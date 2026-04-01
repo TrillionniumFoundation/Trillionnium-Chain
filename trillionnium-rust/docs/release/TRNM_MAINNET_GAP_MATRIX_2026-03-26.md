@@ -141,9 +141,10 @@ The repository has local node configs and preflight scripts, but not a clearly c
 
 ### Partial coverage now present
 - validator bootstrap / re-bootstrap operational guide: `docs/runbooks/validator-bootstrap-rebootstrap.md`
+- validator replacement / rotation / DR handoff guide: `docs/runbooks/validator-rotation-dr.md`
 
 ### Still open inside this area
-- bootstrap procedure is documented, but not yet wired into a signed/public-mainnet operator ceremony
+- bootstrap / replacement / rotation / DR procedures are documented, but not yet wired into a signed/public-mainnet operator ceremony
 - no validator replacement / rotation automation
 - no disaster-recovery rebuild drill with captured evidence
 
