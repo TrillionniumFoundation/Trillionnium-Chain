@@ -5,6 +5,7 @@ Fail-closed operator checklist for bringing up a validator from a clean worktree
 This runbook is intentionally narrow:
 - it does **not** declare TRNM public-mainnet ready by itself
 - it does provide a reproducible bootstrap / re-bootstrap procedure bound to an exact worktree, branch, and validator config set
+- it points operators at `scripts/v2/check_validator_config_bundle.py --emit-ceremony-packet` so the ceremony packet can be generated from the validated config bundle instead of free-typing validator entries
 - it prefers explicit stop conditions over "probably fine" operator judgment
 
 ## Scope

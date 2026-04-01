@@ -140,10 +140,12 @@ The repository has local node configs and preflight scripts, but not a clearly c
 - disaster recovery and node rebuild SOP
 
 ### Partial coverage now present
+- genesis generation / validation checklist: `docs/runbooks/genesis-generation-checklist.md`
 - validator bootstrap / re-bootstrap operational guide: `docs/runbooks/validator-bootstrap-rebootstrap.md`
+- validator config bundle checker + ceremony packet skeleton generator: `scripts/v2/check_validator_config_bundle.py`
 
 ### Still open inside this area
-- bootstrap procedure is documented, but not yet wired into a signed/public-mainnet operator ceremony
+- genesis + bootstrap procedure is documented and a ceremony packet can be generated from the validated config bundle, but the flow is not yet wired into a signed/public-mainnet operator ceremony
 - no validator replacement / rotation automation
 - no disaster-recovery rebuild drill with captured evidence
 
