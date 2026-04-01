@@ -98,6 +98,9 @@ Record:
 - preflight_expected_worktree_root=
 - preflight_expected_branch_ref=
 - preflight_expected_head=
+- preflight_git_worktree_path=
+- preflight_git_worktree_branch_ref=
+- preflight_git_worktree_branch_ref_match=
 - summary_generated_at=
 - manifest_generated_at=
 
@@ -132,7 +135,9 @@ Decision rule:
 - preflight `git_worktree_path=` / `git_worktree_branch_ref=` must match the assigned worktree/branch, not just exist
 - preflight `expected_worktree_root=` / `expected_branch_ref=` must also match the ticket-assigned values verbatim; a packet is incomplete if the preflight artifact only proves the current shell was self-consistent
 - if the ticket assigned an expected head, preflight `expected_head=` must match it verbatim
-- `git_worktree_branch_ref_match=true` is mandatory
+- preflight `git_worktree_branch_ref_match=true` is mandatory before later summary/manifest evidence can be treated as lane-bound
+- summary/manifest `git_worktree_branch_ref_match=true` is also mandatory; do not let a green preflight soften a later artifact mismatch
+- all three stages (preflight / summary / manifest) must agree on lane identity; a two-of-three match is still **NO-GO**
 - `git_status_summary=clean` is mandatory
 - the summary and manifest values must match each other and match the assigned worktree/branch
 - any mismatch = **NO-GO**
@@ -212,6 +217,9 @@ Mark each item explicitly:
 - [ ] `preflight_expected_worktree_root=` preserved next to preflight decision language
 - [ ] `preflight_expected_branch_ref=` preserved next to preflight decision language
 - [ ] `preflight_expected_head=` preserved when the ticket assigned one
+- [ ] `preflight_git_worktree_path=` preserved next to preflight decision language
+- [ ] `preflight_git_worktree_branch_ref=` preserved next to preflight decision language
+- [ ] `preflight_git_worktree_branch_ref_match=true` preserved next to preflight decision language
 - [ ] `summary_generated_at=` preserved next to local-evidence decision language
 - [ ] `manifest_generated_at=` preserved next to RC decision language
 - [ ] preflight identity fields preserved next to preflight decision language
@@ -243,6 +251,7 @@ preflight_git_head_state=<artifact value>
 preflight_git_status_summary=<artifact value>
 preflight_git_worktree_path=<artifact value>
 preflight_git_worktree_branch_ref=<artifact value>
+preflight_git_worktree_branch_ref_match=<true|false|unknown>
 preflight_expected_worktree_root=<artifact value>
 preflight_expected_branch_ref=<artifact value>
 preflight_expected_head=<artifact value or <unset>>
