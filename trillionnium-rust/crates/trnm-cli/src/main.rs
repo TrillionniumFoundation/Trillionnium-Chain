@@ -1019,9 +1019,12 @@ fn contains_hidden_or_control(c: char) -> bool {
     c.is_control()
         || matches!(
             c,
-            '\u{200B}'
+            '\u{061C}'
+                | '\u{200B}'
                 | '\u{200C}'
                 | '\u{200D}'
+                | '\u{200E}'
+                | '\u{200F}'
                 | '\u{2060}'
                 | '\u{FEFF}'
                 | '\u{202A}'
@@ -2793,6 +2796,9 @@ mod tests {
             "hello\nworld",
             "hello\rworld",
             "hello\u{0007}world",
+            "hello\u{061c}world",
+            "hello\u{200e}world",
+            "hello\u{200f}world",
             "hello\u{202e}world",
             "hello\u{2068}world",
         ] {
