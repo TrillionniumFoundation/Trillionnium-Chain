@@ -513,6 +513,31 @@ fn oracle_validate_snapshot_response_rejects_zero_min_source_policy() {
 }
 
 #[test]
+fn oracle_validate_snapshot_response_rejects_zero_staleness_policy() {
+    let policy_path = write_json_fixture(
+        "oracle-policy-zero-staleness",
+        &serde_json::json!({
+            "max_staleness_ms": 0,
+            "min_source_count": 2,
+            "max_deviation_bps": 500,
+            "feed_id": "btc/usd",
+        }),
+    );
+    let snapshot_path = write_json_fixture(
+        "oracle-snapshot-zero-staleness",
+        &oracle_snapshot_fixture(100_000, Some(100_000), 10_000),
+    );
+
+    let err = oracle_validate_snapshot_response(&snapshot_path, &policy_path, 10_100)
+        .expect_err("zero max_staleness_ms policy should fail closed");
+
+    assert_eq!(err, "invalid policy: max_staleness_ms must be > 0");
+
+    let _ = fs::remove_file(snapshot_path);
+    let _ = fs::remove_file(policy_path);
+}
+
+#[test]
 fn oracle_validate_snapshot_response_rejects_deviation_cap_above_guardrail() {
     let policy_path = write_json_fixture(
         "oracle-policy-deviation-cap-overflow",
