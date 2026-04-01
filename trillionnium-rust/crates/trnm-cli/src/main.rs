@@ -945,6 +945,7 @@ fn wallet_store_path_is_safe(path: &Path) -> bool {
     use std::path::Component;
 
     path.is_absolute()
+        && path.parent().is_some()
         && !path
             .components()
             .any(|component| matches!(component, Component::CurDir | Component::ParentDir))
@@ -2635,7 +2636,7 @@ mod tests {
     }
 
     #[test]
-    fn default_wallet_store_rejects_relative_env_paths() {
+    fn default_wallet_store_rejects_relative_or_root_env_paths() {
         let original_store = std::env::var_os("TRNM_WALLET_STORE");
         let original_home = std::env::var_os("HOME");
         let home = std::env::temp_dir().join(format!(
@@ -2653,6 +2654,9 @@ mod tests {
         assert_eq!(default_wallet_store(), home.join(".trnm").join("wallets"));
 
         std::env::set_var("TRNM_WALLET_STORE", "nested/wallets");
+        assert_eq!(default_wallet_store(), home.join(".trnm").join("wallets"));
+
+        std::env::set_var("TRNM_WALLET_STORE", "/");
         assert_eq!(default_wallet_store(), home.join(".trnm").join("wallets"));
 
         std::env::set_var("TRNM_WALLET_STORE", " /tmp/trnm-wallets ");
