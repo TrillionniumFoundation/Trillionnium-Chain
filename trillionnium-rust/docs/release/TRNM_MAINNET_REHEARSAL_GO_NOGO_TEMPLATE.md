@@ -52,6 +52,8 @@ Capture the fail-closed helper output verbatim before any release/evidence scrip
   --expected-branch-ref "refs/heads/lane/assigned-branch"
 ```
 
+`--expected-branch-ref` may be either the short branch name from the ticket (for example `lane/assigned-branch`) or the fully qualified ref (`refs/heads/lane/assigned-branch`), but the memo should preserve exactly which form the ticket assigned.
+
 Record:
 - signer_exclusivity_note=
 - checked_process_output=
@@ -92,6 +94,8 @@ printf 'manifest_path=%s\n' "$manifest_path"
   --expected-worktree-root "/abs/path/from-ticket" \
   --expected-branch-ref "refs/heads/lane/assigned-branch"
 ```
+
+As with the pre-run helper, `--expected-branch-ref` may be supplied as either the short branch name from the ticket or the full ref, but the recorded `preflight_expected_branch_ref=` / `git_expected_worktree_branch_ref=` fields should preserve the exact ticket-assigned form instead of normalizing it after the fact.
 
 Record:
 - preflight_path=
