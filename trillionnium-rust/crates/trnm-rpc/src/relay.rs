@@ -1133,7 +1133,31 @@ fn is_hex_wrapper_noise(ch: char) -> bool {
 }
 
 fn decode_hex_32(input: &str, field: &str) -> Result<[u8; 32]> {
-    let normalized = input.trim_matches(is_hex_wrapper_noise);
+    fn quote_wrapper_len(input: &str) -> Option<(usize, usize)> {
+        const QUOTE_WRAPPERS: [(&str, &str); 7] = [
+            ("\"", "\""),
+            ("'", "'"),
+            ("`", "`"),
+            ("“", "”"),
+            ("‘", "’"),
+            ("«", "»"),
+            ("「", "」"),
+        ];
+
+        QUOTE_WRAPPERS.iter().find_map(|(open, close)| {
+            input
+                .starts_with(open)
+                .then_some(())
+                .filter(|_| input.ends_with(close))
+                .map(|_| (open.len(), close.len()))
+        })
+    }
+
+    let mut normalized = input.trim_matches(is_hex_wrapper_noise);
+    while let Some((prefix_len, suffix_len)) = quote_wrapper_len(normalized) {
+        normalized = normalized[prefix_len..normalized.len() - suffix_len]
+            .trim_matches(is_hex_wrapper_noise);
+    }
     let canonical = normalized
         .strip_prefix("0x")
         .or_else(|| normalized.strip_prefix("0X"))
@@ -2036,6 +2060,49 @@ mod tests {
                     "\u{061C}\u{2061}0X{}\u{2064}\u{180F}",
                     step.sibling_hash_hex.to_uppercase()
                 );
+            }
+        }
+
+        verify_session_proof(&proof).unwrap();
+    }
+
+    #[test]
+    fn relay_session_proof_accepts_hash_hex_wrapped_in_quotes() {
+        let mut router = RelayRouter::new();
+        router.register("relay.echo", EchoHandler);
+        let relay = RelayService::new(router);
+        relay
+            .open(RelayOpenRequest {
+                session_id: "sp3-quote-noise".into(),
+            })
+            .unwrap();
+
+        relay
+            .send(RelaySendRequest {
+                session_id: "sp3-quote-noise".into(),
+                route: "relay.echo".into(),
+                from: "alice".into(),
+                to: Some("bob".into()),
+                payload: b"m1".to_vec(),
+                source: None,
+            })
+            .unwrap();
+
+        let mut proof = relay
+            .query_session_proof(RelaySessionProofQuery {
+                task_id: 7,
+                session_id: "sp3-quote-noise".into(),
+                from_seq: 1,
+                to_seq: 2,
+                source: None,
+            })
+            .unwrap();
+
+        proof.segment_root_hex = format!(" \"0x{}\" ", proof.segment_root_hex);
+        for entry in proof.proofs.iter_mut() {
+            entry.leaf_hash_hex = format!("“0X{}”", entry.leaf_hash_hex.to_uppercase());
+            for step in entry.proof.iter_mut() {
+                step.sibling_hash_hex = format!(" 「{}」 ", step.sibling_hash_hex);
             }
         }
 
