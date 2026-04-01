@@ -123,6 +123,7 @@ assert_equal() {
   fi
 }
 
+summary_toplevel="$(require_key "$SUMMARY_PATH" git_toplevel)"
 summary_branch="$(require_key "$SUMMARY_PATH" git_branch)"
 summary_head="$(require_key "$SUMMARY_PATH" git_head)"
 summary_head_state="$(require_key "$SUMMARY_PATH" git_head_state)"
@@ -139,6 +140,7 @@ summary_result="$(require_key "$SUMMARY_PATH" result)"
 summary_rollback="$(require_key "$SUMMARY_PATH" rollback_command)"
 summary_replay="$(require_key "$SUMMARY_PATH" replay_command)"
 
+manifest_toplevel="$(require_key "$MANIFEST_PATH" git_toplevel)"
 manifest_branch="$(require_key "$MANIFEST_PATH" git_branch)"
 manifest_head="$(require_key "$MANIFEST_PATH" git_head)"
 manifest_head_state="$(require_key "$MANIFEST_PATH" git_head_state)"
@@ -154,6 +156,7 @@ manifest_evidence_scope="$(require_key "$MANIFEST_PATH" evidence_scope)"
 manifest_rollback="$(require_key "$MANIFEST_PATH" rollback_command)"
 manifest_replay="$(require_key "$MANIFEST_PATH" replay_command)"
 
+assert_equal git_toplevel "$summary_toplevel" "$manifest_toplevel"
 assert_equal git_branch "$summary_branch" "$manifest_branch"
 assert_equal git_head "$summary_head" "$manifest_head"
 assert_equal git_head_state "$summary_head_state" "$manifest_head_state"
@@ -192,6 +195,7 @@ printf 'summary_path=%s\n' "$SUMMARY_PATH"
 printf 'manifest_path=%s\n' "$MANIFEST_PATH"
 printf 'summary_generated_at=%s\n' "$summary_generated_at"
 printf 'manifest_generated_at=%s\n' "$manifest_generated_at"
+printf 'git_toplevel=%s\n' "$summary_toplevel"
 printf 'git_branch=%s\n' "$summary_branch"
 printf 'git_head=%s\n' "$summary_head"
 printf 'git_head_state=%s\n' "$summary_head_state"
