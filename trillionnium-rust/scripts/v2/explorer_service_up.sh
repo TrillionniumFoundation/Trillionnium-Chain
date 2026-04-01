@@ -130,5 +130,24 @@ if ! kill -0 "${server_pid}" 2>/dev/null; then
   exit 1
 fi
 
+LOCAL_HEALTH_URL="http://${HOST}:${PORT}/healthz"
+if command -v curl >/dev/null 2>&1; then
+  health_probe_ok="false"
+  for _attempt in 1 2 3 4 5; do
+    if curl --silent --show-error --fail --max-time 2 "${LOCAL_HEALTH_URL}" >/dev/null 2>&1; then
+      health_probe_ok="true"
+      break
+    fi
+    sleep 1
+  done
+  if [[ "${health_probe_ok}" != "true" ]]; then
+    kill "${server_pid}" 2>/dev/null || true
+    rm -f "${PID_FILE}"
+    echo "explorer service scaffold failed local health probe url=${LOCAL_HEALTH_URL}"
+    emit_contract_fields
+    exit 1
+  fi
+fi
+
 echo "started explorer service scaffold pid=${server_pid}"
 emit_contract_fields

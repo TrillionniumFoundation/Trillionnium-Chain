@@ -109,7 +109,7 @@ Expected healthy signals:
 If the PID file is malformed or empty, status reports `state=stale-pid` and also emits `pid_file_valid=false`.
 If `curl` is unavailable on the host, the status script leaves active probing disabled and reports `health=unknown` instead of forcing a false negative.
 The status script now probes `health_url` only when `state=running`, so operators do not get a misleading `health=ok` from an unrelated process that happens to answer on the same URL while the scaffold PID is absent or stale.
-If `explorer_service_up.sh` fails its post-launch liveness check, it now removes the just-written PID file before exiting so the next operator status check sees a clean `state=down` instead of a misleading startup-generated `stale-pid` artifact.
+If `explorer_service_up.sh` fails its post-launch liveness check, it now removes the just-written PID file before exiting so the next operator status check sees a clean `state=down` instead of a misleading startup-generated `stale-pid` artifact. When `curl` is available, that liveness check now probes the scaffold's local bind target (`http://<bind_host>:<bind_port>/healthz`) instead of only checking that the `python3 -m http.server` process is still alive.
 
 ## What gets served
 
@@ -204,7 +204,7 @@ It also re-emits the same operator-facing contract fields as the up/status scrip
 - `service_mode=operator-facing-static-scaffold`
 - `production_ready=false`
 
-Likewise, `explorer_service_up.sh` now emits the same `service_mode` / `production_ready` markers plus `rpc_base_url=...` on success, "already running", and fail-fast exits, so operator notes can quote one consistent contract without having to run `status` first.
+Likewise, `explorer_service_up.sh` now emits the same `service_mode` / `production_ready` markers plus `rpc_base_url=...` on success, "already running", and fail-fast exits, so operator notes can quote one consistent contract without having to run `status` first. Its startup gate intentionally probes the local bind target rather than `EXPLORER_PUBLIC_BASE_URL`, so a reverse-proxy-facing public URL can still differ from the local loopback/host bind without breaking the operator bring-up check.
 
 ## Operator caution
 
