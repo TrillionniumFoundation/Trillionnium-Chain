@@ -46,6 +46,7 @@ summary_generated_at=
 manifest_generated_at=
 dr_summary_path=
 dr_generated_at=
+dr_status=
 dr_replay_command=
 dr_rollback_command=
 bootstrap_command=
@@ -54,7 +55,7 @@ next_blocker=
 ```
 
 Rules:
-- `dr_summary_path=` / `dr_generated_at=` / `dr_replay_command=` / `dr_rollback_command=` may remain empty unless `cutover_kind=dr_rebuild`.
+- `dr_summary_path=` / `dr_generated_at=` / `dr_status=` / `dr_replay_command=` / `dr_rollback_command=` may remain empty unless `cutover_kind=dr_rebuild`.
 - `handoff_summary_path=` / `handoff_manifest_path=` / `summary_generated_at=` / `manifest_generated_at=` may remain empty unless release-evidence or RC artifacts are part of the handoff.
 - when `extract_release_handoff_fields.sh` is used, copy both artifact paths and both generated-at fields verbatim; do not collapse them into one hand-written timestamp.
 - `result=` should stay empty until the smallest credible bootstrap/re-bootstrap sanity actually finishes.
@@ -69,7 +70,7 @@ If any required row cannot be satisfied, treat the event as **No-Go** before exe
 | --- | --- | --- | --- |
 | `replacement` | `verified_worktree=` / `verified_branch_ref=` / `verified_head=` plus explicit outgoing and incoming validator identity/config | clean `git status --short`, config-bundle check output, exact `bootstrap_command=`, explicit `rollback_command=` | cannot name which validator identity is being retired vs activated |
 | `rotation` | all replacement fields plus `handoff_signed_by=` / `handoff_acknowledged_by=` and explicit lineage (`expected_genesis_or_checkpoint=`) | handoff note with signed/acknowledged ownership transfer, optional `handoff_summary_path=` / `handoff_manifest_path=` when release artifacts are part of the cutover | signer/acknowledger missing, or rotation lineage cannot be stated from the note |
-| `dr_rebuild` | all rotation fields plus `dr_summary_path=` / `dr_generated_at=` / `dr_replay_command=` / `dr_rollback_command=` | concrete recovery artifact from the current worktree, plus the bootstrap/re-bootstrap sanity command used after rebuild | DR claimed but no path-resolved recovery report exists for the rebuild |
+| `dr_rebuild` | all rotation fields plus `dr_summary_path=` / `dr_generated_at=` / `dr_status=` / `dr_replay_command=` / `dr_rollback_command=` | concrete recovery artifact from the current worktree, plus the bootstrap/re-bootstrap sanity command used after rebuild | DR claimed but no path-resolved recovery report exists for the rebuild |
 
 Interpretation rule:
 - `replacement` is a local operator-owner swap with explicit rollback and clean config proof.
@@ -200,7 +201,7 @@ For a DR rebuild, preserve evidence in this order so the handoff can be audited 
 
 1. run `verify_lane_worktree.sh` with the **ticket-assigned** worktree path and branch ref (and `EXPECTED_HEAD` too when the ticket/handoff already pins an exact commit)
 2. run `check_bft_restart_recovery.sh` and capture the emitted report path
-3. copy `dr_summary_path=` and `dr_generated_at=` from that concrete report
+3. copy `dr_summary_path=` / `dr_generated_at=` / `dr_status=` from that concrete report
 4. copy `dr_replay_command=` / `dr_rollback_command=` verbatim from the report
 5. if RC/release artifacts are part of the same event, run `extract_release_handoff_fields.sh` against the same expected worktree/branch and copy the emitted `handoff_*` / `*_generated_at` fields verbatim
 
@@ -259,6 +260,7 @@ When handing this event to another operator, record:
 - pass/fail result
 - rollback command
 - DR report generated-at timestamp when DR evidence was required
+- DR report status when DR evidence was required
 - replay command when DR evidence was required
 - one-line blocker if the event is not reproducible
 
@@ -278,7 +280,7 @@ Attach one compact packet that another operator can audit without terminal scrol
 Fail-closed interpretation:
 - a replacement may stay local/unsigned only when there is no human ownership boundary; once the event crosses operators, treat it as `rotation`
 - if the handoff references release or RC evidence, preserve both `handoff_summary_path=` and `handoff_manifest_path=` together with both generated-at timestamps
-- if the handoff references DR rebuild evidence, preserve `dr_summary_path=` together with `dr_generated_at=` / `dr_replay_command=` / `dr_rollback_command=` from the same concrete report
+- if the handoff references DR rebuild evidence, preserve `dr_summary_path=` together with `dr_generated_at=` / `dr_status=` / `dr_replay_command=` / `dr_rollback_command=` from the same concrete report
 - if an operator name, artifact path, or generated-at field has to be reconstructed from chat or shell memory, the ceremony packet is incomplete and the event is **No-Go**
 
 This packet does not make TRNM public-mainnet ready by itself, but it does close the operator-facing question "what exact signed evidence turns a local cutover rehearsal into an auditable handoff?"
@@ -306,6 +308,7 @@ summary_generated_at=<verbatim summary generated_at or empty>
 manifest_generated_at=<verbatim manifest generated_at or empty>
 dr_summary_path=<path to recovery report when cutover_kind=dr_rebuild>
 dr_generated_at=<verbatim generated_at from recovery report when cutover_kind=dr_rebuild>
+dr_status=<verbatim status from recovery report when cutover_kind=dr_rebuild>
 dr_replay_command=<verbatim replay_command from recovery report when cutover_kind=dr_rebuild>
 dr_rollback_command=<verbatim rollback_command from recovery report when cutover_kind=dr_rebuild>
 bootstrap_command=<exact bootstrap or re-bootstrap command>
@@ -316,7 +319,7 @@ next_blocker=<one line or empty>
 Fail-closed interpretation:
 - for `cutover_kind=replacement`, `handoff_signed_by=` / `handoff_acknowledged_by=` may stay empty only when there is truly no cross-operator ownership boundary
 - for `cutover_kind=rotation`, both handoff names must be present on the same note as the verified worktree/branch/head tuple
-- for `cutover_kind=dr_rebuild`, do not mark `result=PASS` unless the same note also carries `dr_summary_path=` plus verbatim `dr_replay_command=` / `dr_rollback_command=` from one concrete report
+- for `cutover_kind=dr_rebuild`, do not mark `result=PASS` unless the same note also carries `dr_summary_path=` / `dr_generated_at=` / `dr_status=PASS` plus verbatim `dr_replay_command=` / `dr_rollback_command=` from one concrete report
 - if `rollback_command=` was paraphrased instead of copied verbatim from the selected artifact or pre-declared cutover note, the packet is incomplete
 
 ## No-Go conditions
