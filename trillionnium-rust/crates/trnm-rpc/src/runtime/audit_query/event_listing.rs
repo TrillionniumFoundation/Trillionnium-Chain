@@ -19,7 +19,16 @@ pub(crate) fn query_normalized_audit_events(
     events.sort_by(|left, right| {
         audit_event_height(right)
             .cmp(&audit_event_height(left))
+            .then_with(|| left.source.cmp(&right.source))
             .then_with(|| left.event_type.cmp(&right.event_type))
+            .then_with(|| compare_optional_str(&left.object_id, &right.object_id))
+            .then_with(|| compare_optional_str(&left.actor, &right.actor))
+            .then_with(|| compare_optional_str(&left.related_id, &right.related_id))
+            .then_with(|| compare_optional_str(&left.amount, &right.amount))
+            .then_with(|| compare_optional_str(&left.reason, &right.reason))
+            .then_with(|| compare_optional_str(&left.note, &right.note))
+            .then_with(|| compare_optional_str(&left.timestamp, &right.timestamp))
+            .then_with(|| compare_optional_str(&left.subject, &right.subject))
     });
 
     paginate_normalized_audit_events(events, query.cursor.unwrap_or(0), limit)
@@ -155,6 +164,10 @@ fn audit_event_height(event: &NormalizedAuditEvent) -> u64 {
         .and_then(|value| value.strip_prefix("height:"))
         .and_then(|value| value.parse::<u64>().ok())
         .unwrap_or(0)
+}
+
+fn compare_optional_str(left: &Option<String>, right: &Option<String>) -> std::cmp::Ordering {
+    left.as_deref().cmp(&right.as_deref())
 }
 
 fn paginate_normalized_audit_events(

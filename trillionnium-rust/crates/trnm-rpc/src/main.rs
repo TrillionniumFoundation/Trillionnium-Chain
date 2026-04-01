@@ -3915,7 +3915,16 @@ fn query_normalized_audit_events(
             .unwrap_or(0);
         right_height
             .cmp(&left_height)
+            .then_with(|| left.source.cmp(&right.source))
             .then_with(|| left.event_type.cmp(&right.event_type))
+            .then_with(|| left.object_id.as_deref().cmp(&right.object_id.as_deref()))
+            .then_with(|| left.actor.as_deref().cmp(&right.actor.as_deref()))
+            .then_with(|| left.related_id.as_deref().cmp(&right.related_id.as_deref()))
+            .then_with(|| left.amount.as_deref().cmp(&right.amount.as_deref()))
+            .then_with(|| left.reason.as_deref().cmp(&right.reason.as_deref()))
+            .then_with(|| left.note.as_deref().cmp(&right.note.as_deref()))
+            .then_with(|| left.timestamp.as_deref().cmp(&right.timestamp.as_deref()))
+            .then_with(|| left.subject.as_deref().cmp(&right.subject.as_deref()))
     });
 
     let total = events.len();
@@ -5307,6 +5316,70 @@ mod tests {
         assert_eq!(second.events.len(), 1);
         assert_eq!(second.events[0].event_type, "trnm.task.accept");
         assert_eq!(second.has_more, Some(false));
+    }
+
+    #[test]
+    fn query_normalized_audit_events_stably_orders_same_height_same_type_history() {
+        let events = vec![
+            NodeEventRecord {
+                event_type: "commit".into(),
+                task_id: 9,
+                from_status: "Assigned".into(),
+                to_status: "Committed".into(),
+                actor: "worker-b".into(),
+                tx_id: 1,
+                block_height: 42,
+                state_root: "s1".into(),
+                ts_unix_ms: 100,
+                signer: Some("worker-b".into()),
+                challenger: None,
+                tx_hash: None,
+                resolution_code: None,
+                treasury_delta: None,
+                challenger_delta: None,
+                bond_disposition: None,
+                metering: None,
+            },
+            NodeEventRecord {
+                event_type: "commit".into(),
+                task_id: 7,
+                from_status: "Assigned".into(),
+                to_status: "Committed".into(),
+                actor: "worker-a".into(),
+                tx_id: 2,
+                block_height: 42,
+                state_root: "s2".into(),
+                ts_unix_ms: 200,
+                signer: Some("worker-a".into()),
+                challenger: None,
+                tx_hash: None,
+                resolution_code: None,
+                treasury_delta: None,
+                challenger_delta: None,
+                bond_disposition: None,
+                metering: None,
+            },
+        ];
+
+        let out = query_normalized_audit_events(
+            &events,
+            &[],
+            &QueryNormalizedAuditEventsQuery {
+                source: Some("trnm.task".into()),
+                event_type: Some("trnm.task.commit".into()),
+                cursor: None,
+                limit: 10,
+            },
+        );
+
+        let object_ids: Vec<_> = out
+            .events
+            .iter()
+            .map(|event| event.object_id.as_deref())
+            .collect();
+        assert_eq!(object_ids, vec![Some("task:7"), Some("task:9")]);
+        let actors: Vec<_> = out.events.iter().map(|event| event.actor.as_deref()).collect();
+        assert_eq!(actors, vec![Some("worker-a"), Some("worker-b")]);
     }
 
     #[test]
