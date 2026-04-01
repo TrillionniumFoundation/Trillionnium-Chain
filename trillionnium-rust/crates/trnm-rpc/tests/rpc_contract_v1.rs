@@ -405,6 +405,24 @@ fn contract_public_read_payloads_reject_unknown_top_level_fields() {
     .expect_err("pending update contract should fail closed on unknown fields");
     assert!(pending_update_err.to_string().contains("unexpected"));
 
+    let balance_err = serde_json::from_value::<AccountBalanceQueryResponse>(json!({
+        "address":"trnm1abc",
+        "balance":1,
+        "version":1,
+        "unexpected":true
+    }))
+    .expect_err("account balance contract should fail closed on unknown fields");
+    assert!(balance_err.to_string().contains("unexpected"));
+
+    let nonce_err = serde_json::from_value::<AccountNonceQueryResponse>(json!({
+        "address":"trnm1abc",
+        "nonce":7,
+        "version":1,
+        "unexpected":true
+    }))
+    .expect_err("account nonce contract should fail closed on unknown fields");
+    assert!(nonce_err.to_string().contains("unexpected"));
+
     let faucet_err = serde_json::from_value::<FaucetRequestResponse>(json!({
         "ok":true,
         "code":"OK",
