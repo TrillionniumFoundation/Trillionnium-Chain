@@ -1748,11 +1748,27 @@ bootstrap_peers = ["127.0.0.1:27656"]
         let mut shipped_nodes = Vec::new();
         let mut bootstrap_loopback_ips = HashSet::new();
 
-        for (index, (config_path, workspace_relative_path)) in [
-            ("trillionnium-rust/configs/node1.toml", "configs/node1.toml"),
-            ("trillionnium-rust/configs/node2.toml", "configs/node2.toml"),
-            ("trillionnium-rust/configs/node3.toml", "configs/node3.toml"),
-            ("trillionnium-rust/configs/node4.toml", "configs/node4.toml"),
+        for (index, (config_path, workspace_relative_path, curdir_repo_relative_path)) in [
+            (
+                "trillionnium-rust/configs/node1.toml",
+                "configs/node1.toml",
+                "./configs/node1.toml",
+            ),
+            (
+                "trillionnium-rust/configs/node2.toml",
+                "configs/node2.toml",
+                "./configs/node2.toml",
+            ),
+            (
+                "trillionnium-rust/configs/node3.toml",
+                "configs/node3.toml",
+                "./configs/node3.toml",
+            ),
+            (
+                "trillionnium-rust/configs/node4.toml",
+                "configs/node4.toml",
+                "./configs/node4.toml",
+            ),
         ]
         .into_iter()
         .enumerate()
@@ -1809,6 +1825,17 @@ bootstrap_peers = ["127.0.0.1:27656"]
                 canonical_workspace_relative_path, canonical_config_path,
                 "{workspace_relative_path} must canonicalize to the same shipped bootstrap fixture as {config_path}"
             );
+            let canonical_curdir_repo_relative_path = std::path::Path::new(curdir_repo_relative_path)
+                .canonicalize()
+                .unwrap_or_else(|err| {
+                    panic!(
+                        "{curdir_repo_relative_path} should canonicalize for curdir-prefixed bootstrap/rejoin path anchoring: {err}"
+                    )
+                });
+            assert_eq!(
+                canonical_curdir_repo_relative_path, canonical_config_path,
+                "{curdir_repo_relative_path} must canonicalize to the same shipped bootstrap fixture as {config_path}"
+            );
 
             let cfg = load_config(config_path)
                 .unwrap_or_else(|err| panic!("{config_path} should remain loadable: {err:#}"));
@@ -1817,6 +1844,12 @@ bootstrap_peers = ["127.0.0.1:27656"]
                     "{workspace_relative_path} should remain loadable for bootstrap/rejoin path anchoring: {err:#}"
                 )
             });
+            let curdir_repo_relative_cfg =
+                load_config(curdir_repo_relative_path).unwrap_or_else(|err| {
+                    panic!(
+                        "{curdir_repo_relative_path} should remain loadable for curdir-prefixed bootstrap/rejoin path anchoring: {err:#}"
+                    )
+                });
             assert_eq!(
                 workspace_relative_cfg.node_id, cfg.node_id,
                 "{workspace_relative_path} must resolve to the same shipped bootstrap node_id as {config_path}"
@@ -1828,6 +1861,18 @@ bootstrap_peers = ["127.0.0.1:27656"]
             assert_eq!(
                 workspace_relative_cfg.p2p_addr, cfg.p2p_addr,
                 "{workspace_relative_path} must resolve to the same shipped bootstrap p2p_addr as {config_path}"
+            );
+            assert_eq!(
+                curdir_repo_relative_cfg.node_id, cfg.node_id,
+                "{curdir_repo_relative_path} must resolve to the same shipped bootstrap node_id as {config_path}"
+            );
+            assert_eq!(
+                curdir_repo_relative_cfg.rpc_addr, cfg.rpc_addr,
+                "{curdir_repo_relative_path} must resolve to the same shipped bootstrap rpc_addr as {config_path}"
+            );
+            assert_eq!(
+                curdir_repo_relative_cfg.p2p_addr, cfg.p2p_addr,
+                "{curdir_repo_relative_path} must resolve to the same shipped bootstrap p2p_addr as {config_path}"
             );
             let expected_node_id = format!("node{}", index + 1);
             let expected_p2p_port = 26_656 + (index as u16) * 1_000;
