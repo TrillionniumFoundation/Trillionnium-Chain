@@ -127,17 +127,31 @@ describe("dashboard page", () => {
     expect(mockedFetch).toHaveBeenCalledWith({ mode: "empty" });
   });
 
-  it("shows adapter error state", async () => {
+  it("shows adapter error state as an assertive fail-closed alert", async () => {
     mockedFetch.mockRejectedValue(new Error("Dashboard backend unavailable"));
     window.history.replaceState({}, "", "/?mode=error");
 
     render(<Home />);
 
-    await waitFor(() => {
-      expect(screen.getByText("Failed to load dashboard")).toBeInTheDocument();
-    });
-
-    expect(screen.getByText(/Adapter source error: Dashboard backend unavailable/)).toBeInTheDocument();
+    const alert = await screen.findByRole("alert");
+    expect(alert).toHaveTextContent("Failed to load dashboard");
+    expect(alert).toHaveTextContent("Adapter source error: Dashboard backend unavailable");
+    expect(alert).toHaveAttribute("aria-live", "assertive");
     expect(mockedFetch).toHaveBeenCalledWith({ mode: "error" });
+  });
+
+  it("announces loading state politely before readonly data resolves", () => {
+    mockedFetch.mockImplementation(
+      () =>
+        new Promise(() => {
+          // keep pending to assert loading UX
+        }),
+    );
+
+    render(<Home />);
+
+    const status = screen.getByRole("status");
+    expect(status).toHaveTextContent("Loading dashboard snapshot");
+    expect(status).toHaveAttribute("aria-live", "polite");
   });
 });

@@ -22,9 +22,25 @@ function StatusChip({ text, tone }: { text: string; tone: string }) {
   return <span className={`rounded-full px-2 py-1 text-xs font-medium ${tone}`}>{text}</span>;
 }
 
-function EmptyState({ title, detail }: { title: string; detail: string }) {
+function EmptyState({
+  title,
+  detail,
+  tone = "neutral",
+  live = "off",
+}: {
+  title: string;
+  detail: string;
+  tone?: "neutral" | "error";
+  live?: "off" | "polite" | "assertive";
+}) {
   return (
-    <article className="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-8 text-center text-slate-600">
+    <article
+      role={tone === "error" ? "alert" : live === "off" ? undefined : "status"}
+      aria-live={live}
+      className={`rounded-xl border border-dashed p-8 text-center text-slate-600 ${
+        tone === "error" ? "border-rose-300 bg-rose-50" : "border-slate-300 bg-slate-50"
+      }`}
+    >
       <p className="text-base font-semibold text-slate-700">{title}</p>
       <p className="mt-2 text-sm">{detail}</p>
     </article>
@@ -123,11 +139,20 @@ export default function Home() {
         </nav>
 
         {loadState.status === "loading" && (
-          <EmptyState title="Loading dashboard snapshot" detail="Fetching readonly adapter data and normalizing schema..." />
+          <EmptyState
+            title="Loading dashboard snapshot"
+            detail="Fetching readonly adapter data and normalizing schema..."
+            live="polite"
+          />
         )}
 
         {loadState.status === "error" && (
-          <EmptyState title="Failed to load dashboard" detail={`Adapter source error: ${loadState.message}`} />
+          <EmptyState
+            title="Failed to load dashboard"
+            detail={`Adapter source error: ${loadState.message}`}
+            tone="error"
+            live="assertive"
+          />
         )}
 
         {loadState.status === "ready" && (
