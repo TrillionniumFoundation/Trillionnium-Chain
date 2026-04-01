@@ -139,6 +139,24 @@ If the cutover includes any offline-signed or manually submitted transaction, re
 - if any query returns a different normalized hash for the same operator action, stop and classify the procedure as **No-Go**
 - do **not** treat a tx-hash mismatch as cosmetic formatting drift; treat it as signer-path ambiguity or wrong-transaction evidence until disproven
 
+Minimum operator pattern after manual/offline submit:
+
+```bash
+REQUESTED_TX_HASH="0x...captured-from-submit-path..."
+
+./target/debug/trnm-cli tx query "$REQUESTED_TX_HASH"
+./target/debug/trnm-cli tx wait "$REQUESTED_TX_HASH" --timeout 30 --interval 2
+```
+
+Record together:
+- `requested_tx_hash=` from the submit path exactly once
+- `query_tx_hash=` from `trnm-cli tx query`
+- `wait_tx_hash=` from `trnm-cli tx wait`
+
+Fail-closed rule:
+- if `query_tx_hash` or `wait_tx_hash` normalizes to a different value than `requested_tx_hash`, stop and treat the cutover as wrong-transaction or signer-path ambiguity evidence
+- do not replace the original requested hash mid-procedure just because a later shell command prints a differently formatted alias
+
 And re-run the operator checks from:
 - `docs/runbooks/validator-bootstrap-rebootstrap.md`
 - `docs/release/TRNM_VALIDATOR_RELEASE_HANDOFF.md`
