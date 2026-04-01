@@ -275,10 +275,25 @@ Why:
 At minimum link out to:
 
 - oracle dashboard bundle from `docs/runbooks/oracle-observability-alerts.md`
+- bridge settlement / relay drill-down: settlement heartbeat trend, relay/backlog evidence, and the matching release evidence block from `docs/runbooks/local-release-evidence.md`
 - recovery / WAL runbook from `docs/runbooks/bft-checkpoint-wal-recovery.md`
 - release evidence runbook from `docs/runbooks/local-release-evidence.md`
 
-### 7. First-stop routing table
+### 7. Bridge relay / settlement integrity
+
+Show or annotate:
+
+- bridge relay heartbeat trend
+- settlement loop success vs failure trend
+- latest settlement evidence pointer or release `summary.txt` / `manifest.txt` when present
+- whether `replay_command=` and `rollback_command=` were captured when settlement integrity is in doubt
+
+Why:
+
+- gives `bridge-anomaly` one stable first-stop panel instead of a generic service-specific placeholder
+- keeps settlement trust incidents tied to evidence and rollback state, not only to liveness graphs
+
+### 8. First-stop routing table
 
 Use one append-stable routing table so the first responder does not have to guess which panel or artifact to open first.
 
@@ -290,7 +305,7 @@ Use one append-stable routing table so the first responder does not have to gues
 | `rpc` | `rpc-unhealthy` | **RPC health / read surface** | failing endpoint, query success/failure trend, latest rollback/replay pointer if the failure followed deploy or rehearsal | preserves the public read surface as its own first-class operator plane |
 | `worker` | `worker-failure` | **Worker execution / receipt flow** | affected worker ids/queues, retry/exhaustion trend, linked worker receipt evidence | separates queue starvation from execution or submission failure before escalation |
 | `oracle` | `oracle-anomaly` | **Oracle-specific drill-down** | labels from `docs/runbooks/oracle-observability-alerts.md`, matching `severity`, `needs_replay`, and evidence pointers | oracle triage already has a service-specific contract; use it without dropping the shared labels |
-| `bridge` | `bridge-anomaly` | **Service-specific drill-down** | bridge relay/settlement heartbeat evidence, settlement blast radius, replay/rollback pointers if integrity is in doubt | bridge incidents often start as sev2 but can promote quickly when settlement trust is threatened |
+| `bridge` | `bridge-anomaly` | **Bridge relay / settlement integrity** | bridge relay/settlement heartbeat evidence, settlement blast radius, replay/rollback pointers if integrity is in doubt | bridge incidents often start as sev2 but can promote quickly when settlement trust is threatened |
 | `any` | `contract-drift` | **Evidence / replay integrity** | label block completeness, dashboard math/field drift, `truth_source=`, `evidence_scope=`, identity-match fields | if the contract is drifting, operators must stop trusting the dashboard before anything else |
 
 Routing rules:
@@ -311,7 +326,7 @@ Every `sev0` / `sev1` incident should preserve one compact evidence block:
 - `signal`: `<node-down|sync-lag|replay-failure|rpc-unhealthy|worker-failure|oracle-anomaly|bridge-anomaly|contract-drift>`
 - `needs_replay`: `<yes|no>`
 - `needs_rollback`: `<yes|no>`
-- `first_stop_panel`: `<Node liveness / height progress|Consensus instability / rollback pressure|RPC health / read surface|Worker execution / receipt flow|Evidence / replay integrity|Oracle-specific drill-down|Service-specific drill-down|unknown>`
+- `first_stop_panel`: `<Node liveness / height progress|Consensus instability / rollback pressure|RPC health / read surface|Worker execution / receipt flow|Evidence / replay integrity|Oracle-specific drill-down|Bridge relay / settlement integrity|unknown>`
 - `summary_line`: `<one-line operator summary>`
 - `summary_path`: `<abs-path-to-summary.txt|unknown>`
 - `manifest_path`: `<abs-path-to-manifest.txt|unknown>`
