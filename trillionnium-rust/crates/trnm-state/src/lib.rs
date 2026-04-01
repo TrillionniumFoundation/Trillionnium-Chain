@@ -15139,6 +15139,68 @@ mod tests {
     }
 
     #[test]
+    fn restore_pending_resolve_approval_from_rollback_rejects_reserved_authority_alias_snapshot() {
+        let mut st = StateStore::new();
+        st.set_gov_param(
+            7_999,
+            EMERGENCY_PAUSE_KEY_ID,
+            "emergency_pause".into(),
+            "true".into(),
+        )
+        .expect("pause toggle must apply immediately");
+        assert!(st.is_emergency_paused());
+
+        st.set_gov_param_unchecked(
+            7_310,
+            "resolve_authority".into(),
+            "authority-a,authority-b".into(),
+        )
+        .expect("resolve authority bootstrap should succeed for rollback replay coverage");
+
+        st.restore_task(
+            906,
+            Some(TaskObject {
+                task_id: 906,
+                creator: "alice".into(),
+                bounty: 100,
+                status: TaskStatus::Challenged,
+                proof_type: Default::default(),
+                metadata: None,
+                worker: Some("worker-1".into()),
+                committed_hash: Some([1u8; 32]),
+                result_hash: Some([2u8; 32]),
+                reveal_salt: Some([3u8; 32]),
+                committed_at_height: Some(10),
+                reveal_deadline_height: Some(20),
+                challenge_deadline_height: Some(30),
+                challenge_window_blocks_snapshot: Some(40),
+                challenged_at_height: Some(25),
+                resolve_deadline_height: Some(35),
+                challenge_bond: Some(500),
+                challenger: Some("bob".into()),
+                challenge_bond_forfeited: Some(true),
+                version: 7,
+            }),
+        );
+
+        st.restore_pending_resolve_approval_from_rollback(
+            906,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-a,governance.resolve_authority".into(),
+                task_version: 7,
+            }),
+        );
+
+        assert!(
+            st.pending_resolve_approval(906).is_none(),
+            "rollback restore must not allow reserved authority aliases to bypass canonical pending resolve validation"
+        );
+    }
+
+    #[test]
     fn restore_pending_resolve_approval_rejects_forfeit_decision_metadata_mismatch() {
         let mut st = StateStore::new();
         st.put_task_new(TaskObject {
