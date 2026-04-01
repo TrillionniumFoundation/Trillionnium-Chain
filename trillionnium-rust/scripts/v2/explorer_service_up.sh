@@ -27,6 +27,7 @@ emit_contract_fields() {
   echo "index_file=${INDEX_FILE}"
   echo "bind_host=${HOST}"
   echo "bind_port=${PORT}"
+  echo "public_base_url=${PUBLIC_BASE_URL}"
   echo "health_url=${HEALTH_URL}"
   echo "local_health_url=${LOCAL_HEALTH_URL}"
   echo "index_url=${INDEX_URL}"

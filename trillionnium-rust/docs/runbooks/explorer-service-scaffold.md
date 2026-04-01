@@ -102,6 +102,7 @@ The status output should include the operator contract fields below:
 - `index_file=.../run/explorer-service/public/index.json`
 - `bind_host=...`
 - `bind_port=...`
+- `public_base_url=http://...`
 - `health_url=http://.../healthz`
 - `local_health_url=http://<bind_host>:<bind_port>/healthz`
 - `index_url=http://.../index.json`
@@ -207,6 +208,7 @@ It also re-emits the same operator-facing contract fields as the up/status scrip
 - `index_file=.../run/explorer-service/public/index.json`
 - `bind_host=...`
 - `bind_port=...`
+- `public_base_url=http://...`
 - `health_url=http://.../healthz`
 - `local_health_url=http://<bind_host>:<bind_port>/healthz`
 - `index_url=http://.../index.json`
@@ -214,7 +216,7 @@ It also re-emits the same operator-facing contract fields as the up/status scrip
 - `service_mode=operator-facing-static-scaffold`
 - `production_ready=false`
 
-Likewise, `explorer_service_up.sh` now emits the same `service_mode` / `production_ready` markers plus `rpc_base_url=...` and `local_health_url=...` on success, "already running", and fail-fast exits, so operator notes can quote one consistent contract without having to run `status` first. Its startup gate intentionally probes the local bind target rather than `EXPLORER_PUBLIC_BASE_URL`, so a reverse-proxy-facing public URL can still differ from the local loopback/host bind without breaking the operator bring-up check.
+Likewise, `explorer_service_up.sh` now emits the same `service_mode` / `production_ready` markers plus `public_base_url=...`, `rpc_base_url=...`, and `local_health_url=...` on success, "already running", and fail-fast exits, so operator notes can quote one consistent contract without having to run `status` first. Its startup gate intentionally probes the local bind target rather than `EXPLORER_PUBLIC_BASE_URL`, so a reverse-proxy-facing public URL can still differ from the local loopback/host bind without breaking the operator bring-up check.
 
 ## Operator caution
 
