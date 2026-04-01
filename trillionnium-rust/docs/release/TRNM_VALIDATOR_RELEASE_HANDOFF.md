@@ -170,7 +170,7 @@ Minimum evidence files to preserve:
 
 Interpretation rule:
 - `summary.txt` must end with `result=PASS`
-- `generated_at=` and `git_status_summary=clean` must both be present before anyone treats the evidence as handoff-grade
+- raw `summary.txt` must contain `generated_at=` and `git_status_summary=clean`; when quoting through `extract_release_handoff_fields.sh`, preserve that timestamp as `summary_generated_at=` so it cannot be confused with the RC manifest timestamp
 - if `challenge_reexec=FAIL(entry_not_found)`, treat the rehearsal as incomplete rather than silently acceptable
 
 ### 3. RC gate rehearsal
@@ -216,8 +216,8 @@ Use the generated artifact as the source of truth for the step you just ran; do 
 | Step | Primary artifact | Identity fields to verify first | Operator question it answers |
 | --- | --- | --- | --- |
 | Fast preflight | `run/preflight/go-no-go-latest.txt` | generated timestamp, referenced log paths | Did the local rehearsal fail fast on obvious safety blockers? |
-| Local release evidence | `run/health/evidence-<timestamp>/summary.txt` | `git_toplevel=`, `git_branch=`, `git_head=`, `git_head_state=`, `git_worktree_path=`, `git_worktree_branch_ref=`, `git_expected_worktree_branch_ref=`, `git_worktree_branch_ref_match=`, `git_status_summary=`, `generated_at=`, `truth_source=`, `historical_evidence_only=`, `evidence_scope=` | Did the evidence bundle pass, and what exact replay / rollback commands apply? |
-| RC gate rehearsal | `release/rc-<timestamp>/manifest.txt` | `git_toplevel=`, `git_branch=`, `git_head=`, `git_head_state=`, `git_worktree_path=`, `git_worktree_branch_ref=`, `git_expected_worktree_branch_ref=`, `git_worktree_branch_ref_match=`, `git_status_summary=`, `generated_at=`, `truth_source=`, `historical_evidence_only=`, `evidence_scope=` | Is this branch/commit rehearsal-ready, and is any remaining blocker code vs policy? |
+| Local release evidence | `run/health/evidence-<timestamp>/summary.txt` | `git_toplevel=`, `git_branch=`, `git_head=`, `git_head_state=`, `git_worktree_path=`, `git_worktree_branch_ref=`, `git_expected_worktree_branch_ref=`, `git_worktree_branch_ref_match=`, `git_status_summary=`, raw `generated_at=` (quote as `summary_generated_at=` when using the helper), `truth_source=`, `historical_evidence_only=`, `evidence_scope=` | Did the evidence bundle pass, and what exact replay / rollback commands apply? |
+| RC gate rehearsal | `release/rc-<timestamp>/manifest.txt` | `git_toplevel=`, `git_branch=`, `git_head=`, `git_head_state=`, `git_worktree_path=`, `git_worktree_branch_ref=`, `git_expected_worktree_branch_ref=`, `git_worktree_branch_ref_match=`, `git_status_summary=`, raw `generated_at=` (quote as `manifest_generated_at=` when using the helper), `truth_source=`, `historical_evidence_only=`, `evidence_scope=` | Is this branch/commit rehearsal-ready, and is any remaining blocker code vs policy? |
 
 ### Canonical path resolution commands
 
@@ -349,13 +349,13 @@ Record these fields in the release ticket or operator handoff note:
 - git status summary (`git_status_summary`):
 - preflight summary path:
 - local evidence summary path:
-- local evidence generated_at:
+- local evidence generated_at (`summary_generated_at`, or raw `generated_at=` when quoting `summary.txt` directly):
 - local evidence truth_source:
 - local evidence historical_evidence_only:
 - local evidence evidence_scope:
 - local evidence result (`summary_result`):
 - rc manifest path:
-- rc manifest generated_at:
+- rc manifest generated_at (`manifest_generated_at`, or raw `generated_at=` when quoting `manifest.txt` directly):
 - rc manifest truth_source:
 - rc manifest historical_evidence_only:
 - rc manifest evidence_scope:
