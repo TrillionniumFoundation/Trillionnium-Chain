@@ -124,6 +124,7 @@ echo "${server_pid}" >"${PID_FILE}"
 sleep 1
 
 if ! kill -0 "${server_pid}" 2>/dev/null; then
+  rm -f "${PID_FILE}"
   echo "explorer service scaffold failed to stay up"
   emit_contract_fields
   exit 1
