@@ -199,3 +199,33 @@ fn reserve_only_saturation_reopens_cleanly_after_one_real_drain() {
     assert_eq!(g.queued_counts(), (0, 2, 2));
     assert_eq!(g.seen_global.len(), 2);
 }
+
+#[test]
+fn borrowed_last_idle_reserved_slot_recloses_to_normal_once_critical_backlog_appears() {
+    let mut g = LaneAdmissionGate::new(3, 1);
+
+    // Fill dedicated normal headroom, then borrow the last idle reserved critical
+    // slot exactly once while the critical lane is still idle.
+    assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(g.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(g.admit(3, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(g.queued_counts(), (2, 1, 3));
+    assert_eq!(g.qos_snapshot().fresh_normal_admissible, false);
+    assert_eq!(g.qos_snapshot().fresh_critical_admissible, true);
+
+    // As soon as a real critical tx claims backlog ownership, the borrowed-slot
+    // exception must snap shut for fresh normal ingress while preserving critical
+    // admission on the reopened reserved slot.
+    assert_eq!(g.pop_ready(), Some(3));
+    assert_eq!(g.admit(50, IngressClass::Critical), AdmitOutcome::Accepted);
+    let guarded = g.qos_snapshot();
+    assert!(!guarded.fresh_normal_admissible);
+    assert!(guarded.fresh_critical_admissible);
+    assert_eq!(guarded.normal_queued, 2);
+    assert_eq!(guarded.critical_queued, 1);
+    assert_eq!(guarded.total_queued, 3);
+
+    assert_eq!(g.admit(4, IngressClass::Normal), AdmitOutcome::Backpressured);
+    assert_eq!(g.queued_counts(), (2, 1, 3));
+    assert_eq!(g.qos_snapshot(), guarded);
+}
