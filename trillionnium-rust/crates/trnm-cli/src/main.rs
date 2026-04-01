@@ -4129,11 +4129,13 @@ mod tests {
         };
 
         let emitted = format!(
-            "{}\n{}\n{}\n{}\nstatus={}\n",
+            "{}\n{}\n{}\n{}\n{}\n{}\nstatus={}\n",
             format_tx_hash_line(&query.tx_hash),
             format_tx_hash_alias_line(&query.tx_hash),
             format_transaction_hash_alias_line(&query.tx_hash),
             format_transaction_hash_camel_alias_line(&query.tx_hash),
+            format_tx_hash_hyphen_alias_line(&query.tx_hash),
+            format_transaction_hash_hyphen_alias_line(&query.tx_hash),
             query.status
         );
 
@@ -4141,6 +4143,8 @@ mod tests {
         assert!(emitted.contains("txhash=0xabc123"));
         assert!(emitted.contains("transaction_hash=0xabc123"));
         assert!(emitted.contains("transactionHash=0xabc123"));
+        assert!(emitted.contains("tx-hash=0xabc123"));
+        assert!(emitted.contains("transaction-hash=0xabc123"));
         assert_eq!(extract_tx_hash(&emitted).as_deref(), Some("0xabc123"));
     }
 }
