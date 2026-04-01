@@ -266,6 +266,8 @@ fn is_sanitized_to_space(ch: char) -> bool {
                 | '\u{115F}'
                 | '\u{1160}'
                 | '\u{1680}'
+                | '\u{17B4}'
+                | '\u{17B5}'
                 | '\u{180B}'
                 | '\u{180C}'
                 | '\u{180D}'
@@ -474,6 +476,13 @@ mod tests {
     #[test]
     fn normalize_compensation_reason_collapses_ogham_space_mark_for_replay_stability() {
         let raw = "target\u{1680}relay timeout";
+        let normalized = normalize_compensation_reason(raw, "fallback");
+        assert_eq!(normalized, "target relay timeout");
+    }
+
+    #[test]
+    fn normalize_compensation_reason_strips_khmer_inherent_vowels_for_replay_stability() {
+        let raw = "target\u{17B4}relay\u{17B5}timeout";
         let normalized = normalize_compensation_reason(raw, "fallback");
         assert_eq!(normalized, "target relay timeout");
     }
