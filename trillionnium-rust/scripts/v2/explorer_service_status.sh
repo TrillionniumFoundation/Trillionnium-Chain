@@ -87,6 +87,9 @@ state="down"
 health="unknown"
 health_probe="not-run-state-not-running"
 health_probe_url="not-run-state-not-running"
+local_health="unknown"
+local_health_probe="not-run-state-not-running"
+local_health_probe_url="not-run-state-not-running"
 pid_valid="true"
 
 validate_runtime_contract
@@ -114,9 +117,19 @@ if [[ "${state}" == "running" ]]; then
     else
       health="down"
     fi
+
+    local_health_probe="active"
+    local_health_probe_url="${LOCAL_HEALTH_URL}"
+    if curl --silent --show-error --fail --max-time 2 "${LOCAL_HEALTH_URL}" >/dev/null 2>&1; then
+      local_health="ok"
+    else
+      local_health="down"
+    fi
   else
     health_probe="disabled-curl-unavailable"
     health_probe_url="curl-unavailable"
+    local_health_probe="disabled-curl-unavailable"
+    local_health_probe_url="curl-unavailable"
   fi
 fi
 
@@ -144,3 +157,6 @@ echo "production_ready=false"
 echo "health=${health}"
 echo "health_probe=${health_probe}"
 echo "health_probe_url=${health_probe_url}"
+echo "local_health=${local_health}"
+echo "local_health_probe=${local_health_probe}"
+echo "local_health_probe_url=${local_health_probe_url}"

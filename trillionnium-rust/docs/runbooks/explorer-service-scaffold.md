@@ -148,7 +148,10 @@ The status output should include the operator contract fields below:
 - `production_ready=false`
 - `health=ok`
 - `health_probe=active`
-- `health_probe_url=<the exact URL status checked>`
+- `health_probe_url=<the exact public/reverse-proxy-facing URL status checked>`
+- `local_health=ok`
+- `local_health_probe=active`
+- `local_health_probe_url=http://<bind_host>:<bind_port>/healthz`
 
 If the runtime contract is invalid, `explorer_service_status.sh` exits non-zero and prints `state=invalid-config` plus `config_error=...` and `health_probe_url=invalid-config` so operators can see the probe never ran.
 
@@ -223,7 +226,12 @@ Action:
 3. inspect `log_file`
 4. fetch `local_health_url` directly with `curl` first, then debug the public/reverse-proxy URL separately if needed
 
-If `state!=running`, treat `health=unknown` as expected and fix the process/PID state first instead of debugging the HTTP probe path.
+If `state!=running`, treat `health=unknown` and `local_health=unknown` as expected and fix the process/PID state first instead of debugging the HTTP probe path.
+
+A useful operator interpretation rule now is:
+
+- `health=down` + `local_health=ok` usually points to reverse-proxy/public-URL drift while the local scaffold is still alive
+- `health=down` + `local_health=down` usually means the local bind target itself is broken or the process is serving the wrong path
 
 ## Shutdown
 
