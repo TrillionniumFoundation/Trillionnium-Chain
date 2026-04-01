@@ -1,0 +1,200 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+usage() {
+  cat <<'EOF' >&2
+Usage: extract_validator_rotation_dr_fields.sh [--report-path <path>] \
+  [--expected-worktree-root <path>] [--expected-branch-ref <ref>] [--expected-head <sha>]
+
+Resolve the latest validator DR recovery report (unless --report-path is
+provided), then print the canonical fields required by the validator
+replacement/rotation/DR handoff. This helper fails closed on missing report
+paths, missing required keys, or lane/worktree identity drift when explicit
+expectations are provided.
+`--expected-branch-ref` accepts either a short branch name (for example
+`lane/foo`) or a full ref (for example `refs/heads/lane/foo`).
+EOF
+}
+
+REPORT_PATH=""
+EXPECTED_WORKTREE_ROOT=""
+EXPECTED_BRANCH_REF=""
+EXPECTED_BRANCH_REF_CANONICAL=""
+EXPECTED_HEAD=""
+
+require_nonempty_value() {
+  local flag_name="$1"
+  local value="$2"
+
+  [ -n "$value" ] || {
+    printf 'missing %s\n' "$flag_name" >&2
+    usage
+    exit 2
+  }
+}
+
+require_worktree_root_value() {
+  local flag_name="$1"
+  local value="$2"
+
+  require_nonempty_value "$flag_name" "$value"
+
+  case "$value" in
+    [[:space:]]*|*[[:space:]])
+      printf 'invalid %s: must not start or end with whitespace: %q\n' "$flag_name" "$value" >&2
+      exit 2
+      ;;
+  esac
+
+  case "$value" in
+    *[$'\001'-$'\037']*|*$'\177'*)
+      printf 'invalid %s: must not contain control characters\n' "$flag_name" >&2
+      exit 2
+      ;;
+  esac
+}
+
+require_ref_token() {
+  local flag_name="$1"
+  local value="$2"
+
+  require_nonempty_value "$flag_name" "$value"
+
+  case "$value" in
+    *[[:space:]]*)
+      printf 'invalid %s: must not contain whitespace: %s\n' "$flag_name" "$value" >&2
+      exit 2
+      ;;
+  esac
+}
+
+canonicalize_branch_ref() {
+  local ref="$1"
+  case "$ref" in
+    refs/*)
+      printf '%s' "$ref"
+      ;;
+    *)
+      printf 'refs/heads/%s' "$ref"
+      ;;
+  esac
+}
+
+require_key() {
+  local path="$1"
+  local key="$2"
+  local value
+
+  value="$(awk -F= -v key="$key" '$1 == key { sub(/^[^=]*=/, ""); print; exit }' "$path")"
+  [ -n "$value" ] || { printf 'missing %s in %s\n' "$key" "$path" >&2; exit 1; }
+  printf '%s' "$value"
+}
+
+while [ "$#" -gt 0 ]; do
+  case "$1" in
+    --report-path)
+      [ "$#" -ge 2 ] || { echo "missing value for $1" >&2; usage; exit 2; }
+      REPORT_PATH="$2"
+      shift 2
+      ;;
+    --expected-worktree-root)
+      [ "$#" -ge 2 ] || { echo "missing value for $1" >&2; usage; exit 2; }
+      EXPECTED_WORKTREE_ROOT="$2"
+      shift 2
+      ;;
+    --expected-branch-ref)
+      [ "$#" -ge 2 ] || { echo "missing value for $1" >&2; usage; exit 2; }
+      EXPECTED_BRANCH_REF="$2"
+      shift 2
+      ;;
+    --expected-head)
+      [ "$#" -ge 2 ] || { echo "missing value for $1" >&2; usage; exit 2; }
+      EXPECTED_HEAD="$2"
+      shift 2
+      ;;
+    -h|--help)
+      usage
+      exit 0
+      ;;
+    *)
+      echo "unknown argument: $1" >&2
+      usage
+      exit 2
+      ;;
+  esac
+done
+
+if [ -n "$EXPECTED_WORKTREE_ROOT" ]; then
+  require_worktree_root_value --expected-worktree-root "$EXPECTED_WORKTREE_ROOT"
+fi
+if [ -n "$EXPECTED_BRANCH_REF" ]; then
+  require_ref_token --expected-branch-ref "$EXPECTED_BRANCH_REF"
+  EXPECTED_BRANCH_REF_CANONICAL="$(canonicalize_branch_ref "$EXPECTED_BRANCH_REF")"
+  case "$EXPECTED_BRANCH_REF_CANONICAL" in
+    refs/heads/*) ;;
+    *)
+      printf 'invalid --expected-branch-ref: expected refs/heads/* got %s\n' "$EXPECTED_BRANCH_REF_CANONICAL" >&2
+      exit 2
+      ;;
+  esac
+fi
+if [ -n "$EXPECTED_HEAD" ]; then
+  require_ref_token --expected-head "$EXPECTED_HEAD"
+fi
+
+ROOT="$(git rev-parse --show-toplevel)"
+
+if [ -z "$REPORT_PATH" ]; then
+  REPORT_PATH="$(find "$ROOT/run" -maxdepth 1 -type f -name 'bft-restart-recovery-*.txt' -print 2>/dev/null | sort | tail -n 1)"
+fi
+
+[ -n "$REPORT_PATH" ] || { echo "missing recovery report under $ROOT/run" >&2; exit 1; }
+[ -f "$REPORT_PATH" ] || { echo "missing recovery report file: $REPORT_PATH" >&2; exit 1; }
+
+GENERATED_AT="$(require_key "$REPORT_PATH" generated_at)"
+GIT_WORKTREE_PATH="$(require_key "$REPORT_PATH" git_worktree_path)"
+GIT_WORKTREE_BRANCH_REF="$(require_key "$REPORT_PATH" git_worktree_branch_ref)"
+GIT_BRANCH="$(require_key "$REPORT_PATH" git_branch)"
+GIT_HEAD="$(require_key "$REPORT_PATH" git_head)"
+GIT_STATUS_SUMMARY="$(require_key "$REPORT_PATH" git_status_summary)"
+ROLLBACK_COMMAND="$(require_key "$REPORT_PATH" rollback_command)"
+REPLAY_COMMAND="$(require_key "$REPORT_PATH" replay_command)"
+STATUS="$(require_key "$REPORT_PATH" status)"
+
+if [ -n "$EXPECTED_WORKTREE_ROOT" ] && [ "$GIT_WORKTREE_PATH" != "$EXPECTED_WORKTREE_ROOT" ]; then
+  printf 'assigned-worktree mismatch: expected %s got %s\n' "$EXPECTED_WORKTREE_ROOT" "$GIT_WORKTREE_PATH" >&2
+  exit 1
+fi
+
+if [ -n "$EXPECTED_BRANCH_REF_CANONICAL" ] && [ "$GIT_WORKTREE_BRANCH_REF" != "$EXPECTED_BRANCH_REF_CANONICAL" ]; then
+  printf 'assigned-branch-ref mismatch: expected %s got %s\n' "$EXPECTED_BRANCH_REF_CANONICAL" "$GIT_WORKTREE_BRANCH_REF" >&2
+  exit 1
+fi
+
+if [ -n "$EXPECTED_HEAD" ] && [ "$GIT_HEAD" != "$EXPECTED_HEAD" ]; then
+  printf 'assigned-head mismatch: expected %s got %s\n' "$EXPECTED_HEAD" "$GIT_HEAD" >&2
+  exit 1
+fi
+
+printf 'report_path=%s\n' "$REPORT_PATH"
+printf 'generated_at=%s\n' "$GENERATED_AT"
+printf 'git_worktree_path=%s\n' "$GIT_WORKTREE_PATH"
+printf 'git_worktree_branch_ref=%s\n' "$GIT_WORKTREE_BRANCH_REF"
+printf 'git_branch=%s\n' "$GIT_BRANCH"
+printf 'git_head=%s\n' "$GIT_HEAD"
+printf 'git_status_summary=%s\n' "$GIT_STATUS_SUMMARY"
+if grep -q '^expected_worktree_root=' "$REPORT_PATH"; then
+  printf 'expected_worktree_root=%s\n' "$(require_key "$REPORT_PATH" expected_worktree_root)"
+fi
+if grep -q '^expected_branch_ref=' "$REPORT_PATH"; then
+  printf 'expected_branch_ref=%s\n' "$(require_key "$REPORT_PATH" expected_branch_ref)"
+fi
+if grep -q '^expected_head=' "$REPORT_PATH"; then
+  printf 'expected_head=%s\n' "$(require_key "$REPORT_PATH" expected_head)"
+fi
+if grep -q '^lane_verify_command=' "$REPORT_PATH"; then
+  printf 'lane_verify_command=%s\n' "$(require_key "$REPORT_PATH" lane_verify_command)"
+fi
+printf 'rollback_command=%s\n' "$ROLLBACK_COMMAND"
+printf 'replay_command=%s\n' "$REPLAY_COMMAND"
+printf 'status=%s\n' "$STATUS"

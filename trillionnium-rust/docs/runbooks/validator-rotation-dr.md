@@ -200,7 +200,7 @@ Minimum DR evidence fields to preserve from the generated report:
 - `replay_command=`
 - final pass/fail result
 
-Copy the report path itself into the cutover note as `dr_summary_path=`, copy the report `generated_at=` into `dr_generated_at=`, and quote the emitted `rollback_command=` / `replay_command=` verbatim from that report. When lane binding is enabled, also preserve `expected_worktree_root=` / `expected_branch_ref=` / `expected_head=` and the exact `lane_verify_command=` string from the same report so another operator can prove the rebuild was checked against the ticket-assigned lane rather than a self-derived shell guess. Treat missing `generated_at=` / `git_worktree_path=` / `git_status_summary=` as evidence-incomplete, because another operator should be able to audit artifact freshness, lane identity, and clean-tree status directly from the recovery report instead of reconstructing them from shell memory. If lane binding was expected for the event, treat missing `expected_worktree_root=` / `expected_branch_ref=` / `lane_verify_command=` the same way. The recovery script emits `status=PASS` on success; do not search for a non-existent `result=` field when auditing the report.
+Copy the report path itself into the cutover note as `dr_summary_path=`, copy the report `generated_at=` into `dr_generated_at=`, and quote the emitted `rollback_command=` / `replay_command=` verbatim from that report. Prefer `./scripts/v2/extract_validator_rotation_dr_fields.sh` so another operator copies one fail-closed field set rather than retyping ad hoc `awk` output. When lane binding is enabled, also preserve `expected_worktree_root=` / `expected_branch_ref=` / `expected_head=` and the exact `lane_verify_command=` string from the same report so another operator can prove the rebuild was checked against the ticket-assigned lane rather than a self-derived shell guess. Treat missing `generated_at=` / `git_worktree_path=` / `git_status_summary=` as evidence-incomplete, because another operator should be able to audit artifact freshness, lane identity, and clean-tree status directly from the recovery report instead of reconstructing them from shell memory. If lane binding was expected for the event, treat missing `expected_worktree_root=` / `expected_branch_ref=` / `lane_verify_command=` the same way. The recovery script emits `status=PASS` on success; do not search for a non-existent `result=` field when auditing the report.
 If release-evidence or RC artifacts also exist for the same handoff, prefer extracting the final handoff fields with the fail-closed helper instead of copying mixed snippets by hand:
 
 ```bash
@@ -250,7 +250,11 @@ EXPECTED_HEAD="$EXPECTED_HEAD" \
 report_path="$(ls -dt run/bft-restart-recovery-*.txt 2>/dev/null | head -n 1)"
 
 [ -n "$report_path" ] || { echo "missing recovery report" >&2; exit 1; }
-awk -F= '/^(generated_at|git_worktree_path|git_worktree_branch_ref|git_branch|git_head|git_status_summary|expected_worktree_root|expected_branch_ref|expected_head|lane_verify_command|rollback_command|replay_command|status)=/ { print }' "$report_path"
+./scripts/v2/extract_validator_rotation_dr_fields.sh \
+  --report-path "$report_path" \
+  --expected-worktree-root "$EXPECTED_WORKTREE_ROOT" \
+  --expected-branch-ref "$EXPECTED_BRANCH_REF" \
+  ${EXPECTED_HEAD:+--expected-head "$EXPECTED_HEAD"}
 ```
 
 Stop if any of the following occurs:
