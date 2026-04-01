@@ -1354,6 +1354,52 @@ mod tests {
     }
 
     #[test]
+    fn governance_write_with_stale_config_version_is_fail_closed_and_side_effect_free() {
+        let mut relay = BridgeRelay::with_admin(1, vec![validator_pub(7)], b32(9));
+        let audit_len_before = relay.audit_log().len();
+        let admin_before = b32(9);
+
+        relay
+            .set_validators_with_version(&admin_before, relay.config_version(), vec![validator_pub(7), validator_pub(8)])
+            .unwrap();
+        let stale_version = relay.config_version();
+
+        relay
+            .set_min_validator_signatures(&admin_before, 2)
+            .unwrap();
+
+        let audit_len_after_rotation = relay.audit_log().len();
+        let current_version = relay.config_version();
+
+        let err = relay
+            .set_admin_with_version(&admin_before, stale_version, b32(10))
+            .unwrap_err();
+
+        assert!(matches!(
+            err,
+            BridgeRelayError::InvalidConfigVersion {
+                expected,
+                got,
+            } if expected == current_version && got == stale_version
+        ));
+        assert_eq!(relay.admin, admin_before, "stale write must not rotate admin");
+        assert_eq!(
+            relay.config_version(),
+            current_version,
+            "stale write must not mutate config version"
+        );
+        assert_eq!(
+            relay.audit_log().len(),
+            audit_len_after_rotation,
+            "stale write must not append governance audit events"
+        );
+        assert!(
+            audit_len_after_rotation > audit_len_before,
+            "control step should have produced governance audit events"
+        );
+    }
+
+    #[test]
     fn config_version_gating_accepts_matching_version() {
         let mut relay = BridgeRelay::with_admin(2, vec![validator_pub(7)], b32(9));
         let expected = relay.config_version();
