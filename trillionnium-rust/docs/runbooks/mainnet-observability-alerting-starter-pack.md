@@ -331,6 +331,8 @@ Minimum annotation fields:
 - `needs_replay=<yes|no>`
 - `needs_rollback=<yes|no>`
 - `first_stop=<stable-panel-name-from-this-runbook>`
+- `truth_source=<verbatim emitted value|unknown>`
+- `evidence_scope=<verbatim emitted value|unknown>`
 - `summary_path=<abs-path|unknown>`
 - `manifest_path=<abs-path|unknown>`
 - `replay=<present|missing>`
@@ -340,13 +342,14 @@ Annotation rules:
 
 - the `first_stop=` value must exactly match one stable panel name from this runbook; do not invent shortened aliases in screenshots or share links;
 - preserve `needs_replay=` / `needs_rollback=` alongside `replay=` / `rollback=` so responders can distinguish required evidence actions from merely missing pointers;
+- preserve `truth_source=` / `evidence_scope=` from emitted artifacts when present so dashboard annotations stay semantically aligned with the incident evidence block and the `contract-drift` routing path;
 - if the dashboard tool cannot render all fields inline, put the missing fields into the linked incident/ticket body and treat the dashboard share as incomplete until that link exists;
 - if `replay=missing` and `rollback=missing` during a live `sev0` / `sev1` incident, classify the dashboard annotation as insufficient even if the graph looks obvious;
 - for `service=oracle`, also preserve `verdict=<accepts-stalled|stale-wave|quorum-collapse|drift-anomaly|contract-drift>` next to the shared fields so the oracle-specific subtype is visible in the dashboard layer too.
 
 Example annotation line:
 
-- `plane=observability service=rpc severity=sev1 signal=rpc-unhealthy needs_replay=yes needs_rollback=no first_stop="RPC health / read surface" summary_path=/abs/run/health/evidence-20260331/summary.txt manifest_path=/abs/release/rc-20260331/manifest.txt replay=present rollback=missing`
+- `plane=observability service=rpc severity=sev1 signal=rpc-unhealthy needs_replay=yes needs_rollback=no first_stop="RPC health / read surface" truth_source=local-release-evidence-v1 evidence_scope=release-handoff summary_path=/abs/run/health/evidence-20260331/summary.txt manifest_path=/abs/release/rc-20260331/manifest.txt replay=present rollback=missing`
 
 ---
 
