@@ -22,6 +22,7 @@ Primary references:
 - `docs/runbooks/bft-checkpoint-wal-recovery.md`
 - `scripts/v2/verify_lane_worktree.sh`
 - `scripts/v2/extract_release_handoff_fields.sh`
+- `scripts/v2/extract_validator_rotation_dr_fields.sh`
 
 ## Operator cutover note template
 
@@ -42,6 +43,10 @@ handoff_acknowledged_by=
 rollback_command=
 config_bundle_check_command=
 config_bundle_check_result=
+expected_worktree_root=
+expected_branch_ref=
+expected_head=
+lane_verify_command=
 handoff_summary_path=
 handoff_manifest_path=
 summary_generated_at=
@@ -59,6 +64,7 @@ next_blocker=
 Rules:
 - `dr_summary_path=` / `dr_generated_at=` / `dr_status=` / `dr_replay_command=` / `dr_rollback_command=` may remain empty unless `cutover_kind=dr_rebuild`.
 - `handoff_summary_path=` / `handoff_manifest_path=` / `summary_generated_at=` / `manifest_generated_at=` may remain empty unless release-evidence or RC artifacts are part of the handoff.
+- `expected_worktree_root=` / `expected_branch_ref=` / `expected_head=` / `lane_verify_command=` may remain empty until Step 1 finishes, but once lane binding is part of the ticket or handoff they must be copied verbatim from the verification/recovery step instead of reconstructed from chat or shell memory.
 - `config_bundle_check_command=` / `config_bundle_check_result=` may remain empty until Step 3 finishes, but they must be filled before any replacement / rotation / DR event can be called reproducible.
 - when `extract_release_handoff_fields.sh` is used, copy both artifact paths and both generated-at fields verbatim; do not collapse them into one hand-written timestamp.
 - `result=` should stay empty until the smallest credible bootstrap/re-bootstrap sanity actually finishes.
