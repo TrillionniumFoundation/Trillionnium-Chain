@@ -178,19 +178,19 @@ When launch review wants slightly stronger evidence without widening into a repo
 rehearsal, append these focused checks to the same packet:
 
 ```bash
-cargo test --manifest-path trillionnium-rust/Cargo.toml -p trnm-mempool zero_capacity_qos_snapshot_stays_hard_stopped_across_probe_noise_and_idle_polls -q
-cargo test --manifest-path trillionnium-rust/Cargo.toml -p trnm-mempool qos_snapshot_stays_stable_when_last_reserved_critical_slot_is_still_guarded_after_reopen -q
+cargo test --manifest-path trillionnium-rust/Cargo.toml -p trnm-mempool --test lane_qos_snapshot_zero_capacity_stability_bound -q
+cargo test --manifest-path trillionnium-rust/Cargo.toml -p trnm-mempool --test lane_qos_snapshot_guarded_reopen_probe_stability_bound -q
 cargo test --manifest-path trillionnium-rust/Cargo.toml -p trnm-mempool hard_stop_idle_pop_preserves_restored_duplicate_metadata -q
 ```
 
 Why these are useful extensions:
-- `zero_capacity_qos_snapshot_stays_hard_stopped_across_probe_noise_and_idle_polls`
-  demonstrates that repeated idle polls and cross-class probe noise do not make a fully
-  closed public lane look open again.
-- `qos_snapshot_stays_stable_when_last_reserved_critical_slot_is_still_guarded_after_reopen`
-  demonstrates that partially reopened capacity does not falsely widen the externally
-  visible sponsor/free-ingress surface while the last reserved critical slot is still
-  guarded.
+- `--test lane_qos_snapshot_zero_capacity_stability_bound`
+  runs the integration gate showing that repeated idle polls and cross-class probe noise
+  do not make a fully closed public lane look open again.
+- `--test lane_qos_snapshot_guarded_reopen_probe_stability_bound`
+  runs the integration gate showing that partially reopened capacity does not falsely
+  widen the externally visible sponsor/free-ingress surface while the last reserved
+  critical slot is still guarded.
 - `hard_stop_idle_pop_preserves_restored_duplicate_metadata` demonstrates that a
   zero-budget/hard-stop lane preserves already-seen duplicate knowledge across idle-pop
   recovery, which matters when sponsor revocation is using a `drain-only`-style duplicate
@@ -431,7 +431,7 @@ consistency boundaries:
 - `cargo test --manifest-path trillionnium-rust/Cargo.toml -p trnm-mempool lane_qos_snapshot_reserve_only_immediate_reopen_bound -q`
   - proves reserve-only shared-lane QoS observability does not falsely re-advertise
     sponsor/free-ingress headroom across guarded reopen boundaries
-- `cargo test --manifest-path trillionnium-rust/Cargo.toml -p trnm-mempool zero_capacity_qos_snapshot_stays_hard_stopped_across_probe_noise_and_idle_polls -q`
+- `cargo test --manifest-path trillionnium-rust/Cargo.toml -p trnm-mempool --test lane_qos_snapshot_zero_capacity_stability_bound -q`
   - proves hard-stop mode keeps public admission closed even under repeated cross-class
     probe noise and idle scheduler polls
 - `cargo test --manifest-path trillionnium-rust/Cargo.toml -p trnm-mempool lane_zero_capacity_public_contract_bound -q`
@@ -462,7 +462,7 @@ consistency boundaries:
   - proves the same drained-retry boundary closes the externally visible sponsor/free-ingress
     snapshot again as soon as the drained id is re-admitted, so freeze review covers both the
     classification-only duplicate phase and the immediate re-saturation phase of shared-lane reuse
-- `cargo test --manifest-path trillionnium-rust/Cargo.toml -p trnm-mempool qos_snapshot_stays_stable_when_last_reserved_critical_slot_is_still_guarded_after_reopen -q`
+- `cargo test --manifest-path trillionnium-rust/Cargo.toml -p trnm-mempool --test lane_qos_snapshot_guarded_reopen_probe_stability_bound -q`
   - proves partially reopened capacity does not falsely widen free-ingress observability:
     when the last reserved critical slot is still guarded, repeated fresh-normal and
     cross-class probe noise stays classification-only and cannot advertise phantom headroom
