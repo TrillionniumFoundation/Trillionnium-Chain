@@ -1552,13 +1552,15 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         !node_id.contains('@')
             && !node_id.contains('?')
             && !node_id.contains('#')
-            && !node_id.contains('%'),
-        "invalid node config {}: node_id must not contain URI delimiters (@ ? # %)",
+            && !node_id.contains('%')
+            && !node_id.contains('&')
+            && !node_id.contains('='),
+        "invalid node config {}: node_id must not contain URI delimiters (@ ? # % & =)",
         path
     );
     anyhow::ensure!(
         !node_id.contains('[') && !node_id.contains(']'),
-        "invalid node config {}: node_id must not contain host-literal brackets ([ ])",
+        "invalid node config {}: node_id must not contain bracketed host delimiters ([ ])",
         path
     );
     anyhow::ensure!(
@@ -1566,7 +1568,13 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         "invalid node config {}: node_id must not be '.' or '..'",
         path
     );
+    let bracketed_host_literal = node_id
+        .strip_prefix('[')
+        .and_then(|inner| inner.strip_suffix(']'))
+        .is_some_and(|inner| inner.parse::<std::net::IpAddr>().is_ok());
     let dns_like_host_label = node_id
+        .strip_suffix('.')
+        .unwrap_or(node_id)
         .split('.')
         .all(|label| {
             !label.is_empty()
@@ -1581,6 +1589,7 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         !node_id.eq_ignore_ascii_case("localhost")
             && node_id.parse::<std::net::IpAddr>().is_err()
             && node_id.parse::<SocketAddr>().is_err()
+            && !bracketed_host_literal
             && !dns_like_host_label,
         "invalid node config {}: node_id must not look like a host or socket literal",
         path
@@ -5668,6 +5677,8 @@ bootstrap_peers = ["127.0.0.1:27656"]
             "node?peer=seed",
             "node#fragment",
             "node%2falpha",
+            "node&peer=seed",
+            "node=seed",
         ] {
             let err = validate_node_config(
                 NodeConfig {
@@ -5680,7 +5691,7 @@ bootstrap_peers = ["127.0.0.1:27656"]
             .expect_err("node_id URI delimiters must fail closed");
             assert!(err
                 .to_string()
-                .contains("node_id must not contain URI delimiters (@ ? # %)"));
+                .contains("node_id must not contain URI delimiters (@ ? # % & =)"));
         }
     }
 
@@ -5701,8 +5712,8 @@ bootstrap_peers = ["127.0.0.1:27656"]
     }
 
     #[test]
-    fn validate_node_config_rejects_host_literal_brackets_in_node_id() {
-        for node_id in ["[seed.example.com]", "[node-a]", "node-a]", "[node-a"] {
+    fn validate_node_config_rejects_bracketed_host_delimiters_in_node_id() {
+        for node_id in ["[seed]", "seed]", "[seed"] {
             let err = validate_node_config(
                 NodeConfig {
                     node_id: node_id.into(),
@@ -5711,10 +5722,10 @@ bootstrap_peers = ["127.0.0.1:27656"]
                 },
                 "node.toml",
             )
-            .expect_err("node_id host-literal brackets must fail closed");
+            .expect_err("node_id bracketed host delimiters must fail closed");
             assert!(err
                 .to_string()
-                .contains("node_id must not contain host-literal brackets ([ ])"));
+                .contains("node_id must not contain bracketed host delimiters ([ ])"));
         }
     }
 
@@ -5725,7 +5736,9 @@ bootstrap_peers = ["127.0.0.1:27656"]
             "LOCALHOST",
             "127.0.0.1",
             "seed.example.com",
+            "seed.example.com.",
             "validator-1.mainnet.local",
+            "validator-1.mainnet.local.",
         ] {
             let err = validate_node_config(
                 NodeConfig {
