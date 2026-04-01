@@ -1006,6 +1006,54 @@ bootstrap_peers = ["127.0.0.1:27656"]
     }
 
     #[test]
+    fn load_config_rejects_documentation_rpc_listener_with_operator_facing_error() {
+        let path = std::env::temp_dir().join(format!(
+            "trnm-node-config-documentation-rpc-listener-{}-{}.toml",
+            std::process::id(),
+            std::thread::current().name().unwrap_or("unnamed")
+        ));
+        std::fs::write(
+            &path,
+            "node_id = \"node-a\"\nrpc_addr = \"192.0.2.10:7000\"\np2p_addr = \"192.0.2.10:7001\"\n",
+        )
+        .expect("write config");
+
+        let err = load_config(path.to_str().expect("utf8 path"))
+            .expect_err("documentation rpc listener must fail closed");
+        assert!(
+            err.to_string()
+                .contains("rpc_addr must not use a documentation or benchmark-only address"),
+            "unexpected error: {err:#}"
+        );
+
+        let _ = std::fs::remove_file(path);
+    }
+
+    #[test]
+    fn load_config_rejects_documentation_p2p_listener_with_operator_facing_error() {
+        let path = std::env::temp_dir().join(format!(
+            "trnm-node-config-documentation-p2p-listener-{}-{}.toml",
+            std::process::id(),
+            std::thread::current().name().unwrap_or("unnamed")
+        ));
+        std::fs::write(
+            &path,
+            "node_id = \"node-a\"\nrpc_addr = \"127.0.0.1:7000\"\np2p_addr = \"198.19.0.10:7001\"\n",
+        )
+        .expect("write config");
+
+        let err = load_config(path.to_str().expect("utf8 path"))
+            .expect_err("documentation p2p listener must fail closed");
+        assert!(
+            err.to_string()
+                .contains("p2p_addr must not use a documentation or benchmark-only address"),
+            "unexpected error: {err:#}"
+        );
+
+        let _ = std::fs::remove_file(path);
+    }
+
+    #[test]
     fn load_config_rejects_multicast_listener_after_operator_trimming() {
         let rpc_path = std::env::temp_dir().join(format!(
             "trnm-node-config-multicast-rpc-listener-{}-{}.toml",
