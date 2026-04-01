@@ -1933,7 +1933,14 @@ where
     let started = Instant::now();
     loop {
         let resp = query_fn(&requested)?;
-        if let Some(got) = normalize_tx_hash(&resp.tx_hash) {
+        if !resp.tx_hash.trim().is_empty() {
+            let got = normalize_tx_hash(&resp.tx_hash).ok_or_else(|| {
+                anyhow!(
+                    "tx wait response hash invalid: requested={}, got={}",
+                    requested,
+                    resp.tx_hash
+                )
+            })?;
             if got != requested {
                 bail!(
                     "tx wait response hash mismatch: requested={}, got={}",
