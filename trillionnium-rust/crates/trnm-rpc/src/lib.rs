@@ -484,6 +484,21 @@ mod tests {
     }
 
     #[test]
+    fn rpc_task_query_rejects_unknown_fields_fail_closed() {
+        let err = serde_json::from_value::<TaskQueryResponse>(json!({
+            "task_id": 1,
+            "status": "Open",
+            "worker": null,
+            "bounty": 100,
+            "result_hash_hex": null,
+            "version": 1,
+            "unexpected": true
+        }))
+        .expect_err("task query schema should reject unknown fields");
+        assert!(err.to_string().contains("unexpected"));
+    }
+
+    #[test]
     fn rpc_gov_param_query_omits_pending_update_when_absent() {
         let response = GovParamQueryResponse {
             key_id: 7,
@@ -599,6 +614,24 @@ mod tests {
         };
         let v = serde_json::to_value(event).unwrap();
         assert!(v.get("metering").is_none());
+    }
+
+    #[test]
+    fn rpc_event_query_rejects_unknown_fields_fail_closed() {
+        let err = serde_json::from_value::<EventQueryResponse>(json!({
+            "event_type": "commit",
+            "task_id": 1,
+            "from_status": "Assigned",
+            "to_status": "Committed",
+            "actor": "worker1",
+            "tx_id": 7,
+            "block_height": 2,
+            "state_root": "abc",
+            "ts_unix_ms": 1,
+            "unexpected": true
+        }))
+        .expect_err("event query schema should reject unknown fields");
+        assert!(err.to_string().contains("unexpected"));
     }
 
     #[test]
