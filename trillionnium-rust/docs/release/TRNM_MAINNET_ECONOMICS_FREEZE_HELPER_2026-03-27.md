@@ -75,6 +75,25 @@ For launch review, the team should be able to fill in this sheet with concrete v
 | `override_authority` | Who can change these values before launch? |
 | `override_timelock_or_bypass` | What timelock or emergency rule governs changes? |
 
+## Fail-closed defaults for unresolved freeze fields
+
+If launch review has not frozen a field yet, do **not** let operator wording or temporary configs silently widen the public economics surface. Use these conservative placeholders until an explicit tuple value is approved:
+
+| Unresolved field | Required fail-closed default |
+| --- | --- |
+| `public_free_ingress_classes` | treat as empty for public launch review; no class should be described as generally free by default |
+| `public_fee_like_classes` | keep candidate classes outside public day-1 exposure until the admission floor and payer semantics are named |
+| `sponsor_allowed_callers` / `sponsor_allowed_classes` | treat as `none`; do not imply governance-or-third-party sponsorship exists yet |
+| `sponsor_epoch_budget` / `sponsor_epoch_refill_rule` | treat as zero budget / no refill |
+| `sponsor_revocation_queue_disposition` | prefer `drain-only` only if duplicate-retention semantics are also frozen and evidenced; otherwise fail review rather than improvising queue behavior |
+| `retention_payer_rule` | disable storage-heavy retention claims for public launch review; do not assume treasury absorption by default |
+| `retention_budget_exhaustion_fallback` | fail closed to `disable new sponsor-funded retention growth` rather than silently rolling costs into an unspecified payer |
+| `retention_expiry_disposition` | describe as `checkpoint-only` or stricter until an explicit archive/prune rule is approved |
+| `anti_spam_floor` | treat public sustained-load admission as not frozen / not launch-ready |
+| `override_authority` / `override_timelock_or_bypass` | treat tuple changes as unauthorized for launch review evidence |
+
+These defaults are not the target economics policy. They are a review discipline: when a field is blank, the burden stays on the reviewer to freeze it explicitly rather than letting ambiguity widen subsidy, retention, or admission behavior.
+
 ## Evidence expected at freeze time
 
 A launch review should include:
