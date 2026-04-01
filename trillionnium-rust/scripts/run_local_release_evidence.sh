@@ -58,6 +58,16 @@ if [[ -n "$CURRENT_WORKTREE_ENTRY" ]]; then
 else
   CURRENT_WORKTREE_BRANCH_REF=""
 fi
+EXPECTED_BRANCH_REF_CANONICAL="${EXPECTED_BRANCH_REF:-}"
+GIT_WORKTREE_BRANCH_REF_MATCH="unknown"
+if [[ -n "$EXPECTED_BRANCH_REF_CANONICAL" ]]; then
+  EXPECTED_BRANCH_REF_CANONICAL="$(normalize_branch_ref "$EXPECTED_BRANCH_REF_CANONICAL")"
+  if [[ -n "$CURRENT_WORKTREE_BRANCH_REF" && "$CURRENT_WORKTREE_BRANCH_REF" == "$EXPECTED_BRANCH_REF_CANONICAL" ]]; then
+    GIT_WORKTREE_BRANCH_REF_MATCH="true"
+  else
+    GIT_WORKTREE_BRANCH_REF_MATCH="false"
+  fi
+fi
 
 lane_verify_command="<not-run>"
 if [[ -n "${EXPECTED_WORKTREE_ROOT:-}" || -n "${EXPECTED_BRANCH_REF:-}" || -n "${EXPECTED_HEAD:-}" ]]; then
@@ -174,13 +184,15 @@ find_challenge_reexec_entry() {
   echo "git_status_summary=$GIT_STATUS_SUMMARY"
   echo "git_worktree_path=$GIT_TOPLEVEL"
   echo "git_worktree_branch_ref=${CURRENT_WORKTREE_BRANCH_REF:-<detached-or-unbound>}"
+  echo "git_expected_worktree_branch_ref=${EXPECTED_BRANCH_REF_CANONICAL:-<unset>}"
+  echo "git_worktree_branch_ref_match=$GIT_WORKTREE_BRANCH_REF_MATCH"
   echo "git_worktree_entry_begin"
   if [[ -n "$CURRENT_WORKTREE_ENTRY" ]]; then
     printf '%s\n' "$CURRENT_WORKTREE_ENTRY"
   fi
   echo "git_worktree_entry_end"
   echo "expected_worktree_root=${EXPECTED_WORKTREE_ROOT:-<unset>}"
-  echo "expected_branch_ref=${EXPECTED_BRANCH_REF:-<unset>}"
+  echo "expected_branch_ref=${EXPECTED_BRANCH_REF_CANONICAL:-<unset>}"
   echo "expected_head=${EXPECTED_HEAD:-<unset>}"
   echo "lane_verify_command=${lane_verify_command}"
   echo "git_status_short_begin"

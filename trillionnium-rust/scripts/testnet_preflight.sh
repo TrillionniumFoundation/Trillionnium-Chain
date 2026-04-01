@@ -68,6 +68,16 @@ if [ -n "$CURRENT_WORKTREE_ENTRY" ]; then
 else
   CURRENT_WORKTREE_BRANCH_REF=""
 fi
+EXPECTED_BRANCH_REF_CANONICAL="${EXPECTED_BRANCH_REF:-}"
+GIT_WORKTREE_BRANCH_REF_MATCH="unknown"
+if [ -n "$EXPECTED_BRANCH_REF_CANONICAL" ]; then
+  EXPECTED_BRANCH_REF_CANONICAL="$(normalize_branch_ref "$EXPECTED_BRANCH_REF_CANONICAL")"
+  if [ -n "$CURRENT_WORKTREE_BRANCH_REF" ] && [ "$CURRENT_WORKTREE_BRANCH_REF" = "$EXPECTED_BRANCH_REF_CANONICAL" ]; then
+    GIT_WORKTREE_BRANCH_REF_MATCH="true"
+  else
+    GIT_WORKTREE_BRANCH_REF_MATCH="false"
+  fi
+fi
 
 log() { echo "[$(date -u +%H:%M:%S)] $*" | tee -a "$LOG"; }
 
@@ -85,7 +95,7 @@ if [ "$GIT_HEAD_STATE" = "attached" ] && [ -n "$CURRENT_WORKTREE_BRANCH_REF" ]; 
 fi
 
 log "start testnet preflight"
-log "git_toplevel=$GIT_TOPLEVEL git_branch=$GIT_BRANCH git_head=$GIT_HEAD git_head_state=$GIT_HEAD_STATE git_worktree_branch_ref=${CURRENT_WORKTREE_BRANCH_REF:-<detached-or-unbound>} git_status_summary=$GIT_STATUS_SUMMARY"
+log "git_toplevel=$GIT_TOPLEVEL git_branch=$GIT_BRANCH git_head=$GIT_HEAD git_head_state=$GIT_HEAD_STATE git_worktree_branch_ref=${CURRENT_WORKTREE_BRANCH_REF:-<detached-or-unbound>} git_expected_worktree_branch_ref=${EXPECTED_BRANCH_REF_CANONICAL:-<unset>} git_worktree_branch_ref_match=$GIT_WORKTREE_BRANCH_REF_MATCH git_status_summary=$GIT_STATUS_SUMMARY"
 
 if [ -n "${EXPECTED_WORKTREE_ROOT:-}" ] || [ -n "${EXPECTED_BRANCH_REF:-}" ] || [ -n "${EXPECTED_HEAD:-}" ]; then
   [ -n "${EXPECTED_WORKTREE_ROOT:-}" ] || { log "lane identity failed: EXPECTED_WORKTREE_ROOT is required when lane binding is enabled"; exit 4; }
@@ -297,8 +307,10 @@ git_head_state=$GIT_HEAD_STATE
 git_status_summary=$GIT_STATUS_SUMMARY
 git_worktree_path=$GIT_TOPLEVEL
 git_worktree_branch_ref=${CURRENT_WORKTREE_BRANCH_REF:-<detached-or-unbound>}
+git_expected_worktree_branch_ref=${EXPECTED_BRANCH_REF_CANONICAL:-<unset>}
+git_worktree_branch_ref_match=$GIT_WORKTREE_BRANCH_REF_MATCH
 expected_worktree_root=${EXPECTED_WORKTREE_ROOT:-<unset>}
-expected_branch_ref=${EXPECTED_BRANCH_REF:-<unset>}
+expected_branch_ref=${EXPECTED_BRANCH_REF_CANONICAL:-<unset>}
 expected_head=${EXPECTED_HEAD:-<unset>}
 git_worktree_entry_begin
 $CURRENT_WORKTREE_ENTRY
