@@ -337,7 +337,10 @@ To keep this blocker reviewable, attach one concrete answer for each item below:
 3. **Behavioral evidence**
    - at least one mempool gate for ingress/sponsor boundaries
    - at least one state gate for retention canonicalization
-4. **Tightening rollback**
+4. **Launch-packet attachment metadata**
+   - exact artifact path or release-note section where this freeze review is attached
+   - commit/revision snapshot reviewers are signing off against
+5. **Tightening rollback**
    - exact prelaunch action for moving from `CONDITIONAL GO` back to `NO-GO`
    - preferred rollback bias: disable sponsorship first, then tighten free-ingress exposure, then shorten retention/query surface if storage payer remains undefined
 
@@ -349,6 +352,7 @@ admission / sponsorship / retention boundary in one place:
 ```text
 TRNM mainnet economics freeze review
 - truth-source snapshot (`origin/main`):
+- review artifact path / launch-packet section:
 - tuple source of truth:
 - tuple owner of record:
 - operator inspection command:
@@ -364,6 +368,7 @@ TRNM mainnet economics freeze review
 - mempool evidence gate(s):
 - state evidence gate(s):
 - tightening rollback action:
+- reviewer commit / revision snapshot:
 - review result (GO / CONDITIONAL GO / NO-GO):
 ```
 
