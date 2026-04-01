@@ -435,6 +435,30 @@ mod tests {
     }
 
     #[test]
+    fn terminal_lock_records_keep_request_ids_reserved() {
+        let mut vault = SettlementVault::new("owner");
+
+        vault.deposit("owner", "alice", 100).unwrap();
+        vault.lock("owner", "req-release", "alice", 20).unwrap();
+        vault.release("owner", "req-release").unwrap();
+        assert_eq!(
+            vault
+                .lock("owner", "req-release", "alice", 5)
+                .expect_err("released request id must remain reserved"),
+            VaultError::DuplicateRequest
+        );
+
+        vault.lock("owner", "req-slash", "alice", 10).unwrap();
+        vault.slash("owner", "req-slash", "treasury").unwrap();
+        assert_eq!(
+            vault
+                .lock("owner", "req-slash", "alice", 1)
+                .expect_err("slashed request id must remain reserved"),
+            VaultError::DuplicateRequest
+        );
+    }
+
+    #[test]
     fn failed_lock_does_not_create_zero_balance_account_entry() {
         let mut vault = SettlementVault::new("owner");
 
