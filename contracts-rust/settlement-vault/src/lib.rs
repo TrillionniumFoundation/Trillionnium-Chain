@@ -211,10 +211,14 @@ impl SettlementVault {
             return Err(VaultError::DuplicateRequest);
         }
 
-        let balance = self.balances.entry(account.to_string()).or_insert(0);
-        if *balance < amount {
+        let available = self.balance_of(account);
+        if available < amount {
             return Err(VaultError::InsufficientBalance);
         }
+        let balance = self
+            .balances
+            .get_mut(account)
+            .expect("available balance implies existing account entry");
         *balance -= amount;
 
         self.locks.insert(
@@ -424,6 +428,20 @@ mod tests {
             .lock("owner", "req-dup", "alice", 10)
             .expect_err("duplicate request must fail");
         assert_eq!(err, VaultError::DuplicateRequest);
+    }
+
+    #[test]
+    fn failed_lock_does_not_create_zero_balance_account_entry() {
+        let mut vault = SettlementVault::new("owner");
+
+        let err = vault
+            .lock("owner", "req-missing", "ghost", 1)
+            .expect_err("missing account should fail closed");
+        assert_eq!(err, VaultError::InsufficientBalance);
+        assert_eq!(vault.balance_of("ghost"), 0);
+        assert!(vault.balances.get("ghost").is_none());
+        assert!(vault.lock_record("req-missing").is_none());
+        assert!(vault.audit_log().is_empty());
     }
 
     #[test]
