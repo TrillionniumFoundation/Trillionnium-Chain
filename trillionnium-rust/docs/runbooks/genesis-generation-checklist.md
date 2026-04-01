@@ -36,14 +36,25 @@ If any invariant fails, stop before continuing.
 
 ## Step 1 — Bind the artifact to an exact worktree and branch
 
+Prefer the shared fail-closed helper instead of copying the current shell state by hand:
+
+```bash
+EXPECTED_WORKTREE_ROOT="/abs/path/from-ticket"
+EXPECTED_BRANCH_REF="refs/heads/lane/assigned-branch"
+
+./scripts/v2/verify_lane_worktree.sh \
+  --expected-worktree-root "$EXPECTED_WORKTREE_ROOT" \
+  --expected-branch-ref "$EXPECTED_BRANCH_REF"
+```
+
 Record at minimum:
-- `git_worktree_path=`
-- `git_branch_ref=`
-- `git_head=`
+- `verified_worktree=`
+- `verified_branch_ref=`
+- `verified_head=`
 - `genesis_decision_scope=`
 
 Interpretation rule:
-- if the worktree/branch cannot be named exactly, do not generate a handoff artifact
+- if the worktree/branch cannot be proven from the ticket-assigned values, do not generate a handoff artifact
 - if the decision scope is fuzzy, stop until it is stated explicitly
 
 ## Step 2 — Generate or select exactly one genesis artifact
