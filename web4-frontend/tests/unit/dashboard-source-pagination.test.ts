@@ -537,6 +537,54 @@ describe("dashboard source normalized audit pagination", () => {
     expect(snapshot.tasks[0]?.updatedAt).toBe("-");
   });
 
+  it("falls back to '-' when normalized audit events and task both lack timestamps", async () => {
+    const mockClient = {
+      queryTask: vi.fn().mockResolvedValue({
+        task: {
+          id: "348",
+          owner: "ops",
+          status: "running",
+          metadata: {},
+        },
+      }),
+      queryEvents: vi.fn().mockResolvedValue({
+        taskId: "348",
+        events: [],
+      }),
+      queryCapabilityAudit: vi.fn().mockResolvedValue({
+        subject: "did:trnm:test",
+        audits: [
+          {
+            subject: "did:trnm:test",
+            capability: "AUDIT_READ",
+            granted: true,
+            checkedAt: "2026-03-01T00:00:00.000Z",
+          },
+        ],
+      }),
+      queryNormalizedAuditEvents: vi.fn().mockResolvedValue({
+        events: [
+          {
+            source: "bridge-relay",
+            event_type: "bridge_relay.proof_submitted",
+            actor: "validator",
+            object_id: "proof-5",
+            note: "timestamp omitted",
+          },
+        ],
+        hasMore: false,
+      }),
+    } as unknown as ReturnType<typeof apiContractClient.createFrontendApiClient>;
+
+    vi.spyOn(apiContractClient, "createFrontendApiClient").mockReturnValue(mockClient);
+
+    const snapshot = await fetchDashboardSnapshot();
+
+    expect(snapshot.events).toHaveLength(1);
+    expect(snapshot.events[0]?.time).toBe("-");
+    expect(snapshot.events[0]?.summary).toBe("bridge-relay · bridge_relay.proof_submitted");
+  });
+
   it("fails closed when mock mode is requested in production", async () => {
     const createClientSpy = vi.spyOn(apiContractClient, "createFrontendApiClient");
 

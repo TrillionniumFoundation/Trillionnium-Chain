@@ -138,7 +138,9 @@ const defaultTaskId = process.env.NEXT_PUBLIC_DASHBOARD_TASK_ID ?? "341";
 const defaultAuditSubject =
   process.env.NEXT_PUBLIC_DASHBOARD_AUDIT_SUBJECT ?? "did:trnm:core-rpc";
 
-const toDisplayTime = (isoLike: string): string => {
+const toDisplayTime = (isoLike?: string): string => {
+  if (typeof isoLike !== "string" || isoLike.trim().length === 0) return "-";
+
   const date = new Date(isoLike);
   if (Number.isNaN(date.getTime())) return isoLike;
 
@@ -193,7 +195,7 @@ const mapNormalizedAuditSeverity = (event: NormalizedAuditEvent): DashboardSnaps
   return "Info";
 };
 
-const mapNormalizedAuditToDashboardEvent = (event: NormalizedAuditEvent, fallbackTime: string): DashboardSnapshot["events"][number] => {
+const mapNormalizedAuditToDashboardEvent = (event: NormalizedAuditEvent, fallbackTime?: string): DashboardSnapshot["events"][number] => {
   return {
     id: event.object_id
       ? `${event.source}:${event.object_id}`
