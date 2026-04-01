@@ -174,11 +174,15 @@ Minimum DR evidence fields to preserve from the generated report:
 - `git_branch=`
 - `git_head=`
 - `git_status_summary=`
+- `expected_worktree_root=`
+- `expected_branch_ref=`
+- `expected_head=` when the ticket or handoff already pinned a commit
+- `lane_verify_command=`
 - `rollback_command=`
 - `replay_command=`
 - final pass/fail result
 
-Copy the report path itself into the cutover note as `dr_summary_path=`, copy the report `generated_at=` into `dr_generated_at=`, and quote the emitted `rollback_command=` / `replay_command=` verbatim from that report. Treat missing `generated_at=` / `git_worktree_path=` / `git_status_summary=` as evidence-incomplete, because another operator should be able to audit artifact freshness, lane identity, and clean-tree status directly from the recovery report instead of reconstructing them from shell memory. The recovery script emits `status=PASS` on success; do not search for a non-existent `result=` field when auditing the report.
+Copy the report path itself into the cutover note as `dr_summary_path=`, copy the report `generated_at=` into `dr_generated_at=`, and quote the emitted `rollback_command=` / `replay_command=` verbatim from that report. When lane binding is enabled, also preserve `expected_worktree_root=` / `expected_branch_ref=` / `expected_head=` and the exact `lane_verify_command=` string from the same report so another operator can prove the rebuild was checked against the ticket-assigned lane rather than a self-derived shell guess. Treat missing `generated_at=` / `git_worktree_path=` / `git_status_summary=` as evidence-incomplete, because another operator should be able to audit artifact freshness, lane identity, and clean-tree status directly from the recovery report instead of reconstructing them from shell memory. If lane binding was expected for the event, treat missing `expected_worktree_root=` / `expected_branch_ref=` / `lane_verify_command=` the same way. The recovery script emits `status=PASS` on success; do not search for a non-existent `result=` field when auditing the report.
 If release-evidence or RC artifacts also exist for the same handoff, prefer extracting the final handoff fields with the fail-closed helper instead of copying mixed snippets by hand:
 
 ```bash
