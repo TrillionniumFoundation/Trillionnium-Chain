@@ -7546,6 +7546,40 @@ fn checkpoint_da_light_verifier_summary_fails_closed_on_control_char_non_genesis
 }
 
 #[test]
+fn checkpoint_da_light_verifier_summary_fails_closed_on_carriage_return_non_genesis_wal_prev_hash_surface() {
+    let wal = WalMeta {
+        height: 4,
+        round: 1,
+        proposal_hash: "proposal-4".into(),
+        committed: true,
+        state_root_hex: "ab".repeat(32),
+        prev_hash_hex: Some("cd".repeat(32)),
+    };
+    let checkpoint = CheckpointMeta {
+        height: wal.height,
+        state_root_hex: wal.state_root_hex.clone(),
+        wal_entry_hash_hex: wal.content_hash_hex(),
+    };
+
+    let mut bad_wal = wal.clone();
+    bad_wal.prev_hash_hex = Some(format!("{}\r", "cd".repeat(32)));
+    let bad_checkpoint = CheckpointMeta {
+        height: bad_wal.height,
+        state_root_hex: bad_wal.state_root_hex.clone(),
+        wal_entry_hash_hex: bad_wal.content_hash_hex(),
+    };
+
+    assert!(
+        checkpoint_da_light_verifier_summary(&checkpoint, &wal).is_some(),
+        "sanity: canonical non-genesis checkpoint/WAL evidence should summarize before the carriage-return prev-hash regression mutation"
+    );
+    assert!(
+        checkpoint_da_light_verifier_summary(&bad_checkpoint, &bad_wal).is_none(),
+        "non-genesis WAL prev_hash_hex with carriage-return drift must fail closed instead of emitting a DA/light-verifier summary"
+    );
+}
+
+#[test]
 fn checkpoint_da_light_verifier_summary_fails_closed_on_internal_whitespace_non_genesis_wal_prev_hash_surface() {
     let wal = WalMeta {
         height: 4,
