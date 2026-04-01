@@ -186,6 +186,8 @@ assert_equal git_status_summary "$summary_status_summary" "$manifest_status_summ
 assert_equal truth_source "$summary_truth_source" "$manifest_truth_source"
 assert_equal historical_evidence_only "$summary_historical_evidence_only" "$manifest_historical_evidence_only"
 assert_equal evidence_scope "$summary_evidence_scope" "$manifest_evidence_scope"
+assert_equal rollback_command "$summary_rollback" "$manifest_rollback"
+assert_equal replay_command "$summary_replay" "$manifest_replay"
 
 [ "$summary_worktree_branch_ref_match" = "true" ] || {
   printf 'artifact mismatch for git_worktree_branch_ref_match: expected true got %s\n' "$summary_worktree_branch_ref_match" >&2
