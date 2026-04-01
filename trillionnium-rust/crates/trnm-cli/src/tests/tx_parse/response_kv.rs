@@ -189,6 +189,12 @@ fn tx_query_parse_kv_accepts_quoted_and_unicode_wrapped_keys() {
     assert_eq!(parsed_unicode.tx_hash, "0xcafe78");
     assert_eq!(parsed_unicode.status, "committed");
     assert_eq!(parsed_unicode.error, None);
+
+    let vertical_wrapped = "〝transactionHash〞：0xCAFE79\n〟status〟：SUCCESS\n〝error〞：NULL\n";
+    let parsed_vertical = parse_tx_query_response(vertical_wrapped, "0xfallback").unwrap();
+    assert_eq!(parsed_vertical.tx_hash, "0xcafe79");
+    assert_eq!(parsed_vertical.status, "committed");
+    assert_eq!(parsed_vertical.error, None);
 }
 
 #[test]
