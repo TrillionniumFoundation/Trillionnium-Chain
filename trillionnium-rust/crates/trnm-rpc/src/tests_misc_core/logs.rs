@@ -222,7 +222,7 @@ fn load_node_event_log_sources_unwraps_quoted_env_entries_for_historical_replay(
     unsafe {
         std::env::set_var(
             NODE_EVENT_LOG_SOURCES_ENV,
-            "  \"shared.log\" ; `./shared.log`  ",
+            "  \"shared.log\" ; `./shared.log` ; \"# ignored wrapped comment\" ; `# ignored too`  ",
         );
         std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV);
     }
