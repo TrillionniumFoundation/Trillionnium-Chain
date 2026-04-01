@@ -196,8 +196,12 @@ When that helper is used, record at minimum:
 - `handoff_manifest_path=`
 - `summary_generated_at=`
 - `manifest_generated_at=`
+- `expected_worktree_root=`
+- `expected_branch_ref=`
+- `expected_head=` when the ticket or handoff pinned a commit
+- `lane_verify_command=`
 
-Keep the two generated-at fields distinct. They do not need to match, but both must survive the handoff note so another operator can audit artifact freshness without relying on shell memory.
+Keep the two generated-at fields distinct. They do not need to match, but both must survive the handoff note so another operator can audit artifact freshness without relying on shell memory. Keep the lane-binding fields adjacent to those artifact paths so the signed packet still proves the cutover was audited against the ticket-assigned worktree instead of a self-derived shell guess.
 
 ### 4a. Fail-closed DR evidence capture order
 
@@ -306,6 +310,10 @@ expected_genesis_or_checkpoint=<genesis-hash-or-checkpoint>
 handoff_signed_by=<operator releasing ownership>
 handoff_acknowledged_by=<operator accepting ownership>
 rollback_command=<quoted verbatim from the cutover note or generated artifact>
+expected_worktree_root=<ticket-assigned worktree root>
+expected_branch_ref=<ticket-assigned branch ref>
+expected_head=<ticket-assigned commit or empty when not pinned>
+lane_verify_command=<verbatim verify_lane_worktree.sh invocation>
 handoff_summary_path=<path from extract_release_handoff_fields.sh or empty>
 handoff_manifest_path=<path from extract_release_handoff_fields.sh or empty>
 summary_generated_at=<verbatim summary generated_at or empty>
@@ -323,7 +331,8 @@ next_blocker=<one line or empty>
 Fail-closed interpretation:
 - for `cutover_kind=replacement`, `handoff_signed_by=` / `handoff_acknowledged_by=` may stay empty only when there is truly no cross-operator ownership boundary
 - for `cutover_kind=rotation`, both handoff names must be present on the same note as the verified worktree/branch/head tuple
-- for `cutover_kind=dr_rebuild`, do not mark `result=PASS` unless the same note also carries `dr_summary_path=` / `dr_generated_at=` / `dr_status=PASS` plus verbatim `dr_replay_command=` / `dr_rollback_command=` from one concrete report
+- for `cutover_kind=dr_rebuild`, do not mark `result=PASS` unless the same note also carries `expected_worktree_root=` / `expected_branch_ref=` / `lane_verify_command=` together with `dr_summary_path=` / `dr_generated_at=` / `dr_status=PASS` plus verbatim `dr_replay_command=` / `dr_rollback_command=` from one concrete report
+- if `expected_worktree_root=` / `expected_branch_ref=` / `lane_verify_command=` had to be reconstructed from chat instead of copied from the lane-verification step, the packet is incomplete
 - if `rollback_command=` was paraphrased instead of copied verbatim from the selected artifact or pre-declared cutover note, the packet is incomplete
 
 ## No-Go conditions
