@@ -133,12 +133,18 @@ git status --short
 cargo check -p trnm-cli -q
 ```
 
+If the cutover includes any offline-signed or manually submitted transaction, record the locally expected tx hash and verify that every later lookup returns the same canonical hash:
+- save the requested hash exactly once from the submit path (`requested_tx_hash=`)
+- compare it against the hash returned by every follow-up query/wait path
+- if any query returns a different normalized hash for the same operator action, stop and classify the procedure as **No-Go**
+- do **not** treat a tx-hash mismatch as cosmetic formatting drift; treat it as signer-path ambiguity or wrong-transaction evidence until disproven
+
 And re-run the operator checks from:
 - `docs/runbooks/validator-bootstrap-rebootstrap.md`
 - `docs/release/TRNM_VALIDATOR_RELEASE_HANDOFF.md`
 
 Interpretation rule:
-- if identity, process exclusivity, or targeted validation cannot be proven after cutover, treat the rotation as blocked
+- if identity, process exclusivity, targeted validation, or tx-hash continuity cannot be proven after cutover, treat the rotation as blocked
 - do not normalize an ambiguous signer state into a soft warning
 
 ## Rollback / containment
