@@ -76,6 +76,30 @@ mod tests {
     }
 
     #[test]
+    fn non_reserve_only_mode_keeps_surplus_reserved_headroom_borrowable_under_critical_backlog() {
+        let mut gate = LaneAdmissionGate::new(4, 2);
+
+        assert_eq!(gate.normal.capacity, 2);
+        assert_eq!(gate.critical.capacity, 2);
+        assert_eq!(gate.admit(11, crate::IngressClass::Critical), crate::AdmitOutcome::Accepted);
+        assert!(!gate.critical.queue.is_empty());
+        assert_eq!(gate.critical_free_slots(), 1);
+        assert!(!gate.can_normal_borrow_critical_slot(1));
+
+        gate.critical.pop_ready();
+        assert!(gate.critical.queue.is_empty());
+        assert_eq!(gate.critical_free_slots(), 2);
+
+        // With more than one reserved slot free, normal traffic may still borrow
+        // surplus critical headroom without consuming the final protected slot.
+        assert!(gate.can_normal_borrow_critical_slot(2));
+
+        assert_eq!(gate.admit(21, crate::IngressClass::Critical), crate::AdmitOutcome::Accepted);
+        assert_eq!(gate.critical_free_slots(), 1);
+        assert!(!gate.can_normal_borrow_critical_slot(1));
+    }
+
+    #[test]
     fn reserve_only_mode_allows_borrowing_any_reopened_critical_slot() {
         let gate = LaneAdmissionGate::new(2, 2);
 
