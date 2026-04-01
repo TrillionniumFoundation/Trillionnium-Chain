@@ -221,6 +221,26 @@ describe("dashboard page", () => {
     expect(auditCard).toHaveAttribute("aria-pressed", "true");
   });
 
+  it("supports arrow/home/end keyboard navigation across readonly dashboard tabs", async () => {
+    mockedFetch.mockResolvedValue(snapshot);
+
+    render(<Home />);
+
+    await screen.findByText("Task Digest");
+
+    const overviewTab = screen.getByRole("tab", { name: "Overview" });
+    fireEvent.keyDown(overviewTab, { key: "ArrowRight" });
+    await waitFor(() => expect(screen.getByRole("tab", { name: "Tasks" })).toHaveAttribute("aria-selected", "true"));
+
+    const tasksTab = screen.getByRole("tab", { name: "Tasks" });
+    fireEvent.keyDown(tasksTab, { key: "End" });
+    await waitFor(() => expect(screen.getByRole("tab", { name: "Audit" })).toHaveAttribute("aria-selected", "true"));
+
+    const auditTab = screen.getByRole("tab", { name: "Audit" });
+    fireEvent.keyDown(auditTab, { key: "Home" });
+    await waitFor(() => expect(screen.getByRole("tab", { name: "Overview" })).toHaveAttribute("aria-selected", "true"));
+  });
+
   it("clears tabpanel busy state after readonly snapshot loads", async () => {
     mockedFetch.mockResolvedValue(snapshot);
 

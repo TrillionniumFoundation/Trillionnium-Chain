@@ -64,6 +64,36 @@ function onSelectableKeyDown(event: KeyboardEvent<HTMLElement>, onSelect: () => 
   }
 }
 
+function onTabKeyDown(event: KeyboardEvent<HTMLButtonElement>, activeTab: Tab, setActiveTab: (tab: Tab) => void) {
+  const currentIndex = tabs.indexOf(activeTab);
+
+  if (currentIndex === -1) {
+    return;
+  }
+
+  let nextTab: Tab | null = null;
+
+  if (event.key === "ArrowRight") {
+    nextTab = tabs[(currentIndex + 1) % tabs.length];
+  } else if (event.key === "ArrowLeft") {
+    nextTab = tabs[(currentIndex - 1 + tabs.length) % tabs.length];
+  } else if (event.key === "Home") {
+    nextTab = tabs[0];
+  } else if (event.key === "End") {
+    nextTab = tabs[tabs.length - 1];
+  }
+
+  if (!nextTab) {
+    return;
+  }
+
+  event.preventDefault();
+  setActiveTab(nextTab);
+  requestAnimationFrame(() => {
+    document.getElementById(`dashboard-tab-${nextTab.toLowerCase()}`)?.focus();
+  });
+}
+
 export default function Home() {
   const [activeTab, setActiveTab] = useState<Tab>("Overview");
   const [taskStatusFilter, setTaskStatusFilter] = useState<"All" | DashboardSnapshot["tasks"][number]["status"]>("All");
@@ -156,6 +186,7 @@ export default function Home() {
                 aria-controls={panelId}
                 tabIndex={isActive ? 0 : -1}
                 onClick={() => setActiveTab(tab)}
+                onKeyDown={(event) => onTabKeyDown(event, activeTab, setActiveTab)}
                 className={`rounded-lg px-4 py-2 text-sm font-medium transition ${
                   isActive
                     ? "bg-slate-900 text-white"
