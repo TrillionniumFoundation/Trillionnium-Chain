@@ -371,6 +371,8 @@ Record these fields in the release ticket or operator handoff note:
 - blocker summary:
 - local evidence rollback command (`summary_rollback_command`, or `rollback_command=` from `summary.txt` when quoting the raw artifact directly):
 - local evidence replay command (`summary_replay_command`, or `replay_command=` from `summary.txt` when quoting the raw artifact directly):
+- local evidence replay env challenge re-exec entry (`replay_env_trnm_challenge_reexec_entry`; preserve the literal helper/artifact value, including `<entry_not_found>`, when present):
+- local evidence challenge re-exec entry (`challenge_reexec_entry`; preserve the literal helper/artifact value, including `<entry_not_found>`, when present):
 - rc manifest rollback command (`manifest_rollback_command`, or `rollback_command=` from `manifest.txt` when quoting the raw artifact directly):
 - rc manifest replay command (`manifest_replay_command`, or `replay_command=` from `manifest.txt` when quoting the raw artifact directly):
 
