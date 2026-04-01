@@ -192,7 +192,11 @@ fn health_probe_body(ts_unix_ms: u64) -> String {
 
 fn has_ambiguous_path_segment_encoding(segment: &str) -> bool {
     let lower = segment.to_ascii_lowercase();
-    lower.contains("%2f") || lower.contains("%5c")
+    lower.contains("%2f") || lower.contains("%5c") || is_encoded_dot_segment(&lower)
+}
+
+fn is_encoded_dot_segment(segment: &str) -> bool {
+    matches!(segment, "." | ".." | "%2e" | ".%2e" | "%2e." | "%2e%2e")
 }
 
 fn parse_path_u64_suffix<'a>(path: &'a str, prefix: &str) -> Option<&'a str> {
@@ -635,14 +639,48 @@ mod tests {
             ),
             None
         );
+        assert_eq!(
+            parse_nonempty_path_suffix(
+                "/query-capability-audit/%2E",
+                "/query-capability-audit/"
+            ),
+            None
+        );
+        assert_eq!(
+            parse_nonempty_path_suffix(
+                "/query-capability-audit/.%2e",
+                "/query-capability-audit/"
+            ),
+            None
+        );
+        assert_eq!(
+            parse_nonempty_path_suffix(
+                "/query-capability-audit/%2E.",
+                "/query-capability-audit/"
+            ),
+            None
+        );
+        assert_eq!(
+            parse_nonempty_path_suffix(
+                "/query-capability-audit/%2e%2E",
+                "/query-capability-audit/"
+            ),
+            None
+        );
     }
 
     #[test]
-    fn ambiguous_path_segment_encoding_detects_encoded_separators() {
+    fn ambiguous_path_segment_encoding_detects_encoded_separators_and_dot_segments() {
         assert!(has_ambiguous_path_segment_encoding("alice%2Fextra"));
         assert!(has_ambiguous_path_segment_encoding("alice%2fextra"));
         assert!(has_ambiguous_path_segment_encoding("alice%5Cextra"));
         assert!(has_ambiguous_path_segment_encoding("alice%5cextra"));
+        assert!(has_ambiguous_path_segment_encoding("%2E"));
+        assert!(has_ambiguous_path_segment_encoding(".%2e"));
+        assert!(has_ambiguous_path_segment_encoding("%2E."));
+        assert!(has_ambiguous_path_segment_encoding("%2e%2E"));
+        assert!(has_ambiguous_path_segment_encoding("."));
+        assert!(has_ambiguous_path_segment_encoding(".."));
         assert!(!has_ambiguous_path_segment_encoding("did:trn:alice"));
     }
 
