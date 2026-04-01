@@ -4914,6 +4914,14 @@ mod tests {
     }
 
     #[test]
+    fn parse_query_events_limit_from_path_rejects_duplicate_limit_params() {
+        let err = parse_query_events_limit_from_path("/query-events/42?limit=1&limit=2")
+            .expect_err("duplicate limit params must fail closed instead of picking one");
+        assert!(err.contains("400 Bad Request"));
+        assert!(err.contains("duplicate limit"));
+    }
+
+    #[test]
     fn parse_query_events_limit_from_path_rejects_uppercase_percent_encoded_query_delimiters() {
         for path in [
             "/query-events/42?limit=7%26limit=9",
