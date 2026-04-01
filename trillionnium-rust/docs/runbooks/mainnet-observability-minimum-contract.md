@@ -44,7 +44,7 @@ The runtime implementation in `src/runtime/http.rs` is the primary truth source;
 
 For any accepted probe alias, the current JSON body is:
 
-Query strings are ignored for alias matching. For example, `/healthz?probe=lb` and `/-/statusz/?from=ops` still bind to the same health contract as their path-only forms.
+Query strings are ignored for alias matching. For example, `GET /healthz?probe=lb HTTP/1.1`, `HEAD /-/readyz?probe=lb&from=ops HTTP/1.1`, and `/-/statusz/?from=ops` still bind to the same health contract as their path-only forms.
 
 ```json
 {
