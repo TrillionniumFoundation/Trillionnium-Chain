@@ -1137,14 +1137,19 @@ fn write_key(store: &Path, name: &str, priv_hex: &str) -> Result<PathBuf> {
     let normalized_priv_hex = ensure_hex_32_bytes(priv_hex)?;
     ensure_wallet_store_path_is_safe(store)?;
     ensure_wallet_store_ancestors_not_symlink(store)?;
-    if fs::symlink_metadata(store)
-        .map(|meta| meta.file_type().is_symlink())
-        .unwrap_or(false)
-    {
-        bail!(
-            "wallet store '{}' is a symlink; refusing to write keys through non-regular wallet store path",
-            store.display()
-        );
+    if let Ok(store_meta) = fs::symlink_metadata(store) {
+        if store_meta.file_type().is_symlink() {
+            bail!(
+                "wallet store '{}' is a symlink; refusing to write keys through non-regular wallet store path",
+                store.display()
+            );
+        }
+        if !store_meta.file_type().is_dir() {
+            bail!(
+                "wallet store '{}' is not a directory; refusing to write keys through non-regular wallet store path",
+                store.display()
+            );
+        }
     }
     fs::create_dir_all(store)?;
     let f = wallet_file(store, name);
@@ -2924,6 +2929,41 @@ mod tests {
                     .contains("refusing to read keys through non-regular wallet store path"),
             "unexpected error: {err}"
         );
+
+        let _ = std::fs::remove_file(&file_store);
+        let _ = std::fs::remove_dir(&root);
+    }
+
+    #[test]
+    fn write_key_refuses_non_directory_wallet_store() {
+        let unique = format!(
+            "trnm-cli-wallet-store-write-file-test-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        );
+        let root = canonical_temp_root().join(unique);
+        std::fs::create_dir_all(&root).unwrap();
+        let file_store = root.join("wallet-store-file");
+        std::fs::write(&file_store, "not a directory\n").unwrap();
+
+        let err = write_key(
+            &file_store,
+            "alice",
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        )
+        .unwrap_err();
+        assert!(
+            err.to_string().contains("wallet store")
+                && err.to_string().contains("is not a directory")
+                && err
+                    .to_string()
+                    .contains("refusing to write keys through non-regular wallet store path"),
+            "unexpected error: {err}"
+        );
+        assert!(!wallet_file(&file_store, "alice").exists());
 
         let _ = std::fs::remove_file(&file_store);
         let _ = std::fs::remove_dir(&root);
