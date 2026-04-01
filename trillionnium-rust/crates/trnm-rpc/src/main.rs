@@ -4111,6 +4111,18 @@ fn main() -> Result<()> {
                 }),
             })?;
 
+            if matches!(out.status, trnm_rpc::TxStatus::Committed) {
+                if let Some(rec) = txs.get(&tx_hash) {
+                    for address in [&rec.tx.from, &rec.tx.to] {
+                        accounts.entry(address.clone()).or_insert(AccountState {
+                            address: address.clone(),
+                            balance: ledger.balance_of(address),
+                            nonce: ledger.next_nonce_of(address),
+                        });
+                    }
+                }
+            }
+
             ledger_to_accounts(&ledger, &mut accounts);
             save_tx_lifecycle(&tx_path, &txs)?;
             save_account_state(&account_path, &accounts)?;
@@ -9032,6 +9044,76 @@ line2
         );
 
         let _ = fs::remove_file(&path);
+    }
+
+    #[test]
+    fn get_tx_persists_new_recipient_account_into_account_index() {
+        let private_key_hex = "1111111111111111111111111111111111111111111111111111111111111111";
+        let to = "trnm1bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb".to_string();
+        let bootstrap_sig = TransferTx {
+            from: "trnm1bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb".into(),
+            to: to.clone(),
+            amount: 1,
+            fee: 0,
+            nonce: 0,
+            signature: String::new(),
+        }
+        .sign_with_private_key_hex(private_key_hex)
+        .expect("bootstrap signature builds");
+        let pubkey_hex = bootstrap_sig
+            .split(':')
+            .nth(1)
+            .expect("signature includes pubkey");
+        let pubkey_bytes = hex::decode(pubkey_hex).expect("signature pubkey decodes");
+        let from = TransferTx::derive_address_from_ed25519_pubkey(&pubkey_bytes);
+        let unsigned_tx = TransferTx {
+            from: from.clone(),
+            to: to.clone(),
+            amount: 120,
+            fee: 5,
+            nonce: 0,
+            signature: String::new(),
+        };
+        let signed_tx = TransferTx {
+            signature: unsigned_tx
+                .clone()
+                .sign_with_private_key_hex(private_key_hex)
+                .expect("signature builds"),
+            ..unsigned_tx
+        };
+        let mut accounts = BTreeMap::from([(
+            from.clone(),
+            AccountState {
+                address: from.clone(),
+                balance: 500,
+                nonce: 0,
+            },
+        )]);
+        let mut ledger = accounts_to_ledger(&accounts);
+        let mut txs = BTreeMap::new();
+
+        let sent = submit_tx(&mut txs, signed_tx, 10);
+        let out = get_tx(&mut txs, &mut ledger, &sent.tx_hash, 20).expect("tx is tracked");
+        assert_eq!(out.status, trnm_rpc::TxStatus::Committed);
+
+        if let Some(rec) = txs.get(&sent.tx_hash) {
+            for address in [&rec.tx.from, &rec.tx.to] {
+                accounts.entry(address.clone()).or_insert(AccountState {
+                    address: address.clone(),
+                    balance: ledger.balance_of(address),
+                    nonce: ledger.next_nonce_of(address),
+                });
+            }
+        }
+
+        ledger_to_accounts(&ledger, &mut accounts);
+
+        let recipient = accounts.get(&to).expect("recipient should be persisted");
+        assert_eq!(recipient.balance, 120);
+        assert_eq!(recipient.nonce, 0);
+        let sender = accounts.get(&from).expect("sender retained");
+        assert_eq!(sender.balance, 375);
+        assert_eq!(sender.nonce, 1);
     }
 
     #[test]

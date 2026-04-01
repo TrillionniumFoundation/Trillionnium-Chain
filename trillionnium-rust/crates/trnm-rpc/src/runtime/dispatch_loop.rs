@@ -162,6 +162,18 @@ pub(crate) fn run() -> Result<()> {
                 }),
             })?;
 
+            if matches!(out.status, trnm_rpc::TxStatus::Committed) {
+                if let Some(rec) = txs.get(&tx_hash) {
+                    for address in [&rec.tx.from, &rec.tx.to] {
+                        accounts.entry(address.clone()).or_insert(AccountState {
+                            address: address.clone(),
+                            balance: ledger.balance_of(address),
+                            nonce: ledger.next_nonce_of(address),
+                        });
+                    }
+                }
+            }
+
             ledger_to_accounts(&ledger, &mut accounts);
             save_tx_lifecycle(&tx_path, &txs)?;
             save_account_state(&account_path, &accounts)?;
