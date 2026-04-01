@@ -232,8 +232,27 @@ pub(crate) fn metadata_only_recovery_error(
     wal_dir: &Path,
     recovered: &RecoveredWalState,
 ) -> String {
+    let checkpoint_tip_relation = if recovered.wal_entries_retained == 0 {
+        recovered
+            .checkpoint_height_retained
+            .map(|checkpoint_height| format!("checkpoint_only:{}", checkpoint_height))
+            .unwrap_or_else(|| "none".into())
+    } else {
+        let tip_height = recovered.next_height.saturating_sub(1);
+        match recovered.checkpoint_height_retained {
+            Some(checkpoint_height) if checkpoint_height < tip_height => {
+                format!("behind:{}", tip_height - checkpoint_height)
+            }
+            Some(checkpoint_height) if checkpoint_height > tip_height => {
+                format!("ahead:{}", checkpoint_height - tip_height)
+            }
+            Some(_) => "aligned".into(),
+            None => "missing".into(),
+        }
+    };
+
     format!(
-        "refusing metadata-only recovery from {}: verified WAL/checkpoint metadata {} (last retained checkpoint: {}, next startup height: {}); incident clue: metadata_only_recovery=1 wal_entries_retained={} wal_tail_truncated={} checkpoint_height_retained={} next_startup_height={} but trnm-node does not yet restore application StateStore snapshots or replay committed blocks; start from a fresh --bft-wal-dir / --bft-wal-mode auto isolated run, or implement state snapshot+replay recovery first",
+        "refusing metadata-only recovery from {}: verified WAL/checkpoint metadata {} (last retained checkpoint: {}, next startup height: {}); incident clue: metadata_only_recovery=1 wal_entries_retained={} wal_tail_truncated={} checkpoint_height_retained={} checkpoint_tip_relation={} next_startup_height={} but trnm-node does not yet restore application StateStore snapshots or replay committed blocks; start from a fresh --bft-wal-dir / --bft-wal-mode auto isolated run, or implement state snapshot+replay recovery first",
         wal_dir.display(),
         retained_wal_summary(recovered),
         recovered
@@ -247,6 +266,7 @@ pub(crate) fn metadata_only_recovery_error(
             .checkpoint_height_retained
             .map(|checkpoint_height| checkpoint_height.to_string())
             .unwrap_or_else(|| "none".into()),
+        checkpoint_tip_relation,
         recovered.next_height,
     )
 }
@@ -342,6 +362,7 @@ mod tests {
         assert!(error.contains("wal_entries_retained=2"));
         assert!(error.contains("wal_tail_truncated=true"));
         assert!(error.contains("checkpoint_height_retained=10"));
+        assert!(error.contains("checkpoint_tip_relation=behind:1"));
         assert!(error.contains("next_startup_height=12"));
     }
 

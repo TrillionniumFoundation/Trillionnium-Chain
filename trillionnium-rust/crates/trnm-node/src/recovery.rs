@@ -235,31 +235,8 @@ fn retained_wal_summary(recovered: &RecoveredWalState) -> String {
     }
 }
 
-pub(crate) fn metadata_only_recovery_error(
-    wal_dir: &Path,
-    recovered: &RecoveredWalState,
-) -> String {
-    format!(
-        "refusing metadata-only recovery from {}: verified WAL/checkpoint metadata {} (last retained checkpoint: {}, next startup height: {}); incident clue: metadata_only_recovery=1 wal_entries_retained={} wal_tail_truncated={} checkpoint_height_retained={} next_startup_height={} but trnm-node does not yet restore application StateStore snapshots or replay committed blocks; start from a fresh --bft-wal-dir / --bft-wal-mode auto isolated run, or implement state snapshot+replay recovery first",
-        wal_dir.display(),
-        retained_wal_summary(recovered),
-        recovered
-            .checkpoint_height_retained
-            .map(|checkpoint_height| checkpoint_height.to_string())
-            .unwrap_or_else(|| "none".into()),
-        recovered.next_height,
-        recovered.wal_entries_retained,
-        recovered.truncated,
-        recovered
-            .checkpoint_height_retained
-            .map(|checkpoint_height| checkpoint_height.to_string())
-            .unwrap_or_else(|| "none".into()),
-        recovered.next_height,
-    )
-}
-
-pub(crate) fn recovery_startup_summary(recovered: &RecoveredWalState) -> String {
-    let checkpoint_relation = if recovered.wal_entries_retained == 0 {
+fn checkpoint_tip_relation(recovered: &RecoveredWalState) -> String {
+    if recovered.wal_entries_retained == 0 {
         recovered
             .checkpoint_height_retained
             .map(|checkpoint_height| format!("checkpoint_only:{}", checkpoint_height))
@@ -276,8 +253,34 @@ pub(crate) fn recovery_startup_summary(recovered: &RecoveredWalState) -> String 
             Some(_) => "aligned".into(),
             None => "missing".into(),
         }
-    };
+    }
+}
 
+pub(crate) fn metadata_only_recovery_error(
+    wal_dir: &Path,
+    recovered: &RecoveredWalState,
+) -> String {
+    format!(
+        "refusing metadata-only recovery from {}: verified WAL/checkpoint metadata {} (last retained checkpoint: {}, next startup height: {}); incident clue: metadata_only_recovery=1 wal_entries_retained={} wal_tail_truncated={} checkpoint_height_retained={} checkpoint_tip_relation={} next_startup_height={} but trnm-node does not yet restore application StateStore snapshots or replay committed blocks; start from a fresh --bft-wal-dir / --bft-wal-mode auto isolated run, or implement state snapshot+replay recovery first",
+        wal_dir.display(),
+        retained_wal_summary(recovered),
+        recovered
+            .checkpoint_height_retained
+            .map(|checkpoint_height| checkpoint_height.to_string())
+            .unwrap_or_else(|| "none".into()),
+        recovered.next_height,
+        recovered.wal_entries_retained,
+        recovered.truncated,
+        recovered
+            .checkpoint_height_retained
+            .map(|checkpoint_height| checkpoint_height.to_string())
+            .unwrap_or_else(|| "none".into()),
+        checkpoint_tip_relation(recovered),
+        recovered.next_height,
+    )
+}
+
+pub(crate) fn recovery_startup_summary(recovered: &RecoveredWalState) -> String {
     format!(
         "retained_wal_entries={} checkpoint_height_retained={} checkpoint_tip_relation={} next_startup_height={} wal_tail_truncated={} metadata_only_recovery={}",
         recovered.wal_entries_retained,
@@ -285,7 +288,7 @@ pub(crate) fn recovery_startup_summary(recovered: &RecoveredWalState) -> String 
             .checkpoint_height_retained
             .map(|checkpoint_height| checkpoint_height.to_string())
             .unwrap_or_else(|| "none".into()),
-        checkpoint_relation,
+        checkpoint_tip_relation(recovered),
         recovered.next_height,
         recovered.truncated,
         recovered.metadata_only_recovery,
@@ -471,6 +474,7 @@ mod tests {
         assert!(error.contains("wal_entries_retained=2"));
         assert!(error.contains("wal_tail_truncated=true"));
         assert!(error.contains("checkpoint_height_retained=10"));
+        assert!(error.contains("checkpoint_tip_relation=behind:1"));
         assert!(error.contains("next_startup_height=12"));
     }
 
@@ -488,6 +492,7 @@ mod tests {
         assert!(error.contains("wal_entries_retained=1"));
         assert!(error.contains("wal_tail_truncated=false"));
         assert!(error.contains("checkpoint_height_retained=none"));
+        assert!(error.contains("checkpoint_tip_relation=missing"));
         assert!(error.contains("next_startup_height=9"));
     }
 
@@ -505,6 +510,7 @@ mod tests {
         assert!(error.contains("wal_entries_retained=2"));
         assert!(error.contains("wal_tail_truncated=false"));
         assert!(error.contains("checkpoint_height_retained=15"));
+        assert!(error.contains("checkpoint_tip_relation=ahead:4"));
         assert!(error.contains("next_startup_height=12"));
     }
 
@@ -522,6 +528,7 @@ mod tests {
         assert!(error.contains("wal_entries_retained=0"));
         assert!(error.contains("wal_tail_truncated=false"));
         assert!(error.contains("checkpoint_height_retained=8"));
+        assert!(error.contains("checkpoint_tip_relation=checkpoint_only:8"));
         assert!(error.contains("next_startup_height=9"));
     }
 }
