@@ -270,8 +270,11 @@ pub(crate) fn parse_oracle_validate_snapshot_target(
 }
 
 fn compute_deviation_bps(aggregate: u64, reference: u64) -> u64 {
-    if reference == 0 {
+    if reference == aggregate {
         return 0;
+    }
+    if reference == 0 {
+        return 10_000;
     }
     let diff = aggregate.max(reference) - aggregate.min(reference);
     ((diff as u128 * 10_000) / (reference as u128)) as u64
