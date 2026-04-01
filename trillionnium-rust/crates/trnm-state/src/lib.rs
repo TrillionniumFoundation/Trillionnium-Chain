@@ -4851,6 +4851,32 @@ mod tests {
     }
 
     #[test]
+    fn wal_content_hash_length_frames_state_root_and_prev_hash_boundaries() {
+        let wal_a = WalMeta {
+            height: 12,
+            round: 3,
+            proposal_hash: "checkpoint-proof-12".into(),
+            committed: true,
+            state_root_hex: "abcd".into(),
+            prev_hash_hex: Some("ef".into()),
+        };
+        let wal_b = WalMeta {
+            height: 12,
+            round: 3,
+            proposal_hash: "checkpoint-proof-12".into(),
+            committed: true,
+            state_root_hex: "ab".into(),
+            prev_hash_hex: Some("cdef".into()),
+        };
+
+        assert_ne!(
+            wal_a.content_hash_hex(),
+            wal_b.content_hash_hex(),
+            "WAL checkpoint evidence digest must length-frame state_root_hex and prev_hash_hex independently so DA/checkpoint sidecars cannot collide by shifting bytes across the state-root/predecessor boundary"
+        );
+    }
+
+    #[test]
     fn checkpoint_evidence_surface_rejects_mixed_case_digest_encodings() {
         let wal_entry = WalMeta {
             height: 7,
