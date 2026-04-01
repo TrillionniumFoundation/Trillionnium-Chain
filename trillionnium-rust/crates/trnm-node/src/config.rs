@@ -1639,6 +1639,17 @@ bootstrap_peers = ["127.0.0.1:27656"]
                 "{config_path} must canonicalize inside {} to keep shipped bootstrap topology path anchoring deterministic",
                 canonical_shipped_config_dir.display()
             );
+            let canonical_workspace_relative_path = std::path::Path::new(workspace_relative_path)
+                .canonicalize()
+                .unwrap_or_else(|err| {
+                    panic!(
+                        "{workspace_relative_path} should canonicalize for bootstrap/rejoin path anchoring: {err}"
+                    )
+                });
+            assert_eq!(
+                canonical_workspace_relative_path, canonical_config_path,
+                "{workspace_relative_path} must canonicalize to the same shipped bootstrap fixture as {config_path}"
+            );
 
             let cfg = load_config(config_path)
                 .unwrap_or_else(|err| panic!("{config_path} should remain loadable: {err:#}"));
