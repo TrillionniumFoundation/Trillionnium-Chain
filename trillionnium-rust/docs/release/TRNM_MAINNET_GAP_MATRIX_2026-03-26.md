@@ -275,6 +275,8 @@ That is the right level of honesty.
 - relayer trust model hardening
 - failure recovery + settlement audit trail
 - bridge operator runbook
+- explicit settlement confirmation boundary documentation so operators can state the fail-closed rule in plain terms (`target < confirm <= source + 1`, with the stricter `source + 1` requirement once target has already caught up to source)
+- frozen settlement audit field contract (`phase`, `heartbeat_source_height`, `heartbeat_target_height`, `heartbeat_latency_ms`, `confirm_height`, `confirm_reason`) so replay and incident review quote one canonical evidence surface instead of ad-hoc log phrasing
 
 ### Launch effect
 If bridge is not part of day-1 launch promise, this can trail.
