@@ -148,13 +148,14 @@ If any operator runbook, launch checklist, or public release note describes a br
 
 To satisfy the blocker-board requirement that the frozen tuple survives one concrete spam /
 fairness rehearsal, attach at least one small reproducible command packet alongside the
-frozen sheet:
+frozen sheet. Run the commands below from the **repo root** (the directory that contains
+`trillionnium-rust/`), because the Cargo workspace itself lives under that subdirectory:
 
 ```bash
-cargo check -p trnm-mempool -p trnm-pouw -q
-cargo test -p trnm-mempool lane_zero_capacity_public_contract_bound -q
-cargo test -p trnm-mempool lane_qos_snapshot_reserve_only_drained_retry_resaturates_bound -q
-cargo test -p trnm-state --test retention_restore_regression -q
+cargo check --manifest-path trillionnium-rust/Cargo.toml -p trnm-mempool -p trnm-pouw -q
+cargo test --manifest-path trillionnium-rust/Cargo.toml -p trnm-mempool lane_zero_capacity_public_contract_bound -q
+cargo test --manifest-path trillionnium-rust/Cargo.toml -p trnm-mempool lane_qos_snapshot_reserve_only_drained_retry_resaturates_bound -q
+cargo test --manifest-path trillionnium-rust/Cargo.toml -p trnm-state --test retention_restore_regression -q
 ```
 
 Why this is the minimum useful slice:
@@ -177,9 +178,9 @@ When launch review wants slightly stronger evidence without widening into a repo
 rehearsal, append these focused checks to the same packet:
 
 ```bash
-cargo test -p trnm-mempool zero_capacity_qos_snapshot_stays_hard_stopped_across_probe_noise_and_idle_polls -q
-cargo test -p trnm-mempool qos_snapshot_stays_stable_when_last_reserved_critical_slot_is_still_guarded_after_reopen -q
-cargo test -p trnm-mempool hard_stop_idle_pop_preserves_restored_duplicate_metadata -q
+cargo test --manifest-path trillionnium-rust/Cargo.toml -p trnm-mempool zero_capacity_qos_snapshot_stays_hard_stopped_across_probe_noise_and_idle_polls -q
+cargo test --manifest-path trillionnium-rust/Cargo.toml -p trnm-mempool qos_snapshot_stays_stable_when_last_reserved_critical_slot_is_still_guarded_after_reopen -q
+cargo test --manifest-path trillionnium-rust/Cargo.toml -p trnm-mempool hard_stop_idle_pop_preserves_restored_duplicate_metadata -q
 ```
 
 Why these are useful extensions:
@@ -207,20 +208,20 @@ keeps that review bounded and auditable.
 
 | Freeze tuple element | Current gate/evidence anchor | What it proves today |
 | --- | --- | --- |
-| ingress class split | `cargo test -p trnm-mempool lane_zero_capacity_public_contract_bound -q` | When public capacity is hard-stopped, sponsor-backed and free-ingress probe noise cannot make the externally visible admission surface look open again. |
-| sponsor boundary / duplicate retention | `cargo test -p trnm-mempool lane_qos_snapshot_reserve_only_drained_retry_resaturates_bound -q` | Once a reopened shared slot is re-consumed, sponsor/free-ingress retries remain classification-only until a real drain happens again; retry noise cannot silently widen sponsor-backed headroom. |
-| sponsor boundary / borrowed-slot discipline | `cargo test -p trnm-mempool lane_borrowed_last_slot_backpressured_retry_reuse_bound -q` | If the last admissible shared slot is already borrowed, fresh cross-class retries stay backpressured until that exact borrowed occupant drains. |
-| sponsor revocation / drain-only duplicate retention | `cargo test -p trnm-mempool hard_stop_idle_pop_preserves_restored_duplicate_metadata -q` | A hard-stopped / zero-budget lane preserves already-seen duplicate knowledge across idle-pop recovery, so a drain-only sponsor revocation path cannot silently reopen sponsor-backed headroom before the queue truly drains. |
-| retention pricing / retention safety | `cargo test -p trnm-state --test retention_restore_regression -q` | Retained proof/collateral metadata remains canonical and fail-closed under restore/replay pressure, which keeps the future payer/audit path reviewable instead of silently accepting malformed identities. This remains a **required companion gate** even though it lives outside the mempool/`trnm-pouw` compile slice. |
-| tuple integrity packet | `cargo check -p trnm-mempool -p trnm-pouw -q` | The current mempool / proof-retention surfaces still compile together as one economics-review slice, rather than drifting independently. This compile check does **not** replace the retention restore regression above; reviewers need both signals in the packet. |
+| ingress class split | `cargo test --manifest-path trillionnium-rust/Cargo.toml -p trnm-mempool lane_zero_capacity_public_contract_bound -q` | When public capacity is hard-stopped, sponsor-backed and free-ingress probe noise cannot make the externally visible admission surface look open again. |
+| sponsor boundary / duplicate retention | `cargo test --manifest-path trillionnium-rust/Cargo.toml -p trnm-mempool lane_qos_snapshot_reserve_only_drained_retry_resaturates_bound -q` | Once a reopened shared slot is re-consumed, sponsor/free-ingress retries remain classification-only until a real drain happens again; retry noise cannot silently widen sponsor-backed headroom. |
+| sponsor boundary / borrowed-slot discipline | `cargo test --manifest-path trillionnium-rust/Cargo.toml -p trnm-mempool lane_borrowed_last_slot_backpressured_retry_reuse_bound -q` | If the last admissible shared slot is already borrowed, fresh cross-class retries stay backpressured until that exact borrowed occupant drains. |
+| sponsor revocation / drain-only duplicate retention | `cargo test --manifest-path trillionnium-rust/Cargo.toml -p trnm-mempool hard_stop_idle_pop_preserves_restored_duplicate_metadata -q` | A hard-stopped / zero-budget lane preserves already-seen duplicate knowledge across idle-pop recovery, so a drain-only sponsor revocation path cannot silently reopen sponsor-backed headroom before the queue truly drains. |
+| retention pricing / retention safety | `cargo test --manifest-path trillionnium-rust/Cargo.toml -p trnm-state --test retention_restore_regression -q` | Retained proof/collateral metadata remains canonical and fail-closed under restore/replay pressure, which keeps the future payer/audit path reviewable instead of silently accepting malformed identities. This remains a **required companion gate** even though it lives outside the mempool/`trnm-pouw` compile slice. |
+| tuple integrity packet | `cargo check --manifest-path trillionnium-rust/Cargo.toml -p trnm-mempool -p trnm-pouw -q` | The current mempool / proof-retention surfaces still compile together as one economics-review slice, rather than drifting independently. This compile check does **not** replace the retention restore regression above; reviewers need both signals in the packet. |
 
 This is intentionally **evidence of current guardrails**, not proof that the economics tuple is
 fully frozen. Launch review must still bind these behaviors to named launch constants,
 authorities, and operator-visible inspection commands. In particular, do not treat a green
-`cargo check -p trnm-mempool -p trnm-pouw -q` as sufficient evidence that retention payer/
-restore semantics were exercised; the `trnm-state` retention regression remains the explicit
-retention-side proof point until a first-class economics review harness folds both surfaces
-into one operator command.
+`cargo check --manifest-path trillionnium-rust/Cargo.toml -p trnm-mempool -p trnm-pouw -q`
+as sufficient evidence that retention payer/restore semantics were exercised; the
+`trnm-state` retention regression remains the explicit retention-side proof point until a
+first-class economics review harness folds both surfaces into one operator command.
 
 ### Minimal evidence capture companion
 
@@ -253,16 +254,16 @@ mkdir -p trillionnium-rust/run/mainnet-economics-freeze
   printf 'worktree=%s\n' "$(pwd)"
   printf 'branch=%s\n' "$(git branch --show-current)"
   echo 'git_status_summary=clean'
-  printf 'command[1]=cargo check -p trnm-mempool -p trnm-pouw -q\n'
-  cargo check -p trnm-mempool -p trnm-pouw -q
-  printf 'command[2]=cargo test -p trnm-mempool lane_zero_capacity_public_contract_bound -q\n'
-  cargo test -p trnm-mempool lane_zero_capacity_public_contract_bound -q
-  printf 'command[3]=cargo test -p trnm-mempool lane_qos_snapshot_reserve_only_drained_retry_resaturates_bound -q\n'
-  cargo test -p trnm-mempool lane_qos_snapshot_reserve_only_drained_retry_resaturates_bound -q
-  printf 'command[4]=cargo test -p trnm-mempool lane_borrowed_last_slot_backpressured_retry_reuse_bound -q\n'
-  cargo test -p trnm-mempool lane_borrowed_last_slot_backpressured_retry_reuse_bound -q
-  printf 'command[5]=cargo test -p trnm-state --test retention_restore_regression -q\n'
-  cargo test -p trnm-state --test retention_restore_regression -q
+  printf 'command[1]=cargo check --manifest-path trillionnium-rust/Cargo.toml -p trnm-mempool -p trnm-pouw -q\n'
+  cargo check --manifest-path trillionnium-rust/Cargo.toml -p trnm-mempool -p trnm-pouw -q
+  printf 'command[2]=cargo test --manifest-path trillionnium-rust/Cargo.toml -p trnm-mempool lane_zero_capacity_public_contract_bound -q\n'
+  cargo test --manifest-path trillionnium-rust/Cargo.toml -p trnm-mempool lane_zero_capacity_public_contract_bound -q
+  printf 'command[3]=cargo test --manifest-path trillionnium-rust/Cargo.toml -p trnm-mempool lane_qos_snapshot_reserve_only_drained_retry_resaturates_bound -q\n'
+  cargo test --manifest-path trillionnium-rust/Cargo.toml -p trnm-mempool lane_qos_snapshot_reserve_only_drained_retry_resaturates_bound -q
+  printf 'command[4]=cargo test --manifest-path trillionnium-rust/Cargo.toml -p trnm-mempool lane_borrowed_last_slot_backpressured_retry_reuse_bound -q\n'
+  cargo test --manifest-path trillionnium-rust/Cargo.toml -p trnm-mempool lane_borrowed_last_slot_backpressured_retry_reuse_bound -q
+  printf 'command[5]=cargo test --manifest-path trillionnium-rust/Cargo.toml -p trnm-state --test retention_restore_regression -q\n'
+  cargo test --manifest-path trillionnium-rust/Cargo.toml -p trnm-state --test retention_restore_regression -q
   echo 'result=PASS'
 ) | tee trillionnium-rust/run/mainnet-economics-freeze/minimal-rehearsal.txt
 ```
@@ -286,8 +287,8 @@ Expected fields visible in the capture:
 - `worktree=` and `branch=` for identity
 - `git_status_summary=clean` for fail-closed clean-tree evidence before the packet runs
 - `command[n]=...` lines for the exact rehearsal packet
-- `command[4]=cargo test -p trnm-mempool lane_borrowed_last_slot_backpressured_retry_reuse_bound -q` so sponsor borrowed-slot backpressure evidence is explicitly present in the recorded freeze packet
-- `command[5]=cargo test -p trnm-state --test retention_restore_regression -q` so the packet still captures the retention-side fail-closed restore evidence instead of only admission-side checks
+- `command[4]=cargo test --manifest-path trillionnium-rust/Cargo.toml -p trnm-mempool lane_borrowed_last_slot_backpressured_retry_reuse_bound -q` so sponsor borrowed-slot backpressure evidence is explicitly present in the recorded freeze packet
+- `command[5]=cargo test --manifest-path trillionnium-rust/Cargo.toml -p trnm-state --test retention_restore_regression -q` so the packet still captures the retention-side fail-closed restore evidence instead of only admission-side checks
 - terminal `result=PASS` only when the full slice finished green
 
 If the artifact is missing any of those fields, if it records `git_status_summary=dirty`, or the
@@ -316,7 +317,7 @@ Expected review fields visible in the output:
 ### Inspect the currently documented behavioral evidence
 
 ```bash
-grep -n "cargo test -p trnm-" \
+grep -n "cargo test --manifest-path trillionnium-rust/Cargo.toml -p trnm-" \
   trillionnium-rust/docs/release/TRNM_MAINNET_ECONOMICS_FREEZE_HELPER_2026-03-27.md
 ```
 
