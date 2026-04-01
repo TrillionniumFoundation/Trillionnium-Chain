@@ -199,7 +199,7 @@ Expected operator rule:
 
 ### Minimum retry / operator-action matrix
 
-To keep retry behavior from masking trust failures, the sidecar should treat each stable `failure_code` as one of three classes:
+To keep retry behavior from masking trust failures, the sidecar should treat each stable `failure_code` as one of two classes:
 
 | failure_code | retry class | expected operator meaning | required sidecar behavior |
 | --- | --- | --- | --- |
