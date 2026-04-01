@@ -12,6 +12,16 @@ type LoadState =
   | { status: "error"; message: string }
   | { status: "ready"; data: DashboardSnapshot };
 
+function normalizeSnapshot(snapshot: DashboardSnapshot): DashboardSnapshot {
+  return {
+    ...snapshot,
+    kpis: Array.isArray(snapshot.kpis) ? snapshot.kpis : [],
+    tasks: Array.isArray(snapshot.tasks) ? snapshot.tasks : [],
+    events: Array.isArray(snapshot.events) ? snapshot.events : [],
+    audits: Array.isArray(snapshot.audits) ? snapshot.audits : [],
+  };
+}
+
 const healthClassMap: Record<DashboardSnapshot["kpis"][number]["health"], string> = {
   healthy: "bg-emerald-100 text-emerald-700",
   degraded: "bg-amber-100 text-amber-700",
@@ -74,10 +84,11 @@ export default function Home() {
       mode: normalizedMode,
     })
       .then((data) => {
-        setLoadState({ status: "ready", data });
-        setSelectedTaskId(data.tasks[0]?.id ?? null);
-        setSelectedEventId(data.events[0]?.id ?? null);
-        setSelectedAuditId(data.audits[0]?.id ?? null);
+        const normalizedData = normalizeSnapshot(data);
+        setLoadState({ status: "ready", data: normalizedData });
+        setSelectedTaskId(normalizedData.tasks[0]?.id ?? null);
+        setSelectedEventId(normalizedData.events[0]?.id ?? null);
+        setSelectedAuditId(normalizedData.audits[0]?.id ?? null);
       })
       .catch((error: unknown) => {
         const message = error instanceof Error ? error.message : "Unknown dashboard loading failure";

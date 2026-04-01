@@ -139,6 +139,31 @@ describe("dashboard page", () => {
     expect(screen.getByText("Open execution items: 1")).toBeInTheDocument();
   });
 
+  it("fail-closes to empty collections when adapter data is partially missing", async () => {
+    mockedFetch.mockResolvedValue({
+      ...snapshot,
+      tasks: undefined,
+      events: undefined,
+      audits: undefined,
+    } as unknown as Awaited<ReturnType<typeof fetchDashboardSnapshot>>);
+
+    render(<Home />);
+
+    expect(await screen.findByText("Task Digest")).toBeInTheDocument();
+    expect(screen.getByText("Open execution items: 0")).toBeInTheDocument();
+    expect(screen.getByText("Critical events in latest window: 0")).toBeInTheDocument();
+    expect(screen.getByText("Non-pass controls to review: 0")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("tab", { name: "Tasks" }));
+    expect(await screen.findByText("No tasks match current filter")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("tab", { name: "Events" }));
+    expect(await screen.findByText("No events found")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("tab", { name: "Audit" }));
+    expect(await screen.findByText("No audit controls found")).toBeInTheDocument();
+  });
+
   it("shows adapter error state as an assertive fail-closed alert", async () => {
     mockedFetch.mockRejectedValue(new Error("Dashboard backend unavailable"));
     window.history.replaceState({}, "", "/?mode=error");
