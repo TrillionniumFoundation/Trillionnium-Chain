@@ -80,6 +80,7 @@ Rules:
 - `needs_replay=yes` for every `sev0` / `sev1` incident.
 - `needs_rollback=yes` only when a concrete emitted `rollback_command=` exists or rollback is the active mitigation choice.
 - if a screenshot or dashboard link is shared without this label block, treat the handoff as incomplete.
+- for `service=oracle`, also preserve `verdict=<accepts-stalled|stale-wave|quorum-collapse|drift-anomaly|contract-drift>` from `docs/runbooks/oracle-observability-alerts.md`; do not drop it when copying the shared block into a page or ticket.
 
 ---
 
@@ -324,6 +325,7 @@ Every `sev0` / `sev1` incident should preserve one compact evidence block:
 - `service`: `<node|rpc|worker|oracle|bridge>`
 - `severity`: `<sev0|sev1|sev2|sev3>`
 - `signal`: `<node-down|sync-lag|replay-failure|rpc-unhealthy|worker-failure|oracle-anomaly|bridge-anomaly|contract-drift>`
+- `verdict`: `<accepts-stalled|stale-wave|quorum-collapse|drift-anomaly|contract-drift|n/a>`
 - `needs_replay`: `<yes|no>`
 - `needs_rollback`: `<yes|no>`
 - `first_stop_panel`: `<Node liveness / height progress|Consensus instability / rollback pressure|RPC health / read surface|Worker execution / receipt flow|Evidence / replay integrity|Oracle-specific drill-down|Bridge relay / settlement integrity|unknown>`
@@ -342,9 +344,10 @@ Rules:
 
 1. Prefer emitted fields from generated artifacts over hand-written shell summaries.
 2. Quote `rollback_command=` / `replay_command=` verbatim; do not rewrite them.
-3. Set `first_stop_panel=` to the exact stable panel name from the routing table above; use `unknown` rather than inventing an ad-hoc alias.
-4. If the worktree/branch identity fields are missing or mismatched during an incident, classify as at least `sev0` until reconciled.
-5. If both replay and rollback pointers are absent, the handoff is incomplete even if the graph looks obvious.
+3. Set `verdict=n/a` for non-oracle incidents; for `service=oracle`, preserve the oracle runbook subtype instead of dropping it.
+4. Set `first_stop_panel=` to the exact stable panel name from the routing table above; use `unknown` rather than inventing an ad-hoc alias.
+5. If the worktree/branch identity fields are missing or mismatched during an incident, classify as at least `sev0` until reconciled.
+6. If both replay and rollback pointers are absent, the handoff is incomplete even if the graph looks obvious.
 
 ---
 
@@ -352,19 +355,20 @@ Rules:
 
 Use one compact line in pages, tickets, and dashboard snapshots:
 
-- `plane=observability service=<service> severity=<sevX> signal=<signal> needs_replay=<yes|no> needs_rollback=<yes|no> first_stop=<stable-panel-name|unknown> observed=<what-failed> impact=<blast-radius> truth_source=<value|unknown> summary_path=<path|unknown> manifest_path=<path|unknown> replay=<present|missing> rollback=<present|missing>`
+- `plane=observability service=<service> severity=<sevX> signal=<signal> verdict=<oracle-subtype|n/a> needs_replay=<yes|no> needs_rollback=<yes|no> first_stop=<stable-panel-name|unknown> observed=<what-failed> impact=<blast-radius> truth_source=<value|unknown> summary_path=<path|unknown> manifest_path=<path|unknown> replay=<present|missing> rollback=<present|missing>`
 
 Keep `first_stop=` aligned with the exact stable panel name from the routing table above, and copy `truth_source=` from emitted evidence when present. If the transport format cannot safely carry spaces, wrap the panel name in quotes rather than inventing an underscore alias.
 
 Example:
 
-- `plane=observability service=node severity=sev1 signal=sync-lag needs_replay=yes needs_rollback=yes first_stop="Node liveness / height progress" observed=committed_height_flat impact=one-validator truth_source=local-release-evidence-v1 summary_path=/abs/run/health/evidence-20260331/summary.txt manifest_path=/abs/release/rc-20260331/manifest.txt replay=present rollback=present`
+- `plane=observability service=node severity=sev1 signal=sync-lag verdict=n/a needs_replay=yes needs_rollback=yes first_stop="Node liveness / height progress" observed=committed_height_flat impact=one-validator truth_source=local-release-evidence-v1 summary_path=/abs/run/health/evidence-20260331/summary.txt manifest_path=/abs/release/rc-20260331/manifest.txt replay=present rollback=present`
+- `plane=observability service=oracle severity=sev1 signal=oracle-anomaly verdict=quorum-collapse needs_replay=yes needs_rollback=no first_stop="Oracle-specific drill-down" observed=source_cardinality_below_floor impact=price-ingest-degraded truth_source=local-release-evidence-v1 summary_path=/abs/run/health/evidence-20260331/summary.txt manifest_path=/abs/release/rc-20260331/manifest.txt replay=present rollback=missing`
 
 ---
 
 ## Responder checklist
 
-1. Confirm the shared label block is present, including `needs_replay` and `needs_rollback`.
+1. Confirm the shared label block is present, including `needs_replay` and `needs_rollback`; for `service=oracle`, also confirm `verdict=` is preserved.
 2. Confirm the active dashboard uses stable panel names from this runbook.
 3. Pull `replay_command=` / `rollback_command=` from generated artifacts, not from memory.
 4. Confirm `git_worktree_path=` / `git_worktree_branch_ref=` match the assigned lane/rehearsal target.
