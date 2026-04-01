@@ -7,6 +7,8 @@ RUN_ROOT="${RUST_ROOT}/run/explorer-service"
 PUBLIC_DIR="${RUN_ROOT}/public"
 PID_FILE="${RUN_ROOT}/explorer-service.pid"
 LOG_FILE="${RUN_ROOT}/explorer-service.log"
+HEALTH_FILE="${PUBLIC_DIR}/healthz"
+INDEX_FILE="${PUBLIC_DIR}/index.json"
 HOST="${EXPLORER_HOST:-127.0.0.1}"
 PORT="${EXPLORER_PORT:-8090}"
 PUBLIC_BASE_URL="${EXPLORER_PUBLIC_BASE_URL:-http://${HOST}:${PORT}}"
@@ -20,6 +22,8 @@ emit_contract_fields() {
   echo "pid_file=${PID_FILE}"
   echo "log_file=${LOG_FILE}"
   echo "public_dir=${PUBLIC_DIR}"
+  echo "health_file=${HEALTH_FILE}"
+  echo "index_file=${INDEX_FILE}"
   echo "bind_host=${HOST}"
   echo "bind_port=${PORT}"
   echo "health_url=${HEALTH_URL}"
@@ -105,11 +109,11 @@ if [[ -f "${PID_FILE}" ]]; then
   rm -f "${PID_FILE}"
 fi
 
-cat >"${PUBLIC_DIR}/healthz" <<EOF
+cat >"${HEALTH_FILE}" <<EOF
 {"status":"ok","service":"explorer-service-scaffold","mode":"operator-facing","production_ready":false}
 EOF
 
-cat >"${PUBLIC_DIR}/index.json" <<EOF
+cat >"${INDEX_FILE}" <<EOF
 {"service":"explorer-service-scaffold","health_url":"${HEALTH_URL}","rpc_base_url":"${RPC_BASE_URL}","read_contract":{"mode":"read-only","source":"rpc-read-surface","day1_surface":["query-task/<task_id>","query-events/<task_id>?limit=<n>","query-capability-audit/<subject-or-token>","query-normalized-audit-events/<task_id>?limit=<n>"],"query_events_default_limit":100,"query_events_max_limit":500,"write_paths_exposed":false},"notes":["static scaffold only","not a durable indexer","not a production read-model","historical queries remain bounded by RPC retention until a durable indexer/archive strategy exists"]}
 EOF
 

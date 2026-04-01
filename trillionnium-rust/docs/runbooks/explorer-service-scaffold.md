@@ -46,6 +46,8 @@ From `trillionnium-rust/`:
 - PID file: `trillionnium-rust/run/explorer-service/explorer-service.pid`
 - log file: `trillionnium-rust/run/explorer-service/explorer-service.log`
 - public root: `trillionnium-rust/run/explorer-service/public`
+- health file: `trillionnium-rust/run/explorer-service/public/healthz`
+- index file: `trillionnium-rust/run/explorer-service/public/index.json`
 
 ## Environment overrides
 
@@ -94,6 +96,8 @@ Expected healthy signals:
 - `pid_file=.../explorer-service.pid`
 - `log_file=.../explorer-service.log`
 - `public_dir=.../run/explorer-service/public`
+- `health_file=.../run/explorer-service/public/healthz`
+- `index_file=.../run/explorer-service/public/index.json`
 - `bind_host=...`
 - `bind_port=...`
 - `health_url=http://.../healthz`
@@ -187,6 +191,8 @@ It also re-emits the same operator-facing contract fields as the up/status scrip
 - `pid_file=.../explorer-service.pid`
 - `log_file=.../explorer-service.log`
 - `public_dir=.../run/explorer-service/public`
+- `health_file=.../run/explorer-service/public/healthz`
+- `index_file=.../run/explorer-service/public/index.json`
 - `bind_host=...`
 - `bind_port=...`
 - `health_url=http://.../healthz`
