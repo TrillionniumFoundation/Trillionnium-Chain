@@ -376,6 +376,7 @@ Every `sev0` / `sev1` incident should preserve one compact evidence block:
 - `replay_command`: `<verbatim emitted value|unknown>`
 - `git_worktree_path`: `<verbatim emitted value|unknown>`
 - `git_worktree_branch_ref`: `<verbatim emitted value|unknown>`
+- `git_expected_worktree_branch_ref`: `<verbatim emitted value|unknown>`
 - `git_worktree_branch_ref_match`: `<true|false|unknown>`
 
 Rules:
@@ -410,7 +411,7 @@ Example:
 1. Confirm the shared label block is present, including `needs_replay` and `needs_rollback`; for `service=oracle`, also confirm `verdict=` is preserved.
 2. Confirm the active dashboard uses stable panel names from this runbook.
 3. Pull `replay_command=` / `rollback_command=` from generated artifacts, not from memory.
-4. Confirm `git_worktree_path=` / `git_worktree_branch_ref=` match the assigned lane/rehearsal target.
+4. Confirm `git_worktree_path=`, `git_worktree_branch_ref=`, and `git_expected_worktree_branch_ref=` all match the assigned lane/rehearsal target.
 5. If evidence and graphs disagree, escalate to `sev0` and freeze automated interpretation.
 6. Link to the service-specific runbook before handing off.
 
