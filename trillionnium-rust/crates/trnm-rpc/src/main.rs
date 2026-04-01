@@ -1202,7 +1202,7 @@ fn submit_message_max_bytes() -> u64 {
 }
 
 fn normalize_wrapped_env_value(raw: &str) -> &str {
-    let mut normalized = raw.trim();
+    let mut normalized = raw.trim().trim_start_matches('\u{feff}');
     while normalized.len() >= 2 {
         let wrapped_by_quotes = (normalized.starts_with('"') && normalized.ends_with('"'))
             || (normalized.starts_with('\'') && normalized.ends_with('\''))
@@ -1210,7 +1210,9 @@ fn normalize_wrapped_env_value(raw: &str) -> &str {
         if !wrapped_by_quotes {
             break;
         }
-        normalized = normalized[1..normalized.len() - 1].trim();
+        normalized = normalized[1..normalized.len() - 1]
+            .trim()
+            .trim_start_matches('\u{feff}');
     }
     normalized
 }
@@ -8576,6 +8578,99 @@ line2
             got,
             vec![archive_dir.join("node4.log"), archive_dir.join("node5.log")],
             "historical replay manifest entries should unwrap quote-like wrappers and dedupe to canonical log sources"
+        );
+
+        let _ = fs::remove_dir_all(root);
+    }
+
+    #[test]
+    fn load_node_event_log_sources_ignores_wrapped_comment_manifest_entries() {
+        let _guard = lock_env();
+        let root = unique_tmp_path("trnm-rpc-log-sources-comment-manifest", "dir");
+        let archive_dir = root.join("archive");
+        let manifest_dir = root.join("cfg/history");
+        fs::create_dir_all(&archive_dir).expect("create archive dir");
+        fs::create_dir_all(&manifest_dir).expect("create manifest dir");
+
+        let archived_log = archive_dir.join("node4.log");
+        let manifest = manifest_dir.join("sources.txt");
+        fs::write(&archived_log, "").expect("write archived log");
+        fs::write(
+            &manifest,
+            "\"# ignored wrapped comment\"\n../../archive/node4.log\n",
+        )
+        .expect("write manifest");
+
+        let prev_sources = std::env::var(NODE_EVENT_LOG_SOURCES_ENV).ok();
+        let prev_manifest = std::env::var(NODE_EVENT_LOG_MANIFEST_ENV).ok();
+        unsafe {
+            std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV);
+            std::env::set_var(
+                NODE_EVENT_LOG_MANIFEST_ENV,
+                manifest.to_string_lossy().to_string(),
+            );
+        }
+
+        let got = load_node_event_log_sources(&root);
+
+        match prev_sources {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_SOURCES_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV) },
+        }
+        match prev_manifest {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_MANIFEST_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV) },
+        }
+
+        assert_eq!(
+            got,
+            vec![archive_dir.join("node4.log")],
+            "wrapped comment manifest entries should not create bogus historical replay paths"
+        );
+
+        let _ = fs::remove_dir_all(root);
+    }
+
+    #[test]
+    fn load_node_event_log_sources_tolerates_utf8_bom_wrapped_manifest_entries() {
+        let _guard = lock_env();
+        let root = unique_tmp_path("trnm-rpc-log-sources-bom-manifest", "dir");
+        let archive_dir = root.join("archive");
+        let manifest_dir = root.join("cfg/history");
+        fs::create_dir_all(&archive_dir).expect("create archive dir");
+        fs::create_dir_all(&manifest_dir).expect("create manifest dir");
+
+        let archived_log = archive_dir.join("node4.log");
+        let manifest = manifest_dir.join("sources.txt");
+        fs::write(&archived_log, "").expect("write archived log");
+        fs::write(&manifest, "\u{feff}\"../../archive/node4.log\"\n")
+            .expect("write manifest");
+
+        let prev_sources = std::env::var(NODE_EVENT_LOG_SOURCES_ENV).ok();
+        let prev_manifest = std::env::var(NODE_EVENT_LOG_MANIFEST_ENV).ok();
+        unsafe {
+            std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV);
+            std::env::set_var(
+                NODE_EVENT_LOG_MANIFEST_ENV,
+                manifest.to_string_lossy().to_string(),
+            );
+        }
+
+        let got = load_node_event_log_sources(&root);
+
+        match prev_sources {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_SOURCES_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV) },
+        }
+        match prev_manifest {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_MANIFEST_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV) },
+        }
+
+        assert_eq!(
+            got,
+            vec![archive_dir.join("node4.log")],
+            "historical replay manifest entries should tolerate UTF-8 BOM wrappers"
         );
 
         let _ = fs::remove_dir_all(root);
