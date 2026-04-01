@@ -71,11 +71,13 @@ pub enum GovernanceEvent {
         actor: String,
         previous_state: bool,
         next_state: bool,
+        reason_hash: String,
     },
     PauseRestoreScheduled {
         proposal_id: ProposalId,
         proposer: String,
         eta: u64,
+        reason_hash: String,
     },
     PauseRestoreExecuted {
         proposal_id: ProposalId,
@@ -359,7 +361,7 @@ impl GovernanceGuard {
         Ok(())
     }
 
-    pub fn emergency_pause(&mut self, caller: &str, _reason_hash: impl Into<String>) -> Result<()> {
+    pub fn emergency_pause(&mut self, caller: &str, reason_hash: impl Into<String>) -> Result<()> {
         self.require_guardian(caller)?;
         let previous_state = self.bridge.emergency_paused;
         self.bridge.emergency_paused = true;
@@ -367,6 +369,7 @@ impl GovernanceGuard {
             actor: caller.to_owned(),
             previous_state,
             next_state: true,
+            reason_hash: reason_hash.into(),
         });
         Ok(())
     }
@@ -387,6 +390,7 @@ impl GovernanceGuard {
         }
 
         let id = self.next_id();
+        let reason_hash = reason_hash.into();
         let proposal = Proposal {
             id,
             kind: ProposalKind::EmergencyUnpause,
@@ -397,7 +401,7 @@ impl GovernanceGuard {
             old_value: "true".to_string(),
             new_value: "false".to_string(),
             base_version: None,
-            reason_hash: reason_hash.into(),
+            reason_hash: reason_hash.clone(),
             status: ProposalStatus::Queued,
             executed_at: None,
         };
@@ -406,6 +410,7 @@ impl GovernanceGuard {
             proposal_id: id,
             proposer: caller.to_owned(),
             eta,
+            reason_hash,
         });
         Ok(id)
     }
@@ -558,21 +563,25 @@ impl GovernanceGuard {
                 actor,
                 previous_state,
                 next_state,
+                reason_hash,
             } => {
                 let mut normalized = AuditEvent::new("governance-guard", "governance.pause_set");
                 normalized.actor = Some(actor.clone());
                 normalized.related_id = Some(format!("{previous_state}->{next_state}"));
+                normalized.reason = Some(reason_hash.clone());
                 normalized
             }
             GovernanceEvent::PauseRestoreScheduled {
                 proposal_id,
                 proposer,
                 eta,
+                reason_hash,
             } => {
                 let mut normalized =
                     AuditEvent::new("governance-guard", "governance.pause_restore_scheduled");
                 normalized.actor = Some(proposer.clone());
                 normalized.object_id = Some(proposal_id.to_string());
+                normalized.reason = Some(reason_hash.clone());
                 normalized.note = Some(format!("eta={eta}"));
                 normalized
             }
@@ -852,8 +861,11 @@ mod tests {
         )));
         assert!(logs.iter().any(|event| matches!(
             event,
-            GovernanceEvent::PauseSet { actor, previous_state, next_state }
-                if actor == "guardian" && !*previous_state && *next_state
+            GovernanceEvent::PauseSet { actor, previous_state, next_state, reason_hash }
+                if actor == "guardian"
+                    && !*previous_state
+                    && *next_state
+                    && reason_hash == "incident"
         )));
         assert!(logs.iter().any(|event| matches!(
             event,
@@ -861,9 +873,11 @@ mod tests {
                 proposal_id,
                 proposer,
                 eta: logged_restore_eta,
+                reason_hash,
             } if *proposal_id == restore_id
                 && proposer == "guardian"
                 && *logged_restore_eta == restore_eta
+                && reason_hash == "recover"
         )));
         assert!(logs.iter().any(|event| matches!(
             event,
@@ -875,9 +889,14 @@ mod tests {
         assert!(normalized
             .iter()
             .any(|event| event.event_type == "governance.proposal_executed"));
-        assert!(normalized
-            .iter()
-            .any(|event| event.event_type == "governance.pause_set"));
+        assert!(normalized.iter().any(|event| {
+            event.event_type == "governance.pause_set"
+                && event.reason.as_deref() == Some("incident")
+        }));
+        assert!(normalized.iter().any(|event| {
+            event.event_type == "governance.pause_restore_scheduled"
+                && event.reason.as_deref() == Some("recover")
+        }));
         assert!(normalized
             .iter()
             .any(|event| event.source == "governance-guard"));
