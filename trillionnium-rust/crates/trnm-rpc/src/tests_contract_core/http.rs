@@ -71,6 +71,25 @@ fn get_health_probe_alias_ignores_query_string_and_keeps_minimum_json_contract()
 }
 
 #[test]
+fn get_health_probe_alias_with_trailing_slash_before_query_keeps_same_contract() {
+    let request = parse_http_request_target("GET /-/statusz/?from=ops HTTP/1.1")
+        .expect("health alias request parses");
+    let path = request.1.split('?').next().expect("path before query");
+    assert_eq!(path, "/-/statusz/");
+    assert!(is_health_probe_path(path));
+
+    let response = if is_health_probe_path(path) {
+        json_response_for_method(request.0, "200 OK", &health_probe_body(42))
+    } else {
+        unreachable!("health alias with trailing slash and query string should match")
+    };
+
+    assert!(response.starts_with("HTTP/1.1 200 OK\r\n"));
+    assert!(response.contains("Content-Length: 50\r\n"));
+    assert!(response.ends_with("{\"ok\":true,\"service\":\"trnm-rpc\",\"ts_unix_ms\":42,\"version\":1}"));
+}
+
+#[test]
 fn parse_http_get_path_accepts_lowercase_get_method() {
     assert_eq!(
         parse_http_get_path("get /query-task/42?verbose=1 HTTP/1.1"),
