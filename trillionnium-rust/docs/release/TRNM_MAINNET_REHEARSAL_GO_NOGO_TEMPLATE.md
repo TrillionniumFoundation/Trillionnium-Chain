@@ -172,8 +172,10 @@ Minimum interpretation:
 
 Quote verbatim from generated artifacts:
 
-- rollback_command=
-- replay_command=
+- summary_rollback_command=
+- summary_replay_command=
+- manifest_rollback_command=
+- manifest_replay_command=
 - challenge_reexec_entry=
 - replay_env_trnm_challenge_reexec_entry=
 
@@ -186,7 +188,8 @@ Record one explicit rollback-drill note for the packet:
 
 Rule:
 - do not rewrite these commands from shell memory
-- `rollback_drill_command=` must either quote the generated `rollback_command=` verbatim or explicitly explain why a narrower docs-only/procedure-only drill was used
+- use `summary_*` commands only for local-evidence conclusions and `manifest_*` commands only for RC rehearsal conclusions; do not collapse them into one synthetic command if the artifacts differ
+- `rollback_drill_command=` must either quote the stage-appropriate generated rollback command verbatim (`summary_rollback_command=` for local evidence or `manifest_rollback_command=` for RC rehearsal) or explicitly explain why a narrower docs-only/procedure-only drill was used
 - if `rollback_drill_result=NOT_RUN`, decision cannot exceed `CONDITIONAL GO`
 - if `challenge_reexec_entry=<entry_not_found>` appears, preserve it literally and treat the packet as incomplete unless the scope explicitly allows that absence
 
@@ -239,8 +242,10 @@ Mark each item explicitly:
 - [ ] `truth_source=` preserved next to decision language
 - [ ] `historical_evidence_only=` preserved next to decision language
 - [ ] `evaluated_origin_main=` recorded from `git rev-parse origin/main` for this packet
-- [ ] `rollback_command=` quoted verbatim
-- [ ] `replay_command=` quoted verbatim
+- [ ] `summary_rollback_command=` quoted verbatim
+- [ ] `summary_replay_command=` quoted verbatim
+- [ ] `manifest_rollback_command=` quoted verbatim
+- [ ] `manifest_replay_command=` quoted verbatim
 - [ ] rollback drill scope/command/result recorded
 - [ ] remaining blocker, if any, is explicitly classified
 
@@ -286,8 +291,10 @@ truth_source=<artifact value>
 historical_evidence_only=<artifact value>
 evidence_scope=<artifact value>
 evaluated_origin_main=<git rev-parse origin/main at memo time>
-rollback_command=<artifact value>
-replay_command=<artifact value>
+summary_rollback_command=<summary artifact value>
+summary_replay_command=<summary artifact value>
+manifest_rollback_command=<manifest artifact value>
+manifest_replay_command=<manifest artifact value>
 rollback_drill_scope=<docs-only|artifact replay only|operator procedure walkthrough|executed on rehearsal environment>
 rollback_drill_command=<artifact value or documented narrower drill command>
 rollback_drill_result=<PASS|FAIL|NOT_RUN>

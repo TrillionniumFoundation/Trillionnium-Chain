@@ -169,8 +169,6 @@ assert_equal git_status_summary "$summary_git_status_summary" "$manifest_git_sta
 assert_equal truth_source "$summary_truth_source" "$manifest_truth_source"
 assert_equal historical_evidence_only "$summary_historical_evidence_only" "$manifest_historical_evidence_only"
 assert_equal evidence_scope "$summary_evidence_scope" "$manifest_evidence_scope"
-assert_equal rollback_command "$summary_rollback" "$manifest_rollback"
-assert_equal replay_command "$summary_replay" "$manifest_replay"
 
 if [ -n "$EXPECTED_WORKTREE_ROOT" ]; then
   [ "$summary_worktree_path" = "$EXPECTED_WORKTREE_ROOT" ] || {
@@ -209,8 +207,10 @@ printf 'truth_source=%s\n' "$summary_truth_source"
 printf 'historical_evidence_only=%s\n' "$summary_historical_evidence_only"
 printf 'evidence_scope=%s\n' "$summary_evidence_scope"
 printf 'summary_result=%s\n' "$summary_result"
-printf 'rollback_command=%s\n' "$summary_rollback"
-printf 'replay_command=%s\n' "$summary_replay"
+printf 'summary_rollback_command=%s\n' "$summary_rollback"
+printf 'summary_replay_command=%s\n' "$summary_replay"
+printf 'manifest_rollback_command=%s\n' "$manifest_rollback"
+printf 'manifest_replay_command=%s\n' "$manifest_replay"
 
 if [ -n "$EXPECTED_WORKTREE_ROOT" ]; then
   printf 'expected_worktree_root=%s\n' "$EXPECTED_WORKTREE_ROOT"
