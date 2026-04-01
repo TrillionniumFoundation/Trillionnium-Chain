@@ -43,6 +43,7 @@ handoff_acknowledged_by=
 rollback_command=
 config_bundle_check_command=
 config_bundle_check_result=
+config_bundle_check_log_path=
 expected_worktree_root=
 expected_branch_ref=
 expected_head=
@@ -66,6 +67,7 @@ Rules:
 - `handoff_summary_path=` / `handoff_manifest_path=` / `summary_generated_at=` / `manifest_generated_at=` may remain empty unless release-evidence or RC artifacts are part of the handoff.
 - `expected_worktree_root=` / `expected_branch_ref=` / `expected_head=` / `lane_verify_command=` may remain empty until Step 1 finishes, but once lane binding is part of the ticket or handoff they must be copied verbatim from the verification/recovery step instead of reconstructed from chat or shell memory.
 - `config_bundle_check_command=` / `config_bundle_check_result=` may remain empty until Step 3 finishes, but they must be filled before any replacement / rotation / DR event can be called reproducible.
+- `config_bundle_check_log_path=` may remain empty unless Step 3 needed a tee/log capture, but when the last-line verdict is ambiguous or the command spans multiple files it should point to the preserved full log instead of forcing a later operator to reconstruct stderr from memory.
 - when `extract_release_handoff_fields.sh` is used, copy both artifact paths and both generated-at fields verbatim; do not collapse them into one hand-written timestamp.
 - `result=` should stay empty until the smallest credible bootstrap/re-bootstrap sanity actually finishes.
 - if any identity or rollback field cannot be filled before cutover, stop.
@@ -169,15 +171,17 @@ Interpretation rule:
 Recommended evidence-capture shape for the cutover note:
 
 ```bash
+config_bundle_check_log_path="/tmp/trnm-config-bundle-check.log"
 config_bundle_check_command="python3 scripts/v2/check_validator_config_bundle.py configs/validator-new.toml"
-config_bundle_check_result="$(python3 scripts/v2/check_validator_config_bundle.py configs/validator-new.toml 2>&1 | tee /tmp/trnm-config-bundle-check.log | tail -n 1)"
+config_bundle_check_result="$(python3 scripts/v2/check_validator_config_bundle.py configs/validator-new.toml 2>&1 | tee "$config_bundle_check_log_path" | tail -n 1)"
 printf 'config_bundle_check_command=%s\n' "$config_bundle_check_command"
 printf 'config_bundle_check_result=%s\n' "$config_bundle_check_result"
+printf 'config_bundle_check_log_path=%s\n' "$config_bundle_check_log_path"
 ```
 
 Interpretation rule:
 - replace `configs/validator-new.toml` with the exact incoming bundle named in the cutover note (and append any additional config files to the same command when the bundle spans more than one file)
-- keep the emitted `config_bundle_check_command=` and `config_bundle_check_result=` lines adjacent in the handoff note so another operator can audit the exact bundle and terminal verdict together
+- keep the emitted `config_bundle_check_command=` / `config_bundle_check_result=` / `config_bundle_check_log_path=` lines adjacent in the handoff note so another operator can audit the exact bundle, terminal verdict, and full stderr/stdout capture together
 - if the last line is ambiguous or truncated, preserve the full log path (for example `/tmp/trnm-config-bundle-check.log`) next to the handoff note rather than paraphrasing the result from memory
 
 ### 4. Attach DR/recovery evidence when the event is a rebuild
@@ -296,6 +300,7 @@ When handing this event to another operator, record:
 - `handoff_signed_by=` / `handoff_acknowledged_by=` when `cutover_kind=rotation` or `cutover_kind=dr_rebuild`
 - commands run
 - config-bundle check command/result
+- config-bundle check log path when tee/log capture was used
 - pass/fail result
 - rollback command
 - DR report generated-at timestamp when DR evidence was required
@@ -343,6 +348,7 @@ handoff_acknowledged_by=<operator accepting ownership>
 rollback_command=<quoted verbatim from the cutover note or generated artifact>
 config_bundle_check_command=<verbatim python3 scripts/v2/check_validator_config_bundle.py ... invocation>
 config_bundle_check_result=<verbatim final OK/fail line for the exact incoming bundle>
+config_bundle_check_log_path=<path to preserved tee/log output when used, else empty>
 expected_worktree_root=<ticket-assigned worktree root>
 expected_branch_ref=<ticket-assigned branch ref>
 expected_head=<ticket-assigned commit or empty when not pinned>
@@ -367,6 +373,7 @@ Fail-closed interpretation:
 - for `cutover_kind=dr_rebuild`, do not mark `result=PASS` unless the same note also carries `expected_worktree_root=` / `expected_branch_ref=` / `lane_verify_command=` together with `dr_summary_path=` / `dr_generated_at=` / `dr_status=PASS` plus verbatim `dr_replay_command=` / `dr_rollback_command=` from one concrete report
 - if `expected_worktree_root=` / `expected_branch_ref=` / `lane_verify_command=` had to be reconstructed from chat instead of copied from the lane-verification step, the packet is incomplete
 - if `config_bundle_check_command=` / `config_bundle_check_result=` are missing or paraphrased, the packet is incomplete because the incoming validator bundle was not auditable as-validated
+- if tee/log capture was used but `config_bundle_check_log_path=` is omitted, the packet is incomplete whenever the last-line verdict alone would not let another operator audit the exact failure/success context
 - if `rollback_command=` was paraphrased instead of copied verbatim from the selected artifact or pre-declared cutover note, the packet is incomplete
 
 ## No-Go conditions
