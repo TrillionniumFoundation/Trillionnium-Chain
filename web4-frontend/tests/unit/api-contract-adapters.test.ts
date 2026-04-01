@@ -328,6 +328,27 @@ describe("api-contract adapters", () => {
     expect(out.total).toBe(42);
   });
 
+  it("fails closed when canonical normalized audit pagination reports hasMore without usable cursor", () => {
+    const out = adaptQueryNormalizedAuditEvents({
+      events: [
+        {
+          source: "bridge-relay",
+          event_type: "bridge_relay.proof_submitted",
+          actor: "validator-1",
+          checkedAt: "height:778",
+        },
+      ],
+      hasMore: true,
+      nextCursor: "   ",
+      total: 43,
+    });
+
+    expect(out.events[0]?.event_type).toBe("bridge_relay.proof_submitted");
+    expect(out.hasMore).toBe(false);
+    expect(out.nextCursor).toBe("");
+    expect(out.total).toBe(43);
+  });
+
   it("adapts canonical normalized audit-events payload", () => {
 
     const out = adaptQueryNormalizedAuditEvents({
