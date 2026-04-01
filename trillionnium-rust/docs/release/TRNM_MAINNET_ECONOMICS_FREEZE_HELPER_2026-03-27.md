@@ -78,6 +78,22 @@ Use this conservative interpretation until governance freezes something stricter
 - **NO-GO** if the anti-spam floor can be changed without an auditable authority path.
 - **CONDITIONAL GO** only when all five tuple elements are written, reviewable, and tied to named parameters or explicit launch constants.
 
+## Freeze decision rubric (attach to the review packet)
+
+Use one of these labels only after the tuple sheet, evidence packet, and wording checks are all reviewed together.
+Do not treat a green compile/test slice by itself as a launch decision.
+
+| Decision | Minimum required state | Typical blocker that keeps this from upgrading |
+| --- | --- | --- |
+| `GO` | all five tuple elements are frozen with concrete values; sponsor revocation disposition + duplicate-retention stance are named; retention payer + exhaustion label + expiry label are named; adversarial rehearsal slice is green; operator/public wording matches the tuple; rollback/tightening path is recorded | none inside the economics packet; any remaining launch blocker should be outside this economics scope |
+| `CONDITIONAL GO` | tuple is mostly frozen and the targeted rehearsal slice is green, but one or more non-widening review artifacts are still missing (for example: inspection/runbook command not yet attached, public wording not yet updated, or rollback wording still draft) | evidence packet or wording drift means reviewers still cannot audit the frozen boundary cleanly |
+| `NO-GO` | any tuple element is still undecided, any unresolved field would widen public ingress/subsidy/retention semantics, or the targeted rehearsal slice is red / unexplained | launch economics boundary is still mutable, ambiguous, or contradicted by the current gate results |
+
+Escalation rule:
+- if reviewers cannot tell whether a gap is merely documentation drift or a real widening of ingress/subsidy semantics, classify it as `NO-GO` until the ambiguity is removed.
+- if a fix only tightens wording/evidence without changing economics behavior, it may move `NO-GO -> CONDITIONAL GO`.
+- only a packet with frozen values **and** green targeted evidence may move `CONDITIONAL GO -> GO`.
+
 ## Minimal parameter sheet to freeze
 
 For launch review, the team should be able to fill in this sheet with concrete values:
