@@ -239,6 +239,105 @@ describe("dashboard source normalized audit pagination", () => {
     expect(snapshot.kpis.find((kpi) => kpi.label === "Open Incidents")?.value).toBe("1");
   });
 
+  it("stops normalized audit pagination at the configured max pages even when hasMore stays true", async () => {
+    const previousPages = process.env.NEXT_PUBLIC_DASHBOARD_NORMALIZED_AUDIT_MAX_PAGES;
+
+    process.env.NEXT_PUBLIC_DASHBOARD_NORMALIZED_AUDIT_MAX_PAGES = "2";
+
+    try {
+      const mockClient = {
+        queryTask: vi.fn().mockResolvedValue({
+          task: {
+            id: "345",
+            owner: "ops",
+            status: "running",
+            createdAt: "2026-03-01T00:00:00.000Z",
+            metadata: {},
+          },
+        }),
+        queryEvents: vi.fn().mockResolvedValue({
+          taskId: "345",
+          events: [],
+        }),
+        queryCapabilityAudit: vi.fn().mockResolvedValue({
+          subject: "did:trnm:test",
+          audits: [
+            {
+              subject: "did:trnm:test",
+              capability: "AUDIT_READ",
+              granted: true,
+              checkedAt: "2026-03-01T00:00:00.000Z",
+            },
+          ],
+        }),
+        queryNormalizedAuditEvents: vi
+          .fn()
+          .mockResolvedValueOnce({
+            events: [
+              {
+                source: "governance-guard",
+                event_type: "governance.proposal_created",
+                actor: "alice",
+                object_id: "pp-2",
+                timestamp: "2026-03-01T00:01:00.000Z",
+              },
+            ],
+            hasMore: true,
+            nextCursor: " cursor-1 ",
+          })
+          .mockResolvedValueOnce({
+            events: [
+              {
+                source: "bridge-relay",
+                event_type: "bridge_relay.proof_submitted",
+                actor: "validator",
+                object_id: "proof-3",
+                timestamp: "2026-03-01T00:02:00.000Z",
+                reason: "warn",
+              },
+            ],
+            hasMore: true,
+            nextCursor: "cursor-2",
+          })
+          .mockResolvedValueOnce({
+            events: [
+              {
+                source: "settlement-vault",
+                event_type: "vault.withdrawal_requested",
+                actor: "bob",
+                object_id: "withdrawal-1",
+                timestamp: "2026-03-01T00:03:00.000Z",
+                reason: "error",
+              },
+            ],
+            hasMore: false,
+          }),
+      } as unknown as ReturnType<typeof apiContractClient.createFrontendApiClient>;
+
+      vi.spyOn(apiContractClient, "createFrontendApiClient").mockReturnValue(mockClient);
+
+      const snapshot = await fetchDashboardSnapshot();
+
+      expect(mockClient.queryNormalizedAuditEvents).toHaveBeenCalledTimes(2);
+      expect(mockClient.queryNormalizedAuditEvents).toHaveBeenNthCalledWith(1, {
+        limit: 60,
+      });
+      expect(mockClient.queryNormalizedAuditEvents).toHaveBeenNthCalledWith(2, {
+        limit: 60,
+        cursor: "cursor-1",
+      });
+      expect(
+        snapshot.events.find((event) => event.summary === "settlement-vault · vault.withdrawal_requested"),
+      ).toBeUndefined();
+    } finally {
+      if (previousPages === undefined) {
+        delete process.env.NEXT_PUBLIC_DASHBOARD_NORMALIZED_AUDIT_MAX_PAGES;
+      } else {
+        process.env.NEXT_PUBLIC_DASHBOARD_NORMALIZED_AUDIT_MAX_PAGES = previousPages;
+      }
+    }
+  });
+
   it("fails closed on normalized audit pagination errors without dropping readonly task/event data", async () => {
     const mockClient = {
       queryTask: vi
