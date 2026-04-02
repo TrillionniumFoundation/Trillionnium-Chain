@@ -3742,6 +3742,18 @@ mod tests {
     }
 
     #[test]
+    fn load_config_accepts_inner_curdir_markers_for_shipped_bootstrap_paths() {
+        for path in ["configs/./node1.toml", "./configs/./node1.toml"] {
+            let cfg = load_config(path).unwrap_or_else(|err| {
+                panic!("{path} should resolve for shipped bootstrap config anchoring: {err:#}")
+            });
+            assert_eq!(cfg.node_id, "node1", "unexpected node_id for {path}");
+            assert_eq!(cfg.rpc_addr, "127.0.0.1:26657", "unexpected rpc_addr for {path}");
+            assert_eq!(cfg.p2p_addr, "127.0.0.1:26656", "unexpected p2p_addr for {path}");
+        }
+    }
+
+    #[test]
     fn load_config_prefers_workspace_root_default_over_cwd_shadow_config() {
         let manifest_dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR"));
         let workspace_root = manifest_dir
