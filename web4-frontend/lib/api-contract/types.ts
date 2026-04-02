@@ -6,49 +6,49 @@ export type TaskStatus =
   | "failed"
   | "canceled";
 
-export type ChainTask = {
+export type ChainTask = Readonly<{
   id: string;
   name?: string;
   status: TaskStatus;
   owner: string;
   createdAt: string;
   updatedAt?: string;
-  metadata: Record<string, unknown>;
-};
+  metadata: Readonly<Record<string, unknown>>;
+}>;
 
-export type ChainEvent = {
+export type ChainEvent = Readonly<{
   id: string;
   taskId: string;
   type: string;
   level: "info" | "warn" | "error";
   timestamp: string;
-  payload: Record<string, unknown>;
-};
+  payload: Readonly<Record<string, unknown>>;
+}>;
 
-export type CapabilityAuditEntry = {
+export type CapabilityAuditEntry = Readonly<{
   subject: string;
   capability: string;
   granted: boolean;
   reason?: string;
   checkedAt: string;
-};
+}>;
 
-export type QueryTaskResult = {
+export type QueryTaskResult = Readonly<{
   task: ChainTask;
-};
+}>;
 
-export type QueryEventsResult = {
+export type QueryEventsResult = Readonly<{
   taskId: string;
-  events: ChainEvent[];
-};
+  events: ReadonlyArray<ChainEvent>;
+}>;
 
-export type QueryCapabilityAuditResult = {
+export type QueryCapabilityAuditResult = Readonly<{
   subject: string;
-  audits: CapabilityAuditEntry[];
-};
+  audits: ReadonlyArray<CapabilityAuditEntry>;
+}>;
 
 
-export type NormalizedAuditEvent = {
+export type NormalizedAuditEvent = Readonly<{
   source: string;
   event_type: string;
   actor?: string;
@@ -60,14 +60,14 @@ export type NormalizedAuditEvent = {
   checkedAt?: string;
   timestamp?: string;
   subject?: string;
-};
+}>;
 
-export type QueryNormalizedAuditEventsResult = {
-  events: NormalizedAuditEvent[];
+export type QueryNormalizedAuditEventsResult = Readonly<{
+  events: ReadonlyArray<NormalizedAuditEvent>;
   nextCursor?: string;
   hasMore?: boolean;
   total?: number;
-};
+}>;
 
 export type NormalizedAuditEventsQuery = Readonly<{
   source?: string;

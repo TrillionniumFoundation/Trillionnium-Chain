@@ -24,6 +24,8 @@
 3. **适配层**：`adapters.ts`（raw -> typed model）
 4. **客户端层**：`client.ts`（GET、超时、重试、错误归一）
 
+约定：只读查询 contract 在 TypeScript 层按 `Readonly` / `ReadonlyArray` 暴露，调用方不应原地修改解析后的响应对象或事件数组；需要派生视图时请复制后处理。
+
 ## 错误模型（FrontendApiError.code）
 
 - `NETWORK`：网络/连接失败
