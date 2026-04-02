@@ -138,6 +138,15 @@ const resolveNonEmptyEnv = (value: string | undefined, fallback: string): string
   return normalized && normalized.length > 0 ? normalized : fallback;
 };
 
+const resolvePreferredTimestamp = (...candidates: Array<string | undefined>): string | undefined => {
+  for (const candidate of candidates) {
+    const normalized = candidate?.trim();
+    if (normalized) return normalized;
+  }
+
+  return undefined;
+};
+
 const apiBaseUrl = resolveQueryApiBaseUrl();
 const defaultTaskId = resolveNonEmptyEnv(process.env.NEXT_PUBLIC_DASHBOARD_TASK_ID, "341");
 const defaultAuditSubject = resolveNonEmptyEnv(
@@ -352,9 +361,10 @@ async function fetchReadonlySnapshotFromApi(): Promise<DashboardSnapshot> {
         owner: taskResp.task.owner,
         priority: "P1" as const,
         status: mapTaskStatus(taskResp.task.status),
-        updatedAt: taskResp.task.updatedAt ?? taskResp.task.createdAt
-          ? toDisplayTime(taskResp.task.updatedAt ?? taskResp.task.createdAt ?? "")
-          : "-", 
+        updatedAt: (() => {
+          const timestamp = resolvePreferredTimestamp(taskResp.task.updatedAt, taskResp.task.createdAt);
+          return timestamp ? toDisplayTime(timestamp) : "-";
+        })(),
         description: stringifyDashboardField(taskResp.task.metadata, "{}"),
       },
     ],
