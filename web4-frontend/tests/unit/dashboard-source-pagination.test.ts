@@ -289,6 +289,58 @@ describe("dashboard source normalized audit pagination", () => {
     expect(snapshot.events.find((event) => event.id === "EVT-344")?.details).toBe("{}");
   });
 
+  it("preserves plain string metadata and payload values without adding JSON quotes", async () => {
+    const mockClient = {
+      queryTask: vi
+        .fn()
+        .mockResolvedValue({
+          task: {
+            id: "344b",
+            owner: "ops",
+            status: "running",
+            createdAt: "2026-03-01T00:00:00.000Z",
+            metadata: "manual note",
+          },
+        }),
+      queryEvents: vi.fn().mockResolvedValue({
+        taskId: "344b",
+        events: [
+          {
+            id: "EVT-344b",
+            timestamp: "2026-03-01T00:01:00.000Z",
+            type: "deploy.completed",
+            level: "info",
+            payload: "human-readable payload",
+          },
+        ],
+      }),
+      queryCapabilityAudit: vi.fn().mockResolvedValue({
+        subject: "did:trnm:test",
+        audits: [
+          {
+            subject: "did:trnm:test",
+            capability: "AUDIT_READ",
+            granted: true,
+            checkedAt: "2026-03-01T00:00:00.000Z",
+          },
+        ],
+      }),
+      queryNormalizedAuditEvents: vi
+        .fn()
+        .mockResolvedValue({
+          events: [],
+          hasMore: false,
+        }),
+    } as unknown as ReturnType<typeof apiContractClient.createFrontendApiClient>;
+
+    vi.spyOn(apiContractClient, "createFrontendApiClient").mockReturnValue(mockClient);
+
+    const snapshot = await fetchDashboardSnapshot();
+
+    expect(snapshot.tasks[0]?.description).toBe("manual note");
+    expect(snapshot.events.find((event) => event.id === "EVT-344b")?.details).toBe("human-readable payload");
+  });
+
   it("falls back to default ids when task/audit env values are blank", async () => {
     const previousTaskId = process.env.NEXT_PUBLIC_DASHBOARD_TASK_ID;
     const previousAuditSubject = process.env.NEXT_PUBLIC_DASHBOARD_AUDIT_SUBJECT;

@@ -279,6 +279,7 @@ const mapAuditResult = (
 
 const stringifyDashboardField = (value: unknown, fallback: string): string => {
   if (value == null) return fallback;
+  if (typeof value === "string") return value;
 
   const serialized = JSON.stringify(value);
   return serialized ?? fallback;
