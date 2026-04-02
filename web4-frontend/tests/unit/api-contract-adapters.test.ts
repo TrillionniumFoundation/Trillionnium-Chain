@@ -350,13 +350,13 @@ describe("api-contract adapters", () => {
     expect(out.events[0]?.event_type).toBe("governance.proposal_executed");
   });
 
-  it("adapts legacy snake_case normalized audit-events payload", () => {
-    const out = adaptQueryNormalizedAuditEvents({
-      source: "bridge-relay",
-      events: [],
-    });
-
-    expect(out.events).toEqual([]);
+  it("fails closed on malformed canonical normalized audit-events envelope", () => {
+    expect(() =>
+      adaptQueryNormalizedAuditEvents({
+        source: "bridge-relay",
+        events: [],
+      }),
+    ).toThrow(FrontendApiError);
   });
 
   it("adapts normalized audit-events fallback with eventType/objectId aliases", () => {

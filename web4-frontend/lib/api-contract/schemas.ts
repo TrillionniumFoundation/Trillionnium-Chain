@@ -72,7 +72,7 @@ export const queryNormalizedAuditEventsPageSchema = z.object({
   nextCursor: z.string().min(1).optional(),
   hasMore: z.boolean().optional(),
   total: z.number().int().nonnegative().optional(),
-});
+}).strict();
 
 export const normalizedAuditEventsQuerySchema = z.object({
   source: z.string().trim().min(1).optional(),
@@ -85,5 +85,5 @@ export const queryNormalizedAuditEventsResponseSchema = z.union([
   queryNormalizedAuditEventsPageSchema,
   z.object({
     events: z.array(normalizedAuditEventSchema),
-  }),
+  }).strict(),
 ]);
