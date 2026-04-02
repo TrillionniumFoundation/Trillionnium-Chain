@@ -134,4 +134,22 @@ mod tests {
         assert_eq!(gate.critical_free_slots(), 0);
         assert!(!gate.can_normal_borrow_critical_slot(0));
     }
+
+    #[test]
+    fn lane_has_global_capacity_is_strict_at_total_capacity_boundary() {
+        let gate = LaneAdmissionGate::new(3, 1);
+
+        assert!(gate.lane_has_global_capacity(0));
+        assert!(gate.lane_has_global_capacity(2));
+        assert!(!gate.lane_has_global_capacity(3));
+        assert!(!gate.lane_has_global_capacity(4));
+    }
+
+    #[test]
+    fn zero_total_capacity_reports_no_global_headroom() {
+        let gate = LaneAdmissionGate::new(0, 0);
+
+        assert!(!gate.lane_has_global_capacity(0));
+        assert!(!gate.lane_has_global_capacity(1));
+    }
 }
