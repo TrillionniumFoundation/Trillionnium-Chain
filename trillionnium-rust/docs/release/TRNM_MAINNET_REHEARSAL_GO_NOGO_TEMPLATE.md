@@ -88,12 +88,15 @@ manifest_path="$latest_rc_dir/manifest.txt"
 [ -f "$manifest_path" ] || { echo "missing manifest artifact" >&2; exit 1; }
 printf 'manifest_path=%s\n' "$manifest_path"
 
+handoff_helper_output_path="run/preflight/handoff-fields-$(date -u +%Y%m%dT%H%M%SZ).txt"
+mkdir -p "$(dirname "$handoff_helper_output_path")"
 ./scripts/v2/extract_release_handoff_fields.sh \
   --summary-path "$summary_path" \
   --manifest-path "$manifest_path" \
   --expected-worktree-root "/abs/path/from-ticket" \
   --expected-branch-ref "refs/heads/lane/assigned-branch" \
-  | tee /tmp/trnm-release-handoff-fields.txt
+  | tee "$handoff_helper_output_path"
+printf 'handoff_helper_output_path=%s\n' "$handoff_helper_output_path"
 ```
 
 As with the pre-run helper, `--expected-branch-ref` may be supplied as either the short branch name from the ticket or the full ref, but the recorded `preflight_expected_branch_ref=` / `git_expected_worktree_branch_ref=` fields should preserve the exact ticket-assigned form instead of normalizing it after the fact.
