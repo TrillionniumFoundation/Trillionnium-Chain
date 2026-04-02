@@ -275,6 +275,7 @@ fn is_sanitized_to_space(ch: char) -> bool {
                 | '\u{180F}'
                 | '\u{2800}'
                 | '\u{3164}'
+                | '\u{FFA0}'
                 | '\u{2007}'
                 | '\u{200B}'
                 | '\u{200C}'
@@ -401,6 +402,13 @@ mod tests {
         let raw = "target\u{2061} relay\u{2062} timeout\u{2063} signal\u{2064}\u{180E}";
         let normalized = normalize_compensation_reason(raw, "fallback");
         assert_eq!(normalized, "target relay timeout signal");
+    }
+
+    #[test]
+    fn normalize_compensation_reason_strips_halfwidth_hangul_filler_for_replay_stability() {
+        let raw = "target\u{FFA0}relay timeout";
+        let normalized = normalize_compensation_reason(raw, "fallback");
+        assert_eq!(normalized, "target relay timeout");
     }
 
     #[test]

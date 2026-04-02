@@ -142,6 +142,7 @@ fn is_disallowed_invisible_char(ch: char) -> bool {
             | '\u{180F}'
             | '\u{2800}'
             | '\u{3164}'
+            | '\u{FFA0}'
             | '\u{2000}'
             | '\u{2001}'
             | '\u{2002}'
@@ -262,6 +263,13 @@ mod tests {
     #[test]
     fn normalize_failure_reason_strips_alm_and_zwnj_for_replay_stability() {
         let raw = "target\u{061C} relay\u{200C} timeout";
+        let normalized = normalize_failure_reason(raw);
+        assert_eq!(normalized, "target relay timeout");
+    }
+
+    #[test]
+    fn normalize_failure_reason_strips_halfwidth_hangul_filler_for_replay_stability() {
+        let raw = "target\u{FFA0}relay timeout";
         let normalized = normalize_failure_reason(raw);
         assert_eq!(normalized, "target relay timeout");
     }
