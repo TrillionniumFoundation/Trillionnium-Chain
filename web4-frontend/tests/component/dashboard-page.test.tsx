@@ -152,6 +152,20 @@ describe("dashboard page", () => {
     expect(screen.getByText("Network Uptime")).toBeInTheDocument();
   });
 
+  it("fail-closes blank KPI fields to explicit readonly fallback copy", async () => {
+    mockedFetch.mockResolvedValue({
+      ...snapshot,
+      kpis: [{ label: " ", value: "   ", delta: "\n\t", health: "healthy" as const }],
+    });
+
+    render(<Home />);
+
+    expect(await screen.findByText("Metric 1")).toBeInTheDocument();
+    expect(screen.getByText("Unavailable")).toBeInTheDocument();
+    expect(screen.getByText("Δ Unavailable / 24h")).toBeInTheDocument();
+    expect(screen.getByText("healthy")).toBeInTheDocument();
+  });
+
   it("fail-closes to empty collections when adapter data is partially missing", async () => {
     mockedFetch.mockResolvedValue({
       ...snapshot,

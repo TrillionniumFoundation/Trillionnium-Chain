@@ -29,8 +29,11 @@ function normalizeSnapshot(snapshot: DashboardSnapshot): DashboardSnapshot {
   return {
     ...snapshot,
     kpis: Array.isArray(snapshot.kpis)
-      ? snapshot.kpis.map((kpi) => ({
+      ? snapshot.kpis.map((kpi, index) => ({
           ...kpi,
+          label: failClosedText(kpi.label, `Metric ${index + 1}`),
+          value: failClosedText(kpi.value, "Unavailable"),
+          delta: failClosedText(kpi.delta, "Unavailable"),
           health: normalizeHealth(kpi.health),
         }))
       : [],
