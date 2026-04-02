@@ -257,4 +257,24 @@ describe("api-contract client and retry hardening", () => {
     });
     expect(attempts).toBe(1);
   });
+
+  it("fails closed before the first attempt when the retry signal is already aborted", async () => {
+    const controller = new AbortController();
+    controller.abort("preflight canceled");
+
+    const fn = vi.fn(async () => "ok");
+
+    await expect(
+      withRetry(fn, {
+        retries: 2,
+        signal: controller.signal,
+      }),
+    ).rejects.toMatchObject({
+      code: "ABORTED",
+      retryable: false,
+      causeData: "preflight canceled",
+    });
+
+    expect(fn).not.toHaveBeenCalled();
+  });
 });
