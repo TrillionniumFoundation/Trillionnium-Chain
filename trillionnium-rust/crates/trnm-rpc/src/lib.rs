@@ -147,6 +147,8 @@ impl OracleValidateSnapshotResponse {
         matches!(label, "stale")
             || label.starts_with("future snapshot:")
             || label.starts_with("stale snapshot:")
+            || label.starts_with("snapshot future:")
+            || label.starts_with("snapshot stale:")
             || label.starts_with("invalid window:")
             || label.starts_with("invalid window timestamp:")
     }
@@ -844,6 +846,64 @@ mod tests {
             out.error.as_deref(),
             Some("future snapshot: ts=10001, now=10000")
         );
+        assert_eq!(out.classified_reject_total(), 1);
+        assert_eq!(out.classified_outcome_total(), 1);
+        assert!(out.classified_outcome_conserves_sample_count());
+        assert!(out.observation_matches_metrics());
+        assert!(out.bridge_contract_consistent());
+    }
+
+    #[test]
+    fn oracle_validation_response_bridge_contract_consistent_accepts_snapshot_future_label_variant() {
+        let out = OracleValidateSnapshotResponse {
+            ok: false,
+            now_ts_ms: 10_000,
+            observation: OracleValidationObservation {
+                stale_reject_total: 1,
+                quorum_reject_total: 0,
+                drift_reject_total: 0,
+                accepted_total: 0,
+            },
+            metrics: OracleValidationMetrics {
+                oracle_stale_reject_total: 1,
+                oracle_quorum_reject_total: 0,
+                oracle_drift_reject_total: 0,
+                oracle_source_cardinality: 2,
+                accepted_total: 0,
+                sample_count: 1,
+            },
+            error: Some("snapshot future: observed_at_ms=10001 now_ts_ms=10000".into()),
+        };
+
+        assert_eq!(out.classified_reject_total(), 1);
+        assert_eq!(out.classified_outcome_total(), 1);
+        assert!(out.classified_outcome_conserves_sample_count());
+        assert!(out.observation_matches_metrics());
+        assert!(out.bridge_contract_consistent());
+    }
+
+    #[test]
+    fn oracle_validation_response_bridge_contract_consistent_accepts_snapshot_stale_label_variant() {
+        let out = OracleValidateSnapshotResponse {
+            ok: false,
+            now_ts_ms: 70_001,
+            observation: OracleValidationObservation {
+                stale_reject_total: 1,
+                quorum_reject_total: 0,
+                drift_reject_total: 0,
+                accepted_total: 0,
+            },
+            metrics: OracleValidationMetrics {
+                oracle_stale_reject_total: 1,
+                oracle_quorum_reject_total: 0,
+                oracle_drift_reject_total: 0,
+                oracle_source_cardinality: 2,
+                accepted_total: 0,
+                sample_count: 1,
+            },
+            error: Some("snapshot stale: observed_at_ms=10000 max_staleness_ms=60000".into()),
+        };
+
         assert_eq!(out.classified_reject_total(), 1);
         assert_eq!(out.classified_outcome_total(), 1);
         assert!(out.classified_outcome_conserves_sample_count());
