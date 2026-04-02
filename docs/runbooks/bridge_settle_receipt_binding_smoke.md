@@ -28,6 +28,8 @@
      - 覆盖治理变更后 stale `config_version` 的 finalize fail-closed 路径，要求不写入 proof/nonce/finalize 审计副作用。
    - `finalize_settlement_is_idempotent_by_settlement_id_even_with_new_nonce`
      - 覆盖 finalize 终态语义：即使重放请求携带了新的 `nonce`，只要 `settlement_id` 相同，仍必须优先返回 `SettlementAlreadyFinalized`，避免 fresh nonce 绕过 terminal state。
+   - `duplicate_finalize_is_side_effect_free`
+     - 覆盖重复 finalize 的副作用约束：重复请求必须直接命中终态，不得追加新的 proof / nonce / finalize 审计事件。
    - `governance_write_with_stale_config_version_is_fail_closed_and_side_effect_free`
      - 覆盖治理写路径使用 stale `config_version` 时的 fail-closed 语义，要求 admin / config_version / audit_log 均保持不变。
 
