@@ -1,0 +1,48 @@
+# TRNM Bridge Settlement Audit Note (2026-04-02)
+
+Scope: operator-facing clarification for the current `trnm-bridge-poc` settlement boundary.
+This note does **not** expand bridge scope; it freezes the evidence operators should quote during replay and incident review.
+
+## Settlement confirmation boundary
+
+For the current X2 settlement path, finalization remains fail-closed and bounded by the heartbeat sample embedded in the attempt:
+
+- required lower bound: `target < confirm`
+- required upper bound: `confirm <= source + 1`
+- stricter catch-up rule: once `target == source`, the only acceptable confirmation height is `source + 1`
+- saturated edge case: when `source == target == u64::MAX`, `confirm == u64::MAX` remains the only acceptable terminal value
+
+Operationally, this means a stale target-height confirm must never be accepted as enough evidence once the target heartbeat has already caught up to the source head.
+
+## Retry / degraded boundary
+
+Before finalization is considered:
+
+- `degraded == true` must terminate the attempt as compensation/revert
+- `should_retry == true` must block finalization unless the terminal confirmation is already an explicit failed settlement outcome
+- malformed embedded heartbeat bounds must fail closed rather than be reinterpreted as success evidence
+
+## Frozen settlement audit evidence
+
+Replay and incident review should quote the structured settlement event fields below as the canonical evidence surface:
+
+- `phase`
+- `heartbeat_source_height`
+- `heartbeat_target_height`
+- `heartbeat_latency_ms`
+- `confirm_height`
+- `confirm_reason`
+
+Interpretation guidance:
+
+- `phase = settlement_confirmed` implies `confirm_height` is present and `confirm_reason` is absent
+- `phase = settlement_confirm_failed` implies `confirm_reason` is present and `confirm_height` is absent
+- `phase = relay_heartbeat_degraded` implies the relay heartbeat gate failed before finalization and the event carries the degraded reason in `confirm_reason`
+
+## Audit quoting rule
+
+When operators summarize a bridge incident, prefer the structured event tuple first and log phrasing second. A compact quote template is:
+
+`phase=<phase> hb=(<source>,<target>,<latency_ms>) confirm_height=<confirm_height> confirm_reason=<confirm_reason>`
+
+This avoids replay drift caused by ad-hoc prose or differently sanitized log lines.
