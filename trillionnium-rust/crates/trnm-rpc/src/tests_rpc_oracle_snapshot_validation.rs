@@ -463,6 +463,72 @@ fn oracle_validate_snapshot_response_rejects_non_canonical_snapshot_feed_id_fail
 }
 
 #[test]
+fn oracle_validate_snapshot_response_rejects_snapshot_feed_id_with_internal_whitespace() {
+    let policy_path =
+        write_json_fixture("oracle-policy-feed-internal-whitespace", &oracle_policy_fixture());
+    let snapshot_path = write_json_fixture(
+        "oracle-snapshot-feed-internal-whitespace",
+        &serde_json::json!({
+            "observed_at_ms": 10_000,
+            "aggregate_price": 100_000,
+            "reference_price": 100_000,
+            "feed_id": "btc /usd",
+            "sources": [
+                {
+                    "source_id": "binance",
+                    "price": 100_000,
+                    "observed_at_ms": 10_000
+                },
+                {
+                    "source_id": "coinbase",
+                    "price": 100_000,
+                    "observed_at_ms": 10_000
+                }
+            ]
+        }),
+    );
+
+    let err = oracle_validate_snapshot_response(&snapshot_path, &policy_path, 10_100)
+        .expect_err("snapshot feed id with internal whitespace should fail closed");
+
+    assert_eq!(
+        err,
+        "feed id must be canonical lowercase+trim: raw=btc /usd, canonical=btc /usd"
+    );
+
+    let _ = fs::remove_file(snapshot_path);
+    let _ = fs::remove_file(policy_path);
+}
+
+#[test]
+fn oracle_validate_snapshot_response_rejects_policy_feed_id_with_control_chars() {
+    let policy_path = write_json_fixture(
+        "oracle-policy-feed-control-char",
+        &serde_json::json!({
+            "max_staleness_ms": 60_000,
+            "min_source_count": 2,
+            "max_deviation_bps": 500,
+            "feed_id": "btc\n/usd",
+        }),
+    );
+    let snapshot_path = write_json_fixture(
+        "oracle-snapshot-feed-control-char",
+        &oracle_snapshot_fixture(100_000, Some(100_000), 10_000),
+    );
+
+    let err = oracle_validate_snapshot_response(&snapshot_path, &policy_path, 10_100)
+        .expect_err("policy feed id with control chars should fail closed");
+
+    assert_eq!(
+        err,
+        "feed id must be canonical lowercase+trim: raw=btc\n/usd, canonical=btc\n/usd"
+    );
+
+    let _ = fs::remove_file(snapshot_path);
+    let _ = fs::remove_file(policy_path);
+}
+
+#[test]
 fn oracle_validate_snapshot_response_rejects_snapshot_policy_feed_mismatch() {
     let policy_path = write_json_fixture(
         "oracle-policy-feed-mismatch",

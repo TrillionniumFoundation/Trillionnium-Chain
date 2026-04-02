@@ -122,7 +122,8 @@ fn validate_canonical_feed_id(raw: &str) -> Result<String, String> {
     if canonical.is_empty() {
         return Err("feed id is empty".to_string());
     }
-    if raw != canonical {
+    let has_non_canonical_chars = raw.chars().any(|ch| ch.is_whitespace() || ch.is_control());
+    if raw != canonical || has_non_canonical_chars {
         return Err(format!(
             "feed id must be canonical lowercase+trim: raw={}, canonical={}",
             raw, canonical
