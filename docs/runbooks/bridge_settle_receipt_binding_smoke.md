@@ -26,6 +26,8 @@
    - `finalize_settlement_rejects_non_success_tx_receipt`
    - `finalize_settlement_rejects_stale_config_version_after_governance_change`
      - 覆盖治理变更后 stale `config_version` 的 finalize fail-closed 路径，要求不写入 proof/nonce/finalize 审计副作用。
+   - `finalize_settlement_is_idempotent_by_settlement_id_even_with_new_nonce`
+     - 覆盖 finalize 终态语义：即使重放请求携带了新的 `nonce`，只要 `settlement_id` 相同，仍必须优先返回 `SettlementAlreadyFinalized`，避免 fresh nonce 绕过 terminal state。
    - `governance_write_with_stale_config_version_is_fail_closed_and_side_effect_free`
      - 覆盖治理写路径使用 stale `config_version` 时的 fail-closed 语义，要求 admin / config_version / audit_log 均保持不变。
 
