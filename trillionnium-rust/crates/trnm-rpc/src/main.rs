@@ -3321,8 +3321,14 @@ fn parse_query_capability_audit_subject_from_target<'a>(
         return Err("invalid query");
     }
 
-    parse_nonempty_path_suffix(path, "/query-capability-audit/")
-        .ok_or("missing token or subject")
+    match parse_nonempty_path_suffix(path, "/query-capability-audit/") {
+        Some(subject) => Ok(subject),
+        None if path == "/query-capability-audit" || path == "/query-capability-audit/" => {
+            Err("missing token or subject")
+        }
+        None if path.starts_with("/query-capability-audit/") => Err("invalid query"),
+        None => Err("missing token or subject"),
+    }
 }
 
 fn serve_health(host: &str, port: u16) -> Result<()> {
@@ -3447,7 +3453,9 @@ fn serve_health(host: &str, port: u16) -> Result<()> {
             }
 
             (Some((method, _)), Some(path), Some(target))
-                if path.starts_with("/query-capability-audit/") =>
+                if path == "/query-capability-audit"
+                    || path == "/query-capability-audit/"
+                    || path.starts_with("/query-capability-audit/") =>
             {
                 match parse_query_capability_audit_subject_from_target(target) {
                     Ok(subject_or_token) => {
@@ -5501,6 +5509,33 @@ mod tests {
         assert!(has_ambiguous_path_segment_encoding("alice%2Ejson"));
         assert!(has_ambiguous_path_segment_encoding("alice%2ejson"));
         assert!(!has_ambiguous_path_segment_encoding("did:trn:alice"));
+    }
+
+    #[test]
+    fn parse_query_capability_audit_subject_from_target_distinguishes_missing_from_malformed() {
+        assert_eq!(
+            parse_query_capability_audit_subject_from_target("/query-capability-audit")
+                .expect_err("bare capability route should report missing subject"),
+            "missing token or subject"
+        );
+        assert_eq!(
+            parse_query_capability_audit_subject_from_target("/query-capability-audit/")
+                .expect_err("trailing-slash-only capability route should report missing subject"),
+            "missing token or subject"
+        );
+
+        for target in [
+            "/query-capability-audit///",
+            "/query-capability-audit/alice//",
+            "/query-capability-audit/alice/extra",
+        ] {
+            assert_eq!(
+                parse_query_capability_audit_subject_from_target(target)
+                    .expect_err("malformed capability path must fail closed as invalid query"),
+                "invalid query",
+                "target={target}"
+            );
+        }
     }
 
     #[test]
