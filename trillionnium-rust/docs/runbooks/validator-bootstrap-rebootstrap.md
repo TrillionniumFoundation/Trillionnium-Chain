@@ -295,6 +295,41 @@ Fail closed on DR evidence too:
 - if the rebuild changed any config values intentionally, record that delta explicitly in the handoff note instead of implying a like-for-like recovery
 - if `config_bundle_sha256=` was not captured from the bundle that actually booted, treat the DR packet as incomplete
 
+## Step 6 — Validator replacement / rotation preflight minimum
+
+Use this when one validator is being replaced, the signing/ownership context is rotating, or the validator membership packet changes between rehearsals.
+This is still a manual fail-closed procedure, not replacement automation.
+
+Minimum packet delta before any replacement node starts:
+- `replacement_reason=` why the old validator/process is being replaced
+- `replaced_validator_name=` and `replaced_node_id=` for the validator leaving service
+- `replacement_validator_name=` and `replacement_node_id=` for the validator entering service
+- `old_config_path=` and `new_config_path=` naming the exact before/after config files under review
+- `validator_set_version_before=` and `validator_set_version_after=` so operators can tell whether this is a same-membership rebuild or an actual validator-set change
+- `genesis_artifact_sha256=` copied from the shared ceremony packet so the replacement cannot silently drift onto a different chain view
+- `operator_ack=` from both the outgoing owner (or incident commander if the old owner is unavailable) and the incoming owner, each naming the same `replacement_validator_name=` / `replacement_node_id=` pair
+- `cutover_owner=` naming who is authorized to declare the old validator stopped and the replacement allowed to start
+- `cutover_window_utc=` naming the intended UTC cutover window instead of relying on chat-relative timing
+
+Minimum command sequence:
+1. re-run the config bundle validation against the exact post-rotation config set
+2. verify the outgoing validator process is stopped or quarantined before starting the replacement
+3. run the smallest bootstrap sanity start for the replacement validator using the reviewed `new_config_path=`
+4. record the rollback command that restores the previous validator packet/worktree if the replacement is rejected
+
+Minimum evidence to keep with the packet:
+- `old_validator_stop_command=` and `old_validator_stop_result=`
+- `replacement_preflight_command=` and `replacement_preflight_result=`
+- `replacement_bootstrap_command=` and `replacement_bootstrap_result=`
+- `rollback_command=` pointing back to the last known-good validator packet/worktree
+- `captured_at_utc=` recorded after the replacement sanity check finishes
+
+Fail-closed rule:
+- if the outgoing validator might still be signing, do not start the replacement
+- if operators cannot name the before/after validator-set version labels, treat the rotation as evidence-incomplete
+- if the replacement packet changes both validator identity and genesis hash in the same step, stop and split the operation into separate reviewed changes
+- if the replacement bootstrap succeeds only with undocumented one-off flags or unstaged edits, reject the cutover as non-reproducible
+
 ## Rollback
 
 Before starting, the operator should already know which of these applies:
