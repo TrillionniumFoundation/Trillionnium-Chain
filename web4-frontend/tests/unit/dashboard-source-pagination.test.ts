@@ -852,4 +852,62 @@ describe("dashboard source normalized audit pagination", () => {
       category: "Incident",
     });
   });
+
+  it("falls back to actor-based ids when normalized-audit object ids are blank", async () => {
+    const mockClient = {
+      queryTask: vi
+        .fn()
+        .mockResolvedValue({
+          task: {
+            id: "349",
+            owner: "ops",
+            status: "running",
+            createdAt: "2026-03-01T00:00:00.000Z",
+            updatedAt: "2026-03-01T00:05:00.000Z",
+            metadata: {},
+          },
+        }),
+      queryEvents: vi.fn().mockResolvedValue({
+        taskId: "349",
+        events: [],
+      }),
+      queryCapabilityAudit: vi.fn().mockResolvedValue({
+        subject: "did:trnm:test",
+        audits: [
+          {
+            subject: "did:trnm:test",
+            capability: "AUDIT_READ",
+            granted: true,
+            checkedAt: "2026-03-01T00:00:00.000Z",
+          },
+        ],
+      }),
+      queryNormalizedAuditEvents: vi.fn().mockResolvedValue({
+        events: [
+          {
+            source: "bridge-relay",
+            event_type: "bridge_relay.proof_submitted",
+            actor: "validator-z",
+            object_id: "   ",
+            timestamp: "2026-03-01T00:02:00.000Z",
+            reason: "warn",
+          },
+        ],
+        hasMore: false,
+      }),
+    } as unknown as ReturnType<typeof apiContractClient.createFrontendApiClient>;
+
+    vi.spyOn(apiContractClient, "createFrontendApiClient").mockReturnValue(mockClient);
+
+    const snapshot = await fetchDashboardSnapshot();
+    const fallbackEvent = snapshot.events.find(
+      (event) => event.id === "bridge-relay:bridge_relay.proof_submitted:validator-z",
+    );
+
+    expect(fallbackEvent).toMatchObject({
+      summary: "bridge-relay · bridge_relay.proof_submitted",
+      severity: "Warning",
+      category: "Security",
+    });
+  });
 });
