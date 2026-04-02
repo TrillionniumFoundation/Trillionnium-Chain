@@ -306,6 +306,7 @@ report_path="$(printf '%s\n' "$recovery_stdout" | sed -n 's/^\[OK\] bft restart 
 
 Interpretation rule:
 - prefer the `report_path` emitted by the script you just ran over `ls -dt run/bft-restart-recovery-*.txt | head -n 1`; the latter can bind the handoff to the wrong artifact when multiple operators or retries produce nearby reports in the same worktree
+- when lane binding is expected, pass `--expected-worktree-root` and `--expected-branch-ref` together; the helper now rejects half-bound invocations so operators cannot accidentally treat a single self-supplied field as sufficient lane identity proof
 
 Recommended note-capture shape right after the helper succeeds:
 

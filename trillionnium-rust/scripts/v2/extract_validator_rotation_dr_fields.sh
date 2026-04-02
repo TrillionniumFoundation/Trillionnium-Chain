@@ -11,6 +11,8 @@ provided), then print the canonical fields required by the validator
 replacement/rotation/DR handoff. This helper fails closed on missing report
 paths, missing required keys, non-PASS recovery status, or lane/worktree
 identity drift when explicit expectations are provided.
+`--expected-worktree-root` and `--expected-branch-ref` must be provided
+as a pair when lane binding is expected.
 `--expected-branch-ref` accepts either a short branch name (for example
 `lane/foo`) or a full ref (for example `refs/heads/lane/foo`).
 EOF
@@ -125,6 +127,11 @@ while [ "$#" -gt 0 ]; do
 done
 
 if [ -n "$EXPECTED_WORKTREE_ROOT" ] || [ -n "$EXPECTED_BRANCH_REF" ]; then
+  if [ -z "$EXPECTED_WORKTREE_ROOT" ] || [ -z "$EXPECTED_BRANCH_REF" ]; then
+    printf 'lane binding requires both --expected-worktree-root and --expected-branch-ref together\n' >&2
+    usage
+    exit 2
+  fi
   require_worktree_root_value --expected-worktree-root "$EXPECTED_WORKTREE_ROOT"
   require_ref_token --expected-branch-ref "$EXPECTED_BRANCH_REF"
   EXPECTED_BRANCH_REF_CANONICAL="$(canonicalize_branch_ref "$EXPECTED_BRANCH_REF")"
