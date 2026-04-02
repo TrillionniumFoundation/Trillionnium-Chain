@@ -278,6 +278,24 @@ The current repository does not yet expose a full standalone verifier sidecar se
 
 These helpers are not the whole sidecar, but they already establish a fail-closed floor for the checkpoint/WAL tuple that any future sidecar contract must preserve.
 
+### Current regression anchors for release review
+
+Reviewers should not treat the helper names above as prose-only claims. The current repository already carries concrete regression anchors that exercise the fail-closed surface from both the helper layer and the checkpoint-recovery path:
+
+- `trillionnium-rust/crates/trnm-state/src/lib.rs`
+  - `checkpoint_da_light_verifier_summary_is_canonical_and_includes_wal_linkage`
+  - `checkpoint_da_light_verifier_summary_fails_closed_on_uncommitted_wal`
+- `trillionnium-rust/crates/trnm-state/tests/state_root_regression.rs`
+  - `checkpoint_evidence_surface_requires_canonical_state_root_and_hash_hex`
+  - `checkpoint_da_light_verifier_summary_fails_closed_on_uncommitted_wal_surface`
+  - `node_recovery_checkpoint_rejects_non_genesis_prev_hash_with_carriage_return_control_drift`
+
+Together these anchors give release review one concrete trail for verifying that:
+
+1. canonical checkpoint/WAL tuples emit a stable DA/light-verifier summary;
+2. speculative or malformed WAL evidence is rejected before it can be presented as audit-ready; and
+3. predecessor-link drift is treated as a fail-closed trust problem rather than a transport/retry problem.
+
 ### What the current helper surface already proves
 
 For canonical checkpoint/WAL evidence, `checkpoint_da_light_verifier_summary(...)` currently emits operator-reviewable fields covering at least:
