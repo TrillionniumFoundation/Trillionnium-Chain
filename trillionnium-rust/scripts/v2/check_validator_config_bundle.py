@@ -16,6 +16,7 @@ bootstrap/handoff use:
 from __future__ import annotations
 
 import argparse
+import hashlib
 import re
 import sys
 from pathlib import Path
@@ -331,6 +332,19 @@ def validate_ceremony_packet_metadata(args: argparse.Namespace) -> None:
     validate_packet_path(args.packet_distribution_path, "packet_distribution_path")
 
 
+def build_validator_entry_hash(entry: dict[str, str], config_path: str) -> str:
+    descriptor = "\n".join(
+        (
+            f"validator_name={entry['node_id']}",
+            f"node_id={entry['node_id']}",
+            f"config_path={config_path}",
+            f"p2p_addr={entry['p2p_addr']}",
+            f"rpc_addr={entry['rpc_addr']}",
+        )
+    )
+    return hashlib.sha256(descriptor.encode("utf-8")).hexdigest()
+
+
 def emit_ceremony_packet(args: argparse.Namespace, entries: list[dict[str, str]]) -> None:
     print("ceremony_id=" + args.ceremony_id)
     print("ceremony_scope=" + args.ceremony_scope)
@@ -371,7 +385,10 @@ def emit_ceremony_packet(args: argparse.Namespace, entries: list[dict[str, str]]
             f"p2p_addr={entry['p2p_addr']};"
             f"rpc_addr={entry['rpc_addr']}"
         )
-        print("validator_entry_hash=<optional-descriptor-hash>")
+        print(
+            "validator_entry_hash="
+            + build_validator_entry_hash(entry, config_path)
+        )
         print(f"operator_contact={validator_name}=<chat/email/oncall>")
         print(
             "operator_ack="
