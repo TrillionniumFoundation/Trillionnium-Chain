@@ -152,12 +152,13 @@ Even if all code-adjacent P0 items improve, TRNM still cannot claim public-mainn
 - artifact identities consistent across preflight / summary / manifest, with lane binding proven from the ticket-assigned worktree/branch rather than inferred from the shell
 - the packet preserves `generated_at=` and `git_status_summary=clean` next to `git_worktree_path=`, `git_worktree_branch_ref=`, `git_expected_worktree_branch_ref=`, and `git_worktree_branch_ref_match=true`, so reviewers can prove both timing and clean-tree identity from artifacts instead of scrollback memory
 - `truth_source=`, `historical_evidence_only=`, and `evidence_scope=` remain adjacent to the quoted PASS/GO language, and `rollback_command=` / `replay_command=` are preserved verbatim from generated artifacts
+- the `extract_release_handoff_fields.sh` output is itself preserved as a path-resolved helper transcript (for example via `tee`), so reviewers can quote `summary_generated_at=`, `manifest_generated_at=`, and the preserved rollback/replay lines from a saved artifact instead of terminal memory
 - signed operator decision packet
 
 **Next actions**
 1. define rehearsal scope against current `origin/main`
 2. bind the run to the ticket-assigned worktree/branch with `./scripts/v2/verify_lane_worktree.sh --expected-worktree-root ... --expected-branch-ref ...` before any release/evidence script runs
-3. run full rehearsal with a path-resolved evidence bundle, then extract/compare the packet via `./scripts/v2/extract_release_handoff_fields.sh` so `generated_at=`, `git_status_summary=`, `git_worktree_path=`, `git_worktree_branch_ref=`, `git_expected_worktree_branch_ref=`, `git_worktree_branch_ref_match=`, `rollback_command=`, and `replay_command=` are quoted from artifacts instead of terminal memory
+3. run full rehearsal with a path-resolved evidence bundle, then extract/compare the packet via `./scripts/v2/extract_release_handoff_fields.sh`, saving the helper output to a path-resolved transcript so `generated_at=`, `git_status_summary=`, `git_worktree_path=`, `git_worktree_branch_ref=`, `git_expected_worktree_branch_ref=`, `git_worktree_branch_ref_match=`, `rollback_command=`, and `replay_command=` are quoted from artifacts instead of terminal memory
 4. produce formal GO/NOGO memo
 
 ---
