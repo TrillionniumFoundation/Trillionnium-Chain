@@ -1957,7 +1957,9 @@ where
             );
         }
         if is_terminal_tx_status(&resp.status) {
-            return Ok(resp);
+            let mut canonical = resp;
+            canonical.tx_hash = requested.clone();
+            return Ok(canonical);
         }
 
         let elapsed = started.elapsed();
@@ -3972,6 +3974,25 @@ mod tests {
         )
         .unwrap();
         assert_eq!(result.status, "committed");
+    }
+
+    #[test]
+    fn wait_for_tx_returns_requested_canonical_hash_for_terminal_alias_response() {
+        let result = wait_for_tx(
+            "0xbbbccc",
+            Duration::from_millis(10),
+            Duration::from_millis(1),
+            |_| {
+                Ok(TxQueryResponse {
+                    tx_hash: "0XBBBCCC".to_string(),
+                    status: "confirmed".to_string(),
+                    error: None,
+                })
+            },
+        )
+        .unwrap();
+        assert_eq!(result.tx_hash, "0xbbbccc");
+        assert_eq!(result.status, "confirmed");
     }
 
     #[test]
