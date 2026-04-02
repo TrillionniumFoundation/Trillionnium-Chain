@@ -958,6 +958,56 @@ mod tests {
     }
 
     #[test]
+    fn duplicate_finalize_with_stale_config_version_after_governance_change_still_stops_at_terminal_state() {
+        let mut relay = BridgeRelay::with_admin(2, vec![validator_pub(7)], b32(9));
+        relay
+            .set_validators(&b32(9), vec![validator_pub(7), validator_pub(8)])
+            .unwrap();
+        relay
+            .set_min_validator_signatures(&b32(9), 2)
+            .unwrap();
+
+        let mut msg = sample_msg();
+        msg.config_version = relay.config_version();
+
+        relay
+            .finalize_settlement(
+                &msg,
+                &[sig_for(&msg, 7), sig_for(&msg, 8)],
+                1_000,
+                999,
+                31337,
+                addr(9),
+            )
+            .unwrap();
+
+        relay.set_admin(&b32(9), b32(10)).unwrap();
+
+        let audit_len_before = relay.audit_log().len();
+        let err = relay
+            .finalize_settlement(
+                &msg,
+                &[sig_for(&msg, 7), sig_for(&msg, 8)],
+                1_000,
+                999,
+                31337,
+                addr(9),
+            )
+            .unwrap_err();
+
+        assert!(matches!(
+            err,
+            BridgeRelayError::SettlementAlreadyFinalized { settlement_id: id }
+                if id == settlement_id(&msg)
+        ));
+        assert_eq!(
+            relay.audit_log().len(),
+            audit_len_before,
+            "terminal duplicate finalize must win over stale config version after governance change"
+        );
+    }
+
+    #[test]
     fn fail_closed_on_chain_domain_mismatch() {
         let mut relay = relay(1, &[7]);
         let mut msg = sample_msg();
