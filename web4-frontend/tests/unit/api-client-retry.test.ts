@@ -83,6 +83,32 @@ describe("api-contract client and retry hardening", () => {
     expect(String(calledUrl)).toContain("cursor=cursor-1");
   });
 
+  it("trims normalized audit query params and drops blank values", async () => {
+    const fetchImpl = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({ events: [] }),
+    });
+
+    const client = createFrontendApiClient({
+      baseUrl: "http://127.0.0.1:8080",
+      fetchImpl: fetchImpl as unknown as typeof fetch,
+    });
+
+    await client.queryNormalizedAuditEvents({
+      source: "  governance-guard  ",
+      eventType: "   ",
+      limit: 5,
+      cursor: "  cursor-2  ",
+    });
+
+    const calledUrl = String((fetchImpl.mock.calls[0] ?? [])[0]);
+    expect(calledUrl).toContain("source=governance-guard");
+    expect(calledUrl).toContain("cursor=cursor-2");
+    expect(calledUrl).toContain("limit=5");
+    expect(calledUrl).not.toContain("eventType=");
+    expect(calledUrl).not.toContain("%20%20");
+  });
+
   it("uses normalized audit endpoint", async () => {
     const fetchImpl = vi.fn().mockResolvedValue({
       ok: true,
