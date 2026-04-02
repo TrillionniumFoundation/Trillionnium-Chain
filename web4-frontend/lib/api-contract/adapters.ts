@@ -163,6 +163,12 @@ function toHeightMarker(height: unknown): string {
   return `height:${Math.trunc(Number(num))}`;
 }
 
+function toOptionalHeightMarker(height: unknown): string | undefined {
+  if (height == null) return undefined;
+  if (typeof height === "string" && height.trim().length === 0) return undefined;
+  return toHeightMarker(height);
+}
+
 export const adaptQueryTask = (payload: unknown): QueryTaskResult => {
   const canonical = queryTaskResponseSchema.safeParse(payload);
   if (canonical.success) return canonical.data;
@@ -362,7 +368,7 @@ export const adaptQueryCapabilityAudit = (
   if (!rpc.success) throw normalizeSchemaError(rpc.error.flatten());
 
   try {
-    const tokenRevokedAt = rpc.data.token.revoked_at;
+    const tokenRevokedAt = toOptionalHeightMarker(rpc.data.token.revoked_at);
     const tokenIsRevoked = tokenRevokedAt != null;
 
     return {
@@ -373,7 +379,7 @@ export const adaptQueryCapabilityAudit = (
         const actionTouchesCapability = actionGrantsCapability || entry.action === "CAPABILITY_REVOKED";
 
         const revocationMarker = tokenIsRevoked
-          ? `TOKEN_REVOKED@${toHeightMarker(tokenRevokedAt)}`
+          ? `TOKEN_REVOKED@${tokenRevokedAt}`
           : undefined;
 
         return {
