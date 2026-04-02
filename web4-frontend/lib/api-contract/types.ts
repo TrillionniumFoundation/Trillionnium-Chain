@@ -69,10 +69,9 @@ export type QueryNormalizedAuditEventsResult = {
   total?: number;
 };
 
-export type NormalizedAuditEventsQuery = {
+export type NormalizedAuditEventsQuery = Readonly<{
   source?: string;
   eventType?: string;
   limit?: number;
   cursor?: string;
-};
-
+}>;

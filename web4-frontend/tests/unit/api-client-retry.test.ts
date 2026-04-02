@@ -83,6 +83,30 @@ describe("api-contract client and retry hardening", () => {
     expect(String(calledUrl)).toContain("cursor=cursor-1");
   });
 
+  it("fails closed on malformed normalized audit query params", async () => {
+    const fetchImpl = vi.fn();
+
+    const client = createFrontendApiClient({
+      baseUrl: "http://127.0.0.1:8080",
+      fetchImpl: fetchImpl as unknown as typeof fetch,
+    });
+
+    try {
+      client.queryNormalizedAuditEvents({
+        source: "   ",
+        limit: 0,
+      });
+      throw new Error("expected invalid query to throw");
+    } catch (error) {
+      expect(error).toBeInstanceOf(FrontendApiError);
+      expect(error).toMatchObject({
+        code: "INVALID_PAYLOAD",
+      });
+    }
+
+    expect(fetchImpl).not.toHaveBeenCalled();
+  });
+
   it("uses normalized audit endpoint", async () => {
     const fetchImpl = vi.fn().mockResolvedValue({
       ok: true,
