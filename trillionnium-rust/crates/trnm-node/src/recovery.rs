@@ -301,7 +301,10 @@ pub(crate) fn ensure_recoverable_wal_state(
 
 #[cfg(test)]
 mod tests {
-    use super::{metadata_only_recovery_error, recovery_startup_summary, retained_wal_summary};
+    use super::{
+        ensure_recoverable_wal_state, metadata_only_recovery_error, recovery_startup_summary,
+        retained_wal_summary,
+    };
     use crate::types::RecoveredWalState;
     use std::path::Path;
 
@@ -532,5 +535,19 @@ mod tests {
         assert!(error.contains("checkpoint_height_retained=8"));
         assert!(error.contains("checkpoint_tip_relation=checkpoint_only:8"));
         assert!(error.contains("next_startup_height=9"));
+    }
+
+    #[test]
+    fn ensure_recoverable_wal_state_reports_plural_checkpoint_lag_for_metadata_only_recovery() {
+        let recovered = recovered_state(2, 8, Some(5), true, true);
+        let err = ensure_recoverable_wal_state(Path::new("/tmp/trnm-wal"), &recovered)
+            .unwrap_err()
+            .to_string();
+
+        assert!(err.contains("refusing metadata-only recovery"));
+        assert!(err.contains("retained 2 committed WAL entries through height 7"));
+        assert!(err.contains("checkpoint lags retained WAL tip by 2 blocks"));
+        assert!(err.contains("last retained checkpoint: 5"));
+        assert!(err.contains("next startup height: 8"));
     }
 }
