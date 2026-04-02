@@ -255,10 +255,19 @@ When handing off to another validator/operator, prefer copying fields from the a
 Preferred helper (fail-closed on missing paths, cross-artifact identity mismatches, or drift from the lane/ticket-assigned worktree/ref when you provide them; by default it resolves the most recently modified artifacts under the `trillionnium-rust` root derived from the helper script path, matching the `ls -dt ... | head -n 1` path-resolution discipline shown elsewhere in this runbook; `--expected-branch-ref` accepts either a short branch name like `lane/foo` or a full ref like `refs/heads/lane/foo`):
 
 ```bash
+handoff_helper_output_path="run/preflight/handoff-fields-$(date -u +%Y%m%dT%H%M%SZ).txt"
+mkdir -p "$(dirname "$handoff_helper_output_path")"
 ./scripts/v2/extract_release_handoff_fields.sh \
   --expected-worktree-root "/abs/path/from-ticket" \
-  --expected-branch-ref "refs/heads/lane/assigned-branch"
+  --expected-branch-ref "refs/heads/lane/assigned-branch" \
+  | tee "$handoff_helper_output_path"
+printf 'handoff_helper_output_path=%s\n' "$handoff_helper_output_path"
 ```
+
+Operator rule:
+- treat `handoff_helper_output_path=` as a first-class artifact, not throwaway terminal scrollback
+- quote `summary_generated_at=`, `manifest_generated_at=`, `git_status_summary=`, `git_worktree_path=`, `git_worktree_branch_ref=`, `git_expected_worktree_branch_ref=`, `git_worktree_branch_ref_match=`, `rollback_command=`, and `replay_command=` from that saved transcript or the underlying artifacts, not from memory
+- if the helper output was not saved anywhere path-resolved, the handoff remains evidence-incomplete even if the terminal showed the expected lines once
 
 If you need the raw shell extraction for an air-gapped/debugging context, the equivalent block is:
 
