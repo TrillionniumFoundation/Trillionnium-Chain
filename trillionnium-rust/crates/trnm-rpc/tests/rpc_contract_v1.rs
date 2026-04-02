@@ -689,4 +689,48 @@ fn contract_public_read_payloads_reject_unknown_top_level_fields() {
     }))
     .expect_err("oracle validation contract should fail closed on unknown fields");
     assert!(oracle_err.to_string().contains("unexpected"));
+
+    let oracle_observation_err = serde_json::from_value::<OracleValidateSnapshotResponse>(json!({
+        "ok": true,
+        "now_ts_ms": 1710000000123u64,
+        "observation": {
+            "stale_reject_total": 0,
+            "quorum_reject_total": 0,
+            "drift_reject_total": 0,
+            "accepted_total": 1,
+            "unexpected": 7
+        },
+        "metrics": {
+            "oracle_stale_reject_total": 0,
+            "oracle_quorum_reject_total": 0,
+            "oracle_drift_reject_total": 0,
+            "oracle_source_cardinality": 1,
+            "accepted_total": 1,
+            "sample_count": 1
+        }
+    }))
+    .expect_err("oracle observation contract should fail closed on unknown fields");
+    assert!(oracle_observation_err.to_string().contains("unexpected"));
+
+    let oracle_metrics_err = serde_json::from_value::<OracleValidateSnapshotResponse>(json!({
+        "ok": true,
+        "now_ts_ms": 1710000000123u64,
+        "observation": {
+            "stale_reject_total": 0,
+            "quorum_reject_total": 0,
+            "drift_reject_total": 0,
+            "accepted_total": 1
+        },
+        "metrics": {
+            "oracle_stale_reject_total": 0,
+            "oracle_quorum_reject_total": 0,
+            "oracle_drift_reject_total": 0,
+            "oracle_source_cardinality": 1,
+            "accepted_total": 1,
+            "sample_count": 1,
+            "unexpected": false
+        }
+    }))
+    .expect_err("oracle metrics contract should fail closed on unknown fields");
+    assert!(oracle_metrics_err.to_string().contains("unexpected"));
 }
