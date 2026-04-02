@@ -1887,6 +1887,21 @@ fn ensure_relative_config_path_stays_within_allowed_roots(
     Ok(())
 }
 
+fn contains_invisible_or_bidi_format_chars(value: &str) -> bool {
+    value.chars().any(|ch| {
+        matches!(
+            ch,
+            '\u{200B}'
+                | '\u{200C}'
+                | '\u{200D}'
+                | '\u{2060}'
+                | '\u{FEFF}'
+                | '\u{202A}'..='\u{202E}'
+                | '\u{2066}'..='\u{2069}'
+        )
+    })
+}
+
 fn validate_config_path_input(path: &str) -> Result<()> {
     anyhow::ensure!(!path.trim().is_empty(), "read config failed: path must not be empty");
     anyhow::ensure!(
@@ -1896,6 +1911,10 @@ fn validate_config_path_input(path: &str) -> Result<()> {
     anyhow::ensure!(
         !path.chars().any(char::is_control),
         "read config failed: path must not contain control characters"
+    );
+    anyhow::ensure!(
+        !contains_invisible_or_bidi_format_chars(path),
+        "read config failed: path must not contain invisible or bidirectional format characters"
     );
     anyhow::ensure!(
         !path.contains(',') && !path.contains(';') && !path.contains('|'),
@@ -1909,6 +1928,10 @@ fn validate_config_path_input(path: &str) -> Result<()> {
         !Path::new(path)
             .components()
             .any(|component| matches!(component, std::path::Component::ParentDir)),
+        "read config failed: path must not contain parent traversal (..)"
+    );
+    anyhow::ensure!(
+        !path.split(['/', '\\']).any(|segment| segment == ".."),
         "read config failed: path must not contain parent traversal (..)"
     );
 
@@ -4217,8 +4240,30 @@ mod tests {
     }
 
     #[test]
+    fn load_config_rejects_invisible_or_bidi_format_characters_in_path_fail_closed() {
+        for path in [
+            "configs/node1.toml\u{200B}",
+            "configs/node1.toml\u{202E}",
+            "configs/node1.toml\u{2066}",
+        ] {
+            let err = load_config(path)
+                .expect_err("config path invisible/bidi format characters must fail closed");
+            assert!(
+                err.to_string()
+                    .contains("path must not contain invisible or bidirectional format characters"),
+                "unexpected error for {path:?}: {err:#}"
+            );
+        }
+    }
+
+    #[test]
     fn load_config_rejects_parent_traversal_in_path_fail_closed() {
-        for path in ["../configs/node1.toml", "configs/../node1.toml"] {
+        for path in [
+            "../configs/node1.toml",
+            "configs/../node1.toml",
+            r"..\configs\node1.toml",
+            r"configs\..\node1.toml",
+        ] {
             let err = load_config(path).expect_err("config path parent traversal must fail closed");
             assert!(
                 err.to_string()
