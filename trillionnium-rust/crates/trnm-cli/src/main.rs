@@ -1097,7 +1097,9 @@ fn is_unsafe_sign_message_char(c: char) -> bool {
     c.is_control()
         || matches!(
             c,
-            '\u{061c}'
+            '\u{00ad}'
+                | '\u{061c}'
+                | '\u{180e}'
                 | '\u{200b}'
                 | '\u{200c}'
                 | '\u{200d}'
@@ -3827,6 +3829,26 @@ mod tests {
     #[test]
     fn ensure_safe_sign_message_rejects_arabic_letter_mark_text() {
         let err = ensure_safe_sign_message("rotate signer \u{061c}tx=approved").unwrap_err();
+        assert!(
+            err.to_string()
+                .contains("contains control or bidi override characters"),
+            "unexpected: {err}"
+        );
+    }
+
+    #[test]
+    fn ensure_safe_sign_message_rejects_soft_hyphen_text() {
+        let err = ensure_safe_sign_message("rotate signer\u{00ad}slot-b").unwrap_err();
+        assert!(
+            err.to_string()
+                .contains("contains control or bidi override characters"),
+            "unexpected: {err}"
+        );
+    }
+
+    #[test]
+    fn ensure_safe_sign_message_rejects_mongolian_vowel_separator_text() {
+        let err = ensure_safe_sign_message("rotate signer\u{180e}slot-b").unwrap_err();
         assert!(
             err.to_string()
                 .contains("contains control or bidi override characters"),
