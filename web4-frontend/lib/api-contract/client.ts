@@ -95,7 +95,30 @@ const isTimeoutLikeError = (err: unknown): boolean => {
   if (!(err && typeof err === "object")) return false;
 
   const name = "name" in err ? err.name : undefined;
-  return name === "TimeoutError";
+  const code = "code" in err ? err.code : undefined;
+  const cause = "cause" in err ? err.cause : undefined;
+
+  if (name === "TimeoutError") return true;
+  if (
+    code === "UND_ERR_CONNECT_TIMEOUT" ||
+    code === "UND_ERR_HEADERS_TIMEOUT" ||
+    code === "UND_ERR_BODY_TIMEOUT"
+  ) {
+    return true;
+  }
+
+  if (cause && typeof cause === "object") {
+    const causeName = "name" in cause ? cause.name : undefined;
+    const causeCode = "code" in cause ? cause.code : undefined;
+    return (
+      causeName === "TimeoutError" ||
+      causeCode === "UND_ERR_CONNECT_TIMEOUT" ||
+      causeCode === "UND_ERR_HEADERS_TIMEOUT" ||
+      causeCode === "UND_ERR_BODY_TIMEOUT"
+    );
+  }
+
+  return false;
 };
 
 export function createFrontendApiClient(config: BaseClientConfig) {
