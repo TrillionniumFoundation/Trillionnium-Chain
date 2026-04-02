@@ -620,6 +620,16 @@ mod tests {
             parse_path_u64_suffix("/query-events/7%5Chistory", "/query-events/"),
             None
         );
+        assert_eq!(parse_path_u64_suffix("/query-events/.", "/query-events/"), None);
+        assert_eq!(parse_path_u64_suffix("/query-events/..", "/query-events/"), None);
+        assert_eq!(parse_path_u64_suffix("/query-events/%2E", "/query-events/"), None);
+        assert_eq!(parse_path_u64_suffix("/query-events/.%2e", "/query-events/"), None);
+        assert_eq!(parse_path_u64_suffix("/query-events/%2E.", "/query-events/"), None);
+        assert_eq!(parse_path_u64_suffix("/query-events/%2e%2E", "/query-events/"), None);
+        assert_eq!(parse_path_u64_suffix("/query-events/7%0A", "/query-events/"), None);
+        assert_eq!(parse_path_u64_suffix("/query-events/7%0d", "/query-events/"), None);
+        assert_eq!(parse_path_u64_suffix("/query-events/7%09", "/query-events/"), None);
+        assert_eq!(parse_path_u64_suffix("/query-events/7%20", "/query-events/"), None);
     }
 
     #[test]
