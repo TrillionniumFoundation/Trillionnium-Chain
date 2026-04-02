@@ -29,7 +29,7 @@ cp .env.example .env.local
 - `NEXT_PUBLIC_DASHBOARD_NORMALIZED_AUDIT_EVENT_LIMIT`
 - `NEXT_PUBLIC_DASHBOARD_NORMALIZED_AUDIT_MAX_PAGES`
 
-未设置时使用内置默认值（参考 `web4-frontend/docs/api-contract.md`）。
+未设置时使用内置默认值（参考 `docs/api-contract.md`）。
 
 ## 常用命令（统一）
 
