@@ -336,11 +336,12 @@ sed -n '/## Minimal parameter sheet to freeze/,/## Evidence expected at freeze t
 ```
 
 Expected review fields visible in the output:
-- ingress classes (`public_free_ingress_classes`, `public_fee_like_classes`)
+- ingress classes (`public_free_ingress_classes`, `public_fee_like_classes`, `sponsor_only_classes`)
 - sponsor authority/budget (`sponsor_allowed_callers`, `sponsor_allowed_classes`, `sponsor_epoch_budget`, `sponsor_epoch_refill_rule`)
 - sponsor revocation semantics (`sponsor_revocation_path`, `sponsor_revocation_queue_disposition`, `sponsor_revocation_duplicate_retention`)
 - retention window/payer (`retention_window_blocks`, `retention_payer_rule`, `retention_budget_exhaustion_fallback`, `retention_expiry_disposition`)
-- anti-spam floor + override path (`anti_spam_floor`, `override_authority`, `override_timelock_or_bypass`)
+- anti-spam floor + backpressure action (`anti_spam_floor`, `anti_spam_backpressure_action`)
+- override path (`override_authority`, `override_timelock_or_bypass`)
 
 ### Inspect the currently documented behavioral evidence
 
@@ -362,7 +363,7 @@ To keep this blocker reviewable, attach one concrete answer for each item below:
    - owner of record for edits before launch
 2. **Operator inspection path**
    - exact command or runbook operators use to print the current tuple
-- expected output fields: ingress classes, sponsor authority/budget/classes, sponsor revocation duplicate-retention rule, retention window/payer, retention expiry disposition, anti-spam floor, anti-spam backpressure action, override authority
+   - expected output fields: ingress classes, sponsor-only classes, sponsor authority/budget/classes, sponsor revocation duplicate-retention rule, retention window/payer, retention expiry disposition, anti-spam floor, anti-spam backpressure action, override authority
 3. **Behavioral evidence**
    - at least one mempool gate for ingress/sponsor boundaries
    - at least one state gate for retention canonicalization
