@@ -248,11 +248,13 @@ If richer structured logging lands later, prefer adding fields rather than renam
 When `trnm-worker-agent` finishes an assigned-run batch, the current operator-visible summary line is:
 
 - `[agent] run-assigned processed=<n> skipped=<reason=count|none> ingress=<path> submit_log=<path> adapter=<name> adapter_retries=<n> adapter_backoff_ms=<n> adapter_timeout_ms=<n>`
+  - if `skipped` is not `none`, preserve the current lexicographically ordered comma-separated `reason=count` encoding rather than reordering pairs by count or recency.
 
 Operational meaning:
 
 - `processed=<n>` is the number of requests advanced to the commit-queued path in this batch.
 - `skipped=<reason=count|none>` is the compact skip-reason summary; preserve the `none` sentinel for zero-skip runs.
+  When multiple skip reasons exist, keep the comma-separated `reason=count` pairs lexicographically ordered by reason so batch handoff notes remain grep-stable across reruns.
 - `ingress=<path>` points to the ingress record file that was read and rewritten.
 - `submit_log=<path>` points to the persisted submit log coupled to the batch.
 - `adapter=<name>` plus the retry/backoff/timeout fields preserve the exact LLM-adapter policy context used during the run.
