@@ -250,7 +250,7 @@ cd trillionnium-rust
 ```
 
 The down script attempts graceful termination first, then forces termination if the process does not exit within 5 seconds.
-It also re-emits the same operator-facing contract fields as the up/status scripts so handoff/debug notes can still quote the canonical paths even when the service is already stopped. The shutdown path now also emits the terminal state markers that automation can key on without having to call `status` again:
+It also re-emits the same operator-facing contract fields as the up/status scripts, including the Day-1 read-contract markers, so handoff/debug notes can still quote the canonical paths and read-only boundary even when the service is already stopped. The shutdown path now also emits the terminal state markers that automation can key on without having to call `status` again:
 
 - `state=down`
 - `health=unknown`
@@ -274,6 +274,13 @@ It also re-emits the same operator-facing contract fields as the up/status scrip
 - `rpc_base_url=http://...`
 - `service_mode=operator-facing-static-scaffold`
 - `production_ready=false`
+- `read_contract_mode=read-only`
+- `read_contract_source=rpc-read-surface`
+- `day1_surface=query-task/<task_id>,query-events/<task_id>?limit=<n>,query-capability-audit/<subject-or-token>,query-normalized-audit-events/<task_id>?limit=<n>`
+- `query_events_default_limit=100`
+- `query_events_max_limit=500`
+- `write_paths_exposed=false`
+- `historical_query_scope=rpc-retention-bounded`
 
 Likewise, `explorer_service_up.sh` now emits the same `service_mode` / `production_ready` markers plus `public_base_url=...`, `rpc_base_url=...`, and `local_health_url=...` on success, "already running", and fail-fast exits, so operator notes can quote one consistent contract without having to run `status` first. Its startup gate intentionally probes the local bind target rather than `EXPLORER_PUBLIC_BASE_URL`, so a reverse-proxy-facing public URL can still differ from the local loopback/host bind without breaking the operator bring-up check.
 
