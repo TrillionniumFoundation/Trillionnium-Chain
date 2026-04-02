@@ -41,7 +41,11 @@ export function ChainStatusCard({ status }: { status: ChainStatus }) {
         </span>
       </div>
       {isSnapshotUnavailable && (
-        <p className="mt-3 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800">
+        <p
+          role="alert"
+          aria-live="assertive"
+          className="mt-3 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800"
+        >
           Readonly chain snapshot is unavailable. Verify the adapter payload before trusting this card.
         </p>
       )}
