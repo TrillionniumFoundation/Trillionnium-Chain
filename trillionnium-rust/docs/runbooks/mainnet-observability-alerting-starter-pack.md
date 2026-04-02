@@ -354,9 +354,9 @@ Annotation rules:
 
 Example annotation lines:
 
-- `plane=observability service=rpc severity=sev1 signal=rpc-unhealthy needs_replay=yes needs_rollback=no first_stop="RPC health / read surface" truth_source=local-release-evidence-v1 evidence_scope=release-handoff summary_path=/abs/run/health/evidence-20260331/summary.txt manifest_path=/abs/release/rc-20260331/manifest.txt replay=present rollback=missing`
+- `plane=observability service=rpc severity=sev1 signal=rpc-unhealthy verdict=n/a needs_replay=yes needs_rollback=no first_stop="RPC health / read surface" truth_source=local-release-evidence-v1 evidence_scope=release-handoff summary_path=/abs/run/health/evidence-20260331/summary.txt manifest_path=/abs/release/rc-20260331/manifest.txt replay=present rollback=missing`
 - `plane=observability service=oracle severity=sev1 signal=oracle-anomaly verdict=quorum-collapse needs_replay=yes needs_rollback=no first_stop="Oracle-specific drill-down" truth_source=local-release-evidence-v1 evidence_scope=release-handoff summary_path=/abs/run/health/evidence-20260331/summary.txt manifest_path=/abs/release/rc-20260331/manifest.txt replay=present rollback=missing`
-- `plane=observability service=bridge severity=sev1 signal=bridge-anomaly needs_replay=yes needs_rollback=yes first_stop="Bridge relay / settlement integrity" truth_source=local-release-evidence-v1 evidence_scope=release-handoff summary_path=/abs/run/health/evidence-20260331/summary.txt manifest_path=/abs/release/rc-20260331/manifest.txt replay=present rollback=present`
+- `plane=observability service=bridge severity=sev1 signal=bridge-anomaly verdict=n/a needs_replay=yes needs_rollback=yes first_stop="Bridge relay / settlement integrity" truth_source=local-release-evidence-v1 evidence_scope=release-handoff summary_path=/abs/run/health/evidence-20260331/summary.txt manifest_path=/abs/release/rc-20260331/manifest.txt replay=present rollback=present`
 
 ---
 
