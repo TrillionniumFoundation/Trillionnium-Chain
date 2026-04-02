@@ -12,9 +12,11 @@ it refuses to guess missing paths or silently continue when identity fields
 mismatch across artifacts. When lane-binding expectations are supplied, it also
 prints verified_worktree=, verified_branch_ref=, and verified_head= from
 verify_lane_worktree.sh so the ticket/handoff note can preserve the pre-run
-identity anchor verbatim. The helper always emits preflight_summary_path= and
-uses <missing> when no retained preflight summary can be resolved, instead of
-silently omitting that retention signal.
+identity anchor verbatim, and it requires the artifact `git_head=` to match
+that verified pre-run HEAD even when `--expected-head` was omitted. The helper
+always emits preflight_summary_path= and uses <missing> when no retained
+preflight summary can be resolved, instead of silently omitting that retention
+signal.
 EOF
 }
 
@@ -242,6 +244,11 @@ if [ -n "$EXPECTED_HEAD" ]; then
     printf 'artifact mismatch for expected head: expected=%s summary=%s\n' "$EXPECTED_HEAD" "$summary_head" >&2
     exit 1
   fi
+fi
+
+if [ -n "$VERIFIED_HEAD" ] && [ "$summary_head" != "$VERIFIED_HEAD" ]; then
+  printf 'artifact mismatch for verified head: verified=%s summary=%s\n' "$VERIFIED_HEAD" "$summary_head" >&2
+  exit 1
 fi
 
 if [ -n "$VERIFIED_WORKTREE" ]; then
