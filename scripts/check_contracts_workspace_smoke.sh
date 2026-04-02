@@ -20,6 +20,8 @@ fi
 mkdir -p "$ROOT/run/health"
 TS="$(date +%Y%m%d-%H%M%S)"
 OUT="$ROOT/run/health/contracts-workspace-smoke-${TS}.log"
+CARGO_TARGET_DIR="${CARGO_TARGET_DIR:-$ROOT/target/contracts-rust-workspace-smoke}"
+mkdir -p "$CARGO_TARGET_DIR"
 
 run_step() {
   local description="$1"
@@ -35,12 +37,13 @@ run_step() {
 }
 
 run_step "contracts-rust workspace manifest resolves" \
-  "$CARGO_BIN" metadata --manifest-path "$MANIFEST" --locked --no-deps --format-version 1
+  env CARGO_TARGET_DIR="$CARGO_TARGET_DIR" "$CARGO_BIN" metadata --manifest-path "$MANIFEST" --locked --no-deps --format-version 1
 
 run_step "contracts-rust workspace check" \
-  "$CARGO_BIN" check --manifest-path "$MANIFEST" --locked -q
+  env CARGO_TARGET_DIR="$CARGO_TARGET_DIR" "$CARGO_BIN" check --manifest-path "$MANIFEST" --locked -q
 
 run_step "contracts-rust workspace tests" \
-  "$CARGO_BIN" test --manifest-path "$MANIFEST" --locked -q
+  env CARGO_TARGET_DIR="$CARGO_TARGET_DIR" "$CARGO_BIN" test --manifest-path "$MANIFEST" --locked -q
 
-printf '\n[OK] contracts workspace smoke passed: %s\n' "$OUT" | tee -a "$OUT"
+printf '\n[INFO] cargo target dir: %s\n' "$CARGO_TARGET_DIR" | tee -a "$OUT"
+printf '[OK] contracts workspace smoke passed: %s\n' "$OUT" | tee -a "$OUT"
