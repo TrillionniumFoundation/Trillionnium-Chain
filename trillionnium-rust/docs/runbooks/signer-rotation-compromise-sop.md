@@ -148,6 +148,10 @@ REQUESTED_TX_HASH="0x...captured-from-submit-path..."
 ./target/debug/trnm-cli tx wait "$REQUESTED_TX_HASH" --timeout 30 --interval 2
 ```
 
+Operator input rule:
+- capture the submit-path hash in canonical `0x...` form exactly once and reuse that same value for every follow-up command
+- do **not** strip the `0x` prefix or replace the original submit-path hash with a later explorer/log rendering; `trnm-cli tx query` and `trnm-cli tx wait` fail closed on bare hex input because a missing prefix is treated as ambiguous operator evidence, not harmless formatting drift
+
 Record together:
 - `requested_tx_hash=` from the submit path exactly once
 - `query_tx_hash=` from `trnm-cli tx query`
