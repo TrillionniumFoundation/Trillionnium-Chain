@@ -1772,4 +1772,35 @@ mod tests {
 
         assert!(relay.audit_log().is_empty());
     }
+
+    #[test]
+    fn normalized_audit_log_keeps_finalize_and_nonce_binding() {
+        let mut relay = relay(1, &[7]);
+        let msg = sample_msg();
+        let proof_digest = hash_message(&msg);
+        let expected_settlement_id = settlement_id(&msg);
+        let expected_nonce_key = nonce_key(
+            msg.source_chain_id,
+            msg.source_bridge_id,
+            msg.target_chain_id,
+            msg.target_bridge,
+            action_settlement_finalize(),
+            msg.nonce,
+        );
+
+        relay
+            .finalize_settlement(&msg, &[sig_for(&msg, 7)], 1_000, 999, 31337, addr(9))
+            .unwrap();
+
+        let normalized = relay.normalized_audit_log();
+        assert!(normalized.iter().any(|event| {
+            event.event_type == "bridge_relay.nonce_consumed"
+                && event.object_id.as_deref() == Some(hex32(&expected_nonce_key).as_str())
+        }));
+        assert!(normalized.iter().any(|event| {
+            event.event_type == "bridge_relay.settlement_finalized"
+                && event.object_id.as_deref() == Some(hex32(&expected_settlement_id).as_str())
+                && event.related_id.as_deref() == Some(hex32(&proof_digest).as_str())
+        }));
+    }
 }
