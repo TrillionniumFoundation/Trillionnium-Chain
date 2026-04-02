@@ -29,6 +29,16 @@ case "${HOST}" in
 esac
 LOCAL_HEALTH_URL="http://${LOCAL_PROBE_HOST}:${PORT}/healthz"
 
+emit_read_contract_fields() {
+  echo "read_contract_mode=read-only"
+  echo "read_contract_source=rpc-read-surface"
+  echo "day1_surface=query-task/<task_id>,query-events/<task_id>?limit=<n>,query-capability-audit/<subject-or-token>,query-normalized-audit-events/<task_id>?limit=<n>"
+  echo "query_events_default_limit=100"
+  echo "query_events_max_limit=500"
+  echo "write_paths_exposed=false"
+  echo "historical_query_scope=rpc-retention-bounded"
+}
+
 emit_contract_fields() {
   echo "pid_file=${PID_FILE}"
   echo "log_file=${LOG_FILE}"
@@ -45,6 +55,7 @@ emit_contract_fields() {
   echo "rpc_base_url=${RPC_BASE_URL}"
   echo "service_mode=operator-facing-static-scaffold"
   echo "production_ready=false"
+  emit_read_contract_fields
 }
 
 validate_runtime_contract() {
