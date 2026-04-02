@@ -808,9 +808,30 @@ fn parse_event_log_kv(line: &str) -> BTreeMap<String, String> {
 }
 
 fn parse_node_event_log_sources_list(raw: &str) -> Vec<PathBuf> {
-    raw.split(|c: char| c == ',' || c == ';' || c == '\n')
-        .filter_map(|part| normalize_node_event_log_source_entry(part).map(PathBuf::from))
-        .collect()
+    let mut out = Vec::new();
+    let mut start = 0usize;
+    let mut quote: Option<char> = None;
+
+    for (idx, ch) in raw.char_indices() {
+        match quote {
+            Some(active) if ch == active => quote = None,
+            Some(_) => {}
+            None if matches!(ch, '"' | '\'' | '`') => quote = Some(ch),
+            None if matches!(ch, ',' | ';' | '\n') => {
+                if let Some(path) = normalize_node_event_log_source_entry(&raw[start..idx]) {
+                    out.push(PathBuf::from(path));
+                }
+                start = idx + ch.len_utf8();
+            }
+            None => {}
+        }
+    }
+
+    if let Some(path) = normalize_node_event_log_source_entry(&raw[start..]) {
+        out.push(PathBuf::from(path));
+    }
+
+    out
 }
 
 fn normalize_node_event_log_source_entry(raw: &str) -> Option<String> {

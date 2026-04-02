@@ -11,9 +11,30 @@ use crate::{NODE_EVENT_LOG_MANIFEST_ENV, NODE_EVENT_LOG_SOURCES_ENV};
 use std::sync::{Mutex, MutexGuard, OnceLock};
 
 pub(super) fn parse_node_event_log_sources_list(raw: &str) -> Vec<PathBuf> {
-    raw.split(|c: char| c == ',' || c == ';' || c == '\n')
-        .filter_map(|part| normalize_node_event_log_source_entry(part).map(PathBuf::from))
-        .collect()
+    let mut out = Vec::new();
+    let mut start = 0usize;
+    let mut quote: Option<char> = None;
+
+    for (idx, ch) in raw.char_indices() {
+        match quote {
+            Some(active) if ch == active => quote = None,
+            Some(_) => {}
+            None if matches!(ch, '"' | '\'' | '`') => quote = Some(ch),
+            None if matches!(ch, ',' | ';' | '\n') => {
+                if let Some(path) = normalize_node_event_log_source_entry(&raw[start..idx]) {
+                    out.push(PathBuf::from(path));
+                }
+                start = idx + ch.len_utf8();
+            }
+            None => {}
+        }
+    }
+
+    if let Some(path) = normalize_node_event_log_source_entry(&raw[start..]) {
+        out.push(PathBuf::from(path));
+    }
+
+    out
 }
 
 fn normalize_node_event_log_source_entry(raw: &str) -> Option<String> {
@@ -224,6 +245,24 @@ mod tests {
         );
 
         let _ = fs::remove_dir_all(root);
+    }
+
+    #[test]
+    fn parse_node_event_log_sources_list_preserves_delimiters_inside_wrapped_entries() {
+        let parsed = parse_node_event_log_sources_list(
+            "\"archive/node,4.log\";'archive/node;5.log';`archive/node\n6.log`;plain.log",
+        );
+
+        assert_eq!(
+            parsed,
+            vec![
+                PathBuf::from("archive/node,4.log"),
+                PathBuf::from("archive/node;5.log"),
+                PathBuf::from("archive/node\n6.log"),
+                PathBuf::from("plain.log"),
+            ],
+            "wrapped historical replay env entries should keep internal delimiters instead of being split into bogus paths"
+        );
     }
 
     #[test]
