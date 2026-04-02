@@ -48,3 +48,9 @@ npm run release:ready
 - [ ] `docs/api-contract.md` 与当前 adapter/schema 变更一致
 - [ ] 如改动 `lib/api-contract/**`，确认 `tests/unit/api-contract-adapters.test.ts` 覆盖关键分支
 - [ ] 如涉及页面渲染，至少本地打开首页做一次 smoke check
+
+## Truth-source / handoff 复核（避免误导）
+
+- [ ] 若在 release / RC / handoff 语境引用本次结果，同时记录仓库根目录 `RELEASE_READINESS.md` 与当下的 `git rev-parse origin/main` 输出；不要只引用前端子项目绿灯截图
+- [ ] 若演示或排障使用了 `?mode=mock`，在交接记录中明确标注“explicit mock fallback”，不要把 mock 页面结果描述成真实查询环境状态
+- [ ] 对外表述优先使用“web4-frontend 子项目预检通过”而不是“TRNM Web4 platform 已 release-ready”
