@@ -742,8 +742,8 @@ fn retained_wal_summary(recovered: &RecoveredWalState) -> String {
     }
 }
 
-fn metadata_only_recovery_error(wal_dir: &Path, recovered: &RecoveredWalState) -> String {
-    let checkpoint_tip_relation = if recovered.wal_entries_retained == 0 {
+fn checkpoint_tip_relation(recovered: &RecoveredWalState) -> String {
+    if recovered.wal_entries_retained == 0 {
         recovered
             .checkpoint_height_retained
             .map(|checkpoint_height| format!("checkpoint_only:{}", checkpoint_height))
@@ -760,10 +760,27 @@ fn metadata_only_recovery_error(wal_dir: &Path, recovered: &RecoveredWalState) -
             Some(_) => "aligned".into(),
             None => "missing".into(),
         }
-    };
+    }
+}
 
+fn recovery_startup_summary(recovered: &RecoveredWalState) -> String {
     format!(
-        "refusing metadata-only recovery from {}: verified WAL/checkpoint metadata {} (last retained checkpoint: {}, next startup height: {}); incident clue: metadata_only_recovery=1 wal_entries_retained={} wal_tail_truncated={} checkpoint_height_retained={} checkpoint_tip_relation={} next_startup_height={} but trnm-node does not yet restore application StateStore snapshots or replay committed blocks; start from a fresh --bft-wal-dir / --bft-wal-mode auto isolated run, or implement state snapshot+replay recovery first",
+        "retained_wal_entries={} checkpoint_height_retained={} checkpoint_tip_relation={} next_startup_height={} wal_tail_truncated={} metadata_only_recovery={}",
+        recovered.wal_entries_retained,
+        recovered
+            .checkpoint_height_retained
+            .map(|checkpoint_height| checkpoint_height.to_string())
+            .unwrap_or_else(|| "none".into()),
+        checkpoint_tip_relation(recovered),
+        recovered.next_height,
+        recovered.truncated,
+        recovered.metadata_only_recovery,
+    )
+}
+
+fn metadata_only_recovery_error(wal_dir: &Path, recovered: &RecoveredWalState) -> String {
+    format!(
+        "refusing metadata-only recovery from {}: verified WAL/checkpoint metadata {} (last retained checkpoint: {}, next startup height: {}); incident clue: {} but trnm-node does not yet restore application StateStore snapshots or replay committed blocks; start from a fresh --bft-wal-dir / --bft-wal-mode auto isolated run, or implement state snapshot+replay recovery first",
         wal_dir.display(),
         retained_wal_summary(recovered),
         recovered
@@ -771,14 +788,7 @@ fn metadata_only_recovery_error(wal_dir: &Path, recovered: &RecoveredWalState) -
             .map(|checkpoint_height| checkpoint_height.to_string())
             .unwrap_or_else(|| "none".into()),
         recovered.next_height,
-        recovered.wal_entries_retained,
-        recovered.truncated,
-        recovered
-            .checkpoint_height_retained
-            .map(|checkpoint_height| checkpoint_height.to_string())
-            .unwrap_or_else(|| "none".into()),
-        checkpoint_tip_relation,
-        recovered.next_height,
+        recovery_startup_summary(recovered),
     )
 }
 
@@ -15562,10 +15572,13 @@ locked_block_hash = "stale-lock"
         assert!(err.contains("refusing metadata-only recovery"));
         assert!(err.contains("retained 3 committed WAL entries through height 3"));
         assert!(err.contains("last retained checkpoint: 2"));
-        assert!(err.contains("incident clue: metadata_only_recovery=1"));
-        assert!(err.contains("wal_entries_retained=3"));
+        assert!(err.contains(
+            "incident clue: retained_wal_entries=3 checkpoint_height_retained=2 checkpoint_tip_relation=behind:1 next_startup_height=4 wal_tail_truncated=true metadata_only_recovery=true"
+        ));
+        assert!(err.contains("retained_wal_entries=3"));
         assert!(err.contains("wal_tail_truncated=true"));
         assert!(err.contains("checkpoint_height_retained=2"));
+        assert!(err.contains("checkpoint_tip_relation=behind:1"));
         assert!(err.contains("next_startup_height=4"));
 
         let _ = fs::remove_dir_all(&wal_dir);
