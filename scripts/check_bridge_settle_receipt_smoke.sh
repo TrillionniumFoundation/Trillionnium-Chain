@@ -43,6 +43,9 @@ run_step "bridge-relay: keep finalized settlement terminal even after governance
 run_step "bridge-relay: reject stale governance write with stale config version" \
   bash -c 'cargo test --manifest-path contracts-rust/bridge-relay/Cargo.toml --lib --tests governance_write_with_stale_config_version_is_fail_closed_and_side_effect_free -- --nocapture'
 
+run_step "bridge-relay: reject stale validator rotation with stale config version" \
+  bash -c 'cargo test --manifest-path contracts-rust/bridge-relay/Cargo.toml --lib --tests stale_validator_rotation_is_fail_closed_and_side_effect_free -- --nocapture'
+
 run_step "trnm-types: enforce receipt success for finalize helper" \
   bash -c 'cargo test --manifest-path trillionnium-rust/Cargo.toml -p trnm-types --lib settlement_state_machine_enforces_receipt_success_for_finalization -- --nocapture'
 

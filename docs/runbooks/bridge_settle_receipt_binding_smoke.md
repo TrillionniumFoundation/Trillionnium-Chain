@@ -32,6 +32,8 @@
      - 覆盖重复 finalize 的副作用约束：重复请求必须直接命中终态，不得追加新的 proof / nonce / finalize 审计事件。
    - `governance_write_with_stale_config_version_is_fail_closed_and_side_effect_free`
      - 覆盖治理写路径使用 stale `config_version` 时的 fail-closed 语义，要求 admin / config_version / audit_log 均保持不变。
+   - `stale_validator_rotation_is_fail_closed_and_side_effect_free`
+     - 覆盖 validator set 轮换写路径的 stale `config_version` fail-closed 语义，要求 validator 配置、`config_version` 与治理审计事件均保持不变。
 
 2. **trnm-types（核心状态机）**
    - `settlement_state_machine_enforces_receipt_success_for_finalization`
