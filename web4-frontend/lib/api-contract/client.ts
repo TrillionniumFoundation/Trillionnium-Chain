@@ -69,6 +69,11 @@ const normalizeBaseUrl = (baseUrl: string): string => {
   return trimmed.replace(/\/+$/, "");
 };
 
+const isLikelyNetworkError = (err: Error): boolean => {
+  if (err instanceof TypeError) return true;
+  return err.name === "NetworkError" || err.name === "FetchError";
+};
+
 export function createFrontendApiClient(config: BaseClientConfig) {
   const fetchImpl = config.fetchImpl ?? fetch;
   const normalizedBaseUrl = normalizeBaseUrl(config.baseUrl);
@@ -126,10 +131,13 @@ export function createFrontendApiClient(config: BaseClientConfig) {
         }
 
         throw new FrontendApiError({
-          code: "NETWORK",
-          message: "Network error while querying backend",
+          code: err instanceof Error && isLikelyNetworkError(err) ? "NETWORK" : "UNKNOWN",
+          message:
+            err instanceof Error && isLikelyNetworkError(err)
+              ? "Network error while querying backend"
+              : "Unexpected error while querying backend",
           causeData: err,
-          retryable: true,
+          retryable: err instanceof Error && isLikelyNetworkError(err),
         });
       } finally {
         timeout.cleanup();

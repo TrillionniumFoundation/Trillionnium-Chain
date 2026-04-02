@@ -101,6 +101,21 @@ describe("api-contract client and retry hardening", () => {
     );
   });
 
+  it("classifies non-network thrown errors as unknown and fail-closed", async () => {
+    const fetchImpl = vi.fn().mockRejectedValue(new SyntaxError("bad parser state"));
+
+    const client = createFrontendApiClient({
+      baseUrl: "http://127.0.0.1:8080",
+      fetchImpl: fetchImpl as unknown as typeof fetch,
+    });
+
+    await expect(client.queryTask("42", { retries: 2 })).rejects.toMatchObject({
+      code: "UNKNOWN",
+      retryable: false,
+    });
+    expect(fetchImpl).toHaveBeenCalledTimes(1);
+  });
+
   it("clamps invalid retry options to safe defaults", async () => {
     let attempts = 0;
     await expect(
