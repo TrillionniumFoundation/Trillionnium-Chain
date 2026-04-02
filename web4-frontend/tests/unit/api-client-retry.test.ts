@@ -153,6 +153,62 @@ describe("api-contract client and retry hardening", () => {
     );
   });
 
+  it("url-encodes readonly task ids in query-task requests", async () => {
+    const fetchImpl = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        task: {
+          id: "task/alpha 42",
+          status: "running",
+          owner: "alice",
+          createdAt: "2026-03-01T00:00:00.000Z",
+          metadata: {},
+        },
+      }),
+    });
+
+    const client = createFrontendApiClient({
+      baseUrl: "http://127.0.0.1:8080",
+      fetchImpl: fetchImpl as unknown as typeof fetch,
+    });
+
+    await client.queryTask("task/alpha 42");
+
+    expect(fetchImpl).toHaveBeenCalledWith(
+      "http://127.0.0.1:8080/query-task/task%2Falpha%2042",
+      expect.objectContaining({ method: "GET" }),
+    );
+  });
+
+  it("url-encodes readonly capability subjects in audit requests", async () => {
+    const fetchImpl = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        subject: "settlement vault/admin",
+        audits: [
+          {
+            subject: "settlement vault/admin",
+            capability: "AUDIT_READ",
+            granted: true,
+            checkedAt: "height:123",
+          },
+        ],
+      }),
+    });
+
+    const client = createFrontendApiClient({
+      baseUrl: "http://127.0.0.1:8080",
+      fetchImpl: fetchImpl as unknown as typeof fetch,
+    });
+
+    await client.queryCapabilityAudit("settlement vault/admin");
+
+    expect(fetchImpl).toHaveBeenCalledWith(
+      "http://127.0.0.1:8080/query-capability-audit/settlement%20vault%2Fadmin",
+      expect.objectContaining({ method: "GET" }),
+    );
+  });
+
   it("clamps invalid retry options to safe defaults", async () => {
     let attempts = 0;
     await expect(
