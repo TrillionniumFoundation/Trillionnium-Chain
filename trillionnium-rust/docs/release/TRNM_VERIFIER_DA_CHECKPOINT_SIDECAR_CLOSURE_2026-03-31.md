@@ -51,6 +51,7 @@ For launch-grade operator confidence, verifier evidence should preserve these re
 3. `checkpoint.wal_entry_hash_hex` binds to the exact WAL content hash.
 4. non-genesis checkpoints preserve predecessor linkage through canonical `prev_hash_hex` handling.
 5. any exported DA/light-verifier summary preserves canonical lower-hex digest surfaces and rejects trim/control/case drift.
+6. non-genesis `checkpoint_prev_hash_hex` / WAL `prev_hash_hex` surfaces also reject invisible layout drift (for example zero-width characters), not just obvious whitespace or case changes.
 
 In short: a verifier receipt that cannot be traced back to a single canonical checkpoint/WAL tuple is not sufficient release evidence.
 
