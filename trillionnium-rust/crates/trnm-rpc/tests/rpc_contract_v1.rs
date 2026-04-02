@@ -614,6 +614,23 @@ fn contract_public_read_payloads_reject_unknown_top_level_fields() {
     .expect_err("account nonce contract should fail closed on unknown fields");
     assert!(nonce_err.to_string().contains("unexpected"));
 
+    let sendtx_err = serde_json::from_value::<SendTxResponse>(json!({
+        "tx_hash":"0xabc",
+        "status":"pending",
+        "unexpected":true
+    }))
+    .expect_err("sendtx contract should fail closed on unknown fields");
+    assert!(sendtx_err.to_string().contains("unexpected"));
+
+    let gettx_err = serde_json::from_value::<GetTxResponse>(json!({
+        "tx_hash":"0xabc",
+        "status":"committed",
+        "error":null,
+        "unexpected":true
+    }))
+    .expect_err("gettx contract should fail closed on unknown fields");
+    assert!(gettx_err.to_string().contains("unexpected"));
+
     let faucet_err = serde_json::from_value::<FaucetRequestResponse>(json!({
         "ok":true,
         "code":"OK",
