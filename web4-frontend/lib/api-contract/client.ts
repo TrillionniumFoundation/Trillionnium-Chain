@@ -31,12 +31,16 @@ const normalizeTimeoutMs = (timeoutMs: unknown): number => {
 const withTimeoutSignal = (timeoutMs: number, signal?: AbortSignal) => {
   const controller = new AbortController();
   let timedOut = false;
+  let abortedByCaller = false;
   const timer = setTimeout(() => {
     timedOut = true;
     controller.abort("timeout");
   }, timeoutMs);
 
-  const onAbort = () => controller.abort(signal?.reason);
+  const onAbort = () => {
+    abortedByCaller = true;
+    controller.abort(signal?.reason);
+  };
 
   if (signal) {
     if (signal.aborted) {
@@ -49,6 +53,7 @@ const withTimeoutSignal = (timeoutMs: number, signal?: AbortSignal) => {
   return {
     signal: controller.signal,
     isTimeout: () => timedOut,
+    isCallerAbort: () => abortedByCaller,
     cleanup: () => {
       clearTimeout(timer);
       signal?.removeEventListener("abort", onAbort);
@@ -131,7 +136,7 @@ export function createFrontendApiClient(config: BaseClientConfig) {
       } catch (err) {
         if (err instanceof FrontendApiError) throw err;
 
-        if (timeout.isTimeout() || isTimeoutLikeError(err)) {
+        if (timeout.isTimeout()) {
           throw new FrontendApiError({
             code: "TIMEOUT",
             message: "Query timeout",
@@ -140,12 +145,21 @@ export function createFrontendApiClient(config: BaseClientConfig) {
           });
         }
 
-        if (isAbortLikeError(err)) {
+        if (timeout.isCallerAbort() || isAbortLikeError(err)) {
           throw new FrontendApiError({
             code: "ABORTED",
             message: "Request aborted",
             causeData: err,
             retryable: false,
+          });
+        }
+
+        if (isTimeoutLikeError(err)) {
+          throw new FrontendApiError({
+            code: "TIMEOUT",
+            message: "Query timeout",
+            causeData: err,
+            retryable: true,
           });
         }
 

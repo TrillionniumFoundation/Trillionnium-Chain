@@ -135,6 +135,32 @@ describe("api-contract client and retry hardening", () => {
     expect(fetchImpl).toHaveBeenCalledTimes(1);
   });
 
+  it("treats caller-supplied aborts as aborted even when the abort reason looks timeout-like", async () => {
+    const fetchImpl: typeof fetch = vi.fn(
+      (_url: URL | RequestInfo, init?: RequestInit) =>
+        new Promise((_resolve, reject) => {
+          init?.signal?.addEventListener("abort", () => {
+            reject(init.signal?.reason);
+          });
+        }),
+    ) as unknown as typeof fetch;
+
+    const client = createFrontendApiClient({
+      baseUrl: "http://127.0.0.1:8080",
+      fetchImpl: fetchImpl as unknown as typeof fetch,
+    });
+
+    const controller = new AbortController();
+    const request = client.queryTask("42", { retries: 2, signal: controller.signal });
+    controller.abort({ name: "TimeoutError", message: "Cancelled by caller" });
+
+    await expect(request).rejects.toMatchObject({
+      code: "ABORTED",
+      retryable: false,
+    });
+    expect(fetchImpl).toHaveBeenCalledTimes(1);
+  });
+
   it("classifies object-shaped network errors as retryable network failures", async () => {
     const fetchImpl = vi
       .fn()
