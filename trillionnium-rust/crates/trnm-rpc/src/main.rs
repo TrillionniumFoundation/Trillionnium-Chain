@@ -2482,7 +2482,8 @@ fn push_tail_limited<T>(items: &mut Vec<T>, item: T, limit: usize) {
 
 fn normalize_tx_hash_lookup(raw: &str) -> String {
     let mut normalized = raw.trim_matches(|c: char| {
-        c.is_ascii_whitespace() || matches!(c, ',' | ';' | '.' | ':' | '(' | ')' | '[' | ']' | '{' | '}')
+        c.is_ascii_whitespace()
+            || matches!(c, ',' | ';' | '.' | ':' | '(' | ')' | '[' | ']' | '{' | '}')
     });
 
     loop {
@@ -2526,7 +2527,10 @@ fn normalize_tx_hash_lookup(raw: &str) -> String {
                     if is_wrapped {
                         value = value[1..value.len() - 1].trim_matches(|c: char| {
                             c.is_ascii_whitespace()
-                                || matches!(c, ',' | ';' | '.' | ':' | '(' | ')' | '[' | ']' | '{' | '}')
+                                || matches!(
+                                    c,
+                                    ',' | ';' | '.' | ':' | '(' | ')' | '[' | ']' | '{' | '}'
+                                )
                         });
                         continue;
                     }
@@ -3297,6 +3301,32 @@ fn parse_query_normalized_audit_events_query_from_path(
 
     if let Some(limit) = parsed_limit {
         query_params.limit = limit;
+    }
+
+    if query_params
+        .source
+        .as_deref()
+        .is_some_and(|source| source != "trnm.task" && source != "trnm.adapter")
+    {
+        return Err(http_json_response(
+            "400 Bad Request",
+            r#"{"ok":false,"code":"BAD_REQUEST","message":"invalid source"}"#,
+        ));
+    }
+
+    if let Some(event_type) = query_params.event_type.as_deref() {
+        let source_matches = match query_params.source.as_deref() {
+            Some("trnm.task") => event_type.starts_with("trnm.task."),
+            Some("trnm.adapter") => event_type.starts_with("trnm.adapter."),
+            Some(_) => false,
+            None => event_type.starts_with("trnm.task.") || event_type.starts_with("trnm.adapter."),
+        };
+        if !source_matches {
+            return Err(http_json_response(
+                "400 Bad Request",
+                r#"{"ok":false,"code":"BAD_REQUEST","message":"invalid eventType"}"#,
+            ));
+        }
     }
 
     Ok(query_params)
@@ -5238,6 +5268,25 @@ mod tests {
     }
 
     #[test]
+    fn parse_query_normalized_audit_events_query_from_path_rejects_unknown_source_and_mixed_prefix_event_types(
+    ) {
+        for path in [
+            "/query-normalized-audit-events?source=trnm.oracle",
+            "/query-normalized-audit-events?eventType=trnm.oracle.accept",
+            "/query-normalized-audit-events?source=trnm.task&eventType=trnm.adapter.accept",
+            "/query-normalized-audit-events?source=trnm.adapter&eventType=trnm.task.commit",
+        ] {
+            let err = parse_query_normalized_audit_events_query_from_path(path)
+                .expect_err("unknown or mixed-prefix filters should fail closed");
+            assert!(err.contains("400 Bad Request"), "path={path} err={err}");
+            assert!(
+                err.contains("invalid source") || err.contains("invalid eventType"),
+                "path={path} err={err}"
+            );
+        }
+    }
+
+    #[test]
     fn parse_query_normalized_audit_events_query_from_path_rejects_raw_fragment_delimiters() {
         for path in [
             "/query-normalized-audit-events#shadow",
@@ -5418,7 +5467,11 @@ mod tests {
             .map(|event| event.object_id.as_deref())
             .collect();
         assert_eq!(object_ids, vec![Some("task:7"), Some("task:9")]);
-        let actors: Vec<_> = out.events.iter().map(|event| event.actor.as_deref()).collect();
+        let actors: Vec<_> = out
+            .events
+            .iter()
+            .map(|event| event.actor.as_deref())
+            .collect();
         assert_eq!(actors, vec![Some("worker-a"), Some("worker-b")]);
     }
 
@@ -8669,8 +8722,12 @@ line2
         let archived_log = archive_dir.join("node4.log");
         let manifest = manifest_dir.join("sources.txt");
         fs::write(&archived_log, "").expect("write archived log");
-        fs::write(&manifest, "../../archive/node4.log
-").expect("write manifest");
+        fs::write(
+            &manifest,
+            "../../archive/node4.log
+",
+        )
+        .expect("write manifest");
 
         let prev_sources = std::env::var(NODE_EVENT_LOG_SOURCES_ENV).ok();
         let prev_manifest = std::env::var(NODE_EVENT_LOG_MANIFEST_ENV).ok();
@@ -8759,8 +8816,7 @@ line2
         let archived_log = archive_dir.join("node4.log");
         let manifest = manifest_dir.join("sources.txt");
         fs::write(&archived_log, "").expect("write archived log");
-        fs::write(&manifest, "\u{feff}\"../../archive/node4.log\"\n")
-            .expect("write manifest");
+        fs::write(&manifest, "\u{feff}\"../../archive/node4.log\"\n").expect("write manifest");
 
         let prev_sources = std::env::var(NODE_EVENT_LOG_SOURCES_ENV).ok();
         let prev_manifest = std::env::var(NODE_EVENT_LOG_MANIFEST_ENV).ok();
@@ -8804,11 +8860,8 @@ line2
         let archived_log = archive_dir.join("node4.log");
         let manifest = manifest_dir.join("sources.txt");
         fs::write(&archived_log, "").expect("write archived log");
-        fs::write(
-            &manifest,
-            "\"../../archive/node4.log\" # operator note\n",
-        )
-        .expect("write manifest");
+        fs::write(&manifest, "\"../../archive/node4.log\" # operator note\n")
+            .expect("write manifest");
 
         let prev_sources = std::env::var(NODE_EVENT_LOG_SOURCES_ENV).ok();
         let prev_manifest = std::env::var(NODE_EVENT_LOG_MANIFEST_ENV).ok();
