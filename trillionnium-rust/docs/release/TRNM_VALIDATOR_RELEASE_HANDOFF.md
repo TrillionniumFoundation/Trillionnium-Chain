@@ -226,7 +226,17 @@ When multiple timestamped evidence directories exist, resolve the artifact path 
 ```bash
 # Latest preflight summary
 preflight_summary_path="run/preflight/go-no-go-latest.txt"
-[ -f "$preflight_summary_path" ] || { echo "missing preflight summary" >&2; exit 1; }
+if [ ! -f "$preflight_summary_path" ]; then
+  latest_preflight_summary=""
+  if compgen -G 'run/preflight/go-no-go-*.txt' >/dev/null; then
+    latest_preflight_summary="$(ls -dt run/preflight/go-no-go-*.txt 2>/dev/null | head -n 1)"
+  fi
+  if [ -n "$latest_preflight_summary" ]; then
+    preflight_summary_path="$latest_preflight_summary"
+  else
+    preflight_summary_path="<missing>"
+  fi
+fi
 printf 'preflight_summary_path=%s\n' "$preflight_summary_path"
 
 # Latest local-evidence summary
