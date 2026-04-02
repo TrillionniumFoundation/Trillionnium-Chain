@@ -216,6 +216,107 @@ fn contract_error_codes_stable() {
 }
 
 #[test]
+fn contract_gov_param_shape_omits_pending_update_when_absent() {
+    let v = serde_json::to_value(GovParamQueryResponse {
+        key_id: 7,
+        key: "runtime_metadata_schema".into(),
+        value: "v2".into(),
+        version: 3,
+        pending_update: None,
+    })
+    .unwrap();
+
+    assert_eq!(
+        v,
+        json!({
+            "key_id":7,
+            "key":"runtime_metadata_schema",
+            "value":"v2",
+            "version":3
+        })
+    );
+}
+
+#[test]
+fn contract_gov_param_shape_includes_pending_update_when_present() {
+    let v = serde_json::to_value(GovParamQueryResponse {
+        key_id: 7,
+        key: "runtime_metadata_schema".into(),
+        value: "v2".into(),
+        version: 3,
+        pending_update: Some(trnm_rpc::PendingGovParamUpdateQueryResponse {
+            key_id: 7,
+            key: "runtime_metadata_schema".into(),
+            value: "v3".into(),
+            activate_at_height: 4096,
+        }),
+    })
+    .unwrap();
+
+    assert_eq!(
+        v,
+        json!({
+            "key_id":7,
+            "key":"runtime_metadata_schema",
+            "value":"v2",
+            "version":3,
+            "pending_update": {
+                "key_id":7,
+                "key":"runtime_metadata_schema",
+                "value":"v3",
+                "activate_at_height":4096
+            }
+        })
+    );
+}
+
+#[test]
+fn contract_oracle_validate_snapshot_shape_stable() {
+    let v = serde_json::to_value(OracleValidateSnapshotResponse {
+        ok: true,
+        now_ts_ms: 1_710_000_000_123,
+        observation: trnm_oracle::OracleValidationObservation {
+            stale_reject_total: 0,
+            quorum_reject_total: 0,
+            drift_reject_total: 0,
+            accepted_total: 1,
+        },
+        metrics: trnm_oracle::OracleValidationMetrics {
+            oracle_stale_reject_total: 0,
+            oracle_quorum_reject_total: 0,
+            oracle_drift_reject_total: 0,
+            oracle_source_cardinality: 1,
+            accepted_total: 1,
+            sample_count: 1,
+        },
+        error: None,
+    })
+    .unwrap();
+
+    assert_eq!(
+        v,
+        json!({
+            "ok": true,
+            "now_ts_ms": 1710000000123u64,
+            "observation": {
+                "stale_reject_total": 0,
+                "quorum_reject_total": 0,
+                "drift_reject_total": 0,
+                "accepted_total": 1
+            },
+            "metrics": {
+                "oracle_stale_reject_total": 0,
+                "oracle_quorum_reject_total": 0,
+                "oracle_drift_reject_total": 0,
+                "oracle_source_cardinality": 1,
+                "accepted_total": 1,
+                "sample_count": 1
+            }
+        })
+    );
+}
+
+#[test]
 fn contract_public_read_payloads_reject_unknown_top_level_fields() {
     let event_err = serde_json::from_value::<EventQueryResponse>(json!({
         "event_type":"commit",
