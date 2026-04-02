@@ -12,6 +12,10 @@ function failClosedValue(value: string | number | null | undefined, fallback = "
     return normalized === "" ? fallback : normalized;
   }
 
+  if (!Number.isFinite(value)) {
+    return fallback;
+  }
+
   return String(value);
 }
 
