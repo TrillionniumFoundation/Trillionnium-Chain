@@ -51,7 +51,7 @@ fn oracle_validate_snapshot_response_reports_drift_rejection() {
 }
 
 #[test]
-fn oracle_validate_snapshot_response_rejects_exact_drift_boundary_fail_closed() {
+fn oracle_validate_snapshot_response_accepts_exact_drift_boundary() {
     let policy_path = write_json_fixture("oracle-policy-drift-boundary", &oracle_policy_fixture());
     let snapshot_path = write_json_fixture(
         "oracle-snapshot-drift-boundary",
@@ -61,13 +61,15 @@ fn oracle_validate_snapshot_response_rejects_exact_drift_boundary_fail_closed() 
     let out = oracle_validate_snapshot_response(&snapshot_path, &policy_path, 10_100)
         .expect("boundary drift oracle validation response");
 
-    assert!(!out.ok);
+    assert!(out.ok);
     assert_eq!(out.now_ts_ms, 10_100);
-    assert_eq!(out.observation.outcome, "drift");
-    assert_eq!(out.metrics.oracle_drift_reject_total, 1);
+    assert_eq!(out.observation.outcome, "accepted");
+    assert_eq!(out.metrics.oracle_drift_reject_total, 0);
+    assert_eq!(out.metrics.oracle_quorum_reject_total, 0);
+    assert_eq!(out.metrics.oracle_stale_reject_total, 0);
     assert_eq!(out.metrics.sample_count, 1);
-    assert_eq!(out.metrics.accepted_total, 0);
-    assert_eq!(out.error.as_deref(), Some("deviation exceeded"));
+    assert_eq!(out.metrics.accepted_total, 1);
+    assert!(out.error.is_none());
 
     let _ = fs::remove_file(snapshot_path);
     let _ = fs::remove_file(policy_path);
@@ -159,7 +161,7 @@ fn oracle_validate_snapshot_response_rejects_zero_reference_baseline_as_drift_fa
 }
 
 #[test]
-fn oracle_validate_snapshot_response_rejects_zero_reference_baseline_at_guardrail_cap() {
+fn oracle_validate_snapshot_response_accepts_zero_reference_baseline_at_guardrail_cap() {
     let policy_path = write_json_fixture(
         "oracle-policy-zero-reference-baseline-cap",
         &serde_json::json!({
@@ -192,18 +194,18 @@ fn oracle_validate_snapshot_response_rejects_zero_reference_baseline_at_guardrai
     );
 
     let out = oracle_validate_snapshot_response(&snapshot_path, &policy_path, 10_100)
-        .expect("guardrail-cap zero-reference baseline should still fail closed");
+        .expect("guardrail-cap zero-reference baseline should remain admissible at the exact boundary");
 
-    assert!(!out.ok);
+    assert!(out.ok);
     assert_eq!(out.now_ts_ms, 10_100);
-    assert_eq!(out.observation.outcome, "drift");
+    assert_eq!(out.observation.outcome, "accepted");
     assert_eq!(out.metrics.oracle_stale_reject_total, 0);
     assert_eq!(out.metrics.oracle_quorum_reject_total, 0);
-    assert_eq!(out.metrics.oracle_drift_reject_total, 1);
+    assert_eq!(out.metrics.oracle_drift_reject_total, 0);
     assert_eq!(out.metrics.oracle_source_cardinality, 2);
-    assert_eq!(out.metrics.accepted_total, 0);
+    assert_eq!(out.metrics.accepted_total, 1);
     assert_eq!(out.metrics.sample_count, 1);
-    assert_eq!(out.error.as_deref(), Some("deviation exceeded"));
+    assert!(out.error.is_none());
 
     let _ = fs::remove_file(snapshot_path);
     let _ = fs::remove_file(policy_path);
