@@ -1284,6 +1284,31 @@ mod tests {
     }
 
     #[test]
+    fn schedule_unpause_rejects_eta_shorter_than_min_timelock_without_side_effects() {
+        let mut gov = setup();
+        let now = 6_100;
+        let eta = now + 59;
+
+        gov.emergency_pause("guardian", "incident-short-timelock")
+            .unwrap();
+        let audit_len_before = gov.audit_log().len();
+
+        assert_eq!(
+            gov.schedule_unpause("guardian", eta, "recover-too-early", now)
+                .unwrap_err(),
+            Error::InvalidEta
+        );
+
+        assert!(gov.bridge_state().emergency_paused);
+        assert_eq!(gov.proposals.len(), 0);
+        assert_eq!(gov.audit_log().len(), audit_len_before);
+        assert!(!gov.audit_log().iter().any(|event| matches!(
+            event,
+            GovernanceEvent::PauseRestoreScheduled { .. }
+        )));
+    }
+
+    #[test]
     fn execute_unpause_rejects_non_executor_caller() {
         let mut gov = setup();
         let now = 6_500;
