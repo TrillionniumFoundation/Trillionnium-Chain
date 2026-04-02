@@ -553,6 +553,37 @@ mod tests {
     }
 
     #[test]
+    fn unauthorized_release_slash_and_transfer_fail_closed() {
+        let mut vault = SettlementVault::new("owner");
+
+        vault.deposit("owner", "alice", 25).unwrap();
+        vault.lock("owner", "req-auth", "alice", 20).unwrap();
+        let audit_len_after_lock = vault.audit_log().len();
+
+        assert_eq!(
+            vault.release("mallory", "req-auth").unwrap_err(),
+            VaultError::Unauthorized
+        );
+        assert_eq!(
+            vault.slash("mallory", "req-auth", "treasury").unwrap_err(),
+            VaultError::Unauthorized
+        );
+        assert_eq!(
+            vault.transfer("mallory", "alice", "bob", 1).unwrap_err(),
+            VaultError::Unauthorized
+        );
+
+        assert_eq!(vault.balance_of("alice"), 5);
+        assert_eq!(vault.balance_of("bob"), 0);
+        assert_eq!(vault.balance_of("treasury"), 0);
+        assert_eq!(
+            vault.lock_record("req-auth").unwrap().status,
+            LockStatus::Locked
+        );
+        assert_eq!(vault.audit_log().len(), audit_len_after_lock);
+    }
+
+    #[test]
     fn illegal_state_transition_is_rejected() {
         let mut vault = SettlementVault::new("owner");
 
