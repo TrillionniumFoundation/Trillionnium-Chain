@@ -214,5 +214,6 @@ printf 'manifest_replay_command=%s\n' "$manifest_replay"
 
 if [ -n "$EXPECTED_WORKTREE_ROOT" ]; then
   printf 'expected_worktree_root=%s\n' "$EXPECTED_WORKTREE_ROOT"
+  printf 'ticket_expected_branch_ref=%s\n' "$EXPECTED_BRANCH_REF"
   printf 'expected_branch_ref=%s\n' "$EXPECTED_BRANCH_REF_CANONICAL"
 fi
