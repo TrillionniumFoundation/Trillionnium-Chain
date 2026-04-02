@@ -202,6 +202,11 @@ const normalizeDashboardEventToken = (value: string | undefined, fallback: strin
   return normalized && normalized.length > 0 ? normalized : fallback;
 };
 
+const normalizeDashboardText = (value: string | undefined, fallback: string): string => {
+  const normalized = value?.trim();
+  return normalized && normalized.length > 0 ? normalized : fallback;
+};
+
 const mapNormalizedAuditSeverity = (event: NormalizedAuditEvent): DashboardSnapshot["events"][number]["severity"] => {
   const normalizedEventType = normalizeDashboardEventToken(event.event_type, "unknown-event");
   const tokens = `${event.reason ?? ""} ${event.note ?? ""} ${normalizedEventType}`.toLowerCase();
@@ -373,7 +378,7 @@ async function fetchReadonlySnapshotFromApi(): Promise<DashboardSnapshot> {
       {
         id: taskResp.task.id,
         title: taskResp.task.name ?? `task-${taskResp.task.id}`,
-        owner: taskResp.task.owner,
+        owner: normalizeDashboardText(taskResp.task.owner, "Unassigned"),
         priority: "P1" as const,
         status: mapTaskStatus(taskResp.task.status),
         updatedAt: (() => {
