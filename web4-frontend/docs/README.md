@@ -24,9 +24,15 @@
 - [运维手册（发布/回滚/排障）](./operations-runbook.md)
 - [发布前 Checklist](./release-checklist.md)
 
-发布/RC/对外口径引用时，建议同时回看：
+## 5. 状态口径与证据入口
+
+发布/RC/对外口径引用时，建议按下面顺序取材，避免把历史证据误写成当前 readiness：
+
 - 仓库级 truth source：[`../../RELEASE_READINESS.md`](../../RELEASE_READINESS.md)
 - Web4 平台主文档：[`../../docs/WEB4_INFRA_PLATFORM_DEVELOPMENT_MASTER.md`](../../docs/WEB4_INFRA_PLATFORM_DEVELOPMENT_MASTER.md)
+- Web4 阶段快照（历史状态，不等于当前 release-ready）：[`../../docs/development/WEB4_PHASE_B_MILESTONE_SNAPSHOT_2026-02-28.md`](../../docs/development/WEB4_PHASE_B_MILESTONE_SNAPSHOT_2026-02-28.md)
+- Web4 前端接口基线：[`../../docs/development/WEB4_FRONTEND_API_INTERFACE_V0.md`](../../docs/development/WEB4_FRONTEND_API_INTERFACE_V0.md)
+- Web4 修复证据（历史 run evidence，不等于当前 release-ready）：[`../../docs/release/web4-fix-sequence-2026-03-04-evidence.md`](../../docs/release/web4-fix-sequence-2026-03-04-evidence.md)
 
 > 当前更准确的外部口径应是：**强链核 + 初步平台壳的 Alpha 后段项目**，而不是 Beta / production-ready Web4 platform。
 >
