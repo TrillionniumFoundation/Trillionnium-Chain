@@ -99,7 +99,7 @@ mkdir -p "$(dirname "$handoff_helper_output_path")"
 printf 'handoff_helper_output_path=%s\n' "$handoff_helper_output_path"
 ```
 
-As with the pre-run helper, `--expected-branch-ref` may be supplied as either the short branch name from the ticket or the full ref, but the recorded `preflight_expected_branch_ref=` / `git_expected_worktree_branch_ref=` fields should preserve the exact ticket-assigned form instead of normalizing it after the fact.
+As with the pre-run helper, `--expected-branch-ref` may be supplied as either the short branch name from the ticket or the full ref. Preserve both forms in the memo: record `ticket_expected_branch_ref=` from the helper output as the exact ticket-assigned form, and record `expected_branch_ref=` / `git_expected_worktree_branch_ref=` as the canonicalized branch ref emitted by the helper/artifacts.
 
 Treat the helper output as a first-class artifact for memo assembly, not throwaway terminal scrollback. Preserve it (or an equivalent saved transcript) so `summary_generated_at=`, `manifest_generated_at=`, `git_expected_worktree_branch_ref=`, `git_status_summary=`, `truth_source=`, `historical_evidence_only=`, `evidence_scope=`, `summary_rollback_command=`, `summary_replay_command=`, `manifest_rollback_command=`, and `manifest_replay_command=` can all be quoted from the helper/artifacts rather than recopied from memory.
 
@@ -116,6 +116,7 @@ Record:
 - preflight_git_head_state=
 - preflight_git_status_summary=
 - preflight_expected_worktree_root=
+- preflight_ticket_expected_branch_ref=
 - preflight_expected_branch_ref=
 - preflight_expected_head=
 - preflight_git_worktree_path=
@@ -129,9 +130,9 @@ Record:
 
 Rule:
 - if `preflight_path`, `summary_path`, or `manifest_path` is missing or unresolved, decision = **NO-GO**
-- if the preflight artifact does not preserve `result=`, `generated_at=`, `git_status_summary=`, `git_worktree_path=`, `git_worktree_branch_ref=`, `git_worktree_branch_ref_match=`, `expected_worktree_root=`, `expected_branch_ref=`, `rollback_command=`, and `replay_command=`, decision = **NO-GO**
+- if the preflight artifact/helper transcript does not preserve `result=`, `generated_at=`, `git_status_summary=`, `git_worktree_path=`, `git_worktree_branch_ref=`, `git_worktree_branch_ref_match=`, `expected_worktree_root=`, `ticket_expected_branch_ref=`, `expected_branch_ref=`, `rollback_command=`, and `replay_command=`, decision = **NO-GO**
 - if the ticket assigned an expected head, preserve `expected_head=` verbatim from the preflight artifact and require it to match the ticket-assigned value; do not silently downgrade that field into an optional note
-- treat `expected_worktree_root=` / `expected_branch_ref=` in the preflight artifact as the ticket-binding proof for the rehearsal packet, not as decorative metadata
+- treat `expected_worktree_root=` plus `ticket_expected_branch_ref=` as the ticket-binding proof for the rehearsal packet, and keep `expected_branch_ref=` as the canonicalized companion field rather than a replacement for the ticket-original form
 
 ## 4. Required cross-artifact identity fields
 
@@ -156,7 +157,7 @@ Decision rule:
 - `preflight_result=GO` is mandatory before quoting later PASS / GO language
 - `evaluated_origin_main=` must be recorded whenever this memo cites `RELEASE_READINESS.md`; do not reuse a stale hash from an older packet
 - preflight `git_worktree_path=` / `git_worktree_branch_ref=` must match the assigned worktree/branch, not just exist
-- preflight `expected_worktree_root=` / `expected_branch_ref=` must also match the ticket-assigned values verbatim; a packet is incomplete if the preflight artifact only proves the current shell was self-consistent
+- preflight `expected_worktree_root=` plus `ticket_expected_branch_ref=` must preserve the ticket-assigned values verbatim; `expected_branch_ref=` may be the helper's canonicalized form, but the memo must retain the ticket-original form too. A packet is incomplete if the preflight artifact/helper transcript only proves the current shell was self-consistent
 - if the ticket assigned an expected head, preflight `expected_head=` must match it verbatim
 - preflight `git_worktree_branch_ref_match=true` is mandatory before later summary/manifest evidence can be treated as lane-bound
 - summary/manifest `git_worktree_branch_ref_match=true` is also mandatory; do not let a green preflight soften a later artifact mismatch
@@ -250,6 +251,7 @@ Mark each item explicitly:
 - [ ] `preflight_git_head_state=` preserved next to preflight decision language
 - [ ] `preflight_git_status_summary=` preserved next to preflight decision language
 - [ ] `preflight_expected_worktree_root=` preserved next to preflight decision language
+- [ ] `preflight_ticket_expected_branch_ref=` preserved next to preflight decision language
 - [ ] `preflight_expected_branch_ref=` preserved next to preflight decision language
 - [ ] `preflight_expected_head=` preserved when the ticket assigned one
 - [ ] `preflight_git_worktree_path=` preserved next to preflight decision language
@@ -298,7 +300,8 @@ preflight_git_worktree_path=<artifact value>
 preflight_git_worktree_branch_ref=<artifact value>
 preflight_git_worktree_branch_ref_match=<true|false|unknown>
 preflight_expected_worktree_root=<artifact value>
-preflight_expected_branch_ref=<artifact value>
+preflight_ticket_expected_branch_ref=<helper transcript value preserving ticket form>
+preflight_expected_branch_ref=<artifact/helper canonicalized value>
 preflight_expected_head=<artifact value or <unset>>
 preflight_rollback_command=<artifact value>
 preflight_replay_command=<artifact value>
