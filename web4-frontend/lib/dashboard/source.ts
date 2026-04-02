@@ -147,12 +147,11 @@ const resolvePreferredTimestamp = (...candidates: Array<string | undefined>): st
   return undefined;
 };
 
-const apiBaseUrl = resolveQueryApiBaseUrl();
-const defaultTaskId = resolveNonEmptyEnv(process.env.NEXT_PUBLIC_DASHBOARD_TASK_ID, "341");
-const defaultAuditSubject = resolveNonEmptyEnv(
-  process.env.NEXT_PUBLIC_DASHBOARD_AUDIT_SUBJECT,
-  "did:trnm:core-rpc",
-);
+const resolveDashboardTaskId = (): string =>
+  resolveNonEmptyEnv(process.env.NEXT_PUBLIC_DASHBOARD_TASK_ID, "341");
+
+const resolveDashboardAuditSubject = (): string =>
+  resolveNonEmptyEnv(process.env.NEXT_PUBLIC_DASHBOARD_AUDIT_SUBJECT, "did:trnm:core-rpc");
 
 const toDisplayTime = (isoLike: string): string => {
   const date = new Date(isoLike);
@@ -328,12 +327,14 @@ const parseDashboardTime = (value: string): number => {
 };
 
 async function fetchReadonlySnapshotFromApi(): Promise<DashboardSnapshot> {
-  const client = createFrontendApiClient({ baseUrl: apiBaseUrl });
+  const client = createFrontendApiClient({ baseUrl: resolveQueryApiBaseUrl() });
+  const dashboardTaskId = resolveDashboardTaskId();
+  const dashboardAuditSubject = resolveDashboardAuditSubject();
 
   const [taskResp, eventsResp, auditsResp, normalizedAuditEvents] = await Promise.all([
-    client.queryTask(defaultTaskId),
-    client.queryEvents(defaultTaskId),
-    client.queryCapabilityAudit(defaultAuditSubject),
+    client.queryTask(dashboardTaskId),
+    client.queryEvents(dashboardTaskId),
+    client.queryCapabilityAudit(dashboardAuditSubject),
     fetchNormalizedAuditEventsWithPagination(client),
   ]);
 

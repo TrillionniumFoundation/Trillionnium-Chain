@@ -453,6 +453,67 @@ describe("dashboard source normalized audit pagination", () => {
     }
   });
 
+  it("reads task/audit env overrides at fetch time instead of module load time", async () => {
+    const previousTaskId = process.env.NEXT_PUBLIC_DASHBOARD_TASK_ID;
+    const previousAuditSubject = process.env.NEXT_PUBLIC_DASHBOARD_AUDIT_SUBJECT;
+
+    process.env.NEXT_PUBLIC_DASHBOARD_TASK_ID = "777";
+    process.env.NEXT_PUBLIC_DASHBOARD_AUDIT_SUBJECT = "did:trnm:custom-dashboard";
+
+    try {
+      const mockClient = {
+        queryTask: vi.fn().mockResolvedValue({
+          task: {
+            id: "777",
+            owner: "ops",
+            status: "running",
+            createdAt: "2026-03-01T00:00:00.000Z",
+            metadata: {},
+          },
+        }),
+        queryEvents: vi.fn().mockResolvedValue({
+          taskId: "777",
+          events: [],
+        }),
+        queryCapabilityAudit: vi.fn().mockResolvedValue({
+          subject: "did:trnm:custom-dashboard",
+          audits: [
+            {
+              subject: "did:trnm:custom-dashboard",
+              capability: "AUDIT_READ",
+              granted: true,
+              checkedAt: "2026-03-01T00:00:00.000Z",
+            },
+          ],
+        }),
+        queryNormalizedAuditEvents: vi.fn().mockResolvedValue({
+          events: [],
+          hasMore: false,
+        }),
+      } as unknown as ReturnType<typeof apiContractClient.createFrontendApiClient>;
+
+      vi.spyOn(apiContractClient, "createFrontendApiClient").mockReturnValue(mockClient);
+
+      await fetchDashboardSnapshot();
+
+      expect(mockClient.queryTask).toHaveBeenCalledWith("777");
+      expect(mockClient.queryEvents).toHaveBeenCalledWith("777");
+      expect(mockClient.queryCapabilityAudit).toHaveBeenCalledWith("did:trnm:custom-dashboard");
+    } finally {
+      if (previousTaskId === undefined) {
+        delete process.env.NEXT_PUBLIC_DASHBOARD_TASK_ID;
+      } else {
+        process.env.NEXT_PUBLIC_DASHBOARD_TASK_ID = previousTaskId;
+      }
+
+      if (previousAuditSubject === undefined) {
+        delete process.env.NEXT_PUBLIC_DASHBOARD_AUDIT_SUBJECT;
+      } else {
+        process.env.NEXT_PUBLIC_DASHBOARD_AUDIT_SUBJECT = previousAuditSubject;
+      }
+    }
+  });
+
   it("falls back to createdAt when updatedAt is blank", async () => {
     const mockClient = {
       queryTask: vi.fn().mockResolvedValue({
