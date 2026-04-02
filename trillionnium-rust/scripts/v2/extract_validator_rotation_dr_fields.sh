@@ -152,6 +152,7 @@ fi
 [ -f "$REPORT_PATH" ] || { echo "missing recovery report file: $REPORT_PATH" >&2; exit 1; }
 
 GENERATED_AT="$(require_key "$REPORT_PATH" generated_at)"
+CONFIG_PATH="$(require_key "$REPORT_PATH" config_path)"
 GIT_WORKTREE_PATH="$(require_key "$REPORT_PATH" git_worktree_path)"
 GIT_WORKTREE_BRANCH_REF="$(require_key "$REPORT_PATH" git_worktree_branch_ref)"
 GIT_BRANCH="$(require_key "$REPORT_PATH" git_branch)"
@@ -236,6 +237,7 @@ printf 'report_path=%s\n' "$REPORT_PATH"
 printf 'dr_summary_path=%s\n' "$REPORT_PATH"
 printf 'generated_at=%s\n' "$GENERATED_AT"
 printf 'dr_generated_at=%s\n' "$GENERATED_AT"
+printf 'config_path=%s\n' "$CONFIG_PATH"
 printf 'git_worktree_path=%s\n' "$GIT_WORKTREE_PATH"
 printf 'git_worktree_branch_ref=%s\n' "$GIT_WORKTREE_BRANCH_REF"
 printf 'git_branch=%s\n' "$GIT_BRANCH"
