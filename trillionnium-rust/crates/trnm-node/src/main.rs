@@ -15501,6 +15501,24 @@ locked_block_hash = "stale-lock"
     }
 
     #[test]
+    fn recovery_startup_summary_reports_empty_fresh_join_surface_as_ready() {
+        let recovered = RecoveredWalState {
+            next_height: 1,
+            restored_lock: None,
+            last_checkpoint: None,
+            truncated: false,
+            metadata_only_recovery: false,
+            wal_entries_retained: 0,
+            checkpoint_height_retained: None,
+        };
+
+        assert_eq!(
+            recovery_startup_summary(&recovered),
+            "retained_wal_entries=0 checkpoint_height_retained=none checkpoint_tip_relation=none next_startup_height=1 wal_tail_truncated=false metadata_only_recovery=false join_rejoin_status=ready"
+        );
+    }
+
+    #[test]
     fn recover_metadata_only_error_reports_plural_retained_entries_and_height() {
         let wal_dir = temp_wal_dir("recover-metadata-only-error-plural");
         fs::create_dir_all(&wal_dir).unwrap();
