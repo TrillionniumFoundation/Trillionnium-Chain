@@ -293,7 +293,7 @@ const parseDashboardTime = (value: string): number => {
   const fallback = Date.parse(normalized);
   if (!Number.isNaN(fallback)) return fallback;
 
-  return Number.NEGATIVE_INFINITY;
+  return Number.MIN_SAFE_INTEGER;
 };
 
 async function fetchReadonlySnapshotFromApi(): Promise<DashboardSnapshot> {

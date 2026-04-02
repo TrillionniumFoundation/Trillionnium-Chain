@@ -583,4 +583,66 @@ describe("dashboard source normalized audit pagination", () => {
     expect(snapshot.events[0]?.id).toBe("EVT-346");
     expect(snapshot.events.find((event) => event.id === "bridge-relay:proof-346")).toBeDefined();
   });
+
+  it("preserves source order when multiple fallback dashboard times are invalid", async () => {
+    const mockClient = {
+      queryTask: vi
+        .fn()
+        .mockResolvedValue({
+          task: {
+            id: "347",
+            owner: "ops",
+            status: "running",
+            createdAt: "2026-03-01T00:00:00.000Z",
+            updatedAt: "2026-03-01T00:05:00.000Z",
+            metadata: {},
+          },
+        }),
+      queryEvents: vi.fn().mockResolvedValue({
+        taskId: "347",
+        events: [],
+      }),
+      queryCapabilityAudit: vi.fn().mockResolvedValue({
+        subject: "did:trnm:test",
+        audits: [
+          {
+            subject: "did:trnm:test",
+            capability: "AUDIT_READ",
+            granted: true,
+            checkedAt: "2026-03-01T00:00:00.000Z",
+          },
+        ],
+      }),
+      queryNormalizedAuditEvents: vi.fn().mockResolvedValue({
+        events: [
+          {
+            source: "bridge-relay",
+            event_type: "bridge_relay.proof_submitted",
+            actor: "validator-a",
+            object_id: "proof-347a",
+            timestamp: "bad-time-a",
+            reason: "warn",
+          },
+          {
+            source: "bridge-relay",
+            event_type: "bridge_relay.proof_submitted",
+            actor: "validator-b",
+            object_id: "proof-347b",
+            timestamp: "bad-time-b",
+            reason: "warn",
+          },
+        ],
+        hasMore: false,
+      }),
+    } as unknown as ReturnType<typeof apiContractClient.createFrontendApiClient>;
+
+    vi.spyOn(apiContractClient, "createFrontendApiClient").mockReturnValue(mockClient);
+
+    const snapshot = await fetchDashboardSnapshot();
+
+    expect(snapshot.events.map((event) => event.id)).toEqual([
+      "bridge-relay:proof-347a",
+      "bridge-relay:proof-347b",
+    ]);
+  });
 });
