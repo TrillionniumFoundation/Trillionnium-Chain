@@ -20,6 +20,7 @@ pub(crate) fn oracle_policy_fixture() -> serde_json::Value {
         "max_staleness_ms": 60_000,
         "min_source_count": 2,
         "max_deviation_bps": 500,
+        "max_update_rate_per_window": 60,
         "feed_id": "btc/usd",
     })
 }
@@ -94,6 +95,8 @@ struct SnapshotFile {
     reference_price: u64,
     feed_id: String,
     sources: Vec<Value>,
+    #[serde(default = "default_snapshot_sample_count")]
+    sample_count: u32,
 }
 
 #[derive(Debug, Deserialize)]
@@ -101,7 +104,17 @@ struct PolicyFile {
     max_staleness_ms: u64,
     min_source_count: u64,
     max_deviation_bps: u64,
+    #[serde(default = "default_max_update_rate_per_window")]
+    max_update_rate_per_window: u64,
     feed_id: String,
+}
+
+const fn default_snapshot_sample_count() -> u32 {
+    1
+}
+
+const fn default_max_update_rate_per_window() -> u64 {
+    60
 }
 
 fn validate_policy_file(policy: &PolicyFile) -> Result<(), String> {
@@ -113,6 +126,14 @@ fn validate_policy_file(policy: &PolicyFile) -> Result<(), String> {
     }
     if policy.max_deviation_bps > 10_000 {
         return Err("invalid policy: max_deviation_bps must be <= 10000".to_string());
+    }
+    if policy.max_update_rate_per_window == 0 {
+        return Err("invalid policy: max_update_rate_per_window must be > 0".to_string());
+    }
+    if policy.min_source_count > policy.max_update_rate_per_window {
+        return Err(
+            "invalid policy: min_source_count must be <= max_update_rate_per_window".to_string(),
+        );
     }
     Ok(())
 }
@@ -362,6 +383,7 @@ pub(crate) fn oracle_validate_snapshot_response(
     let future = snapshot_val.observed_at_ms > now_ts_ms;
     let stale = now_ts_ms.saturating_sub(snapshot_val.observed_at_ms) > policy_val.max_staleness_ms;
     let quorum = cardinality < policy_val.min_source_count as u32;
+    let rate = snapshot_val.sample_count as u64 > policy_val.max_update_rate_per_window;
     let drift = compute_deviation_bps(snapshot_val.aggregate_price, snapshot_val.reference_price)
         >= policy_val.max_deviation_bps;
 
@@ -383,6 +405,8 @@ pub(crate) fn oracle_validate_snapshot_response(
         outcome = "quorum";
         quorum_reject_total = 1;
         error = Some("quorum reject".to_string());
+    } else if rate {
+        error = Some("rate".to_string());
     } else if drift {
         outcome = "drift";
         drift_reject_total = 1;
@@ -410,7 +434,7 @@ pub(crate) fn oracle_validate_snapshot_response(
             oracle_drift_reject_total: drift_reject_total,
             oracle_source_cardinality: cardinality,
             accepted_total,
-            sample_count: 1,
+            sample_count: snapshot_val.sample_count,
         },
         error,
     })
