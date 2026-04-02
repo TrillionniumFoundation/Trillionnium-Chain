@@ -13,6 +13,8 @@ The shipped topology is intentionally small and fail-closed:
 
 All four nodes bind the same loopback IP (`127.0.0.1`) and keep a deterministic `+1000` port spacing between neighboring peers. This preserves a single explicit bootstrap topology for local formation and operator rehearsal.
 
+This fixture is local-only and rehearsal-scoped. Do not treat it as proof that public-mainnet bootstrap peer management, discovery, or sync closure is complete.
+
 ## Startup / join / rejoin model
 
 1. Start `node1` first as the initial anchor.
