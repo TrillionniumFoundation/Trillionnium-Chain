@@ -1316,6 +1316,7 @@ mod tests {
         let mut relay = relay(1, &[7]);
         let mut msg = sample_msg();
         msg.tx_receipt_status = 0;
+        let audit_len_before = relay.audit_log().len();
 
         let err = relay
             .finalize_settlement(&msg, &[sig_for(&msg, 7)], 1_000, 999, 31337, addr(9))
@@ -1325,6 +1326,11 @@ mod tests {
             err,
             BridgeRelayError::InvalidTransactionReceipt { status: 0 }
         ));
+        assert_eq!(
+            relay.audit_log().len(),
+            audit_len_before,
+            "bad receipt must fail closed without proof/nonce/finalize audit side effects"
+        );
 
         let mut settled_msg = sample_msg();
         settled_msg.nonce = 11;
