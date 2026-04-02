@@ -108,18 +108,17 @@ EXPLORER_RPC_BASE_URL=http://127.0.0.1:7777
 Suggested bring-up from the repo root:
 
 ```bash
-set -a
-. ./trillionnium-rust/run/explorer-service/explorer-service.env
-set +a
 ./trillionnium-rust/scripts/v2/explorer_service_up.sh
 ./trillionnium-rust/scripts/v2/explorer_service_status.sh
 ```
+
+If `trillionnium-rust/run/explorer-service/explorer-service.env` exists, all three scaffold scripts now auto-load it before computing their runtime contract, so operator-local bind/proxy settings persist across `up`, `status`, and `down` without needing a separate `set -a; source ...` step.
 
 Operator notes for this placeholder deployment shape:
 
 - prefer `EXPLORER_HOST=127.0.0.1` when a reverse proxy terminates external traffic; only bind `0.0.0.0` if the host/network policy really requires direct exposure
 - treat `EXPLORER_PUBLIC_BASE_URL` as the public/operator-facing URL and `local_health_url` as the local liveness target; they may differ legitimately
-- keep the env file, emitted `pid_file`, and emitted `log_file` together in handoff notes so the next operator can restart or roll back without guessing hidden shell state
+- keep the env file, emitted `pid_file`, and emitted `log_file` together in handoff notes so the next operator can restart or roll back without guessing hidden shell state; the scripts auto-load that env file when present
 - if the proxy layer is changed, re-run `explorer_service_status.sh` and quote both `health_url` and `local_health_url` in the ticket/handoff note
 
 ## Expected status output

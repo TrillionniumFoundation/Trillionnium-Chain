@@ -10,6 +10,14 @@ LOG_FILE="${RUN_ROOT}/explorer-service.log"
 ENV_FILE="${RUN_ROOT}/explorer-service.env"
 HEALTH_FILE="${PUBLIC_DIR}/healthz"
 INDEX_FILE="${PUBLIC_DIR}/index.json"
+
+if [[ -f "${ENV_FILE}" ]]; then
+  set -a
+  # shellcheck disable=SC1090
+  source "${ENV_FILE}"
+  set +a
+fi
+
 HOST="${EXPLORER_HOST:-127.0.0.1}"
 PORT="${EXPLORER_PORT:-8090}"
 PUBLIC_BASE_URL="${EXPLORER_PUBLIC_BASE_URL:-http://${HOST}:${PORT}}"
