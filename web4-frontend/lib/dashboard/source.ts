@@ -205,16 +205,24 @@ const mapNormalizedAuditSeverity = (event: NormalizedAuditEvent): DashboardSnaps
 };
 
 const mapNormalizedAuditToDashboardEvent = (event: NormalizedAuditEvent, fallbackTime: string): DashboardSnapshot["events"][number] => {
+  const stableId = [
+    event.source,
+    event.object_id ?? event.event_type,
+    event.subject ?? "",
+    event.actor ?? "system",
+  ]
+    .filter((part) => part.length > 0)
+    .join(":");
+
   return {
-    id: event.object_id
-      ? `${event.source}:${event.object_id}`
-      : `${event.source}:${event.event_type}:${event.actor ?? "system"}`,
+    id: stableId,
     time: toDisplayTime(event.timestamp ?? event.checkedAt ?? fallbackTime),
     category: mapEventCategory(event.event_type),
     summary: `${event.source} · ${event.event_type}`,
     severity: mapNormalizedAuditSeverity(event),
     details: JSON.stringify({
       actor: event.actor,
+      subject: event.subject,
       objectId: event.object_id,
       relatedId: event.related_id,
       amount: event.amount,

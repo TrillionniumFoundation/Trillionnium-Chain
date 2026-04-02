@@ -370,11 +370,15 @@ describe("dashboard source normalized audit pagination", () => {
     vi.spyOn(apiContractClient, "createFrontendApiClient").mockReturnValue(mockClient);
 
     const snapshot = await fetchDashboardSnapshot();
+    const capabilityGrantedEvents = snapshot.events.filter(
+      (event) => event.summary === "capability-registry · capability.granted",
+    );
 
     expect(mockClient.queryNormalizedAuditEvents).toHaveBeenCalledTimes(1);
-    expect(
-      snapshot.events.filter((event) => event.summary === "capability-registry · capability.granted"),
-    ).toHaveLength(2);
+    expect(capabilityGrantedEvents).toHaveLength(2);
+    expect(new Set(capabilityGrantedEvents.map((event) => event.id)).size).toBe(2);
+    expect(capabilityGrantedEvents[0]?.details).toContain("did:trnm:");
+    expect(capabilityGrantedEvents[1]?.details).toContain("did:trnm:");
   });
 
   it("treats revocation-like normalized audit events as critical fail-closed incidents", async () => {
