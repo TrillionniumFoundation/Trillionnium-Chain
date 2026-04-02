@@ -370,6 +370,7 @@ export const adaptQueryCapabilityAudit = (
     audits: rpc.data.owner_history.map((entry) => {
       const actionGrantsCapability =
         entry.action === "CAPABILITY_ISSUED" || entry.action === "CAPABILITY_RENEWED";
+      const actionTouchesCapability = actionGrantsCapability || entry.action === "CAPABILITY_REVOKED";
 
       const revocationMarker = tokenIsRevoked
         ? `TOKEN_REVOKED@${toHeightMarker(tokenRevokedAt)}`
@@ -380,8 +381,8 @@ export const adaptQueryCapabilityAudit = (
         capability: rpc.data.token.scope,
         granted: !tokenIsRevoked && actionGrantsCapability,
         reason:
-          tokenIsRevoked && actionGrantsCapability
-            ? [revocationMarker, entry.note]
+          tokenIsRevoked && actionTouchesCapability
+            ? [revocationMarker, entry.note ?? entry.action]
                 .filter((value): value is string => typeof value === "string" && value.length > 0)
                 .join(": ")
             : entry.note ?? entry.action,

@@ -503,6 +503,27 @@ describe("api-contract adapters", () => {
     expect(out.audits[0]?.checkedAt).toBe("height:123");
   });
 
+  it("preserves explicit capability revoke history under token-revoked fail-closed semantics", () => {
+    const out = adaptQueryCapabilityAudit({
+      token: {
+        subject_did: "did:trnm:bob",
+        scope: "AUDIT_READ",
+        revoked_at: 456,
+      },
+      owner_history: [
+        {
+          action: "CAPABILITY_REVOKED",
+          at_height: 124,
+        },
+      ],
+    });
+
+    expect(out.subject).toBe("did:trnm:bob");
+    expect(out.audits[0]?.granted).toBe(false);
+    expect(out.audits[0]?.reason).toBe("TOKEN_REVOKED@height:456: CAPABILITY_REVOKED");
+    expect(out.audits[0]?.checkedAt).toBe("height:124");
+  });
+
   it("accepts canonical capability audit payload with height marker checkedAt", () => {
     const out = adaptQueryCapabilityAudit({
       subject: "did:trnm:bob",
