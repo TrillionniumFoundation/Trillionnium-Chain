@@ -43,14 +43,8 @@ pub(crate) fn query_capability_audit(
         });
     }
 
-    let mut owner_history: Vec<_> = registry
+    if let Some(invalid_subject) = registry
         .audit_trail()
-        .iter()
-        .filter(|event| event.subject == token.subject_did)
-        .cloned()
-        .collect();
-
-    if let Some(invalid_subject) = owner_history
         .iter()
         .map(|event| event.subject.as_str())
         .find(|subject| !IdentityRegistry::is_canonical_did(subject))
@@ -60,6 +54,13 @@ pub(crate) fn query_capability_audit(
             value: invalid_subject.to_string(),
         });
     }
+
+    let mut owner_history: Vec<_> = registry
+        .audit_trail()
+        .iter()
+        .filter(|event| event.subject == token.subject_did)
+        .cloned()
+        .collect();
 
     owner_history.sort_by(|left, right| {
         left.at_height
