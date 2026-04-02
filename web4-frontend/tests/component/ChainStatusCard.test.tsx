@@ -1,6 +1,10 @@
-import { render, screen } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { cleanup, render, screen } from "@testing-library/react";
+import { afterEach, describe, expect, it } from "vitest";
 import { ChainStatusCard } from "@/app/components/ChainStatusCard";
+
+afterEach(() => {
+  cleanup();
+});
 
 describe("ChainStatusCard", () => {
   it("renders readonly chain fields with fail-closed copy", () => {
@@ -37,6 +41,24 @@ describe("ChainStatusCard", () => {
     expect(screen.getByText("Network: Unavailable")).toBeInTheDocument();
     expect(screen.getByText("Latest block: Unavailable")).toBeInTheDocument();
     expect(screen.getByText("Finality: Unavailable")).toBeInTheDocument();
+    expect(screen.getByText("Health: Unavailable")).toBeInTheDocument();
+  });
+
+  it("trims whitespace-only readonly fields before fail-closing", () => {
+    render(
+      <ChainStatusCard
+        status={{
+          network: "   ",
+          latestBlock: 512,
+          finality: "  finalizing ",
+          health: "\n\t",
+        } as unknown as Parameters<typeof ChainStatusCard>[0]["status"]}
+      />,
+    );
+
+    expect(screen.getByText("Network: Unavailable")).toBeInTheDocument();
+    expect(screen.getByText("Latest block: 512")).toBeInTheDocument();
+    expect(screen.getByText("Finality: finalizing")).toBeInTheDocument();
     expect(screen.getByText("Health: Unavailable")).toBeInTheDocument();
   });
 });

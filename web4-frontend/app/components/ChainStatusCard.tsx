@@ -1,8 +1,13 @@
 import type { ChainStatus } from "@/lib/chain-status";
 
 function failClosedValue(value: string | number | null | undefined, fallback = "Unavailable") {
-  if (value === null || value === undefined || value === "") {
+  if (value === null || value === undefined) {
     return fallback;
+  }
+
+  if (typeof value === "string") {
+    const normalized = value.trim();
+    return normalized === "" ? fallback : normalized;
   }
 
   return String(value);
