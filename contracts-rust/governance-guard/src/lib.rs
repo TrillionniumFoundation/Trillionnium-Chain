@@ -990,6 +990,44 @@ mod tests {
     }
 
     #[test]
+    fn queue_is_idempotent_without_duplicate_audit_events() {
+        let mut gov = setup();
+        let now = 2_850;
+        let eta = now + 60;
+        let pid = gov
+            .propose(
+                "alice",
+                "challenge_window_blocks",
+                "100",
+                "131",
+                eta,
+                "reason-queue-idempotent",
+                now,
+            )
+            .unwrap();
+
+        gov.queue("alice", pid).unwrap();
+        let audit_len_after_first_queue = gov.audit_log().len();
+
+        gov.queue("alice", pid).unwrap();
+
+        let proposal = gov.proposal(pid).unwrap();
+        assert_eq!(proposal.status, ProposalStatus::Queued);
+        assert_eq!(gov.audit_log().len(), audit_len_after_first_queue);
+        assert_eq!(
+            gov.audit_log()
+                .iter()
+                .filter(|event| matches!(
+                    event,
+                    GovernanceEvent::ProposalQueued { proposal_id, actor }
+                        if *proposal_id == pid && actor == "alice"
+                ))
+                .count(),
+            1
+        );
+    }
+
+    #[test]
     fn proposer_can_cancel_own_proposal() {
         let mut gov = setup();
         let now = 2_900;
