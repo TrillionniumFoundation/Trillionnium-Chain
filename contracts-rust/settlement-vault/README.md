@@ -32,7 +32,8 @@ cargo test
 ## 说明
 
 - 当前版本为纯 Rust 内存状态机，便于先行验证接口语义与状态迁移。
-- 后续可平滑迁移到链上执行环境（例如存储抽象、权限模型、事件接口等）。
+- 这里的“可迁移”仅表示语义与边界可以为后续宿主接线提供基线；**不表示** 当前 crate 已接入 canonical `HostAbiV1`、`trnm-node` deterministic WASM executor，或已默认产出 `wasm32-unknown-unknown` 合约工件。
+- 是否进入 Day-1 / release-ready / public-mainnet scope，仍应以仓库根 `RELEASE_READINESS.md` 与 `trillionnium-rust/docs/release/TRNM_MAINNET_GAP_MATRIX_2026-03-26.md` 为准。
 
 ## 建议提交信息前缀
 
