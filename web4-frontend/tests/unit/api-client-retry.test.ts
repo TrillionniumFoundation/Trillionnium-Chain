@@ -153,6 +153,22 @@ describe("api-contract client and retry hardening", () => {
     expect(fetchImpl).toHaveBeenCalledTimes(1);
   });
 
+  it("does not retry unknown non-FrontendApiError failures in retry helper", async () => {
+    let attempts = 0;
+
+    await expect(
+      withRetry(
+        async () => {
+          attempts += 1;
+          throw new Error("boom");
+        },
+        { retries: 2, baseDelayMs: 0, maxDelayMs: 0 },
+      ),
+    ).rejects.toThrow("boom");
+
+    expect(attempts).toBe(1);
+  });
+
   it("clamps invalid retry options to safe defaults", async () => {
     let attempts = 0;
     await expect(
