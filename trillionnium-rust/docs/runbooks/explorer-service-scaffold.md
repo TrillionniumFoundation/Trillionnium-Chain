@@ -189,6 +189,7 @@ Additional contract markers carried in `index.json`:
 - `query_events_default_limit=100`
 - `query_events_max_limit=500`
 - `write_paths_exposed=false`
+- `historical_query_scope=rpc-retention-bounded`
 - a note that historical queries remain bounded by current RPC retention until a durable indexer/archive strategy exists
 
 ## Failure interpretation
