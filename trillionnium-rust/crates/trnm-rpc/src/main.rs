@@ -8171,6 +8171,54 @@ mod tests {
     }
 
     #[test]
+    fn load_node_events_authoritative_reads_historical_manifest_sources() {
+        let _guard = lock_env();
+        let root = tempfile::tempdir().expect("tempdir");
+        let run = root.path().join("run");
+        let archive = root.path().join("archive");
+        let manifest_dir = root.path().join("cfg/history");
+        fs::create_dir_all(&run).expect("create run dir");
+        fs::create_dir_all(&archive).expect("create archive dir");
+        fs::create_dir_all(&manifest_dir).expect("create manifest dir");
+
+        fs::write(run.join("node1.log"), "").expect("write empty live log");
+        let archived_log = archive.join("node4.log");
+        fs::write(
+            &archived_log,
+            "2026-03-03T20:10:12Z INFO node [event] event_type=commit task_id=88 from_status=Assigned to_status=Committed actor=worker-h tx_id=9 block_height=7 state_root=s7 ts_unix_ms=7000 signer=worker-h tx_hash=0x88\n",
+        )
+        .expect("write archived log");
+        let manifest = manifest_dir.join("sources.txt");
+        fs::write(&manifest, "../../archive/node4.log\n").expect("write manifest");
+
+        let prev_manifest = std::env::var(NODE_EVENT_LOG_MANIFEST_ENV).ok();
+        let prev_sources = std::env::var(NODE_EVENT_LOG_SOURCES_ENV).ok();
+        std::env::set_var(
+            NODE_EVENT_LOG_MANIFEST_ENV,
+            manifest.to_string_lossy().to_string(),
+        );
+        std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV);
+
+        let loaded = load_node_events_from_root(root.path(), NodeEventScanMode::Authoritative);
+
+        match prev_manifest {
+            Some(v) => std::env::set_var(NODE_EVENT_LOG_MANIFEST_ENV, v),
+            None => std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV),
+        }
+        match prev_sources {
+            Some(v) => std::env::set_var(NODE_EVENT_LOG_SOURCES_ENV, v),
+            None => std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV),
+        }
+
+        assert_eq!(loaded.mode, NodeEventScanMode::Authoritative);
+        assert!(!loaded.truncated);
+        assert_eq!(loaded.events.len(), 1);
+        assert_eq!(loaded.events[0].task_id, 88);
+        assert_eq!(loaded.events[0].event_type, "commit");
+        assert_eq!(loaded.events[0].block_height, 7);
+    }
+
+    #[test]
     fn load_node_events_recent_tail_marks_truncation_but_authoritative_keeps_history() {
         let root = tempfile::tempdir().expect("tempdir");
         let run = root.path().join("run");
