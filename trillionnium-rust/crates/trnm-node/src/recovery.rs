@@ -557,4 +557,16 @@ mod tests {
         assert!(err.contains("last retained checkpoint: 5"));
         assert!(err.contains("next startup height: 8"));
     }
+
+    #[test]
+    fn ensure_recoverable_wal_state_allows_checkpoint_only_rejoin_bootstrap() {
+        let recovered = recovered_state(0, 9, Some(8), false, false);
+
+        ensure_recoverable_wal_state(Path::new("/tmp/trnm-wal"), &recovered)
+            .expect("checkpoint-only rejoin bootstrap should remain recoverable");
+        assert_eq!(
+            recovery_startup_summary(&recovered),
+            "retained_wal_entries=0 checkpoint_height_retained=8 checkpoint_tip_relation=checkpoint_only:8 next_startup_height=9 wal_tail_truncated=false metadata_only_recovery=false join_rejoin_status=ready"
+        );
+    }
 }
