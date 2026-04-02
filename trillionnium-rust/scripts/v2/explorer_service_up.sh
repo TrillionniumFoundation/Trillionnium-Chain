@@ -112,6 +112,18 @@ mkdir -p "${PUBLIC_DIR}"
 
 validate_runtime_contract
 
+if [[ ! -f "${ENV_FILE}" ]]; then
+  cat >"${ENV_FILE}" <<EOF
+# Suggested operator-local explorer scaffold environment.
+# Safe to edit for local/reverse-proxy deployment, but this scaffold remains static-only.
+EXPLORER_HOST=${HOST}
+EXPLORER_PORT=${PORT}
+EXPLORER_PUBLIC_BASE_URL=${PUBLIC_BASE_URL}
+EXPLORER_HEALTH_URL=${HEALTH_URL}
+EXPLORER_RPC_BASE_URL=${RPC_BASE_URL}
+EOF
+fi
+
 if ! command -v python3 >/dev/null 2>&1; then
   echo "refusing to start explorer service scaffold: python3 is required but not installed"
   emit_contract_fields

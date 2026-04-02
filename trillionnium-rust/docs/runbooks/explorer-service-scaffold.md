@@ -95,6 +95,8 @@ A minimal Day-1 handoff can be expressed as:
 
 Suggested env file (`trillionnium-rust/run/explorer-service/explorer-service.env`):
 
+> On first successful/local bring-up, `explorer_service_up.sh` will create this file automatically if it does not already exist, using the current runtime contract values. It never overwrites an existing env file, so operator-local edits remain the source of truth.
+
 ```bash
 EXPLORER_HOST=127.0.0.1
 EXPLORER_PORT=18090
