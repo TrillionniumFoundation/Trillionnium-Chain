@@ -184,6 +184,7 @@ TRNM_TX_CLI=./trillionnium-rust/target/debug/trnm-cli \
 - `legacy/` 仅作归档，不作为当前开发入口。
 - 当前是否“可发布 / release-ready”请以 [RELEASE_READINESS.md](RELEASE_READINESS.md) 为准；历史证据文档不自动代表今日状态。
 - `contracts-rust/` 当前表示的是 **Rust-native external contracts 的独立子树与 MVP 合约骨架**；它不等于已完成 `sdk/`、`runtime-spec/`、`integration-tests/` 目标布局，也不单独构成 mainnet-ready 证明。
+  - 其中 `audit-events/` 更接近 shared audit-event schema 邻接层；它**不等价于** `sdk/` / `runtime-spec/` 已落地，也**不表示** canonical `wasm32-unknown-unknown` Host ABI/runtime integration 已完成。
 - Web4 当前语义是：**前端默认走只读 API client；只在显式 `?mode=mock` 时回退到本地 mock snapshot；不暴露写路径。**
 - 文档中若出现 `/api/v0/web4/*`，应视为历史草案命名；当前仓内前端实际消费的是 `query-task` / `query-events` / `query-capability-audit` / `query-normalized-audit-events` 这组只读接口，**不是仓内已实现的 Next.js route**。
 - Explorer / indexer 接入时可先把这组接口当作最小 read-model 契约：
