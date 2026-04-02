@@ -21,7 +21,8 @@ This fixture is local-only and rehearsal-scoped. Do not treat it as proof that p
 2. Start `node2`, `node3`, and `node4` in slot order.
 3. If `node1` is absent, do not treat `node2`, `node3`, or `node4` as a valid replacement bootstrap anchor; restore the shipped `node1` anchor first and fail closed otherwise.
 4. For a join or rejoin rehearsal, bring the node back with the same config file and the same `node_id`/listener tuple. Treat any drift from the shipped tuple as invalid until reviewed.
-5. If a config contains unknown fields, whitespace drift, path-like ids, non-canonical socket literals, privileged ports, wildcard listeners, or mixed listener IP families, the config loader must fail closed.
+5. Treat `configs/node1.toml` through `configs/node4.toml` as slot-bound fixtures: do not rename them, swap them between peers, or reinterpret a later slot as the bootstrap anchor during operator recovery.
+6. If a config contains unknown fields, whitespace drift, path-like ids, non-canonical socket literals, privileged ports, wildcard listeners, or mixed listener IP families, the config loader must fail closed.
 
 ## What this fixture is for
 
