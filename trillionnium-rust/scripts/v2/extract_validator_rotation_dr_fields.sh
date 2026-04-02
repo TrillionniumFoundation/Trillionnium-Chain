@@ -124,10 +124,8 @@ while [ "$#" -gt 0 ]; do
   esac
 done
 
-if [ -n "$EXPECTED_WORKTREE_ROOT" ]; then
+if [ -n "$EXPECTED_WORKTREE_ROOT" ] || [ -n "$EXPECTED_BRANCH_REF" ]; then
   require_worktree_root_value --expected-worktree-root "$EXPECTED_WORKTREE_ROOT"
-fi
-if [ -n "$EXPECTED_BRANCH_REF" ]; then
   require_ref_token --expected-branch-ref "$EXPECTED_BRANCH_REF"
   EXPECTED_BRANCH_REF_CANONICAL="$(canonicalize_branch_ref "$EXPECTED_BRANCH_REF")"
   case "$EXPECTED_BRANCH_REF_CANONICAL" in
