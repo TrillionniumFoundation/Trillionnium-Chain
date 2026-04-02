@@ -18,7 +18,16 @@ HEALTH_URL="${EXPLORER_HEALTH_URL:-${PUBLIC_BASE_URL}/healthz}"
 INDEX_URL="${PUBLIC_BASE_URL}/index.json"
 RPC_BASE_URL="${EXPLORER_RPC_BASE_URL:-http://127.0.0.1:7777}"
 RPC_BASE_URL="${RPC_BASE_URL%/}"
-LOCAL_HEALTH_URL="http://${HOST}:${PORT}/healthz"
+LOCAL_PROBE_HOST="${HOST}"
+case "${HOST}" in
+  0.0.0.0)
+    LOCAL_PROBE_HOST="127.0.0.1"
+    ;;
+  ::)
+    LOCAL_PROBE_HOST="[::1]"
+    ;;
+esac
+LOCAL_HEALTH_URL="http://${LOCAL_PROBE_HOST}:${PORT}/healthz"
 
 emit_invalid_config() {
   local config_error="$1"

@@ -143,7 +143,7 @@ The status output should include the operator contract fields below:
 - `bind_port=...`
 - `public_base_url=http://...`
 - `health_url=http://.../healthz`
-- `local_health_url=http://<bind_host>:<bind_port>/healthz`
+- `local_health_url=http://<local_probe_host>:<bind_port>/healthz` (`127.0.0.1` when `EXPLORER_HOST=0.0.0.0`, `[::1]` when `EXPLORER_HOST=::`, otherwise the bind host)
 - `index_url=http://.../index.json`
 - `rpc_base_url=http://...`
 - `service_mode=operator-facing-static-scaffold`
@@ -262,7 +262,7 @@ It also re-emits the same operator-facing contract fields as the up/status scrip
 - `bind_port=...`
 - `public_base_url=http://...`
 - `health_url=http://.../healthz`
-- `local_health_url=http://<bind_host>:<bind_port>/healthz`
+- `local_health_url=http://<local_probe_host>:<bind_port>/healthz` (`127.0.0.1` when `EXPLORER_HOST=0.0.0.0`, `[::1]` when `EXPLORER_HOST=::`, otherwise the bind host)
 - `index_url=http://.../index.json`
 - `rpc_base_url=http://...`
 - `service_mode=operator-facing-static-scaffold`
