@@ -74,11 +74,13 @@ Every alert page, dashboard share link, and incident ticket should carry the sam
 - `signal=<node-down|sync-lag|replay-failure|rpc-unhealthy|worker-failure|oracle-anomaly|bridge-anomaly|contract-drift>`
 - `needs_replay=<yes|no>`
 - `needs_rollback=<yes|no>`
+- `first_stop=<stable-panel-name-from-this-runbook|unknown>`
 
 Rules:
 
 - `needs_replay=yes` for every `sev0` / `sev1` incident.
 - `needs_rollback=yes` only when a concrete emitted `rollback_command=` exists or rollback is the active mitigation choice.
+- `first_stop=` must exactly match one stable panel name from this runbook; use `unknown` rather than inventing a new alias.
 - if a screenshot or dashboard link is shared without this label block, treat the handoff as incomplete.
 - for `service=oracle`, also preserve `verdict=<accepts-stalled|stale-wave|quorum-collapse|drift-anomaly|contract-drift>` from `docs/runbooks/oracle-observability-alerts.md`; do not drop it when copying the shared block into a page or ticket.
 
@@ -193,7 +195,7 @@ Threshold rules:
 - consecutive windows must align with the slowest shared dashboard rollup used by operators;
 - default `needs_replay=yes` for every `sev0` / `sev1` row unless a stricter service-specific runbook overrides it explicitly;
 - if observability output and emitted evidence artifacts disagree, override any lower classification to `sev0`;
-- if a page fires without the full shared label block (`plane`, `service`, `severity`, `signal`, `needs_replay`, and `needs_rollback`), treat the incident as under-specified;
+- if a page fires without the full shared label block (`plane`, `service`, `severity`, `signal`, `needs_replay`, `needs_rollback`, and `first_stop`), treat the incident as under-specified;
 - if `needs_rollback=yes`, the ticket/page must quote the current `rollback_command=` verbatim or mark it as `unknown` rather than leaving the field implicit.
 
 ---

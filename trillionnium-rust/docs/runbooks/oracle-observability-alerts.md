@@ -149,11 +149,13 @@ Minimum label block:
 - `verdict=<accepts-stalled|stale-wave|quorum-collapse|drift-anomaly|contract-drift>`
 - `needs_replay=<yes|no>`
 - `needs_rollback=<yes|no>`
+- `first_stop=<Oracle-specific drill-down|Evidence / replay integrity|unknown>`
 
 Label rules:
 
 - set `needs_replay=yes` for every `sev0`/`sev1` incident, or whenever evidence and observability disagree;
 - set `needs_rollback=yes` only when an emitted `rollback_command=` exists or an operator has explicitly chosen rollback as the active mitigation path;
+- keep `first_stop=Oracle-specific drill-down` for normal oracle triage and switch to `Evidence / replay integrity` whenever `verdict=contract-drift` or emitted evidence contradicts dashboard math;
 - if a dashboard screenshot/link is shared without the label block, treat the handoff as incomplete even if the graph itself looks obvious.
 
 ## Dashboard minimum bundle
