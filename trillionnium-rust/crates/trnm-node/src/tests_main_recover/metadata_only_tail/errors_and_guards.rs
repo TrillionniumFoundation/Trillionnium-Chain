@@ -252,8 +252,8 @@ fn recover_metadata_only_error_reports_fully_checkpointed_retained_tip_without_f
 }
 
 #[test]
-fn ensure_recoverable_wal_state_rejects_metadata_only_recovery() {
-    let wal_dir = temp_wal_dir("recover-guard-metadata-only");
+fn ensure_recoverable_wal_state_rejects_metadata_only_recovery_with_singular_checkpoint_lag() {
+    let wal_dir = temp_wal_dir("recover-guard-metadata-only-singular-lag");
     fs::create_dir_all(&wal_dir).unwrap();
 
     let recovered = RecoveredWalState {
@@ -275,6 +275,8 @@ fn ensure_recoverable_wal_state_rejects_metadata_only_recovery() {
 
     assert!(err.contains("refusing metadata-only recovery"));
     assert!(err.contains("retained 3 committed WAL entries through height 3"));
+    assert!(err.contains("checkpoint lags retained WAL tip by 1 block"));
+    assert!(!err.contains("checkpoint lags retained WAL tip by 1 blocks"));
     assert!(err.contains("last retained checkpoint: 2"));
 
     let _ = fs::remove_dir_all(&wal_dir);
