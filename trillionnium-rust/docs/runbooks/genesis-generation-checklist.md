@@ -110,7 +110,7 @@ If the artifact is headed into a shared bootstrap ceremony packet, generate the 
 python3 scripts/v2/check_validator_config_bundle.py \
   --emit-ceremony-packet \
   --genesis-artifact-path /abs/path/to/genesis.json \
-  --genesis-artifact-sha256 <sha256> \
+  --genesis-artifact-sha256 <64-char-sha256> \
   configs/node1.toml \
   configs/node2.toml \
   configs/node3.toml \
