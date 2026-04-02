@@ -165,4 +165,24 @@ mod tests {
             );
         }
     }
+
+    #[test]
+    fn parse_governed_bool_param_accepts_case_drifted_ascii_aliases_without_whitespace() {
+        for raw in ["TRUE", "Yes", "oN", "FALSE", "No", "OFF"] {
+            parse_governed_bool_param(raw, "bool_flag")
+                .expect("ascii case aliases without whitespace should canonicalize");
+        }
+    }
+
+    #[test]
+    fn parse_governed_bool_param_rejects_whitespace_and_hidden_unicode_aliases_fail_closed() {
+        for raw in [" true", "false ", "tr\u{200b}ue", "fa\u{2060}lse", "o\u{00ad}n"] {
+            let err = parse_governed_bool_param(raw, "bool_flag")
+                .expect_err("non-canonical boolean aliases must fail closed");
+            assert!(matches!(
+                err,
+                PouwError::State(msg) if msg.contains("invalid boolean governance value for bool_flag")
+            ));
+        }
+    }
 }
