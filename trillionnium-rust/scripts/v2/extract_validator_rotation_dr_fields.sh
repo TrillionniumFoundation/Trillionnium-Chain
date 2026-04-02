@@ -70,6 +70,13 @@ require_ref_token() {
   esac
 }
 
+canonicalize_path() {
+  local input="$1"
+  (
+    cd "$input" >/dev/null 2>&1 && pwd -P
+  )
+}
+
 canonicalize_branch_ref() {
   local ref="$1"
   case "$ref" in
@@ -148,13 +155,28 @@ if [ -n "$EXPECTED_HEAD" ]; then
 fi
 
 ROOT="$(git rev-parse --show-toplevel)"
+RUN_ROOT="$ROOT/run"
+RUN_ROOT_CANONICAL="$(canonicalize_path "$RUN_ROOT")" || {
+  printf 'run directory is not accessible: %s\n' "$RUN_ROOT" >&2
+  exit 1
+}
 
 if [ -z "$REPORT_PATH" ]; then
-  REPORT_PATH="$(find "$ROOT/run" -maxdepth 1 -type f -name 'bft-restart-recovery-*.txt' -print 2>/dev/null | sort | tail -n 1)"
+  REPORT_PATH="$(find "$RUN_ROOT" -maxdepth 1 -type f -name 'bft-restart-recovery-*.txt' -print 2>/dev/null | sort | tail -n 1)"
 fi
 
-[ -n "$REPORT_PATH" ] || { echo "missing recovery report under $ROOT/run" >&2; exit 1; }
+[ -n "$REPORT_PATH" ] || { echo "missing recovery report under $RUN_ROOT" >&2; exit 1; }
 [ -f "$REPORT_PATH" ] || { echo "missing recovery report file: $REPORT_PATH" >&2; exit 1; }
+
+REPORT_PATH_CANONICAL="$(canonicalize_path "$(dirname "$REPORT_PATH")")/$(basename "$REPORT_PATH")"
+case "$REPORT_PATH_CANONICAL" in
+  "$RUN_ROOT_CANONICAL"/bft-restart-recovery-*.txt) ;;
+  *)
+    printf 'recovery report must live under current worktree run/: %s\n' "$REPORT_PATH_CANONICAL" >&2
+    exit 1
+    ;;
+ esac
+REPORT_PATH="$REPORT_PATH_CANONICAL"
 
 GENERATED_AT="$(require_key "$REPORT_PATH" generated_at)"
 CONFIG_PATH="$(require_key "$REPORT_PATH" config_path)"
