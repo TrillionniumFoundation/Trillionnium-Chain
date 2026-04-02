@@ -274,13 +274,19 @@ pub(crate) fn metadata_only_recovery_error(
     )
 }
 
-pub(crate) fn recovery_startup_summary(recovered: &RecoveredWalState) -> String {
-    let join_rejoin_status = if recovered.metadata_only_recovery {
+fn join_rejoin_status(recovered: &RecoveredWalState) -> &'static str {
+    if recovered.metadata_only_recovery {
         "blocked:metadata_only_recovery"
+    } else if recovered.wal_entries_retained > 0 {
+        "ready:retained_wal_resume"
+    } else if recovered.checkpoint_height_retained.is_some() {
+        "ready:checkpoint_only_bootstrap"
     } else {
-        "ready"
-    };
+        "ready:fresh_bootstrap"
+    }
+}
 
+pub(crate) fn recovery_startup_summary(recovered: &RecoveredWalState) -> String {
     format!(
         "retained_wal_entries={} checkpoint_height_retained={} checkpoint_tip_relation={} next_startup_height={} wal_tail_truncated={} metadata_only_recovery={} join_rejoin_status={}",
         recovered.wal_entries_retained,
@@ -292,7 +298,7 @@ pub(crate) fn recovery_startup_summary(recovered: &RecoveredWalState) -> String 
         recovered.next_height,
         recovered.truncated,
         recovered.metadata_only_recovery,
-        join_rejoin_status,
+        join_rejoin_status(recovered),
     )
 }
 
@@ -419,7 +425,7 @@ mod tests {
 
         assert_eq!(
             recovery_startup_summary(&recovered),
-            "retained_wal_entries=1 checkpoint_height_retained=none checkpoint_tip_relation=missing next_startup_height=9 wal_tail_truncated=false metadata_only_recovery=false join_rejoin_status=ready"
+            "retained_wal_entries=1 checkpoint_height_retained=none checkpoint_tip_relation=missing next_startup_height=9 wal_tail_truncated=false metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume"
         );
     }
 
@@ -439,7 +445,7 @@ mod tests {
 
         assert_eq!(
             recovery_startup_summary(&recovered),
-            "retained_wal_entries=2 checkpoint_height_retained=11 checkpoint_tip_relation=aligned next_startup_height=12 wal_tail_truncated=false metadata_only_recovery=false join_rejoin_status=ready"
+            "retained_wal_entries=2 checkpoint_height_retained=11 checkpoint_tip_relation=aligned next_startup_height=12 wal_tail_truncated=false metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume"
         );
     }
 
@@ -449,7 +455,7 @@ mod tests {
 
         assert_eq!(
             recovery_startup_summary(&recovered),
-            "retained_wal_entries=0 checkpoint_height_retained=8 checkpoint_tip_relation=checkpoint_only:8 next_startup_height=9 wal_tail_truncated=false metadata_only_recovery=false join_rejoin_status=ready"
+            "retained_wal_entries=0 checkpoint_height_retained=8 checkpoint_tip_relation=checkpoint_only:8 next_startup_height=9 wal_tail_truncated=false metadata_only_recovery=false join_rejoin_status=ready:checkpoint_only_bootstrap"
         );
     }
 
@@ -459,7 +465,7 @@ mod tests {
 
         assert_eq!(
             recovery_startup_summary(&recovered),
-            "retained_wal_entries=0 checkpoint_height_retained=none checkpoint_tip_relation=none next_startup_height=1 wal_tail_truncated=false metadata_only_recovery=false join_rejoin_status=ready"
+            "retained_wal_entries=0 checkpoint_height_retained=none checkpoint_tip_relation=none next_startup_height=1 wal_tail_truncated=false metadata_only_recovery=false join_rejoin_status=ready:fresh_bootstrap"
         );
     }
 
@@ -566,7 +572,19 @@ mod tests {
             .expect("checkpoint-only rejoin bootstrap should remain recoverable");
         assert_eq!(
             recovery_startup_summary(&recovered),
-            "retained_wal_entries=0 checkpoint_height_retained=8 checkpoint_tip_relation=checkpoint_only:8 next_startup_height=9 wal_tail_truncated=false metadata_only_recovery=false join_rejoin_status=ready"
+            "retained_wal_entries=0 checkpoint_height_retained=8 checkpoint_tip_relation=checkpoint_only:8 next_startup_height=9 wal_tail_truncated=false metadata_only_recovery=false join_rejoin_status=ready:checkpoint_only_bootstrap"
+        );
+    }
+
+    #[test]
+    fn ensure_recoverable_wal_state_reports_retained_wal_resume_surface() {
+        let recovered = recovered_state(2, 12, Some(11), false, false);
+
+        ensure_recoverable_wal_state(Path::new("/tmp/trnm-wal"), &recovered)
+            .expect("retained WAL resume state should remain recoverable");
+        assert_eq!(
+            recovery_startup_summary(&recovered),
+            "retained_wal_entries=2 checkpoint_height_retained=11 checkpoint_tip_relation=aligned next_startup_height=12 wal_tail_truncated=false metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume"
         );
     }
 }
