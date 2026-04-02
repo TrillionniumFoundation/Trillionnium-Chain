@@ -3855,6 +3855,36 @@ mod tests {
     }
 
     #[test]
+    fn ensure_safe_sign_message_rejects_zero_width_non_joiner_text() {
+        let err = ensure_safe_sign_message("rotate signer\u{200c}slot-b").unwrap_err();
+        assert!(
+            err.to_string()
+                .contains("contains control or bidi override characters"),
+            "unexpected: {err}"
+        );
+    }
+
+    #[test]
+    fn ensure_safe_sign_message_rejects_left_to_right_mark_text() {
+        let err = ensure_safe_sign_message("rotate signer\u{200e}slot-b").unwrap_err();
+        assert!(
+            err.to_string()
+                .contains("contains control or bidi override characters"),
+            "unexpected: {err}"
+        );
+    }
+
+    #[test]
+    fn ensure_safe_sign_message_rejects_right_to_left_mark_text() {
+        let err = ensure_safe_sign_message("rotate signer\u{200f}slot-b").unwrap_err();
+        assert!(
+            err.to_string()
+                .contains("contains control or bidi override characters"),
+            "unexpected: {err}"
+        );
+    }
+
+    #[test]
     fn ensure_safe_sign_message_rejects_word_joiner_text() {
         let err = ensure_safe_sign_message("rotate signer\u{2060}slot-b").unwrap_err();
         assert!(
