@@ -154,6 +154,28 @@ mod tests {
     }
 
     #[test]
+    fn stale_critical_seen_metadata_does_not_fake_active_backlog_on_reopened_last_slot() {
+        let mut gate = LaneAdmissionGate::new(3, 1);
+
+        assert_eq!(gate.normal.capacity, 2);
+        assert_eq!(gate.critical.capacity, 1);
+        assert_eq!(gate.admit(1, crate::IngressClass::Normal), crate::AdmitOutcome::Accepted);
+        assert_eq!(gate.admit(2, crate::IngressClass::Normal), crate::AdmitOutcome::Accepted);
+        assert_eq!(gate.admit(50, crate::IngressClass::Critical), crate::AdmitOutcome::Accepted);
+        assert_eq!(gate.critical_free_slots(), 0);
+        assert!(!gate.can_normal_borrow_critical_slot(0));
+
+        // After the real critical item drains, only queued backlog should control
+        // the last-slot guard. Stale duplicate/seen metadata alone must not keep
+        // free ingress closed once the critical queue is actually idle again.
+        gate.critical.pop_ready();
+        gate.critical.seen.insert(999);
+        assert!(gate.critical.queue.is_empty());
+        assert_eq!(gate.critical_free_slots(), 1);
+        assert!(gate.can_normal_borrow_critical_slot(1));
+    }
+
+    #[test]
     fn lane_has_global_capacity_is_strict_at_total_capacity_boundary() {
         let gate = LaneAdmissionGate::new(3, 1);
 
