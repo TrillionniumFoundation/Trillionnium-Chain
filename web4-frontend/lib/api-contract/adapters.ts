@@ -300,15 +300,14 @@ export const adaptQueryNormalizedAuditEvents = (
       hasMore?: boolean;
       total?: number;
     };
-    const nextCursor = data.nextCursor?.trim();
+    const nextCursor = data.nextCursor?.trim() || undefined;
     const requestedCursor = query?.cursor?.trim();
     const hasCursorLoop =
       requestedCursor != null &&
       requestedCursor.length > 0 &&
       nextCursor != null &&
-      nextCursor.length > 0 &&
       nextCursor === requestedCursor;
-    const hasMore = data.hasMore === true && !!nextCursor && !hasCursorLoop;
+    const hasMore = data.hasMore === true && nextCursor != null && !hasCursorLoop;
 
     return {
       events: data.events,

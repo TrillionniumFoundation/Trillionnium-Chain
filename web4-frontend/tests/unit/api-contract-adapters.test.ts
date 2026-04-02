@@ -382,7 +382,7 @@ describe("api-contract adapters", () => {
 
     expect(out.events[0]?.event_type).toBe("bridge_relay.proof_submitted");
     expect(out.hasMore).toBe(false);
-    expect(out.nextCursor).toBe("");
+    expect(out.nextCursor).toBeUndefined();
     expect(out.total).toBe(43);
   });
 
