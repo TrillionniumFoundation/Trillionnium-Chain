@@ -1557,6 +1557,11 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         path
     );
     anyhow::ensure!(
+        node_id.is_ascii(),
+        "invalid node config {}: node_id must use ASCII-only characters",
+        path
+    );
+    anyhow::ensure!(
         !node_id.chars().any(char::is_whitespace),
         "invalid node config {}: node_id must not contain whitespace",
         path
@@ -5763,6 +5768,36 @@ bootstrap_peers = ["127.0.0.1:27656"]
         assert!(err
             .to_string()
             .contains("node_id must not contain whitespace"));
+    }
+
+    #[test]
+    fn validate_node_config_rejects_non_ascii_node_id() {
+        let err = validate_node_config(
+            NodeConfig {
+                node_id: "nοde-a".into(),
+                rpc_addr: "127.0.0.1:26657".into(),
+                p2p_addr: "127.0.0.1:26656".into(),
+            },
+            "node.toml",
+        )
+        .expect_err("non-ASCII node_id must fail closed");
+        assert!(err
+            .to_string()
+            .contains("node_id must use ASCII-only characters"));
+    }
+
+    #[test]
+    fn validate_node_config_accepts_ascii_boundary_punctuation_node_id() {
+        let cfg = validate_node_config(
+            NodeConfig {
+                node_id: "node-A_09.-~".into(),
+                rpc_addr: "127.0.0.1:26657".into(),
+                p2p_addr: "127.0.0.1:26656".into(),
+            },
+            "node.toml",
+        )
+        .expect("ASCII node_id should remain valid");
+        assert_eq!(cfg.node_id, "node-A_09.-~");
     }
 
     #[test]
