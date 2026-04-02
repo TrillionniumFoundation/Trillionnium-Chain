@@ -4010,6 +4010,94 @@ mod tests {
     }
 
     #[test]
+    fn shipped_bootstrap_configs_keep_canonical_peer_identity_and_listener_literals() {
+        use std::net::SocketAddr;
+
+        let manifest_dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR"));
+        let workspace_root = manifest_dir
+            .ancestors()
+            .nth(2)
+            .expect("trnm-node manifest should sit under trillionnium-rust/crates/trnm-node");
+
+        for config_name in ["node1.toml", "node2.toml", "node3.toml", "node4.toml"] {
+            let config_path = workspace_root.join("configs").join(config_name);
+            let raw = std::fs::read_to_string(&config_path).unwrap_or_else(|err| {
+                panic!(
+                    "{} should stay readable for shipped bootstrap literal checks: {err}",
+                    config_path.display()
+                )
+            });
+            let table: toml::Table = raw.parse().unwrap_or_else(|err| {
+                panic!(
+                    "{} should remain valid TOML for shipped bootstrap literal checks: {err}",
+                    config_path.display()
+                )
+            });
+
+            let node_id = table
+                .get("node_id")
+                .and_then(|value| value.as_str())
+                .unwrap_or_else(|| {
+                    panic!(
+                        "{} must keep node_id as a TOML string literal",
+                        config_path.display()
+                    )
+                });
+            assert_eq!(
+                node_id,
+                node_id.trim(),
+                "{} node_id must not hide boundary whitespace in shipped bootstrap peer identity fixtures",
+                config_path.display()
+            );
+            assert!(
+                !node_id.chars().any(char::is_whitespace),
+                "{} node_id must not contain whitespace in shipped bootstrap peer identity fixtures",
+                config_path.display()
+            );
+
+            for key in ["rpc_addr", "p2p_addr"] {
+                let addr = table
+                    .get(key)
+                    .and_then(|value| value.as_str())
+                    .unwrap_or_else(|| {
+                        panic!(
+                            "{} {} must stay a TOML string literal",
+                            config_path.display(),
+                            key
+                        )
+                    });
+                assert_eq!(
+                    addr,
+                    addr.trim(),
+                    "{} {} must not hide boundary whitespace in shipped bootstrap listener fixtures",
+                    config_path.display(),
+                    key
+                );
+                assert!(
+                    !addr.chars().any(char::is_whitespace),
+                    "{} {} must not contain whitespace in shipped bootstrap listener fixtures",
+                    config_path.display(),
+                    key
+                );
+                let socket: SocketAddr = addr.parse().unwrap_or_else(|err| {
+                    panic!(
+                        "{} {} should remain parseable as a canonical socket literal: {err}",
+                        config_path.display(),
+                        key
+                    )
+                });
+                assert_eq!(
+                    addr,
+                    socket.to_string(),
+                    "{} {} must remain a canonical socket literal for deterministic bootstrap peer dialing",
+                    config_path.display(),
+                    key
+                );
+            }
+        }
+    }
+
+    #[test]
     fn shipped_bootstrap_readme_matches_the_documented_day1_topology_and_fail_closed_model() {
         let manifest_dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR"));
         let workspace_root = manifest_dir
