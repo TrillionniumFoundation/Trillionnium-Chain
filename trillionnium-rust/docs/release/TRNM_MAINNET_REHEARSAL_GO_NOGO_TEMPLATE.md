@@ -237,6 +237,10 @@ Mark each item explicitly:
 - [ ] `git_worktree_branch_ref_match=true`
 - [ ] `git_status_summary=clean`
 - [ ] `preflight_generated_at=` preserved next to preflight decision language
+- [ ] `preflight_git_toplevel=` preserved next to preflight decision language
+- [ ] `preflight_git_head=` preserved next to preflight decision language
+- [ ] `preflight_git_head_state=` preserved next to preflight decision language
+- [ ] `preflight_git_status_summary=` preserved next to preflight decision language
 - [ ] `preflight_expected_worktree_root=` preserved next to preflight decision language
 - [ ] `preflight_expected_branch_ref=` preserved next to preflight decision language
 - [ ] `preflight_expected_head=` preserved when the ticket assigned one
