@@ -1965,7 +1965,7 @@ bootstrap_peers = ["127.0.0.1:27656"]
             "do not treat `node2`, `node3`, or `node4` as a valid replacement bootstrap anchor; restore the shipped `node1` anchor first and fail closed otherwise",
             "bring the node back with the same config file and the same `node_id`/listener tuple",
             "Treat `configs/node1.toml` through `configs/node4.toml` as slot-bound fixtures: do not rename them, swap them between peers, or reinterpret a later slot as the bootstrap anchor during operator recovery.",
-            "unknown fields, whitespace drift, path-like ids, non-canonical socket literals, privileged ports, wildcard listeners, or mixed listener IP families, the config loader must fail closed",
+            "unknown fields, whitespace drift, host-like or path-like ids, URI-like delimiters, non-canonical socket literals, privileged ports, wildcard listeners, reserved documentation/benchmarking listener ranges, or mixed listener IP families, the config loader must fail closed",
             "## Join / rejoin acceptance table",
             "| Fresh bootstrap start | Start `node1` first, then `node2` → `node3` → `node4` in slot order | Accept only when each node keeps its shipped slot-bound config and listener tuple |",
             "| Follower join while `node1` is healthy | Start the joining follower with its original config file (`node2.toml`, `node3.toml`, or `node4.toml`) | Accept only when `node_id`, `rpc_addr`, and `p2p_addr` exactly match the shipped tuple |",
