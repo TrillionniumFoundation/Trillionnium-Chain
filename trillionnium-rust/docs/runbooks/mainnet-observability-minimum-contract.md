@@ -143,11 +143,13 @@ This distinction matters during load balancer, sidecar, and operator triage beca
 - `bft_round_change_backoff_max_ms`
 - `bft_round_change_backoff_wall_share_ppm`
 - `bft_round_change_backoff_share_ppm`
+  - canonical vs compatibility: treat `bft_round_change_backoff_wall_share_ppm` as the descriptive wall-clock share name and `bft_round_change_backoff_share_ppm` as the grep-stable compatibility alias; today they intentionally carry the same value.
 - `bft_double_vote_total`
 - `bft_auth_reject_bad_sig_total`
 - `bft_auth_reject_replay_total`
 - `bft_auth_reject_stale_total`
 - `bft_auth_reject_stale_nonce_total`
+  - canonical vs compatibility: treat `bft_auth_reject_stale_nonce_total` as the descriptive stale-nonce counter and `bft_auth_reject_stale_total` as the grep-stable compatibility alias until the broader metrics contract is explicitly split.
 - `bft_leader_missed_total`
 - `bft_leader_missed_max`
 - `bft_leader_missed_top_share_ppm`
@@ -198,7 +200,7 @@ This distinction matters during load balancer, sidecar, and operator triage beca
 - `bft_round_change_backoff_density_avg_ms` / `bft_round_change_backoff_density_avg_milli` / `bft_round_change_backoff_active_height_share_ppm`
   - keep as the normalized backoff intensity/share trio for dashboards and operator handoff.
 - `bft_round_change_backoff_max_ms` / `bft_round_change_backoff_wall_share_ppm` / `bft_round_change_backoff_share_ppm`
-  - preserve together because peak backoff and finality-share interpretations are often reviewed side by side during BFT incident triage; the two share fields should remain append-stable aliases unless a future contract explicitly splits them.
+  - preserve together because peak backoff and finality-share interpretations are often reviewed side by side during BFT incident triage; treat `bft_round_change_backoff_wall_share_ppm` as the descriptive field name and `bft_round_change_backoff_share_ppm` as its compatibility alias unless a future contract explicitly splits them.
 - `bft_leader_missed_total` / `bft_leader_missed_max` / `bft_leader_missed_top_share_ppm`
   - use together to decide whether missed-proposal pressure is diffuse or concentrated on one proposer.
 - `bft_leader_missed_active_validators` / `bft_leader_missed_active_validator_share_ppm`
@@ -212,7 +214,7 @@ This distinction matters during load balancer, sidecar, and operator triage beca
 - `bft_double_vote_total` / `bft_auth_reject_*`
   - use as the trailing operator-visible BFT auth/safety cluster after the leader-missed proposer-health block.
 - `bft_auth_reject_stale_total` / `bft_auth_reject_stale_nonce_total`
-  - keep both append-stable for grep compatibility; today the alias resolves to the same stale-nonce rejection counter and should not be reinterpreted as a distinct source.
+  - keep both append-stable for grep compatibility; treat `bft_auth_reject_stale_nonce_total` as the descriptive stale-nonce field and `bft_auth_reject_stale_total` as the compatibility alias. Today both resolve to the same stale-nonce rejection counter and should not be reinterpreted as distinct sources.
   - operator note: the block/round-progress `[bft]` log stream may still spell the same underlying signal with `auth_reject_stale` or `auth_reject_stale_nonce` tokens depending on the surface; treat those spellings as the same stale-nonce family unless and until a future contract explicitly splits them.
 
 ### Operator-visible summary template
