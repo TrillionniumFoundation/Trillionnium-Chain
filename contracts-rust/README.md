@@ -84,6 +84,19 @@ contracts-rust/
 
 换句话说：这里现在更像 external-contract runtime perimeter 的 Rust 侧骨架，而不是已经闭合的 host ABI/runtime integration plane。
 
+### 当前可安全假设的 ABI / runtime boundary
+
+为避免把“目标架构”误写成“当前事实”，当前仓库下对 external contracts 最安全的表述应收敛为：
+
+- **可以说**：这些 crate 已经把部分合约语义、审计事件 schema、fail-closed 约束先用 Rust 形式固定下来
+- **可以说**：`audit-events/` 提供 shared schema 邻接层，有助于后续统一事件口径
+- **不要说**：当前已经存在可复用的 canonical `HostAbiV1` 实现或稳定宿主 trait 接线
+- **不要说**：当前已经有 node-side deterministic WASM sandbox、gas metering、storage delta apply、RPC ABI versioning 的闭环集成
+- **不要说**：当前 `contracts-rust/*` crates 已默认编译并交付为链上 canonical `wasm32-unknown-unknown` artifacts
+- **不要说**：当前 external contracts 已自动进入 public-mainnet Day-1 minimum scope；是否纳入 launch promise，仍取决于 `RELEASE_READINESS.md` 与 `TRNM_MAINNET_GAP_MATRIX_2026-03-26.md`
+
+这组边界的核心含义是：**架构方向已锁定，但 runtime 接线、ABI 冻结落地、以及 Day-1 scope 判定都还不能被提前宣称为完成。**
+
 ## 构建边界
 
 当前目录下还没有统一 workspace `Cargo.toml`，因此不要假设可以在 `contracts-rust/` 根目录直接运行统一 workspace gate。
