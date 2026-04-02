@@ -136,6 +136,24 @@ mod tests {
     }
 
     #[test]
+    fn oversized_reserve_clamp_keeps_reserve_only_borrowing_semantics_under_backlog() {
+        let mut gate = LaneAdmissionGate::new(2, 9);
+
+        // Misconfigured reserve > total must clamp into reserve-only semantics
+        // instead of fabricating a dedicated normal lane or hiding the last truly
+        // free critical slot from normal ingress.
+        assert_eq!(gate.normal.capacity, 0);
+        assert_eq!(gate.critical.capacity, 2);
+        assert_eq!(gate.admit(41, crate::IngressClass::Critical), crate::AdmitOutcome::Accepted);
+        assert_eq!(gate.critical_free_slots(), 1);
+        assert!(gate.can_normal_borrow_critical_slot(1));
+
+        assert_eq!(gate.admit(42, crate::IngressClass::Normal), crate::AdmitOutcome::Accepted);
+        assert_eq!(gate.critical_free_slots(), 0);
+        assert!(!gate.can_normal_borrow_critical_slot(0));
+    }
+
+    #[test]
     fn lane_has_global_capacity_is_strict_at_total_capacity_boundary() {
         let gate = LaneAdmissionGate::new(3, 1);
 
