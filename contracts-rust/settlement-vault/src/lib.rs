@@ -335,9 +335,16 @@ impl SettlementVault {
         if available < amount {
             return Err(VaultError::InsufficientBalance);
         }
-        if from != to {
-            self.ensure_creditable_balance(to, amount)?;
+        if from == to {
+            self.audit_log.push(VaultEvent::Transferred {
+                from: from.to_string(),
+                to: to.to_string(),
+                amount,
+            });
+            return Ok(());
         }
+
+        self.ensure_creditable_balance(to, amount)?;
 
         let from_entry = self.balances.entry(from.to_string()).or_insert(0);
         *from_entry -= amount;
@@ -760,6 +767,24 @@ mod tests {
             vault.transfer("owner", "alice", "bob", 999).unwrap_err(),
             VaultError::InsufficientBalance
         );
+    }
+
+    #[test]
+    fn self_transfer_preserves_balance_while_emitting_audit_event() {
+        let mut vault = SettlementVault::new("owner");
+
+        vault.deposit("owner", "alice", 40).unwrap();
+        let audit_len_before = vault.audit_log().len();
+
+        vault.transfer("owner", "alice", "alice", 15).unwrap();
+
+        assert_eq!(vault.balance_of("alice"), 40);
+        assert_eq!(vault.audit_log().len(), audit_len_before + 1);
+        assert!(matches!(
+            vault.audit_log().last(),
+            Some(VaultEvent::Transferred { from, to, amount })
+                if from == "alice" && to == "alice" && *amount == 15
+        ));
     }
 
     #[test]
