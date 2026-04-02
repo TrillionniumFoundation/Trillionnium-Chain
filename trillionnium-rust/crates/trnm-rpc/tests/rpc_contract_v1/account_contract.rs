@@ -21,3 +21,26 @@ fn contract_nonce_shape_stable() {
     .unwrap();
     assert_eq!(v, json!({"address":"trnm1abc","nonce":7,"version":1}));
 }
+
+#[test]
+fn contract_account_read_responses_reject_unknown_fields() {
+    let balance_err = serde_json::from_value::<AccountBalanceQueryResponse>(json!({
+        "address": "trnm1abc",
+        "balance": 1,
+        "version": 1,
+        "extra": true
+    }))
+    .expect_err("balance response should fail closed on unknown fields");
+    let balance_msg = balance_err.to_string();
+    assert!(balance_msg.contains("unknown field") || balance_msg.contains("unexpected"));
+
+    let nonce_err = serde_json::from_value::<AccountNonceQueryResponse>(json!({
+        "address": "trnm1abc",
+        "nonce": 7,
+        "version": 1,
+        "extra": true
+    }))
+    .expect_err("nonce response should fail closed on unknown fields");
+    let nonce_msg = nonce_err.to_string();
+    assert!(nonce_msg.contains("unknown field") || nonce_msg.contains("unexpected"));
+}

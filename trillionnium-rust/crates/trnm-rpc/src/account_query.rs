@@ -9,6 +9,7 @@ pub struct AccountState {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
 pub struct AccountBalanceQueryResponse {
     pub address: String,
     pub balance: u128,
@@ -16,6 +17,7 @@ pub struct AccountBalanceQueryResponse {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
 pub struct AccountNonceQueryResponse {
     pub address: String,
     pub nonce: u64,
