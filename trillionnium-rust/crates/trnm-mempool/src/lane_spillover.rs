@@ -1,4 +1,4 @@
-use crate::{AdmitOutcome, LaneAdmissionGate};
+use crate::{AdmitOutcome, IngressClass, LaneAdmissionGate};
 
 impl LaneAdmissionGate {
     pub(super) fn admit_normal_with_spillover(&mut self, tx_id: u64) -> AdmitOutcome {
@@ -44,5 +44,30 @@ impl LaneAdmissionGate {
 
         self.maybe_warm_normal_fairness(normal_was_empty, out);
         out
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn critical_spillover_stays_fail_closed_once_normal_headroom_is_exhausted() {
+        let mut gate = LaneAdmissionGate::new(3, 1);
+
+        assert_eq!(gate.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(gate.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(gate.normal.queue.len(), gate.normal.capacity);
+        assert!(!gate.normal_has_capacity_for_critical_spillover());
+
+        assert_eq!(gate.admit(3, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(gate.critical.queue.len(), gate.critical.capacity);
+
+        // Once both the dedicated reserve and all spillover headroom are occupied,
+        // fresh critical ingress must fail closed instead of bypassing anti-spam
+        // backpressure through the normal lane.
+        assert_eq!(gate.admit(4, IngressClass::Critical), AdmitOutcome::Backpressured);
+        assert_eq!(gate.normal.queue.len(), gate.normal.capacity);
+        assert_eq!(gate.critical.queue.len(), gate.critical.capacity);
     }
 }
