@@ -63,7 +63,7 @@ Optional environment variables:
 
 - `EXPLORER_HOST` (default `127.0.0.1`)
 - `EXPLORER_PORT` (default `8090`)
-- `EXPLORER_PUBLIC_BASE_URL` (default `http://<host>:<port>`)
+- `EXPLORER_PUBLIC_BASE_URL` (default `http://<host>:<port>`, or `http://[<ipv6-host>]:<port>` when `EXPLORER_HOST` is IPv6)
 - `EXPLORER_HEALTH_URL` (default `<public_base_url>/healthz`)
 - `EXPLORER_RPC_BASE_URL` (default `http://127.0.0.1:7777`)
 
