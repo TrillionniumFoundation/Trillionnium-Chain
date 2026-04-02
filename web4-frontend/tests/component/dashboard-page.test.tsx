@@ -221,6 +221,32 @@ describe("dashboard page", () => {
     expect(auditCard).toHaveAttribute("aria-pressed", "true");
   });
 
+  it("fail-closes stale readonly selection to the first visible task after filtering", async () => {
+    mockedFetch.mockResolvedValue(snapshot);
+
+    render(<Home />);
+
+    await screen.findByText("Task Digest");
+
+    fireEvent.click(screen.getByRole("tab", { name: "Tasks" }));
+    fireEvent.click(screen.getByRole("button", { name: /TSK-2 Task two Core P0 Done 2026-03-03 11:00/i }));
+    expect(await screen.findByText("Task Detail · TSK-2")).toBeInTheDocument();
+
+    fireEvent.change(screen.getByLabelText("Status filter"), { target: { value: "Todo" } });
+    expect(await screen.findByText("Task Detail · TSK-1")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /TSK-1 Task one Ops P1 Todo 2026-03-03 10:00/i })).toHaveAttribute(
+      "aria-pressed",
+      "true",
+    );
+
+    fireEvent.change(screen.getByLabelText("Status filter"), { target: { value: "All" } });
+    expect(await screen.findByText("Task Detail · TSK-1")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /TSK-1 Task one Ops P1 Todo 2026-03-03 10:00/i })).toHaveAttribute(
+      "aria-pressed",
+      "true",
+    );
+  });
+
   it("supports arrow/home/end keyboard navigation across readonly dashboard tabs", async () => {
     mockedFetch.mockResolvedValue(snapshot);
 

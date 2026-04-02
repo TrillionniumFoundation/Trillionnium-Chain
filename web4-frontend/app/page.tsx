@@ -157,6 +157,39 @@ export default function Home() {
   const selectedEvent = filteredEvents.find((event) => event.id === selectedEventId) ?? filteredEvents[0];
   const selectedAudit = filteredAudits.find((audit) => audit.id === selectedAuditId) ?? filteredAudits[0];
 
+  useEffect(() => {
+    if (loadState.status !== "ready") {
+      return;
+    }
+
+    const nextTaskId = filteredTasks[0]?.id ?? null;
+    if (selectedTaskId !== nextTaskId && !filteredTasks.some((task) => task.id === selectedTaskId)) {
+      setSelectedTaskId(nextTaskId);
+    }
+  }, [filteredTasks, loadState.status, selectedTaskId]);
+
+  useEffect(() => {
+    if (loadState.status !== "ready") {
+      return;
+    }
+
+    const nextEventId = filteredEvents[0]?.id ?? null;
+    if (selectedEventId !== nextEventId && !filteredEvents.some((event) => event.id === selectedEventId)) {
+      setSelectedEventId(nextEventId);
+    }
+  }, [filteredEvents, loadState.status, selectedEventId]);
+
+  useEffect(() => {
+    if (loadState.status !== "ready") {
+      return;
+    }
+
+    const nextAuditId = filteredAudits[0]?.id ?? null;
+    if (selectedAuditId !== nextAuditId && !filteredAudits.some((audit) => audit.id === selectedAuditId)) {
+      setSelectedAuditId(nextAuditId);
+    }
+  }, [filteredAudits, loadState.status, selectedAuditId]);
+
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900">
       <main className="mx-auto w-full max-w-6xl px-4 py-10 md:px-8">
