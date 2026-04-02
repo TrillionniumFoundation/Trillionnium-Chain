@@ -509,6 +509,11 @@ consistency boundaries:
   - proves the hard anti-spam floor stays fail-closed once the last reserved critical
     slot is truly occupied: normal ingress cannot borrow its way past the sustained-load
     boundary just because the lane was previously borrowable in reserve-only mode
+- `cargo test --manifest-path trillionnium-rust/Cargo.toml -p trnm-pouw legacy_revealed_snapshot_freezes_resolve_timing_after_challenge_despite_later_gov_change -q`
+  - proves the challenge-time retention window stays frozen once the reveal/challenge
+    snapshot exists, even if governance changes later in the launch-prep window
+  - keeps the retention side of the economics tuple anchored to task-local evidence
+    instead of letting later config edits silently soften or extend resolve timing
 - `cargo test --manifest-path trillionnium-rust/Cargo.toml -p trnm-state --test retention_restore_regression -q`
   - proves retained proof/collateral metadata fails closed when challenge-window,
     challenger, or treasury identity snapshots are non-canonical
