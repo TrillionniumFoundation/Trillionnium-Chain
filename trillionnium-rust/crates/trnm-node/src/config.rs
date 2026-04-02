@@ -1926,6 +1926,16 @@ bootstrap_peers = ["127.0.0.1:27656"]
             "- `node3.toml` → node id `node3`, P2P `127.0.0.1:28656`, RPC `127.0.0.1:28657`",
             "- `node4.toml` → node id `node4`, P2P `127.0.0.1:29656`, RPC `127.0.0.1:29657`",
         ];
+        let documented_topology_lines = readme
+            .lines()
+            .filter(|line| line.starts_with("- `node") && line.contains("→ node id `node"))
+            .collect::<Vec<_>>();
+        assert_eq!(
+            documented_topology_lines,
+            expected_lines,
+            "{} must keep exactly the four shipped Day-1 bootstrap tuples in slot order so operator topology assumptions stay deterministic",
+            readme_path.display()
+        );
         for expected_line in expected_lines {
             assert!(
                 readme.contains(expected_line),
