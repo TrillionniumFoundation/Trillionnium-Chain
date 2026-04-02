@@ -141,6 +141,54 @@ fn smoke_wallet_sign_rejects_multiline_message() {
 }
 
 #[test]
+fn smoke_wallet_sign_rejects_bidi_control_message() {
+    let store = tmp_dir("wallet-sign-bidi-guard");
+    let pk = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+    let import = Command::new(bin())
+        .args([
+            "wallet",
+            "import",
+            "--name",
+            "alice",
+            "--private-key-hex",
+            pk,
+            "--out",
+            store.to_string_lossy().as_ref(),
+        ])
+        .output()
+        .unwrap();
+    assert!(
+        import.status.success(),
+        "stderr: {}",
+        String::from_utf8_lossy(&import.stderr)
+    );
+
+    let out = Command::new(bin())
+        .args([
+            "wallet",
+            "sign",
+            "--name",
+            "alice",
+            "--message",
+            "approve\u{202e}tx",
+            "--store",
+            store.to_string_lossy().as_ref(),
+        ])
+        .output()
+        .unwrap();
+    assert!(
+        !out.status.success(),
+        "bidi-controlled signer input should fail closed"
+    );
+    let stderr = String::from_utf8_lossy(&out.stderr);
+    assert!(
+        stderr.contains("sign message must be single-line printable text without control characters"),
+        "unexpected stderr: {}",
+        stderr
+    );
+}
+
+#[test]
 fn smoke_query_balance_fallback_json() {
     let store = tmp_dir("query-balance");
     let pk = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
