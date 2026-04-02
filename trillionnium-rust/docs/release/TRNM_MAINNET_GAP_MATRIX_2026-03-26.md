@@ -197,13 +197,17 @@ A public chain without a stable read surface becomes operationally opaque and un
 There are partial metrics, smoke checks, benchmark outputs, and localized Prometheus-style surfaces.
 There is not yet one clearly unified production observability plane.
 
+### Partial coverage now present
+- `docs/runbooks/mainnet-observability-alerting-starter-pack.md` defines one starter alert set, one shared severity vocabulary, one minimum dashboard bundle, and one incident handoff block that preserves replay / rollback pointers.
+- `docs/runbooks/oracle-observability-alerts.md` provides the oracle-specific drill-down contract while preserving the shared observability label block.
+
 ### Missing
-- node/rpc/worker/oracle/bridge unified metrics contract
+- node/rpc/worker/oracle/bridge unified metrics contract fully enforced end-to-end in production exporters and emitted payloads
 - production exporter path
-- dashboards
-- alert thresholds
-- incident labels / severity conventions
-- replay + failure-attribution workflow tied to observability
+- dashboards wired to the shared stable panel names / first-stop routing contract
+- alert thresholds frozen beyond the starter pack heuristics
+- incident labels / severity conventions consistently emitted in pages, dashboard annotations, and tickets
+- replay + failure-attribution workflow tied to observability across real rehearsal evidence, not only runbook text
 
 ### Why P0
 Mainnet incidents are inevitable.
