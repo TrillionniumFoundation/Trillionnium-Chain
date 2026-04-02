@@ -4710,6 +4710,29 @@ mod tests {
     }
 
     #[test]
+    fn checkpoint_da_light_verifier_summary_fails_closed_on_uncommitted_wal() {
+        let wal = WalMeta {
+            height: 7,
+            round: 3,
+            proposal_hash: "proposal-7".into(),
+            committed: false,
+            state_root_hex: "ab".repeat(32),
+            prev_hash_hex: Some("ef".repeat(32)),
+        };
+        let checkpoint = CheckpointMeta {
+            height: 7,
+            state_root_hex: wal.state_root_hex.clone(),
+            wal_entry_hash_hex: wal.content_hash_hex(),
+        };
+
+        assert_eq!(
+            checkpoint_da_light_verifier_summary(&checkpoint, &wal),
+            None,
+            "DA/light-verifier summaries must fail closed on uncommitted WAL metadata so sidecars never publish checkpoint evidence for speculative state"
+        );
+    }
+
+    #[test]
     fn checkpoint_da_light_verifier_summary_fails_closed_on_blank_proposal_hash() {
         let wal = WalMeta {
             height: 7,
