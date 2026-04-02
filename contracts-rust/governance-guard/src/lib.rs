@@ -1409,6 +1409,42 @@ mod tests {
     }
 
     #[test]
+    fn normalized_param_execution_carries_value_and_version_delta() {
+        let mut gov = setup();
+        let now = 7_150;
+        let eta = now + 60;
+
+        let pid = gov
+            .propose(
+                "alice",
+                "challenge_window_blocks",
+                "100",
+                "175",
+                eta,
+                "reason-normalized-version",
+                now,
+            )
+            .unwrap();
+        gov.queue("alice", pid).unwrap();
+        gov.execute("exec", pid, eta).unwrap();
+
+        let normalized = gov.normalized_audit_log();
+        let pid_s = pid.to_string();
+        let event = normalized
+            .iter()
+            .find(|event| {
+                event.event_type == "governance.proposal_executed"
+                    && event.object_id.as_deref() == Some(pid_s.as_str())
+            })
+            .unwrap();
+
+        assert_eq!(event.related_id.as_deref(), Some("challenge_window_blocks"));
+        assert_eq!(event.amount, Some(1));
+        assert_eq!(event.note.as_deref(), Some("value=100->175, version=0->1"));
+        assert_eq!(event.reason.as_deref(), Some("kind=ParamChange"));
+    }
+
+    #[test]
     fn execute_rejects_cancelled_param_proposal_as_already_finalized() {
         let mut gov = setup();
         let now = 7_200;
