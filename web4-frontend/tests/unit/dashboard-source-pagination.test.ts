@@ -316,6 +316,67 @@ describe("dashboard source normalized audit pagination", () => {
     ).toHaveLength(1);
   });
 
+  it("keeps normalized capability audit events distinct across subjects during pagination dedupe", async () => {
+    const mockClient = {
+      queryTask: vi
+        .fn()
+        .mockResolvedValue({
+          task: {
+            id: "346",
+            owner: "ops",
+            status: "running",
+            createdAt: "2026-03-01T00:00:00.000Z",
+            metadata: {},
+          },
+        }),
+      queryEvents: vi.fn().mockResolvedValue({
+        taskId: "346",
+        events: [],
+      }),
+      queryCapabilityAudit: vi.fn().mockResolvedValue({
+        subject: "did:trnm:test",
+        audits: [
+          {
+            subject: "did:trnm:test",
+            capability: "AUDIT_READ",
+            granted: true,
+            checkedAt: "2026-03-01T00:00:00.000Z",
+          },
+        ],
+      }),
+      queryNormalizedAuditEvents: vi.fn().mockResolvedValue({
+        events: [
+          {
+            source: "capability-registry",
+            event_type: "capability.granted",
+            actor: "security",
+            subject: "did:trnm:alice",
+            timestamp: "2026-03-01T00:01:00.000Z",
+            reason: "ok",
+          },
+          {
+            source: "capability-registry",
+            event_type: "capability.granted",
+            actor: "security",
+            subject: "did:trnm:bob",
+            timestamp: "2026-03-01T00:01:00.000Z",
+            reason: "ok",
+          },
+        ],
+        hasMore: false,
+      }),
+    } as unknown as ReturnType<typeof apiContractClient.createFrontendApiClient>;
+
+    vi.spyOn(apiContractClient, "createFrontendApiClient").mockReturnValue(mockClient);
+
+    const snapshot = await fetchDashboardSnapshot();
+
+    expect(mockClient.queryNormalizedAuditEvents).toHaveBeenCalledTimes(1);
+    expect(
+      snapshot.events.filter((event) => event.summary === "capability-registry · capability.granted"),
+    ).toHaveLength(2);
+  });
+
   it("treats revocation-like normalized audit events as critical fail-closed incidents", async () => {
     const mockClient = {
       queryTask: vi

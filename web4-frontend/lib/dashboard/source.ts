@@ -245,6 +245,7 @@ const getNormalizedAuditEventKey = (event: NormalizedAuditEvent): string =>
     event.object_id ?? "",
     event.related_id ?? "",
     event.actor ?? "",
+    event.subject ?? "",
     event.timestamp ?? "",
     event.checkedAt ?? "",
     event.reason ?? "",
