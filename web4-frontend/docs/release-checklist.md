@@ -37,6 +37,12 @@ npm run release:ready
 
 `release:ready` 会先校验 `CHANGELOG.md` 存在对应版本，再执行 `release:preflight`。
 
+> 边界说明：这里的 `release:ready` 只表示 **web4-frontend 子项目** 已通过版本 / 变更日志 / 预检串联检查；**不等于整个 TRNM 仓库已经 release-ready**。仓库级发布口径仍以根目录 `RELEASE_READINESS.md` 为准。
+>
+> 对外 release / RC / handoff 语境，建议同时回看：
+> - `../../RELEASE_READINESS.md`
+> - `./operations-runbook.md`
+
 ## 发布前人工复核（轻量）
 
 - [ ] `docs/api-contract.md` 与当前 adapter/schema 变更一致
