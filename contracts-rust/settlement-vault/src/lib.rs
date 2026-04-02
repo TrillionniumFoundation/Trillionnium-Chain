@@ -242,7 +242,7 @@ impl SettlementVault {
         let balance = self
             .balances
             .get_mut(account)
-            .expect("available balance implies existing account entry");
+            .ok_or(VaultError::InsufficientBalance)?;
         *balance -= amount;
         self.prune_zero_balance(account);
 
@@ -285,7 +285,7 @@ impl SettlementVault {
         self.ensure_creditable_balance(&account, amount)?;
         self.locks
             .get_mut(request_id)
-            .expect("lock checked above")
+            .ok_or(VaultError::RequestNotFound)?
             .status = LockStatus::Released;
         self.credit_balance(&account, amount)?;
         self.audit_log.push(VaultEvent::Released {
@@ -322,7 +322,7 @@ impl SettlementVault {
         self.ensure_creditable_balance(beneficiary, amount)?;
         self.locks
             .get_mut(request_id)
-            .expect("lock checked above")
+            .ok_or(VaultError::RequestNotFound)?
             .status = LockStatus::Slashed;
         self.credit_balance(beneficiary, amount)?;
         self.audit_log.push(VaultEvent::Slashed {
