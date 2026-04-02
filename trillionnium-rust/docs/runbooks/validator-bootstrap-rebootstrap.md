@@ -190,7 +190,7 @@ cargo check -p trnm-node -q
 
 The `--emit-ceremony-packet` mode is meant to reduce operator transcription drift: it reuses the validated `node_id` / `config_path` / `p2p_addr` / `rpc_addr` tuple from the actual config bundle instead of retyping each `validator_entry=` by hand. For `--ceremony-scope public-mainnet-input`, it also resolves each emitted `config_path` to an absolute path so the packet can be reviewed without shell-relative ambiguity.
 
-For any packet expected to feed a signed/public-mainnet readiness review, prefer generating the skeleton with the ceremony metadata filled in up front instead of forwarding a packet that still contains placeholder fields:
+For any packet expected to feed a signed/public-mainnet readiness review, prefer generating the skeleton with the ceremony metadata filled in up front instead of forwarding a packet that still contains placeholder fields. The packet generator now fails closed if `--ceremony-id` is left as a `<placeholder>` value under `--ceremony-scope public-mainnet-input`:
 
 ```bash
 python3 scripts/v2/check_validator_config_bundle.py \

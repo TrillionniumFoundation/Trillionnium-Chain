@@ -313,6 +313,11 @@ def validate_ceremony_packet_metadata(args: argparse.Namespace) -> None:
             + ", ".join(dict.fromkeys(placeholder_fields))
         )
 
+    if looks_like_placeholder(args.ceremony_id):
+        fail(
+            "invalid ceremony packet arguments: public-mainnet-input requires ceremony_id to be an explicit non-placeholder value"
+        )
+
     if args.ceremony_id == "mn04-bootstrap-YYYYMMDD-HHMMZ":
         fail(
             "invalid ceremony packet arguments: public-mainnet-input requires an explicit ceremony_id instead of the template default"
