@@ -9,8 +9,8 @@ Usage: extract_validator_rotation_dr_fields.sh [--report-path <path>] \
 Resolve the latest validator DR recovery report (unless --report-path is
 provided), then print the canonical fields required by the validator
 replacement/rotation/DR handoff. This helper fails closed on missing report
-paths, missing required keys, or lane/worktree identity drift when explicit
-expectations are provided.
+paths, missing required keys, non-PASS recovery status, or lane/worktree
+identity drift when explicit expectations are provided.
 `--expected-branch-ref` accepts either a short branch name (for example
 `lane/foo`) or a full ref (for example `refs/heads/lane/foo`).
 EOF
@@ -163,6 +163,11 @@ STATUS="$(require_key "$REPORT_PATH" status)"
 
 if [ "$GIT_STATUS_SUMMARY" != "clean" ]; then
   printf 'report git_status_summary must be clean, got %s from %s\n' "$GIT_STATUS_SUMMARY" "$REPORT_PATH" >&2
+  exit 1
+fi
+
+if [ "$STATUS" != "PASS" ]; then
+  printf 'report status must be PASS, got %s from %s\n' "$STATUS" "$REPORT_PATH" >&2
   exit 1
 fi
 
