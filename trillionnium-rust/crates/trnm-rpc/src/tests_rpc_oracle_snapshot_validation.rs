@@ -657,6 +657,35 @@ fn oracle_validate_snapshot_response_rejects_zero_staleness_policy() {
 }
 
 #[test]
+fn oracle_validate_snapshot_response_rejects_policy_when_min_sources_exceed_rate_cap() {
+    let policy_path = write_json_fixture(
+        "oracle-policy-min-sources-exceed-rate-cap",
+        &serde_json::json!({
+            "max_staleness_ms": 60_000,
+            "min_source_count": 3,
+            "max_deviation_bps": 500,
+            "max_update_rate_per_window": 2,
+            "feed_id": "btc/usd",
+        }),
+    );
+    let snapshot_path = write_json_fixture(
+        "oracle-snapshot-min-sources-exceed-rate-cap",
+        &oracle_snapshot_fixture(100_000, Some(100_000), 10_000),
+    );
+
+    let err = oracle_validate_snapshot_response(&snapshot_path, &policy_path, 10_100)
+        .expect_err("min_source_count greater than rate cap should fail closed");
+
+    assert_eq!(
+        err,
+        "invalid policy: min_source_count must be <= max_update_rate_per_window"
+    );
+
+    let _ = fs::remove_file(snapshot_path);
+    let _ = fs::remove_file(policy_path);
+}
+
+#[test]
 fn oracle_validate_snapshot_response_rejects_deviation_cap_above_guardrail() {
     let policy_path = write_json_fixture(
         "oracle-policy-deviation-cap-overflow",
