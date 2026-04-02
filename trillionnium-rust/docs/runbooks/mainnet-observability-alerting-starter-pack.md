@@ -51,6 +51,7 @@ Dashboards and alert rules may add panels or thresholds later, but they should n
 | `signal` | `node-down`, `sync-lag`, `replay-failure`, `rpc-unhealthy`, `worker-failure`, `oracle-anomaly`, `bridge-anomaly`, `contract-drift` | Keeps alert families stable enough for paging and dashboard links. |
 | `needs_replay` | `yes`, `no` | Forces responders to distinguish evidence-required incidents from pure telemetry noise. |
 | `needs_rollback` | `yes`, `no` | Preserves rollback intent as an explicit operator decision, not tribal knowledge. |
+| `first_stop` | one stable panel name from this runbook, or `unknown` | Freezes dashboard/ticket/page routing so responders open the same first surface during incidents. |
 
 ### Stability rules
 
