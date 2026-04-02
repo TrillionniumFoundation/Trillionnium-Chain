@@ -4710,6 +4710,29 @@ mod tests {
     }
 
     #[test]
+    fn checkpoint_da_light_verifier_summary_fails_closed_on_forged_genesis_prev_hash() {
+        let wal = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "proposal-genesis".into(),
+            committed: true,
+            state_root_hex: "12".repeat(32),
+            prev_hash_hex: Some("34".repeat(32)),
+        };
+        let checkpoint = CheckpointMeta {
+            height: 1,
+            state_root_hex: wal.state_root_hex.clone(),
+            wal_entry_hash_hex: wal.content_hash_hex(),
+        };
+
+        assert_eq!(
+            checkpoint_da_light_verifier_summary(&checkpoint, &wal),
+            None,
+            "DA/light-verifier summaries must fail closed when genesis WAL metadata forges prev_hash_hex so sidecars never publish a fake predecessor link for height-1 checkpoint evidence"
+        );
+    }
+
+    #[test]
     fn checkpoint_da_light_verifier_summary_fails_closed_on_uncommitted_wal() {
         let wal = WalMeta {
             height: 7,
