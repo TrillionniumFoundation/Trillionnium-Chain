@@ -135,6 +135,24 @@ describe("api-contract client and retry hardening", () => {
     expect(fetchImpl).toHaveBeenCalledTimes(1);
   });
 
+  it("classifies TimeoutError-shaped failures as timeout and keeps them retryable", async () => {
+    const fetchImpl = vi.fn().mockRejectedValue({
+      name: "TimeoutError",
+      message: "The operation timed out.",
+    });
+
+    const client = createFrontendApiClient({
+      baseUrl: "http://127.0.0.1:8080",
+      fetchImpl: fetchImpl as unknown as typeof fetch,
+    });
+
+    await expect(client.queryTask("42", { retries: 0 })).rejects.toMatchObject({
+      code: "TIMEOUT",
+      retryable: true,
+    });
+    expect(fetchImpl).toHaveBeenCalledTimes(1);
+  });
+
   it("clamps invalid retry options to safe defaults", async () => {
     let attempts = 0;
     await expect(

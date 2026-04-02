@@ -83,6 +83,13 @@ const isAbortLikeError = (err: unknown): boolean => {
   return name === "AbortError" || code === "ABORT_ERR";
 };
 
+const isTimeoutLikeError = (err: unknown): boolean => {
+  if (!(err && typeof err === "object")) return false;
+
+  const name = "name" in err ? err.name : undefined;
+  return name === "TimeoutError";
+};
+
 export function createFrontendApiClient(config: BaseClientConfig) {
   const fetchImpl = config.fetchImpl ?? fetch;
   const normalizedBaseUrl = normalizeBaseUrl(config.baseUrl);
@@ -121,16 +128,16 @@ export function createFrontendApiClient(config: BaseClientConfig) {
       } catch (err) {
         if (err instanceof FrontendApiError) throw err;
 
-        if (isAbortLikeError(err)) {
-          if (timeout.isTimeout()) {
-            throw new FrontendApiError({
-              code: "TIMEOUT",
-              message: "Query timeout",
-              causeData: err,
-              retryable: true,
-            });
-          }
+        if (timeout.isTimeout() || isTimeoutLikeError(err)) {
+          throw new FrontendApiError({
+            code: "TIMEOUT",
+            message: "Query timeout",
+            causeData: err,
+            retryable: true,
+          });
+        }
 
+        if (isAbortLikeError(err)) {
           throw new FrontendApiError({
             code: "ABORTED",
             message: "Request aborted",
