@@ -103,7 +103,7 @@ cd ../audit-events && cargo test
 
 - `RELEASE_READINESS.md`：仓库整体 **Not release-ready**
 - `TRNM_MAINNET_GAP_MATRIX_2026-03-26.md`：external contracts 更接近 launch-adjacent / scope-dependent 面，不自动属于 Day-1 core minimum
-- `TRNM_WEB4_PLATFORM_SCORECARD_2026-03-31.md`：TRNM 仍是强链核、弱平台外围；contract runtime perimeter 也仍在收口阶段
+- `trillionnium-rust/docs/protocol/external-contracts-rust/RUST_NATIVE_EXTERNAL_CONTRACTS_ARCH_2026-03-05.md`：定义的是目标 package layout / Host ABI / runtime boundary，不能把目标布局误读为当前工程已闭环
 
 因此，`contracts-rust/` 当前最准确的定位是：
 
