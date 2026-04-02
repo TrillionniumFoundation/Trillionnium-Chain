@@ -1983,6 +1983,79 @@ bootstrap_peers = ["127.0.0.1:27656"]
     }
 
     #[test]
+    fn shipped_bootstrap_anchor_stays_unique_and_slot_zero() {
+        let manifest_dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR"));
+        let workspace_root = manifest_dir
+            .ancestors()
+            .nth(2)
+            .expect("trnm-node manifest should sit under trillionnium-rust/crates/trnm-node");
+
+        let mut shipped_nodes = [
+            ("configs/node1.toml", "node1", 26656_u16),
+            ("configs/node2.toml", "node2", 27656_u16),
+            ("configs/node3.toml", "node3", 28656_u16),
+            ("configs/node4.toml", "node4", 29656_u16),
+        ]
+        .into_iter()
+        .map(|(relative_path, expected_node_id, expected_p2p_port)| {
+            let path = workspace_root.join(relative_path);
+            let cfg = load_config(&path).unwrap_or_else(|err| {
+                panic!(
+                    "{} should remain loadable for shipped bootstrap anchor checks: {err:#}",
+                    path.display()
+                )
+            });
+            let p2p_socket: SocketAddr = cfg
+                .p2p_addr
+                .parse()
+                .unwrap_or_else(|err| panic!("{} p2p_addr should parse: {err}", path.display()));
+            assert_eq!(
+                cfg.node_id, expected_node_id,
+                "{} must keep the deterministic node_id for bootstrap anchor slot checks",
+                path.display()
+            );
+            assert_eq!(
+                p2p_socket.port(), expected_p2p_port,
+                "{} must keep the deterministic p2p port for bootstrap anchor slot checks",
+                path.display()
+            );
+            (path, cfg.node_id, p2p_socket.port())
+        })
+        .collect::<Vec<_>>();
+
+        shipped_nodes.sort_by_key(|(_, _, p2p_port)| *p2p_port);
+        let anchor = shipped_nodes
+            .first()
+            .expect("shipped bootstrap fixture should include node1 anchor");
+        assert_eq!(
+            anchor.1, "node1",
+            "{} must remain the unique shipped Day-1 bootstrap anchor id",
+            anchor.0.display()
+        );
+        assert_eq!(
+            anchor.2, 26656,
+            "{} must remain the unique shipped Day-1 bootstrap anchor p2p port",
+            anchor.0.display()
+        );
+
+        for (path, node_id, p2p_port) in shipped_nodes.iter().skip(1) {
+            assert_ne!(
+                node_id, &anchor.1,
+                "{} must not reuse the shipped bootstrap anchor node_id {}",
+                path.display(),
+                anchor.1
+            );
+            assert!(
+                *p2p_port > anchor.2,
+                "{} p2p port {} must stay above the shipped bootstrap anchor port {} so later slots cannot silently become equivalent bootstrap anchors",
+                path.display(),
+                p2p_port,
+                anchor.2
+            );
+        }
+    }
+
+    #[test]
     fn shipped_node_configs_form_a_unique_local_bootstrap_topology() {
         use std::{collections::HashSet, net::SocketAddr};
 
