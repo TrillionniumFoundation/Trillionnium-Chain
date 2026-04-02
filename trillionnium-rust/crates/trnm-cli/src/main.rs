@@ -3309,6 +3309,79 @@ mod tests {
 
     #[test]
     #[cfg(unix)]
+    fn write_key_refuses_symlink_wallet_store_path() {
+        use std::os::unix::fs::symlink;
+
+        let unique = format!(
+            "trnm-cli-wallet-store-symlink-write-test-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        );
+        let root = canonical_temp_root().join(unique);
+        let real_store = root.join("real-store");
+        let linked_store = root.join("linked-store");
+        std::fs::create_dir_all(&real_store).unwrap();
+        symlink(&real_store, &linked_store).unwrap();
+
+        let err = write_key(
+            &linked_store,
+            "alice",
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        )
+        .unwrap_err();
+        assert!(
+            err.to_string().contains("traverses symlinked ancestor"),
+            "unexpected error: {err}"
+        );
+        assert!(!wallet_file(&linked_store, "alice").exists());
+
+        let _ = std::fs::remove_file(&linked_store);
+        let _ = std::fs::remove_dir(&real_store);
+        let _ = std::fs::remove_dir(&root);
+    }
+
+    #[test]
+    #[cfg(unix)]
+    fn read_key_refuses_symlink_wallet_store_path() {
+        use std::os::unix::fs::symlink;
+
+        let unique = format!(
+            "trnm-cli-wallet-store-symlink-read-test-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        );
+        let root = canonical_temp_root().join(unique);
+        let real_store = root.join("real-store");
+        let linked_store = root.join("linked-store");
+        std::fs::create_dir_all(&real_store).unwrap();
+        symlink(&real_store, &linked_store).unwrap();
+        let wallet = real_store.join("alice.key");
+        std::fs::write(
+            &wallet,
+            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n",
+        )
+        .unwrap();
+
+        let err = read_key(&linked_store, "alice").unwrap_err();
+        assert!(
+            err.to_string().contains("traverses symlinked ancestor"),
+            "unexpected error: {err}"
+        );
+
+        let _ = std::fs::remove_file(&wallet);
+        let _ = std::fs::remove_file(&linked_store);
+        let _ = std::fs::remove_dir(&real_store);
+        let _ = std::fs::remove_dir(&root);
+    }
+
+    #[test]
+    #[cfg(unix)]
     fn wallet_create_rejects_symlinked_ancestor_from_env_store() {
         use std::os::unix::fs::symlink;
 
