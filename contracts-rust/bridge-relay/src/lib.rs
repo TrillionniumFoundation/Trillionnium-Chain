@@ -781,6 +781,17 @@ mod tests {
 
         assert_ne!(n1, n2, "different action should isolate nonce domains");
 
+        let n3 = relay
+            .consume_nonce(1, b32(2), 31337, addr(9), action_settlement_finalize(), 10)
+            .unwrap();
+        let n4 = relay
+            .consume_nonce(1, b32(1), 31337, addr(10), action_settlement_finalize(), 10)
+            .unwrap();
+
+        assert_ne!(n1, n3, "different source bridge ids should isolate nonce domains");
+        assert_ne!(n1, n4, "different target bridges should isolate nonce domains");
+        assert_ne!(n3, n4, "source and target bridge domains should stay independently isolated");
+
         let err = relay
             .consume_nonce(1, b32(1), 31337, addr(9), action_settlement_finalize(), 10)
             .unwrap_err();
