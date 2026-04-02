@@ -498,6 +498,74 @@ describe("dashboard source normalized audit pagination", () => {
     expect(snapshot.kpis.find((kpi) => kpi.label === "Open Incidents")?.value).toBe("0");
   });
 
+  it("fails closed when a later normalized audit page errors after an earlier page succeeded", async () => {
+    const mockClient = {
+      queryTask: vi.fn().mockResolvedValue({
+        task: {
+          id: "344b",
+          owner: "ops",
+          status: "running",
+          createdAt: "2026-03-01T00:00:00.000Z",
+          metadata: { region: "ap-east-1" },
+        },
+      }),
+      queryEvents: vi.fn().mockResolvedValue({
+        taskId: "344b",
+        events: [
+          {
+            id: "evt-1",
+            taskId: "344b",
+            type: "deploy.canary_started",
+            level: "info",
+            timestamp: "2026-03-01T00:05:00.000Z",
+            payload: { rollout: "5%" },
+          },
+        ],
+      }),
+      queryCapabilityAudit: vi.fn().mockResolvedValue({
+        subject: "did:trnm:test",
+        audits: [
+          {
+            subject: "did:trnm:test",
+            capability: "AUDIT_READ",
+            granted: true,
+            checkedAt: "2026-03-01T00:00:00.000Z",
+          },
+        ],
+      }),
+      queryNormalizedAuditEvents: vi
+        .fn()
+        .mockResolvedValueOnce({
+          events: [
+            {
+              source: "bridge-relay",
+              event_type: "bridge_relay.proof_submitted",
+              actor: "validator",
+              object_id: "proof-6",
+              timestamp: "2026-03-01T00:04:00.000Z",
+              reason: "error",
+            },
+          ],
+          hasMore: true,
+          nextCursor: "cursor-2",
+        })
+        .mockRejectedValueOnce(new Error("normalized audit timeout page 2")),
+    } as unknown as ReturnType<typeof apiContractClient.createFrontendApiClient>;
+
+    vi.spyOn(apiContractClient, "createFrontendApiClient").mockReturnValue(mockClient);
+
+    const snapshot = await fetchDashboardSnapshot();
+
+    expect(mockClient.queryNormalizedAuditEvents).toHaveBeenCalledTimes(2);
+    expect(snapshot.tasks).toHaveLength(1);
+    expect(snapshot.tasks[0]?.id).toBe("344b");
+    expect(snapshot.events).toHaveLength(1);
+    expect(snapshot.events[0]?.summary).toBe("deploy.canary_started");
+    expect(snapshot.events.find((event) => event.summary === "bridge-relay · bridge_relay.proof_submitted")).toBeUndefined();
+    expect(snapshot.audits).toHaveLength(1);
+    expect(snapshot.kpis.find((kpi) => kpi.label === "Open Incidents")?.value).toBe("0");
+  });
+
   it("fails closed with mock fallback guidance when readonly task query fails", async () => {
     const mockClient = {
       queryTask: vi.fn().mockRejectedValue(new Error("task endpoint timeout")),
