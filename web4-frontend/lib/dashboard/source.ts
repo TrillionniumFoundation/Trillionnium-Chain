@@ -238,6 +238,19 @@ const resolveNormalizedAuditPageLimit = (): number =>
 const resolveNormalizedAuditMaxPages = (): number =>
   parsePositiveIntEnv(process.env.NEXT_PUBLIC_DASHBOARD_NORMALIZED_AUDIT_MAX_PAGES, 4);
 
+const getNormalizedAuditEventKey = (event: NormalizedAuditEvent): string =>
+  [
+    event.source,
+    event.event_type,
+    event.object_id ?? "",
+    event.related_id ?? "",
+    event.actor ?? "",
+    event.timestamp ?? "",
+    event.checkedAt ?? "",
+    event.reason ?? "",
+    event.note ?? "",
+  ].join("\u001f");
+
 const fetchNormalizedAuditEventsWithPagination = async (
   client: ReturnType<typeof createFrontendApiClient>,
 ): Promise<NormalizedAuditEvent[]> => {
@@ -245,6 +258,7 @@ const fetchNormalizedAuditEventsWithPagination = async (
   const normalizedAuditPageLimit = resolveNormalizedAuditPageLimit();
   const normalizedAuditMaxPages = resolveNormalizedAuditMaxPages();
   const seenCursors = new Set<string>();
+  const seenEventKeys = new Set<string>();
 
   let cursor: string | undefined;
   let page = 0;
@@ -253,7 +267,13 @@ const fetchNormalizedAuditEventsWithPagination = async (
   while (hasMore && page < normalizedAuditMaxPages) {
     const query = cursor == null ? {} : { cursor };
     const pageResp = await client.queryNormalizedAuditEvents({ ...query, limit: normalizedAuditPageLimit });
-    allEvents.push(...pageResp.events);
+
+    for (const event of pageResp.events) {
+      const eventKey = getNormalizedAuditEventKey(event);
+      if (seenEventKeys.has(eventKey)) continue;
+      seenEventKeys.add(eventKey);
+      allEvents.push(event);
+    }
 
     const nextCursor = pageResp.nextCursor?.trim();
     hasMore = pageResp.hasMore === true && !!(nextCursor && nextCursor.length > 0);

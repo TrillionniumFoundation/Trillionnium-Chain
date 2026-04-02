@@ -313,7 +313,7 @@ describe("dashboard source normalized audit pagination", () => {
     });
     expect(
       snapshot.events.filter((event) => event.summary === "capability-registry · capability.granted"),
-    ).toHaveLength(2);
+    ).toHaveLength(1);
   });
 
   it("treats revocation-like normalized audit events as critical fail-closed incidents", async () => {
