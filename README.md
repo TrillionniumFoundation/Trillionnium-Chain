@@ -188,7 +188,7 @@ TRNM_TX_CLI=./trillionnium-rust/target/debug/trnm-cli \
   - 当 node event 缺失、只能退回 adapter 记录时，`query-events` 只会在**已持久化 commit 存在**时补出 `commit -> reveal` 历史；单独的 reveal 不会被当成完整历史链。索引器不应把 reveal-only 记录解释成可独立落库的已完成回放片段。
   - `query-capability-audit/<subject-or-token>` 同时接受 capability token id 与 subject DID，索引侧不必为两种 key 维护两套入口。
   - 若需要从归档日志重放历史 read-model，优先通过 `TRNM_RPC_NODE_EVENT_LOG_MANIFEST` 指向一个 manifest 文件，再用 `TRNM_RPC_NODE_EVENT_LOG_SOURCES` 补充临时源；manifest 内的**相对路径以 manifest 所在目录为基准解析**，而 env 里的相对路径以 `trnm-rpc` 运行根目录为基准解析。
-  - `TRNM_RPC_NODE_EVENT_LOG_MANIFEST` 自身也会先做包装/注释归一化：带引号、前后空白、inline comment 的值仍按 **RPC root 相对路径** 解析；sidecar / operator script 不必为了规避 shell 注释或引用风格差异而改写同一条历史源声明。
+  - `TRNM_RPC_NODE_EVENT_LOG_MANIFEST` 自身也会先做包装/注释归一化：带引号、前后空白、inline comment、UTF-8 BOM 的值仍按 **RPC root 相对路径** 解析；sidecar / operator script 不必为了规避 shell 注释、归档拷贝留下的 BOM、或引用风格差异而改写同一条历史源声明。
   - historical replay 的日志源会先做**词法归一化 + 去重**（例如引号包裹、`./`、注释尾巴、等价相对路径），索引器/sidecar 不应依赖“同一路径写多次”来制造重复回放。
   - 若要做 durable index persistence，建议把本地索引库/缓存视为**可重建派生状态**：权威 replay source 仍应是 node event 日志（优先 manifest，其次临时 env 补源），持久化层只保存 checkpoint / watermark / 派生物；当 checkpoint 与历史日志不一致时，应回退到最近可信高度重放，而不是把旧索引快照当作唯一真相。
   - 这组路径当前都属于只读查询面，前端/脚本不应通过它们推断存在对称写接口。
