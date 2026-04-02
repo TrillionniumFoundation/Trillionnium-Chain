@@ -3644,6 +3644,47 @@ mod tests {
     }
 
     #[test]
+    fn hard_stop_seen_global_only_duplicate_survives_cross_class_retries_and_idle_polls() {
+        let mut g = LaneAdmissionGate::new(0, 0);
+
+        // Simulate restored duplicate knowledge carried only by the lane-wide cache.
+        g.seen_global.insert(42);
+        let hard_stop_snapshot = LaneQosSnapshot {
+            normal_queued: 0,
+            critical_queued: 0,
+            total_queued: 0,
+            normal_headroom: 0,
+            critical_headroom: 0,
+            total_headroom: 0,
+            fresh_normal_admissible: false,
+            fresh_critical_admissible: false,
+        };
+
+        for _ in 0..2 {
+            assert_eq!(g.pop_ready(), None);
+            assert_eq!(g.qos_snapshot(), hard_stop_snapshot);
+            assert_eq!(g.queued_counts(), (0, 0, 0));
+
+            assert_eq!(g.admit(42, IngressClass::Normal), AdmitOutcome::Duplicate);
+            assert_eq!(g.admit(42, IngressClass::Critical), AdmitOutcome::Duplicate);
+            assert_eq!(
+                g.admit(99, IngressClass::Normal),
+                AdmitOutcome::Backpressured
+            );
+            assert_eq!(
+                g.admit(99, IngressClass::Critical),
+                AdmitOutcome::Backpressured
+            );
+
+            assert_eq!(g.qos_snapshot(), hard_stop_snapshot);
+            assert_eq!(g.queued_counts(), (0, 0, 0));
+            assert!(g.seen_global.contains(&42));
+            assert!(g.normal.seen.is_empty());
+            assert!(g.critical.seen.is_empty());
+        }
+    }
+
+    #[test]
     fn hard_stop_mode_lane_local_duplicate_survives_repeated_cross_class_probes_without_poisoning_fresh_ids(
     ) {
         let mut g = LaneAdmissionGate::new(0, 0);
