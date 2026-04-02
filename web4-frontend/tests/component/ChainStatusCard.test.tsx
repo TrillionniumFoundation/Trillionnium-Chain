@@ -38,6 +38,7 @@ describe("ChainStatusCard", () => {
       />,
     );
 
+    expect(screen.getByText("Readonly chain snapshot is unavailable. Verify the adapter payload before trusting this card.")).toBeInTheDocument();
     expect(screen.getByText("Network: Unavailable")).toBeInTheDocument();
     expect(screen.getByText("Latest block: Unavailable")).toBeInTheDocument();
     expect(screen.getByText("Finality: Unavailable")).toBeInTheDocument();

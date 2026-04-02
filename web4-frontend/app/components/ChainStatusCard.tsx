@@ -14,6 +14,12 @@ function failClosedValue(value: string | number | null | undefined, fallback = "
 }
 
 export function ChainStatusCard({ status }: { status: ChainStatus }) {
+  const network = failClosedValue(status.network);
+  const latestBlock = failClosedValue(status.latestBlock);
+  const finality = failClosedValue(status.finality);
+  const health = failClosedValue(status.health);
+  const isSnapshotUnavailable = [network, latestBlock, finality, health].every((value) => value === "Unavailable");
+
   return (
     <section aria-label="chain-status" className="w-full rounded-xl border border-zinc-200 p-4">
       <div className="flex flex-wrap items-start justify-between gap-3">
@@ -27,11 +33,16 @@ export function ChainStatusCard({ status }: { status: ChainStatus }) {
           Fail closed
         </span>
       </div>
+      {isSnapshotUnavailable && (
+        <p className="mt-3 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800">
+          Readonly chain snapshot is unavailable. Verify the adapter payload before trusting this card.
+        </p>
+      )}
       <ul className="mt-3 space-y-1 text-sm">
-        <li>Network: {failClosedValue(status.network)}</li>
-        <li>Latest block: {failClosedValue(status.latestBlock)}</li>
-        <li>Finality: {failClosedValue(status.finality)}</li>
-        <li>Health: {failClosedValue(status.health)}</li>
+        <li>Network: {network}</li>
+        <li>Latest block: {latestBlock}</li>
+        <li>Finality: {finality}</li>
+        <li>Health: {health}</li>
       </ul>
     </section>
   );
