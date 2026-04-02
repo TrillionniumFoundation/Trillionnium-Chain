@@ -5533,6 +5533,22 @@ bootstrap_peers = ["127.0.0.1:27656"]
     }
 
     #[test]
+    fn validate_node_config_rejects_exact_shared_listener_socket() {
+        let err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "127.0.0.1:26657".into(),
+                p2p_addr: "127.0.0.1:26657".into(),
+            },
+            "node.toml",
+        )
+        .expect_err("exact shared RPC/P2P listener socket must fail closed");
+        assert!(err
+            .to_string()
+            .contains("rpc_addr and p2p_addr must differ"));
+    }
+
+    #[test]
     fn validate_node_config_rejects_mixed_ip_families() {
         let err = validate_node_config(
             NodeConfig {
