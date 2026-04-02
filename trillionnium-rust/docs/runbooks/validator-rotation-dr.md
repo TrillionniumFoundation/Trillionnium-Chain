@@ -23,6 +23,7 @@ Primary references:
 - `scripts/v2/verify_lane_worktree.sh`
 - `scripts/v2/extract_release_handoff_fields.sh`
 - `scripts/v2/extract_validator_rotation_dr_fields.sh`
+- `scripts/v2/run_validator_dr_rehearsal.sh`
 
 ## Operator cutover note template
 
@@ -307,6 +308,17 @@ report_path="$(printf '%s\n' "$recovery_stdout" | sed -n 's/^\[OK\] bft restart 
 Interpretation rule:
 - prefer the `report_path` emitted by the script you just ran over `ls -dt run/bft-restart-recovery-*.txt | head -n 1`; the latter can bind the handoff to the wrong artifact when multiple operators or retries produce nearby reports in the same worktree
 - when lane binding is expected, pass `--expected-worktree-root` and `--expected-branch-ref` together; the helper now rejects half-bound invocations so operators cannot accidentally treat a single self-supplied field as sufficient lane identity proof
+
+For operators who want one deterministic wrapper instead of manually chaining verify → recovery → extract, use:
+
+```bash
+./scripts/v2/run_validator_dr_rehearsal.sh \
+  --expected-worktree-root "$EXPECTED_WORKTREE_ROOT" \
+  --expected-branch-ref "$EXPECTED_BRANCH_REF" \
+  ${EXPECTED_HEAD:+--expected-head "$EXPECTED_HEAD"}
+```
+
+This wrapper preserves the same fail-closed behavior, captures the concrete `report_path` emitted by the recovery run you just executed, and then prints the canonical `dr_*` fields as one block for the cutover note.
 
 Recommended note-capture shape right after the helper succeeds:
 
