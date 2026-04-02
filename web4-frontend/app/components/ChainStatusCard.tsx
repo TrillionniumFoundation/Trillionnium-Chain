@@ -1,5 +1,13 @@
 import type { ChainStatus } from "@/lib/chain-status";
 
+function failClosedValue(value: string | number | null | undefined, fallback = "Unavailable") {
+  if (value === null || value === undefined || value === "") {
+    return fallback;
+  }
+
+  return String(value);
+}
+
 export function ChainStatusCard({ status }: { status: ChainStatus }) {
   return (
     <section aria-label="chain-status" className="w-full rounded-xl border border-zinc-200 p-4">
@@ -15,10 +23,10 @@ export function ChainStatusCard({ status }: { status: ChainStatus }) {
         </span>
       </div>
       <ul className="mt-3 space-y-1 text-sm">
-        <li>Network: {status.network}</li>
-        <li>Latest block: {status.latestBlock}</li>
-        <li>Finality: {status.finality}</li>
-        <li>Health: {status.health}</li>
+        <li>Network: {failClosedValue(status.network)}</li>
+        <li>Latest block: {failClosedValue(status.latestBlock)}</li>
+        <li>Finality: {failClosedValue(status.finality)}</li>
+        <li>Health: {failClosedValue(status.health)}</li>
       </ul>
     </section>
   );
