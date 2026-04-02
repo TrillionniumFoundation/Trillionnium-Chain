@@ -346,6 +346,7 @@ Record these fields in the release ticket or operator handoff note:
 - local evidence truth_source:
 - local evidence historical_evidence_only:
 - local evidence evidence_scope:
+- evaluated origin/main (record fresh `git rev-parse origin/main` when this handoff cites `RELEASE_READINESS.md`):
 - rc manifest path:
 - rc manifest generated_at:
 - rc manifest truth_source:
