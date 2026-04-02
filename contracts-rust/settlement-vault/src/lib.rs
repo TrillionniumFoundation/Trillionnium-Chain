@@ -46,8 +46,12 @@ pub enum VaultEvent {
         to: String,
         amount: u128,
     },
-    Paused,
-    Unpaused,
+    Paused {
+        caller: String,
+    },
+    Unpaused {
+        caller: String,
+    },
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -170,12 +174,14 @@ impl SettlementVault {
                 normalized.amount = Some(*amount);
                 normalized
             }
-            VaultEvent::Paused => {
-                let normalized = AuditEvent::new("settlement-vault", "vault.paused");
+            VaultEvent::Paused { caller } => {
+                let mut normalized = AuditEvent::new("settlement-vault", "vault.paused");
+                normalized.actor = Some(caller.clone());
                 normalized
             }
-            VaultEvent::Unpaused => {
-                let normalized = AuditEvent::new("settlement-vault", "vault.unpaused");
+            VaultEvent::Unpaused { caller } => {
+                let mut normalized = AuditEvent::new("settlement-vault", "vault.unpaused");
+                normalized.actor = Some(caller.clone());
                 normalized
             }
         }
@@ -350,7 +356,9 @@ impl SettlementVault {
         }
 
         self.paused = true;
-        self.audit_log.push(VaultEvent::Paused);
+        self.audit_log.push(VaultEvent::Paused {
+            caller: caller.to_string(),
+        });
         Ok(())
     }
 
@@ -361,7 +369,9 @@ impl SettlementVault {
         }
 
         self.paused = false;
-        self.audit_log.push(VaultEvent::Unpaused);
+        self.audit_log.push(VaultEvent::Unpaused {
+            caller: caller.to_string(),
+        });
         Ok(())
     }
 
@@ -620,10 +630,14 @@ mod tests {
             VaultEvent::Transferred { from, to, amount }
                 if from == "alice" && to == "bob" && *amount == 20
         )));
-        assert!(logs.iter().any(|event| matches!(event, VaultEvent::Paused)));
-        assert!(logs
-            .iter()
-            .any(|event| matches!(event, VaultEvent::Unpaused)));
+        assert!(logs.iter().any(|event| matches!(
+            event,
+            VaultEvent::Paused { caller } if caller == "owner"
+        )));
+        assert!(logs.iter().any(|event| matches!(
+            event,
+            VaultEvent::Unpaused { caller } if caller == "owner"
+        )));
         assert!(logs.iter().any(|event| matches!(
             event,
             VaultEvent::Slashed { request_id, account, beneficiary, amount }
@@ -650,6 +664,12 @@ mod tests {
                 && event.object_id.as_deref() == Some("req-2")
                 && event.related_id.as_deref() == Some("alice")
                 && event.actor.as_deref() == Some("treasury")
+        }));
+        assert!(normalized.iter().any(|event| {
+            event.event_type == "vault.paused" && event.actor.as_deref() == Some("owner")
+        }));
+        assert!(normalized.iter().any(|event| {
+            event.event_type == "vault.unpaused" && event.actor.as_deref() == Some("owner")
         }));
         assert!(normalized
             .iter()
