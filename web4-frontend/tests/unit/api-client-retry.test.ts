@@ -124,6 +124,36 @@ describe("api-contract client and retry hardening", () => {
     );
   });
 
+  it("trims capability audit subject before encoding endpoint path", async () => {
+    const fetchImpl = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        subject: "did:trnm:alice",
+        audits: [],
+      }),
+    });
+
+    const client = createFrontendApiClient({
+      baseUrl: "http://127.0.0.1:8080",
+      fetchImpl: fetchImpl as unknown as typeof fetch,
+    });
+    await client.queryCapabilityAudit("  did:trnm:alice  ");
+
+    expect(fetchImpl).toHaveBeenCalledWith(
+      "http://127.0.0.1:8080/query-capability-audit/did%3Atrnm%3Aalice",
+      expect.objectContaining({ method: "GET" }),
+    );
+  });
+
+  it("fails fast when capability audit subject is blank", () => {
+    const client = createFrontendApiClient({
+      baseUrl: "http://127.0.0.1:8080",
+      fetchImpl: vi.fn() as unknown as typeof fetch,
+    });
+
+    expect(() => client.queryCapabilityAudit("   ")).toThrow(FrontendApiError);
+  });
+
   it("clamps invalid retry options to safe defaults", async () => {
     let attempts = 0;
     await expect(

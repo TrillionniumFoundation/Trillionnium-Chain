@@ -74,6 +74,21 @@ const normalizeOptionalQueryParam = (value: string | undefined): string | undefi
   return trimmed ? trimmed : undefined;
 };
 
+const normalizeRequiredPathParam = (
+  value: string,
+  label: string,
+): string => {
+  const trimmed = value.trim();
+  if (!trimmed) {
+    throw new FrontendApiError({
+      code: "INVALID_PAYLOAD",
+      message: `${label} is empty`,
+      retryable: false,
+    });
+  }
+  return trimmed;
+};
+
 export function createFrontendApiClient(config: BaseClientConfig) {
   const fetchImpl = config.fetchImpl ?? fetch;
   const normalizedBaseUrl = normalizeBaseUrl(config.baseUrl);
@@ -180,8 +195,9 @@ export function createFrontendApiClient(config: BaseClientConfig) {
       subject: string,
       options?: QueryOptions,
     ): Promise<QueryCapabilityAuditResult> {
+      const normalizedSubject = normalizeRequiredPathParam(subject, "Capability audit subject");
       return getJson(
-        `/query-capability-audit/${encodeURIComponent(subject)}`,
+        `/query-capability-audit/${encodeURIComponent(normalizedSubject)}`,
         options,
       ).then(adaptQueryCapabilityAudit);
     },
