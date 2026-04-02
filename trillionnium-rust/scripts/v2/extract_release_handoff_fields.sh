@@ -132,14 +132,30 @@ resolve_path() {
   printf '%s/%s\n' "$dir" "$base"
 }
 
+require_path_within_trnm_root() {
+  local field_name="$1"
+  local path="$2"
+
+  case "$path" in
+    "$TRNM_ROOT"|"$TRNM_ROOT"/*) ;;
+    *)
+      printf '%s must resolve under %s: %s\n' "$field_name" "$TRNM_ROOT" "$path" >&2
+      exit 1
+      ;;
+  esac
+}
+
 SUMMARY_PATH="$(resolve_path "$SUMMARY_PATH")"
 MANIFEST_PATH="$(resolve_path "$MANIFEST_PATH")"
+require_path_within_trnm_root summary_path "$SUMMARY_PATH"
+require_path_within_trnm_root manifest_path "$MANIFEST_PATH"
 if [ "$SUMMARY_PATH" = "$MANIFEST_PATH" ]; then
   printf 'summary and manifest paths must be distinct artifacts: %s\n' "$SUMMARY_PATH" >&2
   exit 1
 fi
 if [ -n "$PREFLIGHT_SUMMARY_PATH" ]; then
   PREFLIGHT_SUMMARY_PATH="$(resolve_path "$PREFLIGHT_SUMMARY_PATH")"
+  require_path_within_trnm_root preflight_summary_path "$PREFLIGHT_SUMMARY_PATH"
 fi
 
 require_key() {

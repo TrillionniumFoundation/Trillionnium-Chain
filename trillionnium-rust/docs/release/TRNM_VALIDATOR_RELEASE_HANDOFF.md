@@ -268,7 +268,7 @@ Operator discipline:
 
 When handing off to another validator/operator, prefer copying fields from the artifact itself instead of free-typing them from terminal scrollback.
 
-Preferred helper (fail-closed on missing paths, cross-artifact identity mismatches, drift from the lane/ticket-assigned worktree/ref when you provide them, and stale artifacts whose `git_head=` no longer matches the current verified lane HEAD even if `--expected-head` was omitted; by default it resolves the latest artifacts under the `trillionnium-rust` root derived from the helper script path; `--expected-branch-ref` accepts either a short branch name like `lane/foo` or a full ref like `refs/heads/lane/foo`):
+Preferred helper (fail-closed on missing paths, cross-artifact identity mismatches, drift from the lane/ticket-assigned worktree/ref when you provide them, stale artifacts whose `git_head=` no longer matches the current verified lane HEAD even if `--expected-head` was omitted, and explicit artifact paths that resolve outside the current `trillionnium-rust` tree; by default it resolves the latest artifacts under the `trillionnium-rust` root derived from the helper script path; `--expected-branch-ref` accepts either a short branch name like `lane/foo` or a full ref like `refs/heads/lane/foo`):
 
 ```bash
 ./scripts/v2/extract_release_handoff_fields.sh \
