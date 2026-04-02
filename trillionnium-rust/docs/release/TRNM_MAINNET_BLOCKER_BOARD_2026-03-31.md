@@ -212,10 +212,18 @@ The codebase has meaningful anti-spam / QoS / sponsor / challenge-bond work, but
 - explicit Day-1 economics tuple frozen
 - adversarial spam/fairness rehearsal run once against that tuple
 - operator/public wording aligned with actual admission rules
+- launch packet cites at least one green admission-side gate, one green retention-side gate, and the compile-slice integrity check
+
+**Evidence anchors for the launch packet**
+- admission boundary hard-stop: `cargo test --manifest-path trillionnium-rust/Cargo.toml -p trnm-mempool lane_zero_capacity_public_contract_bound -q`
+- sponsor borrowed-slot discipline: `cargo test --manifest-path trillionnium-rust/Cargo.toml -p trnm-mempool lane_borrowed_last_slot_backpressured_retry_reuse_bound -q`
+- retention timing freeze after challenge: `cargo test --manifest-path trillionnium-rust/Cargo.toml -p trnm-pouw legacy_revealed_snapshot_freezes_resolve_timing_after_challenge_despite_later_gov_change -q`
+- retention restore/canonicalization companion gate: `cargo test --manifest-path trillionnium-rust/Cargo.toml -p trnm-state --test retention_restore_regression -q`
+- tuple integrity compile slice: `cargo check --manifest-path trillionnium-rust/Cargo.toml -p trnm-mempool -p trnm-pouw -q`
 
 **Next actions**
 1. freeze ingress/sponsor/retention tuple
-2. run one spam/fairness rehearsal against frozen tuple
+2. run one spam/fairness rehearsal against frozen tuple and capture the admission + retention companion gates above
 3. attach freeze decision to launch packet
 
 ---
