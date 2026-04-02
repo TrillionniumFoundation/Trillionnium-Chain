@@ -153,6 +153,11 @@ Record together:
 - `query_tx_hash=` from `trnm-cli tx query`
 - `wait_tx_hash=` from `trnm-cli tx wait`
 
+Alias-handling rule:
+- later tooling may echo the same canonical value under aliases such as `tx_hash=`, `tx-hash=`, `transaction_hash=`, `transaction-hash=`, or `transactionHash=`
+- treat those as formatting aliases only after they normalize to the exact same canonical tx hash
+- do not overwrite the original `requested_tx_hash=` field with a later alias line; keep the first captured submit-path hash as the source of truth for the entire procedure
+
 Fail-closed rule:
 - if `query_tx_hash` or `wait_tx_hash` normalizes to a different value than `requested_tx_hash`, stop and treat the cutover as wrong-transaction or signer-path ambiguity evidence
 - do not replace the original requested hash mid-procedure just because a later shell command prints a differently formatted alias
