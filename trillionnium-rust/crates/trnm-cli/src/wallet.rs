@@ -138,9 +138,11 @@ pub(crate) fn normalize_wallet_store_env(raw: &str) -> Option<&str> {
 fn wallet_store_path_is_safe(path: &Path) -> bool {
     use std::path::Component;
 
+    let rendered = path.to_string_lossy();
     path.is_absolute()
         && path.parent().is_some()
-        && path.to_string_lossy().chars().all(|c| {
+        && !rendered.contains("//")
+        && rendered.chars().all(|c| {
             !c.is_whitespace()
                 && !c.is_control()
                 && !matches!(

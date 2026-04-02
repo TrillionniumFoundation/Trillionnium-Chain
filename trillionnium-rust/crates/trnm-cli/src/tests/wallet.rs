@@ -254,6 +254,12 @@ fn default_wallet_store_ignores_curdir_or_parent_segments_from_env() {
     std::env::set_var("TRNM_WALLET_STORE", "/tmp/trnm/./wallets");
     assert_eq!(default_wallet_store(), home.join(".trnm").join("wallets"));
 
+    std::env::set_var("TRNM_WALLET_STORE", "/tmp//trnm-wallets");
+    assert_eq!(default_wallet_store(), home.join(".trnm").join("wallets"));
+
+    std::env::set_var("TRNM_WALLET_STORE", "//tmp/trnm-wallets");
+    assert_eq!(default_wallet_store(), home.join(".trnm").join("wallets"));
+
     for wrapped_root in ["/", " / ", "'/'", "《/》", "\u{2068}/\u{2069}", "＜/＞"] {
         std::env::set_var("TRNM_WALLET_STORE", wrapped_root);
         assert_eq!(
