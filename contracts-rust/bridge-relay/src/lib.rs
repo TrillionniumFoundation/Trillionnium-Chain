@@ -1568,6 +1568,81 @@ mod tests {
     }
 
     #[test]
+    fn stale_validator_rotation_is_fail_closed_and_side_effect_free() {
+        let mut relay = BridgeRelay::with_admin(1, vec![validator_pub(7)], b32(9));
+        let admin = b32(9);
+
+        relay
+            .set_validators_with_version(&admin, relay.config_version(), vec![validator_pub(7), validator_pub(8)])
+            .unwrap();
+        let stale_version = relay.config_version();
+
+        relay
+            .set_min_validator_signatures(&admin, 2)
+            .unwrap();
+
+        let current_version = relay.config_version();
+        let audit_len_before = relay.audit_log().len();
+
+        let mut stale = sample_msg();
+        stale.config_version = stale_version;
+        stale.nonce = 124;
+
+        let err = relay
+            .submit_proof(&stale, &[sig_for(&stale, 7)], 1_000, 999, 31337, addr(9))
+            .unwrap_err();
+
+        assert!(matches!(
+            err,
+            BridgeRelayError::InvalidConfigVersion { expected, got }
+                if expected == current_version && got == stale_version
+        ));
+        assert_eq!(
+            relay.audit_log().len(),
+            audit_len_before,
+            "stale proof must not append audit events"
+        );
+
+        let err = relay
+            .set_validators_with_version(&admin, stale_version, vec![validator_pub(7)])
+            .unwrap_err();
+
+        assert!(matches!(
+            err,
+            BridgeRelayError::InvalidConfigVersion { expected, got }
+                if expected == current_version && got == stale_version
+        ));
+        assert_eq!(relay.config_version(), current_version);
+        assert_eq!(
+            relay.audit_log().len(),
+            audit_len_before,
+            "stale validator rotation must not append governance audit events"
+        );
+
+        let mut rotated = sample_msg();
+        rotated.config_version = current_version;
+        rotated.nonce = 125;
+        let err = relay
+            .submit_proof(
+                &rotated,
+                &[sig_for(&rotated, 7)],
+                1_000,
+                999,
+                31337,
+                addr(9),
+            )
+            .unwrap_err();
+
+        assert!(matches!(
+            err,
+            BridgeRelayError::NotEnoughValidatorSignatures {
+                required: 2,
+                got: 1,
+            }
+        ));
+    }
+
+    #[test]
     fn config_version_gating_accepts_matching_version() {
         let mut relay = BridgeRelay::with_admin(2, vec![validator_pub(7)], b32(9));
         let expected = relay.config_version();
