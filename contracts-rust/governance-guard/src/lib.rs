@@ -811,12 +811,34 @@ mod tests {
         gov.queue("alice", pid2).unwrap();
 
         gov.execute("exec", pid, eta).unwrap();
+        let audit_len_before_rejected_execute = gov.audit_log().len();
 
         let err = gov.execute("exec", pid2, eta).unwrap_err();
         assert_eq!(err, Error::ParamVersionMismatch);
 
         let p = gov.proposal(pid2).unwrap();
         assert_eq!(p.status, ProposalStatus::Queued);
+        assert_eq!(p.executor, None);
+        assert_eq!(p.executed_at, None);
+        assert_eq!(
+            gov.bridge_state()
+                .gov_params
+                .get("challenge_window_blocks")
+                .map(String::as_str),
+            Some("130")
+        );
+        assert_eq!(
+            gov.bridge_state()
+                .param_versions
+                .get("challenge_window_blocks")
+                .copied(),
+            Some(1)
+        );
+        assert_eq!(gov.audit_log().len(), audit_len_before_rejected_execute);
+        assert!(!gov.audit_log().iter().any(|event| matches!(
+            event,
+            GovernanceEvent::ProposalExecuted { proposal_id, .. } if *proposal_id == pid2
+        )));
     }
 
     #[test]
