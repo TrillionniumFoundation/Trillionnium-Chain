@@ -1063,7 +1063,7 @@ fn ensure_sign_message(message: &str) -> Result<()> {
             || (c.is_whitespace() && c != ' ')
     }) {
         bail!(
-            "sign message must be single-line printable text with only interior ASCII spaces"
+            "sign message must be single-line printable text without control characters and with only interior ASCII spaces"
         );
     }
     Ok(())
