@@ -714,12 +714,17 @@ fn retained_wal_summary(recovered: &RecoveredWalState) -> String {
     };
 
     if recovered.wal_entries_retained == 0 {
-        return match recovered.checkpoint_height_retained {
+        let summary = match recovered.checkpoint_height_retained {
             Some(checkpoint_height) => format!(
                 "{} (last retained checkpoint height {})",
                 base, checkpoint_height
             ),
             None => base,
+        };
+        return if recovered.truncated {
+            format!("{}; repaired WAL tail required truncation", summary)
+        } else {
+            summary
         };
     }
 
@@ -764,8 +769,14 @@ fn checkpoint_tip_relation(recovered: &RecoveredWalState) -> String {
 }
 
 fn recovery_startup_summary(recovered: &RecoveredWalState) -> String {
+    let join_rejoin_status = if recovered.metadata_only_recovery {
+        "blocked:metadata_only_recovery"
+    } else {
+        "ready"
+    };
+
     format!(
-        "retained_wal_entries={} checkpoint_height_retained={} checkpoint_tip_relation={} next_startup_height={} wal_tail_truncated={} metadata_only_recovery={}",
+        "retained_wal_entries={} checkpoint_height_retained={} checkpoint_tip_relation={} next_startup_height={} wal_tail_truncated={} metadata_only_recovery={} join_rejoin_status={}",
         recovered.wal_entries_retained,
         recovered
             .checkpoint_height_retained
@@ -775,6 +786,7 @@ fn recovery_startup_summary(recovered: &RecoveredWalState) -> String {
         recovered.next_height,
         recovered.truncated,
         recovered.metadata_only_recovery,
+        join_rejoin_status,
     )
 }
 
@@ -15573,7 +15585,7 @@ locked_block_hash = "stale-lock"
         assert!(err.contains("retained 3 committed WAL entries through height 3"));
         assert!(err.contains("last retained checkpoint: 2"));
         assert!(err.contains(
-            "incident clue: retained_wal_entries=3 checkpoint_height_retained=2 checkpoint_tip_relation=behind:1 next_startup_height=4 wal_tail_truncated=true metadata_only_recovery=true"
+            "incident clue: retained_wal_entries=3 checkpoint_height_retained=2 checkpoint_tip_relation=behind:1 next_startup_height=4 wal_tail_truncated=true metadata_only_recovery=true join_rejoin_status=blocked:metadata_only_recovery"
         ));
         assert!(err.contains("retained_wal_entries=3"));
         assert!(err.contains("wal_tail_truncated=true"));
@@ -15604,6 +15616,39 @@ locked_block_hash = "stale-lock"
         };
 
         ensure_recoverable_wal_state(&wal_dir, &recovered).unwrap();
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
+    fn ensure_recoverable_wal_state_allows_truncated_checkpoint_only_rejoin_bootstrap() {
+        let wal_dir = temp_wal_dir("recover-guard-truncated-checkpoint-only-rejoin");
+        fs::create_dir_all(&wal_dir).unwrap();
+
+        let recovered = RecoveredWalState {
+            next_height: 9,
+            restored_lock: None,
+            last_checkpoint: Some(CheckpointMeta {
+                height: 8,
+                state_root_hex: "r8".into(),
+                wal_entry_hash_hex: "h8".into(),
+            }),
+            truncated: true,
+            metadata_only_recovery: false,
+            wal_entries_retained: 0,
+            checkpoint_height_retained: Some(8),
+        };
+
+        ensure_recoverable_wal_state(&wal_dir, &recovered)
+            .expect("truncated checkpoint-only rejoin bootstrap should remain recoverable");
+        assert_eq!(
+            recovery_startup_summary(&recovered),
+            "retained_wal_entries=0 checkpoint_height_retained=8 checkpoint_tip_relation=checkpoint_only:8 next_startup_height=9 wal_tail_truncated=true metadata_only_recovery=false join_rejoin_status=ready"
+        );
+        assert_eq!(
+            retained_wal_summary(&recovered),
+            "retained no committed WAL entries (last retained checkpoint height 8); repaired WAL tail required truncation"
+        );
 
         let _ = fs::remove_dir_all(&wal_dir);
     }
