@@ -74,6 +74,15 @@ const isLikelyNetworkError = (err: Error): boolean => {
   return err.name === "NetworkError" || err.name === "FetchError";
 };
 
+const isAbortLikeError = (err: unknown): boolean => {
+  if (!(err && typeof err === "object")) return false;
+
+  const name = "name" in err ? err.name : undefined;
+  const code = "code" in err ? err.code : undefined;
+
+  return name === "AbortError" || code === "ABORT_ERR";
+};
+
 export function createFrontendApiClient(config: BaseClientConfig) {
   const fetchImpl = config.fetchImpl ?? fetch;
   const normalizedBaseUrl = normalizeBaseUrl(config.baseUrl);
@@ -112,7 +121,7 @@ export function createFrontendApiClient(config: BaseClientConfig) {
       } catch (err) {
         if (err instanceof FrontendApiError) throw err;
 
-        if (err instanceof Error && err.name === "AbortError") {
+        if (isAbortLikeError(err)) {
           if (timeout.isTimeout()) {
             throw new FrontendApiError({
               code: "TIMEOUT",

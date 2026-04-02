@@ -116,6 +116,25 @@ describe("api-contract client and retry hardening", () => {
     expect(fetchImpl).toHaveBeenCalledTimes(1);
   });
 
+  it("classifies abort-like DOMException-shaped errors as aborted and does not retry", async () => {
+    const fetchImpl = vi.fn().mockRejectedValue({
+      name: "AbortError",
+      code: "ABORT_ERR",
+      message: "The operation was aborted.",
+    });
+
+    const client = createFrontendApiClient({
+      baseUrl: "http://127.0.0.1:8080",
+      fetchImpl: fetchImpl as unknown as typeof fetch,
+    });
+
+    await expect(client.queryTask("42", { retries: 2 })).rejects.toMatchObject({
+      code: "ABORTED",
+      retryable: false,
+    });
+    expect(fetchImpl).toHaveBeenCalledTimes(1);
+  });
+
   it("clamps invalid retry options to safe defaults", async () => {
     let attempts = 0;
     await expect(
