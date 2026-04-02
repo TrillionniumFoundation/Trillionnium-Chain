@@ -2111,6 +2111,7 @@ pub(crate) fn reputation_impact_from_gap_bps_from_worst(
     reputation_signal_from_gap_bps_from_worst(gap_bps_from_worst).map(reputation_impact)
 }
 
+#[cfg(test)]
 pub(crate) fn reputation_signal_from_gap_pair(
     gap_bps_from_best: i32,
     gap_bps_from_worst: i32,
@@ -2122,6 +2123,7 @@ pub(crate) fn reputation_signal_from_gap_pair(
     })
 }
 
+#[cfg(test)]
 pub(crate) fn reputation_impact_from_gap_pair(
     gap_bps_from_best: i32,
     gap_bps_from_worst: i32,
@@ -2129,12 +2131,14 @@ pub(crate) fn reputation_impact_from_gap_pair(
     reputation_signal_from_gap_pair(gap_bps_from_best, gap_bps_from_worst).map(reputation_impact)
 }
 
+#[cfg(test)]
 pub(crate) fn reputation_signal_from_score_bps(score_bps: i32) -> Option<ReputationSignal> {
     CANONICAL_REPUTATION_SIGNAL_ORDER
         .iter()
         .find_map(|signal| (reputation_score_bps(*signal) == score_bps).then_some(*signal))
 }
 
+#[cfg(test)]
 pub(crate) fn reputation_impact_from_score_bps(score_bps: i32) -> Option<ReputationImpact> {
     reputation_signal_from_score_bps(score_bps).map(reputation_impact)
 }
@@ -2151,20 +2155,24 @@ pub(crate) fn reputation_surface(signal: ReputationSignal) -> ReputationSurface 
     }
 }
 
+#[cfg(test)]
 pub(crate) fn canonical_reputation_surfaces() -> [ReputationSurface; 4] {
     CANONICAL_REPUTATION_SIGNAL_ORDER.map(reputation_surface)
 }
 
+#[cfg(test)]
 pub(crate) fn reputation_signal_from_weight_bps(weight_bps: u16) -> Option<ReputationSignal> {
     CANONICAL_REPUTATION_SIGNAL_ORDER
         .iter()
         .find_map(|signal| (reputation_weight_bps(*signal) == weight_bps).then_some(*signal))
 }
 
+#[cfg(test)]
 pub(crate) fn reputation_impact_from_weight_bps(weight_bps: u16) -> Option<ReputationImpact> {
     reputation_signal_from_weight_bps(weight_bps).map(reputation_impact)
 }
 
+#[cfg(test)]
 pub(crate) fn reputation_signal_from_surface(
     label: &str,
     delta: i32,
@@ -2185,6 +2193,7 @@ pub(crate) fn reputation_signal_from_surface(
     })
 }
 
+#[cfg(test)]
 pub(crate) fn reputation_impact_from_surface(
     label: &str,
     delta: i32,
