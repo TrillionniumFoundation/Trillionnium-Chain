@@ -139,6 +139,22 @@ fn settlement_request_collapses_bom_spacing_in_revert_reason() {
 }
 
 #[test]
+fn settlement_request_collapses_halfwidth_hangul_filler_in_revert_reason() {
+    let mut request = SettlementRequest::new(7, "0xabcdef".to_string());
+    request
+        .revert_authorized(
+            &settlement_operator(),
+            "target\u{FFA0}relay timeout".to_string(),
+        )
+        .expect("halfwidth hangul filler should be normalized in revert reason");
+
+    assert_eq!(
+        request.status,
+        BridgeStatus::Reverted("target relay timeout".to_string())
+    );
+}
+
+#[test]
 fn settlement_request_collapses_medium_math_and_ideographic_spacing_in_revert_reason() {
     let mut request = SettlementRequest::new(7, "0xabcdef".to_string());
     request
