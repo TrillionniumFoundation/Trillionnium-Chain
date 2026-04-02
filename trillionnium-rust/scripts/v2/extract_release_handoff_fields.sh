@@ -30,6 +30,18 @@ VERIFIED_BRANCH_REF=""
 VERIFIED_HEAD=""
 PREFLIGHT_SUMMARY_PATH=""
 
+canonicalize_directory_path() {
+  local path="$1"
+  [ -d "$path" ] || {
+    printf 'expected worktree root is not a directory: %s\n' "$path" >&2
+    exit 2
+  }
+  (
+    cd "$path"
+    pwd -P
+  )
+}
+
 normalize_branch_ref() {
   case "$1" in
     refs/*) printf '%s\n' "$1" ;;
@@ -83,6 +95,7 @@ REPO_ROOT="$(cd "$SCRIPT_DIR/../../.." && pwd)"
 if [ -n "$EXPECTED_WORKTREE_ROOT" ] || [ -n "$EXPECTED_BRANCH_REF" ] || [ -n "$EXPECTED_HEAD" ]; then
   [ -n "$EXPECTED_WORKTREE_ROOT" ] || { echo "missing --expected-worktree-root when lane binding is requested" >&2; exit 2; }
   [ -n "$EXPECTED_BRANCH_REF" ] || { echo "missing --expected-branch-ref when lane binding is requested" >&2; exit 2; }
+  EXPECTED_WORKTREE_ROOT="$(canonicalize_directory_path "$EXPECTED_WORKTREE_ROOT")"
   EXPECTED_BRANCH_REF="$(normalize_branch_ref "$EXPECTED_BRANCH_REF")"
   verify_args=(
     --expected-worktree-root "$EXPECTED_WORKTREE_ROOT"
@@ -251,6 +264,11 @@ if [ -n "$EXPECTED_WORKTREE_ROOT" ]; then
     printf 'artifact mismatch for expected worktree root: expected=%s summary=%s\n' "$EXPECTED_WORKTREE_ROOT" "$summary_worktree_path" >&2
     exit 1
   fi
+fi
+
+if [ -n "$VERIFIED_WORKTREE" ] && [ "$summary_worktree_path" != "$VERIFIED_WORKTREE" ]; then
+  printf 'artifact mismatch for verified worktree: verified=%s summary=%s\n' "$VERIFIED_WORKTREE" "$summary_worktree_path" >&2
+  exit 1
 fi
 
 if [ -n "$EXPECTED_BRANCH_REF" ]; then
