@@ -40,9 +40,9 @@ If any invariant fails, stop before continuing.
 
 ## Step 1 — Bind to the exact worktree and branch
 
-Prefer the shared fail-closed helper instead of trusting the shell prompt:
+Prefer the shared fail-closed helper instead of trusting the shell prompt.
 
-Use the ticket-assigned **absolute** worktree path directly; do not pass a relative path copied from the current shell.
+Use the ticket-assigned **absolute** worktree path directly; do not pass a relative path copied from the current shell. `--expected-branch-ref` accepts either a short branch name like `lane/assigned-branch` or a full ref like `refs/heads/lane/assigned-branch`; use the exact value recorded in the ticket.
 
 ```bash
 EXPECTED_WORKTREE_ROOT="/abs/path/from-ticket"

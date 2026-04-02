@@ -36,7 +36,7 @@ If any invariant fails, stop before continuing.
 
 ## Step 1 — Bind the artifact to an exact worktree and branch
 
-Prefer the shared fail-closed helper instead of copying the current shell state by hand:
+Prefer the shared fail-closed helper instead of copying the current shell state by hand. `--expected-branch-ref` accepts either a short branch name like `lane/assigned-branch` or a full ref like `refs/heads/lane/assigned-branch`; use the exact value recorded in the ticket.
 
 ```bash
 EXPECTED_WORKTREE_ROOT="/abs/path/from-ticket"
