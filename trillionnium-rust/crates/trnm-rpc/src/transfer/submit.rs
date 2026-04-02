@@ -5,6 +5,7 @@ use std::collections::BTreeMap;
 use trnm_types::TransferTx;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct SendTxResponse {
     pub tx_hash: String,
     pub status: TxStatus,

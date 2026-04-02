@@ -1,11 +1,22 @@
 use serde_json::json;
 use trnm_rpc::{
-    AccountBalanceQueryResponse, AccountNonceQueryResponse, EventQueryResponse,
+    AccountBalanceQueryResponse, AccountNonceQueryResponse, AccountState, EventQueryResponse,
     FaucetRequestResponse, GetTxResponse, GovParamQueryResponse, GovProposalQueryResponse,
     OracleValidateSnapshotResponse, RequestFullQueryResponse, RpcErrorResponse, SendTxResponse,
     TaskMeteringDerivedQueryResponse, TaskMeteringPolicyQueryResponse,
     TaskMeteringQueryResponse, TaskQueryResponse, TxStatus,
 };
+
+#[test]
+fn contract_account_state_shape_stable() {
+    let v = serde_json::to_value(AccountState {
+        address: "trnm1abc".into(),
+        balance: 1,
+        nonce: 7,
+    })
+    .unwrap();
+    assert_eq!(v, json!({"address":"trnm1abc","balance":1,"nonce":7}));
+}
 
 #[test]
 fn contract_balance_shape_stable() {
@@ -595,6 +606,15 @@ fn contract_public_read_payloads_reject_unknown_top_level_fields() {
     }))
     .expect_err("pending update contract should fail closed on unknown fields");
     assert!(pending_update_err.to_string().contains("unexpected"));
+
+    let account_state_err = serde_json::from_value::<AccountState>(json!({
+        "address":"trnm1abc",
+        "balance":1,
+        "nonce":7,
+        "unexpected":true
+    }))
+    .expect_err("account state contract should fail closed on unknown fields");
+    assert!(account_state_err.to_string().contains("unexpected"));
 
     let balance_err = serde_json::from_value::<AccountBalanceQueryResponse>(json!({
         "address":"trnm1abc",
