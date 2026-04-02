@@ -355,6 +355,7 @@ Example annotation lines:
 
 - `plane=observability service=rpc severity=sev1 signal=rpc-unhealthy needs_replay=yes needs_rollback=no first_stop="RPC health / read surface" truth_source=local-release-evidence-v1 evidence_scope=release-handoff summary_path=/abs/run/health/evidence-20260331/summary.txt manifest_path=/abs/release/rc-20260331/manifest.txt replay=present rollback=missing`
 - `plane=observability service=oracle severity=sev1 signal=oracle-anomaly verdict=quorum-collapse needs_replay=yes needs_rollback=no first_stop="Oracle-specific drill-down" truth_source=local-release-evidence-v1 evidence_scope=release-handoff summary_path=/abs/run/health/evidence-20260331/summary.txt manifest_path=/abs/release/rc-20260331/manifest.txt replay=present rollback=missing`
+- `plane=observability service=bridge severity=sev1 signal=bridge-anomaly needs_replay=yes needs_rollback=yes first_stop="Bridge relay / settlement integrity" truth_source=local-release-evidence-v1 evidence_scope=release-handoff summary_path=/abs/run/health/evidence-20260331/summary.txt manifest_path=/abs/release/rc-20260331/manifest.txt replay=present rollback=present`
 
 ---
 
@@ -418,6 +419,7 @@ Example:
 
 - `plane=observability service=node severity=sev1 signal=sync-lag verdict=n/a needs_replay=yes needs_rollback=yes first_stop="Node liveness / height progress" observed=committed_height_flat impact=one-validator truth_source=local-release-evidence-v1 evidence_scope=release-handoff summary_path=/abs/run/health/evidence-20260331/summary.txt manifest_path=/abs/release/rc-20260331/manifest.txt replay=present rollback=present`
 - `plane=observability service=oracle severity=sev1 signal=oracle-anomaly verdict=quorum-collapse needs_replay=yes needs_rollback=no first_stop="Oracle-specific drill-down" observed=source_cardinality_below_floor impact=price-ingest-degraded truth_source=local-release-evidence-v1 evidence_scope=release-handoff summary_path=/abs/run/health/evidence-20260331/summary.txt manifest_path=/abs/release/rc-20260331/manifest.txt replay=present rollback=missing`
+- `plane=observability service=bridge severity=sev1 signal=bridge-anomaly verdict=n/a needs_replay=yes needs_rollback=yes first_stop="Bridge relay / settlement integrity" observed=settlement_heartbeat_stalled impact=cross-chain-settlement-delayed truth_source=local-release-evidence-v1 evidence_scope=release-handoff summary_path=/abs/run/health/evidence-20260331/summary.txt manifest_path=/abs/release/rc-20260331/manifest.txt replay=present rollback=present`
 
 ---
 
