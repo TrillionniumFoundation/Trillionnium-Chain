@@ -46,7 +46,7 @@ Dashboards and alert rules may add panels or thresholds later, but they should n
 | Dimension | Required values / shape | Why it is frozen for the starter pack |
 | --- | --- | --- |
 | `plane` | `observability` | Keeps observability incidents searchable as one operator plane. |
-| `service` | `node`, `rpc`, `worker`, `oracle`, `bridge` | Preserves one cross-service routing surface. |
+| `service` | `node`, `rpc`, `worker`, `oracle`, `bridge`, `any` | Preserves one cross-service routing surface, including starter-pack incidents like `contract-drift` that are not owned by a single service. |
 | `severity` | `sev0`, `sev1`, `sev2`, `sev3` | Prevents page/ticket/dashboard severity drift. |
 | `signal` | `node-down`, `sync-lag`, `replay-failure`, `rpc-unhealthy`, `worker-failure`, `oracle-anomaly`, `bridge-anomaly`, `contract-drift` | Keeps alert families stable enough for paging and dashboard links. |
 | `needs_replay` | `yes`, `no` | Forces responders to distinguish evidence-required incidents from pure telemetry noise. |
