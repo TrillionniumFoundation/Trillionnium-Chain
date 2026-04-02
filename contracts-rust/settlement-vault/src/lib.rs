@@ -650,6 +650,48 @@ mod tests {
     }
 
     #[test]
+    fn terminal_lock_operations_reject_replays_without_mutating_state_or_audit() {
+        let mut vault = SettlementVault::new("owner");
+
+        vault.deposit("owner", "alice", 100).unwrap();
+        vault.lock("owner", "req-release-replay", "alice", 30)
+            .unwrap();
+        vault.release("owner", "req-release-replay").unwrap();
+        let released_audit_len = vault.audit_log().len();
+
+        assert_eq!(
+            vault
+                .release("owner", "req-release-replay")
+                .expect_err("released lock cannot be released twice"),
+            VaultError::InvalidStateTransition
+        );
+        assert_eq!(vault.balance_of("alice"), 100);
+        assert_eq!(
+            vault.lock_record("req-release-replay").unwrap().status,
+            LockStatus::Released
+        );
+        assert_eq!(vault.audit_log().len(), released_audit_len);
+
+        vault.lock("owner", "req-slash-replay", "alice", 40).unwrap();
+        vault.slash("owner", "req-slash-replay", "treasury").unwrap();
+        let slashed_audit_len = vault.audit_log().len();
+
+        assert_eq!(
+            vault
+                .slash("owner", "req-slash-replay", "treasury")
+                .expect_err("slashed lock cannot be slashed twice"),
+            VaultError::InvalidStateTransition
+        );
+        assert_eq!(vault.balance_of("alice"), 60);
+        assert_eq!(vault.balance_of("treasury"), 40);
+        assert_eq!(
+            vault.lock_record("req-slash-replay").unwrap().status,
+            LockStatus::Slashed
+        );
+        assert_eq!(vault.audit_log().len(), slashed_audit_len);
+    }
+
+    #[test]
     fn pause_blocks_state_changes_until_unpause() {
         let mut vault = SettlementVault::new("owner");
 
