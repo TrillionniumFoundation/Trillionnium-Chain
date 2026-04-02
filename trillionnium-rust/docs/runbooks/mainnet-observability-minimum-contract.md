@@ -81,13 +81,14 @@ Operators should not over-read it as indexer/read-model closure.
 The minimum operator-facing contract also includes the current fail-closed transport split around this probe surface:
 
 - a **recognized** probe alias returns `200 OK` with the schema above for `GET`, or the equivalent header-only response for `HEAD`
-- an **unknown but otherwise valid** HTTP request path returns `404 Not Found` with the current JSON error envelope
-- a **malformed** HTTP request line returns `400 Bad Request` with the current JSON error envelope
+- an **unknown but otherwise valid** HTTP request path returns `404 Not Found` with the current JSON error envelope `{"ok":false,"code":"NOT_FOUND"}` for `GET`, or the equivalent header-only response for `HEAD`
+- a **malformed** HTTP request line returns `400 Bad Request` with the current JSON error envelope `{"ok":false,"code":"BAD_REQUEST","message":"invalid http request"}`
 
 Operational meaning:
 
 - `404` means the probe surface was reached but the requested path is outside the current contract
 - `400` means the request itself was malformed and should be treated as probe/client error rather than as a service-specific readiness signal
+- `HEAD` on the negative path should keep the same status code and `Content-Length` that the equivalent `GET` envelope would have produced, rather than inventing a probe-specific error shape
 
 This distinction matters during load balancer, sidecar, and operator triage because it separates "wrong endpoint" from "broken request generation" without overloading the health/readiness meaning of `200`.
 
