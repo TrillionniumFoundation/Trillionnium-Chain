@@ -30,8 +30,10 @@ contracts-rust/
 截至当前仓库快照：
 
 - **已存在**：`settlement-vault/`、`bridge-relay/`、`governance-guard/`
-- **部分相关**：`audit-events/` 提供共享审计事件 schema
+- **部分相关**：`audit-events/` 提供共享审计事件 schema，但它是配套 shared-schema crate，**不等价于** 目标布局里的 `sdk/` 或 `runtime-spec/`
 - **尚未落地为目录**：`sdk/`、`runtime-spec/`、`integration-tests/`
+
+换句话说：当前目录树已经出现了“3 个 contract crates + 1 个 shared schema crate”的 Rust MVP 形态，但**还没有** 达到架构文档里描述的 host ABI/runtime-spec/package-layout 闭环。
 
 因此，这个子树目前应被理解为：
 
