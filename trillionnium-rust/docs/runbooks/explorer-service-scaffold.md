@@ -52,6 +52,7 @@ The scaffold writes/uses:
 
 - PID file: `trillionnium-rust/run/explorer-service/explorer-service.pid`
 - log file: `trillionnium-rust/run/explorer-service/explorer-service.log`
+- suggested env file: `trillionnium-rust/run/explorer-service/explorer-service.env`
 - public root: `trillionnium-rust/run/explorer-service/public`
 - health file: `trillionnium-rust/run/explorer-service/public/healthz`
 - index file: `trillionnium-rust/run/explorer-service/public/index.json`
@@ -134,6 +135,7 @@ The status output should include the operator contract fields below:
 - `pid=<pid>`
 - `pid_file=.../explorer-service.pid`
 - `log_file=.../explorer-service.log`
+- `env_file=.../explorer-service.env`
 - `public_dir=.../run/explorer-service/public`
 - `health_file=.../run/explorer-service/public/healthz`
 - `index_file=.../run/explorer-service/public/index.json`
@@ -252,6 +254,7 @@ It also re-emits the same operator-facing contract fields as the up/status scrip
 - `local_health_probe_url=http://<bind_host>:<bind_port>/healthz` only when running; down/invalid-config exits emit `not-run-state-down` / `invalid-config` markers instead
 - `pid_file=.../explorer-service.pid`
 - `log_file=.../explorer-service.log`
+- `env_file=.../explorer-service.env`
 - `public_dir=.../run/explorer-service/public`
 - `health_file=.../run/explorer-service/public/healthz`
 - `index_file=.../run/explorer-service/public/index.json`
