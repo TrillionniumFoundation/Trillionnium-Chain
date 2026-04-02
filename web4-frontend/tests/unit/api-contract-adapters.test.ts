@@ -450,6 +450,15 @@ describe("api-contract adapters", () => {
     expect(out.audits[0]?.granted).toBe(true);
   });
 
+  it("returns an empty query-events result when rpc payload is empty but request task context is known", () => {
+    const out = adaptQueryEvents([], "7");
+
+    expect(out).toEqual({
+      taskId: "7",
+      events: [],
+    });
+  });
+
   it("fails closed on malformed payload", () => {
     expect(() => adaptQueryEvents({ bad: true }, "1")).toThrow(FrontendApiError);
   });
