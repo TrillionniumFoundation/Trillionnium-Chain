@@ -269,6 +269,19 @@ Preferred helper (fail-closed on missing paths, cross-artifact identity mismatch
 If you need the raw shell extraction for an air-gapped/debugging context, the equivalent block is:
 
 ```bash
+preflight_summary_path="run/preflight/go-no-go-latest.txt"
+if [ ! -f "$preflight_summary_path" ]; then
+  latest_preflight_summary=""
+  if compgen -G 'run/preflight/go-no-go-*.txt' >/dev/null; then
+    latest_preflight_summary="$(ls -dt run/preflight/go-no-go-*.txt 2>/dev/null | head -n 1)"
+  fi
+  if [ -n "$latest_preflight_summary" ]; then
+    preflight_summary_path="$latest_preflight_summary"
+  else
+    preflight_summary_path="<missing>"
+  fi
+fi
+
 latest_evidence_dir="$(ls -dt run/health/evidence-* 2>/dev/null | head -n 1)"
 latest_rc_dir="$(ls -dt release/rc-* 2>/dev/null | head -n 1)"
 
@@ -278,6 +291,7 @@ latest_rc_dir="$(ls -dt release/rc-* 2>/dev/null | head -n 1)"
 summary_path="$latest_evidence_dir/summary.txt"
 manifest_path="$latest_rc_dir/manifest.txt"
 
+printf 'preflight_summary_path=%s\n' "$preflight_summary_path"
 printf 'summary_path=%s\n' "$summary_path"
 printf 'manifest_path=%s\n' "$manifest_path"
 
