@@ -22,7 +22,7 @@ use trnm_rpc::{
 };
 use trnm_state::StateStore;
 use trnm_types::{
-    AuditEvent, CapabilityToken, GovProposalObject, GovProposalStatus, IdentityRegistry,
+    AuditAction, AuditEvent, CapabilityToken, GovProposalObject, GovProposalStatus, IdentityRegistry,
     PrivacyTier, RequestStatus, TaskMetadata, TaskMeteringSnapshot, TaskObject, TaskStatus,
     TransferTx,
 };
@@ -1152,8 +1152,29 @@ fn query_capability_audit(
     }
 
     // Keep audit query output deterministic even when registry snapshots are
-    // merged/imported with non-canonical ordering.
-    owner_history.sort_by_key(|event| (event.at_height, event.seq));
+    // merged/imported with non-canonical ordering or contain same-height/same-seq
+    // ties that would otherwise leak source ordering into the read-model.
+    owner_history.sort_by(|left, right| {
+        fn audit_action_stable_rank(action: AuditAction) -> u8 {
+            match action {
+                AuditAction::DidRegistered => 0,
+                AuditAction::DidRevoked => 1,
+                AuditAction::CapabilityIssued => 2,
+                AuditAction::CapabilityRenewed => 3,
+                AuditAction::CapabilityRevoked => 4,
+            }
+        }
+
+        left.at_height
+            .cmp(&right.at_height)
+            .then_with(|| left.seq.cmp(&right.seq))
+            .then_with(|| {
+                audit_action_stable_rank(left.action).cmp(&audit_action_stable_rank(right.action))
+            })
+            .then_with(|| left.actor.cmp(&right.actor))
+            .then_with(|| left.subject.cmp(&right.subject))
+            .then_with(|| left.note.cmp(&right.note))
+    });
 
     Ok(CapabilityAuditQueryResponse {
         token,

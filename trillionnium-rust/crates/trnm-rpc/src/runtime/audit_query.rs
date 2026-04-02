@@ -1,5 +1,7 @@
 use anyhow::Result;
+use std::cmp::Ordering;
 use trnm_types::IdentityRegistry;
+use trnm_types::{AuditAction, AuditEvent};
 
 use super::*;
 
@@ -15,6 +17,26 @@ pub(crate) use event_listing::query_normalized_audit_events;
 pub(crate) use query_parsing::{
     parse_query_events_limit_from_path, parse_query_normalized_audit_events_query_from_path,
 };
+
+fn audit_action_stable_rank(action: AuditAction) -> u8 {
+    match action {
+        AuditAction::DidRegistered => 0,
+        AuditAction::DidRevoked => 1,
+        AuditAction::CapabilityIssued => 2,
+        AuditAction::CapabilityRenewed => 3,
+        AuditAction::CapabilityRevoked => 4,
+    }
+}
+
+fn compare_owner_history_events(left: &AuditEvent, right: &AuditEvent) -> Ordering {
+    left.at_height
+        .cmp(&right.at_height)
+        .then_with(|| left.seq.cmp(&right.seq))
+        .then_with(|| audit_action_stable_rank(left.action).cmp(&audit_action_stable_rank(right.action)))
+        .then_with(|| left.actor.cmp(&right.actor))
+        .then_with(|| left.subject.cmp(&right.subject))
+        .then_with(|| left.note.cmp(&right.note))
+}
 
 pub(crate) fn query_capability_audit(
     registry: &IdentityRegistry,
@@ -49,7 +71,7 @@ pub(crate) fn query_capability_audit(
         });
     }
 
-    owner_history.sort_by_key(|event| (event.at_height, event.seq));
+    owner_history.sort_by(compare_owner_history_events);
 
     Ok(CapabilityAuditQueryResponse {
         token,
