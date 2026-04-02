@@ -14,6 +14,20 @@ npm run dev
 
 打开 <http://localhost:3000>
 
+## 文档入口与判读边界
+
+优先按下面顺序查阅，避免把不同层级的结论混在一起：
+
+- `web4-frontend/docs/README.md`：**前端文档统一入口**（开发 / API 合约 / 测试 / 运维）
+- `web4-frontend/docs/developer-guide.md`：开发者本地启动、环境变量、提交流程
+- `web4-frontend/docs/operations-runbook.md`：operator / 发布 / 回滚 / 排障操作
+- `../RELEASE_READINESS.md`：**仓库级 release truth source**；判断 TRNM 是否可对外表述为 release-ready 时，以此为准
+- 工作树内若存在最新 Web4 平台评分卡/阶段评估文档，可用来描述成熟度位置；但这类阶段性评分文档 **不等于** release-ready 证明
+
+可用一句话记忆：
+
+> `web4-frontend` 的门禁绿灯，表示**前端子项目预检通过**；不表示整个 TRNM 仓库已经 release-ready。
+
 ## 环境变量（可选）
 
 生产/测试环境建议使用本地化配置文件：
@@ -57,6 +71,11 @@ npm run start
 
 详细说明见：`docs/operations-runbook.md`；发布前门禁与人工复核清单见：`docs/release-checklist.md`
 
-当前 Web4 前端的对外表述边界，优先参考：
-- `./docs/README.md`
-- `../RELEASE_READINESS.md`
+## 对外表述最小口径
+
+若需要在交接、演示、排障记录里简短描述当前 Web4 前端状态，优先使用：
+
+- **默认是 readonly API client**
+- **仅在显式 `?mode=mock` 时回退到本地 mock snapshot**
+- **不提供写路径**
+- **仓库级 release 判定仍以根目录 `RELEASE_READINESS.md` 为准**

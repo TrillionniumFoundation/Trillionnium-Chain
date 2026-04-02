@@ -24,6 +24,21 @@ npm run typecheck
 npm run test
 ```
 
+## 入口与 truth-source 速查
+
+开发过程中若不确定“该看哪个文档、哪个结论代表什么”，按下面顺序判读：
+
+1. `./README.md`：web4-frontend 文档中心入口
+2. `./api-contract.md`：只读查询契约与字段语义
+3. `./operations-runbook.md`：发布 / 回滚 / 排障与 operator 语义
+4. `../../RELEASE_READINESS.md`：TRNM 仓库级 release truth source
+5. 工作树内最新的 Web4 平台评分卡/阶段评估文档：可用于描述成熟度位置，不用于 release 放行
+
+避免两个常见误读：
+
+- `npm run ci:check` 或 `npm run release:ready` 通过，只能说明 **web4-frontend 子项目** 本地门禁通过。
+- 页面在 `?mode=mock` 下可正常展示，只能说明 **explicit mock fallback** 可用，不能说明真实查询环境或写路径已就绪。
+
 
 ## 环境配置
 
