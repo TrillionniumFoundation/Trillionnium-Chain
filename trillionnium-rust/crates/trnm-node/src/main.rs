@@ -4296,6 +4296,49 @@ bootstrap_peers = ["127.0.0.1:27656"]
     }
 
     #[test]
+    fn load_config_rejects_host_like_node_id_literals_fail_closed() {
+        for (suffix, node_id, expected_error) in [
+            (
+                "localhost",
+                "localhost",
+                "node_id must not look like a host or socket literal",
+            ),
+            (
+                "ipv4-literal",
+                "127.0.0.1",
+                "node_id must not look like a host or socket literal",
+            ),
+            (
+                "ipv6-socket-shaped",
+                "[::1]:26656",
+                "node_id must not contain path or host-literal separators",
+            ),
+        ] {
+            let path = std::env::temp_dir().join(format!(
+                "trnm-node-config-host-like-node-id-{suffix}-{}-{}.toml",
+                std::process::id(),
+                std::thread::current().name().unwrap_or("unnamed")
+            ));
+            std::fs::write(
+                &path,
+                format!(
+                    "node_id = \"{node_id}\"\nrpc_addr = \"127.0.0.1:26657\"\np2p_addr = \"127.0.0.1:26656\"\n"
+                ),
+            )
+            .expect("write config");
+
+            let err = load_config(path.to_str().expect("utf8 path"))
+                .expect_err("host-like node_id must fail closed");
+            assert!(
+                err.to_string().contains(expected_error),
+                "unexpected error for {node_id}: {err:#}"
+            );
+
+            let _ = std::fs::remove_file(path);
+        }
+    }
+
+    #[test]
     fn load_config_rejects_blank_rpc_addr_with_operator_facing_error() {
         let path = std::env::temp_dir().join(format!(
             "trnm-node-config-blank-rpc-{}-{}.toml",
