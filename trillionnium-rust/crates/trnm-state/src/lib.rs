@@ -15769,6 +15769,29 @@ mod tests {
     }
 
     #[test]
+    fn wal_checkpoint_verification_rejects_zero_height_pregenesis_entry() {
+        let e0 = WalMeta {
+            height: 0,
+            round: 0,
+            proposal_hash: "p0".into(),
+            committed: true,
+            state_root_hex: "r0".into(),
+            prev_hash_hex: None,
+        };
+        let checkpoints = vec![CheckpointMeta {
+            height: 0,
+            state_root_hex: "r0".into(),
+            wal_entry_hash_hex: e0.content_hash_hex(),
+        }];
+
+        let got = verify_wal_and_find_checkpoint(&checkpoints, &[e0]).unwrap();
+        assert!(
+            got.is_none(),
+            "height-zero WAL/checkpoint evidence must fail closed so pre-genesis metadata cannot be treated as a recoverable canonical anchor"
+        );
+    }
+
+    #[test]
     fn wal_checkpoint_verification_rejects_incomplete_genesis_metadata() {
         let e1 = WalMeta {
             height: 1,
