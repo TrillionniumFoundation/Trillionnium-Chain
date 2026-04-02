@@ -59,8 +59,7 @@ describe("dashboard source normalized audit pagination", () => {
                 reason: "ok",
               },
             ],
-            hasMore: true,
-            nextCursor: "cursor-1",
+            hasMore: false,
           }),
       } as unknown as ReturnType<typeof apiContractClient.createFrontendApiClient>;
 
@@ -870,6 +869,67 @@ describe("dashboard source normalized audit pagination", () => {
     await expect(fetchDashboardSnapshot()).rejects.toThrow(
       "Readonly API unavailable (fail-closed): Normalized audit pagination declared more pages without a next cursor. Add ?mode=mock to switch to readonly snapshot fallback.",
     );
+  });
+
+  it("fails closed when normalized audit pagination exceeds the configured max pages", async () => {
+    const previousPages = process.env.NEXT_PUBLIC_DASHBOARD_NORMALIZED_AUDIT_MAX_PAGES;
+    process.env.NEXT_PUBLIC_DASHBOARD_NORMALIZED_AUDIT_MAX_PAGES = "1";
+
+    try {
+      const mockClient = {
+        queryTask: vi.fn().mockResolvedValue({
+          task: {
+            id: "345d",
+            owner: "ops",
+            status: "running",
+            createdAt: "2026-03-01T00:00:00.000Z",
+            updatedAt: "2026-03-01T00:05:00.000Z",
+            metadata: {},
+          },
+        }),
+        queryEvents: vi.fn().mockResolvedValue({
+          taskId: "345d",
+          events: [],
+        }),
+        queryCapabilityAudit: vi.fn().mockResolvedValue({
+          subject: "did:trnm:test",
+          audits: [
+            {
+              subject: "did:trnm:test",
+              capability: "AUDIT_READ",
+              granted: true,
+              checkedAt: "2026-03-01T00:00:00.000Z",
+            },
+          ],
+        }),
+        queryNormalizedAuditEvents: vi.fn().mockResolvedValue({
+          events: [
+            {
+              source: "bridge-relay",
+              event_type: "bridge_relay.proof_submitted",
+              actor: "validator",
+              object_id: "proof-345e",
+              timestamp: "2026-03-01T00:02:00.000Z",
+              reason: "warn",
+            },
+          ],
+          hasMore: true,
+          nextCursor: "cursor-next",
+        }),
+      } as unknown as ReturnType<typeof apiContractClient.createFrontendApiClient>;
+
+      vi.spyOn(apiContractClient, "createFrontendApiClient").mockReturnValue(mockClient);
+
+      await expect(fetchDashboardSnapshot()).rejects.toThrow(
+        "Readonly API unavailable (fail-closed): Normalized audit pagination exceeded max pages (1). Add ?mode=mock to switch to readonly snapshot fallback.",
+      );
+    } finally {
+      if (previousPages === undefined) {
+        delete process.env.NEXT_PUBLIC_DASHBOARD_NORMALIZED_AUDIT_MAX_PAGES;
+      } else {
+        process.env.NEXT_PUBLIC_DASHBOARD_NORMALIZED_AUDIT_MAX_PAGES = previousPages;
+      }
+    }
   });
 
   it("keeps event ordering stable when fallback dashboard times are not ISO-formatted", async () => {

@@ -295,6 +295,10 @@ const fetchNormalizedAuditEventsWithPagination = async (
     page += 1;
   }
 
+  if (hasMore) {
+    throw new Error(`Normalized audit pagination exceeded max pages (${normalizedAuditMaxPages})`);
+  }
+
   return allEvents;
 };
 
