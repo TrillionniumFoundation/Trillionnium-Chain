@@ -229,6 +229,7 @@ impl SettlementVault {
             .get_mut(account)
             .expect("available balance implies existing account entry");
         *balance -= amount;
+        self.prune_zero_balance(account);
 
         self.locks.insert(
             request_id.to_string(),
@@ -339,6 +340,7 @@ impl SettlementVault {
 
         let from_entry = self.balances.entry(from.to_string()).or_insert(0);
         *from_entry -= amount;
+        self.prune_zero_balance(from);
 
         self.credit_balance(to, amount)?;
         self.audit_log.push(VaultEvent::Transferred {
@@ -402,6 +404,12 @@ impl SettlementVault {
             .checked_add(amount)
             .ok_or(VaultError::BalanceOverflow)?;
         Ok(())
+    }
+
+    fn prune_zero_balance(&mut self, account: &str) {
+        if self.balance_of(account) == 0 {
+            self.balances.remove(account);
+        }
     }
 }
 
@@ -770,5 +778,23 @@ mod tests {
             LockStatus::Locked
         );
         assert_eq!(vault.audit_log().len(), audit_len_before);
+    }
+
+    #[test]
+    fn zero_balances_are_pruned_after_lock_and_transfer() {
+        let mut vault = SettlementVault::new("owner");
+
+        vault.deposit("owner", "alice", 10).unwrap();
+        vault.lock("owner", "req-prune", "alice", 10).unwrap();
+        assert_eq!(vault.balance_of("alice"), 0);
+        assert!(vault.balances.get("alice").is_none());
+
+        vault.release("owner", "req-prune").unwrap();
+        assert_eq!(vault.balance_of("alice"), 10);
+
+        vault.transfer("owner", "alice", "bob", 10).unwrap();
+        assert_eq!(vault.balance_of("alice"), 0);
+        assert_eq!(vault.balance_of("bob"), 10);
+        assert!(vault.balances.get("alice").is_none());
     }
 }
