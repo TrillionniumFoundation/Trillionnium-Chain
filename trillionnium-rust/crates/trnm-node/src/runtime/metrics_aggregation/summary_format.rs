@@ -405,6 +405,43 @@ mod tests {
     }
 
     #[test]
+    fn runtime_summary_line_keeps_leader_missed_cluster_ahead_of_bft_auth_cluster() {
+        let mut metrics = RuntimeMetrics::new(4);
+        metrics.bft_leader_missed_active_heights = 3;
+        metrics.bft_double_vote_total = 7;
+        metrics.bft_auth_reject_bad_sig_total = 11;
+        metrics.bft_auth_reject_replay_total = 13;
+        metrics.bft_auth_reject_stale_nonce_total = 17;
+
+        let mut stats = RuntimeSummaryStats::zeroed();
+        stats.bft_leader_missed_total = 5;
+        stats.bft_leader_missed_max = 3;
+        stats.bft_leader_missed_top_share_ppm = 600_000;
+        stats.bft_leader_missed_active_validators = 2;
+        stats.bft_leader_missed_active_validator_share_ppm = 500_000;
+        stats.bft_leader_missed_density_avg = 1;
+        stats.bft_leader_missed_active_height_share_ppm = 400_000;
+        stats.leader_missed_final = vec![0, 3, 2, 0];
+
+        let summary = format_runtime_summary_line(&metrics, &stats);
+
+        let leader_missed_idx = summary.find("bft_leader_missed_total=5").unwrap();
+        let leader_missed_proposals_idx = summary
+            .find("bft_leader_missed_proposals=[0, 3, 2, 0]")
+            .unwrap();
+        let double_vote_idx = summary.find("bft_double_vote_total=7").unwrap();
+        let bad_sig_idx = summary.find("bft_auth_reject_bad_sig_total=11").unwrap();
+        let replay_idx = summary.find("bft_auth_reject_replay_total=13").unwrap();
+        let stale_alias_idx = summary.find("bft_auth_reject_stale_total=17").unwrap();
+
+        assert!(leader_missed_idx < leader_missed_proposals_idx);
+        assert!(leader_missed_proposals_idx < double_vote_idx);
+        assert!(double_vote_idx < bad_sig_idx);
+        assert!(bad_sig_idx < replay_idx);
+        assert!(replay_idx < stale_alias_idx);
+    }
+
+    #[test]
     fn runtime_summary_line_keeps_bft_leader_missed_health_cluster_visible_once_each() {
         let mut metrics = RuntimeMetrics::new(4);
         metrics.bft_leader_missed_active_heights = 3;
