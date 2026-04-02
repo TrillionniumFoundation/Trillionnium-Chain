@@ -153,10 +153,13 @@ For any artifact expected to feed validator bootstrap/handoff, preserve one shar
 - `validator_set_version=`
 - `packet_distribution_path=`
 - `rollback_owner=`
+- `validator_entry=` per validator
+- `validator_entry_hash=` per validator so acknowledgments can bind back to one immutable descriptor instead of a hand-written tuple
 
 Recommended for public-mainnet-facing evidence:
 - `packet_generated_at=` in UTC
 - `packet_distribution_path=` as one explicit absolute path every operator reviewed
+- `operator_contact=` per validator owner so missing acknowledgments can be chased without ambiguity
 - `operator_ack=` per validator owner
 - `operator_ack_signature_path=` or `operator_ack_digest=` when durable acknowledgment is required
 - explicit `abort_condition=` lines for mismatched genesis hash, duplicate node identity, or wrong worktree/ref
@@ -183,6 +186,8 @@ When passing genesis readiness to another operator, record:
 - genesis artifact sha256
 - genesis source note
 - validator set version
+- packet distribution path
+- validator entry hash(es) relied upon for operator acknowledgment binding
 - commands run
 - pass/fail result
 - rollback command
@@ -196,6 +201,7 @@ Treat genesis generation/handoff as **No-Go** if any of the following is true:
 - the distributed artifact hash is missing, truncated, or inconsistent across operators
 - the validator set version cannot be named
 - the shared ceremony packet disagrees with the artifact actually hashed
+- operator acknowledgment cannot be tied back to a specific `validator_entry=` / `validator_entry_hash=` in the shared packet
 - the operator cannot provide a rollback action immediately
 
 This checklist closes part of the genesis-generation documentation gap, but it does **not** by itself close validator rotation, signer ceremony, network formation, or broader public-mainnet release readiness.
