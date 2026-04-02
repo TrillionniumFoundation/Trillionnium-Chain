@@ -148,6 +148,13 @@ The status output should include the operator contract fields below:
 - `rpc_base_url=http://...`
 - `service_mode=operator-facing-static-scaffold`
 - `production_ready=false`
+- `read_contract_mode=read-only`
+- `read_contract_source=rpc-read-surface`
+- `day1_surface=query-task/<task_id>,query-events/<task_id>?limit=<n>,query-capability-audit/<subject-or-token>,query-normalized-audit-events/<task_id>?limit=<n>`
+- `query_events_default_limit=100`
+- `query_events_max_limit=500`
+- `write_paths_exposed=false`
+- `historical_query_scope=rpc-retention-bounded`
 - `health=ok`
 - `health_probe=active`
 - `health_probe_url=<the exact public/reverse-proxy-facing URL status checked>`
