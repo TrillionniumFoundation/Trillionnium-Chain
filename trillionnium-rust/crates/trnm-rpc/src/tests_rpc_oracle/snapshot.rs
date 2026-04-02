@@ -175,6 +175,25 @@ fn is_non_canonical_query_value(value: &str) -> bool {
     value.trim() != value || value.chars().any(|ch| ch.is_control())
 }
 
+fn contains_percent_encoded_control_or_del(value: &str) -> bool {
+    let bytes = value.as_bytes();
+    let mut idx = 0;
+    while idx + 2 < bytes.len() {
+        if bytes[idx] == b'%' {
+            let hi = from_hex(bytes[idx + 1]);
+            let lo = from_hex(bytes[idx + 2]);
+            if let (Some(hi), Some(lo)) = (hi, lo) {
+                let decoded = (hi << 4) | lo;
+                if decoded <= 0x20 || decoded == 0x7f {
+                    return true;
+                }
+            }
+        }
+        idx += 1;
+    }
+    false
+}
+
 pub(crate) fn parse_http_query_params(target: &str) -> Option<HashMap<String, String>> {
     let query = target.split_once('?')?.1;
     if query.is_empty()
@@ -189,12 +208,7 @@ pub(crate) fn parse_http_query_params(target: &str) -> Option<HashMap<String, St
         || normalized_query.contains("%3d")
         || normalized_query.contains("%23")
         || normalized_query.contains("%3f")
-        || normalized_query.contains("%0d")
-        || normalized_query.contains("%0a")
-        || normalized_query.contains("%09")
-        || normalized_query.contains("%0b")
-        || normalized_query.contains("%0c")
-        || normalized_query.contains("%20")
+        || contains_percent_encoded_control_or_del(query)
     {
         return None;
     }
