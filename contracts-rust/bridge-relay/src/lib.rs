@@ -882,6 +882,40 @@ mod tests {
     }
 
     #[test]
+    fn proof_replay_rejection_is_side_effect_free() {
+        let mut relay = relay(1, &[7]);
+        let msg = sample_msg();
+
+        let proof_digest = relay
+            .submit_proof(&msg, &[sig_for(&msg, 7)], 1_000, 999, 31337, addr(9))
+            .unwrap();
+        let audit_len_before = relay.audit_log().len();
+
+        let err = relay
+            .submit_proof(&msg, &[sig_for(&msg, 7)], 1_000, 999, 31337, addr(9))
+            .unwrap_err();
+
+        assert!(matches!(
+            err,
+            BridgeRelayError::ProofAlreadyUsed { proof_digest: used } if used == proof_digest
+        ));
+        assert_eq!(
+            relay.audit_log().len(),
+            audit_len_before,
+            "proof replay rejection must not append duplicate audit events"
+        );
+
+        let mut fresh_msg = sample_msg();
+        fresh_msg.source_log_index += 1;
+        fresh_msg.nonce += 1;
+
+        let fresh_proof = relay
+            .submit_proof(&fresh_msg, &[sig_for(&fresh_msg, 7)], 1_000, 999, 31337, addr(9))
+            .unwrap();
+        assert_ne!(fresh_proof, proof_digest);
+    }
+
+    #[test]
     fn finalize_settlement_replay_with_invalid_signature_after_terminal_still_blocked_by_terminal_bound() {
         let mut relay = relay(1, &[7]);
         let msg = sample_msg();
