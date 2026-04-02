@@ -1145,6 +1145,24 @@ mod tests {
     }
 
     #[test]
+    fn rejects_zero_sample_count_even_when_multiple_sources_are_present() {
+        let err = OracleSnapshot::new(
+            "btc/usd",
+            100_000,
+            vec![source("coingecko"), source("chainlink")],
+            0,
+            Some(100_000),
+            Some(120),
+            1_000,
+            2_000,
+            10_000,
+        )
+        .expect_err("zero sample count must fail closed before ingest admission");
+
+        assert!(matches!(err, OracleError::InvalidSampleCount));
+    }
+
+    #[test]
     fn rejects_sample_count_below_distinct_source_count() {
         let err = OracleSnapshot::new(
             "btc/usd",
