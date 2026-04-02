@@ -378,7 +378,7 @@ async function fetchReadonlySnapshotFromApi(): Promise<DashboardSnapshot> {
     tasks: [
       {
         id: taskResp.task.id,
-        title: taskResp.task.name ?? `task-${taskResp.task.id}`,
+        title: normalizeDashboardText(taskResp.task.name, `task-${taskResp.task.id}`),
         owner: normalizeDashboardText(taskResp.task.owner, "Unassigned"),
         priority: "P1" as const,
         status: mapTaskStatus(taskResp.task.status),
@@ -411,7 +411,10 @@ async function fetchReadonlySnapshotFromApi(): Promise<DashboardSnapshot> {
       result: mapAuditResult(audit),
       reviewer: "Capability",
       reviewedAt: toDisplayTime(audit.checkedAt),
-      notes: audit.reason ?? (audit.granted ? "Granted" : "No reason provided"),
+      notes: normalizeDashboardText(
+        audit.reason,
+        audit.granted ? "Granted" : "No reason provided",
+      ),
     })),
   };
 
