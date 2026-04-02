@@ -2302,6 +2302,33 @@ mod tests {
     }
 
     #[test]
+    fn reopened_surplus_reserved_headroom_is_borrowable_before_final_guard_slot() {
+        let mut g = LaneAdmissionGate::new(5, 3);
+
+        // Fill the dedicated normal lane first, then leave exactly one free reserved
+        // critical slot while backlog remains active.
+        assert_eq!(g.admit(20, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(21, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(10, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(11, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.queued_counts(), (2, 2, 4));
+
+        // With only the final guarded reserved slot free, fresh normal ingress must stay blocked.
+        assert_eq!(g.admit(22, IngressClass::Normal), AdmitOutcome::Backpressured);
+        assert_eq!(g.queued_counts(), (2, 2, 4));
+
+        // After one critical dequeue, backlog is still active but one surplus reserved
+        // slot reopens. Normal ingress may borrow that surplus slot only, while the
+        // final reserved critical slot remains guarded.
+        assert_eq!(g.pop_ready(), Some(10));
+        assert_eq!(g.queued_counts(), (2, 1, 3));
+        assert_eq!(g.admit(22, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.queued_counts(), (2, 2, 4));
+        assert_eq!(g.admit(23, IngressClass::Normal), AdmitOutcome::Backpressured);
+        assert_eq!(g.admit(12, IngressClass::Critical), AdmitOutcome::Accepted);
+    }
+
+    #[test]
     fn normal_lane_can_borrow_last_critical_slot_when_critical_lane_idle() {
         let mut g = LaneAdmissionGate::new(3, 1);
 
