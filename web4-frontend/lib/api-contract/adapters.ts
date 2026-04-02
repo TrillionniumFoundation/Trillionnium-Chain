@@ -362,32 +362,36 @@ export const adaptQueryCapabilityAudit = (
   const rpc = rpcCapabilityAuditSchema.safeParse(payload);
   if (!rpc.success) throw normalizeSchemaError(rpc.error.flatten());
 
-  const tokenRevokedAt = rpc.data.token.revoked_at;
-  const tokenIsRevoked = tokenRevokedAt != null;
+  try {
+    const tokenRevokedAt = rpc.data.token.revoked_at;
+    const tokenIsRevoked = tokenRevokedAt != null;
 
-  return {
-    subject: rpc.data.token.subject_did,
-    audits: rpc.data.owner_history.map((entry) => {
-      const actionGrantsCapability =
-        entry.action === "CAPABILITY_ISSUED" || entry.action === "CAPABILITY_RENEWED";
-      const actionTouchesCapability = actionGrantsCapability || entry.action === "CAPABILITY_REVOKED";
+    return {
+      subject: rpc.data.token.subject_did,
+      audits: rpc.data.owner_history.map((entry) => {
+        const actionGrantsCapability =
+          entry.action === "CAPABILITY_ISSUED" || entry.action === "CAPABILITY_RENEWED";
+        const actionTouchesCapability = actionGrantsCapability || entry.action === "CAPABILITY_REVOKED";
 
-      const revocationMarker = tokenIsRevoked
-        ? `TOKEN_REVOKED@${toHeightMarker(tokenRevokedAt)}`
-        : undefined;
+        const revocationMarker = tokenIsRevoked
+          ? `TOKEN_REVOKED@${toHeightMarker(tokenRevokedAt)}`
+          : undefined;
 
-      return {
-        subject: rpc.data.token.subject_did,
-        capability: rpc.data.token.scope,
-        granted: !tokenIsRevoked && actionGrantsCapability,
-        reason:
-          tokenIsRevoked && actionTouchesCapability
-            ? [revocationMarker, entry.note ?? entry.action]
-                .filter((value): value is string => typeof value === "string" && value.length > 0)
-                .join(": ")
-            : entry.note ?? entry.action,
-        checkedAt: toHeightMarker(entry.at_height),
-      };
-    }),
-  };
+        return {
+          subject: rpc.data.token.subject_did,
+          capability: rpc.data.token.scope,
+          granted: !tokenIsRevoked && actionGrantsCapability,
+          reason:
+            tokenIsRevoked && actionTouchesCapability
+              ? [revocationMarker, entry.note ?? entry.action]
+                  .filter((value): value is string => typeof value === "string" && value.length > 0)
+                  .join(": ")
+              : entry.note ?? entry.action,
+          checkedAt: toHeightMarker(entry.at_height),
+        };
+      }),
+    };
+  } catch (error) {
+    throw normalizeSchemaError(error);
+  }
 };

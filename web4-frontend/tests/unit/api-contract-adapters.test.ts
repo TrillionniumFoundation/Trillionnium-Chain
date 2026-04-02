@@ -542,6 +542,24 @@ describe("api-contract adapters", () => {
     expect(out.audits[0]?.granted).toBe(true);
   });
 
+  it("fails closed when rpc capability audit contains invalid height markers", () => {
+    expect(() =>
+      adaptQueryCapabilityAudit({
+        token: {
+          subject_did: "did:trnm:bob",
+          scope: "AUDIT_READ",
+          revoked_at: "not-a-height",
+        },
+        owner_history: [
+          {
+            action: "CAPABILITY_ISSUED",
+            at_height: "still-not-a-height",
+          },
+        ],
+      }),
+    ).toThrow(FrontendApiError);
+  });
+
   it("fails closed on malformed payload", () => {
     expect(() => adaptQueryEvents({ bad: true }, "1")).toThrow(FrontendApiError);
   });
