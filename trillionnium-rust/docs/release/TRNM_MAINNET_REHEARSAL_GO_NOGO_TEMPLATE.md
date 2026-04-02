@@ -241,6 +241,7 @@ Mark each item explicitly:
 - [ ] `preflight_path` resolved from disk
 - [ ] `summary_path` resolved from disk
 - [ ] `manifest_path` resolved from disk
+- [ ] `handoff_helper_output_path` resolved from disk and preserved as a first-class artifact
 - [ ] summary/manifest identity fields match each other
 - [ ] summary/manifest identity fields match assigned worktree/branch
 - [ ] `git_worktree_branch_ref_match=true`
@@ -289,6 +290,7 @@ verified_head=<helper output>
 preflight_path=<resolved path>
 summary_path=<resolved path>
 manifest_path=<resolved path>
+handoff_helper_output_path=<resolved saved helper transcript path>
 preflight_result=<GO|NO-GO>
 preflight_generated_at=<artifact value>
 preflight_git_toplevel=<artifact value>
