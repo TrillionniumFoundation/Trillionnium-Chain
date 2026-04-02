@@ -12,6 +12,7 @@ Primary truth sources:
 - `scripts/v2/verify_lane_worktree.sh`
 - `scripts/v2/extract_release_handoff_fields.sh`
 - `scripts/v2/extract_validator_rotation_dr_fields.sh`
+- `scripts/v2/run_validator_dr_rehearsal.sh`
 
 ## Board summary
 
@@ -21,13 +22,14 @@ Primary truth sources:
 | MN05-P0-02 | DR rebuild evidence | **Partial** — DR report extraction helper exists, but no captured live rebuild rehearsal is referenced here | DR is still not proven reproducible from concrete artifacts produced by the assigned worktree | One `dr_rebuild` rehearsal carrying `dr_summary_path=`, `dr_generated_at=`, `dr_status=PASS`, verbatim replay/rollback commands, and lane-binding fields from the same report |
 | MN05-P0-03 | Validator bootstrap / re-bootstrap operator discipline | **Partial** — bootstrap/re-bootstrap SOP exists | Operators still need concrete evidence that the named validator bundle was validated from a clean lane before cutover | One handoff packet with exact `config_bundle_check_command=`, `config_bundle_check_result=`, optional `config_bundle_check_log_path=`, plus bootstrap command and rollback command |
 | MN05-P0-04 | Signed handoff boundary | **Open** for cross-operator events | Cross-operator cutovers are not auditable unless the signer and acknowledger are attached to the same artifact set | One compact ceremony packet with `handoff_signed_by=` and `handoff_acknowledged_by=` on the same note as verified worktree/branch/head and any referenced handoff / DR artifacts |
-| MN05-P0-05 | Automation gap | **Open** | The gap matrix still records no validator replacement / rotation automation and no DR rebuild drill with captured evidence | At least one deterministic operator-facing rehearsal script or command sequence that produces the packet fields without shell-memory reconstruction |
+| MN05-P0-05 | Automation gap | **Partial** — deterministic DR rehearsal wrapper exists, but replacement/rotation automation and captured live evidence are still missing | The gap matrix still records no validator replacement / rotation automation and no DR rebuild drill with captured evidence | At least one deterministic operator-facing rehearsal script or command sequence that produces the packet fields without shell-memory reconstruction |
 
 ## What is already closed enough to build on
 
 - `docs/runbooks/validator-bootstrap-rebootstrap.md` defines fail-closed bootstrap / re-bootstrap steps bound to exact worktree and branch identity.
 - `docs/runbooks/validator-rotation-dr.md` defines the minimum evidence bar for `replacement`, `rotation`, and `dr_rebuild`.
 - `scripts/v2/extract_validator_rotation_dr_fields.sh` can fail closed on missing report fields, non-`PASS` recovery reports, and lane/worktree identity drift.
+- `scripts/v2/run_validator_dr_rehearsal.sh` provides a deterministic verify → recovery → extract wrapper for DR rebuild rehearsals without changing the underlying fail-closed checks.
 - `RELEASE_READINESS.md` now explicitly instructs operators to prefer fail-closed helper extraction over hand-copied shell snippets.
 
 ## Still-open blocker details
@@ -97,12 +99,12 @@ Minimum next evidence:
 
 ### MN05-P0-05 — Automation gap is still explicit
 
-Current truth from the gap matrix:
-- no validator replacement / rotation automation
-- no DR rebuild drill with captured evidence
+Current truth from the gap matrix and current lane assets:
+- validator replacement / rotation automation is still missing
+- a deterministic DR rehearsal wrapper now exists (`scripts/v2/run_validator_dr_rehearsal.sh`), but no captured live rebuild packet is referenced yet
 
-Why this blocks public mainnet:
-- a public validator lifecycle that only exists as prose is fragile and hard to rehearse consistently
+Why this still blocks public mainnet:
+- DR operator flow is less memory-dependent than before, but the validator lifecycle is still not closed end-to-end because replacement/rotation remains manual and no live rehearsal packet is attached
 
 Minimum next evidence:
 - a deterministic rehearsal path that reduces operator memory load and emits reusable packet fields
