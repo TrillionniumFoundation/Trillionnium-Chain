@@ -37,6 +37,31 @@ class CheckValidatorConfigBundleTests(unittest.TestCase):
             check=False,
         )
 
+    def make_public_mainnet_args(self, config: Path, *extra_args: str) -> tuple[str, ...]:
+        return (
+            "--emit-ceremony-packet",
+            "--ceremony-scope",
+            "public-mainnet-input",
+            "--ceremony-id",
+            "mn04-bootstrap-20260331-0621Z",
+            "--packet-generated-at",
+            "2026-03-31T06:21:00Z",
+            "--packet-distribution-path",
+            "/tmp/packet.txt",
+            "--validator-set-version",
+            "release-1",
+            "--startup-order-note",
+            "seq-a",
+            "--rollback-owner",
+            "alice",
+            "--genesis-artifact-path",
+            "/tmp/genesis.json",
+            "--genesis-artifact-sha256",
+            VALID_SHA256,
+            *extra_args,
+            str(config),
+        )
+
     def test_public_mainnet_input_rejects_placeholder_ceremony_id(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
@@ -48,26 +73,11 @@ class CheckValidatorConfigBundleTests(unittest.TestCase):
                 p2p_addr="127.0.0.1:7002",
             )
             result = self.run_script(
-                "--emit-ceremony-packet",
-                "--ceremony-scope",
-                "public-mainnet-input",
-                "--ceremony-id",
-                "<ceremony-id>",
-                "--packet-generated-at",
-                "2026-03-31T06:21:00Z",
-                "--packet-distribution-path",
-                "/tmp/packet.txt",
-                "--validator-set-version",
-                "release-1",
-                "--startup-order-note",
-                "seq-a",
-                "--rollback-owner",
-                "alice",
-                "--genesis-artifact-path",
-                "/tmp/genesis.json",
-                "--genesis-artifact-sha256",
-                VALID_SHA256,
-                str(config),
+                *self.make_public_mainnet_args(
+                    config,
+                    "--ceremony-id",
+                    "<ceremony-id>",
+                )
             )
 
         self.assertNotEqual(result.returncode, 0)
@@ -75,6 +85,56 @@ class CheckValidatorConfigBundleTests(unittest.TestCase):
             "public-mainnet-input requires ceremony_id to be an explicit non-placeholder value",
             result.stderr,
         )
+
+    def test_public_mainnet_input_rejects_template_default_ceremony_id(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            config = self.write_config(
+                root,
+                "node1.toml",
+                node_id="node1",
+                rpc_addr="127.0.0.1:7001",
+                p2p_addr="127.0.0.1:7002",
+            )
+            result = self.run_script(
+                *self.make_public_mainnet_args(
+                    config,
+                    "--ceremony-id",
+                    "mn04-bootstrap-YYYYMMDD-HHMMZ",
+                )
+            )
+
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn(
+            "public-mainnet-input requires an explicit ceremony_id instead of the template default",
+            result.stderr,
+        )
+
+    def test_public_mainnet_input_emits_absolute_config_paths(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            config = self.write_config(
+                root,
+                "node1.toml",
+                node_id="node1",
+                rpc_addr="127.0.0.1:7001",
+                p2p_addr="127.0.0.1:7002",
+            )
+            relative_config = config.relative_to(root)
+            result = subprocess.run(
+                [
+                    "python3",
+                    str(SCRIPT),
+                    *self.make_public_mainnet_args(relative_config),
+                ],
+                cwd=root,
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn(f"config_path={config.resolve()}", result.stdout)
 
 
 if __name__ == "__main__":
