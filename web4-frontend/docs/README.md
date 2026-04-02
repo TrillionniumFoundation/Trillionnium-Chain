@@ -29,6 +29,9 @@
 - Web4 平台主文档：[`../../docs/WEB4_INFRA_PLATFORM_DEVELOPMENT_MASTER.md`](../../docs/WEB4_INFRA_PLATFORM_DEVELOPMENT_MASTER.md)
 
 > 当前更准确的外部口径应是：**强链核 + 初步平台壳的 Alpha 后段项目**，而不是 Beta / production-ready Web4 platform。
+>
+> 若需要一句最短、最不易误导的表述，优先采用：
+> **默认是 readonly API client + explicit mock fallback 的 Web4 前端入口；仓库级 release 判定仍以 `RELEASE_READINESS.md` 为准。**
 
 ---
 
