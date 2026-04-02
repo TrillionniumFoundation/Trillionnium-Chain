@@ -109,6 +109,32 @@ describe("api-contract client and retry hardening", () => {
     expect(calledUrl).not.toContain("%20%20");
   });
 
+  it("truncates fractional normalized audit limits and drops non-string filters", async () => {
+    const fetchImpl = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({ events: [] }),
+    });
+
+    const client = createFrontendApiClient({
+      baseUrl: "http://127.0.0.1:8080",
+      fetchImpl: fetchImpl as unknown as typeof fetch,
+    });
+
+    await client.queryNormalizedAuditEvents({
+      source: "bridge-relay",
+      limit: 12.9,
+      eventType: 42 as unknown as string,
+      cursor: undefined,
+    });
+
+    const calledUrl = String((fetchImpl.mock.calls[0] ?? [])[0]);
+    expect(calledUrl).toContain("source=bridge-relay");
+    expect(calledUrl).toContain("limit=12");
+    expect(calledUrl).not.toContain("limit=12.9");
+    expect(calledUrl).not.toContain("eventType=");
+    expect(calledUrl).not.toContain("cursor=");
+  });
+
   it("uses normalized audit endpoint", async () => {
     const fetchImpl = vi.fn().mockResolvedValue({
       ok: true,
