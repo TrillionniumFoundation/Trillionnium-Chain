@@ -380,7 +380,7 @@ export const adaptQueryCapabilityAudit = (
         return {
           subject: rpc.data.token.subject_did,
           capability: rpc.data.token.scope,
-          granted: !tokenIsRevoked && actionGrantsCapability,
+          granted: actionGrantsCapability,
           reason:
             tokenIsRevoked && actionTouchesCapability
               ? [revocationMarker, entry.note ?? entry.action]

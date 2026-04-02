@@ -481,7 +481,7 @@ describe("api-contract adapters", () => {
     expect(out.audits[0]?.checkedAt).toBe("height:123");
   });
 
-  it("fails closed when rpc capability token is already revoked", () => {
+  it("preserves historical grant entries while annotating token-revoked capability audit state", () => {
     const out = adaptQueryCapabilityAudit({
       token: {
         subject_did: "did:trnm:bob",
@@ -498,12 +498,12 @@ describe("api-contract adapters", () => {
     });
 
     expect(out.subject).toBe("did:trnm:bob");
-    expect(out.audits[0]?.granted).toBe(false);
+    expect(out.audits[0]?.granted).toBe(true);
     expect(out.audits[0]?.reason).toBe("TOKEN_REVOKED@height:456: initial grant");
     expect(out.audits[0]?.checkedAt).toBe("height:123");
   });
 
-  it("preserves explicit capability revoke history under token-revoked fail-closed semantics", () => {
+  it("preserves explicit capability revoke history under token-revoked semantics", () => {
     const out = adaptQueryCapabilityAudit({
       token: {
         subject_did: "did:trnm:bob",
@@ -522,6 +522,32 @@ describe("api-contract adapters", () => {
     expect(out.audits[0]?.granted).toBe(false);
     expect(out.audits[0]?.reason).toBe("TOKEN_REVOKED@height:456: CAPABILITY_REVOKED");
     expect(out.audits[0]?.checkedAt).toBe("height:124");
+  });
+
+  it("keeps non-capability history entries non-grant even when token is revoked", () => {
+    const out = adaptQueryCapabilityAudit({
+      token: {
+        subject_did: "did:trnm:bob",
+        scope: "AUDIT_READ",
+        revoked_at: 456,
+      },
+      owner_history: [
+        {
+          action: "DID_REVOKED",
+          at_height: 125,
+          note: "subject retired",
+        },
+      ],
+    });
+
+    expect(out.subject).toBe("did:trnm:bob");
+    expect(out.audits[0]).toEqual({
+      subject: "did:trnm:bob",
+      capability: "AUDIT_READ",
+      granted: false,
+      reason: "subject retired",
+      checkedAt: "height:125",
+    });
   });
 
   it("accepts canonical capability audit payload with height marker checkedAt", () => {
