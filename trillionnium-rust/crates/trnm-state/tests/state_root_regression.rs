@@ -8717,6 +8717,49 @@ fn wal_checkpoint_verification_rejects_forged_genesis_prev_hash_even_when_checkp
 }
 
 #[test]
+fn checkpoint_audit_summary_rejects_forged_genesis_prev_hash_surface() {
+    let canonical_checkpoint = CheckpointMeta {
+        height: 1,
+        state_root_hex: "ab".repeat(32),
+        wal_entry_hash_hex: "cd".repeat(32),
+    };
+    let canonical_wal = WalMeta {
+        height: 1,
+        round: 0,
+        proposal_hash: "proposal-1".into(),
+        committed: true,
+        state_root_hex: canonical_checkpoint.state_root_hex.clone(),
+        prev_hash_hex: None,
+    };
+    let canonical_checkpoint = CheckpointMeta {
+        wal_entry_hash_hex: canonical_wal.content_hash_hex(),
+        ..canonical_checkpoint
+    };
+
+    assert!(
+        checkpoint_evidence_surface_is_canonical(&canonical_checkpoint, &canonical_wal),
+        "sanity: canonical genesis checkpoint/WAL evidence should remain audit-ready"
+    );
+    assert!(
+        checkpoint_da_light_verifier_summary(&canonical_checkpoint, &canonical_wal).is_some(),
+        "sanity: canonical genesis checkpoint/WAL evidence should emit an audit summary"
+    );
+
+    let forged_genesis_wal = WalMeta {
+        prev_hash_hex: Some("01".repeat(32)),
+        ..canonical_wal
+    };
+    assert!(
+        !checkpoint_evidence_surface_is_canonical(&canonical_checkpoint, &forged_genesis_wal),
+        "checkpoint audit surfaces must reject forged genesis prev_hash_hex so height-1 evidence stays fail-closed"
+    );
+    assert!(
+        checkpoint_da_light_verifier_summary(&canonical_checkpoint, &forged_genesis_wal).is_none(),
+        "light-verifier summaries must fail closed when genesis WAL evidence carries a predecessor hash"
+    );
+}
+
+#[test]
 fn wal_checkpoint_verification_falls_back_when_non_genesis_prev_hash_has_newline_drift() {
     let e1 = WalMeta {
         height: 1,
