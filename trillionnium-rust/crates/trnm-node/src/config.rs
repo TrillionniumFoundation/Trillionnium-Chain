@@ -1503,6 +1503,7 @@ bootstrap_peers = ["127.0.0.1:27656"]
             "seed.example.com",
             "seed.example.com.",
             "seed.example.com:26656",
+            "node1.",
             "validator-1.mainnet.local",
             "validator-1.mainnet.local.",
             "validator-1.mainnet.local:27656",
