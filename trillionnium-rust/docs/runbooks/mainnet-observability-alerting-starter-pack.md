@@ -392,6 +392,18 @@ Rules:
 6. If both replay and rollback pointers are absent, the handoff is incomplete even if the graph looks obvious.
 7. When both `summary.txt` and `manifest.txt` exist, prefer `./scripts/v2/extract_release_handoff_fields.sh --expected-worktree-root <ticket-or-rehearsal-worktree> --expected-branch-ref <ticket-or-rehearsal-branch>` so `summary_path=`, `manifest_path=`, `git_worktree_branch_ref=`, and `git_worktree_branch_ref_match=` are populated fail-closed against the assigned worktree/branch rather than whatever branch happens to be checked out locally.
 
+Quick extraction template for responders:
+
+```bash
+./scripts/v2/extract_release_handoff_fields.sh \
+  --summary-path <abs-path-to-summary.txt> \
+  --manifest-path <abs-path-to-manifest.txt> \
+  --expected-worktree-root <ticket-or-rehearsal-worktree> \
+  --expected-branch-ref <ticket-or-rehearsal-branch>
+```
+
+Use the emitted fields verbatim in the page/ticket annotation block. If the script reports `git_worktree_branch_ref_match=false`, treat the incident as identity-drifted until the evidence bundle and assigned worktree/branch are reconciled.
+
 ---
 
 ## Operator summary line template
