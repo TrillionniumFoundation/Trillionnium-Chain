@@ -557,4 +557,72 @@ describe("dashboard source normalized audit pagination", () => {
     ).toBe("Critical");
     expect(snapshot.kpis.find((kpi) => kpi.label === "Open Incidents")?.value).toBe("1");
   });
+
+  it("treats revocation/expiration noun forms as critical fail-closed incidents", async () => {
+    const mockClient = {
+      queryTask: vi
+        .fn()
+        .mockResolvedValue({
+          task: {
+            id: "349",
+            owner: "ops",
+            status: "running",
+            createdAt: "2026-03-01T00:00:00.000Z",
+            metadata: {},
+          },
+        }),
+      queryEvents: vi.fn().mockResolvedValue({
+        taskId: "349",
+        events: [],
+      }),
+      queryCapabilityAudit: vi.fn().mockResolvedValue({
+        subject: "did:trnm:test",
+        audits: [
+          {
+            subject: "did:trnm:test",
+            capability: "AUDIT_READ",
+            granted: true,
+            checkedAt: "2026-03-01T00:00:00.000Z",
+          },
+        ],
+      }),
+      queryNormalizedAuditEvents: vi.fn().mockResolvedValue({
+        events: [
+          {
+            source: "capability-registry",
+            event_type: "capability.revocation_recorded",
+            actor: "security",
+            object_id: "did:trnm:alice",
+            timestamp: "2026-03-01T00:05:00.000Z",
+            reason: "policy_revocation",
+            note: "manual revocation review logged",
+          },
+          {
+            source: "capability-registry",
+            event_type: "capability.expiration_review",
+            actor: "security",
+            object_id: "did:trnm:bob",
+            timestamp: "2026-03-01T00:06:00.000Z",
+            reason: "capability_expiration",
+            note: "expiration follow-up queued",
+          },
+        ],
+        hasMore: false,
+      }),
+    } as unknown as ReturnType<typeof apiContractClient.createFrontendApiClient>;
+
+    vi.spyOn(apiContractClient, "createFrontendApiClient").mockReturnValue(mockClient);
+
+    const snapshot = await fetchDashboardSnapshot();
+
+    expect(
+      snapshot.events.find((event) => event.summary === "capability-registry · capability.revocation_recorded")
+        ?.severity,
+    ).toBe("Critical");
+    expect(
+      snapshot.events.find((event) => event.summary === "capability-registry · capability.expiration_review")
+        ?.severity,
+    ).toBe("Critical");
+    expect(snapshot.kpis.find((kpi) => kpi.label === "Open Incidents")?.value).toBe("2");
+  });
 });

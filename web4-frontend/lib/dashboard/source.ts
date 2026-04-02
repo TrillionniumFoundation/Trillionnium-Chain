@@ -190,7 +190,9 @@ const mapNormalizedAuditSeverity = (event: NormalizedAuditEvent): DashboardSnaps
     tokens.includes("reject") ||
     tokens.includes("invalid") ||
     tokens.includes("revoke") ||
+    tokens.includes("revocat") ||
     tokens.includes("expire") ||
+    tokens.includes("expirat") ||
     tokens.includes("suspend") ||
     tokens.includes("unauthor") ||
     tokens.includes("forbid") ||
