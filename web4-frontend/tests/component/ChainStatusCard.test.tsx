@@ -62,4 +62,22 @@ describe("ChainStatusCard", () => {
     expect(screen.getByText("Finality: finalizing")).toBeInTheDocument();
     expect(screen.getByText("Health: Unavailable")).toBeInTheDocument();
   });
+
+  it("fail-closes unknown readonly health values to unavailable", () => {
+    render(
+      <ChainStatusCard
+        status={{
+          network: "Trillionnium Localnet",
+          latestBlock: 1024,
+          finality: "2s",
+          health: "recovering",
+        } as unknown as Parameters<typeof ChainStatusCard>[0]["status"]}
+      />,
+    );
+
+    expect(screen.getByText("Network: Trillionnium Localnet")).toBeInTheDocument();
+    expect(screen.getByText("Latest block: 1024")).toBeInTheDocument();
+    expect(screen.getByText("Finality: 2s")).toBeInTheDocument();
+    expect(screen.getByText("Health: Unavailable")).toBeInTheDocument();
+  });
 });

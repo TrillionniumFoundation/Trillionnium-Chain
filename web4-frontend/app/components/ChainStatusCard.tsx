@@ -1,5 +1,7 @@
 import type { ChainStatus } from "@/lib/chain-status";
 
+const knownHealthStates = new Set<ChainStatus["health"]>(["healthy", "degraded", "offline"]);
+
 function failClosedValue(value: string | number | null | undefined, fallback = "Unavailable") {
   if (value === null || value === undefined) {
     return fallback;
@@ -13,11 +15,16 @@ function failClosedValue(value: string | number | null | undefined, fallback = "
   return String(value);
 }
 
+function failClosedHealth(value: ChainStatus["health"] | string | null | undefined) {
+  const normalized = failClosedValue(value);
+  return knownHealthStates.has(normalized as ChainStatus["health"]) ? normalized : "Unavailable";
+}
+
 export function ChainStatusCard({ status }: { status: ChainStatus }) {
   const network = failClosedValue(status.network);
   const latestBlock = failClosedValue(status.latestBlock);
   const finality = failClosedValue(status.finality);
-  const health = failClosedValue(status.health);
+  const health = failClosedHealth(status.health);
   const isSnapshotUnavailable = [network, latestBlock, finality, health].every((value) => value === "Unavailable");
 
   return (
