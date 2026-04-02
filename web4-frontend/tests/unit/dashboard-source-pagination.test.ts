@@ -498,6 +498,25 @@ describe("dashboard source normalized audit pagination", () => {
     expect(snapshot.kpis.find((kpi) => kpi.label === "Open Incidents")?.value).toBe("0");
   });
 
+  it("fails closed with mock fallback guidance when readonly task query fails", async () => {
+    const mockClient = {
+      queryTask: vi.fn().mockRejectedValue(new Error("task endpoint timeout")),
+      queryEvents: vi.fn(),
+      queryCapabilityAudit: vi.fn(),
+      queryNormalizedAuditEvents: vi.fn().mockResolvedValue({
+        events: [],
+        hasMore: false,
+      }),
+    } as unknown as ReturnType<typeof apiContractClient.createFrontendApiClient>;
+
+    vi.spyOn(apiContractClient, "createFrontendApiClient").mockReturnValue(mockClient);
+
+    await expect(fetchDashboardSnapshot()).rejects.toThrow(
+      "Readonly API unavailable (fail-closed): task endpoint timeout. Add ?mode=mock to switch to readonly snapshot fallback.",
+    );
+    expect(mockClient.queryTask).toHaveBeenCalledTimes(1);
+  });
+
   it("falls back to '-' when readonly task timestamps are absent", async () => {
     const mockClient = {
       queryTask: vi.fn().mockResolvedValue({
