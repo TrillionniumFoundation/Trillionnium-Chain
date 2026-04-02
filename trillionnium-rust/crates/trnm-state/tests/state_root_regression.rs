@@ -8159,6 +8159,31 @@ fn node_recovery_checkpoint_verification_rejects_overlong_proposal_hash_even_whe
 }
 
 #[test]
+fn node_recovery_checkpoint_verification_accepts_max_length_canonical_proposal_hash() {
+    let wal = WalMeta {
+        height: 1,
+        round: 0,
+        proposal_hash: "p".repeat(256),
+        committed: true,
+        state_root_hex: "ab".repeat(32),
+        prev_hash_hex: None,
+    };
+    let checkpoints = vec![CheckpointMeta {
+        height: wal.height,
+        state_root_hex: wal.state_root_hex.clone(),
+        wal_entry_hash_hex: wal.content_hash_hex(),
+    }];
+
+    let got = verify_wal_and_find_checkpoint_node_recovery(&checkpoints, &[wal.clone()]).unwrap();
+
+    assert_eq!(
+        got,
+        Some(checkpoints[0].clone()),
+        "node recovery should still accept WAL proposal identities exactly at the canonical 256-byte boundary so the fail-closed max-length guard does not regress into a false reject"
+    );
+}
+
+#[test]
 fn node_recovery_checkpoint_verification_rejects_control_char_proposal_hash_even_when_checkpoint_matches() {
     let wal = WalMeta {
         height: 1,
