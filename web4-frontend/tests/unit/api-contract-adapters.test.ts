@@ -386,6 +386,30 @@ describe("api-contract adapters", () => {
     expect(out.total).toBe(43);
   });
 
+  it("fails closed when canonical normalized audit pagination loops back to the requested cursor", () => {
+    const out = adaptQueryNormalizedAuditEvents(
+      {
+        events: [
+          {
+            source: "capability-registry",
+            event_type: "capability.renewed",
+            actor: "security",
+            checkedAt: "height:779",
+          },
+        ],
+        hasMore: true,
+        nextCursor: "cursor-loop",
+        total: 44,
+      },
+      { cursor: "cursor-loop" },
+    );
+
+    expect(out.events[0]?.event_type).toBe("capability.renewed");
+    expect(out.hasMore).toBe(false);
+    expect(out.nextCursor).toBe("cursor-loop");
+    expect(out.total).toBe(44);
+  });
+
   it("adapts canonical normalized audit-events payload", () => {
 
     const out = adaptQueryNormalizedAuditEvents({

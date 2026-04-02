@@ -278,7 +278,7 @@ export const adaptQueryEvents = (
 
 export const adaptQueryNormalizedAuditEvents = (
   payload: unknown,
-  _query?: NormalizedAuditEventsQuery,
+  query?: NormalizedAuditEventsQuery,
 ): QueryNormalizedAuditEventsResult => {
   const canonical = queryNormalizedAuditEventsResponseSchema.safeParse(payload);
   if (canonical.success) {
@@ -301,7 +301,14 @@ export const adaptQueryNormalizedAuditEvents = (
       total?: number;
     };
     const nextCursor = data.nextCursor?.trim();
-    const hasMore = data.hasMore === true && !!nextCursor;
+    const requestedCursor = query?.cursor?.trim();
+    const hasCursorLoop =
+      requestedCursor != null &&
+      requestedCursor.length > 0 &&
+      nextCursor != null &&
+      nextCursor.length > 0 &&
+      nextCursor === requestedCursor;
+    const hasMore = data.hasMore === true && !!nextCursor && !hasCursorLoop;
 
     return {
       events: data.events,
