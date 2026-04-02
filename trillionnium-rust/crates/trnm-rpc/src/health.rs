@@ -321,6 +321,7 @@ mod tests {
         assert!(is_health_probe_path("/-/ready"));
         assert!(is_health_probe_path("/-/ready/"));
         assert!(is_health_probe_path("/-/readyz"));
+        assert!(is_health_probe_path("/-/readyz/"));
         assert!(is_health_probe_path("/-/STATUS"));
         assert!(is_health_probe_path("/-/STATUSZ/"));
         assert!(!is_health_probe_path("/healthcheck"));
@@ -337,6 +338,10 @@ mod tests {
         assert_eq!(
             parse_http_request_target("HEAD /-/STATUSZ/?from=ops HTTP/1.1"),
             Some(("HEAD", "/-/STATUSZ/?from=ops"))
+        );
+        assert_eq!(
+            parse_http_request_target("HEAD /-/readyz/?probe=lb&from=ops HTTP/1.1"),
+            Some(("HEAD", "/-/readyz/?probe=lb&from=ops"))
         );
     }
 
