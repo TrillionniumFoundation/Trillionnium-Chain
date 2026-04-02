@@ -361,6 +361,17 @@ describe("api-contract adapters", () => {
     expect(out.hasMore).toBe(true);
   });
 
+  it("normalizes canonical normalized audit pagination cursors when valid content is wrapped in BOM/zero-width noise", () => {
+    const out = adaptQueryNormalizedAuditEvents({
+      events: [],
+      hasMore: true,
+      nextCursor: "\uFEFF \u200Bcursor-embedded\u200D ",
+    });
+
+    expect(out.nextCursor).toBe("cursor-embedded");
+    expect(out.hasMore).toBe(true);
+  });
+
   it("adapts canonical normalized audit-events payload", () => {
 
     const out = adaptQueryNormalizedAuditEvents({

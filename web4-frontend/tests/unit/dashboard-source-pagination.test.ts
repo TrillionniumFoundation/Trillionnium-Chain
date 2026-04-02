@@ -445,6 +445,80 @@ describe("dashboard source normalized audit pagination", () => {
     ).toBeDefined();
   });
 
+  it("continues normalized audit pagination when nextCursor wraps valid content in BOM/zero-width noise", async () => {
+    const mockClient = {
+      queryTask: vi.fn().mockResolvedValue({
+        task: {
+          id: "346c",
+          owner: "ops",
+          status: "running",
+          createdAt: "2026-03-01T00:00:00.000Z",
+          metadata: {},
+        },
+      }),
+      queryEvents: vi.fn().mockResolvedValue({
+        taskId: "346c",
+        events: [],
+      }),
+      queryCapabilityAudit: vi.fn().mockResolvedValue({
+        subject: "did:trnm:test",
+        audits: [
+          {
+            subject: "did:trnm:test",
+            capability: "AUDIT_READ",
+            granted: true,
+            checkedAt: "2026-03-01T00:00:00.000Z",
+          },
+        ],
+      }),
+      queryNormalizedAuditEvents: vi
+        .fn()
+        .mockResolvedValueOnce({
+          events: [
+            {
+              source: "bridge-relay",
+              event_type: "bridge_relay.proof_submitted",
+              actor: "validator",
+              object_id: "proof-4c",
+              timestamp: "2026-03-01T00:04:30.000Z",
+              note: "cursor hidden noise",
+            },
+          ],
+          hasMore: true,
+          nextCursor: "\uFEFF \u200Bcursor-2\u200D ",
+        })
+        .mockResolvedValueOnce({
+          events: [
+            {
+              source: "settlement-vault",
+              event_type: "vault.withdrawal_requested",
+              actor: "bob",
+              object_id: "withdrawal-2",
+              timestamp: "2026-03-01T00:05:30.000Z",
+              reason: "warn",
+            },
+          ],
+          hasMore: false,
+        }),
+    } as unknown as ReturnType<typeof apiContractClient.createFrontendApiClient>;
+
+    vi.spyOn(apiContractClient, "createFrontendApiClient").mockReturnValue(mockClient);
+
+    const snapshot = await fetchDashboardSnapshot();
+
+    expect(mockClient.queryNormalizedAuditEvents).toHaveBeenCalledTimes(2);
+    expect(mockClient.queryNormalizedAuditEvents).toHaveBeenNthCalledWith(1, {
+      limit: 60,
+    });
+    expect(mockClient.queryNormalizedAuditEvents).toHaveBeenNthCalledWith(2, {
+      limit: 60,
+      cursor: "cursor-2",
+    });
+    expect(
+      snapshot.events.find((event) => event.summary === "settlement-vault · vault.withdrawal_requested"),
+    ).toBeDefined();
+  });
+
   it("fails closed on normalized audit pagination errors without dropping readonly task/event data", async () => {
     const mockClient = {
       queryTask: vi
