@@ -1760,6 +1760,46 @@ bootstrap_peers = ["127.0.0.1:27656"]
     }
 
     #[test]
+    fn shipped_bootstrap_configs_keep_their_three_line_slot_bound_layout() {
+        let manifest_dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR"));
+        let workspace_root = manifest_dir
+            .ancestors()
+            .nth(2)
+            .expect("trnm-node manifest should sit under trillionnium-rust/crates/trnm-node");
+
+        for (config_name, expected_node_id, expected_rpc_addr, expected_p2p_addr) in [
+            ("node1.toml", "node1", "127.0.0.1:26657", "127.0.0.1:26656"),
+            ("node2.toml", "node2", "127.0.0.1:27657", "127.0.0.1:27656"),
+            ("node3.toml", "node3", "127.0.0.1:28657", "127.0.0.1:28656"),
+            ("node4.toml", "node4", "127.0.0.1:29657", "127.0.0.1:29656"),
+        ] {
+            let config_path = workspace_root.join("configs").join(config_name);
+            let raw = std::fs::read_to_string(&config_path).unwrap_or_else(|err| {
+                panic!(
+                    "{} should stay readable for shipped bootstrap line-layout checks: {err}",
+                    config_path.display()
+                )
+            });
+            let non_empty_lines = raw
+                .lines()
+                .map(str::trim)
+                .filter(|line| !line.is_empty())
+                .collect::<Vec<_>>();
+            let expected_lines = vec![
+                format!("node_id = \"{expected_node_id}\""),
+                format!("rpc_addr = \"{expected_rpc_addr}\""),
+                format!("p2p_addr = \"{expected_p2p_addr}\""),
+            ];
+            assert_eq!(
+                non_empty_lines,
+                expected_lines,
+                "{} must keep the exact three-line slot-bound layout so shipped bootstrap fixtures stay deterministic for peer/bootstrap rehearsal",
+                config_path.display()
+            );
+        }
+    }
+
+    #[test]
     fn shipped_bootstrap_configs_keep_canonical_peer_identity_and_listener_literals() {
         use std::net::SocketAddr;
 
