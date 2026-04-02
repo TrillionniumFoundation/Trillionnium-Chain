@@ -324,6 +324,7 @@ fn is_sanitized_to_space(ch: char) -> bool {
                 | '\u{FFFB}'
         )
         || ('\u{FE00}'..='\u{FE0F}').contains(&ch)
+        || ('\u{1D173}'..='\u{1D17A}').contains(&ch)
         || ('\u{E0000}'..='\u{E007F}').contains(&ch)
         || ('\u{E0100}'..='\u{E01EF}').contains(&ch)
 }
@@ -449,6 +450,13 @@ mod tests {
     #[test]
     fn normalize_compensation_reason_strips_variation_selectors_and_cgj_for_log_consensus() {
         let raw = "target\u{FE0F} relay\u{E0100} timeout\u{034F} signal";
+        let normalized = normalize_compensation_reason(raw, "fallback");
+        assert_eq!(normalized, "target relay timeout signal");
+    }
+
+    #[test]
+    fn normalize_compensation_reason_strips_plane1_musical_controls_for_log_consensus() {
+        let raw = "target\u{1D173}relay\u{1D174}timeout\u{1D17A}signal";
         let normalized = normalize_compensation_reason(raw, "fallback");
         assert_eq!(normalized, "target relay timeout signal");
     }
