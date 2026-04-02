@@ -1177,6 +1177,39 @@ mod tests {
     }
 
     #[test]
+    fn execute_unpause_rejects_non_executor_caller() {
+        let mut gov = setup();
+        let now = 6_500;
+        let eta = now + 60;
+
+        gov.emergency_pause("guardian", "incident-non-exec").unwrap();
+        let pid = gov
+            .schedule_unpause("guardian", eta, "recover-non-exec", now)
+            .unwrap();
+
+        assert_eq!(
+            gov.execute_unpause("alice", pid, eta).unwrap_err(),
+            Error::Unauthorized
+        );
+
+        let proposal = gov.proposal(pid).unwrap();
+        assert_eq!(proposal.status, ProposalStatus::Queued);
+        assert_eq!(proposal.executor, None);
+        assert_eq!(proposal.executed_at, None);
+        assert!(gov.bridge_state().emergency_paused);
+        assert!(!gov.audit_log().iter().any(|event| matches!(
+            event,
+            GovernanceEvent::PauseRestoreExecuted { proposal_id, .. }
+                if *proposal_id == pid
+        )));
+        assert!(!gov.audit_log().iter().any(|event| matches!(
+            event,
+            GovernanceEvent::ProposalExecuted { proposal_id, .. }
+                if *proposal_id == pid
+        )));
+    }
+
+    #[test]
     fn execute_unpause_rejects_if_pause_cleared_before_eta() {
         let mut gov = setup();
         let now = 7_000;
