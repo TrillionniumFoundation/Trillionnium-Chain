@@ -155,16 +155,20 @@ fn parse_query_normalized_audit_events_query_from_path_rejects_malformed_percent
 }
 
 #[test]
-fn parse_query_normalized_audit_events_query_from_path_rejects_percent_encoded_c0_controls_and_del() {
+fn parse_query_normalized_audit_events_query_from_path_rejects_percent_encoded_control_bytes() {
     for path in [
         "/query-normalized-audit-events?source=trnm.task%00shadow",
         "/query-normalized-audit-events?source=trnm.task%01shadow",
+        "/query-normalized-audit-events?source=trnm.task%80shadow",
         "/query-normalized-audit-events?eventType=trnm.task.commit%1ftrail",
         "/query-normalized-audit-events?eventType=trnm.task.commit%7ftrail",
+        "/query-normalized-audit-events?eventType=trnm.task.commit%9ftrail",
         "/query-normalized-audit-events%00shadow?source=trnm.task",
         "/query-normalized-audit-events%01shadow?source=trnm.task",
         "/query-normalized-audit-events%1fshadow?source=trnm.task",
         "/query-normalized-audit-events%7fshadow?source=trnm.task",
+        "/query-normalized-audit-events%80shadow?source=trnm.task",
+        "/query-normalized-audit-events%9fshadow?source=trnm.task",
     ] {
         let err = parse_query_normalized_audit_events_query_from_path(path)
             .expect_err("encoded controls should fail closed");
