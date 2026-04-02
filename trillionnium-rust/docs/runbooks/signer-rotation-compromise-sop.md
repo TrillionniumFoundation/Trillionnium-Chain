@@ -156,9 +156,12 @@ REQUESTED_TX_HASH="0x...captured-from-submit-path..."
 Operator input rule:
 - capture the submit-path hash in canonical `0x...` form exactly once and reuse that same value for every follow-up command
 - do **not** strip the `0x` prefix or replace the original submit-path hash with a later explorer/log rendering; `trnm-cli tx query` and `trnm-cli tx wait` fail closed on bare hex input because a missing prefix is treated as ambiguous operator evidence, not harmless formatting drift
+- when the submit path is `trnm-cli` itself, preserve the first emitted `tx_hash=` line as the operator truth-source and keep the corresponding local pending-state record (`run/rpc/txs.json`, or `TRNM_RPC_TX_FILE` if overridden) until cutover validation is complete
 
 Record together:
 - `requested_tx_hash=` from the submit path exactly once
+- the first locally emitted `tx_hash=` line from the submit path (if `trnm-cli` produced it)
+- local pending-state file path used for the cutover (`run/rpc/txs.json` by default, or `TRNM_RPC_TX_FILE=` override)
 - `query_tx_hash=` from `trnm-cli tx query`
 - `wait_tx_hash=` from `trnm-cli tx wait`
 
