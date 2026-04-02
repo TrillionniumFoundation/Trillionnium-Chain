@@ -277,6 +277,24 @@ Mandatory note in the evidence:
 - which validator identity/worktree now owns the process
 - what exact rollback command returns the operator to the last known-good state
 
+### Rebuild / disaster-recovery evidence minimum
+
+When the re-bootstrap follows host rebuild, disk replacement, or other disaster-recovery work, capture one minimal evidence packet before calling the validator recovered:
+- `dr_trigger=` short description of the failure or rebuild trigger
+- `rebuild_scope=` what was replaced or rebuilt (host / disk / process-only / config-only)
+- `config_bundle_sha256=` one checksum covering the config bundle actually used for the recovered bootstrap
+- `genesis_artifact_path=` and `genesis_artifact_sha256=` copied from the validated bootstrap packet, not retyped from memory
+- `validator_identity_check=` naming the validator entry or node ID that was recovered
+- `preflight_command=` and `preflight_result=` for the exact validation command rerun after rebuild
+- `bootstrap_command=` and `bootstrap_result=` for the smallest sanity start used to prove the node can come back
+- `rollback_command=` that returns the operator to the previously known-good artifact/worktree if the rebuilt node is rejected
+- `captured_at_utc=` recorded in UTC for later handoff or audit comparison
+
+Fail closed on DR evidence too:
+- if the recovered node cannot be tied to the same validator identity/config bundle/genesis hash tuple, do not mark the rebuild as successful
+- if the rebuild changed any config values intentionally, record that delta explicitly in the handoff note instead of implying a like-for-like recovery
+- if `config_bundle_sha256=` was not captured from the bundle that actually booted, treat the DR packet as incomplete
+
 ## Rollback
 
 Before starting, the operator should already know which of these applies:
