@@ -161,6 +161,11 @@ ROLLBACK_COMMAND="$(require_key "$REPORT_PATH" rollback_command)"
 REPLAY_COMMAND="$(require_key "$REPORT_PATH" replay_command)"
 STATUS="$(require_key "$REPORT_PATH" status)"
 
+if [ "$GIT_STATUS_SUMMARY" != "clean" ]; then
+  printf 'report git_status_summary must be clean, got %s from %s\n' "$GIT_STATUS_SUMMARY" "$REPORT_PATH" >&2
+  exit 1
+fi
+
 if [ -n "$EXPECTED_WORKTREE_ROOT" ] && [ "$GIT_WORKTREE_PATH" != "$EXPECTED_WORKTREE_ROOT" ]; then
   printf 'assigned-worktree mismatch: expected %s got %s\n' "$EXPECTED_WORKTREE_ROOT" "$GIT_WORKTREE_PATH" >&2
   exit 1
