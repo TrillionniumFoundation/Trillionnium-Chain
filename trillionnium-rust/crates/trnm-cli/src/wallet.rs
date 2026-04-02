@@ -210,7 +210,11 @@ pub(crate) fn default_wallet_store() -> PathBuf {
         .ok()
         .map(PathBuf::from)
         .filter(|path| wallet_store_path_is_safe(path))
-        .or_else(|| std::env::current_dir().ok().filter(|path| path.is_absolute()))
+        .or_else(|| {
+            std::env::current_dir()
+                .ok()
+                .filter(|path| wallet_store_path_is_safe(path))
+        })
         .unwrap_or_else(|| PathBuf::from("/"));
 
     home_root.join(".trnm").join("wallets")
