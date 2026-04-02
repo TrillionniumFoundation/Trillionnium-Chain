@@ -379,6 +379,96 @@ fn contract_public_read_payloads_reject_unknown_top_level_fields() {
     .expect_err("nested task metering contract should fail closed on unknown fields");
     assert!(nested_task_metering_err.to_string().contains("unexpected"));
 
+    let nested_task_metering_policy_err = serde_json::from_value::<TaskQueryResponse>(json!({
+        "task_id":7,
+        "status":"Open",
+        "worker":"worker-1",
+        "bounty":42,
+        "result_hash_hex":"0xabc",
+        "version":3,
+        "metering": {
+            "workload_class":"llm_inference",
+            "metering_schema":"llm_token_meter_v1",
+            "receipt_hash":"deadbeef",
+            "prompt_tokens":128,
+            "generated_tokens":32,
+            "decode_steps":32,
+            "kv_bytes_moved":4096,
+            "normalized_work_units":192,
+            "prompt_token_weight":1,
+            "generated_token_weight":1,
+            "decode_step_weight":1,
+            "kv_byte_weight":0,
+            "policy": {
+                "snapshot_version":1,
+                "min_accept_work_units":100,
+                "challenge_success_bounty_base":1,
+                "challenge_success_bounty_per_work_unit_num":1,
+                "challenge_success_bounty_per_work_unit_den":192,
+                "worker_completion_bonus_per_work_unit_num":1,
+                "worker_completion_bonus_per_work_unit_den":256,
+                "worker_slash_rebate_per_work_unit_num":1,
+                "worker_slash_rebate_per_work_unit_den":384,
+                "unexpected":"schema-drift"
+            },
+            "derived": {
+                "path":"Resolved",
+                "accept_floor_pass":true,
+                "challenge_metered_bonus":1,
+                "challenge_bonus_total":2,
+                "worker_completion_bonus":1,
+                "worker_slash_rebate":1
+            }
+        }
+    }))
+    .expect_err("nested task metering policy contract should fail closed on unknown fields");
+    assert!(nested_task_metering_policy_err.to_string().contains("unexpected"));
+
+    let nested_task_metering_derived_err = serde_json::from_value::<TaskQueryResponse>(json!({
+        "task_id":7,
+        "status":"Open",
+        "worker":"worker-1",
+        "bounty":42,
+        "result_hash_hex":"0xabc",
+        "version":3,
+        "metering": {
+            "workload_class":"llm_inference",
+            "metering_schema":"llm_token_meter_v1",
+            "receipt_hash":"deadbeef",
+            "prompt_tokens":128,
+            "generated_tokens":32,
+            "decode_steps":32,
+            "kv_bytes_moved":4096,
+            "normalized_work_units":192,
+            "prompt_token_weight":1,
+            "generated_token_weight":1,
+            "decode_step_weight":1,
+            "kv_byte_weight":0,
+            "policy": {
+                "snapshot_version":1,
+                "min_accept_work_units":100,
+                "challenge_success_bounty_base":1,
+                "challenge_success_bounty_per_work_unit_num":1,
+                "challenge_success_bounty_per_work_unit_den":192,
+                "worker_completion_bonus_per_work_unit_num":1,
+                "worker_completion_bonus_per_work_unit_den":256,
+                "worker_slash_rebate_per_work_unit_num":1,
+                "worker_slash_rebate_per_work_unit_den":384
+            },
+            "derived": {
+                "path":"Resolved",
+                "accept_floor_pass":true,
+                "challenge_metered_bonus":1,
+                "challenge_bonus_total":2,
+                "worker_completion_bonus":1,
+                "worker_slash_rebate":1,
+                "unexpected":"schema-drift"
+            }
+        }
+    }))
+    .expect_err("nested task metering derived contract should fail closed on unknown fields");
+    assert!(nested_task_metering_derived_err.to_string().contains("unexpected"));
+
     let gov_param_err = serde_json::from_value::<GovParamQueryResponse>(json!({
         "key_id":1,
         "key":"runtime_metadata_schema",
