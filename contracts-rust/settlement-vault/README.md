@@ -56,3 +56,4 @@ trnm(contract-rs-vault): ...
 - `source: "settlement-vault"`
 - `event_type`：`vault.deposited` / `vault.locked` / `vault.released` / `vault.slashed` / `vault.transferred` / `vault.paused` / `vault.unpaused`。
 - `amount` 与 `object_id` 分别承载金额、`request_id` 或账户信息。
+- `vault.slashed` 的标准化事件使用 `related_id=locked_account`，并将 `beneficiary` 放入 `note`（如 `beneficiary=treasury`），避免把多个主体拼进同一个 ID 字段。
