@@ -215,6 +215,11 @@ const mapNormalizedAuditToDashboardEvent = (event: NormalizedAuditEvent, fallbac
   };
 };
 
+const toEventSortKey = (displayTime: string): number => {
+  const parsed = Date.parse(displayTime);
+  return Number.isNaN(parsed) ? Number.NEGATIVE_INFINITY : parsed;
+};
+
 const parsePositiveIntEnv = (value: string | undefined, fallback: number): number => {
   const normalized = value?.trim();
   if (!normalized) return fallback;
@@ -351,11 +356,7 @@ async function fetchReadonlySnapshotFromApi(): Promise<DashboardSnapshot> {
           eventsResp.events[0]?.timestamp ?? taskResp.task.createdAt,
         ),
       ),
-    ].sort((left, right) => {
-      const leftTime = Date.parse(toDisplayTime(left.time));
-      const rightTime = Date.parse(toDisplayTime(right.time));
-      return rightTime - leftTime;
-    }),
+    ].sort((left, right) => toEventSortKey(right.time) - toEventSortKey(left.time)),
     audits: auditsResp.audits.map((audit, index) => ({
       id: `AUD-${index + 1}`,
       control: audit.capability,

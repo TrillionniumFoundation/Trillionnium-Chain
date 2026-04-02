@@ -746,6 +746,73 @@ describe("dashboard source normalized audit pagination", () => {
     expect(snapshot.events[0]?.summary).toBe("bridge-relay · bridge_relay.proof_submitted");
   });
 
+  it("sorts events with missing display times after timestamped readonly events", async () => {
+    const mockClient = {
+      queryTask: vi.fn().mockResolvedValue({
+        task: {
+          id: "349",
+          owner: "ops",
+          status: "running",
+          createdAt: "2026-03-01T00:00:00.000Z",
+          metadata: {},
+        },
+      }),
+      queryEvents: vi.fn().mockResolvedValue({
+        taskId: "349",
+        events: [
+          {
+            id: "evt-349",
+            taskId: "349",
+            type: "deploy.canary_started",
+            level: "info",
+            payload: { rollout: "5%" },
+          },
+          {
+            id: "evt-350",
+            taskId: "349",
+            type: "deploy.rollback_completed",
+            level: "info",
+            timestamp: "2026-03-01T00:06:00.000Z",
+            payload: { rollout: "5%" },
+          },
+        ],
+      }),
+      queryCapabilityAudit: vi.fn().mockResolvedValue({
+        subject: "did:trnm:test",
+        audits: [
+          {
+            subject: "did:trnm:test",
+            capability: "AUDIT_READ",
+            granted: true,
+            checkedAt: "2026-03-01T00:00:00.000Z",
+          },
+        ],
+      }),
+      queryNormalizedAuditEvents: vi.fn().mockResolvedValue({
+        events: [
+          {
+            source: "bridge-relay",
+            event_type: "bridge_relay.proof_submitted",
+            actor: "validator",
+            object_id: "proof-349",
+            timestamp: "2026-03-01T00:04:00.000Z",
+          },
+        ],
+        hasMore: false,
+      }),
+    } as unknown as ReturnType<typeof apiContractClient.createFrontendApiClient>;
+
+    vi.spyOn(apiContractClient, "createFrontendApiClient").mockReturnValue(mockClient);
+
+    const snapshot = await fetchDashboardSnapshot();
+
+    expect(snapshot.events).toHaveLength(3);
+    expect(snapshot.events[0]?.summary).toBe("deploy.rollback_completed");
+    expect(snapshot.events[1]?.summary).toBe("bridge-relay · bridge_relay.proof_submitted");
+    expect(snapshot.events[2]?.summary).toBe("deploy.canary_started");
+    expect(snapshot.events[2]?.time).toBe("-");
+  });
+
   it("fails closed when mock mode is requested in production", async () => {
     const createClientSpy = vi.spyOn(apiContractClient, "createFrontendApiClient");
 
