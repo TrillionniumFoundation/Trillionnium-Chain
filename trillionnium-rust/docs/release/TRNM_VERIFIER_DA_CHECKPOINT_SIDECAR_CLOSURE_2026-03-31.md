@@ -289,12 +289,26 @@ Reviewers should not treat the helper names above as prose-only claims. The curr
   - `checkpoint_evidence_surface_requires_canonical_state_root_and_hash_hex`
   - `checkpoint_da_light_verifier_summary_fails_closed_on_uncommitted_wal_surface`
   - `node_recovery_checkpoint_rejects_non_genesis_prev_hash_with_carriage_return_control_drift`
+- `trillionnium-rust/crates/trnm-node/src/tests.rs`
+  - `metadata_only_recovery_error_surfaces_da_unavailability_reason_when_checkpoint_wal_linkage_is_missing`
 
 Together these anchors give release review one concrete trail for verifying that:
 
 1. canonical checkpoint/WAL tuples emit a stable DA/light-verifier summary;
-2. speculative or malformed WAL evidence is rejected before it can be presented as audit-ready; and
-3. predecessor-link drift is treated as a fail-closed trust problem rather than a transport/retry problem.
+2. speculative or malformed WAL evidence is rejected before it can be presented as audit-ready;
+3. predecessor-link drift is treated as a fail-closed trust problem rather than a transport/retry problem; and
+4. when checkpoint/WAL linkage cannot be reconstructed locally, the operator-facing recovery surface preserves the concrete `unavailable:no_matching_wal_entry` reason instead of collapsing it into a generic success/failure blur.
+
+### Minimal targeted replay commands
+
+When reviewers want a smallest-possible replay set instead of broad crate sweeps, start with these targeted commands from `trillionnium-rust/`:
+
+- `cargo test -p trnm-state checkpoint_da_light_verifier_summary_is_canonical_and_includes_wal_linkage -q`
+- `cargo test -p trnm-state checkpoint_da_light_verifier_summary_fails_closed_on_uncommitted_wal_surface -q`
+- `cargo test -p trnm-state node_recovery_checkpoint_rejects_non_genesis_prev_hash_with_carriage_return_control_drift -q`
+- `cargo test -p trnm-node metadata_only_recovery_error_surfaces_da_unavailability_reason_when_checkpoint_wal_linkage_is_missing -q`
+
+This replay set is intentionally narrow: one happy-path linkage proof, two fail-closed canonicalization regressions, and one operator-facing DA-unavailability triage check.
 
 ### What the current helper surface already proves
 
