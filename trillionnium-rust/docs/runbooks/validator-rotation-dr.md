@@ -202,6 +202,22 @@ Interpretation rule:
 - keep the emitted `config_bundle_check_command=` / `config_bundle_check_result=` / `config_bundle_check_log_path=` lines adjacent in the handoff note so another operator can audit the exact bundle, terminal verdict, and full stderr/stdout capture together
 - if the last line is ambiguous or truncated, preserve the full log path (for example `/tmp/trnm-config-bundle-check.log`) next to the handoff note rather than paraphrasing the result from memory
 
+### 3a. Fail-closed config bundle evidence capture order
+
+Capture config-bundle evidence in this order so the handoff proves **which exact incoming bundle was validated**, not just that some last-line verdict looked green:
+
+1. run `git status --short` and stop immediately if the worktree is not clean
+2. write `config_bundle_check_command=` with the exact `python3 scripts/v2/check_validator_config_bundle.py ...` invocation for the incoming validator bundle named in the cutover note
+3. run that exact command once, teeing stdout/stderr to `config_bundle_check_log_path=` when the validation spans multiple files or when the final line alone would not let another operator audit the full context
+4. copy the emitted terminal verdict into `config_bundle_check_result=` without paraphrasing it
+5. keep `config_bundle_check_command=` / `config_bundle_check_result=` / `config_bundle_check_log_path=` adjacent in the same note block before moving on to replacement / rotation / DR execution
+
+Stop if any of the following occurs:
+- the command you copied into `config_bundle_check_command=` is not the same command that produced the recorded verdict/log
+- the validated bundle does not match the incoming validator config named in the cutover note
+- the final line is ambiguous, truncated, or clearly refers to a different file set, and no preserved `config_bundle_check_log_path=` exists
+- a later operator would need shell scrollback to reconstruct which bundle was actually checked
+
 ### 4. Attach DR/recovery evidence when the event is a rebuild
 
 For `cutover_kind=dr_rebuild`, attach one explicit recovery artifact instead of summarizing it from memory.
