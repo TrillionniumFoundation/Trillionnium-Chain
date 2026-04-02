@@ -314,6 +314,9 @@ Expected fields visible in the capture:
 - `worktree=` and `branch=` for identity
 - `git_status_summary=clean` for fail-closed clean-tree evidence before the packet runs
 - `command[n]=...` lines for the exact rehearsal packet
+- `command[1]=cargo check --manifest-path trillionnium-rust/Cargo.toml -p trnm-mempool -p trnm-pouw -q` so the packet records the compile-slice integrity check that keeps the economics review anchored to one joint mempool/retention surface
+- `command[2]=cargo test --manifest-path trillionnium-rust/Cargo.toml -p trnm-mempool lane_zero_capacity_public_contract_bound -q` so the packet explicitly captures the hard-stop admission boundary evidence for the public ingress split
+- `command[3]=cargo test --manifest-path trillionnium-rust/Cargo.toml -p trnm-mempool lane_qos_snapshot_reserve_only_drained_retry_resaturates_bound -q` so the packet records the duplicate-retention guard that keeps sponsor/free-ingress retries classification-only after the reopened shared slot is re-consumed
 - `command[4]=cargo test --manifest-path trillionnium-rust/Cargo.toml -p trnm-mempool lane_borrowed_last_slot_backpressured_retry_reuse_bound -q` so sponsor borrowed-slot backpressure evidence is explicitly present in the recorded freeze packet
 - `command[5]=cargo test --manifest-path trillionnium-rust/Cargo.toml -p trnm-pouw legacy_revealed_snapshot_freezes_resolve_timing_after_challenge_despite_later_gov_change -q` so the packet explicitly proves challenge-time retention snapshots stay frozen even if governance changes later
 - `command[6]=cargo test --manifest-path trillionnium-rust/Cargo.toml -p trnm-state --test retention_restore_regression -q` so the packet still captures the retention-side fail-closed restore evidence instead of only admission-side checks
