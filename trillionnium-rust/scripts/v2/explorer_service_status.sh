@@ -74,6 +74,9 @@ emit_invalid_config() {
   echo "health=unknown"
   echo "health_probe=invalid-config"
   echo "health_probe_url=invalid-config"
+  echo "local_health=unknown"
+  echo "local_health_probe=invalid-config"
+  echo "local_health_probe_url=invalid-config"
 }
 
 validate_runtime_contract() {
