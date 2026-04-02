@@ -803,6 +803,39 @@ fn write_key_refuses_symlink_wallet_store() {
 }
 
 #[test]
+#[cfg(unix)]
+fn write_key_refuses_group_or_world_accessible_wallet_store() {
+    use std::os::unix::fs::PermissionsExt;
+
+    let unique = format!(
+        "trnm-cli-wallet-store-write-perm-test-{}-{}",
+        std::process::id(),
+        std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_nanos()
+    );
+    let store = std::env::temp_dir().join(unique);
+    std::fs::create_dir_all(&store).unwrap();
+    std::fs::set_permissions(&store, std::fs::Permissions::from_mode(0o755)).unwrap();
+
+    let err = write_key(
+        &store,
+        "alice",
+        "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    )
+    .unwrap_err();
+    assert!(
+        err.to_string().contains("wallet store") && err.to_string().contains("has insecure permissions"),
+        "unexpected error: {err}"
+    );
+    assert!(!wallet_file(&store, "alice").exists());
+
+    let _ = std::fs::set_permissions(&store, std::fs::Permissions::from_mode(0o700));
+    let _ = std::fs::remove_dir(&store);
+}
+
+#[test]
 fn write_key_refuses_non_directory_wallet_store() {
     let unique = format!(
         "trnm-cli-wallet-store-write-file-test-{}-{}",

@@ -420,6 +420,27 @@ pub(crate) fn ensure_hex_32_bytes(s: &str) -> Result<String> {
     Ok(x)
 }
 
+#[cfg(unix)]
+fn ensure_owner_only_permissions(meta: &fs::Metadata, path: &Path, kind: &str) -> Result<()> {
+    use std::os::unix::fs::PermissionsExt;
+
+    let mode = meta.permissions().mode() & 0o777;
+    if mode & 0o077 != 0 {
+        bail!(
+            "{} '{}' has insecure permissions {:o}; expected owner-only access",
+            kind,
+            path.display(),
+            mode
+        );
+    }
+    Ok(())
+}
+
+#[cfg(not(unix))]
+fn ensure_owner_only_permissions(_meta: &fs::Metadata, _path: &Path, _kind: &str) -> Result<()> {
+    Ok(())
+}
+
 pub(crate) fn write_key(store: &Path, name: &str, priv_hex: &str) -> Result<PathBuf> {
     ensure_wallet_name(name)?;
     let normalized_priv_hex = ensure_hex_32_bytes(priv_hex)?;
@@ -438,6 +459,7 @@ pub(crate) fn write_key(store: &Path, name: &str, priv_hex: &str) -> Result<Path
                 store.display()
             );
         }
+        ensure_owner_only_permissions(&meta, store, "wallet store")?;
     }
     fs::create_dir_all(store)?;
     #[cfg(unix)]
@@ -480,18 +502,7 @@ pub(crate) fn read_key(store: &Path, name: &str) -> Result<String> {
             store.display()
         );
     }
-    #[cfg(unix)]
-    {
-        use std::os::unix::fs::PermissionsExt;
-        let mode = store_meta.permissions().mode() & 0o777;
-        if mode & 0o077 != 0 {
-            bail!(
-                "wallet store '{}' has insecure permissions {:o}; expected owner-only access",
-                store.display(),
-                mode
-            );
-        }
-    }
+    ensure_owner_only_permissions(&store_meta, store, "wallet store")?;
     let f = wallet_file(store, name);
     let meta = fs::symlink_metadata(&f)
         .map_err(|e| anyhow!("failed to inspect wallet '{}' at {}: {e}", name, f.display()))?;
@@ -502,19 +513,7 @@ pub(crate) fn read_key(store: &Path, name: &str) -> Result<String> {
             f.display()
         );
     }
-    #[cfg(unix)]
-    {
-        use std::os::unix::fs::PermissionsExt;
-        let mode = meta.permissions().mode() & 0o777;
-        if mode & 0o077 != 0 {
-            bail!(
-                "wallet '{}' at {} has insecure permissions {:o}; expected owner-only access",
-                name,
-                f.display(),
-                mode
-            );
-        }
-    }
+    ensure_owner_only_permissions(&meta, &f, "wallet")?;
     let raw = fs::read_to_string(&f)
         .map_err(|e| anyhow!("failed to read wallet '{}' at {}: {e}", name, f.display()))?;
     ensure_hex_32_bytes(raw.trim())
