@@ -285,6 +285,23 @@ report_path="$(ls -dt run/bft-restart-recovery-*.txt 2>/dev/null | head -n 1)"
   ${EXPECTED_HEAD:+--expected-head "$EXPECTED_HEAD"}
 ```
 
+Recommended note-capture shape right after the helper succeeds:
+
+```bash
+dr_fields="$(./scripts/v2/extract_validator_rotation_dr_fields.sh \
+  --report-path "$report_path" \
+  --expected-worktree-root "$EXPECTED_WORKTREE_ROOT" \
+  --expected-branch-ref "$EXPECTED_BRANCH_REF" \
+  ${EXPECTED_HEAD:+--expected-head "$EXPECTED_HEAD"})"
+
+printf '%s\n' "$dr_fields"
+printf '%s\n' "$dr_fields" >> cutover-note.txt
+```
+
+Interpretation rule:
+- keep the emitted `dr_summary_path=` / `dr_generated_at=` / `dr_status=` / `dr_replay_command=` / `dr_rollback_command=` lines adjacent in the cutover note so another operator can audit one coherent DR evidence block instead of reconstructing individual fields from shell history
+- do not hand-copy only `dr_status=PASS` while dropping the corresponding report path or replay/rollback commands; the helper output is meant to travel as one fail-closed bundle
+
 Stop if any of the following occurs:
 - `report_path` does not resolve to a concrete report
 - `git_worktree_path=` in the report does not match the ticket-assigned worktree
