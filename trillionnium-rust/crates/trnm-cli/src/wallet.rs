@@ -410,6 +410,42 @@ pub(crate) fn derive_address_from_priv_hex(priv_hex: &str) -> Result<String> {
     Ok(format!("trnm1{}", addr_hex))
 }
 
+fn is_unsafe_sign_message_char(c: char) -> bool {
+    c.is_control()
+        || matches!(
+            c,
+            '\u{00ad}'
+                | '\u{061c}'
+                | '\u{180e}'
+                | '\u{200b}'
+                | '\u{200c}'
+                | '\u{200d}'
+                | '\u{200e}'
+                | '\u{200f}'
+                | '\u{2060}'
+                | '\u{202a}'..='\u{202e}'
+                | '\u{2066}'..='\u{2069}'
+                | '\u{feff}'
+        )
+}
+
+pub(crate) fn ensure_safe_sign_message(message: &str) -> Result<()> {
+    if message.is_empty() {
+        bail!("wallet sign message must not be empty");
+    }
+    if message.trim() != message {
+        bail!(
+            "wallet sign message contains leading or trailing whitespace; refusing ambiguous offline-signing output"
+        );
+    }
+    if message.chars().any(is_unsafe_sign_message_char) {
+        bail!(
+            "wallet sign message contains control or bidi override characters; refusing unsafe offline-signing output"
+        );
+    }
+    Ok(())
+}
+
 pub(crate) fn random_priv_hex() -> Result<String> {
     let mut b = [0u8; 32];
     let mut f = fs::File::open("/dev/urandom")?;

@@ -628,3 +628,45 @@ fn read_key_refuses_symlink_wallet_store() {
     let _ = std::fs::remove_dir(&real_store);
     let _ = std::fs::remove_dir(&root);
 }
+
+#[test]
+fn ensure_safe_sign_message_accepts_plain_visible_text() {
+    ensure_safe_sign_message("rotate signer to cold-key slot b").unwrap();
+}
+
+#[test]
+fn ensure_safe_sign_message_rejects_empty_text() {
+    let err = ensure_safe_sign_message("").unwrap_err();
+    assert!(
+        err.to_string().contains("wallet sign message must not be empty"),
+        "unexpected error: {err}"
+    );
+}
+
+#[test]
+fn ensure_safe_sign_message_rejects_leading_or_trailing_whitespace() {
+    for message in [" rotate signer to cold-key slot b", "rotate signer to cold-key slot b "] {
+        let err = ensure_safe_sign_message(message).unwrap_err();
+        assert!(
+            err.to_string()
+                .contains("leading or trailing whitespace; refusing ambiguous offline-signing output"),
+            "unexpected error: {err}"
+        );
+    }
+}
+
+#[test]
+fn ensure_safe_sign_message_rejects_control_or_bidi_override_text() {
+    for message in [
+        "rotate\nsignature=fake",
+        "rotate signer \u{202e}tx=approved",
+        "rotate signer\u{200b}slot-b",
+    ] {
+        let err = ensure_safe_sign_message(message).unwrap_err();
+        assert!(
+            err.to_string()
+                .contains("control or bidi override characters; refusing unsafe offline-signing output"),
+            "unexpected error: {err}"
+        );
+    }
+}

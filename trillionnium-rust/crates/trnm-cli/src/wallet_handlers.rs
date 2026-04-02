@@ -2,7 +2,7 @@ use anyhow::Result;
 
 use crate::{
     cmd::WalletCommand, default_wallet_store, derive_address_from_priv_hex, ensure_hex_32_bytes,
-    hash, read_key, wallet_create, write_key,
+    ensure_safe_sign_message, hash, read_key, wallet_create, write_key,
 };
 
 pub(crate) fn handle_wallet_command(wallet: WalletCommand) -> Result<()> {
@@ -37,6 +37,7 @@ pub(crate) fn handle_wallet_command(wallet: WalletCommand) -> Result<()> {
         } => {
             let store = store.unwrap_or_else(default_wallet_store);
             let priv_hex = read_key(&store, &name)?;
+            ensure_safe_sign_message(&message)?;
             let sig = hash(&["trnm-sign-v1", &priv_hex, &message]);
             let addr = derive_address_from_priv_hex(&priv_hex)?;
             println!("wallet_name={}", name);
