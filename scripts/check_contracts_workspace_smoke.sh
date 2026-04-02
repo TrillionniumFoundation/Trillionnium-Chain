@@ -5,6 +5,12 @@ ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
 export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
 
+CARGO_BIN="${CARGO_BIN:-cargo}"
+if ! command -v "$CARGO_BIN" >/dev/null 2>&1; then
+  echo "[FAIL] cargo binary not found: $CARGO_BIN" >&2
+  exit 1
+fi
+
 MANIFEST="$ROOT/contracts-rust/Cargo.toml"
 if [[ ! -f "$MANIFEST" ]]; then
   echo "[FAIL] contracts workspace manifest missing: $MANIFEST" >&2
@@ -29,12 +35,12 @@ run_step() {
 }
 
 run_step "contracts-rust workspace manifest resolves" \
-  cargo metadata --manifest-path "$MANIFEST" --locked --no-deps --format-version 1
+  "$CARGO_BIN" metadata --manifest-path "$MANIFEST" --locked --no-deps --format-version 1
 
 run_step "contracts-rust workspace check" \
-  cargo check --manifest-path "$MANIFEST" --locked -q
+  "$CARGO_BIN" check --manifest-path "$MANIFEST" --locked -q
 
 run_step "contracts-rust workspace tests" \
-  cargo test --manifest-path "$MANIFEST" --locked -q
+  "$CARGO_BIN" test --manifest-path "$MANIFEST" --locked -q
 
 printf '\n[OK] contracts workspace smoke passed: %s\n' "$OUT" | tee -a "$OUT"
