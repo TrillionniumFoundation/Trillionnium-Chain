@@ -381,6 +381,73 @@ describe("dashboard source normalized audit pagination", () => {
     expect(capabilityGrantedEvents[1]?.details).toContain("did:trnm:");
   });
 
+  it("keeps normalized audit events distinct when only related_id differs", async () => {
+    const mockClient = {
+      queryTask: vi
+        .fn()
+        .mockResolvedValue({
+          task: {
+            id: "348",
+            owner: "ops",
+            status: "running",
+            createdAt: "2026-03-01T00:00:00.000Z",
+            metadata: {},
+          },
+        }),
+      queryEvents: vi.fn().mockResolvedValue({
+        taskId: "348",
+        events: [],
+      }),
+      queryCapabilityAudit: vi.fn().mockResolvedValue({
+        subject: "did:trnm:test",
+        audits: [
+          {
+            subject: "did:trnm:test",
+            capability: "AUDIT_READ",
+            granted: true,
+            checkedAt: "2026-03-01T00:00:00.000Z",
+          },
+        ],
+      }),
+      queryNormalizedAuditEvents: vi.fn().mockResolvedValue({
+        events: [
+          {
+            source: "capability-registry",
+            event_type: "capability.bound",
+            actor: "security",
+            object_id: "did:trnm:alice",
+            related_id: "scope:audit.read",
+            timestamp: "2026-03-01T00:01:00.000Z",
+            reason: "ok",
+          },
+          {
+            source: "capability-registry",
+            event_type: "capability.bound",
+            actor: "security",
+            object_id: "did:trnm:alice",
+            related_id: "scope:audit.write",
+            timestamp: "2026-03-01T00:01:00.000Z",
+            reason: "ok",
+          },
+        ],
+        hasMore: false,
+      }),
+    } as unknown as ReturnType<typeof apiContractClient.createFrontendApiClient>;
+
+    vi.spyOn(apiContractClient, "createFrontendApiClient").mockReturnValue(mockClient);
+
+    const snapshot = await fetchDashboardSnapshot();
+    const capabilityBoundEvents = snapshot.events.filter(
+      (event) => event.summary === "capability-registry · capability.bound",
+    );
+
+    expect(mockClient.queryNormalizedAuditEvents).toHaveBeenCalledTimes(1);
+    expect(capabilityBoundEvents).toHaveLength(2);
+    expect(new Set(capabilityBoundEvents.map((event) => event.id)).size).toBe(2);
+    expect(capabilityBoundEvents[0]?.details).toContain("scope:audit.");
+    expect(capabilityBoundEvents[1]?.details).toContain("scope:audit.");
+  });
+
   it("treats revocation-like normalized audit events as critical fail-closed incidents", async () => {
     const mockClient = {
       queryTask: vi

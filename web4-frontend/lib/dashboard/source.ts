@@ -208,6 +208,7 @@ const mapNormalizedAuditToDashboardEvent = (event: NormalizedAuditEvent, fallbac
   const stableId = [
     event.source,
     event.object_id ?? event.event_type,
+    event.related_id ?? "",
     event.subject ?? "",
     event.actor ?? "system",
   ]
