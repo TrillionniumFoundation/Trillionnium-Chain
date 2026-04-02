@@ -1008,7 +1008,11 @@ fn default_wallet_store() -> PathBuf {
         .ok()
         .map(PathBuf::from)
         .filter(|path| wallet_store_path_is_safe(path))
-        .or_else(|| std::env::current_dir().ok().filter(|path| path.is_absolute()))
+        .or_else(|| {
+            std::env::current_dir()
+                .ok()
+                .filter(|path| wallet_store_path_is_safe(path))
+        })
         .unwrap_or_else(|| PathBuf::from("/"));
 
     home_root.join(".trnm").join("wallets")
@@ -2718,6 +2722,7 @@ mod tests {
 
     #[test]
     fn default_wallet_store_rejects_relative_or_root_env_paths() {
+        let _guard = ENV_LOCK.lock().unwrap();
         let original_store = std::env::var_os("TRNM_WALLET_STORE");
         let original_home = std::env::var_os("HOME");
         let home = std::env::temp_dir().join(format!(
@@ -2759,6 +2764,7 @@ mod tests {
 
     #[test]
     fn default_wallet_store_falls_back_to_absolute_cwd_when_home_missing_or_relative() {
+        let _guard = ENV_LOCK.lock().unwrap();
         let original_store = std::env::var_os("TRNM_WALLET_STORE");
         let original_home = std::env::var_os("HOME");
         std::env::remove_var("TRNM_WALLET_STORE");
@@ -2779,6 +2785,45 @@ mod tests {
             Some(value) => std::env::set_var("HOME", value),
             None => std::env::remove_var("HOME"),
         }
+    }
+
+    #[test]
+    fn default_wallet_store_rejects_unsafe_absolute_cwd_fallback() {
+        let _guard = ENV_LOCK.lock().unwrap();
+        let original_store = std::env::var_os("TRNM_WALLET_STORE");
+        let original_home = std::env::var_os("HOME");
+        let original_cwd = std::env::current_dir().unwrap();
+
+        let unique = format!(
+            "trnm cli cwd fallback test {} {}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        );
+        let unsafe_cwd = std::env::temp_dir().join(unique);
+        std::fs::create_dir_all(&unsafe_cwd).unwrap();
+
+        std::env::remove_var("TRNM_WALLET_STORE");
+        std::env::remove_var("HOME");
+        std::env::set_current_dir(&unsafe_cwd).unwrap();
+
+        assert_eq!(
+            default_wallet_store(),
+            std::path::PathBuf::from("/").join(".trnm").join("wallets")
+        );
+
+        std::env::set_current_dir(&original_cwd).unwrap();
+        match original_store {
+            Some(value) => std::env::set_var("TRNM_WALLET_STORE", value),
+            None => std::env::remove_var("TRNM_WALLET_STORE"),
+        }
+        match original_home {
+            Some(value) => std::env::set_var("HOME", value),
+            None => std::env::remove_var("HOME"),
+        }
+        let _ = std::fs::remove_dir_all(&unsafe_cwd);
     }
 
     #[test]
