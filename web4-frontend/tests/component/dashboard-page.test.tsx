@@ -177,6 +177,28 @@ describe("dashboard page", () => {
     expect(await screen.findByText("No audit controls found")).toBeInTheDocument();
   });
 
+  it("fail-closes blank readonly detail bodies to explicit unavailable copy", async () => {
+    mockedFetch.mockResolvedValue({
+      ...snapshot,
+      tasks: [{ ...snapshot.tasks[0], description: "   " }],
+      events: [{ ...snapshot.events[0], details: "\n\t" }],
+      audits: [{ ...snapshot.audits[0], notes: " " }],
+    });
+
+    render(<Home />);
+
+    await screen.findByText("Task Digest");
+
+    fireEvent.click(screen.getByRole("tab", { name: "Tasks" }));
+    expect(await screen.findByText("Readonly task detail is unavailable for this snapshot.")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("tab", { name: "Events" }));
+    expect(await screen.findByText("Readonly event detail is unavailable for this snapshot.")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("tab", { name: "Audit" }));
+    expect(await screen.findByText("Readonly audit detail is unavailable for this snapshot.")).toBeInTheDocument();
+  });
+
   it("shows adapter error state as an assertive fail-closed alert", async () => {
     mockedFetch.mockRejectedValue(new Error("Dashboard backend unavailable"));
     window.history.replaceState({}, "", "/?mode=error");

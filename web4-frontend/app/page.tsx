@@ -16,6 +16,15 @@ function normalizeHealth(health: unknown): DashboardSnapshot["kpis"][number]["he
   return health === "healthy" || health === "degraded" || health === "risk" ? health : "risk";
 }
 
+function failClosedText(value: string | null | undefined, fallback: string) {
+  if (typeof value !== "string") {
+    return fallback;
+  }
+
+  const normalized = value.trim();
+  return normalized === "" ? fallback : normalized;
+}
+
 function normalizeSnapshot(snapshot: DashboardSnapshot): DashboardSnapshot {
   return {
     ...snapshot,
@@ -367,7 +376,9 @@ export default function Home() {
                     {selectedTask && (
                       <article className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
                         <h3 className="text-base font-semibold">Task Detail · {selectedTask.id}</h3>
-                        <p className="mt-2 text-sm text-slate-700">{selectedTask.description}</p>
+                        <p className="mt-2 text-sm text-slate-700">
+                          {failClosedText(selectedTask.description, "Readonly task detail is unavailable for this snapshot.")}
+                        </p>
                       </article>
                     )}
                   </>
@@ -430,7 +441,9 @@ export default function Home() {
                     {selectedEvent && (
                       <article className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
                         <h3 className="text-base font-semibold">Event Detail · {selectedEvent.id}</h3>
-                        <p className="mt-2 text-sm text-slate-700">{selectedEvent.details}</p>
+                        <p className="mt-2 text-sm text-slate-700">
+                          {failClosedText(selectedEvent.details, "Readonly event detail is unavailable for this snapshot.")}
+                        </p>
                       </article>
                     )}
                   </>
@@ -495,7 +508,9 @@ export default function Home() {
                     {selectedAudit && (
                       <article className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
                         <h3 className="text-base font-semibold">Audit Detail · {selectedAudit.id}</h3>
-                        <p className="mt-2 text-sm text-slate-700">{selectedAudit.notes}</p>
+                        <p className="mt-2 text-sm text-slate-700">
+                          {failClosedText(selectedAudit.notes, "Readonly audit detail is unavailable for this snapshot.")}
+                        </p>
                       </article>
                     )}
                   </>
