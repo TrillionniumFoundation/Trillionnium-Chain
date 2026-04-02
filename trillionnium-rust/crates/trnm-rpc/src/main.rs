@@ -3435,10 +3435,15 @@ fn serve_health(host: &str, port: u16) -> Result<()> {
                 }
             }
             _ => {
-                let body = "{\"ok\":false,\"code\":\"NOT_FOUND\"}";
                 match request {
-                    Some((method, _)) => json_response_for_method(method, "404 Not Found", body),
-                    None => http_json_response("404 Not Found", body),
+                    Some((method, _)) => {
+                        let body = "{\"ok\":false,\"code\":\"NOT_FOUND\"}";
+                        json_response_for_method(method, "404 Not Found", body)
+                    }
+                    None => {
+                        let body = "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid http request\"}";
+                        http_json_response("400 Bad Request", body)
+                    }
                 }
             }
         };
