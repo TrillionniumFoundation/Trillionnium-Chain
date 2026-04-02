@@ -12,10 +12,19 @@ type LoadState =
   | { status: "error"; message: string }
   | { status: "ready"; data: DashboardSnapshot };
 
+function normalizeHealth(health: unknown): DashboardSnapshot["kpis"][number]["health"] {
+  return health === "healthy" || health === "degraded" || health === "risk" ? health : "risk";
+}
+
 function normalizeSnapshot(snapshot: DashboardSnapshot): DashboardSnapshot {
   return {
     ...snapshot,
-    kpis: Array.isArray(snapshot.kpis) ? snapshot.kpis : [],
+    kpis: Array.isArray(snapshot.kpis)
+      ? snapshot.kpis.map((kpi) => ({
+          ...kpi,
+          health: normalizeHealth(kpi.health),
+        }))
+      : [],
     tasks: Array.isArray(snapshot.tasks) ? snapshot.tasks : [],
     events: Array.isArray(snapshot.events) ? snapshot.events : [],
     audits: Array.isArray(snapshot.audits) ? snapshot.audits : [],

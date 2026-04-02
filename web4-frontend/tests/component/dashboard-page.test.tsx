@@ -139,6 +139,19 @@ describe("dashboard page", () => {
     expect(screen.getByText("Open execution items: 1")).toBeInTheDocument();
   });
 
+  it("fail-closes unknown KPI health values to risk styling", async () => {
+    mockedFetch.mockResolvedValue({
+      ...snapshot,
+      kpis: [{ ...snapshot.kpis[0], health: "unexpected" as never }],
+    });
+
+    render(<Home />);
+
+    const chip = await screen.findByText("risk");
+    expect(chip).toHaveClass("bg-rose-100", "text-rose-700");
+    expect(screen.getByText("Network Uptime")).toBeInTheDocument();
+  });
+
   it("fail-closes to empty collections when adapter data is partially missing", async () => {
     mockedFetch.mockResolvedValue({
       ...snapshot,
