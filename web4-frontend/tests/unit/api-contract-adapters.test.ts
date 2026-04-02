@@ -23,6 +23,22 @@ describe("api-contract adapters", () => {
     expect(out.task.status).toBe("running");
   });
 
+  it("fails closed on canonical query-task payloads with unknown fields", () => {
+    expect(() =>
+      adaptQueryTask({
+        task: {
+          id: "1",
+          name: "demo",
+          status: "running",
+          owner: "alice",
+          createdAt: "2026-03-01T00:00:00.000Z",
+          metadata: {},
+          shadowMode: true,
+        },
+      }),
+    ).toThrow(FrontendApiError);
+  });
+
   it("adapts rpc query-task payload", () => {
     const out = adaptQueryTask({
       task_id: 42,

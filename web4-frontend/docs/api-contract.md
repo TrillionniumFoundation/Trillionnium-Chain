@@ -83,6 +83,7 @@ const normalizedEvents = await api.queryNormalizedAuditEvents({
 ## 变更规则
 
 - 仅允许**向后兼容**的增量字段变更。
+- canonical 只读查询响应当前按 **fail-closed** 处理：未在 `schemas.ts` 声明的根字段或条目字段，不应被前端静默接收。
 - 破坏性变更必须同 PR 更新：
   - `types.ts`
   - `schemas.ts`
