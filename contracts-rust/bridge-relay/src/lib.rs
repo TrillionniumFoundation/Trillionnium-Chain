@@ -1426,6 +1426,27 @@ mod tests {
                 && event.related_id == Some(hex32(&old_admin))
                 && event.reason.as_deref() == Some("admin_rotation")
         }));
+        assert!(normalized.iter().any(|event| {
+            event.event_type == "bridge_relay.config_version_updated"
+                && event.amount == Some(4)
+                && event.object_id.is_none()
+                && event.related_id.is_none()
+                && event.reason.as_deref() == Some("config_version=3->4")
+        }));
+        assert!(normalized.iter().any(|event| {
+            event.event_type == "bridge_relay.min_signatures_updated"
+                && event.amount == Some(2)
+                && event.object_id.is_none()
+                && event.related_id.is_none()
+                && event.reason.as_deref() == Some("old_min=2, new_min=2")
+        }));
+        assert!(normalized.iter().any(|event| {
+            event.event_type == "bridge_relay.validators_updated"
+                && event.amount == Some(2)
+                && event.object_id.is_none()
+                && event.related_id.is_none()
+                && event.reason.as_deref() == Some("previous_count=1, new_count=2")
+        }));
 
         relay.consume_audit_log().into_iter().for_each(|event| {
             if let BridgeRelayEvent::ProofSubmittedAndStored {
