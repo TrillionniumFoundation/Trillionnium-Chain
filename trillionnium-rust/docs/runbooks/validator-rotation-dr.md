@@ -100,6 +100,24 @@ Before touching validator ownership, all of the following must be true:
 
 If any invariant fails, stop before continuing.
 
+## Incident boundary: compromise is not a normal rotation
+
+This runbook covers planned or explicitly-audited `replacement`, `rotation`, and `dr_rebuild` events.
+It does **not** authorize a cutover that starts from suspected key compromise, signer leakage, or validator identity theft.
+
+Treat the event as incident response instead of routine rotation if any of the following is true:
+- the outgoing validator key may be exposed, copied, or controlled by an unknown party
+- the operator cannot state whether the current signer is still trustworthy
+- ownership transfer depends on "rotate first, investigate later"
+- the rollback path would restore a validator identity that is itself suspected compromised
+
+Fail-closed rule:
+- stop the normal replacement / rotation / DR flow
+- preserve the concrete evidence already gathered (`verified_worktree=`, `verified_branch_ref=`, `verified_head=`, current process ownership notes, and any generated report paths)
+- open a dedicated compromise-response track before any public-mainnet-facing handoff is called reproducible
+
+A planned validator replacement can become a compromise event mid-flight. If that happens, mark the current cutover `result=FAIL`, preserve the partially collected evidence, and do not relabel the same artifact set as a successful `rotation`.
+
 ## Minimal procedure
 
 ### 1. Re-prove worktree identity
@@ -386,6 +404,7 @@ Treat replacement/rotation/DR as **No-Go** if any of the following is true:
 - the event depends on unstaged edits or undocumented manual shell state
 - DR rebuild is claimed without a concrete recovery artifact
 - the operator cannot quote the rollback command verbatim
+- the event begins from suspected signer/key compromise or validator identity theft rather than a planned/audited cutover
 
 ## Rollback discipline
 
