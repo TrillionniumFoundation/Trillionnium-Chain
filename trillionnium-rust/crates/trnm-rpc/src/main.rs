@@ -2726,6 +2726,22 @@ fn is_health_probe_path(path: &str) -> bool {
         "/status/",
         "/statusz",
         "/statusz/",
+        "/-/health",
+        "/-/health/",
+        "/-/healthz",
+        "/-/healthz/",
+        "/-/live",
+        "/-/live/",
+        "/-/livez",
+        "/-/livez/",
+        "/-/ready",
+        "/-/ready/",
+        "/-/readyz",
+        "/-/readyz/",
+        "/-/status",
+        "/-/status/",
+        "/-/statusz",
+        "/-/statusz/",
     ]
     .iter()
     .any(|alias| path.eq_ignore_ascii_case(alias))
@@ -5272,6 +5288,29 @@ mod tests {
         assert_eq!(parse_http_request_target("GET /health HTTP/2"), None);
         assert_eq!(parse_http_request_target("GET /health HTTP/1.1junk"), None);
         assert_eq!(parse_http_request_target("GET /health http/1.1"), None);
+    }
+
+    #[test]
+    fn health_probe_aliases_include_dash_prefixed_operator_paths() {
+        assert!(is_health_probe_path("/-/health"));
+        assert!(is_health_probe_path("/-/healthz/"));
+        assert!(is_health_probe_path("/-/live"));
+        assert!(is_health_probe_path("/-/readyz/"));
+        assert!(is_health_probe_path("/-/status"));
+        assert!(is_health_probe_path("/-/STATUSZ/"));
+        assert!(!is_health_probe_path("/-/statuscheck"));
+    }
+
+    #[test]
+    fn parse_http_request_target_preserves_query_string_for_dash_prefixed_health_aliases() {
+        assert_eq!(
+            parse_http_request_target("HEAD /-/statusz/?from=ops&probe=lb HTTP/1.1"),
+            Some(("HEAD", "/-/statusz/?from=ops&probe=lb"))
+        );
+        assert_eq!(
+            parse_http_get_path("GET /-/readyz?probe=lb HTTP/1.1"),
+            Some("/-/readyz")
+        );
     }
 
     #[test]
