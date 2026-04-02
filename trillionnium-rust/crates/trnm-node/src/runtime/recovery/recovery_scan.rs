@@ -638,7 +638,8 @@ mod tests {
                 && err.contains("retained 2 committed WAL entries through height 7")
                 && err.contains("checkpoint lags retained WAL tip by 2 blocks")
                 && err.contains("last retained checkpoint: 5")
-                && err.contains("next startup height: 8"),
+                && err.contains("next startup height: 8")
+                && err.contains("incident clue: retained_wal_entries=2 checkpoint_height_retained=5 checkpoint_tip_relation=behind:2 next_startup_height=8 wal_tail_truncated=true metadata_only_recovery=true join_rejoin_status=blocked:metadata_only_recovery"),
             "unexpected metadata-only recovery error: {err}"
         );
     }
