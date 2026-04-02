@@ -344,6 +344,48 @@ fn query_normalized_audit_events_supports_adapter_source_filter() {
 }
 
 #[test]
+fn query_normalized_audit_events_uses_deterministic_tiebreakers_for_same_height_and_type() {
+    let recs = vec![
+        AdapterRecord {
+            ts: 77,
+            kind: "commit".into(),
+            task_id: 9,
+            worker: Some("worker-z".into()),
+            result_hash: None,
+            status: "accepted".into(),
+            tx_hash: Some("0xbbb".into()),
+        },
+        AdapterRecord {
+            ts: 77,
+            kind: "commit".into(),
+            task_id: 4,
+            worker: Some("worker-a".into()),
+            result_hash: None,
+            status: "accepted".into(),
+            tx_hash: Some("0xaaa".into()),
+        },
+    ];
+
+    let out = query_normalized_audit_events(
+        &[],
+        &recs,
+        &QueryNormalizedAuditEventsQuery {
+            source: Some("trnm.adapter".into()),
+            event_type: Some("trnm.adapter.commit".into()),
+            cursor: None,
+            limit: 10,
+        },
+    );
+
+    assert_eq!(out.total, Some(2));
+    assert_eq!(out.events.len(), 2);
+    assert_eq!(out.events[0].object_id.as_deref(), Some("task:4"));
+    assert_eq!(out.events[0].actor.as_deref(), Some("worker-a"));
+    assert_eq!(out.events[1].object_id.as_deref(), Some("task:9"));
+    assert_eq!(out.events[1].actor.as_deref(), Some("worker-z"));
+}
+
+#[test]
 fn query_normalized_audit_events_bounds_node_reason_and_note_fields() {
     let long_status = "A".repeat(120);
     let long_resolution = "r".repeat(220);

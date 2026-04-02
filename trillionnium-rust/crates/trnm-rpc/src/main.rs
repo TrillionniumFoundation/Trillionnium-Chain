@@ -3860,6 +3860,12 @@ fn query_normalized_audit_events(
         right_height
             .cmp(&left_height)
             .then_with(|| left.event_type.cmp(&right.event_type))
+            .then_with(|| left.source.cmp(&right.source))
+            .then_with(|| left.object_id.as_deref().unwrap_or("").cmp(right.object_id.as_deref().unwrap_or("")))
+            .then_with(|| left.actor.as_deref().unwrap_or("").cmp(right.actor.as_deref().unwrap_or("")))
+            .then_with(|| left.checked_at.as_deref().unwrap_or("").cmp(right.checked_at.as_deref().unwrap_or("")))
+            .then_with(|| left.note.as_deref().unwrap_or("").cmp(right.note.as_deref().unwrap_or("")))
+            .then_with(|| left.reason.as_deref().unwrap_or("").cmp(right.reason.as_deref().unwrap_or("")))
     });
 
     let total = events.len();
