@@ -292,6 +292,10 @@ impl GovernanceGuard {
             )
         };
 
+        if !self.allowed_param_keys.contains(&param_key) {
+            return Err(Error::InvalidParamKey);
+        }
+
         let version = self
             .bridge
             .param_versions
@@ -811,6 +815,44 @@ mod tests {
 
         let p = gov.proposal(pid2).unwrap();
         assert_eq!(p.status, ProposalStatus::Queued);
+    }
+
+    #[test]
+    fn execute_rejects_if_param_key_removed_after_queue() {
+        let mut gov = setup();
+        let now = 3_300;
+        let eta = now + 60;
+
+        let pid = gov
+            .propose(
+                "alice",
+                "challenge_window_blocks",
+                "100",
+                "135",
+                eta,
+                "reason-key-revoked",
+                now,
+            )
+            .unwrap();
+        gov.queue("alice", pid).unwrap();
+
+        gov.set_allowed_param_key("admin", "challenge_window_blocks", false)
+            .unwrap();
+
+        let err = gov.execute("exec", pid, eta).unwrap_err();
+        assert_eq!(err, Error::InvalidParamKey);
+
+        let p = gov.proposal(pid).unwrap();
+        assert_eq!(p.status, ProposalStatus::Queued);
+        assert_eq!(p.executor, None);
+        assert_eq!(p.executed_at, None);
+        assert_eq!(
+            gov.bridge_state()
+                .gov_params
+                .get("challenge_window_blocks")
+                .map(String::as_str),
+            Some("100")
+        );
     }
 
     #[test]
