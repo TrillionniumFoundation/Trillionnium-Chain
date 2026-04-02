@@ -107,6 +107,30 @@ describe("api-contract client and retry hardening", () => {
     expect(fetchImpl).not.toHaveBeenCalled();
   });
 
+  it("fails closed on unknown normalized audit query params", async () => {
+    const fetchImpl = vi.fn();
+
+    const client = createFrontendApiClient({
+      baseUrl: "http://127.0.0.1:8080",
+      fetchImpl: fetchImpl as unknown as typeof fetch,
+    });
+
+    try {
+      client.queryNormalizedAuditEvents({
+        source: "governance-guard",
+        unknownFilter: "shadow-mode",
+      } as never);
+      throw new Error("expected unknown query field to throw");
+    } catch (error) {
+      expect(error).toBeInstanceOf(FrontendApiError);
+      expect(error).toMatchObject({
+        code: "INVALID_PAYLOAD",
+      });
+    }
+
+    expect(fetchImpl).not.toHaveBeenCalled();
+  });
+
   it("uses normalized audit endpoint", async () => {
     const fetchImpl = vi.fn().mockResolvedValue({
       ok: true,

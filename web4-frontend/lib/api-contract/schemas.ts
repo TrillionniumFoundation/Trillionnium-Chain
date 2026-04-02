@@ -79,7 +79,7 @@ export const normalizedAuditEventsQuerySchema = z.object({
   eventType: z.string().trim().min(1).optional(),
   limit: z.number().int().positive().optional(),
   cursor: z.string().trim().min(1).optional(),
-});
+}).strict();
 
 export const queryNormalizedAuditEventsResponseSchema = z.union([
   queryNormalizedAuditEventsPageSchema,
