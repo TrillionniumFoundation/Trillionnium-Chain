@@ -127,6 +127,7 @@ pub(crate) enum WalDirMode {
 }
 
 #[derive(Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub(crate) struct NodeConfig {
     pub(crate) node_id: String,
     pub(crate) rpc_addr: String,
