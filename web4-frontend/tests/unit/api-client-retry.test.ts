@@ -119,4 +119,34 @@ describe("api-contract client and retry hardening", () => {
 
     expect(attempts).toBe(1);
   });
+
+  it("fails closed when aborted during retry backoff", async () => {
+    const controller = new AbortController();
+    let attempts = 0;
+
+    const run = withRetry(
+      async () => {
+        attempts += 1;
+        throw new FrontendApiError({
+          code: "NETWORK",
+          message: "temporary",
+          retryable: true,
+        });
+      },
+      {
+        retries: 2,
+        baseDelayMs: 20,
+        maxDelayMs: 20,
+        signal: controller.signal,
+      },
+    );
+
+    setTimeout(() => controller.abort("user canceled"), 0);
+
+    await expect(run).rejects.toMatchObject({
+      code: "ABORTED",
+      retryable: false,
+    });
+    expect(attempts).toBe(1);
+  });
 });
