@@ -138,7 +138,32 @@ if ! command -v python3 >/dev/null 2>&1; then
   exit 1
 fi
 
-if command -v lsof >/dev/null 2>&1 && lsof -iTCP:"${PORT}" -sTCP:LISTEN >/dev/null 2>&1; then
+port_has_listener() {
+  if command -v lsof >/dev/null 2>&1; then
+    lsof -iTCP:"${PORT}" -sTCP:LISTEN >/dev/null 2>&1
+    return $?
+  fi
+
+  python3 - <<'PY' "${HOST}" "${PORT}"
+import socket
+import sys
+
+host = sys.argv[1]
+port = int(sys.argv[2])
+family = socket.AF_INET6 if ":" in host else socket.AF_INET
+sock = socket.socket(family, socket.SOCK_STREAM)
+try:
+    sock.bind((host, port))
+except OSError:
+    sys.exit(0)
+else:
+    sys.exit(1)
+finally:
+    sock.close()
+PY
+}
+
+if port_has_listener; then
   echo "refusing to start explorer service scaffold: ${HOST}:${PORT} already has a listener"
   emit_contract_fields
   exit 1
