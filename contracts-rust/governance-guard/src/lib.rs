@@ -499,7 +499,9 @@ impl GovernanceGuard {
     }
 
     pub fn consume_audit_log(&mut self) -> Vec<GovernanceEvent> {
-        std::mem::take(&mut self.audit_log)
+        let mut consumed = std::mem::take(&mut self.audit_log);
+        consumed.push(GovernanceEvent::AuditLogCleared);
+        consumed
     }
 
     pub fn normalized_audit_log(&self) -> Vec<AuditEvent> {
@@ -954,6 +956,9 @@ mod tests {
         assert!(normalized
             .iter()
             .any(|event| event.source == "governance-guard"));
+        assert!(logs
+            .iter()
+            .any(|event| matches!(event, GovernanceEvent::AuditLogCleared)));
 
         assert!(gov.audit_log().is_empty());
     }
