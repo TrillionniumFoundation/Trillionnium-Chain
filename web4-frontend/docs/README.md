@@ -28,6 +28,8 @@
 - 仓库级 truth source：[`../../RELEASE_READINESS.md`](../../RELEASE_READINESS.md)
 - Web4 平台主文档：[`../../docs/WEB4_INFRA_PLATFORM_DEVELOPMENT_MASTER.md`](../../docs/WEB4_INFRA_PLATFORM_DEVELOPMENT_MASTER.md)
 
+> 当前更准确的外部口径应是：**强链核 + 初步平台壳的 Alpha 后段项目**，而不是 Beta / production-ready Web4 platform。
+
 ---
 
 ## 命令统一约定
