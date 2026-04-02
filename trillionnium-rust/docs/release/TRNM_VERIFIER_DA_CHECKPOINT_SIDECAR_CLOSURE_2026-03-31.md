@@ -267,6 +267,59 @@ Use this when deciding whether verifier-sidecar scope is still trailing work or 
 - outage handling lacks replayable evidence capture
 - operator handoff cannot show which schema/policy version produced a verdict
 
+## Current repository mapping (implemented today)
+
+The current repository does not yet expose a full standalone verifier sidecar service boundary, but it already contains one concrete **checkpoint/DA evidence surface** that release review can point at without over-claiming product readiness:
+
+- `trnm-state::checkpoint_evidence_surface_is_canonical(...)`
+- `trnm-state::checkpoint_da_light_verifier_summary(...)`
+
+These helpers are not the whole sidecar, but they already establish a fail-closed floor for the checkpoint/WAL tuple that any future sidecar contract must preserve.
+
+### What the current helper surface already proves
+
+For canonical checkpoint/WAL evidence, `checkpoint_da_light_verifier_summary(...)` currently emits operator-reviewable fields covering at least:
+
+- checkpoint identity anchors:
+  - `checkpoint_height`
+  - `checkpoint_state_root`
+  - `checkpoint_wal_entry_hash`
+  - derived `checkpoint_commitment`
+- WAL linkage anchors:
+  - `wal_height`
+  - `wal_round`
+  - `wal_proposal_hash`
+  - `wal_committed`
+  - `wal_state_root`
+  - `wal_prev_hash`
+  - derived `wal_content_hash`
+- canonicalization metadata:
+  - `*_kind=canonical-hex-32b` and `*_bytes=32` for digest surfaces
+  - height/round encoding metadata
+  - `wal_proposal_hash_surface_policy=ascii-trimmed-no-ws-control-max256`
+  - `wal_prev_hash_surface_policy=canonical-hex-32b-or-none`
+- binding/invariant metadata:
+  - `checkpoint_height_matches_wal=true`
+  - `checkpoint_state_root_matches_wal=true`
+  - `checkpoint_wal_entry_hash_matches_wal=true`
+  - `wal_content_hash_matches_checkpoint=true`
+  - `checkpoint_surface_canonical=true`
+
+This means the repository already has one concrete, replayable checkpoint/DA summary surface that:
+
+1. binds a checkpoint to a single WAL tuple;
+2. preserves canonical lower-hex digest semantics for checkpoint/state/WAL hashes;
+3. distinguishes genesis vs non-genesis predecessor linkage through explicit `wal_prev_hash_*` metadata; and
+4. fails closed by returning no summary when canonicalization or linkage invariants do not hold.
+
+### Release-review interpretation boundary
+
+This helper surface should be cited as **implemented evidence linkage**, not as proof that the full verifier sidecar is productized.
+
+Accurate wording today:
+
+> the repository already exposes a fail-closed checkpoint/WAL audit summary suitable for DA/light-verifier evidence linkage review, but it does not yet by itself close the higher-level sidecar service contract, retry policy ownership, or deployable runtime boundary.
+
 ## Suggested next closure slice
 
 The next low-risk engineering slice should prefer one of:
