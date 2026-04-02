@@ -737,4 +737,59 @@ describe("dashboard source normalized audit pagination", () => {
       "bridge-relay:proof-347b",
     ]);
   });
+
+  it("normalizes blank normalized-audit source and event type into stable dashboard fallbacks", async () => {
+    const mockClient = {
+      queryTask: vi
+        .fn()
+        .mockResolvedValue({
+          task: {
+            id: "348",
+            owner: "ops",
+            status: "running",
+            createdAt: "2026-03-01T00:00:00.000Z",
+            updatedAt: "2026-03-01T00:05:00.000Z",
+            metadata: {},
+          },
+        }),
+      queryEvents: vi.fn().mockResolvedValue({
+        taskId: "348",
+        events: [],
+      }),
+      queryCapabilityAudit: vi.fn().mockResolvedValue({
+        subject: "did:trnm:test",
+        audits: [
+          {
+            subject: "did:trnm:test",
+            capability: "AUDIT_READ",
+            granted: true,
+            checkedAt: "2026-03-01T00:00:00.000Z",
+          },
+        ],
+      }),
+      queryNormalizedAuditEvents: vi.fn().mockResolvedValue({
+        events: [
+          {
+            source: "   ",
+            event_type: "\n",
+            actor: "   ",
+            timestamp: "2026-03-01T00:02:00.000Z",
+            reason: "warn",
+          },
+        ],
+        hasMore: false,
+      }),
+    } as unknown as ReturnType<typeof apiContractClient.createFrontendApiClient>;
+
+    vi.spyOn(apiContractClient, "createFrontendApiClient").mockReturnValue(mockClient);
+
+    const snapshot = await fetchDashboardSnapshot();
+    const fallbackEvent = snapshot.events.find((event) => event.id === "unknown-source:unknown-event:system");
+
+    expect(fallbackEvent).toMatchObject({
+      summary: "unknown-source · unknown-event",
+      severity: "Warning",
+      category: "Incident",
+    });
+  });
 });

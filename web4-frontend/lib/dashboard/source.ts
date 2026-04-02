@@ -197,8 +197,14 @@ const mapEventCategory = (
   return "Incident";
 };
 
+const normalizeDashboardEventToken = (value: string | undefined, fallback: string): string => {
+  const normalized = value?.trim();
+  return normalized && normalized.length > 0 ? normalized : fallback;
+};
+
 const mapNormalizedAuditSeverity = (event: NormalizedAuditEvent): DashboardSnapshot["events"][number]["severity"] => {
-  const tokens = `${event.reason ?? ""} ${event.note ?? ""} ${event.event_type}`.toLowerCase();
+  const normalizedEventType = normalizeDashboardEventToken(event.event_type, "unknown-event");
+  const tokens = `${event.reason ?? ""} ${event.note ?? ""} ${normalizedEventType}`.toLowerCase();
 
   if (tokens.includes("error") || tokens.includes("fail") || tokens.includes("reject") || tokens.includes("invalid")) {
     return "Critical";
@@ -210,13 +216,17 @@ const mapNormalizedAuditSeverity = (event: NormalizedAuditEvent): DashboardSnaps
 };
 
 const mapNormalizedAuditToDashboardEvent = (event: NormalizedAuditEvent, fallbackTime: string): DashboardSnapshot["events"][number] => {
+  const source = normalizeDashboardEventToken(event.source, "unknown-source");
+  const eventType = normalizeDashboardEventToken(event.event_type, "unknown-event");
+  const actor = normalizeDashboardEventToken(event.actor, "system");
+
   return {
     id: event.object_id
-      ? `${event.source}:${event.object_id}`
-      : `${event.source}:${event.event_type}:${event.actor ?? "system"}`,
+      ? `${source}:${event.object_id}`
+      : `${source}:${eventType}:${actor}`,
     time: toDisplayTime(event.timestamp ?? event.checkedAt ?? fallbackTime),
-    category: mapEventCategory(event.event_type),
-    summary: `${event.source} · ${event.event_type}`,
+    category: mapEventCategory(eventType),
+    summary: `${source} · ${eventType}`,
     severity: mapNormalizedAuditSeverity(event),
     details: JSON.stringify({
       actor: event.actor,
