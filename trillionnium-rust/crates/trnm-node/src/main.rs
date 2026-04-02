@@ -4192,6 +4192,7 @@ mod tests {
             "do not treat `node2`, `node3`, or `node4` as a valid replacement bootstrap anchor; restore the shipped `node1` anchor first and fail closed otherwise",
             "bring the node back with the same config file and the same `node_id`/listener tuple",
             "unknown fields, whitespace drift, host-like or path-like ids, URI-like delimiters, non-canonical socket literals, privileged ports, wildcard listeners, reserved documentation/benchmarking listener ranges, or mixed listener IP families, the config loader must fail closed",
+            "The regression tests in `crates/trnm-node/src/config.rs` are the source of truth for the exact fixture invariants.",
         ] {
             assert!(
                 readme.contains(expected_phrase),
