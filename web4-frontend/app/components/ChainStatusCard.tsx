@@ -29,9 +29,18 @@ export function ChainStatusCard({ status }: { status: ChainStatus }) {
   const unavailableCount = normalizedValues.filter((value) => value === "Unavailable").length;
   const isSnapshotUnavailable = unavailableCount === normalizedValues.length;
   const isSnapshotPartial = unavailableCount > 0 && !isSnapshotUnavailable;
+  const alertId = isSnapshotUnavailable
+    ? "chain-status-unavailable"
+    : isSnapshotPartial
+      ? "chain-status-partial"
+      : undefined;
 
   return (
-    <section aria-label="chain-status" className="w-full rounded-xl border border-zinc-200 p-4">
+    <section
+      aria-label="chain-status"
+      aria-describedby={alertId}
+      className="w-full rounded-xl border border-zinc-200 p-4"
+    >
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <h2 className="text-lg font-semibold">Chain Status (Read-only)</h2>
@@ -45,6 +54,7 @@ export function ChainStatusCard({ status }: { status: ChainStatus }) {
       </div>
       {isSnapshotUnavailable && (
         <p
+          id="chain-status-unavailable"
           role="alert"
           aria-live="assertive"
           className="mt-3 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800"
@@ -54,6 +64,7 @@ export function ChainStatusCard({ status }: { status: ChainStatus }) {
       )}
       {isSnapshotPartial && (
         <p
+          id="chain-status-partial"
           role="status"
           aria-live="polite"
           className="mt-3 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800"

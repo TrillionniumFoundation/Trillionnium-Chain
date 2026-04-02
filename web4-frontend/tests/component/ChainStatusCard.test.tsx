@@ -43,6 +43,8 @@ describe("ChainStatusCard", () => {
       "Readonly chain snapshot is unavailable. Verify the adapter payload before trusting this card.",
     );
     expect(alert).toHaveAttribute("aria-live", "assertive");
+    expect(alert).toHaveAttribute("id", "chain-status-unavailable");
+    expect(screen.getByLabelText("chain-status")).toHaveAttribute("aria-describedby", "chain-status-unavailable");
     expect(screen.getByText("Network: Unavailable")).toBeInTheDocument();
     expect(screen.getByText("Latest block: Unavailable")).toBeInTheDocument();
     expect(screen.getByText("Finality: Unavailable")).toBeInTheDocument();
@@ -66,6 +68,8 @@ describe("ChainStatusCard", () => {
       "Readonly chain snapshot is partial. Unavailable fields stay fail-closed until the adapter provides them.",
     );
     expect(status).toHaveAttribute("aria-live", "polite");
+    expect(status).toHaveAttribute("id", "chain-status-partial");
+    expect(screen.getByLabelText("chain-status")).toHaveAttribute("aria-describedby", "chain-status-partial");
     expect(screen.getByText("Network: Unavailable")).toBeInTheDocument();
     expect(screen.getByText("Latest block: 512")).toBeInTheDocument();
     expect(screen.getByText("Finality: finalizing")).toBeInTheDocument();
