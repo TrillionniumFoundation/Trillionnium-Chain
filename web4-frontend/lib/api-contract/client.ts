@@ -91,6 +91,18 @@ const isAbortLikeError = (err: unknown): boolean => {
   return name === "AbortError" || code === "ABORT_ERR";
 };
 
+const TIMEOUT_ERROR_CODES = new Set([
+  "UND_ERR_CONNECT_TIMEOUT",
+  "UND_ERR_HEADERS_TIMEOUT",
+  "UND_ERR_BODY_TIMEOUT",
+  "ETIMEDOUT",
+  "ESOCKETTIMEDOUT",
+]);
+
+const isTimeoutErrorCode = (code: unknown): boolean => {
+  return typeof code === "string" && TIMEOUT_ERROR_CODES.has(code);
+};
+
 const isTimeoutLikeError = (err: unknown): boolean => {
   if (!(err && typeof err === "object")) return false;
 
@@ -99,23 +111,14 @@ const isTimeoutLikeError = (err: unknown): boolean => {
   const cause = "cause" in err ? err.cause : undefined;
 
   if (name === "TimeoutError") return true;
-  if (
-    code === "UND_ERR_CONNECT_TIMEOUT" ||
-    code === "UND_ERR_HEADERS_TIMEOUT" ||
-    code === "UND_ERR_BODY_TIMEOUT"
-  ) {
+  if (isTimeoutErrorCode(code)) {
     return true;
   }
 
   if (cause && typeof cause === "object") {
     const causeName = "name" in cause ? cause.name : undefined;
     const causeCode = "code" in cause ? cause.code : undefined;
-    return (
-      causeName === "TimeoutError" ||
-      causeCode === "UND_ERR_CONNECT_TIMEOUT" ||
-      causeCode === "UND_ERR_HEADERS_TIMEOUT" ||
-      causeCode === "UND_ERR_BODY_TIMEOUT"
-    );
+    return causeName === "TimeoutError" || isTimeoutErrorCode(causeCode);
   }
 
   return false;
