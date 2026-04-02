@@ -3040,6 +3040,27 @@ mod tests {
     }
 
     #[test]
+    fn duplicate_or_backpressured_probe_noise_does_not_mutate_fairness_state() {
+        let mut g = LaneAdmissionGate::new(3, 1);
+
+        // Warm fairness under genuine mixed backlog.
+        assert_eq!(g.admit(100, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.critical_served_streak, g.critical_burst_limit);
+
+        let warmed = g.critical_served_streak;
+
+        // Once the lane is saturated, duplicate and fresh retry probes must keep the
+        // existing fairness state unchanged instead of masquerading as new backlog.
+        assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Duplicate);
+        assert_eq!(g.critical_served_streak, warmed);
+
+        assert_eq!(g.admit(9, IngressClass::Normal), AdmitOutcome::Backpressured);
+        assert_eq!(g.critical_served_streak, warmed);
+    }
+
+    #[test]
     fn zero_capacity_admission_gate_does_not_poison_idempotency_after_backpressure() {
         let mut g = AdmissionGate::new(0);
 
