@@ -153,8 +153,17 @@ REQUESTED_TX_HASH="0x...captured-from-submit-path..."
 ./target/debug/trnm-cli tx wait "$REQUESTED_TX_HASH" --timeout 30 --interval 2
 ```
 
+If the submit path is `trnm-cli` itself, capture the first shell-safe hash line once and freeze it as the operator truth-source before any later lookup rewrites the screen context:
+
+```bash
+SUBMIT_LOG=/tmp/trnm-submit.log
+./target/debug/trnm-cli tx ... | tee "$SUBMIT_LOG"
+REQUESTED_TX_HASH="$(grep -m1 '^tx_hash="0x' "$SUBMIT_LOG" | sed -E 's/^tx_hash="([^"]+)"$/\1/')"
+```
+
 Operator input rule:
 - capture the submit-path hash in canonical `0x...` form exactly once and reuse that same value for every follow-up command
+- prefer the first emitted `tx_hash="0x..."` line from `trnm-cli` because it is shell-safe and maps directly to the canonical hash preserved in local pending state
 - do **not** strip the `0x` prefix or replace the original submit-path hash with a later explorer/log rendering; `trnm-cli tx query` and `trnm-cli tx wait` fail closed on bare hex input because a missing prefix is treated as ambiguous operator evidence, not harmless formatting drift
 - when the submit path is `trnm-cli` itself, preserve the first emitted `tx_hash=` line as the operator truth-source and keep the corresponding local pending-state record (`run/rpc/txs.json`, or `TRNM_RPC_TX_FILE` if overridden) until cutover validation is complete
 
