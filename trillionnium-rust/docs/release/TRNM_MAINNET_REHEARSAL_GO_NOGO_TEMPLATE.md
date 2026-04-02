@@ -107,6 +107,11 @@ Record:
 - handoff_helper_output_path=
 - preflight_result=
 - preflight_generated_at=
+- preflight_git_toplevel=
+- preflight_git_branch=
+- preflight_git_head=
+- preflight_git_head_state=
+- preflight_git_status_summary=
 - preflight_expected_worktree_root=
 - preflight_expected_branch_ref=
 - preflight_expected_head=
