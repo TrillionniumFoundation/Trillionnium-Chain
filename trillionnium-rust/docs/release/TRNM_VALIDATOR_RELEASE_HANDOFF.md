@@ -386,10 +386,11 @@ Record these fields in the release ticket or operator handoff note:
 - branch (`git_branch`; quote the helper/artifact field verbatim rather than paraphrasing):
 - commit (`git_head`; quote the helper/artifact field verbatim rather than paraphrasing):
 - signer exclusivity note (which process/host/worktree owns the validator identity during this rehearsal):
-- worktree:
-- worktree branch ref:
-- worktree branch ref match (`git_worktree_branch_ref_match`; when using `extract_release_handoff_fields.sh`, the helper emits this once because it already asserts the value matches across `summary.txt` and `manifest.txt`):
-- git status summary (`git_status_summary`):
+- worktree (`git_worktree_path`; quote the helper/artifact field verbatim rather than paraphrasing it as "this checkout" or re-reading `pwd`):
+- worktree branch ref (`git_worktree_branch_ref`; quote the helper/artifact field verbatim rather than inferring it from the shell prompt):
+- expected worktree branch ref (`git_expected_worktree_branch_ref`; preserve the ticket-assigned target verbatim so later readers can tell what the artifacts were checked against):
+- worktree branch ref match (`git_worktree_branch_ref_match`; when using `extract_release_handoff_fields.sh`, the helper emits this once because it already asserts the value matches across `summary.txt` and `manifest.txt`; `true` is required, not a soft warning):
+- git status summary (`git_status_summary`; `clean` is required for a releasable handoff artifact):
 - preflight summary path (use the helper output verbatim; if it prints `<missing>`, treat preflight evidence retention as incomplete rather than omitting the field):
 - local evidence summary path:
 - local evidence generated_at (`summary_generated_at`, or raw `generated_at=` when quoting `summary.txt` directly):
