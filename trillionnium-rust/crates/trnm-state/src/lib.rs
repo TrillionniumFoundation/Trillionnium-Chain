@@ -3,8 +3,8 @@ use sha2::{Digest, Sha256};
 use std::collections::BTreeMap;
 use std::sync::RwLock;
 use trnm_types::{
-    GovParamKey, GovParamObject, GovProposalObject, GovProposalStatus, Hash32,
-    EMERGENCY_PAUSE_KEY_ID, ObjectRef, TaskObject, TaskStatus,
+    GovParamKey, GovParamObject, GovProposalObject, GovProposalStatus, Hash32, ObjectRef,
+    TaskObject, TaskStatus, EMERGENCY_PAUSE_KEY_ID,
 };
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -580,13 +580,25 @@ const GOV_SCHEMA_INVALID_SAMPLES: &[(&str, &str)] = &[
     ("llm_meter_decode_step_weight", "1000000000001"),
     ("llm_meter_kv_byte_weight", "1000000000001"),
     ("llm_meter_min_accept_work_units", "1000000000001"),
-    ("llm_meter_challenge_success_bounty_per_work_unit_num", "1000000000001"),
+    (
+        "llm_meter_challenge_success_bounty_per_work_unit_num",
+        "1000000000001",
+    ),
     ("llm_meter_challenge_success_bounty_per_work_unit_den", "0"),
-    ("llm_meter_worker_completion_bonus_per_work_unit_num", "1000000000001"),
+    (
+        "llm_meter_worker_completion_bonus_per_work_unit_num",
+        "1000000000001",
+    ),
     ("llm_meter_worker_completion_bonus_per_work_unit_den", "0"),
-    ("llm_meter_worker_slash_rebate_per_work_unit_num", "1000000000001"),
+    (
+        "llm_meter_worker_slash_rebate_per_work_unit_num",
+        "1000000000001",
+    ),
     ("llm_meter_worker_slash_rebate_per_work_unit_den", "0"),
-    ("resolve_authority", "resolver-a,governance.resolve_authority"),
+    (
+        "resolve_authority",
+        "resolver-a,governance.resolve_authority",
+    ),
     ("emergency_pause", "TRUE"),
     ("monetary_policy_tick_interval_blocks", "0"),
     ("monetary_policy_tick_cooldown_blocks", "0"),
@@ -596,10 +608,11 @@ const GOV_SCHEMA_INVALID_SAMPLES: &[(&str, &str)] = &[
 const DEFAULT_RESOLVE_AUTHORITY_PLACEHOLDER: &str = "governance.resolve_authority";
 
 fn governance_pinned_key_id_from_lists(pinned_key_ids: &[(&str, u64)], key: &str) -> Option<u64> {
-    governance_expected_key_id(key)
-        .filter(|expected_id| pinned_key_ids.iter().any(|(pinned_key, pinned_id)| {
-            *pinned_key == key && *pinned_id == *expected_id
-        }))
+    governance_expected_key_id(key).filter(|expected_id| {
+        pinned_key_ids
+            .iter()
+            .any(|(pinned_key, pinned_id)| *pinned_key == key && *pinned_id == *expected_id)
+    })
 }
 
 #[allow(dead_code)]
@@ -1101,7 +1114,8 @@ fn terminal_challenge_retention_is_consistent(task: &TaskObject) -> bool {
         return false;
     }
 
-    if task.status == TaskStatus::Slashed && has_bond && task.challenge_bond_forfeited != Some(true) {
+    if task.status == TaskStatus::Slashed && has_bond && task.challenge_bond_forfeited != Some(true)
+    {
         return false;
     }
 
@@ -4466,9 +4480,9 @@ pub fn verify_wal_and_find_checkpoint_node_recovery(
             return Ok(best_checkpoint);
         }
         if !matching_hash_checkpoints.is_empty()
-            && checkpoints_at_height
-                .iter()
-                .any(|cp| cp.state_root_hex == e.state_root_hex && cp.wal_entry_hash_hex != cur_hash)
+            && checkpoints_at_height.iter().any(|cp| {
+                cp.state_root_hex == e.state_root_hex && cp.wal_entry_hash_hex != cur_hash
+            })
         {
             return Ok(best_checkpoint);
         }
@@ -4784,6 +4798,52 @@ mod tests {
             checkpoint_da_light_verifier_summary(&checkpoint, &wal),
             None,
             "DA/light-verifier summaries must fail closed when WAL proposal_hash contains tab layout drift so sidecars never publish whitespace-sensitive checkpoint evidence"
+        );
+    }
+
+    #[test]
+    fn checkpoint_da_light_verifier_summary_fails_closed_on_embedded_newline_proposal_hash() {
+        let wal = WalMeta {
+            height: 7,
+            round: 3,
+            proposal_hash: "proposal-7\ncheckpoint".into(),
+            committed: true,
+            state_root_hex: "ab".repeat(32),
+            prev_hash_hex: Some("ef".repeat(32)),
+        };
+        let checkpoint = CheckpointMeta {
+            height: 7,
+            state_root_hex: wal.state_root_hex.clone(),
+            wal_entry_hash_hex: wal.content_hash_hex(),
+        };
+
+        assert_eq!(
+            checkpoint_da_light_verifier_summary(&checkpoint, &wal),
+            None,
+            "DA/light-verifier summaries must fail closed when WAL proposal_hash contains embedded newlines so sidecars never publish line-break-sensitive checkpoint evidence"
+        );
+    }
+
+    #[test]
+    fn checkpoint_da_light_verifier_summary_fails_closed_on_overlong_proposal_hash() {
+        let wal = WalMeta {
+            height: 7,
+            round: 3,
+            proposal_hash: "p".repeat(257),
+            committed: true,
+            state_root_hex: "ab".repeat(32),
+            prev_hash_hex: Some("ef".repeat(32)),
+        };
+        let checkpoint = CheckpointMeta {
+            height: 7,
+            state_root_hex: wal.state_root_hex.clone(),
+            wal_entry_hash_hex: wal.content_hash_hex(),
+        };
+
+        assert_eq!(
+            checkpoint_da_light_verifier_summary(&checkpoint, &wal),
+            None,
+            "DA/light-verifier summaries must fail closed when WAL proposal_hash exceeds the canonical 256-byte envelope so sidecars never publish unbounded checkpoint evidence identities"
         );
     }
 
@@ -7299,7 +7359,8 @@ mod tests {
     }
 
     #[test]
-    fn restore_pending_resolve_approval_accepts_canonical_equivalent_snapshot_under_configured_authority() {
+    fn restore_pending_resolve_approval_accepts_canonical_equivalent_snapshot_under_configured_authority(
+    ) {
         let mut restored = StateStore::new();
         restored.restore_gov_param(
             700,
@@ -10400,7 +10461,8 @@ mod tests {
     }
 
     #[test]
-    fn governance_restore_pending_update_noncanonical_emergency_pause_alias_scrubs_reserved_id_aliases() {
+    fn governance_restore_pending_update_noncanonical_emergency_pause_alias_scrubs_reserved_id_aliases(
+    ) {
         let mut st = StateStore::new();
         st.pending_gov_updates.insert(
             "resolve_authority".into(),
@@ -11504,8 +11566,12 @@ mod tests {
 
     #[test]
     fn governance_list_based_key_id_validation_reuses_shared_pinned_policy() {
-        assert!(validate_governance_key_id_from_lists(GOV_PINNED_KEY_IDS, "emergency_pause", 7_999)
-            .is_ok());
+        assert!(validate_governance_key_id_from_lists(
+            GOV_PINNED_KEY_IDS,
+            "emergency_pause",
+            7_999
+        )
+        .is_ok());
 
         let err =
             validate_governance_key_id_from_lists(GOV_PINNED_KEY_IDS, "emergency_pause", 8_000)
@@ -11980,8 +12046,12 @@ mod tests {
             "restore must repair same-key registry drift back to the reserved emergency_pause id"
         );
         assert_eq!(
-            st.get_param(EMERGENCY_PAUSE_KEY_ID)
-                .map(|param| (param.key_id, param.key, param.value, param.version)),
+            st.get_param(EMERGENCY_PAUSE_KEY_ID).map(|param| (
+                param.key_id,
+                param.key,
+                param.value,
+                param.version
+            )),
             Some((
                 EMERGENCY_PAUSE_KEY_ID,
                 "emergency_pause".into(),
@@ -12450,7 +12520,8 @@ mod tests {
     }
 
     #[test]
-    fn restore_pending_gov_update_rejects_emergency_pause_metadata_and_scrubs_reserved_id_aliases() {
+    fn restore_pending_gov_update_rejects_emergency_pause_metadata_and_scrubs_reserved_id_aliases()
+    {
         let mut st = StateStore::new();
 
         st.pending_gov_updates.insert(
@@ -13428,8 +13499,10 @@ mod tests {
             "governance pinned key-id registry contains duplicate keys"
         );
 
-        let pinned_ids: std::collections::BTreeSet<u64> =
-            GOV_PINNED_KEY_IDS.iter().map(|(_, key_id)| *key_id).collect();
+        let pinned_ids: std::collections::BTreeSet<u64> = GOV_PINNED_KEY_IDS
+            .iter()
+            .map(|(_, key_id)| *key_id)
+            .collect();
         assert_eq!(
             pinned_ids.len(),
             GOV_PINNED_KEY_IDS.len(),
@@ -13559,7 +13632,10 @@ mod tests {
                 version: 1,
             }),
         );
-        assert_eq!(st.gov_param_string("max_block_ms"), Some("1000".to_string()));
+        assert_eq!(
+            st.gov_param_string("max_block_ms"),
+            Some("1000".to_string())
+        );
 
         st.restore_gov_param(
             7_001,
@@ -13821,7 +13897,8 @@ mod tests {
     }
 
     #[test]
-    fn emergency_pause_enforce_action_numeric_literal_preserves_live_binding_and_pending_cleanliness() {
+    fn emergency_pause_enforce_action_numeric_literal_preserves_live_binding_and_pending_cleanliness(
+    ) {
         // Merge-gate guard: numeric truthy/falsey coercions must never sneak through the
         // emergency brake path. The control-plane bool stays strict and fail-closed.
         let mut st = StateStore::new();
@@ -13840,7 +13917,10 @@ mod tests {
             )
             .expect_err("enforce action must reject numeric bool literal");
 
-        assert!(err.contains("expected strict bool"), "unexpected error: {err}");
+        assert!(
+            err.contains("expected strict bool"),
+            "unexpected error: {err}"
+        );
         assert!(
             st.is_emergency_paused(),
             "rejected numeric enforce payload must preserve the live emergency brake"
@@ -14975,9 +15055,7 @@ mod tests {
             challenge_bond_forfeited: Some(false),
             version: 7,
         })
-        .expect(
-            "challenged task should still insert for blank challenger regression coverage",
-        );
+        .expect("challenged task should still insert for blank challenger regression coverage");
 
         st.restore_pending_resolve_approval(
             902,
@@ -15142,7 +15220,8 @@ mod tests {
     }
 
     #[test]
-    fn restore_pending_resolve_approval_from_rollback_rejects_paused_noncanonical_authority_snapshot() {
+    fn restore_pending_resolve_approval_from_rollback_rejects_paused_noncanonical_authority_snapshot(
+    ) {
         let mut st = StateStore::new();
         st.set_gov_param(
             7_999,
