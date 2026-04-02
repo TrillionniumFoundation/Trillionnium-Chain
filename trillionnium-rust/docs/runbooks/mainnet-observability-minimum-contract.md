@@ -88,9 +88,10 @@ Operational meaning:
 
 - `404` means the probe surface was reached but the requested path is outside the current contract
 - `400` means the request itself was malformed and should be treated as probe/client error rather than as a service-specific readiness signal
-- `HEAD` on the negative path should keep the same status code and `Content-Length` that the equivalent `GET` envelope would have produced, rather than inventing a probe-specific error shape
+- for a syntactically valid but unknown path probed with `HEAD`, the server keeps the same status code and `Content-Length` that the equivalent `GET` envelope would have produced, rather than inventing a probe-specific error shape
+- for a malformed request line that cannot be parsed into a trustworthy method/path pair, the current implementation fails closed with a JSON `400` body instead of attempting to preserve `HEAD`-style header-only semantics
 
-This distinction matters during load balancer, sidecar, and operator triage because it separates "wrong endpoint" from "broken request generation" without overloading the health/readiness meaning of `200`.
+This distinction matters during load balancer, sidecar, and operator triage because it separates "wrong endpoint" from "broken request generation" without overloading the health/readiness meaning of `200`, while also documenting the current fail-closed behavior for malformed requests.
 
 ## 2. `trnm-node` incident-summary bundle names
 
