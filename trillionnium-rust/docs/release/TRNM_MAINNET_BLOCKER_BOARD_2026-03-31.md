@@ -143,7 +143,7 @@ Even if all code-adjacent P0 items improve, TRNM still cannot claim public-mainn
 
 **What is still missing**
 - one integrated prelaunch rehearsal using the current mainline
-- one path-resolved evidence bundle suitable for launch review
+- one path-resolved evidence bundle suitable for launch review, including retained `preflight_summary_path=` alongside `summary.txt` / `manifest.txt` identity fields
 - one final GO / CONDITIONAL GO / NO-GO document
 - one rollback drill attached to the same decision packet
 
