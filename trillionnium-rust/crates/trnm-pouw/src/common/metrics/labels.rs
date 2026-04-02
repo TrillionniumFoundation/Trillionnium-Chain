@@ -127,3 +127,32 @@ pub(crate) fn unresolved_challenge_slash_on_timeout(st: &StateStore) -> Result<b
         .map(|v| parse_governed_bool_param(&v, "default_slash_on_unresolved_challenge"))
         .unwrap_or(Ok(DEFAULT_UNRESOLVED_CHALLENGE_SLASH_ON_TIMEOUT))
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn canonical_actor_id_helpers_reject_hidden_and_separator_aliases_fail_closed() {
+        assert!(actor_id_has_hidden_or_zero_width_chars("worker\u{200b}"));
+        assert!(actor_id_has_forbidden_separator_alias("worker／backup"));
+        assert!(!is_canonical_actor_id("worker\u{200b}"));
+        assert!(!is_canonical_actor_id("worker／backup"));
+    }
+
+    #[test]
+    fn require_canonical_actor_id_state_preserves_field_context_on_failure() {
+        let err = require_canonical_actor_id_state("worker\u{2060}one", "worker account")
+            .expect_err("non-canonical worker account must fail closed");
+        assert!(matches!(
+            err,
+            PouwError::State(msg) if msg == "non-canonical worker account"
+        ));
+    }
+
+    #[test]
+    fn require_canonical_actor_id_accepts_plain_ascii_token() {
+        require_canonical_actor_id("worker.alpha_02-7")
+            .expect("plain ascii worker ids should remain canonical");
+    }
+}
