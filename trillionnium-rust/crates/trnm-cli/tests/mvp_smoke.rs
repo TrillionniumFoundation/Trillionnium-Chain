@@ -95,6 +95,43 @@ fn smoke_wallet_import_accepts_wrapped_private_key_hex() {
     assert!(s.contains("address=trnm1"));
 }
 
+#[cfg(unix)]
+#[test]
+fn smoke_wallet_create_rejects_symlinked_ancestor_out_path() {
+    use std::os::unix::fs::symlink;
+
+    let root = tmp_dir("wallet-create-symlink-ancestor");
+    let real_parent = root.join("real-parent");
+    let linked_parent = root.join("linked-parent");
+    std::fs::create_dir_all(&real_parent).unwrap();
+    symlink(&real_parent, &linked_parent).unwrap();
+    let store = linked_parent.join("wallets");
+
+    let out = Command::new(bin())
+        .args([
+            "wallet",
+            "create",
+            "--name",
+            "alice",
+            "--out",
+            store.to_string_lossy().as_ref(),
+        ])
+        .output()
+        .unwrap();
+
+    assert!(
+        !out.status.success(),
+        "symlinked keystore ancestor should fail closed"
+    );
+    let stderr = String::from_utf8_lossy(&out.stderr);
+    assert!(
+        stderr.contains("refusing non-canonical keystore path"),
+        "unexpected stderr: {}",
+        stderr
+    );
+    assert!(!real_parent.join("wallets").join("alice.key").exists());
+}
+
 #[test]
 fn smoke_wallet_sign_rejects_multiline_message() {
     let store = tmp_dir("wallet-sign-message-guard");
