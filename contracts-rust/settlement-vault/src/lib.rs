@@ -26,22 +26,26 @@ pub enum VaultEvent {
         amount: u128,
     },
     Locked {
+        caller: String,
         request_id: String,
         account: String,
         amount: u128,
     },
     Released {
+        caller: String,
         request_id: String,
         account: String,
         amount: u128,
     },
     Slashed {
+        caller: String,
         request_id: String,
         account: String,
         beneficiary: String,
         amount: u128,
     },
     Transferred {
+        caller: String,
         from: String,
         to: String,
         amount: u128,
@@ -133,43 +137,53 @@ impl SettlementVault {
                 normalized
             }
             VaultEvent::Locked {
+                caller,
                 request_id,
                 account,
                 amount,
             } => {
                 let mut normalized = AuditEvent::new("settlement-vault", "vault.locked");
-                normalized.actor = Some(account.clone());
+                normalized.actor = Some(caller.clone());
                 normalized.object_id = Some(request_id.clone());
+                normalized.related_id = Some(account.clone());
                 normalized.amount = Some(*amount);
                 normalized
             }
             VaultEvent::Released {
+                caller,
                 request_id,
                 account,
                 amount,
             } => {
                 let mut normalized = AuditEvent::new("settlement-vault", "vault.released");
-                normalized.actor = Some(account.clone());
+                normalized.actor = Some(caller.clone());
                 normalized.object_id = Some(request_id.clone());
+                normalized.related_id = Some(account.clone());
                 normalized.amount = Some(*amount);
                 normalized
             }
             VaultEvent::Slashed {
+                caller,
                 request_id,
                 account,
                 beneficiary,
                 amount,
             } => {
                 let mut normalized = AuditEvent::new("settlement-vault", "vault.slashed");
-                normalized.actor = Some(beneficiary.clone());
+                normalized.actor = Some(caller.clone());
                 normalized.object_id = Some(request_id.clone());
-                normalized.related_id = Some(account.clone());
+                normalized.related_id = Some(format!("{}:{}", account, beneficiary));
                 normalized.amount = Some(*amount);
                 normalized
             }
-            VaultEvent::Transferred { from, to, amount } => {
+            VaultEvent::Transferred {
+                caller,
+                from,
+                to,
+                amount,
+            } => {
                 let mut normalized = AuditEvent::new("settlement-vault", "vault.transferred");
-                normalized.actor = Some(from.clone());
+                normalized.actor = Some(caller.clone());
                 normalized.object_id = Some(to.clone());
                 normalized.related_id = Some(from.clone());
                 normalized.amount = Some(*amount);
@@ -242,6 +256,7 @@ impl SettlementVault {
         );
 
         self.audit_log.push(VaultEvent::Locked {
+            caller: caller.to_string(),
             request_id: request_id.to_string(),
             account: account.to_string(),
             amount,
@@ -274,6 +289,7 @@ impl SettlementVault {
             .status = LockStatus::Released;
         self.credit_balance(&account, amount)?;
         self.audit_log.push(VaultEvent::Released {
+            caller: caller.to_string(),
             request_id: request_id.to_string(),
             account,
             amount,
@@ -310,6 +326,7 @@ impl SettlementVault {
             .status = LockStatus::Slashed;
         self.credit_balance(beneficiary, amount)?;
         self.audit_log.push(VaultEvent::Slashed {
+            caller: caller.to_string(),
             request_id: request_id.to_string(),
             account,
             beneficiary: beneficiary.to_string(),
@@ -337,6 +354,7 @@ impl SettlementVault {
         }
         if from == to {
             self.audit_log.push(VaultEvent::Transferred {
+                caller: caller.to_string(),
                 from: from.to_string(),
                 to: to.to_string(),
                 amount,
@@ -352,6 +370,7 @@ impl SettlementVault {
 
         self.credit_balance(to, amount)?;
         self.audit_log.push(VaultEvent::Transferred {
+            caller: caller.to_string(),
             from: from.to_string(),
             to: to.to_string(),
             amount,
@@ -712,18 +731,18 @@ mod tests {
         )));
         assert!(logs.iter().any(|event| matches!(
             event,
-            VaultEvent::Locked { request_id, account, amount }
-                if request_id == "req-1" && account == "alice" && *amount == 25
+            VaultEvent::Locked { caller, request_id, account, amount }
+                if caller == "owner" && request_id == "req-1" && account == "alice" && *amount == 25
         )));
         assert!(logs.iter().any(|event| matches!(
             event,
-            VaultEvent::Released { request_id, account, amount }
-                if request_id == "req-1" && account == "alice" && *amount == 25
+            VaultEvent::Released { caller, request_id, account, amount }
+                if caller == "owner" && request_id == "req-1" && account == "alice" && *amount == 25
         )));
         assert!(logs.iter().any(|event| matches!(
             event,
-            VaultEvent::Transferred { from, to, amount }
-                if from == "alice" && to == "bob" && *amount == 20
+            VaultEvent::Transferred { caller, from, to, amount }
+                if caller == "owner" && from == "alice" && to == "bob" && *amount == 20
         )));
         assert!(logs.iter().any(|event| matches!(
             event,
@@ -735,8 +754,9 @@ mod tests {
         )));
         assert!(logs.iter().any(|event| matches!(
             event,
-            VaultEvent::Slashed { request_id, account, beneficiary, amount }
-                if request_id == "req-2"
+            VaultEvent::Slashed { caller, request_id, account, beneficiary, amount }
+                if caller == "owner"
+                    && request_id == "req-2"
                     && account == "alice"
                     && beneficiary == "treasury"
                     && *amount == 10
@@ -753,7 +773,7 @@ mod tests {
             .any(|event| event.event_type == "vault.released"));
         assert!(normalized.iter().any(|event| {
             event.event_type == "vault.transferred"
-                && event.actor.as_deref() == Some("alice")
+                && event.actor.as_deref() == Some("owner")
                 && event.object_id.as_deref() == Some("bob")
                 && event.related_id.as_deref() == Some("alice")
                 && event.amount == Some(20)
@@ -761,8 +781,8 @@ mod tests {
         assert!(normalized.iter().any(|event| {
             event.event_type == "vault.slashed"
                 && event.object_id.as_deref() == Some("req-2")
-                && event.related_id.as_deref() == Some("alice")
-                && event.actor.as_deref() == Some("treasury")
+                && event.related_id.as_deref() == Some("alice:treasury")
+                && event.actor.as_deref() == Some("owner")
         }));
         assert!(normalized.iter().any(|event| {
             event.event_type == "vault.paused" && event.actor.as_deref() == Some("owner")
@@ -813,8 +833,8 @@ mod tests {
         assert_eq!(vault.audit_log().len(), audit_len_before + 1);
         assert!(matches!(
             vault.audit_log().last(),
-            Some(VaultEvent::Transferred { from, to, amount })
-                if from == "alice" && to == "alice" && *amount == 15
+            Some(VaultEvent::Transferred { caller, from, to, amount })
+                if caller == "owner" && from == "alice" && to == "alice" && *amount == 15
         ));
     }
 
