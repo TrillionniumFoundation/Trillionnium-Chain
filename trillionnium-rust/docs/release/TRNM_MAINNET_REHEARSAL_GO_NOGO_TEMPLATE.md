@@ -248,6 +248,7 @@ Mark each item explicitly:
 - [ ] `git_status_summary=clean`
 - [ ] `preflight_generated_at=` preserved next to preflight decision language
 - [ ] `preflight_git_toplevel=` preserved next to preflight decision language
+- [ ] `preflight_git_branch=` preserved next to preflight decision language
 - [ ] `preflight_git_head=` preserved next to preflight decision language
 - [ ] `preflight_git_head_state=` preserved next to preflight decision language
 - [ ] `preflight_git_status_summary=` preserved next to preflight decision language
