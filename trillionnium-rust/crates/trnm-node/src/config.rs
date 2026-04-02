@@ -51,6 +51,13 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         "invalid node config {}: node_id must not be '.' or '..'",
         path
     );
+    anyhow::ensure!(
+        !node_id.eq_ignore_ascii_case("localhost")
+            && node_id.parse::<std::net::IpAddr>().is_err()
+            && node_id.parse::<SocketAddr>().is_err(),
+        "invalid node config {}: node_id must not look like a host or socket literal",
+        path
+    );
 
     let rpc_addr = cfg.rpc_addr.trim();
     anyhow::ensure!(
@@ -77,6 +84,11 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
     anyhow::ensure!(
         !rpc_addr.contains(',') && !rpc_addr.contains(';') && !rpc_addr.contains('|'),
         "invalid node config {}: rpc_addr must not contain list separators (, ; |)",
+        path
+    );
+    anyhow::ensure!(
+        !rpc_addr.contains("://"),
+        "invalid node config {}: rpc_addr must be a raw socket address, not a URL",
         path
     );
     anyhow::ensure!(
@@ -109,6 +121,11 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
     anyhow::ensure!(
         !p2p_addr.contains(',') && !p2p_addr.contains(';') && !p2p_addr.contains('|'),
         "invalid node config {}: p2p_addr must not contain list separators (, ; |)",
+        path
+    );
+    anyhow::ensure!(
+        !p2p_addr.contains("://"),
+        "invalid node config {}: p2p_addr must be a raw socket address, not a URL",
         path
     );
     anyhow::ensure!(
@@ -1028,6 +1045,61 @@ bootstrap_peers = ["127.0.0.1:27656"]
             err.to_string()
                 .contains("node_id must not contain control characters"),
             "unexpected error: {err:#}"
+        );
+    }
+
+    #[test]
+    fn validate_node_config_rejects_host_and_socket_literals_in_node_id() {
+        for node_id in ["localhost", "127.0.0.1", "127.0.0.1:7000", "[::1]:7000"] {
+            let err = validate_node_config(
+                NodeConfig {
+                    node_id: node_id.into(),
+                    rpc_addr: "127.0.0.1:7000".into(),
+                    p2p_addr: "127.0.0.1:7001".into(),
+                },
+                "inline",
+            )
+            .expect_err("host/socket-shaped node_id must fail closed");
+            assert!(
+                err.to_string()
+                    .contains("node_id must not look like a host or socket literal"),
+                "unexpected error for {node_id}: {err:#}"
+            );
+        }
+    }
+
+    #[test]
+    fn validate_node_config_rejects_url_like_listener_addresses() {
+        let rpc_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "http://127.0.0.1:7000".into(),
+                p2p_addr: "127.0.0.1:7001".into(),
+            },
+            "inline",
+        )
+        .expect_err("URL-like rpc_addr must fail closed");
+        assert!(
+            rpc_err
+                .to_string()
+                .contains("rpc_addr must be a raw socket address, not a URL"),
+            "unexpected error: {rpc_err:#}"
+        );
+
+        let p2p_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "127.0.0.1:7000".into(),
+                p2p_addr: "tcp://127.0.0.1:7001".into(),
+            },
+            "inline",
+        )
+        .expect_err("URL-like p2p_addr must fail closed");
+        assert!(
+            p2p_err
+                .to_string()
+                .contains("p2p_addr must be a raw socket address, not a URL"),
+            "unexpected error: {p2p_err:#}"
         );
     }
 
