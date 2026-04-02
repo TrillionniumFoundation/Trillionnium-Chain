@@ -87,6 +87,22 @@ fn parse_http_request_target_rejects_encoded_query_delimiter_fail_closed() {
 }
 
 #[test]
+fn parse_http_request_target_rejects_malformed_percent_encoding_fail_closed() {
+    for first_line in [
+        "GET /query-task/42% HTTP/1.1",
+        "GET /query-events/7%2 HTTP/1.1",
+        "HEAD /query-events/7%zz HTTP/1.1",
+        "HEAD /query-capability-audit/alice%4G HTTP/1.1",
+    ] {
+        assert_eq!(
+            parse_http_request_target(first_line),
+            None,
+            "malformed percent encoding must fail closed: {first_line}"
+        );
+    }
+}
+
+#[test]
 fn parse_query_events_limit_from_path_defaults_and_accepts_explicit_limit() {
     assert_eq!(
         parse_query_events_limit_from_path("/query-events/42").expect("default limit"),
