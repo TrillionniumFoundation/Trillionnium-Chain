@@ -606,6 +606,30 @@ mod tests {
     }
 
     #[test]
+    fn paused_release_fails_closed_without_mutating_lock_or_audit_log() {
+        let mut vault = SettlementVault::new("owner");
+
+        vault.deposit("owner", "alice", 20).unwrap();
+        vault.lock("owner", "req-paused-release", "alice", 20)
+            .unwrap();
+        let audit_len_before_pause = vault.audit_log().len();
+        vault.pause("owner").unwrap();
+        let audit_len_while_paused = vault.audit_log().len();
+
+        let err = vault
+            .release("owner", "req-paused-release")
+            .expect_err("release must fail while paused");
+        assert_eq!(err, VaultError::Paused);
+        assert_eq!(vault.balance_of("alice"), 0);
+        assert_eq!(
+            vault.lock_record("req-paused-release").unwrap().status,
+            LockStatus::Locked
+        );
+        assert_eq!(vault.audit_log().len(), audit_len_while_paused);
+        assert_eq!(audit_len_while_paused, audit_len_before_pause + 1);
+    }
+
+    #[test]
     fn slash_transfers_to_beneficiary() {
         let mut vault = SettlementVault::new("owner");
 
