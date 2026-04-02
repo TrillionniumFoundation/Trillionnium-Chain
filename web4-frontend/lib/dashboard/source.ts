@@ -311,8 +311,12 @@ const stringifyDashboardField = (value: unknown, fallback: string): string => {
     return value.trim().length > 0 ? value : fallback;
   }
 
-  const serialized = JSON.stringify(value);
-  return serialized ?? fallback;
+  try {
+    const serialized = JSON.stringify(value);
+    return serialized ?? fallback;
+  } catch {
+    return fallback;
+  }
 };
 
 const parseDashboardTime = (value: string): number => {
