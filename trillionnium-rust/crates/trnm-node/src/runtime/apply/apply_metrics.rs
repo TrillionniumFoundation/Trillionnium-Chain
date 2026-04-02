@@ -294,7 +294,6 @@ fn timeout_outcome_fields(to_status: &str) -> (&'static str, &'static str) {
     match to_status {
         "Slashed" => ("true", "slashed"),
         "Completed" => ("false", "completed"),
-        "Resolved" => ("false", "resolved"),
         _ => ("false", "unknown"),
     }
 }
@@ -303,6 +302,9 @@ pub(crate) fn emit_timeout_event(
     st: &StateStore,
     task_id: u64,
     tx_id: u64,
+    tx_ordinal: u64,
+    tx_id_overflow: bool,
+    tx_ordinal_overflow: bool,
     block_height: u64,
     from_status: &str,
     to_status: &str,
@@ -321,13 +323,16 @@ pub(crate) fn emit_timeout_event(
     let (slash_worker, resolution_code) = timeout_outcome_fields(to_status);
 
     println!(
-        "[event] event_schema=v1 event_type=timeout task_id={} from_status={} to_status={} actor=system signer=system challenger={} tx_hash={} tx_id={} block_height={} state_root={} ts_unix_ms={} slash_worker={} resolution_code={} treasury_delta={} challenger_delta={} bond_disposition={}{}",
+        "[event] event_schema=v1 event_type=timeout task_id={} from_status={} to_status={} actor=system signer=system challenger={} tx_hash={} tx_id={} tx_ordinal={} tx_id_overflow={} tx_ordinal_overflow={} block_height={} state_root={} ts_unix_ms={} slash_worker={} resolution_code={} treasury_delta={} challenger_delta={} bond_disposition={}{}",
         task_id,
         from_status,
         to_status,
         challenger.unwrap_or("-"),
         tx_hash,
         tx_id,
+        tx_ordinal,
+        tx_id_overflow,
+        tx_ordinal_overflow,
         block_height,
         state_root,
         ts_unix_ms,
@@ -345,15 +350,27 @@ mod tests {
     use super::timeout_outcome_fields;
 
     #[test]
-    fn timeout_outcome_fields_distinguishes_terminal_timeout_surfaces() {
+    fn timeout_outcome_fields_marks_slashed_terminal_status() {
         assert_eq!(timeout_outcome_fields("Slashed"), ("true", "slashed"));
-        assert_eq!(timeout_outcome_fields("Completed"), ("false", "completed"));
-        assert_eq!(timeout_outcome_fields("Resolved"), ("false", "resolved"));
     }
 
     #[test]
-    fn timeout_outcome_fields_keeps_nonterminal_or_drifted_labels_unknown() {
+    fn timeout_outcome_fields_only_marks_actual_terminal_statuses() {
+        assert_eq!(timeout_outcome_fields("Completed"), ("false", "completed"));
+        assert_eq!(timeout_outcome_fields("Slashed"), ("true", "slashed"));
+    }
+
+    #[test]
+    fn timeout_outcome_fields_marks_stale_or_unexpected_statuses_unknown_for_visibility() {
+        assert_eq!(timeout_outcome_fields("Resolved"), ("false", "unknown"));
         assert_eq!(timeout_outcome_fields("Challenged"), ("false", "unknown"));
+        assert_eq!(timeout_outcome_fields("Assigned"), ("false", "unknown"));
+    }
+
+    #[test]
+    fn timeout_outcome_fields_stays_unknown_for_noncanonical_terminal_labels() {
         assert_eq!(timeout_outcome_fields("completed"), ("false", "unknown"));
+        assert_eq!(timeout_outcome_fields("slashed"), ("false", "unknown"));
+        assert_eq!(timeout_outcome_fields(" Completed"), ("false", "unknown"));
     }
 }
