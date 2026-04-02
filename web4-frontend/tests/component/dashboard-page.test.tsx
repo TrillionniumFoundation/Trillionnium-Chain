@@ -296,6 +296,30 @@ describe("dashboard page", () => {
     );
   });
 
+  it("fail-closes stale readonly event and audit selections to the first visible record after filtering", async () => {
+    mockedFetch.mockResolvedValue(snapshot);
+
+    render(<Home />);
+
+    await screen.findByText("Task Digest");
+
+    fireEvent.click(screen.getByRole("tab", { name: "Events" }));
+    fireEvent.click(screen.getByRole("button", { name: /Info event/i }));
+    expect(await screen.findByText("Event Detail · EVT-2")).toBeInTheDocument();
+
+    fireEvent.change(screen.getByLabelText("Severity filter"), { target: { value: "Critical" } });
+    expect(await screen.findByText("Event Detail · EVT-1")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Critical event/i })).toHaveAttribute("aria-pressed", "true");
+
+    fireEvent.click(screen.getByRole("tab", { name: "Audit" }));
+    fireEvent.click(screen.getByRole("button", { name: /Endpoint ACL/i }));
+    expect(await screen.findByText("Audit Detail · AUD-2")).toBeInTheDocument();
+
+    fireEvent.change(screen.getByLabelText("Result filter"), { target: { value: "Warn" } });
+    expect(await screen.findByText("Audit Detail · AUD-1")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Readonly controls/i })).toHaveAttribute("aria-pressed", "true");
+  });
+
   it("supports arrow/home/end keyboard navigation across readonly dashboard tabs", async () => {
     mockedFetch.mockResolvedValue(snapshot);
 
