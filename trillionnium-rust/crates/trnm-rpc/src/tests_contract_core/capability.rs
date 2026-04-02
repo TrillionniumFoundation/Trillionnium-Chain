@@ -188,6 +188,41 @@ fn resolve_capability_token_subject_or_token_fail_closed_without_structured_toke
 }
 
 #[test]
+fn query_capability_audit_rejects_noncanonical_owner_history_subject_even_when_token_is_valid() {
+    let mut registry = IdentityRegistry::default();
+    registry
+        .register_did(
+            "did:org:lane-xi".to_string(),
+            "org:lane-xi-admin".to_string(),
+            10,
+        )
+        .expect("register did");
+    let token_id = registry
+        .issue_capability(
+            "org:lane-xi-admin".to_string(),
+            "did:org:lane-xi".to_string(),
+            CapabilityScope::AuditRead,
+            12,
+            Some(120),
+        )
+        .expect("issue capability");
+
+    let mut raw = serde_json::to_value(&registry).expect("serialize registry");
+    raw["audit_trail"][0]["subject"] = serde_json::json!("did:org:lane xi");
+    let imported: IdentityRegistry = serde_json::from_value(raw).expect("deserialize registry");
+
+    let err = query_capability_audit(&imported, token_id)
+        .expect_err("noncanonical audit trail subjects must fail closed");
+    assert_eq!(
+        err,
+        CapabilityAuditQueryError::InvalidRegistryState {
+            field: "owner_history.subject",
+            value: "did:org:lane xi".to_string(),
+        }
+    );
+}
+
+#[test]
 fn capability_audit_query_error_http_status_preserves_not_found() {
     let err = CapabilityAuditQueryError::TokenNotFound(404);
 
