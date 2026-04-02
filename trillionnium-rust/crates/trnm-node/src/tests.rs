@@ -9860,6 +9860,12 @@ locked_block_hash = "stale-lock"
         assert!(err.contains("retained no committed WAL entries"));
         assert!(!err.contains("through height 0"));
         assert!(err.contains("last retained checkpoint: none"));
+        assert!(err.contains("next startup height: 1"));
+        assert!(err.contains(
+            "incident clue: retained_wal_entries=0 checkpoint_height_retained=none checkpoint_tip_relation=none next_startup_height=1 wal_tail_truncated=false metadata_only_recovery=true"
+        ));
+        assert!(err.contains("checkpoint_evidence: none"));
+        assert!(err.contains("checkpoint_da_surface: unavailable:no_checkpoint"));
 
         let _ = fs::remove_dir_all(&wal_dir);
     }
