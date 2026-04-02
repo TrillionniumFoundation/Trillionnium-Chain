@@ -134,6 +134,10 @@ resolve_path() {
 
 SUMMARY_PATH="$(resolve_path "$SUMMARY_PATH")"
 MANIFEST_PATH="$(resolve_path "$MANIFEST_PATH")"
+if [ "$SUMMARY_PATH" = "$MANIFEST_PATH" ]; then
+  printf 'summary and manifest paths must be distinct artifacts: %s\n' "$SUMMARY_PATH" >&2
+  exit 1
+fi
 if [ -n "$PREFLIGHT_SUMMARY_PATH" ]; then
   PREFLIGHT_SUMMARY_PATH="$(resolve_path "$PREFLIGHT_SUMMARY_PATH")"
 fi
