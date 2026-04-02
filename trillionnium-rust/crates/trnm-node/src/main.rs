@@ -3958,6 +3958,110 @@ mod tests {
     }
 
     #[test]
+    fn shipped_bootstrap_readme_matches_the_documented_day1_topology_and_fail_closed_model() {
+        let manifest_dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR"));
+        let workspace_root = manifest_dir
+            .ancestors()
+            .nth(2)
+            .expect("trnm-node manifest should sit under trillionnium-rust/crates/trnm-node");
+        let readme_path = workspace_root.join("configs").join("README.md");
+        let workspace_relative_readme_path = workspace_root.join("configs/README.md");
+
+        let readme_metadata = std::fs::symlink_metadata(&readme_path).unwrap_or_else(|err| {
+            panic!(
+                "{} should stay stat-able for shipped bootstrap README checks: {err}",
+                readme_path.display()
+            )
+        });
+        assert!(
+            readme_metadata.file_type().is_file(),
+            "{} must remain a regular file for deterministic shipped bootstrap README checks",
+            readme_path.display()
+        );
+        assert!(
+            !readme_metadata.file_type().is_symlink(),
+            "{} must not become a symlink that can retarget shipped bootstrap README checks",
+            readme_path.display()
+        );
+
+        let workspace_relative_readme_metadata =
+            std::fs::symlink_metadata(&workspace_relative_readme_path).unwrap_or_else(|err| {
+                panic!(
+                    "{} should stay stat-able for bootstrap README path anchoring: {err}",
+                    workspace_relative_readme_path.display()
+                )
+            });
+        assert!(
+            workspace_relative_readme_metadata.file_type().is_file(),
+            "{} must remain a regular file for bootstrap README path anchoring",
+            workspace_relative_readme_path.display()
+        );
+        assert!(
+            !workspace_relative_readme_metadata.file_type().is_symlink(),
+            "{} must not become a symlink that can retarget bootstrap README path anchoring",
+            workspace_relative_readme_path.display()
+        );
+
+        let canonical_readme_path = readme_path.canonicalize().unwrap_or_else(|err| {
+            panic!(
+                "{} should canonicalize for shipped bootstrap README checks: {err}",
+                readme_path.display()
+            )
+        });
+        let canonical_workspace_relative_readme_path = workspace_relative_readme_path
+            .canonicalize()
+            .unwrap_or_else(|err| {
+                panic!(
+                    "{} should canonicalize for bootstrap README path anchoring: {err}",
+                    workspace_relative_readme_path.display()
+                )
+            });
+        assert_eq!(
+            canonical_workspace_relative_readme_path, canonical_readme_path,
+            "{} must canonicalize to the same shipped bootstrap README as {}",
+            workspace_relative_readme_path.display(),
+            readme_path.display()
+        );
+
+        let readme = std::fs::read_to_string(&readme_path).unwrap_or_else(|err| {
+            panic!(
+                "{} should stay readable for shipped bootstrap README checks: {err}",
+                readme_path.display()
+            )
+        });
+
+        let expected_lines = [
+            "- `node1.toml` → node id `node1`, P2P `127.0.0.1:26656`, RPC `127.0.0.1:26657`",
+            "- `node2.toml` → node id `node2`, P2P `127.0.0.1:27656`, RPC `127.0.0.1:27657`",
+            "- `node3.toml` → node id `node3`, P2P `127.0.0.1:28656`, RPC `127.0.0.1:28657`",
+            "- `node4.toml` → node id `node4`, P2P `127.0.0.1:29656`, RPC `127.0.0.1:29657`",
+        ];
+        for expected_line in expected_lines {
+            assert!(
+                readme.contains(expected_line),
+                "{} must document the shipped Day-1 bootstrap tuple `{expected_line}` so operator topology assumptions stay explicit",
+                readme_path.display()
+            );
+        }
+
+        for expected_phrase in [
+            "All four nodes bind the same loopback IP (`127.0.0.1`)",
+            "keep a deterministic `+1000` port spacing between neighboring peers",
+            "Start `node1` first as the initial anchor.",
+            "Start `node2`, `node3`, and `node4` in slot order.",
+            "do not treat `node2`, `node3`, or `node4` as a valid replacement bootstrap anchor; restore the shipped `node1` anchor first and fail closed otherwise",
+            "bring the node back with the same config file and the same `node_id`/listener tuple",
+            "unknown fields, whitespace drift, path-like ids, non-canonical socket literals, privileged ports, wildcard listeners, or mixed listener IP families, the config loader must fail closed",
+        ] {
+            assert!(
+                readme.contains(expected_phrase),
+                "{} must keep the shipped bootstrap join/rejoin fail-closed rule `{expected_phrase}` visible to operators",
+                readme_path.display()
+            );
+        }
+    }
+
+    #[test]
     fn shipped_node_configs_form_a_unique_local_bootstrap_topology() {
         use std::{collections::HashSet, net::SocketAddr};
 

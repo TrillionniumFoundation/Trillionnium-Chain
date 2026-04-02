@@ -1844,6 +1844,75 @@ bootstrap_peers = ["127.0.0.1:27656"]
             .nth(2)
             .expect("trnm-node manifest should sit under trillionnium-rust/crates/trnm-node");
         let readme_path = workspace_root.join("configs").join("README.md");
+        let workspace_relative_readme_path = std::path::Path::new("configs/README.md");
+        let curdir_repo_relative_readme_path = std::path::Path::new("./configs/README.md");
+        let readme_metadata = std::fs::symlink_metadata(&readme_path).unwrap_or_else(|err| {
+            panic!(
+                "{} should stay stat-able for shipped bootstrap README checks: {err}",
+                readme_path.display()
+            )
+        });
+        assert!(
+            readme_metadata.file_type().is_file(),
+            "{} must remain a regular file for deterministic shipped bootstrap README checks",
+            readme_path.display()
+        );
+        assert!(
+            !readme_metadata.file_type().is_symlink(),
+            "{} must not become a symlink that can retarget shipped bootstrap README checks",
+            readme_path.display()
+        );
+        let workspace_relative_readme_metadata =
+            std::fs::symlink_metadata(workspace_relative_readme_path).unwrap_or_else(|err| {
+                panic!(
+                    "{} should stay stat-able for bootstrap README path anchoring: {err}",
+                    workspace_relative_readme_path.display()
+                )
+            });
+        assert!(
+            workspace_relative_readme_metadata.file_type().is_file(),
+            "{} must remain a regular file for bootstrap README path anchoring",
+            workspace_relative_readme_path.display()
+        );
+        assert!(
+            !workspace_relative_readme_metadata.file_type().is_symlink(),
+            "{} must not become a symlink that can retarget bootstrap README path anchoring",
+            workspace_relative_readme_path.display()
+        );
+        let canonical_readme_path = readme_path.canonicalize().unwrap_or_else(|err| {
+            panic!(
+                "{} should canonicalize for shipped bootstrap README checks: {err}",
+                readme_path.display()
+            )
+        });
+        let canonical_workspace_relative_readme_path = workspace_relative_readme_path
+            .canonicalize()
+            .unwrap_or_else(|err| {
+                panic!(
+                    "{} should canonicalize for bootstrap README path anchoring: {err}",
+                    workspace_relative_readme_path.display()
+                )
+            });
+        assert_eq!(
+            canonical_workspace_relative_readme_path, canonical_readme_path,
+            "{} must canonicalize to the same shipped bootstrap README as {}",
+            workspace_relative_readme_path.display(),
+            readme_path.display()
+        );
+        let canonical_curdir_repo_relative_readme_path = curdir_repo_relative_readme_path
+            .canonicalize()
+            .unwrap_or_else(|err| {
+                panic!(
+                    "{} should canonicalize for curdir-prefixed bootstrap README path anchoring: {err}",
+                    curdir_repo_relative_readme_path.display()
+                )
+            });
+        assert_eq!(
+            canonical_curdir_repo_relative_readme_path, canonical_readme_path,
+            "{} must canonicalize to the same shipped bootstrap README as {}",
+            curdir_repo_relative_readme_path.display(),
+            readme_path.display()
+        );
         let readme = std::fs::read_to_string(&readme_path).unwrap_or_else(|err| {
             panic!(
                 "{} should stay readable for shipped bootstrap README checks: {err}",
