@@ -144,11 +144,13 @@ Even if all code-adjacent P0 items improve, TRNM still cannot claim public-mainn
 **What is still missing**
 - one integrated prelaunch rehearsal using the current mainline
 - one path-resolved evidence bundle suitable for launch review, including retained `preflight_summary_path=` alongside `summary.txt` / `manifest.txt` identity fields
+- one preserved pre-run identity anchor from `verify_lane_worktree.sh` (`verified_worktree=` / `verified_branch_ref=` / `verified_head=`), so the handoff packet proves the artifacts still match the ticket-assigned lane rather than only matching each other
 - one final GO / CONDITIONAL GO / NO-GO document
 - one rollback drill attached to the same decision packet
 
 **Exit criteria**
 - full prelaunch rehearsal green on current `origin/main`
+- pre-run `verified_worktree=` / `verified_branch_ref=` / `verified_head=` anchor retained and consistent with the handoff artifacts
 - artifact identities consistent across summary/manifest
 - both artifact timestamps preserved as `summary_generated_at=` and `manifest_generated_at=` rather than collapsed into one assumed timestamp
 - rollback command explicitly preserved
