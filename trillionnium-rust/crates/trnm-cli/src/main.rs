@@ -1424,6 +1424,39 @@ fn run_template_raw(cmd: &str) -> Result<String> {
     Ok(merged)
 }
 
+fn trim_kv_key_noise(raw: &str) -> &str {
+    raw.trim_matches(|c: char| {
+        c.is_whitespace()
+            || c.is_control()
+            || matches!(
+                c,
+                ',' | ';' | '{' | '}' | '[' | ']' | '(' | ')' | '<' | '>'
+                    | '，' | '；' | '：' | '（' | '）' | '［' | '］' | '｛' | '｝' | '＜' | '＞'
+                    | '「' | '」' | '『' | '』' | '《' | '》' | '〈' | '〉' | '｢' | '｣' | '【' | '】'
+            )
+            || matches!(
+                c,
+                '\u{200B}'
+                    | '\u{200C}'
+                    | '\u{200D}'
+                    | '\u{200E}'
+                    | '\u{200F}'
+                    | '\u{061C}'
+                    | '\u{2060}'
+                    | '\u{FEFF}'
+                    | '\u{202A}'
+                    | '\u{202B}'
+                    | '\u{202C}'
+                    | '\u{202D}'
+                    | '\u{202E}'
+                    | '\u{2066}'
+                    | '\u{2067}'
+                    | '\u{2068}'
+                    | '\u{2069}'
+            )
+    })
+}
+
 fn parse_kv_line(line: &str) -> Option<(String, String)> {
     let trimmed = line.trim();
     let (key, value) = if let Some((k, v)) = trimmed.split_once('=') {
@@ -1438,16 +1471,7 @@ fn parse_kv_line(line: &str) -> Option<(String, String)> {
         return None;
     };
 
-    let key = key.trim_matches(|c: char| {
-        c.is_whitespace()
-            || c.is_control()
-            || matches!(
-                c,
-                ',' | ';' | '{' | '}' | '[' | ']' | '(' | ')' | '<' | '>'
-                    | '，' | '；' | '：' | '（' | '）' | '［' | '］' | '｛' | '｝' | '＜' | '＞'
-                    | '「' | '」' | '『' | '』' | '《' | '》' | '〈' | '〉' | '｢' | '｣' | '【' | '】'
-            )
-    });
+    let key = trim_kv_key_noise(key);
     let value = value.trim_matches(|c: char| {
         c.is_whitespace()
             || c.is_control()
@@ -1476,6 +1500,26 @@ fn parse_inline_kv_token(token: &str) -> Option<(String, String)> {
                     | '，' | '；' | '：' | '（' | '）' | '［' | '］' | '｛' | '｝' | '＜' | '＞'
                     | '「' | '」' | '『' | '』' | '《' | '》' | '〈' | '〉' | '｢' | '｣' | '【' | '】'
             )
+            || matches!(
+                c,
+                '\u{200B}'
+                    | '\u{200C}'
+                    | '\u{200D}'
+                    | '\u{200E}'
+                    | '\u{200F}'
+                    | '\u{061C}'
+                    | '\u{2060}'
+                    | '\u{FEFF}'
+                    | '\u{202A}'
+                    | '\u{202B}'
+                    | '\u{202C}'
+                    | '\u{202D}'
+                    | '\u{202E}'
+                    | '\u{2066}'
+                    | '\u{2067}'
+                    | '\u{2068}'
+                    | '\u{2069}'
+            )
     });
     let (key, value) = if let Some((k, v)) = trimmed.split_once('=') {
         (k.trim(), v.trim())
@@ -1488,6 +1532,8 @@ fn parse_inline_kv_token(token: &str) -> Option<(String, String)> {
     } else {
         return None;
     };
+
+    let key = trim_kv_key_noise(key);
 
     if key.is_empty() || value.is_empty() {
         return None;
@@ -2753,6 +2799,18 @@ mod tests {
         );
         assert_eq!(
             extract_tx_hash("transactionHash:\u{feff}0xBEEF42\u{200b}?!").as_deref(),
+            Some("0xbeef42")
+        );
+    }
+
+    #[test]
+    fn extract_tx_hash_trims_hidden_unicode_from_key_names() {
+        assert_eq!(
+            extract_tx_hash("\u{2068}tx_hash\u{2069}=0xABCD1234").as_deref(),
+            Some("0xabcd1234")
+        );
+        assert_eq!(
+            extract_tx_hash("INFO \u{200e}transactionHash\u{200f}:0xBEEF42 done").as_deref(),
             Some("0xbeef42")
         );
     }
