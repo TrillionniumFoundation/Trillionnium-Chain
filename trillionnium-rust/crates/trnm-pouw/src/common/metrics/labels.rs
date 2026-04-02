@@ -155,4 +155,14 @@ mod tests {
         require_canonical_actor_id("worker.alpha_02-7")
             .expect("plain ascii worker ids should remain canonical");
     }
+
+    #[test]
+    fn canonical_actor_id_helpers_reject_blank_whitespace_and_control_aliases() {
+        for token in ["", " worker", "worker ", "worker one", "worker\n", "worker\t"] {
+            assert!(
+                !is_canonical_actor_id(token),
+                "token should fail closed as non-canonical: {token:?}"
+            );
+        }
+    }
 }

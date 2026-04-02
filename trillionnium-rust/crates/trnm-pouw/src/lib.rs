@@ -22323,4 +22323,14 @@ mod tests {
         assert!(is_canonical_actor_id("challenger-01"));
         assert!(is_canonical_actor_id("worker.alpha_02"));
     }
+
+    #[test]
+    fn canonical_actor_id_rejects_blank_whitespace_and_control_aliases_fail_closed() {
+        for token in ["", " worker", "worker ", "worker one", "worker\n", "worker\t"] {
+            assert!(
+                !is_canonical_actor_id(token),
+                "token should fail closed as non-canonical: {token:?}"
+            );
+        }
+    }
 }
