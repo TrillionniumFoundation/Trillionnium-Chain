@@ -135,6 +135,41 @@ describe("api-contract client and retry hardening", () => {
     expect(calledUrl).not.toContain("cursor=");
   });
 
+  it("drops non-positive and non-finite normalized audit limits from readonly query params", async () => {
+    const fetchImpl = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({ events: [] }),
+    });
+
+    const client = createFrontendApiClient({
+      baseUrl: "http://127.0.0.1:8080",
+      fetchImpl: fetchImpl as unknown as typeof fetch,
+    });
+
+    await client.queryNormalizedAuditEvents({
+      source: "bridge-relay",
+      limit: 0,
+      cursor: "cursor-zero",
+    });
+    await client.queryNormalizedAuditEvents({
+      source: "bridge-relay",
+      limit: -3,
+      cursor: "cursor-negative",
+    });
+    await client.queryNormalizedAuditEvents({
+      source: "bridge-relay",
+      limit: Number.NaN,
+      cursor: "cursor-nan",
+    });
+
+    expect(String((fetchImpl.mock.calls[0] ?? [])[0])).toContain("cursor=cursor-zero");
+    expect(String((fetchImpl.mock.calls[0] ?? [])[0])).not.toContain("limit=");
+    expect(String((fetchImpl.mock.calls[1] ?? [])[0])).toContain("cursor=cursor-negative");
+    expect(String((fetchImpl.mock.calls[1] ?? [])[0])).not.toContain("limit=");
+    expect(String((fetchImpl.mock.calls[2] ?? [])[0])).toContain("cursor=cursor-nan");
+    expect(String((fetchImpl.mock.calls[2] ?? [])[0])).not.toContain("limit=");
+  });
+
   it("uses normalized audit endpoint", async () => {
     const fetchImpl = vi.fn().mockResolvedValue({
       ok: true,
