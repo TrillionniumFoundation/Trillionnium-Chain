@@ -25,7 +25,10 @@ export function ChainStatusCard({ status }: { status: ChainStatus }) {
   const latestBlock = failClosedValue(status.latestBlock);
   const finality = failClosedValue(status.finality);
   const health = failClosedHealth(status.health);
-  const isSnapshotUnavailable = [network, latestBlock, finality, health].every((value) => value === "Unavailable");
+  const normalizedValues = [network, latestBlock, finality, health];
+  const unavailableCount = normalizedValues.filter((value) => value === "Unavailable").length;
+  const isSnapshotUnavailable = unavailableCount === normalizedValues.length;
+  const isSnapshotPartial = unavailableCount > 0 && !isSnapshotUnavailable;
 
   return (
     <section aria-label="chain-status" className="w-full rounded-xl border border-zinc-200 p-4">
@@ -47,6 +50,15 @@ export function ChainStatusCard({ status }: { status: ChainStatus }) {
           className="mt-3 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800"
         >
           Readonly chain snapshot is unavailable. Verify the adapter payload before trusting this card.
+        </p>
+      )}
+      {isSnapshotPartial && (
+        <p
+          role="status"
+          aria-live="polite"
+          className="mt-3 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800"
+        >
+          Readonly chain snapshot is partial. Unavailable fields stay fail-closed until the adapter provides them.
         </p>
       )}
       <ul className="mt-3 space-y-1 text-sm">

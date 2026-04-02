@@ -49,7 +49,7 @@ describe("ChainStatusCard", () => {
     expect(screen.getByText("Health: Unavailable")).toBeInTheDocument();
   });
 
-  it("trims whitespace-only readonly fields before fail-closing", () => {
+  it("trims whitespace-only readonly fields before fail-closing and flags partial snapshots", () => {
     render(
       <ChainStatusCard
         status={{
@@ -61,6 +61,11 @@ describe("ChainStatusCard", () => {
       />,
     );
 
+    const status = screen.getByRole("status");
+    expect(status).toHaveTextContent(
+      "Readonly chain snapshot is partial. Unavailable fields stay fail-closed until the adapter provides them.",
+    );
+    expect(status).toHaveAttribute("aria-live", "polite");
     expect(screen.getByText("Network: Unavailable")).toBeInTheDocument();
     expect(screen.getByText("Latest block: 512")).toBeInTheDocument();
     expect(screen.getByText("Finality: finalizing")).toBeInTheDocument();
