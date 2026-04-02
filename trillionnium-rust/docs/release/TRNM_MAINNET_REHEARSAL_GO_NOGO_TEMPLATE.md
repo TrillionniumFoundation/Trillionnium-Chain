@@ -113,6 +113,8 @@ Record:
 - preflight_git_worktree_path=
 - preflight_git_worktree_branch_ref=
 - preflight_git_worktree_branch_ref_match=
+- preflight_rollback_command=
+- preflight_replay_command=
 - summary_generated_at=
 - manifest_generated_at=
 - git_expected_worktree_branch_ref=
@@ -241,6 +243,8 @@ Mark each item explicitly:
 - [ ] `preflight_git_worktree_path=` preserved next to preflight decision language
 - [ ] `preflight_git_worktree_branch_ref=` preserved next to preflight decision language
 - [ ] `preflight_git_worktree_branch_ref_match=true` preserved next to preflight decision language
+- [ ] `preflight_rollback_command=` quoted verbatim next to preflight decision language
+- [ ] `preflight_replay_command=` quoted verbatim next to preflight decision language
 - [ ] `summary_generated_at=` preserved next to local-evidence decision language
 - [ ] `manifest_generated_at=` preserved next to RC decision language
 - [ ] preflight identity fields preserved next to preflight decision language
@@ -284,6 +288,8 @@ preflight_git_worktree_branch_ref_match=<true|false|unknown>
 preflight_expected_worktree_root=<artifact value>
 preflight_expected_branch_ref=<artifact value>
 preflight_expected_head=<artifact value or <unset>>
+preflight_rollback_command=<artifact value>
+preflight_replay_command=<artifact value>
 summary_generated_at=<artifact value>
 manifest_generated_at=<artifact value>
 git_branch=<artifact value>
