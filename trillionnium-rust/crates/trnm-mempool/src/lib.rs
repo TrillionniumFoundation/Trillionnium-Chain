@@ -3112,6 +3112,31 @@ mod tests {
     }
 
     #[test]
+    fn drained_standalone_fresh_retry_reopens_cleanly_across_idle_polls() {
+        let mut g = AdmissionGate::new(1);
+
+        assert_eq!(g.admit(7), AdmitOutcome::Accepted);
+
+        // A fresh retry under saturation must stay backpressured without entering
+        // duplicate tracking.
+        assert_eq!(g.admit(8), AdmitOutcome::Backpressured);
+        assert_eq!(g.admit(8), AdmitOutcome::Backpressured);
+
+        // After a real full drain, repeated idle polls must not leave behind stale
+        // duplicate metadata that poisons the earlier fresh retry.
+        assert_eq!(g.pop_ready(), Some(7));
+        assert_eq!(g.pop_ready(), None);
+        assert_eq!(g.pop_ready(), None);
+        assert!(g.queue.is_empty());
+        assert!(g.seen.is_empty());
+
+        // The previously backpressured id must still admit as fresh and only then
+        // become Duplicate.
+        assert_eq!(g.admit(8), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(8), AdmitOutcome::Duplicate);
+    }
+
+    #[test]
     fn full_drain_clears_stale_seen_ghosts_before_next_fresh_admission() {
         let mut g = AdmissionGate::new(2);
 
