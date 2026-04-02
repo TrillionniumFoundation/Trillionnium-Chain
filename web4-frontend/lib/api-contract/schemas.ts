@@ -65,7 +65,7 @@ export const normalizedAuditEventSchema = z.object({
   checkedAt: checkedAtSchema.optional(),
   timestamp: z.string().datetime().optional(),
   subject: z.string().optional(),
-});
+}).strict();
 
 export const queryNormalizedAuditEventsPageSchema = z.object({
   events: z.array(normalizedAuditEventSchema),
