@@ -254,7 +254,7 @@ Keep the two generated-at fields distinct. They do not need to match, but both m
 For a DR rebuild, preserve evidence in this order so the handoff can be audited without shell scrollback:
 
 1. run `verify_lane_worktree.sh` with the **ticket-assigned** worktree path and branch ref (and `EXPECTED_HEAD` too when the ticket/handoff already pins an exact commit)
-2. run `check_bft_restart_recovery.sh` and capture the emitted report path
+2. run `check_bft_restart_recovery.sh` and capture the emitted `report_path` for **this exact run** instead of resolving "latest" from disk afterwards
 3. copy `dr_summary_path=` / `dr_generated_at=` / `dr_status=` from that concrete report
 4. copy `dr_replay_command=` / `dr_rollback_command=` verbatim from the report
 5. if RC/release artifacts are part of the same event, run `extract_release_handoff_fields.sh` against the same expected worktree/branch and copy the emitted `handoff_*` / `*_generated_at` fields verbatim
@@ -271,11 +271,14 @@ EXPECTED_HEAD="<optional-commit-from-ticket-or-handoff>"
   --expected-branch-ref "$EXPECTED_BRANCH_REF" \
   ${EXPECTED_HEAD:+--expected-head "$EXPECTED_HEAD"}
 
-EXPECTED_WORKTREE_ROOT="$EXPECTED_WORKTREE_ROOT" \
-EXPECTED_BRANCH_REF="$EXPECTED_BRANCH_REF" \
-EXPECTED_HEAD="$EXPECTED_HEAD" \
-./scripts/check_bft_restart_recovery.sh
-report_path="$(ls -dt run/bft-restart-recovery-*.txt 2>/dev/null | head -n 1)"
+recovery_stdout="$({
+  EXPECTED_WORKTREE_ROOT="$EXPECTED_WORKTREE_ROOT" \
+  EXPECTED_BRANCH_REF="$EXPECTED_BRANCH_REF" \
+  EXPECTED_HEAD="$EXPECTED_HEAD" \
+  ./scripts/check_bft_restart_recovery.sh;
+} 2>&1)"
+printf '%s\n' "$recovery_stdout"
+report_path="$(printf '%s\n' "$recovery_stdout" | sed -n 's/^\[OK\] bft restart recovery passed: //p' | tail -n 1)"
 
 [ -n "$report_path" ] || { echo "missing recovery report" >&2; exit 1; }
 ./scripts/v2/extract_validator_rotation_dr_fields.sh \
@@ -284,6 +287,9 @@ report_path="$(ls -dt run/bft-restart-recovery-*.txt 2>/dev/null | head -n 1)"
   --expected-branch-ref "$EXPECTED_BRANCH_REF" \
   ${EXPECTED_HEAD:+--expected-head "$EXPECTED_HEAD"}
 ```
+
+Interpretation rule:
+- prefer the `report_path` emitted by the script you just ran over `ls -dt run/bft-restart-recovery-*.txt | head -n 1`; the latter can bind the handoff to the wrong artifact when multiple operators or retries produce nearby reports in the same worktree
 
 Recommended note-capture shape right after the helper succeeds:
 
