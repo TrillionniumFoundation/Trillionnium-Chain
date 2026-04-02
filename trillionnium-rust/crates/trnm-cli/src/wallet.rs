@@ -20,6 +20,8 @@ fn is_hidden_env_wrapper(c: char) -> bool {
                 | '\u{2068}'
                 | '\u{2069}'
                 | '\u{061C}'
+                | '\u{200E}'
+                | '\u{200F}'
         )
 }
 
