@@ -357,6 +357,17 @@ Accurate wording today:
 
 > the repository already exposes a fail-closed checkpoint/WAL audit summary suitable for DA/light-verifier evidence linkage review, but it does not yet by itself close the higher-level sidecar service contract, retry policy ownership, or deployable runtime boundary.
 
+## Scope-freeze interpretation
+
+When Day-1 launch scope is frozen, reviewers should classify verifier-sidecar work using the same fail-closed standard as the rest of the mainnet blocker board:
+
+- if public launch claims stop at core chain execution and do **not** promise trusted verification as an operator-facing product, this area may remain P1 trailing work;
+- if launch language promises verifier-backed trust, DA attestation, or checkpoint-proof service semantics to validators/integrators, this checklist should be treated as launch-blocking until the contract/retry/replay surfaces below are concretely closed.
+
+Fail-closed interpretation rule:
+
+> generic statements like "the verifier exists" or "proof checks are wired in" are not enough for scope freeze. Reviewers should require one stable tuple contract, one bounded retry matrix, and one replayable evidence bundle shape that preserves both requested and observed checkpoint/WAL anchors.
+
 ## Suggested next closure slice
 
 The next low-risk engineering slice should prefer one of:
