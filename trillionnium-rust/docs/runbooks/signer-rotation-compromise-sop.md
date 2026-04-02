@@ -48,11 +48,13 @@ Rule: when in doubt, classify as **suspected compromise**.
 
 ## Step 1 — Bind to the assigned lane/worktree
 
-Do this before inspecting processes or claiming ownership:
+Do this before inspecting processes or claiming ownership.
+Use the worktree path and branch ref from the ticket / lane assignment **directly**; do not first infer them from the current shell and then feed those inferred values back into verification.
+The branch argument may be either the short branch name (for example `lane/mn07-offline-signing-tx-safety`) or the full ref (`refs/heads/lane/mn07-offline-signing-tx-safety`).
 
 ```bash
 EXPECTED_WORKTREE_ROOT="/abs/path/from-ticket"
-EXPECTED_BRANCH_REF="refs/heads/lane/assigned-branch"
+EXPECTED_BRANCH_REF="lane/assigned-branch"
 
 ./scripts/v2/verify_lane_worktree.sh \
   --expected-worktree-root "$EXPECTED_WORKTREE_ROOT" \
@@ -60,6 +62,8 @@ EXPECTED_BRANCH_REF="refs/heads/lane/assigned-branch"
 ```
 
 Record verbatim:
+- `expected_worktree_root=`
+- `expected_branch_ref=`
 - `verified_worktree=`
 - `verified_branch_ref=`
 - `verified_head=`
@@ -68,6 +72,7 @@ Stop conditions:
 - worktree mismatch
 - branch mismatch
 - detached HEAD
+- expected ticket-assigned values were unavailable and the operator tried to substitute shell-inferred values
 - current shell cannot be bound to the ticket-assigned lane
 
 ## Step 2 — Establish signer exclusivity
