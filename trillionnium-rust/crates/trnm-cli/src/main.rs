@@ -1053,11 +1053,18 @@ fn ensure_sign_message(message: &str) -> Result<()> {
     if message.len() > 4096 {
         bail!("sign message must be <= 4096 bytes");
     }
-    if message
-        .chars()
-        .any(|c| c == '\r' || c == '\n' || contains_hidden_or_control(c))
-    {
-        bail!("sign message must be single-line printable text without control characters");
+    if message.starts_with(' ') || message.ends_with(' ') {
+        bail!("sign message must not start or end with whitespace");
+    }
+    if message.chars().any(|c| {
+        c == '\r'
+            || c == '\n'
+            || contains_hidden_or_control(c)
+            || (c.is_whitespace() && c != ' ')
+    }) {
+        bail!(
+            "sign message must be single-line printable text with only interior ASCII spaces"
+        );
     }
     Ok(())
 }
@@ -2877,8 +2884,13 @@ mod tests {
         let oversized = "a".repeat(4097);
         for bad in [
             "".to_string(),
+            " hello world".to_string(),
+            "hello world ".to_string(),
             "hello\nworld".to_string(),
             "hello\rworld".to_string(),
+            "hello\tworld".to_string(),
+            "hello\u{00a0}world".to_string(),
+            "hello\u{2003}world".to_string(),
             "hello\u{0007}world".to_string(),
             "hello\u{061c}world".to_string(),
             "hello\u{200e}world".to_string(),
@@ -2896,6 +2908,7 @@ mod tests {
 
         ensure_sign_message("trnm mainnet attestation v1").unwrap();
         ensure_sign_message("签名用途: validator-bootstrap").unwrap();
+        ensure_sign_message("operator approval v1").unwrap();
         ensure_sign_message(&"a".repeat(4096)).unwrap();
     }
 
