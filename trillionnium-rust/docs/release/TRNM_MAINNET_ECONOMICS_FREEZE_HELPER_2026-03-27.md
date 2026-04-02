@@ -115,6 +115,7 @@ For launch review, the team should be able to fill in this sheet with concrete v
 | `retention_budget_exhaustion_fallback` | What payer or disable action applies when sponsor-funded retention budget runs dry? |
 | `retention_expiry_disposition` | What happens after the retention window expires: prune, checkpoint-only, or archive-only? |
 | `anti_spam_floor` | What minimum floor applies under sustained public load? |
+| `anti_spam_backpressure_action` | When public caps are reached, what exact fail-closed action happens: reject, queue-with-budget, sponsor-only, or another explicitly named path? |
 | `override_authority` | Who can change these values before launch? |
 | `override_timelock_or_bypass` | What timelock or emergency rule governs changes? |
 
@@ -133,6 +134,7 @@ If launch review has not frozen a field yet, do **not** let operator wording or 
 | `retention_budget_exhaustion_fallback` | fail closed to `disable new sponsor-funded retention growth` rather than silently rolling costs into an unspecified payer |
 | `retention_expiry_disposition` | describe as `checkpoint-only` or stricter until an explicit archive/prune rule is approved |
 | `anti_spam_floor` | treat public sustained-load admission as not frozen / not launch-ready |
+| `anti_spam_backpressure_action` | treat cap-hit behavior as fail-closed reject / no-new-admission until an explicit operator-visible action is frozen |
 | `override_authority` / `override_timelock_or_bypass` | treat tuple changes as unauthorized for launch review evidence |
 
 These defaults are not the target economics policy. They are a review discipline: when a field is blank, the burden stays on the reviewer to freeze it explicitly rather than letting ambiguity widen subsidy, retention, or admission behavior.
@@ -155,7 +157,7 @@ Minimum wording checks:
 - `fee-like` only names the exact classes listed in `public_fee_like_classes`; if budget-spend semantics are used, say so explicitly instead of implying universal token fees.
 - `sponsor-backed` / `sponsor-only` wording must match the frozen `sponsor_only_classes`, sponsor authority, epoch budget, refill rule, and revocation semantics; never imply unrestricted third-party subsidy when the tuple says allowlist or protocol-only.
 - retention wording must name the payer-of-record and exhaustion fallback, so operators do not infer indefinite free storage for proof/evidence-heavy paths.
-- anti-spam wording must point to the actual floor/budget/bond rule rather than generic QoS language.
+- anti-spam wording must point to the actual floor/budget/bond rule and the cap-hit backpressure action rather than generic QoS language.
 - prelaunch change wording must name the override authority plus timelock/bypass rule, so readers can tell whether the tuple is still mutable.
 
 If any operator runbook, launch checklist, or public release note describes a broader or softer ingress surface than the frozen tuple, treat the economics freeze as evidence-incomplete until the wording is corrected.
@@ -360,7 +362,7 @@ To keep this blocker reviewable, attach one concrete answer for each item below:
    - owner of record for edits before launch
 2. **Operator inspection path**
    - exact command or runbook operators use to print the current tuple
-   - expected output fields: ingress classes, sponsor authority/budget/classes, sponsor revocation duplicate-retention rule, retention window/payer, retention expiry disposition, anti-spam floor, override authority
+- expected output fields: ingress classes, sponsor authority/budget/classes, sponsor revocation duplicate-retention rule, retention window/payer, retention expiry disposition, anti-spam floor, anti-spam backpressure action, override authority
 3. **Behavioral evidence**
    - at least one mempool gate for ingress/sponsor boundaries
    - at least one state gate for retention canonicalization
@@ -391,6 +393,7 @@ TRNM mainnet economics freeze review
 - retention expiry disposition:
 - retention budget exhaustion fallback:
 - anti-spam floor / sustained-load rule:
+- anti-spam backpressure action:
 - override authority:
 - override timelock or emergency bypass:
 - mempool evidence gate(s):
