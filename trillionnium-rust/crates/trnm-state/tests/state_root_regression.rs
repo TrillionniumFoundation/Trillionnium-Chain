@@ -7570,8 +7570,16 @@ fn checkpoint_da_light_verifier_summary_fails_closed_on_carriage_return_non_gene
     };
 
     assert!(
+        checkpoint_evidence_surface_is_canonical(&checkpoint, &wal),
+        "sanity: canonical non-genesis checkpoint/WAL evidence should remain audit-ready before the carriage-return prev-hash regression mutation"
+    );
+    assert!(
         checkpoint_da_light_verifier_summary(&checkpoint, &wal).is_some(),
         "sanity: canonical non-genesis checkpoint/WAL evidence should summarize before the carriage-return prev-hash regression mutation"
+    );
+    assert!(
+        !checkpoint_evidence_surface_is_canonical(&bad_checkpoint, &bad_wal),
+        "non-genesis WAL prev_hash_hex with carriage-return drift must fail canonical checkpoint evidence gating instead of remaining audit-ready"
     );
     assert!(
         checkpoint_da_light_verifier_summary(&bad_checkpoint, &bad_wal).is_none(),
@@ -7604,8 +7612,16 @@ fn checkpoint_da_light_verifier_summary_fails_closed_on_internal_whitespace_non_
     };
 
     assert!(
+        checkpoint_evidence_surface_is_canonical(&checkpoint, &wal),
+        "sanity: canonical non-genesis checkpoint/WAL evidence should remain audit-ready before the internal-whitespace prev-hash regression mutation"
+    );
+    assert!(
         checkpoint_da_light_verifier_summary(&checkpoint, &wal).is_some(),
         "sanity: canonical non-genesis checkpoint/WAL evidence should summarize before the internal-whitespace prev-hash regression mutation"
+    );
+    assert!(
+        !checkpoint_evidence_surface_is_canonical(&bad_checkpoint, &bad_wal),
+        "non-genesis WAL prev_hash_hex with internal whitespace drift must fail canonical checkpoint evidence gating instead of remaining audit-ready"
     );
     assert!(
         checkpoint_da_light_verifier_summary(&bad_checkpoint, &bad_wal).is_none(),
@@ -7638,8 +7654,16 @@ fn checkpoint_da_light_verifier_summary_fails_closed_on_zero_width_non_genesis_w
     };
 
     assert!(
+        checkpoint_evidence_surface_is_canonical(&checkpoint, &wal),
+        "sanity: canonical non-genesis checkpoint/WAL evidence should remain audit-ready before the zero-width prev-hash regression mutation"
+    );
+    assert!(
         checkpoint_da_light_verifier_summary(&checkpoint, &wal).is_some(),
         "sanity: canonical non-genesis checkpoint/WAL evidence should summarize before the zero-width prev-hash regression mutation"
+    );
+    assert!(
+        !checkpoint_evidence_surface_is_canonical(&bad_checkpoint, &bad_wal),
+        "non-genesis WAL prev_hash_hex with zero-width layout drift must fail canonical checkpoint evidence gating instead of remaining audit-ready"
     );
     assert!(
         checkpoint_da_light_verifier_summary(&bad_checkpoint, &bad_wal).is_none(),
