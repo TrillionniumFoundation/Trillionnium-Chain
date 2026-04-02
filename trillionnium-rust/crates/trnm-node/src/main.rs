@@ -482,6 +482,11 @@ fn load_checkpoint_meta(wal_dir: &Path) -> Result<Vec<CheckpointMeta>> {
     let mut list: CheckpointMetaList = toml::from_str(&raw)
         .with_context(|| format!("parse checkpoint failed: {}", f.display()))?;
     canonicalize_checkpoint_meta(&mut list.checkpoints);
+    list.checkpoints.dedup_by(|a, b| {
+        a.height == b.height
+            && a.state_root_hex == b.state_root_hex
+            && a.wal_entry_hash_hex == b.wal_entry_hash_hex
+    });
     Ok(list.checkpoints)
 }
 
@@ -13433,6 +13438,43 @@ locked_block_hash = "stale-lock"
         assert_eq!(checkpoints[0].wal_entry_hash_hex, "hash-a");
         assert_eq!(checkpoints[1].wal_entry_hash_hex, "hash-c");
         assert_eq!(checkpoints[2].wal_entry_hash_hex, "hash-b");
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
+    fn load_checkpoint_meta_deduplicates_identical_disk_entries_for_auditable_surfaces() {
+        let wal_dir = temp_wal_dir("load-checkpoint-dedup-identical-entries");
+        fs::create_dir_all(&wal_dir).unwrap();
+        fs::write(
+            checkpoint_file(&wal_dir),
+            r#"
+                [[checkpoints]]
+                height = 7
+                state_root_hex = "root-a"
+                wal_entry_hash_hex = "hash-a"
+
+                [[checkpoints]]
+                height = 8
+                state_root_hex = "root-b"
+                wal_entry_hash_hex = "hash-b"
+
+                [[checkpoints]]
+                height = 7
+                state_root_hex = "root-a"
+                wal_entry_hash_hex = "hash-a"
+            "#,
+        )
+        .unwrap();
+
+        let checkpoints = load_checkpoint_meta(&wal_dir).unwrap();
+        assert_eq!(checkpoints.len(), 2);
+        assert_eq!(checkpoints[0].height, 7);
+        assert_eq!(checkpoints[0].state_root_hex, "root-a");
+        assert_eq!(checkpoints[0].wal_entry_hash_hex, "hash-a");
+        assert_eq!(checkpoints[1].height, 8);
+        assert_eq!(checkpoints[1].state_root_hex, "root-b");
+        assert_eq!(checkpoints[1].wal_entry_hash_hex, "hash-b");
 
         let _ = fs::remove_dir_all(&wal_dir);
     }
