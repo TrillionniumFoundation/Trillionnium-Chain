@@ -265,6 +265,7 @@ Minimal incident evidence block:
 - `replay_command`: `<verbatim emitted value|unknown>`
 - `git_worktree_path`: `<verbatim emitted value|unknown>`
 - `git_worktree_branch_ref`: `<verbatim emitted value|unknown>`
+- `git_expected_worktree_branch_ref`: `<verbatim emitted value|unknown>`
 - `git_worktree_branch_ref_match`: `<true|false|unknown>`
 
 Responder rules:
