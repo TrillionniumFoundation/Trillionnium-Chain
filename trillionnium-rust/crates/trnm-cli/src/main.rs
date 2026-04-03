@@ -1202,7 +1202,10 @@ fn ensure_hex_32_bytes(s: &str) -> Result<String> {
                 )
                 || matches!(
                     c,
-                    '\u{200B}'
+                    '\u{00AD}'
+                        | '\u{061C}'
+                        | '\u{180E}'
+                        | '\u{200B}'
                         | '\u{200C}'
                         | '\u{200D}'
                         | '\u{2060}'
@@ -1216,7 +1219,6 @@ fn ensure_hex_32_bytes(s: &str) -> Result<String> {
                         | '\u{2067}'
                         | '\u{2068}'
                         | '\u{2069}'
-                        | '\u{061C}'
                 )
         })
         .trim();

@@ -43,6 +43,24 @@ fn wallet_import_hex_check() {
     .unwrap();
     assert_eq!(bidi_wrapped, "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
 
+    let soft_hyphen_wrapped = ensure_hex_32_bytes(
+        "\u{00ad}0xAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\u{00ad}",
+    )
+    .unwrap();
+    assert_eq!(
+        soft_hyphen_wrapped,
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    );
+
+    let mongolian_separator_wrapped = ensure_hex_32_bytes(
+        "\u{180e}0xAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\u{180e}",
+    )
+    .unwrap();
+    assert_eq!(
+        mongolian_separator_wrapped,
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    );
+
     let punctuated_sentence = ensure_hex_32_bytes(
         "0xAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA?!.",
     )
