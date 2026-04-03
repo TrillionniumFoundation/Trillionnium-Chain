@@ -716,6 +716,23 @@ mod tests {
     }
 
     #[test]
+    fn repeated_pause_state_transitions_do_not_append_audit_events() {
+        let mut vault = SettlementVault::new("owner");
+
+        vault.pause("owner").unwrap();
+        let audit_len_after_pause = vault.audit_log().len();
+        assert_eq!(audit_len_after_pause, 1);
+        assert_eq!(vault.pause("owner").unwrap_err(), VaultError::AlreadyPaused);
+        assert_eq!(vault.audit_log().len(), audit_len_after_pause);
+
+        vault.unpause("owner").unwrap();
+        let audit_len_after_unpause = vault.audit_log().len();
+        assert_eq!(audit_len_after_unpause, audit_len_after_pause + 1);
+        assert_eq!(vault.unpause("owner").unwrap_err(), VaultError::NotPaused);
+        assert_eq!(vault.audit_log().len(), audit_len_after_unpause);
+    }
+
+    #[test]
     fn paused_slash_fails_closed_without_mutating_lock_or_audit_log() {
         let mut vault = SettlementVault::new("owner");
 
