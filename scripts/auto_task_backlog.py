@@ -3,7 +3,7 @@ import json
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-BACKLOG = ROOT / 'BACKLOG.md'
+BACKLOG = ROOT / 'docs/archive/root-history/BACKLOG.md'
 TASKS = ROOT / 'scripts/auto_iterate.tasks'
 OUT = ROOT / 'run/auto-iterate/task-backlog.json'
 OUT.parent.mkdir(parents=True, exist_ok=True)

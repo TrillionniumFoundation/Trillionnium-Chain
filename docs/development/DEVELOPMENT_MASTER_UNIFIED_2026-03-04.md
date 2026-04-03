@@ -12,7 +12,7 @@
 - 日常推进：优先看本文件的 **第 3 节执行看板**
 - 新增子任务：先写到本文件再开工
 - 老文档不删，但视为“证据/历史”，不再作为主调度源
-- 若与 `RELEASE_READINESS.md` 冲突：**发布口径以 `RELEASE_READINESS.md` 为准**；若与 `STATUS.md` 冲突：`STATUS.md` 仅保留历史记录
+- 若与 `RELEASE_READINESS.md` 冲突：**发布口径以 `RELEASE_READINESS.md` 为准**；若与 `docs/archive/root-history/STATUS.md` 冲突：后者仅保留历史记录
 
 ### 0.1 入口地图（防止引用漂移）
 
@@ -37,7 +37,7 @@
 - 前端主线：`web4-frontend/`
 
 ### 1.2 已统一纳入的文档簇
-- 根级：`README.md / STATUS.md / ROADMAP.md / BACKLOG.md / OPERATIONS.md`
+- 根级 / 历史入口：`README.md / docs/archive/root-history/STATUS.md / docs/archive/root-history/ROADMAP.md / docs/archive/root-history/BACKLOG.md / OPERATIONS.md`
 - 开发：`docs/development/*`
 - 架构：`docs/architecture/*`
 - Rust 侧 runbook/报告：`trillionnium-rust/docs/*`
@@ -102,7 +102,7 @@
 
 ## A. 已完成（Done）
 
-- [x] PoUW v1 核心迁移与事件冻结（历史阶段，详见 STATUS/BACKLOG）
+- [x] PoUW v1 核心迁移与事件冻结（历史阶段，详见 `docs/archive/root-history/STATUS.md` / `docs/archive/root-history/BACKLOG.md`）
 - [x] PoUW auth hardening（node）
 - [x] PoUW proof binding（pouw verifier）
 - [x] Lane A（protocol_layer 骨架 + 开关 + 测试）
@@ -180,7 +180,7 @@
 ## 6. 附：建议保留/归档策略
 
 - 保留（持续维护）：
-  - `README.md`, `STATUS.md`, `BACKLOG.md`, 本文件
+  - `README.md`, `docs/archive/root-history/STATUS.md`, `docs/archive/root-history/BACKLOG.md`, 本文件
 - 归档（历史记录）：
   - 各阶段 closeout/report 文件保留只读，不再承载调度职责
 - 清理建议：

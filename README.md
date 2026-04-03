@@ -147,7 +147,9 @@ TRNM_TX_CLI=./trillionnium-rust/target/debug/trnm-cli \
 ## 6. 文档入口
 
 - 当前发布/就绪真相源（引用时须同时记录当下 `git rev-parse origin/main` 输出，勿把旧的固定 commit hash 当长期 truth source）：[RELEASE_READINESS.md](RELEASE_READINESS.md)
-- 项目状态（历史推进日志，不作为 release truth source）：[STATUS.md](STATUS.md)
+- 项目状态（历史推进日志，不作为 release truth source）：[docs/archive/root-history/STATUS.md](docs/archive/root-history/STATUS.md)
+- 历史路线图（前一阶段 sprint 记录）：[docs/archive/root-history/ROADMAP.md](docs/archive/root-history/ROADMAP.md)
+- 历史 backlog（前一阶段待办快照）：[docs/archive/root-history/BACKLOG.md](docs/archive/root-history/BACKLOG.md)
 - 统一开发调度（planning board，不覆盖 release 判定）：[docs/development/DEVELOPMENT_MASTER_UNIFIED_2026-03-04.md](docs/development/DEVELOPMENT_MASTER_UNIFIED_2026-03-04.md)
 - 并发瓶颈图与 8 周路线（当前 closeout / roadmap 入口）：[docs/reports/TRNM_CONCURRENCY_BOTTLENECK_MAP_AND_8W_ROADMAP_2026-03-10.md](docs/reports/TRNM_CONCURRENCY_BOTTLENECK_MAP_AND_8W_ROADMAP_2026-03-10.md)
 - TRNM vs Solana vs Sui 对外对标口径（架构/benchmark 口径，不宣称 production parity）：[docs/reports/TRNM_CONCURRENCY_COMPARISON_2026-03-05.md](docs/reports/TRNM_CONCURRENCY_COMPARISON_2026-03-05.md)
