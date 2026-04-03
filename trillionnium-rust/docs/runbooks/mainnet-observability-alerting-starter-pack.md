@@ -19,6 +19,27 @@ Companion truth sources:
 - `docs/runbooks/bft-checkpoint-wal-recovery.md`
 - `docs/runbooks/oracle-observability-alerts.md`
 
+## What this starter pack closes vs. what remains open
+
+This document is meant to close the **runbook-shape** part of P0.5, not the whole public-mainnet observability blocker.
+
+What this runbook closes now:
+- one shared label block across pages, dashboard annotations, and incident tickets;
+- one starter alert family set with default severity / replay / rollback expectations;
+- one minimum dashboard bundle with stable panel names and first-stop routing;
+- one compact incident evidence block that preserves `replay_command=` / `rollback_command=` pointers.
+
+What remains open even after this runbook exists:
+- node/rpc/worker/oracle/bridge metrics contract enforcement in real exporters and emitted page payloads;
+- production dashboard wiring that actually uses the stable panel names and first-stop routing contract from this document;
+- alert thresholds frozen beyond starter-pack heuristics and verified against rehearsal traffic;
+- incident labels / severity conventions emitted consistently by the real paging/ticketing path, not only copied from runbook examples;
+- replay / failure-attribution linkage proven against generated rehearsal evidence, not only described in prose.
+
+Interpretation rule:
+- if operators can only point to this markdown file, the P0.5 blocker is still open;
+- only real exporter payloads, dashboard annotations, alert rules, and rehearsal evidence may downgrade the blocker from documentation-only coverage to operational coverage.
+
 ---
 
 ## Scope
