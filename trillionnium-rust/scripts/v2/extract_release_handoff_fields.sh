@@ -24,6 +24,10 @@ MANIFEST_PATH=""
 EXPECTED_WORKTREE_ROOT=""
 EXPECTED_BRANCH_REF=""
 EXPECTED_BRANCH_REF_CANONICAL=""
+VERIFIED_WORKTREE=""
+VERIFIED_BRANCH_REF=""
+VERIFIED_HEAD=""
+EXPECTED_HEAD=""
 
 canonicalize_branch_ref() {
   local ref="$1"
@@ -289,8 +293,8 @@ fi
   exit 1
 }
 
-[ "$summary_status_summary" = "clean" ] || {
-  printf 'artifact mismatch for git_status_summary: expected clean got %s\n' "$summary_status_summary" >&2
+[ "$summary_git_status_summary" = "clean" ] || {
+  printf 'artifact mismatch for git_status_summary: expected clean got %s\n' "$summary_git_status_summary" >&2
   exit 1
 }
 
