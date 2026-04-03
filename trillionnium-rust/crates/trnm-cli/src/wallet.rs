@@ -551,6 +551,13 @@ pub(crate) fn read_key(store: &Path, name: &str) -> Result<String> {
     let f = wallet_file(store, name);
     let meta = fs::symlink_metadata(&f)
         .map_err(|e| anyhow!("failed to inspect wallet '{}' at {}: {e}", name, f.display()))?;
+    if meta.file_type().is_symlink() {
+        bail!(
+            "wallet '{}' at {} is a symlink; refusing to read key through non-regular wallet file path",
+            name,
+            f.display()
+        );
+    }
     if !meta.file_type().is_file() {
         bail!(
             "wallet '{}' at {} is not a regular file; refusing to follow non-regular wallet path",

@@ -919,7 +919,8 @@ fn read_key_refuses_symlink_wallet_path() {
 
     let err = read_key(&store, "alice").unwrap_err();
     assert!(
-        err.to_string().contains("refusing to follow non-regular wallet path"),
+        err.to_string()
+            .contains("refusing to read key through non-regular wallet file path"),
         "unexpected error: {err}"
     );
     assert!(std::fs::symlink_metadata(&existing).unwrap().file_type().is_symlink());
