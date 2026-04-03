@@ -978,6 +978,46 @@ mod tests {
     }
 
     #[test]
+    fn load_node_event_log_sources_tolerates_leading_whitespace_before_bom_wrapped_env_entries_with_attached_comments(
+    ) {
+        let _guard = lock_env();
+        let root = unique_tmp_path("trnm-rpc-node-event-sources-space-bom-attached-comment-env");
+        fs::create_dir_all(&root).expect("create root dir");
+
+        let shared_log = root.join("shared.log");
+        fs::write(&shared_log, "").expect("write shared log");
+
+        let prev_sources = std::env::var(NODE_EVENT_LOG_SOURCES_ENV).ok();
+        let prev_manifest = std::env::var(NODE_EVENT_LOG_MANIFEST_ENV).ok();
+        unsafe {
+            std::env::set_var(
+                NODE_EVENT_LOG_SOURCES_ENV,
+                "  \u{feff}\"shared.log\"# operator note ;  \u{feff}`./shared.log`# duplicate alias",
+            );
+            std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV);
+        }
+
+        let got = load_node_event_log_sources(&root);
+
+        match prev_sources {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_SOURCES_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV) },
+        }
+        match prev_manifest {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_MANIFEST_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV) },
+        }
+
+        assert_eq!(
+            got,
+            vec![shared_log],
+            "leading whitespace before BOM-wrapped env entries with attached comments should still normalize to one canonical historical replay source"
+        );
+
+        let _ = fs::remove_dir_all(root);
+    }
+
+    #[test]
     fn normalize_node_event_log_source_entry_strips_attached_comment_after_wrapped_path() {
         assert_eq!(
             normalize_node_event_log_source_entry("\"shared.log\"# operator replay note"),
