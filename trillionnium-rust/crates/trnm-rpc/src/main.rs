@@ -1336,6 +1336,10 @@ fn task_state_file() -> Option<PathBuf> {
     normalized_path_from_env(TASK_STATE_FILE_ENV)
 }
 
+fn normalize_task_state_snapshot_line(line: &str) -> &str {
+    line.trim().trim_start_matches('\u{feff}').trim()
+}
+
 fn load_task_state_snapshot() -> Result<Vec<TaskObject>> {
     let Some(path) = task_state_file() else {
         return Ok(vec![]);
@@ -1354,8 +1358,8 @@ fn load_task_state_snapshot() -> Result<Vec<TaskObject>> {
 
     let mut tasks = Vec::new();
     for (idx, line) in raw.lines().enumerate() {
-        let line = line.trim_start_matches('\u{feff}');
-        if line.trim().is_empty() {
+        let line = normalize_task_state_snapshot_line(line);
+        if line.is_empty() {
             continue;
         }
         let task = serde_json::from_str::<TaskObject>(line).map_err(|err| {
