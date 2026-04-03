@@ -24,6 +24,24 @@
 1. **bridge-relay**
    - `submit_proof_rejects_non_success_tx_receipt`
    - `finalize_settlement_rejects_non_success_tx_receipt`
+   - `finalize_settlement_rejects_stale_config_version_after_governance_change`
+     - 覆盖治理变更后 stale `config_version` 的 finalize fail-closed 路径，要求不写入 proof/nonce/finalize 审计副作用。
+   - `finalize_settlement_rejects_target_bridge_mismatch_without_audit_side_effects`
+     - 覆盖目标桥域校验的 fail-closed 语义：当 `target_bridge` 与本桥不匹配时，必须直接拒绝 finalize，且不得追加 proof / nonce / finalize 审计事件。
+   - `finalize_settlement_is_idempotent_by_settlement_id_even_with_new_nonce`
+     - 覆盖 finalize 终态语义：即使重放请求携带了新的 `nonce`，只要 `settlement_id` 相同，仍必须优先返回 `SettlementAlreadyFinalized`，避免 fresh nonce 绕过 terminal state。
+   - `duplicate_finalize_is_side_effect_free`
+     - 覆盖重复 finalize 的副作用约束：重复请求必须直接命中终态，不得追加新的 proof / nonce / finalize 审计事件。
+   - `finalize_settlement_nonce_collision_rolls_back_proof_side_effects`
+     - 覆盖 finalize 过程中 nonce 已被占用时的回滚语义：必须撤销本次 proof 占用与临时审计写入，避免 nonce 冲突把 relay 留在“proof 已用但 settlement 未终结”的半提交状态。
+   - `duplicate_finalize_with_fresh_nonce_and_bad_receipt_still_stops_at_terminal_state`
+     - 覆盖 finalize 终态优先级：即使重放请求携带 fresh `nonce` 且 `tx_receipt_status` 失败，只要 `settlement_id` 相同，仍必须先返回 `SettlementAlreadyFinalized`，避免 fresh nonce + bad receipt 组合绕过 terminal state 或污染审计。
+   - `duplicate_finalize_with_stale_config_version_after_governance_change_still_stops_at_terminal_state`
+     - 覆盖 finalize 终态优先级：即使治理已推进 `config_version`，对已终结 settlement 的重复 finalize 也必须先返回 `SettlementAlreadyFinalized`，避免被 stale config drift 改写成其他错误路径。
+   - `governance_write_with_stale_config_version_is_fail_closed_and_side_effect_free`
+     - 覆盖治理写路径使用 stale `config_version` 时的 fail-closed 语义，要求 admin / config_version / audit_log 均保持不变。
+   - `stale_validator_rotation_is_fail_closed_and_side_effect_free`
+     - 覆盖 validator set 轮换写路径的 stale `config_version` fail-closed 语义，要求 validator 配置、`config_version` 与治理审计事件均保持不变。
 
 2. **trnm-types（核心状态机）**
    - `settlement_state_machine_enforces_receipt_success_for_finalization`

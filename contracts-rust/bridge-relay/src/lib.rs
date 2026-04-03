@@ -38,6 +38,10 @@ pub enum BridgeRelayError {
         now_ts: u64,
         deadline: u64,
     },
+    DeadlineWitnessMismatch {
+        expected: u64,
+        got: u64,
+    },
     ProofAlreadyUsed {
         proof_digest: [u8; 32],
     },
@@ -170,6 +174,12 @@ impl BridgeRelay {
     ) -> Result<[u8; 32], BridgeRelayError> {
         if now_ts > deadline {
             return Err(BridgeRelayError::ProofExpired { now_ts, deadline });
+        }
+        if deadline != message.deadline {
+            return Err(BridgeRelayError::DeadlineWitnessMismatch {
+                expected: message.deadline,
+                got: deadline,
+            });
         }
 
         self.validate_validator_signature_config(self.min_validator_signatures, self.validators.len())?;
@@ -774,6 +784,17 @@ mod tests {
 
         assert_ne!(n1, n2, "different action should isolate nonce domains");
 
+        let n3 = relay
+            .consume_nonce(1, b32(2), 31337, addr(9), action_settlement_finalize(), 10)
+            .unwrap();
+        let n4 = relay
+            .consume_nonce(1, b32(1), 31337, addr(10), action_settlement_finalize(), 10)
+            .unwrap();
+
+        assert_ne!(n1, n3, "different source bridge ids should isolate nonce domains");
+        assert_ne!(n1, n4, "different target bridges should isolate nonce domains");
+        assert_ne!(n3, n4, "source and target bridge domains should stay independently isolated");
+
         let err = relay
             .consume_nonce(1, b32(1), 31337, addr(9), action_settlement_finalize(), 10)
             .unwrap_err();
@@ -788,6 +809,25 @@ mod tests {
             .submit_proof(&msg, &[sig_for(&msg, 1)], 900, 901, 31337, addr(9))
             .unwrap_err();
         assert!(matches!(err, BridgeRelayError::ProofExpired { .. }));
+    }
+
+    #[test]
+    fn fail_closed_on_deadline_witness_mismatch() {
+        let mut relay = relay(1, &[7]);
+        let msg = sample_msg();
+
+        let err = relay
+            .submit_proof(&msg, &[sig_for(&msg, 7)], msg.deadline - 1, 999, 31337, addr(9))
+            .unwrap_err();
+
+        assert!(matches!(
+            err,
+            BridgeRelayError::DeadlineWitnessMismatch {
+                expected,
+                got,
+            } if expected == msg.deadline && got == msg.deadline - 1
+        ));
+        assert!(relay.audit_log().is_empty(), "mismatched deadline must not append audit events");
     }
 
     #[test]
@@ -856,6 +896,40 @@ mod tests {
     }
 
     #[test]
+    fn proof_replay_rejection_is_side_effect_free() {
+        let mut relay = relay(1, &[7]);
+        let msg = sample_msg();
+
+        let proof_digest = relay
+            .submit_proof(&msg, &[sig_for(&msg, 7)], 1_000, 999, 31337, addr(9))
+            .unwrap();
+        let audit_len_before = relay.audit_log().len();
+
+        let err = relay
+            .submit_proof(&msg, &[sig_for(&msg, 7)], 1_000, 999, 31337, addr(9))
+            .unwrap_err();
+
+        assert!(matches!(
+            err,
+            BridgeRelayError::ProofAlreadyUsed { proof_digest: used } if used == proof_digest
+        ));
+        assert_eq!(
+            relay.audit_log().len(),
+            audit_len_before,
+            "proof replay rejection must not append duplicate audit events"
+        );
+
+        let mut fresh_msg = sample_msg();
+        fresh_msg.source_log_index += 1;
+        fresh_msg.nonce += 1;
+
+        let fresh_proof = relay
+            .submit_proof(&fresh_msg, &[sig_for(&fresh_msg, 7)], 1_000, 999, 31337, addr(9))
+            .unwrap();
+        assert_ne!(fresh_proof, proof_digest);
+    }
+
+    #[test]
     fn finalize_settlement_replay_with_invalid_signature_after_terminal_still_blocked_by_terminal_bound() {
         let mut relay = relay(1, &[7]);
         let msg = sample_msg();
@@ -877,6 +951,141 @@ mod tests {
     }
 
     #[test]
+    fn duplicate_finalize_is_side_effect_free() {
+        let mut relay = relay(1, &[7]);
+        let msg = sample_msg();
+
+        relay
+            .finalize_settlement(&msg, &[sig_for(&msg, 7)], 1_000, 999, 31337, addr(9))
+            .unwrap();
+
+        let audit_len_before = relay.audit_log().len();
+        let err = relay
+            .finalize_settlement(&msg, &[sig_for(&msg, 7)], 1_000, 999, 31337, addr(9))
+            .unwrap_err();
+
+        assert!(matches!(
+            err,
+            BridgeRelayError::SettlementAlreadyFinalized { settlement_id: id }
+                if id == settlement_id(&msg)
+        ));
+        assert_eq!(
+            relay.audit_log().len(),
+            audit_len_before,
+            "duplicate finalize must not append audit events"
+        );
+    }
+
+    #[test]
+    fn duplicate_finalize_with_bad_receipt_still_stops_at_terminal_state() {
+        let mut relay = relay(1, &[7]);
+        let msg = sample_msg();
+
+        relay
+            .finalize_settlement(&msg, &[sig_for(&msg, 7)], 1_000, 999, 31337, addr(9))
+            .unwrap();
+
+        let audit_len_before = relay.audit_log().len();
+        let mut replay = sample_msg();
+        replay.tx_receipt_status = 0;
+
+        let err = relay
+            .finalize_settlement(&replay, &[sig_for(&replay, 7)], 1_000, 999, 31337, addr(9))
+            .unwrap_err();
+
+        assert!(matches!(
+            err,
+            BridgeRelayError::SettlementAlreadyFinalized { settlement_id: id }
+                if id == settlement_id(&msg)
+        ));
+        assert_eq!(
+            relay.audit_log().len(),
+            audit_len_before,
+            "terminal duplicate finalize must stay side-effect free even with a bad receipt"
+        );
+    }
+
+    #[test]
+    fn duplicate_finalize_with_fresh_nonce_and_bad_receipt_still_stops_at_terminal_state() {
+        let mut relay = relay(1, &[7]);
+        let msg = sample_msg();
+
+        relay
+            .finalize_settlement(&msg, &[sig_for(&msg, 7)], 1_000, 999, 31337, addr(9))
+            .unwrap();
+
+        let audit_len_before = relay.audit_log().len();
+        let mut replay = sample_msg();
+        replay.nonce = msg.nonce + 1;
+        replay.tx_receipt_status = 0;
+
+        let err = relay
+            .finalize_settlement(&replay, &[sig_for(&replay, 7)], 1_000, 999, 31337, addr(9))
+            .unwrap_err();
+
+        assert!(matches!(
+            err,
+            BridgeRelayError::SettlementAlreadyFinalized { settlement_id: id }
+                if id == settlement_id(&msg)
+        ));
+        assert_eq!(
+            relay.audit_log().len(),
+            audit_len_before,
+            "terminal duplicate finalize must stay side-effect free even with a fresh nonce and bad receipt"
+        );
+    }
+
+    #[test]
+    fn duplicate_finalize_with_stale_config_version_after_governance_change_still_stops_at_terminal_state() {
+        let mut relay = BridgeRelay::with_admin(2, vec![validator_pub(7)], b32(9));
+        relay
+            .set_validators(&b32(9), vec![validator_pub(7), validator_pub(8)])
+            .unwrap();
+        relay
+            .set_min_validator_signatures(&b32(9), 2)
+            .unwrap();
+
+        let mut msg = sample_msg();
+        msg.config_version = relay.config_version();
+
+        relay
+            .finalize_settlement(
+                &msg,
+                &[sig_for(&msg, 7), sig_for(&msg, 8)],
+                1_000,
+                999,
+                31337,
+                addr(9),
+            )
+            .unwrap();
+
+        relay.set_admin(&b32(9), b32(10)).unwrap();
+
+        let audit_len_before = relay.audit_log().len();
+        let err = relay
+            .finalize_settlement(
+                &msg,
+                &[sig_for(&msg, 7), sig_for(&msg, 8)],
+                1_000,
+                999,
+                31337,
+                addr(9),
+            )
+            .unwrap_err();
+
+        assert!(matches!(
+            err,
+            BridgeRelayError::SettlementAlreadyFinalized { settlement_id: id }
+                if id == settlement_id(&msg)
+        ));
+        assert_eq!(
+            relay.audit_log().len(),
+            audit_len_before,
+            "terminal duplicate finalize must win over stale config version after governance change"
+        );
+    }
+
+    #[test]
     fn fail_closed_on_chain_domain_mismatch() {
         let mut relay = relay(1, &[7]);
         let mut msg = sample_msg();
@@ -887,6 +1096,29 @@ mod tests {
             .unwrap_err();
 
         assert!(matches!(err, BridgeRelayError::InvalidTargetChain { .. }));
+    }
+
+    #[test]
+    fn finalize_settlement_rejects_target_bridge_mismatch_without_audit_side_effects() {
+        let mut relay = relay(1, &[7]);
+        let mut msg = sample_msg();
+        msg.target_bridge = addr(8);
+        let audit_len_before = relay.audit_log().len();
+
+        let err = relay
+            .finalize_settlement(&msg, &[sig_for(&msg, 7)], 1_000, 999, 31337, addr(9))
+            .unwrap_err();
+
+        assert!(matches!(
+            err,
+            BridgeRelayError::InvalidTargetBridge { expected, got }
+                if expected == addr(9) && got == addr(8)
+        ));
+        assert_eq!(
+            relay.audit_log().len(),
+            audit_len_before,
+            "target bridge mismatch must not append proof/nonce/finalize audit events"
+        );
     }
 
     #[test]
@@ -1142,6 +1374,7 @@ mod tests {
         let mut relay = relay(1, &[7]);
         let mut msg = sample_msg();
         msg.tx_receipt_status = 0;
+        let audit_len_before = relay.audit_log().len();
 
         let err = relay
             .finalize_settlement(&msg, &[sig_for(&msg, 7)], 1_000, 999, 31337, addr(9))
@@ -1151,6 +1384,11 @@ mod tests {
             err,
             BridgeRelayError::InvalidTransactionReceipt { status: 0 }
         ));
+        assert_eq!(
+            relay.audit_log().len(),
+            audit_len_before,
+            "bad receipt must fail closed without proof/nonce/finalize audit side effects"
+        );
 
         let mut settled_msg = sample_msg();
         settled_msg.nonce = 11;
@@ -1278,6 +1516,62 @@ mod tests {
     }
 
     #[test]
+    fn finalize_settlement_rejects_stale_config_version_after_governance_change() {
+        let mut relay = BridgeRelay::with_admin(2, vec![validator_pub(7)], b32(9));
+        relay
+            .set_validators(&b32(9), vec![validator_pub(7), validator_pub(8)])
+            .unwrap();
+        relay
+            .set_min_validator_signatures(&b32(9), 2)
+            .unwrap();
+
+        let mut stale = sample_msg();
+        stale.nonce = 123;
+
+        relay.set_admin(&b32(9), b32(10)).unwrap();
+
+        let audit_len_before = relay.audit_log().len();
+        let err = relay
+            .finalize_settlement(
+                &stale,
+                &[sig_for(&stale, 7), sig_for(&stale, 8)],
+                1_000,
+                999,
+                31337,
+                addr(9),
+            )
+            .unwrap_err();
+
+        let expected_version = relay.config_version();
+        assert!(matches!(
+            err,
+            BridgeRelayError::InvalidConfigVersion { expected, got: 1 }
+                if expected == expected_version
+        ));
+        assert_eq!(
+            relay.audit_log().len(),
+            audit_len_before,
+            "stale finalize must not append proof/nonce/finalize audit side effects"
+        );
+
+        let mut fresh = sample_msg();
+        fresh.config_version = expected_version;
+        fresh.nonce = 123;
+
+        let finalized_settlement_id = relay
+            .finalize_settlement(
+                &fresh,
+                &[sig_for(&fresh, 7), sig_for(&fresh, 8)],
+                1_000,
+                999,
+                31337,
+                addr(9),
+            )
+            .unwrap();
+        assert_eq!(finalized_settlement_id, settlement_id(&fresh));
+    }
+
+    #[test]
     fn config_version_gating_rejects_stale_expected_version() {
         let mut relay = BridgeRelay::with_admin(2, vec![validator_pub(7)], b32(9));
         relay
@@ -1299,6 +1593,127 @@ mod tests {
                 expected: current,
                 got,
             } if current > 0 && got == expected
+        ));
+    }
+
+    #[test]
+    fn governance_write_with_stale_config_version_is_fail_closed_and_side_effect_free() {
+        let mut relay = BridgeRelay::with_admin(1, vec![validator_pub(7)], b32(9));
+        let audit_len_before = relay.audit_log().len();
+        let admin_before = b32(9);
+
+        relay
+            .set_validators_with_version(&admin_before, relay.config_version(), vec![validator_pub(7), validator_pub(8)])
+            .unwrap();
+        let stale_version = relay.config_version();
+
+        relay
+            .set_min_validator_signatures(&admin_before, 2)
+            .unwrap();
+
+        let audit_len_after_rotation = relay.audit_log().len();
+        let current_version = relay.config_version();
+
+        let err = relay
+            .set_admin_with_version(&admin_before, stale_version, b32(10))
+            .unwrap_err();
+
+        assert!(matches!(
+            err,
+            BridgeRelayError::InvalidConfigVersion {
+                expected,
+                got,
+            } if expected == current_version && got == stale_version
+        ));
+        assert_eq!(relay.admin, admin_before, "stale write must not rotate admin");
+        assert_eq!(
+            relay.config_version(),
+            current_version,
+            "stale write must not mutate config version"
+        );
+        assert_eq!(
+            relay.audit_log().len(),
+            audit_len_after_rotation,
+            "stale write must not append governance audit events"
+        );
+        assert!(
+            audit_len_after_rotation > audit_len_before,
+            "control step should have produced governance audit events"
+        );
+    }
+
+    #[test]
+    fn stale_validator_rotation_is_fail_closed_and_side_effect_free() {
+        let mut relay = BridgeRelay::with_admin(1, vec![validator_pub(7)], b32(9));
+        let admin = b32(9);
+
+        relay
+            .set_validators_with_version(&admin, relay.config_version(), vec![validator_pub(7), validator_pub(8)])
+            .unwrap();
+        let stale_version = relay.config_version();
+
+        relay
+            .set_min_validator_signatures(&admin, 2)
+            .unwrap();
+
+        let current_version = relay.config_version();
+        let audit_len_before = relay.audit_log().len();
+
+        let mut stale = sample_msg();
+        stale.config_version = stale_version;
+        stale.nonce = 124;
+
+        let err = relay
+            .submit_proof(&stale, &[sig_for(&stale, 7)], 1_000, 999, 31337, addr(9))
+            .unwrap_err();
+
+        assert!(matches!(
+            err,
+            BridgeRelayError::InvalidConfigVersion { expected, got }
+                if expected == current_version && got == stale_version
+        ));
+        assert_eq!(
+            relay.audit_log().len(),
+            audit_len_before,
+            "stale proof must not append audit events"
+        );
+
+        let err = relay
+            .set_validators_with_version(&admin, stale_version, vec![validator_pub(7)])
+            .unwrap_err();
+
+        assert!(matches!(
+            err,
+            BridgeRelayError::InvalidConfigVersion { expected, got }
+                if expected == current_version && got == stale_version
+        ));
+        assert_eq!(relay.config_version(), current_version);
+        assert_eq!(
+            relay.audit_log().len(),
+            audit_len_before,
+            "stale validator rotation must not append governance audit events"
+        );
+
+        let mut rotated = sample_msg();
+        rotated.config_version = current_version;
+        rotated.nonce = 125;
+        let err = relay
+            .submit_proof(
+                &rotated,
+                &[sig_for(&rotated, 7)],
+                1_000,
+                999,
+                31337,
+                addr(9),
+            )
+            .unwrap_err();
+
+        assert!(matches!(
+            err,
+            BridgeRelayError::NotEnoughValidatorSignatures {
+                required: 2,
+                got: 1,
+            }
         ));
     }
 
@@ -1463,5 +1878,36 @@ mod tests {
         });
 
         assert!(relay.audit_log().is_empty());
+    }
+
+    #[test]
+    fn normalized_audit_log_keeps_finalize_and_nonce_binding() {
+        let mut relay = relay(1, &[7]);
+        let msg = sample_msg();
+        let proof_digest = hash_message(&msg);
+        let expected_settlement_id = settlement_id(&msg);
+        let expected_nonce_key = nonce_key(
+            msg.source_chain_id,
+            msg.source_bridge_id,
+            msg.target_chain_id,
+            msg.target_bridge,
+            action_settlement_finalize(),
+            msg.nonce,
+        );
+
+        relay
+            .finalize_settlement(&msg, &[sig_for(&msg, 7)], 1_000, 999, 31337, addr(9))
+            .unwrap();
+
+        let normalized = relay.normalized_audit_log();
+        assert!(normalized.iter().any(|event| {
+            event.event_type == "bridge_relay.nonce_consumed"
+                && event.object_id.as_deref() == Some(hex32(&expected_nonce_key).as_str())
+        }));
+        assert!(normalized.iter().any(|event| {
+            event.event_type == "bridge_relay.settlement_finalized"
+                && event.object_id.as_deref() == Some(hex32(&expected_settlement_id).as_str())
+                && event.related_id.as_deref() == Some(hex32(&proof_digest).as_str())
+        }));
     }
 }
