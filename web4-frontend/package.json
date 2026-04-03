@@ -18,7 +18,7 @@
     "release:ready": "bash ./scripts/release-ready.sh"
   },
   "dependencies": {
-    "next": "16.1.6",
+    "next": "16.1.7",
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "zod": "^4.3.6"
