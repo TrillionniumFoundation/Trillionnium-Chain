@@ -111,6 +111,17 @@ A minimal Day-1 handoff can be expressed as:
 3. place any reverse proxy in front of `EXPLORER_PUBLIC_BASE_URL`,
 4. keep the startup/liveness probe pointed at the local bind target unless you are explicitly testing proxy reachability.
 
+### Minimum handoff evidence packet
+
+To keep the current scaffold useful as an **operator-facing deployment placeholder** without overstating blocker closure, capture one small evidence packet whenever you bring it up for rehearsal or handoff:
+
+1. the exact env file values used for `EXPLORER_HOST`, `EXPLORER_PORT`, `EXPLORER_PUBLIC_BASE_URL`, `EXPLORER_HEALTH_URL`, and `EXPLORER_RPC_BASE_URL`
+2. one `./scripts/v2/explorer_service_status.sh` output block showing `state`, `health_url`, `local_health_url`, `index_url`, and `rpc_base_url`
+3. one fetch of `/index.json` proving the static scaffold is serving the declared Day-1 read-only contract markers
+4. one explicit note that this evidence **does not** prove durable indexer / historical read-model / production explorer-backend closure
+
+This packet is intentionally narrow: it closes the question "what exact deployment-path evidence should an operator attach for the current placeholder service?" without claiming that the Rank 1 explorer/indexer blocker is solved.
+
 Suggested env file (`trillionnium-rust/run/explorer-service/explorer-service.env`):
 
 > On first successful/local bring-up, `explorer_service_up.sh` will create this file automatically if it does not already exist, using the current runtime contract values. It never overwrites an existing env file, so operator-local edits remain the source of truth.
