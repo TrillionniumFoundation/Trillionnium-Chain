@@ -137,6 +137,19 @@ To keep the current scaffold useful as an **operator-facing deployment placehold
 
 This packet is intentionally narrow: it closes the question "what exact deployment-path evidence should an operator attach for the current placeholder service?" without claiming that the Rank 1 explorer/indexer blocker is solved.
 
+### What must exist before this scaffold can be retired
+
+Do not replace this scaffold with a so-called "real" explorer/read service unless the handoff packet names all of the following durable-read anchors explicitly:
+
+1. `ingestion_source=` — the canonical source of indexed data (`rpc-pull`, `event-stream`, `block-replay`, or a documented mixed mode)
+2. `checkpoint_store=` — where the durable cursor/checkpoint is persisted
+3. `replay_start_anchor=` — the exact genesis/checkpoint/archive anchor used for rebuilds
+4. `retention_scope=` — whether queries are `rpc-window-bounded`, `durable-hot`, or `durable+archive`
+5. `archive_owner=` — which component/operator owns long-horizon historical retention and restore
+6. `lag_slo=` — the freshness/index-lag budget the operator is actually promising
+
+Fail-closed rule: if any field above is missing, treat the deployment as another placeholder edge, not as durable indexer / historical read-model closure.
+
 Suggested env file (`trillionnium-rust/run/explorer-service/explorer-service.env`):
 
 > On first successful/local bring-up, `explorer_service_up.sh` will create this file automatically if it does not already exist, using the current runtime contract values. It never overwrites an existing env file, so operator-local edits remain the source of truth.
