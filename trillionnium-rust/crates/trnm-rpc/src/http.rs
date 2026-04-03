@@ -163,10 +163,16 @@ pub(crate) fn parse_http_request_target(first_line: &str) -> Option<(&str, &str)
     if path.chars().any(|ch| ch.is_control() || ch.is_whitespace()) {
         return None;
     }
+    if path.matches('?').count() > 1 {
+        return None;
+    }
     if path.contains('\\') || normalized.contains("%5c") {
         return None;
     }
     if path.contains('#') || normalized.contains("%23") {
+        return None;
+    }
+    if normalized.contains("%3f") {
         return None;
     }
     if contains_malformed_percent_encoding(path) || contains_percent_encoded_control_or_space(path) {
@@ -229,7 +235,7 @@ pub(crate) fn parse_query_events_limit_from_path(path: &str) -> std::result::Res
     if query.is_empty()
         || query.contains('?')
         || query.contains('#')
-        || query.chars().any(|ch| ch.is_control())
+        || query.chars().any(|ch| ch.is_control() || ch.is_whitespace())
     {
         return Err(http_json_response(
             "400 Bad Request",
@@ -392,6 +398,30 @@ mod tests {
     }
 
     #[test]
+    fn parse_http_request_target_rejects_encoded_query_delimiter() {
+        assert_eq!(
+            parse_http_request_target("GET /query-task/42%3Fshadow HTTP/1.1"),
+            None
+        );
+        assert_eq!(
+            parse_http_request_target("HEAD /query-events/7%3flimit=9 HTTP/1.1"),
+            None
+        );
+    }
+
+    #[test]
+    fn parse_http_request_target_rejects_multiple_raw_query_delimiters() {
+        assert_eq!(
+            parse_http_request_target("GET /query-task/42??shadow HTTP/1.1"),
+            None
+        );
+        assert_eq!(
+            parse_http_request_target("HEAD /query-events/7?limit=9?shadow HTTP/1.1"),
+            None
+        );
+    }
+
+    #[test]
     fn parse_http_request_target_rejects_raw_path_whitespace_and_controls() {
         assert_eq!(
             parse_http_request_target("GET /health\tcheck HTTP/1.1"),
@@ -487,6 +517,27 @@ mod tests {
     }
 
     #[test]
+    fn parse_query_events_limit_rejects_raw_query_whitespace() {
+        for path in [
+            "/query-events/42?limit=1 ",
+            "/query-events/42?limit= 1",
+            "/query-events/42?limit =1",
+            "/query-events/42?limit=1& limit=2",
+        ] {
+            let response = parse_query_events_limit_from_path(path);
+            assert!(response.is_err(), "path={path:?}");
+            assert_eq!(
+                response.unwrap_err(),
+                http_json_response(
+                    "400 Bad Request",
+                    "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid limit\"}"
+                ),
+                "path={path:?}"
+            );
+        }
+    }
+
+    #[test]
     fn parse_http_request_target_rejects_raw_and_encoded_dot_segments() {
         assert_eq!(
             parse_http_request_target("GET /query-events/../42?limit=1 HTTP/1.1"),
@@ -533,5 +584,36 @@ mod tests {
                 "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid limit\"}"
             )
         );
+    }
+
+    #[test]
+    fn parse_query_events_limit_rejects_unknown_or_duplicate_query_keys() {
+        let duplicate = parse_query_events_limit_from_path("/query-events/42?limit=1&limit=2");
+        assert!(duplicate.is_err());
+        assert_eq!(
+            duplicate.unwrap_err(),
+            http_json_response(
+                "400 Bad Request",
+                "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"duplicate limit\"}"
+            )
+        );
+
+        for path in [
+            "/query-events/42?foo=1",
+            "/query-events/42?limit=1&foo=2",
+            "/query-events/42?foo=2&limit=1",
+            "/query-events/42?Limit=1",
+        ] {
+            let response = parse_query_events_limit_from_path(path);
+            assert!(response.is_err(), "path={path}");
+            assert_eq!(
+                response.unwrap_err(),
+                http_json_response(
+                    "400 Bad Request",
+                    "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid limit\"}"
+                ),
+                "path={path}"
+            );
+        }
     }
 }

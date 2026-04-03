@@ -2,6 +2,7 @@ use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
 pub struct AccountState {
     pub address: String,
     pub balance: u128,
@@ -9,6 +10,7 @@ pub struct AccountState {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
 pub struct AccountBalanceQueryResponse {
     pub address: String,
     pub balance: u128,
@@ -16,6 +18,7 @@ pub struct AccountBalanceQueryResponse {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
 pub struct AccountNonceQueryResponse {
     pub address: String,
     pub nonce: u64,
@@ -23,6 +26,7 @@ pub struct AccountNonceQueryResponse {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
 pub struct FaucetRequestResponse {
     pub ok: bool,
     pub code: String,
@@ -38,6 +42,7 @@ pub struct FaucetRequestResponse {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
 pub struct RpcErrorResponse {
     pub code: &'static str,
     pub message: String,
@@ -108,9 +113,10 @@ pub fn query_account_state(
     accounts: &BTreeMap<String, AccountState>,
     address: &str,
 ) -> Result<AccountState, AccountQueryError> {
-    validate_trnm_address(address)?;
+    let normalized_address = address.trim();
+    validate_trnm_address(normalized_address)?;
     accounts
-        .get(address)
+        .get(normalized_address)
         .cloned()
-        .ok_or_else(|| AccountQueryError::AccountNotFound(address.to_string()))
+        .ok_or_else(|| AccountQueryError::AccountNotFound(normalized_address.to_string()))
 }

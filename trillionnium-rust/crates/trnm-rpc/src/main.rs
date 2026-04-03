@@ -2927,7 +2927,7 @@ fn parse_query_events_limit_from_path(path: &str) -> std::result::Result<usize, 
     if query.is_empty()
         || query.contains('?')
         || query.contains('#')
-        || query.chars().any(|ch| ch.is_control())
+        || query.chars().any(|ch| ch.is_control() || ch.is_whitespace())
     {
         return Err(http_json_response(
             "400 Bad Request",
@@ -3026,6 +3026,25 @@ fn contains_malformed_percent_encoding(value: &str) -> bool {
     false
 }
 
+fn contains_percent_encoded_control_or_space(value: &str) -> bool {
+    let bytes = value.as_bytes();
+    let mut idx = 0;
+    while idx + 2 < bytes.len() {
+        if bytes[idx] == b'%' {
+            let hi = (bytes[idx + 1] as char).to_digit(16);
+            let lo = (bytes[idx + 2] as char).to_digit(16);
+            if let (Some(hi), Some(lo)) = (hi, lo) {
+                let decoded = ((hi << 4) | lo) as u8;
+                if decoded <= 0x20 || decoded == 0x7f {
+                    return true;
+                }
+            }
+        }
+        idx += 1;
+    }
+    false
+}
+
 fn parse_query_normalized_audit_events_query_from_path(
     path: &str,
 ) -> std::result::Result<QueryNormalizedAuditEventsQuery, String> {
@@ -3048,6 +3067,7 @@ fn parse_query_normalized_audit_events_query_from_path(
         || normalized_path.contains("%20")
         || normalized_path.contains("%7f")
         || contains_malformed_percent_encoding(path_without_query)
+        || contains_percent_encoded_control_or_space(path_without_query)
         || path_without_query
             .split('/')
             .any(|segment| segment == "." || segment == "..")
@@ -3070,7 +3090,7 @@ fn parse_query_normalized_audit_events_query_from_path(
     if query.is_empty()
         || query.contains('?')
         || query.contains('#')
-        || query.chars().any(|ch| ch.is_control())
+        || query.chars().any(|ch| ch.is_control() || ch.is_whitespace())
     {
         return Err(http_json_response(
             "400 Bad Request",
@@ -3092,6 +3112,7 @@ fn parse_query_normalized_audit_events_query_from_path(
         || normalized_query.contains("%20")
         || normalized_query.contains("%7f")
         || contains_malformed_percent_encoding(query)
+        || contains_percent_encoded_control_or_space(query)
     {
         return Err(http_json_response(
             "400 Bad Request",
@@ -3275,7 +3296,12 @@ fn json_response_for_method(method: &str, status_line: &str, body: &str) -> Stri
 
 fn has_ambiguous_path_segment_encoding(segment: &str) -> bool {
     let lower = segment.to_ascii_lowercase();
-    lower.contains("%2f") || lower.contains("%5c")
+    lower.contains("%2f")
+        || lower.contains("%5c")
+        || lower.contains("%2e")
+        || lower.contains("%3f")
+        || lower.contains("%23")
+        || lower.contains("%26")
 }
 
 fn parse_nonempty_path_suffix<'a>(path: &'a str, prefix: &str) -> Option<&'a str> {
@@ -3293,9 +3319,33 @@ fn parse_nonempty_path_suffix<'a>(path: &'a str, prefix: &str) -> Option<&'a str
         })
         .filter(|suffix| !suffix.is_empty())
         .filter(|suffix| !matches!(*suffix, "." | ".."))
+        .filter(|suffix| !suffix.contains(['#', '?']))
+        .filter(|suffix| !suffix.chars().any(|ch| ch.is_control() || ch.is_whitespace()))
         .filter(|suffix| !suffix.contains('/'))
         .filter(|suffix| !suffix.contains('\\'))
         .filter(|suffix| !has_ambiguous_path_segment_encoding(suffix))
+}
+
+fn parse_query_capability_audit_subject_from_target<'a>(
+    target: &'a str,
+) -> std::result::Result<&'a str, &'static str> {
+    let (path, query) = match target.split_once('?') {
+        Some((path, query)) => (path, Some(query)),
+        None => (target, None),
+    };
+
+    if query.is_some() {
+        return Err("invalid query");
+    }
+
+    match parse_nonempty_path_suffix(path, "/query-capability-audit/") {
+        Some(subject) => Ok(subject),
+        None if path == "/query-capability-audit" || path == "/query-capability-audit/" => {
+            Err("missing token or subject")
+        }
+        None if path.starts_with("/query-capability-audit/") => Err("invalid query"),
+        None => Err("missing token or subject"),
+    }
 }
 
 fn serve_health(host: &str, port: u16) -> Result<()> {
@@ -3419,11 +3469,13 @@ fn serve_health(host: &str, port: u16) -> Result<()> {
                 }
             }
 
-            (Some((method, _)), Some(path), Some(_))
-                if path.starts_with("/query-capability-audit/") =>
+            (Some((method, _)), Some(path), Some(target))
+                if path == "/query-capability-audit"
+                    || path == "/query-capability-audit/"
+                    || path.starts_with("/query-capability-audit/") =>
             {
-                match parse_nonempty_path_suffix(path, "/query-capability-audit/") {
-                    Some(subject_or_token) => {
+                match parse_query_capability_audit_subject_from_target(target) {
+                    Ok(subject_or_token) => {
                         let registry = load_identity_registry(&identity_registry_file());
                         if let Some(token_id) =
                             resolve_capability_token_subject_or_token(&registry, subject_or_token)
@@ -3445,7 +3497,11 @@ fn serve_health(host: &str, port: u16) -> Result<()> {
                             json_response_for_method(method, "404 Not Found", body)
                         }
                     }
-                    None => {
+                    Err("invalid query") => {
+                        let body = "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid query\"}";
+                        json_response_for_method(method, "400 Bad Request", body)
+                    }
+                    Err(_) => {
                         let body = "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"missing token or subject\"}";
                         json_response_for_method(method, "400 Bad Request", body)
                     }
@@ -5073,6 +5129,21 @@ mod tests {
     }
 
     #[test]
+    fn parse_query_events_limit_from_path_rejects_raw_query_whitespace() {
+        for path in [
+            "/query-events/42?limit=7 ",
+            "/query-events/42?limit=7\t",
+            "/query-events/42?limit= 7",
+            "/query-events/42?limit=7&limit=8 ",
+        ] {
+            let err = parse_query_events_limit_from_path(path)
+                .expect_err("raw query whitespace must fail closed");
+            assert!(err.contains("400 Bad Request"), "path={path:?} err={err}");
+            assert!(err.contains("invalid limit"), "path={path:?} err={err}");
+        }
+    }
+
+    #[test]
     fn parse_query_events_limit_from_path_rejects_percent_encoded_path_smuggling() {
         for path in [
             "/query-events%2f42?limit=7",
@@ -5143,6 +5214,73 @@ mod tests {
     }
 
     #[test]
+    fn parse_query_normalized_audit_events_query_from_path_rejects_duplicate_limit() {
+        let err = parse_query_normalized_audit_events_query_from_path(
+            "/query-normalized-audit-events?limit=3&limit=4",
+        )
+        .expect_err("duplicate limit should fail closed");
+        assert!(err.contains("400 Bad Request"));
+        assert!(err.contains("duplicate limit"));
+    }
+
+    #[test]
+    fn parse_query_normalized_audit_events_query_from_path_rejects_duplicate_event_type() {
+        let err = parse_query_normalized_audit_events_query_from_path(
+            "/query-normalized-audit-events?eventType=trnm.task.accept&eventType=trnm.task.commit",
+        )
+        .expect_err("duplicate eventType should fail closed");
+        assert!(err.contains("400 Bad Request"));
+        assert!(err.contains("duplicate eventType"));
+    }
+
+    #[test]
+    fn parse_query_normalized_audit_events_query_from_path_rejects_duplicate_source() {
+        let err = parse_query_normalized_audit_events_query_from_path(
+            "/query-normalized-audit-events?source=trnm.task&source=trnm.adapter",
+        )
+        .expect_err("duplicate source should fail closed");
+        assert!(err.contains("400 Bad Request"));
+        assert!(err.contains("duplicate source"));
+    }
+
+    #[test]
+    fn parse_query_normalized_audit_events_query_from_path_rejects_duplicate_cursor() {
+        let err = parse_query_normalized_audit_events_query_from_path(
+            "/query-normalized-audit-events?cursor=1&cursor=2",
+        )
+        .expect_err("duplicate cursor should fail closed");
+        assert!(err.contains("400 Bad Request"));
+        assert!(err.contains("duplicate cursor"));
+    }
+
+    #[test]
+    fn parse_query_normalized_audit_events_query_from_path_accepts_wrapped_values() {
+        let out = parse_query_normalized_audit_events_query_from_path(
+            "/query-normalized-audit-events?source='trnm.task'&eventType=`trnm.task.commit`&limit=\"3\"&cursor=  '2'  ",
+        )
+        .expect("wrapped values should normalize");
+        assert_eq!(out.source.as_deref(), Some("trnm.task"));
+        assert_eq!(out.event_type.as_deref(), Some("trnm.task.commit"));
+        assert_eq!(out.limit, 3);
+        assert_eq!(out.cursor, Some(2));
+    }
+
+    #[test]
+    fn parse_query_normalized_audit_events_query_from_path_rejects_raw_query_whitespace() {
+        for path in [
+            "/query-normalized-audit-events?source=trnm.task ",
+            "/query-normalized-audit-events?eventType=trnm.task.commit\t",
+            "/query-normalized-audit-events?cursor= 1",
+            "/query-normalized-audit-events?limit=3 ",
+        ] {
+            let err = parse_query_normalized_audit_events_query_from_path(path)
+                .expect_err("raw query whitespace must fail closed");
+            assert!(err.contains("400 Bad Request"), "path={path:?} err={err}");
+            assert!(err.contains("invalid query"), "path={path:?} err={err}");
+        }
+    }
+
+    #[test]
     fn parse_query_normalized_audit_events_query_from_path_rejects_prefix_shadow_paths() {
         for path in [
             "/query-normalized-audit-events-shadow",
@@ -5168,6 +5306,22 @@ mod tests {
         ] {
             let err = parse_query_normalized_audit_events_query_from_path(path)
                 .expect_err("encoded controls should fail closed");
+            assert!(err.contains("400 Bad Request"), "path={path} err={err}");
+            assert!(err.contains("invalid query"), "path={path} err={err}");
+        }
+    }
+
+    #[test]
+    fn parse_query_normalized_audit_events_query_from_path_rejects_uppercase_percent_encoded_controls_and_spaces(
+    ) {
+        for path in [
+            "/query-normalized-audit-events?source=trnm.task%1Fshadow",
+            "/query-normalized-audit-events?eventType=trnm.task.commit%7Ftrail",
+            "/query-normalized-audit-events?limit=3%20",
+            "/query-normalized-audit-events%0Ashadow?source=trnm.task",
+        ] {
+            let err = parse_query_normalized_audit_events_query_from_path(path)
+                .expect_err("uppercase encoded controls/spaces should fail closed");
             assert!(err.contains("400 Bad Request"), "path={path} err={err}");
             assert!(err.contains("invalid query"), "path={path} err={err}");
         }
@@ -5428,6 +5582,34 @@ mod tests {
             parse_nonempty_path_suffix("/query-capability-audit/..", "/query-capability-audit/"),
             None
         );
+        assert_eq!(
+            parse_nonempty_path_suffix(
+                "/query-capability-audit/alice%2ejson",
+                "/query-capability-audit/"
+            ),
+            None
+        );
+        assert_eq!(
+            parse_nonempty_path_suffix(
+                "/query-capability-audit/alice%3Flimit=1",
+                "/query-capability-audit/"
+            ),
+            None
+        );
+        assert_eq!(
+            parse_nonempty_path_suffix(
+                "/query-capability-audit/alice%23frag",
+                "/query-capability-audit/"
+            ),
+            None
+        );
+        assert_eq!(
+            parse_nonempty_path_suffix(
+                "/query-capability-audit/alice%26cursor=1",
+                "/query-capability-audit/"
+            ),
+            None
+        );
     }
 
     #[test]
@@ -5436,7 +5618,36 @@ mod tests {
         assert!(has_ambiguous_path_segment_encoding("alice%2fextra"));
         assert!(has_ambiguous_path_segment_encoding("alice%5Cextra"));
         assert!(has_ambiguous_path_segment_encoding("alice%5cextra"));
+        assert!(has_ambiguous_path_segment_encoding("alice%2Ejson"));
+        assert!(has_ambiguous_path_segment_encoding("alice%2ejson"));
         assert!(!has_ambiguous_path_segment_encoding("did:trn:alice"));
+    }
+
+    #[test]
+    fn parse_query_capability_audit_subject_from_target_distinguishes_missing_from_malformed() {
+        assert_eq!(
+            parse_query_capability_audit_subject_from_target("/query-capability-audit")
+                .expect_err("bare capability route should report missing subject"),
+            "missing token or subject"
+        );
+        assert_eq!(
+            parse_query_capability_audit_subject_from_target("/query-capability-audit/")
+                .expect_err("trailing-slash-only capability route should report missing subject"),
+            "missing token or subject"
+        );
+
+        for target in [
+            "/query-capability-audit///",
+            "/query-capability-audit/alice//",
+            "/query-capability-audit/alice/extra",
+        ] {
+            assert_eq!(
+                parse_query_capability_audit_subject_from_target(target)
+                    .expect_err("malformed capability path must fail closed as invalid query"),
+                "invalid query",
+                "target={target}"
+            );
+        }
     }
 
     #[test]

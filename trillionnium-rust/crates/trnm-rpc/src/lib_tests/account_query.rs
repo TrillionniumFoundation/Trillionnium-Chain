@@ -50,6 +50,25 @@ fn query_account_state_rejects_uppercase_hex_suffix() {
 }
 
 #[test]
+fn query_account_state_accepts_whitespace_drift() {
+    let address = format!("trnm1{}", "1".repeat(40));
+    let mut accounts = BTreeMap::new();
+    accounts.insert(
+        address.clone(),
+        AccountState {
+            address: address.clone(),
+            balance: 42,
+            nonce: 7,
+        },
+    );
+
+    let got = query_account_state(&accounts, &format!("  {}\n", address)).unwrap();
+    assert_eq!(got.address, address);
+    assert_eq!(got.balance, 42);
+    assert_eq!(got.nonce, 7);
+}
+
+#[test]
 fn query_account_state_rejects_wrong_suffix_length() {
     let accounts = BTreeMap::new();
 
@@ -64,4 +83,47 @@ fn query_account_state_rejects_wrong_suffix_length() {
         query_account_state(&accounts, &long).unwrap_err().code(),
         "INVALID_ADDRESS"
     );
+}
+
+#[test]
+fn account_state_rejects_unknown_fields() {
+    let err = serde_json::from_value::<AccountState>(json!({
+        "address": format!("trnm1{}", "1".repeat(40)),
+        "balance": 42,
+        "nonce": 7,
+        "unexpected": "schema-drift"
+    }))
+    .unwrap_err();
+    assert!(err.to_string().contains("unexpected"));
+}
+
+#[test]
+fn faucet_request_response_rejects_unknown_fields() {
+    let err = serde_json::from_value::<FaucetRequestResponse>(json!({
+        "ok": true,
+        "code": "OK",
+        "message": "granted",
+        "address": format!("trnm1{}", "1".repeat(40)),
+        "requested_amount": 10,
+        "granted_amount": 10,
+        "balance": 20,
+        "nonce": 1,
+        "window_seconds": 60,
+        "next_allowed_unix_ms": 1700000000123u128,
+        "version": 3,
+        "unexpected": "schema-drift"
+    }))
+    .unwrap_err();
+    assert!(err.to_string().contains("unexpected"));
+}
+
+#[test]
+fn rpc_error_response_rejects_unknown_fields() {
+    let err = serde_json::from_value::<RpcErrorResponse>(json!({
+        "code": "INVALID_ADDRESS",
+        "message": "invalid address format",
+        "extra": true
+    }))
+    .unwrap_err();
+    assert!(err.to_string().contains("extra"));
 }

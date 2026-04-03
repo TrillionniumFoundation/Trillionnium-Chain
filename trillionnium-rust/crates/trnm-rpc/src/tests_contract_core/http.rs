@@ -155,6 +155,34 @@ fn parse_http_get_path_rejects_fragment_suffixes_fail_closed() {
 }
 
 #[test]
+fn parse_http_request_target_rejects_encoded_query_delimiter_fail_closed() {
+    assert_eq!(
+        parse_http_request_target("GET /query-task/42%3Fshadow HTTP/1.1"),
+        None
+    );
+    assert_eq!(
+        parse_http_request_target("HEAD /query-events/7%3flimit=9 HTTP/1.1"),
+        None
+    );
+}
+
+#[test]
+fn parse_http_request_target_rejects_malformed_percent_encoding_fail_closed() {
+    for first_line in [
+        "GET /query-task/42% HTTP/1.1",
+        "GET /query-events/7%2 HTTP/1.1",
+        "HEAD /query-events/7%zz HTTP/1.1",
+        "HEAD /query-capability-audit/alice%4G HTTP/1.1",
+    ] {
+        assert_eq!(
+            parse_http_request_target(first_line),
+            None,
+            "malformed percent encoding must fail closed: {first_line}"
+        );
+    }
+}
+
+#[test]
 fn parse_query_events_limit_from_path_defaults_and_accepts_explicit_limit() {
     assert_eq!(
         parse_query_events_limit_from_path("/query-events/42").expect("default limit"),
@@ -342,6 +370,21 @@ fn parse_query_events_limit_from_path_rejects_raw_fragment_delimiters() {
 }
 
 #[test]
+fn parse_query_events_limit_from_path_rejects_raw_query_whitespace() {
+    for path in [
+        "/query-events/42?limit=7 ",
+        "/query-events/42?limit=7\t",
+        "/query-events/42?limit= 7",
+        "/query-events/42?limit=7&limit=8 ",
+    ] {
+        let err = parse_query_events_limit_from_path(path)
+            .expect_err("raw query whitespace must fail closed");
+        assert!(err.contains("400 Bad Request"), "path={path:?} err={err}");
+        assert!(err.contains("invalid limit"), "path={path:?} err={err}");
+    }
+}
+
+#[test]
 fn parse_query_events_limit_from_path_rejects_percent_encoded_null_and_del_controls() {
     for path in [
         "/query-events/42?limit=7%00tail",
@@ -410,6 +453,133 @@ fn parse_query_normalized_audit_events_query_from_path_rejects_invalid_cursor() 
     .expect_err("invalid cursor should fail closed");
     assert!(err.contains("400 Bad Request"));
     assert!(err.contains("invalid cursor"));
+}
+
+#[test]
+fn parse_query_normalized_audit_events_query_from_path_accepts_wrapped_values() {
+    let out = parse_query_normalized_audit_events_query_from_path(
+        "/query-normalized-audit-events?source='trnm.task'&eventType=`trnm.task.commit`&limit=\"3\"&cursor=  '2'  ",
+    )
+    .expect("wrapped values should normalize");
+    assert_eq!(out.source.as_deref(), Some("trnm.task"));
+    assert_eq!(out.event_type.as_deref(), Some("trnm.task.commit"));
+    assert_eq!(out.limit, 3);
+    assert_eq!(out.cursor, Some(2));
+}
+
+#[test]
+fn parse_query_normalized_audit_events_query_from_path_rejects_raw_query_whitespace() {
+    for path in [
+        "/query-normalized-audit-events?source=trnm.task ",
+        "/query-normalized-audit-events?eventType=trnm.task.commit\t",
+        "/query-normalized-audit-events?cursor= 1",
+        "/query-normalized-audit-events?limit=3 ",
+    ] {
+        let err = parse_query_normalized_audit_events_query_from_path(path)
+            .expect_err("raw query whitespace must fail closed");
+        assert!(err.contains("400 Bad Request"), "path={path:?} err={err}");
+        assert!(err.contains("invalid query"), "path={path:?} err={err}");
+    }
+}
+
+#[test]
+fn parse_query_normalized_audit_events_query_from_path_rejects_prefix_shadow_paths() {
+    for path in [
+        "/query-normalized-audit-events-shadow?source=trnm.task",
+        "/query-normalized-audit-events.v1?source=trnm.task",
+        "/query-normalized-audit-events%2fshadow?source=trnm.task",
+        "/query-normalized-audit-events%01shadow?source=trnm.task",
+    ] {
+        let err = parse_query_normalized_audit_events_query_from_path(path)
+            .expect_err("prefix shadow paths must fail closed");
+        assert!(err.contains("400 Bad Request"), "path={path:?} err={err}");
+        assert!(err.contains("invalid query"), "path={path:?} err={err}");
+    }
+}
+
+#[test]
+fn parse_query_capability_audit_subject_from_target_accepts_canonical_subject_path() {
+    assert_eq!(
+        parse_query_capability_audit_subject_from_target("/query-capability-audit/alice")
+            .expect("canonical subject path should parse"),
+        "alice"
+    );
+    assert_eq!(
+        parse_query_capability_audit_subject_from_target("/query-capability-audit/alice/")
+            .expect("single operator trailing slash should normalize"),
+        "alice"
+    );
+}
+
+#[test]
+fn parse_query_capability_audit_subject_from_target_rejects_query_string() {
+    let err = parse_query_capability_audit_subject_from_target(
+        "/query-capability-audit/alice?limit=1",
+    )
+    .expect_err("capability audit route should fail closed on query strings");
+    assert_eq!(err, "invalid query");
+}
+
+#[test]
+fn parse_query_capability_audit_subject_from_target_distinguishes_missing_from_malformed() {
+    assert_eq!(
+        parse_query_capability_audit_subject_from_target("/query-capability-audit/")
+            .expect_err("empty capability route should report missing subject"),
+        "missing token or subject"
+    );
+
+    for target in [
+        "/query-capability-audit///",
+        "/query-capability-audit/alice//",
+        "/query-capability-audit/alice/nested",
+    ] {
+        let err = parse_query_capability_audit_subject_from_target(target)
+            .expect_err("malformed capability audit path must fail closed as invalid query");
+        assert_eq!(err, "invalid query", "target={target}");
+    }
+}
+
+#[test]
+fn parse_query_capability_audit_subject_from_target_rejects_fragments_and_whitespace() {
+    for target in [
+        "/query-capability-audit/alice#frag",
+        "/query-capability-audit/al ice",
+        "/query-capability-audit/alice\textra",
+    ] {
+        let err = parse_query_capability_audit_subject_from_target(target)
+            .expect_err("capability audit subject must stay a clean single path segment");
+        assert_eq!(err, "invalid query", "target={target}");
+    }
+}
+
+#[test]
+fn parse_query_capability_audit_subject_from_target_rejects_encoded_query_delimiters() {
+    for target in [
+        "/query-capability-audit/alice%3Flimit=1",
+        "/query-capability-audit/alice%23frag",
+        "/query-capability-audit/alice%26cursor=1",
+    ] {
+        parse_query_capability_audit_subject_from_target(target).expect_err(
+            "capability audit subject must fail closed on encoded query-like delimiters",
+        );
+    }
+}
+
+#[test]
+fn parse_query_capability_audit_subject_from_target_rejects_encoded_path_ambiguity() {
+    for target in [
+        "/query-capability-audit/alice%2Fextra",
+        "/query-capability-audit/alice%2fextra",
+        "/query-capability-audit/alice%5Cextra",
+        "/query-capability-audit/alice%5cextra",
+        "/query-capability-audit/%2E",
+        "/query-capability-audit/%2e%2E",
+    ] {
+        let err = parse_query_capability_audit_subject_from_target(target).expect_err(
+            "capability audit subject must stay a single clean segment after decoding",
+        );
+        assert_eq!(err, "invalid query", "target={target}");
+    }
 }
 
 #[test]

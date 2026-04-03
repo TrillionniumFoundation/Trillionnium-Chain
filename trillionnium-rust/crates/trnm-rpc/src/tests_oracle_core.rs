@@ -415,3 +415,41 @@ fn query_normalized_audit_events_bounds_adapter_note_field() {
     assert_eq!(event.note.as_ref().unwrap().chars().count(), 160);
     assert!(event.note.as_ref().unwrap().ends_with('…'));
 }
+
+#[test]
+fn query_normalized_audit_events_response_contract_fails_closed_on_unknown_fields() {
+    let payload = serde_json::json!({
+        "events": [{
+            "source": "trnm.task",
+            "event_type": "trnm.task.accept",
+            "actor": "worker-a",
+            "object_id": "task:9",
+            "reason": "accepted",
+            "checkedAt": "2026-03-31T04:18:00Z"
+        }],
+        "nextCursor": "1",
+        "hasMore": false,
+        "total": 1
+    });
+    let parsed: QueryNormalizedAuditEventsResponse =
+        serde_json::from_value(payload).expect("normalized audit response should deserialize");
+    assert_eq!(parsed.next_cursor.as_deref(), Some("1"));
+    assert_eq!(parsed.has_more, Some(false));
+    assert_eq!(parsed.total, Some(1));
+    assert_eq!(parsed.events.len(), 1);
+    assert_eq!(parsed.events[0].source, "trnm.task");
+
+    let err = serde_json::from_value::<QueryNormalizedAuditEventsResponse>(serde_json::json!({
+        "events": [{
+            "source": "trnm.task",
+            "event_type": "trnm.task.accept",
+            "checkedAt": "2026-03-31T04:18:00Z",
+            "unexpected": true
+        }],
+        "total": 1,
+        "unexpectedTopLevel": true
+    }))
+    .expect_err("normalized audit response should fail closed on unknown fields");
+    let msg = err.to_string();
+    assert!(msg.contains("unexpected") || msg.contains("unknown field"));
+}

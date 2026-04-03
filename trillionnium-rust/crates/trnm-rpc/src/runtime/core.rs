@@ -370,7 +370,8 @@ pub(crate) struct QueryNormalizedAuditEventsQuery {
     pub(crate) limit: usize,
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
 pub(crate) struct NormalizedAuditEvent {
     pub(crate) source: String,
     pub(crate) event_type: String,
@@ -382,20 +383,21 @@ pub(crate) struct NormalizedAuditEvent {
     pub(crate) note: Option<String>,
     #[serde(rename = "checkedAt")]
     pub(crate) checked_at: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     pub(crate) timestamp: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub(crate) subject: Option<String>,
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
 pub(crate) struct QueryNormalizedAuditEventsResponse {
     pub(crate) events: Vec<NormalizedAuditEvent>,
-    #[serde(rename = "nextCursor", skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "nextCursor", default, skip_serializing_if = "Option::is_none")]
     pub(crate) next_cursor: Option<String>,
-    #[serde(rename = "hasMore", skip_serializing_if = "Option::is_none")]
+    #[serde(rename = "hasMore", default, skip_serializing_if = "Option::is_none")]
     pub(crate) has_more: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     pub(crate) total: Option<usize>,
 }
 

@@ -22,6 +22,7 @@ pub use transfer::{
 };
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
 pub struct TaskMeteringPolicyQueryResponse {
     pub snapshot_version: u8,
     pub min_accept_work_units: u128,
@@ -35,6 +36,7 @@ pub struct TaskMeteringPolicyQueryResponse {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
 pub struct TaskMeteringDerivedQueryResponse {
     pub path: String,
     pub accept_floor_pass: bool,
@@ -45,6 +47,7 @@ pub struct TaskMeteringDerivedQueryResponse {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
 pub struct TaskMeteringQueryResponse {
     pub workload_class: String,
     pub metering_schema: String,
@@ -63,6 +66,7 @@ pub struct TaskMeteringQueryResponse {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct TaskQueryResponse {
     pub task_id: u64,
     pub status: TaskStatus,
@@ -85,6 +89,7 @@ pub struct TaskQueryResponse {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct GovProposalQueryResponse {
     pub proposal_id: u64,
     pub title: String,
@@ -94,6 +99,7 @@ pub struct GovProposalQueryResponse {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
 pub struct PendingGovParamUpdateQueryResponse {
     pub key_id: u64,
     pub key: String,
@@ -102,6 +108,7 @@ pub struct PendingGovParamUpdateQueryResponse {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
 pub struct GovParamQueryResponse {
     pub key_id: u64,
     pub key: String,
@@ -126,6 +133,7 @@ pub struct GovParamQueryResponse {
 /// - bridge settlement/finality and replay boundaries remain owned by the
 ///   bridge layer after heartbeat/finality checks have already passed.
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct OracleValidateSnapshotResponse {
     pub ok: bool,
     pub now_ts_ms: u64,
@@ -310,6 +318,7 @@ impl From<OracleValidationReport> for OracleValidateSnapshotResponse {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct EventQueryResponse {
     pub event_type: String,
     pub task_id: u64,
@@ -339,6 +348,7 @@ pub struct EventQueryResponse {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct MessageRequestQueryResponse {
     pub request_id: String,
     pub task_id: u64,
@@ -352,6 +362,7 @@ pub struct MessageRequestQueryResponse {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct RequestFullQueryResponse {
     pub request: MessageRequestQueryResponse,
     pub verifier_status: Option<String>,
@@ -363,6 +374,7 @@ pub struct RequestFullQueryResponse {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
 pub struct AccountState {
     pub address: String,
     pub balance: u128,
@@ -370,6 +382,7 @@ pub struct AccountState {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
 pub struct AccountBalanceQueryResponse {
     pub address: String,
     pub balance: u128,
@@ -377,6 +390,7 @@ pub struct AccountBalanceQueryResponse {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
 pub struct AccountNonceQueryResponse {
     pub address: String,
     pub nonce: u64,
@@ -384,6 +398,7 @@ pub struct AccountNonceQueryResponse {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
 pub struct FaucetRequestResponse {
     pub ok: bool,
     pub code: String,
@@ -399,6 +414,7 @@ pub struct FaucetRequestResponse {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
 pub struct RpcErrorResponse {
     pub code: &'static str,
     pub message: String,
@@ -536,6 +552,21 @@ mod tests {
     }
 
     #[test]
+    fn rpc_task_query_rejects_unknown_fields_fail_closed() {
+        let err = serde_json::from_value::<TaskQueryResponse>(json!({
+            "task_id": 1,
+            "status": "Open",
+            "worker": null,
+            "bounty": 100,
+            "result_hash_hex": null,
+            "version": 1,
+            "unexpected": true
+        }))
+        .expect_err("task query schema should reject unknown fields");
+        assert!(err.to_string().contains("unexpected"));
+    }
+
+    #[test]
     fn rpc_gov_param_query_omits_pending_update_when_absent() {
         let response = GovParamQueryResponse {
             key_id: 7,
@@ -651,6 +682,24 @@ mod tests {
         };
         let v = serde_json::to_value(event).unwrap();
         assert!(v.get("metering").is_none());
+    }
+
+    #[test]
+    fn rpc_event_query_rejects_unknown_fields_fail_closed() {
+        let err = serde_json::from_value::<EventQueryResponse>(json!({
+            "event_type": "commit",
+            "task_id": 1,
+            "from_status": "Assigned",
+            "to_status": "Committed",
+            "actor": "worker1",
+            "tx_id": 7,
+            "block_height": 2,
+            "state_root": "abc",
+            "ts_unix_ms": 1,
+            "unexpected": true
+        }))
+        .expect_err("event query schema should reject unknown fields");
+        assert!(err.to_string().contains("unexpected"));
     }
 
     #[test]
@@ -1222,6 +1271,24 @@ mod tests {
     }
 
     #[test]
+    fn query_account_state_accepts_unicode_whitespace_drift() {
+        let address = format!("trnm1{}", "1".repeat(40));
+        let mut accounts = BTreeMap::new();
+        accounts.insert(
+            address.clone(),
+            AccountState {
+                address: address.clone(),
+                balance: 42,
+                nonce: 7,
+            },
+        );
+
+        let got = query_account_state(&accounts, &format!("\u{2003}{}\u{00a0}", address)).unwrap();
+        assert_eq!(got.balance, 42);
+        assert_eq!(got.nonce, 7);
+    }
+
+    #[test]
     fn query_account_state_rejects_non_hex_suffix() {
         let accounts = BTreeMap::new();
         let bad = format!("trnm1{}", "z".repeat(40));
@@ -1234,6 +1301,14 @@ mod tests {
         let accounts = BTreeMap::new();
         let bad = format!("trnm1{}", "A".repeat(40));
         let err = query_account_state(&accounts, &bad).unwrap_err();
+        assert_eq!(err.code(), "INVALID_ADDRESS");
+    }
+
+    #[test]
+    fn query_account_state_rejects_punctuation_wrapped_address() {
+        let accounts = BTreeMap::new();
+        let wrapped = format!("[trnm1{}]", "1".repeat(40));
+        let err = query_account_state(&accounts, &wrapped).unwrap_err();
         assert_eq!(err.code(), "INVALID_ADDRESS");
     }
 
@@ -1820,6 +1895,33 @@ mod tests {
         assert_eq!(out.observation_classified_reject_total(), 0);
         assert!(out.classified_outcome_conserves_sample_count());
         assert!(out.observation_classified_outcome_conserves_sample_count());
+    }
+
+    #[test]
+    fn oracle_validate_snapshot_response_rejects_unknown_top_level_fields() {
+        let payload = json!({
+            "ok": true,
+            "now_ts_ms": 1_710_000_000_123u64,
+            "observation": {
+                "stale_reject_total": 0,
+                "quorum_reject_total": 0,
+                "drift_reject_total": 0,
+                "accepted_total": 1
+            },
+            "metrics": {
+                "oracle_stale_reject_total": 0,
+                "oracle_quorum_reject_total": 0,
+                "oracle_drift_reject_total": 0,
+                "oracle_source_cardinality": 1,
+                "accepted_total": 1,
+                "sample_count": 1
+            },
+            "bridge_status": "finalized"
+        });
+
+        let err = serde_json::from_value::<OracleValidateSnapshotResponse>(payload)
+            .expect_err("oracle read schema should reject unknown top-level fields");
+        assert!(err.to_string().contains("bridge_status"));
     }
 
     #[test]

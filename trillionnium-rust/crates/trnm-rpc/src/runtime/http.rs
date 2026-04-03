@@ -43,6 +43,46 @@ fn is_supported_http_version(version: &str) -> bool {
     matches!(version, "HTTP/1.0" | "HTTP/1.1")
 }
 
+fn contains_malformed_percent_encoding(value: &str) -> bool {
+    let bytes = value.as_bytes();
+    let mut idx = 0;
+    while idx < bytes.len() {
+        if bytes[idx] == b'%' {
+            if idx + 2 >= bytes.len() {
+                return true;
+            }
+            let hi = (bytes[idx + 1] as char).to_digit(16);
+            let lo = (bytes[idx + 2] as char).to_digit(16);
+            if hi.is_none() || lo.is_none() {
+                return true;
+            }
+            idx += 3;
+            continue;
+        }
+        idx += 1;
+    }
+    false
+}
+
+fn contains_percent_encoded_control_or_space(value: &str) -> bool {
+    let bytes = value.as_bytes();
+    let mut idx = 0;
+    while idx + 2 < bytes.len() {
+        if bytes[idx] == b'%' {
+            let hi = (bytes[idx + 1] as char).to_digit(16);
+            let lo = (bytes[idx + 2] as char).to_digit(16);
+            if let (Some(hi), Some(lo)) = (hi, lo) {
+                let decoded = ((hi << 4) | lo) as u8;
+                if decoded <= 0x20 || decoded == 0x7f {
+                    return true;
+                }
+            }
+        }
+        idx += 1;
+    }
+    false
+}
+
 pub(crate) fn http_json_response(status_line: &str, body: &str) -> String {
     format!(
         "HTTP/1.1 {status_line}\r\nContent-Type: application/json\r\nCache-Control: no-store\r\nContent-Length: {}\r\nConnection: close\r\n\r\n{}",
@@ -130,18 +170,16 @@ pub(crate) fn parse_http_request_target(first_line: &str) -> Option<(&str, &str)
     }
 
     let normalized = path.to_ascii_lowercase();
+    if path.chars().any(|ch| ch.is_control() || ch.is_whitespace()) {
+        return None;
+    }
     if path.contains('\\') || normalized.contains("%5c") {
         return None;
     }
     if path.contains('#') || normalized.contains("%23") {
         return None;
     }
-    if normalized.contains("%0d")
-        || normalized.contains("%0a")
-        || normalized.contains("%09")
-        || normalized.contains("%0b")
-        || normalized.contains("%0c")
-        || normalized.contains("%20")
+    if contains_malformed_percent_encoding(path) || contains_percent_encoded_control_or_space(path)
     {
         return None;
     }
@@ -248,12 +286,37 @@ fn parse_nonempty_path_suffix<'a>(path: &'a str, prefix: &str) -> Option<&'a str
             Some(trimmed)
         })
         .filter(|suffix| !suffix.is_empty())
+        .filter(|suffix| !matches!(*suffix, "." | ".."))
+        .filter(|suffix| !suffix.contains(['#', '?']))
+        .filter(|suffix| !suffix.chars().any(|ch| ch.is_control() || ch.is_whitespace()))
         // Capability subjects/tokens are single path segments. Reject extra
         // slash-delimited segments so malformed operator paths fail closed
         // instead of being misread as an opaque identifier.
         .filter(|suffix| !suffix.contains('/'))
         .filter(|suffix| !suffix.contains('\\'))
         .filter(|suffix| !has_ambiguous_path_segment_encoding(suffix))
+}
+
+fn parse_query_capability_audit_subject_from_target<'a>(
+    target: &'a str,
+) -> std::result::Result<&'a str, &'static str> {
+    let (path, query) = match target.split_once('?') {
+        Some((path, query)) => (path, Some(query)),
+        None => (target, None),
+    };
+
+    if query.is_some() {
+        return Err("invalid query");
+    }
+
+    match parse_nonempty_path_suffix(path, "/query-capability-audit/") {
+        Some(subject) => Ok(subject),
+        None if path == "/query-capability-audit" || path == "/query-capability-audit/" => {
+            Err("missing token or subject")
+        }
+        None if path.starts_with("/query-capability-audit/") => Err("invalid query"),
+        None => Err("missing token or subject"),
+    }
 }
 
 pub(crate) fn serve_health(host: &str, port: u16) -> Result<()> {
@@ -367,9 +430,9 @@ pub(crate) fn serve_health(host: &str, port: u16) -> Result<()> {
                 }
             }
 
-            (Some((method, _)), Some(path), Some(_)) if path.starts_with("/query-capability-audit/") => {
-                match parse_nonempty_path_suffix(path, "/query-capability-audit/") {
-                    Some(subject_or_token) => {
+            (Some((method, _)), Some(path), Some(target)) if path.starts_with("/query-capability-audit/") => {
+                match parse_query_capability_audit_subject_from_target(target) {
+                    Ok(subject_or_token) => {
                         let registry = load_identity_registry(&identity_registry_file());
                         if let Some(token_id) =
                             resolve_capability_token_subject_or_token(&registry, subject_or_token)
@@ -397,7 +460,11 @@ pub(crate) fn serve_health(host: &str, port: u16) -> Result<()> {
                             json_response_for_method(method, "404 Not Found", body)
                         }
                     }
-                    None => {
+                    Err("invalid query") => {
+                        let body = "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid query\"}";
+                        json_response_for_method(method, "400 Bad Request", body)
+                    }
+                    Err(_) => {
                         let body = "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"missing token or subject\"}";
                         json_response_for_method(method, "400 Bad Request", body)
                     }
@@ -611,6 +678,16 @@ mod tests {
             parse_path_u64_suffix("/query-events/7%5Chistory", "/query-events/"),
             None
         );
+        assert_eq!(parse_path_u64_suffix("/query-events/.", "/query-events/"), None);
+        assert_eq!(parse_path_u64_suffix("/query-events/..", "/query-events/"), None);
+        assert_eq!(parse_path_u64_suffix("/query-events/%2E", "/query-events/"), None);
+        assert_eq!(parse_path_u64_suffix("/query-events/.%2e", "/query-events/"), None);
+        assert_eq!(parse_path_u64_suffix("/query-events/%2E.", "/query-events/"), None);
+        assert_eq!(parse_path_u64_suffix("/query-events/%2e%2E", "/query-events/"), None);
+        assert_eq!(parse_path_u64_suffix("/query-events/7%0A", "/query-events/"), None);
+        assert_eq!(parse_path_u64_suffix("/query-events/7%0d", "/query-events/"), None);
+        assert_eq!(parse_path_u64_suffix("/query-events/7%09", "/query-events/"), None);
+        assert_eq!(parse_path_u64_suffix("/query-events/7%20", "/query-events/"), None);
     }
 
     #[test]
@@ -645,6 +722,20 @@ mod tests {
         assert_eq!(
             parse_nonempty_path_suffix(
                 "/query-capability-audit/alice%2Fextra",
+                "/query-capability-audit/"
+            ),
+            None
+        );
+        assert_eq!(
+            parse_nonempty_path_suffix(
+                "/query-capability-audit/alice%2fextra",
+                "/query-capability-audit/"
+            ),
+            None
+        );
+        assert_eq!(
+            parse_nonempty_path_suffix(
+                "/query-capability-audit/alice%5Cextra",
                 "/query-capability-audit/"
             ),
             None

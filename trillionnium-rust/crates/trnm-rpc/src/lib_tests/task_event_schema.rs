@@ -268,3 +268,34 @@ fn rpc_schema_smoke_event_fields_stable() {
         })
     );
 }
+
+#[test]
+fn rpc_event_query_includes_optional_audit_fields_when_present() {
+    let event = EventQueryResponse {
+        event_type: "resolve".into(),
+        task_id: 11,
+        from_status: "Challenged".into(),
+        to_status: "Completed".into(),
+        actor: "arbiter-1".into(),
+        tx_id: 19,
+        block_height: 8,
+        state_root: "def".into(),
+        ts_unix_ms: 456,
+        signer: Some("arbiter-1".into()),
+        challenger: Some("challenger-9".into()),
+        tx_hash: Some("0xdeadbeef".into()),
+        resolution_code: Some("completed".into()),
+        treasury_delta: Some(-25),
+        challenger_delta: Some(25),
+        bond_disposition: Some("released".into()),
+        metering: None,
+    };
+    let v = serde_json::to_value(event).unwrap();
+    assert_eq!(v["signer"], json!("arbiter-1"));
+    assert_eq!(v["challenger"], json!("challenger-9"));
+    assert_eq!(v["tx_hash"], json!("0xdeadbeef"));
+    assert_eq!(v["resolution_code"], json!("completed"));
+    assert_eq!(v["treasury_delta"], json!(-25));
+    assert_eq!(v["challenger_delta"], json!(25));
+    assert_eq!(v["bond_disposition"], json!("released"));
+}

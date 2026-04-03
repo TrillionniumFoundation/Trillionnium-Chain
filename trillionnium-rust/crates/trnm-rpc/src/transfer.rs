@@ -274,12 +274,14 @@ pub enum TxStatus {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct SendTxResponse {
     pub tx_hash: String,
     pub status: TxStatus,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct GetTxResponse {
     pub tx_hash: String,
     pub status: TxStatus,

@@ -290,3 +290,48 @@ fn normalized_required_value<'a>(
 fn bad_request(body: &str) -> String {
     http_json_response("400 Bad Request", body)
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn query_normalized_audit_events_accepts_only_exact_route_without_query() {
+        let parsed = parse_query_normalized_audit_events_query_from_path(
+            "/query-normalized-audit-events",
+        )
+        .expect("exact route should parse");
+
+        assert_eq!(parsed, default_normalized_audit_events_query());
+    }
+
+    #[test]
+    fn query_normalized_audit_events_rejects_trailing_slash_route() {
+        let err = parse_query_normalized_audit_events_query_from_path(
+            "/query-normalized-audit-events/",
+        )
+        .expect_err("trailing slash should fail closed");
+
+        assert_eq!(err, http_json_response("400 Bad Request", INVALID_QUERY_RESPONSE));
+    }
+
+    #[test]
+    fn query_normalized_audit_events_rejects_limit_case_drift() {
+        let err = parse_query_normalized_audit_events_query_from_path(
+            "/query-normalized-audit-events?Limit=25",
+        )
+        .expect_err("case-drifted limit key should fail closed");
+
+        assert_eq!(err, http_json_response("400 Bad Request", INVALID_QUERY_RESPONSE));
+    }
+
+    #[test]
+    fn query_normalized_audit_events_rejects_duplicate_limit_keys() {
+        let err = parse_query_normalized_audit_events_query_from_path(
+            "/query-normalized-audit-events?limit=25&limit=26",
+        )
+        .expect_err("duplicate limit should fail closed");
+
+        assert_eq!(err, http_json_response("400 Bad Request", DUPLICATE_LIMIT_RESPONSE));
+    }
+}

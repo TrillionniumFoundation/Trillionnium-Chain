@@ -364,6 +364,7 @@ fn deviation_bps(value: i128, baseline: i128) -> u32 {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct OracleValidationObservation {
     pub stale_reject_total: u32,
     pub quorum_reject_total: u32,
@@ -386,6 +387,7 @@ impl OracleValidationObservation {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct OracleValidationMetrics {
     pub oracle_stale_reject_total: u32,
     pub oracle_quorum_reject_total: u32,
