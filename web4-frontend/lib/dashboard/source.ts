@@ -247,6 +247,7 @@ const mapNormalizedAuditToDashboardEvent = (event: NormalizedAuditEvent, fallbac
 const parsePositiveIntEnv = (value: string | undefined, fallback: number): number => {
   const normalized = value?.trim();
   if (!normalized) return fallback;
+  if (!/^\d+$/.test(normalized)) return fallback;
 
   const parsed = Number.parseInt(normalized, 10);
   if (Number.isNaN(parsed) || parsed <= 0) return fallback;
