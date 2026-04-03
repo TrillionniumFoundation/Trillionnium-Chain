@@ -1657,4 +1657,34 @@ mod tests {
                 if *proposal_id == pid
         )));
     }
+
+    #[test]
+    fn unauthorized_cancel_of_scheduled_unpause_preserves_queue_and_pause_state() {
+        let mut gov = setup();
+        let now = 7_450;
+        let eta = now + 60;
+
+        gov.emergency_pause("guardian", "incident-unauthorized-cancel")
+            .unwrap();
+        let pid = gov
+            .schedule_unpause("guardian", eta, "recover-unauthorized-cancel", now)
+            .unwrap();
+        let audit_len_before = gov.audit_log().len();
+
+        assert_eq!(gov.cancel("alice", pid).unwrap_err(), Error::Unauthorized);
+
+        let proposal = gov.proposal(pid).unwrap();
+        assert_eq!(proposal.kind, ProposalKind::EmergencyUnpause);
+        assert_eq!(proposal.status, ProposalStatus::Queued);
+        assert_eq!(proposal.proposer, "guardian");
+        assert_eq!(proposal.executor, None);
+        assert_eq!(proposal.executed_at, None);
+        assert!(gov.bridge_state().emergency_paused);
+        assert_eq!(gov.audit_log().len(), audit_len_before);
+        assert!(!gov.audit_log().iter().any(|event| matches!(
+            event,
+            GovernanceEvent::ProposalCancelled { proposal_id, .. }
+                if *proposal_id == pid
+        )));
+    }
 }
