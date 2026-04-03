@@ -14,6 +14,8 @@ import type {
   TaskStatus,
   NormalizedAuditEventsQuery,
   CheckedAt,
+  IsoDatetimeString,
+  HeightCheckedAt,
 } from "./types";
 import { FrontendApiError } from "./errors";
 
@@ -152,16 +154,20 @@ function mapRpcTaskStatus(status: z.infer<typeof rpcTaskSchema>["status"]): Task
   }
 }
 
-function toIsoFromUnixMs(ts: unknown): string {
+function toIsoFromUnixMs(ts: unknown): IsoDatetimeString {
   const num = typeof ts === "string" ? Number(ts) : ts;
   if (!Number.isFinite(num)) throw new Error("invalid timestamp");
-  return new Date(Number(num)).toISOString();
+  return new Date(Number(num)).toISOString() as IsoDatetimeString;
 }
 
-function toHeightMarker(height: unknown): string {
+function toHeightMarker(height: unknown): HeightCheckedAt {
   const num = typeof height === "string" ? Number(height) : height;
   if (!Number.isFinite(num)) throw new Error("invalid height");
-  return `height:${Math.trunc(Number(num))}`;
+  return `height:${Math.trunc(Number(num))}` as HeightCheckedAt;
+}
+
+function toCheckedAt(value: z.infer<typeof checkedAtSchema>): CheckedAt {
+  return value as CheckedAt;
 }
 
 export const adaptQueryTask = (payload: unknown): QueryTaskResult => {
@@ -283,30 +289,14 @@ export const adaptQueryNormalizedAuditEvents = (
 ): QueryNormalizedAuditEventsResult => {
   const canonical = queryNormalizedAuditEventsResponseSchema.safeParse(payload);
   if (canonical.success) {
-    const data = canonical.data as {
-      events: Array<{
-        source: string;
-        event_type: string;
-        actor?: string;
-        object_id?: string;
-        related_id?: string;
-        amount?: string | number;
-        reason?: string;
-        note?: string;
-        checkedAt?: CheckedAt;
-        timestamp?: string;
-        subject?: string;
-      }>;
-      nextCursor?: string;
-      hasMore?: boolean;
-      total?: number;
-    };
-
     return {
-      events: data.events,
-      nextCursor: data.nextCursor,
-      hasMore: data.hasMore,
-      total: data.total,
+      events: canonical.data.events.map((event) => ({
+        ...event,
+        checkedAt: event.checkedAt == null ? undefined : toCheckedAt(event.checkedAt),
+      })),
+      nextCursor: "nextCursor" in canonical.data ? canonical.data.nextCursor : undefined,
+      hasMore: "hasMore" in canonical.data ? canonical.data.hasMore : undefined,
+      total: "total" in canonical.data ? canonical.data.total : undefined,
     };
   }
 
@@ -337,7 +327,7 @@ export const adaptQueryNormalizedAuditEvents = (
     amount: event.amount,
     reason: event.reason,
     note: event.note,
-    checkedAt: event.checkedAt,
+    checkedAt: event.checkedAt == null ? undefined : toCheckedAt(event.checkedAt),
     timestamp: event.recordedAt,
     subject: event.subject,
   }));
@@ -349,7 +339,15 @@ export const adaptQueryCapabilityAudit = (
   payload: unknown,
 ): QueryCapabilityAuditResult => {
   const canonical = queryCapabilityAuditResponseSchema.safeParse(payload);
-  if (canonical.success) return canonical.data;
+  if (canonical.success) {
+    return {
+      subject: canonical.data.subject,
+      audits: canonical.data.audits.map((audit) => ({
+        ...audit,
+        checkedAt: toCheckedAt(audit.checkedAt),
+      })),
+    };
+  }
 
   const rpc = rpcCapabilityAuditSchema.safeParse(payload);
   if (!rpc.success) throw normalizeSchemaError(rpc.error.flatten());

@@ -25,7 +25,9 @@ export type ChainEvent = Readonly<{
   payload: Readonly<Record<string, unknown>>;
 }>;
 
-export type CheckedAt = `height:${number}` | string;
+export type HeightCheckedAt = `height:${number}`;
+export type IsoDatetimeString = `${string}T${string}`;
+export type CheckedAt = HeightCheckedAt | IsoDatetimeString;
 
 export type CapabilityAuditEntry = Readonly<{
   subject: string;

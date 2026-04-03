@@ -26,7 +26,7 @@
 
 约定：只读查询 contract 在 TypeScript 层按 `Readonly` / `ReadonlyArray` 暴露，调用方不应原地修改解析后的响应对象或事件数组；需要派生视图时请复制后处理。
 
-补充：`checkedAt` 目前是共享 contract 字段，语义只接受两类值——链高度标记（`height:<non-negative integer>`）或 ISO-8601 时间字符串。类型层与 zod schema 需保持同步，不应把它当成任意自由格式时间文本。
+补充：`checkedAt` 目前是共享 contract 字段，语义只接受两类值——链高度标记（`height:<non-negative integer>`）或 ISO-8601 时间字符串。类型层与 zod schema 需保持同步；TypeScript 合约侧应保持为收窄后的 `HeightCheckedAt | IsoDatetimeString`，不应把它当成任意自由格式时间文本。
 
 ## 错误模型（FrontendApiError.code）
 
