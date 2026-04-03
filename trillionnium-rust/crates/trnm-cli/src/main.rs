@@ -841,8 +841,7 @@ fn is_hidden_env_wrapper(c: char) -> bool {
 fn is_single_sided_env_quote(c: char) -> bool {
     matches!(
         c,
-        '"'
-            | '\''
+        '"' | '\''
             | '`'
             | '“'
             | '”'
@@ -939,57 +938,201 @@ fn normalize_wallet_store_env(raw: &str) -> Option<&str> {
         }
         normalized = trimmed_single_sided;
     }
-    (!normalized.is_empty()).then_some(normalized)
+    if normalized.is_empty()
+        || normalized
+            .chars()
+            .any(|c| c.is_whitespace() || contains_hidden_or_control(c))
+    {
+        return None;
+    }
+    Some(normalized)
+}
+
+fn wallet_store_path_is_safe(path: &Path) -> bool {
+    use std::path::Component;
+
+    path.is_absolute()
+        && path.parent().is_some()
+        && path.to_string_lossy().chars().all(|c| {
+            !c.is_whitespace() && !contains_hidden_or_control(c)
+        })
+        && !path
+            .components()
+            .any(|component| matches!(component, Component::CurDir | Component::ParentDir))
+}
+
+fn ensure_wallet_store_path_is_safe(store: &Path) -> Result<()> {
+    if !wallet_store_path_is_safe(store) {
+        bail!(
+            "wallet store '{}' must be an absolute normalized path without '.' or '..' segments",
+            store.display()
+        );
+    }
+    Ok(())
+}
+
+fn ensure_wallet_store_ancestors_not_symlink(store: &Path) -> Result<()> {
+    for ancestor in store.ancestors() {
+        match fs::symlink_metadata(ancestor) {
+            Ok(meta) if meta.file_type().is_symlink() => {
+                bail!(
+                    "wallet store '{}' traverses symlinked ancestor '{}'; refusing non-canonical keystore path",
+                    store.display(),
+                    ancestor.display()
+                );
+            }
+            Ok(_) => {}
+            Err(err) if err.kind() == std::io::ErrorKind::NotFound => continue,
+            Err(err) => {
+                return Err(anyhow!(
+                    "failed to inspect wallet store ancestor '{}' for symlink safety: {err}",
+                    ancestor.display()
+                ));
+            }
+        }
+    }
+    Ok(())
 }
 
 fn default_wallet_store() -> PathBuf {
     if let Ok(p) = std::env::var("TRNM_WALLET_STORE") {
         if let Some(normalized) = normalize_wallet_store_env(&p) {
-            return PathBuf::from(normalized);
+            let candidate = PathBuf::from(normalized);
+            if wallet_store_path_is_safe(&candidate) {
+                return candidate;
+            }
         }
     }
-    let home = std::env::var("HOME").unwrap_or_else(|_| ".".to_string());
-    PathBuf::from(home).join(".trnm").join("wallets")
+
+    let home_root = std::env::var("HOME")
+        .ok()
+        .map(PathBuf::from)
+        .filter(|path| wallet_store_path_is_safe(path))
+        .or_else(|| {
+            std::env::current_dir()
+                .ok()
+                .filter(|path| wallet_store_path_is_safe(path))
+        })
+        .unwrap_or_else(|| PathBuf::from("/"));
+
+    home_root.join(".trnm").join("wallets")
 }
 
 fn wallet_file(store: &Path, name: &str) -> PathBuf {
     store.join(format!("{}.key", name))
 }
 
+fn contains_hidden_or_control(c: char) -> bool {
+    c.is_control()
+        || matches!(
+            c,
+            '\u{061C}'
+                | '\u{200B}'
+                | '\u{200C}'
+                | '\u{200D}'
+                | '\u{200E}'
+                | '\u{200F}'
+                | '\u{2060}'
+                | '\u{FEFF}'
+                | '\u{202A}'
+                | '\u{202B}'
+                | '\u{202C}'
+                | '\u{202D}'
+                | '\u{202E}'
+                | '\u{2066}'
+                | '\u{2067}'
+                | '\u{2068}'
+                | '\u{2069}'
+        )
+}
+
+fn ensure_sign_message(message: &str) -> Result<()> {
+    if message.is_empty() {
+        bail!("sign message must not be empty");
+    }
+    if message.len() > 4096 {
+        bail!("sign message must be <= 4096 bytes");
+    }
+    if message
+        .chars()
+        .next()
+        .is_some_and(|c| c.is_whitespace())
+        || message
+            .chars()
+            .next_back()
+            .is_some_and(|c| c.is_whitespace())
+    {
+        bail!("sign message must not start or end with whitespace");
+    }
+    if message.chars().any(|c| {
+        c == '\r'
+            || c == '\n'
+            || contains_hidden_or_control(c)
+            || (c.is_whitespace() && c != ' ')
+    }) {
+        bail!(
+            "sign message must be single-line printable text without control characters and with only interior ASCII spaces"
+        );
+    }
+    Ok(())
+}
+
 fn ensure_wallet_name(name: &str) -> Result<()> {
-    let has_hidden_or_whitespace = name.chars().any(|c| {
-        c.is_whitespace()
-            || c.is_control()
-            || matches!(
-                c,
-                '\u{200B}'
-                    | '\u{200C}'
-                    | '\u{200D}'
-                    | '\u{2060}'
-                    | '\u{FEFF}'
-                    | '\u{202A}'
-                    | '\u{202B}'
-                    | '\u{202C}'
-                    | '\u{202D}'
-                    | '\u{202E}'
-                    | '\u{2066}'
-                    | '\u{2067}'
-                    | '\u{2068}'
-                    | '\u{2069}'
-            )
-    });
+    let has_hidden_or_whitespace = name
+        .chars()
+        .any(|c| c.is_whitespace() || contains_hidden_or_control(c));
+    let uppercase = name.to_ascii_uppercase();
+    let is_windows_reserved_device = matches!(
+        uppercase.as_str(),
+        "CON"
+            | "PRN"
+            | "AUX"
+            | "NUL"
+            | "COM1"
+            | "COM2"
+            | "COM3"
+            | "COM4"
+            | "COM5"
+            | "COM6"
+            | "COM7"
+            | "COM8"
+            | "COM9"
+            | "LPT1"
+            | "LPT2"
+            | "LPT3"
+            | "LPT4"
+            | "LPT5"
+            | "LPT6"
+            | "LPT7"
+            | "LPT8"
+            | "LPT9"
+    );
 
     if name.is_empty()
         || name == "."
         || name == ".."
         || name.starts_with('.')
+        || name.ends_with('.')
         || name.starts_with('-')
-        || name.contains(['/', '\\', ':', '=', '|', '&', '$'])
-        || name.contains(['"', '\'', '`', '<', '>', '(', ')', '[', ']', '{', '}', ',', ';'])
+        || name.starts_with(['‐', '‑', '‒', '–', '—', '―', '−', '﹣', '－'])
+        || name.contains(['/', '\\', ':', '=', '|', '&', '$', '*', '?', '!'])
+        || name.contains(['‐', '‑', '‒', '–', '—', '―', '−', '﹣', '－'])
+        || name.contains(['：', '＝', '｜', '＆', '？', '，', '；', '！'])
+        || name.contains(['∕', '⁄', '／', '＼', '⧵', '⟋', '⟍'])
+        || name.contains(['.', '．', '。', '｡', '﹒', '․'])
+        || name.contains([
+            '"', '\'', '`', '<', '>', '(', ')', '[', ']', '{', '}', ',', ';',
+        ])
+        || name.contains([
+            '“', '”', '‘', '’', '«', '»', '‹', '›', '「', '」', '『', '』', '《', '》',
+            '〈', '〉', '｢', '｣', '（', '）', '［', '］', '｛', '｝', '＜', '＞', '【', '】',
+            '〔', '〕', '〖', '〗', '〘', '〙', '〚', '〛', '〝', '〞', '〟',
+        ])
         || has_hidden_or_whitespace
+        || is_windows_reserved_device
     {
         bail!(
-            "invalid wallet name '{}': use a simple local name without path separators",
+            "invalid wallet name '{}': use a simple local name without path separators or reserved device names",
             name
         );
     }
@@ -1001,7 +1144,10 @@ fn ensure_hex_32_bytes(s: &str) -> Result<String> {
         .trim_matches(|c: char| {
             c.is_whitespace()
                 || c.is_control()
-                || matches!(c, '"' | '\'' | '`' | '<' | '>' | '(' | ')' | '[' | ']' | '{' | '}')
+                || matches!(
+                    c,
+                    '"' | '\'' | '`' | '<' | '>' | '(' | ')' | '[' | ']' | '{' | '}'
+                )
                 || matches!(
                     c,
                     '\u{200B}'
@@ -1033,18 +1179,64 @@ fn ensure_hex_32_bytes(s: &str) -> Result<String> {
     Ok(x)
 }
 
-fn write_key(store: &Path, name: &str, priv_hex: &str) -> Result<PathBuf> {
-    ensure_wallet_name(name)?;
-    if fs::symlink_metadata(store)
-        .map(|meta| meta.file_type().is_symlink())
-        .unwrap_or(false)
-    {
+#[cfg(unix)]
+fn ensure_owner_only_permissions(meta: &fs::Metadata, path: &Path, kind: &str) -> Result<()> {
+    use std::os::unix::fs::PermissionsExt;
+
+    let mode = meta.permissions().mode() & 0o777;
+    if mode & 0o077 != 0 {
         bail!(
-            "wallet store '{}' is a symlink; refusing to write keys through non-regular wallet store path",
-            store.display()
+            "{} '{}' has insecure permissions {:o}; expected owner-only access",
+            kind,
+            path.display(),
+            mode
         );
     }
+    Ok(())
+}
+
+#[cfg(not(unix))]
+fn ensure_owner_only_permissions(_meta: &fs::Metadata, _path: &Path, _kind: &str) -> Result<()> {
+    Ok(())
+}
+
+#[cfg(unix)]
+fn set_owner_only_permissions(path: &Path, mode: u32) -> Result<()> {
+    use std::os::unix::fs::PermissionsExt;
+
+    let mut permissions = fs::metadata(path)?.permissions();
+    permissions.set_mode(mode);
+    fs::set_permissions(path, permissions)?;
+    Ok(())
+}
+
+#[cfg(not(unix))]
+fn set_owner_only_permissions(_path: &Path, _mode: u32) -> Result<()> {
+    Ok(())
+}
+
+fn write_key(store: &Path, name: &str, priv_hex: &str) -> Result<PathBuf> {
+    ensure_wallet_name(name)?;
+    let normalized_priv_hex = ensure_hex_32_bytes(priv_hex)?;
+    ensure_wallet_store_path_is_safe(store)?;
+    ensure_wallet_store_ancestors_not_symlink(store)?;
+    if let Ok(store_meta) = fs::symlink_metadata(store) {
+        if store_meta.file_type().is_symlink() {
+            bail!(
+                "wallet store '{}' is a symlink; refusing to write keys through non-regular wallet store path",
+                store.display()
+            );
+        }
+        if !store_meta.file_type().is_dir() {
+            bail!(
+                "wallet store '{}' is not a directory; refusing to write keys through non-regular wallet store path",
+                store.display()
+            );
+        }
+        ensure_owner_only_permissions(&store_meta, store, "wallet store")?;
+    }
     fs::create_dir_all(store)?;
+    set_owner_only_permissions(store, 0o700)?;
     let f = wallet_file(store, name);
     if fs::symlink_metadata(&f).is_ok() {
         bail!(
@@ -1053,22 +1245,48 @@ fn write_key(store: &Path, name: &str, priv_hex: &str) -> Result<PathBuf> {
             f.display()
         );
     }
-    fs::write(&f, format!("{}\n", priv_hex))?;
+    fs::write(&f, format!("{}\n", normalized_priv_hex))?;
+    set_owner_only_permissions(&f, 0o600)?;
     Ok(f)
 }
 
 fn read_key(store: &Path, name: &str) -> Result<String> {
     ensure_wallet_name(name)?;
-    if fs::symlink_metadata(store)
-        .map(|meta| meta.file_type().is_symlink())
-        .unwrap_or(false)
-    {
+    ensure_wallet_store_path_is_safe(store)?;
+    ensure_wallet_store_ancestors_not_symlink(store)?;
+    let store_meta = fs::symlink_metadata(store)
+        .map_err(|e| anyhow!("failed to inspect wallet store '{}': {e}", store.display()))?;
+    if store_meta.file_type().is_symlink() {
         bail!(
             "wallet store '{}' is a symlink; refusing to read keys through non-regular wallet store path",
             store.display()
         );
     }
+    if !store_meta.file_type().is_dir() {
+        bail!(
+            "wallet store '{}' is not a directory; refusing to read keys through non-regular wallet store path",
+            store.display()
+        );
+    }
+    ensure_owner_only_permissions(&store_meta, store, "wallet store")?;
     let f = wallet_file(store, name);
+    let file_meta = fs::symlink_metadata(&f)
+        .map_err(|e| anyhow!("failed to inspect wallet '{}' at {}: {e}", name, f.display()))?;
+    if file_meta.file_type().is_symlink() {
+        bail!(
+            "wallet '{}' at {} is a symlink; refusing to read key through non-regular wallet file path",
+            name,
+            f.display()
+        );
+    }
+    if !file_meta.file_type().is_file() {
+        bail!(
+            "wallet '{}' at {} is not a regular file; refusing to read key through non-regular wallet file path",
+            name,
+            f.display()
+        );
+    }
+    ensure_owner_only_permissions(&file_meta, &f, "wallet")?;
     let raw = fs::read_to_string(&f)
         .map_err(|e| anyhow!("failed to read wallet '{}' at {}: {e}", name, f.display()))?;
     ensure_hex_32_bytes(raw.trim())
@@ -1104,8 +1322,7 @@ fn normalize_tx_hash(raw: &str) -> Option<String> {
                     || c.is_control()
                     || matches!(
                         c,
-                        ','
-                            | ';'
+                        ',' | ';'
                             | ':'
                             | '('
                             | ')'
@@ -1383,9 +1600,38 @@ fn parse_kv_line(line: &str) -> Option<(String, String)> {
             || c.is_control()
             || matches!(
                 c,
-                ',' | ';' | '{' | '}' | '[' | ']' | '(' | ')' | '<' | '>'
-                    | '，' | '；' | '：' | '（' | '）' | '［' | '］' | '｛' | '｝' | '＜' | '＞'
-                    | '「' | '」' | '『' | '』' | '《' | '》' | '〈' | '〉' | '｢' | '｣' | '【' | '】'
+                ',' | ';'
+                    | '{'
+                    | '}'
+                    | '['
+                    | ']'
+                    | '('
+                    | ')'
+                    | '<'
+                    | '>'
+                    | '，'
+                    | '；'
+                    | '：'
+                    | '（'
+                    | '）'
+                    | '［'
+                    | '］'
+                    | '｛'
+                    | '｝'
+                    | '＜'
+                    | '＞'
+                    | '「'
+                    | '」'
+                    | '『'
+                    | '』'
+                    | '《'
+                    | '》'
+                    | '〈'
+                    | '〉'
+                    | '｢'
+                    | '｣'
+                    | '【'
+                    | '】'
             )
     });
     let value = value.trim_matches(|c: char| {
@@ -1393,9 +1639,38 @@ fn parse_kv_line(line: &str) -> Option<(String, String)> {
             || c.is_control()
             || matches!(
                 c,
-                ',' | ';' | '{' | '}' | '[' | ']' | '(' | ')' | '<' | '>'
-                    | '，' | '；' | '：' | '（' | '）' | '［' | '］' | '｛' | '｝' | '＜' | '＞'
-                    | '「' | '」' | '『' | '』' | '《' | '》' | '〈' | '〉' | '｢' | '｣' | '【' | '】'
+                ',' | ';'
+                    | '{'
+                    | '}'
+                    | '['
+                    | ']'
+                    | '('
+                    | ')'
+                    | '<'
+                    | '>'
+                    | '，'
+                    | '；'
+                    | '：'
+                    | '（'
+                    | '）'
+                    | '［'
+                    | '］'
+                    | '｛'
+                    | '｝'
+                    | '＜'
+                    | '＞'
+                    | '「'
+                    | '」'
+                    | '『'
+                    | '』'
+                    | '《'
+                    | '》'
+                    | '〈'
+                    | '〉'
+                    | '｢'
+                    | '｣'
+                    | '【'
+                    | '】'
             )
     });
 
@@ -1412,9 +1687,38 @@ fn parse_inline_kv_token(token: &str) -> Option<(String, String)> {
             || c.is_control()
             || matches!(
                 c,
-                ',' | ';' | '{' | '}' | '[' | ']' | '(' | ')' | '<' | '>'
-                    | '，' | '；' | '：' | '（' | '）' | '［' | '］' | '｛' | '｝' | '＜' | '＞'
-                    | '「' | '」' | '『' | '』' | '《' | '》' | '〈' | '〉' | '｢' | '｣' | '【' | '】'
+                ',' | ';'
+                    | '{'
+                    | '}'
+                    | '['
+                    | ']'
+                    | '('
+                    | ')'
+                    | '<'
+                    | '>'
+                    | '，'
+                    | '；'
+                    | '：'
+                    | '（'
+                    | '）'
+                    | '［'
+                    | '］'
+                    | '｛'
+                    | '｝'
+                    | '＜'
+                    | '＞'
+                    | '「'
+                    | '」'
+                    | '『'
+                    | '』'
+                    | '《'
+                    | '》'
+                    | '〈'
+                    | '〉'
+                    | '｢'
+                    | '｣'
+                    | '【'
+                    | '】'
             )
     });
     let (key, value) = if let Some((k, v)) = trimmed.split_once('=') {
@@ -1441,9 +1745,38 @@ fn parse_inline_kv_token(token: &str) -> Option<(String, String)> {
                     || c.is_control()
                     || matches!(
                         c,
-                        ',' | ';' | '{' | '}' | '[' | ']' | '(' | ')' | '<' | '>'
-                            | '，' | '；' | '：' | '（' | '）' | '［' | '］' | '｛' | '｝' | '＜' | '＞'
-                            | '「' | '」' | '『' | '』' | '《' | '》' | '〈' | '〉' | '｢' | '｣' | '【' | '】'
+                        ',' | ';'
+                            | '{'
+                            | '}'
+                            | '['
+                            | ']'
+                            | '('
+                            | ')'
+                            | '<'
+                            | '>'
+                            | '，'
+                            | '；'
+                            | '：'
+                            | '（'
+                            | '）'
+                            | '［'
+                            | '］'
+                            | '｛'
+                            | '｝'
+                            | '＜'
+                            | '＞'
+                            | '「'
+                            | '」'
+                            | '『'
+                            | '』'
+                            | '《'
+                            | '》'
+                            | '〈'
+                            | '〉'
+                            | '｢'
+                            | '｣'
+                            | '【'
+                            | '】'
                     )
             })
             .trim_matches(|c| matches!(c, '"' | '\'' | '`' | '“' | '”' | '‘' | '’'))
@@ -1459,12 +1792,50 @@ fn normalize_tx_status(raw: &str) -> Option<String> {
                 || c.is_control()
                 || matches!(
                     c,
-                    '"' | '\'' | '`' | '“' | '”' | '‘' | '’'
-                        | '(' | ')' | '[' | ']' | '{' | '}' | '<' | '>'
-                        | ',' | ';' | ':' | '!' | '?'
-                        | '（' | '）' | '［' | '］' | '｛' | '｝' | '＜' | '＞'
-                        | '「' | '」' | '『' | '』' | '《' | '》' | '〈' | '〉' | '｢' | '｣' | '【' | '】'
-                        | '，' | '；' | '：' | '！' | '？'
+                    '"' | '\''
+                        | '`'
+                        | '“'
+                        | '”'
+                        | '‘'
+                        | '’'
+                        | '('
+                        | ')'
+                        | '['
+                        | ']'
+                        | '{'
+                        | '}'
+                        | '<'
+                        | '>'
+                        | ','
+                        | ';'
+                        | ':'
+                        | '!'
+                        | '?'
+                        | '（'
+                        | '）'
+                        | '［'
+                        | '］'
+                        | '｛'
+                        | '｝'
+                        | '＜'
+                        | '＞'
+                        | '「'
+                        | '」'
+                        | '『'
+                        | '』'
+                        | '《'
+                        | '》'
+                        | '〈'
+                        | '〉'
+                        | '｢'
+                        | '｣'
+                        | '【'
+                        | '】'
+                        | '，'
+                        | '；'
+                        | '：'
+                        | '！'
+                        | '？'
                 )
                 || matches!(
                     c,
@@ -1485,7 +1856,11 @@ fn normalize_tx_status(raw: &str) -> Option<String> {
                 )
         })
         .trim_end_matches(|c: char| {
-            c.is_ascii_punctuation() || matches!(c, '。' | '｡' | '．' | '﹒' | '․' | '！' | '？' | '，' | '；' | '：')
+            c.is_ascii_punctuation()
+                || matches!(
+                    c,
+                    '。' | '｡' | '．' | '﹒' | '․' | '！' | '？' | '，' | '；' | '：'
+                )
         })
         .to_ascii_lowercase();
     let canonical = cleaned
@@ -1519,13 +1894,55 @@ fn is_nullish_kv_value(raw: &str) -> bool {
                 || c.is_control()
                 || matches!(
                     c,
-                    '"' | '\'' | '`' | '“' | '”' | '‘' | '’'
-                        | '<' | '>' | '(' | ')' | '[' | ']' | '{' | '}'
-                        | '（' | '）' | '［' | '］' | '｛' | '｝' | '＜' | '＞'
-                        | '「' | '」' | '『' | '』' | '《' | '》' | '〈' | '〉' | '｢' | '｣'
-                        | '«' | '»' | '‹' | '›'
-                        | '【' | '】' | '〔' | '〕' | '〖' | '〗' | '〘' | '〙' | '〚' | '〛'
-                        | '〝' | '〞' | '〟'
+                    '"' | '\''
+                        | '`'
+                        | '“'
+                        | '”'
+                        | '‘'
+                        | '’'
+                        | '<'
+                        | '>'
+                        | '('
+                        | ')'
+                        | '['
+                        | ']'
+                        | '{'
+                        | '}'
+                        | '（'
+                        | '）'
+                        | '［'
+                        | '］'
+                        | '｛'
+                        | '｝'
+                        | '＜'
+                        | '＞'
+                        | '「'
+                        | '」'
+                        | '『'
+                        | '』'
+                        | '《'
+                        | '》'
+                        | '〈'
+                        | '〉'
+                        | '｢'
+                        | '｣'
+                        | '«'
+                        | '»'
+                        | '‹'
+                        | '›'
+                        | '【'
+                        | '】'
+                        | '〔'
+                        | '〕'
+                        | '〖'
+                        | '〗'
+                        | '〘'
+                        | '〙'
+                        | '〚'
+                        | '〛'
+                        | '〝'
+                        | '〞'
+                        | '〟'
                 )
                 || matches!(
                     c,
@@ -1546,7 +1963,11 @@ fn is_nullish_kv_value(raw: &str) -> bool {
                 )
         })
         .trim_end_matches(|c: char| {
-            c.is_ascii_punctuation() || matches!(c, '。' | '｡' | '．' | '﹒' | '․' | '！' | '？' | '，' | '；' | '：')
+            c.is_ascii_punctuation()
+                || matches!(
+                    c,
+                    '。' | '｡' | '．' | '﹒' | '․' | '！' | '？' | '，' | '；' | '：'
+                )
         })
         .to_ascii_lowercase();
     cleaned.is_empty() || cleaned == "null"
@@ -1716,12 +2137,10 @@ fn parse_tx_query_response(raw: &str, requested_tx_hash: &str) -> Result<TxQuery
         for (key, value) in pairs {
             match key.as_str() {
                 "tx_hash" | "txhash" | "tx-hash" | "transaction_hash" | "transactionhash"
-                | "transaction-hash" => {
-                    match normalize_tx_hash(&value) {
-                        Some(normalized) => tx_hash = Some(normalized),
-                        None => bail!("invalid tx_hash field in tx query response"),
-                    }
-                }
+                | "transaction-hash" => match normalize_tx_hash(&value) {
+                    Some(normalized) => tx_hash = Some(normalized),
+                    None => bail!("invalid tx_hash field in tx query response"),
+                },
                 "status" | "tx_status" | "txstatus" | "transaction_status"
                 | "transactionstatus" | "state" | "tx_state" | "txstate" | "transaction_state"
                 | "transactionstate" => {
@@ -2049,12 +2468,12 @@ fn main() -> Result<()> {
                     let tx_hash = format!(
                         "0x{}",
                         hash(&[
-                        "commit-result",
-                        &task_id.to_string(),
-                        &worker,
-                        &commit_hash,
-                        &nonce.to_string(),
-                    ])
+                            "commit-result",
+                            &task_id.to_string(),
+                            &worker,
+                            &commit_hash,
+                            &nonce.to_string(),
+                        ])
                     );
                     emit_pending_tx_hash(&tx_hash)?;
                 }
@@ -2075,11 +2494,11 @@ fn main() -> Result<()> {
                     let tx_hash = format!(
                         "0x{}",
                         hash(&[
-                        "reveal-result",
-                        &task_id.to_string(),
-                        &result_hash,
-                        &salt_hex,
-                    ])
+                            "reveal-result",
+                            &task_id.to_string(),
+                            &result_hash,
+                            &salt_hex,
+                        ])
                     );
                     emit_pending_tx_hash(&tx_hash)?;
                 }
@@ -2182,6 +2601,7 @@ fn main() -> Result<()> {
                 message,
                 store,
             } => {
+                ensure_sign_message(&message)?;
                 let store = store.unwrap_or_else(default_wallet_store);
                 let priv_hex = read_key(&store, &name)?;
                 let sig = hash(&["trnm-sign-v1", &priv_hex, &message]);
@@ -2263,9 +2683,13 @@ fn main() -> Result<()> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::sync::Mutex;
+    use std::{path::PathBuf, sync::Mutex};
 
     static ENV_LOCK: Mutex<()> = Mutex::new(());
+
+    fn canonical_temp_root() -> PathBuf {
+        std::fs::canonicalize(std::env::temp_dir()).unwrap_or_else(|_| std::env::temp_dir())
+    }
 
     #[test]
     fn wallet_import_hex_check() {
@@ -2279,7 +2703,10 @@ mod tests {
             "0XAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
         )
         .unwrap();
-        assert_eq!(upper, "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+        assert_eq!(
+            upper,
+            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        );
 
         assert!(ensure_hex_32_bytes("0x1234").is_err());
     }
@@ -2302,21 +2729,234 @@ mod tests {
     }
 
     #[test]
+    fn normalize_wallet_store_env_rejects_hidden_or_whitespace_payloads() {
+        assert_eq!(normalize_wallet_store_env("/tmp/trnm wallets"), None);
+        assert_eq!(normalize_wallet_store_env("/tmp/trnm\u{200b}-wallets"), None);
+        assert_eq!(normalize_wallet_store_env("/tmp/trnm\u{202e}wallets"), None);
+    }
+
+    #[test]
+    fn default_wallet_store_rejects_relative_or_root_env_paths() {
+        let _guard = ENV_LOCK.lock().unwrap();
+        let original_store = std::env::var_os("TRNM_WALLET_STORE");
+        let original_home = std::env::var_os("HOME");
+        let home = std::env::temp_dir().join(format!(
+            "trnm-cli-wallet-home-test-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        ));
+        std::fs::create_dir_all(&home).unwrap();
+        std::env::set_var("HOME", &home);
+
+        std::env::set_var("TRNM_WALLET_STORE", "wallets");
+        assert_eq!(default_wallet_store(), home.join(".trnm").join("wallets"));
+
+        std::env::set_var("TRNM_WALLET_STORE", "nested/wallets");
+        assert_eq!(default_wallet_store(), home.join(".trnm").join("wallets"));
+
+        std::env::set_var("TRNM_WALLET_STORE", "/");
+        assert_eq!(default_wallet_store(), home.join(".trnm").join("wallets"));
+
+        std::env::set_var("TRNM_WALLET_STORE", " /tmp/trnm-wallets ");
+        assert_eq!(
+            default_wallet_store(),
+            std::path::PathBuf::from("/tmp/trnm-wallets")
+        );
+
+        match original_store {
+            Some(value) => std::env::set_var("TRNM_WALLET_STORE", value),
+            None => std::env::remove_var("TRNM_WALLET_STORE"),
+        }
+        match original_home {
+            Some(value) => std::env::set_var("HOME", value),
+            None => std::env::remove_var("HOME"),
+        }
+        let _ = std::fs::remove_dir_all(&home);
+    }
+
+    #[test]
+    fn default_wallet_store_falls_back_to_absolute_cwd_when_home_missing_or_relative() {
+        let _guard = ENV_LOCK.lock().unwrap();
+        let original_store = std::env::var_os("TRNM_WALLET_STORE");
+        let original_home = std::env::var_os("HOME");
+        std::env::remove_var("TRNM_WALLET_STORE");
+
+        let cwd = std::env::current_dir().unwrap();
+
+        std::env::remove_var("HOME");
+        assert_eq!(default_wallet_store(), cwd.join(".trnm").join("wallets"));
+
+        std::env::set_var("HOME", "./relative-home");
+        assert_eq!(default_wallet_store(), cwd.join(".trnm").join("wallets"));
+
+        match original_store {
+            Some(value) => std::env::set_var("TRNM_WALLET_STORE", value),
+            None => std::env::remove_var("TRNM_WALLET_STORE"),
+        }
+        match original_home {
+            Some(value) => std::env::set_var("HOME", value),
+            None => std::env::remove_var("HOME"),
+        }
+    }
+
+    #[test]
+    fn default_wallet_store_rejects_unsafe_absolute_cwd_fallback() {
+        let _guard = ENV_LOCK.lock().unwrap();
+        let original_store = std::env::var_os("TRNM_WALLET_STORE");
+        let original_home = std::env::var_os("HOME");
+        let original_cwd = std::env::current_dir().unwrap();
+
+        let unique = format!(
+            "trnm cli cwd fallback test {} {}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        );
+        let unsafe_cwd = std::env::temp_dir().join(unique);
+        std::fs::create_dir_all(&unsafe_cwd).unwrap();
+
+        std::env::remove_var("TRNM_WALLET_STORE");
+        std::env::remove_var("HOME");
+        std::env::set_current_dir(&unsafe_cwd).unwrap();
+
+        assert_eq!(
+            default_wallet_store(),
+            std::path::PathBuf::from("/").join(".trnm").join("wallets")
+        );
+
+        std::env::set_current_dir(&original_cwd).unwrap();
+        match original_store {
+            Some(value) => std::env::set_var("TRNM_WALLET_STORE", value),
+            None => std::env::remove_var("TRNM_WALLET_STORE"),
+        }
+        match original_home {
+            Some(value) => std::env::set_var("HOME", value),
+            None => std::env::remove_var("HOME"),
+        }
+        let _ = std::fs::remove_dir_all(&unsafe_cwd);
+    }
+
+    #[test]
+    fn explicit_wallet_store_path_must_be_absolute_and_normalized() {
+        let write_err = write_key(
+            std::path::Path::new("./wallets"),
+            "alice",
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        )
+        .unwrap_err();
+        assert!(
+            write_err
+                .to_string()
+                .contains("must be an absolute normalized path"),
+            "unexpected error: {write_err}"
+        );
+
+        let read_err = read_key(std::path::Path::new("/tmp/trnm/../wallets"), "alice").unwrap_err();
+        assert!(
+            read_err
+                .to_string()
+                .contains("must be an absolute normalized path"),
+            "unexpected error: {read_err}"
+        );
+
+        let spaced_write_err = write_key(
+            std::path::Path::new("/tmp/trnm wallets"),
+            "alice",
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        )
+        .unwrap_err();
+        assert!(
+            spaced_write_err
+                .to_string()
+                .contains("must be an absolute normalized path"),
+            "unexpected error: {spaced_write_err}"
+        );
+
+        let hidden_read_err =
+            read_key(std::path::Path::new("/tmp/trnm\u{200b}wallets"), "alice").unwrap_err();
+        assert!(
+            hidden_read_err
+                .to_string()
+                .contains("must be an absolute normalized path"),
+            "unexpected error: {hidden_read_err}"
+        );
+    }
+
+    #[test]
+    fn sign_message_rejects_multiline_or_control_text() {
+        let oversized = "a".repeat(4097);
+        for bad in [
+            "".to_string(),
+            " hello world".to_string(),
+            "hello world ".to_string(),
+            "\u{00a0}hello world".to_string(),
+            "hello world\u{2003}".to_string(),
+            "hello\nworld".to_string(),
+            "hello\rworld".to_string(),
+            "hello\tworld".to_string(),
+            "hello\u{00a0}world".to_string(),
+            "hello\u{2003}world".to_string(),
+            "hello\u{0007}world".to_string(),
+            "hello\u{061c}world".to_string(),
+            "hello\u{200e}world".to_string(),
+            "hello\u{200f}world".to_string(),
+            "hello\u{202e}world".to_string(),
+            "hello\u{2068}world".to_string(),
+            oversized,
+        ] {
+            let err = ensure_sign_message(&bad).unwrap_err();
+            assert!(
+                err.to_string().contains("sign message"),
+                "unexpected error for {bad:?}: {err}"
+            );
+        }
+
+        ensure_sign_message("trnm mainnet attestation v1").unwrap();
+        ensure_sign_message("签名用途: validator-bootstrap").unwrap();
+        ensure_sign_message("operator approval v1").unwrap();
+        ensure_sign_message(&"a".repeat(4096)).unwrap();
+    }
+
+    #[test]
     fn wallet_name_rejects_path_like_values() {
         for bad in [
             "",
             ".",
             "..",
             ".alice",
+            "alice.",
+            "alice..",
             "-alice",
             "--help",
             "alice/bob",
             "alice\\bob",
             "alice:bob",
+            "alice：bob",
             "alice=debug",
+            "alice＝debug",
             "alice|bob",
+            "alice｜bob",
             "alice&bob",
+            "alice＆bob",
+            "alice!",
+            "alice！",
             "alice$bob",
+            "alice*bob",
+            "alice?bob",
+            "alice/bob",
+            "alice∕bob",
+            "alice⁄bob",
+            "alice／bob",
+            "alice\\bob",
+            "alice＼bob",
+            "alice⧵bob",
+            "alice⟋bob",
+            "alice⟍bob",
             "\"alice\"",
             "'alice'",
             "`alice`",
@@ -2324,8 +2964,26 @@ mod tests {
             "(alice)",
             "[alice]",
             "{alice}",
+            "“alice”",
+            "‘alice’",
+            "「alice」",
+            "『alice』",
+            "《alice》",
+            "〈alice〉",
+            "｢alice｣",
+            "（alice）",
+            "［alice］",
+            "｛alice｝",
+            "＜alice＞",
+            "【alice】",
+            "〔alice〕",
+            "〖alice〗",
+            "〘alice〙",
+            "〚alice〛",
             "alice,",
+            "alice，",
             "alice;",
+            "alice；",
             "alice\n",
             "alice bob",
             " alice",
@@ -2348,6 +3006,81 @@ mod tests {
     }
 
     #[test]
+    #[cfg(unix)]
+    fn write_key_sets_owner_only_permissions() {
+        use std::os::unix::fs::PermissionsExt;
+
+        let unique = format!(
+            "trnm-cli-wallet-perm-test-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        );
+        let store = canonical_temp_root().join(unique);
+
+        let wallet = write_key(
+            &store,
+            "alice",
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        )
+        .unwrap();
+
+        let mode = std::fs::metadata(&wallet).unwrap().permissions().mode() & 0o777;
+        assert_eq!(mode, 0o600, "unexpected wallet file mode: {:o}", mode);
+        let store_mode = std::fs::metadata(&store).unwrap().permissions().mode() & 0o777;
+        assert_eq!(store_mode, 0o700, "unexpected wallet store mode: {:o}", store_mode);
+
+        let _ = std::fs::remove_file(&wallet);
+        let _ = std::fs::remove_dir(&store);
+    }
+
+    #[test]
+    #[cfg(unix)]
+    fn read_key_refuses_group_or_world_accessible_wallet_file_or_store() {
+        use std::os::unix::fs::PermissionsExt;
+
+        let unique = format!(
+            "trnm-cli-wallet-read-perm-test-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        );
+        let store = canonical_temp_root().join(unique);
+        std::fs::create_dir_all(&store).unwrap();
+        let wallet = wallet_file(&store, "alice");
+        std::fs::write(
+            &wallet,
+            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n",
+        )
+        .unwrap();
+
+        std::fs::set_permissions(&wallet, std::fs::Permissions::from_mode(0o644)).unwrap();
+        let err = read_key(&store, "alice").unwrap_err();
+        assert!(
+            err.to_string().contains("wallet '")
+                && err.to_string().contains("has insecure permissions"),
+            "unexpected error: {err}"
+        );
+
+        std::fs::set_permissions(&wallet, std::fs::Permissions::from_mode(0o600)).unwrap();
+        std::fs::set_permissions(&store, std::fs::Permissions::from_mode(0o755)).unwrap();
+        let err = read_key(&store, "alice").unwrap_err();
+        assert!(
+            err.to_string().contains("wallet store '")
+                && err.to_string().contains("has insecure permissions"),
+            "unexpected error: {err}"
+        );
+
+        let _ = std::fs::set_permissions(&store, std::fs::Permissions::from_mode(0o700));
+        let _ = std::fs::remove_file(&wallet);
+        let _ = std::fs::remove_dir(&store);
+    }
+
+    #[test]
     fn write_key_refuses_to_overwrite_existing_wallet_file() {
         let unique = format!(
             "trnm-cli-wallet-test-{}-{}",
@@ -2357,7 +3090,7 @@ mod tests {
                 .unwrap()
                 .as_nanos()
         );
-        let store = std::env::temp_dir().join(unique);
+        let store = canonical_temp_root().join(unique);
         std::fs::create_dir_all(&store).unwrap();
         let existing = wallet_file(&store, "alice");
         std::fs::write(
@@ -2373,7 +3106,8 @@ mod tests {
         )
         .unwrap_err();
         assert!(
-            err.to_string().contains("refusing to overwrite existing key"),
+            err.to_string()
+                .contains("refusing to overwrite existing key"),
             "unexpected error: {err}"
         );
         assert_eq!(
@@ -2398,7 +3132,7 @@ mod tests {
                 .unwrap()
                 .as_nanos()
         );
-        let store = std::env::temp_dir().join(unique);
+        let store = canonical_temp_root().join(unique);
         std::fs::create_dir_all(&store).unwrap();
         let existing = wallet_file(&store, "alice");
         symlink(store.join("missing-target.key"), &existing).unwrap();
@@ -2410,13 +3144,287 @@ mod tests {
         )
         .unwrap_err();
         assert!(
-            err.to_string().contains("refusing to overwrite existing key"),
+            err.to_string()
+                .contains("refusing to overwrite existing key"),
             "unexpected error: {err}"
         );
-        assert!(std::fs::symlink_metadata(&existing).unwrap().file_type().is_symlink());
+        assert!(std::fs::symlink_metadata(&existing)
+            .unwrap()
+            .file_type()
+            .is_symlink());
 
         let _ = std::fs::remove_file(&existing);
         let _ = std::fs::remove_dir(&store);
+    }
+
+    #[test]
+    #[cfg(unix)]
+    fn read_key_refuses_symlink_wallet_file_path() {
+        use std::os::unix::fs::symlink;
+
+        let unique = format!(
+            "trnm-cli-wallet-read-symlink-test-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        );
+        let store = canonical_temp_root().join(unique);
+        std::fs::create_dir_all(&store).unwrap();
+
+        let target = store.join("alice.real.key");
+        std::fs::write(
+            &target,
+            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n",
+        )
+        .unwrap();
+        let wallet = wallet_file(&store, "alice");
+        symlink(&target, &wallet).unwrap();
+
+        let err = read_key(&store, "alice").unwrap_err();
+        assert!(
+            err.to_string()
+                .contains("refusing to read key through non-regular wallet file path"),
+            "unexpected error: {err}"
+        );
+        assert!(std::fs::symlink_metadata(&wallet)
+            .unwrap()
+            .file_type()
+            .is_symlink());
+
+        let _ = std::fs::remove_file(&wallet);
+        let _ = std::fs::remove_file(&target);
+        let _ = std::fs::remove_dir(&store);
+    }
+
+    #[test]
+    fn read_key_refuses_non_directory_wallet_store() {
+        let unique = format!(
+            "trnm-cli-wallet-store-read-file-test-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        );
+        let root = canonical_temp_root().join(unique);
+        std::fs::create_dir_all(&root).unwrap();
+        let file_store = root.join("wallet-store-file");
+        std::fs::write(&file_store, "not a directory\n").unwrap();
+
+        let err = read_key(&file_store, "alice").unwrap_err();
+        assert!(
+            err.to_string().contains("wallet store")
+                && err.to_string().contains("is not a directory")
+                && err
+                    .to_string()
+                    .contains("refusing to read keys through non-regular wallet store path"),
+            "unexpected error: {err}"
+        );
+
+        let _ = std::fs::remove_file(&file_store);
+        let _ = std::fs::remove_dir(&root);
+    }
+
+    #[test]
+    fn write_key_refuses_non_directory_wallet_store() {
+        let unique = format!(
+            "trnm-cli-wallet-store-write-file-test-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        );
+        let root = canonical_temp_root().join(unique);
+        std::fs::create_dir_all(&root).unwrap();
+        let file_store = root.join("wallet-store-file");
+        std::fs::write(&file_store, "not a directory\n").unwrap();
+
+        let err = write_key(
+            &file_store,
+            "alice",
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        )
+        .unwrap_err();
+        assert!(
+            err.to_string().contains("wallet store")
+                && err.to_string().contains("is not a directory")
+                && err
+                    .to_string()
+                    .contains("refusing to write keys through non-regular wallet store path"),
+            "unexpected error: {err}"
+        );
+        assert!(!wallet_file(&file_store, "alice").exists());
+
+        let _ = std::fs::remove_file(&file_store);
+        let _ = std::fs::remove_dir(&root);
+    }
+
+    #[test]
+    #[cfg(unix)]
+    fn wallet_store_rejects_symlinked_ancestor_path_components() {
+        use std::os::unix::fs::symlink;
+
+        let unique = format!(
+            "trnm-cli-wallet-ancestor-symlink-test-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        );
+        let root = std::env::temp_dir().join(unique);
+        let real_parent = root.join("real-parent");
+        let linked_parent = root.join("linked-parent");
+        let store = linked_parent.join("wallets");
+        std::fs::create_dir_all(&real_parent).unwrap();
+        symlink(&real_parent, &linked_parent).unwrap();
+
+        let write_err = write_key(
+            &store,
+            "alice",
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        )
+        .unwrap_err();
+        assert!(
+            write_err
+                .to_string()
+                .contains("traverses symlinked ancestor"),
+            "unexpected error: {write_err}"
+        );
+
+        let wallet_path = real_parent.join("wallets").join("alice.key");
+        std::fs::create_dir_all(wallet_path.parent().unwrap()).unwrap();
+        std::fs::write(
+            &wallet_path,
+            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n",
+        )
+        .unwrap();
+        let read_err = read_key(&store, "alice").unwrap_err();
+        assert!(
+            read_err
+                .to_string()
+                .contains("traverses symlinked ancestor"),
+            "unexpected error: {read_err}"
+        );
+
+        let _ = std::fs::remove_file(&wallet_path);
+        let _ = std::fs::remove_dir(real_parent.join("wallets"));
+        let _ = std::fs::remove_file(&linked_parent);
+        let _ = std::fs::remove_dir(&real_parent);
+        let _ = std::fs::remove_dir(&root);
+    }
+
+    #[test]
+    #[cfg(unix)]
+    fn write_key_refuses_symlink_wallet_store_path() {
+        use std::os::unix::fs::symlink;
+
+        let unique = format!(
+            "trnm-cli-wallet-store-symlink-write-test-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        );
+        let root = canonical_temp_root().join(unique);
+        let real_store = root.join("real-store");
+        let linked_store = root.join("linked-store");
+        std::fs::create_dir_all(&real_store).unwrap();
+        symlink(&real_store, &linked_store).unwrap();
+
+        let err = write_key(
+            &linked_store,
+            "alice",
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        )
+        .unwrap_err();
+        assert!(
+            err.to_string().contains("traverses symlinked ancestor"),
+            "unexpected error: {err}"
+        );
+        assert!(!wallet_file(&linked_store, "alice").exists());
+
+        let _ = std::fs::remove_file(&linked_store);
+        let _ = std::fs::remove_dir(&real_store);
+        let _ = std::fs::remove_dir(&root);
+    }
+
+    #[test]
+    #[cfg(unix)]
+    fn read_key_refuses_symlink_wallet_store_path() {
+        use std::os::unix::fs::symlink;
+
+        let unique = format!(
+            "trnm-cli-wallet-store-symlink-read-test-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        );
+        let root = canonical_temp_root().join(unique);
+        let real_store = root.join("real-store");
+        let linked_store = root.join("linked-store");
+        std::fs::create_dir_all(&real_store).unwrap();
+        symlink(&real_store, &linked_store).unwrap();
+        let wallet = real_store.join("alice.key");
+        std::fs::write(
+            &wallet,
+            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n",
+        )
+        .unwrap();
+
+        let err = read_key(&linked_store, "alice").unwrap_err();
+        assert!(
+            err.to_string().contains("traverses symlinked ancestor"),
+            "unexpected error: {err}"
+        );
+
+        let _ = std::fs::remove_file(&wallet);
+        let _ = std::fs::remove_file(&linked_store);
+        let _ = std::fs::remove_dir(&real_store);
+        let _ = std::fs::remove_dir(&root);
+    }
+
+    #[test]
+    #[cfg(unix)]
+    fn wallet_create_rejects_symlinked_ancestor_from_env_store() {
+        use std::os::unix::fs::symlink;
+
+        let original_store = std::env::var_os("TRNM_WALLET_STORE");
+        let unique = format!(
+            "trnm-cli-wallet-env-ancestor-symlink-test-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        );
+        let root = std::env::temp_dir().join(unique);
+        let real_parent = root.join("real-parent");
+        let linked_parent = root.join("linked-parent");
+        let store = linked_parent.join("wallets");
+        std::fs::create_dir_all(&real_parent).unwrap();
+        symlink(&real_parent, &linked_parent).unwrap();
+        std::env::set_var("TRNM_WALLET_STORE", &store);
+
+        let err = wallet_create("alice".to_string(), None).unwrap_err();
+        assert!(
+            err.to_string().contains("traverses symlinked ancestor"),
+            "unexpected error: {err}"
+        );
+
+        match original_store {
+            Some(value) => std::env::set_var("TRNM_WALLET_STORE", value),
+            None => std::env::remove_var("TRNM_WALLET_STORE"),
+        }
+        let _ = std::fs::remove_file(&linked_parent);
+        let _ = std::fs::remove_dir(&real_parent);
+        let _ = std::fs::remove_dir(&root);
     }
 
     #[test]
@@ -3082,9 +4090,9 @@ mod tests {
     fn task_query_rejects_missing_primary_finding_when_compatibility_implies_one() {
         let raw = r#"{"task_id":42,"status":"Assigned","worker":"worker-a","bounty":777,"result_hash_hex":null,"version":9,"metadata_compatibility":{"legacy_note_only":false,"canonical_core_fields":false,"complete_metering_snapshot":true},"metadata_runtime_compatible":false,"metadata_requires_governance_upgrade":true,"metadata_compatibility_findings":["non_canonical_core_fields"]}"#;
         let err = parse_task_query_response(raw, 42).unwrap_err();
-        assert!(err.to_string().contains(
-            "metadata_primary_compatibility_finding mismatch"
-        ));
+        assert!(err
+            .to_string()
+            .contains("metadata_primary_compatibility_finding mismatch"));
     }
 
     #[test]
@@ -3178,16 +4186,15 @@ mod tests {
 
     #[test]
     fn tx_query_parse_kv_tolerates_unicode_wrapped_status_and_null_error() {
-        let kv = "transactionHash：0xBEEF42\nstatus=\u{2068}“SUCCESS！”\u{2069}\nerror=『NULL？』\n";
+        let kv =
+            "transactionHash：0xBEEF42\nstatus=\u{2068}“SUCCESS！”\u{2069}\nerror=『NULL？』\n";
         let parsed = parse_tx_query_response(kv, "0xfallback").unwrap();
         assert_eq!(parsed.tx_hash, "0xbeef42");
         assert_eq!(parsed.status, "committed");
         assert_eq!(parsed.error, None);
 
-        let guillemet_wrapped =
-            "transactionHash=0xBEEF44\nstatus=«confirmed»\nerror=〚NULL〛；\n";
-        let parsed_guillemet =
-            parse_tx_query_response(guillemet_wrapped, "0xfallback").unwrap();
+        let guillemet_wrapped = "transactionHash=0xBEEF44\nstatus=«confirmed»\nerror=〚NULL〛；\n";
+        let parsed_guillemet = parse_tx_query_response(guillemet_wrapped, "0xfallback").unwrap();
         assert_eq!(parsed_guillemet.tx_hash, "0xbeef44");
         assert_eq!(parsed_guillemet.status, "committed");
         assert_eq!(parsed_guillemet.error, None);

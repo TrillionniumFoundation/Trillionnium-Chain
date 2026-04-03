@@ -5,9 +5,12 @@ fn is_hidden_env_wrapper(c: char) -> bool {
         || c.is_control()
         || matches!(
             c,
-            '\u{200B}'
+            '\u{061C}'
+                | '\u{200B}'
                 | '\u{200C}'
                 | '\u{200D}'
+                | '\u{200E}'
+                | '\u{200F}'
                 | '\u{2060}'
                 | '\u{FEFF}'
                 | '\u{202A}'
@@ -48,10 +51,16 @@ fn is_single_sided_env_quote(c: char) -> bool {
             | '｣'
             | '（'
             | '）'
+            | '('
+            | ')'
             | '［'
             | '］'
+            | '['
+            | ']'
             | '｛'
             | '｝'
+            | '{'
+            | '}'
             | '<'
             | '>'
             | '＜'
@@ -70,6 +79,10 @@ fn is_single_sided_env_quote(c: char) -> bool {
             | '〞'
             | '〟'
     )
+}
+
+fn is_suspicious_path_wrapper(c: char) -> bool {
+    is_single_sided_env_quote(c)
 }
 
 pub(crate) fn normalize_wallet_store_env(raw: &str) -> Option<&str> {
@@ -123,17 +136,104 @@ pub(crate) fn normalize_wallet_store_env(raw: &str) -> Option<&str> {
         }
         normalized = trimmed_single_sided;
     }
-    (!normalized.is_empty()).then_some(normalized)
+    if normalized.is_empty() || normalized.chars().any(is_hidden_env_wrapper) {
+        return None;
+    }
+    Some(normalized)
+}
+
+fn wallet_store_path_is_safe(path: &Path) -> bool {
+    use std::path::Component;
+
+    let rendered = path.to_string_lossy();
+    path.is_absolute()
+        && path.parent().is_some()
+        && !rendered.contains("//")
+        && rendered.chars().all(|c| {
+            !c.is_whitespace()
+                && !c.is_control()
+                && !is_suspicious_path_wrapper(c)
+                && !matches!(
+                    c,
+                    '\u{061C}'
+                        | '\u{200B}'
+                        | '\u{200C}'
+                        | '\u{200D}'
+                        | '\u{200E}'
+                        | '\u{200F}'
+                        | '\u{2060}'
+                        | '\u{FEFF}'
+                        | '\u{202A}'
+                        | '\u{202B}'
+                        | '\u{202C}'
+                        | '\u{202D}'
+                        | '\u{202E}'
+                        | '\u{2066}'
+                        | '\u{2067}'
+                        | '\u{2068}'
+                        | '\u{2069}'
+                )
+        })
+        && !path
+            .components()
+            .any(|component| matches!(component, Component::CurDir | Component::ParentDir))
+}
+
+fn ensure_wallet_store_path_is_safe(store: &Path) -> Result<()> {
+    if !wallet_store_path_is_safe(store) {
+        bail!(
+            "wallet store '{}' must be an absolute normalized path without '.' or '..' segments",
+            store.display()
+        );
+    }
+    Ok(())
+}
+
+fn ensure_wallet_store_ancestors_not_symlink(store: &Path) -> Result<()> {
+    for ancestor in store.ancestors().skip(1) {
+        match fs::symlink_metadata(ancestor) {
+            Ok(meta) if meta.file_type().is_symlink() => {
+                bail!(
+                    "wallet store '{}' traverses symlinked ancestor '{}'; refusing non-canonical keystore path",
+                    store.display(),
+                    ancestor.display()
+                );
+            }
+            Ok(_) => {}
+            Err(err) if err.kind() == std::io::ErrorKind::NotFound => {}
+            Err(err) => {
+                bail!(
+                    "failed to inspect wallet store ancestor '{}' for symlink safety: {err}",
+                    ancestor.display()
+                );
+            }
+        }
+    }
+    Ok(())
 }
 
 pub(crate) fn default_wallet_store() -> PathBuf {
     if let Ok(p) = std::env::var("TRNM_WALLET_STORE") {
         if let Some(normalized) = normalize_wallet_store_env(&p) {
-            return PathBuf::from(normalized);
+            let candidate = PathBuf::from(normalized);
+            if wallet_store_path_is_safe(&candidate) {
+                return candidate;
+            }
         }
     }
-    let home = std::env::var("HOME").unwrap_or_else(|_| ".".to_string());
-    PathBuf::from(home).join(".trnm").join("wallets")
+
+    let home_root = std::env::var("HOME")
+        .ok()
+        .map(PathBuf::from)
+        .filter(|path| wallet_store_path_is_safe(path))
+        .or_else(|| {
+            std::env::current_dir()
+                .ok()
+                .filter(|path| wallet_store_path_is_safe(path))
+        })
+        .unwrap_or_else(|| PathBuf::from("/"));
+
+    home_root.join(".trnm").join("wallets")
 }
 
 pub(crate) fn wallet_file(store: &Path, name: &str) -> PathBuf {
@@ -146,9 +246,12 @@ pub(crate) fn ensure_wallet_name(name: &str) -> Result<()> {
             || c.is_control()
             || matches!(
                 c,
-                '\u{200B}'
+                '\u{061C}'
+                    | '\u{200B}'
                     | '\u{200C}'
                     | '\u{200D}'
+                    | '\u{200E}'
+                    | '\u{200F}'
                     | '\u{2060}'
                     | '\u{FEFF}'
                     | '\u{202A}'
@@ -162,6 +265,32 @@ pub(crate) fn ensure_wallet_name(name: &str) -> Result<()> {
                     | '\u{2069}'
             )
     });
+    let uppercase = name.to_ascii_uppercase();
+    let is_windows_reserved_device = matches!(
+        uppercase.as_str(),
+        "CON"
+            | "PRN"
+            | "AUX"
+            | "NUL"
+            | "COM1"
+            | "COM2"
+            | "COM3"
+            | "COM4"
+            | "COM5"
+            | "COM6"
+            | "COM7"
+            | "COM8"
+            | "COM9"
+            | "LPT1"
+            | "LPT2"
+            | "LPT3"
+            | "LPT4"
+            | "LPT5"
+            | "LPT6"
+            | "LPT7"
+            | "LPT8"
+            | "LPT9"
+    );
 
     if name.is_empty()
         || name == "."
@@ -182,9 +311,10 @@ pub(crate) fn ensure_wallet_name(name: &str) -> Result<()> {
             '〔', '〕', '〖', '〗', '〘', '〙', '〚', '〛', '〝', '〞', '〟',
         ])
         || has_hidden_or_whitespace
+        || is_windows_reserved_device
     {
         bail!(
-            "invalid wallet name '{}': use a simple local name without path separators",
+            "invalid wallet name '{}': use a simple local name without path separators or reserved device names",
             name
         );
     }
@@ -268,9 +398,12 @@ pub(crate) fn ensure_hex_32_bytes(s: &str) -> Result<String> {
                 )
                 || matches!(
                     c,
-                    '\u{200B}'
+                    '\u{061C}'
+                        | '\u{200B}'
                         | '\u{200C}'
                         | '\u{200D}'
+                        | '\u{200E}'
+                        | '\u{200F}'
                         | '\u{2060}'
                         | '\u{FEFF}'
                         | '\u{202A}'
@@ -297,8 +430,32 @@ pub(crate) fn ensure_hex_32_bytes(s: &str) -> Result<String> {
     Ok(x)
 }
 
+#[cfg(unix)]
+fn ensure_owner_only_permissions(meta: &fs::Metadata, path: &Path, kind: &str) -> Result<()> {
+    use std::os::unix::fs::PermissionsExt;
+
+    let mode = meta.permissions().mode() & 0o777;
+    if mode & 0o077 != 0 {
+        bail!(
+            "{} '{}' has insecure permissions {:o}; expected owner-only access",
+            kind,
+            path.display(),
+            mode
+        );
+    }
+    Ok(())
+}
+
+#[cfg(not(unix))]
+fn ensure_owner_only_permissions(_meta: &fs::Metadata, _path: &Path, _kind: &str) -> Result<()> {
+    Ok(())
+}
+
 pub(crate) fn write_key(store: &Path, name: &str, priv_hex: &str) -> Result<PathBuf> {
     ensure_wallet_name(name)?;
+    let normalized_priv_hex = ensure_hex_32_bytes(priv_hex)?;
+    ensure_wallet_store_path_is_safe(store)?;
+    ensure_wallet_store_ancestors_not_symlink(store)?;
     if let Ok(meta) = fs::symlink_metadata(store) {
         if meta.file_type().is_symlink() {
             bail!(
@@ -312,6 +469,7 @@ pub(crate) fn write_key(store: &Path, name: &str, priv_hex: &str) -> Result<Path
                 store.display()
             );
         }
+        ensure_owner_only_permissions(&meta, store, "wallet store")?;
     }
     fs::create_dir_all(store)?;
     #[cfg(unix)]
@@ -327,7 +485,7 @@ pub(crate) fn write_key(store: &Path, name: &str, priv_hex: &str) -> Result<Path
             f.display()
         );
     }
-    fs::write(&f, format!("{}\n", priv_hex))?;
+    fs::write(&f, format!("{}\n", normalized_priv_hex))?;
     #[cfg(unix)]
     {
         use std::os::unix::fs::PermissionsExt;
@@ -338,6 +496,8 @@ pub(crate) fn write_key(store: &Path, name: &str, priv_hex: &str) -> Result<Path
 
 pub(crate) fn read_key(store: &Path, name: &str) -> Result<String> {
     ensure_wallet_name(name)?;
+    ensure_wallet_store_path_is_safe(store)?;
+    ensure_wallet_store_ancestors_not_symlink(store)?;
     let store_meta = fs::symlink_metadata(store)
         .map_err(|e| anyhow!("failed to inspect wallet store '{}': {e}", store.display()))?;
     if store_meta.file_type().is_symlink() {
@@ -352,18 +512,7 @@ pub(crate) fn read_key(store: &Path, name: &str) -> Result<String> {
             store.display()
         );
     }
-    #[cfg(unix)]
-    {
-        use std::os::unix::fs::PermissionsExt;
-        let mode = store_meta.permissions().mode() & 0o777;
-        if mode & 0o077 != 0 {
-            bail!(
-                "wallet store '{}' has insecure permissions {:o}; expected owner-only access",
-                store.display(),
-                mode
-            );
-        }
-    }
+    ensure_owner_only_permissions(&store_meta, store, "wallet store")?;
     let f = wallet_file(store, name);
     let meta = fs::symlink_metadata(&f)
         .map_err(|e| anyhow!("failed to inspect wallet '{}' at {}: {e}", name, f.display()))?;
@@ -374,19 +523,7 @@ pub(crate) fn read_key(store: &Path, name: &str) -> Result<String> {
             f.display()
         );
     }
-    #[cfg(unix)]
-    {
-        use std::os::unix::fs::PermissionsExt;
-        let mode = meta.permissions().mode() & 0o777;
-        if mode & 0o077 != 0 {
-            bail!(
-                "wallet '{}' at {} has insecure permissions {:o}; expected owner-only access",
-                name,
-                f.display(),
-                mode
-            );
-        }
-    }
+    ensure_owner_only_permissions(&meta, &f, "wallet")?;
     let raw = fs::read_to_string(&f)
         .map_err(|e| anyhow!("failed to read wallet '{}' at {}: {e}", name, f.display()))?;
     ensure_hex_32_bytes(raw.trim())

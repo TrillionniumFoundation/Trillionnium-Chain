@@ -29,7 +29,8 @@ fn tmp_dir(label: &str) -> PathBuf {
         .duration_since(UNIX_EPOCH)
         .unwrap()
         .as_nanos();
-    let p = std::env::temp_dir().join(format!("trnm-cli-{label}-{ts}"));
+    let temp_root = std::env::temp_dir().canonicalize().unwrap_or_else(|_| std::env::temp_dir());
+    let p = temp_root.join(format!("trnm-cli-{label}-{ts}"));
     std::fs::create_dir_all(&p).unwrap();
     p
 }
@@ -92,6 +93,189 @@ fn smoke_wallet_import_accepts_wrapped_private_key_hex() {
     let s = String::from_utf8_lossy(&out.stdout);
     assert!(s.contains("wallet_name=alice"));
     assert!(s.contains("address=trnm1"));
+}
+
+#[cfg(unix)]
+#[test]
+fn smoke_wallet_create_rejects_symlinked_ancestor_out_path() {
+    use std::os::unix::fs::symlink;
+
+    let root = tmp_dir("wallet-create-symlink-ancestor");
+    let real_parent = root.join("real-parent");
+    let linked_parent = root.join("linked-parent");
+    std::fs::create_dir_all(&real_parent).unwrap();
+    symlink(&real_parent, &linked_parent).unwrap();
+    let store = linked_parent.join("wallets");
+
+    let out = Command::new(bin())
+        .args([
+            "wallet",
+            "create",
+            "--name",
+            "alice",
+            "--out",
+            store.to_string_lossy().as_ref(),
+        ])
+        .output()
+        .unwrap();
+
+    assert!(
+        !out.status.success(),
+        "symlinked keystore ancestor should fail closed"
+    );
+    let stderr = String::from_utf8_lossy(&out.stderr);
+    assert!(
+        stderr.contains("refusing non-canonical keystore path"),
+        "unexpected stderr: {}",
+        stderr
+    );
+    assert!(!real_parent.join("wallets").join("alice.key").exists());
+}
+
+#[test]
+fn smoke_wallet_sign_rejects_multiline_message() {
+    let store = tmp_dir("wallet-sign-message-guard");
+    let pk = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+    let import = Command::new(bin())
+        .args([
+            "wallet",
+            "import",
+            "--name",
+            "alice",
+            "--private-key-hex",
+            pk,
+            "--out",
+            store.to_string_lossy().as_ref(),
+        ])
+        .output()
+        .unwrap();
+    assert!(
+        import.status.success(),
+        "stderr: {}",
+        String::from_utf8_lossy(&import.stderr)
+    );
+
+    let out = Command::new(bin())
+        .args([
+            "wallet",
+            "sign",
+            "--name",
+            "alice",
+            "--message",
+            "hello\nworld",
+            "--store",
+            store.to_string_lossy().as_ref(),
+        ])
+        .output()
+        .unwrap();
+    assert!(!out.status.success(), "multiline signer input should fail closed");
+    let stderr = String::from_utf8_lossy(&out.stderr);
+    assert!(
+        stderr.contains("sign message must be single-line printable text without control characters"),
+        "unexpected stderr: {}",
+        stderr
+    );
+}
+
+#[test]
+fn smoke_wallet_sign_rejects_bidi_control_message() {
+    let store = tmp_dir("wallet-sign-bidi-guard");
+    let pk = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+    let import = Command::new(bin())
+        .args([
+            "wallet",
+            "import",
+            "--name",
+            "alice",
+            "--private-key-hex",
+            pk,
+            "--out",
+            store.to_string_lossy().as_ref(),
+        ])
+        .output()
+        .unwrap();
+    assert!(
+        import.status.success(),
+        "stderr: {}",
+        String::from_utf8_lossy(&import.stderr)
+    );
+
+    let out = Command::new(bin())
+        .args([
+            "wallet",
+            "sign",
+            "--name",
+            "alice",
+            "--message",
+            "approve\u{202e}tx",
+            "--store",
+            store.to_string_lossy().as_ref(),
+        ])
+        .output()
+        .unwrap();
+    assert!(
+        !out.status.success(),
+        "bidi-controlled signer input should fail closed"
+    );
+    let stderr = String::from_utf8_lossy(&out.stderr);
+    assert!(
+        stderr.contains("sign message must be single-line printable text without control characters"),
+        "unexpected stderr: {}",
+        stderr
+    );
+}
+
+#[test]
+fn smoke_wallet_sign_rejects_edge_or_non_ascii_whitespace() {
+    let store = tmp_dir("wallet-sign-whitespace-guard");
+    let pk = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+    let import = Command::new(bin())
+        .args([
+            "wallet",
+            "import",
+            "--name",
+            "alice",
+            "--private-key-hex",
+            pk,
+            "--out",
+            store.to_string_lossy().as_ref(),
+        ])
+        .output()
+        .unwrap();
+    assert!(
+        import.status.success(),
+        "stderr: {}",
+        String::from_utf8_lossy(&import.stderr)
+    );
+
+    for bad_message in [" approve tx", "approve tx ", "approve\u{00a0}tx"] {
+        let out = Command::new(bin())
+            .args([
+                "wallet",
+                "sign",
+                "--name",
+                "alice",
+                "--message",
+                bad_message,
+                "--store",
+                store.to_string_lossy().as_ref(),
+            ])
+            .output()
+            .unwrap();
+        assert!(
+            !out.status.success(),
+            "whitespace-polluted signer input should fail closed: {bad_message:?}"
+        );
+        let stderr = String::from_utf8_lossy(&out.stderr);
+        assert!(
+            stderr.contains("sign message must not start or end with whitespace")
+                || stderr.contains(
+                    "sign message must be single-line printable text without control characters"
+                ),
+            "unexpected stderr for {bad_message:?}: {}",
+            stderr
+        );
+    }
 }
 
 #[test]
