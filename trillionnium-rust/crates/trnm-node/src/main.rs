@@ -15755,6 +15755,35 @@ locked_block_hash = "stale-lock"
     }
 
     #[test]
+    fn ensure_recoverable_wal_state_allows_truncated_fresh_bootstrap_after_reset() {
+        let wal_dir = temp_wal_dir("recover-guard-truncated-fresh-bootstrap");
+        fs::create_dir_all(&wal_dir).unwrap();
+
+        let recovered = RecoveredWalState {
+            next_height: 1,
+            restored_lock: None,
+            last_checkpoint: None,
+            truncated: true,
+            metadata_only_recovery: false,
+            wal_entries_retained: 0,
+            checkpoint_height_retained: None,
+        };
+
+        ensure_recoverable_wal_state(&wal_dir, &recovered)
+            .expect("truncated fresh bootstrap should remain recoverable for safe join/rejoin");
+        assert_eq!(
+            recovery_startup_summary(&recovered),
+            "retained_wal_entries=0 checkpoint_height_retained=none checkpoint_tip_relation=none next_startup_height=1 wal_tail_truncated=true metadata_only_recovery=false join_rejoin_status=ready:fresh_bootstrap"
+        );
+        assert_eq!(
+            retained_wal_summary(&recovered),
+            "retained no committed WAL entries; repaired WAL tail required truncation"
+        );
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
     fn recover_without_checkpoint_and_without_retained_wal_is_not_metadata_only() {
         let wal_dir = temp_wal_dir("recover-no-checkpoint-no-retained-wal");
         fs::create_dir_all(&wal_dir).unwrap();
