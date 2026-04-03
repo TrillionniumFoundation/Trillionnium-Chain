@@ -1052,6 +1052,35 @@ fn x3_prep_retry_pending_blank_reason_falls_back_without_state_change() {
 }
 
 #[test]
+fn x3_prep_retry_pending_reason_sanitizes_unicode_controls_for_replay_stability() {
+    let mut request = SettlementRequest::new(1, "0xretry-pending-sanitized-reason".to_string());
+    let token = operator_token();
+
+    let retry_pending = HeartbeatOutcome {
+        heartbeat: None,
+        should_retry: true,
+        degraded: false,
+        message: "target\u{2060} relay\u{2028}timeout\u{FFF9} signal".to_string(),
+    };
+
+    let err = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &retry_pending,
+        SettlementConfirm::Confirmed { height: 701 },
+    )
+    .unwrap_err();
+
+    assert_eq!(
+        err,
+        trnm_bridge_poc::bridge_status::SettlementError::HeartbeatRetryPending {
+            reason: "target relay timeout signal".to_string(),
+        }
+    );
+    assert_eq!(current_status(&request), &BridgeStatus::Pending);
+}
+
+#[test]
 fn x3_prep_retry_pending_heartbeat_does_not_override_confirm_failure_terminal_compensation() {
     let mut request = SettlementRequest::new(1, "0xretry-pending-confirm-failure".to_string());
     let token = operator_token();
