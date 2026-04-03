@@ -21,7 +21,8 @@ function failClosedValue(value: string | number | null | undefined, fallback = "
 
 function failClosedHealth(value: ChainStatus["health"] | string | null | undefined) {
   const normalized = failClosedValue(value);
-  return knownHealthStates.has(normalized as ChainStatus["health"]) ? normalized : "Unavailable";
+  const canonical = typeof normalized === "string" ? normalized.toLowerCase() : normalized;
+  return knownHealthStates.has(canonical as ChainStatus["health"]) ? canonical : "Unavailable";
 }
 
 export function ChainStatusCard({ status }: { status: ChainStatus }) {
