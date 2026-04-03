@@ -596,6 +596,14 @@ fn ensure_safe_sign_message_rejects_ambiguous_or_non_ascii_signer_text() {
         "unexpected error: {bidi_err}"
     );
 
+    let invisible_separator_err = ensure_safe_sign_message("approve\u{2063}tx").unwrap_err();
+    assert!(
+        invisible_separator_err
+            .to_string()
+            .contains("ASCII printable text"),
+        "unexpected error: {invisible_separator_err}"
+    );
+
     let inhibit_symmetric_swap_err = ensure_safe_sign_message("approve\u{206a}tx").unwrap_err();
     assert!(
         inhibit_symmetric_swap_err
