@@ -942,6 +942,18 @@ mod tests {
     }
 
     #[test]
+    fn deposit_overflow_fails_closed_without_crediting_or_logging_event() {
+        let mut vault = SettlementVault::new("owner");
+        vault.deposit("owner", "alice", u128::MAX).unwrap();
+        let audit_len_before = vault.audit_log().len();
+
+        let err = vault.deposit("owner", "alice", 1).unwrap_err();
+        assert_eq!(err, VaultError::BalanceOverflow);
+        assert_eq!(vault.balance_of("alice"), u128::MAX);
+        assert_eq!(vault.audit_log().len(), audit_len_before);
+    }
+
+    #[test]
     fn release_overflow_fails_closed_without_unlocking_or_logging_event() {
         let mut vault = SettlementVault::new("owner");
         vault.deposit("owner", "alice", 5).unwrap();
