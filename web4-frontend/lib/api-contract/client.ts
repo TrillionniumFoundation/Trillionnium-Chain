@@ -279,8 +279,9 @@ export function createFrontendApiClient(config: BaseClientConfig) {
       subject: string,
       options?: QueryOptions,
     ): Promise<QueryCapabilityAuditResult> {
+      const normalizedSubject = normalizeRequiredPathParam(subject, "Capability audit subject");
       return getJson(
-        `/query-capability-audit/${encodeURIComponent(subject)}`,
+        `/query-capability-audit/${encodeURIComponent(normalizedSubject)}`,
         options,
       ).then(adaptQueryCapabilityAudit);
     },

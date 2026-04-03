@@ -83,6 +83,43 @@ describe("api-contract adapters", () => {
     expect(out.events[0]?.level).toBe("info");
   });
 
+  it("treats DID registration history as non-grant in rpc capability audit fallback", () => {
+    const out = adaptQueryCapabilityAudit({
+      token: {
+        subject_did: "did:trnm:alice",
+        scope: "AUDIT_READ",
+      },
+      owner_history: [
+        {
+          action: "DID_REGISTERED",
+          at_height: 11,
+        },
+        {
+          action: "CAPABILITY_ISSUED",
+          at_height: 12,
+        },
+      ],
+    });
+
+    expect(out.subject).toBe("did:trnm:alice");
+    expect(out.audits).toEqual([
+      {
+        subject: "did:trnm:alice",
+        capability: "AUDIT_READ",
+        granted: false,
+        reason: "DID_REGISTERED",
+        checkedAt: "height:11",
+      },
+      {
+        subject: "did:trnm:alice",
+        capability: "AUDIT_READ",
+        granted: true,
+        reason: "CAPABILITY_ISSUED",
+        checkedAt: "height:12",
+      },
+    ]);
+  });
+
   it("normalizes canonical events with frozen M2V2 resolution code to fail-closed level", () => {
     const out = adaptQueryEvents({
       taskId: "7",
@@ -344,6 +381,51 @@ describe("api-contract adapters", () => {
     expect(out.total).toBe(42);
   });
 
+  it("fails closed when canonical normalized audit pagination reports hasMore without usable cursor", () => {
+    const out = adaptQueryNormalizedAuditEvents({
+      events: [
+        {
+          source: "bridge-relay",
+          event_type: "bridge_relay.proof_submitted",
+          actor: "validator-1",
+          checkedAt: "height:778",
+        },
+      ],
+      hasMore: true,
+      nextCursor: "   ",
+      total: 43,
+    });
+
+    expect(out.events[0]?.event_type).toBe("bridge_relay.proof_submitted");
+    expect(out.hasMore).toBe(false);
+    expect(out.nextCursor).toBeUndefined();
+    expect(out.total).toBe(43);
+  });
+
+  it("fails closed when canonical normalized audit pagination loops back to the requested cursor", () => {
+    const out = adaptQueryNormalizedAuditEvents(
+      {
+        events: [
+          {
+            source: "capability-registry",
+            event_type: "capability.renewed",
+            actor: "security",
+            checkedAt: "height:779",
+          },
+        ],
+        hasMore: true,
+        nextCursor: "cursor-loop",
+        total: 44,
+      },
+      { cursor: "cursor-loop" },
+    );
+
+    expect(out.events[0]?.event_type).toBe("capability.renewed");
+    expect(out.hasMore).toBe(false);
+    expect(out.nextCursor).toBe("cursor-loop");
+    expect(out.total).toBe(44);
+  });
+
   it("adapts canonical normalized audit-events payload", () => {
 
     const out = adaptQueryNormalizedAuditEvents({
@@ -465,6 +547,100 @@ describe("api-contract adapters", () => {
     expect(out.audits[0]?.checkedAt).toBe("height:123");
   });
 
+  it("preserves historical grant entries while annotating token-revoked capability audit state", () => {
+    const out = adaptQueryCapabilityAudit({
+      token: {
+        subject_did: "did:trnm:bob",
+        scope: "AUDIT_READ",
+        revoked_at: 456,
+      },
+      owner_history: [
+        {
+          action: "CAPABILITY_ISSUED",
+          at_height: 123,
+          note: "initial grant",
+        },
+      ],
+    });
+
+    expect(out.subject).toBe("did:trnm:bob");
+    expect(out.audits[0]?.granted).toBe(true);
+    expect(out.audits[0]?.reason).toBe("TOKEN_REVOKED@height:456: initial grant");
+    expect(out.audits[0]?.checkedAt).toBe("height:123");
+  });
+
+  it("preserves explicit capability revoke history under token-revoked semantics", () => {
+    const out = adaptQueryCapabilityAudit({
+      token: {
+        subject_did: "did:trnm:bob",
+        scope: "AUDIT_READ",
+        revoked_at: 456,
+      },
+      owner_history: [
+        {
+          action: "CAPABILITY_REVOKED",
+          at_height: 124,
+        },
+      ],
+    });
+
+    expect(out.subject).toBe("did:trnm:bob");
+    expect(out.audits[0]?.granted).toBe(false);
+    expect(out.audits[0]?.reason).toBe("TOKEN_REVOKED@height:456: CAPABILITY_REVOKED");
+    expect(out.audits[0]?.checkedAt).toBe("height:124");
+  });
+
+  it("keeps non-capability history entries non-grant even when token is revoked", () => {
+    const out = adaptQueryCapabilityAudit({
+      token: {
+        subject_did: "did:trnm:bob",
+        scope: "AUDIT_READ",
+        revoked_at: 456,
+      },
+      owner_history: [
+        {
+          action: "DID_REVOKED",
+          at_height: 125,
+          note: "subject retired",
+        },
+      ],
+    });
+
+    expect(out.subject).toBe("did:trnm:bob");
+    expect(out.audits[0]).toEqual({
+      subject: "did:trnm:bob",
+      capability: "AUDIT_READ",
+      granted: false,
+      reason: "subject retired",
+      checkedAt: "height:125",
+    });
+  });
+
+  it("falls back to action when rpc capability audit note is blank or whitespace", () => {
+    const out = adaptQueryCapabilityAudit({
+      token: {
+        subject_did: "did:trnm:carol",
+        scope: "AUDIT_READ",
+      },
+      owner_history: [
+        {
+          action: "CAPABILITY_REVOKED",
+          at_height: 126,
+          note: "   ",
+        },
+      ],
+    });
+
+    expect(out.subject).toBe("did:trnm:carol");
+    expect(out.audits[0]).toEqual({
+      subject: "did:trnm:carol",
+      capability: "AUDIT_READ",
+      granted: false,
+      reason: "CAPABILITY_REVOKED",
+      checkedAt: "height:126",
+    });
+  });
+
   it("accepts canonical capability audit payload with height marker checkedAt", () => {
     const out = adaptQueryCapabilityAudit({
       subject: "did:trnm:bob",
@@ -481,6 +657,50 @@ describe("api-contract adapters", () => {
     expect(out.subject).toBe("did:trnm:bob");
     expect(out.audits[0]?.checkedAt).toBe("height:321");
     expect(out.audits[0]?.granted).toBe(true);
+  });
+
+  it("treats blank revoked_at as absent instead of forcing token-revoked audit semantics", () => {
+    const out = adaptQueryCapabilityAudit({
+      token: {
+        subject_did: "did:trnm:bob",
+        scope: "AUDIT_READ",
+        revoked_at: "   ",
+      },
+      owner_history: [
+        {
+          action: "CAPABILITY_ISSUED",
+          at_height: 126,
+          note: "initial grant",
+        },
+      ],
+    });
+
+    expect(out.subject).toBe("did:trnm:bob");
+    expect(out.audits[0]).toEqual({
+      subject: "did:trnm:bob",
+      capability: "AUDIT_READ",
+      granted: true,
+      reason: "initial grant",
+      checkedAt: "height:126",
+    });
+  });
+
+  it("fails closed when rpc capability audit contains invalid height markers", () => {
+    expect(() =>
+      adaptQueryCapabilityAudit({
+        token: {
+          subject_did: "did:trnm:bob",
+          scope: "AUDIT_READ",
+          revoked_at: "not-a-height",
+        },
+        owner_history: [
+          {
+            action: "CAPABILITY_ISSUED",
+            at_height: "still-not-a-height",
+          },
+        ],
+      }),
+    ).toThrow(FrontendApiError);
   });
 
   it("fails closed on malformed payload", () => {

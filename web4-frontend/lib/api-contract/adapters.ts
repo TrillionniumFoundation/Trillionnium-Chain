@@ -170,6 +170,18 @@ function toCheckedAt(value: z.infer<typeof checkedAtSchema>): CheckedAt {
   return value as CheckedAt;
 }
 
+function toOptionalHeightMarker(height: unknown): string | undefined {
+  if (height == null) return undefined;
+  if (typeof height === "string" && height.trim().length === 0) return undefined;
+  return toHeightMarker(height);
+}
+
+function normalizeOptionalText(value: unknown): string | undefined {
+  if (typeof value !== "string") return undefined;
+  const trimmed = value.trim();
+  return trimmed.length > 0 ? trimmed : undefined;
+}
+
 export const adaptQueryTask = (payload: unknown): QueryTaskResult => {
   const canonical = queryTaskResponseSchema.safeParse(payload);
   if (canonical.success) return canonical.data;
@@ -351,14 +363,38 @@ export const adaptQueryCapabilityAudit = (
   const rpc = rpcCapabilityAuditSchema.safeParse(payload);
   if (!rpc.success) throw normalizeSchemaError(rpc.error.flatten());
 
-  return {
-    subject: rpc.data.token.subject_did,
-    audits: rpc.data.owner_history.map((entry) => ({
+  try {
+    const tokenRevokedAt = toOptionalHeightMarker(rpc.data.token.revoked_at);
+    const tokenIsRevoked = tokenRevokedAt != null;
+
+    return {
       subject: rpc.data.token.subject_did,
-      capability: rpc.data.token.scope,
-      granted: entry.action !== "CAPABILITY_REVOKED" && entry.action !== "DID_REVOKED",
-      reason: entry.note ?? entry.action,
-      checkedAt: toHeightMarker(entry.at_height),
-    })),
-  };
+      audits: rpc.data.owner_history.map((entry) => {
+        const actionGrantsCapability =
+          entry.action === "CAPABILITY_ISSUED" || entry.action === "CAPABILITY_RENEWED";
+        const actionTouchesCapability = actionGrantsCapability || entry.action === "CAPABILITY_REVOKED";
+
+        const revocationMarker = tokenIsRevoked
+          ? `TOKEN_REVOKED@${tokenRevokedAt}`
+          : undefined;
+
+        const normalizedNote = normalizeOptionalText(entry.note);
+
+        return {
+          subject: rpc.data.token.subject_did,
+          capability: rpc.data.token.scope,
+          granted: actionGrantsCapability,
+          reason:
+            tokenIsRevoked && actionTouchesCapability
+              ? [revocationMarker, normalizedNote ?? entry.action]
+                  .filter((value): value is string => typeof value === "string" && value.length > 0)
+                  .join(": ")
+              : normalizedNote ?? entry.action,
+          checkedAt: toHeightMarker(entry.at_height),
+        };
+      }),
+    };
+  } catch (error) {
+    throw normalizeSchemaError(error);
+  }
 };

@@ -210,7 +210,22 @@ const mapNormalizedAuditSeverity = (event: NormalizedAuditEvent): DashboardSnaps
   const normalizedEventType = normalizeDashboardEventToken(event.event_type, "unknown-event");
   const tokens = `${event.reason ?? ""} ${event.note ?? ""} ${normalizedEventType}`.toLowerCase();
 
-  if (tokens.includes("error") || tokens.includes("fail") || tokens.includes("reject") || tokens.includes("invalid")) {
+  if (
+    tokens.includes("error") ||
+    tokens.includes("fail") ||
+    tokens.includes("reject") ||
+    tokens.includes("invalid") ||
+    tokens.includes("revoke") ||
+    tokens.includes("revocat") ||
+    tokens.includes("expire") ||
+    tokens.includes("expirat") ||
+    tokens.includes("disable") ||
+    tokens.includes("disabled") ||
+    tokens.includes("suspend") ||
+    tokens.includes("unauthor") ||
+    tokens.includes("forbid") ||
+    tokens.includes("denied")
+  ) {
     return "Critical";
   }
   if (tokens.includes("warn") || tokens.includes("drift") || tokens.includes("mismatch")) {
@@ -264,6 +279,21 @@ const resolveNormalizedAuditPageLimit = (): number =>
 const resolveNormalizedAuditMaxPages = (): number =>
   parsePositiveIntEnv(process.env.NEXT_PUBLIC_DASHBOARD_NORMALIZED_AUDIT_MAX_PAGES, 4);
 
+const getNormalizedAuditEventKey = (event: NormalizedAuditEvent): string =>
+  [
+    event.source,
+    event.event_type,
+    event.object_id ?? "",
+    event.related_id ?? "",
+    event.actor ?? "",
+    event.subject ?? "",
+    event.timestamp ?? "",
+    event.checkedAt ?? "",
+    event.amount == null ? "" : String(event.amount),
+    event.reason ?? "",
+    event.note ?? "",
+  ].join("\u001f");
+
 const fetchNormalizedAuditEventsWithPagination = async (
   client: ReturnType<typeof createFrontendApiClient>,
 ): Promise<NormalizedAuditEvent[]> => {
@@ -279,7 +309,13 @@ const fetchNormalizedAuditEventsWithPagination = async (
   while (hasMore && page < normalizedAuditMaxPages) {
     const query = cursor == null ? {} : { cursor };
     const pageResp = await client.queryNormalizedAuditEvents({ ...query, limit: normalizedAuditPageLimit });
-    allEvents.push(...pageResp.events);
+
+    for (const event of pageResp.events) {
+      const eventKey = getNormalizedAuditEventKey(event);
+      if (seenEventKeys.has(eventKey)) continue;
+      seenEventKeys.add(eventKey);
+      allEvents.push(event);
+    }
 
     const nextCursor = pageResp.nextCursor?.trim();
     if (pageResp.hasMore === true && !(nextCursor && nextCursor.length > 0)) {
