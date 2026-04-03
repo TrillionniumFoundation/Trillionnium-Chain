@@ -75,6 +75,7 @@ Resolve the exact evidence files from disk before quoting any PASS / GO language
 latest_preflight_path="run/preflight/go-no-go-latest.txt"
 [ -f "$latest_preflight_path" ] || { echo "missing preflight artifact" >&2; exit 1; }
 printf 'preflight_path=%s\n' "$latest_preflight_path"
+printf 'preflight_summary_path=%s\n' "$latest_preflight_path"
 awk -F= '/^(result|generated_at|git_toplevel|git_branch|git_head|git_head_state|git_status_summary|git_worktree_path|git_worktree_branch_ref|git_worktree_branch_ref_match|expected_worktree_root|ticket_expected_branch_ref|expected_branch_ref|expected_head|rollback_command|replay_command)=/ { print }' "$latest_preflight_path"
 
 latest_evidence_dir="$(ls -dt run/health/evidence-* 2>/dev/null | head -n 1)"
