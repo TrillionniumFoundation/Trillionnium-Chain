@@ -361,6 +361,10 @@ Minimum annotation fields:
 - `evidence_scope=<verbatim emitted value|unknown>`
 - `summary_path=<abs-path|unknown>`
 - `manifest_path=<abs-path|unknown>`
+- `git_worktree_path=<abs-path|unknown>`
+- `git_worktree_branch_ref=<refs/heads/...|unknown>`
+- `git_expected_worktree_branch_ref=<refs/heads/...|unknown>`
+- `git_worktree_branch_ref_match=<true|false|unknown>`
 - `replay=<present|missing>`
 - `rollback=<present|missing>`
 
@@ -369,6 +373,7 @@ Annotation rules:
 - the `first_stop=` value must exactly match one stable panel name from this runbook; do not invent shortened aliases in screenshots or share links;
 - preserve `needs_replay=` / `needs_rollback=` alongside `replay=` / `rollback=` so responders can distinguish required evidence actions from merely missing pointers;
 - preserve `truth_source=` / `evidence_scope=` from emitted artifacts when present so dashboard annotations stay semantically aligned with the incident evidence block and the `contract-drift` routing path;
+- preserve `git_worktree_path=` / `git_worktree_branch_ref=` / `git_expected_worktree_branch_ref=` / `git_worktree_branch_ref_match=` when emitted so responders can reject identity-drifted evidence before trusting the graph;
 - if the dashboard tool cannot render all fields inline, put the missing fields into the linked incident/ticket body and treat the dashboard share as incomplete until that link exists;
 - if `needs_rollback=yes` but `rollback=missing`, classify the dashboard annotation as insufficient until the page or linked ticket quotes the current `rollback_command=` or explicitly records it as `unknown`;
 - if `replay=missing` and `rollback=missing` during a live `sev0` / `sev1` incident, classify the dashboard annotation as insufficient even if the graph looks obvious;
@@ -376,8 +381,8 @@ Annotation rules:
 
 Example annotation lines:
 
-- `plane=observability service=rpc severity=sev1 signal=rpc-unhealthy verdict=n/a needs_replay=yes needs_rollback=no first_stop="RPC health / read surface" truth_source=local-release-evidence-v1 evidence_scope=release-handoff summary_path=/abs/run/health/evidence-20260331/summary.txt manifest_path=/abs/release/rc-20260331/manifest.txt replay=present rollback=missing`
-- `plane=observability service=node severity=sev1 signal=node-down verdict=n/a needs_replay=yes needs_rollback=yes first_stop="Consensus instability / rollback pressure" truth_source=local-release-evidence-v1 evidence_scope=release-handoff summary_path=/abs/run/health/evidence-20260331/summary.txt manifest_path=/abs/release/rc-20260331/manifest.txt replay=present rollback=present`
+- `plane=observability service=rpc severity=sev1 signal=rpc-unhealthy verdict=n/a needs_replay=yes needs_rollback=no first_stop="RPC health / read surface" truth_source=local-release-evidence-v1 evidence_scope=release-handoff summary_path=/abs/run/health/evidence-20260331/summary.txt manifest_path=/abs/release/rc-20260331/manifest.txt git_worktree_path=/abs/lane/MN12 git_worktree_branch_ref=refs/heads/lane/mn12-alerting-dashboard-incident-sre git_expected_worktree_branch_ref=refs/heads/lane/mn12-alerting-dashboard-incident-sre git_worktree_branch_ref_match=true replay=present rollback=missing`
+- `plane=observability service=node severity=sev1 signal=node-down verdict=n/a needs_replay=yes needs_rollback=yes first_stop="Consensus instability / rollback pressure" truth_source=local-release-evidence-v1 evidence_scope=release-handoff summary_path=/abs/run/health/evidence-20260331/summary.txt manifest_path=/abs/release/rc-20260331/manifest.txt git_worktree_path=/abs/lane/MN12 git_worktree_branch_ref=refs/heads/lane/mn12-alerting-dashboard-incident-sre git_expected_worktree_branch_ref=refs/heads/lane/mn12-alerting-dashboard-incident-sre git_worktree_branch_ref_match=true replay=present rollback=present`
 - `plane=observability service=oracle severity=sev1 signal=oracle-anomaly verdict=quorum-collapse needs_replay=yes needs_rollback=no first_stop="Oracle-specific drill-down" truth_source=local-release-evidence-v1 evidence_scope=release-handoff summary_path=/abs/run/health/evidence-20260331/summary.txt manifest_path=/abs/release/rc-20260331/manifest.txt replay=present rollback=missing`
 - `plane=observability service=bridge severity=sev1 signal=bridge-anomaly verdict=n/a needs_replay=yes needs_rollback=yes first_stop="Bridge relay / settlement integrity" truth_source=local-release-evidence-v1 evidence_scope=release-handoff summary_path=/abs/run/health/evidence-20260331/summary.txt manifest_path=/abs/release/rc-20260331/manifest.txt replay=present rollback=present`
 
@@ -435,13 +440,13 @@ Use the emitted fields verbatim in the page/ticket annotation block. If the scri
 
 Use one compact line in pages, tickets, and dashboard snapshots:
 
-- `plane=observability service=<service> severity=<sevX> signal=<signal> verdict=<oracle-subtype|n/a> needs_replay=<yes|no> needs_rollback=<yes|no> first_stop=<stable-panel-name|unknown> observed=<what-failed> impact=<blast-radius> truth_source=<value|unknown> evidence_scope=<value|unknown> summary_path=<path|unknown> manifest_path=<path|unknown> replay=<present|missing> rollback=<present|missing>`
+- `plane=observability service=<service> severity=<sevX> signal=<signal> verdict=<oracle-subtype|n/a> needs_replay=<yes|no> needs_rollback=<yes|no> first_stop=<stable-panel-name|unknown> observed=<what-failed> impact=<blast-radius> truth_source=<value|unknown> evidence_scope=<value|unknown> summary_path=<path|unknown> manifest_path=<path|unknown> git_worktree_path=<path|unknown> git_worktree_branch_ref=<refs/heads/...|unknown> git_expected_worktree_branch_ref=<refs/heads/...|unknown> git_worktree_branch_ref_match=<true|false|unknown> replay=<present|missing> rollback=<present|missing>`
 
-Keep `first_stop=` aligned with the exact stable panel name from the routing table above, and copy `truth_source=` / `evidence_scope=` from emitted evidence when present. If the transport format cannot safely carry spaces, wrap the panel name in quotes rather than inventing an underscore alias.
+Keep `first_stop=` aligned with the exact stable panel name from the routing table above, copy `truth_source=` / `evidence_scope=` from emitted evidence when present, and preserve the emitted `git_worktree_*` identity fields whenever available so lane-bound evidence can be rejected fail-closed on mismatch. If the transport format cannot safely carry spaces, wrap the panel name in quotes rather than inventing an underscore alias.
 
 Example:
 
-- `plane=observability service=node severity=sev1 signal=sync-lag verdict=n/a needs_replay=yes needs_rollback=yes first_stop="Node liveness / height progress" observed=committed_height_flat impact=one-validator truth_source=local-release-evidence-v1 evidence_scope=release-handoff summary_path=/abs/run/health/evidence-20260331/summary.txt manifest_path=/abs/release/rc-20260331/manifest.txt replay=present rollback=present`
+- `plane=observability service=node severity=sev1 signal=sync-lag verdict=n/a needs_replay=yes needs_rollback=yes first_stop="Node liveness / height progress" observed=committed_height_flat impact=one-validator truth_source=local-release-evidence-v1 evidence_scope=release-handoff summary_path=/abs/run/health/evidence-20260331/summary.txt manifest_path=/abs/release/rc-20260331/manifest.txt git_worktree_path=/abs/lane/MN12 git_worktree_branch_ref=refs/heads/lane/mn12-alerting-dashboard-incident-sre git_expected_worktree_branch_ref=refs/heads/lane/mn12-alerting-dashboard-incident-sre git_worktree_branch_ref_match=true replay=present rollback=present`
 - `plane=observability service=oracle severity=sev1 signal=oracle-anomaly verdict=quorum-collapse needs_replay=yes needs_rollback=no first_stop="Oracle-specific drill-down" observed=source_cardinality_below_floor impact=price-ingest-degraded truth_source=local-release-evidence-v1 evidence_scope=release-handoff summary_path=/abs/run/health/evidence-20260331/summary.txt manifest_path=/abs/release/rc-20260331/manifest.txt replay=present rollback=missing`
 - `plane=observability service=bridge severity=sev1 signal=bridge-anomaly verdict=n/a needs_replay=yes needs_rollback=yes first_stop="Bridge relay / settlement integrity" observed=settlement_heartbeat_stalled impact=cross-chain-settlement-delayed truth_source=local-release-evidence-v1 evidence_scope=release-handoff summary_path=/abs/run/health/evidence-20260331/summary.txt manifest_path=/abs/release/rc-20260331/manifest.txt replay=present rollback=present`
 

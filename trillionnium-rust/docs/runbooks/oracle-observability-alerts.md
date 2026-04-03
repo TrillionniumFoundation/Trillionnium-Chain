@@ -105,13 +105,14 @@ When opening an incident or handing off between operators, include one compact s
 
 Minimal template:
 
-- `plane=observability service=oracle severity=<sev0|sev1|sev2|sev3> signal=oracle-anomaly verdict=<accepts-stalled|stale-wave|quorum-collapse|drift-anomaly|contract-drift> needs_replay=<yes|no> needs_rollback=<yes|no> first_stop=<"Oracle-specific drill-down"|"Evidence / replay integrity"|unknown> sample_count=<n> accepted_total=<n> stale=<n> quorum=<n> drift=<n> source_cardinality=<n|unknown> ingest_latency_ms=<n|unknown> truth_source=<value|unknown> evidence_scope=<value|unknown> summary_path=<path|unknown> manifest_path=<path|unknown> replay=<present|missing> rollback=<present|missing>`
+- `plane=observability service=oracle severity=<sev0|sev1|sev2|sev3> signal=oracle-anomaly verdict=<accepts-stalled|stale-wave|quorum-collapse|drift-anomaly|contract-drift> needs_replay=<yes|no> needs_rollback=<yes|no> first_stop=<"Oracle-specific drill-down"|"Evidence / replay integrity"|unknown> sample_count=<n> accepted_total=<n> stale=<n> quorum=<n> drift=<n> source_cardinality=<n|unknown> ingest_latency_ms=<n|unknown> truth_source=<value|unknown> evidence_scope=<value|unknown> summary_path=<path|unknown> manifest_path=<path|unknown> git_worktree_path=<path|unknown> git_worktree_branch_ref=<refs/heads/...|unknown> git_expected_worktree_branch_ref=<refs/heads/...|unknown> git_worktree_branch_ref_match=<true|false|unknown> replay=<present|missing> rollback=<present|missing>`
 
 Use `first_stop="Oracle-specific drill-down"` for normal oracle triage and `first_stop="Evidence / replay integrity"` whenever `verdict=contract-drift` or emitted evidence contradicts dashboard math.
 
 Template rules:
 
 - copy `truth_source=`, `evidence_scope=`, `summary_path=`, and `manifest_path=` from emitted artifacts when present so oracle incidents stay append-stable with the shared observability handoff contract;
+- preserve emitted `git_worktree_path=` / `git_worktree_branch_ref=` / `git_expected_worktree_branch_ref=` / `git_worktree_branch_ref_match=` fields when present so rehearsal evidence can be rejected fail-closed on lane mismatch;
 - set `replay=<present|missing>` and `rollback=<present|missing>` from emitted `replay_command=` / `rollback_command=` state rather than operator memory;
 - if the dashboard or page payload omits these evidence fields, treat the handoff as incomplete until the linked incident body preserves them.
 
@@ -191,7 +192,7 @@ Dashboard annotation rules:
 - annotate the incident `severity`, `verdict`, `needs_replay`, and `needs_rollback` on `sev0` / `sev1` screenshots or dashboard share links;
 - keep `first_stop=` aligned with the shared observability routing contract: use `first_stop="Oracle-specific drill-down"` for normal oracle triage and switch to `first_stop="Evidence / replay integrity"` whenever `verdict=contract-drift` or emitted evidence contradicts dashboard math;
 - when linking a dashboard snapshot into an incident ticket, include the `summary_line` beside it so the image and ticket stay semantically aligned;
-- if the dashboard tool cannot render the full shared block inline, copy the missing fields (`needs_replay`, `needs_rollback`, `first_stop`, `truth_source`, `evidence_scope`, `summary_path`, `manifest_path`) into the linked incident body and treat the screenshot/share link as incomplete until that link exists.
+- if the dashboard tool cannot render the full shared block inline, copy the missing fields (`needs_replay`, `needs_rollback`, `first_stop`, `truth_source`, `evidence_scope`, `summary_path`, `manifest_path`, `git_worktree_path`, `git_worktree_branch_ref`, `git_expected_worktree_branch_ref`, `git_worktree_branch_ref_match`) into the linked incident body and treat the screenshot/share link as incomplete until that link exists.
 
 ## Starter alert threshold matrix
 
