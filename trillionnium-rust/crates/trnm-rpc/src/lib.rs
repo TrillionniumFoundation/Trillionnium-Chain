@@ -1098,6 +1098,24 @@ mod tests {
     }
 
     #[test]
+    fn query_account_state_accepts_unicode_whitespace_drift() {
+        let address = format!("trnm1{}", "1".repeat(40));
+        let mut accounts = BTreeMap::new();
+        accounts.insert(
+            address.clone(),
+            AccountState {
+                address: address.clone(),
+                balance: 42,
+                nonce: 7,
+            },
+        );
+
+        let got = query_account_state(&accounts, &format!("\u{2003}{}\u{00a0}", address)).unwrap();
+        assert_eq!(got.balance, 42);
+        assert_eq!(got.nonce, 7);
+    }
+
+    #[test]
     fn query_account_state_rejects_non_hex_suffix() {
         let accounts = BTreeMap::new();
         let bad = format!("trnm1{}", "z".repeat(40));
