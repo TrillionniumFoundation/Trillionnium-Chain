@@ -197,6 +197,7 @@ TRNM_TX_CLI=./trillionnium-rust/target/debug/trnm-cli \
   - 从仓库根执行：`./trillionnium-rust/scripts/v2/explorer_service_down.sh`
   - 或先 `cd trillionnium-rust`，再执行 `./scripts/v2/explorer_service_{up,status,down}.sh`
   - 若 `trillionnium-rust/run/explorer-service/explorer-service.env` 已存在，上述三个脚本会自动加载它；值班切换时无需再手动 `source` 才能复用同一组 bind / public URL / RPC URL 配置。
+  - 若需要对外暴露该脚手架，优先采用“loopback bind + reverse proxy” 形态；最小 `nginx` 骨架与 handoff 注意事项见 `trillionnium-rust/docs/runbooks/explorer-service-scaffold.md`。
   - 默认健康检查：`http://127.0.0.1:8090/healthz`；若需非默认地址，可覆盖 `EXPLORER_HOST` / `EXPLORER_PORT` 或直接传 `EXPLORER_HEALTH_URL`。
   - `explorer_service_status.sh` 会直接回显 `pid_file` / `log_file` / `health_url`，并明确标记 `service_mode=operator-facing-static-scaffold`、`production_ready=false`，同时附带最小 Day-1 read-contract 字段（`read_contract_mode`、`day1_surface`、`historical_query_scope` 等），便于 operator 在 down/degraded/handoff 场景直接确认这是 RPC-backed 的只读脚手架，而不是 durable indexer。
   - `explorer_service_down.sh` 现在也会复用同一组 read-contract 字段，便于在 stop / stale-pid 清理 / handoff 场景保留一致的只读边界说明，而不必额外跑一次 `status`。

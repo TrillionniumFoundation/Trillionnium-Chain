@@ -142,6 +142,42 @@ WantedBy=multi-user.target
 
 Because `explorer_service_up.sh` launches the local HTTP server in the background and then exits, the example unit uses `Type=oneshot` + `RemainAfterExit=yes` so systemd tracks the scaffold lifecycle correctly instead of treating the helper script's quick exit as an unexpected service stop.
 
+### Minimal reverse-proxy skeleton
+
+When operators keep the scaffold bound to loopback and expose it via `EXPLORER_PUBLIC_BASE_URL`, use one explicit proxy shape instead of ad-hoc port forwarding.
+A minimal `nginx` location can look like this:
+
+```nginx
+server {
+    listen 443 ssl;
+    server_name explorer.trnm.example;
+
+    location / {
+        proxy_pass http://127.0.0.1:18090/;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    location = /healthz {
+        proxy_pass http://127.0.0.1:18090/healthz;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+    }
+}
+```
+
+Recommended pairing for that shape:
+
+- keep `EXPLORER_HOST=127.0.0.1`
+- keep `EXPLORER_PORT=18090`
+- set `EXPLORER_PUBLIC_BASE_URL=https://explorer.trnm.example`
+- set `EXPLORER_HEALTH_URL=https://explorer.trnm.example/healthz`
+- leave the scaffold startup/liveness gate pointed at `local_health_url=http://127.0.0.1:18090/healthz`
+
+This keeps the operator-facing/public URL distinct from the local probe target while preserving the same static-only read contract.
+
 Use this only as an operator scaffold, not as proof of production-readiness:
 
 - keep `WorkingDirectory` pinned to the checked-out `trillionnium-rust/` tree so PID/log/public paths stay aligned with the runbook
@@ -155,6 +191,7 @@ Operator notes for this placeholder deployment shape:
 - treat `EXPLORER_PUBLIC_BASE_URL` as the public/operator-facing URL and `local_health_url` as the local liveness target; they may differ legitimately
 - keep the env file, emitted `pid_file`, and emitted `log_file` together in handoff notes so the next operator can restart or roll back without guessing hidden shell state; the scripts auto-load that env file when present
 - if the proxy layer is changed, re-run `explorer_service_status.sh` and quote both `health_url` and `local_health_url` in the ticket/handoff note
+- keep the reverse proxy dumb: forward `/` and `/healthz`, but do not rewrite the read-contract paths or imply historical/archive semantics the scaffold does not provide
 
 ## Expected status output
 
