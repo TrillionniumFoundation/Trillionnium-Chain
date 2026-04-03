@@ -215,7 +215,7 @@ Use the generated artifact as the source of truth for the step you just ran; do 
 
 | Step | Primary artifact | Identity fields to verify first | Operator question it answers |
 | --- | --- | --- | --- |
-| Fast preflight | `run/preflight/go-no-go-latest.txt` | generated timestamp, referenced log paths | Did the local rehearsal fail fast on obvious safety blockers? |
+| Fast preflight | `run/preflight/go-no-go-latest.txt` (or helper-emitted `preflight_summary_path=` when retained under a timestamped fallback path) | generated timestamp, referenced log paths, retained `preflight_summary_path=` | Did the local rehearsal fail fast on obvious safety blockers, and was the preflight artifact path preserved for handoff? |
 | Local release evidence | `run/health/evidence-<timestamp>/summary.txt` | `git_toplevel=`, `git_branch=`, `git_head=`, `git_head_state=`, `git_worktree_path=`, `git_worktree_branch_ref=`, `git_expected_worktree_branch_ref=`, `git_worktree_branch_ref_match=`, `git_status_summary=`, raw `generated_at=` (quote as `summary_generated_at=` when using the helper), `truth_source=`, `historical_evidence_only=`, `evidence_scope=` | Did the evidence bundle pass, and what exact replay / rollback commands apply? |
 | RC gate rehearsal | `release/rc-<timestamp>/manifest.txt` | `git_toplevel=`, `git_branch=`, `git_head=`, `git_head_state=`, `git_worktree_path=`, `git_worktree_branch_ref=`, `git_expected_worktree_branch_ref=`, `git_worktree_branch_ref_match=`, `git_status_summary=`, raw `generated_at=` (quote as `manifest_generated_at=` when using the helper), `truth_source=`, `historical_evidence_only=`, `evidence_scope=` | Is this branch/commit rehearsal-ready, and is any remaining blocker code vs policy? |
 
@@ -277,6 +277,8 @@ Preferred helper (fail-closed on missing paths, cross-artifact identity mismatch
 ```
 
 If you need the raw shell extraction for an air-gapped/debugging context, the equivalent block is:
+
+> Note: this raw block resolves artifact paths and field snippets, but it does **not** reproduce the helper's pre-run `verified_worktree=` / `verified_branch_ref=` / `verified_head=` anchor. When a ticket/lane assigns the worktree/ref, prefer the helper invocation above so the handoff keeps that fail-closed identity anchor instead of only comparing artifacts after the fact.
 
 ```bash
 preflight_summary_path="run/preflight/go-no-go-latest.txt"
