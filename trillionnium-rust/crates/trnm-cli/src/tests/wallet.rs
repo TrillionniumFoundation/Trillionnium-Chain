@@ -467,6 +467,28 @@ fn explicit_wallet_store_path_must_be_absolute_and_normalized() {
         "unexpected error: {hidden_read_err}"
     );
 
+    let backslash_write_err = write_key(
+        std::path::Path::new("/tmp\\trnm-wallets"),
+        "alice",
+        "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    )
+    .unwrap_err();
+    assert!(
+        backslash_write_err
+            .to_string()
+            .contains("must be an absolute normalized path"),
+        "unexpected error: {backslash_write_err}"
+    );
+
+    let fullwidth_slash_read_err =
+        read_key(std::path::Path::new("/tmp／trnm-wallets"), "alice").unwrap_err();
+    assert!(
+        fullwidth_slash_read_err
+            .to_string()
+            .contains("must be an absolute normalized path"),
+        "unexpected error: {fullwidth_slash_read_err}"
+    );
+
     let bidi_write_err = write_key(
         std::path::Path::new("/tmp/trnm\u{202e}wallets"),
         "alice",
