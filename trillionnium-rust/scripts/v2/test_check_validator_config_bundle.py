@@ -159,7 +159,7 @@ class CheckValidatorConfigBundleTests(unittest.TestCase):
             result.stderr,
         )
 
-    def test_public_mainnet_input_rejects_relative_packet_distribution_path(self) -> None:
+    def test_public_mainnet_input_rejects_relative_genesis_artifact_path(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             config = self.write_config(
@@ -172,14 +172,14 @@ class CheckValidatorConfigBundleTests(unittest.TestCase):
             result = self.run_script(
                 *self.make_public_mainnet_args(
                     config,
-                    "--packet-distribution-path",
-                    "relative/packet.txt",
+                    "--genesis-artifact-path",
+                    "relative/genesis.json",
                 )
             )
 
         self.assertNotEqual(result.returncode, 0)
         self.assertIn(
-            "public-mainnet-input requires packet_distribution_path to be an absolute path",
+            "public-mainnet-input requires genesis_artifact_path to be an absolute path",
             result.stderr,
         )
 
