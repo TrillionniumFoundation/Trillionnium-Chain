@@ -71,11 +71,13 @@ pub enum GovernanceEvent {
         actor: String,
         previous_state: bool,
         next_state: bool,
+        reason_hash: String,
     },
     PauseRestoreScheduled {
         proposal_id: ProposalId,
         proposer: String,
         eta: u64,
+        reason_hash: String,
     },
     PauseRestoreExecuted {
         proposal_id: ProposalId,
@@ -269,6 +271,12 @@ impl GovernanceGuard {
             if proposal.kind != ProposalKind::ParamChange {
                 return Err(Error::WrongProposalKind);
             }
+            if matches!(
+                proposal.status,
+                ProposalStatus::Executed | ProposalStatus::Cancelled
+            ) {
+                return Err(Error::AlreadyFinalized);
+            }
             if proposal.status != ProposalStatus::Queued {
                 return Err(Error::NotQueued);
             }
@@ -283,6 +291,10 @@ impl GovernanceGuard {
                 proposal.base_version,
             )
         };
+
+        if !self.allowed_param_keys.contains(&param_key) {
+            return Err(Error::InvalidParamKey);
+        }
 
         let version = self
             .bridge
@@ -359,7 +371,7 @@ impl GovernanceGuard {
         Ok(())
     }
 
-    pub fn emergency_pause(&mut self, caller: &str, _reason_hash: impl Into<String>) -> Result<()> {
+    pub fn emergency_pause(&mut self, caller: &str, reason_hash: impl Into<String>) -> Result<()> {
         self.require_guardian(caller)?;
         let previous_state = self.bridge.emergency_paused;
         self.bridge.emergency_paused = true;
@@ -367,6 +379,7 @@ impl GovernanceGuard {
             actor: caller.to_owned(),
             previous_state,
             next_state: true,
+            reason_hash: reason_hash.into(),
         });
         Ok(())
     }
@@ -387,6 +400,7 @@ impl GovernanceGuard {
         }
 
         let id = self.next_id();
+        let reason_hash = reason_hash.into();
         let proposal = Proposal {
             id,
             kind: ProposalKind::EmergencyUnpause,
@@ -397,7 +411,7 @@ impl GovernanceGuard {
             old_value: "true".to_string(),
             new_value: "false".to_string(),
             base_version: None,
-            reason_hash: reason_hash.into(),
+            reason_hash: reason_hash.clone(),
             status: ProposalStatus::Queued,
             executed_at: None,
         };
@@ -406,6 +420,7 @@ impl GovernanceGuard {
             proposal_id: id,
             proposer: caller.to_owned(),
             eta,
+            reason_hash,
         });
         Ok(id)
     }
@@ -426,6 +441,12 @@ impl GovernanceGuard {
 
             if proposal.kind != ProposalKind::EmergencyUnpause {
                 return Err(Error::WrongProposalKind);
+            }
+            if matches!(
+                proposal.status,
+                ProposalStatus::Executed | ProposalStatus::Cancelled
+            ) {
+                return Err(Error::AlreadyFinalized);
             }
             if proposal.status != ProposalStatus::Queued {
                 return Err(Error::NotQueued);
@@ -478,7 +499,9 @@ impl GovernanceGuard {
     }
 
     pub fn consume_audit_log(&mut self) -> Vec<GovernanceEvent> {
-        std::mem::take(&mut self.audit_log)
+        let mut consumed = std::mem::take(&mut self.audit_log);
+        consumed.push(GovernanceEvent::AuditLogCleared);
+        consumed
     }
 
     pub fn normalized_audit_log(&self) -> Vec<AuditEvent> {
@@ -538,10 +561,12 @@ impl GovernanceGuard {
                     normalized.note = Some(format!("version={before}->{after}"));
                 }
                 if let (Some(old), Some(new_value)) = (old_value, new_value) {
-                    normalized.note = Some(format!(
-                        "value={old}->{new_value}, {}",
-                        normalized.note.as_deref().unwrap_or("-")
-                    ));
+                    normalized.note = Some(match normalized.note.take() {
+                        Some(existing_note) => {
+                            format!("value={old}->{new_value}, {existing_note}")
+                        }
+                        None => format!("value={old}->{new_value}"),
+                    });
                 }
                 normalized
             }
@@ -556,25 +581,27 @@ impl GovernanceGuard {
                 actor,
                 previous_state,
                 next_state,
+                reason_hash,
             } => {
                 let mut normalized = AuditEvent::new("governance-guard", "governance.pause_set");
                 normalized.actor = Some(actor.clone());
                 normalized.object_id = Some("emergency_pause".to_string());
                 normalized.related_id = Some(format!("{previous_state}->{next_state}"));
-                normalized.reason = Some("pause_state_transition".to_string());
+                normalized.reason = Some(reason_hash.clone());
                 normalized
             }
             GovernanceEvent::PauseRestoreScheduled {
                 proposal_id,
                 proposer,
                 eta,
+                reason_hash,
             } => {
                 let mut normalized =
                     AuditEvent::new("governance-guard", "governance.pause_restore_scheduled");
                 normalized.actor = Some(proposer.clone());
                 normalized.object_id = Some(proposal_id.to_string());
                 normalized.related_id = Some("emergency_pause".to_string());
-                normalized.reason = Some("pause_restore_schedule".to_string());
+                normalized.reason = Some(reason_hash.clone());
                 normalized.note = Some(format!("eta={eta}"));
                 normalized
             }
@@ -725,7 +752,7 @@ mod tests {
 
         gov.execute("exec", pid, eta).unwrap();
         let second = gov.execute("exec", pid, eta + 1).unwrap_err();
-        assert_eq!(second, Error::NotQueued);
+        assert_eq!(second, Error::AlreadyFinalized);
     }
 
     #[test]
@@ -748,11 +775,33 @@ mod tests {
         gov.queue("alice", pid).unwrap();
 
         seed_param(&mut gov, "99");
+        let audit_len_before_rejected_execute = gov.audit_log().len();
         let err = gov.execute("exec", pid, eta).unwrap_err();
         assert_eq!(err, Error::CurrentValueMismatch);
 
         let p = gov.proposal(pid).unwrap();
         assert_eq!(p.status, ProposalStatus::Queued);
+        assert_eq!(p.executor, None);
+        assert_eq!(p.executed_at, None);
+        assert_eq!(
+            gov.bridge_state()
+                .gov_params
+                .get("challenge_window_blocks")
+                .map(String::as_str),
+            Some("99")
+        );
+        assert_eq!(
+            gov.bridge_state()
+                .param_versions
+                .get("challenge_window_blocks")
+                .copied(),
+            None
+        );
+        assert_eq!(gov.audit_log().len(), audit_len_before_rejected_execute);
+        assert!(!gov.audit_log().iter().any(|event| matches!(
+            event,
+            GovernanceEvent::ProposalExecuted { proposal_id, .. } if *proposal_id == pid
+        )));
     }
 
     #[test]
@@ -788,12 +837,124 @@ mod tests {
         gov.queue("alice", pid2).unwrap();
 
         gov.execute("exec", pid, eta).unwrap();
+        let audit_len_before_rejected_execute = gov.audit_log().len();
 
         let err = gov.execute("exec", pid2, eta).unwrap_err();
         assert_eq!(err, Error::ParamVersionMismatch);
 
         let p = gov.proposal(pid2).unwrap();
         assert_eq!(p.status, ProposalStatus::Queued);
+        assert_eq!(p.executor, None);
+        assert_eq!(p.executed_at, None);
+        assert_eq!(
+            gov.bridge_state()
+                .gov_params
+                .get("challenge_window_blocks")
+                .map(String::as_str),
+            Some("130")
+        );
+        assert_eq!(
+            gov.bridge_state()
+                .param_versions
+                .get("challenge_window_blocks")
+                .copied(),
+            Some(1)
+        );
+        assert_eq!(gov.audit_log().len(), audit_len_before_rejected_execute);
+        assert!(!gov.audit_log().iter().any(|event| matches!(
+            event,
+            GovernanceEvent::ProposalExecuted { proposal_id, .. } if *proposal_id == pid2
+        )));
+    }
+
+    #[test]
+    fn execute_rejects_if_param_version_drifts_without_value_change() {
+        let mut gov = setup();
+        let now = 3_250;
+        let eta = now + 60;
+
+        let pid = gov
+            .propose(
+                "alice",
+                "challenge_window_blocks",
+                "100",
+                "141",
+                eta,
+                "reason-version-drift",
+                now,
+            )
+            .unwrap();
+        gov.queue("alice", pid).unwrap();
+
+        gov.bridge
+            .param_versions
+            .insert("challenge_window_blocks".to_string(), 7);
+        let audit_len_before_rejected_execute = gov.audit_log().len();
+
+        let err = gov.execute("exec", pid, eta).unwrap_err();
+        assert_eq!(err, Error::ParamVersionMismatch);
+
+        let proposal = gov.proposal(pid).unwrap();
+        assert_eq!(proposal.status, ProposalStatus::Queued);
+        assert_eq!(proposal.executor, None);
+        assert_eq!(proposal.executed_at, None);
+        assert_eq!(
+            gov.bridge_state()
+                .gov_params
+                .get("challenge_window_blocks")
+                .map(String::as_str),
+            Some("100")
+        );
+        assert_eq!(
+            gov.bridge_state()
+                .param_versions
+                .get("challenge_window_blocks")
+                .copied(),
+            Some(7)
+        );
+        assert_eq!(gov.audit_log().len(), audit_len_before_rejected_execute);
+        assert!(!gov.audit_log().iter().any(|event| matches!(
+            event,
+            GovernanceEvent::ProposalExecuted { proposal_id, .. } if *proposal_id == pid
+        )));
+    }
+
+    #[test]
+    fn execute_rejects_if_param_key_removed_after_queue() {
+        let mut gov = setup();
+        let now = 3_300;
+        let eta = now + 60;
+
+        let pid = gov
+            .propose(
+                "alice",
+                "challenge_window_blocks",
+                "100",
+                "135",
+                eta,
+                "reason-key-revoked",
+                now,
+            )
+            .unwrap();
+        gov.queue("alice", pid).unwrap();
+
+        gov.set_allowed_param_key("admin", "challenge_window_blocks", false)
+            .unwrap();
+
+        let err = gov.execute("exec", pid, eta).unwrap_err();
+        assert_eq!(err, Error::InvalidParamKey);
+
+        let p = gov.proposal(pid).unwrap();
+        assert_eq!(p.status, ProposalStatus::Queued);
+        assert_eq!(p.executor, None);
+        assert_eq!(p.executed_at, None);
+        assert_eq!(
+            gov.bridge_state()
+                .gov_params
+                .get("challenge_window_blocks")
+                .map(String::as_str),
+            Some("100")
+        );
     }
 
     #[test]
@@ -856,8 +1017,11 @@ mod tests {
         )));
         assert!(logs.iter().any(|event| matches!(
             event,
-            GovernanceEvent::PauseSet { actor, previous_state, next_state }
-                if actor == "guardian" && !*previous_state && *next_state
+            GovernanceEvent::PauseSet { actor, previous_state, next_state, reason_hash }
+                if actor == "guardian"
+                    && !*previous_state
+                    && *next_state
+                    && reason_hash == "incident"
         )));
         assert!(logs.iter().any(|event| matches!(
             event,
@@ -865,9 +1029,11 @@ mod tests {
                 proposal_id,
                 proposer,
                 eta: logged_restore_eta,
+                reason_hash,
             } if *proposal_id == restore_id
                 && proposer == "guardian"
                 && *logged_restore_eta == restore_eta
+                && reason_hash == "recover"
         )));
         assert!(logs.iter().any(|event| matches!(
             event,
@@ -883,13 +1049,13 @@ mod tests {
             event.event_type == "governance.pause_set"
                 && event.object_id.as_deref() == Some("emergency_pause")
                 && event.related_id.as_deref() == Some("false->true")
-                && event.reason.as_deref() == Some("pause_state_transition")
+                && event.reason.as_deref() == Some("incident")
         }));
         assert!(normalized.iter().any(|event| {
             event.event_type == "governance.pause_restore_scheduled"
                 && event.object_id.as_deref() == Some(&restore_id.to_string())
                 && event.related_id.as_deref() == Some("emergency_pause")
-                && event.reason.as_deref() == Some("pause_restore_schedule")
+                && event.reason.as_deref() == Some("recover")
         }));
         assert!(normalized.iter().any(|event| {
             event.event_type == "governance.pause_restore_executed"
@@ -900,6 +1066,9 @@ mod tests {
         assert!(normalized
             .iter()
             .any(|event| event.source == "governance-guard"));
+        assert!(logs
+            .iter()
+            .any(|event| matches!(event, GovernanceEvent::AuditLogCleared)));
 
         assert!(gov.audit_log().is_empty());
     }
@@ -931,6 +1100,44 @@ mod tests {
     }
 
     #[test]
+    fn queue_is_idempotent_without_duplicate_audit_events() {
+        let mut gov = setup();
+        let now = 2_850;
+        let eta = now + 60;
+        let pid = gov
+            .propose(
+                "alice",
+                "challenge_window_blocks",
+                "100",
+                "131",
+                eta,
+                "reason-queue-idempotent",
+                now,
+            )
+            .unwrap();
+
+        gov.queue("alice", pid).unwrap();
+        let audit_len_after_first_queue = gov.audit_log().len();
+
+        gov.queue("alice", pid).unwrap();
+
+        let proposal = gov.proposal(pid).unwrap();
+        assert_eq!(proposal.status, ProposalStatus::Queued);
+        assert_eq!(gov.audit_log().len(), audit_len_after_first_queue);
+        assert_eq!(
+            gov.audit_log()
+                .iter()
+                .filter(|event| matches!(
+                    event,
+                    GovernanceEvent::ProposalQueued { proposal_id, actor }
+                        if *proposal_id == pid && actor == "alice"
+                ))
+                .count(),
+            1
+        );
+    }
+
+    #[test]
     fn proposer_can_cancel_own_proposal() {
         let mut gov = setup();
         let now = 2_900;
@@ -950,6 +1157,44 @@ mod tests {
         gov.cancel("alice", pid).unwrap();
         let p = gov.proposal(pid).unwrap();
         assert_eq!(p.status, ProposalStatus::Cancelled);
+    }
+
+    #[test]
+    fn cancelled_proposal_cannot_be_requeued_or_emit_duplicate_queue_audit() {
+        let mut gov = setup();
+        let now = 2_950;
+        let eta = now + 60;
+        let pid = gov
+            .propose(
+                "alice",
+                "challenge_window_blocks",
+                "100",
+                "145",
+                eta,
+                "reason-cancelled-requeue",
+                now,
+            )
+            .unwrap();
+
+        gov.cancel("alice", pid).unwrap();
+        let audit_len_before_requeue = gov.audit_log().len();
+
+        assert_eq!(gov.queue("alice", pid).unwrap_err(), Error::AlreadyFinalized);
+
+        let proposal = gov.proposal(pid).unwrap();
+        assert_eq!(proposal.status, ProposalStatus::Cancelled);
+        assert_eq!(gov.audit_log().len(), audit_len_before_requeue);
+        assert_eq!(
+            gov.audit_log()
+                .iter()
+                .filter(|event| matches!(
+                    event,
+                    GovernanceEvent::ProposalQueued { proposal_id, actor }
+                        if *proposal_id == pid && actor == "alice"
+                ))
+                .count(),
+            0
+        );
     }
 
     #[test]
@@ -1116,6 +1361,42 @@ mod tests {
     }
 
     #[test]
+    fn emergency_unpause_self_execution_rejection_preserves_queue_and_audit_state() {
+        let mut gov = setup();
+        gov.set_role("admin", "guardian", false, true).unwrap();
+
+        let now = 5_800;
+        let eta = now + 60;
+        gov.emergency_pause("guardian", "incident-self-exec").unwrap();
+        let pid = gov
+            .schedule_unpause("guardian", eta, "recover-self-exec", now)
+            .unwrap();
+        let audit_len_before = gov.audit_log().len();
+
+        assert_eq!(
+            gov.execute_unpause("guardian", pid, eta).unwrap_err(),
+            Error::GuardianExecutorConflict
+        );
+
+        let proposal = gov.proposal(pid).unwrap();
+        assert_eq!(proposal.status, ProposalStatus::Queued);
+        assert_eq!(proposal.executor, None);
+        assert_eq!(proposal.executed_at, None);
+        assert!(gov.bridge_state().emergency_paused);
+        assert_eq!(gov.audit_log().len(), audit_len_before);
+        assert!(!gov.audit_log().iter().any(|event| matches!(
+            event,
+            GovernanceEvent::PauseRestoreExecuted { proposal_id, .. }
+                if *proposal_id == pid
+        )));
+        assert!(!gov.audit_log().iter().any(|event| matches!(
+            event,
+            GovernanceEvent::ProposalExecuted { proposal_id, .. }
+                if *proposal_id == pid
+        )));
+    }
+
+    #[test]
     fn schedule_unpause_rejects_when_pause_is_not_active() {
         let mut gov = setup();
         let now = 6_000;
@@ -1129,6 +1410,102 @@ mod tests {
     }
 
     #[test]
+    fn schedule_unpause_rejects_eta_shorter_than_min_timelock_without_side_effects() {
+        let mut gov = setup();
+        let now = 6_100;
+        let eta = now + 59;
+
+        gov.emergency_pause("guardian", "incident-short-timelock")
+            .unwrap();
+        let audit_len_before = gov.audit_log().len();
+
+        assert_eq!(
+            gov.schedule_unpause("guardian", eta, "recover-too-early", now)
+                .unwrap_err(),
+            Error::InvalidEta
+        );
+
+        assert!(gov.bridge_state().emergency_paused);
+        assert_eq!(gov.proposals.len(), 0);
+        assert_eq!(gov.audit_log().len(), audit_len_before);
+        assert!(!gov.audit_log().iter().any(|event| matches!(
+            event,
+            GovernanceEvent::PauseRestoreScheduled { .. }
+        )));
+    }
+
+    #[test]
+    fn execute_unpause_rejects_non_executor_caller() {
+        let mut gov = setup();
+        let now = 6_500;
+        let eta = now + 60;
+
+        gov.emergency_pause("guardian", "incident-non-exec").unwrap();
+        let pid = gov
+            .schedule_unpause("guardian", eta, "recover-non-exec", now)
+            .unwrap();
+
+        assert_eq!(
+            gov.execute_unpause("alice", pid, eta).unwrap_err(),
+            Error::Unauthorized
+        );
+
+        let proposal = gov.proposal(pid).unwrap();
+        assert_eq!(proposal.status, ProposalStatus::Queued);
+        assert_eq!(proposal.executor, None);
+        assert_eq!(proposal.executed_at, None);
+        assert!(gov.bridge_state().emergency_paused);
+        assert!(!gov.audit_log().iter().any(|event| matches!(
+            event,
+            GovernanceEvent::PauseRestoreExecuted { proposal_id, .. }
+                if *proposal_id == pid
+        )));
+        assert!(!gov.audit_log().iter().any(|event| matches!(
+            event,
+            GovernanceEvent::ProposalExecuted { proposal_id, .. }
+                if *proposal_id == pid
+        )));
+    }
+
+    #[test]
+    fn execute_unpause_fails_closed_if_executor_role_revoked_after_schedule() {
+        let mut gov = setup();
+        let now = 6_750;
+        let eta = now + 60;
+
+        gov.emergency_pause("guardian", "incident-revoke-exec")
+            .unwrap();
+        let pid = gov
+            .schedule_unpause("guardian", eta, "recover-revoke-exec", now)
+            .unwrap();
+        let audit_len_before = gov.audit_log().len();
+
+        gov.set_role("admin", "exec", false, false).unwrap();
+
+        assert_eq!(
+            gov.execute_unpause("exec", pid, eta).unwrap_err(),
+            Error::Unauthorized
+        );
+
+        let proposal = gov.proposal(pid).unwrap();
+        assert_eq!(proposal.status, ProposalStatus::Queued);
+        assert_eq!(proposal.executor, None);
+        assert_eq!(proposal.executed_at, None);
+        assert!(gov.bridge_state().emergency_paused);
+        assert_eq!(gov.audit_log().len(), audit_len_before);
+        assert!(!gov.audit_log().iter().any(|event| matches!(
+            event,
+            GovernanceEvent::PauseRestoreExecuted { proposal_id, .. }
+                if *proposal_id == pid
+        )));
+        assert!(!gov.audit_log().iter().any(|event| matches!(
+            event,
+            GovernanceEvent::ProposalExecuted { proposal_id, .. }
+                if *proposal_id == pid
+        )));
+    }
+
+    #[test]
     fn execute_unpause_rejects_if_pause_cleared_before_eta() {
         let mut gov = setup();
         let now = 7_000;
@@ -1138,6 +1515,7 @@ mod tests {
         let pid = gov
             .schedule_unpause("guardian", eta, "recover-3", now)
             .unwrap();
+        let audit_len_before = gov.audit_log().len();
 
         gov.bridge.emergency_paused = false;
 
@@ -1145,5 +1523,201 @@ mod tests {
             gov.execute_unpause("exec", pid, eta).unwrap_err(),
             Error::PauseNotActive
         );
+
+        let proposal = gov.proposal(pid).unwrap();
+        assert_eq!(proposal.kind, ProposalKind::EmergencyUnpause);
+        assert_eq!(proposal.status, ProposalStatus::Queued);
+        assert_eq!(proposal.executor, None);
+        assert_eq!(proposal.executed_at, None);
+        assert!(!gov.bridge_state().emergency_paused);
+        assert_eq!(gov.audit_log().len(), audit_len_before);
+        assert!(!gov.audit_log().iter().any(|event| matches!(
+            event,
+            GovernanceEvent::PauseRestoreExecuted { proposal_id, .. }
+                if *proposal_id == pid
+        )));
+        assert!(!gov.audit_log().iter().any(|event| matches!(
+            event,
+            GovernanceEvent::ProposalExecuted { proposal_id, .. }
+                if *proposal_id == pid
+        )));
+    }
+
+    #[test]
+    fn normalized_unpause_execution_note_omits_placeholder_version_suffix() {
+        let mut gov = setup();
+        let now = 7_100;
+        let eta = now + 60;
+
+        gov.emergency_pause("guardian", "incident-note").unwrap();
+        let pid = gov
+            .schedule_unpause("guardian", eta, "recover-note", now)
+            .unwrap();
+        gov.execute_unpause("exec", pid, eta).unwrap();
+
+        let normalized = gov.normalized_audit_log();
+        let pid_s = pid.to_string();
+        let event = normalized
+            .iter()
+            .find(|event| {
+                event.event_type == "governance.proposal_executed"
+                    && event.object_id.as_deref() == Some(pid_s.as_str())
+            })
+            .unwrap();
+
+        assert_eq!(event.related_id.as_deref(), Some("emergency_pause"));
+        assert_eq!(event.note.as_deref(), Some("value=true->false"));
+    }
+
+    #[test]
+    fn normalized_param_execution_carries_value_and_version_delta() {
+        let mut gov = setup();
+        let now = 7_150;
+        let eta = now + 60;
+
+        let pid = gov
+            .propose(
+                "alice",
+                "challenge_window_blocks",
+                "100",
+                "175",
+                eta,
+                "reason-normalized-version",
+                now,
+            )
+            .unwrap();
+        gov.queue("alice", pid).unwrap();
+        gov.execute("exec", pid, eta).unwrap();
+
+        let normalized = gov.normalized_audit_log();
+        let pid_s = pid.to_string();
+        let event = normalized
+            .iter()
+            .find(|event| {
+                event.event_type == "governance.proposal_executed"
+                    && event.object_id.as_deref() == Some(pid_s.as_str())
+            })
+            .unwrap();
+
+        assert_eq!(event.related_id.as_deref(), Some("challenge_window_blocks"));
+        assert_eq!(event.amount, Some(1));
+        assert_eq!(event.note.as_deref(), Some("value=100->175, version=0->1"));
+        assert_eq!(event.reason.as_deref(), Some("kind=ParamChange"));
+    }
+
+    #[test]
+    fn execute_rejects_cancelled_param_proposal_as_already_finalized() {
+        let mut gov = setup();
+        let now = 7_200;
+        let eta = now + 60;
+
+        let pid = gov
+            .propose(
+                "alice",
+                "challenge_window_blocks",
+                "100",
+                "180",
+                eta,
+                "reason-finalized-param",
+                now,
+            )
+            .unwrap();
+        gov.queue("alice", pid).unwrap();
+        gov.cancel("alice", pid).unwrap();
+
+        assert_eq!(
+            gov.execute("exec", pid, eta).unwrap_err(),
+            Error::AlreadyFinalized
+        );
+    }
+
+    #[test]
+    fn execute_unpause_rejects_finalized_proposal_as_already_finalized() {
+        let mut gov = setup();
+        let now = 7_300;
+        let eta = now + 60;
+
+        gov.emergency_pause("guardian", "incident-finalized").unwrap();
+        let pid = gov
+            .schedule_unpause("guardian", eta, "recover-finalized", now)
+            .unwrap();
+        gov.execute_unpause("exec", pid, eta).unwrap();
+
+        assert_eq!(
+            gov.execute_unpause("exec", pid, eta + 1).unwrap_err(),
+            Error::AlreadyFinalized
+        );
+    }
+
+    #[test]
+    fn cancelled_unpause_cannot_execute_and_keeps_pause_active() {
+        let mut gov = setup();
+        let now = 7_400;
+        let eta = now + 60;
+
+        gov.emergency_pause("guardian", "incident-cancelled-unpause")
+            .unwrap();
+        let pid = gov
+            .schedule_unpause("guardian", eta, "recover-cancelled-unpause", now)
+            .unwrap();
+        let audit_len_before_cancel = gov.audit_log().len();
+
+        gov.cancel("guardian", pid).unwrap();
+
+        let proposal = gov.proposal(pid).unwrap();
+        assert_eq!(proposal.status, ProposalStatus::Cancelled);
+        assert!(gov.bridge_state().emergency_paused);
+        assert_eq!(gov.audit_log().len(), audit_len_before_cancel + 1);
+        assert!(gov.audit_log().iter().any(|event| matches!(
+            event,
+            GovernanceEvent::ProposalCancelled { proposal_id, actor }
+                if *proposal_id == pid && actor == "guardian"
+        )));
+
+        assert_eq!(
+            gov.execute_unpause("exec", pid, eta).unwrap_err(),
+            Error::AlreadyFinalized
+        );
+        assert!(gov.bridge_state().emergency_paused);
+        assert!(!gov.audit_log().iter().any(|event| matches!(
+            event,
+            GovernanceEvent::PauseRestoreExecuted { proposal_id, .. }
+                if *proposal_id == pid
+        )));
+        assert!(!gov.audit_log().iter().any(|event| matches!(
+            event,
+            GovernanceEvent::ProposalExecuted { proposal_id, .. }
+                if *proposal_id == pid
+        )));
+    }
+
+    #[test]
+    fn unauthorized_cancel_of_scheduled_unpause_preserves_queue_and_pause_state() {
+        let mut gov = setup();
+        let now = 7_450;
+        let eta = now + 60;
+
+        gov.emergency_pause("guardian", "incident-unauthorized-cancel")
+            .unwrap();
+        let pid = gov
+            .schedule_unpause("guardian", eta, "recover-unauthorized-cancel", now)
+            .unwrap();
+        let audit_len_before = gov.audit_log().len();
+
+        assert_eq!(gov.cancel("alice", pid).unwrap_err(), Error::Unauthorized);
+
+        let proposal = gov.proposal(pid).unwrap();
+        assert_eq!(proposal.kind, ProposalKind::EmergencyUnpause);
+        assert_eq!(proposal.status, ProposalStatus::Queued);
+        assert_eq!(proposal.proposer, "guardian");
+        assert_eq!(proposal.executor, None);
+        assert_eq!(proposal.executed_at, None);
+        assert!(gov.bridge_state().emergency_paused);
+        assert_eq!(gov.audit_log().len(), audit_len_before);
+        assert!(!gov.audit_log().iter().any(|event| matches!(
+            event,
+            GovernanceEvent::ProposalCancelled { proposal_id, .. }
+                if *proposal_id == pid
+        )));
     }
 }
