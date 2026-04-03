@@ -501,6 +501,34 @@
     }
 
     #[test]
+    fn load_task_state_snapshot_tolerates_utf8_bom_prefixed_jsonl_rows() {
+        let path = unique_tmp_path("rpc-task-state-bom", "jsonl");
+        let _ = fs::remove_file(&path);
+        fs::write(
+            &path,
+            concat!(
+                "\u{feff}{\"task_id\":77,\"status\":\"Open\",\"worker\":null,\"bounty\":7,\"result_hash\":null,\"version\":3}\n",
+                "{\"task_id\":77,\"status\":\"Assigned\",\"worker\":\"worker-1\",\"bounty\":7,\"result_hash\":null,\"version\":4}\n"
+            ),
+        )
+        .expect("write bom-prefixed task snapshot");
+
+        with_market_path_env(&[(TASK_STATE_FILE_ENV, path.to_str())], || {
+            let tasks = load_task_state_snapshot().expect("task snapshot should parse");
+            assert_eq!(
+                tasks.len(),
+                2,
+                "BOM-prefixed first row should not hide durable task history"
+            );
+            assert_eq!(tasks[0].task_id, 77);
+            assert_eq!(tasks[0].version, 3);
+            assert_eq!(tasks[1].version, 4);
+        });
+
+        let _ = fs::remove_file(&path);
+    }
+
+    #[test]
     fn push_tail_limited_keeps_only_most_recent_items_in_order() {
         let mut items = Vec::new();
         push_tail_limited(&mut items, 1, 3);

@@ -59,6 +59,7 @@ pub(crate) fn load_task_state_snapshot() -> Result<Vec<TaskObject>> {
 
     let mut tasks = Vec::new();
     for (idx, line) in raw.lines().enumerate() {
+        let line = line.trim_start_matches('\u{feff}');
         if line.trim().is_empty() {
             continue;
         }
