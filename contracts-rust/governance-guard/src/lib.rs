@@ -1416,6 +1416,44 @@ mod tests {
     }
 
     #[test]
+    fn execute_unpause_fails_closed_if_executor_role_revoked_after_schedule() {
+        let mut gov = setup();
+        let now = 6_750;
+        let eta = now + 60;
+
+        gov.emergency_pause("guardian", "incident-revoke-exec")
+            .unwrap();
+        let pid = gov
+            .schedule_unpause("guardian", eta, "recover-revoke-exec", now)
+            .unwrap();
+        let audit_len_before = gov.audit_log().len();
+
+        gov.set_role("admin", "exec", false, false).unwrap();
+
+        assert_eq!(
+            gov.execute_unpause("exec", pid, eta).unwrap_err(),
+            Error::Unauthorized
+        );
+
+        let proposal = gov.proposal(pid).unwrap();
+        assert_eq!(proposal.status, ProposalStatus::Queued);
+        assert_eq!(proposal.executor, None);
+        assert_eq!(proposal.executed_at, None);
+        assert!(gov.bridge_state().emergency_paused);
+        assert_eq!(gov.audit_log().len(), audit_len_before);
+        assert!(!gov.audit_log().iter().any(|event| matches!(
+            event,
+            GovernanceEvent::PauseRestoreExecuted { proposal_id, .. }
+                if *proposal_id == pid
+        )));
+        assert!(!gov.audit_log().iter().any(|event| matches!(
+            event,
+            GovernanceEvent::ProposalExecuted { proposal_id, .. }
+                if *proposal_id == pid
+        )));
+    }
+
+    #[test]
     fn execute_unpause_rejects_if_pause_cleared_before_eta() {
         let mut gov = setup();
         let now = 7_000;
