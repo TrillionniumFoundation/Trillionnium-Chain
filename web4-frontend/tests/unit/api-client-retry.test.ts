@@ -158,6 +158,24 @@ describe("api-contract client and retry hardening", () => {
     expect(fetchImpl).toHaveBeenCalledTimes(1);
   });
 
+  it("classifies legacy DOMException abort codes as aborted and does not retry", async () => {
+    const fetchImpl = vi.fn().mockRejectedValue({
+      code: 20,
+      message: "The operation was aborted.",
+    });
+
+    const client = createFrontendApiClient({
+      baseUrl: "http://127.0.0.1:8080",
+      fetchImpl: fetchImpl as unknown as typeof fetch,
+    });
+
+    await expect(client.queryTask("42", { retries: 2 })).rejects.toMatchObject({
+      code: "ABORTED",
+      retryable: false,
+    });
+    expect(fetchImpl).toHaveBeenCalledTimes(1);
+  });
+
   it("treats caller-supplied aborts as aborted even when the abort reason looks timeout-like", async () => {
     const fetchImpl: typeof fetch = vi.fn(
       (_url: URL | RequestInfo, init?: RequestInit) =>
@@ -261,6 +279,24 @@ describe("api-contract client and retry hardening", () => {
       name: "Error",
       code: "ETIMEDOUT",
       message: "Socket timed out",
+    });
+
+    const client = createFrontendApiClient({
+      baseUrl: "http://127.0.0.1:8080",
+      fetchImpl: fetchImpl as unknown as typeof fetch,
+    });
+
+    await expect(client.queryTask("42", { retries: 0 })).rejects.toMatchObject({
+      code: "TIMEOUT",
+      retryable: true,
+    });
+    expect(fetchImpl).toHaveBeenCalledTimes(1);
+  });
+
+  it("classifies legacy DOMException timeout codes as timeout and keeps them retryable", async () => {
+    const fetchImpl = vi.fn().mockRejectedValue({
+      code: 23,
+      message: "The operation timed out.",
     });
 
     const client = createFrontendApiClient({

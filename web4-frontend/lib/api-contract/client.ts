@@ -82,6 +82,13 @@ const isLikelyNetworkError = (err: unknown): boolean => {
   return name === "TypeError" || name === "NetworkError" || name === "FetchError";
 };
 
+const LEGACY_ABORT_ERROR_CODE = 20;
+const LEGACY_TIMEOUT_ERROR_CODE = 23;
+
+const isAbortLikeErrorCode = (code: unknown): boolean => {
+  return code === "ABORT_ERR" || code === LEGACY_ABORT_ERROR_CODE;
+};
+
 const isAbortLikeError = (err: unknown): boolean => {
   if (!(err && typeof err === "object")) return false;
 
@@ -89,14 +96,14 @@ const isAbortLikeError = (err: unknown): boolean => {
   const code = "code" in err ? err.code : undefined;
   const cause = "cause" in err ? err.cause : undefined;
 
-  if (name === "AbortError" || code === "ABORT_ERR") {
+  if (name === "AbortError" || isAbortLikeErrorCode(code)) {
     return true;
   }
 
   if (cause && typeof cause === "object") {
     const causeName = "name" in cause ? cause.name : undefined;
     const causeCode = "code" in cause ? cause.code : undefined;
-    return causeName === "AbortError" || causeCode === "ABORT_ERR";
+    return causeName === "AbortError" || isAbortLikeErrorCode(causeCode);
   }
 
   return false;
@@ -111,7 +118,7 @@ const TIMEOUT_ERROR_CODES = new Set([
 ]);
 
 const isTimeoutErrorCode = (code: unknown): boolean => {
-  return typeof code === "string" && TIMEOUT_ERROR_CODES.has(code);
+  return code === LEGACY_TIMEOUT_ERROR_CODE || (typeof code === "string" && TIMEOUT_ERROR_CODES.has(code));
 };
 
 const isTimeoutLikeError = (err: unknown): boolean => {
