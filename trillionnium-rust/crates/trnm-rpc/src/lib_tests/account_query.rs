@@ -86,6 +86,18 @@ fn query_account_state_rejects_wrong_suffix_length() {
 }
 
 #[test]
+fn account_state_rejects_unknown_fields() {
+    let err = serde_json::from_value::<AccountState>(json!({
+        "address": format!("trnm1{}", "1".repeat(40)),
+        "balance": 42,
+        "nonce": 7,
+        "unexpected": "schema-drift"
+    }))
+    .unwrap_err();
+    assert!(err.to_string().contains("unexpected"));
+}
+
+#[test]
 fn faucet_request_response_rejects_unknown_fields() {
     let err = serde_json::from_value::<FaucetRequestResponse>(json!({
         "ok": true,
