@@ -345,4 +345,54 @@ describe("api-contract client and retry hardening", () => {
 
     expect(attempts).toBe(1);
   });
+
+  it("retries transient http statuses but fails closed on non-transient 5xx", async () => {
+    const retryableFetch = vi
+      .fn()
+      .mockResolvedValueOnce({
+        ok: false,
+        status: 503,
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          task: {
+            id: "42",
+            status: "running",
+            owner: "alice",
+            createdAt: "2026-03-01T00:00:00.000Z",
+            metadata: {},
+          },
+        }),
+      });
+
+    const retryableClient = createFrontendApiClient({
+      baseUrl: "http://127.0.0.1:8080",
+      fetchImpl: retryableFetch as unknown as typeof fetch,
+    });
+
+    await expect(
+      retryableClient.queryTask("42", { retries: 1, baseDelayMs: 0, maxDelayMs: 0 }),
+    ).resolves.toMatchObject({
+      task: expect.objectContaining({ id: "42" }),
+    });
+    expect(retryableFetch).toHaveBeenCalledTimes(2);
+
+    const failClosedFetch = vi.fn().mockResolvedValue({
+      ok: false,
+      status: 501,
+    });
+
+    const failClosedClient = createFrontendApiClient({
+      baseUrl: "http://127.0.0.1:8080",
+      fetchImpl: failClosedFetch as unknown as typeof fetch,
+    });
+
+    await expect(failClosedClient.queryTask("42", { retries: 2 })).rejects.toMatchObject({
+      code: "HTTP_STATUS",
+      status: 501,
+      retryable: false,
+    });
+    expect(failClosedFetch).toHaveBeenCalledTimes(1);
+  });
 });
