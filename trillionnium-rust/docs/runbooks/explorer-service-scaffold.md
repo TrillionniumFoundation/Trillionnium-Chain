@@ -126,7 +126,7 @@ After=network-online.target
 Wants=network-online.target
 
 [Service]
-Type=simple
+Type=oneshot
 WorkingDirectory=/opt/trnm/trillionnium-rust
 EnvironmentFile=/opt/trnm/trillionnium-rust/run/explorer-service/explorer-service.env
 ExecStart=/opt/trnm/trillionnium-rust/scripts/v2/explorer_service_up.sh
@@ -139,6 +139,8 @@ Group=trnm
 [Install]
 WantedBy=multi-user.target
 ```
+
+Because `explorer_service_up.sh` launches the local HTTP server in the background and then exits, the example unit uses `Type=oneshot` + `RemainAfterExit=yes` so systemd tracks the scaffold lifecycle correctly instead of treating the helper script's quick exit as an unexpected service stop.
 
 Use this only as an operator scaffold, not as proof of production-readiness:
 
