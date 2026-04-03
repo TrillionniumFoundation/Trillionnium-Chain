@@ -26,27 +26,36 @@ pub enum VaultEvent {
         amount: u128,
     },
     Locked {
+        caller: String,
         request_id: String,
         account: String,
         amount: u128,
     },
     Released {
+        caller: String,
         request_id: String,
         account: String,
         amount: u128,
     },
     Slashed {
+        caller: String,
         request_id: String,
+        account: String,
         beneficiary: String,
         amount: u128,
     },
     Transferred {
+        caller: String,
         from: String,
         to: String,
         amount: u128,
     },
-    Paused,
-    Unpaused,
+    Paused {
+        caller: String,
+    },
+    Unpaused {
+        caller: String,
+    },
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -128,55 +137,67 @@ impl SettlementVault {
                 normalized
             }
             VaultEvent::Locked {
+                caller,
                 request_id,
                 account,
                 amount,
             } => {
                 let mut normalized = AuditEvent::new("settlement-vault", "vault.locked");
-                normalized.actor = Some(account.clone());
+                normalized.actor = Some(caller.clone());
                 normalized.object_id = Some(request_id.clone());
                 normalized.related_id = Some(account.clone());
                 normalized.amount = Some(*amount);
                 normalized
             }
             VaultEvent::Released {
+                caller,
                 request_id,
                 account,
                 amount,
             } => {
                 let mut normalized = AuditEvent::new("settlement-vault", "vault.released");
-                normalized.actor = Some(account.clone());
+                normalized.actor = Some(caller.clone());
                 normalized.object_id = Some(request_id.clone());
                 normalized.related_id = Some(account.clone());
                 normalized.amount = Some(*amount);
                 normalized
             }
             VaultEvent::Slashed {
+                caller,
                 request_id,
+                account,
                 beneficiary,
                 amount,
             } => {
                 let mut normalized = AuditEvent::new("settlement-vault", "vault.slashed");
-                normalized.actor = Some(beneficiary.clone());
+                normalized.actor = Some(caller.clone());
                 normalized.object_id = Some(request_id.clone());
-                normalized.related_id = Some(beneficiary.clone());
+                normalized.related_id = Some(account.clone());
                 normalized.amount = Some(*amount);
+                normalized.note = Some(format!("beneficiary={beneficiary}"));
                 normalized
             }
-            VaultEvent::Transferred { from, to, amount } => {
+            VaultEvent::Transferred {
+                caller,
+                from,
+                to,
+                amount,
+            } => {
                 let mut normalized = AuditEvent::new("settlement-vault", "vault.transferred");
-                normalized.actor = Some(from.clone());
-                normalized.object_id = Some(from.clone());
-                normalized.related_id = Some(to.clone());
+                normalized.actor = Some(caller.clone());
+                normalized.object_id = Some(to.clone());
+                normalized.related_id = Some(from.clone());
                 normalized.amount = Some(*amount);
                 normalized
             }
-            VaultEvent::Paused => {
-                let normalized = AuditEvent::new("settlement-vault", "vault.paused");
+            VaultEvent::Paused { caller } => {
+                let mut normalized = AuditEvent::new("settlement-vault", "vault.paused");
+                normalized.actor = Some(caller.clone());
                 normalized
             }
-            VaultEvent::Unpaused => {
-                let normalized = AuditEvent::new("settlement-vault", "vault.unpaused");
+            VaultEvent::Unpaused { caller } => {
+                let mut normalized = AuditEvent::new("settlement-vault", "vault.unpaused");
+                normalized.actor = Some(caller.clone());
                 normalized
             }
         }
@@ -215,11 +236,16 @@ impl SettlementVault {
             return Err(VaultError::DuplicateRequest);
         }
 
-        let balance = self.balances.entry(account.to_string()).or_insert(0);
-        if *balance < amount {
+        let available = self.balance_of(account);
+        if available < amount {
             return Err(VaultError::InsufficientBalance);
         }
+        let balance = self
+            .balances
+            .get_mut(account)
+            .ok_or(VaultError::InsufficientBalance)?;
         *balance -= amount;
+        self.prune_zero_balance(account);
 
         self.locks.insert(
             request_id.to_string(),
@@ -231,6 +257,7 @@ impl SettlementVault {
         );
 
         self.audit_log.push(VaultEvent::Locked {
+            caller: caller.to_string(),
             request_id: request_id.to_string(),
             account: account.to_string(),
             amount,
@@ -246,19 +273,24 @@ impl SettlementVault {
         let (account, amount) = {
             let lock = self
                 .locks
-                .get_mut(request_id)
+                .get(request_id)
                 .ok_or(VaultError::RequestNotFound)?;
 
             if lock.status != LockStatus::Locked {
                 return Err(VaultError::InvalidStateTransition);
             }
 
-            lock.status = LockStatus::Released;
             (lock.account.clone(), lock.amount)
         };
 
+        self.ensure_creditable_balance(&account, amount)?;
+        self.locks
+            .get_mut(request_id)
+            .ok_or(VaultError::RequestNotFound)?
+            .status = LockStatus::Released;
         self.credit_balance(&account, amount)?;
         self.audit_log.push(VaultEvent::Released {
+            caller: caller.to_string(),
             request_id: request_id.to_string(),
             account,
             amount,
@@ -275,23 +307,29 @@ impl SettlementVault {
         self.ensure_owner(caller)?;
         self.ensure_not_paused()?;
 
-        let amount = {
+        let (account, amount) = {
             let lock = self
                 .locks
-                .get_mut(request_id)
+                .get(request_id)
                 .ok_or(VaultError::RequestNotFound)?;
 
             if lock.status != LockStatus::Locked {
                 return Err(VaultError::InvalidStateTransition);
             }
 
-            lock.status = LockStatus::Slashed;
-            lock.amount
+            (lock.account.clone(), lock.amount)
         };
 
+        self.ensure_creditable_balance(beneficiary, amount)?;
+        self.locks
+            .get_mut(request_id)
+            .ok_or(VaultError::RequestNotFound)?
+            .status = LockStatus::Slashed;
         self.credit_balance(beneficiary, amount)?;
         self.audit_log.push(VaultEvent::Slashed {
+            caller: caller.to_string(),
             request_id: request_id.to_string(),
+            account,
             beneficiary: beneficiary.to_string(),
             amount,
         });
@@ -311,14 +349,29 @@ impl SettlementVault {
             return Err(VaultError::InvalidAmount);
         }
 
-        let from_entry = self.balances.entry(from.to_string()).or_insert(0);
-        if *from_entry < amount {
+        let available = self.balance_of(from);
+        if available < amount {
             return Err(VaultError::InsufficientBalance);
         }
+        if from == to {
+            self.audit_log.push(VaultEvent::Transferred {
+                caller: caller.to_string(),
+                from: from.to_string(),
+                to: to.to_string(),
+                amount,
+            });
+            return Ok(());
+        }
+
+        self.ensure_creditable_balance(to, amount)?;
+
+        let from_entry = self.balances.entry(from.to_string()).or_insert(0);
         *from_entry -= amount;
+        self.prune_zero_balance(from);
 
         self.credit_balance(to, amount)?;
         self.audit_log.push(VaultEvent::Transferred {
+            caller: caller.to_string(),
             from: from.to_string(),
             to: to.to_string(),
             amount,
@@ -333,7 +386,9 @@ impl SettlementVault {
         }
 
         self.paused = true;
-        self.audit_log.push(VaultEvent::Paused);
+        self.audit_log.push(VaultEvent::Paused {
+            caller: caller.to_string(),
+        });
         Ok(())
     }
 
@@ -344,7 +399,9 @@ impl SettlementVault {
         }
 
         self.paused = false;
-        self.audit_log.push(VaultEvent::Unpaused);
+        self.audit_log.push(VaultEvent::Unpaused {
+            caller: caller.to_string(),
+        });
         Ok(())
     }
 
@@ -362,12 +419,25 @@ impl SettlementVault {
         Ok(())
     }
 
+    fn ensure_creditable_balance(&self, account: &str, amount: u128) -> Result<(), VaultError> {
+        self.balance_of(account)
+            .checked_add(amount)
+            .ok_or(VaultError::BalanceOverflow)?;
+        Ok(())
+    }
+
     fn credit_balance(&mut self, account: &str, amount: u128) -> Result<(), VaultError> {
         let entry = self.balances.entry(account.to_string()).or_insert(0);
         *entry = entry
             .checked_add(amount)
             .ok_or(VaultError::BalanceOverflow)?;
         Ok(())
+    }
+
+    fn prune_zero_balance(&mut self, account: &str) {
+        if self.balance_of(account) == 0 {
+            self.balances.remove(account);
+        }
     }
 }
 
@@ -411,6 +481,44 @@ mod tests {
     }
 
     #[test]
+    fn terminal_lock_records_keep_request_ids_reserved() {
+        let mut vault = SettlementVault::new("owner");
+
+        vault.deposit("owner", "alice", 100).unwrap();
+        vault.lock("owner", "req-release", "alice", 20).unwrap();
+        vault.release("owner", "req-release").unwrap();
+        assert_eq!(
+            vault
+                .lock("owner", "req-release", "alice", 5)
+                .expect_err("released request id must remain reserved"),
+            VaultError::DuplicateRequest
+        );
+
+        vault.lock("owner", "req-slash", "alice", 10).unwrap();
+        vault.slash("owner", "req-slash", "treasury").unwrap();
+        assert_eq!(
+            vault
+                .lock("owner", "req-slash", "alice", 1)
+                .expect_err("slashed request id must remain reserved"),
+            VaultError::DuplicateRequest
+        );
+    }
+
+    #[test]
+    fn failed_lock_does_not_create_zero_balance_account_entry() {
+        let mut vault = SettlementVault::new("owner");
+
+        let err = vault
+            .lock("owner", "req-missing", "ghost", 1)
+            .expect_err("missing account should fail closed");
+        assert_eq!(err, VaultError::InsufficientBalance);
+        assert_eq!(vault.balance_of("ghost"), 0);
+        assert!(vault.balances.get("ghost").is_none());
+        assert!(vault.lock_record("req-missing").is_none());
+        assert!(vault.audit_log().is_empty());
+    }
+
+    #[test]
     fn unauthorized_actions_are_rejected() {
         let mut vault = SettlementVault::new("owner");
 
@@ -435,6 +543,110 @@ mod tests {
     }
 
     #[test]
+    fn rejected_actions_do_not_append_audit_events() {
+        let mut vault = SettlementVault::new("owner");
+
+        assert_eq!(vault.deposit("mallory", "alice", 10).unwrap_err(), VaultError::Unauthorized);
+        assert!(vault.audit_log().is_empty());
+
+        vault.deposit("owner", "alice", 10).unwrap();
+        let audit_len_after_deposit = vault.audit_log().len();
+
+        assert_eq!(
+            vault.lock("mallory", "req-unauthorized", "alice", 5)
+                .unwrap_err(),
+            VaultError::Unauthorized
+        );
+        assert_eq!(vault.audit_log().len(), audit_len_after_deposit);
+
+        vault.pause("owner").unwrap();
+        let audit_len_after_pause = vault.audit_log().len();
+        assert_eq!(
+            vault.transfer("owner", "alice", "bob", 1).unwrap_err(),
+            VaultError::Paused
+        );
+        assert_eq!(
+            vault.release("owner", "req-missing").unwrap_err(),
+            VaultError::Paused
+        );
+        assert_eq!(vault.audit_log().len(), audit_len_after_pause);
+    }
+
+    #[test]
+    fn unauthorized_release_slash_and_transfer_fail_closed() {
+        let mut vault = SettlementVault::new("owner");
+
+        vault.deposit("owner", "alice", 25).unwrap();
+        vault.lock("owner", "req-auth", "alice", 20).unwrap();
+        let audit_len_after_lock = vault.audit_log().len();
+
+        assert_eq!(
+            vault.release("mallory", "req-auth").unwrap_err(),
+            VaultError::Unauthorized
+        );
+        assert_eq!(
+            vault.slash("mallory", "req-auth", "treasury").unwrap_err(),
+            VaultError::Unauthorized
+        );
+        assert_eq!(
+            vault.transfer("mallory", "alice", "bob", 1).unwrap_err(),
+            VaultError::Unauthorized
+        );
+
+        assert_eq!(vault.balance_of("alice"), 5);
+        assert_eq!(vault.balance_of("bob"), 0);
+        assert_eq!(vault.balance_of("treasury"), 0);
+        assert_eq!(
+            vault.lock_record("req-auth").unwrap().status,
+            LockStatus::Locked
+        );
+        assert_eq!(vault.audit_log().len(), audit_len_after_lock);
+    }
+
+    #[test]
+    fn unauthorized_actions_still_fail_closed_while_paused() {
+        let mut vault = SettlementVault::new("owner");
+
+        vault.deposit("owner", "alice", 25).unwrap();
+        vault.lock("owner", "req-auth-paused", "alice", 20).unwrap();
+        vault.pause("owner").unwrap();
+        let audit_len_while_paused = vault.audit_log().len();
+
+        assert_eq!(
+            vault.deposit("mallory", "alice", 1).unwrap_err(),
+            VaultError::Unauthorized
+        );
+        assert_eq!(
+            vault.lock("mallory", "req-auth-paused-2", "alice", 1)
+                .unwrap_err(),
+            VaultError::Unauthorized
+        );
+        assert_eq!(
+            vault.release("mallory", "req-auth-paused").unwrap_err(),
+            VaultError::Unauthorized
+        );
+        assert_eq!(
+            vault.slash("mallory", "req-auth-paused", "treasury")
+                .unwrap_err(),
+            VaultError::Unauthorized
+        );
+        assert_eq!(
+            vault.transfer("mallory", "alice", "bob", 1).unwrap_err(),
+            VaultError::Unauthorized
+        );
+
+        assert_eq!(vault.balance_of("alice"), 5);
+        assert_eq!(vault.balance_of("bob"), 0);
+        assert_eq!(vault.balance_of("treasury"), 0);
+        assert_eq!(
+            vault.lock_record("req-auth-paused").unwrap().status,
+            LockStatus::Locked
+        );
+        assert!(vault.lock_record("req-auth-paused-2").is_none());
+        assert_eq!(vault.audit_log().len(), audit_len_while_paused);
+    }
+
+    #[test]
     fn illegal_state_transition_is_rejected() {
         let mut vault = SettlementVault::new("owner");
 
@@ -446,6 +658,48 @@ mod tests {
             .slash("owner", "req-1", "treasury")
             .expect_err("cannot slash after release");
         assert_eq!(err, VaultError::InvalidStateTransition);
+    }
+
+    #[test]
+    fn terminal_lock_operations_reject_replays_without_mutating_state_or_audit() {
+        let mut vault = SettlementVault::new("owner");
+
+        vault.deposit("owner", "alice", 100).unwrap();
+        vault.lock("owner", "req-release-replay", "alice", 30)
+            .unwrap();
+        vault.release("owner", "req-release-replay").unwrap();
+        let released_audit_len = vault.audit_log().len();
+
+        assert_eq!(
+            vault
+                .release("owner", "req-release-replay")
+                .expect_err("released lock cannot be released twice"),
+            VaultError::InvalidStateTransition
+        );
+        assert_eq!(vault.balance_of("alice"), 100);
+        assert_eq!(
+            vault.lock_record("req-release-replay").unwrap().status,
+            LockStatus::Released
+        );
+        assert_eq!(vault.audit_log().len(), released_audit_len);
+
+        vault.lock("owner", "req-slash-replay", "alice", 40).unwrap();
+        vault.slash("owner", "req-slash-replay", "treasury").unwrap();
+        let slashed_audit_len = vault.audit_log().len();
+
+        assert_eq!(
+            vault
+                .slash("owner", "req-slash-replay", "treasury")
+                .expect_err("slashed lock cannot be slashed twice"),
+            VaultError::InvalidStateTransition
+        );
+        assert_eq!(vault.balance_of("alice"), 60);
+        assert_eq!(vault.balance_of("treasury"), 40);
+        assert_eq!(
+            vault.lock_record("req-slash-replay").unwrap().status,
+            LockStatus::Slashed
+        );
+        assert_eq!(vault.audit_log().len(), slashed_audit_len);
     }
 
     #[test]
@@ -469,6 +723,120 @@ mod tests {
         assert_eq!(vault.unpause("owner").unwrap_err(), VaultError::NotPaused);
 
         vault.lock("owner", "req-paused", "alice", 1).unwrap();
+    }
+
+    #[test]
+    fn repeated_pause_state_transitions_do_not_append_audit_events() {
+        let mut vault = SettlementVault::new("owner");
+
+        vault.pause("owner").unwrap();
+        let audit_len_after_pause = vault.audit_log().len();
+        assert_eq!(audit_len_after_pause, 1);
+        assert_eq!(vault.pause("owner").unwrap_err(), VaultError::AlreadyPaused);
+        assert_eq!(vault.audit_log().len(), audit_len_after_pause);
+
+        vault.unpause("owner").unwrap();
+        let audit_len_after_unpause = vault.audit_log().len();
+        assert_eq!(audit_len_after_unpause, audit_len_after_pause + 1);
+        assert_eq!(vault.unpause("owner").unwrap_err(), VaultError::NotPaused);
+        assert_eq!(vault.audit_log().len(), audit_len_after_unpause);
+    }
+
+    #[test]
+    fn paused_duplicate_lock_request_fails_closed_without_leaking_duplicate_state() {
+        let mut vault = SettlementVault::new("owner");
+
+        vault.deposit("owner", "alice", 20).unwrap();
+        vault.lock("owner", "req-paused-dup", "alice", 5).unwrap();
+        let audit_len_before_pause = vault.audit_log().len();
+
+        vault.pause("owner").unwrap();
+        let audit_len_while_paused = vault.audit_log().len();
+        assert_eq!(audit_len_while_paused, audit_len_before_pause + 1);
+
+        let err = vault
+            .lock("owner", "req-paused-dup", "alice", 1)
+            .expect_err("paused duplicate lock must fail before duplicate-request handling");
+        assert_eq!(err, VaultError::Paused);
+        assert_eq!(vault.balance_of("alice"), 15);
+        assert_eq!(
+            vault.lock_record("req-paused-dup").unwrap().status,
+            LockStatus::Locked
+        );
+        assert_eq!(vault.lock_record("req-paused-dup").unwrap().amount, 5);
+        assert_eq!(vault.audit_log().len(), audit_len_while_paused);
+    }
+
+    #[test]
+    fn paused_slash_fails_closed_without_mutating_lock_or_audit_log() {
+        let mut vault = SettlementVault::new("owner");
+
+        vault.deposit("owner", "alice", 20).unwrap();
+        vault.lock("owner", "req-paused-slash", "alice", 20).unwrap();
+        let audit_len_before_pause = vault.audit_log().len();
+        vault.pause("owner").unwrap();
+        let audit_len_while_paused = vault.audit_log().len();
+
+        let err = vault
+            .slash("owner", "req-paused-slash", "treasury")
+            .expect_err("slash must fail while paused");
+        assert_eq!(err, VaultError::Paused);
+        assert_eq!(vault.balance_of("alice"), 0);
+        assert_eq!(vault.balance_of("treasury"), 0);
+        assert_eq!(
+            vault.lock_record("req-paused-slash").unwrap().status,
+            LockStatus::Locked
+        );
+        assert_eq!(vault.audit_log().len(), audit_len_while_paused);
+        assert_eq!(audit_len_while_paused, audit_len_before_pause + 1);
+    }
+
+    #[test]
+    fn paused_release_fails_closed_without_mutating_lock_or_audit_log() {
+        let mut vault = SettlementVault::new("owner");
+
+        vault.deposit("owner", "alice", 20).unwrap();
+        vault.lock("owner", "req-paused-release", "alice", 20)
+            .unwrap();
+        let audit_len_before_pause = vault.audit_log().len();
+        vault.pause("owner").unwrap();
+        let audit_len_while_paused = vault.audit_log().len();
+
+        let err = vault
+            .release("owner", "req-paused-release")
+            .expect_err("release must fail while paused");
+        assert_eq!(err, VaultError::Paused);
+        assert_eq!(vault.balance_of("alice"), 0);
+        assert_eq!(
+            vault.lock_record("req-paused-release").unwrap().status,
+            LockStatus::Locked
+        );
+        assert_eq!(vault.audit_log().len(), audit_len_while_paused);
+        assert_eq!(audit_len_while_paused, audit_len_before_pause + 1);
+    }
+
+    #[test]
+    fn paused_missing_requests_fail_closed_without_leaking_existence_or_mutating_audit() {
+        let mut vault = SettlementVault::new("owner");
+
+        vault.deposit("owner", "alice", 20).unwrap();
+        vault.pause("owner").unwrap();
+        let audit_len_while_paused = vault.audit_log().len();
+
+        assert_eq!(
+            vault.release("owner", "req-missing")
+                .expect_err("paused release should not reveal request absence"),
+            VaultError::Paused
+        );
+        assert_eq!(
+            vault.slash("owner", "req-missing", "treasury")
+                .expect_err("paused slash should not reveal request absence"),
+            VaultError::Paused
+        );
+        assert!(vault.lock_record("req-missing").is_none());
+        assert_eq!(vault.balance_of("alice"), 20);
+        assert_eq!(vault.balance_of("treasury"), 0);
+        assert_eq!(vault.audit_log().len(), audit_len_while_paused);
     }
 
     #[test]
@@ -515,27 +883,35 @@ mod tests {
         )));
         assert!(logs.iter().any(|event| matches!(
             event,
-            VaultEvent::Locked { request_id, account, amount }
-                if request_id == "req-1" && account == "alice" && *amount == 25
+            VaultEvent::Locked { caller, request_id, account, amount }
+                if caller == "owner" && request_id == "req-1" && account == "alice" && *amount == 25
         )));
         assert!(logs.iter().any(|event| matches!(
             event,
-            VaultEvent::Released { request_id, account, amount }
-                if request_id == "req-1" && account == "alice" && *amount == 25
+            VaultEvent::Released { caller, request_id, account, amount }
+                if caller == "owner" && request_id == "req-1" && account == "alice" && *amount == 25
         )));
         assert!(logs.iter().any(|event| matches!(
             event,
-            VaultEvent::Transferred { from, to, amount }
-                if from == "alice" && to == "bob" && *amount == 20
+            VaultEvent::Transferred { caller, from, to, amount }
+                if caller == "owner" && from == "alice" && to == "bob" && *amount == 20
         )));
-        assert!(logs.iter().any(|event| matches!(event, VaultEvent::Paused)));
-        assert!(logs
-            .iter()
-            .any(|event| matches!(event, VaultEvent::Unpaused)));
         assert!(logs.iter().any(|event| matches!(
             event,
-            VaultEvent::Slashed { request_id, beneficiary, amount }
-                if request_id == "req-2" && beneficiary == "treasury" && *amount == 10
+            VaultEvent::Paused { caller } if caller == "owner"
+        )));
+        assert!(logs.iter().any(|event| matches!(
+            event,
+            VaultEvent::Unpaused { caller } if caller == "owner"
+        )));
+        assert!(logs.iter().any(|event| matches!(
+            event,
+            VaultEvent::Slashed { caller, request_id, account, beneficiary, amount }
+                if caller == "owner"
+                    && request_id == "req-2"
+                    && account == "alice"
+                    && beneficiary == "treasury"
+                    && *amount == 10
         )));
 
         assert!(normalized
@@ -547,12 +923,26 @@ mod tests {
         assert!(normalized
             .iter()
             .any(|event| event.event_type == "vault.released"));
-        assert!(normalized
-            .iter()
-            .any(|event| event.event_type == "vault.transferred"));
-        assert!(normalized
-            .iter()
-            .any(|event| event.event_type == "vault.slashed"));
+        assert!(normalized.iter().any(|event| {
+            event.event_type == "vault.transferred"
+                && event.actor.as_deref() == Some("owner")
+                && event.object_id.as_deref() == Some("bob")
+                && event.related_id.as_deref() == Some("alice")
+                && event.amount == Some(20)
+        }));
+        assert!(normalized.iter().any(|event| {
+            event.event_type == "vault.slashed"
+                && event.object_id.as_deref() == Some("req-2")
+                && event.related_id.as_deref() == Some("alice")
+                && event.note.as_deref() == Some("beneficiary=treasury")
+                && event.actor.as_deref() == Some("owner")
+        }));
+        assert!(normalized.iter().any(|event| {
+            event.event_type == "vault.paused" && event.actor.as_deref() == Some("owner")
+        }));
+        assert!(normalized.iter().any(|event| {
+            event.event_type == "vault.unpaused" && event.actor.as_deref() == Some("owner")
+        }));
         assert!(normalized
             .iter()
             .any(|event| event.source == "settlement-vault"));
@@ -565,16 +955,6 @@ mod tests {
             event.event_type == "vault.released"
                 && event.object_id.as_deref() == Some("req-1")
                 && event.related_id.as_deref() == Some("alice")
-        }));
-        assert!(normalized.iter().any(|event| {
-            event.event_type == "vault.transferred"
-                && event.object_id.as_deref() == Some("alice")
-                && event.related_id.as_deref() == Some("bob")
-        }));
-        assert!(normalized.iter().any(|event| {
-            event.event_type == "vault.slashed"
-                && event.object_id.as_deref() == Some("req-2")
-                && event.related_id.as_deref() == Some("treasury")
         }));
 
         assert!(vault.audit_log().is_empty());
@@ -601,5 +981,100 @@ mod tests {
             vault.transfer("owner", "alice", "bob", 999).unwrap_err(),
             VaultError::InsufficientBalance
         );
+    }
+
+    #[test]
+    fn self_transfer_preserves_balance_while_emitting_audit_event() {
+        let mut vault = SettlementVault::new("owner");
+
+        vault.deposit("owner", "alice", 40).unwrap();
+        let audit_len_before = vault.audit_log().len();
+
+        vault.transfer("owner", "alice", "alice", 15).unwrap();
+
+        assert_eq!(vault.balance_of("alice"), 40);
+        assert_eq!(vault.audit_log().len(), audit_len_before + 1);
+        assert!(matches!(
+            vault.audit_log().last(),
+            Some(VaultEvent::Transferred { caller, from, to, amount })
+                if caller == "owner" && from == "alice" && to == "alice" && *amount == 15
+        ));
+    }
+
+    #[test]
+    fn overflow_paths_fail_closed_without_partial_state_mutation() {
+        let mut vault = SettlementVault::new("owner");
+        vault.deposit("owner", "alice", 5).unwrap();
+        vault.deposit("owner", "bob", u128::MAX).unwrap();
+
+        vault.lock("owner", "req-slash", "alice", 5).unwrap();
+        let audit_len_before_slash = vault.audit_log().len();
+        let slash_err = vault.slash("owner", "req-slash", "bob").unwrap_err();
+        assert_eq!(slash_err, VaultError::BalanceOverflow);
+        assert_eq!(vault.balance_of("bob"), u128::MAX);
+        assert_eq!(
+            vault.lock_record("req-slash").unwrap().status,
+            LockStatus::Locked
+        );
+        assert_eq!(vault.audit_log().len(), audit_len_before_slash);
+
+        vault.deposit("owner", "carol", 1).unwrap();
+        let audit_len_before_transfer = vault.audit_log().len();
+        let transfer_err = vault.transfer("owner", "carol", "bob", 1).unwrap_err();
+        assert_eq!(transfer_err, VaultError::BalanceOverflow);
+        assert_eq!(vault.balance_of("bob"), u128::MAX);
+        assert_eq!(vault.balance_of("carol"), 1);
+        assert_eq!(vault.audit_log().len(), audit_len_before_transfer);
+    }
+
+    #[test]
+    fn deposit_overflow_fails_closed_without_crediting_or_logging_event() {
+        let mut vault = SettlementVault::new("owner");
+        vault.deposit("owner", "alice", u128::MAX).unwrap();
+        let audit_len_before = vault.audit_log().len();
+
+        let err = vault.deposit("owner", "alice", 1).unwrap_err();
+        assert_eq!(err, VaultError::BalanceOverflow);
+        assert_eq!(vault.balance_of("alice"), u128::MAX);
+        assert_eq!(vault.audit_log().len(), audit_len_before);
+    }
+
+    #[test]
+    fn release_overflow_fails_closed_without_unlocking_or_logging_event() {
+        let mut vault = SettlementVault::new("owner");
+        vault.deposit("owner", "alice", 5).unwrap();
+        vault.deposit("owner", "bob", u128::MAX).unwrap();
+
+        vault.lock("owner", "req-release", "alice", 5).unwrap();
+        vault.transfer("owner", "bob", "alice", u128::MAX).unwrap();
+        assert_eq!(vault.balance_of("alice"), u128::MAX);
+
+        let audit_len_before = vault.audit_log().len();
+        let release_err = vault.release("owner", "req-release").unwrap_err();
+        assert_eq!(release_err, VaultError::BalanceOverflow);
+        assert_eq!(vault.balance_of("alice"), u128::MAX);
+        assert_eq!(
+            vault.lock_record("req-release").unwrap().status,
+            LockStatus::Locked
+        );
+        assert_eq!(vault.audit_log().len(), audit_len_before);
+    }
+
+    #[test]
+    fn zero_balances_are_pruned_after_lock_and_transfer() {
+        let mut vault = SettlementVault::new("owner");
+
+        vault.deposit("owner", "alice", 10).unwrap();
+        vault.lock("owner", "req-prune", "alice", 10).unwrap();
+        assert_eq!(vault.balance_of("alice"), 0);
+        assert!(vault.balances.get("alice").is_none());
+
+        vault.release("owner", "req-prune").unwrap();
+        assert_eq!(vault.balance_of("alice"), 10);
+
+        vault.transfer("owner", "alice", "bob", 10).unwrap();
+        assert_eq!(vault.balance_of("alice"), 0);
+        assert_eq!(vault.balance_of("bob"), 10);
+        assert!(vault.balances.get("alice").is_none());
     }
 }
