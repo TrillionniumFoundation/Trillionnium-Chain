@@ -241,6 +241,8 @@ fn normalize_wallet_store_env_trims_shell_wrapped_quotes() {
     assert_eq!(normalize_wallet_store_env("/tmp/trnm wallets"), None);
     assert_eq!(normalize_wallet_store_env("/tmp/trnm\u{200b}-wallets"), None);
     assert_eq!(normalize_wallet_store_env("/tmp/trnm\u{202e}wallets"), None);
+    assert_eq!(normalize_wallet_store_env("/tmp/trnm\u{206a}wallets"), None);
+    assert_eq!(normalize_wallet_store_env("/tmp/trnm\u{206f}wallets"), None);
 }
 
 #[test]
@@ -592,6 +594,22 @@ fn ensure_safe_sign_message_rejects_ambiguous_or_non_ascii_signer_text() {
             .to_string()
             .contains("ASCII printable text"),
         "unexpected error: {bidi_err}"
+    );
+
+    let inhibit_symmetric_swap_err = ensure_safe_sign_message("approve\u{206a}tx").unwrap_err();
+    assert!(
+        inhibit_symmetric_swap_err
+            .to_string()
+            .contains("ASCII printable text"),
+        "unexpected error: {inhibit_symmetric_swap_err}"
+    );
+
+    let nominal_digit_shapes_err = ensure_safe_sign_message("approve\u{206f}tx").unwrap_err();
+    assert!(
+        nominal_digit_shapes_err
+            .to_string()
+            .contains("ASCII printable text"),
+        "unexpected error: {nominal_digit_shapes_err}"
     );
 
     let unicode_visible_err = ensure_safe_sign_message("approve 签名").unwrap_err();
