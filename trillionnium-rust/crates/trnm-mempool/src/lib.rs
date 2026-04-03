@@ -372,6 +372,11 @@ impl LaneAdmissionGate {
         self.critical_queue_has_headroom() || self.critical_can_borrow_normal_headroom()
     }
 
+    fn fresh_admissible(&self, class: IngressClass) -> bool {
+        self.lane_has_global_headroom(self.lane_total())
+            && !self.lane_backpressure_guard_blocks(class)
+    }
+
     fn normal_backpressure_guard_blocks(&self) -> bool {
         !self.normal_has_admission_headroom()
     }
@@ -542,6 +547,10 @@ impl LaneAdmissionGate {
                     // critical backlog is active. If the critical lane is idle,
                     // temporarily borrow the last free critical slot to keep
                     // normal free-ingress throughput live.
+                    //
+                    // Borrowed normal ingress is queued on the critical side on
+                    // purpose, so the reopened reserved slot stays represented by
+                    // the same dequeue / duplicate-accounting path until it drains.
                     self.critical.admit(tx_id)
                 } else {
                     primary
@@ -619,9 +628,8 @@ impl LaneAdmissionGate {
         let normal_headroom = self.normal.capacity.saturating_sub(normal_queued);
         let critical_headroom = self.critical.capacity.saturating_sub(critical_queued);
         let total_headroom = self.total_capacity.saturating_sub(total_queued);
-        let fresh_normal_admissible = total_headroom > 0 && self.normal_has_admission_headroom();
-        let fresh_critical_admissible =
-            total_headroom > 0 && self.critical_has_admission_headroom();
+        let fresh_normal_admissible = self.fresh_admissible(IngressClass::Normal);
+        let fresh_critical_admissible = self.fresh_admissible(IngressClass::Critical);
 
         debug_assert_eq!(normal_queued.saturating_add(critical_queued), total_queued);
 
@@ -788,8 +796,14 @@ mod tests {
             }
         );
 
-        assert_eq!(g.admit(10, IngressClass::Normal), AdmitOutcome::Backpressured);
-        assert_eq!(g.admit(11, IngressClass::Critical), AdmitOutcome::Backpressured);
+        assert_eq!(
+            g.admit(10, IngressClass::Normal),
+            AdmitOutcome::Backpressured
+        );
+        assert_eq!(
+            g.admit(11, IngressClass::Critical),
+            AdmitOutcome::Backpressured
+        );
         assert_eq!(g.pop_ready(), None);
         assert_eq!(
             g.qos_snapshot(),
@@ -836,10 +850,16 @@ mod tests {
         assert_eq!(g.admit(41, IngressClass::Critical), AdmitOutcome::Duplicate);
         assert_eq!(g.qos_snapshot(), hard_stop_snapshot);
 
-        assert_eq!(g.admit(99, IngressClass::Normal), AdmitOutcome::Backpressured);
+        assert_eq!(
+            g.admit(99, IngressClass::Normal),
+            AdmitOutcome::Backpressured
+        );
         assert_eq!(g.qos_snapshot(), hard_stop_snapshot);
 
-        assert_eq!(g.admit(100, IngressClass::Critical), AdmitOutcome::Backpressured);
+        assert_eq!(
+            g.admit(100, IngressClass::Critical),
+            AdmitOutcome::Backpressured
+        );
         assert_eq!(g.qos_snapshot(), hard_stop_snapshot);
 
         assert_eq!(g.pop_ready(), None);
@@ -927,7 +947,53 @@ mod tests {
     }
 
     #[test]
-    fn zero_reserve_full_shared_queue_keeps_qos_flat_across_cross_class_duplicate_and_retry_noise() {
+    fn duplicate_probe_does_not_consume_reopened_zero_reserve_shared_slot() {
+        let mut g = LaneAdmissionGate::new(2, 0);
+
+        // Zero-reserve mode routes both ingress classes through the same shared
+        // normal lane. After one real drain reopens headroom, duplicate probes
+        // against the surviving id must remain purely classificatory.
+        assert_eq!(g.admit(1, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.pop_ready(), Some(1));
+
+        let reopened_snapshot = LaneQosSnapshot {
+            normal_queued: 1,
+            critical_queued: 0,
+            total_queued: 1,
+            normal_headroom: 1,
+            critical_headroom: 0,
+            total_headroom: 1,
+            fresh_normal_admissible: true,
+            fresh_critical_admissible: true,
+        };
+        assert_eq!(g.qos_snapshot(), reopened_snapshot);
+
+        // The queued shared-lane id must stay globally duplicate across classes
+        // without consuming the reopened slot or perturbing QoS observability.
+        assert_eq!(g.admit(2, IngressClass::Critical), AdmitOutcome::Duplicate);
+        assert_eq!(g.qos_snapshot(), reopened_snapshot);
+
+        // The slot remains genuinely available for fresh ingress immediately after.
+        assert_eq!(g.admit(3, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(
+            g.qos_snapshot(),
+            LaneQosSnapshot {
+                normal_queued: 2,
+                critical_queued: 0,
+                total_queued: 2,
+                normal_headroom: 0,
+                critical_headroom: 0,
+                total_headroom: 0,
+                fresh_normal_admissible: false,
+                fresh_critical_admissible: false,
+            }
+        );
+    }
+
+    #[test]
+    fn zero_reserve_full_shared_queue_keeps_qos_flat_across_cross_class_duplicate_and_retry_noise()
+    {
         let mut g = LaneAdmissionGate::new(2, 0);
 
         assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
@@ -951,7 +1017,10 @@ mod tests {
         assert_eq!(g.qos_snapshot(), saturated_snapshot);
         assert_eq!(g.queued_counts(), (2, 0, 2));
 
-        assert_eq!(g.admit(99, IngressClass::Critical), AdmitOutcome::Backpressured);
+        assert_eq!(
+            g.admit(99, IngressClass::Critical),
+            AdmitOutcome::Backpressured
+        );
         assert_eq!(g.qos_snapshot(), saturated_snapshot);
         assert_eq!(g.queued_counts(), (2, 0, 2));
     }
@@ -1047,7 +1116,8 @@ mod tests {
     }
 
     #[test]
-    fn qos_snapshot_stops_advertising_fresh_normal_after_reserve_only_critical_consumes_last_slot() {
+    fn qos_snapshot_stops_advertising_fresh_normal_after_reserve_only_critical_consumes_last_slot()
+    {
         let mut g = LaneAdmissionGate::new(2, 2);
 
         // In reserve-only mode, all ingress shares the critical queue, so the
@@ -1140,7 +1210,10 @@ mod tests {
 
         // Once saturated, repeated fresh normal retries must stay backpressured and
         // leave the public QoS surface flat until a real drain reopens capacity.
-        assert_eq!(g.admit(100, IngressClass::Normal), AdmitOutcome::Backpressured);
+        assert_eq!(
+            g.admit(100, IngressClass::Normal),
+            AdmitOutcome::Backpressured
+        );
         assert_eq!(g.qos_snapshot(), saturated_snapshot);
         assert_eq!(g.queued_counts(), (0, 3, 3));
     }
@@ -1171,7 +1244,10 @@ mod tests {
         // remains consumed.
         assert_eq!(g.admit(2, IngressClass::Critical), AdmitOutcome::Duplicate);
         assert_eq!(g.qos_snapshot(), borrowed_snapshot);
-        assert_eq!(g.admit(99, IngressClass::Critical), AdmitOutcome::Backpressured);
+        assert_eq!(
+            g.admit(99, IngressClass::Critical),
+            AdmitOutcome::Backpressured
+        );
         assert_eq!(g.qos_snapshot(), borrowed_snapshot);
         assert_eq!(g.queued_counts(), (0, 2, 2));
 
@@ -1250,7 +1326,6 @@ mod tests {
         );
     }
 
-
     #[test]
     fn qos_snapshot_reopens_borrowed_last_critical_slot_after_critical_lane_drains() {
         let mut g = LaneAdmissionGate::new(3, 1);
@@ -1310,7 +1385,10 @@ mod tests {
         // consumed by borrowed normal work.
         assert_eq!(g.admit(3, IngressClass::Critical), AdmitOutcome::Duplicate);
         assert_eq!(g.qos_snapshot(), borrowed_snapshot);
-        assert_eq!(g.admit(99, IngressClass::Critical), AdmitOutcome::Backpressured);
+        assert_eq!(
+            g.admit(99, IngressClass::Critical),
+            AdmitOutcome::Backpressured
+        );
         assert_eq!(g.qos_snapshot(), borrowed_snapshot);
         assert_eq!(g.queued_counts(), (2, 1, 3));
 
@@ -1349,7 +1427,10 @@ mod tests {
 
         // Fresh normal retry noise must also stay fail-closed while the borrowed
         // reserved slot remains occupied.
-        assert_eq!(g.admit(99, IngressClass::Normal), AdmitOutcome::Backpressured);
+        assert_eq!(
+            g.admit(99, IngressClass::Normal),
+            AdmitOutcome::Backpressured
+        );
         assert_eq!(g.qos_snapshot(), borrowed_snapshot);
         assert_eq!(g.queued_counts(), (2, 1, 3));
     }
@@ -1382,7 +1463,10 @@ mod tests {
 
         // Fresh normal ingress must stay fail-closed here: the final reserved
         // critical slot cannot be borrowed while critical backlog is active.
-        assert_eq!(g.admit(3, IngressClass::Normal), AdmitOutcome::Backpressured);
+        assert_eq!(
+            g.admit(3, IngressClass::Normal),
+            AdmitOutcome::Backpressured
+        );
         assert_eq!(g.queued_counts(), (2, 1, 3));
         assert_eq!(
             g.qos_snapshot(),
@@ -1425,7 +1509,10 @@ mod tests {
         // operator-facing QoS snapshot.
         assert_eq!(g.admit(10, IngressClass::Normal), AdmitOutcome::Duplicate);
         assert_eq!(g.qos_snapshot(), guarded_snapshot);
-        assert_eq!(g.admit(99, IngressClass::Normal), AdmitOutcome::Backpressured);
+        assert_eq!(
+            g.admit(99, IngressClass::Normal),
+            AdmitOutcome::Backpressured
+        );
         assert_eq!(g.qos_snapshot(), guarded_snapshot);
         assert_eq!(g.queued_counts(), (2, 1, 3));
     }
@@ -1502,7 +1589,10 @@ mod tests {
         // a fresh normal probe must remain backpressured without perturbing QoS.
         assert_eq!(g.admit(11, IngressClass::Normal), AdmitOutcome::Duplicate);
         assert_eq!(g.qos_snapshot(), saturated_snapshot);
-        assert_eq!(g.admit(99, IngressClass::Normal), AdmitOutcome::Backpressured);
+        assert_eq!(
+            g.admit(99, IngressClass::Normal),
+            AdmitOutcome::Backpressured
+        );
         assert_eq!(g.qos_snapshot(), saturated_snapshot);
         assert_eq!(g.queued_counts(), (2, 2, 4));
     }
@@ -1689,10 +1779,53 @@ mod tests {
         assert_eq!(g.qos_snapshot().fresh_normal_admissible, false);
         assert_eq!(g.qos_snapshot().fresh_critical_admissible, true);
 
-        // While critical backlog remains active, draining a normal item must not
-        // reopen fresh normal ingress against the final reserved critical slot.
+        // Once the only active critical backlog clears, normal admissibility may
+        // reopen immediately because the final reserved slot is no longer guarded.
         assert_eq!(g.pop_ready(), Some(10));
         assert_eq!(g.queued_counts(), (3, 0, 3));
+        assert_eq!(g.qos_snapshot().fresh_normal_admissible, true);
+        assert_eq!(g.qos_snapshot().fresh_critical_admissible, true);
+    }
+
+    #[test]
+    fn qos_snapshot_keeps_normal_closed_until_last_active_critical_backlog_entry_drains() {
+        let mut g = LaneAdmissionGate::new(6, 2);
+
+        // Exhaust dedicated normal capacity while keeping two critical occupants
+        // active so the final reserved slot stays guarded after only one drain.
+        assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(3, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(4, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(10, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(11, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.queued_counts(), (4, 2, 6));
+        assert_eq!(g.qos_snapshot().fresh_normal_admissible, false);
+        assert_eq!(g.qos_snapshot().fresh_critical_admissible, false);
+
+        // Draining one critical entry reopens aggregate headroom, but normal must
+        // stay fail-closed because critical backlog is still active and guards the
+        // last reserved slot for fresh critical ingress only.
+        assert_eq!(g.pop_ready(), Some(10));
+        assert_eq!(g.queued_counts(), (4, 1, 5));
+        assert_eq!(
+            g.qos_snapshot(),
+            LaneQosSnapshot {
+                normal_queued: 4,
+                critical_queued: 1,
+                total_queued: 5,
+                normal_headroom: 0,
+                critical_headroom: 1,
+                total_headroom: 1,
+                fresh_normal_admissible: false,
+                fresh_critical_admissible: true,
+            }
+        );
+
+        // Only after the last active critical backlog entry drains may the normal
+        // class borrow again from the now-idle reserved slot.
+        assert_eq!(g.pop_ready(), Some(11));
+        assert_eq!(g.queued_counts(), (4, 0, 4));
         assert_eq!(g.qos_snapshot().fresh_normal_admissible, true);
         assert_eq!(g.qos_snapshot().fresh_critical_admissible, true);
     }
@@ -1722,6 +1855,64 @@ mod tests {
                 total_headroom: 1,
                 fresh_normal_admissible: false,
                 fresh_critical_admissible: true,
+            }
+        );
+    }
+
+    #[test]
+    fn critical_spillover_only_headroom_keeps_normal_closed_across_duplicate_and_retry_noise() {
+        let mut g = LaneAdmissionGate::new(5, 2);
+
+        // Leave exactly one aggregate slot free, but make it reachable only by fresh
+        // critical spillover into normal headroom while the final reserved critical
+        // slot remains guarded against normal ingress.
+        assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(3, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(10, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.queued_counts(), (3, 1, 4));
+
+        let spillover_only_snapshot = LaneQosSnapshot {
+            normal_queued: 3,
+            critical_queued: 1,
+            total_queued: 4,
+            normal_headroom: 0,
+            critical_headroom: 1,
+            total_headroom: 1,
+            fresh_normal_admissible: false,
+            fresh_critical_admissible: true,
+        };
+        assert_eq!(g.qos_snapshot(), spillover_only_snapshot);
+
+        // Cross-class retries of the already queued normal occupant must remain
+        // Duplicate, and fresh normal retry noise must remain Backpressured, without
+        // perturbing the operator-facing QoS contract.
+        assert_eq!(g.admit(3, IngressClass::Critical), AdmitOutcome::Duplicate);
+        assert_eq!(g.qos_snapshot(), spillover_only_snapshot);
+        assert_eq!(
+            g.admit(99, IngressClass::Normal),
+            AdmitOutcome::Backpressured
+        );
+        assert_eq!(g.qos_snapshot(), spillover_only_snapshot);
+        assert_eq!(g.queued_counts(), (3, 1, 4));
+
+        // The remaining aggregate slot is still genuinely available only to fresh
+        // critical ingress. Because one dedicated critical slot is still free, the
+        // next critical tx should claim that final reserved slot directly, and QoS
+        // must then fail closed for both classes immediately.
+        assert_eq!(g.admit(11, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.queued_counts(), (3, 2, 5));
+        assert_eq!(
+            g.qos_snapshot(),
+            LaneQosSnapshot {
+                normal_queued: 3,
+                critical_queued: 2,
+                total_queued: 5,
+                normal_headroom: 0,
+                critical_headroom: 0,
+                total_headroom: 0,
+                fresh_normal_admissible: false,
+                fresh_critical_admissible: false,
             }
         );
     }
@@ -1880,8 +2071,14 @@ mod tests {
         // Under the clamped reserve-only split, queued ids must still dedupe
         // globally while fresh retries remain fail-closed until a real drain.
         assert_eq!(g.admit(2, IngressClass::Normal), AdmitOutcome::Duplicate);
-        assert_eq!(g.admit(99, IngressClass::Normal), AdmitOutcome::Backpressured);
-        assert_eq!(g.admit(99, IngressClass::Critical), AdmitOutcome::Backpressured);
+        assert_eq!(
+            g.admit(99, IngressClass::Normal),
+            AdmitOutcome::Backpressured
+        );
+        assert_eq!(
+            g.admit(99, IngressClass::Critical),
+            AdmitOutcome::Backpressured
+        );
     }
 
     #[test]
@@ -1908,7 +2105,10 @@ mod tests {
         g.seen_global.insert(42);
 
         assert_eq!(g.admit(42, IngressClass::Normal), AdmitOutcome::Duplicate);
-        assert_eq!(g.admit(7, IngressClass::Critical), AdmitOutcome::Backpressured);
+        assert_eq!(
+            g.admit(7, IngressClass::Critical),
+            AdmitOutcome::Backpressured
+        );
         assert_eq!(g.qos_snapshot().total_headroom, 0);
         assert_eq!(g.queued_counts(), (0, 0, 0));
     }
@@ -1958,6 +2158,73 @@ mod tests {
             g.admit(5, IngressClass::Critical),
             AdmitOutcome::Backpressured
         );
+    }
+
+    #[test]
+    fn critical_spillover_stays_fail_closed_once_dedicated_normal_headroom_is_gone() {
+        let mut g = LaneAdmissionGate::new(3, 1);
+
+        assert_eq!(g.queued_counts(), (0, 0, 0));
+        assert_eq!(
+            g.qos_snapshot(),
+            LaneQosSnapshot {
+                normal_queued: 0,
+                critical_queued: 0,
+                total_queued: 0,
+                normal_headroom: 2,
+                critical_headroom: 1,
+                total_headroom: 3,
+                fresh_normal_admissible: true,
+                fresh_critical_admissible: true,
+            }
+        );
+
+        // Consume all dedicated normal headroom while aggregate capacity remains.
+        assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.queued_counts(), (2, 0, 2));
+        assert_eq!(
+            g.qos_snapshot(),
+            LaneQosSnapshot {
+                normal_queued: 2,
+                critical_queued: 0,
+                total_queued: 2,
+                normal_headroom: 0,
+                critical_headroom: 1,
+                total_headroom: 1,
+                fresh_normal_admissible: true,
+                fresh_critical_admissible: true,
+            }
+        );
+
+        // The last aggregate slot is a real reserved critical slot, not hidden
+        // spillover headroom: critical may claim it directly, then both classes
+        // must observe the lane as fully closed.
+        assert_eq!(g.admit(10, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.queued_counts(), (2, 1, 3));
+        assert_eq!(
+            g.qos_snapshot(),
+            LaneQosSnapshot {
+                normal_queued: 2,
+                critical_queued: 1,
+                total_queued: 3,
+                normal_headroom: 0,
+                critical_headroom: 0,
+                total_headroom: 0,
+                fresh_normal_admissible: false,
+                fresh_critical_admissible: false,
+            }
+        );
+
+        assert_eq!(
+            g.admit(11, IngressClass::Critical),
+            AdmitOutcome::Backpressured
+        );
+        assert_eq!(
+            g.admit(11, IngressClass::Normal),
+            AdmitOutcome::Backpressured
+        );
+        assert_eq!(g.queued_counts(), (2, 1, 3));
     }
 
     #[test]
@@ -2034,6 +2301,77 @@ mod tests {
     }
 
     #[test]
+    fn normal_lane_can_still_borrow_surplus_reserved_headroom_while_critical_backlog_is_active() {
+        let mut g = LaneAdmissionGate::new(5, 3);
+
+        assert_eq!(g.admit(10, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.queued_counts(), (0, 1, 1));
+        assert_eq!(
+            g.qos_snapshot(),
+            LaneQosSnapshot {
+                normal_queued: 0,
+                critical_queued: 1,
+                total_queued: 1,
+                normal_headroom: 2,
+                critical_headroom: 2,
+                total_headroom: 4,
+                fresh_normal_admissible: true,
+                fresh_critical_admissible: true,
+            }
+        );
+
+        // Even with active critical backlog, normal ingress may still consume only
+        // genuinely surplus reserved headroom; the final reserved slot must remain guarded.
+        assert_eq!(g.admit(20, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(21, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(22, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.queued_counts(), (2, 2, 4));
+        assert_eq!(
+            g.qos_snapshot(),
+            LaneQosSnapshot {
+                normal_queued: 2,
+                critical_queued: 2,
+                total_queued: 4,
+                normal_headroom: 0,
+                critical_headroom: 1,
+                total_headroom: 1,
+                fresh_normal_admissible: false,
+                fresh_critical_admissible: true,
+            }
+        );
+
+        assert_eq!(g.admit(23, IngressClass::Normal), AdmitOutcome::Backpressured);
+        assert_eq!(g.queued_counts(), (2, 2, 4));
+    }
+
+    #[test]
+    fn reopened_surplus_reserved_headroom_is_borrowable_before_final_guard_slot() {
+        let mut g = LaneAdmissionGate::new(5, 3);
+
+        // Fill the dedicated normal lane first, then leave exactly one free reserved
+        // critical slot while backlog remains active.
+        assert_eq!(g.admit(20, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(21, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(10, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(11, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.queued_counts(), (2, 2, 4));
+
+        // With only the final guarded reserved slot free, fresh normal ingress must stay blocked.
+        assert_eq!(g.admit(22, IngressClass::Normal), AdmitOutcome::Backpressured);
+        assert_eq!(g.queued_counts(), (2, 2, 4));
+
+        // After one critical dequeue, backlog is still active but one surplus reserved
+        // slot reopens. Normal ingress may borrow that surplus slot only, while the
+        // final reserved critical slot remains guarded.
+        assert_eq!(g.pop_ready(), Some(10));
+        assert_eq!(g.queued_counts(), (2, 1, 3));
+        assert_eq!(g.admit(22, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.queued_counts(), (2, 2, 4));
+        assert_eq!(g.admit(23, IngressClass::Normal), AdmitOutcome::Backpressured);
+        assert_eq!(g.admit(12, IngressClass::Critical), AdmitOutcome::Accepted);
+    }
+
+    #[test]
     fn normal_lane_can_borrow_last_critical_slot_when_critical_lane_idle() {
         let mut g = LaneAdmissionGate::new(3, 1);
 
@@ -2050,6 +2388,53 @@ mod tests {
             g.admit(99, IngressClass::Critical),
             AdmitOutcome::Backpressured
         );
+    }
+
+    #[test]
+    fn guarded_normal_retry_stays_fresh_until_all_active_critical_backlog_clears() {
+        let mut g = LaneAdmissionGate::new(5, 2);
+
+        // Fill dedicated normal capacity and arm active critical backlog while one
+        // aggregate slot remains reachable only by fresh critical spillover.
+        assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(3, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(90, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.qos_snapshot().fresh_normal_admissible, false);
+        assert_eq!(g.qos_snapshot().fresh_critical_admissible, true);
+
+        // A fresh normal id is reserve-guarded here and must stay fresh on retry.
+        assert_eq!(
+            g.admit(77, IngressClass::Normal),
+            AdmitOutcome::Backpressured
+        );
+        assert_eq!(
+            g.admit(77, IngressClass::Normal),
+            AdmitOutcome::Backpressured
+        );
+        assert_eq!(g.queued_counts(), (3, 1, 4));
+
+        // Fresh critical ingress may still claim the final guarded slot.
+        assert_eq!(g.admit(91, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.queued_counts(), (3, 2, 5));
+        assert_eq!(
+            g.admit(77, IngressClass::Normal),
+            AdmitOutcome::Backpressured
+        );
+
+        // Draining only one critical item still leaves active critical backlog, so the
+        // same normal id must remain fresh-but-guarded instead of becoming duplicate.
+        assert_eq!(g.pop_ready(), Some(90));
+        assert_eq!(
+            g.admit(77, IngressClass::Normal),
+            AdmitOutcome::Backpressured
+        );
+
+        // Once critical backlog fully clears, the earlier guarded id should admit as
+        // fresh rather than being poisoned by stale anti-spam metadata.
+        assert_eq!(g.pop_ready(), Some(91));
+        assert_eq!(g.admit(77, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(77, IngressClass::Critical), AdmitOutcome::Duplicate);
     }
 
     #[test]
@@ -2080,6 +2465,36 @@ mod tests {
     }
 
     #[test]
+    fn borrowed_last_idle_critical_slot_keeps_cross_class_fresh_retry_unpoisoned_until_drain() {
+        let mut g = LaneAdmissionGate::new(3, 1);
+
+        // Fill dedicated normal capacity, then borrow the last idle critical slot.
+        assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(3, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.queued_counts(), (2, 1, 3));
+
+        // A fresh critical tx blocked by the borrowed slot must remain fresh across
+        // cross-class retry noise instead of being poisoned into lane-wide duplicate
+        // metadata while reserve protection is still active.
+        assert_eq!(
+            g.admit(99, IngressClass::Critical),
+            AdmitOutcome::Backpressured
+        );
+        assert_eq!(
+            g.admit(99, IngressClass::Normal),
+            AdmitOutcome::Backpressured
+        );
+        assert_eq!(g.queued_counts(), (2, 1, 3));
+
+        // Once the borrowed occupant drains, the same tx id should still admit as
+        // fresh through the critical path and only then become globally duplicate.
+        assert_eq!(g.pop_ready(), Some(3));
+        assert_eq!(g.admit(99, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(99, IngressClass::Normal), AdmitOutcome::Duplicate);
+    }
+
+    #[test]
     fn full_critical_reserve_allows_normal_when_critical_lane_idle() {
         let mut g = LaneAdmissionGate::new(1, 1);
 
@@ -2104,6 +2519,39 @@ mod tests {
             g.admit(4, IngressClass::Normal),
             AdmitOutcome::Backpressured
         );
+    }
+
+    #[test]
+    fn reserve_only_stale_seen_metadata_does_not_hide_reopened_shared_slot() {
+        let mut g = LaneAdmissionGate::new(2, 2);
+
+        assert_eq!(g.admit(41, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(42, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.qos_snapshot().total_headroom, 0);
+        assert_eq!(g.qos_snapshot().fresh_normal_admissible, false);
+        assert_eq!(g.qos_snapshot().fresh_critical_admissible, false);
+
+        // Once one real occupant drains, reserve-only mode should immediately
+        // reopen the shared slot for both ingress classes. Stale critical seen
+        // metadata alone must not pin the public contract in a phantom fail-closed
+        // state.
+        assert_eq!(g.pop_ready(), Some(41));
+        g.critical.seen.insert(777);
+        assert_eq!(
+            g.qos_snapshot(),
+            LaneQosSnapshot {
+                normal_queued: 0,
+                critical_queued: 1,
+                total_queued: 1,
+                normal_headroom: 0,
+                critical_headroom: 1,
+                total_headroom: 1,
+                fresh_normal_admissible: true,
+                fresh_critical_admissible: true,
+            }
+        );
+        assert_eq!(g.admit(43, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(43, IngressClass::Critical), AdmitOutcome::Duplicate);
     }
 
     #[test]
@@ -2175,6 +2623,54 @@ mod tests {
             }
         }
         assert_eq!(g.admit(102, IngressClass::Normal), AdmitOutcome::Accepted);
+    }
+
+    #[test]
+    fn critical_spillover_duplicate_probe_keeps_qos_flat_until_final_dedicated_normal_slot_is_claimed(
+    ) {
+        let mut g = LaneAdmissionGate::new(4, 2);
+
+        assert_eq!(g.admit(100, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(101, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(102, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.queued_counts(), (1, 2, 3));
+
+        let spillover_snapshot = LaneQosSnapshot {
+            normal_queued: 1,
+            critical_queued: 2,
+            total_queued: 3,
+            normal_headroom: 1,
+            critical_headroom: 0,
+            total_headroom: 1,
+            fresh_normal_admissible: true,
+            fresh_critical_admissible: true,
+        };
+        assert_eq!(g.qos_snapshot(), spillover_snapshot);
+
+        // The spilled critical occupant must stay globally duplicate across ingress
+        // classes without perturbing operator-facing headroom.
+        assert_eq!(g.admit(102, IngressClass::Normal), AdmitOutcome::Duplicate);
+        assert_eq!(g.qos_snapshot(), spillover_snapshot);
+        assert_eq!(g.queued_counts(), (1, 2, 3));
+
+        // Because one dedicated normal slot is still genuinely free, fresh normal
+        // ingress should claim that slot directly rather than being mistaken for
+        // reserve-guarded retry noise.
+        assert_eq!(g.admit(999, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.queued_counts(), (2, 2, 4));
+        assert_eq!(
+            g.qos_snapshot(),
+            LaneQosSnapshot {
+                normal_queued: 2,
+                critical_queued: 2,
+                total_queued: 4,
+                normal_headroom: 0,
+                critical_headroom: 0,
+                total_headroom: 0,
+                fresh_normal_admissible: false,
+                fresh_critical_admissible: false,
+            }
+        );
     }
 
     #[test]
@@ -2408,6 +2904,21 @@ mod tests {
     }
 
     #[test]
+    fn reserve_only_stale_hot_fairness_does_not_synthesize_normal_preemption() {
+        let mut g = LaneAdmissionGate::new(2, 2);
+
+        assert_eq!(g.admit(10, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(11, IngressClass::Normal), AdmitOutcome::Accepted);
+
+        // Simulate stale restored-state bookkeeping: reserve-only mode should still
+        // refuse to synthesize a dedicated-normal fairness turn.
+        g.critical_served_streak = g.critical_burst_limit;
+        assert_eq!(g.pop_ready(), Some(10));
+        assert_eq!(g.critical_served_streak, 0);
+        assert_eq!(g.pop_ready(), Some(11));
+    }
+
+    #[test]
     fn reserve_only_backpressured_tx_id_stays_fresh_until_headroom_reopens() {
         let mut g = LaneAdmissionGate::new(2, 2);
 
@@ -2418,8 +2929,14 @@ mod tests {
 
         // A fresh tx id rejected under aggregate saturation must remain fresh across
         // both ingress classes rather than poisoning cross-class idempotency.
-        assert_eq!(g.admit(30, IngressClass::Normal), AdmitOutcome::Backpressured);
-        assert_eq!(g.admit(30, IngressClass::Critical), AdmitOutcome::Backpressured);
+        assert_eq!(
+            g.admit(30, IngressClass::Normal),
+            AdmitOutcome::Backpressured
+        );
+        assert_eq!(
+            g.admit(30, IngressClass::Critical),
+            AdmitOutcome::Backpressured
+        );
 
         assert_eq!(g.pop_ready(), Some(1));
 
@@ -2499,8 +3016,14 @@ mod tests {
 
         // Fresh normal ingress is blocked by the final reserved critical slot, but the
         // rejected tx id must stay fresh rather than poisoning cross-class dedupe.
-        assert_eq!(g.admit(99, IngressClass::Normal), AdmitOutcome::Backpressured);
-        assert_eq!(g.admit(99, IngressClass::Normal), AdmitOutcome::Backpressured);
+        assert_eq!(
+            g.admit(99, IngressClass::Normal),
+            AdmitOutcome::Backpressured
+        );
+        assert_eq!(
+            g.admit(99, IngressClass::Normal),
+            AdmitOutcome::Backpressured
+        );
         assert_eq!(g.queued_counts(), (3, 1, 4));
 
         // Once the active critical backlog drains, the previously guarded tx id should
@@ -2593,6 +3116,27 @@ mod tests {
     }
 
     #[test]
+    fn duplicate_or_backpressured_probe_noise_does_not_mutate_fairness_state() {
+        let mut g = LaneAdmissionGate::new(3, 1);
+
+        // Warm fairness under genuine mixed backlog.
+        assert_eq!(g.admit(100, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.critical_served_streak, g.critical_burst_limit);
+
+        let warmed = g.critical_served_streak;
+
+        // Once the lane is saturated, duplicate and fresh retry probes must keep the
+        // existing fairness state unchanged instead of masquerading as new backlog.
+        assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Duplicate);
+        assert_eq!(g.critical_served_streak, warmed);
+
+        assert_eq!(g.admit(9, IngressClass::Normal), AdmitOutcome::Backpressured);
+        assert_eq!(g.critical_served_streak, warmed);
+    }
+
+    #[test]
     fn zero_capacity_admission_gate_does_not_poison_idempotency_after_backpressure() {
         let mut g = AdmissionGate::new(0);
 
@@ -2641,6 +3185,31 @@ mod tests {
         assert!(g.seen.is_empty());
         assert_eq!(g.admit(99), AdmitOutcome::Accepted);
         assert_eq!(g.admit(100), AdmitOutcome::Accepted);
+    }
+
+    #[test]
+    fn drained_standalone_fresh_retry_reopens_cleanly_across_idle_polls() {
+        let mut g = AdmissionGate::new(1);
+
+        assert_eq!(g.admit(7), AdmitOutcome::Accepted);
+
+        // A fresh retry under saturation must stay backpressured without entering
+        // duplicate tracking.
+        assert_eq!(g.admit(8), AdmitOutcome::Backpressured);
+        assert_eq!(g.admit(8), AdmitOutcome::Backpressured);
+
+        // After a real full drain, repeated idle polls must not leave behind stale
+        // duplicate metadata that poisons the earlier fresh retry.
+        assert_eq!(g.pop_ready(), Some(7));
+        assert_eq!(g.pop_ready(), None);
+        assert_eq!(g.pop_ready(), None);
+        assert!(g.queue.is_empty());
+        assert!(g.seen.is_empty());
+
+        // The previously backpressured id must still admit as fresh and only then
+        // become Duplicate.
+        assert_eq!(g.admit(8), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(8), AdmitOutcome::Duplicate);
     }
 
     #[test]
@@ -3275,7 +3844,10 @@ mod tests {
         // lane-wide caches drifted, while the ghost id must remain merely fresh and
         // therefore Backpressured under aggregate saturation.
         assert_eq!(g.admit(100, IngressClass::Normal), AdmitOutcome::Duplicate);
-        assert_eq!(g.admit(999, IngressClass::Critical), AdmitOutcome::Backpressured);
+        assert_eq!(
+            g.admit(999, IngressClass::Critical),
+            AdmitOutcome::Backpressured
+        );
     }
 
     #[test]
@@ -3352,6 +3924,47 @@ mod tests {
             g.admit(7, IngressClass::Normal),
             AdmitOutcome::Backpressured
         );
+    }
+
+    #[test]
+    fn hard_stop_seen_global_only_duplicate_survives_cross_class_retries_and_idle_polls() {
+        let mut g = LaneAdmissionGate::new(0, 0);
+
+        // Simulate restored duplicate knowledge carried only by the lane-wide cache.
+        g.seen_global.insert(42);
+        let hard_stop_snapshot = LaneQosSnapshot {
+            normal_queued: 0,
+            critical_queued: 0,
+            total_queued: 0,
+            normal_headroom: 0,
+            critical_headroom: 0,
+            total_headroom: 0,
+            fresh_normal_admissible: false,
+            fresh_critical_admissible: false,
+        };
+
+        for _ in 0..2 {
+            assert_eq!(g.pop_ready(), None);
+            assert_eq!(g.qos_snapshot(), hard_stop_snapshot);
+            assert_eq!(g.queued_counts(), (0, 0, 0));
+
+            assert_eq!(g.admit(42, IngressClass::Normal), AdmitOutcome::Duplicate);
+            assert_eq!(g.admit(42, IngressClass::Critical), AdmitOutcome::Duplicate);
+            assert_eq!(
+                g.admit(99, IngressClass::Normal),
+                AdmitOutcome::Backpressured
+            );
+            assert_eq!(
+                g.admit(99, IngressClass::Critical),
+                AdmitOutcome::Backpressured
+            );
+
+            assert_eq!(g.qos_snapshot(), hard_stop_snapshot);
+            assert_eq!(g.queued_counts(), (0, 0, 0));
+            assert!(g.seen_global.contains(&42));
+            assert!(g.normal.seen.is_empty());
+            assert!(g.critical.seen.is_empty());
+        }
     }
 
     #[test]
@@ -3508,13 +4121,21 @@ mod tests {
             fresh_critical_admissible: false,
         };
 
-        for class in [IngressClass::Normal, IngressClass::Critical, IngressClass::Normal] {
+        for class in [
+            IngressClass::Normal,
+            IngressClass::Critical,
+            IngressClass::Normal,
+        ] {
             assert_eq!(g.admit(41, class), AdmitOutcome::Duplicate);
             assert_eq!(g.queued_counts(), (0, 0, 0));
             assert_eq!(g.qos_snapshot(), expected);
         }
 
-        for class in [IngressClass::Critical, IngressClass::Normal, IngressClass::Critical] {
+        for class in [
+            IngressClass::Critical,
+            IngressClass::Normal,
+            IngressClass::Critical,
+        ] {
             assert_eq!(g.admit(99, class), AdmitOutcome::Backpressured);
             assert_eq!(g.queued_counts(), (0, 0, 0));
             assert_eq!(g.qos_snapshot(), expected);
@@ -3539,7 +4160,11 @@ mod tests {
             fresh_critical_admissible: false,
         };
 
-        for class in [IngressClass::Normal, IngressClass::Critical, IngressClass::Normal] {
+        for class in [
+            IngressClass::Normal,
+            IngressClass::Critical,
+            IngressClass::Normal,
+        ] {
             assert_eq!(g.admit(55, class), AdmitOutcome::Duplicate);
             assert_eq!(g.queued_counts(), (0, 0, 0));
             assert_eq!(g.qos_snapshot(), expected);
@@ -3582,8 +4207,14 @@ mod tests {
 
             assert_eq!(g.admit(55, IngressClass::Critical), AdmitOutcome::Duplicate);
             assert_eq!(g.admit(56, IngressClass::Normal), AdmitOutcome::Duplicate);
-            assert_eq!(g.admit(404, IngressClass::Normal), AdmitOutcome::Backpressured);
-            assert_eq!(g.admit(404, IngressClass::Critical), AdmitOutcome::Backpressured);
+            assert_eq!(
+                g.admit(404, IngressClass::Normal),
+                AdmitOutcome::Backpressured
+            );
+            assert_eq!(
+                g.admit(404, IngressClass::Critical),
+                AdmitOutcome::Backpressured
+            );
 
             assert_eq!(g.qos_snapshot(), expected);
             assert_eq!(g.queued_counts(), (0, 0, 0));
@@ -3614,7 +4245,11 @@ mod tests {
 
         assert_eq!(g.qos_snapshot(), expected);
 
-        for class in [IngressClass::Normal, IngressClass::Critical, IngressClass::Normal] {
+        for class in [
+            IngressClass::Normal,
+            IngressClass::Critical,
+            IngressClass::Normal,
+        ] {
             assert_eq!(g.admit(55, class), AdmitOutcome::Duplicate);
             assert_eq!(g.queued_counts(), (0, 0, 0));
             assert_eq!(g.qos_snapshot(), expected);

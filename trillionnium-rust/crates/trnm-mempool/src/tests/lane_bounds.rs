@@ -230,6 +230,35 @@ fn qos_snapshot_stays_fail_closed_for_normal_after_critical_refill_probe_noise()
 }
 
 #[test]
+fn qos_snapshot_keeps_normal_closed_when_only_critical_spillover_headroom_remains() {
+    let mut g = LaneAdmissionGate::new(5, 2);
+
+    // Fill the dedicated normal lane and occupy one reserved critical slot.
+    assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(g.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(g.admit(3, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(g.admit(10, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(g.queued_counts(), (3, 1, 4));
+
+    // One aggregate slot remains, but it is reachable only by fresh critical
+    // spillover into the still-free normal headroom. Fresh normal ingress must
+    // stay closed because the last reserved critical slot is guarded.
+    assert_eq!(
+        g.qos_snapshot(),
+        LaneQosSnapshot {
+            normal_queued: 3,
+            critical_queued: 1,
+            total_queued: 4,
+            normal_headroom: 0,
+            critical_headroom: 1,
+            total_headroom: 1,
+            fresh_normal_admissible: false,
+            fresh_critical_admissible: true,
+        }
+    );
+}
+
+#[test]
 fn critical_refill_guarded_normal_retry_stays_fresh_until_reserved_slot_reopens() {
     let mut g = LaneAdmissionGate::new(4, 2);
 
@@ -382,6 +411,25 @@ fn oversized_critical_reserve_clamp_reopens_shared_headroom_immediately_after_on
     // The previously backpressured id must still be fresh after the clamp reopens.
     assert_eq!(g.admit(12, IngressClass::Normal), AdmitOutcome::Accepted);
     assert_eq!(g.admit(12, IngressClass::Critical), AdmitOutcome::Duplicate);
+}
+
+#[test]
+fn oversized_critical_reserve_clamp_reopened_slot_remains_cross_class_fresh_until_reused() {
+    let mut g = LaneAdmissionGate::new(2, 5);
+
+    // Saturate the reserve-only shared lane and confirm a fresh normal retry is
+    // fail-closed rather than cached as a duplicate while no headroom exists.
+    assert_eq!(g.admit(20, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(g.admit(21, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(g.admit(22, IngressClass::Normal), AdmitOutcome::Backpressured);
+    assert_eq!(g.admit(22, IngressClass::Critical), AdmitOutcome::Backpressured);
+
+    // A single real drain reopens one shared slot even though critical backlog is
+    // still active. The previously backpressured id must admit as fresh through
+    // either class, then immediately dedupe across the other class.
+    assert_eq!(g.pop_ready(), Some(20));
+    assert_eq!(g.admit(22, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(g.admit(22, IngressClass::Normal), AdmitOutcome::Duplicate);
 }
 
 #[test]

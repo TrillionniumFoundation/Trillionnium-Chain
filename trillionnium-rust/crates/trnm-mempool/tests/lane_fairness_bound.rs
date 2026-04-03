@@ -202,3 +202,39 @@ fn fairness_warmup_serves_oldest_normal_first_under_active_critical_backlog() {
     // anti-starvation turn.
     assert_eq!(gate.pop_ready(), Some(1));
 }
+
+#[test]
+fn duplicate_probe_noise_does_not_make_warm_fairness_skip_oldest_normal() {
+    let mut gate = LaneAdmissionGate::new(8, 3);
+
+    // Keep critical pressure active, then warm fairness with two normal items.
+    assert_eq!(
+        gate.admit(100, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
+    assert_eq!(
+        gate.admit(101, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
+    assert_eq!(
+        gate.admit(102, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
+    assert_eq!(gate.pop_ready(), Some(100));
+    assert_eq!(gate.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(gate.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(103, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
+
+    // Replays of queued work across both classes should stay classificatory only:
+    // they must not cool warm fairness or let the newer normal item jump ahead.
+    assert_eq!(gate.admit(1, IngressClass::Critical), AdmitOutcome::Duplicate);
+    assert_eq!(gate.admit(102, IngressClass::Normal), AdmitOutcome::Duplicate);
+
+    // The anti-starvation turn should still serve the oldest normal item first.
+    assert_eq!(gate.pop_ready(), Some(1));
+    let second = gate.pop_ready();
+    assert!(matches!(second, Some(101) | Some(102) | Some(103) | Some(2)));
+}

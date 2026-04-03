@@ -95,3 +95,28 @@ fn stale_retry_reservations_are_clamped_before_fresh_ingress_deferral() {
     assert_eq!(m.fairness_deferrals, 0);
     assert_eq!(m.backpressured, 0);
 }
+
+#[test]
+fn fresh_admission_clears_stale_fairness_marker_and_fifo_when_retry_memory_is_empty() {
+    let mut gate = AdmissionGate::new(3);
+    assert_eq!(gate.admit(1), AdmitOutcome::Accepted);
+
+    // Simulate restored/churned state: no known retry ids remain, but stale
+    // fairness + fifo bookkeeping survived a prior partial restore.
+    gate.last_fairness_deferred = Some(777);
+    gate.retry_reservations = 2;
+    gate.backpressured_fifo.extend([777, 778, 777]);
+    assert!(gate.backpressured_ids.is_empty());
+
+    // Admission fast-path should self-heal stale retry/fairness state before
+    // deciding whether fresh ingress can proceed.
+    assert_eq!(gate.admit(2), AdmitOutcome::Accepted);
+    assert_eq!(gate.last_fairness_deferred, None);
+    assert_eq!(gate.retry_reservations, 0);
+    assert!(gate.backpressured_fifo.is_empty());
+
+    let m = gate.metrics();
+    assert_eq!(m.accepted, 2);
+    assert_eq!(m.fairness_deferrals, 0);
+    assert_eq!(m.backpressured, 0);
+}
