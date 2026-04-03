@@ -613,6 +613,15 @@ mod tests {
         let audit_len_while_paused = vault.audit_log().len();
 
         assert_eq!(
+            vault.deposit("mallory", "alice", 1).unwrap_err(),
+            VaultError::Unauthorized
+        );
+        assert_eq!(
+            vault.lock("mallory", "req-auth-paused-2", "alice", 1)
+                .unwrap_err(),
+            VaultError::Unauthorized
+        );
+        assert_eq!(
             vault.release("mallory", "req-auth-paused").unwrap_err(),
             VaultError::Unauthorized
         );
@@ -633,6 +642,7 @@ mod tests {
             vault.lock_record("req-auth-paused").unwrap().status,
             LockStatus::Locked
         );
+        assert!(vault.lock_record("req-auth-paused-2").is_none());
         assert_eq!(vault.audit_log().len(), audit_len_while_paused);
     }
 
