@@ -3121,13 +3121,20 @@ mod tests {
         let _guard = ENV_LOCK.lock().unwrap();
         let original_store = std::env::var_os("TRNM_WALLET_STORE");
 
-        std::env::set_var("TRNM_WALLET_STORE", "\u{2068}\"./wallets\"\u{2069}");
-        let err = resolve_wallet_store(None).unwrap_err();
-        assert!(
-            err.to_string()
-                .contains("must be an absolute normalized symlink-free path"),
-            "unexpected error: {err}"
-        );
+        for invalid_env in [
+            "\u{2068}\"./wallets\"\u{2069}",
+            "'/'",
+            "《/》",
+            " //tmp/trnm-wallets ",
+        ] {
+            std::env::set_var("TRNM_WALLET_STORE", invalid_env);
+            let err = resolve_wallet_store(None).unwrap_err();
+            assert!(
+                err.to_string()
+                    .contains("must be an absolute normalized symlink-free path"),
+                "unexpected error for {invalid_env:?}: {err}"
+            );
+        }
 
         let explicit_root = std::env::temp_dir()
             .canonicalize()
