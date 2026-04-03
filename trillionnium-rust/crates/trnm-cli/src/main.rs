@@ -2994,6 +2994,8 @@ mod tests {
     #[test]
     fn normalize_wallet_store_env_rejects_hidden_or_whitespace_payloads() {
         assert_eq!(normalize_wallet_store_env("/tmp/trnm wallets"), None);
+        assert_eq!(normalize_wallet_store_env("/tmp/trnm\t-wallets"), None);
+        assert_eq!(normalize_wallet_store_env("/tmp/trnm\n-wallets"), None);
         assert_eq!(normalize_wallet_store_env("/tmp/trnm\u{200b}-wallets"), None);
         assert_eq!(normalize_wallet_store_env("/tmp/trnm\u{202e}wallets"), None);
     }
