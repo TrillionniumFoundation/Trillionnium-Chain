@@ -226,6 +226,59 @@ fn smoke_wallet_sign_rejects_bidi_control_message() {
 }
 
 #[test]
+fn smoke_wallet_sign_rejects_edge_or_non_ascii_whitespace() {
+    let store = tmp_dir("wallet-sign-whitespace-guard");
+    let pk = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+    let import = Command::new(bin())
+        .args([
+            "wallet",
+            "import",
+            "--name",
+            "alice",
+            "--private-key-hex",
+            pk,
+            "--out",
+            store.to_string_lossy().as_ref(),
+        ])
+        .output()
+        .unwrap();
+    assert!(
+        import.status.success(),
+        "stderr: {}",
+        String::from_utf8_lossy(&import.stderr)
+    );
+
+    for bad_message in [" approve tx", "approve tx ", "approve\u{00a0}tx"] {
+        let out = Command::new(bin())
+            .args([
+                "wallet",
+                "sign",
+                "--name",
+                "alice",
+                "--message",
+                bad_message,
+                "--store",
+                store.to_string_lossy().as_ref(),
+            ])
+            .output()
+            .unwrap();
+        assert!(
+            !out.status.success(),
+            "whitespace-polluted signer input should fail closed: {bad_message:?}"
+        );
+        let stderr = String::from_utf8_lossy(&out.stderr);
+        assert!(
+            stderr.contains("sign message must not start or end with whitespace")
+                || stderr.contains(
+                    "sign message must be single-line printable text without control characters"
+                ),
+            "unexpected stderr for {bad_message:?}: {}",
+            stderr
+        );
+    }
+}
+
+#[test]
 fn smoke_query_balance_fallback_json() {
     let store = tmp_dir("query-balance");
     let pk = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
