@@ -284,7 +284,7 @@ fn stage_tx_hash_for_ack(
     observed_tx_hash.or_else(|| {
         if is_idempotent_duplicate_ok(rc) {
             previous_tx_hash.and_then(|hash| {
-                let trimmed = hash.trim();
+                let trimmed = trim_boundary_audit_fillers(&hash);
                 if trimmed.is_empty() {
                     None
                 } else {
@@ -628,6 +628,16 @@ mod tests {
             RC_DUPLICATE,
         );
         assert_eq!(staged.as_deref(), Some("fresh-commit-hash"));
+    }
+
+    #[test]
+    fn stage_tx_hash_for_ack_canonicalizes_boundary_fillers_in_persisted_duplicate_receipts() {
+        let staged = super::stage_tx_hash_for_ack(
+            None,
+            Some("\u{feff}\u{200b}previous-commit\u{2060}\u{200d}".to_string()),
+            RC_DUPLICATE,
+        );
+        assert_eq!(staged.as_deref(), Some("previous-commit"));
     }
 
     #[test]
