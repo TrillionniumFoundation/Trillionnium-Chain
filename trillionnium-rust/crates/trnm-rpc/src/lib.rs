@@ -1383,6 +1383,42 @@ mod tests {
     }
 
     #[test]
+    fn oracle_validation_response_preserves_rate_label_and_raw_sample_count() {
+        let out: OracleValidateSnapshotResponse = OracleValidationReport {
+            ok: false,
+            now_ts_ms: 794,
+            observation: OracleValidationObservation {
+                stale_reject_total: 0,
+                quorum_reject_total: 0,
+                drift_reject_total: 0,
+                accepted_total: 0,
+            },
+            metrics: OracleValidationMetrics {
+                oracle_stale_reject_total: 0,
+                oracle_quorum_reject_total: 0,
+                oracle_drift_reject_total: 0,
+                oracle_source_cardinality: 2,
+                accepted_total: 0,
+                sample_count: 3,
+            },
+            error: Some("rate".into()),
+        }
+        .into();
+
+        let v = serde_json::to_value(&out).expect("serialize rate response");
+
+        assert_eq!(v["error"], "rate");
+        assert_eq!(v["metrics"]["sample_count"], 3);
+        assert_eq!(v["metrics"]["accepted_total"], 0);
+        assert_eq!(v["metrics"]["oracle_source_cardinality"], 2);
+        assert_eq!(v["observation"]["accepted_total"], 0);
+        assert_eq!(out.metrics.sample_count, 3);
+        assert_eq!(out.classified_outcome_total(), 0);
+        assert!(!out.classified_outcome_conserves_sample_count());
+        assert!(out.bridge_contract_consistent());
+    }
+
+    #[test]
     fn oracle_validation_response_bridge_contract_consistent_for_classified_outcomes() {
         let reports = [
             OracleValidationReport {
