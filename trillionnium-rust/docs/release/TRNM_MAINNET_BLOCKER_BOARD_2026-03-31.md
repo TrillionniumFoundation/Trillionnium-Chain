@@ -152,6 +152,7 @@ Even if all code-adjacent P0 items improve, TRNM still cannot claim public-mainn
 - artifact identities consistent across preflight / summary / manifest, with lane binding proven from the ticket-assigned worktree/branch rather than inferred from the shell
 - the packet preserves `generated_at=` and `git_status_summary=clean` next to `git_worktree_path=`, `git_worktree_branch_ref=`, `git_expected_worktree_branch_ref=`, and `git_worktree_branch_ref_match=true`, so reviewers can prove both timing and clean-tree identity from artifacts instead of scrollback memory
 - `truth_source=`, `historical_evidence_only=`, and `evidence_scope=` remain adjacent to the quoted PASS/GO language, and `rollback_command=` / `replay_command=` are preserved verbatim from generated artifacts
+- the packet also preserves the path-resolved preflight decision artifact (or saved helper transcript) closely enough to quote `result=`, `generated_at=`, `git_status_summary=`, `git_worktree_path=`, `git_worktree_branch_ref=`, `git_worktree_branch_ref_match=`, `rollback_command=`, and `replay_command=` for the fast-fail stage instead of treating preflight as undocumented terminal context
 - the `extract_release_handoff_fields.sh` output is itself preserved as a path-resolved helper transcript (for example via `tee`), so reviewers can quote `summary_generated_at=`, `manifest_generated_at=`, and the preserved rollback/replay lines from a saved artifact instead of terminal memory
 - signed operator decision packet
 
