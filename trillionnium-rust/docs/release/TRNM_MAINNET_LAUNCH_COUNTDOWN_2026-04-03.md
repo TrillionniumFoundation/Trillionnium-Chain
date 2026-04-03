@@ -15,6 +15,8 @@
 - `TRNM_MAINNET_GAP_MATRIX_2026-03-26.md`
 - `TRNM_MAINNET_BLOCKER_BOARD_2026-03-31.md`
 
+并且不要把本文顶部的固定 `main@...` 快照字符串当作长期 truth source 复用；每次引用 launch countdown 结论时，都应重新记录当下的 `origin/main`，避免把过期 snapshot 误当成当前 GO / NO-GO 依据。
+
 ---
 
 ## 当前结论
@@ -198,7 +200,10 @@
 
 ### Exit criteria
 - full rehearsal green
-- artifact identity 一致
+- preflight artifact、`summary.txt`、`manifest.txt` 都 path-resolved 并一起入包
+- artifact identity 一致，且必须保留 ticket-assigned worktree / branch 绑定证据，而不是只证明“当前 shell 自洽”
+- `git_worktree_branch_ref_match=true` 与 `git_status_summary=clean` 被逐项保留
+- `summary_generated_at=` 与 `manifest_generated_at=` 分开引用，不可塌缩成一个手抄时间戳
 - rollback command preserved
 - operator decision packet 完整
 
@@ -354,12 +359,16 @@
 
 ### 必须完成
 - full-chain rehearsal
-- artifact identity consistency check
+- preflight artifact + saved helper transcript + path-resolved `summary.txt` / `manifest.txt`
+- artifact identity consistency check（含 ticket-assigned worktree / branch 绑定）
 - rollback drill
 - GO / CONDITIONAL GO / NO-GO memo
 
 ### 放行条件
 - 全链 rehearsal green
+- `go-no-go-latest.txt`、helper transcript、`summary.txt`、`manifest.txt` 都已落成可引用路径
+- `git_worktree_path=`、`git_worktree_branch_ref=`、`git_expected_worktree_branch_ref=`、`git_worktree_branch_ref_match=true`、`git_status_summary=clean` 在 preflight / summary / manifest 三段证据里一致
+- `summary_generated_at=` 与 `manifest_generated_at=` 分开保留，且 memo 同时记录当下 `git rev-parse origin/main`
 - rollback command 明确
 - operator packet 自洽
 
