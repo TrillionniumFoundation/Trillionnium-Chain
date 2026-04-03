@@ -171,6 +171,11 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         path
     );
     anyhow::ensure!(
+        !is_reserved_listener_ip(rpc_socket.ip()),
+        "invalid node config {}: rpc_addr must not use a documentation or benchmark-only address",
+        path
+    );
+    anyhow::ensure!(
         !is_ipv4_compatible_ipv6(rpc_socket.ip()),
         "invalid node config {}: rpc_addr must not use an IPv4-compatible IPv6 address",
         path
@@ -251,6 +256,11 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
     anyhow::ensure!(
         !p2p_socket.ip().is_unicast_link_local(),
         "invalid node config {}: p2p_addr must not use a link-local address",
+        path
+    );
+    anyhow::ensure!(
+        !is_reserved_listener_ip(p2p_socket.ip()),
+        "invalid node config {}: p2p_addr must not use a documentation or benchmark-only address",
         path
     );
     anyhow::ensure!(
@@ -1079,6 +1089,41 @@ bootstrap_peers = ["127.0.0.1:27656"]
                 .to_string()
                 .contains("p2p_addr must not use a link-local address"),
             "unexpected error: {p2p_link_local_err:#}"
+        );
+    }
+
+    #[test]
+    fn validate_node_config_rejects_documentation_and_benchmark_listener_addresses() {
+        let rpc_reserved_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "192.0.2.10:7000".into(),
+                p2p_addr: "192.0.2.10:7001".into(),
+            },
+            "inline",
+        )
+        .expect_err("rpc_addr documentation bind must fail closed");
+        assert!(
+            rpc_reserved_err
+                .to_string()
+                .contains("rpc_addr must not use a documentation or benchmark-only address"),
+            "unexpected error: {rpc_reserved_err:#}"
+        );
+
+        let p2p_reserved_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "127.0.0.1:7000".into(),
+                p2p_addr: "198.19.0.10:7001".into(),
+            },
+            "inline",
+        )
+        .expect_err("p2p_addr benchmark bind must fail closed");
+        assert!(
+            p2p_reserved_err
+                .to_string()
+                .contains("p2p_addr must not use a documentation or benchmark-only address"),
+            "unexpected error: {p2p_reserved_err:#}"
         );
     }
 
