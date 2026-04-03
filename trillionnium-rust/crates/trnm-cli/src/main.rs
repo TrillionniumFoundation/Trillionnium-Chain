@@ -1106,6 +1106,8 @@ fn is_unsafe_sign_message_char(c: char) -> bool {
                 | '\u{200e}'
                 | '\u{200f}'
                 | '\u{2060}'
+                | '\u{2028}'
+                | '\u{2029}'
                 | '\u{202a}'..='\u{202e}'
                 | '\u{2066}'..='\u{2069}'
                 | '\u{feff}'
@@ -3977,6 +3979,26 @@ mod tests {
     #[test]
     fn ensure_safe_sign_message_rejects_bom_prefixed_text() {
         let err = ensure_safe_sign_message("\u{feff}rotate signer to slot b").unwrap_err();
+        assert!(
+            err.to_string()
+                .contains("contains control or bidi override characters"),
+            "unexpected: {err}"
+        );
+    }
+
+    #[test]
+    fn ensure_safe_sign_message_rejects_unicode_line_separator_text() {
+        let err = ensure_safe_sign_message("rotate signer\u{2028}slot-b").unwrap_err();
+        assert!(
+            err.to_string()
+                .contains("contains control or bidi override characters"),
+            "unexpected: {err}"
+        );
+    }
+
+    #[test]
+    fn ensure_safe_sign_message_rejects_unicode_paragraph_separator_text() {
+        let err = ensure_safe_sign_message("rotate signer\u{2029}slot-b").unwrap_err();
         assert!(
             err.to_string()
                 .contains("contains control or bidi override characters"),
