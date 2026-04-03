@@ -1003,6 +1003,36 @@ mod tests {
     }
 
     #[test]
+    fn duplicate_finalize_with_fresh_nonce_and_bad_receipt_still_stops_at_terminal_state() {
+        let mut relay = relay(1, &[7]);
+        let msg = sample_msg();
+
+        relay
+            .finalize_settlement(&msg, &[sig_for(&msg, 7)], 1_000, 999, 31337, addr(9))
+            .unwrap();
+
+        let audit_len_before = relay.audit_log().len();
+        let mut replay = sample_msg();
+        replay.nonce = msg.nonce + 1;
+        replay.tx_receipt_status = 0;
+
+        let err = relay
+            .finalize_settlement(&replay, &[sig_for(&replay, 7)], 1_000, 999, 31337, addr(9))
+            .unwrap_err();
+
+        assert!(matches!(
+            err,
+            BridgeRelayError::SettlementAlreadyFinalized { settlement_id: id }
+                if id == settlement_id(&msg)
+        ));
+        assert_eq!(
+            relay.audit_log().len(),
+            audit_len_before,
+            "terminal duplicate finalize must stay side-effect free even with a fresh nonce and bad receipt"
+        );
+    }
+
+    #[test]
     fn duplicate_finalize_with_stale_config_version_after_governance_change_still_stops_at_terminal_state() {
         let mut relay = BridgeRelay::with_admin(2, vec![validator_pub(7)], b32(9));
         relay
