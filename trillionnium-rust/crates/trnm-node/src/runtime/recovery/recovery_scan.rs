@@ -686,6 +686,31 @@ mod tests {
     }
 
     #[test]
+    fn ensure_recoverable_wal_state_allows_checkpoint_only_rejoin_bootstrap_even_after_truncation() {
+        let wal_dir = temp_wal_dir("checkpoint-only-rejoin-bootstrap");
+        let recovered = RecoveredWalState {
+            next_height: 9,
+            restored_lock: None,
+            last_checkpoint: Some(CheckpointMeta {
+                height: 8,
+                state_root_hex: "aa".repeat(32),
+                wal_entry_hash_hex: "bb".repeat(32),
+            }),
+            truncated: true,
+            metadata_only_recovery: false,
+            wal_entries_retained: 0,
+            checkpoint_height_retained: Some(8),
+        };
+
+        ensure_recoverable_wal_state(&wal_dir, &recovered)
+            .expect("truncated checkpoint-only rejoin bootstrap should remain recoverable");
+        assert_eq!(
+            recovery_startup_summary(&recovered),
+            "retained_wal_entries=0 checkpoint_height_retained=8 checkpoint_tip_relation=checkpoint_only:8 next_startup_height=9 wal_tail_truncated=true metadata_only_recovery=false join_rejoin_status=ready:checkpoint_only_bootstrap"
+        );
+    }
+
+    #[test]
     fn ensure_recoverable_wal_state_allows_fresh_or_fully_replayable_state() {
         let wal_dir = temp_wal_dir("recoverable-state-ok");
         let recovered = RecoveredWalState {
