@@ -11,13 +11,17 @@ use crate::envpaths::task_state_file;
 use crate::metering::build_task_metering_query_response;
 use crate::{AdapterRecord, EMERGENCY_PAUSE_KEY_ID};
 
+fn normalize_adapter_record_line(line: &str) -> &str {
+    line.trim().trim_start_matches('\u{feff}').trim()
+}
+
 fn load_adapter_records_file(path: &PathBuf) -> Vec<AdapterRecord> {
     let Ok(raw) = fs::read_to_string(path) else {
         return vec![];
     };
     raw.lines()
-        .map(|line| line.trim_start_matches('\u{feff}'))
-        .filter(|l| !l.trim().is_empty())
+        .map(normalize_adapter_record_line)
+        .filter(|l| !l.is_empty())
         .filter_map(|l| serde_json::from_str::<AdapterRecord>(l).ok())
         .collect()
 }
