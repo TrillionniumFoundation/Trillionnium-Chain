@@ -192,6 +192,10 @@ TRNM_TX_CLI=./trillionnium-rust/target/debug/trnm-cli \
 - Web4 当前语义是：**前端默认走只读 API client；只在显式 `?mode=mock` 时回退到本地 mock snapshot；不暴露写路径。**
 - 文档中若出现 `/api/v0/web4/*`，应视为历史草案命名；当前仓内前端实际消费的是 `query-task` / `query-events` / `query-capability-audit` / `query-normalized-audit-events` 这组只读接口，**不是仓内已实现的 Next.js route**。
 - Explorer / indexer 接入时可先把这组接口当作最小 read-model 契约：
+  - `query-task/<task_id>`
+  - `query-events/<task_id>?limit=<n>`
+  - `query-capability-audit/<subject-or-token>`
+  - `query-normalized-audit-events/<task_id>?limit=<n>`
   - `query-events/<task_id>` 未显式传 `?limit=` 时默认返回 **100** 条，硬上限 **500** 条；超大分页请求会被 clamp，不应假设无限历史窗口。
   - `query-events/<task_id>` 的 query schema 当前 **只接受单个 `limit` 键**；未知键、重复 `limit`、大小写漂移（如 `Limit=`）、空值与编码分隔符都按 fail-closed 处理，接入侧不要假设“多余参数会被静默忽略”。
   - `query-capability-audit/<subject-or-token>` 同时接受 capability token id 与 subject DID，索引侧不必为两种 key 维护两套入口。
@@ -199,6 +203,18 @@ TRNM_TX_CLI=./trillionnium-rust/target/debug/trnm-cli \
   - 带路径后缀的只读路径（如 `query-task/<id>/`、`query-events/<id>/`、`query-capability-audit/<subject>/`）接受**单个** operator trailing slash；但 `query-normalized-audit-events` 走**精确路径匹配**，不应假设 `/query-normalized-audit-events/` 可兼容。
   - 以上路径仍会对额外层级、原始/编码斜杠、query/fragment smuggling 维持 fail-closed；接入侧不要把模糊路径当作可兼容输入。
   - 这组路径当前都属于只读查询面，前端/脚本不应通过它们推断存在对称写接口。
+  - 在 durable indexer / archive read replica 落地前，历史查询语义仍以当前 RPC retention window 为边界，不应把脚手架或前端只读 client 误读为“无限历史可查”。
+- 本地最小 explorer service 仍只是 operator-facing scaffolding，不应误判为 production indexer：
+  - 从仓库根执行：`./trillionnium-rust/scripts/v2/explorer_service_up.sh`
+  - 从仓库根执行：`./trillionnium-rust/scripts/v2/explorer_service_status.sh`
+  - 从仓库根执行：`./trillionnium-rust/scripts/v2/explorer_service_down.sh`
+  - 或先 `cd trillionnium-rust`，再执行 `./scripts/v2/explorer_service_{up,status,down}.sh`
+  - 若 `trillionnium-rust/run/explorer-service/explorer-service.env` 已存在，上述三个脚本会自动加载它；值班切换时无需再手动 `source` 才能复用同一组 bind / public URL / RPC URL 配置。
+  - 若需要对外暴露该脚手架，优先采用“loopback bind + reverse proxy” 形态；最小 `nginx` 骨架与 handoff 注意事项见 `trillionnium-rust/docs/runbooks/explorer-service-scaffold.md`。
+  - 默认健康检查：`http://127.0.0.1:8090/healthz`；若需非默认地址，可覆盖 `EXPLORER_HOST` / `EXPLORER_PORT` 或直接传 `EXPLORER_HEALTH_URL`。
+  - `explorer_service_status.sh` 会直接回显 `pid_file` / `log_file` / `health_url`，并明确标记 `service_mode=operator-facing-static-scaffold`、`production_ready=false`，同时附带最小 Day-1 read-contract 字段（`read_contract_mode`、`day1_surface`、`historical_query_scope` 等），便于 operator 在 down/degraded/handoff 场景直接确认这是 RPC-backed 的只读脚手架，而不是 durable indexer。
+  - `explorer_service_down.sh` 现在也会复用同一组 read-contract 字段，便于在 stop / stale-pid 清理 / handoff 场景保留一致的只读边界说明，而不必额外跑一次 `status`。
+  - 推荐将脚手架操作与值班排障步骤统一参照：`trillionnium-rust/docs/runbooks/explorer-service-scaffold.md`
 - 自动化脚本较多，优先使用本 README、`RELEASE_READINESS.md` 和 `docs/development` 下统一调度文档作为导航。
 
 ---
