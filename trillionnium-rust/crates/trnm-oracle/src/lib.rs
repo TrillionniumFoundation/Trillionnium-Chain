@@ -1722,6 +1722,35 @@ mod tests {
     }
 
     #[test]
+    fn observed_report_preserves_source_cardinality_on_future_snapshot_stale_label() {
+        let p = policy();
+        let snap = OracleSnapshot::new(
+            "btc/usd",
+            100_000,
+            vec![source("binance"), source("chainlink"), source("coingecko")],
+            3,
+            Some(100_000),
+            Some(120),
+            1_000,
+            2_000,
+            10_001,
+        )
+        .expect("snapshot build");
+
+        let report = validate_snapshot_observed(&p, &snap, 10_000);
+        assert!(!report.ok);
+        assert_eq!(report.error.as_deref(), Some("stale"));
+        assert_eq!(report.metrics.oracle_source_cardinality, 3);
+        assert_eq!(report.metrics.oracle_stale_reject_total, 1);
+        assert_eq!(report.metrics.oracle_quorum_reject_total, 0);
+        assert_eq!(report.metrics.oracle_drift_reject_total, 0);
+        assert_eq!(report.metrics.accepted_total, 0);
+        assert_eq!(report.metrics.sample_count, 1);
+        assert!(report.classified_outcome_conserves_sample_count());
+        assert!(report.bridge_contract_consistent());
+    }
+
+    #[test]
     fn observed_report_prefers_future_stale_label_over_quorum_and_drift_failures() {
         let p = policy();
         let snap = OracleSnapshot::new(
