@@ -193,6 +193,23 @@ fn sorted_task_adapter_records<'a>(
                 b.result_hash.as_deref().unwrap_or("").trim(),
             ))
     });
+    task_recs.dedup_by(|a, b| {
+        a.kind == b.kind
+            && a.worker
+                .as_deref()
+                .and_then(normalize_actor_or_signer)
+                == b.worker
+                    .as_deref()
+                    .and_then(normalize_actor_or_signer)
+            && a.tx_hash
+                .as_deref()
+                .map(normalize_tx_hash_lookup)
+                == b.tx_hash
+                    .as_deref()
+                    .map(normalize_tx_hash_lookup)
+            && a.result_hash.as_deref().map(str::trim)
+                == b.result_hash.as_deref().map(str::trim)
+    });
     task_recs
 }
 

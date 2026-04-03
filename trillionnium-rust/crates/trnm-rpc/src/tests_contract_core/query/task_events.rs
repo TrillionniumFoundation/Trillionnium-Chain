@@ -177,6 +177,59 @@ fn query_task_response_fallback_rejects_reveal_without_persisted_commit() {
 }
 
 #[test]
+fn query_task_response_fallback_dedupes_canonical_replay_rows_from_persistence() {
+    with_market_path_env(&[(TASK_STATE_FILE_ENV, None)], || {
+        let recs = vec![
+            AdapterRecord {
+                ts: 10,
+                kind: "commit".into(),
+                task_id: 90,
+                worker: Some(" worker-z\u{200b}".into()),
+                result_hash: None,
+                status: "accepted".into(),
+                tx_hash: Some(" tx_hash=0xabc ".into()),
+            },
+            AdapterRecord {
+                ts: 10,
+                kind: "commit".into(),
+                task_id: 90,
+                worker: Some("worker-z".into()),
+                result_hash: None,
+                status: "accepted".into(),
+                tx_hash: Some("0XABC".into()),
+            },
+            AdapterRecord {
+                ts: 20,
+                kind: "reveal".into(),
+                task_id: 90,
+                worker: Some("worker-z".into()),
+                result_hash: Some("0xdef".into()),
+                status: "accepted".into(),
+                tx_hash: Some("0xdef".into()),
+            },
+            AdapterRecord {
+                ts: 21,
+                kind: "reveal".into(),
+                task_id: 90,
+                worker: Some(" worker-z ".into()),
+                result_hash: Some("0xdef".into()),
+                status: "accepted".into(),
+                tx_hash: Some("0XDEF".into()),
+            },
+        ];
+
+        let out = query_task_response(90, &[], &recs).expect("task expected");
+        assert_eq!(out.status, TaskStatus::Revealed);
+        assert_eq!(out.worker.as_deref(), Some("worker-z"));
+        assert_eq!(out.result_hash_hex.as_deref(), Some("0xdef"));
+        assert_eq!(
+            out.version, 2,
+            "duplicate replay rows must not inflate durable task history"
+        );
+    });
+}
+
+#[test]
 fn query_task_from_node_events_none_for_missing_task() {
     let events = vec![NodeEventRecord {
         event_type: "accept".into(),

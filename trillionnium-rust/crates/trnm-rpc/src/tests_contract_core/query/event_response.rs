@@ -219,3 +219,52 @@ fn query_events_response_fallback_sorts_same_timestamp_records_by_normalized_ide
     assert_eq!(out[1].actor, "worker-z");
     assert_eq!(out[1].tx_hash.as_deref(), Some("0xbbb"));
 }
+
+#[test]
+fn query_events_response_fallback_dedupes_canonical_replay_rows_from_persistence() {
+    let recs = vec![
+        AdapterRecord {
+            ts: 10,
+            kind: "commit".into(),
+            task_id: 47,
+            worker: Some(" worker-z\u{200b}".into()),
+            result_hash: None,
+            status: "accepted".into(),
+            tx_hash: Some(" tx_hash=0xabc ".into()),
+        },
+        AdapterRecord {
+            ts: 10,
+            kind: "commit".into(),
+            task_id: 47,
+            worker: Some("worker-z".into()),
+            result_hash: None,
+            status: "accepted".into(),
+            tx_hash: Some("0XABC".into()),
+        },
+        AdapterRecord {
+            ts: 20,
+            kind: "reveal".into(),
+            task_id: 47,
+            worker: Some("worker-z".into()),
+            result_hash: Some("0xdef".into()),
+            status: "accepted".into(),
+            tx_hash: Some("0xdef".into()),
+        },
+        AdapterRecord {
+            ts: 21,
+            kind: "reveal".into(),
+            task_id: 47,
+            worker: Some(" worker-z ".into()),
+            result_hash: Some("0xdef".into()),
+            status: "accepted".into(),
+            tx_hash: Some("0XDEF".into()),
+        },
+    ];
+
+    let out = query_events_response(47, 20, &[], &recs).expect("events expected");
+    assert_eq!(out.len(), 2, "duplicate replay rows must not duplicate historical events");
+    assert_eq!(out[0].event_type, "commit");
+    assert_eq!(out[0].tx_hash.as_deref(), Some("0xabc"));
+    assert_eq!(out[1].event_type, "reveal");
+    assert_eq!(out[1].tx_hash.as_deref(), Some("0xdef"));
+}
