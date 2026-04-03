@@ -325,6 +325,8 @@ The scaffold writes two static files before launching the HTTP server:
 - `query-capability-audit/<subject-or-token>`
 - `query-normalized-audit-events?source=<source>&eventType=<type>&limit=<n>&cursor=<cursor>`
 
+Fail-closed boundary for operator handoff: this placeholder contract does **not** currently imply public Day-1 support for `block`, `tx`, or `account` queries. Until the durable indexer / historical read-model track closes, keep those surfaces out of scaffold-generated handoff language instead of inferring them from future explorer aspirations or upstream RPC internals.
+
 Additional contract markers carried in `index.json`:
 
 - `service_mode=operator-facing-static-scaffold`
