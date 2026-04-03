@@ -95,15 +95,20 @@ const isAbortLikeError = (err: unknown): boolean => {
   const name = "name" in err ? err.name : undefined;
   const code = "code" in err ? err.code : undefined;
   const cause = "cause" in err ? err.cause : undefined;
+  const reason = "reason" in err ? err.reason : undefined;
 
   if (name === "AbortError" || isAbortLikeErrorCode(code)) {
     return true;
   }
 
-  if (cause && typeof cause === "object") {
-    const causeName = "name" in cause ? cause.name : undefined;
-    const causeCode = "code" in cause ? cause.code : undefined;
-    return causeName === "AbortError" || isAbortLikeErrorCode(causeCode);
+  for (const nested of [cause, reason]) {
+    if (nested && typeof nested === "object") {
+      const nestedName = "name" in nested ? nested.name : undefined;
+      const nestedCode = "code" in nested ? nested.code : undefined;
+      if (nestedName === "AbortError" || isAbortLikeErrorCode(nestedCode)) {
+        return true;
+      }
+    }
   }
 
   return false;
@@ -127,16 +132,21 @@ const isTimeoutLikeError = (err: unknown): boolean => {
   const name = "name" in err ? err.name : undefined;
   const code = "code" in err ? err.code : undefined;
   const cause = "cause" in err ? err.cause : undefined;
+  const reason = "reason" in err ? err.reason : undefined;
 
   if (name === "TimeoutError") return true;
   if (isTimeoutErrorCode(code)) {
     return true;
   }
 
-  if (cause && typeof cause === "object") {
-    const causeName = "name" in cause ? cause.name : undefined;
-    const causeCode = "code" in cause ? cause.code : undefined;
-    return causeName === "TimeoutError" || isTimeoutErrorCode(causeCode);
+  for (const nested of [cause, reason]) {
+    if (nested && typeof nested === "object") {
+      const nestedName = "name" in nested ? nested.name : undefined;
+      const nestedCode = "code" in nested ? nested.code : undefined;
+      if (nestedName === "TimeoutError" || isTimeoutErrorCode(nestedCode)) {
+        return true;
+      }
+    }
   }
 
   return false;
