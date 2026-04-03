@@ -107,14 +107,6 @@ if [ -n "$EXPECTED_HEAD" ]; then
   esac
 fi
 
-case "$EXPECTED_BRANCH_REF" in
-  refs/heads/*) ;;
-  *)
-    printf 'invalid --expected-branch-ref: expected refs/heads/* got %s\n' "$EXPECTED_BRANCH_REF" >&2
-    exit 2
-    ;;
-esac
-
 canonicalize_branch_ref() {
   local ref="$1"
   case "$ref" in

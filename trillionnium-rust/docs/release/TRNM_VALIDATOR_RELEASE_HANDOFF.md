@@ -215,7 +215,7 @@ Use the generated artifact as the source of truth for the step you just ran; do 
 
 | Step | Primary artifact | Identity fields to verify first | Operator question it answers |
 | --- | --- | --- | --- |
-| Fast preflight | `run/preflight/go-no-go-latest.txt` | generated timestamp, referenced log paths | Did the local rehearsal fail fast on obvious safety blockers? |
+| Fast preflight | `run/preflight/go-no-go-latest.txt` plus the saved helper transcript when lane-bound verification is required | `result=`, `generated_at=`, `git_status_summary=`, `git_worktree_path=`, `git_worktree_branch_ref=`, `git_worktree_branch_ref_match=`, `expected_worktree_root=`, `ticket_expected_branch_ref=` (ticket form), `expected_branch_ref=` (canonical form), referenced log paths | Did the local rehearsal fail fast on obvious safety blockers *and* stay bound to the ticket-assigned worktree/ref? |
 | Local release evidence | `run/health/evidence-<timestamp>/summary.txt` | `git_toplevel=`, `git_branch=`, `git_head=`, `git_head_state=`, `git_worktree_path=`, `git_worktree_branch_ref=`, `git_expected_worktree_branch_ref=`, `git_worktree_branch_ref_match=`, `git_status_summary=`, `generated_at=`, `truth_source=`, `historical_evidence_only=`, `evidence_scope=` | Did the evidence bundle pass, and what exact replay / rollback commands apply? |
 | RC gate rehearsal | `release/rc-<timestamp>/manifest.txt` | `git_toplevel=`, `git_branch=`, `git_head=`, `git_head_state=`, `git_worktree_path=`, `git_worktree_branch_ref=`, `git_expected_worktree_branch_ref=`, `git_worktree_branch_ref_match=`, `git_status_summary=`, `generated_at=`, `truth_source=`, `historical_evidence_only=`, `evidence_scope=` | Is this branch/commit rehearsal-ready, and is any remaining blocker code vs policy? |
 
@@ -252,13 +252,22 @@ Operator discipline:
 
 When handing off to another validator/operator, prefer copying fields from the artifact itself instead of free-typing them from terminal scrollback.
 
-Preferred helper (fail-closed on missing paths, cross-artifact identity mismatches, or drift from the lane/ticket-assigned worktree/ref when you provide them; by default it resolves the latest artifacts under the `trillionnium-rust` root derived from the helper script path; `--expected-branch-ref` accepts either a short branch name like `lane/foo` or a full ref like `refs/heads/lane/foo`):
+Preferred helper (fail-closed on missing paths, cross-artifact identity mismatches, or drift from the lane/ticket-assigned worktree/ref when you provide them; by default it resolves the most recently modified artifacts under the `trillionnium-rust` root derived from the helper script path, matching the `ls -dt ... | head -n 1` path-resolution discipline shown elsewhere in this runbook; `--expected-branch-ref` accepts either a short branch name like `lane/foo` or a full ref like `refs/heads/lane/foo`):
 
 ```bash
+handoff_helper_output_path="run/preflight/handoff-fields-$(date -u +%Y%m%dT%H%M%SZ).txt"
+mkdir -p "$(dirname "$handoff_helper_output_path")"
 ./scripts/v2/extract_release_handoff_fields.sh \
   --expected-worktree-root "/abs/path/from-ticket" \
-  --expected-branch-ref "refs/heads/lane/assigned-branch"
+  --expected-branch-ref "refs/heads/lane/assigned-branch" \
+  | tee "$handoff_helper_output_path"
+printf 'handoff_helper_output_path=%s\n' "$handoff_helper_output_path"
 ```
+
+Operator rule:
+- treat `handoff_helper_output_path=` as a first-class artifact, not throwaway terminal scrollback
+- quote `summary_generated_at=`, `manifest_generated_at=`, `git_status_summary=`, `git_worktree_path=`, `git_worktree_branch_ref=`, `git_expected_worktree_branch_ref=`, `git_worktree_branch_ref_match=`, `rollback_command=`, and `replay_command=` from that saved transcript or the underlying artifacts, not from memory
+- if the helper output was not saved anywhere path-resolved, the handoff remains evidence-incomplete even if the terminal showed the expected lines once
 
 If you need the raw shell extraction for an air-gapped/debugging context, the equivalent block is:
 
@@ -332,16 +341,30 @@ Record these fields in the release ticket or operator handoff note:
 - assigned branch ref (from ticket/lane prompt):
 - verified worktree:
 - verified branch ref:
+- verified head:
 - branch:
 - commit:
 - signer exclusivity note (which process/host/worktree owns the validator identity during this rehearsal):
 - worktree:
 - worktree branch ref:
+- worktree branch ref match (`true` required):
+- git status summary (`clean` required):
 - preflight summary path:
+- preflight result:
+- preflight generated_at:
+- preflight rollback command:
+- preflight replay command:
 - local evidence summary path:
+- local evidence generated_at:
 - local evidence truth_source:
+- local evidence historical_evidence_only:
+- local evidence evidence_scope:
+- evaluated origin/main (record fresh `git rev-parse origin/main` when this handoff cites `RELEASE_READINESS.md`):
 - rc manifest path:
+- rc manifest generated_at:
 - rc manifest truth_source:
+- rc manifest historical_evidence_only:
+- rc manifest evidence_scope:
 - nightly streak result:
 - go/no-go decision:
 - blocker summary:

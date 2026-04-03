@@ -67,6 +67,16 @@ if [ -n "$CURRENT_WORKTREE_ENTRY" ]; then
 else
   CURRENT_WORKTREE_BRANCH_REF=""
 fi
+EXPECTED_BRANCH_REF_CANONICAL="${EXPECTED_BRANCH_REF:-}"
+GIT_WORKTREE_BRANCH_REF_MATCH="unknown"
+if [ -n "$EXPECTED_BRANCH_REF_CANONICAL" ]; then
+  EXPECTED_BRANCH_REF_CANONICAL="$(normalize_branch_ref "$EXPECTED_BRANCH_REF_CANONICAL")"
+  if [ -n "$CURRENT_WORKTREE_BRANCH_REF" ] && [ "$CURRENT_WORKTREE_BRANCH_REF" = "$EXPECTED_BRANCH_REF_CANONICAL" ]; then
+    GIT_WORKTREE_BRANCH_REF_MATCH="true"
+  else
+    GIT_WORKTREE_BRANCH_REF_MATCH="false"
+  fi
+fi
 REPO_ROOT="$(cd "$ROOT/.." && pwd)"
 TRUTH_SOURCE="$REPO_ROOT/RELEASE_READINESS.md"
 EVIDENCE_SCOPE="local_rc_rehearsal_not_current_release_ready_claim"
@@ -207,11 +217,13 @@ git_head_state=$GIT_HEAD_STATE
 git_status_summary=$GIT_STATUS_SUMMARY
 git_worktree_path=$GIT_TOPLEVEL
 git_worktree_branch_ref=${CURRENT_WORKTREE_BRANCH_REF:-<detached-or-unbound>}
+git_expected_worktree_branch_ref=${EXPECTED_BRANCH_REF_CANONICAL:-<unset>}
+git_worktree_branch_ref_match=$GIT_WORKTREE_BRANCH_REF_MATCH
 git_worktree_entry_begin
 $CURRENT_WORKTREE_ENTRY
 git_worktree_entry_end
 expected_worktree_root=${EXPECTED_WORKTREE_ROOT:-<unset>}
-expected_branch_ref=${EXPECTED_BRANCH_REF:-<unset>}
+expected_branch_ref=${EXPECTED_BRANCH_REF_CANONICAL:-<unset>}
 expected_head=${EXPECTED_HEAD:-<unset>}
 lane_verify_command=$lane_verify_command
 git_status_short_begin
