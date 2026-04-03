@@ -278,7 +278,7 @@ The scaffold writes two static files before launching the HTTP server:
 - `index.json`
 
 `healthz` reports that the scaffold is alive, but also marks `production_ready=false`.
-`index.json` states clearly that the service is static-only and not a durable indexer/read-model, and also records `rpc_base_url` so operators can see which upstream RPC read surface the scaffold expects. It now exposes the current Day-1 read-only contract:
+`index.json` states clearly that the service is static-only and not a durable indexer/read-model, and now records both `health_url` and `local_health_url` alongside `rpc_base_url`, so operators can preserve the reverse-proxy-facing endpoint and the local bind probe in the same evidence packet. It now exposes the current Day-1 read-only contract:
 
 - `query-task/<task_id>`
 - `query-events/<task_id>?limit=<n>`
