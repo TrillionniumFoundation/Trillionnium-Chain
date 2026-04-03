@@ -298,7 +298,7 @@ Together these anchors give release review one concrete trail for verifying that
 1. canonical checkpoint/WAL tuples emit a stable DA/light-verifier summary;
 2. speculative or malformed WAL evidence is rejected before it can be presented as audit-ready;
 3. proposal-hash surface drift is treated as a fail-closed trust problem before retry logic can blur malformed evidence into a generic outage story;
-4. predecessor-link drift is treated as a fail-closed trust problem rather than a transport/retry problem; and
+4. predecessor-link drift — including a missing non-genesis `prev_hash_hex`, not just malformed casing/control-byte drift — is treated as a fail-closed trust problem rather than a transport/retry problem; and
 5. when checkpoint/WAL linkage cannot be reconstructed locally, the operator-facing recovery surface preserves the concrete `unavailable:no_matching_wal_entry` reason instead of collapsing it into a generic success/failure blur.
 
 ### Minimal targeted replay commands
@@ -307,11 +307,11 @@ When reviewers want a smallest-possible replay set instead of broad crate sweeps
 
 - `cargo test -p trnm-state checkpoint_da_light_verifier_summary_is_canonical_and_includes_wal_linkage -q`
 - `cargo test -p trnm-state checkpoint_da_light_verifier_summary_fails_closed_on_non_ascii_proposal_hash -q`
+- `cargo test -p trnm-state checkpoint_da_light_verifier_summary_fails_closed_on_missing_non_genesis_wal_prev_hash_surface -q`
 - `cargo test -p trnm-state checkpoint_da_light_verifier_summary_fails_closed_on_uncommitted_wal_surface -q`
-- `cargo test -p trnm-state node_recovery_checkpoint_rejects_non_genesis_prev_hash_with_carriage_return_control_drift -q`
 - `cargo test -p trnm-node metadata_only_recovery_error_surfaces_da_unavailability_reason_when_checkpoint_wal_linkage_is_missing -q`
 
-This replay set is intentionally narrow: one happy-path linkage proof, three fail-closed canonicalization regressions spanning proposal-hash, commitment, and predecessor-link surfaces, and one operator-facing DA-unavailability triage check.
+This replay set is intentionally narrow: one happy-path linkage proof, three fail-closed canonicalization regressions spanning proposal-hash, non-genesis predecessor-link presence, and commitment surfaces, and one operator-facing DA-unavailability triage check.
 
 ### What the current helper surface already proves
 
