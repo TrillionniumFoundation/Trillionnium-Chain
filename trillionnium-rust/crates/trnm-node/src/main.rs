@@ -16645,6 +16645,28 @@ locked_block_hash = "stale-lock"
     }
 
     #[test]
+    fn retained_wal_summary_reports_truncated_checkpoint_only_rejoin_surface() {
+        let recovered = RecoveredWalState {
+            next_height: 9,
+            restored_lock: None,
+            last_checkpoint: Some(CheckpointMeta {
+                height: 8,
+                state_root_hex: "r8".into(),
+                wal_entry_hash_hex: "h8".into(),
+            }),
+            truncated: true,
+            metadata_only_recovery: false,
+            wal_entries_retained: 0,
+            checkpoint_height_retained: Some(8),
+        };
+
+        assert_eq!(
+            retained_wal_summary(&recovered),
+            "retained no committed WAL entries (last retained checkpoint height 8); repaired WAL tail required truncation"
+        );
+    }
+
+    #[test]
     fn recovery_startup_summary_reports_empty_fresh_join_surface_as_ready() {
         let recovered = RecoveredWalState {
             next_height: 1,
