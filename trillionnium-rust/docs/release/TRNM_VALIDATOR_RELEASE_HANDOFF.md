@@ -330,12 +330,13 @@ awk -F= '
 
 Interpretation rule:
 - if either path is missing, the handoff is incomplete; do not substitute an older artifact from memory
-- if `git_toplevel=`, `git_branch=`, `git_head=`, `git_head_state=`, `git_worktree_path=`, `git_worktree_branch_ref=`, `git_expected_worktree_branch_ref=`, `git_worktree_branch_ref_match=`, `git_status_summary=`, `truth_source=`, `historical_evidence_only=`, or `evidence_scope=` differ between the two files, stop and treat the rehearsal as **evidence-incomplete / No-Go** until explained
+- if `git_toplevel=`, `git_branch=`, `git_head=`, `git_head_state=`, `git_worktree_path=`, `git_worktree_branch_ref=`, `git_expected_worktree_branch_ref=`, `git_worktree_branch_ref_match=`, or `git_status_summary=` differ between the two files, stop and treat the rehearsal as **evidence-incomplete / No-Go** until explained
+- when quoting helper/raw-extraction output, compare `summary_truth_source=` vs `manifest_truth_source=`, `summary_historical_evidence_only=` vs `manifest_historical_evidence_only=`, and `summary_evidence_scope=` vs `manifest_evidence_scope=`; when quoting the raw artifacts directly, compare the corresponding unprefixed `truth_source=`, `historical_evidence_only=`, and `evidence_scope=` lines from each file
 - treat `git_worktree_branch_ref_match=true` as mandatory; `false` / `unknown` is a stop signal even if the rest of the fields look plausible and should also be classified as **evidence-incomplete / No-Go**
 - preserve both `summary_generated_at=` and `manifest_generated_at=` from the artifacts/helper output; they do **not** need to be identical, but they must both exist so operators can audit when each artifact was generated instead of collapsing them into one hand-copied timestamp
 - `summary_rollback_command` / `summary_replay_command` and `manifest_rollback_command` / `manifest_replay_command` should each be quoted verbatim from their own artifact; they do **not** need to be text-identical across `summary.txt` and `manifest.txt`
-- if `challenge_reexec_entry=` / `replay_env_trnm_challenge_reexec_entry=` appear in `summary.txt`, quote them verbatim next to `replay_command=` instead of dropping them from the handoff note
-- quote the emitted `rollback_command=` / `replay_command=` lines verbatim; do not rewrite them into a shorter or "equivalent" form
+- if `challenge_reexec_entry=` / `replay_env_trnm_challenge_reexec_entry=` appear in `summary.txt`, quote them verbatim next to `summary_replay_command=` (or raw `replay_command=` when quoting `summary.txt` directly) instead of dropping them from the handoff note
+- quote the emitted `summary_rollback_command=` / `summary_replay_command=` and `manifest_rollback_command=` / `manifest_replay_command=` lines verbatim; do not rewrite them into a shorter or "equivalent" form
 
 ## Forbidden operator shortcuts
 
