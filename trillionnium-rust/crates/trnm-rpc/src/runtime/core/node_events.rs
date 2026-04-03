@@ -5,6 +5,7 @@ fn load_adapter_records_file(path: &PathBuf) -> Vec<AdapterRecord> {
         return vec![];
     };
     raw.lines()
+        .map(|line| line.trim_start_matches('\u{feff}'))
         .filter(|l| !l.trim().is_empty())
         .filter_map(|l| serde_json::from_str::<AdapterRecord>(l).ok())
         .collect()
