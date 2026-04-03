@@ -2830,6 +2830,22 @@ bootstrap_peers = ["127.0.0.1:27656"]
             .nth(2)
             .expect("trnm-node manifest should sit under trillionnium-rust/crates/trnm-node");
         let shipped_config_dir = workspace_root.join("configs");
+        let shipped_config_dir_metadata = std::fs::symlink_metadata(&shipped_config_dir).unwrap_or_else(|err| {
+            panic!(
+                "{} should stay stat-able for shipped bootstrap topology directory checks: {err}",
+                shipped_config_dir.display()
+            )
+        });
+        assert!(
+            shipped_config_dir_metadata.file_type().is_dir(),
+            "{} must remain a real directory for deterministic shipped bootstrap topology discovery",
+            shipped_config_dir.display()
+        );
+        assert!(
+            !shipped_config_dir_metadata.file_type().is_symlink(),
+            "{} must not become a symlink that can retarget shipped bootstrap topology discovery",
+            shipped_config_dir.display()
+        );
         let canonical_shipped_config_dir = shipped_config_dir.canonicalize().unwrap_or_else(|err| {
             panic!(
                 "{} should canonicalize for shipped bootstrap topology checks: {err}",
