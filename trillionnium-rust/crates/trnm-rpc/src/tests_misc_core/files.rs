@@ -51,3 +51,22 @@ fn atomic_write_text_file_creates_missing_parent_directories() {
 
     let _ = fs::remove_dir_all(&base);
 }
+
+#[test]
+fn load_account_state_tolerates_utf8_bom_prefixed_json() {
+    let path = unique_tmp_path("rpc-account-state-bom", "json");
+    let _ = fs::remove_file(&path);
+    fs::write(
+        &path,
+        "\u{feff}{\n  \"alice\": {\"address\":\"alice\",\"balance\":7,\"nonce\":3}\n}\n",
+    )
+    .expect("write BOM-prefixed account state");
+
+    let accounts = load_account_state(&path);
+    let alice = accounts.get("alice").expect("alice account should parse");
+    assert_eq!(alice.address, "alice");
+    assert_eq!(alice.balance, 7);
+    assert_eq!(alice.nonce, 3);
+
+    let _ = fs::remove_file(&path);
+}

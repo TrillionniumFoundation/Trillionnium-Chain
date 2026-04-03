@@ -2385,8 +2385,13 @@ fn account_state_file() -> PathBuf {
     run_root().join("run/rpc/accounts.json")
 }
 
+fn json_text_without_utf8_bom(path: &Path) -> Option<String> {
+    let raw = fs::read_to_string(path).ok()?;
+    Some(raw.trim_start_matches('\u{feff}').to_string())
+}
+
 fn load_account_state(path: &Path) -> BTreeMap<String, AccountState> {
-    let Ok(raw) = fs::read_to_string(path) else {
+    let Some(raw) = json_text_without_utf8_bom(path) else {
         return BTreeMap::new();
     };
     match serde_json::from_str::<BTreeMap<String, AccountState>>(&raw) {
@@ -2428,7 +2433,7 @@ fn faucet_limits_file() -> PathBuf {
 }
 
 fn load_faucet_limits(path: &Path) -> BTreeMap<String, FaucetRateEntry> {
-    let Ok(raw) = fs::read_to_string(path) else {
+    let Some(raw) = json_text_without_utf8_bom(path) else {
         return BTreeMap::new();
     };
     match serde_json::from_str::<BTreeMap<String, FaucetRateEntry>>(&raw) {
@@ -2450,7 +2455,7 @@ fn save_faucet_limits(path: &Path, limits: &BTreeMap<String, FaucetRateEntry>) -
 }
 
 fn load_tx_lifecycle(path: &Path) -> BTreeMap<String, TxLifecycleRecord> {
-    let Ok(raw) = fs::read_to_string(path) else {
+    let Some(raw) = json_text_without_utf8_bom(path) else {
         return BTreeMap::new();
     };
     match serde_json::from_str::<BTreeMap<String, TxLifecycleRecord>>(&raw) {

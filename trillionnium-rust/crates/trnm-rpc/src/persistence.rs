@@ -6,8 +6,13 @@ use trnm_rpc::{AccountState, InMemoryTransferLedger, TxLifecycleRecord};
 
 use crate::fsutil::atomic_write_text_file;
 
+fn json_text_without_utf8_bom(path: &Path) -> Option<String> {
+    let raw = fs::read_to_string(path).ok()?;
+    Some(raw.trim_start_matches('\u{feff}').to_string())
+}
+
 pub(crate) fn load_account_state(path: &Path) -> BTreeMap<String, AccountState> {
-    let Ok(raw) = fs::read_to_string(path) else {
+    let Some(raw) = json_text_without_utf8_bom(path) else {
         return BTreeMap::new();
     };
     match serde_json::from_str::<BTreeMap<String, AccountState>>(&raw) {
@@ -38,7 +43,7 @@ pub(crate) struct FaucetRateEntry {
 }
 
 pub(crate) fn load_faucet_limits(path: &Path) -> BTreeMap<String, FaucetRateEntry> {
-    let Ok(raw) = fs::read_to_string(path) else {
+    let Some(raw) = json_text_without_utf8_bom(path) else {
         return BTreeMap::new();
     };
     match serde_json::from_str::<BTreeMap<String, FaucetRateEntry>>(&raw) {
@@ -63,7 +68,7 @@ pub(crate) fn save_faucet_limits(
 }
 
 pub(crate) fn load_tx_lifecycle(path: &Path) -> BTreeMap<String, TxLifecycleRecord> {
-    let Ok(raw) = fs::read_to_string(path) else {
+    let Some(raw) = json_text_without_utf8_bom(path) else {
         return BTreeMap::new();
     };
     match serde_json::from_str::<BTreeMap<String, TxLifecycleRecord>>(&raw) {
