@@ -359,7 +359,7 @@ Minimum annotation fields:
 - `verdict=<accepts-stalled|stale-wave|quorum-collapse|drift-anomaly|contract-drift|n/a>`
 - `needs_replay=<yes|no>`
 - `needs_rollback=<yes|no>`
-- `first_stop=<stable-panel-name-from-this-runbook>`
+- `first_stop=<stable-panel-name-from-this-runbook|unknown>`
 - `truth_source=<verbatim emitted value|unknown>`
 - `evidence_scope=<verbatim emitted value|unknown>`
 - `summary_path=<abs-path|unknown>`
