@@ -26,6 +26,8 @@
    - `finalize_settlement_rejects_non_success_tx_receipt`
    - `finalize_settlement_rejects_stale_config_version_after_governance_change`
      - 覆盖治理变更后 stale `config_version` 的 finalize fail-closed 路径，要求不写入 proof/nonce/finalize 审计副作用。
+   - `finalize_settlement_rejects_target_bridge_mismatch_without_audit_side_effects`
+     - 覆盖目标桥域校验的 fail-closed 语义：当 `target_bridge` 与本桥不匹配时，必须直接拒绝 finalize，且不得追加 proof / nonce / finalize 审计事件。
    - `finalize_settlement_is_idempotent_by_settlement_id_even_with_new_nonce`
      - 覆盖 finalize 终态语义：即使重放请求携带了新的 `nonce`，只要 `settlement_id` 相同，仍必须优先返回 `SettlementAlreadyFinalized`，避免 fresh nonce 绕过 terminal state。
    - `duplicate_finalize_is_side_effect_free`
