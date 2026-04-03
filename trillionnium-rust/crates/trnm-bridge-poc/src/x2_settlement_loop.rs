@@ -483,6 +483,13 @@ mod tests {
     }
 
     #[test]
+    fn normalize_compensation_reason_strips_mongolian_free_variation_selectors_for_replay_stability() {
+        let raw = "target\u{180B}relay\u{180C}timeout\u{180D}signal";
+        let normalized = normalize_compensation_reason(raw, "fallback");
+        assert_eq!(normalized, "target relay timeout signal");
+    }
+
+    #[test]
     fn normalize_compensation_reason_collapses_medium_math_and_ideographic_spaces() {
         let raw = "target\u{205F}relay\u{3000}timeout";
         let normalized = normalize_compensation_reason(raw, "fallback");
