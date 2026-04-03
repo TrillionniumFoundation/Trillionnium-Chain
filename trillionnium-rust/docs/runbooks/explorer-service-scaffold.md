@@ -30,6 +30,24 @@ This is **not**:
 - a production explorer backend
 - proof that the public-mainnet explorer blocker is closed
 
+## What still closes the Rank 1 blocker
+
+Treat this runbook as the **operator-facing placeholder edge** only.
+Closing the actual Rank 1 read-surface / indexer / explorer blocker still requires the repo to carry explicit evidence for all of the following:
+
+1. a **durable indexer pipeline** rather than static files backed only by the current RPC window
+2. an explicit **historical read-model / retention policy** for replay, archive, and bounded-vs-durable query semantics
+3. an **explorer backend/API** that is no longer just the local scaffold described here
+4. an operator packet covering **deployment, replay/recovery, and SLO ownership** for that non-placeholder read service
+
+For the current task decomposition and exit criteria, cross-check:
+
+- `trillionnium-rust/docs/release/TRNM_RANK1_READ_SURFACE_TASK_BOARD_2026-04-03.md`
+- `trillionnium-rust/docs/release/TRNM_DAY1_PUBLIC_READ_CONTRACT_2026-04-03.md`
+- `trillionnium-rust/docs/release/TRNM_MAINNET_LAUNCH_COUNTDOWN_2026-04-03.md`
+
+If a handoff note, incident ticket, or release review cites this scaffold alone as proof that explorer/indexer closure exists, treat that as **insufficient evidence** and escalate the missing durable-read artifacts explicitly.
+
 ## Bring-up
 
 From the repo root:
