@@ -271,6 +271,7 @@ Mark each item explicitly:
 - [ ] `preflight_replay_command=` quoted verbatim next to preflight decision language
 - [ ] `summary_generated_at=` preserved next to local-evidence decision language
 - [ ] `manifest_generated_at=` preserved next to RC decision language
+- [ ] `git_expected_worktree_branch_ref=` preserved next to summary/manifest decision language
 - [ ] preflight identity fields preserved next to preflight decision language
 - [ ] `truth_source=` preserved next to decision language
 - [ ] `historical_evidence_only=` preserved next to decision language
