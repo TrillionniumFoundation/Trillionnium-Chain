@@ -290,6 +290,15 @@ The status output should include the operator contract fields below:
 - `durability_boundary=ephemeral-rpc-window-only`
 - `archive_strategy=not-configured-static-scaffold`
 - `read_replica_strategy=not-configured-static-scaffold`
+- `deployment_evidence_scope=placeholder-only`
+- `rank1_read_surface_blocker=still-open`
+- `durable_indexer_status=not-implemented-in-this-scaffold`
+- `durable_read_anchor_ingestion_source=missing-placeholder-scaffold`
+- `durable_read_anchor_checkpoint_store=missing-placeholder-scaffold`
+- `durable_read_anchor_replay_start_anchor=missing-placeholder-scaffold`
+- `durable_read_anchor_retention_scope=rpc-window-bounded`
+- `durable_read_anchor_archive_owner=missing-placeholder-scaffold`
+- `durable_read_anchor_lag_slo=missing-placeholder-scaffold`
 - `health=ok`
 - `health_probe=active`
 - `health_probe_url=<the exact public/reverse-proxy-facing URL status checked>`
@@ -433,6 +442,15 @@ It also re-emits the same operator-facing contract fields as the up/status scrip
 - `durability_boundary=ephemeral-rpc-window-only`
 - `archive_strategy=not-configured-static-scaffold`
 - `read_replica_strategy=not-configured-static-scaffold`
+- `deployment_evidence_scope=placeholder-only`
+- `rank1_read_surface_blocker=still-open`
+- `durable_indexer_status=not-implemented-in-this-scaffold`
+- `durable_read_anchor_ingestion_source=missing-placeholder-scaffold`
+- `durable_read_anchor_checkpoint_store=missing-placeholder-scaffold`
+- `durable_read_anchor_replay_start_anchor=missing-placeholder-scaffold`
+- `durable_read_anchor_retention_scope=rpc-window-bounded`
+- `durable_read_anchor_archive_owner=missing-placeholder-scaffold`
+- `durable_read_anchor_lag_slo=missing-placeholder-scaffold`
 
 Likewise, `explorer_service_up.sh` now emits the same `service_mode` / `production_ready` markers plus `public_base_url=...`, `rpc_base_url=...`, and `local_health_url=...` on success, "already running", and fail-fast exits, so operator notes can quote one consistent contract without having to run `status` first. It now also emits `deployment_evidence_scope=placeholder-only`, `rank1_read_surface_blocker=still-open`, `durable_indexer_status=not-implemented-in-this-scaffold`, and the flat `durable_read_anchor_*=` placeholders so bring-up notes preserve the same fail-closed blocker language as `status`/`down`. Its startup gate intentionally probes the local bind target rather than `EXPLORER_PUBLIC_BASE_URL`, so a reverse-proxy-facing public URL can still differ from the local loopback/host bind without breaking the operator bring-up check.
 
