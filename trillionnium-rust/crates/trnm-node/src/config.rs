@@ -1793,6 +1793,58 @@ bootstrap_peers = ["127.0.0.1:27656"]
     }
 
     #[test]
+    fn validate_node_config_rejects_invisible_or_bidi_format_characters_in_node_id() {
+        for node_id in ["node\u{200B}1", "node\u{202E}1"] {
+            let err = validate_node_config(
+                NodeConfig {
+                    node_id: node_id.into(),
+                    rpc_addr: "127.0.0.1:7000".into(),
+                    p2p_addr: "127.0.0.1:7001".into(),
+                },
+                "inline",
+            )
+            .expect_err("invisible/bidi node_id characters must fail closed");
+            assert!(
+                err.to_string()
+                    .contains("node_id must not contain invisible or bidirectional format characters"),
+                "unexpected error for {node_id:?}: {err:#}"
+            );
+        }
+    }
+
+    #[test]
+    fn validate_node_config_rejects_invisible_or_bidi_format_characters_in_listener_addresses() {
+        for (field, rpc_addr, p2p_addr, expected_message) in [
+            (
+                "rpc_addr",
+                "127.0.0.1:70\u{200B}00",
+                "127.0.0.1:7001",
+                "rpc_addr must not contain invisible or bidirectional format characters",
+            ),
+            (
+                "p2p_addr",
+                "127.0.0.1:7000",
+                "127.0.0.1:70\u{202E}01",
+                "p2p_addr must not contain invisible or bidirectional format characters",
+            ),
+        ] {
+            let err = validate_node_config(
+                NodeConfig {
+                    node_id: "node-a".into(),
+                    rpc_addr: rpc_addr.into(),
+                    p2p_addr: p2p_addr.into(),
+                },
+                "inline",
+            )
+            .expect_err("invisible/bidi listener characters must fail closed");
+            assert!(
+                err.to_string().contains(expected_message),
+                "unexpected error for {field}: {err:#}"
+            );
+        }
+    }
+
+    #[test]
     fn validate_node_config_rejects_host_and_socket_literals_in_node_id() {
         for node_id in ["localhost", "127.0.0.1", "127.0.0.1:7000", "[::1]:7000"] {
             let err = validate_node_config(
