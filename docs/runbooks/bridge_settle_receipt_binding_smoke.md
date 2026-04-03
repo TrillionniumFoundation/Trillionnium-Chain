@@ -32,6 +32,8 @@
      - 覆盖 finalize 终态语义：即使重放请求携带了新的 `nonce`，只要 `settlement_id` 相同，仍必须优先返回 `SettlementAlreadyFinalized`，避免 fresh nonce 绕过 terminal state。
    - `duplicate_finalize_is_side_effect_free`
      - 覆盖重复 finalize 的副作用约束：重复请求必须直接命中终态，不得追加新的 proof / nonce / finalize 审计事件。
+   - `finalize_settlement_nonce_collision_rolls_back_proof_side_effects`
+     - 覆盖 finalize 过程中 nonce 已被占用时的回滚语义：必须撤销本次 proof 占用与临时审计写入，避免 nonce 冲突把 relay 留在“proof 已用但 settlement 未终结”的半提交状态。
    - `duplicate_finalize_with_fresh_nonce_and_bad_receipt_still_stops_at_terminal_state`
      - 覆盖 finalize 终态优先级：即使重放请求携带 fresh `nonce` 且 `tx_receipt_status` 失败，只要 `settlement_id` 相同，仍必须先返回 `SettlementAlreadyFinalized`，避免 fresh nonce + bad receipt 组合绕过 terminal state 或污染审计。
    - `duplicate_finalize_with_stale_config_version_after_governance_change_still_stops_at_terminal_state`
