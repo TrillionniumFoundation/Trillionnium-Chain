@@ -428,6 +428,28 @@ fn explicit_wallet_store_path_must_be_absolute_and_normalized() {
             .contains("must be an absolute normalized path"),
         "unexpected error: {root_read_err}"
     );
+
+    let wrapped_quote_err = write_key(
+        std::path::Path::new("/tmp/《trnm-wallets》"),
+        "alice",
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    )
+    .unwrap_err();
+    assert!(
+        wrapped_quote_err
+            .to_string()
+            .contains("must be an absolute normalized path"),
+        "unexpected error: {wrapped_quote_err}"
+    );
+
+    let wrapped_bracket_err = read_key(std::path::Path::new("/tmp/【trnm-wallets】"), "alice")
+        .unwrap_err();
+    assert!(
+        wrapped_bracket_err
+            .to_string()
+            .contains("must be an absolute normalized path"),
+        "unexpected error: {wrapped_bracket_err}"
+    );
 }
 
 #[test]

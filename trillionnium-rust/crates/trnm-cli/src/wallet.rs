@@ -81,6 +81,10 @@ fn is_single_sided_env_quote(c: char) -> bool {
     )
 }
 
+fn is_suspicious_path_wrapper(c: char) -> bool {
+    is_single_sided_env_quote(c)
+}
+
 pub(crate) fn normalize_wallet_store_env(raw: &str) -> Option<&str> {
     let mut normalized = raw.trim_matches(is_hidden_env_wrapper);
     loop {
@@ -148,6 +152,7 @@ fn wallet_store_path_is_safe(path: &Path) -> bool {
         && rendered.chars().all(|c| {
             !c.is_whitespace()
                 && !c.is_control()
+                && !is_suspicious_path_wrapper(c)
                 && !matches!(
                     c,
                     '\u{061C}'
