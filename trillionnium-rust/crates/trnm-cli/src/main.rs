@@ -3163,6 +3163,56 @@ mod tests {
     }
 
     #[test]
+    fn resolve_wallet_store_rejects_symlinked_final_store_component() {
+        let _guard = ENV_LOCK.lock().unwrap();
+        let original_store = std::env::var_os("TRNM_WALLET_STORE");
+
+        let root = canonical_temp_root().join(format!(
+            "trnm-cli-resolve-store-symlink-test-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        ));
+        let real_store = root.join("real-store");
+        let linked_store = root.join("linked-store");
+        std::fs::create_dir_all(&real_store).unwrap();
+        std::os::unix::fs::symlink(&real_store, &linked_store).unwrap();
+
+        let explicit_err = resolve_wallet_store(Some(linked_store.clone())).unwrap_err();
+        assert!(
+            explicit_err
+                .to_string()
+                .contains("explicit wallet store")
+                && explicit_err
+                    .to_string()
+                    .contains("must be an absolute normalized symlink-free path"),
+            "unexpected error: {explicit_err}"
+        );
+
+        std::env::set_var("TRNM_WALLET_STORE", linked_store.as_os_str());
+        let env_err = resolve_wallet_store(None).unwrap_err();
+        assert!(
+            env_err
+                .to_string()
+                .contains("TRNM_WALLET_STORE")
+                && env_err
+                    .to_string()
+                    .contains("must be an absolute normalized symlink-free path"),
+            "unexpected error: {env_err}"
+        );
+
+        match original_store {
+            Some(value) => std::env::set_var("TRNM_WALLET_STORE", value),
+            None => std::env::remove_var("TRNM_WALLET_STORE"),
+        }
+        let _ = std::fs::remove_file(&linked_store);
+        let _ = std::fs::remove_dir_all(&real_store);
+        let _ = std::fs::remove_dir_all(&root);
+    }
+
+    #[test]
     fn default_wallet_store_rejects_unsafe_absolute_cwd_fallback() {
         let _guard = ENV_LOCK.lock().unwrap();
         let original_store = std::env::var_os("TRNM_WALLET_STORE");
