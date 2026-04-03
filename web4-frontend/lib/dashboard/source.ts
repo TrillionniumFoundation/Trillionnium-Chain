@@ -153,7 +153,9 @@ const resolveDashboardTaskId = (): string =>
 const resolveDashboardAuditSubject = (): string =>
   resolveNonEmptyEnv(process.env.NEXT_PUBLIC_DASHBOARD_AUDIT_SUBJECT, "did:trnm:core-rpc");
 
-const toDisplayTime = (isoLike: string): string => {
+const toDisplayTime = (isoLike?: string): string => {
+  if (typeof isoLike !== "string" || isoLike.trim().length === 0) return "-";
+
   const date = new Date(isoLike);
   if (Number.isNaN(date.getTime())) return isoLike;
 
@@ -262,6 +264,11 @@ const mapNormalizedAuditToDashboardEvent = (event: NormalizedAuditEvent, fallbac
   };
 };
 
+const toEventSortKey = (displayTime: string): number => {
+  const parsed = Date.parse(displayTime);
+  return Number.isNaN(parsed) ? Number.NEGATIVE_INFINITY : parsed;
+};
+
 const parsePositiveIntEnv = (value: string | undefined, fallback: number): number => {
   const normalized = value?.trim();
   if (!normalized) return fallback;
@@ -271,6 +278,16 @@ const parsePositiveIntEnv = (value: string | undefined, fallback: number): numbe
   if (Number.isNaN(parsed) || parsed <= 0) return fallback;
 
   return parsed;
+};
+
+const normalizeOptionalCursor = (cursor: string | undefined): string | undefined => {
+  if (cursor == null) return undefined;
+
+  const normalized = cursor
+    .replace(/[\u200B\u200C\u200D\u2060\u2063\uFEFF]/g, "")
+    .trim();
+
+  return normalized.length > 0 ? normalized : undefined;
 };
 
 const resolveNormalizedAuditPageLimit = (): number =>

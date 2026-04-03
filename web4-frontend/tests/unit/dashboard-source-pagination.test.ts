@@ -155,6 +155,59 @@ describe("dashboard source normalized audit pagination", () => {
     }
   });
 
+  it("falls back to default pagination limit when env is zero", async () => {
+    const previousLimit = process.env.NEXT_PUBLIC_DASHBOARD_NORMALIZED_AUDIT_EVENT_LIMIT;
+
+    process.env.NEXT_PUBLIC_DASHBOARD_NORMALIZED_AUDIT_EVENT_LIMIT = "0";
+
+    try {
+      const mockClient = {
+        queryTask: vi.fn().mockResolvedValue({
+          task: {
+            id: "343b",
+            owner: "ops",
+            status: "running",
+            createdAt: "2026-03-01T00:00:00.000Z",
+            metadata: {},
+          },
+        }),
+        queryEvents: vi.fn().mockResolvedValue({
+          taskId: "343b",
+          events: [],
+        }),
+        queryCapabilityAudit: vi.fn().mockResolvedValue({
+          subject: "did:trnm:test",
+          audits: [
+            {
+              subject: "did:trnm:test",
+              capability: "AUDIT_READ",
+              granted: true,
+              checkedAt: "2026-03-01T00:00:00.000Z",
+            },
+          ],
+        }),
+        queryNormalizedAuditEvents: vi.fn().mockResolvedValue({
+          events: [],
+          hasMore: false,
+        }),
+      } as unknown as ReturnType<typeof apiContractClient.createFrontendApiClient>;
+
+      vi.spyOn(apiContractClient, "createFrontendApiClient").mockReturnValue(mockClient);
+
+      await fetchDashboardSnapshot();
+
+      expect(mockClient.queryNormalizedAuditEvents).toHaveBeenCalledWith({
+        limit: 60,
+      });
+    } finally {
+      if (previousLimit === undefined) {
+        delete process.env.NEXT_PUBLIC_DASHBOARD_NORMALIZED_AUDIT_EVENT_LIMIT;
+      } else {
+        process.env.NEXT_PUBLIC_DASHBOARD_NORMALIZED_AUDIT_EVENT_LIMIT = previousLimit;
+      }
+    }
+  });
+
   it("loads multiple normalized audit pages and merges into dashboard events", async () => {
     const mockClient = {
       queryTask: vi

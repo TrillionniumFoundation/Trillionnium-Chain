@@ -168,6 +168,31 @@ describe("api-contract adapters", () => {
     });
   });
 
+  it("ignores canonical resolution_code aliases that normalize to empty noise", () => {
+    const out = adaptQueryEvents({
+      taskId: "8b",
+      events: [
+        {
+          id: "e2b",
+          taskId: "8b",
+          type: "settle",
+          level: "warn",
+          timestamp: "2026-03-03T00:00:01.500Z",
+          payload: {
+            resolution_code: "\uFEFF \u200B\u200D ",
+          },
+        },
+      ],
+    });
+
+    expect(out.events[0]?.level).toBe("warn");
+    expect(out.events[0]?.payload).toMatchObject({
+      resolution_code: "\uFEFF \u200B\u200D ",
+    });
+    expect(out.events[0]?.payload?.resolutionCode).toBeUndefined();
+    expect(out.events[0]?.payload?.m2v2ErrorCode).toBeUndefined();
+  });
+
   it("maps frozen M2V2 resolution codes to fail-closed error signal", () => {
     const out = adaptQueryEvents(
       [

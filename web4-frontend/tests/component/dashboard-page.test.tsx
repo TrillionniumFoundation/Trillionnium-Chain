@@ -127,6 +127,27 @@ describe("dashboard page", () => {
     expect(mockedFetch).toHaveBeenCalledWith({ mode: "empty" });
   });
 
+  it("fails closed to ok mode when the query param is unknown", async () => {
+    mockedFetch.mockResolvedValue(snapshot);
+    window.history.replaceState({}, "", "/?mode=write-enabled");
+
+    render(<Home />);
+
+    expect(await screen.findByText("Task Digest")).toBeInTheDocument();
+    expect(mockedFetch).toHaveBeenCalledWith({ mode: "ok" });
+  });
+
+  it("uses readonly mock fallback when explicitly requested via query param", async () => {
+    mockedFetch.mockResolvedValue(snapshot);
+    window.history.replaceState({}, "", "/?mode=mock");
+
+    render(<Home />);
+
+    expect(await screen.findByText("Task Digest")).toBeInTheDocument();
+    expect(screen.getByText("Open execution items: 1")).toBeInTheDocument();
+    expect(mockedFetch).toHaveBeenCalledWith({ mode: "mock" });
+  });
+
   it("shows adapter error state", async () => {
     mockedFetch.mockRejectedValue(new Error("Dashboard backend unavailable"));
     window.history.replaceState({}, "", "/?mode=error");
