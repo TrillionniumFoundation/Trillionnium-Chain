@@ -3101,6 +3101,35 @@ mod tests {
     }
 
     #[test]
+    fn resolve_wallet_store_fail_closes_on_invalid_env_and_prefers_explicit_store() {
+        let _guard = ENV_LOCK.lock().unwrap();
+        let original_store = std::env::var_os("TRNM_WALLET_STORE");
+
+        std::env::set_var("TRNM_WALLET_STORE", "\u{2068}\"./wallets\"\u{2069}");
+        let err = resolve_wallet_store(None).unwrap_err();
+        assert!(
+            err.to_string()
+                .contains("must be an absolute normalized symlink-free path"),
+            "unexpected error: {err}"
+        );
+
+        let explicit = std::env::temp_dir().join(format!(
+            "trnm-cli-explicit-store-test-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        ));
+        assert_eq!(resolve_wallet_store(Some(explicit.clone())).unwrap(), explicit);
+
+        match original_store {
+            Some(value) => std::env::set_var("TRNM_WALLET_STORE", value),
+            None => std::env::remove_var("TRNM_WALLET_STORE"),
+        }
+    }
+
+    #[test]
     fn default_wallet_store_rejects_unsafe_absolute_cwd_fallback() {
         let _guard = ENV_LOCK.lock().unwrap();
         let original_store = std::env::var_os("TRNM_WALLET_STORE");
