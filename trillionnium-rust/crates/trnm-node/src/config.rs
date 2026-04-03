@@ -3119,6 +3119,14 @@ bootstrap_peers = ["127.0.0.1:27656"]
             let expected_p2p_port = 26_656 + (index as u16) * 1_000;
             let expected_rpc_port = expected_p2p_port + 1;
             let config_slot = index + 1;
+            let file_stem = std::path::Path::new(config_path)
+                .file_stem()
+                .and_then(|stem| stem.to_str())
+                .expect("shipped bootstrap config path should end in utf-8 filename stem");
+            let filename_slot = file_stem
+                .strip_prefix("node")
+                .and_then(|slot| slot.parse::<usize>().ok())
+                .unwrap_or_else(|| panic!("{config_path} should keep a numeric `nodeN.toml` slot name"));
             let rpc_socket: SocketAddr = cfg
                 .rpc_addr
                 .parse()
@@ -3131,6 +3139,10 @@ bootstrap_peers = ["127.0.0.1:27656"]
             assert_eq!(
                 cfg.node_id, expected_node_id,
                 "{config_path} must keep the deterministic shipped bootstrap node_id for slot {config_slot}"
+            );
+            assert_eq!(
+                filename_slot, config_slot,
+                "{config_path} filename slot must stay aligned with the deterministic shipped bootstrap slot order"
             );
             assert!(
                 node_ids.insert(cfg.node_id.clone()),
