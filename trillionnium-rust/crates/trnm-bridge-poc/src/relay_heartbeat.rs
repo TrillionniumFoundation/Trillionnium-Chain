@@ -135,6 +135,8 @@ fn is_disallowed_invisible_char(ch: char) -> bool {
             | '\u{115F}'
             | '\u{1160}'
             | '\u{1680}'
+            | '\u{17B4}'
+            | '\u{17B5}'
             | '\u{180B}'
             | '\u{180C}'
             | '\u{180D}'
@@ -191,6 +193,7 @@ fn is_disallowed_invisible_char(ch: char) -> bool {
             | '\u{FFFB}'
     )
         || ('\u{FE00}'..='\u{FE0F}').contains(&ch)
+        || ('\u{1D173}'..='\u{1D17A}').contains(&ch)
         || ('\u{E0000}'..='\u{E007F}').contains(&ch)
         || ('\u{E0100}'..='\u{E01EF}').contains(&ch)
 }
@@ -416,6 +419,20 @@ mod tests {
     }
 
     #[test]
+    fn normalize_failure_reason_strips_khmer_inherent_vowels_for_replay_stability() {
+        let raw = "target\u{17B4}relay\u{17B5}timeout";
+        let normalized = normalize_failure_reason(raw);
+        assert_eq!(normalized, "target relay timeout");
+    }
+
+    #[test]
+    fn normalize_failure_reason_strips_plane1_musical_controls_for_replay_stability() {
+        let raw = "target\u{1D173}relay\u{1D174}timeout\u{1D17A}signal";
+        let normalized = normalize_failure_reason(raw);
+        assert_eq!(normalized, "target relay timeout signal");
+    }
+
+    #[test]
     fn normalize_failure_reason_collapses_braille_blank_for_replay_stability() {
         let raw = "target\u{2800}relay timeout";
         let normalized = normalize_failure_reason(raw);
@@ -453,4 +470,3 @@ mod tests {
         assert!(normalized.ends_with('…'));
     }
 }
-
