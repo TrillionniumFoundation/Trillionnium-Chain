@@ -95,9 +95,12 @@ case "${HOST}" in
     LOCAL_PROBE_HOST="127.0.0.1"
     ;;
   ::)
-    LOCAL_PROBE_HOST="[::1]"
+    LOCAL_PROBE_HOST="::1"
     ;;
 esac
+if [[ "${LOCAL_PROBE_HOST}" == *:* && "${LOCAL_PROBE_HOST}" != \[*\] ]]; then
+  LOCAL_PROBE_HOST="[${LOCAL_PROBE_HOST}]"
+fi
 LOCAL_HEALTH_URL="http://${LOCAL_PROBE_HOST}:${PORT}/healthz"
 
 emit_durable_read_anchor_fields() {
