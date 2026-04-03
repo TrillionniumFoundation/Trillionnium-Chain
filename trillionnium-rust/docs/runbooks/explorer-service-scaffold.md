@@ -308,7 +308,7 @@ The scaffold writes two static files before launching the HTTP server:
 - `healthz`
 - `index.json`
 
-`healthz` reports that the scaffold is alive, but also marks `production_ready=false`.
+`healthz` reports that the scaffold is alive, preserves the minimum health probe shape (`ok=true`, `service`, `ts_unix_ms`, `version=1`), and also marks `production_ready=false` so operators do not over-read the placeholder as durable read-model closure.
 `index.json` states clearly that the service is static-only and not a durable indexer/read-model, and now records both `health_url` and `local_health_url` alongside `rpc_base_url`, so operators can preserve the reverse-proxy-facing endpoint and the local bind probe in the same evidence packet. It now exposes the current Day-1 read-only contract:
 
 - `query-task/<task_id>`

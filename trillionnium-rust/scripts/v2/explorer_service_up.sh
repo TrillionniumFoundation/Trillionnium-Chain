@@ -261,8 +261,14 @@ if [[ -f "${PID_FILE}" ]]; then
   rm -f "${PID_FILE}"
 fi
 
+health_ts_unix_ms="$(python3 - <<'PY'
+import time
+print(int(time.time() * 1000))
+PY
+)"
+
 cat >"${HEALTH_FILE}" <<EOF
-{"status":"ok","service":"explorer-service-scaffold","mode":"operator-facing","production_ready":false}
+{"ok":true,"status":"ok","service":"explorer-service-scaffold","mode":"operator-facing","production_ready":false,"ts_unix_ms":${health_ts_unix_ms},"version":1}
 EOF
 
 cat >"${INDEX_FILE}" <<EOF
