@@ -418,9 +418,10 @@ Rules:
 2. Quote `rollback_command=` / `replay_command=` verbatim; do not rewrite them.
 3. Set `verdict=n/a` for non-oracle incidents; for `service=oracle`, preserve the oracle runbook subtype instead of dropping it.
 4. Set `first_stop_panel=` to the exact stable panel name from the routing table above; use `unknown` rather than inventing an ad-hoc alias.
-5. If the worktree/branch identity fields are missing or mismatched during an incident, classify as at least `sev0` until reconciled.
-6. If both replay and rollback pointers are absent, the handoff is incomplete even if the graph looks obvious.
-7. When both `summary.txt` and `manifest.txt` exist, prefer `./scripts/v2/extract_release_handoff_fields.sh --expected-worktree-root <ticket-or-rehearsal-worktree> --expected-branch-ref <ticket-or-rehearsal-branch>` so `summary_path=`, `manifest_path=`, `git_worktree_branch_ref=`, and `git_worktree_branch_ref_match=` are populated fail-closed against the assigned worktree/branch rather than whatever branch happens to be checked out locally.
+5. If `signal=contract-drift`, set `first_stop_panel="Evidence / replay integrity"` even when the symptom first appeared on a service-specific dashboard; observability-contract failures route to evidence integrity before service-local graphs.
+6. If the worktree/branch identity fields are missing or mismatched during an incident, classify as at least `sev0` until reconciled.
+7. If both replay and rollback pointers are absent, the handoff is incomplete even if the graph looks obvious.
+8. When both `summary.txt` and `manifest.txt` exist, prefer `./scripts/v2/extract_release_handoff_fields.sh --expected-worktree-root <ticket-or-rehearsal-worktree> --expected-branch-ref <ticket-or-rehearsal-branch>` so `summary_path=`, `manifest_path=`, `git_worktree_branch_ref=`, and `git_worktree_branch_ref_match=` are populated fail-closed against the assigned worktree/branch rather than whatever branch happens to be checked out locally.
 
 Quick extraction template for responders:
 
@@ -449,6 +450,7 @@ Example:
 - `plane=observability service=node severity=sev1 signal=sync-lag verdict=n/a needs_replay=yes needs_rollback=yes first_stop="Node liveness / height progress" observed=committed_height_flat impact=one-validator truth_source=local-release-evidence-v1 evidence_scope=release-handoff summary_path=/abs/run/health/evidence-20260331/summary.txt manifest_path=/abs/release/rc-20260331/manifest.txt git_worktree_path=/abs/lane/MN12 git_worktree_branch_ref=refs/heads/lane/mn12-alerting-dashboard-incident-sre git_expected_worktree_branch_ref=refs/heads/lane/mn12-alerting-dashboard-incident-sre git_worktree_branch_ref_match=true replay=present rollback=present`
 - `plane=observability service=oracle severity=sev1 signal=oracle-anomaly verdict=quorum-collapse needs_replay=yes needs_rollback=no first_stop="Oracle-specific drill-down" observed=source_cardinality_below_floor impact=price-ingest-degraded truth_source=local-release-evidence-v1 evidence_scope=release-handoff summary_path=/abs/run/health/evidence-20260331/summary.txt manifest_path=/abs/release/rc-20260331/manifest.txt replay=present rollback=missing`
 - `plane=observability service=bridge severity=sev1 signal=bridge-anomaly verdict=n/a needs_replay=yes needs_rollback=yes first_stop="Bridge relay / settlement integrity" observed=settlement_heartbeat_stalled impact=cross-chain-settlement-delayed truth_source=local-release-evidence-v1 evidence_scope=release-handoff summary_path=/abs/run/health/evidence-20260331/summary.txt manifest_path=/abs/release/rc-20260331/manifest.txt replay=present rollback=present`
+- `plane=observability service=any severity=sev0 signal=contract-drift verdict=n/a needs_replay=yes needs_rollback=yes first_stop="Evidence / replay integrity" observed=label_block_mismatch impact=dashboard-routing-untrusted truth_source=local-release-evidence-v1 evidence_scope=release-handoff summary_path=/abs/run/health/evidence-20260331/summary.txt manifest_path=/abs/release/rc-20260331/manifest.txt git_worktree_path=/abs/lane/MN12 git_worktree_branch_ref=refs/heads/lane/mn12-alerting-dashboard-incident-sre git_expected_worktree_branch_ref=refs/heads/lane/mn12-alerting-dashboard-incident-sre git_worktree_branch_ref_match=true replay=present rollback=present`
 
 ---
 
