@@ -1050,8 +1050,8 @@ mod tests {
         for node_id in [
             "node@seed",
             "node?peer=seed",
-            "node#seed",
-            "node%seed",
+            "node#fragment",
+            "node%2falpha",
             "node&peer=seed",
             "node=seed",
         ] {
