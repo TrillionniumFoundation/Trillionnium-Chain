@@ -21,10 +21,10 @@ Primary references:
 - `docs/runbooks/local-release-evidence.md`
 - `docs/runbooks/validator-rotation-dr.md`
 - `scripts/v2/verify_lane_worktree.sh`
-- `configs/node1.toml`
-- `configs/node2.toml`
-- `configs/node3.toml`
-- `configs/node4.toml`
+- `trillionnium-rust/configs/node1.toml`
+- `trillionnium-rust/configs/node2.toml`
+- `trillionnium-rust/configs/node3.toml`
+- `trillionnium-rust/configs/node4.toml`
 
 ## Operator invariants
 
@@ -117,7 +117,7 @@ Minimum packet fields:
 - `validator_set_version=` identifying the exact validator membership list under review; for packets that may feed `public-mainnet-input`, use a concrete version label (for example `mainnet-candidate-2026-03-31`) instead of the template/default `v1`
 - `validator_entry=` repeated once per validator with `validator_name`, `validator_owner`, `node_id`, `config_path`, `p2p_addr`, and `rpc_addr`; for `public-mainnet-input`, prefer absolute `config_path` values so every operator is reviewing the same on-disk file identity rather than a shell-relative path. When using `python3 scripts/v2/check_validator_config_bundle.py --emit-ceremony-packet --ceremony-scope public-mainnet-input ...`, the generated `validator_entry.config_path` values are emitted as absolute paths automatically from the validated bundle.
 - `validator_entry_hash=` or equivalent per-validator fingerprint if a generated validator descriptor exists; `python3 scripts/v2/check_validator_config_bundle.py --emit-ceremony-packet ...` now emits this deterministically from the validated `validator_name`/`node_id`/`config_path`/`p2p_addr`/`rpc_addr` tuple so later acknowledgments can bind to one exact descriptor instead of a hand-written placeholder
-- `operator_ack=` repeated once per operator/validator owner, confirming they checked the same genesis hash, config path, and the specific `validator_entry=` they own; the acknowledgment must copy the emitted `validator_entry.config_path` verbatim rather than normalizing it by hand, so later review does not have to guess whether `configs/node1.toml` and `/abs/path/.../configs/node1.toml` were intended to name the same reviewed file. When `validator_entry_hash=` is present, require the acknowledgment line/artifact to quote the same hash so later review can bind the acknowledgment to one immutable validator descriptor instead of a loosely matched name/path pair
+- `operator_ack=` repeated once per operator/validator owner, confirming they checked the same genesis hash, config path, and the specific `validator_entry=` they own; the acknowledgment must copy the emitted `validator_entry.config_path` verbatim rather than normalizing it by hand, so later review does not have to guess whether `trillionnium-rust/configs/node1.toml` and `/abs/path/.../trillionnium-rust/configs/node1.toml` were intended to name the same reviewed file. When `validator_entry_hash=` is present, require the acknowledgment line/artifact to quote the same hash so later review can bind the acknowledgment to one immutable validator descriptor instead of a loosely matched name/path pair
 - `operator_ack_signature_path=` or `operator_ack_digest=` repeated once per operator when the ceremony requires a durable signed/attested acknowledgment artifact instead of chat-only confirmation
 - `startup_order_note=` stating whether startup order matters for this rehearsal and who is expected to start first
 - `rollback_owner=` naming who can declare the ceremony aborted and which command/process stop is authoritative
@@ -147,16 +147,16 @@ genesis_artifact_sha256=<64-char-sha256>
 
 authority_note=all operators must acknowledge the exact packet above before any validator starts
 
-validator_entry=validator_name=node1;validator_owner=alice;node_id=node1;config_path=configs/node1.toml;p2p_addr=127.0.0.1:26656;rpc_addr=127.0.0.1:26657
+validator_entry=validator_name=node1;validator_owner=alice;node_id=node1;config_path=trillionnium-rust/configs/node1.toml;p2p_addr=127.0.0.1:26656;rpc_addr=127.0.0.1:26657
 validator_entry_hash=<deterministic-sha256-from-validator_name/node_id/config_path/p2p_addr/rpc_addr>
 operator_contact=node1=<chat/email/oncall>
-operator_ack=alice checked genesis_artifact_sha256=<64-char-sha256>;config_path=configs/node1.toml;validator_name=node1;validator_entry_hash=<deterministic-sha256-from-validator_name/node_id/config_path/p2p_addr/rpc_addr>
+operator_ack=alice checked genesis_artifact_sha256=<64-char-sha256>;config_path=trillionnium-rust/configs/node1.toml;validator_name=node1;validator_entry_hash=<deterministic-sha256-from-validator_name/node_id/config_path/p2p_addr/rpc_addr>
 operator_ack_signature_path=/abs/path/to/alice-ack.txt
 
-validator_entry=validator_name=node2;validator_owner=bob;node_id=node2;config_path=configs/node2.toml;p2p_addr=127.0.0.1:27656;rpc_addr=127.0.0.1:27657
+validator_entry=validator_name=node2;validator_owner=bob;node_id=node2;config_path=trillionnium-rust/configs/node2.toml;p2p_addr=127.0.0.1:27656;rpc_addr=127.0.0.1:27657
 validator_entry_hash=<deterministic-sha256-from-validator_name/node_id/config_path/p2p_addr/rpc_addr>
 operator_contact=node2=<chat/email/oncall>
-operator_ack=bob checked genesis_artifact_sha256=<64-char-sha256>;config_path=configs/node2.toml;validator_name=node2;validator_entry_hash=<deterministic-sha256-from-validator_name/node_id/config_path/p2p_addr/rpc_addr>
+operator_ack=bob checked genesis_artifact_sha256=<64-char-sha256>;config_path=trillionnium-rust/configs/node2.toml;validator_name=node2;validator_entry_hash=<deterministic-sha256-from-validator_name/node_id/config_path/p2p_addr/rpc_addr>
 operator_ack_digest=<optional-sha256-of-bob-ack>
 ```
 
@@ -174,25 +174,25 @@ Fail-closed rule:
 Required files:
 
 ```bash
-ls configs/node1.toml configs/node2.toml configs/node3.toml configs/node4.toml
+ls trillionnium-rust/configs/node1.toml trillionnium-rust/configs/node2.toml trillionnium-rust/configs/node3.toml trillionnium-rust/configs/node4.toml
 ```
 
 Recommended targeted validation:
 
 ```bash
 python3 scripts/v2/check_validator_config_bundle.py \
-  configs/node1.toml \
-  configs/node2.toml \
-  configs/node3.toml \
-  configs/node4.toml
+  trillionnium-rust/configs/node1.toml \
+  trillionnium-rust/configs/node2.toml \
+  trillionnium-rust/configs/node3.toml \
+  trillionnium-rust/configs/node4.toml
 python3 scripts/v2/check_validator_config_bundle.py \
   --emit-ceremony-packet \
   --genesis-artifact-path /abs/path/to/genesis.json \
   --genesis-artifact-sha256 <64-char-sha256> \
-  configs/node1.toml \
-  configs/node2.toml \
-  configs/node3.toml \
-  configs/node4.toml
+  trillionnium-rust/configs/node1.toml \
+  trillionnium-rust/configs/node2.toml \
+  trillionnium-rust/configs/node3.toml \
+  trillionnium-rust/configs/node4.toml
 cargo check -p trnm-node -q
 ```
 
@@ -212,10 +212,10 @@ python3 scripts/v2/check_validator_config_bundle.py \
   --rollback-owner primary-operator \
   --genesis-artifact-path /abs/path/to/genesis.json \
   --genesis-artifact-sha256 <64-char-sha256> \
-  configs/node1.toml \
-  configs/node2.toml \
-  configs/node3.toml \
-  configs/node4.toml
+  trillionnium-rust/configs/node1.toml \
+  trillionnium-rust/configs/node2.toml \
+  trillionnium-rust/configs/node3.toml \
+  trillionnium-rust/configs/node4.toml
 ```
 
 Fail-closed rule for generated packets:
@@ -256,7 +256,7 @@ For a local bootstrap sanity pass, start with the known config entrypoint instea
 
 ```bash
 cargo run -q -p trnm-node -- \
-  --config configs/node1.toml \
+  --config trillionnium-rust/configs/node1.toml \
   --block-ms 5 \
   --max-blocks 6 \
   --demo-tasks 8 \

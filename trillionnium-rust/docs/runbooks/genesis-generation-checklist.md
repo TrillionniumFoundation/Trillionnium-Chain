@@ -18,10 +18,10 @@ Primary references:
 - `docs/runbooks/validator-bootstrap-rebootstrap.md`
 - `docs/release/TRNM_VALIDATOR_RELEASE_HANDOFF.md`
 - `scripts/v2/check_validator_config_bundle.py`
-- `configs/node1.toml`
-- `configs/node2.toml`
-- `configs/node3.toml`
-- `configs/node4.toml`
+- `trillionnium-rust/configs/node1.toml`
+- `trillionnium-rust/configs/node2.toml`
+- `trillionnium-rust/configs/node3.toml`
+- `trillionnium-rust/configs/node4.toml`
 
 ## Operator invariants
 
@@ -91,17 +91,17 @@ Interpretation rule:
 Required files:
 
 ```bash
-ls configs/node1.toml configs/node2.toml configs/node3.toml configs/node4.toml
+ls trillionnium-rust/configs/node1.toml trillionnium-rust/configs/node2.toml trillionnium-rust/configs/node3.toml trillionnium-rust/configs/node4.toml
 ```
 
 Recommended targeted validation:
 
 ```bash
 python3 scripts/v2/check_validator_config_bundle.py \
-  configs/node1.toml \
-  configs/node2.toml \
-  configs/node3.toml \
-  configs/node4.toml
+  trillionnium-rust/configs/node1.toml \
+  trillionnium-rust/configs/node2.toml \
+  trillionnium-rust/configs/node3.toml \
+  trillionnium-rust/configs/node4.toml
 ```
 
 If the artifact is headed into a shared bootstrap ceremony packet, generate the skeleton from the validated bundle instead of free-typing validator entries:
@@ -111,10 +111,10 @@ python3 scripts/v2/check_validator_config_bundle.py \
   --emit-ceremony-packet \
   --genesis-artifact-path /abs/path/to/genesis.json \
   --genesis-artifact-sha256 <64-char-sha256> \
-  configs/node1.toml \
-  configs/node2.toml \
-  configs/node3.toml \
-  configs/node4.toml
+  trillionnium-rust/configs/node1.toml \
+  trillionnium-rust/configs/node2.toml \
+  trillionnium-rust/configs/node3.toml \
+  trillionnium-rust/configs/node4.toml
 ```
 
 For `public-mainnet-input`, fill the ceremony metadata up front instead of forwarding a packet that still contains template/default values. The packet generator already fails closed here: it rejects the template `ceremony_id`, placeholder path fields, shorthand/truncated genesis hashes, and the default `validator_set_version=v1` when `--ceremony-scope public-mainnet-input` is selected.
@@ -133,10 +133,10 @@ python3 scripts/v2/check_validator_config_bundle.py \
   --rollback-owner primary-operator \
   --genesis-artifact-path /abs/path/to/genesis.json \
   --genesis-artifact-sha256 <64-char-sha256> \
-  configs/node1.toml \
-  configs/node2.toml \
-  configs/node3.toml \
-  configs/node4.toml
+  trillionnium-rust/configs/node1.toml \
+  trillionnium-rust/configs/node2.toml \
+  trillionnium-rust/configs/node3.toml \
+  trillionnium-rust/configs/node4.toml
 ```
 
 Interpretation rule:
