@@ -5020,6 +5020,16 @@ mod tests {
     }
 
     #[test]
+    fn ensure_safe_sign_message_rejects_first_strong_isolate_text() {
+        let err = ensure_safe_sign_message("rotate signer\u{2068}slot-b").unwrap_err();
+        assert!(
+            err.to_string()
+                .contains("contains control or bidi override characters"),
+            "unexpected: {err}"
+        );
+    }
+
+    #[test]
     fn ensure_safe_sign_message_rejects_bom_prefixed_text() {
         let err = ensure_safe_sign_message("\u{feff}rotate signer to slot b").unwrap_err();
         assert!(
