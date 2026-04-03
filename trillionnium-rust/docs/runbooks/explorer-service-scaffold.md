@@ -131,6 +131,7 @@ To keep the current scaffold useful as an **operator-facing deployment placehold
 
 1. the exact env file values used for `EXPLORER_HOST`, `EXPLORER_PORT`, `EXPLORER_PUBLIC_BASE_URL`, `EXPLORER_HEALTH_URL`, and `EXPLORER_RPC_BASE_URL`
 2. one `./scripts/v2/explorer_service_status.sh` output block showing `state`, `health_url`, `local_health_url`, `index_url`, and `rpc_base_url`
+   - that status block now also emits `deployment_evidence_scope=placeholder-only`, `rank1_read_surface_blocker=still-open`, and `durable_indexer_status=not-implemented-in-this-scaffold`; copy them verbatim into the handoff note instead of paraphrasing
 3. one fetch of `/index.json` proving the static scaffold is serving the declared Day-1 read-only contract markers
 4. one explicit note that this evidence **does not** prove durable indexer / historical read-model / production explorer-backend closure
 
@@ -314,6 +315,9 @@ Additional contract markers carried in `index.json`:
 - `durability_boundary=ephemeral-rpc-window-only`
 - `archive_strategy=not-configured-static-scaffold`
 - `read_replica_strategy=not-configured-static-scaffold`
+- `deployment_evidence_scope=placeholder-only`
+- `rank1_read_surface_blocker=still-open`
+- `durable_indexer_status=not-implemented-in-this-scaffold`
 - a note that historical queries remain bounded by current RPC retention until a durable indexer/archive strategy exists
 
 ## Failure interpretation
@@ -410,7 +414,7 @@ It also re-emits the same operator-facing contract fields as the up/status scrip
 - `archive_strategy=not-configured-static-scaffold`
 - `read_replica_strategy=not-configured-static-scaffold`
 
-Likewise, `explorer_service_up.sh` now emits the same `service_mode` / `production_ready` markers plus `public_base_url=...`, `rpc_base_url=...`, and `local_health_url=...` on success, "already running", and fail-fast exits, so operator notes can quote one consistent contract without having to run `status` first. Its startup gate intentionally probes the local bind target rather than `EXPLORER_PUBLIC_BASE_URL`, so a reverse-proxy-facing public URL can still differ from the local loopback/host bind without breaking the operator bring-up check.
+Likewise, `explorer_service_up.sh` now emits the same `service_mode` / `production_ready` markers plus `public_base_url=...`, `rpc_base_url=...`, and `local_health_url=...` on success, "already running", and fail-fast exits, so operator notes can quote one consistent contract without having to run `status` first. It now also emits `deployment_evidence_scope=placeholder-only`, `rank1_read_surface_blocker=still-open`, and `durable_indexer_status=not-implemented-in-this-scaffold` so bring-up notes preserve the same fail-closed blocker language as `status`/`down`. Its startup gate intentionally probes the local bind target rather than `EXPLORER_PUBLIC_BASE_URL`, so a reverse-proxy-facing public URL can still differ from the local loopback/host bind without breaking the operator bring-up check.
 
 ## Operator caution
 
