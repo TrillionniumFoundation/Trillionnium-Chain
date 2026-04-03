@@ -2319,6 +2319,11 @@ bootstrap_peers = ["127.0.0.1:27656"]
                 "{config_path} rpc_addr {} must stay pinned to 127.0.0.1 for the shipped local bootstrap topology",
                 cfg.rpc_addr
             );
+            assert!(
+                !is_reserved_listener_ip(rpc_socket.ip()),
+                "{config_path} rpc_addr {} must not drift into reserved documentation or benchmarking ranges for shipped bootstrap rehearsal",
+                cfg.rpc_addr
+            );
             assert_eq!(
                 cfg.rpc_addr,
                 rpc_socket.to_string(),
@@ -2329,6 +2334,11 @@ bootstrap_peers = ["127.0.0.1:27656"]
                 p2p_socket.ip(),
                 std::net::IpAddr::V4(std::net::Ipv4Addr::LOCALHOST),
                 "{config_path} p2p_addr {} must stay pinned to 127.0.0.1 for the shipped local bootstrap topology",
+                cfg.p2p_addr
+            );
+            assert!(
+                !is_reserved_listener_ip(p2p_socket.ip()),
+                "{config_path} p2p_addr {} must not drift into reserved documentation or benchmarking ranges for shipped bootstrap rehearsal",
                 cfg.p2p_addr
             );
             assert_eq!(
@@ -2358,10 +2368,20 @@ bootstrap_peers = ["127.0.0.1:27656"]
                 "{config_path} p2p_addr {} must keep the deterministic shipped bootstrap port for slot {config_slot}",
                 cfg.p2p_addr,
             );
+            assert!(
+                p2p_socket.port() >= 1024,
+                "{config_path} p2p_addr {} must stay above privileged ports for shipped bootstrap rehearsal",
+                cfg.p2p_addr,
+            );
             assert_eq!(
                 rpc_socket.port(),
                 expected_rpc_port,
                 "{config_path} rpc_addr {} must keep the deterministic shipped bootstrap RPC port for slot {config_slot}",
+                cfg.rpc_addr,
+            );
+            assert!(
+                rpc_socket.port() >= 1024,
+                "{config_path} rpc_addr {} must stay above privileged ports for shipped bootstrap rehearsal",
                 cfg.rpc_addr,
             );
             assert_eq!(
