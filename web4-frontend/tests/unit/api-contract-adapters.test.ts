@@ -23,6 +23,22 @@ describe("api-contract adapters", () => {
     expect(out.task.status).toBe("running");
   });
 
+  it("fails closed on canonical query-task payloads with unknown fields", () => {
+    expect(() =>
+      adaptQueryTask({
+        task: {
+          id: "1",
+          name: "demo",
+          status: "running",
+          owner: "alice",
+          createdAt: "2026-03-01T00:00:00.000Z",
+          metadata: {},
+          shadowMode: true,
+        },
+      }),
+    ).toThrow(FrontendApiError);
+  });
+
   it("adapts rpc query-task payload", () => {
     const out = adaptQueryTask({
       task_id: 42,
@@ -350,13 +366,45 @@ describe("api-contract adapters", () => {
     expect(out.events[0]?.event_type).toBe("governance.proposal_executed");
   });
 
-  it("adapts legacy snake_case normalized audit-events payload", () => {
-    const out = adaptQueryNormalizedAuditEvents({
-      source: "bridge-relay",
-      events: [],
-    });
+  it("fails closed on malformed canonical normalized audit-events envelope", () => {
+    expect(() =>
+      adaptQueryNormalizedAuditEvents({
+        source: "bridge-relay",
+        events: [],
+      }),
+    ).toThrow(FrontendApiError);
+  });
 
-    expect(out.events).toEqual([]);
+  it("fails closed on canonical normalized audit-event entries with unknown fields", () => {
+    expect(() =>
+      adaptQueryNormalizedAuditEvents({
+        events: [
+          {
+            source: "bridge-relay",
+            event_type: "bridge_relay.proof_submitted",
+            actor: "validator-1",
+            checkedAt: "height:777",
+            unexpected_flag: true,
+          },
+        ],
+      }),
+    ).toThrow(FrontendApiError);
+  });
+
+  it("fails closed when canonical normalized audit-events page sets hasMore without nextCursor", () => {
+    expect(() =>
+      adaptQueryNormalizedAuditEvents({
+        events: [
+          {
+            source: "bridge-relay",
+            event_type: "bridge_relay.proof_submitted",
+            actor: "validator-1",
+            checkedAt: "height:777",
+          },
+        ],
+        hasMore: true,
+      }),
+    ).toThrow(FrontendApiError);
   });
 
   it("adapts normalized audit-events fallback with eventType/objectId aliases", () => {
@@ -376,6 +424,24 @@ describe("api-contract adapters", () => {
     expect(out.events[0]?.event_type).toBe("vault.deposited");
     expect(out.events[0]?.object_id).toBe("alice");
     expect(out.events[0]?.related_id).toBe("req-1");
+  });
+
+  it("fails closed on fallback normalized audit-events entries with unknown fields", () => {
+    expect(() =>
+      adaptQueryNormalizedAuditEvents([
+        {
+          source: "settlement-vault",
+          eventType: "vault.deposited",
+          actor: "alice",
+          objectId: "alice",
+          relatedId: "req-1",
+          amount: 20,
+          note: "deposit",
+          recordedAt: "2026-03-03T00:01:00.000Z",
+          unexpectedFlag: true,
+        },
+      ]),
+    ).toThrow(FrontendApiError);
   });
 
   it("adapts rpc capability audit payload", () => {

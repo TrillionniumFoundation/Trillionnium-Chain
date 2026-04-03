@@ -17,7 +17,7 @@ export const chainTaskSchema = z.object({
   createdAt: z.string().datetime(),
   updatedAt: z.string().datetime().optional(),
   metadata: z.record(z.string(), z.unknown()).default({}),
-});
+}).strict();
 
 export const chainEventSchema = z.object({
   id: z.string().min(1),
@@ -26,7 +26,7 @@ export const chainEventSchema = z.object({
   level: z.enum(["info", "warn", "error"]),
   timestamp: z.string().datetime(),
   payload: z.record(z.string(), z.unknown()).default({}),
-});
+}).strict();
 
 export const checkedAtSchema = z.string().regex(/^height:\d+$/).or(z.string().datetime());
 
@@ -36,21 +36,21 @@ export const capabilityAuditEntrySchema = z.object({
   granted: z.boolean(),
   reason: z.string().optional(),
   checkedAt: checkedAtSchema,
-});
+}).strict();
 
 export const queryTaskResponseSchema = z.object({
   task: chainTaskSchema,
-});
+}).strict();
 
 export const queryEventsResponseSchema = z.object({
   taskId: z.string().min(1),
   events: z.array(chainEventSchema),
-});
+}).strict();
 
 export const queryCapabilityAuditResponseSchema = z.object({
   subject: z.string().min(1),
   audits: z.array(capabilityAuditEntrySchema),
-});
+}).strict();
 
 
 export const normalizedAuditEventSchema = z.object({
@@ -65,18 +65,33 @@ export const normalizedAuditEventSchema = z.object({
   checkedAt: checkedAtSchema.optional(),
   timestamp: z.string().datetime().optional(),
   subject: z.string().optional(),
-});
+}).strict();
 
 export const queryNormalizedAuditEventsPageSchema = z.object({
   events: z.array(normalizedAuditEventSchema),
   nextCursor: z.string().min(1).optional(),
   hasMore: z.boolean().optional(),
   total: z.number().int().nonnegative().optional(),
+}).strict().superRefine((payload, ctx) => {
+  if (payload.hasMore === true && payload.nextCursor == null) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: "normalized audit page with hasMore=true must include nextCursor",
+      path: ["nextCursor"],
+    });
+  }
 });
+
+export const normalizedAuditEventsQuerySchema = z.object({
+  source: z.string().trim().min(1).optional(),
+  eventType: z.string().trim().min(1).optional(),
+  limit: z.number().int().positive().optional(),
+  cursor: z.string().trim().min(1).optional(),
+}).strict();
 
 export const queryNormalizedAuditEventsResponseSchema = z.union([
   queryNormalizedAuditEventsPageSchema,
   z.object({
     events: z.array(normalizedAuditEventSchema),
-  }),
+  }).strict(),
 ]);

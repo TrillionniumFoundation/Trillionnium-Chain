@@ -4,6 +4,7 @@ import {
   adaptQueryNormalizedAuditEvents,
   adaptQueryTask,
 } from "./adapters";
+import { normalizedAuditEventsQuerySchema } from "./schemas";
 import { FrontendApiError, isRetryableStatus } from "./errors";
 import { withRetry, type RetryOptions } from "./retry";
 import type {
@@ -154,17 +155,28 @@ export function createFrontendApiClient(config: BaseClientConfig) {
       query: NormalizedAuditEventsQuery = {},
       options?: QueryOptions,
     ): Promise<QueryNormalizedAuditEventsResult> {
+      const normalizedQuery = normalizedAuditEventsQuerySchema.safeParse(query);
+      if (!normalizedQuery.success) {
+        throw new FrontendApiError({
+          code: "INVALID_PAYLOAD",
+          message: "Normalized audit query does not match frontend API contract",
+          causeData: normalizedQuery.error.flatten(),
+          retryable: false,
+        });
+      }
+
+      const parsedQuery = normalizedQuery.data;
       const params = new URLSearchParams();
-      if (query.source) params.set("source", query.source);
-      if (query.eventType) params.set("eventType", query.eventType);
-      if (query.cursor) params.set("cursor", query.cursor);
-      if (query.limit != null && Number.isFinite(query.limit) && query.limit > 0) {
-        params.set("limit", String(Math.trunc(query.limit)));
+      if (parsedQuery.source) params.set("source", parsedQuery.source);
+      if (parsedQuery.eventType) params.set("eventType", parsedQuery.eventType);
+      if (parsedQuery.cursor) params.set("cursor", parsedQuery.cursor);
+      if (parsedQuery.limit != null) {
+        params.set("limit", String(parsedQuery.limit));
       }
       const qs = params.toString();
 
       return getJson(`/query-normalized-audit-events${qs ? `?${qs}` : ""}`, options).then(
-        adaptQueryNormalizedAuditEvents,
+        (payload) => adaptQueryNormalizedAuditEvents(payload, parsedQuery),
       );
     },
 

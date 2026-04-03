@@ -26,6 +26,10 @@
 3. **适配层**：`adapters.ts`（raw -> typed model）
 4. **客户端层**：`client.ts`（GET、超时、重试、错误归一）
 
+约定：只读查询 contract 在 TypeScript 层按 `Readonly` / `ReadonlyArray` 暴露，调用方不应原地修改解析后的响应对象或事件数组；需要派生视图时请复制后处理。
+
+补充：`checkedAt` 目前是共享 contract 字段，语义只接受两类值——链高度标记（`height:<non-negative integer>`）或 ISO-8601 时间字符串。类型层与 zod schema 需保持同步；TypeScript 合约侧应保持为收窄后的 `HeightCheckedAt | IsoDatetimeString`，不应把它当成任意自由格式时间文本。
+
 ## 错误模型（FrontendApiError.code）
 
 - `NETWORK`：网络/连接失败
@@ -85,6 +89,7 @@ const normalizedEvents = await api.queryNormalizedAuditEvents({
 ## 变更规则
 
 - 仅允许**向后兼容**的增量字段变更。
+- canonical 只读查询响应当前按 **fail-closed** 处理：未在 `schemas.ts` 声明的根字段或条目字段，不应被前端静默接收。
 - 破坏性变更必须同 PR 更新：
   - `types.ts`
   - `schemas.ts`
@@ -104,3 +109,5 @@ const normalizedEvents = await api.queryNormalizedAuditEvents({
 - `nextCursor`：下一页游标
 - `hasMore`：是否有更多
 - `total`：后端可选的总记录数估计
+
+额外约束：若响应声明 `hasMore: true`，则必须同时返回非空 `nextCursor`；否则前端按合约违规 fail-closed 处理。
