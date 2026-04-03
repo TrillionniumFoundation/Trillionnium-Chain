@@ -51,18 +51,26 @@ fn reliability_db_path_prefers_explicit_env_and_has_stable_fallback() {
         PathBuf::from("/tmp/quoted-reliability.sqlite")
     );
 
+    std::env::remove_var("RELIABILITY_DB_PATH");
+    std::env::set_var("STATE_DIRECTORY", " /tmp/systemd-state ");
+    assert_eq!(
+        default_reliability_db_path(),
+        PathBuf::from("/tmp/systemd-state/reliability.sqlite")
+    );
+
     // Mismatched quote wrappers are malformed and must not leak literal
     // quote characters into filesystem paths.
     std::env::set_var("RELIABILITY_DB_PATH", "\"/tmp/mixed.sqlite'");
     std::env::set_var("XDG_STATE_HOME", "/tmp/state-home");
     assert_eq!(
         default_reliability_db_path(),
-        PathBuf::from("/tmp/state-home/trillionnium/reliability.sqlite")
+        PathBuf::from("/tmp/systemd-state/reliability.sqlite")
     );
 
     // Noisy single-quote values should be treated as invalid input and
     // fall back safely instead of slicing panic.
     std::env::set_var("RELIABILITY_DB_PATH", "'");
+    std::env::set_var("STATE_DIRECTORY", "'");
     std::env::remove_var("XDG_STATE_HOME");
     std::env::remove_var("HOME");
     assert_eq!(
@@ -71,6 +79,7 @@ fn reliability_db_path_prefers_explicit_env_and_has_stable_fallback() {
     );
 
     std::env::remove_var("RELIABILITY_DB_PATH");
+    std::env::remove_var("STATE_DIRECTORY");
     std::env::remove_var("XDG_STATE_HOME");
     std::env::remove_var("HOME");
     assert_eq!(

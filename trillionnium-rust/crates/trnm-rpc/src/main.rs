@@ -809,16 +809,76 @@ fn parse_event_log_kv(line: &str) -> BTreeMap<String, String> {
 }
 
 fn parse_node_event_log_sources_list(raw: &str) -> Vec<PathBuf> {
-    raw.split(|c: char| c == ',' || c == ';' || c == '\n')
-        .filter_map(|part| {
-            let trimmed = part.trim();
-            if trimmed.is_empty() {
-                None
-            } else {
-                Some(PathBuf::from(trimmed))
+    let mut out = Vec::new();
+    let mut start = 0usize;
+    let mut quote: Option<char> = None;
+
+    for (idx, ch) in raw.char_indices() {
+        match quote {
+            Some(active) if ch == active => quote = None,
+            Some(_) => {}
+            None if matches!(ch, '"' | '\'' | '`') => quote = Some(ch),
+            None if matches!(ch, ',' | ';' | '\n') => {
+                if let Some(path) = normalize_node_event_log_source_entry(&raw[start..idx]) {
+                    out.push(PathBuf::from(path));
+                }
+                start = idx + ch.len_utf8();
             }
-        })
-        .collect()
+            None => {}
+        }
+    }
+
+    if let Some(path) = normalize_node_event_log_source_entry(&raw[start..]) {
+        out.push(PathBuf::from(path));
+    }
+
+    out
+}
+
+fn normalize_node_event_log_source_entry(raw: &str) -> Option<String> {
+    let trimmed = raw.trim();
+    if trimmed.is_empty() {
+        return None;
+    }
+
+    let normalized = normalize_wrapped_env_value(trimmed);
+    if normalized.is_empty() || normalized.starts_with('#') {
+        return None;
+    }
+
+    let inline_comment_idx = normalized.char_indices().find_map(|(idx, ch)| {
+        (ch == '#'
+            && idx > 0
+            && normalized[..idx]
+                .chars()
+                .last()
+                .is_some_and(char::is_whitespace))
+        .then_some(idx)
+    });
+    let normalized = inline_comment_idx
+        .map(|idx| normalize_wrapped_env_value(normalized[..idx].trim_end()))
+        .unwrap_or(normalized);
+    if normalized.is_empty() || normalized.starts_with('#') {
+        return None;
+    }
+
+    Some(normalized.to_string())
+}
+
+fn normalize_lexical_path(path: PathBuf) -> PathBuf {
+    let mut normalized = PathBuf::new();
+    for component in path.components() {
+        match component {
+            std::path::Component::CurDir => {}
+            std::path::Component::ParentDir => {
+                if !normalized.pop() {
+                    normalized.push(component.as_os_str());
+                }
+            }
+            other => normalized.push(other.as_os_str()),
+        }
+    }
+    normalized
 }
 
 fn discover_default_node_event_log_sources(root: &Path) -> Vec<PathBuf> {
@@ -851,18 +911,22 @@ fn load_node_event_log_sources(root: &Path) -> Vec<PathBuf> {
     let mut sources = BTreeSet::<PathBuf>::new();
 
     if let Some(manifest_path) = normalized_path_from_env(NODE_EVENT_LOG_MANIFEST_ENV) {
+        let manifest_path = if manifest_path.is_absolute() {
+            normalize_lexical_path(manifest_path)
+        } else {
+            normalize_lexical_path(root.join(manifest_path))
+        };
         if let Ok(raw) = fs::read_to_string(&manifest_path) {
             let manifest_dir = manifest_path.parent().unwrap_or_else(|| Path::new("."));
             for line in raw.lines() {
-                let trimmed = line.trim();
-                if trimmed.is_empty() || trimmed.starts_with('#') {
+                let Some(normalized) = normalize_node_event_log_source_entry(line) else {
                     continue;
-                }
-                let path = PathBuf::from(trimmed);
+                };
+                let path = PathBuf::from(normalized);
                 let resolved = if path.is_absolute() {
-                    path
+                    normalize_lexical_path(path)
                 } else {
-                    manifest_dir.join(path)
+                    normalize_lexical_path(manifest_dir.join(path))
                 };
                 sources.insert(resolved);
             }
@@ -872,9 +936,9 @@ fn load_node_event_log_sources(root: &Path) -> Vec<PathBuf> {
     if let Ok(raw) = std::env::var(NODE_EVENT_LOG_SOURCES_ENV) {
         for path in parse_node_event_log_sources_list(&raw) {
             let resolved = if path.is_absolute() {
-                path
+                normalize_lexical_path(path)
             } else {
-                root.join(path)
+                normalize_lexical_path(root.join(path))
             };
             sources.insert(resolved);
         }
@@ -1185,7 +1249,7 @@ fn submit_message_max_bytes() -> u64 {
 }
 
 fn normalize_wrapped_env_value(raw: &str) -> &str {
-    let mut normalized = raw.trim();
+    let mut normalized = raw.trim().trim_start_matches('\u{feff}');
     while normalized.len() >= 2 {
         let wrapped_by_quotes = (normalized.starts_with('"') && normalized.ends_with('"'))
             || (normalized.starts_with('\'') && normalized.ends_with('\''))
@@ -1193,15 +1257,48 @@ fn normalize_wrapped_env_value(raw: &str) -> &str {
         if !wrapped_by_quotes {
             break;
         }
-        normalized = normalized[1..normalized.len() - 1].trim();
+        normalized = normalized[1..normalized.len() - 1]
+            .trim()
+            .trim_start_matches('\u{feff}');
     }
     normalized
+}
+
+fn normalize_leading_wrapped_comment_value(raw: &str) -> Option<&str> {
+    let normalized = raw.trim();
+    let quote = normalized.chars().next()?;
+    if !matches!(quote, '"' | '\'' | '`') {
+        return None;
+    }
+
+    let closing_idx = normalized[quote.len_utf8()..]
+        .char_indices()
+        .find_map(|(idx, ch)| (ch == quote).then_some(quote.len_utf8() + idx))?;
+    let rest = normalized[closing_idx + quote.len_utf8()..].trim_start();
+    if !rest.starts_with('#') {
+        return None;
+    }
+
+    Some(normalize_wrapped_env_value(&normalized[..closing_idx + quote.len_utf8()]))
 }
 
 fn normalized_path_from_env(name: &str) -> Option<PathBuf> {
     let raw = std::env::var(name).ok()?;
     let normalized = normalize_wrapped_env_value(&raw);
-    if normalized.is_empty() {
+    let inline_comment_idx = normalized.char_indices().find_map(|(idx, ch)| {
+        (ch == '#'
+            && idx > 0
+            && normalized[..idx]
+                .chars()
+                .last()
+                .is_some_and(char::is_whitespace))
+        .then_some(idx)
+    });
+    let normalized = inline_comment_idx
+        .map(|idx| normalize_wrapped_env_value(normalized[..idx].trim_end()))
+        .unwrap_or(normalized);
+    let normalized = normalize_leading_wrapped_comment_value(normalized).unwrap_or(normalized);
+    if normalized.is_empty() || normalized.starts_with('#') {
         None
     } else {
         Some(PathBuf::from(normalized))
@@ -2284,7 +2381,17 @@ fn load_account_state(path: &Path) -> BTreeMap<String, AccountState> {
     let Ok(raw) = fs::read_to_string(path) else {
         return BTreeMap::new();
     };
-    serde_json::from_str::<BTreeMap<String, AccountState>>(&raw).unwrap_or_default()
+    match serde_json::from_str::<BTreeMap<String, AccountState>>(&raw) {
+        Ok(accounts) => accounts,
+        Err(err) => {
+            eprintln!(
+                "[trnm-rpc][warn][ACCOUNT_STATE_PARSE] path={} err={}",
+                path.display(),
+                err
+            );
+            BTreeMap::new()
+        }
+    }
 }
 
 fn save_account_state(path: &Path, accounts: &BTreeMap<String, AccountState>) -> Result<()> {
@@ -2316,7 +2423,17 @@ fn load_faucet_limits(path: &Path) -> BTreeMap<String, FaucetRateEntry> {
     let Ok(raw) = fs::read_to_string(path) else {
         return BTreeMap::new();
     };
-    serde_json::from_str::<BTreeMap<String, FaucetRateEntry>>(&raw).unwrap_or_default()
+    match serde_json::from_str::<BTreeMap<String, FaucetRateEntry>>(&raw) {
+        Ok(limits) => limits,
+        Err(err) => {
+            eprintln!(
+                "[trnm-rpc][warn][FAUCET_LIMITS_PARSE] path={} err={}",
+                path.display(),
+                err
+            );
+            BTreeMap::new()
+        }
+    }
 }
 
 fn save_faucet_limits(path: &Path, limits: &BTreeMap<String, FaucetRateEntry>) -> Result<()> {
@@ -2406,7 +2523,8 @@ fn push_tail_limited<T>(items: &mut Vec<T>, item: T, limit: usize) {
 
 fn normalize_tx_hash_lookup(raw: &str) -> String {
     let mut normalized = raw.trim_matches(|c: char| {
-        c.is_ascii_whitespace() || matches!(c, ',' | ';' | '.' | ':' | '(' | ')' | '[' | ']' | '{' | '}')
+        c.is_ascii_whitespace()
+            || matches!(c, ',' | ';' | '.' | ':' | '(' | ')' | '[' | ']' | '{' | '}')
     });
 
     loop {
@@ -2450,7 +2568,10 @@ fn normalize_tx_hash_lookup(raw: &str) -> String {
                     if is_wrapped {
                         value = value[1..value.len() - 1].trim_matches(|c: char| {
                             c.is_ascii_whitespace()
-                                || matches!(c, ',' | ';' | '.' | ':' | '(' | ')' | '[' | ']' | '{' | '}')
+                                || matches!(
+                                    c,
+                                    ',' | ';' | '.' | ':' | '(' | ')' | '[' | ']' | '{' | '}'
+                                )
                         });
                         continue;
                     }
@@ -3260,6 +3381,32 @@ fn parse_query_normalized_audit_events_query_from_path(
         query_params.limit = limit;
     }
 
+    if query_params
+        .source
+        .as_deref()
+        .is_some_and(|source| source != "trnm.task" && source != "trnm.adapter")
+    {
+        return Err(http_json_response(
+            "400 Bad Request",
+            r#"{"ok":false,"code":"BAD_REQUEST","message":"invalid source"}"#,
+        ));
+    }
+
+    if let Some(event_type) = query_params.event_type.as_deref() {
+        let source_matches = match query_params.source.as_deref() {
+            Some("trnm.task") => event_type.starts_with("trnm.task."),
+            Some("trnm.adapter") => event_type.starts_with("trnm.adapter."),
+            Some(_) => false,
+            None => event_type.starts_with("trnm.task.") || event_type.starts_with("trnm.adapter."),
+        };
+        if !source_matches {
+            return Err(http_json_response(
+                "400 Bad Request",
+                r#"{"ok":false,"code":"BAD_REQUEST","message":"invalid eventType"}"#,
+            ));
+        }
+    }
+
     Ok(query_params)
 }
 
@@ -3691,8 +3838,14 @@ fn query_task_response(
     if task_recs.is_empty() {
         bail!("task not found: {}", task_id);
     }
-    let has_reveal = task_recs.iter().any(|r| r.kind == "reveal");
     let has_commit = task_recs.iter().any(|r| r.kind == "commit");
+    if !has_commit {
+        bail!(
+            "task not found: {} (adapter fallback requires persisted commit history)",
+            task_id
+        );
+    }
+    let has_reveal = task_recs.iter().any(|r| r.kind == "reveal");
     let status = if has_reveal {
         TaskStatus::Revealed
     } else if has_commit {
@@ -3952,6 +4105,7 @@ fn query_normalized_audit_events(
             .unwrap_or(0);
         right_height
             .cmp(&left_height)
+            .then_with(|| left.source.cmp(&right.source))
             .then_with(|| left.event_type.cmp(&right.event_type))
             .then_with(|| left.source.cmp(&right.source))
             .then_with(|| left.object_id.as_deref().unwrap_or("").cmp(right.object_id.as_deref().unwrap_or("")))
@@ -4144,6 +4298,18 @@ fn main() -> Result<()> {
                     message: format!("tx not found: {}", tx_hash),
                 }),
             })?;
+
+            if matches!(out.status, trnm_rpc::TxStatus::Committed) {
+                if let Some(rec) = txs.get(&tx_hash) {
+                    for address in [&rec.tx.from, &rec.tx.to] {
+                        accounts.entry(address.clone()).or_insert(AccountState {
+                            address: address.clone(),
+                            balance: ledger.balance_of(address),
+                            nonce: ledger.next_nonce_of(address),
+                        });
+                    }
+                }
+            }
 
             ledger_to_accounts(&ledger, &mut accounts);
             save_tx_lifecycle(&tx_path, &txs)?;
@@ -5489,6 +5655,74 @@ mod tests {
         assert_eq!(second.events.len(), 1);
         assert_eq!(second.events[0].event_type, "trnm.task.accept");
         assert_eq!(second.has_more, Some(false));
+    }
+
+    #[test]
+    fn query_normalized_audit_events_stably_orders_same_height_same_type_history() {
+        let events = vec![
+            NodeEventRecord {
+                event_type: "commit".into(),
+                task_id: 9,
+                from_status: "Assigned".into(),
+                to_status: "Committed".into(),
+                actor: "worker-b".into(),
+                tx_id: 1,
+                block_height: 42,
+                state_root: "s1".into(),
+                ts_unix_ms: 100,
+                signer: Some("worker-b".into()),
+                challenger: None,
+                tx_hash: None,
+                resolution_code: None,
+                treasury_delta: None,
+                challenger_delta: None,
+                bond_disposition: None,
+                metering: None,
+            },
+            NodeEventRecord {
+                event_type: "commit".into(),
+                task_id: 7,
+                from_status: "Assigned".into(),
+                to_status: "Committed".into(),
+                actor: "worker-a".into(),
+                tx_id: 2,
+                block_height: 42,
+                state_root: "s2".into(),
+                ts_unix_ms: 200,
+                signer: Some("worker-a".into()),
+                challenger: None,
+                tx_hash: None,
+                resolution_code: None,
+                treasury_delta: None,
+                challenger_delta: None,
+                bond_disposition: None,
+                metering: None,
+            },
+        ];
+
+        let out = query_normalized_audit_events(
+            &events,
+            &[],
+            &QueryNormalizedAuditEventsQuery {
+                source: Some("trnm.task".into()),
+                event_type: Some("trnm.task.commit".into()),
+                cursor: None,
+                limit: 10,
+            },
+        );
+
+        let object_ids: Vec<_> = out
+            .events
+            .iter()
+            .map(|event| event.object_id.as_deref())
+            .collect();
+        assert_eq!(object_ids, vec![Some("task:7"), Some("task:9")]);
+        let actors: Vec<_> = out
+            .events
+            .iter()
+            .map(|event| event.actor.as_deref())
+            .collect();
+        assert_eq!(actors, vec![Some("worker-a"), Some("worker-b")]);
     }
 
     #[test]
@@ -8371,6 +8605,54 @@ mod tests {
     }
 
     #[test]
+    fn load_node_events_authoritative_reads_historical_manifest_sources() {
+        let _guard = lock_env();
+        let root = tempfile::tempdir().expect("tempdir");
+        let run = root.path().join("run");
+        let archive = root.path().join("archive");
+        let manifest_dir = root.path().join("cfg/history");
+        fs::create_dir_all(&run).expect("create run dir");
+        fs::create_dir_all(&archive).expect("create archive dir");
+        fs::create_dir_all(&manifest_dir).expect("create manifest dir");
+
+        fs::write(run.join("node1.log"), "").expect("write empty live log");
+        let archived_log = archive.join("node4.log");
+        fs::write(
+            &archived_log,
+            "2026-03-03T20:10:12Z INFO node [event] event_type=commit task_id=88 from_status=Assigned to_status=Committed actor=worker-h tx_id=9 block_height=7 state_root=s7 ts_unix_ms=7000 signer=worker-h tx_hash=0x88\n",
+        )
+        .expect("write archived log");
+        let manifest = manifest_dir.join("sources.txt");
+        fs::write(&manifest, "../../archive/node4.log\n").expect("write manifest");
+
+        let prev_manifest = std::env::var(NODE_EVENT_LOG_MANIFEST_ENV).ok();
+        let prev_sources = std::env::var(NODE_EVENT_LOG_SOURCES_ENV).ok();
+        std::env::set_var(
+            NODE_EVENT_LOG_MANIFEST_ENV,
+            manifest.to_string_lossy().to_string(),
+        );
+        std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV);
+
+        let loaded = load_node_events_from_root(root.path(), NodeEventScanMode::Authoritative);
+
+        match prev_manifest {
+            Some(v) => std::env::set_var(NODE_EVENT_LOG_MANIFEST_ENV, v),
+            None => std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV),
+        }
+        match prev_sources {
+            Some(v) => std::env::set_var(NODE_EVENT_LOG_SOURCES_ENV, v),
+            None => std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV),
+        }
+
+        assert_eq!(loaded.mode, NodeEventScanMode::Authoritative);
+        assert!(!loaded.truncated);
+        assert_eq!(loaded.events.len(), 1);
+        assert_eq!(loaded.events[0].task_id, 88);
+        assert_eq!(loaded.events[0].event_type, "commit");
+        assert_eq!(loaded.events[0].block_height, 7);
+    }
+
+    #[test]
     fn load_node_events_recent_tail_marks_truncation_but_authoritative_keeps_history() {
         let root = tempfile::tempdir().expect("tempdir");
         let run = root.path().join("run");
@@ -8608,6 +8890,448 @@ line2
         assert!(got.contains(&env_log));
         assert!(got.contains(&manifest_log));
         assert_eq!(got.len(), 2, "custom sources should replace defaults");
+
+        let _ = fs::remove_dir_all(root);
+    }
+
+    #[test]
+    fn load_node_event_log_sources_resolves_parent_relative_manifest_entries_from_manifest_dir() {
+        let _guard = lock_env();
+        let root = unique_tmp_path("trnm-rpc-log-sources-parent-relative", "dir");
+        let archive_dir = root.join("archive");
+        let manifest_dir = root.join("cfg/history");
+        fs::create_dir_all(&archive_dir).expect("create archive dir");
+        fs::create_dir_all(&manifest_dir).expect("create manifest dir");
+
+        let archived_log = archive_dir.join("node4.log");
+        let manifest = manifest_dir.join("sources.txt");
+        fs::write(&archived_log, "").expect("write archived log");
+        fs::write(&manifest, "../../archive/node4.log\n").expect("write manifest");
+
+        let prev_sources = std::env::var(NODE_EVENT_LOG_SOURCES_ENV).ok();
+        let prev_manifest = std::env::var(NODE_EVENT_LOG_MANIFEST_ENV).ok();
+        unsafe {
+            std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV);
+            std::env::set_var(
+                NODE_EVENT_LOG_MANIFEST_ENV,
+                manifest.to_string_lossy().to_string(),
+            );
+        }
+
+        let got = load_node_event_log_sources(&root);
+
+        match prev_sources {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_SOURCES_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV) },
+        }
+        match prev_manifest {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_MANIFEST_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV) },
+        }
+
+        assert_eq!(
+            got,
+            vec![archive_dir.join("node4.log")],
+            "historical replay manifests must resolve relative entries from the manifest directory"
+        );
+
+        let _ = fs::remove_dir_all(root);
+    }
+
+    #[test]
+    fn load_node_event_log_sources_deduplicates_manifest_and_env_entries_after_lexical_normalization(
+    ) {
+        let _guard = lock_env();
+        let root = unique_tmp_path("trnm-rpc-log-sources-manifest-env-lexical-dedupe", "dir");
+        let history_dir = root.join("history");
+        fs::create_dir_all(&history_dir).expect("create history dir");
+
+        let shared_log = root.join("shared.log");
+        let manifest = history_dir.join("sources.txt");
+        fs::write(&shared_log, "").expect("write shared log");
+        fs::write(&manifest, "../shared.log\n").expect("write manifest");
+
+        let prev_sources = std::env::var(NODE_EVENT_LOG_SOURCES_ENV).ok();
+        let prev_manifest = std::env::var(NODE_EVENT_LOG_MANIFEST_ENV).ok();
+        unsafe {
+            std::env::set_var(NODE_EVENT_LOG_SOURCES_ENV, "./shared.log");
+            std::env::set_var(
+                NODE_EVENT_LOG_MANIFEST_ENV,
+                manifest.to_string_lossy().to_string(),
+            );
+        }
+
+        let got = load_node_event_log_sources(&root);
+
+        match prev_sources {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_SOURCES_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV) },
+        }
+        match prev_manifest {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_MANIFEST_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV) },
+        }
+
+        assert_eq!(
+            got,
+            vec![shared_log],
+            "historical replay sources should dedupe across manifest/env lexical path variants"
+        );
+
+        let _ = fs::remove_dir_all(root);
+    }
+
+    #[test]
+    fn load_node_event_log_sources_unwraps_quoted_env_entries_for_historical_replay() {
+        let _guard = lock_env();
+        let root = unique_tmp_path("trnm-rpc-log-sources-quoted-env", "dir");
+        fs::create_dir_all(&root).expect("create root dir");
+
+        let shared_log = root.join("shared.log");
+        fs::write(&shared_log, "").expect("write shared log");
+
+        let prev_sources = std::env::var(NODE_EVENT_LOG_SOURCES_ENV).ok();
+        let prev_manifest = std::env::var(NODE_EVENT_LOG_MANIFEST_ENV).ok();
+        unsafe {
+            std::env::set_var(
+                NODE_EVENT_LOG_SOURCES_ENV,
+                "  \"shared.log\" ; `./shared.log` ; \"# ignored wrapped comment\" ; `# ignored too`  ",
+            );
+            std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV);
+        }
+
+        let got = load_node_event_log_sources(&root);
+
+        match prev_sources {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_SOURCES_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV) },
+        }
+        match prev_manifest {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_MANIFEST_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV) },
+        }
+
+        assert_eq!(
+            got,
+            vec![shared_log],
+            "quoted historical replay env entries should resolve to canonical log sources"
+        );
+
+        let _ = fs::remove_dir_all(root);
+    }
+
+    #[test]
+    fn load_node_event_log_sources_unwraps_quoted_manifest_entries_for_historical_replay() {
+        let _guard = lock_env();
+        let root = unique_tmp_path("trnm-rpc-log-sources-manifest-quoted", "dir");
+        let archive_dir = root.join("archive");
+        let manifest_dir = root.join("cfg/history");
+        fs::create_dir_all(&archive_dir).expect("create archive dir");
+        fs::create_dir_all(&manifest_dir).expect("create manifest dir");
+
+        let archived_log = archive_dir.join("node4.log");
+        let second_archived_log = archive_dir.join("node5.log");
+        let manifest = manifest_dir.join("sources.txt");
+        fs::write(&archived_log, "").expect("write archived log");
+        fs::write(&second_archived_log, "").expect("write second archived log");
+        fs::write(
+            &manifest,
+            "\"../../archive/node4.log\"\n'../../archive/node5.log'\n`../../archive/node4.log`\n",
+        )
+        .expect("write manifest");
+
+        let prev_sources = std::env::var(NODE_EVENT_LOG_SOURCES_ENV).ok();
+        let prev_manifest = std::env::var(NODE_EVENT_LOG_MANIFEST_ENV).ok();
+        unsafe {
+            std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV);
+            std::env::set_var(
+                NODE_EVENT_LOG_MANIFEST_ENV,
+                manifest.to_string_lossy().to_string(),
+            );
+        }
+
+        let got = load_node_event_log_sources(&root);
+
+        match prev_sources {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_SOURCES_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV) },
+        }
+        match prev_manifest {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_MANIFEST_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV) },
+        }
+
+        assert_eq!(
+            got,
+            vec![archive_dir.join("node4.log"), archive_dir.join("node5.log")],
+            "historical replay manifest entries should unwrap quote-like wrappers and dedupe to canonical log sources"
+        );
+
+        let _ = fs::remove_dir_all(root);
+    }
+
+    #[test]
+    fn load_node_event_log_sources_resolves_relative_manifest_env_from_root() {
+        let _guard = lock_env();
+        let root = unique_tmp_path("trnm-rpc-log-sources-relative-manifest-env", "dir");
+        let archive_dir = root.join("archive");
+        let manifest_dir = root.join("cfg/history");
+        fs::create_dir_all(&archive_dir).expect("create archive dir");
+        fs::create_dir_all(&manifest_dir).expect("create manifest dir");
+
+        let archived_log = archive_dir.join("node4.log");
+        let manifest = manifest_dir.join("sources.txt");
+        fs::write(&archived_log, "").expect("write archived log");
+        fs::write(
+            &manifest,
+            "../../archive/node4.log
+",
+        )
+        .expect("write manifest");
+
+        let prev_sources = std::env::var(NODE_EVENT_LOG_SOURCES_ENV).ok();
+        let prev_manifest = std::env::var(NODE_EVENT_LOG_MANIFEST_ENV).ok();
+        unsafe {
+            std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV);
+            std::env::set_var(NODE_EVENT_LOG_MANIFEST_ENV, "cfg/history/sources.txt");
+        }
+
+        let got = load_node_event_log_sources(&root);
+
+        match prev_sources {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_SOURCES_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV) },
+        }
+        match prev_manifest {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_MANIFEST_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV) },
+        }
+
+        assert_eq!(
+            got,
+            vec![archived_log],
+            "relative manifest env paths should resolve from the RPC root before historical replay entries are expanded"
+        );
+
+        let _ = fs::remove_dir_all(root);
+    }
+
+    #[test]
+    fn load_node_event_log_sources_ignores_wrapped_comment_manifest_entries() {
+        let _guard = lock_env();
+        let root = unique_tmp_path("trnm-rpc-log-sources-comment-manifest", "dir");
+        let archive_dir = root.join("archive");
+        let manifest_dir = root.join("cfg/history");
+        fs::create_dir_all(&archive_dir).expect("create archive dir");
+        fs::create_dir_all(&manifest_dir).expect("create manifest dir");
+
+        let archived_log = archive_dir.join("node4.log");
+        let manifest = manifest_dir.join("sources.txt");
+        fs::write(&archived_log, "").expect("write archived log");
+        fs::write(
+            &manifest,
+            "\"# ignored wrapped comment\"\n../../archive/node4.log\n",
+        )
+        .expect("write manifest");
+
+        let prev_sources = std::env::var(NODE_EVENT_LOG_SOURCES_ENV).ok();
+        let prev_manifest = std::env::var(NODE_EVENT_LOG_MANIFEST_ENV).ok();
+        unsafe {
+            std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV);
+            std::env::set_var(
+                NODE_EVENT_LOG_MANIFEST_ENV,
+                manifest.to_string_lossy().to_string(),
+            );
+        }
+
+        let got = load_node_event_log_sources(&root);
+
+        match prev_sources {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_SOURCES_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV) },
+        }
+        match prev_manifest {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_MANIFEST_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV) },
+        }
+
+        assert_eq!(
+            got,
+            vec![archive_dir.join("node4.log")],
+            "wrapped comment manifest entries should not create bogus historical replay paths"
+        );
+
+        let _ = fs::remove_dir_all(root);
+    }
+
+    #[test]
+    fn load_node_event_log_sources_tolerates_utf8_bom_wrapped_manifest_entries() {
+        let _guard = lock_env();
+        let root = unique_tmp_path("trnm-rpc-log-sources-bom-manifest", "dir");
+        let archive_dir = root.join("archive");
+        let manifest_dir = root.join("cfg/history");
+        fs::create_dir_all(&archive_dir).expect("create archive dir");
+        fs::create_dir_all(&manifest_dir).expect("create manifest dir");
+
+        let archived_log = archive_dir.join("node4.log");
+        let manifest = manifest_dir.join("sources.txt");
+        fs::write(&archived_log, "").expect("write archived log");
+        fs::write(&manifest, "\u{feff}\"../../archive/node4.log\"\n").expect("write manifest");
+
+        let prev_sources = std::env::var(NODE_EVENT_LOG_SOURCES_ENV).ok();
+        let prev_manifest = std::env::var(NODE_EVENT_LOG_MANIFEST_ENV).ok();
+        unsafe {
+            std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV);
+            std::env::set_var(
+                NODE_EVENT_LOG_MANIFEST_ENV,
+                manifest.to_string_lossy().to_string(),
+            );
+        }
+
+        let got = load_node_event_log_sources(&root);
+
+        match prev_sources {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_SOURCES_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV) },
+        }
+        match prev_manifest {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_MANIFEST_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV) },
+        }
+
+        assert_eq!(
+            got,
+            vec![archive_dir.join("node4.log")],
+            "historical replay manifest entries should tolerate UTF-8 BOM wrappers"
+        );
+
+        let _ = fs::remove_dir_all(root);
+    }
+
+    #[test]
+    fn load_node_event_log_sources_normalizes_utf8_bom_wrapped_manifest_env_path() {
+        let _guard = lock_env();
+        let root = unique_tmp_path("trnm-rpc-log-sources-bom-manifest-env", "dir");
+        let archive_dir = root.join("archive");
+        let manifest_dir = root.join("cfg/history");
+        fs::create_dir_all(&archive_dir).expect("create archive dir");
+        fs::create_dir_all(&manifest_dir).expect("create manifest dir");
+
+        let archived_log = archive_dir.join("node4.log");
+        let manifest = manifest_dir.join("sources.txt");
+        fs::write(&archived_log, "").expect("write archived log");
+        fs::write(&manifest, "../../archive/node4.log\n").expect("write manifest");
+
+        let prev_sources = std::env::var(NODE_EVENT_LOG_SOURCES_ENV).ok();
+        let prev_manifest = std::env::var(NODE_EVENT_LOG_MANIFEST_ENV).ok();
+        unsafe {
+            std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV);
+            std::env::set_var(
+                NODE_EVENT_LOG_MANIFEST_ENV,
+                "\u{feff}  \"cfg/history/sources.txt\"   # archived replay note ",
+            );
+        }
+
+        let got = load_node_event_log_sources(&root);
+
+        match prev_sources {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_SOURCES_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV) },
+        }
+        match prev_manifest {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_MANIFEST_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV) },
+        }
+
+        assert_eq!(
+            got,
+            vec![archived_log],
+            "historical replay manifest env values should tolerate UTF-8 BOM wrappers before resolving from the RPC root"
+        );
+
+        let _ = fs::remove_dir_all(root);
+    }
+
+    #[test]
+    fn load_node_event_log_sources_ignores_inline_manifest_comments_after_wrapped_paths() {
+        let _guard = lock_env();
+        let root = unique_tmp_path("trnm-rpc-log-sources-inline-comment-manifest", "dir");
+        let archive_dir = root.join("archive");
+        let manifest_dir = root.join("cfg/history");
+        fs::create_dir_all(&archive_dir).expect("create archive dir");
+        fs::create_dir_all(&manifest_dir).expect("create manifest dir");
+
+        let archived_log = archive_dir.join("node4.log");
+        let manifest = manifest_dir.join("sources.txt");
+        fs::write(&archived_log, "").expect("write archived log");
+        fs::write(&manifest, "\"../../archive/node4.log\" # operator note\n")
+            .expect("write manifest");
+
+        let prev_sources = std::env::var(NODE_EVENT_LOG_SOURCES_ENV).ok();
+        let prev_manifest = std::env::var(NODE_EVENT_LOG_MANIFEST_ENV).ok();
+        unsafe {
+            std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV);
+            std::env::set_var(
+                NODE_EVENT_LOG_MANIFEST_ENV,
+                manifest.to_string_lossy().to_string(),
+            );
+        }
+
+        let got = load_node_event_log_sources(&root);
+
+        match prev_sources {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_SOURCES_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV) },
+        }
+        match prev_manifest {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_MANIFEST_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV) },
+        }
+
+        assert_eq!(
+            got,
+            vec![archive_dir.join("node4.log")],
+            "inline manifest comments should not corrupt wrapped historical replay paths"
+        );
+
+        let _ = fs::remove_dir_all(root);
+    }
+
+    #[test]
+    fn load_node_event_log_sources_ignores_inline_env_comments_after_wrapped_paths() {
+        let _guard = lock_env();
+        let root = unique_tmp_path("trnm-rpc-log-sources-inline-comment-env", "dir");
+        fs::create_dir_all(&root).expect("create root dir");
+
+        let shared_log = root.join("shared.log");
+        fs::write(&shared_log, "").expect("write shared log");
+
+        let prev_sources = std::env::var(NODE_EVENT_LOG_SOURCES_ENV).ok();
+        let prev_manifest = std::env::var(NODE_EVENT_LOG_MANIFEST_ENV).ok();
+        unsafe {
+            std::env::set_var(
+                NODE_EVENT_LOG_SOURCES_ENV,
+                "\"shared.log\" # operator note\n`./history/../shared.log` # duplicate alias",
+            );
+            std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV);
+        }
+
+        let got = load_node_event_log_sources(&root);
+
+        match prev_sources {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_SOURCES_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV) },
+        }
+        match prev_manifest {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_MANIFEST_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV) },
+        }
+
+        assert_eq!(
+            got,
+            vec![shared_log],
+            "newline-separated historical replay env aliases should normalize comments and dedupe to one canonical source"
+        );
 
         let _ = fs::remove_dir_all(root);
     }
@@ -8988,6 +9712,76 @@ line2
         );
 
         let _ = fs::remove_file(&path);
+    }
+
+    #[test]
+    fn get_tx_persists_new_recipient_account_into_account_index() {
+        let private_key_hex = "1111111111111111111111111111111111111111111111111111111111111111";
+        let to = "trnm1bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb".to_string();
+        let bootstrap_sig = TransferTx {
+            from: "trnm1bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb".into(),
+            to: to.clone(),
+            amount: 1,
+            fee: 0,
+            nonce: 0,
+            signature: String::new(),
+        }
+        .sign_with_private_key_hex(private_key_hex)
+        .expect("bootstrap signature builds");
+        let pubkey_hex = bootstrap_sig
+            .split(':')
+            .nth(1)
+            .expect("signature includes pubkey");
+        let pubkey_bytes = hex::decode(pubkey_hex).expect("signature pubkey decodes");
+        let from = TransferTx::derive_address_from_ed25519_pubkey(&pubkey_bytes);
+        let unsigned_tx = TransferTx {
+            from: from.clone(),
+            to: to.clone(),
+            amount: 120,
+            fee: 5,
+            nonce: 0,
+            signature: String::new(),
+        };
+        let signed_tx = TransferTx {
+            signature: unsigned_tx
+                .clone()
+                .sign_with_private_key_hex(private_key_hex)
+                .expect("signature builds"),
+            ..unsigned_tx
+        };
+        let mut accounts = BTreeMap::from([(
+            from.clone(),
+            AccountState {
+                address: from.clone(),
+                balance: 500,
+                nonce: 0,
+            },
+        )]);
+        let mut ledger = accounts_to_ledger(&accounts);
+        let mut txs = BTreeMap::new();
+
+        let sent = submit_tx(&mut txs, signed_tx, 10);
+        let out = get_tx(&mut txs, &mut ledger, &sent.tx_hash, 20).expect("tx is tracked");
+        assert_eq!(out.status, trnm_rpc::TxStatus::Committed);
+
+        if let Some(rec) = txs.get(&sent.tx_hash) {
+            for address in [&rec.tx.from, &rec.tx.to] {
+                accounts.entry(address.clone()).or_insert(AccountState {
+                    address: address.clone(),
+                    balance: ledger.balance_of(address),
+                    nonce: ledger.next_nonce_of(address),
+                });
+            }
+        }
+
+        ledger_to_accounts(&ledger, &mut accounts);
+
+        let recipient = accounts.get(&to).expect("recipient should be persisted");
+        assert_eq!(recipient.balance, 120);
+        assert_eq!(recipient.nonce, 0);
+        let sender = accounts.get(&from).expect("sender retained");
+        assert_eq!(sender.balance, 375);
+        assert_eq!(sender.nonce, 1);
     }
 
     #[test]

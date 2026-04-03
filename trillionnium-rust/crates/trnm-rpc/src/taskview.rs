@@ -77,6 +77,33 @@ pub(crate) fn filtered_node_events_for_task<'a>(
     })
 }
 
+fn sorted_node_events_for_task<'a>(
+    task_id: u64,
+    node_events: &'a [NodeEventRecord],
+) -> Vec<&'a NodeEventRecord> {
+    let mut events: Vec<&NodeEventRecord> =
+        filtered_node_events_for_task(task_id, node_events).collect();
+    events.sort_by(|a, b| {
+        (
+            a.block_height,
+            a.tx_id,
+            a.ts_unix_ms,
+            a.event_type.as_str(),
+            a.from_status.as_str(),
+            a.to_status.as_str(),
+        )
+            .cmp(&(
+                b.block_height,
+                b.tx_id,
+                b.ts_unix_ms,
+                b.event_type.as_str(),
+                b.from_status.as_str(),
+                b.to_status.as_str(),
+            ))
+    });
+    events
+}
+
 pub(crate) fn query_task_from_node_events(
     task_id: u64,
     node_events: &[NodeEventRecord],
@@ -85,7 +112,7 @@ pub(crate) fn query_task_from_node_events(
     let mut status: Option<TaskStatus> = None;
     let mut worker: Option<String> = None;
 
-    for event in filtered_node_events_for_task(task_id, node_events) {
+    for event in sorted_node_events_for_task(task_id, node_events) {
         version += 1;
         if let Some(mapped) = task_status_from_node_status(event.to_status.as_str()) {
             status = Some(mapped);
@@ -122,7 +149,10 @@ fn adapter_kind_query_order(kind: &str) -> u8 {
     }
 }
 
-fn sorted_task_adapter_records<'a>(task_id: u64, recs: &'a [AdapterRecord]) -> Vec<&'a AdapterRecord> {
+fn sorted_task_adapter_records<'a>(
+    task_id: u64,
+    recs: &'a [AdapterRecord],
+) -> Vec<&'a AdapterRecord> {
     let mut task_recs: Vec<&AdapterRecord> = recs
         .iter()
         .filter(|r| {
@@ -139,17 +169,46 @@ fn sorted_task_adapter_records<'a>(task_id: u64, recs: &'a [AdapterRecord]) -> V
         (
             a.ts,
             adapter_kind_query_order(&a.kind),
-            a.worker.as_deref().unwrap_or(""),
-            a.tx_hash.as_deref().unwrap_or(""),
-            a.result_hash.as_deref().unwrap_or(""),
+            a.worker
+                .as_deref()
+                .and_then(normalize_actor_or_signer)
+                .unwrap_or_default(),
+            a.tx_hash
+                .as_deref()
+                .map(normalize_tx_hash_lookup)
+                .unwrap_or_default(),
+            a.result_hash.as_deref().unwrap_or("").trim(),
         )
             .cmp(&(
                 b.ts,
                 adapter_kind_query_order(&b.kind),
-                b.worker.as_deref().unwrap_or(""),
-                b.tx_hash.as_deref().unwrap_or(""),
-                b.result_hash.as_deref().unwrap_or(""),
+                b.worker
+                    .as_deref()
+                    .and_then(normalize_actor_or_signer)
+                    .unwrap_or_default(),
+                b.tx_hash
+                    .as_deref()
+                    .map(normalize_tx_hash_lookup)
+                    .unwrap_or_default(),
+                b.result_hash.as_deref().unwrap_or("").trim(),
             ))
+    });
+    task_recs.dedup_by(|a, b| {
+        a.kind == b.kind
+            && a.worker
+                .as_deref()
+                .and_then(normalize_actor_or_signer)
+                == b.worker
+                    .as_deref()
+                    .and_then(normalize_actor_or_signer)
+            && a.tx_hash
+                .as_deref()
+                .map(normalize_tx_hash_lookup)
+                == b.tx_hash
+                    .as_deref()
+                    .map(normalize_tx_hash_lookup)
+            && a.result_hash.as_deref().map(str::trim)
+                == b.result_hash.as_deref().map(str::trim)
     });
     task_recs
 }
@@ -171,8 +230,14 @@ pub(crate) fn query_task_response(
     if task_recs.is_empty() {
         bail!("task not found: {}", task_id);
     }
-    let has_reveal = task_recs.iter().any(|r| r.kind == "reveal");
     let has_commit = task_recs.iter().any(|r| r.kind == "commit");
+    if !has_commit {
+        bail!(
+            "task not found: {} (adapter fallback requires persisted commit history)",
+            task_id
+        );
+    }
+    let has_reveal = task_recs.iter().any(|r| r.kind == "reveal");
     let status = if has_reveal {
         TaskStatus::Revealed
     } else if has_commit {
@@ -220,7 +285,7 @@ pub(crate) fn query_events_response(
     );
     let mut events = Vec::new();
 
-    for e in filtered_node_events_for_task(task_id, node_events) {
+    for e in sorted_node_events_for_task(task_id, node_events) {
         let Some(actor) = normalize_actor_or_signer(&e.actor) else {
             continue;
         };

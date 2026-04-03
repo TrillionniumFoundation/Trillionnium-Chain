@@ -155,6 +155,22 @@ pub(crate) fn parse_node_event_log_sources_list(raw: &str) -> Vec<PathBuf> {
         .collect()
 }
 
+fn normalize_lexical_path(path: PathBuf) -> PathBuf {
+    let mut normalized = PathBuf::new();
+    for component in path.components() {
+        match component {
+            std::path::Component::CurDir => {}
+            std::path::Component::ParentDir => {
+                if !normalized.pop() {
+                    normalized.push(component.as_os_str());
+                }
+            }
+            other => normalized.push(other.as_os_str()),
+        }
+    }
+    normalized
+}
+
 pub(crate) fn discover_default_node_event_log_sources(root: &Path) -> Vec<PathBuf> {
     let run_dir = root.join("run");
     let mut out = BTreeSet::<PathBuf>::new();
@@ -192,11 +208,15 @@ pub(crate) fn load_node_event_log_sources(root: &Path) -> Vec<PathBuf> {
                 if trimmed.is_empty() || trimmed.starts_with('#') {
                     continue;
                 }
-                let path = PathBuf::from(trimmed);
+                let normalized = normalize_wrapped_env_value(trimmed);
+                if normalized.is_empty() || normalized.starts_with('#') {
+                    continue;
+                }
+                let path = PathBuf::from(normalized);
                 let resolved = if path.is_absolute() {
-                    path
+                    normalize_lexical_path(path)
                 } else {
-                    manifest_dir.join(path)
+                    normalize_lexical_path(manifest_dir.join(path))
                 };
                 sources.insert(resolved);
             }
@@ -205,10 +225,15 @@ pub(crate) fn load_node_event_log_sources(root: &Path) -> Vec<PathBuf> {
 
     if let Ok(raw) = std::env::var(NODE_EVENT_LOG_SOURCES_ENV) {
         for path in parse_node_event_log_sources_list(&raw) {
+            let normalized = normalize_wrapped_env_value(&path.to_string_lossy());
+            if normalized.is_empty() || normalized.starts_with('#') {
+                continue;
+            }
+            let path = PathBuf::from(normalized);
             let resolved = if path.is_absolute() {
-                path
+                normalize_lexical_path(path)
             } else {
-                root.join(path)
+                normalize_lexical_path(root.join(path))
             };
             sources.insert(resolved);
         }

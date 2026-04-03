@@ -24,6 +24,49 @@ fn normalized_path_from_env_trims_shell_wrapped_quotes() {
             );
         },
     );
+
+    with_market_path_env(
+        &[(
+            "TRNM_RPC_MARKET_TASKS_FILE",
+            Some("  \"/tmp/tasks.jsonl\"   # replay note "),
+        )],
+        || {
+            assert_eq!(
+                normalized_path_from_env("TRNM_RPC_MARKET_TASKS_FILE"),
+                Some(PathBuf::from("/tmp/tasks.jsonl"))
+            );
+        },
+    );
+
+    with_market_path_env(
+        &[(
+            "TRNM_RPC_MARKET_TASKS_FILE",
+            Some("\u{feff}  \"/tmp/tasks.jsonl\"   # replay note from archived index env "),
+        )],
+        || {
+            assert_eq!(
+                normalized_path_from_env("TRNM_RPC_MARKET_TASKS_FILE"),
+                Some(PathBuf::from("/tmp/tasks.jsonl"))
+            );
+        },
+    );
+
+    with_market_path_env(
+        &[(
+            "TRNM_RPC_MARKET_TASKS_FILE",
+            Some("\"/tmp/tasks.jsonl\"# replay note without separator space"),
+        )],
+        || {
+            assert_eq!(
+                normalized_path_from_env("TRNM_RPC_MARKET_TASKS_FILE"),
+                Some(PathBuf::from("/tmp/tasks.jsonl"))
+            );
+        },
+    );
+
+    with_market_path_env(&[("TRNM_RPC_MARKET_TASKS_FILE", Some(" # comment only "))], || {
+        assert_eq!(normalized_path_from_env("TRNM_RPC_MARKET_TASKS_FILE"), None);
+    });
 }
 
 #[test]

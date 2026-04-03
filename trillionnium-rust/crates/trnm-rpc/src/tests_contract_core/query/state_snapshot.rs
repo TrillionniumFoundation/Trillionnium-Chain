@@ -1,6 +1,63 @@
 use super::*;
 
 #[test]
+fn query_task_from_state_snapshot_prefers_highest_version_across_replayed_history() {
+    let tasks = vec![
+        TaskObject {
+            task_id: 88,
+            creator: "alice".into(),
+            bounty: 100,
+            status: TaskStatus::Completed,
+            proof_type: trnm_types::ProofType::Fraud,
+            metadata: None,
+            worker: Some("worker-new".into()),
+            committed_hash: None,
+            result_hash: Some([0x22u8; 32]),
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 7,
+        },
+        TaskObject {
+            task_id: 88,
+            creator: "alice".into(),
+            bounty: 90,
+            status: TaskStatus::Revealed,
+            proof_type: trnm_types::ProofType::Fraud,
+            metadata: None,
+            worker: Some("worker-old".into()),
+            committed_hash: None,
+            result_hash: Some([0x11u8; 32]),
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 3,
+        },
+    ];
+
+    let out = query_task_from_state_snapshot(88, &tasks).expect("task expected");
+    let expected_result_hash = hex::encode([0x22u8; 32]);
+    assert_eq!(out.version, 7, "historical replay must prefer the highest task snapshot version");
+    assert_eq!(out.status, TaskStatus::Completed);
+    assert_eq!(out.worker.as_deref(), Some("worker-new"));
+    assert_eq!(out.result_hash_hex.as_deref(), Some(expected_result_hash.as_str()));
+}
+
+#[test]
 fn query_task_from_state_snapshot_computes_metering_derived_block() {
     let tasks = vec![TaskObject {
         task_id: 77,

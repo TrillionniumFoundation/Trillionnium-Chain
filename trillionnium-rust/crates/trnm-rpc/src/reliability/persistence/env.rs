@@ -69,6 +69,12 @@ pub fn default_reliability_db_path() -> PathBuf {
         }
     }
 
+    if let Ok(state_directory) = std::env::var("STATE_DIRECTORY") {
+        if let Some(normalized) = normalized_env_path(&state_directory) {
+            return PathBuf::from(normalized).join("reliability.sqlite");
+        }
+    }
+
     if let Ok(xdg_state_home) = std::env::var("XDG_STATE_HOME") {
         if let Some(normalized) = normalized_env_path(&xdg_state_home) {
             return PathBuf::from(normalized)

@@ -6,7 +6,7 @@ use std::{
     path::{Path, PathBuf},
 };
 
-use crate::envpaths::{normalized_path_from_env, run_root};
+use crate::envpaths::{normalize_wrapped_env_value, normalized_path_from_env, run_root};
 use crate::metering::{
     normalize_opt_kv, parse_event_log_kv, parse_event_metering_query_response, parse_i128_kv_value,
     parse_u128_kv_value, parse_u64_kv_value,
@@ -64,11 +64,11 @@ pub(crate) fn read_log_tail(path: &Path, tail_bytes: u64) -> Option<String> {
 fn parse_node_event_log_sources_list(raw: &str) -> Vec<PathBuf> {
     raw.split(|c: char| c == ',' || c == ';' || c == '\n')
         .filter_map(|part| {
-            let trimmed = part.trim();
-            if trimmed.is_empty() {
+            let normalized = normalize_wrapped_env_value(part);
+            if normalized.is_empty() {
                 None
             } else {
-                Some(PathBuf::from(trimmed))
+                Some(PathBuf::from(normalized))
             }
         })
         .collect()
@@ -140,7 +140,11 @@ pub(crate) fn load_node_event_log_sources(root: &Path) -> Vec<PathBuf> {
                 if trimmed.is_empty() || trimmed.starts_with('#') {
                     continue;
                 }
-                let path = PathBuf::from(trimmed);
+                let normalized = normalize_wrapped_env_value(trimmed);
+                if normalized.is_empty() || normalized.starts_with('#') {
+                    continue;
+                }
+                let path = PathBuf::from(normalized);
                 let resolved = if path.is_absolute() {
                     path
                 } else {
@@ -181,7 +185,11 @@ fn load_node_event_log_sources(root: &Path) -> Vec<PathBuf> {
                 if trimmed.is_empty() || trimmed.starts_with('#') {
                     continue;
                 }
-                let path = PathBuf::from(trimmed);
+                let normalized = normalize_wrapped_env_value(trimmed);
+                if normalized.is_empty() || normalized.starts_with('#') {
+                    continue;
+                }
+                let path = PathBuf::from(normalized);
                 let resolved = if path.is_absolute() {
                     path
                 } else {

@@ -331,6 +331,70 @@ fn query_normalized_audit_events_supports_pagination_and_event_filters() {
 }
 
 #[test]
+fn query_normalized_audit_events_stably_orders_same_height_same_type_history() {
+    let events = vec![
+        NodeEventRecord {
+            event_type: "commit".into(),
+            task_id: 9,
+            from_status: "Assigned".into(),
+            to_status: "Committed".into(),
+            actor: "worker-b".into(),
+            tx_id: 1,
+            block_height: 42,
+            state_root: "s1".into(),
+            ts_unix_ms: 100,
+            signer: Some("worker-b".into()),
+            challenger: None,
+            tx_hash: None,
+            resolution_code: None,
+            treasury_delta: None,
+            challenger_delta: None,
+            bond_disposition: None,
+            metering: None,
+        },
+        NodeEventRecord {
+            event_type: "commit".into(),
+            task_id: 7,
+            from_status: "Assigned".into(),
+            to_status: "Committed".into(),
+            actor: "worker-a".into(),
+            tx_id: 2,
+            block_height: 42,
+            state_root: "s2".into(),
+            ts_unix_ms: 200,
+            signer: Some("worker-a".into()),
+            challenger: None,
+            tx_hash: None,
+            resolution_code: None,
+            treasury_delta: None,
+            challenger_delta: None,
+            bond_disposition: None,
+            metering: None,
+        },
+    ];
+
+    let out = query_normalized_audit_events(
+        &events,
+        &[],
+        &QueryNormalizedAuditEventsQuery {
+            source: Some("trnm.task".into()),
+            event_type: Some("trnm.task.commit".into()),
+            cursor: None,
+            limit: 10,
+        },
+    );
+
+    let object_ids: Vec<_> = out
+        .events
+        .iter()
+        .map(|event| event.object_id.as_deref())
+        .collect();
+    assert_eq!(object_ids, vec![Some("task:7"), Some("task:9")]);
+    let actors: Vec<_> = out.events.iter().map(|event| event.actor.as_deref()).collect();
+    assert_eq!(actors, vec![Some("worker-a"), Some("worker-b")]);
+}
+
+#[test]
 fn query_normalized_audit_events_supports_adapter_source_filter() {
     let recs = vec![AdapterRecord {
         ts: 300,

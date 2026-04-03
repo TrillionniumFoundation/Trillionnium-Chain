@@ -44,7 +44,17 @@ pub(crate) fn load_account_state(path: &Path) -> BTreeMap<String, AccountState> 
     let Ok(raw) = fs::read_to_string(path) else {
         return BTreeMap::new();
     };
-    serde_json::from_str::<BTreeMap<String, AccountState>>(&raw).unwrap_or_default()
+    match serde_json::from_str::<BTreeMap<String, AccountState>>(&raw) {
+        Ok(accounts) => accounts,
+        Err(err) => {
+            eprintln!(
+                "[trnm-rpc][warn][ACCOUNT_STATE_PARSE] path={} err={}",
+                path.display(),
+                err
+            );
+            BTreeMap::new()
+        }
+    }
 }
 
 pub(crate) fn save_account_state(
@@ -73,7 +83,17 @@ pub(crate) fn load_faucet_limits(path: &Path) -> BTreeMap<String, FaucetRateEntr
     let Ok(raw) = fs::read_to_string(path) else {
         return BTreeMap::new();
     };
-    serde_json::from_str::<BTreeMap<String, FaucetRateEntry>>(&raw).unwrap_or_default()
+    match serde_json::from_str::<BTreeMap<String, FaucetRateEntry>>(&raw) {
+        Ok(limits) => limits,
+        Err(err) => {
+            eprintln!(
+                "[trnm-rpc][warn][FAUCET_LIMITS_PARSE] path={} err={}",
+                path.display(),
+                err
+            );
+            BTreeMap::new()
+        }
+    }
 }
 
 pub(crate) fn save_faucet_limits(
