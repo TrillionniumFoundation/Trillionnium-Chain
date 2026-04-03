@@ -350,6 +350,10 @@ Record these fields in the release ticket or operator handoff note:
 - worktree branch ref match (`true` required):
 - git status summary (`clean` required):
 - preflight summary path:
+- preflight result:
+- preflight generated_at:
+- preflight rollback command:
+- preflight replay command:
 - local evidence summary path:
 - local evidence generated_at:
 - local evidence truth_source:
