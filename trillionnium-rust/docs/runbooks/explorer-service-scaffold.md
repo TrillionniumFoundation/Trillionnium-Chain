@@ -191,6 +191,8 @@ The status output should include the operator contract fields below:
 - `query_events_max_limit=500`
 - `write_paths_exposed=false`
 - `historical_query_scope=rpc-retention-bounded`
+- `archive_strategy=not-configured-static-scaffold`
+- `read_replica_strategy=not-configured-static-scaffold`
 - `health=ok`
 - `health_probe=active`
 - `health_probe_url=<the exact public/reverse-proxy-facing URL status checked>`
@@ -226,6 +228,8 @@ Additional contract markers carried in `index.json`:
 - `query_events_max_limit=500`
 - `write_paths_exposed=false`
 - `historical_query_scope=rpc-retention-bounded`
+- `archive_strategy=not-configured-static-scaffold`
+- `read_replica_strategy=not-configured-static-scaffold`
 - a note that historical queries remain bounded by current RPC retention until a durable indexer/archive strategy exists
 
 ## Failure interpretation
@@ -318,6 +322,8 @@ It also re-emits the same operator-facing contract fields as the up/status scrip
 - `query_events_max_limit=500`
 - `write_paths_exposed=false`
 - `historical_query_scope=rpc-retention-bounded`
+- `archive_strategy=not-configured-static-scaffold`
+- `read_replica_strategy=not-configured-static-scaffold`
 
 Likewise, `explorer_service_up.sh` now emits the same `service_mode` / `production_ready` markers plus `public_base_url=...`, `rpc_base_url=...`, and `local_health_url=...` on success, "already running", and fail-fast exits, so operator notes can quote one consistent contract without having to run `status` first. Its startup gate intentionally probes the local bind target rather than `EXPLORER_PUBLIC_BASE_URL`, so a reverse-proxy-facing public URL can still differ from the local loopback/host bind without breaking the operator bring-up check.
 
