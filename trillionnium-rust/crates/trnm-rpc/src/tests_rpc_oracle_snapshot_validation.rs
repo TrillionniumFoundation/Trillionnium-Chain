@@ -381,6 +381,29 @@ fn oracle_validate_snapshot_response_excludes_blank_source_ids_from_canonical_ca
 }
 
 #[test]
+fn oracle_validate_snapshot_response_rejects_snapshot_without_sources_fail_closed() {
+    let policy_path = write_json_fixture("oracle-policy-no-sources", &oracle_policy_fixture());
+    let snapshot_path = write_json_fixture(
+        "oracle-snapshot-no-sources",
+        &serde_json::json!({
+            "observed_at_ms": 10_000,
+            "aggregate_price": 100_000,
+            "reference_price": 100_000,
+            "feed_id": "btc/usd",
+            "sources": []
+        }),
+    );
+
+    let err = oracle_validate_snapshot_response(&snapshot_path, &policy_path, 10_100)
+        .expect_err("source-less snapshot must fail closed before structured counters");
+
+    assert_eq!(err, "snapshot has no sources");
+
+    let _ = fs::remove_file(snapshot_path);
+    let _ = fs::remove_file(policy_path);
+}
+
+#[test]
 fn oracle_validate_snapshot_response_accepts_exact_staleness_boundary_without_quorum_or_drift_counter_noise() {
     let policy_path = write_json_fixture("oracle-policy-stale-boundary", &oracle_policy_fixture());
     let snapshot_path = write_json_fixture(
