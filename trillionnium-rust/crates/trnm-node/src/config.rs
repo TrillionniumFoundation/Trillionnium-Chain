@@ -2611,6 +2611,28 @@ bootstrap_peers = ["127.0.0.1:27656"]
             "| `node3` missing during startup or rejoin | Keep `node4` stopped until `node3` returns with `node3.toml` and its shipped tuple | Reject while `node4` tries to skip the missing `node3` slot |",
             "| Any tuple drift or config mutation | Stop and review before startup | Reject on renamed files, swapped slots, unknown fields, whitespace drift, non-canonical socket literals, or listener-family drift |",
         ];
+        let expected_table_lines = [
+            "| Scenario | Expected operator action | Acceptance |",
+            "| --- | --- | --- |",
+            expected_rows_in_order[0],
+            expected_rows_in_order[1],
+            expected_rows_in_order[2],
+            expected_rows_in_order[3],
+            expected_rows_in_order[4],
+            expected_rows_in_order[5],
+            expected_rows_in_order[6],
+            expected_rows_in_order[7],
+        ];
+        let documented_acceptance_table_lines = readme
+            .lines()
+            .filter(|line| line.starts_with("| "))
+            .collect::<Vec<_>>();
+        assert_eq!(
+            documented_acceptance_table_lines,
+            expected_table_lines,
+            "{} must keep exactly the shipped bootstrap acceptance table header + separator + scenario rows so topology recovery rules cannot silently drift",
+            readme_path.display()
+        );
         for expected_phrase in [
             "All four nodes bind the same loopback IP (`127.0.0.1`)",
             "keep RPC exactly one port above the matching P2P listener for each slot",
