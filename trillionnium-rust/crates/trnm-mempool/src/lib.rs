@@ -3962,6 +3962,7 @@ mod tests {
             assert_eq!(g.qos_snapshot(), hard_stop_snapshot);
             assert_eq!(g.queued_counts(), (0, 0, 0));
             assert!(g.seen_global.contains(&42));
+            assert!(!g.seen_global.contains(&99));
             assert!(g.normal.seen.is_empty());
             assert!(g.critical.seen.is_empty());
         }
