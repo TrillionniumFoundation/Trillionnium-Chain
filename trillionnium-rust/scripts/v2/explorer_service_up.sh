@@ -108,6 +108,7 @@ emit_read_contract_fields() {
   echo "query_events_max_limit=500"
   echo "write_paths_exposed=false"
   echo "historical_query_scope=rpc-retention-bounded"
+  echo "durability_boundary=ephemeral-rpc-window-only"
   echo "archive_strategy=not-configured-static-scaffold"
   echo "read_replica_strategy=not-configured-static-scaffold"
 }
@@ -249,7 +250,7 @@ cat >"${HEALTH_FILE}" <<EOF
 EOF
 
 cat >"${INDEX_FILE}" <<EOF
-{"service":"explorer-service-scaffold","service_mode":"operator-facing-static-scaffold","production_ready":false,"health_url":"${HEALTH_URL}","local_health_url":"${LOCAL_HEALTH_URL}","rpc_base_url":"${RPC_BASE_URL}","read_contract":{"mode":"read-only","source":"rpc-read-surface","day1_surface":["query-task/<task_id>","query-events/<task_id>?limit=<n>","query-capability-audit/<subject-or-token>","query-normalized-audit-events?source=<source>&eventType=<type>&limit=<n>&cursor=<cursor>"],"query_events_default_limit":100,"query_events_max_limit":500,"write_paths_exposed":false,"historical_query_scope":"rpc-retention-bounded","archive_strategy":"not-configured-static-scaffold","read_replica_strategy":"not-configured-static-scaffold"},"notes":["static scaffold only","not a durable indexer","not a production read-model","historical queries remain bounded by RPC retention until a durable indexer/archive strategy exists"]}
+{"service":"explorer-service-scaffold","service_mode":"operator-facing-static-scaffold","production_ready":false,"health_url":"${HEALTH_URL}","local_health_url":"${LOCAL_HEALTH_URL}","rpc_base_url":"${RPC_BASE_URL}","read_contract":{"mode":"read-only","source":"rpc-read-surface","day1_surface":["query-task/<task_id>","query-events/<task_id>?limit=<n>","query-capability-audit/<subject-or-token>","query-normalized-audit-events?source=<source>&eventType=<type>&limit=<n>&cursor=<cursor>"],"query_events_default_limit":100,"query_events_max_limit":500,"write_paths_exposed":false,"historical_query_scope":"rpc-retention-bounded","durability_boundary":"ephemeral-rpc-window-only","archive_strategy":"not-configured-static-scaffold","read_replica_strategy":"not-configured-static-scaffold"},"notes":["static scaffold only","not a durable indexer","not a production read-model","historical queries remain bounded by RPC retention until a durable indexer/archive strategy exists"]}
 EOF
 
 cd "${PUBLIC_DIR}"

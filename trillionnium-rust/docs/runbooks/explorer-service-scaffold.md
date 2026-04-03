@@ -259,6 +259,7 @@ The status output should include the operator contract fields below:
 - `query_events_max_limit=500`
 - `write_paths_exposed=false`
 - `historical_query_scope=rpc-retention-bounded`
+- `durability_boundary=ephemeral-rpc-window-only`
 - `archive_strategy=not-configured-static-scaffold`
 - `read_replica_strategy=not-configured-static-scaffold`
 - `health=ok`
@@ -296,6 +297,7 @@ Additional contract markers carried in `index.json`:
 - `query_events_max_limit=500`
 - `write_paths_exposed=false`
 - `historical_query_scope=rpc-retention-bounded`
+- `durability_boundary=ephemeral-rpc-window-only`
 - `archive_strategy=not-configured-static-scaffold`
 - `read_replica_strategy=not-configured-static-scaffold`
 - a note that historical queries remain bounded by current RPC retention until a durable indexer/archive strategy exists
@@ -390,6 +392,7 @@ It also re-emits the same operator-facing contract fields as the up/status scrip
 - `query_events_max_limit=500`
 - `write_paths_exposed=false`
 - `historical_query_scope=rpc-retention-bounded`
+- `durability_boundary=ephemeral-rpc-window-only`
 - `archive_strategy=not-configured-static-scaffold`
 - `read_replica_strategy=not-configured-static-scaffold`
 
@@ -405,3 +408,5 @@ It only proves that:
 - one health/log/PID contract is visible.
 
 The remaining blocker still requires durable indexing, replay semantics, historical query policy, and a real deployment/SLO story.
+
+Treat `durability_boundary=ephemeral-rpc-window-only` as a fail-closed reminder that this scaffold has no persisted cursor/checkpoint/read-model state of its own: once the upstream RPC retention window no longer carries a record, the scaffold has no independent durability claim to fall back on.
