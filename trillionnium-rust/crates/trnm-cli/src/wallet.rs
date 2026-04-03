@@ -94,6 +94,28 @@ fn is_single_sided_env_quote(c: char) -> bool {
     )
 }
 
+fn is_hidden_text_control(c: char) -> bool {
+    c.is_whitespace()
+        || c.is_control()
+        || matches!(
+            c,
+            '\u{00AD}'
+                | '\u{061C}'
+                | '\u{180E}'
+                | '\u{200B}'
+                | '\u{200C}'
+                | '\u{200D}'
+                | '\u{200E}'
+                | '\u{200F}'
+                | '\u{2060}'
+                | '\u{2061}'..='\u{2065}'
+                | '\u{206A}'..='\u{206F}'
+                | '\u{FEFF}'
+                | '\u{202A}'..='\u{202E}'
+                | '\u{2066}'..='\u{2069}'
+        )
+}
+
 fn is_suspicious_path_wrapper(c: char) -> bool {
     is_single_sided_env_quote(c)
 }
@@ -280,32 +302,7 @@ pub(crate) fn wallet_file(store: &Path, name: &str) -> PathBuf {
 }
 
 pub(crate) fn ensure_wallet_name(name: &str) -> Result<()> {
-    let has_hidden_or_whitespace = name.chars().any(|c| {
-        c.is_whitespace()
-            || c.is_control()
-            || matches!(
-                c,
-                '\u{00AD}'
-                    | '\u{061C}'
-                    | '\u{180E}'
-                    | '\u{200B}'
-                    | '\u{200C}'
-                    | '\u{200D}'
-                    | '\u{200E}'
-                    | '\u{200F}'
-                    | '\u{2060}'
-                    | '\u{FEFF}'
-                    | '\u{202A}'
-                    | '\u{202B}'
-                    | '\u{202C}'
-                    | '\u{202D}'
-                    | '\u{202E}'
-                    | '\u{2066}'
-                    | '\u{2067}'
-                    | '\u{2068}'
-                    | '\u{2069}'
-            )
-    });
+    let has_hidden_or_whitespace = name.chars().any(is_hidden_text_control);
     let uppercase = name.to_ascii_uppercase();
     let is_windows_reserved_device = matches!(
         uppercase.as_str(),
