@@ -743,6 +743,31 @@ mod tests {
     }
 
     #[test]
+    fn paused_duplicate_lock_request_fails_closed_without_leaking_duplicate_state() {
+        let mut vault = SettlementVault::new("owner");
+
+        vault.deposit("owner", "alice", 20).unwrap();
+        vault.lock("owner", "req-paused-dup", "alice", 5).unwrap();
+        let audit_len_before_pause = vault.audit_log().len();
+
+        vault.pause("owner").unwrap();
+        let audit_len_while_paused = vault.audit_log().len();
+        assert_eq!(audit_len_while_paused, audit_len_before_pause + 1);
+
+        let err = vault
+            .lock("owner", "req-paused-dup", "alice", 1)
+            .expect_err("paused duplicate lock must fail before duplicate-request handling");
+        assert_eq!(err, VaultError::Paused);
+        assert_eq!(vault.balance_of("alice"), 15);
+        assert_eq!(
+            vault.lock_record("req-paused-dup").unwrap().status,
+            LockStatus::Locked
+        );
+        assert_eq!(vault.lock_record("req-paused-dup").unwrap().amount, 5);
+        assert_eq!(vault.audit_log().len(), audit_len_while_paused);
+    }
+
+    #[test]
     fn paused_slash_fails_closed_without_mutating_lock_or_audit_log() {
         let mut vault = SettlementVault::new("owner");
 
