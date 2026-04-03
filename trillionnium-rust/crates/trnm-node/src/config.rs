@@ -530,6 +530,18 @@ mod tests {
     }
 
     #[test]
+    fn resolve_config_path_anchors_repo_root_workspace_path_to_workspace_root() {
+        let resolved = resolve_config_path("trillionnium-rust/configs/node1.toml");
+        let manifest_dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR"));
+        let workspace_root = manifest_dir
+            .ancestors()
+            .nth(2)
+            .expect("trnm-node manifest should sit under trillionnium-rust/crates/trnm-node");
+        assert_eq!(resolved, workspace_root.join("configs/node1.toml"));
+        assert!(resolved.is_file(), "expected shipped node1 config to exist");
+    }
+
+    #[test]
     fn resolve_config_path_anchors_curdir_prefixed_workspace_path_to_workspace_root() {
         let resolved = resolve_config_path("./trillionnium-rust/configs/node1.toml");
         let manifest_dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR"));
@@ -542,9 +554,46 @@ mod tests {
     }
 
     #[test]
+    fn resolve_config_path_anchors_curdir_prefixed_repo_root_defaults_to_workspace_configs_dir() {
+        let resolved = resolve_config_path("./configs/node1.toml");
+        assert!(
+            resolved.ends_with(std::path::Path::new("trillionnium-rust/configs/node1.toml")),
+            "resolved path should normalize curdir-prefixed repo-root bootstrap defaults: {}",
+            resolved.display()
+        );
+    }
+
+    #[test]
+    fn load_config_accepts_legacy_repo_root_relative_default_path() {
+        let cfg =
+            load_config("configs/node1.toml").expect("repo-root launches should resolve legacy default config path");
+        assert_eq!(cfg.node_id, "node1");
+        assert_eq!(cfg.rpc_addr, "127.0.0.1:26657");
+        assert_eq!(cfg.p2p_addr, "127.0.0.1:26656");
+    }
+
+    #[test]
+    fn load_config_accepts_repo_root_workspace_path_for_shipped_bootstrap_config() {
+        let cfg = load_config("trillionnium-rust/configs/node1.toml")
+            .expect("repo-root workspace bootstrap config should resolve");
+        assert_eq!(cfg.node_id, "node1");
+        assert_eq!(cfg.rpc_addr, "127.0.0.1:26657");
+        assert_eq!(cfg.p2p_addr, "127.0.0.1:26656");
+    }
+
+    #[test]
     fn load_config_accepts_curdir_prefixed_workspace_path_for_shipped_bootstrap_config() {
         let cfg = load_config("./trillionnium-rust/configs/node1.toml")
             .expect("curdir-prefixed workspace bootstrap config should resolve");
+        assert_eq!(cfg.node_id, "node1");
+        assert_eq!(cfg.rpc_addr, "127.0.0.1:26657");
+        assert_eq!(cfg.p2p_addr, "127.0.0.1:26656");
+    }
+
+    #[test]
+    fn load_config_accepts_curdir_prefixed_repo_root_default_path() {
+        let cfg =
+            load_config("./configs/node1.toml").expect("curdir-prefixed repo-root bootstrap config should resolve");
         assert_eq!(cfg.node_id, "node1");
         assert_eq!(cfg.rpc_addr, "127.0.0.1:26657");
         assert_eq!(cfg.p2p_addr, "127.0.0.1:26656");

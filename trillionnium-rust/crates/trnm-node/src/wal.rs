@@ -97,6 +97,13 @@ fn canonicalize_wal_meta(entries: &mut Vec<WalMeta>) {
     entries.dedup_by(|a, b| a == b);
 }
 
+fn metadata_scaffold_is_effectively_empty(raw: &str) -> bool {
+    raw.lines().all(|line| {
+        let trimmed = line.trim_start_matches('\u{feff}').trim();
+        trimmed.is_empty() || trimmed.starts_with('#')
+    })
+}
+
 pub(crate) fn load_wal_meta_entries(wal_dir: &Path) -> Result<Vec<WalMeta>> {
     let f = wal_meta_file(wal_dir);
     if !f.exists() {
@@ -104,7 +111,7 @@ pub(crate) fn load_wal_meta_entries(wal_dir: &Path) -> Result<Vec<WalMeta>> {
     }
     let raw =
         fs::read_to_string(&f).with_context(|| format!("read wal meta failed: {}", f.display()))?;
-    if raw.trim().is_empty() {
+    if metadata_scaffold_is_effectively_empty(&raw) {
         return Ok(vec![]);
     }
     let mut list: WalMetaList =
@@ -139,12 +146,17 @@ pub(crate) fn load_checkpoint_meta(wal_dir: &Path) -> Result<Vec<CheckpointMeta>
     }
     let raw = fs::read_to_string(&f)
         .with_context(|| format!("read checkpoint failed: {}", f.display()))?;
-    if raw.trim().is_empty() {
+    if metadata_scaffold_is_effectively_empty(&raw) {
         return Ok(vec![]);
     }
     let mut list: CheckpointMetaList = toml::from_str(&raw)
         .with_context(|| format!("parse checkpoint failed: {}", f.display()))?;
     canonicalize_checkpoint_meta(&mut list.checkpoints);
+    list.checkpoints.dedup_by(|a, b| {
+        a.height == b.height
+            && a.state_root_hex == b.state_root_hex
+            && a.wal_entry_hash_hex == b.wal_entry_hash_hex
+    });
     Ok(list.checkpoints)
 }
 
@@ -177,6 +189,7 @@ pub(crate) fn persist_consensus_wal(wal_dir: &Path, wal: &ConsensusWal) -> Resul
 #[cfg(test)]
 mod tests {
     use super::*;
+    use clap::Parser;
 
     fn temp_wal_dir(name: &str) -> PathBuf {
         let now_nanos = SystemTime::now()
@@ -189,6 +202,72 @@ mod tests {
             std::process::id(),
             now_nanos
         ))
+    }
+
+    fn default_args() -> Args {
+        Args::parse_from(["trnm-node"])
+    }
+
+    #[test]
+    fn resolve_wal_dir_auto_isolates_existing_builtin_default_state_for_safe_rejoin() {
+        let sandbox = temp_wal_dir("resolve-auto-isolates-default");
+        let prior_cwd = std::env::current_dir().unwrap();
+        fs::create_dir_all(sandbox.join(DEFAULT_BFT_WAL_DIR)).unwrap();
+        fs::write(
+            checkpoint_file(&sandbox.join(DEFAULT_BFT_WAL_DIR)),
+            "[[checkpoints]]\nheight = 1\nstate_root_hex = \"aa\"\nwal_entry_hash_hex = \"bb\"\n",
+        )
+        .unwrap();
+        std::env::set_current_dir(&sandbox).unwrap();
+
+        let args = default_args();
+        let requested = PathBuf::from(DEFAULT_BFT_WAL_DIR);
+        let (resolved, note) = resolve_wal_dir(&args).unwrap();
+        assert_ne!(resolved, requested);
+        assert!(resolved.starts_with(&requested));
+        assert!(
+            note.unwrap().contains("isolating this run"),
+            "expected auto isolation note for existing default-path state"
+        );
+
+        std::env::set_current_dir(prior_cwd).unwrap();
+        let _ = fs::remove_dir_all(&sandbox);
+    }
+
+    #[test]
+    fn resolve_wal_dir_auto_preserves_explicit_custom_recovery_path() {
+        let wal_dir = temp_wal_dir("resolve-auto-preserves-custom");
+        fs::create_dir_all(&wal_dir).unwrap();
+        fs::write(wal_meta_file(&wal_dir), "entries = []\n").unwrap();
+
+        let mut args = default_args();
+        args.bft_wal_dir = wal_dir.display().to_string();
+        args.bft_wal_mode = WalDirMode::Auto;
+
+        let (resolved, note) = resolve_wal_dir(&args).unwrap();
+        assert_eq!(resolved, wal_dir);
+        assert!(note.is_none());
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
+    fn resolve_wal_dir_fail_if_exists_rejects_checkpoint_only_recovery_surface() {
+        let wal_dir = temp_wal_dir("resolve-fail-if-exists-checkpoint-only");
+        fs::create_dir_all(&wal_dir).unwrap();
+        fs::write(checkpoint_file(&wal_dir), "[[checkpoints]]\nheight = 7\nstate_root_hex = \"root-a\"\nwal_entry_hash_hex = \"hash-a\"\n").unwrap();
+
+        let mut args = default_args();
+        args.bft_wal_dir = wal_dir.display().to_string();
+        args.bft_wal_mode = WalDirMode::FailIfExists;
+
+        let err = resolve_wal_dir(&args).unwrap_err().to_string();
+        assert!(
+            err.contains("refusing to reuse existing BFT WAL state"),
+            "unexpected fail-if-exists error: {err}"
+        );
+
+        let _ = fs::remove_dir_all(&wal_dir);
     }
 
     #[test]
@@ -665,10 +744,91 @@ mod tests {
     }
 
     #[test]
+    fn load_checkpoint_meta_deduplicates_identical_disk_entries_for_auditable_surfaces() {
+        let wal_dir = temp_wal_dir("checkpoint-load-dedup-identical-entries");
+        fs::create_dir_all(&wal_dir).unwrap();
+        fs::write(
+            checkpoint_file(&wal_dir),
+            r#"
+                [[checkpoints]]
+                height = 7
+                state_root_hex = "root-a"
+                wal_entry_hash_hex = "hash-a"
+
+                [[checkpoints]]
+                height = 8
+                state_root_hex = "root-b"
+                wal_entry_hash_hex = "hash-b"
+
+                [[checkpoints]]
+                height = 7
+                state_root_hex = "root-a"
+                wal_entry_hash_hex = "hash-a"
+            "#,
+        )
+        .unwrap();
+
+        let checkpoints = load_checkpoint_meta(&wal_dir).unwrap();
+        assert_eq!(checkpoints.len(), 2);
+        assert_eq!(checkpoints[0].height, 7);
+        assert_eq!(checkpoints[0].state_root_hex, "root-a");
+        assert_eq!(checkpoints[0].wal_entry_hash_hex, "hash-a");
+        assert_eq!(checkpoints[1].height, 8);
+        assert_eq!(checkpoints[1].state_root_hex, "root-b");
+        assert_eq!(checkpoints[1].wal_entry_hash_hex, "hash-b");
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
     fn load_checkpoint_meta_treats_blank_files_as_empty_metadata_scaffolds() {
         let wal_dir = temp_wal_dir("checkpoint-blank-scaffold");
         fs::create_dir_all(&wal_dir).unwrap();
         fs::write(checkpoint_file(&wal_dir), "  \n\t").unwrap();
+
+        let checkpoints = load_checkpoint_meta(&wal_dir).unwrap();
+        assert!(checkpoints.is_empty());
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
+    fn load_checkpoint_meta_treats_comment_only_files_as_empty_metadata_scaffolds() {
+        let wal_dir = temp_wal_dir("checkpoint-comment-only-scaffold");
+        fs::create_dir_all(&wal_dir).unwrap();
+        fs::write(
+            checkpoint_file(&wal_dir),
+            "# operator left a recovery note\n   # keep until next successful catch-up\n",
+        )
+        .unwrap();
+
+        let checkpoints = load_checkpoint_meta(&wal_dir).unwrap();
+        assert!(checkpoints.is_empty());
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
+    fn load_checkpoint_meta_treats_bom_prefixed_blank_files_as_empty_metadata_scaffolds() {
+        let wal_dir = temp_wal_dir("checkpoint-bom-blank-scaffold");
+        fs::create_dir_all(&wal_dir).unwrap();
+        fs::write(checkpoint_file(&wal_dir), "\u{feff} \n\t").unwrap();
+
+        let checkpoints = load_checkpoint_meta(&wal_dir).unwrap();
+        assert!(checkpoints.is_empty());
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
+    fn load_checkpoint_meta_treats_bom_prefixed_comment_only_files_as_empty_metadata_scaffolds() {
+        let wal_dir = temp_wal_dir("checkpoint-bom-comment-only-scaffold");
+        fs::create_dir_all(&wal_dir).unwrap();
+        fs::write(
+            checkpoint_file(&wal_dir),
+            "\u{feff}# operator left a recovery note\n   # keep until next successful catch-up\n",
+        )
+        .unwrap();
 
         let checkpoints = load_checkpoint_meta(&wal_dir).unwrap();
         assert!(checkpoints.is_empty());
@@ -736,6 +896,66 @@ mod tests {
     }
 
     #[test]
+    fn load_wal_meta_treats_comment_only_files_as_empty_metadata_scaffolds() {
+        let wal_dir = temp_wal_dir("wal-comment-only-scaffold");
+        fs::create_dir_all(&wal_dir).unwrap();
+        fs::write(
+            wal_meta_file(&wal_dir),
+            "# operator left a catch-up note\n\t# safe to treat as empty metadata scaffold\n",
+        )
+        .unwrap();
+
+        let entries = load_wal_meta_entries(&wal_dir).unwrap();
+        assert!(entries.is_empty());
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
+    fn load_wal_meta_treats_bom_prefixed_blank_files_as_empty_metadata_scaffolds() {
+        let wal_dir = temp_wal_dir("wal-bom-blank-scaffold");
+        fs::create_dir_all(&wal_dir).unwrap();
+        fs::write(wal_meta_file(&wal_dir), "\u{feff}\n  \t").unwrap();
+
+        let entries = load_wal_meta_entries(&wal_dir).unwrap();
+        assert!(entries.is_empty());
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
+    fn load_wal_meta_treats_bom_prefixed_comment_only_files_as_empty_metadata_scaffolds() {
+        let wal_dir = temp_wal_dir("wal-bom-comment-only-scaffold");
+        fs::create_dir_all(&wal_dir).unwrap();
+        fs::write(
+            wal_meta_file(&wal_dir),
+            "\u{feff}# operator left a catch-up note\n\t# safe to treat as empty metadata scaffold\n",
+        )
+        .unwrap();
+
+        let entries = load_wal_meta_entries(&wal_dir).unwrap();
+        assert!(entries.is_empty());
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
+    fn load_wal_meta_treats_crlf_comment_only_files_as_empty_metadata_scaffolds() {
+        let wal_dir = temp_wal_dir("wal-crlf-comment-only-scaffold");
+        fs::create_dir_all(&wal_dir).unwrap();
+        fs::write(
+            wal_meta_file(&wal_dir),
+            "# operator left a catch-up note\r\n\t# safe to treat as empty metadata scaffold\r\n",
+        )
+        .unwrap();
+
+        let entries = load_wal_meta_entries(&wal_dir).unwrap();
+        assert!(entries.is_empty());
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
     fn load_wal_meta_rejects_unknown_top_level_fields_for_auditable_surfaces() {
         let wal_dir = temp_wal_dir("wal-unknown-top-level-field");
         fs::create_dir_all(&wal_dir).unwrap();
@@ -785,4 +1005,3 @@ mod tests {
         let _ = fs::remove_dir_all(&wal_dir);
     }
 }
-

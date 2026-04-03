@@ -59,6 +59,7 @@ pub(crate) fn initialize_runtime_recovery(
         recovered.truncated,
         recovered.metadata_only_recovery
     );
+    println!("[bft-recover] {}", recovery_startup_summary(&recovered));
     ensure_recoverable_wal_state(&wal_dir, &recovered)?;
     Ok((wal_dir, recovered, restored_lock))
 }

@@ -7,7 +7,9 @@ use crate::args::Args;
 use crate::bft::model::{BftJitterControl, LeaderHealth};
 use crate::config::{load_config, NodeConfig};
 use crate::demo::init_demo_state_and_mempool;
-use crate::recovery::{ensure_recoverable_wal_state, recover_wal_state};
+use crate::recovery::{
+    ensure_recoverable_wal_state, recover_wal_state, recovery_startup_summary,
+};
 use crate::types::MockTx;
 use crate::wal::{load_checkpoint_meta, load_wal_meta_entries, resolve_wal_dir};
 
@@ -80,6 +82,7 @@ pub(crate) fn bootstrap_node_runtime(args: &Args) -> Result<BootstrappedNodeRunt
         recovered.truncated,
         recovered.metadata_only_recovery
     );
+    println!("[bft-recover] {}", recovery_startup_summary(&recovered));
     ensure_recoverable_wal_state(&wal_dir, &recovered)?;
 
     let (state, mempool) = init_demo_state_and_mempool(args.demo_tasks, args.demo_keys);
