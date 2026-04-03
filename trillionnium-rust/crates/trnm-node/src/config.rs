@@ -2022,7 +2022,14 @@ bootstrap_peers = ["127.0.0.1:27656"]
 
     #[test]
     fn validate_node_config_rejects_uri_and_userinfo_separators_in_node_id() {
-        for node_id in ["node@alpha", "node?alpha", "node#alpha", "node%zone"] {
+        for node_id in [
+            "node@alpha",
+            "node?alpha",
+            "node#alpha",
+            "node%zone",
+            "node&peer",
+            "node=peer",
+        ] {
             let err = validate_node_config(
                 NodeConfig {
                     node_id: node_id.into(),
