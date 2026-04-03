@@ -809,6 +809,16 @@ mod tests {
     }
 
     #[test]
+    fn recovery_startup_summary_reports_truncated_missing_checkpoint_metadata_for_runtime_triage() {
+        let recovered = recovered_state(1, 9, None, true, false);
+
+        assert_eq!(
+            recovery_startup_summary(&recovered),
+            "retained_wal_entries=1 checkpoint_height_retained=none checkpoint_tip_relation=missing next_startup_height=9 wal_tail_truncated=true metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume_missing_checkpoint_metadata_after_tail_repair"
+        );
+    }
+
+    #[test]
     fn recovery_startup_summary_reports_lagging_checkpoint_resume_surface_for_runtime_triage() {
         let recovered = recovered_state(3, 8, Some(5), false, false);
 
