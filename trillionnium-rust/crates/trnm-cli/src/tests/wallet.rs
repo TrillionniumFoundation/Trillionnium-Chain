@@ -162,6 +162,10 @@ fn normalize_wallet_store_env_trims_shell_wrapped_quotes() {
     );
     assert_eq!(normalize_wallet_store_env("\u{200e}\u{200f}\u{061c}"), None);
     assert_eq!(
+        normalize_wallet_store_env("\u{00ad}\u{180e}《/tmp/trnm-wallets》\u{180e}\u{00ad}"),
+        Some("/tmp/trnm-wallets")
+    );
+    assert_eq!(
         normalize_wallet_store_env("\u{200e}\"/tmp/trnm-wallets\"\u{200f}"),
         Some("/tmp/trnm-wallets")
     );
@@ -499,6 +503,28 @@ fn explicit_wallet_store_path_must_be_absolute_and_normalized() {
             .to_string()
             .contains("must be an absolute normalized path"),
         "unexpected error: {wrapped_bracket_err}"
+    );
+
+    let soft_hyphen_err = write_key(
+        std::path::Path::new("/tmp/trnm\u{00ad}wallets"),
+        "alice",
+        "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    )
+    .unwrap_err();
+    assert!(
+        soft_hyphen_err
+            .to_string()
+            .contains("must be an absolute normalized path"),
+        "unexpected error: {soft_hyphen_err}"
+    );
+
+    let mongolian_separator_err = read_key(std::path::Path::new("/tmp/trnm\u{180e}wallets"), "alice")
+        .unwrap_err();
+    assert!(
+        mongolian_separator_err
+            .to_string()
+            .contains("must be an absolute normalized path"),
+        "unexpected error: {mongolian_separator_err}"
     );
 }
 

@@ -5,7 +5,9 @@ fn is_hidden_env_wrapper(c: char) -> bool {
         || c.is_control()
         || matches!(
             c,
-            '\u{061C}'
+            '\u{00AD}'
+                | '\u{061C}'
+                | '\u{180E}'
                 | '\u{200B}'
                 | '\u{200C}'
                 | '\u{200D}'
@@ -22,9 +24,6 @@ fn is_hidden_env_wrapper(c: char) -> bool {
                 | '\u{2067}'
                 | '\u{2068}'
                 | '\u{2069}'
-                | '\u{061C}'
-                | '\u{200E}'
-                | '\u{200F}'
         )
 }
 
@@ -158,7 +157,9 @@ fn wallet_store_path_is_safe(path: &Path) -> bool {
                 && !is_suspicious_path_wrapper(c)
                 && !matches!(
                     c,
-                    '\u{061C}'
+                    '\u{00AD}'
+                        | '\u{061C}'
+                        | '\u{180E}'
                         | '\u{200B}'
                         | '\u{200C}'
                         | '\u{200D}'
