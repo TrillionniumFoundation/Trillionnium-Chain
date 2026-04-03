@@ -31,6 +31,7 @@ This fixture is local-only and rehearsal-scoped. Do not treat it as proof that p
 | Fresh bootstrap start | Start `node1` first, then `node2` → `node3` → `node4` in slot order | Accept only when each node keeps its shipped slot-bound config and listener tuple |
 | Follower join while `node1` is healthy | Start the joining follower with its original config file (`node2.toml`, `node3.toml`, or `node4.toml`) | Accept only when `node_id`, `rpc_addr`, and `p2p_addr` exactly match the shipped tuple |
 | Follower rejoin after restart | Bring the same follower back with the same filename and the same tuple | Accept only when the rejoining node does not drift slots, IDs, or listener addresses |
+| Anchor rejoin after restart | Bring `node1` back only with `node1.toml`; resume follower startup/rejoin only after the shipped anchor tuple is restored | Accept only when `node1` regains the shipped anchor tuple before later slots continue |
 | `node1` missing during recovery | Restore `node1` first; do not promote a later slot into the anchor role | Reject until the shipped `node1` anchor tuple is back in place |
 | Any tuple drift or config mutation | Stop and review before startup | Reject on renamed files, swapped slots, unknown fields, whitespace drift, non-canonical socket literals, or listener-family drift |
 
