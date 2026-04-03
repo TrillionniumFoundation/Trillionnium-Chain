@@ -1066,6 +1066,29 @@ mod tests {
     }
 
     #[test]
+    fn finalize_settlement_rejects_target_bridge_mismatch_without_audit_side_effects() {
+        let mut relay = relay(1, &[7]);
+        let mut msg = sample_msg();
+        msg.target_bridge = addr(8);
+        let audit_len_before = relay.audit_log().len();
+
+        let err = relay
+            .finalize_settlement(&msg, &[sig_for(&msg, 7)], 1_000, 999, 31337, addr(9))
+            .unwrap_err();
+
+        assert!(matches!(
+            err,
+            BridgeRelayError::InvalidTargetBridge { expected, got }
+                if expected == addr(9) && got == addr(8)
+        ));
+        assert_eq!(
+            relay.audit_log().len(),
+            audit_len_before,
+            "target bridge mismatch must not append proof/nonce/finalize audit events"
+        );
+    }
+
+    #[test]
     fn duplicate_validator_signatures_do_not_count_twice() {
         let mut relay = relay(1, &[7]);
         let msg = sample_msg();
