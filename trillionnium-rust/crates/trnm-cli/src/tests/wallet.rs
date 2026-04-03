@@ -529,7 +529,7 @@ fn explicit_wallet_store_path_must_be_absolute_and_normalized() {
 }
 
 #[test]
-fn ensure_safe_sign_message_rejects_ambiguous_whitespace_and_bidi_controls() {
+fn ensure_safe_sign_message_rejects_ambiguous_or_non_ascii_signer_text() {
     let leading_err = ensure_safe_sign_message(" approve tx").unwrap_err();
     assert!(
         leading_err
@@ -542,7 +542,7 @@ fn ensure_safe_sign_message_rejects_ambiguous_whitespace_and_bidi_controls() {
     assert!(
         nbsp_err
             .to_string()
-            .contains("control or bidi override characters"),
+            .contains("ASCII printable text"),
         "unexpected error: {nbsp_err}"
     );
 
@@ -550,11 +550,27 @@ fn ensure_safe_sign_message_rejects_ambiguous_whitespace_and_bidi_controls() {
     assert!(
         bidi_err
             .to_string()
-            .contains("control or bidi override characters"),
+            .contains("ASCII printable text"),
         "unexpected error: {bidi_err}"
     );
 
+    let unicode_visible_err = ensure_safe_sign_message("approve 签名").unwrap_err();
+    assert!(
+        unicode_visible_err
+            .to_string()
+            .contains("ASCII printable text"),
+        "unexpected error: {unicode_visible_err}"
+    );
+
+    let too_long_message = "a".repeat(4097);
+    let too_long_err = ensure_safe_sign_message(&too_long_message).unwrap_err();
+    assert!(
+        too_long_err.to_string().contains("<= 4096 bytes"),
+        "unexpected error: {too_long_err}"
+    );
+
     ensure_safe_sign_message("approve tx").unwrap();
+    ensure_safe_sign_message(&"a".repeat(4096)).unwrap();
 }
 
 #[test]

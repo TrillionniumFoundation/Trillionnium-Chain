@@ -582,14 +582,19 @@ pub(crate) fn ensure_safe_sign_message(message: &str) -> Result<()> {
     if message.is_empty() {
         bail!("wallet sign message must not be empty");
     }
+    if message.len() > 4096 {
+        bail!("wallet sign message must be <= 4096 bytes");
+    }
     if message.trim() != message {
         bail!(
             "wallet sign message contains leading or trailing whitespace; refusing ambiguous offline-signing output"
         );
     }
-    if message.chars().any(is_unsafe_sign_message_char) {
+    if message.chars().any(|c| {
+        is_unsafe_sign_message_char(c) || !c.is_ascii() || (!c.is_ascii_graphic() && c != ' ')
+    }) {
         bail!(
-            "wallet sign message contains control or bidi override characters; refusing unsafe offline-signing output"
+            "wallet sign message must be single-line ASCII printable text with only interior ASCII spaces; refusing unsafe offline-signing output"
         );
     }
     Ok(())

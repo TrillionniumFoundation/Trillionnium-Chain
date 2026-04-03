@@ -1345,14 +1345,19 @@ fn ensure_safe_sign_message(message: &str) -> Result<()> {
     if message.is_empty() {
         bail!("wallet sign message must not be empty");
     }
+    if message.len() > 4096 {
+        bail!("wallet sign message must be <= 4096 bytes");
+    }
     if message.trim() != message {
         bail!(
             "wallet sign message contains leading or trailing whitespace; refusing ambiguous offline-signing output"
         );
     }
-    if message.chars().any(is_unsafe_sign_message_char) {
+    if message.chars().any(|c| {
+        is_unsafe_sign_message_char(c) || !c.is_ascii() || (!c.is_ascii_graphic() && c != ' ')
+    }) {
         bail!(
-            "wallet sign message contains control or bidi override characters; refusing unsafe offline-signing output"
+            "wallet sign message must be single-line ASCII printable text with only interior ASCII spaces; refusing unsafe offline-signing output"
         );
     }
     Ok(())
@@ -4883,8 +4888,7 @@ mod tests {
     fn ensure_safe_sign_message_rejects_newline_injected_text() {
         let err = ensure_safe_sign_message("rotate\nsignature=fake").unwrap_err();
         assert!(
-            err.to_string()
-                .contains("contains control or bidi override characters"),
+            err.to_string().contains("ASCII printable text"),
             "unexpected: {err}"
         );
     }
@@ -4913,8 +4917,7 @@ mod tests {
     fn ensure_safe_sign_message_rejects_non_ascii_whitespace_text() {
         let err = ensure_safe_sign_message("rotate signer\u{00a0}to cold-key slot b").unwrap_err();
         assert!(
-            err.to_string()
-                .contains("contains control or bidi override characters"),
+            err.to_string().contains("ASCII printable text"),
             "unexpected: {err}"
         );
     }
@@ -4923,8 +4926,7 @@ mod tests {
     fn ensure_safe_sign_message_rejects_bidi_override_text() {
         let err = ensure_safe_sign_message("rotate signer \u{202e}tx=approved").unwrap_err();
         assert!(
-            err.to_string()
-                .contains("contains control or bidi override characters"),
+            err.to_string().contains("ASCII printable text"),
             "unexpected: {err}"
         );
     }
@@ -4933,8 +4935,7 @@ mod tests {
     fn ensure_safe_sign_message_rejects_arabic_letter_mark_text() {
         let err = ensure_safe_sign_message("rotate signer \u{061c}tx=approved").unwrap_err();
         assert!(
-            err.to_string()
-                .contains("contains control or bidi override characters"),
+            err.to_string().contains("ASCII printable text"),
             "unexpected: {err}"
         );
     }
@@ -4943,8 +4944,7 @@ mod tests {
     fn ensure_safe_sign_message_rejects_soft_hyphen_text() {
         let err = ensure_safe_sign_message("rotate signer\u{00ad}slot-b").unwrap_err();
         assert!(
-            err.to_string()
-                .contains("contains control or bidi override characters"),
+            err.to_string().contains("ASCII printable text"),
             "unexpected: {err}"
         );
     }
@@ -4953,8 +4953,7 @@ mod tests {
     fn ensure_safe_sign_message_rejects_mongolian_vowel_separator_text() {
         let err = ensure_safe_sign_message("rotate signer\u{180e}slot-b").unwrap_err();
         assert!(
-            err.to_string()
-                .contains("contains control or bidi override characters"),
+            err.to_string().contains("ASCII printable text"),
             "unexpected: {err}"
         );
     }
@@ -4963,8 +4962,7 @@ mod tests {
     fn ensure_safe_sign_message_rejects_zero_width_space_text() {
         let err = ensure_safe_sign_message("rotate signer\u{200b}slot-b").unwrap_err();
         assert!(
-            err.to_string()
-                .contains("contains control or bidi override characters"),
+            err.to_string().contains("ASCII printable text"),
             "unexpected: {err}"
         );
     }
@@ -4973,8 +4971,7 @@ mod tests {
     fn ensure_safe_sign_message_rejects_zero_width_joiner_text() {
         let err = ensure_safe_sign_message("rotate signer\u{200d}slot-b").unwrap_err();
         assert!(
-            err.to_string()
-                .contains("contains control or bidi override characters"),
+            err.to_string().contains("ASCII printable text"),
             "unexpected: {err}"
         );
     }
@@ -4983,8 +4980,7 @@ mod tests {
     fn ensure_safe_sign_message_rejects_zero_width_non_joiner_text() {
         let err = ensure_safe_sign_message("rotate signer\u{200c}slot-b").unwrap_err();
         assert!(
-            err.to_string()
-                .contains("contains control or bidi override characters"),
+            err.to_string().contains("ASCII printable text"),
             "unexpected: {err}"
         );
     }
@@ -4993,8 +4989,7 @@ mod tests {
     fn ensure_safe_sign_message_rejects_left_to_right_mark_text() {
         let err = ensure_safe_sign_message("rotate signer\u{200e}slot-b").unwrap_err();
         assert!(
-            err.to_string()
-                .contains("contains control or bidi override characters"),
+            err.to_string().contains("ASCII printable text"),
             "unexpected: {err}"
         );
     }
@@ -5003,8 +4998,7 @@ mod tests {
     fn ensure_safe_sign_message_rejects_right_to_left_mark_text() {
         let err = ensure_safe_sign_message("rotate signer\u{200f}slot-b").unwrap_err();
         assert!(
-            err.to_string()
-                .contains("contains control or bidi override characters"),
+            err.to_string().contains("ASCII printable text"),
             "unexpected: {err}"
         );
     }
@@ -5013,8 +5007,7 @@ mod tests {
     fn ensure_safe_sign_message_rejects_word_joiner_text() {
         let err = ensure_safe_sign_message("rotate signer\u{2060}slot-b").unwrap_err();
         assert!(
-            err.to_string()
-                .contains("contains control or bidi override characters"),
+            err.to_string().contains("ASCII printable text"),
             "unexpected: {err}"
         );
     }
@@ -5023,8 +5016,7 @@ mod tests {
     fn ensure_safe_sign_message_rejects_first_strong_isolate_text() {
         let err = ensure_safe_sign_message("rotate signer\u{2068}slot-b").unwrap_err();
         assert!(
-            err.to_string()
-                .contains("contains control or bidi override characters"),
+            err.to_string().contains("ASCII printable text"),
             "unexpected: {err}"
         );
     }
@@ -5033,8 +5025,7 @@ mod tests {
     fn ensure_safe_sign_message_rejects_bom_prefixed_text() {
         let err = ensure_safe_sign_message("\u{feff}rotate signer to slot b").unwrap_err();
         assert!(
-            err.to_string()
-                .contains("contains control or bidi override characters"),
+            err.to_string().contains("ASCII printable text"),
             "unexpected: {err}"
         );
     }
@@ -5043,8 +5034,7 @@ mod tests {
     fn ensure_safe_sign_message_rejects_unicode_line_separator_text() {
         let err = ensure_safe_sign_message("rotate signer\u{2028}slot-b").unwrap_err();
         assert!(
-            err.to_string()
-                .contains("contains control or bidi override characters"),
+            err.to_string().contains("ASCII printable text"),
             "unexpected: {err}"
         );
     }
@@ -5053,10 +5043,32 @@ mod tests {
     fn ensure_safe_sign_message_rejects_unicode_paragraph_separator_text() {
         let err = ensure_safe_sign_message("rotate signer\u{2029}slot-b").unwrap_err();
         assert!(
-            err.to_string()
-                .contains("contains control or bidi override characters"),
+            err.to_string().contains("ASCII printable text"),
             "unexpected: {err}"
         );
+    }
+
+    #[test]
+    fn ensure_safe_sign_message_rejects_non_ascii_visible_text() {
+        let err = ensure_safe_sign_message("rotate signer 到 slot-b").unwrap_err();
+        assert!(
+            err.to_string().contains("ASCII printable text"),
+            "unexpected: {err}"
+        );
+    }
+
+    #[test]
+    fn ensure_safe_sign_message_rejects_oversized_text() {
+        let err = ensure_safe_sign_message(&"a".repeat(4097)).unwrap_err();
+        assert!(
+            err.to_string().contains("<= 4096 bytes"),
+            "unexpected: {err}"
+        );
+    }
+
+    #[test]
+    fn ensure_safe_sign_message_accepts_max_length_ascii_text() {
+        ensure_safe_sign_message(&"a".repeat(4096)).unwrap();
     }
 
     #[test]
