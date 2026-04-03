@@ -3136,6 +3136,16 @@ mod tests {
             );
         }
 
+        for empty_invalid_env in ["", "   ", "\u{2068}\u{2069}", "  \"\"  "] {
+            std::env::set_var("TRNM_WALLET_STORE", empty_invalid_env);
+            let err = resolve_wallet_store(None).unwrap_err();
+            assert!(
+                err.to_string()
+                    .contains("TRNM_WALLET_STORE is set but invalid; refusing ambiguous keystore path fallback"),
+                "unexpected error for {empty_invalid_env:?}: {err}"
+            );
+        }
+
         let explicit_root = std::env::temp_dir()
             .canonicalize()
             .unwrap_or_else(|_| std::env::temp_dir());
@@ -3147,6 +3157,7 @@ mod tests {
                 .unwrap()
                 .as_nanos()
         ));
+        std::env::set_var("TRNM_WALLET_STORE", "\u{2068}\u{2069}");
         assert_eq!(resolve_wallet_store(Some(explicit.clone())).unwrap(), explicit);
 
         let explicit_relative_err = resolve_wallet_store(Some(PathBuf::from("./wallets"))).unwrap_err();
