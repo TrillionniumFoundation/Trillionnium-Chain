@@ -951,11 +951,22 @@ fn normalize_wallet_store_env(raw: &str) -> Option<&str> {
     Some(normalized)
 }
 
+fn path_text_has_dot_segments(path: &Path) -> bool {
+    let raw = path.to_string_lossy();
+    ["/./", "/../", "\\.\\", "\\..\\"]
+        .iter()
+        .any(|needle| raw.contains(needle))
+        || ["/.", "/..", "\\.", "\\.."]
+            .iter()
+            .any(|suffix| raw.ends_with(suffix))
+}
+
 fn wallet_store_path_is_safe(path: &Path) -> bool {
     use std::path::Component;
 
     path.is_absolute()
         && path.parent().is_some()
+        && !path_text_has_dot_segments(path)
         && path.to_string_lossy().chars().all(|c| {
             !c.is_whitespace() && !contains_hidden_or_control(c)
         })
@@ -2946,6 +2957,12 @@ mod tests {
         assert_eq!(default_wallet_store(), home.join(".trnm").join("wallets"));
 
         std::env::set_var("TRNM_WALLET_STORE", "/");
+        assert_eq!(default_wallet_store(), home.join(".trnm").join("wallets"));
+
+        std::env::set_var("TRNM_WALLET_STORE", "/tmp/trnm/../wallets");
+        assert_eq!(default_wallet_store(), home.join(".trnm").join("wallets"));
+
+        std::env::set_var("TRNM_WALLET_STORE", "/tmp/./trnm-wallets");
         assert_eq!(default_wallet_store(), home.join(".trnm").join("wallets"));
 
         std::env::set_var("TRNM_WALLET_STORE", " /tmp/trnm-wallets ");
