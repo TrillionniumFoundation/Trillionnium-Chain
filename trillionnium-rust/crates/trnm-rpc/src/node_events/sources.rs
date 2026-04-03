@@ -48,6 +48,7 @@ fn normalize_leading_wrapped_log_source_comment_value(raw: &str) -> Option<&str>
         .char_indices()
         .find_map(|(idx, ch)| (ch == quote).then_some(quote.len_utf8() + idx))?;
     let rest = normalized[closing_idx + quote.len_utf8()..]
+        .trim_start()
         .trim_start_matches('\u{feff}')
         .trim_start();
     if !rest.starts_with('#') {
@@ -315,6 +316,22 @@ mod tests {
                 PathBuf::from("archive/node5.log"),
             ],
             "windows-style historical replay aliases should keep wrapped paths while dropping attached comments"
+        );
+    }
+
+    #[test]
+    fn parse_node_event_log_sources_list_keeps_wrapped_entries_with_whitespace_then_bom_comments() {
+        let parsed = parse_node_event_log_sources_list(
+            "\"archive/node4.log\"  \u{feff}# replay note\r`archive/node5.log`  \u{feff}# archived replay note\r",
+        );
+
+        assert_eq!(
+            parsed,
+            vec![
+                PathBuf::from("archive/node4.log"),
+                PathBuf::from("archive/node5.log"),
+            ],
+            "historical replay aliases should keep wrapped paths when whitespace+BOM precedes attached comments"
         );
     }
 

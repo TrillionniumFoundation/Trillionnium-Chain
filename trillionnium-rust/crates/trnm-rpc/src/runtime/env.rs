@@ -64,6 +64,7 @@ fn normalize_leading_wrapped_comment_value(raw: &str) -> Option<&str> {
         .char_indices()
         .find_map(|(idx, ch)| (ch == quote).then_some(quote.len_utf8() + idx))?;
     let rest = normalized[closing_idx + quote.len_utf8()..]
+        .trim_start()
         .trim_start_matches('\u{feff}')
         .trim_start();
     if !rest.starts_with('#') {
@@ -173,6 +174,26 @@ mod tests {
             std::env::set_var(
                 "TRNM_RPC_RUNTIME_ENV_TEST_PATH",
                 "  \u{feff}\"cfg/history/sources.txt\"# archived replay note ",
+            );
+        }
+
+        let got = normalized_path_from_env("TRNM_RPC_RUNTIME_ENV_TEST_PATH");
+
+        match prev {
+            Some(value) => unsafe { std::env::set_var("TRNM_RPC_RUNTIME_ENV_TEST_PATH", value) },
+            None => unsafe { std::env::remove_var("TRNM_RPC_RUNTIME_ENV_TEST_PATH") },
+        }
+
+        assert_eq!(got, Some(PathBuf::from("cfg/history/sources.txt")));
+    }
+
+    #[test]
+    fn normalized_path_from_env_tolerates_whitespace_then_bom_before_comment_suffix() {
+        let prev = std::env::var("TRNM_RPC_RUNTIME_ENV_TEST_PATH").ok();
+        unsafe {
+            std::env::set_var(
+                "TRNM_RPC_RUNTIME_ENV_TEST_PATH",
+                "\"cfg/history/sources.txt\"  \u{feff}# archived replay note ",
             );
         }
 
