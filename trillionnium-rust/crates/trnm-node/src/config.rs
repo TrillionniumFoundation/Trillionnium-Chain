@@ -2592,6 +2592,15 @@ bootstrap_peers = ["127.0.0.1:27656"]
             );
         }
 
+        let expected_steps_in_order = [
+            "1. Start `node1` first as the initial anchor.",
+            "2. Start `node2`, `node3`, and `node4` in slot order.",
+            "3. If `node1` is absent, do not treat `node2`, `node3`, or `node4` as a valid replacement bootstrap anchor; restore the shipped `node1` anchor first and fail closed otherwise.",
+            "4. For a join or rejoin rehearsal, bring the node back with the same config file and the same `node_id`/listener tuple. Treat any drift from the shipped tuple as invalid until reviewed.",
+            "5. Do not skip a missing earlier follower slot during startup or rejoin: if `node2` is absent, keep `node3` and `node4` stopped; if `node3` is absent, keep `node4` stopped until the earlier slot regains its shipped tuple.",
+            "6. Treat `configs/node1.toml` through `configs/node4.toml` as slot-bound fixtures: do not rename them, swap them between peers, or reinterpret a later slot as the bootstrap anchor during operator recovery.",
+            "7. If a config contains unknown fields, whitespace drift, host-like or path-like ids, URI-like delimiters, non-canonical socket literals, privileged ports, wildcard listeners, reserved documentation/benchmarking listener ranges, or mixed listener IP families, the config loader must fail closed.",
+        ];
         let expected_rows_in_order = [
             "| Fresh bootstrap start | Start `node1` first, then `node2` → `node3` → `node4` in slot order | Accept only when each node keeps its shipped slot-bound config and listener tuple |",
             "| Follower join while `node1` is healthy | Start the joining follower with its original config file (`node2.toml`, `node3.toml`, or `node4.toml`) | Accept only when `node_id`, `rpc_addr`, and `p2p_addr` exactly match the shipped tuple |",
@@ -2631,6 +2640,24 @@ bootstrap_peers = ["127.0.0.1:27656"]
                 readme_path.display()
             );
         }
+        let mut previous_step_index = None;
+        for expected_step in expected_steps_in_order {
+            let current_step_index = readme.find(expected_step).unwrap_or_else(|| {
+                panic!(
+                    "{} must keep the shipped bootstrap startup/join model step `{expected_step}` visible to operators",
+                    readme_path.display()
+                )
+            });
+            if let Some(previous_step_index) = previous_step_index {
+                assert!(
+                    previous_step_index < current_step_index,
+                    "{} must keep bootstrap startup/join model steps in anchor-first slot order so operator recovery does not silently drift",
+                    readme_path.display()
+                );
+            }
+            previous_step_index = Some(current_step_index);
+        }
+
         let mut previous_index = None;
         for expected_row in expected_rows_in_order {
             let current_index = readme.find(expected_row).unwrap_or_else(|| {
