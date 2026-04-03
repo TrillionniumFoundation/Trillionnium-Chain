@@ -271,6 +271,17 @@ if [ -n "$VERIFIED_WORKTREE" ] && [ "$summary_worktree_path" != "$VERIFIED_WORKT
   exit 1
 fi
 
+if [ -n "$VERIFIED_BRANCH_REF" ]; then
+  if [ "$summary_worktree_branch_ref" != "$VERIFIED_BRANCH_REF" ]; then
+    printf 'artifact mismatch for verified branch ref: verified=%s summary=%s\n' "$VERIFIED_BRANCH_REF" "$summary_worktree_branch_ref" >&2
+    exit 1
+  fi
+  if [ "$summary_expected_worktree_branch_ref" != "$VERIFIED_BRANCH_REF" ]; then
+    printf 'artifact mismatch for artifact expected branch ref vs verified branch ref: verified=%s summary=%s\n' "$VERIFIED_BRANCH_REF" "$summary_expected_worktree_branch_ref" >&2
+    exit 1
+  fi
+fi
+
 if [ -n "$EXPECTED_BRANCH_REF" ]; then
   if [ "$summary_worktree_branch_ref" != "$EXPECTED_BRANCH_REF" ]; then
     printf 'artifact mismatch for expected worktree branch ref: expected=%s summary=%s\n' "$EXPECTED_BRANCH_REF" "$summary_worktree_branch_ref" >&2
