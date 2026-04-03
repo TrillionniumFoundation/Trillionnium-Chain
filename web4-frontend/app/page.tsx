@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { type KeyboardEvent, useEffect, useMemo, useState } from "react";
 import { fetchDashboardSnapshot } from "@/lib/dashboard/source";
 import type { DashboardSnapshot } from "@/lib/dashboard/adapter";
 
@@ -12,6 +12,37 @@ type LoadState =
   | { status: "error"; message: string }
   | { status: "ready"; data: DashboardSnapshot };
 
+function normalizeHealth(health: unknown): DashboardSnapshot["kpis"][number]["health"] {
+  return health === "healthy" || health === "degraded" || health === "risk" ? health : "risk";
+}
+
+function failClosedText(value: string | null | undefined, fallback: string) {
+  if (typeof value !== "string") {
+    return fallback;
+  }
+
+  const normalized = value.trim();
+  return normalized === "" ? fallback : normalized;
+}
+
+function normalizeSnapshot(snapshot: DashboardSnapshot): DashboardSnapshot {
+  return {
+    ...snapshot,
+    kpis: Array.isArray(snapshot.kpis)
+      ? snapshot.kpis.map((kpi, index) => ({
+          ...kpi,
+          label: failClosedText(kpi.label, `Metric ${index + 1}`),
+          value: failClosedText(kpi.value, "Unavailable"),
+          delta: failClosedText(kpi.delta, "Unavailable"),
+          health: normalizeHealth(kpi.health),
+        }))
+      : [],
+    tasks: Array.isArray(snapshot.tasks) ? snapshot.tasks : [],
+    events: Array.isArray(snapshot.events) ? snapshot.events : [],
+    audits: Array.isArray(snapshot.audits) ? snapshot.audits : [],
+  };
+}
+
 const healthClassMap: Record<DashboardSnapshot["kpis"][number]["health"], string> = {
   healthy: "bg-emerald-100 text-emerald-700",
   degraded: "bg-amber-100 text-amber-700",
@@ -22,13 +53,66 @@ function StatusChip({ text, tone }: { text: string; tone: string }) {
   return <span className={`rounded-full px-2 py-1 text-xs font-medium ${tone}`}>{text}</span>;
 }
 
-function EmptyState({ title, detail }: { title: string; detail: string }) {
+function EmptyState({
+  title,
+  detail,
+  tone = "neutral",
+  live = "off",
+}: {
+  title: string;
+  detail: string;
+  tone?: "neutral" | "error";
+  live?: "off" | "polite" | "assertive";
+}) {
   return (
-    <article className="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-8 text-center text-slate-600">
+    <article
+      role={tone === "error" ? "alert" : live === "off" ? undefined : "status"}
+      aria-live={live}
+      className={`rounded-xl border border-dashed p-8 text-center text-slate-600 ${
+        tone === "error" ? "border-rose-300 bg-rose-50" : "border-slate-300 bg-slate-50"
+      }`}
+    >
       <p className="text-base font-semibold text-slate-700">{title}</p>
       <p className="mt-2 text-sm">{detail}</p>
     </article>
   );
+}
+
+function onSelectableKeyDown(event: KeyboardEvent<HTMLElement>, onSelect: () => void) {
+  if (event.key === "Enter" || event.key === " ") {
+    event.preventDefault();
+    onSelect();
+  }
+}
+
+function onTabKeyDown(event: KeyboardEvent<HTMLButtonElement>, activeTab: Tab, setActiveTab: (tab: Tab) => void) {
+  const currentIndex = tabs.indexOf(activeTab);
+
+  if (currentIndex === -1) {
+    return;
+  }
+
+  let nextTab: Tab | null = null;
+
+  if (event.key === "ArrowRight") {
+    nextTab = tabs[(currentIndex + 1) % tabs.length];
+  } else if (event.key === "ArrowLeft") {
+    nextTab = tabs[(currentIndex - 1 + tabs.length) % tabs.length];
+  } else if (event.key === "Home") {
+    nextTab = tabs[0];
+  } else if (event.key === "End") {
+    nextTab = tabs[tabs.length - 1];
+  }
+
+  if (!nextTab) {
+    return;
+  }
+
+  event.preventDefault();
+  setActiveTab(nextTab);
+  requestAnimationFrame(() => {
+    document.getElementById(`dashboard-tab-${nextTab.toLowerCase()}`)?.focus();
+  });
 }
 
 export default function Home() {
@@ -51,10 +135,11 @@ export default function Home() {
       mode: normalizedMode,
     })
       .then((data) => {
-        setLoadState({ status: "ready", data });
-        setSelectedTaskId(data.tasks[0]?.id ?? null);
-        setSelectedEventId(data.events[0]?.id ?? null);
-        setSelectedAuditId(data.audits[0]?.id ?? null);
+        const normalizedData = normalizeSnapshot(data);
+        setLoadState({ status: "ready", data: normalizedData });
+        setSelectedTaskId(normalizedData.tasks[0]?.id ?? null);
+        setSelectedEventId(normalizedData.events[0]?.id ?? null);
+        setSelectedAuditId(normalizedData.audits[0]?.id ?? null);
       })
       .catch((error: unknown) => {
         const message = error instanceof Error ? error.message : "Unknown dashboard loading failure";
@@ -93,6 +178,39 @@ export default function Home() {
   const selectedEvent = filteredEvents.find((event) => event.id === selectedEventId) ?? filteredEvents[0];
   const selectedAudit = filteredAudits.find((audit) => audit.id === selectedAuditId) ?? filteredAudits[0];
 
+  useEffect(() => {
+    if (loadState.status !== "ready") {
+      return;
+    }
+
+    const nextTaskId = filteredTasks[0]?.id ?? null;
+    if (selectedTaskId !== nextTaskId && !filteredTasks.some((task) => task.id === selectedTaskId)) {
+      setSelectedTaskId(nextTaskId);
+    }
+  }, [filteredTasks, loadState.status, selectedTaskId]);
+
+  useEffect(() => {
+    if (loadState.status !== "ready") {
+      return;
+    }
+
+    const nextEventId = filteredEvents[0]?.id ?? null;
+    if (selectedEventId !== nextEventId && !filteredEvents.some((event) => event.id === selectedEventId)) {
+      setSelectedEventId(nextEventId);
+    }
+  }, [filteredEvents, loadState.status, selectedEventId]);
+
+  useEffect(() => {
+    if (loadState.status !== "ready") {
+      return;
+    }
+
+    const nextAuditId = filteredAudits[0]?.id ?? null;
+    if (selectedAuditId !== nextAuditId && !filteredAudits.some((audit) => audit.id === selectedAuditId)) {
+      setSelectedAuditId(nextAuditId);
+    }
+  }, [filteredAudits, loadState.status, selectedAuditId]);
+
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900">
       <main className="mx-auto w-full max-w-6xl px-4 py-10 md:px-8">
@@ -106,46 +224,82 @@ export default function Home() {
           </p>
         </header>
 
-        <nav className="mb-8 flex flex-wrap gap-2">
-          {tabs.map((tab) => (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              className={`rounded-lg px-4 py-2 text-sm font-medium transition ${
-                activeTab === tab
-                  ? "bg-slate-900 text-white"
-                  : "bg-white text-slate-700 ring-1 ring-slate-200 hover:bg-slate-100"
-              }`}
-            >
-              {tab}
-            </button>
-          ))}
+        <nav role="tablist" aria-label="Dashboard sections" className="mb-8 flex flex-wrap gap-2">
+          {tabs.map((tab) => {
+            const isActive = activeTab === tab;
+            const tabId = `dashboard-tab-${tab.toLowerCase()}`;
+            const panelId = `dashboard-panel-${tab.toLowerCase()}`;
+
+            return (
+              <button
+                key={tab}
+                id={tabId}
+                role="tab"
+                type="button"
+                aria-selected={isActive}
+                aria-controls={panelId}
+                tabIndex={isActive ? 0 : -1}
+                onClick={() => setActiveTab(tab)}
+                onKeyDown={(event) => onTabKeyDown(event, activeTab, setActiveTab)}
+                className={`rounded-lg px-4 py-2 text-sm font-medium transition ${
+                  isActive
+                    ? "bg-slate-900 text-white"
+                    : "bg-white text-slate-700 ring-1 ring-slate-200 hover:bg-slate-100"
+                }`}
+              >
+                {tab}
+              </button>
+            );
+          })}
         </nav>
 
+        <div
+          id={`dashboard-panel-${activeTab.toLowerCase()}`}
+          role="tabpanel"
+          aria-labelledby={`dashboard-tab-${activeTab.toLowerCase()}`}
+          aria-busy={loadState.status === "loading"}
+        >
+
         {loadState.status === "loading" && (
-          <EmptyState title="Loading dashboard snapshot" detail="Fetching readonly adapter data and normalizing schema..." />
+          <EmptyState
+            title="Loading dashboard snapshot"
+            detail="Fetching readonly adapter data and normalizing schema..."
+            live="polite"
+          />
         )}
 
         {loadState.status === "error" && (
-          <EmptyState title="Failed to load dashboard" detail={`Adapter source error: ${loadState.message}`} />
+          <EmptyState
+            title="Failed to load dashboard"
+            detail={`Adapter source error: ${loadState.message}`}
+            tone="error"
+            live="assertive"
+          />
         )}
 
         {loadState.status === "ready" && (
           <>
             {activeTab === "Overview" && (
               <section className="space-y-6">
-                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                  {loadState.data.kpis.map((kpi) => (
-                    <article key={kpi.label} className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-                      <p className="text-sm text-slate-500">{kpi.label}</p>
-                      <div className="mt-2 flex items-center justify-between gap-2">
-                        <p className="text-2xl font-semibold">{kpi.value}</p>
-                        <StatusChip text={kpi.health} tone={healthClassMap[kpi.health]} />
-                      </div>
-                      <p className="mt-2 text-sm text-slate-500">Δ {kpi.delta} / 24h</p>
-                    </article>
-                  ))}
-                </div>
+                {loadState.data.kpis.length === 0 ? (
+                  <EmptyState
+                    title="No overview KPIs available"
+                    detail="Readonly dashboard metrics are unavailable for this snapshot. Verify the adapter payload before trusting the overview."
+                  />
+                ) : (
+                  <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                    {loadState.data.kpis.map((kpi) => (
+                      <article key={kpi.label} className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+                        <p className="text-sm text-slate-500">{kpi.label}</p>
+                        <div className="mt-2 flex items-center justify-between gap-2">
+                          <p className="text-2xl font-semibold">{kpi.value}</p>
+                          <StatusChip text={kpi.health} tone={healthClassMap[kpi.health]} />
+                        </div>
+                        <p className="mt-2 text-sm text-slate-500">Δ {kpi.delta} / 24h</p>
+                      </article>
+                    ))}
+                  </div>
+                )}
 
                 <div className="grid gap-4 lg:grid-cols-3">
                   <article className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
@@ -184,7 +338,11 @@ export default function Home() {
                 </div>
 
                 {filteredTasks.length === 0 ? (
-                  <EmptyState title="No tasks match current filter" detail="Try another status filter or switch to All." />
+                  <EmptyState
+                    title="No tasks match current filter"
+                    detail="Readonly task snapshot has no entries for this filter. Try another status filter or switch to All."
+                    live="polite"
+                  />
                 ) : (
                   <>
                     <section className="overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-sm">
@@ -203,8 +361,12 @@ export default function Home() {
                           {filteredTasks.map((task) => (
                             <tr
                               key={task.id}
+                              role="button"
+                              tabIndex={0}
+                              aria-pressed={selectedTask?.id === task.id}
                               onClick={() => setSelectedTaskId(task.id)}
-                              className={`cursor-pointer border-t border-slate-100 ${selectedTask?.id === task.id ? "bg-slate-50" : ""}`}
+                              onKeyDown={(event) => onSelectableKeyDown(event, () => setSelectedTaskId(task.id))}
+                              className={`cursor-pointer border-t border-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-300 ${selectedTask?.id === task.id ? "bg-slate-50" : ""}`}
                             >
                               <td className="px-4 py-3 font-medium">{task.id}</td>
                               <td className="px-4 py-3">{task.title}</td>
@@ -221,7 +383,9 @@ export default function Home() {
                     {selectedTask && (
                       <article className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
                         <h3 className="text-base font-semibold">Task Detail · {selectedTask.id}</h3>
-                        <p className="mt-2 text-sm text-slate-700">{selectedTask.description}</p>
+                        <p className="mt-2 text-sm text-slate-700">
+                          {failClosedText(selectedTask.description, "Readonly task detail is unavailable for this snapshot.")}
+                        </p>
                       </article>
                     )}
                   </>
@@ -246,14 +410,22 @@ export default function Home() {
                 </label>
 
                 {filteredEvents.length === 0 ? (
-                  <EmptyState title="No events found" detail="Current filter has no matching event records." />
+                  <EmptyState
+                    title="No events found"
+                    detail="Readonly event snapshot has no matching records for this filter."
+                    live="polite"
+                  />
                 ) : (
                   <>
                     {filteredEvents.map((event) => (
                       <article
                         key={event.id}
+                        role="button"
+                        tabIndex={0}
+                        aria-pressed={selectedEvent?.id === event.id}
                         onClick={() => setSelectedEventId(event.id)}
-                        className={`cursor-pointer rounded-xl border border-slate-200 bg-white p-4 shadow-sm ${
+                        onKeyDown={(eventKey) => onSelectableKeyDown(eventKey, () => setSelectedEventId(event.id))}
+                        className={`cursor-pointer rounded-xl border border-slate-200 bg-white p-4 shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-300 ${
                           selectedEvent?.id === event.id ? "ring-2 ring-slate-300" : ""
                         }`}
                       >
@@ -280,7 +452,9 @@ export default function Home() {
                     {selectedEvent && (
                       <article className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
                         <h3 className="text-base font-semibold">Event Detail · {selectedEvent.id}</h3>
-                        <p className="mt-2 text-sm text-slate-700">{selectedEvent.details}</p>
+                        <p className="mt-2 text-sm text-slate-700">
+                          {failClosedText(selectedEvent.details, "Readonly event detail is unavailable for this snapshot.")}
+                        </p>
                       </article>
                     )}
                   </>
@@ -305,15 +479,23 @@ export default function Home() {
                 </label>
 
                 {filteredAudits.length === 0 ? (
-                  <EmptyState title="No audit controls found" detail="No entries match this result filter." />
+                  <EmptyState
+                    title="No audit controls found"
+                    detail="Readonly audit snapshot has no entries for this result filter."
+                    live="polite"
+                  />
                 ) : (
                   <>
                     <section className="grid gap-3">
                       {filteredAudits.map((audit) => (
                         <article
                           key={audit.id}
+                          role="button"
+                          tabIndex={0}
+                          aria-pressed={selectedAudit?.id === audit.id}
                           onClick={() => setSelectedAuditId(audit.id)}
-                          className={`cursor-pointer rounded-xl border border-slate-200 bg-white p-4 shadow-sm ${
+                          onKeyDown={(eventKey) => onSelectableKeyDown(eventKey, () => setSelectedAuditId(audit.id))}
+                          className={`cursor-pointer rounded-xl border border-slate-200 bg-white p-4 shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-300 ${
                             selectedAudit?.id === audit.id ? "ring-2 ring-slate-300" : ""
                           }`}
                         >
@@ -341,7 +523,9 @@ export default function Home() {
                     {selectedAudit && (
                       <article className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
                         <h3 className="text-base font-semibold">Audit Detail · {selectedAudit.id}</h3>
-                        <p className="mt-2 text-sm text-slate-700">{selectedAudit.notes}</p>
+                        <p className="mt-2 text-sm text-slate-700">
+                          {failClosedText(selectedAudit.notes, "Readonly audit detail is unavailable for this snapshot.")}
+                        </p>
                       </article>
                     )}
                   </>
@@ -350,6 +534,7 @@ export default function Home() {
             )}
           </>
         )}
+        </div>
       </main>
     </div>
   );

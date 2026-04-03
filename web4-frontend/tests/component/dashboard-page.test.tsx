@@ -93,17 +93,17 @@ describe("dashboard page", () => {
     expect(screen.getByText("Critical events in latest window: 1")).toBeInTheDocument();
     expect(screen.getByText("Non-pass controls to review: 1")).toBeInTheDocument();
 
-    fireEvent.click(screen.getByRole("button", { name: "Tasks" }));
+    fireEvent.click(screen.getByRole("tab", { name: "Tasks" }));
     expect(await screen.findByText("Task Detail · TSK-1")).toBeInTheDocument();
     fireEvent.change(screen.getByLabelText("Status filter"), { target: { value: "Done" } });
     expect(await screen.findByText("Task Detail · TSK-2")).toBeInTheDocument();
 
-    fireEvent.click(screen.getByRole("button", { name: "Events" }));
+    fireEvent.click(screen.getByRole("tab", { name: "Events" }));
     expect(await screen.findByText("Event Detail · EVT-1")).toBeInTheDocument();
     fireEvent.change(screen.getByLabelText("Severity filter"), { target: { value: "Info" } });
     expect(await screen.findByText("Event Detail · EVT-2")).toBeInTheDocument();
 
-    fireEvent.click(screen.getByRole("button", { name: "Audit" }));
+    fireEvent.click(screen.getByRole("tab", { name: "Audit" }));
     expect(await screen.findByText("Audit Detail · AUD-1")).toBeInTheDocument();
     fireEvent.change(screen.getByLabelText("Result filter"), { target: { value: "Pass" } });
     expect(await screen.findByText("Audit Detail · AUD-2")).toBeInTheDocument();
@@ -115,14 +115,25 @@ describe("dashboard page", () => {
 
     render(<Home />);
 
-    fireEvent.click(await screen.findByRole("button", { name: "Tasks" }));
-    expect(await screen.findByText("No tasks match current filter")).toBeInTheDocument();
+    fireEvent.click(await screen.findByRole("tab", { name: "Tasks" }));
+    const tasksEmptyState = await screen.findByRole("status");
+    expect(tasksEmptyState).toHaveTextContent("No tasks match current filter");
+    expect(tasksEmptyState).toHaveTextContent(
+      "Readonly task snapshot has no entries for this filter. Try another status filter or switch to All.",
+    );
+    expect(tasksEmptyState).toHaveAttribute("aria-live", "polite");
 
-    fireEvent.click(screen.getByRole("button", { name: "Events" }));
-    expect(await screen.findByText("No events found")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("tab", { name: "Events" }));
+    const eventsEmptyState = await screen.findByRole("status");
+    expect(eventsEmptyState).toHaveTextContent("No events found");
+    expect(eventsEmptyState).toHaveTextContent("Readonly event snapshot has no matching records for this filter.");
+    expect(eventsEmptyState).toHaveAttribute("aria-live", "polite");
 
-    fireEvent.click(screen.getByRole("button", { name: "Audit" }));
-    expect(await screen.findByText("No audit controls found")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("tab", { name: "Audit" }));
+    const auditsEmptyState = await screen.findByRole("status");
+    expect(auditsEmptyState).toHaveTextContent("No audit controls found");
+    expect(auditsEmptyState).toHaveTextContent("Readonly audit snapshot has no entries for this result filter.");
+    expect(auditsEmptyState).toHaveAttribute("aria-live", "polite");
 
     expect(mockedFetch).toHaveBeenCalledWith({ mode: "empty" });
   });
@@ -154,11 +165,133 @@ describe("dashboard page", () => {
 
     render(<Home />);
 
-    await waitFor(() => {
-      expect(screen.getByText("Failed to load dashboard")).toBeInTheDocument();
-    });
-
-    expect(screen.getByText(/Adapter source error: Dashboard backend unavailable/)).toBeInTheDocument();
+    const alert = await screen.findByRole("alert");
+    expect(alert).toHaveTextContent("Failed to load dashboard");
+    expect(alert).toHaveTextContent("Adapter source error: Dashboard backend unavailable");
+    expect(alert).toHaveAttribute("aria-live", "assertive");
     expect(mockedFetch).toHaveBeenCalledWith({ mode: "error" });
+  });
+
+  it("announces loading state politely before readonly data resolves", () => {
+    mockedFetch.mockImplementation(
+      () =>
+        new Promise(() => {
+          // keep pending to assert loading UX
+        }),
+    );
+
+    render(<Home />);
+
+    const status = screen.getByRole("status");
+    expect(status).toHaveTextContent("Loading dashboard snapshot");
+    expect(status).toHaveAttribute("aria-live", "polite");
+    expect(screen.getByRole("tabpanel")).toHaveAttribute("aria-busy", "true");
+  });
+
+  it("supports keyboard selection for readonly task, event, and audit details", async () => {
+    mockedFetch.mockResolvedValue(snapshot);
+
+    render(<Home />);
+
+    await screen.findByText("Task Digest");
+
+    fireEvent.click(screen.getByRole("tab", { name: "Tasks" }));
+    const taskRow = screen.getByRole("button", { name: /TSK-2 Task two Core P0 Done 2026-03-03 11:00/i });
+    fireEvent.keyDown(taskRow, { key: "Enter" });
+    expect(await screen.findByText("Task Detail · TSK-2")).toBeInTheDocument();
+    expect(taskRow).toHaveAttribute("aria-pressed", "true");
+
+    fireEvent.click(screen.getByRole("tab", { name: "Events" }));
+    const eventCard = screen.getByText("Info event").closest("article");
+    expect(eventCard).not.toBeNull();
+    fireEvent.keyDown(eventCard!, { key: " " });
+    expect(await screen.findByText("Event Detail · EVT-2")).toBeInTheDocument();
+    expect(eventCard).toHaveAttribute("aria-pressed", "true");
+
+    fireEvent.click(screen.getByRole("tab", { name: "Audit" }));
+    const auditCard = screen.getByText("Endpoint ACL").closest("article");
+    expect(auditCard).not.toBeNull();
+    fireEvent.keyDown(auditCard!, { key: "Enter" });
+    expect(await screen.findByText("Audit Detail · AUD-2")).toBeInTheDocument();
+    expect(auditCard).toHaveAttribute("aria-pressed", "true");
+  });
+
+  it("fail-closes stale readonly selection to the first visible task after filtering", async () => {
+    mockedFetch.mockResolvedValue(snapshot);
+
+    render(<Home />);
+
+    await screen.findByText("Task Digest");
+
+    fireEvent.click(screen.getByRole("tab", { name: "Tasks" }));
+    fireEvent.click(screen.getByRole("button", { name: /TSK-2 Task two Core P0 Done 2026-03-03 11:00/i }));
+    expect(await screen.findByText("Task Detail · TSK-2")).toBeInTheDocument();
+
+    fireEvent.change(screen.getByLabelText("Status filter"), { target: { value: "Todo" } });
+    expect(await screen.findByText("Task Detail · TSK-1")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /TSK-1 Task one Ops P1 Todo 2026-03-03 10:00/i })).toHaveAttribute(
+      "aria-pressed",
+      "true",
+    );
+
+    fireEvent.change(screen.getByLabelText("Status filter"), { target: { value: "All" } });
+    expect(await screen.findByText("Task Detail · TSK-1")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /TSK-1 Task one Ops P1 Todo 2026-03-03 10:00/i })).toHaveAttribute(
+      "aria-pressed",
+      "true",
+    );
+  });
+
+  it("fail-closes stale readonly event and audit selections to the first visible record after filtering", async () => {
+    mockedFetch.mockResolvedValue(snapshot);
+
+    render(<Home />);
+
+    await screen.findByText("Task Digest");
+
+    fireEvent.click(screen.getByRole("tab", { name: "Events" }));
+    fireEvent.click(screen.getByRole("button", { name: /Info event/i }));
+    expect(await screen.findByText("Event Detail · EVT-2")).toBeInTheDocument();
+
+    fireEvent.change(screen.getByLabelText("Severity filter"), { target: { value: "Critical" } });
+    expect(await screen.findByText("Event Detail · EVT-1")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Critical event/i })).toHaveAttribute("aria-pressed", "true");
+
+    fireEvent.click(screen.getByRole("tab", { name: "Audit" }));
+    fireEvent.click(screen.getByRole("button", { name: /Endpoint ACL/i }));
+    expect(await screen.findByText("Audit Detail · AUD-2")).toBeInTheDocument();
+
+    fireEvent.change(screen.getByLabelText("Result filter"), { target: { value: "Warn" } });
+    expect(await screen.findByText("Audit Detail · AUD-1")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Readonly controls/i })).toHaveAttribute("aria-pressed", "true");
+  });
+
+  it("supports arrow/home/end keyboard navigation across readonly dashboard tabs", async () => {
+    mockedFetch.mockResolvedValue(snapshot);
+
+    render(<Home />);
+
+    await screen.findByText("Task Digest");
+
+    const overviewTab = screen.getByRole("tab", { name: "Overview" });
+    fireEvent.keyDown(overviewTab, { key: "ArrowRight" });
+    await waitFor(() => expect(screen.getByRole("tab", { name: "Tasks" })).toHaveAttribute("aria-selected", "true"));
+
+    const tasksTab = screen.getByRole("tab", { name: "Tasks" });
+    fireEvent.keyDown(tasksTab, { key: "End" });
+    await waitFor(() => expect(screen.getByRole("tab", { name: "Audit" })).toHaveAttribute("aria-selected", "true"));
+
+    const auditTab = screen.getByRole("tab", { name: "Audit" });
+    fireEvent.keyDown(auditTab, { key: "Home" });
+    await waitFor(() => expect(screen.getByRole("tab", { name: "Overview" })).toHaveAttribute("aria-selected", "true"));
+  });
+
+  it("clears tabpanel busy state after readonly snapshot loads", async () => {
+    mockedFetch.mockResolvedValue(snapshot);
+
+    render(<Home />);
+
+    await screen.findByText("Task Digest");
+    expect(screen.getByRole("tabpanel")).toHaveAttribute("aria-busy", "false");
   });
 });
