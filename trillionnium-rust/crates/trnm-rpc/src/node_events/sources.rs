@@ -37,6 +37,28 @@ pub(super) fn parse_node_event_log_sources_list(raw: &str) -> Vec<PathBuf> {
     out
 }
 
+fn normalize_leading_wrapped_log_source_comment_value(raw: &str) -> Option<&str> {
+    let normalized = raw.trim_start_matches('\u{feff}').trim();
+    let quote = normalized.chars().next()?;
+    if !matches!(quote, '"' | '\'' | '`') {
+        return None;
+    }
+
+    let closing_idx = normalized[quote.len_utf8()..]
+        .char_indices()
+        .find_map(|(idx, ch)| (ch == quote).then_some(quote.len_utf8() + idx))?;
+    let rest = normalized[closing_idx + quote.len_utf8()..]
+        .trim_start_matches('\u{feff}')
+        .trim_start();
+    if !rest.starts_with('#') {
+        return None;
+    }
+
+    Some(normalize_wrapped_env_value(
+        &normalized[..closing_idx + quote.len_utf8()],
+    ))
+}
+
 fn normalize_node_event_log_source_entry(raw: &str) -> Option<String> {
     let trimmed = raw.trim();
     if trimmed.is_empty() {
@@ -59,6 +81,8 @@ fn normalize_node_event_log_source_entry(raw: &str) -> Option<String> {
     });
     let normalized = inline_comment_idx
         .map(|idx| normalize_wrapped_env_value(normalized[..idx].trim_end()))
+        .unwrap_or(normalized);
+    let normalized = normalize_leading_wrapped_log_source_comment_value(normalized)
         .unwrap_or(normalized);
     if normalized.is_empty() || normalized.starts_with('#') {
         return None;
@@ -878,5 +902,17 @@ mod tests {
         );
 
         let _ = fs::remove_dir_all(root);
+    }
+
+    #[test]
+    fn normalize_node_event_log_source_entry_strips_attached_comment_after_wrapped_path() {
+        assert_eq!(
+            normalize_node_event_log_source_entry("\"shared.log\"# operator replay note"),
+            Some("shared.log".to_string())
+        );
+        assert_eq!(
+            normalize_node_event_log_source_entry("`./archive/node4.log`# archived alias"),
+            Some("./archive/node4.log".to_string())
+        );
     }
 }
