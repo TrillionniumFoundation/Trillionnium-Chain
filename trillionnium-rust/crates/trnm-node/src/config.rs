@@ -2803,39 +2803,48 @@ bootstrap_peers = ["127.0.0.1:27656"]
             .expect("trnm-node manifest should sit under trillionnium-rust/crates/trnm-node");
 
         let mut shipped_nodes = [
-            ("configs/node1.toml", "node1", 26656_u16),
-            ("configs/node2.toml", "node2", 27656_u16),
-            ("configs/node3.toml", "node3", 28656_u16),
-            ("configs/node4.toml", "node4", 29656_u16),
+            ("configs/node1.toml", "node1", 26656_u16, 26657_u16),
+            ("configs/node2.toml", "node2", 27656_u16, 27657_u16),
+            ("configs/node3.toml", "node3", 28656_u16, 28657_u16),
+            ("configs/node4.toml", "node4", 29656_u16, 29657_u16),
         ]
         .into_iter()
-        .map(|(relative_path, expected_node_id, expected_p2p_port)| {
-            let path = workspace_root.join(relative_path);
-            let cfg = load_config(&path).unwrap_or_else(|err| {
-                panic!(
-                    "{} should remain loadable for shipped bootstrap anchor checks: {err:#}",
+        .map(
+            |(relative_path, expected_node_id, expected_p2p_port, expected_rpc_port)| {
+                let path = workspace_root.join(relative_path);
+                let cfg = load_config(&path).unwrap_or_else(|err| {
+                    panic!(
+                        "{} should remain loadable for shipped bootstrap anchor checks: {err:#}",
+                        path.display()
+                    )
+                });
+                let p2p_socket: SocketAddr = cfg.p2p_addr.parse().unwrap_or_else(|err| {
+                    panic!("{} p2p_addr should parse: {err}", path.display())
+                });
+                let rpc_socket: SocketAddr = cfg.rpc_addr.parse().unwrap_or_else(|err| {
+                    panic!("{} rpc_addr should parse: {err}", path.display())
+                });
+                assert_eq!(
+                    cfg.node_id, expected_node_id,
+                    "{} must keep the deterministic node_id for bootstrap anchor slot checks",
                     path.display()
-                )
-            });
-            let p2p_socket: SocketAddr = cfg
-                .p2p_addr
-                .parse()
-                .unwrap_or_else(|err| panic!("{} p2p_addr should parse: {err}", path.display()));
-            assert_eq!(
-                cfg.node_id, expected_node_id,
-                "{} must keep the deterministic node_id for bootstrap anchor slot checks",
-                path.display()
-            );
-            assert_eq!(
-                p2p_socket.port(), expected_p2p_port,
-                "{} must keep the deterministic p2p port for bootstrap anchor slot checks",
-                path.display()
-            );
-            (path, cfg.node_id, p2p_socket.port())
-        })
+                );
+                assert_eq!(
+                    p2p_socket.port(), expected_p2p_port,
+                    "{} must keep the deterministic p2p port for bootstrap anchor slot checks",
+                    path.display()
+                );
+                assert_eq!(
+                    rpc_socket.port(), expected_rpc_port,
+                    "{} must keep the deterministic rpc port for bootstrap anchor slot checks",
+                    path.display()
+                );
+                (path, cfg.node_id, p2p_socket.port(), rpc_socket.port())
+            },
+        )
         .collect::<Vec<_>>();
 
-        shipped_nodes.sort_by_key(|(_, _, p2p_port)| *p2p_port);
+        shipped_nodes.sort_by_key(|(_, _, p2p_port, rpc_port)| (*p2p_port, *rpc_port));
         let anchor = shipped_nodes
             .first()
             .expect("shipped bootstrap fixture should include node1 anchor");
@@ -2849,8 +2858,13 @@ bootstrap_peers = ["127.0.0.1:27656"]
             "{} must remain the unique shipped Day-1 bootstrap anchor p2p port",
             anchor.0.display()
         );
+        assert_eq!(
+            anchor.3, 26657,
+            "{} must remain the unique shipped Day-1 bootstrap anchor rpc port",
+            anchor.0.display()
+        );
 
-        for (path, node_id, p2p_port) in shipped_nodes.iter().skip(1) {
+        for (path, node_id, p2p_port, rpc_port) in shipped_nodes.iter().skip(1) {
             assert_ne!(
                 node_id, &anchor.1,
                 "{} must not reuse the shipped bootstrap anchor node_id {}",
@@ -2863,6 +2877,13 @@ bootstrap_peers = ["127.0.0.1:27656"]
                 path.display(),
                 p2p_port,
                 anchor.2
+            );
+            assert!(
+                *rpc_port > anchor.3,
+                "{} rpc port {} must stay above the shipped bootstrap anchor rpc port {} so later slots cannot silently become equivalent bootstrap anchors",
+                path.display(),
+                rpc_port,
+                anchor.3
             );
         }
     }
