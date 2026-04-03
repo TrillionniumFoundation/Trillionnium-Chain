@@ -120,6 +120,10 @@ fn is_suspicious_path_wrapper(c: char) -> bool {
     is_single_sided_env_quote(c)
 }
 
+fn is_suspicious_path_separator(c: char) -> bool {
+    matches!(c, '\\' | '∕' | '⁄' | '／' | '＼' | '⧵' | '⟋' | '⟍')
+}
+
 pub(crate) fn normalize_wallet_store_env(raw: &str) -> Option<&str> {
     let mut normalized = raw.trim_matches(is_hidden_env_wrapper);
     loop {
@@ -188,6 +192,7 @@ fn wallet_store_path_is_safe(path: &Path) -> bool {
             !c.is_whitespace()
                 && !c.is_control()
                 && !is_suspicious_path_wrapper(c)
+                && !is_suspicious_path_separator(c)
                 && !matches!(
                     c,
                     '\u{00AD}'
