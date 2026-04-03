@@ -82,6 +82,26 @@ pub(crate) fn normalize_wrapped_env_value(raw: &str) -> &str {
     normalized.trim_start_matches('\u{feff}').trim()
 }
 
+fn normalize_leading_wrapped_comment_value(raw: &str) -> Option<&str> {
+    let normalized = raw.trim_start_matches('\u{feff}').trim();
+    let quote = normalized.chars().next()?;
+    if !matches!(quote, '"' | '\'' | '`') {
+        return None;
+    }
+
+    let closing_idx = normalized[quote.len_utf8()..]
+        .char_indices()
+        .find_map(|(idx, ch)| (ch == quote).then_some(quote.len_utf8() + idx))?;
+    let rest = normalized[closing_idx + quote.len_utf8()..]
+        .trim_start_matches('\u{feff}')
+        .trim_start();
+    if !rest.starts_with('#') {
+        return None;
+    }
+
+    Some(normalize_wrapped_env_value(&normalized[..closing_idx + quote.len_utf8()]))
+}
+
 pub(crate) fn normalized_path_from_env(name: &str) -> Option<PathBuf> {
     let raw = std::env::var(name).ok()?;
     let normalized = normalize_wrapped_env_value(&raw);
@@ -97,6 +117,7 @@ pub(crate) fn normalized_path_from_env(name: &str) -> Option<PathBuf> {
     let normalized = inline_comment_idx
         .map(|idx| normalize_wrapped_env_value(normalized[..idx].trim_end()))
         .unwrap_or(normalized);
+    let normalized = normalize_leading_wrapped_comment_value(normalized).unwrap_or(normalized);
     if normalized.is_empty() || normalized.starts_with('#') {
         None
     } else {
