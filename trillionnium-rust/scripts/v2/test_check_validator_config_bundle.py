@@ -134,6 +134,55 @@ class CheckValidatorConfigBundleTests(unittest.TestCase):
             result.stderr,
         )
 
+
+    def test_public_mainnet_input_rejects_relative_packet_distribution_path(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            config = self.write_config(
+                root,
+                "node1.toml",
+                node_id="node1",
+                rpc_addr="127.0.0.1:7001",
+                p2p_addr="127.0.0.1:7002",
+            )
+            result = self.run_script(
+                *self.make_public_mainnet_args(
+                    config,
+                    "--packet-distribution-path",
+                    "relative/packet.txt",
+                )
+            )
+
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn(
+            "public-mainnet-input requires packet_distribution_path to be an absolute path",
+            result.stderr,
+        )
+
+    def test_public_mainnet_input_rejects_relative_packet_distribution_path(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            config = self.write_config(
+                root,
+                "node1.toml",
+                node_id="node1",
+                rpc_addr="127.0.0.1:7001",
+                p2p_addr="127.0.0.1:7002",
+            )
+            result = self.run_script(
+                *self.make_public_mainnet_args(
+                    config,
+                    "--packet-distribution-path",
+                    "relative/packet.txt",
+                )
+            )
+
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn(
+            "public-mainnet-input requires packet_distribution_path to be an absolute path",
+            result.stderr,
+        )
+
     def test_public_mainnet_input_emits_absolute_config_paths(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
