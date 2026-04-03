@@ -322,7 +322,7 @@ export const adaptQueryNormalizedAuditEvents = (
       checkedAt: checkedAtSchema.optional(),
       recordedAt: z.string().datetime().optional(),
       subject: z.string().optional(),
-    }),
+    }).strict(),
   ).safeParse(payload);
 
   if (!rpc.success) throw normalizeSchemaError(rpc.error.flatten());

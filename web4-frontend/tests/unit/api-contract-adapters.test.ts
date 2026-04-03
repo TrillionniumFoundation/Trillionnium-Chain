@@ -410,6 +410,24 @@ describe("api-contract adapters", () => {
     expect(out.events[0]?.related_id).toBe("req-1");
   });
 
+  it("fails closed on fallback normalized audit-events entries with unknown fields", () => {
+    expect(() =>
+      adaptQueryNormalizedAuditEvents([
+        {
+          source: "settlement-vault",
+          eventType: "vault.deposited",
+          actor: "alice",
+          objectId: "alice",
+          relatedId: "req-1",
+          amount: 20,
+          note: "deposit",
+          recordedAt: "2026-03-03T00:01:00.000Z",
+          unexpectedFlag: true,
+        },
+      ]),
+    ).toThrow(FrontendApiError);
+  });
+
   it("adapts rpc capability audit payload", () => {
 
     const out = adaptQueryCapabilityAudit({
