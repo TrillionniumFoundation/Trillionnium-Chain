@@ -61,6 +61,7 @@ Record:
 - verified_worktree=
 - verified_branch_ref=
 - verified_head=
+- verified_worktree_entry=
 - `git status --short` result:
 
 Rule:
@@ -237,6 +238,7 @@ Mark each item explicitly:
 - [ ] `verified_worktree=` preserved from helper output
 - [ ] `verified_branch_ref=` preserved from helper output
 - [ ] `verified_head=` preserved from helper output
+- [ ] `verified_worktree_entry=` preserved from helper output / `git worktree list --porcelain` stanza
 - [ ] `git status --short` empty before evidence generation
 - [ ] `preflight_path` resolved from disk
 - [ ] `summary_path` resolved from disk
@@ -288,6 +290,7 @@ checked_listener_output=<captured command output or explicit "no matching listen
 verified_worktree=<helper output>
 verified_branch_ref=<helper output>
 verified_head=<helper output>
+verified_worktree_entry=<captured current-path stanza from helper output or git worktree list --porcelain>
 preflight_path=<resolved path>
 summary_path=<resolved path>
 manifest_path=<resolved path>
