@@ -61,6 +61,24 @@ fn wallet_import_hex_check() {
         "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
     );
 
+    let invisible_math_separator_wrapped = ensure_hex_32_bytes(
+        "\u{2062}0xAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\u{2062}",
+    )
+    .unwrap();
+    assert_eq!(
+        invisible_math_separator_wrapped,
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    );
+
+    let nominal_digit_shapes_wrapped = ensure_hex_32_bytes(
+        "\u{206f}0xAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\u{206f}",
+    )
+    .unwrap();
+    assert_eq!(
+        nominal_digit_shapes_wrapped,
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    );
+
     let punctuated_sentence = ensure_hex_32_bytes(
         "0xAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA?!.",
     )
