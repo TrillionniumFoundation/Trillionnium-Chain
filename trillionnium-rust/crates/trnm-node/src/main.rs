@@ -5566,6 +5566,38 @@ bootstrap_peers = ["127.0.0.1:27656"]
     }
 
     #[test]
+    fn validate_startup_args_accepts_repo_root_bootstrap_config() {
+        let args = Args {
+            config: "configs/node1.toml".into(),
+            block_ms: 1000,
+            max_blocks: 10,
+            demo_tasks: 2,
+            demo_keys: 2,
+            parallel_workers: 4,
+            txs_per_block: 4,
+            validators: 4,
+            byzantine: 0,
+            bft_max_rounds: 3,
+            bft_fault_rounds: 0,
+            bft_missed_proposal_threshold: 2,
+            bft_leader_penalty_rounds: 2,
+            bft_round_change_backoff_ms: 5,
+            bft_round_change_backoff_max_ms: 40,
+            bft_wal_dir: DEFAULT_BFT_WAL_DIR.into(),
+            bft_wal_mode: WalDirMode::Auto,
+            bft_checkpoint_interval: 5,
+            pouw_timeout_scan: true,
+            pouw_timeout_scan_every_blocks: 1,
+            enable_da_ordering_decouple: false,
+            rl_advisor_shadow: false,
+            rl_advisor_shadow_topk: 4,
+        };
+
+        validate_startup_args(&args)
+            .expect("repo-root bootstrap config should remain bootstrappable");
+    }
+
+    #[test]
     fn validate_startup_args_accepts_curdir_prefixed_workspace_bootstrap_config() {
         let args = Args {
             config: "./trillionnium-rust/configs/node1.toml".into(),
@@ -5595,6 +5627,38 @@ bootstrap_peers = ["127.0.0.1:27656"]
 
         validate_startup_args(&args)
             .expect("curdir-prefixed workspace bootstrap config should remain bootstrappable");
+    }
+
+    #[test]
+    fn validate_startup_args_accepts_inner_curdir_markers_for_bootstrap_config() {
+        let args = Args {
+            config: "trillionnium-rust/./configs/./node1.toml".into(),
+            block_ms: 1000,
+            max_blocks: 10,
+            demo_tasks: 2,
+            demo_keys: 2,
+            parallel_workers: 4,
+            txs_per_block: 4,
+            validators: 4,
+            byzantine: 0,
+            bft_max_rounds: 3,
+            bft_fault_rounds: 0,
+            bft_missed_proposal_threshold: 2,
+            bft_leader_penalty_rounds: 2,
+            bft_round_change_backoff_ms: 5,
+            bft_round_change_backoff_max_ms: 40,
+            bft_wal_dir: DEFAULT_BFT_WAL_DIR.into(),
+            bft_wal_mode: WalDirMode::Auto,
+            bft_checkpoint_interval: 5,
+            pouw_timeout_scan: true,
+            pouw_timeout_scan_every_blocks: 1,
+            enable_da_ordering_decouple: false,
+            rl_advisor_shadow: false,
+            rl_advisor_shadow_topk: 4,
+        };
+
+        validate_startup_args(&args)
+            .expect("inner-curdir shipped bootstrap config paths should remain bootstrappable");
     }
 
     #[test]
