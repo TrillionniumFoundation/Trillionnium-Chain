@@ -132,14 +132,6 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         path
     );
     anyhow::ensure!(
-        !node_id.contains('@')
-            && !node_id.contains('?')
-            && !node_id.contains('#')
-            && !node_id.contains('%'),
-        "invalid node config {}: node_id must not contain URI or userinfo separators (@ ? # %)",
-        path
-    );
-    anyhow::ensure!(
         !node_id.contains('"') && !node_id.contains('\'') && !node_id.contains('`'),
         "invalid node config {}: node_id must not contain quoting characters (\" ' `)",
         path
@@ -2042,7 +2034,7 @@ bootstrap_peers = ["127.0.0.1:27656"]
             .expect_err("node_id URI/userinfo separators must fail closed");
             assert!(
                 err.to_string()
-                    .contains("node_id must not contain URI or userinfo separators (@ ? # %)"),
+                    .contains("node_id must not contain URI delimiters (@ ? # % & =)"),
                 "unexpected error for {node_id:?}: {err:#}"
             );
         }
