@@ -452,6 +452,30 @@ fn node_recovery_checkpoint_rejects_blank_state_root() {
 }
 
 #[test]
+fn node_recovery_checkpoint_rejects_state_root_with_non_hex_ascii_drift() {
+    let wal_entry = WalMeta {
+        height: 1,
+        round: 0,
+        proposal_hash: "proposal-1".into(),
+        committed: true,
+        state_root_hex: "ab".repeat(32),
+        prev_hash_hex: None,
+    };
+    let checkpoint = CheckpointMeta {
+        height: wal_entry.height,
+        state_root_hex: "zz".repeat(32),
+        wal_entry_hash_hex: wal_entry.content_hash_hex(),
+    };
+
+    let got = verify_wal_and_find_checkpoint_node_recovery(&[checkpoint], &[wal_entry]).unwrap();
+
+    assert!(
+        got.is_none(),
+        "node recovery must reject checkpoint state_root_hex with non-hex ascii drift so restart-time checkpoint proofs preserve canonical lower-hex state-root surfaces"
+    );
+}
+
+#[test]
 fn node_recovery_checkpoint_rejects_state_root_with_edge_whitespace() {
     let wal_entry = WalMeta {
         height: 1,
@@ -1593,6 +1617,161 @@ fn task_metering_snapshot_should_affect_state_root() {
 }
 
 #[test]
+fn task_metering_min_accept_work_units_should_affect_state_root() {
+    let mut st1 = StateStore::new();
+    let mut st2 = StateStore::new();
+
+    let base_task = TaskObject {
+        task_id: 6_504,
+        creator: "alice".into(),
+        bounty: 42,
+        status: TaskStatus::Open,
+        proof_type: ProofType::Fraud,
+        metadata: Some(TaskMetadata {
+            note: Some("checkpoint acceptance threshold snapshot".into()),
+            task_type: Some("inference".into()),
+            input_hash: Some("ab".repeat(32)),
+            model: None,
+            provenance: None,
+            metering: Some(TaskMeteringSnapshot {
+                workload_class: "gpu.inference".into(),
+                metering_schema: "llm/v1".into(),
+                policy_snapshot_version: 3,
+                receipt_hash: "ef".repeat(32),
+                prompt_tokens: 10,
+                generated_tokens: 20,
+                decode_steps: 30,
+                kv_bytes_moved: 40,
+                normalized_work_units: 50,
+                prompt_token_weight: 1,
+                generated_token_weight: 2,
+                decode_step_weight: 3,
+                kv_byte_weight: 4,
+                min_accept_work_units: 5,
+                challenge_success_bounty_base: 6,
+                challenge_success_bounty_per_work_unit_num: 7,
+                challenge_success_bounty_per_work_unit_den: 8,
+                worker_completion_bonus_per_work_unit_num: 9,
+                worker_completion_bonus_per_work_unit_den: 10,
+                worker_slash_rebate_per_work_unit_num: 11,
+                worker_slash_rebate_per_work_unit_den: 12,
+            }),
+        }),
+        worker: None,
+        committed_hash: None,
+        result_hash: None,
+        reveal_salt: None,
+        committed_at_height: None,
+        reveal_deadline_height: None,
+        challenge_deadline_height: None,
+        challenge_window_blocks_snapshot: None,
+        challenged_at_height: None,
+        resolve_deadline_height: None,
+        challenge_bond: None,
+        challenger: None,
+        challenge_bond_forfeited: None,
+        version: 1,
+    };
+
+    let mut changed_task = base_task.clone();
+    changed_task
+        .metadata
+        .as_mut()
+        .expect("task metadata should exist")
+        .metering
+        .as_mut()
+        .expect("task metering snapshot should exist")
+        .min_accept_work_units = 6;
+
+    st1.put_task_new(base_task).unwrap();
+    st2.put_task_new(changed_task).unwrap();
+
+    assert_ne!(
+        st1.state_root(),
+        st2.state_root(),
+        "state_root must include task metering min_accept_work_units so acceptance-threshold drift cannot preserve the same canonical audit root"
+    );
+}
+
+#[test]
+fn task_metering_reward_terms_should_affect_state_root_even_when_usage_metrics_match() {
+    let mut st1 = StateStore::new();
+    let mut st2 = StateStore::new();
+
+    let base_task = TaskObject {
+        task_id: 6_504_1,
+        creator: "alice".into(),
+        bounty: 42,
+        status: TaskStatus::Open,
+        proof_type: ProofType::Fraud,
+        metadata: Some(TaskMetadata {
+            note: Some("checkpoint incentive snapshot".into()),
+            task_type: Some("inference".into()),
+            input_hash: Some("ab".repeat(32)),
+            model: None,
+            provenance: None,
+            metering: Some(TaskMeteringSnapshot {
+                workload_class: "gpu.inference".into(),
+                metering_schema: "llm/v1".into(),
+                policy_snapshot_version: 3,
+                receipt_hash: "ef".repeat(32),
+                prompt_tokens: 10,
+                generated_tokens: 20,
+                decode_steps: 30,
+                kv_bytes_moved: 40,
+                normalized_work_units: 50,
+                prompt_token_weight: 1,
+                generated_token_weight: 2,
+                decode_step_weight: 3,
+                kv_byte_weight: 4,
+                min_accept_work_units: 5,
+                challenge_success_bounty_base: 6,
+                challenge_success_bounty_per_work_unit_num: 7,
+                challenge_success_bounty_per_work_unit_den: 8,
+                worker_completion_bonus_per_work_unit_num: 9,
+                worker_completion_bonus_per_work_unit_den: 10,
+                worker_slash_rebate_per_work_unit_num: 11,
+                worker_slash_rebate_per_work_unit_den: 12,
+            }),
+        }),
+        worker: None,
+        committed_hash: None,
+        result_hash: None,
+        reveal_salt: None,
+        committed_at_height: None,
+        reveal_deadline_height: None,
+        challenge_deadline_height: None,
+        challenge_window_blocks_snapshot: None,
+        challenged_at_height: None,
+        resolve_deadline_height: None,
+        challenge_bond: None,
+        challenger: None,
+        challenge_bond_forfeited: None,
+        version: 1,
+    };
+
+    let mut changed_task = base_task.clone();
+    let metering = changed_task
+        .metadata
+        .as_mut()
+        .expect("task metadata should exist")
+        .metering
+        .as_mut()
+        .expect("task metering snapshot should exist");
+    metering.challenge_success_bounty_base = 7;
+    metering.worker_completion_bonus_per_work_unit_num = 10;
+
+    st1.put_task_new(base_task).unwrap();
+    st2.put_task_new(changed_task).unwrap();
+
+    assert_ne!(
+        st1.state_root(),
+        st2.state_root(),
+        "state_root must include task metering reward terms so incentive-schedule drift cannot preserve the same canonical audit root"
+    );
+}
+
+#[test]
 fn task_metadata_and_proof_type_should_affect_state_root() {
     let mut st1 = StateStore::new();
     let mut st2 = StateStore::new();
@@ -2259,6 +2438,58 @@ fn zero_challenge_escrow_balance_canonicalizes_to_missing_entry_even_with_other_
         explicit_zero.state_root(),
         missing_root,
         "state_root must treat zero challenge escrow balance the same as a missing entry even when other pending, treasury, and monetary state is present"
+    );
+}
+
+#[test]
+fn zero_challenge_forfeits_balance_canonicalizes_to_missing_entry_even_with_other_pending_and_monetary_state(
+) {
+    let mut missing = StateStore::new();
+    let mut explicit_zero = StateStore::new();
+
+    for state in [&mut missing, &mut explicit_zero] {
+        state.set_balance("treasury.challenge_escrow", 17);
+        state.set_balance("treasury.worker_slashes", 19);
+        state.restore_pending_gov_update(
+            "challenge_min_bond",
+            Some(PendingGovParamUpdate {
+                key_id: 304,
+                key: "challenge_min_bond".into(),
+                value: "180".into(),
+                activate_at_height: 262,
+            }),
+        );
+        state.restore_pending_resolve_approval(
+            4_202,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: false,
+                confirmations: 1,
+                first_approver: "authority.beta".into(),
+                authority_set: "authority.alpha,authority.beta".into(),
+                task_version: 6,
+            }),
+        );
+        state.restore_monetary_state(MonetaryState {
+            last_tick_height: 93,
+            tick_count: 7,
+            total_minted: 31,
+            total_burned: 8,
+            net_issuance: 23,
+        });
+    }
+
+    let missing_root = missing.state_root();
+    explicit_zero.set_balance("treasury.challenge_forfeits", 0);
+
+    assert_eq!(
+        explicit_zero.balance_of("treasury.challenge_forfeits"),
+        0,
+        "sanity: explicit zero challenge forfeits balance should still read back as zero"
+    );
+    assert_eq!(
+        explicit_zero.state_root(),
+        missing_root,
+        "state_root must treat zero challenge forfeits balance the same as a missing entry even when other pending, collateral, and monetary state is present"
     );
 }
 
@@ -6612,6 +6843,52 @@ fn checkpoint_da_light_verifier_summary_rejects_mixed_case_non_genesis_prev_hash
 }
 
 #[test]
+fn checkpoint_da_light_verifier_summary_rejects_zero_width_non_genesis_prev_hash_surface() {
+    let wal = WalMeta {
+        height: 7,
+        round: 3,
+        proposal_hash: "proposal-7".into(),
+        committed: true,
+        state_root_hex: "ab".repeat(32),
+        prev_hash_hex: Some("cd".repeat(32)),
+    };
+    let checkpoint = CheckpointMeta {
+        height: wal.height,
+        state_root_hex: wal.state_root_hex.clone(),
+        wal_entry_hash_hex: wal.content_hash_hex(),
+    };
+
+    assert!(
+        checkpoint_da_light_verifier_summary(&checkpoint, &wal).is_some(),
+        "sanity: canonical non-genesis checkpoint/WAL evidence should expose a DA/light-verifier summary"
+    );
+
+    let mut zero_width_prev_hash_wal = wal.clone();
+    zero_width_prev_hash_wal.prev_hash_hex = Some(format!("{}\u{200b}", "cd".repeat(32)));
+    let zero_width_prev_hash_checkpoint = CheckpointMeta {
+        height: zero_width_prev_hash_wal.height,
+        state_root_hex: zero_width_prev_hash_wal.state_root_hex.clone(),
+        wal_entry_hash_hex: zero_width_prev_hash_wal.content_hash_hex(),
+    };
+
+    assert!(
+        !checkpoint_evidence_surface_is_canonical(
+            &zero_width_prev_hash_checkpoint,
+            &zero_width_prev_hash_wal,
+        ),
+        "checkpoint evidence surfaces must reject zero-width prev_hash_hex on non-genesis WAL metadata so audit-ready predecessor links stay byte-canonical"
+    );
+    assert_eq!(
+        checkpoint_da_light_verifier_summary(
+            &zero_width_prev_hash_checkpoint,
+            &zero_width_prev_hash_wal,
+        ),
+        None,
+        "DA/light-verifier summaries must fail closed when non-genesis prev_hash_hex carries zero-width layout drift"
+    );
+}
+
+#[test]
 fn checkpoint_da_light_verifier_summary_rejects_forged_genesis_prev_hash_surface() {
     let wal = WalMeta {
         height: 1,
@@ -6648,6 +6925,46 @@ fn checkpoint_da_light_verifier_summary_rejects_forged_genesis_prev_hash_surface
         checkpoint_da_light_verifier_summary(&forged_prev_hash_checkpoint, &forged_prev_hash_wal),
         None,
         "DA/light-verifier summaries must fail closed when genesis WAL metadata forges prev_hash_hex"
+    );
+}
+
+#[test]
+fn checkpoint_da_light_verifier_summary_rejects_blank_genesis_prev_hash_surface() {
+    let wal = WalMeta {
+        height: 1,
+        round: 0,
+        proposal_hash: "proposal-genesis".into(),
+        committed: true,
+        state_root_hex: "ab".repeat(32),
+        prev_hash_hex: None,
+    };
+    let checkpoint = CheckpointMeta {
+        height: wal.height,
+        state_root_hex: wal.state_root_hex.clone(),
+        wal_entry_hash_hex: wal.content_hash_hex(),
+    };
+
+    assert!(
+        checkpoint_da_light_verifier_summary(&checkpoint, &wal).is_some(),
+        "sanity: canonical genesis checkpoint/WAL evidence should expose a DA/light-verifier summary"
+    );
+
+    let mut blank_prev_hash_wal = wal.clone();
+    blank_prev_hash_wal.prev_hash_hex = Some(String::new());
+    let blank_prev_hash_checkpoint = CheckpointMeta {
+        height: blank_prev_hash_wal.height,
+        state_root_hex: blank_prev_hash_wal.state_root_hex.clone(),
+        wal_entry_hash_hex: blank_prev_hash_wal.content_hash_hex(),
+    };
+
+    assert!(
+        !checkpoint_evidence_surface_is_canonical(&blank_prev_hash_checkpoint, &blank_prev_hash_wal),
+        "checkpoint evidence surfaces must reject blank genesis prev_hash_hex so height-1 audit proofs cannot smuggle an empty predecessor surface"
+    );
+    assert_eq!(
+        checkpoint_da_light_verifier_summary(&blank_prev_hash_checkpoint, &blank_prev_hash_wal),
+        None,
+        "DA/light-verifier summaries must fail closed when genesis WAL metadata encodes blank prev_hash_hex instead of canonical none"
     );
 }
 
@@ -7135,6 +7452,10 @@ fn checkpoint_da_light_verifier_summary_fails_closed_on_whitespace_padded_wal_pr
     assert!(
         checkpoint_da_light_verifier_summary(&checkpoint, &wal).is_some(),
         "sanity: canonical checkpoint/WAL evidence should summarize before the whitespace regression mutation"
+    );
+    assert!(
+        !checkpoint_evidence_surface_is_canonical(&bad_checkpoint, &bad_wal),
+        "checkpoint audit surfaces must reject whitespace-padded WAL proposal identities so checkpoint proofs cannot hide non-canonical task linkage"
     );
     assert!(
         checkpoint_da_light_verifier_summary(&bad_checkpoint, &bad_wal).is_none(),
@@ -7693,6 +8014,28 @@ fn checkpoint_evidence_surface_rejects_uppercase_wal_state_root_even_when_checkp
 }
 
 #[test]
+fn checkpoint_evidence_surface_rejects_uppercase_checkpoint_state_root_even_when_wal_matches() {
+    let wal = WalMeta {
+        height: 2,
+        round: 0,
+        proposal_hash: "proposal-2".into(),
+        committed: true,
+        state_root_hex: "ab".repeat(32),
+        prev_hash_hex: Some("cd".repeat(32)),
+    };
+    let checkpoint = CheckpointMeta {
+        height: wal.height,
+        state_root_hex: wal.state_root_hex.clone().to_uppercase(),
+        wal_entry_hash_hex: wal.content_hash_hex(),
+    };
+
+    assert!(
+        !checkpoint_evidence_surface_is_canonical(&checkpoint, &wal),
+        "checkpoint evidence surfaces must reject uppercase checkpoint state_root_hex even when WAL state_root_hex and wal_entry_hash_hex otherwise match, so audit-ready proofs require lowercase canonical digest surfaces end-to-end"
+    );
+}
+
+#[test]
 fn wal_checkpoint_verification_rejects_blank_proposal_hash_even_when_checkpoint_matches() {
     let wal = WalMeta {
         height: 1,
@@ -7834,6 +8177,31 @@ fn node_recovery_checkpoint_verification_rejects_overlong_proposal_hash_even_whe
     assert!(
         got.is_none(),
         "node recovery must reject overlong WAL proposal identities so restart-time checkpoint proofs keep the same canonical audit-surface bound even when checkpoint fields otherwise match"
+    );
+}
+
+#[test]
+fn node_recovery_checkpoint_verification_accepts_max_length_canonical_proposal_hash() {
+    let wal = WalMeta {
+        height: 1,
+        round: 0,
+        proposal_hash: "p".repeat(256),
+        committed: true,
+        state_root_hex: "ab".repeat(32),
+        prev_hash_hex: None,
+    };
+    let checkpoints = vec![CheckpointMeta {
+        height: wal.height,
+        state_root_hex: wal.state_root_hex.clone(),
+        wal_entry_hash_hex: wal.content_hash_hex(),
+    }];
+
+    let got = verify_wal_and_find_checkpoint_node_recovery(&checkpoints, &[wal.clone()]).unwrap();
+
+    assert_eq!(
+        got,
+        Some(checkpoints[0].clone()),
+        "node recovery should still accept WAL proposal identities exactly at the canonical 256-byte boundary so the fail-closed max-length guard does not regress into a false reject"
     );
 }
 
@@ -8253,6 +8621,30 @@ fn wal_checkpoint_verification_rejects_zero_width_checkpoint_wal_hash_even_when_
 }
 
 #[test]
+fn wal_checkpoint_verification_rejects_newline_checkpoint_wal_hash_even_when_state_root_matches(
+) {
+    let wal = WalMeta {
+        height: 1,
+        round: 0,
+        proposal_hash: "proposal-1".into(),
+        committed: true,
+        state_root_hex: "ab".repeat(32),
+        prev_hash_hex: None,
+    };
+    let checkpoints = vec![CheckpointMeta {
+        height: 1,
+        state_root_hex: wal.state_root_hex.clone(),
+        wal_entry_hash_hex: format!("{}\n", wal.content_hash_hex()),
+    }];
+
+    let got = verify_wal_and_find_checkpoint(&checkpoints, &[wal]).unwrap();
+    assert!(
+        got.is_none(),
+        "checkpoint recovery must reject newline-variant checkpoint wal_entry_hash_hex surfaces even when the state_root evidence otherwise matches"
+    );
+}
+
+#[test]
 fn wal_checkpoint_verification_rejects_non_ascii_checkpoint_wal_hash_even_when_state_root_matches(
 ) {
     let wal = WalMeta {
@@ -8347,6 +8739,89 @@ fn wal_checkpoint_verification_rejects_forged_genesis_prev_hash_even_when_checkp
 }
 
 #[test]
+fn checkpoint_audit_summary_rejects_forged_genesis_prev_hash_surface() {
+    let canonical_checkpoint = CheckpointMeta {
+        height: 1,
+        state_root_hex: "ab".repeat(32),
+        wal_entry_hash_hex: "cd".repeat(32),
+    };
+    let canonical_wal = WalMeta {
+        height: 1,
+        round: 0,
+        proposal_hash: "proposal-1".into(),
+        committed: true,
+        state_root_hex: canonical_checkpoint.state_root_hex.clone(),
+        prev_hash_hex: None,
+    };
+    let canonical_checkpoint = CheckpointMeta {
+        wal_entry_hash_hex: canonical_wal.content_hash_hex(),
+        ..canonical_checkpoint
+    };
+
+    assert!(
+        checkpoint_evidence_surface_is_canonical(&canonical_checkpoint, &canonical_wal),
+        "sanity: canonical genesis checkpoint/WAL evidence should remain audit-ready"
+    );
+    assert!(
+        checkpoint_da_light_verifier_summary(&canonical_checkpoint, &canonical_wal).is_some(),
+        "sanity: canonical genesis checkpoint/WAL evidence should emit an audit summary"
+    );
+
+    let forged_genesis_wal = WalMeta {
+        prev_hash_hex: Some("01".repeat(32)),
+        ..canonical_wal
+    };
+    assert!(
+        !checkpoint_evidence_surface_is_canonical(&canonical_checkpoint, &forged_genesis_wal),
+        "checkpoint audit surfaces must reject forged genesis prev_hash_hex so height-1 evidence stays fail-closed"
+    );
+    assert!(
+        checkpoint_da_light_verifier_summary(&canonical_checkpoint, &forged_genesis_wal).is_none(),
+        "light-verifier summaries must fail closed when genesis WAL evidence carries a predecessor hash"
+    );
+}
+
+#[test]
+fn wal_checkpoint_verification_falls_back_when_non_genesis_prev_hash_has_newline_drift() {
+    let e1 = WalMeta {
+        height: 1,
+        round: 0,
+        proposal_hash: "proposal-1".into(),
+        committed: true,
+        state_root_hex: "ab".repeat(32),
+        prev_hash_hex: None,
+    };
+    let h1 = e1.content_hash_hex();
+    let e2 = WalMeta {
+        height: 2,
+        round: 0,
+        proposal_hash: "proposal-2".into(),
+        committed: true,
+        state_root_hex: "cd".repeat(32),
+        prev_hash_hex: Some(format!("{}\n", h1)),
+    };
+    let checkpoints = vec![
+        CheckpointMeta {
+            height: 1,
+            state_root_hex: e1.state_root_hex.clone(),
+            wal_entry_hash_hex: h1,
+        },
+        CheckpointMeta {
+            height: 2,
+            state_root_hex: e2.state_root_hex.clone(),
+            wal_entry_hash_hex: e2.content_hash_hex(),
+        },
+    ];
+
+    let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, e2]).unwrap();
+    assert_eq!(
+        got.map(|cp| cp.height),
+        Some(1),
+        "checkpoint recovery must fail closed back to the last unambiguous checkpoint when a non-genesis WAL prev_hash_hex carries newline drift instead of a canonical linked digest"
+    );
+}
+
+#[test]
 fn wal_checkpoint_verification_rejects_noncanonical_wal_state_root_surface_even_when_checkpoint_matches(
 ) {
     let wal = WalMeta {
@@ -8415,6 +8890,30 @@ fn wal_checkpoint_verification_rejects_zero_width_wal_state_root_even_when_check
     assert!(
         got.is_none(),
         "checkpoint recovery must reject zero-width WAL state_root_hex surfaces even when checkpoint state_root_hex and wal_entry_hash_hex otherwise match"
+    );
+}
+
+#[test]
+fn wal_checkpoint_verification_rejects_newline_wal_state_root_even_when_checkpoint_matches() {
+    let canonical_root = "ab".repeat(32);
+    let wal = WalMeta {
+        height: 1,
+        round: 0,
+        proposal_hash: "proposal-1".into(),
+        committed: true,
+        state_root_hex: format!("{}\n", canonical_root),
+        prev_hash_hex: None,
+    };
+    let checkpoints = vec![CheckpointMeta {
+        height: 1,
+        state_root_hex: wal.state_root_hex.clone(),
+        wal_entry_hash_hex: wal.content_hash_hex(),
+    }];
+
+    let got = verify_wal_and_find_checkpoint(&checkpoints, &[wal]).unwrap();
+    assert!(
+        got.is_none(),
+        "checkpoint recovery must reject newline-tailed WAL state_root_hex surfaces even when checkpoint state_root_hex and wal_entry_hash_hex otherwise match"
     );
 }
 
@@ -8637,6 +9136,40 @@ fn wal_evidence_summary_exposes_round_height_and_proposal_hash_surface_fields() 
 }
 
 #[test]
+fn zero_height_checkpoint_and_wal_evidence_summaries_fail_closed_as_noncanonical() {
+    let wal = WalMeta {
+        height: 0,
+        round: 0,
+        proposal_hash: "proposal-zero-height".into(),
+        committed: true,
+        state_root_hex: "34".repeat(32),
+        prev_hash_hex: None,
+    };
+    let checkpoint = CheckpointMeta {
+        height: wal.height,
+        state_root_hex: wal.state_root_hex.clone(),
+        wal_entry_hash_hex: wal.content_hash_hex(),
+    };
+
+    let checkpoint_summary = checkpoint.evidence_summary();
+    assert!(checkpoint_summary.contains("checkpoint_height=0"));
+    assert!(checkpoint_summary.contains("checkpoint_height_boundary_kind=non-genesis"));
+    assert!(
+        checkpoint_summary.contains("checkpoint_surface_canonical=false"),
+        "height-zero checkpoint summaries must fail closed instead of advertising canonical audit evidence"
+    );
+
+    let wal_summary = wal.evidence_summary();
+    assert!(wal_summary.contains("wal_height=0"));
+    assert!(wal_summary.contains("wal_prev_hash=none"));
+    assert!(wal_summary.contains("wal_prev_hash_present=false"));
+    assert!(
+        wal_summary.contains("wal_surface_canonical=false"),
+        "height-zero WAL summaries must fail closed instead of advertising canonical audit evidence"
+    );
+}
+
+#[test]
 fn wal_evidence_summary_marks_overlong_proposal_hash_surface_noncanonical() {
     let wal = WalMeta {
         height: 9,
@@ -8653,6 +9186,27 @@ fn wal_evidence_summary_marks_overlong_proposal_hash_surface_noncanonical() {
     assert!(
         wal_summary.contains("wal_surface_canonical=false"),
         "wal evidence summary must fail closed when proposal_hash exceeds the canonical 256-byte audit surface bound"
+    );
+}
+
+#[test]
+fn wal_evidence_summary_marks_whitespace_only_proposal_hash_surface_absent_and_noncanonical() {
+    let wal = WalMeta {
+        height: 9,
+        round: 4,
+        proposal_hash: "   ".into(),
+        committed: true,
+        state_root_hex: "34".repeat(32),
+        prev_hash_hex: Some("56".repeat(32)),
+    };
+
+    let wal_summary = wal.evidence_summary();
+    assert!(wal_summary.contains("wal_proposal_hash=   "));
+    assert!(wal_summary.contains("wal_proposal_hash_present=false"));
+    assert!(wal_summary.contains("wal_proposal_hash_bytes=3"));
+    assert!(
+        wal_summary.contains("wal_surface_canonical=false"),
+        "wal evidence summary must not advertise whitespace-only proposal_hash surfaces as present when the audit surface is noncanonical"
     );
 }
 
@@ -8683,6 +9237,46 @@ fn checkpoint_and_wal_evidence_summaries_mark_noncanonical_surfaces_false() {
     assert!(wal_summary.contains("wal_prev_hash_present=true"));
     assert!(wal_summary.contains("wal_prev_hash_kind=linked"));
     assert!(wal_summary.contains("wal_prev_hash_surface_policy=canonical-hex-32b-or-none"));
+}
+
+#[test]
+fn wal_evidence_summary_rejects_short_ascii_state_root_surface() {
+    let wal = WalMeta {
+        height: 2,
+        round: 1,
+        proposal_hash: "proposal-2".into(),
+        committed: true,
+        state_root_hex: "state-root-2".into(),
+        prev_hash_hex: Some("cd".repeat(32)),
+    };
+
+    let wal_summary = wal.evidence_summary();
+    assert!(wal_summary.contains("wal_state_root=state-root-2"));
+    assert!(wal_summary.contains("wal_state_root_kind=canonical-hex-32b"));
+    assert!(wal_summary.contains("wal_state_root_encoding=hex-lower"));
+    assert!(
+        wal_summary.contains("wal_surface_canonical=false"),
+        "wal evidence summary must fail closed when state_root_hex is printable ascii but not a canonical 32-byte lower-hex digest"
+    );
+}
+
+#[test]
+fn checkpoint_evidence_summary_marks_blank_digest_surfaces_noncanonical() {
+    let checkpoint = CheckpointMeta {
+        height: 2,
+        state_root_hex: String::new(),
+        wal_entry_hash_hex: String::new(),
+    };
+
+    let checkpoint_summary = checkpoint.evidence_summary();
+    assert!(checkpoint_summary.contains("checkpoint_state_root="));
+    assert!(checkpoint_summary.contains("checkpoint_state_root_bytes=0"));
+    assert!(checkpoint_summary.contains("checkpoint_wal_entry_hash="));
+    assert!(checkpoint_summary.contains("checkpoint_wal_entry_hash_bytes=0"));
+    assert!(
+        checkpoint_summary.contains("checkpoint_surface_canonical=false"),
+        "checkpoint evidence summary must fail closed when state_root_hex or wal_entry_hash_hex is blank so restart-time evidence cannot advertise missing digest surfaces as canonical"
+    );
 }
 
 #[test]

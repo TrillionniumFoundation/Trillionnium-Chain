@@ -109,3 +109,57 @@ fn pending_resolve_task_version_must_affect_state_root() {
         "restoring the original pending resolve task_version should rewind the deterministic root exactly"
     );
 }
+
+#[test]
+fn pending_resolve_reserved_authority_alias_snapshot_fails_closed_to_empty_root() {
+    let mut state = StateStore::new();
+    let empty_root = state.state_root();
+
+    state.restore_pending_resolve_approval(
+        5_152,
+        Some(PendingResolveApprovalSnapshot {
+            slash_worker: true,
+            confirmations: 1,
+            first_approver: "resolver-a".into(),
+            authority_set: "resolver-a,governance.resolve_authority".into(),
+            task_version: 7,
+        }),
+    );
+
+    assert!(
+        state.pending_resolve_approval_snapshot(5_152).is_none(),
+        "reserved authority aliases must fail closed during pending resolve snapshot restore"
+    );
+    assert_eq!(
+        state.state_root(),
+        empty_root,
+        "invalid pending resolve authority aliases must not perturb the canonical empty state root"
+    );
+}
+
+#[test]
+fn pending_resolve_reserved_first_approver_alias_fails_closed_to_empty_root() {
+    let mut state = StateStore::new();
+    let empty_root = state.state_root();
+
+    state.restore_pending_resolve_approval(
+        5_153,
+        Some(PendingResolveApprovalSnapshot {
+            slash_worker: true,
+            confirmations: 1,
+            first_approver: "governance.resolve_authority".into(),
+            authority_set: "resolver-a,resolver-b".into(),
+            task_version: 7,
+        }),
+    );
+
+    assert!(
+        state.pending_resolve_approval_snapshot(5_153).is_none(),
+        "reserved first approver aliases must fail closed during pending resolve snapshot restore"
+    );
+    assert_eq!(
+        state.state_root(),
+        empty_root,
+        "invalid pending resolve first approver aliases must not perturb the canonical empty state root"
+    );
+}

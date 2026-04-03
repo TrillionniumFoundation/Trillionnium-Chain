@@ -137,6 +137,37 @@ fn rollback_snapshot_scrubs_pending_resolve_snapshot_with_forbidden_authority_se
 }
 
 #[test]
+fn rollback_snapshot_scrubs_pending_resolve_snapshot_with_reserved_system_approver() {
+    let mut st = StateStore::new();
+    let _ = challenged_task_fixture(&mut st, 8_116);
+    let before_task = st.get_task(8_116).unwrap();
+    let before_escrow = st.balance_of("treasury.challenge_escrow");
+
+    let snapshot = TxRollbackSnapshot {
+        task_id: 8_116,
+        task: Some(before_task.clone()),
+        balances: vec![("treasury.challenge_escrow".into(), Some(before_escrow))],
+        pending_resolve_approval: Some(PendingResolveApprovalSnapshot {
+            slash_worker: true,
+            confirmations: 1,
+            first_approver: "system".into(),
+            authority_set: "authority-a,authority-b".into(),
+            task_version: before_task.version,
+        }),
+    };
+
+    rollback_tx_snapshot(&mut st, snapshot);
+
+    assert_eq!(st.get_task(8_116).unwrap(), before_task);
+    assert_eq!(st.balance_of("treasury.challenge_escrow"), before_escrow);
+    assert_eq!(
+        st.pending_resolve_approval(8_116),
+        None,
+        "rollback must scrub reserved system approvers instead of reviving a forged quorum"
+    );
+}
+
+#[test]
 fn rollback_snapshot_scrubs_pending_resolve_snapshot_with_whitespace_padded_authority_members() {
     let mut st = StateStore::new();
     st.set_gov_param_bootstrap_unchecked(

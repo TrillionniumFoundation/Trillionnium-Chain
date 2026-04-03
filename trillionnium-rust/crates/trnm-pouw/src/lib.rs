@@ -18757,6 +18757,45 @@ mod tests {
     }
 
     #[test]
+    fn challenge_rejects_hidden_char_worker_id_in_revealed_state_without_mutation() {
+        let mut st = seeded_state();
+        st.set_balance("challenger", 100);
+
+        let r1 = apply_create_task(&mut st, 8_994_1, "alice".into(), 10).unwrap();
+        let result_hash = [1u8; 32];
+        let reveal_salt = [2u8; 32];
+        let committed = compute_commitment(8_994_1, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
+        let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, None).unwrap();
+
+        // Simulate malformed legacy state carrying hidden-char worker account id.
+        let mut malformed = st.get_task(r4.id).unwrap();
+        malformed.worker = Some("worker1\u{200b}".into());
+        let r4 = st.update_task(r4, malformed).unwrap();
+
+        let before = st.clone();
+        let err =
+            apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into()).unwrap_err();
+        assert!(matches!(err, PouwError::State(msg) if msg.contains("non-canonical worker account")));
+
+        let task = st.get_task(8_994_1).unwrap();
+        assert_eq!(task.status, TaskStatus::Revealed);
+        assert_eq!(task.challenger, None);
+        assert_eq!(task.challenge_bond, None);
+        assert_eq!(st.balance_of("challenger"), before.balance_of("challenger"));
+        assert_eq!(
+            st.balance_of(CHALLENGE_ESCROW_ACCOUNT),
+            before.balance_of(CHALLENGE_ESCROW_ACCOUNT)
+        );
+        assert_eq!(
+            st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+            before.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT)
+        );
+    }
+
+    #[test]
     fn challenge_accepts_when_signer_matches_challenger() {
         let mut st = seeded_state();
         st.set_balance("challenger", 100);
@@ -22302,5 +22341,35 @@ mod tests {
             st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT),
             before_slash_treasury
         );
+    }
+
+    #[test]
+    fn canonical_actor_id_rejects_hidden_unicode_aliases_fail_closed() {
+        assert!(!is_canonical_actor_id("challenger\u{200b}"));
+        assert!(!is_canonical_actor_id("worker\u{2060}one"));
+        assert!(!is_canonical_actor_id("resolver\u{fe0f}"));
+    }
+
+    #[test]
+    fn canonical_actor_id_rejects_forbidden_separator_aliases_fail_closed() {
+        assert!(!is_canonical_actor_id("challenger;backup"));
+        assert!(!is_canonical_actor_id("challenger／backup"));
+        assert!(!is_canonical_actor_id("challenger︓backup"));
+    }
+
+    #[test]
+    fn canonical_actor_id_accepts_plain_ascii_without_whitespace_or_aliases() {
+        assert!(is_canonical_actor_id("challenger-01"));
+        assert!(is_canonical_actor_id("worker.alpha_02"));
+    }
+
+    #[test]
+    fn canonical_actor_id_rejects_blank_whitespace_and_control_aliases_fail_closed() {
+        for token in ["", " worker", "worker ", "worker one", "worker\n", "worker\t"] {
+            assert!(
+                !is_canonical_actor_id(token),
+                "token should fail closed as non-canonical: {token:?}"
+            );
+        }
     }
 }

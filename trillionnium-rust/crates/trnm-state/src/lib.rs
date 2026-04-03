@@ -3,9 +3,11 @@ use sha2::{Digest, Sha256};
 use std::collections::BTreeMap;
 use std::sync::RwLock;
 use trnm_types::{
-    GovParamKey, GovParamObject, GovProposalObject, GovProposalStatus, Hash32,
-    EMERGENCY_PAUSE_KEY_ID, ObjectRef, TaskObject, TaskStatus,
+    GovParamObject, GovProposalObject, GovProposalStatus, Hash32, EMERGENCY_PAUSE_KEY_ID,
+    ObjectRef, TaskObject, TaskStatus,
 };
+#[cfg(test)]
+use trnm_types::GovParamKey;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum ObjectValue {
@@ -218,7 +220,7 @@ impl WalMeta {
             .as_ref()
             .map(|prev| prev.len() / 2)
             .unwrap_or(0);
-        let wal_proposal_hash_present = !self.proposal_hash.is_empty();
+        let wal_proposal_hash_present = !self.proposal_hash.trim().is_empty();
         let wal_proposal_hash_kind = "opaque-ascii";
         let wal_proposal_hash_surface_policy = "ascii-trimmed-no-ws-control-max256";
         let wal_surface_canonical = checkpoint_height_surface_is_canonical(self.height)
@@ -3916,14 +3918,9 @@ fn wal_state_root_surface_has_forbidden_layout(value: &str) -> bool {
 
 fn wal_state_root_surface_is_canonical(wal_entry: &WalMeta) -> bool {
     let state_root_hex = wal_entry.state_root_hex.as_str();
-    let looks_like_digest_surface = state_root_hex.len() == 64
-        && state_root_hex
-            .as_bytes()
-            .iter()
-            .all(|byte| byte.is_ascii_hexdigit());
 
     !wal_state_root_surface_has_forbidden_layout(state_root_hex)
-        && (!looks_like_digest_surface || is_canonical_hex_digest(state_root_hex))
+        && is_canonical_hex_digest(state_root_hex)
 }
 
 fn checkpoint_hash_surfaces_are_canonical(
@@ -5725,6 +5722,88 @@ mod tests {
             without_metering.state_root(),
             with_metering.state_root(),
             "state_root must include task metering snapshots so audit-proof work-unit evidence cannot be silently omitted"
+        );
+    }
+
+    #[test]
+    fn task_provenance_identity_and_timestamp_affect_state_root() {
+        let mut baseline = StateStore::new();
+        let mut changed_producer = StateStore::new();
+        let mut changed_timestamp = StateStore::new();
+
+        let base_task = TaskObject {
+            task_id: 405,
+            creator: "alice".into(),
+            bounty: 25,
+            status: TaskStatus::Completed,
+            proof_type: trnm_types::ProofType::Fraud,
+            metadata: Some(trnm_types::TaskMetadata {
+                note: Some("checkpoint evidence linked task".into()),
+                task_type: Some("inference".into()),
+                input_hash: Some("ab".repeat(32)),
+                model: Some(trnm_types::TaskModelMetadata {
+                    model_id: Some("trnm-model".into()),
+                    model_digest: Some("cd".repeat(32)),
+                    version: Some("v1".into()),
+                }),
+                provenance: Some(trnm_types::TaskProvenanceMetadata {
+                    producer_did: Some("did:trnm:test:alice".into()),
+                    produced_at: Some("2026-03-12T06:45:00Z".into()),
+                    provenance_index: Some("prov-task-405".into()),
+                    privacy_tier: Some(trnm_types::PrivacyTier::Internal),
+                }),
+                metering: None,
+            }),
+            worker: Some("worker-a".into()),
+            committed_hash: Some([0x11; 32]),
+            result_hash: Some([0x22; 32]),
+            reveal_salt: Some([0x33; 32]),
+            committed_at_height: Some(10),
+            reveal_deadline_height: Some(20),
+            challenge_deadline_height: Some(30),
+            challenge_window_blocks_snapshot: Some(12),
+            challenged_at_height: None,
+            resolve_deadline_height: Some(40),
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 2,
+        };
+
+        let mut producer_mutation = base_task.clone();
+        producer_mutation
+            .metadata
+            .as_mut()
+            .unwrap()
+            .provenance
+            .as_mut()
+            .unwrap()
+            .producer_did = Some("did:trnm:test:bob".into());
+
+        let mut timestamp_mutation = base_task.clone();
+        timestamp_mutation
+            .metadata
+            .as_mut()
+            .unwrap()
+            .provenance
+            .as_mut()
+            .unwrap()
+            .produced_at = Some("2026-03-12T06:46:00Z".into());
+
+        baseline.put_task_new(base_task).unwrap();
+        changed_producer.put_task_new(producer_mutation).unwrap();
+        changed_timestamp.put_task_new(timestamp_mutation).unwrap();
+
+        let baseline_root = baseline.state_root();
+        assert_ne!(
+            baseline_root,
+            changed_producer.state_root(),
+            "state_root must include task provenance producer_did so otherwise identical completed tasks from different provenance identities cannot hash identically"
+        );
+        assert_ne!(
+            baseline_root,
+            changed_timestamp.state_root(),
+            "state_root must include task provenance produced_at so otherwise identical completed tasks with different provenance timestamps cannot hash identically"
         );
     }
 
@@ -14493,6 +14572,50 @@ mod tests {
     }
 
     #[test]
+    fn restore_pending_resolve_approval_rejects_duplicate_authority_members_in_snapshot() {
+        let mut st = StateStore::new();
+        st.put_task_new(TaskObject {
+            task_id: 901,
+            creator: "alice".into(),
+            bounty: 100,
+            status: TaskStatus::Challenged,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: Some("worker-1".into()),
+            committed_hash: Some([1u8; 32]),
+            result_hash: Some([2u8; 32]),
+            reveal_salt: Some([3u8; 32]),
+            committed_at_height: Some(10),
+            reveal_deadline_height: Some(20),
+            challenge_deadline_height: Some(30),
+            challenge_window_blocks_snapshot: Some(40),
+            challenged_at_height: Some(25),
+            resolve_deadline_height: Some(35),
+            challenge_bond: Some(500),
+            challenger: Some("bob".into()),
+            challenge_bond_forfeited: Some(false),
+            version: 7,
+        })
+        .expect("challenged task should be restorable");
+
+        st.restore_pending_resolve_approval(
+            901,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-a,authority-b,authority-a".into(),
+                task_version: 7,
+            }),
+        );
+
+        assert!(
+            st.pending_resolve_approval(901).is_none(),
+            "restore must fail closed when pending resolve snapshot authority_set repeats a member and therefore is not canonically replayable"
+        );
+    }
+
+    #[test]
     fn restore_pending_resolve_approval_rejects_incomplete_task_boundary_metadata() {
         let mut st = StateStore::new();
         st.put_task_new(TaskObject {
@@ -15056,6 +15179,68 @@ mod tests {
         assert!(
             st.pending_resolve_approval(905).is_none(),
             "rollback restore must still fail closed when paused snapshot authority metadata drifts from canonical governance"
+        );
+    }
+
+    #[test]
+    fn restore_pending_resolve_approval_from_rollback_rejects_reserved_authority_alias_snapshot() {
+        let mut st = StateStore::new();
+        st.set_gov_param(
+            7_999,
+            EMERGENCY_PAUSE_KEY_ID,
+            "emergency_pause".into(),
+            "true".into(),
+        )
+        .expect("pause toggle must apply immediately");
+        assert!(st.is_emergency_paused());
+
+        st.set_gov_param_unchecked(
+            7_310,
+            "resolve_authority".into(),
+            "authority-a,authority-b".into(),
+        )
+        .expect("resolve authority bootstrap should succeed for rollback replay coverage");
+
+        st.restore_task(
+            906,
+            Some(TaskObject {
+                task_id: 906,
+                creator: "alice".into(),
+                bounty: 100,
+                status: TaskStatus::Challenged,
+                proof_type: Default::default(),
+                metadata: None,
+                worker: Some("worker-1".into()),
+                committed_hash: Some([1u8; 32]),
+                result_hash: Some([2u8; 32]),
+                reveal_salt: Some([3u8; 32]),
+                committed_at_height: Some(10),
+                reveal_deadline_height: Some(20),
+                challenge_deadline_height: Some(30),
+                challenge_window_blocks_snapshot: Some(40),
+                challenged_at_height: Some(25),
+                resolve_deadline_height: Some(35),
+                challenge_bond: Some(500),
+                challenger: Some("bob".into()),
+                challenge_bond_forfeited: Some(true),
+                version: 7,
+            }),
+        );
+
+        st.restore_pending_resolve_approval_from_rollback(
+            906,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-a,governance.resolve_authority".into(),
+                task_version: 7,
+            }),
+        );
+
+        assert!(
+            st.pending_resolve_approval(906).is_none(),
+            "rollback restore must not allow reserved authority aliases to bypass canonical pending resolve validation"
         );
     }
 
@@ -15624,6 +15809,29 @@ mod tests {
         assert!(
             got.is_none(),
             "genesis WAL metadata with a forged prev hash must fail closed instead of claiming checkpoint recovery"
+        );
+    }
+
+    #[test]
+    fn wal_checkpoint_verification_rejects_zero_height_pregenesis_entry() {
+        let e0 = WalMeta {
+            height: 0,
+            round: 0,
+            proposal_hash: "p0".into(),
+            committed: true,
+            state_root_hex: "r0".into(),
+            prev_hash_hex: None,
+        };
+        let checkpoints = vec![CheckpointMeta {
+            height: 0,
+            state_root_hex: "r0".into(),
+            wal_entry_hash_hex: e0.content_hash_hex(),
+        }];
+
+        let got = verify_wal_and_find_checkpoint(&checkpoints, &[e0]).unwrap();
+        assert!(
+            got.is_none(),
+            "height-zero WAL/checkpoint evidence must fail closed so pre-genesis metadata cannot be treated as a recoverable canonical anchor"
         );
     }
 

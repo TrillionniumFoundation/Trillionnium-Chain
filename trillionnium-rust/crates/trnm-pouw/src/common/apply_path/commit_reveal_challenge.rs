@@ -24,6 +24,11 @@ pub fn apply_commit_result_at_height(
     }
 
     let assigned_worker = task.worker.clone().ok_or(PouwError::MissingWorker)?;
+    // Fail closed on malformed worker ids before the commit envelope is accepted,
+    // so legacy/corrupted Assigned state cannot advance into Committed with a
+    // non-canonical actor binding that later stages would have to unwind.
+    require_canonical_actor_id_state(&assigned_worker, "worker account")?;
+    require_canonical_actor_id(&worker)?;
     if assigned_worker != worker {
         return Err(PouwError::Unauthorized);
     }

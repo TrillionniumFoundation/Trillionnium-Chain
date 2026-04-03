@@ -248,4 +248,11 @@ mod tests {
         assert_eq!(timeout_outcome_fields("slashed"), ("false", "unknown"));
         assert_eq!(timeout_outcome_fields(" Completed"), ("false", "unknown"));
     }
+
+    #[test]
+    fn timeout_outcome_fields_stays_unknown_for_trailing_whitespace_terminal_labels() {
+        assert_eq!(timeout_outcome_fields("Completed "), ("false", "unknown"));
+        assert_eq!(timeout_outcome_fields("Slashed\n"), ("false", "unknown"));
+        assert_eq!(timeout_outcome_fields("Slashed\t"), ("false", "unknown"));
+    }
 }

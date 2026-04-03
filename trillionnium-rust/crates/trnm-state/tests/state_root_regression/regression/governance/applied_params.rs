@@ -401,6 +401,54 @@ fn restore_gov_param_invalid_resolve_authority_literal_preserves_live_binding_an
 }
 
 #[test]
+fn restore_gov_param_noncanonical_resolve_authority_alias_preserves_live_binding_and_root() {
+    let mut state = StateStore::new();
+
+    state
+        .set_gov_param(
+            98_248,
+            7_998,
+            "resolve_authority".into(),
+            "authority-a,authority-b".into(),
+        )
+        .expect("canonical resolve_authority must be set first");
+    let canonical_snapshot = state
+        .get_param(7_998)
+        .expect("live canonical resolve_authority object must exist");
+    let canonical_root = state.state_root();
+
+    state.restore_gov_param(
+        7_998,
+        Some(GovParamObject {
+            key_id: 7_998,
+            key: "resolve_authority ".into(),
+            value: "authority-c".into(),
+            version: canonical_snapshot.version,
+        }),
+    );
+
+    assert_eq!(
+        state.gov_param_string("resolve_authority"),
+        Some("authority-a,authority-b".into()),
+        "rejecting a non-canonical applied resolve_authority alias must preserve the live canonical authority binding"
+    );
+    assert!(
+        state.gov_param_string("resolve_authority ").is_none(),
+        "rejecting a non-canonical applied resolve_authority alias must not persist the malformed alias binding"
+    );
+    assert_eq!(
+        state.state_root(),
+        canonical_root,
+        "rejecting a non-canonical applied resolve_authority alias must preserve the prior deterministic root"
+    );
+    assert_eq!(
+        state.state_root(),
+        canonical_root,
+        "repeated reads after rejecting a non-canonical applied resolve_authority alias should deterministically reuse the preserved cached root"
+    );
+}
+
+#[test]
 fn cloned_cached_state_restore_roundtrip_rewinds_applied_gov_param_root_without_aliasing_original_index(
 ) {
     let mut original = StateStore::new();

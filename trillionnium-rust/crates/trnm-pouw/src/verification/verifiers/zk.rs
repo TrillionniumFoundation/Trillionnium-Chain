@@ -935,6 +935,22 @@ mod tests {
     }
 
     #[test]
+    fn zk_verifier_rejects_whitespace_wrapped_noop_backend_before_legacy_alias_canonicalization() {
+        let mut config = router_config();
+        config.zk_features.zk_explicit_backend_required = true;
+        let verifier = ZkVerifier::from_config(&config, Arc::new(ZkBackendRegistry::new()));
+        let task = mock_task();
+        let payload = br#"ZK:{"task_id":99,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","backend_id":" noop ","schema_version":"trnm.zk.payload.v0","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["99","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]}}"#;
+
+        assert!(matches!(
+            verifier.verify_proof(&task, payload),
+            VerificationResult::Invalid(msg)
+                if msg.contains("must not contain surrounding whitespace")
+                    && !msg.contains("canonical lowercase token 'noop'")
+        ));
+    }
+
+    #[test]
     fn zk_verifier_explicit_noop_payload_backend_remains_authoritative_without_falling_back_to_configured_backend(
     ) {
         let mut backends = ZkBackendRegistry::new();
