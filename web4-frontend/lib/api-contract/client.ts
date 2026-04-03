@@ -182,7 +182,10 @@ export function createFrontendApiClient(config: BaseClientConfig) {
       if (eventType) params.set("eventType", eventType);
       if (cursor) params.set("cursor", cursor);
       if (query.limit != null && Number.isFinite(query.limit) && query.limit > 0) {
-        params.set("limit", String(Math.trunc(query.limit)));
+        const normalizedLimit = Math.trunc(query.limit);
+        if (normalizedLimit > 0) {
+          params.set("limit", String(normalizedLimit));
+        }
       }
       const qs = params.toString();
 
