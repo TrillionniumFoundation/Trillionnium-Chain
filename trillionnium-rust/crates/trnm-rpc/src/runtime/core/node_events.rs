@@ -201,6 +201,11 @@ pub(crate) fn load_node_event_log_sources(root: &Path) -> Vec<PathBuf> {
     let mut sources = BTreeSet::<PathBuf>::new();
 
     if let Some(manifest_path) = normalized_path_from_env(NODE_EVENT_LOG_MANIFEST_ENV) {
+        let manifest_path = if manifest_path.is_absolute() {
+            normalize_lexical_path(manifest_path)
+        } else {
+            normalize_lexical_path(root.join(manifest_path))
+        };
         if let Ok(raw) = fs::read_to_string(&manifest_path) {
             let manifest_dir = manifest_path.parent().unwrap_or_else(|| Path::new("."));
             for line in raw.lines() {
