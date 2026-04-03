@@ -28,6 +28,35 @@ if bash "$SCRIPT" "${common_args[@]}" >/tmp/emit-packet.out 2>/tmp/emit-packet.e
 fi
 grep -q 'missing --expected-worktree-root' /tmp/emit-packet.err
 
+if bash "$SCRIPT" \
+  --cutover-kind rotation \
+  --verified-worktree /tmp/trnm-lane \
+  --verified-branch-ref lane/mn05-operator-dr-rotation-lifecycle \
+  --verified-head 0123456789abcdef \
+  --outgoing-validator-id validator-old \
+  --incoming-validator-id validator-new \
+  --incoming-config-path /tmp/configs/validator-new.json \
+  --rollback-command 'rm -rf /tmp/cutover-note' \
+  >/tmp/emit-packet.out 2>/tmp/emit-packet.err; then
+  echo "expected rotation without handoff sign-off to fail" >&2
+  exit 1
+fi
+grep -q 'missing --handoff-signed-by' /tmp/emit-packet.err
+
+bash "$SCRIPT" \
+  --cutover-kind replacement \
+  --verified-worktree /tmp/trnm-lane \
+  --verified-branch-ref lane/mn05-operator-dr-rotation-lifecycle \
+  --verified-head 0123456789abcdef \
+  --outgoing-validator-id validator-old \
+  --incoming-validator-id validator-new \
+  --incoming-config-path /tmp/configs/validator-new.json \
+  --rollback-command 'rm -rf /tmp/cutover-note' \
+  >/tmp/emit-packet.out
+
+grep -q '^cutover_kind=replacement$' /tmp/emit-packet.out
+grep -q '^rollback_command=rm -rf /tmp/cutover-note$' /tmp/emit-packet.out
+
 bash "$SCRIPT" \
   "${common_args[@]}" \
   --expected-worktree-root /Users/qianqi/.openclaw/workspace/trnm-mainnet-lanes/MN05-operator-dr-rotation-lifecycle \
