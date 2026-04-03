@@ -82,7 +82,7 @@ pub(crate) fn execute_height_step(
         return Ok(HeightLoopControl::Continue);
     }
     println!(
-        "[bft] height={} committed_round={} prevote={} precommit={} round_changes={} round_backoff_ms={} leader_missed={:?} double_vote_events={} auth_reject_bad_sig={} auth_reject_replay={} auth_reject_stale_nonce={}",
+        "[bft] height={} committed_round={} prevote={} precommit={} round_changes={} round_backoff_ms={} leader_missed={:?} double_vote_events={} auth_reject_bad_sig={} auth_reject_replay={} auth_reject_stale={} auth_reject_stale_nonce={}",
         height,
         bft.committed_round,
         bft.prevote_count,
@@ -93,6 +93,7 @@ pub(crate) fn execute_height_step(
         bft.double_vote_events,
         bft.auth_reject_bad_sig,
         bft.auth_reject_replay,
+        bft.auth_reject_stale_nonce,
         bft.auth_reject_stale_nonce
     );
 

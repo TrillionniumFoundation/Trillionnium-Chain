@@ -68,7 +68,7 @@ pub(crate) fn record_bft_commit(
 ) {
     record_bft_common(metrics, &bft.result);
     println!(
-        "[bft] height={} committed_round={} prevote={} precommit={} round_changes={} round_backoff_ms={} leader_missed={:?} double_vote_events={} auth_reject_bad_sig={} auth_reject_replay={} auth_reject_stale_nonce={}",
+        "[bft] height={} committed_round={} prevote={} precommit={} round_changes={} round_backoff_ms={} leader_missed={:?} double_vote_events={} auth_reject_bad_sig={} auth_reject_replay={} auth_reject_stale={} auth_reject_stale_nonce={}",
         runtime.height,
         bft.result.committed_round,
         bft.result.prevote_count,
@@ -79,6 +79,7 @@ pub(crate) fn record_bft_commit(
         bft.result.double_vote_events,
         bft.result.auth_reject_bad_sig,
         bft.result.auth_reject_replay,
+        bft.result.auth_reject_stale_nonce,
         bft.result.auth_reject_stale_nonce
     );
     let _ = args;
