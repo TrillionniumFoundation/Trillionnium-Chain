@@ -80,6 +80,13 @@ Rust 版外置治理骨架（in-memory state machine）：
 
 事件包括：`ProposalProposed`、`ProposalQueued`、`ProposalExecuted`、`ProposalCancelled`、`PauseSet`、`PauseRestoreScheduled`、`PauseRestoreExecuted`。
 
+## Runtime / ABI boundary（truthful snapshot）
+
+- 当前 crate 仍是 **Rust MVP / in-memory governance state machine**；它先固定 timelock、版本漂移保护、pause/unpause 与审计语义，**不表示** 已接入 canonical `HostAbiV1`、`trnm-node` deterministic WASM executor，或链上参数写入管线。
+- README 中对 `trnm-state` 的映射，应理解为“未来宿主接线的目标语义边界”，而不是“当前仓内已经闭合的 runtime integration 事实”。
+- 当前也不应把这个 crate 表述成已默认产出 canonical `wasm32-unknown-unknown` artifacts，或已完成 `sdk/` + `runtime-spec/` + golden integration replay 闭环。
+- 是否进入 Day-1 / release-ready / public-mainnet scope，仍应以仓库根 `RELEASE_READINESS.md` 与 `trillionnium-rust/docs/release/TRNM_MAINNET_GAP_MATRIX_2026-03-26.md` 为准。
+
 
 ## 标准化审计事件（v1）
 

@@ -52,6 +52,13 @@ cd contracts-rust/bridge-relay
 cargo test
 ```
 
+## Runtime / ABI boundary（truthful snapshot）
+
+- 当前 crate 是 **Rust MVP / in-memory state machine**，用于先固定 BridgeRelay 的 fail-closed 语义、审计事件和配置版本约束；**不表示** 已接入 canonical `HostAbiV1` 或 `trnm-node` 的 deterministic WASM executor。
+- 当前 README 不应被解读为：本 crate 已默认产出链上 canonical `wasm32-unknown-unknown` artifacts，或已经完成 `sdk/` + `runtime-spec/` + integration replay 闭环。
+- `audit-events` 的标准化事件接线有助于后续 indexer / 风控统一口径，但它本身 **不等价于** host runtime integration 已闭合。
+- 是否进入 Day-1 / release-ready / public-mainnet scope，仍应以仓库根 `RELEASE_READINESS.md` 与 `trillionnium-rust/docs/release/TRNM_MAINNET_GAP_MATRIX_2026-03-26.md` 为准。
+
 ## 下一步（v1）
 
 - 对接真实签名密钥生命周期与链上治理更新（签名验证链路已对接 Ed25519 示例验签，可继续扩展为生产签名算法）
@@ -62,6 +69,7 @@ cargo test
     - 要求调用携带期望版本，过期版本调用将被 `InvalidConfigVersion` 拒绝，避免并发配置更新竞争。
 
 - 对接真实执行层（资产结算/状态提交）
+- 在 `sdk/` / `runtime-spec/` 明确落地前，保持 README 与实现口径一致：只表述当前语义骨架，不提前宣称 canonical Host ABI/runtime 已完成
 - 增加更多 domain 约束与 fuzz/property 测试
 
 ## 标准化审计事件（v1）
