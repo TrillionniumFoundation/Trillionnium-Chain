@@ -148,10 +148,17 @@ Minimum operator pattern after manual/offline submit:
 
 ```bash
 REQUESTED_TX_HASH="0x...captured-from-submit-path..."
+TRNM_RPC_TX_FILE="/absolute/path/to/run/rpc/txs.json"
+export TRNM_RPC_TX_FILE
 
 ./target/debug/trnm-cli tx query "$REQUESTED_TX_HASH"
 ./target/debug/trnm-cli tx wait "$REQUESTED_TX_HASH" --timeout 30 --interval 2
 ```
+
+Operator safety rule:
+- pin `TRNM_RPC_TX_FILE` to the exact pending-state file that was active for the submit path before running any follow-up `tx query` / `tx wait` command
+- if the cutover moved to a different worktree/host, copy the submit-path pending-state file into the new owner context (or mount the same absolute path) before reusing `REQUESTED_TX_HASH`
+- do **not** let follow-up commands silently fall back to a different default `run/rpc/txs.json`; treat that as signer-path ambiguity until you can prove the pending-state file path is the same one recorded for the submit action
 
 If the submit path is `trnm-cli` itself, capture the first shell-safe hash line once and freeze it as the operator truth-source before any later lookup rewrites the screen context:
 
