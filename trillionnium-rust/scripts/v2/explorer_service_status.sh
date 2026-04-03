@@ -104,6 +104,7 @@ fi
 LOCAL_HEALTH_URL="http://${LOCAL_PROBE_HOST}:${PORT}/healthz"
 
 emit_durable_read_anchor_fields() {
+  echo "durable_read_anchor_complete=false"
   echo "durable_read_anchor_ingestion_source=missing-placeholder-scaffold"
   echo "durable_read_anchor_checkpoint_store=missing-placeholder-scaffold"
   echo "durable_read_anchor_replay_start_anchor=missing-placeholder-scaffold"
