@@ -65,3 +65,34 @@ fn query_account_state_rejects_wrong_suffix_length() {
         "INVALID_ADDRESS"
     );
 }
+
+#[test]
+fn faucet_request_response_rejects_unknown_fields() {
+    let err = serde_json::from_value::<FaucetRequestResponse>(json!({
+        "ok": true,
+        "code": "OK",
+        "message": "granted",
+        "address": format!("trnm1{}", "1".repeat(40)),
+        "requested_amount": 10,
+        "granted_amount": 10,
+        "balance": 20,
+        "nonce": 1,
+        "window_seconds": 60,
+        "next_allowed_unix_ms": 1700000000123u128,
+        "version": 3,
+        "unexpected": "schema-drift"
+    }))
+    .unwrap_err();
+    assert!(err.to_string().contains("unexpected"));
+}
+
+#[test]
+fn rpc_error_response_rejects_unknown_fields() {
+    let err = serde_json::from_value::<RpcErrorResponse>(json!({
+        "code": "INVALID_ADDRESS",
+        "message": "invalid address format",
+        "extra": true
+    }))
+    .unwrap_err();
+    assert!(err.to_string().contains("extra"));
+}

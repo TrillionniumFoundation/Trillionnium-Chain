@@ -25,6 +25,7 @@ pub struct AccountNonceQueryResponse {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
 pub struct FaucetRequestResponse {
     pub ok: bool,
     pub code: String,
@@ -40,6 +41,7 @@ pub struct FaucetRequestResponse {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
 pub struct RpcErrorResponse {
     pub code: &'static str,
     pub message: String,
