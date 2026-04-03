@@ -821,28 +821,20 @@ fn is_hidden_env_wrapper(c: char) -> bool {
         || c.is_control()
         || matches!(
             c,
-            '\u{200B}'
+            '\u{00AD}'
+                | '\u{061C}'
+                | '\u{180E}'
+                | '\u{200B}'
                 | '\u{200C}'
                 | '\u{200D}'
                 | '\u{200E}'
                 | '\u{200F}'
-                | '\u{061C}'
                 | '\u{2060}'
-                | '\u{2061}'
-                | '\u{2062}'
-                | '\u{2063}'
-                | '\u{2064}'
-                | '\u{2065}'
+                | '\u{2061}'..='\u{2065}'
+                | '\u{206A}'..='\u{206F}'
                 | '\u{FEFF}'
-                | '\u{202A}'
-                | '\u{202B}'
-                | '\u{202C}'
-                | '\u{202D}'
-                | '\u{202E}'
-                | '\u{2066}'
-                | '\u{2067}'
-                | '\u{2068}'
-                | '\u{2069}'
+                | '\u{202A}'..='\u{202E}'
+                | '\u{2066}'..='\u{2069}'
         )
 }
 
@@ -2986,6 +2978,8 @@ mod tests {
             normalize_wallet_store_env("\u{200e}\u{061c}《/tmp/trnm-wallets》\u{200f}"),
             Some("/tmp/trnm-wallets")
         );
+        assert_eq!(normalize_wallet_store_env("\u{00ad}\u{180e}《/tmp/trnm-wallets》\u{180e}\u{00ad}"), Some("/tmp/trnm-wallets"));
+        assert_eq!(normalize_wallet_store_env("\u{206a}《/tmp/trnm-wallets》\u{206f}"), Some("/tmp/trnm-wallets"));
         assert_eq!(normalize_wallet_store_env("   \"\"   "), None);
     }
 
