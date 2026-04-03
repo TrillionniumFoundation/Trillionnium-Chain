@@ -135,6 +135,7 @@ impl SettlementVault {
                 let mut normalized = AuditEvent::new("settlement-vault", "vault.locked");
                 normalized.actor = Some(account.clone());
                 normalized.object_id = Some(request_id.clone());
+                normalized.related_id = Some(account.clone());
                 normalized.amount = Some(*amount);
                 normalized
             }
@@ -146,6 +147,7 @@ impl SettlementVault {
                 let mut normalized = AuditEvent::new("settlement-vault", "vault.released");
                 normalized.actor = Some(account.clone());
                 normalized.object_id = Some(request_id.clone());
+                normalized.related_id = Some(account.clone());
                 normalized.amount = Some(*amount);
                 normalized
             }
@@ -157,13 +159,15 @@ impl SettlementVault {
                 let mut normalized = AuditEvent::new("settlement-vault", "vault.slashed");
                 normalized.actor = Some(beneficiary.clone());
                 normalized.object_id = Some(request_id.clone());
+                normalized.related_id = Some(beneficiary.clone());
                 normalized.amount = Some(*amount);
                 normalized
             }
             VaultEvent::Transferred { from, to, amount } => {
                 let mut normalized = AuditEvent::new("settlement-vault", "vault.transferred");
                 normalized.actor = Some(from.clone());
-                normalized.object_id = Some(to.clone());
+                normalized.object_id = Some(from.clone());
+                normalized.related_id = Some(to.clone());
                 normalized.amount = Some(*amount);
                 normalized
             }
@@ -552,6 +556,26 @@ mod tests {
         assert!(normalized
             .iter()
             .any(|event| event.source == "settlement-vault"));
+        assert!(normalized.iter().any(|event| {
+            event.event_type == "vault.locked"
+                && event.object_id.as_deref() == Some("req-1")
+                && event.related_id.as_deref() == Some("alice")
+        }));
+        assert!(normalized.iter().any(|event| {
+            event.event_type == "vault.released"
+                && event.object_id.as_deref() == Some("req-1")
+                && event.related_id.as_deref() == Some("alice")
+        }));
+        assert!(normalized.iter().any(|event| {
+            event.event_type == "vault.transferred"
+                && event.object_id.as_deref() == Some("alice")
+                && event.related_id.as_deref() == Some("bob")
+        }));
+        assert!(normalized.iter().any(|event| {
+            event.event_type == "vault.slashed"
+                && event.object_id.as_deref() == Some("req-2")
+                && event.related_id.as_deref() == Some("treasury")
+        }));
 
         assert!(vault.audit_log().is_empty());
     }

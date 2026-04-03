@@ -464,27 +464,28 @@ impl BridgeRelay {
                 new_admin,
             } => {
                 let mut normalized = AuditEvent::new("bridge-relay", "bridge_relay.admin_updated");
-                normalized.note = Some(format!(
-                    "admin_update {} -> {}",
-                    hex32(old_admin),
-                    hex32(new_admin)
-                ));
+                normalized.object_id = Some(hex32(new_admin));
+                normalized.related_id = Some(hex32(old_admin));
+                normalized.reason = Some("admin_rotation".to_string());
                 normalized
             }
             BridgeRelayEvent::ConfigVersionUpdated {
                 old_version,
                 new_version,
             } => {
-                let mut normalized = AuditEvent::new("bridge-relay", "bridge_relay.config_version_updated");
+                let mut normalized =
+                    AuditEvent::new("bridge-relay", "bridge_relay.config_version_updated");
+                normalized.object_id = Some("bridge_config".to_string());
+                normalized.related_id = Some("config_version".to_string());
                 normalized.amount = Some(*new_version as u128);
-                normalized.reason = Some(format!(
-                    "config_version={old_version}->{new_version}"
-                ));
+                normalized.reason = Some(format!("old_version={old_version}, new_version={new_version}"));
                 normalized
             }
             BridgeRelayEvent::MinSignaturesUpdated { old_min, new_min } => {
                 let mut normalized =
                     AuditEvent::new("bridge-relay", "bridge_relay.min_signatures_updated");
+                normalized.object_id = Some("bridge_config".to_string());
+                normalized.related_id = Some("min_signatures".to_string());
                 normalized.amount = Some(*new_min as u128);
                 normalized.reason = Some(format!("old_min={old_min}, new_min={new_min}"));
                 normalized
@@ -495,6 +496,8 @@ impl BridgeRelay {
             } => {
                 let mut normalized =
                     AuditEvent::new("bridge-relay", "bridge_relay.validators_updated");
+                normalized.object_id = Some("bridge_config".to_string());
+                normalized.related_id = Some("validators".to_string());
                 normalized.amount = Some(*new_count as u128);
                 normalized.reason = Some(format!(
                     "previous_count={previous_count}, new_count={new_count}"
@@ -912,7 +915,9 @@ mod tests {
     fn governance_like_admin_can_rotate_validator_set_and_threshold() {
         let mut relay = BridgeRelay::with_admin(1, vec![validator_pub(7)], b32(9));
 
-        relay.set_validators(&b32(9), vec![validator_pub(7), validator_pub(8)]).unwrap();
+        relay
+            .set_validators(&b32(9), vec![validator_pub(7), validator_pub(8)])
+            .unwrap();
         relay.set_min_validator_signatures(&b32(9), 2).unwrap();
 
         let mut msg = sample_msg();
@@ -1366,12 +1371,17 @@ mod tests {
     #[test]
     fn audit_log_records_admin_and_settlement_flow() {
         let mut relay = BridgeRelay::with_admin(2, vec![validator_pub(7)], b32(9));
+        let old_admin = b32(9);
+        let new_admin = b32(11);
 
-        relay.set_validators(&b32(9), vec![validator_pub(7), validator_pub(8)]).unwrap();
-        relay.set_min_validator_signatures(&b32(9), 2).unwrap();
+        relay.set_admin(&old_admin, new_admin).unwrap();
+        relay
+            .set_validators(&new_admin, vec![validator_pub(7), validator_pub(8)])
+            .unwrap();
+        relay.set_min_validator_signatures(&new_admin, 2).unwrap();
 
         let mut msg = sample_msg();
-        msg.config_version = 3;
+        msg.config_version = 4;
         let sigs = vec![sig_for(&msg, 7), sig_for(&msg, 8)];
 
         let proof_digest = relay
@@ -1415,6 +1425,33 @@ mod tests {
         assert!(normalized
             .iter()
             .any(|event| event.source == "bridge-relay"));
+        assert!(normalized.iter().any(|event| {
+            event.event_type == "bridge_relay.admin_updated"
+                && event.object_id == Some(hex32(&new_admin))
+                && event.related_id == Some(hex32(&old_admin))
+                && event.reason.as_deref() == Some("admin_rotation")
+        }));
+        assert!(normalized.iter().any(|event| {
+            event.event_type == "bridge_relay.config_version_updated"
+                && event.amount == Some(4)
+                && event.object_id.as_deref() == Some("bridge_config")
+                && event.related_id.as_deref() == Some("config_version")
+                && event.reason.as_deref() == Some("old_version=3, new_version=4")
+        }));
+        assert!(normalized.iter().any(|event| {
+            event.event_type == "bridge_relay.min_signatures_updated"
+                && event.amount == Some(2)
+                && event.object_id.as_deref() == Some("bridge_config")
+                && event.related_id.as_deref() == Some("min_signatures")
+                && event.reason.as_deref() == Some("old_min=2, new_min=2")
+        }));
+        assert!(normalized.iter().any(|event| {
+            event.event_type == "bridge_relay.validators_updated"
+                && event.amount == Some(2)
+                && event.object_id.as_deref() == Some("bridge_config")
+                && event.related_id.as_deref() == Some("validators")
+                && event.reason.as_deref() == Some("previous_count=1, new_count=2")
+        }));
 
         relay.consume_audit_log().into_iter().for_each(|event| {
             if let BridgeRelayEvent::ProofSubmittedAndStored {
