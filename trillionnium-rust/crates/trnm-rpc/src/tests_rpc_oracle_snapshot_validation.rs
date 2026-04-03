@@ -812,6 +812,7 @@ fn oracle_validate_snapshot_response_accepts_sample_count_at_exact_policy_cap() 
     let _ = fs::remove_file(policy_path);
 }
 
+#[test]
 fn oracle_validate_snapshot_response_returns_structured_rate_rejection_when_sample_count_exceeds_policy_cap() {
     let policy_path = write_json_fixture(
         "oracle-policy-rate-cap",
