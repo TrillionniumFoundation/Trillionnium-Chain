@@ -4694,6 +4694,35 @@ mod tests {
             "shipped local bootstrap configs must all stay on the same loopback IP for deterministic peer dialing"
         );
 
+        let mut shipped_nodes_by_rpc_port = shipped_nodes.clone();
+        shipped_nodes_by_rpc_port.sort_by_key(|(_, _, rpc_socket, _)| rpc_socket.port());
+        let anchor = shipped_nodes_by_rpc_port
+            .first()
+            .expect("shipped bootstrap fixture should include node1 RPC anchor");
+        assert_eq!(
+            anchor.1, "node1",
+            "{} must remain the unique shipped Day-1 bootstrap anchor id when RPC ports are ordered",
+            anchor.0
+        );
+        assert_eq!(
+            anchor.2.port(), 26657,
+            "{} must remain the unique shipped Day-1 bootstrap anchor RPC port",
+            anchor.0
+        );
+        for (config_path, node_id, rpc_socket, _) in shipped_nodes_by_rpc_port.iter().skip(1) {
+            assert_ne!(
+                node_id, &anchor.1,
+                "{config_path} must not reuse the shipped bootstrap anchor node_id {} on a later RPC slot",
+                anchor.1
+            );
+            assert!(
+                rpc_socket.port() > anchor.2.port(),
+                "{config_path} rpc_addr {} must stay above the shipped bootstrap anchor RPC port {} so later slots cannot silently become equivalent bootstrap anchors",
+                rpc_socket,
+                anchor.2.port()
+            );
+        }
+
         for window in shipped_nodes.windows(2) {
             let [(prev_config_path, prev_node_id, prev_rpc_socket, prev_p2p_socket), (config_path, node_id, rpc_socket, p2p_socket)] =
                 window
