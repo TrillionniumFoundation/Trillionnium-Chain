@@ -816,6 +816,30 @@ mod tests {
     }
 
     #[test]
+    fn paused_missing_requests_fail_closed_without_leaking_existence_or_mutating_audit() {
+        let mut vault = SettlementVault::new("owner");
+
+        vault.deposit("owner", "alice", 20).unwrap();
+        vault.pause("owner").unwrap();
+        let audit_len_while_paused = vault.audit_log().len();
+
+        assert_eq!(
+            vault.release("owner", "req-missing")
+                .expect_err("paused release should not reveal request absence"),
+            VaultError::Paused
+        );
+        assert_eq!(
+            vault.slash("owner", "req-missing", "treasury")
+                .expect_err("paused slash should not reveal request absence"),
+            VaultError::Paused
+        );
+        assert!(vault.lock_record("req-missing").is_none());
+        assert_eq!(vault.balance_of("alice"), 20);
+        assert_eq!(vault.balance_of("treasury"), 0);
+        assert_eq!(vault.audit_log().len(), audit_len_while_paused);
+    }
+
+    #[test]
     fn slash_transfers_to_beneficiary() {
         let mut vault = SettlementVault::new("owner");
 
