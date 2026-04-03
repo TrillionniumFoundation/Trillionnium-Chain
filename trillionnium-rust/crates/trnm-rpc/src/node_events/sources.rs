@@ -303,6 +303,22 @@ mod tests {
     }
 
     #[test]
+    fn parse_node_event_log_sources_list_keeps_windows_style_wrapped_entries_with_attached_comments() {
+        let parsed = parse_node_event_log_sources_list(
+            "\"archive/node4.log\"# replay note\r`archive/node5.log`# archived replay note\r",
+        );
+
+        assert_eq!(
+            parsed,
+            vec![
+                PathBuf::from("archive/node4.log"),
+                PathBuf::from("archive/node5.log"),
+            ],
+            "windows-style historical replay aliases should keep wrapped paths while dropping attached comments"
+        );
+    }
+
+    #[test]
     fn load_node_event_log_sources_unwraps_quoted_manifest_entries_for_historical_replay() {
         let _guard = lock_env();
         let root = unique_tmp_path("trnm-rpc-node-event-sources-quoted-manifest");
