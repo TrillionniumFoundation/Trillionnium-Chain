@@ -32,7 +32,7 @@ npm run test
 2. `./api-contract.md`：只读查询契约与字段语义
 3. `./operations-runbook.md`：发布 / 回滚 / 排障与 operator 语义
 4. `../../RELEASE_READINESS.md`：TRNM 仓库级 release truth source
-5. 工作树内最新的 Web4 平台评分卡/阶段评估文档：可用于描述成熟度位置，不用于 release 放行
+5. 若当前 checkout 含有 `docs/reports/TRNM_WEB4_PLATFORM_SCORECARD_2026-03-31.md`，优先引用该 Web4 平台阶段评分卡来描述成熟度位置；它不用于 release 放行
 
 避免两个常见误读：
 

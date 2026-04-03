@@ -22,7 +22,7 @@ npm run dev
 - `web4-frontend/docs/developer-guide.md`：开发者本地启动、环境变量、提交流程
 - `web4-frontend/docs/operations-runbook.md`：operator / 发布 / 回滚 / 排障操作
 - `../RELEASE_READINESS.md`：**仓库级 release truth source**；判断 TRNM 是否可对外表述为 release-ready 时，以此为准
-- 工作树内若存在最新 Web4 平台评分卡/阶段评估文档，可用来描述成熟度位置；但这类阶段性评分文档 **不等于** release-ready 证明
+- 若当前 checkout 含有 `docs/reports/TRNM_WEB4_PLATFORM_SCORECARD_2026-03-31.md`，优先引用该 Web4 平台阶段评分卡来描述成熟度位置；但它 **不等于** release-ready 证明
 
 可用一句话记忆：
 
@@ -87,3 +87,4 @@ npm run start
 - **仅在显式 `?mode=mock` 时回退到本地 mock snapshot**
 - **不提供写路径**
 - **仓库级 release 判定仍以根目录 `RELEASE_READINESS.md` 为准**
+- **当前平台成熟度表述若需引用阶段口径，优先引用 `docs/reports/TRNM_WEB4_PLATFORM_SCORECARD_2026-03-31.md`，不要泛化为“最新某份评分文档”**
