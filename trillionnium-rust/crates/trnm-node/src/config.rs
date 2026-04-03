@@ -2835,7 +2835,7 @@ bootstrap_peers = ["127.0.0.1:27656"]
                 shipped_config_dir.display()
             )
         });
-        let shipped_node_configs = std::fs::read_dir(&shipped_config_dir)
+        let shipped_config_entries = std::fs::read_dir(&shipped_config_dir)
             .unwrap_or_else(|err| {
                 panic!(
                     "{} should stay readable for shipped bootstrap config discovery: {err}",
@@ -2844,7 +2844,22 @@ bootstrap_peers = ["127.0.0.1:27656"]
             })
             .filter_map(|entry| entry.ok())
             .map(|entry| entry.file_name().to_string_lossy().into_owned())
+            .collect::<HashSet<_>>();
+        let expected_shipped_config_entries = HashSet::from([
+            String::from("README.md"),
+            String::from("node1.toml"),
+            String::from("node2.toml"),
+            String::from("node3.toml"),
+            String::from("node4.toml"),
+        ]);
+        assert_eq!(
+            shipped_config_entries, expected_shipped_config_entries,
+            "shipped bootstrap config dir must stay exactly README.md + node1.toml..node4.toml so peer/bootstrap topology fixtures remain deterministic and fail closed"
+        );
+        let shipped_node_configs = shipped_config_entries
+            .iter()
             .filter(|name| name.starts_with("node") && name.ends_with(".toml"))
+            .cloned()
             .collect::<HashSet<_>>();
         let expected_shipped_node_configs = HashSet::from([
             String::from("node1.toml"),
