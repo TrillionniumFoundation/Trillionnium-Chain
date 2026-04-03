@@ -19,6 +19,14 @@ function failClosedValue(value: string | number | null | undefined, fallback = "
   return String(value);
 }
 
+function failClosedBlockHeight(value: number | null | undefined, fallback = "Unavailable") {
+  if (typeof value !== "number" || !Number.isInteger(value) || value < 0) {
+    return fallback;
+  }
+
+  return String(value);
+}
+
 function failClosedHealth(value: ChainStatus["health"] | string | null | undefined) {
   const normalized = failClosedValue(value);
   const canonical = typeof normalized === "string" ? normalized.toLowerCase() : normalized;
@@ -27,7 +35,7 @@ function failClosedHealth(value: ChainStatus["health"] | string | null | undefin
 
 export function ChainStatusCard({ status }: { status: ChainStatus }) {
   const network = failClosedValue(status.network);
-  const latestBlock = failClosedValue(status.latestBlock);
+  const latestBlock = failClosedBlockHeight(status.latestBlock);
   const finality = failClosedValue(status.finality);
   const health = failClosedHealth(status.health);
   const normalizedValues = [network, latestBlock, finality, health];

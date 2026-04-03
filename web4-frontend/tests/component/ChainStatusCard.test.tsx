@@ -114,23 +114,43 @@ describe("ChainStatusCard", () => {
     expect(screen.getByText("Health: Unavailable")).toBeInTheDocument();
   });
 
-  it("fail-closes non-finite numeric readonly fields to unavailable", () => {
+  it("fail-closes non-finite or invalid readonly numeric fields to unavailable", () => {
     render(
-      <ChainStatusCard
-        status={{
-          network: "Trillionnium Localnet",
-          latestBlock: Number.NaN,
-          finality: Number.POSITIVE_INFINITY as unknown as string,
-          health: "healthy",
-        } as unknown as Parameters<typeof ChainStatusCard>[0]["status"]}
-      />,
+      <>
+        <ChainStatusCard
+          status={{
+            network: "Trillionnium Localnet",
+            latestBlock: Number.NaN,
+            finality: Number.POSITIVE_INFINITY as unknown as string,
+            health: "healthy",
+          } as unknown as Parameters<typeof ChainStatusCard>[0]["status"]}
+        />
+        <ChainStatusCard
+          status={{
+            network: "Trillionnium Localnet",
+            latestBlock: -1,
+            finality: "2s",
+            health: "healthy",
+          } as unknown as Parameters<typeof ChainStatusCard>[0]["status"]}
+        />
+        <ChainStatusCard
+          status={{
+            network: "Trillionnium Localnet",
+            latestBlock: 12.5,
+            finality: "2s",
+            health: "healthy",
+          } as unknown as Parameters<typeof ChainStatusCard>[0]["status"]}
+        />
+      </>,
     );
 
-    expect(screen.getByRole("status")).toHaveTextContent(
+    const partialWarnings = screen.getAllByRole("status");
+    expect(partialWarnings).toHaveLength(3);
+    expect(partialWarnings[0]).toHaveTextContent(
       "Readonly chain snapshot is partial. Unavailable fields stay fail-closed until the adapter provides them.",
     );
-    expect(screen.getByText("Latest block: Unavailable")).toBeInTheDocument();
+    expect(screen.getAllByText("Latest block: Unavailable")).toHaveLength(3);
     expect(screen.getByText("Finality: Unavailable")).toBeInTheDocument();
-    expect(screen.getByText("Health: healthy")).toBeInTheDocument();
+    expect(screen.getAllByText("Health: healthy")).toHaveLength(3);
   });
 });
