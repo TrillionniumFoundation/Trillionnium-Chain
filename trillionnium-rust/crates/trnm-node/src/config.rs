@@ -764,6 +764,8 @@ mod tests {
             "configs/../node1.toml",
             r"..\configs\node1.toml",
             r"configs\..\node1.toml",
+            "configs/..\\node1.toml",
+            "configs\\../node1.toml",
         ] {
             let err = load_config(path).expect_err("config path parent traversal must fail closed");
             assert!(
