@@ -2983,7 +2983,7 @@ mod tests {
         let _guard = ENV_LOCK.lock().unwrap();
         let original_store = std::env::var_os("TRNM_WALLET_STORE");
         let original_home = std::env::var_os("HOME");
-        let home = std::env::temp_dir().join(format!(
+        let home = canonical_temp_root().join(format!(
             "trnm-cli-wallet-home-test-{}-{}",
             std::process::id(),
             std::time::SystemTime::now()
@@ -3010,10 +3010,15 @@ mod tests {
         assert_eq!(default_wallet_store(), home.join(".trnm").join("wallets"));
 
         std::env::set_var("TRNM_WALLET_STORE", " /tmp/trnm-wallets ");
-        assert_eq!(
-            default_wallet_store(),
-            std::path::PathBuf::from("/tmp/trnm-wallets")
-        );
+        let trimmed_absolute = std::path::PathBuf::from("/tmp/trnm-wallets");
+        let expected_trimmed_absolute = if wallet_store_path_is_safe(&trimmed_absolute)
+            && wallet_store_path_and_ancestors_are_symlink_free(&trimmed_absolute)
+        {
+            trimmed_absolute
+        } else {
+            home.join(".trnm").join("wallets")
+        };
+        assert_eq!(default_wallet_store(), expected_trimmed_absolute);
 
         match original_store {
             Some(value) => std::env::set_var("TRNM_WALLET_STORE", value),
@@ -3108,7 +3113,7 @@ mod tests {
                 .unwrap()
                 .as_nanos()
         );
-        let unsafe_cwd = std::env::temp_dir().join(unique);
+        let unsafe_cwd = canonical_temp_root().join(unique);
         std::fs::create_dir_all(&unsafe_cwd).unwrap();
 
         std::env::remove_var("TRNM_WALLET_STORE");
