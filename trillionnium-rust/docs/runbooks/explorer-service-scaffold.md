@@ -114,6 +114,39 @@ Suggested bring-up from the repo root:
 
 If `trillionnium-rust/run/explorer-service/explorer-service.env` exists, all three scaffold scripts now auto-load it before computing their runtime contract, so operator-local bind/proxy settings persist across `up`, `status`, and `down` without needing a separate `set -a; source ...` step.
 
+### Minimal service-manager skeleton
+
+For a Day-1 operator handoff, keep one explicit service-manager shape so the scaffold is restarted the same way every time.
+A minimal `systemd` unit can look like this:
+
+```ini
+[Unit]
+Description=TRNM explorer service scaffold
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/trnm/trillionnium-rust
+EnvironmentFile=/opt/trnm/trillionnium-rust/run/explorer-service/explorer-service.env
+ExecStart=/opt/trnm/trillionnium-rust/scripts/v2/explorer_service_up.sh
+ExecStop=/opt/trnm/trillionnium-rust/scripts/v2/explorer_service_down.sh
+ExecStartPost=/opt/trnm/trillionnium-rust/scripts/v2/explorer_service_status.sh
+RemainAfterExit=yes
+User=trnm
+Group=trnm
+
+[Install]
+WantedBy=multi-user.target
+```
+
+Use this only as an operator scaffold, not as proof of production-readiness:
+
+- keep `WorkingDirectory` pinned to the checked-out `trillionnium-rust/` tree so PID/log/public paths stay aligned with the runbook
+- keep the env file outside shell history and review it before `systemctl start` / `restart`
+- use `ExecStartPost` output as the ticket/handoff artifact so the emitted `public_base_url`, `health_url`, `local_health_url`, and `rpc_base_url` are captured from one source of truth
+- if you are not using `systemd`, preserve the same shape anyway: fixed working directory, one env file, explicit up/down/status lifecycle
+
 Operator notes for this placeholder deployment shape:
 
 - prefer `EXPLORER_HOST=127.0.0.1` when a reverse proxy terminates external traffic; only bind `0.0.0.0` if the host/network policy really requires direct exposure
