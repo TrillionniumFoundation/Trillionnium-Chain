@@ -192,6 +192,7 @@ TRNM_TX_CLI=./trillionnium-rust/target/debug/trnm-cli \
   - `TRNM_RPC_NODE_EVENT_LOG_MANIFEST` 自身也会先做包装/注释归一化：带引号、前后空白、inline comment、UTF-8 BOM 的值仍按 **RPC root 相对路径** 解析；sidecar / operator script 不必为了规避 shell 注释、归档拷贝留下的 BOM、或引用风格差异而改写同一条历史源声明。
   - historical replay 的日志源会先做**词法归一化 + 去重**（例如引号包裹、`./`、注释尾巴、等价相对路径），索引器/sidecar 不应依赖“同一路径写多次”来制造重复回放。
   - 若要做 durable index persistence，建议把本地索引库/缓存视为**可重建派生状态**：权威 replay source 仍应是 node event 日志（优先 manifest，其次临时 env 补源），持久化层只保存 checkpoint / watermark / 派生物；当 checkpoint 与历史日志不一致时，应回退到最近可信高度重放，而不是把旧索引快照当作唯一真相。
+  - 更具体地说：一旦 `TRNM_RPC_NODE_EVENT_LOG_MANIFEST` / `TRNM_RPC_NODE_EVENT_LOG_SOURCES` 的**规范化后源集合**发生变化（例如 BOM/引号/注释清洗后去重结果不同、manifest 扩容、历史补档、路径别名合并），就不应盲目沿用旧 checkpoint；应至少回退到最近可信高度或直接从权威历史源重扫，以免把“旧源集合下的 resume 点”错当成当前唯一真相。
   - 这组路径当前都属于只读查询面，前端/脚本不应通过它们推断存在对称写接口。
 - 自动化脚本较多，优先使用本 README、`RELEASE_READINESS.md` 和 `docs/development` 下统一调度文档作为导航。
 

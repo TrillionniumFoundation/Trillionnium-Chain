@@ -253,6 +253,50 @@ fn load_node_event_log_sources_unwraps_quoted_manifest_entries_for_historical_re
 }
 
 #[test]
+fn load_node_event_log_sources_tolerates_bom_wrapped_manifest_env_for_historical_replay() {
+    let _guard = lock_env();
+    let root = unique_tmp_path("trnm-rpc-log-sources-manifest-env-bom", "dir");
+    let archive_dir = root.join("archive");
+    let manifest_dir = root.join("cfg/history");
+    fs::create_dir_all(&archive_dir).expect("create archive dir");
+    fs::create_dir_all(&manifest_dir).expect("create manifest dir");
+
+    let archived_log = archive_dir.join("node4.log");
+    let manifest = manifest_dir.join("sources.txt");
+    fs::write(&archived_log, "").expect("write archived log");
+    fs::write(&manifest, "../../archive/node4.log\n").expect("write manifest");
+
+    let prev_sources = std::env::var(NODE_EVENT_LOG_SOURCES_ENV).ok();
+    let prev_manifest = std::env::var(NODE_EVENT_LOG_MANIFEST_ENV).ok();
+    unsafe {
+        std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV);
+        std::env::set_var(
+            NODE_EVENT_LOG_MANIFEST_ENV,
+            "\u{feff}  \"cfg/history/sources.txt\"   # archived replay note ",
+        );
+    }
+
+    let got = load_node_event_log_sources(&root);
+
+    match prev_sources {
+        Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_SOURCES_ENV, v) },
+        None => unsafe { std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV) },
+    }
+    match prev_manifest {
+        Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_MANIFEST_ENV, v) },
+        None => unsafe { std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV) },
+    }
+
+    assert_eq!(
+        got,
+        vec![archived_log],
+        "historical replay manifest env values should tolerate UTF-8 BOM wrappers before resolving from the RPC root"
+    );
+
+    let _ = fs::remove_dir_all(root);
+}
+
+#[test]
 fn load_node_event_log_sources_unwraps_quoted_env_entries_for_historical_replay() {
     let _guard = lock_env();
     let root = unique_tmp_path("trnm-rpc-log-sources-quoted-env", "dir");
