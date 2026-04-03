@@ -15466,6 +15466,39 @@ locked_block_hash = "stale-lock"
     }
 
     #[test]
+    fn recover_metadata_only_error_reports_truncated_checkpoint_only_rejoin_surface() {
+        let wal_dir = temp_wal_dir("recover-metadata-only-error-truncated-checkpoint-only");
+        fs::create_dir_all(&wal_dir).unwrap();
+
+        let recovered = RecoveredWalState {
+            next_height: 9,
+            restored_lock: None,
+            last_checkpoint: Some(CheckpointMeta {
+                height: 8,
+                state_root_hex: "r8".into(),
+                wal_entry_hash_hex: "h8".into(),
+            }),
+            truncated: true,
+            metadata_only_recovery: true,
+            wal_entries_retained: 0,
+            checkpoint_height_retained: Some(8),
+        };
+
+        let err = metadata_only_recovery_error(&wal_dir, &recovered);
+
+        assert!(err.contains(
+            "retained no committed WAL entries (last retained checkpoint height 8); repaired WAL tail required truncation"
+        ));
+        assert!(err.contains("last retained checkpoint: 8"));
+        assert!(err.contains("next startup height: 9"));
+        assert!(err.contains(
+            "incident clue: retained_wal_entries=0 checkpoint_height_retained=8 checkpoint_tip_relation=checkpoint_only:8 next_startup_height=9 wal_tail_truncated=true metadata_only_recovery=true join_rejoin_status=blocked:metadata_only_recovery"
+        ));
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
     fn recover_metadata_only_error_reports_absent_checkpoint() {
         let wal_dir = temp_wal_dir("recover-metadata-only-error-no-checkpoint");
         fs::create_dir_all(&wal_dir).unwrap();
