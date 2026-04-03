@@ -116,13 +116,24 @@ describe("dashboard page", () => {
     render(<Home />);
 
     fireEvent.click(await screen.findByRole("tab", { name: "Tasks" }));
-    expect(await screen.findByText("No tasks match current filter")).toBeInTheDocument();
+    const tasksEmptyState = await screen.findByRole("status");
+    expect(tasksEmptyState).toHaveTextContent("No tasks match current filter");
+    expect(tasksEmptyState).toHaveTextContent(
+      "Readonly task snapshot has no entries for this filter. Try another status filter or switch to All.",
+    );
+    expect(tasksEmptyState).toHaveAttribute("aria-live", "polite");
 
     fireEvent.click(screen.getByRole("tab", { name: "Events" }));
-    expect(await screen.findByText("No events found")).toBeInTheDocument();
+    const eventsEmptyState = await screen.findByRole("status");
+    expect(eventsEmptyState).toHaveTextContent("No events found");
+    expect(eventsEmptyState).toHaveTextContent("Readonly event snapshot has no matching records for this filter.");
+    expect(eventsEmptyState).toHaveAttribute("aria-live", "polite");
 
     fireEvent.click(screen.getByRole("tab", { name: "Audit" }));
-    expect(await screen.findByText("No audit controls found")).toBeInTheDocument();
+    const auditsEmptyState = await screen.findByRole("status");
+    expect(auditsEmptyState).toHaveTextContent("No audit controls found");
+    expect(auditsEmptyState).toHaveTextContent("Readonly audit snapshot has no entries for this result filter.");
+    expect(auditsEmptyState).toHaveAttribute("aria-live", "polite");
 
     expect(mockedFetch).toHaveBeenCalledWith({ mode: "empty" });
   });
@@ -182,13 +193,13 @@ describe("dashboard page", () => {
     expect(screen.getByText("Non-pass controls to review: 0")).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole("tab", { name: "Tasks" }));
-    expect(await screen.findByText("No tasks match current filter")).toBeInTheDocument();
+    expect(await screen.findByRole("status")).toHaveTextContent("No tasks match current filter");
 
     fireEvent.click(screen.getByRole("tab", { name: "Events" }));
-    expect(await screen.findByText("No events found")).toBeInTheDocument();
+    expect(await screen.findByRole("status")).toHaveTextContent("No events found");
 
     fireEvent.click(screen.getByRole("tab", { name: "Audit" }));
-    expect(await screen.findByText("No audit controls found")).toBeInTheDocument();
+    expect(await screen.findByRole("status")).toHaveTextContent("No audit controls found");
   });
 
   it("fail-closes blank readonly detail bodies to explicit unavailable copy", async () => {

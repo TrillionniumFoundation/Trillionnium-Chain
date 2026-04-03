@@ -338,7 +338,11 @@ export default function Home() {
                 </div>
 
                 {filteredTasks.length === 0 ? (
-                  <EmptyState title="No tasks match current filter" detail="Try another status filter or switch to All." />
+                  <EmptyState
+                    title="No tasks match current filter"
+                    detail="Readonly task snapshot has no entries for this filter. Try another status filter or switch to All."
+                    live="polite"
+                  />
                 ) : (
                   <>
                     <section className="overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-sm">
@@ -406,7 +410,11 @@ export default function Home() {
                 </label>
 
                 {filteredEvents.length === 0 ? (
-                  <EmptyState title="No events found" detail="Current filter has no matching event records." />
+                  <EmptyState
+                    title="No events found"
+                    detail="Readonly event snapshot has no matching records for this filter."
+                    live="polite"
+                  />
                 ) : (
                   <>
                     {filteredEvents.map((event) => (
@@ -471,7 +479,11 @@ export default function Home() {
                 </label>
 
                 {filteredAudits.length === 0 ? (
-                  <EmptyState title="No audit controls found" detail="No entries match this result filter." />
+                  <EmptyState
+                    title="No audit controls found"
+                    detail="Readonly audit snapshot has no entries for this result filter."
+                    live="polite"
+                  />
                 ) : (
                   <>
                     <section className="grid gap-3">
