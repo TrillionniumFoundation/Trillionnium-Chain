@@ -1053,7 +1053,15 @@ fn ensure_sign_message(message: &str) -> Result<()> {
     if message.len() > 4096 {
         bail!("sign message must be <= 4096 bytes");
     }
-    if message.starts_with(' ') || message.ends_with(' ') {
+    if message
+        .chars()
+        .next()
+        .is_some_and(|c| c.is_whitespace())
+        || message
+            .chars()
+            .next_back()
+            .is_some_and(|c| c.is_whitespace())
+    {
         bail!("sign message must not start or end with whitespace");
     }
     if message.chars().any(|c| {
@@ -2886,6 +2894,8 @@ mod tests {
             "".to_string(),
             " hello world".to_string(),
             "hello world ".to_string(),
+            "\u{00a0}hello world".to_string(),
+            "hello world\u{2003}".to_string(),
             "hello\nworld".to_string(),
             "hello\rworld".to_string(),
             "hello\tworld".to_string(),
