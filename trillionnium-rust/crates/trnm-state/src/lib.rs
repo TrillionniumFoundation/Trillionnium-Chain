@@ -14572,6 +14572,50 @@ mod tests {
     }
 
     #[test]
+    fn restore_pending_resolve_approval_rejects_duplicate_authority_members_in_snapshot() {
+        let mut st = StateStore::new();
+        st.put_task_new(TaskObject {
+            task_id: 901,
+            creator: "alice".into(),
+            bounty: 100,
+            status: TaskStatus::Challenged,
+            proof_type: Default::default(),
+            metadata: None,
+            worker: Some("worker-1".into()),
+            committed_hash: Some([1u8; 32]),
+            result_hash: Some([2u8; 32]),
+            reveal_salt: Some([3u8; 32]),
+            committed_at_height: Some(10),
+            reveal_deadline_height: Some(20),
+            challenge_deadline_height: Some(30),
+            challenge_window_blocks_snapshot: Some(40),
+            challenged_at_height: Some(25),
+            resolve_deadline_height: Some(35),
+            challenge_bond: Some(500),
+            challenger: Some("bob".into()),
+            challenge_bond_forfeited: Some(false),
+            version: 7,
+        })
+        .expect("challenged task should be restorable");
+
+        st.restore_pending_resolve_approval(
+            901,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-a,authority-b,authority-a".into(),
+                task_version: 7,
+            }),
+        );
+
+        assert!(
+            st.pending_resolve_approval(901).is_none(),
+            "restore must fail closed when pending resolve snapshot authority_set repeats a member and therefore is not canonically replayable"
+        );
+    }
+
+    #[test]
     fn restore_pending_resolve_approval_rejects_incomplete_task_boundary_metadata() {
         let mut st = StateStore::new();
         st.put_task_new(TaskObject {
