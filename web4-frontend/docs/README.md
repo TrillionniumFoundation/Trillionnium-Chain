@@ -30,10 +30,23 @@
 
 - 仓库级 truth source：[`../../RELEASE_READINESS.md`](../../RELEASE_READINESS.md)
 - Web4 平台主文档：[`../../docs/WEB4_INFRA_PLATFORM_DEVELOPMENT_MASTER.md`](../../docs/WEB4_INFRA_PLATFORM_DEVELOPMENT_MASTER.md)
-- Web4 当前阶段评分卡（最新平台口径快照，不等于当前 release-ready）：[`../../docs/reports/TRNM_WEB4_PLATFORM_SCORECARD_2026-03-31.md`](../../docs/reports/TRNM_WEB4_PLATFORM_SCORECARD_2026-03-31.md)
+- Web4 当前阶段评分卡（若当前 checkout 含有 `docs/reports/TRNM_WEB4_PLATFORM_SCORECARD_2026-03-31.md`，优先引用它描述平台成熟度；它不等于当前 release-ready）
 - Web4 阶段快照（历史状态，不等于当前 release-ready）：[`../../docs/development/WEB4_PHASE_B_MILESTONE_SNAPSHOT_2026-02-28.md`](../../docs/development/WEB4_PHASE_B_MILESTONE_SNAPSHOT_2026-02-28.md)
 - Web4 前端接口基线：[`../../docs/development/WEB4_FRONTEND_API_INTERFACE_V0.md`](../../docs/development/WEB4_FRONTEND_API_INTERFACE_V0.md)
 - Web4 修复证据（历史 run evidence，不等于当前 release-ready）：[`../../docs/release/web4-fix-sequence-2026-03-04-evidence.md`](../../docs/release/web4-fix-sequence-2026-03-04-evidence.md)
+
+### 5.1 三类问题，分别引用哪份文档
+
+| 你要回答的问题 | 应优先引用 | 不能顺手放大的结论 |
+| --- | --- | --- |
+| **现在整个 TRNM 仓库能否对外说 release-ready？** | [`../../RELEASE_READINESS.md`](../../RELEASE_READINESS.md) | 不能把某次 Web4 预检、RC 演练、历史 GO-ready 证据外推为“整个仓库已 ready” |
+| **当前 Web4 平台大致成熟到哪个阶段？** | 若当前 checkout 含有 `docs/reports/TRNM_WEB4_PLATFORM_SCORECARD_2026-03-31.md`，优先引用它；若缺失，则退回 [`../../docs/WEB4_INFRA_PLATFORM_DEVELOPMENT_MASTER.md`](../../docs/WEB4_INFRA_PLATFORM_DEVELOPMENT_MASTER.md) 并明确这是路线/能力文档，不是阶段评分卡 | 不能把“Alpha 后段 / 接近 Beta-prep 之前”润色成“Beta”或“production-ready”，也不能把路线图目标写成当前成熟度事实 |
+| **平台路线图、能力域目标、下一阶段该补什么？** | [`../../docs/WEB4_INFRA_PLATFORM_DEVELOPMENT_MASTER.md`](../../docs/WEB4_INFRA_PLATFORM_DEVELOPMENT_MASTER.md) | 不能把路线图里的 To-Be 目标写成当前已完成事实 |
+
+> 一个好用的心智模型：
+> - `RELEASE_READINESS.md` 回答 **现在能不能放行**
+> - Scorecard 回答 **现在大概到哪一阶段**
+> - Master 文档回答 **接下来应该往哪补**
 
 > 当前更准确的外部口径应是：**强链核 + 初步平台壳的 Alpha 后段项目**，而不是 Beta / production-ready Web4 platform。
 >
