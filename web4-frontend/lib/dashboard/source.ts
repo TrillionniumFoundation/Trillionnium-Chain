@@ -133,10 +133,25 @@ const resolveQueryApiBaseUrl = (): string => {
   return "http://127.0.0.1:8080";
 };
 
-const apiBaseUrl = resolveQueryApiBaseUrl();
-const defaultTaskId = process.env.NEXT_PUBLIC_DASHBOARD_TASK_ID ?? "341";
-const defaultAuditSubject =
-  process.env.NEXT_PUBLIC_DASHBOARD_AUDIT_SUBJECT ?? "did:trnm:core-rpc";
+const resolveNonEmptyEnv = (value: string | undefined, fallback: string): string => {
+  const normalized = value?.trim();
+  return normalized && normalized.length > 0 ? normalized : fallback;
+};
+
+const resolvePreferredTimestamp = (...candidates: Array<string | undefined>): string | undefined => {
+  for (const candidate of candidates) {
+    const normalized = candidate?.trim();
+    if (normalized) return normalized;
+  }
+
+  return undefined;
+};
+
+const resolveDashboardTaskId = (): string =>
+  resolveNonEmptyEnv(process.env.NEXT_PUBLIC_DASHBOARD_TASK_ID, "341");
+
+const resolveDashboardAuditSubject = (): string =>
+  resolveNonEmptyEnv(process.env.NEXT_PUBLIC_DASHBOARD_AUDIT_SUBJECT, "did:trnm:core-rpc");
 
 const toDisplayTime = (isoLike: string): string => {
   const date = new Date(isoLike);
@@ -181,8 +196,19 @@ const mapEventCategory = (
   return "Incident";
 };
 
+const normalizeDashboardEventToken = (value: string | undefined, fallback: string): string => {
+  const normalized = value?.trim();
+  return normalized && normalized.length > 0 ? normalized : fallback;
+};
+
+const normalizeDashboardText = (value: string | undefined, fallback: string): string => {
+  const normalized = value?.trim();
+  return normalized && normalized.length > 0 ? normalized : fallback;
+};
+
 const mapNormalizedAuditSeverity = (event: NormalizedAuditEvent): DashboardSnapshot["events"][number]["severity"] => {
-  const tokens = `${event.reason ?? ""} ${event.note ?? ""} ${event.event_type}`.toLowerCase();
+  const normalizedEventType = normalizeDashboardEventToken(event.event_type, "unknown-event");
+  const tokens = `${event.reason ?? ""} ${event.note ?? ""} ${normalizedEventType}`.toLowerCase();
 
   if (tokens.includes("error") || tokens.includes("fail") || tokens.includes("reject") || tokens.includes("invalid")) {
     return "Critical";
@@ -194,28 +220,37 @@ const mapNormalizedAuditSeverity = (event: NormalizedAuditEvent): DashboardSnaps
 };
 
 const mapNormalizedAuditToDashboardEvent = (event: NormalizedAuditEvent, fallbackTime: string): DashboardSnapshot["events"][number] => {
+  const source = normalizeDashboardEventToken(event.source, "unknown-source");
+  const eventType = normalizeDashboardEventToken(event.event_type, "unknown-event");
+  const actor = normalizeDashboardEventToken(event.actor, "system");
+  const objectId = event.object_id?.trim();
+
   return {
-    id: event.object_id
-      ? `${event.source}:${event.object_id}`
-      : `${event.source}:${event.event_type}:${event.actor ?? "system"}`,
+    id: objectId && objectId.length > 0
+      ? `${source}:${objectId}`
+      : `${source}:${eventType}:${actor}`,
     time: toDisplayTime(event.timestamp ?? event.checkedAt ?? fallbackTime),
-    category: mapEventCategory(event.event_type),
-    summary: `${event.source} · ${event.event_type}`,
+    category: mapEventCategory(eventType),
+    summary: `${source} · ${eventType}`,
     severity: mapNormalizedAuditSeverity(event),
-    details: JSON.stringify({
-      actor: event.actor,
-      objectId: event.object_id,
-      relatedId: event.related_id,
-      amount: event.amount,
-      reason: event.reason,
-      note: event.note,
-    }),
+    details: stringifyDashboardField(
+      {
+        actor: event.actor,
+        objectId: event.object_id,
+        relatedId: event.related_id,
+        amount: event.amount,
+        reason: event.reason,
+        note: event.note,
+      },
+      "{}",
+    ),
   };
 };
 
 const parsePositiveIntEnv = (value: string | undefined, fallback: number): number => {
   const normalized = value?.trim();
   if (!normalized) return fallback;
+  if (!/^\d+$/.test(normalized)) return fallback;
 
   const parsed = Number.parseInt(normalized, 10);
   if (Number.isNaN(parsed) || parsed <= 0) return fallback;
@@ -235,6 +270,7 @@ const fetchNormalizedAuditEventsWithPagination = async (
   const allEvents: NormalizedAuditEvent[] = [];
   const normalizedAuditPageLimit = resolveNormalizedAuditPageLimit();
   const normalizedAuditMaxPages = resolveNormalizedAuditMaxPages();
+  const seenCursors = new Set<string>();
 
   let cursor: string | undefined;
   let page = 0;
@@ -246,12 +282,25 @@ const fetchNormalizedAuditEventsWithPagination = async (
     allEvents.push(...pageResp.events);
 
     const nextCursor = pageResp.nextCursor?.trim();
+    if (pageResp.hasMore === true && !(nextCursor && nextCursor.length > 0)) {
+      throw new Error("Normalized audit pagination declared more pages without a next cursor");
+    }
+
     hasMore = pageResp.hasMore === true && !!(nextCursor && nextCursor.length > 0);
 
-    if (!hasMore) break;
+    if (!hasMore || !nextCursor) break;
 
+    if (nextCursor === cursor || seenCursors.has(nextCursor)) {
+      throw new Error(`Normalized audit pagination cursor stalled at ${nextCursor}`);
+    }
+
+    seenCursors.add(nextCursor);
     cursor = nextCursor;
     page += 1;
+  }
+
+  if (hasMore) {
+    throw new Error(`Normalized audit pagination exceeded max pages (${normalizedAuditMaxPages})`);
   }
 
   return allEvents;
@@ -264,14 +313,41 @@ const mapAuditResult = (
   return entry.reason ? "Warn" : "Fail";
 };
 
+const stringifyDashboardField = (value: unknown, fallback: string): string => {
+  if (value == null) return fallback;
+  if (typeof value === "string") {
+    return value.trim().length > 0 ? value : fallback;
+  }
+
+  try {
+    const serialized = JSON.stringify(value);
+    return serialized ?? fallback;
+  } catch {
+    return fallback;
+  }
+};
+
+const parseDashboardTime = (value: string): number => {
+  const direct = Date.parse(value);
+  if (!Number.isNaN(direct)) return direct;
+
+  const normalized = value.trim().replace(" ", "T");
+  const fallback = Date.parse(normalized);
+  if (!Number.isNaN(fallback)) return fallback;
+
+  return Number.MIN_SAFE_INTEGER;
+};
+
 async function fetchReadonlySnapshotFromApi(): Promise<DashboardSnapshot> {
-  const client = createFrontendApiClient({ baseUrl: apiBaseUrl });
+  const client = createFrontendApiClient({ baseUrl: resolveQueryApiBaseUrl() });
+  const dashboardTaskId = resolveDashboardTaskId();
+  const dashboardAuditSubject = resolveDashboardAuditSubject();
 
   const [taskResp, eventsResp, auditsResp, normalizedAuditEvents] = await Promise.all([
-    client.queryTask(defaultTaskId),
-    client.queryEvents(defaultTaskId),
-    client.queryCapabilityAudit(defaultAuditSubject),
-    fetchNormalizedAuditEventsWithPagination(client).catch(() => [] as NormalizedAuditEvent[]),
+    client.queryTask(dashboardTaskId),
+    client.queryEvents(dashboardTaskId),
+    client.queryCapabilityAudit(dashboardAuditSubject),
+    fetchNormalizedAuditEventsWithPagination(client),
   ]);
 
   const mapped = {
@@ -314,43 +390,47 @@ async function fetchReadonlySnapshotFromApi(): Promise<DashboardSnapshot> {
     tasks: [
       {
         id: taskResp.task.id,
-        title: taskResp.task.name ?? `task-${taskResp.task.id}`,
-        owner: taskResp.task.owner,
+        title: normalizeDashboardText(taskResp.task.name, `task-${taskResp.task.id}`),
+        owner: normalizeDashboardText(taskResp.task.owner, "Unassigned"),
         priority: "P1" as const,
         status: mapTaskStatus(taskResp.task.status),
-        updatedAt: taskResp.task.updatedAt ?? taskResp.task.createdAt
-          ? toDisplayTime(taskResp.task.updatedAt ?? taskResp.task.createdAt ?? "")
-          : "-", 
-        description: JSON.stringify(taskResp.task.metadata),
+        updatedAt: (() => {
+          const timestamp = resolvePreferredTimestamp(taskResp.task.updatedAt, taskResp.task.createdAt);
+          return timestamp ? toDisplayTime(timestamp) : "-";
+        })(),
+        description: stringifyDashboardField(taskResp.task.metadata, "{}"),
       },
     ],
     events: [
-      ...eventsResp.events.map((event) => ({
-        id: event.id,
-        time: toDisplayTime(event.timestamp),
-        category: mapEventCategory(event.type),
-        summary: event.type,
-        severity: mapEventSeverity(event.level),
-        details: JSON.stringify(event.payload),
-      })),
+      ...eventsResp.events.map((event) => {
+        const normalizedType = normalizeDashboardEventToken(event.type, "unknown-event");
+
+        return {
+          id: event.id,
+          time: toDisplayTime(event.timestamp),
+          category: mapEventCategory(normalizedType),
+          summary: normalizedType,
+          severity: mapEventSeverity(event.level),
+          details: stringifyDashboardField(event.payload, "{}"),
+        };
+      }),
       ...normalizedAuditEvents.map((event) =>
         mapNormalizedAuditToDashboardEvent(
           event,
           eventsResp.events[0]?.timestamp ?? taskResp.task.createdAt,
         ),
       ),
-    ].sort((left, right) => {
-      const leftTime = Date.parse(toDisplayTime(left.time));
-      const rightTime = Date.parse(toDisplayTime(right.time));
-      return rightTime - leftTime;
-    }),
+    ].sort((left, right) => parseDashboardTime(right.time) - parseDashboardTime(left.time)),
     audits: auditsResp.audits.map((audit, index) => ({
       id: `AUD-${index + 1}`,
       control: audit.capability,
       result: mapAuditResult(audit),
       reviewer: "Capability",
       reviewedAt: toDisplayTime(audit.checkedAt),
-      notes: audit.reason ?? (audit.granted ? "Granted" : "No reason provided"),
+      notes: normalizeDashboardText(
+        audit.reason,
+        audit.granted ? "Granted" : "No reason provided",
+      ),
     })),
   };
 

@@ -59,8 +59,7 @@ describe("dashboard source normalized audit pagination", () => {
                 reason: "ok",
               },
             ],
-            hasMore: true,
-            nextCursor: "cursor-1",
+            hasMore: false,
           }),
       } as unknown as ReturnType<typeof apiContractClient.createFrontendApiClient>;
 
@@ -94,7 +93,7 @@ describe("dashboard source normalized audit pagination", () => {
     const previousLimit = process.env.NEXT_PUBLIC_DASHBOARD_NORMALIZED_AUDIT_EVENT_LIMIT;
     const previousPages = process.env.NEXT_PUBLIC_DASHBOARD_NORMALIZED_AUDIT_MAX_PAGES;
 
-    process.env.NEXT_PUBLIC_DASHBOARD_NORMALIZED_AUDIT_EVENT_LIMIT = "bad";
+    process.env.NEXT_PUBLIC_DASHBOARD_NORMALIZED_AUDIT_EVENT_LIMIT = "2abc";
     process.env.NEXT_PUBLIC_DASHBOARD_NORMALIZED_AUDIT_MAX_PAGES = "-1";
 
     try {
@@ -237,5 +236,1000 @@ describe("dashboard source normalized audit pagination", () => {
       snapshot.events.find((event) => event.summary === "bridge-relay · bridge_relay.proof_submitted"),
     ).toBeDefined();
     expect(snapshot.kpis.find((kpi) => kpi.label === "Open Incidents")?.value).toBe("1");
+  });
+
+  it("keeps the readonly snapshot adaptable when task metadata or event payload are missing", async () => {
+    const mockClient = {
+      queryTask: vi
+        .fn()
+        .mockResolvedValue({
+          task: {
+            id: "344",
+            owner: "ops",
+            status: "running",
+            createdAt: "2026-03-01T00:00:00.000Z",
+          },
+        }),
+      queryEvents: vi.fn().mockResolvedValue({
+        taskId: "344",
+        events: [
+          {
+            id: "EVT-344",
+            timestamp: "2026-03-01T00:01:00.000Z",
+            type: "deploy.completed",
+            level: "info",
+          },
+        ],
+      }),
+      queryCapabilityAudit: vi.fn().mockResolvedValue({
+        subject: "did:trnm:test",
+        audits: [
+          {
+            subject: "did:trnm:test",
+            capability: "AUDIT_READ",
+            granted: true,
+            checkedAt: "2026-03-01T00:00:00.000Z",
+          },
+        ],
+      }),
+      queryNormalizedAuditEvents: vi
+        .fn()
+        .mockResolvedValue({
+          events: [],
+          hasMore: false,
+        }),
+    } as unknown as ReturnType<typeof apiContractClient.createFrontendApiClient>;
+
+    vi.spyOn(apiContractClient, "createFrontendApiClient").mockReturnValue(mockClient);
+
+    const snapshot = await fetchDashboardSnapshot();
+
+    expect(snapshot.tasks[0]?.description).toBe("{}");
+    expect(snapshot.events.find((event) => event.id === "EVT-344")?.details).toBe("{}");
+  });
+
+  it("preserves plain string metadata and payload values without adding JSON quotes", async () => {
+    const mockClient = {
+      queryTask: vi
+        .fn()
+        .mockResolvedValue({
+          task: {
+            id: "344b",
+            owner: "ops",
+            status: "running",
+            createdAt: "2026-03-01T00:00:00.000Z",
+            metadata: "manual note",
+          },
+        }),
+      queryEvents: vi.fn().mockResolvedValue({
+        taskId: "344b",
+        events: [
+          {
+            id: "EVT-344b",
+            timestamp: "2026-03-01T00:01:00.000Z",
+            type: "deploy.completed",
+            level: "info",
+            payload: "human-readable payload",
+          },
+        ],
+      }),
+      queryCapabilityAudit: vi.fn().mockResolvedValue({
+        subject: "did:trnm:test",
+        audits: [
+          {
+            subject: "did:trnm:test",
+            capability: "AUDIT_READ",
+            granted: true,
+            checkedAt: "2026-03-01T00:00:00.000Z",
+          },
+        ],
+      }),
+      queryNormalizedAuditEvents: vi
+        .fn()
+        .mockResolvedValue({
+          events: [],
+          hasMore: false,
+        }),
+    } as unknown as ReturnType<typeof apiContractClient.createFrontendApiClient>;
+
+    vi.spyOn(apiContractClient, "createFrontendApiClient").mockReturnValue(mockClient);
+
+    const snapshot = await fetchDashboardSnapshot();
+
+    expect(snapshot.tasks[0]?.description).toBe("manual note");
+    expect(snapshot.events.find((event) => event.id === "EVT-344b")?.details).toBe("human-readable payload");
+  });
+
+  it("falls back when task metadata or event payload are blank strings", async () => {
+    const mockClient = {
+      queryTask: vi
+        .fn()
+        .mockResolvedValue({
+          task: {
+            id: "344c",
+            owner: "ops",
+            status: "running",
+            createdAt: "2026-03-01T00:00:00.000Z",
+            metadata: "   ",
+          },
+        }),
+      queryEvents: vi.fn().mockResolvedValue({
+        taskId: "344c",
+        events: [
+          {
+            id: "EVT-344c",
+            timestamp: "2026-03-01T00:01:00.000Z",
+            type: "deploy.completed",
+            level: "info",
+            payload: "\n\t",
+          },
+        ],
+      }),
+      queryCapabilityAudit: vi.fn().mockResolvedValue({
+        subject: "did:trnm:test",
+        audits: [
+          {
+            subject: "did:trnm:test",
+            capability: "AUDIT_READ",
+            granted: true,
+            checkedAt: "2026-03-01T00:00:00.000Z",
+          },
+        ],
+      }),
+      queryNormalizedAuditEvents: vi
+        .fn()
+        .mockResolvedValue({
+          events: [],
+          hasMore: false,
+        }),
+    } as unknown as ReturnType<typeof apiContractClient.createFrontendApiClient>;
+
+    vi.spyOn(apiContractClient, "createFrontendApiClient").mockReturnValue(mockClient);
+
+    const snapshot = await fetchDashboardSnapshot();
+
+    expect(snapshot.tasks[0]?.description).toBe("{}");
+    expect(snapshot.events.find((event) => event.id === "EVT-344c")?.details).toBe("{}");
+  });
+
+  it("normalizes blank readonly event types into stable dashboard fallbacks", async () => {
+    const mockClient = {
+      queryTask: vi
+        .fn()
+        .mockResolvedValue({
+          task: {
+            id: "344e",
+            owner: "ops",
+            status: "running",
+            createdAt: "2026-03-01T00:00:00.000Z",
+            metadata: {},
+          },
+        }),
+      queryEvents: vi.fn().mockResolvedValue({
+        taskId: "344e",
+        events: [
+          {
+            id: "EVT-344e",
+            timestamp: "2026-03-01T00:01:00.000Z",
+            type: "   ",
+            level: "warn",
+            payload: {},
+          },
+        ],
+      }),
+      queryCapabilityAudit: vi.fn().mockResolvedValue({
+        subject: "did:trnm:test",
+        audits: [
+          {
+            subject: "did:trnm:test",
+            capability: "AUDIT_READ",
+            granted: true,
+            checkedAt: "2026-03-01T00:00:00.000Z",
+          },
+        ],
+      }),
+      queryNormalizedAuditEvents: vi
+        .fn()
+        .mockResolvedValue({
+          events: [],
+          hasMore: false,
+        }),
+    } as unknown as ReturnType<typeof apiContractClient.createFrontendApiClient>;
+
+    vi.spyOn(apiContractClient, "createFrontendApiClient").mockReturnValue(mockClient);
+
+    const snapshot = await fetchDashboardSnapshot();
+    const event = snapshot.events.find((item) => item.id === "EVT-344e");
+
+    expect(event).toMatchObject({
+      summary: "unknown-event",
+      category: "Incident",
+      severity: "Warning",
+    });
+  });
+
+  it("falls back when task metadata, readonly payload, or normalized audit details are not JSON-serializable", async () => {
+    const mockClient = {
+      queryTask: vi
+        .fn()
+        .mockResolvedValue({
+          task: {
+            id: "344d",
+            owner: "ops",
+            status: "running",
+            createdAt: "2026-03-01T00:00:00.000Z",
+            metadata: { counter: BigInt(7) },
+          },
+        }),
+      queryEvents: vi.fn().mockResolvedValue({
+        taskId: "344d",
+        events: [
+          {
+            id: "EVT-344d",
+            timestamp: "2026-03-01T00:01:00.000Z",
+            type: "deploy.completed",
+            level: "info",
+            payload: { amount: BigInt(9) },
+          },
+        ],
+      }),
+      queryCapabilityAudit: vi.fn().mockResolvedValue({
+        subject: "did:trnm:test",
+        audits: [
+          {
+            subject: "did:trnm:test",
+            capability: "AUDIT_READ",
+            granted: true,
+            checkedAt: "2026-03-01T00:00:00.000Z",
+          },
+        ],
+      }),
+      queryNormalizedAuditEvents: vi
+        .fn()
+        .mockResolvedValue({
+          events: [
+            {
+              source: "bridge-relay",
+              event_type: "bridge_relay.proof_submitted",
+              actor: "validator",
+              object_id: "proof-9",
+              timestamp: "2026-03-01T00:02:00.000Z",
+              amount: BigInt(11),
+            },
+          ],
+          hasMore: false,
+        }),
+    } as unknown as ReturnType<typeof apiContractClient.createFrontendApiClient>;
+
+    vi.spyOn(apiContractClient, "createFrontendApiClient").mockReturnValue(mockClient);
+
+    const snapshot = await fetchDashboardSnapshot();
+
+    expect(snapshot.tasks[0]?.description).toBe("{}");
+    expect(snapshot.events.find((event) => event.id === "EVT-344d")?.details).toBe("{}");
+    expect(snapshot.events.find((event) => event.id === "bridge-relay:proof-9")?.details).toBe("{}");
+  });
+
+  it("falls back to default ids when task/audit env values are blank", async () => {
+    const previousTaskId = process.env.NEXT_PUBLIC_DASHBOARD_TASK_ID;
+    const previousAuditSubject = process.env.NEXT_PUBLIC_DASHBOARD_AUDIT_SUBJECT;
+
+    process.env.NEXT_PUBLIC_DASHBOARD_TASK_ID = "   ";
+    process.env.NEXT_PUBLIC_DASHBOARD_AUDIT_SUBJECT = "\n";
+
+    try {
+      const mockClient = {
+        queryTask: vi.fn().mockResolvedValue({
+          task: {
+            id: "341",
+            owner: "ops",
+            status: "running",
+            createdAt: "2026-03-01T00:00:00.000Z",
+            metadata: {},
+          },
+        }),
+        queryEvents: vi.fn().mockResolvedValue({
+          taskId: "341",
+          events: [],
+        }),
+        queryCapabilityAudit: vi.fn().mockResolvedValue({
+          subject: "did:trnm:core-rpc",
+          audits: [
+            {
+              subject: "did:trnm:core-rpc",
+              capability: "AUDIT_READ",
+              granted: true,
+              checkedAt: "2026-03-01T00:00:00.000Z",
+            },
+          ],
+        }),
+        queryNormalizedAuditEvents: vi.fn().mockResolvedValue({
+          events: [],
+          hasMore: false,
+        }),
+      } as unknown as ReturnType<typeof apiContractClient.createFrontendApiClient>;
+
+      vi.spyOn(apiContractClient, "createFrontendApiClient").mockReturnValue(mockClient);
+
+      await fetchDashboardSnapshot();
+
+      expect(mockClient.queryTask).toHaveBeenCalledWith("341");
+      expect(mockClient.queryCapabilityAudit).toHaveBeenCalledWith("did:trnm:core-rpc");
+    } finally {
+      if (previousTaskId === undefined) {
+        delete process.env.NEXT_PUBLIC_DASHBOARD_TASK_ID;
+      } else {
+        process.env.NEXT_PUBLIC_DASHBOARD_TASK_ID = previousTaskId;
+      }
+
+      if (previousAuditSubject === undefined) {
+        delete process.env.NEXT_PUBLIC_DASHBOARD_AUDIT_SUBJECT;
+      } else {
+        process.env.NEXT_PUBLIC_DASHBOARD_AUDIT_SUBJECT = previousAuditSubject;
+      }
+    }
+  });
+
+  it("reads task/audit env overrides at fetch time instead of module load time", async () => {
+    const previousTaskId = process.env.NEXT_PUBLIC_DASHBOARD_TASK_ID;
+    const previousAuditSubject = process.env.NEXT_PUBLIC_DASHBOARD_AUDIT_SUBJECT;
+
+    process.env.NEXT_PUBLIC_DASHBOARD_TASK_ID = "777";
+    process.env.NEXT_PUBLIC_DASHBOARD_AUDIT_SUBJECT = "did:trnm:custom-dashboard";
+
+    try {
+      const mockClient = {
+        queryTask: vi.fn().mockResolvedValue({
+          task: {
+            id: "777",
+            owner: "ops",
+            status: "running",
+            createdAt: "2026-03-01T00:00:00.000Z",
+            metadata: {},
+          },
+        }),
+        queryEvents: vi.fn().mockResolvedValue({
+          taskId: "777",
+          events: [],
+        }),
+        queryCapabilityAudit: vi.fn().mockResolvedValue({
+          subject: "did:trnm:custom-dashboard",
+          audits: [
+            {
+              subject: "did:trnm:custom-dashboard",
+              capability: "AUDIT_READ",
+              granted: true,
+              checkedAt: "2026-03-01T00:00:00.000Z",
+            },
+          ],
+        }),
+        queryNormalizedAuditEvents: vi.fn().mockResolvedValue({
+          events: [],
+          hasMore: false,
+        }),
+      } as unknown as ReturnType<typeof apiContractClient.createFrontendApiClient>;
+
+      vi.spyOn(apiContractClient, "createFrontendApiClient").mockReturnValue(mockClient);
+
+      await fetchDashboardSnapshot();
+
+      expect(mockClient.queryTask).toHaveBeenCalledWith("777");
+      expect(mockClient.queryEvents).toHaveBeenCalledWith("777");
+      expect(mockClient.queryCapabilityAudit).toHaveBeenCalledWith("did:trnm:custom-dashboard");
+    } finally {
+      if (previousTaskId === undefined) {
+        delete process.env.NEXT_PUBLIC_DASHBOARD_TASK_ID;
+      } else {
+        process.env.NEXT_PUBLIC_DASHBOARD_TASK_ID = previousTaskId;
+      }
+
+      if (previousAuditSubject === undefined) {
+        delete process.env.NEXT_PUBLIC_DASHBOARD_AUDIT_SUBJECT;
+      } else {
+        process.env.NEXT_PUBLIC_DASHBOARD_AUDIT_SUBJECT = previousAuditSubject;
+      }
+    }
+  });
+
+  it("falls back to createdAt when updatedAt is blank", async () => {
+    const mockClient = {
+      queryTask: vi.fn().mockResolvedValue({
+        task: {
+          id: "341-ts",
+          owner: "ops",
+          status: "running",
+          createdAt: "2026-03-01T00:00:00.000Z",
+          updatedAt: "   ",
+          metadata: {},
+        },
+      }),
+      queryEvents: vi.fn().mockResolvedValue({
+        taskId: "341-ts",
+        events: [],
+      }),
+      queryCapabilityAudit: vi.fn().mockResolvedValue({
+        subject: "did:trnm:test",
+        audits: [
+          {
+            subject: "did:trnm:test",
+            capability: "AUDIT_READ",
+            granted: true,
+            checkedAt: "2026-03-01T00:00:00.000Z",
+          },
+        ],
+      }),
+      queryNormalizedAuditEvents: vi.fn().mockResolvedValue({
+        events: [],
+        hasMore: false,
+      }),
+    } as unknown as ReturnType<typeof apiContractClient.createFrontendApiClient>;
+
+    vi.spyOn(apiContractClient, "createFrontendApiClient").mockReturnValue(mockClient);
+
+    const snapshot = await fetchDashboardSnapshot();
+
+    expect(snapshot.tasks[0]?.updatedAt).toBe("2026-03-01 08:00");
+  });
+
+  it("falls back to a stable owner label when task owner is blank", async () => {
+    const mockClient = {
+      queryTask: vi.fn().mockResolvedValue({
+        task: {
+          id: "341-owner",
+          owner: "   ",
+          status: "running",
+          createdAt: "2026-03-01T00:00:00.000Z",
+          updatedAt: "2026-03-01T00:05:00.000Z",
+          metadata: {},
+        },
+      }),
+      queryEvents: vi.fn().mockResolvedValue({
+        taskId: "341-owner",
+        events: [],
+      }),
+      queryCapabilityAudit: vi.fn().mockResolvedValue({
+        subject: "did:trnm:test",
+        audits: [
+          {
+            subject: "did:trnm:test",
+            capability: "AUDIT_READ",
+            granted: true,
+            checkedAt: "2026-03-01T00:00:00.000Z",
+          },
+        ],
+      }),
+      queryNormalizedAuditEvents: vi.fn().mockResolvedValue({
+        events: [],
+        hasMore: false,
+      }),
+    } as unknown as ReturnType<typeof apiContractClient.createFrontendApiClient>;
+
+    vi.spyOn(apiContractClient, "createFrontendApiClient").mockReturnValue(mockClient);
+
+    const snapshot = await fetchDashboardSnapshot();
+
+    expect(snapshot.tasks[0]?.owner).toBe("Unassigned");
+  });
+
+  it("falls back to stable task title and audit notes when API fields are blank", async () => {
+    const mockClient = {
+      queryTask: vi.fn().mockResolvedValue({
+        task: {
+          id: "341-title",
+          name: "   ",
+          owner: "ops",
+          status: "running",
+          createdAt: "2026-03-01T00:00:00.000Z",
+          updatedAt: "2026-03-01T00:05:00.000Z",
+          metadata: {},
+        },
+      }),
+      queryEvents: vi.fn().mockResolvedValue({
+        taskId: "341-title",
+        events: [],
+      }),
+      queryCapabilityAudit: vi.fn().mockResolvedValue({
+        subject: "did:trnm:test",
+        audits: [
+          {
+            subject: "did:trnm:test",
+            capability: "AUDIT_READ",
+            granted: false,
+            checkedAt: "2026-03-01T00:00:00.000Z",
+            reason: "   ",
+          },
+        ],
+      }),
+      queryNormalizedAuditEvents: vi.fn().mockResolvedValue({
+        events: [],
+        hasMore: false,
+      }),
+    } as unknown as ReturnType<typeof apiContractClient.createFrontendApiClient>;
+
+    vi.spyOn(apiContractClient, "createFrontendApiClient").mockReturnValue(mockClient);
+
+    const snapshot = await fetchDashboardSnapshot();
+
+    expect(snapshot.tasks[0]?.title).toBe("task-341-title");
+    expect(snapshot.audits[0]?.notes).toBe("No reason provided");
+  });
+
+  it("fails closed when normalized audit pagination cannot be loaded", async () => {
+    const mockClient = {
+      queryTask: vi
+        .fn()
+        .mockResolvedValue({
+          task: {
+            id: "345",
+            owner: "ops",
+            status: "running",
+            createdAt: "2026-03-01T00:00:00.000Z",
+            updatedAt: "2026-03-01T00:05:00.000Z",
+            metadata: {},
+          },
+        }),
+      queryEvents: vi.fn().mockResolvedValue({
+        taskId: "345",
+        events: [
+          {
+            id: "EVT-345",
+            timestamp: "2026-03-01T00:04:00.000Z",
+            type: "deploy.completed",
+            level: "info",
+            payload: {},
+          },
+        ],
+      }),
+      queryCapabilityAudit: vi.fn().mockResolvedValue({
+        subject: "did:trnm:test",
+        audits: [
+          {
+            subject: "did:trnm:test",
+            capability: "AUDIT_READ",
+            granted: true,
+            checkedAt: "2026-03-01T00:00:00.000Z",
+          },
+        ],
+      }),
+      queryNormalizedAuditEvents: vi.fn().mockRejectedValue(new Error("normalized audit endpoint unavailable")),
+    } as unknown as ReturnType<typeof apiContractClient.createFrontendApiClient>;
+
+    vi.spyOn(apiContractClient, "createFrontendApiClient").mockReturnValue(mockClient);
+
+    await expect(fetchDashboardSnapshot()).rejects.toThrow(
+      "Readonly API unavailable (fail-closed): normalized audit endpoint unavailable. Add ?mode=mock to switch to readonly snapshot fallback.",
+    );
+  });
+
+  it("fails closed when normalized audit pagination repeats a cursor", async () => {
+    const mockClient = {
+      queryTask: vi
+        .fn()
+        .mockResolvedValue({
+          task: {
+            id: "345b",
+            owner: "ops",
+            status: "running",
+            createdAt: "2026-03-01T00:00:00.000Z",
+            updatedAt: "2026-03-01T00:05:00.000Z",
+            metadata: {},
+          },
+        }),
+      queryEvents: vi.fn().mockResolvedValue({
+        taskId: "345b",
+        events: [
+          {
+            id: "EVT-345b",
+            timestamp: "2026-03-01T00:04:00.000Z",
+            type: "deploy.completed",
+            level: "info",
+            payload: {},
+          },
+        ],
+      }),
+      queryCapabilityAudit: vi.fn().mockResolvedValue({
+        subject: "did:trnm:test",
+        audits: [
+          {
+            subject: "did:trnm:test",
+            capability: "AUDIT_READ",
+            granted: true,
+            checkedAt: "2026-03-01T00:00:00.000Z",
+          },
+        ],
+      }),
+      queryNormalizedAuditEvents: vi
+        .fn()
+        .mockResolvedValueOnce({
+          events: [
+            {
+              source: "bridge-relay",
+              event_type: "bridge_relay.proof_submitted",
+              actor: "validator",
+              object_id: "proof-345b",
+              timestamp: "2026-03-01T00:02:00.000Z",
+              reason: "warn",
+            },
+          ],
+          hasMore: true,
+          nextCursor: "cursor-stall",
+        })
+        .mockResolvedValueOnce({
+          events: [
+            {
+              source: "bridge-relay",
+              event_type: "bridge_relay.proof_submitted",
+              actor: "validator",
+              object_id: "proof-345c",
+              timestamp: "2026-03-01T00:03:00.000Z",
+              reason: "warn",
+            },
+          ],
+          hasMore: true,
+          nextCursor: "cursor-stall",
+        }),
+    } as unknown as ReturnType<typeof apiContractClient.createFrontendApiClient>;
+
+    vi.spyOn(apiContractClient, "createFrontendApiClient").mockReturnValue(mockClient);
+
+    await expect(fetchDashboardSnapshot()).rejects.toThrow(
+      "Readonly API unavailable (fail-closed): Normalized audit pagination cursor stalled at cursor-stall. Add ?mode=mock to switch to readonly snapshot fallback.",
+    );
+  });
+
+  it("fails closed when normalized audit pagination declares more pages without a cursor", async () => {
+    const mockClient = {
+      queryTask: vi
+        .fn()
+        .mockResolvedValue({
+          task: {
+            id: "345c",
+            owner: "ops",
+            status: "running",
+            createdAt: "2026-03-01T00:00:00.000Z",
+            updatedAt: "2026-03-01T00:05:00.000Z",
+            metadata: {},
+          },
+        }),
+      queryEvents: vi.fn().mockResolvedValue({
+        taskId: "345c",
+        events: [
+          {
+            id: "EVT-345c",
+            timestamp: "2026-03-01T00:04:00.000Z",
+            type: "deploy.completed",
+            level: "info",
+            payload: {},
+          },
+        ],
+      }),
+      queryCapabilityAudit: vi.fn().mockResolvedValue({
+        subject: "did:trnm:test",
+        audits: [
+          {
+            subject: "did:trnm:test",
+            capability: "AUDIT_READ",
+            granted: true,
+            checkedAt: "2026-03-01T00:00:00.000Z",
+          },
+        ],
+      }),
+      queryNormalizedAuditEvents: vi.fn().mockResolvedValue({
+        events: [
+          {
+            source: "bridge-relay",
+            event_type: "bridge_relay.proof_submitted",
+            actor: "validator",
+            object_id: "proof-345d",
+            timestamp: "2026-03-01T00:02:00.000Z",
+            reason: "warn",
+          },
+        ],
+        hasMore: true,
+        nextCursor: "   ",
+      }),
+    } as unknown as ReturnType<typeof apiContractClient.createFrontendApiClient>;
+
+    vi.spyOn(apiContractClient, "createFrontendApiClient").mockReturnValue(mockClient);
+
+    await expect(fetchDashboardSnapshot()).rejects.toThrow(
+      "Readonly API unavailable (fail-closed): Normalized audit pagination declared more pages without a next cursor. Add ?mode=mock to switch to readonly snapshot fallback.",
+    );
+  });
+
+  it("fails closed when normalized audit pagination exceeds the configured max pages", async () => {
+    const previousPages = process.env.NEXT_PUBLIC_DASHBOARD_NORMALIZED_AUDIT_MAX_PAGES;
+    process.env.NEXT_PUBLIC_DASHBOARD_NORMALIZED_AUDIT_MAX_PAGES = "1";
+
+    try {
+      const mockClient = {
+        queryTask: vi.fn().mockResolvedValue({
+          task: {
+            id: "345d",
+            owner: "ops",
+            status: "running",
+            createdAt: "2026-03-01T00:00:00.000Z",
+            updatedAt: "2026-03-01T00:05:00.000Z",
+            metadata: {},
+          },
+        }),
+        queryEvents: vi.fn().mockResolvedValue({
+          taskId: "345d",
+          events: [],
+        }),
+        queryCapabilityAudit: vi.fn().mockResolvedValue({
+          subject: "did:trnm:test",
+          audits: [
+            {
+              subject: "did:trnm:test",
+              capability: "AUDIT_READ",
+              granted: true,
+              checkedAt: "2026-03-01T00:00:00.000Z",
+            },
+          ],
+        }),
+        queryNormalizedAuditEvents: vi.fn().mockResolvedValue({
+          events: [
+            {
+              source: "bridge-relay",
+              event_type: "bridge_relay.proof_submitted",
+              actor: "validator",
+              object_id: "proof-345e",
+              timestamp: "2026-03-01T00:02:00.000Z",
+              reason: "warn",
+            },
+          ],
+          hasMore: true,
+          nextCursor: "cursor-next",
+        }),
+      } as unknown as ReturnType<typeof apiContractClient.createFrontendApiClient>;
+
+      vi.spyOn(apiContractClient, "createFrontendApiClient").mockReturnValue(mockClient);
+
+      await expect(fetchDashboardSnapshot()).rejects.toThrow(
+        "Readonly API unavailable (fail-closed): Normalized audit pagination exceeded max pages (1). Add ?mode=mock to switch to readonly snapshot fallback.",
+      );
+    } finally {
+      if (previousPages === undefined) {
+        delete process.env.NEXT_PUBLIC_DASHBOARD_NORMALIZED_AUDIT_MAX_PAGES;
+      } else {
+        process.env.NEXT_PUBLIC_DASHBOARD_NORMALIZED_AUDIT_MAX_PAGES = previousPages;
+      }
+    }
+  });
+
+  it("keeps event ordering stable when fallback dashboard times are not ISO-formatted", async () => {
+    const mockClient = {
+      queryTask: vi
+        .fn()
+        .mockResolvedValue({
+          task: {
+            id: "346",
+            owner: "ops",
+            status: "running",
+            createdAt: "2026-03-01T00:00:00.000Z",
+            updatedAt: "2026-03-01T00:05:00.000Z",
+            metadata: {},
+          },
+        }),
+      queryEvents: vi.fn().mockResolvedValue({
+        taskId: "346",
+        events: [
+          {
+            id: "EVT-346",
+            timestamp: "2026-03-01T00:04:00.000Z",
+            type: "deploy.completed",
+            level: "info",
+            payload: {},
+          },
+        ],
+      }),
+      queryCapabilityAudit: vi.fn().mockResolvedValue({
+        subject: "did:trnm:test",
+        audits: [
+          {
+            subject: "did:trnm:test",
+            capability: "AUDIT_READ",
+            granted: true,
+            checkedAt: "2026-03-01T00:00:00.000Z",
+          },
+        ],
+      }),
+      queryNormalizedAuditEvents: vi.fn().mockResolvedValue({
+        events: [
+          {
+            source: "bridge-relay",
+            event_type: "bridge_relay.proof_submitted",
+            actor: "validator",
+            object_id: "proof-346",
+            timestamp: "not-an-iso-timestamp",
+            reason: "warn",
+          },
+        ],
+        hasMore: false,
+      }),
+    } as unknown as ReturnType<typeof apiContractClient.createFrontendApiClient>;
+
+    vi.spyOn(apiContractClient, "createFrontendApiClient").mockReturnValue(mockClient);
+
+    const snapshot = await fetchDashboardSnapshot();
+
+    expect(snapshot.events[0]?.id).toBe("EVT-346");
+    expect(snapshot.events.find((event) => event.id === "bridge-relay:proof-346")).toBeDefined();
+  });
+
+  it("preserves source order when multiple fallback dashboard times are invalid", async () => {
+    const mockClient = {
+      queryTask: vi
+        .fn()
+        .mockResolvedValue({
+          task: {
+            id: "347",
+            owner: "ops",
+            status: "running",
+            createdAt: "2026-03-01T00:00:00.000Z",
+            updatedAt: "2026-03-01T00:05:00.000Z",
+            metadata: {},
+          },
+        }),
+      queryEvents: vi.fn().mockResolvedValue({
+        taskId: "347",
+        events: [],
+      }),
+      queryCapabilityAudit: vi.fn().mockResolvedValue({
+        subject: "did:trnm:test",
+        audits: [
+          {
+            subject: "did:trnm:test",
+            capability: "AUDIT_READ",
+            granted: true,
+            checkedAt: "2026-03-01T00:00:00.000Z",
+          },
+        ],
+      }),
+      queryNormalizedAuditEvents: vi.fn().mockResolvedValue({
+        events: [
+          {
+            source: "bridge-relay",
+            event_type: "bridge_relay.proof_submitted",
+            actor: "validator-a",
+            object_id: "proof-347a",
+            timestamp: "bad-time-a",
+            reason: "warn",
+          },
+          {
+            source: "bridge-relay",
+            event_type: "bridge_relay.proof_submitted",
+            actor: "validator-b",
+            object_id: "proof-347b",
+            timestamp: "bad-time-b",
+            reason: "warn",
+          },
+        ],
+        hasMore: false,
+      }),
+    } as unknown as ReturnType<typeof apiContractClient.createFrontendApiClient>;
+
+    vi.spyOn(apiContractClient, "createFrontendApiClient").mockReturnValue(mockClient);
+
+    const snapshot = await fetchDashboardSnapshot();
+
+    expect(snapshot.events.map((event) => event.id)).toEqual([
+      "bridge-relay:proof-347a",
+      "bridge-relay:proof-347b",
+    ]);
+  });
+
+  it("normalizes blank normalized-audit source and event type into stable dashboard fallbacks", async () => {
+    const mockClient = {
+      queryTask: vi
+        .fn()
+        .mockResolvedValue({
+          task: {
+            id: "348",
+            owner: "ops",
+            status: "running",
+            createdAt: "2026-03-01T00:00:00.000Z",
+            updatedAt: "2026-03-01T00:05:00.000Z",
+            metadata: {},
+          },
+        }),
+      queryEvents: vi.fn().mockResolvedValue({
+        taskId: "348",
+        events: [],
+      }),
+      queryCapabilityAudit: vi.fn().mockResolvedValue({
+        subject: "did:trnm:test",
+        audits: [
+          {
+            subject: "did:trnm:test",
+            capability: "AUDIT_READ",
+            granted: true,
+            checkedAt: "2026-03-01T00:00:00.000Z",
+          },
+        ],
+      }),
+      queryNormalizedAuditEvents: vi.fn().mockResolvedValue({
+        events: [
+          {
+            source: "   ",
+            event_type: "\n",
+            actor: "   ",
+            timestamp: "2026-03-01T00:02:00.000Z",
+            reason: "warn",
+          },
+        ],
+        hasMore: false,
+      }),
+    } as unknown as ReturnType<typeof apiContractClient.createFrontendApiClient>;
+
+    vi.spyOn(apiContractClient, "createFrontendApiClient").mockReturnValue(mockClient);
+
+    const snapshot = await fetchDashboardSnapshot();
+    const fallbackEvent = snapshot.events.find((event) => event.id === "unknown-source:unknown-event:system");
+
+    expect(fallbackEvent).toMatchObject({
+      summary: "unknown-source · unknown-event",
+      severity: "Warning",
+      category: "Incident",
+    });
+  });
+
+  it("falls back to actor-based ids when normalized-audit object ids are blank", async () => {
+    const mockClient = {
+      queryTask: vi
+        .fn()
+        .mockResolvedValue({
+          task: {
+            id: "349",
+            owner: "ops",
+            status: "running",
+            createdAt: "2026-03-01T00:00:00.000Z",
+            updatedAt: "2026-03-01T00:05:00.000Z",
+            metadata: {},
+          },
+        }),
+      queryEvents: vi.fn().mockResolvedValue({
+        taskId: "349",
+        events: [],
+      }),
+      queryCapabilityAudit: vi.fn().mockResolvedValue({
+        subject: "did:trnm:test",
+        audits: [
+          {
+            subject: "did:trnm:test",
+            capability: "AUDIT_READ",
+            granted: true,
+            checkedAt: "2026-03-01T00:00:00.000Z",
+          },
+        ],
+      }),
+      queryNormalizedAuditEvents: vi.fn().mockResolvedValue({
+        events: [
+          {
+            source: "bridge-relay",
+            event_type: "bridge_relay.proof_submitted",
+            actor: "validator-z",
+            object_id: "   ",
+            timestamp: "2026-03-01T00:02:00.000Z",
+            reason: "warn",
+          },
+        ],
+        hasMore: false,
+      }),
+    } as unknown as ReturnType<typeof apiContractClient.createFrontendApiClient>;
+
+    vi.spyOn(apiContractClient, "createFrontendApiClient").mockReturnValue(mockClient);
+
+    const snapshot = await fetchDashboardSnapshot();
+    const fallbackEvent = snapshot.events.find(
+      (event) => event.id === "bridge-relay:bridge_relay.proof_submitted:validator-z",
+    );
+
+    expect(fallbackEvent).toMatchObject({
+      summary: "bridge-relay · bridge_relay.proof_submitted",
+      severity: "Warning",
+      category: "Security",
+    });
   });
 });

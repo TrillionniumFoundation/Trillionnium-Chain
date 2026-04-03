@@ -42,7 +42,7 @@ describe("adaptDashboardSnapshot", () => {
     expect(result.tasks[0].id).toBe("TSK-1");
   });
 
-  it("accepts snake_case task/audit timestamps and normalizes them", () => {
+  it("accepts snake_case task/event/audit timestamps and normalizes them", () => {
     const payload = {
       kpis: [{ label: "K1", value: "1", delta: "+0", health: "healthy" }],
       tasks: [
@@ -59,7 +59,7 @@ describe("adaptDashboardSnapshot", () => {
       events: [
         {
           id: "EVT-2",
-          time: "2026-01-02",
+          event_time: "2026-01-02",
           category: "Deploy",
           summary: "sum",
           severity: "Info",
@@ -80,7 +80,47 @@ describe("adaptDashboardSnapshot", () => {
 
     const result = adaptDashboardSnapshot(payload);
     expect(result.tasks[0].updatedAt).toBe("2026-01-02");
+    expect(result.events[0].time).toBe("2026-01-02");
     expect(result.audits[0].reviewedAt).toBe("2026-01-02");
+  });
+
+  it("accepts legacy slim snapshots and fills missing detail fields with empty strings", () => {
+    const payload = {
+      kpis: [{ label: "K1", value: "1", delta: "+0", health: "healthy" }],
+      tasks: [
+        {
+          id: "TSK-3",
+          title: "task",
+          owner: "ops",
+          priority: "P1",
+          status: "Todo",
+          updatedAt: "2026-01-03",
+        },
+      ],
+      events: [
+        {
+          id: "EVT-3",
+          time: "2026-01-03",
+          category: "Deploy",
+          summary: "sum",
+          severity: "Info",
+        },
+      ],
+      audits: [
+        {
+          id: "AUD-3",
+          control: "ctl",
+          result: "Pass",
+          reviewer: "sec",
+          reviewedAt: "2026-01-03",
+        },
+      ],
+    };
+
+    const result = adaptDashboardSnapshot(payload);
+    expect(result.tasks[0].description).toBe("");
+    expect(result.events[0].details).toBe("");
+    expect(result.audits[0].notes).toBe("");
   });
 
   it("throws on invalid payload", () => {
