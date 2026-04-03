@@ -207,6 +207,21 @@ fn parse_query_normalized_audit_events_query_from_path_rejects_percent_encoded_s
 }
 
 #[test]
+fn parse_query_normalized_audit_events_query_from_path_rejects_raw_whitespace() {
+    for path in [
+        "/query-normalized-audit-events ?source=trnm.task",
+        "/query-normalized-audit-events?source=trnm.task ",
+        "/query-normalized-audit-events?eventType=trnm.task.commit\t",
+        "/query-normalized-audit-events?limit=3\n",
+    ] {
+        let err = parse_query_normalized_audit_events_query_from_path(path)
+            .expect_err("raw whitespace should fail closed");
+        assert!(err.contains("400 Bad Request"), "path={path:?} err={err}");
+        assert!(err.contains("invalid query"), "path={path:?} err={err}");
+    }
+}
+
+#[test]
 fn parse_query_normalized_audit_events_query_from_path_rejects_prefix_shadow_paths() {
     for path in [
         "/query-normalized-audit-events-shadow",

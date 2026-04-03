@@ -20,6 +20,7 @@ pub(crate) fn oracle_policy_fixture() -> serde_json::Value {
         "max_staleness_ms": 60_000,
         "min_source_count": 2,
         "max_deviation_bps": 500,
+        "max_update_rate_per_window": 60,
         "feed_id": "btc/usd",
     })
 }
@@ -94,6 +95,8 @@ struct SnapshotFile {
     reference_price: u64,
     feed_id: String,
     sources: Vec<Value>,
+    #[serde(default = "default_snapshot_sample_count")]
+    sample_count: u32,
 }
 
 #[derive(Debug, Deserialize)]
@@ -101,8 +104,53 @@ struct PolicyFile {
     max_staleness_ms: u64,
     min_source_count: u64,
     max_deviation_bps: u64,
-    #[allow(dead_code)]
+    #[serde(default = "default_max_update_rate_per_window")]
+    max_update_rate_per_window: u64,
     feed_id: String,
+}
+
+const fn default_snapshot_sample_count() -> u32 {
+    1
+}
+
+const fn default_max_update_rate_per_window() -> u64 {
+    60
+}
+
+fn validate_policy_file(policy: &PolicyFile) -> Result<(), String> {
+    if policy.min_source_count == 0 {
+        return Err("invalid policy: min_source_count must be > 0".to_string());
+    }
+    if policy.max_staleness_ms == 0 {
+        return Err("invalid policy: max_staleness_ms must be > 0".to_string());
+    }
+    if policy.max_deviation_bps > 10_000 {
+        return Err("invalid policy: max_deviation_bps must be <= 10000".to_string());
+    }
+    if policy.max_update_rate_per_window == 0 {
+        return Err("invalid policy: max_update_rate_per_window must be > 0".to_string());
+    }
+    if policy.min_source_count > policy.max_update_rate_per_window {
+        return Err(
+            "invalid policy: min_source_count must be <= max_update_rate_per_window".to_string(),
+        );
+    }
+    Ok(())
+}
+
+fn validate_canonical_feed_id(raw: &str) -> Result<String, String> {
+    let canonical = raw.trim().to_ascii_lowercase();
+    if canonical.is_empty() {
+        return Err("feed id is empty".to_string());
+    }
+    let has_non_canonical_chars = raw.chars().any(|ch| ch.is_whitespace() || ch.is_control());
+    if raw != canonical || has_non_canonical_chars {
+        return Err(format!(
+            "feed id must be canonical lowercase+trim: raw={}, canonical={}",
+            raw, canonical
+        ));
+    }
+    Ok(canonical)
 }
 
 fn from_hex(n: u8) -> Option<u8> {
@@ -148,6 +196,25 @@ fn is_non_canonical_query_value(value: &str) -> bool {
     value.trim() != value || value.chars().any(|ch| ch.is_control())
 }
 
+fn contains_percent_encoded_control_or_del(value: &str) -> bool {
+    let bytes = value.as_bytes();
+    let mut idx = 0;
+    while idx + 2 < bytes.len() {
+        if bytes[idx] == b'%' {
+            let hi = from_hex(bytes[idx + 1]);
+            let lo = from_hex(bytes[idx + 2]);
+            if let (Some(hi), Some(lo)) = (hi, lo) {
+                let decoded = (hi << 4) | lo;
+                if decoded <= 0x20 || decoded == 0x7f {
+                    return true;
+                }
+            }
+        }
+        idx += 1;
+    }
+    false
+}
+
 pub(crate) fn parse_http_query_params(target: &str) -> Option<HashMap<String, String>> {
     let query = target.split_once('?')?.1;
     if query.is_empty()
@@ -162,12 +229,7 @@ pub(crate) fn parse_http_query_params(target: &str) -> Option<HashMap<String, St
         || normalized_query.contains("%3d")
         || normalized_query.contains("%23")
         || normalized_query.contains("%3f")
-        || normalized_query.contains("%0d")
-        || normalized_query.contains("%0a")
-        || normalized_query.contains("%09")
-        || normalized_query.contains("%0b")
-        || normalized_query.contains("%0c")
-        || normalized_query.contains("%20")
+        || contains_percent_encoded_control_or_del(query)
     {
         return None;
     }
@@ -241,7 +303,7 @@ pub(crate) fn parse_oracle_validate_snapshot_target(
     }
 
     let now_ts_ms = match params.get("now_ts_ms") {
-        Some(v) if !v.is_empty() => Some(
+        Some(v) if !v.is_empty() && !v.trim().is_empty() => Some(
             v.parse::<u64>()
                 .map_err(|_| "invalid now_ts_ms".to_string())?,
         ),
@@ -257,8 +319,11 @@ pub(crate) fn parse_oracle_validate_snapshot_target(
 }
 
 fn compute_deviation_bps(aggregate: u64, reference: u64) -> u64 {
-    if reference == 0 {
+    if reference == aggregate {
         return 0;
+    }
+    if reference == 0 {
+        return 10_000;
     }
     let diff = aggregate.max(reference) - aggregate.min(reference);
     ((diff as u128 * 10_000) / (reference as u128)) as u64
@@ -270,7 +335,11 @@ fn canonical_source_cardinality(sources: &[Value]) -> u32 {
         let Some(source_id) = source.get("source_id").and_then(Value::as_str) else {
             return sources.len() as u32;
         };
-        unique.insert(source_id.trim().to_ascii_lowercase());
+        let canonical = source_id.trim().to_ascii_lowercase();
+        if canonical.is_empty() {
+            continue;
+        }
+        unique.insert(canonical);
     }
     unique.len() as u32
 }
@@ -286,9 +355,19 @@ pub(crate) fn oracle_validate_snapshot_response(
     let snapshot_val: SnapshotFile =
         serde_json::from_str(&snapshot_text).map_err(|e| e.to_string())?;
     let policy_val: PolicyFile = serde_json::from_str(&policy_text).map_err(|e| e.to_string())?;
+    validate_policy_file(&policy_val)?;
 
     let source_count = snapshot_val.sources.len() as u32;
     let cardinality = canonical_source_cardinality(&snapshot_val.sources);
+    let snapshot_feed_id = validate_canonical_feed_id(&snapshot_val.feed_id)?;
+    let policy_feed_id = validate_canonical_feed_id(&policy_val.feed_id)?;
+
+    if snapshot_feed_id != policy_feed_id {
+        return Err(format!(
+            "feed id mismatch: snapshot={}, policy={}",
+            snapshot_feed_id, policy_feed_id
+        ));
+    }
 
     if source_count == 0 {
         return Err("snapshot has no sources".to_string());
@@ -304,6 +383,7 @@ pub(crate) fn oracle_validate_snapshot_response(
     let future = snapshot_val.observed_at_ms > now_ts_ms;
     let stale = now_ts_ms.saturating_sub(snapshot_val.observed_at_ms) > policy_val.max_staleness_ms;
     let quorum = cardinality < policy_val.min_source_count as u32;
+    let rate = snapshot_val.sample_count as u64 > policy_val.max_update_rate_per_window;
     let drift = compute_deviation_bps(snapshot_val.aggregate_price, snapshot_val.reference_price)
         >= policy_val.max_deviation_bps;
 
@@ -325,6 +405,8 @@ pub(crate) fn oracle_validate_snapshot_response(
         outcome = "quorum";
         quorum_reject_total = 1;
         error = Some("quorum reject".to_string());
+    } else if rate {
+        error = Some("rate".to_string());
     } else if drift {
         outcome = "drift";
         drift_reject_total = 1;
@@ -340,7 +422,7 @@ pub(crate) fn oracle_validate_snapshot_response(
         now_ts_ms,
         observation: OracleValidationObservation {
             outcome: outcome.to_string(),
-            feed_id: snapshot_val.feed_id,
+            feed_id: snapshot_feed_id,
             stale_reject_total,
             quorum_reject_total,
             drift_reject_total,
@@ -352,7 +434,7 @@ pub(crate) fn oracle_validate_snapshot_response(
             oracle_drift_reject_total: drift_reject_total,
             oracle_source_cardinality: cardinality,
             accepted_total,
-            sample_count: 1,
+            sample_count: snapshot_val.sample_count,
         },
         error,
     })

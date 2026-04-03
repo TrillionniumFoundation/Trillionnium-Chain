@@ -47,6 +47,20 @@ fn parse_http_query_params_rejects_query_smuggling_and_fragments() {
 }
 
 #[test]
+fn parse_http_query_params_rejects_percent_encoded_controls_and_del() {
+    for target in [
+        "/oracle/validate_snapshot?snapshot=/tmp/a.json%01&policy=/tmp/p.json",
+        "/oracle/validate_snapshot?snapshot=/tmp/a.json&policy=/tmp/p.json%7F",
+        "/oracle/validate_snapshot?snapshot=/tmp/a.json&policy=/tmp/p.json&now_ts_ms=10100%1f",
+    ] {
+        assert!(
+            parse_http_query_params(target).is_none(),
+            "target must fail closed: {target}"
+        );
+    }
+}
+
+#[test]
 fn parse_http_query_params_rejects_non_canonical_query_keys() {
     for target in [
         "/oracle/validate_snapshot?=value&policy=/tmp/p.json",
@@ -68,6 +82,30 @@ fn parse_oracle_validate_snapshot_target_returns_stable_request_schema() {
         .expect("oracle request");
 
     assert_eq!(request.snapshot, "/tmp/oracle snapshot.json");
+    assert_eq!(request.policy, "/tmp/policy.json");
+    assert_eq!(request.now_ts_ms, Some(10_100));
+}
+
+#[test]
+fn parse_oracle_validate_snapshot_target_accepts_oracle_metrics_alias() {
+    let request = parse_oracle_validate_snapshot_target(
+        "/oracle/metrics?snapshot=/tmp/oracle.json&policy=/tmp/policy.json&now_ts_ms=10100",
+    )
+    .expect("oracle metrics alias should reuse the same request schema");
+
+    assert_eq!(request.snapshot, "/tmp/oracle.json");
+    assert_eq!(request.policy, "/tmp/policy.json");
+    assert_eq!(request.now_ts_ms, Some(10_100));
+}
+
+#[test]
+fn parse_oracle_validate_snapshot_target_accepts_global_metrics_alias() {
+    let request = parse_oracle_validate_snapshot_target(
+        "/metrics?snapshot=/tmp/oracle.json&policy=/tmp/policy.json&now_ts_ms=10100",
+    )
+    .expect("global metrics alias should preserve oracle query parsing");
+
+    assert_eq!(request.snapshot, "/tmp/oracle.json");
     assert_eq!(request.policy, "/tmp/policy.json");
     assert_eq!(request.now_ts_ms, Some(10_100));
 }
@@ -154,6 +192,14 @@ fn parse_oracle_validate_snapshot_target_rejects_empty_or_invalid_now_ts_ms() {
     for (target, expected) in [
         (
             "/oracle/validate_snapshot?snapshot=/tmp/s.json&policy=/tmp/p.json&now_ts_ms=",
+            "empty now_ts_ms",
+        ),
+        (
+            "/oracle/validate_snapshot?snapshot=/tmp/s.json&policy=/tmp/p.json&now_ts_ms=+",
+            "empty now_ts_ms",
+        ),
+        (
+            "/oracle/validate_snapshot?snapshot=/tmp/s.json&policy=/tmp/p.json&now_ts_ms=%20",
             "empty now_ts_ms",
         ),
         (

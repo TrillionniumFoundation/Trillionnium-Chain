@@ -197,19 +197,19 @@ fn oracle_validation_report_into_rpc_response_preserves_repeated_observation_car
 }
 
 #[test]
-fn oracle_validation_report_into_rpc_response_preserves_unmapped_error_string() {
+fn oracle_validation_report_into_rpc_response_preserves_snapshot_hash_mismatch_label_and_quorum_accounting() {
     let report = OracleValidationReport {
         ok: false,
         now_ts_ms: 790,
         observation: OracleValidationObservation {
             stale_reject_total: 0,
-            quorum_reject_total: 0,
+            quorum_reject_total: 1,
             drift_reject_total: 0,
             accepted_total: 0,
         },
         metrics: OracleValidationMetrics {
             oracle_stale_reject_total: 0,
-            oracle_quorum_reject_total: 0,
+            oracle_quorum_reject_total: 1,
             oracle_drift_reject_total: 0,
             oracle_source_cardinality: 2,
             accepted_total: 0,
@@ -219,15 +219,16 @@ fn oracle_validation_report_into_rpc_response_preserves_unmapped_error_string() 
     };
 
     let out: OracleValidateSnapshotResponse = report.into();
-    assert_eq!(out.classified_reject_total(), 0);
-    assert_eq!(out.classified_outcome_total(), 0);
-    assert!(!out.classified_outcome_conserves_sample_count());
+    assert_eq!(out.classified_reject_total(), 1);
+    assert_eq!(out.classified_outcome_total(), 1);
+    assert!(out.classified_outcome_conserves_sample_count());
     let v = serde_json::to_value(out).unwrap();
     assert_eq!(
         v["error"],
         "snapshot hash mismatch: expected=abc, actual=def"
     );
     assert_eq!(v["metrics"]["sample_count"], 1);
+    assert_eq!(v["metrics"]["oracle_quorum_reject_total"], 1);
     assert_eq!(v["metrics"]["oracle_source_cardinality"], 2);
 }
 

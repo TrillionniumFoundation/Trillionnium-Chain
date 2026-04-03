@@ -162,3 +162,15 @@ fn zero_deviation_policy_accepts_only_exact_median_matches() {
         .expect_err("zero-deviation policy should reject any non-zero drift");
     assert!(matches!(err, OracleError::DeviationExceeded { .. }));
 }
+
+#[test]
+fn policy_validate_accepts_guardrail_caps_at_exact_boundaries() {
+    OraclePolicy {
+        min_sources: 60,
+        max_staleness_ms: 5_000,
+        max_deviation_bps: 10_000,
+        max_update_rate_per_window: 60,
+    }
+    .validate()
+    .expect("policy should accept deviation cap and quorum floor exactly at documented guardrail boundaries");
+}
