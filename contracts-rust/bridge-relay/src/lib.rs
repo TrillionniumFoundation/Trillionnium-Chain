@@ -484,6 +484,7 @@ impl BridgeRelay {
             BridgeRelayEvent::MinSignaturesUpdated { old_min, new_min } => {
                 let mut normalized =
                     AuditEvent::new("bridge-relay", "bridge_relay.min_signatures_updated");
+                normalized.object_id = Some("bridge_config".to_string());
                 normalized.related_id = Some("min_signatures".to_string());
                 normalized.amount = Some(*new_min as u128);
                 normalized.reason = Some(format!("old_min={old_min}, new_min={new_min}"));
@@ -1439,7 +1440,7 @@ mod tests {
         assert!(normalized.iter().any(|event| {
             event.event_type == "bridge_relay.min_signatures_updated"
                 && event.amount == Some(2)
-                && event.object_id.is_none()
+                && event.object_id.as_deref() == Some("bridge_config")
                 && event.related_id.as_deref() == Some("min_signatures")
                 && event.reason.as_deref() == Some("old_min=2, new_min=2")
         }));
