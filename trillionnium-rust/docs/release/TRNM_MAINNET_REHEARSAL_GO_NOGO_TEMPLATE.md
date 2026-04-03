@@ -148,7 +148,9 @@ Copy these fields from the extracted artifact output or directly from `go-no-go-
 - `git_expected_worktree_branch_ref=`
 - `git_worktree_branch_ref_match=`
 - `git_status_summary=`
-- `generated_at=`
+- `preflight_generated_at=`
+- `summary_generated_at=`
+- `manifest_generated_at=`
 - `truth_source=`
 - `historical_evidence_only=`
 - `evidence_scope=`
@@ -164,6 +166,7 @@ Decision rule:
 - summary/manifest `git_worktree_branch_ref_match=true` is also mandatory; do not let a green preflight soften a later artifact mismatch
 - all three stages (preflight / summary / manifest) must agree on lane identity; a two-of-three match is still **NO-GO**
 - `git_status_summary=clean` is mandatory
+- `preflight_generated_at=`, `summary_generated_at=`, and `manifest_generated_at=` must all be present and quoted as separate artifact timestamps; do not collapse them into one hand-copied `generated_at=` line
 - the summary and manifest values must match each other and match the assigned worktree/branch
 - any mismatch = **NO-GO**
 
