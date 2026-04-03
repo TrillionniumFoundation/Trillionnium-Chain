@@ -70,6 +70,7 @@ export function ChainStatusCard({ status }: { status: ChainStatus }) {
           id="chain-status-unavailable"
           role="alert"
           aria-live="assertive"
+          aria-atomic="true"
           className="mt-3 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800"
         >
           Readonly chain snapshot is unavailable. Verify the adapter payload before trusting this card.
@@ -80,6 +81,7 @@ export function ChainStatusCard({ status }: { status: ChainStatus }) {
           id="chain-status-partial"
           role="status"
           aria-live="polite"
+          aria-atomic="true"
           className="mt-3 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800"
         >
           Readonly chain snapshot is partial. Unavailable fields stay fail-closed until the adapter provides them.
