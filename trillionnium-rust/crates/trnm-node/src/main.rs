@@ -833,9 +833,17 @@ fn recovery_startup_summary(recovered: &RecoveredWalState) -> String {
             }
         }
     } else if recovered.checkpoint_height_retained.is_some() {
-        "ready:checkpoint_only_bootstrap"
+        if recovered.truncated {
+            "ready:checkpoint_only_bootstrap_after_tail_repair"
+        } else {
+            "ready:checkpoint_only_bootstrap"
+        }
     } else {
-        "ready:fresh_bootstrap"
+        if recovered.truncated {
+            "ready:fresh_bootstrap_after_tail_repair"
+        } else {
+            "ready:fresh_bootstrap"
+        }
     };
 
     format!(
@@ -16738,7 +16746,7 @@ locked_block_hash = "stale-lock"
 
         assert_eq!(
             recovery_startup_summary(&recovered),
-            "retained_wal_entries=0 checkpoint_height_retained=none checkpoint_tip_relation=none next_startup_height=1 wal_tail_truncated=true metadata_only_recovery=false join_rejoin_status=ready:fresh_bootstrap"
+            "retained_wal_entries=0 checkpoint_height_retained=none checkpoint_tip_relation=none next_startup_height=1 wal_tail_truncated=true metadata_only_recovery=false join_rejoin_status=ready:fresh_bootstrap_after_tail_repair"
         );
     }
 
@@ -16979,7 +16987,7 @@ locked_block_hash = "stale-lock"
             .expect("truncated checkpoint-only rejoin bootstrap should remain recoverable");
         assert_eq!(
             recovery_startup_summary(&recovered),
-            "retained_wal_entries=0 checkpoint_height_retained=8 checkpoint_tip_relation=checkpoint_only:8 next_startup_height=9 wal_tail_truncated=true metadata_only_recovery=false join_rejoin_status=ready:checkpoint_only_bootstrap"
+            "retained_wal_entries=0 checkpoint_height_retained=8 checkpoint_tip_relation=checkpoint_only:8 next_startup_height=9 wal_tail_truncated=true metadata_only_recovery=false join_rejoin_status=ready:checkpoint_only_bootstrap_after_tail_repair"
         );
         assert_eq!(
             retained_wal_summary(&recovered),
@@ -17041,7 +17049,7 @@ locked_block_hash = "stale-lock"
             .expect("truncated fresh bootstrap should remain recoverable for safe join/rejoin");
         assert_eq!(
             recovery_startup_summary(&recovered),
-            "retained_wal_entries=0 checkpoint_height_retained=none checkpoint_tip_relation=none next_startup_height=1 wal_tail_truncated=true metadata_only_recovery=false join_rejoin_status=ready:fresh_bootstrap"
+            "retained_wal_entries=0 checkpoint_height_retained=none checkpoint_tip_relation=none next_startup_height=1 wal_tail_truncated=true metadata_only_recovery=false join_rejoin_status=ready:fresh_bootstrap_after_tail_repair"
         );
         assert_eq!(
             retained_wal_summary(&recovered),
