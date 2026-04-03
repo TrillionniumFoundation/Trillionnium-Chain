@@ -11,11 +11,70 @@ PUBLIC_DIR="${RUN_ROOT}/public"
 HEALTH_FILE="${PUBLIC_DIR}/healthz"
 INDEX_FILE="${PUBLIC_DIR}/index.json"
 
-if [[ -f "${ENV_FILE}" ]]; then
+load_env_defaults() {
+  local had_host="false"
+  local had_port="false"
+  local had_public_base_url="false"
+  local had_health_url="false"
+  local had_rpc_base_url="false"
+  local host_value=""
+  local port_value=""
+  local public_base_url_value=""
+  local health_url_value=""
+  local rpc_base_url_value=""
+
+  if [[ -n "${EXPLORER_HOST+x}" ]]; then
+    had_host="true"
+    host_value="${EXPLORER_HOST}"
+  fi
+  if [[ -n "${EXPLORER_PORT+x}" ]]; then
+    had_port="true"
+    port_value="${EXPLORER_PORT}"
+  fi
+  if [[ -n "${EXPLORER_PUBLIC_BASE_URL+x}" ]]; then
+    had_public_base_url="true"
+    public_base_url_value="${EXPLORER_PUBLIC_BASE_URL}"
+  fi
+  if [[ -n "${EXPLORER_HEALTH_URL+x}" ]]; then
+    had_health_url="true"
+    health_url_value="${EXPLORER_HEALTH_URL}"
+  fi
+  if [[ -n "${EXPLORER_RPC_BASE_URL+x}" ]]; then
+    had_rpc_base_url="true"
+    rpc_base_url_value="${EXPLORER_RPC_BASE_URL}"
+  fi
+
   set -a
   # shellcheck disable=SC1090
   source "${ENV_FILE}"
   set +a
+
+  if [[ "${had_public_base_url}" != "true" ]] && [[ "${had_host}" == "true" || "${had_port}" == "true" ]]; then
+    unset EXPLORER_PUBLIC_BASE_URL
+  fi
+  if [[ "${had_health_url}" != "true" ]] && [[ "${had_host}" == "true" || "${had_port}" == "true" || "${had_public_base_url}" == "true" ]]; then
+    unset EXPLORER_HEALTH_URL
+  fi
+
+  if [[ "${had_host}" == "true" ]]; then
+    EXPLORER_HOST="${host_value}"
+  fi
+  if [[ "${had_port}" == "true" ]]; then
+    EXPLORER_PORT="${port_value}"
+  fi
+  if [[ "${had_public_base_url}" == "true" ]]; then
+    EXPLORER_PUBLIC_BASE_URL="${public_base_url_value}"
+  fi
+  if [[ "${had_health_url}" == "true" ]]; then
+    EXPLORER_HEALTH_URL="${health_url_value}"
+  fi
+  if [[ "${had_rpc_base_url}" == "true" ]]; then
+    EXPLORER_RPC_BASE_URL="${rpc_base_url_value}"
+  fi
+}
+
+if [[ -f "${ENV_FILE}" ]]; then
+  load_env_defaults
 fi
 
 HOST="${EXPLORER_HOST:-127.0.0.1}"
