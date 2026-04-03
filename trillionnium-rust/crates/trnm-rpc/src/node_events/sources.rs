@@ -20,7 +20,7 @@ pub(super) fn parse_node_event_log_sources_list(raw: &str) -> Vec<PathBuf> {
             Some(active) if ch == active => quote = None,
             Some(_) => {}
             None if matches!(ch, '"' | '\'' | '`') => quote = Some(ch),
-            None if matches!(ch, ',' | ';' | '\n') => {
+            None if matches!(ch, ',' | ';' | '\n' | '\r') => {
                 if let Some(path) = normalize_node_event_log_source_entry(&raw[start..idx]) {
                     out.push(PathBuf::from(path));
                 }
@@ -282,6 +282,23 @@ mod tests {
                 PathBuf::from("plain.log"),
             ],
             "wrapped historical replay env entries should keep internal delimiters instead of being split into bogus paths"
+        );
+    }
+
+    #[test]
+    fn parse_node_event_log_sources_list_accepts_carriage_return_separators_for_historical_replay() {
+        let parsed = parse_node_event_log_sources_list(
+            "\"archive/node4.log\"\r'archive/node5.log'\rplain.log\r",
+        );
+
+        assert_eq!(
+            parsed,
+            vec![
+                PathBuf::from("archive/node4.log"),
+                PathBuf::from("archive/node5.log"),
+                PathBuf::from("plain.log"),
+            ],
+            "carriage-return separated historical replay aliases should parse as distinct sources"
         );
     }
 
