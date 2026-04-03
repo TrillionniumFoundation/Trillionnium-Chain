@@ -106,6 +106,7 @@ Treat the helper output as a first-class artifact for memo assembly, not throwaw
 
 Record:
 - preflight_path=
+- preflight_summary_path=
 - summary_path=
 - manifest_path=
 - handoff_helper_output_path=
@@ -130,7 +131,7 @@ Record:
 - git_expected_worktree_branch_ref=
 
 Rule:
-- if `preflight_path`, `summary_path`, or `manifest_path` is missing or unresolved, decision = **NO-GO**
+- if `preflight_path`, `preflight_summary_path`, `summary_path`, or `manifest_path` is missing or unresolved, decision = **NO-GO**
 - if the preflight artifact/helper transcript does not preserve `result=`, `generated_at=`, `git_status_summary=`, `git_worktree_path=`, `git_worktree_branch_ref=`, `git_worktree_branch_ref_match=`, `expected_worktree_root=`, `ticket_expected_branch_ref=`, `expected_branch_ref=`, `rollback_command=`, and `replay_command=`, decision = **NO-GO**
 - if the ticket assigned an expected head, preserve `expected_head=` verbatim from the preflight artifact and require it to match the ticket-assigned value; do not silently downgrade that field into an optional note
 - treat `expected_worktree_root=` plus `ticket_expected_branch_ref=` as the ticket-binding proof for the rehearsal packet, and keep `expected_branch_ref=` as the canonicalized companion field rather than a replacement for the ticket-original form
@@ -244,6 +245,7 @@ Mark each item explicitly:
 - [ ] `verified_worktree_entry=` preserved from helper output / `git worktree list --porcelain` stanza
 - [ ] `git status --short` empty before evidence generation
 - [ ] `preflight_path` resolved from disk
+- [ ] `preflight_summary_path` resolved from disk
 - [ ] `summary_path` resolved from disk
 - [ ] `manifest_path` resolved from disk
 - [ ] `handoff_helper_output_path` resolved from disk and preserved as a first-class artifact
@@ -295,6 +297,7 @@ verified_branch_ref=<helper output>
 verified_head=<helper output>
 verified_worktree_entry=<captured current-path stanza from helper output or git worktree list --porcelain>
 preflight_path=<resolved path>
+preflight_summary_path=<resolved path>
 summary_path=<resolved path>
 manifest_path=<resolved path>
 handoff_helper_output_path=<resolved saved helper transcript path>
