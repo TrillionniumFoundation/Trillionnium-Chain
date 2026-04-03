@@ -48,6 +48,20 @@ For the current task decomposition and exit criteria, cross-check:
 
 If a handoff note, incident ticket, or release review cites this scaffold alone as proof that explorer/indexer closure exists, treat that as **insufficient evidence** and escalate the missing durable-read artifacts explicitly.
 
+### Rank 1 closure cross-check (fail-closed)
+
+Use the following table before labeling any explorer/indexer milestone as "closed":
+
+| Rank 1 DoD item | Can the current scaffold evidence satisfy it by itself? | Why / what is still missing |
+| --- | --- | --- |
+| Day-1 minimum public read surface frozen | **Partially at best** | The scaffold can quote the current Day-1 read-only contract from `index.json`, but the real truth-source remains the release docs and contract tests, not the static placeholder itself. |
+| durable indexer pipeline exists | **No** | The scaffold serves static files and has no ingestion, replay cursor, checkpoint, or persistence path of its own. |
+| historical query / storage policy explicit | **No** | The scaffold can restate that history is bounded by the current RPC retention window, but it does not define or implement a durable retention/archive policy. |
+| explorer backend/API no longer just scaffold | **No** | This runbook explicitly describes a local operator-facing placeholder rather than a production explorer backend/API. |
+| operator deployment + replay + SLO packet exists | **Not fully** | This runbook covers the placeholder bring-up packet only; a non-placeholder service still needs deployment, replay/recovery, and SLO ownership evidence tied to the durable read path. |
+
+Default interpretation: if any row above remains `No`, `Not fully`, or `Partially at best`, the Rank 1 blocker remains open.
+
 ## Bring-up
 
 From the repo root:
