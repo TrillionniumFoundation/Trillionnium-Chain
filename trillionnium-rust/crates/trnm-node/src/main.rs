@@ -1857,11 +1857,8 @@ fn resolve_config_path(path: &str) -> PathBuf {
     requested.to_path_buf()
 }
 
-fn ensure_relative_config_path_stays_within_allowed_roots(
-    requested: &str,
-    resolved: &Path,
-) -> Result<()> {
-    if Path::new(requested).is_absolute() || !resolved.exists() {
+fn ensure_config_path_stays_within_allowed_roots(requested: &str, resolved: &Path) -> Result<()> {
+    if !resolved.exists() {
         return Ok(());
     }
 
@@ -1941,7 +1938,7 @@ fn validate_config_path_input(path: &str) -> Result<()> {
 fn load_config(path: &str) -> Result<NodeConfig> {
     validate_config_path_input(path)?;
     let resolved = resolve_config_path(path);
-    ensure_relative_config_path_stays_within_allowed_roots(path, &resolved)?;
+    ensure_config_path_stays_within_allowed_roots(path, &resolved)?;
     let raw = fs::read_to_string(&resolved).with_context(|| {
         format!(
             "read config failed: {} (resolved: {})",
@@ -3967,6 +3964,51 @@ mod tests {
         std::env::set_current_dir(&original_cwd).expect("restore cwd");
         let _ = std::fs::remove_dir_all(&temp_root);
 
+        assert!(
+            err.to_string().contains("resolves outside allowed roots"),
+            "unexpected error: {err:#}"
+        );
+    }
+
+    #[test]
+    fn load_config_rejects_absolute_symlink_path_that_escapes_allowed_roots() {
+        use std::os::unix::fs::symlink;
+        use std::time::{SystemTime, UNIX_EPOCH};
+
+        let temp_root = std::env::temp_dir().join(format!(
+            "trnm-node-config-absolute-symlink-escape-{}-{}",
+            std::process::id(),
+            SystemTime::now()
+                .duration_since(UNIX_EPOCH)
+                .expect("clock should be after unix epoch")
+                .as_millis()
+        ));
+        let workspace_shadow = temp_root.join("workspace-shadow");
+        let outside_path = temp_root.join("outside.toml");
+        let symlink_path = workspace_shadow.join("configs/escaped.toml");
+        std::fs::create_dir_all(symlink_path.parent().expect("symlink parent"))
+            .expect("workspace shadow should be creatable");
+        std::fs::write(
+            &outside_path,
+            "node_id = \"node-escape\"\nrpc_addr = \"127.0.0.1:30001\"\np2p_addr = \"127.0.0.1:30000\"\n",
+        )
+        .expect("outside config should be writable");
+        symlink(&outside_path, &symlink_path).expect("escape symlink should be creatable");
+
+        let err = load_config(symlink_path.to_str().expect("utf8 path"))
+            .expect_err("absolute symlink path escaping allowed roots must fail closed");
+        let canonical_target = outside_path
+            .canonicalize()
+            .expect("outside target should canonicalize");
+        let canonical_symlink_parent = workspace_shadow
+            .canonicalize()
+            .expect("workspace shadow should canonicalize");
+        let _ = std::fs::remove_dir_all(&temp_root);
+
+        assert!(
+            !canonical_target.starts_with(&canonical_symlink_parent),
+            "test fixture must point outside the allowed workspace shadow"
+        );
         assert!(
             err.to_string().contains("resolves outside allowed roots"),
             "unexpected error: {err:#}"
