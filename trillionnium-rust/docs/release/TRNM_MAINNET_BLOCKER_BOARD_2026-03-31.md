@@ -28,7 +28,7 @@ Primary truth sources:
 
 - `docs/runbooks/validator-bootstrap-rebootstrap.md` defines fail-closed bootstrap / re-bootstrap steps bound to exact worktree and branch identity.
 - `docs/runbooks/validator-rotation-dr.md` defines the minimum evidence bar for `replacement`, `rotation`, and `dr_rebuild`.
-- `scripts/v2/extract_validator_rotation_dr_fields.sh` can fail closed on missing report fields, non-`PASS` recovery reports, and lane/worktree identity drift.
+- `scripts/v2/extract_validator_rotation_dr_fields.sh` can fail closed on missing report fields, non-`PASS` recovery reports, and lane/worktree identity drift; it also emits `verified_worktree=` / `verified_branch_ref=` / `verified_head=` aliases so DR evidence can drop into a handoff packet without manual field renaming.
 - `scripts/v2/run_validator_dr_rehearsal.sh` provides a deterministic verify → recovery → extract wrapper for DR rebuild rehearsals without changing the underlying fail-closed checks.
 - `RELEASE_READINESS.md` now explicitly instructs operators to prefer fail-closed helper extraction over hand-copied shell snippets.
 
