@@ -470,6 +470,16 @@ mod tests {
     }
 
     #[test]
+    fn recovery_startup_summary_handles_truncated_empty_rejoin_bootstrap_state() {
+        let recovered = recovered_state(0, 1, None, true, false);
+
+        assert_eq!(
+            recovery_startup_summary(&recovered),
+            "retained_wal_entries=0 checkpoint_height_retained=none checkpoint_tip_relation=none next_startup_height=1 wal_tail_truncated=true metadata_only_recovery=false join_rejoin_status=ready:fresh_bootstrap"
+        );
+    }
+
+    #[test]
     fn metadata_only_recovery_error_includes_operator_facing_summary() {
         let recovered = recovered_state(2, 12, Some(10), true, true);
         let error = metadata_only_recovery_error(Path::new("/tmp/trnm-wal"), &recovered);
@@ -597,6 +607,18 @@ mod tests {
         assert_eq!(
             recovery_startup_summary(&recovered),
             "retained_wal_entries=2 checkpoint_height_retained=11 checkpoint_tip_relation=aligned next_startup_height=12 wal_tail_truncated=false metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume"
+        );
+    }
+
+    #[test]
+    fn ensure_recoverable_wal_state_allows_truncated_fresh_bootstrap() {
+        let recovered = recovered_state(0, 1, None, true, false);
+
+        ensure_recoverable_wal_state(Path::new("/tmp/trnm-wal"), &recovered)
+            .expect("truncated fresh bootstrap state should remain recoverable");
+        assert_eq!(
+            recovery_startup_summary(&recovered),
+            "retained_wal_entries=0 checkpoint_height_retained=none checkpoint_tip_relation=none next_startup_height=1 wal_tail_truncated=true metadata_only_recovery=false join_rejoin_status=ready:fresh_bootstrap"
         );
     }
 }
