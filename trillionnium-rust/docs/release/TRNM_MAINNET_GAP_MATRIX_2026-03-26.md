@@ -201,13 +201,17 @@ There are partial metrics, smoke checks, benchmark outputs, and localized Promet
 There is not yet one clearly unified production observability plane.
 A minimum operator-visible contract is now frozen in `docs/runbooks/mainnet-observability-minimum-contract.md` for the currently shipped health aliases, `trnm-rpc` health body, `trnm-node` incident-summary fields, and `trnm-worker-agent` handoff/batch-summary shapes.
 
+### Partial coverage now present
+- `docs/runbooks/mainnet-observability-alerting-starter-pack.md` defines one starter alert set, one shared severity vocabulary, one minimum dashboard bundle, and one incident handoff block that preserves replay / rollback pointers.
+- `docs/runbooks/oracle-observability-alerts.md` provides the oracle-specific drill-down contract while preserving the shared observability label block.
+
 ### Missing
 - node/rpc/worker/oracle/bridge unified metrics contract beyond that minimum frozen operator contract
 - production exporter path
-- dashboards
-- alert thresholds
-- incident labels / severity conventions
-- replay + failure-attribution workflow tied to observability
+- dashboards wired to the shared stable panel names / first-stop routing contract
+- alert thresholds frozen beyond the starter pack heuristics
+- incident labels / severity conventions consistently emitted in pages, dashboard annotations, and tickets
+- replay + failure-attribution workflow tied to observability across real rehearsal evidence, not only runbook text
 
 ### Why P0
 Mainnet incidents are inevitable.

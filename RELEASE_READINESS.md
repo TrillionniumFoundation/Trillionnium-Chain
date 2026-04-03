@@ -68,6 +68,9 @@
 10. **public mainnet blocker 判定 / P0-P1 收口顺序**：看 `trillionnium-rust/docs/release/TRNM_MAINNET_GAP_MATRIX_2026-03-26.md`。
    - 适用场景：需要回答“距离 public mainnet 还差什么”“哪些属于 launch blocker”“Day-1 最小可信 scope 是什么”。
    - 作用边界：它是 mainnet closure matrix，不等于某一轮本地 RC/证据脚本已跑绿。
+11. **主网值班可观测性最小包 / 告警与 incident handoff 约定**：看 `trillionnium-rust/docs/runbooks/mainnet-observability-alerting-starter-pack.md`，oracle 特定告警再配合 `trillionnium-rust/docs/runbooks/oracle-observability-alerts.md`。
+   - 适用场景：需要冻结 `severity` / `signal` / `needs_replay` / `needs_rollback` 标签、最小 dashboard bundle、first-stop panel、以及 incident handoff 的 replay/rollback 指针。
+   - 作用边界：它定义的是 **starter pack / 共享值班语义**，不等于 observability P0 已关闭，更不等于整个仓库 release-ready。
 
 ## RC 演练最小证据模板（不发布）
 

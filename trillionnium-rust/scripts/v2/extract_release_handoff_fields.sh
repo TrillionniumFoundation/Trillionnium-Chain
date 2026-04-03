@@ -202,6 +202,36 @@ if [ -n "$EXPECTED_BRANCH_REF_CANONICAL" ] && [ "$summary_worktree_branch_ref" !
   exit 1
 fi
 
+if [ -n "$EXPECTED_WORKTREE_ROOT" ]; then
+  [ "$summary_worktree_path" = "$EXPECTED_WORKTREE_ROOT" ] || {
+    printf 'expected worktree mismatch: expected %s got %s\n' "$EXPECTED_WORKTREE_ROOT" "$summary_worktree_path" >&2
+    exit 1
+  }
+  [ "$manifest_worktree_path" = "$EXPECTED_WORKTREE_ROOT" ] || {
+    printf 'expected worktree mismatch: expected %s got %s\n' "$EXPECTED_WORKTREE_ROOT" "$manifest_worktree_path" >&2
+    exit 1
+  }
+  [ "$summary_worktree_branch_ref" = "$EXPECTED_BRANCH_REF_CANONICAL" ] || {
+    printf 'expected branch-ref mismatch: expected %s got %s\n' "$EXPECTED_BRANCH_REF_CANONICAL" "$summary_worktree_branch_ref" >&2
+    exit 1
+  }
+  [ "$manifest_worktree_branch_ref" = "$EXPECTED_BRANCH_REF_CANONICAL" ] || {
+    printf 'expected branch-ref mismatch: expected %s got %s\n' "$EXPECTED_BRANCH_REF_CANONICAL" "$manifest_worktree_branch_ref" >&2
+    exit 1
+  }
+fi
+
+current_branch_ref="$(git symbolic-ref -q HEAD || true)"
+if [ -n "$current_branch_ref" ]; then
+  if [ "$current_branch_ref" = "$summary_worktree_branch_ref" ]; then
+    git_worktree_branch_ref_match="true"
+  else
+    git_worktree_branch_ref_match="false"
+  fi
+else
+  git_worktree_branch_ref_match="unknown"
+fi
+
 printf 'summary_path=%s\n' "$SUMMARY_PATH"
 printf 'manifest_path=%s\n' "$MANIFEST_PATH"
 printf 'summary_generated_at=%s\n' "$summary_generated_at"
