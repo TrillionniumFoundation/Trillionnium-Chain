@@ -7,7 +7,7 @@
 > 在 release / RC / handoff 语境引用本文件时，必须把当时的 `origin/main` commit 与本文件一起记录，避免把过期快照误当成当前结论。
 > - `STATUS.md`：历史推进日志 / working journal，不参与当前 release 判定。
 > - `docs/development/DEVELOPMENT_MASTER_UNIFIED_2026-03-04.md`：开发调度板，不覆盖发布口径。
-> - `docs/development/GO_READY_EVIDENCE_WEB4_2026-03-03.md`、`docs/release/web4-fix-sequence-2026-03-04-evidence.md`：仅表示当时那一轮修复/门禁证据，不等于今天整个仓库已可发布。
+> - `docs/archive/web4-history/GO_READY_EVIDENCE_WEB4_2026-03-03.md`、`docs/archive/web4-history/web4-fix-sequence-2026-03-04-evidence.md`：仅表示当时那一轮修复/门禁证据，不等于今天整个仓库已可发布。
 
 ## 当前结论
 
@@ -58,7 +58,7 @@
    - 当前瓶颈图与 8 周路线：`docs/reports/TRNM_CONCURRENCY_BOTTLENECK_MAP_AND_8W_ROADMAP_2026-03-10.md`
    - TRNM vs Solana vs Sui 对比口径：`docs/reports/TRNM_CONCURRENCY_COMPARISON_2026-03-05.md`
 6. **历史推进与里程碑**：看 `STATUS.md`。
-7. **某一轮 Web4 / release 修复是否跑通过**：看对应 `docs/development/*evidence*.md`、`docs/release/*evidence*.md`。
+7. **某一轮 Web4 / release 修复是否跑通过**：看对应 `docs/archive/web4-history/*evidence*.md`。
 8. **子项目操作说明**：
    - 仓库总览：`README.md`
    - Web4 子项目：`web4-frontend/README.md`

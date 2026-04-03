@@ -15,7 +15,7 @@
 2. `trillionnium-rust/crates/trnm-rpc/tests/dispatch_submit_serial_consistency.rs`
    - 并发压测 `submit-message` 与 `dispatch-open` 同文件写入串行一致性。
    - 断言所有追加写入保留、`task_id` 无重复、锁文件不泄漏。
-3. `docs/development/GO_READY_EVIDENCE_WEB4_2026-03-03.md`（本文档）
+3. `docs/archive/web4-history/GO_READY_EVIDENCE_WEB4_2026-03-03.md`（本文档）
 
 ## 门禁执行与结果
 

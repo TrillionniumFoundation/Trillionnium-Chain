@@ -93,9 +93,9 @@
 ### Challenge E-09（P0）
 - **问题**：release closeout 文档使用短 SHA 且无 artifact digest/run_id 绑定，不满足强审计可追溯。
 - **证据路径**：
-  - `release/closeout/web4-closeout-bundle-2026-03-04.md:5-9,19-31`
+  - `docs/archive/web4-history/web4-closeout-bundle-2026-03-04.md:5-9,19-31`
 - **触发方式**：
-  - `nl -ba release/closeout/web4-closeout-bundle-2026-03-04.md | sed -n '1,40p'`
+  - `nl -ba docs/archive/web4-history/web4-closeout-bundle-2026-03-04.md | sed -n '1,40p'`
 - **建议**：
   - 统一使用 40 位 commit SHA + GitHub run_id/run_attempt + artifact SHA256 清单；补“证据索引清单（manifest）”。
 

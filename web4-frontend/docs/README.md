@@ -33,7 +33,7 @@
 - Web4 当前阶段评分卡：[`../../docs/reports/TRNM_WEB4_PLATFORM_SCORECARD_2026-03-31.md`](../../docs/reports/TRNM_WEB4_PLATFORM_SCORECARD_2026-03-31.md)（若当前 checkout 含有该文件，优先引用它描述平台成熟度；它是基于特定仓库快照的阶段评分卡，不等于当前 release-ready，也不自动等于实时状态）
 - Web4 阶段快照（历史状态，不等于当前 release-ready）：[`../../docs/development/WEB4_PHASE_B_MILESTONE_SNAPSHOT_2026-02-28.md`](../../docs/development/WEB4_PHASE_B_MILESTONE_SNAPSHOT_2026-02-28.md)
 - Web4 前端接口基线：[`../../docs/development/WEB4_FRONTEND_API_INTERFACE_V0.md`](../../docs/development/WEB4_FRONTEND_API_INTERFACE_V0.md)
-- Web4 修复证据（历史 run evidence，不等于当前 release-ready）：[`../../docs/release/web4-fix-sequence-2026-03-04-evidence.md`](../../docs/release/web4-fix-sequence-2026-03-04-evidence.md)
+- Web4 修复证据（历史 run evidence，不等于当前 release-ready）：[`../../docs/archive/web4-history/web4-fix-sequence-2026-03-04-evidence.md`](../../docs/archive/web4-history/web4-fix-sequence-2026-03-04-evidence.md)
 
 ### 5.1 三类问题，分别引用哪份文档
 
