@@ -849,6 +849,16 @@ mod tests {
     }
 
     #[test]
+    fn recovery_startup_summary_marks_checkpoint_ahead_resume_mismatch_after_tail_repair() {
+        let recovered = recovered_state(2, 12, Some(15), true, false);
+
+        assert_eq!(
+            recovery_startup_summary(&recovered),
+            "retained_wal_entries=2 checkpoint_height_retained=15 checkpoint_tip_relation=ahead:4 next_startup_height=12 wal_tail_truncated=true metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume_checkpoint_ahead_mismatch_after_tail_repair"
+        );
+    }
+
+    #[test]
     fn recovery_startup_summary_marks_checkpoint_only_bootstrap_as_ready_mode() {
         let recovered = recovered_state(0, 9, Some(8), false, false);
 
