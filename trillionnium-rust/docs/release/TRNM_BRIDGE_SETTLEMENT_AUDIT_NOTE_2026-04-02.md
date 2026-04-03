@@ -37,7 +37,8 @@ Interpretation guidance:
 
 - `phase = settlement_confirmed` implies `confirm_height` is present and `confirm_reason` is absent
 - `phase = settlement_confirm_failed` implies `confirm_reason` is present and `confirm_height` is absent
-- `phase = relay_heartbeat_degraded` implies the relay heartbeat gate failed before finalization and the event carries the degraded reason in `confirm_reason`
+- `phase = relay_heartbeat_degraded` implies the relay heartbeat gate failed before finalization, `confirm_height` remains absent, and the event carries the degraded reason in `confirm_reason`
+- when an embedded heartbeat sample is malformed, the attempt must still fail closed; only explicitly declared invalid-heartbeat reason families (for example `invalid heartbeat height...` / `invalid heartbeat progression...`) are allowed to flow into the compensated audit trail instead of being reinterpreted as successful settlement evidence
 - `confirm_reason` is a normalized audit string, not a raw upstream blob: invisible/control separators are collapsed to plain spaces, empty-or-fully-sanitized inputs fall back to a stable unknown-reason contract string, and the final stored reason is capped to a replay-stable bounded length (currently 160 chars, with a single terminal ellipsis when truncation occurs)
 
 ## Audit quoting rule
