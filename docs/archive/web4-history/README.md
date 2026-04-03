@@ -5,7 +5,14 @@ This directory contains **historical Web4 evidence / closeout / pre-main documen
 Use these files to answer questions like:
 - what passed in a specific historical repair round;
 - what the closeout bundle recorded on that date;
-- what the old pre-main evidence procedure looked like.
+- what the old pre-main evidence procedure looked like;
+- what the historical Web4 phase snapshot and V0 interface baseline said at that time.
+
+Typical files archived here include:
+- historical evidence / closeout bundles
+- pre-main evidence runbooks
+- phase snapshots
+- V0 interface baseline docs
 
 Do **not** use this directory to decide whether the current repository is release-ready.
 

@@ -28,7 +28,7 @@
 - 工作区全量测试已完成收口，近期关键红点已修复（含 `trnm-rpc` 环境变量测试并发干扰问题）。
 
 ### 1.2 Web4 能力雷达（现状）
-（来源：Appendix A.4 雷达快照；并与 `docs/development/WEB4_PHASE_B_MILESTONE_SNAPSHOT_2026-02-28.md` 对齐）
+（来源：Appendix A.4 雷达快照；并与 `docs/archive/web4-history/WEB4_PHASE_B_MILESTONE_SNAPSHOT_2026-02-28.md` 对齐）
 - Decentralized AI Compute Market：3/5
 - Verifiable Execution (TEE/ZK/Fraud)：2/5
 - Cross-chain Settlement & Interop：1/5
@@ -312,7 +312,7 @@ Trillionnium 目标不是“单链功能齐全”，而是“可被开发者和�
 
 ### 10.2 前端接口文档（2026-03-03）
 - 现状：前端默认走 `web4-frontend/lib/api-contract/*` 的只读查询客户端；仅在显式 `?mode=mock` 时回退到本地 snapshot fallback。
-- 接口契约基线：`docs/development/WEB4_FRONTEND_API_INTERFACE_V0.md` 与 `web4-frontend/docs/api-contract.md`
+- 接口契约基线：`docs/archive/web4-history/WEB4_FRONTEND_API_INTERFACE_V0.md` 与 `web4-frontend/docs/api-contract.md`
 - 约束：Dashboard 仅消费只读聚合 API，不得绕过 XI 门禁结论（X2/I2 gate）；`/api/v0/web4/*` 仅是历史草案命名，不是当前仓内 route。
 
 ### 10.3 Lane MV（2026-03-03）V2 回执契约冻结主文档锚点
