@@ -81,7 +81,14 @@ fn parse_governed_bool_param_rejects_fullwidth_digit_aliases_fail_closed() {
 }
 #[test]
 fn parse_governed_bool_param_rejects_unicode_whitespace_lookalikes_fail_closed() {
-    for raw in ["true\u{00a0}", "\u{2003}false", "o\u{00a0}n", "of\u{2009}f"] {
+    for raw in [
+        "true\u{00a0}",
+        "\u{2003}false",
+        "o\u{00a0}n",
+        "of\u{2009}f",
+        "\u{feff}true",
+        "o\u{3000}n",
+    ] {
         let err = parse_governed_bool_param(raw, "default_slash_on_unresolved_challenge")
             .expect_err("unicode whitespace boolean lookalikes must be rejected");
         assert!(matches!(err, PouwError::State(msg) if msg.contains(raw)));
