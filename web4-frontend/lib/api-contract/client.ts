@@ -71,7 +71,9 @@ const normalizeBaseUrl = (baseUrl: string): string => {
 
 const normalizeQueryParam = (value: unknown): string | null => {
   if (typeof value !== "string") return null;
-  const trimmed = value.trim();
+  const trimmed = value
+    .replace(/[\u200B\u200C\u200D\u2060\u2063\uFEFF]/g, "")
+    .trim();
   return trimmed ? trimmed : null;
 };
 

@@ -109,6 +109,33 @@ describe("api-contract client and retry hardening", () => {
     expect(calledUrl).not.toContain("%20%20");
   });
 
+  it("strips BOM and zero-width noise from normalized audit query params", async () => {
+    const fetchImpl = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({ events: [] }),
+    });
+
+    const client = createFrontendApiClient({
+      baseUrl: "http://127.0.0.1:8080",
+      fetchImpl: fetchImpl as unknown as typeof fetch,
+    });
+
+    await client.queryNormalizedAuditEvents({
+      source: "\uFEFF governance-guard \u200B",
+      eventType: "\u200D governance.proposal_executed \u2060",
+      limit: 5,
+      cursor: "\uFEFF \u200Bcursor-2\u200D ",
+    });
+
+    const calledUrl = String((fetchImpl.mock.calls[0] ?? [])[0]);
+    expect(calledUrl).toContain("source=governance-guard");
+    expect(calledUrl).toContain("eventType=governance.proposal_executed");
+    expect(calledUrl).toContain("cursor=cursor-2");
+    expect(calledUrl).not.toContain("%EF%BB%BF");
+    expect(calledUrl).not.toContain("%E2%80%8B");
+    expect(calledUrl).not.toContain("%E2%80%8D");
+  });
+
   it("truncates fractional normalized audit limits and drops non-string filters", async () => {
     const fetchImpl = vi.fn().mockResolvedValue({
       ok: true,
