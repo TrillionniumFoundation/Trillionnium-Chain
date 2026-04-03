@@ -391,6 +391,22 @@ describe("api-contract adapters", () => {
     ).toThrow(FrontendApiError);
   });
 
+  it("fails closed when canonical normalized audit-events page sets hasMore without nextCursor", () => {
+    expect(() =>
+      adaptQueryNormalizedAuditEvents({
+        events: [
+          {
+            source: "bridge-relay",
+            event_type: "bridge_relay.proof_submitted",
+            actor: "validator-1",
+            checkedAt: "height:777",
+          },
+        ],
+        hasMore: true,
+      }),
+    ).toThrow(FrontendApiError);
+  });
+
   it("adapts normalized audit-events fallback with eventType/objectId aliases", () => {
     const out = adaptQueryNormalizedAuditEvents([
       {

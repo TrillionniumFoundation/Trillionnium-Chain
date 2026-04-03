@@ -72,7 +72,15 @@ export const queryNormalizedAuditEventsPageSchema = z.object({
   nextCursor: z.string().min(1).optional(),
   hasMore: z.boolean().optional(),
   total: z.number().int().nonnegative().optional(),
-}).strict();
+}).strict().superRefine((payload, ctx) => {
+  if (payload.hasMore === true && payload.nextCursor == null) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: "normalized audit page with hasMore=true must include nextCursor",
+      path: ["nextCursor"],
+    });
+  }
+});
 
 export const normalizedAuditEventsQuerySchema = z.object({
   source: z.string().trim().min(1).optional(),

@@ -105,3 +105,5 @@ const normalizedEvents = await api.queryNormalizedAuditEvents({
 - `nextCursor`：下一页游标
 - `hasMore`：是否有更多
 - `total`：后端可选的总记录数估计
+
+额外约束：若响应声明 `hasMore: true`，则必须同时返回非空 `nextCursor`；否则前端按合约违规 fail-closed 处理。
