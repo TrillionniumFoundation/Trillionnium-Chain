@@ -691,4 +691,59 @@ describe("dashboard source normalized audit pagination", () => {
     ).toBe("Critical");
     expect(snapshot.kpis.find((kpi) => kpi.label === "Open Incidents")?.value).toBe("2");
   });
+
+  it("treats disabled capability audit events as critical fail-closed incidents", async () => {
+    const mockClient = {
+      queryTask: vi
+        .fn()
+        .mockResolvedValue({
+          task: {
+            id: "351",
+            owner: "ops",
+            status: "running",
+            createdAt: "2026-03-01T00:00:00.000Z",
+            metadata: {},
+          },
+        }),
+      queryEvents: vi.fn().mockResolvedValue({
+        taskId: "351",
+        events: [],
+      }),
+      queryCapabilityAudit: vi.fn().mockResolvedValue({
+        subject: "did:trnm:test",
+        audits: [
+          {
+            subject: "did:trnm:test",
+            capability: "AUDIT_READ",
+            granted: true,
+            checkedAt: "2026-03-01T00:00:00.000Z",
+          },
+        ],
+      }),
+      queryNormalizedAuditEvents: vi.fn().mockResolvedValue({
+        events: [
+          {
+            source: "capability-registry",
+            event_type: "capability.disabled",
+            actor: "security",
+            object_id: "did:trnm:alice",
+            timestamp: "2026-03-01T00:07:00.000Z",
+            reason: "capability_disabled",
+            note: "readonly access disabled pending compliance review",
+          },
+        ],
+        hasMore: false,
+      }),
+    } as unknown as ReturnType<typeof apiContractClient.createFrontendApiClient>;
+
+    vi.spyOn(apiContractClient, "createFrontendApiClient").mockReturnValue(mockClient);
+
+    const snapshot = await fetchDashboardSnapshot();
+
+    expect(
+      snapshot.events.find((event) => event.summary === "capability-registry · capability.disabled")
+        ?.severity,
+    ).toBe("Critical");
+    expect(snapshot.kpis.find((kpi) => kpi.label === "Open Incidents")?.value).toBe("1");
+  });
 });
