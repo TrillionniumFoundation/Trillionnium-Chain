@@ -2647,6 +2647,7 @@ bootstrap_peers = ["127.0.0.1:27656"]
             expected_rows_in_order[5],
             expected_rows_in_order[6],
             expected_rows_in_order[7],
+            expected_rows_in_order[8],
         ];
         let documented_acceptance_table_lines = readme
             .lines()
