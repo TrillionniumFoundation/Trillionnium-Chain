@@ -227,6 +227,16 @@ fn contract_error_codes_stable() {
 }
 
 #[test]
+fn contract_error_response_shape_stable() {
+    let value = serde_json::to_value(RpcErrorResponse {
+        code: "INVALID_ADDRESS",
+        message: "bad".into(),
+    })
+    .unwrap();
+    assert_eq!(value, json!({"code":"INVALID_ADDRESS","message":"bad"}));
+}
+
+#[test]
 fn contract_gov_param_shape_omits_pending_update_when_absent() {
     let v = serde_json::to_value(GovParamQueryResponse {
         key_id: 7,
