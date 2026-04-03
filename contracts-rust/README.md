@@ -118,6 +118,19 @@ cd ../audit-events && cargo test
 - `TRNM_MAINNET_GAP_MATRIX_2026-03-26.md`：external contracts 更接近 launch-adjacent / scope-dependent 面，不自动属于 Day-1 core minimum
 - `trillionnium-rust/docs/protocol/external-contracts-rust/RUST_NATIVE_EXTERNAL_CONTRACTS_ARCH_2026-03-05.md`：定义的是目标 package layout / Host ABI / runtime boundary，不能把目标布局误读为当前工程已闭环
 
+### Day-1 scope 判读（保持与 gap matrix 一致）
+
+当前 `contracts-rust/` 子树更适合作为 **Day-1 scope-dependent / trailing-capable** 的外围面来描述，而不是默认 P0：
+
+- `settlement-vault/`：只有在公开 launch promise 明确包含 oracle-backed settlement / vault semantics 时，才应上升为 Day-1 blocker；否则更接近可后置模块。
+- `bridge-relay/`：只有在公开 day-1 叙事包含 cross-chain / bridge positioning 时，才应被视为 P0；否则按 gap matrix 应维持 trailing-capable 口径。
+- `governance-guard/`：可以帮助冻结 upgrade / pause discipline，但当前 crate 仍是 Rust MVP 语义骨架，不等价于已完成链上治理接线或 public-mainnet governance closure。
+- `audit-events/`：只是 shared schema 邻接层；它有助于统一事件口径，但不单独决定 external contracts 已进入 Day-1 minimum scope。
+
+因此，在 README、对外材料或内部 handoff 中，更安全的写法应是：
+
+> `contracts-rust/` 代表 TRNM external-contract perimeter 的 Rust MVP 子树；哪些模块会进入 Day-1 launch promise，仍取决于当轮 mainnet scope freeze，而不是由目录存在本身自动决定。
+
 因此，`contracts-rust/` 当前最准确的定位是：
 
 > 一个应被持续推进、但必须保持边界诚实的 Rust-native external-contracts 子树。
