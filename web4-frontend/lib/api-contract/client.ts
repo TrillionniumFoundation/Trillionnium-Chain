@@ -87,8 +87,19 @@ const isAbortLikeError = (err: unknown): boolean => {
 
   const name = "name" in err ? err.name : undefined;
   const code = "code" in err ? err.code : undefined;
+  const cause = "cause" in err ? err.cause : undefined;
 
-  return name === "AbortError" || code === "ABORT_ERR";
+  if (name === "AbortError" || code === "ABORT_ERR") {
+    return true;
+  }
+
+  if (cause && typeof cause === "object") {
+    const causeName = "name" in cause ? cause.name : undefined;
+    const causeCode = "code" in cause ? cause.code : undefined;
+    return causeName === "AbortError" || causeCode === "ABORT_ERR";
+  }
+
+  return false;
 };
 
 const TIMEOUT_ERROR_CODES = new Set([
