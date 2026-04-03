@@ -2479,6 +2479,39 @@ mod tests {
     }
 
     #[test]
+    fn reserve_only_stale_seen_metadata_does_not_hide_reopened_shared_slot() {
+        let mut g = LaneAdmissionGate::new(2, 2);
+
+        assert_eq!(g.admit(41, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(42, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.qos_snapshot().total_headroom, 0);
+        assert_eq!(g.qos_snapshot().fresh_normal_admissible, false);
+        assert_eq!(g.qos_snapshot().fresh_critical_admissible, false);
+
+        // Once one real occupant drains, reserve-only mode should immediately
+        // reopen the shared slot for both ingress classes. Stale critical seen
+        // metadata alone must not pin the public contract in a phantom fail-closed
+        // state.
+        assert_eq!(g.pop_ready(), Some(41));
+        g.critical.seen.insert(777);
+        assert_eq!(
+            g.qos_snapshot(),
+            LaneQosSnapshot {
+                normal_queued: 0,
+                critical_queued: 1,
+                total_queued: 1,
+                normal_headroom: 0,
+                critical_headroom: 1,
+                total_headroom: 1,
+                fresh_normal_admissible: true,
+                fresh_critical_admissible: true,
+            }
+        );
+        assert_eq!(g.admit(43, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(43, IngressClass::Critical), AdmitOutcome::Duplicate);
+    }
+
+    #[test]
     fn reserve_only_normal_borrowing_does_not_preempt_critical_drain_order() {
         let mut g = LaneAdmissionGate::new(3, 3);
 
