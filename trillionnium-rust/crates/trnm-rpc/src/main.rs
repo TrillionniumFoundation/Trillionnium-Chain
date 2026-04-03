@@ -466,6 +466,16 @@ impl CapabilityAuditQueryError {
     }
 }
 
+fn load_adapter_records_file(path: &PathBuf) -> Vec<AdapterRecord> {
+    let Ok(raw) = fs::read_to_string(path) else {
+        return vec![];
+    };
+    raw.lines()
+        .filter(|l| !l.trim().is_empty())
+        .filter_map(|l| serde_json::from_str::<AdapterRecord>(l).ok())
+        .collect()
+}
+
 fn load_latest_adapter_records() -> Vec<AdapterRecord> {
     let root = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
         .parent()
@@ -488,17 +498,15 @@ fn load_latest_adapter_records() -> Vec<AdapterRecord> {
         })
         .collect();
     files.sort();
-    let Some(latest) = files.last() else {
-        return vec![];
-    };
 
-    let Ok(raw) = fs::read_to_string(latest) else {
-        return vec![];
-    };
-    raw.lines()
-        .filter(|l| !l.trim().is_empty())
-        .filter_map(|l| serde_json::from_str::<AdapterRecord>(l).ok())
-        .collect()
+    for path in files.iter().rev() {
+        let records = load_adapter_records_file(path);
+        if !records.is_empty() {
+            return records;
+        }
+    }
+
+    vec![]
 }
 
 #[cfg(test)]
