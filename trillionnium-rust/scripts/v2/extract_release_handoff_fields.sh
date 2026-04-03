@@ -102,8 +102,54 @@ if [ -z "$MANIFEST_PATH" ]; then
   MANIFEST_PATH="$latest_rc_dir/manifest.txt"
 fi
 
+if [ -f "$TRNM_ROOT/run/preflight/go-no-go-latest.txt" ]; then
+  PREFLIGHT_SUMMARY_PATH="$TRNM_ROOT/run/preflight/go-no-go-latest.txt"
+else
+  latest_preflight_summary=""
+  if compgen -G "$TRNM_ROOT/run/preflight/go-no-go-*.txt" >/dev/null; then
+    latest_preflight_summary="$(ls -dt "$TRNM_ROOT"/run/preflight/go-no-go-*.txt 2>/dev/null | head -n 1)"
+  fi
+  if [ -n "$latest_preflight_summary" ]; then
+    PREFLIGHT_SUMMARY_PATH="$latest_preflight_summary"
+  fi
+fi
+
 [ -f "$SUMMARY_PATH" ] || { echo "missing summary file: $SUMMARY_PATH" >&2; exit 1; }
 [ -f "$MANIFEST_PATH" ] || { echo "missing manifest file: $MANIFEST_PATH" >&2; exit 1; }
+
+resolve_path() {
+  local path="$1"
+  local dir base
+  dir="$(cd "$(dirname "$path")" && pwd -P)"
+  base="$(basename "$path")"
+  printf '%s/%s\n' "$dir" "$base"
+}
+
+require_path_within_trnm_root() {
+  local field_name="$1"
+  local path="$2"
+
+  case "$path" in
+    "$TRNM_ROOT"|"$TRNM_ROOT"/*) ;;
+    *)
+      printf '%s must resolve under %s: %s\n' "$field_name" "$TRNM_ROOT" "$path" >&2
+      exit 1
+      ;;
+  esac
+}
+
+SUMMARY_PATH="$(resolve_path "$SUMMARY_PATH")"
+MANIFEST_PATH="$(resolve_path "$MANIFEST_PATH")"
+require_path_within_trnm_root summary_path "$SUMMARY_PATH"
+require_path_within_trnm_root manifest_path "$MANIFEST_PATH"
+if [ "$SUMMARY_PATH" = "$MANIFEST_PATH" ]; then
+  printf 'summary and manifest paths must be distinct artifacts: %s\n' "$SUMMARY_PATH" >&2
+  exit 1
+fi
+if [ -n "$PREFLIGHT_SUMMARY_PATH" ]; then
+  PREFLIGHT_SUMMARY_PATH="$(resolve_path "$PREFLIGHT_SUMMARY_PATH")"
+  require_path_within_trnm_root preflight_summary_path "$PREFLIGHT_SUMMARY_PATH"
+fi
 
 require_key() {
   local path="$1"
@@ -112,6 +158,12 @@ require_key() {
   value="$(awk -F= -v key="$key" '$1 == key { sub(/^[^=]*=/, ""); print; exit }' "$path")"
   [ -n "$value" ] || { printf 'missing %s in %s\n' "$key" "$path" >&2; exit 1; }
   printf '%s' "$value"
+}
+
+optional_key() {
+  local path="$1"
+  local key="$2"
+  awk -F= -v key="$key" '$1 == key { sub(/^[^=]*=/, ""); print; exit }' "$path"
 }
 
 assert_equal() {
@@ -232,6 +284,81 @@ else
   git_worktree_branch_ref_match="unknown"
 fi
 
+[ "$summary_worktree_branch_ref_match" = "true" ] || {
+  printf 'artifact mismatch for git_worktree_branch_ref_match: expected true got %s\n' "$summary_worktree_branch_ref_match" >&2
+  exit 1
+}
+
+[ "$summary_status_summary" = "clean" ] || {
+  printf 'artifact mismatch for git_status_summary: expected clean got %s\n' "$summary_status_summary" >&2
+  exit 1
+}
+
+[ "$summary_result" = "PASS" ] || {
+  printf 'artifact mismatch for summary_result: expected PASS got %s\n' "$summary_result" >&2
+  exit 1
+}
+
+if [ -n "$EXPECTED_WORKTREE_ROOT" ]; then
+  if [ "$summary_worktree_path" != "$EXPECTED_WORKTREE_ROOT" ]; then
+    printf 'artifact mismatch for expected worktree root: expected=%s summary=%s\n' "$EXPECTED_WORKTREE_ROOT" "$summary_worktree_path" >&2
+    exit 1
+  fi
+fi
+
+if [ -n "$VERIFIED_WORKTREE" ] && [ "$summary_worktree_path" != "$VERIFIED_WORKTREE" ]; then
+  printf 'artifact mismatch for verified worktree: verified=%s summary=%s\n' "$VERIFIED_WORKTREE" "$summary_worktree_path" >&2
+  exit 1
+fi
+
+if [ -n "$VERIFIED_BRANCH_REF" ]; then
+  if [ "$summary_worktree_branch_ref" != "$VERIFIED_BRANCH_REF" ]; then
+    printf 'artifact mismatch for verified branch ref: verified=%s summary=%s\n' "$VERIFIED_BRANCH_REF" "$summary_worktree_branch_ref" >&2
+    exit 1
+  fi
+  if [ "$summary_expected_worktree_branch_ref" != "$VERIFIED_BRANCH_REF" ]; then
+    printf 'artifact mismatch for artifact expected branch ref vs verified branch ref: verified=%s summary=%s\n' "$VERIFIED_BRANCH_REF" "$summary_expected_worktree_branch_ref" >&2
+    exit 1
+  fi
+fi
+
+if [ -n "$EXPECTED_BRANCH_REF" ]; then
+  if [ "$summary_worktree_branch_ref" != "$EXPECTED_BRANCH_REF" ]; then
+    printf 'artifact mismatch for expected worktree branch ref: expected=%s summary=%s\n' "$EXPECTED_BRANCH_REF" "$summary_worktree_branch_ref" >&2
+    exit 1
+  fi
+  if [ "$summary_expected_worktree_branch_ref" != "$EXPECTED_BRANCH_REF" ]; then
+    printf 'artifact mismatch for artifact expected branch ref: expected=%s summary=%s\n' "$EXPECTED_BRANCH_REF" "$summary_expected_worktree_branch_ref" >&2
+    exit 1
+  fi
+fi
+
+if [ -n "$EXPECTED_HEAD" ]; then
+  if [ "$summary_head" != "$EXPECTED_HEAD" ]; then
+    printf 'artifact mismatch for expected head: expected=%s summary=%s\n' "$EXPECTED_HEAD" "$summary_head" >&2
+    exit 1
+  fi
+fi
+
+if [ -n "$VERIFIED_HEAD" ] && [ "$summary_head" != "$VERIFIED_HEAD" ]; then
+  printf 'artifact mismatch for verified head: verified=%s summary=%s\n' "$VERIFIED_HEAD" "$summary_head" >&2
+  exit 1
+fi
+
+if [ -n "$VERIFIED_WORKTREE" ]; then
+  printf 'verified_worktree=%s\n' "$VERIFIED_WORKTREE"
+fi
+if [ -n "$VERIFIED_BRANCH_REF" ]; then
+  printf 'verified_branch_ref=%s\n' "$VERIFIED_BRANCH_REF"
+fi
+if [ -n "$VERIFIED_HEAD" ]; then
+  printf 'verified_head=%s\n' "$VERIFIED_HEAD"
+fi
+if [ -n "$PREFLIGHT_SUMMARY_PATH" ]; then
+  printf 'preflight_summary_path=%s\n' "$PREFLIGHT_SUMMARY_PATH"
+else
+  printf 'preflight_summary_path=%s\n' '<missing>'
+fi
 printf 'summary_path=%s\n' "$SUMMARY_PATH"
 printf 'manifest_path=%s\n' "$MANIFEST_PATH"
 printf 'summary_generated_at=%s\n' "$summary_generated_at"

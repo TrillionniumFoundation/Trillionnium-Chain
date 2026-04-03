@@ -48,7 +48,8 @@ fi
 CURRENT_WORKTREE_ENTRY="$(git worktree list --porcelain 2>/dev/null | awk -v target="$GIT_TOPLEVEL" '
   BEGIN { in_match=0 }
   /^worktree / {
-    in_match = ($2 == target)
+    worktree_path = substr($0, length("worktree ") + 1)
+    in_match = (worktree_path == target)
   }
   in_match { print }
   in_match && /^$/ { exit }
@@ -66,6 +67,17 @@ if [[ -n "$EXPECTED_BRANCH_REF_CANONICAL" ]]; then
     GIT_WORKTREE_BRANCH_REF_MATCH="true"
   else
     GIT_WORKTREE_BRANCH_REF_MATCH="false"
+  fi
+fi
+
+EXPECTED_BRANCH_REF_NORMALIZED="${EXPECTED_BRANCH_REF:-}"
+WORKTREE_BRANCH_REF_MATCH="unknown"
+if [[ -n "${EXPECTED_BRANCH_REF:-}" ]]; then
+  EXPECTED_BRANCH_REF_NORMALIZED="$(normalize_branch_ref "$EXPECTED_BRANCH_REF")"
+  if [[ -n "$CURRENT_WORKTREE_BRANCH_REF" && "$CURRENT_WORKTREE_BRANCH_REF" == "$EXPECTED_BRANCH_REF_NORMALIZED" ]]; then
+    WORKTREE_BRANCH_REF_MATCH="true"
+  else
+    WORKTREE_BRANCH_REF_MATCH="false"
   fi
 fi
 

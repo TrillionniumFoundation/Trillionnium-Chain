@@ -210,8 +210,10 @@ EXPECTED_BRANCH_REF="refs/heads/rc/stage1-devnet-20260324"
 Interpretation rule:
 - do not replace `EXPECTED_*` with values copied back out of the current shell session; use the lane assignment / ticket values
 - if the helper fails, stop instead of continuing to release evidence generation
-- after the helper passes, record `git rev-parse HEAD` together with the verified worktree/ref in the handoff note so later `summary.txt` / `manifest.txt` identity checks have an explicit pre-run anchor
-- even after path-resolving the latest `run/health/evidence-*` or `release/rc-*` artifact, still compare `git_worktree_path=` / `git_worktree_branch_ref=` inside those files against the ticket-assigned worktree/ref; “latest artifact under this checkout” is not by itself lane-identity proof
+- after the helper passes, record its `verified_worktree=`, `verified_branch_ref=`, and `verified_head=` lines verbatim in the handoff note; do not paraphrase them into "same branch as before" or re-derive them from the shell later
+- when you also record `git rev-parse HEAD`, treat it as a duplicate cross-check next to the helper output rather than the sole identity anchor
+- even after path-resolving the latest `run/health/evidence-*` or `release/rc-*` artifact, still compare `git_worktree_path=` / `git_worktree_branch_ref=` inside those files against the ticket-assigned worktree/ref; `git_expected_worktree_branch_ref=` must also preserve the ticket-assigned target and `git_worktree_branch_ref_match=true` is required rather than a soft warning
+- prefer the shared extraction helper for handoff quoting (`./scripts/v2/extract_release_handoff_fields.sh --expected-worktree-root "$EXPECTED_WORKTREE_ROOT" --expected-branch-ref "$EXPECTED_BRANCH_REF"`) so path resolution and cross-artifact identity checks fail closed together instead of depending on manually recopied snippets
 
 ### Step 4 — run minimum replay verification on the clean branch
 Required:

@@ -170,7 +170,7 @@ Minimum evidence files to preserve:
 
 Interpretation rule:
 - `summary.txt` must end with `result=PASS`
-- `generated_at=` and `git_status_summary=clean` must both be present before anyone treats the evidence as handoff-grade
+- raw `summary.txt` must contain `generated_at=` and `git_status_summary=clean`; when quoting through `extract_release_handoff_fields.sh`, preserve that timestamp as `summary_generated_at=` so it cannot be confused with the RC manifest timestamp
 - if `challenge_reexec=FAIL(entry_not_found)`, treat the rehearsal as incomplete rather than silently acceptable
 
 ### 3. RC gate rehearsal
@@ -224,6 +224,21 @@ Use the generated artifact as the source of truth for the step you just ran; do 
 When multiple timestamped evidence directories exist, resolve the artifact path from disk before quoting any field in chat, a ticket, or a handoff note.
 
 ```bash
+# Latest preflight summary
+preflight_summary_path="run/preflight/go-no-go-latest.txt"
+if [ ! -f "$preflight_summary_path" ]; then
+  latest_preflight_summary=""
+  if compgen -G 'run/preflight/go-no-go-*.txt' >/dev/null; then
+    latest_preflight_summary="$(ls -dt run/preflight/go-no-go-*.txt 2>/dev/null | head -n 1)"
+  fi
+  if [ -n "$latest_preflight_summary" ]; then
+    preflight_summary_path="$latest_preflight_summary"
+  else
+    preflight_summary_path="<missing>"
+  fi
+fi
+printf 'preflight_summary_path=%s\n' "$preflight_summary_path"
+
 # Latest local-evidence summary
 latest_evidence_dir="$(ls -dt run/health/evidence-* 2>/dev/null | head -n 1)"
 [ -n "$latest_evidence_dir" ] || { echo "missing local evidence" >&2; exit 1; }
@@ -239,14 +254,15 @@ printf 'manifest_path=%s\n' "$manifest_path"
 
 Operator rule:
 - if the directory listing returns nothing, do not guess the path from memory; treat the step as not yet run or artifact retention as incomplete
+- if `run/preflight/go-no-go-latest.txt` is missing, treat preflight evidence retention as incomplete instead of silently omitting the path from the handoff note
 - quote `summary_path` / `manifest_path` together with the `git_branch=` and `git_head=` fields from the file you just resolved
 - path resolution alone is **not** lane-identity proof: after resolving the files, also verify the artifact `git_worktree_path=` / `git_worktree_branch_ref=` against the lane-assigned worktree/ref from the ticket instead of assuming “latest artifact under this checkout” is automatically the assigned lane
-- prefer `./scripts/v2/extract_release_handoff_fields.sh --expected-worktree-root <lane-worktree> --expected-branch-ref <lane-branch-ref>` (or `./trillionnium-rust/scripts/v2/extract_release_handoff_fields.sh ...` from the repo root) so artifact resolution and assigned-lane comparison fail closed in one step
+- prefer `./scripts/v2/extract_release_handoff_fields.sh --expected-worktree-root <lane-worktree> --expected-branch-ref <lane-branch-ref>` (or `./trillionnium-rust/scripts/v2/extract_release_handoff_fields.sh ...` from the repo root) so artifact resolution and assigned-lane comparison fail closed in one step; when preflight artifacts exist, the helper now also emits `preflight_summary_path=` for the ticket/handoff note
 
 Operator discipline:
 - quote `summary.txt` only for local-evidence conclusions
 - quote `manifest.txt` only for RC rehearsal conclusions
-- if branch / commit / worktree identity differs across artifacts, stop and treat the handoff as **No-Go** until the mismatch is explained
+- if branch / commit / worktree identity differs across artifacts, stop and treat the handoff as **evidence-incomplete / No-Go** until the mismatch is explained
 
 ### Canonical handoff extraction block
 
@@ -271,7 +287,22 @@ Operator rule:
 
 If you need the raw shell extraction for an air-gapped/debugging context, the equivalent block is:
 
+> Note: this raw block resolves artifact paths and field snippets, but it does **not** reproduce the helper's pre-run `verified_worktree=` / `verified_branch_ref=` / `verified_head=` anchor. When a ticket/lane assigns the worktree/ref, prefer the helper invocation above so the handoff keeps that fail-closed identity anchor instead of only comparing artifacts after the fact.
+
 ```bash
+preflight_summary_path="run/preflight/go-no-go-latest.txt"
+if [ ! -f "$preflight_summary_path" ]; then
+  latest_preflight_summary=""
+  if compgen -G 'run/preflight/go-no-go-*.txt' >/dev/null; then
+    latest_preflight_summary="$(ls -dt run/preflight/go-no-go-*.txt 2>/dev/null | head -n 1)"
+  fi
+  if [ -n "$latest_preflight_summary" ]; then
+    preflight_summary_path="$latest_preflight_summary"
+  else
+    preflight_summary_path="<missing>"
+  fi
+fi
+
 latest_evidence_dir="$(ls -dt run/health/evidence-* 2>/dev/null | head -n 1)"
 latest_rc_dir="$(ls -dt release/rc-* 2>/dev/null | head -n 1)"
 
@@ -281,20 +312,42 @@ latest_rc_dir="$(ls -dt release/rc-* 2>/dev/null | head -n 1)"
 summary_path="$latest_evidence_dir/summary.txt"
 manifest_path="$latest_rc_dir/manifest.txt"
 
+printf 'preflight_summary_path=%s\n' "$preflight_summary_path"
 printf 'summary_path=%s\n' "$summary_path"
 printf 'manifest_path=%s\n' "$manifest_path"
 
-awk -F= '/^(git_toplevel|git_branch|git_head|git_head_state|git_worktree_path|git_worktree_branch_ref|git_expected_worktree_branch_ref|git_worktree_branch_ref_match|git_status_summary|generated_at|truth_source|historical_evidence_only|evidence_scope|result|rollback_command|replay_command|challenge_reexec_entry|replay_env_trnm_challenge_reexec_entry)=/ { print }' "$summary_path"
-awk -F= '/^(git_toplevel|git_branch|git_head|git_head_state|git_worktree_path|git_worktree_branch_ref|git_expected_worktree_branch_ref|git_worktree_branch_ref_match|git_status_summary|generated_at|truth_source|historical_evidence_only|evidence_scope|rollback_command|replay_command)=/ { print }' "$manifest_path"
+awk -F= '
+  /^(git_toplevel|git_branch|git_head|git_head_state|git_worktree_path|git_worktree_branch_ref|git_expected_worktree_branch_ref|git_worktree_branch_ref_match|git_status_summary)=/ { print; next }
+  /^truth_source=/ { sub(/^truth_source=/, "summary_truth_source="); print; next }
+  /^historical_evidence_only=/ { sub(/^historical_evidence_only=/, "summary_historical_evidence_only="); print; next }
+  /^evidence_scope=/ { sub(/^evidence_scope=/, "summary_evidence_scope="); print; next }
+  /^rollback_command=/ { sub(/^rollback_command=/, "summary_rollback_command="); print; next }
+  /^replay_command=/ { sub(/^replay_command=/, "summary_replay_command="); print; next }
+  /^challenge_reexec_entry=/ { print; next }
+  /^replay_env_trnm_challenge_reexec_entry=/ { print; next }
+  /^result=/ { sub(/^result=/, "summary_result="); print; next }
+  /^generated_at=/ { sub(/^generated_at=/, "summary_generated_at="); print }
+' "$summary_path"
+awk -F= '
+  /^(git_toplevel|git_branch|git_head|git_head_state|git_worktree_path|git_worktree_branch_ref|git_expected_worktree_branch_ref|git_worktree_branch_ref_match|git_status_summary)=/ { print; next }
+  /^truth_source=/ { sub(/^truth_source=/, "manifest_truth_source="); print; next }
+  /^historical_evidence_only=/ { sub(/^historical_evidence_only=/, "manifest_historical_evidence_only="); print; next }
+  /^evidence_scope=/ { sub(/^evidence_scope=/, "manifest_evidence_scope="); print; next }
+  /^rollback_command=/ { sub(/^rollback_command=/, "manifest_rollback_command="); print; next }
+  /^replay_command=/ { sub(/^replay_command=/, "manifest_replay_command="); print; next }
+  /^generated_at=/ { sub(/^generated_at=/, "manifest_generated_at="); print }
+' "$manifest_path"
 ```
 
 Interpretation rule:
 - if either path is missing, the handoff is incomplete; do not substitute an older artifact from memory
-- if `git_toplevel=`, `git_branch=`, `git_head=`, `git_head_state=`, `git_worktree_path=`, `git_worktree_branch_ref=`, `git_expected_worktree_branch_ref=`, `git_worktree_branch_ref_match=`, `git_status_summary=`, `truth_source=`, `historical_evidence_only=`, or `evidence_scope=` differ between the two files, stop and treat the rehearsal as **No-Go** until explained
-- treat `git_worktree_branch_ref_match=true` as mandatory; `false` / `unknown` is a stop signal even if the rest of the fields look plausible
+- if `git_toplevel=`, `git_branch=`, `git_head=`, `git_head_state=`, `git_worktree_path=`, `git_worktree_branch_ref=`, `git_expected_worktree_branch_ref=`, `git_worktree_branch_ref_match=`, or `git_status_summary=` differ between the two files, stop and treat the rehearsal as **evidence-incomplete / No-Go** until explained
+- when quoting helper/raw-extraction output, compare `summary_truth_source=` vs `manifest_truth_source=`, `summary_historical_evidence_only=` vs `manifest_historical_evidence_only=`, and `summary_evidence_scope=` vs `manifest_evidence_scope=`; when quoting the raw artifacts directly, compare the corresponding unprefixed `truth_source=`, `historical_evidence_only=`, and `evidence_scope=` lines from each file
+- treat `git_worktree_branch_ref_match=true` as mandatory; `false` / `unknown` is a stop signal even if the rest of the fields look plausible and should also be classified as **evidence-incomplete / No-Go**
 - preserve both `summary_generated_at=` and `manifest_generated_at=` from the artifacts/helper output; they do **not** need to be identical, but they must both exist so operators can audit when each artifact was generated instead of collapsing them into one hand-copied timestamp
-- if `challenge_reexec_entry=` / `replay_env_trnm_challenge_reexec_entry=` appear in `summary.txt`, quote them verbatim next to `replay_command=` instead of dropping them from the handoff note
-- quote the emitted `rollback_command=` / `replay_command=` lines verbatim; do not rewrite them into a shorter or "equivalent" form
+- `summary_rollback_command` / `summary_replay_command` and `manifest_rollback_command` / `manifest_replay_command` should each be quoted verbatim from their own artifact; they do **not** need to be text-identical across `summary.txt` and `manifest.txt`
+- if `challenge_reexec_entry=` / `replay_env_trnm_challenge_reexec_entry=` appear in `summary.txt`, quote them verbatim next to `summary_replay_command=` (or raw `replay_command=` when quoting `summary.txt` directly) instead of dropping them from the handoff note
+- quote the emitted `summary_rollback_command=` / `summary_replay_command=` and `manifest_rollback_command=` / `manifest_replay_command=` lines verbatim; do not rewrite them into a shorter or "equivalent" form
 
 ## Forbidden operator shortcuts
 
@@ -368,8 +421,12 @@ Record these fields in the release ticket or operator handoff note:
 - nightly streak result:
 - go/no-go decision:
 - blocker summary:
-- rollback command:
-- replay command:
+- local evidence rollback command (`summary_rollback_command`, or `rollback_command=` from `summary.txt` when quoting the raw artifact directly):
+- local evidence replay command (`summary_replay_command`, or `replay_command=` from `summary.txt` when quoting the raw artifact directly):
+- local evidence replay env challenge re-exec entry (`replay_env_trnm_challenge_reexec_entry`; preserve the literal helper/artifact value, including `<entry_not_found>`, when present):
+- local evidence challenge re-exec entry (`challenge_reexec_entry`; preserve the literal helper/artifact value, including `<entry_not_found>`, when present):
+- rc manifest rollback command (`manifest_rollback_command`, or `rollback_command=` from `manifest.txt` when quoting the raw artifact directly):
+- rc manifest replay command (`manifest_replay_command`, or `replay_command=` from `manifest.txt` when quoting the raw artifact directly):
 
 ## Rollback discipline
 

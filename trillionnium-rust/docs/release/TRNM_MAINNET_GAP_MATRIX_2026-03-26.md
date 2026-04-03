@@ -442,7 +442,7 @@ Anything not required for the chosen day-1 promise must not be allowed to silent
 - adversarial spam/fairness rehearsal
 - incident rollback drill
 - go/no-go document for public launch
-- one path-resolved rehearsal evidence bundle that names the exact `summary.txt` / `manifest.txt` used for the decision, together with matching `git_branch=`, `git_head=`, `git_worktree_path=`, `git_worktree_branch_ref=`, `git_status_summary=`, `generated_at=`, `truth_source=`, `historical_evidence_only=`, `evidence_scope=`, `rollback_command=`, and `replay_command=` fields; prefer `./scripts/v2/extract_release_handoff_fields.sh` so the handoff fails closed on missing artifacts or cross-artifact identity drift instead of relying on manually recopied field snippets
+- one path-resolved rehearsal evidence bundle that names the exact `summary.txt` / `manifest.txt` used for the decision, together with matching `git_branch=`, `git_head=`, `git_worktree_path=`, `git_worktree_branch_ref=`, `git_status_summary=`, `truth_source=`, `historical_evidence_only=`, `evidence_scope=`, `rollback_command=`, and `replay_command=` fields, plus both artifact timestamps preserved as `summary_generated_at=` and `manifest_generated_at=` rather than collapsed into one assumed-to-match `generated_at=` value; prefer `./scripts/v2/extract_release_handoff_fields.sh` so the handoff fails closed on missing artifacts or cross-artifact identity drift instead of relying on manually recopied field snippets
 
 Interpretation rule:
 - a Week-4 rehearsal is not "mainnet-ready evidence" unless the operator can point to concrete artifact paths and those identity fields agree across the local evidence summary and RC manifest;
