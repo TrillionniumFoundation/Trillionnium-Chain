@@ -198,6 +198,8 @@ TRNM_TX_CLI=./trillionnium-rust/target/debug/trnm-cli \
   - `query-events/<task_id>?limit=<n>`
   - `query-capability-audit/<subject-or-token>`
   - `query-normalized-audit-events?source=<source>&eventType=<eventType>&cursor=<cursor>&limit=<n>`
+  - 对外冻结口径请以 `trillionnium-rust/docs/release/TRNM_DAY1_PUBLIC_READ_CONTRACT_2026-04-03.md` 为准；若需要逐 endpoint 参数/错误语义/明确 out-of-scope 表，请再对照 `trillionnium-rust/docs/release/TRNM_DAY1_PUBLIC_READ_CONTRACT_MATRIX_2026-04-03.md`。
+  - 这两份文档只冻结 **Day-1 minimum public read surface**，不等于 durable indexer / historical read-model / stable explorer backend 已闭环。
   - `query-events/<task_id>` 未显式传 `?limit=` 时默认返回 **100** 条，硬上限 **500** 条；超大分页请求会被 clamp，不应假设无限历史窗口。
   - `query-events/<task_id>` 的 query schema 当前 **只接受单个 `limit` 键**；未知键、重复 `limit`、大小写漂移（如 `Limit=`）、空值与编码分隔符都按 fail-closed 处理，接入侧不要假设“多余参数会被静默忽略”。
   - `query-capability-audit/<subject-or-token>` 同时接受 capability token id 与 subject DID，索引侧不必为两种 key 维护两套入口。
