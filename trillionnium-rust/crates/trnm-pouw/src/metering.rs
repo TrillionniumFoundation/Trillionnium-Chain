@@ -473,6 +473,15 @@ mod tests {
     }
 
     #[test]
+    fn llm_token_meter_receipt_accepts_whitespace_padded_prefixed_receipt_hash() {
+        let mut receipt = sample_receipt().with_computed_receipt_hash().unwrap();
+        receipt.receipt_hash = format!("  0x{}\n", receipt.receipt_hash);
+        receipt
+            .validate(DEFAULT_LLM_TOKEN_METER_JITTER_BUDGET_MS)
+            .expect("trimmed 0x-prefixed receipt hashes should canonicalize");
+    }
+
+    #[test]
     fn llm_token_meter_receipt_rejects_hash_mismatch() {
         let mut receipt = sample_receipt().with_computed_receipt_hash().unwrap();
         receipt.receipt_hash = "deadbeef".to_string();

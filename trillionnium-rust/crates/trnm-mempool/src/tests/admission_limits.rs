@@ -97,6 +97,25 @@ fn zero_capacity_admission_gate_does_not_poison_idempotency_after_backpressure()
 }
 
 #[test]
+fn zero_capacity_admission_gate_preserves_restored_duplicate_metadata_across_idle_polls() {
+    let mut g = AdmissionGate::new(0);
+
+    // Launch-day hard-stop / fee-freeze semantics must preserve restored duplicate
+    // knowledge while the standalone gate stays fail-closed. Idle polls and fresh
+    // retry noise must not erase that metadata or fabricate queue state.
+    g.seen.insert(41);
+
+    for _ in 0..3 {
+        assert_eq!(g.pop_ready(), None);
+        assert_eq!(g.admit(41), AdmitOutcome::Duplicate);
+        assert_eq!(g.admit(99), AdmitOutcome::Backpressured);
+        assert!(g.queue.is_empty());
+        assert!(g.seen.contains(&41));
+        assert!(!g.seen.contains(&99));
+    }
+}
+
+#[test]
 fn full_drain_clears_stale_seen_ghosts_before_next_fresh_admission() {
     let mut g = AdmissionGate::new(2);
 
