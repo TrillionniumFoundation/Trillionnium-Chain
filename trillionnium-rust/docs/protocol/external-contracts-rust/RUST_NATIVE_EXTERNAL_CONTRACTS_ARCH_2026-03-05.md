@@ -53,6 +53,14 @@ contracts-rust/
   integration-tests/      # golden tests with deterministic replay
 ```
 
+Current repository snapshot note:
+
+- The layout above is the **target architecture**, not a claim that the full workspace already exists in-tree.
+- The current repository already contains contract crates for `settlement-vault/`, `bridge-relay/`, and `governance-guard/`.
+- The current repository also contains `contracts-rust/audit-events/` as a shared audit-event schema crate adjacent to this target layout.
+- `audit-events/` is helpful for normalized event truthfulness, but it does **not** by itself mean `sdk/`, `runtime-spec/`, or `integration-tests/` are already implemented.
+- Until those pieces land and are wired to the host runtime, this document should be read as an architecture baseline and boundary spec, **not** as proof that canonical WASM host integration is complete.
+
 ---
 
 ## 2. Host ABI Specification
@@ -316,6 +324,7 @@ RPC compatibility policy:
 2. **Create Rust contract workspace**
    - Initialize `contracts-rust/` with `sdk` + 3 contract crates.
    - Add CI for `wasm32-unknown-unknown` build and size checks.
+   - Snapshot truthfulness note: the current repository already has `settlement-vault/`, `bridge-relay/`, `governance-guard/`, and adjacent `audit-events/`, but still does **not** have the target `sdk/`, `runtime-spec/`, or `integration-tests/` directories wired as one canonical host-runtime workspace.
 
 3. **Define ABI and codec lock**
    - Freeze Host ABI v1 and payload codec.
@@ -366,6 +375,8 @@ RPC compatibility policy:
 
 Cutover acceptance requires all:
 
+> These checkboxes are **future cutover gates**, not a claim that the current repository snapshot already satisfies them. Until they are all evidenced, this document remains an architecture/boundary baseline rather than proof of production Host ABI/runtime closure.
+
 - [ ] ABI v1 frozen and documented.
 - [ ] Three contracts compile to deterministic WASM (`no_std`).
 - [ ] State root/event equivalence in replay suite (100% pass).
@@ -393,8 +404,3 @@ Cutover acceptance requires all:
 ---
 
 **Status:** architecture baseline approved for Rust-native external contracts.
-l contracts.
-ive external contracts.
-l contracts.
-rnal contracts.
-l contracts.

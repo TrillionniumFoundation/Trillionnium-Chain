@@ -41,6 +41,7 @@ TrillionniumChain/
 ├── web4-frontend/               # Web4 前端（Next.js + Vitest + Playwright）
 ├── scripts/                     # 仓库级流水线与自动化脚本
 ├── docs/                        # 架构 / 协议 / 开发 / runbook / 报告
+├── contracts-rust/              # Rust-native external contracts 子树（当前为独立 MVP contract crates / shared schema，尚未形成闭合 host runtime）
 ├── config/                      # 策略与告警配置
 ├── data/                        # 验收数据与实验产物
 ├── run/                         # 运行日志与 gate 输出
@@ -145,12 +146,14 @@ TRNM_TX_CLI=./trillionnium-rust/target/debug/trnm-cli \
 
 ## 6. 文档入口
 
-- 当前发布/就绪真相源（绑定当前 `origin/main` 快照 `0b209289`）：[RELEASE_READINESS.md](RELEASE_READINESS.md)
+- 当前发布/就绪真相源（引用时须同时记录当下 `git rev-parse origin/main` 输出，勿把旧的固定 commit hash 当长期 truth source）：[RELEASE_READINESS.md](RELEASE_READINESS.md)
 - 项目状态（历史推进日志，不作为 release truth source）：[STATUS.md](STATUS.md)
 - 统一开发调度（planning board，不覆盖 release 判定）：[docs/development/DEVELOPMENT_MASTER_UNIFIED_2026-03-04.md](docs/development/DEVELOPMENT_MASTER_UNIFIED_2026-03-04.md)
 - 并发瓶颈图与 8 周路线（当前 closeout / roadmap 入口）：[docs/reports/TRNM_CONCURRENCY_BOTTLENECK_MAP_AND_8W_ROADMAP_2026-03-10.md](docs/reports/TRNM_CONCURRENCY_BOTTLENECK_MAP_AND_8W_ROADMAP_2026-03-10.md)
 - TRNM vs Solana vs Sui 对外对标口径（架构/benchmark 口径，不宣称 production parity）：[docs/reports/TRNM_CONCURRENCY_COMPARISON_2026-03-05.md](docs/reports/TRNM_CONCURRENCY_COMPARISON_2026-03-05.md)
 - Web4 基础设施总览（平台路线图）：[docs/WEB4_INFRA_PLATFORM_DEVELOPMENT_MASTER.md](docs/WEB4_INFRA_PLATFORM_DEVELOPMENT_MASTER.md)
+- Rust-native external contracts 架构基线（目标 package layout / Host ABI / runtime boundary）：[trillionnium-rust/docs/protocol/external-contracts-rust/RUST_NATIVE_EXTERNAL_CONTRACTS_ARCH_2026-03-05.md](trillionnium-rust/docs/protocol/external-contracts-rust/RUST_NATIVE_EXTERNAL_CONTRACTS_ARCH_2026-03-05.md)
+- `contracts-rust/` 当前状态与边界说明：[contracts-rust/README.md](contracts-rust/README.md)
 - PoUW 机制说明：[trillionnium-rust/docs/challenge-economics-minimal.md](trillionnium-rust/docs/challenge-economics-minimal.md)
 - A2A 适配契约：[docs/agent/a2a_adapter_contract_v1.md](docs/agent/a2a_adapter_contract_v1.md)
 - MCP 适配契约：[docs/agent/mcp_adapter_contract_v1.md](docs/agent/mcp_adapter_contract_v1.md)
@@ -180,6 +183,8 @@ TRNM_TX_CLI=./trillionnium-rust/target/debug/trnm-cli \
 - 主线开发入口为 `trillionnium-rust/`。
 - `legacy/` 仅作归档，不作为当前开发入口。
 - 当前是否“可发布 / release-ready”请以 [RELEASE_READINESS.md](RELEASE_READINESS.md) 为准；历史证据文档不自动代表今日状态。
+- `contracts-rust/` 当前表示的是 **Rust-native external contracts 的独立子树与 MVP 合约骨架**；它不等于已完成 `sdk/`、`runtime-spec/`、`integration-tests/` 目标布局，也不单独构成 mainnet-ready 证明。
+  - 其中 `audit-events/` 更接近 shared audit-event schema 邻接层；它**不等价于** `sdk/` / `runtime-spec/` 已落地，也**不表示** canonical `wasm32-unknown-unknown` Host ABI/runtime integration 已完成。
 - Web4 当前语义是：**前端默认走只读 API client；只在显式 `?mode=mock` 时回退到本地 mock snapshot；不暴露写路径。**
 - 文档中若出现 `/api/v0/web4/*`，应视为历史草案命名；当前仓内前端实际消费的是 `query-task` / `query-events` / `query-capability-audit` / `query-normalized-audit-events` 这组只读接口，**不是仓内已实现的 Next.js route**。
 - Explorer / indexer 接入时可先把这组接口当作最小 read-model 契约：
