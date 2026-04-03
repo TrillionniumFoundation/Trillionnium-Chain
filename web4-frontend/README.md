@@ -14,9 +14,31 @@ npm run dev
 
 打开 <http://localhost:3000>
 
+## 文档入口与判读边界
+
+优先按下面顺序查阅，避免把不同层级的结论混在一起：
+
+- [`docs/README.md`](./docs/README.md)：**前端文档统一入口**（开发 / API 合约 / 测试 / 运维）
+- [`docs/developer-guide.md`](./docs/developer-guide.md)：开发者本地启动、环境变量、提交流程
+- [`docs/operations-runbook.md`](./docs/operations-runbook.md)：operator / 发布 / 回滚 / 排障操作
+- [`../RELEASE_READINESS.md`](../RELEASE_READINESS.md)：**仓库级 release truth source**；判断 TRNM 是否可对外表述为 release-ready 时，以此为准
+- 若当前 checkout 含有 [`../docs/reports/TRNM_WEB4_PLATFORM_SCORECARD_2026-03-31.md`](../docs/reports/TRNM_WEB4_PLATFORM_SCORECARD_2026-03-31.md)，优先引用该 Web4 平台阶段评分卡来描述成熟度位置；它适用的仓库快照是 `main@9ea9e7751`，用于回答“当时大致处于哪个平台阶段”，**不等于** release-ready 证明，也不自动等于当前实时状态
+
+可用一句话记忆：
+
+> `web4-frontend` 的门禁绿灯，表示**前端子项目预检通过**；不表示整个 TRNM 仓库已经 release-ready。
+
 ## 环境变量（可选）
 
 生产/测试环境建议使用本地化配置文件：
+
+若当前目录是 `web4-frontend/`：
+
+```bash
+cp .env.example .env.local
+```
+
+若当前目录是仓库根：
 
 ```bash
 cp web4-frontend/.env.example web4-frontend/.env.local
@@ -29,7 +51,7 @@ cp web4-frontend/.env.example web4-frontend/.env.local
 - `NEXT_PUBLIC_DASHBOARD_NORMALIZED_AUDIT_EVENT_LIMIT`
 - `NEXT_PUBLIC_DASHBOARD_NORMALIZED_AUDIT_MAX_PAGES`
 
-未设置时使用内置默认值（参考 `web4-frontend/docs/api-contract.md`）。
+未设置时使用内置默认值（参考 `docs/api-contract.md`）。
 
 ## 常用命令（统一）
 
@@ -55,4 +77,14 @@ npm run start
 
 > `release:ready` 会先校验当前版本在 `CHANGELOG.md` 中有对应条目，再执行 `release:preflight`（lint/typecheck/test/test:contract/build）。
 
-详细说明见：`docs/operations-runbook.md`
+详细说明见：`docs/operations-runbook.md`；发布前门禁与人工复核清单见：`docs/release-checklist.md`
+
+## 对外表述最小口径
+
+若需要在交接、演示、排障记录里简短描述当前 Web4 前端状态，优先使用：
+
+- **默认是 readonly API client**
+- **仅在显式 `?mode=mock` 时回退到本地 mock snapshot**
+- **不提供写路径**
+- **仓库级 release 判定仍以根目录 `RELEASE_READINESS.md` 为准**
+- **当前平台成熟度表述若需引用阶段口径，优先引用 `docs/reports/TRNM_WEB4_PLATFORM_SCORECARD_2026-03-31.md`，不要泛化为“最新某份评分文档”**

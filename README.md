@@ -160,6 +160,10 @@ TRNM_TX_CLI=./trillionnium-rust/target/debug/trnm-cli \
 - 运维手册：[OPERATIONS.md](OPERATIONS.md)
 - OpenClaw 微型运维 Runbook：[docs/development/OPENCLAW_OPS_MICRO_RUNBOOK.md](docs/development/OPENCLAW_OPS_MICRO_RUNBOOK.md)
 - Web4 前端说明：[web4-frontend/README.md](web4-frontend/README.md)
+- Web4 文档中心（统一入口）：[web4-frontend/docs/README.md](web4-frontend/docs/README.md)
+  - 开发指南：[web4-frontend/docs/developer-guide.md](web4-frontend/docs/developer-guide.md)
+  - 运维手册：[web4-frontend/docs/operations-runbook.md](web4-frontend/docs/operations-runbook.md)
+  - 发布前 Checklist：[web4-frontend/docs/release-checklist.md](web4-frontend/docs/release-checklist.md)
 
 > 轻量校验：可运行 `./scripts/check_root_readme_local_links.sh` 验证 README 本地相对链接是否全部可达。
 

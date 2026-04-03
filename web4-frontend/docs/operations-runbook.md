@@ -9,6 +9,24 @@ npm run start
 ```
 
 > `release:ready` 会校验 `package.json` 当前版本是否已写入 `CHANGELOG.md`，随后自动执行 `release:preflight`。
+>
+> 边界说明：这里的 `release:ready` 仅表示 **web4-frontend 子项目** 已通过本地版本/变更日志/预检串联检查；**不等于整个 TRNM 仓库已经 release-ready**。仓库级发布口径仍以根目录 `RELEASE_READINESS.md` 为准。
+
+## 发布前语义核对（fail-closed）
+
+在把 Web4 前端结果用于 demo、handoff 或 operator 检查前，先确认下面 3 点：
+
+1. **默认语义是 readonly API client**
+   - 未显式追加 `?mode=mock` 时，页面应优先读取查询 API。
+   - 若查询 API 不可用，不应把页面能打开误判为“写路径已接通”或“平台已 production-ready”。
+
+2. **mock fallback 必须是显式行为**
+   - 仅在 URL 明确追加 `?mode=mock` 时，才允许回退到本地 mock snapshot。
+   - 若演示使用了 mock 模式，应在记录或交接中明确标注，避免把 mock 结果描述成真实后端状态。
+
+3. **仓库级 release 口径单独判定**
+   - 即使 `npm run release:ready` 通过，也只说明 `web4-frontend` 子项目本地预检链路通过。
+   - 需要判断 TRNM 当前是否可对外表述为 release-ready 时，必须回到仓库根目录核对 `RELEASE_READINESS.md`。
 
 ## 回滚最小路径
 
