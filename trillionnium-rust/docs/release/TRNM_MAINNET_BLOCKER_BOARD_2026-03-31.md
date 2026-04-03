@@ -13,6 +13,7 @@ Primary truth sources:
 - `scripts/v2/extract_release_handoff_fields.sh`
 - `scripts/v2/extract_validator_rotation_dr_fields.sh`
 - `scripts/v2/run_validator_dr_rehearsal.sh`
+- `scripts/v2/emit_validator_rotation_packet.sh`
 
 ## Board summary
 
@@ -30,6 +31,7 @@ Primary truth sources:
 - `docs/runbooks/validator-rotation-dr.md` defines the minimum evidence bar for `replacement`, `rotation`, and `dr_rebuild`.
 - `scripts/v2/extract_validator_rotation_dr_fields.sh` can fail closed on missing report fields, non-`PASS` recovery reports, and lane/worktree identity drift; it also emits `verified_worktree=` / `verified_branch_ref=` / `verified_head=` aliases so DR evidence can drop into a handoff packet without manual field renaming.
 - `scripts/v2/run_validator_dr_rehearsal.sh` provides a deterministic verify → recovery → extract wrapper for DR rebuild rehearsals without changing the underlying fail-closed checks.
+- `scripts/v2/emit_validator_rotation_packet.sh` now gives replacement / rotation / DR handoff notes one canonical, fail-closed output shape, so operators do not have to hand-assemble packet fields from shell memory once the underlying evidence is already in hand.
 - `RELEASE_READINESS.md` now explicitly instructs operators to prefer fail-closed helper extraction over hand-copied shell snippets.
 
 ## Still-open blocker details
@@ -109,6 +111,7 @@ Why this still blocks public mainnet:
 Minimum next evidence:
 - a deterministic rehearsal path that reduces operator memory load and emits reusable packet fields
 - examples: helper-driven capture flow, signed note template backed by emitted paths, or a narrow rehearsal wrapper that does not hide the underlying commands
+- current lane step forward: `scripts/v2/emit_validator_rotation_packet.sh` now covers the packet-emission half for `replacement` / `rotation` / `dr_rebuild`, but it still depends on real operator artifacts and therefore does not by itself discharge the blocker
 
 ## Lane operating rule
 
