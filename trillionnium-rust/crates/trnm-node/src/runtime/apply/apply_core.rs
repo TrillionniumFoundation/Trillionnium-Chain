@@ -1128,6 +1128,7 @@ mod tests {
         for node_id in [
             "localhost",
             "LOCALHOST",
+            "localhost.",
             "127.0.0.1",
             "127.0.0.1:7001",
             "[::1]",
