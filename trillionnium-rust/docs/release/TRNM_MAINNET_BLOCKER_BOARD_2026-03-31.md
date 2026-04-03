@@ -215,8 +215,8 @@ The codebase has meaningful anti-spam / QoS / sponsor / challenge-bond work, but
 - launch packet cites at least one green admission-side gate, one green retention-side gate, and the compile-slice integrity check
 
 **Evidence anchors for the launch packet**
-- admission boundary hard-stop: `cargo test --manifest-path trillionnium-rust/Cargo.toml -p trnm-mempool lane_zero_capacity_public_contract_bound -q`
-- sponsor borrowed-slot discipline: `cargo test --manifest-path trillionnium-rust/Cargo.toml -p trnm-mempool lane_borrowed_last_slot_backpressured_retry_reuse_bound -q`
+- admission boundary hard-stop: `cargo test --manifest-path trillionnium-rust/Cargo.toml -p trnm-mempool --test lane_zero_capacity_public_contract_bound -q`
+- sponsor borrowed-slot discipline: `cargo test --manifest-path trillionnium-rust/Cargo.toml -p trnm-mempool --test lane_borrowed_last_slot_backpressured_retry_reuse_bound -q`
 - sponsor revocation / drain-only duplicate retention: `cargo test --manifest-path trillionnium-rust/Cargo.toml -p trnm-mempool hard_stop_idle_pop_preserves_restored_duplicate_metadata -q`
 - anti-spam floor / sustained-load admission boundary: `cargo test --manifest-path trillionnium-rust/Cargo.toml -p trnm-mempool non_reserve_only_normal_never_borrows_when_no_critical_headroom_remains -q`
 - retention timing freeze after challenge: `cargo test --manifest-path trillionnium-rust/Cargo.toml -p trnm-pouw legacy_revealed_snapshot_freezes_resolve_timing_after_challenge_despite_later_gov_change -q`
