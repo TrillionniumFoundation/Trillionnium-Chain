@@ -169,6 +169,12 @@ function toOptionalHeightMarker(height: unknown): string | undefined {
   return toHeightMarker(height);
 }
 
+function normalizeOptionalText(value: unknown): string | undefined {
+  if (typeof value !== "string") return undefined;
+  const trimmed = value.trim();
+  return trimmed.length > 0 ? trimmed : undefined;
+}
+
 export const adaptQueryTask = (payload: unknown): QueryTaskResult => {
   const canonical = queryTaskResponseSchema.safeParse(payload);
   if (canonical.success) return canonical.data;
@@ -382,16 +388,18 @@ export const adaptQueryCapabilityAudit = (
           ? `TOKEN_REVOKED@${tokenRevokedAt}`
           : undefined;
 
+        const normalizedNote = normalizeOptionalText(entry.note);
+
         return {
           subject: rpc.data.token.subject_did,
           capability: rpc.data.token.scope,
           granted: actionGrantsCapability,
           reason:
             tokenIsRevoked && actionTouchesCapability
-              ? [revocationMarker, entry.note ?? entry.action]
+              ? [revocationMarker, normalizedNote ?? entry.action]
                   .filter((value): value is string => typeof value === "string" && value.length > 0)
                   .join(": ")
-              : entry.note ?? entry.action,
+              : normalizedNote ?? entry.action,
           checkedAt: toHeightMarker(entry.at_height),
         };
       }),
