@@ -448,6 +448,72 @@ describe("dashboard source normalized audit pagination", () => {
     expect(capabilityBoundEvents[1]?.details).toContain("scope:audit.");
   });
 
+  it("keeps normalized audit events distinct when only amount differs", async () => {
+    const mockClient = {
+      queryTask: vi
+        .fn()
+        .mockResolvedValue({
+          task: {
+            id: "350",
+            owner: "ops",
+            status: "running",
+            createdAt: "2026-03-01T00:00:00.000Z",
+            metadata: {},
+          },
+        }),
+      queryEvents: vi.fn().mockResolvedValue({
+        taskId: "350",
+        events: [],
+      }),
+      queryCapabilityAudit: vi.fn().mockResolvedValue({
+        subject: "did:trnm:test",
+        audits: [
+          {
+            subject: "did:trnm:test",
+            capability: "AUDIT_READ",
+            granted: true,
+            checkedAt: "2026-03-01T00:00:00.000Z",
+          },
+        ],
+      }),
+      queryNormalizedAuditEvents: vi.fn().mockResolvedValue({
+        events: [
+          {
+            source: "settlement-vault",
+            event_type: "vault.balance_adjusted",
+            actor: "security",
+            object_id: "vault:treasury",
+            timestamp: "2026-03-01T00:01:00.000Z",
+            amount: "10",
+            reason: "ok",
+          },
+          {
+            source: "settlement-vault",
+            event_type: "vault.balance_adjusted",
+            actor: "security",
+            object_id: "vault:treasury",
+            timestamp: "2026-03-01T00:01:00.000Z",
+            amount: "20",
+            reason: "ok",
+          },
+        ],
+        hasMore: false,
+      }),
+    } as unknown as ReturnType<typeof apiContractClient.createFrontendApiClient>;
+
+    vi.spyOn(apiContractClient, "createFrontendApiClient").mockReturnValue(mockClient);
+
+    const snapshot = await fetchDashboardSnapshot();
+    const balanceAdjustedEvents = snapshot.events.filter(
+      (event) => event.summary === "settlement-vault · vault.balance_adjusted",
+    );
+
+    expect(mockClient.queryNormalizedAuditEvents).toHaveBeenCalledTimes(1);
+    expect(balanceAdjustedEvents).toHaveLength(2);
+    expect(balanceAdjustedEvents[0]?.details).toContain('"amount":"10"');
+    expect(balanceAdjustedEvents[1]?.details).toContain('"amount":"20"');
+  });
+
   it("treats revocation-like normalized audit events as critical fail-closed incidents", async () => {
     const mockClient = {
       queryTask: vi

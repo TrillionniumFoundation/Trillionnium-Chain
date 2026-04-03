@@ -261,6 +261,7 @@ const getNormalizedAuditEventKey = (event: NormalizedAuditEvent): string =>
     event.subject ?? "",
     event.timestamp ?? "",
     event.checkedAt ?? "",
+    event.amount == null ? "" : String(event.amount),
     event.reason ?? "",
     event.note ?? "",
   ].join("\u001f");
