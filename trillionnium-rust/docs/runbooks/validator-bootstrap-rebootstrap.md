@@ -17,6 +17,7 @@ Use this when an operator needs to:
 Primary references:
 - `docs/release/TRNM_VALIDATOR_RELEASE_HANDOFF.md`
 - `docs/runbooks/local-release-evidence.md`
+- `docs/runbooks/validator-rotation-dr.md`
 - `scripts/v2/verify_lane_worktree.sh`
 - `configs/node1.toml`
 - `configs/node2.toml`
@@ -43,10 +44,12 @@ Prefer the shared fail-closed helper instead of trusting the shell prompt:
 ```bash
 EXPECTED_WORKTREE_ROOT="/abs/path/from-ticket"
 EXPECTED_BRANCH_REF="refs/heads/lane/assigned-branch"
+EXPECTED_HEAD="<optional-commit-from-ticket-or-handoff>"
 
 ./scripts/v2/verify_lane_worktree.sh \
   --expected-worktree-root "$EXPECTED_WORKTREE_ROOT" \
-  --expected-branch-ref "$EXPECTED_BRANCH_REF"
+  --expected-branch-ref "$EXPECTED_BRANCH_REF" \
+  ${EXPECTED_HEAD:+--expected-head "$EXPECTED_HEAD"}
 ```
 
 Minimum evidence to record:
@@ -54,10 +57,15 @@ Minimum evidence to record:
 - `verified_branch_ref=`
 - `verified_head=`
 
+Interpretation rule:
+- if the lane ticket or operator handoff already pins an exact commit, pass it via `EXPECTED_HEAD` so bootstrap/re-bootstrap fails closed on the wrong lane tip
+- if `EXPECTED_HEAD` is intentionally unknown, leave it empty rather than inventing a commit from memory
+
 Stop conditions:
 - worktree mismatch
 - branch mismatch
 - detached HEAD
+- expected-HEAD mismatch when the ticket/handoff pinned an exact commit
 - missing `git worktree` stanza for the current path
 
 ## Step 2 — Confirm a clean operator state

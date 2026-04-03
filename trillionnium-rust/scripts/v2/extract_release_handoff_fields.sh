@@ -192,6 +192,16 @@ fi
   exit 1
 }
 
+if [ -n "$EXPECTED_WORKTREE_ROOT" ] && [ "$summary_worktree_path" != "$EXPECTED_WORKTREE_ROOT" ]; then
+  printf 'assigned-worktree mismatch: expected %s got %s\n' "$EXPECTED_WORKTREE_ROOT" "$summary_worktree_path" >&2
+  exit 1
+fi
+
+if [ -n "$EXPECTED_BRANCH_REF_CANONICAL" ] && [ "$summary_worktree_branch_ref" != "$EXPECTED_BRANCH_REF_CANONICAL" ]; then
+  printf 'assigned-branch-ref mismatch: expected %s got %s\n' "$EXPECTED_BRANCH_REF_CANONICAL" "$summary_worktree_branch_ref" >&2
+  exit 1
+fi
+
 printf 'summary_path=%s\n' "$SUMMARY_PATH"
 printf 'manifest_path=%s\n' "$MANIFEST_PATH"
 printf 'summary_generated_at=%s\n' "$summary_generated_at"

@@ -141,9 +141,12 @@ The repository has local node configs and preflight scripts, but not a clearly c
 
 ### Partial coverage now present
 - validator bootstrap / re-bootstrap operational guide: `docs/runbooks/validator-bootstrap-rebootstrap.md`
+- validator replacement / rotation / DR handoff guide: `docs/runbooks/validator-rotation-dr.md`
+- fail-closed DR handoff field extraction helper: `scripts/v2/extract_validator_rotation_dr_fields.sh`
+- signed operator ceremony packet skeleton for replacement / rotation / DR handoff is now documented in `docs/runbooks/validator-rotation-dr.md`
 
 ### Still open inside this area
-- bootstrap procedure is documented, but not yet wired into a signed/public-mainnet operator ceremony
+- bootstrap / replacement / rotation / DR procedures are documented, but still need a real signed rehearsal packet produced from live operator artifacts instead of documentation-only closure
 - no validator replacement / rotation automation
 - no disaster-recovery rebuild drill with captured evidence
 
