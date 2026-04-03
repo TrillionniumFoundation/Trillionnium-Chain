@@ -1779,10 +1779,53 @@ mod tests {
         assert_eq!(g.qos_snapshot().fresh_normal_admissible, false);
         assert_eq!(g.qos_snapshot().fresh_critical_admissible, true);
 
-        // While critical backlog remains active, draining a normal item must not
-        // reopen fresh normal ingress against the final reserved critical slot.
+        // Once the only active critical backlog clears, normal admissibility may
+        // reopen immediately because the final reserved slot is no longer guarded.
         assert_eq!(g.pop_ready(), Some(10));
         assert_eq!(g.queued_counts(), (3, 0, 3));
+        assert_eq!(g.qos_snapshot().fresh_normal_admissible, true);
+        assert_eq!(g.qos_snapshot().fresh_critical_admissible, true);
+    }
+
+    #[test]
+    fn qos_snapshot_keeps_normal_closed_until_last_active_critical_backlog_entry_drains() {
+        let mut g = LaneAdmissionGate::new(6, 2);
+
+        // Exhaust dedicated normal capacity while keeping two critical occupants
+        // active so the final reserved slot stays guarded after only one drain.
+        assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(3, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(4, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(10, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(11, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.queued_counts(), (4, 2, 6));
+        assert_eq!(g.qos_snapshot().fresh_normal_admissible, false);
+        assert_eq!(g.qos_snapshot().fresh_critical_admissible, false);
+
+        // Draining one critical entry reopens aggregate headroom, but normal must
+        // stay fail-closed because critical backlog is still active and guards the
+        // last reserved slot for fresh critical ingress only.
+        assert_eq!(g.pop_ready(), Some(10));
+        assert_eq!(g.queued_counts(), (4, 1, 5));
+        assert_eq!(
+            g.qos_snapshot(),
+            LaneQosSnapshot {
+                normal_queued: 4,
+                critical_queued: 1,
+                total_queued: 5,
+                normal_headroom: 0,
+                critical_headroom: 1,
+                total_headroom: 1,
+                fresh_normal_admissible: false,
+                fresh_critical_admissible: true,
+            }
+        );
+
+        // Only after the last active critical backlog entry drains may the normal
+        // class borrow again from the now-idle reserved slot.
+        assert_eq!(g.pop_ready(), Some(11));
+        assert_eq!(g.queued_counts(), (4, 0, 4));
         assert_eq!(g.qos_snapshot().fresh_normal_admissible, true);
         assert_eq!(g.qos_snapshot().fresh_critical_admissible, true);
     }
