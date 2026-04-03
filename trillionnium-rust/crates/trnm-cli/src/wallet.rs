@@ -132,7 +132,10 @@ pub(crate) fn normalize_wallet_store_env(raw: &str) -> Option<&str> {
         }
         normalized = trimmed_single_sided;
     }
-    (!normalized.is_empty()).then_some(normalized)
+    if normalized.is_empty() || normalized.chars().any(is_hidden_env_wrapper) {
+        return None;
+    }
+    Some(normalized)
 }
 
 fn wallet_store_path_is_safe(path: &Path) -> bool {
