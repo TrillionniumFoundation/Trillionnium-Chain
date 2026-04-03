@@ -607,6 +607,18 @@ mod tests {
     }
 
     #[test]
+    fn load_config_accepts_inner_curdir_markers_for_shipped_bootstrap_paths() {
+        for path in ["configs/./node1.toml", "./configs/./node1.toml"] {
+            let cfg = load_config(path).unwrap_or_else(|err| {
+                panic!("{path} should resolve for shipped bootstrap config anchoring: {err:#}")
+            });
+            assert_eq!(cfg.node_id, "node1", "unexpected node_id for {path}");
+            assert_eq!(cfg.rpc_addr, "127.0.0.1:26657", "unexpected rpc_addr for {path}");
+            assert_eq!(cfg.p2p_addr, "127.0.0.1:26656", "unexpected p2p_addr for {path}");
+        }
+    }
+
+    #[test]
     fn validate_node_config_rejects_operator_boundary_whitespace_fail_closed() {
         let cfg = NodeConfig {
             node_id: "  node-a  ".into(),
