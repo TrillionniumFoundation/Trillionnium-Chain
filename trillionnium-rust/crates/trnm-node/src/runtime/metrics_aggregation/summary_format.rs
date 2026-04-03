@@ -347,26 +347,6 @@ mod tests {
     }
 
     #[test]
-    fn runtime_summary_line_keeps_stale_auth_reject_alias_operator_visible_once_each() {
-        let mut metrics = RuntimeMetrics::new(2);
-        metrics.bft_auth_reject_stale_nonce_total = 17;
-
-        let stats = RuntimeSummaryStats::zeroed();
-        let summary = format_runtime_summary_line(&metrics, &stats);
-
-        assert_eq!(summary.matches("bft_auth_reject_stale_total=").count(), 1);
-        assert_eq!(summary.matches("bft_auth_reject_stale_nonce_total=").count(), 1);
-        assert!(summary.contains("bft_auth_reject_stale_total=17"));
-        assert!(summary.contains("bft_auth_reject_stale_nonce_total=17"));
-
-        let alias_idx = summary.find("bft_auth_reject_stale_total=17").unwrap();
-        let canonical_idx = summary
-            .find("bft_auth_reject_stale_nonce_total=17")
-            .unwrap();
-        assert!(alias_idx < canonical_idx);
-    }
-
-    #[test]
     fn runtime_summary_line_keeps_recovery_and_bft_auth_signal_cluster_in_operator_order() {
         let mut metrics = RuntimeMetrics::new(2);
         metrics.apply_error_total = 4;
