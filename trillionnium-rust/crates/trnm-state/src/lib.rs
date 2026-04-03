@@ -582,13 +582,25 @@ const GOV_SCHEMA_INVALID_SAMPLES: &[(&str, &str)] = &[
     ("llm_meter_decode_step_weight", "1000000000001"),
     ("llm_meter_kv_byte_weight", "1000000000001"),
     ("llm_meter_min_accept_work_units", "1000000000001"),
-    ("llm_meter_challenge_success_bounty_per_work_unit_num", "1000000000001"),
+    (
+        "llm_meter_challenge_success_bounty_per_work_unit_num",
+        "1000000000001",
+    ),
     ("llm_meter_challenge_success_bounty_per_work_unit_den", "0"),
-    ("llm_meter_worker_completion_bonus_per_work_unit_num", "1000000000001"),
+    (
+        "llm_meter_worker_completion_bonus_per_work_unit_num",
+        "1000000000001",
+    ),
     ("llm_meter_worker_completion_bonus_per_work_unit_den", "0"),
-    ("llm_meter_worker_slash_rebate_per_work_unit_num", "1000000000001"),
+    (
+        "llm_meter_worker_slash_rebate_per_work_unit_num",
+        "1000000000001",
+    ),
     ("llm_meter_worker_slash_rebate_per_work_unit_den", "0"),
-    ("resolve_authority", "resolver-a,governance.resolve_authority"),
+    (
+        "resolve_authority",
+        "resolver-a,governance.resolve_authority",
+    ),
     ("emergency_pause", "TRUE"),
     ("monetary_policy_tick_interval_blocks", "0"),
     ("monetary_policy_tick_cooldown_blocks", "0"),
@@ -598,10 +610,11 @@ const GOV_SCHEMA_INVALID_SAMPLES: &[(&str, &str)] = &[
 const DEFAULT_RESOLVE_AUTHORITY_PLACEHOLDER: &str = "governance.resolve_authority";
 
 fn governance_pinned_key_id_from_lists(pinned_key_ids: &[(&str, u64)], key: &str) -> Option<u64> {
-    governance_expected_key_id(key)
-        .filter(|expected_id| pinned_key_ids.iter().any(|(pinned_key, pinned_id)| {
-            *pinned_key == key && *pinned_id == *expected_id
-        }))
+    governance_expected_key_id(key).filter(|expected_id| {
+        pinned_key_ids
+            .iter()
+            .any(|(pinned_key, pinned_id)| *pinned_key == key && *pinned_id == *expected_id)
+    })
 }
 
 #[allow(dead_code)]
@@ -1103,7 +1116,8 @@ fn terminal_challenge_retention_is_consistent(task: &TaskObject) -> bool {
         return false;
     }
 
-    if task.status == TaskStatus::Slashed && has_bond && task.challenge_bond_forfeited != Some(true) {
+    if task.status == TaskStatus::Slashed && has_bond && task.challenge_bond_forfeited != Some(true)
+    {
         return false;
     }
 
@@ -3994,6 +4008,23 @@ pub fn checkpoint_da_light_verifier_summary(
     } else {
         "non-genesis"
     };
+    let checkpoint_prev_hash = wal_entry.prev_hash_hex.as_deref().unwrap_or("none");
+    let checkpoint_prev_hash_present = wal_entry.prev_hash_hex.is_some();
+    let checkpoint_prev_hash_required = checkpoint.height > 1;
+    let checkpoint_prev_hash_kind = if checkpoint_prev_hash_present {
+        "linked"
+    } else {
+        "genesis"
+    };
+    let checkpoint_prev_hash_matches_height_boundary =
+        checkpoint_prev_hash_present == checkpoint_prev_hash_required;
+    let checkpoint_prev_hash_surface_policy = "canonical-hex-32b-or-none";
+    let checkpoint_prev_hash_encoding = "hex-lower-or-none";
+    let checkpoint_prev_hash_bytes = wal_entry
+        .prev_hash_hex
+        .as_ref()
+        .map(|prev| prev.len() / 2)
+        .unwrap_or(0);
     let wal_content_hash = wal_entry.content_hash_hex();
     let wal_content_hash_kind = "canonical-hex-32b";
     let wal_content_hash_encoding = "hex-lower";
@@ -4031,7 +4062,7 @@ pub fn checkpoint_da_light_verifier_summary(
     let wal_proposal_hash_surface_policy = "ascii-trimmed-no-ws-control-max256";
 
     Some(format!(
-        "da_light_surface=checkpoint-wal-v1 light_verifier_surface=checkpoint-wal-v1 da_binding_fields=state_commitment,checkpoint_commitment,wal_content_hash da_binding_kind=triple-anchor da_anchor_count=3 da_anchor_total_bytes=96 da_anchor_order=state_commitment,checkpoint_commitment,wal_content_hash da_state_commitment_source=checkpoint.state_root_hex da_checkpoint_commitment_source=checkpoint.commitment_hex da_wal_content_hash_source=wal.content_hash_hex da_state_commitment={} da_state_commitment_kind={} da_state_commitment_encoding={} da_state_commitment_bytes={} da_state_commitment_matches_checkpoint_state_root=true da_checkpoint_commitment={} da_checkpoint_commitment_kind={} da_checkpoint_commitment_encoding={} da_checkpoint_commitment_bytes={} da_checkpoint_commitment_matches_checkpoint_commitment=true da_wal_content_hash={} da_wal_content_hash_kind={} da_wal_content_hash_encoding={} da_wal_content_hash_bytes={} da_wal_content_hash_matches_checkpoint_wal_entry_hash=true da_wal_content_hash_commits_wal_round=true da_wal_content_hash_commits_wal_prev_hash=true checkpoint_binding_fields=height,state_root,wal_entry_hash checkpoint_tuple_order=height,state_root,wal_entry_hash checkpoint_tuple_encoding=sha256(len-prefixed height-le-u64|state_root|wal_entry_hash) checkpoint_commitment_fields=height,state_root,wal_entry_hash checkpoint_commitment_encoding=sha256(len-prefixed height-le-u64|state_root|wal_entry_hash) checkpoint_commitment_binding_kind=tuple-hash checkpoint_commitment={} checkpoint_commitment_kind={} checkpoint_commitment_encoding={} checkpoint_commitment_bytes={} checkpoint_commitment_matches_recomputed=true checkpoint_height={} checkpoint_height_encoding={} checkpoint_height_kind={} checkpoint_height_bytes=8 checkpoint_height_boundary_kind={} checkpoint_state_root={} checkpoint_state_root_kind={} checkpoint_state_root_encoding={} checkpoint_state_root_bytes={} checkpoint_wal_entry_hash={} checkpoint_wal_entry_hash_kind={} checkpoint_wal_entry_hash_encoding={} checkpoint_wal_entry_hash_bytes={} checkpoint_height_matches_wal=true checkpoint_state_root_matches_wal=true checkpoint_wal_entry_hash_matches_wal=true checkpoint_wal_binding_kind=content-hash-equality checkpoint_surface_canonical=true wal_content_hash_fields=height,round,proposal_hash,committed,state_root,prev_hash wal_tuple_order=height,round,proposal_hash,committed,state_root,prev_hash wal_tuple_encoding=sha256(len-prefixed height-le-u64|round-le-u64|proposal_hash|committed-u8|state_root|prev_hash?) wal_height={} wal_height_encoding={} wal_height_kind={} wal_height_bytes=8 wal_round={} wal_round_encoding={} wal_round_kind={} wal_round_bytes=8 wal_state_root={} wal_state_root_kind={} wal_state_root_encoding={} wal_state_root_bytes={} wal_content_hash={} wal_content_hash_kind={} wal_content_hash_encoding={} wal_content_hash_bytes={} wal_content_hash_matches_recomputed=true wal_content_hash_matches_checkpoint=true wal_content_hash_matches_checkpoint_wal_entry_hash=true wal_committed={} wal_committed_encoding={} wal_committed_kind={} wal_committed_bytes=1 wal_height_boundary_kind={} wal_prev_hash={} wal_prev_hash_present={} wal_prev_hash_required={} wal_prev_hash_kind={} wal_prev_hash_matches_height_boundary={} wal_prev_hash_bytes={} wal_prev_hash_surface_policy={} wal_prev_hash_encoding={} wal_prev_hash_surface_canonical=true wal_linkage_kind=prev-hash-chain wal_proposal_hash={} wal_proposal_hash_present={} wal_proposal_hash_kind={} wal_proposal_hash_bytes={} wal_proposal_hash_surface_policy={} wal_proposal_hash_surface_canonical=true",
+        "da_light_surface=checkpoint-wal-v1 light_verifier_surface=checkpoint-wal-v1 da_binding_fields=state_commitment,checkpoint_commitment,wal_content_hash da_binding_kind=triple-anchor da_anchor_count=3 da_anchor_total_bytes=96 da_anchor_order=state_commitment,checkpoint_commitment,wal_content_hash da_state_commitment_source=checkpoint.state_root_hex da_checkpoint_commitment_source=checkpoint.commitment_hex da_wal_content_hash_source=wal.content_hash_hex da_state_commitment={} da_state_commitment_kind={} da_state_commitment_encoding={} da_state_commitment_bytes={} da_state_commitment_matches_checkpoint_state_root=true da_checkpoint_commitment={} da_checkpoint_commitment_kind={} da_checkpoint_commitment_encoding={} da_checkpoint_commitment_bytes={} da_checkpoint_commitment_matches_checkpoint_commitment=true da_wal_content_hash={} da_wal_content_hash_kind={} da_wal_content_hash_encoding={} da_wal_content_hash_bytes={} da_wal_content_hash_matches_checkpoint_wal_entry_hash=true da_wal_content_hash_commits_wal_height=true da_wal_content_hash_commits_wal_round=true da_wal_content_hash_commits_wal_proposal_hash=true da_wal_content_hash_commits_wal_committed=true da_wal_content_hash_commits_wal_state_root=true da_wal_content_hash_commits_wal_prev_hash=true checkpoint_binding_fields=height,state_root,wal_entry_hash checkpoint_tuple_order=height,state_root,wal_entry_hash checkpoint_tuple_encoding=sha256(len-prefixed height-le-u64|state_root|wal_entry_hash) checkpoint_commitment_fields=height,state_root,wal_entry_hash checkpoint_commitment_encoding=sha256(len-prefixed height-le-u64|state_root|wal_entry_hash) checkpoint_commitment_binding_kind=tuple-hash checkpoint_commitment={} checkpoint_commitment_kind={} checkpoint_commitment_encoding={} checkpoint_commitment_bytes={} checkpoint_commitment_matches_recomputed=true checkpoint_height={} checkpoint_height_encoding={} checkpoint_height_kind={} checkpoint_height_bytes=8 checkpoint_height_boundary_kind={} checkpoint_state_root={} checkpoint_state_root_kind={} checkpoint_state_root_encoding={} checkpoint_state_root_bytes={} checkpoint_wal_entry_hash={} checkpoint_wal_entry_hash_kind={} checkpoint_wal_entry_hash_encoding={} checkpoint_wal_entry_hash_bytes={} checkpoint_prev_hash={} checkpoint_prev_hash_present={} checkpoint_prev_hash_required={} checkpoint_prev_hash_kind={} checkpoint_prev_hash_matches_height_boundary={} checkpoint_prev_hash_matches_wal=true checkpoint_prev_hash_bytes={} checkpoint_prev_hash_surface_policy={} checkpoint_prev_hash_encoding={} checkpoint_prev_hash_surface_canonical=true checkpoint_height_matches_wal=true checkpoint_state_root_matches_wal=true checkpoint_wal_entry_hash_matches_wal=true checkpoint_wal_binding_kind=content-hash-equality checkpoint_surface_canonical=true wal_content_hash_fields=height,round,proposal_hash,committed,state_root,prev_hash wal_tuple_order=height,round,proposal_hash,committed,state_root,prev_hash wal_tuple_encoding=sha256(len-prefixed height-le-u64|round-le-u64|proposal_hash|committed-u8|state_root|prev_hash?) wal_height={} wal_height_encoding={} wal_height_kind={} wal_height_bytes=8 wal_round={} wal_round_encoding={} wal_round_kind={} wal_round_bytes=8 wal_state_root={} wal_state_root_kind={} wal_state_root_encoding={} wal_state_root_bytes={} wal_content_hash={} wal_content_hash_kind={} wal_content_hash_encoding={} wal_content_hash_bytes={} wal_content_hash_matches_recomputed=true wal_content_hash_matches_checkpoint=true wal_content_hash_matches_checkpoint_wal_entry_hash=true wal_committed={} wal_committed_encoding={} wal_committed_kind={} wal_committed_bytes=1 wal_height_boundary_kind={} wal_prev_hash={} wal_prev_hash_present={} wal_prev_hash_required={} wal_prev_hash_kind={} wal_prev_hash_matches_height_boundary={} wal_prev_hash_bytes={} wal_prev_hash_surface_policy={} wal_prev_hash_encoding={} wal_prev_hash_surface_canonical=true wal_linkage_kind=prev-hash-chain wal_proposal_hash={} wal_proposal_hash_present={} wal_proposal_hash_kind={} wal_proposal_hash_bytes={} wal_proposal_hash_surface_policy={} wal_proposal_hash_surface_canonical=true",
         checkpoint.state_root_hex,
         checkpoint_state_root_kind,
         checkpoint_state_root_encoding,
@@ -4060,6 +4091,14 @@ pub fn checkpoint_da_light_verifier_summary(
         checkpoint_wal_entry_hash_kind,
         checkpoint_wal_entry_hash_encoding,
         checkpoint.wal_entry_hash_hex.len() / 2,
+        checkpoint_prev_hash,
+        checkpoint_prev_hash_present,
+        checkpoint_prev_hash_required,
+        checkpoint_prev_hash_kind,
+        checkpoint_prev_hash_matches_height_boundary,
+        checkpoint_prev_hash_bytes,
+        checkpoint_prev_hash_surface_policy,
+        checkpoint_prev_hash_encoding,
         wal_entry.height,
         wal_height_encoding,
         wal_height_kind,
@@ -4438,9 +4477,9 @@ pub fn verify_wal_and_find_checkpoint_node_recovery(
             return Ok(best_checkpoint);
         }
         if !matching_hash_checkpoints.is_empty()
-            && checkpoints_at_height
-                .iter()
-                .any(|cp| cp.state_root_hex == e.state_root_hex && cp.wal_entry_hash_hex != cur_hash)
+            && checkpoints_at_height.iter().any(|cp| {
+                cp.state_root_hex == e.state_root_hex && cp.wal_entry_hash_hex != cur_hash
+            })
         {
             return Ok(best_checkpoint);
         }
@@ -4610,13 +4649,14 @@ mod tests {
         assert_eq!(
             summary,
             format!(
-                "da_light_surface=checkpoint-wal-v1 light_verifier_surface=checkpoint-wal-v1 da_binding_fields=state_commitment,checkpoint_commitment,wal_content_hash da_binding_kind=triple-anchor da_anchor_count=3 da_anchor_total_bytes=96 da_anchor_order=state_commitment,checkpoint_commitment,wal_content_hash da_state_commitment_source=checkpoint.state_root_hex da_checkpoint_commitment_source=checkpoint.commitment_hex da_wal_content_hash_source=wal.content_hash_hex da_state_commitment={} da_state_commitment_kind=canonical-hex-32b da_state_commitment_encoding=hex-lower da_state_commitment_bytes=32 da_state_commitment_matches_checkpoint_state_root=true da_checkpoint_commitment={} da_checkpoint_commitment_kind=canonical-hex-32b da_checkpoint_commitment_encoding=hex-lower da_checkpoint_commitment_bytes=32 da_checkpoint_commitment_matches_checkpoint_commitment=true da_wal_content_hash={} da_wal_content_hash_kind=canonical-hex-32b da_wal_content_hash_encoding=hex-lower da_wal_content_hash_bytes=32 da_wal_content_hash_matches_checkpoint_wal_entry_hash=true da_wal_content_hash_commits_wal_round=true da_wal_content_hash_commits_wal_prev_hash=true checkpoint_binding_fields=height,state_root,wal_entry_hash checkpoint_tuple_order=height,state_root,wal_entry_hash checkpoint_tuple_encoding=sha256(len-prefixed height-le-u64|state_root|wal_entry_hash) checkpoint_commitment_fields=height,state_root,wal_entry_hash checkpoint_commitment_encoding=sha256(len-prefixed height-le-u64|state_root|wal_entry_hash) checkpoint_commitment_binding_kind=tuple-hash checkpoint_commitment={} checkpoint_commitment_kind=canonical-hex-32b checkpoint_commitment_encoding=hex-lower checkpoint_commitment_bytes=32 checkpoint_commitment_matches_recomputed=true checkpoint_height=7 checkpoint_height_encoding=le-u64 checkpoint_height_kind=bft-height-u64 checkpoint_height_bytes=8 checkpoint_height_boundary_kind=non-genesis checkpoint_state_root={} checkpoint_state_root_kind=canonical-hex-32b checkpoint_state_root_encoding=hex-lower checkpoint_state_root_bytes=32 checkpoint_wal_entry_hash={} checkpoint_wal_entry_hash_kind=canonical-hex-32b checkpoint_wal_entry_hash_encoding=hex-lower checkpoint_wal_entry_hash_bytes=32 checkpoint_height_matches_wal=true checkpoint_state_root_matches_wal=true checkpoint_wal_entry_hash_matches_wal=true checkpoint_wal_binding_kind=content-hash-equality checkpoint_surface_canonical=true wal_content_hash_fields=height,round,proposal_hash,committed,state_root,prev_hash wal_tuple_order=height,round,proposal_hash,committed,state_root,prev_hash wal_tuple_encoding=sha256(len-prefixed height-le-u64|round-le-u64|proposal_hash|committed-u8|state_root|prev_hash?) wal_height=7 wal_height_encoding=le-u64 wal_height_kind=bft-height-u64 wal_height_bytes=8 wal_round=3 wal_round_encoding=le-u64 wal_round_kind=bft-round-u64 wal_round_bytes=8 wal_state_root={} wal_state_root_kind=canonical-hex-32b wal_state_root_encoding=hex-lower wal_state_root_bytes=32 wal_content_hash={} wal_content_hash_kind=canonical-hex-32b wal_content_hash_encoding=hex-lower wal_content_hash_bytes=32 wal_content_hash_matches_recomputed=true wal_content_hash_matches_checkpoint=true wal_content_hash_matches_checkpoint_wal_entry_hash=true wal_committed=true wal_committed_encoding=u8 wal_committed_kind=commit-flag-u8 wal_committed_bytes=1 wal_height_boundary_kind=non-genesis wal_prev_hash={} wal_prev_hash_present=true wal_prev_hash_required=true wal_prev_hash_kind=linked wal_prev_hash_matches_height_boundary=true wal_prev_hash_bytes=32 wal_prev_hash_surface_policy=canonical-hex-32b-or-none wal_prev_hash_encoding=hex-lower-or-none wal_prev_hash_surface_canonical=true wal_linkage_kind=prev-hash-chain wal_proposal_hash=proposal-7 wal_proposal_hash_present=true wal_proposal_hash_kind=opaque-ascii wal_proposal_hash_bytes=10 wal_proposal_hash_surface_policy=ascii-trimmed-no-ws-control-max256 wal_proposal_hash_surface_canonical=true",
+                "da_light_surface=checkpoint-wal-v1 light_verifier_surface=checkpoint-wal-v1 da_binding_fields=state_commitment,checkpoint_commitment,wal_content_hash da_binding_kind=triple-anchor da_anchor_count=3 da_anchor_total_bytes=96 da_anchor_order=state_commitment,checkpoint_commitment,wal_content_hash da_state_commitment_source=checkpoint.state_root_hex da_checkpoint_commitment_source=checkpoint.commitment_hex da_wal_content_hash_source=wal.content_hash_hex da_state_commitment={} da_state_commitment_kind=canonical-hex-32b da_state_commitment_encoding=hex-lower da_state_commitment_bytes=32 da_state_commitment_matches_checkpoint_state_root=true da_checkpoint_commitment={} da_checkpoint_commitment_kind=canonical-hex-32b da_checkpoint_commitment_encoding=hex-lower da_checkpoint_commitment_bytes=32 da_checkpoint_commitment_matches_checkpoint_commitment=true da_wal_content_hash={} da_wal_content_hash_kind=canonical-hex-32b da_wal_content_hash_encoding=hex-lower da_wal_content_hash_bytes=32 da_wal_content_hash_matches_checkpoint_wal_entry_hash=true da_wal_content_hash_commits_wal_height=true da_wal_content_hash_commits_wal_round=true da_wal_content_hash_commits_wal_proposal_hash=true da_wal_content_hash_commits_wal_committed=true da_wal_content_hash_commits_wal_state_root=true da_wal_content_hash_commits_wal_prev_hash=true checkpoint_binding_fields=height,state_root,wal_entry_hash checkpoint_tuple_order=height,state_root,wal_entry_hash checkpoint_tuple_encoding=sha256(len-prefixed height-le-u64|state_root|wal_entry_hash) checkpoint_commitment_fields=height,state_root,wal_entry_hash checkpoint_commitment_encoding=sha256(len-prefixed height-le-u64|state_root|wal_entry_hash) checkpoint_commitment_binding_kind=tuple-hash checkpoint_commitment={} checkpoint_commitment_kind=canonical-hex-32b checkpoint_commitment_encoding=hex-lower checkpoint_commitment_bytes=32 checkpoint_commitment_matches_recomputed=true checkpoint_height=7 checkpoint_height_encoding=le-u64 checkpoint_height_kind=bft-height-u64 checkpoint_height_bytes=8 checkpoint_height_boundary_kind=non-genesis checkpoint_state_root={} checkpoint_state_root_kind=canonical-hex-32b checkpoint_state_root_encoding=hex-lower checkpoint_state_root_bytes=32 checkpoint_wal_entry_hash={} checkpoint_wal_entry_hash_kind=canonical-hex-32b checkpoint_wal_entry_hash_encoding=hex-lower checkpoint_wal_entry_hash_bytes=32 checkpoint_prev_hash={} checkpoint_prev_hash_present=true checkpoint_prev_hash_required=true checkpoint_prev_hash_kind=linked checkpoint_prev_hash_matches_height_boundary=true checkpoint_prev_hash_matches_wal=true checkpoint_prev_hash_bytes=32 checkpoint_prev_hash_surface_policy=canonical-hex-32b-or-none checkpoint_prev_hash_encoding=hex-lower-or-none checkpoint_prev_hash_surface_canonical=true checkpoint_height_matches_wal=true checkpoint_state_root_matches_wal=true checkpoint_wal_entry_hash_matches_wal=true checkpoint_wal_binding_kind=content-hash-equality checkpoint_surface_canonical=true wal_content_hash_fields=height,round,proposal_hash,committed,state_root,prev_hash wal_tuple_order=height,round,proposal_hash,committed,state_root,prev_hash wal_tuple_encoding=sha256(len-prefixed height-le-u64|round-le-u64|proposal_hash|committed-u8|state_root|prev_hash?) wal_height=7 wal_height_encoding=le-u64 wal_height_kind=bft-height-u64 wal_height_bytes=8 wal_round=3 wal_round_encoding=le-u64 wal_round_kind=bft-round-u64 wal_round_bytes=8 wal_state_root={} wal_state_root_kind=canonical-hex-32b wal_state_root_encoding=hex-lower wal_state_root_bytes=32 wal_content_hash={} wal_content_hash_kind=canonical-hex-32b wal_content_hash_encoding=hex-lower wal_content_hash_bytes=32 wal_content_hash_matches_recomputed=true wal_content_hash_matches_checkpoint=true wal_content_hash_matches_checkpoint_wal_entry_hash=true wal_committed=true wal_committed_encoding=u8 wal_committed_kind=commit-flag-u8 wal_committed_bytes=1 wal_height_boundary_kind=non-genesis wal_prev_hash={} wal_prev_hash_present=true wal_prev_hash_required=true wal_prev_hash_kind=linked wal_prev_hash_matches_height_boundary=true wal_prev_hash_bytes=32 wal_prev_hash_surface_policy=canonical-hex-32b-or-none wal_prev_hash_encoding=hex-lower-or-none wal_prev_hash_surface_canonical=true wal_linkage_kind=prev-hash-chain wal_proposal_hash=proposal-7 wal_proposal_hash_present=true wal_proposal_hash_kind=opaque-ascii wal_proposal_hash_bytes=10 wal_proposal_hash_surface_policy=ascii-trimmed-no-ws-control-max256 wal_proposal_hash_surface_canonical=true",
                 checkpoint.state_root_hex,
                 checkpoint.commitment_hex(),
                 wal.content_hash_hex(),
                 checkpoint.commitment_hex(),
                 checkpoint.state_root_hex,
                 checkpoint.wal_entry_hash_hex,
+                wal.prev_hash_hex.as_deref().unwrap(),
                 wal.state_root_hex,
                 wal.content_hash_hex(),
                 wal.prev_hash_hex.as_deref().unwrap(),
@@ -4653,7 +4693,7 @@ mod tests {
         assert_eq!(
             summary,
             format!(
-                "da_light_surface=checkpoint-wal-v1 light_verifier_surface=checkpoint-wal-v1 da_binding_fields=state_commitment,checkpoint_commitment,wal_content_hash da_binding_kind=triple-anchor da_anchor_count=3 da_anchor_total_bytes=96 da_anchor_order=state_commitment,checkpoint_commitment,wal_content_hash da_state_commitment_source=checkpoint.state_root_hex da_checkpoint_commitment_source=checkpoint.commitment_hex da_wal_content_hash_source=wal.content_hash_hex da_state_commitment={} da_state_commitment_kind=canonical-hex-32b da_state_commitment_encoding=hex-lower da_state_commitment_bytes=32 da_state_commitment_matches_checkpoint_state_root=true da_checkpoint_commitment={} da_checkpoint_commitment_kind=canonical-hex-32b da_checkpoint_commitment_encoding=hex-lower da_checkpoint_commitment_bytes=32 da_checkpoint_commitment_matches_checkpoint_commitment=true da_wal_content_hash={} da_wal_content_hash_kind=canonical-hex-32b da_wal_content_hash_encoding=hex-lower da_wal_content_hash_bytes=32 da_wal_content_hash_matches_checkpoint_wal_entry_hash=true da_wal_content_hash_commits_wal_round=true da_wal_content_hash_commits_wal_prev_hash=true checkpoint_binding_fields=height,state_root,wal_entry_hash checkpoint_tuple_order=height,state_root,wal_entry_hash checkpoint_tuple_encoding=sha256(len-prefixed height-le-u64|state_root|wal_entry_hash) checkpoint_commitment_fields=height,state_root,wal_entry_hash checkpoint_commitment_encoding=sha256(len-prefixed height-le-u64|state_root|wal_entry_hash) checkpoint_commitment_binding_kind=tuple-hash checkpoint_commitment={} checkpoint_commitment_kind=canonical-hex-32b checkpoint_commitment_encoding=hex-lower checkpoint_commitment_bytes=32 checkpoint_commitment_matches_recomputed=true checkpoint_height=1 checkpoint_height_encoding=le-u64 checkpoint_height_kind=bft-height-u64 checkpoint_height_bytes=8 checkpoint_height_boundary_kind=genesis checkpoint_state_root={} checkpoint_state_root_kind=canonical-hex-32b checkpoint_state_root_encoding=hex-lower checkpoint_state_root_bytes=32 checkpoint_wal_entry_hash={} checkpoint_wal_entry_hash_kind=canonical-hex-32b checkpoint_wal_entry_hash_encoding=hex-lower checkpoint_wal_entry_hash_bytes=32 checkpoint_height_matches_wal=true checkpoint_state_root_matches_wal=true checkpoint_wal_entry_hash_matches_wal=true checkpoint_wal_binding_kind=content-hash-equality checkpoint_surface_canonical=true wal_content_hash_fields=height,round,proposal_hash,committed,state_root,prev_hash wal_tuple_order=height,round,proposal_hash,committed,state_root,prev_hash wal_tuple_encoding=sha256(len-prefixed height-le-u64|round-le-u64|proposal_hash|committed-u8|state_root|prev_hash?) wal_height=1 wal_height_encoding=le-u64 wal_height_kind=bft-height-u64 wal_height_bytes=8 wal_round=0 wal_round_encoding=le-u64 wal_round_kind=bft-round-u64 wal_round_bytes=8 wal_state_root={} wal_state_root_kind=canonical-hex-32b wal_state_root_encoding=hex-lower wal_state_root_bytes=32 wal_content_hash={} wal_content_hash_kind=canonical-hex-32b wal_content_hash_encoding=hex-lower wal_content_hash_bytes=32 wal_content_hash_matches_recomputed=true wal_content_hash_matches_checkpoint=true wal_content_hash_matches_checkpoint_wal_entry_hash=true wal_committed=true wal_committed_encoding=u8 wal_committed_kind=commit-flag-u8 wal_committed_bytes=1 wal_height_boundary_kind=genesis wal_prev_hash=none wal_prev_hash_present=false wal_prev_hash_required=false wal_prev_hash_kind=genesis wal_prev_hash_matches_height_boundary=true wal_prev_hash_bytes=0 wal_prev_hash_surface_policy=canonical-hex-32b-or-none wal_prev_hash_encoding=hex-lower-or-none wal_prev_hash_surface_canonical=true wal_linkage_kind=prev-hash-chain wal_proposal_hash=proposal-genesis wal_proposal_hash_present=true wal_proposal_hash_kind=opaque-ascii wal_proposal_hash_bytes=16 wal_proposal_hash_surface_policy=ascii-trimmed-no-ws-control-max256 wal_proposal_hash_surface_canonical=true",
+                "da_light_surface=checkpoint-wal-v1 light_verifier_surface=checkpoint-wal-v1 da_binding_fields=state_commitment,checkpoint_commitment,wal_content_hash da_binding_kind=triple-anchor da_anchor_count=3 da_anchor_total_bytes=96 da_anchor_order=state_commitment,checkpoint_commitment,wal_content_hash da_state_commitment_source=checkpoint.state_root_hex da_checkpoint_commitment_source=checkpoint.commitment_hex da_wal_content_hash_source=wal.content_hash_hex da_state_commitment={} da_state_commitment_kind=canonical-hex-32b da_state_commitment_encoding=hex-lower da_state_commitment_bytes=32 da_state_commitment_matches_checkpoint_state_root=true da_checkpoint_commitment={} da_checkpoint_commitment_kind=canonical-hex-32b da_checkpoint_commitment_encoding=hex-lower da_checkpoint_commitment_bytes=32 da_checkpoint_commitment_matches_checkpoint_commitment=true da_wal_content_hash={} da_wal_content_hash_kind=canonical-hex-32b da_wal_content_hash_encoding=hex-lower da_wal_content_hash_bytes=32 da_wal_content_hash_matches_checkpoint_wal_entry_hash=true da_wal_content_hash_commits_wal_height=true da_wal_content_hash_commits_wal_round=true da_wal_content_hash_commits_wal_proposal_hash=true da_wal_content_hash_commits_wal_committed=true da_wal_content_hash_commits_wal_state_root=true da_wal_content_hash_commits_wal_prev_hash=true checkpoint_binding_fields=height,state_root,wal_entry_hash checkpoint_tuple_order=height,state_root,wal_entry_hash checkpoint_tuple_encoding=sha256(len-prefixed height-le-u64|state_root|wal_entry_hash) checkpoint_commitment_fields=height,state_root,wal_entry_hash checkpoint_commitment_encoding=sha256(len-prefixed height-le-u64|state_root|wal_entry_hash) checkpoint_commitment_binding_kind=tuple-hash checkpoint_commitment={} checkpoint_commitment_kind=canonical-hex-32b checkpoint_commitment_encoding=hex-lower checkpoint_commitment_bytes=32 checkpoint_commitment_matches_recomputed=true checkpoint_height=1 checkpoint_height_encoding=le-u64 checkpoint_height_kind=bft-height-u64 checkpoint_height_bytes=8 checkpoint_height_boundary_kind=genesis checkpoint_state_root={} checkpoint_state_root_kind=canonical-hex-32b checkpoint_state_root_encoding=hex-lower checkpoint_state_root_bytes=32 checkpoint_wal_entry_hash={} checkpoint_wal_entry_hash_kind=canonical-hex-32b checkpoint_wal_entry_hash_encoding=hex-lower checkpoint_wal_entry_hash_bytes=32 checkpoint_prev_hash=none checkpoint_prev_hash_present=false checkpoint_prev_hash_required=false checkpoint_prev_hash_kind=genesis checkpoint_prev_hash_matches_height_boundary=true checkpoint_prev_hash_matches_wal=true checkpoint_prev_hash_bytes=0 checkpoint_prev_hash_surface_policy=canonical-hex-32b-or-none checkpoint_prev_hash_encoding=hex-lower-or-none checkpoint_prev_hash_surface_canonical=true checkpoint_height_matches_wal=true checkpoint_state_root_matches_wal=true checkpoint_wal_entry_hash_matches_wal=true checkpoint_wal_binding_kind=content-hash-equality checkpoint_surface_canonical=true wal_content_hash_fields=height,round,proposal_hash,committed,state_root,prev_hash wal_tuple_order=height,round,proposal_hash,committed,state_root,prev_hash wal_tuple_encoding=sha256(len-prefixed height-le-u64|round-le-u64|proposal_hash|committed-u8|state_root|prev_hash?) wal_height=1 wal_height_encoding=le-u64 wal_height_kind=bft-height-u64 wal_height_bytes=8 wal_round=0 wal_round_encoding=le-u64 wal_round_kind=bft-round-u64 wal_round_bytes=8 wal_state_root={} wal_state_root_kind=canonical-hex-32b wal_state_root_encoding=hex-lower wal_state_root_bytes=32 wal_content_hash={} wal_content_hash_kind=canonical-hex-32b wal_content_hash_encoding=hex-lower wal_content_hash_bytes=32 wal_content_hash_matches_recomputed=true wal_content_hash_matches_checkpoint=true wal_content_hash_matches_checkpoint_wal_entry_hash=true wal_committed=true wal_committed_encoding=u8 wal_committed_kind=commit-flag-u8 wal_committed_bytes=1 wal_height_boundary_kind=genesis wal_prev_hash=none wal_prev_hash_present=false wal_prev_hash_required=false wal_prev_hash_kind=genesis wal_prev_hash_matches_height_boundary=true wal_prev_hash_bytes=0 wal_prev_hash_surface_policy=canonical-hex-32b-or-none wal_prev_hash_encoding=hex-lower-or-none wal_prev_hash_surface_canonical=true wal_linkage_kind=prev-hash-chain wal_proposal_hash=proposal-genesis wal_proposal_hash_present=true wal_proposal_hash_kind=opaque-ascii wal_proposal_hash_bytes=16 wal_proposal_hash_surface_policy=ascii-trimmed-no-ws-control-max256 wal_proposal_hash_surface_canonical=true",
                 checkpoint.state_root_hex,
                 checkpoint.commitment_hex(),
                 wal.content_hash_hex(),
@@ -4663,6 +4703,236 @@ mod tests {
                 wal.state_root_hex,
                 wal.content_hash_hex(),
             )
+        );
+    }
+
+    #[test]
+    fn checkpoint_da_light_verifier_summary_fails_closed_on_forged_genesis_prev_hash() {
+        let wal = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "proposal-genesis".into(),
+            committed: true,
+            state_root_hex: "12".repeat(32),
+            prev_hash_hex: Some("34".repeat(32)),
+        };
+        let checkpoint = CheckpointMeta {
+            height: 1,
+            state_root_hex: wal.state_root_hex.clone(),
+            wal_entry_hash_hex: wal.content_hash_hex(),
+        };
+
+        assert_eq!(
+            checkpoint_da_light_verifier_summary(&checkpoint, &wal),
+            None,
+            "DA/light-verifier summaries must fail closed when genesis WAL metadata forges prev_hash_hex so sidecars never publish a fake predecessor link for height-1 checkpoint evidence"
+        );
+    }
+
+    #[test]
+    fn checkpoint_da_light_verifier_summary_fails_closed_on_missing_non_genesis_prev_hash() {
+        let wal = WalMeta {
+            height: 2,
+            round: 0,
+            proposal_hash: "proposal-2".into(),
+            committed: true,
+            state_root_hex: "34".repeat(32),
+            prev_hash_hex: None,
+        };
+        let checkpoint = CheckpointMeta {
+            height: wal.height,
+            state_root_hex: wal.state_root_hex.clone(),
+            wal_entry_hash_hex: wal.content_hash_hex(),
+        };
+
+        assert_eq!(
+            checkpoint_da_light_verifier_summary(&checkpoint, &wal),
+            None,
+            "DA/light-verifier summaries must fail closed when non-genesis WAL metadata omits prev_hash_hex so sidecars never publish checkpoint evidence without a predecessor link"
+        );
+    }
+
+    #[test]
+    fn checkpoint_da_light_verifier_summary_fails_closed_on_uncommitted_wal() {
+        let wal = WalMeta {
+            height: 7,
+            round: 3,
+            proposal_hash: "proposal-7".into(),
+            committed: false,
+            state_root_hex: "ab".repeat(32),
+            prev_hash_hex: Some("ef".repeat(32)),
+        };
+        let checkpoint = CheckpointMeta {
+            height: 7,
+            state_root_hex: wal.state_root_hex.clone(),
+            wal_entry_hash_hex: wal.content_hash_hex(),
+        };
+
+        assert_eq!(
+            checkpoint_da_light_verifier_summary(&checkpoint, &wal),
+            None,
+            "DA/light-verifier summaries must fail closed on uncommitted WAL metadata so sidecars never publish checkpoint evidence for speculative state"
+        );
+    }
+
+    #[test]
+    fn checkpoint_da_light_verifier_summary_fails_closed_on_blank_proposal_hash() {
+        let wal = WalMeta {
+            height: 7,
+            round: 3,
+            proposal_hash: String::new(),
+            committed: true,
+            state_root_hex: "ab".repeat(32),
+            prev_hash_hex: Some("ef".repeat(32)),
+        };
+        let checkpoint = CheckpointMeta {
+            height: 7,
+            state_root_hex: wal.state_root_hex.clone(),
+            wal_entry_hash_hex: wal.content_hash_hex(),
+        };
+
+        assert_eq!(
+            checkpoint_da_light_verifier_summary(&checkpoint, &wal),
+            None,
+            "DA/light-verifier summaries must fail closed when WAL proposal_hash is blank so sidecars never publish checkpoint evidence without a stable proposal identity"
+        );
+    }
+
+    #[test]
+    fn checkpoint_da_light_verifier_summary_fails_closed_on_noncanonical_proposal_hash() {
+        let wal = WalMeta {
+            height: 7,
+            round: 3,
+            proposal_hash: " proposal-7 ".into(),
+            committed: true,
+            state_root_hex: "ab".repeat(32),
+            prev_hash_hex: Some("ef".repeat(32)),
+        };
+        let checkpoint = CheckpointMeta {
+            height: 7,
+            state_root_hex: wal.state_root_hex.clone(),
+            wal_entry_hash_hex: wal.content_hash_hex(),
+        };
+
+        assert_eq!(
+            checkpoint_da_light_verifier_summary(&checkpoint, &wal),
+            None,
+            "DA/light-verifier summaries must fail closed when WAL proposal_hash is non-canonical so sidecars never publish trim-sensitive checkpoint evidence"
+        );
+    }
+
+    #[test]
+    fn checkpoint_da_light_verifier_summary_fails_closed_on_non_ascii_proposal_hash() {
+        let wal = WalMeta {
+            height: 7,
+            round: 3,
+            proposal_hash: "proposal-7-猫头鹰".into(),
+            committed: true,
+            state_root_hex: "ab".repeat(32),
+            prev_hash_hex: Some("ef".repeat(32)),
+        };
+        let checkpoint = CheckpointMeta {
+            height: 7,
+            state_root_hex: wal.state_root_hex.clone(),
+            wal_entry_hash_hex: wal.content_hash_hex(),
+        };
+
+        assert_eq!(
+            checkpoint_da_light_verifier_summary(&checkpoint, &wal),
+            None,
+            "DA/light-verifier summaries must fail closed when WAL proposal_hash is non-ascii so sidecars never publish locale-dependent checkpoint evidence"
+        );
+    }
+
+    #[test]
+    fn checkpoint_da_light_verifier_summary_fails_closed_on_carriage_return_proposal_hash() {
+        let wal = WalMeta {
+            height: 7,
+            round: 3,
+            proposal_hash: "proposal-7\r".into(),
+            committed: true,
+            state_root_hex: "ab".repeat(32),
+            prev_hash_hex: Some("ef".repeat(32)),
+        };
+        let checkpoint = CheckpointMeta {
+            height: 7,
+            state_root_hex: wal.state_root_hex.clone(),
+            wal_entry_hash_hex: wal.content_hash_hex(),
+        };
+
+        assert_eq!(
+            checkpoint_da_light_verifier_summary(&checkpoint, &wal),
+            None,
+            "DA/light-verifier summaries must fail closed when WAL proposal_hash carries carriage-return control drift so sidecars never publish CRLF-sensitive checkpoint evidence"
+        );
+    }
+
+    #[test]
+    fn checkpoint_da_light_verifier_summary_fails_closed_on_tabbed_proposal_hash() {
+        let wal = WalMeta {
+            height: 7,
+            round: 3,
+            proposal_hash: "proposal-7\tcheckpoint".into(),
+            committed: true,
+            state_root_hex: "ab".repeat(32),
+            prev_hash_hex: Some("ef".repeat(32)),
+        };
+        let checkpoint = CheckpointMeta {
+            height: 7,
+            state_root_hex: wal.state_root_hex.clone(),
+            wal_entry_hash_hex: wal.content_hash_hex(),
+        };
+
+        assert_eq!(
+            checkpoint_da_light_verifier_summary(&checkpoint, &wal),
+            None,
+            "DA/light-verifier summaries must fail closed when WAL proposal_hash contains tab layout drift so sidecars never publish whitespace-sensitive checkpoint evidence"
+        );
+    }
+
+    #[test]
+    fn checkpoint_da_light_verifier_summary_fails_closed_on_embedded_newline_proposal_hash() {
+        let wal = WalMeta {
+            height: 7,
+            round: 3,
+            proposal_hash: "proposal-7\ncheckpoint".into(),
+            committed: true,
+            state_root_hex: "ab".repeat(32),
+            prev_hash_hex: Some("ef".repeat(32)),
+        };
+        let checkpoint = CheckpointMeta {
+            height: 7,
+            state_root_hex: wal.state_root_hex.clone(),
+            wal_entry_hash_hex: wal.content_hash_hex(),
+        };
+
+        assert_eq!(
+            checkpoint_da_light_verifier_summary(&checkpoint, &wal),
+            None,
+            "DA/light-verifier summaries must fail closed when WAL proposal_hash contains embedded newlines so sidecars never publish line-break-sensitive checkpoint evidence"
+        );
+    }
+
+    #[test]
+    fn checkpoint_da_light_verifier_summary_fails_closed_on_overlong_proposal_hash() {
+        let wal = WalMeta {
+            height: 7,
+            round: 3,
+            proposal_hash: "p".repeat(257),
+            committed: true,
+            state_root_hex: "ab".repeat(32),
+            prev_hash_hex: Some("ef".repeat(32)),
+        };
+        let checkpoint = CheckpointMeta {
+            height: 7,
+            state_root_hex: wal.state_root_hex.clone(),
+            wal_entry_hash_hex: wal.content_hash_hex(),
+        };
+
+        assert_eq!(
+            checkpoint_da_light_verifier_summary(&checkpoint, &wal),
+            None,
+            "DA/light-verifier summaries must fail closed when WAL proposal_hash exceeds the canonical 256-byte envelope so sidecars never publish unbounded checkpoint evidence identities"
         );
     }
 
@@ -4798,6 +5068,32 @@ mod tests {
             wal_a.content_hash_hex(),
             wal_missing_prev.content_hash_hex(),
             "WAL checkpoint evidence digest must distinguish present-vs-missing prev_hash_hex so broken predecessor links cannot masquerade as canonical checkpoint evidence"
+        );
+    }
+
+    #[test]
+    fn wal_content_hash_length_frames_state_root_and_prev_hash_boundaries() {
+        let wal_a = WalMeta {
+            height: 12,
+            round: 3,
+            proposal_hash: "checkpoint-proof-12".into(),
+            committed: true,
+            state_root_hex: "abcd".into(),
+            prev_hash_hex: Some("ef".into()),
+        };
+        let wal_b = WalMeta {
+            height: 12,
+            round: 3,
+            proposal_hash: "checkpoint-proof-12".into(),
+            committed: true,
+            state_root_hex: "ab".into(),
+            prev_hash_hex: Some("cdef".into()),
+        };
+
+        assert_ne!(
+            wal_a.content_hash_hex(),
+            wal_b.content_hash_hex(),
+            "WAL checkpoint evidence digest must length-frame state_root_hex and prev_hash_hex independently so DA/checkpoint sidecars cannot collide by shifting bytes across the state-root/predecessor boundary"
         );
     }
 
@@ -7234,7 +7530,8 @@ mod tests {
     }
 
     #[test]
-    fn restore_pending_resolve_approval_accepts_canonical_equivalent_snapshot_under_configured_authority() {
+    fn restore_pending_resolve_approval_accepts_canonical_equivalent_snapshot_under_configured_authority(
+    ) {
         let mut restored = StateStore::new();
         restored.restore_gov_param(
             700,
@@ -10335,7 +10632,8 @@ mod tests {
     }
 
     #[test]
-    fn governance_restore_pending_update_noncanonical_emergency_pause_alias_scrubs_reserved_id_aliases() {
+    fn governance_restore_pending_update_noncanonical_emergency_pause_alias_scrubs_reserved_id_aliases(
+    ) {
         let mut st = StateStore::new();
         st.pending_gov_updates.insert(
             "resolve_authority".into(),
@@ -11439,8 +11737,12 @@ mod tests {
 
     #[test]
     fn governance_list_based_key_id_validation_reuses_shared_pinned_policy() {
-        assert!(validate_governance_key_id_from_lists(GOV_PINNED_KEY_IDS, "emergency_pause", 7_999)
-            .is_ok());
+        assert!(validate_governance_key_id_from_lists(
+            GOV_PINNED_KEY_IDS,
+            "emergency_pause",
+            7_999
+        )
+        .is_ok());
 
         let err =
             validate_governance_key_id_from_lists(GOV_PINNED_KEY_IDS, "emergency_pause", 8_000)
@@ -11915,8 +12217,12 @@ mod tests {
             "restore must repair same-key registry drift back to the reserved emergency_pause id"
         );
         assert_eq!(
-            st.get_param(EMERGENCY_PAUSE_KEY_ID)
-                .map(|param| (param.key_id, param.key, param.value, param.version)),
+            st.get_param(EMERGENCY_PAUSE_KEY_ID).map(|param| (
+                param.key_id,
+                param.key,
+                param.value,
+                param.version
+            )),
             Some((
                 EMERGENCY_PAUSE_KEY_ID,
                 "emergency_pause".into(),
@@ -12385,7 +12691,8 @@ mod tests {
     }
 
     #[test]
-    fn restore_pending_gov_update_rejects_emergency_pause_metadata_and_scrubs_reserved_id_aliases() {
+    fn restore_pending_gov_update_rejects_emergency_pause_metadata_and_scrubs_reserved_id_aliases()
+    {
         let mut st = StateStore::new();
 
         st.pending_gov_updates.insert(
@@ -13363,8 +13670,10 @@ mod tests {
             "governance pinned key-id registry contains duplicate keys"
         );
 
-        let pinned_ids: std::collections::BTreeSet<u64> =
-            GOV_PINNED_KEY_IDS.iter().map(|(_, key_id)| *key_id).collect();
+        let pinned_ids: std::collections::BTreeSet<u64> = GOV_PINNED_KEY_IDS
+            .iter()
+            .map(|(_, key_id)| *key_id)
+            .collect();
         assert_eq!(
             pinned_ids.len(),
             GOV_PINNED_KEY_IDS.len(),
@@ -13494,7 +13803,10 @@ mod tests {
                 version: 1,
             }),
         );
-        assert_eq!(st.gov_param_string("max_block_ms"), Some("1000".to_string()));
+        assert_eq!(
+            st.gov_param_string("max_block_ms"),
+            Some("1000".to_string())
+        );
 
         st.restore_gov_param(
             7_001,
@@ -13756,7 +14068,8 @@ mod tests {
     }
 
     #[test]
-    fn emergency_pause_enforce_action_numeric_literal_preserves_live_binding_and_pending_cleanliness() {
+    fn emergency_pause_enforce_action_numeric_literal_preserves_live_binding_and_pending_cleanliness(
+    ) {
         // Merge-gate guard: numeric truthy/falsey coercions must never sneak through the
         // emergency brake path. The control-plane bool stays strict and fail-closed.
         let mut st = StateStore::new();
@@ -13775,7 +14088,10 @@ mod tests {
             )
             .expect_err("enforce action must reject numeric bool literal");
 
-        assert!(err.contains("expected strict bool"), "unexpected error: {err}");
+        assert!(
+            err.contains("expected strict bool"),
+            "unexpected error: {err}"
+        );
         assert!(
             st.is_emergency_paused(),
             "rejected numeric enforce payload must preserve the live emergency brake"
@@ -14954,9 +15270,7 @@ mod tests {
             challenge_bond_forfeited: Some(false),
             version: 7,
         })
-        .expect(
-            "challenged task should still insert for blank challenger regression coverage",
-        );
+        .expect("challenged task should still insert for blank challenger regression coverage");
 
         st.restore_pending_resolve_approval(
             902,
@@ -15121,7 +15435,8 @@ mod tests {
     }
 
     #[test]
-    fn restore_pending_resolve_approval_from_rollback_rejects_paused_noncanonical_authority_snapshot() {
+    fn restore_pending_resolve_approval_from_rollback_rejects_paused_noncanonical_authority_snapshot(
+    ) {
         let mut st = StateStore::new();
         st.set_gov_param(
             7_999,

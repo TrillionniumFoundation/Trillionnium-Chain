@@ -409,6 +409,25 @@ fn node_recovery_checkpoint_rejects_non_genesis_prev_hash_with_newline_control_d
 }
 
 #[test]
+fn node_recovery_checkpoint_rejects_non_genesis_prev_hash_with_carriage_return_control_drift() {
+    let wal_entry = WalMeta {
+        height: 2,
+        round: 0,
+        proposal_hash: "proposal-2".into(),
+        committed: true,
+        state_root_hex: "ab".repeat(32),
+        prev_hash_hex: Some(format!("{}\r", "01".repeat(32))),
+    };
+
+    let got = verify_wal_and_find_checkpoint_node_recovery(&[], &[wal_entry]).unwrap();
+
+    assert!(
+        got.is_none(),
+        "node recovery must reject non-genesis WAL prev_hash_hex with carriage-return drift so checkpoint sidecars cannot revive CRLF-tainted predecessor bindings during restart-time recovery"
+    );
+}
+
+#[test]
 fn node_recovery_checkpoint_rejects_non_genesis_prev_hash_with_uppercase_hex_drift() {
     let wal_entry = WalMeta {
         height: 2,
@@ -6684,6 +6703,32 @@ fn checkpoint_evidence_surface_requires_canonical_state_root_and_hash_hex() {
         ),
         "checkpoint evidence surfaces must reject zero-width prev_hash_hex on non-genesis WAL metadata so audit-ready predecessor links cannot hide layout drift behind visually identical digest surfaces"
     );
+
+    let mut non_ascii_proposal_hash_wal = wal.clone();
+    non_ascii_proposal_hash_wal.proposal_hash = "proposal-猫头鹰".into();
+    let mut non_ascii_proposal_hash_checkpoint = checkpoint.clone();
+    non_ascii_proposal_hash_checkpoint.wal_entry_hash_hex =
+        non_ascii_proposal_hash_wal.content_hash_hex();
+    assert!(
+        !checkpoint_evidence_surface_is_canonical(
+            &non_ascii_proposal_hash_checkpoint,
+            &non_ascii_proposal_hash_wal,
+        ),
+        "checkpoint evidence surfaces must reject non-ascii WAL proposal_hash values so verifier sidecars cannot publish DA-linked checkpoint provenance with locale-dependent proposal identities"
+    );
+
+    let mut overlong_proposal_hash_wal = wal.clone();
+    overlong_proposal_hash_wal.proposal_hash = "p".repeat(257);
+    let mut overlong_proposal_hash_checkpoint = checkpoint.clone();
+    overlong_proposal_hash_checkpoint.wal_entry_hash_hex =
+        overlong_proposal_hash_wal.content_hash_hex();
+    assert!(
+        !checkpoint_evidence_surface_is_canonical(
+            &overlong_proposal_hash_checkpoint,
+            &overlong_proposal_hash_wal,
+        ),
+        "checkpoint evidence surfaces must reject overlong WAL proposal_hash values so DA/light-verifier sidecars cannot anchor checkpoint evidence to unbounded proposal identity surfaces"
+    );
 }
 
 #[test]
@@ -7005,6 +7050,12 @@ fn checkpoint_da_light_verifier_summary_exposes_canonical_surface_fields() {
     assert!(summary.contains(&format!("da_wal_content_hash={}", wal.content_hash_hex())));
     assert!(summary.contains("da_wal_content_hash_kind=canonical-hex-32b"));
     assert!(summary.contains("da_wal_content_hash_bytes=32"));
+    assert!(summary.contains("da_wal_content_hash_commits_wal_height=true"));
+    assert!(summary.contains("da_wal_content_hash_commits_wal_round=true"));
+    assert!(summary.contains("da_wal_content_hash_commits_wal_proposal_hash=true"));
+    assert!(summary.contains("da_wal_content_hash_commits_wal_committed=true"));
+    assert!(summary.contains("da_wal_content_hash_commits_wal_state_root=true"));
+    assert!(summary.contains("da_wal_content_hash_commits_wal_prev_hash=true"));
     assert!(summary.contains("checkpoint_binding_fields=height,state_root,wal_entry_hash"));
     assert!(summary.contains("checkpoint_tuple_order=height,state_root,wal_entry_hash"));
     assert!(summary.contains(
@@ -7710,6 +7761,234 @@ fn checkpoint_da_light_verifier_summary_fails_closed_on_missing_non_genesis_wal_
     assert!(
         checkpoint_da_light_verifier_summary(&bad_checkpoint, &bad_wal).is_none(),
         "non-genesis WAL metadata without prev_hash_hex must fail closed instead of emitting a DA/light-verifier summary"
+    );
+}
+
+#[test]
+fn checkpoint_da_light_verifier_summary_fails_closed_on_blank_non_genesis_wal_prev_hash_surface() {
+    let wal = WalMeta {
+        height: 4,
+        round: 1,
+        proposal_hash: "proposal-4".into(),
+        committed: true,
+        state_root_hex: "ab".repeat(32),
+        prev_hash_hex: Some("cd".repeat(32)),
+    };
+    let checkpoint = CheckpointMeta {
+        height: wal.height,
+        state_root_hex: wal.state_root_hex.clone(),
+        wal_entry_hash_hex: wal.content_hash_hex(),
+    };
+
+    let mut bad_wal = wal.clone();
+    bad_wal.prev_hash_hex = Some(String::new());
+    let bad_checkpoint = CheckpointMeta {
+        height: bad_wal.height,
+        state_root_hex: bad_wal.state_root_hex.clone(),
+        wal_entry_hash_hex: bad_wal.content_hash_hex(),
+    };
+
+    assert!(
+        checkpoint_da_light_verifier_summary(&checkpoint, &wal).is_some(),
+        "sanity: canonical non-genesis checkpoint/WAL evidence should summarize before the blank-prev-hash regression mutation"
+    );
+    assert!(
+        checkpoint_da_light_verifier_summary(&bad_checkpoint, &bad_wal).is_none(),
+        "blank non-genesis WAL prev_hash_hex must fail closed instead of emitting a DA/light-verifier summary"
+    );
+}
+
+#[test]
+fn checkpoint_da_light_verifier_summary_fails_closed_on_edge_whitespace_non_genesis_wal_prev_hash_surface() {
+    let wal = WalMeta {
+        height: 4,
+        round: 1,
+        proposal_hash: "proposal-4".into(),
+        committed: true,
+        state_root_hex: "ab".repeat(32),
+        prev_hash_hex: Some("cd".repeat(32)),
+    };
+    let checkpoint = CheckpointMeta {
+        height: wal.height,
+        state_root_hex: wal.state_root_hex.clone(),
+        wal_entry_hash_hex: wal.content_hash_hex(),
+    };
+
+    let mut bad_wal = wal.clone();
+    bad_wal.prev_hash_hex = Some(format!(" {} ", "cd".repeat(32)));
+    let bad_checkpoint = CheckpointMeta {
+        height: bad_wal.height,
+        state_root_hex: bad_wal.state_root_hex.clone(),
+        wal_entry_hash_hex: bad_wal.content_hash_hex(),
+    };
+
+    assert!(
+        checkpoint_da_light_verifier_summary(&checkpoint, &wal).is_some(),
+        "sanity: canonical non-genesis checkpoint/WAL evidence should summarize before the edge-whitespace prev-hash regression mutation"
+    );
+    assert!(
+        checkpoint_da_light_verifier_summary(&bad_checkpoint, &bad_wal).is_none(),
+        "non-genesis WAL prev_hash_hex with edge whitespace drift must fail closed instead of emitting a DA/light-verifier summary"
+    );
+}
+
+#[test]
+fn checkpoint_da_light_verifier_summary_fails_closed_on_control_char_non_genesis_wal_prev_hash_surface() {
+    let wal = WalMeta {
+        height: 4,
+        round: 1,
+        proposal_hash: "proposal-4".into(),
+        committed: true,
+        state_root_hex: "ab".repeat(32),
+        prev_hash_hex: Some("cd".repeat(32)),
+    };
+    let checkpoint = CheckpointMeta {
+        height: wal.height,
+        state_root_hex: wal.state_root_hex.clone(),
+        wal_entry_hash_hex: wal.content_hash_hex(),
+    };
+
+    let mut bad_wal = wal.clone();
+    bad_wal.prev_hash_hex = Some(format!("{}\n", "cd".repeat(32)));
+    let bad_checkpoint = CheckpointMeta {
+        height: bad_wal.height,
+        state_root_hex: bad_wal.state_root_hex.clone(),
+        wal_entry_hash_hex: bad_wal.content_hash_hex(),
+    };
+
+    assert!(
+        checkpoint_da_light_verifier_summary(&checkpoint, &wal).is_some(),
+        "sanity: canonical non-genesis checkpoint/WAL evidence should summarize before the control-char prev-hash regression mutation"
+    );
+    assert!(
+        checkpoint_da_light_verifier_summary(&bad_checkpoint, &bad_wal).is_none(),
+        "non-genesis WAL prev_hash_hex with control-character drift must fail closed instead of emitting a DA/light-verifier summary"
+    );
+}
+
+#[test]
+fn checkpoint_da_light_verifier_summary_fails_closed_on_carriage_return_non_genesis_wal_prev_hash_surface() {
+    let wal = WalMeta {
+        height: 4,
+        round: 1,
+        proposal_hash: "proposal-4".into(),
+        committed: true,
+        state_root_hex: "ab".repeat(32),
+        prev_hash_hex: Some("cd".repeat(32)),
+    };
+    let checkpoint = CheckpointMeta {
+        height: wal.height,
+        state_root_hex: wal.state_root_hex.clone(),
+        wal_entry_hash_hex: wal.content_hash_hex(),
+    };
+
+    let mut bad_wal = wal.clone();
+    bad_wal.prev_hash_hex = Some(format!("{}\r", "cd".repeat(32)));
+    let bad_checkpoint = CheckpointMeta {
+        height: bad_wal.height,
+        state_root_hex: bad_wal.state_root_hex.clone(),
+        wal_entry_hash_hex: bad_wal.content_hash_hex(),
+    };
+
+    assert!(
+        checkpoint_evidence_surface_is_canonical(&checkpoint, &wal),
+        "sanity: canonical non-genesis checkpoint/WAL evidence should remain audit-ready before the carriage-return prev-hash regression mutation"
+    );
+    assert!(
+        checkpoint_da_light_verifier_summary(&checkpoint, &wal).is_some(),
+        "sanity: canonical non-genesis checkpoint/WAL evidence should summarize before the carriage-return prev-hash regression mutation"
+    );
+    assert!(
+        !checkpoint_evidence_surface_is_canonical(&bad_checkpoint, &bad_wal),
+        "non-genesis WAL prev_hash_hex with carriage-return drift must fail canonical checkpoint evidence gating instead of remaining audit-ready"
+    );
+    assert!(
+        checkpoint_da_light_verifier_summary(&bad_checkpoint, &bad_wal).is_none(),
+        "non-genesis WAL prev_hash_hex with carriage-return drift must fail closed instead of emitting a DA/light-verifier summary"
+    );
+}
+
+#[test]
+fn checkpoint_da_light_verifier_summary_fails_closed_on_internal_whitespace_non_genesis_wal_prev_hash_surface() {
+    let wal = WalMeta {
+        height: 4,
+        round: 1,
+        proposal_hash: "proposal-4".into(),
+        committed: true,
+        state_root_hex: "ab".repeat(32),
+        prev_hash_hex: Some("cd".repeat(32)),
+    };
+    let checkpoint = CheckpointMeta {
+        height: wal.height,
+        state_root_hex: wal.state_root_hex.clone(),
+        wal_entry_hash_hex: wal.content_hash_hex(),
+    };
+
+    let mut bad_wal = wal.clone();
+    bad_wal.prev_hash_hex = Some(format!("{} {}", "cd".repeat(16), "cd".repeat(16)));
+    let bad_checkpoint = CheckpointMeta {
+        height: bad_wal.height,
+        state_root_hex: bad_wal.state_root_hex.clone(),
+        wal_entry_hash_hex: bad_wal.content_hash_hex(),
+    };
+
+    assert!(
+        checkpoint_evidence_surface_is_canonical(&checkpoint, &wal),
+        "sanity: canonical non-genesis checkpoint/WAL evidence should remain audit-ready before the internal-whitespace prev-hash regression mutation"
+    );
+    assert!(
+        checkpoint_da_light_verifier_summary(&checkpoint, &wal).is_some(),
+        "sanity: canonical non-genesis checkpoint/WAL evidence should summarize before the internal-whitespace prev-hash regression mutation"
+    );
+    assert!(
+        !checkpoint_evidence_surface_is_canonical(&bad_checkpoint, &bad_wal),
+        "non-genesis WAL prev_hash_hex with internal whitespace drift must fail canonical checkpoint evidence gating instead of remaining audit-ready"
+    );
+    assert!(
+        checkpoint_da_light_verifier_summary(&bad_checkpoint, &bad_wal).is_none(),
+        "non-genesis WAL prev_hash_hex with internal whitespace drift must fail closed instead of emitting a DA/light-verifier summary"
+    );
+}
+
+#[test]
+fn checkpoint_da_light_verifier_summary_fails_closed_on_zero_width_non_genesis_wal_prev_hash_surface() {
+    let wal = WalMeta {
+        height: 4,
+        round: 1,
+        proposal_hash: "proposal-4".into(),
+        committed: true,
+        state_root_hex: "ab".repeat(32),
+        prev_hash_hex: Some("cd".repeat(32)),
+    };
+    let checkpoint = CheckpointMeta {
+        height: wal.height,
+        state_root_hex: wal.state_root_hex.clone(),
+        wal_entry_hash_hex: wal.content_hash_hex(),
+    };
+
+    let mut bad_wal = wal.clone();
+    bad_wal.prev_hash_hex = Some(format!("{}\u{200b}", "cd".repeat(32)));
+    let bad_checkpoint = CheckpointMeta {
+        height: bad_wal.height,
+        state_root_hex: bad_wal.state_root_hex.clone(),
+        wal_entry_hash_hex: bad_wal.content_hash_hex(),
+    };
+
+    assert!(
+        checkpoint_evidence_surface_is_canonical(&checkpoint, &wal),
+        "sanity: canonical non-genesis checkpoint/WAL evidence should remain audit-ready before the zero-width prev-hash regression mutation"
+    );
+    assert!(
+        checkpoint_da_light_verifier_summary(&checkpoint, &wal).is_some(),
+        "sanity: canonical non-genesis checkpoint/WAL evidence should summarize before the zero-width prev-hash regression mutation"
+    );
+    assert!(
+        !checkpoint_evidence_surface_is_canonical(&bad_checkpoint, &bad_wal),
+        "non-genesis WAL prev_hash_hex with zero-width layout drift must fail canonical checkpoint evidence gating instead of remaining audit-ready"
+    );
+    assert!(
+        checkpoint_da_light_verifier_summary(&bad_checkpoint, &bad_wal).is_none(),
+        "non-genesis WAL prev_hash_hex with zero-width layout drift must fail closed instead of emitting a DA/light-verifier summary"
     );
 }
 

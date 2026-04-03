@@ -293,6 +293,9 @@ TEE / ZK / verification paths have meaningful code and contracts in motion, but 
 - trust/retry/failure semantics under production conditions
 - audit/replay evidence path for verifier outages or mismatches
 
+### Closure note
+- verifier / DA / checkpoint sidecar closure checklist: `docs/release/TRNM_VERIFIER_DA_CHECKPOINT_SIDECAR_CLOSURE_2026-03-31.md`
+
 ### Launch effect
 Can trail if day-1 mainnet only requires the core task lifecycle and local trust assumptions.
 Cannot trail if "trusted verification as a product" is part of the public launch claim.
