@@ -1320,7 +1320,8 @@ fn derive_address_from_priv_hex(priv_hex: &str) -> Result<String> {
 }
 
 fn is_unsafe_sign_message_char(c: char) -> bool {
-    c.is_control()
+    (c.is_whitespace() && c != ' ')
+        || c.is_control()
         || matches!(
             c,
             '\u{00ad}'
@@ -4904,6 +4905,16 @@ mod tests {
         assert!(
             err.to_string()
                 .contains("contains leading or trailing whitespace"),
+            "unexpected: {err}"
+        );
+    }
+
+    #[test]
+    fn ensure_safe_sign_message_rejects_non_ascii_whitespace_text() {
+        let err = ensure_safe_sign_message("rotate signer\u{00a0}to cold-key slot b").unwrap_err();
+        assert!(
+            err.to_string()
+                .contains("contains control or bidi override characters"),
             "unexpected: {err}"
         );
     }

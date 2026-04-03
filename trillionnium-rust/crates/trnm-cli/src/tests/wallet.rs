@@ -503,6 +503,35 @@ fn explicit_wallet_store_path_must_be_absolute_and_normalized() {
 }
 
 #[test]
+fn ensure_safe_sign_message_rejects_ambiguous_whitespace_and_bidi_controls() {
+    let leading_err = ensure_safe_sign_message(" approve tx").unwrap_err();
+    assert!(
+        leading_err
+            .to_string()
+            .contains("leading or trailing whitespace"),
+        "unexpected error: {leading_err}"
+    );
+
+    let nbsp_err = ensure_safe_sign_message("approve\u{00a0}tx").unwrap_err();
+    assert!(
+        nbsp_err
+            .to_string()
+            .contains("control or bidi override characters"),
+        "unexpected error: {nbsp_err}"
+    );
+
+    let bidi_err = ensure_safe_sign_message("approve\u{202e}tx").unwrap_err();
+    assert!(
+        bidi_err
+            .to_string()
+            .contains("control or bidi override characters"),
+        "unexpected error: {bidi_err}"
+    );
+
+    ensure_safe_sign_message("approve tx").unwrap();
+}
+
+#[test]
 fn wallet_name_rejects_path_like_values() {
     for bad in [
         "",

@@ -558,7 +558,8 @@ pub(crate) fn derive_address_from_priv_hex(priv_hex: &str) -> Result<String> {
 }
 
 fn is_unsafe_sign_message_char(c: char) -> bool {
-    c.is_control()
+    (c.is_whitespace() && c != ' ')
+        || c.is_control()
         || matches!(
             c,
             '\u{00ad}'
