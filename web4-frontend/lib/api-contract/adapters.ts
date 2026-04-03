@@ -12,7 +12,6 @@ import type {
   QueryTaskResult,
   QueryNormalizedAuditEventsResult,
   TaskStatus,
-  NormalizedAuditEventsQuery,
 } from "./types";
 import { FrontendApiError } from "./errors";
 
@@ -278,7 +277,6 @@ export const adaptQueryEvents = (
 
 export const adaptQueryNormalizedAuditEvents = (
   payload: unknown,
-  _query?: NormalizedAuditEventsQuery,
 ): QueryNormalizedAuditEventsResult => {
   const canonical = queryNormalizedAuditEventsResponseSchema.safeParse(payload);
   if (canonical.success) {

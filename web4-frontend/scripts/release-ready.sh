@@ -2,6 +2,13 @@
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+
+# Normalize locale/time-sensitive output so release guidance is deterministic
+# across local shells and CI runners.
+export TZ=UTC
+export LANG=C.UTF-8
+export LC_ALL=C.UTF-8
+
 cd "$ROOT_DIR"
 
 VERSION="$(node -p "require('./package.json').version")"

@@ -5,10 +5,17 @@ ROOT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 REPORT_DIR="$ROOT_DIR/run"
 REPORT_FILE="$REPORT_DIR/release-preflight-report.txt"
 
+# Normalize time/locale-sensitive output and ensure the script runs from the
+# package root even when invoked directly outside `npm run`.
+export TZ=UTC
+export LANG=C.UTF-8
+export LC_ALL=C.UTF-8
+
+cd "$ROOT_DIR"
 mkdir -p "$REPORT_DIR"
 
 {
-  echo "[release-preflight] started: $(date '+%Y-%m-%d %H:%M:%S %z')"
+  echo "[release-preflight] started: $(date -u '+%Y-%m-%dT%H:%M:%SZ')"
   echo "[release-preflight] root: $ROOT_DIR"
 
   echo

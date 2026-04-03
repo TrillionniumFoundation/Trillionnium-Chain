@@ -164,7 +164,7 @@ export function createFrontendApiClient(config: BaseClientConfig) {
       const qs = params.toString();
 
       return getJson(`/query-normalized-audit-events${qs ? `?${qs}` : ""}`, options).then(
-        (payload) => adaptQueryNormalizedAuditEvents(payload, query),
+        adaptQueryNormalizedAuditEvents,
       );
     },
 
