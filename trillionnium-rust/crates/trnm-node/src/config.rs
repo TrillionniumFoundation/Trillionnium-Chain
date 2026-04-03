@@ -2625,6 +2625,26 @@ bootstrap_peers = ["127.0.0.1:27656"]
             "8. If a config contains unknown fields, whitespace drift, host-like or path-like ids, URI-like delimiters, non-canonical socket literals, privileged ports, wildcard listeners, reserved documentation/benchmarking listener ranges, or mixed listener IP families, the config loader must fail closed.",
             "9. Do not substitute IPv6 loopback `[::1]` for the shipped IPv4 loopback `127.0.0.1` during bootstrap or rejoin; listener-family drift is invalid even if both addresses are loopback.",
         ];
+        let documented_startup_model_lines = readme
+            .lines()
+            .filter(|line| {
+                line.starts_with("1. ")
+                    || line.starts_with("2. ")
+                    || line.starts_with("3. ")
+                    || line.starts_with("4. ")
+                    || line.starts_with("5. ")
+                    || line.starts_with("6. ")
+                    || line.starts_with("7. ")
+                    || line.starts_with("8. ")
+                    || line.starts_with("9. ")
+            })
+            .collect::<Vec<_>>();
+        assert_eq!(
+            documented_startup_model_lines,
+            expected_steps_in_order,
+            "{} must keep exactly the shipped bootstrap startup/join/rejoin steps so operator recovery cannot silently gain extra numbered branches or lose a fail-closed rule",
+            readme_path.display()
+        );
         let expected_rows_in_order = [
             "| Fresh bootstrap start | Start `node1` first, then `node2` → `node3` → `node4` in slot order | Accept only when each node keeps its shipped slot-bound config and listener tuple |",
             "| Follower join while `node1` is healthy | Start the joining follower with its original config file (`node2.toml`, `node3.toml`, or `node4.toml`) | Accept only when `node_id`, `rpc_addr`, and `p2p_addr` exactly match the shipped tuple |",
