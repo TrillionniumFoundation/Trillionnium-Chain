@@ -140,6 +140,7 @@ The repository has local node configs and preflight scripts, but not a clearly c
 - disaster recovery and node rebuild SOP
 
 ### Partial coverage now present
+- genesis generation / validation checklist: `docs/runbooks/genesis-generation-checklist.md`
 - validator bootstrap / re-bootstrap operational guide: `docs/runbooks/validator-bootstrap-rebootstrap.md`
 - validator replacement / rotation / DR handoff guide: `docs/runbooks/validator-rotation-dr.md`
 - fail-closed DR handoff field extraction helper: `scripts/v2/extract_validator_rotation_dr_fields.sh`

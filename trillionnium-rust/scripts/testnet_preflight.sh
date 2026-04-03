@@ -164,6 +164,13 @@ for f in configs/node1.toml configs/node2.toml configs/node3.toml configs/node4.
   [[ -f "$f" ]] || { echo "missing $f" | tee -a "$LOG"; exit 1; }
 done
 
+log "validate validator config bundle"
+python3 ./scripts/v2/check_validator_config_bundle.py \
+  configs/node1.toml \
+  configs/node2.toml \
+  configs/node3.toml \
+  configs/node4.toml | tee -a "$LOG"
+
 log "workspace tests"
 cargo test --workspace | tee -a "$LOG"
 

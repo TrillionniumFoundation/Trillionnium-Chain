@@ -3,12 +3,13 @@ set -euo pipefail
 
 usage() {
   cat <<'EOF' >&2
-Usage: verify_lane_worktree.sh --expected-worktree-root <path> --expected-branch-ref <ref> [--expected-head <sha>]
+Usage: verify_lane_worktree.sh --expected-worktree-root <absolute-path> --expected-branch-ref <ref> [--expected-head <sha>]
 
 Fail-closed helper for lane/ticket-bound validator release rehearsals.
 It verifies the current git worktree root, attached branch ref, and optional HEAD
 against the supervisor-assigned values, then prints the resolved identity and the
 matching `git worktree list --porcelain` stanza for artifact capture.
+`--expected-worktree-root` must be an absolute path copied from the ticket/lane assignment.
 `--expected-branch-ref` accepts either a full ref (for example
 `refs/heads/lane/foo`) or a short branch name (for example `lane/foo`).
 EOF
@@ -72,6 +73,14 @@ require_worktree_root_value() {
   case "$value" in
     *[$'\001'-$'\037']*|*$'\177'*)
       printf 'invalid %s: must not contain control characters\n' "$flag_name" >&2
+      exit 2
+      ;;
+  esac
+
+  case "$value" in
+    /*) ;;
+    *)
+      printf 'invalid %s: expected absolute path got %s\n' "$flag_name" "$value" >&2
       exit 2
       ;;
   esac

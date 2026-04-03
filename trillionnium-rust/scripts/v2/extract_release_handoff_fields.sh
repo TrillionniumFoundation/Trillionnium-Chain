@@ -376,6 +376,12 @@ printf 'truth_source=%s\n' "$summary_truth_source"
 printf 'historical_evidence_only=%s\n' "$summary_historical_evidence_only"
 printf 'evidence_scope=%s\n' "$summary_evidence_scope"
 printf 'summary_result=%s\n' "$summary_result"
+if [ -n "$summary_challenge_reexec_entry" ]; then
+  printf 'challenge_reexec_entry=%s\n' "$summary_challenge_reexec_entry"
+fi
+if [ -n "$summary_replay_env_trnm_challenge_reexec_entry" ]; then
+  printf 'replay_env_trnm_challenge_reexec_entry=%s\n' "$summary_replay_env_trnm_challenge_reexec_entry"
+fi
 printf 'summary_rollback_command=%s\n' "$summary_rollback"
 printf 'summary_replay_command=%s\n' "$summary_replay"
 printf 'challenge_reexec_entry=%s\n' "$summary_challenge_reexec_entry"

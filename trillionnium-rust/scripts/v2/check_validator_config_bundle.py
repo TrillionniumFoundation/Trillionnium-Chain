@@ -16,6 +16,9 @@ bootstrap/handoff use:
 
 from __future__ import annotations
 
+import argparse
+import hashlib
+import re
 import sys
 from pathlib import Path
 from urllib.parse import urlsplit
@@ -23,11 +26,102 @@ from urllib.parse import urlsplit
 try:
     import tomllib
 except ModuleNotFoundError:  # pragma: no cover
-    print("python 3.11+ with tomllib is required", file=sys.stderr)
-    sys.exit(2)
+    tomllib = None
 
 
 REQUIRED_FIELDS = ("node_id", "rpc_addr", "p2p_addr")
+SHA256_HEX_RE = re.compile(r"^[0-9a-fA-F]{64}$")
+UTC_TIMESTAMP_RE = re.compile(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$")
+
+
+def looks_like_placeholder(value: str) -> bool:
+    trimmed = value.strip()
+    return trimmed.startswith("<") and trimmed.endswith(">") and len(trimmed) >= 3
+
+
+def parse_args(argv: list[str]) -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        description=(
+            "Fail-closed validator config bundle checker for TRNM bootstrap/handoff use."
+        )
+    )
+    parser.add_argument(
+        "configs",
+        nargs="+",
+        help="validator config TOML files to validate",
+    )
+    parser.add_argument(
+        "--emit-ceremony-packet",
+        action="store_true",
+        help=(
+            "print a copyable validator ceremony packet skeleton after validation succeeds"
+        ),
+    )
+    parser.add_argument(
+        "--ceremony-id",
+        default="mn04-bootstrap-YYYYMMDD-HHMMZ",
+        help=(
+            "ceremony_id value to print when --emit-ceremony-packet is used; "
+            "public-mainnet-input requires replacing the template default"
+        ),
+    )
+    parser.add_argument(
+        "--ceremony-scope",
+        default="operator-handoff",
+        choices=("local-rehearsal", "operator-handoff", "public-mainnet-input"),
+        help="ceremony_scope value to print when --emit-ceremony-packet is used",
+    )
+    parser.add_argument(
+        "--packet-generated-at",
+        default="<utc-timestamp>",
+        help=(
+            "packet_generated_at value to print when --emit-ceremony-packet is used; "
+            "public-mainnet-input requires a UTC ISO-8601 timestamp like 2026-03-31T06:21:00Z"
+        ),
+    )
+    parser.add_argument(
+        "--packet-distribution-path",
+        default="<shared-folder-or-ticket>",
+        help=(
+            "packet_distribution_path value to print when --emit-ceremony-packet is used; "
+            "public-mainnet-input requires an explicit absolute path"
+        ),
+    )
+    parser.add_argument(
+        "--validator-set-version",
+        default="v1",
+        help=(
+            "validator_set_version value to print when --emit-ceremony-packet is used; "
+            "public-mainnet-input requires replacing the default v1 label"
+        ),
+    )
+    parser.add_argument(
+        "--startup-order-note",
+        default="<startup-order>",
+        help="startup_order_note value to print when --emit-ceremony-packet is used",
+    )
+    parser.add_argument(
+        "--rollback-owner",
+        default="<rollback-owner>",
+        help="rollback_owner value to print when --emit-ceremony-packet is used",
+    )
+    parser.add_argument(
+        "--genesis-artifact-path",
+        default="<genesis-artifact-path>",
+        help=(
+            "genesis_artifact_path value to print when --emit-ceremony-packet is used; "
+            "public-mainnet-input requires an explicit absolute path"
+        ),
+    )
+    parser.add_argument(
+        "--genesis-artifact-sha256",
+        default="<genesis-sha256>",
+        help=(
+            "genesis_artifact_sha256 value to print when --emit-ceremony-packet is used; "
+            "public-mainnet-input requires a full 64-character hex SHA-256 digest"
+        ),
+    )
+    return parser.parse_args(argv[1:])
 
 
 def fail(message: str) -> "None":
@@ -39,6 +133,10 @@ def trimmed_string(raw: object, field: str, path: Path) -> str:
     if not isinstance(raw, str):
         fail(f"invalid node config {path}: {field} must be a string")
     value = raw.strip()
+    if raw != value:
+        fail(
+            f"invalid node config {path}: {field} must not contain leading or trailing whitespace"
+        )
     if not value:
         fail(f"invalid node config {path}: {field} must not be empty")
     return value
@@ -101,33 +199,205 @@ def validate_listener_addr(addr: str, field: str, path: Path) -> None:
         fail(f"invalid node config {path}: {field} port must be in 1..65535")
 
 
+def parse_flat_toml_config(text: str, path: Path) -> dict[str, str]:
+    data: dict[str, str] = {}
+    for line_number, raw_line in enumerate(text.splitlines(), start=1):
+        line = raw_line.strip()
+        if not line or line.startswith("#"):
+            continue
+        if "=" not in line:
+            fail(
+                f"parse toml failed: {path}:{line_number}: expected key = value assignment"
+            )
+        key, value = line.split("=", 1)
+        key = key.strip()
+        value = value.strip()
+        if not key:
+            fail(f"parse toml failed: {path}:{line_number}: empty key")
+        if key in data:
+            fail(f"parse toml failed: {path}:{line_number}: duplicate key {key!r}")
+        if value.startswith('"') and value.endswith('"') and len(value) >= 2:
+            data[key] = value[1:-1]
+            continue
+        fail(
+            f"parse toml failed: {path}:{line_number}: only flat quoted string values are supported by the Python <3.11 fallback parser"
+        )
+    return data
+
+
+def load_config(path: Path) -> dict[str, object]:
+    try:
+        raw_text = path.read_text(encoding="utf-8")
+    except FileNotFoundError:
+        fail(f"missing node config: {path}")
+    except IsADirectoryError:
+        fail(f"invalid node config {path}: expected a file, got a directory")
+    except OSError as exc:
+        fail(f"read node config failed: {path}: {exc}")
+
+    if tomllib is not None:
+        try:
+            data = tomllib.loads(raw_text)
+        except Exception as exc:
+            fail(f"parse toml failed: {path}: {exc}")
+    else:
+        data = parse_flat_toml_config(raw_text, path)
+
+    if not isinstance(data, dict):
+        fail(f"invalid node config {path}: expected a top-level TOML table")
+    return data
+
+
+def validate_ceremony_packet_metadata(args: argparse.Namespace) -> None:
+    packet_line_values = {
+        "ceremony_id": args.ceremony_id,
+        "ceremony_scope": args.ceremony_scope,
+        "packet_generated_at": args.packet_generated_at,
+        "packet_distribution_path": args.packet_distribution_path,
+        "validator_set_version": args.validator_set_version,
+        "startup_order_note": args.startup_order_note,
+        "rollback_owner": args.rollback_owner,
+        "genesis_artifact_path": args.genesis_artifact_path,
+        "genesis_artifact_sha256": args.genesis_artifact_sha256,
+    }
+    for field, value in packet_line_values.items():
+        validate_packet_line_value(value, field)
+
+    if args.ceremony_scope != "public-mainnet-input":
+        return
+
+    required_exact_values = {
+        "packet_generated_at": args.packet_generated_at,
+        "packet_distribution_path": args.packet_distribution_path,
+        "validator_set_version": args.validator_set_version,
+        "startup_order_note": args.startup_order_note,
+        "rollback_owner": args.rollback_owner,
+        "genesis_artifact_path": args.genesis_artifact_path,
+        "genesis_artifact_sha256": args.genesis_artifact_sha256,
+    }
+    placeholder_fields = [
+        field for field, value in required_exact_values.items() if looks_like_placeholder(value)
+    ]
+    if args.validator_set_version == "v1":
+        placeholder_fields.append("validator_set_version")
+    if placeholder_fields:
+        fail(
+            "invalid ceremony packet arguments: public-mainnet-input requires explicit values for "
+            + ", ".join(dict.fromkeys(placeholder_fields))
+        )
+
+    if looks_like_placeholder(args.ceremony_id):
+        fail(
+            "invalid ceremony packet arguments: public-mainnet-input requires ceremony_id to be an explicit non-placeholder value"
+        )
+
+    if args.ceremony_id == "mn04-bootstrap-YYYYMMDD-HHMMZ":
+        fail(
+            "invalid ceremony packet arguments: public-mainnet-input requires an explicit ceremony_id instead of the template default"
+        )
+
+    if not UTC_TIMESTAMP_RE.fullmatch(args.packet_generated_at):
+        fail(
+            "invalid ceremony packet arguments: public-mainnet-input requires packet_generated_at in UTC ISO-8601 form like 2026-03-31T06:21:00Z"
+        )
+
+    if not SHA256_HEX_RE.fullmatch(args.genesis_artifact_sha256):
+        fail(
+            "invalid ceremony packet arguments: public-mainnet-input requires genesis_artifact_sha256 to be a 64-character hex sha256 digest"
+        )
+
+    validate_packet_path(args.genesis_artifact_path, "genesis_artifact_path")
+    validate_packet_path(args.packet_distribution_path, "packet_distribution_path")
+
+
+def build_validator_entry_hash(entry: dict[str, str], config_path: str) -> str:
+    descriptor = "\n".join(
+        (
+            f"validator_name={entry['node_id']}",
+            f"node_id={entry['node_id']}",
+            f"config_path={config_path}",
+            f"p2p_addr={entry['p2p_addr']}",
+            f"rpc_addr={entry['rpc_addr']}",
+        )
+    )
+    return hashlib.sha256(descriptor.encode("utf-8")).hexdigest()
+
+
+def emit_ceremony_packet(args: argparse.Namespace, entries: list[dict[str, str]]) -> None:
+    print("ceremony_id=" + args.ceremony_id)
+    print("ceremony_scope=" + args.ceremony_scope)
+    print("packet_generated_at=" + args.packet_generated_at)
+    print("packet_distribution_path=" + args.packet_distribution_path)
+    print("validator_set_version=" + args.validator_set_version)
+    print("startup_order_note=" + args.startup_order_note)
+    print("rollback_owner=" + args.rollback_owner)
+    print("abort_condition=genesis hash mismatch")
+    print("abort_condition=duplicate node_id")
+    print("abort_condition=assigned worktree/ref mismatch")
+    print()
+    print("genesis_artifact_path=" + args.genesis_artifact_path)
+    print("genesis_artifact_sha256=" + args.genesis_artifact_sha256)
+    print()
+    print(
+        "authority_note=all operators must acknowledge the exact packet above before any validator starts"
+    )
+    print()
+    prefer_absolute_config_paths = args.ceremony_scope == "public-mainnet-input"
+    for entry in entries:
+        config_path = entry["config_path"]
+        if prefer_absolute_config_paths:
+            config_path = str(Path(config_path).resolve())
+            validate_packet_path(config_path, "validator_entry.config_path")
+        validator_name = entry["node_id"]
+        validate_packet_atom_value(validator_name, "validator_entry.validator_name")
+        validate_packet_atom_value(validator_name, "validator_entry.node_id")
+        validate_packet_atom_value(config_path, "validator_entry.config_path")
+        validate_packet_atom_value(entry["p2p_addr"], "validator_entry.p2p_addr")
+        validate_packet_atom_value(entry["rpc_addr"], "validator_entry.rpc_addr")
+        validator_entry_hash = build_validator_entry_hash(entry, config_path)
+        print(
+            "validator_entry="
+            f"validator_name={validator_name};"
+            "validator_owner=<owner>;"
+            f"node_id={validator_name};"
+            f"config_path={config_path};"
+            f"p2p_addr={entry['p2p_addr']};"
+            f"rpc_addr={entry['rpc_addr']}"
+        )
+        print("validator_entry_hash=" + validator_entry_hash)
+        print(f"operator_contact={validator_name}=<chat/email/oncall>")
+        print(
+            "operator_ack="
+            f"<owner> checked genesis_artifact_sha256={args.genesis_artifact_sha256};"
+            f"config_path={config_path};"
+            f"validator_name={validator_name};"
+            f"validator_entry_hash={validator_entry_hash}"
+        )
+        print("operator_ack_signature_path=<optional-ack-path>")
+        print("operator_ack_digest=<optional-sha256-of-ack>")
+        print()
+
 
 def main(argv: list[str]) -> int:
-    if len(argv) < 2:
-        print(
-            "usage: check_validator_config_bundle.py <config1.toml> [<config2.toml> ...]",
-            file=sys.stderr,
-        )
-        return 2
+    args = parse_args(argv)
 
+    seen_config_paths: dict[Path, Path] = {}
     seen_node_ids: dict[str, Path] = {}
     seen_addresses: dict[str, tuple[str, Path]] = {}
+    entries: list[dict[str, str]] = []
 
-    for raw_path in argv[1:]:
+    for raw_path in args.configs:
         path = Path(raw_path)
-        try:
-            data = tomllib.loads(path.read_text(encoding="utf-8"))
-        except FileNotFoundError:
-            fail(f"missing node config: {path}")
-        except IsADirectoryError:
-            fail(f"invalid node config {path}: expected a file, got a directory")
-        except OSError as exc:
-            fail(f"read node config failed: {path}: {exc}")
-        except tomllib.TOMLDecodeError as exc:
-            fail(f"parse toml failed: {path}: {exc}")
+        canonical_path = path.resolve(strict=False)
+        previous_path = seen_config_paths.get(canonical_path)
+        if previous_path is not None:
+            fail(
+                "invalid validator config bundle: "
+                f"config file {path} resolves to the same path as {previous_path}"
+            )
+        seen_config_paths[canonical_path] = path
 
-        if not isinstance(data, dict):
-            fail(f"invalid node config {path}: expected a top-level TOML table")
+        data = load_config(path)
 
         missing = [field for field in REQUIRED_FIELDS if field not in data]
         if missing:
@@ -159,10 +429,22 @@ def main(argv: list[str]) -> int:
                 )
             seen_addresses[addr] = (field, path)
 
+        entries.append(
+            {
+                "config_path": str(path),
+                "node_id": node_id,
+                "rpc_addr": rpc_addr,
+                "p2p_addr": p2p_addr,
+            }
+        )
+
     print(
-        "validator config bundle OK: "
-        + ", ".join(str(Path(raw_path)) for raw_path in argv[1:])
+        "validator config bundle OK: " + ", ".join(str(Path(raw_path)) for raw_path in args.configs)
     )
+    if args.emit_ceremony_packet:
+        validate_ceremony_packet_metadata(args)
+        print()
+        emit_ceremony_packet(args, entries)
     return 0
 
 
