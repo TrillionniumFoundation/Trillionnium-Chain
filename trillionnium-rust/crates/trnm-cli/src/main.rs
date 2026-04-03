@@ -968,7 +968,9 @@ fn wallet_store_path_is_safe(path: &Path) -> bool {
         && path.parent().is_some()
         && !path_text_has_dot_segments(path)
         && path.to_string_lossy().chars().all(|c| {
-            !c.is_whitespace() && !contains_hidden_or_control(c)
+            !c.is_whitespace()
+                && !contains_hidden_or_control(c)
+                && !matches!(c, '\\' | '＼' | '∕' | '⁄' | '／' | '⧵' | '⟋' | '⟍')
         })
         && !path
             .components()
@@ -3011,6 +3013,12 @@ mod tests {
         std::env::set_var("TRNM_WALLET_STORE", "/tmp/./trnm-wallets");
         assert_eq!(default_wallet_store(), home.join(".trnm").join("wallets"));
 
+        std::env::set_var("TRNM_WALLET_STORE", "/tmp\\trnm-wallets");
+        assert_eq!(default_wallet_store(), home.join(".trnm").join("wallets"));
+
+        std::env::set_var("TRNM_WALLET_STORE", "/tmp／trnm-wallets");
+        assert_eq!(default_wallet_store(), home.join(".trnm").join("wallets"));
+
         std::env::set_var("TRNM_WALLET_STORE", " /tmp/trnm-wallets ");
         let trimmed_absolute = std::path::PathBuf::from("/tmp/trnm-wallets");
         let expected_trimmed_absolute = if wallet_store_path_is_safe(&trimmed_absolute)
@@ -3211,6 +3219,28 @@ mod tests {
                 .to_string()
                 .contains("must be an absolute normalized path"),
             "unexpected error: {hidden_read_err}"
+        );
+
+        let backslash_write_err = write_key(
+            std::path::Path::new("/tmp\\trnm-wallets"),
+            "alice",
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        )
+        .unwrap_err();
+        assert!(
+            backslash_write_err
+                .to_string()
+                .contains("must be an absolute normalized path"),
+            "unexpected error: {backslash_write_err}"
+        );
+
+        let slash_confusable_read_err =
+            read_key(std::path::Path::new("/tmp／trnm-wallets"), "alice").unwrap_err();
+        assert!(
+            slash_confusable_read_err
+                .to_string()
+                .contains("must be an absolute normalized path"),
+            "unexpected error: {slash_confusable_read_err}"
         );
     }
 
