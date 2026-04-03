@@ -496,6 +496,7 @@ impl BridgeRelay {
             } => {
                 let mut normalized =
                     AuditEvent::new("bridge-relay", "bridge_relay.validators_updated");
+                normalized.object_id = Some("bridge_config".to_string());
                 normalized.related_id = Some("validators".to_string());
                 normalized.amount = Some(*new_count as u128);
                 normalized.reason = Some(format!(
@@ -1447,7 +1448,7 @@ mod tests {
         assert!(normalized.iter().any(|event| {
             event.event_type == "bridge_relay.validators_updated"
                 && event.amount == Some(2)
-                && event.object_id.is_none()
+                && event.object_id.as_deref() == Some("bridge_config")
                 && event.related_id.as_deref() == Some("validators")
                 && event.reason.as_deref() == Some("previous_count=1, new_count=2")
         }));
