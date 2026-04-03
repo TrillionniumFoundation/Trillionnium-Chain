@@ -212,7 +212,8 @@ Threshold rules:
 - consecutive windows should map to the dashboard's stable rollup interval; if multiple dashboards exist, use the slowest shared rollup when paging;
 - default `needs_replay=yes` for every `sev0` / `sev1` row unless the responder has already reconciled observability with emitted evidence and the service-specific runbook says otherwise;
 - if observability data and emitted evidence artifacts disagree, override any lower threshold and classify as `sev0`;
-- if a page fires without the matching `severity` / `signal` / `verdict` / `needs_replay` / `needs_rollback` label block, treat the incident as under-specified until the labels are added.
+- if a page fires without the matching `severity` / `signal` / `verdict` / `needs_replay` / `needs_rollback` label block, treat the incident as under-specified until the labels are added;
+- if `needs_rollback=yes`, the page/ticket should quote the current emitted `rollback_command=` verbatim or mark it as `unknown` instead of leaving rollback state implicit.
 
 ## Severity mapping
 
