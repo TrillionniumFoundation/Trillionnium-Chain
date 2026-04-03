@@ -448,7 +448,7 @@ describe("dashboard source normalized audit pagination", () => {
     });
   });
 
-  it("falls back when task metadata or event payload are not JSON-serializable", async () => {
+  it("falls back when task metadata, readonly payload, or normalized audit details are not JSON-serializable", async () => {
     const mockClient = {
       queryTask: vi
         .fn()
@@ -487,7 +487,16 @@ describe("dashboard source normalized audit pagination", () => {
       queryNormalizedAuditEvents: vi
         .fn()
         .mockResolvedValue({
-          events: [],
+          events: [
+            {
+              source: "bridge-relay",
+              event_type: "bridge_relay.proof_submitted",
+              actor: "validator",
+              object_id: "proof-9",
+              timestamp: "2026-03-01T00:02:00.000Z",
+              amount: BigInt(11),
+            },
+          ],
           hasMore: false,
         }),
     } as unknown as ReturnType<typeof apiContractClient.createFrontendApiClient>;
@@ -498,6 +507,7 @@ describe("dashboard source normalized audit pagination", () => {
 
     expect(snapshot.tasks[0]?.description).toBe("{}");
     expect(snapshot.events.find((event) => event.id === "EVT-344d")?.details).toBe("{}");
+    expect(snapshot.events.find((event) => event.id === "bridge-relay:proof-9")?.details).toBe("{}");
   });
 
   it("falls back to default ids when task/audit env values are blank", async () => {

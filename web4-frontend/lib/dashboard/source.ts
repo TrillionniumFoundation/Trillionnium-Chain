@@ -233,14 +233,17 @@ const mapNormalizedAuditToDashboardEvent = (event: NormalizedAuditEvent, fallbac
     category: mapEventCategory(eventType),
     summary: `${source} · ${eventType}`,
     severity: mapNormalizedAuditSeverity(event),
-    details: JSON.stringify({
-      actor: event.actor,
-      objectId: event.object_id,
-      relatedId: event.related_id,
-      amount: event.amount,
-      reason: event.reason,
-      note: event.note,
-    }),
+    details: stringifyDashboardField(
+      {
+        actor: event.actor,
+        objectId: event.object_id,
+        relatedId: event.related_id,
+        amount: event.amount,
+        reason: event.reason,
+        note: event.note,
+      },
+      "{}",
+    ),
   };
 };
 
