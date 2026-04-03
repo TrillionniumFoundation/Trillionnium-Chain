@@ -149,6 +149,130 @@ describe("api-contract client and retry hardening", () => {
     );
   });
 
+  it("maps http 400 to bad request and does not retry", async () => {
+    const fetchImpl = vi.fn().mockResolvedValue({
+      ok: false,
+      status: 400,
+    });
+
+    const client = createFrontendApiClient({
+      baseUrl: "http://127.0.0.1:8080",
+      fetchImpl: fetchImpl as unknown as typeof fetch,
+    });
+
+    await expect(client.queryTask("42", { retries: 2 })).rejects.toMatchObject({
+      code: "BAD_REQUEST",
+      status: 400,
+      retryable: false,
+    });
+    expect(fetchImpl).toHaveBeenCalledTimes(1);
+  });
+
+  it("maps http 404 to not found and does not retry", async () => {
+    const fetchImpl = vi.fn().mockResolvedValue({
+      ok: false,
+      status: 404,
+    });
+
+    const client = createFrontendApiClient({
+      baseUrl: "http://127.0.0.1:8080",
+      fetchImpl: fetchImpl as unknown as typeof fetch,
+    });
+
+    await expect(client.queryTask("42", { retries: 2 })).rejects.toMatchObject({
+      code: "NOT_FOUND",
+      status: 404,
+      retryable: false,
+    });
+    expect(fetchImpl).toHaveBeenCalledTimes(1);
+  });
+
+  it("maps non-json backend payloads to invalid payload and does not retry", async () => {
+    const fetchImpl = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => {
+        throw new SyntaxError("bad json");
+      },
+    });
+
+    const client = createFrontendApiClient({
+      baseUrl: "http://127.0.0.1:8080",
+      fetchImpl: fetchImpl as unknown as typeof fetch,
+    });
+
+    await expect(client.queryTask("42", { retries: 2 })).rejects.toMatchObject({
+      code: "INVALID_PAYLOAD",
+      retryable: false,
+    });
+    expect(fetchImpl).toHaveBeenCalledTimes(1);
+  });
+
+  it("maps contract-invalid json payloads to invalid payload and does not retry", async () => {
+    const fetchImpl = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        task: {
+          id: "42",
+          status: "running",
+        },
+      }),
+    });
+
+    const client = createFrontendApiClient({
+      baseUrl: "http://127.0.0.1:8080",
+      fetchImpl: fetchImpl as unknown as typeof fetch,
+    });
+
+    await expect(client.queryTask("42", { retries: 2 })).rejects.toMatchObject({
+      code: "INVALID_PAYLOAD",
+      retryable: false,
+    });
+    expect(fetchImpl).toHaveBeenCalledTimes(1);
+  });
+
+  it("normalizes capability audit subject before path construction", async () => {
+    const fetchImpl = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        subject: "did:trnm:alice/ops",
+        audits: [],
+      }),
+    });
+
+    const client = createFrontendApiClient({
+      baseUrl: "http://127.0.0.1:8080",
+      fetchImpl: fetchImpl as unknown as typeof fetch,
+    });
+
+    await client.queryCapabilityAudit("  did:trnm:alice/ops  ");
+
+    expect(fetchImpl).toHaveBeenCalledWith(
+      "http://127.0.0.1:8080/query-capability-audit/did%3Atrnm%3Aalice%2Fops",
+      expect.objectContaining({ method: "GET" }),
+    );
+  });
+
+  it("fails closed on blank capability audit subject before request", async () => {
+    const fetchImpl = vi.fn();
+
+    const client = createFrontendApiClient({
+      baseUrl: "http://127.0.0.1:8080",
+      fetchImpl: fetchImpl as unknown as typeof fetch,
+    });
+
+    try {
+      client.queryCapabilityAudit("   ");
+      throw new Error("expected blank subject to throw");
+    } catch (error) {
+      expect(error).toBeInstanceOf(FrontendApiError);
+      expect(error).toMatchObject({
+        code: "INVALID_PAYLOAD",
+      });
+    }
+
+    expect(fetchImpl).not.toHaveBeenCalled();
+  });
+
   it("classifies non-network thrown errors as unknown and fail-closed", async () => {
     const fetchImpl = vi.fn().mockRejectedValue(new SyntaxError("bad parser state"));
 

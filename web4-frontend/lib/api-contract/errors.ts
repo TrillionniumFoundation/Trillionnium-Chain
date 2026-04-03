@@ -1,4 +1,6 @@
 export type ApiErrorCode =
+  | "BAD_REQUEST"
+  | "NOT_FOUND"
   | "NETWORK"
   | "TIMEOUT"
   | "ABORTED"
@@ -32,4 +34,15 @@ const RETRYABLE_HTTP_STATUSES = new Set([408, 429, 500, 502, 503, 504]);
 
 export const isRetryableStatus = (status: number): boolean => {
   return RETRYABLE_HTTP_STATUSES.has(status);
+};
+
+export const classifyHttpStatusCode = (status: number): ApiErrorCode => {
+  switch (status) {
+    case 400:
+      return "BAD_REQUEST";
+    case 404:
+      return "NOT_FOUND";
+    default:
+      return "HTTP_STATUS";
+  }
 };

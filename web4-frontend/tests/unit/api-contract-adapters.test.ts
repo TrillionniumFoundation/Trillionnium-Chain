@@ -61,6 +61,60 @@ describe("api-contract adapters", () => {
     });
   });
 
+  it("fails closed on canonical query-task payloads with invalid status", () => {
+    expect(() =>
+      adaptQueryTask({
+        task: {
+          id: "1",
+          name: "demo",
+          status: "done",
+          owner: "alice",
+          createdAt: "2026-03-01T00:00:00.000Z",
+          metadata: {},
+        },
+      }),
+    ).toThrow(FrontendApiError);
+  });
+
+  it("fails closed on canonical query-task payloads missing task id", () => {
+    expect(() =>
+      adaptQueryTask({
+        task: {
+          name: "demo",
+          status: "running",
+          owner: "alice",
+          createdAt: "2026-03-01T00:00:00.000Z",
+          metadata: {},
+        },
+      }),
+    ).toThrow(FrontendApiError);
+  });
+
+  it("fails closed on rpc query-task payloads missing task_id", () => {
+    expect(() =>
+      adaptQueryTask({
+        status: "Completed",
+        worker: "did:trnm:alice",
+        bounty: 100,
+        result_hash_hex: "abcd",
+        version: 9,
+      }),
+    ).toThrow(FrontendApiError);
+  });
+
+  it("fails closed on rpc query-task payloads with invalid status", () => {
+    expect(() =>
+      adaptQueryTask({
+        task_id: 42,
+        status: "Done",
+        worker: "did:trnm:alice",
+        bounty: 100,
+        result_hash_hex: "abcd",
+        version: 9,
+      }),
+    ).toThrow(FrontendApiError);
+  });
+
   it("adapts rpc query-events array payload", () => {
     const out = adaptQueryEvents(
       [
@@ -190,6 +244,82 @@ describe("api-contract adapters", () => {
       resolution_code: "\uFEFF \u200B\u200D ",
     });
     expect(out.events[0]?.payload?.resolutionCode).toBeUndefined();
+    expect(out.events[0]?.payload?.m2v2ErrorCode).toBeUndefined();
+  });
+
+  it("falls back to snake_case resolution_code when camelCase alias is blank noise", () => {
+    const out = adaptQueryEvents({
+      taskId: "8c",
+      events: [
+        {
+          id: "e2c",
+          taskId: "8c",
+          type: "settle",
+          level: "warn",
+          timestamp: "2026-03-03T00:00:01.700Z",
+          payload: {
+            resolutionCode: "\uFEFF \u200B\u200D ",
+            resolution_code: " err_m2v2_proof_missing ",
+          },
+        },
+      ],
+    });
+
+    expect(out.events[0]?.level).toBe("error");
+    expect(out.events[0]?.payload).toMatchObject({
+      resolutionCode: "ERR_M2V2_PROOF_MISSING",
+      resolution_code: " err_m2v2_proof_missing ",
+      m2v2ErrorCode: "ERR_M2V2_PROOF_MISSING",
+    });
+  });
+
+  it("prefers canonical resolutionCode alias when both aliases are present", () => {
+    const out = adaptQueryEvents({
+      taskId: "8d",
+      events: [
+        {
+          id: "e2d",
+          taskId: "8d",
+          type: "settle",
+          level: "warn",
+          timestamp: "2026-03-03T00:00:01.800Z",
+          payload: {
+            resolutionCode: " err_m2v2_proof_late ",
+            resolution_code: " err_m2v2_proof_missing ",
+          },
+        },
+      ],
+    });
+
+    expect(out.events[0]?.level).toBe("error");
+    expect(out.events[0]?.payload).toMatchObject({
+      resolutionCode: "ERR_M2V2_PROOF_LATE",
+      resolution_code: " err_m2v2_proof_missing ",
+      m2v2ErrorCode: "ERR_M2V2_PROOF_LATE",
+    });
+  });
+
+  it("does not over-trigger fail-closed mapping for non-frozen canonical resolution codes", () => {
+    const out = adaptQueryEvents({
+      taskId: "8e",
+      events: [
+        {
+          id: "e2e",
+          taskId: "8e",
+          type: "settle",
+          level: "warn",
+          timestamp: "2026-03-03T00:00:01.900Z",
+          payload: {
+            resolutionCode: " err_custom_resolution ",
+          },
+        },
+      ],
+    });
+
+    expect(out.events[0]?.level).toBe("warn");
+    expect(out.events[0]?.payload).toMatchObject({
+      resolutionCode: " err_custom_resolution ",
+    });
     expect(out.events[0]?.payload?.m2v2ErrorCode).toBeUndefined();
   });
 
@@ -473,6 +603,20 @@ describe("api-contract adapters", () => {
     expect(out.events[0]?.event_type).toBe("governance.proposal_executed");
   });
 
+  it("fails closed on malformed canonical normalized audit-events items", () => {
+    expect(() =>
+      adaptQueryNormalizedAuditEvents({
+        events: [
+          {
+            source: "governance-guard",
+            event_type: 7,
+            actor: "alice",
+          },
+        ],
+      }),
+    ).toThrow(FrontendApiError);
+  });
+
   it("fails closed on malformed canonical normalized audit-events envelope", () => {
     expect(() =>
       adaptQueryNormalizedAuditEvents({
@@ -494,6 +638,54 @@ describe("api-contract adapters", () => {
             unexpected_flag: true,
           },
         ],
+      }),
+    ).toThrow(FrontendApiError);
+  });
+
+  it("fails closed on canonical normalized audit-events page nextCursor type mismatch", () => {
+    expect(() =>
+      adaptQueryNormalizedAuditEvents({
+        events: [
+          {
+            source: "bridge-relay",
+            event_type: "bridge_relay.proof_submitted",
+            actor: "validator-1",
+            checkedAt: "height:777",
+          },
+        ],
+        nextCursor: 123,
+      }),
+    ).toThrow(FrontendApiError);
+  });
+
+  it("fails closed on canonical normalized audit-events page hasMore type mismatch", () => {
+    expect(() =>
+      adaptQueryNormalizedAuditEvents({
+        events: [
+          {
+            source: "bridge-relay",
+            event_type: "bridge_relay.proof_submitted",
+            actor: "validator-1",
+            checkedAt: "height:777",
+          },
+        ],
+        hasMore: "yes",
+      }),
+    ).toThrow(FrontendApiError);
+  });
+
+  it("fails closed on canonical normalized audit-events page total non-integer", () => {
+    expect(() =>
+      adaptQueryNormalizedAuditEvents({
+        events: [
+          {
+            source: "bridge-relay",
+            event_type: "bridge_relay.proof_submitted",
+            actor: "validator-1",
+            checkedAt: "height:777",
+          },
+        ],
+        total: 42.5,
       }),
     ).toThrow(FrontendApiError);
   });
@@ -684,6 +876,43 @@ describe("api-contract adapters", () => {
     expect(out.audits[0]?.granted).toBe(true);
   });
 
+  it("accepts canonical capability audit payload with iso checkedAt", () => {
+    const out = adaptQueryCapabilityAudit({
+      subject: "did:trnm:bob",
+      audits: [
+        {
+          subject: "did:trnm:bob",
+          capability: "AUDIT_READ",
+          granted: false,
+          checkedAt: "2026-03-03T00:00:00.000Z",
+          reason: "CAPABILITY_REVOKED",
+        },
+      ],
+    });
+
+    expect(out.subject).toBe("did:trnm:bob");
+    expect(out.audits[0]?.checkedAt).toBe("2026-03-03T00:00:00.000Z");
+    expect(out.audits[0]?.granted).toBe(false);
+  });
+
+  it("fails closed on canonical capability audit entries with unknown fields", () => {
+    expect(() =>
+      adaptQueryCapabilityAudit({
+        subject: "did:trnm:bob",
+        audits: [
+          {
+            subject: "did:trnm:bob",
+            capability: "AUDIT_READ",
+            granted: true,
+            checkedAt: "height:321",
+            reason: "delegated",
+            unexpectedFlag: true,
+          },
+        ],
+      }),
+    ).toThrow(FrontendApiError);
+  });
+
   it("treats blank revoked_at as absent instead of forcing token-revoked audit semantics", () => {
     const out = adaptQueryCapabilityAudit({
       token: {
@@ -722,6 +951,22 @@ describe("api-contract adapters", () => {
           {
             action: "CAPABILITY_ISSUED",
             at_height: "still-not-a-height",
+          },
+        ],
+      }),
+    ).toThrow(FrontendApiError);
+  });
+
+  it("fails closed when rpc capability audit token subject is missing", () => {
+    expect(() =>
+      adaptQueryCapabilityAudit({
+        token: {
+          scope: "AUDIT_READ",
+        },
+        owner_history: [
+          {
+            action: "CAPABILITY_ISSUED",
+            at_height: 123,
           },
         ],
       }),

@@ -5,7 +5,7 @@ import {
   adaptQueryTask,
 } from "./adapters";
 import { normalizedAuditEventsQuerySchema } from "./schemas";
-import { FrontendApiError, isRetryableStatus } from "./errors";
+import { FrontendApiError, classifyHttpStatusCode, isRetryableStatus } from "./errors";
 import { withRetry, type RetryOptions } from "./retry";
 import type {
   QueryCapabilityAuditResult,
@@ -22,6 +22,34 @@ type BaseClientConfig = {
 
 type QueryOptions = RetryOptions & {
   timeoutMs?: number;
+};
+
+export const NORMALIZED_AUDIT_EVENTS_QUERY_PARAM_KEYS = {
+  source: "source",
+  eventType: "eventType",
+  limit: "limit",
+  cursor: "cursor",
+} as const satisfies Record<keyof NormalizedAuditEventsQuery, string>;
+
+export const buildNormalizedAuditEventsQueryParams = (
+  query: NormalizedAuditEventsQuery,
+): URLSearchParams => {
+  const params = new URLSearchParams();
+
+  if (query.source) {
+    params.set(NORMALIZED_AUDIT_EVENTS_QUERY_PARAM_KEYS.source, query.source);
+  }
+  if (query.eventType) {
+    params.set(NORMALIZED_AUDIT_EVENTS_QUERY_PARAM_KEYS.eventType, query.eventType);
+  }
+  if (query.cursor) {
+    params.set(NORMALIZED_AUDIT_EVENTS_QUERY_PARAM_KEYS.cursor, query.cursor);
+  }
+  if (query.limit != null) {
+    params.set(NORMALIZED_AUDIT_EVENTS_QUERY_PARAM_KEYS.limit, String(query.limit));
+  }
+
+  return params;
 };
 
 const normalizeTimeoutMs = (timeoutMs: unknown): number => {
@@ -73,6 +101,29 @@ const normalizeBaseUrl = (baseUrl: string): string => {
   }
 
   return trimmed.replace(/\/+$/, "");
+};
+
+const normalizeRequiredPathParam = (value: unknown, label: string): string => {
+  if (typeof value !== "string") {
+    throw new FrontendApiError({
+      code: "INVALID_PAYLOAD",
+      message: `${label} must be a non-empty string`,
+      causeData: value,
+      retryable: false,
+    });
+  }
+
+  const trimmed = value.trim();
+  if (!trimmed) {
+    throw new FrontendApiError({
+      code: "INVALID_PAYLOAD",
+      message: `${label} must be a non-empty string`,
+      causeData: value,
+      retryable: false,
+    });
+  }
+
+  return trimmed;
 };
 
 const isLikelyNetworkError = (err: unknown): boolean => {
@@ -170,11 +221,12 @@ export function createFrontendApiClient(config: BaseClientConfig) {
         });
 
         if (!response.ok) {
+          const code = classifyHttpStatusCode(response.status);
           throw new FrontendApiError({
-            code: "HTTP_STATUS",
+            code,
             message: `Query failed with HTTP ${response.status}`,
             status: response.status,
-            retryable: isRetryableStatus(response.status),
+            retryable: code === "HTTP_STATUS" ? isRetryableStatus(response.status) : false,
           });
         }
 
@@ -261,13 +313,7 @@ export function createFrontendApiClient(config: BaseClientConfig) {
       }
 
       const parsedQuery = normalizedQuery.data;
-      const params = new URLSearchParams();
-      if (parsedQuery.source) params.set("source", parsedQuery.source);
-      if (parsedQuery.eventType) params.set("eventType", parsedQuery.eventType);
-      if (parsedQuery.cursor) params.set("cursor", parsedQuery.cursor);
-      if (parsedQuery.limit != null) {
-        params.set("limit", String(parsedQuery.limit));
-      }
+      const params = buildNormalizedAuditEventsQueryParams(parsedQuery);
       const qs = params.toString();
 
       return getJson(`/query-normalized-audit-events${qs ? `?${qs}` : ""}`, options).then(

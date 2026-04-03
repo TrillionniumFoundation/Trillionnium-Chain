@@ -32,14 +32,17 @@
 
 ## 错误模型（FrontendApiError.code）
 
+- `BAD_REQUEST`：HTTP 400 / 调用方输入无效
+- `NOT_FOUND`：HTTP 404 / 资源不存在
 - `NETWORK`：网络/连接失败
 - `TIMEOUT`：请求超时
 - `ABORTED`：主动取消（AbortController）
-- `HTTP_STATUS`：非 2xx（包含 `status`）
+- `HTTP_STATUS`：其余非 2xx（包含 `status`）
 - `INVALID_PAYLOAD`：响应不符合合约
 - `UNKNOWN`：兜底错误
 
 > 约定：`TIMEOUT` 与 `ABORTED` 语义必须区分。
+> 约定：`400` / `404` 不再折叠成通用 `HTTP_STATUS`。
 
 ## 重试策略
 
@@ -52,7 +55,9 @@
 
 仅当错误标记为 `retryable` 时重试。
 
-HTTP 状态仅对更可能瞬时恢复的集合开启重试：`408`、`429`、`500`、`502`、`503`、`504`；其余状态（含非瞬时 `5xx`，如 `501`）默认 fail-closed，不自动重试。
+`BAD_REQUEST` / `NOT_FOUND` 默认不重试。
+
+`HTTP_STATUS` fallback 仅对更可能瞬时恢复的集合开启重试：`408`、`429`、`500`、`502`、`503`、`504`；其余状态（含非瞬时 `5xx`，如 `501`）默认 fail-closed，不自动重试。
 
 ## 使用示例
 

@@ -318,6 +318,7 @@ const fetchNormalizedAuditEventsWithPagination = async (
   const normalizedAuditPageLimit = resolveNormalizedAuditPageLimit();
   const normalizedAuditMaxPages = resolveNormalizedAuditMaxPages();
   const seenCursors = new Set<string>();
+  const seenEventKeys = new Set<string>();
 
   let cursor: string | undefined;
   let page = 0;

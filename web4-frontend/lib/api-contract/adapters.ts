@@ -78,13 +78,7 @@ const m2v2ErrorCodeSet: ReadonlySet<string> = new Set(m2v2ErrorCodes);
 function normalizeCanonicalEventForM2V2(
   event: QueryEventsResult["events"][number],
 ): QueryEventsResult["events"][number] {
-  const rawResolutionCode =
-    typeof event.payload?.resolutionCode === "string"
-      ? event.payload.resolutionCode
-      : typeof event.payload?.resolution_code === "string"
-        ? event.payload.resolution_code
-        : undefined;
-  const resolutionCode = canonicalizeResolutionCode(rawResolutionCode);
+  const resolutionCode = normalizeCanonicalResolutionCodeAlias(event.payload);
   const isM2V2Error = isM2V2ErrorCode(resolutionCode);
 
   if (!isM2V2Error) return event;
@@ -98,6 +92,22 @@ function normalizeCanonicalEventForM2V2(
       m2v2ErrorCode: resolutionCode,
     },
   };
+}
+
+function normalizeCanonicalResolutionCodeAlias(
+  payload: QueryEventsResult["events"][number]["payload"] | undefined,
+): string | undefined {
+  const camelCaseCode =
+    typeof payload?.resolutionCode === "string"
+      ? canonicalizeResolutionCode(payload.resolutionCode)
+      : undefined;
+  if (camelCaseCode != null) {
+    return camelCaseCode;
+  }
+
+  return typeof payload?.resolution_code === "string"
+    ? canonicalizeResolutionCode(payload.resolution_code)
+    : undefined;
 }
 
 function canonicalizeResolutionCode(code: string | undefined): string | undefined {
@@ -307,16 +317,28 @@ export const adaptQueryEvents = (
 
 export const adaptQueryNormalizedAuditEvents = (
   payload: unknown,
+  parsedQuery?: NormalizedAuditEventsQuery,
 ): QueryNormalizedAuditEventsResult => {
   const canonical = queryNormalizedAuditEventsResponseSchema.safeParse(payload);
   if (canonical.success) {
+    const normalizedNextCursor =
+      "nextCursor" in canonical.data
+        ? normalizeOptionalCursor(canonical.data.nextCursor)
+        : undefined;
+    const normalizedRequestedCursor = normalizeOptionalCursor(parsedQuery?.cursor);
+    const rawHasMore = "hasMore" in canonical.data ? canonical.data.hasMore : undefined;
+    const normalizedHasMore =
+      rawHasMore === true
+        ? normalizedNextCursor != null && normalizedNextCursor !== normalizedRequestedCursor
+        : rawHasMore;
+
     return {
       events: canonical.data.events.map((event) => ({
         ...event,
         checkedAt: event.checkedAt == null ? undefined : toCheckedAt(event.checkedAt),
       })),
-      nextCursor: "nextCursor" in canonical.data ? canonical.data.nextCursor : undefined,
-      hasMore: "hasMore" in canonical.data ? canonical.data.hasMore : undefined,
+      nextCursor: normalizedNextCursor,
+      hasMore: normalizedHasMore,
       total: "total" in canonical.data ? canonical.data.total : undefined,
     };
   }
