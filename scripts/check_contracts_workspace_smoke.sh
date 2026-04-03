@@ -17,18 +17,20 @@ if [[ ! -f "$MANIFEST" ]]; then
   exit 1
 fi
 
-CONTRACTS_ROOT="$ROOT/contracts-rust"
+CONTRACTS_ROOT="$(python3 -c 'import os, sys; print(os.path.realpath(sys.argv[1]))' "$ROOT/contracts-rust")"
 mkdir -p "$ROOT/run/health"
 TS="$(date +%Y%m%d-%H%M%S)"
 OUT="$ROOT/run/health/contracts-workspace-smoke-${TS}.log"
 CARGO_TARGET_DIR="${CARGO_TARGET_DIR:-$ROOT/target/contracts-rust-workspace-smoke}"
-case "$CARGO_TARGET_DIR" in
+CARGO_TARGET_DIR_ABS="$(python3 -c 'import os, sys; print(os.path.realpath(sys.argv[1]))' "$CARGO_TARGET_DIR")"
+case "$CARGO_TARGET_DIR_ABS" in
   "$CONTRACTS_ROOT"|"$CONTRACTS_ROOT"/*)
     echo "[FAIL] CARGO_TARGET_DIR must stay outside contracts-rust: $CARGO_TARGET_DIR" >&2
     exit 1
     ;;
 esac
-mkdir -p "$CARGO_TARGET_DIR"
+mkdir -p "$CARGO_TARGET_DIR_ABS"
+CARGO_TARGET_DIR="$CARGO_TARGET_DIR_ABS"
 
 run_step() {
   local description="$1"
