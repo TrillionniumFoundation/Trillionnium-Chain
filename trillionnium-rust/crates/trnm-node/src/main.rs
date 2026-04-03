@@ -16663,6 +16663,24 @@ locked_block_hash = "stale-lock"
     }
 
     #[test]
+    fn recovery_startup_summary_preserves_fresh_bootstrap_status_after_tail_truncation() {
+        let recovered = RecoveredWalState {
+            next_height: 1,
+            restored_lock: None,
+            last_checkpoint: None,
+            truncated: true,
+            metadata_only_recovery: false,
+            wal_entries_retained: 0,
+            checkpoint_height_retained: None,
+        };
+
+        assert_eq!(
+            recovery_startup_summary(&recovered),
+            "retained_wal_entries=0 checkpoint_height_retained=none checkpoint_tip_relation=none next_startup_height=1 wal_tail_truncated=true metadata_only_recovery=false join_rejoin_status=ready:fresh_bootstrap"
+        );
+    }
+
+    #[test]
     fn recovery_startup_summary_reports_retained_wal_resume_join_surface() {
         let recovered = RecoveredWalState {
             next_height: 12,
