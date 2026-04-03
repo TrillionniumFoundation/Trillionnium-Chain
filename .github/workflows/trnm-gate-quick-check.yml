@@ -147,6 +147,14 @@ jobs:
         run: |
           ./scripts/v2/check_contracts_workspace_smoke_missing_cargo_guard_test.sh
 
+      - name: Contracts workspace smoke target dir guard regression
+        run: |
+          ./scripts/v2/check_contracts_workspace_smoke_target_dir_guard_test.sh
+
+      - name: Contracts workspace smoke relative target dir guard regression
+        run: |
+          ./scripts/v2/check_contracts_workspace_smoke_relative_target_dir_guard_test.sh
+
       - name: Validate workflow script refs (exist + executable)
         run: |
           WORKFLOW_SCRIPT_REF_STRICT=1 \
