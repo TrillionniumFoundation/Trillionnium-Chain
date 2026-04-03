@@ -394,14 +394,14 @@ Record these fields in the release ticket or operator handoff note:
 - expected worktree branch ref (`git_expected_worktree_branch_ref`; preserve the ticket-assigned target verbatim so later readers can tell what the artifacts were checked against):
 - worktree branch ref match (`git_worktree_branch_ref_match`; when using `extract_release_handoff_fields.sh`, the helper emits this once because it already asserts the value matches across `summary.txt` and `manifest.txt`; `true` is required, not a soft warning):
 - git status summary (`git_status_summary`; `clean` is required for a releasable handoff artifact):
-- preflight summary path (use the helper output verbatim; if it prints `<missing>`, treat preflight evidence retention as incomplete rather than omitting the field):
-- local evidence summary path:
+- preflight summary path (`preflight_summary_path`; use the helper output verbatim; if it prints `<missing>`, treat preflight evidence retention as incomplete rather than omitting the field):
+- local evidence summary path (`summary_path` when using `extract_release_handoff_fields.sh`):
 - local evidence generated_at (`summary_generated_at`, or raw `generated_at=` when quoting `summary.txt` directly):
 - local evidence truth_source (`summary_truth_source`, or raw `truth_source=` when quoting `summary.txt` directly):
 - local evidence historical_evidence_only (`summary_historical_evidence_only`, or raw `historical_evidence_only=` when quoting `summary.txt` directly):
 - local evidence evidence_scope (`summary_evidence_scope`, or raw `evidence_scope=` when quoting `summary.txt` directly):
 - local evidence result (`summary_result`):
-- rc manifest path:
+- rc manifest path (`manifest_path` when using `extract_release_handoff_fields.sh`):
 - rc manifest generated_at (`manifest_generated_at`, or raw `generated_at=` when quoting `manifest.txt` directly):
 - rc manifest truth_source (`manifest_truth_source`, or raw `truth_source=` when quoting `manifest.txt` directly):
 - rc manifest historical_evidence_only (`manifest_historical_evidence_only`, or raw `historical_evidence_only=` when quoting `manifest.txt` directly):
