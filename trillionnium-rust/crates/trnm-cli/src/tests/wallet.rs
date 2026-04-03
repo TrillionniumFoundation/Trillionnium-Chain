@@ -291,6 +291,52 @@ fn default_wallet_store_ignores_curdir_or_parent_segments_from_env() {
 }
 
 #[test]
+fn default_wallet_store_rejects_symlinked_ancestor_from_env() {
+    let _guard = ENV_LOCK.lock().unwrap();
+    let original_store = std::env::var_os("TRNM_WALLET_STORE");
+    let original_home = std::env::var_os("HOME");
+    let home = std::env::temp_dir().join(format!(
+        "trnm-cli-wallet-env-symlink-home-test-{}-{}",
+        std::process::id(),
+        std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_nanos()
+    ));
+    std::fs::create_dir_all(&home).unwrap();
+    std::env::set_var("HOME", &home);
+
+    let root = std::env::temp_dir().join(format!(
+        "trnm-cli-wallet-env-symlink-root-test-{}-{}",
+        std::process::id(),
+        std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_nanos()
+    ));
+    let real_parent = root.join("real-parent");
+    let linked_parent = root.join("linked-parent");
+    std::fs::create_dir_all(&real_parent).unwrap();
+    std::os::unix::fs::symlink(&real_parent, &linked_parent).unwrap();
+
+    std::env::set_var("TRNM_WALLET_STORE", linked_parent.join("wallets"));
+    assert_eq!(default_wallet_store(), home.join(".trnm").join("wallets"));
+
+    let _ = std::fs::remove_file(&linked_parent);
+    let _ = std::fs::remove_dir_all(&real_parent);
+    let _ = std::fs::remove_dir_all(&root);
+    let _ = std::fs::remove_dir_all(&home);
+    match original_store {
+        Some(v) => std::env::set_var("TRNM_WALLET_STORE", v),
+        None => std::env::remove_var("TRNM_WALLET_STORE"),
+    }
+    match original_home {
+        Some(v) => std::env::set_var("HOME", v),
+        None => std::env::remove_var("HOME"),
+    }
+}
+
+#[test]
 fn default_wallet_store_falls_back_to_absolute_cwd_when_home_missing_or_relative() {
     let _guard = ENV_LOCK.lock().unwrap();
     let original_store = std::env::var_os("TRNM_WALLET_STORE");

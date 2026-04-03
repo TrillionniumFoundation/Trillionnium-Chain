@@ -215,11 +215,24 @@ fn ensure_wallet_store_ancestors_not_symlink(store: &Path) -> Result<()> {
     Ok(())
 }
 
+fn wallet_store_ancestors_are_symlink_free(store: &Path) -> bool {
+    store
+        .ancestors()
+        .skip(1)
+        .all(|ancestor| match fs::symlink_metadata(ancestor) {
+            Ok(meta) => !meta.file_type().is_symlink(),
+            Err(err) if err.kind() == std::io::ErrorKind::NotFound => true,
+            Err(_) => false,
+        })
+}
+
 pub(crate) fn default_wallet_store() -> PathBuf {
     if let Ok(p) = std::env::var("TRNM_WALLET_STORE") {
         if let Some(normalized) = normalize_wallet_store_env(&p) {
             let candidate = PathBuf::from(normalized);
-            if wallet_store_path_is_safe(&candidate) {
+            if wallet_store_path_is_safe(&candidate)
+                && wallet_store_ancestors_are_symlink_free(&candidate)
+            {
                 return candidate;
             }
         }
@@ -228,11 +241,11 @@ pub(crate) fn default_wallet_store() -> PathBuf {
     let home_root = std::env::var("HOME")
         .ok()
         .map(PathBuf::from)
-        .filter(|path| wallet_store_path_is_safe(path))
+        .filter(|path| wallet_store_path_is_safe(path) && wallet_store_ancestors_are_symlink_free(path))
         .or_else(|| {
-            std::env::current_dir()
-                .ok()
-                .filter(|path| wallet_store_path_is_safe(path))
+            std::env::current_dir().ok().filter(|path| {
+                wallet_store_path_is_safe(path) && wallet_store_ancestors_are_symlink_free(path)
+            })
         })
         .unwrap_or_else(|| PathBuf::from("/"));
 
