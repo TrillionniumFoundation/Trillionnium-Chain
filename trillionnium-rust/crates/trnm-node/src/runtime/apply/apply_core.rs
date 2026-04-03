@@ -137,6 +137,11 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         path
     );
     anyhow::ensure!(
+        !rpc_socket.ip().is_unicast_link_local(),
+        "invalid node config {}: rpc_addr must not use a link-local address",
+        path
+    );
+    anyhow::ensure!(
         !is_ipv4_compatible_ipv6(rpc_socket.ip()),
         "invalid node config {}: rpc_addr must not use an IPv4-compatible IPv6 address",
         path
@@ -212,6 +217,11 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
     anyhow::ensure!(
         !p2p_socket.ip().is_unspecified(),
         "invalid node config {}: p2p_addr must not use an unspecified address",
+        path
+    );
+    anyhow::ensure!(
+        !p2p_socket.ip().is_unicast_link_local(),
+        "invalid node config {}: p2p_addr must not use a link-local address",
         path
     );
     anyhow::ensure!(
@@ -1005,6 +1015,41 @@ bootstrap_peers = ["127.0.0.1:27656"]
                 .to_string()
                 .contains("p2p_addr must not use an unspecified address"),
             "unexpected error: {p2p_unspecified_err:#}"
+        );
+    }
+
+    #[test]
+    fn validate_node_config_rejects_link_local_listener_addresses() {
+        let rpc_link_local_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "[fe80::1]:7000".into(),
+                p2p_addr: "[2001:4860::1]:7001".into(),
+            },
+            "inline",
+        )
+        .expect_err("rpc_addr link-local bind must fail closed");
+        assert!(
+            rpc_link_local_err
+                .to_string()
+                .contains("rpc_addr must not use a link-local address"),
+            "unexpected error: {rpc_link_local_err:#}"
+        );
+
+        let p2p_link_local_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "[2001:4860::1]:7000".into(),
+                p2p_addr: "[fe80::2]:7001".into(),
+            },
+            "inline",
+        )
+        .expect_err("p2p_addr link-local bind must fail closed");
+        assert!(
+            p2p_link_local_err
+                .to_string()
+                .contains("p2p_addr must not use a link-local address"),
+            "unexpected error: {p2p_link_local_err:#}"
         );
     }
 
