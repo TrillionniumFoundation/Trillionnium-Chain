@@ -59,7 +59,7 @@ They share all of the following properties:
 - `crates/trnm-node/src/main.rs` (only the already-harvested test scoping + rollback restore canonicalization)
 - `crates/trnm-rpc/src/main.rs` (only the already-harvested quarantine dedupe/compact fix)
 - `crates/trnm-rpc/tests/reliability_persistent_smoke.rs` (only the already-harvested stability fix)
-- `docs/release/*` and `artifacts/devnet-ready/*` evidence/checklist additions
+- `docs/release/*` plus archived root evidence under `docs/archive/devnet-ready-history/*`, and `trillionnium-rust/artifacts/devnet-ready/*` inventory additions
 - `docs/worker-agent-timeout-retry-runbook.md`
 
 ### Explicitly excluded from this candidate stack

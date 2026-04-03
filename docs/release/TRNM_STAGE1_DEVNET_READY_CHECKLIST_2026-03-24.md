@@ -261,7 +261,7 @@ cd trillionnium-rust
 - `trillionnium-rust`: 409
 
 证据文件：
-- `artifacts/devnet-ready/repo-hygiene-2026-03-24.json`
+- `docs/archive/devnet-ready-history/repo-hygiene-2026-03-24.json`
 
 含义：
 - 当前可做 stage-1 bring-up / smoke / inventory；
@@ -316,5 +316,5 @@ cargo test -p trnm-cli -- --test-threads=1
 本轮仅新增文档/工件索引；若需回滚：
 
 ```bash
-git checkout -- docs/release/TRNM_STAGE1_DEVNET_READY_CHECKLIST_2026-03-24.md trillionnium-rust/artifacts/devnet-ready artifacts/devnet-ready
+git checkout -- docs/release/TRNM_STAGE1_DEVNET_READY_CHECKLIST_2026-03-24.md trillionnium-rust/artifacts/devnet-ready docs/archive/devnet-ready-history
 ```

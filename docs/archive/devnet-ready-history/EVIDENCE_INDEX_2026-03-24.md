@@ -21,7 +21,7 @@
 ## Blocking evidence
 
 - Repo hygiene snapshot:
-  - `artifacts/devnet-ready/repo-hygiene-2026-03-24.json`
+  - `docs/archive/devnet-ready-history/repo-hygiene-2026-03-24.json`
 
 ## Interpretation guardrail
 
