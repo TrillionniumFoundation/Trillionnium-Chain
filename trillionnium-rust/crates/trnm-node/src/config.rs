@@ -145,6 +145,21 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         path
     );
     anyhow::ensure!(
+        !node_id.contains('[') && !node_id.contains(']'),
+        "invalid node config {}: node_id must not contain bracketed host delimiters ([ ])",
+        path
+    );
+    anyhow::ensure!(
+        !node_id.contains('@')
+            && !node_id.contains('?')
+            && !node_id.contains('#')
+            && !node_id.contains('%')
+            && !node_id.contains('&')
+            && !node_id.contains('='),
+        "invalid node config {}: node_id must not contain URI delimiters (@ ? # % & =)",
+        path
+    );
+    anyhow::ensure!(
         node_id != "." && node_id != "..",
         "invalid node config {}: node_id must not be '.' or '..'",
         path
@@ -628,6 +643,23 @@ mod tests {
 
         let resolved = resolve_config_path("../configs/node1.toml");
         assert_eq!(resolved, std::path::PathBuf::from("../configs/node1.toml"));
+    }
+
+    #[test]
+    fn resolve_config_path_does_not_anchor_curdir_prefixed_workspace_parent_traversal() {
+        let manifest_dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR"));
+        let workspace_root = manifest_dir
+            .ancestors()
+            .nth(2)
+            .expect("trnm-node manifest should sit under trillionnium-rust/crates/trnm-node");
+        let outside_path = workspace_root.join("../configs/node1.toml");
+        assert!(outside_path.exists(), "expected parent traversal fixture to exist");
+
+        let resolved = resolve_config_path("./trillionnium-rust/../configs/node1.toml");
+        assert_eq!(
+            resolved,
+            std::path::PathBuf::from("./trillionnium-rust/../configs/node1.toml")
+        );
     }
 
     #[test]
@@ -1257,6 +1289,53 @@ bootstrap_peers = ["127.0.0.1:27656"]
             p2p_err
                 .to_string()
                 .contains("p2p_addr must not use a multicast address"),
+            "unexpected error: {p2p_err:#}"
+        );
+
+        let _ = std::fs::remove_file(p2p_path);
+    }
+
+    #[test]
+    fn load_config_rejects_link_local_listener_after_operator_trimming() {
+        let rpc_path = std::env::temp_dir().join(format!(
+            "trnm-node-config-link-local-rpc-listener-{}-{}.toml",
+            std::process::id(),
+            std::thread::current().name().unwrap_or("unnamed")
+        ));
+        std::fs::write(
+            &rpc_path,
+            "node_id = \"node-a\"\nrpc_addr = \"169.254.10.20:7000\"\np2p_addr = \"127.0.0.1:7001\"\n",
+        )
+        .expect("write config");
+
+        let rpc_err = load_config(rpc_path.to_str().expect("utf8 path"))
+            .expect_err("trimmed link-local rpc listener must fail closed");
+        assert!(
+            rpc_err
+                .to_string()
+                .contains("rpc_addr must not use a link-local address"),
+            "unexpected error: {rpc_err:#}"
+        );
+
+        let _ = std::fs::remove_file(rpc_path);
+
+        let p2p_path = std::env::temp_dir().join(format!(
+            "trnm-node-config-link-local-p2p-listener-{}-{}.toml",
+            std::process::id(),
+            std::thread::current().name().unwrap_or("unnamed")
+        ));
+        std::fs::write(
+            &p2p_path,
+            "node_id = \"node-a\"\nrpc_addr = \"127.0.0.1:7000\"\np2p_addr = \"[fe80::1]:7001\"\n",
+        )
+        .expect("write config");
+
+        let p2p_err = load_config(p2p_path.to_str().expect("utf8 path"))
+            .expect_err("trimmed link-local p2p listener must fail closed");
+        assert!(
+            p2p_err
+                .to_string()
+                .contains("p2p_addr must not use a link-local address"),
             "unexpected error: {p2p_err:#}"
         );
 
@@ -2226,6 +2305,346 @@ bootstrap_peers = ["127.0.0.1:27656"]
     }
 
     #[test]
+    fn shipped_bootstrap_configs_keep_their_three_line_slot_bound_layout() {
+        let manifest_dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR"));
+        let workspace_root = manifest_dir
+            .ancestors()
+            .nth(2)
+            .expect("trnm-node manifest should sit under trillionnium-rust/crates/trnm-node");
+
+        for (config_name, expected_node_id, expected_rpc_addr, expected_p2p_addr) in [
+            ("node1.toml", "node1", "127.0.0.1:26657", "127.0.0.1:26656"),
+            ("node2.toml", "node2", "127.0.0.1:27657", "127.0.0.1:27656"),
+            ("node3.toml", "node3", "127.0.0.1:28657", "127.0.0.1:28656"),
+            ("node4.toml", "node4", "127.0.0.1:29657", "127.0.0.1:29656"),
+        ] {
+            let config_path = workspace_root.join("configs").join(config_name);
+            let raw = std::fs::read_to_string(&config_path).unwrap_or_else(|err| {
+                panic!(
+                    "{} should stay readable for shipped bootstrap line-layout checks: {err}",
+                    config_path.display()
+                )
+            });
+            let non_empty_lines = raw
+                .lines()
+                .map(str::trim)
+                .filter(|line| !line.is_empty())
+                .collect::<Vec<_>>();
+            let expected_lines = vec![
+                format!("node_id = \"{expected_node_id}\""),
+                format!("rpc_addr = \"{expected_rpc_addr}\""),
+                format!("p2p_addr = \"{expected_p2p_addr}\""),
+            ];
+            assert_eq!(
+                non_empty_lines,
+                expected_lines,
+                "{} must keep the exact three-line slot-bound layout so shipped bootstrap fixtures stay deterministic for peer/bootstrap rehearsal",
+                config_path.display()
+            );
+        }
+    }
+
+    #[test]
+    fn shipped_bootstrap_configs_keep_canonical_peer_identity_and_listener_literals() {
+        use std::net::SocketAddr;
+
+        let manifest_dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR"));
+        let workspace_root = manifest_dir
+            .ancestors()
+            .nth(2)
+            .expect("trnm-node manifest should sit under trillionnium-rust/crates/trnm-node");
+
+        for config_name in ["node1.toml", "node2.toml", "node3.toml", "node4.toml"] {
+            let config_path = workspace_root.join("configs").join(config_name);
+            let raw = std::fs::read_to_string(&config_path).unwrap_or_else(|err| {
+                panic!(
+                    "{} should stay readable for shipped bootstrap literal checks: {err}",
+                    config_path.display()
+                )
+            });
+            let table: toml::Table = raw.parse().unwrap_or_else(|err| {
+                panic!(
+                    "{} should remain valid TOML for shipped bootstrap literal checks: {err}",
+                    config_path.display()
+                )
+            });
+
+            let node_id = table
+                .get("node_id")
+                .and_then(|value| value.as_str())
+                .unwrap_or_else(|| {
+                    panic!(
+                        "{} must keep node_id as a TOML string literal",
+                        config_path.display()
+                    )
+                });
+            assert_eq!(
+                node_id,
+                node_id.trim(),
+                "{} node_id must not hide boundary whitespace in shipped bootstrap peer identity fixtures",
+                config_path.display()
+            );
+            assert!(
+                !node_id.chars().any(char::is_whitespace),
+                "{} node_id must not contain whitespace in shipped bootstrap peer identity fixtures",
+                config_path.display()
+            );
+
+            for key in ["rpc_addr", "p2p_addr"] {
+                let addr = table
+                    .get(key)
+                    .and_then(|value| value.as_str())
+                    .unwrap_or_else(|| {
+                        panic!(
+                            "{} {} must stay a TOML string literal",
+                            config_path.display(),
+                            key
+                        )
+                    });
+                assert_eq!(
+                    addr,
+                    addr.trim(),
+                    "{} {} must not hide boundary whitespace in shipped bootstrap listener fixtures",
+                    config_path.display(),
+                    key
+                );
+                assert!(
+                    !addr.chars().any(char::is_whitespace),
+                    "{} {} must not contain whitespace in shipped bootstrap listener fixtures",
+                    config_path.display(),
+                    key
+                );
+                let socket: SocketAddr = addr.parse().unwrap_or_else(|err| {
+                    panic!(
+                        "{} {} should remain parseable as a canonical socket literal: {err}",
+                        config_path.display(),
+                        key
+                    )
+                });
+                assert_eq!(
+                    addr,
+                    socket.to_string(),
+                    "{} {} must remain a canonical socket literal for deterministic bootstrap peer dialing",
+                    config_path.display(),
+                    key
+                );
+            }
+        }
+    }
+
+    #[test]
+    fn shipped_bootstrap_readme_matches_the_documented_day1_topology_and_fail_closed_model() {
+        let manifest_dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR"));
+        let workspace_root = manifest_dir
+            .ancestors()
+            .nth(2)
+            .expect("trnm-node manifest should sit under trillionnium-rust/crates/trnm-node");
+        let readme_path = workspace_root.join("configs").join("README.md");
+        let workspace_relative_readme_path = std::path::Path::new("configs/README.md");
+        let curdir_repo_relative_readme_path = std::path::Path::new("./configs/README.md");
+        let readme_metadata = std::fs::symlink_metadata(&readme_path).unwrap_or_else(|err| {
+            panic!(
+                "{} should stay stat-able for shipped bootstrap README checks: {err}",
+                readme_path.display()
+            )
+        });
+        assert!(
+            readme_metadata.file_type().is_file(),
+            "{} must remain a regular file for deterministic shipped bootstrap README checks",
+            readme_path.display()
+        );
+        assert!(
+            !readme_metadata.file_type().is_symlink(),
+            "{} must not become a symlink that can retarget shipped bootstrap README checks",
+            readme_path.display()
+        );
+        let workspace_relative_readme_metadata =
+            std::fs::symlink_metadata(workspace_relative_readme_path).unwrap_or_else(|err| {
+                panic!(
+                    "{} should stay stat-able for bootstrap README path anchoring: {err}",
+                    workspace_relative_readme_path.display()
+                )
+            });
+        assert!(
+            workspace_relative_readme_metadata.file_type().is_file(),
+            "{} must remain a regular file for bootstrap README path anchoring",
+            workspace_relative_readme_path.display()
+        );
+        assert!(
+            !workspace_relative_readme_metadata.file_type().is_symlink(),
+            "{} must not become a symlink that can retarget bootstrap README path anchoring",
+            workspace_relative_readme_path.display()
+        );
+        let canonical_readme_path = readme_path.canonicalize().unwrap_or_else(|err| {
+            panic!(
+                "{} should canonicalize for shipped bootstrap README checks: {err}",
+                readme_path.display()
+            )
+        });
+        let canonical_workspace_relative_readme_path = workspace_relative_readme_path
+            .canonicalize()
+            .unwrap_or_else(|err| {
+                panic!(
+                    "{} should canonicalize for bootstrap README path anchoring: {err}",
+                    workspace_relative_readme_path.display()
+                )
+            });
+        assert_eq!(
+            canonical_workspace_relative_readme_path, canonical_readme_path,
+            "{} must canonicalize to the same shipped bootstrap README as {}",
+            workspace_relative_readme_path.display(),
+            readme_path.display()
+        );
+        let canonical_curdir_repo_relative_readme_path = curdir_repo_relative_readme_path
+            .canonicalize()
+            .unwrap_or_else(|err| {
+                panic!(
+                    "{} should canonicalize for curdir-prefixed bootstrap README path anchoring: {err}",
+                    curdir_repo_relative_readme_path.display()
+                )
+            });
+        assert_eq!(
+            canonical_curdir_repo_relative_readme_path, canonical_readme_path,
+            "{} must canonicalize to the same shipped bootstrap README as {}",
+            curdir_repo_relative_readme_path.display(),
+            readme_path.display()
+        );
+        let readme = std::fs::read_to_string(&readme_path).unwrap_or_else(|err| {
+            panic!(
+                "{} should stay readable for shipped bootstrap README checks: {err}",
+                readme_path.display()
+            )
+        });
+
+        let expected_lines = [
+            "- `node1.toml` → node id `node1`, P2P `127.0.0.1:26656`, RPC `127.0.0.1:26657`",
+            "- `node2.toml` → node id `node2`, P2P `127.0.0.1:27656`, RPC `127.0.0.1:27657`",
+            "- `node3.toml` → node id `node3`, P2P `127.0.0.1:28656`, RPC `127.0.0.1:28657`",
+            "- `node4.toml` → node id `node4`, P2P `127.0.0.1:29656`, RPC `127.0.0.1:29657`",
+        ];
+        let documented_topology_lines = readme
+            .lines()
+            .filter(|line| line.starts_with("- `node") && line.contains("→ node id `node"))
+            .collect::<Vec<_>>();
+        assert_eq!(
+            documented_topology_lines,
+            expected_lines,
+            "{} must keep exactly the four shipped Day-1 bootstrap tuples in slot order so operator topology assumptions stay deterministic",
+            readme_path.display()
+        );
+        for expected_line in expected_lines {
+            assert!(
+                readme.contains(expected_line),
+                "{} must document the shipped Day-1 bootstrap tuple `{expected_line}` so operator topology assumptions stay explicit",
+                readme_path.display()
+            );
+        }
+
+        for expected_phrase in [
+            "All four nodes bind the same loopback IP (`127.0.0.1`)",
+            "keep a deterministic `+1000` port spacing between neighboring peers",
+            "This fixture is local-only and rehearsal-scoped.",
+            "Do not treat it as proof that public-mainnet bootstrap peer management, discovery, or sync closure is complete.",
+            "Start `node1` first as the initial anchor.",
+            "Start `node2`, `node3`, and `node4` in slot order.",
+            "do not treat `node2`, `node3`, or `node4` as a valid replacement bootstrap anchor; restore the shipped `node1` anchor first and fail closed otherwise",
+            "bring the node back with the same config file and the same `node_id`/listener tuple",
+            "Do not skip a missing earlier follower slot during startup or rejoin: if `node2` is absent, keep `node3` and `node4` stopped; if `node3` is absent, keep `node4` stopped until the earlier slot regains its shipped tuple.",
+            "Treat `configs/node1.toml` through `configs/node4.toml` as slot-bound fixtures: do not rename them, swap them between peers, or reinterpret a later slot as the bootstrap anchor during operator recovery.",
+            "unknown fields, whitespace drift, host-like or path-like ids, URI-like delimiters, non-canonical socket literals, privileged ports, wildcard listeners, reserved documentation/benchmarking listener ranges, or mixed listener IP families, the config loader must fail closed",
+            "## Join / rejoin acceptance table",
+            "| Fresh bootstrap start | Start `node1` first, then `node2` → `node3` → `node4` in slot order | Accept only when each node keeps its shipped slot-bound config and listener tuple |",
+            "| Follower join while `node1` is healthy | Start the joining follower with its original config file (`node2.toml`, `node3.toml`, or `node4.toml`) | Accept only when `node_id`, `rpc_addr`, and `p2p_addr` exactly match the shipped tuple |",
+            "| Follower rejoin after restart | Bring the same follower back with the same filename and the same tuple | Accept only when the rejoining node does not drift slots, IDs, or listener addresses |",
+            "| Anchor rejoin after restart | Bring `node1` back only with `node1.toml`; resume follower startup/rejoin only after the shipped anchor tuple is restored | Accept only when `node1` regains the shipped anchor tuple before later slots continue |",
+            "| `node1` missing during recovery | Restore `node1` first; do not promote a later slot into the anchor role | Reject until the shipped `node1` anchor tuple is back in place |",
+            "| `node2` missing during startup or rejoin | Keep `node3` and `node4` stopped until `node2` returns with `node2.toml` and its shipped tuple | Reject while a later follower tries to skip the missing `node2` slot |",
+            "| `node3` missing during startup or rejoin | Keep `node4` stopped until `node3` returns with `node3.toml` and its shipped tuple | Reject while `node4` tries to skip the missing `node3` slot |",
+            "| Any tuple drift or config mutation | Stop and review before startup | Reject on renamed files, swapped slots, unknown fields, whitespace drift, non-canonical socket literals, or listener-family drift |",
+            "This table is intentionally local-fixture scoped: it documents the minimum fail-closed acceptance rule for shipped bootstrap rehearsal, not a claim that public-mainnet peer discovery, sync, or dynamic topology management is complete.",
+        ] {
+            assert!(
+                readme.contains(expected_phrase),
+                "{} must keep the shipped bootstrap join/rejoin fail-closed rule `{expected_phrase}` visible to operators",
+                readme_path.display()
+            );
+        }
+    }
+
+    #[test]
+    fn shipped_bootstrap_anchor_stays_unique_and_slot_zero() {
+        let manifest_dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR"));
+        let workspace_root = manifest_dir
+            .ancestors()
+            .nth(2)
+            .expect("trnm-node manifest should sit under trillionnium-rust/crates/trnm-node");
+
+        let mut shipped_nodes = [
+            ("configs/node1.toml", "node1", 26656_u16),
+            ("configs/node2.toml", "node2", 27656_u16),
+            ("configs/node3.toml", "node3", 28656_u16),
+            ("configs/node4.toml", "node4", 29656_u16),
+        ]
+        .into_iter()
+        .map(|(relative_path, expected_node_id, expected_p2p_port)| {
+            let path = workspace_root.join(relative_path);
+            let cfg = load_config(&path).unwrap_or_else(|err| {
+                panic!(
+                    "{} should remain loadable for shipped bootstrap anchor checks: {err:#}",
+                    path.display()
+                )
+            });
+            let p2p_socket: SocketAddr = cfg
+                .p2p_addr
+                .parse()
+                .unwrap_or_else(|err| panic!("{} p2p_addr should parse: {err}", path.display()));
+            assert_eq!(
+                cfg.node_id, expected_node_id,
+                "{} must keep the deterministic node_id for bootstrap anchor slot checks",
+                path.display()
+            );
+            assert_eq!(
+                p2p_socket.port(), expected_p2p_port,
+                "{} must keep the deterministic p2p port for bootstrap anchor slot checks",
+                path.display()
+            );
+            (path, cfg.node_id, p2p_socket.port())
+        })
+        .collect::<Vec<_>>();
+
+        shipped_nodes.sort_by_key(|(_, _, p2p_port)| *p2p_port);
+        let anchor = shipped_nodes
+            .first()
+            .expect("shipped bootstrap fixture should include node1 anchor");
+        assert_eq!(
+            anchor.1, "node1",
+            "{} must remain the unique shipped Day-1 bootstrap anchor id",
+            anchor.0.display()
+        );
+        assert_eq!(
+            anchor.2, 26656,
+            "{} must remain the unique shipped Day-1 bootstrap anchor p2p port",
+            anchor.0.display()
+        );
+
+        for (path, node_id, p2p_port) in shipped_nodes.iter().skip(1) {
+            assert_ne!(
+                node_id, &anchor.1,
+                "{} must not reuse the shipped bootstrap anchor node_id {}",
+                path.display(),
+                anchor.1
+            );
+            assert!(
+                *p2p_port > anchor.2,
+                "{} p2p port {} must stay above the shipped bootstrap anchor port {} so later slots cannot silently become equivalent bootstrap anchors",
+                path.display(),
+                p2p_port,
+                anchor.2
+            );
+        }
+    }
+
+    #[test]
     fn shipped_node_configs_form_a_unique_local_bootstrap_topology() {
         use std::{collections::HashSet, net::SocketAddr};
 
@@ -2235,6 +2654,12 @@ bootstrap_peers = ["127.0.0.1:27656"]
             .nth(2)
             .expect("trnm-node manifest should sit under trillionnium-rust/crates/trnm-node");
         let shipped_config_dir = workspace_root.join("configs");
+        let canonical_shipped_config_dir = shipped_config_dir.canonicalize().unwrap_or_else(|err| {
+            panic!(
+                "{} should canonicalize for shipped bootstrap topology checks: {err}",
+                shipped_config_dir.display()
+            )
+        });
         let shipped_node_configs = std::fs::read_dir(&shipped_config_dir)
             .unwrap_or_else(|err| {
                 panic!(
@@ -2264,15 +2689,95 @@ bootstrap_peers = ["127.0.0.1:27656"]
         let mut shipped_nodes = Vec::new();
         let mut bootstrap_loopback_ips = HashSet::new();
 
-        for (index, (config_path, workspace_relative_path)) in [
-            ("trillionnium-rust/configs/node1.toml", "configs/node1.toml"),
-            ("trillionnium-rust/configs/node2.toml", "configs/node2.toml"),
-            ("trillionnium-rust/configs/node3.toml", "configs/node3.toml"),
-            ("trillionnium-rust/configs/node4.toml", "configs/node4.toml"),
+        for (index, (config_path, workspace_relative_path, curdir_repo_relative_path)) in [
+            (
+                "trillionnium-rust/configs/node1.toml",
+                "configs/node1.toml",
+                "./configs/node1.toml",
+            ),
+            (
+                "trillionnium-rust/configs/node2.toml",
+                "configs/node2.toml",
+                "./configs/node2.toml",
+            ),
+            (
+                "trillionnium-rust/configs/node3.toml",
+                "configs/node3.toml",
+                "./configs/node3.toml",
+            ),
+            (
+                "trillionnium-rust/configs/node4.toml",
+                "configs/node4.toml",
+                "./configs/node4.toml",
+            ),
         ]
         .into_iter()
         .enumerate()
         {
+            let on_disk_metadata = std::fs::symlink_metadata(config_path).unwrap_or_else(|err| {
+                panic!(
+                    "{config_path} should stay stat-able for shipped bootstrap topology checks: {err}"
+                )
+            });
+            assert!(
+                on_disk_metadata.file_type().is_file(),
+                "{config_path} must remain a regular file for deterministic shipped bootstrap topology fixtures"
+            );
+            assert!(
+                !on_disk_metadata.file_type().is_symlink(),
+                "{config_path} must not become a symlink that can retarget shipped bootstrap topology fixtures"
+            );
+            let workspace_relative_metadata =
+                std::fs::symlink_metadata(workspace_relative_path).unwrap_or_else(|err| {
+                    panic!(
+                        "{workspace_relative_path} should stay stat-able for bootstrap/rejoin path anchoring: {err}"
+                    )
+                });
+            assert!(
+                workspace_relative_metadata.file_type().is_file(),
+                "{workspace_relative_path} must remain a regular file for deterministic bootstrap/rejoin path anchoring"
+            );
+            assert!(
+                !workspace_relative_metadata.file_type().is_symlink(),
+                "{workspace_relative_path} must not become a symlink that can retarget shipped bootstrap/rejoin fixtures"
+            );
+
+            let canonical_config_path = std::path::Path::new(config_path)
+                .canonicalize()
+                .unwrap_or_else(|err| {
+                    panic!(
+                        "{config_path} should canonicalize for shipped bootstrap topology checks: {err}"
+                    )
+                });
+            assert_eq!(
+                canonical_config_path.parent(),
+                Some(canonical_shipped_config_dir.as_path()),
+                "{config_path} must canonicalize inside {} to keep shipped bootstrap topology path anchoring deterministic",
+                canonical_shipped_config_dir.display()
+            );
+            let canonical_workspace_relative_path = std::path::Path::new(workspace_relative_path)
+                .canonicalize()
+                .unwrap_or_else(|err| {
+                    panic!(
+                        "{workspace_relative_path} should canonicalize for bootstrap/rejoin path anchoring: {err}"
+                    )
+                });
+            assert_eq!(
+                canonical_workspace_relative_path, canonical_config_path,
+                "{workspace_relative_path} must canonicalize to the same shipped bootstrap fixture as {config_path}"
+            );
+            let canonical_curdir_repo_relative_path = std::path::Path::new(curdir_repo_relative_path)
+                .canonicalize()
+                .unwrap_or_else(|err| {
+                    panic!(
+                        "{curdir_repo_relative_path} should canonicalize for curdir-prefixed bootstrap/rejoin path anchoring: {err}"
+                    )
+                });
+            assert_eq!(
+                canonical_curdir_repo_relative_path, canonical_config_path,
+                "{curdir_repo_relative_path} must canonicalize to the same shipped bootstrap fixture as {config_path}"
+            );
+
             let cfg = load_config(config_path)
                 .unwrap_or_else(|err| panic!("{config_path} should remain loadable: {err:#}"));
             let workspace_relative_cfg = load_config(workspace_relative_path).unwrap_or_else(|err| {
@@ -2280,6 +2785,12 @@ bootstrap_peers = ["127.0.0.1:27656"]
                     "{workspace_relative_path} should remain loadable for bootstrap/rejoin path anchoring: {err:#}"
                 )
             });
+            let curdir_repo_relative_cfg =
+                load_config(curdir_repo_relative_path).unwrap_or_else(|err| {
+                    panic!(
+                        "{curdir_repo_relative_path} should remain loadable for curdir-prefixed bootstrap/rejoin path anchoring: {err:#}"
+                    )
+                });
             assert_eq!(
                 workspace_relative_cfg.node_id, cfg.node_id,
                 "{workspace_relative_path} must resolve to the same shipped bootstrap node_id as {config_path}"
@@ -2291,6 +2802,18 @@ bootstrap_peers = ["127.0.0.1:27656"]
             assert_eq!(
                 workspace_relative_cfg.p2p_addr, cfg.p2p_addr,
                 "{workspace_relative_path} must resolve to the same shipped bootstrap p2p_addr as {config_path}"
+            );
+            assert_eq!(
+                curdir_repo_relative_cfg.node_id, cfg.node_id,
+                "{curdir_repo_relative_path} must resolve to the same shipped bootstrap node_id as {config_path}"
+            );
+            assert_eq!(
+                curdir_repo_relative_cfg.rpc_addr, cfg.rpc_addr,
+                "{curdir_repo_relative_path} must resolve to the same shipped bootstrap rpc_addr as {config_path}"
+            );
+            assert_eq!(
+                curdir_repo_relative_cfg.p2p_addr, cfg.p2p_addr,
+                "{curdir_repo_relative_path} must resolve to the same shipped bootstrap p2p_addr as {config_path}"
             );
             let expected_node_id = format!("node{}", index + 1);
             let expected_p2p_port = 26_656 + (index as u16) * 1_000;
@@ -2340,6 +2863,11 @@ bootstrap_peers = ["127.0.0.1:27656"]
                 "{config_path} rpc_addr {} must stay pinned to 127.0.0.1 for the shipped local bootstrap topology",
                 cfg.rpc_addr
             );
+            assert!(
+                !is_reserved_listener_ip(rpc_socket.ip()),
+                "{config_path} rpc_addr {} must not drift into reserved documentation or benchmarking ranges for shipped bootstrap rehearsal",
+                cfg.rpc_addr
+            );
             assert_eq!(
                 cfg.rpc_addr,
                 rpc_socket.to_string(),
@@ -2350,6 +2878,11 @@ bootstrap_peers = ["127.0.0.1:27656"]
                 p2p_socket.ip(),
                 std::net::IpAddr::V4(std::net::Ipv4Addr::LOCALHOST),
                 "{config_path} p2p_addr {} must stay pinned to 127.0.0.1 for the shipped local bootstrap topology",
+                cfg.p2p_addr
+            );
+            assert!(
+                !is_reserved_listener_ip(p2p_socket.ip()),
+                "{config_path} p2p_addr {} must not drift into reserved documentation or benchmarking ranges for shipped bootstrap rehearsal",
                 cfg.p2p_addr
             );
             assert_eq!(
@@ -2379,10 +2912,20 @@ bootstrap_peers = ["127.0.0.1:27656"]
                 "{config_path} p2p_addr {} must keep the deterministic shipped bootstrap port for slot {config_slot}",
                 cfg.p2p_addr,
             );
+            assert!(
+                p2p_socket.port() >= 1024,
+                "{config_path} p2p_addr {} must stay above privileged ports for shipped bootstrap rehearsal",
+                cfg.p2p_addr,
+            );
             assert_eq!(
                 rpc_socket.port(),
                 expected_rpc_port,
                 "{config_path} rpc_addr {} must keep the deterministic shipped bootstrap RPC port for slot {config_slot}",
+                cfg.rpc_addr,
+            );
+            assert!(
+                rpc_socket.port() >= 1024,
+                "{config_path} rpc_addr {} must stay above privileged ports for shipped bootstrap rehearsal",
                 cfg.rpc_addr,
             );
             assert_eq!(

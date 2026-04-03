@@ -19,6 +19,25 @@ pub(crate) fn hash32_hex(data: &[u8]) -> String {
     hex::encode(hasher.finalize())
 }
 
+fn is_reserved_listener_ip(ip: std::net::IpAddr) -> bool {
+    match ip {
+        std::net::IpAddr::V4(addr) => {
+            let octets = addr.octets();
+            matches!(
+                octets,
+                [192, 0, 2, _]
+                    | [198, 51, 100, _]
+                    | [203, 0, 113, _]
+                    | [198, 18 | 19, _, _]
+            )
+        }
+        std::net::IpAddr::V6(addr) => {
+            let segments = addr.segments();
+            segments[0] == 0x2001 && segments[1] == 0x0db8
+        }
+    }
+}
+
 fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
     let node_id = cfg.node_id.trim();
     anyhow::ensure!(
@@ -49,6 +68,16 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
     anyhow::ensure!(
         !node_id.contains('/') && !node_id.contains('\\') && !node_id.contains(':'),
         "invalid node config {}: node_id must not contain path separators (/ \\ :)",
+        path
+    );
+    anyhow::ensure!(
+        !node_id.contains('@')
+            && !node_id.contains('?')
+            && !node_id.contains('#')
+            && !node_id.contains('%')
+            && !node_id.contains('&')
+            && !node_id.contains('='),
+        "invalid node config {}: node_id must not contain URI delimiters (@ ? # % & =)",
         path
     );
     anyhow::ensure!(
@@ -1157,6 +1186,59 @@ bootstrap_peers = ["127.0.0.1:27656"]
         assert!(
             err.to_string()
                 .contains("node_id must not contain path separators (/ \\ :)"),
+            "unexpected error: {err:#}"
+        );
+    }
+
+    #[test]
+    fn load_config_rejects_url_like_listener_addrs() {
+        let temp = tempfile::tempdir().expect("tempdir");
+        let path = temp.path().join("node.toml");
+        std::fs::write(
+            &path,
+            "node_id = \"node-a\"\nrpc_addr = \"http://127.0.0.1:7000\"\np2p_addr = \"tcp://127.0.0.1:7001\"\n",
+        )
+        .expect("write config");
+
+        let err = load_config(path.to_str().expect("utf8 path"))
+            .expect_err("URL-like listener addrs must fail closed");
+        let err_surface = err.to_string();
+        assert!(
+            err_surface.contains("rpc_addr must be a raw socket address, not a URL")
+                || err_surface.contains("p2p_addr must be a raw socket address, not a URL"),
+            "unexpected error: {err:#}"
+        );
+    }
+
+    #[test]
+    fn validate_node_config_rejects_url_like_listener_addrs() {
+        let err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "http://127.0.0.1:7000".into(),
+                p2p_addr: "127.0.0.1:7001".into(),
+            },
+            "inline",
+        )
+        .expect_err("URL-like rpc_addr must fail closed");
+        assert!(
+            err.to_string()
+                .contains("rpc_addr must be a raw socket address, not a URL"),
+            "unexpected error: {err:#}"
+        );
+
+        let err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "127.0.0.1:7000".into(),
+                p2p_addr: "tcp://127.0.0.1:7001".into(),
+            },
+            "inline",
+        )
+        .expect_err("URL-like p2p_addr must fail closed");
+        assert!(
+            err.to_string()
+                .contains("p2p_addr must be a raw socket address, not a URL"),
             "unexpected error: {err:#}"
         );
     }
