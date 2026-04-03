@@ -287,6 +287,79 @@ fn query_capability_audit_owner_history_sorts_by_height_then_seq_on_ties() {
 }
 
 #[test]
+fn query_capability_audit_owner_history_keeps_revocation_event_on_same_height_tie() {
+    let tmp = tempdir().expect("tempdir");
+    let registry_path = tmp.path().join("identity_registry.json");
+
+    let mut reg = IdentityRegistry::default();
+    reg.register_did(
+        "did:org:lane-xi".to_string(),
+        "org:lane-xi-admin".to_string(),
+        10,
+    )
+    .expect("register did");
+    let token_id = reg
+        .issue_capability(
+            "org:lane-xi-admin".to_string(),
+            "did:org:lane-xi".to_string(),
+            CapabilityScope::AuditRead,
+            12,
+            Some(120),
+        )
+        .expect("issue capability");
+    reg.revoke_capability(
+        "org:lane-xi-admin".to_string(),
+        token_id,
+        12,
+        Some("operator-drill".to_string()),
+    )
+    .expect("revoke capability at same height as issue");
+
+    let mut raw: Value = serde_json::to_value(&reg).expect("registry to json");
+    raw["audit_trail"]
+        .as_array_mut()
+        .expect("audit trail")
+        .reverse();
+
+    fs::write(
+        &registry_path,
+        serde_json::to_string_pretty(&raw).expect("serialize registry"),
+    )
+    .expect("write registry");
+
+    let out = run_ok(
+        &[
+            "query-capability-audit",
+            "--token-id",
+            &token_id.to_string(),
+        ],
+        registry_path.to_str().expect("utf8 path"),
+    );
+    let body: Value = serde_json::from_str(&out).expect("query response json");
+    let same_height_events: Vec<(String, u64)> = body["owner_history"]
+        .as_array()
+        .expect("owner_history array")
+        .iter()
+        .filter(|ev| ev["at_height"].as_u64() == Some(12))
+        .map(|ev| {
+            (
+                ev["action"].as_str().expect("action").to_string(),
+                ev["seq"].as_u64().expect("seq"),
+            )
+        })
+        .collect();
+
+    assert_eq!(
+        same_height_events,
+        vec![
+            ("CAPABILITY_ISSUED".to_string(), 2),
+            ("CAPABILITY_REVOKED".to_string(), 3),
+        ]
+    );
+    assert_eq!(body["token"]["revoked_at"].as_u64(), Some(12));
+}
+
+#[test]
 fn query_capability_audit_reports_expired_without_revocation_fields() {
     let tmp = tempdir().expect("tempdir");
     let registry_path = tmp.path().join("identity_registry.json");
@@ -509,6 +582,63 @@ fn query_capability_audit_rejects_noncanonical_subject_did_from_registry_snapsho
         "{stderr}"
     );
     assert!(stderr.contains("non-canonical subject_did"), "{stderr}");
+}
+
+#[test]
+fn query_capability_audit_rejects_noncanonical_owner_history_subject_from_registry_snapshot() {
+    let tmp = tempdir().expect("tempdir");
+    let registry_path = tmp.path().join("identity_registry.json");
+
+    let mut reg = IdentityRegistry::default();
+    reg.register_did(
+        "did:org:lane-xi".to_string(),
+        "org:lane-xi-admin".to_string(),
+        10,
+    )
+    .expect("register did");
+    let token_id = reg
+        .issue_capability(
+            "org:lane-xi-admin".to_string(),
+            "did:org:lane-xi".to_string(),
+            CapabilityScope::AuditRead,
+            12,
+            Some(120),
+        )
+        .expect("issue capability");
+
+    let mut raw: Value = serde_json::to_value(&reg).expect("registry to json");
+    let audit_trail = raw["audit_trail"]
+        .as_array_mut()
+        .expect("audit trail array");
+    let owner_event = audit_trail
+        .iter_mut()
+        .find(|event| event["subject"] == Value::String("did:org:lane-xi".to_string()))
+        .expect("owner history event for subject did");
+    owner_event["subject"] = Value::String("did:Org:lane-xi".to_string());
+
+    fs::write(
+        &registry_path,
+        serde_json::to_string_pretty(&raw).expect("serialize registry"),
+    )
+    .expect("write registry");
+
+    let stderr = run_fail(
+        &[
+            "query-capability-audit",
+            "--token-id",
+            &token_id.to_string(),
+        ],
+        registry_path.to_str().expect("utf8 path"),
+    );
+
+    assert!(
+        stderr.contains("\"code\": \"INVALID_REGISTRY_STATE\""),
+        "{stderr}"
+    );
+    assert!(
+        stderr.contains("non-canonical owner_history.subject"),
+        "{stderr}"
+    );
 }
 
 #[test]

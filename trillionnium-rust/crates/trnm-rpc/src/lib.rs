@@ -143,11 +143,67 @@ pub struct OracleValidateSnapshotResponse {
     pub error: Option<String>,
 }
 
+fn error_label_char_is_structural_whitespace(ch: char) -> bool {
+    ch.is_whitespace()
+        || ch.is_control()
+        || matches!(
+            ch,
+            '\u{00AD}'
+                | '\u{034F}'
+                | '\u{061C}'
+                | '\u{180E}'
+                | '\u{200B}'
+                | '\u{200C}'
+                | '\u{200D}'
+                | '\u{200E}'
+                | '\u{200F}'
+                | '\u{202A}'
+                | '\u{202B}'
+                | '\u{202C}'
+                | '\u{202D}'
+                | '\u{202E}'
+                | '\u{2060}'
+                | '\u{2061}'
+                | '\u{2062}'
+                | '\u{2063}'
+                | '\u{2064}'
+                | '\u{2065}'
+                | '\u{2066}'
+                | '\u{2067}'
+                | '\u{2068}'
+                | '\u{2069}'
+                | '\u{206A}'
+                | '\u{206B}'
+                | '\u{206C}'
+                | '\u{206D}'
+                | '\u{206E}'
+                | '\u{206F}'
+                | '\u{FE00}'
+                | '\u{FE0F}'
+                | '\u{FEFF}'
+                | '\u{FFF9}'
+                | '\u{FFFA}'
+                | '\u{FFFB}'
+        )
+        || ('\u{E0000}'..='\u{E007F}').contains(&ch)
+        || ('\u{E0100}'..='\u{E01EF}').contains(&ch)
+}
+
+fn normalize_error_label_for_contract(label: &str) -> String {
+    label
+        .chars()
+        .map(|ch| if error_label_char_is_structural_whitespace(ch) { ' ' } else { ch })
+        .collect::<String>()
+        .split_whitespace()
+        .collect::<Vec<_>>()
+        .join(" ")
+}
+
 impl OracleValidateSnapshotResponse {
     fn has_non_empty_error_label(&self) -> bool {
         self.error
             .as_deref()
-            .map(str::trim)
+            .map(normalize_error_label_for_contract)
             .is_some_and(|label| !label.is_empty())
     }
 
@@ -1829,6 +1885,28 @@ mod tests {
         }
         .into();
         assert!(!err_with_whitespace_label.bridge_contract_consistent());
+
+        let err_with_invisible_only_label: OracleValidateSnapshotResponse = OracleValidationReport {
+            ok: false,
+            now_ts_ms: 799,
+            observation: OracleValidationObservation {
+                stale_reject_total: 0,
+                quorum_reject_total: 1,
+                drift_reject_total: 0,
+                accepted_total: 0,
+            },
+            metrics: OracleValidationMetrics {
+                oracle_stale_reject_total: 0,
+                oracle_quorum_reject_total: 1,
+                oracle_drift_reject_total: 0,
+                oracle_source_cardinality: 1,
+                accepted_total: 0,
+                sample_count: 1,
+            },
+            error: Some("\u{200B}\u{2060}\u{202E}\u{FEFF}".into()),
+        }
+        .into();
+        assert!(!err_with_invisible_only_label.bridge_contract_consistent());
     }
 
     #[test]

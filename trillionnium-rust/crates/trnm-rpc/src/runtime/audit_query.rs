@@ -1,5 +1,7 @@
+use std::cmp::Ordering;
+
 use anyhow::Result;
-use trnm_types::IdentityRegistry;
+use trnm_types::{AuditAction, IdentityRegistry};
 
 use super::*;
 
@@ -16,6 +18,16 @@ pub(crate) use query_parsing::{
     parse_query_events_limit_from_path, parse_query_normalized_audit_events_query_from_path,
 };
 
+fn audit_action_rank(action: &AuditAction) -> u8 {
+    match action {
+        AuditAction::DidRegistered => 0,
+        AuditAction::DidRevoked => 1,
+        AuditAction::CapabilityIssued => 2,
+        AuditAction::CapabilityRenewed => 3,
+        AuditAction::CapabilityRevoked => 4,
+    }
+}
+
 pub(crate) fn query_capability_audit(
     registry: &IdentityRegistry,
     token_id: u64,
@@ -31,14 +43,8 @@ pub(crate) fn query_capability_audit(
         });
     }
 
-    let mut owner_history: Vec<_> = registry
+    if let Some(invalid_subject) = registry
         .audit_trail()
-        .iter()
-        .filter(|event| event.subject == token.subject_did)
-        .cloned()
-        .collect();
-
-    if let Some(invalid_subject) = owner_history
         .iter()
         .map(|event| event.subject.as_str())
         .find(|subject| !IdentityRegistry::is_canonical_did(subject))
@@ -49,7 +55,23 @@ pub(crate) fn query_capability_audit(
         });
     }
 
-    owner_history.sort_by_key(|event| (event.at_height, event.seq));
+    let mut owner_history: Vec<_> = registry
+        .audit_trail()
+        .iter()
+        .filter(|event| event.subject == token.subject_did)
+        .cloned()
+        .collect();
+
+    owner_history.sort_by(|left, right| {
+        left.at_height
+            .cmp(&right.at_height)
+            .then_with(|| left.seq.cmp(&right.seq))
+            .then_with(|| audit_action_rank(&left.action).cmp(&audit_action_rank(&right.action)))
+            .then_with(|| left.actor.cmp(&right.actor))
+            .then_with(|| left.subject.cmp(&right.subject))
+            .then_with(|| left.note.cmp(&right.note))
+            .then(Ordering::Equal)
+    });
 
     Ok(CapabilityAuditQueryResponse {
         token,

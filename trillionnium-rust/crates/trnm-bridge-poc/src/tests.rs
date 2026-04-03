@@ -22,6 +22,23 @@ fn settlement_request_rejects_ogham_space_mark_in_tx_hash() {
 }
 
 #[test]
+fn settlement_audit_view_exposes_non_terminal_pending_fields() {
+    let pending = SettlementRequest::new(7, "0xpending".to_string());
+
+    assert_eq!(
+        pending.audit_view(),
+        crate::bridge_status::SettlementAuditView {
+            chain_id: 7,
+            tx_hash: "0xpending".to_string(),
+            status: "pending",
+            is_terminal: false,
+            finalized_height: None,
+            revert_reason: None,
+        }
+    );
+}
+
+#[test]
 fn settlement_audit_view_exposes_explicit_terminal_fields() {
     let mut finalized = SettlementRequest::new(7, "0xfinal".to_string());
     finalized.status = BridgeStatus::Finalized(88);
@@ -122,6 +139,22 @@ fn settlement_request_collapses_bom_spacing_in_revert_reason() {
 }
 
 #[test]
+fn settlement_request_collapses_halfwidth_hangul_filler_in_revert_reason() {
+    let mut request = SettlementRequest::new(7, "0xabcdef".to_string());
+    request
+        .revert_authorized(
+            &settlement_operator(),
+            "target\u{FFA0}relay timeout".to_string(),
+        )
+        .expect("halfwidth hangul filler should be normalized in revert reason");
+
+    assert_eq!(
+        request.status,
+        BridgeStatus::Reverted("target relay timeout".to_string())
+    );
+}
+
+#[test]
 fn settlement_request_collapses_medium_math_and_ideographic_spacing_in_revert_reason() {
     let mut request = SettlementRequest::new(7, "0xabcdef".to_string());
     request
@@ -162,6 +195,22 @@ fn settlement_request_collapses_interlinear_annotation_controls_in_revert_reason
     assert_eq!(
         request.status,
         BridgeStatus::Reverted("proof mismatch target trail".to_string())
+    );
+}
+
+#[test]
+fn settlement_request_collapses_plane14_tag_noise_in_revert_reason() {
+    let mut request = SettlementRequest::new(7, "0xabcdef".to_string());
+    request
+        .revert_authorized(
+            &settlement_operator(),
+            "proof\u{E0100}mismatch\u{E0101}\u{E0001}trail".to_string(),
+        )
+        .expect("plane14 tag noise should be normalized in revert reason");
+
+    assert_eq!(
+        request.status,
+        BridgeStatus::Reverted("proof mismatch trail".to_string())
     );
 }
 
@@ -241,6 +290,35 @@ fn settlement_request_rejects_plane14_tags_in_tx_hash_and_subject() {
     };
 
     let finalize_err = request.settle_authorized(&token, 88);
+    assert_eq!(
+        finalize_err,
+        Err(SettlementError::MalformedRequest {
+            reason: "non-canonical tx_hash",
+        })
+    );
+    assert_eq!(request.status, BridgeStatus::Pending);
+
+    request.tx_hash = "0xabcdef".to_string();
+
+    let revert_err = request.revert_authorized(&token, "target relay timeout".to_string());
+    assert_eq!(
+        revert_err,
+        Err(SettlementError::MalformedToken {
+            reason: "non-canonical subject",
+        })
+    );
+    assert_eq!(request.status, BridgeStatus::Pending);
+}
+
+#[test]
+fn settlement_request_rejects_variation_selectors_in_tx_hash_and_subject() {
+    let mut request = SettlementRequest::new(7, "0xabc\u{FE0E}def\u{FE0F}".to_string());
+    let token = CapabilityToken {
+        subject: "did:trn:settlement\u{FE0E}-operator\u{FE0F}".to_string(),
+        capabilities: vec![SettlementCapability::Finalize, SettlementCapability::Revert],
+    };
+
+    let finalize_err = request.settle_authorized(&token, 90);
     assert_eq!(
         finalize_err,
         Err(SettlementError::MalformedRequest {

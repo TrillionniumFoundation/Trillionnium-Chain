@@ -13,7 +13,7 @@ fn x3_prep_confirm_failure_reason_strips_variation_selectors_for_replay_stabilit
         &token,
         &heartbeat,
         SettlementConfirm::Failed {
-            reason: "target\u{FE0E} receipt\u{FE0F} timeout".to_string(),
+            reason: "target\u{FE00} receipt\u{FE0E}\u{FE0F} timeout".to_string(),
         },
     )
     .unwrap();

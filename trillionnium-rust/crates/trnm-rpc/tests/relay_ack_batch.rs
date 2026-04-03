@@ -175,3 +175,64 @@ fn relay_ack_does_not_cross_session_boundary_by_envelope_id() {
         .unwrap();
     assert_eq!(still_visible_a.envelopes.len(), 2);
 }
+
+#[test]
+fn relay_ack_deduplicates_overlapping_envelope_ids_and_upto_seq() {
+    let mut router = RelayRouter::new();
+    router.register("relay.echo", EchoHandler);
+    let relay = RelayService::new(router);
+
+    relay
+        .open(RelayOpenRequest {
+            session_id: "it-s4".into(),
+        })
+        .unwrap();
+    relay
+        .send(RelaySendRequest {
+            session_id: "it-s4".into(),
+            route: "relay.echo".into(),
+            from: "alice".into(),
+            to: Some("bob".into()),
+            payload: b"m1".to_vec(),
+            source: None,
+        })
+        .unwrap();
+    relay
+        .send(RelaySendRequest {
+            session_id: "it-s4".into(),
+            route: "relay.echo".into(),
+            from: "alice".into(),
+            to: Some("bob".into()),
+            payload: b"m2".to_vec(),
+            source: None,
+        })
+        .unwrap();
+
+    let polled = relay
+        .poll(RelayPollRequest {
+            session_id: "it-s4".into(),
+            limit: 10,
+        })
+        .unwrap();
+    assert_eq!(polled.envelopes.len(), 4);
+
+    let second_id = polled.envelopes[1].envelope_id;
+    let acked = relay
+        .ack(RelayAckRequest {
+            session_id: "it-s4".into(),
+            envelope_ids: vec![second_id, second_id],
+            upto_seq: Some(2),
+        })
+        .unwrap();
+    assert_eq!(acked.acked, 2);
+
+    let left = relay
+        .poll(RelayPollRequest {
+            session_id: "it-s4".into(),
+            limit: 10,
+        })
+        .unwrap();
+    assert_eq!(left.envelopes.len(), 2);
+    assert_eq!(left.envelopes[0].sequence, 3);
+    assert_eq!(left.envelopes[1].sequence, 4);
+}

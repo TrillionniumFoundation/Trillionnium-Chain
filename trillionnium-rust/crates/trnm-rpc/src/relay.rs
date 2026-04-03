@@ -956,8 +956,6 @@ impl RelayService {
             }
             return Err(err);
         }
-        self.consume_risk_quota(RiskDomain::Proof, &req.session_id, req.source.as_deref())?;
-
         let g = self
             .sessions
             .lock()
@@ -978,6 +976,8 @@ impl RelayService {
                 format!("to_seq({}) exceeds max sequence({max_seq})", req.to_seq),
             ));
         }
+
+        self.consume_risk_quota(RiskDomain::Proof, &req.session_id, req.source.as_deref())?;
 
         let expected_len = (req.to_seq - req.from_seq + 1) as usize;
         let start_idx = (req.from_seq - 1) as usize;
@@ -1088,7 +1088,15 @@ fn is_hex_wrapper_noise(ch: char) -> bool {
         || ch.is_control()
         || matches!(
             ch,
-            '\u{200B}'
+            '\u{00AD}'
+                | '\u{034F}'
+                | '\u{061C}'
+                | '\u{180B}'
+                | '\u{180C}'
+                | '\u{180D}'
+                | '\u{180E}'
+                | '\u{180F}'
+                | '\u{200B}'
                 | '\u{200C}'
                 | '\u{200D}'
                 | '\u{200E}'
@@ -1099,16 +1107,57 @@ fn is_hex_wrapper_noise(ch: char) -> bool {
                 | '\u{202D}'
                 | '\u{202E}'
                 | '\u{2060}'
+                | '\u{2061}'
+                | '\u{2062}'
+                | '\u{2063}'
+                | '\u{2064}'
+                | '\u{2065}'
                 | '\u{2066}'
                 | '\u{2067}'
                 | '\u{2068}'
                 | '\u{2069}'
+                | '\u{206A}'
+                | '\u{206B}'
+                | '\u{206C}'
+                | '\u{206D}'
+                | '\u{206E}'
+                | '\u{206F}'
                 | '\u{FEFF}'
+                | '\u{FFF9}'
+                | '\u{FFFA}'
+                | '\u{FFFB}'
         )
+        || ('\u{FE00}'..='\u{FE0F}').contains(&ch)
+        || ('\u{E0000}'..='\u{E007F}').contains(&ch)
+        || ('\u{E0100}'..='\u{E01EF}').contains(&ch)
 }
 
 fn decode_hex_32(input: &str, field: &str) -> Result<[u8; 32]> {
-    let normalized = input.trim_matches(is_hex_wrapper_noise);
+    fn quote_wrapper_len(input: &str) -> Option<(usize, usize)> {
+        const QUOTE_WRAPPERS: [(&str, &str); 7] = [
+            ("\"", "\""),
+            ("'", "'"),
+            ("`", "`"),
+            ("“", "”"),
+            ("‘", "’"),
+            ("«", "»"),
+            ("「", "」"),
+        ];
+
+        QUOTE_WRAPPERS.iter().find_map(|(open, close)| {
+            input
+                .starts_with(open)
+                .then_some(())
+                .filter(|_| input.ends_with(close))
+                .map(|_| (open.len(), close.len()))
+        })
+    }
+
+    let mut normalized = input.trim_matches(is_hex_wrapper_noise);
+    while let Some((prefix_len, suffix_len)) = quote_wrapper_len(normalized) {
+        normalized = normalized[prefix_len..normalized.len() - suffix_len]
+            .trim_matches(is_hex_wrapper_noise);
+    }
     let canonical = normalized
         .strip_prefix("0x")
         .or_else(|| normalized.strip_prefix("0X"))
@@ -1928,6 +1977,139 @@ mod tests {
     }
 
     #[test]
+    fn relay_session_proof_accepts_hash_hex_wrapped_in_bom_and_bidi_noise() {
+        let mut router = RelayRouter::new();
+        router.register("relay.echo", EchoHandler);
+        let relay = RelayService::new(router);
+        relay
+            .open(RelayOpenRequest {
+                session_id: "sp3-wrapper-noise".into(),
+            })
+            .unwrap();
+
+        relay
+            .send(RelaySendRequest {
+                session_id: "sp3-wrapper-noise".into(),
+                route: "relay.echo".into(),
+                from: "alice".into(),
+                to: Some("bob".into()),
+                payload: b"m1".to_vec(),
+                source: None,
+            })
+            .unwrap();
+
+        let mut proof = relay
+            .query_session_proof(RelaySessionProofQuery {
+                task_id: 7,
+                session_id: "sp3-wrapper-noise".into(),
+                from_seq: 1,
+                to_seq: 2,
+                source: None,
+            })
+            .unwrap();
+
+        proof.segment_root_hex = format!("\u{FEFF} 0x{} \u{202E}", proof.segment_root_hex);
+        for entry in proof.proofs.iter_mut() {
+            entry.leaf_hash_hex = format!("\u{2066}0x{}\u{2069}", entry.leaf_hash_hex);
+            for step in entry.proof.iter_mut() {
+                step.sibling_hash_hex = format!("\n\u{200F}{}\u{FEFF}\t", step.sibling_hash_hex);
+            }
+        }
+
+        verify_session_proof(&proof).unwrap();
+    }
+
+    #[test]
+    fn relay_session_proof_accepts_hash_hex_wrapped_in_annotation_and_tag_noise() {
+        let mut router = RelayRouter::new();
+        router.register("relay.echo", EchoHandler);
+        let relay = RelayService::new(router);
+        relay
+            .open(RelayOpenRequest {
+                session_id: "sp3-annotation-tag-noise".into(),
+            })
+            .unwrap();
+
+        relay
+            .send(RelaySendRequest {
+                session_id: "sp3-annotation-tag-noise".into(),
+                route: "relay.echo".into(),
+                from: "alice".into(),
+                to: Some("bob".into()),
+                payload: b"m1".to_vec(),
+                source: None,
+            })
+            .unwrap();
+
+        let mut proof = relay
+            .query_session_proof(RelaySessionProofQuery {
+                task_id: 7,
+                session_id: "sp3-annotation-tag-noise".into(),
+                from_seq: 1,
+                to_seq: 2,
+                source: None,
+            })
+            .unwrap();
+
+        proof.segment_root_hex = format!("\u{FFF9}\u{E0001}0x{}\u{E007F}\u{FFFB}", proof.segment_root_hex);
+        for entry in proof.proofs.iter_mut() {
+            entry.leaf_hash_hex =
+                format!("\u{034F}\u{FE0F}{}\u{E0100}", entry.leaf_hash_hex.to_uppercase());
+            for step in entry.proof.iter_mut() {
+                step.sibling_hash_hex = format!(
+                    "\u{061C}\u{2061}0X{}\u{2064}\u{180F}",
+                    step.sibling_hash_hex.to_uppercase()
+                );
+            }
+        }
+
+        verify_session_proof(&proof).unwrap();
+    }
+
+    #[test]
+    fn relay_session_proof_accepts_hash_hex_wrapped_in_quotes() {
+        let mut router = RelayRouter::new();
+        router.register("relay.echo", EchoHandler);
+        let relay = RelayService::new(router);
+        relay
+            .open(RelayOpenRequest {
+                session_id: "sp3-quote-noise".into(),
+            })
+            .unwrap();
+
+        relay
+            .send(RelaySendRequest {
+                session_id: "sp3-quote-noise".into(),
+                route: "relay.echo".into(),
+                from: "alice".into(),
+                to: Some("bob".into()),
+                payload: b"m1".to_vec(),
+                source: None,
+            })
+            .unwrap();
+
+        let mut proof = relay
+            .query_session_proof(RelaySessionProofQuery {
+                task_id: 7,
+                session_id: "sp3-quote-noise".into(),
+                from_seq: 1,
+                to_seq: 2,
+                source: None,
+            })
+            .unwrap();
+
+        proof.segment_root_hex = format!(" \"0x{}\" ", proof.segment_root_hex);
+        for entry in proof.proofs.iter_mut() {
+            entry.leaf_hash_hex = format!("“0X{}”", entry.leaf_hash_hex.to_uppercase());
+            for step in entry.proof.iter_mut() {
+                step.sibling_hash_hex = format!(" 「{}」 ", step.sibling_hash_hex);
+            }
+        }
+
+        verify_session_proof(&proof).unwrap();
+    }
+
+    #[test]
     fn relay_open_rejects_empty_session() {
         let relay = RelayService::new(RelayRouter::new());
         let err = relay
@@ -2739,6 +2921,12 @@ mod tests {
         let canonical = canonicalize_risk_source(Some("   Bot\t\n Worker   "));
         assert_eq!(canonical, "bot worker");
 
+        // Quoted wrappers should not create distinct quota buckets for the same source alias.
+        let canonical_wrapped = canonicalize_risk_source(Some("  \"Bot Worker\"  "));
+        assert_eq!(canonical_wrapped, "bot worker");
+        let canonical_nested_wrapped = canonicalize_risk_source(Some("  「 Bot Worker 」  "));
+        assert_eq!(canonical_nested_wrapped, "bot worker");
+
         // Non-ASCII whitespace must still collapse even on the lowercase fast path.
         let canonical_nbsp = canonicalize_risk_source(Some("bot\u{00a0}worker"));
         assert_eq!(canonical_nbsp, "bot worker");
@@ -2877,6 +3065,152 @@ mod tests {
             .query_session_proof(RelaySessionProofQuery {
                 task_id: 1,
                 session_id: "proof-s1".into(),
+                from_seq: 1,
+                to_seq: 1,
+                source: Some("proof-src".into()),
+            })
+            .unwrap_err();
+        assert!(err.to_string().contains("too_many_requests/quota_exceeded"));
+    }
+
+    #[test]
+    fn out_of_bounds_proof_query_does_not_consume_quota_budget() {
+        let mut router = RelayRouter::new();
+        router.register("relay.echo", EchoHandler);
+        let relay = RelayService::with_risk_quota_config(
+            router,
+            RiskQuotaConfig {
+                window_ms: 1_000,
+                per_session_limit: 2,
+                per_source_limit: 2,
+            },
+        );
+        relay
+            .open(RelayOpenRequest {
+                session_id: "proof-oob-budget".into(),
+            })
+            .unwrap();
+        relay
+            .send(RelaySendRequest {
+                session_id: "proof-oob-budget".into(),
+                route: "relay.echo".into(),
+                from: "alice".into(),
+                to: Some("bob".into()),
+                payload: b"x".to_vec(),
+                source: Some("proof-src".into()),
+            })
+            .unwrap();
+
+        for _ in 0..3 {
+            let err = relay
+                .query_session_proof(RelaySessionProofQuery {
+                    task_id: 1,
+                    session_id: "proof-oob-budget".into(),
+                    from_seq: 1,
+                    to_seq: 9,
+                    source: Some("proof-src".into()),
+                })
+                .unwrap_err();
+            assert!(err.to_string().contains("bad_request/range_out_of_bounds"));
+        }
+
+        relay
+            .query_session_proof(RelaySessionProofQuery {
+                task_id: 1,
+                session_id: "proof-oob-budget".into(),
+                from_seq: 1,
+                to_seq: 1,
+                source: Some("proof-src".into()),
+            })
+            .expect("out-of-bounds requests should not burn proof quota budget");
+
+        relay
+            .query_session_proof(RelaySessionProofQuery {
+                task_id: 1,
+                session_id: "proof-oob-budget".into(),
+                from_seq: 1,
+                to_seq: 1,
+                source: Some("proof-src".into()),
+            })
+            .expect("full proof quota budget should remain available after rejected oob requests");
+
+        let err = relay
+            .query_session_proof(RelaySessionProofQuery {
+                task_id: 1,
+                session_id: "proof-oob-budget".into(),
+                from_seq: 1,
+                to_seq: 1,
+                source: Some("proof-src".into()),
+            })
+            .unwrap_err();
+        assert!(err.to_string().contains("too_many_requests/quota_exceeded"));
+    }
+
+    #[test]
+    fn zero_from_seq_proof_query_does_not_consume_quota_budget() {
+        let mut router = RelayRouter::new();
+        router.register("relay.echo", EchoHandler);
+        let relay = RelayService::with_risk_quota_config(
+            router,
+            RiskQuotaConfig {
+                window_ms: 1_000,
+                per_session_limit: 2,
+                per_source_limit: 2,
+            },
+        );
+        relay
+            .open(RelayOpenRequest {
+                session_id: "proof-zero-budget".into(),
+            })
+            .unwrap();
+        relay
+            .send(RelaySendRequest {
+                session_id: "proof-zero-budget".into(),
+                route: "relay.echo".into(),
+                from: "alice".into(),
+                to: Some("bob".into()),
+                payload: b"x".to_vec(),
+                source: Some("proof-src".into()),
+            })
+            .unwrap();
+
+        for _ in 0..3 {
+            let err = relay
+                .query_session_proof(RelaySessionProofQuery {
+                    task_id: 1,
+                    session_id: "proof-zero-budget".into(),
+                    from_seq: 0,
+                    to_seq: 1,
+                    source: Some("proof-src".into()),
+                })
+                .unwrap_err();
+            assert!(err.to_string().contains("bad_request/invalid_range"));
+        }
+
+        relay
+            .query_session_proof(RelaySessionProofQuery {
+                task_id: 1,
+                session_id: "proof-zero-budget".into(),
+                from_seq: 1,
+                to_seq: 1,
+                source: Some("proof-src".into()),
+            })
+            .expect("zero from_seq requests should not burn proof quota budget");
+
+        relay
+            .query_session_proof(RelaySessionProofQuery {
+                task_id: 1,
+                session_id: "proof-zero-budget".into(),
+                from_seq: 1,
+                to_seq: 1,
+                source: Some("proof-src".into()),
+            })
+            .expect("full proof quota budget should remain available after rejected zero-from requests");
+
+        let err = relay
+            .query_session_proof(RelaySessionProofQuery {
+                task_id: 1,
+                session_id: "proof-zero-budget".into(),
                 from_seq: 1,
                 to_seq: 1,
                 source: Some("proof-src".into()),

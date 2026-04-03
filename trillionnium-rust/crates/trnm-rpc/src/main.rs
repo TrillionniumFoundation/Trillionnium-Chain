@@ -9,6 +9,7 @@ use std::{
     fs::{self, OpenOptions},
     io::{Read, Write},
     net::{TcpListener, TcpStream},
+    cmp::Ordering,
     path::{Path, PathBuf},
     time::{Duration, Instant, SystemTime, UNIX_EPOCH},
 };
@@ -22,7 +23,7 @@ use trnm_rpc::{
 };
 use trnm_state::StateStore;
 use trnm_types::{
-    AuditEvent, CapabilityToken, GovProposalObject, GovProposalStatus, IdentityRegistry,
+    AuditAction, AuditEvent, CapabilityToken, GovProposalObject, GovProposalStatus, IdentityRegistry,
     PrivacyTier, RequestStatus, TaskMetadata, TaskMeteringSnapshot, TaskObject, TaskStatus,
     TransferTx,
 };
@@ -1054,6 +1055,16 @@ fn load_identity_registry(path: &Path) -> IdentityRegistry {
     serde_json::from_str::<IdentityRegistry>(&raw).unwrap_or_default()
 }
 
+fn audit_action_rank(action: &AuditAction) -> u8 {
+    match action {
+        AuditAction::DidRegistered => 0,
+        AuditAction::DidRevoked => 1,
+        AuditAction::CapabilityIssued => 2,
+        AuditAction::CapabilityRenewed => 3,
+        AuditAction::CapabilityRevoked => 4,
+    }
+}
+
 fn query_capability_audit(
     registry: &IdentityRegistry,
     token_id: u64,
@@ -1069,14 +1080,8 @@ fn query_capability_audit(
         });
     }
 
-    let mut owner_history: Vec<_> = registry
+    if let Some(invalid_subject) = registry
         .audit_trail()
-        .iter()
-        .filter(|event| event.subject == token.subject_did)
-        .cloned()
-        .collect();
-
-    if let Some(invalid_subject) = owner_history
         .iter()
         .map(|event| event.subject.as_str())
         .find(|subject| !IdentityRegistry::is_canonical_did(subject))
@@ -1087,9 +1092,25 @@ fn query_capability_audit(
         });
     }
 
+    let mut owner_history: Vec<_> = registry
+        .audit_trail()
+        .iter()
+        .filter(|event| event.subject == token.subject_did)
+        .cloned()
+        .collect();
+
     // Keep audit query output deterministic even when registry snapshots are
     // merged/imported with non-canonical ordering.
-    owner_history.sort_by_key(|event| (event.at_height, event.seq));
+    owner_history.sort_by(|left, right| {
+        left.at_height
+            .cmp(&right.at_height)
+            .then_with(|| left.seq.cmp(&right.seq))
+            .then_with(|| audit_action_rank(&left.action).cmp(&audit_action_rank(&right.action)))
+            .then_with(|| left.actor.cmp(&right.actor))
+            .then_with(|| left.subject.cmp(&right.subject))
+            .then_with(|| left.note.cmp(&right.note))
+            .then(Ordering::Equal)
+    });
 
     Ok(CapabilityAuditQueryResponse {
         token,
@@ -3243,11 +3264,25 @@ fn parse_query_normalized_audit_events_query_from_path(
 }
 
 fn normalize_capability_subject_lookup(raw: &str) -> Option<String> {
-    let normalized = raw
-        .trim()
+    let normalized = normalize_wrapped_env_value(raw)
         .chars()
         .filter_map(|ch| match ch {
-            '\u{200B}' | '\u{200C}' | '\u{200D}' | '\u{2060}' | '\u{FEFF}' => None,
+            '\u{061C}'
+            | '\u{200B}'
+            | '\u{200C}'
+            | '\u{200D}'
+            | '\u{200E}'
+            | '\u{200F}'
+            | '\u{2060}'
+            | '\u{2061}'
+            | '\u{2062}'
+            | '\u{2063}'
+            | '\u{2064}'
+            | '\u{2066}'
+            | '\u{2067}'
+            | '\u{2068}'
+            | '\u{2069}'
+            | '\u{FEFF}' => None,
             _ if ch.is_control() => None,
             _ => Some(ch),
         })
@@ -3918,6 +3953,12 @@ fn query_normalized_audit_events(
         right_height
             .cmp(&left_height)
             .then_with(|| left.event_type.cmp(&right.event_type))
+            .then_with(|| left.source.cmp(&right.source))
+            .then_with(|| left.object_id.as_deref().unwrap_or("").cmp(right.object_id.as_deref().unwrap_or("")))
+            .then_with(|| left.actor.as_deref().unwrap_or("").cmp(right.actor.as_deref().unwrap_or("")))
+            .then_with(|| left.checked_at.as_deref().unwrap_or("").cmp(right.checked_at.as_deref().unwrap_or("")))
+            .then_with(|| left.note.as_deref().unwrap_or("").cmp(right.note.as_deref().unwrap_or("")))
+            .then_with(|| left.reason.as_deref().unwrap_or("").cmp(right.reason.as_deref().unwrap_or("")))
     });
 
     let total = events.len();
@@ -4850,6 +4891,54 @@ mod tests {
                 " \u{FEFF}did:org:lane-xi\u{200B} ",
             ),
             Some(token_id)
+        );
+        assert_eq!(
+            resolve_capability_token_subject_or_token(
+                &registry,
+                "\u{2066}did:org:lane\u{200E}-xi\u{2069}\u{061C}",
+            ),
+            Some(token_id),
+            "bidi/format controls should be stripped before capability audit lookup"
+        );
+    }
+
+    #[test]
+    fn resolve_capability_token_subject_or_token_accepts_wrapped_operator_input() {
+        let mut registry = IdentityRegistry::default();
+        registry
+            .register_did(
+                "did:org:lane-xi".to_string(),
+                "org:lane-xi-admin".to_string(),
+                10,
+            )
+            .expect("register did");
+        let token_id = registry
+            .issue_capability(
+                "org:lane-xi-admin".to_string(),
+                "did:org:lane-xi".to_string(),
+                CapabilityScope::AuditRead,
+                12,
+                Some(120),
+            )
+            .expect("issue capability");
+
+        assert_eq!(
+            resolve_capability_token_subject_or_token(&registry, " \"did:org:lane-xi\" "),
+            Some(token_id)
+        );
+        assert_eq!(
+            resolve_capability_token_subject_or_token(
+                &registry,
+                "  \u{2066}`\"'did:org:lane-xi'\"`\u{2069}  ",
+            ),
+            Some(token_id),
+            "mixed operator quoting plus bidi controls should still normalize to the canonical DID"
+        );
+        let wrapped_token = format!(" '`{token_id}`' ");
+        assert_eq!(
+            resolve_capability_token_subject_or_token(&registry, &wrapped_token),
+            Some(token_id),
+            "quoted numeric token ids should resolve like unwrapped operator input"
         );
     }
 

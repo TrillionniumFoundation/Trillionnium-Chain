@@ -155,16 +155,20 @@ fn parse_query_normalized_audit_events_query_from_path_rejects_malformed_percent
 }
 
 #[test]
-fn parse_query_normalized_audit_events_query_from_path_rejects_percent_encoded_c0_controls_and_del() {
+fn parse_query_normalized_audit_events_query_from_path_rejects_percent_encoded_control_bytes() {
     for path in [
         "/query-normalized-audit-events?source=trnm.task%00shadow",
         "/query-normalized-audit-events?source=trnm.task%01shadow",
+        "/query-normalized-audit-events?source=trnm.task%80shadow",
         "/query-normalized-audit-events?eventType=trnm.task.commit%1ftrail",
         "/query-normalized-audit-events?eventType=trnm.task.commit%7ftrail",
+        "/query-normalized-audit-events?eventType=trnm.task.commit%9ftrail",
         "/query-normalized-audit-events%00shadow?source=trnm.task",
         "/query-normalized-audit-events%01shadow?source=trnm.task",
         "/query-normalized-audit-events%1fshadow?source=trnm.task",
         "/query-normalized-audit-events%7fshadow?source=trnm.task",
+        "/query-normalized-audit-events%80shadow?source=trnm.task",
+        "/query-normalized-audit-events%9fshadow?source=trnm.task",
     ] {
         let err = parse_query_normalized_audit_events_query_from_path(path)
             .expect_err("encoded controls should fail closed");
@@ -231,6 +235,21 @@ fn parse_query_normalized_audit_events_query_from_path_rejects_prefix_shadow_pat
     ] {
         let err = parse_query_normalized_audit_events_query_from_path(path)
             .expect_err("prefix-shadow paths should fail closed");
+        assert!(err.contains("400 Bad Request"), "path={path} err={err}");
+        assert!(err.contains("invalid query"), "path={path} err={err}");
+    }
+}
+
+#[test]
+fn parse_query_normalized_audit_events_query_from_path_rejects_raw_route_delimiter_confusion() {
+    for path in [
+        "/query-normalized-audit-events#tail",
+        "/query-normalized-audit-events\\tail",
+        "/query-normalized-audit-events?source=trnm.task?limit=2",
+        "/query-normalized-audit-events?source=trnm.task#tail",
+    ] {
+        let err = parse_query_normalized_audit_events_query_from_path(path)
+            .expect_err("raw route delimiter confusion should fail closed");
         assert!(err.contains("400 Bad Request"), "path={path} err={err}");
         assert!(err.contains("invalid query"), "path={path} err={err}");
     }
@@ -341,6 +360,48 @@ fn query_normalized_audit_events_supports_adapter_source_filter() {
     assert_eq!(out.events[0].object_id.as_deref(), Some("task:7"));
     assert_eq!(out.events[0].note.as_deref(), Some("0xabc123"));
     assert_eq!(out.has_more, Some(false));
+}
+
+#[test]
+fn query_normalized_audit_events_uses_deterministic_tiebreakers_for_same_height_and_type() {
+    let recs = vec![
+        AdapterRecord {
+            ts: 77,
+            kind: "commit".into(),
+            task_id: 9,
+            worker: Some("worker-z".into()),
+            result_hash: None,
+            status: "accepted".into(),
+            tx_hash: Some("0xbbb".into()),
+        },
+        AdapterRecord {
+            ts: 77,
+            kind: "commit".into(),
+            task_id: 4,
+            worker: Some("worker-a".into()),
+            result_hash: None,
+            status: "accepted".into(),
+            tx_hash: Some("0xaaa".into()),
+        },
+    ];
+
+    let out = query_normalized_audit_events(
+        &[],
+        &recs,
+        &QueryNormalizedAuditEventsQuery {
+            source: Some("trnm.adapter".into()),
+            event_type: Some("trnm.adapter.commit".into()),
+            cursor: None,
+            limit: 10,
+        },
+    );
+
+    assert_eq!(out.total, Some(2));
+    assert_eq!(out.events.len(), 2);
+    assert_eq!(out.events[0].object_id.as_deref(), Some("task:4"));
+    assert_eq!(out.events[0].actor.as_deref(), Some("worker-a"));
+    assert_eq!(out.events[1].object_id.as_deref(), Some("task:9"));
+    assert_eq!(out.events[1].actor.as_deref(), Some("worker-z"));
 }
 
 #[test]

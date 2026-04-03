@@ -70,6 +70,57 @@ fn relay_query_session_proof_returns_messages_root_and_proofs() {
 }
 
 #[test]
+fn relay_session_proof_remains_queryable_after_close_for_audit_replay() {
+    let mut router = RelayRouter::new();
+    router.register("relay.echo", EchoHandler);
+    let relay = RelayService::new(router);
+    relay
+        .open(RelayOpenRequest {
+            session_id: "sp-closed-audit".into(),
+        })
+        .unwrap();
+
+    relay
+        .send(RelaySendRequest {
+            session_id: "sp-closed-audit".into(),
+            route: "relay.echo".into(),
+            from: "alice".into(),
+            to: Some("bob".into()),
+            payload: b"audit-me".to_vec(),
+            source: None,
+        })
+        .unwrap();
+
+    let closed = relay
+        .close(RelayCloseRequest {
+            session_id: "sp-closed-audit".into(),
+        })
+        .unwrap();
+    assert_eq!(closed.session.status, RelaySessionStatus::Closed);
+    assert!(closed.session.closed_at_unix_ms.is_some());
+
+    let proof = relay
+        .query_session_proof(RelaySessionProofQuery {
+            task_id: 99,
+            session_id: "sp-closed-audit".into(),
+            from_seq: 1,
+            to_seq: 2,
+            source: None,
+        })
+        .unwrap();
+
+    assert_eq!(proof.session_id, "sp-closed-audit");
+    assert_eq!(proof.range_len, 2);
+    assert_eq!(proof.message_count, 2);
+    assert_eq!(proof.proof_count, 2);
+    assert_eq!(proof.messages.len(), 2);
+    assert_eq!(proof.proofs.len(), 2);
+    assert_eq!(proof.messages[0].sequence, 1);
+    assert_eq!(proof.messages[1].sequence, 2);
+    verify_session_proof(&proof).unwrap();
+}
+
+#[test]
 fn relay_session_proof_json_contract_keeps_explicit_audit_fields() {
     let mut router = RelayRouter::new();
     router.register("relay.echo", EchoHandler);

@@ -374,6 +374,48 @@ fn x3_prep_failed_confirm_blank_reason_falls_back_to_stable_contract_message() {
 }
 
 #[test]
+fn x3_prep_failed_confirm_blank_reason_preserves_heartbeat_metrics_in_audit_event() {
+    let mut request = SettlementRequest::new(1, "0xfailed-confirm-blank-reason-metrics".to_string());
+    let token = operator_token();
+
+    let mut monitor = RelayHeartbeatMonitor::new(RelayHeartbeatConfig::new(5, 2));
+    let heartbeat = monitor.record_success(310, 309, 25);
+
+    let out = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &heartbeat,
+        SettlementConfirm::Failed {
+            reason: "\u{200B}\n\t\u{202E}".to_string(),
+        },
+    )
+    .unwrap();
+
+    assert_eq!(
+        out,
+        SettlementStep::Compensated {
+            reason: "settlement confirm failed: unknown confirm failure".to_string(),
+            event: trnm_bridge_poc::x2_settlement_loop::SettlementEvent {
+                phase: "settlement_confirm_failed",
+                heartbeat_source_height: Some(310),
+                heartbeat_target_height: Some(309),
+                heartbeat_latency_ms: Some(25),
+                confirm_height: None,
+                confirm_reason: Some(
+                    "settlement confirm failed: unknown confirm failure".to_string(),
+                ),
+            },
+        }
+    );
+    assert_eq!(
+        current_status(&request),
+        &BridgeStatus::Reverted(
+            "settlement confirm failed: unknown confirm failure".to_string()
+        )
+    );
+}
+
+#[test]
 fn x3_prep_stale_invalid_heartbeat_after_finalize_prefers_replay_guard_over_metric_validation() {
     let mut request = SettlementRequest::new(1, "0xstale-invalid-after-finalize".to_string());
     let token = operator_token();
@@ -1004,6 +1046,35 @@ fn x3_prep_retry_pending_blank_reason_falls_back_without_state_change() {
         err,
         trnm_bridge_poc::bridge_status::SettlementError::HeartbeatRetryPending {
             reason: "heartbeat retry pending".to_string(),
+        }
+    );
+    assert_eq!(current_status(&request), &BridgeStatus::Pending);
+}
+
+#[test]
+fn x3_prep_retry_pending_reason_sanitizes_unicode_controls_for_replay_stability() {
+    let mut request = SettlementRequest::new(1, "0xretry-pending-sanitized-reason".to_string());
+    let token = operator_token();
+
+    let retry_pending = HeartbeatOutcome {
+        heartbeat: None,
+        should_retry: true,
+        degraded: false,
+        message: "target\u{2060} relay\u{2028}timeout\u{FFF9} signal".to_string(),
+    };
+
+    let err = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &retry_pending,
+        SettlementConfirm::Confirmed { height: 701 },
+    )
+    .unwrap_err();
+
+    assert_eq!(
+        err,
+        trnm_bridge_poc::bridge_status::SettlementError::HeartbeatRetryPending {
+            reason: "target relay timeout signal".to_string(),
         }
     );
     assert_eq!(current_status(&request), &BridgeStatus::Pending);
