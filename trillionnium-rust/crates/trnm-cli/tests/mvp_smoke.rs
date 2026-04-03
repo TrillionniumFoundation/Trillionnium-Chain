@@ -226,6 +226,47 @@ fn smoke_wallet_sign_rejects_bidi_control_message() {
 }
 
 #[test]
+fn smoke_wallet_sign_rejects_invalid_env_store_fallback() {
+    let store = tmp_dir("wallet-sign-invalid-env-store");
+    let pk = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+    let import = Command::new(bin())
+        .args([
+            "wallet",
+            "import",
+            "--name",
+            "alice",
+            "--private-key-hex",
+            pk,
+            "--out",
+            store.to_string_lossy().as_ref(),
+        ])
+        .output()
+        .unwrap();
+    assert!(
+        import.status.success(),
+        "stderr: {}",
+        String::from_utf8_lossy(&import.stderr)
+    );
+
+    let out = Command::new(bin())
+        .args(["wallet", "sign", "--name", "alice", "--message", "approve tx"])
+        .env("TRNM_WALLET_STORE", "\u{2068}\"./wallets\"\u{2069}")
+        .output()
+        .unwrap();
+    assert!(
+        !out.status.success(),
+        "invalid env keystore fallback should fail closed"
+    );
+    let stderr = String::from_utf8_lossy(&out.stderr);
+    assert!(
+        stderr.contains("TRNM_WALLET_STORE is set but invalid")
+            || stderr.contains("must be an absolute normalized symlink-free path"),
+        "unexpected stderr: {}",
+        stderr
+    );
+}
+
+#[test]
 fn smoke_wallet_sign_rejects_edge_or_non_ascii_whitespace() {
     let store = tmp_dir("wallet-sign-whitespace-guard");
     let pk = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
