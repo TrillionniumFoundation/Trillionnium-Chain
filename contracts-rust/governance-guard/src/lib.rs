@@ -1146,6 +1146,44 @@ mod tests {
     }
 
     #[test]
+    fn cancelled_proposal_cannot_be_requeued_or_emit_duplicate_queue_audit() {
+        let mut gov = setup();
+        let now = 2_950;
+        let eta = now + 60;
+        let pid = gov
+            .propose(
+                "alice",
+                "challenge_window_blocks",
+                "100",
+                "145",
+                eta,
+                "reason-cancelled-requeue",
+                now,
+            )
+            .unwrap();
+
+        gov.cancel("alice", pid).unwrap();
+        let audit_len_before_requeue = gov.audit_log().len();
+
+        assert_eq!(gov.queue("alice", pid).unwrap_err(), Error::AlreadyFinalized);
+
+        let proposal = gov.proposal(pid).unwrap();
+        assert_eq!(proposal.status, ProposalStatus::Cancelled);
+        assert_eq!(gov.audit_log().len(), audit_len_before_requeue);
+        assert_eq!(
+            gov.audit_log()
+                .iter()
+                .filter(|event| matches!(
+                    event,
+                    GovernanceEvent::ProposalQueued { proposal_id, actor }
+                        if *proposal_id == pid && actor == "alice"
+                ))
+                .count(),
+            0
+        );
+    }
+
+    #[test]
     fn guardian_can_cancel_any_active_proposal() {
         let mut gov = setup();
         let now = 3_000;
