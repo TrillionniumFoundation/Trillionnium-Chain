@@ -9266,6 +9266,50 @@ line2
     }
 
     #[test]
+    fn load_node_event_log_sources_resolves_attached_comment_wrapped_manifest_env_from_root() {
+        let _guard = lock_env();
+        let root = unique_tmp_path("trnm-rpc-log-sources-manifest-env-attached-comment", "dir");
+        let archive_dir = root.join("archive");
+        let manifest_dir = root.join("cfg/history");
+        fs::create_dir_all(&archive_dir).expect("create archive dir");
+        fs::create_dir_all(&manifest_dir).expect("create manifest dir");
+
+        let archived_log = archive_dir.join("node4.log");
+        let manifest = manifest_dir.join("sources.txt");
+        fs::write(&archived_log, "").expect("write archived log");
+        fs::write(&manifest, "../../archive/node4.log\n").expect("write manifest");
+
+        let prev_sources = std::env::var(NODE_EVENT_LOG_SOURCES_ENV).ok();
+        let prev_manifest = std::env::var(NODE_EVENT_LOG_MANIFEST_ENV).ok();
+        unsafe {
+            std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV);
+            std::env::set_var(
+                NODE_EVENT_LOG_MANIFEST_ENV,
+                "\"cfg/history/sources.txt\"# archived replay note",
+            );
+        }
+
+        let got = load_node_event_log_sources(&root);
+
+        match prev_sources {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_SOURCES_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV) },
+        }
+        match prev_manifest {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_MANIFEST_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV) },
+        }
+
+        assert_eq!(
+            got,
+            vec![archived_log],
+            "attached-comment wrapped manifest env paths should still resolve from the RPC root"
+        );
+
+        let _ = fs::remove_dir_all(root);
+    }
+
+    #[test]
     fn load_node_event_log_sources_ignores_inline_manifest_comments_after_wrapped_paths() {
         let _guard = lock_env();
         let root = unique_tmp_path("trnm-rpc-log-sources-inline-comment-manifest", "dir");
