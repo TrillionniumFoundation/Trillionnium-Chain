@@ -94,6 +94,7 @@ Every alert page, dashboard share link, and incident ticket should carry the sam
 - `service=<node|rpc|worker|oracle|bridge|any>`
 - `severity=<sev0|sev1|sev2|sev3>`
 - `signal=<node-down|sync-lag|replay-failure|rpc-unhealthy|worker-failure|oracle-anomaly|bridge-anomaly|contract-drift>`
+- `verdict=<accepts-stalled|stale-wave|quorum-collapse|drift-anomaly|contract-drift|n/a>`
 - `needs_replay=<yes|no>`
 - `needs_rollback=<yes|no>`
 - `first_stop=<stable-panel-name-from-this-runbook|unknown>`
@@ -103,8 +104,8 @@ Rules:
 - `needs_replay=yes` for every `sev0` / `sev1` incident.
 - `needs_rollback=yes` only when a concrete emitted `rollback_command=` exists or rollback is the active mitigation choice.
 - `first_stop=` must exactly match one stable panel name from this runbook; use `unknown` rather than inventing a new alias.
+- set `verdict=n/a` for non-oracle incidents; for `service=oracle`, preserve `verdict=<accepts-stalled|stale-wave|quorum-collapse|drift-anomaly|contract-drift>` from `docs/runbooks/oracle-observability-alerts.md`.
 - if a screenshot or dashboard link is shared without this label block, treat the handoff as incomplete.
-- for `service=oracle`, also preserve `verdict=<accepts-stalled|stale-wave|quorum-collapse|drift-anomaly|contract-drift>` from `docs/runbooks/oracle-observability-alerts.md`; do not drop it when copying the shared block into a page or ticket.
 
 ---
 
