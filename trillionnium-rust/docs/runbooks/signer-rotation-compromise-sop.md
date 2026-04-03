@@ -211,6 +211,30 @@ Rule:
 - do **not** roll back to the suspect signer context just because the replacement failed fast
 - keep the old signer disabled until ownership and exposure are resolved explicitly
 
+## Day-1 signer safety checklist attachment
+
+Attach this checklist to any launch packet, rehearsal decision memo, or signer handoff note that claims the signer path is ready enough for operator review.
+Mark every item `PASS`, `FAIL`, or `NOT_APPLICABLE`; do not leave silent gaps.
+
+- **identity bound** — ticket-assigned `expected_worktree_root=` and `expected_branch_ref=` were checked with `./scripts/v2/verify_lane_worktree.sh`, and the recorded `verified_worktree=` / `verified_branch_ref=` / `verified_head=` all match the assigned lane
+- **clean owner context** — `git status --short` was empty before signer work began, and any later diff is either the intentional patch or explicitly recorded as blocking noise
+- **single signer owner** — exactly one operator, process set, host, and worktree owned signing authority during the procedure; any ambiguity was classified as `SIGNER_OWNERSHIP_AMBIGUOUS`
+- **severity declared** — the event was classified up front as either `planned_rotation` or `suspected_signer_compromise`; if uncertain, the packet uses the compromise classification
+- **rollback/containment preserved** — one single-line rollback or containment command was written down before cutover and copied verbatim into the packet
+- **targeted validation green** — the packet preserves the exact validation commands run (minimum: `git status --short`, `cargo check -p trnm-cli -q`) and whether each passed or failed
+- **offline/manual submit continuity** — if any offline-signed or manually submitted transaction was involved, the original `requested_tx_hash=` stayed frozen as the truth-source and every later `query_tx_hash=` / `wait_tx_hash=` normalized to the same canonical `0x...` value
+- **local pending-state evidence preserved** — the packet records the local pending-state file path (`run/rpc/txs.json` or `TRNM_RPC_TX_FILE=` override) until cutover validation is complete
+- **no-go rule honored** — any identity drift, signer dual-ownership, tx-hash mismatch, or missing validation evidence was treated as `No-Go`, not downgraded into a warning
+- **out-of-scope gaps called out** — the packet explicitly states that this checklist does not by itself close keystore architecture, remote signer/HSM integration, multisig policy, or broader public-mainnet readiness
+
+Recommended packet footer fields:
+- `signer_checklist_result=PASS|FAIL|CONDITIONAL`
+- `rotation_class=planned|suspected_compromise`
+- `rollback_command=`
+- `requested_tx_hash=` (if applicable)
+- `query_tx_hash=` / `wait_tx_hash=` (if applicable)
+- `next_blocker=`
+
 ## Required report fields
 
 For every rotation/compromise run, record:
