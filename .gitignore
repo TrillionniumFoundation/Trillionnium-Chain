@@ -4,6 +4,7 @@
 # Build artifacts
 /build/
 /dist/
+/contracts-rust/target/
 /trillionnium-rust/target/
 /trillionnium-rust/run/
 /trillionnium-rust/release/

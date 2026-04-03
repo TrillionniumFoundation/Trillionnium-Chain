@@ -1,0 +1,14 @@
+[workspace]
+resolver = "2"
+members = [
+    "audit-events",
+    "bridge-relay",
+    "governance-guard",
+    "settlement-vault",
+]
+default-members = [
+    "audit-events",
+    "bridge-relay",
+    "governance-guard",
+    "settlement-vault",
+]

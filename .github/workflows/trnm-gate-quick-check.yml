@@ -3,12 +3,14 @@ name: trnm-gate-quick-check
 on:
   pull_request:
     paths:
+      - 'contracts-rust/**'
       - 'scripts/**'
       - 'trillionnium-rust/scripts/**'
       - '.github/workflows/trnm-gate-quick-check.yml'
   push:
     branches: [main]
     paths:
+      - 'contracts-rust/**'
       - 'scripts/**'
       - 'trillionnium-rust/scripts/**'
       - '.github/workflows/trnm-gate-quick-check.yml'
@@ -132,6 +134,26 @@ jobs:
         run: |
           QUICK_GATE_SUMMARY_PATH=run/quick-gate/summary.json \
           ./scripts/quick_gate_shell.sh scripts trillionnium-rust/scripts
+
+      - name: Contracts workspace smoke
+        run: |
+          ./scripts/check_contracts_workspace_smoke.sh
+
+      - name: Contracts workspace smoke missing manifest guard regression
+        run: |
+          ./scripts/v2/check_contracts_workspace_smoke_missing_manifest_guard_test.sh
+
+      - name: Contracts workspace smoke missing cargo guard regression
+        run: |
+          ./scripts/v2/check_contracts_workspace_smoke_missing_cargo_guard_test.sh
+
+      - name: Contracts workspace smoke target dir guard regression
+        run: |
+          ./scripts/v2/check_contracts_workspace_smoke_target_dir_guard_test.sh
+
+      - name: Contracts workspace smoke relative target dir guard regression
+        run: |
+          ./scripts/v2/check_contracts_workspace_smoke_relative_target_dir_guard_test.sh
 
       - name: Validate workflow script refs (exist + executable)
         run: |
