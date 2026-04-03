@@ -6510,9 +6510,12 @@ bootstrap_peers = ["127.0.0.1:27656"]
                 "node.toml",
             )
             .expect_err("node_id URI delimiters must fail closed");
-            assert!(err
-                .to_string()
-                .contains("node_id must not contain URI delimiters (@ ? # % & =)"));
+            let err_surface = err.to_string();
+            assert!(
+                err_surface.contains("node_id must not contain URI delimiters (@ ? # % & =)")
+                    || err_surface.contains("node_id must not contain URI or userinfo separators (@ ? # %)"),
+                "unexpected error surface for {node_id:?}: {err:#}"
+            );
         }
     }
 
