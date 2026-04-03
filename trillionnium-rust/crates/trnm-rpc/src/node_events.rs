@@ -62,16 +62,32 @@ pub(crate) fn read_log_tail(path: &Path, tail_bytes: u64) -> Option<String> {
 }
 
 fn parse_node_event_log_sources_list(raw: &str) -> Vec<PathBuf> {
-    raw.split(|c: char| c == ',' || c == ';' || c == '\n')
-        .filter_map(|part| {
-            let normalized = normalize_wrapped_env_value(part);
-            if normalized.is_empty() {
-                None
-            } else {
-                Some(PathBuf::from(normalized))
+    let mut out = Vec::new();
+    let mut start = 0usize;
+    let mut quote: Option<char> = None;
+
+    for (idx, ch) in raw.char_indices() {
+        match quote {
+            Some(active) if ch == active => quote = None,
+            Some(_) => {}
+            None if matches!(ch, '"' | '\'' | '`') => quote = Some(ch),
+            None if matches!(ch, ',' | ';' | '\n' | '\r') => {
+                let normalized = normalize_wrapped_env_value(raw[start..idx].trim());
+                if !normalized.is_empty() {
+                    out.push(PathBuf::from(normalized));
+                }
+                start = idx + ch.len_utf8();
             }
-        })
-        .collect()
+            None => {}
+        }
+    }
+
+    let normalized = normalize_wrapped_env_value(raw[start..].trim());
+    if !normalized.is_empty() {
+        out.push(PathBuf::from(normalized));
+    }
+
+    out
 }
 
 #[cfg(test)]

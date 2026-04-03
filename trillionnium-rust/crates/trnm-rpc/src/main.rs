@@ -831,7 +831,7 @@ fn parse_node_event_log_sources_list(raw: &str) -> Vec<PathBuf> {
             Some(active) if ch == active => quote = None,
             Some(_) => {}
             None if matches!(ch, '"' | '\'' | '`') => quote = Some(ch),
-            None if matches!(ch, ',' | ';' | '\n') => {
+            None if matches!(ch, ',' | ';' | '\n' | '\r') => {
                 if let Some(path) = normalize_node_event_log_source_entry(&raw[start..idx]) {
                     out.push(PathBuf::from(path));
                 }
@@ -846,6 +846,29 @@ fn parse_node_event_log_sources_list(raw: &str) -> Vec<PathBuf> {
     }
 
     out
+}
+
+fn normalize_leading_wrapped_log_source_comment_value(raw: &str) -> Option<&str> {
+    let normalized = raw.trim_start_matches('\u{feff}').trim();
+    let quote = normalized.chars().next()?;
+    if !matches!(quote, '"' | '\'' | '`') {
+        return None;
+    }
+
+    let closing_idx = normalized[quote.len_utf8()..]
+        .char_indices()
+        .find_map(|(idx, ch)| (ch == quote).then_some(quote.len_utf8() + idx))?;
+    let rest = normalized[closing_idx + quote.len_utf8()..]
+        .trim_start()
+        .trim_start_matches('\u{feff}')
+        .trim_start();
+    if !rest.starts_with('#') {
+        return None;
+    }
+
+    Some(normalize_wrapped_env_value(
+        &normalized[..closing_idx + quote.len_utf8()],
+    ))
 }
 
 fn normalize_node_event_log_source_entry(raw: &str) -> Option<String> {
@@ -870,6 +893,8 @@ fn normalize_node_event_log_source_entry(raw: &str) -> Option<String> {
     });
     let normalized = inline_comment_idx
         .map(|idx| normalize_wrapped_env_value(normalized[..idx].trim_end()))
+        .unwrap_or(normalized);
+    let normalized = normalize_leading_wrapped_log_source_comment_value(normalized)
         .unwrap_or(normalized);
     if normalized.is_empty() || normalized.starts_with('#') {
         return None;
@@ -9041,6 +9066,47 @@ line2
             got,
             vec![shared_log],
             "quoted historical replay env entries should resolve to canonical log sources"
+        );
+
+        let _ = fs::remove_dir_all(root);
+    }
+
+    #[test]
+    fn load_node_event_log_sources_accepts_carriage_return_env_entries_with_bom_wrapped_comments() {
+        let _guard = lock_env();
+        let root = unique_tmp_path("trnm-rpc-log-sources-env-crlf-bom-comments", "dir");
+        fs::create_dir_all(&root).expect("create root dir");
+
+        let node4_log = root.join("node4.log");
+        let node5_log = root.join("node5.log");
+        fs::write(&node4_log, "").expect("write node4 log");
+        fs::write(&node5_log, "").expect("write node5 log");
+
+        let prev_sources = std::env::var(NODE_EVENT_LOG_SOURCES_ENV).ok();
+        let prev_manifest = std::env::var(NODE_EVENT_LOG_MANIFEST_ENV).ok();
+        unsafe {
+            std::env::set_var(
+                NODE_EVENT_LOG_SOURCES_ENV,
+                "\"node4.log\"  \u{feff}# replay note\r`./node5.log`  \u{feff}# archived replay note\r",
+            );
+            std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV);
+        }
+
+        let got = load_node_event_log_sources(&root);
+
+        match prev_sources {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_SOURCES_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV) },
+        }
+        match prev_manifest {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_MANIFEST_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV) },
+        }
+
+        assert_eq!(
+            got,
+            vec![node4_log, node5_log],
+            "carriage-return-separated historical replay env aliases should keep wrapped paths while dropping BOM-spaced attached comments"
         );
 
         let _ = fs::remove_dir_all(root);

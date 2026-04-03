@@ -269,6 +269,47 @@ mod tests {
     }
 
     #[test]
+    fn load_node_event_log_sources_accepts_carriage_return_env_entries_with_bom_wrapped_comments() {
+        let _guard = lock_env();
+        let root = unique_tmp_path("trnm-rpc-node-event-sources-env-crlf-bom-comments");
+        fs::create_dir_all(&root).expect("create root dir");
+
+        let node4_log = root.join("node4.log");
+        let node5_log = root.join("node5.log");
+        fs::write(&node4_log, "").expect("write node4 log");
+        fs::write(&node5_log, "").expect("write node5 log");
+
+        let prev_sources = std::env::var(NODE_EVENT_LOG_SOURCES_ENV).ok();
+        let prev_manifest = std::env::var(NODE_EVENT_LOG_MANIFEST_ENV).ok();
+        unsafe {
+            std::env::set_var(
+                NODE_EVENT_LOG_SOURCES_ENV,
+                "\"node4.log\"  \u{feff}# replay note\r`./node5.log`  \u{feff}# archived replay note\r",
+            );
+            std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV);
+        }
+
+        let got = load_node_event_log_sources(&root);
+
+        match prev_sources {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_SOURCES_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV) },
+        }
+        match prev_manifest {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_MANIFEST_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV) },
+        }
+
+        assert_eq!(
+            got,
+            vec![node4_log, node5_log],
+            "carriage-return-separated historical replay env aliases should keep wrapped paths while dropping BOM-spaced attached comments"
+        );
+
+        let _ = fs::remove_dir_all(root);
+    }
+
+    #[test]
     fn parse_node_event_log_sources_list_preserves_delimiters_inside_wrapped_entries() {
         let parsed = parse_node_event_log_sources_list(
             "\"archive/node,4.log\";'archive/node;5.log';`archive/node\n6.log`;plain.log",
