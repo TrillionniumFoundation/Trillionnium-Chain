@@ -108,6 +108,8 @@ emit_read_contract_fields() {
   echo "query_events_max_limit=500"
   echo "write_paths_exposed=false"
   echo "historical_query_scope=rpc-retention-bounded"
+  echo "archive_strategy=not-configured-static-scaffold"
+  echo "read_replica_strategy=not-configured-static-scaffold"
 }
 
 emit_contract_paths() {
