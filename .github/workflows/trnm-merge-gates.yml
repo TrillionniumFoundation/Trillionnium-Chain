@@ -40,7 +40,6 @@ concurrency:
 jobs:
   rust-l1-merge-gates:
     runs-on: macos-latest
-<<<<<<< HEAD
     env:
       TZ: UTC
       LANG: C.UTF-8
@@ -102,8 +101,6 @@ jobs:
       # replay artifacts and git diffs keep deterministic mode bits.
       UMASK: "022"
       SOURCE_DATE_EPOCH: "1704067200"
-=======
->>>>>>> feat/p2.3-stability-observability
     timeout-minutes: 45
 
     steps:
@@ -112,7 +109,6 @@ jobs:
       - name: Setup Rust toolchain
         uses: dtolnay/rust-toolchain@stable
 
-<<<<<<< HEAD
       - name: Deterministic env guard self-check (hard gate)
         run: |
           set -euo pipefail
@@ -124,14 +120,10 @@ jobs:
           ./scripts/v2/rust_l1_testnet_preflight_deterministic_env_guard_test.sh
 
       - name: PoUW proof-binding fail-closed gate (hard gate)
-=======
-      - name: Rust workspace tests
->>>>>>> feat/p2.3-stability-observability
         run: |
           set -euo pipefail
           export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
           cd trillionnium-rust
-<<<<<<< HEAD
           cargo test -p trnm-pouw --lib --locked
 
       - name: V1 proof backend CI gate (hard gate)
@@ -149,9 +141,6 @@ jobs:
           export RUST_TEST_THREADS="${RUST_TEST_THREADS:-1}"
           cd trillionnium-rust
           cargo test --workspace --locked
-=======
-          cargo test --workspace
->>>>>>> feat/p2.3-stability-observability
 
       - name: Run parallel mode sanity (hard gate)
         run: |
@@ -177,7 +166,6 @@ jobs:
           set -euo pipefail
           export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
           cd trillionnium-rust
-<<<<<<< HEAD
           MVP_MODE=prod ALLOW_MISSING_RESOLVE_EVENT=0 ./scripts/check_event_fields.sh
 
       - name: Challenge escrow/forfeit reconcile (hard gate)
@@ -223,16 +211,12 @@ jobs:
           set -euo pipefail
           export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
           ./scripts/v2/run_tokenomics_r1_r14_regression_gate.sh
-=======
-          ./scripts/check_event_fields.sh
->>>>>>> feat/p2.3-stability-observability
 
       - name: Validate v1 event replay order (hard gate)
         run: |
           set -euo pipefail
           export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
           cd trillionnium-rust
-<<<<<<< HEAD
           MVP_MODE=prod ALLOW_PARTIAL_EVENT_REPLAY=0 ./scripts/check_event_replay_smoke.sh
 
       - name: BFT 4-node consensus smoke (hard gate)
@@ -336,9 +320,6 @@ jobs:
           set -euo pipefail
           export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
           ./scripts/v2/web4_release_aggregate_gate.sh
-=======
-          ./scripts/check_event_replay_smoke.sh
->>>>>>> feat/p2.3-stability-observability
 
       - name: Aggressive regression check (PR-visible warn)
         if: github.event_name == 'pull_request'
@@ -357,7 +338,6 @@ jobs:
           AGGRESSIVE_MAX_RATIO_HOT_STREAK=${AGGRESSIVE_MAX_RATIO_HOT_STREAK:-3.75} \
           ./scripts/check_aggressive_regression.sh 2>&1 | tee "$REPORT"
           rc=${PIPESTATUS[0]}
-<<<<<<< HEAD
           set -euo pipefail
 
           python3 ./scripts/summarize_aggressive_profile.py
@@ -370,9 +350,6 @@ jobs:
 
           PROFILE_SUMMARY="${profile_candidates[0]:-}"
           CORR_SUMMARY="${corr_candidates[0]:-}"
-=======
-          set -e
->>>>>>> feat/p2.3-stability-observability
 
           if grep -q "regression ratio above threshold" "$REPORT"; then
             echo "::warning title=Aggressive regression warning::One or more aggressive/original ratios exceeded threshold. See workflow summary + artifact report."
@@ -388,7 +365,6 @@ jobs:
               echo '```text'
               cat "$REPORT"
               echo '```'
-<<<<<<< HEAD
               echo
               echo "## Aggressive Profile Summary"
               echo
@@ -405,8 +381,6 @@ jobs:
               else
                 echo "(missing aggressive scan correlation artifact)"
               fi
-=======
->>>>>>> feat/p2.3-stability-observability
             } >> "$GITHUB_STEP_SUMMARY"
           fi
 
@@ -423,7 +397,6 @@ jobs:
             trillionnium-rust/run/event-replay-smoke.log
             trillionnium-rust/run/bench/aggressive-regression-pr-*.txt
             trillionnium-rust/run/bench/bench-regression-matrix-*.csv
-<<<<<<< HEAD
             trillionnium-rust/run/bench/aggressive-profile-summary-*.md
             trillionnium-rust/run/bench/aggressive-scan-correlation-*.md
             trillionnium-rust/run/health/**
@@ -436,6 +409,4 @@ jobs:
             data/reexec-bundles/**
             data/worker-onboard/**
             run/p1-integration-gate/**
-=======
->>>>>>> feat/p2.3-stability-observability
           if-no-files-found: warn
