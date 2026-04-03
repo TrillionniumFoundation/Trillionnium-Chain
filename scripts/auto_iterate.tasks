@@ -750,3 +750,7 @@ bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: ver
 
 # Auto-filled by dual-subagent task pool
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: collect-release-operator-preflight-relative-paths-canonical-test" "./scripts/v2/collect_release_operator_preflight_relative_paths_canonical_test.sh" "ci(gate): add collect-release-operator-preflight-relative-paths-canonical-test regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: check-contracts-workspace-smoke-rejects-contracts-root-target-dir-guard-test" "./scripts/v2/check_contracts_workspace_smoke_rejects_contracts_root_target_dir_guard_test.sh" "ci(gate): add check-contracts-workspace-smoke-rejects-contracts-root-target-dir-guard-test regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: explorer-service-status" "./scripts/v2/explorer_service_status.sh" "ci(gate): add explorer-service-status regression to quick-check"
