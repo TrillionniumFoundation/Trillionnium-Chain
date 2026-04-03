@@ -100,6 +100,15 @@ case "${HOST}" in
 esac
 LOCAL_HEALTH_URL="http://${LOCAL_PROBE_HOST}:${PORT}/healthz"
 
+emit_durable_read_anchor_fields() {
+  echo "durable_read_anchor_ingestion_source=missing-placeholder-scaffold"
+  echo "durable_read_anchor_checkpoint_store=missing-placeholder-scaffold"
+  echo "durable_read_anchor_replay_start_anchor=missing-placeholder-scaffold"
+  echo "durable_read_anchor_retention_scope=rpc-window-bounded"
+  echo "durable_read_anchor_archive_owner=missing-placeholder-scaffold"
+  echo "durable_read_anchor_lag_slo=missing-placeholder-scaffold"
+}
+
 emit_read_contract_fields() {
   echo "read_contract_mode=read-only"
   echo "read_contract_source=rpc-read-surface"
@@ -114,6 +123,7 @@ emit_read_contract_fields() {
   echo "deployment_evidence_scope=placeholder-only"
   echo "rank1_read_surface_blocker=still-open"
   echo "durable_indexer_status=not-implemented-in-this-scaffold"
+  emit_durable_read_anchor_fields
 }
 
 emit_contract_fields() {
