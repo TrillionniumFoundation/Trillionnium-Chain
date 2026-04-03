@@ -197,7 +197,7 @@ TRNM_TX_CLI=./trillionnium-rust/target/debug/trnm-cli \
   - `query-task/<task_id>`
   - `query-events/<task_id>?limit=<n>`
   - `query-capability-audit/<subject-or-token>`
-  - `query-normalized-audit-events/<task_id>?limit=<n>`
+  - `query-normalized-audit-events?source=<source>&eventType=<eventType>&cursor=<cursor>&limit=<n>`
   - `query-events/<task_id>` 未显式传 `?limit=` 时默认返回 **100** 条，硬上限 **500** 条；超大分页请求会被 clamp，不应假设无限历史窗口。
   - `query-events/<task_id>` 的 query schema 当前 **只接受单个 `limit` 键**；未知键、重复 `limit`、大小写漂移（如 `Limit=`）、空值与编码分隔符都按 fail-closed 处理，接入侧不要假设“多余参数会被静默忽略”。
   - `query-capability-audit/<subject-or-token>` 同时接受 capability token id 与 subject DID，索引侧不必为两种 key 维护两套入口。
