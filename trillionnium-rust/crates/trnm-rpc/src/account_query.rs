@@ -112,9 +112,10 @@ pub fn query_account_state(
     accounts: &BTreeMap<String, AccountState>,
     address: &str,
 ) -> Result<AccountState, AccountQueryError> {
-    validate_trnm_address(address)?;
+    let normalized_address = address.trim();
+    validate_trnm_address(normalized_address)?;
     accounts
-        .get(address)
+        .get(normalized_address)
         .cloned()
-        .ok_or_else(|| AccountQueryError::AccountNotFound(address.to_string()))
+        .ok_or_else(|| AccountQueryError::AccountNotFound(normalized_address.to_string()))
 }
