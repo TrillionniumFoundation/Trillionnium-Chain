@@ -2353,9 +2353,11 @@ fn main() -> Result<()> {
                 let priv_hex = read_key(&store, &name)?;
                 let sig = hash(&["trnm-sign-v1", &priv_hex, &message]);
                 let addr = derive_address_from_priv_hex(&priv_hex)?;
+                let message_sha256 = sha256_hex(message.as_bytes());
                 println!("wallet_name={}", name);
                 println!("address={}", addr);
                 println!("message={}", message);
+                println!("message_sha256={}", message_sha256);
                 println!("signature={}", sig);
             }
         },
