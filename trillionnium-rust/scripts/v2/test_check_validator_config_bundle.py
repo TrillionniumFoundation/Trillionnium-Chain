@@ -160,6 +160,30 @@ class CheckValidatorConfigBundleTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertIn(f"config_path={config.resolve()}", result.stdout)
 
+    def test_public_mainnet_input_operator_ack_quotes_validator_entry_hash(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            config = self.write_config(
+                root,
+                "node1.toml",
+                node_id="node1",
+                rpc_addr="127.0.0.1:7001",
+                p2p_addr="127.0.0.1:7002",
+            )
+            result = self.run_script(*self.make_public_mainnet_args(config))
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+        hash_line = next(
+            line for line in result.stdout.splitlines() if line.startswith("validator_entry_hash=")
+        )
+        ack_line = next(
+            line for line in result.stdout.splitlines() if line.startswith("operator_ack=")
+        )
+        validator_entry_hash = hash_line.split("=", 1)[1]
+        self.assertIn(f"genesis_artifact_sha256={VALID_SHA256}", ack_line)
+        self.assertIn("validator_name=node1", ack_line)
+        self.assertIn(f"validator_entry_hash={validator_entry_hash}", ack_line)
+
 
 if __name__ == "__main__":
     unittest.main()

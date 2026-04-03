@@ -381,6 +381,7 @@ def emit_ceremony_packet(args: argparse.Namespace, entries: list[dict[str, str]]
         validate_packet_atom_value(config_path, "validator_entry.config_path")
         validate_packet_atom_value(entry["p2p_addr"], "validator_entry.p2p_addr")
         validate_packet_atom_value(entry["rpc_addr"], "validator_entry.rpc_addr")
+        validator_entry_hash = build_validator_entry_hash(entry, config_path)
         print(
             "validator_entry="
             f"validator_name={validator_name};"
@@ -390,16 +391,14 @@ def emit_ceremony_packet(args: argparse.Namespace, entries: list[dict[str, str]]
             f"p2p_addr={entry['p2p_addr']};"
             f"rpc_addr={entry['rpc_addr']}"
         )
-        print(
-            "validator_entry_hash="
-            + build_validator_entry_hash(entry, config_path)
-        )
+        print("validator_entry_hash=" + validator_entry_hash)
         print(f"operator_contact={validator_name}=<chat/email/oncall>")
         print(
             "operator_ack="
             f"<owner> checked genesis_artifact_sha256={args.genesis_artifact_sha256};"
             f"config_path={config_path};"
-            f"validator_name={validator_name}"
+            f"validator_name={validator_name};"
+            f"validator_entry_hash={validator_entry_hash}"
         )
         print("operator_ack_signature_path=<optional-ack-path>")
         print("operator_ack_digest=<optional-sha256-of-ack>")
