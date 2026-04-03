@@ -11,7 +11,7 @@ The shipped topology is intentionally small and fail-closed:
 - `node3.toml` → node id `node3`, P2P `127.0.0.1:28656`, RPC `127.0.0.1:28657`
 - `node4.toml` → node id `node4`, P2P `127.0.0.1:29656`, RPC `127.0.0.1:29657`
 
-All four nodes bind the same loopback IP (`127.0.0.1`) and keep a deterministic `+1000` port spacing between neighboring peers. This preserves a single explicit bootstrap topology for local formation and operator rehearsal.
+All four nodes bind the same loopback IP (`127.0.0.1`), keep RPC exactly one port above the matching P2P listener for each slot, and keep a deterministic `+1000` port spacing between neighboring peers. This preserves a single explicit bootstrap topology for local formation and operator rehearsal.
 
 This fixture is local-only and rehearsal-scoped. Do not treat it as proof that public-mainnet bootstrap peer management, discovery, or sync closure is complete.
 
