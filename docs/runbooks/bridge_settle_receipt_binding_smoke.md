@@ -30,6 +30,8 @@
      - 覆盖 finalize 终态语义：即使重放请求携带了新的 `nonce`，只要 `settlement_id` 相同，仍必须优先返回 `SettlementAlreadyFinalized`，避免 fresh nonce 绕过 terminal state。
    - `duplicate_finalize_is_side_effect_free`
      - 覆盖重复 finalize 的副作用约束：重复请求必须直接命中终态，不得追加新的 proof / nonce / finalize 审计事件。
+   - `duplicate_finalize_with_stale_config_version_after_governance_change_still_stops_at_terminal_state`
+     - 覆盖 finalize 终态优先级：即使治理已推进 `config_version`，对已终结 settlement 的重复 finalize 也必须先返回 `SettlementAlreadyFinalized`，避免被 stale config drift 改写成其他错误路径。
    - `governance_write_with_stale_config_version_is_fail_closed_and_side_effect_free`
      - 覆盖治理写路径使用 stale `config_version` 时的 fail-closed 语义，要求 admin / config_version / audit_log 均保持不变。
    - `stale_validator_rotation_is_fail_closed_and_side_effect_free`
