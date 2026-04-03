@@ -1682,8 +1682,12 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         path
     );
     anyhow::ensure!(
-        !node_id.contains('[') && !node_id.contains(']'),
-        "invalid node config {}: node_id must not contain bracketed host delimiters ([ ])",
+        !node_id.contains('/')
+            && !node_id.contains('\\')
+            && !node_id.contains(':')
+            && !node_id.contains('[')
+            && !node_id.contains(']'),
+        "invalid node config {}: node_id must not contain path or host-literal separators (/ \\ : [ ])",
         path
     );
     anyhow::ensure!(
