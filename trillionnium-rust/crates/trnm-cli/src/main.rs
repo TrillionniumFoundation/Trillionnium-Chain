@@ -1044,6 +1044,32 @@ fn default_wallet_store() -> PathBuf {
     home_root.join(".trnm").join("wallets")
 }
 
+fn resolve_wallet_store(store: Option<PathBuf>) -> Result<PathBuf> {
+    if let Some(store) = store {
+        return Ok(store);
+    }
+
+    if let Ok(raw) = std::env::var("TRNM_WALLET_STORE") {
+        let Some(normalized) = normalize_wallet_store_env(&raw) else {
+            bail!(
+                "TRNM_WALLET_STORE is set but invalid; refusing ambiguous keystore path fallback"
+            );
+        };
+        let candidate = PathBuf::from(normalized);
+        if !wallet_store_path_is_safe(&candidate)
+            || !wallet_store_path_and_ancestors_are_symlink_free(&candidate)
+        {
+            bail!(
+                "TRNM_WALLET_STORE '{}' must be an absolute normalized symlink-free path",
+                candidate.display()
+            );
+        }
+        return Ok(candidate);
+    }
+
+    Ok(default_wallet_store())
+}
+
 fn wallet_file(store: &Path, name: &str) -> PathBuf {
     store.join(format!("{}.key", name))
 }
@@ -2622,7 +2648,7 @@ fn emit_pending_tx_hash(tx_hash: &str) -> Result<()> {
 }
 
 fn wallet_create(name: String, out: Option<PathBuf>) -> Result<()> {
-    let store = out.unwrap_or_else(default_wallet_store);
+    let store = resolve_wallet_store(out)?;
     let priv_hex = random_priv_hex()?;
     let path = write_key(&store, &name, &priv_hex)?;
     let addr = derive_address_from_priv_hex(&priv_hex)?;
@@ -2642,7 +2668,7 @@ fn resolve_address_for_query(
         return Ok(a);
     }
     let wallet_name = name.unwrap_or_else(|| "default".to_string());
-    let s = store.unwrap_or_else(default_wallet_store);
+    let s = resolve_wallet_store(store)?;
     let priv_hex = read_key(&s, &wallet_name)?;
     derive_address_from_priv_hex(&priv_hex)
 }
@@ -2736,7 +2762,7 @@ fn main() -> Result<()> {
                 denom,
                 store,
             } => {
-                let s = store.unwrap_or_else(default_wallet_store);
+                let s = resolve_wallet_store(store)?;
                 let from_priv_hex = read_key(&s, &from)?;
                 let from_addr = derive_address_from_priv_hex(&from_priv_hex)?;
                 let req = TransferTxRequest {
@@ -2782,7 +2808,7 @@ fn main() -> Result<()> {
                 private_key_hex,
                 out,
             } => {
-                let store = out.unwrap_or_else(default_wallet_store);
+                let store = resolve_wallet_store(out)?;
                 let priv_hex = ensure_hex_32_bytes(&private_key_hex)?;
                 let path = write_key(&store, &name, &priv_hex)?;
                 let addr = derive_address_from_priv_hex(&priv_hex)?;
@@ -2791,7 +2817,7 @@ fn main() -> Result<()> {
                 println!("address={}", addr);
             }
             WalletCommand::Address { name, store } => {
-                let store = store.unwrap_or_else(default_wallet_store);
+                let store = resolve_wallet_store(store)?;
                 let priv_hex = read_key(&store, &name)?;
                 let addr = derive_address_from_priv_hex(&priv_hex)?;
                 println!("wallet_name={}", name);
@@ -2803,7 +2829,7 @@ fn main() -> Result<()> {
                 store,
             } => {
                 ensure_sign_message(&message)?;
-                let store = store.unwrap_or_else(default_wallet_store);
+                let store = resolve_wallet_store(store)?;
                 ensure_safe_sign_message(&message)?;
                 let priv_hex = read_key(&store, &name)?;
                 let sig = hash(&["trnm-sign-v1", &priv_hex, &message]);
@@ -3682,7 +3708,8 @@ mod tests {
 
         let err = wallet_create("alice".to_string(), None).unwrap_err();
         assert!(
-            err.to_string().contains("traverses symlinked ancestor"),
+            err.to_string().contains("traverses symlinked ancestor")
+                || err.to_string().contains("must be an absolute normalized symlink-free path"),
             "unexpected error: {err}"
         );
 
