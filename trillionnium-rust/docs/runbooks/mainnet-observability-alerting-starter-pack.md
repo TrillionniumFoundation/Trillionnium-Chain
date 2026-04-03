@@ -218,6 +218,7 @@ Threshold rules:
 - default `needs_replay=yes` for every `sev0` / `sev1` row unless a stricter service-specific runbook overrides it explicitly;
 - if observability output and emitted evidence artifacts disagree, override any lower classification to `sev0`;
 - if a page fires without the full shared label block (`plane`, `service`, `severity`, `signal`, `needs_replay`, `needs_rollback`, and `first_stop`), treat the incident as under-specified;
+- for `service=oracle`, also treat the incident as under-specified if `verdict=` is missing, even when the shared label block above is otherwise present;
 - if `needs_rollback=yes`, the ticket/page must quote the current `rollback_command=` verbatim or mark it as `unknown` rather than leaving the field implicit.
 
 ---
@@ -340,6 +341,7 @@ Routing rules:
 - if multiple signals fire together, start with the highest-severity row; if severities tie, prefer `contract-drift` → `replay-failure` → availability/performance signals;
 - if `node-down` or `sync-lag` fires together with visible rollback, round-change backoff, leader-miss, or auth-replay churn, switch the first stop from **Node liveness / height progress** to **Consensus instability / rollback pressure** before deciding whether the issue is pure host loss or active consensus stress;
 - if the chosen first-stop panel lacks the fields listed under **Immediately verify**, classify the handoff as incomplete and add those missing fields to the ticket/page before reassignment;
+- for `service=oracle`, do not reassign the incident until `verdict=` is restored beside the shared label block, because oracle routing depends on the subtype as well as the shared severity/signal fields;
 - if the signal is `oracle-anomaly` but the shared label block is missing, restore the shared block first and then continue with the oracle-specific runbook.
 
 ## Dashboard annotation minimum
