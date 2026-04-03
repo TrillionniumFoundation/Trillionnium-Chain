@@ -33,14 +33,27 @@ const taskSchema = z
       .transform(({ updated_at, ...rest }) => ({ ...rest, updatedAt: updated_at }))
   );
 
-const eventSchema = z.object({
-  id: z.string().min(1),
-  time: z.string().min(1),
-  category: z.enum(["Deploy", "Incident", "Governance", "Security"]),
-  summary: z.string().min(1),
-  severity: z.enum(["Info", "Warning", "Critical"]),
-  details: optionalDetailField,
-});
+const eventSchema = z
+  .object({
+    id: z.string().min(1),
+    time: z.string().min(1),
+    category: z.enum(["Deploy", "Incident", "Governance", "Security"]),
+    summary: z.string().min(1),
+    severity: z.enum(["Info", "Warning", "Critical"]),
+    details: optionalDetailField,
+  })
+  .or(
+    z
+      .object({
+        id: z.string().min(1),
+        event_time: z.string().min(1),
+        category: z.enum(["Deploy", "Incident", "Governance", "Security"]),
+        summary: z.string().min(1),
+        severity: z.enum(["Info", "Warning", "Critical"]),
+        details: optionalDetailField,
+      })
+      .transform(({ event_time, ...rest }) => ({ ...rest, time: event_time }))
+  );
 
 const auditSchema = z
   .object({
