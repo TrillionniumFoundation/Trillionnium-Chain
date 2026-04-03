@@ -56,6 +56,22 @@ python3 trillionnium-rust/scripts/v2/check_validator_config_bundle.py \
 这意味着：
 - 从“能校验 config bundle”到“能吐出 public-mainnet-input 形态的 packet skeleton”，当前工具链已经可用。
 
+### 1.4 Artifact discovery 现实结论
+本轮还额外验证了两件最关键的事实：
+
+1. **仓里当前没有已提交的真实 genesis artifact 文件**
+   - 未找到真实 `genesis*.json` / `genesis*.toml` 等候选文件；
+   - 当前仓里出现的只是 runbook / release 文档，而不是实际可分发的 genesis artifact。
+
+2. **仓里当前也没有明确暴露的 genesis 生成入口**
+   - `trnm-cli --help` 未暴露 genesis 生成子命令；
+   - `trnm-node --help` 未暴露 genesis 生成子命令；
+   - repo 内也未定位到一条明确的“生成并落盘 genesis artifact”的脚本/命令路径。
+
+这意味着：
+- 当前阻塞点已经不是 config bundle checker 或 packet skeleton 生成器；
+- 当前真正缺的是 **真实 genesis artifact 及其来源工作流**。
+
 ---
 
 ## 2. 当前仍缺的真实输入材料
@@ -165,6 +181,7 @@ python3 trillionnium-rust/scripts/v2/check_validator_config_bundle.py \
 2. **没有真实 genesis hash**
 3. **没有 validator owners / contacts / acknowledgments**
 4. **没有真实 packet distribution path**
+5. **没有在 repo 内定位到明确的 genesis artifact 生成入口**
 
 也就是说：
 
