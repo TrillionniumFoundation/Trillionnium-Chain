@@ -201,6 +201,39 @@ fn reserve_only_saturation_reopens_cleanly_after_one_real_drain() {
 }
 
 #[test]
+fn reserve_only_active_backlog_duplicate_probe_keeps_reopened_shared_headroom_flat() {
+    let mut g = LaneAdmissionGate::new(3, 3);
+
+    assert_eq!(g.admit(10, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(g.admit(11, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(g.queued_counts(), (0, 2, 2));
+
+    let reopened = LaneQosSnapshot {
+        normal_queued: 0,
+        critical_queued: 2,
+        total_queued: 2,
+        normal_headroom: 0,
+        critical_headroom: 1,
+        total_headroom: 1,
+        fresh_normal_admissible: true,
+        fresh_critical_admissible: true,
+    };
+    assert_eq!(g.qos_snapshot(), reopened);
+
+    // In reserve-only mode, duplicate probes against active backlog must stay
+    // purely classificatory: they cannot consume or hide the one genuinely
+    // reopened shared slot that both ingress classes may still use.
+    assert_eq!(g.admit(10, IngressClass::Normal), AdmitOutcome::Duplicate);
+    assert_eq!(g.qos_snapshot(), reopened);
+    assert_eq!(g.queued_counts(), (0, 2, 2));
+    assert_eq!(g.seen_global.len(), 2);
+
+    assert_eq!(g.admit(12, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(g.queued_counts(), (0, 3, 3));
+    assert_eq!(g.seen_global.len(), 3);
+}
+
+#[test]
 fn borrowed_last_idle_reserved_slot_recloses_to_normal_once_critical_backlog_appears() {
     let mut g = LaneAdmissionGate::new(3, 1);
 
