@@ -2638,6 +2638,7 @@ bootstrap_peers = ["127.0.0.1:27656"]
             "All four nodes bind the same loopback IP (`127.0.0.1`)",
             "keep RPC exactly one port above the matching P2P listener for each slot",
             "keep a deterministic `+1000` port spacing between neighboring peers",
+            "`node1` is the unique shipped bootstrap anchor because it alone owns the lowest shipped P2P port (`127.0.0.1:26656`); later slots must never reuse that listener or identity.",
             "This fixture is local-only and rehearsal-scoped.",
             "Do not treat it as proof that public-mainnet bootstrap peer management, discovery, or sync closure is complete.",
             "Start `node1` first as the initial anchor.",
