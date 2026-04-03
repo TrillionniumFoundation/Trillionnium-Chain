@@ -130,6 +130,7 @@
 - durability boundary（进程重启后不丢已消费位点）
 - checkpoint / cursor / replay strategy
 - reorg / replay / duplicate event behavior 说明
+- 一组明确的 durable-read anchors：`ingestion_source` / `checkpoint_store` / `replay_start_anchor` / `retention_scope` / `archive_owner` / `lag_slo`
 
 **当前缺口**
 - 目前的 explorer-service 仍明确不是 durable indexer
@@ -139,6 +140,7 @@
 - 存在实际 indexer pipeline（不是仅静态 scaffold）
 - 有 cursor/checkpoint 机制
 - 能从既有链状态重放并恢复到一致状态
+- 上述 6 个 durable-read anchors 已被显式填写；缺任一项都仍按 placeholder / blocker-open 处理
 
 **依赖**
 - R1-01 / R1-02
@@ -204,6 +206,7 @@
 - backup / restore / replay / resync runbook
 - first-stop diagnosis checklist
 - index lag / data gap / stale read / broken cursor 的排障路径
+- 一份 handoff packet 模板，能把 placeholder-only 证据与 durable-read anchors 明确区分开
 
 **当前缺口**
 - scaffold runbook 存在，但 durable service runbook 还不完整
@@ -212,6 +215,7 @@
 **Exit criteria**
 - operator 不看代码也能 bring-up / diagnose / recover
 - read stack 有明确的 oncall 入口
+- runbook / handoff note 不再把 scaffold bring-up 证据误写成 durable indexer / historical read-model closure
 
 **依赖**
 - R1-05
@@ -255,6 +259,7 @@
 - SLO / lag / health evidence
 - rollback / resync commands
 - one-page signoff memo
+- 6 个 durable-read anchors 的已填值，或显式 blocker note 说明哪些 anchor 仍缺失
 
 **Exit criteria**
 - Rank 1 closure 可被 launch packet 直接引用
