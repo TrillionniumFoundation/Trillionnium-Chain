@@ -577,6 +577,18 @@ mod tests {
     }
 
     #[test]
+    fn ensure_recoverable_wal_state_allows_truncated_checkpoint_only_rejoin_bootstrap() {
+        let recovered = recovered_state(0, 9, Some(8), true, false);
+
+        ensure_recoverable_wal_state(Path::new("/tmp/trnm-wal"), &recovered)
+            .expect("truncated checkpoint-only rejoin bootstrap should remain recoverable");
+        assert_eq!(
+            recovery_startup_summary(&recovered),
+            "retained_wal_entries=0 checkpoint_height_retained=8 checkpoint_tip_relation=checkpoint_only:8 next_startup_height=9 wal_tail_truncated=true metadata_only_recovery=false join_rejoin_status=ready:checkpoint_only_bootstrap"
+        );
+    }
+
+    #[test]
     fn ensure_recoverable_wal_state_reports_retained_wal_resume_surface() {
         let recovered = recovered_state(2, 12, Some(11), false, false);
 
