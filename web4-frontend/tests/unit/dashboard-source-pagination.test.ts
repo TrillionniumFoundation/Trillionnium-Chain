@@ -392,6 +392,62 @@ describe("dashboard source normalized audit pagination", () => {
     expect(snapshot.events.find((event) => event.id === "EVT-344c")?.details).toBe("{}");
   });
 
+  it("normalizes blank readonly event types into stable dashboard fallbacks", async () => {
+    const mockClient = {
+      queryTask: vi
+        .fn()
+        .mockResolvedValue({
+          task: {
+            id: "344e",
+            owner: "ops",
+            status: "running",
+            createdAt: "2026-03-01T00:00:00.000Z",
+            metadata: {},
+          },
+        }),
+      queryEvents: vi.fn().mockResolvedValue({
+        taskId: "344e",
+        events: [
+          {
+            id: "EVT-344e",
+            timestamp: "2026-03-01T00:01:00.000Z",
+            type: "   ",
+            level: "warn",
+            payload: {},
+          },
+        ],
+      }),
+      queryCapabilityAudit: vi.fn().mockResolvedValue({
+        subject: "did:trnm:test",
+        audits: [
+          {
+            subject: "did:trnm:test",
+            capability: "AUDIT_READ",
+            granted: true,
+            checkedAt: "2026-03-01T00:00:00.000Z",
+          },
+        ],
+      }),
+      queryNormalizedAuditEvents: vi
+        .fn()
+        .mockResolvedValue({
+          events: [],
+          hasMore: false,
+        }),
+    } as unknown as ReturnType<typeof apiContractClient.createFrontendApiClient>;
+
+    vi.spyOn(apiContractClient, "createFrontendApiClient").mockReturnValue(mockClient);
+
+    const snapshot = await fetchDashboardSnapshot();
+    const event = snapshot.events.find((item) => item.id === "EVT-344e");
+
+    expect(event).toMatchObject({
+      summary: "unknown-event",
+      category: "Incident",
+      severity: "Warning",
+    });
+  });
+
   it("falls back when task metadata or event payload are not JSON-serializable", async () => {
     const mockClient = {
       queryTask: vi

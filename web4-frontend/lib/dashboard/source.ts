@@ -399,14 +399,18 @@ async function fetchReadonlySnapshotFromApi(): Promise<DashboardSnapshot> {
       },
     ],
     events: [
-      ...eventsResp.events.map((event) => ({
-        id: event.id,
-        time: toDisplayTime(event.timestamp),
-        category: mapEventCategory(event.type),
-        summary: event.type,
-        severity: mapEventSeverity(event.level),
-        details: stringifyDashboardField(event.payload, "{}"),
-      })),
+      ...eventsResp.events.map((event) => {
+        const normalizedType = normalizeDashboardEventToken(event.type, "unknown-event");
+
+        return {
+          id: event.id,
+          time: toDisplayTime(event.timestamp),
+          category: mapEventCategory(normalizedType),
+          summary: normalizedType,
+          severity: mapEventSeverity(event.level),
+          details: stringifyDashboardField(event.payload, "{}"),
+        };
+      }),
       ...normalizedAuditEvents.map((event) =>
         mapNormalizedAuditToDashboardEvent(
           event,
