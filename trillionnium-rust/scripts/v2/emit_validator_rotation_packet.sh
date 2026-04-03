@@ -172,6 +172,12 @@ if [ "$CUTOVER_KIND" = "dr_rebuild" ]; then
   require_nonempty --dr-status "$DR_STATUS"
   require_nonempty --dr-replay-command "$DR_REPLAY_COMMAND"
   require_nonempty --dr-rollback-command "$DR_ROLLBACK_COMMAND"
+  require_path_value --expected-worktree-root "$EXPECTED_WORKTREE_ROOT"
+  require_token --expected-branch-ref "$EXPECTED_BRANCH_REF"
+  require_nonempty --lane-verify-command "$LANE_VERIFY_COMMAND"
+  if [ -n "$EXPECTED_HEAD" ]; then
+    require_token --expected-head "$EXPECTED_HEAD"
+  fi
   if [ "$DR_STATUS" != "PASS" ]; then
     printf 'invalid --dr-status: expected PASS got %s\n' "$DR_STATUS" >&2
     exit 2
