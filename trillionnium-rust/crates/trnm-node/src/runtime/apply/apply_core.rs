@@ -1,5 +1,18 @@
 use super::*;
 
+fn is_ipv4_compatible_ipv6(ip: std::net::IpAddr) -> bool {
+    match ip {
+        std::net::IpAddr::V4(_) => false,
+        std::net::IpAddr::V6(addr) => {
+            let segments = addr.segments();
+            segments[..6].iter().all(|segment| *segment == 0)
+                && !addr.is_unspecified()
+                && !addr.is_loopback()
+                && addr.to_ipv4_mapped().is_none()
+        }
+    }
+}
+
 pub(crate) fn hash32_hex(data: &[u8]) -> String {
     let mut hasher = Sha256::new();
     hasher.update(data);
@@ -43,6 +56,13 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         "invalid node config {}: node_id must not be '.' or '..'",
         path
     );
+    anyhow::ensure!(
+        !node_id.eq_ignore_ascii_case("localhost")
+            && node_id.parse::<std::net::IpAddr>().is_err()
+            && node_id.parse::<std::net::SocketAddr>().is_err(),
+        "invalid node config {}: node_id must not look like a host or socket literal",
+        path
+    );
 
     let rpc_addr = cfg.rpc_addr.trim();
     anyhow::ensure!(
@@ -68,6 +88,11 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
     anyhow::ensure!(
         !rpc_addr.contains(',') && !rpc_addr.contains(';') && !rpc_addr.contains('|'),
         "invalid node config {}: rpc_addr must not contain list separators (, ; |)",
+        path
+    );
+    anyhow::ensure!(
+        !rpc_addr.contains("://"),
+        "invalid node config {}: rpc_addr must be a raw socket address, not a URL",
         path
     );
     anyhow::ensure!(
@@ -111,6 +136,16 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         "invalid node config {}: rpc_addr must not use an unspecified address",
         path
     );
+    anyhow::ensure!(
+        !rpc_socket.ip().is_unicast_link_local(),
+        "invalid node config {}: rpc_addr must not use a link-local address",
+        path
+    );
+    anyhow::ensure!(
+        !is_ipv4_compatible_ipv6(rpc_socket.ip()),
+        "invalid node config {}: rpc_addr must not use an IPv4-compatible IPv6 address",
+        path
+    );
 
     let p2p_addr = cfg.p2p_addr.trim();
     anyhow::ensure!(
@@ -136,6 +171,11 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
     anyhow::ensure!(
         !p2p_addr.contains(',') && !p2p_addr.contains(';') && !p2p_addr.contains('|'),
         "invalid node config {}: p2p_addr must not contain list separators (, ; |)",
+        path
+    );
+    anyhow::ensure!(
+        !p2p_addr.contains("://"),
+        "invalid node config {}: p2p_addr must be a raw socket address, not a URL",
         path
     );
     anyhow::ensure!(
@@ -177,6 +217,16 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
     anyhow::ensure!(
         !p2p_socket.ip().is_unspecified(),
         "invalid node config {}: p2p_addr must not use an unspecified address",
+        path
+    );
+    anyhow::ensure!(
+        !p2p_socket.ip().is_unicast_link_local(),
+        "invalid node config {}: p2p_addr must not use a link-local address",
+        path
+    );
+    anyhow::ensure!(
+        !is_ipv4_compatible_ipv6(p2p_socket.ip()),
+        "invalid node config {}: p2p_addr must not use an IPv4-compatible IPv6 address",
         path
     );
     anyhow::ensure!(
@@ -278,7 +328,59 @@ fn ensure_relative_config_path_stays_within_allowed_roots(
     Ok(())
 }
 
+fn contains_invisible_or_bidi_format_chars(value: &str) -> bool {
+    value.chars().any(|ch| {
+        matches!(
+            ch,
+            '\u{200B}'
+                | '\u{200C}'
+                | '\u{200D}'
+                | '\u{2060}'
+                | '\u{FEFF}'
+                | '\u{202A}'..='\u{202E}'
+                | '\u{2066}'..='\u{2069}'
+        )
+    })
+}
+
+fn validate_config_path_input(path: &str) -> Result<()> {
+    anyhow::ensure!(!path.trim().is_empty(), "read config failed: path must not be empty");
+    anyhow::ensure!(
+        path == path.trim(),
+        "read config failed: path must not contain leading or trailing whitespace"
+    );
+    anyhow::ensure!(
+        !path.chars().any(char::is_control),
+        "read config failed: path must not contain control characters"
+    );
+    anyhow::ensure!(
+        !contains_invisible_or_bidi_format_chars(path),
+        "read config failed: path must not contain invisible or bidirectional format characters"
+    );
+    anyhow::ensure!(
+        !path.contains(',') && !path.contains(';') && !path.contains('|'),
+        "read config failed: path must not contain list separators (, ; |)"
+    );
+    anyhow::ensure!(
+        !path.contains("://"),
+        "read config failed: path must not be a URL"
+    );
+    anyhow::ensure!(
+        !Path::new(path)
+            .components()
+            .any(|component| matches!(component, std::path::Component::ParentDir)),
+        "read config failed: path must not contain parent traversal (..)"
+    );
+    anyhow::ensure!(
+        !path.split(['/', '\\']).any(|segment| segment == ".."),
+        "read config failed: path must not contain parent traversal (..)"
+    );
+
+    Ok(())
+}
+
 pub(crate) fn load_config(path: &str) -> Result<NodeConfig> {
+    validate_config_path_input(path)?;
     let resolved = resolve_config_path(path);
     ensure_relative_config_path_stays_within_allowed_roots(path, &resolved)?;
     let raw = fs::read_to_string(&resolved).with_context(|| {
@@ -656,6 +758,113 @@ mod tests {
     }
 
     #[test]
+    fn load_config_rejects_blank_path_fail_closed() {
+        let err = load_config("   ").expect_err("blank apply config path must fail closed");
+        assert!(
+            err.to_string().contains("path must not be empty"),
+            "unexpected error: {err:#}"
+        );
+    }
+
+    #[test]
+    fn load_config_rejects_invisible_or_bidi_format_characters_in_path_fail_closed() {
+        for path in [
+            "configs/node1.toml\u{200B}",
+            "configs/node1.toml\u{202E}",
+            "configs/node1.toml\u{2066}",
+        ] {
+            let err = load_config(path)
+                .expect_err("apply config path invisible/bidi format characters must fail closed");
+            assert!(
+                err.to_string()
+                    .contains("path must not contain invisible or bidirectional format characters"),
+                "unexpected error for {path:?}: {err:#}"
+            );
+        }
+    }
+
+    #[test]
+    fn load_config_rejects_list_separator_paths_fail_closed() {
+        for path in [
+            "configs/node1.toml,configs/node2.toml",
+            "configs/node1.toml;configs/node2.toml",
+            "configs/node1.toml|configs/node2.toml",
+        ] {
+            let err = load_config(path)
+                .expect_err("multi-config apply path separators must fail closed");
+            assert!(
+                err.to_string().contains("path must not contain list separators"),
+                "unexpected error for {path:?}: {err:#}"
+            );
+        }
+    }
+
+    #[test]
+    fn load_config_rejects_url_style_paths_fail_closed() {
+        for path in [
+            "http://example.invalid/node1.toml",
+            "https://example.invalid/node1.toml",
+        ] {
+            let err = load_config(path).expect_err("URL-style apply config paths must fail closed");
+            assert!(
+                err.to_string().contains("path must not be a URL"),
+                "unexpected error for {path:?}: {err:#}"
+            );
+        }
+    }
+
+    #[test]
+    fn load_config_rejects_parent_traversal_in_path_fail_closed() {
+        for path in [
+            "../configs/node1.toml",
+            "configs/../node1.toml",
+            r"..\configs\node1.toml",
+            r"configs\..\node1.toml",
+        ] {
+            let err = load_config(path).expect_err("apply config path parent traversal must fail closed");
+            assert!(
+                err.to_string()
+                    .contains("path must not contain parent traversal (..)"),
+                "unexpected error for {path:?}: {err:#}"
+            );
+        }
+    }
+
+    #[test]
+    fn load_config_rejects_unknown_fields_to_keep_apply_bootstrap_config_fail_closed() {
+        use std::time::{SystemTime, UNIX_EPOCH};
+
+        let path = std::env::temp_dir().join(format!(
+            "trnm-node-apply-config-unknown-field-{}-{}.toml",
+            std::process::id(),
+            SystemTime::now()
+                .duration_since(UNIX_EPOCH)
+                .expect("clock should be after unix epoch")
+                .as_nanos()
+        ));
+        std::fs::write(
+            &path,
+            r#"node_id = "node-a"
+rpc_addr = "127.0.0.1:26657"
+p2p_addr = "127.0.0.1:26656"
+bootstrap_peers = ["127.0.0.1:27656"]
+"#,
+        )
+        .expect("write temp config");
+
+        let err = load_config(path.to_str().expect("temp path utf-8"))
+            .expect_err("unknown apply config fields must fail closed");
+        let _ = std::fs::remove_file(&path);
+
+        let err_surface = err.to_string();
+        assert!(
+            err_surface.contains("parse toml failed")
+                && err_surface.contains("unknown field `bootstrap_peers`"),
+            "unexpected error: {err:#}"
+        );
+    }
+
+    #[test]
     fn validate_node_config_rejects_operator_boundary_whitespace_fail_closed() {
         let cfg = NodeConfig {
             node_id: "  node-a  ".into(),
@@ -704,6 +913,38 @@ mod tests {
                 .to_string()
                 .contains("p2p_addr must use a canonical socket address literal"),
             "unexpected error: {p2p_err:#}"
+        );
+
+        let rpc_ipv4_compatible_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "[::7f00:1]:26657".into(),
+                p2p_addr: "[2001:4860::1]:26656".into(),
+            },
+            "inline",
+        )
+        .expect_err("IPv4-compatible rpc_addr literals must fail closed");
+        assert!(
+            rpc_ipv4_compatible_err
+                .to_string()
+                .contains("rpc_addr must not use an IPv4-compatible IPv6 address"),
+            "unexpected error: {rpc_ipv4_compatible_err:#}"
+        );
+
+        let p2p_ipv4_compatible_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "[2001:4860::1]:26657".into(),
+                p2p_addr: "[::c000:20a]:26656".into(),
+            },
+            "inline",
+        )
+        .expect_err("IPv4-compatible p2p_addr literals must fail closed");
+        assert!(
+            p2p_ipv4_compatible_err
+                .to_string()
+                .contains("p2p_addr must not use an IPv4-compatible IPv6 address"),
+            "unexpected error: {p2p_ipv4_compatible_err:#}"
         );
     }
 
@@ -774,6 +1015,41 @@ mod tests {
                 .to_string()
                 .contains("p2p_addr must not use an unspecified address"),
             "unexpected error: {p2p_unspecified_err:#}"
+        );
+    }
+
+    #[test]
+    fn validate_node_config_rejects_link_local_listener_addresses() {
+        let rpc_link_local_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "[fe80::1]:7000".into(),
+                p2p_addr: "[2001:4860::1]:7001".into(),
+            },
+            "inline",
+        )
+        .expect_err("rpc_addr link-local bind must fail closed");
+        assert!(
+            rpc_link_local_err
+                .to_string()
+                .contains("rpc_addr must not use a link-local address"),
+            "unexpected error: {rpc_link_local_err:#}"
+        );
+
+        let p2p_link_local_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "[2001:4860::1]:7000".into(),
+                p2p_addr: "[fe80::2]:7001".into(),
+            },
+            "inline",
+        )
+        .expect_err("p2p_addr link-local bind must fail closed");
+        assert!(
+            p2p_link_local_err
+                .to_string()
+                .contains("p2p_addr must not use a link-local address"),
+            "unexpected error: {p2p_link_local_err:#}"
         );
     }
 
@@ -903,6 +1179,58 @@ mod tests {
                 "unexpected error for {node_id:?}: {err:#}"
             );
         }
+    }
+
+    #[test]
+    fn validate_node_config_rejects_host_like_node_id_and_url_style_operator_addresses() {
+        for node_id in ["localhost", "LOCALHOST", "127.0.0.1", "127.0.0.1:7000"] {
+            let err = validate_node_config(
+                NodeConfig {
+                    node_id: node_id.into(),
+                    rpc_addr: "127.0.0.1:7000".into(),
+                    p2p_addr: "127.0.0.1:7001".into(),
+                },
+                "inline",
+            )
+            .expect_err("host-like node_id literals must fail closed");
+            assert!(
+                err.to_string()
+                    .contains("node_id must not look like a host or socket literal"),
+                "unexpected error for {node_id:?}: {err:#}"
+            );
+        }
+
+        let rpc_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "http://127.0.0.1:7000".into(),
+                p2p_addr: "127.0.0.1:7001".into(),
+            },
+            "inline",
+        )
+        .expect_err("URL-style rpc_addr must fail closed");
+        assert!(
+            rpc_err
+                .to_string()
+                .contains("rpc_addr must be a raw socket address, not a URL"),
+            "unexpected error: {rpc_err:#}"
+        );
+
+        let p2p_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "127.0.0.1:7000".into(),
+                p2p_addr: "tcp://127.0.0.1:7001".into(),
+            },
+            "inline",
+        )
+        .expect_err("URL-style p2p_addr must fail closed");
+        assert!(
+            p2p_err
+                .to_string()
+                .contains("p2p_addr must be a raw socket address, not a URL"),
+            "unexpected error: {p2p_err:#}"
+        );
     }
 
     #[test]

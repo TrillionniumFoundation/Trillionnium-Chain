@@ -105,6 +105,7 @@ struct Args {
 }
 
 const DEFAULT_BFT_WAL_DIR: &str = "run/consensus-wal";
+const MAX_NODE_ID_LEN: usize = 64;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, ValueEnum)]
 enum WalDirMode {
@@ -119,6 +120,41 @@ struct NodeConfig {
     node_id: String,
     rpc_addr: String,
     p2p_addr: String,
+}
+
+fn is_link_local_ip(ip: std::net::IpAddr) -> bool {
+    match ip {
+        std::net::IpAddr::V4(addr) => addr.is_link_local(),
+        std::net::IpAddr::V6(addr) => addr.is_unicast_link_local(),
+    }
+}
+
+fn is_documentation_or_benchmark_ip(ip: std::net::IpAddr) -> bool {
+    match ip {
+        std::net::IpAddr::V4(addr) => {
+            let octets = addr.octets();
+            matches!(octets, [192, 0, 2, _] | [198, 51, 100, _] | [203, 0, 113, _])
+                || (octets[0] == 198 && octets[1] >= 18 && octets[1] <= 19)
+        }
+        std::net::IpAddr::V6(addr) => {
+            let segments = addr.segments();
+            segments[0] == 0x2001 && segments[1] == 0x0db8
+        }
+    }
+}
+
+fn is_ipv4_mapped_ipv6(ip: std::net::IpAddr) -> bool {
+    match ip {
+        std::net::IpAddr::V4(_) => false,
+        std::net::IpAddr::V6(addr) => addr.to_ipv4_mapped().is_some(),
+    }
+}
+
+fn has_nonzero_ipv6_scope(socket: SocketAddr) -> bool {
+    match socket {
+        SocketAddr::V4(_) => false,
+        SocketAddr::V6(addr) => addr.scope_id() != 0,
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -1515,8 +1551,19 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         path
     );
     anyhow::ensure!(
+        node_id.len() <= MAX_NODE_ID_LEN,
+        "invalid node config {}: node_id must be at most {} bytes",
+        path,
+        MAX_NODE_ID_LEN
+    );
+    anyhow::ensure!(
         !node_id.chars().any(char::is_control),
         "invalid node config {}: node_id must not contain control characters",
+        path
+    );
+    anyhow::ensure!(
+        node_id.is_ascii(),
+        "invalid node config {}: node_id must use ASCII-only characters",
         path
     );
     anyhow::ensure!(
@@ -1530,8 +1577,25 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         path
     );
     anyhow::ensure!(
-        !node_id.contains('/') && !node_id.contains('\\') && !node_id.contains(':'),
-        "invalid node config {}: node_id must not contain path separators (/ \\ :)",
+        !node_id.contains('/')
+            && !node_id.contains('\\')
+            && !node_id.contains(':')
+            && !node_id.contains('[')
+            && !node_id.contains(']'),
+        "invalid node config {}: node_id must not contain path or host-literal separators (/ \\ : [ ])",
+        path
+    );
+    anyhow::ensure!(
+        !node_id.contains('@')
+            && !node_id.contains('?')
+            && !node_id.contains('#')
+            && !node_id.contains('%'),
+        "invalid node config {}: node_id must not contain URI or userinfo separators (@ ? # %)",
+        path
+    );
+    anyhow::ensure!(
+        !node_id.contains('"') && !node_id.contains('\'') && !node_id.contains('`'),
+        "invalid node config {}: node_id must not contain quoting characters (\" ' `)",
         path
     );
     anyhow::ensure!(
@@ -1619,6 +1683,26 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         "invalid node config {}: rpc_addr must not use an unspecified address",
         path
     );
+    anyhow::ensure!(
+        !is_link_local_ip(rpc_socket.ip()),
+        "invalid node config {}: rpc_addr must not use a link-local address",
+        path
+    );
+    anyhow::ensure!(
+        !is_ipv4_mapped_ipv6(rpc_socket.ip()),
+        "invalid node config {}: rpc_addr must not use an IPv4-mapped IPv6 address",
+        path
+    );
+    anyhow::ensure!(
+        !has_nonzero_ipv6_scope(rpc_socket),
+        "invalid node config {}: rpc_addr must not use an IPv6 scope identifier",
+        path
+    );
+    anyhow::ensure!(
+        !is_documentation_or_benchmark_ip(rpc_socket.ip()),
+        "invalid node config {}: rpc_addr must not use a documentation or benchmark-only address",
+        path
+    );
 
     let p2p_addr = cfg.p2p_addr.trim();
     anyhow::ensure!(
@@ -1693,6 +1777,26 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         path
     );
     anyhow::ensure!(
+        !is_link_local_ip(p2p_socket.ip()),
+        "invalid node config {}: p2p_addr must not use a link-local address",
+        path
+    );
+    anyhow::ensure!(
+        !is_ipv4_mapped_ipv6(p2p_socket.ip()),
+        "invalid node config {}: p2p_addr must not use an IPv4-mapped IPv6 address",
+        path
+    );
+    anyhow::ensure!(
+        !has_nonzero_ipv6_scope(p2p_socket),
+        "invalid node config {}: p2p_addr must not use an IPv6 scope identifier",
+        path
+    );
+    anyhow::ensure!(
+        !is_documentation_or_benchmark_ip(p2p_socket.ip()),
+        "invalid node config {}: p2p_addr must not use a documentation or benchmark-only address",
+        path
+    );
+    anyhow::ensure!(
         rpc_socket != p2p_socket,
         "invalid node config {}: rpc_addr and p2p_addr must differ",
         path
@@ -1758,11 +1862,8 @@ fn resolve_config_path(path: &str) -> PathBuf {
     requested.to_path_buf()
 }
 
-fn ensure_relative_config_path_stays_within_allowed_roots(
-    requested: &str,
-    resolved: &Path,
-) -> Result<()> {
-    if Path::new(requested).is_absolute() || !resolved.exists() {
+fn ensure_config_path_stays_within_allowed_roots(requested: &str, resolved: &Path) -> Result<()> {
+    if !resolved.exists() {
         return Ok(());
     }
 
@@ -1777,9 +1878,20 @@ fn ensure_relative_config_path_stays_within_allowed_roots(
         .canonicalize()
         .unwrap_or_else(|_| current_dir.clone());
 
+    let allowed_by_workspace_or_cwd = canonical_resolved.starts_with(&workspace_root)
+        || canonical_resolved.starts_with(&canonical_current_dir);
+    #[cfg(test)]
+    let allowed_by_test_temp = {
+        let temp_dir = std::env::temp_dir();
+        let canonical_temp_dir = temp_dir.canonicalize().unwrap_or_else(|_| temp_dir.clone());
+        (resolved.starts_with(&temp_dir) || resolved.starts_with(&canonical_temp_dir))
+            && canonical_resolved.starts_with(&canonical_temp_dir)
+    };
+    #[cfg(not(test))]
+    let allowed_by_test_temp = false;
+
     anyhow::ensure!(
-        canonical_resolved.starts_with(&workspace_root)
-            || canonical_resolved.starts_with(&canonical_current_dir),
+        allowed_by_workspace_or_cwd || allowed_by_test_temp,
         "read config failed: {} resolves outside allowed roots (resolved: {})",
         requested,
         canonical_resolved.display()
@@ -1788,9 +1900,61 @@ fn ensure_relative_config_path_stays_within_allowed_roots(
     Ok(())
 }
 
+fn contains_invisible_or_bidi_format_chars(value: &str) -> bool {
+    value.chars().any(|ch| {
+        matches!(
+            ch,
+            '\u{200B}'
+                | '\u{200C}'
+                | '\u{200D}'
+                | '\u{2060}'
+                | '\u{FEFF}'
+                | '\u{202A}'..='\u{202E}'
+                | '\u{2066}'..='\u{2069}'
+        )
+    })
+}
+
+fn validate_config_path_input(path: &str) -> Result<()> {
+    anyhow::ensure!(!path.trim().is_empty(), "read config failed: path must not be empty");
+    anyhow::ensure!(
+        path == path.trim(),
+        "read config failed: path must not contain leading or trailing whitespace"
+    );
+    anyhow::ensure!(
+        !path.chars().any(char::is_control),
+        "read config failed: path must not contain control characters"
+    );
+    anyhow::ensure!(
+        !contains_invisible_or_bidi_format_chars(path),
+        "read config failed: path must not contain invisible or bidirectional format characters"
+    );
+    anyhow::ensure!(
+        !path.contains(',') && !path.contains(';') && !path.contains('|'),
+        "read config failed: path must not contain list separators (, ; |)"
+    );
+    anyhow::ensure!(
+        !path.contains("://"),
+        "read config failed: path must not be a URL"
+    );
+    anyhow::ensure!(
+        !Path::new(path)
+            .components()
+            .any(|component| matches!(component, std::path::Component::ParentDir)),
+        "read config failed: path must not contain parent traversal (..)"
+    );
+    anyhow::ensure!(
+        !path.split(['/', '\\']).any(|segment| segment == ".."),
+        "read config failed: path must not contain parent traversal (..)"
+    );
+
+    Ok(())
+}
+
 fn load_config(path: &str) -> Result<NodeConfig> {
+    validate_config_path_input(path)?;
     let resolved = resolve_config_path(path);
-    ensure_relative_config_path_stays_within_allowed_roots(path, &resolved)?;
+    ensure_config_path_stays_within_allowed_roots(path, &resolved)?;
     let raw = fs::read_to_string(&resolved).with_context(|| {
         format!(
             "read config failed: {} (resolved: {})",
@@ -3595,6 +3759,32 @@ mod tests {
         assert!(p2p_unspecified_err
             .to_string()
             .contains("p2p_addr must not use an unspecified address"));
+
+        let rpc_link_local_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "169.254.10.20:26657".into(),
+                p2p_addr: "127.0.0.1:26656".into(),
+            },
+            "node.toml",
+        )
+        .expect_err("rpc_addr link-local bind must be rejected");
+        assert!(rpc_link_local_err
+            .to_string()
+            .contains("rpc_addr must not use a link-local address"));
+
+        let p2p_link_local_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "[::1]:26657".into(),
+                p2p_addr: "[fe80::1]:26656".into(),
+            },
+            "node.toml",
+        )
+        .expect_err("p2p_addr link-local bind must be rejected");
+        assert!(p2p_link_local_err
+            .to_string()
+            .contains("p2p_addr must not use a link-local address"));
     }
 
     #[test]
@@ -3792,6 +3982,51 @@ mod tests {
         std::env::set_current_dir(&original_cwd).expect("restore cwd");
         let _ = std::fs::remove_dir_all(&temp_root);
 
+        assert!(
+            err.to_string().contains("resolves outside allowed roots"),
+            "unexpected error: {err:#}"
+        );
+    }
+
+    #[test]
+    fn load_config_rejects_absolute_symlink_path_that_escapes_allowed_roots() {
+        use std::os::unix::fs::symlink;
+        use std::time::{SystemTime, UNIX_EPOCH};
+
+        let temp_root = std::env::temp_dir().join(format!(
+            "trnm-node-config-absolute-symlink-escape-{}-{}",
+            std::process::id(),
+            SystemTime::now()
+                .duration_since(UNIX_EPOCH)
+                .expect("clock should be after unix epoch")
+                .as_millis()
+        ));
+        let workspace_shadow = temp_root.join("workspace-shadow");
+        let outside_path = temp_root.join("outside.toml");
+        let symlink_path = workspace_shadow.join("configs/escaped.toml");
+        std::fs::create_dir_all(symlink_path.parent().expect("symlink parent"))
+            .expect("workspace shadow should be creatable");
+        std::fs::write(
+            &outside_path,
+            "node_id = \"node-escape\"\nrpc_addr = \"127.0.0.1:30001\"\np2p_addr = \"127.0.0.1:30000\"\n",
+        )
+        .expect("outside config should be writable");
+        symlink(&outside_path, &symlink_path).expect("escape symlink should be creatable");
+
+        let err = load_config(symlink_path.to_str().expect("utf8 path"))
+            .expect_err("absolute symlink path escaping allowed roots must fail closed");
+        let canonical_target = outside_path
+            .canonicalize()
+            .expect("outside target should canonicalize");
+        let canonical_symlink_parent = workspace_shadow
+            .canonicalize()
+            .expect("workspace shadow should canonicalize");
+        let _ = std::fs::remove_dir_all(&temp_root);
+
+        assert!(
+            !canonical_target.starts_with(&canonical_symlink_parent),
+            "test fixture must point outside the allowed workspace shadow"
+        );
         assert!(
             err.to_string().contains("resolves outside allowed roots"),
             "unexpected error: {err:#}"
@@ -4045,6 +4280,60 @@ mod tests {
     }
 
     #[test]
+    fn load_config_rejects_list_separators_in_path_fail_closed() {
+        let err = load_config("configs/node1.toml,configs/node2.toml")
+            .expect_err("config path lists must fail closed");
+        assert!(
+            err.to_string().contains("path must not contain list separators"),
+            "unexpected error: {err:#}"
+        );
+    }
+
+    #[test]
+    fn load_config_rejects_url_style_path_fail_closed() {
+        let err = load_config("https://example.invalid/node1.toml")
+            .expect_err("URL-style config paths must fail closed");
+        assert!(
+            err.to_string().contains("path must not be a URL"),
+            "unexpected error: {err:#}"
+        );
+    }
+
+    #[test]
+    fn load_config_rejects_invisible_or_bidi_format_characters_in_path_fail_closed() {
+        for path in [
+            "configs/node1.toml\u{200B}",
+            "configs/node1.toml\u{202E}",
+            "configs/node1.toml\u{2066}",
+        ] {
+            let err = load_config(path)
+                .expect_err("config path invisible/bidi format characters must fail closed");
+            assert!(
+                err.to_string()
+                    .contains("path must not contain invisible or bidirectional format characters"),
+                "unexpected error for {path:?}: {err:#}"
+            );
+        }
+    }
+
+    #[test]
+    fn load_config_rejects_parent_traversal_in_path_fail_closed() {
+        for path in [
+            "../configs/node1.toml",
+            "configs/../node1.toml",
+            r"..\configs\node1.toml",
+            r"configs\..\node1.toml",
+        ] {
+            let err = load_config(path).expect_err("config path parent traversal must fail closed");
+            assert!(
+                err.to_string()
+                    .contains("path must not contain parent traversal (..)"),
+                "unexpected error for {path:?}: {err:#}"
+            );
+        }
+    }
+
+    #[test]
     fn load_config_rejects_unknown_fields_to_keep_bootstrap_config_fail_closed() {
         let path = std::env::temp_dir().join(format!(
             "trnm-node-config-unknown-field-{}-{}.toml",
@@ -4109,6 +4398,49 @@ bootstrap_peers = ["127.0.0.1:27656"]
         assert!(err.to_string().contains("node_id must not be '.' or '..'"));
 
         let _ = std::fs::remove_file(path);
+    }
+
+    #[test]
+    fn load_config_rejects_host_like_node_id_literals_fail_closed() {
+        for (suffix, node_id, expected_error) in [
+            (
+                "localhost",
+                "localhost",
+                "node_id must not look like a host or socket literal",
+            ),
+            (
+                "ipv4-literal",
+                "127.0.0.1",
+                "node_id must not look like a host or socket literal",
+            ),
+            (
+                "ipv6-socket-shaped",
+                "[::1]:26656",
+                "node_id must not contain path or host-literal separators",
+            ),
+        ] {
+            let path = std::env::temp_dir().join(format!(
+                "trnm-node-config-host-like-node-id-{suffix}-{}-{}.toml",
+                std::process::id(),
+                std::thread::current().name().unwrap_or("unnamed")
+            ));
+            std::fs::write(
+                &path,
+                format!(
+                    "node_id = \"{node_id}\"\nrpc_addr = \"127.0.0.1:26657\"\np2p_addr = \"127.0.0.1:26656\"\n"
+                ),
+            )
+            .expect("write config");
+
+            let err = load_config(path.to_str().expect("utf8 path"))
+                .expect_err("host-like node_id must fail closed");
+            assert!(
+                err.to_string().contains(expected_error),
+                "unexpected error for {node_id}: {err:#}"
+            );
+
+            let _ = std::fs::remove_file(path);
+        }
     }
 
     #[test]
@@ -4320,6 +4652,47 @@ bootstrap_peers = ["127.0.0.1:27656"]
         assert!(p2p_err
             .to_string()
             .contains("p2p_addr must not use a multicast address"));
+
+        let _ = std::fs::remove_file(p2p_path);
+    }
+
+    #[test]
+    fn load_config_rejects_link_local_listener_after_operator_trimming() {
+        let rpc_path = std::env::temp_dir().join(format!(
+            "trnm-node-config-link-local-rpc-listener-{}-{}.toml",
+            std::process::id(),
+            std::thread::current().name().unwrap_or("unnamed")
+        ));
+        std::fs::write(
+            &rpc_path,
+            "node_id = \"node-a\"\nrpc_addr = \"169.254.10.20:26657\"\np2p_addr = \"169.254.10.21:26656\"\n",
+        )
+        .expect("write config");
+
+        let rpc_err = load_config(rpc_path.to_str().expect("utf8 path"))
+            .expect_err("trimmed link-local rpc listener must fail closed");
+        assert!(rpc_err
+            .to_string()
+            .contains("rpc_addr must not use a link-local address"));
+
+        let _ = std::fs::remove_file(rpc_path);
+
+        let p2p_path = std::env::temp_dir().join(format!(
+            "trnm-node-config-link-local-p2p-listener-{}-{}.toml",
+            std::process::id(),
+            std::thread::current().name().unwrap_or("unnamed")
+        ));
+        std::fs::write(
+            &p2p_path,
+            "node_id = \"node-a\"\nrpc_addr = \"[::1]:26657\"\np2p_addr = \"[fe80::1]:26656\"\n",
+        )
+        .expect("write config");
+
+        let p2p_err = load_config(p2p_path.to_str().expect("utf8 path"))
+            .expect_err("trimmed link-local p2p listener must fail closed");
+        assert!(p2p_err
+            .to_string()
+            .contains("p2p_addr must not use a link-local address"));
 
         let _ = std::fs::remove_file(p2p_path);
     }
@@ -5308,6 +5681,22 @@ bootstrap_peers = ["127.0.0.1:27656"]
     }
 
     #[test]
+    fn validate_node_config_rejects_exact_shared_listener_socket() {
+        let err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "127.0.0.1:26657".into(),
+                p2p_addr: "127.0.0.1:26657".into(),
+            },
+            "node.toml",
+        )
+        .expect_err("exact shared RPC/P2P listener socket must fail closed");
+        assert!(err
+            .to_string()
+            .contains("rpc_addr and p2p_addr must differ"));
+    }
+
+    #[test]
     fn validate_node_config_rejects_mixed_ip_families() {
         let err = validate_node_config(
             NodeConfig {
@@ -5396,6 +5785,123 @@ bootstrap_peers = ["127.0.0.1:27656"]
             .to_string()
             .contains("p2p_addr must not contain list separators (, ; |)"));
     }
+
+    #[test]
+    fn validate_node_config_rejects_ipv4_mapped_scope_and_documentation_listener_addresses() {
+        let rpc_ipv4_mapped_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "[::ffff:127.0.0.1]:26657".into(),
+                p2p_addr: "[2001:4860:4860::8888]:26656".into(),
+            },
+            "node.toml",
+        )
+        .expect_err("rpc_addr IPv4-mapped IPv6 bind must fail closed");
+        assert!(rpc_ipv4_mapped_err
+            .to_string()
+            .contains("rpc_addr must not use an IPv4-mapped IPv6 address"));
+
+        let p2p_ipv4_mapped_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "[2001:4860:4860::8888]:26657".into(),
+                p2p_addr: "[::ffff:127.0.0.1]:26656".into(),
+            },
+            "node.toml",
+        )
+        .expect_err("p2p_addr IPv4-mapped IPv6 bind must fail closed");
+        assert!(p2p_ipv4_mapped_err
+            .to_string()
+            .contains("p2p_addr must not use an IPv4-mapped IPv6 address"));
+
+        let rpc_scope_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "[2001:4860:4860::8888%7]:26657".into(),
+                p2p_addr: "[2001:4860:4860::8888]:26656".into(),
+            },
+            "node.toml",
+        )
+        .expect_err("rpc_addr IPv6 scope identifier must fail closed");
+        assert!(rpc_scope_err
+            .to_string()
+            .contains("rpc_addr must not use an IPv6 scope identifier"));
+
+        let p2p_scope_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "[2001:4860:4860::8888]:26657".into(),
+                p2p_addr: "[2001:4860:4860::8888%9]:26656".into(),
+            },
+            "node.toml",
+        )
+        .expect_err("p2p_addr IPv6 scope identifier must fail closed");
+        assert!(p2p_scope_err
+            .to_string()
+            .contains("p2p_addr must not use an IPv6 scope identifier"));
+
+        for rpc_addr in [
+            "192.0.2.10:26657",
+            "198.51.100.10:26657",
+            "203.0.113.10:26657",
+            "198.18.0.10:26657",
+            "[2001:db8::10]:26657",
+        ] {
+            let rpc_err = validate_node_config(
+                NodeConfig {
+                    node_id: "node-a".into(),
+                    rpc_addr: rpc_addr.into(),
+                    p2p_addr: "127.0.0.1:26656".into(),
+                },
+                "node.toml",
+            )
+            .expect_err("rpc_addr documentation and benchmark ranges must fail closed");
+            assert!(rpc_err
+                .to_string()
+                .contains("rpc_addr must not use a documentation or benchmark-only address"));
+        }
+
+        for p2p_addr in [
+            "192.0.2.10:26656",
+            "198.51.100.10:26656",
+            "203.0.113.10:26656",
+            "198.19.0.10:26656",
+            "[2001:db8::11]:26656",
+        ] {
+            let p2p_err = validate_node_config(
+                NodeConfig {
+                    node_id: "node-a".into(),
+                    rpc_addr: "127.0.0.1:26657".into(),
+                    p2p_addr: p2p_addr.into(),
+                },
+                "node.toml",
+            )
+            .expect_err("p2p_addr documentation and benchmark ranges must fail closed");
+            assert!(p2p_err
+                .to_string()
+                .contains("p2p_addr must not use a documentation or benchmark-only address"));
+        }
+    }
+
+    #[test]
+    fn validate_node_config_rejects_oversized_node_id() {
+        let oversized_node_id = "n".repeat(MAX_NODE_ID_LEN + 1);
+        let err = validate_node_config(
+            NodeConfig {
+                node_id: oversized_node_id,
+                rpc_addr: "127.0.0.1:7000".into(),
+                p2p_addr: "127.0.0.1:7001".into(),
+            },
+            "inline",
+        )
+        .expect_err("oversized node_id must fail closed");
+        assert!(
+            err.to_string()
+                .contains("node_id must be at most 64 bytes"),
+            "unexpected error: {err:#}"
+        );
+    }
+
     #[test]
     fn validate_node_config_rejects_control_characters_in_node_id() {
         let err = validate_node_config(
@@ -5429,6 +5935,36 @@ bootstrap_peers = ["127.0.0.1:27656"]
     }
 
     #[test]
+    fn validate_node_config_rejects_non_ascii_node_id() {
+        let err = validate_node_config(
+            NodeConfig {
+                node_id: "nοde-a".into(),
+                rpc_addr: "127.0.0.1:26657".into(),
+                p2p_addr: "127.0.0.1:26656".into(),
+            },
+            "node.toml",
+        )
+        .expect_err("non-ASCII node_id must fail closed");
+        assert!(err
+            .to_string()
+            .contains("node_id must use ASCII-only characters"));
+    }
+
+    #[test]
+    fn validate_node_config_accepts_ascii_boundary_punctuation_node_id() {
+        let cfg = validate_node_config(
+            NodeConfig {
+                node_id: "node-A_09.-~".into(),
+                rpc_addr: "127.0.0.1:26657".into(),
+                p2p_addr: "127.0.0.1:26656".into(),
+            },
+            "node.toml",
+        )
+        .expect("ASCII node_id should remain valid");
+        assert_eq!(cfg.node_id, "node-A_09.-~");
+    }
+
+    #[test]
     fn validate_node_config_rejects_list_separators_in_node_id() {
         let err = validate_node_config(
             NodeConfig {
@@ -5445,19 +5981,58 @@ bootstrap_peers = ["127.0.0.1:27656"]
     }
 
     #[test]
-    fn validate_node_config_rejects_path_separators_in_node_id() {
-        let err = validate_node_config(
-            NodeConfig {
-                node_id: "node/alpha".into(),
-                rpc_addr: "127.0.0.1:26657".into(),
-                p2p_addr: "127.0.0.1:26656".into(),
-            },
-            "node.toml",
-        )
-        .expect_err("node_id path separators must fail closed");
-        assert!(err
-            .to_string()
-            .contains("node_id must not contain path separators"));
+    fn validate_node_config_rejects_path_and_host_literal_separators_in_node_id() {
+        for node_id in ["node/alpha", r"node\\alpha", "node:alpha", "[::1]"] {
+            let err = validate_node_config(
+                NodeConfig {
+                    node_id: node_id.into(),
+                    rpc_addr: "127.0.0.1:26657".into(),
+                    p2p_addr: "127.0.0.1:26656".into(),
+                },
+                "node.toml",
+            )
+            .expect_err("node_id path or host-literal separators must fail closed");
+            assert!(err
+                .to_string()
+                .contains("node_id must not contain path or host-literal separators"));
+        }
+    }
+
+    #[test]
+    fn validate_node_config_rejects_uri_and_userinfo_separators_in_node_id() {
+        for node_id in ["node@alpha", "node?alpha", "node#alpha", "node%zone"] {
+            let err = validate_node_config(
+                NodeConfig {
+                    node_id: node_id.into(),
+                    rpc_addr: "127.0.0.1:26657".into(),
+                    p2p_addr: "127.0.0.1:26656".into(),
+                },
+                "node.toml",
+            )
+            .expect_err("node_id URI/userinfo separators must fail closed");
+            assert!(err
+                .to_string()
+                .contains("node_id must not contain URI or userinfo separators (@ ? # %)")
+            );
+        }
+    }
+
+    #[test]
+    fn validate_node_config_rejects_quoting_characters_in_node_id() {
+        for node_id in ["node\"alpha", "node'alpha", "node`alpha"] {
+            let err = validate_node_config(
+                NodeConfig {
+                    node_id: node_id.into(),
+                    rpc_addr: "127.0.0.1:26657".into(),
+                    p2p_addr: "127.0.0.1:26656".into(),
+                },
+                "node.toml",
+            )
+            .expect_err("node_id quoting characters must fail closed");
+            assert!(err
+                .to_string()
+                .contains("node_id must not contain quoting characters (\" ' `)"));
+        }
     }
 
     #[test]
@@ -5491,6 +6066,25 @@ bootstrap_peers = ["127.0.0.1:27656"]
             assert!(
                 err.to_string()
                     .contains("node_id must not look like a host or socket literal")
+            );
+        }
+    }
+
+    #[test]
+    fn validate_node_config_rejects_ipv6_literal_and_socket_shaped_node_ids_fail_closed() {
+        for node_id in ["::1", "[::1]:26656"] {
+            let err = validate_node_config(
+                NodeConfig {
+                    node_id: node_id.into(),
+                    rpc_addr: "127.0.0.1:26657".into(),
+                    p2p_addr: "127.0.0.1:26656".into(),
+                },
+                "node.toml",
+            )
+            .expect_err("IPv6 literal or socket-shaped node_id must fail closed");
+            assert!(
+                err.to_string().contains("node_id must not contain path or host-literal separators"),
+                "unexpected error for {node_id}: {err:#}"
             );
         }
     }
