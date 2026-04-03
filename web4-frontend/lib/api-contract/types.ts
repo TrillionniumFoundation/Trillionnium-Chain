@@ -25,12 +25,14 @@ export type ChainEvent = Readonly<{
   payload: Readonly<Record<string, unknown>>;
 }>;
 
+export type CheckedAt = `height:${number}` | string;
+
 export type CapabilityAuditEntry = Readonly<{
   subject: string;
   capability: string;
   granted: boolean;
   reason?: string;
-  checkedAt: string;
+  checkedAt: CheckedAt;
 }>;
 
 export type QueryTaskResult = Readonly<{
@@ -57,7 +59,7 @@ export type NormalizedAuditEvent = Readonly<{
   amount?: string | number;
   reason?: string;
   note?: string;
-  checkedAt?: string;
+  checkedAt?: CheckedAt;
   timestamp?: string;
   subject?: string;
 }>;

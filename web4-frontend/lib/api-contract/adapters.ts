@@ -13,6 +13,7 @@ import type {
   QueryNormalizedAuditEventsResult,
   TaskStatus,
   NormalizedAuditEventsQuery,
+  CheckedAt,
 } from "./types";
 import { FrontendApiError } from "./errors";
 
@@ -292,7 +293,7 @@ export const adaptQueryNormalizedAuditEvents = (
         amount?: string | number;
         reason?: string;
         note?: string;
-        checkedAt?: string;
+        checkedAt?: CheckedAt;
         timestamp?: string;
         subject?: string;
       }>;
