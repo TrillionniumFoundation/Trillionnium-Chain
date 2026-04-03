@@ -279,6 +279,47 @@ fn smoke_wallet_sign_rejects_edge_or_non_ascii_whitespace() {
 }
 
 #[test]
+fn smoke_wallet_sign_emits_message_sha256_hint() {
+    let store = tmp_dir("wallet-sign");
+    let pk = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+    let import = Command::new(bin())
+        .args([
+            "wallet",
+            "import",
+            "--name",
+            "alice",
+            "--private-key-hex",
+            pk,
+            "--out",
+            store.to_string_lossy().as_ref(),
+        ])
+        .output()
+        .unwrap();
+    assert!(import.status.success());
+
+    let message = "rotate signer to cold-key slot b";
+    let out = Command::new(bin())
+        .args([
+            "wallet",
+            "sign",
+            "--name",
+            "alice",
+            "--message",
+            message,
+            "--store",
+            store.to_string_lossy().as_ref(),
+        ])
+        .output()
+        .unwrap();
+    assert!(out.status.success(), "stderr: {}", String::from_utf8_lossy(&out.stderr));
+    let s = String::from_utf8_lossy(&out.stdout);
+    assert!(s.contains("wallet_name=alice"));
+    assert!(s.contains(&format!("message={message}")));
+    assert!(s.contains("message_sha256=0921750d68e4f12cb9b90b90e66f3406f4bcf49e1a4a312e693fa5d8236d1cab"));
+    assert!(s.contains("signature="));
+}
+
+#[test]
 fn smoke_query_balance_fallback_json() {
     let store = tmp_dir("query-balance");
     let pk = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";

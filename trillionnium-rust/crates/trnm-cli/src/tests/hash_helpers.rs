@@ -88,6 +88,34 @@ fn extract_tx_hash_accepts_hyphenated_key_aliases() {
 }
 
 #[test]
+fn emitted_transaction_hash_camel_alias_round_trips_through_parser() {
+    assert_eq!(
+        format_transaction_hash_camel_alias_line("0xABCD1234"),
+        "transactionHash=0xABCD1234".to_string()
+    );
+    assert_eq!(
+        extract_tx_hash(&format_transaction_hash_camel_alias_line("0xABCD1234")).as_deref(),
+        Some("0xabcd1234")
+    );
+}
+
+#[test]
+fn extract_tx_hash_accepts_spaced_key_aliases() {
+    assert_eq!(
+        extract_tx_hash("tx hash=0xCAFE03").as_deref(),
+        Some("0xcafe03")
+    );
+    assert_eq!(
+        extract_tx_hash("transaction hash : 0xBEEF04").as_deref(),
+        Some("0xbeef04")
+    );
+    assert_eq!(
+        extract_tx_hash("INFO transaction hash ＝ 0xBEEF05 done").as_deref(),
+        Some("0xbeef05")
+    );
+}
+
+#[test]
 fn extract_tx_hash_accepts_spaced_separators() {
     assert_eq!(
         extract_tx_hash("tx_hash = 0xfeed55").as_deref(),
@@ -143,6 +171,18 @@ fn extract_tx_hash_trims_hidden_unicode_wrappers() {
     );
     assert_eq!(
         extract_tx_hash("transactionHash:\u{feff}0xBEEF42\u{200b}?!").as_deref(),
+        Some("0xbeef42")
+    );
+}
+
+#[test]
+fn extract_tx_hash_trims_bidi_control_wrappers() {
+    assert_eq!(
+        extract_tx_hash("tx_hash=\u{200e}0xABCD1234\u{200f}").as_deref(),
+        Some("0xabcd1234")
+    );
+    assert_eq!(
+        extract_tx_hash("transactionHash:\u{061c}0xBEEF42\u{200f}?!").as_deref(),
         Some("0xbeef42")
     );
 }

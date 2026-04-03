@@ -45,6 +45,9 @@ pub(crate) fn normalize_tx_hash(raw: &str) -> Option<String> {
                         '\u{200B}'
                             | '\u{200C}'
                             | '\u{200D}'
+                            | '\u{200E}'
+                            | '\u{200F}'
+                            | '\u{061C}'
                             | '\u{2060}'
                             | '\u{FEFF}'
                             | '\u{202A}'
@@ -119,28 +122,31 @@ fn json_value_tx_hash(v: &serde_json::Value) -> Option<String> {
     None
 }
 
+fn is_text_tx_hash_key(key: &str) -> bool {
+    let canonical = key
+        .chars()
+        .filter(|c| c.is_ascii_alphanumeric())
+        .map(|c| c.to_ascii_lowercase())
+        .collect::<String>();
+    matches!(canonical.as_str(), "txhash" | "transactionhash")
+}
+
 pub(crate) fn extract_tx_hash(text: &str) -> Option<String> {
     for line in text.lines() {
         if let Some((key, value)) = parse_kv_line(line) {
-            match key.as_str() {
-                "tx_hash" | "txhash" | "tx-hash" | "transaction_hash" | "transactionhash"
-                | "transaction-hash" => {
-                    if let Some(normalized) = normalize_tx_hash(&value) {
-                        return Some(normalized);
-                    }
+            if is_text_tx_hash_key(&key) {
+                if let Some(normalized) = normalize_tx_hash(&value) {
+                    return Some(normalized);
                 }
-                _ => {}
             }
         }
 
         let tokens = line.split_whitespace().collect::<Vec<_>>();
         if let Some(v) = tokens.iter().find_map(|w| {
             let (key, value) = parse_inline_kv_token(w)?;
-            match key.as_str() {
-                "tx_hash" | "txhash" | "tx-hash" | "transaction_hash" | "transactionhash"
-                | "transaction-hash" => normalize_tx_hash(&value),
-                _ => None,
-            }
+            is_text_tx_hash_key(&key)
+                .then(|| normalize_tx_hash(&value))
+                .flatten()
         }) {
             return Some(v);
         }
@@ -155,17 +161,30 @@ pub(crate) fn extract_tx_hash(text: &str) -> Option<String> {
                 c.is_ascii_whitespace()
                     || matches!(c, ',' | ';' | '(' | ')' | '[' | ']' | '{' | '}' | '<' | '>')
             });
-            if !matches!(sep, "=" | ":") {
+            if !matches!(sep, "=" | ":" | "＝" | "：") {
                 continue;
             }
-            match key.to_ascii_lowercase().as_str() {
-                "tx_hash" | "txhash" | "tx-hash" | "transaction_hash" | "transactionhash"
-                | "transaction-hash" => {
-                    if let Some(normalized) = normalize_tx_hash(value) {
-                        return Some(normalized);
-                    }
+            if is_text_tx_hash_key(key) {
+                if let Some(normalized) = normalize_tx_hash(value) {
+                    return Some(normalized);
                 }
-                _ => {}
+            }
+        }
+
+        for window in tokens.windows(4) {
+            let key = format!("{} {}", window[0], window[1]);
+            let sep = window[2].trim();
+            let value = window[3].trim_matches(|c: char| {
+                c.is_ascii_whitespace()
+                    || matches!(c, ',' | ';' | '(' | ')' | '[' | ']' | '{' | '}' | '<' | '>')
+            });
+            if !matches!(sep, "=" | ":" | "＝" | "：") {
+                continue;
+            }
+            if is_text_tx_hash_key(&key) {
+                if let Some(normalized) = normalize_tx_hash(value) {
+                    return Some(normalized);
+                }
             }
         }
     }
@@ -232,6 +251,9 @@ fn trim_kv_key_noise(raw: &str) -> &str {
                     | '〙'
                     | '〚'
                     | '〛'
+                    | '〝'
+                    | '〞'
+                    | '〟'
                     | '，'
                     | '；'
                     | '：'
@@ -258,6 +280,14 @@ fn trim_kv_key_noise(raw: &str) -> &str {
     })
 }
 
+fn canonical_kv_key(key: &str) -> String {
+    trim_kv_key_noise(key)
+        .chars()
+        .filter(|c| c.is_ascii_alphanumeric())
+        .map(|c| c.to_ascii_lowercase())
+        .collect()
+}
+
 fn parse_kv_line(line: &str) -> Option<(String, String)> {
     let trimmed = line.trim();
     let (key, value) = if let Some((k, v)) = trimmed.split_once('=') {
@@ -282,7 +312,7 @@ fn parse_kv_line(line: &str) -> Option<(String, String)> {
         return None;
     }
 
-    Some((key.to_ascii_lowercase(), value.to_string()))
+    Some((canonical_kv_key(key), value.to_string()))
 }
 
 fn parse_inline_kv_token(token: &str) -> Option<(String, String)> {
@@ -301,6 +331,13 @@ fn parse_inline_kv_token(token: &str) -> Option<(String, String)> {
                     | ')'
                     | '<'
                     | '>'
+                    | '"'
+                    | '\''
+                    | '`'
+                    | '“'
+                    | '”'
+                    | '‘'
+                    | '’'
                     | '（'
                     | '）'
                     | '［'
@@ -319,6 +356,23 @@ fn parse_inline_kv_token(token: &str) -> Option<(String, String)> {
                     | '〉'
                     | '｢'
                     | '｣'
+                    | '«'
+                    | '»'
+                    | '‹'
+                    | '›'
+                    | '【'
+                    | '】'
+                    | '〔'
+                    | '〕'
+                    | '〖'
+                    | '〗'
+                    | '〘'
+                    | '〙'
+                    | '〚'
+                    | '〛'
+                    | '〝'
+                    | '〞'
+                    | '〟'
                     | '，'
                     | '；'
                     | '：'
@@ -361,7 +415,7 @@ fn parse_inline_kv_token(token: &str) -> Option<(String, String)> {
     }
 
     Some((
-        key.to_ascii_lowercase(),
+        canonical_kv_key(key),
         value
             .trim_matches(|c: char| {
                 c.is_whitespace()
@@ -661,10 +715,7 @@ fn infer_json_tx_status(value: &serde_json::Value) -> Option<String> {
 
 fn infer_kv_tx_status(key: &str, value: &str) -> Option<String> {
     match key {
-        "code" | "tx_code" | "txcode" | "tx-code" | "transaction_code"
-        | "transactioncode" | "transaction-code" | "deliver_tx_code"
-        | "delivertxcode" | "deliver-tx-code" | "check_tx_code" | "checktxcode"
-        | "check-tx-code" => {
+        "code" | "txcode" | "transactioncode" | "delivertxcode" | "checktxcode" => {
             let cleaned = value
                 .trim()
                 .trim_matches('"')
@@ -787,27 +838,23 @@ pub(crate) fn parse_tx_query_response(
 
         for (key, value) in pairs {
             match key.as_str() {
-                "tx_hash" | "txhash" | "tx-hash" | "transaction_hash" | "transactionhash"
-                | "transaction-hash" => match normalize_tx_hash(&value) {
+                "txhash" | "transactionhash" => match normalize_tx_hash(&value) {
                     Some(normalized) => tx_hash = Some(normalized),
                     None => bail!("invalid tx_hash field in tx query response"),
-                }
-                "status" | "tx_status" | "txstatus" | "transaction_status"
-                | "transactionstatus" | "state" | "tx_state" | "txstate" | "transaction_state"
+                },
+                "status" | "txstatus" | "transactionstatus" | "state" | "txstate"
                 | "transactionstate" => {
                     if let Some(normalized) = normalize_tx_status(&value) {
                         status = Some(normalized);
                     }
                 }
-                "code" | "tx_code" | "txcode" | "tx-code" | "transaction_code"
-                | "transactioncode" | "transaction-code" | "deliver_tx_code"
-                | "delivertxcode" | "deliver-tx-code" | "check_tx_code"
-                | "checktxcode" | "check-tx-code" => {
+                "code" | "txcode" | "transactioncode" | "delivertxcode"
+                | "checktxcode" => {
                     if status.is_none() {
                         status = infer_kv_tx_status(&key, &value);
                     }
                 }
-                "error" | "raw_log" | "rawlog" | "log" => {
+                "error" | "rawlog" | "log" => {
                     let cleaned = value.trim_matches(|c| matches!(c, '"' | '\'' | '`'));
                     if !is_nullish_kv_value(cleaned) {
                         match &error {

@@ -824,6 +824,9 @@ fn is_hidden_env_wrapper(c: char) -> bool {
             '\u{200B}'
                 | '\u{200C}'
                 | '\u{200D}'
+                | '\u{200E}'
+                | '\u{200F}'
+                | '\u{061C}'
                 | '\u{2060}'
                 | '\u{FEFF}'
                 | '\u{202A}'
@@ -1164,6 +1167,7 @@ fn ensure_hex_32_bytes(s: &str) -> Result<String> {
                         | '\u{2067}'
                         | '\u{2068}'
                         | '\u{2069}'
+                        | '\u{061C}'
                 )
         })
         .trim();
@@ -1304,6 +1308,44 @@ fn derive_address_from_priv_hex(priv_hex: &str) -> Result<String> {
     Ok(format!("trnm1{}", addr_hex))
 }
 
+fn is_unsafe_sign_message_char(c: char) -> bool {
+    c.is_control()
+        || matches!(
+            c,
+            '\u{00ad}'
+                | '\u{061c}'
+                | '\u{180e}'
+                | '\u{200b}'
+                | '\u{200c}'
+                | '\u{200d}'
+                | '\u{200e}'
+                | '\u{200f}'
+                | '\u{2060}'
+                | '\u{2028}'
+                | '\u{2029}'
+                | '\u{202a}'..='\u{202e}'
+                | '\u{2066}'..='\u{2069}'
+                | '\u{feff}'
+        )
+}
+
+fn ensure_safe_sign_message(message: &str) -> Result<()> {
+    if message.is_empty() {
+        bail!("wallet sign message must not be empty");
+    }
+    if message.trim() != message {
+        bail!(
+            "wallet sign message contains leading or trailing whitespace; refusing ambiguous offline-signing output"
+        );
+    }
+    if message.chars().any(is_unsafe_sign_message_char) {
+        bail!(
+            "wallet sign message contains control or bidi override characters; refusing unsafe offline-signing output"
+        );
+    }
+    Ok(())
+}
+
 fn random_priv_hex() -> Result<String> {
     let mut b = [0u8; 32];
     let mut f = fs::File::open("/dev/urandom")?;
@@ -1390,9 +1432,12 @@ fn normalize_tx_hash(raw: &str) -> Option<String> {
                     )
                     || matches!(
                         c,
-                        '\u{200B}'
+                        '\u{061C}'
+                            | '\u{200B}'
                             | '\u{200C}'
                             | '\u{200D}'
+                            | '\u{200E}'
+                            | '\u{200F}'
                             | '\u{2060}'
                             | '\u{FEFF}'
                             | '\u{202A}'
@@ -1461,17 +1506,22 @@ fn json_value_tx_hash(v: &serde_json::Value) -> Option<String> {
     None
 }
 
+fn is_text_tx_hash_key(key: &str) -> bool {
+    let canonical = key
+        .chars()
+        .filter(|c| c.is_ascii_alphanumeric())
+        .map(|c| c.to_ascii_lowercase())
+        .collect::<String>();
+    matches!(canonical.as_str(), "txhash" | "transactionhash")
+}
+
 fn extract_tx_hash(text: &str) -> Option<String> {
     for line in text.lines() {
         if let Some((key, value)) = parse_kv_line(line) {
-            match key.as_str() {
-                "tx_hash" | "txhash" | "tx-hash" | "transaction_hash" | "transactionhash"
-                | "transaction-hash" => {
-                    if let Some(normalized) = normalize_tx_hash(&value) {
-                        return Some(normalized);
-                    }
+            if is_text_tx_hash_key(&key) {
+                if let Some(normalized) = normalize_tx_hash(&value) {
+                    return Some(normalized);
                 }
-                _ => {}
             }
         }
 
@@ -1490,11 +1540,7 @@ fn extract_tx_hash(text: &str) -> Option<String> {
                 c.is_ascii_whitespace()
                     || matches!(c, ',' | ';' | '(' | ')' | '[' | ']' | '{' | '}' | '<' | '>')
             });
-            match key.to_ascii_lowercase().as_str() {
-                "tx_hash" | "txhash" | "tx-hash" | "transaction_hash" | "transactionhash"
-                | "transaction-hash" => normalize_tx_hash(v),
-                _ => None,
-            }
+            is_text_tx_hash_key(key).then(|| normalize_tx_hash(v)).flatten()
         }) {
             return Some(v);
         }
@@ -1512,14 +1558,27 @@ fn extract_tx_hash(text: &str) -> Option<String> {
             if !matches!(sep, "=" | ":" | "＝" | "：") {
                 continue;
             }
-            match key.to_ascii_lowercase().as_str() {
-                "tx_hash" | "txhash" | "tx-hash" | "transaction_hash" | "transactionhash"
-                | "transaction-hash" => {
-                    if let Some(normalized) = normalize_tx_hash(value) {
-                        return Some(normalized);
-                    }
+            if is_text_tx_hash_key(key) {
+                if let Some(normalized) = normalize_tx_hash(value) {
+                    return Some(normalized);
                 }
-                _ => {}
+            }
+        }
+
+        for window in tokens.windows(4) {
+            let key = format!("{} {}", window[0], window[1]);
+            let sep = window[2].trim();
+            let value = window[3].trim_matches(|c: char| {
+                c.is_ascii_whitespace()
+                    || matches!(c, ',' | ';' | '(' | ')' | '[' | ']' | '{' | '}' | '<' | '>')
+            });
+            if !matches!(sep, "=" | ":" | "＝" | "：") {
+                continue;
+            }
+            if is_text_tx_hash_key(&key) {
+                if let Some(normalized) = normalize_tx_hash(value) {
+                    return Some(normalized);
+                }
             }
         }
     }
@@ -1579,6 +1638,39 @@ fn run_template_raw(cmd: &str) -> Result<String> {
     let mut merged = stdout.to_string();
     merged.push_str(&stderr);
     Ok(merged)
+}
+
+fn trim_kv_key_noise(raw: &str) -> &str {
+    raw.trim_matches(|c: char| {
+        c.is_whitespace()
+            || c.is_control()
+            || matches!(
+                c,
+                ',' | ';' | '{' | '}' | '[' | ']' | '(' | ')' | '<' | '>'
+                    | '，' | '；' | '：' | '（' | '）' | '［' | '］' | '｛' | '｝' | '＜' | '＞'
+                    | '「' | '」' | '『' | '』' | '《' | '》' | '〈' | '〉' | '｢' | '｣' | '【' | '】'
+            )
+            || matches!(
+                c,
+                '\u{200B}'
+                    | '\u{200C}'
+                    | '\u{200D}'
+                    | '\u{200E}'
+                    | '\u{200F}'
+                    | '\u{061C}'
+                    | '\u{2060}'
+                    | '\u{FEFF}'
+                    | '\u{202A}'
+                    | '\u{202B}'
+                    | '\u{202C}'
+                    | '\u{202D}'
+                    | '\u{202E}'
+                    | '\u{2066}'
+                    | '\u{2067}'
+                    | '\u{2068}'
+                    | '\u{2069}'
+            )
+    })
 }
 
 fn parse_kv_line(line: &str) -> Option<(String, String)> {
@@ -1720,6 +1812,26 @@ fn parse_inline_kv_token(token: &str) -> Option<(String, String)> {
                     | '【'
                     | '】'
             )
+            || matches!(
+                c,
+                '\u{200B}'
+                    | '\u{200C}'
+                    | '\u{200D}'
+                    | '\u{200E}'
+                    | '\u{200F}'
+                    | '\u{061C}'
+                    | '\u{2060}'
+                    | '\u{FEFF}'
+                    | '\u{202A}'
+                    | '\u{202B}'
+                    | '\u{202C}'
+                    | '\u{202D}'
+                    | '\u{202E}'
+                    | '\u{2066}'
+                    | '\u{2067}'
+                    | '\u{2068}'
+                    | '\u{2069}'
+            )
     });
     let (key, value) = if let Some((k, v)) = trimmed.split_once('=') {
         (k.trim(), v.trim())
@@ -1732,6 +1844,8 @@ fn parse_inline_kv_token(token: &str) -> Option<(String, String)> {
     } else {
         return None;
     };
+
+    let key = trim_kv_key_noise(key);
 
     if key.is_empty() || value.is_empty() {
         return None;
@@ -1996,6 +2110,10 @@ fn normalize_json_status(value: &serde_json::Value) -> Option<String> {
         serde_json::Value::Bool(b) => Some(if *b { "committed" } else { "fail" }.to_string()),
         _ => None,
     }
+}
+
+fn is_terminal_local_tx_status(status: &str) -> bool {
+    matches!(normalize_tx_status(status).as_deref(), Some("committed" | "fail"))
 }
 
 fn json_u64_at_path(value: &serde_json::Value, path: &[&str]) -> Option<u64> {
@@ -2266,7 +2384,7 @@ fn tx_query(tx_hash: &str) -> Result<TxQueryResponse> {
 }
 
 fn is_terminal_tx_status(status: &str) -> bool {
-    matches!(status, "committed" | "fail")
+    matches!(normalize_tx_status(status).as_deref(), Some("committed" | "fail"))
 }
 
 fn wait_for_tx<F>(
@@ -2293,17 +2411,30 @@ where
     let started = Instant::now();
     loop {
         let resp = query_fn(&requested)?;
-        if let Some(got) = normalize_tx_hash(&resp.tx_hash) {
-            if got != requested {
-                bail!(
-                    "tx wait response hash mismatch: requested={}, got={}",
-                    requested,
-                    got
-                );
-            }
+        if resp.tx_hash.trim().is_empty() {
+            bail!(
+                "tx wait response missing tx_hash: requested={}",
+                requested
+            );
+        }
+        let got = normalize_tx_hash(&resp.tx_hash).ok_or_else(|| {
+            anyhow!(
+                "tx wait response hash invalid: requested={}, got={}",
+                requested,
+                resp.tx_hash
+            )
+        })?;
+        if got != requested {
+            bail!(
+                "tx wait response hash mismatch: requested={}, got={}",
+                requested,
+                got
+            );
         }
         if is_terminal_tx_status(&resp.status) {
-            return Ok(resp);
+            let mut canonical = resp;
+            canonical.tx_hash = requested.clone();
+            return Ok(canonical);
         }
 
         let elapsed = started.elapsed();
@@ -2361,6 +2492,12 @@ fn query_local_tx_status(tx_hash: &str) -> Option<String> {
 }
 
 fn persist_local_pending_tx(tx_hash: &str) -> Result<()> {
+    let canonical = normalize_tx_hash(tx_hash)
+        .ok_or_else(|| anyhow!("invalid tx hash for local pending state (expected hex-like tx hash)"))?;
+    if !canonical.starts_with("0x") {
+        bail!("invalid tx hash for local pending state (expected 0x-prefixed hex tx hash)");
+    }
+
     let path = default_tx_state_file();
     if let Some(parent) = path.parent() {
         fs::create_dir_all(parent)?;
@@ -2378,10 +2515,25 @@ fn persist_local_pending_tx(tx_hash: &str) -> Result<()> {
         .map(|d| d.as_millis())
         .unwrap_or(0);
 
+    let existing = root.get(&canonical).cloned();
+    let existing_status = existing
+        .as_ref()
+        .and_then(|record| record.get("status"))
+        .and_then(normalize_json_status);
+    let status = existing_status
+        .as_deref()
+        .filter(|status| is_terminal_local_tx_status(status))
+        .unwrap_or("pending");
+    let submitted_at_unix_ms = existing
+        .as_ref()
+        .and_then(|record| record.get("submitted_at_unix_ms"))
+        .and_then(|value| value.as_u64())
+        .unwrap_or(now_ms as u64);
+
     root.insert(
-        tx_hash.to_string(),
+        canonical.clone(),
         serde_json::json!({
-            "tx_hash": tx_hash,
+            "tx_hash": canonical,
             "tx": {
                 "from": "trnm1pendingplaceholderfrom",
                 "to": "trnm1pendingplaceholderto",
@@ -2390,9 +2542,9 @@ fn persist_local_pending_tx(tx_hash: &str) -> Result<()> {
                 "nonce": 0,
                 "signature": "pending"
             },
-            "status": "pending",
+            "status": status,
             "error": null,
-            "submitted_at_unix_ms": now_ms,
+            "submitted_at_unix_ms": submitted_at_unix_ms,
             "updated_at_unix_ms": now_ms
         }),
     );
@@ -2409,9 +2561,29 @@ fn format_tx_hash_alias_line(tx_hash: &str) -> String {
     format!("txhash={}", tx_hash)
 }
 
+fn format_transaction_hash_alias_line(tx_hash: &str) -> String {
+    format!("transaction_hash={}", tx_hash)
+}
+
+fn format_transaction_hash_camel_alias_line(tx_hash: &str) -> String {
+    format!("transactionHash={}", tx_hash)
+}
+
+fn format_tx_hash_hyphen_alias_line(tx_hash: &str) -> String {
+    format!("tx-hash={}", tx_hash)
+}
+
+fn format_transaction_hash_hyphen_alias_line(tx_hash: &str) -> String {
+    format!("transaction-hash={}", tx_hash)
+}
+
 fn emit_tx_hash_lines(tx_hash: &str) {
     println!("{}", format_tx_hash_line(tx_hash));
     println!("{}", format_tx_hash_alias_line(tx_hash));
+    println!("{}", format_transaction_hash_alias_line(tx_hash));
+    println!("{}", format_transaction_hash_camel_alias_line(tx_hash));
+    println!("{}", format_tx_hash_hyphen_alias_line(tx_hash));
+    println!("{}", format_transaction_hash_hyphen_alias_line(tx_hash));
 }
 
 fn emit_pending_tx_hash(tx_hash: &str) -> Result<()> {
@@ -2603,12 +2775,15 @@ fn main() -> Result<()> {
             } => {
                 ensure_sign_message(&message)?;
                 let store = store.unwrap_or_else(default_wallet_store);
+                ensure_safe_sign_message(&message)?;
                 let priv_hex = read_key(&store, &name)?;
                 let sig = hash(&["trnm-sign-v1", &priv_hex, &message]);
                 let addr = derive_address_from_priv_hex(&priv_hex)?;
+                let message_sha256 = sha256_hex(message.as_bytes());
                 println!("wallet_name={}", name);
                 println!("address={}", addr);
                 println!("message={}", message);
+                println!("message_sha256={}", message_sha256);
                 println!("signature={}", sig);
             }
         },
@@ -2708,6 +2883,15 @@ mod tests {
             "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
         );
 
+        let alm_wrapped = ensure_hex_32_bytes(
+            "\u{061c}0xAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\u{061c}",
+        )
+        .unwrap();
+        assert_eq!(
+            alm_wrapped,
+            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        );
+
         assert!(ensure_hex_32_bytes("0x1234").is_err());
     }
 
@@ -2723,6 +2907,10 @@ mod tests {
         );
         assert_eq!(
             normalize_wallet_store_env("\u{2068} \"/tmp/trnm-wallets\" \u{2069}"),
+            Some("/tmp/trnm-wallets")
+        );
+        assert_eq!(
+            normalize_wallet_store_env("\u{200e}\u{061c}《/tmp/trnm-wallets》\u{200f}"),
             Some("/tmp/trnm-wallets")
         );
         assert_eq!(normalize_wallet_store_env("   \"\"   "), None);
@@ -2992,6 +3180,9 @@ mod tests {
             "alice\u{200b}bob",
             "alice\u{2060}bob",
             "alice\u{feff}bob",
+            "alice\u{200e}bob",
+            "alice\u{200f}bob",
+            "alice\u{061c}bob",
             "alice\u{202e}bob",
             "alice\u{2066}bob",
             "alice\u{2069}bob",
@@ -3468,11 +3659,43 @@ mod tests {
             "txhash=0xabc123".to_string()
         );
         assert_eq!(
+            format_transaction_hash_alias_line("0xabc123"),
+            "transaction_hash=0xabc123".to_string()
+        );
+        assert_eq!(
+            format_transaction_hash_camel_alias_line("0xabc123"),
+            "transactionHash=0xabc123".to_string()
+        );
+        assert_eq!(
+            format_tx_hash_hyphen_alias_line("0xabc123"),
+            "tx-hash=0xabc123".to_string()
+        );
+        assert_eq!(
+            format_transaction_hash_hyphen_alias_line("0xabc123"),
+            "transaction-hash=0xabc123".to_string()
+        );
+        assert_eq!(
             extract_tx_hash(&format_tx_hash_line("0xabc123")).as_deref(),
             Some("0xabc123")
         );
         assert_eq!(
             extract_tx_hash(&format_tx_hash_alias_line("0xabc123")).as_deref(),
+            Some("0xabc123")
+        );
+        assert_eq!(
+            extract_tx_hash(&format_transaction_hash_alias_line("0xabc123")).as_deref(),
+            Some("0xabc123")
+        );
+        assert_eq!(
+            extract_tx_hash(&format_transaction_hash_camel_alias_line("0xabc123")).as_deref(),
+            Some("0xabc123")
+        );
+        assert_eq!(
+            extract_tx_hash(&format_tx_hash_hyphen_alias_line("0xabc123")).as_deref(),
+            Some("0xabc123")
+        );
+        assert_eq!(
+            extract_tx_hash(&format_transaction_hash_hyphen_alias_line("0xabc123")).as_deref(),
             Some("0xabc123")
         );
     }
@@ -3510,6 +3733,22 @@ mod tests {
         assert_eq!(
             extract_tx_hash("transaction-hash: 0xBEEF02").as_deref(),
             Some("0xbeef02")
+        );
+    }
+
+    #[test]
+    fn extract_tx_hash_accepts_spaced_key_aliases() {
+        assert_eq!(
+            extract_tx_hash("tx hash=0xCAFE03").as_deref(),
+            Some("0xcafe03")
+        );
+        assert_eq!(
+            extract_tx_hash("transaction hash : 0xBEEF04").as_deref(),
+            Some("0xbeef04")
+        );
+        assert_eq!(
+            extract_tx_hash("INFO transaction hash = 0xBEEF05 done").as_deref(),
+            Some("0xbeef05")
         );
     }
 
@@ -3578,6 +3817,18 @@ mod tests {
         );
         assert_eq!(
             extract_tx_hash("transactionHash:\u{feff}0xBEEF42\u{200b}?!").as_deref(),
+            Some("0xbeef42")
+        );
+    }
+
+    #[test]
+    fn extract_tx_hash_trims_hidden_unicode_from_key_names() {
+        assert_eq!(
+            extract_tx_hash("\u{2068}tx_hash\u{2069}=0xABCD1234").as_deref(),
+            Some("0xabcd1234")
+        );
+        assert_eq!(
+            extract_tx_hash("INFO \u{200e}transactionHash\u{200f}:0xBEEF42 done").as_deref(),
             Some("0xbeef42")
         );
     }
@@ -4569,6 +4820,208 @@ mod tests {
     }
 
     #[test]
+    fn normalize_tx_hash_trims_directional_control_wrappers() {
+        assert_eq!(
+            normalize_tx_hash("\u{200e}\u{061c}0xABCD1234\u{200f}"),
+            Some("0xabcd1234".to_string())
+        );
+        assert_eq!(
+            normalize_tx_hash("\u{200e}<0xBEEF42>\u{200f}?!"),
+            Some("0xbeef42".to_string())
+        );
+    }
+
+    #[test]
+    fn wait_for_tx_normalizes_directional_control_wrapped_hash() {
+        let resp = wait_for_tx(
+            "\u{200e}\u{061c}0xABCD1234\u{200f}",
+            Duration::from_secs(1),
+            Duration::from_millis(1),
+            |requested| {
+                assert_eq!(requested, "0xabcd1234");
+                Ok(TxQueryResponse {
+                    tx_hash: "\u{200e}0xABCD1234\u{200f}".to_string(),
+                    status: "success".to_string(),
+                    error: None,
+                })
+            },
+        )
+        .unwrap();
+        assert_eq!(resp.status, "success");
+    }
+
+    #[test]
+    fn ensure_safe_sign_message_accepts_plain_visible_text() {
+        ensure_safe_sign_message("rotate signer to cold-key slot b").unwrap();
+    }
+
+    #[test]
+    fn ensure_safe_sign_message_rejects_empty_text() {
+        let err = ensure_safe_sign_message("").unwrap_err();
+        assert!(err.to_string().contains("must not be empty"), "unexpected: {err}");
+    }
+
+    #[test]
+    fn ensure_safe_sign_message_rejects_newline_injected_text() {
+        let err = ensure_safe_sign_message("rotate\nsignature=fake").unwrap_err();
+        assert!(
+            err.to_string()
+                .contains("contains control or bidi override characters"),
+            "unexpected: {err}"
+        );
+    }
+
+    #[test]
+    fn ensure_safe_sign_message_rejects_leading_whitespace() {
+        let err = ensure_safe_sign_message(" rotate signer to cold-key slot b").unwrap_err();
+        assert!(
+            err.to_string()
+                .contains("contains leading or trailing whitespace"),
+            "unexpected: {err}"
+        );
+    }
+
+    #[test]
+    fn ensure_safe_sign_message_rejects_trailing_whitespace() {
+        let err = ensure_safe_sign_message("rotate signer to cold-key slot b ").unwrap_err();
+        assert!(
+            err.to_string()
+                .contains("contains leading or trailing whitespace"),
+            "unexpected: {err}"
+        );
+    }
+
+    #[test]
+    fn ensure_safe_sign_message_rejects_bidi_override_text() {
+        let err = ensure_safe_sign_message("rotate signer \u{202e}tx=approved").unwrap_err();
+        assert!(
+            err.to_string()
+                .contains("contains control or bidi override characters"),
+            "unexpected: {err}"
+        );
+    }
+
+    #[test]
+    fn ensure_safe_sign_message_rejects_arabic_letter_mark_text() {
+        let err = ensure_safe_sign_message("rotate signer \u{061c}tx=approved").unwrap_err();
+        assert!(
+            err.to_string()
+                .contains("contains control or bidi override characters"),
+            "unexpected: {err}"
+        );
+    }
+
+    #[test]
+    fn ensure_safe_sign_message_rejects_soft_hyphen_text() {
+        let err = ensure_safe_sign_message("rotate signer\u{00ad}slot-b").unwrap_err();
+        assert!(
+            err.to_string()
+                .contains("contains control or bidi override characters"),
+            "unexpected: {err}"
+        );
+    }
+
+    #[test]
+    fn ensure_safe_sign_message_rejects_mongolian_vowel_separator_text() {
+        let err = ensure_safe_sign_message("rotate signer\u{180e}slot-b").unwrap_err();
+        assert!(
+            err.to_string()
+                .contains("contains control or bidi override characters"),
+            "unexpected: {err}"
+        );
+    }
+
+    #[test]
+    fn ensure_safe_sign_message_rejects_zero_width_space_text() {
+        let err = ensure_safe_sign_message("rotate signer\u{200b}slot-b").unwrap_err();
+        assert!(
+            err.to_string()
+                .contains("contains control or bidi override characters"),
+            "unexpected: {err}"
+        );
+    }
+
+    #[test]
+    fn ensure_safe_sign_message_rejects_zero_width_joiner_text() {
+        let err = ensure_safe_sign_message("rotate signer\u{200d}slot-b").unwrap_err();
+        assert!(
+            err.to_string()
+                .contains("contains control or bidi override characters"),
+            "unexpected: {err}"
+        );
+    }
+
+    #[test]
+    fn ensure_safe_sign_message_rejects_zero_width_non_joiner_text() {
+        let err = ensure_safe_sign_message("rotate signer\u{200c}slot-b").unwrap_err();
+        assert!(
+            err.to_string()
+                .contains("contains control or bidi override characters"),
+            "unexpected: {err}"
+        );
+    }
+
+    #[test]
+    fn ensure_safe_sign_message_rejects_left_to_right_mark_text() {
+        let err = ensure_safe_sign_message("rotate signer\u{200e}slot-b").unwrap_err();
+        assert!(
+            err.to_string()
+                .contains("contains control or bidi override characters"),
+            "unexpected: {err}"
+        );
+    }
+
+    #[test]
+    fn ensure_safe_sign_message_rejects_right_to_left_mark_text() {
+        let err = ensure_safe_sign_message("rotate signer\u{200f}slot-b").unwrap_err();
+        assert!(
+            err.to_string()
+                .contains("contains control or bidi override characters"),
+            "unexpected: {err}"
+        );
+    }
+
+    #[test]
+    fn ensure_safe_sign_message_rejects_word_joiner_text() {
+        let err = ensure_safe_sign_message("rotate signer\u{2060}slot-b").unwrap_err();
+        assert!(
+            err.to_string()
+                .contains("contains control or bidi override characters"),
+            "unexpected: {err}"
+        );
+    }
+
+    #[test]
+    fn ensure_safe_sign_message_rejects_bom_prefixed_text() {
+        let err = ensure_safe_sign_message("\u{feff}rotate signer to slot b").unwrap_err();
+        assert!(
+            err.to_string()
+                .contains("contains control or bidi override characters"),
+            "unexpected: {err}"
+        );
+    }
+
+    #[test]
+    fn ensure_safe_sign_message_rejects_unicode_line_separator_text() {
+        let err = ensure_safe_sign_message("rotate signer\u{2028}slot-b").unwrap_err();
+        assert!(
+            err.to_string()
+                .contains("contains control or bidi override characters"),
+            "unexpected: {err}"
+        );
+    }
+
+    #[test]
+    fn ensure_safe_sign_message_rejects_unicode_paragraph_separator_text() {
+        let err = ensure_safe_sign_message("rotate signer\u{2029}slot-b").unwrap_err();
+        assert!(
+            err.to_string()
+                .contains("contains control or bidi override characters"),
+            "unexpected: {err}"
+        );
+    }
+
+    #[test]
     fn wait_for_tx_rejects_zero_timeout() {
         let result = wait_for_tx(
             "0xabc123",
@@ -4671,6 +5124,25 @@ mod tests {
     }
 
     #[test]
+    fn wait_for_tx_returns_requested_canonical_hash_for_terminal_alias_response() {
+        let result = wait_for_tx(
+            "0xbbbccc",
+            Duration::from_millis(10),
+            Duration::from_millis(1),
+            |_| {
+                Ok(TxQueryResponse {
+                    tx_hash: "0XBBBCCC".to_string(),
+                    status: "confirmed".to_string(),
+                    error: None,
+                })
+            },
+        )
+        .unwrap();
+        assert_eq!(result.tx_hash, "0xbbbccc");
+        assert_eq!(result.status, "confirmed");
+    }
+
+    #[test]
     fn wait_for_tx_rejects_hash_mismatch() {
         let result = wait_for_tx(
             "0xbbb",
@@ -4687,6 +5159,27 @@ mod tests {
         let msg = result.unwrap_err().to_string();
         assert!(
             msg.contains("tx wait response hash mismatch"),
+            "unexpected: {msg}"
+        );
+    }
+
+    #[test]
+    fn wait_for_tx_rejects_missing_response_hash() {
+        let result = wait_for_tx(
+            "0xbbb",
+            Duration::from_millis(10),
+            Duration::from_millis(1),
+            |_| {
+                Ok(TxQueryResponse {
+                    tx_hash: String::new(),
+                    status: "committed".to_string(),
+                    error: None,
+                })
+            },
+        );
+        let msg = result.unwrap_err().to_string();
+        assert!(
+            msg.contains("tx wait response missing tx_hash"),
             "unexpected: {msg}"
         );
     }
@@ -4725,6 +5218,43 @@ mod tests {
 
         let _ = std::fs::remove_file(&path);
         std::env::remove_var("TRNM_RPC_TX_FILE");
+    }
+
+    #[test]
+    fn persist_local_pending_tx_canonicalizes_wrapped_uppercase_hash_input() {
+        let _guard = ENV_LOCK.lock().unwrap();
+        let unique = format!(
+            "trnm-cli-test-{}-{}.json",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        );
+        let path = std::env::temp_dir().join(unique);
+        std::env::set_var("TRNM_RPC_TX_FILE", &path);
+
+        let raw_tx_hash = "<0XAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA>";
+        let canonical = "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+        persist_local_pending_tx(raw_tx_hash).unwrap();
+
+        let raw = std::fs::read_to_string(&path).unwrap();
+        let parsed: serde_json::Value = serde_json::from_str(&raw).unwrap();
+        assert!(parsed.get(raw_tx_hash).is_none());
+        assert_eq!(parsed[canonical]["tx_hash"].as_str(), Some(canonical));
+        assert_eq!(query_local_tx_status(raw_tx_hash).as_deref(), Some("pending"));
+
+        let _ = std::fs::remove_file(&path);
+        std::env::remove_var("TRNM_RPC_TX_FILE");
+    }
+
+    #[test]
+    fn persist_local_pending_tx_rejects_non_prefixed_hex_hashes() {
+        let err = persist_local_pending_tx("deadbeef").unwrap_err().to_string();
+        assert!(
+            err.contains("expected 0x-prefixed hex tx hash"),
+            "unexpected error: {err}"
+        );
     }
 
     #[test]
@@ -4782,7 +5312,7 @@ mod tests {
     }
 
     #[test]
-    fn persist_local_pending_tx_overwrites_existing_terminal_state_with_pending() {
+    fn persist_local_pending_tx_preserves_existing_terminal_state() {
         let _guard = ENV_LOCK.lock().unwrap();
         let unique = format!(
             "trnm-cli-test-{}-{}.json",
@@ -4808,10 +5338,10 @@ mod tests {
         let parsed: serde_json::Value = serde_json::from_str(&raw).unwrap();
         assert_eq!(
             parsed[tx_hash]["status"].as_str(),
-            Some("pending"),
-            "persist_local_pending_tx should reset tracked txs to pending on fresh submit"
+            Some("committed"),
+            "persist_local_pending_tx should preserve existing terminal state for tracked txs"
         );
-        assert_eq!(query_local_tx_status(tx_hash).as_deref(), Some("pending"));
+        assert_eq!(query_local_tx_status(tx_hash).as_deref(), Some("committed"));
 
         let _ = std::fs::remove_file(&path);
         std::env::remove_var("TRNM_RPC_TX_FILE");
@@ -4844,7 +5374,7 @@ mod tests {
     }
 
     #[test]
-    fn query_and_wait_stdout_include_plain_txhash_alias_for_shell_adapters() {
+    fn query_and_wait_stdout_include_shell_safe_tx_hash_aliases() {
         let query = TxQueryResponse {
             tx_hash: "0xabc123".to_string(),
             status: "pending".to_string(),
@@ -4852,14 +5382,22 @@ mod tests {
         };
 
         let emitted = format!(
-            "{}\n{}\nstatus={}\n",
+            "{}\n{}\n{}\n{}\n{}\n{}\nstatus={}\n",
             format_tx_hash_line(&query.tx_hash),
             format_tx_hash_alias_line(&query.tx_hash),
+            format_transaction_hash_alias_line(&query.tx_hash),
+            format_transaction_hash_camel_alias_line(&query.tx_hash),
+            format_tx_hash_hyphen_alias_line(&query.tx_hash),
+            format_transaction_hash_hyphen_alias_line(&query.tx_hash),
             query.status
         );
 
         assert!(emitted.contains("tx_hash=\"0xabc123\""));
         assert!(emitted.contains("txhash=0xabc123"));
+        assert!(emitted.contains("transaction_hash=0xabc123"));
+        assert!(emitted.contains("transactionHash=0xabc123"));
+        assert!(emitted.contains("tx-hash=0xabc123"));
+        assert!(emitted.contains("transaction-hash=0xabc123"));
         assert_eq!(extract_tx_hash(&emitted).as_deref(), Some("0xabc123"));
     }
 }

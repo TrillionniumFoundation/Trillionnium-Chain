@@ -141,6 +141,16 @@ fn tx_query_parse_kv_accepts_transaction_hash_aliases() {
     let parsed_transaction_hyphen =
         parse_tx_query_response(transaction_hyphen, "0xfallback").unwrap();
     assert_eq!(parsed_transaction_hyphen.tx_hash, "0xdecafbad");
+
+    let spaced = "tx hash = 0xabc123\ntransaction status = success\n";
+    let parsed_spaced = parse_tx_query_response(spaced, "0xfallback").unwrap();
+    assert_eq!(parsed_spaced.tx_hash, "0xabc123");
+    assert_eq!(parsed_spaced.status, "committed");
+
+    let mixed = "transaction hash：0xdef456\ncheck tx code：0\n";
+    let parsed_mixed = parse_tx_query_response(mixed, "0xfallback").unwrap();
+    assert_eq!(parsed_mixed.tx_hash, "0xdef456");
+    assert_eq!(parsed_mixed.status, "committed");
 }
 
 #[test]
@@ -179,6 +189,12 @@ fn tx_query_parse_kv_accepts_quoted_and_unicode_wrapped_keys() {
     assert_eq!(parsed_unicode.tx_hash, "0xcafe78");
     assert_eq!(parsed_unicode.status, "committed");
     assert_eq!(parsed_unicode.error, None);
+
+    let vertical_wrapped = "〝transactionHash〞：0xCAFE79\n〟status〟：SUCCESS\n〝error〞：NULL\n";
+    let parsed_vertical = parse_tx_query_response(vertical_wrapped, "0xfallback").unwrap();
+    assert_eq!(parsed_vertical.tx_hash, "0xcafe79");
+    assert_eq!(parsed_vertical.status, "committed");
+    assert_eq!(parsed_vertical.error, None);
 }
 
 #[test]
@@ -191,10 +207,28 @@ fn tx_query_parse_kv_accepts_fullwidth_wrapped_inline_tokens() {
 }
 
 #[test]
+fn tx_query_parse_kv_accepts_quote_wrapped_inline_tokens() {
+    let noisy = "[rpc] \"transactionHash\"=0xCAFE97 'status'=COMMITTED `error`=NULL";
+    let parsed = parse_tx_query_response(noisy, "0xfallback").unwrap();
+    assert_eq!(parsed.tx_hash, "0xcafe97");
+    assert_eq!(parsed.status, "committed");
+    assert_eq!(parsed.error, None);
+}
+
+#[test]
 fn tx_query_parse_kv_tolerates_unicode_wrapped_status_and_null_error() {
     let kv = "transactionHash：0xBEEF42\nstatus=\u{2068}“SUCCESS！”\u{2069}\nerror=『NULL？』\n";
     let parsed = parse_tx_query_response(kv, "0xfallback").unwrap();
     assert_eq!(parsed.tx_hash, "0xbeef42");
+    assert_eq!(parsed.status, "committed");
+    assert_eq!(parsed.error, None);
+}
+
+#[test]
+fn tx_query_parse_kv_tolerates_bidi_wrapped_tx_hash() {
+    let kv = "transactionHash=\u{200e}0xBEEF44\u{200f}\nstatus=\u{061c}committed\u{200f}\nerror=null\n";
+    let parsed = parse_tx_query_response(kv, "0xfallback").unwrap();
+    assert_eq!(parsed.tx_hash, "0xbeef44");
     assert_eq!(parsed.status, "committed");
     assert_eq!(parsed.error, None);
 }

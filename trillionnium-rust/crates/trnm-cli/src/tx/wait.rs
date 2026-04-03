@@ -2,7 +2,10 @@ use super::*;
 use std::{thread, time::Instant};
 
 fn is_terminal_tx_status(status: &str) -> bool {
-    matches!(status, "committed" | "fail")
+    matches!(
+        super::parse::normalize_tx_status(status).as_deref(),
+        Some("committed" | "fail")
+    )
 }
 
 pub(crate) fn wait_for_tx<F>(
@@ -29,14 +32,25 @@ where
     let started = Instant::now();
     loop {
         let resp = query_fn(&requested)?;
-        if let Some(got) = normalize_tx_hash(&resp.tx_hash) {
-            if got != requested {
-                bail!(
-                    "tx wait response hash mismatch: requested={}, got={}",
-                    requested,
-                    got
-                );
-            }
+        if resp.tx_hash.trim().is_empty() {
+            bail!(
+                "tx wait response missing tx_hash: requested={}",
+                requested
+            );
+        }
+        let got = normalize_tx_hash(&resp.tx_hash).ok_or_else(|| {
+            anyhow!(
+                "tx wait response hash invalid: requested={}, got={}",
+                requested,
+                resp.tx_hash
+            )
+        })?;
+        if got != requested {
+            bail!(
+                "tx wait response hash mismatch: requested={}, got={}",
+                requested,
+                got
+            );
         }
         if is_terminal_tx_status(&resp.status) {
             return Ok(resp);
