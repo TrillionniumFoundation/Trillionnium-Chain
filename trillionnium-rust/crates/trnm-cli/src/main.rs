@@ -1048,6 +1048,14 @@ fn default_wallet_store() -> PathBuf {
 
 fn resolve_wallet_store(store: Option<PathBuf>) -> Result<PathBuf> {
     if let Some(store) = store {
+        if !wallet_store_path_is_safe(&store)
+            || !wallet_store_path_and_ancestors_are_symlink_free(&store)
+        {
+            bail!(
+                "explicit wallet store '{}' must be an absolute normalized symlink-free path",
+                store.display()
+            );
+        }
         return Ok(store);
     }
 
@@ -3121,7 +3129,10 @@ mod tests {
             "unexpected error: {err}"
         );
 
-        let explicit = std::env::temp_dir().join(format!(
+        let explicit_root = std::env::temp_dir()
+            .canonicalize()
+            .unwrap_or_else(|_| std::env::temp_dir());
+        let explicit = explicit_root.join(format!(
             "trnm-cli-explicit-store-test-{}-{}",
             std::process::id(),
             std::time::SystemTime::now()
@@ -3130,6 +3141,14 @@ mod tests {
                 .as_nanos()
         ));
         assert_eq!(resolve_wallet_store(Some(explicit.clone())).unwrap(), explicit);
+
+        let explicit_relative_err = resolve_wallet_store(Some(PathBuf::from("./wallets"))).unwrap_err();
+        assert!(
+            explicit_relative_err
+                .to_string()
+                .contains("explicit wallet store './wallets' must be an absolute normalized symlink-free path"),
+            "unexpected error: {explicit_relative_err}"
+        );
 
         match original_store {
             Some(value) => std::env::set_var("TRNM_WALLET_STORE", value),
