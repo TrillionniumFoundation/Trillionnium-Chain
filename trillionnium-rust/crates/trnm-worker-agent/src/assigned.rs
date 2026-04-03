@@ -1,5 +1,5 @@
 use anyhow::{anyhow, Result};
-use std::{collections::BTreeMap, env, path::PathBuf, time::Duration};
+use std::{collections::BTreeMap, env, path::{Path, PathBuf}, time::Duration};
 
 use crate::proof_adapter::{build_proof_adapter, DEFAULT_PROOF_ADAPTER};
 use crate::{
@@ -23,6 +23,41 @@ pub(crate) fn assigned_skip_reason(
         Some(current) if current == worker => None,
         Some(_) => Some("assigned_worker_mismatch"),
         None => Some("assigned_worker_missing"),
+    }
+}
+
+fn run_assigned_summary_line(
+    processed: usize,
+    skipped: &str,
+    ingress_file: &Path,
+    submit_log: &Path,
+    llm_adapter_cmd: &str,
+    adapter_retries: u32,
+    adapter_backoff_ms: u64,
+    adapter_timeout_ms: u64,
+) -> String {
+    format!(
+        "[agent] run-assigned processed={} skipped={} ingress={} submit_log={} adapter={} adapter_retries={} adapter_backoff_ms={} adapter_timeout_ms={}",
+        processed,
+        skipped,
+        ingress_file.display(),
+        submit_log.display(),
+        llm_adapter_cmd,
+        adapter_retries,
+        adapter_backoff_ms,
+        adapter_timeout_ms
+    )
+}
+
+fn format_skip_summary(skipped: &BTreeMap<&'static str, usize>) -> String {
+    if skipped.is_empty() {
+        "none".to_string()
+    } else {
+        skipped
+            .iter()
+            .map(|(reason, count)| format!("{}={}", reason, count))
+            .collect::<Vec<_>>()
+            .join(",")
     }
 }
 
@@ -168,25 +203,76 @@ pub(crate) fn handle_run_assigned(
         );
     }
     save_ingress_records(&ingress_file, &records)?;
-    let skip_summary = if skipped.is_empty() {
-        "none".to_string()
-    } else {
-        skipped
-            .iter()
-            .map(|(reason, count)| format!("{}={}", reason, count))
-            .collect::<Vec<_>>()
-            .join(",")
-    };
+    let skip_summary = format_skip_summary(&skipped);
     println!(
-        "[agent] run-assigned processed={} skipped={} ingress={} submit_log={} adapter={} adapter_retries={} adapter_backoff_ms={} adapter_timeout_ms={}",
-        n,
-        skip_summary,
-        ingress_file.display(),
-        submit_log.display(),
-        llm_adapter_cmd,
-        llm_policy.retry.max_retries,
-        llm_policy.retry.backoff_ms,
-        llm_policy.timeout_ms
+        "{}",
+        run_assigned_summary_line(
+            n,
+            &skip_summary,
+            &ingress_file,
+            &submit_log,
+            &llm_adapter_cmd,
+            llm_policy.retry.max_retries,
+            llm_policy.retry.backoff_ms,
+            llm_policy.timeout_ms,
+        )
     );
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use std::collections::BTreeMap;
+
+    use super::{format_skip_summary, run_assigned_summary_line};
+
+    #[test]
+    fn run_assigned_summary_line_keeps_operator_visible_handoff_tokens_stable() {
+        let line = run_assigned_summary_line(
+            3,
+            "none",
+            std::path::Path::new("logs/ingress.jsonl"),
+            std::path::Path::new("logs/submit.jsonl"),
+            "llm-adapter",
+            2,
+            150,
+            5_000,
+        );
+
+        assert_eq!(
+            line,
+            "[agent] run-assigned processed=3 skipped=none ingress=logs/ingress.jsonl submit_log=logs/submit.jsonl adapter=llm-adapter adapter_retries=2 adapter_backoff_ms=150 adapter_timeout_ms=5000"
+        );
+        for token in [
+            "processed=",
+            "skipped=",
+            "ingress=",
+            "submit_log=",
+            "adapter=",
+            "adapter_retries=",
+            "adapter_backoff_ms=",
+            "adapter_timeout_ms=",
+        ] {
+            assert_eq!(line.matches(token).count(), 1, "token should appear once: {token}");
+        }
+    }
+
+    #[test]
+    fn format_skip_summary_preserves_none_sentinel_for_zero_skip_runs() {
+        let skipped = BTreeMap::new();
+        assert_eq!(format_skip_summary(&skipped), "none");
+    }
+
+    #[test]
+    fn format_skip_summary_keeps_reason_counts_sorted_for_grep_stability() {
+        let mut skipped = BTreeMap::new();
+        skipped.insert("status_not_assigned", 2);
+        skipped.insert("assigned_worker_missing", 1);
+        skipped.insert("assigned_worker_mismatch", 4);
+
+        assert_eq!(
+            format_skip_summary(&skipped),
+            "assigned_worker_mismatch=4,assigned_worker_missing=1,status_not_assigned=2"
+        );
+    }
 }

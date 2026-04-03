@@ -34,6 +34,86 @@ fn parse_http_request_target_accepts_head_health_probe() {
 }
 
 #[test]
+fn head_health_probe_alias_ignores_query_string_and_preserves_content_length() {
+    let request = parse_http_request_target("HEAD /-/readyz?probe=lb&from=ops HTTP/1.1")
+        .expect("health alias request parses");
+    let path = request.1.split('?').next().expect("path before query");
+    assert!(is_health_probe_path(path));
+
+    let response = if is_health_probe_path(path) {
+        json_response_for_method(request.0, "200 OK", &health_probe_body(42))
+    } else {
+        unreachable!("health alias with query string should match after path split")
+    };
+
+    assert!(response.starts_with("HTTP/1.1 200 OK\r\n"));
+    assert!(response.contains("Content-Length: 50\r\n"));
+    assert!(response.ends_with("\r\n\r\n"));
+    assert!(!response.ends_with("\"version\":1}"));
+}
+
+#[test]
+fn get_health_probe_alias_ignores_query_string_and_keeps_minimum_json_contract() {
+    let request = parse_http_request_target("GET /healthz?probe=lb&from=ops HTTP/1.1")
+        .expect("health alias request parses");
+    let path = request.1.split('?').next().expect("path before query");
+    assert!(is_health_probe_path(path));
+
+    let response = if is_health_probe_path(path) {
+        json_response_for_method(request.0, "200 OK", &health_probe_body(42))
+    } else {
+        unreachable!("health alias with query string should match after path split")
+    };
+
+    assert!(response.starts_with("HTTP/1.1 200 OK\r\n"));
+    assert!(response.contains("Content-Length: 50\r\n"));
+    assert!(response.ends_with("{\"ok\":true,\"service\":\"trnm-rpc\",\"ts_unix_ms\":42,\"version\":1}"));
+}
+
+#[test]
+fn get_health_probe_alias_with_trailing_slash_before_query_keeps_same_contract() {
+    let request = parse_http_request_target("GET /-/statusz/?from=ops HTTP/1.1")
+        .expect("health alias request parses");
+    let path = request.1.split('?').next().expect("path before query");
+    assert_eq!(path, "/-/statusz/");
+    assert!(is_health_probe_path(path));
+
+    let response = if is_health_probe_path(path) {
+        json_response_for_method(request.0, "200 OK", &health_probe_body(42))
+    } else {
+        unreachable!("health alias with trailing slash and query string should match")
+    };
+
+    assert!(response.starts_with("HTTP/1.1 200 OK\r\n"));
+    assert!(response.contains("Content-Length: 50\r\n"));
+    assert!(response.ends_with("{\"ok\":true,\"service\":\"trnm-rpc\",\"ts_unix_ms\":42,\"version\":1}"));
+}
+
+#[test]
+fn live_and_status_probe_aliases_with_query_strings_stay_on_same_minimum_contract() {
+    for (method, request_line, expected_path) in [
+        ("GET", "GET /live?probe=lb HTTP/1.1", "/live"),
+        ("HEAD", "HEAD /-/status/?from=ops HTTP/1.1", "/-/status/"),
+    ] {
+        let request = parse_http_request_target(request_line).expect("health alias request parses");
+        assert_eq!(request.0, method);
+        let path = request.1.split('?').next().expect("path before query");
+        assert_eq!(path, expected_path);
+        assert!(is_health_probe_path(path), "path should remain an accepted probe alias: {path}");
+
+        let response = json_response_for_method(request.0, "200 OK", &health_probe_body(42));
+        assert!(response.starts_with("HTTP/1.1 200 OK\r\n"));
+        assert!(response.contains("Content-Length: 50\r\n"));
+        if method == "HEAD" {
+            assert!(response.ends_with("\r\n\r\n"));
+            assert!(!response.ends_with("\"version\":1}"));
+        } else {
+            assert!(response.ends_with("{\"ok\":true,\"service\":\"trnm-rpc\",\"ts_unix_ms\":42,\"version\":1}"));
+        }
+    }
+}
+
+#[test]
 fn parse_http_get_path_accepts_lowercase_get_method() {
     assert_eq!(
         parse_http_get_path("get /query-task/42?verbose=1 HTTP/1.1"),

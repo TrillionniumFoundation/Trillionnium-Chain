@@ -22,6 +22,7 @@ mod flush;
 mod flush_submission;
 mod proof_adapter;
 mod workflow;
+mod workflow_ops;
 
 #[cfg(test)]
 pub(crate) use audit::{

@@ -63,6 +63,16 @@ fn json_response_for_method(method: &str, status_line: &str, body: &str) -> Stri
     }
 }
 
+fn health_probe_body(ts_unix_ms: u64) -> String {
+    serde_json::json!({
+        "ok": true,
+        "service": "trnm-rpc",
+        "ts_unix_ms": ts_unix_ms,
+        "version": 1
+    })
+    .to_string()
+}
+
 fn fallback_response_for_request(request: Option<(&str, &str)>) -> String {
     match request {
         Some((method, _)) => {
@@ -170,13 +180,7 @@ pub(crate) fn serve_health(host: &str, port: u16) -> Result<()> {
 
         let response = match (request, path, target) {
             (Some((method, _)), Some(path), _) if is_health_probe_path(path) => {
-                let body = serde_json::json!({
-                    "ok": true,
-                    "service": "trnm-rpc",
-                    "ts_unix_ms": now_ms(),
-                    "version": 1
-                })
-                .to_string();
+                let body = health_probe_body(now_ms());
                 json_response_for_method(method, "200 OK", &body)
             }
             (Some((method, _)), Some(path), Some(_)) if path.starts_with("/query-task/") => {
@@ -277,7 +281,7 @@ pub(crate) fn serve_health(host: &str, port: u16) -> Result<()> {
 #[cfg(test)]
 mod tests {
     use super::{
-        fallback_response_for_request, has_ambiguous_path_segment_encoding,
+        fallback_response_for_request, has_ambiguous_path_segment_encoding, health_probe_body,
         is_health_probe_path, json_response_for_method, parse_nonempty_path_suffix,
         parse_path_u64_suffix,
     };
@@ -317,11 +321,62 @@ mod tests {
         assert!(is_health_probe_path("/-/ready"));
         assert!(is_health_probe_path("/-/ready/"));
         assert!(is_health_probe_path("/-/readyz"));
+        assert!(is_health_probe_path("/-/readyz/"));
         assert!(is_health_probe_path("/-/STATUS"));
         assert!(is_health_probe_path("/-/STATUSZ/"));
         assert!(!is_health_probe_path("/healthcheck"));
         assert!(!is_health_probe_path("/-/healthcheck"));
         assert!(!is_health_probe_path("/-/readycheck"));
+    }
+
+    #[test]
+    fn parse_http_request_target_preserves_query_string_for_health_probe_aliases() {
+        assert_eq!(
+            parse_http_request_target("GET /healthz?probe=lb HTTP/1.1"),
+            Some(("GET", "/healthz?probe=lb"))
+        );
+        assert_eq!(
+            parse_http_request_target("HEAD /-/STATUSZ/?from=ops HTTP/1.1"),
+            Some(("HEAD", "/-/STATUSZ/?from=ops"))
+        );
+        assert_eq!(
+            parse_http_request_target("HEAD /-/readyz/?probe=lb&from=ops HTTP/1.1"),
+            Some(("HEAD", "/-/readyz/?probe=lb&from=ops"))
+        );
+    }
+
+    #[test]
+    fn query_string_is_ignored_for_health_probe_alias_matching() {
+        let request = parse_http_request_target("HEAD /-/STATUSZ/?from=ops HTTP/1.1").unwrap();
+        let path = request.1.split('?').next().unwrap();
+
+        assert!(is_health_probe_path(path));
+
+        let response = if is_health_probe_path(path) {
+            json_response_for_method(request.0, "200 OK", &health_probe_body(42))
+        } else {
+            unreachable!("health alias with query string should match after path split")
+        };
+
+        assert!(response.starts_with("HTTP/1.1 200 OK\r\n"));
+        assert!(response.ends_with("\r\n\r\n"));
+        assert!(!response.contains("\"ok\":true"));
+    }
+
+    #[test]
+    fn trailing_slash_health_alias_with_query_keeps_same_head_contract() {
+        let request = parse_http_request_target("HEAD /-/statusz/?from=ops HTTP/1.1").unwrap();
+        let path = request.1.split('?').next().unwrap();
+
+        assert_eq!(path, "/-/statusz/");
+        assert!(is_health_probe_path(path));
+
+        let response = json_response_for_method(request.0, "200 OK", &health_probe_body(42));
+
+        assert!(response.starts_with("HTTP/1.1 200 OK\r\n"));
+        assert!(response.contains("Content-Length: 50\r\n"));
+        assert!(response.ends_with("\r\n\r\n"));
+        assert!(!response.ends_with("\"version\":1}"));
     }
 
     #[test]
@@ -353,6 +408,18 @@ mod tests {
         assert!(bad_request.starts_with("HTTP/1.1 400 Bad Request\r\n"));
         assert!(bad_request.ends_with("\r\n\r\n"));
         assert!(!bad_request.ends_with("BAD_REQUEST\"}"));
+    }
+
+    #[test]
+    fn health_probe_body_keeps_minimum_operator_contract_fields_stable() {
+        let body = health_probe_body(42);
+        let json: serde_json::Value = serde_json::from_str(&body).unwrap();
+
+        assert_eq!(json.get("ok"), Some(&serde_json::Value::Bool(true)));
+        assert_eq!(json.get("service"), Some(&serde_json::Value::String("trnm-rpc".into())));
+        assert_eq!(json.get("ts_unix_ms"), Some(&serde_json::Value::from(42u64)));
+        assert_eq!(json.get("version"), Some(&serde_json::Value::from(1)));
+        assert_eq!(json.as_object().map(|obj| obj.len()), Some(4));
     }
 
     #[test]

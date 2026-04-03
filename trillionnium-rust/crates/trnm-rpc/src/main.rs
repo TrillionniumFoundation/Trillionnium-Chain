@@ -2726,6 +2726,22 @@ fn is_health_probe_path(path: &str) -> bool {
         "/status/",
         "/statusz",
         "/statusz/",
+        "/-/health",
+        "/-/health/",
+        "/-/healthz",
+        "/-/healthz/",
+        "/-/live",
+        "/-/live/",
+        "/-/livez",
+        "/-/livez/",
+        "/-/ready",
+        "/-/ready/",
+        "/-/readyz",
+        "/-/readyz/",
+        "/-/status",
+        "/-/status/",
+        "/-/statusz",
+        "/-/statusz/",
     ]
     .iter()
     .any(|alias| path.eq_ignore_ascii_case(alias))
@@ -3435,10 +3451,15 @@ fn serve_health(host: &str, port: u16) -> Result<()> {
                 }
             }
             _ => {
-                let body = "{\"ok\":false,\"code\":\"NOT_FOUND\"}";
                 match request {
-                    Some((method, _)) => json_response_for_method(method, "404 Not Found", body),
-                    None => http_json_response("404 Not Found", body),
+                    Some((method, _)) => {
+                        let body = "{\"ok\":false,\"code\":\"NOT_FOUND\"}";
+                        json_response_for_method(method, "404 Not Found", body)
+                    }
+                    None => {
+                        let body = "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid http request\"}";
+                        http_json_response("400 Bad Request", body)
+                    }
                 }
             }
         };
@@ -5267,6 +5288,48 @@ mod tests {
         assert_eq!(parse_http_request_target("GET /health HTTP/2"), None);
         assert_eq!(parse_http_request_target("GET /health HTTP/1.1junk"), None);
         assert_eq!(parse_http_request_target("GET /health http/1.1"), None);
+    }
+
+    #[test]
+    fn health_probe_aliases_include_dash_prefixed_operator_paths() {
+        assert!(is_health_probe_path("/-/health"));
+        assert!(is_health_probe_path("/-/healthz/"));
+        assert!(is_health_probe_path("/-/live"));
+        assert!(is_health_probe_path("/-/readyz/"));
+        assert!(is_health_probe_path("/-/status"));
+        assert!(is_health_probe_path("/-/STATUSZ/"));
+        assert!(!is_health_probe_path("/-/statuscheck"));
+        assert!(!is_health_probe_path("/-/statusz//"));
+        assert!(!is_health_probe_path("/-/readyz/extra"));
+    }
+
+    #[test]
+    fn parse_http_request_target_preserves_query_string_for_dash_prefixed_health_aliases() {
+        assert_eq!(
+            parse_http_request_target("HEAD /-/statusz/?from=ops&probe=lb HTTP/1.1"),
+            Some(("HEAD", "/-/statusz/?from=ops&probe=lb"))
+        );
+        assert_eq!(
+            parse_http_get_path("GET /-/readyz?probe=lb HTTP/1.1"),
+            Some("/-/readyz")
+        );
+    }
+
+    #[test]
+    fn mixed_case_status_health_alias_with_query_keeps_same_head_contract() {
+        let request = parse_http_request_target("HEAD /-/STATUSZ/?from=ops&probe=lb HTTP/1.1")
+            .expect("health alias request parses");
+        let path = request.1.split('?').next().expect("path before query");
+
+        assert_eq!(path, "/-/STATUSZ/");
+        assert!(is_health_probe_path(path));
+
+        let response = json_response_for_method(request.0, "200 OK", "{\"ok\":true}");
+
+        assert!(response.starts_with("HTTP/1.1 200 OK\r\n"));
+        assert!(response.contains("Content-Length: 11\r\n"));
+        assert!(response.ends_with("\r\n\r\n"));
+        assert!(!response.ends_with("{\"ok\":true}"));
     }
 
     #[test]
