@@ -9,16 +9,28 @@
 - 传输层：HTTPS + JSON
 - 鉴权：`Authorization: Bearer <capability_token>`
 - 请求必须携带：`X-TRNM-Request-ID`
+- `X-TRNM-Request-ID` 必须为去首尾空白后的非空字符串；出现前后空白或空串按 `400 schema_invalid` fail-closed
+- 请求头 `X-TRNM-Request-ID` 必须与请求体 `request_id` 严格一致；不一致按 `400 schema_invalid` fail-closed
 - 请求必须携带：`X-TRNM-Trace-ID`（与审计导出 `trace_id` 一致）
 - 请求必须携带：`X-TRNM-Timestamp`（RFC3339 UTC），时钟偏差 ≤ 300 秒
-- 请求必须携带：`X-TRNM-Schema-Version`（固定 `a2a-adapter-v1`）
-- 重试安全：`Idempotency-Key`
+- `X-TRNM-Timestamp` 必须为 `Z` 结尾的 UTC 时间戳；偏移时区按 `400 schema_invalid` fail-closed
+- 请求必须携带：`X-TRNM-Schema-Version`（固定 `a2a-adapter-v1`）；版本不匹配按 `400 schema_invalid` fail-closed
+- 重试安全：`Idempotency-Key`（同一键值 + 同一请求体必须幂等返回同一 `task_id`）
 - 防重放：`X-TRNM-Nonce`
-- 请求完整性：`X-TRNM-Body-SHA256`（SHA-256 小写 hex）
+- `X-TRNM-Nonce` 必须绑定 `request_id + X-TRNM-Body-SHA256`；同一 `request_id` 出现重复或漂移 nonce 按 `409 replay_detected` fail-closed
+- 请求完整性：`X-TRNM-Body-SHA256`（SHA-256 小写 hex）；与服务端重算不一致按 `400 schema_invalid` fail-closed
 - 请求内容类型：`Content-Type: application/json`
+- 请求可接受类型：`Accept` 必须显式包含 `application/json`；缺失或不包含 JSON 按 `400 schema_invalid` fail-closed
+- `Accept` 中若 `application/json;q=0`（显式不可接受）必须视为不接受 JSON，并按 `400 schema_invalid` fail-closed
+- `Accept` 仅为通配符（如 `*/*` 或 `application/*`）不视为“显式包含 `application/json`”，必须按 `400 schema_invalid` fail-closed
 - 响应内容类型：`Content-Type: application/json; charset=utf-8`；非 JSON 响应按 `502 upstream_execution_failed` fail-closed
+- 响应必须回显：`X-TRNM-Schema-Version: a2a-adapter-v1`；缺失或不匹配按 `502 upstream_execution_failed` fail-closed
+- `X-TRNM-Schema-Version` 回显值必须为未加引号的精确 token `a2a-adapter-v1`（禁止 `"a2a-adapter-v1"`、前后空白或参数拼接）；否则按 `502 upstream_execution_failed` fail-closed
+- 响应若出现多个 `X-TRNM-Schema-Version` 头（重复字段）必须按协议违约处理，并按 `502 upstream_execution_failed` fail-closed（禁止“取第一个/最后一个”容错）
 - 响应必须回显：X-TRNM-Request-ID（与请求值逐字节一致）
 - 响应必须回显：X-TRNM-Trace-ID（与请求值逐字节一致）
+- 响应体 `request_id` 必须与响应头 `X-TRNM-Request-ID` 严格一致；不一致按 `502 request_id_mismatch` fail-closed
+- 错误响应（4xx/5xx）也必须回显 `X-TRNM-Request-ID`，且必须与错误体 `request_id` 严格一致；不一致按 `502 request_id_mismatch` fail-closed
 
 ## 3. 最小请求/响应语义
 

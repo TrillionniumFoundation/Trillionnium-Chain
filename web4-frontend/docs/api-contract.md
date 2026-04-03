@@ -16,6 +16,8 @@
 - 本文档描述的是**当前前端实际消费的只读查询接口**。
 - 当前仓内并没有 `/api/v0/web4/*` 对应 route；若你在历史文档里看到这些路径，应理解为未落地的聚合草案，而不是现有实现。
 - Dashboard 默认走只读 API client；仅在显式 `?mode=mock` 时回退到本地 mock snapshot。
+- `docs/agent/a2a_adapter_contract_v1.md` 与 `docs/agent/mcp_adapter_contract_v1.md` 描述的是 **agent-facing adapter contracts**，用于 MCP/A2A 平台接入边界、鉴权、审计与结算语义；它们**不是**当前 `web4-frontend` 的 route contract，也不能据此推断前端已具备写路径。
+- 若 agent-facing adapter contract 与 readonly query contract 同时被引用，应以“前台只读查询面”和“Agent 接入面”分开表述，避免把 adapter fail-closed 语义误读为现有 dashboard route 行为。
 
 ## 分层结构
 
