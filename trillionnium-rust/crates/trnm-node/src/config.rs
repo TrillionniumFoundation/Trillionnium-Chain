@@ -2017,6 +2017,8 @@ bootstrap_peers = ["127.0.0.1:27656"]
             "| Follower rejoin after restart | Bring the same follower back with the same filename and the same tuple | Accept only when the rejoining node does not drift slots, IDs, or listener addresses |",
             "| Anchor rejoin after restart | Bring `node1` back only with `node1.toml`; resume follower startup/rejoin only after the shipped anchor tuple is restored | Accept only when `node1` regains the shipped anchor tuple before later slots continue |",
             "| `node1` missing during recovery | Restore `node1` first; do not promote a later slot into the anchor role | Reject until the shipped `node1` anchor tuple is back in place |",
+            "| `node2` missing during startup or rejoin | Keep `node3` and `node4` stopped until `node2` returns with `node2.toml` and its shipped tuple | Reject while a later follower tries to skip the missing `node2` slot |",
+            "| `node3` missing during startup or rejoin | Keep `node4` stopped until `node3` returns with `node3.toml` and its shipped tuple | Reject while `node4` tries to skip the missing `node3` slot |",
             "| Any tuple drift or config mutation | Stop and review before startup | Reject on renamed files, swapped slots, unknown fields, whitespace drift, non-canonical socket literals, or listener-family drift |",
             "This table is intentionally local-fixture scoped: it documents the minimum fail-closed acceptance rule for shipped bootstrap rehearsal, not a claim that public-mainnet peer discovery, sync, or dynamic topology management is complete.",
         ] {
