@@ -127,7 +127,7 @@ Run the same fail-closed binding step used for validator bootstrap:
 
 ```bash
 EXPECTED_WORKTREE_ROOT="/abs/path/from-ticket"
-EXPECTED_BRANCH_REF="refs/heads/lane/assigned-branch"
+EXPECTED_BRANCH_REF="refs/heads/lane/assigned-branch" # or short name: lane/assigned-branch
 EXPECTED_HEAD="<optional-commit-from-ticket-or-handoff>"
 
 ./scripts/v2/verify_lane_worktree.sh \
@@ -135,6 +135,9 @@ EXPECTED_HEAD="<optional-commit-from-ticket-or-handoff>"
   --expected-branch-ref "$EXPECTED_BRANCH_REF" \
   ${EXPECTED_HEAD:+--expected-head "$EXPECTED_HEAD"}
 ```
+
+Interpretation rule:
+- `EXPECTED_BRANCH_REF` may be either a short branch name such as `lane/assigned-branch` or a full ref such as `refs/heads/lane/assigned-branch`; pick one from the ticket/handoff and copy it verbatim instead of normalizing by memory mid-cutover
 
 Record:
 - `verified_worktree=`
@@ -280,7 +283,7 @@ Recommended shell shape:
 
 ```bash
 EXPECTED_WORKTREE_ROOT="/abs/path/from-ticket"
-EXPECTED_BRANCH_REF="refs/heads/lane/assigned-branch"
+EXPECTED_BRANCH_REF="refs/heads/lane/assigned-branch" # or short name: lane/assigned-branch
 EXPECTED_HEAD="<optional-commit-from-ticket-or-handoff>"
 
 ./scripts/v2/verify_lane_worktree.sh \
@@ -308,6 +311,7 @@ report_path="$(printf '%s\n' "$recovery_stdout" | sed -n 's/^\[OK\] bft restart 
 Interpretation rule:
 - prefer the `report_path` emitted by the script you just ran over `ls -dt run/bft-restart-recovery-*.txt | head -n 1`; the latter can bind the handoff to the wrong artifact when multiple operators or retries produce nearby reports in the same worktree
 - when lane binding is expected, pass `--expected-worktree-root` and `--expected-branch-ref` together; the helper now rejects half-bound invocations so operators cannot accidentally treat a single self-supplied field as sufficient lane identity proof
+- `--expected-branch-ref` may be either a short branch name or a full `refs/heads/...` ref, but the handoff note should preserve whichever form the ticket assigned rather than rewriting it during DR evidence capture
 
 For operators who want one deterministic wrapper instead of manually chaining verify → recovery → extract, use:
 
