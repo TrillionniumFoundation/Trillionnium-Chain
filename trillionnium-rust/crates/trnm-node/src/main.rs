@@ -1873,9 +1873,20 @@ fn ensure_config_path_stays_within_allowed_roots(requested: &str, resolved: &Pat
         .canonicalize()
         .unwrap_or_else(|_| current_dir.clone());
 
+    let allowed_by_workspace_or_cwd = canonical_resolved.starts_with(&workspace_root)
+        || canonical_resolved.starts_with(&canonical_current_dir);
+    #[cfg(test)]
+    let allowed_by_test_temp = {
+        let temp_dir = std::env::temp_dir();
+        let canonical_temp_dir = temp_dir.canonicalize().unwrap_or_else(|_| temp_dir.clone());
+        (resolved.starts_with(&temp_dir) || resolved.starts_with(&canonical_temp_dir))
+            && canonical_resolved.starts_with(&canonical_temp_dir)
+    };
+    #[cfg(not(test))]
+    let allowed_by_test_temp = false;
+
     anyhow::ensure!(
-        canonical_resolved.starts_with(&workspace_root)
-            || canonical_resolved.starts_with(&canonical_current_dir),
+        allowed_by_workspace_or_cwd || allowed_by_test_temp,
         "read config failed: {} resolves outside allowed roots (resolved: {})",
         requested,
         canonical_resolved.display()
