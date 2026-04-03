@@ -32,12 +32,16 @@ const normalizeTimeoutMs = (timeoutMs: unknown): number => {
 const withTimeoutSignal = (timeoutMs: number, signal?: AbortSignal) => {
   const controller = new AbortController();
   let timedOut = false;
+  let abortedByCaller = false;
   const timer = setTimeout(() => {
     timedOut = true;
     controller.abort("timeout");
   }, timeoutMs);
 
-  const onAbort = () => controller.abort(signal?.reason);
+  const onAbort = () => {
+    abortedByCaller = true;
+    controller.abort(signal?.reason);
+  };
 
   if (signal) {
     if (signal.aborted) {
@@ -50,6 +54,7 @@ const withTimeoutSignal = (timeoutMs: number, signal?: AbortSignal) => {
   return {
     signal: controller.signal,
     isTimeout: () => timedOut,
+    isCallerAbort: () => abortedByCaller,
     cleanup: () => {
       clearTimeout(timer);
       signal?.removeEventListener("abort", onAbort);
@@ -68,6 +73,84 @@ const normalizeBaseUrl = (baseUrl: string): string => {
   }
 
   return trimmed.replace(/\/+$/, "");
+};
+
+const isLikelyNetworkError = (err: unknown): boolean => {
+  if (err instanceof TypeError) return true;
+  if (!(err && typeof err === "object")) return false;
+
+  const name = "name" in err ? err.name : undefined;
+  return name === "TypeError" || name === "NetworkError" || name === "FetchError";
+};
+
+const LEGACY_ABORT_ERROR_CODE = 20;
+const LEGACY_TIMEOUT_ERROR_CODE = 23;
+
+const isAbortLikeErrorCode = (code: unknown): boolean => {
+  return code === "ABORT_ERR" || code === LEGACY_ABORT_ERROR_CODE;
+};
+
+const isAbortLikeError = (err: unknown): boolean => {
+  if (!(err && typeof err === "object")) return false;
+
+  const name = "name" in err ? err.name : undefined;
+  const code = "code" in err ? err.code : undefined;
+  const cause = "cause" in err ? err.cause : undefined;
+  const reason = "reason" in err ? err.reason : undefined;
+
+  if (name === "AbortError" || isAbortLikeErrorCode(code)) {
+    return true;
+  }
+
+  for (const nested of [cause, reason]) {
+    if (nested && typeof nested === "object") {
+      const nestedName = "name" in nested ? nested.name : undefined;
+      const nestedCode = "code" in nested ? nested.code : undefined;
+      if (nestedName === "AbortError" || isAbortLikeErrorCode(nestedCode)) {
+        return true;
+      }
+    }
+  }
+
+  return false;
+};
+
+const TIMEOUT_ERROR_CODES = new Set([
+  "UND_ERR_CONNECT_TIMEOUT",
+  "UND_ERR_HEADERS_TIMEOUT",
+  "UND_ERR_BODY_TIMEOUT",
+  "ETIMEDOUT",
+  "ESOCKETTIMEDOUT",
+]);
+
+const isTimeoutErrorCode = (code: unknown): boolean => {
+  return code === LEGACY_TIMEOUT_ERROR_CODE || (typeof code === "string" && TIMEOUT_ERROR_CODES.has(code));
+};
+
+const isTimeoutLikeError = (err: unknown): boolean => {
+  if (!(err && typeof err === "object")) return false;
+
+  const name = "name" in err ? err.name : undefined;
+  const code = "code" in err ? err.code : undefined;
+  const cause = "cause" in err ? err.cause : undefined;
+  const reason = "reason" in err ? err.reason : undefined;
+
+  if (name === "TimeoutError") return true;
+  if (isTimeoutErrorCode(code)) {
+    return true;
+  }
+
+  for (const nested of [cause, reason]) {
+    if (nested && typeof nested === "object") {
+      const nestedName = "name" in nested ? nested.name : undefined;
+      const nestedCode = "code" in nested ? nested.code : undefined;
+      if (nestedName === "TimeoutError" || isTimeoutErrorCode(nestedCode)) {
+        return true;
+      }
+    }
+  }
+
+  return false;
 };
 
 export function createFrontendApiClient(config: BaseClientConfig) {
@@ -108,16 +191,16 @@ export function createFrontendApiClient(config: BaseClientConfig) {
       } catch (err) {
         if (err instanceof FrontendApiError) throw err;
 
-        if (err instanceof Error && err.name === "AbortError") {
-          if (timeout.isTimeout()) {
-            throw new FrontendApiError({
-              code: "TIMEOUT",
-              message: "Query timeout",
-              causeData: err,
-              retryable: true,
-            });
-          }
+        if (timeout.isTimeout()) {
+          throw new FrontendApiError({
+            code: "TIMEOUT",
+            message: "Query timeout",
+            causeData: err,
+            retryable: true,
+          });
+        }
 
+        if (timeout.isCallerAbort() || isAbortLikeError(err)) {
           throw new FrontendApiError({
             code: "ABORTED",
             message: "Request aborted",
@@ -126,11 +209,23 @@ export function createFrontendApiClient(config: BaseClientConfig) {
           });
         }
 
+        if (isTimeoutLikeError(err)) {
+          throw new FrontendApiError({
+            code: "TIMEOUT",
+            message: "Query timeout",
+            causeData: err,
+            retryable: true,
+          });
+        }
+
+        const networkLike = isLikelyNetworkError(err);
         throw new FrontendApiError({
-          code: "NETWORK",
-          message: "Network error while querying backend",
+          code: networkLike ? "NETWORK" : "UNKNOWN",
+          message: networkLike
+            ? "Network error while querying backend"
+            : "Unexpected error while querying backend",
           causeData: err,
-          retryable: true,
+          retryable: networkLike,
         });
       } finally {
         timeout.cleanup();
