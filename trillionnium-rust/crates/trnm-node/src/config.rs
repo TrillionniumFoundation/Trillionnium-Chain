@@ -2559,6 +2559,17 @@ bootstrap_peers = ["127.0.0.1:27656"]
                 readme_path.display()
             )
         });
+        let ipv6_loopback_mentions = readme.matches("[::1]").count();
+        assert_eq!(
+            ipv6_loopback_mentions, 1,
+            "{} must mention `[::1]` exactly once, only in the explicit fail-closed prohibition against IPv6 loopback drift",
+            readme_path.display()
+        );
+        assert!(
+            !readme.to_ascii_lowercase().contains("localhost"),
+            "{} must not silently drift bootstrap anchor guidance from canonical `127.0.0.1` tuples to `localhost` aliases",
+            readme_path.display()
+        );
 
         let expected_lines = [
             "- `node1.toml` → node id `node1`, P2P `127.0.0.1:26656`, RPC `127.0.0.1:26657`",
@@ -2706,7 +2717,6 @@ bootstrap_peers = ["127.0.0.1:27656"]
             );
         }
     }
-
     #[test]
     fn shipped_bootstrap_readme_tuples_match_loaded_configs_exactly() {
         let manifest_dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR"));
