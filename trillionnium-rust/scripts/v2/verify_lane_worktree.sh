@@ -19,6 +19,20 @@ EXPECTED_BRANCH_REF=""
 EXPECTED_BRANCH_REF_CANONICAL=""
 EXPECTED_HEAD=""
 
+canonicalize_directory_path() {
+  local path="$1"
+
+  [ -d "$path" ] || {
+    printf 'expected worktree root is not a directory: %s\n' "$path" >&2
+    exit 2
+  }
+
+  (
+    cd "$path"
+    pwd -P
+  )
+}
+
 canonicalize_branch_ref() {
   local ref="$1"
   case "$ref" in
@@ -107,6 +121,7 @@ while [ "$#" -gt 0 ]; do
 done
 
 require_worktree_root_value --expected-worktree-root "$EXPECTED_WORKTREE_ROOT"
+EXPECTED_WORKTREE_ROOT="$(canonicalize_directory_path "$EXPECTED_WORKTREE_ROOT")"
 require_ref_token --expected-branch-ref "$EXPECTED_BRANCH_REF"
 if [ -n "$EXPECTED_HEAD" ]; then
   require_ref_token --expected-head "$EXPECTED_HEAD"
