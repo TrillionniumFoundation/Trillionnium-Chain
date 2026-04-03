@@ -2675,6 +2675,18 @@ bootstrap_peers = ["127.0.0.1:27656"]
             }
             previous_index = Some(current_index);
         }
+
+        for expected_phrase in [
+            "## What this fixture is for",
+            "Use these files to keep peer/bootstrap topology assumptions explicit while the public-mainnet bootstrap peer-management path is still being hardened.",
+            "The regression tests in `crates/trnm-node/src/config.rs` are the source of truth for the exact fixture invariants.",
+        ] {
+            assert!(
+                readme.contains(expected_phrase),
+                "{} must keep the shipped bootstrap scope/source-of-truth note `{expected_phrase}` visible to operators",
+                readme_path.display()
+            );
+        }
     }
 
     #[test]
