@@ -331,7 +331,14 @@ Additional contract markers carried in `index.json`:
 - `deployment_evidence_scope=placeholder-only`
 - `rank1_read_surface_blocker=still-open`
 - `durable_indexer_status=not-implemented-in-this-scaffold`
+- `durable_read_anchors.ingestion_source=missing-placeholder-scaffold`
+- `durable_read_anchors.checkpoint_store=missing-placeholder-scaffold`
+- `durable_read_anchors.replay_start_anchor=missing-placeholder-scaffold`
+- `durable_read_anchors.retention_scope=rpc-window-bounded`
+- `durable_read_anchors.archive_owner=missing-placeholder-scaffold`
+- `durable_read_anchors.lag_slo=missing-placeholder-scaffold`
 - a note that historical queries remain bounded by current RPC retention until a durable indexer/archive strategy exists
+- a note that durable read anchors remain intentionally unset until a real indexer/read-model exists
 
 ## Failure interpretation
 
