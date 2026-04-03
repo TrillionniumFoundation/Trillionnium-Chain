@@ -716,6 +716,26 @@ mod tests {
     }
 
     #[test]
+    fn recovery_startup_summary_reports_missing_checkpoint_metadata_for_runtime_triage() {
+        let recovered = recovered_state(1, 9, None, false, false);
+
+        assert_eq!(
+            recovery_startup_summary(&recovered),
+            "retained_wal_entries=1 checkpoint_height_retained=none checkpoint_tip_relation=missing next_startup_height=9 wal_tail_truncated=false metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume"
+        );
+    }
+
+    #[test]
+    fn recovery_startup_summary_reports_checkpoint_ahead_of_retained_tip_as_blocked_metadata_only() {
+        let recovered = recovered_state(2, 12, Some(15), false, true);
+
+        assert_eq!(
+            recovery_startup_summary(&recovered),
+            "retained_wal_entries=2 checkpoint_height_retained=15 checkpoint_tip_relation=ahead:4 next_startup_height=12 wal_tail_truncated=false metadata_only_recovery=true join_rejoin_status=blocked:metadata_only_recovery"
+        );
+    }
+
+    #[test]
     fn recovery_startup_summary_marks_checkpoint_only_bootstrap_as_ready_mode() {
         let recovered = recovered_state(0, 9, Some(8), false, false);
 
