@@ -2540,6 +2540,16 @@ bootstrap_peers = ["127.0.0.1:27656"]
             );
         }
 
+        let expected_rows_in_order = [
+            "| Fresh bootstrap start | Start `node1` first, then `node2` → `node3` → `node4` in slot order | Accept only when each node keeps its shipped slot-bound config and listener tuple |",
+            "| Follower join while `node1` is healthy | Start the joining follower with its original config file (`node2.toml`, `node3.toml`, or `node4.toml`) | Accept only when `node_id`, `rpc_addr`, and `p2p_addr` exactly match the shipped tuple |",
+            "| Follower rejoin after restart | Bring the same follower back with the same filename and the same tuple | Accept only when the rejoining node does not drift slots, IDs, or listener addresses |",
+            "| Anchor rejoin after restart | Bring `node1` back only with `node1.toml`; resume follower startup/rejoin only after the shipped anchor tuple is restored | Accept only when `node1` regains the shipped anchor tuple before later slots continue |",
+            "| `node1` missing during recovery | Restore `node1` first; do not promote a later slot into the anchor role | Reject until the shipped `node1` anchor tuple is back in place |",
+            "| `node2` missing during startup or rejoin | Keep `node3` and `node4` stopped until `node2` returns with `node2.toml` and its shipped tuple | Reject while a later follower tries to skip the missing `node2` slot |",
+            "| `node3` missing during startup or rejoin | Keep `node4` stopped until `node3` returns with `node3.toml` and its shipped tuple | Reject while `node4` tries to skip the missing `node3` slot |",
+            "| Any tuple drift or config mutation | Stop and review before startup | Reject on renamed files, swapped slots, unknown fields, whitespace drift, non-canonical socket literals, or listener-family drift |",
+        ];
         for expected_phrase in [
             "All four nodes bind the same loopback IP (`127.0.0.1`)",
             "keep a deterministic `+1000` port spacing between neighboring peers",
@@ -2553,14 +2563,14 @@ bootstrap_peers = ["127.0.0.1:27656"]
             "Treat `configs/node1.toml` through `configs/node4.toml` as slot-bound fixtures: do not rename them, swap them between peers, or reinterpret a later slot as the bootstrap anchor during operator recovery.",
             "unknown fields, whitespace drift, host-like or path-like ids, URI-like delimiters, non-canonical socket literals, privileged ports, wildcard listeners, reserved documentation/benchmarking listener ranges, or mixed listener IP families, the config loader must fail closed",
             "## Join / rejoin acceptance table",
-            "| Fresh bootstrap start | Start `node1` first, then `node2` → `node3` → `node4` in slot order | Accept only when each node keeps its shipped slot-bound config and listener tuple |",
-            "| Follower join while `node1` is healthy | Start the joining follower with its original config file (`node2.toml`, `node3.toml`, or `node4.toml`) | Accept only when `node_id`, `rpc_addr`, and `p2p_addr` exactly match the shipped tuple |",
-            "| Follower rejoin after restart | Bring the same follower back with the same filename and the same tuple | Accept only when the rejoining node does not drift slots, IDs, or listener addresses |",
-            "| Anchor rejoin after restart | Bring `node1` back only with `node1.toml`; resume follower startup/rejoin only after the shipped anchor tuple is restored | Accept only when `node1` regains the shipped anchor tuple before later slots continue |",
-            "| `node1` missing during recovery | Restore `node1` first; do not promote a later slot into the anchor role | Reject until the shipped `node1` anchor tuple is back in place |",
-            "| `node2` missing during startup or rejoin | Keep `node3` and `node4` stopped until `node2` returns with `node2.toml` and its shipped tuple | Reject while a later follower tries to skip the missing `node2` slot |",
-            "| `node3` missing during startup or rejoin | Keep `node4` stopped until `node3` returns with `node3.toml` and its shipped tuple | Reject while `node4` tries to skip the missing `node3` slot |",
-            "| Any tuple drift or config mutation | Stop and review before startup | Reject on renamed files, swapped slots, unknown fields, whitespace drift, non-canonical socket literals, or listener-family drift |",
+            expected_rows_in_order[0],
+            expected_rows_in_order[1],
+            expected_rows_in_order[2],
+            expected_rows_in_order[3],
+            expected_rows_in_order[4],
+            expected_rows_in_order[5],
+            expected_rows_in_order[6],
+            expected_rows_in_order[7],
             "This table is intentionally local-fixture scoped: it documents the minimum fail-closed acceptance rule for shipped bootstrap rehearsal, not a claim that public-mainnet peer discovery, sync, or dynamic topology management is complete.",
         ] {
             assert!(
@@ -2568,6 +2578,23 @@ bootstrap_peers = ["127.0.0.1:27656"]
                 "{} must keep the shipped bootstrap join/rejoin fail-closed rule `{expected_phrase}` visible to operators",
                 readme_path.display()
             );
+        }
+        let mut previous_index = None;
+        for expected_row in expected_rows_in_order {
+            let current_index = readme.find(expected_row).unwrap_or_else(|| {
+                panic!(
+                    "{} must keep the shipped bootstrap acceptance-table row `{expected_row}` visible to operators",
+                    readme_path.display()
+                )
+            });
+            if let Some(previous_index) = previous_index {
+                assert!(
+                    previous_index < current_index,
+                    "{} must keep bootstrap/join/rejoin acceptance rows in anchor-first slot order so operator recovery does not silently drift",
+                    readme_path.display()
+                );
+            }
+            previous_index = Some(current_index);
         }
     }
 
