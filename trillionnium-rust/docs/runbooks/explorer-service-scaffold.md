@@ -125,6 +125,8 @@ This packet is intentionally narrow: it closes the question "what exact deployme
 Suggested env file (`trillionnium-rust/run/explorer-service/explorer-service.env`):
 
 > On first successful/local bring-up, `explorer_service_up.sh` will create this file automatically if it does not already exist, using the current runtime contract values. It never overwrites an existing env file, so operator-local edits remain the source of truth.
+>
+> The script default remains `EXPLORER_PORT=8090` when no override is provided. The sample below is an explicit reverse-proxy-facing example that pins the scaffold to `18090`; if you bring the scaffold up with no port override, the generated env file will carry `8090` instead.
 
 ```bash
 EXPLORER_HOST=127.0.0.1
