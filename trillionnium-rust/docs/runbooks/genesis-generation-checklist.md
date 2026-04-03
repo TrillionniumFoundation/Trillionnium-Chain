@@ -155,6 +155,7 @@ For any artifact expected to feed validator bootstrap/handoff, preserve one shar
 - `rollback_owner=`
 - `validator_entry=` per validator
 - `validator_entry_hash=` per validator so acknowledgments can bind back to one immutable descriptor instead of a hand-written tuple
+- `operator_ack=` lines must reuse the emitted `validator_entry.config_path` verbatim; if the generated packet uses an absolute `config_path=`, do not rewrite it as a relative path in the acknowledgment artifact
 
 Recommended for public-mainnet-facing evidence:
 - `packet_generated_at=` in UTC
