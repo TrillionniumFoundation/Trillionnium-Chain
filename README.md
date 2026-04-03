@@ -186,6 +186,7 @@ TRNM_TX_CLI=./trillionnium-rust/target/debug/trnm-cli \
   - `query-events/<task_id>` 未显式传 `?limit=` 时默认返回 **100** 条，硬上限 **500** 条；超大分页请求会被 clamp，不应假设无限历史窗口。
   - `query-events/<task_id>` 的历史排序应视为 **确定性回放顺序**：node event 主路径按 `block_height -> tx_id -> ts_unix_ms -> event_type -> from_status -> to_status` 稳定排序；索引侧若要做持久化增量回放，不应自行改写这条顺序轴。
   - 若索引器要保存增量 checkpoint，优先持久化“**最后一个已应用事件的稳定排序 key**”（至少覆盖 `block_height + tx_id + ts_unix_ms + event_type + from_status + to_status`），而不是只记 page offset / 本地扫描轮次；否则在历史补档、manifest 扩容或重新去重后，resume 点可能漂移到错误位置。
+  - 更稳妥的做法是把 checkpoint 与一份 **canonical replay source fingerprint** 绑定持久化（例如规范化后 manifest/env 源集合的摘要 + 最近可信高度）；只要 source fingerprint 变化，就应触发回退重放或人工确认，而不是直接沿用旧 resume 点。
   - 当 node event 缺失、只能退回 adapter 记录时，`query-events` 只会在**已持久化 commit 存在**时补出 `commit -> reveal` 历史；单独的 reveal 不会被当成完整历史链。索引器不应把 reveal-only 记录解释成可独立落库的已完成回放片段。
   - `query-capability-audit/<subject-or-token>` 同时接受 capability token id 与 subject DID，索引侧不必为两种 key 维护两套入口。
   - 若需要从归档日志重放历史 read-model，优先通过 `TRNM_RPC_NODE_EVENT_LOG_MANIFEST` 指向一个 manifest 文件，再用 `TRNM_RPC_NODE_EVENT_LOG_SOURCES` 补充临时源；manifest 内的**相对路径以 manifest 所在目录为基准解析**，而 env 里的相对路径以 `trnm-rpc` 运行根目录为基准解析。
