@@ -17141,6 +17141,36 @@ locked_block_hash = "stale-lock"
     }
 
     #[test]
+    fn ensure_recoverable_wal_state_allows_truncated_missing_checkpoint_metadata_resume() {
+        let wal_dir = temp_wal_dir("recover-guard-truncated-missing-checkpoint-metadata-resume");
+        fs::create_dir_all(&wal_dir).unwrap();
+
+        let recovered = RecoveredWalState {
+            next_height: 9,
+            restored_lock: Some("h8".into()),
+            last_checkpoint: None,
+            truncated: true,
+            metadata_only_recovery: false,
+            wal_entries_retained: 1,
+            checkpoint_height_retained: None,
+        };
+
+        ensure_recoverable_wal_state(&wal_dir, &recovered).expect(
+            "truncated retained WAL resume without checkpoint metadata should remain recoverable for safe join/rejoin",
+        );
+        assert_eq!(
+            recovery_startup_summary(&recovered),
+            "retained_wal_entries=1 checkpoint_height_retained=none checkpoint_tip_relation=missing next_startup_height=9 wal_tail_truncated=true metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume_missing_checkpoint_metadata_after_tail_repair"
+        );
+        assert_eq!(
+            retained_wal_summary(&recovered),
+            "retained 1 committed WAL entry through height 8 (no retained checkpoint metadata); repaired WAL tail required truncation"
+        );
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
     fn ensure_recoverable_wal_state_allows_truncated_fresh_bootstrap_after_reset() {
         let wal_dir = temp_wal_dir("recover-guard-truncated-fresh-bootstrap");
         fs::create_dir_all(&wal_dir).unwrap();
