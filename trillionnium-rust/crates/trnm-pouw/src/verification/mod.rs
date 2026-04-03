@@ -1,6 +1,8 @@
 pub mod backend;
 #[cfg(feature = "real-tee-backend")]
 pub mod real_tee_backend;
+#[cfg(feature = "real-zk-backend")]
+pub mod real_zk_backend;
 pub mod registry;
 pub mod verifiers;
 
