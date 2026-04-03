@@ -38,7 +38,7 @@ pub(crate) fn make_request_id(
 }
 
 pub(crate) fn normalize_wrapped_env_value(raw: &str) -> &str {
-    let mut normalized = raw.trim();
+    let mut normalized = raw.trim_start_matches('\u{feff}').trim();
     while normalized.len() >= 2 {
         let wrapped_by_quotes = (normalized.starts_with('"') && normalized.ends_with('"'))
             || (normalized.starts_with('\'') && normalized.ends_with('\''))
@@ -46,13 +46,15 @@ pub(crate) fn normalize_wrapped_env_value(raw: &str) -> &str {
         if !wrapped_by_quotes {
             break;
         }
-        normalized = normalized[1..normalized.len() - 1].trim();
+        normalized = normalized[1..normalized.len() - 1]
+            .trim_start_matches('\u{feff}')
+            .trim();
     }
-    normalized
+    normalized.trim_start_matches('\u{feff}').trim()
 }
 
 fn normalize_leading_wrapped_comment_value(raw: &str) -> Option<&str> {
-    let normalized = raw.trim();
+    let normalized = raw.trim_start_matches('\u{feff}').trim();
     let quote = normalized.chars().next()?;
     if !matches!(quote, '"' | '\'' | '`') {
         return None;
@@ -61,7 +63,9 @@ fn normalize_leading_wrapped_comment_value(raw: &str) -> Option<&str> {
     let closing_idx = normalized[quote.len_utf8()..]
         .char_indices()
         .find_map(|(idx, ch)| (ch == quote).then_some(quote.len_utf8() + idx))?;
-    let rest = normalized[closing_idx + quote.len_utf8()..].trim_start();
+    let rest = normalized[closing_idx + quote.len_utf8()..]
+        .trim_start_matches('\u{feff}')
+        .trim_start();
     if !rest.starts_with('#') {
         return None;
     }
@@ -135,5 +139,30 @@ pub(crate) fn normalized_path_from_env(name: &str) -> Option<PathBuf> {
         None
     } else {
         Some(PathBuf::from(normalized))
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn normalized_path_from_env_tolerates_bom_wrapped_comment_suffix() {
+        let prev = std::env::var("TRNM_RPC_RUNTIME_ENV_TEST_PATH").ok();
+        unsafe {
+            std::env::set_var(
+                "TRNM_RPC_RUNTIME_ENV_TEST_PATH",
+                "\u{feff}  \"cfg/history/sources.txt\"# archived replay note ",
+            );
+        }
+
+        let got = normalized_path_from_env("TRNM_RPC_RUNTIME_ENV_TEST_PATH");
+
+        match prev {
+            Some(value) => unsafe { std::env::set_var("TRNM_RPC_RUNTIME_ENV_TEST_PATH", value) },
+            None => unsafe { std::env::remove_var("TRNM_RPC_RUNTIME_ENV_TEST_PATH") },
+        }
+
+        assert_eq!(got, Some(PathBuf::from("cfg/history/sources.txt")));
     }
 }
