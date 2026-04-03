@@ -333,7 +333,7 @@ fn default_wallet_store_ignores_curdir_or_parent_segments_from_env() {
 }
 
 #[test]
-fn default_wallet_store_rejects_symlinked_ancestor_from_env() {
+fn default_wallet_store_rejects_symlinked_paths_from_env() {
     let _guard = ENV_LOCK.lock().unwrap();
     let original_store = std::env::var_os("TRNM_WALLET_STORE");
     let original_home = std::env::var_os("HOME");
@@ -364,6 +364,20 @@ fn default_wallet_store_rejects_symlinked_ancestor_from_env() {
     std::env::set_var("TRNM_WALLET_STORE", linked_parent.join("wallets"));
     assert_eq!(default_wallet_store(), home.join(".trnm").join("wallets"));
 
+    let real_store = root.join("real-store");
+    let linked_store = root.join("linked-store");
+    std::fs::create_dir_all(&real_store).unwrap();
+    std::os::unix::fs::symlink(&real_store, &linked_store).unwrap();
+
+    std::env::set_var("TRNM_WALLET_STORE", &linked_store);
+    assert_eq!(
+        default_wallet_store(),
+        home.join(".trnm").join("wallets"),
+        "symlinked final store path should fail closed"
+    );
+
+    let _ = std::fs::remove_file(&linked_store);
+    let _ = std::fs::remove_dir_all(&real_store);
     let _ = std::fs::remove_file(&linked_parent);
     let _ = std::fs::remove_dir_all(&real_parent);
     let _ = std::fs::remove_dir_all(&root);
