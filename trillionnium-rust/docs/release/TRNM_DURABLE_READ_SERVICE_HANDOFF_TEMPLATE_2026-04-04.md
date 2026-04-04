@@ -22,6 +22,7 @@
 - `trillionnium-rust/docs/release/TRNM_DAY1_PUBLIC_READ_CONTRACT_2026-04-03.md`
 - `trillionnium-rust/docs/release/TRNM_MAINNET_BLOCKER_BOARD_2026-03-31.md`
 - `trillionnium-rust/docs/release/TRNM_MAINNET_GAP_MATRIX_2026-03-26.md`
+- `trillionnium-rust/docs/release/TRNM_PUBLIC_MAINNET_GO_NO_GO_PANEL_2026-04-04.md`
 - `trillionnium-rust/docs/runbooks/explorer-service-scaffold.md`
 - `trillionnium-rust/docs/release/TRNM_EXPLORER_SCAFFOLD_HANDOFF_TEMPLATE_2026-04-04.md`
 
@@ -43,6 +44,24 @@
 Fail-closed choice:
 
 > **缺 anchor、缺 replay/restore 证据、仍靠 scaffold bring-up、或 `service_mode` 还不是 non-placeholder durable read service 时，一律按 placeholder-only handoff 处理。**
+
+### Template selection quick matrix
+
+在 release review / operator handoff / incident follow-up 里，先把当前证据放进下面这张矩阵，再决定能不能用 durable 模板：
+
+| 当前证据形态 | 允许使用的模板 | 结论 |
+| --- | --- | --- |
+| 仍使用 `explorer_service_up.sh` / `explorer_service_status.sh` 的静态 scaffold bring-up，且证据以 `deployment_evidence_scope=placeholder-only` 为主 | `TRNM_EXPLORER_SCAFFOLD_HANDOFF_TEMPLATE_2026-04-04.md` | 只能说明 placeholder deployment path 已被记录；**不能**说明 Rank 1 已关闭 |
+| `service_mode` 不是 `non-placeholder-durable-read-service` | `TRNM_EXPLORER_SCAFFOLD_HANDOFF_TEMPLATE_2026-04-04.md` | 仍按 placeholder-only 处理 |
+| 6 个 durable-read anchors 任一缺失、为空、或仍是 `missing-*` / `placeholder-*` / `not-configured-*` | `TRNM_EXPLORER_SCAFFOLD_HANDOFF_TEMPLATE_2026-04-04.md` | durable read boundary 仍未成立 |
+| replay / restore / lag / checkpoint 证据缺任一项 | `TRNM_EXPLORER_SCAFFOLD_HANDOFF_TEMPLATE_2026-04-04.md` | 仍不得写成 durable handoff |
+| 只有 non-placeholder deployment boundary、6 个 durable-read anchors、replay/restore 命令、lag/health evidence 同时具备 | **本模板** | 才能进入 durable read service handoff 审阅 |
+
+机械判定规则：
+
+- 先看 `deployment_evidence_scope=` 与 `service_mode=`；二者任一仍指向 placeholder，就停止，不再往 durable 模板补写。
+- 再逐项核对 6 个 durable-read anchors；**不是“将来会填”而是“当前 note 已有真实值”**。
+- 最后核对 replay / restore / checkpoint / lag evidence；缺任何一项，都回退到 placeholder-only 口径。
 
 ## Fail-closed boundary
 
