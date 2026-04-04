@@ -109,6 +109,11 @@ assert_json_contains "${RUN_ROOT}/public/index.json" '"durable_read_anchor_missi
 assert_json_contains "${RUN_ROOT}/public/index.json" '"durable_read_anchor_missing_fields":"ingestion_source,checkpoint_store,replay_start_anchor,retention_scope,archive_owner,lag_slo"'
 assert_json_contains "${RUN_ROOT}/public/index.json" '"historical_query_scope":"rpc-retention-bounded"'
 assert_json_contains "${RUN_ROOT}/public/index.json" '"durability_boundary":"ephemeral-rpc-window-only"'
+assert_json_contains "${RUN_ROOT}/public/index.json" '"archive_strategy":"not-configured-static-scaffold"'
+assert_json_contains "${RUN_ROOT}/public/index.json" '"read_replica_strategy":"not-configured-static-scaffold"'
+assert_json_contains "${RUN_ROOT}/public/index.json" '"local_health_url":"'"${HEALTH_URL}"'"'
+assert_json_contains "${RUN_ROOT}/public/index.json" '"durable_read_anchor_archive_owner":"missing-placeholder-scaffold"'
+assert_json_contains "${RUN_ROOT}/public/index.json" '"durable_read_anchor_lag_slo":"missing-placeholder-scaffold"'
 assert_json_contains "${RUN_ROOT}/public/index.json" '"durable_read_anchors":{"ingestion_source":"missing-placeholder-scaffold","checkpoint_store":"missing-placeholder-scaffold","replay_start_anchor":"missing-placeholder-scaffold","retention_scope":"rpc-window-bounded","archive_owner":"missing-placeholder-scaffold","lag_slo":"missing-placeholder-scaffold"}'
 
 EXPLORER_HOST=127.0.0.1 \
