@@ -208,6 +208,10 @@ if [ -n "$DR_SUMMARY_PATH" ] || [ -n "$DR_GENERATED_AT" ] || [ -n "$DR_STATUS" ]
   require_atom_value --dr-status "$DR_STATUS"
   require_nonempty --dr-replay-command "$DR_REPLAY_COMMAND"
   require_nonempty --dr-rollback-command "$DR_ROLLBACK_COMMAND"
+  if [ "$DR_STATUS" != "PASS" ]; then
+    printf 'invalid --dr-status: expected PASS got %s\n' "$DR_STATUS" >&2
+    exit 2
+  fi
 fi
 
 if [ "$CUTOVER_KIND" = "dr_rebuild" ]; then
@@ -221,10 +225,6 @@ if [ "$CUTOVER_KIND" = "dr_rebuild" ]; then
   require_nonempty --lane-verify-command "$LANE_VERIFY_COMMAND"
   if [ -n "$EXPECTED_HEAD" ]; then
     require_token --expected-head "$EXPECTED_HEAD"
-  fi
-  if [ "$DR_STATUS" != "PASS" ]; then
-    printf 'invalid --dr-status: expected PASS got %s\n' "$DR_STATUS" >&2
-    exit 2
   fi
 fi
 
