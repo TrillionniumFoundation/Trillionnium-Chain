@@ -743,6 +743,18 @@ mod tests {
     }
 
     #[test]
+    fn ensure_recoverable_wal_state_reports_missing_checkpoint_resume_surface_after_tail_repair() {
+        let recovered = recovered_state(1, 9, None, true, false);
+
+        ensure_recoverable_wal_state(Path::new("/tmp/trnm-wal"), &recovered)
+            .expect("retained WAL resume without checkpoint metadata should remain recoverable after tail repair");
+        assert_eq!(
+            recovery_startup_summary(&recovered),
+            "retained_wal_entries=1 checkpoint_height_retained=none checkpoint_tip_relation=missing next_startup_height=9 wal_tail_truncated=true metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume_missing_checkpoint_metadata_after_tail_repair"
+        );
+    }
+
+    #[test]
     fn ensure_recoverable_wal_state_reports_lagging_checkpoint_resume_surface() {
         let recovered = recovered_state(3, 8, Some(5), false, false);
 
@@ -763,6 +775,18 @@ mod tests {
         assert_eq!(
             recovery_startup_summary(&recovered),
             "retained_wal_entries=2 checkpoint_height_retained=15 checkpoint_tip_relation=ahead:4 next_startup_height=12 wal_tail_truncated=false metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume_checkpoint_ahead_mismatch"
+        );
+    }
+
+    #[test]
+    fn ensure_recoverable_wal_state_reports_checkpoint_ahead_resume_mismatch_surface_after_tail_repair() {
+        let recovered = recovered_state(2, 12, Some(15), true, false);
+
+        ensure_recoverable_wal_state(Path::new("/tmp/trnm-wal"), &recovered)
+            .expect("checkpoint-ahead retained WAL resume mismatch should stay recoverable after tail repair while surfacing mismatch triage");
+        assert_eq!(
+            recovery_startup_summary(&recovered),
+            "retained_wal_entries=2 checkpoint_height_retained=15 checkpoint_tip_relation=ahead:4 next_startup_height=12 wal_tail_truncated=true metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume_checkpoint_ahead_mismatch_after_tail_repair"
         );
     }
 
