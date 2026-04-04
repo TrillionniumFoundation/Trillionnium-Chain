@@ -3438,14 +3438,27 @@ mod tests {
             anchor.0.display()
         );
 
-        let mut shipped_node_ids = shipped_nodes
+        let shipped_node_paths = shipped_nodes
+            .iter()
+            .map(|(path, _, _, _)| {
+                path.file_name()
+                    .and_then(|name| name.to_str())
+                    .unwrap_or_else(|| panic!("{} should end in a UTF-8 filename", path.display()))
+            })
+            .collect::<Vec<_>>();
+        assert_eq!(
+            shipped_node_paths,
+            vec!["node1.toml", "node2.toml", "node3.toml", "node4.toml"],
+            "bootstrap anchor ordering must stay slot-first by shipped config filename as well as by listener ports so later slots cannot silently masquerade as an equivalent Day-1 anchor"
+        );
+
+        let shipped_node_ids = shipped_nodes
             .iter()
             .map(|(_, node_id, _, _)| node_id.as_str())
             .collect::<Vec<_>>();
-        let mut lexically_sorted_node_ids = shipped_node_ids.clone();
-        lexically_sorted_node_ids.sort();
         assert_eq!(
-            shipped_node_ids, lexically_sorted_node_ids,
+            shipped_node_ids,
+            vec!["node1", "node2", "node3", "node4"],
             "bootstrap anchor ordering must stay slot-first by node_id as well as by listener ports so later slots cannot silently masquerade as an equivalent Day-1 anchor"
         );
 
