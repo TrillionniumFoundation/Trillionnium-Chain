@@ -752,7 +752,12 @@ mod tests {
         assert!(error.contains(
             "incident clue: retained_wal_entries=0 checkpoint_height_retained=8 checkpoint_tip_relation=checkpoint_only:8 next_startup_height=9 wal_tail_truncated=false metadata_only_recovery=true join_rejoin_status=blocked:metadata_only_recovery"
         ));
-        assert!(error.contains("restart with a fresh --bft-wal-dir / --bft-wal-mode auto isolated run"));
+        assert!(error.contains(
+            "checkpoint-only bootstrap is acceptable with a fresh --bft-wal-dir / --bft-wal-mode auto isolated run"
+        ));
+        assert!(!error.contains(
+            "operator action: restart with a fresh --bft-wal-dir / --bft-wal-mode auto isolated run; if this node must rejoin from prior state, restore an application snapshot before retrying"
+        ));
         assert!(error.contains("wal_entries_retained=0"));
         assert!(error.contains("wal_tail_truncated=false"));
         assert!(error.contains("checkpoint_height_retained=8"));
@@ -772,6 +777,12 @@ mod tests {
         assert!(error.contains("next startup height: 9"));
         assert!(error.contains(
             "incident clue: retained_wal_entries=0 checkpoint_height_retained=8 checkpoint_tip_relation=checkpoint_only:8 next_startup_height=9 wal_tail_truncated=true metadata_only_recovery=true join_rejoin_status=blocked:metadata_only_recovery"
+        ));
+        assert!(error.contains(
+            "checkpoint-only bootstrap is acceptable with a fresh --bft-wal-dir / --bft-wal-mode auto isolated run"
+        ));
+        assert!(!error.contains(
+            "operator action: restart with a fresh --bft-wal-dir / --bft-wal-mode auto isolated run; if this node must rejoin from prior state, restore an application snapshot before retrying"
         ));
         assert!(error.contains("checkpoint_tip_relation=checkpoint_only:8"));
         assert!(error.contains("wal_tail_truncated=true"));
