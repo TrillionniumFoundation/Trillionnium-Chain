@@ -91,6 +91,24 @@ if bash "$SCRIPT" \
 fi
 grep -q 'missing --handoff-manifest-path' /tmp/emit-packet.err
 
+if bash "$SCRIPT" \
+  --cutover-kind rotation \
+  --verified-worktree /tmp/trnm-lane \
+  --verified-branch-ref lane/mn05-operator-dr-rotation-lifecycle \
+  --verified-head 0123456789abcdef \
+  --outgoing-validator-id validator-old \
+  --incoming-validator-id validator-new \
+  --incoming-config-path /tmp/configs/validator-new.json \
+  --rollback-command 'rm -rf /tmp/cutover-note' \
+  --handoff-signed-by alice \
+  --handoff-acknowledged-by bob \
+  --dr-summary-path /tmp/run/bft-restart-recovery-1.txt \
+  >/tmp/emit-packet.out 2>/tmp/emit-packet.err; then
+  echo "expected partial dr evidence fields to fail" >&2
+  exit 1
+fi
+grep -q 'missing --dr-generated-at' /tmp/emit-packet.err
+
 bash "$SCRIPT" \
   "${common_args[@]}" \
   --expected-worktree-root /Users/qianqi/.openclaw/workspace/trnm-mainnet-lanes/MN05-operator-dr-rotation-lifecycle \

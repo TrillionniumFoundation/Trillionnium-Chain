@@ -190,6 +190,14 @@ if [ -n "$HANDOFF_SUMMARY_PATH" ] || [ -n "$HANDOFF_MANIFEST_PATH" ] || [ -n "$S
   require_nonempty --manifest-generated-at "$MANIFEST_GENERATED_AT"
 fi
 
+if [ -n "$DR_SUMMARY_PATH" ] || [ -n "$DR_GENERATED_AT" ] || [ -n "$DR_STATUS" ] || [ -n "$DR_REPLAY_COMMAND" ] || [ -n "$DR_ROLLBACK_COMMAND" ]; then
+  require_path_value --dr-summary-path "$DR_SUMMARY_PATH"
+  require_nonempty --dr-generated-at "$DR_GENERATED_AT"
+  require_nonempty --dr-status "$DR_STATUS"
+  require_nonempty --dr-replay-command "$DR_REPLAY_COMMAND"
+  require_nonempty --dr-rollback-command "$DR_ROLLBACK_COMMAND"
+fi
+
 if [ "$CUTOVER_KIND" = "dr_rebuild" ]; then
   require_path_value --dr-summary-path "$DR_SUMMARY_PATH"
   require_nonempty --dr-generated-at "$DR_GENERATED_AT"
