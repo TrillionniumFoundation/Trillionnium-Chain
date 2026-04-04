@@ -72,9 +72,8 @@ fn parse_node_event_log_sources_list(raw: &str) -> Vec<PathBuf> {
             Some(_) => {}
             None if matches!(ch, '"' | '\'' | '`') => quote = Some(ch),
             None if matches!(ch, ',' | ';' | '\n' | '\r') => {
-                let normalized = normalize_wrapped_env_value(raw[start..idx].trim());
-                if !normalized.is_empty() {
-                    out.push(PathBuf::from(normalized));
+                if let Some(path) = normalize_node_event_log_source_entry(&raw[start..idx]) {
+                    out.push(PathBuf::from(path));
                 }
                 start = idx + ch.len_utf8();
             }
@@ -82,12 +81,82 @@ fn parse_node_event_log_sources_list(raw: &str) -> Vec<PathBuf> {
         }
     }
 
-    let normalized = normalize_wrapped_env_value(raw[start..].trim());
-    if !normalized.is_empty() {
-        out.push(PathBuf::from(normalized));
+    if let Some(path) = normalize_node_event_log_source_entry(&raw[start..]) {
+        out.push(PathBuf::from(path));
     }
 
     out
+}
+
+fn normalize_leading_wrapped_log_source_comment_value(raw: &str) -> Option<&str> {
+    let normalized = raw.trim_start_matches('\u{feff}').trim();
+    let quote = normalized.chars().next()?;
+    if !matches!(quote, '"' | '\'' | '`') {
+        return None;
+    }
+
+    let closing_idx = normalized[quote.len_utf8()..]
+        .char_indices()
+        .find_map(|(idx, ch)| (ch == quote).then_some(quote.len_utf8() + idx))?;
+    let rest = normalized[closing_idx + quote.len_utf8()..]
+        .trim_start()
+        .trim_start_matches('\u{feff}')
+        .trim_start();
+    if !rest.starts_with('#') {
+        return None;
+    }
+
+    Some(normalize_wrapped_env_value(
+        &normalized[..closing_idx + quote.len_utf8()],
+    ))
+}
+
+fn normalize_node_event_log_source_entry(raw: &str) -> Option<String> {
+    let trimmed = raw.trim();
+    if trimmed.is_empty() {
+        return None;
+    }
+
+    let normalized = normalize_wrapped_env_value(trimmed);
+    if normalized.is_empty() || normalized.starts_with('#') {
+        return None;
+    }
+
+    let inline_comment_idx = normalized.char_indices().find_map(|(idx, ch)| {
+        (ch == '#'
+            && idx > 0
+            && normalized[..idx]
+                .chars()
+                .last()
+                .is_some_and(char::is_whitespace))
+        .then_some(idx)
+    });
+    let normalized = inline_comment_idx
+        .map(|idx| normalize_wrapped_env_value(normalized[..idx].trim_end()))
+        .unwrap_or(normalized);
+    let normalized = normalize_leading_wrapped_log_source_comment_value(normalized)
+        .unwrap_or(normalized);
+    if normalized.is_empty() || normalized.starts_with('#') {
+        return None;
+    }
+
+    Some(normalized.to_string())
+}
+
+fn normalize_lexical_path(path: PathBuf) -> PathBuf {
+    let mut normalized = PathBuf::new();
+    for component in path.components() {
+        match component {
+            std::path::Component::CurDir => {}
+            std::path::Component::ParentDir => {
+                if !normalized.pop() {
+                    normalized.push(component.as_os_str());
+                }
+            }
+            other => normalized.push(other.as_os_str()),
+        }
+    }
+    normalized
 }
 
 #[cfg(test)]
@@ -149,18 +218,18 @@ pub(crate) fn load_node_event_log_sources(root: &Path) -> Vec<PathBuf> {
     let mut sources = BTreeSet::<PathBuf>::new();
 
     if let Some(manifest_path) = normalized_path_from_env(NODE_EVENT_LOG_MANIFEST_ENV) {
+        let manifest_path = if manifest_path.is_absolute() {
+            normalize_lexical_path(manifest_path)
+        } else {
+            normalize_lexical_path(root.join(manifest_path))
+        };
         if let Ok(raw) = fs::read_to_string(&manifest_path) {
             let manifest_dir = manifest_path.parent().unwrap_or_else(|| Path::new("."));
             for path in parse_node_event_log_sources_list(&raw) {
-                let normalized = normalize_wrapped_env_value(&path.to_string_lossy());
-                if normalized.is_empty() || normalized.starts_with('#') {
-                    continue;
-                }
-                let path = PathBuf::from(normalized);
                 let resolved = if path.is_absolute() {
-                    path
+                    normalize_lexical_path(path)
                 } else {
-                    manifest_dir.join(path)
+                    normalize_lexical_path(manifest_dir.join(path))
                 };
                 sources.insert(resolved);
             }
@@ -170,9 +239,9 @@ pub(crate) fn load_node_event_log_sources(root: &Path) -> Vec<PathBuf> {
     if let Ok(raw) = std::env::var(NODE_EVENT_LOG_SOURCES_ENV) {
         for path in parse_node_event_log_sources_list(&raw) {
             let resolved = if path.is_absolute() {
-                path
+                normalize_lexical_path(path)
             } else {
-                root.join(path)
+                normalize_lexical_path(root.join(path))
             };
             sources.insert(resolved);
         }
@@ -190,18 +259,18 @@ fn load_node_event_log_sources(root: &Path) -> Vec<PathBuf> {
     let mut sources = BTreeSet::<PathBuf>::new();
 
     if let Some(manifest_path) = normalized_path_from_env(NODE_EVENT_LOG_MANIFEST_ENV) {
+        let manifest_path = if manifest_path.is_absolute() {
+            normalize_lexical_path(manifest_path)
+        } else {
+            normalize_lexical_path(root.join(manifest_path))
+        };
         if let Ok(raw) = fs::read_to_string(&manifest_path) {
             let manifest_dir = manifest_path.parent().unwrap_or_else(|| Path::new("."));
             for path in parse_node_event_log_sources_list(&raw) {
-                let normalized = normalize_wrapped_env_value(&path.to_string_lossy());
-                if normalized.is_empty() || normalized.starts_with('#') {
-                    continue;
-                }
-                let path = PathBuf::from(normalized);
                 let resolved = if path.is_absolute() {
-                    path
+                    normalize_lexical_path(path)
                 } else {
-                    manifest_dir.join(path)
+                    normalize_lexical_path(manifest_dir.join(path))
                 };
                 sources.insert(resolved);
             }
@@ -211,9 +280,9 @@ fn load_node_event_log_sources(root: &Path) -> Vec<PathBuf> {
     if let Ok(raw) = std::env::var(NODE_EVENT_LOG_SOURCES_ENV) {
         for path in parse_node_event_log_sources_list(&raw) {
             let resolved = if path.is_absolute() {
-                path
+                normalize_lexical_path(path)
             } else {
-                root.join(path)
+                normalize_lexical_path(root.join(path))
             };
             sources.insert(resolved);
         }
