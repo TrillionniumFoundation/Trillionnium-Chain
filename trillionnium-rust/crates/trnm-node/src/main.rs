@@ -854,9 +854,9 @@ fn recovery_startup_summary(recovered: &RecoveredWalState) -> String {
         }
     } else if recovered.checkpoint_height_retained.is_some() {
         if recovered.truncated {
-            "ready:checkpoint_only_bootstrap_after_tail_repair"
+            "ready:checkpoint_only_rejoin_bootstrap_after_tail_repair"
         } else {
-            "ready:checkpoint_only_bootstrap"
+            "ready:checkpoint_only_rejoin_bootstrap"
         }
     } else {
         if recovered.truncated {
@@ -16854,7 +16854,7 @@ locked_block_hash = "stale-lock"
 
         assert_eq!(
             recovery_startup_summary(&recovered),
-            "retained_wal_entries=0 checkpoint_height_retained=8 checkpoint_tip_relation=checkpoint_only:8 next_startup_height=9 wal_tail_truncated=false metadata_only_recovery=false join_rejoin_status=ready:checkpoint_only_bootstrap"
+            "retained_wal_entries=0 checkpoint_height_retained=8 checkpoint_tip_relation=checkpoint_only:8 next_startup_height=9 wal_tail_truncated=false metadata_only_recovery=false join_rejoin_status=ready:checkpoint_only_rejoin_bootstrap"
         );
         assert_eq!(
             retained_wal_summary(&recovered),
@@ -17360,7 +17360,7 @@ locked_block_hash = "stale-lock"
             .expect("truncated checkpoint-only rejoin bootstrap should remain recoverable");
         assert_eq!(
             recovery_startup_summary(&recovered),
-            "retained_wal_entries=0 checkpoint_height_retained=8 checkpoint_tip_relation=checkpoint_only:8 next_startup_height=9 wal_tail_truncated=true metadata_only_recovery=false join_rejoin_status=ready:checkpoint_only_bootstrap_after_tail_repair"
+            "retained_wal_entries=0 checkpoint_height_retained=8 checkpoint_tip_relation=checkpoint_only:8 next_startup_height=9 wal_tail_truncated=true metadata_only_recovery=false join_rejoin_status=ready:checkpoint_only_rejoin_bootstrap_after_tail_repair"
         );
         assert_eq!(
             retained_wal_summary(&recovered),
