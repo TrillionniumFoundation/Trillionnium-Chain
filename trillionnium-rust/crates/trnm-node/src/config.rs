@@ -2682,6 +2682,14 @@ mod tests {
             "{} must not silently drift bootstrap anchor guidance from canonical `127.0.0.1` tuples to `localhost` aliases",
             readme_path.display()
         );
+        for forbidden_term in ["bootstrap_peers", "seed_nodes", "persistent_peers", "node5.toml"] {
+            assert_eq!(
+                readme.matches(forbidden_term).count(),
+                1,
+                "{} must mention `{forbidden_term}` exactly once, only in the explicit fail-closed prohibition against widening the shipped local bootstrap fixture",
+                readme_path.display()
+            );
+        }
 
         let expected_lines = [
             "- `node1.toml` → node id `node1`, P2P `127.0.0.1:26656`, RPC `127.0.0.1:26657`",
