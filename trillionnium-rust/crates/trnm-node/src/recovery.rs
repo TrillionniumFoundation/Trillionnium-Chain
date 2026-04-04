@@ -831,6 +831,22 @@ mod tests {
     }
 
     #[test]
+    fn ensure_recoverable_wal_state_allows_single_block_lagging_checkpoint_resume() {
+        let recovered = recovered_state(2, 8, Some(6), false, false);
+
+        ensure_recoverable_wal_state(Path::new("/tmp/trnm-wal"), &recovered)
+            .expect("single-block lagging checkpoint resume should remain recoverable for safe join/rejoin");
+        assert_eq!(
+            retained_wal_summary(&recovered),
+            "retained 2 committed WAL entries through height 7 (checkpoint lags retained WAL tip by 1 block)"
+        );
+        assert_eq!(
+            recovery_startup_summary(&recovered),
+            "retained_wal_entries=2 checkpoint_height_retained=6 checkpoint_tip_relation=behind:1 next_startup_height=8 wal_tail_truncated=false metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume_checkpoint_lagging"
+        );
+    }
+
+    #[test]
     fn recovery_startup_summary_keeps_lagging_join_surface_saturated_at_max_height() {
         let recovered = recovered_state(1, u64::MAX, Some(u64::MAX - 2), false, false);
 
