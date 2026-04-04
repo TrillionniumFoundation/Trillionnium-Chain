@@ -4539,6 +4539,31 @@ mod tests {
     }
 
     #[test]
+    fn shipped_bootstrap_readme_keeps_single_authoritative_fail_closed_topology_rules() {
+        let manifest_dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR"));
+        let workspace_root = manifest_dir
+            .ancestors()
+            .nth(2)
+            .expect("trnm-node manifest should sit under trillionnium-rust/crates/trnm-node");
+        let readme_path = workspace_root.join("configs/README.md");
+        let readme = std::fs::read_to_string(&readme_path)
+            .unwrap_or_else(|err| panic!("{} should stay readable: {err}", readme_path.display()));
+
+        for expected_phrase in [
+            "If `node1` is absent, do not treat `node2`, `node3`, or `node4` as a valid replacement bootstrap anchor; restore the shipped `node1` anchor first and fail closed otherwise.",
+            "Do not skip a missing earlier follower slot during startup or rejoin: if `node2` is absent, keep `node3` and `node4` stopped; if `node3` is absent, keep `node4` stopped until the earlier slot regains its shipped tuple.",
+            "If `node4` is absent, keep `node1` through `node3` in their shipped slots; do not rename another config into the `node4` role, and if `node4` returns it must come back with `node4.toml` and its shipped tuple.",
+        ] {
+            let occurrences = readme.match_indices(expected_phrase).count();
+            assert_eq!(
+                occurrences, 1,
+                "{} must keep exactly one authoritative copy of the shipped bootstrap fail-closed rule `{expected_phrase}` so operator topology guidance cannot silently fork",
+                readme_path.display()
+            );
+        }
+    }
+
+    #[test]
     fn shipped_node_configs_form_a_unique_local_bootstrap_topology() {
         use std::{collections::HashSet, net::SocketAddr};
 
