@@ -961,10 +961,12 @@ fn path_text_has_dot_segments(path: &Path) -> bool {
 fn wallet_store_path_is_safe(path: &Path) -> bool {
     use std::path::Component;
 
+    let rendered = path.to_string_lossy();
     path.is_absolute()
         && path.parent().is_some()
+        && !rendered.contains("//")
         && !path_text_has_dot_segments(path)
-        && path.to_string_lossy().chars().all(|c| {
+        && rendered.chars().all(|c| {
             !c.is_whitespace()
                 && !contains_hidden_or_control(c)
                 && !matches!(c, '\\' | '＼' | '∕' | '⁄' | '／' | '⧵' | '⟋' | '⟍')
@@ -3345,6 +3347,19 @@ mod tests {
                 .to_string()
                 .contains("must be an absolute normalized path"),
             "unexpected error: {slash_confusable_read_err}"
+        );
+
+        let duplicate_slash_write_err = write_key(
+            std::path::Path::new("//tmp/trnm-wallets"),
+            "alice",
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        )
+        .unwrap_err();
+        assert!(
+            duplicate_slash_write_err
+                .to_string()
+                .contains("must be an absolute normalized path"),
+            "unexpected error: {duplicate_slash_write_err}"
         );
     }
 
