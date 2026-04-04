@@ -2981,6 +2981,10 @@ mod tests {
             Some("/tmp/trnm-wallets")
         );
         assert_eq!(
+            normalize_wallet_store_env("\u{2066}\u{2068}\"/tmp/trnm-wallets\"\u{2069}\u{2067}"),
+            Some("/tmp/trnm-wallets")
+        );
+        assert_eq!(
             normalize_wallet_store_env("\u{200e}\u{061c}《/tmp/trnm-wallets》\u{200f}"),
             Some("/tmp/trnm-wallets")
         );
@@ -2991,7 +2995,11 @@ mod tests {
             Some("/tmp/trnm-wallets")
         );
         assert_eq!(
-            normalize_wallet_store_env(" \"/tmp/trnm-wallets  "),
+            normalize_wallet_store_env("  /tmp/trnm-wallets\" "),
+            Some("/tmp/trnm-wallets")
+        );
+        assert_eq!(
+            normalize_wallet_store_env(" /tmp/trnm-wallets》 "),
             Some("/tmp/trnm-wallets")
         );
         assert_eq!(normalize_wallet_store_env("   \"\"   "), None);
