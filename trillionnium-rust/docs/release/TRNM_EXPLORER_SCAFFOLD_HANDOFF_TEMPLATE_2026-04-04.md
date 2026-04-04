@@ -99,6 +99,7 @@ public_dir=<value>
 health_file=<value>
 index_file=<value>
 read_contract_mode=read-only
+read_contract_source=rpc-read-surface
 day1_surface=query-task/<task_id>,query-events/<task_id>?limit=<n>,query-capability-audit/<subject-or-token>,query-normalized-audit-events?source=<source>&eventType=<type>&limit=<n>&cursor=<cursor>
 query_events_default_limit=100
 query_events_max_limit=500
@@ -180,8 +181,8 @@ rollback_command=./trillionnium-rust/scripts/v2/explorer_service_down.sh
 3. The status block must be copied from script output verbatim for the fail-closed markers.
 4. Preserve `bind_host`, `bind_port`, `public_base_url`, and `env_file` so the handoff records the actual local deployment boundary rather than only the reverse-proxy-facing URL.
 5. `/index.json` proof may come from `curl`, browser fetch, or direct file read, but the note must preserve where it was fetched from.
-6. Copy the status-side read-contract markers verbatim too: `read_contract_mode`, `day1_surface`, `query_events_default_limit`, `query_events_max_limit`, and `write_paths_exposed`. Do not rely on `service_mode` alone, because the handoff note should freeze the actual Day-1 read surface rather than just the deployment shape.
-7. Preserve the matching `/index.json` contract markers (`index_json_read_contract_mode`, `index_json_day1_surface`, limit fields, and durability markers) so operators can prove the served static payload matches the CLI/status contract instead of only asserting `index_json_declares_day1_contract=true`.
+6. Copy the status-side read-contract markers verbatim too: `read_contract_mode`, `read_contract_source`, `day1_surface`, `query_events_default_limit`, `query_events_max_limit`, and `write_paths_exposed`. Do not rely on `service_mode` alone, because the handoff note should freeze the actual Day-1 read surface rather than just the deployment shape.
+7. Preserve the matching `/index.json` contract markers (`index_json_read_contract_mode`, `index_json_read_contract_source`, `index_json_day1_surface`, limit fields, and durability markers) so operators can prove the served static payload matches the CLI/status contract instead of only asserting `index_json_declares_day1_contract=true`.
 8. If reverse proxy and local bind differ, preserve both `health_url` and `local_health_url`, plus the corresponding `health_probe_url` / `local_health_probe_url` fields.
 9. Preserve both `replay_command` and `rollback_command` so the same placeholder bring-up path can be re-run or torn down without reconstructing it from memory.
 10. When `summary.txt` is available, also preserve `template_path=`, `durable_template_path=`, `template_selection=`, `durable_template_allowed=`, `durable_template_rejection_reason=`, `deployment_template_boundary=`, and the `truth_source_*=` lines verbatim; they are the mechanical hint for which template the next operator is allowed to use.
@@ -204,10 +205,10 @@ This template does **not** claim any of the following are closed:
 A scaffold handoff note is acceptable only if it includes all of the following:
 
 - exact `EXPLORER_*` runtime values
-- one emitted status block with fail-closed markers intact, including `read_contract_mode`, `day1_surface`, `query_events_default_limit`, `query_events_max_limit`, `write_paths_exposed`, and `durable_read_anchor_missing_count` + `durable_read_anchor_missing_fields`
+- one emitted status block with fail-closed markers intact, including `read_contract_mode`, `read_contract_source`, `day1_surface`, `query_events_default_limit`, `query_events_max_limit`, `write_paths_exposed`, and `durable_read_anchor_missing_count` + `durable_read_anchor_missing_fields`
 - explicit local deployment-path fields (`bind_host`, `bind_port`, `public_base_url`, `env_file`)
 - explicit probe evidence (`health_probe_url`, `local_health_probe_url`)
-- one `/index.json` fetch proof that also preserves the served read-contract/durability markers, not just a boolean declaration
+- one `/index.json` fetch proof that also preserves the served read-contract/durability markers, including `index_json_read_contract_source`, not just a boolean declaration
 - one explicit blocker note stating placeholder-only scope
 - one replay command
 - one rollback command
