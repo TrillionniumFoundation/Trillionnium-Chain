@@ -151,6 +151,12 @@ if [[ ! -f "${ENV_FILE}" ]]; then
   exit 1
 fi
 
+assert_contains "${ENV_FILE}" "EXPLORER_HOST=127.0.0.1"
+assert_contains "${ENV_FILE}" "EXPLORER_PORT=${PORT}"
+assert_contains "${ENV_FILE}" "EXPLORER_PUBLIC_BASE_URL=${PUBLIC_BASE_URL}"
+assert_contains "${ENV_FILE}" "EXPLORER_HEALTH_URL=${HEALTH_URL}"
+assert_contains "${ENV_FILE}" "EXPLORER_RPC_BASE_URL=${RPC_BASE_URL}"
+
 if [[ ! -f "${LOG_FILE}" ]]; then
   echo "expected log file to exist: ${LOG_FILE}" >&2
   exit 1
