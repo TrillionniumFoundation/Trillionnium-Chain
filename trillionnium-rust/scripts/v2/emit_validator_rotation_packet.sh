@@ -99,6 +99,18 @@ require_path_value() {
   esac
 }
 
+require_atom_value() {
+  local flag_name="$1"
+  local value="$2"
+  require_nonempty "$flag_name" "$value"
+  case "$value" in
+    [[:space:]]*|*[[:space:]])
+      printf 'invalid %s: must not start or end with whitespace: %q\n' "$flag_name" "$value" >&2
+      exit 2
+      ;;
+  esac
+}
+
 while [ "$#" -gt 0 ]; do
   case "$1" in
     --cutover-kind) CUTOVER_KIND="${2-}"; shift 2 ;;
@@ -186,22 +198,22 @@ fi
 if [ -n "$HANDOFF_SUMMARY_PATH" ] || [ -n "$HANDOFF_MANIFEST_PATH" ] || [ -n "$SUMMARY_GENERATED_AT" ] || [ -n "$MANIFEST_GENERATED_AT" ]; then
   require_path_value --handoff-summary-path "$HANDOFF_SUMMARY_PATH"
   require_path_value --handoff-manifest-path "$HANDOFF_MANIFEST_PATH"
-  require_nonempty --summary-generated-at "$SUMMARY_GENERATED_AT"
-  require_nonempty --manifest-generated-at "$MANIFEST_GENERATED_AT"
+  require_atom_value --summary-generated-at "$SUMMARY_GENERATED_AT"
+  require_atom_value --manifest-generated-at "$MANIFEST_GENERATED_AT"
 fi
 
 if [ -n "$DR_SUMMARY_PATH" ] || [ -n "$DR_GENERATED_AT" ] || [ -n "$DR_STATUS" ] || [ -n "$DR_REPLAY_COMMAND" ] || [ -n "$DR_ROLLBACK_COMMAND" ]; then
   require_path_value --dr-summary-path "$DR_SUMMARY_PATH"
-  require_nonempty --dr-generated-at "$DR_GENERATED_AT"
-  require_nonempty --dr-status "$DR_STATUS"
+  require_atom_value --dr-generated-at "$DR_GENERATED_AT"
+  require_atom_value --dr-status "$DR_STATUS"
   require_nonempty --dr-replay-command "$DR_REPLAY_COMMAND"
   require_nonempty --dr-rollback-command "$DR_ROLLBACK_COMMAND"
 fi
 
 if [ "$CUTOVER_KIND" = "dr_rebuild" ]; then
   require_path_value --dr-summary-path "$DR_SUMMARY_PATH"
-  require_nonempty --dr-generated-at "$DR_GENERATED_AT"
-  require_nonempty --dr-status "$DR_STATUS"
+  require_atom_value --dr-generated-at "$DR_GENERATED_AT"
+  require_atom_value --dr-status "$DR_STATUS"
   require_nonempty --dr-replay-command "$DR_REPLAY_COMMAND"
   require_nonempty --dr-rollback-command "$DR_ROLLBACK_COMMAND"
   require_path_value --expected-worktree-root "$EXPECTED_WORKTREE_ROOT"
