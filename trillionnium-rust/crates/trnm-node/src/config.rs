@@ -3290,6 +3290,34 @@ mod tests {
             }
             previous_repo_root_slot_path_index = Some(current_repo_root_slot_path_index);
         }
+
+        let repo_root_anchor_index = readme.find("`trillionnium-rust/configs/node1.toml`").unwrap_or_else(|| {
+            panic!(
+                "{} must keep the repo-root anchor path visible for startup/join/rejoin incident triage",
+                readme_path.display()
+            )
+        });
+        for placeholder_alias in ["`configs/nodeN.toml`", "`./configs/nodeN.toml`"] {
+            assert_eq!(
+                readme.matches(placeholder_alias).count(),
+                1,
+                "{} must mention {} exactly once so bootstrap incident guidance cannot silently drift or duplicate alias placeholders",
+                readme_path.display(),
+                placeholder_alias
+            );
+            let placeholder_alias_index = readme.find(placeholder_alias).unwrap_or_else(|| {
+                panic!(
+                    "{} must keep {} visible so operators can map alias-shaped input paths back to the shipped slot files",
+                    readme_path.display(),
+                    placeholder_alias
+                )
+            });
+            assert!(
+                repo_root_anchor_index < placeholder_alias_index,
+                "{} must introduce alias-shaped path placeholders only after the repo-root slot references so incident notes stay anchored on the canonical shipped slot files",
+                readme_path.display()
+            );
+        }
     }
     #[test]
     fn shipped_bootstrap_configs_directory_keeps_exactly_the_readme_and_four_slot_bound_files() {
