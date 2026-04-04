@@ -294,6 +294,65 @@ fn smoke_wallet_sign_rejects_invalid_explicit_store_path() {
     );
 }
 
+#[cfg(unix)]
+#[test]
+fn smoke_wallet_sign_rejects_explicit_store_with_symlinked_ancestor() {
+    use std::os::unix::fs::symlink;
+
+    let root = tmp_dir("wallet-sign-symlink-ancestor");
+    let real_parent = root.join("real-parent");
+    let linked_parent = root.join("linked-parent");
+    let real_store = real_parent.join("wallets");
+    std::fs::create_dir_all(&real_store).unwrap();
+    symlink(&real_parent, &linked_parent).unwrap();
+
+    let pk = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+    let import = Command::new(bin())
+        .args([
+            "wallet",
+            "import",
+            "--name",
+            "alice",
+            "--private-key-hex",
+            pk,
+            "--out",
+            real_store.to_string_lossy().as_ref(),
+        ])
+        .output()
+        .unwrap();
+    assert!(
+        import.status.success(),
+        "stderr: {}",
+        String::from_utf8_lossy(&import.stderr)
+    );
+
+    let linked_store = linked_parent.join("wallets");
+    let out = Command::new(bin())
+        .args([
+            "wallet",
+            "sign",
+            "--name",
+            "alice",
+            "--message",
+            "approve tx",
+            "--store",
+            linked_store.to_string_lossy().as_ref(),
+        ])
+        .output()
+        .unwrap();
+    assert!(
+        !out.status.success(),
+        "symlinked explicit keystore ancestor should fail closed"
+    );
+    let stderr = String::from_utf8_lossy(&out.stderr);
+    assert!(
+        stderr.contains("explicit wallet store")
+            && stderr.contains("must be an absolute normalized symlink-free path"),
+        "unexpected stderr: {}",
+        stderr
+    );
+}
+
 #[test]
 fn smoke_wallet_address_rejects_invalid_env_store_fallback() {
     let store = tmp_dir("wallet-address-invalid-env-store");
