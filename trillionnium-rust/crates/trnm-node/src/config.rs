@@ -1490,6 +1490,53 @@ mod tests {
     }
 
     #[test]
+    fn load_config_rejects_ipv4_mapped_ipv6_listener_with_operator_facing_error() {
+        for (field, addr, expected_fragment) in [
+            (
+                "rpc_addr",
+                "[::ffff:127.0.0.1]:7000",
+                "rpc_addr must not use an IPv4-mapped IPv6 address",
+            ),
+            (
+                "p2p_addr",
+                "[::ffff:127.0.0.1]:7001",
+                "p2p_addr must not use an IPv4-mapped IPv6 address",
+            ),
+        ] {
+            let path = std::env::temp_dir().join(format!(
+                "trnm-node-config-ipv4-mapped-{field}-listener-{}-{}.toml",
+                std::process::id(),
+                now_unix_ms()
+            ));
+            let body = if field == "rpc_addr" {
+                format!(
+                    "node_id = \"node-a\"\nrpc_addr = \"{addr}\"\np2p_addr = \"[2001:4860::1]:7001\"\n"
+                )
+            } else {
+                format!(
+                    "node_id = \"node-a\"\nrpc_addr = \"[2001:4860::1]:7000\"\np2p_addr = \"{addr}\"\n"
+                )
+            };
+            std::fs::write(&path, body).expect("write config");
+
+            let path_str = path.to_str().expect("utf8 path");
+            let err = load_config(path_str)
+                .expect_err("IPv4-mapped IPv6 bootstrap listeners must fail closed");
+            let err_surface = format!("{err:#}");
+            assert!(
+                err_surface.contains(expected_fragment),
+                "unexpected error for {field}: {err:#}"
+            );
+            assert!(
+                err_surface.contains(path_str),
+                "error surface for {field} must keep the operator-supplied config path visible: {err:#}"
+            );
+
+            let _ = std::fs::remove_file(path);
+        }
+    }
+
+    #[test]
     fn validate_node_config_rejects_invalid_socket_addresses() {
         let rpc_err = validate_node_config(
             NodeConfig {
