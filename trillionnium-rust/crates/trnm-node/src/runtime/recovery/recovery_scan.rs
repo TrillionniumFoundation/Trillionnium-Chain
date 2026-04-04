@@ -321,7 +321,14 @@ fn recovery_startup_summary(recovered: &RecoveredWalState) -> String {
 
 fn metadata_only_operator_action(recovered: &RecoveredWalState) -> &'static str {
     if recovered.wal_entries_retained == 0 {
-        "operator action: restart with a fresh --bft-wal-dir / --bft-wal-mode auto isolated run; if this node must rejoin from prior state, restore an application snapshot before retrying"
+        match recovered.checkpoint_height_retained {
+            Some(_) => {
+                "operator action: checkpoint-only bootstrap is acceptable with a fresh --bft-wal-dir / --bft-wal-mode auto isolated run; if this node must rejoin from prior state, restore an application snapshot before retrying"
+            }
+            None => {
+                "operator action: restart with a fresh --bft-wal-dir / --bft-wal-mode auto isolated run; if this node must rejoin from prior state, restore an application snapshot before retrying"
+            }
+        }
     } else {
         match recovered.checkpoint_height_retained {
             Some(checkpoint_height) if checkpoint_height < recovered.next_height.saturating_sub(1) => {
@@ -825,7 +832,8 @@ mod tests {
                 && err.contains("checkpoint_height_retained=8")
                 && err.contains("checkpoint_tip_relation=checkpoint_only:8")
                 && err.contains("next_startup_height=9")
-                && err.contains("operator action: restart with a fresh --bft-wal-dir / --bft-wal-mode auto isolated run; if this node must rejoin from prior state, restore an application snapshot before retrying"),
+                && err.contains("operator action: checkpoint-only bootstrap is acceptable with a fresh --bft-wal-dir / --bft-wal-mode auto isolated run; if this node must rejoin from prior state, restore an application snapshot before retrying")
+                && !err.contains("operator action: restart with a fresh --bft-wal-dir / --bft-wal-mode auto isolated run; if this node must rejoin from prior state, restore an application snapshot before retrying"),
             "unexpected metadata-only recovery error: {err}"
         );
     }
