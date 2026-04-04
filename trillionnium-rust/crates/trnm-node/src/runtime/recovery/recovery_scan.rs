@@ -898,6 +898,29 @@ mod tests {
     }
 
     #[test]
+    fn recovery_startup_summary_keeps_truncated_lagging_join_surface_saturated_at_max_height() {
+        let recovered = recovered_state(1, u64::MAX, Some(u64::MAX - 2), true, false);
+
+        ensure_recoverable_wal_state(Path::new("/tmp/trnm-runtime-wal"), &recovered)
+            .expect("truncated max-height lagging checkpoint resume should remain recoverable for runtime join/rejoin triage");
+        assert_eq!(
+            retained_wal_summary(&recovered),
+            format!(
+                "retained 1 committed WAL entry through height {} (checkpoint lags retained WAL tip by 1 block); repaired WAL tail required truncation",
+                u64::MAX - 1
+            )
+        );
+        assert_eq!(
+            recovery_startup_summary(&recovered),
+            format!(
+                "retained_wal_entries=1 checkpoint_height_retained={} checkpoint_tip_relation=behind:1 next_startup_height={} wal_tail_truncated=true metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume_checkpoint_lagging_after_tail_repair",
+                u64::MAX - 2,
+                u64::MAX,
+            )
+        );
+    }
+
+    #[test]
     fn recovery_startup_summary_reports_checkpoint_ahead_of_retained_tip_as_blocked_metadata_only() {
         let recovered = recovered_state(2, 12, Some(15), false, true);
 
