@@ -215,15 +215,31 @@ npx vitest run \
 ### Contract scope
 - 运维探针。
 - 不属于产品级 public data plane。
+- 最小字段 contract 仍限定为：`ok / service / ts_unix_ms / version`。
 
 ### Current evidence
 **Primary source**
 - `TRNM_DAY1_PUBLIC_READ_CONTRACT_2026-04-03.md`
 - `TRNM_DAY1_PUBLIC_READ_CONTRACT_MATRIX_2026-04-03.md`
 - `TRNM_GROUPA_CONTRACT_DRIFT_GUARD_PACK_2026-04-03.md`
+- `trillionnium-rust/crates/trnm-rpc/src/main.rs`
+- `trillionnium-rust/docs/runbooks/explorer-service-scaffold.md`
+
+**Minimum reproducible check (doc-guarded, not signoff-equivalent to frontend tests)**
+```bash
+cd trillionnium-rust
+./scripts/v2/explorer_service_status.sh
+curl -fsS http://127.0.0.1:7777/healthz | jq '{ok, service, ts_unix_ms, version}'
+```
+
+Review expectation:
+- `explorer_service_status.sh` / scaffold docs 只能把 `healthz` 作为 operator probe 引用，不能把它包装成 public data endpoint。
+- 抓取结果必须仍可压缩到 `ok / service / ts_unix_ms / version` 这一最小 contract；如果 reviewer 需要更多字段才能解释“成功”，就说明边界已经开始漂移。
 
 ### Signoff statement
-- 当前有**文档边界证据**，但没有与前四个 endpoint 同等级的 frontend conformance test pack。
+- 当前有**文档边界 + backend 最小字段抓取**证据，
+- 但仍没有与前四个 endpoint 同等级的 frontend conformance test pack，
+- 因此只能按 **DOC-GUARDED ONLY** 处理，不能误写成“已有同等级自动化 signoff”。
 
 **Status:** `DOC-GUARDED ONLY`
 
