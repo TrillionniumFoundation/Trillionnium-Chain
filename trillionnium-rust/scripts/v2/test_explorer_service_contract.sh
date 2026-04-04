@@ -184,6 +184,14 @@ assert_contains "${CAPTURE_DIR}/summary.txt" "deployment_evidence_scope=placehol
 assert_contains "${CAPTURE_DIR}/summary.txt" "rank1_read_surface_blocker=still-open"
 assert_contains "${CAPTURE_DIR}/summary.txt" "durable_indexer_status=not-implemented-in-this-scaffold"
 assert_contains "${CAPTURE_DIR}/summary.txt" "durable_read_anchor_complete=false"
+assert_contains "${CAPTURE_DIR}/summary.txt" "durable_read_anchor_missing_count=6"
+assert_contains "${CAPTURE_DIR}/summary.txt" "durable_read_anchor_missing_fields=ingestion_source,checkpoint_store,replay_start_anchor,retention_scope,archive_owner,lag_slo"
+assert_contains "${CAPTURE_DIR}/summary.txt" "durable_read_anchor_ingestion_source=missing-placeholder-scaffold"
+assert_contains "${CAPTURE_DIR}/summary.txt" "durable_read_anchor_checkpoint_store=missing-placeholder-scaffold"
+assert_contains "${CAPTURE_DIR}/summary.txt" "durable_read_anchor_replay_start_anchor=missing-placeholder-scaffold"
+assert_contains "${CAPTURE_DIR}/summary.txt" "durable_read_anchor_retention_scope=rpc-window-bounded"
+assert_contains "${CAPTURE_DIR}/summary.txt" "durable_read_anchor_archive_owner=missing-placeholder-scaffold"
+assert_contains "${CAPTURE_DIR}/summary.txt" "durable_read_anchor_lag_slo=missing-placeholder-scaffold"
 
 EXPLORER_HOST=127.0.0.1 \
 EXPLORER_PORT="${PORT}" \

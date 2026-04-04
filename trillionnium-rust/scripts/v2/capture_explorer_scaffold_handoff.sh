@@ -81,6 +81,14 @@ DEPLOYMENT_EVIDENCE_SCOPE="$(status_field deployment_evidence_scope)"
 RANK1_BLOCKER="$(status_field rank1_read_surface_blocker)"
 DURABLE_INDEXER_STATUS="$(status_field durable_indexer_status)"
 DURABLE_READ_ANCHOR_COMPLETE="$(status_field durable_read_anchor_complete)"
+DURABLE_READ_ANCHOR_MISSING_COUNT="$(status_field durable_read_anchor_missing_count)"
+DURABLE_READ_ANCHOR_MISSING_FIELDS="$(status_field durable_read_anchor_missing_fields)"
+DURABLE_READ_ANCHOR_INGESTION_SOURCE="$(status_field durable_read_anchor_ingestion_source)"
+DURABLE_READ_ANCHOR_CHECKPOINT_STORE="$(status_field durable_read_anchor_checkpoint_store)"
+DURABLE_READ_ANCHOR_REPLAY_START_ANCHOR="$(status_field durable_read_anchor_replay_start_anchor)"
+DURABLE_READ_ANCHOR_RETENTION_SCOPE="$(status_field durable_read_anchor_retention_scope)"
+DURABLE_READ_ANCHOR_ARCHIVE_OWNER="$(status_field durable_read_anchor_archive_owner)"
+DURABLE_READ_ANCHOR_LAG_SLO="$(status_field durable_read_anchor_lag_slo)"
 
 if [[ "${STATE}" != "running" ]]; then
   echo "refusing to capture handoff packet: explorer scaffold is not running (state=${STATE:-missing})" >&2
@@ -147,6 +155,14 @@ deployment_evidence_scope=${DEPLOYMENT_EVIDENCE_SCOPE}
 rank1_read_surface_blocker=${RANK1_BLOCKER}
 durable_indexer_status=${DURABLE_INDEXER_STATUS}
 durable_read_anchor_complete=${DURABLE_READ_ANCHOR_COMPLETE}
+durable_read_anchor_missing_count=${DURABLE_READ_ANCHOR_MISSING_COUNT}
+durable_read_anchor_missing_fields=${DURABLE_READ_ANCHOR_MISSING_FIELDS}
+durable_read_anchor_ingestion_source=${DURABLE_READ_ANCHOR_INGESTION_SOURCE}
+durable_read_anchor_checkpoint_store=${DURABLE_READ_ANCHOR_CHECKPOINT_STORE}
+durable_read_anchor_replay_start_anchor=${DURABLE_READ_ANCHOR_REPLAY_START_ANCHOR}
+durable_read_anchor_retention_scope=${DURABLE_READ_ANCHOR_RETENTION_SCOPE}
+durable_read_anchor_archive_owner=${DURABLE_READ_ANCHOR_ARCHIVE_OWNER}
+durable_read_anchor_lag_slo=${DURABLE_READ_ANCHOR_LAG_SLO}
 blocker_note=this_evidence_does_not_close_durable_indexer_historical_read_model_or_production_explorer_backend
 EOF
 
