@@ -901,6 +901,10 @@ mod tests {
             ("persistent_peer", "\"127.0.0.1:27656\""),
             ("persistentPeers", "[\"127.0.0.1:27656\"]"),
             ("persistentPeer", "\"127.0.0.1:27656\""),
+            ("persistent_nodes", "[\"127.0.0.1:27656\"]"),
+            ("persistent_node", "\"127.0.0.1:27656\""),
+            ("persistentNodes", "[\"127.0.0.1:27656\"]"),
+            ("persistentNode", "\"127.0.0.1:27656\""),
         ] {
             let path = std::env::temp_dir().join(format!(
                 "trnm-node-config-unknown-field-{unknown_field}-{}-{}.toml",
@@ -2874,6 +2878,10 @@ mod tests {
             "persistent_peer",
             "persistentPeers",
             "persistentPeer",
+            "persistent_nodes",
+            "persistent_node",
+            "persistentNodes",
+            "persistentNode",
             "node5.toml",
         ] {
             let exact_token = format!("`{forbidden_term}`");
@@ -3048,7 +3056,7 @@ mod tests {
         for expected_phrase in [
             "## What this fixture is for",
             "Use these files to keep peer/bootstrap topology assumptions explicit while the public-mainnet bootstrap peer-management path is still being hardened.",
-            "Do not add ad-hoc `bootstrap_nodes`, `bootstrap_node`, `bootstrap_peers`, `bootstrap_peer`, `bootstrapNodes`, `bootstrapNode`, `bootstrapPeers`, `bootstrapPeer`, `seed_nodes`, `seed_node`, `seed_peers`, `seed_peer`, `seedNodes`, `seedNode`, `seedPeers`, `seedPeer`, `seeds`, `persistent_peers`, `persistent_peer`, `persistentPeers`, or `persistentPeer` fields to these shipped fixtures; the local rehearsal schema stays the minimal three-field contract until a real peer-management surface exists.",
+            "Do not add ad-hoc `bootstrap_nodes`, `bootstrap_node`, `bootstrap_peers`, `bootstrap_peer`, `bootstrapNodes`, `bootstrapNode`, `bootstrapPeers`, `bootstrapPeer`, `seed_nodes`, `seed_node`, `seed_peers`, `seed_peer`, `seedNodes`, `seedNode`, `seedPeers`, `seedPeer`, `seeds`, `persistent_peers`, `persistent_peer`, `persistentPeers`, `persistentPeer`, `persistent_nodes`, `persistent_node`, `persistentNodes`, or `persistentNode` fields to these shipped fixtures; the local rehearsal schema stays the minimal three-field contract until a real peer-management surface exists.",
             "Do not add extra shipped topology files such as `node5.toml`, alternate slot aliases, or helper sidecar configs under `configs/`; the deterministic local bootstrap fixture remains exactly `README.md` plus `node1.toml` through `node4.toml` until a separate peer-management surface is introduced.",
             "The regression tests in `crates/trnm-node/src/config.rs` are the source of truth for the exact fixture invariants.",
         ] {
