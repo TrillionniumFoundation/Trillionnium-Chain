@@ -101,6 +101,21 @@ fn adapter_kind_query_order(kind: &str) -> u8 {
     }
 }
 
+fn normalize_result_hash_replay_identity(value: Option<&str>) -> Option<String> {
+    value.map(str::trim).and_then(|value| {
+        if value.is_empty() {
+            None
+        } else {
+            let normalized = normalize_tx_hash_lookup(value);
+            if is_hex_like_tx_hash(&normalized) {
+                Some(normalized)
+            } else {
+                Some(value.to_string())
+            }
+        }
+    })
+}
+
 pub(crate) fn sorted_task_adapter_records<'a>(
     task_id: u64,
     recs: &'a [AdapterRecord],
@@ -129,7 +144,7 @@ pub(crate) fn sorted_task_adapter_records<'a>(
                 .as_deref()
                 .map(normalize_tx_hash_lookup)
                 .unwrap_or_default(),
-            a.result_hash.as_deref().unwrap_or("").trim(),
+            normalize_result_hash_replay_identity(a.result_hash.as_deref()).unwrap_or_default(),
         )
             .cmp(&(
                 b.ts,
@@ -142,7 +157,7 @@ pub(crate) fn sorted_task_adapter_records<'a>(
                     .as_deref()
                     .map(normalize_tx_hash_lookup)
                     .unwrap_or_default(),
-                b.result_hash.as_deref().unwrap_or("").trim(),
+                normalize_result_hash_replay_identity(b.result_hash.as_deref()).unwrap_or_default(),
             ))
     });
     task_recs.dedup_by(|a, b| {
@@ -159,8 +174,8 @@ pub(crate) fn sorted_task_adapter_records<'a>(
                 == b.tx_hash
                     .as_deref()
                     .map(normalize_tx_hash_lookup)
-            && a.result_hash.as_deref().map(str::trim)
-                == b.result_hash.as_deref().map(str::trim)
+            && normalize_result_hash_replay_identity(a.result_hash.as_deref())
+                == normalize_result_hash_replay_identity(b.result_hash.as_deref())
     });
     task_recs
 }
