@@ -159,7 +159,7 @@ For any artifact expected to feed validator bootstrap/handoff, preserve one shar
 
 Required for `public-mainnet-input` evidence:
 - `packet_generated_at=` in UTC
-- `packet_distribution_path=` as one explicit absolute path every operator reviewed
+- `packet_distribution_path=` as one explicit absolute path to the generated ceremony packet file every operator reviewed
 - `operator_contact=` per validator owner so missing acknowledgments can be chased without ambiguity
 - `operator_ack=` per validator owner
 - `operator_ack_signature_path=` or `operator_ack_digest=` when durable acknowledgment is required; for each validator/operator, fill at least one of these fields before treating the packet as signed/public-mainnet handoff evidence
@@ -171,6 +171,7 @@ Recommended for non-public rehearsal/handoff packets:
 
 Interpretation rule:
 - if operators receive different packet contents for the same `ceremony_id`, stop and normalize to one packet before startup
+- if `packet_distribution_path=` names only a folder, ticket, or bundle root without one exact packet file path, treat the handoff as ambiguous and regenerate/re-record the packet path before startup
 - if a public-mainnet-input packet still contains placeholders, relative packet/genesis paths, truncated hashes, or the default `validator_set_version=v1`, do not treat it as ceremony-ready
 
 ## Rollback
