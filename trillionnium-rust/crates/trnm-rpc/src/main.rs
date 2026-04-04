@@ -4991,6 +4991,7 @@ fn main() -> Result<()> {
 mod tests {
     use super::*;
     use std::panic::{catch_unwind, AssertUnwindSafe};
+    use trnm_rpc::TxStatus;
     use std::sync::{
         atomic::{AtomicU64, Ordering},
         Mutex, MutexGuard, OnceLock,
@@ -10100,5 +10101,49 @@ line2
         for (path, bytes) in backup {
             let _ = fs::write(path, bytes);
         }
+    }
+
+    #[test]
+    fn load_faucet_limits_tolerates_whitespace_prefixed_utf8_bom_json() {
+        let path = unique_tmp_path("rpc-faucet-limits-whitespace-bom", "json");
+        let _ = fs::remove_file(&path);
+        fs::write(
+            &path,
+            "\r\n  \t\u{feff}{\n  \"alice\": {\"window_start_unix_ms\":1234,\"count_in_window\":2}\n}\n",
+        )
+        .expect("write whitespace-prefixed BOM faucet limits");
+
+        let limits = load_faucet_limits(&path);
+        let alice = limits.get("alice").expect("alice limits should parse");
+        assert_eq!(alice.window_start_unix_ms, 1234);
+        assert_eq!(alice.count_in_window, 2);
+
+        let _ = fs::remove_file(&path);
+    }
+
+    #[test]
+    fn load_tx_lifecycle_tolerates_whitespace_prefixed_utf8_bom_json() {
+        let path = unique_tmp_path("rpc-tx-lifecycle-whitespace-bom", "json");
+        let _ = fs::remove_file(&path);
+        fs::write(
+            &path,
+            "\r\n\t\u{feff}{\n  \"0xabc\": {\n    \"tx_hash\": \"0xabc\",\n    \"tx\": {\n      \"from\": \"alice\",\n      \"to\": \"bob\",\n      \"amount\": 7,\n      \"fee\": 1,\n      \"nonce\": 4,\n      \"signature\": \"feedface\"\n    },\n    \"status\": \"committed\",\n    \"error\": null,\n    \"submitted_at_unix_ms\": 10,\n    \"updated_at_unix_ms\": 11\n  }\n}\n",
+        )
+        .expect("write whitespace-prefixed BOM tx lifecycle");
+
+        let txs = load_tx_lifecycle(&path);
+        let tx = txs.get("0xabc").expect("tx lifecycle should parse");
+        assert_eq!(tx.tx_hash, "0xabc");
+        assert_eq!(tx.tx.from, "alice");
+        assert_eq!(tx.tx.to, "bob");
+        assert_eq!(tx.tx.amount, 7);
+        assert_eq!(tx.tx.fee, 1);
+        assert_eq!(tx.tx.nonce, 4);
+        assert_eq!(tx.status, TxStatus::Committed);
+        assert_eq!(tx.error, None);
+        assert_eq!(tx.submitted_at_unix_ms, 10);
+        assert_eq!(tx.updated_at_unix_ms, 11);
+
+        let _ = fs::remove_file(&path);
     }
 }
