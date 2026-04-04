@@ -23,6 +23,26 @@
 - `trillionnium-rust/docs/release/TRNM_MAINNET_BLOCKER_BOARD_2026-03-31.md`
 - `trillionnium-rust/docs/release/TRNM_MAINNET_GAP_MATRIX_2026-03-26.md`
 - `trillionnium-rust/docs/runbooks/explorer-service-scaffold.md`
+- `trillionnium-rust/docs/release/TRNM_EXPLORER_SCAFFOLD_HANDOFF_TEMPLATE_2026-04-04.md`
+
+## Template selection rule
+
+在 operator handoff 场景里，先决定**你处于 placeholder scaffold，还是 non-placeholder durable read service**，再选模板。
+
+使用本模板之前，至少先逐项回答：
+
+- 当前部署是否仍然引用 `explorer-service-scaffold.md` 的静态 scaffold bring-up 路径？
+- `service_mode` 是否已经能真实写成 `non-placeholder-durable-read-service`？
+- 6 个 durable-read anchors 是否都有真实值，而不是 `missing-*` / `placeholder-*` / `not-configured-*`？
+- 是否真的存在独立的 replay / restore / checkpoint / lag evidence？
+
+只要上面任一项答案是否定的，就**不要**使用本模板；改用：
+
+- `trillionnium-rust/docs/release/TRNM_EXPLORER_SCAFFOLD_HANDOFF_TEMPLATE_2026-04-04.md`
+
+Fail-closed choice:
+
+> **缺 anchor、缺 replay/restore 证据、仍靠 scaffold bring-up、或 `service_mode` 还不是 non-placeholder durable read service 时，一律按 placeholder-only handoff 处理。**
 
 ## Fail-closed boundary
 
