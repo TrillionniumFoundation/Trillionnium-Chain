@@ -427,6 +427,13 @@ fn smoke_wallet_sign_rejects_edge_whitespace_non_ascii_or_delimiter_payloads() {
         "approve;tx",
         "approve,tx",
         "approve|tx",
+        "\"approve tx\"",
+        "'approve tx'",
+        "`approve tx`",
+        "<approve tx>",
+        "(approve tx)",
+        "[approve tx]",
+        "{approve tx}",
     ] {
         let out = Command::new(bin())
             .args([
@@ -451,7 +458,8 @@ fn smoke_wallet_sign_rejects_edge_whitespace_non_ascii_or_delimiter_payloads() {
                 || stderr.contains("leading or trailing whitespace")
                 || stderr.contains("ASCII printable text")
                 || stderr.contains("single-line printable text without control characters")
-                || stderr.contains("delimiter punctuation"),
+                || stderr.contains("delimiter punctuation")
+                || stderr.contains("wrapper punctuation"),
             "unexpected stderr for {bad_message:?}: {}",
             stderr
         );
