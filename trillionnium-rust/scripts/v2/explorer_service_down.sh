@@ -218,6 +218,8 @@ fi
 if [[ ! -f "${PID_FILE}" ]]; then
   if [[ -n "${config_error}" ]]; then
     echo "explorer service already stopped (current env invalid: ${config_error})"
+    echo "config_warning=${config_error}"
+    echo "config_error=${config_error}"
     emit_contract_paths "invalid-config" "unknown" "invalid-config" "unknown" "invalid-config" "invalid-config" "invalid-config"
   else
     echo "explorer service already stopped"
@@ -248,5 +250,6 @@ else
 fi
 if [[ -n "${config_error}" ]]; then
   echo "config_warning=${config_error}"
+  echo "config_error=${config_error}"
 fi
 emit_contract_paths "down" "unknown" "not-run-state-down" "unknown" "not-run-state-down" "not-run-state-down" "not-run-state-down"
