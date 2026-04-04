@@ -1375,7 +1375,8 @@ fn is_unsafe_sign_message_char(c: char) -> bool {
         || c.is_control()
         || matches!(
             c,
-            '\u{00ad}'
+            '='
+                | '\u{00ad}'
                 | '\u{061c}'
                 | '\u{180e}'
                 | '\u{200b}'
@@ -5353,6 +5354,15 @@ mod tests {
     #[test]
     fn ensure_safe_sign_message_rejects_non_ascii_visible_text() {
         let err = ensure_safe_sign_message("rotate signer 到 slot-b").unwrap_err();
+        assert!(
+            err.to_string().contains("ASCII printable text"),
+            "unexpected: {err}"
+        );
+    }
+
+    #[test]
+    fn ensure_safe_sign_message_rejects_kv_delimiter_text() {
+        let err = ensure_safe_sign_message("approve=tx").unwrap_err();
         assert!(
             err.to_string().contains("ASCII printable text"),
             "unexpected: {err}"
