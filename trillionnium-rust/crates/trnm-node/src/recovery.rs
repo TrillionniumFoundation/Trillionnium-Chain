@@ -836,6 +836,10 @@ mod tests {
             "operator action: checkpoint-only bootstrap is acceptable with a fresh --bft-wal-dir / --bft-wal-mode auto isolated run; if this node must rejoin from prior state, restore an application snapshot before retrying"
         );
         assert_eq!(
+            metadata_only_operator_action(&recovered_state(0, 9, Some(8), true, true)),
+            "operator action: checkpoint-only bootstrap is acceptable with a fresh --bft-wal-dir / --bft-wal-mode auto isolated run; if this node must rejoin from prior state, restore an application snapshot before retrying; note: this startup already truncated a malformed WAL tail, so keep the repaired WAL/checkpoint artifacts for incident review if join/rejoin still fails"
+        );
+        assert_eq!(
             metadata_only_operator_action(&recovered_state(1, 9, None, false, true)),
             "operator action: rebuild or restore checkpoint metadata so it covers retained WAL tip height 8 before retrying join/rejoin; do not resume from metadata alone"
         );
