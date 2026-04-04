@@ -899,10 +899,14 @@ fn metadata_only_operator_action(recovered: &RecoveredWalState) -> String {
             "operator action: restore an application snapshot that covers the retained WAL tip before retrying join/rejoin; do not resume from metadata alone".into()
         }
         Some(checkpoint_height) if checkpoint_height > tip_height => {
+            let checkpoint_lead = checkpoint_height - tip_height;
+            let lead_blocks = if checkpoint_lead == 1 { "block" } else { "blocks" };
             format!(
-                "operator action: investigate WAL/checkpoint mismatch (retained WAL tip height {}, checkpoint height {}), rebuild the recovery inputs, and only retry join/rejoin once WAL tip and checkpoint evidence agree",
+                "operator action: investigate WAL/checkpoint mismatch (retained WAL tip height {}, checkpoint height {}, checkpoint leads tip by {} {}), rebuild the recovery inputs, and only retry join/rejoin once WAL tip and checkpoint evidence agree",
                 tip_height,
                 checkpoint_height,
+                checkpoint_lead,
+                lead_blocks,
             )
         }
         None => {
@@ -17012,7 +17016,7 @@ locked_block_hash = "stale-lock"
                 wal_entries_retained: 2,
                 checkpoint_height_retained: Some(12),
             }),
-            "operator action: investigate WAL/checkpoint mismatch (retained WAL tip height 11, checkpoint height 12), rebuild the recovery inputs, and only retry join/rejoin once WAL tip and checkpoint evidence agree"
+            "operator action: investigate WAL/checkpoint mismatch (retained WAL tip height 11, checkpoint height 12, checkpoint leads tip by 1 block), rebuild the recovery inputs, and only retry join/rejoin once WAL tip and checkpoint evidence agree"
         );
         assert_eq!(
             metadata_only_operator_action(&RecoveredWalState {
@@ -17028,7 +17032,7 @@ locked_block_hash = "stale-lock"
                 wal_entries_retained: 2,
                 checkpoint_height_retained: Some(15),
             }),
-            "operator action: investigate WAL/checkpoint mismatch (retained WAL tip height 11, checkpoint height 15), rebuild the recovery inputs, and only retry join/rejoin once WAL tip and checkpoint evidence agree"
+            "operator action: investigate WAL/checkpoint mismatch (retained WAL tip height 11, checkpoint height 15, checkpoint leads tip by 4 blocks), rebuild the recovery inputs, and only retry join/rejoin once WAL tip and checkpoint evidence agree"
         );
     }
 
@@ -17538,7 +17542,7 @@ locked_block_hash = "stale-lock"
             "retained checkpoint height 3 is ahead of retained WAL tip height 2 by 1 blocks"
         ));
         assert!(err.contains(
-            "operator action: investigate WAL/checkpoint mismatch (retained WAL tip height 2, checkpoint height 3), rebuild the recovery inputs, and only retry join/rejoin once WAL tip and checkpoint evidence agree"
+            "operator action: investigate WAL/checkpoint mismatch (retained WAL tip height 2, checkpoint height 3, checkpoint leads tip by 1 block), rebuild the recovery inputs, and only retry join/rejoin once WAL tip and checkpoint evidence agree"
         ));
         assert!(err.contains("last retained checkpoint: 3"));
         assert!(err.contains("next startup height: 3"));
