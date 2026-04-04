@@ -261,6 +261,7 @@ fn normalize_wallet_store_env_trims_shell_wrapped_quotes() {
     assert_eq!(normalize_wallet_store_env("/tmp/trnm\u{202e}wallets"), None);
     assert_eq!(normalize_wallet_store_env("/tmp/trnm\u{206a}wallets"), None);
     assert_eq!(normalize_wallet_store_env("/tmp/trnm\u{206f}wallets"), None);
+    assert_eq!(normalize_wallet_store_env("/tmp/trnm⧸wallets"), None);
 }
 
 #[test]
@@ -317,6 +318,9 @@ fn default_wallet_store_ignores_curdir_or_parent_segments_from_env() {
             "wrapped root path should fail closed: {wrapped_root:?}"
         );
     }
+
+    std::env::set_var("TRNM_WALLET_STORE", "/tmp⧸trnm-wallets");
+    assert_eq!(default_wallet_store(), home.join(".trnm").join("wallets"));
 
     std::env::set_var("TRNM_WALLET_STORE", " /tmp/trnm-wallets ");
     assert_eq!(default_wallet_store(), std::path::PathBuf::from("/tmp/trnm-wallets"));
@@ -630,6 +634,19 @@ fn explicit_wallet_store_path_must_be_absolute_and_normalized() {
             .to_string()
             .contains("must be an absolute normalized path"),
         "unexpected error: {wrapped_bracket_err}"
+    );
+
+    let big_solidus_err = write_key(
+        std::path::Path::new("/tmp⧸trnm-wallets"),
+        "alice",
+        "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    )
+    .unwrap_err();
+    assert!(
+        big_solidus_err
+            .to_string()
+            .contains("must be an absolute normalized path"),
+        "unexpected error: {big_solidus_err}"
     );
 
     let soft_hyphen_err = write_key(

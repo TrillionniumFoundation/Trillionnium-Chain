@@ -939,9 +939,11 @@ fn normalize_wallet_store_env(raw: &str) -> Option<&str> {
         normalized = trimmed_single_sided;
     }
     if normalized.is_empty()
-        || normalized
-            .chars()
-            .any(|c| c.is_whitespace() || contains_hidden_or_control(c))
+        || normalized.chars().any(|c| {
+            c.is_whitespace()
+                || contains_hidden_or_control(c)
+                || matches!(c, '\\' | '＼' | '∕' | '⁄' | '／' | '⧵' | '⧸' | '⟋' | '⟍')
+        })
     {
         return None;
     }
@@ -969,7 +971,7 @@ fn wallet_store_path_is_safe(path: &Path) -> bool {
         && rendered.chars().all(|c| {
             !c.is_whitespace()
                 && !contains_hidden_or_control(c)
-                && !matches!(c, '\\' | '＼' | '∕' | '⁄' | '／' | '⧵' | '⟋' | '⟍')
+                && !matches!(c, '\\' | '＼' | '∕' | '⁄' | '／' | '⧵' | '⧸' | '⟋' | '⟍')
         })
         && !path
             .components()
@@ -3000,6 +3002,7 @@ mod tests {
         assert_eq!(normalize_wallet_store_env("/tmp/trnm\n-wallets"), None);
         assert_eq!(normalize_wallet_store_env("/tmp/trnm\u{200b}-wallets"), None);
         assert_eq!(normalize_wallet_store_env("/tmp/trnm\u{202e}wallets"), None);
+        assert_eq!(normalize_wallet_store_env("/tmp/trnm⧸wallets"), None);
     }
 
     #[test]
@@ -3037,6 +3040,9 @@ mod tests {
         assert_eq!(default_wallet_store(), home.join(".trnm").join("wallets"));
 
         std::env::set_var("TRNM_WALLET_STORE", "/tmp／trnm-wallets");
+        assert_eq!(default_wallet_store(), home.join(".trnm").join("wallets"));
+
+        std::env::set_var("TRNM_WALLET_STORE", "/tmp⧸trnm-wallets");
         assert_eq!(default_wallet_store(), home.join(".trnm").join("wallets"));
 
         std::env::set_var("TRNM_WALLET_STORE", " /tmp/trnm-wallets ");
@@ -3364,6 +3370,19 @@ mod tests {
                 .to_string()
                 .contains("must be an absolute normalized path"),
             "unexpected error: {slash_confusable_read_err}"
+        );
+
+        let big_solidus_write_err = write_key(
+            std::path::Path::new("/tmp⧸trnm-wallets"),
+            "alice",
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        )
+        .unwrap_err();
+        assert!(
+            big_solidus_write_err
+                .to_string()
+                .contains("must be an absolute normalized path"),
+            "unexpected error: {big_solidus_write_err}"
         );
 
         let duplicate_slash_write_err = write_key(

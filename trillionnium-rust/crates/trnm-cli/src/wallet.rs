@@ -121,7 +121,7 @@ fn is_suspicious_path_wrapper(c: char) -> bool {
 }
 
 fn is_suspicious_path_separator(c: char) -> bool {
-    matches!(c, '\\' | '∕' | '⁄' | '／' | '＼' | '⧵' | '⟋' | '⟍')
+    matches!(c, '\\' | '∕' | '⁄' | '／' | '＼' | '⧵' | '⧸' | '⟋' | '⟍')
 }
 
 pub(crate) fn normalize_wallet_store_env(raw: &str) -> Option<&str> {
@@ -175,7 +175,11 @@ pub(crate) fn normalize_wallet_store_env(raw: &str) -> Option<&str> {
         }
         normalized = trimmed_single_sided;
     }
-    if normalized.is_empty() || normalized.chars().any(is_hidden_env_wrapper) {
+    if normalized.is_empty()
+        || normalized
+            .chars()
+            .any(|c| is_hidden_env_wrapper(c) || is_suspicious_path_separator(c))
+    {
         return None;
     }
     Some(normalized)
