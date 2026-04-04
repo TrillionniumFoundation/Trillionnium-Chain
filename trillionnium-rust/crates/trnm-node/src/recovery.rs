@@ -845,6 +845,14 @@ mod tests {
             metadata_only_operator_action(&recovered_state(2, 12, Some(15), false, true)),
             "operator action: investigate WAL/checkpoint mismatch (retained WAL tip height 11, checkpoint height 15), rebuild the recovery inputs, and only retry join/rejoin once WAL tip and checkpoint evidence agree"
         );
+        assert_eq!(
+            metadata_only_operator_action(&recovered_state(1, u64::MAX, Some(u64::MAX), false, true)),
+            &format!(
+                "operator action: investigate WAL/checkpoint mismatch (retained WAL tip height {}, checkpoint height {}), rebuild the recovery inputs, and only retry join/rejoin once WAL tip and checkpoint evidence agree",
+                u64::MAX - 1,
+                u64::MAX,
+            )
+        );
     }
 
     #[test]
