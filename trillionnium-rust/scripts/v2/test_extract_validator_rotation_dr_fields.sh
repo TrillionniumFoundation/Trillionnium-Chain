@@ -35,14 +35,37 @@ replay_command=./scripts/check_bft_restart_recovery.sh --config $WORKTREE_ROOT/c
 status=PASS
 expected_worktree_root=$WORKTREE_ROOT
 expected_branch_ref=lane/mn05-operator-dr-rotation-lifecycle
-lane_verify_command=./scripts/v2/verify_lane_worktree.sh --expected-worktree-root $WORKTREE_ROOT --expected-branch-ref lane/mn05-operator-dr-rotation-lifecycle
+lane_verify_command=./scripts/v2/verify_lane_worktree.sh --expected-worktree-root $WORKTREE_ROOT --expected-branch-ref lane/mn05-operator-dr-rotation-lifecycle --expected-head $HEAD_SHA
 expected_head=$HEAD_SHA
 EOF
 
 bash "$SCRIPT" --report-path "$REPORT_PATH" >"$TMPDIR/out.txt"
 grep -q "^dr_summary_path=$REPORT_PATH_CANONICAL$" "$TMPDIR/out.txt"
 grep -q "^expected_branch_ref=lane/mn05-operator-dr-rotation-lifecycle$" "$TMPDIR/out.txt"
-grep -q "^lane_verify_command=./scripts/v2/verify_lane_worktree.sh --expected-worktree-root $WORKTREE_ROOT --expected-branch-ref lane/mn05-operator-dr-rotation-lifecycle$" "$TMPDIR/out.txt"
+grep -q "^lane_verify_command=./scripts/v2/verify_lane_worktree.sh --expected-worktree-root $WORKTREE_ROOT --expected-branch-ref lane/mn05-operator-dr-rotation-lifecycle --expected-head $HEAD_SHA$" "$TMPDIR/out.txt"
+
+cat >"$REPORT_PATH" <<EOF
+generated_at=2026-04-04T11:59:00Z
+config_path=$WORKTREE_ROOT/configs/node1.toml
+git_worktree_path=$WORKTREE_ROOT
+git_worktree_branch_ref=$BRANCH_REF
+git_branch=lane/mn05-operator-dr-rotation-lifecycle
+git_head=$HEAD_SHA
+git_status_summary=clean
+rollback_command=git reset --hard $HEAD_SHA
+replay_command=./scripts/check_bft_restart_recovery.sh --config $WORKTREE_ROOT/configs/node1.toml
+status=PASS
+expected_worktree_root=$WORKTREE_ROOT
+expected_branch_ref=lane/mn05-operator-dr-rotation-lifecycle
+lane_verify_command=./scripts/v2/verify_lane_worktree.sh --expected-worktree-root $WORKTREE_ROOT --expected-branch-ref lane/mn05-operator-dr-rotation-lifecycle
+expected_head=$HEAD_SHA
+EOF
+
+if bash "$SCRIPT" --report-path "$REPORT_PATH" >"$TMPDIR/out.txt" 2>"$TMPDIR/err.txt"; then
+  echo "expected missing --expected-head lane verify command to fail" >&2
+  exit 1
+fi
+grep -q "lane_verify_command missing --expected-head $HEAD_SHA in $REPORT_PATH_CANONICAL" "$TMPDIR/err.txt"
 
 cat >"$REPORT_PATH" <<EOF
 generated_at=2026-04-04T11:59:00Z
