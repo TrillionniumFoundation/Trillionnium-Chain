@@ -4873,29 +4873,34 @@ mod tests {
 
     #[test]
     fn load_config_rejects_unknown_fields_to_keep_bootstrap_config_fail_closed() {
-        let path = std::env::temp_dir().join(format!(
-            "trnm-node-config-unknown-field-{}-{}.toml",
-            std::process::id(),
-            now_unix_ms()
-        ));
-        std::fs::write(
-            &path,
-            r#"node_id = "node1"
-rpc_addr = "127.0.0.1:26657"
-p2p_addr = "127.0.0.1:26656"
-bootstrap_peers = ["127.0.0.1:27656"]
-"#,
-        )
-        .expect("write temp config");
+        for (unknown_field, field_value) in [
+            ("bootstrap_peers", "[\"127.0.0.1:27656\"]"),
+            ("seed_nodes", "[\"127.0.0.1:27656\"]"),
+            ("persistent_peers", "[\"127.0.0.1:27656\"]"),
+        ] {
+            let path = std::env::temp_dir().join(format!(
+                "trnm-node-config-unknown-field-{unknown_field}-{}-{}.toml",
+                std::process::id(),
+                now_unix_ms()
+            ));
+            std::fs::write(
+                &path,
+                format!(
+                    "node_id = \"node1\"\nrpc_addr = \"127.0.0.1:26657\"\np2p_addr = \"127.0.0.1:26656\"\n{unknown_field} = {field_value}\n"
+                ),
+            )
+            .expect("write temp config");
 
-        let err = load_config(path.to_str().expect("temp path utf-8"))
-            .expect_err("unknown config fields must fail closed");
-        let err_surface = format!("{err:#}");
-        assert!(
-            err_surface.contains("parse toml failed")
-                && err_surface.contains("unknown field `bootstrap_peers`"),
-            "unexpected error: {err:#}"
-        );
+            let err = load_config(path.to_str().expect("temp path utf-8"))
+                .expect_err("unknown config fields must fail closed");
+            let err_surface = format!("{err:#}");
+            assert!(
+                err_surface.contains("parse toml failed")
+                    && err_surface.contains(&format!("unknown field `{unknown_field}`")),
+                "unexpected error for {unknown_field}: {err:#}"
+            );
+            let _ = std::fs::remove_file(path);
+        }
     }
 
     #[test]
