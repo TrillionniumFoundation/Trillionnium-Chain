@@ -45,6 +45,8 @@
 如果下列任一条不成立，就不要把本模板生成的 handoff note 写成 Rank 1 blocker 已关闭：
 
 - `deployment_evidence_scope=placeholder-only` 没被原样保留
+- `deployment_evidence_scope` 仅出现在说明文字里、却没有作为 packet 字段被逐字保留
+- `service_mode=operator-facing-static-scaffold` 没被原样保留
 - `rank1_read_surface_blocker=still-open` 没被原样保留
 - `durable_indexer_status=not-implemented-in-this-scaffold` 没被原样保留
 - `durable_read_anchor_complete=false` 没被原样保留
