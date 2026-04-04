@@ -16890,6 +16890,86 @@ locked_block_hash = "stale-lock"
     }
 
     #[test]
+    fn metadata_only_operator_action_varies_by_join_rejoin_surface() {
+        assert_eq!(
+            metadata_only_operator_action(&RecoveredWalState {
+                next_height: 9,
+                restored_lock: None,
+                last_checkpoint: Some(CheckpointMeta {
+                    height: 8,
+                    state_root_hex: "r8".into(),
+                    wal_entry_hash_hex: "h8".into(),
+                }),
+                truncated: false,
+                metadata_only_recovery: true,
+                wal_entries_retained: 0,
+                checkpoint_height_retained: Some(8),
+            }),
+            "operator action: restart with a fresh --bft-wal-dir / --bft-wal-mode auto isolated run; if this node must rejoin from prior state, restore an application snapshot before retrying"
+        );
+        assert_eq!(
+            metadata_only_operator_action(&RecoveredWalState {
+                next_height: 9,
+                restored_lock: None,
+                last_checkpoint: None,
+                truncated: false,
+                metadata_only_recovery: true,
+                wal_entries_retained: 1,
+                checkpoint_height_retained: None,
+            }),
+            "operator action: rebuild or restore checkpoint metadata for the retained WAL tip before retrying join/rejoin; do not resume from metadata alone"
+        );
+        assert_eq!(
+            metadata_only_operator_action(&RecoveredWalState {
+                next_height: 12,
+                restored_lock: None,
+                last_checkpoint: Some(CheckpointMeta {
+                    height: 10,
+                    state_root_hex: "r10".into(),
+                    wal_entry_hash_hex: "h10".into(),
+                }),
+                truncated: false,
+                metadata_only_recovery: true,
+                wal_entries_retained: 2,
+                checkpoint_height_retained: Some(10),
+            }),
+            "operator action: restore an application snapshot that covers the retained WAL tip before retrying join/rejoin; do not resume from metadata alone"
+        );
+        assert_eq!(
+            metadata_only_operator_action(&RecoveredWalState {
+                next_height: 12,
+                restored_lock: None,
+                last_checkpoint: Some(CheckpointMeta {
+                    height: 11,
+                    state_root_hex: "r11".into(),
+                    wal_entry_hash_hex: "h11".into(),
+                }),
+                truncated: false,
+                metadata_only_recovery: true,
+                wal_entries_retained: 2,
+                checkpoint_height_retained: Some(11),
+            }),
+            "operator action: restore the corresponding application snapshot before retrying join/rejoin; do not resume from metadata alone"
+        );
+        assert_eq!(
+            metadata_only_operator_action(&RecoveredWalState {
+                next_height: 12,
+                restored_lock: None,
+                last_checkpoint: Some(CheckpointMeta {
+                    height: 15,
+                    state_root_hex: "r15".into(),
+                    wal_entry_hash_hex: "h15".into(),
+                }),
+                truncated: false,
+                metadata_only_recovery: true,
+                wal_entries_retained: 2,
+                checkpoint_height_retained: Some(15),
+            }),
+            "operator action: investigate WAL/checkpoint mismatch, rebuild the recovery inputs, and only retry join/rejoin once WAL tip and checkpoint evidence agree"
+        );
+    }
+
+    #[test]
     fn recovery_startup_summary_reports_checkpoint_ahead_of_retained_tip_as_blocked_metadata_only() {
         let recovered = RecoveredWalState {
             next_height: 12,
