@@ -320,7 +320,7 @@ fn recovery_startup_summary(recovered: &RecoveredWalState) -> String {
 }
 
 fn metadata_only_operator_action(recovered: &RecoveredWalState) -> String {
-    if recovered.wal_entries_retained == 0 {
+    let action = if recovered.wal_entries_retained == 0 {
         match recovered.checkpoint_height_retained {
             Some(_) => {
                 "operator action: checkpoint-only bootstrap is acceptable with a fresh --bft-wal-dir / --bft-wal-mode auto isolated run; if this node must rejoin from prior state, restore an application snapshot before retrying".into()
@@ -352,6 +352,15 @@ fn metadata_only_operator_action(recovered: &RecoveredWalState) -> String {
                 "operator action: restore the corresponding application snapshot before retrying join/rejoin; do not resume from metadata alone".into()
             }
         }
+    };
+
+    if recovered.truncated {
+        format!(
+            "{}; note: this startup already truncated a malformed WAL tail, so keep the repaired WAL/checkpoint artifacts for incident review if join/rejoin still fails",
+            action,
+        )
+    } else {
+        action
     }
 }
 
@@ -472,7 +481,7 @@ mod tests {
         assert!(error.contains("checkpoint_tip_relation=behind:1"));
         assert!(error.contains("next_startup_height=12"));
         assert!(error.contains(
-            "operator action: restore an application snapshot that covers the retained WAL tip before retrying join/rejoin; do not resume from metadata alone"
+            "operator action: restore an application snapshot that covers the retained WAL tip before retrying join/rejoin; do not resume from metadata alone; note: this startup already truncated a malformed WAL tail, so keep the repaired WAL/checkpoint artifacts for incident review if join/rejoin still fails"
         ));
     }
 
@@ -709,7 +718,7 @@ mod tests {
                 && err.contains("checkpoint_tip_relation=ahead:1")
                 && err.contains("next_startup_height=12")
                 && err.contains(
-                    "operator action: investigate WAL/checkpoint mismatch (retained WAL tip height 11, checkpoint height 12), rebuild the recovery inputs, and only retry join/rejoin once WAL tip and checkpoint evidence agree"
+                    "operator action: investigate WAL/checkpoint mismatch (retained WAL tip height 11, checkpoint height 12), rebuild the recovery inputs, and only retry join/rejoin once WAL tip and checkpoint evidence agree; note: this startup already truncated a malformed WAL tail, so keep the repaired WAL/checkpoint artifacts for incident review if join/rejoin still fails"
                 ),
             "unexpected metadata-only recovery error: {err}"
         );
@@ -742,7 +751,7 @@ mod tests {
                 && err.contains("wal_tail_truncated=true")
                 && err.contains("checkpoint_height_retained=none")
                 && err.contains("next_startup_height=6")
-                && err.contains("operator action: rebuild or restore checkpoint metadata so it covers retained WAL tip height 5 before retrying join/rejoin; do not resume from metadata alone"),
+                && err.contains("operator action: rebuild or restore checkpoint metadata so it covers retained WAL tip height 5 before retrying join/rejoin; do not resume from metadata alone; note: this startup already truncated a malformed WAL tail, so keep the repaired WAL/checkpoint artifacts for incident review if join/rejoin still fails"),
             "unexpected metadata-only recovery error: {err}"
         );
     }
@@ -806,7 +815,7 @@ mod tests {
                 && err.contains("last retained checkpoint: 5")
                 && err.contains("next startup height: 8")
                 && err.contains("incident clue: retained_wal_entries=2 checkpoint_height_retained=5 checkpoint_tip_relation=behind:2 next_startup_height=8 wal_tail_truncated=true metadata_only_recovery=true join_rejoin_status=blocked:metadata_only_recovery")
-                && err.contains("operator action: restore an application snapshot that covers the retained WAL tip before retrying join/rejoin; do not resume from metadata alone"),
+                && err.contains("operator action: restore an application snapshot that covers the retained WAL tip before retrying join/rejoin; do not resume from metadata alone; note: this startup already truncated a malformed WAL tail, so keep the repaired WAL/checkpoint artifacts for incident review if join/rejoin still fails"),
             "unexpected metadata-only recovery error: {err}"
         );
     }
@@ -862,7 +871,7 @@ mod tests {
                 && err.contains("checkpoint_height_retained=8")
                 && err.contains("checkpoint_tip_relation=checkpoint_only:8")
                 && err.contains("next_startup_height=9")
-                && err.contains("operator action: checkpoint-only bootstrap is acceptable with a fresh --bft-wal-dir / --bft-wal-mode auto isolated run; if this node must rejoin from prior state, restore an application snapshot before retrying")
+                && err.contains("operator action: checkpoint-only bootstrap is acceptable with a fresh --bft-wal-dir / --bft-wal-mode auto isolated run; if this node must rejoin from prior state, restore an application snapshot before retrying; note: this startup already truncated a malformed WAL tail, so keep the repaired WAL/checkpoint artifacts for incident review if join/rejoin still fails")
                 && !err.contains("operator action: restart with a fresh --bft-wal-dir / --bft-wal-mode auto isolated run; if this node must rejoin from prior state, restore an application snapshot before retrying"),
             "unexpected metadata-only recovery error: {err}"
         );
