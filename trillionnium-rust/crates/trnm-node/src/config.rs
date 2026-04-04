@@ -3030,6 +3030,7 @@ mod tests {
             "{} must not silently drift shipped bootstrap listener guidance toward extra IPv6 listener literals beyond the single explicit fail-closed `[::1]` prohibition",
             readme_path.display()
         );
+        let mut previous_forbidden_alias_index = None;
         for forbidden_term in FORBIDDEN_BOOTSTRAP_ALIAS_FIELDS.iter().map(|(field, _)| *field) {
             let exact_token = format!("`{forbidden_term}`");
             assert_eq!(
@@ -3038,6 +3039,20 @@ mod tests {
                 "{} must mention `{forbidden_term}` exactly once, only in the explicit fail-closed prohibition against ad-hoc bootstrap alias drift",
                 readme_path.display()
             );
+            let current_forbidden_alias_index = readme.find(&exact_token).unwrap_or_else(|| {
+                panic!(
+                    "{} must keep `{forbidden_term}` visible in the explicit alias prohibition so operator remediation stays deterministic",
+                    readme_path.display()
+                )
+            });
+            if let Some(previous_forbidden_alias_index) = previous_forbidden_alias_index {
+                assert!(
+                    previous_forbidden_alias_index < current_forbidden_alias_index,
+                    "{} must list forbidden bootstrap aliases in the same order as FORBIDDEN_BOOTSTRAP_ALIAS_FIELDS so parse-time diagnostics and README remediation steps stay aligned",
+                    readme_path.display()
+                );
+            }
+            previous_forbidden_alias_index = Some(current_forbidden_alias_index);
         }
         for forbidden_term in FORBIDDEN_BOOTSTRAP_README_TOPOLOGY_TOKENS {
             let exact_token = format!("`{forbidden_term}`");
