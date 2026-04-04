@@ -2216,7 +2216,7 @@ fn demo_worker_name(task_id: u64) -> String {
 fn build_demo_mempool(demo_tasks: u64, _demo_keys: u64) -> VecDeque<MockTx> {
     let mut q = VecDeque::new();
 
-    for i in 0..demo_tasks.max(1) {
+    for i in 0..demo_tasks {
         let task_id = 1001u64 + i;
         let worker = demo_worker_name(task_id);
         let result_hash = [7u8; 32];
@@ -3676,6 +3676,12 @@ mod tests {
 
         let task_ids: Vec<u64> = mempool.iter().map(task_id_of).collect();
         assert_eq!(task_ids, vec![2001, 2002, 1001, 1001]);
+    }
+
+    #[test]
+    fn build_demo_mempool_respects_zero_demo_tasks() {
+        let mempool = build_demo_mempool(0, 2);
+        assert!(mempool.is_empty());
     }
 
     #[test]
@@ -17456,7 +17462,7 @@ fn main() -> Result<()> {
     let mut state = StateStore::new();
     state.set_balance("challenger", 1_000_000);
     let mut mempool = build_demo_mempool(args.demo_tasks, args.demo_keys);
-    for i in 0..args.demo_tasks.max(1) {
+    for i in 0..args.demo_tasks {
         let worker = demo_worker_name(1001u64 + i);
         state.set_balance(&worker, 1_000_000);
     }
