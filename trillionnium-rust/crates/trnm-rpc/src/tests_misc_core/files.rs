@@ -112,6 +112,22 @@ fn load_account_state_tolerates_whitespace_after_utf8_bom_json() {
 }
 
 #[test]
+fn load_account_state_returns_empty_map_for_invalid_utf8_json() {
+    let path = unique_tmp_path("rpc-account-state-invalid-utf8", "json");
+    let _ = fs::remove_file(&path);
+    fs::write(&path, b"\xff\xfe\xfa invalid-account-state\n")
+        .expect("write invalid utf8 account state");
+
+    let accounts = load_account_state(&path);
+    assert!(
+        accounts.is_empty(),
+        "invalid utf-8 account state should fail closed to an empty durable map"
+    );
+
+    let _ = fs::remove_file(&path);
+}
+
+#[test]
 fn load_faucet_limits_tolerates_whitespace_prefixed_utf8_bom_json() {
     let path = unique_tmp_path("rpc-faucet-limits-whitespace-bom", "json");
     let _ = fs::remove_file(&path);
@@ -125,6 +141,22 @@ fn load_faucet_limits_tolerates_whitespace_prefixed_utf8_bom_json() {
     let alice = limits.get("alice").expect("alice limits should parse");
     assert_eq!(alice.window_start_unix_ms, 1234);
     assert_eq!(alice.count_in_window, 2);
+
+    let _ = fs::remove_file(&path);
+}
+
+#[test]
+fn load_faucet_limits_returns_empty_map_for_invalid_utf8_json() {
+    let path = unique_tmp_path("rpc-faucet-limits-invalid-utf8", "json");
+    let _ = fs::remove_file(&path);
+    fs::write(&path, b"\xff\xfe\xfa invalid-faucet-limits\n")
+        .expect("write invalid utf8 faucet limits");
+
+    let limits = load_faucet_limits(&path);
+    assert!(
+        limits.is_empty(),
+        "invalid utf-8 faucet limits should fail closed to an empty durable map"
+    );
 
     let _ = fs::remove_file(&path);
 }
@@ -199,6 +231,22 @@ fn load_tx_lifecycle_tolerates_whitespace_after_utf8_bom_json() {
     assert_eq!(tx.error, None);
     assert_eq!(tx.submitted_at_unix_ms, 12);
     assert_eq!(tx.updated_at_unix_ms, 13);
+
+    let _ = fs::remove_file(&path);
+}
+
+#[test]
+fn load_tx_lifecycle_returns_empty_map_for_invalid_utf8_json() {
+    let path = unique_tmp_path("rpc-tx-lifecycle-invalid-utf8", "json");
+    let _ = fs::remove_file(&path);
+    fs::write(&path, b"\xff\xfe\xfa invalid-tx-lifecycle\n")
+        .expect("write invalid utf8 tx lifecycle");
+
+    let txs = load_tx_lifecycle(&path);
+    assert!(
+        txs.is_empty(),
+        "invalid utf-8 tx lifecycle should fail closed to an empty durable map"
+    );
 
     let _ = fs::remove_file(&path);
 }
