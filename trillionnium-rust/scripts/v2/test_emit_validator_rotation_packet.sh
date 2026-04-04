@@ -57,6 +57,46 @@ bash "$SCRIPT" \
 grep -q '^cutover_kind=replacement$' /tmp/emit-packet.out
 grep -q '^rollback_command=rm -rf /tmp/cutover-note$' /tmp/emit-packet.out
 
+if bash "$SCRIPT" \
+  --cutover-kind rotation \
+  --verified-worktree /tmp/trnm-lane \
+  --verified-branch-ref lane/mn05-operator-dr-rotation-lifecycle \
+  --verified-head 0123456789abcdef \
+  --outgoing-validator-id validator-old \
+  --incoming-validator-id validator-new \
+  --incoming-config-path /tmp/configs/validator-new.json \
+  --rollback-command 'rm -rf /tmp/cutover-note' \
+  --handoff-signed-by alice \
+  --handoff-acknowledged-by bob \
+  --handoff-summary-path /tmp/release/summary.txt \
+  >/tmp/emit-packet.out 2>/tmp/emit-packet.err; then
+  echo "expected partial handoff artifact fields to fail" >&2
+  exit 1
+fi
+grep -q 'missing --handoff-manifest-path' /tmp/emit-packet.err
+
+bash "$SCRIPT" \
+  --cutover-kind rotation \
+  --verified-worktree /tmp/trnm-lane \
+  --verified-branch-ref lane/mn05-operator-dr-rotation-lifecycle \
+  --verified-head 0123456789abcdef \
+  --outgoing-validator-id validator-old \
+  --incoming-validator-id validator-new \
+  --incoming-config-path /tmp/configs/validator-new.json \
+  --rollback-command 'rm -rf /tmp/cutover-note' \
+  --handoff-signed-by alice \
+  --handoff-acknowledged-by bob \
+  --handoff-summary-path /tmp/release/summary.txt \
+  --handoff-manifest-path /tmp/release/manifest.txt \
+  --summary-generated-at 2026-04-04T11:45:00Z \
+  --manifest-generated-at 2026-04-04T11:46:00Z \
+  >/tmp/emit-packet.out
+
+grep -q '^handoff_summary_path=/tmp/release/summary.txt$' /tmp/emit-packet.out
+grep -q '^handoff_manifest_path=/tmp/release/manifest.txt$' /tmp/emit-packet.out
+grep -q '^summary_generated_at=2026-04-04T11:45:00Z$' /tmp/emit-packet.out
+grep -q '^manifest_generated_at=2026-04-04T11:46:00Z$' /tmp/emit-packet.out
+
 bash "$SCRIPT" \
   "${common_args[@]}" \
   --expected-worktree-root /Users/qianqi/.openclaw/workspace/trnm-mainnet-lanes/MN05-operator-dr-rotation-lifecycle \
