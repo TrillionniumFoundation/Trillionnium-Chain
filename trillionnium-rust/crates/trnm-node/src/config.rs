@@ -3247,6 +3247,40 @@ mod tests {
                 readme_path.display()
             );
         }
+
+        let expected_repo_root_slot_paths = [
+            "`trillionnium-rust/configs/node1.toml`",
+            "`trillionnium-rust/configs/node2.toml`",
+            "`trillionnium-rust/configs/node3.toml`",
+            "`trillionnium-rust/configs/node4.toml`",
+        ];
+        let mut previous_repo_root_slot_path_index = None;
+        for expected_repo_root_slot_path in expected_repo_root_slot_paths {
+            assert_eq!(
+                readme.matches(expected_repo_root_slot_path).count(),
+                1,
+                "{} must mention {} exactly once so startup/join/rejoin incident triage keeps a single repo-root slot reference",
+                readme_path.display(),
+                expected_repo_root_slot_path
+            );
+            let current_repo_root_slot_path_index = readme
+                .find(expected_repo_root_slot_path)
+                .unwrap_or_else(|| {
+                    panic!(
+                        "{} must keep {} visible so operators can map startup/join/rejoin failures to the exact shipped slot file",
+                        readme_path.display(),
+                        expected_repo_root_slot_path
+                    )
+                });
+            if let Some(previous_repo_root_slot_path_index) = previous_repo_root_slot_path_index {
+                assert!(
+                    previous_repo_root_slot_path_index < current_repo_root_slot_path_index,
+                    "{} must keep repo-root slot references in node1→node4 order so incident notes cannot silently drift to a different startup topology",
+                    readme_path.display()
+                );
+            }
+            previous_repo_root_slot_path_index = Some(current_repo_root_slot_path_index);
+        }
     }
     #[test]
     fn shipped_bootstrap_configs_directory_keeps_exactly_the_readme_and_four_slot_bound_files() {
