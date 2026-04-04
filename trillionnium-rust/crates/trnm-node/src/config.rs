@@ -170,8 +170,9 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         "invalid node config {}: node_id must not be '.' or '..'",
         path
     );
+    let normalized_node_id_host_candidate = node_id.strip_suffix('.').unwrap_or(node_id);
     anyhow::ensure!(
-        !node_id.eq_ignore_ascii_case("localhost")
+        !normalized_node_id_host_candidate.eq_ignore_ascii_case("localhost")
             && !looks_like_dns_hostname(node_id)
             && node_id.parse::<std::net::IpAddr>().is_err()
             && node_id.parse::<SocketAddr>().is_err(),
@@ -1933,6 +1934,7 @@ mod tests {
     fn validate_node_config_rejects_host_and_socket_literals_in_node_id() {
         for node_id in [
             "localhost",
+            "localhost.",
             "127.0.0.1",
             "127.0.0.1:7000",
             "[::1]:7000",
@@ -2171,6 +2173,8 @@ mod tests {
         for node_id in [
             "localhost",
             "LOCALHOST",
+            "localhost.",
+            "LOCALHOST.",
             "127.0.0.1",
             "127.0.0.1:7000",
             "::1",
