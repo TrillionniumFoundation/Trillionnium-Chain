@@ -156,6 +156,8 @@ By default this writes a packet under `trillionnium-rust/run/explorer-service/ha
 
 `summary.txt` is intentionally operator-facing rather than generic bookkeeping only: besides the output paths and template pointer, it freezes the current `service_mode`, `production_ready`, `bind_host`, `bind_port`, `env_file`, `pid_file`, `log_file`, `public_dir`, `health_file`, `index_file`, `public_base_url`, `health_url`, `local_health_url`, the actual probe results (`health`, `health_probe`, `health_probe_url`, `local_health`, `local_health_probe`, `local_health_probe_url`), `index_url`, `rpc_base_url`, the placeholder scaffold truth-source pointer (`truth_source_scaffold_runbook=trillionnium-rust/docs/runbooks/explorer-service-scaffold.md`), the fail-closed Day-1 read-surface markers (`read_contract_mode`, `read_contract_source`, `day1_surface`, `query_events_default_limit`, `query_events_max_limit`, `write_paths_exposed`, `historical_query_scope`, `durability_boundary`, `archive_strategy`, `read_replica_strategy`, `deployment_topology`), the durable-read-anchor placeholders, and the canonical bring-up / status / rollback / index-fetch commands. This keeps the placeholder deployment path and public-read boundary reproducible in one file instead of forcing the next operator to reconstruct local bind/probe details or limit/readonly semantics from `status.txt` by hand, and makes the placeholder/non-production boundary explicit even if only `summary.txt` gets pasted into a ticket or handoff note.
 
+Important truth-source boundary: preserve every emitted `truth_source_*=` line **verbatim**, including `truth_source_go_no_go_panel=` when it appears as `missing-in-this-snapshot:...`. That placeholder is a fail-closed statement about the current repo snapshot, not an invitation to hand-edit the packet into claiming a GO/NO-GO panel file that this snapshot does not actually carry.
+
 If you need a deterministic destination for a ticket or operator bundle, pass it explicitly:
 
 ```bash
@@ -191,6 +193,7 @@ Fail-closed capture rules:
 - if the public fetch fails but the local fetch succeeds, keep the note scoped to placeholder deployment evidence and classify the proxy/public path separately instead of rewriting the scaffold as down
 - if the local fetch fails, do not substitute a browser screenshot or paraphrased JSON fields; preserve the failing command/output and treat the packet as incomplete
 - if `EXPLORER_PORT` / `EXPLORER_PUBLIC_BASE_URL` are being sourced from `explorer-service.env`, do not retype them by hand mid-capture; let the scripts emit the canonical values first, then reuse those values in the note
+- do not "repair" `truth_source_go_no_go_panel=missing-in-this-snapshot:...` by hand inside a ticket or handoff note; either keep the emitted missing marker or add the real file to the repo snapshot first
 
 If you want a copy/paste ticket/handoff skeleton instead of assembling the note manually, use:
 
