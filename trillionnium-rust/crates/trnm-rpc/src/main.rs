@@ -2425,7 +2425,11 @@ fn account_state_file() -> PathBuf {
 
 fn json_text_without_utf8_bom(path: &Path) -> Option<String> {
     let raw = fs::read_to_string(path).ok()?;
-    Some(raw.trim_start_matches('\u{feff}').to_string())
+    Some(
+        raw.trim_start_matches(char::is_whitespace)
+            .trim_start_matches('\u{feff}')
+            .to_string(),
+    )
 }
 
 fn load_account_state(path: &Path) -> BTreeMap<String, AccountState> {

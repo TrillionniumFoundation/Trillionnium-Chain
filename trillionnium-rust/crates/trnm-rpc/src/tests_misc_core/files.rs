@@ -70,3 +70,22 @@ fn load_account_state_tolerates_utf8_bom_prefixed_json() {
 
     let _ = fs::remove_file(&path);
 }
+
+#[test]
+fn load_account_state_tolerates_whitespace_prefixed_utf8_bom_json() {
+    let path = unique_tmp_path("rpc-account-state-whitespace-bom", "json");
+    let _ = fs::remove_file(&path);
+    fs::write(
+        &path,
+        "  \n\t\u{feff}{\n  \"alice\": {\"address\":\"alice\",\"balance\":9,\"nonce\":4}\n}\n",
+    )
+    .expect("write whitespace-prefixed BOM account state");
+
+    let accounts = load_account_state(&path);
+    let alice = accounts.get("alice").expect("alice account should parse");
+    assert_eq!(alice.address, "alice");
+    assert_eq!(alice.balance, 9);
+    assert_eq!(alice.nonce, 4);
+
+    let _ = fs::remove_file(&path);
+}
