@@ -15,6 +15,61 @@ pub(crate) struct NodeConfig {
 }
 
 const MAX_NODE_ID_LEN: usize = 64;
+const FORBIDDEN_BOOTSTRAP_ALIAS_FIELDS: &[(&str, &str)] = &[
+    ("bootstrap_nodes", "[\"127.0.0.1:27656\"]"),
+    ("bootstrap_node", "\"127.0.0.1:27656\""),
+    ("bootstrap_peers", "[\"127.0.0.1:27656\"]"),
+    ("bootstrap_peer", "\"127.0.0.1:27656\""),
+    ("bootstrapNodes", "[\"127.0.0.1:27656\"]"),
+    ("bootstrapNode", "\"127.0.0.1:27656\""),
+    ("bootstrapPeers", "[\"127.0.0.1:27656\"]"),
+    ("bootstrapPeer", "\"127.0.0.1:27656\""),
+    ("seed_nodes", "[\"127.0.0.1:27656\"]"),
+    ("seed_node", "\"127.0.0.1:27656\""),
+    ("seed_peers", "[\"127.0.0.1:27656\"]"),
+    ("seed_peer", "\"127.0.0.1:27656\""),
+    ("seedNodes", "[\"127.0.0.1:27656\"]"),
+    ("seedNode", "\"127.0.0.1:27656\""),
+    ("seedPeers", "[\"127.0.0.1:27656\"]"),
+    ("seedPeer", "\"127.0.0.1:27656\""),
+    ("seeds", "\"127.0.0.1:27656\""),
+    ("persistent_peers", "[\"127.0.0.1:27656\"]"),
+    ("persistent_peer", "\"127.0.0.1:27656\""),
+    ("persistentPeers", "[\"127.0.0.1:27656\"]"),
+    ("persistentPeer", "\"127.0.0.1:27656\""),
+    ("persistent_nodes", "[\"127.0.0.1:27656\"]"),
+    ("persistent_node", "\"127.0.0.1:27656\""),
+    ("persistentNodes", "[\"127.0.0.1:27656\"]"),
+    ("persistentNode", "\"127.0.0.1:27656\""),
+];
+const FORBIDDEN_BOOTSTRAP_README_TOKENS: &[&str] = &[
+    "bootstrap_nodes",
+    "bootstrap_node",
+    "bootstrap_peers",
+    "bootstrap_peer",
+    "bootstrapNodes",
+    "bootstrapNode",
+    "bootstrapPeers",
+    "bootstrapPeer",
+    "seed_nodes",
+    "seed_node",
+    "seed_peers",
+    "seed_peer",
+    "seedNodes",
+    "seedNode",
+    "seedPeers",
+    "seedPeer",
+    "seeds",
+    "persistent_peers",
+    "persistent_peer",
+    "persistentPeers",
+    "persistentPeer",
+    "persistent_nodes",
+    "persistent_node",
+    "persistentNodes",
+    "persistentNode",
+    "node5.toml",
+];
 
 fn contains_invisible_or_bidi_format_chars(value: &str) -> bool {
     value.chars().any(|ch| {
@@ -879,33 +934,7 @@ mod tests {
 
     #[test]
     fn load_config_rejects_unknown_fields_to_keep_bootstrap_config_fail_closed() {
-        for (unknown_field, field_value) in [
-            ("bootstrap_nodes", "[\"127.0.0.1:27656\"]"),
-            ("bootstrap_node", "\"127.0.0.1:27656\""),
-            ("bootstrap_peers", "[\"127.0.0.1:27656\"]"),
-            ("bootstrap_peer", "\"127.0.0.1:27656\""),
-            ("bootstrapNodes", "[\"127.0.0.1:27656\"]"),
-            ("bootstrapNode", "\"127.0.0.1:27656\""),
-            ("bootstrapPeers", "[\"127.0.0.1:27656\"]"),
-            ("bootstrapPeer", "\"127.0.0.1:27656\""),
-            ("seed_nodes", "[\"127.0.0.1:27656\"]"),
-            ("seed_node", "\"127.0.0.1:27656\""),
-            ("seed_peers", "[\"127.0.0.1:27656\"]"),
-            ("seed_peer", "\"127.0.0.1:27656\""),
-            ("seedNodes", "[\"127.0.0.1:27656\"]"),
-            ("seedNode", "\"127.0.0.1:27656\""),
-            ("seedPeers", "[\"127.0.0.1:27656\"]"),
-            ("seedPeer", "\"127.0.0.1:27656\""),
-            ("seeds", "\"127.0.0.1:27656\""),
-            ("persistent_peers", "[\"127.0.0.1:27656\"]"),
-            ("persistent_peer", "\"127.0.0.1:27656\""),
-            ("persistentPeers", "[\"127.0.0.1:27656\"]"),
-            ("persistentPeer", "\"127.0.0.1:27656\""),
-            ("persistent_nodes", "[\"127.0.0.1:27656\"]"),
-            ("persistent_node", "\"127.0.0.1:27656\""),
-            ("persistentNodes", "[\"127.0.0.1:27656\"]"),
-            ("persistentNode", "\"127.0.0.1:27656\""),
-        ] {
+        for (unknown_field, field_value) in FORBIDDEN_BOOTSTRAP_ALIAS_FIELDS {
             let path = std::env::temp_dir().join(format!(
                 "trnm-node-config-unknown-field-{unknown_field}-{}-{}.toml",
                 std::process::id(),
@@ -2865,34 +2894,7 @@ mod tests {
             "{} must not silently drift shipped bootstrap listener guidance toward extra IPv6 listener literals beyond the single explicit fail-closed `[::1]` prohibition",
             readme_path.display()
         );
-        for forbidden_term in [
-            "bootstrap_nodes",
-            "bootstrap_node",
-            "bootstrap_peers",
-            "bootstrap_peer",
-            "bootstrapNodes",
-            "bootstrapNode",
-            "bootstrapPeers",
-            "bootstrapPeer",
-            "seed_nodes",
-            "seed_node",
-            "seed_peers",
-            "seed_peer",
-            "seedNodes",
-            "seedNode",
-            "seedPeers",
-            "seedPeer",
-            "seeds",
-            "persistent_peers",
-            "persistent_peer",
-            "persistentPeers",
-            "persistentPeer",
-            "persistent_nodes",
-            "persistent_node",
-            "persistentNodes",
-            "persistentNode",
-            "node5.toml",
-        ] {
+        for forbidden_term in FORBIDDEN_BOOTSTRAP_README_TOKENS {
             let exact_token = format!("`{forbidden_term}`");
             assert_eq!(
                 readme.matches(&exact_token).count(),
