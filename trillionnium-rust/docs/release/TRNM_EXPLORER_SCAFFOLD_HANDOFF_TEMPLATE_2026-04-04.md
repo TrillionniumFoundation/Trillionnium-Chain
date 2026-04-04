@@ -120,6 +120,9 @@ durable_read_anchor_replay_start_anchor=missing-placeholder-scaffold
 durable_read_anchor_retention_scope=rpc-window-bounded
 durable_read_anchor_archive_owner=missing-placeholder-scaffold
 durable_read_anchor_lag_slo=missing-placeholder-scaffold
+# note: `historical_query_scope=rpc-retention-bounded` is the current placeholder query boundary,
+# while `durable_read_anchor_retention_scope=rpc-window-bounded` is only the placeholder value for the
+# future durable-read anchor named `retention_scope`; do not collapse them into a generic “history supported” claim.
 health=<ok|down|unknown>
 health_probe=<active|disabled-curl-unavailable|not-run-state-down|not-run-state-not-running|invalid-config>
 health_probe_url=<value>

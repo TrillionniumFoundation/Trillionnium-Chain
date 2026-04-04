@@ -385,6 +385,8 @@ The status output should include the operator contract fields below:
 - `durable_read_anchor_retention_scope=rpc-window-bounded`
 - `durable_read_anchor_archive_owner=missing-placeholder-scaffold`
 - `durable_read_anchor_lag_slo=missing-placeholder-scaffold`
+
+Important boundary note: `historical_query_scope=rpc-retention-bounded` and `durable_read_anchor_retention_scope=rpc-window-bounded` are intentionally related but **not interchangeable**. The former describes the current user-visible history guarantee of the placeholder scaffold (queries only work while upstream RPC still retains the data). The latter is the placeholder value for the future durable-read anchor named `retention_scope`, and it stays in the `durable_read_anchor_*` namespace precisely to show that no durable/archive retention contract has been filled yet. If an operator handoff collapses these into one generic “history supported” statement, treat that as blocker-language drift rather than evidence of durable read-model closure.
 - `health=ok`
 - `health_probe=active`
 - `health_probe_url=<the exact public/reverse-proxy-facing URL status checked>`
