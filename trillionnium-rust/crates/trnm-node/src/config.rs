@@ -2945,7 +2945,7 @@ bootstrap_peers = ["127.0.0.1:27656"]
                 shipped_config_dir.display()
             )
         });
-        let shipped_config_entries = std::fs::read_dir(&shipped_config_dir)
+        let shipped_config_entry_names = std::fs::read_dir(&shipped_config_dir)
             .unwrap_or_else(|err| {
                 panic!(
                     "{} should stay readable for shipped bootstrap config discovery: {err}",
@@ -2954,7 +2954,8 @@ bootstrap_peers = ["127.0.0.1:27656"]
             })
             .filter_map(|entry| entry.ok())
             .map(|entry| entry.file_name().to_string_lossy().into_owned())
-            .collect::<HashSet<_>>();
+            .collect::<Vec<_>>();
+        let shipped_config_entries = shipped_config_entry_names.iter().cloned().collect::<HashSet<_>>();
         let expected_shipped_config_entries = HashSet::from([
             String::from("README.md"),
             String::from("node1.toml"),
@@ -2965,6 +2966,19 @@ bootstrap_peers = ["127.0.0.1:27656"]
         assert_eq!(
             shipped_config_entries, expected_shipped_config_entries,
             "shipped bootstrap config dir must stay exactly README.md + node1.toml..node4.toml so peer/bootstrap topology fixtures remain deterministic and fail closed"
+        );
+        let mut sorted_shipped_config_entry_names = shipped_config_entry_names;
+        sorted_shipped_config_entry_names.sort();
+        assert_eq!(
+            sorted_shipped_config_entry_names,
+            vec![
+                String::from("README.md"),
+                String::from("node1.toml"),
+                String::from("node2.toml"),
+                String::from("node3.toml"),
+                String::from("node4.toml"),
+            ],
+            "shipped bootstrap config dir entries must remain in deterministic README + node1..node4 lexical slot order so bootstrap topology discovery cannot hide slot drift behind set equality"
         );
         let shipped_node_configs = shipped_config_entries
             .iter()
