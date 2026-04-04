@@ -502,6 +502,16 @@ mod tests {
     }
 
     #[test]
+    fn recovery_startup_summary_keeps_single_block_checkpoint_lag_visible_without_tail_repair() {
+        let recovered = recovered_state(2, 12, Some(10), false, false);
+
+        assert_eq!(
+            recovery_startup_summary(&recovered),
+            "retained_wal_entries=2 checkpoint_height_retained=10 checkpoint_tip_relation=behind:1 next_startup_height=12 wal_tail_truncated=false metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume_checkpoint_lagging"
+        );
+    }
+
+    #[test]
     fn recovery_startup_summary_surfaces_checkpoint_ahead_relation() {
         let recovered = recovered_state(2, 12, Some(15), false, true);
 
