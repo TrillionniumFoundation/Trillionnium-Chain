@@ -918,6 +918,22 @@ mod tests {
     }
 
     #[test]
+    fn ensure_recoverable_wal_state_keeps_single_block_checkpoint_ahead_mismatch_visible_after_tail_repair() {
+        let recovered = recovered_state(2, 12, Some(12), true, false);
+
+        ensure_recoverable_wal_state(Path::new("/tmp/trnm-wal"), &recovered)
+            .expect("single-block checkpoint-ahead retained WAL resume mismatch should stay recoverable after tail repair while surfacing mismatch triage");
+        assert_eq!(
+            retained_wal_summary(&recovered),
+            "retained 2 committed WAL entries through height 11 (retained checkpoint height 12 is ahead of retained WAL tip height 11 by 1 block; investigate WAL/checkpoint mismatch); repaired WAL tail required truncation"
+        );
+        assert_eq!(
+            recovery_startup_summary(&recovered),
+            "retained_wal_entries=2 checkpoint_height_retained=12 checkpoint_tip_relation=ahead:1 next_startup_height=12 wal_tail_truncated=true metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume_checkpoint_ahead_mismatch_after_tail_repair"
+        );
+    }
+
+    #[test]
     fn ensure_recoverable_wal_state_allows_truncated_fresh_bootstrap() {
         let recovered = recovered_state(0, 1, None, true, false);
 
