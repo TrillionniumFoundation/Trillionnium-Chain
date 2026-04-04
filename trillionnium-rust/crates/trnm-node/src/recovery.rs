@@ -693,6 +693,24 @@ mod tests {
     }
 
     #[test]
+    fn metadata_only_recovery_error_surfaces_truncated_checkpoint_only_bootstrap_for_join_rejoin_triage() {
+        let recovered = recovered_state(0, 9, Some(8), true, true);
+        let error = metadata_only_recovery_error(Path::new("/tmp/trnm-wal"), &recovered);
+
+        assert!(error.contains(
+            "retained no committed WAL entries (last retained checkpoint height 8); repaired WAL tail required truncation"
+        ));
+        assert!(error.contains("last retained checkpoint: 8"));
+        assert!(error.contains("next startup height: 9"));
+        assert!(error.contains(
+            "incident clue: retained_wal_entries=0 checkpoint_height_retained=8 checkpoint_tip_relation=checkpoint_only:8 next_startup_height=9 wal_tail_truncated=true metadata_only_recovery=true join_rejoin_status=blocked:metadata_only_recovery"
+        ));
+        assert!(error.contains("checkpoint_tip_relation=checkpoint_only:8"));
+        assert!(error.contains("wal_tail_truncated=true"));
+        assert!(!error.contains("through height 0"));
+    }
+
+    #[test]
     fn ensure_recoverable_wal_state_reports_plural_checkpoint_lag_for_metadata_only_recovery() {
         let recovered = recovered_state(2, 8, Some(5), true, true);
         let err = ensure_recoverable_wal_state(Path::new("/tmp/trnm-wal"), &recovered)
