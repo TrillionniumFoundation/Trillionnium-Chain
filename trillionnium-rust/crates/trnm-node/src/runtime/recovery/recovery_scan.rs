@@ -941,6 +941,26 @@ mod tests {
     }
 
     #[test]
+    fn retained_wal_summary_uses_singular_block_for_single_height_ahead_mismatch() {
+        let recovered = recovered_state(2, 12, Some(12), false, false);
+
+        assert_eq!(
+            retained_wal_summary(&recovered),
+            "retained 2 committed WAL entries through height 11 (retained checkpoint height 12 is ahead of retained WAL tip height 11 by 1 block; investigate WAL/checkpoint mismatch)"
+        );
+    }
+
+    #[test]
+    fn recovery_startup_summary_keeps_single_block_checkpoint_ahead_mismatch_visible() {
+        let recovered = recovered_state(2, 12, Some(12), false, false);
+
+        assert_eq!(
+            recovery_startup_summary(&recovered),
+            "retained_wal_entries=2 checkpoint_height_retained=12 checkpoint_tip_relation=ahead:1 next_startup_height=12 wal_tail_truncated=false metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume_checkpoint_ahead_mismatch"
+        );
+    }
+
+    #[test]
     fn recovery_startup_summary_marks_checkpoint_ahead_resume_mismatch_after_tail_repair() {
         let recovered = recovered_state(2, 12, Some(15), true, false);
 
