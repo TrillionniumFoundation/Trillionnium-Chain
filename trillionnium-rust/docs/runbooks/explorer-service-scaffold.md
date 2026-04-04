@@ -154,6 +154,8 @@ By default this writes a packet under `trillionnium-rust/run/explorer-service/ha
 - `index.json`
 - `summary.txt`
 
+`summary.txt` is intentionally operator-facing rather than generic bookkeeping only: besides the output paths and template pointer, it freezes the current `public_base_url`, `health_url`, `local_health_url`, `index_url`, `rpc_base_url`, the fail-closed Day-1 read-surface markers (`read_contract_mode`, `day1_surface`, `historical_query_scope`, `durability_boundary`, `archive_strategy`, `read_replica_strategy`), and the canonical bring-up / status / rollback commands. This keeps the placeholder deployment path and public-read boundary reproducible in one file instead of forcing the next operator to reconstruct them from `status.txt` by hand.
+
 If you need a deterministic destination for a ticket or operator bundle, pass it explicitly:
 
 ```bash
