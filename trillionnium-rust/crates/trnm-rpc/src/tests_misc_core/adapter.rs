@@ -157,3 +157,26 @@ fn load_latest_adapter_records_accepts_crlf_separated_whitespace_prefixed_utf8_b
         assert_eq!(records[0].task_id, 6464);
     });
 }
+
+#[test]
+fn load_latest_adapter_records_falls_back_to_previous_nonempty_snapshot_when_latest_is_invalid_utf8() {
+    with_isolated_adapter_dir(|dir| {
+        let previous = dir.join(format!("tx-adapter-20260403-{}-a.jsonl", std::process::id()));
+        let latest = dir.join(format!("tx-adapter-20260404-{}-z.jsonl", std::process::id()));
+        fs::write(
+            &previous,
+            "{\"ts\":1772074584,\"mode\":\"mock\",\"kind\":\"commit\",\"task_id\":6767,\"worker\":\"worker1\",\"commit_hash\":\"764c7baf3e1d3d325511cdc3d7836fbc1fa71a289bd669edcc4b55d6baaee9d7\",\"nonce\":101001,\"tx_hash\":\"7336b90d593ebe324cb4b3e41e7e9d86d1e2418f230cca0162ca1d539f32c2b9\",\"status\":\"accepted\",\"rc\":0}\n",
+        )
+        .expect("write previous adapter snapshot");
+        fs::write(&latest, b"\xff\xfe\xfa totally-invalid-utf8\n")
+            .expect("write invalid utf8 latest adapter snapshot");
+
+        let records = load_latest_adapter_records();
+        assert_eq!(
+            records.len(),
+            1,
+            "invalid utf-8 newest snapshot should not erase the last durable read-model snapshot"
+        );
+        assert_eq!(records[0].task_id, 6767);
+    });
+}
