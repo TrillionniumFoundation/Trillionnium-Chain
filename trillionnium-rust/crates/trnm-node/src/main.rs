@@ -779,10 +779,14 @@ fn retained_wal_summary(recovered: &RecoveredWalState) -> String {
                 base, lag, blocks
             )
         }
-        Some(checkpoint_height) if checkpoint_height > tip_height => format!(
-            "{} (retained checkpoint height {} is ahead of retained WAL tip height {}; investigate WAL/checkpoint mismatch)",
-            base, checkpoint_height, tip_height
-        ),
+        Some(checkpoint_height) if checkpoint_height > tip_height => {
+            let lead = checkpoint_height - tip_height;
+            let blocks = if lead == 1 { "block" } else { "blocks" };
+            format!(
+                "{} (retained checkpoint height {} is ahead of retained WAL tip height {} by {} {}; investigate WAL/checkpoint mismatch)",
+                base, checkpoint_height, tip_height, lead, blocks
+            )
+        }
         None => format!("{} (no retained checkpoint metadata)", base),
         Some(_) => base,
     };
@@ -16924,7 +16928,29 @@ locked_block_hash = "stale-lock"
         );
         assert_eq!(
             retained_wal_summary(&recovered),
-            "retained 2 committed WAL entries through height 11 (retained checkpoint height 15 is ahead of retained WAL tip height 11; investigate WAL/checkpoint mismatch); repaired WAL tail required truncation"
+            "retained 2 committed WAL entries through height 11 (retained checkpoint height 15 is ahead of retained WAL tip height 11 by 4 blocks; investigate WAL/checkpoint mismatch); repaired WAL tail required truncation"
+        );
+    }
+
+    #[test]
+    fn retained_wal_summary_uses_singular_block_for_single_block_checkpoint_ahead_mismatch() {
+        let recovered = RecoveredWalState {
+            next_height: 12,
+            restored_lock: None,
+            last_checkpoint: Some(CheckpointMeta {
+                height: 12,
+                state_root_hex: "r12".into(),
+                wal_entry_hash_hex: "h12".into(),
+            }),
+            truncated: false,
+            metadata_only_recovery: false,
+            wal_entries_retained: 2,
+            checkpoint_height_retained: Some(12),
+        };
+
+        assert_eq!(
+            retained_wal_summary(&recovered),
+            "retained 2 committed WAL entries through height 11 (retained checkpoint height 12 is ahead of retained WAL tip height 11 by 1 block; investigate WAL/checkpoint mismatch)"
         );
     }
 

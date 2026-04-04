@@ -668,7 +668,7 @@ mod tests {
         let error = metadata_only_recovery_error(Path::new("/tmp/trnm-wal"), &recovered);
 
         assert!(error.contains(
-            "retained 2 committed WAL entries through height 11 (retained checkpoint height 15 is ahead of retained WAL tip height 11; investigate WAL/checkpoint mismatch)"
+            "retained 2 committed WAL entries through height 11 (retained checkpoint height 15 is ahead of retained WAL tip height 11 by 4 blocks; investigate WAL/checkpoint mismatch)"
         ));
         assert!(error.contains("last retained checkpoint: 15"));
         assert!(error.contains("next startup height: 12"));
