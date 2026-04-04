@@ -878,6 +878,14 @@ mod tests {
             metadata_only_operator_action(&recovered_state(2, 12, Some(15), true, true)),
             "operator action: investigate WAL/checkpoint mismatch (retained WAL tip height 11, checkpoint height 15), rebuild the recovery inputs, and only retry join/rejoin once WAL tip and checkpoint evidence agree; note: this startup already truncated a malformed WAL tail, so keep the repaired WAL/checkpoint artifacts for incident review if join/rejoin still fails"
         );
+        assert_eq!(
+            metadata_only_operator_action(&recovered_state(1, 9, None, true, true)),
+            "operator action: rebuild or restore checkpoint metadata so it covers retained WAL tip height 8 before retrying join/rejoin; do not resume from metadata alone; note: this startup already truncated a malformed WAL tail, so keep the repaired WAL/checkpoint artifacts for incident review if join/rejoin still fails"
+        );
+        assert_eq!(
+            metadata_only_operator_action(&recovered_state(0, 1, None, true, true)),
+            "operator action: restart with a fresh --bft-wal-dir / --bft-wal-mode auto isolated run; if this node must rejoin from prior state, restore an application snapshot before retrying; note: this startup already truncated a malformed WAL tail, so keep the repaired WAL/checkpoint artifacts for incident review if join/rejoin still fails"
+        );
     }
 
     #[test]
