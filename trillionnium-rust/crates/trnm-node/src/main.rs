@@ -4474,6 +4474,7 @@ mod tests {
             .expect("trnm-node manifest should sit under trillionnium-rust/crates/trnm-node");
         let readme_path = workspace_root.join("configs").join("README.md");
         let workspace_relative_readme_path = workspace_root.join("configs/README.md");
+        let curdir_repo_relative_readme_path = workspace_root.join("./configs/README.md");
 
         let readme_metadata = std::fs::symlink_metadata(&readme_path).unwrap_or_else(|err| {
             panic!(
@@ -4528,6 +4529,20 @@ mod tests {
             canonical_workspace_relative_readme_path, canonical_readme_path,
             "{} must canonicalize to the same shipped bootstrap README as {}",
             workspace_relative_readme_path.display(),
+            readme_path.display()
+        );
+        let canonical_curdir_repo_relative_readme_path = curdir_repo_relative_readme_path
+            .canonicalize()
+            .unwrap_or_else(|err| {
+                panic!(
+                    "{} should canonicalize for curdir-prefixed bootstrap README path anchoring: {err}",
+                    curdir_repo_relative_readme_path.display()
+                )
+            });
+        assert_eq!(
+            canonical_curdir_repo_relative_readme_path, canonical_readme_path,
+            "{} must canonicalize to the same shipped bootstrap README as {}",
+            curdir_repo_relative_readme_path.display(),
             readme_path.display()
         );
 
