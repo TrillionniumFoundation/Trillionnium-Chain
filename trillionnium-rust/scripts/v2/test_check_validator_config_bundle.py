@@ -379,6 +379,35 @@ class CheckValidatorConfigBundleTests(unittest.TestCase):
             result.stderr,
         )
 
+    def test_public_mainnet_input_rejects_normalized_same_packet_and_genesis_paths(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            config = self.write_config(
+                root,
+                "node1.toml",
+                node_id="node1",
+                rpc_addr="127.0.0.1:7001",
+                p2p_addr="127.0.0.1:7002",
+            )
+            packet_dir = root / "packets"
+            packet_dir.mkdir()
+            shared_path = packet_dir / "shared.packet.txt"
+            result = self.run_script(
+                *self.make_public_mainnet_args(
+                    config,
+                    "--packet-distribution-path",
+                    str(shared_path),
+                    "--genesis-artifact-path",
+                    str(packet_dir / ".." / "packets" / "shared.packet.txt"),
+                )
+            )
+
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn(
+            "public-mainnet-input requires packet_distribution_path and genesis_artifact_path to name different files",
+            result.stderr,
+        )
+
     def test_public_mainnet_input_emits_absolute_config_paths(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
