@@ -167,6 +167,28 @@ if bash "$SCRIPT" \
 fi
 grep -q 'invalid --dr-status: expected PASS got FAIL' /tmp/emit-packet.err
 
+bash "$SCRIPT" \
+  --cutover-kind rotation \
+  --verified-worktree /tmp/trnm-lane \
+  --verified-branch-ref lane/mn05-operator-dr-rotation-lifecycle \
+  --verified-head 0123456789abcdef \
+  --outgoing-validator-id validator-old \
+  --incoming-validator-id validator-new \
+  --incoming-config-path /tmp/configs/validator-new.json \
+  --rollback-command 'rm -rf /tmp/cutover-note' \
+  --handoff-signed-by alice \
+  --handoff-acknowledged-by bob \
+  --dr-summary-path /tmp/run/bft-restart-recovery-1.txt \
+  --dr-generated-at 2026-04-03T06:14:00Z \
+  --dr-status PASS \
+  --dr-replay-command './scripts/check_bft_restart_recovery.sh --config /tmp/configs/validator-new.json' \
+  --dr-rollback-command 'rm -rf /tmp/run/bft-restart-recovery-1.txt' \
+  >/tmp/emit-packet.out
+
+grep -q '^cutover_kind=rotation$' /tmp/emit-packet.out
+grep -q '^dr_summary_path=/tmp/run/bft-restart-recovery-1.txt$' /tmp/emit-packet.out
+grep -q '^dr_status=PASS$' /tmp/emit-packet.out
+
 if bash "$SCRIPT" \
   "${common_args[@]}" \
   --expected-worktree-root /Users/qianqi/.openclaw/workspace/trnm-mainnet-lanes/MN05-operator-dr-rotation-lifecycle \

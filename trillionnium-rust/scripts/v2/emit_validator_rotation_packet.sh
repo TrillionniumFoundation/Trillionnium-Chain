@@ -289,7 +289,7 @@ if [ -n "$HANDOFF_SUMMARY_PATH" ]; then
   printf 'manifest_generated_at=%s\n' "$MANIFEST_GENERATED_AT"
 fi
 printf 'rollback_command=%s\n' "$ROLLBACK_COMMAND"
-if [ "$CUTOVER_KIND" = "dr_rebuild" ]; then
+if [ -n "$DR_SUMMARY_PATH" ]; then
   printf 'dr_summary_path=%s\n' "$DR_SUMMARY_PATH"
   printf 'dr_generated_at=%s\n' "$DR_GENERATED_AT"
   printf 'dr_status=%s\n' "$DR_STATUS"
