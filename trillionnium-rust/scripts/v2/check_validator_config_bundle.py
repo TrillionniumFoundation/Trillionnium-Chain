@@ -383,6 +383,10 @@ def validate_ceremony_packet_metadata(args: argparse.Namespace) -> None:
 
     validate_packet_artifact_path(args.genesis_artifact_path, "genesis_artifact_path")
     validate_packet_file_path(args.packet_distribution_path, "packet_distribution_path")
+    if Path(args.genesis_artifact_path) == Path(args.packet_distribution_path):
+        fail(
+            "invalid ceremony packet arguments: public-mainnet-input requires packet_distribution_path and genesis_artifact_path to name different files"
+        )
 
 
 def build_validator_entry_hash(entry: dict[str, str], config_path: str) -> str:
