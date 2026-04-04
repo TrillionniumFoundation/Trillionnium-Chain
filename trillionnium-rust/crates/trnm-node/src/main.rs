@@ -3993,6 +3993,44 @@ mod tests {
     }
 
     #[test]
+    fn resolve_config_path_keeps_all_shipped_bootstrap_slots_on_the_same_canonical_paths() {
+        let manifest_dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR"));
+        let workspace_root = manifest_dir
+            .ancestors()
+            .nth(2)
+            .expect("trnm-node manifest should sit under trillionnium-rust/crates/trnm-node");
+
+        for slot in 1..=4 {
+            let workspace_relative = format!("configs/node{slot}.toml");
+            let repo_root_relative = format!("trillionnium-rust/configs/node{slot}.toml");
+            let curdir_workspace_relative = format!("./configs/node{slot}.toml");
+            let curdir_repo_root_relative = format!("./trillionnium-rust/configs/node{slot}.toml");
+            let expected = workspace_root.join(format!("configs/node{slot}.toml"));
+
+            assert_eq!(
+                resolve_config_path(&workspace_relative),
+                expected,
+                "{workspace_relative} must stay anchored to the shipped slot-bound bootstrap path"
+            );
+            assert_eq!(
+                resolve_config_path(&repo_root_relative),
+                expected,
+                "{repo_root_relative} must stay anchored to the shipped slot-bound bootstrap path"
+            );
+            assert_eq!(
+                resolve_config_path(&curdir_workspace_relative),
+                expected,
+                "{curdir_workspace_relative} must stay anchored to the shipped slot-bound bootstrap path"
+            );
+            assert_eq!(
+                resolve_config_path(&curdir_repo_root_relative),
+                expected,
+                "{curdir_repo_root_relative} must stay anchored to the shipped slot-bound bootstrap path"
+            );
+        }
+    }
+
+    #[test]
     fn load_config_accepts_legacy_repo_root_relative_default_path() {
         let cfg = load_config("configs/node1.toml")
             .expect("repo-root launches should resolve legacy default config path");
