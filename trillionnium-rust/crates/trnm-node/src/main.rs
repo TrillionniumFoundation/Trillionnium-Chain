@@ -17979,6 +17979,92 @@ locked_block_hash = "stale-lock"
 
         let _ = fs::remove_dir_all(&wal_dir);
     }
+
+    #[test]
+    fn resolve_wal_dir_fail_if_exists_allows_comment_only_checkpoint_scaffold() {
+        let wal_dir = temp_wal_dir("fail-if-exists-comment-only-checkpoint-scaffold");
+        fs::create_dir_all(&wal_dir).unwrap();
+        fs::write(
+            checkpoint_file(&wal_dir),
+            "# operator left a recovery note\n   # safe to reuse after catch-up succeeds\n",
+        )
+        .unwrap();
+
+        let args = Args {
+            config: "configs/node1.toml".into(),
+            block_ms: 1000,
+            max_blocks: 10,
+            demo_tasks: 2,
+            demo_keys: 2,
+            parallel_workers: 4,
+            txs_per_block: 4,
+            validators: 4,
+            byzantine: 0,
+            bft_max_rounds: 3,
+            bft_fault_rounds: 0,
+            bft_missed_proposal_threshold: 2,
+            bft_leader_penalty_rounds: 2,
+            bft_round_change_backoff_ms: 5,
+            bft_round_change_backoff_max_ms: 40,
+            bft_wal_dir: wal_dir.display().to_string(),
+            bft_wal_mode: WalDirMode::FailIfExists,
+            bft_checkpoint_interval: 5,
+            pouw_timeout_scan: true,
+            pouw_timeout_scan_every_blocks: 1,
+            enable_da_ordering_decouple: false,
+            rl_advisor_shadow: false,
+            rl_advisor_shadow_topk: 4,
+        };
+
+        let (resolved, notice) = resolve_wal_dir(&args).unwrap();
+        assert_eq!(resolved, wal_dir);
+        assert!(notice.is_none());
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
+    fn resolve_wal_dir_fail_if_exists_allows_comment_only_consensus_wal_scaffold() {
+        let wal_dir = temp_wal_dir("fail-if-exists-comment-only-consensus-wal-scaffold");
+        fs::create_dir_all(&wal_dir).unwrap();
+        fs::write(
+            wal_file(&wal_dir),
+            "# operator left a rejoin note\n   # safe to reuse after catch-up succeeds\n",
+        )
+        .unwrap();
+
+        let args = Args {
+            config: "configs/node1.toml".into(),
+            block_ms: 1000,
+            max_blocks: 10,
+            demo_tasks: 2,
+            demo_keys: 2,
+            parallel_workers: 4,
+            txs_per_block: 4,
+            validators: 4,
+            byzantine: 0,
+            bft_max_rounds: 3,
+            bft_fault_rounds: 0,
+            bft_missed_proposal_threshold: 2,
+            bft_leader_penalty_rounds: 2,
+            bft_round_change_backoff_ms: 5,
+            bft_round_change_backoff_max_ms: 40,
+            bft_wal_dir: wal_dir.display().to_string(),
+            bft_wal_mode: WalDirMode::FailIfExists,
+            bft_checkpoint_interval: 5,
+            pouw_timeout_scan: true,
+            pouw_timeout_scan_every_blocks: 1,
+            enable_da_ordering_decouple: false,
+            rl_advisor_shadow: false,
+            rl_advisor_shadow_topk: 4,
+        };
+
+        let (resolved, notice) = resolve_wal_dir(&args).unwrap();
+        assert_eq!(resolved, wal_dir);
+        assert!(notice.is_none());
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
 }
 
 fn main() -> Result<()> {

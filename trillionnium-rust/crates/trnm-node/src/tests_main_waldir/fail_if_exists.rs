@@ -98,3 +98,41 @@ fn resolve_wal_dir_fail_if_exists_allows_comment_only_wal_scaffold() {
 
     let _ = fs::remove_dir_all(&resolved);
 }
+
+#[test]
+fn resolve_wal_dir_fail_if_exists_allows_comment_only_checkpoint_scaffold() {
+    let wal_dir = temp_wal_dir("fail-if-exists-comment-only-checkpoint-scaffold");
+    fs::create_dir_all(&wal_dir).unwrap();
+    fs::write(
+        checkpoint_file(&wal_dir),
+        "# operator left a recovery note\n   # safe to reuse after catch-up succeeds\n",
+    )
+    .unwrap();
+
+    let args = args_with_wal_dir(wal_dir.display().to_string(), WalDirMode::FailIfExists);
+
+    let (resolved, notice) = resolve_wal_dir(&args).unwrap();
+    assert_eq!(resolved, wal_dir);
+    assert!(notice.is_none());
+
+    let _ = fs::remove_dir_all(&resolved);
+}
+
+#[test]
+fn resolve_wal_dir_fail_if_exists_allows_comment_only_consensus_wal_scaffold() {
+    let wal_dir = temp_wal_dir("fail-if-exists-comment-only-consensus-wal-scaffold");
+    fs::create_dir_all(&wal_dir).unwrap();
+    fs::write(
+        wal_file(&wal_dir),
+        "# operator left a rejoin note\n   # safe to reuse after catch-up succeeds\n",
+    )
+    .unwrap();
+
+    let args = args_with_wal_dir(wal_dir.display().to_string(), WalDirMode::FailIfExists);
+
+    let (resolved, notice) = resolve_wal_dir(&args).unwrap();
+    assert_eq!(resolved, wal_dir);
+    assert!(notice.is_none());
+
+    let _ = fs::remove_dir_all(&resolved);
+}
