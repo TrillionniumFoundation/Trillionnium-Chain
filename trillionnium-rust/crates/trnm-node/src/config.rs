@@ -880,6 +880,8 @@ mod tests {
     #[test]
     fn load_config_rejects_unknown_fields_to_keep_bootstrap_config_fail_closed() {
         for (unknown_field, field_value) in [
+            ("bootstrap_nodes", "[\"127.0.0.1:27656\"]"),
+            ("bootstrap_node", "\"127.0.0.1:27656\""),
             ("bootstrap_peers", "[\"127.0.0.1:27656\"]"),
             ("bootstrap_peer", "\"127.0.0.1:27656\""),
             ("seed_nodes", "[\"127.0.0.1:27656\"]"),
@@ -2841,6 +2843,8 @@ mod tests {
             readme_path.display()
         );
         for forbidden_term in [
+            "bootstrap_nodes",
+            "bootstrap_node",
             "bootstrap_peers",
             "bootstrap_peer",
             "seed_nodes",
@@ -3024,7 +3028,7 @@ mod tests {
         for expected_phrase in [
             "## What this fixture is for",
             "Use these files to keep peer/bootstrap topology assumptions explicit while the public-mainnet bootstrap peer-management path is still being hardened.",
-            "Do not add ad-hoc `bootstrap_peers`, `bootstrap_peer`, `seed_nodes`, `seed_node`, `seed_peers`, `seed_peer`, `seeds`, `persistent_peers`, or `persistent_peer` fields to these shipped fixtures; the local rehearsal schema stays the minimal three-field contract until a real peer-management surface exists.",
+            "Do not add ad-hoc `bootstrap_nodes`, `bootstrap_node`, `bootstrap_peers`, `bootstrap_peer`, `seed_nodes`, `seed_node`, `seed_peers`, `seed_peer`, `seeds`, `persistent_peers`, or `persistent_peer` fields to these shipped fixtures; the local rehearsal schema stays the minimal three-field contract until a real peer-management surface exists.",
             "Do not add extra shipped topology files such as `node5.toml`, alternate slot aliases, or helper sidecar configs under `configs/`; the deterministic local bootstrap fixture remains exactly `README.md` plus `node1.toml` through `node4.toml` until a separate peer-management surface is introduced.",
             "The regression tests in `crates/trnm-node/src/config.rs` are the source of truth for the exact fixture invariants.",
         ] {

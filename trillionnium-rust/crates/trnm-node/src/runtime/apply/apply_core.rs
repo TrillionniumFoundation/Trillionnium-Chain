@@ -909,6 +909,8 @@ mod tests {
         use std::time::{SystemTime, UNIX_EPOCH};
 
         for (unknown_field, field_value) in [
+            ("bootstrap_nodes", "[\"127.0.0.1:27656\"]"),
+            ("bootstrap_node", "\"127.0.0.1:27656\""),
             ("bootstrap_peers", "[\"127.0.0.1:27656\"]"),
             ("bootstrap_peer", "\"127.0.0.1:27656\""),
             ("seed_nodes", "[\"127.0.0.1:27656\"]"),
