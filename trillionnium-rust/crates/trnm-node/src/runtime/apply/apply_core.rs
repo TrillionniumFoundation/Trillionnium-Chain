@@ -1298,6 +1298,26 @@ mod tests {
     }
 
     #[test]
+    fn validate_node_config_rejects_invisible_or_bidi_format_characters_in_node_id() {
+        for node_id in ["node\u{200B}alpha", "node\u{202E}alpha"] {
+            let err = validate_node_config(
+                NodeConfig {
+                    node_id: node_id.into(),
+                    rpc_addr: "127.0.0.1:7000".into(),
+                    p2p_addr: "127.0.0.1:7001".into(),
+                },
+                "inline",
+            )
+            .expect_err("invisible or bidi node_id characters must fail closed");
+            assert!(
+                err.to_string()
+                    .contains("node_id must not contain invisible or bidirectional format characters"),
+                "unexpected error for {node_id:?}: {err:#}"
+            );
+        }
+    }
+
+    #[test]
     fn load_config_rejects_url_like_listener_addrs() {
         let temp = tempfile::tempdir().expect("tempdir");
         let path = temp.path().join("node.toml");
