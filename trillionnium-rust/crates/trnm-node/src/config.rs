@@ -3015,6 +3015,7 @@ mod tests {
                     || line.starts_with("7. ")
                     || line.starts_with("8. ")
                     || line.starts_with("9. ")
+                    || line.starts_with("10. ")
             })
             .collect::<Vec<_>>();
         assert_eq!(
