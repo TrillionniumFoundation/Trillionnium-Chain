@@ -985,7 +985,7 @@ mod tests {
 
     #[test]
     fn load_config_rejects_localhost_style_node_id_with_operator_facing_error() {
-        for node_id in ["localhost", "LOCALHOST"] {
+        for node_id in ["localhost", "LOCALHOST", "localhost.", "LOCALHOST."] {
             let path = std::env::temp_dir().join(format!(
                 "trnm-node-config-localhost-node-id-{}-{}-{node_id}.toml",
                 std::process::id(),
