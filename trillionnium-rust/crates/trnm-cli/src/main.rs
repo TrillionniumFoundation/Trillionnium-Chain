@@ -859,6 +859,10 @@ fn is_single_sided_env_quote(c: char) -> bool {
             | '》'
             | '〈'
             | '〉'
+            | '〈'
+            | '〉'
+            | '⟨'
+            | '⟩'
             | '｢'
             | '｣'
             | '（'
@@ -909,6 +913,8 @@ fn normalize_wallet_store_env(raw: &str) -> Option<&str> {
                 | (Some('『'), Some('』'))
                 | (Some('《'), Some('》'))
                 | (Some('〈'), Some('〉'))
+                | (Some('〈'), Some('〉'))
+                | (Some('⟨'), Some('⟩'))
                 | (Some('｢'), Some('｣'))
                 | (Some('（'), Some('）'))
                 | (Some('［'), Some('］'))
@@ -3034,6 +3040,8 @@ mod tests {
         );
         assert_eq!(normalize_wallet_store_env("\u{00ad}\u{180e}《/tmp/trnm-wallets》\u{180e}\u{00ad}"), Some("/tmp/trnm-wallets"));
         assert_eq!(normalize_wallet_store_env("\u{206a}《/tmp/trnm-wallets》\u{206f}"), Some("/tmp/trnm-wallets"));
+        assert_eq!(normalize_wallet_store_env("〈/tmp/trnm-wallets〉"), Some("/tmp/trnm-wallets"));
+        assert_eq!(normalize_wallet_store_env("⟨/tmp/trnm-wallets⟩"), Some("/tmp/trnm-wallets"));
         assert_eq!(
             normalize_wallet_store_env("【『 /tmp/trnm-wallets 』】"),
             Some("/tmp/trnm-wallets")
@@ -3047,6 +3055,8 @@ mod tests {
             Some("/tmp/trnm-wallets")
         );
         assert_eq!(normalize_wallet_store_env("   \"\"   "), None);
+        assert_eq!(normalize_wallet_store_env("〈〉"), None);
+        assert_eq!(normalize_wallet_store_env("⟨⟩"), None);
         assert_eq!(normalize_wallet_store_env("\u{2068}\u{2069}"), None);
     }
 
