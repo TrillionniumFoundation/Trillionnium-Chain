@@ -66,7 +66,7 @@ const FORBIDDEN_BOOTSTRAP_ALIAS_FIELDS: &[(&str, &str)] = &[
     ("persistentNodes", "[\"127.0.0.1:27656\"]"),
     ("persistentNode", "\"127.0.0.1:27656\""),
 ];
-const FORBIDDEN_BOOTSTRAP_README_TOKENS: &[&str] = &[
+const FORBIDDEN_BOOTSTRAP_README_ALIAS_TOKENS: &[&str] = &[
     "bootstrap_nodes",
     "bootstrap_node",
     "bootstrap_peers",
@@ -116,8 +116,8 @@ const FORBIDDEN_BOOTSTRAP_README_TOKENS: &[&str] = &[
     "persistent_node",
     "persistentNodes",
     "persistentNode",
-    "node5.toml",
 ];
+const FORBIDDEN_BOOTSTRAP_README_TOPOLOGY_TOKENS: &[&str] = &["node5.toml"];
 
 fn contains_invisible_or_bidi_format_chars(value: &str) -> bool {
     value.chars().any(|ch| {
@@ -1016,7 +1016,7 @@ mod tests {
             .map(|(field, _)| *field)
             .collect::<Vec<_>>();
         let parse_alias_set = parse_alias_fields.iter().copied().collect::<BTreeSet<_>>();
-        let readme_alias_set = FORBIDDEN_BOOTSTRAP_README_TOKENS
+        let readme_alias_set = FORBIDDEN_BOOTSTRAP_README_ALIAS_TOKENS
             .iter()
             .copied()
             .collect::<BTreeSet<_>>();
@@ -1027,9 +1027,9 @@ mod tests {
             "FORBIDDEN_BOOTSTRAP_ALIAS_FIELDS must not duplicate alias names or operator parse diagnostics can drift"
         );
         assert_eq!(
-            FORBIDDEN_BOOTSTRAP_README_TOKENS.len(),
+            FORBIDDEN_BOOTSTRAP_README_ALIAS_TOKENS.len(),
             readme_alias_set.len(),
-            "FORBIDDEN_BOOTSTRAP_README_TOKENS must not duplicate alias names or operator docs can drift"
+            "FORBIDDEN_BOOTSTRAP_README_ALIAS_TOKENS must not duplicate alias names or operator docs can drift"
         );
         assert_eq!(
             parse_alias_set, readme_alias_set,
@@ -3094,12 +3094,21 @@ mod tests {
             "{} must not silently drift shipped bootstrap listener guidance toward extra IPv6 listener literals beyond the single explicit fail-closed `[::1]` prohibition",
             readme_path.display()
         );
-        for forbidden_term in FORBIDDEN_BOOTSTRAP_README_TOKENS {
+        for forbidden_term in FORBIDDEN_BOOTSTRAP_README_ALIAS_TOKENS {
             let exact_token = format!("`{forbidden_term}`");
             assert_eq!(
                 readme.matches(&exact_token).count(),
                 1,
-                "{} must mention `{forbidden_term}` exactly once, only in the explicit fail-closed prohibition against widening the shipped local bootstrap fixture",
+                "{} must mention `{forbidden_term}` exactly once, only in the explicit fail-closed prohibition against ad-hoc bootstrap alias drift",
+                readme_path.display()
+            );
+        }
+        for forbidden_term in FORBIDDEN_BOOTSTRAP_README_TOPOLOGY_TOKENS {
+            let exact_token = format!("`{forbidden_term}`");
+            assert_eq!(
+                readme.matches(&exact_token).count(),
+                1,
+                "{} must mention `{forbidden_term}` exactly once, only in the explicit fail-closed prohibition against widening the shipped local bootstrap topology fixture",
                 readme_path.display()
             );
         }
