@@ -2429,6 +2429,7 @@ fn json_text_without_utf8_bom(path: &Path) -> Option<String> {
     Some(
         raw.trim_start_matches(char::is_whitespace)
             .trim_start_matches('\u{feff}')
+            .trim_start_matches(char::is_whitespace)
             .to_string(),
     )
 }
@@ -10205,6 +10206,26 @@ line2
     }
 
     #[test]
+    fn load_faucet_limits_tolerates_whitespace_after_utf8_bom_json() {
+        let path = unique_tmp_path("rpc-faucet-limits-post-bom-whitespace", "json");
+        let _ = fs::remove_file(&path);
+        fs::write(
+            &path,
+            "\u{feff}\r\n  {\n  \"alice\": {\"window_start_unix_ms\":5678,\"count_in_window\":3}\n}\n",
+        )
+        .expect("write post-BOM-whitespace faucet limits");
+
+        let limits = load_faucet_limits(&path);
+        let alice = limits
+            .get("alice")
+            .expect("alice limits should parse after BOM-adjacent whitespace");
+        assert_eq!(alice.window_start_unix_ms, 5678);
+        assert_eq!(alice.count_in_window, 3);
+
+        let _ = fs::remove_file(&path);
+    }
+
+    #[test]
     fn load_tx_lifecycle_tolerates_whitespace_prefixed_utf8_bom_json() {
         let path = unique_tmp_path("rpc-tx-lifecycle-whitespace-bom", "json");
         let _ = fs::remove_file(&path);
@@ -10226,6 +10247,34 @@ line2
         assert_eq!(tx.error, None);
         assert_eq!(tx.submitted_at_unix_ms, 10);
         assert_eq!(tx.updated_at_unix_ms, 11);
+
+        let _ = fs::remove_file(&path);
+    }
+
+    #[test]
+    fn load_tx_lifecycle_tolerates_whitespace_after_utf8_bom_json() {
+        let path = unique_tmp_path("rpc-tx-lifecycle-post-bom-whitespace", "json");
+        let _ = fs::remove_file(&path);
+        fs::write(
+            &path,
+            "\u{feff}\r\n  {\n  \"0xdef\": {\n    \"tx_hash\": \"0xdef\",\n    \"tx\": {\n      \"from\": \"carol\",\n      \"to\": \"dave\",\n      \"amount\": 8,\n      \"fee\": 1,\n      \"nonce\": 5,\n      \"signature\": \"cafebabe\"\n    },\n    \"status\": \"committed\",\n    \"error\": null,\n    \"submitted_at_unix_ms\": 12,\n    \"updated_at_unix_ms\": 13\n  }\n}\n",
+        )
+        .expect("write post-BOM-whitespace tx lifecycle");
+
+        let txs = load_tx_lifecycle(&path);
+        let tx = txs
+            .get("0xdef")
+            .expect("tx lifecycle should parse after BOM-adjacent whitespace");
+        assert_eq!(tx.tx_hash, "0xdef");
+        assert_eq!(tx.tx.from, "carol");
+        assert_eq!(tx.tx.to, "dave");
+        assert_eq!(tx.tx.amount, 8);
+        assert_eq!(tx.tx.fee, 1);
+        assert_eq!(tx.tx.nonce, 5);
+        assert_eq!(tx.status, TxStatus::Committed);
+        assert_eq!(tx.error, None);
+        assert_eq!(tx.submitted_at_unix_ms, 12);
+        assert_eq!(tx.updated_at_unix_ms, 13);
 
         let _ = fs::remove_file(&path);
     }
