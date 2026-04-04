@@ -41,6 +41,12 @@
 
 - `trillionnium-rust/docs/release/TRNM_EXPLORER_SCAFFOLD_HANDOFF_TEMPLATE_2026-04-04.md`
 
+一旦进入 durable handoff，note 里还应显式冻结：
+
+- `deployment_evidence_scope=durable-read-service`
+
+这样才能与 placeholder packet 中的 `deployment_evidence_scope=placeholder-only` 形成机械可判定的边界，而不是仅靠口头描述“看起来像 durable”。
+
 Fail-closed choice:
 
 > **缺 anchor、缺 replay/restore 证据、仍靠 scaffold bring-up、或 `service_mode` 还不是 non-placeholder durable read service 时，一律按 placeholder-only handoff 处理。**
@@ -59,7 +65,7 @@ Fail-closed choice:
 
 机械判定规则：
 
-- 先看 `deployment_evidence_scope=` 与 `service_mode=`；二者任一仍指向 placeholder，就停止，不再往 durable 模板补写。
+- 先看 `deployment_evidence_scope=` 与 `service_mode=`；二者任一仍指向 placeholder，或 `deployment_evidence_scope` 根本未被显式写出，就停止，不再往 durable 模板补写。
 - 再逐项核对 6 个 durable-read anchors；**不是“将来会填”而是“当前 note 已有真实值”**。
 - 最后核对 replay / restore / checkpoint / lag evidence；缺任何一项，都回退到 placeholder-only 口径。
 
@@ -67,6 +73,7 @@ Fail-closed choice:
 
 如果下列任一条不成立，就不要把 durable read service handoff note 写成 Rank 1 blocker 已关闭：
 
+- `deployment_evidence_scope=durable-read-service` 没被原样保留
 - `service_mode=non-placeholder-durable-read-service` 没被原样保留
 - `production_ready=true` 没被真实部署证据支持
 - 6 个 durable-read anchors 中任意一项缺失或仍是 placeholder 值
@@ -87,6 +94,7 @@ scope=durable-read-service
 handoff_date=<YYYY-MM-DD>
 operator=<name-or-team>
 repo_snapshot=<git-sha>
+deployment_evidence_scope=durable-read-service
 service_name=<value>
 service_mode=non-placeholder-durable-read-service
 production_ready=<true|false>
@@ -145,14 +153,15 @@ blocker_note=this_packet_requires_real_durable_read_anchors_and_must_not_be_back
 
 ## Operator instructions
 
-1. 6 个 durable-read anchors 必须全部填写真实值；任一项缺失都按无效 handoff note 处理。
-2. `production_ready=true` 只能在 deploy / replay / restore / lag evidence 同时具备时出现；否则写 `false`。
-3. `lag_slo` 必须和实际 freshness/lag 证据一起出现，不能只写目标值不写当前观测值。
-4. `historical_query_scope` 必须明确 bounded 与 durable 的边界，不得混写成模糊的“supports history”。
-5. `archive_owner` 必须指向真实 owner/team，而不是占位词。
-6. `restore_strategy` 不能省略；缺 restore 说明 durable read path 还不具备可信恢复闭环。
-7. 如果 handoff note 里还引用 placeholder scaffold 输出，必须单独标注为旧证据/对照证据，不能替代 durable-service 字段。
-8. `served_day1_surface` 应只写当前真实承诺的 Day-1 read surface，不能顺手把 future `block` / `tx` / `account` promise 提前写进来。
+1. `deployment_evidence_scope=durable-read-service` 必须显式出现；缺这一行时，按边界不清的无效 handoff note 处理。
+2. 6 个 durable-read anchors 必须全部填写真实值；任一项缺失都按无效 handoff note 处理。
+3. `production_ready=true` 只能在 deploy / replay / restore / lag evidence 同时具备时出现；否则写 `false`。
+4. `lag_slo` 必须和实际 freshness/lag 证据一起出现，不能只写目标值不写当前观测值。
+5. `historical_query_scope` 必须明确 bounded 与 durable 的边界，不得混写成模糊的“supports history”。
+6. `archive_owner` 必须指向真实 owner/team，而不是占位词。
+7. `restore_strategy` 不能省略；缺 restore 说明 durable read path 还不具备可信恢复闭环。
+8. 如果 handoff note 里还引用 placeholder scaffold 输出，必须单独标注为旧证据/对照证据，不能替代 durable-service 字段。
+9. `served_day1_surface` 应只写当前真实承诺的 Day-1 read surface，不能顺手把 future `block` / `tx` / `account` promise 提前写进来。
 
 ## What this template intentionally does not claim
 
@@ -170,7 +179,7 @@ blocker_note=this_packet_requires_real_durable_read_anchors_and_must_not_be_back
 
 一份 durable read service handoff note 只有在同时具备以下内容时才算有效：
 
-- 一份 non-placeholder deployment boundary
+- 一份显式标记 `deployment_evidence_scope=durable-read-service` 的 non-placeholder deployment boundary
 - 6 个 durable-read anchors 的真实值
 - 一份 explicit historical read-model / replay / restore 说明
 - 一份 freshness / lag / checkpoint 证据
