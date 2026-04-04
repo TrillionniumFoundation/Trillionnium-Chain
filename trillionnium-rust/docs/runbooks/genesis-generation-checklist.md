@@ -127,7 +127,7 @@ python3 trillionnium-rust/scripts/v2/check_validator_config_bundle.py \
   --ceremony-id mn04-bootstrap-20260331-0621Z \
   --ceremony-scope public-mainnet-input \
   --packet-generated-at 2026-03-31T06:21:00Z \
-  --packet-distribution-path /abs/path/or/ticket \
+  --packet-distribution-path /abs/path/to/bootstrap-ceremony.packet.txt \
   --validator-set-version mainnet-candidate-2026-03-31 \
   --startup-order-note 'node1 -> node2 -> node3 -> node4' \
   --rollback-owner primary-operator \
