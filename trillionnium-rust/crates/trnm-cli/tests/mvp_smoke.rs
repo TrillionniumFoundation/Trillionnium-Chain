@@ -609,3 +609,54 @@ fn smoke_tx_transfer_template_path() {
     assert!(s.contains("0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"));
     assert!(s.contains("\"status\": \"pending\""));
 }
+
+#[test]
+fn smoke_tx_transfer_rejects_invalid_env_store_fallback() {
+    let store = tmp_dir("tx-transfer-invalid-env-store");
+    let pk = "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb";
+
+    let import = Command::new(bin())
+        .args([
+            "wallet",
+            "import",
+            "--name",
+            "sender",
+            "--private-key-hex",
+            pk,
+            "--out",
+            store.to_string_lossy().as_ref(),
+        ])
+        .output()
+        .unwrap();
+    assert!(import.status.success());
+
+    let out = Command::new(bin())
+        .env(
+            "TRNM_TX_TRANSFER_CMD",
+            "echo tx_hash=0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        )
+        .env("TRNM_WALLET_STORE", "\u{2068}\"./wallets\"\u{2069}")
+        .args([
+            "tx",
+            "transfer",
+            "--from",
+            "sender",
+            "--to",
+            "trnm1deadbeef",
+            "--amount",
+            "42",
+        ])
+        .output()
+        .unwrap();
+
+    assert!(
+        !out.status.success(),
+        "invalid env keystore fallback should fail closed for tx transfer"
+    );
+    let stderr = String::from_utf8_lossy(&out.stderr);
+    assert!(
+        stderr.contains("TRNM_WALLET_STORE is set but invalid; refusing ambiguous keystore path fallback")
+            || stderr.contains("must be an absolute normalized symlink-free path"),
+        "unexpected stderr: {stderr}"
+    );
+}
