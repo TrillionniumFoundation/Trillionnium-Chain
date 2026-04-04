@@ -9841,6 +9841,39 @@ locked_block_hash = "stale-lock"
     }
 
     #[test]
+    fn recover_fully_checkpointed_max_height_keeps_join_rejoin_summary_saturated() {
+        let recovered = RecoveredWalState {
+            next_height: u64::MAX,
+            restored_lock: Some("h-max".into()),
+            last_checkpoint: Some(CheckpointMeta {
+                height: u64::MAX,
+                state_root_hex: "r-max".into(),
+                wal_entry_hash_hex: "h-max".into(),
+            }),
+            truncated: false,
+            metadata_only_recovery: false,
+            wal_entries_retained: 1,
+            checkpoint_height_retained: Some(u64::MAX),
+        };
+
+        assert_eq!(
+            retained_wal_summary(&recovered),
+            format!(
+                "retained 1 committed WAL entry through height {}",
+                u64::MAX - 1
+            )
+        );
+        assert_eq!(
+            recovery_startup_summary(&recovered),
+            format!(
+                "retained_wal_entries=1 checkpoint_height_retained={} checkpoint_tip_relation=aligned next_startup_height={} wal_tail_truncated=false metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume",
+                u64::MAX,
+                u64::MAX,
+            )
+        );
+    }
+
+    #[test]
     fn recover_metadata_only_error_reports_absent_checkpoint() {
         let wal_dir = temp_wal_dir("recover-metadata-only-error-no-checkpoint");
         fs::create_dir_all(&wal_dir).unwrap();
