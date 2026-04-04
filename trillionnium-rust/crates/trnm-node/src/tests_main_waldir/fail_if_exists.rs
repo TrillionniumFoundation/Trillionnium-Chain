@@ -50,6 +50,37 @@ fn resolve_wal_dir_fail_if_exists_rejects_checkpoint_only_state() {
 }
 
 #[test]
+fn resolve_wal_dir_fail_if_exists_rejects_wal_meta_only_state() {
+    let wal_dir = temp_wal_dir("fail-if-exists-wal-meta-only");
+    fs::create_dir_all(&wal_dir).unwrap();
+    persist_wal_meta_entries(
+        &wal_dir,
+        &[WalMeta {
+            height: 7,
+            round: 0,
+            proposal_hash: "proposal-a".into(),
+            committed: true,
+            state_root_hex: "aa".repeat(32),
+            prev_hash_hex: None,
+        }],
+    )
+    .unwrap();
+
+    let args = args_with_wal_dir(wal_dir.display().to_string(), WalDirMode::FailIfExists);
+
+    let err = resolve_wal_dir(&args).unwrap_err().to_string();
+    assert!(
+        err.contains("refusing to reuse existing BFT WAL state")
+            && err.contains(&wal_dir.display().to_string())
+            && err.contains("--bft-wal-mode reuse")
+            && err.contains("--bft-wal-dir"),
+        "unexpected wal-meta-only fail-if-exists error: {err}"
+    );
+
+    let _ = fs::remove_dir_all(&wal_dir);
+}
+
+#[test]
 fn resolve_wal_dir_fail_if_exists_allows_comment_only_wal_scaffold() {
     let wal_dir = temp_wal_dir("fail-if-exists-comment-only-wal-scaffold");
     fs::create_dir_all(&wal_dir).unwrap();
