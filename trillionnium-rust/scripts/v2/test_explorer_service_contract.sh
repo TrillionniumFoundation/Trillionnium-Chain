@@ -379,5 +379,29 @@ assert_contains "${TMP_DIR}/status-explicit-ipv6-host-override.out" "public_base
 assert_contains "${TMP_DIR}/status-explicit-ipv6-host-override.out" "health_url=http://[::]:18081/healthz"
 assert_contains "${TMP_DIR}/status-explicit-ipv6-host-override.out" "local_health_url=http://[::1]:18081/healthz"
 
+CONFLICT_PORT=18083
+python3 -m http.server "${CONFLICT_PORT}" --bind 127.0.0.1 >"${TMP_DIR}/listener-conflict.log" 2>&1 &
+CONFLICT_PID=$!
+trap 'kill "${CONFLICT_PID}" 2>/dev/null || true; cleanup' EXIT
+sleep 1
+
+EXPLORER_HOST=127.0.0.1 \
+EXPLORER_PORT="${CONFLICT_PORT}" \
+EXPLORER_PUBLIC_BASE_URL="http://127.0.0.1:${CONFLICT_PORT}" \
+EXPLORER_HEALTH_URL="http://127.0.0.1:${CONFLICT_PORT}/healthz" \
+EXPLORER_RPC_BASE_URL="${RPC_BASE_URL}" \
+  "${UP_SCRIPT}" >"${TMP_DIR}/up-port-conflict.out" 2>&1 || true
+assert_contains "${TMP_DIR}/up-port-conflict.out" "refusing to start explorer service scaffold: 127.0.0.1:${CONFLICT_PORT} already has a listener"
+assert_contains "${TMP_DIR}/up-port-conflict.out" "state=down"
+assert_contains "${TMP_DIR}/up-port-conflict.out" "health_probe=not-run-port-listener-conflict"
+assert_contains "${TMP_DIR}/up-port-conflict.out" "local_health_probe=not-run-port-listener-conflict"
+assert_contains "${TMP_DIR}/up-port-conflict.out" "deployment_evidence_scope=placeholder-only"
+assert_contains "${TMP_DIR}/up-port-conflict.out" "rank1_read_surface_blocker=still-open"
+assert_contains "${TMP_DIR}/up-port-conflict.out" "durable_indexer_status=not-implemented-in-this-scaffold"
+
+kill "${CONFLICT_PID}" 2>/dev/null || true
+wait "${CONFLICT_PID}" 2>/dev/null || true
+trap cleanup EXIT
+
 
 echo "explorer_service_contract_smoke=ok"
