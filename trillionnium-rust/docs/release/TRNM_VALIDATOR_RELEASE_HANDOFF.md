@@ -4,6 +4,10 @@ Cosmos/CometBFT-style operator discipline for a local Stage-1 release rehearsal.
 
 This document is intentionally narrow: it tells a validator/operator **what to run, what evidence must exist, what blocks a release, and how to back out cleanly**.
 
+Path discipline note:
+- all validator config references in this handoff use the repo-root-qualified form `trillionnium-rust/configs/node*.toml`
+- do not rewrite them to legacy root-level `configs/node*.toml` paths in tickets, packets, or operator acknowledgments
+
 ## Scope
 
 Use this handoff when rehearsing or validating a Stage-1 TRNM release candidate on a clean worktree.
@@ -19,7 +23,7 @@ Before starting, confirm all of the following:
 - you are on the intended release branch/worktree
 - `git status --short` is empty
 - the branch tip is recorded in the ticket / release note
-- required config files exist: `configs/node1.toml`, `configs/node2.toml`, `configs/node3.toml`, `configs/node4.toml`
+- required config files exist: `trillionnium-rust/configs/node1.toml`, `trillionnium-rust/configs/node2.toml`, `trillionnium-rust/configs/node3.toml`, `trillionnium-rust/configs/node4.toml`
 - no one is treating local evidence as a public release claim
 - exactly one validator signing context is active for the validator identity under rehearsal
 
