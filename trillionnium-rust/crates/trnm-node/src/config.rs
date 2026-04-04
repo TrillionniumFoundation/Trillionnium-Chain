@@ -2487,20 +2487,17 @@ mod tests {
                     config_path.display()
                 )
             });
-            let non_empty_lines = raw
-                .lines()
-                .map(str::trim)
-                .filter(|line| !line.is_empty())
-                .collect::<Vec<_>>();
+            let raw_lines = raw.lines().collect::<Vec<_>>();
             let expected_lines = vec![
                 format!("node_id = \"{expected_node_id}\""),
                 format!("rpc_addr = \"{expected_rpc_addr}\""),
                 format!("p2p_addr = \"{expected_p2p_addr}\""),
             ];
+            let expected_line_refs = expected_lines.iter().map(String::as_str).collect::<Vec<_>>();
             assert_eq!(
-                non_empty_lines,
-                expected_lines,
-                "{} must keep the exact three-line slot-bound layout so shipped bootstrap fixtures stay deterministic for peer/bootstrap rehearsal",
+                raw_lines,
+                expected_line_refs,
+                "{} must keep the exact three-line slot-bound layout with no blank/comment drift so shipped bootstrap fixtures stay deterministic for peer/bootstrap rehearsal",
                 config_path.display()
             );
         }
