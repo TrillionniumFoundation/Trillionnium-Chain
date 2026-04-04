@@ -222,6 +222,7 @@ TRNM_TX_CLI=./trillionnium-rust/target/debug/trnm-cli \
   - `explorer_service_down.sh` 现在也会复用同一组 read-contract 字段，便于在 stop / stale-pid 清理 / handoff 场景保留一致的只读边界说明，而不必额外跑一次 `status`。
   - 推荐将脚手架操作与值班排障步骤统一参照：`trillionnium-rust/docs/runbooks/explorer-service-scaffold.md`
   - 若需要直接复制 ticket / 值班交接文本骨架，优先使用：`trillionnium-rust/docs/release/TRNM_EXPLORER_SCAFFOLD_HANDOFF_TEMPLATE_2026-04-04.md`，避免 handoff 时把 placeholder 误写成 durable read service。
+  - 只有当部署已明确脱离 placeholder scaffold，并且 6 个 durable-read anchors（`ingestion_source` / `checkpoint_store` / `replay_start_anchor` / `retention_scope` / `archive_owner` / `lag_slo`）都能给出真实值时，才切换到：`trillionnium-rust/docs/release/TRNM_DURABLE_READ_SERVICE_HANDOFF_TEMPLATE_2026-04-04.md`；否则继续按 scaffold handoff 处理，避免把 blocker-open 的读面误写成 Rank 1 已关闭。
 - 自动化脚本较多，优先使用本 README、`RELEASE_READINESS.md` 和 `docs/development` 下统一调度文档作为导航。
 
 ---
