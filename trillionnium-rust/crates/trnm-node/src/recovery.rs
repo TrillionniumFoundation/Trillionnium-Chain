@@ -823,6 +823,13 @@ mod tests {
             "operator action: rebuild or restore checkpoint metadata so it covers retained WAL tip height 8 before retrying join/rejoin; do not resume from metadata alone"
         );
         assert_eq!(
+            metadata_only_operator_action(&recovered_state(1, u64::MAX, None, false, true)),
+            &format!(
+                "operator action: rebuild or restore checkpoint metadata so it covers retained WAL tip height {} before retrying join/rejoin; do not resume from metadata alone",
+                u64::MAX - 1,
+            )
+        );
+        assert_eq!(
             metadata_only_operator_action(&recovered_state(2, 12, Some(10), false, true)),
             "operator action: restore an application snapshot that covers the retained WAL tip before retrying join/rejoin; do not resume from metadata alone"
         );

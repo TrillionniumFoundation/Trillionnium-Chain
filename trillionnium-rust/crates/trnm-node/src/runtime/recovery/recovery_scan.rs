@@ -806,6 +806,26 @@ mod tests {
     }
 
     #[test]
+    fn metadata_only_operator_action_keeps_missing_checkpoint_tip_height_saturated_at_max_height() {
+        let recovered = recovered_state(1, u64::MAX, None, false, true);
+
+        assert_eq!(
+            metadata_only_operator_action(&recovered),
+            format!(
+                "operator action: rebuild or restore checkpoint metadata so it covers retained WAL tip height {} before retrying join/rejoin; do not resume from metadata alone",
+                u64::MAX - 1,
+            )
+        );
+        assert_eq!(
+            recovery_startup_summary(&recovered),
+            format!(
+                "retained_wal_entries=1 checkpoint_height_retained=none checkpoint_tip_relation=missing next_startup_height={} wal_tail_truncated=false metadata_only_recovery=true join_rejoin_status=blocked:metadata_only_recovery",
+                u64::MAX,
+            )
+        );
+    }
+
+    #[test]
     fn ensure_recoverable_wal_state_reports_checkpoint_only_join_rejoin_surface() {
         let wal_dir = temp_wal_dir("metadata-only-checkpoint-only");
         let recovered = RecoveredWalState {
