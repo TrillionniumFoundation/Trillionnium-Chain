@@ -222,6 +222,13 @@
 - 仓内存在一份单独的 durable-service handoff packet truth-source，并与 placeholder-only 模板显式区分
 - durable-service packet 至少要求同时出现：6 个 durable-read anchors、deploy/replay/restore 命令、lag/health 证据、以及“非 placeholder backend”声明；缺任一项都不得写成 Rank 1 已关闭
 
+**Mechanical template-selection gate（operator handoff 前必须先过）**
+- 先看 `deployment_evidence_scope=`：若仍是 `placeholder-only`，或该字段缺失，必须继续使用 `TRNM_EXPLORER_SCAFFOLD_HANDOFF_TEMPLATE_2026-04-04.md`。
+- 再看 `service_mode=`：若不是 `non-placeholder-durable-read-service`，不得切换到 durable 模板。
+- 再看 6 个 durable-read anchors：`ingestion_source` / `checkpoint_store` / `replay_start_anchor` / `retention_scope` / `archive_owner` / `lag_slo`，任一缺失、为空、或仍是 `missing-*` / `placeholder-*` / `not-configured-*`，一律按 scaffold handoff 处理。
+- 即便 anchor 已填写，只要 replay / restore / lag / checkpoint 证据缺任一项，仍不得把 note 写成 durable read service handoff。
+- 只有当 non-placeholder deployment boundary、6 个 durable-read anchors、以及 replay/restore/lag evidence 同时存在时，才允许切换到 `TRNM_DURABLE_READ_SERVICE_HANDOFF_TEMPLATE_2026-04-04.md`。
+
 **依赖**
 - R1-05
 
