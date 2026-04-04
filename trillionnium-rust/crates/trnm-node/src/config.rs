@@ -3495,16 +3495,18 @@ mod tests {
                 continue;
             };
 
+            let p2p_port_spacing = i32::from(p2p_socket.port()) - i32::from(prev_p2p_socket.port());
             assert_eq!(
-                p2p_socket.port() - prev_p2p_socket.port(),
+                p2p_port_spacing,
                 1000,
                 "{config_path} p2p_addr {} must stay 1000 ports above prior shipped bootstrap peer {} ({}) to keep the local multi-node topology deterministic",
                 p2p_socket,
                 prev_node_id,
                 prev_config_path
             );
+            let rpc_port_spacing = i32::from(rpc_socket.port()) - i32::from(prev_rpc_socket.port());
             assert_eq!(
-                rpc_socket.port() - prev_rpc_socket.port(),
+                rpc_port_spacing,
                 1000,
                 "{config_path} rpc_addr {} must stay 1000 ports above prior shipped bootstrap peer {} ({}) to keep the local multi-node topology deterministic",
                 rpc_socket,
