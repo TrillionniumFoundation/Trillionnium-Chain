@@ -186,6 +186,9 @@ bundle 内容包括：
 2. 生成一份 `operator-handoff` scope 的 packet 初稿
 3. 准备 4-node bootstrap rehearsal 的输入表（owner/contact/startup order/rollback owner）
 
+当前输入表已落盘：
+- `trillionnium-rust/docs/release/TRNM_GENESIS_OPERATOR_HANDOFF_INPUT_SHEET_2026-04-04.md`
+
 ---
 
 ## 6. 当前状态一句话

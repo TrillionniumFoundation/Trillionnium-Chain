@@ -25,6 +25,7 @@ For local validator handoff rehearsal, the current repo now has a **local-rehear
 - checkpoint wal entry hash: `4f8a336dd57a0daaf1051f27362a31d21ecd4604e16076eb28a7e9b181655756`
 - local-rehearsal packet skeleton: `trillionnium-rust/run/genesis-artifact-candidates/trnm-genesis-candidate-local-rehearsal-2026-04-04-b74758fac.packet.txt`
 - operator-handoff draft packet: `trillionnium-rust/run/genesis-artifact-candidates/trnm-genesis-candidate-operator-handoff-draft-2026-04-04-b74758fac.packet.txt`
+- operator ownership/contact/ack input sheet: `trillionnium-rust/docs/release/TRNM_GENESIS_OPERATOR_HANDOFF_INPUT_SHEET_2026-04-04.md`
 
 Interpretation rule:
 - this candidate is valid as **local-rehearsal / operator-handoff draft input only**;
