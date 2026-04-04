@@ -1427,6 +1427,57 @@ fn wallet_store_rejects_symlinked_ancestor_path_components() {
 
 #[test]
 #[cfg(unix)]
+fn resolve_wallet_store_rejects_symlinked_final_store_component() {
+    use std::os::unix::fs::symlink;
+
+    let _guard = ENV_LOCK.lock().unwrap();
+    let original_store = std::env::var_os("TRNM_WALLET_STORE");
+    let unique = format!(
+        "trnm-cli-wallet-explicit-store-symlink-test-{}-{}",
+        std::process::id(),
+        std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_nanos()
+    );
+    let root = std::env::temp_dir().join(unique);
+    let real_store = root.join("real-store");
+    let linked_store = root.join("linked-store");
+    std::fs::create_dir_all(&real_store).unwrap();
+    symlink(&real_store, &linked_store).unwrap();
+
+    let explicit_err = resolve_wallet_store(Some(linked_store.clone())).unwrap_err();
+    assert!(
+        explicit_err
+            .to_string()
+            .contains("explicit wallet store")
+            && explicit_err
+                .to_string()
+                .contains("must be an absolute normalized symlink-free path"),
+        "unexpected explicit error: {explicit_err}"
+    );
+
+    std::env::set_var("TRNM_WALLET_STORE", linked_store.as_os_str());
+    let env_err = resolve_wallet_store(None).unwrap_err();
+    assert!(
+        env_err.to_string().contains("TRNM_WALLET_STORE")
+            && env_err
+                .to_string()
+                .contains("must be an absolute normalized symlink-free path"),
+        "unexpected env error: {env_err}"
+    );
+
+    match original_store {
+        Some(value) => std::env::set_var("TRNM_WALLET_STORE", value),
+        None => std::env::remove_var("TRNM_WALLET_STORE"),
+    }
+    let _ = std::fs::remove_file(&linked_store);
+    let _ = std::fs::remove_dir_all(&real_store);
+    let _ = std::fs::remove_dir(&root);
+}
+
+#[test]
+#[cfg(unix)]
 fn resolve_wallet_store_rejects_explicit_path_with_symlinked_ancestor() {
     use std::os::unix::fs::symlink;
 
