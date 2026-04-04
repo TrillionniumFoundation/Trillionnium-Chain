@@ -631,6 +631,47 @@ mod tests {
     }
 
     #[test]
+    fn ensure_recoverable_wal_state_rejects_metadata_only_recovery_with_singular_checkpoint_ahead_mismatch() {
+        let wal_dir = temp_wal_dir("metadata-only-singular-ahead");
+        let recovered = RecoveredWalState {
+            next_height: 12,
+            restored_lock: None,
+            last_checkpoint: Some(CheckpointMeta {
+                height: 12,
+                state_root_hex: "aa".repeat(32),
+                wal_entry_hash_hex: "bb".repeat(32),
+            }),
+            truncated: true,
+            metadata_only_recovery: true,
+            wal_entries_retained: 2,
+            checkpoint_height_retained: Some(12),
+        };
+
+        let err = ensure_recoverable_wal_state(&wal_dir, &recovered)
+            .unwrap_err()
+            .to_string();
+        assert!(
+            err.contains("refusing metadata-only recovery")
+                && err.contains("retained 2 committed WAL entries through height 11")
+                && err.contains(
+                    "retained checkpoint height 12 is ahead of retained WAL tip height 11 by 1 block"
+                )
+                && !err.contains(
+                    "retained checkpoint height 12 is ahead of retained WAL tip height 11 by 1 blocks"
+                )
+                && err.contains("last retained checkpoint: 12")
+                && err.contains("next startup height: 12")
+                && err.contains("incident clue: retained_wal_entries=2 checkpoint_height_retained=12 checkpoint_tip_relation=ahead:1 next_startup_height=12 wal_tail_truncated=true metadata_only_recovery=true join_rejoin_status=blocked:metadata_only_recovery")
+                && err.contains("retained_wal_entries=2")
+                && err.contains("wal_tail_truncated=true")
+                && err.contains("checkpoint_height_retained=12")
+                && err.contains("checkpoint_tip_relation=ahead:1")
+                && err.contains("next_startup_height=12"),
+            "unexpected metadata-only recovery error: {err}"
+        );
+    }
+
+    #[test]
     fn ensure_recoverable_wal_state_rejects_metadata_only_recovery_without_retained_checkpoint_metadata() {
         let wal_dir = temp_wal_dir("metadata-only-no-checkpoint");
         let recovered = RecoveredWalState {
