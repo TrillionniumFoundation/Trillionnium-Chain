@@ -3991,6 +3991,44 @@ mod tests {
     }
 
     #[test]
+    fn load_config_keeps_all_shipped_bootstrap_slots_path_alias_stable() {
+        let expected = [
+            ("node1", "127.0.0.1:26657", "127.0.0.1:26656"),
+            ("node2", "127.0.0.1:27657", "127.0.0.1:27656"),
+            ("node3", "127.0.0.1:28657", "127.0.0.1:28656"),
+            ("node4", "127.0.0.1:29657", "127.0.0.1:29656"),
+        ];
+
+        for (slot, (node_id, rpc_addr, p2p_addr)) in expected.into_iter().enumerate() {
+            let config_number = slot + 1;
+            for path in [
+                format!("configs/node{config_number}.toml"),
+                format!("./configs/node{config_number}.toml"),
+                format!("trillionnium-rust/configs/node{config_number}.toml"),
+                format!("./trillionnium-rust/configs/node{config_number}.toml"),
+            ] {
+                let cfg = load_config(&path).unwrap_or_else(|err| {
+                    panic!(
+                        "{path} should resolve for shipped bootstrap slot {config_number}: {err:#}"
+                    )
+                });
+                assert_eq!(
+                    cfg.node_id, node_id,
+                    "unexpected node_id for shipped bootstrap slot {config_number} via {path}"
+                );
+                assert_eq!(
+                    cfg.rpc_addr, rpc_addr,
+                    "unexpected rpc_addr for shipped bootstrap slot {config_number} via {path}"
+                );
+                assert_eq!(
+                    cfg.p2p_addr, p2p_addr,
+                    "unexpected p2p_addr for shipped bootstrap slot {config_number} via {path}"
+                );
+            }
+        }
+    }
+
+    #[test]
     fn load_config_prefers_workspace_root_default_over_cwd_shadow_config() {
         let manifest_dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR"));
         let workspace_root = manifest_dir
