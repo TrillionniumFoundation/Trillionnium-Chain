@@ -219,8 +219,8 @@ if [ -n "$CONFIG_BUNDLE_CHECK_LOG_PATH" ]; then
 fi
 
 if [ "$CUTOVER_KIND" = "rotation" ] || [ "$CUTOVER_KIND" = "dr_rebuild" ]; then
-  require_nonempty --handoff-signed-by "$HANDOFF_SIGNED_BY"
-  require_nonempty --handoff-acknowledged-by "$HANDOFF_ACKNOWLEDGED_BY"
+  require_atom_value --handoff-signed-by "$HANDOFF_SIGNED_BY"
+  require_atom_value --handoff-acknowledged-by "$HANDOFF_ACKNOWLEDGED_BY"
 fi
 
 if [ -n "$HANDOFF_SUMMARY_PATH" ] || [ -n "$HANDOFF_MANIFEST_PATH" ] || [ -n "$SUMMARY_GENERATED_AT" ] || [ -n "$MANIFEST_GENERATED_AT" ]; then

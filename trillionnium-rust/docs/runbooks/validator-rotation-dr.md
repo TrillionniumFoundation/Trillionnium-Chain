@@ -167,6 +167,7 @@ Also record:
 Interpretation rule:
 - if the outgoing or incoming validator identity cannot be named explicitly, stop
 - if `cutover_kind=rotation` or `cutover_kind=dr_rebuild` and either handoff signer/acknowledger is still unknown, stop
+- copy `handoff_signed_by=` / `handoff_acknowledged_by=` as trimmed operator identifiers; leading/trailing whitespace is evidence-incomplete and should fail before packet generation
 - if `cutover_kind=replacement`, leave `handoff_signed_by=` / `handoff_acknowledged_by=` empty rather than inventing a fake approval boundary
 - if the rollback command is still "to be figured out later", stop
 

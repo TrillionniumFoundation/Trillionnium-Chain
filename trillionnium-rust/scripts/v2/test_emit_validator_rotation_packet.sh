@@ -44,6 +44,23 @@ fi
 grep -q 'missing --handoff-signed-by' /tmp/emit-packet.err
 
 if bash "$SCRIPT" \
+  --cutover-kind rotation \
+  --verified-worktree /tmp/trnm-lane \
+  --verified-branch-ref lane/mn05-operator-dr-rotation-lifecycle \
+  --verified-head 0123456789abcdef \
+  --outgoing-validator-id validator-old \
+  --incoming-validator-id validator-new \
+  --incoming-config-path /tmp/configs/validator-new.json \
+  --rollback-command 'rm -rf /tmp/cutover-note' \
+  --handoff-signed-by ' alice' \
+  --handoff-acknowledged-by bob \
+  >/tmp/emit-packet.out 2>/tmp/emit-packet.err; then
+  echo "expected leading whitespace in handoff_signed_by to fail" >&2
+  exit 1
+fi
+grep -q 'invalid --handoff-signed-by: must not start or end with whitespace' /tmp/emit-packet.err
+
+if bash "$SCRIPT" \
   --cutover-kind replacement \
   --verified-worktree /tmp/trnm-lane \
   --verified-branch-ref lane/mn05-operator-dr-rotation-lifecycle \
