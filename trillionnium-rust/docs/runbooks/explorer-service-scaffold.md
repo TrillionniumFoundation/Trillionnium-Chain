@@ -380,7 +380,7 @@ The status output should include the operator contract fields below:
 
 If the runtime contract is invalid, `explorer_service_status.sh` exits non-zero and prints `state=invalid-config` plus `config_error=...` and `health_probe_url=invalid-config` so operators can see the probe never ran.
 
-If `explorer_service_up.sh` fails its post-launch liveness check, it now removes the just-written PID file before exiting so the next operator status check sees a clean `state=down` instead of a misleading startup-generated `stale-pid` artifact. When `curl` is available, that liveness check now probes the scaffold's local bind target (`http://<bind_host>:<bind_port>/healthz`) instead of only checking that the `python3 -m http.server` process is still alive.
+If `explorer_service_up.sh` fails its post-launch liveness check, it now removes the just-written PID file before exiting so the next operator status check sees a clean `state=down` instead of a misleading startup-generated `stale-pid` artifact. When `curl` is available, that liveness check now probes the scaffold's local bind target (`http://<bind_host>:<bind_port>/healthz`) instead of only checking that the `python3 -m http.server` process is still alive. In that specific startup-failure path, the script also leaves `health_probe=not-run-startup-local-only` / `health_probe_url=not-run-startup-local-only` so operators do not misread the failure as evidence that the public/reverse-proxy-facing `health_url` was already probed; only `local_health_probe=startup-local-health-probe-failed` and `local_health_probe_url=<local bind target>` should be treated as exercised.
 
 ## What gets served
 

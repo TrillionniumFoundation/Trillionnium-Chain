@@ -322,7 +322,7 @@ if command -v curl >/dev/null 2>&1; then
     kill "${server_pid}" 2>/dev/null || true
     rm -f "${PID_FILE}"
     echo "explorer service scaffold failed local health probe url=${LOCAL_HEALTH_URL}"
-    emit_contract_status "down" "unknown" "startup-local-health-probe-failed" "${HEALTH_URL}" "down" "startup-local-health-probe-failed" "${LOCAL_HEALTH_URL}"
+    emit_contract_status "down" "unknown" "not-run-startup-local-only" "not-run-startup-local-only" "down" "startup-local-health-probe-failed" "${LOCAL_HEALTH_URL}"
     exit 1
   fi
 fi
