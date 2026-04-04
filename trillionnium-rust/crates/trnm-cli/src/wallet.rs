@@ -314,6 +314,40 @@ pub(crate) fn default_wallet_store() -> PathBuf {
     home_root.join(".trnm").join("wallets")
 }
 
+pub(crate) fn resolve_wallet_store(store: Option<PathBuf>) -> Result<PathBuf> {
+    if let Some(store) = store {
+        if !wallet_store_path_is_safe(&store)
+            || !wallet_store_path_and_ancestors_are_symlink_free(&store)
+        {
+            bail!(
+                "explicit wallet store '{}' must be an absolute normalized symlink-free path",
+                store.display()
+            );
+        }
+        return Ok(store);
+    }
+
+    if let Ok(raw) = std::env::var("TRNM_WALLET_STORE") {
+        let Some(normalized) = normalize_wallet_store_env(&raw) else {
+            bail!(
+                "TRNM_WALLET_STORE is set but invalid; refusing ambiguous keystore path fallback"
+            );
+        };
+        let candidate = PathBuf::from(normalized);
+        if !wallet_store_path_is_safe(&candidate)
+            || !wallet_store_path_and_ancestors_are_symlink_free(&candidate)
+        {
+            bail!(
+                "TRNM_WALLET_STORE '{}' must be an absolute normalized symlink-free path",
+                candidate.display()
+            );
+        }
+        return Ok(candidate);
+    }
+
+    Ok(default_wallet_store())
+}
+
 pub(crate) fn wallet_file(store: &Path, name: &str) -> PathBuf {
     store.join(format!("{}.key", name))
 }
@@ -652,7 +686,7 @@ pub(crate) fn random_priv_hex() -> Result<String> {
 }
 
 pub(crate) fn wallet_create(name: String, out: Option<PathBuf>) -> Result<()> {
-    let store = out.unwrap_or_else(default_wallet_store);
+    let store = resolve_wallet_store(out)?;
     let priv_hex = random_priv_hex()?;
     let path = write_key(&store, &name, &priv_hex)?;
     let addr = derive_address_from_priv_hex(&priv_hex)?;
@@ -672,7 +706,7 @@ pub(crate) fn resolve_address_for_query(
         return Ok(a);
     }
     let wallet_name = name.unwrap_or_else(|| "default".to_string());
-    let s = store.unwrap_or_else(default_wallet_store);
+    let s = resolve_wallet_store(store)?;
     let priv_hex = read_key(&s, &wallet_name)?;
     derive_address_from_priv_hex(&priv_hex)
 }

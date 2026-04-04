@@ -3,8 +3,9 @@ use std::time::Duration;
 
 use crate::{
     cmd::{TransferTxRequest, TransferTxResponse, TxCommand},
-    default_wallet_store, derive_address_from_priv_hex, emit_pending_tx_hash, emit_tx_hash_lines,
-    hash, persist_local_pending_tx, read_key, run_template, tpl, tx_query, wait_for_tx,
+    derive_address_from_priv_hex, emit_pending_tx_hash, emit_tx_hash_lines, hash,
+    persist_local_pending_tx, read_key, resolve_wallet_store, run_template, tpl, tx_query,
+    wait_for_tx,
 };
 
 pub(crate) fn handle_tx_command(tx: TxCommand) -> Result<()> {
@@ -94,7 +95,7 @@ pub(crate) fn handle_tx_command(tx: TxCommand) -> Result<()> {
             denom,
             store,
         } => {
-            let s = store.unwrap_or_else(default_wallet_store);
+            let s = resolve_wallet_store(store)?;
             let from_priv_hex = read_key(&s, &from)?;
             let from_addr = derive_address_from_priv_hex(&from_priv_hex)?;
             let req = TransferTxRequest {

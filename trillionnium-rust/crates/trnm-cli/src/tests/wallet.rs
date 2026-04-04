@@ -355,6 +355,44 @@ fn default_wallet_store_ignores_curdir_or_parent_segments_from_env() {
 }
 
 #[test]
+fn resolve_wallet_store_fail_closes_on_invalid_env_and_prefers_explicit_store() {
+    let _guard = ENV_LOCK.lock().unwrap();
+    let original_store = std::env::var_os("TRNM_WALLET_STORE");
+
+    for invalid in [
+        "\u{2068}\"./wallets\"\u{2069}",
+        " //tmp/trnm-wallets ",
+        "/tmp/trnm\u{202e}wallets",
+    ] {
+        std::env::set_var("TRNM_WALLET_STORE", invalid);
+        let err = resolve_wallet_store(None).unwrap_err();
+        assert!(
+            err.to_string().contains("TRNM_WALLET_STORE")
+                || err
+                    .to_string()
+                    .contains("must be an absolute normalized symlink-free path"),
+            "unexpected error for {invalid:?}: {err}"
+        );
+    }
+
+    std::env::set_var("TRNM_WALLET_STORE", "\u{2068}\"./wallets\"\u{2069}");
+    let explicit = std::env::temp_dir().join(format!(
+        "trnm-cli-wallet-explicit-store-test-{}-{}",
+        std::process::id(),
+        std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_nanos()
+    ));
+    assert_eq!(resolve_wallet_store(Some(explicit.clone())).unwrap(), explicit);
+
+    match original_store {
+        Some(v) => std::env::set_var("TRNM_WALLET_STORE", v),
+        None => std::env::remove_var("TRNM_WALLET_STORE"),
+    }
+}
+
+#[test]
 fn default_wallet_store_rejects_symlinked_paths_from_env() {
     let _guard = ENV_LOCK.lock().unwrap();
     let original_store = std::env::var_os("TRNM_WALLET_STORE");
