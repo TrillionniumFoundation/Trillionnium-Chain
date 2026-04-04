@@ -261,7 +261,7 @@ fn checkpoint_tip_relation(recovered: &RecoveredWalState) -> String {
 }
 
 fn metadata_only_operator_action(recovered: &RecoveredWalState) -> String {
-    if recovered.wal_entries_retained == 0 {
+    let action = if recovered.wal_entries_retained == 0 {
         match recovered.checkpoint_height_retained {
             Some(_) => {
                 "operator action: checkpoint-only bootstrap is acceptable with a fresh --bft-wal-dir / --bft-wal-mode auto isolated run; if this node must rejoin from prior state, restore an application snapshot before retrying".into()
@@ -297,6 +297,15 @@ fn metadata_only_operator_action(recovered: &RecoveredWalState) -> String {
                 "operator action: restore the corresponding application snapshot before retrying join/rejoin; do not resume from metadata alone".into()
             }
         }
+    };
+
+    if recovered.truncated {
+        format!(
+            "{}; note: this startup already truncated a malformed WAL tail, so keep the repaired WAL/checkpoint artifacts for incident review if join/rejoin still fails",
+            action,
+        )
+    } else {
+        action
     }
 }
 
@@ -860,6 +869,14 @@ mod tests {
         assert_eq!(
             metadata_only_operator_action(&recovered_state(2, u64::MAX, Some(u64::MAX), false, true)),
             "operator action: restore the corresponding application snapshot before retrying join/rejoin; do not resume from metadata alone"
+        );
+        assert_eq!(
+            metadata_only_operator_action(&recovered_state(2, 12, Some(10), true, true)),
+            "operator action: restore an application snapshot that covers the retained WAL tip before retrying join/rejoin; do not resume from metadata alone; note: this startup already truncated a malformed WAL tail, so keep the repaired WAL/checkpoint artifacts for incident review if join/rejoin still fails"
+        );
+        assert_eq!(
+            metadata_only_operator_action(&recovered_state(2, 12, Some(15), true, true)),
+            "operator action: investigate WAL/checkpoint mismatch (retained WAL tip height 11, checkpoint height 15), rebuild the recovery inputs, and only retry join/rejoin once WAL tip and checkpoint evidence agree; note: this startup already truncated a malformed WAL tail, so keep the repaired WAL/checkpoint artifacts for incident review if join/rejoin still fails"
         );
     }
 
