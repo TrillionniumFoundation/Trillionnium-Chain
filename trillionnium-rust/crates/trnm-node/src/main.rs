@@ -4569,22 +4569,34 @@ mod tests {
             shipped_node_configs, expected_shipped_node_configs,
             "shipped bootstrap config set must stay exactly node1.toml..node4.toml to keep deterministic peer formation fixtures intact"
         );
-        let shipped_topology_files = std::fs::read_dir(&shipped_config_dir)
+        let shipped_topology_file_names = std::fs::read_dir(&shipped_config_dir)
             .unwrap_or_else(|err| {
                 panic!(
                     "{} should stay readable for shipped bootstrap topology file checks: {err}",
                     shipped_config_dir.display()
                 )
             })
-            .filter_map(|entry| entry.ok())
-            .filter_map(|entry| {
-                let file_type = entry.file_type().ok()?;
+            .map(|entry| {
+                let entry = entry.unwrap_or_else(|err| {
+                    panic!(
+                        "{} must fail closed if a shipped bootstrap topology entry cannot be read: {err}",
+                        shipped_config_dir.display()
+                    )
+                });
+                let file_type = entry.file_type().unwrap_or_else(|err| {
+                    panic!(
+                        "{} must fail closed if a shipped bootstrap topology entry file type cannot be read: {err}",
+                        shipped_config_dir.display()
+                    )
+                });
                 if !file_type.is_file() || file_type.is_symlink() {
                     return None;
                 }
                 Some(entry.file_name().to_string_lossy().into_owned())
             })
-            .collect::<HashSet<_>>();
+            .collect::<Option<Vec<_>>>()
+            .expect("non-regular shipped bootstrap topology entries should stay excluded deterministically");
+        let shipped_topology_files = shipped_topology_file_names.iter().cloned().collect::<HashSet<_>>();
         let expected_shipped_topology_files = HashSet::from([
             String::from("README.md"),
             String::from("node1.toml"),
@@ -4595,6 +4607,19 @@ mod tests {
         assert_eq!(
             shipped_topology_files, expected_shipped_topology_files,
             "configs/ must remain exactly README.md plus node1.toml..node4.toml so bootstrap topology cannot silently grow extra shipped fixtures or helper sidecars"
+        );
+        let mut sorted_shipped_topology_file_names = shipped_topology_file_names;
+        sorted_shipped_topology_file_names.sort();
+        assert_eq!(
+            sorted_shipped_topology_file_names,
+            vec![
+                String::from("README.md"),
+                String::from("node1.toml"),
+                String::from("node2.toml"),
+                String::from("node3.toml"),
+                String::from("node4.toml"),
+            ],
+            "configs/ file entries must remain in deterministic README + node1..node4 lexical slot order so bootstrap topology discovery cannot hide slot drift behind set equality"
         );
 
         let mut node_ids = HashSet::new();
