@@ -17,6 +17,10 @@ Usage: emit_validator_rotation_packet.sh \
   [--config-bundle-check-log-path <path>] \
   [--handoff-signed-by <name>] \
   [--handoff-acknowledged-by <name>] \
+  [--handoff-summary-path <path>] \
+  [--handoff-manifest-path <path>] \
+  [--summary-generated-at <timestamp>] \
+  [--manifest-generated-at <timestamp>] \
   [--dr-summary-path <path>] \
   [--dr-generated-at <timestamp>] \
   [--dr-status <PASS>] \
@@ -47,6 +51,10 @@ CONFIG_BUNDLE_CHECK_RESULT=""
 CONFIG_BUNDLE_CHECK_LOG_PATH=""
 HANDOFF_SIGNED_BY=""
 HANDOFF_ACKNOWLEDGED_BY=""
+HANDOFF_SUMMARY_PATH=""
+HANDOFF_MANIFEST_PATH=""
+SUMMARY_GENERATED_AT=""
+MANIFEST_GENERATED_AT=""
 DR_SUMMARY_PATH=""
 DR_GENERATED_AT=""
 DR_STATUS=""
@@ -106,6 +114,10 @@ while [ "$#" -gt 0 ]; do
     --config-bundle-check-log-path) CONFIG_BUNDLE_CHECK_LOG_PATH="${2-}"; shift 2 ;;
     --handoff-signed-by) HANDOFF_SIGNED_BY="${2-}"; shift 2 ;;
     --handoff-acknowledged-by) HANDOFF_ACKNOWLEDGED_BY="${2-}"; shift 2 ;;
+    --handoff-summary-path) HANDOFF_SUMMARY_PATH="${2-}"; shift 2 ;;
+    --handoff-manifest-path) HANDOFF_MANIFEST_PATH="${2-}"; shift 2 ;;
+    --summary-generated-at) SUMMARY_GENERATED_AT="${2-}"; shift 2 ;;
+    --manifest-generated-at) MANIFEST_GENERATED_AT="${2-}"; shift 2 ;;
     --dr-summary-path) DR_SUMMARY_PATH="${2-}"; shift 2 ;;
     --dr-generated-at) DR_GENERATED_AT="${2-}"; shift 2 ;;
     --dr-status) DR_STATUS="${2-}"; shift 2 ;;
@@ -166,6 +178,13 @@ if [ "$CUTOVER_KIND" = "rotation" ] || [ "$CUTOVER_KIND" = "dr_rebuild" ]; then
   require_nonempty --handoff-acknowledged-by "$HANDOFF_ACKNOWLEDGED_BY"
 fi
 
+if [ -n "$HANDOFF_SUMMARY_PATH" ] || [ -n "$HANDOFF_MANIFEST_PATH" ] || [ -n "$SUMMARY_GENERATED_AT" ] || [ -n "$MANIFEST_GENERATED_AT" ]; then
+  require_path_value --handoff-summary-path "$HANDOFF_SUMMARY_PATH"
+  require_path_value --handoff-manifest-path "$HANDOFF_MANIFEST_PATH"
+  require_nonempty --summary-generated-at "$SUMMARY_GENERATED_AT"
+  require_nonempty --manifest-generated-at "$MANIFEST_GENERATED_AT"
+fi
+
 if [ "$CUTOVER_KIND" = "dr_rebuild" ]; then
   require_path_value --dr-summary-path "$DR_SUMMARY_PATH"
   require_nonempty --dr-generated-at "$DR_GENERATED_AT"
@@ -209,6 +228,12 @@ fi
 if [ -n "$HANDOFF_SIGNED_BY" ]; then
   printf 'handoff_signed_by=%s\n' "$HANDOFF_SIGNED_BY"
   printf 'handoff_acknowledged_by=%s\n' "$HANDOFF_ACKNOWLEDGED_BY"
+fi
+if [ -n "$HANDOFF_SUMMARY_PATH" ]; then
+  printf 'handoff_summary_path=%s\n' "$HANDOFF_SUMMARY_PATH"
+  printf 'handoff_manifest_path=%s\n' "$HANDOFF_MANIFEST_PATH"
+  printf 'summary_generated_at=%s\n' "$SUMMARY_GENERATED_AT"
+  printf 'manifest_generated_at=%s\n' "$MANIFEST_GENERATED_AT"
 fi
 printf 'rollback_command=%s\n' "$ROLLBACK_COMMAND"
 if [ "$CUTOVER_KIND" = "dr_rebuild" ]; then

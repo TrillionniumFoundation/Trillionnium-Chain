@@ -57,14 +57,38 @@ bash "$SCRIPT" \
 grep -q '^cutover_kind=replacement$' /tmp/emit-packet.out
 grep -q '^rollback_command=rm -rf /tmp/cutover-note$' /tmp/emit-packet.out
 
+if bash "$SCRIPT" \
+  --cutover-kind rotation \
+  --verified-worktree /tmp/trnm-lane \
+  --verified-branch-ref lane/mn05-operator-dr-rotation-lifecycle \
+  --verified-head 0123456789abcdef \
+  --outgoing-validator-id validator-old \
+  --incoming-validator-id validator-new \
+  --incoming-config-path /tmp/configs/validator-new.json \
+  --rollback-command 'rm -rf /tmp/cutover-note' \
+  --handoff-signed-by alice \
+  --handoff-acknowledged-by bob \
+  --handoff-summary-path /tmp/run/health/evidence-20260403/summary.txt \
+  >/tmp/emit-packet.out 2>/tmp/emit-packet.err; then
+  echo "expected partial handoff release artifact fields to fail" >&2
+  exit 1
+fi
+grep -q 'missing --handoff-manifest-path' /tmp/emit-packet.err
+
 bash "$SCRIPT" \
   "${common_args[@]}" \
   --expected-worktree-root /Users/qianqi/.openclaw/workspace/trnm-mainnet-lanes/MN05-operator-dr-rotation-lifecycle \
   --expected-branch-ref lane/mn05-operator-dr-rotation-lifecycle \
   --lane-verify-command './scripts/v2/verify_lane_worktree.sh --expected-worktree-root /Users/qianqi/.openclaw/workspace/trnm-mainnet-lanes/MN05-operator-dr-rotation-lifecycle --expected-branch-ref lane/mn05-operator-dr-rotation-lifecycle' \
+  --handoff-summary-path /tmp/run/health/evidence-20260403/summary.txt \
+  --handoff-manifest-path /tmp/release/rc-20260403/manifest.txt \
+  --summary-generated-at 2026-04-03T06:11:00Z \
+  --manifest-generated-at 2026-04-03T06:12:00Z \
   >/tmp/emit-packet.out
 
 grep -q '^expected_worktree_root=/Users/qianqi/.openclaw/workspace/trnm-mainnet-lanes/MN05-operator-dr-rotation-lifecycle$' /tmp/emit-packet.out
+grep -q '^handoff_summary_path=/tmp/run/health/evidence-20260403/summary.txt$' /tmp/emit-packet.out
+grep -q '^manifest_generated_at=2026-04-03T06:12:00Z$' /tmp/emit-packet.out
 grep -q '^dr_status=PASS$' /tmp/emit-packet.out
 
 echo "PASS"

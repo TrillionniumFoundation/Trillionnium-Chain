@@ -403,6 +403,8 @@ Fail-closed interpretation:
 
 This packet does not make TRNM public-mainnet ready by itself, but it does close the operator-facing question "what exact signed evidence turns a local cutover rehearsal into an auditable handoff?"
 
+When operators prefer a generated packet instead of hand-copying the skeleton, `./scripts/v2/emit_validator_rotation_packet.sh` now accepts the release-artifact pair `--handoff-summary-path` / `--handoff-manifest-path` together with `--summary-generated-at` / `--manifest-generated-at`, and fails closed if only a partial release-artifact set is supplied. Use that path when the same cutover packet needs to carry both ownership sign-off and concrete release-evidence lineage.
+
 ### 6a. Copy-paste ceremony packet skeleton
 
 Use this exact shape when a replacement crosses operators or when a DR rebuild is being handed off. Keep unresolved fields empty; do not backfill them from chat or shell memory after the fact.
