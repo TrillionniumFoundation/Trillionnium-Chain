@@ -333,6 +333,28 @@ class CheckValidatorConfigBundleTests(unittest.TestCase):
         self.assertIn("validator_name=node1", ack_line)
         self.assertIn(f"validator_entry_hash={validator_entry_hash}", ack_line)
 
+    def test_public_mainnet_input_scopes_ack_artifact_placeholders_per_validator(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            config = self.write_config(
+                root,
+                "node1.toml",
+                node_id="node1",
+                rpc_addr="127.0.0.1:7001",
+                p2p_addr="127.0.0.1:7002",
+            )
+            result = self.run_script(*self.make_public_mainnet_args(config))
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn(
+            "operator_ack_signature_path=<optional-ack-path-for-node1>",
+            result.stdout,
+        )
+        self.assertIn(
+            "operator_ack_digest=<optional-sha256-of-node1-ack>",
+            result.stdout,
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

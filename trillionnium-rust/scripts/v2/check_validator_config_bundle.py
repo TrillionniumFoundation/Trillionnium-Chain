@@ -403,8 +403,8 @@ def emit_ceremony_packet(args: argparse.Namespace, entries: list[dict[str, str]]
             f"validator_name={validator_name};"
             f"validator_entry_hash={validator_entry_hash}"
         )
-        print("operator_ack_signature_path=<optional-ack-path>")
-        print("operator_ack_digest=<optional-sha256-of-ack>")
+        print(f"operator_ack_signature_path=<optional-ack-path-for-{validator_name}>")
+        print(f"operator_ack_digest=<optional-sha256-of-{validator_name}-ack>")
         print()
 
 
