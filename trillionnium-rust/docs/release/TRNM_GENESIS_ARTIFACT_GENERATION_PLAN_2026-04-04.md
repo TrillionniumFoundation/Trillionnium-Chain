@@ -109,6 +109,18 @@ bundle 内容包括：
 
 这符合当前 scope：**local-rehearsal**，不是 public-mainnet-input。
 
+### 2.5 生成 operator-handoff draft packet
+已生成：
+- `/Users/qianqi/.openclaw/workspace/TrillionniumChain/trillionnium-rust/run/genesis-artifact-candidates/trnm-genesis-candidate-operator-handoff-draft-2026-04-04-b74758fac.packet.txt`
+
+它复用了同一份 candidate bundle 与 SHA256，但把 ceremony scope 提升到 **operator-handoff**，用于下一步补齐：
+- `validator_owner=`
+- `operator_contact=`
+- `operator_ack=`
+- `operator_ack_signature_path=` / `operator_ack_digest=`
+
+因此，当前已经不是“只有 local-rehearsal packet”，而是已经有一份可继续填充的 **operator-handoff 初稿**。
+
 ---
 
 ## 3. 推荐的 artifact 定义（当前阶段）

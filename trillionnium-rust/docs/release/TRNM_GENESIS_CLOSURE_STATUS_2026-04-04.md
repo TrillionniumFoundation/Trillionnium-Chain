@@ -35,6 +35,23 @@
 - TRNM 已经不再停留在“口头说有 genesis 流程”；
 - 至少已有一份 **fail-closed 的 genesis artifact 操作模板**。
 
+### 1.1.1 Local-rehearsal genesis candidate bundle
+已存在：
+- `trillionnium-rust/run/genesis-artifact-candidates/trnm-genesis-candidate-local-rehearsal-2026-04-04-b74758fac.tar.gz`
+- `trillionnium-rust/run/genesis-artifact-candidates/trnm-genesis-candidate-local-rehearsal-2026-04-04-b74758fac.packet.txt`
+- `trillionnium-rust/run/genesis-artifact-candidates/trnm-genesis-candidate-operator-handoff-draft-2026-04-04-b74758fac.packet.txt`
+- frozen sha256: `0cf37d6ae68baa3ac1af1db89c3b225cf669f072aa3f531681448dbcf995108f`
+
+它绑定了：
+- `source_head = b74758fac`
+- `checkpoint_height = 1`
+- `checkpoint_state_root_hex = a965ffa8c1777b4cd4009fd1a940fd2fba58fd3faa6dcd3e11655f28b213d46e`
+- `checkpoint_wal_entry_hash_hex = 4f8a336dd57a0daaf1051f27362a31d21ecd4604e16076eb28a7e9b181655756`
+
+这意味着：
+- TRNM 已经不再是“完全没有真实 artifact/path/hash”；
+- 但当前 artifact 的 scope 仍只是 **local-rehearsal / operator-handoff draft**，不是 public-mainnet closure。
+
 ### 1.2 Validator bootstrap / re-bootstrap runbook
 已存在：
 - `trillionnium-rust/docs/runbooks/validator-bootstrap-rebootstrap.md`
@@ -144,7 +161,7 @@
 
 | 子项 | 当前状态 | 已有证据 | 仍缺什么 | 判定 |
 |---|---|---|---|---|
-| genesis artifact checklist | 已具备 | `trillionnium-rust/docs/runbooks/genesis-generation-checklist.md` | 真实 artifact + hash + packet | 部分完成 |
+| genesis artifact checklist / local candidate | 已具备 local candidate | `trillionnium-rust/docs/runbooks/genesis-generation-checklist.md`; `trillionnium-rust/run/genesis-artifact-candidates/trnm-genesis-candidate-local-rehearsal-2026-04-04-b74758fac.tar.gz` | 受 operator 认可的 handoff/public-mainnet artifact + owner/ack evidence | 部分完成 |
 | validator config bundle validation | 已具备 | `trillionnium-rust/scripts/v2/check_validator_config_bundle.py` | 对当前 mainline 的真实 ceremony bundle run | 部分完成 |
 | bootstrap / re-bootstrap runbook | 已具备 | `trillionnium-rust/docs/runbooks/validator-bootstrap-rebootstrap.md` | 一轮可审计 bootstrap rehearsal evidence | 部分完成 |
 | replacement / rotation / DR runbook | 已具备 | `trillionnium-rust/docs/runbooks/validator-rotation-dr.md` | 真实 signed rotation / DR rebuild evidence | 部分完成 |

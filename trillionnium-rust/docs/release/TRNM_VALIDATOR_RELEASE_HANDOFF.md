@@ -13,6 +13,24 @@ Primary entrypoints:
 - `./scripts/run_local_release_evidence.sh`
 - `./scripts/release_rc.sh`
 
+## Current genesis candidate snapshot (2026-04-04)
+
+For local validator handoff rehearsal, the current repo now has a **local-rehearsal genesis candidate bundle** derived from a zero-demo height-1 checkpoint/WAL anchor:
+
+- candidate bundle: `trillionnium-rust/run/genesis-artifact-candidates/trnm-genesis-candidate-local-rehearsal-2026-04-04-b74758fac.tar.gz`
+- candidate bundle sha256: `0cf37d6ae68baa3ac1af1db89c3b225cf669f072aa3f531681448dbcf995108f`
+- source head: `b74758fac`
+- source origin/main at generation time: `35da4109e`
+- checkpoint state root: `a965ffa8c1777b4cd4009fd1a940fd2fba58fd3faa6dcd3e11655f28b213d46e`
+- checkpoint wal entry hash: `4f8a336dd57a0daaf1051f27362a31d21ecd4604e16076eb28a7e9b181655756`
+- local-rehearsal packet skeleton: `trillionnium-rust/run/genesis-artifact-candidates/trnm-genesis-candidate-local-rehearsal-2026-04-04-b74758fac.packet.txt`
+- operator-handoff draft packet: `trillionnium-rust/run/genesis-artifact-candidates/trnm-genesis-candidate-operator-handoff-draft-2026-04-04-b74758fac.packet.txt`
+
+Interpretation rule:
+- this candidate is valid as **local-rehearsal / operator-handoff draft input only**;
+- it is **not** evidence that public-mainnet genesis closure is complete;
+- do not upgrade it to `public-mainnet-input` until validator owners / contacts / acknowledgments and a controlled 4-node bootstrap rehearsal exist.
+
 ## Operator invariants
 
 Before starting, confirm all of the following:
