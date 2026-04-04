@@ -45,6 +45,17 @@ assert_json_contains() {
   fi
 }
 
+assert_json_not_contains() {
+  local file="$1"
+  local unexpected="$2"
+  if grep -Fq "${unexpected}" "${file}"; then
+    echo "unexpected json fragment present: ${unexpected}" >&2
+    echo "--- ${file} ---" >&2
+    cat "${file}" >&2
+    exit 1
+  fi
+}
+
 rm -rf "${RUN_ROOT}"
 mkdir -p "${RUN_ROOT}"
 
@@ -116,9 +127,13 @@ assert_json_contains "${RUN_ROOT}/public/index.json" '"durability_boundary":"eph
 assert_json_contains "${RUN_ROOT}/public/index.json" '"archive_strategy":"not-configured-static-scaffold"'
 assert_json_contains "${RUN_ROOT}/public/index.json" '"read_replica_strategy":"not-configured-static-scaffold"'
 assert_json_contains "${RUN_ROOT}/public/index.json" '"read_contract":{"mode":"read-only","source":"rpc-read-surface"'
+assert_json_contains "${RUN_ROOT}/public/index.json" '"day1_surface":["query-task/<task_id>","query-events/<task_id>?limit=<n>","query-capability-audit/<subject-or-token>","query-normalized-audit-events?source=<source>&eventType=<type>&limit=<n>&cursor=<cursor>"]'
 assert_json_contains "${RUN_ROOT}/public/index.json" '"query_events_default_limit":100'
 assert_json_contains "${RUN_ROOT}/public/index.json" '"query_events_max_limit":500'
 assert_json_contains "${RUN_ROOT}/public/index.json" '"write_paths_exposed":false'
+assert_json_not_contains "${RUN_ROOT}/public/index.json" 'block/<block_id>'
+assert_json_not_contains "${RUN_ROOT}/public/index.json" 'tx/<tx_id>'
+assert_json_not_contains "${RUN_ROOT}/public/index.json" 'account/<account_id>'
 assert_json_contains "${RUN_ROOT}/public/index.json" '"local_health_url":"'"${HEALTH_URL}"'"'
 assert_json_contains "${RUN_ROOT}/public/index.json" '"durable_read_anchor_archive_owner":"missing-placeholder-scaffold"'
 assert_json_contains "${RUN_ROOT}/public/index.json" '"durable_read_anchor_lag_slo":"missing-placeholder-scaffold"'
