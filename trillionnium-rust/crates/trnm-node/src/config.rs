@@ -950,7 +950,41 @@ mod tests {
 
     #[test]
     fn load_config_rejects_unknown_fields_to_keep_bootstrap_config_fail_closed() {
+        use std::collections::BTreeSet;
+
+        let parse_alias_fields = FORBIDDEN_BOOTSTRAP_ALIAS_FIELDS
+            .iter()
+            .map(|(field, _)| *field)
+            .collect::<Vec<_>>();
+        let parse_alias_set = parse_alias_fields.iter().copied().collect::<BTreeSet<_>>();
+        let readme_alias_set = FORBIDDEN_BOOTSTRAP_README_TOKENS
+            .iter()
+            .copied()
+            .collect::<BTreeSet<_>>();
+
+        assert_eq!(
+            parse_alias_fields.len(),
+            parse_alias_set.len(),
+            "FORBIDDEN_BOOTSTRAP_ALIAS_FIELDS must not duplicate alias names or operator parse diagnostics can drift"
+        );
+        assert_eq!(
+            FORBIDDEN_BOOTSTRAP_README_TOKENS.len(),
+            readme_alias_set.len(),
+            "FORBIDDEN_BOOTSTRAP_README_TOKENS must not duplicate alias names or operator docs can drift"
+        );
+        assert_eq!(
+            parse_alias_set, readme_alias_set,
+            "parse-time forbidden bootstrap aliases and README forbidden tokens must stay identical so startup errors point operators at the same exact fix surface"
+        );
+
         for (unknown_field, field_value) in FORBIDDEN_BOOTSTRAP_ALIAS_FIELDS {
+            let sample = format!("{unknown_field} = {field_value}\n");
+            sample.parse::<toml::Table>().unwrap_or_else(|err| {
+                panic!(
+                    "FORBIDDEN_BOOTSTRAP_ALIAS_FIELDS example for {unknown_field} must stay valid TOML so fail-closed diagnostics remain copyable: {err}"
+                )
+            });
+
             let path = std::env::temp_dir().join(format!(
                 "trnm-node-config-unknown-field-{unknown_field}-{}-{}.toml",
                 std::process::id(),
