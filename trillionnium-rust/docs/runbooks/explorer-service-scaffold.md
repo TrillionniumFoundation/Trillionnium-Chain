@@ -137,6 +137,36 @@ To keep the current scaffold useful as an **operator-facing deployment placehold
 
 This packet is intentionally narrow: it closes the question "what exact deployment-path evidence should an operator attach for the current placeholder service?" without claiming that the Rank 1 explorer/indexer blocker is solved.
 
+### Deterministic evidence capture commands
+
+Use one repeatable capture sequence so the handoff note is built from emitted contract fields rather than shell memory or paraphrase:
+
+```bash
+# from repo root
+./trillionnium-rust/scripts/v2/explorer_service_up.sh \
+  | tee trillionnium-rust/run/explorer-service/handoff-up.txt
+
+./trillionnium-rust/scripts/v2/explorer_service_status.sh \
+  | tee trillionnium-rust/run/explorer-service/handoff-status.txt
+
+curl -fsS http://127.0.0.1:${EXPLORER_PORT:-8090}/index.json \
+  | tee trillionnium-rust/run/explorer-service/handoff-index.json
+```
+
+If the public/reverse-proxy URL is the evidence target, capture that separately instead of replacing the local proof:
+
+```bash
+curl -fsS "${EXPLORER_PUBLIC_BASE_URL:-http://127.0.0.1:${EXPLORER_PORT:-8090}}/index.json" \
+  | tee trillionnium-rust/run/explorer-service/handoff-public-index.json
+```
+
+Fail-closed capture rules:
+
+- keep the local `handoff-status.txt` even when the public fetch is the ticket artifact; it preserves the bind/probe boundary that the public URL alone cannot prove
+- if the public fetch fails but the local fetch succeeds, keep the note scoped to placeholder deployment evidence and classify the proxy/public path separately instead of rewriting the scaffold as down
+- if the local fetch fails, do not substitute a browser screenshot or paraphrased JSON fields; preserve the failing command/output and treat the packet as incomplete
+- if `EXPLORER_PORT` / `EXPLORER_PUBLIC_BASE_URL` are being sourced from `explorer-service.env`, do not retype them by hand mid-capture; let the scripts emit the canonical values first, then reuse those values in the note
+
 If you want a copy/paste ticket/handoff skeleton instead of assembling the note manually, use:
 
 - `trillionnium-rust/docs/release/TRNM_EXPLORER_SCAFFOLD_HANDOFF_TEMPLATE_2026-04-04.md`
