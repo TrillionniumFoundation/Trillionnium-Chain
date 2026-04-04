@@ -265,6 +265,8 @@ fn normalize_wallet_store_env_trims_shell_wrapped_quotes() {
     assert_eq!(normalize_wallet_store_env("  “”  "), None);
     assert_eq!(normalize_wallet_store_env("\u{2068}\u{2069}"), None);
     assert_eq!(normalize_wallet_store_env("/tmp/trnm wallets"), None);
+    assert_eq!(normalize_wallet_store_env("/tmp/trnm\t-wallets"), None);
+    assert_eq!(normalize_wallet_store_env("/tmp/trnm\n-wallets"), None);
     assert_eq!(normalize_wallet_store_env("/tmp/trnm\u{200b}-wallets"), None);
     assert_eq!(normalize_wallet_store_env("/tmp/trnm\u{202e}wallets"), None);
     assert_eq!(normalize_wallet_store_env("/tmp/trnm\u{206a}wallets"), None);
