@@ -934,6 +934,18 @@ mod tests {
     }
 
     #[test]
+    fn ensure_recoverable_wal_state_allows_fresh_bootstrap() {
+        let recovered = recovered_state(0, 1, None, false, false);
+
+        ensure_recoverable_wal_state(Path::new("/tmp/trnm-wal"), &recovered)
+            .expect("fresh bootstrap state should remain recoverable for join/rejoin admission");
+        assert_eq!(
+            recovery_startup_summary(&recovered),
+            "retained_wal_entries=0 checkpoint_height_retained=none checkpoint_tip_relation=none next_startup_height=1 wal_tail_truncated=false metadata_only_recovery=false join_rejoin_status=ready:fresh_bootstrap"
+        );
+    }
+
+    #[test]
     fn ensure_recoverable_wal_state_allows_truncated_fresh_bootstrap() {
         let recovered = recovered_state(0, 1, None, true, false);
 
