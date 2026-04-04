@@ -99,6 +99,34 @@ fn load_task_state_snapshot_tolerates_whitespace_prefixed_utf8_bom_rows() {
 }
 
 #[test]
+fn load_task_state_snapshot_tolerates_crlf_separated_whitespace_prefixed_utf8_bom_rows() {
+    let path = unique_tmp_path("rpc-task-state-bom-whitespace-crlf", "jsonl");
+    let _ = fs::remove_file(&path);
+    fs::write(
+        &path,
+        concat!(
+            "\r\n  \u{feff}{\"task_id\":99,\"status\":\"Open\",\"worker\":null,\"bounty\":9,\"result_hash\":null,\"version\":7}\r\n",
+            "{\"task_id\":99,\"status\":\"Assigned\",\"worker\":\"worker-3\",\"bounty\":9,\"result_hash\":null,\"version\":8}\r\n\r\n"
+        ),
+    )
+    .expect("write crlf whitespace-prefixed bom task snapshot");
+
+    with_market_path_env(&[(TASK_STATE_FILE_ENV, path.to_str())], || {
+        let tasks = load_task_state_snapshot().expect("task snapshot should parse");
+        assert_eq!(
+            tasks.len(),
+            2,
+            "crlf-separated task snapshots with leading whitespace before BOM should keep durable task history readable"
+        );
+        assert_eq!(tasks[0].task_id, 99);
+        assert_eq!(tasks[0].version, 7);
+        assert_eq!(tasks[1].version, 8);
+    });
+
+    let _ = fs::remove_file(&path);
+}
+
+#[test]
 fn push_tail_limited_keeps_only_most_recent_items_in_order() {
     let mut items = Vec::new();
     push_tail_limited(&mut items, 1, 3);
