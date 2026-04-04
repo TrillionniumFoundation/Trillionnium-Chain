@@ -31,6 +31,19 @@ fn contains_invisible_or_bidi_format_chars(value: &str) -> bool {
     })
 }
 
+fn looks_like_dns_hostname(value: &str) -> bool {
+    if !value.contains('.') {
+        return false;
+    }
+
+    value.split('.').all(|label| {
+        !label.is_empty()
+            && !label.starts_with('-')
+            && !label.ends_with('-')
+            && label.bytes().all(|byte| byte.is_ascii_alphanumeric() || byte == b'-')
+    })
+}
+
 fn is_link_local_ip(ip: std::net::IpAddr) -> bool {
     match ip {
         std::net::IpAddr::V4(addr) => addr.is_link_local(),
@@ -158,6 +171,7 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
     );
     anyhow::ensure!(
         !node_id.eq_ignore_ascii_case("localhost")
+            && !looks_like_dns_hostname(node_id)
             && node_id.parse::<std::net::IpAddr>().is_err()
             && node_id.parse::<SocketAddr>().is_err(),
         "invalid node config {}: node_id must not look like a host or socket literal",
@@ -982,6 +996,34 @@ mod tests {
 
             let err = load_config(path.to_str().expect("utf8 path"))
                 .expect_err("localhost-style node_id must fail closed");
+            assert!(
+                err.to_string()
+                    .contains("node_id must not look like a host or socket literal"),
+                "unexpected error for {node_id:?}: {err:#}"
+            );
+
+            let _ = std::fs::remove_file(path);
+        }
+    }
+
+    #[test]
+    fn load_config_rejects_dns_hostname_style_node_id_with_operator_facing_error() {
+        for node_id in ["bootstrap.example.com", "node-2.bootstrap.internal"] {
+            let path = std::env::temp_dir().join(format!(
+                "trnm-node-config-dns-hostname-node-id-{}-{}-{node_id}.toml",
+                std::process::id(),
+                std::thread::current().name().unwrap_or("unnamed")
+            ));
+            std::fs::write(
+                &path,
+                format!(
+                    "node_id = \"{node_id}\"\nrpc_addr = \"127.0.0.1:7000\"\np2p_addr = \"127.0.0.1:7001\"\n"
+                ),
+            )
+            .expect("write config");
+
+            let err = load_config(path.to_str().expect("utf8 path"))
+                .expect_err("dns-hostname-style node_id must fail closed");
             assert!(
                 err.to_string()
                     .contains("node_id must not look like a host or socket literal"),
@@ -2096,6 +2138,8 @@ mod tests {
             "[::1]:7000",
             "::ffff:127.0.0.1",
             "[::ffff:127.0.0.1]:7000",
+            "bootstrap.example.com",
+            "node-2.bootstrap.internal",
         ] {
             let err = validate_node_config(
                 NodeConfig {

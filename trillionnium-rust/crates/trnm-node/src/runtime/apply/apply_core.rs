@@ -38,6 +38,19 @@ fn is_reserved_listener_ip(ip: std::net::IpAddr) -> bool {
     }
 }
 
+fn looks_like_dns_hostname(value: &str) -> bool {
+    if !value.contains('.') {
+        return false;
+    }
+
+    value.split('.').all(|label| {
+        !label.is_empty()
+            && !label.starts_with('-')
+            && !label.ends_with('-')
+            && label.bytes().all(|byte| byte.is_ascii_alphanumeric() || byte == b'-')
+    })
+}
+
 fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
     let node_id = cfg.node_id.trim();
     anyhow::ensure!(
@@ -107,6 +120,7 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
     );
     anyhow::ensure!(
         !node_id.eq_ignore_ascii_case("localhost")
+            && !looks_like_dns_hostname(node_id)
             && node_id.parse::<std::net::IpAddr>().is_err()
             && node_id.parse::<std::net::SocketAddr>().is_err(),
         "invalid node config {}: node_id must not look like a host or socket literal",
@@ -1350,7 +1364,14 @@ bootstrap_peers = ["127.0.0.1:27656"]
 
     #[test]
     fn validate_node_config_rejects_host_like_node_id_and_url_style_operator_addresses() {
-        for node_id in ["localhost", "LOCALHOST", "127.0.0.1", "127.0.0.1:7000"] {
+        for node_id in [
+            "localhost",
+            "LOCALHOST",
+            "127.0.0.1",
+            "127.0.0.1:7000",
+            "bootstrap.example.com",
+            "node-2.bootstrap.internal",
+        ] {
             let err = validate_node_config(
                 NodeConfig {
                     node_id: node_id.into(),
