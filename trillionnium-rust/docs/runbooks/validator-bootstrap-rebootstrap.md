@@ -146,20 +146,20 @@ abort_condition=duplicate node_id
 abort_condition=assigned worktree/ref mismatch
 
 genesis_artifact_path=/abs/path/to/genesis.json
-genesis_artifact_sha256=<64-char-sha256>
+genesis_artifact_sha256=<64-character-genesis-sha256>
 
 authority_note=all operators must acknowledge the exact packet above before any validator starts
 
 validator_entry=validator_name=node1;validator_owner=alice;node_id=node1;config_path=/abs/path/to/configs/node1.toml;p2p_addr=127.0.0.1:26656;rpc_addr=127.0.0.1:26657
 validator_entry_hash=<deterministic-sha256-from-validator_name/node_id/config_path/p2p_addr/rpc_addr>
 operator_contact=node1=<chat/email/oncall-for-node1>
-operator_ack=alice checked genesis_artifact_sha256=<64-char-sha256>;config_path=/abs/path/to/configs/node1.toml;validator_name=node1;validator_entry_hash=<deterministic-sha256-from-validator_name/node_id/config_path/p2p_addr/rpc_addr>
+operator_ack=alice checked genesis_artifact_sha256=<64-character-genesis-sha256>;config_path=/abs/path/to/configs/node1.toml;validator_name=node1;validator_entry_hash=<deterministic-sha256-from-validator_name/node_id/config_path/p2p_addr/rpc_addr>
 operator_ack_signature_path=/abs/path/to/alice-ack.txt
 
 validator_entry=validator_name=node2;validator_owner=bob;node_id=node2;config_path=/abs/path/to/configs/node2.toml;p2p_addr=127.0.0.1:27656;rpc_addr=127.0.0.1:27657
 validator_entry_hash=<deterministic-sha256-from-validator_name/node_id/config_path/p2p_addr/rpc_addr>
 operator_contact=node2=<chat/email/oncall-for-node2>
-operator_ack=bob checked genesis_artifact_sha256=<64-char-sha256>;config_path=/abs/path/to/configs/node2.toml;validator_name=node2;validator_entry_hash=<deterministic-sha256-from-validator_name/node_id/config_path/p2p_addr/rpc_addr>
+operator_ack=bob checked genesis_artifact_sha256=<64-character-genesis-sha256>;config_path=/abs/path/to/configs/node2.toml;validator_name=node2;validator_entry_hash=<deterministic-sha256-from-validator_name/node_id/config_path/p2p_addr/rpc_addr>
 operator_ack_digest=<optional-sha256-of-bob-ack>
 ```
 
@@ -192,7 +192,7 @@ python3 scripts/v2/check_validator_config_bundle.py \
 python3 scripts/v2/check_validator_config_bundle.py \
   --emit-ceremony-packet \
   --genesis-artifact-path /abs/path/to/genesis.json \
-  --genesis-artifact-sha256 <64-char-sha256> \
+  --genesis-artifact-sha256 <64-character-genesis-sha256> \
   trillionnium-rust/configs/node1.toml \
   trillionnium-rust/configs/node2.toml \
   trillionnium-rust/configs/node3.toml \
@@ -215,7 +215,7 @@ python3 scripts/v2/check_validator_config_bundle.py \
   --startup-order-note 'node1 -> node2 -> node3 -> node4' \
   --rollback-owner primary-operator \
   --genesis-artifact-path /abs/path/to/genesis.json \
-  --genesis-artifact-sha256 <64-char-sha256> \
+  --genesis-artifact-sha256 <64-character-genesis-sha256> \
   trillionnium-rust/configs/node1.toml \
   trillionnium-rust/configs/node2.toml \
   trillionnium-rust/configs/node3.toml \

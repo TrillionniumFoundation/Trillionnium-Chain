@@ -110,7 +110,7 @@ If the artifact is headed into a shared bootstrap ceremony packet, generate the 
 python3 trillionnium-rust/scripts/v2/check_validator_config_bundle.py \
   --emit-ceremony-packet \
   --genesis-artifact-path /abs/path/to/genesis.json \
-  --genesis-artifact-sha256 <64-char-sha256> \
+  --genesis-artifact-sha256 <64-character-genesis-sha256> \
   trillionnium-rust/configs/node1.toml \
   trillionnium-rust/configs/node2.toml \
   trillionnium-rust/configs/node3.toml \
@@ -132,7 +132,7 @@ python3 trillionnium-rust/scripts/v2/check_validator_config_bundle.py \
   --startup-order-note 'node1 -> node2 -> node3 -> node4' \
   --rollback-owner primary-operator \
   --genesis-artifact-path /abs/path/to/genesis.json \
-  --genesis-artifact-sha256 <64-char-sha256> \
+  --genesis-artifact-sha256 <64-character-genesis-sha256> \
   trillionnium-rust/configs/node1.toml \
   trillionnium-rust/configs/node2.toml \
   trillionnium-rust/configs/node3.toml \
