@@ -3024,6 +3024,17 @@ mod tests {
                 readme_path.display()
             );
         }
+        for expected_phrase in [
+            "All four nodes bind the same loopback IP (`127.0.0.1`)",
+            "keep RPC exactly one port above the matching P2P listener for each slot",
+            "keep a deterministic `+1000` port spacing between neighboring peers",
+        ] {
+            assert!(
+                readme.contains(expected_phrase),
+                "{} must keep the shipped bootstrap listener-spacing rule `{expected_phrase}` visible to operators",
+                readme_path.display()
+            );
+        }
 
         let expected_steps_in_order = [
             "1. Start `node1` first as the initial anchor.",
@@ -3296,6 +3307,7 @@ mod tests {
             "{} must keep README Day-1 tuples exactly aligned with the shipped bootstrap configs so peer topology docs cannot silently drift from fixture truth",
             readme_path.display()
         );
+
     }
 
     #[test]
