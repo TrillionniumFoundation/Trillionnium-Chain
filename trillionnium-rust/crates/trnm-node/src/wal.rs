@@ -109,8 +109,9 @@ fn canonicalize_wal_meta(entries: &mut Vec<WalMeta>) {
 
 fn metadata_scaffold_is_effectively_empty(raw: &str) -> bool {
     raw.lines().all(|line| {
-        let trimmed = line.trim_start_matches('\u{feff}').trim();
-        trimmed.is_empty() || trimmed.starts_with('#')
+        let line = line.trim_start_matches('\u{feff}');
+        let without_comment = line.split_once('#').map_or(line, |(before, _)| before);
+        without_comment.trim().is_empty()
     })
 }
 
@@ -292,6 +293,47 @@ mod tests {
         fs::write(
             wal_file(&sandbox.join(DEFAULT_BFT_WAL_DIR)),
             "# operator left a rejoin note\n   # safe to reuse builtin default once catch-up succeeds\n",
+        )
+        .unwrap();
+        std::env::set_current_dir(&sandbox).unwrap();
+
+        let args = default_args();
+        let requested = PathBuf::from(DEFAULT_BFT_WAL_DIR);
+        let (resolved, note) = resolve_wal_dir(&args).unwrap();
+        assert_eq!(resolved, requested);
+        assert!(note.is_none());
+
+        std::env::set_current_dir(prior_cwd).unwrap();
+        let _ = fs::remove_dir_all(&sandbox);
+    }
+
+    #[test]
+    fn resolve_wal_dir_auto_allows_builtin_default_when_only_blank_consensus_wal_scaffold_exists() {
+        let sandbox = temp_wal_dir("resolve-auto-blank-consensus-wal-scaffold");
+        let prior_cwd = std::env::current_dir().unwrap();
+        fs::create_dir_all(sandbox.join(DEFAULT_BFT_WAL_DIR)).unwrap();
+        fs::write(wal_file(&sandbox.join(DEFAULT_BFT_WAL_DIR)), "  \n\t").unwrap();
+        std::env::set_current_dir(&sandbox).unwrap();
+
+        let args = default_args();
+        let requested = PathBuf::from(DEFAULT_BFT_WAL_DIR);
+        let (resolved, note) = resolve_wal_dir(&args).unwrap();
+        assert_eq!(resolved, requested);
+        assert!(note.is_none());
+
+        std::env::set_current_dir(prior_cwd).unwrap();
+        let _ = fs::remove_dir_all(&sandbox);
+    }
+
+    #[test]
+    fn resolve_wal_dir_auto_allows_builtin_default_when_only_bom_prefixed_comment_consensus_wal_scaffold_exists(
+    ) {
+        let sandbox = temp_wal_dir("resolve-auto-bom-comment-consensus-wal-scaffold");
+        let prior_cwd = std::env::current_dir().unwrap();
+        fs::create_dir_all(sandbox.join(DEFAULT_BFT_WAL_DIR)).unwrap();
+        fs::write(
+            wal_file(&sandbox.join(DEFAULT_BFT_WAL_DIR)),
+            "\u{feff}# operator left a rejoin note\n   # safe to reuse builtin default once catch-up succeeds\n",
         )
         .unwrap();
         std::env::set_current_dir(&sandbox).unwrap();
