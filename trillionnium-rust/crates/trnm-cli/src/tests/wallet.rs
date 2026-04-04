@@ -795,6 +795,7 @@ fn wallet_name_rejects_path_like_values() {
         "alice／bob",
         "alice＼bob",
         "alice⧵bob",
+        "alice⧸bob",
         "alice⟋bob",
         "alice⟍bob",
         "alice:bob",
