@@ -177,6 +177,16 @@ EXPLORER_HEALTH_URL=ftp://invalid-health-url
 EXPLORER_RPC_BASE_URL=${RPC_BASE_URL}
 EOF
 
+"${UP_SCRIPT}" >"${TMP_DIR}/up-invalid-config.out" 2>&1 || true
+assert_contains "${TMP_DIR}/up-invalid-config.out" "refusing to start explorer service scaffold: EXPLORER_HEALTH_URL must start with http:// or https://"
+assert_contains "${TMP_DIR}/up-invalid-config.out" "state=invalid-config"
+assert_contains "${TMP_DIR}/up-invalid-config.out" "config_error=EXPLORER_HEALTH_URL must start with http:// or https://"
+assert_contains "${TMP_DIR}/up-invalid-config.out" "health_probe=invalid-config"
+assert_contains "${TMP_DIR}/up-invalid-config.out" "local_health_probe=invalid-config"
+assert_contains "${TMP_DIR}/up-invalid-config.out" "deployment_evidence_scope=placeholder-only"
+assert_contains "${TMP_DIR}/up-invalid-config.out" "rank1_read_surface_blocker=still-open"
+assert_contains "${TMP_DIR}/up-invalid-config.out" "durable_indexer_status=not-implemented-in-this-scaffold"
+
 "${STATUS_SCRIPT}" >"${TMP_DIR}/status-invalid-env.out" || true
 assert_contains "${TMP_DIR}/status-invalid-env.out" "state=invalid-config"
 assert_contains "${TMP_DIR}/status-invalid-env.out" "config_error=EXPLORER_HEALTH_URL must start with http:// or https://"

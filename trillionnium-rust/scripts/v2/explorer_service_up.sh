@@ -151,52 +151,58 @@ emit_contract_fields() {
   emit_read_contract_fields
 }
 
+emit_invalid_config() {
+  local config_error="$1"
+  echo "refusing to start explorer service scaffold: ${config_error}"
+  echo "state=invalid-config"
+  echo "config_error=${config_error}"
+  emit_contract_fields
+  echo "health=unknown"
+  echo "health_probe=invalid-config"
+  echo "health_probe_url=invalid-config"
+  echo "local_health=unknown"
+  echo "local_health_probe=invalid-config"
+  echo "local_health_probe_url=invalid-config"
+}
+
 validate_runtime_contract() {
   if [[ -z "${HOST}" ]]; then
-    echo "refusing to start explorer service scaffold: EXPLORER_HOST must not be empty"
-    emit_contract_fields
+    emit_invalid_config "EXPLORER_HOST must not be empty"
     exit 1
   fi
 
   if [[ ! "${PORT}" =~ ^[0-9]+$ ]] || (( PORT < 1 || PORT > 65535 )); then
-    echo "refusing to start explorer service scaffold: EXPLORER_PORT must be an integer in [1, 65535]"
-    emit_contract_fields
+    emit_invalid_config "EXPLORER_PORT must be an integer in [1, 65535]"
     exit 1
   fi
 
   if [[ -z "${PUBLIC_BASE_URL}" ]]; then
-    echo "refusing to start explorer service scaffold: EXPLORER_PUBLIC_BASE_URL must not be empty"
-    emit_contract_fields
+    emit_invalid_config "EXPLORER_PUBLIC_BASE_URL must not be empty"
     exit 1
   fi
 
   if [[ ! "${PUBLIC_BASE_URL}" =~ ^https?://.+ ]]; then
-    echo "refusing to start explorer service scaffold: EXPLORER_PUBLIC_BASE_URL must start with http:// or https://"
-    emit_contract_fields
+    emit_invalid_config "EXPLORER_PUBLIC_BASE_URL must start with http:// or https://"
     exit 1
   fi
 
   if [[ -z "${HEALTH_URL}" ]]; then
-    echo "refusing to start explorer service scaffold: EXPLORER_HEALTH_URL must not be empty"
-    emit_contract_fields
+    emit_invalid_config "EXPLORER_HEALTH_URL must not be empty"
     exit 1
   fi
 
   if [[ ! "${HEALTH_URL}" =~ ^https?://.+ ]]; then
-    echo "refusing to start explorer service scaffold: EXPLORER_HEALTH_URL must start with http:// or https://"
-    emit_contract_fields
+    emit_invalid_config "EXPLORER_HEALTH_URL must start with http:// or https://"
     exit 1
   fi
 
   if [[ -z "${RPC_BASE_URL}" ]]; then
-    echo "refusing to start explorer service scaffold: EXPLORER_RPC_BASE_URL must not be empty"
-    emit_contract_fields
+    emit_invalid_config "EXPLORER_RPC_BASE_URL must not be empty"
     exit 1
   fi
 
   if [[ ! "${RPC_BASE_URL}" =~ ^https?://.+ ]]; then
-    echo "refusing to start explorer service scaffold: EXPLORER_RPC_BASE_URL must start with http:// or https://"
-    emit_contract_fields
+    emit_invalid_config "EXPLORER_RPC_BASE_URL must start with http:// or https://"
     exit 1
   fi
 }
