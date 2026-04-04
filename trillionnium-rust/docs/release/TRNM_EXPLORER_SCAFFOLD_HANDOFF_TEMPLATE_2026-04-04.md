@@ -68,6 +68,11 @@ env_file=<value>
 public_dir=<value>
 health_file=<value>
 index_file=<value>
+read_contract_mode=read-only
+day1_surface=query-task/<task_id>,query-events/<task_id>?limit=<n>,query-capability-audit/<subject-or-token>,query-normalized-audit-events?source=<source>&eventType=<type>&limit=<n>&cursor=<cursor>
+query_events_default_limit=100
+query_events_max_limit=500
+write_paths_exposed=false
 deployment_evidence_scope=placeholder-only
 rank1_read_surface_blocker=still-open
 durable_indexer_status=not-implemented-in-this-scaffold
@@ -96,6 +101,23 @@ index_json_fetched_at=<timestamp>
 index_json_path_or_url=<value>
 index_json_declares_day1_contract=true
 index_json_declares_placeholder_only=true
+index_json_service_mode=operator-facing-static-scaffold
+index_json_production_ready=false
+index_json_rpc_base_url=<value>
+index_json_health_url=<value>
+index_json_local_health_url=<value>
+index_json_read_contract_mode=read-only
+index_json_read_contract_source=rpc-read-surface
+index_json_day1_surface=query-task/<task_id>,query-events/<task_id>?limit=<n>,query-capability-audit/<subject-or-token>,query-normalized-audit-events?source=<source>&eventType=<type>&limit=<n>&cursor=<cursor>
+index_json_query_events_default_limit=100
+index_json_query_events_max_limit=500
+index_json_write_paths_exposed=false
+index_json_historical_query_scope=rpc-retention-bounded
+index_json_durability_boundary=ephemeral-rpc-window-only
+index_json_archive_strategy=not-configured-static-scaffold
+index_json_read_replica_strategy=not-configured-static-scaffold
+index_json_durable_read_anchor_complete=false
+index_json_notes_include=static-scaffold-only,not-a-durable-indexer,not-a-production-read-model
 
 # explicit blocker note (must stay explicit)
 blocker_note=this_evidence_does_not_close_durable_indexer_historical_read_model_or_production_explorer_backend
@@ -113,10 +135,12 @@ rollback_command=./trillionnium-rust/scripts/v2/explorer_service_down.sh
 2. The status block must be copied from script output verbatim for the fail-closed markers.
 3. Preserve `bind_host`, `bind_port`, `public_base_url`, and `env_file` so the handoff records the actual local deployment boundary rather than only the reverse-proxy-facing URL.
 4. `/index.json` proof may come from `curl`, browser fetch, or direct file read, but the note must preserve where it was fetched from.
-5. If reverse proxy and local bind differ, preserve both `health_url` and `local_health_url`, plus the corresponding `health_probe_url` / `local_health_probe_url` fields.
-6. Preserve both `replay_command` and `rollback_command` so the same placeholder bring-up path can be re-run or torn down without reconstructing it from memory.
-7. Preserve `durable_read_anchor_missing_count` together with `durable_read_anchor_missing_fields`; do not keep one while trimming the other, because the pair is the fail-closed proof that the scaffold still lacks all 6 durable-read anchors.
-8. If any durable-read anchor is later filled with a real value, stop using this placeholder-only template and move to a durable-service handoff packet instead.
+5. Copy the status-side read-contract markers verbatim too: `read_contract_mode`, `day1_surface`, `query_events_default_limit`, `query_events_max_limit`, and `write_paths_exposed`. Do not rely on `service_mode` alone, because the handoff note should freeze the actual Day-1 read surface rather than just the deployment shape.
+6. Preserve the matching `/index.json` contract markers (`index_json_read_contract_mode`, `index_json_day1_surface`, limit fields, and durability markers) so operators can prove the served static payload matches the CLI/status contract instead of only asserting `index_json_declares_day1_contract=true`.
+7. If reverse proxy and local bind differ, preserve both `health_url` and `local_health_url`, plus the corresponding `health_probe_url` / `local_health_probe_url` fields.
+8. Preserve both `replay_command` and `rollback_command` so the same placeholder bring-up path can be re-run or torn down without reconstructing it from memory.
+9. Preserve `durable_read_anchor_missing_count` together with `durable_read_anchor_missing_fields`; do not keep one while trimming the other, because the pair is the fail-closed proof that the scaffold still lacks all 6 durable-read anchors.
+10. If any durable-read anchor is later filled with a real value, stop using this placeholder-only template and move to a durable-service handoff packet instead.
 
 ## What this template intentionally does not claim
 
@@ -134,10 +158,10 @@ This template does **not** claim any of the following are closed:
 A scaffold handoff note is acceptable only if it includes all of the following:
 
 - exact `EXPLORER_*` runtime values
-- one emitted status block with fail-closed markers intact, including `durable_read_anchor_missing_count` + `durable_read_anchor_missing_fields`
+- one emitted status block with fail-closed markers intact, including `read_contract_mode`, `day1_surface`, `query_events_default_limit`, `query_events_max_limit`, `write_paths_exposed`, and `durable_read_anchor_missing_count` + `durable_read_anchor_missing_fields`
 - explicit local deployment-path fields (`bind_host`, `bind_port`, `public_base_url`, `env_file`)
 - explicit probe evidence (`health_probe_url`, `local_health_probe_url`)
-- one `/index.json` fetch proof
+- one `/index.json` fetch proof that also preserves the served read-contract/durability markers, not just a boolean declaration
 - one explicit blocker note stating placeholder-only scope
 - one replay command
 - one rollback command
