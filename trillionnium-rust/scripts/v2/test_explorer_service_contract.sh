@@ -62,7 +62,13 @@ assert_contains "${TMP_DIR}/up.out" "rank1_read_surface_blocker=still-open"
 assert_contains "${TMP_DIR}/up.out" "durable_indexer_status=not-implemented-in-this-scaffold"
 assert_contains "${TMP_DIR}/up.out" "durable_read_anchor_complete=false"
 assert_contains "${TMP_DIR}/up.out" "durable_read_anchor_missing_count=6"
+assert_contains "${TMP_DIR}/up.out" "durable_read_anchor_missing_fields=ingestion_source,checkpoint_store,replay_start_anchor,retention_scope,archive_owner,lag_slo"
+assert_contains "${TMP_DIR}/up.out" "durable_read_anchor_ingestion_source=missing-placeholder-scaffold"
+assert_contains "${TMP_DIR}/up.out" "durable_read_anchor_checkpoint_store=missing-placeholder-scaffold"
+assert_contains "${TMP_DIR}/up.out" "durable_read_anchor_replay_start_anchor=missing-placeholder-scaffold"
 assert_contains "${TMP_DIR}/up.out" "durable_read_anchor_retention_scope=rpc-window-bounded"
+assert_contains "${TMP_DIR}/up.out" "durable_read_anchor_archive_owner=missing-placeholder-scaffold"
+assert_contains "${TMP_DIR}/up.out" "durable_read_anchor_lag_slo=missing-placeholder-scaffold"
 assert_contains "${TMP_DIR}/up.out" "local_health_url=${HEALTH_URL}"
 assert_contains "${TMP_DIR}/up.out" "rpc_base_url=${RPC_BASE_URL}"
 
@@ -85,14 +91,25 @@ assert_contains "${TMP_DIR}/status.out" "historical_query_scope=rpc-retention-bo
 assert_contains "${TMP_DIR}/status.out" "durability_boundary=ephemeral-rpc-window-only"
 assert_contains "${TMP_DIR}/status.out" "archive_strategy=not-configured-static-scaffold"
 assert_contains "${TMP_DIR}/status.out" "read_replica_strategy=not-configured-static-scaffold"
+assert_contains "${TMP_DIR}/status.out" "durable_read_anchor_missing_fields=ingestion_source,checkpoint_store,replay_start_anchor,retention_scope,archive_owner,lag_slo"
+assert_contains "${TMP_DIR}/status.out" "durable_read_anchor_ingestion_source=missing-placeholder-scaffold"
+assert_contains "${TMP_DIR}/status.out" "durable_read_anchor_checkpoint_store=missing-placeholder-scaffold"
+assert_contains "${TMP_DIR}/status.out" "durable_read_anchor_replay_start_anchor=missing-placeholder-scaffold"
+assert_contains "${TMP_DIR}/status.out" "durable_read_anchor_retention_scope=rpc-window-bounded"
+assert_contains "${TMP_DIR}/status.out" "durable_read_anchor_archive_owner=missing-placeholder-scaffold"
+assert_contains "${TMP_DIR}/status.out" "durable_read_anchor_lag_slo=missing-placeholder-scaffold"
 
 assert_json_contains "${RUN_ROOT}/public/index.json" '"service_mode":"operator-facing-static-scaffold"'
 assert_json_contains "${RUN_ROOT}/public/index.json" '"production_ready":false'
 assert_json_contains "${RUN_ROOT}/public/index.json" '"deployment_evidence_scope":"placeholder-only"'
 assert_json_contains "${RUN_ROOT}/public/index.json" '"rank1_read_surface_blocker":"still-open"'
 assert_json_contains "${RUN_ROOT}/public/index.json" '"durable_indexer_status":"not-implemented-in-this-scaffold"'
+assert_json_contains "${RUN_ROOT}/public/index.json" '"durable_read_anchor_complete":false'
+assert_json_contains "${RUN_ROOT}/public/index.json" '"durable_read_anchor_missing_count":6'
+assert_json_contains "${RUN_ROOT}/public/index.json" '"durable_read_anchor_missing_fields":"ingestion_source,checkpoint_store,replay_start_anchor,retention_scope,archive_owner,lag_slo"'
 assert_json_contains "${RUN_ROOT}/public/index.json" '"historical_query_scope":"rpc-retention-bounded"'
 assert_json_contains "${RUN_ROOT}/public/index.json" '"durability_boundary":"ephemeral-rpc-window-only"'
+assert_json_contains "${RUN_ROOT}/public/index.json" '"durable_read_anchors":{"ingestion_source":"missing-placeholder-scaffold","checkpoint_store":"missing-placeholder-scaffold","replay_start_anchor":"missing-placeholder-scaffold","retention_scope":"rpc-window-bounded","archive_owner":"missing-placeholder-scaffold","lag_slo":"missing-placeholder-scaffold"}'
 
 EXPLORER_HOST=127.0.0.1 \
 EXPLORER_PORT="${PORT}" \
@@ -111,6 +128,13 @@ assert_contains "${TMP_DIR}/down.out" "local_health_probe_url=not-run-state-down
 assert_contains "${TMP_DIR}/down.out" "deployment_evidence_scope=placeholder-only"
 assert_contains "${TMP_DIR}/down.out" "rank1_read_surface_blocker=still-open"
 assert_contains "${TMP_DIR}/down.out" "durable_indexer_status=not-implemented-in-this-scaffold"
+assert_contains "${TMP_DIR}/down.out" "durable_read_anchor_missing_fields=ingestion_source,checkpoint_store,replay_start_anchor,retention_scope,archive_owner,lag_slo"
+assert_contains "${TMP_DIR}/down.out" "durable_read_anchor_ingestion_source=missing-placeholder-scaffold"
+assert_contains "${TMP_DIR}/down.out" "durable_read_anchor_checkpoint_store=missing-placeholder-scaffold"
+assert_contains "${TMP_DIR}/down.out" "durable_read_anchor_replay_start_anchor=missing-placeholder-scaffold"
+assert_contains "${TMP_DIR}/down.out" "durable_read_anchor_retention_scope=rpc-window-bounded"
+assert_contains "${TMP_DIR}/down.out" "durable_read_anchor_archive_owner=missing-placeholder-scaffold"
+assert_contains "${TMP_DIR}/down.out" "durable_read_anchor_lag_slo=missing-placeholder-scaffold"
 
 if [[ -f "${PID_FILE}" ]]; then
   echo "pid file still present after shutdown: ${PID_FILE}" >&2
