@@ -131,7 +131,7 @@ To keep the current scaffold useful as an **operator-facing deployment placehold
 
 1. the exact env file values used for `EXPLORER_HOST`, `EXPLORER_PORT`, `EXPLORER_PUBLIC_BASE_URL`, `EXPLORER_HEALTH_URL`, and `EXPLORER_RPC_BASE_URL`
 2. one `./scripts/v2/explorer_service_status.sh` output block showing `state`, `health_url`, `local_health_url`, `index_url`, and `rpc_base_url`
-   - that status block now also emits `deployment_evidence_scope=placeholder-only`, `rank1_read_surface_blocker=still-open`, `durable_indexer_status=not-implemented-in-this-scaffold`, `durable_read_anchor_complete=false`, `durable_read_anchor_missing_count=5`, `durable_read_anchor_missing_fields=...`, and the flat `durable_read_anchor_*=` placeholders; copy them verbatim into the handoff note instead of paraphrasing
+   - that status block now also emits `deployment_evidence_scope=placeholder-only`, `rank1_read_surface_blocker=still-open`, `durable_indexer_status=not-implemented-in-this-scaffold`, `durable_read_anchor_complete=false`, `durable_read_anchor_missing_count=6`, `durable_read_anchor_missing_fields=...`, and the flat `durable_read_anchor_*=` placeholders; copy them verbatim into the handoff note instead of paraphrasing
 3. one fetch of `/index.json` proving the static scaffold is serving the declared Day-1 read-only contract markers
 4. one explicit note that this evidence **does not** prove durable indexer / historical read-model / production explorer-backend closure
 
