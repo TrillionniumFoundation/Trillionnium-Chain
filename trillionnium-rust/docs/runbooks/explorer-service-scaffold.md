@@ -154,6 +154,10 @@ Do not replace this scaffold with a so-called "real" explorer/read service unles
 
 Fail-closed rule: if any field above is missing, treat the deployment as another placeholder edge, not as durable indexer / historical read-model closure.
 
+If you are preparing the first non-placeholder handoff packet rather than another scaffold-only note, start from:
+
+- `trillionnium-rust/docs/release/TRNM_DURABLE_READ_SERVICE_HANDOFF_TEMPLATE_2026-04-04.md`
+
 Suggested env file (`trillionnium-rust/run/explorer-service/explorer-service.env`):
 
 > On first successful/local bring-up, `explorer_service_up.sh` will create this file automatically if it does not already exist, using the current runtime contract values. It never overwrites an existing env file, so operator-local edits remain the source of truth.
