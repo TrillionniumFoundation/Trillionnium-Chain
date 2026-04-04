@@ -281,7 +281,11 @@ fn metadata_only_operator_action(recovered: &RecoveredWalState) -> String {
             Some(checkpoint_height)
                 if checkpoint_height > tip_height =>
             {
-                "operator action: investigate WAL/checkpoint mismatch, rebuild the recovery inputs, and only retry join/rejoin once WAL tip and checkpoint evidence agree".into()
+                format!(
+                    "operator action: investigate WAL/checkpoint mismatch (retained WAL tip height {}, checkpoint height {}), rebuild the recovery inputs, and only retry join/rejoin once WAL tip and checkpoint evidence agree",
+                    tip_height,
+                    checkpoint_height,
+                )
             }
             None => {
                 format!(
@@ -839,7 +843,7 @@ mod tests {
         );
         assert_eq!(
             metadata_only_operator_action(&recovered_state(2, 12, Some(15), false, true)),
-            "operator action: investigate WAL/checkpoint mismatch, rebuild the recovery inputs, and only retry join/rejoin once WAL tip and checkpoint evidence agree"
+            "operator action: investigate WAL/checkpoint mismatch (retained WAL tip height 11, checkpoint height 15), rebuild the recovery inputs, and only retry join/rejoin once WAL tip and checkpoint evidence agree"
         );
     }
 
