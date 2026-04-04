@@ -16962,6 +16962,28 @@ locked_block_hash = "stale-lock"
     }
 
     #[test]
+    fn recovery_startup_summary_keeps_single_block_checkpoint_lag_visible_without_tail_repair() {
+        let recovered = RecoveredWalState {
+            next_height: 12,
+            restored_lock: None,
+            last_checkpoint: Some(CheckpointMeta {
+                height: 10,
+                state_root_hex: "r10".into(),
+                wal_entry_hash_hex: "h10".into(),
+            }),
+            truncated: false,
+            metadata_only_recovery: false,
+            wal_entries_retained: 2,
+            checkpoint_height_retained: Some(10),
+        };
+
+        assert_eq!(
+            recovery_startup_summary(&recovered),
+            "retained_wal_entries=2 checkpoint_height_retained=10 checkpoint_tip_relation=behind:1 next_startup_height=12 wal_tail_truncated=false metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume_checkpoint_lagging"
+        );
+    }
+
+    #[test]
     fn ensure_recoverable_wal_state_reports_checkpoint_ahead_resume_mismatch_surface() {
         let recovered = RecoveredWalState {
             next_height: 12,
