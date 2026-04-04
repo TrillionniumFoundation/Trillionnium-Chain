@@ -162,7 +162,7 @@ Required for `public-mainnet-input` evidence:
 - `packet_distribution_path=` as one explicit absolute path every operator reviewed
 - `operator_contact=` per validator owner so missing acknowledgments can be chased without ambiguity
 - `operator_ack=` per validator owner
-- `operator_ack_signature_path=` or `operator_ack_digest=` when durable acknowledgment is required
+- `operator_ack_signature_path=` or `operator_ack_digest=` when durable acknowledgment is required; for each validator/operator, fill at least one of these fields before treating the packet as signed/public-mainnet handoff evidence
 - explicit `abort_condition=` lines for mismatched genesis hash, duplicate node identity, or wrong worktree/ref
 - a concrete `validator_set_version=` (for example `mainnet-candidate-2026-03-31`) instead of a template/default label
 
