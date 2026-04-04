@@ -887,6 +887,10 @@ mod tests {
             "operator action: restore an application snapshot that covers the retained WAL tip before retrying join/rejoin; do not resume from metadata alone; note: this startup already truncated a malformed WAL tail, so keep the repaired WAL/checkpoint artifacts for incident review if join/rejoin still fails"
         );
         assert_eq!(
+            metadata_only_operator_action(&recovered_state(2, 12, Some(12), true, true)),
+            "operator action: investigate WAL/checkpoint mismatch (retained WAL tip height 11, checkpoint height 12, checkpoint leads tip by 1 block), rebuild the recovery inputs, and only retry join/rejoin once WAL tip and checkpoint evidence agree; note: this startup already truncated a malformed WAL tail, so keep the repaired WAL/checkpoint artifacts for incident review if join/rejoin still fails"
+        );
+        assert_eq!(
             metadata_only_operator_action(&recovered_state(2, 12, Some(15), true, true)),
             "operator action: investigate WAL/checkpoint mismatch (retained WAL tip height 11, checkpoint height 15, checkpoint leads tip by 4 blocks), rebuild the recovery inputs, and only retry join/rejoin once WAL tip and checkpoint evidence agree; note: this startup already truncated a malformed WAL tail, so keep the repaired WAL/checkpoint artifacts for incident review if join/rejoin still fails"
         );
