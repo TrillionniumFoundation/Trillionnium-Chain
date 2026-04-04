@@ -590,21 +590,29 @@ pub(crate) fn load_config(path: &str) -> Result<NodeConfig> {
     validate_config_path_input(path)?;
     let resolved = resolve_config_path(path);
     ensure_config_path_stays_within_allowed_roots(path, &resolved)?;
+    let canonical_resolved = resolved.canonicalize().unwrap_or_else(|_| resolved.clone());
     let raw = fs::read_to_string(&resolved).with_context(|| {
         format!(
             "read config failed: {} (resolved: {})",
             path,
-            resolved.display()
+            canonical_resolved.display()
         )
     })?;
     let cfg: NodeConfig = toml::from_str(&raw).with_context(|| {
         format!(
             "parse toml failed: {} (resolved: {})",
             path,
-            resolved.display()
+            canonical_resolved.display()
         )
     })?;
-    validate_node_config(cfg, resolved.to_string_lossy().as_ref())
+    validate_node_config(cfg, canonical_resolved.to_string_lossy().as_ref()).map_err(|err| {
+        anyhow::anyhow!(
+            "validate config failed: {} (resolved: {}): {:#}",
+            path,
+            canonical_resolved.display(),
+            err
+        )
+    })
 }
 
 #[cfg(test)]
@@ -1177,6 +1185,46 @@ mod tests {
 
             let _ = std::fs::remove_file(path);
         }
+    }
+
+    #[test]
+    fn load_config_validation_errors_keep_operator_and_resolved_paths_visible() {
+        let current_dir = std::env::current_dir().expect("current dir");
+        let file_name = format!(
+            "trnm-node-config-validation-surface-{}-{}.toml",
+            std::process::id(),
+            now_unix_ms()
+        );
+        let path = current_dir.join(&file_name);
+        std::fs::write(
+            &path,
+            "node_id = \"localhost\"\nrpc_addr = \"127.0.0.1:7000\"\np2p_addr = \"127.0.0.1:7001\"\n",
+        )
+        .expect("write config");
+
+        let operator_path = format!("./{file_name}");
+        let canonical_path = path.canonicalize().expect("canonicalize temp config path");
+        let err = load_config(&operator_path)
+            .expect_err("validation-stage config drift must fail closed with both paths visible");
+        let err_surface = format!("{err:#}");
+        assert!(
+            err_surface.contains("validate config failed"),
+            "validation-stage failures must retain the load_config context: {err:#}"
+        );
+        assert!(
+            err_surface.contains(&operator_path),
+            "validation-stage failures must keep the operator-supplied path visible: {err:#}"
+        );
+        assert!(
+            err_surface.contains(canonical_path.to_string_lossy().as_ref()),
+            "validation-stage failures must keep the canonical resolved path visible: {err:#}"
+        );
+        assert!(
+            err_surface.contains("node_id must not look like a host or socket literal"),
+            "validation-stage failures must keep the exact fail-closed drift reason visible: {err:#}"
+        );
+
+        let _ = std::fs::remove_file(path);
     }
 
     #[test]
