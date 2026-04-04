@@ -5095,6 +5095,42 @@ mod tests {
     }
 
     #[test]
+    fn shipped_bootstrap_readme_alias_ban_matches_runtime_rejection_surface() {
+        let manifest_dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR"));
+        let workspace_root = manifest_dir
+            .ancestors()
+            .nth(2)
+            .expect("trnm-node manifest should sit under trillionnium-rust/crates/trnm-node");
+        let readme_path = workspace_root.join("configs/README.md");
+        let readme = std::fs::read_to_string(&readme_path).unwrap_or_else(|err| {
+            panic!(
+                "{} should stay readable for shipped bootstrap README alias-ban checks: {err}",
+                readme_path.display()
+            )
+        });
+        let fixture_scope_section = readme
+            .split("## What this fixture is for")
+            .nth(1)
+            .unwrap_or_else(|| {
+                panic!(
+                    "{} must keep the `What this fixture is for` section so forbidden bootstrap alias guidance stays reviewable",
+                    readme_path.display()
+                )
+            });
+
+        for forbidden_alias in FORBIDDEN_BOOTSTRAP_ALIAS_FIELDS.iter().map(|(field, _)| *field) {
+            let mention_count = fixture_scope_section
+                .matches(&format!("`{forbidden_alias}`"))
+                .count();
+            assert_eq!(
+                mention_count, 1,
+                "{} must mention forbidden bootstrap alias `{forbidden_alias}` exactly once inside the fixture-scope ban list so operator docs stay aligned with the real fail-closed parser surface",
+                readme_path.display()
+            );
+        }
+    }
+
+    #[test]
     fn load_config_rejects_blank_node_id_with_operator_facing_error() {
         let path = std::env::temp_dir().join(format!(
             "trnm-node-config-blank-node-id-{}-{}.toml",
