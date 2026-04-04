@@ -424,6 +424,23 @@ class CheckValidatorConfigBundleTests(unittest.TestCase):
             result.stdout,
         )
 
+    def test_emit_ceremony_packet_uses_unambiguous_path_and_digest_placeholders(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            config = self.write_config(
+                root,
+                "node1.toml",
+                node_id="node1",
+                rpc_addr="127.0.0.1:7001",
+                p2p_addr="127.0.0.1:7002",
+            )
+            result = self.run_script("--emit-ceremony-packet", str(config))
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("packet_distribution_path=<absolute-path-to-ceremony-packet>", result.stdout)
+        self.assertIn("genesis_artifact_path=<absolute-path-to-genesis-artifact>", result.stdout)
+        self.assertIn("genesis_artifact_sha256=<64-character-genesis-sha256>", result.stdout)
+
 
 if __name__ == "__main__":
     unittest.main()

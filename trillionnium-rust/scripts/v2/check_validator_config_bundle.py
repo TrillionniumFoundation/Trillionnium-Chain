@@ -81,10 +81,10 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     )
     parser.add_argument(
         "--packet-distribution-path",
-        default="<shared-folder-or-ticket>",
+        default="<absolute-path-to-ceremony-packet>",
         help=(
             "packet_distribution_path value to print when --emit-ceremony-packet is used; "
-            "public-mainnet-input requires an explicit absolute path"
+            "public-mainnet-input requires one exact absolute path to the generated ceremony packet file"
         ),
     )
     parser.add_argument(
@@ -113,15 +113,15 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     )
     parser.add_argument(
         "--genesis-artifact-path",
-        default="<genesis-artifact-path>",
+        default="<absolute-path-to-genesis-artifact>",
         help=(
             "genesis_artifact_path value to print when --emit-ceremony-packet is used; "
-            "public-mainnet-input requires an explicit absolute path"
+            "public-mainnet-input requires one exact absolute path to the genesis artifact or bundle member"
         ),
     )
     parser.add_argument(
         "--genesis-artifact-sha256",
-        default="<genesis-sha256>",
+        default="<64-character-genesis-sha256>",
         help=(
             "genesis_artifact_sha256 value to print when --emit-ceremony-packet is used; "
             "public-mainnet-input requires a full 64-character hex SHA-256 digest"
