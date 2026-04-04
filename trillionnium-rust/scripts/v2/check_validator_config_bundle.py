@@ -98,12 +98,18 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     parser.add_argument(
         "--startup-order-note",
         default="<startup-order>",
-        help="startup_order_note value to print when --emit-ceremony-packet is used",
+        help=(
+            "startup_order_note value to print when --emit-ceremony-packet is used; "
+            "public-mainnet-input requires replacing placeholder/default wording"
+        ),
     )
     parser.add_argument(
         "--rollback-owner",
         default="<rollback-owner>",
-        help="rollback_owner value to print when --emit-ceremony-packet is used",
+        help=(
+            "rollback_owner value to print when --emit-ceremony-packet is used; "
+            "public-mainnet-input requires an explicit non-placeholder owner"
+        ),
     )
     parser.add_argument(
         "--genesis-artifact-path",
