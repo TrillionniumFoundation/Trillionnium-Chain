@@ -134,6 +134,29 @@ class CheckValidatorConfigBundleTests(unittest.TestCase):
             result.stderr,
         )
 
+    def test_emit_ceremony_packet_rejects_separator_in_validator_set_version(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            config = self.write_config(
+                root,
+                "node1.toml",
+                node_id="node1",
+                rpc_addr="127.0.0.1:7001",
+                p2p_addr="127.0.0.1:7002",
+            )
+            result = self.run_script(
+                "--emit-ceremony-packet",
+                "--validator-set-version",
+                "release=1",
+                str(config),
+            )
+
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn(
+            "invalid ceremony packet arguments: validator_set_version must not contain ';' or '=' separators",
+            result.stderr,
+        )
+
     def test_public_mainnet_input_rejects_placeholder_startup_order_note(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
@@ -179,6 +202,29 @@ class CheckValidatorConfigBundleTests(unittest.TestCase):
         self.assertNotEqual(result.returncode, 0)
         self.assertIn(
             "public-mainnet-input requires explicit values for rollback_owner",
+            result.stderr,
+        )
+
+    def test_emit_ceremony_packet_rejects_separator_in_rollback_owner(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            config = self.write_config(
+                root,
+                "node1.toml",
+                node_id="node1",
+                rpc_addr="127.0.0.1:7001",
+                p2p_addr="127.0.0.1:7002",
+            )
+            result = self.run_script(
+                "--emit-ceremony-packet",
+                "--rollback-owner",
+                "alice;bob",
+                str(config),
+            )
+
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn(
+            "invalid ceremony packet arguments: rollback_owner must not contain ';' or '=' separators",
             result.stderr,
         )
 

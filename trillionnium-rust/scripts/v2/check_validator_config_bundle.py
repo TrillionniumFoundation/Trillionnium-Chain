@@ -299,6 +299,17 @@ def validate_ceremony_packet_metadata(args: argparse.Namespace) -> None:
     for field, value in packet_line_values.items():
         validate_packet_line_value(value, field)
 
+    packet_atom_values = {
+        "ceremony_id": args.ceremony_id,
+        "ceremony_scope": args.ceremony_scope,
+        "packet_generated_at": args.packet_generated_at,
+        "validator_set_version": args.validator_set_version,
+        "rollback_owner": args.rollback_owner,
+        "genesis_artifact_sha256": args.genesis_artifact_sha256,
+    }
+    for field, value in packet_atom_values.items():
+        validate_packet_atom_value(value, field)
+
     if args.ceremony_scope != "public-mainnet-input":
         return
 
