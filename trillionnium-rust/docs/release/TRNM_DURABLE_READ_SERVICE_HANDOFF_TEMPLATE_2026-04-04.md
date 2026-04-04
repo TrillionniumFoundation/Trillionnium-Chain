@@ -68,6 +68,7 @@ Fail-closed choice:
 - 先看 `deployment_evidence_scope=` 与 `service_mode=`；二者任一仍指向 placeholder，或 `deployment_evidence_scope` 根本未被显式写出，就停止，不再往 durable 模板补写。
 - 再逐项核对 6 个 durable-read anchors；**不是“将来会填”而是“当前 note 已有真实值”**。
 - 最后核对 replay / restore / checkpoint / lag evidence；缺任何一项，都回退到 placeholder-only 口径。
+- 如果当前证据包是由 `capture_explorer_scaffold_handoff.sh`、`explorer_service_status.sh`、或 `TRNM_EXPLORER_SCAFFOLD_HANDOFF_TEMPLATE_2026-04-04.md` 生成/抄写出来的 placeholder packet，不允许仅靠手工把 `deployment_evidence_scope` 改成 `durable-read-service` 就升级为 durable handoff；必须先用真实 non-placeholder deployment + 6 个 durable-read anchors + replay/restore/lag evidence 重新生成一份独立 packet。
 
 ## Fail-closed boundary
 
@@ -85,6 +86,10 @@ Fail-closed choice:
 默认解释：
 
 > **只有当 durable-read anchors、部署路径、重放恢复路径、以及 lag/health 证据一起出现时，handoff note 才有资格讨论 Rank 1 closure；否则仍按 blocker-open 处理。**
+
+额外 fail-closed 规则：
+
+> **placeholder packet 不能靠补字段“升格”为 durable packet。若证据起点仍是 scaffold helper 输出，就必须回到真实 durable service 部署现场重新采集。**
 
 ## Copy/paste durable-service handoff template
 
