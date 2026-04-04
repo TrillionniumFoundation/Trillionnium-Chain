@@ -1304,6 +1304,41 @@ fn wallet_store_rejects_symlinked_ancestor_path_components() {
 
 #[test]
 #[cfg(unix)]
+fn resolve_wallet_store_rejects_explicit_path_with_symlinked_ancestor() {
+    use std::os::unix::fs::symlink;
+
+    let unique = format!(
+        "trnm-cli-wallet-explicit-ancestor-symlink-test-{}-{}",
+        std::process::id(),
+        std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_nanos()
+    );
+    let root = std::env::temp_dir().join(unique);
+    let real_parent = root.join("real-parent");
+    let linked_parent = root.join("linked-parent");
+    std::fs::create_dir_all(&real_parent).unwrap();
+    symlink(&real_parent, &linked_parent).unwrap();
+
+    let store = linked_parent.join("wallets");
+    let err = resolve_wallet_store(Some(store.clone())).unwrap_err();
+    assert!(
+        err.to_string().contains("explicit wallet store")
+            && err
+                .to_string()
+                .contains("must be an absolute normalized symlink-free path"),
+        "unexpected error: {err}"
+    );
+    assert!(!real_parent.join("wallets").exists());
+
+    let _ = std::fs::remove_file(&linked_parent);
+    let _ = std::fs::remove_dir(&real_parent);
+    let _ = std::fs::remove_dir(&root);
+}
+
+#[test]
+#[cfg(unix)]
 fn wallet_create_rejects_symlinked_ancestor_from_env_store() {
     use std::os::unix::fs::symlink;
 
