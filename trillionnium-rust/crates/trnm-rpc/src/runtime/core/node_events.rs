@@ -156,16 +156,73 @@ pub(crate) fn parse_event_log_kv(line: &str) -> BTreeMap<String, String> {
 }
 
 pub(crate) fn parse_node_event_log_sources_list(raw: &str) -> Vec<PathBuf> {
-    raw.split(|c: char| c == ',' || c == ';' || c == '\n')
-        .filter_map(|part| {
-            let trimmed = part.trim();
-            if trimmed.is_empty() {
-                None
-            } else {
-                Some(PathBuf::from(trimmed))
+    let mut out = Vec::new();
+    let mut start = 0usize;
+    let mut quote: Option<char> = None;
+
+    for (idx, ch) in raw.char_indices() {
+        match quote {
+            Some(active) if ch == active => quote = None,
+            Some(_) => {}
+            None if matches!(ch, '"' | '\'' | '`') => quote = Some(ch),
+            None if matches!(ch, ',' | ';' | '\n' | '\r') => {
+                let normalized = normalize_wrapped_env_value(raw[start..idx].trim());
+                if !normalized.is_empty() {
+                    out.push(PathBuf::from(normalized));
+                }
+                start = idx + ch.len_utf8();
             }
-        })
-        .collect()
+            None => {}
+        }
+    }
+
+    let normalized = normalize_wrapped_env_value(raw[start..].trim());
+    if !normalized.is_empty() {
+        out.push(PathBuf::from(normalized));
+    }
+
+    out
+}
+
+#[cfg(test)]
+mod tests {
+    use super::parse_node_event_log_sources_list;
+    use std::path::PathBuf;
+
+    #[test]
+    fn parse_node_event_log_sources_list_accepts_carriage_return_separators_for_historical_replay() {
+        let parsed = parse_node_event_log_sources_list(
+            "\"archive/node4.log\"\r'archive/node5.log'\rplain.log\r",
+        );
+
+        assert_eq!(
+            parsed,
+            vec![
+                PathBuf::from("archive/node4.log"),
+                PathBuf::from("archive/node5.log"),
+                PathBuf::from("plain.log"),
+            ],
+            "carriage-return separated historical replay aliases should parse as distinct sources"
+        );
+    }
+
+    #[test]
+    fn parse_node_event_log_sources_list_keeps_wrapped_entries_with_internal_delimiters() {
+        let parsed = parse_node_event_log_sources_list(
+            "\"archive/node,4.log\";'archive/node;5.log';`archive/node\n6.log`,plain.log",
+        );
+
+        assert_eq!(
+            parsed,
+            vec![
+                PathBuf::from("archive/node,4.log"),
+                PathBuf::from("archive/node;5.log"),
+                PathBuf::from("archive/node\n6.log"),
+                PathBuf::from("plain.log"),
+            ],
+            "wrapped historical replay env entries should keep internal delimiters instead of being split into bogus paths"
+        );
+    }
 }
 
 fn normalize_lexical_path(path: PathBuf) -> PathBuf {
