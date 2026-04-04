@@ -160,7 +160,7 @@ For any artifact expected to feed validator bootstrap/handoff, preserve one shar
 Required for `public-mainnet-input` evidence:
 - `packet_generated_at=` in UTC
 - `packet_distribution_path=` as one explicit absolute path to the generated ceremony packet file every operator reviewed
-- `operator_contact=` per validator owner so missing acknowledgments can be chased without ambiguity
+- `operator_contact=` per validator owner so missing acknowledgments can be chased without ambiguity; each contact must identify one concrete validator-scoped route (for example one on-call alias/chat handle per validator) instead of reusing one generic team alias across the full packet
 - `operator_ack=` per validator owner
 - `operator_ack_signature_path=` or `operator_ack_digest=` when durable acknowledgment is required; for each validator/operator, fill at least one of these fields before treating the packet as signed/public-mainnet handoff evidence
 - explicit `abort_condition=` lines for mismatched genesis hash, duplicate node identity, or wrong worktree/ref
