@@ -2992,6 +2992,17 @@ mod tests {
             anchor.0.display()
         );
 
+        let mut shipped_node_ids = shipped_nodes
+            .iter()
+            .map(|(_, node_id, _, _)| node_id.as_str())
+            .collect::<Vec<_>>();
+        let mut lexically_sorted_node_ids = shipped_node_ids.clone();
+        lexically_sorted_node_ids.sort();
+        assert_eq!(
+            shipped_node_ids, lexically_sorted_node_ids,
+            "bootstrap anchor ordering must stay slot-first by node_id as well as by listener ports so later slots cannot silently masquerade as an equivalent Day-1 anchor"
+        );
+
         for (path, node_id, p2p_port, rpc_port) in shipped_nodes.iter().skip(1) {
             assert_ne!(
                 node_id, &anchor.1,
