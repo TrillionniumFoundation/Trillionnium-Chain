@@ -97,6 +97,7 @@ fn recover_metadata_only_error_reports_plural_retained_entries_and_height() {
 
     assert!(err.contains("retained 2 committed WAL entries through height 2"));
     assert!(err.contains("checkpoint lags retained WAL tip by 1 block"));
+    assert!(!err.contains("checkpoint lags retained WAL tip by 1 blocks"));
     assert!(err.contains("last retained checkpoint: 1"));
     assert!(err.contains("next startup height: 3"));
     assert!(err.contains(
