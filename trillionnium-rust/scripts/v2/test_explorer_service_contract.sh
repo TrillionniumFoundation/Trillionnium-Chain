@@ -271,6 +271,43 @@ assert_contains "${TMP_DIR}/down-invalid-public-base-url.out" "durable_indexer_s
 
 cat >"${ENV_FILE}" <<EOF
 EXPLORER_HOST=127.0.0.1
+EXPLORER_PORT=${PORT}
+EXPLORER_PUBLIC_BASE_URL=${PUBLIC_BASE_URL}
+EXPLORER_HEALTH_URL=${HEALTH_URL}
+EXPLORER_RPC_BASE_URL=ftp://invalid-rpc-base-url
+EOF
+
+"${UP_SCRIPT}" >"${TMP_DIR}/up-invalid-rpc-base-url.out" 2>&1 || true
+assert_contains "${TMP_DIR}/up-invalid-rpc-base-url.out" "refusing to start explorer service scaffold: EXPLORER_RPC_BASE_URL must start with http:// or https://"
+assert_contains "${TMP_DIR}/up-invalid-rpc-base-url.out" "state=invalid-config"
+assert_contains "${TMP_DIR}/up-invalid-rpc-base-url.out" "config_error=EXPLORER_RPC_BASE_URL must start with http:// or https://"
+assert_contains "${TMP_DIR}/up-invalid-rpc-base-url.out" "health_probe=invalid-config"
+assert_contains "${TMP_DIR}/up-invalid-rpc-base-url.out" "local_health_probe=invalid-config"
+assert_contains "${TMP_DIR}/up-invalid-rpc-base-url.out" "deployment_evidence_scope=placeholder-only"
+assert_contains "${TMP_DIR}/up-invalid-rpc-base-url.out" "rank1_read_surface_blocker=still-open"
+assert_contains "${TMP_DIR}/up-invalid-rpc-base-url.out" "durable_indexer_status=not-implemented-in-this-scaffold"
+
+"${STATUS_SCRIPT}" >"${TMP_DIR}/status-invalid-rpc-base-url.out" || true
+assert_contains "${TMP_DIR}/status-invalid-rpc-base-url.out" "state=invalid-config"
+assert_contains "${TMP_DIR}/status-invalid-rpc-base-url.out" "config_error=EXPLORER_RPC_BASE_URL must start with http:// or https://"
+assert_contains "${TMP_DIR}/status-invalid-rpc-base-url.out" "health_probe=invalid-config"
+assert_contains "${TMP_DIR}/status-invalid-rpc-base-url.out" "local_health_probe=invalid-config"
+assert_contains "${TMP_DIR}/status-invalid-rpc-base-url.out" "deployment_evidence_scope=placeholder-only"
+assert_contains "${TMP_DIR}/status-invalid-rpc-base-url.out" "rank1_read_surface_blocker=still-open"
+assert_contains "${TMP_DIR}/status-invalid-rpc-base-url.out" "durable_indexer_status=not-implemented-in-this-scaffold"
+
+"${DOWN_SCRIPT}" >"${TMP_DIR}/down-invalid-rpc-base-url.out"
+assert_contains "${TMP_DIR}/down-invalid-rpc-base-url.out" "config_warning=EXPLORER_RPC_BASE_URL must start with http:// or https://"
+assert_contains "${TMP_DIR}/down-invalid-rpc-base-url.out" "state=down"
+assert_contains "${TMP_DIR}/down-invalid-rpc-base-url.out" "health=unknown"
+assert_contains "${TMP_DIR}/down-invalid-rpc-base-url.out" "health_probe=not-run-state-down"
+assert_contains "${TMP_DIR}/down-invalid-rpc-base-url.out" "local_health_probe=not-run-state-down"
+assert_contains "${TMP_DIR}/down-invalid-rpc-base-url.out" "deployment_evidence_scope=placeholder-only"
+assert_contains "${TMP_DIR}/down-invalid-rpc-base-url.out" "rank1_read_surface_blocker=still-open"
+assert_contains "${TMP_DIR}/down-invalid-rpc-base-url.out" "durable_indexer_status=not-implemented-in-this-scaffold"
+
+cat >"${ENV_FILE}" <<EOF
+EXPLORER_HOST=127.0.0.1
 EXPLORER_PORT=18081
 EXPLORER_PUBLIC_BASE_URL=http://127.0.0.1:18081
 EXPLORER_HEALTH_URL=http://127.0.0.1:18081/healthz
