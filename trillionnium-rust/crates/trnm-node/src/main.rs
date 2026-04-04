@@ -4655,7 +4655,15 @@ mod tests {
                 )
             })
             .filter_map(|entry| entry.ok())
-            .map(|entry| entry.file_name().to_string_lossy().into_owned())
+            .map(|entry| {
+                entry.file_name().into_string().unwrap_or_else(|name| {
+                    panic!(
+                        "{} entry {:?} must stay utf-8 for deterministic shipped bootstrap config discovery",
+                        shipped_config_dir.display(),
+                        name
+                    )
+                })
+            })
             .filter(|name| name.starts_with("node") && name.ends_with(".toml"))
             .collect::<HashSet<_>>();
         let expected_shipped_node_configs = HashSet::from([
@@ -4691,7 +4699,13 @@ mod tests {
                 if !file_type.is_file() || file_type.is_symlink() {
                     return None;
                 }
-                Some(entry.file_name().to_string_lossy().into_owned())
+                Some(entry.file_name().into_string().unwrap_or_else(|name| {
+                    panic!(
+                        "{} entry {:?} must stay utf-8 for deterministic shipped bootstrap topology discovery",
+                        shipped_config_dir.display(),
+                        name
+                    )
+                }))
             })
             .collect::<Option<Vec<_>>>()
             .expect("non-regular shipped bootstrap topology entries should stay excluded deterministically");
