@@ -157,6 +157,11 @@ require_path_value --incoming-config-path "$INCOMING_CONFIG_PATH"
 require_nonempty --rollback-command "$ROLLBACK_COMMAND"
 
 if [ -n "$EXPECTED_WORKTREE_ROOT" ] || [ -n "$EXPECTED_BRANCH_REF" ] || [ -n "$EXPECTED_HEAD" ] || [ -n "$LANE_VERIFY_COMMAND" ]; then
+  if [ -z "$EXPECTED_WORKTREE_ROOT" ] || [ -z "$EXPECTED_BRANCH_REF" ] || [ -z "$LANE_VERIFY_COMMAND" ]; then
+    printf 'lane binding requires --expected-worktree-root, --expected-branch-ref, and --lane-verify-command together\n' >&2
+    usage
+    exit 2
+  fi
   require_path_value --expected-worktree-root "$EXPECTED_WORKTREE_ROOT"
   require_token --expected-branch-ref "$EXPECTED_BRANCH_REF"
   require_nonempty --lane-verify-command "$LANE_VERIFY_COMMAND"
