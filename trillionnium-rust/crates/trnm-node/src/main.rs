@@ -16956,6 +16956,22 @@ locked_block_hash = "stale-lock"
                 next_height: 12,
                 restored_lock: None,
                 last_checkpoint: Some(CheckpointMeta {
+                    height: 12,
+                    state_root_hex: "r12".into(),
+                    wal_entry_hash_hex: "h12".into(),
+                }),
+                truncated: false,
+                metadata_only_recovery: true,
+                wal_entries_retained: 2,
+                checkpoint_height_retained: Some(12),
+            }),
+            "operator action: investigate WAL/checkpoint mismatch, rebuild the recovery inputs, and only retry join/rejoin once WAL tip and checkpoint evidence agree"
+        );
+        assert_eq!(
+            metadata_only_operator_action(&RecoveredWalState {
+                next_height: 12,
+                restored_lock: None,
+                last_checkpoint: Some(CheckpointMeta {
                     height: 15,
                     state_root_hex: "r15".into(),
                     wal_entry_hash_hex: "h15".into(),
