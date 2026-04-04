@@ -328,6 +328,19 @@ mod tests {
     }
 
     #[test]
+    fn parse_node_event_log_sources_list_keeps_tab_separated_wrapped_entries_with_attached_comments() {
+        let parsed = parse_node_event_log_sources_list(
+            "\"shared.log\"\t# operator replay note ; `./shared.log`\t# duplicate alias",
+        );
+
+        assert_eq!(
+            parsed,
+            vec![PathBuf::from("shared.log")],
+            "tab-separated historical replay env comments should not corrupt wrapped paths or dedupe behavior"
+        );
+    }
+
+    #[test]
     fn parse_node_event_log_sources_list_accepts_carriage_return_separators_for_historical_replay() {
         let parsed = parse_node_event_log_sources_list(
             "\"archive/node4.log\"\r'archive/node5.log'\rplain.log\r",
