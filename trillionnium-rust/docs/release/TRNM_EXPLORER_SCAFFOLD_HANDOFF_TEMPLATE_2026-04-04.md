@@ -34,7 +34,7 @@
 
 最小原则：
 
-- `summary.txt` 作为 operator-facing 汇总入口，优先承载 `template_path=`、`truth_source_*=`、`replay_command=`、`status_command=`、`rollback_command=` 与 placeholder fail-closed markers
+- `summary.txt` 作为 operator-facing 汇总入口，优先承载 `template_path=`、`durable_template_path=`、`template_selection=placeholder-scaffold-only`、`durable_template_allowed=false`、`durable_template_rejection_reason=`、`deployment_template_boundary=`、`truth_source_*=`、`replay_command=`、`status_command=`、`rollback_command=` 与 placeholder fail-closed markers
 - `status.txt` 保留 live runtime / probe / bind-path 证据，避免只剩 public URL 而丢失本地 deployment boundary
 - `index.json` 保留实际对外静态读面声明，避免 handoff note 只引用 CLI/status 侧而没有 served payload 对照
 
@@ -182,7 +182,7 @@ rollback_command=./trillionnium-rust/scripts/v2/explorer_service_down.sh
 7. Preserve the matching `/index.json` contract markers (`index_json_read_contract_mode`, `index_json_day1_surface`, limit fields, and durability markers) so operators can prove the served static payload matches the CLI/status contract instead of only asserting `index_json_declares_day1_contract=true`.
 8. If reverse proxy and local bind differ, preserve both `health_url` and `local_health_url`, plus the corresponding `health_probe_url` / `local_health_probe_url` fields.
 9. Preserve both `replay_command` and `rollback_command` so the same placeholder bring-up path can be re-run or torn down without reconstructing it from memory.
-10. When `summary.txt` is available, also preserve `template_path=` and the `truth_source_*=` lines verbatim; they are the mechanical hint for which template the next operator is allowed to use.
+10. When `summary.txt` is available, also preserve `template_path=`, `durable_template_path=`, `template_selection=`, `durable_template_allowed=`, `durable_template_rejection_reason=`, `deployment_template_boundary=`, and the `truth_source_*=` lines verbatim; they are the mechanical hint for which template the next operator is allowed to use.
 11. Preserve `durable_read_anchor_missing_count` together with `durable_read_anchor_missing_fields`; do not keep one while trimming the other, because the pair is the fail-closed proof that the scaffold still lacks all 6 durable-read anchors.
 12. If any durable-read anchor is later filled with a real value, stop using this placeholder-only template and move to a durable-service handoff packet instead.
 
