@@ -2894,6 +2894,68 @@ mod tests {
         }
     }
     #[test]
+    fn shipped_bootstrap_configs_directory_keeps_exactly_the_readme_and_four_slot_bound_files() {
+        use std::collections::BTreeSet;
+
+        let manifest_dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR"));
+        let workspace_root = manifest_dir
+            .ancestors()
+            .nth(2)
+            .expect("trnm-node manifest should sit under trillionnium-rust/crates/trnm-node");
+        let configs_dir = workspace_root.join("configs");
+
+        let actual_entries = std::fs::read_dir(&configs_dir)
+            .unwrap_or_else(|err| {
+                panic!(
+                    "{} should stay readable for shipped bootstrap directory membership checks: {err}",
+                    configs_dir.display()
+                )
+            })
+            .map(|entry| {
+                let entry = entry.unwrap_or_else(|err| {
+                    panic!(
+                        "{} should enumerate deterministically for shipped bootstrap directory membership checks: {err}",
+                        configs_dir.display()
+                    )
+                });
+                let file_type = entry.file_type().unwrap_or_else(|err| {
+                    panic!(
+                        "{} should reveal file type for shipped bootstrap directory membership checks: {err}",
+                        entry.path().display()
+                    )
+                });
+                assert!(
+                    file_type.is_file(),
+                    "{} must not gain subdirectories, symlinks, or other non-file entries inside the shipped bootstrap configs directory",
+                    entry.path().display()
+                );
+                entry
+                    .file_name()
+                    .into_string()
+                    .unwrap_or_else(|_| {
+                        panic!(
+                            "{} must keep UTF-8 file names for deterministic shipped bootstrap directory membership checks",
+                            entry.path().display()
+                        )
+                    })
+            })
+            .collect::<BTreeSet<_>>();
+        let expected_entries = BTreeSet::from([
+            String::from("README.md"),
+            String::from("node1.toml"),
+            String::from("node2.toml"),
+            String::from("node3.toml"),
+            String::from("node4.toml"),
+        ]);
+
+        assert_eq!(
+            actual_entries, expected_entries,
+            "{} must stay limited to README.md plus node1.toml through node4.toml so shipped bootstrap topology assumptions cannot silently widen",
+            configs_dir.display()
+        );
+    }
+
+    #[test]
     fn shipped_bootstrap_readme_tuples_match_loaded_configs_exactly() {
         let manifest_dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR"));
         let workspace_root = manifest_dir
