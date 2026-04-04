@@ -51,8 +51,24 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         path
     );
     anyhow::ensure!(
+        node_id.len() <= MAX_NODE_ID_LEN,
+        "invalid node config {}: node_id must be at most {} bytes",
+        path,
+        MAX_NODE_ID_LEN
+    );
+    anyhow::ensure!(
         !node_id.chars().any(char::is_control),
         "invalid node config {}: node_id must not contain control characters",
+        path
+    );
+    anyhow::ensure!(
+        node_id.is_ascii(),
+        "invalid node config {}: node_id must use ASCII-only characters",
+        path
+    );
+    anyhow::ensure!(
+        !contains_invisible_or_bidi_format_chars(node_id),
+        "invalid node config {}: node_id must not contain invisible or bidirectional format characters",
         path
     );
     anyhow::ensure!(
@@ -66,8 +82,12 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         path
     );
     anyhow::ensure!(
-        !node_id.contains('/') && !node_id.contains('\\') && !node_id.contains(':'),
-        "invalid node config {}: node_id must not contain path separators (/ \\ :)",
+        !node_id.contains('/')
+            && !node_id.contains('\\')
+            && !node_id.contains(':')
+            && !node_id.contains('[')
+            && !node_id.contains(']'),
+        "invalid node config {}: node_id must not contain path or host-literal separators (/ \\ : [ ])",
         path
     );
     anyhow::ensure!(
@@ -1218,19 +1238,39 @@ bootstrap_peers = ["127.0.0.1:27656"]
     }
 
     #[test]
-    fn validate_node_config_rejects_path_separators_in_node_id() {
+    fn validate_node_config_rejects_path_and_host_literal_separators_in_node_id() {
+        for node_id in ["node/alpha", r"node\\alpha", "node:alpha", "[::1]"] {
+            let err = validate_node_config(
+                NodeConfig {
+                    node_id: node_id.into(),
+                    rpc_addr: "127.0.0.1:7000".into(),
+                    p2p_addr: "127.0.0.1:7001".into(),
+                },
+                "inline",
+            )
+            .expect_err("path or host-literal separators in node_id must fail closed");
+            assert!(
+                err.to_string()
+                    .contains("node_id must not contain path or host-literal separators (/ \\ : [ ])"),
+                "unexpected error for {node_id:?}: {err:#}"
+            );
+        }
+    }
+
+    #[test]
+    fn validate_node_config_rejects_non_ascii_node_id() {
         let err = validate_node_config(
             NodeConfig {
-                node_id: "node/alpha".into(),
+                node_id: "节点-alpha".into(),
                 rpc_addr: "127.0.0.1:7000".into(),
                 p2p_addr: "127.0.0.1:7001".into(),
             },
             "inline",
         )
-        .expect_err("path separators in node_id must fail closed");
+        .expect_err("non-ascii node_id must fail closed");
         assert!(
             err.to_string()
-                .contains("node_id must not contain path separators (/ \\ :)"),
+                .contains("node_id must use ASCII-only characters"),
             "unexpected error: {err:#}"
         );
     }
