@@ -66,6 +66,8 @@ status_field() {
 STATE="$(status_field state)"
 HEALTH="$(status_field health)"
 LOCAL_HEALTH="$(status_field local_health)"
+SERVICE_MODE="$(status_field service_mode)"
+PRODUCTION_READY="$(status_field production_ready)"
 BIND_HOST="$(status_field bind_host)"
 BIND_PORT="$(status_field bind_port)"
 PID_FILE_PATH="$(status_field pid_file)"
@@ -163,6 +165,8 @@ index_path=${INDEX_OUT}
 index_fetch_mode=${INDEX_FETCH_MODE}
 index_fetch_source=${INDEX_FETCH_SOURCE}
 index_fetch_command=${INDEX_FETCH_COMMAND}
+service_mode=${SERVICE_MODE}
+production_ready=${PRODUCTION_READY}
 bind_host=${BIND_HOST}
 bind_port=${BIND_PORT}
 pid_file=${PID_FILE_PATH}

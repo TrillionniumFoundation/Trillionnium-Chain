@@ -165,6 +165,8 @@ assert_contains "${CAPTURE_DIR}/status.txt" "rank1_read_surface_blocker=still-op
 assert_contains "${CAPTURE_DIR}/status.txt" "durable_indexer_status=not-implemented-in-this-scaffold"
 assert_json_contains "${CAPTURE_DIR}/index.json" '"deployment_evidence_scope":"placeholder-only"'
 assert_json_contains "${CAPTURE_DIR}/index.json" '"durable_indexer_status":"not-implemented-in-this-scaffold"'
+assert_contains "${CAPTURE_DIR}/summary.txt" "service_mode=operator-facing-static-scaffold"
+assert_contains "${CAPTURE_DIR}/summary.txt" "production_ready=false"
 assert_contains "${CAPTURE_DIR}/summary.txt" "public_base_url=${PUBLIC_BASE_URL}"
 assert_contains "${CAPTURE_DIR}/summary.txt" "health_url=${HEALTH_URL}"
 assert_contains "${CAPTURE_DIR}/summary.txt" "local_health_url=${HEALTH_URL}"
