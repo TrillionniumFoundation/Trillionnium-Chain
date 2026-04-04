@@ -32,11 +32,12 @@ fn contains_invisible_or_bidi_format_chars(value: &str) -> bool {
 }
 
 fn looks_like_dns_hostname(value: &str) -> bool {
-    if !value.contains('.') {
+    let candidate = value.strip_suffix('.').unwrap_or(value);
+    if !candidate.contains('.') {
         return false;
     }
 
-    value.split('.').all(|label| {
+    candidate.split('.').all(|label| {
         !label.is_empty()
             && !label.starts_with('-')
             && !label.ends_with('-')
@@ -1032,7 +1033,12 @@ mod tests {
 
     #[test]
     fn load_config_rejects_dns_hostname_style_node_id_with_operator_facing_error() {
-        for node_id in ["bootstrap.example.com", "node-2.bootstrap.internal"] {
+        for node_id in [
+            "bootstrap.example.com",
+            "node-2.bootstrap.internal",
+            "bootstrap.example.com.",
+            "node-2.bootstrap.internal.",
+        ] {
             let path = std::env::temp_dir().join(format!(
                 "trnm-node-config-dns-hostname-node-id-{}-{}-{node_id}.toml",
                 std::process::id(),
@@ -1922,7 +1928,13 @@ mod tests {
 
     #[test]
     fn validate_node_config_rejects_host_and_socket_literals_in_node_id() {
-        for node_id in ["localhost", "127.0.0.1", "127.0.0.1:7000", "[::1]:7000"] {
+        for node_id in [
+            "localhost",
+            "127.0.0.1",
+            "127.0.0.1:7000",
+            "[::1]:7000",
+            "bootstrap.example.com.",
+        ] {
             let err = validate_node_config(
                 NodeConfig {
                     node_id: node_id.into(),
