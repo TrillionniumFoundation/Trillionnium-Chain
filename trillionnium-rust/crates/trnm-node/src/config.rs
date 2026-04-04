@@ -3090,7 +3090,15 @@ mod tests {
                     )
                 })
             })
-            .map(|entry| entry.file_name().to_string_lossy().into_owned())
+            .map(|entry| {
+                entry.file_name().into_string().unwrap_or_else(|raw_name| {
+                    panic!(
+                        "{} must fail closed if a shipped bootstrap config directory entry is not valid UTF-8: {:?}",
+                        shipped_config_dir.display(),
+                        raw_name
+                    )
+                })
+            })
             .collect::<Vec<_>>();
         let shipped_config_entries = shipped_config_entry_names.iter().cloned().collect::<HashSet<_>>();
         let expected_shipped_config_entries = HashSet::from([
