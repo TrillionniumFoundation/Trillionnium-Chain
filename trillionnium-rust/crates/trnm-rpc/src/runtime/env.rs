@@ -206,4 +206,24 @@ mod tests {
 
         assert_eq!(got, Some(PathBuf::from("cfg/history/sources.txt")));
     }
+
+    #[test]
+    fn normalized_path_from_env_tolerates_crlf_before_bom_wrapped_comment_suffix() {
+        let prev = std::env::var("TRNM_RPC_RUNTIME_ENV_TEST_PATH").ok();
+        unsafe {
+            std::env::set_var(
+                "TRNM_RPC_RUNTIME_ENV_TEST_PATH",
+                "\r\n  \u{feff}\"cfg/history/sources.txt\"# archived replay note ",
+            );
+        }
+
+        let got = normalized_path_from_env("TRNM_RPC_RUNTIME_ENV_TEST_PATH");
+
+        match prev {
+            Some(value) => unsafe { std::env::set_var("TRNM_RPC_RUNTIME_ENV_TEST_PATH", value) },
+            None => unsafe { std::env::remove_var("TRNM_RPC_RUNTIME_ENV_TEST_PATH") },
+        }
+
+        assert_eq!(got, Some(PathBuf::from("cfg/history/sources.txt")));
+    }
 }
