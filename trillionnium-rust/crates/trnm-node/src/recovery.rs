@@ -470,6 +470,16 @@ mod tests {
     }
 
     #[test]
+    fn recovery_startup_summary_keeps_truncated_empty_state_in_fresh_bootstrap_mode() {
+        let recovered = recovered_state(0, 1, None, true, false);
+
+        assert_eq!(
+            recovery_startup_summary(&recovered),
+            "retained_wal_entries=0 checkpoint_height_retained=none checkpoint_tip_relation=none next_startup_height=1 wal_tail_truncated=true metadata_only_recovery=false join_rejoin_status=ready:fresh_bootstrap"
+        );
+    }
+
+    #[test]
     fn metadata_only_recovery_error_includes_operator_facing_summary() {
         let recovered = recovered_state(2, 12, Some(10), true, true);
         let error = metadata_only_recovery_error(Path::new("/tmp/trnm-wal"), &recovered);
