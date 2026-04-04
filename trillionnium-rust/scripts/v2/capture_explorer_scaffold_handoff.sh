@@ -107,6 +107,12 @@ DURABLE_READ_ANCHOR_REPLAY_START_ANCHOR="$(status_field durable_read_anchor_repl
 DURABLE_READ_ANCHOR_RETENTION_SCOPE="$(status_field durable_read_anchor_retention_scope)"
 DURABLE_READ_ANCHOR_ARCHIVE_OWNER="$(status_field durable_read_anchor_archive_owner)"
 DURABLE_READ_ANCHOR_LAG_SLO="$(status_field durable_read_anchor_lag_slo)"
+EXPECTED_DURABLE_READ_ANCHOR_INGESTION_SOURCE="missing-placeholder-scaffold"
+EXPECTED_DURABLE_READ_ANCHOR_CHECKPOINT_STORE="missing-placeholder-scaffold"
+EXPECTED_DURABLE_READ_ANCHOR_REPLAY_START_ANCHOR="missing-placeholder-scaffold"
+EXPECTED_DURABLE_READ_ANCHOR_RETENTION_SCOPE="rpc-window-bounded"
+EXPECTED_DURABLE_READ_ANCHOR_ARCHIVE_OWNER="missing-placeholder-scaffold"
+EXPECTED_DURABLE_READ_ANCHOR_LAG_SLO="missing-placeholder-scaffold"
 
 if [[ "${STATE}" != "running" ]]; then
   echo "refusing to capture handoff packet: explorer scaffold is not running (state=${STATE:-missing})" >&2
@@ -142,6 +148,30 @@ if [[ "${DURABLE_READ_ANCHOR_MISSING_COUNT}" != "${EXPECTED_DURABLE_READ_ANCHOR_
 fi
 if [[ "${DURABLE_READ_ANCHOR_MISSING_FIELDS}" != "${EXPECTED_DURABLE_READ_ANCHOR_MISSING_FIELDS}" ]]; then
   echo "refusing to capture handoff packet: durable_read_anchor_missing_fields drifted from placeholder scaffold contract" >&2
+  exit 1
+fi
+if [[ "${DURABLE_READ_ANCHOR_INGESTION_SOURCE}" != "${EXPECTED_DURABLE_READ_ANCHOR_INGESTION_SOURCE}" ]]; then
+  echo "refusing to capture handoff packet: durable_read_anchor_ingestion_source drifted from placeholder scaffold contract" >&2
+  exit 1
+fi
+if [[ "${DURABLE_READ_ANCHOR_CHECKPOINT_STORE}" != "${EXPECTED_DURABLE_READ_ANCHOR_CHECKPOINT_STORE}" ]]; then
+  echo "refusing to capture handoff packet: durable_read_anchor_checkpoint_store drifted from placeholder scaffold contract" >&2
+  exit 1
+fi
+if [[ "${DURABLE_READ_ANCHOR_REPLAY_START_ANCHOR}" != "${EXPECTED_DURABLE_READ_ANCHOR_REPLAY_START_ANCHOR}" ]]; then
+  echo "refusing to capture handoff packet: durable_read_anchor_replay_start_anchor drifted from placeholder scaffold contract" >&2
+  exit 1
+fi
+if [[ "${DURABLE_READ_ANCHOR_RETENTION_SCOPE}" != "${EXPECTED_DURABLE_READ_ANCHOR_RETENTION_SCOPE}" ]]; then
+  echo "refusing to capture handoff packet: durable_read_anchor_retention_scope drifted from placeholder scaffold contract" >&2
+  exit 1
+fi
+if [[ "${DURABLE_READ_ANCHOR_ARCHIVE_OWNER}" != "${EXPECTED_DURABLE_READ_ANCHOR_ARCHIVE_OWNER}" ]]; then
+  echo "refusing to capture handoff packet: durable_read_anchor_archive_owner drifted from placeholder scaffold contract" >&2
+  exit 1
+fi
+if [[ "${DURABLE_READ_ANCHOR_LAG_SLO}" != "${EXPECTED_DURABLE_READ_ANCHOR_LAG_SLO}" ]]; then
+  echo "refusing to capture handoff packet: durable_read_anchor_lag_slo drifted from placeholder scaffold contract" >&2
   exit 1
 fi
 
