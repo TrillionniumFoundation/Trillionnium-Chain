@@ -1089,13 +1089,26 @@ fn contains_hidden_or_control(c: char) -> bool {
     c.is_control()
         || matches!(
             c,
-            '\u{061C}'
+            '\u{00AD}'
+                | '\u{061C}'
+                | '\u{180E}'
                 | '\u{200B}'
                 | '\u{200C}'
                 | '\u{200D}'
                 | '\u{200E}'
                 | '\u{200F}'
                 | '\u{2060}'
+                | '\u{2061}'
+                | '\u{2062}'
+                | '\u{2063}'
+                | '\u{2064}'
+                | '\u{2065}'
+                | '\u{206A}'
+                | '\u{206B}'
+                | '\u{206C}'
+                | '\u{206D}'
+                | '\u{206E}'
+                | '\u{206F}'
                 | '\u{FEFF}'
                 | '\u{202A}'
                 | '\u{202B}'
@@ -3488,11 +3501,17 @@ mod tests {
             "hello\u{00a0}world".to_string(),
             "hello\u{2003}world".to_string(),
             "hello\u{0007}world".to_string(),
+            "hello\u{00ad}world".to_string(),
             "hello\u{061c}world".to_string(),
+            "hello\u{180e}world".to_string(),
             "hello\u{200e}world".to_string(),
             "hello\u{200f}world".to_string(),
             "hello\u{202e}world".to_string(),
+            "hello\u{2060}world".to_string(),
+            "hello\u{2063}world".to_string(),
             "hello\u{2068}world".to_string(),
+            "hello\u{206a}world".to_string(),
+            "hello\u{206f}world".to_string(),
             oversized,
         ] {
             let err = ensure_sign_message(&bad).unwrap_err();
