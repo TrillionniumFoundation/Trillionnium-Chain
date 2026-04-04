@@ -150,6 +150,19 @@ fn is_ipv4_mapped_ipv6(ip: std::net::IpAddr) -> bool {
     }
 }
 
+fn is_ipv4_compatible_ipv6(ip: std::net::IpAddr) -> bool {
+    match ip {
+        std::net::IpAddr::V4(_) => false,
+        std::net::IpAddr::V6(addr) => {
+            let segments = addr.segments();
+            segments[..6].iter().all(|segment| *segment == 0)
+                && !addr.is_unspecified()
+                && !addr.is_loopback()
+                && addr.to_ipv4_mapped().is_none()
+        }
+    }
+}
+
 fn has_nonzero_ipv6_scope(socket: SocketAddr) -> bool {
     match socket {
         SocketAddr::V4(_) => false,
@@ -1801,6 +1814,11 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         path
     );
     anyhow::ensure!(
+        !is_ipv4_compatible_ipv6(rpc_socket.ip()),
+        "invalid node config {}: rpc_addr must not use an IPv4-compatible IPv6 address",
+        path
+    );
+    anyhow::ensure!(
         !has_nonzero_ipv6_scope(rpc_socket),
         "invalid node config {}: rpc_addr must not use an IPv6 scope identifier",
         path
@@ -1896,6 +1914,11 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
     anyhow::ensure!(
         !is_ipv4_mapped_ipv6(p2p_socket.ip()),
         "invalid node config {}: p2p_addr must not use an IPv4-mapped IPv6 address",
+        path
+    );
+    anyhow::ensure!(
+        !is_ipv4_compatible_ipv6(p2p_socket.ip()),
+        "invalid node config {}: p2p_addr must not use an IPv4-compatible IPv6 address",
         path
     );
     anyhow::ensure!(
@@ -5641,6 +5664,35 @@ mod tests {
             .contains("p2p_addr must use a canonical socket literal"));
 
         let _ = std::fs::remove_file(p2p_path);
+    }
+
+    #[test]
+    fn load_config_rejects_ipv4_compatible_ipv6_rpc_listener_with_operator_facing_error() {
+        let path = std::env::temp_dir().join(format!(
+            "trnm-node-config-ipv4-compatible-rpc-listener-{}-{}.toml",
+            std::process::id(),
+            now_unix_ms()
+        ));
+        std::fs::write(
+            &path,
+            "node_id = \"node-a\"\nrpc_addr = \"[::7f00:1]:26657\"\np2p_addr = \"[::7f00:1]:26656\"\n",
+        )
+        .expect("write config");
+
+        let path_str = path.to_str().expect("utf8 path");
+        let err = load_config(path_str)
+            .expect_err("IPv4-compatible IPv6 bootstrap listeners must fail closed");
+        let err_surface = format!("{err:#}");
+        assert!(
+            err_surface.contains("rpc_addr must not use an IPv4-compatible IPv6 address"),
+            "unexpected error: {err:#}"
+        );
+        assert!(
+            err_surface.contains(path_str),
+            "error surface must keep the operator-supplied config path visible: {err:#}"
+        );
+
+        let _ = std::fs::remove_file(path);
     }
 
     #[test]
