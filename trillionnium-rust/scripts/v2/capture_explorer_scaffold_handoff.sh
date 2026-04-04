@@ -7,6 +7,9 @@ RUN_ROOT="${RUST_ROOT}/run/explorer-service"
 STATUS_SCRIPT="${SCRIPT_DIR}/explorer_service_status.sh"
 INDEX_FILE="${RUN_ROOT}/public/index.json"
 TEMPLATE_PATH="trillionnium-rust/docs/release/TRNM_EXPLORER_SCAFFOLD_HANDOFF_TEMPLATE_2026-04-04.md"
+DAY1_CONTRACT_PATH="trillionnium-rust/docs/release/TRNM_DAY1_PUBLIC_READ_CONTRACT_2026-04-03.md"
+RANK1_TASK_BOARD_PATH="trillionnium-rust/docs/release/TRNM_RANK1_READ_SURFACE_TASK_BOARD_2026-04-03.md"
+BLOCKER_BOARD_PATH="trillionnium-rust/docs/release/TRNM_MAINNET_BLOCKER_BOARD_2026-03-31.md"
 
 usage() {
   cat <<'EOF'
@@ -223,6 +226,9 @@ durability_boundary=${DURABILITY_BOUNDARY}
 archive_strategy=${ARCHIVE_STRATEGY}
 read_replica_strategy=${READ_REPLICA_STRATEGY}
 template_path=${TEMPLATE_PATH}
+truth_source_day1_contract=${DAY1_CONTRACT_PATH}
+truth_source_rank1_task_board=${RANK1_TASK_BOARD_PATH}
+truth_source_blocker_board=${BLOCKER_BOARD_PATH}
 replay_command=./trillionnium-rust/scripts/v2/explorer_service_up.sh
 status_command=./trillionnium-rust/scripts/v2/explorer_service_status.sh
 rollback_command=./trillionnium-rust/scripts/v2/explorer_service_down.sh
