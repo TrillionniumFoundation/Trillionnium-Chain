@@ -90,3 +90,27 @@ fn ensure_recoverable_wal_state_allows_fully_checkpointed_recovery() {
 
     let _ = fs::remove_dir_all(&wal_dir);
 }
+
+#[test]
+fn ensure_recoverable_wal_state_allows_checkpoint_only_bootstrap_after_tail_repair() {
+    let wal_dir = temp_wal_dir("recover-guard-checkpoint-only-tail-repair");
+    fs::create_dir_all(&wal_dir).unwrap();
+
+    let recovered = RecoveredWalState {
+        next_height: 9,
+        restored_lock: None,
+        last_checkpoint: Some(CheckpointMeta {
+            height: 8,
+            state_root_hex: "r8".into(),
+            wal_entry_hash_hex: "h8".into(),
+        }),
+        truncated: true,
+        metadata_only_recovery: false,
+        wal_entries_retained: 0,
+        checkpoint_height_retained: Some(8),
+    };
+
+    ensure_recoverable_wal_state(&wal_dir, &recovered).unwrap();
+
+    let _ = fs::remove_dir_all(&wal_dir);
+}
