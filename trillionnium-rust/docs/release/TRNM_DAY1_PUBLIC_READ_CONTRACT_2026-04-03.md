@@ -315,6 +315,40 @@ Day-1 只冻结已真实存在并可证明的 pagination 行为。
 
 > **本文件只能关闭 Group A 的“contract freeze”部分，不能单独关闭整个 Rank 1。**
 
+## 当前最小 operator-facing deployment path（与 contract freeze 配套，但不等于 blocker closure）
+
+即使 Day-1 read contract 冻结，也仍需要一个**不会把 placeholder 写成 durable backend** 的最小部署路径，供 operator / signoff / handoff 使用。
+
+当前只应承认下面这条最小路径：
+
+1. 读面仍以 `query-task` / `query-events` / `query-capability-audit` / `query-normalized-audit-events` + `healthz` 为唯一 Day-1 promise；
+2. 对外暴露若需要独立入口，只能引用 `trillionnium-rust/docs/runbooks/explorer-service-scaffold.md` 中的 operator-facing static scaffold；
+3. 部署形态优先采用 **loopback bind + reverse proxy**，并把 runtime knobs 固定在 `trillionnium-rust/run/explorer-service/explorer-service.env`；
+4. handoff / signoff 时必须同时保存：
+   - env file 关键字段：`EXPLORER_HOST`、`EXPLORER_PORT`、`EXPLORER_PUBLIC_BASE_URL`、`EXPLORER_HEALTH_URL`、`EXPLORER_RPC_BASE_URL`
+   - 一次 `./scripts/v2/explorer_service_status.sh` 输出
+   - 一次 `/index.json` 抓取结果
+5. handoff 文本必须原样保留 fail-closed blocker markers：
+   - `deployment_evidence_scope=placeholder-only`
+   - `rank1_read_surface_blocker=still-open`
+   - `durable_indexer_status=not-implemented-in-this-scaffold`
+   - `historical_query_scope=rpc-retention-bounded`
+   - `durable_read_anchor_complete=false`
+
+这条路径解决的是：
+
+> **“当前最小 public read contract 应该如何被 operator 稳定部署/交接而不制造误判？”**
+
+它**不**解决：
+- durable indexer pipeline
+- historical read-model
+- archive / read replica strategy
+- explorer backend SLO / lag promise
+
+换句话说：
+
+> **可以冻结 contract，也可以冻结 placeholder deployment path；但仍不能把这两者写成 Rank 1 explorer/indexer blocker 已关闭。**
+
 ---
 
 # Part V — 需要立刻跟进的实现任务
@@ -337,6 +371,12 @@ Day-1 只冻结已真实存在并可证明的 pagination 行为。
 - 一页 memo
 - 引用本文件
 - 说明：哪些是 Day-1 promise，哪些明确不承诺
+
+## G-A5 — 冻结最小 operator-facing deployment handoff 附件
+- signoff note 必须同时引用 `trillionnium-rust/docs/runbooks/explorer-service-scaffold.md`
+- 至少附上 env file 关键字段、一次 `explorer_service_status.sh` 输出、一次 `/index.json` 抓取结果
+- 必须保留 `deployment_evidence_scope=placeholder-only` / `rank1_read_surface_blocker=still-open` / `durable_indexer_status=not-implemented-in-this-scaffold` / `durable_read_anchor_complete=false`
+- 不允许只凭 `health=ok`、`state=running` 或 reverse proxy 可访问就把 deployment path 表述成 durable explorer backend
 
 ---
 

@@ -84,6 +84,12 @@
 3. adapter tests 覆盖所有 fail-closed 规则
 4. query-normalized-audit-events 的 query 字段有表格化说明
 5. out-of-scope 项未被 README / frontend / runbook 误写成已支持
+6. 若 signoff 同时引用 operator-facing deployment path，则必须附：
+   - `trillionnium-rust/docs/runbooks/explorer-service-scaffold.md`
+   - env file 关键字段（`EXPLORER_HOST` / `EXPLORER_PORT` / `EXPLORER_PUBLIC_BASE_URL` / `EXPLORER_HEALTH_URL` / `EXPLORER_RPC_BASE_URL`）
+   - 一次 `./scripts/v2/explorer_service_status.sh` 输出
+   - 一次 `/index.json` 抓取结果
+   - fail-closed blocker markers：`deployment_evidence_scope=placeholder-only`、`rank1_read_surface_blocker=still-open`、`durable_indexer_status=not-implemented-in-this-scaffold`、`historical_query_scope=rpc-retention-bounded`、`durable_read_anchor_complete=false`
 
 ---
 
