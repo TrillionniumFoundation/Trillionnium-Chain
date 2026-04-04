@@ -5326,6 +5326,15 @@ mod tests {
     }
 
     #[test]
+    fn ensure_safe_sign_message_rejects_inhibit_symmetric_swapping_text() {
+        let err = ensure_safe_sign_message("rotate signer\u{206a}slot-b").unwrap_err();
+        assert!(
+            err.to_string().contains("ASCII printable text"),
+            "unexpected: {err}"
+        );
+    }
+
+    #[test]
     fn ensure_safe_sign_message_rejects_first_strong_isolate_text() {
         let err = ensure_safe_sign_message("rotate signer\u{2068}slot-b").unwrap_err();
         assert!(
