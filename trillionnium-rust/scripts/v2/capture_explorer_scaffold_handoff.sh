@@ -97,6 +97,8 @@ DURABLE_INDEXER_STATUS="$(status_field durable_indexer_status)"
 DURABLE_READ_ANCHOR_COMPLETE="$(status_field durable_read_anchor_complete)"
 DURABLE_READ_ANCHOR_MISSING_COUNT="$(status_field durable_read_anchor_missing_count)"
 DURABLE_READ_ANCHOR_MISSING_FIELDS="$(status_field durable_read_anchor_missing_fields)"
+EXPECTED_DURABLE_READ_ANCHOR_MISSING_COUNT="6"
+EXPECTED_DURABLE_READ_ANCHOR_MISSING_FIELDS="ingestion_source,checkpoint_store,replay_start_anchor,retention_scope,archive_owner,lag_slo"
 DURABLE_READ_ANCHOR_INGESTION_SOURCE="$(status_field durable_read_anchor_ingestion_source)"
 DURABLE_READ_ANCHOR_CHECKPOINT_STORE="$(status_field durable_read_anchor_checkpoint_store)"
 DURABLE_READ_ANCHOR_REPLAY_START_ANCHOR="$(status_field durable_read_anchor_replay_start_anchor)"
@@ -130,6 +132,14 @@ if [[ "${DURABLE_INDEXER_STATUS}" != "not-implemented-in-this-scaffold" ]]; then
 fi
 if [[ "${DURABLE_READ_ANCHOR_COMPLETE}" != "false" ]]; then
   echo "refusing to capture handoff packet: durable_read_anchor_complete must remain false for placeholder scaffold capture" >&2
+  exit 1
+fi
+if [[ "${DURABLE_READ_ANCHOR_MISSING_COUNT}" != "${EXPECTED_DURABLE_READ_ANCHOR_MISSING_COUNT}" ]]; then
+  echo "refusing to capture handoff packet: durable_read_anchor_missing_count drifted from placeholder scaffold contract" >&2
+  exit 1
+fi
+if [[ "${DURABLE_READ_ANCHOR_MISSING_FIELDS}" != "${EXPECTED_DURABLE_READ_ANCHOR_MISSING_FIELDS}" ]]; then
+  echo "refusing to capture handoff packet: durable_read_anchor_missing_fields drifted from placeholder scaffold contract" >&2
   exit 1
 fi
 
