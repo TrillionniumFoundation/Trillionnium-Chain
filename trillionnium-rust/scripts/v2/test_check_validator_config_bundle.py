@@ -326,6 +326,30 @@ class CheckValidatorConfigBundleTests(unittest.TestCase):
             result.stderr,
         )
 
+    def test_public_mainnet_input_rejects_dot_segments_in_packet_distribution_path(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            config = self.write_config(
+                root,
+                "node1.toml",
+                node_id="node1",
+                rpc_addr="127.0.0.1:7001",
+                p2p_addr="127.0.0.1:7002",
+            )
+            result = self.run_script(
+                *self.make_public_mainnet_args(
+                    config,
+                    "--packet-distribution-path",
+                    str(root / "handoff" / ".." / "packet.txt"),
+                )
+            )
+
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn(
+            "public-mainnet-input requires packet_distribution_path to avoid '.' or '..' path segments",
+            result.stderr,
+        )
+
     def test_public_mainnet_input_rejects_directory_genesis_artifact_path(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
@@ -349,6 +373,30 @@ class CheckValidatorConfigBundleTests(unittest.TestCase):
         self.assertNotEqual(result.returncode, 0)
         self.assertIn(
             "public-mainnet-input requires genesis_artifact_path to name one exact artifact path",
+            result.stderr,
+        )
+
+    def test_public_mainnet_input_rejects_dot_segments_in_genesis_artifact_path(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            config = self.write_config(
+                root,
+                "node1.toml",
+                node_id="node1",
+                rpc_addr="127.0.0.1:7001",
+                p2p_addr="127.0.0.1:7002",
+            )
+            result = self.run_script(
+                *self.make_public_mainnet_args(
+                    config,
+                    "--genesis-artifact-path",
+                    f"{root}/artifacts/./genesis.json",
+                )
+            )
+
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn(
+            "public-mainnet-input requires genesis_artifact_path to avoid '.' or '..' path segments",
             result.stderr,
         )
 
@@ -379,7 +427,7 @@ class CheckValidatorConfigBundleTests(unittest.TestCase):
             result.stderr,
         )
 
-    def test_public_mainnet_input_rejects_normalized_same_packet_and_genesis_paths(self) -> None:
+    def test_public_mainnet_input_rejects_dot_segment_alias_before_normalized_same_path_check(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             config = self.write_config(
@@ -398,13 +446,13 @@ class CheckValidatorConfigBundleTests(unittest.TestCase):
                     "--packet-distribution-path",
                     str(shared_path),
                     "--genesis-artifact-path",
-                    str(packet_dir / ".." / "packets" / "shared.packet.txt"),
+                    f"{packet_dir}/../packets/shared.packet.txt",
                 )
             )
 
         self.assertNotEqual(result.returncode, 0)
         self.assertIn(
-            "public-mainnet-input requires packet_distribution_path and genesis_artifact_path to name different files",
+            "public-mainnet-input requires genesis_artifact_path to avoid '.' or '..' path segments",
             result.stderr,
         )
 

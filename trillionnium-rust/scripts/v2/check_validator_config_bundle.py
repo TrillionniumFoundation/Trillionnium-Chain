@@ -277,9 +277,14 @@ def validate_packet_atom_value(value: str, field: str) -> None:
 
 def validate_packet_path(value: str, field: str) -> None:
     validate_packet_line_value(value, field)
-    if not Path(value).is_absolute():
+    path = Path(value)
+    if not path.is_absolute():
         fail(
             f"invalid ceremony packet arguments: public-mainnet-input requires {field} to be an absolute path"
+        )
+    if "/./" in value or value.endswith("/.") or any(part == ".." for part in path.parts):
+        fail(
+            f"invalid ceremony packet arguments: public-mainnet-input requires {field} to avoid '.' or '..' path segments"
         )
 
 
