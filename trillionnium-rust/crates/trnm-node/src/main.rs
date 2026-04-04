@@ -1995,7 +1995,11 @@ fn ensure_config_path_stays_within_allowed_roots(requested: &str, resolved: &Pat
     let allowed_by_test_temp = {
         let temp_dir = std::env::temp_dir();
         let canonical_temp_dir = temp_dir.canonicalize().unwrap_or_else(|_| temp_dir.clone());
-        (resolved.starts_with(&temp_dir) || resolved.starts_with(&canonical_temp_dir))
+        let resolved_is_symlink = std::fs::symlink_metadata(resolved)
+            .map(|meta| meta.file_type().is_symlink())
+            .unwrap_or(false);
+        !resolved_is_symlink
+            && (resolved.starts_with(&temp_dir) || resolved.starts_with(&canonical_temp_dir))
             && canonical_resolved.starts_with(&canonical_temp_dir)
     };
     #[cfg(not(test))]
@@ -4197,11 +4201,23 @@ mod tests {
         let canonical_symlink_parent = workspace_shadow
             .canonicalize()
             .expect("workspace shadow should canonicalize");
+        let workspace_root = super::workspace_root()
+            .canonicalize()
+            .expect("workspace root should canonicalize");
+        let current_dir = std::env::current_dir()
+            .expect("capture cwd")
+            .canonicalize()
+            .expect("cwd should canonicalize");
         let _ = std::fs::remove_dir_all(&temp_root);
 
         assert!(
             !canonical_target.starts_with(&canonical_symlink_parent),
             "test fixture must point outside the allowed workspace shadow"
+        );
+        assert!(
+            !canonical_target.starts_with(&workspace_root)
+                && !canonical_target.starts_with(&current_dir),
+            "test fixture must stay outside both allowed roots"
         );
         assert!(
             err.to_string().contains("resolves outside allowed roots"),
