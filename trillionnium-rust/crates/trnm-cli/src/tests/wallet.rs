@@ -670,6 +670,24 @@ fn explicit_wallet_store_path_must_be_absolute_and_normalized() {
             .contains("must be an absolute normalized path"),
         "unexpected error: {mongolian_separator_err}"
     );
+
+    let math_forward_slash_err = read_key(std::path::Path::new("/tmp⟋trnm-wallets"), "alice")
+        .unwrap_err();
+    assert!(
+        math_forward_slash_err
+            .to_string()
+            .contains("must be an absolute normalized path"),
+        "unexpected error: {math_forward_slash_err}"
+    );
+
+    let math_back_slash_err = read_key(std::path::Path::new("/tmp⟍trnm-wallets"), "alice")
+        .unwrap_err();
+    assert!(
+        math_back_slash_err
+            .to_string()
+            .contains("must be an absolute normalized path"),
+        "unexpected error: {math_back_slash_err}"
+    );
 }
 
 #[test]
