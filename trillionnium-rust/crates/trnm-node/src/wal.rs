@@ -263,6 +263,32 @@ mod tests {
     }
 
     #[test]
+    fn resolve_wal_dir_auto_keeps_explicit_custom_recovery_path_even_when_builtin_default_has_state() {
+        let sandbox = temp_wal_dir("resolve-auto-custom-overrides-builtin-default-state");
+        let prior_cwd = std::env::current_dir().unwrap();
+        let explicit_wal_dir = sandbox.join("custom-rejoin-wal");
+        fs::create_dir_all(&explicit_wal_dir).unwrap();
+        fs::create_dir_all(sandbox.join(DEFAULT_BFT_WAL_DIR)).unwrap();
+        fs::write(
+            checkpoint_file(&sandbox.join(DEFAULT_BFT_WAL_DIR)),
+            "[[checkpoints]]\nheight = 7\nstate_root_hex = \"aa\"\nwal_entry_hash_hex = \"bb\"\n",
+        )
+        .unwrap();
+        std::env::set_current_dir(&sandbox).unwrap();
+
+        let mut args = default_args();
+        args.bft_wal_dir = explicit_wal_dir.display().to_string();
+        args.bft_wal_mode = WalDirMode::Auto;
+
+        let (resolved, note) = resolve_wal_dir(&args).unwrap();
+        assert_eq!(resolved, explicit_wal_dir);
+        assert!(note.is_none());
+
+        std::env::set_current_dir(prior_cwd).unwrap();
+        let _ = fs::remove_dir_all(&sandbox);
+    }
+
+    #[test]
     fn resolve_wal_dir_auto_allows_builtin_default_when_only_comment_only_checkpoint_scaffold_exists() {
         let sandbox = temp_wal_dir("resolve-auto-comment-only-checkpoint-scaffold");
         let prior_cwd = std::env::current_dir().unwrap();
