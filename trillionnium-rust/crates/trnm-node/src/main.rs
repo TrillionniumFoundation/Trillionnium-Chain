@@ -881,9 +881,35 @@ fn recovery_startup_summary(recovered: &RecoveredWalState) -> String {
     )
 }
 
+fn metadata_only_operator_action(recovered: &RecoveredWalState) -> &'static str {
+    if recovered.wal_entries_retained == 0 {
+        "operator action: restart with a fresh --bft-wal-dir / --bft-wal-mode auto isolated run; if this node must rejoin from prior state, restore an application snapshot before retrying"
+    } else {
+        match recovered.checkpoint_height_retained {
+            Some(checkpoint_height)
+                if checkpoint_height < recovered.next_height.saturating_sub(1) =>
+            {
+                "operator action: restore an application snapshot that covers the retained WAL tip before retrying join/rejoin; do not resume from metadata alone"
+            }
+            Some(checkpoint_height)
+                if checkpoint_height > recovered.next_height.saturating_sub(1) =>
+            {
+                "operator action: investigate WAL/checkpoint mismatch, rebuild the recovery inputs, and only retry join/rejoin once WAL tip and checkpoint evidence agree"
+            }
+            None => {
+                "operator action: rebuild or restore checkpoint metadata for the retained WAL tip before retrying join/rejoin; do not resume from metadata alone"
+            }
+            Some(_) => {
+                "operator action: restore the corresponding application snapshot before retrying join/rejoin; do not resume from metadata alone"
+            }
+        }
+    }
+}
+
 fn metadata_only_recovery_error(wal_dir: &Path, recovered: &RecoveredWalState) -> String {
+    let operator_action = metadata_only_operator_action(recovered);
     format!(
-        "refusing metadata-only recovery from {}: verified WAL/checkpoint metadata {} (last retained checkpoint: {}, next startup height: {}); incident clue: {} but trnm-node does not yet restore application StateStore snapshots or replay committed blocks; start from a fresh --bft-wal-dir / --bft-wal-mode auto isolated run, or implement state snapshot+replay recovery first",
+        "refusing metadata-only recovery from {}: verified WAL/checkpoint metadata {} (last retained checkpoint: {}, next startup height: {}); incident clue: {} but trnm-node does not yet restore application StateStore snapshots or replay committed blocks; {}; implement state snapshot+replay recovery first if this restart path must remain supported",
         wal_dir.display(),
         retained_wal_summary(recovered),
         recovered
@@ -892,6 +918,7 @@ fn metadata_only_recovery_error(wal_dir: &Path, recovered: &RecoveredWalState) -
             .unwrap_or_else(|| "none".into()),
         recovered.next_height,
         recovery_startup_summary(recovered),
+        operator_action,
     )
 }
 

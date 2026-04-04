@@ -10019,6 +10019,41 @@ locked_block_hash = "stale-lock"
     }
 
     #[test]
+    fn recover_metadata_only_error_reports_aligned_retained_wal_operator_action() {
+        let wal_dir = temp_wal_dir("recover-metadata-only-error-aligned-retained-wal");
+        fs::create_dir_all(&wal_dir).unwrap();
+
+        let recovered = RecoveredWalState {
+            next_height: 12,
+            restored_lock: None,
+            last_checkpoint: Some(CheckpointMeta {
+                height: 11,
+                state_root_hex: "r11".into(),
+                wal_entry_hash_hex: "h11".into(),
+            }),
+            truncated: false,
+            metadata_only_recovery: true,
+            wal_entries_retained: 2,
+            checkpoint_height_retained: Some(11),
+        };
+
+        let err = metadata_only_recovery_error(&wal_dir, &recovered);
+
+        assert!(err.contains("retained 2 committed WAL entries through height 11"));
+        assert!(err.contains("last retained checkpoint: 11"));
+        assert!(err.contains("next startup height: 12"));
+        assert!(err.contains(
+            "incident clue: retained_wal_entries=2 checkpoint_height_retained=11 checkpoint_tip_relation=aligned next_startup_height=12 wal_tail_truncated=false metadata_only_recovery=true join_rejoin_status=blocked:metadata_only_recovery"
+        ));
+        assert!(err.contains(
+            "operator action: restore the corresponding application snapshot before retrying join/rejoin; do not resume from metadata alone"
+        ));
+        assert_eq!(crate::recovery::metadata_only_recovery_error(&wal_dir, &recovered), err);
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
     fn ensure_recoverable_wal_state_allows_fully_checkpointed_recovery() {
         let wal_dir = temp_wal_dir("recover-guard-safe");
         fs::create_dir_all(&wal_dir).unwrap();
