@@ -4569,6 +4569,33 @@ mod tests {
             shipped_node_configs, expected_shipped_node_configs,
             "shipped bootstrap config set must stay exactly node1.toml..node4.toml to keep deterministic peer formation fixtures intact"
         );
+        let shipped_topology_files = std::fs::read_dir(&shipped_config_dir)
+            .unwrap_or_else(|err| {
+                panic!(
+                    "{} should stay readable for shipped bootstrap topology file checks: {err}",
+                    shipped_config_dir.display()
+                )
+            })
+            .filter_map(|entry| entry.ok())
+            .filter_map(|entry| {
+                let file_type = entry.file_type().ok()?;
+                if !file_type.is_file() || file_type.is_symlink() {
+                    return None;
+                }
+                Some(entry.file_name().to_string_lossy().into_owned())
+            })
+            .collect::<HashSet<_>>();
+        let expected_shipped_topology_files = HashSet::from([
+            String::from("README.md"),
+            String::from("node1.toml"),
+            String::from("node2.toml"),
+            String::from("node3.toml"),
+            String::from("node4.toml"),
+        ]);
+        assert_eq!(
+            shipped_topology_files, expected_shipped_topology_files,
+            "configs/ must remain exactly README.md plus node1.toml..node4.toml so bootstrap topology cannot silently grow extra shipped fixtures or helper sidecars"
+        );
 
         let mut node_ids = HashSet::new();
         let mut rpc_addrs = HashSet::new();
