@@ -200,6 +200,54 @@ fn load_node_event_log_sources_resolves_parent_relative_manifest_entries_from_ma
 }
 
 #[test]
+fn load_node_event_log_sources_deduplicates_lexically_equivalent_manifest_relative_entries() {
+    let _guard = lock_env();
+    let root = unique_tmp_path("trnm-rpc-log-sources-manifest-relative-dedupe", "dir");
+    let archive_dir = root.join("archive");
+    let manifest_dir = root.join("cfg/history");
+    fs::create_dir_all(&archive_dir).expect("create archive dir");
+    fs::create_dir_all(&manifest_dir).expect("create manifest dir");
+
+    let archived_log = archive_dir.join("node4.log");
+    let manifest = manifest_dir.join("sources.txt");
+    fs::write(&archived_log, "").expect("write archived log");
+    fs::write(
+        &manifest,
+        "../../archive/./node4.log\n../../archive/history/../node4.log\n",
+    )
+    .expect("write manifest");
+
+    let prev_sources = std::env::var(NODE_EVENT_LOG_SOURCES_ENV).ok();
+    let prev_manifest = std::env::var(NODE_EVENT_LOG_MANIFEST_ENV).ok();
+    unsafe {
+        std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV);
+        std::env::set_var(
+            NODE_EVENT_LOG_MANIFEST_ENV,
+            manifest.to_string_lossy().to_string(),
+        );
+    }
+
+    let got = load_node_event_log_sources(&root);
+
+    match prev_sources {
+        Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_SOURCES_ENV, v) },
+        None => unsafe { std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV) },
+    }
+    match prev_manifest {
+        Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_MANIFEST_ENV, v) },
+        None => unsafe { std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV) },
+    }
+
+    assert_eq!(
+        got,
+        vec![archive_dir.join("node4.log")],
+        "historical replay manifests should dedupe lexically equivalent relative aliases before read-model expansion"
+    );
+
+    let _ = fs::remove_dir_all(root);
+}
+
+#[test]
 fn load_node_event_log_sources_resolves_relative_manifest_env_from_root_before_replay_expansion() {
     let _guard = lock_env();
     let root = unique_tmp_path("trnm-rpc-log-sources-relative-manifest-env", "dir");
