@@ -71,6 +71,9 @@
 11. **主网值班可观测性最小包 / 告警与 incident handoff 约定**：看 `trillionnium-rust/docs/runbooks/mainnet-observability-alerting-starter-pack.md`，oracle 特定告警再配合 `trillionnium-rust/docs/runbooks/oracle-observability-alerts.md`。
    - 适用场景：需要冻结 `severity` / `signal` / `needs_replay` / `needs_rollback` 标签、最小 dashboard bundle、first-stop panel、以及 incident handoff 的 replay/rollback 指针。
    - 作用边界：它定义的是 **starter pack / 共享值班语义**，不等于 observability P0 已关闭，更不等于整个仓库 release-ready。
+12. **把当前 36-lane 进展压成 launch-distance / GO-NO-GO 面板**：看 `trillionnium-rust/docs/release/TRNM_PUBLIC_MAINNET_GO_NO_GO_PANEL_2026-04-04.md`。
+   - 适用场景：需要回答“结合当前 36-lane 提交代码，距离主网上线还有多远”“哪些已明显推进、哪些仍属硬 blocker、哪些可延后到 Day-1 之后”。
+   - 作用边界：它是基于当下 lane snapshot 的**判断面板**，不是 release-ready 证明，也不替代 gap matrix 的长期 blocker taxonomy。
 
 ## RC 演练最小证据模板（不发布）
 
