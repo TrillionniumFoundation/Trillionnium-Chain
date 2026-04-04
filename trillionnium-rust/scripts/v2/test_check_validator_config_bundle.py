@@ -330,8 +330,31 @@ class CheckValidatorConfigBundleTests(unittest.TestCase):
         )
         validator_entry_hash = hash_line.split("=", 1)[1]
         self.assertIn(f"genesis_artifact_sha256={VALID_SHA256}", ack_line)
+        self.assertIn("<owner-for-node1> checked", ack_line)
         self.assertIn("validator_name=node1", ack_line)
         self.assertIn(f"validator_entry_hash={validator_entry_hash}", ack_line)
+
+    def test_public_mainnet_input_scopes_owner_contact_placeholders_per_validator(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            config = self.write_config(
+                root,
+                "node1.toml",
+                node_id="node1",
+                rpc_addr="127.0.0.1:7001",
+                p2p_addr="127.0.0.1:7002",
+            )
+            result = self.run_script(*self.make_public_mainnet_args(config))
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn(
+            "validator_entry=validator_name=node1;validator_owner=<owner-for-node1>;",
+            result.stdout,
+        )
+        self.assertIn(
+            "operator_contact=node1=<chat/email/oncall-for-node1>",
+            result.stdout,
+        )
 
     def test_public_mainnet_input_scopes_ack_artifact_placeholders_per_validator(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

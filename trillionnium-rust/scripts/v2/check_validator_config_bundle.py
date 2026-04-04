@@ -391,20 +391,22 @@ def emit_ceremony_packet(args: argparse.Namespace, entries: list[dict[str, str]]
         validate_packet_atom_value(entry["p2p_addr"], "validator_entry.p2p_addr")
         validate_packet_atom_value(entry["rpc_addr"], "validator_entry.rpc_addr")
         validator_entry_hash = build_validator_entry_hash(entry, config_path)
+        validator_owner_placeholder = f"<owner-for-{validator_name}>"
+        operator_contact_placeholder = f"<chat/email/oncall-for-{validator_name}>"
         print(
             "validator_entry="
             f"validator_name={validator_name};"
-            "validator_owner=<owner>;"
+            f"validator_owner={validator_owner_placeholder};"
             f"node_id={validator_name};"
             f"config_path={config_path};"
             f"p2p_addr={entry['p2p_addr']};"
             f"rpc_addr={entry['rpc_addr']}"
         )
         print("validator_entry_hash=" + validator_entry_hash)
-        print(f"operator_contact={validator_name}=<chat/email/oncall>")
+        print(f"operator_contact={validator_name}={operator_contact_placeholder}")
         print(
             "operator_ack="
-            f"<owner> checked genesis_artifact_sha256={args.genesis_artifact_sha256};"
+            f"{validator_owner_placeholder} checked genesis_artifact_sha256={args.genesis_artifact_sha256};"
             f"config_path={config_path};"
             f"validator_name={validator_name};"
             f"validator_entry_hash={validator_entry_hash}"
