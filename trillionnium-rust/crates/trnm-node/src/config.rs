@@ -1007,6 +1007,30 @@ mod tests {
     }
 
     #[test]
+    fn load_config_rejects_socket_shaped_ipv4_node_id_with_operator_facing_error() {
+        let path = std::env::temp_dir().join(format!(
+            "trnm-node-config-ipv4-socket-node-id-{}-{}.toml",
+            std::process::id(),
+            std::thread::current().name().unwrap_or("unnamed")
+        ));
+        std::fs::write(
+            &path,
+            "node_id = \"127.0.0.1:7000\"\nrpc_addr = \"127.0.0.1:7000\"\np2p_addr = \"127.0.0.1:7001\"\n",
+        )
+        .expect("write config");
+
+        let err = load_config(path.to_str().expect("utf8 path"))
+            .expect_err("socket-shaped ipv4 node_id must fail closed");
+        assert!(
+            err.to_string()
+                .contains("node_id must not look like a host or socket literal"),
+            "unexpected error: {err:#}"
+        );
+
+        let _ = std::fs::remove_file(path);
+    }
+
+    #[test]
     fn load_config_rejects_dns_hostname_style_node_id_with_operator_facing_error() {
         for node_id in ["bootstrap.example.com", "node-2.bootstrap.internal"] {
             let path = std::env::temp_dir().join(format!(
