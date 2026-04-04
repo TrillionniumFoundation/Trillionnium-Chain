@@ -823,6 +823,10 @@ mod tests {
             "operator action: restart with a fresh --bft-wal-dir / --bft-wal-mode auto isolated run; if this node must rejoin from prior state, restore an application snapshot before retrying"
         );
         assert_eq!(
+            metadata_only_operator_action(&recovered_state(0, u64::MAX, Some(u64::MAX - 1), false, true)),
+            "operator action: checkpoint-only bootstrap is acceptable with a fresh --bft-wal-dir / --bft-wal-mode auto isolated run; if this node must rejoin from prior state, restore an application snapshot before retrying"
+        );
+        assert_eq!(
             metadata_only_operator_action(&recovered_state(1, 9, None, false, true)),
             "operator action: rebuild or restore checkpoint metadata so it covers retained WAL tip height 8 before retrying join/rejoin; do not resume from metadata alone"
         );
@@ -852,6 +856,10 @@ mod tests {
                 u64::MAX - 1,
                 u64::MAX,
             )
+        );
+        assert_eq!(
+            metadata_only_operator_action(&recovered_state(2, u64::MAX, Some(u64::MAX), false, true)),
+            "operator action: restore the corresponding application snapshot before retrying join/rejoin; do not resume from metadata alone"
         );
     }
 
