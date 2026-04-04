@@ -177,8 +177,36 @@ if [ -n "$EXPECTED_WORKTREE_ROOT" ] || [ -n "$EXPECTED_BRANCH_REF" ] || [ -n "$E
   require_path_value --expected-worktree-root "$EXPECTED_WORKTREE_ROOT"
   require_token --expected-branch-ref "$EXPECTED_BRANCH_REF"
   require_nonempty --lane-verify-command "$LANE_VERIFY_COMMAND"
+  case "$LANE_VERIFY_COMMAND" in
+    *"verify_lane_worktree.sh"*) ;;
+    *)
+      printf 'invalid --lane-verify-command: expected verify_lane_worktree.sh invocation\n' >&2
+      exit 2
+      ;;
+  esac
+  case "$LANE_VERIFY_COMMAND" in
+    *"--expected-worktree-root $EXPECTED_WORKTREE_ROOT"*) ;;
+    *)
+      printf 'invalid --lane-verify-command: missing --expected-worktree-root %s\n' "$EXPECTED_WORKTREE_ROOT" >&2
+      exit 2
+      ;;
+  esac
+  case "$LANE_VERIFY_COMMAND" in
+    *"--expected-branch-ref $EXPECTED_BRANCH_REF"*) ;;
+    *)
+      printf 'invalid --lane-verify-command: missing --expected-branch-ref %s\n' "$EXPECTED_BRANCH_REF" >&2
+      exit 2
+      ;;
+  esac
   if [ -n "$EXPECTED_HEAD" ]; then
     require_token --expected-head "$EXPECTED_HEAD"
+    case "$LANE_VERIFY_COMMAND" in
+      *"--expected-head $EXPECTED_HEAD"*) ;;
+      *)
+        printf 'invalid --lane-verify-command: missing --expected-head %s\n' "$EXPECTED_HEAD" >&2
+        exit 2
+        ;;
+    esac
   fi
 fi
 

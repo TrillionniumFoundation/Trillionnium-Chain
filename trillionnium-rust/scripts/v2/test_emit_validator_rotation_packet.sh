@@ -59,6 +59,42 @@ if bash "$SCRIPT" \
 fi
 grep -q 'lane binding requires --expected-worktree-root, --expected-branch-ref, and --lane-verify-command together' /tmp/emit-packet.err
 
+if bash "$SCRIPT" \
+  --cutover-kind replacement \
+  --verified-worktree /tmp/trnm-lane \
+  --verified-branch-ref lane/mn05-operator-dr-rotation-lifecycle \
+  --verified-head 0123456789abcdef \
+  --outgoing-validator-id validator-old \
+  --incoming-validator-id validator-new \
+  --incoming-config-path /tmp/configs/validator-new.json \
+  --rollback-command 'rm -rf /tmp/cutover-note' \
+  --expected-worktree-root /Users/qianqi/.openclaw/workspace/trnm-mainnet-lanes/MN05-operator-dr-rotation-lifecycle \
+  --expected-branch-ref lane/mn05-operator-dr-rotation-lifecycle \
+  --lane-verify-command 'echo lane verified' \
+  >/tmp/emit-packet.out 2>/tmp/emit-packet.err; then
+  echo "expected non-verify_lane_worktree lane verify command to fail" >&2
+  exit 1
+fi
+grep -q 'invalid --lane-verify-command: expected verify_lane_worktree.sh invocation' /tmp/emit-packet.err
+
+if bash "$SCRIPT" \
+  --cutover-kind replacement \
+  --verified-worktree /tmp/trnm-lane \
+  --verified-branch-ref lane/mn05-operator-dr-rotation-lifecycle \
+  --verified-head 0123456789abcdef \
+  --outgoing-validator-id validator-old \
+  --incoming-validator-id validator-new \
+  --incoming-config-path /tmp/configs/validator-new.json \
+  --rollback-command 'rm -rf /tmp/cutover-note' \
+  --expected-worktree-root /Users/qianqi/.openclaw/workspace/trnm-mainnet-lanes/MN05-operator-dr-rotation-lifecycle \
+  --expected-branch-ref lane/mn05-operator-dr-rotation-lifecycle \
+  --lane-verify-command './scripts/v2/verify_lane_worktree.sh --expected-worktree-root /Users/qianqi/.openclaw/workspace/trnm-mainnet-lanes/MN05-operator-dr-rotation-lifecycle' \
+  >/tmp/emit-packet.out 2>/tmp/emit-packet.err; then
+  echo "expected lane verify command missing branch ref to fail" >&2
+  exit 1
+fi
+grep -q 'invalid --lane-verify-command: missing --expected-branch-ref lane/mn05-operator-dr-rotation-lifecycle' /tmp/emit-packet.err
+
 bash "$SCRIPT" \
   --cutover-kind replacement \
   --verified-worktree /tmp/trnm-lane \
@@ -170,6 +206,22 @@ if bash "$SCRIPT" \
   exit 1
 fi
 grep -q 'invalid --dr-status: must not start or end with whitespace' /tmp/emit-packet.err
+
+if bash "$SCRIPT" \
+  "${common_args[@]}" \
+  --expected-worktree-root /Users/qianqi/.openclaw/workspace/trnm-mainnet-lanes/MN05-operator-dr-rotation-lifecycle \
+  --expected-branch-ref lane/mn05-operator-dr-rotation-lifecycle \
+  --expected-head 0123456789abcdef \
+  --lane-verify-command './scripts/v2/verify_lane_worktree.sh --expected-worktree-root /Users/qianqi/.openclaw/workspace/trnm-mainnet-lanes/MN05-operator-dr-rotation-lifecycle --expected-branch-ref lane/mn05-operator-dr-rotation-lifecycle' \
+  --handoff-summary-path /tmp/run/health/evidence-20260403/summary.txt \
+  --handoff-manifest-path /tmp/release/rc-20260403/manifest.txt \
+  --summary-generated-at 2026-04-03T06:11:00Z \
+  --manifest-generated-at 2026-04-03T06:12:00Z \
+  >/tmp/emit-packet.out 2>/tmp/emit-packet.err; then
+  echo "expected lane verify command missing expected head to fail" >&2
+  exit 1
+fi
+grep -q 'invalid --lane-verify-command: missing --expected-head 0123456789abcdef' /tmp/emit-packet.err
 
 bash "$SCRIPT" \
   "${common_args[@]}" \
