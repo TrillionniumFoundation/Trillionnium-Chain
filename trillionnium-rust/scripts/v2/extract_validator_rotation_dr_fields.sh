@@ -260,6 +260,21 @@ if [ -z "$LANE_VERIFY_COMMAND" ] && grep -q '^lane_verify_command=' "$REPORT_PAT
   LANE_VERIFY_COMMAND="$(require_key "$REPORT_PATH" lane_verify_command)"
 fi
 
+if [ -n "$EXPECTED_WORKTREE_ROOT_RECORDED" ] || [ -n "$EXPECTED_BRANCH_REF_RECORDED" ] || [ -n "$LANE_VERIFY_COMMAND" ]; then
+  [ -n "$EXPECTED_WORKTREE_ROOT_RECORDED" ] || {
+    printf 'incomplete lane binding in %s: missing expected_worktree_root\n' "$REPORT_PATH" >&2
+    exit 1
+  }
+  [ -n "$EXPECTED_BRANCH_REF_RECORDED" ] || {
+    printf 'incomplete lane binding in %s: missing expected_branch_ref\n' "$REPORT_PATH" >&2
+    exit 1
+  }
+  [ -n "$LANE_VERIFY_COMMAND" ] || {
+    printf 'incomplete lane binding in %s: missing lane_verify_command\n' "$REPORT_PATH" >&2
+    exit 1
+  }
+fi
+
 printf 'report_path=%s\n' "$REPORT_PATH"
 printf 'dr_summary_path=%s\n' "$REPORT_PATH"
 printf 'generated_at=%s\n' "$GENERATED_AT"
