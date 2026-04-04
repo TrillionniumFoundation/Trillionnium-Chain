@@ -230,6 +230,40 @@ fn query_task_response_fallback_dedupes_canonical_replay_rows_from_persistence()
 }
 
 #[test]
+fn query_task_response_fallback_normalizes_hex_result_hash_alias_for_durable_read_model() {
+    with_market_path_env(&[(TASK_STATE_FILE_ENV, None)], || {
+        let recs = vec![
+            AdapterRecord {
+                ts: 10,
+                kind: "commit".into(),
+                task_id: 91,
+                worker: Some("worker-z".into()),
+                result_hash: None,
+                status: "accepted".into(),
+                tx_hash: Some("0xabc".into()),
+            },
+            AdapterRecord {
+                ts: 20,
+                kind: "reveal".into(),
+                task_id: 91,
+                worker: Some("worker-z".into()),
+                result_hash: Some(" 0XDEF ".into()),
+                status: "accepted".into(),
+                tx_hash: Some("0xdef".into()),
+            },
+        ];
+
+        let out = query_task_response(91, &[], &recs).expect("task expected");
+        assert_eq!(out.status, TaskStatus::Revealed);
+        assert_eq!(
+            out.result_hash_hex.as_deref(),
+            Some("0xdef"),
+            "durable replay should surface canonical result-hash identity"
+        );
+    });
+}
+
+#[test]
 fn query_task_from_node_events_none_for_missing_task() {
     let events = vec![NodeEventRecord {
         event_type: "accept".into(),
