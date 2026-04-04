@@ -25,6 +25,7 @@
 - `rank1_read_surface_blocker=still-open` 没被原样保留
 - `durable_indexer_status=not-implemented-in-this-scaffold` 没被原样保留
 - `durable_read_anchor_complete=false` 没被原样保留
+- `durable_read_anchor_missing_count=6` 或 `durable_read_anchor_missing_fields=ingestion_source,checkpoint_store,replay_start_anchor,retention_scope,archive_owner,lag_slo` 没被原样保留
 - 6 个 durable-read anchors 缺失时，却被误写成已补齐
 - note 中把 `block` / `tx` / `account` / archive / historical read-model 写成 Day-1 已承诺 surface
 
@@ -114,7 +115,8 @@ rollback_command=./trillionnium-rust/scripts/v2/explorer_service_down.sh
 4. `/index.json` proof may come from `curl`, browser fetch, or direct file read, but the note must preserve where it was fetched from.
 5. If reverse proxy and local bind differ, preserve both `health_url` and `local_health_url`, plus the corresponding `health_probe_url` / `local_health_probe_url` fields.
 6. Preserve both `replay_command` and `rollback_command` so the same placeholder bring-up path can be re-run or torn down without reconstructing it from memory.
-7. If any durable-read anchor is later filled with a real value, stop using this placeholder-only template and move to a durable-service handoff packet instead.
+7. Preserve `durable_read_anchor_missing_count` together with `durable_read_anchor_missing_fields`; do not keep one while trimming the other, because the pair is the fail-closed proof that the scaffold still lacks all 6 durable-read anchors.
+8. If any durable-read anchor is later filled with a real value, stop using this placeholder-only template and move to a durable-service handoff packet instead.
 
 ## What this template intentionally does not claim
 
@@ -132,7 +134,7 @@ This template does **not** claim any of the following are closed:
 A scaffold handoff note is acceptable only if it includes all of the following:
 
 - exact `EXPLORER_*` runtime values
-- one emitted status block with fail-closed markers intact
+- one emitted status block with fail-closed markers intact, including `durable_read_anchor_missing_count` + `durable_read_anchor_missing_fields`
 - explicit local deployment-path fields (`bind_host`, `bind_port`, `public_base_url`, `env_file`)
 - explicit probe evidence (`health_probe_url`, `local_health_probe_url`)
 - one `/index.json` fetch proof
