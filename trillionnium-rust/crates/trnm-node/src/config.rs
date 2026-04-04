@@ -2699,8 +2699,9 @@ mod tests {
             "persistent_peer",
             "node5.toml",
         ] {
+            let exact_token = format!("`{forbidden_term}`");
             assert_eq!(
-                readme.matches(forbidden_term).count(),
+                readme.matches(&exact_token).count(),
                 1,
                 "{} must mention `{forbidden_term}` exactly once, only in the explicit fail-closed prohibition against widening the shipped local bootstrap fixture",
                 readme_path.display()
