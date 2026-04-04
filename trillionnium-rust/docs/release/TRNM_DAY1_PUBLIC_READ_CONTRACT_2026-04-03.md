@@ -375,9 +375,11 @@ Day-1 只冻结已真实存在并可证明的 pagination 行为。
 
 ## G-A5 — 冻结最小 operator-facing deployment handoff 附件
 - signoff note 必须同时引用 `trillionnium-rust/docs/runbooks/explorer-service-scaffold.md`
+- 若当前证据仍来自 scaffold bring-up / `capture_explorer_scaffold_handoff.sh` / `explorer_service_status.sh`，或仍保留 `deployment_evidence_scope=placeholder-only`、`service_mode=operator-facing-static-scaffold`，则只能使用 `trillionnium-rust/docs/release/TRNM_EXPLORER_SCAFFOLD_HANDOFF_TEMPLATE_2026-04-04.md`
 - 至少附上 env file 关键字段、一次 `explorer_service_status.sh` 输出、一次 `/index.json` 抓取结果
-- 必须保留 `deployment_evidence_scope=placeholder-only` / `rank1_read_surface_blocker=still-open` / `durable_indexer_status=not-implemented-in-this-scaffold` / `durable_read_anchor_complete=false`
-- 不允许只凭 `health=ok`、`state=running` 或 reverse proxy 可访问就把 deployment path 表述成 durable explorer backend
+- 必须原样保留 `deployment_evidence_scope=placeholder-only` / `rank1_read_surface_blocker=still-open` / `durable_indexer_status=not-implemented-in-this-scaffold` / `durable_read_anchor_complete=false`
+- 只有当 `deployment_evidence_scope=durable-read-service`、`service_mode=non-placeholder-durable-read-service`、6 个 durable-read anchors 都已有真实值，且 replay / restore / checkpoint / lag evidence 同时具备时，才允许切换到 `trillionnium-rust/docs/release/TRNM_DURABLE_READ_SERVICE_HANDOFF_TEMPLATE_2026-04-04.md`
+- 不允许只凭 `health=ok`、`state=running`、reverse proxy 可访问，或手工补写未来态字段，就把 deployment path 表述成 durable explorer backend
 
 ---
 
