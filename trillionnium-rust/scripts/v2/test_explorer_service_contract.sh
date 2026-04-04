@@ -185,6 +185,34 @@ assert_contains "${ENV_FILE}" "EXPLORER_PUBLIC_BASE_URL=${PUBLIC_BASE_URL}"
 assert_contains "${ENV_FILE}" "EXPLORER_HEALTH_URL=${HEALTH_URL}"
 assert_contains "${ENV_FILE}" "EXPLORER_RPC_BASE_URL=${RPC_BASE_URL}"
 
+cp "${ENV_FILE}" "${TMP_DIR}/env-before-preserve-check"
+EXPLORER_HOST=127.0.0.1 \
+EXPLORER_PORT="${PORT}" \
+EXPLORER_PUBLIC_BASE_URL="https://override.should.not.persist.example" \
+EXPLORER_HEALTH_URL="https://override.should.not.persist.example/healthz" \
+EXPLORER_RPC_BASE_URL="https://override.should.not.persist.example/rpc" \
+  "${UP_SCRIPT}" >"${TMP_DIR}/up-env-preserve.out"
+assert_contains "${TMP_DIR}/up-env-preserve.out" "state=running"
+assert_contains "${TMP_DIR}/up-env-preserve.out" "public_base_url=https://override.should.not.persist.example"
+assert_contains "${TMP_DIR}/up-env-preserve.out" "health_url=https://override.should.not.persist.example/healthz"
+assert_contains "${TMP_DIR}/up-env-preserve.out" "rpc_base_url=https://override.should.not.persist.example/rpc"
+if ! cmp -s "${ENV_FILE}" "${TMP_DIR}/env-before-preserve-check"; then
+  echo "existing env file was unexpectedly rewritten by already-running up path" >&2
+  echo "--- before ---" >&2
+  cat "${TMP_DIR}/env-before-preserve-check" >&2
+  echo "--- after ---" >&2
+  cat "${ENV_FILE}" >&2
+  exit 1
+fi
+
+EXPLORER_HOST=127.0.0.1 \
+EXPLORER_PORT="${PORT}" \
+EXPLORER_PUBLIC_BASE_URL="https://override.should.not.persist.example" \
+EXPLORER_HEALTH_URL="https://override.should.not.persist.example/healthz" \
+EXPLORER_RPC_BASE_URL="https://override.should.not.persist.example/rpc" \
+  "${DOWN_SCRIPT}" >"${TMP_DIR}/down-env-preserve.out"
+assert_contains "${TMP_DIR}/down-env-preserve.out" "state=down"
+
 if [[ ! -f "${LOG_FILE}" ]]; then
   echo "expected log file to exist: ${LOG_FILE}" >&2
   exit 1
