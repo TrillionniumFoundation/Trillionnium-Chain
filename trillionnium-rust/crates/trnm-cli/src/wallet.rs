@@ -289,7 +289,7 @@ pub(crate) fn default_wallet_store() -> PathBuf {
 
     let home_root = std::env::var("HOME")
         .ok()
-        .map(PathBuf::from)
+        .and_then(|raw| normalize_wallet_store_env(&raw).map(PathBuf::from))
         .filter(|path| {
             wallet_store_path_is_safe(path) && wallet_store_path_and_ancestors_are_symlink_free(path)
         })

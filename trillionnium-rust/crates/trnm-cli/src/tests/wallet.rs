@@ -418,6 +418,37 @@ fn default_wallet_store_falls_back_to_absolute_cwd_when_home_missing_or_relative
 }
 
 #[test]
+fn default_wallet_store_normalizes_wrapped_home_env_before_deriving_store() {
+    let _guard = ENV_LOCK.lock().unwrap();
+    let original_store = std::env::var_os("TRNM_WALLET_STORE");
+    let original_home = std::env::var_os("HOME");
+    std::env::remove_var("TRNM_WALLET_STORE");
+
+    let clean_home = std::env::temp_dir().join(format!(
+        "trnm-cli-wallet-home-wrap-test-{}-{}",
+        std::process::id(),
+        std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_nanos()
+    ));
+    std::fs::create_dir_all(&clean_home).unwrap();
+
+    std::env::set_var("HOME", format!(" \u{2068}《{}》\u{2069} ", clean_home.display()));
+    assert_eq!(default_wallet_store(), clean_home.join(".trnm").join("wallets"));
+
+    match original_store {
+        Some(value) => std::env::set_var("TRNM_WALLET_STORE", value),
+        None => std::env::remove_var("TRNM_WALLET_STORE"),
+    }
+    match original_home {
+        Some(value) => std::env::set_var("HOME", value),
+        None => std::env::remove_var("HOME"),
+    }
+    let _ = std::fs::remove_dir_all(&clean_home);
+}
+
+#[test]
 fn default_wallet_store_rejects_unsafe_absolute_cwd_fallback() {
     let _guard = ENV_LOCK.lock().unwrap();
     let original_store = std::env::var_os("TRNM_WALLET_STORE");
