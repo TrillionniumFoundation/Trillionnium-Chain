@@ -1082,6 +1082,10 @@ mod tests {
             Some("shared.log".to_string())
         );
         assert_eq!(
+            normalize_node_event_log_source_entry("'./archive/node3.log'# archived alias"),
+            Some("./archive/node3.log".to_string())
+        );
+        assert_eq!(
             normalize_node_event_log_source_entry("`./archive/node4.log`# archived alias"),
             Some("./archive/node4.log".to_string())
         );
