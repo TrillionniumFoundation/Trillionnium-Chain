@@ -2688,6 +2688,17 @@ mod tests {
             "{} must not silently drift bootstrap anchor guidance from canonical `127.0.0.1` tuples to `localhost` aliases",
             readme_path.display()
         );
+        assert!(
+            !readme.contains("0.0.0.0"),
+            "{} must not silently drift shipped bootstrap listener guidance toward wildcard IPv4 listeners such as `0.0.0.0`",
+            readme_path.display()
+        );
+        let readme_without_explicit_ipv6_prohibition = readme.replace("`[::1]`", "");
+        assert!(
+            !readme_without_explicit_ipv6_prohibition.contains("::"),
+            "{} must not silently drift shipped bootstrap listener guidance toward extra IPv6 listener literals beyond the single explicit fail-closed `[::1]` prohibition",
+            readme_path.display()
+        );
         for forbidden_term in [
             "bootstrap_peers",
             "bootstrap_peer",
