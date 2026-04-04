@@ -151,4 +151,43 @@ if [[ ! -f "${LOG_FILE}" ]]; then
   exit 1
 fi
 
+EXPLORER_HOST=127.0.0.1 \
+EXPLORER_PORT="${PORT}" \
+EXPLORER_PUBLIC_BASE_URL="${PUBLIC_BASE_URL}" \
+EXPLORER_HEALTH_URL="${HEALTH_URL}" \
+EXPLORER_RPC_BASE_URL="${RPC_BASE_URL}" \
+  "${UP_SCRIPT}" >"${TMP_DIR}/up-invalid-env.out"
+
+cat >"${ENV_FILE}" <<EOF
+EXPLORER_HOST=127.0.0.1
+EXPLORER_PORT=${PORT}
+EXPLORER_PUBLIC_BASE_URL=${PUBLIC_BASE_URL}
+EXPLORER_HEALTH_URL=ftp://invalid-health-url
+EXPLORER_RPC_BASE_URL=${RPC_BASE_URL}
+EOF
+
+"${STATUS_SCRIPT}" >"${TMP_DIR}/status-invalid-env.out" || true
+assert_contains "${TMP_DIR}/status-invalid-env.out" "state=invalid-config"
+assert_contains "${TMP_DIR}/status-invalid-env.out" "config_error=EXPLORER_HEALTH_URL must start with http:// or https://"
+assert_contains "${TMP_DIR}/status-invalid-env.out" "health_probe=invalid-config"
+assert_contains "${TMP_DIR}/status-invalid-env.out" "local_health_probe=invalid-config"
+assert_contains "${TMP_DIR}/status-invalid-env.out" "deployment_evidence_scope=placeholder-only"
+assert_contains "${TMP_DIR}/status-invalid-env.out" "rank1_read_surface_blocker=still-open"
+assert_contains "${TMP_DIR}/status-invalid-env.out" "durable_indexer_status=not-implemented-in-this-scaffold"
+
+"${DOWN_SCRIPT}" >"${TMP_DIR}/down-invalid-env.out"
+assert_contains "${TMP_DIR}/down-invalid-env.out" "config_warning=EXPLORER_HEALTH_URL must start with http:// or https://"
+assert_contains "${TMP_DIR}/down-invalid-env.out" "state=down"
+assert_contains "${TMP_DIR}/down-invalid-env.out" "health=unknown"
+assert_contains "${TMP_DIR}/down-invalid-env.out" "health_probe=not-run-state-down"
+assert_contains "${TMP_DIR}/down-invalid-env.out" "local_health_probe=not-run-state-down"
+assert_contains "${TMP_DIR}/down-invalid-env.out" "deployment_evidence_scope=placeholder-only"
+assert_contains "${TMP_DIR}/down-invalid-env.out" "rank1_read_surface_blocker=still-open"
+assert_contains "${TMP_DIR}/down-invalid-env.out" "durable_indexer_status=not-implemented-in-this-scaffold"
+
+if [[ -f "${PID_FILE}" ]]; then
+  echo "pid file still present after invalid-env shutdown: ${PID_FILE}" >&2
+  exit 1
+fi
+
 echo "explorer_service_contract_smoke=ok"
