@@ -51,16 +51,20 @@ EXPLORER_HEALTH_URL=<value>
 EXPLORER_RPC_BASE_URL=<value>
 
 # status block (copy emitted values verbatim)
-state=<running|stopped|...>
+state=<running|stopped|stale-pid|invalid-config|...>
 service_mode=operator-facing-static-scaffold
 production_ready=false
+bind_host=<value>
+bind_port=<value>
+public_base_url=<value>
 health_url=<value>
 local_health_url=<value>
 index_url=<value>
 rpc_base_url=<value>
 pid_file=<value>
 log_file=<value>
-public_root=<value>
+env_file=<value>
+public_dir=<value>
 health_file=<value>
 index_file=<value>
 deployment_evidence_scope=placeholder-only
@@ -79,6 +83,12 @@ durable_read_anchor_replay_start_anchor=missing-placeholder-scaffold
 durable_read_anchor_retention_scope=rpc-window-bounded
 durable_read_anchor_archive_owner=missing-placeholder-scaffold
 durable_read_anchor_lag_slo=missing-placeholder-scaffold
+health=<ok|down|unknown>
+health_probe=<active|disabled-curl-unavailable|not-run-state-not-running|invalid-config>
+health_probe_url=<value>
+local_health=<ok|down|unknown>
+local_health_probe=<active|disabled-curl-unavailable|not-run-state-not-running|invalid-config>
+local_health_probe_url=<value>
 
 # /index.json proof
 index_json_fetched_at=<timestamp>
@@ -99,9 +109,10 @@ rollback_command=./trillionnium-rust/scripts/v2/explorer_service_down.sh
 
 1. `EXPLORER_*` runtime knobs must be copied as exact values, not paraphrased.
 2. The status block must be copied from script output verbatim for the fail-closed markers.
-3. `/index.json` proof may come from `curl`, browser fetch, or direct file read, but the note must preserve where it was fetched from.
-4. If reverse proxy and local bind differ, preserve both `health_url` and `local_health_url`.
-5. If any durable-read anchor is later filled with a real value, stop using this placeholder-only template and move to a durable-service handoff packet instead.
+3. Preserve `bind_host`, `bind_port`, `public_base_url`, and `env_file` so the handoff records the actual local deployment boundary rather than only the reverse-proxy-facing URL.
+4. `/index.json` proof may come from `curl`, browser fetch, or direct file read, but the note must preserve where it was fetched from.
+5. If reverse proxy and local bind differ, preserve both `health_url` and `local_health_url`, plus the corresponding `health_probe_url` / `local_health_probe_url` fields.
+6. If any durable-read anchor is later filled with a real value, stop using this placeholder-only template and move to a durable-service handoff packet instead.
 
 ## What this template intentionally does not claim
 
@@ -120,6 +131,8 @@ A scaffold handoff note is acceptable only if it includes all of the following:
 
 - exact `EXPLORER_*` runtime values
 - one emitted status block with fail-closed markers intact
+- explicit local deployment-path fields (`bind_host`, `bind_port`, `public_base_url`, `env_file`)
+- explicit probe evidence (`health_probe_url`, `local_health_probe_url`)
 - one `/index.json` fetch proof
 - one explicit blocker note stating placeholder-only scope
 - one rollback command
