@@ -3109,6 +3109,13 @@ mod tests {
         std::env::set_var("HOME", format!(" \"{}\" ", clean_home.display()));
         assert_eq!(default_wallet_store(), clean_home.join(".trnm").join("wallets"));
 
+        std::env::set_var("HOME", format!(" \u{2068}《{}》\u{2069} ", clean_home.display()));
+        assert_eq!(
+            default_wallet_store(),
+            clean_home.join(".trnm").join("wallets"),
+            "wrapped HOME should normalize before deriving the default keystore path"
+        );
+
         std::env::set_var("HOME", format!("{}", linked_parent.display()));
         assert_eq!(default_wallet_store(), std::env::current_dir().unwrap().join(".trnm").join("wallets"));
 
