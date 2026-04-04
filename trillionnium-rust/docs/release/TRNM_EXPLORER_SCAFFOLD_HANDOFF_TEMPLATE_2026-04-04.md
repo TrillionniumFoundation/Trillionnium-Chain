@@ -100,6 +100,7 @@ index_json_declares_placeholder_only=true
 blocker_note=this_evidence_does_not_close_durable_indexer_historical_read_model_or_production_explorer_backend
 
 # optional local commands used
+replay_command=./trillionnium-rust/scripts/v2/explorer_service_up.sh
 status_command=./trillionnium-rust/scripts/v2/explorer_service_status.sh
 index_fetch_command=<curl-or-cat-command>
 rollback_command=./trillionnium-rust/scripts/v2/explorer_service_down.sh
@@ -112,7 +113,8 @@ rollback_command=./trillionnium-rust/scripts/v2/explorer_service_down.sh
 3. Preserve `bind_host`, `bind_port`, `public_base_url`, and `env_file` so the handoff records the actual local deployment boundary rather than only the reverse-proxy-facing URL.
 4. `/index.json` proof may come from `curl`, browser fetch, or direct file read, but the note must preserve where it was fetched from.
 5. If reverse proxy and local bind differ, preserve both `health_url` and `local_health_url`, plus the corresponding `health_probe_url` / `local_health_probe_url` fields.
-6. If any durable-read anchor is later filled with a real value, stop using this placeholder-only template and move to a durable-service handoff packet instead.
+6. Preserve both `replay_command` and `rollback_command` so the same placeholder bring-up path can be re-run or torn down without reconstructing it from memory.
+7. If any durable-read anchor is later filled with a real value, stop using this placeholder-only template and move to a durable-service handoff packet instead.
 
 ## What this template intentionally does not claim
 
@@ -135,6 +137,7 @@ A scaffold handoff note is acceptable only if it includes all of the following:
 - explicit probe evidence (`health_probe_url`, `local_health_probe_url`)
 - one `/index.json` fetch proof
 - one explicit blocker note stating placeholder-only scope
+- one replay command
 - one rollback command
 
 If any item above is missing, treat the note as incomplete operator evidence rather than a valid scaffold handoff packet.
