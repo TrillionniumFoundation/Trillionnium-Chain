@@ -279,12 +279,8 @@ pub(crate) fn load_node_event_log_sources(root: &Path) -> Vec<PathBuf> {
         };
         if let Ok(raw) = fs::read_to_string(&manifest_path) {
             let manifest_dir = manifest_path.parent().unwrap_or_else(|| Path::new("."));
-            for line in raw.lines() {
-                let trimmed = line.trim();
-                if trimmed.is_empty() || trimmed.starts_with('#') {
-                    continue;
-                }
-                let normalized = normalize_wrapped_env_value(trimmed);
+            for path in parse_node_event_log_sources_list(&raw) {
+                let normalized = normalize_wrapped_env_value(&path.to_string_lossy());
                 if normalized.is_empty() || normalized.starts_with('#') {
                     continue;
                 }
