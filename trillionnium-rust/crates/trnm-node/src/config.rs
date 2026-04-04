@@ -3439,6 +3439,16 @@ mod tests {
                     path.display()
                 );
                 assert_eq!(
+                    p2p_socket.ip().to_string(), "127.0.0.1",
+                    "{} must keep the shipped IPv4 loopback P2P host so later slots cannot silently drift to a different listener family or host literal",
+                    path.display()
+                );
+                assert_eq!(
+                    rpc_socket.ip().to_string(), "127.0.0.1",
+                    "{} must keep the shipped IPv4 loopback RPC host so later slots cannot silently drift to a different listener family or host literal",
+                    path.display()
+                );
+                assert_eq!(
                     p2p_socket.port(), expected_p2p_port,
                     "{} must keep the deterministic p2p port for bootstrap anchor slot checks",
                     path.display()
@@ -3448,12 +3458,19 @@ mod tests {
                     "{} must keep the deterministic rpc port for bootstrap anchor slot checks",
                     path.display()
                 );
-                (path, cfg.node_id, p2p_socket.port(), rpc_socket.port())
+                (
+                    path,
+                    cfg.node_id,
+                    p2p_socket.ip().to_string(),
+                    rpc_socket.ip().to_string(),
+                    p2p_socket.port(),
+                    rpc_socket.port(),
+                )
             },
         )
         .collect::<Vec<_>>();
 
-        shipped_nodes.sort_by_key(|(_, _, p2p_port, rpc_port)| (*p2p_port, *rpc_port));
+        shipped_nodes.sort_by_key(|(_, _, _, _, p2p_port, rpc_port)| (*p2p_port, *rpc_port));
         let anchor = shipped_nodes
             .first()
             .expect("shipped bootstrap fixture should include node1 anchor");
@@ -3463,19 +3480,29 @@ mod tests {
             anchor.0.display()
         );
         assert_eq!(
-            anchor.2, 26656,
+            anchor.2, "127.0.0.1",
+            "{} must remain bound to the shipped IPv4 loopback P2P host at the bootstrap anchor slot",
+            anchor.0.display()
+        );
+        assert_eq!(
+            anchor.3, "127.0.0.1",
+            "{} must remain bound to the shipped IPv4 loopback RPC host at the bootstrap anchor slot",
+            anchor.0.display()
+        );
+        assert_eq!(
+            anchor.4, 26656,
             "{} must remain the unique shipped Day-1 bootstrap anchor p2p port",
             anchor.0.display()
         );
         assert_eq!(
-            anchor.3, 26657,
+            anchor.5, 26657,
             "{} must remain the unique shipped Day-1 bootstrap anchor rpc port",
             anchor.0.display()
         );
 
         let shipped_node_paths = shipped_nodes
             .iter()
-            .map(|(path, _, _, _)| {
+            .map(|(path, _, _, _, _, _)| {
                 path.file_name()
                     .and_then(|name| name.to_str())
                     .unwrap_or_else(|| panic!("{} should end in a UTF-8 filename", path.display()))
@@ -3489,7 +3516,7 @@ mod tests {
 
         let shipped_node_ids = shipped_nodes
             .iter()
-            .map(|(_, node_id, _, _)| node_id.as_str())
+            .map(|(_, node_id, _, _, _, _)| node_id.as_str())
             .collect::<Vec<_>>();
         assert_eq!(
             shipped_node_ids,
@@ -3497,26 +3524,38 @@ mod tests {
             "bootstrap anchor ordering must stay slot-first by node_id as well as by listener ports so later slots cannot silently masquerade as an equivalent Day-1 anchor"
         );
 
-        for (path, node_id, p2p_port, rpc_port) in shipped_nodes.iter().skip(1) {
+        for (path, node_id, p2p_host, rpc_host, p2p_port, rpc_port) in shipped_nodes.iter().skip(1) {
             assert_ne!(
                 node_id, &anchor.1,
                 "{} must not reuse the shipped bootstrap anchor node_id {}",
                 path.display(),
                 anchor.1
             );
+            assert_eq!(
+                p2p_host, &anchor.2,
+                "{} must keep the shipped IPv4 loopback P2P host {} so later slots cannot silently drift to a different listener host/family while still looking slot-compatible",
+                path.display(),
+                anchor.2
+            );
+            assert_eq!(
+                rpc_host, &anchor.3,
+                "{} must keep the shipped IPv4 loopback RPC host {} so later slots cannot silently drift to a different listener host/family while still looking slot-compatible",
+                path.display(),
+                anchor.3
+            );
             assert!(
-                *p2p_port > anchor.2,
+                *p2p_port > anchor.4,
                 "{} p2p port {} must stay above the shipped bootstrap anchor port {} so later slots cannot silently become equivalent bootstrap anchors",
                 path.display(),
                 p2p_port,
-                anchor.2
+                anchor.4
             );
             assert!(
-                *rpc_port > anchor.3,
+                *rpc_port > anchor.5,
                 "{} rpc port {} must stay above the shipped bootstrap anchor rpc port {} so later slots cannot silently become equivalent bootstrap anchors",
                 path.display(),
                 rpc_port,
-                anchor.3
+                anchor.5
             );
         }
     }
