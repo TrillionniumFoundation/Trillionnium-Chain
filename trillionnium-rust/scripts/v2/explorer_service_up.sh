@@ -151,18 +151,30 @@ emit_contract_fields() {
   emit_read_contract_fields
 }
 
+emit_contract_status() {
+  local state="$1"
+  local health="$2"
+  local health_probe="$3"
+  local health_probe_url="$4"
+  local local_health="$5"
+  local local_health_probe="$6"
+  local local_health_probe_url="$7"
+
+  echo "state=${state}"
+  emit_contract_fields
+  echo "health=${health}"
+  echo "health_probe=${health_probe}"
+  echo "health_probe_url=${health_probe_url}"
+  echo "local_health=${local_health}"
+  echo "local_health_probe=${local_health_probe}"
+  echo "local_health_probe_url=${local_health_probe_url}"
+}
+
 emit_invalid_config() {
   local config_error="$1"
   echo "refusing to start explorer service scaffold: ${config_error}"
-  echo "state=invalid-config"
   echo "config_error=${config_error}"
-  emit_contract_fields
-  echo "health=unknown"
-  echo "health_probe=invalid-config"
-  echo "health_probe_url=invalid-config"
-  echo "local_health=unknown"
-  echo "local_health_probe=invalid-config"
-  echo "local_health_probe_url=invalid-config"
+  emit_contract_status "invalid-config" "unknown" "invalid-config" "invalid-config" "unknown" "invalid-config" "invalid-config"
 }
 
 validate_runtime_contract() {
@@ -225,7 +237,7 @@ fi
 
 if ! command -v python3 >/dev/null 2>&1; then
   echo "refusing to start explorer service scaffold: python3 is required but not installed"
-  emit_contract_fields
+  emit_contract_status "down" "unknown" "not-run-python3-missing" "not-run-python3-missing" "unknown" "not-run-python3-missing" "not-run-python3-missing"
   exit 1
 fi
 
@@ -256,7 +268,7 @@ PY
 
 if port_has_listener; then
   echo "refusing to start explorer service scaffold: ${HOST}:${PORT} already has a listener"
-  emit_contract_fields
+  emit_contract_status "down" "unknown" "not-run-port-listener-conflict" "not-run-port-listener-conflict" "unknown" "not-run-port-listener-conflict" "not-run-port-listener-conflict"
   exit 1
 fi
 
@@ -264,7 +276,7 @@ if [[ -f "${PID_FILE}" ]]; then
   existing_pid="$(tr -d '[:space:]' <"${PID_FILE}")"
   if [[ "${existing_pid}" =~ ^[0-9]+$ ]] && kill -0 "${existing_pid}" 2>/dev/null; then
     echo "explorer service already running pid=${existing_pid}"
-    emit_contract_fields
+    emit_contract_status "running" "unknown" "not-run-already-running" "not-run-already-running" "unknown" "not-run-already-running" "not-run-already-running"
     exit 0
   fi
   rm -f "${PID_FILE}"
@@ -293,7 +305,7 @@ sleep 1
 if ! kill -0 "${server_pid}" 2>/dev/null; then
   rm -f "${PID_FILE}"
   echo "explorer service scaffold failed to stay up"
-  emit_contract_fields
+  emit_contract_status "down" "unknown" "not-run-process-exited" "not-run-process-exited" "unknown" "not-run-process-exited" "not-run-process-exited"
   exit 1
 fi
 
@@ -310,10 +322,10 @@ if command -v curl >/dev/null 2>&1; then
     kill "${server_pid}" 2>/dev/null || true
     rm -f "${PID_FILE}"
     echo "explorer service scaffold failed local health probe url=${LOCAL_HEALTH_URL}"
-    emit_contract_fields
+    emit_contract_status "down" "unknown" "startup-local-health-probe-failed" "${HEALTH_URL}" "down" "startup-local-health-probe-failed" "${LOCAL_HEALTH_URL}"
     exit 1
   fi
 fi
 
 echo "started explorer service scaffold pid=${server_pid}"
-emit_contract_fields
+emit_contract_status "running" "ok" "active" "${HEALTH_URL}" "ok" "active" "${LOCAL_HEALTH_URL}"
