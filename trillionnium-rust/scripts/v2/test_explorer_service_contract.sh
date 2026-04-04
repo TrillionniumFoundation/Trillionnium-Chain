@@ -139,6 +139,38 @@ assert_json_contains "${RUN_ROOT}/public/index.json" '"durable_read_anchor_archi
 assert_json_contains "${RUN_ROOT}/public/index.json" '"durable_read_anchor_lag_slo":"missing-placeholder-scaffold"'
 assert_json_contains "${RUN_ROOT}/public/index.json" '"durable_read_anchors":{"ingestion_source":"missing-placeholder-scaffold","checkpoint_store":"missing-placeholder-scaffold","replay_start_anchor":"missing-placeholder-scaffold","retention_scope":"rpc-window-bounded","archive_owner":"missing-placeholder-scaffold","lag_slo":"missing-placeholder-scaffold"}'
 
+CAPTURE_DIR="${TMP_DIR}/capture-helper"
+EXPLORER_HOST=127.0.0.1 \
+EXPLORER_PORT="${PORT}" \
+EXPLORER_PUBLIC_BASE_URL="${PUBLIC_BASE_URL}" \
+EXPLORER_HEALTH_URL="${HEALTH_URL}" \
+EXPLORER_RPC_BASE_URL="${RPC_BASE_URL}" \
+  "${SCRIPT_DIR}/capture_explorer_scaffold_handoff.sh" --output-dir "${CAPTURE_DIR}" >"${TMP_DIR}/capture.out"
+
+assert_contains "${TMP_DIR}/capture.out" "handoff_capture_output_dir=${CAPTURE_DIR}"
+assert_contains "${TMP_DIR}/capture.out" "handoff_capture_status_path=${CAPTURE_DIR}/status.txt"
+assert_contains "${TMP_DIR}/capture.out" "handoff_capture_index_path=${CAPTURE_DIR}/index.json"
+assert_contains "${TMP_DIR}/capture.out" "handoff_capture_summary_path=${CAPTURE_DIR}/summary.txt"
+assert_contains "${TMP_DIR}/capture.out" "handoff_capture_template_path=trillionnium-rust/docs/release/TRNM_EXPLORER_SCAFFOLD_HANDOFF_TEMPLATE_2026-04-04.md"
+assert_contains "${TMP_DIR}/capture.out" "handoff_capture_state=running"
+assert_contains "${TMP_DIR}/capture.out" "handoff_capture_health=ok"
+assert_contains "${TMP_DIR}/capture.out" "handoff_capture_local_health=ok"
+assert_contains "${TMP_DIR}/capture.out" "handoff_capture_scope=placeholder-only"
+assert_contains "${TMP_DIR}/capture.out" "handoff_capture_blocker=still-open"
+assert_contains "${CAPTURE_DIR}/status.txt" "state=running"
+assert_contains "${CAPTURE_DIR}/status.txt" "health=ok"
+assert_contains "${CAPTURE_DIR}/status.txt" "local_health=ok"
+assert_contains "${CAPTURE_DIR}/status.txt" "deployment_evidence_scope=placeholder-only"
+assert_contains "${CAPTURE_DIR}/status.txt" "rank1_read_surface_blocker=still-open"
+assert_contains "${CAPTURE_DIR}/status.txt" "durable_indexer_status=not-implemented-in-this-scaffold"
+assert_json_contains "${CAPTURE_DIR}/index.json" '"deployment_evidence_scope":"placeholder-only"'
+assert_json_contains "${CAPTURE_DIR}/index.json" '"durable_indexer_status":"not-implemented-in-this-scaffold"'
+assert_contains "${CAPTURE_DIR}/summary.txt" "template_path=trillionnium-rust/docs/release/TRNM_EXPLORER_SCAFFOLD_HANDOFF_TEMPLATE_2026-04-04.md"
+assert_contains "${CAPTURE_DIR}/summary.txt" "deployment_evidence_scope=placeholder-only"
+assert_contains "${CAPTURE_DIR}/summary.txt" "rank1_read_surface_blocker=still-open"
+assert_contains "${CAPTURE_DIR}/summary.txt" "durable_indexer_status=not-implemented-in-this-scaffold"
+assert_contains "${CAPTURE_DIR}/summary.txt" "durable_read_anchor_complete=false"
+
 EXPLORER_HOST=127.0.0.1 \
 EXPLORER_PORT="${PORT}" \
 EXPLORER_PUBLIC_BASE_URL="${PUBLIC_BASE_URL}" \

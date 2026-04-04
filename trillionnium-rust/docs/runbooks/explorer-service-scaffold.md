@@ -139,7 +139,29 @@ This packet is intentionally narrow: it closes the question "what exact deployme
 
 ### Deterministic evidence capture commands
 
-Use one repeatable capture sequence so the handoff note is built from emitted contract fields rather than shell memory or paraphrase:
+Use one repeatable capture sequence so the handoff note is built from emitted contract fields rather than shell memory or paraphrase.
+
+Preferred helper (captures status + served/static index + summary into one timestamped packet and fails closed unless the placeholder is actually healthy):
+
+```bash
+# from repo root
+./trillionnium-rust/scripts/v2/capture_explorer_scaffold_handoff.sh
+```
+
+By default this writes a packet under `trillionnium-rust/run/explorer-service/handoff-<timestamp>/` containing:
+
+- `status.txt`
+- `index.json`
+- `summary.txt`
+
+If you need a deterministic destination for a ticket or operator bundle, pass it explicitly:
+
+```bash
+./trillionnium-rust/scripts/v2/capture_explorer_scaffold_handoff.sh \
+  --output-dir trillionnium-rust/run/explorer-service/handoff-ticket-001
+```
+
+Manual fallback if you are debugging the helper itself:
 
 ```bash
 # from repo root
@@ -162,7 +184,8 @@ curl -fsS "${EXPLORER_PUBLIC_BASE_URL:-http://127.0.0.1:${EXPLORER_PORT:-8090}}/
 
 Fail-closed capture rules:
 
-- keep the local `handoff-status.txt` even when the public fetch is the ticket artifact; it preserves the bind/probe boundary that the public URL alone cannot prove
+- the helper refuses to emit a packet unless `explorer_service_status.sh` reports `state=running`, `health=ok`, `local_health=ok`, `deployment_evidence_scope=placeholder-only`, `rank1_read_surface_blocker=still-open`, `durable_indexer_status=not-implemented-in-this-scaffold`, and `durable_read_anchor_complete=false`
+- keep the local `status.txt`/`handoff-status.txt` even when the public fetch is the ticket artifact; it preserves the bind/probe boundary that the public URL alone cannot prove
 - if the public fetch fails but the local fetch succeeds, keep the note scoped to placeholder deployment evidence and classify the proxy/public path separately instead of rewriting the scaffold as down
 - if the local fetch fails, do not substitute a browser screenshot or paraphrased JSON fields; preserve the failing command/output and treat the packet as incomplete
 - if `EXPLORER_PORT` / `EXPLORER_PUBLIC_BASE_URL` are being sourced from `explorer-service.env`, do not retype them by hand mid-capture; let the scripts emit the canonical values first, then reuse those values in the note
