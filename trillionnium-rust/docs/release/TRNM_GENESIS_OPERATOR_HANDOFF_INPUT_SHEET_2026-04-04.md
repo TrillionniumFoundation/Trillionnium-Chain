@@ -28,6 +28,8 @@
   - `trillionnium-rust/run/genesis-artifact-candidates/trnm-genesis-candidate-local-rehearsal-2026-04-04-b74758fac.packet.txt`
 - operator-handoff draft packet:
   - `trillionnium-rust/run/genesis-artifact-candidates/trnm-genesis-candidate-operator-handoff-draft-2026-04-04-b74758fac.packet.txt`
+- operator-handoff fillable packet:
+  - `trillionnium-rust/run/genesis-artifact-candidates/trnm-genesis-candidate-operator-handoff-fillable-2026-04-04-b74758fac.packet.txt`
 
 ---
 
@@ -142,6 +144,9 @@ operator_ack_digest=
 3. 4 条 operator acknowledgment
 4. rollback owner
 5. startup order note
+
+优先编辑的文件建议改为：
+- `trillionnium-rust/run/genesis-artifact-candidates/trnm-genesis-candidate-operator-handoff-fillable-2026-04-04-b74758fac.packet.txt`
 
 然后再生成下一版：
 
