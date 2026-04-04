@@ -1182,7 +1182,7 @@ fn ensure_wallet_name(name: &str) -> Result<()> {
         || name.contains(['‐', '‑', '‒', '–', '—', '―', '−', '﹣', '－'])
         || name.contains(['：', '﹕', '＝', '﹦', '｜', '￨', '＆', '﹠', '？', '﹖', '，', '；', '！', '﹗'])
         || name.contains(['＊', '﹡'])
-        || name.contains(['∕', '⁄', '／', '＼', '⧵', '⟋', '⟍'])
+        || name.contains(['∕', '⁄', '／', '＼', '⧵', '⧸', '⟋', '⟍'])
         || name.contains(['.', '．', '。', '｡', '﹒', '․'])
         || name.contains([
             '"', '\'', '`', '<', '>', '(', ')', '[', ']', '{', '}', ',', ';',
@@ -3469,6 +3469,7 @@ mod tests {
             "alice\\bob",
             "alice＼bob",
             "alice⧵bob",
+            "alice⧸bob",
             "alice⟋bob",
             "alice⟍bob",
             "\"alice\"",
