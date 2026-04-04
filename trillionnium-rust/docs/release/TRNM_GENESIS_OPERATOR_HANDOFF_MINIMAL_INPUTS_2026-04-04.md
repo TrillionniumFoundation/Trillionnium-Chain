@@ -10,6 +10,8 @@
   - `trillionnium-rust/run/genesis-artifact-candidates/trnm-genesis-candidate-operator-handoff-fillable-2026-04-04-b74758fac.packet.txt`
 - 详细输入表：
   - `trillionnium-rust/docs/release/TRNM_GENESIS_OPERATOR_HANDOFF_INPUT_SHEET_2026-04-04.md`
+- 可直接回复的聊天模板：
+  - `trillionnium-rust/docs/release/TRNM_GENESIS_OPERATOR_HANDOFF_REPLY_TEMPLATE_2026-04-04.md`
 
 ---
 
