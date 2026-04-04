@@ -248,6 +248,36 @@ def load_config(path: Path) -> dict[str, object]:
     return data
 
 
+def validate_packet_line_value(value: str, field: str) -> None:
+    if not isinstance(value, str):
+        fail(f"invalid ceremony packet arguments: {field} must be a string")
+    if value != value.strip():
+        fail(f"invalid ceremony packet arguments: {field} must not contain leading or trailing whitespace")
+    if not value:
+        fail(f"invalid ceremony packet arguments: {field} must not be empty")
+    if "\n" in value or "\r" in value:
+        fail(f"invalid ceremony packet arguments: {field} must be a single line")
+    if any(ord(ch) < 32 or ord(ch) == 127 for ch in value):
+        fail(f"invalid ceremony packet arguments: {field} must not contain control characters")
+
+
+
+def validate_packet_atom_value(value: str, field: str) -> None:
+    validate_packet_line_value(value, field)
+    if any(ch in value for ch in (";", "=")):
+        fail(f"invalid ceremony packet arguments: {field} must not contain ';' or '=' separators")
+
+
+
+def validate_packet_path(value: str, field: str) -> None:
+    validate_packet_line_value(value, field)
+    if not Path(value).is_absolute():
+        fail(
+            f"invalid ceremony packet arguments: public-mainnet-input requires {field} to be an absolute path"
+        )
+
+
+
 def validate_ceremony_packet_metadata(args: argparse.Namespace) -> None:
     packet_line_values = {
         "ceremony_id": args.ceremony_id,
