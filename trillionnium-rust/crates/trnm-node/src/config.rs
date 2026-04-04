@@ -886,6 +886,7 @@ mod tests {
             ("seed_node", "\"127.0.0.1:27656\""),
             ("seed_peers", "[\"127.0.0.1:27656\"]"),
             ("seed_peer", "\"127.0.0.1:27656\""),
+            ("seeds", "\"127.0.0.1:27656\""),
             ("persistent_peers", "[\"127.0.0.1:27656\"]"),
             ("persistent_peer", "\"127.0.0.1:27656\""),
         ] {
@@ -2846,6 +2847,7 @@ mod tests {
             "seed_node",
             "seed_peers",
             "seed_peer",
+            "seeds",
             "persistent_peers",
             "persistent_peer",
             "node5.toml",
