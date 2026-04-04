@@ -267,6 +267,33 @@ fn smoke_wallet_sign_rejects_invalid_env_store_fallback() {
 }
 
 #[test]
+fn smoke_wallet_sign_rejects_invalid_explicit_store_path() {
+    let out = Command::new(bin())
+        .args([
+            "wallet",
+            "sign",
+            "--name",
+            "alice",
+            "--message",
+            "approve tx",
+            "--store",
+            "./wallets",
+        ])
+        .output()
+        .unwrap();
+    assert!(
+        !out.status.success(),
+        "relative explicit keystore path should fail closed"
+    );
+    let stderr = String::from_utf8_lossy(&out.stderr);
+    assert!(
+        stderr.contains("explicit wallet store './wallets' must be an absolute normalized symlink-free path"),
+        "unexpected stderr: {}",
+        stderr
+    );
+}
+
+#[test]
 fn smoke_wallet_sign_rejects_edge_or_non_ascii_whitespace() {
     let store = tmp_dir("wallet-sign-whitespace-guard");
     let pk = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
