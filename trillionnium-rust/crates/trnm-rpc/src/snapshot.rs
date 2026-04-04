@@ -15,14 +15,19 @@ fn normalize_adapter_record_line(line: &str) -> &str {
     line.trim().trim_start_matches('\u{feff}').trim()
 }
 
+fn is_adapter_record_line_candidate(line: &str) -> bool {
+    let line = normalize_adapter_record_line(line);
+    !line.is_empty() && !line.starts_with('#')
+}
+
 fn load_adapter_records_file(path: &PathBuf) -> Vec<AdapterRecord> {
     let Ok(raw) = fs::read(path) else {
         return vec![];
     };
     String::from_utf8_lossy(&raw)
         .lines()
+        .filter(|line| is_adapter_record_line_candidate(line))
         .map(normalize_adapter_record_line)
-        .filter(|l| !l.is_empty())
         .filter_map(|l| serde_json::from_str::<AdapterRecord>(l).ok())
         .collect()
 }
