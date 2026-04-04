@@ -412,7 +412,7 @@ cd trillionnium-rust
 ```
 
 The down script attempts graceful termination first, then forces termination if the process does not exit within 5 seconds.
-It also re-emits the same operator-facing contract fields as the up/status scripts, including the Day-1 read-contract markers, so handoff/debug notes can still quote the canonical paths and read-only boundary even when the service is already stopped. The shutdown path now also emits the terminal state markers that automation can key on without having to call `status` again:
+It also re-emits the same operator-facing contract fields as the up/status scripts, including the Day-1 read-contract markers, so handoff/debug notes can still quote the canonical paths and read-only boundary even when the service is already stopped. If the current env file is malformed, the stop helper still tears down any live PID first and then emits `config_warning=...`, so operators do not get stuck with a running placeholder just because the handoff/env contract drifted into an invalid state. The shutdown path now also emits the terminal state markers that automation can key on without having to call `status` again:
 
 - `state=down`
 - `health=unknown`

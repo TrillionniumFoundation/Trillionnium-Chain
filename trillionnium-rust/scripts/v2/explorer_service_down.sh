@@ -166,61 +166,63 @@ emit_contract_paths() {
   echo "local_health_probe_url=${local_health_probe_url}"
 }
 
-validate_runtime_contract() {
+runtime_contract_error() {
   if [[ -z "${HOST}" ]]; then
-    echo "refusing to stop explorer service scaffold: EXPLORER_HOST must not be empty"
-    emit_contract_paths "invalid-config" "unknown" "invalid-config" "unknown" "invalid-config" "invalid-config" "invalid-config"
-    exit 1
+    echo "EXPLORER_HOST must not be empty"
+    return 0
   fi
 
   if [[ ! "${PORT}" =~ ^[0-9]+$ ]] || (( PORT < 1 || PORT > 65535 )); then
-    echo "refusing to stop explorer service scaffold: EXPLORER_PORT must be an integer in [1, 65535]"
-    emit_contract_paths "invalid-config" "unknown" "invalid-config" "unknown" "invalid-config" "invalid-config" "invalid-config"
-    exit 1
+    echo "EXPLORER_PORT must be an integer in [1, 65535]"
+    return 0
   fi
 
   if [[ -z "${PUBLIC_BASE_URL}" ]]; then
-    echo "refusing to stop explorer service scaffold: EXPLORER_PUBLIC_BASE_URL must not be empty"
-    emit_contract_paths "invalid-config" "unknown" "invalid-config" "unknown" "invalid-config" "invalid-config" "invalid-config"
-    exit 1
+    echo "EXPLORER_PUBLIC_BASE_URL must not be empty"
+    return 0
   fi
 
   if [[ ! "${PUBLIC_BASE_URL}" =~ ^https?://.+ ]]; then
-    echo "refusing to stop explorer service scaffold: EXPLORER_PUBLIC_BASE_URL must start with http:// or https://"
-    emit_contract_paths "invalid-config" "unknown" "invalid-config" "unknown" "invalid-config" "invalid-config" "invalid-config"
-    exit 1
+    echo "EXPLORER_PUBLIC_BASE_URL must start with http:// or https://"
+    return 0
   fi
 
   if [[ -z "${HEALTH_URL}" ]]; then
-    echo "refusing to stop explorer service scaffold: EXPLORER_HEALTH_URL must not be empty"
-    emit_contract_paths "invalid-config" "unknown" "invalid-config" "unknown" "invalid-config" "invalid-config" "invalid-config"
-    exit 1
+    echo "EXPLORER_HEALTH_URL must not be empty"
+    return 0
   fi
 
   if [[ ! "${HEALTH_URL}" =~ ^https?://.+ ]]; then
-    echo "refusing to stop explorer service scaffold: EXPLORER_HEALTH_URL must start with http:// or https://"
-    emit_contract_paths "invalid-config" "unknown" "invalid-config" "unknown" "invalid-config" "invalid-config" "invalid-config"
-    exit 1
+    echo "EXPLORER_HEALTH_URL must start with http:// or https://"
+    return 0
   fi
 
   if [[ -z "${RPC_BASE_URL}" ]]; then
-    echo "refusing to stop explorer service scaffold: EXPLORER_RPC_BASE_URL must not be empty"
-    emit_contract_paths "invalid-config" "unknown" "invalid-config" "unknown" "invalid-config" "invalid-config" "invalid-config"
-    exit 1
+    echo "EXPLORER_RPC_BASE_URL must not be empty"
+    return 0
   fi
 
   if [[ ! "${RPC_BASE_URL}" =~ ^https?://.+ ]]; then
-    echo "refusing to stop explorer service scaffold: EXPLORER_RPC_BASE_URL must start with http:// or https://"
-    emit_contract_paths "invalid-config" "unknown" "invalid-config" "unknown" "invalid-config" "invalid-config" "invalid-config"
-    exit 1
+    echo "EXPLORER_RPC_BASE_URL must start with http:// or https://"
+    return 0
   fi
+
+  return 1
 }
 
-validate_runtime_contract
+config_error=""
+if config_error_candidate="$(runtime_contract_error)"; then
+  config_error="${config_error_candidate}"
+fi
 
 if [[ ! -f "${PID_FILE}" ]]; then
-  echo "explorer service already stopped"
-  emit_contract_paths "down" "unknown" "not-run-state-down" "unknown" "not-run-state-down" "not-run-state-down" "not-run-state-down"
+  if [[ -n "${config_error}" ]]; then
+    echo "explorer service already stopped (current env invalid: ${config_error})"
+    emit_contract_paths "invalid-config" "unknown" "invalid-config" "unknown" "invalid-config" "invalid-config" "invalid-config"
+  else
+    echo "explorer service already stopped"
+    emit_contract_paths "down" "unknown" "not-run-state-down" "unknown" "not-run-state-down" "not-run-state-down" "not-run-state-down"
+  fi
   exit 0
 fi
 
@@ -243,5 +245,8 @@ if [[ -n "${pid}" && "${pid}" =~ ^[0-9]+$ ]]; then
   echo "stopped explorer service scaffold pid=${pid}"
 else
   echo "cleared explorer service scaffold stale pid file"
+fi
+if [[ -n "${config_error}" ]]; then
+  echo "config_warning=${config_error}"
 fi
 emit_contract_paths "down" "unknown" "not-run-state-down" "unknown" "not-run-state-down" "not-run-state-down" "not-run-state-down"
