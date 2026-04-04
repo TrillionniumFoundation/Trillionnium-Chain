@@ -9119,6 +9119,45 @@ line2
     }
 
     #[test]
+    fn load_node_event_log_sources_ignores_tab_separated_env_comments_after_wrapped_paths() {
+        let _guard = lock_env();
+        let root = unique_tmp_path("trnm-rpc-log-sources-env-tab-comments", "dir");
+        fs::create_dir_all(&root).expect("create root dir");
+
+        let shared_log = root.join("shared.log");
+        fs::write(&shared_log, "").expect("write shared log");
+
+        let prev_sources = std::env::var(NODE_EVENT_LOG_SOURCES_ENV).ok();
+        let prev_manifest = std::env::var(NODE_EVENT_LOG_MANIFEST_ENV).ok();
+        unsafe {
+            std::env::set_var(
+                NODE_EVENT_LOG_SOURCES_ENV,
+                "\"shared.log\"\t# operator replay note ; `./shared.log`\t# duplicate alias",
+            );
+            std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV);
+        }
+
+        let got = load_node_event_log_sources(&root);
+
+        match prev_sources {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_SOURCES_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV) },
+        }
+        match prev_manifest {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_MANIFEST_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV) },
+        }
+
+        assert_eq!(
+            got,
+            vec![shared_log],
+            "tab-separated historical replay env comments should not corrupt wrapped paths or dedupe behavior"
+        );
+
+        let _ = fs::remove_dir_all(root);
+    }
+
+    #[test]
     fn load_node_event_log_sources_unwraps_quoted_manifest_entries_for_historical_replay() {
         let _guard = lock_env();
         let root = unique_tmp_path("trnm-rpc-log-sources-manifest-quoted", "dir");
