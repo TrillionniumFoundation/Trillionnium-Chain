@@ -1434,10 +1434,13 @@ fn ensure_safe_sign_message(message: &str) -> Result<()> {
         );
     }
     if message.chars().any(|c| {
-        is_unsafe_sign_message_char(c) || !c.is_ascii() || (!c.is_ascii_graphic() && c != ' ')
+        is_unsafe_sign_message_char(c)
+            || !c.is_ascii()
+            || (!c.is_ascii_graphic() && c != ' ')
+            || matches!(c, '=' | ':' | ';' | ',' | '|')
     }) {
         bail!(
-            "wallet sign message must be single-line ASCII printable text with only interior ASCII spaces; refusing unsafe offline-signing output"
+            "wallet sign message must be single-line ASCII printable text with only interior ASCII spaces and no delimiter punctuation; refusing unsafe offline-signing output"
         );
     }
     Ok(())

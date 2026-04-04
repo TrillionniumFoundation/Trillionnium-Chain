@@ -396,7 +396,7 @@ fn smoke_wallet_address_rejects_invalid_env_store_fallback() {
 }
 
 #[test]
-fn smoke_wallet_sign_rejects_edge_or_non_ascii_whitespace() {
+fn smoke_wallet_sign_rejects_edge_whitespace_non_ascii_or_delimiter_payloads() {
     let store = tmp_dir("wallet-sign-whitespace-guard");
     let pk = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
     let import = Command::new(bin())
@@ -418,7 +418,16 @@ fn smoke_wallet_sign_rejects_edge_or_non_ascii_whitespace() {
         String::from_utf8_lossy(&import.stderr)
     );
 
-    for bad_message in [" approve tx", "approve tx ", "approve\u{00a0}tx"] {
+    for bad_message in [
+        " approve tx",
+        "approve tx ",
+        "approve\u{00a0}tx",
+        "approve=tx",
+        "approve:tx",
+        "approve;tx",
+        "approve,tx",
+        "approve|tx",
+    ] {
         let out = Command::new(bin())
             .args([
                 "wallet",
@@ -434,14 +443,15 @@ fn smoke_wallet_sign_rejects_edge_or_non_ascii_whitespace() {
             .unwrap();
         assert!(
             !out.status.success(),
-            "whitespace-polluted signer input should fail closed: {bad_message:?}"
+            "ambiguous signer input should fail closed: {bad_message:?}"
         );
         let stderr = String::from_utf8_lossy(&out.stderr);
         assert!(
-            stderr.contains("sign message must not start or end with whitespace")
-                || stderr.contains(
-                    "sign message must be single-line printable text without control characters"
-                ),
+            stderr.contains("must not start or end with whitespace")
+                || stderr.contains("leading or trailing whitespace")
+                || stderr.contains("ASCII printable text")
+                || stderr.contains("single-line printable text without control characters")
+                || stderr.contains("delimiter punctuation"),
             "unexpected stderr for {bad_message:?}: {}",
             stderr
         );
