@@ -32,10 +32,20 @@ pub(crate) fn wal_file(wal_dir: &Path) -> PathBuf {
     wal_dir.join("consensus-wal.toml")
 }
 
+fn file_contains_meaningful_recovery_surface(path: &Path) -> bool {
+    if !path.exists() {
+        return false;
+    }
+    match fs::read_to_string(path) {
+        Ok(raw) => !metadata_scaffold_is_effectively_empty(&raw),
+        Err(_) => true,
+    }
+}
+
 pub(crate) fn wal_dir_has_existing_state(wal_dir: &Path) -> bool {
-    wal_file(wal_dir).exists()
-        || wal_meta_file(wal_dir).exists()
-        || checkpoint_file(wal_dir).exists()
+    file_contains_meaningful_recovery_surface(&wal_file(wal_dir))
+        || file_contains_meaningful_recovery_surface(&wal_meta_file(wal_dir))
+        || file_contains_meaningful_recovery_surface(&checkpoint_file(wal_dir))
 }
 
 pub(crate) fn isolated_default_wal_dir(base_dir: &Path) -> PathBuf {
@@ -249,6 +259,28 @@ mod tests {
         assert!(note.is_none());
 
         let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
+    fn resolve_wal_dir_auto_allows_builtin_default_when_only_comment_only_checkpoint_scaffold_exists() {
+        let sandbox = temp_wal_dir("resolve-auto-comment-only-checkpoint-scaffold");
+        let prior_cwd = std::env::current_dir().unwrap();
+        fs::create_dir_all(sandbox.join(DEFAULT_BFT_WAL_DIR)).unwrap();
+        fs::write(
+            checkpoint_file(&sandbox.join(DEFAULT_BFT_WAL_DIR)),
+            "# operator left a recovery note\n   # keep until next successful catch-up\n",
+        )
+        .unwrap();
+        std::env::set_current_dir(&sandbox).unwrap();
+
+        let args = default_args();
+        let requested = PathBuf::from(DEFAULT_BFT_WAL_DIR);
+        let (resolved, note) = resolve_wal_dir(&args).unwrap();
+        assert_eq!(resolved, requested);
+        assert!(note.is_none());
+
+        std::env::set_current_dir(prior_cwd).unwrap();
+        let _ = fs::remove_dir_all(&sandbox);
     }
 
     #[test]
