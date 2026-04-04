@@ -397,6 +397,52 @@ mod tests {
     }
 
     #[test]
+    fn resolve_wal_dir_auto_allows_builtin_default_when_only_bom_prefixed_comment_only_wal_meta_scaffold_exists(
+    ) {
+        let sandbox = temp_wal_dir("resolve-auto-bom-comment-only-wal-meta-scaffold");
+        let prior_cwd = std::env::current_dir().unwrap();
+        fs::create_dir_all(sandbox.join(DEFAULT_BFT_WAL_DIR)).unwrap();
+        fs::write(
+            wal_meta_file(&sandbox.join(DEFAULT_BFT_WAL_DIR)),
+            "\u{feff}# operator left a catch-up note\n\t# safe to treat as empty metadata scaffold\n",
+        )
+        .unwrap();
+        std::env::set_current_dir(&sandbox).unwrap();
+
+        let args = default_args();
+        let requested = PathBuf::from(DEFAULT_BFT_WAL_DIR);
+        let (resolved, note) = resolve_wal_dir(&args).unwrap();
+        assert_eq!(resolved, requested);
+        assert!(note.is_none());
+
+        std::env::set_current_dir(prior_cwd).unwrap();
+        let _ = fs::remove_dir_all(&sandbox);
+    }
+
+    #[test]
+    fn resolve_wal_dir_auto_allows_builtin_default_when_only_crlf_comment_only_wal_meta_scaffold_exists(
+    ) {
+        let sandbox = temp_wal_dir("resolve-auto-crlf-comment-only-wal-meta-scaffold");
+        let prior_cwd = std::env::current_dir().unwrap();
+        fs::create_dir_all(sandbox.join(DEFAULT_BFT_WAL_DIR)).unwrap();
+        fs::write(
+            wal_meta_file(&sandbox.join(DEFAULT_BFT_WAL_DIR)),
+            "# operator left a catch-up note\r\n\t# safe to treat as empty metadata scaffold\r\n",
+        )
+        .unwrap();
+        std::env::set_current_dir(&sandbox).unwrap();
+
+        let args = default_args();
+        let requested = PathBuf::from(DEFAULT_BFT_WAL_DIR);
+        let (resolved, note) = resolve_wal_dir(&args).unwrap();
+        assert_eq!(resolved, requested);
+        assert!(note.is_none());
+
+        std::env::set_current_dir(prior_cwd).unwrap();
+        let _ = fs::remove_dir_all(&sandbox);
+    }
+
+    #[test]
     fn resolve_wal_dir_fail_if_exists_allows_comment_only_checkpoint_scaffold() {
         let wal_dir = temp_wal_dir("resolve-fail-if-exists-comment-only-checkpoint");
         fs::create_dir_all(&wal_dir).unwrap();
@@ -466,6 +512,48 @@ mod tests {
         fs::write(
             wal_meta_file(&wal_dir),
             "# operator left a catch-up note\n\t# safe to treat as empty metadata scaffold\n",
+        )
+        .unwrap();
+
+        let mut args = default_args();
+        args.bft_wal_dir = wal_dir.display().to_string();
+        args.bft_wal_mode = WalDirMode::FailIfExists;
+
+        let (resolved, note) = resolve_wal_dir(&args).unwrap();
+        assert_eq!(resolved, wal_dir);
+        assert!(note.is_none());
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
+    fn resolve_wal_dir_fail_if_exists_allows_bom_prefixed_comment_only_wal_meta_scaffold() {
+        let wal_dir = temp_wal_dir("resolve-fail-if-exists-bom-comment-only-wal-meta");
+        fs::create_dir_all(&wal_dir).unwrap();
+        fs::write(
+            wal_meta_file(&wal_dir),
+            "\u{feff}# operator left a catch-up note\n\t# safe to treat as empty metadata scaffold\n",
+        )
+        .unwrap();
+
+        let mut args = default_args();
+        args.bft_wal_dir = wal_dir.display().to_string();
+        args.bft_wal_mode = WalDirMode::FailIfExists;
+
+        let (resolved, note) = resolve_wal_dir(&args).unwrap();
+        assert_eq!(resolved, wal_dir);
+        assert!(note.is_none());
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
+    fn resolve_wal_dir_fail_if_exists_allows_crlf_comment_only_wal_meta_scaffold() {
+        let wal_dir = temp_wal_dir("resolve-fail-if-exists-crlf-comment-only-wal-meta");
+        fs::create_dir_all(&wal_dir).unwrap();
+        fs::write(
+            wal_meta_file(&wal_dir),
+            "# operator left a catch-up note\r\n\t# safe to treat as empty metadata scaffold\r\n",
         )
         .unwrap();
 
