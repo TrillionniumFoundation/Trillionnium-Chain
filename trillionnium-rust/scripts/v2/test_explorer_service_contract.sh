@@ -204,6 +204,24 @@ assert_contains "${CAPTURE_DIR}/summary.txt" "durable_read_anchor_retention_scop
 assert_contains "${CAPTURE_DIR}/summary.txt" "durable_read_anchor_archive_owner=missing-placeholder-scaffold"
 assert_contains "${CAPTURE_DIR}/summary.txt" "durable_read_anchor_lag_slo=missing-placeholder-scaffold"
 
+python3 - <<'PY' "${RUN_ROOT}/public/index.json"
+import json
+import pathlib
+import sys
+path = pathlib.Path(sys.argv[1])
+data = json.loads(path.read_text())
+data["deployment_evidence_scope"] = "durable-read-service"
+path.write_text(json.dumps(data, separators=(",", ":")))
+PY
+
+EXPLORER_HOST=127.0.0.1 \
+EXPLORER_PORT="${PORT}" \
+EXPLORER_PUBLIC_BASE_URL="${PUBLIC_BASE_URL}" \
+EXPLORER_HEALTH_URL="${HEALTH_URL}" \
+EXPLORER_RPC_BASE_URL="${RPC_BASE_URL}" \
+  "${SCRIPT_DIR}/capture_explorer_scaffold_handoff.sh" --output-dir "${TMP_DIR}/capture-should-fail" >"${TMP_DIR}/capture-drift.out" 2>&1 || true
+assert_contains "${TMP_DIR}/capture-drift.out" 'refusing to capture handoff packet: fetched index.json drifted from placeholder scaffold contract ("deployment_evidence_scope":"placeholder-only")'
+
 EXPLORER_HOST=127.0.0.1 \
 EXPLORER_PORT="${PORT}" \
 EXPLORER_PUBLIC_BASE_URL="${PUBLIC_BASE_URL}" \

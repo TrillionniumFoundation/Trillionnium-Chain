@@ -194,6 +194,30 @@ else
   INDEX_FETCH_COMMAND="cp ${INDEX_FILE} ${INDEX_OUT}"
 fi
 
+assert_index_json_fragment() {
+  local expected="$1"
+  if ! grep -Fq "${expected}" "${INDEX_OUT}"; then
+    echo "refusing to capture handoff packet: fetched index.json drifted from placeholder scaffold contract (${expected})" >&2
+    exit 1
+  fi
+}
+
+assert_index_json_fragment '"service_mode":"operator-facing-static-scaffold"'
+assert_index_json_fragment '"production_ready":false'
+assert_index_json_fragment '"deployment_evidence_scope":"placeholder-only"'
+assert_index_json_fragment '"rank1_read_surface_blocker":"still-open"'
+assert_index_json_fragment '"durable_indexer_status":"not-implemented-in-this-scaffold"'
+assert_index_json_fragment '"read_contract":{"mode":"read-only","source":"rpc-read-surface"'
+assert_index_json_fragment '"day1_surface":["query-task/<task_id>","query-events/<task_id>?limit=<n>","query-capability-audit/<subject-or-token>","query-normalized-audit-events?source=<source>&eventType=<type>&limit=<n>&cursor=<cursor>"]'
+assert_index_json_fragment '"historical_query_scope":"rpc-retention-bounded"'
+assert_index_json_fragment '"durability_boundary":"ephemeral-rpc-window-only"'
+assert_index_json_fragment '"archive_strategy":"not-configured-static-scaffold"'
+assert_index_json_fragment '"read_replica_strategy":"not-configured-static-scaffold"'
+assert_index_json_fragment '"durable_read_anchor_complete":false'
+assert_index_json_fragment '"durable_read_anchor_missing_count":6'
+assert_index_json_fragment '"durable_read_anchor_missing_fields":"ingestion_source,checkpoint_store,replay_start_anchor,retention_scope,archive_owner,lag_slo"'
+assert_index_json_fragment '"durable_read_anchors":{"ingestion_source":"missing-placeholder-scaffold","checkpoint_store":"missing-placeholder-scaffold","replay_start_anchor":"missing-placeholder-scaffold","retention_scope":"rpc-window-bounded","archive_owner":"missing-placeholder-scaffold","lag_slo":"missing-placeholder-scaffold"}'
+
 cat >"${SUMMARY_OUT}" <<EOF
 captured_at_utc=${TIMESTAMP_UTC}
 output_dir=${OUTPUT_DIR}
