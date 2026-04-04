@@ -881,27 +881,38 @@ fn recovery_startup_summary(recovered: &RecoveredWalState) -> String {
     )
 }
 
-fn metadata_only_operator_action(recovered: &RecoveredWalState) -> &'static str {
+fn metadata_only_operator_action(recovered: &RecoveredWalState) -> String {
     if recovered.wal_entries_retained == 0 {
-        "operator action: restart with a fresh --bft-wal-dir / --bft-wal-mode auto isolated run; if this node must rejoin from prior state, restore an application snapshot before retrying"
-    } else {
-        match recovered.checkpoint_height_retained {
-            Some(checkpoint_height)
-                if checkpoint_height < recovered.next_height.saturating_sub(1) =>
-            {
-                "operator action: restore an application snapshot that covers the retained WAL tip before retrying join/rejoin; do not resume from metadata alone"
-            }
-            Some(checkpoint_height)
-                if checkpoint_height > recovered.next_height.saturating_sub(1) =>
-            {
-                "operator action: investigate WAL/checkpoint mismatch, rebuild the recovery inputs, and only retry join/rejoin once WAL tip and checkpoint evidence agree"
+        return match recovered.checkpoint_height_retained {
+            Some(_) => {
+                "operator action: checkpoint-only bootstrap is acceptable with a fresh --bft-wal-dir / --bft-wal-mode auto isolated run; if this node must rejoin from prior state, restore an application snapshot before retrying".into()
             }
             None => {
-                "operator action: rebuild or restore checkpoint metadata for the retained WAL tip before retrying join/rejoin; do not resume from metadata alone"
+                "operator action: restart with a fresh --bft-wal-dir / --bft-wal-mode auto isolated run; if this node must rejoin from prior state, restore an application snapshot before retrying".into()
             }
-            Some(_) => {
-                "operator action: restore the corresponding application snapshot before retrying join/rejoin; do not resume from metadata alone"
-            }
+        };
+    }
+
+    let tip_height = recovered.next_height.saturating_sub(1);
+    match recovered.checkpoint_height_retained {
+        Some(checkpoint_height) if checkpoint_height < tip_height => {
+            "operator action: restore an application snapshot that covers the retained WAL tip before retrying join/rejoin; do not resume from metadata alone".into()
+        }
+        Some(checkpoint_height) if checkpoint_height > tip_height => {
+            format!(
+                "operator action: investigate WAL/checkpoint mismatch (retained WAL tip height {}, checkpoint height {}), rebuild the recovery inputs, and only retry join/rejoin once WAL tip and checkpoint evidence agree",
+                tip_height,
+                checkpoint_height,
+            )
+        }
+        None => {
+            format!(
+                "operator action: rebuild or restore checkpoint metadata so it covers retained WAL tip height {} before retrying join/rejoin; do not resume from metadata alone",
+                tip_height,
+            )
+        }
+        Some(_) => {
+            "operator action: restore the corresponding application snapshot before retrying join/rejoin; do not resume from metadata alone".into()
         }
     }
 }
@@ -16941,7 +16952,7 @@ locked_block_hash = "stale-lock"
                 wal_entries_retained: 0,
                 checkpoint_height_retained: Some(8),
             }),
-            "operator action: restart with a fresh --bft-wal-dir / --bft-wal-mode auto isolated run; if this node must rejoin from prior state, restore an application snapshot before retrying"
+            "operator action: checkpoint-only bootstrap is acceptable with a fresh --bft-wal-dir / --bft-wal-mode auto isolated run; if this node must rejoin from prior state, restore an application snapshot before retrying"
         );
         assert_eq!(
             metadata_only_operator_action(&RecoveredWalState {
@@ -16953,7 +16964,7 @@ locked_block_hash = "stale-lock"
                 wal_entries_retained: 1,
                 checkpoint_height_retained: None,
             }),
-            "operator action: rebuild or restore checkpoint metadata for the retained WAL tip before retrying join/rejoin; do not resume from metadata alone"
+            "operator action: rebuild or restore checkpoint metadata so it covers retained WAL tip height 8 before retrying join/rejoin; do not resume from metadata alone"
         );
         assert_eq!(
             metadata_only_operator_action(&RecoveredWalState {
@@ -17001,7 +17012,7 @@ locked_block_hash = "stale-lock"
                 wal_entries_retained: 2,
                 checkpoint_height_retained: Some(12),
             }),
-            "operator action: investigate WAL/checkpoint mismatch, rebuild the recovery inputs, and only retry join/rejoin once WAL tip and checkpoint evidence agree"
+            "operator action: investigate WAL/checkpoint mismatch (retained WAL tip height 11, checkpoint height 12), rebuild the recovery inputs, and only retry join/rejoin once WAL tip and checkpoint evidence agree"
         );
         assert_eq!(
             metadata_only_operator_action(&RecoveredWalState {
@@ -17017,7 +17028,7 @@ locked_block_hash = "stale-lock"
                 wal_entries_retained: 2,
                 checkpoint_height_retained: Some(15),
             }),
-            "operator action: investigate WAL/checkpoint mismatch, rebuild the recovery inputs, and only retry join/rejoin once WAL tip and checkpoint evidence agree"
+            "operator action: investigate WAL/checkpoint mismatch (retained WAL tip height 11, checkpoint height 15), rebuild the recovery inputs, and only retry join/rejoin once WAL tip and checkpoint evidence agree"
         );
     }
 
@@ -17493,6 +17504,46 @@ locked_block_hash = "stale-lock"
         assert!(err.contains("next startup height: 12"));
         assert!(err.contains(
             "incident clue: retained_wal_entries=2 checkpoint_height_retained=12 checkpoint_tip_relation=ahead:1 next_startup_height=12 wal_tail_truncated=true metadata_only_recovery=true join_rejoin_status=blocked:metadata_only_recovery"
+        ));
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
+    fn recover_metadata_only_error_surfaces_checkpoint_ahead_mismatch_operator_action() {
+        let wal_dir = temp_wal_dir("recover-metadata-only-error-checkpoint-ahead-mismatch");
+        fs::create_dir_all(&wal_dir).unwrap();
+
+        let recovered = RecoveredWalState {
+            next_height: 3,
+            restored_lock: None,
+            last_checkpoint: Some(CheckpointMeta {
+                height: 3,
+                state_root_hex: "r3".into(),
+                wal_entry_hash_hex: "h3".into(),
+            }),
+            truncated: false,
+            metadata_only_recovery: true,
+            wal_entries_retained: 2,
+            checkpoint_height_retained: Some(3),
+        };
+
+        let err = metadata_only_recovery_error(&wal_dir, &recovered);
+
+        assert!(err.contains("retained 2 committed WAL entries through height 2"));
+        assert!(err.contains(
+            "retained checkpoint height 3 is ahead of retained WAL tip height 2 by 1 block; investigate WAL/checkpoint mismatch"
+        ));
+        assert!(!err.contains(
+            "retained checkpoint height 3 is ahead of retained WAL tip height 2 by 1 blocks"
+        ));
+        assert!(err.contains(
+            "operator action: investigate WAL/checkpoint mismatch (retained WAL tip height 2, checkpoint height 3), rebuild the recovery inputs, and only retry join/rejoin once WAL tip and checkpoint evidence agree"
+        ));
+        assert!(err.contains("last retained checkpoint: 3"));
+        assert!(err.contains("next startup height: 3"));
+        assert!(err.contains(
+            "incident clue: retained_wal_entries=2 checkpoint_height_retained=3 checkpoint_tip_relation=ahead:1 next_startup_height=3 wal_tail_truncated=false metadata_only_recovery=true join_rejoin_status=blocked:metadata_only_recovery"
         ));
 
         let _ = fs::remove_dir_all(&wal_dir);
