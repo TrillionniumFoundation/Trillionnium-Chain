@@ -298,6 +298,20 @@ def validate_packet_file_path(value: str, field: str) -> None:
 
 
 
+def validate_packet_artifact_path(value: str, field: str) -> None:
+    validate_packet_path(value, field)
+    normalized = value.rstrip("/")
+    if not normalized or normalized == "/":
+        fail(
+            f"invalid ceremony packet arguments: public-mainnet-input requires {field} to name one exact artifact path"
+        )
+    if Path(value).name in {"", ".", ".."} or value.endswith("/"):
+        fail(
+            f"invalid ceremony packet arguments: public-mainnet-input requires {field} to name one exact artifact path"
+        )
+
+
+
 def validate_ceremony_packet_metadata(args: argparse.Namespace) -> None:
     packet_line_values = {
         "ceremony_id": args.ceremony_id,
@@ -367,7 +381,7 @@ def validate_ceremony_packet_metadata(args: argparse.Namespace) -> None:
             "invalid ceremony packet arguments: public-mainnet-input requires genesis_artifact_sha256 to be a 64-character hex sha256 digest"
         )
 
-    validate_packet_path(args.genesis_artifact_path, "genesis_artifact_path")
+    validate_packet_artifact_path(args.genesis_artifact_path, "genesis_artifact_path")
     validate_packet_file_path(args.packet_distribution_path, "packet_distribution_path")
 
 
