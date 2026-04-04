@@ -588,6 +588,16 @@ mod tests {
     }
 
     #[test]
+    fn recovery_startup_summary_keeps_single_block_checkpoint_lag_visible_after_tail_repair() {
+        let recovered = recovered_state(2, 12, Some(10), true, false);
+
+        assert_eq!(
+            recovery_startup_summary(&recovered),
+            "retained_wal_entries=2 checkpoint_height_retained=10 checkpoint_tip_relation=behind:1 next_startup_height=12 wal_tail_truncated=true metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume_checkpoint_lagging_after_tail_repair"
+        );
+    }
+
+    #[test]
     fn metadata_only_recovery_error_includes_operator_facing_summary() {
         let recovered = recovered_state(2, 12, Some(10), true, true);
         let error = metadata_only_recovery_error(Path::new("/tmp/trnm-wal"), &recovered);
