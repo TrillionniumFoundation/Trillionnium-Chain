@@ -219,6 +219,19 @@ If you are preparing the first non-placeholder handoff packet rather than anothe
 
 - `trillionnium-rust/docs/release/TRNM_DURABLE_READ_SERVICE_HANDOFF_TEMPLATE_2026-04-04.md`
 
+### Handoff template selection quick check
+
+Before reusing any explorer/read-service evidence in a ticket, release review, or operator handoff note, classify the packet with this fail-closed matrix:
+
+| observed evidence shape | allowed template | boundary decision |
+| --- | --- | --- |
+| any evidence comes directly from `capture_explorer_scaffold_handoff.sh`, `explorer_service_status.sh`, or this scaffold runbook, and `deployment_evidence_scope=placeholder-only` remains intact | `trillionnium-rust/docs/release/TRNM_EXPLORER_SCAFFOLD_HANDOFF_TEMPLATE_2026-04-04.md` | keep the packet placeholder-only; do not upgrade it by hand |
+| `service_mode` is still `operator-facing-static-scaffold` even if the service is reverse-proxied or wrapped by systemd | `trillionnium-rust/docs/release/TRNM_EXPLORER_SCAFFOLD_HANDOFF_TEMPLATE_2026-04-04.md` | deployment shape is still scaffold-boundary only |
+| any of the 6 durable-read anchors (`ingestion_source`, `checkpoint_store`, `replay_start_anchor`, `retention_scope`, `archive_owner`, `lag_slo`) is missing, placeholder, or inferred from future intent rather than current evidence | `trillionnium-rust/docs/release/TRNM_EXPLORER_SCAFFOLD_HANDOFF_TEMPLATE_2026-04-04.md` | durable read boundary is not established |
+| non-placeholder deployment evidence exists **and** all 6 durable-read anchors have real values **and** replay / restore / lag evidence is attached in the same packet | `trillionnium-rust/docs/release/TRNM_DURABLE_READ_SERVICE_HANDOFF_TEMPLATE_2026-04-04.md` | eligible for durable-read-service review |
+
+Fail-closed rule: changing only the prose around a scaffold packet does not change the packet class. If the evidence still originates from scaffold-only scripts or still carries placeholder markers, the handoff stays placeholder-only.
+
 Suggested env file (`trillionnium-rust/run/explorer-service/explorer-service.env`):
 
 > On first successful/local bring-up, `explorer_service_up.sh` will create this file automatically if it does not already exist, using the current runtime contract values. It never overwrites an existing env file, so operator-local edits remain the source of truth.
