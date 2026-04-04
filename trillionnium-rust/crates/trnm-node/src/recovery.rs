@@ -260,33 +260,37 @@ fn checkpoint_tip_relation(recovered: &RecoveredWalState) -> String {
     }
 }
 
-fn metadata_only_operator_action(recovered: &RecoveredWalState) -> &'static str {
+fn metadata_only_operator_action(recovered: &RecoveredWalState) -> String {
     if recovered.wal_entries_retained == 0 {
         match recovered.checkpoint_height_retained {
             Some(_) => {
-                "operator action: checkpoint-only bootstrap is acceptable with a fresh --bft-wal-dir / --bft-wal-mode auto isolated run; if this node must rejoin from prior state, restore an application snapshot before retrying"
+                "operator action: checkpoint-only bootstrap is acceptable with a fresh --bft-wal-dir / --bft-wal-mode auto isolated run; if this node must rejoin from prior state, restore an application snapshot before retrying".into()
             }
             None => {
-                "operator action: restart with a fresh --bft-wal-dir / --bft-wal-mode auto isolated run; if this node must rejoin from prior state, restore an application snapshot before retrying"
+                "operator action: restart with a fresh --bft-wal-dir / --bft-wal-mode auto isolated run; if this node must rejoin from prior state, restore an application snapshot before retrying".into()
             }
         }
     } else {
+        let tip_height = recovered.next_height.saturating_sub(1);
         match recovered.checkpoint_height_retained {
             Some(checkpoint_height)
-                if checkpoint_height < recovered.next_height.saturating_sub(1) =>
+                if checkpoint_height < tip_height =>
             {
-                "operator action: restore an application snapshot that covers the retained WAL tip before retrying join/rejoin; do not resume from metadata alone"
+                "operator action: restore an application snapshot that covers the retained WAL tip before retrying join/rejoin; do not resume from metadata alone".into()
             }
             Some(checkpoint_height)
-                if checkpoint_height > recovered.next_height.saturating_sub(1) =>
+                if checkpoint_height > tip_height =>
             {
-                "operator action: investigate WAL/checkpoint mismatch, rebuild the recovery inputs, and only retry join/rejoin once WAL tip and checkpoint evidence agree"
+                "operator action: investigate WAL/checkpoint mismatch, rebuild the recovery inputs, and only retry join/rejoin once WAL tip and checkpoint evidence agree".into()
             }
             None => {
-                "operator action: rebuild or restore checkpoint metadata for the retained WAL tip before retrying join/rejoin; do not resume from metadata alone"
+                format!(
+                    "operator action: rebuild or restore checkpoint metadata so it covers retained WAL tip height {} before retrying join/rejoin; do not resume from metadata alone",
+                    tip_height,
+                )
             }
             Some(_) => {
-                "operator action: restore the corresponding application snapshot before retrying join/rejoin; do not resume from metadata alone"
+                "operator action: restore the corresponding application snapshot before retrying join/rejoin; do not resume from metadata alone".into()
             }
         }
     }
@@ -710,7 +714,7 @@ mod tests {
         assert!(error.contains(
             "incident clue: retained_wal_entries=1 checkpoint_height_retained=none checkpoint_tip_relation=missing next_startup_height=9 wal_tail_truncated=false metadata_only_recovery=true join_rejoin_status=blocked:metadata_only_recovery"
         ));
-        assert!(error.contains("rebuild or restore checkpoint metadata for the retained WAL tip before retrying join/rejoin"));
+        assert!(error.contains("rebuild or restore checkpoint metadata so it covers retained WAL tip height 8 before retrying join/rejoin"));
         assert!(error.contains("wal_entries_retained=1"));
         assert!(error.contains("wal_tail_truncated=false"));
         assert!(error.contains("checkpoint_height_retained=none"));
@@ -816,7 +820,7 @@ mod tests {
         );
         assert_eq!(
             metadata_only_operator_action(&recovered_state(1, 9, None, false, true)),
-            "operator action: rebuild or restore checkpoint metadata for the retained WAL tip before retrying join/rejoin; do not resume from metadata alone"
+            "operator action: rebuild or restore checkpoint metadata so it covers retained WAL tip height 8 before retrying join/rejoin; do not resume from metadata alone"
         );
         assert_eq!(
             metadata_only_operator_action(&recovered_state(2, 12, Some(10), false, true)),
