@@ -5042,31 +5042,33 @@ mod tests {
         }
     }
 
+    const FORBIDDEN_BOOTSTRAP_ALIAS_FIELDS: &[(&str, &str)] = &[
+        ("bootstrap_nodes", "[\"127.0.0.1:27656\"]"),
+        ("bootstrap_node", "\"127.0.0.1:27656\""),
+        ("bootstrap_peers", "[\"127.0.0.1:27656\"]"),
+        ("bootstrap_peer", "\"127.0.0.1:27656\""),
+        ("bootstrapNodes", "[\"127.0.0.1:27656\"]"),
+        ("bootstrapNode", "\"127.0.0.1:27656\""),
+        ("bootstrapPeers", "[\"127.0.0.1:27656\"]"),
+        ("bootstrapPeer", "\"127.0.0.1:27656\""),
+        ("seed_nodes", "[\"127.0.0.1:27656\"]"),
+        ("seed_node", "\"127.0.0.1:27656\""),
+        ("seed_peers", "[\"127.0.0.1:27656\"]"),
+        ("seed_peer", "\"127.0.0.1:27656\""),
+        ("seedNodes", "[\"127.0.0.1:27656\"]"),
+        ("seedNode", "\"127.0.0.1:27656\""),
+        ("seedPeers", "[\"127.0.0.1:27656\"]"),
+        ("seedPeer", "\"127.0.0.1:27656\""),
+        ("seeds", "\"127.0.0.1:27656\""),
+        ("persistent_peers", "[\"127.0.0.1:27656\"]"),
+        ("persistent_peer", "\"127.0.0.1:27656\""),
+        ("persistentPeers", "[\"127.0.0.1:27656\"]"),
+        ("persistentPeer", "\"127.0.0.1:27656\""),
+    ];
+
     #[test]
     fn load_config_rejects_unknown_fields_to_keep_bootstrap_config_fail_closed() {
-        for (unknown_field, field_value) in [
-            ("bootstrap_nodes", "[\"127.0.0.1:27656\"]"),
-            ("bootstrap_node", "\"127.0.0.1:27656\""),
-            ("bootstrap_peers", "[\"127.0.0.1:27656\"]"),
-            ("bootstrap_peer", "\"127.0.0.1:27656\""),
-            ("bootstrapNodes", "[\"127.0.0.1:27656\"]"),
-            ("bootstrapNode", "\"127.0.0.1:27656\""),
-            ("bootstrapPeers", "[\"127.0.0.1:27656\"]"),
-            ("bootstrapPeer", "\"127.0.0.1:27656\""),
-            ("seed_nodes", "[\"127.0.0.1:27656\"]"),
-            ("seed_node", "\"127.0.0.1:27656\""),
-            ("seed_peers", "[\"127.0.0.1:27656\"]"),
-            ("seed_peer", "\"127.0.0.1:27656\""),
-            ("seedNodes", "[\"127.0.0.1:27656\"]"),
-            ("seedNode", "\"127.0.0.1:27656\""),
-            ("seedPeers", "[\"127.0.0.1:27656\"]"),
-            ("seedPeer", "\"127.0.0.1:27656\""),
-            ("seeds", "\"127.0.0.1:27656\""),
-            ("persistent_peers", "[\"127.0.0.1:27656\"]"),
-            ("persistent_peer", "\"127.0.0.1:27656\""),
-            ("persistentPeers", "[\"127.0.0.1:27656\"]"),
-            ("persistentPeer", "\"127.0.0.1:27656\""),
-        ] {
+        for (unknown_field, field_value) in FORBIDDEN_BOOTSTRAP_ALIAS_FIELDS {
             let path = std::env::temp_dir().join(format!(
                 "trnm-node-config-unknown-field-{unknown_field}-{}-{}.toml",
                 std::process::id(),
