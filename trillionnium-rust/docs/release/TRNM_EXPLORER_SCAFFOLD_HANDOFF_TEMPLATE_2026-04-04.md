@@ -52,7 +52,7 @@ EXPLORER_HEALTH_URL=<value>
 EXPLORER_RPC_BASE_URL=<value>
 
 # status block (copy emitted values verbatim)
-state=<running|stopped|stale-pid|invalid-config|...>
+state=<running|down|stale-pid|invalid-config|...>
 service_mode=operator-facing-static-scaffold
 production_ready=false
 bind_host=<value>
@@ -85,10 +85,10 @@ durable_read_anchor_retention_scope=rpc-window-bounded
 durable_read_anchor_archive_owner=missing-placeholder-scaffold
 durable_read_anchor_lag_slo=missing-placeholder-scaffold
 health=<ok|down|unknown>
-health_probe=<active|disabled-curl-unavailable|not-run-state-not-running|invalid-config>
+health_probe=<active|disabled-curl-unavailable|not-run-state-down|not-run-state-not-running|invalid-config>
 health_probe_url=<value>
 local_health=<ok|down|unknown>
-local_health_probe=<active|disabled-curl-unavailable|not-run-state-not-running|invalid-config>
+local_health_probe=<active|disabled-curl-unavailable|not-run-state-down|not-run-state-not-running|invalid-config>
 local_health_probe_url=<value>
 
 # /index.json proof
