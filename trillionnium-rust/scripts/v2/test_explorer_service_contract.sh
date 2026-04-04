@@ -226,14 +226,6 @@ fi
 
 cat >"${ENV_FILE}" <<EOF
 EXPLORER_HOST=127.0.0.1
-EXPLORER_PORT=18081
-EXPLORER_PUBLIC_BASE_URL=http://127.0.0.1:18081
-EXPLORER_HEALTH_URL=http://127.0.0.1:18081/healthz
-EXPLORER_RPC_BASE_URL=http://127.0.0.1:7777
-EOF
-
-cat >"${ENV_FILE}" <<EOF
-EXPLORER_HOST=127.0.0.1
 EXPLORER_PORT=${PORT}
 EXPLORER_PUBLIC_BASE_URL=ftp://invalid-public-base-url
 EXPLORER_HEALTH_URL=${HEALTH_URL}
@@ -305,6 +297,43 @@ assert_contains "${TMP_DIR}/down-invalid-rpc-base-url.out" "local_health_probe=n
 assert_contains "${TMP_DIR}/down-invalid-rpc-base-url.out" "deployment_evidence_scope=placeholder-only"
 assert_contains "${TMP_DIR}/down-invalid-rpc-base-url.out" "rank1_read_surface_blocker=still-open"
 assert_contains "${TMP_DIR}/down-invalid-rpc-base-url.out" "durable_indexer_status=not-implemented-in-this-scaffold"
+
+cat >"${ENV_FILE}" <<EOF
+EXPLORER_HOST=127.0.0.1
+EXPLORER_PORT=0
+EXPLORER_PUBLIC_BASE_URL=http://127.0.0.1:${PORT}
+EXPLORER_HEALTH_URL=${HEALTH_URL}
+EXPLORER_RPC_BASE_URL=${RPC_BASE_URL}
+EOF
+
+"${UP_SCRIPT}" >"${TMP_DIR}/up-invalid-port.out" 2>&1 || true
+assert_contains "${TMP_DIR}/up-invalid-port.out" "refusing to start explorer service scaffold: EXPLORER_PORT must be an integer in [1, 65535]"
+assert_contains "${TMP_DIR}/up-invalid-port.out" "state=invalid-config"
+assert_contains "${TMP_DIR}/up-invalid-port.out" "config_error=EXPLORER_PORT must be an integer in [1, 65535]"
+assert_contains "${TMP_DIR}/up-invalid-port.out" "health_probe=invalid-config"
+assert_contains "${TMP_DIR}/up-invalid-port.out" "local_health_probe=invalid-config"
+assert_contains "${TMP_DIR}/up-invalid-port.out" "deployment_evidence_scope=placeholder-only"
+assert_contains "${TMP_DIR}/up-invalid-port.out" "rank1_read_surface_blocker=still-open"
+assert_contains "${TMP_DIR}/up-invalid-port.out" "durable_indexer_status=not-implemented-in-this-scaffold"
+
+"${STATUS_SCRIPT}" >"${TMP_DIR}/status-invalid-port.out" || true
+assert_contains "${TMP_DIR}/status-invalid-port.out" "state=invalid-config"
+assert_contains "${TMP_DIR}/status-invalid-port.out" "config_error=EXPLORER_PORT must be an integer in [1, 65535]"
+assert_contains "${TMP_DIR}/status-invalid-port.out" "health_probe=invalid-config"
+assert_contains "${TMP_DIR}/status-invalid-port.out" "local_health_probe=invalid-config"
+assert_contains "${TMP_DIR}/status-invalid-port.out" "deployment_evidence_scope=placeholder-only"
+assert_contains "${TMP_DIR}/status-invalid-port.out" "rank1_read_surface_blocker=still-open"
+assert_contains "${TMP_DIR}/status-invalid-port.out" "durable_indexer_status=not-implemented-in-this-scaffold"
+
+"${DOWN_SCRIPT}" >"${TMP_DIR}/down-invalid-port.out"
+assert_contains "${TMP_DIR}/down-invalid-port.out" "config_warning=EXPLORER_PORT must be an integer in [1, 65535]"
+assert_contains "${TMP_DIR}/down-invalid-port.out" "state=down"
+assert_contains "${TMP_DIR}/down-invalid-port.out" "health=unknown"
+assert_contains "${TMP_DIR}/down-invalid-port.out" "health_probe=not-run-state-down"
+assert_contains "${TMP_DIR}/down-invalid-port.out" "local_health_probe=not-run-state-down"
+assert_contains "${TMP_DIR}/down-invalid-port.out" "deployment_evidence_scope=placeholder-only"
+assert_contains "${TMP_DIR}/down-invalid-port.out" "rank1_read_surface_blocker=still-open"
+assert_contains "${TMP_DIR}/down-invalid-port.out" "durable_indexer_status=not-implemented-in-this-scaffold"
 
 cat >"${ENV_FILE}" <<EOF
 EXPLORER_HOST=127.0.0.1
