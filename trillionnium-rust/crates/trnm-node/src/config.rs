@@ -1042,6 +1042,10 @@ mod tests {
             "node-2.bootstrap.internal",
             "bootstrap.example.com.",
             "node-2.bootstrap.internal.",
+            "BOOTSTRAP.EXAMPLE.COM",
+            "NODE-2.BOOTSTRAP.INTERNAL",
+            "BOOTSTRAP.EXAMPLE.COM.",
+            "NODE-2.BOOTSTRAP.INTERNAL.",
         ] {
             let path = std::env::temp_dir().join(format!(
                 "trnm-node-config-dns-hostname-node-id-{}-{}-{node_id}.toml",
