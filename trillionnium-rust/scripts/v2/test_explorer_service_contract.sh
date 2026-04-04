@@ -250,5 +250,14 @@ assert_contains "${TMP_DIR}/status-explicit-url-override.out" "public_base_url=h
 assert_contains "${TMP_DIR}/status-explicit-url-override.out" "health_url=https://explorer.override.example/healthz"
 assert_contains "${TMP_DIR}/status-explicit-url-override.out" "local_health_url=http://127.0.0.1:18081/healthz"
 
+EXPLORER_HOST=0.0.0.0 \
+  "${STATUS_SCRIPT}" >"${TMP_DIR}/status-explicit-host-override.out"
+assert_contains "${TMP_DIR}/status-explicit-host-override.out" "state=down"
+assert_contains "${TMP_DIR}/status-explicit-host-override.out" "bind_host=0.0.0.0"
+assert_contains "${TMP_DIR}/status-explicit-host-override.out" "bind_port=18081"
+assert_contains "${TMP_DIR}/status-explicit-host-override.out" "public_base_url=http://0.0.0.0:18081"
+assert_contains "${TMP_DIR}/status-explicit-host-override.out" "health_url=http://0.0.0.0:18081/healthz"
+assert_contains "${TMP_DIR}/status-explicit-host-override.out" "local_health_url=http://127.0.0.1:18081/healthz"
+
 
 echo "explorer_service_contract_smoke=ok"
