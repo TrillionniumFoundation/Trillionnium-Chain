@@ -919,13 +919,22 @@ mod tests {
             )
             .expect("write temp config");
 
-            let err = load_config(path.to_str().expect("temp path utf-8"))
-                .expect_err("unknown config fields must fail closed");
+            let path_str = path.to_str().expect("temp path utf-8");
+            let resolved = std::fs::canonicalize(&path).expect("canonicalize temp config path");
+            let err = load_config(path_str).expect_err("unknown config fields must fail closed");
             let err_surface = format!("{err:#}");
             assert!(
                 err_surface.contains("parse toml failed")
                     && err_surface.contains(&format!("unknown field `{unknown_field}`")),
                 "unexpected error for {unknown_field}: {err:#}"
+            );
+            assert!(
+                err_surface.contains(path_str),
+                "error surface for {unknown_field} must keep the operator-supplied config path visible: {err:#}"
+            );
+            assert!(
+                err_surface.contains(resolved.to_string_lossy().as_ref()),
+                "error surface for {unknown_field} must keep the resolved config path visible for operator diagnosis: {err:#}"
             );
 
             let _ = std::fs::remove_file(path);
