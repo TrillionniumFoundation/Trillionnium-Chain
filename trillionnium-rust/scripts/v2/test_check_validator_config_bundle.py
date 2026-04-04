@@ -280,6 +280,35 @@ class CheckValidatorConfigBundleTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertIn(f"config_path={config.resolve()}", result.stdout)
 
+    def test_public_mainnet_input_operator_ack_reuses_absolute_config_path(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            config = self.write_config(
+                root,
+                "node1.toml",
+                node_id="node1",
+                rpc_addr="127.0.0.1:7001",
+                p2p_addr="127.0.0.1:7002",
+            )
+            relative_config = config.relative_to(root)
+            result = subprocess.run(
+                [
+                    "python3",
+                    str(SCRIPT),
+                    *self.make_public_mainnet_args(relative_config),
+                ],
+                cwd=root,
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+        ack_line = next(
+            line for line in result.stdout.splitlines() if line.startswith("operator_ack=")
+        )
+        self.assertIn(f"config_path={config.resolve()}", ack_line)
+
     def test_public_mainnet_input_operator_ack_quotes_validator_entry_hash(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
