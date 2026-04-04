@@ -4500,6 +4500,45 @@ mod tests {
     }
 
     #[test]
+    fn default_cli_config_stays_pinned_to_shipped_bootstrap_anchor() {
+        let args = Args::parse_from(["trnm-node"]);
+        assert_eq!(
+            args.config, "configs/node1.toml",
+            "default trnm-node config path must stay pinned to the shipped bootstrap anchor fixture"
+        );
+
+        let cfg = load_config(&args.config).unwrap_or_else(|err| {
+            panic!(
+                "{} should remain loadable as the default shipped bootstrap anchor: {err:#}",
+                args.config
+            )
+        });
+        let p2p_socket: SocketAddr = cfg
+            .p2p_addr
+            .parse()
+            .unwrap_or_else(|err| panic!("default p2p_addr should parse: {err}"));
+        let rpc_socket: SocketAddr = cfg
+            .rpc_addr
+            .parse()
+            .unwrap_or_else(|err| panic!("default rpc_addr should parse: {err}"));
+
+        assert_eq!(
+            cfg.node_id, "node1",
+            "default trnm-node config must keep node1 as the shipped bootstrap anchor id"
+        );
+        assert_eq!(
+            p2p_socket,
+            "127.0.0.1:26656".parse().expect("socket literal should parse"),
+            "default trnm-node config must keep the shipped bootstrap anchor p2p tuple"
+        );
+        assert_eq!(
+            rpc_socket,
+            "127.0.0.1:26657".parse().expect("socket literal should parse"),
+            "default trnm-node config must keep the shipped bootstrap anchor rpc tuple"
+        );
+    }
+
+    #[test]
     fn shipped_node_configs_form_a_unique_local_bootstrap_topology() {
         use std::{collections::HashSet, net::SocketAddr};
 
