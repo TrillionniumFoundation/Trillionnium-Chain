@@ -336,7 +336,11 @@ fn metadata_only_operator_action(recovered: &RecoveredWalState) -> String {
                 "operator action: restore an application snapshot that covers the retained WAL tip before retrying join/rejoin; do not resume from metadata alone".into()
             }
             Some(checkpoint_height) if checkpoint_height > tip_height => {
-                "operator action: investigate WAL/checkpoint mismatch, rebuild the recovery inputs, and only retry join/rejoin once WAL tip and checkpoint evidence agree".into()
+                format!(
+                    "operator action: investigate WAL/checkpoint mismatch (retained WAL tip height {}, checkpoint height {}), rebuild the recovery inputs, and only retry join/rejoin once WAL tip and checkpoint evidence agree",
+                    tip_height,
+                    checkpoint_height,
+                )
             }
             None => {
                 format!(
@@ -704,7 +708,9 @@ mod tests {
                 && err.contains("checkpoint_height_retained=12")
                 && err.contains("checkpoint_tip_relation=ahead:1")
                 && err.contains("next_startup_height=12")
-                && err.contains("operator action: investigate WAL/checkpoint mismatch, rebuild the recovery inputs, and only retry join/rejoin once WAL tip and checkpoint evidence agree"),
+                && err.contains(
+                    "operator action: investigate WAL/checkpoint mismatch (retained WAL tip height 11, checkpoint height 12), rebuild the recovery inputs, and only retry join/rejoin once WAL tip and checkpoint evidence agree"
+                ),
             "unexpected metadata-only recovery error: {err}"
         );
     }
