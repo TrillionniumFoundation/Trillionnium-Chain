@@ -221,6 +221,7 @@ TRNM_TX_CLI=./trillionnium-rust/target/debug/trnm-cli \
   - 当前 placeholder 仍故意把 durable-read anchors 保持 fail-closed：`durable_read_anchor_missing_count=6`，缺口字段为 `ingestion_source`、`checkpoint_store`、`replay_start_anchor`、`retention_scope`、`archive_owner`、`lag_slo`；运行时会同时给出 `historical_query_scope=rpc-retention-bounded` 与 `durable_read_anchor_retention_scope=rpc-window-bounded` 两层口径：前者说明当前历史查询仍受 RPC retention window 约束，后者只是 durable anchor 中 `retention_scope` 这一占位字段的保守默认值。两者都不应被误读为 durable read-model 已闭环，因此这组输出应被视为“阻塞项清单”，不是“已实现能力清单”。
   - `explorer_service_down.sh` 现在也会复用同一组 read-contract 字段，便于在 stop / stale-pid 清理 / handoff 场景保留一致的只读边界说明，而不必额外跑一次 `status`。
   - 推荐将脚手架操作与值班排障步骤统一参照：`trillionnium-rust/docs/runbooks/explorer-service-scaffold.md`
+  - 若需要直接复制 ticket / 值班交接文本骨架，优先使用：`trillionnium-rust/docs/release/TRNM_EXPLORER_SCAFFOLD_HANDOFF_TEMPLATE_2026-04-04.md`，避免 handoff 时把 placeholder 误写成 durable read service。
 - 自动化脚本较多，优先使用本 README、`RELEASE_READINESS.md` 和 `docs/development` 下统一调度文档作为导航。
 
 ---

@@ -328,6 +328,7 @@ Day-1 只冻结已真实存在并可证明的 pagination 行为。
    - env file 关键字段：`EXPLORER_HOST`、`EXPLORER_PORT`、`EXPLORER_PUBLIC_BASE_URL`、`EXPLORER_HEALTH_URL`、`EXPLORER_RPC_BASE_URL`
    - 一次 `./scripts/v2/explorer_service_status.sh` 输出
    - 一次 `/index.json` 抓取结果
+   - 若需要可复制的 ticket / 值班文本骨架，直接引用 `trillionnium-rust/docs/release/TRNM_EXPLORER_SCAFFOLD_HANDOFF_TEMPLATE_2026-04-04.md`
 5. handoff 文本必须原样保留 fail-closed blocker markers：
    - `deployment_evidence_scope=placeholder-only`
    - `rank1_read_surface_blocker=still-open`
