@@ -97,24 +97,24 @@ ls configs/node1.toml configs/node2.toml configs/node3.toml configs/node4.toml
 Recommended targeted validation:
 
 ```bash
-python3 scripts/v2/check_validator_config_bundle.py \
-  configs/node1.toml \
-  configs/node2.toml \
-  configs/node3.toml \
-  configs/node4.toml
+python3 trillionnium-rust/scripts/v2/check_validator_config_bundle.py \
+  trillionnium-rust/configs/node1.toml \
+  trillionnium-rust/configs/node2.toml \
+  trillionnium-rust/configs/node3.toml \
+  trillionnium-rust/configs/node4.toml
 ```
 
 If the artifact is headed into a shared bootstrap ceremony packet, generate the skeleton from the validated bundle instead of free-typing validator entries:
 
 ```bash
-python3 scripts/v2/check_validator_config_bundle.py \
+python3 trillionnium-rust/scripts/v2/check_validator_config_bundle.py \
   --emit-ceremony-packet \
   --genesis-artifact-path /abs/path/to/genesis.json \
   --genesis-artifact-sha256 <64-char-sha256> \
-  configs/node1.toml \
-  configs/node2.toml \
-  configs/node3.toml \
-  configs/node4.toml
+  trillionnium-rust/configs/node1.toml \
+  trillionnium-rust/configs/node2.toml \
+  trillionnium-rust/configs/node3.toml \
+  trillionnium-rust/configs/node4.toml
 ```
 
 For `public-mainnet-input`, fill the ceremony metadata up front instead of forwarding a packet that still contains template/default values. The packet generator already fails closed here: it rejects the template `ceremony_id`, placeholder path fields, shorthand/truncated genesis hashes, and the default `validator_set_version=v1` when `--ceremony-scope public-mainnet-input` is selected.
@@ -122,7 +122,7 @@ For `public-mainnet-input`, fill the ceremony metadata up front instead of forwa
 Copyable stricter example:
 
 ```bash
-python3 scripts/v2/check_validator_config_bundle.py \
+python3 trillionnium-rust/scripts/v2/check_validator_config_bundle.py \
   --emit-ceremony-packet \
   --ceremony-id mn04-bootstrap-20260331-0621Z \
   --ceremony-scope public-mainnet-input \
@@ -133,10 +133,10 @@ python3 scripts/v2/check_validator_config_bundle.py \
   --rollback-owner primary-operator \
   --genesis-artifact-path /abs/path/to/genesis.json \
   --genesis-artifact-sha256 <64-char-sha256> \
-  configs/node1.toml \
-  configs/node2.toml \
-  configs/node3.toml \
-  configs/node4.toml
+  trillionnium-rust/configs/node1.toml \
+  trillionnium-rust/configs/node2.toml \
+  trillionnium-rust/configs/node3.toml \
+  trillionnium-rust/configs/node4.toml
 ```
 
 Interpretation rule:
