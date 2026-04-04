@@ -748,6 +748,14 @@ fn ensure_safe_sign_message_rejects_ambiguous_or_non_ascii_signer_text() {
         "unexpected error: {unicode_visible_err}"
     );
 
+    let kv_delimiter_err = ensure_safe_sign_message("approve=tx").unwrap_err();
+    assert!(
+        kv_delimiter_err
+            .to_string()
+            .contains("ASCII printable text"),
+        "unexpected error: {kv_delimiter_err}"
+    );
+
     let too_long_message = "a".repeat(4097);
     let too_long_err = ensure_safe_sign_message(&too_long_message).unwrap_err();
     assert!(
