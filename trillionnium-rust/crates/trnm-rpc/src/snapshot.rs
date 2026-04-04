@@ -16,10 +16,11 @@ fn normalize_adapter_record_line(line: &str) -> &str {
 }
 
 fn load_adapter_records_file(path: &PathBuf) -> Vec<AdapterRecord> {
-    let Ok(raw) = fs::read_to_string(path) else {
+    let Ok(raw) = fs::read(path) else {
         return vec![];
     };
-    raw.lines()
+    String::from_utf8_lossy(&raw)
+        .lines()
         .map(normalize_adapter_record_line)
         .filter(|l| !l.is_empty())
         .filter_map(|l| serde_json::from_str::<AdapterRecord>(l).ok())

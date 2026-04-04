@@ -1,7 +1,6 @@
 use super::*;
 
-#[test]
-fn load_latest_adapter_records_skips_invalid_jsonl_rows() {
+fn with_isolated_adapter_dir(test: impl FnOnce(&PathBuf)) {
     let dir = run_root().join("run/worker-agent");
     fs::create_dir_all(&dir).expect("create worker-agent dir");
 
@@ -24,19 +23,56 @@ fn load_latest_adapter_records_skips_invalid_jsonl_rows() {
         }
     }
 
-    let fixture = dir.join(format!("tx-adapter-99991231-{}.jsonl", std::process::id()));
-    fs::write(
+    test(&dir);
+
+    if let Ok(entries) = fs::read_dir(&dir) {
+        for entry in entries.flatten() {
+            let path = entry.path();
+            let is_adapter = path
+                .file_name()
+                .and_then(|n| n.to_str())
+                .map(|s| s.starts_with("tx-adapter-") && s.ends_with(".jsonl"))
+                .unwrap_or(false);
+            if is_adapter {
+                let _ = fs::remove_file(&path);
+            }
+        }
+    }
+    for (path, bytes) in backup {
+        let _ = fs::write(path, bytes);
+    }
+}
+
+#[test]
+fn load_latest_adapter_records_skips_invalid_jsonl_rows() {
+    with_isolated_adapter_dir(|dir| {
+        let fixture = dir.join(format!("tx-adapter-99991231-{}.jsonl", std::process::id()));
+        fs::write(
             &fixture,
             "not-json\n{\"ts\":1772074584,\"mode\":\"mock\",\"kind\":\"commit\",\"task_id\":101001,\"worker\":\"worker1\",\"commit_hash\":\"764c7baf3e1d3d325511cdc3d7836fbc1fa71a289bd669edcc4b55d6baaee9d7\",\"nonce\":101001,\"tx_hash\":\"7336b90d593ebe324cb4b3e41e7e9d86d1e2418f230cca0162ca1d539f32c2b9\",\"status\":\"accepted\",\"rc\":0}\n",
         )
         .expect("write adapter fixture");
 
-    let records = load_latest_adapter_records();
-    assert_eq!(records.len(), 1, "only valid JSONL rows should be loaded");
-    assert_eq!(records[0].task_id, 101001);
+        let records = load_latest_adapter_records();
+        assert_eq!(records.len(), 1, "only valid JSONL rows should be loaded");
+        assert_eq!(records[0].task_id, 101001);
+    });
+}
 
-    let _ = fs::remove_file(&fixture);
-    for (path, bytes) in backup {
-        let _ = fs::write(path, bytes);
-    }
+#[test]
+fn load_latest_adapter_records_skips_invalid_utf8_rows_without_dropping_same_snapshot_valid_rows() {
+    with_isolated_adapter_dir(|dir| {
+        let latest = dir.join(format!("tx-adapter-20260404-{}-z.jsonl", std::process::id()));
+        let mut raw = b"\xff\xfe\xfa not-utf8\n".to_vec();
+        raw.extend_from_slice(b"{\"ts\":1772074584,\"mode\":\"mock\",\"kind\":\"commit\",\"task_id\":6565,\"worker\":\"worker1\",\"commit_hash\":\"764c7baf3e1d3d325511cdc3d7836fbc1fa71a289bd669edcc4b55d6baaee9d7\",\"nonce\":101001,\"tx_hash\":\"7336b90d593ebe324cb4b3e41e7e9d86d1e2418f230cca0162ca1d539f32c2b9\",\"status\":\"accepted\",\"rc\":0}\n");
+        fs::write(&latest, raw).expect("write invalid utf8 + valid adapter snapshot");
+
+        let records = load_latest_adapter_records();
+        assert_eq!(
+            records.len(),
+            1,
+            "invalid utf-8 rows should not cause the latest durable snapshot to be discarded wholesale"
+        );
+        assert_eq!(records[0].task_id, 6565);
+    });
 }
