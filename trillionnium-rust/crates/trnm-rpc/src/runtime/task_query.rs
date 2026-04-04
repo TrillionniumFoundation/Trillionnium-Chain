@@ -66,7 +66,7 @@ pub(crate) fn filtered_node_events_for_task<'a>(
     })
 }
 
-fn sorted_node_events_for_task<'a>(
+pub(crate) fn sorted_node_events_for_task<'a>(
     task_id: u64,
     node_events: &'a [NodeEventRecord],
 ) -> Vec<&'a NodeEventRecord> {
@@ -91,6 +91,78 @@ fn sorted_node_events_for_task<'a>(
             ))
     });
     events
+}
+
+fn adapter_kind_query_order(kind: &str) -> u8 {
+    match kind {
+        "commit" => 0,
+        "reveal" => 1,
+        _ => 2,
+    }
+}
+
+pub(crate) fn sorted_task_adapter_records<'a>(
+    task_id: u64,
+    recs: &'a [AdapterRecord],
+) -> Vec<&'a AdapterRecord> {
+    let mut task_recs: Vec<&AdapterRecord> = recs
+        .iter()
+        .filter(|r| {
+            r.task_id == task_id
+                && r.status == "accepted"
+                && matches!(r.kind.as_str(), "commit" | "reveal")
+                && r.worker
+                    .as_deref()
+                    .and_then(normalize_actor_or_signer)
+                    .is_some()
+        })
+        .collect();
+    task_recs.sort_by(|a, b| {
+        (
+            a.ts,
+            adapter_kind_query_order(&a.kind),
+            a.worker
+                .as_deref()
+                .and_then(normalize_actor_or_signer)
+                .unwrap_or_default(),
+            a.tx_hash
+                .as_deref()
+                .map(normalize_tx_hash_lookup)
+                .unwrap_or_default(),
+            a.result_hash.as_deref().unwrap_or("").trim(),
+        )
+            .cmp(&(
+                b.ts,
+                adapter_kind_query_order(&b.kind),
+                b.worker
+                    .as_deref()
+                    .and_then(normalize_actor_or_signer)
+                    .unwrap_or_default(),
+                b.tx_hash
+                    .as_deref()
+                    .map(normalize_tx_hash_lookup)
+                    .unwrap_or_default(),
+                b.result_hash.as_deref().unwrap_or("").trim(),
+            ))
+    });
+    task_recs.dedup_by(|a, b| {
+        a.kind == b.kind
+            && a.worker
+                .as_deref()
+                .and_then(normalize_actor_or_signer)
+                == b.worker
+                    .as_deref()
+                    .and_then(normalize_actor_or_signer)
+            && a.tx_hash
+                .as_deref()
+                .map(normalize_tx_hash_lookup)
+                == b.tx_hash
+                    .as_deref()
+                    .map(normalize_tx_hash_lookup)
+            && a.result_hash.as_deref().map(str::trim)
+                == b.result_hash.as_deref().map(str::trim)
+    });
+    task_recs
 }
 
 pub(crate) fn query_task_from_node_events(
@@ -143,18 +215,7 @@ pub(crate) fn query_task_response(
         return Ok(out);
     }
 
-    let task_recs: Vec<&AdapterRecord> = recs
-        .iter()
-        .filter(|r| {
-            r.task_id == task_id
-                && r.status == "accepted"
-                && matches!(r.kind.as_str(), "commit" | "reveal")
-                && r.worker
-                    .as_deref()
-                    .and_then(normalize_actor_or_signer)
-                    .is_some()
-        })
-        .collect();
+    let task_recs = sorted_task_adapter_records(task_id, recs);
     if task_recs.is_empty() {
         bail!("task not found: {}", task_id);
     }
