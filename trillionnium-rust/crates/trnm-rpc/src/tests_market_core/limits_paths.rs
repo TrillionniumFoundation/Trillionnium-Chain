@@ -127,6 +127,31 @@ fn load_task_state_snapshot_tolerates_crlf_separated_whitespace_prefixed_utf8_bo
 }
 
 #[test]
+fn load_task_state_snapshot_tolerates_invalid_utf8_prefix_before_valid_history_rows() {
+    let path = unique_tmp_path("rpc-task-state-invalid-utf8-prefix", "jsonl");
+    let _ = fs::remove_file(&path);
+    fs::write(
+        &path,
+        b"\xff\xfe\xfa\n{\"task_id\":109,\"status\":\"Open\",\"worker\":null,\"bounty\":10,\"result_hash\":null,\"version\":9}\n{\"task_id\":109,\"status\":\"Assigned\",\"worker\":\"worker-4\",\"bounty\":10,\"result_hash\":null,\"version\":10}\n",
+    )
+    .expect("write invalid utf8-prefixed task snapshot");
+
+    with_market_path_env(&[(TASK_STATE_FILE_ENV, path.to_str())], || {
+        let tasks = load_task_state_snapshot().expect("task snapshot should parse after lossy utf8 recovery");
+        assert_eq!(
+            tasks.len(),
+            2,
+            "invalid utf-8 prefix bytes should not erase later durable task history rows"
+        );
+        assert_eq!(tasks[0].task_id, 109);
+        assert_eq!(tasks[0].version, 9);
+        assert_eq!(tasks[1].version, 10);
+    });
+
+    let _ = fs::remove_file(&path);
+}
+
+#[test]
 fn push_tail_limited_keeps_only_most_recent_items_in_order() {
     let mut items = Vec::new();
     push_tail_limited(&mut items, 1, 3);

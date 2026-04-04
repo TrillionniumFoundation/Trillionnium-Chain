@@ -49,8 +49,8 @@ pub(crate) fn load_task_state_snapshot() -> Result<Vec<TaskObject>> {
     let Some(path) = task_state_file() else {
         return Ok(vec![]);
     };
-    let raw = match fs::read_to_string(&path) {
-        Ok(raw) => raw,
+    let raw = match fs::read(&path) {
+        Ok(raw) => String::from_utf8_lossy(&raw).into_owned(),
         Err(err) if err.kind() == std::io::ErrorKind::NotFound => return Ok(vec![]),
         Err(err) => {
             return Err(anyhow!(
