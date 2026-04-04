@@ -2926,7 +2926,8 @@ mod tests {
             "6. Treat `configs/node1.toml` through `configs/node4.toml` as slot-bound fixtures: do not rename them, swap them between peers, or reinterpret a later slot as the bootstrap anchor during operator recovery.",
             "7. If `node4` is absent, keep `node1` through `node3` in their shipped slots; do not rename another config into the `node4` role, and if `node4` returns it must come back with `node4.toml` and its shipped tuple.",
             "8. If a config contains unknown fields, whitespace drift, host-like or path-like ids, URI-like delimiters, non-canonical socket literals, privileged ports, wildcard listeners, reserved documentation/benchmarking listener ranges, or mixed listener IP families, the config loader must fail closed.",
-            "9. Do not substitute IPv6 loopback `[::1]` for the shipped IPv4 loopback `127.0.0.1` during bootstrap or rejoin; listener-family drift is invalid even if both addresses are loopback.",
+            "9. If startup fails because a shipped config introduces an ad-hoc peer/bootstrap alias such as `bootstrap_nodes`, `seedPeers`, or `persistentNode`, treat the exact field named in the parse error as the operator fix target; do not guess or silently translate aliases.",
+            "10. Do not substitute IPv6 loopback `[::1]` for the shipped IPv4 loopback `127.0.0.1` during bootstrap or rejoin; listener-family drift is invalid even if both addresses are loopback.",
         ];
         let documented_startup_model_lines = readme
             .lines()
