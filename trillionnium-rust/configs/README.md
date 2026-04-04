@@ -48,4 +48,4 @@ This table is intentionally local-fixture scoped: it documents the minimum fail-
 
 ## What this fixture is for
 
-Use these files to keep peer/bootstrap topology assumptions explicit while the public-mainnet bootstrap peer-management path is still being hardened. Do not add ad-hoc `bootstrap_peers` or `seed_nodes` fields to these shipped fixtures; the local rehearsal schema stays the minimal three-field contract until a real peer-management surface exists. The regression tests in `crates/trnm-node/src/config.rs` are the source of truth for the exact fixture invariants.
+Use these files to keep peer/bootstrap topology assumptions explicit while the public-mainnet bootstrap peer-management path is still being hardened. Do not add ad-hoc `bootstrap_peers`, `seed_nodes`, or `persistent_peers` fields to these shipped fixtures; the local rehearsal schema stays the minimal three-field contract until a real peer-management surface exists. The regression tests in `crates/trnm-node/src/config.rs` are the source of truth for the exact fixture invariants.

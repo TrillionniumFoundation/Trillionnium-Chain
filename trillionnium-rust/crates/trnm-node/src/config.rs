@@ -866,6 +866,7 @@ mod tests {
         for (unknown_field, field_value) in [
             ("bootstrap_peers", "[\"127.0.0.1:27656\"]"),
             ("seed_nodes", "[\"127.0.0.1:27656\"]"),
+            ("persistent_peers", "[\"127.0.0.1:27656\"]"),
         ] {
             let path = std::env::temp_dir().join(format!(
                 "trnm-node-config-unknown-field-{unknown_field}-{}-{}.toml",
@@ -2758,7 +2759,7 @@ mod tests {
         for expected_phrase in [
             "## What this fixture is for",
             "Use these files to keep peer/bootstrap topology assumptions explicit while the public-mainnet bootstrap peer-management path is still being hardened.",
-            "Do not add ad-hoc `bootstrap_peers` or `seed_nodes` fields to these shipped fixtures; the local rehearsal schema stays the minimal three-field contract until a real peer-management surface exists.",
+            "Do not add ad-hoc `bootstrap_peers`, `seed_nodes`, or `persistent_peers` fields to these shipped fixtures; the local rehearsal schema stays the minimal three-field contract until a real peer-management surface exists.",
             "The regression tests in `crates/trnm-node/src/config.rs` are the source of truth for the exact fixture invariants.",
         ] {
             assert!(
