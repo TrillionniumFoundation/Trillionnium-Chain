@@ -17204,6 +17204,39 @@ locked_block_hash = "stale-lock"
     }
 
     #[test]
+    fn ensure_recoverable_wal_state_allows_truncated_lagging_checkpoint_resume() {
+        let wal_dir = temp_wal_dir("recover-guard-truncated-lagging-checkpoint-resume");
+        fs::create_dir_all(&wal_dir).unwrap();
+
+        let recovered = RecoveredWalState {
+            next_height: 8,
+            restored_lock: Some("h7".into()),
+            last_checkpoint: Some(CheckpointMeta {
+                height: 5,
+                state_root_hex: "r5".into(),
+                wal_entry_hash_hex: "h5".into(),
+            }),
+            truncated: true,
+            metadata_only_recovery: false,
+            wal_entries_retained: 3,
+            checkpoint_height_retained: Some(5),
+        };
+
+        ensure_recoverable_wal_state(&wal_dir, &recovered)
+            .expect("truncated lagging-checkpoint retained WAL resume should remain recoverable for safe join/rejoin");
+        assert_eq!(
+            recovery_startup_summary(&recovered),
+            "retained_wal_entries=3 checkpoint_height_retained=5 checkpoint_tip_relation=behind:2 next_startup_height=8 wal_tail_truncated=true metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume_checkpoint_lagging_after_tail_repair"
+        );
+        assert_eq!(
+            retained_wal_summary(&recovered),
+            "retained 3 committed WAL entries through height 7 (checkpoint lags retained WAL tip by 2 blocks); repaired WAL tail required truncation"
+        );
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
     fn ensure_recoverable_wal_state_allows_truncated_fresh_bootstrap_after_reset() {
         let wal_dir = temp_wal_dir("recover-guard-truncated-fresh-bootstrap");
         fs::create_dir_all(&wal_dir).unwrap();
