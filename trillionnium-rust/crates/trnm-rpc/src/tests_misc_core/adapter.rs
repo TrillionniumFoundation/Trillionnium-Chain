@@ -137,3 +137,23 @@ fn load_latest_adapter_records_accepts_whitespace_prefixed_utf8_bom_snapshot() {
         assert_eq!(records[0].task_id, 6363);
     });
 }
+
+#[test]
+fn load_latest_adapter_records_accepts_crlf_separated_whitespace_prefixed_utf8_bom_snapshot() {
+    with_isolated_adapter_dir(|dir| {
+        let latest = dir.join(format!("tx-adapter-20260404-{}-z.jsonl", std::process::id()));
+        fs::write(
+            &latest,
+            "\r\n  \u{feff}{\"ts\":1772074584,\"mode\":\"mock\",\"kind\":\"commit\",\"task_id\":6464,\"worker\":\"worker1\",\"commit_hash\":\"764c7baf3e1d3d325511cdc3d7836fbc1fa71a289bd669edcc4b55d6baaee9d7\",\"nonce\":101001,\"tx_hash\":\"7336b90d593ebe324cb4b3e41e7e9d86d1e2418f230cca0162ca1d539f32c2b9\",\"status\":\"accepted\",\"rc\":0}\r\n\r\n",
+        )
+        .expect("write crlf bom snapshot");
+
+        let records = load_latest_adapter_records();
+        assert_eq!(
+            records.len(),
+            1,
+            "crlf-separated durable snapshots with leading whitespace before utf-8 bom should stay readable"
+        );
+        assert_eq!(records[0].task_id, 6464);
+    });
+}
