@@ -1800,6 +1800,11 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         path
     );
     anyhow::ensure!(
+        !matches!(rpc_socket.ip(), std::net::IpAddr::V6(addr) if addr.is_loopback()),
+        "invalid node config {}: rpc_addr must not use the IPv6 loopback address; keep the shipped IPv4 loopback topology fail-closed",
+        path
+    );
+    anyhow::ensure!(
         !is_ipv4_mapped_ipv6(rpc_socket.ip()),
         "invalid node config {}: rpc_addr must not use an IPv4-mapped IPv6 address",
         path
@@ -1890,6 +1895,11 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
     anyhow::ensure!(
         !is_link_local_ip(p2p_socket.ip()),
         "invalid node config {}: p2p_addr must not use a link-local address",
+        path
+    );
+    anyhow::ensure!(
+        !matches!(p2p_socket.ip(), std::net::IpAddr::V6(addr) if addr.is_loopback()),
+        "invalid node config {}: p2p_addr must not use the IPv6 loopback address; keep the shipped IPv4 loopback topology fail-closed",
         path
     );
     anyhow::ensure!(
@@ -3875,6 +3885,32 @@ mod tests {
             .to_string()
             .contains("p2p_addr must not use an unspecified address"));
 
+        let rpc_ipv6_loopback_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "[::1]:26657".into(),
+                p2p_addr: "[2001:4860::1]:26656".into(),
+            },
+            "node.toml",
+        )
+        .expect_err("rpc_addr IPv6 loopback bind must be rejected");
+        assert!(rpc_ipv6_loopback_err
+            .to_string()
+            .contains("rpc_addr must not use the IPv6 loopback address"));
+
+        let p2p_ipv6_loopback_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "[2001:4860::1]:26657".into(),
+                p2p_addr: "[::1]:26656".into(),
+            },
+            "node.toml",
+        )
+        .expect_err("p2p_addr IPv6 loopback bind must be rejected");
+        assert!(p2p_ipv6_loopback_err
+            .to_string()
+            .contains("p2p_addr must not use the IPv6 loopback address"));
+
         let rpc_link_local_err = validate_node_config(
             NodeConfig {
                 node_id: "node-a".into(),
@@ -5313,6 +5349,47 @@ mod tests {
         assert!(p2p_err
             .to_string()
             .contains("p2p_addr must not use a multicast address"));
+
+        let _ = std::fs::remove_file(p2p_path);
+    }
+
+    #[test]
+    fn load_config_rejects_ipv6_loopback_listener_after_operator_trimming() {
+        let rpc_path = std::env::temp_dir().join(format!(
+            "trnm-node-config-ipv6-loopback-rpc-listener-{}-{}.toml",
+            std::process::id(),
+            std::thread::current().name().unwrap_or("unnamed")
+        ));
+        std::fs::write(
+            &rpc_path,
+            "node_id = \"node-a\"\nrpc_addr = \"[::1]:26657\"\np2p_addr = \"[2001:4860::1]:26656\"\n",
+        )
+        .expect("write config");
+
+        let rpc_err = load_config(rpc_path.to_str().expect("utf8 path"))
+            .expect_err("ipv6 loopback rpc listener must fail closed");
+        assert!(rpc_err
+            .to_string()
+            .contains("rpc_addr must not use the IPv6 loopback address"));
+
+        let _ = std::fs::remove_file(rpc_path);
+
+        let p2p_path = std::env::temp_dir().join(format!(
+            "trnm-node-config-ipv6-loopback-p2p-listener-{}-{}.toml",
+            std::process::id(),
+            std::thread::current().name().unwrap_or("unnamed")
+        ));
+        std::fs::write(
+            &p2p_path,
+            "node_id = \"node-a\"\nrpc_addr = \"[2001:4860::1]:26657\"\np2p_addr = \"[::1]:26656\"\n",
+        )
+        .expect("write config");
+
+        let p2p_err = load_config(p2p_path.to_str().expect("utf8 path"))
+            .expect_err("ipv6 loopback p2p listener must fail closed");
+        assert!(p2p_err
+            .to_string()
+            .contains("p2p_addr must not use the IPv6 loopback address"));
 
         let _ = std::fs::remove_file(p2p_path);
     }
