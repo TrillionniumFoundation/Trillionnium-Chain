@@ -917,8 +917,11 @@ fn normalize_wallet_store_env(raw: &str) -> Option<&str> {
                 | (Some('⟨'), Some('⟩'))
                 | (Some('｢'), Some('｣'))
                 | (Some('（'), Some('）'))
+                | (Some('('), Some(')'))
                 | (Some('［'), Some('］'))
+                | (Some('['), Some(']'))
                 | (Some('｛'), Some('｝'))
+                | (Some('{'), Some('}'))
                 | (Some('<'), Some('>'))
                 | (Some('＜'), Some('＞'))
                 | (Some('【'), Some('】'))
@@ -3042,6 +3045,9 @@ mod tests {
         assert_eq!(normalize_wallet_store_env("\u{206a}《/tmp/trnm-wallets》\u{206f}"), Some("/tmp/trnm-wallets"));
         assert_eq!(normalize_wallet_store_env("〈/tmp/trnm-wallets〉"), Some("/tmp/trnm-wallets"));
         assert_eq!(normalize_wallet_store_env("⟨/tmp/trnm-wallets⟩"), Some("/tmp/trnm-wallets"));
+        assert_eq!(normalize_wallet_store_env("(/tmp/trnm-wallets)"), Some("/tmp/trnm-wallets"));
+        assert_eq!(normalize_wallet_store_env("[/tmp/trnm-wallets]"), Some("/tmp/trnm-wallets"));
+        assert_eq!(normalize_wallet_store_env("{/tmp/trnm-wallets}"), Some("/tmp/trnm-wallets"));
         assert_eq!(
             normalize_wallet_store_env("【『 /tmp/trnm-wallets 』】"),
             Some("/tmp/trnm-wallets")
