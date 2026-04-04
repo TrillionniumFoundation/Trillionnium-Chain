@@ -15,6 +15,15 @@ DAY1_CONTRACT_PATH="trillionnium-rust/docs/release/TRNM_DAY1_PUBLIC_READ_CONTRAC
 RANK1_TASK_BOARD_PATH="trillionnium-rust/docs/release/TRNM_RANK1_READ_SURFACE_TASK_BOARD_2026-04-03.md"
 BLOCKER_BOARD_PATH="trillionnium-rust/docs/release/TRNM_MAINNET_BLOCKER_BOARD_2026-03-31.md"
 
+truth_source_value() {
+  local relative_path="$1"
+  if [[ -f "${RUST_ROOT}/../${relative_path}" ]]; then
+    printf '%s' "${relative_path}"
+  else
+    printf '%s' "missing-in-this-snapshot:${relative_path}"
+  fi
+}
+
 usage() {
   cat <<'EOF'
 Usage: ./scripts/v2/capture_explorer_scaffold_handoff.sh [--output-dir <path>]
@@ -54,6 +63,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 TIMESTAMP_UTC="$(date -u +"%Y%m%dT%H%M%SZ")"
+TRUTH_SOURCE_GO_NO_GO_PANEL="$(truth_source_value "${GO_NO_GO_PANEL_PATH}")"
 if [[ -z "${OUTPUT_DIR}" ]]; then
   OUTPUT_DIR="${RUN_ROOT}/handoff-${TIMESTAMP_UTC}"
 fi
@@ -270,7 +280,7 @@ durable_template_rejection_reason=scaffold-capture-is-placeholder-only-and-missi
 deployment_template_boundary=use-scaffold-template-until-non-placeholder-deployment-and-all-6-durable-read-anchors-exist
 truth_source_scaffold_runbook=${SCAFFOLD_RUNBOOK_PATH}
 truth_source_release_readiness=${RELEASE_READINESS_PATH}
-truth_source_go_no_go_panel=${GO_NO_GO_PANEL_PATH}
+truth_source_go_no_go_panel=${TRUTH_SOURCE_GO_NO_GO_PANEL}
 truth_source_day1_contract=${DAY1_CONTRACT_PATH}
 truth_source_rank1_task_board=${RANK1_TASK_BOARD_PATH}
 truth_source_blocker_board=${BLOCKER_BOARD_PATH}
