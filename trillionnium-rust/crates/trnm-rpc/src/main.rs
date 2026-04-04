@@ -471,10 +471,11 @@ fn normalize_adapter_record_line(line: &str) -> &str {
 }
 
 fn load_adapter_records_file(path: &PathBuf) -> Vec<AdapterRecord> {
-    let Ok(raw) = fs::read_to_string(path) else {
+    let Ok(raw) = fs::read(path) else {
         return vec![];
     };
-    raw.lines()
+    String::from_utf8_lossy(&raw)
+        .lines()
         .map(normalize_adapter_record_line)
         .filter(|l| !l.is_empty())
         .filter_map(|l| serde_json::from_str::<AdapterRecord>(l).ok())
@@ -10096,6 +10097,49 @@ line2
             "crlf-separated durable snapshots with leading whitespace before utf-8 bom should stay readable"
         );
         assert_eq!(records[0].task_id, 6464);
+
+        let _ = fs::remove_file(&latest);
+        for (path, bytes) in backup {
+            let _ = fs::write(path, bytes);
+        }
+    }
+
+    #[test]
+    fn load_latest_adapter_records_skips_invalid_utf8_rows_without_dropping_same_snapshot_valid_rows() {
+        let dir = run_root().join("run/worker-agent");
+        fs::create_dir_all(&dir).expect("create worker-agent dir");
+
+        let mut backup: Vec<(PathBuf, Vec<u8>)> = vec![];
+        if let Ok(entries) = fs::read_dir(&dir) {
+            for entry in entries.flatten() {
+                let path = entry.path();
+                let is_adapter = path
+                    .file_name()
+                    .and_then(|n| n.to_str())
+                    .map(|s| s.starts_with("tx-adapter-") && s.ends_with(".jsonl"))
+                    .unwrap_or(false);
+                if !is_adapter {
+                    continue;
+                }
+                if let Ok(bytes) = fs::read(&path) {
+                    backup.push((path.clone(), bytes));
+                }
+                let _ = fs::remove_file(&path);
+            }
+        }
+
+        let latest = dir.join(format!("tx-adapter-20260404-{}-z.jsonl", std::process::id()));
+        let mut raw = b"\xff\xfe\xfa not-utf8\n".to_vec();
+        raw.extend_from_slice(b"{\"ts\":1772074584,\"mode\":\"mock\",\"kind\":\"commit\",\"task_id\":6565,\"worker\":\"worker1\",\"commit_hash\":\"764c7baf3e1d3d325511cdc3d7836fbc1fa71a289bd669edcc4b55d6baaee9d7\",\"nonce\":101001,\"tx_hash\":\"7336b90d593ebe324cb4b3e41e7e9d86d1e2418f230cca0162ca1d539f32c2b9\",\"status\":\"accepted\",\"rc\":0}\n");
+        fs::write(&latest, raw).expect("write invalid utf8 + valid adapter snapshot");
+
+        let records = load_latest_adapter_records();
+        assert_eq!(
+            records.len(),
+            1,
+            "invalid utf-8 rows should not cause the latest durable snapshot to be discarded wholesale"
+        );
+        assert_eq!(records[0].task_id, 6565);
 
         let _ = fs::remove_file(&latest);
         for (path, bytes) in backup {
