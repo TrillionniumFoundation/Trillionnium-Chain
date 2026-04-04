@@ -10008,7 +10008,12 @@ locked_block_hash = "stale-lock"
 
         assert!(err.contains("refusing metadata-only recovery"));
         assert!(err.contains("retained 3 committed WAL entries through height 3"));
+        assert!(err.contains("checkpoint lags retained WAL tip by 1 block"));
         assert!(err.contains("last retained checkpoint: 2"));
+        assert!(err.contains("next startup height: 4"));
+        assert!(err.contains(
+            "incident clue: retained_wal_entries=3 checkpoint_height_retained=2 checkpoint_tip_relation=behind:1 next_startup_height=4 wal_tail_truncated=true metadata_only_recovery=true join_rejoin_status=blocked:metadata_only_recovery"
+        ));
 
         let _ = fs::remove_dir_all(&wal_dir);
     }
