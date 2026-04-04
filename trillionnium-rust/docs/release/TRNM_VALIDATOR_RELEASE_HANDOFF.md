@@ -27,6 +27,7 @@ For local validator handoff rehearsal, the current repo now has a **local-rehear
 - operator-handoff draft packet: `trillionnium-rust/run/genesis-artifact-candidates/trnm-genesis-candidate-operator-handoff-draft-2026-04-04-b74758fac.packet.txt`
 - operator-handoff fillable packet: `trillionnium-rust/run/genesis-artifact-candidates/trnm-genesis-candidate-operator-handoff-fillable-2026-04-04-b74758fac.packet.txt`
 - operator ownership/contact/ack input sheet: `trillionnium-rust/docs/release/TRNM_GENESIS_OPERATOR_HANDOFF_INPUT_SHEET_2026-04-04.md`
+- minimal required inputs checklist: `trillionnium-rust/docs/release/TRNM_GENESIS_OPERATOR_HANDOFF_MINIMAL_INPUTS_2026-04-04.md`
 
 Interpretation rule:
 - this candidate is valid as **local-rehearsal / operator-handoff draft input only**;

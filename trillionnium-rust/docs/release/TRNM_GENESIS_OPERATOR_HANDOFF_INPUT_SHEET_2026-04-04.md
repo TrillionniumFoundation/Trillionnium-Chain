@@ -4,6 +4,9 @@
 - 当前 `local-rehearsal genesis candidate` 的 **operator-handoff** 填表输入
 - 不是 public-mainnet-input 最终 packet
 
+快速入口（只看必须回答的字段）：
+- `trillionnium-rust/docs/release/TRNM_GENESIS_OPERATOR_HANDOFF_MINIMAL_INPUTS_2026-04-04.md`
+
 评估快照：
 - `origin/main = 35da4109e`
 - candidate 来源 HEAD = `b74758fac`
