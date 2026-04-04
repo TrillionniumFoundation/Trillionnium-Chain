@@ -141,6 +141,12 @@ If you want a copy/paste ticket/handoff skeleton instead of assembling the note 
 
 - `trillionnium-rust/docs/release/TRNM_EXPLORER_SCAFFOLD_HANDOFF_TEMPLATE_2026-04-04.md`
 
+Template selection shortcut for operators:
+
+- if `deployment_evidence_scope=placeholder-only`, `service_mode=operator-facing-static-scaffold`, or any durable-read anchor is still `missing-*` / `placeholder-*` / `not-configured-*`, stay on the scaffold handoff template
+- only switch to the durable-service template after the deployment boundary is no longer scaffold-based, all 6 durable-read anchors have real values, and replay / restore / lag evidence exists in the same note
+- do not mix placeholder script output into a durable-service handoff packet unless it is explicitly labeled as historical or comparison-only evidence
+
 ### What must exist before this scaffold can be retired
 
 Do not replace this scaffold with a so-called "real" explorer/read service unless the handoff packet names all of the following durable-read anchors explicitly:
