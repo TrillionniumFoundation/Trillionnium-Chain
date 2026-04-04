@@ -17,6 +17,29 @@
 - `trillionnium-rust/docs/release/TRNM_RANK1_READ_SURFACE_TASK_BOARD_2026-04-03.md`
 - `trillionnium-rust/docs/release/TRNM_MAINNET_BLOCKER_BOARD_2026-03-31.md`
 
+## Preferred capture flow
+
+优先不要手工拼接 placeholder handoff note。
+当前最稳妥的路径是先运行：
+
+```bash
+./trillionnium-rust/scripts/v2/capture_explorer_scaffold_handoff.sh
+```
+
+然后把同一输出目录里的以下三份 artifact 作为单一 evidence packet 使用：
+
+- `summary.txt`
+- `status.txt`
+- `index.json`
+
+最小原则：
+
+- `summary.txt` 作为 operator-facing 汇总入口，优先承载 `template_path=`、`truth_source_*=`、`replay_command=`、`status_command=`、`rollback_command=` 与 placeholder fail-closed markers
+- `status.txt` 保留 live runtime / probe / bind-path 证据，避免只剩 public URL 而丢失本地 deployment boundary
+- `index.json` 保留实际对外静态读面声明，避免 handoff note 只引用 CLI/status 侧而没有 served payload 对照
+
+如果不是从同一个 capture 目录抽取这三份 artifact，就把 note 视为 **evidence bundle incomplete**，而不是默认当作有效 placeholder handoff。
+
 ## Fail-closed boundary
 
 如果下列任一条不成立，就不要把本模板生成的 handoff note 写成 Rank 1 blocker 已关闭：
@@ -32,6 +55,11 @@
 默认解释：
 
 > **本模板只能证明 placeholder deployment path 是可复述的，不能证明 durable read path 已关闭。**
+
+额外 fail-closed 规则：
+
+> **如果证据起点仍是 `capture_explorer_scaffold_handoff.sh` / `explorer_service_status.sh` / scaffold-only ticket 文本产物，就不允许仅靠手工补字段把 note 升格成 durable read service handoff。**
+> **一旦要宣称 non-placeholder durable boundary，必须改用独立的 durable-service packet，并同时具备真实 non-placeholder deployment、6 个 durable-read anchors、以及 replay / restore / lag evidence。**
 
 ## Copy/paste handoff template
 
@@ -145,16 +173,18 @@ rollback_command=./trillionnium-rust/scripts/v2/explorer_service_down.sh
 
 ## Operator instructions
 
-1. `EXPLORER_*` runtime knobs must be copied as exact values, not paraphrased.
-2. The status block must be copied from script output verbatim for the fail-closed markers.
-3. Preserve `bind_host`, `bind_port`, `public_base_url`, and `env_file` so the handoff records the actual local deployment boundary rather than only the reverse-proxy-facing URL.
-4. `/index.json` proof may come from `curl`, browser fetch, or direct file read, but the note must preserve where it was fetched from.
-5. Copy the status-side read-contract markers verbatim too: `read_contract_mode`, `day1_surface`, `query_events_default_limit`, `query_events_max_limit`, and `write_paths_exposed`. Do not rely on `service_mode` alone, because the handoff note should freeze the actual Day-1 read surface rather than just the deployment shape.
-6. Preserve the matching `/index.json` contract markers (`index_json_read_contract_mode`, `index_json_day1_surface`, limit fields, and durability markers) so operators can prove the served static payload matches the CLI/status contract instead of only asserting `index_json_declares_day1_contract=true`.
-7. If reverse proxy and local bind differ, preserve both `health_url` and `local_health_url`, plus the corresponding `health_probe_url` / `local_health_probe_url` fields.
-8. Preserve both `replay_command` and `rollback_command` so the same placeholder bring-up path can be re-run or torn down without reconstructing it from memory.
-9. Preserve `durable_read_anchor_missing_count` together with `durable_read_anchor_missing_fields`; do not keep one while trimming the other, because the pair is the fail-closed proof that the scaffold still lacks all 6 durable-read anchors.
-10. If any durable-read anchor is later filled with a real value, stop using this placeholder-only template and move to a durable-service handoff packet instead.
+1. 若 `capture_explorer_scaffold_handoff.sh` 可用，优先直接引用同一 output dir 下的 `summary.txt` / `status.txt` / `index.json`，不要手工从多次运行结果里混拷字段。
+2. `EXPLORER_*` runtime knobs must be copied as exact values, not paraphrased.
+3. The status block must be copied from script output verbatim for the fail-closed markers.
+4. Preserve `bind_host`, `bind_port`, `public_base_url`, and `env_file` so the handoff records the actual local deployment boundary rather than only the reverse-proxy-facing URL.
+5. `/index.json` proof may come from `curl`, browser fetch, or direct file read, but the note must preserve where it was fetched from.
+6. Copy the status-side read-contract markers verbatim too: `read_contract_mode`, `day1_surface`, `query_events_default_limit`, `query_events_max_limit`, and `write_paths_exposed`. Do not rely on `service_mode` alone, because the handoff note should freeze the actual Day-1 read surface rather than just the deployment shape.
+7. Preserve the matching `/index.json` contract markers (`index_json_read_contract_mode`, `index_json_day1_surface`, limit fields, and durability markers) so operators can prove the served static payload matches the CLI/status contract instead of only asserting `index_json_declares_day1_contract=true`.
+8. If reverse proxy and local bind differ, preserve both `health_url` and `local_health_url`, plus the corresponding `health_probe_url` / `local_health_probe_url` fields.
+9. Preserve both `replay_command` and `rollback_command` so the same placeholder bring-up path can be re-run or torn down without reconstructing it from memory.
+10. When `summary.txt` is available, also preserve `template_path=` and the `truth_source_*=` lines verbatim; they are the mechanical hint for which template the next operator is allowed to use.
+11. Preserve `durable_read_anchor_missing_count` together with `durable_read_anchor_missing_fields`; do not keep one while trimming the other, because the pair is the fail-closed proof that the scaffold still lacks all 6 durable-read anchors.
+12. If any durable-read anchor is later filled with a real value, stop using this placeholder-only template and move to a durable-service handoff packet instead.
 
 ## What this template intentionally does not claim
 
