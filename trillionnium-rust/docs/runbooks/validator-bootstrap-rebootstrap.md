@@ -152,18 +152,19 @@ authority_note=all operators must acknowledge the exact packet above before any 
 
 validator_entry=validator_name=node1;validator_owner=alice;node_id=node1;config_path=/abs/path/to/configs/node1.toml;p2p_addr=127.0.0.1:26656;rpc_addr=127.0.0.1:26657
 validator_entry_hash=<deterministic-sha256-from-validator_name/node_id/config_path/p2p_addr/rpc_addr>
-operator_contact=node1=<chat/email/oncall>
+operator_contact=node1=<chat/email/oncall-for-node1>
 operator_ack=alice checked genesis_artifact_sha256=<64-char-sha256>;config_path=/abs/path/to/configs/node1.toml;validator_name=node1;validator_entry_hash=<deterministic-sha256-from-validator_name/node_id/config_path/p2p_addr/rpc_addr>
 operator_ack_signature_path=/abs/path/to/alice-ack.txt
 
 validator_entry=validator_name=node2;validator_owner=bob;node_id=node2;config_path=/abs/path/to/configs/node2.toml;p2p_addr=127.0.0.1:27656;rpc_addr=127.0.0.1:27657
 validator_entry_hash=<deterministic-sha256-from-validator_name/node_id/config_path/p2p_addr/rpc_addr>
-operator_contact=node2=<chat/email/oncall>
+operator_contact=node2=<chat/email/oncall-for-node2>
 operator_ack=bob checked genesis_artifact_sha256=<64-char-sha256>;config_path=/abs/path/to/configs/node2.toml;validator_name=node2;validator_entry_hash=<deterministic-sha256-from-validator_name/node_id/config_path/p2p_addr/rpc_addr>
 operator_ack_digest=<optional-sha256-of-bob-ack>
 ```
 
 Interpretation rule:
+- `operator_contact=` should identify one concrete durable contact route per validator/operator (for example `node1=alice-oncall@...` or a ticket/chat handle scoped to that validator) rather than a shared generic team alias copied into every entry
 - chat-only `operator_ack=` is acceptable for local rehearsal, but if the packet is later quoted in a mainnet readiness review, preserve either `operator_ack_signature_path=` or `operator_ack_digest=` for each operator whose approval is being relied upon
 - if the packet claims a durable acknowledgment exists but cannot name the path or digest, treat that acknowledgment as missing instead of implicitly trusted
 
