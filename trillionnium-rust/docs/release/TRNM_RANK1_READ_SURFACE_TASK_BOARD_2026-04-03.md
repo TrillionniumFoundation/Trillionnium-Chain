@@ -211,6 +211,7 @@
 **当前缺口**
 - scaffold runbook 存在，但 durable service runbook 还不完整
 - operator path 仍偏 placeholder
+- placeholder-only handoff packet 模板现已单独收口到 `trillionnium-rust/docs/release/TRNM_EXPLORER_SCAFFOLD_HANDOFF_TEMPLATE_2026-04-04.md`，但 durable-service packet 仍缺
 
 **Exit criteria**
 - operator 不看代码也能 bring-up / diagnose / recover

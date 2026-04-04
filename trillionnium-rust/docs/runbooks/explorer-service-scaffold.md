@@ -137,6 +137,10 @@ To keep the current scaffold useful as an **operator-facing deployment placehold
 
 This packet is intentionally narrow: it closes the question "what exact deployment-path evidence should an operator attach for the current placeholder service?" without claiming that the Rank 1 explorer/indexer blocker is solved.
 
+If you want a copy/paste ticket/handoff skeleton instead of assembling the note manually, use:
+
+- `trillionnium-rust/docs/release/TRNM_EXPLORER_SCAFFOLD_HANDOFF_TEMPLATE_2026-04-04.md`
+
 ### What must exist before this scaffold can be retired
 
 Do not replace this scaffold with a so-called "real" explorer/read service unless the handoff packet names all of the following durable-read anchors explicitly:
