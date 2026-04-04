@@ -226,6 +226,14 @@ fn normalize_wallet_store_env_trims_shell_wrapped_quotes() {
     );
     assert_eq!(normalize_wallet_store_env("\u{200e}\u{200f}\u{061c}"), None);
     assert_eq!(
+        normalize_wallet_store_env("\u{2061}《/tmp/trnm-wallets》\u{2065}"),
+        Some("/tmp/trnm-wallets")
+    );
+    assert_eq!(
+        normalize_wallet_store_env("\u{2062}\u{2063}/tmp/trnm-wallets\u{2064}"),
+        Some("/tmp/trnm-wallets")
+    );
+    assert_eq!(
         normalize_wallet_store_env("\u{00ad}\u{180e}《/tmp/trnm-wallets》\u{180e}\u{00ad}"),
         Some("/tmp/trnm-wallets")
     );
@@ -289,6 +297,8 @@ fn normalize_wallet_store_env_trims_shell_wrapped_quotes() {
     assert_eq!(normalize_wallet_store_env("/tmp/trnm\n-wallets"), None);
     assert_eq!(normalize_wallet_store_env("/tmp/trnm\u{200b}-wallets"), None);
     assert_eq!(normalize_wallet_store_env("/tmp/trnm\u{202e}wallets"), None);
+    assert_eq!(normalize_wallet_store_env("/tmp/trnm\u{2061}wallets"), None);
+    assert_eq!(normalize_wallet_store_env("/tmp/trnm\u{2065}wallets"), None);
     assert_eq!(normalize_wallet_store_env("/tmp/trnm\u{206a}wallets"), None);
     assert_eq!(normalize_wallet_store_env("/tmp/trnm\u{206f}wallets"), None);
     assert_eq!(normalize_wallet_store_env("/tmp/trnm⧸wallets"), None);
