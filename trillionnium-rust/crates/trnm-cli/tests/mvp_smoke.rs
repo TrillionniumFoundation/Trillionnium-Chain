@@ -125,7 +125,8 @@ fn smoke_wallet_create_rejects_symlinked_ancestor_out_path() {
     );
     let stderr = String::from_utf8_lossy(&out.stderr);
     assert!(
-        stderr.contains("refusing non-canonical keystore path"),
+        stderr.contains("refusing non-canonical keystore path")
+            || stderr.contains("must be an absolute normalized symlink-free path"),
         "unexpected stderr: {}",
         stderr
     );
