@@ -16929,6 +16929,39 @@ locked_block_hash = "stale-lock"
     }
 
     #[test]
+    fn recovery_startup_summary_keeps_lagging_join_surface_saturated_at_max_height() {
+        let recovered = RecoveredWalState {
+            next_height: u64::MAX,
+            restored_lock: Some("h-max-minus-1".into()),
+            last_checkpoint: Some(CheckpointMeta {
+                height: u64::MAX - 2,
+                state_root_hex: "r-max-minus-2".into(),
+                wal_entry_hash_hex: "h-max-minus-1".into(),
+            }),
+            truncated: false,
+            metadata_only_recovery: false,
+            wal_entries_retained: 1,
+            checkpoint_height_retained: Some(u64::MAX - 2),
+        };
+
+        assert_eq!(
+            retained_wal_summary(&recovered),
+            format!(
+                "retained 1 committed WAL entry through height {} (checkpoint lags retained WAL tip by 1 block)",
+                u64::MAX - 1
+            )
+        );
+        assert_eq!(
+            recovery_startup_summary(&recovered),
+            format!(
+                "retained_wal_entries=1 checkpoint_height_retained={} checkpoint_tip_relation=behind:1 next_startup_height={} wal_tail_truncated=false metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume_checkpoint_lagging",
+                u64::MAX - 2,
+                u64::MAX,
+            )
+        );
+    }
+
+    #[test]
     fn ensure_recoverable_wal_state_reports_checkpoint_ahead_resume_mismatch_surface() {
         let recovered = RecoveredWalState {
             next_height: 12,
