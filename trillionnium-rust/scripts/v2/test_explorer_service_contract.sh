@@ -87,6 +87,10 @@ assert_contains "${TMP_DIR}/status.out" "local_health_probe=active"
 assert_contains "${TMP_DIR}/status.out" "health_probe_url=${HEALTH_URL}"
 assert_contains "${TMP_DIR}/status.out" "local_health_probe_url=${HEALTH_URL}"
 assert_contains "${TMP_DIR}/status.out" "read_contract_mode=read-only"
+assert_contains "${TMP_DIR}/status.out" "read_contract_source=rpc-read-surface"
+assert_contains "${TMP_DIR}/status.out" "query_events_default_limit=100"
+assert_contains "${TMP_DIR}/status.out" "query_events_max_limit=500"
+assert_contains "${TMP_DIR}/status.out" "write_paths_exposed=false"
 assert_contains "${TMP_DIR}/status.out" "historical_query_scope=rpc-retention-bounded"
 assert_contains "${TMP_DIR}/status.out" "durability_boundary=ephemeral-rpc-window-only"
 assert_contains "${TMP_DIR}/status.out" "archive_strategy=not-configured-static-scaffold"
@@ -111,6 +115,10 @@ assert_json_contains "${RUN_ROOT}/public/index.json" '"historical_query_scope":"
 assert_json_contains "${RUN_ROOT}/public/index.json" '"durability_boundary":"ephemeral-rpc-window-only"'
 assert_json_contains "${RUN_ROOT}/public/index.json" '"archive_strategy":"not-configured-static-scaffold"'
 assert_json_contains "${RUN_ROOT}/public/index.json" '"read_replica_strategy":"not-configured-static-scaffold"'
+assert_json_contains "${RUN_ROOT}/public/index.json" '"read_contract":{"mode":"read-only","source":"rpc-read-surface"'
+assert_json_contains "${RUN_ROOT}/public/index.json" '"query_events_default_limit":100'
+assert_json_contains "${RUN_ROOT}/public/index.json" '"query_events_max_limit":500'
+assert_json_contains "${RUN_ROOT}/public/index.json" '"write_paths_exposed":false'
 assert_json_contains "${RUN_ROOT}/public/index.json" '"local_health_url":"'"${HEALTH_URL}"'"'
 assert_json_contains "${RUN_ROOT}/public/index.json" '"durable_read_anchor_archive_owner":"missing-placeholder-scaffold"'
 assert_json_contains "${RUN_ROOT}/public/index.json" '"durable_read_anchor_lag_slo":"missing-placeholder-scaffold"'
@@ -130,6 +138,11 @@ assert_contains "${TMP_DIR}/down.out" "health_probe=not-run-state-down"
 assert_contains "${TMP_DIR}/down.out" "local_health_probe=not-run-state-down"
 assert_contains "${TMP_DIR}/down.out" "health_probe_url=not-run-state-down"
 assert_contains "${TMP_DIR}/down.out" "local_health_probe_url=not-run-state-down"
+assert_contains "${TMP_DIR}/down.out" "read_contract_mode=read-only"
+assert_contains "${TMP_DIR}/down.out" "read_contract_source=rpc-read-surface"
+assert_contains "${TMP_DIR}/down.out" "query_events_default_limit=100"
+assert_contains "${TMP_DIR}/down.out" "query_events_max_limit=500"
+assert_contains "${TMP_DIR}/down.out" "write_paths_exposed=false"
 assert_contains "${TMP_DIR}/down.out" "deployment_evidence_scope=placeholder-only"
 assert_contains "${TMP_DIR}/down.out" "rank1_read_surface_blocker=still-open"
 assert_contains "${TMP_DIR}/down.out" "durable_indexer_status=not-implemented-in-this-scaffold"
