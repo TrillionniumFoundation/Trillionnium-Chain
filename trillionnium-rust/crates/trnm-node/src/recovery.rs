@@ -801,6 +801,10 @@ mod tests {
             "operator action: restore an application snapshot that covers the retained WAL tip before retrying join/rejoin; do not resume from metadata alone"
         );
         assert_eq!(
+            metadata_only_operator_action(&recovered_state(2, 12, Some(11), false, true)),
+            "operator action: restore the corresponding application snapshot before retrying join/rejoin; do not resume from metadata alone"
+        );
+        assert_eq!(
             metadata_only_operator_action(&recovered_state(2, 12, Some(15), false, true)),
             "operator action: investigate WAL/checkpoint mismatch, rebuild the recovery inputs, and only retry join/rejoin once WAL tip and checkpoint evidence agree"
         );
