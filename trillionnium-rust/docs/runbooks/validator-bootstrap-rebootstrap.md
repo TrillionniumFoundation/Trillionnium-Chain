@@ -122,11 +122,14 @@ Minimum packet fields:
 - `startup_order_note=` stating whether startup order matters for this rehearsal and who is expected to start first
 - `rollback_owner=` naming who can declare the ceremony aborted and which command/process stop is authoritative
 
-Recommended for any packet expected to feed a public-mainnet readiness review:
+Required for `public-mainnet-input` packets:
 - `packet_generated_at=` in UTC so later evidence can tie the ceremony packet to the bootstrap window explicitly
-- `packet_distribution_path=` naming the exact shared folder, ticket, or immutable artifact bundle every operator reviewed; for `public-mainnet-input`, use one explicit absolute path so operators do not normalize different relative paths by hand
+- `packet_distribution_path=` naming the exact shared folder, ticket, or immutable artifact bundle every operator reviewed; use one explicit absolute path so operators do not normalize different relative paths by hand
 - `operator_contact=` repeated once per operator so a missing acknowledgment can be resolved without ambiguity
 - `abort_condition=` repeated for the specific fail-closed triggers that cause the ceremony to stop immediately (for example mismatched genesis hash, duplicate `node_id`, or wrong assigned worktree)
+
+Recommended for non-public rehearsal/handoff packets:
+- still include `packet_generated_at=` and `packet_distribution_path=` so later review can tie one exact packet to one bootstrap window and distribution channel
 
 Copyable packet skeleton:
 

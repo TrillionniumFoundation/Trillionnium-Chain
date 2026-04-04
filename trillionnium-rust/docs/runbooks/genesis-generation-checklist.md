@@ -157,7 +157,7 @@ For any artifact expected to feed validator bootstrap/handoff, preserve one shar
 - `validator_entry_hash=` per validator so acknowledgments can bind back to one immutable descriptor instead of a hand-written tuple
 - `operator_ack=` lines must reuse the emitted `validator_entry.config_path` verbatim; if the generated packet uses an absolute `config_path=`, do not rewrite it as a relative path in the acknowledgment artifact
 
-Recommended for public-mainnet-facing evidence:
+Required for `public-mainnet-input` evidence:
 - `packet_generated_at=` in UTC
 - `packet_distribution_path=` as one explicit absolute path every operator reviewed
 - `operator_contact=` per validator owner so missing acknowledgments can be chased without ambiguity
@@ -165,6 +165,9 @@ Recommended for public-mainnet-facing evidence:
 - `operator_ack_signature_path=` or `operator_ack_digest=` when durable acknowledgment is required
 - explicit `abort_condition=` lines for mismatched genesis hash, duplicate node identity, or wrong worktree/ref
 - a concrete `validator_set_version=` (for example `mainnet-candidate-2026-03-31`) instead of a template/default label
+
+Recommended for non-public rehearsal/handoff packets:
+- still include `packet_generated_at=` and `packet_distribution_path=` so later review can tie one exact packet to one bootstrap window and distribution channel
 
 Interpretation rule:
 - if operators receive different packet contents for the same `ceremony_id`, stop and normalize to one packet before startup
