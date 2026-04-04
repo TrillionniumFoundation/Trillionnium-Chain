@@ -377,6 +377,56 @@ fn load_node_event_log_sources_ignores_inline_manifest_comments_after_plain_path
 }
 
 #[test]
+fn load_node_event_log_sources_accepts_crlf_manifest_entries_with_wrapped_comment_suffixes() {
+    let _guard = lock_env();
+    let root = unique_tmp_path("trnm-rpc-log-sources-manifest-crlf-comments", "dir");
+    let archive_dir = root.join("archive");
+    let manifest_dir = root.join("cfg/history");
+    fs::create_dir_all(&archive_dir).expect("create archive dir");
+    fs::create_dir_all(&manifest_dir).expect("create manifest dir");
+
+    let node4_log = archive_dir.join("node4.log");
+    let node5_log = archive_dir.join("node5.log");
+    let manifest = manifest_dir.join("sources.txt");
+    fs::write(&node4_log, "").expect("write node4 archived log");
+    fs::write(&node5_log, "").expect("write node5 archived log");
+    fs::write(
+        &manifest,
+        "\"../../archive/node4.log\"  \u{feff}# replay note\r\n`../../archive/node5.log`  \u{feff}# archived replay note\r\n",
+    )
+    .expect("write manifest");
+
+    let prev_sources = std::env::var(NODE_EVENT_LOG_SOURCES_ENV).ok();
+    let prev_manifest = std::env::var(NODE_EVENT_LOG_MANIFEST_ENV).ok();
+    unsafe {
+        std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV);
+        std::env::set_var(
+            NODE_EVENT_LOG_MANIFEST_ENV,
+            manifest.to_string_lossy().to_string(),
+        );
+    }
+
+    let got = load_node_event_log_sources(&root);
+
+    match prev_sources {
+        Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_SOURCES_ENV, v) },
+        None => unsafe { std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV) },
+    }
+    match prev_manifest {
+        Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_MANIFEST_ENV, v) },
+        None => unsafe { std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV) },
+    }
+
+    assert_eq!(
+        got,
+        vec![node4_log, node5_log],
+        "CRLF-separated historical replay manifests should keep wrapped paths while dropping attached BOM-spaced comments"
+    );
+
+    let _ = fs::remove_dir_all(root);
+}
+
+#[test]
 fn load_node_event_log_sources_deduplicates_lexically_equivalent_relative_env_entries() {
     let _guard = lock_env();
     let root = unique_tmp_path("trnm-rpc-log-sources-env-relative", "dir");
