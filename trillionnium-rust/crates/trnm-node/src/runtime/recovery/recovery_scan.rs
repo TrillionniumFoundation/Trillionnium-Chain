@@ -336,10 +336,14 @@ fn metadata_only_operator_action(recovered: &RecoveredWalState) -> String {
                 "operator action: restore an application snapshot that covers the retained WAL tip before retrying join/rejoin; do not resume from metadata alone".into()
             }
             Some(checkpoint_height) if checkpoint_height > tip_height => {
+                let checkpoint_lead = checkpoint_height - tip_height;
+                let lead_blocks = if checkpoint_lead == 1 { "block" } else { "blocks" };
                 format!(
-                    "operator action: investigate WAL/checkpoint mismatch (retained WAL tip height {}, checkpoint height {}), rebuild the recovery inputs, and only retry join/rejoin once WAL tip and checkpoint evidence agree",
+                    "operator action: investigate WAL/checkpoint mismatch (retained WAL tip height {}, checkpoint height {}, checkpoint leads tip by {} {}), rebuild the recovery inputs, and only retry join/rejoin once WAL tip and checkpoint evidence agree",
                     tip_height,
                     checkpoint_height,
+                    checkpoint_lead,
+                    lead_blocks,
                 )
             }
             None => {
@@ -718,7 +722,7 @@ mod tests {
                 && err.contains("checkpoint_tip_relation=ahead:1")
                 && err.contains("next_startup_height=12")
                 && err.contains(
-                    "operator action: investigate WAL/checkpoint mismatch (retained WAL tip height 11, checkpoint height 12), rebuild the recovery inputs, and only retry join/rejoin once WAL tip and checkpoint evidence agree; note: this startup already truncated a malformed WAL tail, so keep the repaired WAL/checkpoint artifacts for incident review if join/rejoin still fails"
+                    "operator action: investigate WAL/checkpoint mismatch (retained WAL tip height 11, checkpoint height 12, checkpoint leads tip by 1 block), rebuild the recovery inputs, and only retry join/rejoin once WAL tip and checkpoint evidence agree; note: this startup already truncated a malformed WAL tail, so keep the repaired WAL/checkpoint artifacts for incident review if join/rejoin still fails"
                 ),
             "unexpected metadata-only recovery error: {err}"
         );
