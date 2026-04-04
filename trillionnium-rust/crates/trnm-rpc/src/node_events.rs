@@ -213,8 +213,7 @@ fn discover_default_node_event_log_sources(root: &Path) -> Vec<PathBuf> {
     out.into_iter().collect()
 }
 
-#[cfg(test)]
-pub(crate) fn load_node_event_log_sources(root: &Path) -> Vec<PathBuf> {
+fn load_node_event_log_sources_impl(root: &Path) -> Vec<PathBuf> {
     let mut sources = BTreeSet::<PathBuf>::new();
 
     if let Some(manifest_path) = normalized_path_from_env(NODE_EVENT_LOG_MANIFEST_ENV) {
@@ -254,45 +253,14 @@ pub(crate) fn load_node_event_log_sources(root: &Path) -> Vec<PathBuf> {
     sources.into_iter().collect()
 }
 
+#[cfg(test)]
+pub(crate) fn load_node_event_log_sources(root: &Path) -> Vec<PathBuf> {
+    load_node_event_log_sources_impl(root)
+}
+
 #[cfg(not(test))]
 fn load_node_event_log_sources(root: &Path) -> Vec<PathBuf> {
-    let mut sources = BTreeSet::<PathBuf>::new();
-
-    if let Some(manifest_path) = normalized_path_from_env(NODE_EVENT_LOG_MANIFEST_ENV) {
-        let manifest_path = if manifest_path.is_absolute() {
-            normalize_lexical_path(manifest_path)
-        } else {
-            normalize_lexical_path(root.join(manifest_path))
-        };
-        if let Ok(raw) = fs::read_to_string(&manifest_path) {
-            let manifest_dir = manifest_path.parent().unwrap_or_else(|| Path::new("."));
-            for path in parse_node_event_log_sources_list(&raw) {
-                let resolved = if path.is_absolute() {
-                    normalize_lexical_path(path)
-                } else {
-                    normalize_lexical_path(manifest_dir.join(path))
-                };
-                sources.insert(resolved);
-            }
-        }
-    }
-
-    if let Ok(raw) = std::env::var(NODE_EVENT_LOG_SOURCES_ENV) {
-        for path in parse_node_event_log_sources_list(&raw) {
-            let resolved = if path.is_absolute() {
-                normalize_lexical_path(path)
-            } else {
-                normalize_lexical_path(root.join(path))
-            };
-            sources.insert(resolved);
-        }
-    }
-
-    if sources.is_empty() {
-        return discover_default_node_event_log_sources(root);
-    }
-
-    sources.into_iter().collect()
+    load_node_event_log_sources_impl(root)
 }
 
 fn node_event_log_candidates(root: &Path) -> Vec<PathBuf> {
