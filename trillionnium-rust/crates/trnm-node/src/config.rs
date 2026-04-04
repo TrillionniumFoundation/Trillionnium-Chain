@@ -3047,7 +3047,14 @@ mod tests {
                     shipped_config_dir.display()
                 )
             })
-            .filter_map(|entry| entry.ok())
+            .map(|entry| {
+                entry.unwrap_or_else(|err| {
+                    panic!(
+                        "{} must fail closed if a shipped bootstrap config directory entry cannot be read: {err}",
+                        shipped_config_dir.display()
+                    )
+                })
+            })
             .map(|entry| entry.file_name().to_string_lossy().into_owned())
             .collect::<Vec<_>>();
         let shipped_config_entries = shipped_config_entry_names.iter().cloned().collect::<HashSet<_>>();
