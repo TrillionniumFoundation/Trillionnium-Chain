@@ -2592,6 +2592,149 @@ mod tests {
     }
 
     #[test]
+    fn shipped_bootstrap_configs_keep_a_unique_anchor_first_topology() {
+        use std::collections::BTreeSet;
+        use std::net::{IpAddr, SocketAddr};
+
+        let manifest_dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR"));
+        let workspace_root = manifest_dir
+            .ancestors()
+            .nth(2)
+            .expect("trnm-node manifest should sit under trillionnium-rust/crates/trnm-node");
+
+        let mut seen_node_ids = BTreeSet::new();
+        let mut seen_rpc_addrs = BTreeSet::new();
+        let mut seen_p2p_addrs = BTreeSet::new();
+        let mut previous_rpc_port = None;
+        let mut previous_p2p_port = None;
+
+        for (slot, config_name, expected_node_id, expected_rpc_addr, expected_p2p_addr) in [
+            (1usize, "node1.toml", "node1", "127.0.0.1:26657", "127.0.0.1:26656"),
+            (2usize, "node2.toml", "node2", "127.0.0.1:27657", "127.0.0.1:27656"),
+            (3usize, "node3.toml", "node3", "127.0.0.1:28657", "127.0.0.1:28656"),
+            (4usize, "node4.toml", "node4", "127.0.0.1:29657", "127.0.0.1:29656"),
+        ] {
+            let config_path = workspace_root.join("configs").join(config_name);
+            let raw = std::fs::read_to_string(&config_path).unwrap_or_else(|err| {
+                panic!(
+                    "{} should stay readable for shipped bootstrap topology checks: {err}",
+                    config_path.display()
+                )
+            });
+            let table: toml::Table = raw.parse().unwrap_or_else(|err| {
+                panic!(
+                    "{} should remain valid TOML for shipped bootstrap topology checks: {err}",
+                    config_path.display()
+                )
+            });
+
+            let node_id = table
+                .get("node_id")
+                .and_then(|value| value.as_str())
+                .unwrap_or_else(|| panic!("{} must keep node_id as a TOML string literal", config_path.display()));
+            assert_eq!(
+                node_id, expected_node_id,
+                "{} must keep the shipped slot-bound node_id for deterministic bootstrap topology",
+                config_path.display()
+            );
+            assert!(
+                seen_node_ids.insert(node_id.to_string()),
+                "{} must not duplicate a shipped bootstrap node_id across slots",
+                config_path.display()
+            );
+
+            let rpc_addr: SocketAddr = table
+                .get("rpc_addr")
+                .and_then(|value| value.as_str())
+                .unwrap_or_else(|| panic!("{} must keep rpc_addr as a TOML string literal", config_path.display()))
+                .parse()
+                .unwrap_or_else(|err| panic!("{} rpc_addr should remain parseable as a canonical socket literal: {err}", config_path.display()));
+            let p2p_addr: SocketAddr = table
+                .get("p2p_addr")
+                .and_then(|value| value.as_str())
+                .unwrap_or_else(|| panic!("{} must keep p2p_addr as a TOML string literal", config_path.display()))
+                .parse()
+                .unwrap_or_else(|err| panic!("{} p2p_addr should remain parseable as a canonical socket literal: {err}", config_path.display()));
+
+            assert_eq!(
+                rpc_addr.to_string(), expected_rpc_addr,
+                "{} must keep the shipped slot-bound rpc_addr for deterministic bootstrap topology",
+                config_path.display()
+            );
+            assert_eq!(
+                p2p_addr.to_string(), expected_p2p_addr,
+                "{} must keep the shipped slot-bound p2p_addr for deterministic bootstrap topology",
+                config_path.display()
+            );
+            assert!(
+                seen_rpc_addrs.insert(rpc_addr),
+                "{} must not duplicate a shipped bootstrap rpc_addr across slots",
+                config_path.display()
+            );
+            assert!(
+                seen_p2p_addrs.insert(p2p_addr),
+                "{} must not duplicate a shipped bootstrap p2p_addr across slots",
+                config_path.display()
+            );
+            assert_eq!(
+                rpc_addr.ip(),
+                IpAddr::from([127, 0, 0, 1]),
+                "{} rpc_addr must stay on the shipped IPv4 loopback anchor family",
+                config_path.display()
+            );
+            assert_eq!(
+                p2p_addr.ip(),
+                IpAddr::from([127, 0, 0, 1]),
+                "{} p2p_addr must stay on the shipped IPv4 loopback anchor family",
+                config_path.display()
+            );
+            assert_eq!(
+                rpc_addr.port(),
+                p2p_addr.port() + 1,
+                "{} must keep rpc_addr exactly one port above its matching p2p_addr",
+                config_path.display()
+            );
+
+            if let Some(previous_rpc_port) = previous_rpc_port {
+                assert_eq!(
+                    rpc_addr.port(),
+                    previous_rpc_port + 1000,
+                    "{} must keep the shipped +1000 rpc port spacing between neighboring slots",
+                    config_path.display()
+                );
+            }
+            if let Some(previous_p2p_port) = previous_p2p_port {
+                assert_eq!(
+                    p2p_addr.port(),
+                    previous_p2p_port + 1000,
+                    "{} must keep the shipped +1000 p2p port spacing between neighboring slots",
+                    config_path.display()
+                );
+            }
+            previous_rpc_port = Some(rpc_addr.port());
+            previous_p2p_port = Some(p2p_addr.port());
+
+            assert_eq!(
+                config_name,
+                format!("node{slot}.toml"),
+                "slot {} must stay anchored to its shipped config filename",
+                slot
+            );
+        }
+
+        assert_eq!(
+            seen_node_ids,
+            BTreeSet::from([
+                String::from("node1"),
+                String::from("node2"),
+                String::from("node3"),
+                String::from("node4"),
+            ]),
+            "shipped bootstrap configs must preserve the exact four slot-bound peer identities"
+        );
+    }
+
+    #[test]
     fn shipped_bootstrap_readme_matches_the_documented_day1_topology_and_fail_closed_model() {
         let manifest_dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR"));
         let workspace_root = manifest_dir
