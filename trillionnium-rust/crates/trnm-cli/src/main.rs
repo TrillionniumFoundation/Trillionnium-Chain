@@ -3187,6 +3187,23 @@ mod tests {
             "unexpected error: {explicit_relative_err}"
         );
 
+        for invalid_explicit in [
+            PathBuf::from("/tmp/trnm-wallets "),
+            PathBuf::from(" /tmp/trnm-wallets"),
+            PathBuf::from("/tmp/trnm\u{200b}wallets"),
+            PathBuf::from("/tmp/《trnm-wallets》"),
+        ] {
+            let err = resolve_wallet_store(Some(invalid_explicit.clone())).unwrap_err();
+            assert!(
+                err.to_string().contains("explicit wallet store")
+                    && err
+                        .to_string()
+                        .contains("must be an absolute normalized symlink-free path"),
+                "unexpected error for explicit store {:?}: {err}",
+                invalid_explicit
+            );
+        }
+
         match original_store {
             Some(value) => std::env::set_var("TRNM_WALLET_STORE", value),
             None => std::env::remove_var("TRNM_WALLET_STORE"),
