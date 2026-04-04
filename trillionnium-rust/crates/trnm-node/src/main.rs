@@ -17062,6 +17062,34 @@ locked_block_hash = "stale-lock"
     }
 
     #[test]
+    fn ensure_recoverable_wal_state_reports_truncated_checkpoint_ahead_resume_mismatch_surface() {
+        let recovered = RecoveredWalState {
+            next_height: 12,
+            restored_lock: None,
+            last_checkpoint: Some(CheckpointMeta {
+                height: 15,
+                state_root_hex: "r15".into(),
+                wal_entry_hash_hex: "h15".into(),
+            }),
+            truncated: true,
+            metadata_only_recovery: false,
+            wal_entries_retained: 2,
+            checkpoint_height_retained: Some(15),
+        };
+
+        ensure_recoverable_wal_state(Path::new("/tmp/trnm-wal"), &recovered)
+            .expect("truncated checkpoint-ahead retained WAL resume mismatch should stay recoverable but surface mismatch-after-tail-repair triage");
+        assert_eq!(
+            recovery_startup_summary(&recovered),
+            "retained_wal_entries=2 checkpoint_height_retained=15 checkpoint_tip_relation=ahead:4 next_startup_height=12 wal_tail_truncated=true metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume_checkpoint_ahead_mismatch_after_tail_repair"
+        );
+        assert_eq!(
+            retained_wal_summary(&recovered),
+            "retained 2 committed WAL entries through height 11 (retained checkpoint height 15 is ahead of retained WAL tip height 11 by 4 blocks; investigate WAL/checkpoint mismatch); repaired WAL tail required truncation"
+        );
+    }
+
+    #[test]
     fn recover_metadata_only_error_reports_plural_retained_entries_and_height() {
         let wal_dir = temp_wal_dir("recover-metadata-only-error-plural");
         fs::create_dir_all(&wal_dir).unwrap();
