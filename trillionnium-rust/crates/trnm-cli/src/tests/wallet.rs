@@ -386,6 +386,24 @@ fn resolve_wallet_store_fail_closes_on_invalid_env_and_prefers_explicit_store() 
     ));
     assert_eq!(resolve_wallet_store(Some(explicit.clone())).unwrap(), explicit);
 
+    for invalid_explicit in [
+        std::path::PathBuf::from("./wallets"),
+        std::path::PathBuf::from("/tmp/trnm-wallets "),
+        std::path::PathBuf::from(" /tmp/trnm-wallets"),
+        std::path::PathBuf::from("/tmp/trnm\u{200b}wallets"),
+        std::path::PathBuf::from("/tmp/《trnm-wallets》"),
+    ] {
+        let err = resolve_wallet_store(Some(invalid_explicit.clone())).unwrap_err();
+        assert!(
+            err.to_string().contains("explicit wallet store")
+                && err
+                    .to_string()
+                    .contains("must be an absolute normalized symlink-free path"),
+            "unexpected error for explicit store {:?}: {err}",
+            invalid_explicit
+        );
+    }
+
     match original_store {
         Some(v) => std::env::set_var("TRNM_WALLET_STORE", v),
         None => std::env::remove_var("TRNM_WALLET_STORE"),
