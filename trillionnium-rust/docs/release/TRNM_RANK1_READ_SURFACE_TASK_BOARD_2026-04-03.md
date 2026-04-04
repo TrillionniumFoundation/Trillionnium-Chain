@@ -211,8 +211,9 @@
 **当前缺口**
 - scaffold runbook 存在，但 durable service runbook 还不完整
 - operator path 仍偏 placeholder
-- placeholder-only handoff packet 模板现已单独收口到 `trillionnium-rust/docs/release/TRNM_EXPLORER_SCAFFOLD_HANDOFF_TEMPLATE_2026-04-04.md`，但 durable-service packet 仍缺
-- 目前仓内还没有一份明确的 **durable-service handoff packet** truth-source，去要求 operator 同时抄出：`ingestion_source` / `checkpoint_store` / `replay_start_anchor` / `retention_scope` / `archive_owner` / `lag_slo`，以及 non-placeholder deployment / replay / restore 证据
+- placeholder-only handoff packet 模板现已单独收口到 `trillionnium-rust/docs/release/TRNM_EXPLORER_SCAFFOLD_HANDOFF_TEMPLATE_2026-04-04.md`
+- durable-service handoff packet 的 truth-source skeleton 已补到 `trillionnium-rust/docs/release/TRNM_DURABLE_READ_SERVICE_HANDOFF_TEMPLATE_2026-04-04.md`，用于要求 operator 同时抄出：`ingestion_source` / `checkpoint_store` / `replay_start_anchor` / `retention_scope` / `archive_owner` / `lag_slo`，以及 non-placeholder deployment / replay / restore 证据
+- 但当前它仍只是 **future-state skeleton**，不是 repo 已有 durable read service / historical read-model closure 的证据
 
 **Exit criteria**
 - operator 不看代码也能 bring-up / diagnose / recover
