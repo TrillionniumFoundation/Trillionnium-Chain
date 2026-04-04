@@ -106,6 +106,7 @@ assert_contains "${TMP_DIR}/status.out" "historical_query_scope=rpc-retention-bo
 assert_contains "${TMP_DIR}/status.out" "durability_boundary=ephemeral-rpc-window-only"
 assert_contains "${TMP_DIR}/status.out" "archive_strategy=not-configured-static-scaffold"
 assert_contains "${TMP_DIR}/status.out" "read_replica_strategy=not-configured-static-scaffold"
+assert_contains "${TMP_DIR}/status.out" "deployment_topology=single-process-static-http-on-one-host"
 assert_contains "${TMP_DIR}/status.out" "durable_read_anchor_missing_fields=ingestion_source,checkpoint_store,replay_start_anchor,retention_scope,archive_owner,lag_slo"
 assert_contains "${TMP_DIR}/status.out" "durable_read_anchor_ingestion_source=missing-placeholder-scaffold"
 assert_contains "${TMP_DIR}/status.out" "durable_read_anchor_checkpoint_store=missing-placeholder-scaffold"
@@ -126,6 +127,7 @@ assert_json_contains "${RUN_ROOT}/public/index.json" '"historical_query_scope":"
 assert_json_contains "${RUN_ROOT}/public/index.json" '"durability_boundary":"ephemeral-rpc-window-only"'
 assert_json_contains "${RUN_ROOT}/public/index.json" '"archive_strategy":"not-configured-static-scaffold"'
 assert_json_contains "${RUN_ROOT}/public/index.json" '"read_replica_strategy":"not-configured-static-scaffold"'
+assert_json_contains "${RUN_ROOT}/public/index.json" '"deployment_topology":"single-process-static-http-on-one-host"'
 assert_json_contains "${RUN_ROOT}/public/index.json" '"read_contract":{"mode":"read-only","source":"rpc-read-surface"'
 assert_json_contains "${RUN_ROOT}/public/index.json" '"day1_surface":["query-task/<task_id>","query-events/<task_id>?limit=<n>","query-capability-audit/<subject-or-token>","query-normalized-audit-events?source=<source>&eventType=<type>&limit=<n>&cursor=<cursor>"]'
 assert_json_contains "${RUN_ROOT}/public/index.json" '"query_events_default_limit":100'
@@ -187,6 +189,7 @@ assert_contains "${CAPTURE_DIR}/summary.txt" "historical_query_scope=rpc-retenti
 assert_contains "${CAPTURE_DIR}/summary.txt" "durability_boundary=ephemeral-rpc-window-only"
 assert_contains "${CAPTURE_DIR}/summary.txt" "archive_strategy=not-configured-static-scaffold"
 assert_contains "${CAPTURE_DIR}/summary.txt" "read_replica_strategy=not-configured-static-scaffold"
+assert_contains "${CAPTURE_DIR}/summary.txt" "deployment_topology=single-process-static-http-on-one-host"
 assert_contains "${CAPTURE_DIR}/summary.txt" "template_path=trillionnium-rust/docs/release/TRNM_EXPLORER_SCAFFOLD_HANDOFF_TEMPLATE_2026-04-04.md"
 assert_contains "${CAPTURE_DIR}/summary.txt" "truth_source_scaffold_runbook=trillionnium-rust/docs/runbooks/explorer-service-scaffold.md"
 assert_contains "${CAPTURE_DIR}/summary.txt" "truth_source_day1_contract=trillionnium-rust/docs/release/TRNM_DAY1_PUBLIC_READ_CONTRACT_2026-04-03.md"

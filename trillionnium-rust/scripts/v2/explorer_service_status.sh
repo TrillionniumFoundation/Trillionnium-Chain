@@ -126,6 +126,7 @@ emit_read_contract_fields() {
   echo "durability_boundary=ephemeral-rpc-window-only"
   echo "archive_strategy=not-configured-static-scaffold"
   echo "read_replica_strategy=not-configured-static-scaffold"
+  echo "deployment_topology=single-process-static-http-on-one-host"
   echo "deployment_evidence_scope=placeholder-only"
   echo "rank1_read_surface_blocker=still-open"
   echo "durable_indexer_status=not-implemented-in-this-scaffold"

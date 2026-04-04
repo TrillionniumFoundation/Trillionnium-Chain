@@ -102,6 +102,7 @@ HISTORICAL_QUERY_SCOPE="$(status_field historical_query_scope)"
 DURABILITY_BOUNDARY="$(status_field durability_boundary)"
 ARCHIVE_STRATEGY="$(status_field archive_strategy)"
 READ_REPLICA_STRATEGY="$(status_field read_replica_strategy)"
+DEPLOYMENT_TOPOLOGY="$(status_field deployment_topology)"
 DEPLOYMENT_EVIDENCE_SCOPE="$(status_field deployment_evidence_scope)"
 RANK1_BLOCKER="$(status_field rank1_read_surface_blocker)"
 DURABLE_INDEXER_STATUS="$(status_field durable_indexer_status)"
@@ -215,6 +216,7 @@ assert_index_json_fragment '"historical_query_scope":"rpc-retention-bounded"'
 assert_index_json_fragment '"durability_boundary":"ephemeral-rpc-window-only"'
 assert_index_json_fragment '"archive_strategy":"not-configured-static-scaffold"'
 assert_index_json_fragment '"read_replica_strategy":"not-configured-static-scaffold"'
+assert_index_json_fragment '"deployment_topology":"single-process-static-http-on-one-host"'
 assert_index_json_fragment '"durable_read_anchor_complete":false'
 assert_index_json_fragment '"durable_read_anchor_missing_count":6'
 assert_index_json_fragment '"durable_read_anchor_missing_fields":"ingestion_source,checkpoint_store,replay_start_anchor,retention_scope,archive_owner,lag_slo"'
@@ -258,6 +260,7 @@ write_paths_exposed=${WRITE_PATHS_EXPOSED}
 historical_query_scope=${HISTORICAL_QUERY_SCOPE}
 durability_boundary=${DURABILITY_BOUNDARY}
 archive_strategy=${ARCHIVE_STRATEGY}
+deployment_topology=${DEPLOYMENT_TOPOLOGY}
 read_replica_strategy=${READ_REPLICA_STRATEGY}
 template_path=${TEMPLATE_PATH}
 durable_template_path=${DURABLE_TEMPLATE_PATH}
