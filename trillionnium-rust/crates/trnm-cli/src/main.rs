@@ -1233,7 +1233,11 @@ fn ensure_hex_32_bytes(s: &str) -> Result<String> {
                         | '\u{200B}'
                         | '\u{200C}'
                         | '\u{200D}'
+                        | '\u{200E}'
+                        | '\u{200F}'
                         | '\u{2060}'
+                        | '\u{2061}'..='\u{2065}'
+                        | '\u{206A}'..='\u{206F}'
                         | '\u{FEFF}'
                         | '\u{202A}'
                         | '\u{202B}'
@@ -2973,6 +2977,33 @@ mod tests {
         .unwrap();
         assert_eq!(
             alm_wrapped,
+            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        );
+
+        let directional_marks_wrapped = ensure_hex_32_bytes(
+            "\u{200e}\u{200f}0xAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\u{200f}\u{200e}",
+        )
+        .unwrap();
+        assert_eq!(
+            directional_marks_wrapped,
+            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        );
+
+        let invisible_math_separator_wrapped = ensure_hex_32_bytes(
+            "\u{2062}0xAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\u{2062}",
+        )
+        .unwrap();
+        assert_eq!(
+            invisible_math_separator_wrapped,
+            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        );
+
+        let nominal_digit_shapes_wrapped = ensure_hex_32_bytes(
+            "\u{206f}0xAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\u{206f}",
+        )
+        .unwrap();
+        assert_eq!(
+            nominal_digit_shapes_wrapped,
             "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
         );
 
