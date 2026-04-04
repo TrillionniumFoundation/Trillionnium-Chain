@@ -284,6 +284,51 @@ mod tests {
     }
 
     #[test]
+    fn resolve_wal_dir_auto_allows_builtin_default_when_only_comment_only_consensus_wal_scaffold_exists(
+    ) {
+        let sandbox = temp_wal_dir("resolve-auto-comment-only-consensus-wal-scaffold");
+        let prior_cwd = std::env::current_dir().unwrap();
+        fs::create_dir_all(sandbox.join(DEFAULT_BFT_WAL_DIR)).unwrap();
+        fs::write(
+            wal_file(&sandbox.join(DEFAULT_BFT_WAL_DIR)),
+            "# operator left a rejoin note\n   # safe to reuse builtin default once catch-up succeeds\n",
+        )
+        .unwrap();
+        std::env::set_current_dir(&sandbox).unwrap();
+
+        let args = default_args();
+        let requested = PathBuf::from(DEFAULT_BFT_WAL_DIR);
+        let (resolved, note) = resolve_wal_dir(&args).unwrap();
+        assert_eq!(resolved, requested);
+        assert!(note.is_none());
+
+        std::env::set_current_dir(prior_cwd).unwrap();
+        let _ = fs::remove_dir_all(&sandbox);
+    }
+
+    #[test]
+    fn resolve_wal_dir_auto_allows_builtin_default_when_only_comment_only_wal_meta_scaffold_exists() {
+        let sandbox = temp_wal_dir("resolve-auto-comment-only-wal-meta-scaffold");
+        let prior_cwd = std::env::current_dir().unwrap();
+        fs::create_dir_all(sandbox.join(DEFAULT_BFT_WAL_DIR)).unwrap();
+        fs::write(
+            wal_meta_file(&sandbox.join(DEFAULT_BFT_WAL_DIR)),
+            "# operator left a catch-up note\n\t# safe to treat as empty metadata scaffold\n",
+        )
+        .unwrap();
+        std::env::set_current_dir(&sandbox).unwrap();
+
+        let args = default_args();
+        let requested = PathBuf::from(DEFAULT_BFT_WAL_DIR);
+        let (resolved, note) = resolve_wal_dir(&args).unwrap();
+        assert_eq!(resolved, requested);
+        assert!(note.is_none());
+
+        std::env::set_current_dir(prior_cwd).unwrap();
+        let _ = fs::remove_dir_all(&sandbox);
+    }
+
+    #[test]
     fn resolve_wal_dir_fail_if_exists_rejects_checkpoint_only_recovery_surface() {
         let wal_dir = temp_wal_dir("resolve-fail-if-exists-checkpoint-only");
         fs::create_dir_all(&wal_dir).unwrap();
