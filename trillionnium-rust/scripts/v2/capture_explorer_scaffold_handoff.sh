@@ -66,11 +66,21 @@ status_field() {
 STATE="$(status_field state)"
 HEALTH="$(status_field health)"
 LOCAL_HEALTH="$(status_field local_health)"
+BIND_HOST="$(status_field bind_host)"
+BIND_PORT="$(status_field bind_port)"
+PID_FILE_PATH="$(status_field pid_file)"
+LOG_FILE_PATH="$(status_field log_file)"
+ENV_FILE_PATH="$(status_field env_file)"
+PUBLIC_DIR_PATH="$(status_field public_dir)"
+HEALTH_FILE_PATH="$(status_field health_file)"
+INDEX_FILE_PATH="$(status_field index_file)"
 PUBLIC_BASE_URL="$(status_field public_base_url)"
 HEALTH_URL="$(status_field health_url)"
 INDEX_URL="$(status_field index_url)"
 RPC_BASE_URL="$(status_field rpc_base_url)"
 LOCAL_HEALTH_URL="$(status_field local_health_url)"
+HEALTH_PROBE_URL="$(status_field health_probe_url)"
+LOCAL_HEALTH_PROBE_URL="$(status_field local_health_probe_url)"
 READ_CONTRACT_MODE="$(status_field read_contract_mode)"
 READ_CONTRACT_SOURCE="$(status_field read_contract_source)"
 DAY1_SURFACE="$(status_field day1_surface)"
@@ -127,10 +137,12 @@ if command -v curl >/dev/null 2>&1; then
   curl --silent --show-error --fail --max-time 5 "${INDEX_URL}" | tee "${INDEX_OUT}" >/dev/null
   INDEX_FETCH_MODE="curl"
   INDEX_FETCH_SOURCE="${INDEX_URL}"
+  INDEX_FETCH_COMMAND="curl --silent --show-error --fail --max-time 5 ${INDEX_URL}"
 else
   cp "${INDEX_FILE}" "${INDEX_OUT}"
   INDEX_FETCH_MODE="file-copy-fallback"
   INDEX_FETCH_SOURCE="${INDEX_FILE}"
+  INDEX_FETCH_COMMAND="cp ${INDEX_FILE} ${INDEX_OUT}"
 fi
 
 cat >"${SUMMARY_OUT}" <<EOF
@@ -140,9 +152,20 @@ status_path=${STATUS_OUT}
 index_path=${INDEX_OUT}
 index_fetch_mode=${INDEX_FETCH_MODE}
 index_fetch_source=${INDEX_FETCH_SOURCE}
+index_fetch_command=${INDEX_FETCH_COMMAND}
+bind_host=${BIND_HOST}
+bind_port=${BIND_PORT}
+pid_file=${PID_FILE_PATH}
+log_file=${LOG_FILE_PATH}
+env_file=${ENV_FILE_PATH}
+public_dir=${PUBLIC_DIR_PATH}
+health_file=${HEALTH_FILE_PATH}
+index_file=${INDEX_FILE_PATH}
 public_base_url=${PUBLIC_BASE_URL}
 health_url=${HEALTH_URL}
 local_health_url=${LOCAL_HEALTH_URL}
+health_probe_url=${HEALTH_PROBE_URL}
+local_health_probe_url=${LOCAL_HEALTH_PROBE_URL}
 index_url=${INDEX_URL}
 rpc_base_url=${RPC_BASE_URL}
 read_contract_mode=${READ_CONTRACT_MODE}
