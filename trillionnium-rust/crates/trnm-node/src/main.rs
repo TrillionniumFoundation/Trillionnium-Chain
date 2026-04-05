@@ -5214,8 +5214,17 @@ mod tests {
     fn load_config_rejects_unknown_fields_to_keep_bootstrap_config_fail_closed() {
         for (unknown_field, field_value) in [
             ("bootstrap_peers", "[\"127.0.0.1:27656\"]"),
+            ("bootstrap_peer", "\"127.0.0.1:27656\""),
+            ("bootstrap_addr", "\"127.0.0.1:27656\""),
+            ("bootstrap_addrs", "[\"127.0.0.1:27656\"]"),
             ("seed_nodes", "[\"127.0.0.1:27656\"]"),
+            ("seed_node", "\"127.0.0.1:27656\""),
+            ("seed_addr", "\"127.0.0.1:27656\""),
+            ("seed_addrs", "[\"127.0.0.1:27656\"]"),
             ("persistent_peers", "[\"127.0.0.1:27656\"]"),
+            ("persistent_peer", "\"127.0.0.1:27656\""),
+            ("persistent_addr", "\"127.0.0.1:27656\""),
+            ("persistent_addrs", "[\"127.0.0.1:27656\"]"),
         ] {
             let path = std::env::temp_dir().join(format!(
                 "trnm-node-config-unknown-field-{unknown_field}-{}-{}.toml",
