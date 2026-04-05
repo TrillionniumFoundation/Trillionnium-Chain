@@ -16687,6 +16687,9 @@ locked_block_hash = "stale-lock"
         assert!(err.contains("last retained checkpoint: 8"));
         assert!(err.contains("next startup height: 9"));
         assert!(err.contains(
+            "operator action: checkpoint-only bootstrap is acceptable with a fresh --bft-wal-dir / --bft-wal-mode auto isolated run; if this node must rejoin from prior state, restore an application snapshot before retrying"
+        ));
+        assert!(err.contains(
             "incident clue: retained_wal_entries=0 checkpoint_height_retained=8 checkpoint_tip_relation=checkpoint_only:8 next_startup_height=9 wal_tail_truncated=true metadata_only_recovery=true join_rejoin_status=blocked:metadata_only_recovery"
         ));
 
