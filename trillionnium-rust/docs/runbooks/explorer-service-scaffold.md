@@ -103,6 +103,8 @@ Optional environment variables:
 
 If you need a reverse-proxy-facing health URL different from the local bind target, set `EXPLORER_HEALTH_URL` explicitly.
 
+Wildcard-bind note: when `EXPLORER_HOST=0.0.0.0` or `EXPLORER_HOST=::`, the scaffold still normalizes `local_health_url` to a loopback probe target (`127.0.0.1` or `::1`). Keep that emitted `local_health_url` as the local liveness truth-source in tickets/handoffs; do not retype the wildcard bind literal itself as a curl target.
+
 Example:
 
 ```bash
@@ -123,7 +125,8 @@ A minimal Day-1 handoff can be expressed as:
 1. keep the process bound to a predictable host/port,
 2. persist runtime knobs in one env file,
 3. place any reverse proxy in front of `EXPLORER_PUBLIC_BASE_URL`,
-4. keep the startup/liveness probe pointed at the local bind target unless you are explicitly testing proxy reachability.
+4. keep the startup/liveness probe pointed at the emitted `local_health_url` unless you are explicitly testing proxy reachability.
+   - when the bind host is a wildcard (`0.0.0.0` / `::`), this means probing the normalized loopback target rather than curling the wildcard literal itself.
 
 ### Minimum handoff evidence packet
 
