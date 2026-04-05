@@ -73,6 +73,7 @@ operator=<name-or-team>
 repo_snapshot=<git-sha>
 runbook=trillionnium-rust/docs/runbooks/explorer-service-scaffold.md
 truth_source_day1_contract=trillionnium-rust/docs/release/TRNM_DAY1_PUBLIC_READ_CONTRACT_2026-04-03.md
+truth_source_day1_contract_matrix=trillionnium-rust/docs/release/TRNM_DAY1_PUBLIC_READ_CONTRACT_MATRIX_2026-04-03.md
 
 # runtime knobs (copy exact values)
 EXPLORER_HOST=<value>

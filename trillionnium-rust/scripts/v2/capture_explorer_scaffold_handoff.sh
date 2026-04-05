@@ -12,6 +12,7 @@ SCAFFOLD_RUNBOOK_PATH="trillionnium-rust/docs/runbooks/explorer-service-scaffold
 RELEASE_READINESS_PATH="RELEASE_READINESS.md"
 GO_NO_GO_PANEL_PATH="trillionnium-rust/docs/release/TRNM_PUBLIC_MAINNET_GO_NO_GO_PANEL_2026-04-04.md"
 DAY1_CONTRACT_PATH="trillionnium-rust/docs/release/TRNM_DAY1_PUBLIC_READ_CONTRACT_2026-04-03.md"
+DAY1_CONTRACT_MATRIX_PATH="trillionnium-rust/docs/release/TRNM_DAY1_PUBLIC_READ_CONTRACT_MATRIX_2026-04-03.md"
 RANK1_TASK_BOARD_PATH="trillionnium-rust/docs/release/TRNM_RANK1_READ_SURFACE_TASK_BOARD_2026-04-03.md"
 BLOCKER_BOARD_PATH="trillionnium-rust/docs/release/TRNM_MAINNET_BLOCKER_BOARD_2026-03-31.md"
 
@@ -66,6 +67,7 @@ TIMESTAMP_UTC="$(date -u +"%Y%m%dT%H%M%SZ")"
 TRUTH_SOURCE_RELEASE_READINESS="$(truth_source_value "${RELEASE_READINESS_PATH}")"
 TRUTH_SOURCE_GO_NO_GO_PANEL="$(truth_source_value "${GO_NO_GO_PANEL_PATH}")"
 TRUTH_SOURCE_DAY1_CONTRACT="$(truth_source_value "${DAY1_CONTRACT_PATH}")"
+TRUTH_SOURCE_DAY1_CONTRACT_MATRIX="$(truth_source_value "${DAY1_CONTRACT_MATRIX_PATH}")"
 TRUTH_SOURCE_RANK1_TASK_BOARD="$(truth_source_value "${RANK1_TASK_BOARD_PATH}")"
 TRUTH_SOURCE_BLOCKER_BOARD="$(truth_source_value "${BLOCKER_BOARD_PATH}")"
 if [[ -z "${OUTPUT_DIR}" ]]; then
@@ -319,6 +321,7 @@ truth_source_scaffold_runbook=${SCAFFOLD_RUNBOOK_PATH}
 truth_source_release_readiness=${TRUTH_SOURCE_RELEASE_READINESS}
 truth_source_go_no_go_panel=${TRUTH_SOURCE_GO_NO_GO_PANEL}
 truth_source_day1_contract=${TRUTH_SOURCE_DAY1_CONTRACT}
+truth_source_day1_contract_matrix=${TRUTH_SOURCE_DAY1_CONTRACT_MATRIX}
 truth_source_rank1_task_board=${TRUTH_SOURCE_RANK1_TASK_BOARD}
 truth_source_blocker_board=${TRUTH_SOURCE_BLOCKER_BOARD}
 replay_command=./trillionnium-rust/scripts/v2/explorer_service_up.sh

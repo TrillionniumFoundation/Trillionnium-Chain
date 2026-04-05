@@ -243,6 +243,7 @@ assert_contains "${CAPTURE_DIR}/summary.txt" "deployment_template_boundary=use-s
 assert_contains "${CAPTURE_DIR}/summary.txt" "truth_source_scaffold_runbook=trillionnium-rust/docs/runbooks/explorer-service-scaffold.md"
 assert_contains "${CAPTURE_DIR}/summary.txt" "truth_source_release_readiness=RELEASE_READINESS.md"
 assert_contains "${CAPTURE_DIR}/summary.txt" "truth_source_day1_contract=trillionnium-rust/docs/release/TRNM_DAY1_PUBLIC_READ_CONTRACT_2026-04-03.md"
+assert_contains "${CAPTURE_DIR}/summary.txt" "truth_source_day1_contract_matrix=trillionnium-rust/docs/release/TRNM_DAY1_PUBLIC_READ_CONTRACT_MATRIX_2026-04-03.md"
 assert_contains "${CAPTURE_DIR}/summary.txt" "truth_source_go_no_go_panel=missing-in-this-snapshot:trillionnium-rust/docs/release/TRNM_PUBLIC_MAINNET_GO_NO_GO_PANEL_2026-04-04.md"
 assert_contains "${CAPTURE_DIR}/summary.txt" "truth_source_rank1_task_board=trillionnium-rust/docs/release/TRNM_RANK1_READ_SURFACE_TASK_BOARD_2026-04-03.md"
 assert_contains "${CAPTURE_DIR}/summary.txt" "truth_source_blocker_board=trillionnium-rust/docs/release/TRNM_MAINNET_BLOCKER_BOARD_2026-03-31.md"
