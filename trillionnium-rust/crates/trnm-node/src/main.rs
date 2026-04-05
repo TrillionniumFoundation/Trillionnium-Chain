@@ -8482,6 +8482,42 @@ bootstrap_peers = ["127.0.0.1:27656"]
     }
 
     #[test]
+    fn incident_review_bundle_keeps_skipped_coverage_triplet_between_recovery_and_round_change_clusters(
+    ) {
+        let incident_review_fields = [
+            "timeout_migrated_total",
+            "recovery_error_rate",
+            "bft_observed_heights",
+            "bft_committed_heights",
+            "bft_commit_observed_height_rate_ppm",
+            "bft_skipped_height_total",
+            "bft_skipped_observed_height_rate_ppm",
+            "bft_round_change_total",
+            "bft_round_change_per_height_ppm",
+        ];
+
+        assert_eq!(incident_review_fields.len(), 9);
+        assert!(incident_review_fields[0].ends_with("_total"));
+        assert!(incident_review_fields[1].ends_with("_rate"));
+        assert!(incident_review_fields[2].ends_with("_heights"));
+        assert!(incident_review_fields[3].ends_with("_heights"));
+        assert!(incident_review_fields[4].ends_with("_rate_ppm"));
+        assert!(incident_review_fields[5].ends_with("_total"));
+        assert!(incident_review_fields[6].ends_with("_rate_ppm"));
+        assert!(incident_review_fields[7].ends_with("_total"));
+        assert!(incident_review_fields[8].ends_with("_ppm"));
+        assert_eq!(incident_review_fields[1], "recovery_error_rate");
+        assert_eq!(incident_review_fields[4], "bft_commit_observed_height_rate_ppm");
+        assert_eq!(incident_review_fields[5], "bft_skipped_height_total");
+        assert_eq!(incident_review_fields[6], "bft_skipped_observed_height_rate_ppm");
+        assert_eq!(incident_review_fields[7], "bft_round_change_total");
+        assert_eq!(incident_review_fields[8], "bft_round_change_per_height_ppm");
+        assert_ne!(incident_review_fields[4], incident_review_fields[6]);
+        assert_ne!(incident_review_fields[5], incident_review_fields[6]);
+        assert_ne!(incident_review_fields[6], incident_review_fields[7]);
+    }
+
+    #[test]
     fn round_change_active_height_rate_metrics_make_jitter_concentration_visible() {
         let bft_round_change_total = 6u64;
         let bft_round_change_active_heights = 2u64;

@@ -94,6 +94,7 @@ Every alert page, dashboard share link, and incident ticket should carry the sam
 - `service=<node|rpc|worker|oracle|bridge|any>`
 - `severity=<sev0|sev1|sev2|sev3>`
 - `signal=<node-down|sync-lag|replay-failure|rpc-unhealthy|worker-failure|oracle-anomaly|bridge-anomaly|contract-drift>`
+- `verdict=<accepts-stalled|stale-wave|quorum-collapse|drift-anomaly|contract-drift|n/a>`
 - `needs_replay=<yes|no>`
 - `needs_rollback=<yes|no>`
 - `first_stop=<stable-panel-name-from-this-runbook|unknown>`
@@ -103,8 +104,8 @@ Rules:
 - `needs_replay=yes` for every `sev0` / `sev1` incident.
 - `needs_rollback=yes` only when a concrete emitted `rollback_command=` exists or rollback is the active mitigation choice.
 - `first_stop=` must exactly match one stable panel name from this runbook; use `unknown` rather than inventing a new alias.
+- set `verdict=n/a` for non-oracle incidents; for `service=oracle`, preserve `verdict=<accepts-stalled|stale-wave|quorum-collapse|drift-anomaly|contract-drift>` from `docs/runbooks/oracle-observability-alerts.md`.
 - if a screenshot or dashboard link is shared without this label block, treat the handoff as incomplete.
-- for `service=oracle`, also preserve `verdict=<accepts-stalled|stale-wave|quorum-collapse|drift-anomaly|contract-drift>` from `docs/runbooks/oracle-observability-alerts.md`; do not drop it when copying the shared block into a page or ticket.
 
 ---
 
@@ -358,7 +359,7 @@ Minimum annotation fields:
 - `verdict=<accepts-stalled|stale-wave|quorum-collapse|drift-anomaly|contract-drift|n/a>`
 - `needs_replay=<yes|no>`
 - `needs_rollback=<yes|no>`
-- `first_stop=<stable-panel-name-from-this-runbook>`
+- `first_stop=<stable-panel-name-from-this-runbook|unknown>`
 - `truth_source=<verbatim emitted value|unknown>`
 - `evidence_scope=<verbatim emitted value|unknown>`
 - `summary_path=<abs-path|unknown>`
@@ -385,8 +386,8 @@ Example annotation lines:
 
 - `plane=observability service=rpc severity=sev1 signal=rpc-unhealthy verdict=n/a needs_replay=yes needs_rollback=no first_stop="RPC health / read surface" truth_source=local-release-evidence-v1 evidence_scope=release-handoff summary_path=/abs/run/health/evidence-20260331/summary.txt manifest_path=/abs/release/rc-20260331/manifest.txt git_worktree_path=/abs/lane/MN12 git_worktree_branch_ref=refs/heads/lane/mn12-alerting-dashboard-incident-sre git_expected_worktree_branch_ref=refs/heads/lane/mn12-alerting-dashboard-incident-sre git_worktree_branch_ref_match=true replay=present rollback=missing`
 - `plane=observability service=node severity=sev1 signal=node-down verdict=n/a needs_replay=yes needs_rollback=yes first_stop="Consensus instability / rollback pressure" truth_source=local-release-evidence-v1 evidence_scope=release-handoff summary_path=/abs/run/health/evidence-20260331/summary.txt manifest_path=/abs/release/rc-20260331/manifest.txt git_worktree_path=/abs/lane/MN12 git_worktree_branch_ref=refs/heads/lane/mn12-alerting-dashboard-incident-sre git_expected_worktree_branch_ref=refs/heads/lane/mn12-alerting-dashboard-incident-sre git_worktree_branch_ref_match=true replay=present rollback=present`
-- `plane=observability service=oracle severity=sev1 signal=oracle-anomaly verdict=quorum-collapse needs_replay=yes needs_rollback=no first_stop="Oracle-specific drill-down" truth_source=local-release-evidence-v1 evidence_scope=release-handoff summary_path=/abs/run/health/evidence-20260331/summary.txt manifest_path=/abs/release/rc-20260331/manifest.txt replay=present rollback=missing`
-- `plane=observability service=bridge severity=sev1 signal=bridge-anomaly verdict=n/a needs_replay=yes needs_rollback=yes first_stop="Bridge relay / settlement integrity" truth_source=local-release-evidence-v1 evidence_scope=release-handoff summary_path=/abs/run/health/evidence-20260331/summary.txt manifest_path=/abs/release/rc-20260331/manifest.txt replay=present rollback=present`
+- `plane=observability service=oracle severity=sev1 signal=oracle-anomaly verdict=quorum-collapse needs_replay=yes needs_rollback=no first_stop="Oracle-specific drill-down" truth_source=local-release-evidence-v1 evidence_scope=release-handoff summary_path=/abs/run/health/evidence-20260331/summary.txt manifest_path=/abs/release/rc-20260331/manifest.txt git_worktree_path=/abs/lane/MN12 git_worktree_branch_ref=refs/heads/lane/mn12-alerting-dashboard-incident-sre git_expected_worktree_branch_ref=refs/heads/lane/mn12-alerting-dashboard-incident-sre git_worktree_branch_ref_match=true replay=present rollback=missing`
+- `plane=observability service=bridge severity=sev1 signal=bridge-anomaly verdict=n/a needs_replay=yes needs_rollback=yes first_stop="Bridge relay / settlement integrity" truth_source=local-release-evidence-v1 evidence_scope=release-handoff summary_path=/abs/run/health/evidence-20260331/summary.txt manifest_path=/abs/release/rc-20260331/manifest.txt git_worktree_path=/abs/lane/MN12 git_worktree_branch_ref=refs/heads/lane/mn12-alerting-dashboard-incident-sre git_expected_worktree_branch_ref=refs/heads/lane/mn12-alerting-dashboard-incident-sre git_worktree_branch_ref_match=true replay=present rollback=present`
 
 ---
 
@@ -450,8 +451,8 @@ Keep `first_stop=` aligned with the exact stable panel name from the routing tab
 Example:
 
 - `plane=observability service=node severity=sev1 signal=sync-lag verdict=n/a needs_replay=yes needs_rollback=yes first_stop="Node liveness / height progress" observed=committed_height_flat impact=one-validator truth_source=local-release-evidence-v1 evidence_scope=release-handoff summary_path=/abs/run/health/evidence-20260331/summary.txt manifest_path=/abs/release/rc-20260331/manifest.txt git_worktree_path=/abs/lane/MN12 git_worktree_branch_ref=refs/heads/lane/mn12-alerting-dashboard-incident-sre git_expected_worktree_branch_ref=refs/heads/lane/mn12-alerting-dashboard-incident-sre git_worktree_branch_ref_match=true replay=present rollback=present`
-- `plane=observability service=oracle severity=sev1 signal=oracle-anomaly verdict=quorum-collapse needs_replay=yes needs_rollback=no first_stop="Oracle-specific drill-down" observed=source_cardinality_below_floor impact=price-ingest-degraded truth_source=local-release-evidence-v1 evidence_scope=release-handoff summary_path=/abs/run/health/evidence-20260331/summary.txt manifest_path=/abs/release/rc-20260331/manifest.txt replay=present rollback=missing`
-- `plane=observability service=bridge severity=sev1 signal=bridge-anomaly verdict=n/a needs_replay=yes needs_rollback=yes first_stop="Bridge relay / settlement integrity" observed=settlement_heartbeat_stalled impact=cross-chain-settlement-delayed truth_source=local-release-evidence-v1 evidence_scope=release-handoff summary_path=/abs/run/health/evidence-20260331/summary.txt manifest_path=/abs/release/rc-20260331/manifest.txt replay=present rollback=present`
+- `plane=observability service=oracle severity=sev1 signal=oracle-anomaly verdict=quorum-collapse needs_replay=yes needs_rollback=no first_stop="Oracle-specific drill-down" observed=source_cardinality_below_floor impact=price-ingest-degraded truth_source=local-release-evidence-v1 evidence_scope=release-handoff summary_path=/abs/run/health/evidence-20260331/summary.txt manifest_path=/abs/release/rc-20260331/manifest.txt git_worktree_path=/abs/lane/MN12 git_worktree_branch_ref=refs/heads/lane/mn12-alerting-dashboard-incident-sre git_expected_worktree_branch_ref=refs/heads/lane/mn12-alerting-dashboard-incident-sre git_worktree_branch_ref_match=true replay=present rollback=missing`
+- `plane=observability service=bridge severity=sev1 signal=bridge-anomaly verdict=n/a needs_replay=yes needs_rollback=yes first_stop="Bridge relay / settlement integrity" observed=settlement_heartbeat_stalled impact=cross-chain-settlement-delayed truth_source=local-release-evidence-v1 evidence_scope=release-handoff summary_path=/abs/run/health/evidence-20260331/summary.txt manifest_path=/abs/release/rc-20260331/manifest.txt git_worktree_path=/abs/lane/MN12 git_worktree_branch_ref=refs/heads/lane/mn12-alerting-dashboard-incident-sre git_expected_worktree_branch_ref=refs/heads/lane/mn12-alerting-dashboard-incident-sre git_worktree_branch_ref_match=true replay=present rollback=present`
 - `plane=observability service=any severity=sev0 signal=contract-drift verdict=n/a needs_replay=yes needs_rollback=yes first_stop="Evidence / replay integrity" observed=label_block_mismatch impact=dashboard-routing-untrusted truth_source=local-release-evidence-v1 evidence_scope=release-handoff summary_path=/abs/run/health/evidence-20260331/summary.txt manifest_path=/abs/release/rc-20260331/manifest.txt git_worktree_path=/abs/lane/MN12 git_worktree_branch_ref=refs/heads/lane/mn12-alerting-dashboard-incident-sre git_expected_worktree_branch_ref=refs/heads/lane/mn12-alerting-dashboard-incident-sre git_worktree_branch_ref_match=true replay=present rollback=present`
 
 ---
