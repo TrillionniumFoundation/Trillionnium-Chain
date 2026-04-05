@@ -5378,22 +5378,29 @@ mod tests {
 
     #[test]
     fn load_config_rejects_dot_segment_node_id_with_operator_facing_error() {
-        let path = std::env::temp_dir().join(format!(
-            "trnm-node-config-dot-segment-node-id-{}-{}.toml",
-            std::process::id(),
-            std::thread::current().name().unwrap_or("unnamed")
-        ));
-        std::fs::write(
-            &path,
-            "node_id = \"..\"\nrpc_addr = \"127.0.0.1:26657\"\np2p_addr = \"127.0.0.1:26656\"\n",
-        )
-        .expect("write config");
+        for node_id in [".", ".."] {
+            let path = std::env::temp_dir().join(format!(
+                "trnm-node-config-dot-segment-node-id-{}-{}-{node_id}.toml",
+                std::process::id(),
+                std::thread::current().name().unwrap_or("unnamed")
+            ));
+            std::fs::write(
+                &path,
+                format!(
+                    "node_id = \"{node_id}\"\nrpc_addr = \"127.0.0.1:26657\"\np2p_addr = \"127.0.0.1:26656\"\n"
+                ),
+            )
+            .expect("write config");
 
-        let err = load_config(path.to_str().expect("utf8 path"))
-            .expect_err("dot-segment node_id must fail closed");
-        assert!(err.to_string().contains("node_id must not be '.' or '..'"));
+            let err = load_config(path.to_str().expect("utf8 path"))
+                .expect_err("dot-segment node_id must fail closed");
+            assert!(
+                err.to_string().contains("node_id must not be '.' or '..'"),
+                "unexpected error for {node_id}: {err:#}"
+            );
 
-        let _ = std::fs::remove_file(path);
+            let _ = std::fs::remove_file(path);
+        }
     }
 
     #[test]
@@ -5402,6 +5409,11 @@ mod tests {
             (
                 "localhost",
                 "localhost",
+                "node_id must not look like a host or socket literal",
+            ),
+            (
+                "localhost-uppercase",
+                "LOCALHOST",
                 "node_id must not look like a host or socket literal",
             ),
             (
@@ -5418,6 +5430,41 @@ mod tests {
                 "ipv4-literal",
                 "127.0.0.1",
                 "node_id must not look like a host or socket literal",
+            ),
+            (
+                "ipv4-socket-shaped",
+                "127.0.0.1:26656",
+                "node_id must not contain path or host-literal separators",
+            ),
+            (
+                "dns-lowercase",
+                "bootstrap.example.com",
+                "node_id must not look like a host or socket literal",
+            ),
+            (
+                "dns-lowercase-dot",
+                "bootstrap.example.com.",
+                "node_id must not look like a host or socket literal",
+            ),
+            (
+                "dns-uppercase",
+                "BOOTSTRAP.EXAMPLE.COM",
+                "node_id must not look like a host or socket literal",
+            ),
+            (
+                "dns-uppercase-dot",
+                "BOOTSTRAP.EXAMPLE.COM.",
+                "node_id must not look like a host or socket literal",
+            ),
+            (
+                "dns-uppercase-internal",
+                "NODE-2.BOOTSTRAP.INTERNAL",
+                "node_id must not look like a host or socket literal",
+            ),
+            (
+                "ipv6-literal",
+                "::1",
+                "node_id must not contain path or host-literal separators",
             ),
             (
                 "ipv6-socket-shaped",
@@ -5918,6 +5965,30 @@ mod tests {
 
         for (suffix, rpc_addr, p2p_addr, expected_fragment) in [
             (
+                "rpc-path-style",
+                "127.0.0.1/7000",
+                "127.0.0.1:7001",
+                "rpc_addr must not contain path separators",
+            ),
+            (
+                "p2p-url-style",
+                "127.0.0.1:7000",
+                "tcp://127.0.0.1:7001",
+                "p2p_addr must be a raw socket address, not a URL",
+            ),
+            (
+                "rpc-noncanonical",
+                "[0:0:0:0:0:0:0:1]:7000",
+                "[2001:4860::1]:7001",
+                "rpc_addr must use a canonical socket literal",
+            ),
+            (
+                "p2p-noncanonical",
+                "[2001:4860::1]:7000",
+                "[0:0:0:0:0:0:0:1]:7001",
+                "p2p_addr must use a canonical socket literal",
+            ),
+            (
                 "rpc-doc-v4",
                 "192.0.2.10:7000",
                 "127.0.0.1:7001",
@@ -5977,6 +6048,48 @@ mod tests {
                 "[2001:4860::8888%9]:7001",
                 "p2p_addr must not use an IPv6 scope identifier",
             ),
+            (
+                "rpc-unspecified",
+                "0.0.0.0:7000",
+                "127.0.0.1:7001",
+                "rpc_addr must not use an unspecified address",
+            ),
+            (
+                "p2p-broadcast",
+                "127.0.0.1:7000",
+                "255.255.255.255:7001",
+                "p2p_addr must not use the IPv4 broadcast address",
+            ),
+            (
+                "rpc-link-local",
+                "169.254.10.20:7000",
+                "127.0.0.1:7001",
+                "rpc_addr must not use a link-local address",
+            ),
+            (
+                "p2p-link-local",
+                "[2001:4860::1]:7000",
+                "[fe80::1]:7001",
+                "p2p_addr must not use a link-local address",
+            ),
+            (
+                "shared-socket",
+                "127.0.0.1:7000",
+                "127.0.0.1:7000",
+                "must differ",
+            ),
+            (
+                "mixed-family",
+                "127.0.0.1:7000",
+                "[2001:4860::1]:7001",
+                "must use the same IP family",
+            ),
+            (
+                "distinct-ip",
+                "127.0.0.1:7000",
+                "127.0.0.2:7001",
+                "must bind the same IP",
+            ),
         ] {
             let file_name = format!(
                 "trnm-node-config-validation-surface-{suffix}-{}-{}.toml",
@@ -6030,9 +6143,39 @@ mod tests {
                 "node_id must use ASCII-only characters",
             ),
             (
+                "list-separator",
+                "node;a",
+                "node_id must not contain list separators (, ; |)",
+            ),
+            (
+                "uri-delimiter",
+                "node&peer=seed",
+                "node_id must not contain URI delimiters (@ ? # % & =)",
+            ),
+            (
+                "quoting",
+                "node'alpha",
+                "node_id must not contain quoting characters (\" ' `)",
+            ),
+            (
+                "dot-segment",
+                ".",
+                "node_id must not be '.' or '..'",
+            ),
+            (
                 "path-like",
                 "seed/slot",
                 "node_id must not contain path or host-literal separators (/ \\ : [ ])",
+            ),
+            (
+                "bracketed-pseudo-host",
+                "[seed]",
+                "node_id must not contain path or host-literal separators (/ \\ : [ ])",
+            ),
+            (
+                "localhost",
+                "localhost",
+                "node_id must not look like a host or socket literal",
             ),
             (
                 "dns-uppercase-dot",
@@ -6055,8 +6198,18 @@ mod tests {
                 "node_id must not look like a host or socket literal",
             ),
             (
+                "ipv4-literal",
+                "127.0.0.1",
+                "node_id must not look like a host or socket literal",
+            ),
+            (
                 "ipv4-socket-shaped",
                 "127.0.0.1:7000",
+                "node_id must not contain path or host-literal separators (/ \\ : [ ])",
+            ),
+            (
+                "ipv6-literal",
+                "::1",
                 "node_id must not contain path or host-literal separators (/ \\ : [ ])",
             ),
             (
@@ -7600,25 +7753,6 @@ mod tests {
     }
 
     #[test]
-    fn validate_node_config_rejects_uri_and_userinfo_separators_in_node_id() {
-        for node_id in ["node@alpha", "node?alpha", "node#alpha", "node%zone"] {
-            let err = validate_node_config(
-                NodeConfig {
-                    node_id: node_id.into(),
-                    rpc_addr: "127.0.0.1:26657".into(),
-                    p2p_addr: "127.0.0.1:26656".into(),
-                },
-                "node.toml",
-            )
-            .expect_err("node_id URI/userinfo separators must fail closed");
-            assert!(err
-                .to_string()
-                .contains("node_id must not contain URI or userinfo separators (@ ? # %)")
-            );
-        }
-    }
-
-    #[test]
     fn validate_node_config_rejects_quoting_characters_in_node_id() {
         for node_id in ["node\"alpha", "node'alpha", "node`alpha"] {
             let err = validate_node_config(
@@ -7758,6 +7892,9 @@ mod tests {
             "127.0.0.1",
             "seed.example.com",
             "seed.example.com.",
+            "BOOTSTRAP.EXAMPLE.COM",
+            "BOOTSTRAP.EXAMPLE.COM.",
+            "NODE-2.BOOTSTRAP.INTERNAL",
             "validator-1.mainnet.local",
             "validator-1.mainnet.local.",
         ] {
