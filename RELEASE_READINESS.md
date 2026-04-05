@@ -80,6 +80,9 @@
 14. **基于当前本地 integrated `main`（包括尚未推送到 `origin/main` 的本地吸收增量）重新评估“距离 public mainnet 还差多少”**：看 `trillionnium-rust/docs/release/TRNM_MAINNET_READINESS_REASSESSMENT_2026-04-05.md`。
    - 适用场景：需要回答“在当前本地 `main` 快照上，分支清理 / residual 吸收之后，项目离 public mainnet 到底还有多远”“当前最好阶段名是什么”“哪些 blocker 仍是最短发射路径上的硬约束”。
    - 作用边界：它评估的是**当前本地 integrated `main`**，因此必须连同当时的 `local main` commit 与 `origin/main` commit 一起引用；它不自动意味着远端 `origin/main` 已达到同一结论，也不替代本文件的总 release-ready 口径。
+15. **把当前本地 integrated `main` 的剩余 launch distance 进一步拆成可执行 closing packages / exit criteria / evidence packet / first execution slice**：看 `trillionnium-rust/docs/release/TRNM_MAINNET_CLOSURE_EXECUTION_BOARD_2026-04-05.md`。
+   - 适用场景：需要从“现在还差什么”继续推进到“下一阶段具体按哪几个 closure packages 执行、每包的 exit criteria 是什么、先做哪一刀”。
+   - 作用边界：它是**execution board**，不是 release-ready 证明；它评估和编排的是当前本地 `main` 的 closing work，而不是自动代表 `origin/main` 已同步到同一闭环阶段。
 
 ## RC 演练最小证据模板（不发布）
 
