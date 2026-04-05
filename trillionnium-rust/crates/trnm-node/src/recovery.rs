@@ -929,6 +929,30 @@ mod tests {
     }
 
     #[test]
+    fn recovery_startup_summary_keeps_checkpoint_only_rejoin_bootstrap_saturated_at_max_height() {
+        let recovered = recovered_state(0, u64::MAX, Some(u64::MAX - 1), false, false);
+
+        ensure_recoverable_wal_state(Path::new("/tmp/trnm-wal"), &recovered)
+            .expect("max-height checkpoint-only rejoin bootstrap should remain recoverable for safe join/rejoin");
+        assert_eq!(
+            retained_wal_summary(&recovered),
+            format!(
+                "retained no committed WAL entries (last retained checkpoint height {})",
+                u64::MAX - 1,
+            )
+        );
+        assert_eq!(
+            recovery_startup_summary(&recovered),
+            format!(
+                "retained_wal_entries=0 checkpoint_height_retained={} checkpoint_tip_relation=checkpoint_only:{} next_startup_height={} wal_tail_truncated=false metadata_only_recovery=false join_rejoin_status=ready:checkpoint_only_rejoin_bootstrap",
+                u64::MAX - 1,
+                u64::MAX - 1,
+                u64::MAX,
+            )
+        );
+    }
+
+    #[test]
     fn ensure_recoverable_wal_state_reports_retained_wal_resume_surface() {
         let recovered = recovered_state(2, 12, Some(11), false, false);
 
