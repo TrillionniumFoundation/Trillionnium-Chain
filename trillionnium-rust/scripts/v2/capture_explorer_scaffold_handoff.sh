@@ -63,7 +63,11 @@ while [[ $# -gt 0 ]]; do
 done
 
 TIMESTAMP_UTC="$(date -u +"%Y%m%dT%H%M%SZ")"
+TRUTH_SOURCE_RELEASE_READINESS="$(truth_source_value "${RELEASE_READINESS_PATH}")"
 TRUTH_SOURCE_GO_NO_GO_PANEL="$(truth_source_value "${GO_NO_GO_PANEL_PATH}")"
+TRUTH_SOURCE_DAY1_CONTRACT="$(truth_source_value "${DAY1_CONTRACT_PATH}")"
+TRUTH_SOURCE_RANK1_TASK_BOARD="$(truth_source_value "${RANK1_TASK_BOARD_PATH}")"
+TRUTH_SOURCE_BLOCKER_BOARD="$(truth_source_value "${BLOCKER_BOARD_PATH}")"
 if [[ -z "${OUTPUT_DIR}" ]]; then
   OUTPUT_DIR="${RUN_ROOT}/handoff-${TIMESTAMP_UTC}"
 fi
@@ -279,11 +283,11 @@ durable_template_allowed=false
 durable_template_rejection_reason=scaffold-capture-is-placeholder-only-and-missing-durable-read-anchors
 deployment_template_boundary=use-scaffold-template-until-non-placeholder-deployment-and-all-6-durable-read-anchors-exist
 truth_source_scaffold_runbook=${SCAFFOLD_RUNBOOK_PATH}
-truth_source_release_readiness=${RELEASE_READINESS_PATH}
+truth_source_release_readiness=${TRUTH_SOURCE_RELEASE_READINESS}
 truth_source_go_no_go_panel=${TRUTH_SOURCE_GO_NO_GO_PANEL}
-truth_source_day1_contract=${DAY1_CONTRACT_PATH}
-truth_source_rank1_task_board=${RANK1_TASK_BOARD_PATH}
-truth_source_blocker_board=${BLOCKER_BOARD_PATH}
+truth_source_day1_contract=${TRUTH_SOURCE_DAY1_CONTRACT}
+truth_source_rank1_task_board=${TRUTH_SOURCE_RANK1_TASK_BOARD}
+truth_source_blocker_board=${TRUTH_SOURCE_BLOCKER_BOARD}
 replay_command=./trillionnium-rust/scripts/v2/explorer_service_up.sh
 status_command=./trillionnium-rust/scripts/v2/explorer_service_status.sh
 rollback_command=./trillionnium-rust/scripts/v2/explorer_service_down.sh
