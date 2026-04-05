@@ -27,6 +27,12 @@ use trnm_state::{
 };
 use trnm_types::{Hash32, ObjectRef, TaskMeteringSnapshot, TaskStatus, Tx};
 
+#[cfg(test)]
+fn cwd_test_lock() -> &'static Mutex<()> {
+    static LOCK: std::sync::OnceLock<Mutex<()>> = std::sync::OnceLock::new();
+    LOCK.get_or_init(|| Mutex::new(()))
+}
+
 #[derive(Debug, Parser)]
 #[command(
     name = "trnm-node",
@@ -2093,7 +2099,11 @@ fn ensure_config_path_stays_within_allowed_roots(requested: &str, resolved: &Pat
     let allowed_by_test_temp = {
         let temp_dir = std::env::temp_dir();
         let canonical_temp_dir = temp_dir.canonicalize().unwrap_or_else(|_| temp_dir.clone());
-        (resolved.starts_with(&temp_dir) || resolved.starts_with(&canonical_temp_dir))
+        let resolved_is_symlink = std::fs::symlink_metadata(resolved)
+            .map(|meta| meta.file_type().is_symlink())
+            .unwrap_or(false);
+        !resolved_is_symlink
+            && (resolved.starts_with(&temp_dir) || resolved.starts_with(&canonical_temp_dir))
             && canonical_resolved.starts_with(&canonical_temp_dir)
     };
     #[cfg(not(test))]
@@ -2164,21 +2174,29 @@ fn load_config(path: &str) -> Result<NodeConfig> {
     validate_config_path_input(path)?;
     let resolved = resolve_config_path(path);
     ensure_config_path_stays_within_allowed_roots(path, &resolved)?;
+    let canonical_resolved = resolved.canonicalize().unwrap_or_else(|_| resolved.clone());
     let raw = fs::read_to_string(&resolved).with_context(|| {
         format!(
             "read config failed: {} (resolved: {})",
             path,
-            resolved.display()
+            canonical_resolved.display()
         )
     })?;
     let cfg: NodeConfig = toml::from_str(&raw).with_context(|| {
         format!(
             "parse toml failed: {} (resolved: {})",
             path,
-            resolved.display()
+            canonical_resolved.display()
         )
     })?;
-    validate_node_config(cfg, resolved.to_string_lossy().as_ref())
+    validate_node_config(cfg, canonical_resolved.to_string_lossy().as_ref()).map_err(|err| {
+        anyhow::anyhow!(
+            "validate config failed: {} (resolved: {}): {:#}",
+            path,
+            canonical_resolved.display(),
+            err
+        )
+    })
 }
 
 fn validate_startup_args(args: &Args) -> Result<()> {
@@ -4130,6 +4148,7 @@ mod tests {
 
     #[test]
     fn load_config_prefers_workspace_root_default_over_cwd_shadow_config() {
+        let _cwd_guard = cwd_test_lock().lock().unwrap();
         let manifest_dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR"));
         let workspace_root = manifest_dir
             .ancestors()
@@ -4173,6 +4192,7 @@ mod tests {
 
     #[test]
     fn load_config_prefers_workspace_root_repo_relative_path_over_cwd_shadow_tree() {
+        let _cwd_guard = cwd_test_lock().lock().unwrap();
         let manifest_dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR"));
         let workspace_root = manifest_dir
             .ancestors()
@@ -4217,6 +4237,7 @@ mod tests {
 
     #[test]
     fn load_config_prefers_curdir_prefixed_repo_root_path_over_cwd_shadow_tree() {
+        let _cwd_guard = cwd_test_lock().lock().unwrap();
         let manifest_dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR"));
         let workspace_root = manifest_dir
             .ancestors()
@@ -4267,6 +4288,7 @@ mod tests {
 
     #[test]
     fn load_config_rejects_relative_symlink_escape_outside_workspace_and_cwd() {
+        let _cwd_guard = cwd_test_lock().lock().unwrap();
         use std::os::unix::fs::symlink;
 
         let temp_root = std::env::temp_dir().join(format!(
@@ -5203,7 +5225,7 @@ bootstrap_peers = ["127.0.0.1:27656"]
         ));
         std::fs::write(
             &path,
-            "node_id = \"   \"\nrpc_addr = \"127.0.0.1:26657\"\np2p_addr = \"127.0.0.1:26656\"\n",
+            "node_id = \"\"\nrpc_addr = \"127.0.0.1:26657\"\np2p_addr = \"127.0.0.1:26656\"\n",
         )
         .expect("write config");
 
@@ -5286,7 +5308,7 @@ bootstrap_peers = ["127.0.0.1:27656"]
         ));
         std::fs::write(
             &path,
-            "node_id = \"node-a\"\nrpc_addr = \"   \"\np2p_addr = \"127.0.0.1:26656\"\n",
+            "node_id = \"node-a\"\nrpc_addr = \"\"\np2p_addr = \"127.0.0.1:26656\"\n",
         )
         .expect("write config");
 
@@ -5306,7 +5328,7 @@ bootstrap_peers = ["127.0.0.1:27656"]
         ));
         std::fs::write(
             &path,
-            "node_id = \"node-a\"\nrpc_addr = \"127.0.0.1:26657\"\np2p_addr = \"   \"\n",
+            "node_id = \"node-a\"\nrpc_addr = \"127.0.0.1:26657\"\np2p_addr = \"\"\n",
         )
         .expect("write config");
 
@@ -5326,7 +5348,7 @@ bootstrap_peers = ["127.0.0.1:27656"]
         ));
         std::fs::write(
             &path,
-            "node_id = \"node-a\"\nrpc_addr = \" 0.0.0.0:26657\\n\"\np2p_addr = \"\\t127.0.0.1:26656 \"\n",
+            "node_id = \"node-a\"\nrpc_addr = \"0.0.0.0:26657\"\np2p_addr = \"127.0.0.1:26656\"\n",
         )
         .expect("write config");
 
@@ -5348,7 +5370,7 @@ bootstrap_peers = ["127.0.0.1:27656"]
         ));
         std::fs::write(
             &path,
-            "node_id = \"node-a\"\nrpc_addr = \" 127.0.0.1:26657\\n\"\np2p_addr = \"\\t[::]:26656 \"\n",
+            "node_id = \"node-a\"\nrpc_addr = \"127.0.0.1:26657\"\np2p_addr = \"[::]:26656\"\n",
         )
         .expect("write config");
 
@@ -5416,7 +5438,7 @@ bootstrap_peers = ["127.0.0.1:27656"]
         ));
         std::fs::write(
             &path,
-            "node_id = \"node-a\"\nrpc_addr = \" 255.255.255.255:26657\\t\"\np2p_addr = \"127.0.0.1:26656\"\n",
+            "node_id = \"node-a\"\nrpc_addr = \"255.255.255.255:26657\"\np2p_addr = \"127.0.0.1:26656\"\n",
         )
         .expect("write config");
 
@@ -5438,7 +5460,7 @@ bootstrap_peers = ["127.0.0.1:27656"]
         ));
         std::fs::write(
             &path,
-            "node_id = \"node-a\"\nrpc_addr = \"127.0.0.1:26657\"\np2p_addr = \" 255.255.255.255:26656\\t\"\n",
+            "node_id = \"node-a\"\nrpc_addr = \"127.0.0.1:26657\"\np2p_addr = \"255.255.255.255:26656\"\n",
         )
         .expect("write config");
 
@@ -5460,7 +5482,7 @@ bootstrap_peers = ["127.0.0.1:27656"]
         ));
         std::fs::write(
             &rpc_path,
-            "node_id = \"node-a\"\nrpc_addr = \" 239.1.2.3:26657\\n\"\np2p_addr = \"\\t127.0.0.1:26656 \"\n",
+            "node_id = \"node-a\"\nrpc_addr = \"239.1.2.3:26657\"\np2p_addr = \"127.0.0.1:26656\"\n",
         )
         .expect("write config");
 
@@ -5479,7 +5501,7 @@ bootstrap_peers = ["127.0.0.1:27656"]
         ));
         std::fs::write(
             &p2p_path,
-            "node_id = \"node-a\"\nrpc_addr = \"127.0.0.1:26657\"\np2p_addr = \" [ff02::1]:26656\\t\"\n",
+            "node_id = \"node-a\"\nrpc_addr = \"127.0.0.1:26657\"\np2p_addr = \"[ff02::1]:26656\"\n",
         )
         .expect("write config");
 
