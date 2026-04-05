@@ -136,3 +136,41 @@ fn recover_metadata_only_error_reports_multi_block_checkpoint_lag() {
 
     let _ = fs::remove_dir_all(&wal_dir);
 }
+
+#[test]
+fn recover_metadata_only_error_reports_singular_checkpoint_ahead_mismatch_operator_action() {
+    let wal_dir = temp_wal_dir("recover-metadata-only-error-singular-checkpoint-ahead");
+    fs::create_dir_all(&wal_dir).unwrap();
+
+    let recovered = RecoveredWalState {
+        next_height: 12,
+        restored_lock: None,
+        last_checkpoint: Some(CheckpointMeta {
+            height: 12,
+            state_root_hex: "r12".into(),
+            wal_entry_hash_hex: "h12".into(),
+        }),
+        truncated: true,
+        metadata_only_recovery: true,
+        wal_entries_retained: 2,
+        checkpoint_height_retained: Some(12),
+    };
+
+    let err = metadata_only_recovery_error(&wal_dir, &recovered);
+
+    assert!(err.contains("retained 2 committed WAL entries through height 11"));
+    assert!(err.contains(
+        "retained checkpoint height 12 is ahead of retained WAL tip height 11 by 1 block"
+    ));
+    assert!(!err.contains("checkpoint leads tip by 1 blocks"));
+    assert!(err.contains("last retained checkpoint: 12"));
+    assert!(err.contains("next startup height: 12"));
+    assert!(err.contains(
+        "operator action: investigate WAL/checkpoint mismatch (retained WAL tip height 11, checkpoint height 12, checkpoint leads tip by 1 block), rebuild the recovery inputs, and only retry join/rejoin once WAL tip and checkpoint evidence agree"
+    ));
+    assert!(err.contains(
+        "note: this startup already truncated a malformed WAL tail, so keep the repaired WAL/checkpoint artifacts for incident review if join/rejoin still fails"
+    ));
+
+    let _ = fs::remove_dir_all(&wal_dir);
+}
