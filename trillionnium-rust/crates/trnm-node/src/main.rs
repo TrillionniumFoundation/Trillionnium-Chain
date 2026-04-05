@@ -1802,9 +1802,8 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         .strip_prefix('[')
         .and_then(|inner| inner.strip_suffix(']'))
         .is_some_and(|inner| inner.parse::<std::net::IpAddr>().is_ok());
-    let dns_like_host_label = node_id
-        .strip_suffix('.')
-        .unwrap_or(node_id)
+    let normalized_node_id_host_candidate = node_id.strip_suffix('.').unwrap_or(node_id);
+    let dns_like_host_label = normalized_node_id_host_candidate
         .split('.')
         .all(|label| {
             !label.is_empty()
@@ -1814,9 +1813,9 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
                 && !label.starts_with('-')
                 && !label.ends_with('-')
         })
-        && node_id.contains('.');
+        && normalized_node_id_host_candidate.contains('.');
     anyhow::ensure!(
-        !node_id.eq_ignore_ascii_case("localhost")
+        !normalized_node_id_host_candidate.eq_ignore_ascii_case("localhost")
             && node_id.parse::<std::net::IpAddr>().is_err()
             && node_id.parse::<SocketAddr>().is_err()
             && !bracketed_host_literal
@@ -5298,6 +5297,16 @@ bootstrap_peers = ["127.0.0.1:27656"]
                 "node_id must not look like a host or socket literal",
             ),
             (
+                "localhost-dot",
+                "localhost.",
+                "node_id must not look like a host or socket literal",
+            ),
+            (
+                "localhost-dot-uppercase",
+                "LOCALHOST.",
+                "node_id must not look like a host or socket literal",
+            ),
+            (
                 "ipv4-literal",
                 "127.0.0.1",
                 "node_id must not look like a host or socket literal",
@@ -7359,6 +7368,8 @@ bootstrap_peers = ["127.0.0.1:27656"]
         for node_id in [
             "localhost",
             "LOCALHOST",
+            "localhost.",
+            "LOCALHOST.",
             "127.0.0.1",
             "seed.example.com",
             "seed.example.com.",
