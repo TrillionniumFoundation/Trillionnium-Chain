@@ -83,6 +83,9 @@
 15. **把当前本地 integrated `main` 的剩余 launch distance 进一步拆成可执行 closing packages / exit criteria / evidence packet / first execution slice**：看 `trillionnium-rust/docs/release/TRNM_MAINNET_CLOSURE_EXECUTION_BOARD_2026-04-05.md`。
    - 适用场景：需要从“现在还差什么”继续推进到“下一阶段具体按哪几个 closure packages 执行、每包的 exit criteria 是什么、先做哪一刀”。
    - 作用边界：它是**execution board**，不是 release-ready 证明；它评估和编排的是当前本地 `main` 的 closing work，而不是自动代表 `origin/main` 已同步到同一闭环阶段。
+16. **先从 Rank 1（public read surface / indexer / explorer）切出当前 local `main` 上最短、最诚实的第一刀**：看 `trillionnium-rust/docs/release/TRNM_RANK1_FIRST_EXECUTION_SLICE_2026-04-05.md`。
+   - 适用场景：需要把“Rank 1 是最高优先级 blocker”进一步压成可立即执行的 first slice，明确当前到底先冻结什么、什么仍不能承诺、placeholder/durable 的边界怎样机械判定。
+   - 作用边界：它只覆盖 Rank 1 的**first execution slice**，不等于 Rank 1 已关闭；它冻结的是 Day-1 read promise 与 evidence boundary，不自动代表 durable indexer / historical read-model / production explorer backend 已实现。
 
 ## RC 演练最小证据模板（不发布）
 
