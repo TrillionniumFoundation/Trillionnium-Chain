@@ -146,14 +146,6 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         path
     );
     anyhow::ensure!(
-        !node_id.contains('@')
-            && !node_id.contains('?')
-            && !node_id.contains('#')
-            && !node_id.contains('%'),
-        "invalid node config {}: node_id must not contain URI or userinfo separators (@ ? # %)",
-        path
-    );
-    anyhow::ensure!(
         !node_id.contains('"') && !node_id.contains('\'') && !node_id.contains('`'),
         "invalid node config {}: node_id must not contain quoting characters (\" ' `)",
         path
@@ -2148,8 +2140,15 @@ mod tests {
     }
 
     #[test]
-    fn validate_node_config_rejects_uri_and_userinfo_separators_in_node_id() {
-        for node_id in ["node@alpha", "node?alpha", "node#alpha", "node%zone"] {
+    fn validate_node_config_rejects_uri_delimiters_in_node_id() {
+        for node_id in [
+            "node@alpha",
+            "node?alpha",
+            "node#alpha",
+            "node%zone",
+            "node&peer",
+            "node=peer",
+        ] {
             let err = validate_node_config(
                 NodeConfig {
                     node_id: node_id.into(),
@@ -2158,10 +2157,10 @@ mod tests {
                 },
                 "inline",
             )
-            .expect_err("node_id URI/userinfo separators must fail closed");
+            .expect_err("node_id URI delimiters must fail closed");
             assert!(
                 err.to_string()
-                    .contains("node_id must not contain URI or userinfo separators (@ ? # %)"),
+                    .contains("node_id must not contain URI delimiters (@ ? # % & =)"),
                 "unexpected error for {node_id:?}: {err:#}"
             );
         }
