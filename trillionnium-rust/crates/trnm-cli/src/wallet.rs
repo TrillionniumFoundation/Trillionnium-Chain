@@ -5,13 +5,26 @@ fn is_hidden_env_wrapper(c: char) -> bool {
         || c.is_control()
         || matches!(
             c,
-            '\u{061C}'
+            '\u{00AD}'
+                | '\u{061C}'
+                | '\u{180E}'
                 | '\u{200B}'
                 | '\u{200C}'
                 | '\u{200D}'
                 | '\u{200E}'
                 | '\u{200F}'
                 | '\u{2060}'
+                | '\u{2061}'
+                | '\u{2062}'
+                | '\u{2063}'
+                | '\u{2064}'
+                | '\u{2065}'
+                | '\u{206A}'
+                | '\u{206B}'
+                | '\u{206C}'
+                | '\u{206D}'
+                | '\u{206E}'
+                | '\u{206F}'
                 | '\u{FEFF}'
                 | '\u{202A}'
                 | '\u{202B}'
@@ -22,9 +35,6 @@ fn is_hidden_env_wrapper(c: char) -> bool {
                 | '\u{2067}'
                 | '\u{2068}'
                 | '\u{2069}'
-                | '\u{061C}'
-                | '\u{200E}'
-                | '\u{200F}'
         )
 }
 
@@ -50,6 +60,10 @@ fn is_single_sided_env_quote(c: char) -> bool {
             | '》'
             | '〈'
             | '〉'
+            | '〈'
+            | '〉'
+            | '⟨'
+            | '⟩'
             | '｢'
             | '｣'
             | '（'
@@ -84,8 +98,34 @@ fn is_single_sided_env_quote(c: char) -> bool {
     )
 }
 
+fn is_hidden_text_control(c: char) -> bool {
+    c.is_whitespace()
+        || c.is_control()
+        || matches!(
+            c,
+            '\u{00AD}'
+                | '\u{061C}'
+                | '\u{180E}'
+                | '\u{200B}'
+                | '\u{200C}'
+                | '\u{200D}'
+                | '\u{200E}'
+                | '\u{200F}'
+                | '\u{2060}'
+                | '\u{2061}'..='\u{2065}'
+                | '\u{206A}'..='\u{206F}'
+                | '\u{FEFF}'
+                | '\u{202A}'..='\u{202E}'
+                | '\u{2066}'..='\u{2069}'
+        )
+}
+
 fn is_suspicious_path_wrapper(c: char) -> bool {
     is_single_sided_env_quote(c)
+}
+
+fn is_suspicious_path_separator(c: char) -> bool {
+    matches!(c, '\\' | '∕' | '⁄' | '／' | '＼' | '⧵' | '⧸' | '⟋' | '⟍')
 }
 
 pub(crate) fn normalize_wallet_store_env(raw: &str) -> Option<&str> {
@@ -110,6 +150,8 @@ pub(crate) fn normalize_wallet_store_env(raw: &str) -> Option<&str> {
                 | (Some('『'), Some('』'))
                 | (Some('《'), Some('》'))
                 | (Some('〈'), Some('〉'))
+                | (Some('〈'), Some('〉'))
+                | (Some('⟨'), Some('⟩'))
                 | (Some('｢'), Some('｣'))
                 | (Some('（'), Some('）'))
                 | (Some('［'), Some('］'))
@@ -139,7 +181,11 @@ pub(crate) fn normalize_wallet_store_env(raw: &str) -> Option<&str> {
         }
         normalized = trimmed_single_sided;
     }
-    if normalized.is_empty() || normalized.chars().any(is_hidden_env_wrapper) {
+    if normalized.is_empty()
+        || normalized
+            .chars()
+            .any(|c| is_hidden_env_wrapper(c) || is_suspicious_path_separator(c))
+    {
         return None;
     }
     Some(normalized)
@@ -156,15 +202,29 @@ fn wallet_store_path_is_safe(path: &Path) -> bool {
             !c.is_whitespace()
                 && !c.is_control()
                 && !is_suspicious_path_wrapper(c)
+                && !is_suspicious_path_separator(c)
                 && !matches!(
                     c,
-                    '\u{061C}'
+                    '\u{00AD}'
+                        | '\u{061C}'
+                        | '\u{180E}'
                         | '\u{200B}'
                         | '\u{200C}'
                         | '\u{200D}'
                         | '\u{200E}'
                         | '\u{200F}'
                         | '\u{2060}'
+                        | '\u{2061}'
+                        | '\u{2062}'
+                        | '\u{2063}'
+                        | '\u{2064}'
+                        | '\u{2065}'
+                        | '\u{206A}'
+                        | '\u{206B}'
+                        | '\u{206C}'
+                        | '\u{206D}'
+                        | '\u{206E}'
+                        | '\u{206F}'
                         | '\u{FEFF}'
                         | '\u{202A}'
                         | '\u{202B}'
@@ -215,11 +275,23 @@ fn ensure_wallet_store_ancestors_not_symlink(store: &Path) -> Result<()> {
     Ok(())
 }
 
+fn wallet_store_path_and_ancestors_are_symlink_free(store: &Path) -> bool {
+    store
+        .ancestors()
+        .all(|path| match fs::symlink_metadata(path) {
+            Ok(meta) => !meta.file_type().is_symlink(),
+            Err(err) if err.kind() == std::io::ErrorKind::NotFound => true,
+            Err(_) => false,
+        })
+}
+
 pub(crate) fn default_wallet_store() -> PathBuf {
     if let Ok(p) = std::env::var("TRNM_WALLET_STORE") {
         if let Some(normalized) = normalize_wallet_store_env(&p) {
             let candidate = PathBuf::from(normalized);
-            if wallet_store_path_is_safe(&candidate) {
+            if wallet_store_path_is_safe(&candidate)
+                && wallet_store_path_and_ancestors_are_symlink_free(&candidate)
+            {
                 return candidate;
             }
         }
@@ -227,16 +299,53 @@ pub(crate) fn default_wallet_store() -> PathBuf {
 
     let home_root = std::env::var("HOME")
         .ok()
-        .map(PathBuf::from)
-        .filter(|path| wallet_store_path_is_safe(path))
+        .and_then(|raw| normalize_wallet_store_env(&raw).map(PathBuf::from))
+        .filter(|path| {
+            wallet_store_path_is_safe(path) && wallet_store_path_and_ancestors_are_symlink_free(path)
+        })
         .or_else(|| {
-            std::env::current_dir()
-                .ok()
-                .filter(|path| wallet_store_path_is_safe(path))
+            std::env::current_dir().ok().filter(|path| {
+                wallet_store_path_is_safe(path)
+                    && wallet_store_path_and_ancestors_are_symlink_free(path)
+            })
         })
         .unwrap_or_else(|| PathBuf::from("/"));
 
     home_root.join(".trnm").join("wallets")
+}
+
+pub(crate) fn resolve_wallet_store(store: Option<PathBuf>) -> Result<PathBuf> {
+    if let Some(store) = store {
+        if !wallet_store_path_is_safe(&store)
+            || !wallet_store_path_and_ancestors_are_symlink_free(&store)
+        {
+            bail!(
+                "explicit wallet store '{}' must be an absolute normalized symlink-free path",
+                store.display()
+            );
+        }
+        return Ok(store);
+    }
+
+    if let Ok(raw) = std::env::var("TRNM_WALLET_STORE") {
+        let Some(normalized) = normalize_wallet_store_env(&raw) else {
+            bail!(
+                "TRNM_WALLET_STORE is set but invalid; refusing ambiguous keystore path fallback"
+            );
+        };
+        let candidate = PathBuf::from(normalized);
+        if !wallet_store_path_is_safe(&candidate)
+            || !wallet_store_path_and_ancestors_are_symlink_free(&candidate)
+        {
+            bail!(
+                "TRNM_WALLET_STORE '{}' must be an absolute normalized symlink-free path",
+                candidate.display()
+            );
+        }
+        return Ok(candidate);
+    }
+
+    Ok(default_wallet_store())
 }
 
 pub(crate) fn wallet_file(store: &Path, name: &str) -> PathBuf {
@@ -244,30 +353,7 @@ pub(crate) fn wallet_file(store: &Path, name: &str) -> PathBuf {
 }
 
 pub(crate) fn ensure_wallet_name(name: &str) -> Result<()> {
-    let has_hidden_or_whitespace = name.chars().any(|c| {
-        c.is_whitespace()
-            || c.is_control()
-            || matches!(
-                c,
-                '\u{061C}'
-                    | '\u{200B}'
-                    | '\u{200C}'
-                    | '\u{200D}'
-                    | '\u{200E}'
-                    | '\u{200F}'
-                    | '\u{2060}'
-                    | '\u{FEFF}'
-                    | '\u{202A}'
-                    | '\u{202B}'
-                    | '\u{202C}'
-                    | '\u{202D}'
-                    | '\u{202E}'
-                    | '\u{2066}'
-                    | '\u{2067}'
-                    | '\u{2068}'
-                    | '\u{2069}'
-            )
-    });
+    let has_hidden_or_whitespace = name.chars().any(is_hidden_text_control);
     let uppercase = name.to_ascii_uppercase();
     let is_windows_reserved_device = matches!(
         uppercase.as_str(),
@@ -304,8 +390,9 @@ pub(crate) fn ensure_wallet_name(name: &str) -> Result<()> {
         || name.starts_with(['‐', '‑', '‒', '–', '—', '―', '−', '﹣', '－'])
         || name.contains(['/', '\\', ':', '=', '|', '&', '$', '*', '?', '!'])
         || name.contains(['‐', '‑', '‒', '–', '—', '―', '−', '﹣', '－'])
-        || name.contains(['：', '＝', '｜', '＆', '？', '，', '；', '！'])
-        || name.contains(['∕', '⁄', '／', '＼', '⧵', '⟋', '⟍'])
+        || name.contains(['：', '﹕', '＝', '﹦', '｜', '￨', '＆', '﹠', '？', '﹖', '，', '；', '！', '﹗'])
+        || name.contains(['＊', '﹡'])
+        || name.contains(['∕', '⁄', '／', '＼', '⧵', '⧸', '⟋', '⟍'])
         || name.contains(['.', '．', '。', '｡', '﹒', '․'])
         || name.contains(['"', '\'', '`', '<', '>', '(', ')', '[', ']', '{', '}', ',', ';'])
         || name.contains([
@@ -401,23 +488,20 @@ pub(crate) fn ensure_hex_32_bytes(s: &str) -> Result<String> {
                 )
                 || matches!(
                     c,
-                    '\u{061C}'
+                    '\u{00AD}'
+                        | '\u{061C}'
+                        | '\u{180E}'
                         | '\u{200B}'
                         | '\u{200C}'
                         | '\u{200D}'
                         | '\u{200E}'
                         | '\u{200F}'
                         | '\u{2060}'
+                        | '\u{2061}'..='\u{2065}'
+                        | '\u{206A}'..='\u{206F}'
                         | '\u{FEFF}'
-                        | '\u{202A}'
-                        | '\u{202B}'
-                        | '\u{202C}'
-                        | '\u{202D}'
-                        | '\u{202E}'
-                        | '\u{2066}'
-                        | '\u{2067}'
-                        | '\u{2068}'
-                        | '\u{2069}'
+                        | '\u{202A}'..='\u{202E}'
+                        | '\u{2066}'..='\u{2069}'
                 )
         })
         .trim();
@@ -519,6 +603,13 @@ pub(crate) fn read_key(store: &Path, name: &str) -> Result<String> {
     let f = wallet_file(store, name);
     let meta = fs::symlink_metadata(&f)
         .map_err(|e| anyhow!("failed to inspect wallet '{}' at {}: {e}", name, f.display()))?;
+    if meta.file_type().is_symlink() {
+        bail!(
+            "wallet '{}' at {} is a symlink; refusing to read key through non-regular wallet file path",
+            name,
+            f.display()
+        );
+    }
     if !meta.file_type().is_file() {
         bail!(
             "wallet '{}' at {} is not a regular file; refusing to follow non-regular wallet path",
@@ -545,7 +636,8 @@ pub(crate) fn derive_address_from_priv_hex(priv_hex: &str) -> Result<String> {
 }
 
 fn is_unsafe_sign_message_char(c: char) -> bool {
-    c.is_control()
+    (c.is_whitespace() && c != ' ')
+        || c.is_control()
         || matches!(
             c,
             '\u{00ad}'
@@ -557,6 +649,8 @@ fn is_unsafe_sign_message_char(c: char) -> bool {
                 | '\u{200e}'
                 | '\u{200f}'
                 | '\u{2060}'
+                | '\u{2061}'..='\u{2065}'
+                | '\u{206a}'..='\u{206f}'
                 | '\u{202a}'..='\u{202e}'
                 | '\u{2066}'..='\u{2069}'
                 | '\u{feff}'
@@ -567,14 +661,25 @@ pub(crate) fn ensure_safe_sign_message(message: &str) -> Result<()> {
     if message.is_empty() {
         bail!("wallet sign message must not be empty");
     }
+    if message.len() > 4096 {
+        bail!("wallet sign message must be <= 4096 bytes");
+    }
     if message.trim() != message {
         bail!(
             "wallet sign message contains leading or trailing whitespace; refusing ambiguous offline-signing output"
         );
     }
-    if message.chars().any(is_unsafe_sign_message_char) {
+    if message.chars().any(|c| {
+        is_unsafe_sign_message_char(c)
+            || !c.is_ascii()
+            || (!c.is_ascii_graphic() && c != ' ')
+            || matches!(
+                c,
+                '=' | ':' | ';' | ',' | '|' | '"' | '\'' | '`' | '<' | '>' | '(' | ')' | '[' | ']' | '{' | '}'
+            )
+    }) {
         bail!(
-            "wallet sign message contains control or bidi override characters; refusing unsafe offline-signing output"
+            "wallet sign message must be single-line ASCII printable text with only interior ASCII spaces and no delimiter or wrapper punctuation; refusing unsafe offline-signing output"
         );
     }
     Ok(())
@@ -588,7 +693,7 @@ pub(crate) fn random_priv_hex() -> Result<String> {
 }
 
 pub(crate) fn wallet_create(name: String, out: Option<PathBuf>) -> Result<()> {
-    let store = out.unwrap_or_else(default_wallet_store);
+    let store = resolve_wallet_store(out)?;
     let priv_hex = random_priv_hex()?;
     let path = write_key(&store, &name, &priv_hex)?;
     let addr = derive_address_from_priv_hex(&priv_hex)?;
@@ -608,7 +713,7 @@ pub(crate) fn resolve_address_for_query(
         return Ok(a);
     }
     let wallet_name = name.unwrap_or_else(|| "default".to_string());
-    let s = store.unwrap_or_else(default_wallet_store);
+    let s = resolve_wallet_store(store)?;
     let priv_hex = read_key(&s, &wallet_name)?;
     derive_address_from_priv_hex(&priv_hex)
 }

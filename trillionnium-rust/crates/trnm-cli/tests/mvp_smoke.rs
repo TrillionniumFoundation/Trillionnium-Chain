@@ -125,7 +125,8 @@ fn smoke_wallet_create_rejects_symlinked_ancestor_out_path() {
     );
     let stderr = String::from_utf8_lossy(&out.stderr);
     assert!(
-        stderr.contains("refusing non-canonical keystore path"),
+        stderr.contains("refusing non-canonical keystore path")
+            || stderr.contains("must be an absolute normalized symlink-free path"),
         "unexpected stderr: {}",
         stderr
     );
@@ -226,7 +227,231 @@ fn smoke_wallet_sign_rejects_bidi_control_message() {
 }
 
 #[test]
-fn smoke_wallet_sign_rejects_edge_or_non_ascii_whitespace() {
+fn smoke_wallet_sign_rejects_invalid_env_store_fallback() {
+    let store = tmp_dir("wallet-sign-invalid-env-store");
+    let pk = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+    let import = Command::new(bin())
+        .args([
+            "wallet",
+            "import",
+            "--name",
+            "alice",
+            "--private-key-hex",
+            pk,
+            "--out",
+            store.to_string_lossy().as_ref(),
+        ])
+        .output()
+        .unwrap();
+    assert!(
+        import.status.success(),
+        "stderr: {}",
+        String::from_utf8_lossy(&import.stderr)
+    );
+
+    let out = Command::new(bin())
+        .args(["wallet", "sign", "--name", "alice", "--message", "approve tx"])
+        .env("TRNM_WALLET_STORE", "\u{2068}\"./wallets\"\u{2069}")
+        .output()
+        .unwrap();
+    assert!(
+        !out.status.success(),
+        "invalid env keystore fallback should fail closed"
+    );
+    let stderr = String::from_utf8_lossy(&out.stderr);
+    assert!(
+        stderr.contains("TRNM_WALLET_STORE is set but invalid")
+            || stderr.contains("must be an absolute normalized symlink-free path"),
+        "unexpected stderr: {}",
+        stderr
+    );
+}
+
+#[test]
+fn smoke_wallet_sign_rejects_invalid_explicit_store_path() {
+    let out = Command::new(bin())
+        .args([
+            "wallet",
+            "sign",
+            "--name",
+            "alice",
+            "--message",
+            "approve tx",
+            "--store",
+            "./wallets",
+        ])
+        .output()
+        .unwrap();
+    assert!(
+        !out.status.success(),
+        "relative explicit keystore path should fail closed"
+    );
+    let stderr = String::from_utf8_lossy(&out.stderr);
+    assert!(
+        stderr.contains("explicit wallet store './wallets' must be an absolute normalized symlink-free path"),
+        "unexpected stderr: {}",
+        stderr
+    );
+}
+
+#[cfg(unix)]
+#[test]
+fn smoke_wallet_sign_rejects_explicit_store_with_symlinked_ancestor() {
+    use std::os::unix::fs::symlink;
+
+    let root = tmp_dir("wallet-sign-symlink-ancestor");
+    let real_parent = root.join("real-parent");
+    let linked_parent = root.join("linked-parent");
+    let real_store = real_parent.join("wallets");
+    std::fs::create_dir_all(&real_store).unwrap();
+    symlink(&real_parent, &linked_parent).unwrap();
+
+    let pk = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+    let import = Command::new(bin())
+        .args([
+            "wallet",
+            "import",
+            "--name",
+            "alice",
+            "--private-key-hex",
+            pk,
+            "--out",
+            real_store.to_string_lossy().as_ref(),
+        ])
+        .output()
+        .unwrap();
+    assert!(
+        import.status.success(),
+        "stderr: {}",
+        String::from_utf8_lossy(&import.stderr)
+    );
+
+    let linked_store = linked_parent.join("wallets");
+    let out = Command::new(bin())
+        .args([
+            "wallet",
+            "sign",
+            "--name",
+            "alice",
+            "--message",
+            "approve tx",
+            "--store",
+            linked_store.to_string_lossy().as_ref(),
+        ])
+        .output()
+        .unwrap();
+    assert!(
+        !out.status.success(),
+        "symlinked explicit keystore ancestor should fail closed"
+    );
+    let stderr = String::from_utf8_lossy(&out.stderr);
+    assert!(
+        stderr.contains("explicit wallet store")
+            && stderr.contains("must be an absolute normalized symlink-free path"),
+        "unexpected stderr: {}",
+        stderr
+    );
+}
+
+#[test]
+fn smoke_wallet_address_rejects_invalid_env_store_fallback() {
+    let store = tmp_dir("wallet-address-invalid-env-store");
+    let pk = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+    let import = Command::new(bin())
+        .args([
+            "wallet",
+            "import",
+            "--name",
+            "alice",
+            "--private-key-hex",
+            pk,
+            "--out",
+            store.to_string_lossy().as_ref(),
+        ])
+        .output()
+        .unwrap();
+    assert!(
+        import.status.success(),
+        "stderr: {}",
+        String::from_utf8_lossy(&import.stderr)
+    );
+
+    let out = Command::new(bin())
+        .args(["wallet", "address", "--name", "alice"])
+        .env("TRNM_WALLET_STORE", "\u{2068}\"./wallets\"\u{2069}")
+        .output()
+        .unwrap();
+    assert!(
+        !out.status.success(),
+        "invalid env keystore fallback should fail closed for wallet address"
+    );
+
+    let stderr = String::from_utf8_lossy(&out.stderr);
+    assert!(
+        stderr.contains("TRNM_WALLET_STORE is set but invalid")
+            || stderr.contains("must be an absolute normalized symlink-free path"),
+        "unexpected stderr: {}",
+        stderr
+    );
+}
+
+#[cfg(unix)]
+#[test]
+fn smoke_wallet_address_rejects_explicit_store_with_symlinked_final_path() {
+    use std::os::unix::fs::symlink;
+
+    let root = tmp_dir("wallet-address-symlink-final-store");
+    let real_store = root.join("real-store");
+    let linked_store = root.join("linked-store");
+    std::fs::create_dir_all(&real_store).unwrap();
+    symlink(&real_store, &linked_store).unwrap();
+
+    let pk = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+    let import = Command::new(bin())
+        .args([
+            "wallet",
+            "import",
+            "--name",
+            "alice",
+            "--private-key-hex",
+            pk,
+            "--out",
+            real_store.to_string_lossy().as_ref(),
+        ])
+        .output()
+        .unwrap();
+    assert!(
+        import.status.success(),
+        "stderr: {}",
+        String::from_utf8_lossy(&import.stderr)
+    );
+
+    let out = Command::new(bin())
+        .args([
+            "wallet",
+            "address",
+            "--name",
+            "alice",
+            "--store",
+            linked_store.to_string_lossy().as_ref(),
+        ])
+        .output()
+        .unwrap();
+    assert!(
+        !out.status.success(),
+        "symlinked explicit wallet address store should fail closed"
+    );
+    let stderr = String::from_utf8_lossy(&out.stderr);
+    assert!(
+        stderr.contains("explicit wallet store")
+            && stderr.contains("must be an absolute normalized symlink-free path"),
+        "unexpected stderr: {}",
+        stderr
+    );
+}
+
+#[test]
+fn smoke_wallet_sign_rejects_edge_whitespace_non_ascii_or_delimiter_payloads() {
     let store = tmp_dir("wallet-sign-whitespace-guard");
     let pk = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
     let import = Command::new(bin())
@@ -248,7 +473,23 @@ fn smoke_wallet_sign_rejects_edge_or_non_ascii_whitespace() {
         String::from_utf8_lossy(&import.stderr)
     );
 
-    for bad_message in [" approve tx", "approve tx ", "approve\u{00a0}tx"] {
+    for bad_message in [
+        " approve tx",
+        "approve tx ",
+        "approve\u{00a0}tx",
+        "approve=tx",
+        "approve:tx",
+        "approve;tx",
+        "approve,tx",
+        "approve|tx",
+        "\"approve tx\"",
+        "'approve tx'",
+        "`approve tx`",
+        "<approve tx>",
+        "(approve tx)",
+        "[approve tx]",
+        "{approve tx}",
+    ] {
         let out = Command::new(bin())
             .args([
                 "wallet",
@@ -264,14 +505,16 @@ fn smoke_wallet_sign_rejects_edge_or_non_ascii_whitespace() {
             .unwrap();
         assert!(
             !out.status.success(),
-            "whitespace-polluted signer input should fail closed: {bad_message:?}"
+            "ambiguous signer input should fail closed: {bad_message:?}"
         );
         let stderr = String::from_utf8_lossy(&out.stderr);
         assert!(
-            stderr.contains("sign message must not start or end with whitespace")
-                || stderr.contains(
-                    "sign message must be single-line printable text without control characters"
-                ),
+            stderr.contains("must not start or end with whitespace")
+                || stderr.contains("leading or trailing whitespace")
+                || stderr.contains("ASCII printable text")
+                || stderr.contains("single-line printable text without control characters")
+                || stderr.contains("delimiter punctuation")
+                || stderr.contains("wrapper punctuation"),
             "unexpected stderr for {bad_message:?}: {}",
             stderr
         );
@@ -438,4 +681,55 @@ fn smoke_tx_transfer_template_path() {
     let s = String::from_utf8_lossy(&out2.stdout);
     assert!(s.contains("0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"));
     assert!(s.contains("\"status\": \"pending\""));
+}
+
+#[test]
+fn smoke_tx_transfer_rejects_invalid_env_store_fallback() {
+    let store = tmp_dir("tx-transfer-invalid-env-store");
+    let pk = "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb";
+
+    let import = Command::new(bin())
+        .args([
+            "wallet",
+            "import",
+            "--name",
+            "sender",
+            "--private-key-hex",
+            pk,
+            "--out",
+            store.to_string_lossy().as_ref(),
+        ])
+        .output()
+        .unwrap();
+    assert!(import.status.success());
+
+    let out = Command::new(bin())
+        .env(
+            "TRNM_TX_TRANSFER_CMD",
+            "echo tx_hash=0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        )
+        .env("TRNM_WALLET_STORE", "\u{2068}\"./wallets\"\u{2069}")
+        .args([
+            "tx",
+            "transfer",
+            "--from",
+            "sender",
+            "--to",
+            "trnm1deadbeef",
+            "--amount",
+            "42",
+        ])
+        .output()
+        .unwrap();
+
+    assert!(
+        !out.status.success(),
+        "invalid env keystore fallback should fail closed for tx transfer"
+    );
+    let stderr = String::from_utf8_lossy(&out.stderr);
+    assert!(
+        stderr.contains("TRNM_WALLET_STORE is set but invalid; refusing ambiguous keystore path fallback")
+            || stderr.contains("must be an absolute normalized symlink-free path"),
+        "unexpected stderr: {stderr}"
+    );
 }
