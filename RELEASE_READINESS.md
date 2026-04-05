@@ -77,6 +77,9 @@
 13. **判断 `MN01` 当前 residual 到底是“还没 merge 的真实工作”，还是“已被主线吸收 / superseded 的剩余 patch 形状”**：看 `trillionnium-rust/docs/release/TRNM_MN01_RESIDUAL_CLOSURE_2026-04-05.md`。
    - 适用场景：需要回答“`lane/mn01-peer-bootstrap-topology` 现在还剩多少是真正该继续手工吸收的”“哪些 recovery 提交不该再 merge”“为什么 `git cherry -v` 仍然显示很多 `+` 但语义上大多已被主线覆盖”。
    - 作用边界：它是**lane residual closure** 文档，不替代 broader launch-readiness truth source，也不意味着 `MN01` 可整体机械 merge。
+14. **基于当前本地 integrated `main`（包括尚未推送到 `origin/main` 的本地吸收增量）重新评估“距离 public mainnet 还差多少”**：看 `trillionnium-rust/docs/release/TRNM_MAINNET_READINESS_REASSESSMENT_2026-04-05.md`。
+   - 适用场景：需要回答“在当前本地 `main` 快照上，分支清理 / residual 吸收之后，项目离 public mainnet 到底还有多远”“当前最好阶段名是什么”“哪些 blocker 仍是最短发射路径上的硬约束”。
+   - 作用边界：它评估的是**当前本地 integrated `main`**，因此必须连同当时的 `local main` commit 与 `origin/main` commit 一起引用；它不自动意味着远端 `origin/main` 已达到同一结论，也不替代本文件的总 release-ready 口径。
 
 ## RC 演练最小证据模板（不发布）
 
