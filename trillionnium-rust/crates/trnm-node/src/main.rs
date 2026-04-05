@@ -156,6 +156,19 @@ fn is_ipv4_mapped_ipv6(ip: std::net::IpAddr) -> bool {
     }
 }
 
+fn is_ipv4_compatible_ipv6(ip: std::net::IpAddr) -> bool {
+    match ip {
+        std::net::IpAddr::V4(_) => false,
+        std::net::IpAddr::V6(addr) => {
+            let segments = addr.segments();
+            segments[..6].iter().all(|segment| *segment == 0)
+                && !addr.is_unspecified()
+                && !addr.is_loopback()
+                && addr.to_ipv4_mapped().is_none()
+        }
+    }
+}
+
 fn has_nonzero_ipv6_scope(socket: SocketAddr) -> bool {
     match socket {
         SocketAddr::V4(_) => false,
@@ -1895,8 +1908,18 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         path
     );
     anyhow::ensure!(
+        !matches!(rpc_socket.ip(), std::net::IpAddr::V6(addr) if addr.is_loopback()),
+        "invalid node config {}: rpc_addr must not use the IPv6 loopback address; keep the shipped IPv4 loopback topology fail-closed",
+        path
+    );
+    anyhow::ensure!(
         !is_ipv4_mapped_ipv6(rpc_socket.ip()),
         "invalid node config {}: rpc_addr must not use an IPv4-mapped IPv6 address",
+        path
+    );
+    anyhow::ensure!(
+        !is_ipv4_compatible_ipv6(rpc_socket.ip()),
+        "invalid node config {}: rpc_addr must not use an IPv4-compatible IPv6 address",
         path
     );
     anyhow::ensure!(
@@ -1993,8 +2016,18 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         path
     );
     anyhow::ensure!(
+        !matches!(p2p_socket.ip(), std::net::IpAddr::V6(addr) if addr.is_loopback()),
+        "invalid node config {}: p2p_addr must not use the IPv6 loopback address; keep the shipped IPv4 loopback topology fail-closed",
+        path
+    );
+    anyhow::ensure!(
         !is_ipv4_mapped_ipv6(p2p_socket.ip()),
         "invalid node config {}: p2p_addr must not use an IPv4-mapped IPv6 address",
+        path
+    );
+    anyhow::ensure!(
+        !is_ipv4_compatible_ipv6(p2p_socket.ip()),
+        "invalid node config {}: p2p_addr must not use an IPv4-compatible IPv6 address",
         path
     );
     anyhow::ensure!(
@@ -5392,7 +5425,7 @@ bootstrap_peers = ["127.0.0.1:27656"]
         ));
         std::fs::write(
             &path,
-            "node_id = \"node-a\"\nrpc_addr = \"127.0.0.1:26657\"\np2p_addr = \"[::1]:26656\"\n",
+            "node_id = \"node-a\"\nrpc_addr = \"127.0.0.1:26657\"\np2p_addr = \"[2001:4860:4860::8888]:26656\"\n",
         )
         .expect("write config");
 
@@ -5401,7 +5434,7 @@ bootstrap_peers = ["127.0.0.1:27656"]
         let err_surface = err.to_string();
         assert!(err_surface.contains("must use the same IP family"));
         assert!(err_surface.contains("127.0.0.1:26657"));
-        assert!(err_surface.contains("[::1]:26656"));
+        assert!(err_surface.contains("[2001:4860:4860::8888]:26656"));
 
         let _ = std::fs::remove_file(path);
     }
@@ -5542,7 +5575,7 @@ bootstrap_peers = ["127.0.0.1:27656"]
         ));
         std::fs::write(
             &p2p_path,
-            "node_id = \"node-a\"\nrpc_addr = \"[::1]:26657\"\np2p_addr = \"[fe80::1]:26656\"\n",
+            "node_id = \"node-a\"\nrpc_addr = \"[2001:4860:4860::8888]:26657\"\np2p_addr = \"[fe80::1]:26656\"\n",
         )
         .expect("write config");
 
@@ -5646,7 +5679,7 @@ bootstrap_peers = ["127.0.0.1:27656"]
         ));
         std::fs::write(
             &rpc_path,
-            "node_id = \"node-a\"\nrpc_addr = \"[0:0:0:0:0:0:0:1]:26657\"\np2p_addr = \"[::1]:26656\"\n",
+            "node_id = \"node-a\"\nrpc_addr = \"[0:0:0:0:0:0:0:1]:26657\"\np2p_addr = \"[2001:4860:4860::8888]:26656\"\n",
         )
         .expect("write config");
 
@@ -5665,7 +5698,7 @@ bootstrap_peers = ["127.0.0.1:27656"]
         ));
         std::fs::write(
             &p2p_path,
-            "node_id = \"node-a\"\nrpc_addr = \"[::1]:26657\"\np2p_addr = \"[0:0:0:0:0:0:0:1]:26656\"\n",
+            "node_id = \"node-a\"\nrpc_addr = \"[2001:4860:4860::8888]:26657\"\np2p_addr = \"[0:0:0:0:0:0:0:1]:26656\"\n",
         )
         .expect("write config");
 
@@ -6912,6 +6945,32 @@ bootstrap_peers = ["127.0.0.1:27656"]
 
     #[test]
     fn validate_node_config_rejects_ipv4_mapped_scope_and_documentation_listener_addresses() {
+        let rpc_loopback_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "[::1]:26657".into(),
+                p2p_addr: "[2001:4860:4860::8888]:26656".into(),
+            },
+            "node.toml",
+        )
+        .expect_err("rpc_addr IPv6 loopback bind must fail closed");
+        assert!(rpc_loopback_err
+            .to_string()
+            .contains("rpc_addr must not use the IPv6 loopback address"));
+
+        let p2p_loopback_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "[2001:4860:4860::8888]:26657".into(),
+                p2p_addr: "[::1]:26656".into(),
+            },
+            "node.toml",
+        )
+        .expect_err("p2p_addr IPv6 loopback bind must fail closed");
+        assert!(p2p_loopback_err
+            .to_string()
+            .contains("p2p_addr must not use the IPv6 loopback address"));
+
         let rpc_ipv4_mapped_err = validate_node_config(
             NodeConfig {
                 node_id: "node-a".into(),
