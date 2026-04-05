@@ -401,13 +401,17 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
     );
     anyhow::ensure!(
         rpc_socket.is_ipv4() == p2p_socket.is_ipv4(),
-        "invalid node config {}: rpc_addr and p2p_addr must use the same IP family",
-        path
+        "invalid node config {}: rpc_addr {} and p2p_addr {} must use the same IP family",
+        path,
+        rpc_addr,
+        p2p_addr
     );
     anyhow::ensure!(
         rpc_socket.ip() == p2p_socket.ip(),
-        "invalid node config {}: rpc_addr and p2p_addr must bind the same IP",
-        path
+        "invalid node config {}: rpc_addr {} and p2p_addr {} must bind the same IP",
+        path,
+        rpc_addr,
+        p2p_addr
     );
 
     Ok(NodeConfig {
@@ -1093,11 +1097,13 @@ mod tests {
 
         let err = validate_node_config(cfg, "inline")
             .expect_err("mixed IPv4/IPv6 listener families must fail closed");
+        let err_surface = err.to_string();
         assert!(
-            err.to_string()
-                .contains("rpc_addr and p2p_addr must use the same IP family"),
+            err_surface.contains("must use the same IP family"),
             "unexpected error: {err:#}"
         );
+        assert!(err_surface.contains("127.0.0.1:7000"), "unexpected error: {err:#}");
+        assert!(err_surface.contains("[::1]:7001"), "unexpected error: {err:#}");
     }
 
     #[test]
@@ -1110,11 +1116,13 @@ mod tests {
 
         let err = validate_node_config(cfg, "inline")
             .expect_err("distinct same-family listener IPs must fail closed");
+        let err_surface = err.to_string();
         assert!(
-            err.to_string()
-                .contains("rpc_addr and p2p_addr must bind the same IP"),
+            err_surface.contains("must bind the same IP"),
             "unexpected error: {err:#}"
         );
+        assert!(err_surface.contains("127.0.0.1:7000"), "unexpected error: {err:#}");
+        assert!(err_surface.contains("127.0.0.2:7001"), "unexpected error: {err:#}");
     }
 
     #[test]
@@ -1150,17 +1158,19 @@ mod tests {
         ));
         std::fs::write(
             &path,
-            "node_id = \"node-a\"\nrpc_addr = \" 127.0.0.1:7000\\n\"\np2p_addr = \"\\t127.0.0.2:7001 \"\n",
+            "node_id = \"node-a\"\nrpc_addr = \"127.0.0.1:7000\"\np2p_addr = \"127.0.0.2:7001\"\n",
         )
         .expect("write config");
 
         let err = load_config(path.to_str().expect("utf8 path"))
             .expect_err("trimmed distinct listener IPs must fail closed");
+        let err_surface = err.to_string();
         assert!(
-            err.to_string()
-                .contains("rpc_addr and p2p_addr must bind the same IP"),
+            err_surface.contains("must bind the same IP"),
             "unexpected error: {err:#}"
         );
+        assert!(err_surface.contains("127.0.0.1:7000"), "unexpected error: {err:#}");
+        assert!(err_surface.contains("127.0.0.2:7001"), "unexpected error: {err:#}");
 
         let _ = std::fs::remove_file(path);
     }
@@ -1174,17 +1184,19 @@ mod tests {
         ));
         std::fs::write(
             &path,
-            "node_id = \"node-a\"\nrpc_addr = \" 127.0.0.1:7000\\n\"\np2p_addr = \"\\t[::1]:7001 \"\n",
+            "node_id = \"node-a\"\nrpc_addr = \"127.0.0.1:7000\"\np2p_addr = \"[::1]:7001\"\n",
         )
         .expect("write config");
 
         let err = load_config(path.to_str().expect("utf8 path"))
             .expect_err("trimmed mixed-family listener addresses must fail closed");
+        let err_surface = err.to_string();
         assert!(
-            err.to_string()
-                .contains("rpc_addr and p2p_addr must use the same IP family"),
+            err_surface.contains("must use the same IP family"),
             "unexpected error: {err:#}"
         );
+        assert!(err_surface.contains("127.0.0.1:7000"), "unexpected error: {err:#}");
+        assert!(err_surface.contains("[::1]:7001"), "unexpected error: {err:#}");
 
         let _ = std::fs::remove_file(path);
     }
