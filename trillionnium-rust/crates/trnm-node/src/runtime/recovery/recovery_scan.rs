@@ -322,8 +322,11 @@ fn recovery_startup_summary(recovered: &RecoveredWalState) -> String {
 fn metadata_only_operator_action(recovered: &RecoveredWalState) -> String {
     let action = if recovered.wal_entries_retained == 0 {
         match recovered.checkpoint_height_retained {
-            Some(_) => {
-                "operator action: checkpoint-only bootstrap is acceptable with a fresh --bft-wal-dir / --bft-wal-mode auto isolated run; if this node must rejoin from prior state, restore an application snapshot before retrying".into()
+            Some(checkpoint_height) => {
+                format!(
+                    "operator action: checkpoint-only bootstrap from retained checkpoint height {} is acceptable with a fresh --bft-wal-dir / --bft-wal-mode auto isolated run; if this node must rejoin from prior state, restore an application snapshot before retrying",
+                    checkpoint_height,
+                )
             }
             None => {
                 "operator action: restart with a fresh --bft-wal-dir / --bft-wal-mode auto isolated run; if this node must rejoin from prior state, restore an application snapshot before retrying".into()
@@ -875,7 +878,7 @@ mod tests {
                 && err.contains("checkpoint_height_retained=8")
                 && err.contains("checkpoint_tip_relation=checkpoint_only:8")
                 && err.contains("next_startup_height=9")
-                && err.contains("operator action: checkpoint-only bootstrap is acceptable with a fresh --bft-wal-dir / --bft-wal-mode auto isolated run; if this node must rejoin from prior state, restore an application snapshot before retrying; note: this startup already truncated a malformed WAL tail, so keep the repaired WAL/checkpoint artifacts for incident review if join/rejoin still fails")
+                && err.contains("operator action: checkpoint-only bootstrap from retained checkpoint height 8 is acceptable with a fresh --bft-wal-dir / --bft-wal-mode auto isolated run; if this node must rejoin from prior state, restore an application snapshot before retrying; note: this startup already truncated a malformed WAL tail, so keep the repaired WAL/checkpoint artifacts for incident review if join/rejoin still fails")
                 && !err.contains("operator action: restart with a fresh --bft-wal-dir / --bft-wal-mode auto isolated run; if this node must rejoin from prior state, restore an application snapshot before retrying"),
             "unexpected metadata-only recovery error: {err}"
         );
