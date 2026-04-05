@@ -647,6 +647,91 @@ mod tests {
     }
 
     #[test]
+    fn shipped_bootstrap_slots_keep_node_id_suffixes_and_listener_stride_in_lockstep() {
+        use std::net::SocketAddr;
+
+        let manifest_dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR"));
+        let workspace_root = manifest_dir
+            .ancestors()
+            .nth(2)
+            .expect("trnm-node manifest should sit under trillionnium-rust/crates/trnm-node");
+
+        let anchor_p2p_port = 26_656_u16;
+        let anchor_rpc_port = 26_657_u16;
+        let slot_stride = 1_000_u16;
+
+        for relative_path in [
+            "configs/node1.toml",
+            "configs/node2.toml",
+            "configs/node3.toml",
+            "configs/node4.toml",
+        ] {
+            let path = workspace_root.join(relative_path);
+            let cfg = load_config(&path).unwrap_or_else(|err| {
+                panic!(
+                    "{} should remain loadable for slot/stride bootstrap checks: {err:#}",
+                    path.display()
+                )
+            });
+            let p2p_socket: SocketAddr = cfg.p2p_addr.parse().unwrap_or_else(|err| {
+                panic!("{} p2p_addr should parse for slot/stride checks: {err}", path.display())
+            });
+            let rpc_socket: SocketAddr = cfg.rpc_addr.parse().unwrap_or_else(|err| {
+                panic!("{} rpc_addr should parse for slot/stride checks: {err}", path.display())
+            });
+            let filename_slot = path
+                .file_stem()
+                .and_then(|stem| stem.to_str())
+                .and_then(|stem| stem.strip_prefix("node"))
+                .and_then(|slot| slot.parse::<u16>().ok())
+                .unwrap_or_else(|| {
+                    panic!(
+                        "{} should keep a numeric `nodeN.toml` filename for slot/stride bootstrap checks",
+                        path.display()
+                    )
+                });
+            let node_id_slot = cfg
+                .node_id
+                .strip_prefix("node")
+                .and_then(|slot| slot.parse::<u16>().ok())
+                .unwrap_or_else(|| {
+                    panic!(
+                        "{} node_id {} should keep a numeric `nodeN` suffix for slot/stride bootstrap checks",
+                        path.display(),
+                        cfg.node_id
+                    )
+                });
+            assert_eq!(
+                node_id_slot, filename_slot,
+                "{} node_id {} must stay aligned with its shipped slot-bound filename so later peers cannot silently masquerade as a different bootstrap slot",
+                path.display(),
+                cfg.node_id
+            );
+            let slot_offset = filename_slot - 1;
+            let expected_p2p_port = anchor_p2p_port + slot_offset * slot_stride;
+            let expected_rpc_port = anchor_rpc_port + slot_offset * slot_stride;
+            assert_eq!(
+                p2p_socket.port(), expected_p2p_port,
+                "{} p2p_addr {} must remain derived from the Day-1 anchor stride so peer slot drift is immediately diagnosable",
+                path.display(),
+                cfg.p2p_addr
+            );
+            assert_eq!(
+                rpc_socket.port(), expected_rpc_port,
+                "{} rpc_addr {} must remain derived from the Day-1 anchor stride so peer slot drift is immediately diagnosable",
+                path.display(),
+                cfg.rpc_addr
+            );
+            assert_eq!(
+                rpc_socket.port() - p2p_socket.port(),
+                1,
+                "{} must keep the exact rpc=p2p+1 listener pairing within each shipped bootstrap slot",
+                path.display()
+            );
+        }
+    }
+
+    #[test]
     fn validate_node_config_rejects_operator_boundary_whitespace_fail_closed() {
         let cfg = NodeConfig {
             node_id: "  node-a  ".into(),
