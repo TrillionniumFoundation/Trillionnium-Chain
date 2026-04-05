@@ -34,6 +34,17 @@ assert_contains() {
   fi
 }
 
+assert_contains_prefix() {
+  local file="$1"
+  local expected_prefix="$2"
+  if ! grep -Fq "${expected_prefix}" "${file}"; then
+    echo "missing expected line prefix: ${expected_prefix}" >&2
+    echo "--- ${file} ---" >&2
+    cat "${file}" >&2
+    exit 1
+  fi
+}
+
 assert_json_contains() {
   local file="$1"
   local expected="$2"
@@ -182,6 +193,36 @@ assert_contains "${CAPTURE_DIR}/summary.txt" "index_url=${PUBLIC_BASE_URL}/index
 assert_contains "${CAPTURE_DIR}/summary.txt" "index_fetch_mode=curl"
 assert_contains "${CAPTURE_DIR}/summary.txt" "index_fetch_source=${PUBLIC_BASE_URL}/index.json"
 assert_contains "${CAPTURE_DIR}/summary.txt" "index_fetch_command=curl --silent --show-error --fail --max-time 5 ${PUBLIC_BASE_URL}/index.json"
+assert_contains_prefix "${CAPTURE_DIR}/summary.txt" "index_json_fetched_at="
+assert_contains "${CAPTURE_DIR}/summary.txt" "index_json_path_or_url=${PUBLIC_BASE_URL}/index.json"
+assert_contains "${CAPTURE_DIR}/summary.txt" "index_json_declares_day1_contract=true"
+assert_contains "${CAPTURE_DIR}/summary.txt" "index_json_declares_placeholder_only=true"
+assert_contains "${CAPTURE_DIR}/summary.txt" "index_json_service_mode=operator-facing-static-scaffold"
+assert_contains "${CAPTURE_DIR}/summary.txt" "index_json_production_ready=false"
+assert_contains "${CAPTURE_DIR}/summary.txt" "index_json_rpc_base_url=${RPC_BASE_URL}"
+assert_contains "${CAPTURE_DIR}/summary.txt" "index_json_health_url=${HEALTH_URL}"
+assert_contains "${CAPTURE_DIR}/summary.txt" "index_json_local_health_url=${HEALTH_URL}"
+assert_contains "${CAPTURE_DIR}/summary.txt" "index_json_read_contract_mode=read-only"
+assert_contains "${CAPTURE_DIR}/summary.txt" "index_json_read_contract_source=rpc-read-surface"
+assert_contains "${CAPTURE_DIR}/summary.txt" "index_json_day1_surface=query-task/<task_id>,query-events/<task_id>?limit=<n>,query-capability-audit/<subject-or-token>,query-normalized-audit-events?source=<source>&eventType=<type>&limit=<n>&cursor=<cursor>"
+assert_contains "${CAPTURE_DIR}/summary.txt" "index_json_query_events_default_limit=100"
+assert_contains "${CAPTURE_DIR}/summary.txt" "index_json_query_events_max_limit=500"
+assert_contains "${CAPTURE_DIR}/summary.txt" "index_json_write_paths_exposed=false"
+assert_contains "${CAPTURE_DIR}/summary.txt" "index_json_historical_query_scope=rpc-retention-bounded"
+assert_contains "${CAPTURE_DIR}/summary.txt" "index_json_durability_boundary=ephemeral-rpc-window-only"
+assert_contains "${CAPTURE_DIR}/summary.txt" "index_json_archive_strategy=not-configured-static-scaffold"
+assert_contains "${CAPTURE_DIR}/summary.txt" "index_json_read_replica_strategy=not-configured-static-scaffold"
+assert_contains "${CAPTURE_DIR}/summary.txt" "index_json_deployment_topology=single-process-static-http-on-one-host"
+assert_contains "${CAPTURE_DIR}/summary.txt" "index_json_durable_read_anchor_complete=false"
+assert_contains "${CAPTURE_DIR}/summary.txt" "index_json_durable_read_anchor_missing_count=6"
+assert_contains "${CAPTURE_DIR}/summary.txt" "index_json_durable_read_anchor_missing_fields=ingestion_source,checkpoint_store,replay_start_anchor,retention_scope,archive_owner,lag_slo"
+assert_contains "${CAPTURE_DIR}/summary.txt" "index_json_durable_read_anchor_ingestion_source=missing-placeholder-scaffold"
+assert_contains "${CAPTURE_DIR}/summary.txt" "index_json_durable_read_anchor_checkpoint_store=missing-placeholder-scaffold"
+assert_contains "${CAPTURE_DIR}/summary.txt" "index_json_durable_read_anchor_replay_start_anchor=missing-placeholder-scaffold"
+assert_contains "${CAPTURE_DIR}/summary.txt" "index_json_durable_read_anchor_retention_scope=rpc-window-bounded"
+assert_contains "${CAPTURE_DIR}/summary.txt" "index_json_durable_read_anchor_archive_owner=missing-placeholder-scaffold"
+assert_contains "${CAPTURE_DIR}/summary.txt" "index_json_durable_read_anchor_lag_slo=missing-placeholder-scaffold"
+assert_contains "${CAPTURE_DIR}/summary.txt" "index_json_notes_include=static-scaffold-only,not-a-durable-indexer,not-a-production-read-model"
 assert_contains "${CAPTURE_DIR}/summary.txt" "rpc_base_url=${RPC_BASE_URL}"
 assert_contains "${CAPTURE_DIR}/summary.txt" "read_contract_mode=read-only"
 assert_contains "${CAPTURE_DIR}/summary.txt" "day1_surface=query-task/<task_id>,query-events/<task_id>?limit=<n>,query-capability-audit/<subject-or-token>,query-normalized-audit-events?source=<source>&eventType=<type>&limit=<n>&cursor=<cursor>"
