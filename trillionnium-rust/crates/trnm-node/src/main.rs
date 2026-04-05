@@ -1760,14 +1760,6 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         path
     );
     anyhow::ensure!(
-        !node_id.contains('@')
-            && !node_id.contains('?')
-            && !node_id.contains('#')
-            && !node_id.contains('%'),
-        "invalid node config {}: node_id must not contain URI or userinfo separators (@ ? # %)",
-        path
-    );
-    anyhow::ensure!(
         !node_id.contains('"') && !node_id.contains('\'') && !node_id.contains('`'),
         "invalid node config {}: node_id must not contain quoting characters (\" ' `)",
         path
@@ -1780,15 +1772,6 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
             && !node_id.contains('&')
             && !node_id.contains('='),
         "invalid node config {}: node_id must not contain URI delimiters (@ ? # % & =)",
-        path
-    );
-    anyhow::ensure!(
-        !node_id.contains('/')
-            && !node_id.contains('\\')
-            && !node_id.contains(':')
-            && !node_id.contains('[')
-            && !node_id.contains(']'),
-        "invalid node config {}: node_id must not contain path or host-literal separators (/ \\ : [ ])",
         path
     );
     anyhow::ensure!(
