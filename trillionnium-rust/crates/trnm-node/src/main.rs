@@ -5020,6 +5020,35 @@ mod tests {
             );
         }
 
+        let mut shipped_nodes_by_p2p_port = shipped_nodes.clone();
+        shipped_nodes_by_p2p_port.sort_by_key(|(_, _, _, p2p_socket)| p2p_socket.port());
+        let p2p_anchor = shipped_nodes_by_p2p_port
+            .first()
+            .expect("shipped bootstrap fixture should include node1 P2P anchor");
+        assert_eq!(
+            p2p_anchor.1, "node1",
+            "{} must remain the unique shipped Day-1 bootstrap anchor id when P2P ports are ordered",
+            p2p_anchor.0
+        );
+        assert_eq!(
+            p2p_anchor.3.port(), 26656,
+            "{} must remain the unique shipped Day-1 bootstrap anchor P2P port",
+            p2p_anchor.0
+        );
+        for (config_path, node_id, _, p2p_socket) in shipped_nodes_by_p2p_port.iter().skip(1) {
+            assert_ne!(
+                node_id, &p2p_anchor.1,
+                "{config_path} must not reuse the shipped bootstrap anchor node_id {} on a later P2P slot",
+                p2p_anchor.1
+            );
+            assert!(
+                p2p_socket.port() > p2p_anchor.3.port(),
+                "{config_path} p2p_addr {} must stay above the shipped bootstrap anchor P2P port {} so later slots cannot silently become equivalent bootstrap anchors",
+                p2p_socket,
+                p2p_anchor.3.port()
+            );
+        }
+
         for window in shipped_nodes.windows(2) {
             let [(prev_config_path, prev_node_id, prev_rpc_socket, prev_p2p_socket), (config_path, node_id, rpc_socket, p2p_socket)] =
                 window
