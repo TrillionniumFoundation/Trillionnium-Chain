@@ -5995,6 +5995,78 @@ mod tests {
     }
 
     #[test]
+    fn load_config_validation_errors_keep_operator_and_resolved_paths_visible_for_node_id_guard_drift(
+    ) {
+        let current_dir = std::env::current_dir().expect("current dir");
+
+        for (suffix, node_id, expected_fragment) in [
+            (
+                "non-ascii",
+                "nοde-a",
+                "node_id must use ASCII-only characters",
+            ),
+            (
+                "path-like",
+                "seed/slot",
+                "node_id must not contain path or host-literal separators (/ \\ : [ ])",
+            ),
+            (
+                "dns-uppercase-dot",
+                "BOOTSTRAP.EXAMPLE.COM.",
+                "node_id must not look like a host or socket literal",
+            ),
+            (
+                "localhost-dot-uppercase",
+                "LOCALHOST.",
+                "node_id must not look like a host or socket literal",
+            ),
+            (
+                "invisible-bidi",
+                concat!("node", "\u{200B}", "alpha"),
+                "node_id must not contain invisible or bidirectional format characters",
+            ),
+        ] {
+            let file_name = format!(
+                "trnm-node-config-node-id-surface-{suffix}-{}-{}.toml",
+                std::process::id(),
+                now_unix_ms()
+            );
+            let path = current_dir.join(&file_name);
+            std::fs::write(
+                &path,
+                format!(
+                    "node_id = \"{node_id}\"\nrpc_addr = \"127.0.0.1:7000\"\np2p_addr = \"127.0.0.1:7001\"\n"
+                ),
+            )
+            .expect("write config");
+
+            let operator_path = format!("./{file_name}");
+            let canonical_path = path.canonicalize().expect("canonicalize temp config path");
+            let err = load_config(&operator_path)
+                .expect_err("node_id guard drift must fail closed with both paths visible");
+            let err_surface = format!("{err:#}");
+            assert!(
+                err_surface.contains("validate config failed"),
+                "validation-stage failures must retain the load_config context for {suffix}: {err:#}"
+            );
+            assert!(
+                err_surface.contains(&operator_path),
+                "validation-stage failures must keep the operator-supplied path visible for {suffix}: {err:#}"
+            );
+            assert!(
+                err_surface.contains(canonical_path.to_string_lossy().as_ref()),
+                "validation-stage failures must keep the canonical resolved path visible for {suffix}: {err:#}"
+            );
+            assert!(
+                err_surface.contains(expected_fragment),
+                "validation-stage failures must keep the exact node_id guard reason visible for {suffix}: {err:#}"
+            );
+
+            let _ = std::fs::remove_file(path);
+        }
+    }
+
+    #[test]
     fn validate_startup_args_rejects_zero_validators() {
         let args = Args {
             config: "configs/node1.toml".into(),
