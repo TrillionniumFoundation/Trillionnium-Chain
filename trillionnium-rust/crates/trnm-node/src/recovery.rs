@@ -263,8 +263,11 @@ fn checkpoint_tip_relation(recovered: &RecoveredWalState) -> String {
 fn metadata_only_operator_action(recovered: &RecoveredWalState) -> String {
     let action = if recovered.wal_entries_retained == 0 {
         match recovered.checkpoint_height_retained {
-            Some(_) => {
-                "operator action: checkpoint-only bootstrap is acceptable with a fresh --bft-wal-dir / --bft-wal-mode auto isolated run; if this node must rejoin from prior state, restore an application snapshot before retrying".into()
+            Some(checkpoint_height) => {
+                format!(
+                    "operator action: checkpoint-only bootstrap from retained checkpoint height {} is acceptable with a fresh --bft-wal-dir / --bft-wal-mode auto isolated run; if this node must rejoin from prior state, restore an application snapshot before retrying",
+                    checkpoint_height,
+                )
             }
             None => {
                 "operator action: restart with a fresh --bft-wal-dir / --bft-wal-mode auto isolated run; if this node must rejoin from prior state, restore an application snapshot before retrying".into()
@@ -829,7 +832,7 @@ mod tests {
     fn metadata_only_operator_action_varies_by_join_rejoin_surface() {
         assert_eq!(
             metadata_only_operator_action(&recovered_state(0, 9, Some(8), false, true)),
-            "operator action: checkpoint-only bootstrap is acceptable with a fresh --bft-wal-dir / --bft-wal-mode auto isolated run; if this node must rejoin from prior state, restore an application snapshot before retrying"
+            "operator action: checkpoint-only bootstrap from retained checkpoint height 8 is acceptable with a fresh --bft-wal-dir / --bft-wal-mode auto isolated run; if this node must rejoin from prior state, restore an application snapshot before retrying"
         );
         assert_eq!(
             metadata_only_operator_action(&recovered_state(0, 1, None, false, true)),
@@ -837,11 +840,14 @@ mod tests {
         );
         assert_eq!(
             metadata_only_operator_action(&recovered_state(0, u64::MAX, Some(u64::MAX - 1), false, true)),
-            "operator action: checkpoint-only bootstrap is acceptable with a fresh --bft-wal-dir / --bft-wal-mode auto isolated run; if this node must rejoin from prior state, restore an application snapshot before retrying"
+            &format!(
+                "operator action: checkpoint-only bootstrap from retained checkpoint height {} is acceptable with a fresh --bft-wal-dir / --bft-wal-mode auto isolated run; if this node must rejoin from prior state, restore an application snapshot before retrying",
+                u64::MAX - 1,
+            )
         );
         assert_eq!(
             metadata_only_operator_action(&recovered_state(0, 9, Some(8), true, true)),
-            "operator action: checkpoint-only bootstrap is acceptable with a fresh --bft-wal-dir / --bft-wal-mode auto isolated run; if this node must rejoin from prior state, restore an application snapshot before retrying; note: this startup already truncated a malformed WAL tail, so keep the repaired WAL/checkpoint artifacts for incident review if join/rejoin still fails"
+            "operator action: checkpoint-only bootstrap from retained checkpoint height 8 is acceptable with a fresh --bft-wal-dir / --bft-wal-mode auto isolated run; if this node must rejoin from prior state, restore an application snapshot before retrying; note: this startup already truncated a malformed WAL tail, so keep the repaired WAL/checkpoint artifacts for incident review if join/rejoin still fails"
         );
         assert_eq!(
             metadata_only_operator_action(&recovered_state(1, 9, None, false, true)),
