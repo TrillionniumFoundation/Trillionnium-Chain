@@ -4610,12 +4610,39 @@ mod tests {
             "do not treat `node2`, `node3`, or `node4` as a valid replacement bootstrap anchor; restore the shipped `node1` anchor first and fail closed otherwise",
             "bring the node back with the same config file and the same `node_id`/listener tuple",
             "Do not skip a missing earlier follower slot during startup or rejoin: if `node2` is absent, keep `node3` and `node4` stopped; if `node3` is absent, keep `node4` stopped until the earlier slot regains its shipped tuple.",
+            "Keep `node1` through `node3` in their shipped slots; if `node4` returns, bring it back only with `node4.toml` and its shipped tuple",
+            "Accept the remaining slots only while no other config is renamed or promoted into the `node4` role",
             "unknown fields, whitespace drift, host-like or path-like ids, URI-like delimiters, non-canonical socket literals, privileged ports, wildcard listeners, reserved documentation/benchmarking listener ranges, or mixed listener IP families, the config loader must fail closed",
             "The regression tests in `crates/trnm-node/src/config.rs` are the source of truth for the exact fixture invariants.",
         ] {
             assert!(
                 readme.contains(expected_phrase),
                 "{} must keep the shipped bootstrap join/rejoin fail-closed rule `{expected_phrase}` visible to operators",
+                readme_path.display()
+            );
+        }
+    }
+
+    #[test]
+    fn shipped_bootstrap_readme_keeps_single_authoritative_fail_closed_topology_rules() {
+        let manifest_dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR"));
+        let workspace_root = manifest_dir
+            .ancestors()
+            .nth(2)
+            .expect("trnm-node manifest should sit under trillionnium-rust/crates/trnm-node");
+        let readme_path = workspace_root.join("configs/README.md");
+        let readme = std::fs::read_to_string(&readme_path)
+            .unwrap_or_else(|err| panic!("{} should stay readable: {err}", readme_path.display()));
+
+        for expected_phrase in [
+            "If `node1` is absent, do not treat `node2`, `node3`, or `node4` as a valid replacement bootstrap anchor; restore the shipped `node1` anchor first and fail closed otherwise.",
+            "Do not skip a missing earlier follower slot during startup or rejoin: if `node2` is absent, keep `node3` and `node4` stopped; if `node3` is absent, keep `node4` stopped until the earlier slot regains its shipped tuple.",
+            "If `node4` is absent, keep `node1` through `node3` in their shipped slots; do not rename another config into the `node4` role, and if `node4` returns it must come back with `node4.toml` and its shipped tuple.",
+        ] {
+            let occurrences = readme.match_indices(expected_phrase).count();
+            assert_eq!(
+                occurrences, 1,
+                "{} must keep exactly one authoritative copy of the shipped bootstrap fail-closed rule `{expected_phrase}` so operator topology guidance cannot silently fork",
                 readme_path.display()
             );
         }
@@ -5100,6 +5127,55 @@ bootstrap_peers = ["127.0.0.1:27656"]
                 && err_surface.contains("unknown field `bootstrap_peers`"),
             "unexpected error: {err:#}"
         );
+    }
+
+    #[test]
+    fn shipped_bootstrap_readme_alias_ban_matches_runtime_rejection_surface() {
+        let manifest_dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR"));
+        let workspace_root = manifest_dir
+            .ancestors()
+            .nth(2)
+            .expect("trnm-node manifest should sit under trillionnium-rust/crates/trnm-node");
+        let readme_path = workspace_root.join("configs/README.md");
+        let readme = std::fs::read_to_string(&readme_path).unwrap_or_else(|err| {
+            panic!(
+                "{} should stay readable for shipped bootstrap README alias-ban checks: {err}",
+                readme_path.display()
+            )
+        });
+        let fixture_scope_section = readme
+            .split("## What this fixture is for")
+            .nth(1)
+            .unwrap_or_else(|| {
+                panic!(
+                    "{} must keep the `What this fixture is for` section so forbidden bootstrap alias guidance stays reviewable",
+                    readme_path.display()
+                )
+            });
+
+        for forbidden_alias in [
+            "bootstrap_nodes", "bootstrap_node", "bootstrap_peers", "bootstrap_peer",
+            "bootstrapNodes", "bootstrapNode", "bootstrapPeers", "bootstrapPeer",
+            "bootstrap_addr", "bootstrap_addrs", "bootstrapAddr", "bootstrapAddrs",
+            "seed_nodes", "seed_node", "seed_peers", "seed_peer",
+            "seedNodes", "seedNode", "seedPeers", "seedPeer",
+            "seed_addr", "seed_addrs", "seedAddr", "seedAddrs", "seed", "seeds",
+            "bootnodes", "bootnode", "boot_nodes", "boot_node",
+            "bootNodes", "bootNode", "boot_peers", "boot_peer",
+            "boot_addr", "boot_addrs", "bootAddr", "bootAddrs", "bootPeers", "bootPeer",
+            "persistent_peers", "persistent_peer", "persistent_addr", "persistent_addrs",
+            "persistentAddr", "persistentAddrs", "persistentPeers", "persistentPeer",
+            "persistent_nodes", "persistent_node", "persistentNodes", "persistentNode",
+        ] {
+            let mention_count = fixture_scope_section
+                .matches(&format!("`{forbidden_alias}`"))
+                .count();
+            assert_eq!(
+                mention_count, 1,
+                "{} must mention forbidden bootstrap alias `{forbidden_alias}` exactly once inside the fixture-scope ban list so operator docs stay aligned with the real fail-closed parser surface",
+                readme_path.display()
+            );
+        }
     }
 
     #[test]
