@@ -2765,22 +2765,69 @@ mod tests {
             .nth(2)
             .expect("trnm-node manifest should sit under trillionnium-rust/crates/trnm-node");
         let shipped_config_dir = workspace_root.join("configs");
+        let shipped_config_dir_metadata = std::fs::symlink_metadata(&shipped_config_dir)
+            .unwrap_or_else(|err| {
+                panic!(
+                    "{} should stay stat-able for shipped bootstrap topology directory checks: {err}",
+                    shipped_config_dir.display()
+                )
+            });
+        assert!(
+            shipped_config_dir_metadata.file_type().is_dir(),
+            "{} must remain a real directory for deterministic shipped bootstrap topology discovery",
+            shipped_config_dir.display()
+        );
+        assert!(
+            !shipped_config_dir_metadata.file_type().is_symlink(),
+            "{} must not become a symlink that can retarget shipped bootstrap topology discovery",
+            shipped_config_dir.display()
+        );
         let canonical_shipped_config_dir = shipped_config_dir.canonicalize().unwrap_or_else(|err| {
             panic!(
                 "{} should canonicalize for shipped bootstrap topology checks: {err}",
                 shipped_config_dir.display()
             )
         });
-        let shipped_node_configs = std::fs::read_dir(&shipped_config_dir)
+        let shipped_config_entries = std::fs::read_dir(&shipped_config_dir)
             .unwrap_or_else(|err| {
                 panic!(
                     "{} should stay readable for shipped bootstrap config discovery: {err}",
                     shipped_config_dir.display()
                 )
             })
-            .filter_map(|entry| entry.ok())
-            .map(|entry| entry.file_name().to_string_lossy().into_owned())
+            .map(|entry| {
+                entry.unwrap_or_else(|err| {
+                    panic!(
+                        "{} must fail closed if a shipped bootstrap config directory entry cannot be read: {err}",
+                        shipped_config_dir.display()
+                    )
+                })
+            })
+            .map(|entry| {
+                entry.file_name().into_string().unwrap_or_else(|raw_name| {
+                    panic!(
+                        "{} must fail closed if a shipped bootstrap config directory entry is not valid UTF-8: {:?}",
+                        shipped_config_dir.display(),
+                        raw_name
+                    )
+                })
+            })
+            .collect::<HashSet<_>>();
+        let expected_shipped_config_entries = HashSet::from([
+            String::from("README.md"),
+            String::from("node1.toml"),
+            String::from("node2.toml"),
+            String::from("node3.toml"),
+            String::from("node4.toml"),
+        ]);
+        assert_eq!(
+            shipped_config_entries, expected_shipped_config_entries,
+            "shipped bootstrap config dir must stay exactly README.md + node1.toml..node4.toml so peer/bootstrap topology fixtures remain deterministic and fail closed"
+        );
+        let shipped_node_configs = shipped_config_entries
+            .iter()
             .filter(|name| name.starts_with("node") && name.ends_with(".toml"))
+            .cloned()
             .collect::<HashSet<_>>();
         let expected_shipped_node_configs = HashSet::from([
             String::from("node1.toml"),
