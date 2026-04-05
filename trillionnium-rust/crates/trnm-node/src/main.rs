@@ -6016,9 +6016,24 @@ mod tests {
                 "node_id must not look like a host or socket literal",
             ),
             (
+                "dns-uppercase",
+                "BOOTSTRAP.EXAMPLE.COM",
+                "node_id must not look like a host or socket literal",
+            ),
+            (
+                "dns-uppercase-internal",
+                "NODE-2.BOOTSTRAP.INTERNAL",
+                "node_id must not look like a host or socket literal",
+            ),
+            (
                 "localhost-dot-uppercase",
                 "LOCALHOST.",
                 "node_id must not look like a host or socket literal",
+            ),
+            (
+                "ipv4-socket-shaped",
+                "127.0.0.1:7000",
+                "node_id must not contain path or host-literal separators (/ \\ : [ ])",
             ),
             (
                 "invisible-bidi",
