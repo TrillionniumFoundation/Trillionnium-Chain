@@ -212,10 +212,14 @@ fn retained_wal_summary(recovered: &RecoveredWalState) -> String {
                     base, lag, blocks
                 )
             }
-            Some(checkpoint_height) if checkpoint_height > tip_height => format!(
-                "{} (retained checkpoint height {} is ahead of retained WAL tip height {}; investigate WAL/checkpoint mismatch)",
-                base, checkpoint_height, tip_height
-            ),
+            Some(checkpoint_height) if checkpoint_height > tip_height => {
+                let lead = checkpoint_height - tip_height;
+                let blocks = if lead == 1 { "block" } else { "blocks" };
+                format!(
+                    "{} (retained checkpoint height {} is ahead of retained WAL tip height {} by {} {}; investigate WAL/checkpoint mismatch)",
+                    base, checkpoint_height, tip_height, lead, blocks
+                )
+            },
             None => format!("{} (no retained checkpoint metadata)", base),
             Some(_) => base,
         }
@@ -253,11 +257,49 @@ fn join_rejoin_status(recovered: &RecoveredWalState) -> &'static str {
     if recovered.metadata_only_recovery {
         "blocked:metadata_only_recovery"
     } else if recovered.wal_entries_retained > 0 {
-        "ready:retained_wal_resume"
+        match recovered.checkpoint_height_retained {
+            None => {
+                if recovered.truncated {
+                    "ready:retained_wal_resume_missing_checkpoint_metadata_after_tail_repair"
+                } else {
+                    "ready:retained_wal_resume_missing_checkpoint_metadata"
+                }
+            }
+            Some(checkpoint_height) => {
+                let tip_height = recovered.next_height.saturating_sub(1);
+                if checkpoint_height < tip_height {
+                    if recovered.truncated {
+                        "ready:retained_wal_resume_checkpoint_lagging_after_tail_repair"
+                    } else {
+                        "ready:retained_wal_resume_checkpoint_lagging"
+                    }
+                } else if checkpoint_height > tip_height {
+                    if recovered.truncated {
+                        "ready:retained_wal_resume_checkpoint_ahead_mismatch_after_tail_repair"
+                    } else {
+                        "ready:retained_wal_resume_checkpoint_ahead_mismatch"
+                    }
+                } else {
+                    if recovered.truncated {
+                        "ready:retained_wal_resume_after_tail_repair"
+                    } else {
+                        "ready:retained_wal_resume"
+                    }
+                }
+            }
+        }
     } else if recovered.checkpoint_height_retained.is_some() {
-        "ready:checkpoint_only_bootstrap"
+        if recovered.truncated {
+            "ready:checkpoint_only_rejoin_bootstrap_after_tail_repair"
+        } else {
+            "ready:checkpoint_only_rejoin_bootstrap"
+        }
     } else {
-        "ready:fresh_bootstrap"
+        if recovered.truncated {
+            "ready:fresh_bootstrap_after_tail_repair"
+        } else {
+            "ready:fresh_bootstrap"
+        }
     }
 }
 
@@ -277,14 +319,67 @@ fn recovery_startup_summary(recovered: &RecoveredWalState) -> String {
     )
 }
 
+fn metadata_only_operator_action(recovered: &RecoveredWalState) -> String {
+    let action = if recovered.wal_entries_retained == 0 {
+        match recovered.checkpoint_height_retained {
+            Some(checkpoint_height) => {
+                format!(
+                    "operator action: checkpoint-only bootstrap from retained checkpoint height {} is acceptable with a fresh --bft-wal-dir / --bft-wal-mode auto isolated run; if this node must rejoin from prior state, restore an application snapshot before retrying",
+                    checkpoint_height,
+                )
+            }
+            None => {
+                "operator action: restart with a fresh --bft-wal-dir / --bft-wal-mode auto isolated run; if this node must rejoin from prior state, restore an application snapshot before retrying".into()
+            }
+        }
+    } else {
+        let tip_height = recovered.next_height.saturating_sub(1);
+        match recovered.checkpoint_height_retained {
+            Some(checkpoint_height) if checkpoint_height < tip_height => {
+                "operator action: restore an application snapshot that covers the retained WAL tip before retrying join/rejoin; do not resume from metadata alone".into()
+            }
+            Some(checkpoint_height) if checkpoint_height > tip_height => {
+                let checkpoint_lead = checkpoint_height - tip_height;
+                let lead_blocks = if checkpoint_lead == 1 { "block" } else { "blocks" };
+                format!(
+                    "operator action: investigate WAL/checkpoint mismatch (retained WAL tip height {}, checkpoint height {}, checkpoint leads tip by {} {}), rebuild the recovery inputs, and only retry join/rejoin once WAL tip and checkpoint evidence agree",
+                    tip_height,
+                    checkpoint_height,
+                    checkpoint_lead,
+                    lead_blocks,
+                )
+            }
+            None => {
+                format!(
+                    "operator action: rebuild or restore checkpoint metadata so it covers retained WAL tip height {} before retrying join/rejoin; do not resume from metadata alone",
+                    tip_height,
+                )
+            }
+            Some(_) => {
+                "operator action: restore the corresponding application snapshot before retrying join/rejoin; do not resume from metadata alone".into()
+            }
+        }
+    };
+
+    if recovered.truncated {
+        format!(
+            "{}; note: this startup already truncated a malformed WAL tail, so keep the repaired WAL/checkpoint artifacts for incident review if join/rejoin still fails",
+            action,
+        )
+    } else {
+        action
+    }
+}
+
 pub(crate) fn metadata_only_recovery_error(
     wal_dir: &Path,
     recovered: &RecoveredWalState,
 ) -> String {
     let recovery_summary = recovery_startup_summary(recovered);
+    let operator_action = metadata_only_operator_action(recovered);
 
     format!(
-        "refusing metadata-only recovery from {}: verified WAL/checkpoint metadata {} (last retained checkpoint: {}, next startup height: {}); incident clue: {} but trnm-node does not yet restore application StateStore snapshots or replay committed blocks; start from a fresh --bft-wal-dir / --bft-wal-mode auto isolated run, or implement state snapshot+replay recovery first",
+        "refusing metadata-only recovery from {}: verified WAL/checkpoint metadata {} (last retained checkpoint: {}, next startup height: {}); incident clue: {} but trnm-node does not yet restore application StateStore snapshots or replay committed blocks; {}; implement state snapshot+replay recovery first if this restart path must remain supported",
         wal_dir.display(),
         retained_wal_summary(recovered),
         recovered
@@ -293,6 +388,7 @@ pub(crate) fn metadata_only_recovery_error(
             .unwrap_or_else(|| "none".into()),
         recovered.next_height,
         recovery_summary,
+        operator_action,
     )
 }
 
@@ -348,7 +444,7 @@ mod tests {
 
         assert_eq!(
             retained_wal_summary(&recovered),
-            "retained 2 committed WAL entries through height 11 (retained checkpoint height 15 is ahead of retained WAL tip height 11; investigate WAL/checkpoint mismatch)"
+            "retained 2 committed WAL entries through height 11 (retained checkpoint height 15 is ahead of retained WAL tip height 11 by 4 blocks; investigate WAL/checkpoint mismatch)"
         );
     }
 
@@ -391,6 +487,9 @@ mod tests {
         assert!(error.contains("checkpoint_height_retained=10"));
         assert!(error.contains("checkpoint_tip_relation=behind:1"));
         assert!(error.contains("next_startup_height=12"));
+        assert!(error.contains(
+            "operator action: restore an application snapshot that covers the retained WAL tip before retrying join/rejoin; do not resume from metadata alone; note: this startup already truncated a malformed WAL tail, so keep the repaired WAL/checkpoint artifacts for incident review if join/rejoin still fails"
+        ));
     }
 
     #[test]
@@ -589,6 +688,50 @@ mod tests {
     }
 
     #[test]
+    fn ensure_recoverable_wal_state_rejects_metadata_only_recovery_with_singular_checkpoint_ahead_mismatch() {
+        let wal_dir = temp_wal_dir("metadata-only-singular-ahead");
+        let recovered = RecoveredWalState {
+            next_height: 12,
+            restored_lock: None,
+            last_checkpoint: Some(CheckpointMeta {
+                height: 12,
+                state_root_hex: "aa".repeat(32),
+                wal_entry_hash_hex: "bb".repeat(32),
+            }),
+            truncated: true,
+            metadata_only_recovery: true,
+            wal_entries_retained: 2,
+            checkpoint_height_retained: Some(12),
+        };
+
+        let err = ensure_recoverable_wal_state(&wal_dir, &recovered)
+            .unwrap_err()
+            .to_string();
+        assert!(
+            err.contains("refusing metadata-only recovery")
+                && err.contains("retained 2 committed WAL entries through height 11")
+                && err.contains(
+                    "retained checkpoint height 12 is ahead of retained WAL tip height 11 by 1 block"
+                )
+                && !err.contains(
+                    "retained checkpoint height 12 is ahead of retained WAL tip height 11 by 1 blocks"
+                )
+                && err.contains("last retained checkpoint: 12")
+                && err.contains("next startup height: 12")
+                && err.contains("incident clue: retained_wal_entries=2 checkpoint_height_retained=12 checkpoint_tip_relation=ahead:1 next_startup_height=12 wal_tail_truncated=true metadata_only_recovery=true join_rejoin_status=blocked:metadata_only_recovery")
+                && err.contains("retained_wal_entries=2")
+                && err.contains("wal_tail_truncated=true")
+                && err.contains("checkpoint_height_retained=12")
+                && err.contains("checkpoint_tip_relation=ahead:1")
+                && err.contains("next_startup_height=12")
+                && err.contains(
+                    "operator action: investigate WAL/checkpoint mismatch (retained WAL tip height 11, checkpoint height 12, checkpoint leads tip by 1 block), rebuild the recovery inputs, and only retry join/rejoin once WAL tip and checkpoint evidence agree; note: this startup already truncated a malformed WAL tail, so keep the repaired WAL/checkpoint artifacts for incident review if join/rejoin still fails"
+                ),
+            "unexpected metadata-only recovery error: {err}"
+        );
+    }
+
+    #[test]
     fn ensure_recoverable_wal_state_rejects_metadata_only_recovery_without_retained_checkpoint_metadata() {
         let wal_dir = temp_wal_dir("metadata-only-no-checkpoint");
         let recovered = RecoveredWalState {
@@ -614,7 +757,40 @@ mod tests {
                 && err.contains("retained_wal_entries=1")
                 && err.contains("wal_tail_truncated=true")
                 && err.contains("checkpoint_height_retained=none")
-                && err.contains("next_startup_height=6"),
+                && err.contains("next_startup_height=6")
+                && err.contains("operator action: rebuild or restore checkpoint metadata so it covers retained WAL tip height 5 before retrying join/rejoin; do not resume from metadata alone; note: this startup already truncated a malformed WAL tail, so keep the repaired WAL/checkpoint artifacts for incident review if join/rejoin still fails"),
+            "unexpected metadata-only recovery error: {err}"
+        );
+    }
+
+    #[test]
+    fn ensure_recoverable_wal_state_rejects_metadata_only_recovery_with_singular_checkpoint_lag() {
+        let wal_dir = temp_wal_dir("metadata-only-single-block-lag");
+        let recovered = RecoveredWalState {
+            next_height: 8,
+            restored_lock: None,
+            last_checkpoint: Some(CheckpointMeta {
+                height: 6,
+                state_root_hex: "aa".repeat(32),
+                wal_entry_hash_hex: "bb".repeat(32),
+            }),
+            truncated: true,
+            metadata_only_recovery: true,
+            wal_entries_retained: 2,
+            checkpoint_height_retained: Some(6),
+        };
+
+        let err = ensure_recoverable_wal_state(&wal_dir, &recovered)
+            .unwrap_err()
+            .to_string();
+        assert!(
+            err.contains("refusing metadata-only recovery")
+                && err.contains("retained 2 committed WAL entries through height 7")
+                && err.contains("checkpoint lags retained WAL tip by 1 block")
+                && !err.contains("checkpoint lags retained WAL tip by 1 blocks")
+                && err.contains("last retained checkpoint: 6")
+                && err.contains("next startup height: 8")
+                && err.contains("incident clue: retained_wal_entries=2 checkpoint_height_retained=6 checkpoint_tip_relation=behind:1 next_startup_height=8 wal_tail_truncated=true metadata_only_recovery=true join_rejoin_status=blocked:metadata_only_recovery"),
             "unexpected metadata-only recovery error: {err}"
         );
     }
@@ -645,8 +821,29 @@ mod tests {
                 && err.contains("checkpoint lags retained WAL tip by 2 blocks")
                 && err.contains("last retained checkpoint: 5")
                 && err.contains("next startup height: 8")
-                && err.contains("incident clue: retained_wal_entries=2 checkpoint_height_retained=5 checkpoint_tip_relation=behind:2 next_startup_height=8 wal_tail_truncated=true metadata_only_recovery=true join_rejoin_status=blocked:metadata_only_recovery"),
+                && err.contains("incident clue: retained_wal_entries=2 checkpoint_height_retained=5 checkpoint_tip_relation=behind:2 next_startup_height=8 wal_tail_truncated=true metadata_only_recovery=true join_rejoin_status=blocked:metadata_only_recovery")
+                && err.contains("operator action: restore an application snapshot that covers the retained WAL tip before retrying join/rejoin; do not resume from metadata alone; note: this startup already truncated a malformed WAL tail, so keep the repaired WAL/checkpoint artifacts for incident review if join/rejoin still fails"),
             "unexpected metadata-only recovery error: {err}"
+        );
+    }
+
+    #[test]
+    fn metadata_only_operator_action_keeps_missing_checkpoint_tip_height_saturated_at_max_height() {
+        let recovered = recovered_state(1, u64::MAX, None, false, true);
+
+        assert_eq!(
+            metadata_only_operator_action(&recovered),
+            format!(
+                "operator action: rebuild or restore checkpoint metadata so it covers retained WAL tip height {} before retrying join/rejoin; do not resume from metadata alone",
+                u64::MAX - 1,
+            )
+        );
+        assert_eq!(
+            recovery_startup_summary(&recovered),
+            format!(
+                "retained_wal_entries=1 checkpoint_height_retained=none checkpoint_tip_relation=missing next_startup_height={} wal_tail_truncated=false metadata_only_recovery=true join_rejoin_status=blocked:metadata_only_recovery",
+                u64::MAX,
+            )
         );
     }
 
@@ -680,8 +877,35 @@ mod tests {
                 && err.contains("wal_tail_truncated=true")
                 && err.contains("checkpoint_height_retained=8")
                 && err.contains("checkpoint_tip_relation=checkpoint_only:8")
-                && err.contains("next_startup_height=9"),
+                && err.contains("next_startup_height=9")
+                && err.contains("operator action: checkpoint-only bootstrap from retained checkpoint height 8 is acceptable with a fresh --bft-wal-dir / --bft-wal-mode auto isolated run; if this node must rejoin from prior state, restore an application snapshot before retrying; note: this startup already truncated a malformed WAL tail, so keep the repaired WAL/checkpoint artifacts for incident review if join/rejoin still fails")
+                && !err.contains("operator action: restart with a fresh --bft-wal-dir / --bft-wal-mode auto isolated run; if this node must rejoin from prior state, restore an application snapshot before retrying"),
             "unexpected metadata-only recovery error: {err}"
+        );
+    }
+
+    #[test]
+    fn ensure_recoverable_wal_state_allows_checkpoint_only_rejoin_bootstrap_even_after_truncation() {
+        let wal_dir = temp_wal_dir("checkpoint-only-rejoin-bootstrap");
+        let recovered = RecoveredWalState {
+            next_height: 9,
+            restored_lock: None,
+            last_checkpoint: Some(CheckpointMeta {
+                height: 8,
+                state_root_hex: "aa".repeat(32),
+                wal_entry_hash_hex: "bb".repeat(32),
+            }),
+            truncated: true,
+            metadata_only_recovery: false,
+            wal_entries_retained: 0,
+            checkpoint_height_retained: Some(8),
+        };
+
+        ensure_recoverable_wal_state(&wal_dir, &recovered)
+            .expect("truncated checkpoint-only rejoin bootstrap should remain recoverable");
+        assert_eq!(
+            recovery_startup_summary(&recovered),
+            "retained_wal_entries=0 checkpoint_height_retained=8 checkpoint_tip_relation=checkpoint_only:8 next_startup_height=9 wal_tail_truncated=true metadata_only_recovery=false join_rejoin_status=ready:checkpoint_only_rejoin_bootstrap_after_tail_repair"
         );
     }
 
@@ -706,6 +930,16 @@ mod tests {
     }
 
     #[test]
+    fn recovery_startup_summary_marks_fresh_bootstrap_after_tail_repair_as_ready_mode() {
+        let recovered = recovered_state(0, 1, None, true, false);
+
+        assert_eq!(
+            recovery_startup_summary(&recovered),
+            "retained_wal_entries=0 checkpoint_height_retained=none checkpoint_tip_relation=none next_startup_height=1 wal_tail_truncated=true metadata_only_recovery=false join_rejoin_status=ready:fresh_bootstrap_after_tail_repair"
+        );
+    }
+
+    #[test]
     fn recovery_startup_summary_marks_retained_wal_resume_as_ready_mode() {
         let recovered = recovered_state(2, 12, Some(11), false, false);
 
@@ -716,12 +950,130 @@ mod tests {
     }
 
     #[test]
+    fn recovery_startup_summary_marks_truncated_retained_wal_resume_after_tail_repair() {
+        let recovered = recovered_state(2, 12, Some(11), true, false);
+
+        assert_eq!(
+            recovery_startup_summary(&recovered),
+            "retained_wal_entries=2 checkpoint_height_retained=11 checkpoint_tip_relation=aligned next_startup_height=12 wal_tail_truncated=true metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume_after_tail_repair"
+        );
+    }
+
+    #[test]
+    fn recovery_startup_summary_reports_truncated_lagging_checkpoint_resume_surface_for_runtime_triage() {
+        let recovered = recovered_state(3, 8, Some(5), true, false);
+
+        assert_eq!(
+            recovery_startup_summary(&recovered),
+            "retained_wal_entries=3 checkpoint_height_retained=5 checkpoint_tip_relation=behind:2 next_startup_height=8 wal_tail_truncated=true metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume_checkpoint_lagging_after_tail_repair"
+        );
+    }
+
+    #[test]
     fn recovery_startup_summary_reports_missing_checkpoint_metadata_for_runtime_triage() {
         let recovered = recovered_state(1, 9, None, false, false);
 
         assert_eq!(
             recovery_startup_summary(&recovered),
-            "retained_wal_entries=1 checkpoint_height_retained=none checkpoint_tip_relation=missing next_startup_height=9 wal_tail_truncated=false metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume"
+            "retained_wal_entries=1 checkpoint_height_retained=none checkpoint_tip_relation=missing next_startup_height=9 wal_tail_truncated=false metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume_missing_checkpoint_metadata"
+        );
+    }
+
+    #[test]
+    fn recovery_startup_summary_reports_truncated_missing_checkpoint_metadata_for_runtime_triage() {
+        let recovered = recovered_state(1, 9, None, true, false);
+
+        assert_eq!(
+            recovery_startup_summary(&recovered),
+            "retained_wal_entries=1 checkpoint_height_retained=none checkpoint_tip_relation=missing next_startup_height=9 wal_tail_truncated=true metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume_missing_checkpoint_metadata_after_tail_repair"
+        );
+    }
+
+    #[test]
+    fn recovery_startup_summary_reports_lagging_checkpoint_resume_surface_for_runtime_triage() {
+        let recovered = recovered_state(3, 8, Some(5), false, false);
+
+        assert_eq!(
+            recovery_startup_summary(&recovered),
+            "retained_wal_entries=3 checkpoint_height_retained=5 checkpoint_tip_relation=behind:2 next_startup_height=8 wal_tail_truncated=false metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume_checkpoint_lagging"
+        );
+    }
+
+    #[test]
+    fn ensure_recoverable_wal_state_allows_single_block_lagging_checkpoint_resume() {
+        let recovered = recovered_state(2, 8, Some(6), false, false);
+
+        ensure_recoverable_wal_state(Path::new("/tmp/trnm-runtime-wal"), &recovered)
+            .expect("single-block lagging checkpoint resume should remain recoverable for runtime join/rejoin triage");
+        assert_eq!(
+            retained_wal_summary(&recovered),
+            "retained 2 committed WAL entries through height 7 (checkpoint lags retained WAL tip by 1 block)"
+        );
+        assert_eq!(
+            recovery_startup_summary(&recovered),
+            "retained_wal_entries=2 checkpoint_height_retained=6 checkpoint_tip_relation=behind:1 next_startup_height=8 wal_tail_truncated=false metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume_checkpoint_lagging"
+        );
+    }
+
+    #[test]
+    fn recovery_startup_summary_keeps_lagging_join_surface_saturated_at_max_height() {
+        let recovered = recovered_state(1, u64::MAX, Some(u64::MAX - 2), false, false);
+
+        ensure_recoverable_wal_state(Path::new("/tmp/trnm-runtime-wal"), &recovered)
+            .expect("max-height lagging checkpoint resume should remain recoverable for runtime join/rejoin triage");
+        assert_eq!(
+            retained_wal_summary(&recovered),
+            format!(
+                "retained 1 committed WAL entry through height {} (checkpoint lags retained WAL tip by 1 block)",
+                u64::MAX - 1
+            )
+        );
+        assert_eq!(
+            recovery_startup_summary(&recovered),
+            format!(
+                "retained_wal_entries=1 checkpoint_height_retained={} checkpoint_tip_relation=behind:1 next_startup_height={} wal_tail_truncated=false metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume_checkpoint_lagging",
+                u64::MAX - 2,
+                u64::MAX,
+            )
+        );
+    }
+
+    #[test]
+    fn ensure_recoverable_wal_state_allows_truncated_single_block_lagging_checkpoint_resume() {
+        let recovered = recovered_state(2, 8, Some(6), true, false);
+
+        ensure_recoverable_wal_state(Path::new("/tmp/trnm-runtime-wal"), &recovered)
+            .expect("truncated single-block lagging checkpoint resume should remain recoverable for runtime join/rejoin triage");
+        assert_eq!(
+            retained_wal_summary(&recovered),
+            "retained 2 committed WAL entries through height 7 (checkpoint lags retained WAL tip by 1 block)"
+        );
+        assert_eq!(
+            recovery_startup_summary(&recovered),
+            "retained_wal_entries=2 checkpoint_height_retained=6 checkpoint_tip_relation=behind:1 next_startup_height=8 wal_tail_truncated=true metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume_checkpoint_lagging_after_tail_repair"
+        );
+    }
+
+    #[test]
+    fn recovery_startup_summary_keeps_truncated_lagging_join_surface_saturated_at_max_height() {
+        let recovered = recovered_state(1, u64::MAX, Some(u64::MAX - 2), true, false);
+
+        ensure_recoverable_wal_state(Path::new("/tmp/trnm-runtime-wal"), &recovered)
+            .expect("truncated max-height lagging checkpoint resume should remain recoverable for runtime join/rejoin triage");
+        assert_eq!(
+            retained_wal_summary(&recovered),
+            format!(
+                "retained 1 committed WAL entry through height {} (checkpoint lags retained WAL tip by 1 block); repaired WAL tail required truncation",
+                u64::MAX - 1
+            )
+        );
+        assert_eq!(
+            recovery_startup_summary(&recovered),
+            format!(
+                "retained_wal_entries=1 checkpoint_height_retained={} checkpoint_tip_relation=behind:1 next_startup_height={} wal_tail_truncated=true metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume_checkpoint_lagging_after_tail_repair",
+                u64::MAX - 2,
+                u64::MAX,
+            )
         );
     }
 
@@ -736,12 +1088,78 @@ mod tests {
     }
 
     #[test]
+    fn recovery_startup_summary_reports_checkpoint_ahead_resume_mismatch_surface() {
+        let recovered = recovered_state(2, 12, Some(15), false, false);
+
+        assert_eq!(
+            recovery_startup_summary(&recovered),
+            "retained_wal_entries=2 checkpoint_height_retained=15 checkpoint_tip_relation=ahead:4 next_startup_height=12 wal_tail_truncated=false metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume_checkpoint_ahead_mismatch"
+        );
+    }
+
+    #[test]
+    fn retained_wal_summary_uses_singular_block_for_single_height_ahead_mismatch() {
+        let recovered = recovered_state(2, 12, Some(12), false, false);
+
+        assert_eq!(
+            retained_wal_summary(&recovered),
+            "retained 2 committed WAL entries through height 11 (retained checkpoint height 12 is ahead of retained WAL tip height 11 by 1 block; investigate WAL/checkpoint mismatch)"
+        );
+    }
+
+    #[test]
+    fn recovery_startup_summary_keeps_single_block_checkpoint_ahead_mismatch_visible() {
+        let recovered = recovered_state(2, 12, Some(12), false, false);
+
+        assert_eq!(
+            recovery_startup_summary(&recovered),
+            "retained_wal_entries=2 checkpoint_height_retained=12 checkpoint_tip_relation=ahead:1 next_startup_height=12 wal_tail_truncated=false metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume_checkpoint_ahead_mismatch"
+        );
+    }
+
+    #[test]
+    fn recovery_startup_summary_marks_checkpoint_ahead_resume_mismatch_after_tail_repair() {
+        let recovered = recovered_state(2, 12, Some(15), true, false);
+
+        assert_eq!(
+            recovery_startup_summary(&recovered),
+            "retained_wal_entries=2 checkpoint_height_retained=15 checkpoint_tip_relation=ahead:4 next_startup_height=12 wal_tail_truncated=true metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume_checkpoint_ahead_mismatch_after_tail_repair"
+        );
+    }
+
+    #[test]
+    fn recovery_startup_summary_keeps_single_block_checkpoint_ahead_mismatch_visible_after_tail_repair() {
+        let recovered = recovered_state(2, 12, Some(12), true, false);
+
+        assert_eq!(
+            recovery_startup_summary(&recovered),
+            "retained_wal_entries=2 checkpoint_height_retained=12 checkpoint_tip_relation=ahead:1 next_startup_height=12 wal_tail_truncated=true metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume_checkpoint_ahead_mismatch_after_tail_repair"
+        );
+    }
+
+    #[test]
+    fn ensure_recoverable_wal_state_allows_truncated_single_block_checkpoint_ahead_mismatch() {
+        let recovered = recovered_state(2, 12, Some(12), true, false);
+
+        ensure_recoverable_wal_state(Path::new("/tmp/trnm-runtime-wal"), &recovered)
+            .expect("truncated single-block checkpoint-ahead mismatch should remain recoverable for runtime join/rejoin triage");
+        assert_eq!(
+            retained_wal_summary(&recovered),
+            "retained 2 committed WAL entries through height 11 (retained checkpoint height 12 is ahead of retained WAL tip height 11 by 1 block; investigate WAL/checkpoint mismatch); repaired WAL tail required truncation"
+        );
+        assert_eq!(
+            recovery_startup_summary(&recovered),
+            "retained_wal_entries=2 checkpoint_height_retained=12 checkpoint_tip_relation=ahead:1 next_startup_height=12 wal_tail_truncated=true metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume_checkpoint_ahead_mismatch_after_tail_repair"
+        );
+    }
+
+    #[test]
     fn recovery_startup_summary_marks_checkpoint_only_bootstrap_as_ready_mode() {
         let recovered = recovered_state(0, 9, Some(8), false, false);
 
         assert_eq!(
             recovery_startup_summary(&recovered),
-            "retained_wal_entries=0 checkpoint_height_retained=8 checkpoint_tip_relation=checkpoint_only:8 next_startup_height=9 wal_tail_truncated=false metadata_only_recovery=false join_rejoin_status=ready:checkpoint_only_bootstrap"
+            "retained_wal_entries=0 checkpoint_height_retained=8 checkpoint_tip_relation=checkpoint_only:8 next_startup_height=9 wal_tail_truncated=false metadata_only_recovery=false join_rejoin_status=ready:checkpoint_only_rejoin_bootstrap"
         );
     }
 }

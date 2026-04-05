@@ -32,10 +32,20 @@ pub(crate) fn wal_file(wal_dir: &Path) -> PathBuf {
     wal_dir.join("consensus-wal.toml")
 }
 
+fn file_contains_meaningful_recovery_surface(path: &Path) -> bool {
+    if !path.exists() {
+        return false;
+    }
+    match fs::read_to_string(path) {
+        Ok(raw) => !metadata_scaffold_is_effectively_empty(&raw),
+        Err(_) => true,
+    }
+}
+
 pub(crate) fn wal_dir_has_existing_state(wal_dir: &Path) -> bool {
-    wal_file(wal_dir).exists()
-        || wal_meta_file(wal_dir).exists()
-        || checkpoint_file(wal_dir).exists()
+    file_contains_meaningful_recovery_surface(&wal_file(wal_dir))
+        || file_contains_meaningful_recovery_surface(&wal_meta_file(wal_dir))
+        || file_contains_meaningful_recovery_surface(&checkpoint_file(wal_dir))
 }
 
 pub(crate) fn isolated_default_wal_dir(base_dir: &Path) -> PathBuf {
@@ -99,8 +109,9 @@ fn canonicalize_wal_meta(entries: &mut Vec<WalMeta>) {
 
 fn metadata_scaffold_is_effectively_empty(raw: &str) -> bool {
     raw.lines().all(|line| {
-        let trimmed = line.trim_start_matches('\u{feff}').trim();
-        trimmed.is_empty() || trimmed.starts_with('#')
+        let line = line.trim_start_matches('\u{feff}');
+        let without_comment = line.split_once('#').map_or(line, |(before, _)| before);
+        without_comment.trim().is_empty()
     })
 }
 
@@ -243,6 +254,335 @@ mod tests {
         let mut args = default_args();
         args.bft_wal_dir = wal_dir.display().to_string();
         args.bft_wal_mode = WalDirMode::Auto;
+
+        let (resolved, note) = resolve_wal_dir(&args).unwrap();
+        assert_eq!(resolved, wal_dir);
+        assert!(note.is_none());
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
+    fn resolve_wal_dir_auto_keeps_explicit_custom_recovery_path_even_when_builtin_default_has_state() {
+        let sandbox = temp_wal_dir("resolve-auto-custom-overrides-builtin-default-state");
+        let prior_cwd = std::env::current_dir().unwrap();
+        let explicit_wal_dir = sandbox.join("custom-rejoin-wal");
+        fs::create_dir_all(&explicit_wal_dir).unwrap();
+        fs::create_dir_all(sandbox.join(DEFAULT_BFT_WAL_DIR)).unwrap();
+        fs::write(
+            checkpoint_file(&sandbox.join(DEFAULT_BFT_WAL_DIR)),
+            "[[checkpoints]]\nheight = 7\nstate_root_hex = \"aa\"\nwal_entry_hash_hex = \"bb\"\n",
+        )
+        .unwrap();
+        std::env::set_current_dir(&sandbox).unwrap();
+
+        let mut args = default_args();
+        args.bft_wal_dir = explicit_wal_dir.display().to_string();
+        args.bft_wal_mode = WalDirMode::Auto;
+
+        let (resolved, note) = resolve_wal_dir(&args).unwrap();
+        assert_eq!(resolved, explicit_wal_dir);
+        assert!(note.is_none());
+
+        std::env::set_current_dir(prior_cwd).unwrap();
+        let _ = fs::remove_dir_all(&sandbox);
+    }
+
+    #[test]
+    fn resolve_wal_dir_auto_allows_builtin_default_when_only_comment_only_checkpoint_scaffold_exists() {
+        let sandbox = temp_wal_dir("resolve-auto-comment-only-checkpoint-scaffold");
+        let prior_cwd = std::env::current_dir().unwrap();
+        fs::create_dir_all(sandbox.join(DEFAULT_BFT_WAL_DIR)).unwrap();
+        fs::write(
+            checkpoint_file(&sandbox.join(DEFAULT_BFT_WAL_DIR)),
+            "# operator left a recovery note\n   # keep until next successful catch-up\n",
+        )
+        .unwrap();
+        std::env::set_current_dir(&sandbox).unwrap();
+
+        let args = default_args();
+        let requested = PathBuf::from(DEFAULT_BFT_WAL_DIR);
+        let (resolved, note) = resolve_wal_dir(&args).unwrap();
+        assert_eq!(resolved, requested);
+        assert!(note.is_none());
+
+        std::env::set_current_dir(prior_cwd).unwrap();
+        let _ = fs::remove_dir_all(&sandbox);
+    }
+
+    #[test]
+    fn resolve_wal_dir_auto_allows_builtin_default_when_only_comment_only_consensus_wal_scaffold_exists(
+    ) {
+        let sandbox = temp_wal_dir("resolve-auto-comment-only-consensus-wal-scaffold");
+        let prior_cwd = std::env::current_dir().unwrap();
+        fs::create_dir_all(sandbox.join(DEFAULT_BFT_WAL_DIR)).unwrap();
+        fs::write(
+            wal_file(&sandbox.join(DEFAULT_BFT_WAL_DIR)),
+            "# operator left a rejoin note\n   # safe to reuse builtin default once catch-up succeeds\n",
+        )
+        .unwrap();
+        std::env::set_current_dir(&sandbox).unwrap();
+
+        let args = default_args();
+        let requested = PathBuf::from(DEFAULT_BFT_WAL_DIR);
+        let (resolved, note) = resolve_wal_dir(&args).unwrap();
+        assert_eq!(resolved, requested);
+        assert!(note.is_none());
+
+        std::env::set_current_dir(prior_cwd).unwrap();
+        let _ = fs::remove_dir_all(&sandbox);
+    }
+
+    #[test]
+    fn resolve_wal_dir_auto_allows_builtin_default_when_only_crlf_comment_only_checkpoint_scaffold_exists(
+    ) {
+        let sandbox = temp_wal_dir("resolve-auto-crlf-comment-only-checkpoint-scaffold");
+        let prior_cwd = std::env::current_dir().unwrap();
+        fs::create_dir_all(sandbox.join(DEFAULT_BFT_WAL_DIR)).unwrap();
+        fs::write(
+            checkpoint_file(&sandbox.join(DEFAULT_BFT_WAL_DIR)),
+            "# operator left a recovery note\r\n   # keep until next successful catch-up\r\n",
+        )
+        .unwrap();
+        std::env::set_current_dir(&sandbox).unwrap();
+
+        let args = default_args();
+        let requested = PathBuf::from(DEFAULT_BFT_WAL_DIR);
+        let (resolved, note) = resolve_wal_dir(&args).unwrap();
+        assert_eq!(resolved, requested);
+        assert!(note.is_none());
+
+        std::env::set_current_dir(prior_cwd).unwrap();
+        let _ = fs::remove_dir_all(&sandbox);
+    }
+
+    #[test]
+    fn resolve_wal_dir_auto_allows_builtin_default_when_only_blank_consensus_wal_scaffold_exists() {
+        let sandbox = temp_wal_dir("resolve-auto-blank-consensus-wal-scaffold");
+        let prior_cwd = std::env::current_dir().unwrap();
+        fs::create_dir_all(sandbox.join(DEFAULT_BFT_WAL_DIR)).unwrap();
+        fs::write(wal_file(&sandbox.join(DEFAULT_BFT_WAL_DIR)), "  \n\t").unwrap();
+        std::env::set_current_dir(&sandbox).unwrap();
+
+        let args = default_args();
+        let requested = PathBuf::from(DEFAULT_BFT_WAL_DIR);
+        let (resolved, note) = resolve_wal_dir(&args).unwrap();
+        assert_eq!(resolved, requested);
+        assert!(note.is_none());
+
+        std::env::set_current_dir(prior_cwd).unwrap();
+        let _ = fs::remove_dir_all(&sandbox);
+    }
+
+    #[test]
+    fn resolve_wal_dir_auto_allows_builtin_default_when_only_bom_prefixed_comment_consensus_wal_scaffold_exists(
+    ) {
+        let sandbox = temp_wal_dir("resolve-auto-bom-comment-consensus-wal-scaffold");
+        let prior_cwd = std::env::current_dir().unwrap();
+        fs::create_dir_all(sandbox.join(DEFAULT_BFT_WAL_DIR)).unwrap();
+        fs::write(
+            wal_file(&sandbox.join(DEFAULT_BFT_WAL_DIR)),
+            "\u{feff}# operator left a rejoin note\n   # safe to reuse builtin default once catch-up succeeds\n",
+        )
+        .unwrap();
+        std::env::set_current_dir(&sandbox).unwrap();
+
+        let args = default_args();
+        let requested = PathBuf::from(DEFAULT_BFT_WAL_DIR);
+        let (resolved, note) = resolve_wal_dir(&args).unwrap();
+        assert_eq!(resolved, requested);
+        assert!(note.is_none());
+
+        std::env::set_current_dir(prior_cwd).unwrap();
+        let _ = fs::remove_dir_all(&sandbox);
+    }
+
+    #[test]
+    fn resolve_wal_dir_auto_allows_builtin_default_when_only_comment_only_wal_meta_scaffold_exists() {
+        let sandbox = temp_wal_dir("resolve-auto-comment-only-wal-meta-scaffold");
+        let prior_cwd = std::env::current_dir().unwrap();
+        fs::create_dir_all(sandbox.join(DEFAULT_BFT_WAL_DIR)).unwrap();
+        fs::write(
+            wal_meta_file(&sandbox.join(DEFAULT_BFT_WAL_DIR)),
+            "# operator left a catch-up note\n\t# safe to treat as empty metadata scaffold\n",
+        )
+        .unwrap();
+        std::env::set_current_dir(&sandbox).unwrap();
+
+        let args = default_args();
+        let requested = PathBuf::from(DEFAULT_BFT_WAL_DIR);
+        let (resolved, note) = resolve_wal_dir(&args).unwrap();
+        assert_eq!(resolved, requested);
+        assert!(note.is_none());
+
+        std::env::set_current_dir(prior_cwd).unwrap();
+        let _ = fs::remove_dir_all(&sandbox);
+    }
+
+    #[test]
+    fn resolve_wal_dir_auto_allows_builtin_default_when_only_bom_prefixed_comment_only_wal_meta_scaffold_exists(
+    ) {
+        let sandbox = temp_wal_dir("resolve-auto-bom-comment-only-wal-meta-scaffold");
+        let prior_cwd = std::env::current_dir().unwrap();
+        fs::create_dir_all(sandbox.join(DEFAULT_BFT_WAL_DIR)).unwrap();
+        fs::write(
+            wal_meta_file(&sandbox.join(DEFAULT_BFT_WAL_DIR)),
+            "\u{feff}# operator left a catch-up note\n\t# safe to treat as empty metadata scaffold\n",
+        )
+        .unwrap();
+        std::env::set_current_dir(&sandbox).unwrap();
+
+        let args = default_args();
+        let requested = PathBuf::from(DEFAULT_BFT_WAL_DIR);
+        let (resolved, note) = resolve_wal_dir(&args).unwrap();
+        assert_eq!(resolved, requested);
+        assert!(note.is_none());
+
+        std::env::set_current_dir(prior_cwd).unwrap();
+        let _ = fs::remove_dir_all(&sandbox);
+    }
+
+    #[test]
+    fn resolve_wal_dir_auto_allows_builtin_default_when_only_crlf_comment_only_wal_meta_scaffold_exists(
+    ) {
+        let sandbox = temp_wal_dir("resolve-auto-crlf-comment-only-wal-meta-scaffold");
+        let prior_cwd = std::env::current_dir().unwrap();
+        fs::create_dir_all(sandbox.join(DEFAULT_BFT_WAL_DIR)).unwrap();
+        fs::write(
+            wal_meta_file(&sandbox.join(DEFAULT_BFT_WAL_DIR)),
+            "# operator left a catch-up note\r\n\t# safe to treat as empty metadata scaffold\r\n",
+        )
+        .unwrap();
+        std::env::set_current_dir(&sandbox).unwrap();
+
+        let args = default_args();
+        let requested = PathBuf::from(DEFAULT_BFT_WAL_DIR);
+        let (resolved, note) = resolve_wal_dir(&args).unwrap();
+        assert_eq!(resolved, requested);
+        assert!(note.is_none());
+
+        std::env::set_current_dir(prior_cwd).unwrap();
+        let _ = fs::remove_dir_all(&sandbox);
+    }
+
+    #[test]
+    fn resolve_wal_dir_fail_if_exists_allows_comment_only_checkpoint_scaffold() {
+        let wal_dir = temp_wal_dir("resolve-fail-if-exists-comment-only-checkpoint");
+        fs::create_dir_all(&wal_dir).unwrap();
+        fs::write(
+            checkpoint_file(&wal_dir),
+            "# operator left a recovery note\n   # safe to reuse after catch-up succeeds\n",
+        )
+        .unwrap();
+
+        let mut args = default_args();
+        args.bft_wal_dir = wal_dir.display().to_string();
+        args.bft_wal_mode = WalDirMode::FailIfExists;
+
+        let (resolved, note) = resolve_wal_dir(&args).unwrap();
+        assert_eq!(resolved, wal_dir);
+        assert!(note.is_none());
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
+    fn resolve_wal_dir_fail_if_exists_allows_bom_prefixed_comment_only_checkpoint_scaffold() {
+        let wal_dir = temp_wal_dir("resolve-fail-if-exists-bom-comment-only-checkpoint");
+        fs::create_dir_all(&wal_dir).unwrap();
+        fs::write(
+            checkpoint_file(&wal_dir),
+            "\u{feff}# operator left a recovery note\n   # safe to reuse after catch-up succeeds\n",
+        )
+        .unwrap();
+
+        let mut args = default_args();
+        args.bft_wal_dir = wal_dir.display().to_string();
+        args.bft_wal_mode = WalDirMode::FailIfExists;
+
+        let (resolved, note) = resolve_wal_dir(&args).unwrap();
+        assert_eq!(resolved, wal_dir);
+        assert!(note.is_none());
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
+    fn resolve_wal_dir_fail_if_exists_allows_comment_only_consensus_wal_scaffold() {
+        let wal_dir = temp_wal_dir("resolve-fail-if-exists-comment-only-consensus-wal");
+        fs::create_dir_all(&wal_dir).unwrap();
+        fs::write(
+            wal_file(&wal_dir),
+            "# operator left a rejoin note\n   # safe to reuse after catch-up succeeds\n",
+        )
+        .unwrap();
+
+        let mut args = default_args();
+        args.bft_wal_dir = wal_dir.display().to_string();
+        args.bft_wal_mode = WalDirMode::FailIfExists;
+
+        let (resolved, note) = resolve_wal_dir(&args).unwrap();
+        assert_eq!(resolved, wal_dir);
+        assert!(note.is_none());
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
+    fn resolve_wal_dir_fail_if_exists_allows_comment_only_wal_meta_scaffold() {
+        let wal_dir = temp_wal_dir("resolve-fail-if-exists-comment-only-wal-meta");
+        fs::create_dir_all(&wal_dir).unwrap();
+        fs::write(
+            wal_meta_file(&wal_dir),
+            "# operator left a catch-up note\n\t# safe to treat as empty metadata scaffold\n",
+        )
+        .unwrap();
+
+        let mut args = default_args();
+        args.bft_wal_dir = wal_dir.display().to_string();
+        args.bft_wal_mode = WalDirMode::FailIfExists;
+
+        let (resolved, note) = resolve_wal_dir(&args).unwrap();
+        assert_eq!(resolved, wal_dir);
+        assert!(note.is_none());
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
+    fn resolve_wal_dir_fail_if_exists_allows_bom_prefixed_comment_only_wal_meta_scaffold() {
+        let wal_dir = temp_wal_dir("resolve-fail-if-exists-bom-comment-only-wal-meta");
+        fs::create_dir_all(&wal_dir).unwrap();
+        fs::write(
+            wal_meta_file(&wal_dir),
+            "\u{feff}# operator left a catch-up note\n\t# safe to treat as empty metadata scaffold\n",
+        )
+        .unwrap();
+
+        let mut args = default_args();
+        args.bft_wal_dir = wal_dir.display().to_string();
+        args.bft_wal_mode = WalDirMode::FailIfExists;
+
+        let (resolved, note) = resolve_wal_dir(&args).unwrap();
+        assert_eq!(resolved, wal_dir);
+        assert!(note.is_none());
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
+    fn resolve_wal_dir_fail_if_exists_allows_crlf_comment_only_wal_meta_scaffold() {
+        let wal_dir = temp_wal_dir("resolve-fail-if-exists-crlf-comment-only-wal-meta");
+        fs::create_dir_all(&wal_dir).unwrap();
+        fs::write(
+            wal_meta_file(&wal_dir),
+            "# operator left a catch-up note\r\n\t# safe to treat as empty metadata scaffold\r\n",
+        )
+        .unwrap();
+
+        let mut args = default_args();
+        args.bft_wal_dir = wal_dir.display().to_string();
+        args.bft_wal_mode = WalDirMode::FailIfExists;
 
         let (resolved, note) = resolve_wal_dir(&args).unwrap();
         assert_eq!(resolved, wal_dir);
@@ -827,6 +1167,22 @@ mod tests {
         fs::write(
             checkpoint_file(&wal_dir),
             "\u{feff}# operator left a recovery note\n   # keep until next successful catch-up\n",
+        )
+        .unwrap();
+
+        let checkpoints = load_checkpoint_meta(&wal_dir).unwrap();
+        assert!(checkpoints.is_empty());
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
+    fn load_checkpoint_meta_treats_crlf_comment_only_files_as_empty_metadata_scaffolds() {
+        let wal_dir = temp_wal_dir("checkpoint-crlf-comment-only-scaffold");
+        fs::create_dir_all(&wal_dir).unwrap();
+        fs::write(
+            checkpoint_file(&wal_dir),
+            "# operator left a recovery note\r\n   # keep until next successful catch-up\r\n",
         )
         .unwrap();
 
