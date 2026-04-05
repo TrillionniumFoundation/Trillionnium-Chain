@@ -74,6 +74,9 @@
 12. **把当前 36-lane 进展压成 launch-distance / GO-NO-GO 面板**：看 `trillionnium-rust/docs/release/TRNM_PUBLIC_MAINNET_GO_NO_GO_PANEL_2026-04-04.md`。
    - 适用场景：需要回答“结合当前 36-lane 提交代码，距离主网上线还有多远”“哪些已明显推进、哪些仍属硬 blocker、哪些可延后到 Day-1 之后”。
    - 作用边界：它是基于当下 lane snapshot 的**判断面板**，不是 release-ready 证明，也不替代 gap matrix 的长期 blocker taxonomy。
+13. **判断 `MN01` 当前 residual 到底是“还没 merge 的真实工作”，还是“已被主线吸收 / superseded 的剩余 patch 形状”**：看 `trillionnium-rust/docs/release/TRNM_MN01_RESIDUAL_CLOSURE_2026-04-05.md`。
+   - 适用场景：需要回答“`lane/mn01-peer-bootstrap-topology` 现在还剩多少是真正该继续手工吸收的”“哪些 recovery 提交不该再 merge”“为什么 `git cherry -v` 仍然显示很多 `+` 但语义上大多已被主线覆盖”。
+   - 作用边界：它是**lane residual closure** 文档，不替代 broader launch-readiness truth source，也不意味着 `MN01` 可整体机械 merge。
 
 ## RC 演练最小证据模板（不发布）
 
