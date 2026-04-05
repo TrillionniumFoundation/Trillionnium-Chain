@@ -75,6 +75,7 @@ Resolve the exact evidence files from disk before quoting any PASS / GO language
 latest_preflight_path="run/preflight/go-no-go-latest.txt"
 [ -f "$latest_preflight_path" ] || { echo "missing preflight artifact" >&2; exit 1; }
 printf 'preflight_path=%s\n' "$latest_preflight_path"
+printf 'preflight_summary_path=%s\n' "$latest_preflight_path"
 awk -F= '/^(result|generated_at|git_toplevel|git_branch|git_head|git_head_state|git_status_summary|git_worktree_path|git_worktree_branch_ref|git_worktree_branch_ref_match|expected_worktree_root|ticket_expected_branch_ref|expected_branch_ref|expected_head|rollback_command|replay_command)=/ { print }' "$latest_preflight_path"
 
 latest_evidence_dir="$(ls -dt run/health/evidence-* 2>/dev/null | head -n 1)"
@@ -106,6 +107,7 @@ Treat the helper output as a first-class artifact for memo assembly, not throwaw
 
 Record:
 - preflight_path=
+- preflight_summary_path=
 - summary_path=
 - manifest_path=
 - handoff_helper_output_path=
@@ -130,7 +132,7 @@ Record:
 - git_expected_worktree_branch_ref=
 
 Rule:
-- if `preflight_path`, `summary_path`, or `manifest_path` is missing or unresolved, decision = **NO-GO**
+- if `preflight_path`, `preflight_summary_path`, `summary_path`, or `manifest_path` is missing or unresolved, decision = **NO-GO**
 - if the preflight artifact/helper transcript does not preserve `result=`, `generated_at=`, `git_status_summary=`, `git_worktree_path=`, `git_worktree_branch_ref=`, `git_worktree_branch_ref_match=`, `expected_worktree_root=`, `ticket_expected_branch_ref=`, `expected_branch_ref=`, `rollback_command=`, and `replay_command=`, decision = **NO-GO**
 - if the ticket assigned an expected head, preserve `expected_head=` verbatim from the preflight artifact and require it to match the ticket-assigned value; do not silently downgrade that field into an optional note
 - treat `expected_worktree_root=` plus `ticket_expected_branch_ref=` as the ticket-binding proof for the rehearsal packet, and keep `expected_branch_ref=` as the canonicalized companion field rather than a replacement for the ticket-original form
@@ -244,6 +246,7 @@ Mark each item explicitly:
 - [ ] `verified_worktree_entry=` preserved from helper output / `git worktree list --porcelain` stanza
 - [ ] `git status --short` empty before evidence generation
 - [ ] `preflight_path` resolved from disk
+- [ ] `preflight_summary_path` resolved from disk
 - [ ] `summary_path` resolved from disk
 - [ ] `manifest_path` resolved from disk
 - [ ] `handoff_helper_output_path` resolved from disk and preserved as a first-class artifact
@@ -268,6 +271,7 @@ Mark each item explicitly:
 - [ ] `preflight_replay_command=` quoted verbatim next to preflight decision language
 - [ ] `summary_generated_at=` preserved next to local-evidence decision language
 - [ ] `manifest_generated_at=` preserved next to RC decision language
+- [ ] `git_expected_worktree_branch_ref=` preserved next to summary/manifest decision language
 - [ ] preflight identity fields preserved next to preflight decision language
 - [ ] `truth_source=` preserved next to decision language
 - [ ] `historical_evidence_only=` preserved next to decision language
@@ -295,6 +299,7 @@ verified_branch_ref=<helper output>
 verified_head=<helper output>
 verified_worktree_entry=<captured current-path stanza from helper output or git worktree list --porcelain>
 preflight_path=<resolved path>
+preflight_summary_path=<resolved path>
 summary_path=<resolved path>
 manifest_path=<resolved path>
 handoff_helper_output_path=<resolved saved helper transcript path>
@@ -331,6 +336,8 @@ summary_rollback_command=<summary artifact value>
 summary_replay_command=<summary artifact value>
 manifest_rollback_command=<manifest artifact value>
 manifest_replay_command=<manifest artifact value>
+challenge_reexec_entry=<artifact value including <entry_not_found> when present>
+replay_env_trnm_challenge_reexec_entry=<artifact value including <entry_not_found> when present>
 rollback_drill_scope=<docs-only|artifact replay only|operator procedure walkthrough|executed on rehearsal environment>
 rollback_drill_command=<artifact value or documented narrower drill command>
 rollback_drill_result=<PASS|FAIL|NOT_RUN>
