@@ -212,7 +212,10 @@ Once this slice is accepted, the next document/work artifact should be:
 Purpose:
 - choose the concrete durable-read direction instead of keeping it as a generic placeholder gap.
 
-Minimum fields that should be frozen in that memo:
+This artifact now exists as:
+- `trillionnium-rust/docs/release/TRNM_RANK1_DURABLE_BOUNDARY_DECISION_MEMO_2026-04-05.md`
+
+Frozen fields in that memo:
 - `ingestion_source`
 - `checkpoint_store`
 - `replay_start_anchor`
