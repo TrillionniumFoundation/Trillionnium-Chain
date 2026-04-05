@@ -95,21 +95,42 @@ case "${HOST}" in
     LOCAL_PROBE_HOST="127.0.0.1"
     ;;
   ::)
-    LOCAL_PROBE_HOST="[::1]"
+    LOCAL_PROBE_HOST="::1"
     ;;
 esac
+if [[ "${LOCAL_PROBE_HOST}" == *:* && "${LOCAL_PROBE_HOST}" != \[*\] ]]; then
+  LOCAL_PROBE_HOST="[${LOCAL_PROBE_HOST}]"
+fi
 LOCAL_HEALTH_URL="http://${LOCAL_PROBE_HOST}:${PORT}/healthz"
+
+emit_durable_read_anchor_fields() {
+  echo "durable_read_anchor_complete=false"
+  echo "durable_read_anchor_missing_count=6"
+  echo "durable_read_anchor_missing_fields=ingestion_source,checkpoint_store,replay_start_anchor,retention_scope,archive_owner,lag_slo"
+  echo "durable_read_anchor_ingestion_source=missing-placeholder-scaffold"
+  echo "durable_read_anchor_checkpoint_store=missing-placeholder-scaffold"
+  echo "durable_read_anchor_replay_start_anchor=missing-placeholder-scaffold"
+  echo "durable_read_anchor_retention_scope=rpc-window-bounded"
+  echo "durable_read_anchor_archive_owner=missing-placeholder-scaffold"
+  echo "durable_read_anchor_lag_slo=missing-placeholder-scaffold"
+}
 
 emit_read_contract_fields() {
   echo "read_contract_mode=read-only"
   echo "read_contract_source=rpc-read-surface"
-  echo "day1_surface=query-task/<task_id>,query-events/<task_id>?limit=<n>,query-capability-audit/<subject-or-token>,query-normalized-audit-events?source=<source>&eventType=<eventType>&cursor=<cursor>&limit=<n>"
+  echo "day1_surface=query-task/<task_id>,query-events/<task_id>?limit=<n>,query-capability-audit/<subject-or-token>,query-normalized-audit-events?source=<source>&eventType=<type>&limit=<n>&cursor=<cursor>"
   echo "query_events_default_limit=100"
   echo "query_events_max_limit=500"
   echo "write_paths_exposed=false"
   echo "historical_query_scope=rpc-retention-bounded"
+  echo "durability_boundary=ephemeral-rpc-window-only"
   echo "archive_strategy=not-configured-static-scaffold"
   echo "read_replica_strategy=not-configured-static-scaffold"
+  echo "deployment_topology=single-process-static-http-on-one-host"
+  echo "deployment_evidence_scope=placeholder-only"
+  echo "rank1_read_surface_blocker=still-open"
+  echo "durable_indexer_status=not-implemented-in-this-scaffold"
+  emit_durable_read_anchor_fields
 }
 
 emit_contract_fields() {
@@ -131,52 +152,70 @@ emit_contract_fields() {
   emit_read_contract_fields
 }
 
+emit_contract_status() {
+  local state="$1"
+  local health="$2"
+  local health_probe="$3"
+  local health_probe_url="$4"
+  local local_health="$5"
+  local local_health_probe="$6"
+  local local_health_probe_url="$7"
+
+  echo "state=${state}"
+  emit_contract_fields
+  echo "health=${health}"
+  echo "health_probe=${health_probe}"
+  echo "health_probe_url=${health_probe_url}"
+  echo "local_health=${local_health}"
+  echo "local_health_probe=${local_health_probe}"
+  echo "local_health_probe_url=${local_health_probe_url}"
+}
+
+emit_invalid_config() {
+  local config_error="$1"
+  echo "refusing to start explorer service scaffold: ${config_error}"
+  echo "config_error=${config_error}"
+  emit_contract_status "invalid-config" "unknown" "invalid-config" "invalid-config" "unknown" "invalid-config" "invalid-config"
+}
+
 validate_runtime_contract() {
   if [[ -z "${HOST}" ]]; then
-    echo "refusing to start explorer service scaffold: EXPLORER_HOST must not be empty"
-    emit_contract_fields
+    emit_invalid_config "EXPLORER_HOST must not be empty"
     exit 1
   fi
 
   if [[ ! "${PORT}" =~ ^[0-9]+$ ]] || (( PORT < 1 || PORT > 65535 )); then
-    echo "refusing to start explorer service scaffold: EXPLORER_PORT must be an integer in [1, 65535]"
-    emit_contract_fields
+    emit_invalid_config "EXPLORER_PORT must be an integer in [1, 65535]"
     exit 1
   fi
 
   if [[ -z "${PUBLIC_BASE_URL}" ]]; then
-    echo "refusing to start explorer service scaffold: EXPLORER_PUBLIC_BASE_URL must not be empty"
-    emit_contract_fields
+    emit_invalid_config "EXPLORER_PUBLIC_BASE_URL must not be empty"
     exit 1
   fi
 
   if [[ ! "${PUBLIC_BASE_URL}" =~ ^https?://.+ ]]; then
-    echo "refusing to start explorer service scaffold: EXPLORER_PUBLIC_BASE_URL must start with http:// or https://"
-    emit_contract_fields
+    emit_invalid_config "EXPLORER_PUBLIC_BASE_URL must start with http:// or https://"
     exit 1
   fi
 
   if [[ -z "${HEALTH_URL}" ]]; then
-    echo "refusing to start explorer service scaffold: EXPLORER_HEALTH_URL must not be empty"
-    emit_contract_fields
+    emit_invalid_config "EXPLORER_HEALTH_URL must not be empty"
     exit 1
   fi
 
   if [[ ! "${HEALTH_URL}" =~ ^https?://.+ ]]; then
-    echo "refusing to start explorer service scaffold: EXPLORER_HEALTH_URL must start with http:// or https://"
-    emit_contract_fields
+    emit_invalid_config "EXPLORER_HEALTH_URL must start with http:// or https://"
     exit 1
   fi
 
   if [[ -z "${RPC_BASE_URL}" ]]; then
-    echo "refusing to start explorer service scaffold: EXPLORER_RPC_BASE_URL must not be empty"
-    emit_contract_fields
+    emit_invalid_config "EXPLORER_RPC_BASE_URL must not be empty"
     exit 1
   fi
 
   if [[ ! "${RPC_BASE_URL}" =~ ^https?://.+ ]]; then
-    echo "refusing to start explorer service scaffold: EXPLORER_RPC_BASE_URL must start with http:// or https://"
-    emit_contract_fields
+    emit_invalid_config "EXPLORER_RPC_BASE_URL must start with http:// or https://"
     exit 1
   fi
 }
@@ -199,7 +238,7 @@ fi
 
 if ! command -v python3 >/dev/null 2>&1; then
   echo "refusing to start explorer service scaffold: python3 is required but not installed"
-  emit_contract_fields
+  emit_contract_status "down" "unknown" "not-run-python3-missing" "not-run-python3-missing" "unknown" "not-run-python3-missing" "not-run-python3-missing"
   exit 1
 fi
 
@@ -230,7 +269,7 @@ PY
 
 if port_has_listener; then
   echo "refusing to start explorer service scaffold: ${HOST}:${PORT} already has a listener"
-  emit_contract_fields
+  emit_contract_status "down" "unknown" "not-run-port-listener-conflict" "not-run-port-listener-conflict" "unknown" "not-run-port-listener-conflict" "not-run-port-listener-conflict"
   exit 1
 fi
 
@@ -238,18 +277,24 @@ if [[ -f "${PID_FILE}" ]]; then
   existing_pid="$(tr -d '[:space:]' <"${PID_FILE}")"
   if [[ "${existing_pid}" =~ ^[0-9]+$ ]] && kill -0 "${existing_pid}" 2>/dev/null; then
     echo "explorer service already running pid=${existing_pid}"
-    emit_contract_fields
+    emit_contract_status "running" "unknown" "not-run-already-running" "not-run-already-running" "unknown" "not-run-already-running" "not-run-already-running"
     exit 0
   fi
   rm -f "${PID_FILE}"
 fi
 
+health_ts_unix_ms="$(python3 - <<'PY'
+import time
+print(int(time.time() * 1000))
+PY
+)"
+
 cat >"${HEALTH_FILE}" <<EOF
-{"status":"ok","service":"explorer-service-scaffold","mode":"operator-facing","production_ready":false}
+{"ok":true,"status":"ok","service":"explorer-service-scaffold","mode":"operator-facing","production_ready":false,"ts_unix_ms":${health_ts_unix_ms},"version":1}
 EOF
 
 cat >"${INDEX_FILE}" <<EOF
-{"service":"explorer-service-scaffold","service_mode":"operator-facing-static-scaffold","production_ready":false,"health_url":"${HEALTH_URL}","rpc_base_url":"${RPC_BASE_URL}","read_contract":{"mode":"read-only","source":"rpc-read-surface","day1_surface":["query-task/<task_id>","query-events/<task_id>?limit=<n>","query-capability-audit/<subject-or-token>","query-normalized-audit-events?source=<source>&eventType=<eventType>&cursor=<cursor>&limit=<n>"],"query_events_default_limit":100,"query_events_max_limit":500,"write_paths_exposed":false,"historical_query_scope":"rpc-retention-bounded","archive_strategy":"not-configured-static-scaffold","read_replica_strategy":"not-configured-static-scaffold"},"notes":["static scaffold only","not a durable indexer","not a production read-model","historical queries remain bounded by RPC retention until a durable indexer/archive strategy exists"]}
+{"service":"explorer-service-scaffold","service_mode":"operator-facing-static-scaffold","production_ready":false,"health_url":"${HEALTH_URL}","local_health_url":"${LOCAL_HEALTH_URL}","rpc_base_url":"${RPC_BASE_URL}","deployment_topology":"single-process-static-http-on-one-host","deployment_evidence_scope":"placeholder-only","rank1_read_surface_blocker":"still-open","durable_indexer_status":"not-implemented-in-this-scaffold","historical_query_scope":"rpc-retention-bounded","durability_boundary":"ephemeral-rpc-window-only","archive_strategy":"not-configured-static-scaffold","read_replica_strategy":"not-configured-static-scaffold","durable_read_anchor_complete":false,"durable_read_anchor_missing_count":6,"durable_read_anchor_missing_fields":"ingestion_source,checkpoint_store,replay_start_anchor,retention_scope,archive_owner,lag_slo","durable_read_anchor_ingestion_source":"missing-placeholder-scaffold","durable_read_anchor_checkpoint_store":"missing-placeholder-scaffold","durable_read_anchor_replay_start_anchor":"missing-placeholder-scaffold","durable_read_anchor_retention_scope":"rpc-window-bounded","durable_read_anchor_archive_owner":"missing-placeholder-scaffold","durable_read_anchor_lag_slo":"missing-placeholder-scaffold","read_contract":{"mode":"read-only","source":"rpc-read-surface","day1_surface":["query-task/<task_id>","query-events/<task_id>?limit=<n>","query-capability-audit/<subject-or-token>","query-normalized-audit-events?source=<source>&eventType=<type>&limit=<n>&cursor=<cursor>"],"query_events_default_limit":100,"query_events_max_limit":500,"write_paths_exposed":false,"historical_query_scope":"rpc-retention-bounded","durability_boundary":"ephemeral-rpc-window-only","archive_strategy":"not-configured-static-scaffold","read_replica_strategy":"not-configured-static-scaffold","deployment_topology":"single-process-static-http-on-one-host"},"durable_read_anchors":{"ingestion_source":"missing-placeholder-scaffold","checkpoint_store":"missing-placeholder-scaffold","replay_start_anchor":"missing-placeholder-scaffold","retention_scope":"rpc-window-bounded","archive_owner":"missing-placeholder-scaffold","lag_slo":"missing-placeholder-scaffold"},"notes":["static scaffold only","not a durable indexer","not a production read-model","historical queries remain bounded by RPC retention until a durable indexer/archive strategy exists","durable read anchors remain intentionally unset until a real indexer/read-model exists"]}
 EOF
 
 cd "${PUBLIC_DIR}"
@@ -261,7 +306,7 @@ sleep 1
 if ! kill -0 "${server_pid}" 2>/dev/null; then
   rm -f "${PID_FILE}"
   echo "explorer service scaffold failed to stay up"
-  emit_contract_fields
+  emit_contract_status "down" "unknown" "not-run-process-exited" "not-run-process-exited" "unknown" "not-run-process-exited" "not-run-process-exited"
   exit 1
 fi
 
@@ -278,10 +323,10 @@ if command -v curl >/dev/null 2>&1; then
     kill "${server_pid}" 2>/dev/null || true
     rm -f "${PID_FILE}"
     echo "explorer service scaffold failed local health probe url=${LOCAL_HEALTH_URL}"
-    emit_contract_fields
+    emit_contract_status "down" "unknown" "not-run-startup-local-only" "not-run-startup-local-only" "down" "startup-local-health-probe-failed" "${LOCAL_HEALTH_URL}"
     exit 1
   fi
 fi
 
 echo "started explorer service scaffold pid=${server_pid}"
-emit_contract_fields
+emit_contract_status "running" "ok" "active" "${HEALTH_URL}" "ok" "active" "${LOCAL_HEALTH_URL}"

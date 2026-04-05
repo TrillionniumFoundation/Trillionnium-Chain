@@ -130,6 +130,7 @@
 - durability boundary（进程重启后不丢已消费位点）
 - checkpoint / cursor / replay strategy
 - reorg / replay / duplicate event behavior 说明
+- 一组明确的 durable-read anchors：`ingestion_source` / `checkpoint_store` / `replay_start_anchor` / `retention_scope` / `archive_owner` / `lag_slo`
 
 **当前缺口**
 - 目前的 explorer-service 仍明确不是 durable indexer
@@ -139,6 +140,7 @@
 - 存在实际 indexer pipeline（不是仅静态 scaffold）
 - 有 cursor/checkpoint 机制
 - 能从既有链状态重放并恢复到一致状态
+- 上述 6 个 durable-read anchors 已被显式填写；缺任一项都仍按 placeholder / blocker-open 处理
 
 **依赖**
 - R1-01 / R1-02
@@ -204,14 +206,28 @@
 - backup / restore / replay / resync runbook
 - first-stop diagnosis checklist
 - index lag / data gap / stale read / broken cursor 的排障路径
+- 一份 handoff packet 模板，能把 placeholder-only 证据与 durable-read anchors 明确区分开
 
 **当前缺口**
 - scaffold runbook 存在，但 durable service runbook 还不完整
 - operator path 仍偏 placeholder
+- placeholder-only handoff packet 模板现已单独收口到 `trillionnium-rust/docs/release/TRNM_EXPLORER_SCAFFOLD_HANDOFF_TEMPLATE_2026-04-04.md`
+- durable-service handoff packet 的 truth-source skeleton 已补到 `trillionnium-rust/docs/release/TRNM_DURABLE_READ_SERVICE_HANDOFF_TEMPLATE_2026-04-04.md`，用于要求 operator 同时抄出：`ingestion_source` / `checkpoint_store` / `replay_start_anchor` / `retention_scope` / `archive_owner` / `lag_slo`，以及 non-placeholder deployment / replay / restore 证据
+- 但当前它仍只是 **future-state skeleton**，不是 repo 已有 durable read service / historical read-model closure 的证据
 
 **Exit criteria**
 - operator 不看代码也能 bring-up / diagnose / recover
 - read stack 有明确的 oncall 入口
+- runbook / handoff note 不再把 scaffold bring-up 证据误写成 durable indexer / historical read-model closure
+- 仓内存在一份单独的 durable-service handoff packet truth-source，并与 placeholder-only 模板显式区分
+- durable-service packet 至少要求同时出现：6 个 durable-read anchors、deploy/replay/restore 命令、lag/health 证据、以及“非 placeholder backend”声明；缺任一项都不得写成 Rank 1 已关闭
+
+**Mechanical template-selection gate（operator handoff 前必须先过）**
+- 先看 `deployment_evidence_scope=`：若仍是 `placeholder-only`，或该字段缺失，必须继续使用 `TRNM_EXPLORER_SCAFFOLD_HANDOFF_TEMPLATE_2026-04-04.md`。
+- 再看 `service_mode=`：若不是 `non-placeholder-durable-read-service`，不得切换到 durable 模板。
+- 再看 6 个 durable-read anchors：`ingestion_source` / `checkpoint_store` / `replay_start_anchor` / `retention_scope` / `archive_owner` / `lag_slo`，任一缺失、为空、或仍是 `missing-*` / `placeholder-*` / `not-configured-*`，一律按 scaffold handoff 处理。
+- 即便 anchor 已填写，只要 replay / restore / lag / checkpoint 证据缺任一项，仍不得把 note 写成 durable read service handoff。
+- 只有当 non-placeholder deployment boundary、6 个 durable-read anchors、以及 replay/restore/lag evidence 同时存在时，才允许切换到 `TRNM_DURABLE_READ_SERVICE_HANDOFF_TEMPLATE_2026-04-04.md`。
 
 **依赖**
 - R1-05
@@ -255,6 +271,7 @@
 - SLO / lag / health evidence
 - rollback / resync commands
 - one-page signoff memo
+- 6 个 durable-read anchors 的已填值，或显式 blocker note 说明哪些 anchor 仍缺失
 
 **Exit criteria**
 - Rank 1 closure 可被 launch packet 直接引用

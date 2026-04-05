@@ -95,21 +95,42 @@ case "${HOST}" in
     LOCAL_PROBE_HOST="127.0.0.1"
     ;;
   ::)
-    LOCAL_PROBE_HOST="[::1]"
+    LOCAL_PROBE_HOST="::1"
     ;;
 esac
+if [[ "${LOCAL_PROBE_HOST}" == *:* && "${LOCAL_PROBE_HOST}" != \[*\] ]]; then
+  LOCAL_PROBE_HOST="[${LOCAL_PROBE_HOST}]"
+fi
 LOCAL_HEALTH_URL="http://${LOCAL_PROBE_HOST}:${PORT}/healthz"
+
+emit_durable_read_anchor_fields() {
+  echo "durable_read_anchor_complete=false"
+  echo "durable_read_anchor_missing_count=6"
+  echo "durable_read_anchor_missing_fields=ingestion_source,checkpoint_store,replay_start_anchor,retention_scope,archive_owner,lag_slo"
+  echo "durable_read_anchor_ingestion_source=missing-placeholder-scaffold"
+  echo "durable_read_anchor_checkpoint_store=missing-placeholder-scaffold"
+  echo "durable_read_anchor_replay_start_anchor=missing-placeholder-scaffold"
+  echo "durable_read_anchor_retention_scope=rpc-window-bounded"
+  echo "durable_read_anchor_archive_owner=missing-placeholder-scaffold"
+  echo "durable_read_anchor_lag_slo=missing-placeholder-scaffold"
+}
 
 emit_read_contract_fields() {
   echo "read_contract_mode=read-only"
   echo "read_contract_source=rpc-read-surface"
-  echo "day1_surface=query-task/<task_id>,query-events/<task_id>?limit=<n>,query-capability-audit/<subject-or-token>,query-normalized-audit-events?source=<source>&eventType=<eventType>&cursor=<cursor>&limit=<n>"
+  echo "day1_surface=query-task/<task_id>,query-events/<task_id>?limit=<n>,query-capability-audit/<subject-or-token>,query-normalized-audit-events?source=<source>&eventType=<type>&limit=<n>&cursor=<cursor>"
   echo "query_events_default_limit=100"
   echo "query_events_max_limit=500"
   echo "write_paths_exposed=false"
   echo "historical_query_scope=rpc-retention-bounded"
+  echo "durability_boundary=ephemeral-rpc-window-only"
   echo "archive_strategy=not-configured-static-scaffold"
   echo "read_replica_strategy=not-configured-static-scaffold"
+  echo "deployment_topology=single-process-static-http-on-one-host"
+  echo "deployment_evidence_scope=placeholder-only"
+  echo "rank1_read_surface_blocker=still-open"
+  echo "durable_indexer_status=not-implemented-in-this-scaffold"
+  emit_durable_read_anchor_fields
 }
 
 emit_contract_paths() {
@@ -146,60 +167,63 @@ emit_contract_paths() {
   echo "local_health_probe_url=${local_health_probe_url}"
 }
 
-validate_runtime_contract() {
+runtime_contract_error() {
   if [[ -z "${HOST}" ]]; then
-    echo "refusing to stop explorer service scaffold: EXPLORER_HOST must not be empty"
-    emit_contract_paths "invalid-config" "unknown" "invalid-config" "unknown" "invalid-config" "invalid-config" "invalid-config"
-    exit 1
+    echo "EXPLORER_HOST must not be empty"
+    return 0
   fi
 
   if [[ ! "${PORT}" =~ ^[0-9]+$ ]] || (( PORT < 1 || PORT > 65535 )); then
-    echo "refusing to stop explorer service scaffold: EXPLORER_PORT must be an integer in [1, 65535]"
-    emit_contract_paths "invalid-config" "unknown" "invalid-config" "unknown" "invalid-config" "invalid-config" "invalid-config"
-    exit 1
+    echo "EXPLORER_PORT must be an integer in [1, 65535]"
+    return 0
   fi
 
   if [[ -z "${PUBLIC_BASE_URL}" ]]; then
-    echo "refusing to stop explorer service scaffold: EXPLORER_PUBLIC_BASE_URL must not be empty"
-    emit_contract_paths "invalid-config" "unknown" "invalid-config" "unknown" "invalid-config" "invalid-config" "invalid-config"
-    exit 1
+    echo "EXPLORER_PUBLIC_BASE_URL must not be empty"
+    return 0
   fi
 
   if [[ ! "${PUBLIC_BASE_URL}" =~ ^https?://.+ ]]; then
-    echo "refusing to stop explorer service scaffold: EXPLORER_PUBLIC_BASE_URL must start with http:// or https://"
-    emit_contract_paths "invalid-config" "unknown" "invalid-config" "unknown" "invalid-config" "invalid-config" "invalid-config"
-    exit 1
+    echo "EXPLORER_PUBLIC_BASE_URL must start with http:// or https://"
+    return 0
   fi
 
   if [[ -z "${HEALTH_URL}" ]]; then
-    echo "refusing to stop explorer service scaffold: EXPLORER_HEALTH_URL must not be empty"
-    emit_contract_paths "invalid-config" "unknown" "invalid-config" "unknown" "invalid-config" "invalid-config" "invalid-config"
-    exit 1
+    echo "EXPLORER_HEALTH_URL must not be empty"
+    return 0
   fi
 
   if [[ ! "${HEALTH_URL}" =~ ^https?://.+ ]]; then
-    echo "refusing to stop explorer service scaffold: EXPLORER_HEALTH_URL must start with http:// or https://"
-    emit_contract_paths "invalid-config" "unknown" "invalid-config" "unknown" "invalid-config" "invalid-config" "invalid-config"
-    exit 1
+    echo "EXPLORER_HEALTH_URL must start with http:// or https://"
+    return 0
   fi
 
   if [[ -z "${RPC_BASE_URL}" ]]; then
-    echo "refusing to stop explorer service scaffold: EXPLORER_RPC_BASE_URL must not be empty"
-    emit_contract_paths "invalid-config" "unknown" "invalid-config" "unknown" "invalid-config" "invalid-config" "invalid-config"
-    exit 1
+    echo "EXPLORER_RPC_BASE_URL must not be empty"
+    return 0
   fi
 
   if [[ ! "${RPC_BASE_URL}" =~ ^https?://.+ ]]; then
-    echo "refusing to stop explorer service scaffold: EXPLORER_RPC_BASE_URL must start with http:// or https://"
-    emit_contract_paths "invalid-config" "unknown" "invalid-config" "unknown" "invalid-config" "invalid-config" "invalid-config"
-    exit 1
+    echo "EXPLORER_RPC_BASE_URL must start with http:// or https://"
+    return 0
   fi
+
+  return 1
 }
 
-validate_runtime_contract
+config_error=""
+if config_error_candidate="$(runtime_contract_error)"; then
+  config_error="${config_error_candidate}"
+fi
 
 if [[ ! -f "${PID_FILE}" ]]; then
-  echo "explorer service already stopped"
+  if [[ -n "${config_error}" ]]; then
+    echo "explorer service already stopped (current env invalid: ${config_error})"
+    echo "config_warning=${config_error}"
+    echo "config_error=${config_error}"
+  else
+    echo "explorer service already stopped"
+  fi
   emit_contract_paths "down" "unknown" "not-run-state-down" "unknown" "not-run-state-down" "not-run-state-down" "not-run-state-down"
   exit 0
 fi
@@ -223,5 +247,9 @@ if [[ -n "${pid}" && "${pid}" =~ ^[0-9]+$ ]]; then
   echo "stopped explorer service scaffold pid=${pid}"
 else
   echo "cleared explorer service scaffold stale pid file"
+fi
+if [[ -n "${config_error}" ]]; then
+  echo "config_warning=${config_error}"
+  echo "config_error=${config_error}"
 fi
 emit_contract_paths "down" "unknown" "not-run-state-down" "unknown" "not-run-state-down" "not-run-state-down" "not-run-state-down"

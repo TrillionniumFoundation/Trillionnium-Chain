@@ -200,6 +200,8 @@ TRNM_TX_CLI=./trillionnium-rust/target/debug/trnm-cli \
   - `query-normalized-audit-events?source=<source>&eventType=<eventType>&cursor=<cursor>&limit=<n>`
   - `query-task/<task_id>` 会优先读取持久化 state snapshot，其次回放 canonical node event history；只有在存在**已持久化 commit 历史**时才允许 adapter fallback 合成 `Committed` / `Revealed` 视图。仅有 reveal、缺失 commit，或把 adapter 行当作完整历史索引的接入方式，都应视为 fail-closed。
   - `query-events/<task_id>` 对 adapter fallback 只提供有界、去重后的 commit/reveal 事件尾部，不补造 pre-commit 历史；做 durable indexer / archive replica 时，应持久化 canonical node event stream，而不是依赖 adapter 行长期充当历史真相源。
+  - 对外冻结口径请以 `trillionnium-rust/docs/release/TRNM_DAY1_PUBLIC_READ_CONTRACT_2026-04-03.md` 为准；若需要逐 endpoint 参数/错误语义/明确 out-of-scope 表，请再对照 `trillionnium-rust/docs/release/TRNM_DAY1_PUBLIC_READ_CONTRACT_MATRIX_2026-04-03.md`。
+  - 这两份文档只冻结 **Day-1 minimum public read surface**，不等于 durable indexer / historical read-model / stable explorer backend 已闭环。
   - `query-events/<task_id>` 未显式传 `?limit=` 时默认返回 **100** 条，硬上限 **500** 条；超大分页请求会被 clamp，不应假设无限历史窗口。
   - `query-events/<task_id>` 的 query schema 当前 **只接受单个 `limit` 键**；未知键、重复 `limit`、大小写漂移（如 `Limit=`）、空值与编码分隔符都按 fail-closed 处理，接入侧不要假设“多余参数会被静默忽略”。
   - `query-capability-audit/<subject-or-token>` 同时接受 capability token id 与 subject DID，索引侧不必为两种 key 维护两套入口。
@@ -216,9 +218,14 @@ TRNM_TX_CLI=./trillionnium-rust/target/debug/trnm-cli \
   - 若 `trillionnium-rust/run/explorer-service/explorer-service.env` 已存在，上述三个脚本会自动加载它；值班切换时无需再手动 `source` 才能复用同一组 bind / public URL / RPC URL 配置。
   - 若需要对外暴露该脚手架，优先采用“loopback bind + reverse proxy” 形态；最小 `nginx` 骨架与 handoff 注意事项见 `trillionnium-rust/docs/runbooks/explorer-service-scaffold.md`。
   - 默认健康检查：`http://127.0.0.1:8090/healthz`；若需非默认地址，可覆盖 `EXPLORER_HOST` / `EXPLORER_PORT` 或直接传 `EXPLORER_HEALTH_URL`。
+  - 若脚手架绑定到 wildcard 地址（`EXPLORER_HOST=0.0.0.0` 或 `EXPLORER_HOST=::`），脚本仍会把 `local_health_url` 规范化为 loopback（分别是 `127.0.0.1` / `::1`）做本机探测；不要把不可路由的 wildcard 字面值抄成值班 probe 目标。
   - `explorer_service_status.sh` 会直接回显 `pid_file` / `log_file` / `health_url`，并明确标记 `service_mode=operator-facing-static-scaffold`、`production_ready=false`，同时附带最小 Day-1 read-contract 字段（`read_contract_mode`、`day1_surface`、`historical_query_scope` 等），便于 operator 在 down/degraded/handoff 场景直接确认这是 RPC-backed 的只读脚手架，而不是 durable indexer。
+  - 值班记录若要作为 read-surface handoff 证据，至少应连同 `deployment_evidence_scope=placeholder-only`、`rank1_read_surface_blocker=still-open`、`durable_indexer_status=not-implemented-in-this-scaffold`、`durable_read_anchor_complete=false` 一并抄出；不要只截取 `health=ok` 或 `state=running` 就误写成 Rank 1 已关闭。
+  - 当前 placeholder 仍故意把 durable-read anchors 保持 fail-closed：`durable_read_anchor_missing_count=6`，缺口字段为 `ingestion_source`、`checkpoint_store`、`replay_start_anchor`、`retention_scope`、`archive_owner`、`lag_slo`；运行时会同时给出 `historical_query_scope=rpc-retention-bounded` 与 `durable_read_anchor_retention_scope=rpc-window-bounded` 两层口径：前者说明当前历史查询仍受 RPC retention window 约束，后者只是 durable anchor 中 `retention_scope` 这一占位字段的保守默认值。两者都不应被误读为 durable read-model 已闭环，因此这组输出应被视为“阻塞项清单”，不是“已实现能力清单”。
   - `explorer_service_down.sh` 现在也会复用同一组 read-contract 字段，便于在 stop / stale-pid 清理 / handoff 场景保留一致的只读边界说明，而不必额外跑一次 `status`。
   - 推荐将脚手架操作与值班排障步骤统一参照：`trillionnium-rust/docs/runbooks/explorer-service-scaffold.md`
+  - 若需要直接复制 ticket / 值班交接文本骨架，优先使用：`trillionnium-rust/docs/release/TRNM_EXPLORER_SCAFFOLD_HANDOFF_TEMPLATE_2026-04-04.md`，避免 handoff 时把 placeholder 误写成 durable read service。
+  - 只有当部署已明确脱离 placeholder scaffold，并且 6 个 durable-read anchors（`ingestion_source` / `checkpoint_store` / `replay_start_anchor` / `retention_scope` / `archive_owner` / `lag_slo`）都能给出真实值时，才切换到：`trillionnium-rust/docs/release/TRNM_DURABLE_READ_SERVICE_HANDOFF_TEMPLATE_2026-04-04.md`；否则继续按 scaffold handoff 处理，避免把 blocker-open 的读面误写成 Rank 1 已关闭。
 - 自动化脚本较多，优先使用本 README、`RELEASE_READINESS.md` 和 `docs/development` 下统一调度文档作为导航。
 
 ---

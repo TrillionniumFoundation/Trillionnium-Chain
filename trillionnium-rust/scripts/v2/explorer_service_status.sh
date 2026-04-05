@@ -95,21 +95,42 @@ case "${HOST}" in
     LOCAL_PROBE_HOST="127.0.0.1"
     ;;
   ::)
-    LOCAL_PROBE_HOST="[::1]"
+    LOCAL_PROBE_HOST="::1"
     ;;
 esac
+if [[ "${LOCAL_PROBE_HOST}" == *:* && "${LOCAL_PROBE_HOST}" != \[*\] ]]; then
+  LOCAL_PROBE_HOST="[${LOCAL_PROBE_HOST}]"
+fi
 LOCAL_HEALTH_URL="http://${LOCAL_PROBE_HOST}:${PORT}/healthz"
+
+emit_durable_read_anchor_fields() {
+  echo "durable_read_anchor_complete=false"
+  echo "durable_read_anchor_missing_count=6"
+  echo "durable_read_anchor_missing_fields=ingestion_source,checkpoint_store,replay_start_anchor,retention_scope,archive_owner,lag_slo"
+  echo "durable_read_anchor_ingestion_source=missing-placeholder-scaffold"
+  echo "durable_read_anchor_checkpoint_store=missing-placeholder-scaffold"
+  echo "durable_read_anchor_replay_start_anchor=missing-placeholder-scaffold"
+  echo "durable_read_anchor_retention_scope=rpc-window-bounded"
+  echo "durable_read_anchor_archive_owner=missing-placeholder-scaffold"
+  echo "durable_read_anchor_lag_slo=missing-placeholder-scaffold"
+}
 
 emit_read_contract_fields() {
   echo "read_contract_mode=read-only"
   echo "read_contract_source=rpc-read-surface"
-  echo "day1_surface=query-task/<task_id>,query-events/<task_id>?limit=<n>,query-capability-audit/<subject-or-token>,query-normalized-audit-events?source=<source>&eventType=<eventType>&cursor=<cursor>&limit=<n>"
+  echo "day1_surface=query-task/<task_id>,query-events/<task_id>?limit=<n>,query-capability-audit/<subject-or-token>,query-normalized-audit-events?source=<source>&eventType=<type>&limit=<n>&cursor=<cursor>"
   echo "query_events_default_limit=100"
   echo "query_events_max_limit=500"
   echo "write_paths_exposed=false"
   echo "historical_query_scope=rpc-retention-bounded"
+  echo "durability_boundary=ephemeral-rpc-window-only"
   echo "archive_strategy=not-configured-static-scaffold"
   echo "read_replica_strategy=not-configured-static-scaffold"
+  echo "deployment_topology=single-process-static-http-on-one-host"
+  echo "deployment_evidence_scope=placeholder-only"
+  echo "rank1_read_surface_blocker=still-open"
+  echo "durable_indexer_status=not-implemented-in-this-scaffold"
+  emit_durable_read_anchor_fields
 }
 
 emit_invalid_config() {

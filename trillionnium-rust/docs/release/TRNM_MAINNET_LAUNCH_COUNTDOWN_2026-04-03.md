@@ -79,6 +79,8 @@
 ### 当前已具备
 - 更完整的 query / adapter / readonly contract 面
 - explorer scaffold runbook
+- placeholder-only 的 operator handoff 模板，能把当前 bring-up / status / rollback 证据写成不夸大 blocker closure 的 ticket 文本（`trillionnium-rust/docs/release/TRNM_EXPLORER_SCAFFOLD_HANDOFF_TEMPLATE_2026-04-04.md`）
+- 一份 **future-state** 的 durable read service handoff skeleton，已经把 non-placeholder deployment / replay / restore / lag / anchor 证据应如何冻结写清楚，但它只是模板，不是当前 durable read closure 证据（`trillionnium-rust/docs/release/TRNM_DURABLE_READ_SERVICE_HANDOFF_TEMPLATE_2026-04-04.md`）
 - 更清楚的 Day-1 read API 讨论基础
 
 ### 仍缺
@@ -87,6 +89,7 @@
 - stable explorer backend/API
 - archive / read replica policy
 - public read SLO / retention policy
+- 一份带 **真实 non-placeholder deployment / replay / restore / lag / durable-read anchors** 的 operator handoff packet；当前仓库虽然已有 durable handoff 模板，但还没有可把 Rank 1 关闭写成 operator-grade evidence 的真实 packet
 
 ### 这包的真正 exit criteria
 - 一份明确的 **Day-1 minimum public read surface**
