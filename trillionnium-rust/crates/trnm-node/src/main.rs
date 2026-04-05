@@ -4041,6 +4041,44 @@ mod tests {
     }
 
     #[test]
+    fn resolve_config_path_keeps_all_shipped_bootstrap_slots_on_the_same_canonical_paths() {
+        let manifest_dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR"));
+        let workspace_root = manifest_dir
+            .ancestors()
+            .nth(2)
+            .expect("trnm-node manifest should sit under trillionnium-rust/crates/trnm-node");
+
+        for slot in 1..=4 {
+            let workspace_relative = format!("configs/node{slot}.toml");
+            let repo_root_relative = format!("trillionnium-rust/configs/node{slot}.toml");
+            let curdir_workspace_relative = format!("./configs/node{slot}.toml");
+            let curdir_repo_root_relative = format!("./trillionnium-rust/configs/node{slot}.toml");
+            let expected = workspace_root.join(format!("configs/node{slot}.toml"));
+
+            assert_eq!(
+                resolve_config_path(&workspace_relative),
+                expected,
+                "{workspace_relative} must stay anchored to the shipped slot-bound bootstrap path"
+            );
+            assert_eq!(
+                resolve_config_path(&repo_root_relative),
+                expected,
+                "{repo_root_relative} must stay anchored to the shipped slot-bound bootstrap path"
+            );
+            assert_eq!(
+                resolve_config_path(&curdir_workspace_relative),
+                expected,
+                "{curdir_workspace_relative} must stay anchored to the shipped slot-bound bootstrap path"
+            );
+            assert_eq!(
+                resolve_config_path(&curdir_repo_root_relative),
+                expected,
+                "{curdir_repo_root_relative} must stay anchored to the shipped slot-bound bootstrap path"
+            );
+        }
+    }
+
+    #[test]
     fn load_config_accepts_legacy_repo_root_relative_default_path() {
         let cfg = load_config("configs/node1.toml")
             .expect("repo-root launches should resolve legacy default config path");
@@ -5645,6 +5683,154 @@ bootstrap_peers = ["127.0.0.1:27656"]
     }
 
     #[test]
+    fn validate_startup_args_accepts_repo_root_bootstrap_config() {
+        let args = Args {
+            config: "configs/node1.toml".into(),
+            block_ms: 1000,
+            max_blocks: 10,
+            demo_tasks: 2,
+            demo_keys: 2,
+            parallel_workers: 4,
+            txs_per_block: 4,
+            validators: 4,
+            byzantine: 0,
+            bft_max_rounds: 3,
+            bft_fault_rounds: 0,
+            bft_missed_proposal_threshold: 2,
+            bft_leader_penalty_rounds: 2,
+            bft_round_change_backoff_ms: 5,
+            bft_round_change_backoff_max_ms: 40,
+            bft_wal_dir: DEFAULT_BFT_WAL_DIR.into(),
+            bft_wal_mode: WalDirMode::Auto,
+            bft_checkpoint_interval: 5,
+            pouw_timeout_scan: true,
+            pouw_timeout_scan_every_blocks: 1,
+            enable_da_ordering_decouple: false,
+            rl_advisor_shadow: false,
+            rl_advisor_shadow_topk: 4,
+        };
+
+        validate_startup_args(&args)
+            .expect("repo-root bootstrap config should remain bootstrappable");
+    }
+
+    #[test]
+    fn validate_startup_args_accepts_all_shipped_repo_root_bootstrap_configs() {
+        for config in [
+            "configs/node1.toml",
+            "configs/node2.toml",
+            "configs/node3.toml",
+            "configs/node4.toml",
+        ] {
+            let args = Args {
+                config: config.into(),
+                block_ms: 1000,
+                max_blocks: 10,
+                demo_tasks: 2,
+                demo_keys: 2,
+                parallel_workers: 4,
+                txs_per_block: 4,
+                validators: 4,
+                byzantine: 0,
+                bft_max_rounds: 3,
+                bft_fault_rounds: 0,
+                bft_missed_proposal_threshold: 2,
+                bft_leader_penalty_rounds: 2,
+                bft_round_change_backoff_ms: 5,
+                bft_round_change_backoff_max_ms: 40,
+                bft_wal_dir: DEFAULT_BFT_WAL_DIR.into(),
+                bft_wal_mode: WalDirMode::Auto,
+                bft_checkpoint_interval: 5,
+                pouw_timeout_scan: true,
+                pouw_timeout_scan_every_blocks: 1,
+                enable_da_ordering_decouple: false,
+                rl_advisor_shadow: false,
+                rl_advisor_shadow_topk: 4,
+            };
+
+            validate_startup_args(&args).unwrap_or_else(|err| {
+                panic!(
+                    "all shipped Day-1 bootstrap configs should remain bootstrappable via startup preflight; {config} failed with {err:#}"
+                )
+            });
+        }
+    }
+
+    #[test]
+    fn validate_startup_args_accepts_workspace_prefixed_bootstrap_config() {
+        let args = Args {
+            config: "trillionnium-rust/configs/node1.toml".into(),
+            block_ms: 1000,
+            max_blocks: 10,
+            demo_tasks: 2,
+            demo_keys: 2,
+            parallel_workers: 4,
+            txs_per_block: 4,
+            validators: 4,
+            byzantine: 0,
+            bft_max_rounds: 3,
+            bft_fault_rounds: 0,
+            bft_missed_proposal_threshold: 2,
+            bft_leader_penalty_rounds: 2,
+            bft_round_change_backoff_ms: 5,
+            bft_round_change_backoff_max_ms: 40,
+            bft_wal_dir: DEFAULT_BFT_WAL_DIR.into(),
+            bft_wal_mode: WalDirMode::Auto,
+            bft_checkpoint_interval: 5,
+            pouw_timeout_scan: true,
+            pouw_timeout_scan_every_blocks: 1,
+            enable_da_ordering_decouple: false,
+            rl_advisor_shadow: false,
+            rl_advisor_shadow_topk: 4,
+        };
+
+        validate_startup_args(&args)
+            .expect("workspace-prefixed bootstrap config should remain bootstrappable");
+    }
+
+    #[test]
+    fn validate_startup_args_accepts_all_workspace_prefixed_bootstrap_configs() {
+        for config in [
+            "trillionnium-rust/configs/node1.toml",
+            "trillionnium-rust/configs/node2.toml",
+            "trillionnium-rust/configs/node3.toml",
+            "trillionnium-rust/configs/node4.toml",
+        ] {
+            let args = Args {
+                config: config.into(),
+                block_ms: 1000,
+                max_blocks: 10,
+                demo_tasks: 2,
+                demo_keys: 2,
+                parallel_workers: 4,
+                txs_per_block: 4,
+                validators: 4,
+                byzantine: 0,
+                bft_max_rounds: 3,
+                bft_fault_rounds: 0,
+                bft_missed_proposal_threshold: 2,
+                bft_leader_penalty_rounds: 2,
+                bft_round_change_backoff_ms: 5,
+                bft_round_change_backoff_max_ms: 40,
+                bft_wal_dir: DEFAULT_BFT_WAL_DIR.into(),
+                bft_wal_mode: WalDirMode::Auto,
+                bft_checkpoint_interval: 5,
+                pouw_timeout_scan: true,
+                pouw_timeout_scan_every_blocks: 1,
+                enable_da_ordering_decouple: false,
+                rl_advisor_shadow: false,
+                rl_advisor_shadow_topk: 4,
+            };
+
+            validate_startup_args(&args).unwrap_or_else(|err| {
+                panic!(
+                    "all workspace-prefixed shipped Day-1 bootstrap configs should remain bootstrappable via startup preflight; {config} failed with {err:#}"
+                )
+            });
+        }
+    }
+
+    #[test]
     fn validate_startup_args_accepts_curdir_prefixed_workspace_bootstrap_config() {
         let args = Args {
             config: "./trillionnium-rust/configs/node1.toml".into(),
@@ -5674,6 +5860,122 @@ bootstrap_peers = ["127.0.0.1:27656"]
 
         validate_startup_args(&args)
             .expect("curdir-prefixed workspace bootstrap config should remain bootstrappable");
+    }
+
+    #[test]
+    fn validate_startup_args_accepts_all_curdir_prefixed_workspace_bootstrap_configs() {
+        for config in [
+            "./trillionnium-rust/configs/node1.toml",
+            "./trillionnium-rust/configs/node2.toml",
+            "./trillionnium-rust/configs/node3.toml",
+            "./trillionnium-rust/configs/node4.toml",
+        ] {
+            let args = Args {
+                config: config.into(),
+                block_ms: 1000,
+                max_blocks: 10,
+                demo_tasks: 2,
+                demo_keys: 2,
+                parallel_workers: 4,
+                txs_per_block: 4,
+                validators: 4,
+                byzantine: 0,
+                bft_max_rounds: 3,
+                bft_fault_rounds: 0,
+                bft_missed_proposal_threshold: 2,
+                bft_leader_penalty_rounds: 2,
+                bft_round_change_backoff_ms: 5,
+                bft_round_change_backoff_max_ms: 40,
+                bft_wal_dir: DEFAULT_BFT_WAL_DIR.into(),
+                bft_wal_mode: WalDirMode::Auto,
+                bft_checkpoint_interval: 5,
+                pouw_timeout_scan: true,
+                pouw_timeout_scan_every_blocks: 1,
+                enable_da_ordering_decouple: false,
+                rl_advisor_shadow: false,
+                rl_advisor_shadow_topk: 4,
+            };
+
+            validate_startup_args(&args).unwrap_or_else(|err| {
+                panic!(
+                    "all curdir-prefixed shipped Day-1 bootstrap configs should remain bootstrappable via startup preflight; {config} failed with {err:#}"
+                )
+            });
+        }
+    }
+
+    #[test]
+    fn validate_startup_args_accepts_curdir_prefixed_repo_root_bootstrap_config() {
+        let args = Args {
+            config: "./configs/node1.toml".into(),
+            block_ms: 1000,
+            max_blocks: 10,
+            demo_tasks: 2,
+            demo_keys: 2,
+            parallel_workers: 4,
+            txs_per_block: 4,
+            validators: 4,
+            byzantine: 0,
+            bft_max_rounds: 3,
+            bft_fault_rounds: 0,
+            bft_missed_proposal_threshold: 2,
+            bft_leader_penalty_rounds: 2,
+            bft_round_change_backoff_ms: 5,
+            bft_round_change_backoff_max_ms: 40,
+            bft_wal_dir: DEFAULT_BFT_WAL_DIR.into(),
+            bft_wal_mode: WalDirMode::Auto,
+            bft_checkpoint_interval: 5,
+            pouw_timeout_scan: true,
+            pouw_timeout_scan_every_blocks: 1,
+            enable_da_ordering_decouple: false,
+            rl_advisor_shadow: false,
+            rl_advisor_shadow_topk: 4,
+        };
+
+        validate_startup_args(&args)
+            .expect("curdir-prefixed repo-root bootstrap config should remain bootstrappable");
+    }
+
+    #[test]
+    fn validate_startup_args_accepts_all_curdir_prefixed_repo_root_bootstrap_configs() {
+        for config in [
+            "./configs/node1.toml",
+            "./configs/node2.toml",
+            "./configs/node3.toml",
+            "./configs/node4.toml",
+        ] {
+            let args = Args {
+                config: config.into(),
+                block_ms: 1000,
+                max_blocks: 10,
+                demo_tasks: 2,
+                demo_keys: 2,
+                parallel_workers: 4,
+                txs_per_block: 4,
+                validators: 4,
+                byzantine: 0,
+                bft_max_rounds: 3,
+                bft_fault_rounds: 0,
+                bft_missed_proposal_threshold: 2,
+                bft_leader_penalty_rounds: 2,
+                bft_round_change_backoff_ms: 5,
+                bft_round_change_backoff_max_ms: 40,
+                bft_wal_dir: DEFAULT_BFT_WAL_DIR.into(),
+                bft_wal_mode: WalDirMode::Auto,
+                bft_checkpoint_interval: 5,
+                pouw_timeout_scan: true,
+                pouw_timeout_scan_every_blocks: 1,
+                enable_da_ordering_decouple: false,
+                rl_advisor_shadow: false,
+                rl_advisor_shadow_topk: 4,
+            };
+
+            validate_startup_args(&args).unwrap_or_else(|err| {
+                panic!(
+                    "all curdir-prefixed repo-root shipped Day-1 bootstrap configs should remain bootstrappable via startup preflight; {config} failed with {err:#}"
+                )
+            });
+        }
     }
 
     #[test]
