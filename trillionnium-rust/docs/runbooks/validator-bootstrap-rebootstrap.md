@@ -122,11 +122,14 @@ Minimum packet fields:
 - `startup_order_note=` stating whether startup order matters for this rehearsal and who is expected to start first
 - `rollback_owner=` naming who can declare the ceremony aborted and which command/process stop is authoritative
 
-Recommended for any packet expected to feed a public-mainnet readiness review:
+Required for `public-mainnet-input` packets:
 - `packet_generated_at=` in UTC so later evidence can tie the ceremony packet to the bootstrap window explicitly
-- `packet_distribution_path=` naming the exact shared folder, ticket, or immutable artifact bundle every operator reviewed; for `public-mainnet-input`, use one explicit absolute path so operators do not normalize different relative paths by hand
+- `packet_distribution_path=` naming the exact generated ceremony packet file every operator reviewed (or the immutable bundle member that contains that packet); use one explicit absolute path so operators do not normalize different relative paths by hand or guess which file inside a folder/ticket was authoritative
 - `operator_contact=` repeated once per operator so a missing acknowledgment can be resolved without ambiguity
 - `abort_condition=` repeated for the specific fail-closed triggers that cause the ceremony to stop immediately (for example mismatched genesis hash, duplicate `node_id`, or wrong assigned worktree)
+
+Recommended for non-public rehearsal/handoff packets:
+- still include `packet_generated_at=` and `packet_distribution_path=` so later review can tie one exact packet to one bootstrap window and distribution channel
 
 Copyable packet skeleton:
 
@@ -134,7 +137,7 @@ Copyable packet skeleton:
 ceremony_id=mn04-bootstrap-YYYYMMDD-HHMMZ
 ceremony_scope=operator-handoff
 packet_generated_at=2026-03-31T06:21:00Z
-packet_distribution_path=/abs/path/or/ticket
+packet_distribution_path=/abs/path/to/bootstrap-ceremony.packet.txt
 validator_set_version=mainnet-candidate-2026-03-31
 startup_order_note=node1 -> node2 -> node3 -> node4
 rollback_owner=primary-operator
@@ -143,24 +146,25 @@ abort_condition=duplicate node_id
 abort_condition=assigned worktree/ref mismatch
 
 genesis_artifact_path=/abs/path/to/genesis.json
-genesis_artifact_sha256=<64-char-sha256>
+genesis_artifact_sha256=<64-character-genesis-sha256>
 
 authority_note=all operators must acknowledge the exact packet above before any validator starts
 
 validator_entry=validator_name=node1;validator_owner=alice;node_id=node1;config_path=/abs/path/to/configs/node1.toml;p2p_addr=127.0.0.1:26656;rpc_addr=127.0.0.1:26657
 validator_entry_hash=<deterministic-sha256-from-validator_name/node_id/config_path/p2p_addr/rpc_addr>
-operator_contact=node1=<chat/email/oncall>
-operator_ack=alice checked genesis_artifact_sha256=<64-char-sha256>;config_path=/abs/path/to/configs/node1.toml;validator_name=node1;validator_entry_hash=<deterministic-sha256-from-validator_name/node_id/config_path/p2p_addr/rpc_addr>
+operator_contact=node1=<chat/email/oncall-for-node1>
+operator_ack=alice checked genesis_artifact_sha256=<64-character-genesis-sha256>;config_path=/abs/path/to/configs/node1.toml;validator_name=node1;validator_entry_hash=<deterministic-sha256-from-validator_name/node_id/config_path/p2p_addr/rpc_addr>
 operator_ack_signature_path=/abs/path/to/alice-ack.txt
 
 validator_entry=validator_name=node2;validator_owner=bob;node_id=node2;config_path=/abs/path/to/configs/node2.toml;p2p_addr=127.0.0.1:27656;rpc_addr=127.0.0.1:27657
 validator_entry_hash=<deterministic-sha256-from-validator_name/node_id/config_path/p2p_addr/rpc_addr>
-operator_contact=node2=<chat/email/oncall>
-operator_ack=bob checked genesis_artifact_sha256=<64-char-sha256>;config_path=/abs/path/to/configs/node2.toml;validator_name=node2;validator_entry_hash=<deterministic-sha256-from-validator_name/node_id/config_path/p2p_addr/rpc_addr>
+operator_contact=node2=<chat/email/oncall-for-node2>
+operator_ack=bob checked genesis_artifact_sha256=<64-character-genesis-sha256>;config_path=/abs/path/to/configs/node2.toml;validator_name=node2;validator_entry_hash=<deterministic-sha256-from-validator_name/node_id/config_path/p2p_addr/rpc_addr>
 operator_ack_digest=<optional-sha256-of-bob-ack>
 ```
 
 Interpretation rule:
+- `operator_contact=` should identify one concrete durable contact route per validator/operator (for example `node1=alice-oncall@...` or a ticket/chat handle scoped to that validator) rather than a shared generic team alias copied into every entry
 - chat-only `operator_ack=` is acceptable for local rehearsal, but if the packet is later quoted in a mainnet readiness review, preserve either `operator_ack_signature_path=` or `operator_ack_digest=` for each operator whose approval is being relied upon
 - if the packet claims a durable acknowledgment exists but cannot name the path or digest, treat that acknowledgment as missing instead of implicitly trusted
 
@@ -188,7 +192,7 @@ python3 scripts/v2/check_validator_config_bundle.py \
 python3 scripts/v2/check_validator_config_bundle.py \
   --emit-ceremony-packet \
   --genesis-artifact-path /abs/path/to/genesis.json \
-  --genesis-artifact-sha256 <64-char-sha256> \
+  --genesis-artifact-sha256 <64-character-genesis-sha256> \
   trillionnium-rust/configs/node1.toml \
   trillionnium-rust/configs/node2.toml \
   trillionnium-rust/configs/node3.toml \
@@ -206,12 +210,12 @@ python3 scripts/v2/check_validator_config_bundle.py \
   --ceremony-id mn04-bootstrap-20260331-0621Z \
   --ceremony-scope public-mainnet-input \
   --packet-generated-at 2026-03-31T06:21:00Z \
-  --packet-distribution-path /abs/path/or/ticket \
+  --packet-distribution-path /abs/path/to/bootstrap-ceremony.packet.txt \
   --validator-set-version mainnet-candidate-2026-03-31 \
   --startup-order-note 'node1 -> node2 -> node3 -> node4' \
   --rollback-owner primary-operator \
   --genesis-artifact-path /abs/path/to/genesis.json \
-  --genesis-artifact-sha256 <64-char-sha256> \
+  --genesis-artifact-sha256 <64-character-genesis-sha256> \
   trillionnium-rust/configs/node1.toml \
   trillionnium-rust/configs/node2.toml \
   trillionnium-rust/configs/node3.toml \
@@ -220,8 +224,9 @@ python3 scripts/v2/check_validator_config_bundle.py \
 
 Fail-closed rule for generated packets:
 - if `packet_generated_at=` or `packet_distribution_path=` is still a placeholder when the packet is shared for operator acknowledgment, do not treat the packet as ceremony-ready
-- if `ceremony_scope=public-mainnet-input`, require operators to replace `<owner>` / `<chat/email/oncall>` / `<optional-ack-path>` placeholders before startup instead of relying on a later cleanup pass
-- if `ceremony_scope=public-mainnet-input`, do not treat a generated packet as signed/public-mainnet handoff evidence until every `validator_entry=` has a named owner/contact and every `operator_ack` / `operator_ack_signature_path` line has been filled with the real acknowledgment artifact for that validator; when `validator_entry_hash=` is emitted, each acknowledgment must quote the same hash verbatim, and each acknowledgment must also reuse the emitted absolute `config_path=` verbatim instead of rewriting it as a shell-relative path
+- if `packet_distribution_path=` names only a folder, chat ticket, or bundle root without one exact packet file path, treat the handoff as ambiguous and regenerate/re-record the packet path before startup
+- if `ceremony_scope=public-mainnet-input`, require operators to replace the per-validator `<owner-for-<validator>>` / `<chat/email/oncall-for-<validator>>` placeholders plus any `<optional-ack-path>` / `<optional-sha256-of-ack>` placeholders before startup instead of relying on a later cleanup pass
+- if `ceremony_scope=public-mainnet-input`, do not treat a generated packet as signed/public-mainnet handoff evidence until every `validator_entry=` has a named owner/contact and every `operator_ack` / `operator_ack_signature_path` / `operator_ack_digest` line has been filled with the real acknowledgment artifact or digest for that validator; when `validator_entry_hash=` is emitted, each acknowledgment must quote the same hash verbatim, and each acknowledgment must also reuse the emitted absolute `config_path=` verbatim instead of rewriting it as a shell-relative path
 - if `ceremony_scope=public-mainnet-input`, require `genesis_artifact_path=` and `packet_distribution_path=` to be explicit absolute paths rather than relative paths copied from a local shell
 - if `ceremony_scope=public-mainnet-input`, require `genesis_artifact_sha256=` to be a real 64-character hex SHA-256 digest instead of a shorthand label or truncated checksum
 

@@ -18,10 +18,10 @@ Primary references:
 - `docs/runbooks/validator-bootstrap-rebootstrap.md`
 - `docs/release/TRNM_VALIDATOR_RELEASE_HANDOFF.md`
 - `scripts/v2/check_validator_config_bundle.py`
-- `trillionnium-rust/configs/node1.toml`
-- `trillionnium-rust/configs/node2.toml`
-- `trillionnium-rust/configs/node3.toml`
-- `trillionnium-rust/configs/node4.toml`
+- `configs/node1.toml`
+- `configs/node2.toml`
+- `configs/node3.toml`
+- `configs/node4.toml`
 
 ## Operator invariants
 
@@ -91,13 +91,13 @@ Interpretation rule:
 Required files:
 
 ```bash
-ls trillionnium-rust/configs/node1.toml trillionnium-rust/configs/node2.toml trillionnium-rust/configs/node3.toml trillionnium-rust/configs/node4.toml
+ls configs/node1.toml configs/node2.toml configs/node3.toml configs/node4.toml
 ```
 
 Recommended targeted validation:
 
 ```bash
-python3 scripts/v2/check_validator_config_bundle.py \
+python3 trillionnium-rust/scripts/v2/check_validator_config_bundle.py \
   trillionnium-rust/configs/node1.toml \
   trillionnium-rust/configs/node2.toml \
   trillionnium-rust/configs/node3.toml \
@@ -107,10 +107,10 @@ python3 scripts/v2/check_validator_config_bundle.py \
 If the artifact is headed into a shared bootstrap ceremony packet, generate the skeleton from the validated bundle instead of free-typing validator entries:
 
 ```bash
-python3 scripts/v2/check_validator_config_bundle.py \
+python3 trillionnium-rust/scripts/v2/check_validator_config_bundle.py \
   --emit-ceremony-packet \
   --genesis-artifact-path /abs/path/to/genesis.json \
-  --genesis-artifact-sha256 <64-char-sha256> \
+  --genesis-artifact-sha256 <64-character-genesis-sha256> \
   trillionnium-rust/configs/node1.toml \
   trillionnium-rust/configs/node2.toml \
   trillionnium-rust/configs/node3.toml \
@@ -122,17 +122,17 @@ For `public-mainnet-input`, fill the ceremony metadata up front instead of forwa
 Copyable stricter example:
 
 ```bash
-python3 scripts/v2/check_validator_config_bundle.py \
+python3 trillionnium-rust/scripts/v2/check_validator_config_bundle.py \
   --emit-ceremony-packet \
   --ceremony-id mn04-bootstrap-20260331-0621Z \
   --ceremony-scope public-mainnet-input \
   --packet-generated-at 2026-03-31T06:21:00Z \
-  --packet-distribution-path /abs/path/or/ticket \
+  --packet-distribution-path /abs/path/to/bootstrap-ceremony.packet.txt \
   --validator-set-version mainnet-candidate-2026-03-31 \
   --startup-order-note 'node1 -> node2 -> node3 -> node4' \
   --rollback-owner primary-operator \
   --genesis-artifact-path /abs/path/to/genesis.json \
-  --genesis-artifact-sha256 <64-char-sha256> \
+  --genesis-artifact-sha256 <64-character-genesis-sha256> \
   trillionnium-rust/configs/node1.toml \
   trillionnium-rust/configs/node2.toml \
   trillionnium-rust/configs/node3.toml \
@@ -157,17 +157,21 @@ For any artifact expected to feed validator bootstrap/handoff, preserve one shar
 - `validator_entry_hash=` per validator so acknowledgments can bind back to one immutable descriptor instead of a hand-written tuple
 - `operator_ack=` lines must reuse the emitted `validator_entry.config_path` verbatim; if the generated packet uses an absolute `config_path=`, do not rewrite it as a relative path in the acknowledgment artifact
 
-Recommended for public-mainnet-facing evidence:
+Required for `public-mainnet-input` evidence:
 - `packet_generated_at=` in UTC
-- `packet_distribution_path=` as one explicit absolute path every operator reviewed
-- `operator_contact=` per validator owner so missing acknowledgments can be chased without ambiguity
+- `packet_distribution_path=` as one explicit absolute path to the generated ceremony packet file every operator reviewed
+- `operator_contact=` per validator owner so missing acknowledgments can be chased without ambiguity; each contact must identify one concrete validator-scoped route (for example one on-call alias/chat handle per validator) instead of reusing one generic team alias across the full packet
 - `operator_ack=` per validator owner
-- `operator_ack_signature_path=` or `operator_ack_digest=` when durable acknowledgment is required
+- `operator_ack_signature_path=` or `operator_ack_digest=` when durable acknowledgment is required; for each validator/operator, fill at least one of these fields before treating the packet as signed/public-mainnet handoff evidence
 - explicit `abort_condition=` lines for mismatched genesis hash, duplicate node identity, or wrong worktree/ref
 - a concrete `validator_set_version=` (for example `mainnet-candidate-2026-03-31`) instead of a template/default label
 
+Recommended for non-public rehearsal/handoff packets:
+- still include `packet_generated_at=` and `packet_distribution_path=` so later review can tie one exact packet to one bootstrap window and distribution channel
+
 Interpretation rule:
 - if operators receive different packet contents for the same `ceremony_id`, stop and normalize to one packet before startup
+- if `packet_distribution_path=` names only a folder, ticket, or bundle root without one exact packet file path, treat the handoff as ambiguous and regenerate/re-record the packet path before startup
 - if a public-mainnet-input packet still contains placeholders, relative packet/genesis paths, truncated hashes, or the default `validator_set_version=v1`, do not treat it as ceremony-ready
 
 ## Rollback

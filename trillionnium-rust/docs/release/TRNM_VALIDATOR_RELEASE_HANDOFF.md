@@ -4,6 +4,10 @@ Cosmos/CometBFT-style operator discipline for a local Stage-1 release rehearsal.
 
 This document is intentionally narrow: it tells a validator/operator **what to run, what evidence must exist, what blocks a release, and how to back out cleanly**.
 
+Path discipline note:
+- all validator config references in this handoff use the repo-root-qualified form `trillionnium-rust/configs/node*.toml`
+- do not rewrite them to legacy root-level `configs/node*.toml` paths in tickets, packets, or operator acknowledgments
+
 ## Scope
 
 Use this handoff when rehearsing or validating a Stage-1 TRNM release candidate on a clean worktree.

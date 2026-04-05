@@ -81,10 +81,10 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     )
     parser.add_argument(
         "--packet-distribution-path",
-        default="<shared-folder-or-ticket>",
+        default="<absolute-path-to-ceremony-packet>",
         help=(
             "packet_distribution_path value to print when --emit-ceremony-packet is used; "
-            "public-mainnet-input requires an explicit absolute path"
+            "public-mainnet-input requires one exact absolute path to the generated ceremony packet file"
         ),
     )
     parser.add_argument(
@@ -98,24 +98,30 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     parser.add_argument(
         "--startup-order-note",
         default="<startup-order>",
-        help="startup_order_note value to print when --emit-ceremony-packet is used",
+        help=(
+            "startup_order_note value to print when --emit-ceremony-packet is used; "
+            "public-mainnet-input requires replacing placeholder/default wording"
+        ),
     )
     parser.add_argument(
         "--rollback-owner",
         default="<rollback-owner>",
-        help="rollback_owner value to print when --emit-ceremony-packet is used",
+        help=(
+            "rollback_owner value to print when --emit-ceremony-packet is used; "
+            "public-mainnet-input requires an explicit non-placeholder owner"
+        ),
     )
     parser.add_argument(
         "--genesis-artifact-path",
-        default="<genesis-artifact-path>",
+        default="<absolute-path-to-genesis-artifact>",
         help=(
             "genesis_artifact_path value to print when --emit-ceremony-packet is used; "
-            "public-mainnet-input requires an explicit absolute path"
+            "public-mainnet-input requires one exact absolute path to the genesis artifact or bundle member"
         ),
     )
     parser.add_argument(
         "--genesis-artifact-sha256",
-        default="<genesis-sha256>",
+        default="<64-character-genesis-sha256>",
         help=(
             "genesis_artifact_sha256 value to print when --emit-ceremony-packet is used; "
             "public-mainnet-input requires a full 64-character hex SHA-256 digest"
@@ -248,35 +254,67 @@ def load_config(path: Path) -> dict[str, object]:
     return data
 
 
-def validate_packet_line_value(value: object, field: str) -> None:
+def validate_packet_line_value(value: str, field: str) -> None:
     if not isinstance(value, str):
         fail(f"invalid ceremony packet arguments: {field} must be a string")
+    if value != value.strip():
+        fail(f"invalid ceremony packet arguments: {field} must not contain leading or trailing whitespace")
     if not value:
         fail(f"invalid ceremony packet arguments: {field} must not be empty")
-    if value != value.strip():
-        fail(
-            f"invalid ceremony packet arguments: {field} must not contain leading or trailing whitespace"
-        )
+    if "\n" in value or "\r" in value:
+        fail(f"invalid ceremony packet arguments: {field} must be a single line")
     if any(ord(ch) < 32 or ord(ch) == 127 for ch in value):
         fail(f"invalid ceremony packet arguments: {field} must not contain control characters")
 
 
-def validate_packet_atom_value(value: object, field: str) -> None:
+
+def validate_packet_atom_value(value: str, field: str) -> None:
     validate_packet_line_value(value, field)
-    assert isinstance(value, str)
-    if any(ch in value for ch in (";", "\n", "\r")):
-        fail(
-            f"invalid ceremony packet arguments: {field} must not contain semicolons or line breaks"
-        )
+    if any(ch in value for ch in (";", "=")):
+        fail(f"invalid ceremony packet arguments: {field} must not contain ';' or '=' separators")
 
 
-def validate_packet_path(value: object, field: str) -> None:
+
+def validate_packet_path(value: str, field: str) -> None:
     validate_packet_line_value(value, field)
-    assert isinstance(value, str)
-    if not Path(value).is_absolute():
+    path = Path(value)
+    if not path.is_absolute():
         fail(
             f"invalid ceremony packet arguments: public-mainnet-input requires {field} to be an absolute path"
         )
+    if "/./" in value or value.endswith("/.") or any(part == ".." for part in path.parts):
+        fail(
+            f"invalid ceremony packet arguments: public-mainnet-input requires {field} to avoid '.' or '..' path segments"
+        )
+
+
+
+def validate_packet_file_path(value: str, field: str) -> None:
+    validate_packet_path(value, field)
+    normalized = value.rstrip("/")
+    if not normalized or normalized == "/":
+        fail(
+            f"invalid ceremony packet arguments: public-mainnet-input requires {field} to name one exact packet file"
+        )
+    if Path(value).name in {"", ".", ".."} or value.endswith("/"):
+        fail(
+            f"invalid ceremony packet arguments: public-mainnet-input requires {field} to name one exact packet file"
+        )
+
+
+
+def validate_packet_artifact_path(value: str, field: str) -> None:
+    validate_packet_path(value, field)
+    normalized = value.rstrip("/")
+    if not normalized or normalized == "/":
+        fail(
+            f"invalid ceremony packet arguments: public-mainnet-input requires {field} to name one exact artifact path"
+        )
+    if Path(value).name in {"", ".", ".."} or value.endswith("/"):
+        fail(
+            f"invalid ceremony packet arguments: public-mainnet-input requires {field} to name one exact artifact path"
+        )
+
 
 
 def validate_ceremony_packet_metadata(args: argparse.Namespace) -> None:
@@ -293,6 +331,17 @@ def validate_ceremony_packet_metadata(args: argparse.Namespace) -> None:
     }
     for field, value in packet_line_values.items():
         validate_packet_line_value(value, field)
+
+    packet_atom_values = {
+        "ceremony_id": args.ceremony_id,
+        "ceremony_scope": args.ceremony_scope,
+        "packet_generated_at": args.packet_generated_at,
+        "validator_set_version": args.validator_set_version,
+        "rollback_owner": args.rollback_owner,
+        "genesis_artifact_sha256": args.genesis_artifact_sha256,
+    }
+    for field, value in packet_atom_values.items():
+        validate_packet_atom_value(value, field)
 
     if args.ceremony_scope != "public-mainnet-input":
         return
@@ -337,8 +386,14 @@ def validate_ceremony_packet_metadata(args: argparse.Namespace) -> None:
             "invalid ceremony packet arguments: public-mainnet-input requires genesis_artifact_sha256 to be a 64-character hex sha256 digest"
         )
 
-    validate_packet_path(args.genesis_artifact_path, "genesis_artifact_path")
-    validate_packet_path(args.packet_distribution_path, "packet_distribution_path")
+    validate_packet_artifact_path(args.genesis_artifact_path, "genesis_artifact_path")
+    validate_packet_file_path(args.packet_distribution_path, "packet_distribution_path")
+    normalized_genesis_artifact_path = Path(args.genesis_artifact_path).resolve(strict=False)
+    normalized_packet_distribution_path = Path(args.packet_distribution_path).resolve(strict=False)
+    if normalized_genesis_artifact_path == normalized_packet_distribution_path:
+        fail(
+            "invalid ceremony packet arguments: public-mainnet-input requires packet_distribution_path and genesis_artifact_path to name different files"
+        )
 
 
 def build_validator_entry_hash(entry: dict[str, str], config_path: str) -> str:
@@ -386,26 +441,28 @@ def emit_ceremony_packet(args: argparse.Namespace, entries: list[dict[str, str]]
         validate_packet_atom_value(entry["p2p_addr"], "validator_entry.p2p_addr")
         validate_packet_atom_value(entry["rpc_addr"], "validator_entry.rpc_addr")
         validator_entry_hash = build_validator_entry_hash(entry, config_path)
+        validator_owner_placeholder = f"<owner-for-{validator_name}>"
+        operator_contact_placeholder = f"<chat/email/oncall-for-{validator_name}>"
         print(
             "validator_entry="
             f"validator_name={validator_name};"
-            "validator_owner=<owner>;"
+            f"validator_owner={validator_owner_placeholder};"
             f"node_id={validator_name};"
             f"config_path={config_path};"
             f"p2p_addr={entry['p2p_addr']};"
             f"rpc_addr={entry['rpc_addr']}"
         )
         print("validator_entry_hash=" + validator_entry_hash)
-        print(f"operator_contact={validator_name}=<chat/email/oncall>")
+        print(f"operator_contact={validator_name}={operator_contact_placeholder}")
         print(
             "operator_ack="
-            f"<owner> checked genesis_artifact_sha256={args.genesis_artifact_sha256};"
+            f"{validator_owner_placeholder} checked genesis_artifact_sha256={args.genesis_artifact_sha256};"
             f"config_path={config_path};"
             f"validator_name={validator_name};"
             f"validator_entry_hash={validator_entry_hash}"
         )
-        print("operator_ack_signature_path=<optional-ack-path>")
-        print("operator_ack_digest=<optional-sha256-of-ack>")
+        print(f"operator_ack_signature_path=<optional-ack-path-for-{validator_name}>")
+        print(f"operator_ack_digest=<optional-sha256-of-{validator_name}-ack>")
         print()
 
 
