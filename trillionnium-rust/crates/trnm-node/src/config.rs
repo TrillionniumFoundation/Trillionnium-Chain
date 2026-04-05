@@ -3255,7 +3255,6 @@ mod tests {
             "Triage them in shipped slot order: `trillionnium-rust/configs/node1.toml` is the anchor, `trillionnium-rust/configs/node2.toml` is follower slot 2, `trillionnium-rust/configs/node3.toml` is follower slot 3, and `trillionnium-rust/configs/node4.toml` is follower slot 4; do not relabel a later file as an earlier slot when diagnosing bootstrap failures.",
             "During incident triage, require the filename slot, `node_id`, and listener stride to agree (`nodeN.toml` ↔ `nodeN` ↔ `127.0.0.1:26656+1000*(N-1)` / `127.0.0.1:26657+1000*(N-1)`); if any one of the three surfaces drifts, treat it as slot drift and fail closed.",
             "If `load_config` reports an unknown field or tuple drift, fix the exact repo-root slot file named by the error surface and the exact field named in that error; do not guess across sibling configs or translate ad-hoc aliases by hand.",
-            "Do not add ad-hoc `bootstrap_nodes`, `bootstrap_node`, `bootstrap_peers`, `bootstrap_peer`, `bootstrapNodes`, `bootstrapNode`, `bootstrapPeers`, `bootstrapPeer`, `bootstrap_addr`, `bootstrap_addrs`, `bootstrapAddr`, `bootstrapAddrs`, `seed_nodes`, `seed_node`, `seed_peers`, `seed_peer`, `seedNodes`, `seedNode`, `seedPeers`, `seedPeer`, `seed_addr`, `seed_addrs`, `seedAddr`, `seedAddrs`, `seeds`, `bootnodes`, `bootnode`, `bootNodes`, `bootNode`, `boot_peers`, `boot_peer`, `boot_addr`, `boot_addrs`, `bootAddr`, `bootAddrs`, `bootPeers`, `bootPeer`, `persistent_peers`, `persistent_peer`, `persistent_addr`, `persistent_addrs`, `persistentAddr`, `persistentAddrs`, `persistentPeers`, `persistentPeer`, `persistent_nodes`, `persistent_node`, `persistentNodes`, or `persistentNode` fields to these shipped fixtures; the local rehearsal schema stays the minimal three-field contract until a real peer-management surface exists.",
             "Do not add extra shipped topology files such as `node5.toml`, alternate slot aliases, or helper sidecar configs under `configs/`; the deterministic local bootstrap fixture remains exactly `README.md` plus `node1.toml` through `node4.toml` until a separate peer-management surface is introduced.",
             "The regression tests in `crates/trnm-node/src/config.rs` are the source of truth for the exact fixture invariants.",
         ] {
@@ -3265,6 +3264,20 @@ mod tests {
                 readme_path.display()
             );
         }
+
+        let forbidden_alias_fields = FORBIDDEN_BOOTSTRAP_ALIAS_FIELDS
+            .iter()
+            .map(|(field, _)| format!("`{field}`"))
+            .collect::<Vec<_>>();
+        let forbidden_alias_phrase = format!(
+            "Do not add ad-hoc {} fields to these shipped fixtures; the local rehearsal schema stays the minimal three-field contract until a real peer-management surface exists.",
+            join_with_oxford_comma(&forbidden_alias_fields)
+        );
+        assert!(
+            readme.contains(&forbidden_alias_phrase),
+            "{} must keep the forbidden bootstrap alias README remediation list derived from FORBIDDEN_BOOTSTRAP_ALIAS_FIELDS so parse-time diagnostics and operator guidance cannot silently drift",
+            readme_path.display()
+        );
 
         let expected_repo_root_slot_paths = [
             "`trillionnium-rust/configs/node1.toml`",
