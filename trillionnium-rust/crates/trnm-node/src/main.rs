@@ -4622,6 +4622,45 @@ mod tests {
     }
 
     #[test]
+    fn default_cli_config_stays_pinned_to_shipped_bootstrap_anchor() {
+        let args = Args::parse_from(["trnm-node"]);
+        assert_eq!(
+            args.config, "configs/node1.toml",
+            "default trnm-node config path must stay pinned to the shipped bootstrap anchor fixture"
+        );
+
+        let cfg = load_config(&args.config).unwrap_or_else(|err| {
+            panic!(
+                "{} should remain loadable as the default shipped bootstrap anchor: {err:#}",
+                args.config
+            )
+        });
+        let p2p_socket: SocketAddr = cfg
+            .p2p_addr
+            .parse()
+            .unwrap_or_else(|err| panic!("default p2p_addr should parse: {err}"));
+        let rpc_socket: SocketAddr = cfg
+            .rpc_addr
+            .parse()
+            .unwrap_or_else(|err| panic!("default rpc_addr should parse: {err}"));
+
+        assert_eq!(
+            cfg.node_id, "node1",
+            "default trnm-node config must keep node1 as the shipped bootstrap anchor id"
+        );
+        assert_eq!(
+            p2p_socket,
+            "127.0.0.1:26656".parse().expect("socket literal should parse"),
+            "default trnm-node config must keep the shipped bootstrap anchor p2p tuple"
+        );
+        assert_eq!(
+            rpc_socket,
+            "127.0.0.1:26657".parse().expect("socket literal should parse"),
+            "default trnm-node config must keep the shipped bootstrap anchor rpc tuple"
+        );
+    }
+
+    #[test]
     fn shipped_node_configs_form_a_unique_local_bootstrap_topology() {
         use std::{collections::HashSet, net::SocketAddr};
 
@@ -4651,6 +4690,59 @@ mod tests {
         assert_eq!(
             shipped_node_configs, expected_shipped_node_configs,
             "shipped bootstrap config set must stay exactly node1.toml..node4.toml to keep deterministic peer formation fixtures intact"
+        );
+        let shipped_topology_file_names = std::fs::read_dir(&shipped_config_dir)
+            .unwrap_or_else(|err| {
+                panic!(
+                    "{} should stay readable for shipped bootstrap topology file checks: {err}",
+                    shipped_config_dir.display()
+                )
+            })
+            .map(|entry| {
+                let entry = entry.unwrap_or_else(|err| {
+                    panic!(
+                        "{} must fail closed if a shipped bootstrap topology entry cannot be read: {err}",
+                        shipped_config_dir.display()
+                    )
+                });
+                let file_type = entry.file_type().unwrap_or_else(|err| {
+                    panic!(
+                        "{} must fail closed if a shipped bootstrap topology entry file type cannot be read: {err}",
+                        shipped_config_dir.display()
+                    )
+                });
+                if !file_type.is_file() || file_type.is_symlink() {
+                    return None;
+                }
+                Some(entry.file_name().to_string_lossy().into_owned())
+            })
+            .collect::<Option<Vec<_>>>()
+            .expect("non-regular shipped bootstrap topology entries should stay excluded deterministically");
+        let shipped_topology_files = shipped_topology_file_names.iter().cloned().collect::<HashSet<_>>();
+        let expected_shipped_topology_files = HashSet::from([
+            String::from("README.md"),
+            String::from("node1.toml"),
+            String::from("node2.toml"),
+            String::from("node3.toml"),
+            String::from("node4.toml"),
+        ]);
+        assert_eq!(
+            shipped_topology_files,
+            expected_shipped_topology_files,
+            "configs/ must remain exactly README.md plus node1.toml..node4.toml so bootstrap topology cannot silently grow extra shipped fixtures or helper sidecars"
+        );
+        let mut sorted_shipped_topology_file_names = shipped_topology_file_names;
+        sorted_shipped_topology_file_names.sort();
+        assert_eq!(
+            sorted_shipped_topology_file_names,
+            vec![
+                String::from("README.md"),
+                String::from("node1.toml"),
+                String::from("node2.toml"),
+                String::from("node3.toml"),
+                String::from("node4.toml"),
+            ],
+            "configs/ file entries must remain in deterministic README + node1..node4 lexical slot order so bootstrap topology discovery cannot hide slot drift behind set equality"
         );
 
         let mut node_ids = HashSet::new();
@@ -4837,6 +4929,64 @@ mod tests {
             1,
             "shipped local bootstrap configs must all stay on the same loopback IP for deterministic peer dialing"
         );
+
+        let mut shipped_nodes_by_rpc_port = shipped_nodes.clone();
+        shipped_nodes_by_rpc_port.sort_by_key(|(_, _, rpc_socket, _)| rpc_socket.port());
+        let anchor = shipped_nodes_by_rpc_port
+            .first()
+            .expect("shipped bootstrap fixture should include node1 RPC anchor");
+        assert_eq!(
+            anchor.1, "node1",
+            "{} must remain the unique shipped Day-1 bootstrap anchor id when RPC ports are ordered",
+            anchor.0
+        );
+        assert_eq!(
+            anchor.2.port(), 26657,
+            "{} must remain the unique shipped Day-1 bootstrap anchor RPC port",
+            anchor.0
+        );
+        for (config_path, node_id, rpc_socket, _) in shipped_nodes_by_rpc_port.iter().skip(1) {
+            assert_ne!(
+                node_id, &anchor.1,
+                "{config_path} must not reuse the shipped bootstrap anchor node_id {} on a later RPC slot",
+                anchor.1
+            );
+            assert!(
+                rpc_socket.port() > anchor.2.port(),
+                "{config_path} rpc_addr {} must stay above the shipped bootstrap anchor RPC port {} so later slots cannot silently become equivalent bootstrap anchors",
+                rpc_socket,
+                anchor.2.port()
+            );
+        }
+
+        let mut shipped_nodes_by_p2p_port = shipped_nodes.clone();
+        shipped_nodes_by_p2p_port.sort_by_key(|(_, _, _, p2p_socket)| p2p_socket.port());
+        let p2p_anchor = shipped_nodes_by_p2p_port
+            .first()
+            .expect("shipped bootstrap fixture should include node1 P2P anchor");
+        assert_eq!(
+            p2p_anchor.1, "node1",
+            "{} must remain the unique shipped Day-1 bootstrap anchor id when P2P ports are ordered",
+            p2p_anchor.0
+        );
+        assert_eq!(
+            p2p_anchor.3.port(), 26656,
+            "{} must remain the unique shipped Day-1 bootstrap anchor P2P port",
+            p2p_anchor.0
+        );
+        for (config_path, node_id, _, p2p_socket) in shipped_nodes_by_p2p_port.iter().skip(1) {
+            assert_ne!(
+                node_id, &p2p_anchor.1,
+                "{config_path} must not reuse the shipped bootstrap anchor node_id {} on a later P2P slot",
+                p2p_anchor.1
+            );
+            assert!(
+                p2p_socket.port() > p2p_anchor.3.port(),
+                "{config_path} p2p_addr {} must stay above the shipped bootstrap anchor P2P port {} so later slots cannot silently become equivalent bootstrap anchors",
+                p2p_socket,
+                p2p_anchor.3.port()
+            );
+        }
 
         for window in shipped_nodes.windows(2) {
             let [(prev_config_path, prev_node_id, prev_rpc_socket, prev_p2p_socket), (config_path, node_id, rpc_socket, p2p_socket)] =
