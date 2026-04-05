@@ -1731,6 +1731,11 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         path
     );
     anyhow::ensure!(
+        !contains_invisible_or_bidi_format_chars(node_id),
+        "invalid node config {}: node_id must not contain invisible or bidirectional format characters",
+        path
+    );
+    anyhow::ensure!(
         node_id.is_ascii(),
         "invalid node config {}: node_id must use ASCII-only characters",
         path
@@ -1778,8 +1783,12 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         path
     );
     anyhow::ensure!(
-        !node_id.contains('[') && !node_id.contains(']'),
-        "invalid node config {}: node_id must not contain bracketed host delimiters ([ ])",
+        !node_id.contains('/')
+            && !node_id.contains('\\')
+            && !node_id.contains(':')
+            && !node_id.contains('[')
+            && !node_id.contains(']'),
+        "invalid node config {}: node_id must not contain path or host-literal separators (/ \\ : [ ])",
         path
     );
     anyhow::ensure!(
@@ -1833,6 +1842,11 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
     anyhow::ensure!(
         !rpc_addr.chars().any(char::is_control),
         "invalid node config {}: rpc_addr must not contain control characters",
+        path
+    );
+    anyhow::ensure!(
+        !contains_invisible_or_bidi_format_chars(rpc_addr),
+        "invalid node config {}: rpc_addr must not contain invisible or bidirectional format characters",
         path
     );
     anyhow::ensure!(
@@ -1926,6 +1940,11 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
     anyhow::ensure!(
         !p2p_addr.chars().any(char::is_control),
         "invalid node config {}: p2p_addr must not contain control characters",
+        path
+    );
+    anyhow::ensure!(
+        !contains_invisible_or_bidi_format_chars(p2p_addr),
+        "invalid node config {}: p2p_addr must not contain invisible or bidirectional format characters",
         path
     );
     anyhow::ensure!(
@@ -7067,24 +7086,6 @@ bootstrap_peers = ["127.0.0.1:27656"]
     }
 
     #[test]
-    fn validate_node_config_rejects_path_and_host_literal_separators_in_node_id() {
-        for node_id in ["node/alpha", r"node\\alpha", "node:alpha", "[::1]"] {
-            let err = validate_node_config(
-                NodeConfig {
-                    node_id: node_id.into(),
-                    rpc_addr: "127.0.0.1:26657".into(),
-                    p2p_addr: "127.0.0.1:26656".into(),
-                },
-                "node.toml",
-            )
-            .expect_err("node_id path or host-literal separators must fail closed");
-            assert!(err
-                .to_string()
-                .contains("node_id must not contain path or host-literal separators"));
-        }
-    }
-
-    #[test]
     fn validate_node_config_rejects_uri_and_userinfo_separators_in_node_id() {
         for node_id in ["node@alpha", "node?alpha", "node#alpha", "node%zone"] {
             let err = validate_node_config(
@@ -7163,8 +7164,8 @@ bootstrap_peers = ["127.0.0.1:27656"]
     }
 
     #[test]
-    fn validate_node_config_rejects_bracketed_host_delimiters_in_node_id() {
-        for node_id in ["[seed]", "seed]", "[seed"] {
+    fn validate_node_config_rejects_path_and_host_literal_separators_in_node_id() {
+        for node_id in ["seed/slot", "seed\\slot", "seed:slot", "[seed]", "seed]", "[seed"] {
             let err = validate_node_config(
                 NodeConfig {
                     node_id: node_id.into(),
@@ -7173,10 +7174,63 @@ bootstrap_peers = ["127.0.0.1:27656"]
                 },
                 "node.toml",
             )
-            .expect_err("node_id bracketed host delimiters must fail closed");
+            .expect_err("node_id path or host-literal separators must fail closed");
             assert!(err
                 .to_string()
-                .contains("node_id must not contain bracketed host delimiters ([ ])"));
+                .contains("node_id must not contain path or host-literal separators (/ \\ : [ ])"));
+        }
+    }
+
+    #[test]
+    fn validate_node_config_rejects_invisible_or_bidi_format_characters_in_node_id() {
+        for node_id in ["node\u{200B}1", "node\u{202E}1"] {
+            let err = validate_node_config(
+                NodeConfig {
+                    node_id: node_id.into(),
+                    rpc_addr: "127.0.0.1:26657".into(),
+                    p2p_addr: "127.0.0.1:26656".into(),
+                },
+                "node.toml",
+            )
+            .expect_err("invisible/bidi node_id characters must fail closed");
+            assert!(
+                err.to_string().contains(
+                    "node_id must not contain invisible or bidirectional format characters"
+                ),
+                "unexpected error for {node_id:?}: {err:#}"
+            );
+        }
+    }
+
+    #[test]
+    fn validate_node_config_rejects_invisible_or_bidi_format_characters_in_listener_addresses() {
+        for (field, rpc_addr, p2p_addr, expected_message) in [
+            (
+                "rpc_addr",
+                "127.0.0.1:26\u{200B}657",
+                "127.0.0.1:26656",
+                "rpc_addr must not contain invisible or bidirectional format characters",
+            ),
+            (
+                "p2p_addr",
+                "127.0.0.1:26657",
+                "127.0.0.1:26\u{202E}656",
+                "p2p_addr must not contain invisible or bidirectional format characters",
+            ),
+        ] {
+            let err = validate_node_config(
+                NodeConfig {
+                    node_id: "node-a".into(),
+                    rpc_addr: rpc_addr.into(),
+                    p2p_addr: p2p_addr.into(),
+                },
+                "node.toml",
+            )
+            .expect_err("invisible/bidi listener characters must fail closed");
+            assert!(
+                err.to_string().contains(expected_message),
+                "unexpected error for {field}: {err:#}"
+            );
         }
     }
 
