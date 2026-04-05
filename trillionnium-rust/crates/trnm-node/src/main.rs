@@ -5813,6 +5813,172 @@ mod tests {
     }
 
     #[test]
+    fn load_config_parse_errors_keep_operator_and_resolved_paths_visible_for_alias_drift() {
+        let current_dir = std::env::current_dir().expect("current dir");
+
+        for (suffix, alias_line, expected_field) in [
+            (
+                "bootstrap-peer",
+                "bootstrap_peer = \"127.0.0.1:27656\"",
+                "bootstrap_peer",
+            ),
+            (
+                "bootstrap-addr",
+                "bootstrap_addr = \"127.0.0.1:27656\"",
+                "bootstrap_addr",
+            ),
+            (
+                "bootstrap-addrs",
+                "bootstrap_addrs = [\"127.0.0.1:27656\"]",
+                "bootstrap_addrs",
+            ),
+            ("seed-peer", "seed_peer = \"127.0.0.1:27656\"", "seed_peer"),
+            ("seed-addr", "seed_addr = \"127.0.0.1:27656\"", "seed_addr"),
+            (
+                "seed-addrs",
+                "seed_addrs = [\"127.0.0.1:27656\"]",
+                "seed_addrs",
+            ),
+            (
+                "persistent-peer",
+                "persistent_peer = \"127.0.0.1:27656\"",
+                "persistent_peer",
+            ),
+            (
+                "persistent-addr",
+                "persistent_addr = \"127.0.0.1:27656\"",
+                "persistent_addr",
+            ),
+            (
+                "persistent-addrs",
+                "persistent_addrs = [\"127.0.0.1:27656\"]",
+                "persistent_addrs",
+            ),
+        ] {
+            let file_name = format!(
+                "trnm-node-config-parse-surface-{suffix}-{}-{}.toml",
+                std::process::id(),
+                now_unix_ms()
+            );
+            let path = current_dir.join(&file_name);
+            std::fs::write(
+                &path,
+                format!(
+                    "node_id = \"node-a\"\nrpc_addr = \"127.0.0.1:7000\"\np2p_addr = \"127.0.0.1:7001\"\n{alias_line}\n"
+                ),
+            )
+            .expect("write config");
+
+            let operator_path = format!("./{file_name}");
+            let canonical_path = path.canonicalize().expect("canonicalize temp config path");
+            let err = load_config(&operator_path)
+                .expect_err("alias drift must fail closed with both paths visible");
+            let err_surface = format!("{err:#}");
+            assert!(
+                err_surface.contains("parse toml failed"),
+                "parse-stage failures must retain the load_config context for {expected_field}: {err:#}"
+            );
+            assert!(
+                err_surface.contains(&operator_path),
+                "parse-stage failures must keep the operator-supplied path visible for {expected_field}: {err:#}"
+            );
+            assert!(
+                err_surface.contains(canonical_path.to_string_lossy().as_ref()),
+                "parse-stage failures must keep the canonical resolved path visible for {expected_field}: {err:#}"
+            );
+            assert!(
+                err_surface.contains(&format!("unknown field `{expected_field}`")),
+                "parse-stage failures must keep the exact alias drift reason visible for {expected_field}: {err:#}"
+            );
+
+            let _ = std::fs::remove_file(path);
+        }
+    }
+
+    #[test]
+    fn load_config_validation_errors_keep_operator_and_resolved_paths_visible_for_listener_guard_drift(
+    ) {
+        let current_dir = std::env::current_dir().expect("current dir");
+
+        for (suffix, rpc_addr, p2p_addr, expected_fragment) in [
+            (
+                "rpc-doc-v4",
+                "192.0.2.10:7000",
+                "127.0.0.1:7001",
+                "rpc_addr must not use a documentation or benchmark-only address",
+            ),
+            (
+                "p2p-doc-v6",
+                "[2001:4860::1]:7000",
+                "[2001:db8::11]:7001",
+                "p2p_addr must not use a documentation or benchmark-only address",
+            ),
+            (
+                "rpc-ipv4-mapped",
+                "[::ffff:127.0.0.1]:7000",
+                "[2001:4860::1]:7001",
+                "rpc_addr must not use an IPv4-mapped IPv6 address",
+            ),
+            (
+                "p2p-ipv4-mapped",
+                "[2001:4860::1]:7000",
+                "[::ffff:127.0.0.1]:7001",
+                "p2p_addr must not use an IPv4-mapped IPv6 address",
+            ),
+            (
+                "rpc-scope",
+                "[2001:4860::8888%7]:7000",
+                "[2001:4860::8888]:7001",
+                "rpc_addr must not use an IPv6 scope identifier",
+            ),
+            (
+                "p2p-scope",
+                "[2001:4860::8888]:7000",
+                "[2001:4860::8888%9]:7001",
+                "p2p_addr must not use an IPv6 scope identifier",
+            ),
+        ] {
+            let file_name = format!(
+                "trnm-node-config-validation-surface-{suffix}-{}-{}.toml",
+                std::process::id(),
+                now_unix_ms()
+            );
+            let path = current_dir.join(&file_name);
+            std::fs::write(
+                &path,
+                format!(
+                    "node_id = \"node-a\"\nrpc_addr = \"{rpc_addr}\"\np2p_addr = \"{p2p_addr}\"\n"
+                ),
+            )
+            .expect("write config");
+
+            let operator_path = format!("./{file_name}");
+            let canonical_path = path.canonicalize().expect("canonicalize temp config path");
+            let err = load_config(&operator_path)
+                .expect_err("listener guard drift must fail closed with both paths visible");
+            let err_surface = format!("{err:#}");
+            assert!(
+                err_surface.contains("validate config failed"),
+                "validation-stage failures must retain the load_config context for {suffix}: {err:#}"
+            );
+            assert!(
+                err_surface.contains(&operator_path),
+                "validation-stage failures must keep the operator-supplied path visible for {suffix}: {err:#}"
+            );
+            assert!(
+                err_surface.contains(canonical_path.to_string_lossy().as_ref()),
+                "validation-stage failures must keep the canonical resolved path visible for {suffix}: {err:#}"
+            );
+            assert!(
+                err_surface.contains(expected_fragment),
+                "validation-stage failures must keep the exact listener guard reason visible for {suffix}: {err:#}"
+            );
+
+            let _ = std::fs::remove_file(path);
+        }
+    }
+
+    #[test]
     fn validate_startup_args_rejects_zero_validators() {
         let args = Args {
             config: "configs/node1.toml".into(),
