@@ -1,3 +1,4 @@
+pub mod durable_read;
 pub mod reliability;
 
 mod relay;
