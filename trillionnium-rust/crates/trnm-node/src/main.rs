@@ -4385,16 +4385,31 @@ mod tests {
         )
         .expect("escape symlink should be creatable");
 
+        let requested_path = "configs/escaped.toml";
+        let escaped_resolved = workspace_shadow
+            .join(requested_path)
+            .canonicalize()
+            .expect("escaped config should canonicalize through the symlink target");
+
         let original_cwd = std::env::current_dir().expect("capture cwd");
         std::env::set_current_dir(&workspace_shadow).expect("enter shadow cwd");
-        let err = load_config("configs/escaped.toml")
+        let err = load_config(requested_path)
             .expect_err("relative symlink escape should fail closed");
         std::env::set_current_dir(&original_cwd).expect("restore cwd");
         let _ = std::fs::remove_dir_all(&temp_root);
 
+        let err_surface = format!("{err:#}");
         assert!(
-            err.to_string().contains("resolves outside allowed roots"),
+            err_surface.contains("resolves outside allowed roots"),
             "unexpected error: {err:#}"
+        );
+        assert!(
+            err_surface.contains(requested_path),
+            "symlink escape error must keep the operator-supplied path visible: {err:#}"
+        );
+        assert!(
+            err_surface.contains(escaped_resolved.to_string_lossy().as_ref()),
+            "symlink escape error must keep the resolved escape target visible: {err:#}"
         );
     }
 
@@ -4433,13 +4448,22 @@ mod tests {
             .expect("workspace shadow should canonicalize");
         let _ = std::fs::remove_dir_all(&temp_root);
 
+        let err_surface = format!("{err:#}");
         assert!(
             !canonical_target.starts_with(&canonical_symlink_parent),
             "test fixture must point outside the allowed workspace shadow"
         );
         assert!(
-            err.to_string().contains("resolves outside allowed roots"),
+            err_surface.contains("resolves outside allowed roots"),
             "unexpected error: {err:#}"
+        );
+        assert!(
+            err_surface.contains(symlink_path.to_string_lossy().as_ref()),
+            "absolute symlink escape error must keep the operator-supplied path visible: {err:#}"
+        );
+        assert!(
+            err_surface.contains(canonical_target.to_string_lossy().as_ref()),
+            "absolute symlink escape error must keep the resolved escape target visible: {err:#}"
         );
     }
 
