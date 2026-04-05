@@ -65,6 +65,7 @@ next_blocker=
 
 Rules:
 - `dr_summary_path=` / `dr_generated_at=` / `dr_status=` / `dr_replay_command=` / `dr_rollback_command=` may remain empty unless `cutover_kind=dr_rebuild`.
+- when `cutover_kind=dr_rebuild`, copy `dr_status=` verbatim from the selected recovery report's `status=` field; do not infer it from shell exit status, wrapper success text, or a hand-written `PASS`.
 - `handoff_summary_path=` / `handoff_manifest_path=` / `summary_generated_at=` / `manifest_generated_at=` may remain empty unless release-evidence or RC artifacts are part of the handoff.
 - `expected_worktree_root=` / `expected_branch_ref=` / `expected_head=` / `lane_verify_command=` may remain empty until Step 1 finishes, but once lane binding is part of the ticket or handoff they must be copied verbatim from the verification/recovery step instead of reconstructed from chat or shell memory.
 - `config_bundle_check_command=` / `config_bundle_check_result=` may remain empty until Step 3 finishes, but they must be filled before any replacement / rotation / DR event can be called reproducible.
@@ -167,6 +168,7 @@ Also record:
 Interpretation rule:
 - if the outgoing or incoming validator identity cannot be named explicitly, stop
 - if `cutover_kind=rotation` or `cutover_kind=dr_rebuild` and either handoff signer/acknowledger is still unknown, stop
+- copy `handoff_signed_by=` / `handoff_acknowledged_by=` as trimmed operator identifiers; leading/trailing whitespace is evidence-incomplete and should fail before packet generation
 - if `cutover_kind=replacement`, leave `handoff_signed_by=` / `handoff_acknowledged_by=` empty rather than inventing a fake approval boundary
 - if the rollback command is still "to be figured out later", stop
 
@@ -248,7 +250,7 @@ Minimum DR evidence fields to preserve from the generated report:
 - `replay_command=`
 - final pass/fail result
 
-Copy the report path itself into the cutover note as `dr_summary_path=`, copy the report `generated_at=` into `dr_generated_at=`, and quote the emitted `rollback_command=` / `replay_command=` verbatim from that report. Prefer `./scripts/v2/extract_validator_rotation_dr_fields.sh` so another operator copies one fail-closed field set rather than retyping ad hoc `awk` output. That helper now rejects non-`PASS` recovery reports, missing fields, and `--report-path` values that do not resolve under the current worktree's `run/` directory, so a stale, cross-worktree, or failed rebuild report cannot be silently handed off as valid DR evidence. When lane binding is enabled, also preserve `expected_worktree_root=` / `expected_branch_ref=` / `expected_head=` and the exact `lane_verify_command=` string from the same report so another operator can prove the rebuild was checked against the ticket-assigned lane rather than a self-derived shell guess. Treat missing `generated_at=` / `git_worktree_path=` / `git_status_summary=` as evidence-incomplete, because another operator should be able to audit artifact freshness, lane identity, and clean-tree status directly from the recovery report instead of reconstructing them from shell memory. If lane binding was expected for the event, treat missing `expected_worktree_root=` / `expected_branch_ref=` / `lane_verify_command=` the same way. The recovery script emits `status=PASS` on success; do not search for a non-existent `result=` field when auditing the report.
+Copy the report path itself into the cutover note as `dr_summary_path=`, copy the report `generated_at=` into `dr_generated_at=`, copy `dr_status=` verbatim from the report `status=` field, and quote the emitted `rollback_command=` / `replay_command=` verbatim from that report. Prefer `./scripts/v2/extract_validator_rotation_dr_fields.sh` so another operator copies one fail-closed field set rather than retyping ad hoc `awk` output. That helper now rejects non-`PASS` recovery reports, missing fields, and `--report-path` values that do not resolve under the current worktree's `run/` directory, so a stale, cross-worktree, or failed rebuild report cannot be silently handed off as valid DR evidence. When lane binding is enabled, also preserve `expected_worktree_root=` / `expected_branch_ref=` / `expected_head=` and the exact `lane_verify_command=` string from the same report so another operator can prove the rebuild was checked against the ticket-assigned lane rather than a self-derived shell guess. Treat missing `generated_at=` / `git_worktree_path=` / `git_status_summary=` as evidence-incomplete, because another operator should be able to audit artifact freshness, lane identity, and clean-tree status directly from the recovery report instead of reconstructing them from shell memory. If lane binding was expected for the event, treat missing `expected_worktree_root=` / `expected_branch_ref=` / `lane_verify_command=` the same way. The recovery script emits `status=PASS` on success; do not search for a non-existent `result=` field when auditing the report, and do not synthesize `dr_status=` from wrapper success alone.
 If release-evidence or RC artifacts also exist for the same handoff, prefer extracting the final handoff fields with the fail-closed helper instead of copying mixed snippets by hand:
 
 ```bash
@@ -340,6 +342,7 @@ printf '%s\n' "$dr_fields" >> cutover-note.txt
 Interpretation rule:
 - keep the emitted `dr_summary_path=` / `dr_generated_at=` / `dr_status=` / `dr_replay_command=` / `dr_rollback_command=` lines adjacent in the cutover note so another operator can audit one coherent DR evidence block instead of reconstructing individual fields from shell history
 - do not hand-copy only `dr_status=PASS` while dropping the corresponding report path or replay/rollback commands; the helper output is meant to travel as one fail-closed bundle
+- do not rewrite `dr_status=` from memory after a green wrapper run; copy the literal report-backed value so later review can tie the cutover note to one concrete recovery artifact
 
 Stop if any of the following occurs:
 - `report_path` does not resolve to a concrete report
@@ -402,6 +405,8 @@ Fail-closed interpretation:
 - if an operator name, artifact path, or generated-at field has to be reconstructed from chat or shell memory, the ceremony packet is incomplete and the event is **No-Go**
 
 This packet does not make TRNM public-mainnet ready by itself, but it does close the operator-facing question "what exact signed evidence turns a local cutover rehearsal into an auditable handoff?"
+
+When operators prefer a generated packet instead of hand-copying the skeleton, `./scripts/v2/emit_validator_rotation_packet.sh` now accepts the release-artifact pair `--handoff-summary-path` / `--handoff-manifest-path` together with `--summary-generated-at` / `--manifest-generated-at`, and fails closed if only a partial release-artifact set is supplied. When lane binding is present, the same helper also requires `--expected-worktree-root`, `--expected-branch-ref`, and `--lane-verify-command` together (with optional `--expected-head`) so the generated packet cannot carry a half-copied lane identity. If any `--dr-*` evidence fields are supplied, the helper now also requires `--dr-status=PASS` so a generated packet cannot silently carry a failed or ambiguous DR report as if it were valid handoff evidence. Use that path when the same cutover packet needs to carry both ownership sign-off and concrete release-evidence lineage.
 
 ### 6a. Copy-paste ceremony packet skeleton
 

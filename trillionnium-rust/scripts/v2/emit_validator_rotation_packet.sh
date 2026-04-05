@@ -99,6 +99,18 @@ require_path_value() {
   esac
 }
 
+require_atom_value() {
+  local flag_name="$1"
+  local value="$2"
+  require_nonempty "$flag_name" "$value"
+  case "$value" in
+    [[:space:]]*|*[[:space:]])
+      printf 'invalid %s: must not start or end with whitespace: %q\n' "$flag_name" "$value" >&2
+      exit 2
+      ;;
+  esac
+}
+
 while [ "$#" -gt 0 ]; do
   case "$1" in
     --cutover-kind) CUTOVER_KIND="${2-}"; shift 2 ;;
@@ -157,11 +169,44 @@ require_path_value --incoming-config-path "$INCOMING_CONFIG_PATH"
 require_nonempty --rollback-command "$ROLLBACK_COMMAND"
 
 if [ -n "$EXPECTED_WORKTREE_ROOT" ] || [ -n "$EXPECTED_BRANCH_REF" ] || [ -n "$EXPECTED_HEAD" ] || [ -n "$LANE_VERIFY_COMMAND" ]; then
+  if [ -z "$EXPECTED_WORKTREE_ROOT" ] || [ -z "$EXPECTED_BRANCH_REF" ] || [ -z "$LANE_VERIFY_COMMAND" ]; then
+    printf 'lane binding requires --expected-worktree-root, --expected-branch-ref, and --lane-verify-command together\n' >&2
+    usage
+    exit 2
+  fi
   require_path_value --expected-worktree-root "$EXPECTED_WORKTREE_ROOT"
   require_token --expected-branch-ref "$EXPECTED_BRANCH_REF"
   require_nonempty --lane-verify-command "$LANE_VERIFY_COMMAND"
+  case "$LANE_VERIFY_COMMAND" in
+    *"verify_lane_worktree.sh"*) ;;
+    *)
+      printf 'invalid --lane-verify-command: expected verify_lane_worktree.sh invocation\n' >&2
+      exit 2
+      ;;
+  esac
+  case "$LANE_VERIFY_COMMAND" in
+    *"--expected-worktree-root $EXPECTED_WORKTREE_ROOT"*) ;;
+    *)
+      printf 'invalid --lane-verify-command: missing --expected-worktree-root %s\n' "$EXPECTED_WORKTREE_ROOT" >&2
+      exit 2
+      ;;
+  esac
+  case "$LANE_VERIFY_COMMAND" in
+    *"--expected-branch-ref $EXPECTED_BRANCH_REF"*) ;;
+    *)
+      printf 'invalid --lane-verify-command: missing --expected-branch-ref %s\n' "$EXPECTED_BRANCH_REF" >&2
+      exit 2
+      ;;
+  esac
   if [ -n "$EXPECTED_HEAD" ]; then
     require_token --expected-head "$EXPECTED_HEAD"
+    case "$LANE_VERIFY_COMMAND" in
+      *"--expected-head $EXPECTED_HEAD"*) ;;
+      *)
+        printf 'invalid --lane-verify-command: missing --expected-head %s\n' "$EXPECTED_HEAD" >&2
+        exit 2
+        ;;
+    esac
   fi
 fi
 
@@ -174,8 +219,27 @@ if [ -n "$CONFIG_BUNDLE_CHECK_LOG_PATH" ]; then
 fi
 
 if [ "$CUTOVER_KIND" = "rotation" ] || [ "$CUTOVER_KIND" = "dr_rebuild" ]; then
-  require_nonempty --handoff-signed-by "$HANDOFF_SIGNED_BY"
-  require_nonempty --handoff-acknowledged-by "$HANDOFF_ACKNOWLEDGED_BY"
+  require_atom_value --handoff-signed-by "$HANDOFF_SIGNED_BY"
+  require_atom_value --handoff-acknowledged-by "$HANDOFF_ACKNOWLEDGED_BY"
+fi
+
+if [ -n "$HANDOFF_SUMMARY_PATH" ] || [ -n "$HANDOFF_MANIFEST_PATH" ] || [ -n "$SUMMARY_GENERATED_AT" ] || [ -n "$MANIFEST_GENERATED_AT" ]; then
+  require_path_value --handoff-summary-path "$HANDOFF_SUMMARY_PATH"
+  require_path_value --handoff-manifest-path "$HANDOFF_MANIFEST_PATH"
+  require_atom_value --summary-generated-at "$SUMMARY_GENERATED_AT"
+  require_atom_value --manifest-generated-at "$MANIFEST_GENERATED_AT"
+fi
+
+if [ -n "$DR_SUMMARY_PATH" ] || [ -n "$DR_GENERATED_AT" ] || [ -n "$DR_STATUS" ] || [ -n "$DR_REPLAY_COMMAND" ] || [ -n "$DR_ROLLBACK_COMMAND" ]; then
+  require_path_value --dr-summary-path "$DR_SUMMARY_PATH"
+  require_atom_value --dr-generated-at "$DR_GENERATED_AT"
+  require_atom_value --dr-status "$DR_STATUS"
+  require_nonempty --dr-replay-command "$DR_REPLAY_COMMAND"
+  require_nonempty --dr-rollback-command "$DR_ROLLBACK_COMMAND"
+  if [ "$DR_STATUS" != "PASS" ]; then
+    printf 'invalid --dr-status: expected PASS got %s\n' "$DR_STATUS" >&2
+    exit 2
+  fi
 fi
 
 if [ -n "$HANDOFF_SUMMARY_PATH" ] || [ -n "$HANDOFF_MANIFEST_PATH" ] || [ -n "$SUMMARY_GENERATED_AT" ] || [ -n "$MANIFEST_GENERATED_AT" ]; then
@@ -187,8 +251,8 @@ fi
 
 if [ "$CUTOVER_KIND" = "dr_rebuild" ]; then
   require_path_value --dr-summary-path "$DR_SUMMARY_PATH"
-  require_nonempty --dr-generated-at "$DR_GENERATED_AT"
-  require_nonempty --dr-status "$DR_STATUS"
+  require_atom_value --dr-generated-at "$DR_GENERATED_AT"
+  require_atom_value --dr-status "$DR_STATUS"
   require_nonempty --dr-replay-command "$DR_REPLAY_COMMAND"
   require_nonempty --dr-rollback-command "$DR_ROLLBACK_COMMAND"
   require_path_value --expected-worktree-root "$EXPECTED_WORKTREE_ROOT"
@@ -196,10 +260,6 @@ if [ "$CUTOVER_KIND" = "dr_rebuild" ]; then
   require_nonempty --lane-verify-command "$LANE_VERIFY_COMMAND"
   if [ -n "$EXPECTED_HEAD" ]; then
     require_token --expected-head "$EXPECTED_HEAD"
-  fi
-  if [ "$DR_STATUS" != "PASS" ]; then
-    printf 'invalid --dr-status: expected PASS got %s\n' "$DR_STATUS" >&2
-    exit 2
   fi
 fi
 
@@ -236,7 +296,7 @@ if [ -n "$HANDOFF_SUMMARY_PATH" ]; then
   printf 'manifest_generated_at=%s\n' "$MANIFEST_GENERATED_AT"
 fi
 printf 'rollback_command=%s\n' "$ROLLBACK_COMMAND"
-if [ "$CUTOVER_KIND" = "dr_rebuild" ]; then
+if [ -n "$DR_SUMMARY_PATH" ]; then
   printf 'dr_summary_path=%s\n' "$DR_SUMMARY_PATH"
   printf 'dr_generated_at=%s\n' "$DR_GENERATED_AT"
   printf 'dr_status=%s\n' "$DR_STATUS"

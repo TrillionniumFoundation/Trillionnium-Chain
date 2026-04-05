@@ -216,6 +216,7 @@ fi
 
 EXPECTED_WORKTREE_ROOT_RECORDED=""
 EXPECTED_BRANCH_REF_RECORDED=""
+RECORDED_BRANCH_REF_CANONICAL=""
 EXPECTED_HEAD_RECORDED=""
 LANE_VERIFY_COMMAND=""
 
@@ -246,6 +247,7 @@ if [ -n "$EXPECTED_WORKTREE_ROOT" ] || [ -n "$EXPECTED_BRANCH_REF_CANONICAL" ] |
   elif grep -q '^expected_head=' "$REPORT_PATH"; then
     EXPECTED_HEAD_RECORDED="$(require_key "$REPORT_PATH" expected_head)"
   fi
+
 elif grep -q '^expected_worktree_root=' "$REPORT_PATH"; then
   EXPECTED_WORKTREE_ROOT_RECORDED="$(require_key "$REPORT_PATH" expected_worktree_root)"
 fi
@@ -253,11 +255,60 @@ fi
 if [ -z "$EXPECTED_BRANCH_REF_RECORDED" ] && grep -q '^expected_branch_ref=' "$REPORT_PATH"; then
   EXPECTED_BRANCH_REF_RECORDED="$(require_key "$REPORT_PATH" expected_branch_ref)"
 fi
+if [ -n "$EXPECTED_BRANCH_REF_RECORDED" ]; then
+  RECORDED_BRANCH_REF_CANONICAL="$(canonicalize_branch_ref "$EXPECTED_BRANCH_REF_RECORDED")"
+fi
 if [ -z "$EXPECTED_HEAD_RECORDED" ] && grep -q '^expected_head=' "$REPORT_PATH"; then
   EXPECTED_HEAD_RECORDED="$(require_key "$REPORT_PATH" expected_head)"
 fi
 if [ -z "$LANE_VERIFY_COMMAND" ] && grep -q '^lane_verify_command=' "$REPORT_PATH"; then
   LANE_VERIFY_COMMAND="$(require_key "$REPORT_PATH" lane_verify_command)"
+fi
+
+if [ -n "$EXPECTED_WORKTREE_ROOT_RECORDED" ]; then
+  case "$LANE_VERIFY_COMMAND" in
+    *"--expected-worktree-root $EXPECTED_WORKTREE_ROOT_RECORDED"*) ;;
+    *)
+      printf 'lane_verify_command missing --expected-worktree-root %s in %s\n' "$EXPECTED_WORKTREE_ROOT_RECORDED" "$REPORT_PATH" >&2
+      exit 1
+      ;;
+  esac
+fi
+
+if [ -n "$EXPECTED_BRANCH_REF_RECORDED" ]; then
+  case "$LANE_VERIFY_COMMAND" in
+    *"--expected-branch-ref $EXPECTED_BRANCH_REF_RECORDED"*) ;;
+    *"--expected-branch-ref $RECORDED_BRANCH_REF_CANONICAL"*) ;;
+    *)
+      printf 'lane_verify_command missing --expected-branch-ref %s in %s\n' "$EXPECTED_BRANCH_REF_RECORDED" "$REPORT_PATH" >&2
+      exit 1
+      ;;
+  esac
+fi
+
+if [ -n "$EXPECTED_HEAD_RECORDED" ]; then
+  case "$LANE_VERIFY_COMMAND" in
+    *"--expected-head $EXPECTED_HEAD_RECORDED"*) ;;
+    *)
+      printf 'lane_verify_command missing --expected-head %s in %s\n' "$EXPECTED_HEAD_RECORDED" "$REPORT_PATH" >&2
+      exit 1
+      ;;
+  esac
+fi
+
+if [ -n "$EXPECTED_WORKTREE_ROOT_RECORDED" ] || [ -n "$EXPECTED_BRANCH_REF_RECORDED" ] || [ -n "$LANE_VERIFY_COMMAND" ]; then
+  [ -n "$EXPECTED_WORKTREE_ROOT_RECORDED" ] || {
+    printf 'incomplete lane binding in %s: missing expected_worktree_root\n' "$REPORT_PATH" >&2
+    exit 1
+  }
+  [ -n "$EXPECTED_BRANCH_REF_RECORDED" ] || {
+    printf 'incomplete lane binding in %s: missing expected_branch_ref\n' "$REPORT_PATH" >&2
+    exit 1
+  }
+  [ -n "$LANE_VERIFY_COMMAND" ] || {
+    printf 'incomplete lane binding in %s: missing lane_verify_command\n' "$REPORT_PATH" >&2
+    exit 1
+  }
 fi
 
 printf 'report_path=%s\n' "$REPORT_PATH"
