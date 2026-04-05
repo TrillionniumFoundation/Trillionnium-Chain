@@ -5930,6 +5930,18 @@ mod tests {
                 "p2p_addr must not use a documentation or benchmark-only address",
             ),
             (
+                "rpc-v6-loopback",
+                "[::1]:7000",
+                "[2001:4860::1]:7001",
+                "rpc_addr must not use the IPv6 loopback address",
+            ),
+            (
+                "p2p-v6-loopback",
+                "[2001:4860::1]:7000",
+                "[::1]:7001",
+                "p2p_addr must not use the IPv6 loopback address",
+            ),
+            (
                 "rpc-ipv4-mapped",
                 "[::ffff:127.0.0.1]:7000",
                 "[2001:4860::1]:7001",
@@ -5940,6 +5952,18 @@ mod tests {
                 "[2001:4860::1]:7000",
                 "[::ffff:127.0.0.1]:7001",
                 "p2p_addr must not use an IPv4-mapped IPv6 address",
+            ),
+            (
+                "rpc-ipv4-compatible",
+                "[::7f00:1]:7000",
+                "[2001:4860::1]:7001",
+                "rpc_addr must not use an IPv4-compatible IPv6 address",
+            ),
+            (
+                "p2p-ipv4-compatible",
+                "[2001:4860::1]:7000",
+                "[::c000:20a]:7001",
+                "p2p_addr must not use an IPv4-compatible IPv6 address",
             ),
             (
                 "rpc-scope",
