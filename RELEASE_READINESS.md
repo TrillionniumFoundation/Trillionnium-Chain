@@ -89,6 +89,9 @@
 17. **在 Rank 1 first slice 之后，正式为 6 个 durable-read anchors 选定“当前 local `main` 下最短、最诚实、可执行”的候选方向**：看 `trillionnium-rust/docs/release/TRNM_RANK1_DURABLE_BOUNDARY_DECISION_MEMO_2026-04-05.md`。
    - 适用场景：需要回答“Rank 1 的 durable service 下一步到底按什么方向实现”“6 个 anchors 不应再留空时，当前最短实施路径是什么”“placeholder scaffold 到 non-placeholder durable read service 的桥应如何定义”。
    - 作用边界：它是**decision memo**，不是 durable closure 证明；它冻结的是候选 durable boundary 方向，不自动代表 durable indexer / historical read-model / archive/SLO 已经实现。
+18. **把 Rank 1 durable-boundary direction 进一步落成真正可开工的实现设计包（schema / ingest loop / replay bootstrap / lag formula / retained-surface materialization）**：看 `trillionnium-rust/docs/release/TRNM_RANK1_IMPLEMENTATION_DESIGN_PACKET_2026-04-05.md`。
+   - 适用场景：需要从“我们决定走 rpc-pull + sqlite + genesis replay”继续推进到“具体怎么实现第一版 durable read service”。
+   - 作用边界：它是**implementation design packet**，不是实现完成证明；它定义的是第一版 non-placeholder durable read service 的最小设计边界，不自动代表 Rank 1 已关闭或 production read plane 已完成。
 
 ## RC 演练最小证据模板（不发布）
 

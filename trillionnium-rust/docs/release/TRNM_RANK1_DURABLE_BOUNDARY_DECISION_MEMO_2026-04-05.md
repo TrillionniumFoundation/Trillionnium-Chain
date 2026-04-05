@@ -293,18 +293,18 @@ The next concrete Rank 1 implementation packet should assume:
 
 # Required follow-on artifact
 
-The next artifact after this memo should be one of these two forms:
+The preferred next artifact now exists as:
 
-## Preferred
-A **Rank 1 implementation design packet** that defines:
+- `trillionnium-rust/docs/release/TRNM_RANK1_IMPLEMENTATION_DESIGN_PACKET_2026-04-05.md`
+
+That design packet defines:
 - SQLite schema for checkpoints / ingested rows / replay cursor
 - rpc-pull ingestion loop
 - replay-from-genesis bootstrap flow
 - lag measurement logic
 - retained Day-1 surface materialization strategy
 
-## Minimum acceptable fallback
-A **Rank 1 implementation sketch** that at least freezes:
+Minimum acceptable fallback (if the full packet had not existed) would have been:
 - polling cadence
 - cursor/checkpoint row shape
 - replay bootstrap command
