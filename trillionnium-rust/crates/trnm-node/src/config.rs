@@ -3704,6 +3704,113 @@ mod tests {
     }
 
     #[test]
+    fn shipped_bootstrap_slots_keep_consecutive_anchor_first_port_windows() {
+        use std::net::SocketAddr;
+
+        let manifest_dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR"));
+        let workspace_root = manifest_dir
+            .ancestors()
+            .nth(2)
+            .expect("trnm-node manifest should sit under trillionnium-rust/crates/trnm-node");
+
+        let mut shipped_windows = [
+            ("configs/node1.toml", 1_u16),
+            ("configs/node2.toml", 2_u16),
+            ("configs/node3.toml", 3_u16),
+            ("configs/node4.toml", 4_u16),
+        ]
+        .into_iter()
+        .map(|(relative_path, expected_slot)| {
+            let path = workspace_root.join(relative_path);
+            let cfg = load_config(&path).unwrap_or_else(|err| {
+                panic!(
+                    "{} should remain loadable for consecutive bootstrap port-window checks: {err:#}",
+                    path.display()
+                )
+            });
+            let p2p_socket: SocketAddr = cfg.p2p_addr.parse().unwrap_or_else(|err| {
+                panic!(
+                    "{} p2p_addr should parse for consecutive bootstrap port-window checks: {err}",
+                    path.display()
+                )
+            });
+            let rpc_socket: SocketAddr = cfg.rpc_addr.parse().unwrap_or_else(|err| {
+                panic!(
+                    "{} rpc_addr should parse for consecutive bootstrap port-window checks: {err}",
+                    path.display()
+                )
+            });
+            (expected_slot, path, cfg.node_id, p2p_socket.port(), rpc_socket.port())
+        })
+        .collect::<Vec<_>>();
+
+        shipped_windows.sort_by_key(|(_, _, _, p2p_port, rpc_port)| (*p2p_port, *rpc_port));
+
+        let observed_slots = shipped_windows
+            .iter()
+            .map(|(slot, _, _, _, _)| *slot)
+            .collect::<Vec<_>>();
+        assert_eq!(
+            observed_slots,
+            vec![1, 2, 3, 4],
+            "bootstrap port windows must stay anchor-first in contiguous slot order so a later peer cannot silently occupy an equivalent earlier bootstrap window"
+        );
+
+        let observed_nodes = shipped_windows
+            .iter()
+            .map(|(_, path, node_id, p2p_port, rpc_port)| format!(
+                "{}:{}:{}:{}",
+                path.file_name()
+                    .and_then(|name| name.to_str())
+                    .unwrap_or("<non-utf8>"),
+                node_id,
+                p2p_port,
+                rpc_port
+            ))
+            .collect::<Vec<_>>();
+        assert_eq!(
+            observed_nodes,
+            vec![
+                String::from("node1.toml:node1:26656:26657"),
+                String::from("node2.toml:node2:27656:27657"),
+                String::from("node3.toml:node3:28656:28657"),
+                String::from("node4.toml:node4:29656:29657"),
+            ],
+            "bootstrap port windows must keep the shipped filename/node_id/listener tuples in exact anchor-first order so operator diagnostics can pinpoint slot drift immediately"
+        );
+
+        for window in shipped_windows.windows(2) {
+            let [
+                (earlier_slot, earlier_path, _, earlier_p2p_port, earlier_rpc_port),
+                (later_slot, later_path, _, later_p2p_port, later_rpc_port),
+            ] = &window else {
+                unreachable!("windows(2) must yield two entries");
+            };
+            assert_eq!(
+                later_slot - earlier_slot,
+                1,
+                "{} and {} must remain neighboring bootstrap slots so port-window diagnostics stay gap-free",
+                earlier_path.display(),
+                later_path.display()
+            );
+            assert_eq!(
+                later_p2p_port - earlier_p2p_port,
+                1_000,
+                "{} and {} must keep the exact +1000 P2P stride between neighboring bootstrap slots",
+                earlier_path.display(),
+                later_path.display()
+            );
+            assert_eq!(
+                later_rpc_port - earlier_rpc_port,
+                1_000,
+                "{} and {} must keep the exact +1000 RPC stride between neighboring bootstrap slots",
+                earlier_path.display(),
+                later_path.display()
+            );
+        }
+    }
+
+    #[test]
     fn shipped_node_configs_form_a_unique_local_bootstrap_topology() {
         use std::{collections::HashSet, net::SocketAddr};
 
