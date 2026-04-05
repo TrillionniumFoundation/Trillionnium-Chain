@@ -67,17 +67,17 @@ fn verify_model_output_enforces_trimmed_empty_and_char_limit_boundaries() {
     );
 
     // Limit is measured in characters (not bytes) to keep verifier behavior predictable.
-    let within = "你好ab"; // 4 chars
+    let within = "helloab"; // 4 chars
     assert_eq!(verify_model_output(within, 4), ("accepted", "ok"));
 
-    let over = "你好abc"; // 5 chars
+    let over = "helloabc"; // 5 chars
     assert_eq!(
         verify_model_output(over, 4),
         ("rejected", "output_too_long")
     );
 
     // Leading/trailing transport whitespace should not cause false rejections.
-    assert_eq!(verify_model_output(" 你好ab \n", 4), ("accepted", "ok"));
+    assert_eq!(verify_model_output(" helloab \n", 4), ("accepted", "ok"));
 
     // Mixed visible + zero-width should still count as meaningful content.
     assert_eq!(

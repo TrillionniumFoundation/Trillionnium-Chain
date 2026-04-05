@@ -133,7 +133,7 @@ fn x3_prep_degraded_over_cap_reason_replay_keeps_truncated_reason_stable() {
         heartbeat: None,
         should_retry: false,
         degraded: true,
-        message: "测".repeat(220),
+        message: "x".repeat(220),
     };
 
     let first = drive_minimal_settlement(

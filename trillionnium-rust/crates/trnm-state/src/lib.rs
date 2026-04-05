@@ -4826,7 +4826,7 @@ mod tests {
         let wal = WalMeta {
             height: 7,
             round: 3,
-            proposal_hash: "proposal-7-猫头鹰".into(),
+            proposal_hash: "proposal-7-owl".into(),
             committed: true,
             state_root_hex: "ab".repeat(32),
             prev_hash_hex: Some("ef".repeat(32)),
@@ -5345,7 +5345,7 @@ mod tests {
         let wal_entry = WalMeta {
             height: 1,
             round: 0,
-            proposal_hash: "proposal-猫头鹰".into(),
+            proposal_hash: "proposal-owl".into(),
             committed: true,
             state_root_hex: "ab".repeat(32),
             prev_hash_hex: None,
@@ -5466,7 +5466,7 @@ mod tests {
         };
         let checkpoint = CheckpointMeta {
             height: wal_entry.height,
-            state_root_hex: "state-root-猫头鹰".into(),
+            state_root_hex: "state-root-owl".into(),
             wal_entry_hash_hex: wal_entry.content_hash_hex(),
         };
 
@@ -5586,7 +5586,7 @@ mod tests {
             round: 0,
             proposal_hash: "proposal-1".into(),
             committed: true,
-            state_root_hex: "state-root-猫头鹰".into(),
+            state_root_hex: "state-root-owl".into(),
             prev_hash_hex: None,
         };
         let checkpoint = CheckpointMeta {

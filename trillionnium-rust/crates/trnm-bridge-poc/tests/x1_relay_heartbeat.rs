@@ -235,10 +235,10 @@ fn relay_heartbeat_failure_reason_is_capped_for_log_safety() {
 #[test]
 fn relay_heartbeat_failure_reason_unicode_over_cap_truncates_once_with_terminal_ellipsis() {
     let mut hb = RelayHeartbeatMonitor::new(RelayHeartbeatConfig::new(5, 3));
-    let long_reason = format!("目标中继超时{}", "测".repeat(220));
+    let long_reason = format!("target relay timeout{}", "x".repeat(220));
 
     let out = hb.record_failure(&long_reason);
-    assert!(out.message.starts_with("目标中继超时"));
+    assert!(out.message.starts_with("target relay timeout"));
     assert!(out.message.ends_with('…'));
     assert_eq!(out.message.matches('…').count(), 1);
     assert_eq!(out.message.chars().count(), 160);

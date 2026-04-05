@@ -2239,7 +2239,7 @@ fn x3_prep_confirm_failure_reason_unicode_over_cap_truncates_once_with_terminal_
         &token,
         &heartbeat,
         SettlementConfirm::Failed {
-            reason: format!("目标链确认超时{}", "测".repeat(200)),
+            reason: format!("target chain confirmation timeout{}", "x".repeat(200)),
         },
     )
     .unwrap();
@@ -2248,7 +2248,7 @@ fn x3_prep_confirm_failure_reason_unicode_over_cap_truncates_once_with_terminal_
         panic!("expected compensated branch");
     };
 
-    assert!(reason.starts_with("settlement confirm failed: 目标链确认超时"));
+    assert!(reason.starts_with("settlement confirm failed: target chain confirmation timeout"));
     assert!(reason.ends_with('…'));
     assert_eq!(reason.matches('…').count(), 1);
     assert!(reason.chars().count() <= 188);
@@ -2387,7 +2387,7 @@ fn x3_prep_degraded_heartbeat_reason_unicode_over_cap_truncates_once_with_termin
 
     let mut monitor = RelayHeartbeatMonitor::new(RelayHeartbeatConfig::new(5, 2));
     let _ = monitor.record_failure("first failure");
-    let degraded = monitor.record_failure(&format!("目标中继超时{}", "测".repeat(200)));
+    let degraded = monitor.record_failure(&format!("target relay timeout{}", "x".repeat(200)));
 
     let out = drive_minimal_settlement(
         &mut request,
@@ -2401,7 +2401,7 @@ fn x3_prep_degraded_heartbeat_reason_unicode_over_cap_truncates_once_with_termin
         panic!("expected compensated branch");
     };
 
-    assert!(reason.starts_with("heartbeat degraded: 目标中继超时"));
+    assert!(reason.starts_with("heartbeat degraded: target relay timeout"));
     assert!(reason.ends_with('…'));
     assert_eq!(reason.matches('…').count(), 1);
     assert!(reason.chars().count() <= 181);

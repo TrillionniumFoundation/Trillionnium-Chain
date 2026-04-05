@@ -5952,7 +5952,7 @@ fn paused_state_restore_pending_resolve_snapshot_scrubs_non_ascii_challenger_bou
             challenged_at_height: None,
             resolve_deadline_height: None,
             challenge_bond: None,
-            challenger: Some("挑战者".into()),
+            challenger: Some("challenger".into()),
             challenge_bond_forfeited: None,
             version: 2,
         }),

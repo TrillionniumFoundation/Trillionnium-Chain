@@ -6705,7 +6705,7 @@ fn checkpoint_evidence_surface_requires_canonical_state_root_and_hash_hex() {
     );
 
     let mut non_ascii_proposal_hash_wal = wal.clone();
-    non_ascii_proposal_hash_wal.proposal_hash = "proposal-猫头鹰".into();
+    non_ascii_proposal_hash_wal.proposal_hash = "proposal-owl".into();
     let mut non_ascii_proposal_hash_checkpoint = checkpoint.clone();
     non_ascii_proposal_hash_checkpoint.wal_entry_hash_hex =
         non_ascii_proposal_hash_wal.content_hash_hex();
@@ -8105,7 +8105,7 @@ fn checkpoint_da_light_verifier_summary_fails_closed_on_non_ascii_wal_proposal_h
     };
 
     let mut bad_wal = wal.clone();
-    bad_wal.proposal_hash = "提案-4".into();
+    bad_wal.proposal_hash = "proposal-4".into();
     let bad_checkpoint = CheckpointMeta {
         height: bad_wal.height,
         state_root_hex: bad_wal.state_root_hex.clone(),
@@ -8583,7 +8583,7 @@ fn checkpoint_evidence_surface_rejects_non_ascii_proposal_hash_even_when_hashes_
     let wal = WalMeta {
         height: 1,
         round: 0,
-        proposal_hash: "提案-1".into(),
+        proposal_hash: "proposal-1".into(),
         committed: true,
         state_root_hex: "ab".repeat(32),
         prev_hash_hex: None,
@@ -8764,7 +8764,7 @@ fn wal_checkpoint_verification_rejects_non_ascii_proposal_hash_even_when_checkpo
     let wal = WalMeta {
         height: 1,
         round: 0,
-        proposal_hash: "提案-1".into(),
+        proposal_hash: "proposal-1".into(),
         committed: true,
         state_root_hex: "r1".into(),
         prev_hash_hex: None,

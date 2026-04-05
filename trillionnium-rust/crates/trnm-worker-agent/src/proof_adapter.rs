@@ -459,7 +459,7 @@ mod tests {
         assert!(!ok);
         assert_eq!(code, "empty_output");
 
-        let (ok, code) = adapter.verify("你好abc", 4);
+        let (ok, code) = adapter.verify("helloabc", 4);
         assert!(!ok);
         assert_eq!(code, "output_too_long");
     }

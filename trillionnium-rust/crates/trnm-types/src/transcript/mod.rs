@@ -188,7 +188,7 @@ mod tests {
 
     #[test]
     fn transcript_batch_proof_hash_pair_count_estimate_is_lower() {
-        // 近似性能对比：重复单点 proof 需要重复构建树层。
+        // Approximate performance comparison: repeated single-point proofs need to rebuild the tree levels each time.
         let leaf_count = 64usize;
         let proof_count = 8usize;
         let levels = (leaf_count as f64).log2().ceil() as usize;

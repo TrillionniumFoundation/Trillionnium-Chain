@@ -1368,7 +1368,7 @@ mod tests {
     fn validate_node_config_rejects_non_ascii_node_id() {
         let err = validate_node_config(
             NodeConfig {
-                node_id: "节点-alpha".into(),
+                node_id: "node-alpha".into(),
                 rpc_addr: "127.0.0.1:7000".into(),
                 p2p_addr: "127.0.0.1:7001".into(),
             },

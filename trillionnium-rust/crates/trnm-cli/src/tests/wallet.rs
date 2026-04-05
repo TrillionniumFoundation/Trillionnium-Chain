@@ -842,7 +842,7 @@ fn ensure_safe_sign_message_rejects_ambiguous_or_non_ascii_signer_text() {
         "unexpected error: {nominal_digit_shapes_err}"
     );
 
-    let unicode_visible_err = ensure_safe_sign_message("approve 签名").unwrap_err();
+    let unicode_visible_err = ensure_safe_sign_message("approve signé").unwrap_err();
     assert!(
         unicode_visible_err
             .to_string()

@@ -3575,7 +3575,7 @@ mod tests {
         }
 
         ensure_sign_message("trnm mainnet attestation v1").unwrap();
-        ensure_sign_message("签名用途: validator-bootstrap").unwrap();
+        ensure_sign_message("Signing purpose: validator-bootstrap").unwrap();
         ensure_sign_message("operator approval v1").unwrap();
         ensure_sign_message(&"a".repeat(4096)).unwrap();
     }
@@ -5508,7 +5508,7 @@ mod tests {
 
     #[test]
     fn ensure_safe_sign_message_rejects_non_ascii_visible_text() {
-        let err = ensure_safe_sign_message("rotate signer 到 slot-b").unwrap_err();
+        let err = ensure_safe_sign_message("rotate signer to slöt-b").unwrap_err();
         assert!(
             err.to_string().contains("ASCII printable text"),
             "unexpected: {err}"
