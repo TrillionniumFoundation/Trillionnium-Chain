@@ -38,6 +38,19 @@ fn is_reserved_listener_ip(ip: std::net::IpAddr) -> bool {
     }
 }
 
+fn looks_like_dns_hostname(value: &str) -> bool {
+    if !value.contains('.') {
+        return false;
+    }
+
+    value.split('.').all(|label| {
+        !label.is_empty()
+            && !label.starts_with('-')
+            && !label.ends_with('-')
+            && label.bytes().all(|byte| byte.is_ascii_alphanumeric() || byte == b'-')
+    })
+}
+
 fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
     let node_id = cfg.node_id.trim();
     anyhow::ensure!(
@@ -130,8 +143,10 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         "invalid node config {}: node_id must not be '.' or '..'",
         path
     );
+    let normalized_node_id_host_candidate = node_id.strip_suffix('.').unwrap_or(node_id);
     anyhow::ensure!(
-        !node_id.eq_ignore_ascii_case("localhost")
+        !normalized_node_id_host_candidate.eq_ignore_ascii_case("localhost")
+            && !looks_like_dns_hostname(node_id)
             && node_id.parse::<std::net::IpAddr>().is_err()
             && node_id.parse::<std::net::SocketAddr>().is_err(),
         "invalid node config {}: node_id must not look like a host or socket literal",
@@ -216,6 +231,11 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         path
     );
     anyhow::ensure!(
+        !is_reserved_listener_ip(rpc_socket.ip()),
+        "invalid node config {}: rpc_addr must not use a documentation or benchmark-only address",
+        path
+    );
+    anyhow::ensure!(
         !is_ipv4_compatible_ipv6(rpc_socket.ip()),
         "invalid node config {}: rpc_addr must not use an IPv4-compatible IPv6 address",
         path
@@ -296,6 +316,11 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
     anyhow::ensure!(
         !p2p_socket.ip().is_unicast_link_local(),
         "invalid node config {}: p2p_addr must not use a link-local address",
+        path
+    );
+    anyhow::ensure!(
+        !is_reserved_listener_ip(p2p_socket.ip()),
+        "invalid node config {}: p2p_addr must not use a documentation or benchmark-only address",
         path
     );
     anyhow::ensure!(
@@ -912,34 +937,93 @@ mod tests {
     fn load_config_rejects_unknown_fields_to_keep_apply_bootstrap_config_fail_closed() {
         use std::time::{SystemTime, UNIX_EPOCH};
 
-        let path = std::env::temp_dir().join(format!(
-            "trnm-node-apply-config-unknown-field-{}-{}.toml",
-            std::process::id(),
-            SystemTime::now()
-                .duration_since(UNIX_EPOCH)
-                .expect("clock should be after unix epoch")
-                .as_nanos()
-        ));
-        std::fs::write(
-            &path,
-            r#"node_id = "node-a"
-rpc_addr = "127.0.0.1:26657"
-p2p_addr = "127.0.0.1:26656"
-bootstrap_peers = ["127.0.0.1:27656"]
-"#,
-        )
-        .expect("write temp config");
+        for (unknown_field, field_value) in [
+            ("bootstrap_nodes", "[\"127.0.0.1:27656\"]"),
+            ("bootstrap_node", "\"127.0.0.1:27656\""),
+            ("bootstrap_peers", "[\"127.0.0.1:27656\"]"),
+            ("bootstrap_peer", "\"127.0.0.1:27656\""),
+            ("bootstrapNodes", "[\"127.0.0.1:27656\"]"),
+            ("bootstrapNode", "\"127.0.0.1:27656\""),
+            ("bootstrapPeers", "[\"127.0.0.1:27656\"]"),
+            ("bootstrapPeer", "\"127.0.0.1:27656\""),
+            ("bootstrap_addr", "\"127.0.0.1:27656\""),
+            ("bootstrap_addrs", "[\"127.0.0.1:27656\"]"),
+            ("bootstrapAddr", "\"127.0.0.1:27656\""),
+            ("bootstrapAddrs", "[\"127.0.0.1:27656\"]"),
+            ("seed_nodes", "[\"127.0.0.1:27656\"]"),
+            ("seed_node", "\"127.0.0.1:27656\""),
+            ("seed_peers", "[\"127.0.0.1:27656\"]"),
+            ("seed_peer", "\"127.0.0.1:27656\""),
+            ("seedNodes", "[\"127.0.0.1:27656\"]"),
+            ("seedNode", "\"127.0.0.1:27656\""),
+            ("seedPeers", "[\"127.0.0.1:27656\"]"),
+            ("seedPeer", "\"127.0.0.1:27656\""),
+            ("seed_addr", "\"127.0.0.1:27656\""),
+            ("seed_addrs", "[\"127.0.0.1:27656\"]"),
+            ("seedAddr", "\"127.0.0.1:27656\""),
+            ("seedAddrs", "[\"127.0.0.1:27656\"]"),
+            ("seeds", "\"127.0.0.1:27656\""),
+            ("bootnodes", "[\"127.0.0.1:27656\"]"),
+            ("bootnode", "\"127.0.0.1:27656\""),
+            ("bootNodes", "[\"127.0.0.1:27656\"]"),
+            ("bootNode", "\"127.0.0.1:27656\""),
+            ("boot_peers", "[\"127.0.0.1:27656\"]"),
+            ("boot_peer", "\"127.0.0.1:27656\""),
+            ("boot_addr", "\"127.0.0.1:27656\""),
+            ("boot_addrs", "[\"127.0.0.1:27656\"]"),
+            ("bootAddr", "\"127.0.0.1:27656\""),
+            ("bootAddrs", "[\"127.0.0.1:27656\"]"),
+            ("bootPeers", "[\"127.0.0.1:27656\"]"),
+            ("bootPeer", "\"127.0.0.1:27656\""),
+            ("persistent_peers", "[\"127.0.0.1:27656\"]"),
+            ("persistent_peer", "\"127.0.0.1:27656\""),
+            ("persistent_addr", "\"127.0.0.1:27656\""),
+            ("persistent_addrs", "[\"127.0.0.1:27656\"]"),
+            ("persistentAddr", "\"127.0.0.1:27656\""),
+            ("persistentAddrs", "[\"127.0.0.1:27656\"]"),
+            ("persistentPeers", "[\"127.0.0.1:27656\"]"),
+            ("persistentPeer", "\"127.0.0.1:27656\""),
+            ("persistent_nodes", "[\"127.0.0.1:27656\"]"),
+            ("persistent_node", "\"127.0.0.1:27656\""),
+            ("persistentNodes", "[\"127.0.0.1:27656\"]"),
+            ("persistentNode", "\"127.0.0.1:27656\""),
+        ] {
+            let path = std::env::temp_dir().join(format!(
+                "trnm-node-apply-config-unknown-field-{unknown_field}-{}-{}.toml",
+                std::process::id(),
+                SystemTime::now()
+                    .duration_since(UNIX_EPOCH)
+                    .expect("clock should be after unix epoch")
+                    .as_nanos()
+            ));
+            std::fs::write(
+                &path,
+                format!(
+                    "node_id = \"node-a\"\nrpc_addr = \"127.0.0.1:26657\"\np2p_addr = \"127.0.0.1:26656\"\n{unknown_field} = {field_value}\n"
+                ),
+            )
+            .expect("write temp config");
 
-        let err = load_config(path.to_str().expect("temp path utf-8"))
-            .expect_err("unknown apply config fields must fail closed");
-        let _ = std::fs::remove_file(&path);
+            let path_str = path.to_str().expect("temp path utf-8");
+            let resolved = std::fs::canonicalize(&path).expect("canonicalize temp config path");
+            let err = load_config(path_str).expect_err("unknown apply config fields must fail closed");
+            let _ = std::fs::remove_file(&path);
 
-        let err_surface = err.to_string();
-        assert!(
-            err_surface.contains("parse toml failed")
-                && err_surface.contains("unknown field `bootstrap_peers`"),
-            "unexpected error: {err:#}"
-        );
+            let err_surface = format!("{err:#}");
+            assert!(
+                err_surface.contains("parse toml failed")
+                    && err_surface.contains(&format!("unknown field `{unknown_field}`")),
+                "unexpected error for {unknown_field}: {err:#}"
+            );
+            assert!(
+                err_surface.contains(path_str),
+                "error surface for {unknown_field} must keep the operator-supplied apply config path visible: {err:#}"
+            );
+            assert!(
+                err_surface.contains(resolved.to_string_lossy().as_ref()),
+                "error surface for {unknown_field} must keep the resolved apply config path visible for operator diagnosis: {err:#}"
+            );
+        }
     }
 
     #[test]
@@ -1132,6 +1216,41 @@ bootstrap_peers = ["127.0.0.1:27656"]
     }
 
     #[test]
+    fn validate_node_config_rejects_documentation_and_benchmark_listener_addresses() {
+        let rpc_reserved_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "192.0.2.10:7000".into(),
+                p2p_addr: "192.0.2.10:7001".into(),
+            },
+            "inline",
+        )
+        .expect_err("rpc_addr documentation bind must fail closed");
+        assert!(
+            rpc_reserved_err
+                .to_string()
+                .contains("rpc_addr must not use a documentation or benchmark-only address"),
+            "unexpected error: {rpc_reserved_err:#}"
+        );
+
+        let p2p_reserved_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "127.0.0.1:7000".into(),
+                p2p_addr: "198.19.0.10:7001".into(),
+            },
+            "inline",
+        )
+        .expect_err("p2p_addr benchmark bind must fail closed");
+        assert!(
+            p2p_reserved_err
+                .to_string()
+                .contains("p2p_addr must not use a documentation or benchmark-only address"),
+            "unexpected error: {p2p_reserved_err:#}"
+        );
+    }
+
+    #[test]
     fn validate_node_config_rejects_control_characters_in_node_id() {
         let err = validate_node_config(
             NodeConfig {
@@ -1226,21 +1345,61 @@ bootstrap_peers = ["127.0.0.1:27656"]
     }
 
     #[test]
-    fn validate_node_config_rejects_path_separators_in_node_id() {
+    fn validate_node_config_rejects_path_and_host_literal_separators_in_node_id() {
+        for node_id in ["node/alpha", r"node\\alpha", "node:alpha", "[::1]"] {
+            let err = validate_node_config(
+                NodeConfig {
+                    node_id: node_id.into(),
+                    rpc_addr: "127.0.0.1:7000".into(),
+                    p2p_addr: "127.0.0.1:7001".into(),
+                },
+                "inline",
+            )
+            .expect_err("path or host-literal separators in node_id must fail closed");
+            assert!(
+                err.to_string()
+                    .contains("node_id must not contain path or host-literal separators (/ \\ : [ ])"),
+                "unexpected error for {node_id:?}: {err:#}"
+            );
+        }
+    }
+
+    #[test]
+    fn validate_node_config_rejects_non_ascii_node_id() {
         let err = validate_node_config(
             NodeConfig {
-                node_id: "node/alpha".into(),
+                node_id: "节点-alpha".into(),
                 rpc_addr: "127.0.0.1:7000".into(),
                 p2p_addr: "127.0.0.1:7001".into(),
             },
             "inline",
         )
-        .expect_err("path separators in node_id must fail closed");
+        .expect_err("non-ascii node_id must fail closed");
         assert!(
             err.to_string()
-                .contains("node_id must not contain path separators (/ \\ :)"),
+                .contains("node_id must use ASCII-only characters"),
             "unexpected error: {err:#}"
         );
+    }
+
+    #[test]
+    fn validate_node_config_rejects_invisible_or_bidi_format_characters_in_node_id() {
+        for node_id in ["node\u{200B}alpha", "node\u{202E}alpha"] {
+            let err = validate_node_config(
+                NodeConfig {
+                    node_id: node_id.into(),
+                    rpc_addr: "127.0.0.1:7000".into(),
+                    p2p_addr: "127.0.0.1:7001".into(),
+                },
+                "inline",
+            )
+            .expect_err("invisible or bidi node_id characters must fail closed");
+            assert!(
+                err.to_string()
+                    .contains("node_id must not contain invisible or bidirectional format characters"),
+                "unexpected error for {node_id:?}: {err:#}"
+            );
+        }
     }
 
     #[test]
@@ -1318,7 +1477,16 @@ bootstrap_peers = ["127.0.0.1:27656"]
 
     #[test]
     fn validate_node_config_rejects_host_like_node_id_and_url_style_operator_addresses() {
-        for node_id in ["localhost", "LOCALHOST", "127.0.0.1", "127.0.0.1:7000"] {
+        for node_id in [
+            "localhost",
+            "LOCALHOST",
+            "localhost.",
+            "LOCALHOST.",
+            "127.0.0.1",
+            "127.0.0.1:7000",
+            "bootstrap.example.com",
+            "node-2.bootstrap.internal",
+        ] {
             let err = validate_node_config(
                 NodeConfig {
                     node_id: node_id.into(),

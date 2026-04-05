@@ -4025,6 +4025,32 @@ mod tests {
             .to_string()
             .contains("p2p_addr must not use an unspecified address"));
 
+        let rpc_ipv6_loopback_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "[::1]:26657".into(),
+                p2p_addr: "[2001:4860::1]:26656".into(),
+            },
+            "node.toml",
+        )
+        .expect_err("rpc_addr IPv6 loopback bind must be rejected");
+        assert!(rpc_ipv6_loopback_err
+            .to_string()
+            .contains("rpc_addr must not use the IPv6 loopback address"));
+
+        let p2p_ipv6_loopback_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "[2001:4860::1]:26657".into(),
+                p2p_addr: "[::1]:26656".into(),
+            },
+            "node.toml",
+        )
+        .expect_err("p2p_addr IPv6 loopback bind must be rejected");
+        assert!(p2p_ipv6_loopback_err
+            .to_string()
+            .contains("p2p_addr must not use the IPv6 loopback address"));
+
         let rpc_link_local_err = validate_node_config(
             NodeConfig {
                 node_id: "node-a".into(),
@@ -4041,7 +4067,7 @@ mod tests {
         let p2p_link_local_err = validate_node_config(
             NodeConfig {
                 node_id: "node-a".into(),
-                rpc_addr: "[::1]:26657".into(),
+                rpc_addr: "[2001:4860::1]:26657".into(),
                 p2p_addr: "[fe80::1]:26656".into(),
             },
             "node.toml",
@@ -4446,12 +4472,24 @@ mod tests {
         let canonical_symlink_parent = workspace_shadow
             .canonicalize()
             .expect("workspace shadow should canonicalize");
+        let workspace_root = super::workspace_root()
+            .canonicalize()
+            .expect("workspace root should canonicalize");
+        let current_dir = std::env::current_dir()
+            .expect("capture cwd")
+            .canonicalize()
+            .expect("cwd should canonicalize");
         let _ = std::fs::remove_dir_all(&temp_root);
 
         let err_surface = format!("{err:#}");
         assert!(
             !canonical_target.starts_with(&canonical_symlink_parent),
             "test fixture must point outside the allowed workspace shadow"
+        );
+        assert!(
+            !canonical_target.starts_with(&workspace_root)
+                && !canonical_target.starts_with(&current_dir),
+            "test fixture must stay outside both allowed roots"
         );
         assert!(
             err_surface.contains("resolves outside allowed roots"),
@@ -4642,6 +4680,7 @@ mod tests {
             .expect("trnm-node manifest should sit under trillionnium-rust/crates/trnm-node");
         let readme_path = workspace_root.join("configs").join("README.md");
         let workspace_relative_readme_path = workspace_root.join("configs/README.md");
+        let curdir_repo_relative_readme_path = workspace_root.join("./configs/README.md");
 
         let readme_metadata = std::fs::symlink_metadata(&readme_path).unwrap_or_else(|err| {
             panic!(
@@ -4696,6 +4735,20 @@ mod tests {
             canonical_workspace_relative_readme_path, canonical_readme_path,
             "{} must canonicalize to the same shipped bootstrap README as {}",
             workspace_relative_readme_path.display(),
+            readme_path.display()
+        );
+        let canonical_curdir_repo_relative_readme_path = curdir_repo_relative_readme_path
+            .canonicalize()
+            .unwrap_or_else(|err| {
+                panic!(
+                    "{} should canonicalize for curdir-prefixed bootstrap README path anchoring: {err}",
+                    curdir_repo_relative_readme_path.display()
+                )
+            });
+        assert_eq!(
+            canonical_curdir_repo_relative_readme_path, canonical_readme_path,
+            "{} must canonicalize to the same shipped bootstrap README as {}",
+            curdir_repo_relative_readme_path.display(),
             readme_path.display()
         );
 
@@ -5240,8 +5293,63 @@ mod tests {
         }
     }
 
+    const FORBIDDEN_BOOTSTRAP_ALIAS_FIELDS: &[(&str, &str)] = &[
+        ("bootstrap_nodes", "[\"127.0.0.1:27656\"]"),
+        ("bootstrap_node", "\"127.0.0.1:27656\""),
+        ("bootstrap_peers", "[\"127.0.0.1:27656\"]"),
+        ("bootstrap_peer", "\"127.0.0.1:27656\""),
+        ("bootstrapNodes", "[\"127.0.0.1:27656\"]"),
+        ("bootstrapNode", "\"127.0.0.1:27656\""),
+        ("bootstrapPeers", "[\"127.0.0.1:27656\"]"),
+        ("bootstrapPeer", "\"127.0.0.1:27656\""),
+        ("bootstrap_addr", "\"127.0.0.1:27656\""),
+        ("bootstrap_addrs", "[\"127.0.0.1:27656\"]"),
+        ("bootstrapAddr", "\"127.0.0.1:27656\""),
+        ("bootstrapAddrs", "[\"127.0.0.1:27656\"]"),
+        ("seed_nodes", "[\"127.0.0.1:27656\"]"),
+        ("seed_node", "\"127.0.0.1:27656\""),
+        ("seed_peers", "[\"127.0.0.1:27656\"]"),
+        ("seed_peer", "\"127.0.0.1:27656\""),
+        ("seedNodes", "[\"127.0.0.1:27656\"]"),
+        ("seedNode", "\"127.0.0.1:27656\""),
+        ("seedPeers", "[\"127.0.0.1:27656\"]"),
+        ("seedPeer", "\"127.0.0.1:27656\""),
+        ("seed_addr", "\"127.0.0.1:27656\""),
+        ("seed_addrs", "[\"127.0.0.1:27656\"]"),
+        ("seedAddr", "\"127.0.0.1:27656\""),
+        ("seedAddrs", "[\"127.0.0.1:27656\"]"),
+        ("seeds", "\"127.0.0.1:27656\""),
+        ("bootnodes", "[\"127.0.0.1:27656\"]"),
+        ("bootnode", "\"127.0.0.1:27656\""),
+        ("boot_nodes", "[\"127.0.0.1:27656\"]"),
+        ("boot_node", "\"127.0.0.1:27656\""),
+        ("bootNodes", "[\"127.0.0.1:27656\"]"),
+        ("bootNode", "\"127.0.0.1:27656\""),
+        ("boot_peers", "[\"127.0.0.1:27656\"]"),
+        ("boot_peer", "\"127.0.0.1:27656\""),
+        ("boot_addr", "\"127.0.0.1:27656\""),
+        ("boot_addrs", "[\"127.0.0.1:27656\"]"),
+        ("bootAddr", "\"127.0.0.1:27656\""),
+        ("bootAddrs", "[\"127.0.0.1:27656\"]"),
+        ("bootPeers", "[\"127.0.0.1:27656\"]"),
+        ("bootPeer", "\"127.0.0.1:27656\""),
+        ("persistent_peers", "[\"127.0.0.1:27656\"]"),
+        ("persistent_peer", "\"127.0.0.1:27656\""),
+        ("persistent_addr", "\"127.0.0.1:27656\""),
+        ("persistent_addrs", "[\"127.0.0.1:27656\"]"),
+        ("persistentAddr", "\"127.0.0.1:27656\""),
+        ("persistentAddrs", "[\"127.0.0.1:27656\"]"),
+        ("persistentPeers", "[\"127.0.0.1:27656\"]"),
+        ("persistentPeer", "\"127.0.0.1:27656\""),
+        ("persistent_nodes", "[\"127.0.0.1:27656\"]"),
+        ("persistent_node", "\"127.0.0.1:27656\""),
+        ("persistentNodes", "[\"127.0.0.1:27656\"]"),
+        ("persistentNode", "\"127.0.0.1:27656\""),
+    ];
+
     #[test]
     fn load_config_rejects_unknown_fields_to_keep_bootstrap_config_fail_closed() {
+        let _cwd_guard = cwd_test_lock().lock().unwrap();
         for (unknown_field, field_value) in [
             ("bootstrap_nodes", "[\"127.0.0.1:27656\"]"),
             ("bootstrap_node", "\"127.0.0.1:27656\""),
@@ -5742,6 +5850,47 @@ mod tests {
     }
 
     #[test]
+    fn load_config_rejects_ipv6_loopback_listener_after_operator_trimming() {
+        let rpc_path = std::env::temp_dir().join(format!(
+            "trnm-node-config-ipv6-loopback-rpc-listener-{}-{}.toml",
+            std::process::id(),
+            std::thread::current().name().unwrap_or("unnamed")
+        ));
+        std::fs::write(
+            &rpc_path,
+            "node_id = \"node-a\"\nrpc_addr = \"[::1]:26657\"\np2p_addr = \"[2001:4860::1]:26656\"\n",
+        )
+        .expect("write config");
+
+        let rpc_err = load_config(rpc_path.to_str().expect("utf8 path"))
+            .expect_err("ipv6 loopback rpc listener must fail closed");
+        assert!(rpc_err
+            .to_string()
+            .contains("rpc_addr must not use the IPv6 loopback address"));
+
+        let _ = std::fs::remove_file(rpc_path);
+
+        let p2p_path = std::env::temp_dir().join(format!(
+            "trnm-node-config-ipv6-loopback-p2p-listener-{}-{}.toml",
+            std::process::id(),
+            std::thread::current().name().unwrap_or("unnamed")
+        ));
+        std::fs::write(
+            &p2p_path,
+            "node_id = \"node-a\"\nrpc_addr = \"[2001:4860::1]:26657\"\np2p_addr = \"[::1]:26656\"\n",
+        )
+        .expect("write config");
+
+        let p2p_err = load_config(p2p_path.to_str().expect("utf8 path"))
+            .expect_err("ipv6 loopback p2p listener must fail closed");
+        assert!(p2p_err
+            .to_string()
+            .contains("p2p_addr must not use the IPv6 loopback address"));
+
+        let _ = std::fs::remove_file(p2p_path);
+    }
+
+    #[test]
     fn load_config_rejects_link_local_listener_after_operator_trimming() {
         let rpc_path = std::env::temp_dir().join(format!(
             "trnm-node-config-link-local-rpc-listener-{}-{}.toml",
@@ -5907,6 +6056,7 @@ mod tests {
 
     #[test]
     fn load_config_parse_errors_keep_operator_and_resolved_paths_visible_for_alias_drift() {
+        let _cwd_guard = cwd_test_lock().lock().unwrap();
         let current_dir = std::env::current_dir().expect("current dir");
 
         for (suffix, alias_line, expected_field) in [
@@ -5991,6 +6141,7 @@ mod tests {
     #[test]
     fn load_config_validation_errors_keep_operator_and_resolved_paths_visible_for_listener_guard_drift(
     ) {
+        let _cwd_guard = cwd_test_lock().lock().unwrap();
         let current_dir = std::env::current_dir().expect("current dir");
 
         for (suffix, rpc_addr, p2p_addr, expected_fragment) in [
@@ -6164,6 +6315,7 @@ mod tests {
     #[test]
     fn load_config_validation_errors_keep_operator_and_resolved_paths_visible_for_node_id_guard_drift(
     ) {
+        let _cwd_guard = cwd_test_lock().lock().unwrap();
         let current_dir = std::env::current_dir().expect("current dir");
 
         for (suffix, node_id, expected_fragment) in [
@@ -7562,7 +7714,7 @@ mod tests {
             NodeConfig {
                 node_id: "node-a".into(),
                 rpc_addr: "127.0.0.1:26657".into(),
-                p2p_addr: "[::1]:26656".into(),
+                p2p_addr: "[2606:4700:4700::1111]:26656".into(),
             },
             "node.toml",
         )
@@ -7570,7 +7722,7 @@ mod tests {
         let err_surface = err.to_string();
         assert!(err_surface.contains("must use the same IP family"));
         assert!(err_surface.contains("127.0.0.1:26657"));
-        assert!(err_surface.contains("[::1]:26656"));
+        assert!(err_surface.contains("[2606:4700:4700::1111]:26656"));
     }
 
     #[test]
@@ -7905,9 +8057,11 @@ mod tests {
                 "node.toml",
             )
             .expect_err("node_id URI delimiters must fail closed");
-            assert!(err
-                .to_string()
-                .contains("node_id must not contain URI delimiters (@ ? # % & =)"));
+            let err_surface = err.to_string();
+            assert!(
+                err_surface.contains("node_id must not contain URI delimiters (@ ? # % & =)"),
+                "unexpected error surface for {node_id:?}: {err:#}"
+            );
         }
     }
 
