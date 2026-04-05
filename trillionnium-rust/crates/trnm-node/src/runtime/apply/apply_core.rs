@@ -51,8 +51,24 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         path
     );
     anyhow::ensure!(
+        node_id.len() <= MAX_NODE_ID_LEN,
+        "invalid node config {}: node_id must be at most {} bytes",
+        path,
+        MAX_NODE_ID_LEN
+    );
+    anyhow::ensure!(
         !node_id.chars().any(char::is_control),
         "invalid node config {}: node_id must not contain control characters",
+        path
+    );
+    anyhow::ensure!(
+        node_id.is_ascii(),
+        "invalid node config {}: node_id must use ASCII-only characters",
+        path
+    );
+    anyhow::ensure!(
+        !contains_invisible_or_bidi_format_chars(node_id),
+        "invalid node config {}: node_id must not contain invisible or bidirectional format characters",
         path
     );
     anyhow::ensure!(
@@ -66,8 +82,37 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         path
     );
     anyhow::ensure!(
-        !node_id.contains('/') && !node_id.contains('\\') && !node_id.contains(':'),
-        "invalid node config {}: node_id must not contain path separators (/ \\ :)",
+        !node_id.contains('/')
+            && !node_id.contains('\\')
+            && !node_id.contains(':')
+            && !node_id.contains('[')
+            && !node_id.contains(']'),
+        "invalid node config {}: node_id must not contain path or host-literal separators (/ \\ : [ ])",
+        path
+    );
+    let bracketed_host_literal = node_id
+        .strip_prefix('[')
+        .and_then(|inner| inner.strip_suffix(']'))
+        .is_some_and(|inner| inner.parse::<std::net::IpAddr>().is_ok());
+    let normalized_node_id_host_candidate = node_id.strip_suffix('.').unwrap_or(node_id);
+    let dns_like_host_label = normalized_node_id_host_candidate
+        .split('.')
+        .all(|label| {
+            !label.is_empty()
+                && label
+                    .chars()
+                    .all(|ch| ch.is_ascii_alphanumeric() || ch == '-')
+                && !label.starts_with('-')
+                && !label.ends_with('-')
+        })
+        && normalized_node_id_host_candidate.contains('.');
+    anyhow::ensure!(
+        !normalized_node_id_host_candidate.eq_ignore_ascii_case("localhost")
+            && node_id.parse::<std::net::IpAddr>().is_err()
+            && node_id.parse::<SocketAddr>().is_err()
+            && !bracketed_host_literal
+            && !dns_like_host_label,
+        "invalid node config {}: node_id must not look like a host or socket literal",
         path
     );
     anyhow::ensure!(
