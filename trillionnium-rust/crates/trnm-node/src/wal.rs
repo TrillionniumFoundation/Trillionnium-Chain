@@ -334,6 +334,29 @@ mod tests {
     }
 
     #[test]
+    fn resolve_wal_dir_auto_allows_builtin_default_when_only_crlf_comment_only_checkpoint_scaffold_exists(
+    ) {
+        let sandbox = temp_wal_dir("resolve-auto-crlf-comment-only-checkpoint-scaffold");
+        let prior_cwd = std::env::current_dir().unwrap();
+        fs::create_dir_all(sandbox.join(DEFAULT_BFT_WAL_DIR)).unwrap();
+        fs::write(
+            checkpoint_file(&sandbox.join(DEFAULT_BFT_WAL_DIR)),
+            "# operator left a recovery note\r\n   # keep until next successful catch-up\r\n",
+        )
+        .unwrap();
+        std::env::set_current_dir(&sandbox).unwrap();
+
+        let args = default_args();
+        let requested = PathBuf::from(DEFAULT_BFT_WAL_DIR);
+        let (resolved, note) = resolve_wal_dir(&args).unwrap();
+        assert_eq!(resolved, requested);
+        assert!(note.is_none());
+
+        std::env::set_current_dir(prior_cwd).unwrap();
+        let _ = fs::remove_dir_all(&sandbox);
+    }
+
+    #[test]
     fn resolve_wal_dir_auto_allows_builtin_default_when_only_blank_consensus_wal_scaffold_exists() {
         let sandbox = temp_wal_dir("resolve-auto-blank-consensus-wal-scaffold");
         let prior_cwd = std::env::current_dir().unwrap();
