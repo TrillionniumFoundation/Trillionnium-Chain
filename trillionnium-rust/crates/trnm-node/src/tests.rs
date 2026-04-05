@@ -9874,6 +9874,48 @@ locked_block_hash = "stale-lock"
     }
 
     #[test]
+    fn ensure_recoverable_wal_state_allows_truncated_checkpoint_only_rejoin_bootstrap_at_max_height() {
+        let wal_dir = temp_wal_dir("recover-guard-max-truncated-checkpoint-only-rejoin");
+        fs::create_dir_all(&wal_dir).unwrap();
+
+        let recovered = RecoveredWalState {
+            next_height: u64::MAX,
+            restored_lock: None,
+            last_checkpoint: Some(CheckpointMeta {
+                height: u64::MAX - 1,
+                state_root_hex: "r-max-minus-1".into(),
+                wal_entry_hash_hex: "h-max-minus-1".into(),
+            }),
+            truncated: true,
+            metadata_only_recovery: false,
+            wal_entries_retained: 0,
+            checkpoint_height_retained: Some(u64::MAX - 1),
+        };
+
+        ensure_recoverable_wal_state(&wal_dir, &recovered).expect(
+            "truncated max-height checkpoint-only rejoin bootstrap should remain recoverable",
+        );
+        assert_eq!(
+            retained_wal_summary(&recovered),
+            format!(
+                "retained no committed WAL entries (last retained checkpoint height {}); repaired WAL tail required truncation",
+                u64::MAX - 1,
+            )
+        );
+        assert_eq!(
+            recovery_startup_summary(&recovered),
+            format!(
+                "retained_wal_entries=0 checkpoint_height_retained={} checkpoint_tip_relation=checkpoint_only:{} next_startup_height={} wal_tail_truncated=true metadata_only_recovery=false join_rejoin_status=ready:checkpoint_only_rejoin_bootstrap_after_tail_repair",
+                u64::MAX - 1,
+                u64::MAX - 1,
+                u64::MAX,
+            )
+        );
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
     fn recover_metadata_only_error_reports_absent_checkpoint() {
         let wal_dir = temp_wal_dir("recover-metadata-only-error-no-checkpoint");
         fs::create_dir_all(&wal_dir).unwrap();
