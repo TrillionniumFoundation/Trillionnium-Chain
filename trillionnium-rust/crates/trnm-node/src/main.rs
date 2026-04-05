@@ -6871,6 +6871,92 @@ mod tests {
     }
 
     #[test]
+    fn shipped_bootstrap_path_aliases_stay_slot_stable_across_load_and_startup_preflight() {
+        let manifest_dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR"));
+        let workspace_root = manifest_dir
+            .ancestors()
+            .nth(2)
+            .expect("trnm-node manifest should sit under trillionnium-rust/crates/trnm-node");
+
+        let make_args = |config: String| Args {
+            config,
+            block_ms: 1000,
+            max_blocks: 10,
+            demo_tasks: 2,
+            demo_keys: 2,
+            parallel_workers: 4,
+            txs_per_block: 4,
+            validators: 4,
+            byzantine: 0,
+            bft_max_rounds: 3,
+            bft_fault_rounds: 0,
+            bft_missed_proposal_threshold: 2,
+            bft_leader_penalty_rounds: 2,
+            bft_round_change_backoff_ms: 5,
+            bft_round_change_backoff_max_ms: 40,
+            bft_wal_dir: DEFAULT_BFT_WAL_DIR.into(),
+            bft_wal_mode: WalDirMode::Auto,
+            bft_checkpoint_interval: 5,
+            pouw_timeout_scan: true,
+            pouw_timeout_scan_every_blocks: 1,
+            enable_da_ordering_decouple: false,
+            rl_advisor_shadow: false,
+            rl_advisor_shadow_topk: 4,
+        };
+
+        let expected = [
+            (1, "node1", "127.0.0.1:26657", "127.0.0.1:26656"),
+            (2, "node2", "127.0.0.1:27657", "127.0.0.1:27656"),
+            (3, "node3", "127.0.0.1:28657", "127.0.0.1:28656"),
+            (4, "node4", "127.0.0.1:29657", "127.0.0.1:29656"),
+        ];
+
+        for (slot, node_id, rpc_addr, p2p_addr) in expected {
+            let canonical_slot_path = workspace_root.join(format!("configs/node{slot}.toml"));
+            for config in [
+                format!("configs/node{slot}.toml"),
+                format!("./configs/node{slot}.toml"),
+                format!("configs/./node{slot}.toml"),
+                format!("./configs/./node{slot}.toml"),
+                format!("trillionnium-rust/configs/node{slot}.toml"),
+                format!("./trillionnium-rust/configs/node{slot}.toml"),
+                format!("trillionnium-rust/./configs/./node{slot}.toml"),
+                format!("./trillionnium-rust/./configs/./node{slot}.toml"),
+            ] {
+                assert_eq!(
+                    resolve_config_path(&config),
+                    canonical_slot_path,
+                    "{config} must stay anchored to shipped bootstrap slot {slot}"
+                );
+
+                let cfg = load_config(&config).unwrap_or_else(|err| {
+                    panic!(
+                        "{config} should load for shipped bootstrap slot {slot}: {err:#}"
+                    )
+                });
+                assert_eq!(
+                    cfg.node_id, node_id,
+                    "{config} must keep the shipped node_id for bootstrap slot {slot}"
+                );
+                assert_eq!(
+                    cfg.rpc_addr, rpc_addr,
+                    "{config} must keep the shipped rpc_addr for bootstrap slot {slot}"
+                );
+                assert_eq!(
+                    cfg.p2p_addr, p2p_addr,
+                    "{config} must keep the shipped p2p_addr for bootstrap slot {slot}"
+                );
+
+                validate_startup_args(&make_args(config.clone())).unwrap_or_else(|err| {
+                    panic!(
+                        "{config} should remain bootstrappable via startup preflight for shipped slot {slot}: {err:#}"
+                    )
+                });
+            }
+        }
+    }
+
+    #[test]
     fn validate_startup_args_rejects_parent_traversal_in_config_path() {
         let args = Args {
             config: "../configs/node1.toml".into(),
