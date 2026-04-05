@@ -253,6 +253,56 @@ fn load_node_event_log_sources_unwraps_quoted_manifest_entries_for_historical_re
 }
 
 #[test]
+fn load_node_event_log_sources_accepts_carriage_return_manifest_entries_for_historical_replay() {
+    let _guard = lock_env();
+    let root = unique_tmp_path("trnm-rpc-log-sources-manifest-crlf", "dir");
+    let archive_dir = root.join("archive");
+    let manifest_dir = root.join("cfg/history");
+    fs::create_dir_all(&archive_dir).expect("create archive dir");
+    fs::create_dir_all(&manifest_dir).expect("create manifest dir");
+
+    let archived_log = archive_dir.join("node4.log");
+    let second_archived_log = archive_dir.join("node5.log");
+    let manifest = manifest_dir.join("sources.txt");
+    fs::write(&archived_log, "").expect("write archived log");
+    fs::write(&second_archived_log, "").expect("write second archived log");
+    fs::write(
+        &manifest,
+        "\"../../archive/node4.log\"# replay note\r`../../archive/node5.log`# archived replay note\r",
+    )
+    .expect("write manifest");
+
+    let prev_sources = std::env::var(NODE_EVENT_LOG_SOURCES_ENV).ok();
+    let prev_manifest = std::env::var(NODE_EVENT_LOG_MANIFEST_ENV).ok();
+    unsafe {
+        std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV);
+        std::env::set_var(
+            NODE_EVENT_LOG_MANIFEST_ENV,
+            manifest.to_string_lossy().to_string(),
+        );
+    }
+
+    let got = load_node_event_log_sources(&root);
+
+    match prev_sources {
+        Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_SOURCES_ENV, v) },
+        None => unsafe { std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV) },
+    }
+    match prev_manifest {
+        Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_MANIFEST_ENV, v) },
+        None => unsafe { std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV) },
+    }
+
+    assert_eq!(
+        got,
+        vec![archive_dir.join("node4.log"), archive_dir.join("node5.log")],
+        "historical replay manifests should keep carriage-return-separated wrapped entries while dropping attached comments"
+    );
+
+    let _ = fs::remove_dir_all(root);
+}
+
+#[test]
 fn load_node_event_log_sources_tolerates_bom_wrapped_manifest_env_for_historical_replay() {
     let _guard = lock_env();
     let root = unique_tmp_path("trnm-rpc-log-sources-manifest-env-bom", "dir");
@@ -330,6 +380,47 @@ fn load_node_event_log_sources_unwraps_quoted_env_entries_for_historical_replay(
         got,
         vec![shared_log],
         "quoted historical replay env entries should resolve to canonical log sources"
+    );
+
+    let _ = fs::remove_dir_all(root);
+}
+
+#[test]
+fn load_node_event_log_sources_accepts_carriage_return_env_entries_with_bom_wrapped_comments() {
+    let _guard = lock_env();
+    let root = unique_tmp_path("trnm-rpc-log-sources-env-crlf-bom-comments", "dir");
+    fs::create_dir_all(&root).expect("create root dir");
+
+    let node4_log = root.join("node4.log");
+    let node5_log = root.join("node5.log");
+    fs::write(&node4_log, "").expect("write node4 log");
+    fs::write(&node5_log, "").expect("write node5 log");
+
+    let prev_sources = std::env::var(NODE_EVENT_LOG_SOURCES_ENV).ok();
+    let prev_manifest = std::env::var(NODE_EVENT_LOG_MANIFEST_ENV).ok();
+    unsafe {
+        std::env::set_var(
+            NODE_EVENT_LOG_SOURCES_ENV,
+            "\"node4.log\"  \u{feff}# replay note\r`./node5.log`  \u{feff}# archived replay note\r",
+        );
+        std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV);
+    }
+
+    let got = load_node_event_log_sources(&root);
+
+    match prev_sources {
+        Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_SOURCES_ENV, v) },
+        None => unsafe { std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV) },
+    }
+    match prev_manifest {
+        Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_MANIFEST_ENV, v) },
+        None => unsafe { std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV) },
+    }
+
+    assert_eq!(
+        got,
+        vec![node4_log, node5_log],
+        "carriage-return-separated historical replay env aliases should keep wrapped paths while dropping BOM-spaced attached comments"
     );
 
     let _ = fs::remove_dir_all(root);

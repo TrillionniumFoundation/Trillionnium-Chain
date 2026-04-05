@@ -1,5 +1,21 @@
 use super::*;
 
+fn normalize_adapter_record_line(line: &str) -> &str {
+    line.trim().trim_start_matches('\u{feff}').trim()
+}
+
+fn load_adapter_records_file(path: &PathBuf) -> Vec<AdapterRecord> {
+    let Ok(raw) = fs::read(path) else {
+        return vec![];
+    };
+    String::from_utf8_lossy(&raw)
+        .lines()
+        .map(normalize_adapter_record_line)
+        .filter(|l| !l.is_empty())
+        .filter_map(|l| serde_json::from_str::<AdapterRecord>(l).ok())
+        .collect()
+}
+
 pub(crate) fn load_latest_adapter_records() -> Vec<AdapterRecord> {
     let root = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
         .parent()
@@ -22,17 +38,15 @@ pub(crate) fn load_latest_adapter_records() -> Vec<AdapterRecord> {
         })
         .collect();
     files.sort();
-    let Some(latest) = files.last() else {
-        return vec![];
-    };
 
-    let Ok(raw) = fs::read_to_string(latest) else {
-        return vec![];
-    };
-    raw.lines()
-        .filter(|l| !l.trim().is_empty())
-        .filter_map(|l| serde_json::from_str::<AdapterRecord>(l).ok())
-        .collect()
+    for path in files.iter().rev() {
+        let records = load_adapter_records_file(path);
+        if !records.is_empty() {
+            return records;
+        }
+    }
+
+    vec![]
 }
 
 #[cfg(test)]
@@ -143,16 +157,73 @@ pub(crate) fn parse_event_log_kv(line: &str) -> BTreeMap<String, String> {
 }
 
 pub(crate) fn parse_node_event_log_sources_list(raw: &str) -> Vec<PathBuf> {
-    raw.split(|c: char| c == ',' || c == ';' || c == '\n')
-        .filter_map(|part| {
-            let trimmed = part.trim();
-            if trimmed.is_empty() {
-                None
-            } else {
-                Some(PathBuf::from(trimmed))
+    let mut out = Vec::new();
+    let mut start = 0usize;
+    let mut quote: Option<char> = None;
+
+    for (idx, ch) in raw.char_indices() {
+        match quote {
+            Some(active) if ch == active => quote = None,
+            Some(_) => {}
+            None if matches!(ch, '"' | '\'' | '`') => quote = Some(ch),
+            None if matches!(ch, ',' | ';' | '\n' | '\r') => {
+                let normalized = normalize_wrapped_env_value(raw[start..idx].trim());
+                if !normalized.is_empty() {
+                    out.push(PathBuf::from(normalized));
+                }
+                start = idx + ch.len_utf8();
             }
-        })
-        .collect()
+            None => {}
+        }
+    }
+
+    let normalized = normalize_wrapped_env_value(raw[start..].trim());
+    if !normalized.is_empty() {
+        out.push(PathBuf::from(normalized));
+    }
+
+    out
+}
+
+#[cfg(test)]
+mod tests {
+    use super::parse_node_event_log_sources_list;
+    use std::path::PathBuf;
+
+    #[test]
+    fn parse_node_event_log_sources_list_accepts_carriage_return_separators_for_historical_replay() {
+        let parsed = parse_node_event_log_sources_list(
+            "\"archive/node4.log\"\r'archive/node5.log'\rplain.log\r",
+        );
+
+        assert_eq!(
+            parsed,
+            vec![
+                PathBuf::from("archive/node4.log"),
+                PathBuf::from("archive/node5.log"),
+                PathBuf::from("plain.log"),
+            ],
+            "carriage-return separated historical replay aliases should parse as distinct sources"
+        );
+    }
+
+    #[test]
+    fn parse_node_event_log_sources_list_keeps_wrapped_entries_with_internal_delimiters() {
+        let parsed = parse_node_event_log_sources_list(
+            "\"archive/node,4.log\";'archive/node;5.log';`archive/node\n6.log`,plain.log",
+        );
+
+        assert_eq!(
+            parsed,
+            vec![
+                PathBuf::from("archive/node,4.log"),
+                PathBuf::from("archive/node;5.log"),
+                PathBuf::from("archive/node\n6.log"),
+                PathBuf::from("plain.log"),
+            ],
+            "wrapped historical replay env entries should keep internal delimiters instead of being split into bogus paths"
+        );
+    }
 }
 
 fn normalize_lexical_path(path: PathBuf) -> PathBuf {
@@ -201,14 +272,15 @@ pub(crate) fn load_node_event_log_sources(root: &Path) -> Vec<PathBuf> {
     let mut sources = BTreeSet::<PathBuf>::new();
 
     if let Some(manifest_path) = normalized_path_from_env(NODE_EVENT_LOG_MANIFEST_ENV) {
+        let manifest_path = if manifest_path.is_absolute() {
+            normalize_lexical_path(manifest_path)
+        } else {
+            normalize_lexical_path(root.join(manifest_path))
+        };
         if let Ok(raw) = fs::read_to_string(&manifest_path) {
             let manifest_dir = manifest_path.parent().unwrap_or_else(|| Path::new("."));
-            for line in raw.lines() {
-                let trimmed = line.trim();
-                if trimmed.is_empty() || trimmed.starts_with('#') {
-                    continue;
-                }
-                let normalized = normalize_wrapped_env_value(trimmed);
+            for path in parse_node_event_log_sources_list(&raw) {
+                let normalized = normalize_wrapped_env_value(&path.to_string_lossy());
                 if normalized.is_empty() || normalized.starts_with('#') {
                     continue;
                 }

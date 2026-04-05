@@ -1,7 +1,6 @@
 pub(crate) use super::*;
 
-#[test]
-fn load_latest_adapter_records_skips_invalid_jsonl_rows() {
+fn with_isolated_adapter_dir(test: impl FnOnce(&PathBuf)) {
     let _guard = faucet_env_test_lock()
         .lock()
         .unwrap_or_else(|poison| poison.into_inner());
@@ -27,19 +26,157 @@ fn load_latest_adapter_records_skips_invalid_jsonl_rows() {
         }
     }
 
-    let fixture = dir.join(format!("tx-adapter-99991231-{}.jsonl", std::process::id()));
-    fs::write(
-        &fixture,
-        "not-json\n{\"ts\":1772074584,\"mode\":\"mock\",\"kind\":\"commit\",\"task_id\":101001,\"worker\":\"worker1\",\"commit_hash\":\"764c7baf3e1d3d325511cdc3d7836fbc1fa71a289bd669edcc4b55d6baaee9d7\",\"nonce\":101001,\"tx_hash\":\"7336b90d593ebe324cb4b3e41e7e9d86d1e2418f230cca0162ca1d539f32c2b9\",\"status\":\"accepted\",\"rc\":0}\n",
-    )
-    .expect("write adapter fixture");
+    test(&dir);
 
-    let records = load_latest_adapter_records();
-    assert_eq!(records.len(), 1, "only valid JSONL rows should be loaded");
-    assert_eq!(records[0].task_id, 101001);
-
-    let _ = fs::remove_file(&fixture);
+    if let Ok(entries) = fs::read_dir(&dir) {
+        for entry in entries.flatten() {
+            let path = entry.path();
+            let is_adapter = path
+                .file_name()
+                .and_then(|n| n.to_str())
+                .map(|s| s.starts_with("tx-adapter-") && s.ends_with(".jsonl"))
+                .unwrap_or(false);
+            if is_adapter {
+                let _ = fs::remove_file(&path);
+            }
+        }
+    }
     for (path, bytes) in backup {
         let _ = fs::write(path, bytes);
     }
+}
+
+#[test]
+fn load_latest_adapter_records_skips_invalid_jsonl_rows() {
+    with_isolated_adapter_dir(|dir| {
+        let fixture = dir.join(format!("tx-adapter-99991231-{}.jsonl", std::process::id()));
+        fs::write(
+            &fixture,
+            "not-json\n{\"ts\":1772074584,\"mode\":\"mock\",\"kind\":\"commit\",\"task_id\":101001,\"worker\":\"worker1\",\"commit_hash\":\"764c7baf3e1d3d325511cdc3d7836fbc1fa71a289bd669edcc4b55d6baaee9d7\",\"nonce\":101001,\"tx_hash\":\"7336b90d593ebe324cb4b3e41e7e9d86d1e2418f230cca0162ca1d539f32c2b9\",\"status\":\"accepted\",\"rc\":0}\n",
+        )
+        .expect("write adapter fixture");
+
+        let records = load_latest_adapter_records();
+        assert_eq!(records.len(), 1, "only valid JSONL rows should be loaded");
+        assert_eq!(records[0].task_id, 101001);
+    });
+}
+
+#[test]
+fn load_latest_adapter_records_falls_back_to_previous_nonempty_snapshot_when_latest_is_corrupt() {
+    with_isolated_adapter_dir(|dir| {
+        let previous = dir.join(format!("tx-adapter-20260403-{}-a.jsonl", std::process::id()));
+        let latest = dir.join(format!("tx-adapter-20260404-{}-z.jsonl", std::process::id()));
+        fs::write(
+            &previous,
+            "{\"ts\":1772074584,\"mode\":\"mock\",\"kind\":\"commit\",\"task_id\":4242,\"worker\":\"worker1\",\"commit_hash\":\"764c7baf3e1d3d325511cdc3d7836fbc1fa71a289bd669edcc4b55d6baaee9d7\",\"nonce\":101001,\"tx_hash\":\"7336b90d593ebe324cb4b3e41e7e9d86d1e2418f230cca0162ca1d539f32c2b9\",\"status\":\"accepted\",\"rc\":0}\n",
+        )
+        .expect("write previous adapter snapshot");
+        fs::write(&latest, "not-json\n").expect("write corrupt latest adapter snapshot");
+
+        let records = load_latest_adapter_records();
+        assert_eq!(records.len(), 1, "corrupt newest snapshot should not erase the last durable read-model snapshot");
+        assert_eq!(records[0].task_id, 4242);
+    });
+}
+
+#[test]
+fn load_latest_adapter_records_falls_back_to_previous_nonempty_snapshot_when_latest_is_empty() {
+    with_isolated_adapter_dir(|dir| {
+        let previous = dir.join(format!("tx-adapter-20260403-{}-a.jsonl", std::process::id()));
+        let latest = dir.join(format!("tx-adapter-20260404-{}-z.jsonl", std::process::id()));
+        fs::write(
+            &previous,
+            "{\"ts\":1772074584,\"mode\":\"mock\",\"kind\":\"commit\",\"task_id\":5252,\"worker\":\"worker1\",\"commit_hash\":\"764c7baf3e1d3d325511cdc3d7836fbc1fa71a289bd669edcc4b55d6baaee9d7\",\"nonce\":101001,\"tx_hash\":\"7336b90d593ebe324cb4b3e41e7e9d86d1e2418f230cca0162ca1d539f32c2b9\",\"status\":\"accepted\",\"rc\":0}\n",
+        )
+        .expect("write previous adapter snapshot");
+        fs::write(&latest, "\n  \n").expect("write empty latest adapter snapshot");
+
+        let records = load_latest_adapter_records();
+        assert_eq!(
+            records.len(),
+            1,
+            "empty newest snapshot should not erase the last durable read-model snapshot"
+        );
+        assert_eq!(records[0].task_id, 5252);
+    });
+}
+
+#[test]
+fn load_latest_adapter_records_accepts_utf8_bom_wrapped_latest_snapshot() {
+    with_isolated_adapter_dir(|dir| {
+        let latest = dir.join(format!("tx-adapter-20260404-{}-z.jsonl", std::process::id()));
+        fs::write(
+            &latest,
+            "\u{feff}{\"ts\":1772074584,\"mode\":\"mock\",\"kind\":\"commit\",\"task_id\":6262,\"worker\":\"worker1\",\"commit_hash\":\"764c7baf3e1d3d325511cdc3d7836fbc1fa71a289bd669edcc4b55d6baaee9d7\",\"nonce\":101001,\"tx_hash\":\"7336b90d593ebe324cb4b3e41e7e9d86d1e2418f230cca0162ca1d539f32c2b9\",\"status\":\"accepted\",\"rc\":0}\n",
+        )
+        .expect("write bom-wrapped latest adapter snapshot");
+
+        let records = load_latest_adapter_records();
+        assert_eq!(records.len(), 1, "utf-8 bom should not hide the latest durable read-model snapshot");
+        assert_eq!(records[0].task_id, 6262);
+    });
+}
+
+#[test]
+fn load_latest_adapter_records_accepts_whitespace_prefixed_utf8_bom_snapshot() {
+    with_isolated_adapter_dir(|dir| {
+        let latest = dir.join(format!("tx-adapter-20260404-{}-z.jsonl", std::process::id()));
+        fs::write(
+            &latest,
+            "  \u{feff}{\"ts\":1772074584,\"mode\":\"mock\",\"kind\":\"commit\",\"task_id\":6363,\"worker\":\"worker1\",\"commit_hash\":\"764c7baf3e1d3d325511cdc3d7836fbc1fa71a289bd669edcc4b55d6baaee9d7\",\"nonce\":101001,\"tx_hash\":\"7336b90d593ebe324cb4b3e41e7e9d86d1e2418f230cca0162ca1d539f32c2b9\",\"status\":\"accepted\",\"rc\":0}\n",
+        )
+        .expect("write whitespace-prefixed bom snapshot");
+
+        let records = load_latest_adapter_records();
+        assert_eq!(
+            records.len(),
+            1,
+            "leading whitespace before utf-8 bom should not hide the latest durable read-model snapshot"
+        );
+        assert_eq!(records[0].task_id, 6363);
+    });
+}
+
+#[test]
+fn load_latest_adapter_records_accepts_crlf_separated_whitespace_prefixed_utf8_bom_snapshot() {
+    with_isolated_adapter_dir(|dir| {
+        let latest = dir.join(format!("tx-adapter-20260404-{}-z.jsonl", std::process::id()));
+        fs::write(
+            &latest,
+            "\r\n  \u{feff}{\"ts\":1772074584,\"mode\":\"mock\",\"kind\":\"commit\",\"task_id\":6464,\"worker\":\"worker1\",\"commit_hash\":\"764c7baf3e1d3d325511cdc3d7836fbc1fa71a289bd669edcc4b55d6baaee9d7\",\"nonce\":101001,\"tx_hash\":\"7336b90d593ebe324cb4b3e41e7e9d86d1e2418f230cca0162ca1d539f32c2b9\",\"status\":\"accepted\",\"rc\":0}\r\n\r\n",
+        )
+        .expect("write crlf bom snapshot");
+
+        let records = load_latest_adapter_records();
+        assert_eq!(
+            records.len(),
+            1,
+            "crlf-separated durable snapshots with leading whitespace before utf-8 bom should stay readable"
+        );
+        assert_eq!(records[0].task_id, 6464);
+    });
+}
+
+#[test]
+fn load_latest_adapter_records_falls_back_to_previous_nonempty_snapshot_when_latest_is_invalid_utf8() {
+    with_isolated_adapter_dir(|dir| {
+        let previous = dir.join(format!("tx-adapter-20260403-{}-a.jsonl", std::process::id()));
+        let latest = dir.join(format!("tx-adapter-20260404-{}-z.jsonl", std::process::id()));
+        fs::write(
+            &previous,
+            "{\"ts\":1772074584,\"mode\":\"mock\",\"kind\":\"commit\",\"task_id\":6767,\"worker\":\"worker1\",\"commit_hash\":\"764c7baf3e1d3d325511cdc3d7836fbc1fa71a289bd669edcc4b55d6baaee9d7\",\"nonce\":101001,\"tx_hash\":\"7336b90d593ebe324cb4b3e41e7e9d86d1e2418f230cca0162ca1d539f32c2b9\",\"status\":\"accepted\",\"rc\":0}\n",
+        )
+        .expect("write previous adapter snapshot");
+        fs::write(&latest, b"\xff\xfe\xfa totally-invalid-utf8\n")
+            .expect("write invalid utf8 latest adapter snapshot");
+
+        let records = load_latest_adapter_records();
+        assert_eq!(
+            records.len(),
+            1,
+            "invalid utf-8 newest snapshot should not erase the last durable read-model snapshot"
+        );
+        assert_eq!(records[0].task_id, 6767);
+    });
 }

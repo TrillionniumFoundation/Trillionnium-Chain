@@ -268,3 +268,41 @@ fn query_events_response_fallback_dedupes_canonical_replay_rows_from_persistence
     assert_eq!(out[1].event_type, "reveal");
     assert_eq!(out[1].tx_hash.as_deref(), Some("0xdef"));
 }
+
+#[test]
+fn query_events_response_fallback_dedupes_hex_result_hash_replay_aliases() {
+    let recs = vec![
+        AdapterRecord {
+            ts: 10,
+            kind: "commit".into(),
+            task_id: 48,
+            worker: Some("worker-z".into()),
+            result_hash: None,
+            status: "accepted".into(),
+            tx_hash: Some("0xabc".into()),
+        },
+        AdapterRecord {
+            ts: 20,
+            kind: "reveal".into(),
+            task_id: 48,
+            worker: Some(" worker-z ".into()),
+            result_hash: Some(" 0XDEF ".into()),
+            status: "accepted".into(),
+            tx_hash: Some("0xdef".into()),
+        },
+        AdapterRecord {
+            ts: 21,
+            kind: "reveal".into(),
+            task_id: 48,
+            worker: Some("worker-z\u{200b}".into()),
+            result_hash: Some("0xdef".into()),
+            status: "accepted".into(),
+            tx_hash: Some("0XDEF".into()),
+        },
+    ];
+
+    let out = query_events_response(48, 20, &[], &recs).expect("events expected");
+    assert_eq!(out.len(), 2, "hex result-hash aliases must not duplicate historical replay rows");
+    assert_eq!(out[1].event_type, "reveal");
+    assert_eq!(out[1].tx_hash.as_deref(), Some("0xdef"));
+}

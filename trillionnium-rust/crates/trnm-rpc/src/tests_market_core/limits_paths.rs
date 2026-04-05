@@ -47,6 +47,111 @@ fn task_state_file_uses_trimmed_env_path() {
 }
 
 #[test]
+fn load_task_state_snapshot_tolerates_utf8_bom_prefixed_jsonl_rows() {
+    let path = unique_tmp_path("rpc-task-state-bom", "jsonl");
+    let _ = fs::remove_file(&path);
+    fs::write(
+        &path,
+        concat!(
+            "\u{feff}{\"task_id\":77,\"status\":\"Open\",\"worker\":null,\"bounty\":7,\"result_hash\":null,\"version\":3}\n",
+            "{\"task_id\":77,\"status\":\"Assigned\",\"worker\":\"worker-1\",\"bounty\":7,\"result_hash\":null,\"version\":4}\n"
+        ),
+    )
+    .expect("write bom-prefixed task snapshot");
+
+    with_market_path_env(&[(TASK_STATE_FILE_ENV, path.to_str())], || {
+        let tasks = load_task_state_snapshot().expect("task snapshot should parse");
+        assert_eq!(tasks.len(), 2, "BOM-prefixed first row should not hide durable task history");
+        assert_eq!(tasks[0].task_id, 77);
+        assert_eq!(tasks[0].version, 3);
+        assert_eq!(tasks[1].version, 4);
+    });
+
+    let _ = fs::remove_file(&path);
+}
+
+#[test]
+fn load_task_state_snapshot_tolerates_whitespace_prefixed_utf8_bom_rows() {
+    let path = unique_tmp_path("rpc-task-state-bom-whitespace", "jsonl");
+    let _ = fs::remove_file(&path);
+    fs::write(
+        &path,
+        concat!(
+            "  \u{feff}{\"task_id\":88,\"status\":\"Open\",\"worker\":null,\"bounty\":8,\"result_hash\":null,\"version\":5}\n",
+            "{\"task_id\":88,\"status\":\"Assigned\",\"worker\":\"worker-2\",\"bounty\":8,\"result_hash\":null,\"version\":6}\n"
+        ),
+    )
+    .expect("write whitespace-prefixed bom task snapshot");
+
+    with_market_path_env(&[(TASK_STATE_FILE_ENV, path.to_str())], || {
+        let tasks = load_task_state_snapshot().expect("task snapshot should parse");
+        assert_eq!(
+            tasks.len(),
+            2,
+            "leading whitespace before BOM should not hide durable task history"
+        );
+        assert_eq!(tasks[0].task_id, 88);
+        assert_eq!(tasks[0].version, 5);
+        assert_eq!(tasks[1].version, 6);
+    });
+
+    let _ = fs::remove_file(&path);
+}
+
+#[test]
+fn load_task_state_snapshot_tolerates_crlf_separated_whitespace_prefixed_utf8_bom_rows() {
+    let path = unique_tmp_path("rpc-task-state-bom-whitespace-crlf", "jsonl");
+    let _ = fs::remove_file(&path);
+    fs::write(
+        &path,
+        concat!(
+            "\r\n  \u{feff}{\"task_id\":99,\"status\":\"Open\",\"worker\":null,\"bounty\":9,\"result_hash\":null,\"version\":7}\r\n",
+            "{\"task_id\":99,\"status\":\"Assigned\",\"worker\":\"worker-3\",\"bounty\":9,\"result_hash\":null,\"version\":8}\r\n\r\n"
+        ),
+    )
+    .expect("write crlf whitespace-prefixed bom task snapshot");
+
+    with_market_path_env(&[(TASK_STATE_FILE_ENV, path.to_str())], || {
+        let tasks = load_task_state_snapshot().expect("task snapshot should parse");
+        assert_eq!(
+            tasks.len(),
+            2,
+            "crlf-separated task snapshots with leading whitespace before BOM should keep durable task history readable"
+        );
+        assert_eq!(tasks[0].task_id, 99);
+        assert_eq!(tasks[0].version, 7);
+        assert_eq!(tasks[1].version, 8);
+    });
+
+    let _ = fs::remove_file(&path);
+}
+
+#[test]
+fn load_task_state_snapshot_tolerates_invalid_utf8_prefix_before_valid_history_rows() {
+    let path = unique_tmp_path("rpc-task-state-invalid-utf8-prefix", "jsonl");
+    let _ = fs::remove_file(&path);
+    fs::write(
+        &path,
+        b"\xff\xfe\xfa\n{\"task_id\":109,\"status\":\"Open\",\"worker\":null,\"bounty\":10,\"result_hash\":null,\"version\":9}\n{\"task_id\":109,\"status\":\"Assigned\",\"worker\":\"worker-4\",\"bounty\":10,\"result_hash\":null,\"version\":10}\n",
+    )
+    .expect("write invalid utf8-prefixed task snapshot");
+
+    with_market_path_env(&[(TASK_STATE_FILE_ENV, path.to_str())], || {
+        let tasks = load_task_state_snapshot().expect("task snapshot should parse after lossy utf8 recovery");
+        assert_eq!(
+            tasks.len(),
+            2,
+            "invalid utf-8 prefix bytes should not erase later durable task history rows"
+        );
+        assert_eq!(tasks[0].task_id, 109);
+        assert_eq!(tasks[0].version, 9);
+        assert_eq!(tasks[1].version, 10);
+    });
+
+    let _ = fs::remove_file(&path);
+}
+
+#[test]
 fn push_tail_limited_keeps_only_most_recent_items_in_order() {
     let mut items = Vec::new();
     push_tail_limited(&mut items, 1, 3);

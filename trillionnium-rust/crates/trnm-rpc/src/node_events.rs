@@ -62,16 +62,101 @@ pub(crate) fn read_log_tail(path: &Path, tail_bytes: u64) -> Option<String> {
 }
 
 fn parse_node_event_log_sources_list(raw: &str) -> Vec<PathBuf> {
-    raw.split(|c: char| c == ',' || c == ';' || c == '\n')
-        .filter_map(|part| {
-            let normalized = normalize_wrapped_env_value(part);
-            if normalized.is_empty() {
-                None
-            } else {
-                Some(PathBuf::from(normalized))
+    let mut out = Vec::new();
+    let mut start = 0usize;
+    let mut quote: Option<char> = None;
+
+    for (idx, ch) in raw.char_indices() {
+        match quote {
+            Some(active) if ch == active => quote = None,
+            Some(_) => {}
+            None if matches!(ch, '"' | '\'' | '`') => quote = Some(ch),
+            None if matches!(ch, ',' | ';' | '\n' | '\r') => {
+                if let Some(path) = normalize_node_event_log_source_entry(&raw[start..idx]) {
+                    out.push(PathBuf::from(path));
+                }
+                start = idx + ch.len_utf8();
             }
-        })
-        .collect()
+            None => {}
+        }
+    }
+
+    if let Some(path) = normalize_node_event_log_source_entry(&raw[start..]) {
+        out.push(PathBuf::from(path));
+    }
+
+    out
+}
+
+fn normalize_leading_wrapped_log_source_comment_value(raw: &str) -> Option<&str> {
+    let normalized = raw.trim_start_matches('\u{feff}').trim();
+    let quote = normalized.chars().next()?;
+    if !matches!(quote, '"' | '\'' | '`') {
+        return None;
+    }
+
+    let closing_idx = normalized[quote.len_utf8()..]
+        .char_indices()
+        .find_map(|(idx, ch)| (ch == quote).then_some(quote.len_utf8() + idx))?;
+    let rest = normalized[closing_idx + quote.len_utf8()..]
+        .trim_start()
+        .trim_start_matches('\u{feff}')
+        .trim_start();
+    if !rest.starts_with('#') {
+        return None;
+    }
+
+    Some(normalize_wrapped_env_value(
+        &normalized[..closing_idx + quote.len_utf8()],
+    ))
+}
+
+fn normalize_node_event_log_source_entry(raw: &str) -> Option<String> {
+    let trimmed = raw.trim();
+    if trimmed.is_empty() {
+        return None;
+    }
+
+    let normalized = normalize_wrapped_env_value(trimmed);
+    if normalized.is_empty() || normalized.starts_with('#') {
+        return None;
+    }
+
+    let inline_comment_idx = normalized.char_indices().find_map(|(idx, ch)| {
+        (ch == '#'
+            && idx > 0
+            && normalized[..idx]
+                .chars()
+                .last()
+                .is_some_and(char::is_whitespace))
+        .then_some(idx)
+    });
+    let normalized = inline_comment_idx
+        .map(|idx| normalize_wrapped_env_value(normalized[..idx].trim_end()))
+        .unwrap_or(normalized);
+    let normalized = normalize_leading_wrapped_log_source_comment_value(normalized)
+        .unwrap_or(normalized);
+    if normalized.is_empty() || normalized.starts_with('#') {
+        return None;
+    }
+
+    Some(normalized.to_string())
+}
+
+fn normalize_lexical_path(path: PathBuf) -> PathBuf {
+    let mut normalized = PathBuf::new();
+    for component in path.components() {
+        match component {
+            std::path::Component::CurDir => {}
+            std::path::Component::ParentDir => {
+                if !normalized.pop() {
+                    normalized.push(component.as_os_str());
+                }
+            }
+            other => normalized.push(other.as_os_str()),
+        }
+    }
+    normalized
 }
 
 #[cfg(test)]
@@ -128,27 +213,22 @@ fn discover_default_node_event_log_sources(root: &Path) -> Vec<PathBuf> {
     out.into_iter().collect()
 }
 
-#[cfg(test)]
-pub(crate) fn load_node_event_log_sources(root: &Path) -> Vec<PathBuf> {
+fn load_node_event_log_sources_impl(root: &Path) -> Vec<PathBuf> {
     let mut sources = BTreeSet::<PathBuf>::new();
 
     if let Some(manifest_path) = normalized_path_from_env(NODE_EVENT_LOG_MANIFEST_ENV) {
+        let manifest_path = if manifest_path.is_absolute() {
+            normalize_lexical_path(manifest_path)
+        } else {
+            normalize_lexical_path(root.join(manifest_path))
+        };
         if let Ok(raw) = fs::read_to_string(&manifest_path) {
             let manifest_dir = manifest_path.parent().unwrap_or_else(|| Path::new("."));
-            for line in raw.lines() {
-                let trimmed = line.trim();
-                if trimmed.is_empty() || trimmed.starts_with('#') {
-                    continue;
-                }
-                let normalized = normalize_wrapped_env_value(trimmed);
-                if normalized.is_empty() || normalized.starts_with('#') {
-                    continue;
-                }
-                let path = PathBuf::from(normalized);
+            for path in parse_node_event_log_sources_list(&raw) {
                 let resolved = if path.is_absolute() {
-                    path
+                    normalize_lexical_path(path)
                 } else {
-                    manifest_dir.join(path)
+                    normalize_lexical_path(manifest_dir.join(path))
                 };
                 sources.insert(resolved);
             }
@@ -158,9 +238,9 @@ pub(crate) fn load_node_event_log_sources(root: &Path) -> Vec<PathBuf> {
     if let Ok(raw) = std::env::var(NODE_EVENT_LOG_SOURCES_ENV) {
         for path in parse_node_event_log_sources_list(&raw) {
             let resolved = if path.is_absolute() {
-                path
+                normalize_lexical_path(path)
             } else {
-                root.join(path)
+                normalize_lexical_path(root.join(path))
             };
             sources.insert(resolved);
         }
@@ -173,49 +253,14 @@ pub(crate) fn load_node_event_log_sources(root: &Path) -> Vec<PathBuf> {
     sources.into_iter().collect()
 }
 
+#[cfg(test)]
+pub(crate) fn load_node_event_log_sources(root: &Path) -> Vec<PathBuf> {
+    load_node_event_log_sources_impl(root)
+}
+
 #[cfg(not(test))]
 fn load_node_event_log_sources(root: &Path) -> Vec<PathBuf> {
-    let mut sources = BTreeSet::<PathBuf>::new();
-
-    if let Some(manifest_path) = normalized_path_from_env(NODE_EVENT_LOG_MANIFEST_ENV) {
-        if let Ok(raw) = fs::read_to_string(&manifest_path) {
-            let manifest_dir = manifest_path.parent().unwrap_or_else(|| Path::new("."));
-            for line in raw.lines() {
-                let trimmed = line.trim();
-                if trimmed.is_empty() || trimmed.starts_with('#') {
-                    continue;
-                }
-                let normalized = normalize_wrapped_env_value(trimmed);
-                if normalized.is_empty() || normalized.starts_with('#') {
-                    continue;
-                }
-                let path = PathBuf::from(normalized);
-                let resolved = if path.is_absolute() {
-                    path
-                } else {
-                    manifest_dir.join(path)
-                };
-                sources.insert(resolved);
-            }
-        }
-    }
-
-    if let Ok(raw) = std::env::var(NODE_EVENT_LOG_SOURCES_ENV) {
-        for path in parse_node_event_log_sources_list(&raw) {
-            let resolved = if path.is_absolute() {
-                path
-            } else {
-                root.join(path)
-            };
-            sources.insert(resolved);
-        }
-    }
-
-    if sources.is_empty() {
-        return discover_default_node_event_log_sources(root);
-    }
-
-    sources.into_iter().collect()
+    load_node_event_log_sources_impl(root)
 }
 
 fn node_event_log_candidates(root: &Path) -> Vec<PathBuf> {
@@ -407,4 +452,66 @@ pub(crate) fn load_node_events(mode: NodeEventScanMode) -> LoadedNodeEvents {
 #[cfg(test)]
 pub(crate) fn load_latest_node_events() -> Vec<NodeEventRecord> {
     load_node_events(NodeEventScanMode::RecentTail).events
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn unique_tmp_path(prefix: &str) -> PathBuf {
+        let nanos = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .expect("system time before unix epoch")
+            .as_nanos();
+        std::env::temp_dir().join(format!("{prefix}-{}-{nanos}", std::process::id()))
+    }
+
+    #[test]
+    fn load_node_event_log_sources_accepts_comma_and_semicolon_separated_manifest_entries() {
+        let root = unique_tmp_path("trnm-rpc-node-events-manifest-delimiters");
+        let archive_dir = root.join("archive");
+        let manifest_dir = root.join("cfg/history");
+        fs::create_dir_all(&archive_dir).expect("create archive dir");
+        fs::create_dir_all(&manifest_dir).expect("create manifest dir");
+
+        let first_log = archive_dir.join("node4.log");
+        let second_log = archive_dir.join("node5.log");
+        let manifest = manifest_dir.join("sources.txt");
+        fs::write(&first_log, "").expect("write first archived log");
+        fs::write(&second_log, "").expect("write second archived log");
+        fs::write(
+            &manifest,
+            "\"../../archive/node4.log\", '../../archive/node5.log'; `../../archive/node4.log`\n",
+        )
+        .expect("write manifest");
+
+        let prev_sources = std::env::var(NODE_EVENT_LOG_SOURCES_ENV).ok();
+        let prev_manifest = std::env::var(NODE_EVENT_LOG_MANIFEST_ENV).ok();
+        unsafe {
+            std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV);
+            std::env::set_var(
+                NODE_EVENT_LOG_MANIFEST_ENV,
+                manifest.to_string_lossy().to_string(),
+            );
+        }
+
+        let got = load_node_event_log_sources(&root);
+
+        match prev_sources {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_SOURCES_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV) },
+        }
+        match prev_manifest {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_MANIFEST_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV) },
+        }
+
+        assert_eq!(
+            got,
+            vec![archive_dir.join("node4.log"), archive_dir.join("node5.log")],
+            "historical replay manifests should accept comma/semicolon-separated path aliases and dedupe them"
+        );
+
+        let _ = fs::remove_dir_all(root);
+    }
 }

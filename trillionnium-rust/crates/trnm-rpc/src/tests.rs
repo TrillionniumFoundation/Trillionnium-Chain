@@ -501,6 +501,62 @@
     }
 
     #[test]
+    fn load_task_state_snapshot_tolerates_utf8_bom_prefixed_jsonl_rows() {
+        let path = unique_tmp_path("rpc-task-state-bom", "jsonl");
+        let _ = fs::remove_file(&path);
+        fs::write(
+            &path,
+            concat!(
+                "\u{feff}{\"task_id\":77,\"status\":\"Open\",\"worker\":null,\"bounty\":7,\"result_hash\":null,\"version\":3}\n",
+                "{\"task_id\":77,\"status\":\"Assigned\",\"worker\":\"worker-1\",\"bounty\":7,\"result_hash\":null,\"version\":4}\n"
+            ),
+        )
+        .expect("write bom-prefixed task snapshot");
+
+        with_market_path_env(&[(TASK_STATE_FILE_ENV, path.to_str())], || {
+            let tasks = load_task_state_snapshot().expect("task snapshot should parse");
+            assert_eq!(
+                tasks.len(),
+                2,
+                "BOM-prefixed first row should not hide durable task history"
+            );
+            assert_eq!(tasks[0].task_id, 77);
+            assert_eq!(tasks[0].version, 3);
+            assert_eq!(tasks[1].version, 4);
+        });
+
+        let _ = fs::remove_file(&path);
+    }
+
+    #[test]
+    fn load_task_state_snapshot_tolerates_whitespace_prefixed_utf8_bom_rows() {
+        let path = unique_tmp_path("rpc-task-state-bom-whitespace", "jsonl");
+        let _ = fs::remove_file(&path);
+        fs::write(
+            &path,
+            concat!(
+                "  \u{feff}{\"task_id\":88,\"status\":\"Open\",\"worker\":null,\"bounty\":8,\"result_hash\":null,\"version\":5}\n",
+                "{\"task_id\":88,\"status\":\"Assigned\",\"worker\":\"worker-2\",\"bounty\":8,\"result_hash\":null,\"version\":6}\n"
+            ),
+        )
+        .expect("write whitespace-prefixed bom task snapshot");
+
+        with_market_path_env(&[(TASK_STATE_FILE_ENV, path.to_str())], || {
+            let tasks = load_task_state_snapshot().expect("task snapshot should parse");
+            assert_eq!(
+                tasks.len(),
+                2,
+                "leading whitespace before BOM should not hide durable task history"
+            );
+            assert_eq!(tasks[0].task_id, 88);
+            assert_eq!(tasks[0].version, 5);
+            assert_eq!(tasks[1].version, 6);
+        });
+
+        let _ = fs::remove_file(&path);
+    }
+
+    #[test]
     fn push_tail_limited_keeps_only_most_recent_items_in_order() {
         let mut items = Vec::new();
         push_tail_limited(&mut items, 1, 3);
@@ -3327,8 +3383,7 @@ not-json
         let _ = fs::remove_file(&path);
     }
 
-    #[test]
-    fn load_latest_adapter_records_skips_invalid_jsonl_rows() {
+    fn with_isolated_adapter_dir(test: impl FnOnce(&PathBuf)) {
         let dir = run_root().join("run/worker-agent");
         fs::create_dir_all(&dir).expect("create worker-agent dir");
 
@@ -3351,19 +3406,72 @@ not-json
             }
         }
 
-        let fixture = dir.join(format!("tx-adapter-99991231-{}.jsonl", std::process::id()));
-        fs::write(
-            &fixture,
-            "not-json\n{\"ts\":1772074584,\"mode\":\"mock\",\"kind\":\"commit\",\"task_id\":101001,\"worker\":\"worker1\",\"commit_hash\":\"764c7baf3e1d3d325511cdc3d7836fbc1fa71a289bd669edcc4b55d6baaee9d7\",\"nonce\":101001,\"tx_hash\":\"7336b90d593ebe324cb4b3e41e7e9d86d1e2418f230cca0162ca1d539f32c2b9\",\"status\":\"accepted\",\"rc\":0}\n",
-        )
-        .expect("write adapter fixture");
+        test(&dir);
 
-        let records = load_latest_adapter_records();
-        assert_eq!(records.len(), 1, "only valid JSONL rows should be loaded");
-        assert_eq!(records[0].task_id, 101001);
-
-        let _ = fs::remove_file(&fixture);
+        if let Ok(entries) = fs::read_dir(&dir) {
+            for entry in entries.flatten() {
+                let path = entry.path();
+                let is_adapter = path
+                    .file_name()
+                    .and_then(|n| n.to_str())
+                    .map(|s| s.starts_with("tx-adapter-") && s.ends_with(".jsonl"))
+                    .unwrap_or(false);
+                if is_adapter {
+                    let _ = fs::remove_file(&path);
+                }
+            }
+        }
         for (path, bytes) in backup {
             let _ = fs::write(path, bytes);
         }
+    }
+
+    #[test]
+    fn load_latest_adapter_records_skips_invalid_jsonl_rows() {
+        with_isolated_adapter_dir(|dir| {
+            let fixture = dir.join(format!("tx-adapter-99991231-{}.jsonl", std::process::id()));
+            fs::write(
+                &fixture,
+                "not-json\n{\"ts\":1772074584,\"mode\":\"mock\",\"kind\":\"commit\",\"task_id\":101001,\"worker\":\"worker1\",\"commit_hash\":\"764c7baf3e1d3d325511cdc3d7836fbc1fa71a289bd669edcc4b55d6baaee9d7\",\"nonce\":101001,\"tx_hash\":\"7336b90d593ebe324cb4b3e41e7e9d86d1e2418f230cca0162ca1d539f32c2b9\",\"status\":\"accepted\",\"rc\":0}\n",
+            )
+            .expect("write adapter fixture");
+
+            let records = load_latest_adapter_records();
+            assert_eq!(records.len(), 1, "only valid JSONL rows should be loaded");
+            assert_eq!(records[0].task_id, 101001);
+        });
+    }
+
+    #[test]
+    fn load_latest_adapter_records_falls_back_to_previous_nonempty_snapshot_when_latest_is_corrupt() {
+        with_isolated_adapter_dir(|dir| {
+            let previous = dir.join(format!("tx-adapter-20260403-{}-a.jsonl", std::process::id()));
+            let latest = dir.join(format!("tx-adapter-20260404-{}-z.jsonl", std::process::id()));
+            fs::write(
+                &previous,
+                "{\"ts\":1772074584,\"mode\":\"mock\",\"kind\":\"commit\",\"task_id\":4242,\"worker\":\"worker1\",\"commit_hash\":\"764c7baf3e1d3d325511cdc3d7836fbc1fa71a289bd669edcc4b55d6baaee9d7\",\"nonce\":101001,\"tx_hash\":\"7336b90d593ebe324cb4b3e41e7e9d86d1e2418f230cca0162ca1d539f32c2b9\",\"status\":\"accepted\",\"rc\":0}\n",
+            )
+            .expect("write previous adapter snapshot");
+            fs::write(&latest, "not-json\n").expect("write corrupt latest adapter snapshot");
+
+            let records = load_latest_adapter_records();
+            assert_eq!(records.len(), 1, "corrupt newest snapshot should not erase the last durable read-model snapshot");
+            assert_eq!(records[0].task_id, 4242);
+        });
+    }
+
+    #[test]
+    fn load_latest_adapter_records_accepts_utf8_bom_wrapped_latest_snapshot() {
+        with_isolated_adapter_dir(|dir| {
+            let latest = dir.join(format!("tx-adapter-20260404-{}-z.jsonl", std::process::id()));
+            fs::write(
+                &latest,
+                "\u{feff}{\"ts\":1772074584,\"mode\":\"mock\",\"kind\":\"commit\",\"task_id\":6262,\"worker\":\"worker1\",\"commit_hash\":\"764c7baf3e1d3d325511cdc3d7836fbc1fa71a289bd669edcc4b55d6baaee9d7\",\"nonce\":101001,\"tx_hash\":\"7336b90d593ebe324cb4b3e41e7e9d86d1e2418f230cca0162ca1d539f32c2b9\",\"status\":\"accepted\",\"rc\":0}\n",
+            )
+            .expect("write bom-wrapped latest adapter snapshot");
+
+            let records = load_latest_adapter_records();
+            assert_eq!(records.len(), 1, "utf-8 bom should not hide the latest durable read-model snapshot");
+            assert_eq!(records[0].task_id, 6262);
+        });
     }

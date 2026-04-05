@@ -14,7 +14,7 @@ pub(crate) fn query_events_response(
     );
     let mut events = Vec::new();
 
-    for e in filtered_node_events_for_task(task_id, node_events) {
+    for e in sorted_node_events_for_task(task_id, node_events) {
         let Some(actor) = normalize_actor_or_signer(&e.actor) else {
             continue;
         };
@@ -51,10 +51,7 @@ pub(crate) fn query_events_response(
     if events.is_empty() {
         let mut tx_id = 1u64;
         let mut has_commit = false;
-        for r in recs
-            .iter()
-            .filter(|r| r.task_id == task_id && r.status == "accepted")
-        {
+        for r in sorted_task_adapter_records(task_id, recs) {
             let Some(actor) = r.worker.as_deref().and_then(normalize_actor_or_signer) else {
                 continue;
             };
@@ -113,4 +110,49 @@ pub(crate) fn query_events_response(
         bail!("events not found for task_id={}", task_id);
     }
     Ok(events)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn query_events_response_fallback_sorts_and_dedupes_replayed_adapter_rows() {
+        let recs = vec![
+            AdapterRecord {
+                ts: 20,
+                kind: "reveal".into(),
+                task_id: 77,
+                worker: Some(" worker-z ".into()),
+                result_hash: Some("0xdef".into()),
+                status: "accepted".into(),
+                tx_hash: Some("0XDEF".into()),
+            },
+            AdapterRecord {
+                ts: 10,
+                kind: "commit".into(),
+                task_id: 77,
+                worker: Some(" worker-z\u{200b}".into()),
+                result_hash: None,
+                status: "accepted".into(),
+                tx_hash: Some(" tx_hash=0xabc ".into()),
+            },
+            AdapterRecord {
+                ts: 10,
+                kind: "commit".into(),
+                task_id: 77,
+                worker: Some("worker-z".into()),
+                result_hash: None,
+                status: "accepted".into(),
+                tx_hash: Some("0XABC".into()),
+            },
+        ];
+
+        let out = query_events_response(77, 20, &[], &recs).expect("events expected");
+        assert_eq!(out.len(), 2, "replayed canonical adapter rows must dedupe");
+        assert_eq!(out[0].event_type, "commit");
+        assert_eq!(out[0].tx_hash.as_deref(), Some("0xabc"));
+        assert_eq!(out[1].event_type, "reveal");
+        assert_eq!(out[1].tx_hash.as_deref(), Some("0xdef"));
+    }
 }

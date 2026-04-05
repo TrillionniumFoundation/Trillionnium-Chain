@@ -11,6 +11,27 @@ use crate::envpaths::task_state_file;
 use crate::metering::build_task_metering_query_response;
 use crate::{AdapterRecord, EMERGENCY_PAUSE_KEY_ID};
 
+fn normalize_adapter_record_line(line: &str) -> &str {
+    line.trim().trim_start_matches('\u{feff}').trim()
+}
+
+fn is_adapter_record_line_candidate(line: &str) -> bool {
+    let line = normalize_adapter_record_line(line);
+    !line.is_empty() && !line.starts_with('#')
+}
+
+fn load_adapter_records_file(path: &PathBuf) -> Vec<AdapterRecord> {
+    let Ok(raw) = fs::read(path) else {
+        return vec![];
+    };
+    String::from_utf8_lossy(&raw)
+        .lines()
+        .filter(|line| is_adapter_record_line_candidate(line))
+        .map(normalize_adapter_record_line)
+        .filter_map(|l| serde_json::from_str::<AdapterRecord>(l).ok())
+        .collect()
+}
+
 pub(crate) fn load_latest_adapter_records() -> Vec<AdapterRecord> {
     let root = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
         .parent()
@@ -33,17 +54,15 @@ pub(crate) fn load_latest_adapter_records() -> Vec<AdapterRecord> {
         })
         .collect();
     files.sort();
-    let Some(latest) = files.last() else {
-        return vec![];
-    };
 
-    let Ok(raw) = fs::read_to_string(latest) else {
-        return vec![];
-    };
-    raw.lines()
-        .filter(|l| !l.trim().is_empty())
-        .filter_map(|l| serde_json::from_str::<AdapterRecord>(l).ok())
-        .collect()
+    for path in files.iter().rev() {
+        let records = load_adapter_records_file(path);
+        if !records.is_empty() {
+            return records;
+        }
+    }
+
+    vec![]
 }
 
 pub(crate) fn governance_state() -> StateStore {
@@ -65,12 +84,16 @@ pub(crate) fn governance_state() -> StateStore {
     st
 }
 
+fn normalize_task_state_snapshot_line(line: &str) -> &str {
+    line.trim().trim_start_matches('\u{feff}').trim()
+}
+
 pub(crate) fn load_task_state_snapshot() -> Result<Vec<TaskObject>> {
     let Some(path) = task_state_file() else {
         return Ok(vec![]);
     };
-    let raw = match fs::read_to_string(&path) {
-        Ok(raw) => raw,
+    let raw = match fs::read(&path) {
+        Ok(raw) => String::from_utf8_lossy(&raw).into_owned(),
         Err(err) if err.kind() == std::io::ErrorKind::NotFound => return Ok(vec![]),
         Err(err) => {
             return Err(anyhow!(
@@ -83,7 +106,8 @@ pub(crate) fn load_task_state_snapshot() -> Result<Vec<TaskObject>> {
 
     let mut tasks = Vec::new();
     for (idx, line) in raw.lines().enumerate() {
-        if line.trim().is_empty() {
+        let line = normalize_task_state_snapshot_line(line);
+        if line.is_empty() {
             continue;
         }
         let task = serde_json::from_str::<TaskObject>(line).map_err(|err| {

@@ -93,6 +93,7 @@ fn normalize_leading_wrapped_comment_value(raw: &str) -> Option<&str> {
         .char_indices()
         .find_map(|(idx, ch)| (ch == quote).then_some(quote.len_utf8() + idx))?;
     let rest = normalized[closing_idx + quote.len_utf8()..]
+        .trim_start()
         .trim_start_matches('\u{feff}')
         .trim_start();
     if !rest.starts_with('#') {

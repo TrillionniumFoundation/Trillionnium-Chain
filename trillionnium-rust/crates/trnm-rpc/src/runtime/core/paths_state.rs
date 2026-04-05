@@ -41,12 +41,16 @@ pub(crate) fn task_state_file() -> Option<PathBuf> {
     normalized_path_from_env(TASK_STATE_FILE_ENV)
 }
 
+fn normalize_task_state_snapshot_line(line: &str) -> &str {
+    line.trim().trim_start_matches('\u{feff}').trim()
+}
+
 pub(crate) fn load_task_state_snapshot() -> Result<Vec<TaskObject>> {
     let Some(path) = task_state_file() else {
         return Ok(vec![]);
     };
-    let raw = match fs::read_to_string(&path) {
-        Ok(raw) => raw,
+    let raw = match fs::read(&path) {
+        Ok(raw) => String::from_utf8_lossy(&raw).into_owned(),
         Err(err) if err.kind() == std::io::ErrorKind::NotFound => return Ok(vec![]),
         Err(err) => {
             return Err(anyhow!(
@@ -59,7 +63,8 @@ pub(crate) fn load_task_state_snapshot() -> Result<Vec<TaskObject>> {
 
     let mut tasks = Vec::new();
     for (idx, line) in raw.lines().enumerate() {
-        if line.trim().is_empty() {
+        let line = normalize_task_state_snapshot_line(line);
+        if line.is_empty() {
             continue;
         }
         let task = serde_json::from_str::<TaskObject>(line).map_err(|err| {

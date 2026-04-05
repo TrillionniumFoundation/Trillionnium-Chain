@@ -466,6 +466,22 @@ impl CapabilityAuditQueryError {
     }
 }
 
+fn normalize_adapter_record_line(line: &str) -> &str {
+    line.trim().trim_start_matches('\u{feff}').trim()
+}
+
+fn load_adapter_records_file(path: &PathBuf) -> Vec<AdapterRecord> {
+    let Ok(raw) = fs::read(path) else {
+        return vec![];
+    };
+    String::from_utf8_lossy(&raw)
+        .lines()
+        .map(normalize_adapter_record_line)
+        .filter(|l| !l.is_empty())
+        .filter_map(|l| serde_json::from_str::<AdapterRecord>(l).ok())
+        .collect()
+}
+
 fn load_latest_adapter_records() -> Vec<AdapterRecord> {
     let root = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
         .parent()
@@ -488,17 +504,15 @@ fn load_latest_adapter_records() -> Vec<AdapterRecord> {
         })
         .collect();
     files.sort();
-    let Some(latest) = files.last() else {
-        return vec![];
-    };
 
-    let Ok(raw) = fs::read_to_string(latest) else {
-        return vec![];
-    };
-    raw.lines()
-        .filter(|l| !l.trim().is_empty())
-        .filter_map(|l| serde_json::from_str::<AdapterRecord>(l).ok())
-        .collect()
+    for path in files.iter().rev() {
+        let records = load_adapter_records_file(path);
+        if !records.is_empty() {
+            return records;
+        }
+    }
+
+    vec![]
 }
 
 #[cfg(test)]
@@ -818,7 +832,7 @@ fn parse_node_event_log_sources_list(raw: &str) -> Vec<PathBuf> {
             Some(active) if ch == active => quote = None,
             Some(_) => {}
             None if matches!(ch, '"' | '\'' | '`') => quote = Some(ch),
-            None if matches!(ch, ',' | ';' | '\n') => {
+            None if matches!(ch, ',' | ';' | '\n' | '\r') => {
                 if let Some(path) = normalize_node_event_log_source_entry(&raw[start..idx]) {
                     out.push(PathBuf::from(path));
                 }
@@ -833,6 +847,29 @@ fn parse_node_event_log_sources_list(raw: &str) -> Vec<PathBuf> {
     }
 
     out
+}
+
+fn normalize_leading_wrapped_log_source_comment_value(raw: &str) -> Option<&str> {
+    let normalized = raw.trim_start_matches('\u{feff}').trim();
+    let quote = normalized.chars().next()?;
+    if !matches!(quote, '"' | '\'' | '`') {
+        return None;
+    }
+
+    let closing_idx = normalized[quote.len_utf8()..]
+        .char_indices()
+        .find_map(|(idx, ch)| (ch == quote).then_some(quote.len_utf8() + idx))?;
+    let rest = normalized[closing_idx + quote.len_utf8()..]
+        .trim_start()
+        .trim_start_matches('\u{feff}')
+        .trim_start();
+    if !rest.starts_with('#') {
+        return None;
+    }
+
+    Some(normalize_wrapped_env_value(
+        &normalized[..closing_idx + quote.len_utf8()],
+    ))
 }
 
 fn normalize_node_event_log_source_entry(raw: &str) -> Option<String> {
@@ -857,6 +894,8 @@ fn normalize_node_event_log_source_entry(raw: &str) -> Option<String> {
     });
     let normalized = inline_comment_idx
         .map(|idx| normalize_wrapped_env_value(normalized[..idx].trim_end()))
+        .unwrap_or(normalized);
+    let normalized = normalize_leading_wrapped_log_source_comment_value(normalized)
         .unwrap_or(normalized);
     if normalized.is_empty() || normalized.starts_with('#') {
         return None;
@@ -1274,7 +1313,10 @@ fn normalize_leading_wrapped_comment_value(raw: &str) -> Option<&str> {
     let closing_idx = normalized[quote.len_utf8()..]
         .char_indices()
         .find_map(|(idx, ch)| (ch == quote).then_some(quote.len_utf8() + idx))?;
-    let rest = normalized[closing_idx + quote.len_utf8()..].trim_start();
+    let rest = normalized[closing_idx + quote.len_utf8()..]
+        .trim_start()
+        .trim_start_matches('\u{feff}')
+        .trim_start();
     if !rest.starts_with('#') {
         return None;
     }
@@ -1323,12 +1365,16 @@ fn task_state_file() -> Option<PathBuf> {
     normalized_path_from_env(TASK_STATE_FILE_ENV)
 }
 
+fn normalize_task_state_snapshot_line(line: &str) -> &str {
+    line.trim().trim_start_matches('\u{feff}').trim()
+}
+
 fn load_task_state_snapshot() -> Result<Vec<TaskObject>> {
     let Some(path) = task_state_file() else {
         return Ok(vec![]);
     };
-    let raw = match fs::read_to_string(&path) {
-        Ok(raw) => raw,
+    let raw = match fs::read(&path) {
+        Ok(raw) => String::from_utf8_lossy(&raw).into_owned(),
         Err(err) if err.kind() == std::io::ErrorKind::NotFound => return Ok(vec![]),
         Err(err) => {
             return Err(anyhow!(
@@ -1341,7 +1387,8 @@ fn load_task_state_snapshot() -> Result<Vec<TaskObject>> {
 
     let mut tasks = Vec::new();
     for (idx, line) in raw.lines().enumerate() {
-        if line.trim().is_empty() {
+        let line = normalize_task_state_snapshot_line(line);
+        if line.is_empty() {
             continue;
         }
         let task = serde_json::from_str::<TaskObject>(line).map_err(|err| {
@@ -2377,8 +2424,18 @@ fn account_state_file() -> PathBuf {
     run_root().join("run/rpc/accounts.json")
 }
 
+fn json_text_without_utf8_bom(path: &Path) -> Option<String> {
+    let raw = fs::read_to_string(path).ok()?;
+    Some(
+        raw.trim_start_matches(char::is_whitespace)
+            .trim_start_matches('\u{feff}')
+            .trim_start_matches(char::is_whitespace)
+            .to_string(),
+    )
+}
+
 fn load_account_state(path: &Path) -> BTreeMap<String, AccountState> {
-    let Ok(raw) = fs::read_to_string(path) else {
+    let Some(raw) = json_text_without_utf8_bom(path) else {
         return BTreeMap::new();
     };
     match serde_json::from_str::<BTreeMap<String, AccountState>>(&raw) {
@@ -2420,7 +2477,7 @@ fn faucet_limits_file() -> PathBuf {
 }
 
 fn load_faucet_limits(path: &Path) -> BTreeMap<String, FaucetRateEntry> {
-    let Ok(raw) = fs::read_to_string(path) else {
+    let Some(raw) = json_text_without_utf8_bom(path) else {
         return BTreeMap::new();
     };
     match serde_json::from_str::<BTreeMap<String, FaucetRateEntry>>(&raw) {
@@ -2442,7 +2499,7 @@ fn save_faucet_limits(path: &Path, limits: &BTreeMap<String, FaucetRateEntry>) -
 }
 
 fn load_tx_lifecycle(path: &Path) -> BTreeMap<String, TxLifecycleRecord> {
-    let Ok(raw) = fs::read_to_string(path) else {
+    let Some(raw) = json_text_without_utf8_bom(path) else {
         return BTreeMap::new();
     };
     match serde_json::from_str::<BTreeMap<String, TxLifecycleRecord>>(&raw) {
@@ -4936,6 +4993,7 @@ fn main() -> Result<()> {
 mod tests {
     use super::*;
     use std::panic::{catch_unwind, AssertUnwindSafe};
+    use trnm_rpc::TxStatus;
     use std::sync::{
         atomic::{AtomicU64, Ordering},
         Mutex, MutexGuard, OnceLock,
@@ -8982,6 +9040,54 @@ line2
     }
 
     #[test]
+    fn load_node_event_log_sources_deduplicates_manifest_only_lexical_aliases() {
+        let _guard = lock_env();
+        let root = unique_tmp_path("trnm-rpc-log-sources-manifest-only-lexical-dedupe", "dir");
+        let archive_dir = root.join("archive");
+        let manifest_dir = root.join("cfg/history");
+        fs::create_dir_all(&archive_dir).expect("create archive dir");
+        fs::create_dir_all(&manifest_dir).expect("create manifest dir");
+
+        let archived_log = archive_dir.join("node4.log");
+        let manifest = manifest_dir.join("sources.txt");
+        fs::write(&archived_log, "").expect("write archived log");
+        fs::write(
+            &manifest,
+            "../../archive/node4.log\n../history/../../archive/node4.log\n`../../archive/./node4.log`\n",
+        )
+        .expect("write manifest");
+
+        let prev_sources = std::env::var(NODE_EVENT_LOG_SOURCES_ENV).ok();
+        let prev_manifest = std::env::var(NODE_EVENT_LOG_MANIFEST_ENV).ok();
+        unsafe {
+            std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV);
+            std::env::set_var(
+                NODE_EVENT_LOG_MANIFEST_ENV,
+                manifest.to_string_lossy().to_string(),
+            );
+        }
+
+        let got = load_node_event_log_sources(&root);
+
+        match prev_sources {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_SOURCES_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV) },
+        }
+        match prev_manifest {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_MANIFEST_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV) },
+        }
+
+        assert_eq!(
+            got,
+            vec![archived_log],
+            "historical replay manifests should dedupe manifest-only lexical path aliases before building the read-model source set"
+        );
+
+        let _ = fs::remove_dir_all(root);
+    }
+
+    #[test]
     fn load_node_event_log_sources_unwraps_quoted_env_entries_for_historical_replay() {
         let _guard = lock_env();
         let root = unique_tmp_path("trnm-rpc-log-sources-quoted-env", "dir");
@@ -9015,6 +9121,86 @@ line2
             got,
             vec![shared_log],
             "quoted historical replay env entries should resolve to canonical log sources"
+        );
+
+        let _ = fs::remove_dir_all(root);
+    }
+
+    #[test]
+    fn load_node_event_log_sources_accepts_carriage_return_env_entries_with_bom_wrapped_comments() {
+        let _guard = lock_env();
+        let root = unique_tmp_path("trnm-rpc-log-sources-env-crlf-bom-comments", "dir");
+        fs::create_dir_all(&root).expect("create root dir");
+
+        let node4_log = root.join("node4.log");
+        let node5_log = root.join("node5.log");
+        fs::write(&node4_log, "").expect("write node4 log");
+        fs::write(&node5_log, "").expect("write node5 log");
+
+        let prev_sources = std::env::var(NODE_EVENT_LOG_SOURCES_ENV).ok();
+        let prev_manifest = std::env::var(NODE_EVENT_LOG_MANIFEST_ENV).ok();
+        unsafe {
+            std::env::set_var(
+                NODE_EVENT_LOG_SOURCES_ENV,
+                "\"node4.log\"  \u{feff}# replay note\r`./node5.log`  \u{feff}# archived replay note\r",
+            );
+            std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV);
+        }
+
+        let got = load_node_event_log_sources(&root);
+
+        match prev_sources {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_SOURCES_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV) },
+        }
+        match prev_manifest {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_MANIFEST_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV) },
+        }
+
+        assert_eq!(
+            got,
+            vec![node4_log, node5_log],
+            "carriage-return-separated historical replay env aliases should keep wrapped paths while dropping BOM-spaced attached comments"
+        );
+
+        let _ = fs::remove_dir_all(root);
+    }
+
+    #[test]
+    fn load_node_event_log_sources_ignores_tab_separated_env_comments_after_wrapped_paths() {
+        let _guard = lock_env();
+        let root = unique_tmp_path("trnm-rpc-log-sources-env-tab-comments", "dir");
+        fs::create_dir_all(&root).expect("create root dir");
+
+        let shared_log = root.join("shared.log");
+        fs::write(&shared_log, "").expect("write shared log");
+
+        let prev_sources = std::env::var(NODE_EVENT_LOG_SOURCES_ENV).ok();
+        let prev_manifest = std::env::var(NODE_EVENT_LOG_MANIFEST_ENV).ok();
+        unsafe {
+            std::env::set_var(
+                NODE_EVENT_LOG_SOURCES_ENV,
+                "\"shared.log\"\t# operator replay note ; `./shared.log`\t# duplicate alias",
+            );
+            std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV);
+        }
+
+        let got = load_node_event_log_sources(&root);
+
+        match prev_sources {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_SOURCES_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV) },
+        }
+        match prev_manifest {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_MANIFEST_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV) },
+        }
+
+        assert_eq!(
+            got,
+            vec![shared_log],
+            "tab-separated historical replay env comments should not corrupt wrapped paths or dedupe behavior"
         );
 
         let _ = fs::remove_dir_all(root);
@@ -9247,6 +9433,50 @@ line2
             got,
             vec![archived_log],
             "historical replay manifest env values should tolerate UTF-8 BOM wrappers before resolving from the RPC root"
+        );
+
+        let _ = fs::remove_dir_all(root);
+    }
+
+    #[test]
+    fn load_node_event_log_sources_resolves_attached_comment_wrapped_manifest_env_from_root() {
+        let _guard = lock_env();
+        let root = unique_tmp_path("trnm-rpc-log-sources-manifest-env-attached-comment", "dir");
+        let archive_dir = root.join("archive");
+        let manifest_dir = root.join("cfg/history");
+        fs::create_dir_all(&archive_dir).expect("create archive dir");
+        fs::create_dir_all(&manifest_dir).expect("create manifest dir");
+
+        let archived_log = archive_dir.join("node4.log");
+        let manifest = manifest_dir.join("sources.txt");
+        fs::write(&archived_log, "").expect("write archived log");
+        fs::write(&manifest, "../../archive/node4.log\n").expect("write manifest");
+
+        let prev_sources = std::env::var(NODE_EVENT_LOG_SOURCES_ENV).ok();
+        let prev_manifest = std::env::var(NODE_EVENT_LOG_MANIFEST_ENV).ok();
+        unsafe {
+            std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV);
+            std::env::set_var(
+                NODE_EVENT_LOG_MANIFEST_ENV,
+                "\"cfg/history/sources.txt\"# archived replay note",
+            );
+        }
+
+        let got = load_node_event_log_sources(&root);
+
+        match prev_sources {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_SOURCES_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV) },
+        }
+        match prev_manifest {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_MANIFEST_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV) },
+        }
+
+        assert_eq!(
+            got,
+            vec![archived_log],
+            "attached-comment wrapped manifest env paths should still resolve from the RPC root"
         );
 
         let _ = fs::remove_dir_all(root);
@@ -9823,5 +10053,375 @@ line2
         for (path, bytes) in backup {
             let _ = fs::write(path, bytes);
         }
+    }
+
+    #[test]
+    fn load_latest_adapter_records_falls_back_to_previous_nonempty_snapshot_when_latest_is_empty() {
+        let dir = run_root().join("run/worker-agent");
+        fs::create_dir_all(&dir).expect("create worker-agent dir");
+
+        let mut backup: Vec<(PathBuf, Vec<u8>)> = vec![];
+        if let Ok(entries) = fs::read_dir(&dir) {
+            for entry in entries.flatten() {
+                let path = entry.path();
+                let is_adapter = path
+                    .file_name()
+                    .and_then(|n| n.to_str())
+                    .map(|s| s.starts_with("tx-adapter-") && s.ends_with(".jsonl"))
+                    .unwrap_or(false);
+                if !is_adapter {
+                    continue;
+                }
+                if let Ok(bytes) = fs::read(&path) {
+                    backup.push((path.clone(), bytes));
+                }
+                let _ = fs::remove_file(&path);
+            }
+        }
+
+        let previous = dir.join(format!("tx-adapter-20260403-{}-a.jsonl", std::process::id()));
+        let latest = dir.join(format!("tx-adapter-20260404-{}-z.jsonl", std::process::id()));
+        fs::write(
+            &previous,
+            "{\"ts\":1772074584,\"mode\":\"mock\",\"kind\":\"commit\",\"task_id\":5252,\"worker\":\"worker1\",\"commit_hash\":\"764c7baf3e1d3d325511cdc3d7836fbc1fa71a289bd669edcc4b55d6baaee9d7\",\"nonce\":101001,\"tx_hash\":\"7336b90d593ebe324cb4b3e41e7e9d86d1e2418f230cca0162ca1d539f32c2b9\",\"status\":\"accepted\",\"rc\":0}\n",
+        )
+        .expect("write previous adapter snapshot");
+        fs::write(&latest, "\n  \n").expect("write empty latest adapter snapshot");
+
+        let records = load_latest_adapter_records();
+        assert_eq!(records.len(), 1, "empty newest snapshot should not erase the last durable read-model snapshot");
+        assert_eq!(records[0].task_id, 5252);
+
+        let _ = fs::remove_file(&previous);
+        let _ = fs::remove_file(&latest);
+        for (path, bytes) in backup {
+            let _ = fs::write(path, bytes);
+        }
+    }
+
+    #[test]
+    fn load_latest_adapter_records_falls_back_to_previous_nonempty_snapshot_when_latest_contains_only_comment_noise() {
+        let dir = run_root().join("run/worker-agent");
+        fs::create_dir_all(&dir).expect("create worker-agent dir");
+
+        let mut backup: Vec<(PathBuf, Vec<u8>)> = vec![];
+        if let Ok(entries) = fs::read_dir(&dir) {
+            for entry in entries.flatten() {
+                let path = entry.path();
+                let is_adapter = path
+                    .file_name()
+                    .and_then(|n| n.to_str())
+                    .map(|s| s.starts_with("tx-adapter-") && s.ends_with(".jsonl"))
+                    .unwrap_or(false);
+                if !is_adapter {
+                    continue;
+                }
+                if let Ok(bytes) = fs::read(&path) {
+                    backup.push((path.clone(), bytes));
+                }
+                let _ = fs::remove_file(&path);
+            }
+        }
+
+        let previous = dir.join(format!("tx-adapter-20260403-{}-a.jsonl", std::process::id()));
+        let latest = dir.join(format!("tx-adapter-20260404-{}-z.jsonl", std::process::id()));
+        fs::write(
+            &previous,
+            "{\"ts\":1772074584,\"mode\":\"mock\",\"kind\":\"commit\",\"task_id\":6666,\"worker\":\"worker1\",\"commit_hash\":\"764c7baf3e1d3d325511cdc3d7836fbc1fa71a289bd669edcc4b55d6baaee9d7\",\"nonce\":101001,\"tx_hash\":\"7336b90d593ebe324cb4b3e41e7e9d86d1e2418f230cca0162ca1d539f32c2b9\",\"status\":\"accepted\",\"rc\":0}\n",
+        )
+        .expect("write previous adapter snapshot");
+        fs::write(&latest, "  # archived replay note only\n\t# no durable rows here either\n")
+            .expect("write comment-noise latest adapter snapshot");
+
+        let records = load_latest_adapter_records();
+        assert_eq!(
+            records.len(),
+            1,
+            "comment-only newest snapshot should not erase the last durable read-model snapshot"
+        );
+        assert_eq!(records[0].task_id, 6666);
+
+        let _ = fs::remove_file(&previous);
+        let _ = fs::remove_file(&latest);
+        for (path, bytes) in backup {
+            let _ = fs::write(path, bytes);
+        }
+    }
+
+    #[test]
+    fn load_latest_adapter_records_falls_back_to_previous_nonempty_snapshot_when_latest_is_corrupt() {
+        let dir = run_root().join("run/worker-agent");
+        fs::create_dir_all(&dir).expect("create worker-agent dir");
+
+        let mut backup: Vec<(PathBuf, Vec<u8>)> = vec![];
+        if let Ok(entries) = fs::read_dir(&dir) {
+            for entry in entries.flatten() {
+                let path = entry.path();
+                let is_adapter = path
+                    .file_name()
+                    .and_then(|n| n.to_str())
+                    .map(|s| s.starts_with("tx-adapter-") && s.ends_with(".jsonl"))
+                    .unwrap_or(false);
+                if !is_adapter {
+                    continue;
+                }
+                if let Ok(bytes) = fs::read(&path) {
+                    backup.push((path.clone(), bytes));
+                }
+                let _ = fs::remove_file(&path);
+            }
+        }
+
+        let previous = dir.join(format!("tx-adapter-20260403-{}-a.jsonl", std::process::id()));
+        let latest = dir.join(format!("tx-adapter-20260404-{}-z.jsonl", std::process::id()));
+        fs::write(
+            &previous,
+            "{\"ts\":1772074584,\"mode\":\"mock\",\"kind\":\"commit\",\"task_id\":4242,\"worker\":\"worker1\",\"commit_hash\":\"764c7baf3e1d3d325511cdc3d7836fbc1fa71a289bd669edcc4b55d6baaee9d7\",\"nonce\":101001,\"tx_hash\":\"7336b90d593ebe324cb4b3e41e7e9d86d1e2418f230cca0162ca1d539f32c2b9\",\"status\":\"accepted\",\"rc\":0}\n",
+        )
+        .expect("write previous adapter snapshot");
+        fs::write(&latest, "not-json\n").expect("write corrupt latest adapter snapshot");
+
+        let records = load_latest_adapter_records();
+        assert_eq!(
+            records.len(),
+            1,
+            "corrupt newest snapshot should not erase the last durable read-model snapshot"
+        );
+        assert_eq!(records[0].task_id, 4242);
+
+        let _ = fs::remove_file(&previous);
+        let _ = fs::remove_file(&latest);
+        for (path, bytes) in backup {
+            let _ = fs::write(path, bytes);
+        }
+    }
+
+    #[test]
+    fn load_latest_adapter_records_accepts_crlf_separated_whitespace_prefixed_utf8_bom_snapshot() {
+        let dir = run_root().join("run/worker-agent");
+        fs::create_dir_all(&dir).expect("create worker-agent dir");
+
+        let mut backup: Vec<(PathBuf, Vec<u8>)> = vec![];
+        if let Ok(entries) = fs::read_dir(&dir) {
+            for entry in entries.flatten() {
+                let path = entry.path();
+                let is_adapter = path
+                    .file_name()
+                    .and_then(|n| n.to_str())
+                    .map(|s| s.starts_with("tx-adapter-") && s.ends_with(".jsonl"))
+                    .unwrap_or(false);
+                if !is_adapter {
+                    continue;
+                }
+                if let Ok(bytes) = fs::read(&path) {
+                    backup.push((path.clone(), bytes));
+                }
+                let _ = fs::remove_file(&path);
+            }
+        }
+
+        let latest = dir.join(format!("tx-adapter-20260404-{}-z.jsonl", std::process::id()));
+        fs::write(
+            &latest,
+            "\r\n  \u{feff}{\"ts\":1772074584,\"mode\":\"mock\",\"kind\":\"commit\",\"task_id\":6464,\"worker\":\"worker1\",\"commit_hash\":\"764c7baf3e1d3d325511cdc3d7836fbc1fa71a289bd669edcc4b55d6baaee9d7\",\"nonce\":101001,\"tx_hash\":\"7336b90d593ebe324cb4b3e41e7e9d86d1e2418f230cca0162ca1d539f32c2b9\",\"status\":\"accepted\",\"rc\":0}\r\n\r\n",
+        )
+        .expect("write crlf bom snapshot");
+
+        let records = load_latest_adapter_records();
+        assert_eq!(
+            records.len(),
+            1,
+            "crlf-separated durable snapshots with leading whitespace before utf-8 bom should stay readable"
+        );
+        assert_eq!(records[0].task_id, 6464);
+
+        let _ = fs::remove_file(&latest);
+        for (path, bytes) in backup {
+            let _ = fs::write(path, bytes);
+        }
+    }
+
+    #[test]
+    fn load_latest_adapter_records_skips_invalid_utf8_rows_without_dropping_same_snapshot_valid_rows() {
+        let dir = run_root().join("run/worker-agent");
+        fs::create_dir_all(&dir).expect("create worker-agent dir");
+
+        let mut backup: Vec<(PathBuf, Vec<u8>)> = vec![];
+        if let Ok(entries) = fs::read_dir(&dir) {
+            for entry in entries.flatten() {
+                let path = entry.path();
+                let is_adapter = path
+                    .file_name()
+                    .and_then(|n| n.to_str())
+                    .map(|s| s.starts_with("tx-adapter-") && s.ends_with(".jsonl"))
+                    .unwrap_or(false);
+                if !is_adapter {
+                    continue;
+                }
+                if let Ok(bytes) = fs::read(&path) {
+                    backup.push((path.clone(), bytes));
+                }
+                let _ = fs::remove_file(&path);
+            }
+        }
+
+        let latest = dir.join(format!("tx-adapter-20260404-{}-z.jsonl", std::process::id()));
+        let mut raw = b"\xff\xfe\xfa not-utf8\n".to_vec();
+        raw.extend_from_slice(b"{\"ts\":1772074584,\"mode\":\"mock\",\"kind\":\"commit\",\"task_id\":6565,\"worker\":\"worker1\",\"commit_hash\":\"764c7baf3e1d3d325511cdc3d7836fbc1fa71a289bd669edcc4b55d6baaee9d7\",\"nonce\":101001,\"tx_hash\":\"7336b90d593ebe324cb4b3e41e7e9d86d1e2418f230cca0162ca1d539f32c2b9\",\"status\":\"accepted\",\"rc\":0}\n");
+        fs::write(&latest, raw).expect("write invalid utf8 + valid adapter snapshot");
+
+        let records = load_latest_adapter_records();
+        assert_eq!(
+            records.len(),
+            1,
+            "invalid utf-8 rows should not cause the latest durable snapshot to be discarded wholesale"
+        );
+        assert_eq!(records[0].task_id, 6565);
+
+        let _ = fs::remove_file(&latest);
+        for (path, bytes) in backup {
+            let _ = fs::write(path, bytes);
+        }
+    }
+
+    #[test]
+    fn load_latest_adapter_records_falls_back_to_previous_nonempty_snapshot_when_latest_is_invalid_utf8_only() {
+        let dir = run_root().join("run/worker-agent");
+        fs::create_dir_all(&dir).expect("create worker-agent dir");
+
+        let mut backup: Vec<(PathBuf, Vec<u8>)> = vec![];
+        if let Ok(entries) = fs::read_dir(&dir) {
+            for entry in entries.flatten() {
+                let path = entry.path();
+                let is_adapter = path
+                    .file_name()
+                    .and_then(|n| n.to_str())
+                    .map(|s| s.starts_with("tx-adapter-") && s.ends_with(".jsonl"))
+                    .unwrap_or(false);
+                if !is_adapter {
+                    continue;
+                }
+                if let Ok(bytes) = fs::read(&path) {
+                    backup.push((path.clone(), bytes));
+                }
+                let _ = fs::remove_file(&path);
+            }
+        }
+
+        let previous = dir.join(format!("tx-adapter-20260403-{}-a.jsonl", std::process::id()));
+        let latest = dir.join(format!("tx-adapter-20260404-{}-z.jsonl", std::process::id()));
+        fs::write(
+            &previous,
+            "{\"ts\":1772074584,\"mode\":\"mock\",\"kind\":\"commit\",\"task_id\":6767,\"worker\":\"worker1\",\"commit_hash\":\"764c7baf3e1d3d325511cdc3d7836fbc1fa71a289bd669edcc4b55d6baaee9d7\",\"nonce\":101001,\"tx_hash\":\"7336b90d593ebe324cb4b3e41e7e9d86d1e2418f230cca0162ca1d539f32c2b9\",\"status\":\"accepted\",\"rc\":0}\n",
+        )
+        .expect("write previous adapter snapshot");
+        fs::write(&latest, b"\xff\xfe\xfa totally-invalid-utf8\n")
+            .expect("write invalid utf8 latest adapter snapshot");
+
+        let records = load_latest_adapter_records();
+        assert_eq!(
+            records.len(),
+            1,
+            "invalid utf-8 newest snapshot should not erase the last durable read-model snapshot"
+        );
+        assert_eq!(records[0].task_id, 6767);
+
+        let _ = fs::remove_file(&previous);
+        let _ = fs::remove_file(&latest);
+        for (path, bytes) in backup {
+            let _ = fs::write(path, bytes);
+        }
+    }
+
+    #[test]
+    fn load_faucet_limits_tolerates_whitespace_prefixed_utf8_bom_json() {
+        let path = unique_tmp_path("rpc-faucet-limits-whitespace-bom", "json");
+        let _ = fs::remove_file(&path);
+        fs::write(
+            &path,
+            "\r\n  \t\u{feff}{\n  \"alice\": {\"window_start_unix_ms\":1234,\"count_in_window\":2}\n}\n",
+        )
+        .expect("write whitespace-prefixed BOM faucet limits");
+
+        let limits = load_faucet_limits(&path);
+        let alice = limits.get("alice").expect("alice limits should parse");
+        assert_eq!(alice.window_start_unix_ms, 1234);
+        assert_eq!(alice.count_in_window, 2);
+
+        let _ = fs::remove_file(&path);
+    }
+
+    #[test]
+    fn load_faucet_limits_tolerates_whitespace_after_utf8_bom_json() {
+        let path = unique_tmp_path("rpc-faucet-limits-post-bom-whitespace", "json");
+        let _ = fs::remove_file(&path);
+        fs::write(
+            &path,
+            "\u{feff}\r\n  {\n  \"alice\": {\"window_start_unix_ms\":5678,\"count_in_window\":3}\n}\n",
+        )
+        .expect("write post-BOM-whitespace faucet limits");
+
+        let limits = load_faucet_limits(&path);
+        let alice = limits
+            .get("alice")
+            .expect("alice limits should parse after BOM-adjacent whitespace");
+        assert_eq!(alice.window_start_unix_ms, 5678);
+        assert_eq!(alice.count_in_window, 3);
+
+        let _ = fs::remove_file(&path);
+    }
+
+    #[test]
+    fn load_tx_lifecycle_tolerates_whitespace_prefixed_utf8_bom_json() {
+        let path = unique_tmp_path("rpc-tx-lifecycle-whitespace-bom", "json");
+        let _ = fs::remove_file(&path);
+        fs::write(
+            &path,
+            "\r\n\t\u{feff}{\n  \"0xabc\": {\n    \"tx_hash\": \"0xabc\",\n    \"tx\": {\n      \"from\": \"alice\",\n      \"to\": \"bob\",\n      \"amount\": 7,\n      \"fee\": 1,\n      \"nonce\": 4,\n      \"signature\": \"feedface\"\n    },\n    \"status\": \"committed\",\n    \"error\": null,\n    \"submitted_at_unix_ms\": 10,\n    \"updated_at_unix_ms\": 11\n  }\n}\n",
+        )
+        .expect("write whitespace-prefixed BOM tx lifecycle");
+
+        let txs = load_tx_lifecycle(&path);
+        let tx = txs.get("0xabc").expect("tx lifecycle should parse");
+        assert_eq!(tx.tx_hash, "0xabc");
+        assert_eq!(tx.tx.from, "alice");
+        assert_eq!(tx.tx.to, "bob");
+        assert_eq!(tx.tx.amount, 7);
+        assert_eq!(tx.tx.fee, 1);
+        assert_eq!(tx.tx.nonce, 4);
+        assert_eq!(tx.status, TxStatus::Committed);
+        assert_eq!(tx.error, None);
+        assert_eq!(tx.submitted_at_unix_ms, 10);
+        assert_eq!(tx.updated_at_unix_ms, 11);
+
+        let _ = fs::remove_file(&path);
+    }
+
+    #[test]
+    fn load_tx_lifecycle_tolerates_whitespace_after_utf8_bom_json() {
+        let path = unique_tmp_path("rpc-tx-lifecycle-post-bom-whitespace", "json");
+        let _ = fs::remove_file(&path);
+        fs::write(
+            &path,
+            "\u{feff}\r\n  {\n  \"0xdef\": {\n    \"tx_hash\": \"0xdef\",\n    \"tx\": {\n      \"from\": \"carol\",\n      \"to\": \"dave\",\n      \"amount\": 8,\n      \"fee\": 1,\n      \"nonce\": 5,\n      \"signature\": \"cafebabe\"\n    },\n    \"status\": \"committed\",\n    \"error\": null,\n    \"submitted_at_unix_ms\": 12,\n    \"updated_at_unix_ms\": 13\n  }\n}\n",
+        )
+        .expect("write post-BOM-whitespace tx lifecycle");
+
+        let txs = load_tx_lifecycle(&path);
+        let tx = txs
+            .get("0xdef")
+            .expect("tx lifecycle should parse after BOM-adjacent whitespace");
+        assert_eq!(tx.tx_hash, "0xdef");
+        assert_eq!(tx.tx.from, "carol");
+        assert_eq!(tx.tx.to, "dave");
+        assert_eq!(tx.tx.amount, 8);
+        assert_eq!(tx.tx.fee, 1);
+        assert_eq!(tx.tx.nonce, 5);
+        assert_eq!(tx.status, TxStatus::Committed);
+        assert_eq!(tx.error, None);
+        assert_eq!(tx.submitted_at_unix_ms, 12);
+        assert_eq!(tx.updated_at_unix_ms, 13);
+
+        let _ = fs::remove_file(&path);
     }
 }

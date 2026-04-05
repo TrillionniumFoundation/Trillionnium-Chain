@@ -20,7 +20,7 @@ pub(super) fn parse_node_event_log_sources_list(raw: &str) -> Vec<PathBuf> {
             Some(active) if ch == active => quote = None,
             Some(_) => {}
             None if matches!(ch, '"' | '\'' | '`') => quote = Some(ch),
-            None if matches!(ch, ',' | ';' | '\n') => {
+            None if matches!(ch, ',' | ';' | '\n' | '\r') => {
                 if let Some(path) = normalize_node_event_log_source_entry(&raw[start..idx]) {
                     out.push(PathBuf::from(path));
                 }
@@ -35,6 +35,29 @@ pub(super) fn parse_node_event_log_sources_list(raw: &str) -> Vec<PathBuf> {
     }
 
     out
+}
+
+fn normalize_leading_wrapped_log_source_comment_value(raw: &str) -> Option<&str> {
+    let normalized = raw.trim_start_matches('\u{feff}').trim();
+    let quote = normalized.chars().next()?;
+    if !matches!(quote, '"' | '\'' | '`') {
+        return None;
+    }
+
+    let closing_idx = normalized[quote.len_utf8()..]
+        .char_indices()
+        .find_map(|(idx, ch)| (ch == quote).then_some(quote.len_utf8() + idx))?;
+    let rest = normalized[closing_idx + quote.len_utf8()..]
+        .trim_start()
+        .trim_start_matches('\u{feff}')
+        .trim_start();
+    if !rest.starts_with('#') {
+        return None;
+    }
+
+    Some(normalize_wrapped_env_value(
+        &normalized[..closing_idx + quote.len_utf8()],
+    ))
 }
 
 fn normalize_node_event_log_source_entry(raw: &str) -> Option<String> {
@@ -59,6 +82,8 @@ fn normalize_node_event_log_source_entry(raw: &str) -> Option<String> {
     });
     let normalized = inline_comment_idx
         .map(|idx| normalize_wrapped_env_value(normalized[..idx].trim_end()))
+        .unwrap_or(normalized);
+    let normalized = normalize_leading_wrapped_log_source_comment_value(normalized)
         .unwrap_or(normalized);
     if normalized.is_empty() || normalized.starts_with('#') {
         return None;
@@ -244,6 +269,47 @@ mod tests {
     }
 
     #[test]
+    fn load_node_event_log_sources_accepts_carriage_return_env_entries_with_bom_wrapped_comments() {
+        let _guard = lock_env();
+        let root = unique_tmp_path("trnm-rpc-node-event-sources-env-crlf-bom-comments");
+        fs::create_dir_all(&root).expect("create root dir");
+
+        let node4_log = root.join("node4.log");
+        let node5_log = root.join("node5.log");
+        fs::write(&node4_log, "").expect("write node4 log");
+        fs::write(&node5_log, "").expect("write node5 log");
+
+        let prev_sources = std::env::var(NODE_EVENT_LOG_SOURCES_ENV).ok();
+        let prev_manifest = std::env::var(NODE_EVENT_LOG_MANIFEST_ENV).ok();
+        unsafe {
+            std::env::set_var(
+                NODE_EVENT_LOG_SOURCES_ENV,
+                "\"node4.log\"  \u{feff}# replay note\r`./node5.log`  \u{feff}# archived replay note\r",
+            );
+            std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV);
+        }
+
+        let got = load_node_event_log_sources(&root);
+
+        match prev_sources {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_SOURCES_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV) },
+        }
+        match prev_manifest {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_MANIFEST_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV) },
+        }
+
+        assert_eq!(
+            got,
+            vec![node4_log, node5_log],
+            "carriage-return-separated historical replay env aliases should keep wrapped paths while dropping BOM-spaced attached comments"
+        );
+
+        let _ = fs::remove_dir_all(root);
+    }
+
+    #[test]
     fn parse_node_event_log_sources_list_preserves_delimiters_inside_wrapped_entries() {
         let parsed = parse_node_event_log_sources_list(
             "\"archive/node,4.log\";'archive/node;5.log';`archive/node\n6.log`;plain.log",
@@ -258,6 +324,68 @@ mod tests {
                 PathBuf::from("plain.log"),
             ],
             "wrapped historical replay env entries should keep internal delimiters instead of being split into bogus paths"
+        );
+    }
+
+    #[test]
+    fn parse_node_event_log_sources_list_keeps_tab_separated_wrapped_entries_with_attached_comments() {
+        let parsed = parse_node_event_log_sources_list(
+            "\"shared.log\"\t# operator replay note ; `./shared.log`\t# duplicate alias",
+        );
+
+        assert_eq!(
+            parsed,
+            vec![PathBuf::from("shared.log")],
+            "tab-separated historical replay env comments should not corrupt wrapped paths or dedupe behavior"
+        );
+    }
+
+    #[test]
+    fn parse_node_event_log_sources_list_accepts_carriage_return_separators_for_historical_replay() {
+        let parsed = parse_node_event_log_sources_list(
+            "\"archive/node4.log\"\r'archive/node5.log'\rplain.log\r",
+        );
+
+        assert_eq!(
+            parsed,
+            vec![
+                PathBuf::from("archive/node4.log"),
+                PathBuf::from("archive/node5.log"),
+                PathBuf::from("plain.log"),
+            ],
+            "carriage-return separated historical replay aliases should parse as distinct sources"
+        );
+    }
+
+    #[test]
+    fn parse_node_event_log_sources_list_keeps_windows_style_wrapped_entries_with_attached_comments() {
+        let parsed = parse_node_event_log_sources_list(
+            "\"archive/node4.log\"# replay note\r`archive/node5.log`# archived replay note\r",
+        );
+
+        assert_eq!(
+            parsed,
+            vec![
+                PathBuf::from("archive/node4.log"),
+                PathBuf::from("archive/node5.log"),
+            ],
+            "windows-style historical replay aliases should keep wrapped paths while dropping attached comments"
+        );
+    }
+
+    #[test]
+    fn parse_node_event_log_sources_list_keeps_wrapped_entries_with_whitespace_then_bom_comments() {
+        let parsed = parse_node_event_log_sources_list(
+            "\"archive/node4.log\"  \u{feff}# replay note\r`archive/node5.log`  \u{feff}# archived replay note\r",
+        );
+
+        assert_eq!(
+            parsed,
+            vec![
+                PathBuf::from("archive/node4.log"),
+                PathBuf::from("archive/node5.log"),
+            ],
+            "historical replay aliases should keep wrapped paths when whitespace+BOM precedes attached comments"
         );
     }
 
@@ -397,6 +525,50 @@ mod tests {
     }
 
     #[test]
+    fn load_node_event_log_sources_normalizes_wrapped_relative_manifest_env_with_attached_comment() {
+        let _guard = lock_env();
+        let root = unique_tmp_path("trnm-rpc-node-event-sources-attached-comment-manifest-env");
+        let archive_dir = root.join("archive");
+        let manifest_dir = root.join("cfg/history");
+        fs::create_dir_all(&archive_dir).expect("create archive dir");
+        fs::create_dir_all(&manifest_dir).expect("create manifest dir");
+
+        let archived_log = archive_dir.join("node4.log");
+        let manifest = manifest_dir.join("sources.txt");
+        fs::write(&archived_log, "").expect("write archived log");
+        fs::write(&manifest, "../../archive/node4.log\n").expect("write manifest");
+
+        let prev_sources = std::env::var(NODE_EVENT_LOG_SOURCES_ENV).ok();
+        let prev_manifest = std::env::var(NODE_EVENT_LOG_MANIFEST_ENV).ok();
+        unsafe {
+            std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV);
+            std::env::set_var(
+                NODE_EVENT_LOG_MANIFEST_ENV,
+                "\"cfg/history/sources.txt\"# operator replay note",
+            );
+        }
+
+        let got = load_node_event_log_sources(&root);
+
+        match prev_sources {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_SOURCES_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV) },
+        }
+        match prev_manifest {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_MANIFEST_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV) },
+        }
+
+        assert_eq!(
+            got,
+            vec![archived_log],
+            "wrapped relative manifest env paths with attached comments should still resolve from the RPC root"
+        );
+
+        let _ = fs::remove_dir_all(root);
+    }
+
+    #[test]
     fn load_node_event_log_sources_deduplicates_manifest_and_env_entries_after_lexical_normalization(
     ) {
         let _guard = lock_env();
@@ -484,6 +656,54 @@ mod tests {
             got,
             vec![first_log, second_log],
             "historical replay manifests should accept comma/semicolon-separated path aliases and dedupe them"
+        );
+
+        let _ = fs::remove_dir_all(root);
+    }
+
+    #[test]
+    fn load_node_event_log_sources_deduplicates_manifest_only_lexical_aliases() {
+        let _guard = lock_env();
+        let root = unique_tmp_path("trnm-rpc-node-event-sources-manifest-only-dedupe");
+        let archive_dir = root.join("archive");
+        let manifest_dir = root.join("cfg/history");
+        fs::create_dir_all(&archive_dir).expect("create archive dir");
+        fs::create_dir_all(&manifest_dir).expect("create manifest dir");
+
+        let archived_log = archive_dir.join("node4.log");
+        let manifest = manifest_dir.join("sources.txt");
+        fs::write(&archived_log, "").expect("write archived log");
+        fs::write(
+            &manifest,
+            "../../archive/node4.log\n../history/../../archive/node4.log\n`../../archive/./node4.log`\n",
+        )
+        .expect("write manifest");
+
+        let prev_sources = std::env::var(NODE_EVENT_LOG_SOURCES_ENV).ok();
+        let prev_manifest = std::env::var(NODE_EVENT_LOG_MANIFEST_ENV).ok();
+        unsafe {
+            std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV);
+            std::env::set_var(
+                NODE_EVENT_LOG_MANIFEST_ENV,
+                manifest.to_string_lossy().to_string(),
+            );
+        }
+
+        let got = load_node_event_log_sources(&root);
+
+        match prev_sources {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_SOURCES_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV) },
+        }
+        match prev_manifest {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_MANIFEST_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV) },
+        }
+
+        assert_eq!(
+            got,
+            vec![archived_log],
+            "historical replay manifests should dedupe manifest-only lexical path aliases before building the read-model source set"
         );
 
         let _ = fs::remove_dir_all(root);
@@ -621,6 +841,50 @@ mod tests {
             got,
             vec![archived_log],
             "historical replay manifest env values should tolerate UTF-8 BOM wrappers before resolving from the RPC root"
+        );
+
+        let _ = fs::remove_dir_all(root);
+    }
+
+    #[test]
+    fn load_node_event_log_sources_normalizes_leading_whitespace_before_bom_wrapped_manifest_env_path() {
+        let _guard = lock_env();
+        let root = unique_tmp_path("trnm-rpc-node-event-sources-spaced-bom-manifest-env");
+        let archive_dir = root.join("archive");
+        let manifest_dir = root.join("cfg/history");
+        fs::create_dir_all(&archive_dir).expect("create archive dir");
+        fs::create_dir_all(&manifest_dir).expect("create manifest dir");
+
+        let archived_log = archive_dir.join("node4.log");
+        let manifest = manifest_dir.join("sources.txt");
+        fs::write(&archived_log, "").expect("write archived log");
+        fs::write(&manifest, "../../archive/node4.log\n").expect("write manifest");
+
+        let prev_sources = std::env::var(NODE_EVENT_LOG_SOURCES_ENV).ok();
+        let prev_manifest = std::env::var(NODE_EVENT_LOG_MANIFEST_ENV).ok();
+        unsafe {
+            std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV);
+            std::env::set_var(
+                NODE_EVENT_LOG_MANIFEST_ENV,
+                "  \u{feff}\"cfg/history/sources.txt\"# archived replay note ",
+            );
+        }
+
+        let got = load_node_event_log_sources(&root);
+
+        match prev_sources {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_SOURCES_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV) },
+        }
+        match prev_manifest {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_MANIFEST_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV) },
+        }
+
+        assert_eq!(
+            got,
+            vec![archived_log],
+            "historical replay manifest env values should tolerate leading whitespace before a BOM-wrapped path with an attached comment"
         );
 
         let _ = fs::remove_dir_all(root);
@@ -834,5 +1098,101 @@ mod tests {
         );
 
         let _ = fs::remove_dir_all(root);
+    }
+
+    #[test]
+    fn load_node_event_log_sources_tolerates_utf8_bom_wrapped_env_entries_with_attached_comments()
+    {
+        let _guard = lock_env();
+        let root = unique_tmp_path("trnm-rpc-node-event-sources-bom-attached-comment-env");
+        fs::create_dir_all(&root).expect("create root dir");
+
+        let shared_log = root.join("shared.log");
+        fs::write(&shared_log, "").expect("write shared log");
+
+        let prev_sources = std::env::var(NODE_EVENT_LOG_SOURCES_ENV).ok();
+        let prev_manifest = std::env::var(NODE_EVENT_LOG_MANIFEST_ENV).ok();
+        unsafe {
+            std::env::set_var(
+                NODE_EVENT_LOG_SOURCES_ENV,
+                "\u{feff} \"shared.log\"# operator note ; \u{feff}`./shared.log`# duplicate alias",
+            );
+            std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV);
+        }
+
+        let got = load_node_event_log_sources(&root);
+
+        match prev_sources {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_SOURCES_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV) },
+        }
+        match prev_manifest {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_MANIFEST_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV) },
+        }
+
+        assert_eq!(
+            got,
+            vec![shared_log],
+            "BOM-prefixed wrapped env entries with attached comments should still normalize to one canonical historical replay source"
+        );
+
+        let _ = fs::remove_dir_all(root);
+    }
+
+    #[test]
+    fn load_node_event_log_sources_tolerates_leading_whitespace_before_bom_wrapped_env_entries_with_attached_comments(
+    ) {
+        let _guard = lock_env();
+        let root = unique_tmp_path("trnm-rpc-node-event-sources-space-bom-attached-comment-env");
+        fs::create_dir_all(&root).expect("create root dir");
+
+        let shared_log = root.join("shared.log");
+        fs::write(&shared_log, "").expect("write shared log");
+
+        let prev_sources = std::env::var(NODE_EVENT_LOG_SOURCES_ENV).ok();
+        let prev_manifest = std::env::var(NODE_EVENT_LOG_MANIFEST_ENV).ok();
+        unsafe {
+            std::env::set_var(
+                NODE_EVENT_LOG_SOURCES_ENV,
+                "  \u{feff}\"shared.log\"# operator note ;  \u{feff}`./shared.log`# duplicate alias",
+            );
+            std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV);
+        }
+
+        let got = load_node_event_log_sources(&root);
+
+        match prev_sources {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_SOURCES_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV) },
+        }
+        match prev_manifest {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_MANIFEST_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV) },
+        }
+
+        assert_eq!(
+            got,
+            vec![shared_log],
+            "leading whitespace before BOM-wrapped env entries with attached comments should still normalize to one canonical historical replay source"
+        );
+
+        let _ = fs::remove_dir_all(root);
+    }
+
+    #[test]
+    fn normalize_node_event_log_source_entry_strips_attached_comment_after_wrapped_path() {
+        assert_eq!(
+            normalize_node_event_log_source_entry("\"shared.log\"# operator replay note"),
+            Some("shared.log".to_string())
+        );
+        assert_eq!(
+            normalize_node_event_log_source_entry("'./archive/node3.log'# archived alias"),
+            Some("./archive/node3.log".to_string())
+        );
+        assert_eq!(
+            normalize_node_event_log_source_entry("`./archive/node4.log`# archived alias"),
+            Some("./archive/node4.log".to_string())
+        );
     }
 }

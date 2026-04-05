@@ -106,6 +106,56 @@ fn load_node_event_log_sources_deduplicates_overlapping_manifest_and_relative_en
 }
 
 #[test]
+fn load_node_event_log_sources_accepts_comma_and_semicolon_separated_manifest_entries() {
+    let _guard = lock_env();
+    let root = unique_tmp_path("trnm-rpc-log-sources-manifest-delimiters", "dir");
+    let archive_dir = root.join("archive");
+    let manifest_dir = root.join("cfg/history");
+    fs::create_dir_all(&archive_dir).expect("create archive dir");
+    fs::create_dir_all(&manifest_dir).expect("create manifest dir");
+
+    let first_log = archive_dir.join("node4.log");
+    let second_log = archive_dir.join("node5.log");
+    let manifest = manifest_dir.join("sources.txt");
+    fs::write(&first_log, "").expect("write first archived log");
+    fs::write(&second_log, "").expect("write second archived log");
+    fs::write(
+        &manifest,
+        "\"../../archive/node4.log\", '../../archive/node5.log'; `../../archive/node4.log`\n",
+    )
+    .expect("write manifest");
+
+    let prev_sources = std::env::var(NODE_EVENT_LOG_SOURCES_ENV).ok();
+    let prev_manifest = std::env::var(NODE_EVENT_LOG_MANIFEST_ENV).ok();
+    unsafe {
+        std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV);
+        std::env::set_var(
+            NODE_EVENT_LOG_MANIFEST_ENV,
+            manifest.to_string_lossy().to_string(),
+        );
+    }
+
+    let got = load_node_event_log_sources(&root);
+
+    match prev_sources {
+        Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_SOURCES_ENV, v) },
+        None => unsafe { std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV) },
+    }
+    match prev_manifest {
+        Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_MANIFEST_ENV, v) },
+        None => unsafe { std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV) },
+    }
+
+    assert_eq!(
+        got,
+        vec![archive_dir.join("node4.log"), archive_dir.join("node5.log")],
+        "historical replay manifests should accept comma/semicolon-separated path aliases and dedupe them"
+    );
+
+    let _ = fs::remove_dir_all(root);
+}
+
+#[test]
 fn load_node_event_log_sources_resolves_parent_relative_manifest_entries_from_manifest_dir() {
     let _guard = lock_env();
     let root = unique_tmp_path("trnm-rpc-log-sources-parent-relative", "dir");
@@ -150,6 +200,233 @@ fn load_node_event_log_sources_resolves_parent_relative_manifest_entries_from_ma
 }
 
 #[test]
+fn load_node_event_log_sources_deduplicates_lexically_equivalent_manifest_relative_entries() {
+    let _guard = lock_env();
+    let root = unique_tmp_path("trnm-rpc-log-sources-manifest-relative-dedupe", "dir");
+    let archive_dir = root.join("archive");
+    let manifest_dir = root.join("cfg/history");
+    fs::create_dir_all(&archive_dir).expect("create archive dir");
+    fs::create_dir_all(&manifest_dir).expect("create manifest dir");
+
+    let archived_log = archive_dir.join("node4.log");
+    let manifest = manifest_dir.join("sources.txt");
+    fs::write(&archived_log, "").expect("write archived log");
+    fs::write(
+        &manifest,
+        "../../archive/./node4.log\n../../archive/history/../node4.log\n",
+    )
+    .expect("write manifest");
+
+    let prev_sources = std::env::var(NODE_EVENT_LOG_SOURCES_ENV).ok();
+    let prev_manifest = std::env::var(NODE_EVENT_LOG_MANIFEST_ENV).ok();
+    unsafe {
+        std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV);
+        std::env::set_var(
+            NODE_EVENT_LOG_MANIFEST_ENV,
+            manifest.to_string_lossy().to_string(),
+        );
+    }
+
+    let got = load_node_event_log_sources(&root);
+
+    match prev_sources {
+        Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_SOURCES_ENV, v) },
+        None => unsafe { std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV) },
+    }
+    match prev_manifest {
+        Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_MANIFEST_ENV, v) },
+        None => unsafe { std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV) },
+    }
+
+    assert_eq!(
+        got,
+        vec![archive_dir.join("node4.log")],
+        "historical replay manifests should dedupe lexically equivalent relative aliases before read-model expansion"
+    );
+
+    let _ = fs::remove_dir_all(root);
+}
+
+#[test]
+fn load_node_event_log_sources_resolves_relative_manifest_env_from_root_before_replay_expansion() {
+    let _guard = lock_env();
+    let root = unique_tmp_path("trnm-rpc-log-sources-relative-manifest-env", "dir");
+    let archive_dir = root.join("archive");
+    let manifest_dir = root.join("cfg/history");
+    fs::create_dir_all(&archive_dir).expect("create archive dir");
+    fs::create_dir_all(&manifest_dir).expect("create manifest dir");
+
+    let archived_log = archive_dir.join("node4.log");
+    let manifest = manifest_dir.join("sources.txt");
+    fs::write(&archived_log, "").expect("write archived log");
+    fs::write(&manifest, "../../archive/node4.log\n").expect("write manifest");
+
+    let prev_sources = std::env::var(NODE_EVENT_LOG_SOURCES_ENV).ok();
+    let prev_manifest = std::env::var(NODE_EVENT_LOG_MANIFEST_ENV).ok();
+    unsafe {
+        std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV);
+        std::env::set_var(NODE_EVENT_LOG_MANIFEST_ENV, "cfg/history/sources.txt");
+    }
+
+    let got = load_node_event_log_sources(&root);
+
+    match prev_sources {
+        Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_SOURCES_ENV, v) },
+        None => unsafe { std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV) },
+    }
+    match prev_manifest {
+        Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_MANIFEST_ENV, v) },
+        None => unsafe { std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV) },
+    }
+
+    assert_eq!(
+        got,
+        vec![archive_dir.join("node4.log")],
+        "relative historical replay manifest env paths must resolve from the RPC root before manifest entries are expanded"
+    );
+
+    let _ = fs::remove_dir_all(root);
+}
+
+#[test]
+fn load_node_event_log_sources_accepts_bom_wrapped_manifest_env_with_comment_suffix() {
+    let _guard = lock_env();
+    let root = unique_tmp_path("trnm-rpc-log-sources-wrapped-manifest-env", "dir");
+    let archive_dir = root.join("archive");
+    let manifest_dir = root.join("cfg/history");
+    fs::create_dir_all(&archive_dir).expect("create archive dir");
+    fs::create_dir_all(&manifest_dir).expect("create manifest dir");
+
+    let archived_log = archive_dir.join("node4.log");
+    let manifest = manifest_dir.join("sources.txt");
+    fs::write(&archived_log, "").expect("write archived log");
+    fs::write(&manifest, "../../archive/node4.log\n").expect("write manifest");
+
+    let prev_sources = std::env::var(NODE_EVENT_LOG_SOURCES_ENV).ok();
+    let prev_manifest = std::env::var(NODE_EVENT_LOG_MANIFEST_ENV).ok();
+    unsafe {
+        std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV);
+        std::env::set_var(
+            NODE_EVENT_LOG_MANIFEST_ENV,
+            "\u{feff}  \"cfg/history/sources.txt\"# archived replay note ",
+        );
+    }
+
+    let got = load_node_event_log_sources(&root);
+
+    match prev_sources {
+        Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_SOURCES_ENV, v) },
+        None => unsafe { std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV) },
+    }
+    match prev_manifest {
+        Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_MANIFEST_ENV, v) },
+        None => unsafe { std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV) },
+    }
+
+    assert_eq!(
+        got,
+        vec![archive_dir.join("node4.log")],
+        "wrapped historical replay manifest env paths should normalize before manifest expansion"
+    );
+
+    let _ = fs::remove_dir_all(root);
+}
+
+#[test]
+fn load_node_event_log_sources_ignores_inline_manifest_comments_after_plain_paths() {
+    let _guard = lock_env();
+    let root = unique_tmp_path("trnm-rpc-log-sources-inline-manifest-comment", "dir");
+    let archive_dir = root.join("archive");
+    let manifest_dir = root.join("cfg/history");
+    fs::create_dir_all(&archive_dir).expect("create archive dir");
+    fs::create_dir_all(&manifest_dir).expect("create manifest dir");
+
+    let archived_log = archive_dir.join("node4.log");
+    let manifest = manifest_dir.join("sources.txt");
+    fs::write(&archived_log, "").expect("write archived log");
+    fs::write(&manifest, "../../archive/node4.log   # replay note\n").expect("write manifest");
+
+    let prev_sources = std::env::var(NODE_EVENT_LOG_SOURCES_ENV).ok();
+    let prev_manifest = std::env::var(NODE_EVENT_LOG_MANIFEST_ENV).ok();
+    unsafe {
+        std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV);
+        std::env::set_var(
+            NODE_EVENT_LOG_MANIFEST_ENV,
+            manifest.to_string_lossy().to_string(),
+        );
+    }
+
+    let got = load_node_event_log_sources(&root);
+
+    match prev_sources {
+        Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_SOURCES_ENV, v) },
+        None => unsafe { std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV) },
+    }
+    match prev_manifest {
+        Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_MANIFEST_ENV, v) },
+        None => unsafe { std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV) },
+    }
+
+    assert_eq!(
+        got,
+        vec![archive_dir.join("node4.log")],
+        "plain manifest entries should ignore trailing inline comments before replay-source resolution"
+    );
+
+    let _ = fs::remove_dir_all(root);
+}
+
+#[test]
+fn load_node_event_log_sources_accepts_crlf_manifest_entries_with_wrapped_comment_suffixes() {
+    let _guard = lock_env();
+    let root = unique_tmp_path("trnm-rpc-log-sources-manifest-crlf-comments", "dir");
+    let archive_dir = root.join("archive");
+    let manifest_dir = root.join("cfg/history");
+    fs::create_dir_all(&archive_dir).expect("create archive dir");
+    fs::create_dir_all(&manifest_dir).expect("create manifest dir");
+
+    let node4_log = archive_dir.join("node4.log");
+    let node5_log = archive_dir.join("node5.log");
+    let manifest = manifest_dir.join("sources.txt");
+    fs::write(&node4_log, "").expect("write node4 archived log");
+    fs::write(&node5_log, "").expect("write node5 archived log");
+    fs::write(
+        &manifest,
+        "\"../../archive/node4.log\"  \u{feff}# replay note\r\n`../../archive/node5.log`  \u{feff}# archived replay note\r\n",
+    )
+    .expect("write manifest");
+
+    let prev_sources = std::env::var(NODE_EVENT_LOG_SOURCES_ENV).ok();
+    let prev_manifest = std::env::var(NODE_EVENT_LOG_MANIFEST_ENV).ok();
+    unsafe {
+        std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV);
+        std::env::set_var(
+            NODE_EVENT_LOG_MANIFEST_ENV,
+            manifest.to_string_lossy().to_string(),
+        );
+    }
+
+    let got = load_node_event_log_sources(&root);
+
+    match prev_sources {
+        Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_SOURCES_ENV, v) },
+        None => unsafe { std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV) },
+    }
+    match prev_manifest {
+        Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_MANIFEST_ENV, v) },
+        None => unsafe { std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV) },
+    }
+
+    assert_eq!(
+        got,
+        vec![node4_log, node5_log],
+        "CRLF-separated historical replay manifests should keep wrapped paths while dropping attached BOM-spaced comments"
+    );
+
+    let _ = fs::remove_dir_all(root);
+}
+
+#[test]
 fn load_node_event_log_sources_deduplicates_lexically_equivalent_relative_env_entries() {
     let _guard = lock_env();
     let root = unique_tmp_path("trnm-rpc-log-sources-env-relative", "dir");
@@ -184,6 +461,54 @@ fn load_node_event_log_sources_deduplicates_lexically_equivalent_relative_env_en
         got,
         vec![shared_log],
         "historical replay env entries should dedupe after lexical normalization"
+    );
+
+    let _ = fs::remove_dir_all(root);
+}
+
+#[test]
+fn load_node_event_log_sources_falls_back_to_default_logs_when_manifest_and_env_only_contain_comments(
+) {
+    let _guard = lock_env();
+    let root = unique_tmp_path("trnm-rpc-log-sources-comment-only-fallback", "dir");
+    let run_dir = root.join("run");
+    let manifest_dir = root.join("cfg/history");
+    fs::create_dir_all(&run_dir).expect("create run dir");
+    fs::create_dir_all(&manifest_dir).expect("create manifest dir");
+
+    let default_log = run_dir.join("event-field-check.log");
+    let manifest = manifest_dir.join("sources.txt");
+    fs::write(&default_log, "").expect("write default log");
+    fs::write(&manifest, "# archived replay note only\n\n").expect("write manifest");
+
+    let prev_sources = std::env::var(NODE_EVENT_LOG_SOURCES_ENV).ok();
+    let prev_manifest = std::env::var(NODE_EVENT_LOG_MANIFEST_ENV).ok();
+    unsafe {
+        std::env::set_var(
+            NODE_EVENT_LOG_SOURCES_ENV,
+            "  # operator replay note only ;   # another note ",
+        );
+        std::env::set_var(
+            NODE_EVENT_LOG_MANIFEST_ENV,
+            manifest.to_string_lossy().to_string(),
+        );
+    }
+
+    let got = load_node_event_log_sources(&root);
+
+    match prev_sources {
+        Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_SOURCES_ENV, v) },
+        None => unsafe { std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV) },
+    }
+    match prev_manifest {
+        Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_MANIFEST_ENV, v) },
+        None => unsafe { std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV) },
+    }
+
+    assert_eq!(
+        got,
+        vec![default_log],
+        "comment-only historical replay manifest/env inputs should fall back to durable default log discovery"
     );
 
     let _ = fs::remove_dir_all(root);
