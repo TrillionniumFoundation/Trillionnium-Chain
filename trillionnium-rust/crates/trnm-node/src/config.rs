@@ -32,11 +32,12 @@ fn contains_invisible_or_bidi_format_chars(value: &str) -> bool {
 }
 
 fn looks_like_dns_hostname(value: &str) -> bool {
-    if !value.contains('.') {
+    let candidate = value.strip_suffix('.').unwrap_or(value);
+    if !candidate.contains('.') {
         return false;
     }
 
-    value.split('.').all(|label| {
+    candidate.split('.').all(|label| {
         !label.is_empty()
             && !label.starts_with('-')
             && !label.ends_with('-')
@@ -177,8 +178,9 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         "invalid node config {}: node_id must not be '.' or '..'",
         path
     );
+    let normalized_node_id_host_candidate = node_id.strip_suffix('.').unwrap_or(node_id);
     anyhow::ensure!(
-        !node_id.eq_ignore_ascii_case("localhost")
+        !normalized_node_id_host_candidate.eq_ignore_ascii_case("localhost")
             && !looks_like_dns_hostname(node_id)
             && node_id.parse::<std::net::IpAddr>().is_err()
             && node_id.parse::<SocketAddr>().is_err(),
@@ -1001,7 +1003,17 @@ mod tests {
 
     #[test]
     fn load_config_rejects_host_like_node_id_with_operator_facing_error() {
-        for node_id in ["127.0.0.1", "bootstrap.example.com", "node-2.bootstrap.internal"] {
+        for node_id in [
+            "127.0.0.1",
+            "bootstrap.example.com",
+            "node-2.bootstrap.internal",
+            "bootstrap.example.com.",
+            "node-2.bootstrap.internal.",
+            "BOOTSTRAP.EXAMPLE.COM",
+            "NODE-2.BOOTSTRAP.INTERNAL",
+            "BOOTSTRAP.EXAMPLE.COM.",
+            "NODE-2.BOOTSTRAP.INTERNAL.",
+        ] {
             let path = std::env::temp_dir().join(format!(
                 "trnm-node-config-host-like-node-id-{}-{}-{node_id}.toml",
                 std::process::id(),
@@ -1029,7 +1041,7 @@ mod tests {
 
     #[test]
     fn load_config_rejects_localhost_style_node_id_with_operator_facing_error() {
-        for node_id in ["localhost", "LOCALHOST"] {
+        for node_id in ["localhost", "LOCALHOST", "localhost.", "LOCALHOST."] {
             let path = std::env::temp_dir().join(format!(
                 "trnm-node-config-localhost-node-id-{}-{}-{node_id}.toml",
                 std::process::id(),
@@ -1869,11 +1881,18 @@ mod tests {
     fn validate_node_config_rejects_host_and_socket_literals_in_node_id() {
         for node_id in [
             "localhost",
+            "localhost.",
             "127.0.0.1",
             "127.0.0.1:7000",
             "[::1]:7000",
             "bootstrap.example.com",
             "node-2.bootstrap.internal",
+            "bootstrap.example.com.",
+            "node-2.bootstrap.internal.",
+            "BOOTSTRAP.EXAMPLE.COM",
+            "NODE-2.BOOTSTRAP.INTERNAL",
+            "BOOTSTRAP.EXAMPLE.COM.",
+            "NODE-2.BOOTSTRAP.INTERNAL.",
         ] {
             let err = validate_node_config(
                 NodeConfig {
