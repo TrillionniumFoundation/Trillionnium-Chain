@@ -21,6 +21,6 @@ pub struct AuditEvent {
 
 ## Boundary note
 
-- `audit-events/` 是共享审计事件 schema crate，帮助 `contracts-rust/*` 在 Rust MVP 阶段先统一 normalized event 口径。
+- `audit-events/` 是共享审计事件 schema crate，帮助 `contracts/*` 在 Rust MVP 阶段先统一 normalized event 口径。
 - 它 **不等价于** `sdk/`、`runtime-spec/` 或 host ABI/runtime integration 已经落地；也**不表示** 当前 external-contract crates 已默认形成 canonical `wasm32-unknown-unknown` 交付物闭环。
 - 因此，这个 crate 更适合被理解为 runtime boundary 外围的 shared-schema 邻接层，而不是 Day-1 mainnet / release-ready 证明。

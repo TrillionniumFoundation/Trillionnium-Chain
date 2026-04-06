@@ -23,7 +23,7 @@
 
 ## 构建与测试
 
-在目录 `contracts-rust/settlement-vault` 下执行：
+在目录 `contracts/settlement-vault` 下执行：
 
 ```bash
 cargo test
@@ -33,8 +33,8 @@ cargo test
 
 - 当前版本为纯 Rust 内存状态机，便于先行验证接口语义与状态迁移。
 - 这里的“可迁移”仅表示语义与边界可以为后续宿主接线提供基线；**不表示** 当前 crate 已接入 canonical `HostAbiV1`、`trnm-node` deterministic WASM executor，或已默认产出 `wasm32-unknown-unknown` 合约工件。
-- 按 `trillionnium-rust/docs/protocol/external-contracts-rust/RUST_NATIVE_EXTERNAL_CONTRACTS_ARCH_2026-03-05.md` 的目标布局，`SettlementVault` 未来应与 `sdk/`、`runtime-spec/`、`integration-tests/` 一起构成更完整的 external-contract workspace；当前 README 只能被读作单 crate Rust MVP 说明，**不能**反推这些目录、宿主 trait 接线或 golden replay 已在仓内落地。
-- 是否进入 Day-1 / release-ready / public-mainnet scope，仍应以仓库根 `RELEASE_READINESS.md` 与 `trillionnium-rust/docs/release/TRNM_MAINNET_GAP_MATRIX_2026-03-26.md` 为准；在 scope freeze 明确前，更安全的口径是把本 crate 视作 scope-dependent / trailing-capable 模块，而不是默认 Day-1 minimum。
+- 按 `trillionnium/docs/protocol/external-contracts-rust/RUST_NATIVE_EXTERNAL_CONTRACTS_ARCH_2026-03-05.md` 的目标布局，`SettlementVault` 未来应与 `sdk/`、`runtime-spec/`、`integration-tests/` 一起构成更完整的 external-contract workspace；当前 README 只能被读作单 crate Rust MVP 说明，**不能**反推这些目录、宿主 trait 接线或 golden replay 已在仓内落地。
+- 是否进入 Day-1 / release-ready / public-mainnet scope，仍应以仓库根 `RELEASE_READINESS.md` 与 `trillionnium/docs/release/TRNM_MAINNET_GAP_MATRIX_2026-03-26.md` 为准；在 scope freeze 明确前，更安全的口径是把本 crate 视作 scope-dependent / trailing-capable 模块，而不是默认 Day-1 minimum。
 
 ## 建议提交信息前缀
 

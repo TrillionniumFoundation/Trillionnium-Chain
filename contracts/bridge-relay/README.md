@@ -1,4 +1,4 @@
-# BridgeRelay Rust MVP (contracts-rust/bridge-relay)
+# BridgeRelay Rust MVP (contracts/bridge-relay)
 
 Rust 版本的 BridgeRelay 最小可测试合约骨架（状态机模型），用于承载当前外置合约路线的核心接口验证。
 
@@ -48,7 +48,7 @@ Rust 版本的 BridgeRelay 最小可测试合约骨架（状态机模型），�
 ## 运行测试
 
 ```bash
-cd contracts-rust/bridge-relay
+cd contracts/bridge-relay
 cargo test
 ```
 
@@ -57,7 +57,7 @@ cargo test
 - 当前 crate 是 **Rust MVP / in-memory state machine**，用于先固定 BridgeRelay 的 fail-closed 语义、审计事件和配置版本约束；**不表示** 已接入 canonical `HostAbiV1` 或 `trnm-node` 的 deterministic WASM executor。
 - 当前 README 不应被解读为：本 crate 已默认产出链上 canonical `wasm32-unknown-unknown` artifacts，或已经完成 `sdk/` + `runtime-spec/` + integration replay 闭环。
 - `audit-events` 的标准化事件接线有助于后续 indexer / 风控统一口径，但它本身 **不等价于** host runtime integration 已闭合。
-- 是否进入 Day-1 / release-ready / public-mainnet scope，仍应以仓库根 `RELEASE_READINESS.md` 与 `trillionnium-rust/docs/release/TRNM_MAINNET_GAP_MATRIX_2026-03-26.md` 为准。
+- 是否进入 Day-1 / release-ready / public-mainnet scope，仍应以仓库根 `RELEASE_READINESS.md` 与 `trillionnium/docs/release/TRNM_MAINNET_GAP_MATRIX_2026-03-26.md` 为准。
 
 ## 下一步（v1）
 
