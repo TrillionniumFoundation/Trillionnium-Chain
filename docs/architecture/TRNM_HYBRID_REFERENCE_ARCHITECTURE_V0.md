@@ -2,7 +2,7 @@
 
 - 状态：**Draft / architecture option**
 - 范围：定义 TRNM 如何**同时借鉴** Solana、Sui、Conflux 的分层方法；**不直接声明实现完成度，不覆盖发布口径**
-- 当前适用代码面：`trillionnium-rust/` 主线，尤其是 `trnm-state`、`trnm-executor`、`trnm-node`、`trnm-mempool`、`trnm-rpc`、`trnm-pouw`
+- 当前适用代码面：`trillionnium/` 主线，尤其是 `trnm-state`、`trnm-executor`、`trnm-node`、`trnm-mempool`、`trnm-rpc`、`trnm-pouw`
 
 > 入口约定：
 > - 当前是否 release-ready：看仓库根 `RELEASE_READINESS.md`

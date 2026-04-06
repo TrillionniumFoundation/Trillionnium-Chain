@@ -12,5 +12,5 @@ These files are **not** the current release truth-source.
 Current interpretation order:
 1. `RELEASE_READINESS.md`
 2. `docs/release/TRNM_STAGE1_DEVNET_READY_CHECKLIST_2026-03-24.md` for the historical stage-1 checklist itself
-3. `trillionnium-rust/artifacts/devnet-ready/` for preserved test inventories that remain under the Rust workspace
+3. `trillionnium/artifacts/devnet-ready/` for preserved test inventories that remain under the Rust workspace
 4. this archive directory for the historical root-level evidence snapshot

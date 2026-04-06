@@ -9,10 +9,10 @@
 ## 本轮微补丁（可回滚）
 
 ### 变更文件
-1. `trillionnium-rust/crates/trnm-rpc/tests/submit_message_ingress_persistence.rs`
+1. `trillionnium/crates/trnm-rpc/tests/submit_message_ingress_persistence.rs`
    - 覆盖 `submit-message` 在存在历史高位 `task_id` + 脏行场景下，必须采用 `max(task_id)+1`。
    - 覆盖 ingress 原子写后不残留 `.<file>.tmp-*` 临时文件。
-2. `trillionnium-rust/crates/trnm-rpc/tests/dispatch_submit_serial_consistency.rs`
+2. `trillionnium/crates/trnm-rpc/tests/dispatch_submit_serial_consistency.rs`
    - 并发压测 `submit-message` 与 `dispatch-open` 同文件写入串行一致性。
    - 断言所有追加写入保留、`task_id` 无重复、锁文件不泄漏。
 3. `docs/archive/web4-history/GO_READY_EVIDENCE_WEB4_2026-03-03.md`（本文档）
@@ -21,7 +21,7 @@
 
 ### 1) 全仓测试
 ```bash
-cd trillionnium-rust
+cd trillionnium
 cargo test --workspace
 ```
 结果：✅ 通过（exit code 0）。

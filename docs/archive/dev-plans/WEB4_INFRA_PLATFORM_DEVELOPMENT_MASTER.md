@@ -193,7 +193,7 @@ Trillionnium 目标不是“单链功能齐全”，而是“可被开发者和�
   - `cargo test --workspace`
   - `scripts/v2/governance_value_schema_reject_test.sh`
   - `scripts/v2/emergency_pause_drill.sh`
-  - `trillionnium-rust/scripts/run_consensus_fault_matrix.sh`
+  - `trillionnium/scripts/run_consensus_fault_matrix.sh`
 - 变更影响到具体域时，必须补充 targeted tests
 
 ### 5.3 发布规则
@@ -351,7 +351,7 @@ Trillionnium 目标不是“单链功能齐全”，而是“可被开发者和�
 - `cargo test --workspace`：PASS（在 `fc542c4` 后收口）
 - `./scripts/v2/governance_value_schema_reject_test.sh`：PASS
 - `./scripts/v2/emergency_pause_drill.sh`：PASS
-- `./trillionnium-rust/scripts/run_consensus_fault_matrix.sh`：PASS（8/8）
+- `./trillionnium/scripts/run_consensus_fault_matrix.sh`：PASS（8/8）
 
 ### A.4 Web4 能力现状快照（雷达）
 - Market 3/5, Verifiable 2/5, Interop 1/5, Identity 2/5, Data 2/5, Agent 2/5, Enterprise 2/5
@@ -363,14 +363,14 @@ Trillionnium 目标不是“单链功能齐全”，而是“可被开发者和�
 
 ```bash
 # 全量测试
-cd trillionnium-rust
+cd trillionnium
 cargo test --workspace
 
 # 核心门禁
 cd ..
 ./scripts/v2/governance_value_schema_reject_test.sh
 ./scripts/v2/emergency_pause_drill.sh
-./trillionnium-rust/scripts/run_consensus_fault_matrix.sh
+./trillionnium/scripts/run_consensus_fault_matrix.sh
 ```
 
 ---

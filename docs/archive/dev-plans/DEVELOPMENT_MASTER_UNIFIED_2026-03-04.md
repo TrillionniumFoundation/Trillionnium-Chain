@@ -33,14 +33,14 @@
 ## 1. 范围与当前基线
 
 ### 1.1 代码主线
-- 主代码：`trillionnium-rust/`
+- 主代码：`trillionnium/`
 - 前端主线：`web4-frontend/`
 
 ### 1.2 已统一纳入的文档簇
 - 根级 / 历史入口：`README.md / docs/archive/root-history/STATUS.md / docs/archive/root-history/ROADMAP.md / docs/archive/root-history/BACKLOG.md / OPERATIONS.md`
 - 开发：`docs/development/*`
 - 架构：`docs/architecture/*`
-- Rust 侧 runbook/报告：`trillionnium-rust/docs/*`
+- Rust 侧 runbook/报告：`trillionnium/docs/*`
 - Web4：`web4-frontend/docs/*`
 
 ---

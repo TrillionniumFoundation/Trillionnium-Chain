@@ -116,7 +116,7 @@ node4_config_sha256=<not-used>
 建议命令：
 
 ```bash
-cd trillionnium-rust
+cd trillionnium
 for f in configs/node1.toml configs/node2.toml configs/node3.toml configs/node4.toml; do
   if [[ -f "$f" ]]; then
     shasum -a 256 "$f"

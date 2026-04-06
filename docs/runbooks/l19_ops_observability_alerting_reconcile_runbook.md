@@ -10,8 +10,8 @@
 - `scripts/v2/pr6_*`
 - `scripts/v2/pr7_*`
 - `scripts/v2/pr9_*`
-- `trillionnium-rust/scripts/oracle`
-- `trillionnium-rust/docs/reports/oracle-baseline.md`
+- `trillionnium/scripts/oracle`
+- `trillionnium/docs/reports/oracle-baseline.md`
 
 ## Required gate set
 
@@ -23,7 +23,7 @@
 ./scripts/v2/pr6_alert_rules_gate.sh
 ./scripts/v2/pr7_alert_delivery_gate.sh
 python3 ./scripts/v2/pr9_weekly_alert_governance.py
-cd trillionnium-rust && ./scripts/run_oracle_baseline.sh
+cd trillionnium && ./scripts/run_oracle_baseline.sh
 ```
 
 通过标准：
@@ -47,7 +47,7 @@ cd trillionnium-rust && ./scripts/run_oracle_baseline.sh
 ```
 
 ### Inputs
-- 默认事件日志：`trillionnium-rust/run/event-field-check.log`
+- 默认事件日志：`trillionnium/run/event-field-check.log`
 - 可覆盖：`SOURCE_LOG=<path>`
 
 ### Outputs
@@ -88,7 +88,7 @@ SOURCE_LOG=/path/to/event.log ./scripts/v2/pr5_treasury_reconcile_report.sh
 ```
 
 ### Important env
-- `EVENT_LOG`：默认 `trillionnium-rust/run/event-field-check.log`
+- `EVENT_LOG`：默认 `trillionnium/run/event-field-check.log`
 - `WINDOW_HOURS`：默认 `48`
 - `FAIL_UNRESOLVED_CHALLENGES` / `WARN_UNRESOLVED_CHALLENGES`
 - `FAIL_FORFEITS_DAILY_INCREASE` / `WARN_FORFEITS_DAILY_INCREASE`
@@ -245,7 +245,7 @@ python3 ./scripts/v2/pr9_weekly_alert_governance.py
 ### Command
 
 ```bash
-cd trillionnium-rust
+cd trillionnium
 ./scripts/run_oracle_baseline.sh
 ```
 
@@ -264,7 +264,7 @@ cd trillionnium-rust
 - `ingest_latency_p95_ms`
 - `ingest_latency_max_ms`
 
-文档基线说明：`trillionnium-rust/docs/reports/oracle-baseline.md`
+文档基线说明：`trillionnium/docs/reports/oracle-baseline.md`
 
 ---
 

@@ -5,18 +5,18 @@
 - Stage-1 checklist:
   - `docs/release/TRNM_STAGE1_DEVNET_READY_CHECKLIST_2026-03-24.md`
 - 4-node BFT smoke:
-  - `trillionnium-rust/run/bft4-smoke-20260324-163130.txt`
-  - `trillionnium-rust/run/bft4-node1-20260324-163130.log`
-  - `trillionnium-rust/run/bft4-node2-20260324-163130.log`
-  - `trillionnium-rust/run/bft4-node3-20260324-163130.log`
-  - `trillionnium-rust/run/bft4-node4-20260324-163130.log`
+  - `trillionnium/run/bft4-smoke-20260324-163130.txt`
+  - `trillionnium/run/bft4-node1-20260324-163130.log`
+  - `trillionnium/run/bft4-node2-20260324-163130.log`
+  - `trillionnium/run/bft4-node3-20260324-163130.log`
+  - `trillionnium/run/bft4-node4-20260324-163130.log`
 - Test inventories:
-  - `trillionnium-rust/artifacts/devnet-ready/testlists/trnm-state.tests.list`
-  - `trillionnium-rust/artifacts/devnet-ready/testlists/trnm-rpc.tests.list`
-  - `trillionnium-rust/artifacts/devnet-ready/testlists/trnm-node.tests.list`
-  - `trillionnium-rust/artifacts/devnet-ready/testlists/trnm-pouw.tests.list`
-  - `trillionnium-rust/artifacts/devnet-ready/testlists/trnm-worker-agent.tests.list`
-  - `trillionnium-rust/artifacts/devnet-ready/testlists/trnm-cli.tests.list`
+  - `trillionnium/artifacts/devnet-ready/testlists/trnm-state.tests.list`
+  - `trillionnium/artifacts/devnet-ready/testlists/trnm-rpc.tests.list`
+  - `trillionnium/artifacts/devnet-ready/testlists/trnm-node.tests.list`
+  - `trillionnium/artifacts/devnet-ready/testlists/trnm-pouw.tests.list`
+  - `trillionnium/artifacts/devnet-ready/testlists/trnm-worker-agent.tests.list`
+  - `trillionnium/artifacts/devnet-ready/testlists/trnm-cli.tests.list`
 
 ## Blocking evidence
 

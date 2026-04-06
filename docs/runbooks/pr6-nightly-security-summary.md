@@ -20,12 +20,12 @@ python3 ./scripts/v2/pr6_daily_security_summary.py
 
 ## 2) 指标来源（脚本自动探测）
 
-- `trillionnium-rust/run/health/nightly-attribution-*.txt`
+- `trillionnium/run/health/nightly-attribution-*.txt`
   - `attribution.labels`
   - `attribution.reasons`
-- `trillionnium-rust/run/health/nightly-summary-*.md`
-- `trillionnium-rust/run/health/auto-adaptive-threshold-suggestion-*.txt`
-- `trillionnium-rust/run/bench/aggressive-profile-summary-*.md`
+- `trillionnium/run/health/nightly-summary-*.md`
+- `trillionnium/run/health/auto-adaptive-threshold-suggestion-*.txt`
+- `trillionnium/run/bench/aggressive-profile-summary-*.md`
 - `run/pr5-reconcile/*/summary.txt`
   - `status`
   - `record_count`

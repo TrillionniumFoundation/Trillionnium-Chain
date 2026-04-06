@@ -1,7 +1,7 @@
 # Status Report: Lane II Micro-Iteration (Interop + Identity/AuthZ)
 
 **Target:** Web4 Platform Identity (Phase B2: DID + Capability Permission System)
-**File:** `trillionnium-rust/crates/trnm-types/src/interop_identity.rs`
+**File:** `trillionnium/crates/trnm-types/src/interop_identity.rs`
 
 ## Action Taken
 Executed a **reversible micro-iteration** to generalize the identity capability system beyond settlement use cases, enabling upcoming Market features (Phase A1).

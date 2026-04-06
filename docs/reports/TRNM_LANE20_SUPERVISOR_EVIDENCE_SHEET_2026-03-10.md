@@ -30,9 +30,9 @@ Dirty files observed at collection time:
 - `docs/development/DEVELOPMENT_MASTER_UNIFIED_2026-03-04.md`
 - `docs/reports/TRNM_WEEK7_E2E_CLOSEOUT_BENCHMARK_SYSTEM_2026-03-10.md`
 - `scripts/v2/pr6_daily_security_summary.py`
-- `trillionnium-rust/crates/trnm-state/tests/m1_pause_resolve_escrow_invariant.rs`
-- `trillionnium-rust/scripts/nightly_attribution.sh`
-- `trillionnium-rust/scripts/run_consensus_fault_matrix.sh`
+- `trillionnium/crates/trnm-state/tests/m1_pause_resolve_escrow_invariant.rs`
+- `trillionnium/scripts/nightly_attribution.sh`
+- `trillionnium/scripts/run_consensus_fault_matrix.sh`
 
 ## Executive rollup
 
@@ -58,7 +58,7 @@ Dirty files observed at collection time:
 - Key committed files in tip commit:
   - `docs/protocol/zk-proof-payload-public-input-v0.md` *(new)*
   - `docs/architecture/TRNM_ZKP_PLATFORM_V0.md`
-  - `trillionnium-rust/docs/zk-proof-payload-v1.md`
+  - `trillionnium/docs/zk-proof-payload-v1.md`
 - Evidence notes:
   - tip commit is clearly attributable and doc-producing
   - branch also includes inherited commits such as `1a5c360b`, `e69e611c`, `808c2571`, so lane03 is **not isolated as a single-lane stack**
@@ -72,7 +72,7 @@ Dirty files observed at collection time:
 - Head: `62597be3` — `fix: keep preexec workers alive on malformed jobs`
 - Ahead of `origin/main`: 1 commit
 - Tip commit touches:
-  - `trillionnium-rust/crates/trnm-node/src/main.rs`
+  - `trillionnium/crates/trnm-node/src/main.rs`
 - Diff stat:
   - 1 file changed, 45 insertions, 11 deletions
 - Evidence notes:
@@ -87,7 +87,7 @@ Dirty files observed at collection time:
 - Head: `87788143` — `fix: isolate mempool lane11 baseline reds`
 - Ahead of `origin/main`: 12 commits
 - Tip commit touches:
-  - `trillionnium-rust/crates/trnm-mempool/src/lib.rs`
+  - `trillionnium/crates/trnm-mempool/src/lib.rs`
 - Diff stat of tip:
   - 1 file changed, 8 insertions, 15 deletions
 - Additional inherited evidence in branch ancestry:
@@ -95,7 +95,7 @@ Dirty files observed at collection time:
   - `149d90db` / `808c2571` — timing/profiling metrics commits
   - docs / closeout commits carried on the branch
 - Tests:
-  - branch diff includes `trillionnium-rust/crates/trnm-mempool/tests/lane_free_ingress_recovery_bound.rs`
+  - branch diff includes `trillionnium/crates/trnm-mempool/tests/lane_free_ingress_recovery_bound.rs`
   - **Gap:** no explicit lane11 command/result log found
 - Blocked / caution:
   - branch is materially stacked; lane11-only scope is not cleanly isolated by branch boundary
@@ -149,8 +149,8 @@ Dirty files observed at collection time:
 - Head: `83c2f9a6` — `wip: scaffold real zk backend integration`
 - Ahead of `origin/main`: 6 commits
 - Tip commit touches:
-  - `trillionnium-rust/crates/trnm-pouw/Cargo.toml`
-  - `trillionnium-rust/crates/trnm-pouw/src/verification/verifiers/zk.rs`
+  - `trillionnium/crates/trnm-pouw/Cargo.toml`
+  - `trillionnium/crates/trnm-pouw/src/verification/verifiers/zk.rs`
 - Diff stat of tip:
   - 2 files changed, 269 insertions, 633 deletions
 - Evidence notes:
@@ -169,9 +169,9 @@ Dirty files observed at collection time:
 - Tip / near-tip committed evidence:
   - `scripts/v2/nightly_artifact_binding_guard_test.sh` *(new in `49baf91a`)*
   - `.github/workflows/rust-l1-nightly-health.yml`
-  - `trillionnium-rust/scripts/nightly_attribution.sh`
-  - `trillionnium-rust/scripts/run_consensus_fault_matrix.sh`
-  - `trillionnium-rust/crates/trnm-pouw` test coverage added at tip `4acb4141`
+  - `trillionnium/scripts/nightly_attribution.sh`
+  - `trillionnium/scripts/run_consensus_fault_matrix.sh`
+  - `trillionnium/crates/trnm-pouw` test coverage added at tip `4acb4141`
 - Memory-backed evidence:
   - `memory/2026-03-10.md` records earlier verified green results for a **different selective absorption / merge flow** (`ca6a58d3` lineage), not for this branch tip specifically
 - Tests:
@@ -187,9 +187,9 @@ Dirty files observed at collection time:
 - Committed files visible in merge tip:
   - `docs/reports/TRNM_CONCURRENCY_BOTTLENECK_MAP_AND_8W_ROADMAP_2026-03-10.md` *(new)*
   - `docs/reports/TRNM_WEEK7_E2E_CLOSEOUT_BENCHMARK_SYSTEM_2026-03-10.md` *(new)*
-  - `trillionnium-rust/scripts/render_benchmark_closeout.py` *(new)*
-  - `trillionnium-rust/scripts/run_benchmark_closeout.sh` *(new)*
-  - `trillionnium-rust/crates/trnm-mempool/tests/lane_free_ingress_recovery_bound.rs`
+  - `trillionnium/scripts/render_benchmark_closeout.py` *(new)*
+  - `trillionnium/scripts/run_benchmark_closeout.sh` *(new)*
+  - `trillionnium/crates/trnm-mempool/tests/lane_free_ingress_recovery_bound.rs`
 - Tests:
   - test file present in branch diff
   - **Gap:** no standalone integration run log found for `laneE/integration-20260310`
@@ -209,9 +209,9 @@ Dirty files observed at collection time:
   - `8a2b4d3a` — avoid mempool rebuild in critical guard picker
   - `4522a6f9` — scan full mempool for critical guard fairness
 - Tip merge touches:
-  - `trillionnium-rust/crates/trnm-rpc/src/main.rs`
-  - `trillionnium-rust/crates/trnm-rpc/src/reliability.rs`
-  - `trillionnium-rust/crates/trnm-rpc/tests/reliability_persistent_smoke.rs`
+  - `trillionnium/crates/trnm-rpc/src/main.rs`
+  - `trillionnium/crates/trnm-rpc/src/reliability.rs`
+  - `trillionnium/crates/trnm-rpc/tests/reliability_persistent_smoke.rs`
 - Tests:
   - test file changes exist in committed diff
   - **Gap:** no explicit laneF integration command/result log located in this collection
@@ -231,7 +231,7 @@ These are verifiable from workspace memory, but they belong to an earlier recove
     - `cargo check --workspace -q`
     - `bash scripts/v2/rust_l1_nightly_health_deterministic_env_guard_test.sh`
   - merge commit: `ca6a58d3`
-  - blocker after merge prep: dirty root file `trillionnium-rust/crates/trnm-pouw/src/lib.rs`
+  - blocker after merge prep: dirty root file `trillionnium/crates/trnm-pouw/src/lib.rs`
 
 - `memory/2026-03-09.md` records an earlier local integration branch with validated results:
   - branch: `fix/integrate-challenge-wave-20260309`

@@ -4,7 +4,7 @@
 
 ## 适用范围
 
-- `contracts-rust/bridge-relay`：`submit_proof`/`finalize_settlement` 的 `tx_receipt_status` 约束
+- `contracts/bridge-relay`：`submit_proof`/`finalize_settlement` 的 `tx_receipt_status` 约束
 - `trnm-types`：`SettlementRecord::apply_status_with_receipt_status` 的最终化回执检查
 
 ## 快速执行

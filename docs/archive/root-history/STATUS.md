@@ -159,12 +159,12 @@
   - 周期性产出 `[block]` 日志（height 递增）
   - `max_blocks` 到达后优雅退出
 - 已补齐 3 节点配置：
-  - `trillionnium-rust/configs/node1.toml`
-  - `trillionnium-rust/configs/node2.toml`
-  - `trillionnium-rust/configs/node3.toml`
+  - `trillionnium/configs/node1.toml`
+  - `trillionnium/configs/node2.toml`
+  - `trillionnium/configs/node3.toml`
 - 已新增 devnet 脚本：
-  - `trillionnium-rust/scripts/devnet_up.sh`
-  - `trillionnium-rust/scripts/devnet_down.sh`
+  - `trillionnium/scripts/devnet_up.sh`
+  - `trillionnium/scripts/devnet_down.sh`
 - 验证：`cargo check --workspace` 通过，`cargo run -p trnm-node -- --config configs/node1.toml --block-ms 50 --max-blocks 3` 成功出块并退出。
 
 ## 17) Rust L1 Day-5 进展（2026-02-19 夜）
@@ -194,8 +194,8 @@
   4. 按组应用交易（当前为串行执行，保留并行执行 TODO）
 - demo mempool 扩展为 2 个 task 流，验证跨 task 并发可分组。
 - 新增压测入口：
-  - `trillionnium-rust/crates/trnm-bench`（并发分组基准）
-  - `trillionnium-rust/scripts/run_bench.sh`
+  - `trillionnium/crates/trnm-bench`（并发分组基准）
+  - `trillionnium/scripts/run_bench.sh`
 - 运行样本：
   - node：`height=1..3`，`groups=3/2/2`，mempool 清空退出
   - bench：`txs=20000 groups=10 elapsed_ms=8604`
@@ -204,27 +204,27 @@
 ## 19) Rust L1 Day-7 进展（2026-02-19 夜）
 
 - 已新增 RC 与演示交付脚本：
-  - `trillionnium-rust/scripts/demo_day7.sh`
-  - `trillionnium-rust/scripts/release_rc.sh`
+  - `trillionnium/scripts/demo_day7.sh`
+  - `trillionnium/scripts/release_rc.sh`
 - 已新增文档：
   - `docs/protocol/rust-l1-week1-rc.md`
   - `docs/runbooks/rust-l1-rollback-runbook.md`
 - 演示脚本已实跑：
-  - node demo 输出：`trillionnium-rust/run/day7/node-demo.log`
-  - bench 输出：`trillionnium-rust/run/day7/bench.log`
+  - node demo 输出：`trillionnium/run/day7/node-demo.log`
+  - bench 输出：`trillionnium/run/day7/bench.log`
   - bench 样本：`txs=20000 groups=10 elapsed_ms=8624`
 - RC 打包已实跑：
-  - 输出目录：`trillionnium-rust/release/rc-20260219-194509`
+  - 输出目录：`trillionnium/release/rc-20260219-194509`
   - 产物包含：`cargo-test.log` / `cargo-build.log` / `manifest.txt` / node configs
 
 ## 20) Rust L1 后续动作-1（状态根对账，2026-02-19 夜）
 
-- 新增脚本：`trillionnium-rust/scripts/audit_state_roots.sh`
+- 新增脚本：`trillionnium/scripts/audit_state_roots.sh`
   - 输入：`run/node1.log` / `run/node2.log` / `run/node3.log`
   - 输出：`run/audit/state-root-audit-<ts>.txt`
   - 逻辑：按 `height` 对齐三节点 `state_root`，标记 `OK/MISSING/MISMATCH`
 - 已完成一次实跑：
-  - 报告：`trillionnium-rust/run/audit/state-root-audit-20260219-194739.txt`
+  - 报告：`trillionnium/run/audit/state-root-audit-20260219-194739.txt`
   - 结果：`ok=true mismatch=0 missing=0 heights=3`
 
 ## 21) Rust L1 后续动作-2（可注入负载与冲突率压测，2026-02-19 夜）
@@ -235,8 +235,8 @@
 - `run_bench.sh` 已支持环境变量：
   - `TXS=<n> KEYS=<k> ./scripts/run_bench.sh`
 - 新增矩阵压测脚本：
-  - `trillionnium-rust/scripts/run_bench_matrix.sh`
-  - 输出：`trillionnium-rust/run/bench/bench-matrix-<ts>.txt`
+  - `trillionnium/scripts/run_bench_matrix.sh`
+  - 输出：`trillionnium/run/bench/bench-matrix-<ts>.txt`
 - `trnm-node` 已支持注入式 demo 负载参数：
   - `--demo-tasks`（任务流数量）
   - `--demo-keys`（并发规划冲突键空间）
@@ -250,15 +250,15 @@
 - 触发：
   - 每日定时（cron）
   - `workflow_dispatch`
-  - `trillionnium-rust/**` 相关 push
+  - `trillionnium/**` 相关 push
 - 作业内容：
   1. `cargo test --workspace`
   2. `devnet_up/down + audit_state_roots.sh`
   3. `TXS=5000 ./scripts/run_bench_matrix.sh`
 - artifacts：
-  - `trillionnium-rust/run/audit/**`
-  - `trillionnium-rust/run/bench/**`
-  - `trillionnium-rust/run/node*.log`
+  - `trillionnium/run/audit/**`
+  - `trillionnium/run/bench/**`
+  - `trillionnium/run/node*.log`
 - 同步更新 RC 文档：`docs/protocol/rust-l1-week1-rc.md`（新增自动化健康检查章节）。
 
 ## 23) Rust L1 后续动作-4（并行执行器接线首版，2026-02-19 夜）
@@ -295,7 +295,7 @@
   - 新增步骤 `Run parallel mode sanity (hard gate)`
   - 执行 `trnm-node --parallel-workers 4` 的并行路径实跑
   - 若日志出现 `apply_error` 或 `rollback=true`，直接 fail job
-- artifacts 新增：`trillionnium-rust/run/parallel-sanity.log`
+- artifacts 新增：`trillionnium/run/parallel-sanity.log`
 - RC 文档已同步：`docs/protocol/rust-l1-week1-rc.md`
   - Nightly 覆盖项增加“并行模式硬门禁”
 
@@ -390,7 +390,7 @@
 
 ## 29) Rust L1 后续动作-10（事件回放一致性门禁，2026-02-19 23:22~23:26 CST）
 
-- 新增脚本：`trillionnium-rust/scripts/check_event_replay_smoke.sh`
+- 新增脚本：`trillionnium/scripts/check_event_replay_smoke.sh`
   - 用单任务链路校验事件顺序：
     - `create -> accept -> commit -> reveal -> challenge -> resolve`
   - 输出：`run/event-replay-smoke.log`
@@ -406,11 +406,11 @@
   - 连跑 `20` 轮
 - 检查口径：日志不得出现 `apply_error` 或 `rollback=true`
 - 结果：`parallel_sanity_streak=20/20`（全部通过）
-- 产物：`trillionnium-rust/run/parallel-sanity-flaky-*.log`
+- 产物：`trillionnium/run/parallel-sanity-flaky-*.log`
 
 ## 31) Rust L1 后续动作-12（一键门禁脚本 + merge gates 接入，2026-02-19 23:40~23:44 CST）
 
-- 新增一键门禁脚本：`trillionnium-rust/scripts/run_v1_protocol_gates.sh`
+- 新增一键门禁脚本：`trillionnium/scripts/run_v1_protocol_gates.sh`
   - `cargo test --workspace`
   - `check_event_fields.sh`
   - `check_event_replay_smoke.sh`
@@ -424,7 +424,7 @@
 
 ## 32) Rust L1 后续动作-13（nightly 加入并行抖动门禁，2026-02-19 23:44~23:48 CST）
 
-- 新增脚本：`trillionnium-rust/scripts/check_parallel_flaky.sh`
+- 新增脚本：`trillionnium/scripts/check_parallel_flaky.sh`
   - 默认连跑 `RUNS=5`（可通过 `PARALLEL_FLAKY_RUNS` 覆盖）
   - 任一 run 出现 `apply_error` 或 `rollback=true` 直接 fail
 - 本地实跑：`RUNS=5`，结果 `parallel flaky streak=5/5`。

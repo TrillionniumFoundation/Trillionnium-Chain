@@ -4,7 +4,7 @@
 
 ## 变更摘要（已落地）
 
-在 `contracts-rust/bridge-relay` 已完成：
+在 `contracts/bridge-relay` 已完成：
 
 - `BridgeSettlementMessage` 新增 `config_version: u64`
 - `submit_proof` 强制校验 `message.config_version == self.config_version`

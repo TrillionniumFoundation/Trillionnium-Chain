@@ -30,11 +30,11 @@
 
 ### 1.1 最新基线证据
 
-- `trillionnium-rust/run/bench/bench-matrix-20260305-032018.txt`（classic，txs=5000）
-- `trillionnium-rust/run/bench/bench-mixed-matrix-20260305-032031.txt`（mixed，txs=5000，read_fanout=3）
-- `trillionnium-rust/run/bench/bench-regression-matrix-20260304-200728.csv`（classic/mixed/hot-streak，txs=20000，strategy 对比）
-- `trillionnium-rust/run/bench/bench-strategy-compare-20260219-211113.txt`（完整策略横比）
-- `trillionnium-rust/run/bench/hot-bucket-sweep-20260220-235524.txt`（hot-streak 桶参数 sweep）
+- `trillionnium/run/bench/bench-matrix-20260305-032018.txt`（classic，txs=5000）
+- `trillionnium/run/bench/bench-mixed-matrix-20260305-032031.txt`（mixed，txs=5000，read_fanout=3）
+- `trillionnium/run/bench/bench-regression-matrix-20260304-200728.csv`（classic/mixed/hot-streak，txs=20000，strategy 对比）
+- `trillionnium/run/bench/bench-strategy-compare-20260219-211113.txt`（完整策略横比）
+- `trillionnium/run/bench/hot-bucket-sweep-20260220-235524.txt`（hot-streak 桶参数 sweep）
 
 ### 1.2 20k 回归矩阵（最新）要点
 
@@ -178,7 +178,7 @@ E2E TPS 至少应包含：
 
 ## 附录 A：可复现命令（本报告使用/建议）
 
-> 在 `trillionnium-rust/` 目录执行
+> 在 `trillionnium/` 目录执行
 
 ```bash
 # 1) classic matrix（micro）
@@ -218,12 +218,12 @@ PY
 
 ## 附录 B：证据文件索引
 
-- `trillionnium-rust/run/bench/bench-matrix-20260305-032018.txt`
-- `trillionnium-rust/run/bench/bench-mixed-matrix-20260305-032031.txt`
-- `trillionnium-rust/run/bench/bench-regression-matrix-20260304-200728.csv`
-- `trillionnium-rust/run/bench/bench-strategy-compare-20260219-211113.txt`（完整策略对照）
-- `trillionnium-rust/run/bench/bench-strategy-compare-20260305-113531.txt`（最新但未跑完，文件末尾截断）
-- `trillionnium-rust/run/bench/hot-bucket-sweep-20260220-235524.txt`
+- `trillionnium/run/bench/bench-matrix-20260305-032018.txt`
+- `trillionnium/run/bench/bench-mixed-matrix-20260305-032031.txt`
+- `trillionnium/run/bench/bench-regression-matrix-20260304-200728.csv`
+- `trillionnium/run/bench/bench-strategy-compare-20260219-211113.txt`（完整策略对照）
+- `trillionnium/run/bench/bench-strategy-compare-20260305-113531.txt`（最新但未跑完，文件末尾截断）
+- `trillionnium/run/bench/hot-bucket-sweep-20260220-235524.txt`
 
 ---
 

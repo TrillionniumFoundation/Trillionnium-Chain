@@ -48,7 +48,7 @@ cd web4-frontend
 npm run lint && npm run typecheck && npm run test --if-present && npm run build
 
 # 全仓
-cd ../trillionnium-rust
+cd ../trillionnium
 cargo test --workspace
 
 cd ..

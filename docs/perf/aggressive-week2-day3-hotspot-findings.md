@@ -3,9 +3,9 @@
 日期：2026-02-20
 
 ## 实验输入
-- 脚本：`trillionnium-rust/scripts/run_executor_hotspot_experiment.sh`
+- 脚本：`trillionnium/scripts/run_executor_hotspot_experiment.sh`
 - 参数：`TXS=20000 KEYS=2000 READ_FANOUT=3 WRITE_EVERY=2`
-- 产物：`trillionnium-rust/run/bench/executor-hotspot-exp-20260220-155811.txt`
+- 产物：`trillionnium/run/bench/executor-hotspot-exp-20260220-155811.txt`
 
 ## 结果摘要
 - original: `37ms`（groups=579）

@@ -18,7 +18,7 @@
 - `run/bench/bench-regression-matrix-20260220-153109.csv`
 
 2. D2 指标扩展
-- `trillionnium-rust/scripts/summarize_aggressive_profile.py`
+- `trillionnium/scripts/summarize_aggressive_profile.py`
 - `docs/perf/aggressive-round3-metrics.md`
 
 3. D3 Patch A
@@ -30,7 +30,7 @@
 - `run/bench/bench-regression-matrix-20260220-154327.csv`
 
 5. D5 门禁口径收敛
-- `trillionnium-rust/scripts/check_aggressive_regression.sh`（默认阈值收紧）
+- `trillionnium/scripts/check_aggressive_regression.sh`（默认阈值收紧）
 - `.github/workflows/rust-l1-nightly-health.yml`（nightly 阈值同步收紧）
 
 ---

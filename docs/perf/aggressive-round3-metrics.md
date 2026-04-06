@@ -8,11 +8,11 @@
 ## 输入数据
 
 - 基线 CSV：
-  - `trillionnium-rust/run/bench/bench-regression-matrix-20260220-153109.csv`
+  - `trillionnium/run/bench/bench-regression-matrix-20260220-153109.csv`
 - 汇总脚本：
-  - `trillionnium-rust/scripts/summarize_aggressive_profile.py`（已扩展 CSV 聚合能力）
+  - `trillionnium/scripts/summarize_aggressive_profile.py`（已扩展 CSV 聚合能力）
 - 汇总产物：
-  - `trillionnium-rust/run/bench/aggressive-profile-summary-20260220-1532.md`
+  - `trillionnium/run/bench/aggressive-profile-summary-20260220-1532.md`
 
 ---
 

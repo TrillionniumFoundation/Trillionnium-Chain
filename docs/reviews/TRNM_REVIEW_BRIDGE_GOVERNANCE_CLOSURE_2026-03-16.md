@@ -1,6 +1,6 @@
 # TRNM Bridge Relay 治理闭环复核（2026-03-16）
 
-- 范围：`contracts-rust/bridge-relay`（签名验签、validator 配置治理接口）、`trillionnium-rust/crates/trnm-rpc`（能力与标准化审计对接）、链上治理接线上下文（跨仓讨论）。
+- 范围：`contracts/bridge-relay`（签名验签、validator 配置治理接口）、`trillionnium/crates/trnm-rpc`（能力与标准化审计对接）、链上治理接线上下文（跨仓讨论）。
 - 结论：**签名闭环与配置防误配已落地；剩余核心差距主要在“真实 signer / committee auth context / governance wiring”层。**
 
 ---
@@ -10,7 +10,7 @@
 1. `bridge-relay` 已从 Tag 绑定切到 Ed25519 验签：
    - `parse_validator_signature` 改为解析 `96B` 载荷（`32B` 公钥 + `64B` 签名）。
    - `validate_validator_signatures` 使用 `VerifyingKey::from_bytes(validator).verify(message_digest, signature)`。
-   - 证据：`contracts-rust/bridge-relay/src/lib.rs:451-476`。
+   - 证据：`contracts/bridge-relay/src/lib.rs:451-476`。
 
 2. 签名配置误配防线增强：
    - 新增 `InvalidValidatorConfiguration`。
@@ -18,7 +18,7 @@
      - `min_validator_signatures > 0`
      - `available_validators > 0`
      - `min_validator_signatures <= validators.len()`
-   - 证据：`contracts-rust/bridge-relay/src/lib.rs:224-267`。
+   - 证据：`contracts/bridge-relay/src/lib.rs:224-267`。
 
 3. 回归覆盖已补齐：
    - `governance_like_admin_rejects_zero_min_signatures`
@@ -63,7 +63,7 @@
 
 ## 3. 建议的最小执行清单（不影响现有前端主链路）
 
-1. **先不改前端**：继续保持 `trillionnium-rust` / `web4-frontend` 兼容。
+1. **先不改前端**：继续保持 `trillionnium` / `web4-frontend` 兼容。
 2. 在 `bridge-relay` 增加最小“配置版本”字段 + 版本化审计（仅 metadata，不改变现有签名语义）。
 3. 增加一个“committee 配置事件 + 版本”快照测试，验证：
    - 版本不一致时拒绝新签名提交；

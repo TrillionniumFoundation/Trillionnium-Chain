@@ -11,7 +11,7 @@
 原因：
 - 最小 4 节点 BFT smoke 已通过，可作为 stage-1 bring-up 正向证据；
 - 敏感 crate 的 test inventory 已刷新，可用于后续 gate 收口；
-- 但仓库当前仍有大规模 dirty tree（`git status --short` 共 **411** 条，其中 **409** 条在 `trillionnium-rust/` 下），因此**不能**把当前工作树直接当作稳定 RC 候选。
+- 但仓库当前仍有大规模 dirty tree（`git status --short` 共 **411** 条，其中 **409** 条在 `trillionnium/` 下），因此**不能**把当前工作树直接当作稳定 RC 候选。
 
 ## Stage-1 的最小通过定义
 
@@ -24,12 +24,12 @@
    - 目的：避免“在什么树上跑出来的”说不清。
 
 2. **最小 bring-up 路径可执行**
-   - 3 节点本地 bring-up：`trillionnium-rust/scripts/devnet_up.sh`
-   - 3 节点停止：`trillionnium-rust/scripts/devnet_down.sh`
+   - 3 节点本地 bring-up：`trillionnium/scripts/devnet_up.sh`
+   - 3 节点停止：`trillionnium/scripts/devnet_down.sh`
    - 说明：这是最短路径；仅依赖 `configs/node{1,2,3}.toml` 与 `trnm-node`。
 
 3. **BFT 4 节点 smoke 通过**
-   - 命令：`trillionnium-rust/scripts/check_bft_4node_smoke.sh`
+   - 命令：`trillionnium/scripts/check_bft_4node_smoke.sh`
    - 通过标准：每个节点都出现 commit 事件与 committed-height 统计，且没有 `apply_error` / `rollback=true`。
 
 4. **状态一致性 / state-root 审计路径存在**
@@ -104,7 +104,7 @@ rollback_entrypoint=
 若只想人工理解脚本采集了哪些字段，可参考它的等价展开：
 
 ```bash
-cd trillionnium-rust
+cd trillionnium
 WORKTREE_ROOT="$(git rev-parse --show-toplevel)"
 WORKSPACE_ROOT="$(pwd)"
 printf 'operator_id=%s\n' "${OPERATOR_ID:-<fill-me>}"
@@ -135,7 +135,7 @@ printf 'rollback_entrypoint=%s\n' "${ROLLBACK_ENTRYPOINT:-./scripts/devnet_down.
 若本轮涉及 validator 配置或 peer 变更，额外固定配置指纹，避免 smoke 证据与实际 bring-up 配置脱钩：
 
 ```bash
-cd trillionnium-rust
+cd trillionnium
 for f in configs/node1.toml configs/node2.toml configs/node3.toml configs/node4.toml; do
   shasum -a 256 "$f"
 done
@@ -190,7 +190,7 @@ test "$(git branch --show-current)" = "$EXPECTED_BRANCH"
 在仓库根目录下：
 
 ```bash
-cd trillionnium-rust
+cd trillionnium
 ./scripts/devnet_up.sh
 # 查看日志
 ls run/node{1,2,3}.log
@@ -215,18 +215,18 @@ ls run/node{1,2,3}.log
 已执行：
 
 ```bash
-cd trillionnium-rust
+cd trillionnium
 ./scripts/check_bft_4node_smoke.sh
 ```
 
 结果：**PASS**
 
 证据文件：
-- `trillionnium-rust/run/bft4-smoke-20260324-163130.txt`
-- `trillionnium-rust/run/bft4-node1-20260324-163130.log`
-- `trillionnium-rust/run/bft4-node2-20260324-163130.log`
-- `trillionnium-rust/run/bft4-node3-20260324-163130.log`
-- `trillionnium-rust/run/bft4-node4-20260324-163130.log`
+- `trillionnium/run/bft4-smoke-20260324-163130.txt`
+- `trillionnium/run/bft4-node1-20260324-163130.log`
+- `trillionnium/run/bft4-node2-20260324-163130.log`
+- `trillionnium/run/bft4-node3-20260324-163130.log`
+- `trillionnium/run/bft4-node4-20260324-163130.log`
 
 摘要：
 - node1 commit events = 4
@@ -237,7 +237,7 @@ cd trillionnium-rust
 
 ### 2) 敏感 crate 测试 inventory
 
-已刷新到：`trillionnium-rust/artifacts/devnet-ready/testlists/`
+已刷新到：`trillionnium/artifacts/devnet-ready/testlists/`
 
 | crate | lines |
 |---|---:|
@@ -258,7 +258,7 @@ cd trillionnium-rust
 `git status --short` 当前共 **411** 条变更：
 - `BACKLOG.md`: 1
 - `ROADMAP.md`: 1
-- `trillionnium-rust`: 409
+- `trillionnium`: 409
 
 证据文件：
 - `docs/archive/devnet-ready-history/repo-hygiene-2026-03-24.json`
@@ -277,8 +277,8 @@ cd trillionnium-rust
 ### Blocker C — 完整 RC rehearsal 尚未重新跑完
 
 本轮没有执行完整：
-- `trillionnium-rust/scripts/run_local_release_evidence.sh`
-- `trillionnium-rust/scripts/release_rc.sh`
+- `trillionnium/scripts/run_local_release_evidence.sh`
+- `trillionnium/scripts/release_rc.sh`
 
 原因不是脚本不存在，而是当前 dirty tree 规模过大，先做它们会把“局部 smoke 绿”误包装成“整仓 RC 绿”。
 
@@ -297,17 +297,17 @@ cd trillionnium-rust
 
 ## 操作员命令口径（避免路径歧义）
 
-为避免在仓库根目录与 `trillionnium-rust/` 工作区之间切换时误跑命令，建议固定如下口径：
+为避免在仓库根目录与 `trillionnium/` 工作区之间切换时误跑命令，建议固定如下口径：
 
 - 若当前目录是仓库根：
 
 ```bash
-cd trillionnium-rust
+cd trillionnium
 cargo test -p trnm-node -- --test-threads=1
 cargo test -p trnm-cli -- --test-threads=1
 ```
 
-- 若当前目录已经是 `trillionnium-rust/`：直接执行同样的 `cargo test -p ...` 命令即可。
+- 若当前目录已经是 `trillionnium/`：直接执行同样的 `cargo test -p ...` 命令即可。
 
 - 在证据或 runbook 中记录命令时，优先保留**执行目录 + 原始命令**，避免事后无法判断 `cargo` 是在哪个 workspace 下运行。
 
@@ -316,5 +316,5 @@ cargo test -p trnm-cli -- --test-threads=1
 本轮仅新增文档/工件索引；若需回滚：
 
 ```bash
-git checkout -- docs/release/TRNM_STAGE1_DEVNET_READY_CHECKLIST_2026-03-24.md trillionnium-rust/artifacts/devnet-ready docs/archive/devnet-ready-history
+git checkout -- docs/release/TRNM_STAGE1_DEVNET_READY_CHECKLIST_2026-03-24.md trillionnium/artifacts/devnet-ready docs/archive/devnet-ready-history
 ```

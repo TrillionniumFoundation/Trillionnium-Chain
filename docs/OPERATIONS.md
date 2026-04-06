@@ -1,6 +1,6 @@
 # Operations（Agent↔User Phase A 补充）
 
-> 适用范围：`trillionnium-rust/crates/trnm-rpc` Phase A 可靠性与 relay 语义。
+> 适用范围：`trillionnium/crates/trnm-rpc` Phase A 可靠性与 relay 语义。
 
 ## 新增参数
 
@@ -55,7 +55,7 @@ Phase A gate 默认使用 sqlite 持久化 reliability store（用于重启后�
 示例：
 
 ```bash
-cd trillionnium-rust
+cd trillionnium
 RELIABILITY_STORE=sqlite \
 RELIABILITY_DB_PATH=run/health/reliability-phasea.sqlite \
 ./scripts/run_agent_user_phasea_gate.sh
@@ -70,7 +70,7 @@ RELIABILITY_DB_PATH=run/health/reliability-phasea.sqlite \
 
 ## Soak SLO 门禁（Phase A）
 
-新增脚本：`trillionnium-rust/scripts/run_phasea_soak_gate.sh`
+新增脚本：`trillionnium/scripts/run_phasea_soak_gate.sh`
 
 用途：读取 soak / fault 报告并按阈值做自动判定，默认阈值：
 
@@ -96,7 +96,7 @@ RELIABILITY_DB_PATH=run/health/reliability-phasea.sqlite \
 示例：
 
 ```bash
-cd trillionnium-rust
+cd trillionnium
 SOAK_RESULT=run/health/phasea-soak-20260222-200000.txt \
 FAULT_RESULT=run/health/request-fault-injection-20260222-200010.txt \
 MAX_STORE_REJECTED=2 \
@@ -214,7 +214,7 @@ CI：
 执行顺序（失败即停）：
 1. `bond_forfeiture_flow_test`：`trnm-pouw` challenge 失败 → bond 罚没路径。
 2. `bond_refund_flow_test`：`trnm-pouw` challenge 成功（worker slashed）→ bond 返还路径。
-3. `event_audit_fields_visibility`：运行 `trillionnium-rust/scripts/check_event_fields.sh`，并强制检查 resolve 事件审计字段。
+3. `event_audit_fields_visibility`：运行 `trillionnium/scripts/check_event_fields.sh`，并强制检查 resolve 事件审计字段。
 
 强制字段（resolve event）：
 - `signer=`
@@ -239,7 +239,7 @@ CI：
 
 ### 1) 快速查询（按 task）
 
-在 `trillionnium-rust/` 下执行：
+在 `trillionnium/` 下执行：
 
 ```bash
 cargo run -q -p trnm-rpc -- query-events --task-id <TASK_ID> --limit 100
@@ -261,9 +261,9 @@ cargo run -q -p trnm-rpc -- query-events --task-id <TASK_ID> --limit 100
 ```
 
 默认输入优先级：
-1. `trillionnium-rust/run/event-field-check.log`
-2. `trillionnium-rust/run/parallel-sanity.log`
-3. `trillionnium-rust/run/node1.log` / `node2.log` / `node3.log`
+1. `trillionnium/run/event-field-check.log`
+2. `trillionnium/run/parallel-sanity.log`
+3. `trillionnium/run/node1.log` / `node2.log` / `node3.log`
 
 输出：
 - `run/pr5-reconcile/<timestamp>/summary.txt`
@@ -368,7 +368,7 @@ Runbook：`docs/runbooks/pr9-weekly-alert-governance.md`
 2. 交互确认（默认需输入 `ROLLBACK`）
 3. `git checkout --detach <target>` 切换代码
 4. 运行态清理（devnet 关闭、常见进程清理、phaseA 临时文件清理）
-5. 执行最小验证：`trillionnium-rust/scripts/run_agent_user_phasea_gate.sh`
+5. 执行最小验证：`trillionnium/scripts/run_agent_user_phasea_gate.sh`
 
 安全约束：
 - 默认拒绝脏工作区（可用 `ALLOW_DIRTY=1` 显式覆盖）

@@ -16,7 +16,7 @@
 
 ## 固化检查项
 
-1. `cargo test --workspace`（在 `trillionnium-rust/` 内执行）
+1. `cargo test --workspace`（在 `trillionnium/` 内执行）
 2. `./scripts/v2/web4_release_aggregate_gate.sh`
 3. `web4-frontend` 全量校验：
    - `npm run lint`

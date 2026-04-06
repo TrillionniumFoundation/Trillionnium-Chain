@@ -1,7 +1,7 @@
 # TRNM Lane E（Ops/CI/Recovery）复审报告
 
 - 复审时间：2026-03-05
-- 复审范围：`.github/workflows`、`scripts/`、`trillionnium-rust/scripts`、runbooks、release 证据链
+- 复审范围：`.github/workflows`、`scripts/`、`trillionnium/scripts`、runbooks、release 证据链
 - 复审方式：静态审查 + 关键脚本可执行性检查（`./scripts/validate_workflow_script_refs.sh`）
 
 ---
@@ -75,18 +75,18 @@
 ### Challenge E-07（P1）
 - **问题**：BFT 恢复脚本使用 `kill -9` 强杀 + 单 WAL 目录跨轮复用，可能引入污染/偶发假阳性。
 - **证据路径**：
-  - `trillionnium-rust/scripts/check_bft_restart_recovery.sh:12,38,16-19`
+  - `trillionnium/scripts/check_bft_restart_recovery.sh:12,38,16-19`
 - **触发方式**：
-  - `nl -ba trillionnium-rust/scripts/check_bft_restart_recovery.sh | sed -n '12,60p'`
+  - `nl -ba trillionnium/scripts/check_bft_restart_recovery.sh | sed -n '12,60p'`
 - **建议**：
   - 每轮独立 WAL 目录；优先 SIGTERM + 超时升级 SIGKILL；在报告中记录每轮 WAL hash 与恢复高度。
 
 ### Challenge E-08（P1）
 - **问题**：本地 release 证据脚本用“模糊匹配首个 challenge reexec 入口”，可重复性不足。
 - **证据路径**：
-  - `trillionnium-rust/scripts/run_local_release_evidence.sh:67-74,107-109`
+  - `trillionnium/scripts/run_local_release_evidence.sh:67-74,107-109`
 - **触发方式**：
-  - `nl -ba trillionnium-rust/scripts/run_local_release_evidence.sh | sed -n '67,110p'`
+  - `nl -ba trillionnium/scripts/run_local_release_evidence.sh | sed -n '67,110p'`
 - **建议**：
   - 显式固定入口脚本（参数化但需 allowlist），禁止 `find|head -n1` 非确定性选择。
 
@@ -111,9 +111,9 @@
 ### Challenge E-11（P1）
 - **问题**：RC 发布脚本允许 `SKIP_STREAK_CHECK=1` 跳过“nightly 连绿”前置门禁，易被临时绕过固化为习惯。
 - **证据路径**：
-  - `trillionnium-rust/scripts/release_rc.sh:12-17`
+  - `trillionnium/scripts/release_rc.sh:12-17`
 - **触发方式**：
-  - `SKIP_STREAK_CHECK=1 trillionnium-rust/scripts/release_rc.sh`
+  - `SKIP_STREAK_CHECK=1 trillionnium/scripts/release_rc.sh`
 - **建议**：
   - 仅允许在本地 debug 使用；CI/release 环境下强制禁止该变量（检测到即 fail）。
 

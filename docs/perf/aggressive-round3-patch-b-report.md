@@ -7,7 +7,7 @@
 
 ## Patch B 内容
 
-文件：`trillionnium-rust/crates/trnm-executor/src/lib.rs`
+文件：`trillionnium/crates/trnm-executor/src/lib.rs`
 
 - 将 Aggressive 默认路径重构为 **dependency-bound fast path**：
   - 默认不维护 deep-scan 专用的 group read/write hashset

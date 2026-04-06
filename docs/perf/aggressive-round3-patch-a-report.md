@@ -7,7 +7,7 @@
 
 ## Patch A 内容
 
-文件：`trillionnium-rust/crates/trnm-executor/src/lib.rs`
+文件：`trillionnium/crates/trnm-executor/src/lib.rs`
 
 - 在 `AggressiveGreedy` 路径引入 **lower-bound fast-path placement**：
   - 默认直接放入 `min_group`（由 latest writer/reader 依赖边界计算得到）
