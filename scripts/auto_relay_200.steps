@@ -2,165 +2,165 @@
 # one command per line; empty/# lines ignored
 
 # 001
-bash -lc 'cd trillionnium-rust && ./scripts/run_v1_protocol_gates.sh'
+bash -lc 'cd trillionnium && ./scripts/run_v1_protocol_gates.sh'
 # 002
-bash -lc 'export PATH="/opt/homebrew/opt/rustup/bin:$PATH"; cd trillionnium-rust && cargo test --workspace --quiet'
+bash -lc 'export PATH="/opt/homebrew/opt/rustup/bin:$PATH"; cd trillionnium && cargo test --workspace --quiet'
 # 003
-bash -lc 'cd trillionnium-rust && ./scripts/check_event_fields.sh'
+bash -lc 'cd trillionnium && ./scripts/check_event_fields.sh'
 # 004
-bash -lc 'cd trillionnium-rust && ./scripts/check_event_replay_smoke.sh'
+bash -lc 'cd trillionnium && ./scripts/check_event_replay_smoke.sh'
 # 005
-bash -lc 'cd trillionnium-rust && ./scripts/check_parallel_flaky.sh'
+bash -lc 'cd trillionnium && ./scripts/check_parallel_flaky.sh'
 # 006
-bash -lc 'cd trillionnium-rust && ./scripts/run_bench_matrix.sh'
+bash -lc 'cd trillionnium && ./scripts/run_bench_matrix.sh'
 # 007
-bash -lc 'cd trillionnium-rust && ./scripts/run_bench_mixed_matrix.sh'
+bash -lc 'cd trillionnium && ./scripts/run_bench_mixed_matrix.sh'
 # 008
-bash -lc 'cd trillionnium-rust && ./scripts/run_bench_regression_matrix.sh'
+bash -lc 'cd trillionnium && ./scripts/run_bench_regression_matrix.sh'
 # 009
-bash -lc 'cd trillionnium-rust && ./scripts/check_aggressive_regression.sh'
+bash -lc 'cd trillionnium && ./scripts/check_aggressive_regression.sh'
 # 010
-bash -lc 'cd trillionnium-rust && ./scripts/testnet_preflight.sh'
+bash -lc 'cd trillionnium && ./scripts/testnet_preflight.sh'
 # 011
-bash -lc 'cd trillionnium-rust && ./scripts/run_v1_protocol_gates.sh'
+bash -lc 'cd trillionnium && ./scripts/run_v1_protocol_gates.sh'
 # 012
-bash -lc 'export PATH="/opt/homebrew/opt/rustup/bin:$PATH"; cd trillionnium-rust && cargo test --workspace --quiet'
+bash -lc 'export PATH="/opt/homebrew/opt/rustup/bin:$PATH"; cd trillionnium && cargo test --workspace --quiet'
 # 013
-bash -lc 'cd trillionnium-rust && ./scripts/check_event_fields.sh'
+bash -lc 'cd trillionnium && ./scripts/check_event_fields.sh'
 # 014
-bash -lc 'cd trillionnium-rust && ./scripts/check_event_replay_smoke.sh'
+bash -lc 'cd trillionnium && ./scripts/check_event_replay_smoke.sh'
 # 015
-bash -lc 'cd trillionnium-rust && ./scripts/check_parallel_flaky.sh'
+bash -lc 'cd trillionnium && ./scripts/check_parallel_flaky.sh'
 # 016
-bash -lc 'cd trillionnium-rust && ./scripts/run_bench_matrix.sh'
+bash -lc 'cd trillionnium && ./scripts/run_bench_matrix.sh'
 # 017
-bash -lc 'cd trillionnium-rust && ./scripts/run_bench_mixed_matrix.sh'
+bash -lc 'cd trillionnium && ./scripts/run_bench_mixed_matrix.sh'
 # 018
-bash -lc 'cd trillionnium-rust && ./scripts/run_bench_regression_matrix.sh'
+bash -lc 'cd trillionnium && ./scripts/run_bench_regression_matrix.sh'
 # 019
-bash -lc 'cd trillionnium-rust && ./scripts/check_aggressive_regression.sh'
+bash -lc 'cd trillionnium && ./scripts/check_aggressive_regression.sh'
 # 020
-bash -lc 'cd trillionnium-rust && ./scripts/testnet_preflight.sh'
+bash -lc 'cd trillionnium && ./scripts/testnet_preflight.sh'
 # 021
-bash -lc 'cd trillionnium-rust && ./scripts/run_v1_protocol_gates.sh'
+bash -lc 'cd trillionnium && ./scripts/run_v1_protocol_gates.sh'
 # 022
-bash -lc 'export PATH="/opt/homebrew/opt/rustup/bin:$PATH"; cd trillionnium-rust && cargo test --workspace --quiet'
+bash -lc 'export PATH="/opt/homebrew/opt/rustup/bin:$PATH"; cd trillionnium && cargo test --workspace --quiet'
 # 023
-bash -lc 'cd trillionnium-rust && ./scripts/check_event_fields.sh'
+bash -lc 'cd trillionnium && ./scripts/check_event_fields.sh'
 # 024
-bash -lc 'cd trillionnium-rust && ./scripts/check_event_replay_smoke.sh'
+bash -lc 'cd trillionnium && ./scripts/check_event_replay_smoke.sh'
 # 025
-bash -lc 'cd trillionnium-rust && ./scripts/check_parallel_flaky.sh'
+bash -lc 'cd trillionnium && ./scripts/check_parallel_flaky.sh'
 # 026
-bash -lc 'cd trillionnium-rust && ./scripts/run_bench_matrix.sh'
+bash -lc 'cd trillionnium && ./scripts/run_bench_matrix.sh'
 # 027
-bash -lc 'cd trillionnium-rust && ./scripts/run_bench_mixed_matrix.sh'
+bash -lc 'cd trillionnium && ./scripts/run_bench_mixed_matrix.sh'
 # 028
-bash -lc 'cd trillionnium-rust && ./scripts/run_bench_regression_matrix.sh'
+bash -lc 'cd trillionnium && ./scripts/run_bench_regression_matrix.sh'
 # 029
-bash -lc 'cd trillionnium-rust && ./scripts/check_aggressive_regression.sh'
+bash -lc 'cd trillionnium && ./scripts/check_aggressive_regression.sh'
 # 030
-bash -lc 'cd trillionnium-rust && ./scripts/testnet_preflight.sh'
+bash -lc 'cd trillionnium && ./scripts/testnet_preflight.sh'
 # 031
-bash -lc 'cd trillionnium-rust && ./scripts/run_v1_protocol_gates.sh'
+bash -lc 'cd trillionnium && ./scripts/run_v1_protocol_gates.sh'
 # 032
-bash -lc 'export PATH="/opt/homebrew/opt/rustup/bin:$PATH"; cd trillionnium-rust && cargo test --workspace --quiet'
+bash -lc 'export PATH="/opt/homebrew/opt/rustup/bin:$PATH"; cd trillionnium && cargo test --workspace --quiet'
 # 033
-bash -lc 'cd trillionnium-rust && ./scripts/check_event_fields.sh'
+bash -lc 'cd trillionnium && ./scripts/check_event_fields.sh'
 # 034
-bash -lc 'cd trillionnium-rust && ./scripts/check_event_replay_smoke.sh'
+bash -lc 'cd trillionnium && ./scripts/check_event_replay_smoke.sh'
 # 035
-bash -lc 'cd trillionnium-rust && ./scripts/check_parallel_flaky.sh'
+bash -lc 'cd trillionnium && ./scripts/check_parallel_flaky.sh'
 # 036
-bash -lc 'cd trillionnium-rust && ./scripts/run_bench_matrix.sh'
+bash -lc 'cd trillionnium && ./scripts/run_bench_matrix.sh'
 # 037
-bash -lc 'cd trillionnium-rust && ./scripts/run_bench_mixed_matrix.sh'
+bash -lc 'cd trillionnium && ./scripts/run_bench_mixed_matrix.sh'
 # 038
-bash -lc 'cd trillionnium-rust && ./scripts/run_bench_regression_matrix.sh'
+bash -lc 'cd trillionnium && ./scripts/run_bench_regression_matrix.sh'
 # 039
-bash -lc 'cd trillionnium-rust && ./scripts/check_aggressive_regression.sh'
+bash -lc 'cd trillionnium && ./scripts/check_aggressive_regression.sh'
 # 040
-bash -lc 'cd trillionnium-rust && ./scripts/testnet_preflight.sh'
+bash -lc 'cd trillionnium && ./scripts/testnet_preflight.sh'
 # 041
-bash -lc 'cd trillionnium-rust && ./scripts/run_v1_protocol_gates.sh'
+bash -lc 'cd trillionnium && ./scripts/run_v1_protocol_gates.sh'
 # 042
-bash -lc 'export PATH="/opt/homebrew/opt/rustup/bin:$PATH"; cd trillionnium-rust && cargo test --workspace --quiet'
+bash -lc 'export PATH="/opt/homebrew/opt/rustup/bin:$PATH"; cd trillionnium && cargo test --workspace --quiet'
 # 043
-bash -lc 'cd trillionnium-rust && ./scripts/check_event_fields.sh'
+bash -lc 'cd trillionnium && ./scripts/check_event_fields.sh'
 # 044
-bash -lc 'cd trillionnium-rust && ./scripts/check_event_replay_smoke.sh'
+bash -lc 'cd trillionnium && ./scripts/check_event_replay_smoke.sh'
 # 045
-bash -lc 'cd trillionnium-rust && ./scripts/check_parallel_flaky.sh'
+bash -lc 'cd trillionnium && ./scripts/check_parallel_flaky.sh'
 # 046
-bash -lc 'cd trillionnium-rust && ./scripts/run_bench_matrix.sh'
+bash -lc 'cd trillionnium && ./scripts/run_bench_matrix.sh'
 # 047
-bash -lc 'cd trillionnium-rust && ./scripts/run_bench_mixed_matrix.sh'
+bash -lc 'cd trillionnium && ./scripts/run_bench_mixed_matrix.sh'
 # 048
-bash -lc 'cd trillionnium-rust && ./scripts/run_bench_regression_matrix.sh'
+bash -lc 'cd trillionnium && ./scripts/run_bench_regression_matrix.sh'
 # 049
-bash -lc 'cd trillionnium-rust && ./scripts/check_aggressive_regression.sh'
+bash -lc 'cd trillionnium && ./scripts/check_aggressive_regression.sh'
 # 050
-bash -lc 'cd trillionnium-rust && ./scripts/testnet_preflight.sh'
+bash -lc 'cd trillionnium && ./scripts/testnet_preflight.sh'
 # 051
-bash -lc 'cd trillionnium-rust && ./scripts/run_v1_protocol_gates.sh'
+bash -lc 'cd trillionnium && ./scripts/run_v1_protocol_gates.sh'
 # 052
-bash -lc 'export PATH="/opt/homebrew/opt/rustup/bin:$PATH"; cd trillionnium-rust && cargo test --workspace --quiet'
+bash -lc 'export PATH="/opt/homebrew/opt/rustup/bin:$PATH"; cd trillionnium && cargo test --workspace --quiet'
 # 053
-bash -lc 'cd trillionnium-rust && ./scripts/check_event_fields.sh'
+bash -lc 'cd trillionnium && ./scripts/check_event_fields.sh'
 # 054
-bash -lc 'cd trillionnium-rust && ./scripts/check_event_replay_smoke.sh'
+bash -lc 'cd trillionnium && ./scripts/check_event_replay_smoke.sh'
 # 055
-bash -lc 'cd trillionnium-rust && ./scripts/check_parallel_flaky.sh'
+bash -lc 'cd trillionnium && ./scripts/check_parallel_flaky.sh'
 # 056
-bash -lc 'cd trillionnium-rust && ./scripts/run_bench_matrix.sh'
+bash -lc 'cd trillionnium && ./scripts/run_bench_matrix.sh'
 # 057
-bash -lc 'cd trillionnium-rust && ./scripts/run_bench_mixed_matrix.sh'
+bash -lc 'cd trillionnium && ./scripts/run_bench_mixed_matrix.sh'
 # 058
-bash -lc 'cd trillionnium-rust && ./scripts/run_bench_regression_matrix.sh'
+bash -lc 'cd trillionnium && ./scripts/run_bench_regression_matrix.sh'
 # 059
-bash -lc 'cd trillionnium-rust && ./scripts/check_aggressive_regression.sh'
+bash -lc 'cd trillionnium && ./scripts/check_aggressive_regression.sh'
 # 060
-bash -lc 'cd trillionnium-rust && ./scripts/testnet_preflight.sh'
+bash -lc 'cd trillionnium && ./scripts/testnet_preflight.sh'
 # 061
-bash -lc 'cd trillionnium-rust && ./scripts/run_v1_protocol_gates.sh'
+bash -lc 'cd trillionnium && ./scripts/run_v1_protocol_gates.sh'
 # 062
-bash -lc 'export PATH="/opt/homebrew/opt/rustup/bin:$PATH"; cd trillionnium-rust && cargo test --workspace --quiet'
+bash -lc 'export PATH="/opt/homebrew/opt/rustup/bin:$PATH"; cd trillionnium && cargo test --workspace --quiet'
 # 063
-bash -lc 'cd trillionnium-rust && ./scripts/check_event_fields.sh'
+bash -lc 'cd trillionnium && ./scripts/check_event_fields.sh'
 # 064
-bash -lc 'cd trillionnium-rust && ./scripts/check_event_replay_smoke.sh'
+bash -lc 'cd trillionnium && ./scripts/check_event_replay_smoke.sh'
 # 065
-bash -lc 'cd trillionnium-rust && ./scripts/check_parallel_flaky.sh'
+bash -lc 'cd trillionnium && ./scripts/check_parallel_flaky.sh'
 # 066
-bash -lc 'cd trillionnium-rust && ./scripts/run_bench_matrix.sh'
+bash -lc 'cd trillionnium && ./scripts/run_bench_matrix.sh'
 # 067
-bash -lc 'cd trillionnium-rust && ./scripts/run_bench_mixed_matrix.sh'
+bash -lc 'cd trillionnium && ./scripts/run_bench_mixed_matrix.sh'
 # 068
-bash -lc 'cd trillionnium-rust && ./scripts/run_bench_regression_matrix.sh'
+bash -lc 'cd trillionnium && ./scripts/run_bench_regression_matrix.sh'
 # 069
-bash -lc 'cd trillionnium-rust && ./scripts/check_aggressive_regression.sh'
+bash -lc 'cd trillionnium && ./scripts/check_aggressive_regression.sh'
 # 070
-bash -lc 'cd trillionnium-rust && ./scripts/testnet_preflight.sh'
+bash -lc 'cd trillionnium && ./scripts/testnet_preflight.sh'
 # 071
-bash -lc 'cd trillionnium-rust && ./scripts/run_v1_protocol_gates.sh'
+bash -lc 'cd trillionnium && ./scripts/run_v1_protocol_gates.sh'
 # 072
-bash -lc 'export PATH="/opt/homebrew/opt/rustup/bin:$PATH"; cd trillionnium-rust && cargo test --workspace --quiet'
+bash -lc 'export PATH="/opt/homebrew/opt/rustup/bin:$PATH"; cd trillionnium && cargo test --workspace --quiet'
 # 073
-bash -lc 'cd trillionnium-rust && ./scripts/check_event_fields.sh'
+bash -lc 'cd trillionnium && ./scripts/check_event_fields.sh'
 # 074
-bash -lc 'cd trillionnium-rust && ./scripts/check_event_replay_smoke.sh'
+bash -lc 'cd trillionnium && ./scripts/check_event_replay_smoke.sh'
 # 075
-bash -lc 'cd trillionnium-rust && ./scripts/check_parallel_flaky.sh'
+bash -lc 'cd trillionnium && ./scripts/check_parallel_flaky.sh'
 # 076
-bash -lc 'cd trillionnium-rust && ./scripts/run_bench_matrix.sh'
+bash -lc 'cd trillionnium && ./scripts/run_bench_matrix.sh'
 # 077
-bash -lc 'cd trillionnium-rust && ./scripts/run_bench_mixed_matrix.sh'
+bash -lc 'cd trillionnium && ./scripts/run_bench_mixed_matrix.sh'
 # 078
-bash -lc 'cd trillionnium-rust && ./scripts/run_bench_regression_matrix.sh'
+bash -lc 'cd trillionnium && ./scripts/run_bench_regression_matrix.sh'
 # 079
-bash -lc 'cd trillionnium-rust && ./scripts/check_aggressive_regression.sh'
+bash -lc 'cd trillionnium && ./scripts/check_aggressive_regression.sh'
 # 080
-bash -lc 'cd trillionnium-rust && ./scripts/testnet_preflight.sh'
+bash -lc 'cd trillionnium && ./scripts/testnet_preflight.sh'
 # 081
 bash ./scripts/challenge_reexec_template_smoke.sh
 # 082
@@ -168,23 +168,23 @@ bash ./scripts/worker_onchain_contract_smoke.sh
 # 083
 bash ./scripts/demo_storyline.sh
 # 084
-bash -lc 'cd trillionnium-rust && ./scripts/nightly_attribution.sh'
+bash -lc 'cd trillionnium && ./scripts/nightly_attribution.sh'
 # 085
-bash -lc 'cd trillionnium-rust && python3 ./scripts/render_nightly_summary.py'
+bash -lc 'cd trillionnium && python3 ./scripts/render_nightly_summary.py'
 # 086
-bash -lc 'cd trillionnium-rust && python3 ./scripts/summarize_aggressive_profile.py'
+bash -lc 'cd trillionnium && python3 ./scripts/summarize_aggressive_profile.py'
 # 087
-bash -lc 'cd trillionnium-rust && python3 ./scripts/executor_profile_report.py'
+bash -lc 'cd trillionnium && python3 ./scripts/executor_profile_report.py'
 # 088
-bash -lc 'cd trillionnium-rust && ./scripts/enforce_ci_thresholds.sh'
+bash -lc 'cd trillionnium && ./scripts/enforce_ci_thresholds.sh'
 # 089
-bash -lc 'cd trillionnium-rust && ./scripts/run_executor_strategy_experiment.sh'
+bash -lc 'cd trillionnium && ./scripts/run_executor_strategy_experiment.sh'
 # 090
-bash -lc 'cd trillionnium-rust && ./scripts/run_executor_hotspot_experiment.sh'
+bash -lc 'cd trillionnium && ./scripts/run_executor_hotspot_experiment.sh'
 # 091
-bash -lc 'cd trillionnium-rust && ./scripts/run_hot_bucket_sweep.sh'
+bash -lc 'cd trillionnium && ./scripts/run_hot_bucket_sweep.sh'
 # 092
-bash -lc 'cd trillionnium-rust && ./scripts/run_auto_adaptive_threshold_sweep.sh'
+bash -lc 'cd trillionnium && ./scripts/run_auto_adaptive_threshold_sweep.sh'
 # 093
 bash ./scripts/challenge_reexec_template_smoke.sh
 # 094
@@ -192,23 +192,23 @@ bash ./scripts/worker_onchain_contract_smoke.sh
 # 095
 bash ./scripts/demo_storyline.sh
 # 096
-bash -lc 'cd trillionnium-rust && ./scripts/nightly_attribution.sh'
+bash -lc 'cd trillionnium && ./scripts/nightly_attribution.sh'
 # 097
-bash -lc 'cd trillionnium-rust && python3 ./scripts/render_nightly_summary.py'
+bash -lc 'cd trillionnium && python3 ./scripts/render_nightly_summary.py'
 # 098
-bash -lc 'cd trillionnium-rust && python3 ./scripts/summarize_aggressive_profile.py'
+bash -lc 'cd trillionnium && python3 ./scripts/summarize_aggressive_profile.py'
 # 099
-bash -lc 'cd trillionnium-rust && python3 ./scripts/executor_profile_report.py'
+bash -lc 'cd trillionnium && python3 ./scripts/executor_profile_report.py'
 # 100
-bash -lc 'cd trillionnium-rust && ./scripts/enforce_ci_thresholds.sh'
+bash -lc 'cd trillionnium && ./scripts/enforce_ci_thresholds.sh'
 # 101
-bash -lc 'cd trillionnium-rust && ./scripts/run_executor_strategy_experiment.sh'
+bash -lc 'cd trillionnium && ./scripts/run_executor_strategy_experiment.sh'
 # 102
-bash -lc 'cd trillionnium-rust && ./scripts/run_executor_hotspot_experiment.sh'
+bash -lc 'cd trillionnium && ./scripts/run_executor_hotspot_experiment.sh'
 # 103
-bash -lc 'cd trillionnium-rust && ./scripts/run_hot_bucket_sweep.sh'
+bash -lc 'cd trillionnium && ./scripts/run_hot_bucket_sweep.sh'
 # 104
-bash -lc 'cd trillionnium-rust && ./scripts/run_auto_adaptive_threshold_sweep.sh'
+bash -lc 'cd trillionnium && ./scripts/run_auto_adaptive_threshold_sweep.sh'
 # 105
 bash ./scripts/challenge_reexec_template_smoke.sh
 # 106
@@ -216,23 +216,23 @@ bash ./scripts/worker_onchain_contract_smoke.sh
 # 107
 bash ./scripts/demo_storyline.sh
 # 108
-bash -lc 'cd trillionnium-rust && ./scripts/nightly_attribution.sh'
+bash -lc 'cd trillionnium && ./scripts/nightly_attribution.sh'
 # 109
-bash -lc 'cd trillionnium-rust && python3 ./scripts/render_nightly_summary.py'
+bash -lc 'cd trillionnium && python3 ./scripts/render_nightly_summary.py'
 # 110
-bash -lc 'cd trillionnium-rust && python3 ./scripts/summarize_aggressive_profile.py'
+bash -lc 'cd trillionnium && python3 ./scripts/summarize_aggressive_profile.py'
 # 111
-bash -lc 'cd trillionnium-rust && python3 ./scripts/executor_profile_report.py'
+bash -lc 'cd trillionnium && python3 ./scripts/executor_profile_report.py'
 # 112
-bash -lc 'cd trillionnium-rust && ./scripts/enforce_ci_thresholds.sh'
+bash -lc 'cd trillionnium && ./scripts/enforce_ci_thresholds.sh'
 # 113
-bash -lc 'cd trillionnium-rust && ./scripts/run_executor_strategy_experiment.sh'
+bash -lc 'cd trillionnium && ./scripts/run_executor_strategy_experiment.sh'
 # 114
-bash -lc 'cd trillionnium-rust && ./scripts/run_executor_hotspot_experiment.sh'
+bash -lc 'cd trillionnium && ./scripts/run_executor_hotspot_experiment.sh'
 # 115
-bash -lc 'cd trillionnium-rust && ./scripts/run_hot_bucket_sweep.sh'
+bash -lc 'cd trillionnium && ./scripts/run_hot_bucket_sweep.sh'
 # 116
-bash -lc 'cd trillionnium-rust && ./scripts/run_auto_adaptive_threshold_sweep.sh'
+bash -lc 'cd trillionnium && ./scripts/run_auto_adaptive_threshold_sweep.sh'
 # 117
 bash ./scripts/challenge_reexec_template_smoke.sh
 # 118
@@ -240,23 +240,23 @@ bash ./scripts/worker_onchain_contract_smoke.sh
 # 119
 bash ./scripts/demo_storyline.sh
 # 120
-bash -lc 'cd trillionnium-rust && ./scripts/nightly_attribution.sh'
+bash -lc 'cd trillionnium && ./scripts/nightly_attribution.sh'
 # 121
-bash -lc 'cd trillionnium-rust && python3 ./scripts/render_nightly_summary.py'
+bash -lc 'cd trillionnium && python3 ./scripts/render_nightly_summary.py'
 # 122
-bash -lc 'cd trillionnium-rust && python3 ./scripts/summarize_aggressive_profile.py'
+bash -lc 'cd trillionnium && python3 ./scripts/summarize_aggressive_profile.py'
 # 123
-bash -lc 'cd trillionnium-rust && python3 ./scripts/executor_profile_report.py'
+bash -lc 'cd trillionnium && python3 ./scripts/executor_profile_report.py'
 # 124
-bash -lc 'cd trillionnium-rust && ./scripts/enforce_ci_thresholds.sh'
+bash -lc 'cd trillionnium && ./scripts/enforce_ci_thresholds.sh'
 # 125
-bash -lc 'cd trillionnium-rust && ./scripts/run_executor_strategy_experiment.sh'
+bash -lc 'cd trillionnium && ./scripts/run_executor_strategy_experiment.sh'
 # 126
-bash -lc 'cd trillionnium-rust && ./scripts/run_executor_hotspot_experiment.sh'
+bash -lc 'cd trillionnium && ./scripts/run_executor_hotspot_experiment.sh'
 # 127
-bash -lc 'cd trillionnium-rust && ./scripts/run_hot_bucket_sweep.sh'
+bash -lc 'cd trillionnium && ./scripts/run_hot_bucket_sweep.sh'
 # 128
-bash -lc 'cd trillionnium-rust && ./scripts/run_auto_adaptive_threshold_sweep.sh'
+bash -lc 'cd trillionnium && ./scripts/run_auto_adaptive_threshold_sweep.sh'
 # 129
 bash ./scripts/challenge_reexec_template_smoke.sh
 # 130
@@ -264,140 +264,140 @@ bash ./scripts/worker_onchain_contract_smoke.sh
 # 131
 bash ./scripts/demo_storyline.sh
 # 132
-bash -lc 'cd trillionnium-rust && ./scripts/nightly_attribution.sh'
+bash -lc 'cd trillionnium && ./scripts/nightly_attribution.sh'
 # 133
-bash -lc 'cd trillionnium-rust && python3 ./scripts/render_nightly_summary.py'
+bash -lc 'cd trillionnium && python3 ./scripts/render_nightly_summary.py'
 # 134
-bash -lc 'cd trillionnium-rust && python3 ./scripts/summarize_aggressive_profile.py'
+bash -lc 'cd trillionnium && python3 ./scripts/summarize_aggressive_profile.py'
 # 135
-bash -lc 'cd trillionnium-rust && python3 ./scripts/executor_profile_report.py'
+bash -lc 'cd trillionnium && python3 ./scripts/executor_profile_report.py'
 # 136
-bash -lc 'cd trillionnium-rust && ./scripts/enforce_ci_thresholds.sh'
+bash -lc 'cd trillionnium && ./scripts/enforce_ci_thresholds.sh'
 # 137
-bash -lc 'cd trillionnium-rust && ./scripts/run_executor_strategy_experiment.sh'
+bash -lc 'cd trillionnium && ./scripts/run_executor_strategy_experiment.sh'
 # 138
-bash -lc 'cd trillionnium-rust && ./scripts/run_executor_hotspot_experiment.sh'
+bash -lc 'cd trillionnium && ./scripts/run_executor_hotspot_experiment.sh'
 # 139
-bash -lc 'cd trillionnium-rust && ./scripts/run_hot_bucket_sweep.sh'
+bash -lc 'cd trillionnium && ./scripts/run_hot_bucket_sweep.sh'
 # 140
-bash -lc 'cd trillionnium-rust && ./scripts/run_auto_adaptive_threshold_sweep.sh'
+bash -lc 'cd trillionnium && ./scripts/run_auto_adaptive_threshold_sweep.sh'
 # 141
-bash -lc 'cd trillionnium-rust && TXS_LIST="10000" KEYS_LIST="64 128 256 512 1024" ./scripts/run_bench_regression_matrix.sh'
+bash -lc 'cd trillionnium && TXS_LIST="10000" KEYS_LIST="64 128 256 512 1024" ./scripts/run_bench_regression_matrix.sh'
 # 142
-bash -lc 'cd trillionnium-rust && TXS_LIST="20000" KEYS_LIST="64 128 256 512 1024" ./scripts/run_bench_regression_matrix.sh'
+bash -lc 'cd trillionnium && TXS_LIST="20000" KEYS_LIST="64 128 256 512 1024" ./scripts/run_bench_regression_matrix.sh'
 # 143
-bash -lc 'cd trillionnium-rust && TXS_LIST="40000" KEYS_LIST="64 128 256 512 1024" ./scripts/run_bench_regression_matrix.sh'
+bash -lc 'cd trillionnium && TXS_LIST="40000" KEYS_LIST="64 128 256 512 1024" ./scripts/run_bench_regression_matrix.sh'
 # 144
-bash -lc 'cd trillionnium-rust && TXS_LIST="10000" KEYS_LIST="2000 1000 500 200 100" ./scripts/run_bench_regression_mixed_sweep.sh'
+bash -lc 'cd trillionnium && TXS_LIST="10000" KEYS_LIST="2000 1000 500 200 100" ./scripts/run_bench_regression_mixed_sweep.sh'
 # 145
-bash -lc 'cd trillionnium-rust && TXS_LIST="20000" KEYS_LIST="2000 1000 500 200 100" ./scripts/run_bench_regression_mixed_sweep.sh'
+bash -lc 'cd trillionnium && TXS_LIST="20000" KEYS_LIST="2000 1000 500 200 100" ./scripts/run_bench_regression_mixed_sweep.sh'
 # 146
-bash -lc 'cd trillionnium-rust && TXS_LIST="40000" KEYS_LIST="2000 1000 500 200 100" ./scripts/run_bench_regression_mixed_sweep.sh'
+bash -lc 'cd trillionnium && TXS_LIST="40000" KEYS_LIST="2000 1000 500 200 100" ./scripts/run_bench_regression_mixed_sweep.sh'
 # 147
-bash -lc 'cd trillionnium-rust && python3 ./scripts/analyze_mixed_sweep_correlation.py'
+bash -lc 'cd trillionnium && python3 ./scripts/analyze_mixed_sweep_correlation.py'
 # 148
-bash -lc 'cd trillionnium-rust && python3 ./scripts/analyze_aggressive_scan_correlation.py'
+bash -lc 'cd trillionnium && python3 ./scripts/analyze_aggressive_scan_correlation.py'
 # 149
-bash -lc 'cd trillionnium-rust && python3 ./scripts/suggest_auto_adaptive_thresholds.py'
+bash -lc 'cd trillionnium && python3 ./scripts/suggest_auto_adaptive_thresholds.py'
 # 150
-bash -lc 'cd trillionnium-rust && ./scripts/check_nightly_green_streak.sh ProfAlexQI TrillionniumChain 3'
+bash -lc 'cd trillionnium && ./scripts/check_nightly_green_streak.sh ProfAlexQI TrillionniumChain 3'
 # 151
-bash -lc 'cd trillionnium-rust && ./scripts/nightly_attribution.sh'
+bash -lc 'cd trillionnium && ./scripts/nightly_attribution.sh'
 # 152
-bash -lc 'cd trillionnium-rust && python3 ./scripts/render_nightly_summary.py'
+bash -lc 'cd trillionnium && python3 ./scripts/render_nightly_summary.py'
 # 153
-bash -lc 'cd trillionnium-rust && python3 ./scripts/summarize_aggressive_profile.py'
+bash -lc 'cd trillionnium && python3 ./scripts/summarize_aggressive_profile.py'
 # 154
-bash -lc 'cd trillionnium-rust && python3 ./scripts/executor_profile_report.py'
+bash -lc 'cd trillionnium && python3 ./scripts/executor_profile_report.py'
 # 155
-bash -lc 'cd trillionnium-rust && ./scripts/testnet_preflight.sh'
+bash -lc 'cd trillionnium && ./scripts/testnet_preflight.sh'
 # 156
-bash -lc 'cd trillionnium-rust && TXS_LIST="10000" KEYS_LIST="64 128 256 512 1024" ./scripts/run_bench_regression_matrix.sh'
+bash -lc 'cd trillionnium && TXS_LIST="10000" KEYS_LIST="64 128 256 512 1024" ./scripts/run_bench_regression_matrix.sh'
 # 157
-bash -lc 'cd trillionnium-rust && TXS_LIST="20000" KEYS_LIST="64 128 256 512 1024" ./scripts/run_bench_regression_matrix.sh'
+bash -lc 'cd trillionnium && TXS_LIST="20000" KEYS_LIST="64 128 256 512 1024" ./scripts/run_bench_regression_matrix.sh'
 # 158
-bash -lc 'cd trillionnium-rust && TXS_LIST="40000" KEYS_LIST="64 128 256 512 1024" ./scripts/run_bench_regression_matrix.sh'
+bash -lc 'cd trillionnium && TXS_LIST="40000" KEYS_LIST="64 128 256 512 1024" ./scripts/run_bench_regression_matrix.sh'
 # 159
-bash -lc 'cd trillionnium-rust && TXS_LIST="10000" KEYS_LIST="2000 1000 500 200 100" ./scripts/run_bench_regression_mixed_sweep.sh'
+bash -lc 'cd trillionnium && TXS_LIST="10000" KEYS_LIST="2000 1000 500 200 100" ./scripts/run_bench_regression_mixed_sweep.sh'
 # 160
-bash -lc 'cd trillionnium-rust && TXS_LIST="20000" KEYS_LIST="2000 1000 500 200 100" ./scripts/run_bench_regression_mixed_sweep.sh'
+bash -lc 'cd trillionnium && TXS_LIST="20000" KEYS_LIST="2000 1000 500 200 100" ./scripts/run_bench_regression_mixed_sweep.sh'
 # 161
-bash -lc 'cd trillionnium-rust && TXS_LIST="40000" KEYS_LIST="2000 1000 500 200 100" ./scripts/run_bench_regression_mixed_sweep.sh'
+bash -lc 'cd trillionnium && TXS_LIST="40000" KEYS_LIST="2000 1000 500 200 100" ./scripts/run_bench_regression_mixed_sweep.sh'
 # 162
-bash -lc 'cd trillionnium-rust && python3 ./scripts/analyze_mixed_sweep_correlation.py'
+bash -lc 'cd trillionnium && python3 ./scripts/analyze_mixed_sweep_correlation.py'
 # 163
-bash -lc 'cd trillionnium-rust && python3 ./scripts/analyze_aggressive_scan_correlation.py'
+bash -lc 'cd trillionnium && python3 ./scripts/analyze_aggressive_scan_correlation.py'
 # 164
-bash -lc 'cd trillionnium-rust && python3 ./scripts/suggest_auto_adaptive_thresholds.py'
+bash -lc 'cd trillionnium && python3 ./scripts/suggest_auto_adaptive_thresholds.py'
 # 165
-bash -lc 'cd trillionnium-rust && ./scripts/check_nightly_green_streak.sh ProfAlexQI TrillionniumChain 3'
+bash -lc 'cd trillionnium && ./scripts/check_nightly_green_streak.sh ProfAlexQI TrillionniumChain 3'
 # 166
-bash -lc 'cd trillionnium-rust && ./scripts/nightly_attribution.sh'
+bash -lc 'cd trillionnium && ./scripts/nightly_attribution.sh'
 # 167
-bash -lc 'cd trillionnium-rust && python3 ./scripts/render_nightly_summary.py'
+bash -lc 'cd trillionnium && python3 ./scripts/render_nightly_summary.py'
 # 168
-bash -lc 'cd trillionnium-rust && python3 ./scripts/summarize_aggressive_profile.py'
+bash -lc 'cd trillionnium && python3 ./scripts/summarize_aggressive_profile.py'
 # 169
-bash -lc 'cd trillionnium-rust && python3 ./scripts/executor_profile_report.py'
+bash -lc 'cd trillionnium && python3 ./scripts/executor_profile_report.py'
 # 170
-bash -lc 'cd trillionnium-rust && ./scripts/testnet_preflight.sh'
+bash -lc 'cd trillionnium && ./scripts/testnet_preflight.sh'
 # 171
-bash -lc 'cd trillionnium-rust && TXS_LIST="10000" KEYS_LIST="64 128 256 512 1024" ./scripts/run_bench_regression_matrix.sh'
+bash -lc 'cd trillionnium && TXS_LIST="10000" KEYS_LIST="64 128 256 512 1024" ./scripts/run_bench_regression_matrix.sh'
 # 172
-bash -lc 'cd trillionnium-rust && TXS_LIST="20000" KEYS_LIST="64 128 256 512 1024" ./scripts/run_bench_regression_matrix.sh'
+bash -lc 'cd trillionnium && TXS_LIST="20000" KEYS_LIST="64 128 256 512 1024" ./scripts/run_bench_regression_matrix.sh'
 # 173
-bash -lc 'cd trillionnium-rust && TXS_LIST="40000" KEYS_LIST="64 128 256 512 1024" ./scripts/run_bench_regression_matrix.sh'
+bash -lc 'cd trillionnium && TXS_LIST="40000" KEYS_LIST="64 128 256 512 1024" ./scripts/run_bench_regression_matrix.sh'
 # 174
-bash -lc 'cd trillionnium-rust && TXS_LIST="10000" KEYS_LIST="2000 1000 500 200 100" ./scripts/run_bench_regression_mixed_sweep.sh'
+bash -lc 'cd trillionnium && TXS_LIST="10000" KEYS_LIST="2000 1000 500 200 100" ./scripts/run_bench_regression_mixed_sweep.sh'
 # 175
-bash -lc 'cd trillionnium-rust && TXS_LIST="20000" KEYS_LIST="2000 1000 500 200 100" ./scripts/run_bench_regression_mixed_sweep.sh'
+bash -lc 'cd trillionnium && TXS_LIST="20000" KEYS_LIST="2000 1000 500 200 100" ./scripts/run_bench_regression_mixed_sweep.sh'
 # 176
-bash -lc 'cd trillionnium-rust && TXS_LIST="40000" KEYS_LIST="2000 1000 500 200 100" ./scripts/run_bench_regression_mixed_sweep.sh'
+bash -lc 'cd trillionnium && TXS_LIST="40000" KEYS_LIST="2000 1000 500 200 100" ./scripts/run_bench_regression_mixed_sweep.sh'
 # 177
-bash -lc 'cd trillionnium-rust && python3 ./scripts/analyze_mixed_sweep_correlation.py'
+bash -lc 'cd trillionnium && python3 ./scripts/analyze_mixed_sweep_correlation.py'
 # 178
-bash -lc 'cd trillionnium-rust && python3 ./scripts/analyze_aggressive_scan_correlation.py'
+bash -lc 'cd trillionnium && python3 ./scripts/analyze_aggressive_scan_correlation.py'
 # 179
-bash -lc 'cd trillionnium-rust && python3 ./scripts/suggest_auto_adaptive_thresholds.py'
+bash -lc 'cd trillionnium && python3 ./scripts/suggest_auto_adaptive_thresholds.py'
 # 180
-bash -lc 'cd trillionnium-rust && ./scripts/check_nightly_green_streak.sh ProfAlexQI TrillionniumChain 3'
+bash -lc 'cd trillionnium && ./scripts/check_nightly_green_streak.sh ProfAlexQI TrillionniumChain 3'
 # 181
-bash -lc 'cd trillionnium-rust && ./scripts/nightly_attribution.sh'
+bash -lc 'cd trillionnium && ./scripts/nightly_attribution.sh'
 # 182
-bash -lc 'cd trillionnium-rust && python3 ./scripts/render_nightly_summary.py'
+bash -lc 'cd trillionnium && python3 ./scripts/render_nightly_summary.py'
 # 183
-bash -lc 'cd trillionnium-rust && python3 ./scripts/summarize_aggressive_profile.py'
+bash -lc 'cd trillionnium && python3 ./scripts/summarize_aggressive_profile.py'
 # 184
-bash -lc 'cd trillionnium-rust && python3 ./scripts/executor_profile_report.py'
+bash -lc 'cd trillionnium && python3 ./scripts/executor_profile_report.py'
 # 185
-bash -lc 'cd trillionnium-rust && ./scripts/testnet_preflight.sh'
+bash -lc 'cd trillionnium && ./scripts/testnet_preflight.sh'
 # 186
-bash -lc 'cd trillionnium-rust && TXS_LIST="10000" KEYS_LIST="64 128 256 512 1024" ./scripts/run_bench_regression_matrix.sh'
+bash -lc 'cd trillionnium && TXS_LIST="10000" KEYS_LIST="64 128 256 512 1024" ./scripts/run_bench_regression_matrix.sh'
 # 187
-bash -lc 'cd trillionnium-rust && TXS_LIST="20000" KEYS_LIST="64 128 256 512 1024" ./scripts/run_bench_regression_matrix.sh'
+bash -lc 'cd trillionnium && TXS_LIST="20000" KEYS_LIST="64 128 256 512 1024" ./scripts/run_bench_regression_matrix.sh'
 # 188
-bash -lc 'cd trillionnium-rust && TXS_LIST="40000" KEYS_LIST="64 128 256 512 1024" ./scripts/run_bench_regression_matrix.sh'
+bash -lc 'cd trillionnium && TXS_LIST="40000" KEYS_LIST="64 128 256 512 1024" ./scripts/run_bench_regression_matrix.sh'
 # 189
-bash -lc 'cd trillionnium-rust && TXS_LIST="10000" KEYS_LIST="2000 1000 500 200 100" ./scripts/run_bench_regression_mixed_sweep.sh'
+bash -lc 'cd trillionnium && TXS_LIST="10000" KEYS_LIST="2000 1000 500 200 100" ./scripts/run_bench_regression_mixed_sweep.sh'
 # 190
-bash -lc 'cd trillionnium-rust && TXS_LIST="20000" KEYS_LIST="2000 1000 500 200 100" ./scripts/run_bench_regression_mixed_sweep.sh'
+bash -lc 'cd trillionnium && TXS_LIST="20000" KEYS_LIST="2000 1000 500 200 100" ./scripts/run_bench_regression_mixed_sweep.sh'
 # 191
-bash -lc 'cd trillionnium-rust && TXS_LIST="40000" KEYS_LIST="2000 1000 500 200 100" ./scripts/run_bench_regression_mixed_sweep.sh'
+bash -lc 'cd trillionnium && TXS_LIST="40000" KEYS_LIST="2000 1000 500 200 100" ./scripts/run_bench_regression_mixed_sweep.sh'
 # 192
-bash -lc 'cd trillionnium-rust && python3 ./scripts/analyze_mixed_sweep_correlation.py'
+bash -lc 'cd trillionnium && python3 ./scripts/analyze_mixed_sweep_correlation.py'
 # 193
-bash -lc 'cd trillionnium-rust && python3 ./scripts/analyze_aggressive_scan_correlation.py'
+bash -lc 'cd trillionnium && python3 ./scripts/analyze_aggressive_scan_correlation.py'
 # 194
-bash -lc 'cd trillionnium-rust && python3 ./scripts/suggest_auto_adaptive_thresholds.py'
+bash -lc 'cd trillionnium && python3 ./scripts/suggest_auto_adaptive_thresholds.py'
 # 195
-bash -lc 'cd trillionnium-rust && ./scripts/check_nightly_green_streak.sh ProfAlexQI TrillionniumChain 3'
+bash -lc 'cd trillionnium && ./scripts/check_nightly_green_streak.sh ProfAlexQI TrillionniumChain 3'
 # 196
-bash -lc 'cd trillionnium-rust && ./scripts/nightly_attribution.sh'
+bash -lc 'cd trillionnium && ./scripts/nightly_attribution.sh'
 # 197
-bash -lc 'cd trillionnium-rust && python3 ./scripts/render_nightly_summary.py'
+bash -lc 'cd trillionnium && python3 ./scripts/render_nightly_summary.py'
 # 198
-bash -lc 'cd trillionnium-rust && python3 ./scripts/summarize_aggressive_profile.py'
+bash -lc 'cd trillionnium && python3 ./scripts/summarize_aggressive_profile.py'
 # 199
-bash -lc 'cd trillionnium-rust && python3 ./scripts/executor_profile_report.py'
+bash -lc 'cd trillionnium && python3 ./scripts/executor_profile_report.py'
 # 200
-bash -lc 'cd trillionnium-rust && ./scripts/testnet_preflight.sh'
+bash -lc 'cd trillionnium && ./scripts/testnet_preflight.sh'

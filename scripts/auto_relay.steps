@@ -2,35 +2,35 @@
 # one command per line; empty/# lines ignored
 
 # A) 语义与协议一致性（ correctness first ）
-bash -lc 'cd trillionnium-rust && ./scripts/run_v1_protocol_gates.sh'
-bash -lc 'export PATH="/opt/homebrew/opt/rustup/bin:$PATH"; cd trillionnium-rust && cargo test --workspace --quiet'
-bash -lc 'cd trillionnium-rust && ./scripts/check_event_fields.sh'
-bash -lc 'cd trillionnium-rust && ./scripts/check_event_replay_smoke.sh'
+bash -lc 'cd trillionnium && ./scripts/run_v1_protocol_gates.sh'
+bash -lc 'export PATH="/opt/homebrew/opt/rustup/bin:$PATH"; cd trillionnium && cargo test --workspace --quiet'
+bash -lc 'cd trillionnium && ./scripts/check_event_fields.sh'
+bash -lc 'cd trillionnium && ./scripts/check_event_replay_smoke.sh'
 
 # B) 基线性能矩阵（throughput/latency 基本盘）
-bash -lc 'cd trillionnium-rust && ./scripts/run_bench_matrix.sh'
-bash -lc 'cd trillionnium-rust && ./scripts/run_bench_mixed_matrix.sh'
+bash -lc 'cd trillionnium && ./scripts/run_bench_matrix.sh'
+bash -lc 'cd trillionnium && ./scripts/run_bench_mixed_matrix.sh'
 
 # C) 执行器策略对标（并发冲突与热键鲁棒性）
-bash -lc 'cd trillionnium-rust && ./scripts/run_bench_regression_matrix.sh'
-bash -lc 'cd trillionnium-rust && ./scripts/check_aggressive_regression.sh'
-bash -lc 'cd trillionnium-rust && ./scripts/run_bench_regression_mixed_sweep.sh'
-bash -lc 'cd trillionnium-rust && python3 ./scripts/analyze_mixed_sweep_correlation.py'
+bash -lc 'cd trillionnium && ./scripts/run_bench_regression_matrix.sh'
+bash -lc 'cd trillionnium && ./scripts/check_aggressive_regression.sh'
+bash -lc 'cd trillionnium && ./scripts/run_bench_regression_mixed_sweep.sh'
+bash -lc 'cd trillionnium && python3 ./scripts/analyze_mixed_sweep_correlation.py'
 
 # D) 多策略实验（对标 Sui/Object-conflict 与 Solana/hotspot 退化）
-bash -lc 'cd trillionnium-rust && ./scripts/run_executor_strategy_experiment.sh'
-bash -lc 'cd trillionnium-rust && ./scripts/run_executor_hotspot_experiment.sh'
-bash -lc 'cd trillionnium-rust && ./scripts/run_hot_bucket_sweep.sh'
+bash -lc 'cd trillionnium && ./scripts/run_executor_strategy_experiment.sh'
+bash -lc 'cd trillionnium && ./scripts/run_executor_hotspot_experiment.sh'
+bash -lc 'cd trillionnium && ./scripts/run_hot_bucket_sweep.sh'
 
 # E) 自适应阈值调优（SLO-aware autotuning）
-bash -lc 'cd trillionnium-rust && ./scripts/run_auto_adaptive_threshold_sweep.sh'
-bash -lc 'cd trillionnium-rust && python3 ./scripts/suggest_auto_adaptive_thresholds.py'
+bash -lc 'cd trillionnium && ./scripts/run_auto_adaptive_threshold_sweep.sh'
+bash -lc 'cd trillionnium && python3 ./scripts/suggest_auto_adaptive_thresholds.py'
 
 # F) 归因与报告（对标可观测性/可解释性）
-bash -lc 'cd trillionnium-rust && ./scripts/nightly_attribution.sh'
-bash -lc 'cd trillionnium-rust && python3 ./scripts/render_nightly_summary.py'
-bash -lc 'cd trillionnium-rust && python3 ./scripts/summarize_aggressive_profile.py'
-bash -lc 'cd trillionnium-rust && python3 ./scripts/executor_profile_report.py'
+bash -lc 'cd trillionnium && ./scripts/nightly_attribution.sh'
+bash -lc 'cd trillionnium && python3 ./scripts/render_nightly_summary.py'
+bash -lc 'cd trillionnium && python3 ./scripts/summarize_aggressive_profile.py'
+bash -lc 'cd trillionnium && python3 ./scripts/executor_profile_report.py'
 
 # G) 预发布守门（release-readiness）
-bash -lc 'cd trillionnium-rust && ./scripts/testnet_preflight.sh'
+bash -lc 'cd trillionnium && ./scripts/testnet_preflight.sh'

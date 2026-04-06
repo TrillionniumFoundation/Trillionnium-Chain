@@ -2,7 +2,7 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
-cd "$ROOT/trillionnium-rust"
+cd "$ROOT/trillionnium"
 
 N="${N:-50}"
 OUT_DIR="run/challenges"

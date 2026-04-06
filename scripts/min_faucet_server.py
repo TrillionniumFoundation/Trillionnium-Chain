@@ -5,7 +5,7 @@ import subprocess
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-RPC_WORKDIR = os.path.join(ROOT, "trillionnium-rust")
+RPC_WORKDIR = os.path.join(ROOT, "trillionnium")
 
 HOST = os.environ.get("FAUCET_HOST", "127.0.0.1")
 PORT = int(os.environ.get("FAUCET_PORT", "8546"))

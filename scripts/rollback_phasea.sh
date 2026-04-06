@@ -2,7 +2,7 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-RUST_ROOT="$ROOT/trillionnium-rust"
+RUST_ROOT="$ROOT/trillionnium"
 
 usage() {
   cat <<'EOF'

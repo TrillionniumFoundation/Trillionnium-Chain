@@ -94,12 +94,12 @@ for wf in "${WORKFLOW_FILES[@]}"; do
       printf '%s\n' "$ref" >>"$refs_file"
       # Only require ./-prefixed refs for executable workflow invocations.
       # GitHub trigger path globs are repo-relative patterns, where retaining
-      # plain scripts/... or trillionnium-rust/scripts/... is expected.
+      # plain scripts/... or trillionnium/scripts/... is expected.
       if [[ "$ref" != ./* ]] \
-        && ! printf '%s\n' "$line" | LC_ALL=C grep -Eq "^[[:space:]]*-[[:space:]]*['\"]?(scripts|trillionnium-rust/scripts)/"; then
+        && ! printf '%s\n' "$line" | LC_ALL=C grep -Eq "^[[:space:]]*-[[:space:]]*['\"]?(scripts|trillionnium/scripts)/"; then
         printf '%s\n' "$ref" >>"$non_dot_refs_file"
       fi
-    done < <(printf '%s\n' "$line" | LC_ALL=C grep -Eo '(\./scripts|scripts|trillionnium-rust/scripts)/[[:alnum:]_./-]+\.(sh|py)' || true)
+    done < <(printf '%s\n' "$line" | LC_ALL=C grep -Eo '(\./scripts|scripts|trillionnium/scripts)/[[:alnum:]_./-]+\.(sh|py)' || true)
   done <"$wf"
 done
 
@@ -123,7 +123,7 @@ if command -v git >/dev/null 2>&1; then
 fi
 
 if [[ ${#SCRIPT_REFS[@]} -eq 0 ]]; then
-  echo "[workflow-ref][WARN] no workflow script references found in workflows (expected ./scripts, scripts, or trillionnium-rust/scripts .sh/.py refs)"
+  echo "[workflow-ref][WARN] no workflow script references found in workflows (expected ./scripts, scripts, or trillionnium/scripts .sh/.py refs)"
 fi
 
 empty_ref_count=0
@@ -139,8 +139,8 @@ for ref in "${SCRIPT_REFS[@]}"; do
   resolved=""
   if [[ -f "$path" ]]; then
     resolved="$path"
-  elif [[ -f "trillionnium-rust/$path" ]]; then
-    resolved="trillionnium-rust/$path"
+  elif [[ -f "trillionnium/$path" ]]; then
+    resolved="trillionnium/$path"
   fi
 
   if [[ -z "$resolved" ]]; then

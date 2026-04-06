@@ -2,7 +2,7 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
-cd "$ROOT/trillionnium-rust"
+cd "$ROOT/trillionnium"
 
 OUT_DIR="run/challenges"
 OUT="$OUT_DIR/bft-message-auth-gate-strength-probe-$(date +%Y%m%d-%H%M%S).txt"
