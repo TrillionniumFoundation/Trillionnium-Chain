@@ -1,7 +1,7 @@
-diff --git a/trillionnium-rust/crates/trnm-rpc/src/main.rs b/trillionnium-rust/crates/trnm-rpc/src/main.rs
+diff --git a/trillionnium/crates/trnm-rpc/src/main.rs b/trillionnium/crates/trnm-rpc/src/main.rs
 index 9157c19..a40b5d0 100644
---- a/trillionnium-rust/crates/trnm-rpc/src/main.rs
-+++ b/trillionnium-rust/crates/trnm-rpc/src/main.rs
+--- a/trillionnium/crates/trnm-rpc/src/main.rs
++++ b/trillionnium/crates/trnm-rpc/src/main.rs
 @@ -41,6 +41,16 @@ const FAUCET_MAX_REQUESTS_DEFAULT: u32 = 1;
  const FAUCET_MAX_REQUESTS_MIN: u32 = 1;
  const EMERGENCY_PAUSE_KEY_ID: u64 = 7_999;

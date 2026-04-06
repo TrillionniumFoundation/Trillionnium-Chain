@@ -3,16 +3,16 @@ name: trnm-gate-quick-check
 on:
   pull_request:
     paths:
-      - 'contracts-rust/**'
+      - 'contracts/**'
       - 'scripts/**'
-      - 'trillionnium-rust/scripts/**'
+      - 'trillionnium/scripts/**'
       - '.github/workflows/trnm-gate-quick-check.yml'
   push:
     branches: [main]
     paths:
-      - 'contracts-rust/**'
+      - 'contracts/**'
       - 'scripts/**'
-      - 'trillionnium-rust/scripts/**'
+      - 'trillionnium/scripts/**'
       - '.github/workflows/trnm-gate-quick-check.yml'
   workflow_dispatch:
 
@@ -133,7 +133,7 @@ jobs:
       - name: Quick shell gate (bash -n + shellcheck)
         run: |
           QUICK_GATE_SUMMARY_PATH=run/quick-gate/summary.json \
-          ./scripts/quick_gate_shell.sh scripts trillionnium-rust/scripts
+          ./scripts/quick_gate_shell.sh scripts trillionnium/scripts
 
       - name: Contracts workspace smoke
         run: |

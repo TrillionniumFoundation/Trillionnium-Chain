@@ -4,10 +4,10 @@
 # Build artifacts
 /build/
 /dist/
-/contracts-rust/target/
-/trillionnium-rust/target/
-/trillionnium-rust/run/
-/trillionnium-rust/release/
+/contracts/target/
+/trillionnium/target/
+/trillionnium/run/
+/trillionnium/release/
 
 # Runtime logs
 *.log

@@ -2,19 +2,19 @@
 
 ## 1) Task lifecycle query
 ```bash
-cd trillionnium-rust
+cd trillionnium
 cargo run -q -p trnm-rpc -- query-task 42
 ```
 
 ## 2) Governance proposal query
 ```bash
-cd trillionnium-rust
+cd trillionnium
 cargo run -q -p trnm-rpc -- query-proposal 9001
 ```
 
 ## 3) Event stream query
 ```bash
-cd trillionnium-rust
+cd trillionnium
 cargo run -q -p trnm-rpc -- query-events 42
 ```
 

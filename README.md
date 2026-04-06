@@ -1,28 +1,28 @@
 # Trillionnium Chain (TRNM)
 
-Rust-native Layer 1 for **Decentralized AI Compute**（PoUW）。
+**TRNM** is a Rust-native Layer 1 focused on **Decentralized AI Compute** (PoUW).
 
-> 当前主线：`trillionnium-rust/`  
-> 历史归档：`legacy/`
-
----
-
-## 1. 项目定位
-
-TRNM 是面向 AI 计算任务结算与验证的 Rust L1 项目，核心关注：
-
-- **PoUW 状态机**（任务创建、提交、揭示、挑战、裁决）
-- **高并发执行**（冲突检测与并发分组）
-- **可审计事件与稳定接口**（便于集成、回放、治理与运维）
-- **Worker Agent + CLI**（从任务执行到链上提交的闭环）
+- Active mainline: `trillionnium/`
+- Historical archive: `legacy/`
 
 ---
 
-## 2. 仓库结构（按当前代码）
+## 1) Project Positioning
+
+TRNM is a Rust L1 protocol for task-based AI compute settlement and verification. Its core design goals are:
+
+- **PoUW state machine** for task lifecycle: create → commit → reveal → challenge → resolve
+- **High-concurrency execution** with conflict detection and grouped scheduling
+- **Auditable events + stable interfaces** for integration, replay, governance, and operations
+- **Worker Agent + CLI** loop from execution to on-chain submission
+
+---
+
+## 2) Repository Layout (Current)
 
 ```text
 TrillionniumChain/
-├── trillionnium-rust/           # Rust workspace（核心主线）
+├── trillionnium/                    # Rust workspace (current source-of-truth lane)
 │   ├── crates/
 │   │   ├── trnm-node
 │   │   ├── trnm-types
@@ -38,105 +38,108 @@ TrillionniumChain/
 │   ├── configs/
 │   ├── scripts/
 │   └── run/
-├── web4-frontend/               # Web4 前端（Next.js + Vitest + Playwright）
-├── scripts/                     # 仓库级流水线与自动化脚本
-├── docs/                        # 架构 / 协议 / 开发 / runbook / 报告
-├── contracts-rust/              # Rust-native external contracts 子树（当前为独立 MVP contract crates / shared schema，尚未形成闭合 host runtime）
-├── config/                      # 策略与告警配置
-├── data/                        # 验收数据与实验产物
-├── run/                         # 运行日志与 gate 输出
-├── examples/                    # SDK/演示样例
-└── legacy/                      # 历史冻结代码
+├── web4-frontend/                  # Web4 frontend (Next.js + Vitest + Playwright)
+├── scripts/                        # Repo-level CI/automation scripts
+├── docs/                           # Architecture, protocol, runbooks, and reports
+├── contracts/                      # Rust-native external contracts subtree (active MVP scaffolding)
+├── config/                         # Policy and alerting config
+├── data/                           # Acceptance data and experiment artifacts
+├── run/                            # Runtime logs and gate outputs
+├── examples/                       # SDK and demo examples
+└── legacy/                         # Historical frozen branches / archival code
 ```
 
 ---
 
-## 3. 核心模块职责
+## 3) Core Modules
 
-### Rust 主链（`trillionnium-rust/crates`）
+### Rust mainline (`trillionnium/crates`)
 
-- `trnm-node`：节点主循环、执行接线、事件输出
-- `trnm-state`：版本化状态存储与 `state_root`
-- `trnm-pouw`：PoUW 任务状态机与验证逻辑
-- `trnm-executor`：冲突检测与并发调度策略
-- `trnm-mempool`：交易池与打包/接入策略
-- `trnm-rpc`：RPC 服务与稳定查询接口
-- `trnm-worker-agent`：Worker 执行与提交链路
-- `trnm-cli`：原生 CLI（tx/query）
-- `trnm-bench`：性能基准工具
-- `trnm-types`：共享类型
-- `trnm-bridge-poc`：桥接 PoC
+- `trnm-node`: node runtime loop, execution wiring, event emission
+- `trnm-state`: versioned state store and `state_root`
+- `trnm-pouw`: PoUW task state machine and validation logic
+- `trnm-executor`: conflict detection and concurrent scheduling strategy
+- `trnm-mempool`: transaction pool and admission/packaging
+- `trnm-rpc`: RPC service and stable query APIs
+- `trnm-worker-agent`: worker execution and on-chain submission path
+- `trnm-cli`: native CLI for tx/query operations
+- `trnm-bench`: benchmarking and performance tooling
+- `trnm-types`: shared protocol types
+- `trnm-bridge-poc`: bridge proof-of-concept integration
 
-### Web4 前端（`web4-frontend`）
+### Web4 frontend (`web4-frontend`)
 
-- Next.js 应用（`app/`）
-- 合约/接口适配层（`lib/`）
-- 测试（unit / component / contract / e2e）
-- 发布前检查脚本（位于 `web4-frontend/scripts/`；入口命令见 `web4-frontend/package.json`：`npm run ci:check` / `npm run release:preflight` / `npm run release:ready`）
+- Next.js app shell (`app/`)
+- Contract/API adaptation layer (`lib/`)
+- Test suites (unit/component/contract/e2e)
+- Release preflight scripts in `web4-frontend/scripts/`:
+  - `npm run ci:check`
+  - `npm run release:preflight`
+  - `npm run release:ready`
 
 ---
 
-## 4. 快速开始
+## 4) Quick Start
 
-### 4.1 环境
+### 4.1 Environment
 
-- Rust stable（建议与 `rust-toolchain`/CI 保持一致）
-- Node.js 20+（前端/脚本）
+- Rust stable (keep aligned with `rust-toolchain`/CI)
+- Node.js 20+
 - Git
 
-### 4.2 克隆
+### 4.2 Clone
 
 ```bash
 git clone https://github.com/ProfAlexQI/TrillionniumChain.git
 cd TrillionniumChain
 ```
 
-### 4.3 Rust 主线最小验证
+### 4.3 Rust mainline smoke
 
 ```bash
-cd trillionnium-rust
+cd trillionnium
 cargo test --workspace
 ```
 
-### 4.4 Web4 前端最小验证
+### 4.4 Web4 frontend smoke
 
 ```bash
 cd web4-frontend
 npm ci
 npm run ci:check
-# 若需强制跑 e2e
+# Force e2e if needed
 CI_RUN_E2E=1 npm run ci:check
 ```
 
 ---
 
-## 5. 常用命令（仓库根目录）
+## 5) Common Repo Commands
 
-### 5.1 仓库级 gate / pipeline
+### 5.1 Repo-level gates / pipeline
 
 ```bash
-# 快速门禁
+# Quick gate
 ./scripts/quick_gate_shell.sh
 
-# 自动化流水线
+# Automation pipelines
 ./scripts/run_100step_pipeline.sh
 ./scripts/run_200step_pipeline.sh
 ./scripts/run_200step_v2_pipeline.sh
 ./scripts/run_codegen_pipeline.sh
 ```
 
-### 5.2 Worker / Receipt 相关
+### 5.2 Worker / Receipt gates
 
 ```bash
 # Worker receipt gates
 ./scripts/v2/run_worker_receipt_gates.sh
 
-# strict real-cli gate
-TRNM_TX_CLI=./trillionnium-rust/target/debug/trnm-cli \
+# Strict real-cli mode
+TRNM_TX_CLI=./trillionnium/target/debug/trnm-cli \
   ./scripts/v2/run_worker_receipt_gates_real_cli.sh
 ```
 
-### 5.3 Tokenomics 回归门禁
+### 5.3 Tokenomics regression gate
 
 ```bash
 ./scripts/v2/run_tokenomics_r1_r14_regression_gate.sh
@@ -144,89 +147,124 @@ TRNM_TX_CLI=./trillionnium-rust/target/debug/trnm-cli \
 
 ---
 
-## 6. 文档入口
+## 6) Documentation Entry Points
 
-- 当前发布/就绪真相源（引用时须同时记录当下 `git rev-parse origin/main` 输出，勿把旧的固定 commit hash 当长期 truth source）：[RELEASE_READINESS.md](RELEASE_READINESS.md)
-- 项目状态（历史推进日志，不作为 release truth source）：[docs/archive/root-history/STATUS.md](docs/archive/root-history/STATUS.md)
-- 历史路线图（前一阶段 sprint 记录）：[docs/archive/root-history/ROADMAP.md](docs/archive/root-history/ROADMAP.md)
-- 历史 backlog（前一阶段待办快照）：[docs/archive/root-history/BACKLOG.md](docs/archive/root-history/BACKLOG.md)
-- 统一开发调度（planning board，不覆盖 release 判定）：[docs/development/DEVELOPMENT_MASTER_UNIFIED_2026-03-04.md](docs/development/DEVELOPMENT_MASTER_UNIFIED_2026-03-04.md)
-- 并发瓶颈图与 8 周路线（当前 closeout / roadmap 入口）：[docs/reports/TRNM_CONCURRENCY_BOTTLENECK_MAP_AND_8W_ROADMAP_2026-03-10.md](docs/reports/TRNM_CONCURRENCY_BOTTLENECK_MAP_AND_8W_ROADMAP_2026-03-10.md)
-- TRNM vs Solana vs Sui 对外对标口径（架构/benchmark 口径，不宣称 production parity）：[docs/reports/TRNM_CONCURRENCY_COMPARISON_2026-03-05.md](docs/reports/TRNM_CONCURRENCY_COMPARISON_2026-03-05.md)
-- Web4 基础设施总览（平台路线图）：[docs/WEB4_INFRA_PLATFORM_DEVELOPMENT_MASTER.md](docs/WEB4_INFRA_PLATFORM_DEVELOPMENT_MASTER.md)
-- Rust-native external contracts 架构基线（目标 package layout / Host ABI / runtime boundary）：[trillionnium-rust/docs/protocol/external-contracts-rust/RUST_NATIVE_EXTERNAL_CONTRACTS_ARCH_2026-03-05.md](trillionnium-rust/docs/protocol/external-contracts-rust/RUST_NATIVE_EXTERNAL_CONTRACTS_ARCH_2026-03-05.md)
-- `contracts-rust/` 当前状态与边界说明：[contracts-rust/README.md](contracts-rust/README.md)
-- PoUW 机制说明：[trillionnium-rust/docs/challenge-economics-minimal.md](trillionnium-rust/docs/challenge-economics-minimal.md)
-- A2A 适配契约：[docs/agent/a2a_adapter_contract_v1.md](docs/agent/a2a_adapter_contract_v1.md)
-- MCP 适配契约：[docs/agent/mcp_adapter_contract_v1.md](docs/agent/mcp_adapter_contract_v1.md)
-- 运维手册：[OPERATIONS.md](OPERATIONS.md)
-- OpenClaw 微型运维 Runbook：[docs/development/OPENCLAW_OPS_MICRO_RUNBOOK.md](docs/development/OPENCLAW_OPS_MICRO_RUNBOOK.md)
-- Web4 前端说明：[web4-frontend/README.md](web4-frontend/README.md)
-- Web4 文档中心（统一入口）：[web4-frontend/docs/README.md](web4-frontend/docs/README.md)
-  - 开发指南：[web4-frontend/docs/developer-guide.md](web4-frontend/docs/developer-guide.md)
-  - 运维手册：[web4-frontend/docs/operations-runbook.md](web4-frontend/docs/operations-runbook.md)
-  - 发布前 Checklist：[web4-frontend/docs/release-checklist.md](web4-frontend/docs/release-checklist.md)
+- Release/truth source entry: [RELEASE_READINESS.md](RELEASE_READINESS.md)
+  - When referencing this file, include the current `git rev-parse origin/main` value to avoid using stale commit hashes as current truth.
+- Project status log: [docs/archive/root-history/STATUS.md](docs/archive/root-history/STATUS.md)
+- Historical roadmap: [docs/archive/root-history/ROADMAP.md](docs/archive/root-history/ROADMAP.md)
+- Historical backlog snapshots: [docs/archive/root-history/BACKLOG.md](docs/archive/root-history/BACKLOG.md)
+- Unified development scheduling (planning board): [docs/development/DEVELOPMENT_MASTER_UNIFIED_2026-03-04.md](docs/development/DEVELOPMENT_MASTER_UNIFIED_2026-03-04.md)
+- Concurrency bottleneck map + 8-week roadmap: [docs/reports/TRNM_CONCURRENCY_BOTTLENECK_MAP_AND_8W_ROADMAP_2026-03-10.md](docs/reports/TRNM_CONCURRENCY_BOTTLENECK_MAP_AND_8W_ROADMAP_2026-03-10.md)
+- External benchmark comparison: [docs/reports/TRNM_CONCURRENCY_COMPARISON_2026-03-05.md](docs/reports/TRNM_CONCURRENCY_COMPARISON_2026-03-05.md)
+- Web4 platform overview: [docs/WEB4_INFRA_PLATFORM_DEVELOPMENT_MASTER.md](docs/WEB4_INFRA_PLATFORM_DEVELOPMENT_MASTER.md)
+- Rust-native external contracts baseline architecture: [trillionnium/docs/protocol/external-contracts-rust/RUST_NATIVE_EXTERNAL_CONTRACTS_ARCH_2026-03-05.md](trillionnium/docs/protocol/external-contracts-rust/RUST_NATIVE_EXTERNAL_CONTRACTS_ARCH_2026-03-05.md)
+- `contracts/` status and boundaries: [contracts/README.md](contracts/README.md)
+- PoUW mechanism: [trillionnium/docs/challenge-economics-minimal.md](trillionnium/docs/challenge-economics-minimal.md)
+- A2A adapter contract: [docs/agent/a2a_adapter_contract_v1.md](docs/agent/a2a_adapter_contract_v1.md)
+- MCP adapter contract: [docs/agent/mcp_adapter_contract_v1.md](docs/agent/mcp_adapter_contract_v1.md)
+- Operations handbook: [OPERATIONS.md](OPERATIONS.md)
+- OpenClaw ops micro-runbook: [docs/development/OPENCLAW_OPS_MICRO_RUNBOOK.md](docs/development/OPENCLAW_OPS_MICRO_RUNBOOK.md)
+- Web4 frontend docs: [web4-frontend/README.md](web4-frontend/README.md)
+- Web4 documentation center:
+  - [web4-frontend/docs/README.md](web4-frontend/docs/README.md)
+  - [web4-frontend/docs/developer-guide.md](web4-frontend/docs/developer-guide.md)
+  - [web4-frontend/docs/operations-runbook.md](web4-frontend/docs/operations-runbook.md)
+  - [web4-frontend/docs/release-checklist.md](web4-frontend/docs/release-checklist.md)
 
-> 轻量校验：可运行 `./scripts/check_root_readme_local_links.sh` 验证 README 本地相对链接是否全部可达。
+> Quick link check: run `./scripts/check_root_readme_local_links.sh` to verify local links.
 
 ---
 
-## 7. CI / 工作流
+## 7) CI / Workflows
 
-仓库包含主链与前端多条工作流（位于 `.github/workflows/`），其中包括：
+The repo runs multiple chain/frontend pipelines under `.github/workflows/`, including:
 
 - `trnm-merge-gates.yml`
 - `rust-l1-nightly-health.yml`
 - `trnm-gate-quick-check.yml`
 - `web4-frontend-ci.yml`
 
-建议在提交前本地先跑最小 gate，减少 CI 往返。
+Please run the local minimum gates before creating PRs to reduce CI turnarounds.
 
 ---
 
-## 8. 现阶段说明
+## 8) Current State Notes (Operational Boundaries)
 
-- 主线开发入口为 `trillionnium-rust/`。
-- `legacy/` 仅作归档，不作为当前开发入口。
-- 当前是否“可发布 / release-ready”请以 [RELEASE_READINESS.md](RELEASE_READINESS.md) 为准；历史证据文档不自动代表今日状态。
-- `contracts-rust/` 当前表示的是 **Rust-native external contracts 的独立子树与 MVP 合约骨架**；它不等于已完成 `sdk/`、`runtime-spec/`、`integration-tests/` 目标布局，也不单独构成 mainnet-ready 证明。
-  - 其中 `audit-events/` 更接近 shared audit-event schema 邻接层；它**不等价于** `sdk/` / `runtime-spec/` 已落地，也**不表示** canonical `wasm32-unknown-unknown` Host ABI/runtime integration 已完成。
-- Web4 当前语义是：**前端默认走只读 API client；只在显式 `?mode=mock` 时回退到本地 mock snapshot；不暴露写路径。**
-- 文档中若出现 `/api/v0/web4/*`，应视为历史草案命名；当前仓内前端实际消费的是 `query-task` / `query-events` / `query-capability-audit` / `query-normalized-audit-events` 这组只读接口，**不是仓内已实现的 Next.js route**。
-- Explorer / indexer 接入时可先把这组接口当作最小 read-model 契约：
+- Main development entry is `trillionnium/`.
+- `legacy/` is for archival history only.
+- Whether the project is currently **release-ready** is defined by [RELEASE_READINESS.md](RELEASE_READINESS.md); historical evidence documents are not automatically equivalent to live state.
+- `contracts/` is an **independent Rust-native external-contract subtree / MVP contract scaffolding**. It is not yet the full `sdk / runtime-spec / integration-tests` target layout.
+- `audit-events/` under `contracts/` is a shared audit-event schema-adjacent layer; it is not a proof that canonical `sdk`, `runtime-spec`, or `wasm32-unknown-unknown` Host ABI/runtime integration is complete.
+- Web4 currently uses a read-only API client by default; it falls back to local mock snapshots only when explicitly launched with `?mode=mock`, and write paths are not exposed by default.
+- If you see `/api/v0/web4/*` references in docs, treat them as historical naming only; current frontend consumption is around:
+  - `query-task`
+  - `query-events`
+  - `query-capability-audit`
+  - `query-normalized-audit-events`
+
+### Read-surface contract (important for integration)
+
+- The following endpoints are the current minimal read contract:
   - `query-task/<task_id>`
   - `query-events/<task_id>?limit=<n>`
   - `query-capability-audit/<subject-or-token>`
   - `query-normalized-audit-events?source=<source>&eventType=<eventType>&cursor=<cursor>&limit=<n>`
-  - `query-task/<task_id>` 会优先读取持久化 state snapshot，其次回放 canonical node event history；只有在存在**已持久化 commit 历史**时才允许 adapter fallback 合成 `Committed` / `Revealed` 视图。仅有 reveal、缺失 commit，或把 adapter 行当作完整历史索引的接入方式，都应视为 fail-closed。
-  - `query-events/<task_id>` 对 adapter fallback 只提供有界、去重后的 commit/reveal 事件尾部，不补造 pre-commit 历史；做 durable indexer / archive replica 时，应持久化 canonical node event stream，而不是依赖 adapter 行长期充当历史真相源。
-  - 对外冻结口径请以 `trillionnium-rust/docs/release/TRNM_DAY1_PUBLIC_READ_CONTRACT_2026-04-03.md` 为准；若需要逐 endpoint 参数/错误语义/明确 out-of-scope 表，请再对照 `trillionnium-rust/docs/release/TRNM_DAY1_PUBLIC_READ_CONTRACT_MATRIX_2026-04-03.md`。
-  - 这两份文档只冻结 **Day-1 minimum public read surface**，不等于 durable indexer / historical read-model / stable explorer backend 已闭环。
-  - `query-events/<task_id>` 未显式传 `?limit=` 时默认返回 **100** 条，硬上限 **500** 条；超大分页请求会被 clamp，不应假设无限历史窗口。
-  - `query-events/<task_id>` 的 query schema 当前 **只接受单个 `limit` 键**；未知键、重复 `limit`、大小写漂移（如 `Limit=`）、空值与编码分隔符都按 fail-closed 处理，接入侧不要假设“多余参数会被静默忽略”。
-  - `query-capability-audit/<subject-or-token>` 同时接受 capability token id 与 subject DID，索引侧不必为两种 key 维护两套入口。
-  - `query-normalized-audit-events` 当前只接受 `source` / `eventType` / `cursor` / `limit` 这组 query 参数；重复键、未知键、空值、编码分隔符与 query smuggling 都按 fail-closed 处理，接入侧不要把“额外参数会被忽略”当作兼容约定。
-  - 带路径后缀的只读路径（如 `query-task/<id>/`、`query-events/<id>/`、`query-capability-audit/<subject>/`）接受**单个** operator trailing slash；但 `query-normalized-audit-events` 走**精确路径匹配**，不应假设 `/query-normalized-audit-events/` 可兼容。
-  - 以上路径仍会对额外层级、原始/编码斜杠、query/fragment smuggling 维持 fail-closed；接入侧不要把模糊路径当作可兼容输入。
-  - 这组路径当前都属于只读查询面，前端/脚本不应通过它们推断存在对称写接口。
-  - 在 durable indexer / archive read replica 落地前，历史查询语义仍以当前 RPC retention window 为边界，不应把脚手架或前端只读 client 误读为“无限历史可查”。
-- 本地最小 explorer service 仍只是 operator-facing scaffolding，不应误判为 production indexer：
-  - 从仓库根执行：`./trillionnium-rust/scripts/v2/explorer_service_up.sh`
-  - 从仓库根执行：`./trillionnium-rust/scripts/v2/explorer_service_status.sh`
-  - 从仓库根执行：`./trillionnium-rust/scripts/v2/explorer_service_down.sh`
-  - 或先 `cd trillionnium-rust`，再执行 `./scripts/v2/explorer_service_{up,status,down}.sh`
-  - 若 `trillionnium-rust/run/explorer-service/explorer-service.env` 已存在，上述三个脚本会自动加载它；值班切换时无需再手动 `source` 才能复用同一组 bind / public URL / RPC URL 配置。
-  - 若需要对外暴露该脚手架，优先采用“loopback bind + reverse proxy” 形态；最小 `nginx` 骨架与 handoff 注意事项见 `trillionnium-rust/docs/runbooks/explorer-service-scaffold.md`。
-  - 默认健康检查：`http://127.0.0.1:8090/healthz`；若需非默认地址，可覆盖 `EXPLORER_HOST` / `EXPLORER_PORT` 或直接传 `EXPLORER_HEALTH_URL`。
-  - 若脚手架绑定到 wildcard 地址（`EXPLORER_HOST=0.0.0.0` 或 `EXPLORER_HOST=::`），脚本仍会把 `local_health_url` 规范化为 loopback（分别是 `127.0.0.1` / `::1`）做本机探测；不要把不可路由的 wildcard 字面值抄成值班 probe 目标。
-  - `explorer_service_status.sh` 会直接回显 `pid_file` / `log_file` / `health_url`，并明确标记 `service_mode=operator-facing-static-scaffold`、`production_ready=false`，同时附带最小 Day-1 read-contract 字段（`read_contract_mode`、`day1_surface`、`historical_query_scope` 等），便于 operator 在 down/degraded/handoff 场景直接确认这是 RPC-backed 的只读脚手架，而不是 durable indexer。
-  - 值班记录若要作为 read-surface handoff 证据，至少应连同 `deployment_evidence_scope=placeholder-only`、`rank1_read_surface_blocker=still-open`、`durable_indexer_status=not-implemented-in-this-scaffold`、`durable_read_anchor_complete=false` 一并抄出；不要只截取 `health=ok` 或 `state=running` 就误写成 Rank 1 已关闭。
-  - 当前 placeholder 仍故意把 durable-read anchors 保持 fail-closed：`durable_read_anchor_missing_count=6`，缺口字段为 `ingestion_source`、`checkpoint_store`、`replay_start_anchor`、`retention_scope`、`archive_owner`、`lag_slo`；运行时会同时给出 `historical_query_scope=rpc-retention-bounded` 与 `durable_read_anchor_retention_scope=rpc-window-bounded` 两层口径：前者说明当前历史查询仍受 RPC retention window 约束，后者只是 durable anchor 中 `retention_scope` 这一占位字段的保守默认值。两者都不应被误读为 durable read-model 已闭环，因此这组输出应被视为“阻塞项清单”，不是“已实现能力清单”。
-  - `explorer_service_down.sh` 现在也会复用同一组 read-contract 字段，便于在 stop / stale-pid 清理 / handoff 场景保留一致的只读边界说明，而不必额外跑一次 `status`。
-  - 推荐将脚手架操作与值班排障步骤统一参照：`trillionnium-rust/docs/runbooks/explorer-service-scaffold.md`
-  - 若需要直接复制 ticket / 值班交接文本骨架，优先使用：`trillionnium-rust/docs/release/TRNM_EXPLORER_SCAFFOLD_HANDOFF_TEMPLATE_2026-04-04.md`，避免 handoff 时把 placeholder 误写成 durable read service。
-  - 只有当部署已明确脱离 placeholder scaffold，并且 6 个 durable-read anchors（`ingestion_source` / `checkpoint_store` / `replay_start_anchor` / `retention_scope` / `archive_owner` / `lag_slo`）都能给出真实值时，才切换到：`trillionnium-rust/docs/release/TRNM_DURABLE_READ_SERVICE_HANDOFF_TEMPLATE_2026-04-04.md`；否则继续按 scaffold handoff 处理，避免把 blocker-open 的读面误写成 Rank 1 已关闭。
-- 自动化脚本较多，优先使用本 README、`RELEASE_READINESS.md` 和 `docs/development` 下统一调度文档作为导航。
+- `query-task/<task_id>` prefers persisted state snapshots first, then replay over canonical node event history. Adapter fallback may only enrich `Committed`/`Revealed` views when persisted commit history exists.
+- For `query-events/<task_id>`, adapter fallback is strictly bounded/deduplicated to recent commit/reveal tails; it must not invent pre-commit history.
+- For durable indexer/archive replica planning, persist canonical node event streams rather than relying long-term on adapter fallback.
+- Reference: [TRNM_DAY1_PUBLIC_READ_CONTRACT_2026-04-03.md](trillionnium/docs/release/TRNM_DAY1_PUBLIC_READ_CONTRACT_2026-04-03.md) and [TRNM_DAY1_PUBLIC_READ_CONTRACT_MATRIX_2026-04-03.md](trillionnium/docs/release/TRNM_DAY1_PUBLIC_READ_CONTRACT_MATRIX_2026-04-03.md)
+- These two documents freeze the **Day-1 minimum public read surface only**, not full durable-indexer/archival read-model readiness.
+- `query-events/<task_id>` defaults to `100` and hard-caps at `500`; no assumption of infinite window.
+- `query-events/<task_id>` currently accepts only one `limit` key. Unknown keys, duplicated `limit`, case variants (`Limit=`), empty values, or query smuggling are fail-closed.
+- `query-capability-audit/<subject-or-token>` supports both capability token and subject DID.
+- `query-normalized-audit-events` currently accepts only `source / eventType / cursor / limit`; unknown keys, repeated keys, empty values, and smuggling are fail-closed.
+- Paths with a single trailing slash are accepted for:
+  - `query-task/<id>/`
+  - `query-events/<id>/`
+  - `query-capability-audit/<subject>/`
+  - but **not** for `query-normalized-audit-events/` (currently exact path only).
+- All read endpoints remain fail-closed for extra segments, raw/encoded slash tricks, and query/fragment smuggling.
+
+### Explorer scaffold (operator-facing)
+
+Current explorer service in this repo is an operator-facing scaffold, not a production durable indexer.
+
+Typical commands (run from repo root):
+
+```bash
+./trillionnium/scripts/v2/explorer_service_up.sh
+./trillionnium/scripts/v2/explorer_service_status.sh
+./trillionnium/scripts/v2/explorer_service_down.sh
+```
+
+Or from inside `trillionnium/`:
+
+```bash
+./scripts/v2/explorer_service_up.sh
+./scripts/v2/explorer_service_status.sh
+./scripts/v2/explorer_service_down.sh
+```
+
+- Service status defaults to `http://127.0.0.1:8090/healthz`.
+- Environment overrides: `EXPLORER_HOST`, `EXPLORER_PORT`, or `EXPLORER_HEALTH_URL`.
+- If `trillionnium/run/explorer-service/explorer-service.env` exists, the scripts load it automatically.
+- For external exposure, prefer loopback-bound bind + reverse proxy.
+- `explorer_service_status.sh` reports `pid_file`, `log_file`, `health_url`, and explicitly marks `service_mode=operator-facing-static-scaffold`, `production_ready=false`.
+- Current scaffold intentionally keeps durable-read anchors fail-closed:
+  - `ingestion_source`
+  - `checkpoint_store`
+  - `replay_start_anchor`
+  - `retention_scope`
+  - `archive_owner`
+  - `lag_slo`
+- In handoff notes, include flags such as:
+  - `deployment_evidence_scope=placeholder-only`
+  - `rank1_read_surface_blocker=still-open`
+  - `durable_indexer_status=not-implemented-in-this-scaffold`
+  - `durable_read_anchor_complete=false`
+
+Only switch to durable handoff templates when all six durable-read anchors are truly implemented.
 
 ---
 

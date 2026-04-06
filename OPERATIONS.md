@@ -1,174 +1,176 @@
 # Operations Manual
 
+> Scope: main Trillionnium repository operational playbook (English rewrite).
+
 ## Workload Module
 
 ### RequestUnbonding
 
-The `RequestUnbonding` message allows a worker to initiate the process of unstaking their tokens.
+The `RequestUnbonding` message allows a worker to initiate unbonding of their stake.
 
 #### Business Logic
-1.  **Validation**:
-    *   Checks if the request is valid (not nil).
-    *   Verifies the creator address format.
-    *   Checks if the worker exists (`ErrWorkerNotFound`).
-    *   **Stake Check**: Verifies that the worker has a non-zero stake. If `Stake == 0`, the request is rejected with `ErrInvalidRequest` ("worker has no stake to unbond").
-    *   Checks if an unbonding request already exists for the worker (`ErrUnbondingAlreadyRequested`).
-    *   Verifies the block height is within safe bounds.
+1. **Validation**:
+   * Validate that the request is not nil.
+   * Verify creator address format.
+   * Ensure the worker exists (`ErrWorkerNotFound`).
+   * **Stake check**: require a non-zero stake. If `Stake == 0`, reject with `ErrInvalidRequest` (`worker has no stake to unbond`).
+   * Ensure no unbonding request already exists for the worker (`ErrUnbondingAlreadyRequested`).
+   * Verify block height is within safe bounds.
 
-2.  **Execution**:
-    *   Calculates the release height (`CurrentHeight + UnbondingPeriodBlocks`).
-    *   Creates an `Unbonding` record with the calculated release height and the worker's current stake.
-    *   Removes the `Worker` record immediately (worker exits active set).
-    *   Emits a `workload_request_unbonding` event.
+2. **Execution**:
+   * Compute release height as (`CurrentHeight + UnbondingPeriodBlocks`).
+   * Create an `Unbonding` record with computed release height and current worker stake.
+   * Remove the `Worker` record immediately (worker exits active set).
+   * Emit `workload_request_unbonding` event.
 
 
 ### FinalizeUnbonding
 
-The `FinalizeUnbonding` message allows a user to claim their unbonded tokens after the unbonding period has elapsed.
+The `FinalizeUnbonding` message allows a user to claim unbonded tokens after the cooldown elapses.
 
 #### Business Logic
-1.  **Validation**:
-    *   Checks if the request is valid (not nil).
-    *   Verifies the creator address format.
-    *   Checks if an `Unbonding` record exists for the creator (`ErrUnbondingNotFound`).
-    *   Checks if the current block height has reached or exceeded the `ReleaseHeight` (`ErrUnbondingCooldownNotReached`).
+1. **Validation**:
+   * Validate that the request is not nil.
+   * Verify creator address format.
+   * Check that an `Unbonding` record exists for the creator (`ErrUnbondingNotFound`).
+   * Check whether current block height is at least the `ReleaseHeight` (`ErrUnbondingCooldownNotReached`).
 
-2.  **Execution**:
-    *   Retrieves the stored `Unbonding` amount.
-    *   Transfers the unbonded tokens from the module account back to the user's account (via BankKeeper).
-    *   Removes the `Unbonding` record from the store.
-    *   Emits a `workload_finalize_unbonding` event.
+2. **Execution**:
+   * Read stored unbonding amount.
+   * Transfer tokens from module account back to user account via BankKeeper.
+   * Remove `Unbonding` record from store.
+   * Emit `workload_finalize_unbonding` event.
 
 #### State Consistency
-*   **Worker Removal**: The `Worker` record is removed during `RequestUnbonding`. `FinalizeUnbonding` ensures that no "zombie" worker record exists.
-*   **Unbonding Cleanup**: The `Unbonding` record is strictly removed upon successful finalization to prevent double spending.
+* **Worker removal**: `Worker` is removed during `RequestUnbonding`; `FinalizeUnbonding` ensures no stale "zombie" worker entries remain.
+* **Unbonding cleanup**: remove `Unbonding` record only after successful finalization to avoid duplicate reclaim.
 
 ### Test Coverage
-*   `x/workload/keeper`: ~92.7%
-*   New Test: `TestFinalizeUnbonding_StateConsistency` verifies that:
-    1.  Worker record is removed after `RequestUnbonding`.
-    2.  Unbonding record is created correctly.
-    3.  After `FinalizeUnbonding`, both Worker and Unbonding records are absent.
+* `x/workload/keeper`: ~92.7%
+* New test `TestFinalizeUnbonding_StateConsistency` covers:
+  1. Worker record is removed after `RequestUnbonding`.
+  2. Unbonding record is created correctly.
+  3. After `FinalizeUnbonding`, both worker and unbonding records are absent.
 
 ## Compute Module
 
 ### CreateComputeJob
 
-The `CreateComputeJob` message allows a user to submit a compute job which creates a task in the Workload module.
+The `CreateComputeJob` message lets a user submit compute work that becomes a Workload task.
 
 #### Business Logic
-1.  **Validation**:
-    *   Checks if the payload is empty (`ErrInvalidPayload`).
-    *   Verifies the creator address format.
+1. **Validation**:
+   * Reject empty payload (`ErrInvalidPayload`).
+   * Verify creator address format.
 
-2.  **Execution**:
-    *   Creates a `Task` in the Workload module with the provided payload as `IpfsHash`.
-    *   Returns the new `JobId` (which corresponds to the Task ID in Workload module).
+2. **Execution**:
+   * Create a `Task` in Workload with payload stored as `IpfsHash`.
+   * Return new `JobId` (same as Workload task ID).
 
 ### Integration Test
-*   `TestCreateComputeJob_Integration`:
-    *   Verifies that calling `CreateComputeJob` creates a corresponding task in `Workload` module.
-    *   Queries the task using the returned `JobId` to confirm side effects.
-    *   Validates error handling for empty payload.
+* `TestCreateComputeJob_Integration`:
+  * Verifies that `CreateComputeJob` creates corresponding `Workload` task.
+  * Queries by returned `JobId` to validate side effects.
+  * Checks empty payload rejection path.
 
-## 产品层最小 API 联调（Create Account -> Balance -> Transfer -> GetTx）
+## Product-layer minimal API smoke (Create Account -> Balance -> Transfer -> GetTx)
 
-> 目标：用一套可脚本化步骤，验证产品层最小交易闭环。
+> Goal: provide a scriptable sequence that validates the minimal product-layer transaction loop.
 
-### 前置
-- RPC endpoint 可用（默认 `http://127.0.0.1:8545`）
-- 测试账户已注资（本地 dev/faucet 均可）
+### Prerequisites
+- RPC endpoint reachable (default `http://127.0.0.1:8545`)
+- Test accounts funded (local dev/faucet acceptable)
 
-### 1) 创建账户（示例）
+### 1) Create accounts (example)
 
 ```bash
-# 示例：本地生成一对测试地址；也可替换为你现有的钱包地址
+# Example: generate two test addresses locally; replace with your wallet addresses if needed
 ALICE_ADDR=${ALICE_ADDR:-trnm1alice...}
 BOB_ADDR=${BOB_ADDR:-trnm1bob...}
 RPC_URL=${RPC_URL:-http://127.0.0.1:8545}
 ```
 
-### 2) 查询余额（balance）
+### 2) Query balance
 
 ```bash
-curl -sS "$RPC_URL" -H 'content-type: application/json' -d "{
-  \"jsonrpc\":\"2.0\",
-  \"id\":1,
-  \"method\":\"balance\",
-  \"params\":{\"address\":\"$ALICE_ADDR\"}
-}"
+curl -sS "$RPC_URL" -H 'content-type: application/json' -d '{
+  "jsonrpc":"2.0",
+  "id":1,
+  "method":"balance",
+  "params":{"address":"$ALICE_ADDR"}
+}'
 ```
 
-### 3) 转账（nonce + sendTx）
+### 3) Transfer (nonce + sendTx)
 
 ```bash
-# 先取 nonce
-NONCE=$(curl -sS "$RPC_URL" -H 'content-type: application/json' -d "{
-  \"jsonrpc\":\"2.0\",
-  \"id\":2,
-  \"method\":\"nonce\",
-  \"params\":{\"address\":\"$ALICE_ADDR\"}
-}" | jq -r '.result.nonce')
+# Get nonce first
+NONCE=$(curl -sS "$RPC_URL" -H 'content-type: application/json' -d '{
+  "jsonrpc":"2.0",
+  "id":2,
+  "method":"nonce",
+  "params":{"address":"$ALICE_ADDR"}
+}' | jq -r '.result.nonce')
 
-# 发交易（signature 按你的 signer/钱包实现替换）
-TX_HASH=$(curl -sS "$RPC_URL" -H 'content-type: application/json' -d "{
-  \"jsonrpc\":\"2.0\",
-  \"id\":3,
-  \"method\":\"sendTx\",
-  \"params\":{
-    \"from\":\"$ALICE_ADDR\",
-    \"to\":\"$BOB_ADDR\",
-    \"amount\":\"1000000\",
-    \"denom\":\"utrnm\",
-    \"nonce\":$NONCE,
-    \"signature\":\"0x...\"
+# Submit tx (replace signature with your signer/wallet implementation)
+TX_HASH=$(curl -sS "$RPC_URL" -H 'content-type: application/json' -d '{
+  "jsonrpc":"2.0",
+  "id":3,
+  "method":"sendTx",
+  "params":{
+    "from":"$ALICE_ADDR",
+    "to":"$BOB_ADDR",
+    "amount":"1000000",
+    "denom":"utrnm",
+    "nonce":$NONCE,
+    "signature":"0x..."
   }
-}" | jq -r '.result.txHash')
+}' | jq -r '.result.txHash')
 
 echo "tx_hash=$TX_HASH"
 ```
 
-### 4) 查询交易（getTx）
+### 4) Query transaction (getTx)
 
 ```bash
-curl -sS "$RPC_URL" -H 'content-type: application/json' -d "{
-  \"jsonrpc\":\"2.0\",
-  \"id\":4,
-  \"method\":\"getTx\",
-  \"params\":{\"txHash\":\"$TX_HASH\"}
-}"
+curl -sS "$RPC_URL" -H 'content-type: application/json' -d '{
+  "jsonrpc":"2.0",
+  "id":4,
+  "method":"getTx",
+  "params":{"txHash":"$TX_HASH"}
+}'
 ```
 
-### 一键 smoke（推荐）
+### One-command smoke (recommended)
 
 ```bash
 cd /Users/qianqi/.openclaw/workspace/TrillionniumChain
 ./scripts/v2/product_layer_smoke.sh
 ```
 
-标准输出会打印清晰的 PASS/FAIL 以及关键字段：
+The standard output prints explicit PASS/FAIL fields, such as:
 - `address`
 - `tx_hash`
 - `status`
 
-可选环境变量：
-- `CLI_BIN`（默认 `cargo run -q -p trnm-cli --`）
+Optional environment variables:
+- `CLI_BIN` (default `cargo run -q -p trnm-cli --`)
 - `WALLET_STORE` / `RUN_DIR`
 - `ALICE_NAME` / `BOB_NAME`
 - `TRANSFER_AMOUNT` / `DENOM`
 
-### 通过标准
-- `wallet create` 成功并产出 `address`
-- `query balance` 成功返回 `address/balance`
-- `tx transfer` 成功返回 `tx_hash`
-- `getTx` 返回 `status`
-- 脚本结尾输出 `[SMOKE][PASS] product-layer smoke`
+### Pass criteria
+- `wallet create` succeeds and prints `address`
+- `query balance` returns `address/balance`
+- `tx transfer` returns `tx_hash`
+- `getTx` returns `status`
+- script ends with `[SMOKE][PASS] product-layer smoke`
 
 ## E2E Worker Runbook (Job -> Execute -> Commit)
 
 ### Prerequisites
-- Local chain is running (`chaind status` returns latest height)
-- Docker daemon is running
+- Local chain running (`chaind status` returns latest height)
+- Docker daemon running
 - Worker config exists at `worker/config.yaml`
 
 ### 1) Batch submit jobs (with sequence-mismatch retry)
@@ -185,70 +187,70 @@ cd /Users/qianqi/.openclaw/workspace/TrillionniumChain
 
 The smoke script automatically:
 1. checks chain availability
-2. ensures a single worker instance
+2. ensures exactly one worker instance
 3. submits N jobs
 4. waits for processing
-5. verifies `result committed on-chain` appears N times in `worker/worker.log`
+5. checks `worker/worker.log` contains `result committed on-chain` exactly N times
 
-### 3) Pass criteria
-- script exits with code `0`
-- terminal prints `SMOKE PASS ✅`
-- worker log contains entries like:
+### Pass criteria
+- Script exits with code `0`
+- Terminal prints `SMOKE PASS ✅`
+- Worker log contains entries like:
   - `Submitting MsgCompleteJob for Job <id>...`
   - `✅ Job <id> result committed on-chain`
 
-## Rust Worker Receipt Gate（唯一入口）
+## Rust Worker Receipt Gate (single entrypoint)
 
-在仓库根目录执行：
+Run from repository root:
 
 ```bash
 ./scripts/v2/run_worker_receipt_gates.sh
 ```
 
-说明：
-- 这是 worker 回执门禁的唯一入口命令（与 CI / relay 一致）。
-- 内部包含：
+Notes:
+- This is the only supported entrypoint for worker receipt gating (aligned with CI and relay).
+- It includes:
   1. `worker_agent_full_loop.sh`
   2. `worker_replay_guard_test.sh`
   3. `worker_failed_receipt_test.sh`
   4. `worker_resume_no_duplicate_test.sh`
 
-真实 CLI 就绪度检查（接入前建议先跑）：
+Readiness check for real CLI (run before integration):
 
 ```bash
 ./scripts/v2/worker_real_cli_readiness.sh
-# 强制模式：未就绪则直接非 0 退出
+# Strict mode: non-zero exit when prerequisites are not met
 REQUIRE_REAL_TX_CLI=1 ./scripts/v2/worker_real_cli_readiness.sh
 ```
 
-真实 CLI 全量门禁（readiness + receipt gates 一键）：
+Full real-cli gate (readiness + receipt gates):
 
 ```bash
 TRNM_TX_CLI=<your-real-tx-cli> ./scripts/v2/run_worker_receipt_gates_real_cli.sh
-# 本地最小示例（wrapper）
+# Local minimal wrapper example
 TRNM_TX_CLI=./scripts/v2/trnm_tx_cli_wrapper.sh ./scripts/v2/run_worker_receipt_gates_real_cli.sh
-# Rust-native CLI（先 build）
-TRNM_TX_CLI=./trillionnium-rust/target/debug/trnm-cli ./scripts/v2/run_worker_receipt_gates_real_cli.sh
-# 真实链适配器（按环境变量配置真实 tx 命令）
+# Rust-native CLI (build first)
+TRNM_TX_CLI=./trillionnium/target/debug/trnm-cli ./scripts/v2/run_worker_receipt_gates_real_cli.sh
+# Real-chain adapter (configured via env vars)
 TRNM_TX_CLI=./scripts/v2/trnm_tx_cli_real_adapter.sh ./scripts/v2/run_worker_receipt_gates_real_cli.sh
 ```
 
-推荐先用环境模板：
+Recommended environment template flow:
 
 ```bash
 cp scripts/v2/worker_real_cli.env.example /tmp/worker_real_cli.env
-# 编辑 /tmp/worker_real_cli.env 中的 TRNM_TX_COMMIT_CMD / TRNM_TX_REVEAL_CMD
+# Edit TRNM_TX_COMMIT_CMD / TRNM_TX_REVEAL_CMD inside /tmp/worker_real_cli.env
 source /tmp/worker_real_cli.env
 TRNM_TX_CLI=./scripts/v2/trnm_tx_cli_real_adapter.sh ./scripts/v2/run_worker_receipt_gates_real_cli.sh
 ```
 
-真实适配模板与规范：
-- 规范：`docs/protocol/worker-real-tx-cli-adapter-spec.md`
-- 模板：`scripts/v2/trnm_tx_cli_real_adapter.template.sh`
+Adapter spec/template references:
+- Spec: `docs/protocol/worker-real-tx-cli-adapter-spec.md`
+- Template: `scripts/v2/trnm_tx_cli_real_adapter.template.sh`
 
-### PR-1 安全补丁配套门禁（Tests-Docs）
+### PR-1 companion gates (Tests-Docs)
 
-在仓库根目录执行：
+Run from repository root:
 
 ```bash
 ./scripts/v2/rpc_query_hardcap_enforcement_test.sh
@@ -256,16 +258,16 @@ TRNM_TX_CLI=./scripts/v2/trnm_tx_cli_real_adapter.sh ./scripts/v2/run_worker_rec
 ./scripts/v2/worker_real_cli_fake_wrapper_block_test.sh
 ```
 
-门禁说明：
-- `rpc_query_hardcap_enforcement_test.sh`：验证 RPC 查询 hard cap 的 clamp 逻辑（超限被截断、0 回落默认值）。
-- `governance_value_schema_reject_test.sh`：验证治理参数 value schema（非法 u64 / 非严格 bool）会被拒绝。
-- `worker_real_cli_fake_wrapper_block_test.sh`：验证 fake wrapper 在 strict real-cli gate 下会被拦截（必须非 0 退出）。
+Gate notes:
+- `rpc_query_hardcap_enforcement_test.sh`: verifies query hard-cap clamp behavior (cap upper bound, and zero falling back to default).
+- `governance_value_schema_reject_test.sh`: verifies invalid u64 / non-strict bool governance params are rejected.
+- `worker_real_cli_fake_wrapper_block_test.sh`: verifies strict real-cli gate blocks fake wrapper (must exit non-zero).
 
-建议将以上三项与 `run_worker_receipt_gates_real_cli.sh` 组合为 PR-1 最小验收集。
+Recommended set: combine the three checks above with `run_worker_receipt_gates_real_cli.sh` as PR-1 minimum acceptance.
 
-### PR-2 安全补丁配套门禁（Timeout + Challenge Bond）
+### PR-2 companion gates (Timeout + Challenge Bond)
 
-在仓库根目录执行：
+Run from repository root:
 
 ```bash
 ./scripts/v2/pouw_commit_timeout_migration_test.sh
@@ -273,201 +275,208 @@ TRNM_TX_CLI=./scripts/v2/trnm_tx_cli_real_adapter.sh ./scripts/v2/run_worker_rec
 ./scripts/v2/challenge_bond_enforcement_test.sh
 ```
 
-门禁说明：
-- `pouw_commit_timeout_migration_test.sh`：扫描并执行 `commit -> timeout` 迁移相关测试（关键词：`commit + timeout + migration`）。
-- `pouw_challenge_timeout_migration_test.sh`：扫描并执行 `challenge -> timeout` 迁移相关测试（关键词：`challenge + timeout + migration`）。
-- `challenge_bond_enforcement_test.sh`：扫描并执行 challenge bond 强制校验相关测试（关键词：`challenge + bond + enforce/min`）。
+Gate notes:
+- `pouw_commit_timeout_migration_test.sh`: scans and executes `commit -> timeout` migration tests (keywords: `commit + timeout + migration`).
+- `pouw_challenge_timeout_migration_test.sh`: scans and executes `challenge -> timeout` migration tests (keywords: `challenge + timeout + migration`).
+- `challenge_bond_enforcement_test.sh`: scans and executes challenge bond enforcement tests (keywords: `challenge + bond + enforce/min`).
 
-验收清单（PR-2）：
-- [ ] 三个脚本均成功退出（exit code = 0）
-- [ ] 输出中至少命中并执行了目标测试（不是 0 tests）
-- [ ] commit 阶段超时迁移路径覆盖
-- [ ] challenge 阶段超时迁移路径覆盖
-- [ ] challenge 最小 bond / bond enforcement 拒绝路径覆盖
+PR-2 acceptance list:
+- [ ] All three scripts exit with code 0
+- [ ] Target tests are actually executed (non-zero test count)
+- [ ] `commit` timeout migration path covered
+- [ ] `challenge` timeout migration path covered
+- [ ] minimum bond / bond enforcement rejection path covered
 
-> 说明：脚本会先从 `cargo test -- --list` 中按关键词发现测试；若未发现对应测试，会直接 `FAIL`，用于防止“脚本通过但用例缺失”的假阳性。
+> Note: each script discovers tests via `cargo test -- --list` by keyword; it fails immediately if no matching tests are found. This is intentional to avoid green checks with missing test coverage.
 
-### PR-4 门禁（罚没资金流向 + 审计字段可见）
+### PR-4 gate (forfeited funds flow + audit field visibility)
 
-在仓库根目录执行：
+Run from repository root:
 
 ```bash
 ./scripts/v2/pr4_challenge_fundflow_audit_gate.sh
 ```
 
-门禁说明：
-- `bond_forfeiture_flow_test`：验证 challenge 失败后 bond 罚没路径（`challenge_bond_forfeited=true`）。
-- `bond_refund_flow_test`：验证 challenge 成功且 worker 被 slash 时 challenger bond 返还路径（`challenge_bond_forfeited=false`）。
-- `event_audit_fields_visibility`：验证 resolve 事件审计字段可见（至少包含 `signer/challenger/tx_hash/slash_worker/resolution_code`）。
+Gate notes:
+- `bond_forfeiture_flow_test`: verifies challenge failure forfeits bond path (`challenge_bond_forfeited=true`).
+- `bond_refund_flow_test`: verifies successful challenge + worker slash returns challenger bond (`challenge_bond_forfeited=false`).
+- `event_audit_fields_visibility`: checks resolve event exposes audit fields (must include `signer/challenger/tx_hash/slash_worker/resolution_code`).
 
-产物目录：
-- 默认写入 `run/pr4-gates/<timestamp>/`（UTC 时间戳）
-- 汇总文件：`summary.txt`（包含 `generated_at_utc`）
-- 各步骤日志：`bond_forfeiture_flow_test.log` / `bond_refund_flow_test.log` / `event_audit_fields_visibility.log`
+Artifacts:
+- default output dir: `run/pr4-gates/<timestamp>/` (UTC)
+- summary: `summary.txt` (includes `generated_at_utc`)
+- per-step logs: `bond_forfeiture_flow_test.log` / `bond_refund_flow_test.log` / `event_audit_fields_visibility.log`
 
-验收 checklist（PR-4）：
-- [ ] 脚本退出码为 0
-- [ ] `summary.txt` 中 `status=PASS`
-- [ ] 罚没路径测试通过（forfeiture）
-- [ ] 返还路径测试通过（refund）
-- [ ] resolve 事件包含 `signer/challenger/tx_hash/slash_worker/resolution_code`
+PR-4 acceptance checklist:
+- [ ] Script exits 0
+- [ ] `summary.txt` contains `status=PASS`
+- [ ] Forfeiture path passes
+- [ ] Refund path passes
+- [ ] resolve event includes `signer/challenger/tx_hash/slash_worker/resolution_code`
 
-### PR-5 运维查询与对账（Challenge Treasury / Forfeits）
+### PR-5 operations query and reconciliation (Challenge Treasury / Forfeits)
 
-#### A) 快速查询（按 task）
+#### A) Fast query by task
 
-在 `trillionnium-rust/` 下执行：
+Run in `trillionnium/`:
 
 ```bash
-# 查询单 task 的事件轨迹（含 challenge/resolve 审计字段）
+# Query single task event trail, including challenge/resolve audit fields
 cargo run -q -p trnm-rpc -- query-events --task-id <TASK_ID> --limit 100
 ```
 
-重点字段：
-- `event_type`（`challenge` / `resolve`）
+Key fields:
+- `event_type` (`challenge` / `resolve`)
 - `treasury_delta`
 - `challenger_delta`
-- `bond_disposition`（`posted/forfeited/refunded`）
+- `bond_disposition` (`posted/forfeited/refunded`)
 - `resolution_code`
 
-#### B) 每日对账（日志聚合）
+#### B) Daily reconciliation (log aggregation)
 
-在仓库根目录执行：
+Run from repository root:
 
 ```bash
 ./scripts/v2/pr5_treasury_reconcile_report.sh
 ```
 
-脚本会自动选择事件日志源（优先 `trillionnium-rust/run/event-field-check.log`），并输出：
+The script auto-selects event-log source (preferred: `trillionnium/run/event-field-check.log`) and outputs:
 - `run/pr5-reconcile/<timestamp>/summary.txt`
 - `run/pr5-reconcile/<timestamp>/reconcile.json`
 
-可选参数：
-- `SOURCE_LOG=<path>`：强制指定日志输入
-- `OUT_DIR=<path>`：指定输出目录
+Optional args:
+- `SOURCE_LOG=<path>`: force log input
+- `OUT_DIR=<path>`: custom output directory
 
-#### C) PR-5 验收 checklist
+#### C) PR-5 acceptance checklist
 
-- [ ] `query-events` 可查到 `challenge/resolve` 事件
-- [ ] 事件中可见 `treasury_delta/challenger_delta/bond_disposition`
-- [ ] `pr5_treasury_reconcile_report.sh` 成功输出 `summary.txt`
-- [ ] `summary.txt` 中 `status=PASS`
+- [ ] `query-events` can return `challenge/resolve` events
+- [ ] Output contains `treasury_delta/challenger_delta/bond_disposition`
+- [ ] `pr5_treasury_reconcile_report.sh` successfully writes `summary.txt`
+- [ ] `summary.txt` has `status=PASS`
 
-更多操作细节：见 `docs/runbooks/l19_ops_observability_alerting_reconcile_runbook.md` 的 PR-5 小节；脚本内联帮助仍是最近实现细节的真值来源。
+For more details see `docs/runbooks/l19_ops_observability_alerting_reconcile_runbook.md` PR-5 section; inline script help is authoritative for exact implementation details.
 
-## PR-6 Alert Rules（Challenge Treasury 异常告警）
+## PR-6 Alert Rules (Challenge Treasury Anomaly Alerts)
 
-执行：
+Run:
 
 ```bash
 ./scripts/v2/pr6_alert_rules_gate.sh
 ```
 
-默认输出：
-- `run/pr6-alerts/<timestamp>/summary.txt`（UTC 时间戳目录）
-- 机器可解析字段：`status=PASS|WARN|FAIL` + `rule.*`
+Default output:
+- `run/pr6-alerts/<timestamp>/summary.txt` (timestamped by UTC)
+- machine-parseable fields: `status=PASS|WARN|FAIL` and `rule.*`
 
-阈值参数（环境变量）：
+Threshold env vars:
 - `FAIL_UNRESOLVED_CHALLENGES` / `WARN_UNRESOLVED_CHALLENGES`
 - `FAIL_FORFEITS_DAILY_INCREASE` / `WARN_FORFEITS_DAILY_INCREASE`
 - `FAIL_ESCROW_NONZERO_HOURS` / `WARN_ESCROW_NONZERO_HOURS`
-- `CI_HARD_FAIL_ON_WARN=1`（WARN 也返回非 0）
+- `CI_HARD_FAIL_ON_WARN=1` (make WARN return non-zero)
 
-Runbook：见 `docs/runbooks/l19_ops_observability_alerting_reconcile_runbook.md` 的 PR-6 小节；若与脚本行为冲突，以 `./scripts/v2/pr6_alert_rules_gate.sh` 和生成的 `run/pr6-alerts/*/summary.txt` 为准。
+Runbook: see `docs/runbooks/l19_ops_observability_alerting_reconcile_runbook.md` PR-6 section. If behavior conflicts, `./scripts/v2/pr6_alert_rules_gate.sh` and generated `run/pr6-alerts/*/summary.txt` take precedence.
 
-## PR-7 Alert Delivery（告警投递）
+## PR-7 Alert Delivery
 
-将 PR-6 `WARN/FAIL` 告警投递到消息通道（Slack webhook 或 Telegram bot），并提供窗口去重防抖。
+Use this gate to deliver PR-6 `WARN`/`FAIL` alerts to Slack/Telegram and apply windowed de-duplication.
 
-执行（推荐串联）：
+Run (recommended chain):
 
 ```bash
 DRY_RUN=1 ALERT_NOTIFY_CHANNEL=slack ./scripts/v2/pr7_alert_delivery_gate.sh
 ```
 
-常用环境变量：
+Common env vars:
 - `ALERT_NOTIFY_CHANNEL=slack|telegram|imessage`
 - `ALERT_NOTIFY_PRIMARY_CHANNEL`
 - `ALERT_NOTIFY_BACKUP_CHANNEL`
-- `ALERT_NOTIFY_MIN_LEVEL=INFO|WARN|CRITICAL`（兼容 `PASS->INFO`、`FAIL->CRITICAL` 别名）
+- `ALERT_NOTIFY_MIN_LEVEL=INFO|WARN|CRITICAL` (`PASS->INFO`, `FAIL->CRITICAL` aliases accepted)
 - `ALERT_NOTIFY_DEDUP_SECONDS=1800`
 - `ALERT_NOTIFY_STATE_FILE=run/pr7-alert-delivery/state.json`
 - `ALERT_NOTIFY_AUDIT_FILE=run/pr7-alert-delivery/audit.jsonl`
 - `ALERT_NOTIFY_DEAD_LETTER_FILE=run/pr7-alert-delivery/dead-letter.jsonl`
 - `ALERT_NOTIFY_GLOBAL_RETRY_BUDGET_STATE_FILE=run/pr7-alert-delivery/retry-budget-state.json`
-- `PR7_DELIVERY_FAIL_MODE=ignore|warn|escalate`（默认 `ignore`；`escalate` 时投递失败会把 gate 最终返回码提升为 `4`）
-- `DRY_RUN=1`（本地演示，不依赖真实密钥）
+- `PR7_DELIVERY_FAIL_MODE=ignore|warn|escalate` (default ignore; escalate raises final gate code to 4 on delivery failure)
+- `DRY_RUN=1` (local simulation without real credentials)
 - Slack: `SLACK_WEBHOOK_URL`
 - Telegram: `TELEGRAM_BOT_TOKEN` + `TELEGRAM_CHAT_ID`
 - iMessage: `IMESSAGE_TO`
 
-排障产物：
-- `run/pr7-alerts/<timestamp>-pid*/summary.txt`：PR-6 生成的原始告警摘要
-- `run/pr7-alerts/<timestamp>-pid*/policy.env`：本次 PR-6/PR-7 链路生效的阈值/策略快照（便于复盘告警为何命中或未命中）
-- `run/pr7-alerts/<timestamp>-pid*/pr7-delivery-status.env`：PR-7 最终状态（`status/pr6_rc/pr7_rc/final_rc/fail_mode/delivery_event/primary_channel/backup_channel/success_channels/failed_channels/channels_ok/channels_failed/partial_success/run_dir/lock_dir/report/audit_file/generated_at_utc`）
-- `run/pr7-alert-delivery/state.json`：累计投递/抑制/失败统计与最近一次投递元数据
-- `run/pr7-alert-delivery/audit.jsonl`：逐次投递/抑制/失败审计流
-- `run/pr7-alert-delivery/dead-letter.jsonl`：重试耗尽后的 dead-letter 记录
-- `run/pr7-alert-delivery/retry-budget-state.json`：跨运行的全局重试预算状态
+Troubleshooting artifacts:
+- `run/pr7-alerts/<timestamp>-pid*/summary.txt`: raw alert summary from PR-6
+- `run/pr7-alerts/<timestamp>-pid*/policy.env`: policy snapshot used in this PR-6/PR-7 chain
+- `run/pr7-alerts/<timestamp>-pid*/pr7-delivery-status.env`: final PR-7 status fields (`status/pr6_rc/pr7_rc/final_rc/fail_mode/delivery_event/primary_channel/backup_channel/success_channels/failed_channels/channels_ok/channels_failed/partial_success/run_dir/lock_dir/report/audit_file/generated_at_utc`)
+- `run/pr7-alert-delivery/state.json`: cumulative delivery/suppression/failure counters and latest metadata
+- `run/pr7-alert-delivery/audit.jsonl`: per-attempt delivery/suppression/fail audit stream
+- `run/pr7-alert-delivery/dead-letter.jsonl`: dead-letter after retry exhaustion
+- `run/pr7-alert-delivery/retry-budget-state.json`: cross-run global retry budget
 
-建议：
-- 本地 dry-run 默认用 `PR7_DELIVERY_FAIL_MODE=warn`，既保留 `pr7_rc` 可观测性，又不把临时通道故障误判成规则引擎失败。
-- CI / cron 若要求“规则通过但投递失败也要报警”，改用 `PR7_DELIVERY_FAIL_MODE=escalate`。
+Suggestion:
+- For local dry runs use `PR7_DELIVERY_FAIL_MODE=warn` to keep `pr7_rc` visible without turning temporary channel failure into gate failure.
+- For workflows requiring "alerts must page when delivery fails": set `PR7_DELIVERY_FAIL_MODE=escalate`.
 
-Runbook：见 `docs/runbooks/l19_ops_observability_alerting_reconcile_runbook.md` 的 PR-7 小节；若与脚本行为冲突，以 `./scripts/v2/pr7_alert_delivery_gate.sh` / `scripts/v2/pr7_alert_delivery.py` 及 `run/pr7-alerts/*` 产物为准。
+Runbook: see `docs/runbooks/l19_ops_observability_alerting_reconcile_runbook.md` PR-7 section. If behavior conflicts, prefer outputs from `./scripts/v2/pr7_alert_delivery_gate.sh`, `scripts/v2/pr7_alert_delivery.py`, and `run/pr7-alerts/*`.
 
-## PR-6 Nightly Security 日报（自动化）
+## PR-6 Nightly Security Summary (automated)
 
-nightly 在流程末尾自动生成日报：
+Nightly at the end of the flow generates:
 
-- 产物：`run/pr6-ops/daily-security-summary.md`
-- 本地手动重跑：`python3 ./scripts/v2/pr6_daily_security_summary.py`
-- Workflow Summary 小节：`PR-6 Daily Security Ops`
+- artifact: `run/pr6-ops/daily-security-summary.md`
+- local rerun: `python3 ./scripts/v2/pr6_daily_security_summary.py`
+- workflow summary section label: `PR-6 Daily Security Ops`
 
-Runbook：见 `docs/runbooks/l19_ops_observability_alerting_reconcile_runbook.md` 的 PR-6 Nightly Daily Security Summary 小节；若与脚本行为冲突，以 `python3 ./scripts/v2/pr6_daily_security_summary.py` 和生成的 `run/pr6-ops/daily-security-summary.md` 为准。
+Runbook: see `docs/runbooks/l19_ops_observability_alerting_reconcile_runbook.md` PR-6 Nightly Daily Security Summary section. If behavior conflicts, trust script output at `run/pr6-ops/daily-security-summary.md` produced by `python3 ./scripts/v2/pr6_daily_security_summary.py`.
 
-## PR-9 Weekly Alert Governance（每周告警治理）
+## PR-9 Weekly Alert Governance (weekly alert governance)
 
-每周治理报告（非阻断）聚合以下指标：告警总量、抑制率、失败率、实际投递成功率、suppression share、TopN异常、阈值建议变更。
+The weekly governance report (non-blocking) aggregates:
+- total alerts,
+- suppression rate,
+- fail rate,
+- actual delivery success rate,
+- suppression share,
+- TopN anomalies,
+- threshold advice changes.
 
-执行：
+Run:
 
 ```bash
 python3 ./scripts/v2/pr9_weekly_alert_governance.py
 ```
 
-默认输出：
+Default outputs:
 - `run/pr9/weekly-alert-governance.md`
 - `run/pr9/weekly-alert-governance.json`
 - `run/pr9/history/weekly-alert-governance-YYYYMMDDTHHMMSSZ.json`
 
-输入来源（best effort，缺失时不会阻断）：
-- `run/pr7-alert-delivery/state.json`：投递统计（`alerts_sent / alerts_suppressed / alerts_failed`）
-- `run/pr7-alert-delivery/dead-letter.jsonl`：近 `--lookback-days` 窗口内 dead letter 计数
-- `run/pr7-topn/*/topn-anomaly-summary.md`：最新 TopN unresolved / forfeit / escrow 摘要
-- `run/pr7-threshold-advisor/*/threshold-advice.json`：最新阈值建议
-- `run/pr9/alert-thresholds.env` / `run/pr9/alert-thresholds.previous.env`：当前/上一版阈值 env diff
-- `run/pr9/history/weekly-alert-governance-*.json`：上一周 baseline（用于 week-over-week diff；会忽略未来时间戳的 stray snapshot）
+Best-effort inputs (missing data does not hard-fail):
+- `run/pr7-alert-delivery/state.json` delivery stats (`alerts_sent / alerts_suppressed / alerts_failed`)
+- `run/pr7-alert-delivery/dead-letter.jsonl` dead-letter count in `--lookback-days` window
+- `run/pr7-topn/*/topn-anomaly-summary.md` latest TopN unresolved / forfeit / escrow summaries
+- `run/pr7-threshold-advisor/*/threshold-advice.json` latest threshold advice
+- `run/pr9/alert-thresholds.env` / `run/pr9/alert-thresholds.previous.env` threshold env diff
+- `run/pr9/history/weekly-alert-governance-*.json` last-week baseline (for WoW diff; ignores future-stray snapshots)
 
-可选参数：
-- `--lookback-days <n>`：dead letter / 周对比窗口，默认 `7`
-- `--top-n <n>`：报告中保留的 TopN 数量，默认 `5`
-- `--out <path>`：Markdown 输出路径
-- `--json-out <path>`：JSON 输出路径
-- `--history-dir <path>`：历史快照目录
+Optional params:
+- `--lookback-days <n>` dead-letter and weekly comparison window (default 7)
+- `--top-n <n>` TopN size in output (default 5)
+- `--out <path>` markdown output path
+- `--json-out <path>` JSON output path
+- `--history-dir <path>` history snapshot directory
 
-降级/缺失行为：
-- 若缺少上一周 baseline，报告会标记 `baseline unavailable`，但仍输出本周 `.md/.json`。
-- 若缺少 PR7 TopN 或 threshold advice，报告会在 JSON 的 `degraded.*` 字段中标出，并在 Markdown 中写明 `MISSING` / `unavailable`。
-- 若本轮 JSON 负载与最新历史快照完全相同，history 目录会跳过重复快照写入，仅刷新当前 `weekly-alert-governance.md/.json`。
-- 选择 baseline 时会忽略未来时间戳的 stray history snapshot，避免 week-over-week diff 被未来产物污染。
+Degradation/missing-data behavior:
+- if baseline missing, marks `baseline unavailable` but still writes current `.md/.json`
+- if PR7 TopN or threshold advice missing, marks `MISSING` / `unavailable` in JSON `degraded.*` and markdown note
+- if current JSON payload matches latest historical payload exactly, PR-9 skips duplicate write and refreshes only current outputs
+- baseline selection ignores future-timestamp snapshots to avoid WoW contamination
 
-nightly 接入建议：
-- workflow step 使用 `continue-on-error: true`
-- 上传 `run/pr9/**` 到 artifacts
-- Step Summary 增加 `PR-9 Weekly Alert Governance`
+Nightly integration guidance:
+- workflow step: `continue-on-error: true`
+- upload `run/pr9/**` as artifacts
+- workflow summary section: `PR-9 Weekly Alert Governance`
 
-推荐前置（便于得到更完整的 PR-9 报告，而非硬依赖）：
+Recommended pre-step (for richer report):
 
 ```bash
 ./scripts/v2/pr7_topn_summary_gate.sh
@@ -475,120 +484,99 @@ python3 ./scripts/v2/pr7_threshold_advisor.py
 python3 ./scripts/v2/pr9_weekly_alert_governance.py
 ```
 
-Runbook：见 `docs/runbooks/l19_ops_observability_alerting_reconcile_runbook.md` 的 PR-9 小节；若与脚本行为冲突，以 `python3 ./scripts/v2/pr9_weekly_alert_governance.py` 生成的 `run/pr9/weekly-alert-governance.md` / `.json` 为准。
+Runbook: see `docs/runbooks/l19_ops_observability_alerting_reconcile_runbook.md` PR-9 section. If behavior conflicts, use generated `run/pr9/weekly-alert-governance.md` / `.json` from script output.
 
-## PR-9 Weekly Alert Governance（每周告警治理）
+## Agent↔User P2P Phase A (MVP)
 
-每周治理报告（非阻断）聚合以下指标：告警总量、抑制率、失败率、TopN异常、阈值建议变更。
+Primary docs: `docs/protocol/agent-user-p2p-phaseA-ops.md`
 
-执行：
+Supplemental operations doc (batch ack / retry cut-off and triage): `docs/OPERATIONS.md`
 
-```bash
-python3 ./scripts/v2/pr9_weekly_alert_governance.py
-```
-
-默认输出：
-- `run/pr9/weekly-alert-governance.md`
-
-nightly 接入建议：
-- workflow step 使用 `continue-on-error: true`
-- 上传 `run/pr9/**` 到 artifacts
-- Step Summary 增加 `PR-9 Weekly Alert Governance`
-
-Runbook：`docs/runbooks/pr9-weekly-alert-governance.md`
-
-## Agent↔User P2P Phase A（MVP）
-
-文档入口：`docs/protocol/agent-user-p2p-phaseA-ops.md`
-
-补充运维文档（ack 批量 / retry 熔断参数与排障）：`docs/OPERATIONS.md`
-
-最小门禁命令：
+Minimum gate command:
 
 ```bash
-cd trillionnium-rust
+cd trillionnium
 ./scripts/run_agent_user_phasea_gate.sh
 ```
 
-默认：启用 sqlite 持久化 reliability store（可用 `RELIABILITY_STORE=memory` 显式切回内存模式）
+Default uses sqlite persistence for reliability store. Set `RELIABILITY_STORE=memory` to force in-memory mode.
 
 ```bash
-cd trillionnium-rust
-# 可覆盖默认 DB 路径
+cd trillionnium
+# Override DB path if needed
 RELIABILITY_DB_PATH=run/health/reliability-phasea.sqlite \
 ./scripts/run_agent_user_phasea_gate.sh
 ```
 
-### 2h Soak 压测 Harness（submit/dispatch/worker/query 持续闭环）
+### 2h Soak Harness (submit/dispatch/worker/query end-to-end loop)
 
-从仓库根目录执行（默认 2 小时）：
+Run from repository root (default duration 2h):
 
 ```bash
 ./scripts/v2/run_reliability_soak.sh
 ```
 
-快速 smoke（例如 5 分钟）：
+Quick smoke (for example 5 minutes):
 
 ```bash
 ./scripts/v2/run_reliability_soak.sh --duration 5m --clean
 ```
 
-产物（可审计）：
-- `run/health/reliability-soak-<ts>.json`：完整指标与参数
-- `run/health/reliability-soak-<ts>.txt`：人类可读摘要
-- `run/health/reliability-soak-<ts>.audit.jsonl`：逐周期事件审计轨迹
+Auditable artifacts:
+- `run/health/reliability-soak-<ts>.json`: full metrics and parameters
+- `run/health/reliability-soak-<ts>.txt`: human-readable summary
+- `run/health/reliability-soak-<ts>.audit.jsonl`: per-cycle event audit trail
 
-默认行为：
-- `RELIABILITY_STORE=sqlite`（未显式设置时）
-- 持续执行 submit → dispatch-open → run-assigned → flush-submissions → query-request-full
-- 汇总吞吐（submit/terminal TPS）与成功率（提交成功率、终态成功率）
+Default behavior:
+- `RELIABILITY_STORE=sqlite` when not explicitly set
+- continuously runs: submit -> dispatch-open -> run-assigned -> flush-submissions -> query-request-full
+- aggregates throughput (`submit/terminal TPS`) and success rates (submit success, finality success)
 
-一键串联门禁（失败即停，先共识安全矩阵，再 proof 检查，再 Phase A）：
+One-shot chained gate (fail-fast): consensus matrix -> proof checks -> Phase A
 
 ```bash
-cd trillionnium-rust
+cd trillionnium
 ./scripts/run_phasea_security_oneshot.sh
-# 可选：自定义产物根目录
+# Optional: custom root output directory
 # RUN_ROOT=/tmp/trnm-gate-oneshot ./scripts/run_phasea_security_oneshot.sh
 ```
 
-结果解读（one-shot）：
-- 第一步（共识安全矩阵）摘要：`<RUN_ROOT>/consensus-security/summary.txt`
-  - `result=PASS`：矩阵全通过
-  - `result=FAIL`：至少一个子项失败（查看同目录 `*.log`）
-- 第二步（proof smoke + tamper）日志：`<RUN_ROOT>/proof-gate.log`
-  - 用例：`relay_session_proof_smoke_and_tamper_matrix`
-  - 覆盖：缺片段 / 顺序错乱 / 内容篡改 / root 不匹配
-- 第三步（Phase A）报告目录：`<RUN_ROOT>/agent-user-phasea/`
-  - 报告文件：`agent-user-phasea-gate-<ts>.txt`
-  - 关键字段应包含：`status=COMMIT_QUEUED`、`verifier_status=accepted`、`status=PASS`
+One-shot result interpretation:
+- Step 1 (consensus security matrix) summary: `<RUN_ROOT>/consensus-security/summary.txt`
+  - `result=PASS`: all matrix items pass
+  - `result=FAIL`: at least one item fails (check `*.log` in same folder)
+- Step 2 (proof smoke + tamper) log: `<RUN_ROOT>/proof-gate.log`
+  - case: `relay_session_proof_smoke_and_tamper_matrix`
+  - coverage: missing segment / out-of-order / content tampering / root mismatch
+- Step 3 (Phase A) outputs: `<RUN_ROOT>/agent-user-phasea/`
+  - report file: `agent-user-phasea-gate-<ts>.txt`
+  - required fields include `status=COMMIT_QUEUED`, `verifier_status=accepted`, `status=PASS`
 
-门禁断言：
-- `trnm-rpc` 与 `trnm-worker-agent` 构建测试通过
-- relay proof smoke + tamper 用例通过（缺片段/顺序错乱/内容篡改/root 不匹配）
-- submit/dispatch/consume/query 最小闭环通过
-- `query-request-full` 满足：`status=COMMIT_QUEUED` 且 `verifier_status=accepted`
+Gate assertions:
+- `trnm-rpc` and `trnm-worker-agent` build/tests pass
+- proof smoke + tamper case passes (missing segment / order confusion / content tamper / root mismatch)
+- minimal end-to-end loop passes: submit/dispatch/consume/query
+- `query-request-full` includes `status=COMMIT_QUEUED` and `verifier_status=accepted`
 
-### Phase A 一键回滚（commit/tag）
+### Phase A one-command rollback (commit/tag)
 
-从仓库根目录执行：
+Run from repository root:
 
 ```bash
 ./scripts/rollback_phasea.sh <commit-or-tag>
-# 跳过交互确认
+# Skip interactive confirmation
 ./scripts/rollback_phasea.sh <commit-or-tag> --yes
 ```
 
-脚本行为（失败即退出）：
-1. 校验目标 commit/tag 可解析
-2. 安全确认（默认要求输入 `ROLLBACK`）
-3. 切换到目标版本（`git checkout --detach`）
-4. 清理运行态（devnet_down + 常见本地进程 + 临时文件）
-5. 执行最小验证：`trillionnium-rust/scripts/run_agent_user_phasea_gate.sh`
+Script behavior (exit on first failure):
+1. Validate target commit/tag resolves
+2. Explicit safety confirmation (default requires typing `ROLLBACK`)
+3. Checkout detached target (`git checkout --detach`)
+4. Clean runtime state (`devnet_down`, common local processes, temp files)
+5. Run minimum verification: `trillionnium/scripts/run_agent_user_phasea_gate.sh`
 
-安全防护：
-- 默认要求工作区干净；如确需覆盖可显式设置 `ALLOW_DIRTY=1`
-- 失败会打印日志路径，默认输出到：
+Safety protections:
+- clean working tree required by default; set `ALLOW_DIRTY=1` if override is explicitly needed
+- on failure, script prints log paths by default:
   - `run/rollback-phasea/<timestamp>/rollback.log`
   - `run/rollback-phasea/<timestamp>/agent-user-phasea/`
-

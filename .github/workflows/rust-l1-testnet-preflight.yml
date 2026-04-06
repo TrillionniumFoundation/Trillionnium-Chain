@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   push:
     paths:
-      - 'trillionnium-rust/**'
+      - 'trillionnium/**'
       - '.github/workflows/rust-l1-testnet-preflight.yml'
 
 permissions:
@@ -51,7 +51,7 @@ jobs:
         run: |
           set -euo pipefail
           export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
-          cd trillionnium-rust
+          cd trillionnium
           ./scripts/testnet_preflight.sh
 
       - name: Upload preflight artifacts
@@ -60,9 +60,9 @@ jobs:
         with:
           name: rust-l1-testnet-preflight-${{ github.run_id }}
           path: |
-            trillionnium-rust/run/preflight/**
-            trillionnium-rust/run/audit/**
-            trillionnium-rust/run/bench/**
-            trillionnium-rust/run/node*.log
-            trillionnium-rust/run/parallel-sanity.log
+            trillionnium/run/preflight/**
+            trillionnium/run/audit/**
+            trillionnium/run/bench/**
+            trillionnium/run/node*.log
+            trillionnium/run/parallel-sanity.log
           if-no-files-found: warn

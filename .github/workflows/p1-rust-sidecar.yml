@@ -14,8 +14,8 @@ on:
       - 'scripts/v2/i2_token_lifecycle_gate.sh'
       - 'scripts/v2/product_layer_smoke.sh'
       - 'examples/sdk-js/**'
-      - 'trillionnium-rust/crates/trnm-rpc/src/**'
-      - 'trillionnium-rust/crates/trnm-rpc/tests/**'
+      - 'trillionnium/crates/trnm-rpc/src/**'
+      - 'trillionnium/crates/trnm-rpc/tests/**'
       - '.github/workflows/p1-rust-sidecar.yml'
 
 permissions:

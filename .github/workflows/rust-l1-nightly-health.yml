@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
   push:
     paths:
-      - 'trillionnium-rust/**'
+      - 'trillionnium/**'
       - '.github/workflows/rust-l1-nightly-health.yml'
 
 concurrency:
@@ -27,13 +27,13 @@ jobs:
       - name: Rust workspace tests
         run: |
           export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
-          cd trillionnium-rust
+          cd trillionnium
           cargo test --workspace
 
       - name: Run devnet + state root audit (baseline)
         run: |
           set -euo pipefail
-          cd trillionnium-rust
+          cd trillionnium
           ./scripts/devnet_up.sh
           # allow initial cargo startup + block production on CI runners
           sleep ${DEVNET_AUDIT_WAIT_SECONDS:-12}
@@ -44,7 +44,7 @@ jobs:
         run: |
           set -euo pipefail
           export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
-          cd trillionnium-rust
+          cd trillionnium
           cargo run -q -p trnm-node -- \
             --config configs/node1.toml \
             --block-ms 5 \
@@ -63,7 +63,7 @@ jobs:
         run: |
           set -euo pipefail
           export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
-          cd trillionnium-rust
+          cd trillionnium
           MVP_MODE=prod ALLOW_MISSING_RESOLVE_EVENT=0 ./scripts/check_event_fields.sh
 
       - name: Validate PoUW timeout migration gates (hard gate)
@@ -83,49 +83,49 @@ jobs:
         run: |
           set -euo pipefail
           export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
-          cd trillionnium-rust
+          cd trillionnium
           RUNS=${PARALLEL_FLAKY_RUNS:-5} ./scripts/check_parallel_flaky.sh
 
       - name: Validate v1 event replay order (hard gate)
         run: |
           set -euo pipefail
           export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
-          cd trillionnium-rust
+          cd trillionnium
           MVP_MODE=prod ALLOW_PARTIAL_EVENT_REPLAY=0 ./scripts/check_event_replay_smoke.sh
 
       - name: BFT 4-node consensus smoke (hard gate)
         run: |
           set -euo pipefail
           export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
-          cd trillionnium-rust
+          cd trillionnium
           ./scripts/check_bft_4node_smoke.sh
 
       - name: BFT restart recovery (hard gate)
         run: |
           set -euo pipefail
           export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
-          cd trillionnium-rust
+          cd trillionnium
           RUNS=${BFT_RECOVERY_RUNS:-20} ./scripts/check_bft_restart_recovery.sh
 
       - name: BFT message auth anti-replay (hard gate)
         run: |
           set -euo pipefail
           export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
-          cd trillionnium-rust
+          cd trillionnium
           ./scripts/check_bft_message_auth.sh
 
       - name: BFT round-change + recovery liveness (hard gate)
         run: |
           set -euo pipefail
           export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
-          cd trillionnium-rust
+          cd trillionnium
           ./scripts/check_bft_round_change.sh
 
       - name: Consensus fault matrix (hard gate)
         run: |
           set -euo pipefail
           export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
-          cd trillionnium-rust
+          cd trillionnium
           BASELINE_MAX_FINALITY_P95_MS=${BASELINE_MAX_FINALITY_P95_MS:-100} \
           SLOW_BLOCK_MAX_FINALITY_P95_MS=${SLOW_BLOCK_MAX_FINALITY_P95_MS:-300} \
           RESTART_RECOVERY_MAX_FINALITY_P95_MS=${RESTART_RECOVERY_MAX_FINALITY_P95_MS:-200} \
@@ -138,14 +138,14 @@ jobs:
         run: |
           set -euo pipefail
           export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
-          cd trillionnium-rust
+          cd trillionnium
           ./scripts/run_request_fault_injection.sh
 
       - name: Request tx-hash binding (hard gate)
         run: |
           set -euo pipefail
           export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
-          cd trillionnium-rust
+          cd trillionnium
           ./scripts/check_request_tx_binding.sh
 
       - name: Challenge reexec bundle smoke (hard gate)
@@ -182,7 +182,7 @@ jobs:
         run: |
           set -euo pipefail
           export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
-          cd trillionnium-rust
+          cd trillionnium
 
           OUT_DIR="run/bench"
           mkdir -p "$OUT_DIR"
@@ -223,32 +223,32 @@ jobs:
       - name: Run bench matrix
         run: |
           export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
-          cd trillionnium-rust
+          cd trillionnium
           TXS=5000 ./scripts/run_bench_matrix.sh
 
       - name: Run mixed workload matrix
         run: |
           export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
-          cd trillionnium-rust
+          cd trillionnium
           TXS=5000 ./scripts/run_bench_mixed_matrix.sh
 
       - name: Run executor strategy experiment (mixed, non-gate)
         run: |
           export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
-          cd trillionnium-rust
+          cd trillionnium
           TXS=10000 KEYS=2000 READ_FANOUT=4 WRITE_EVERY=2 ./scripts/run_executor_strategy_experiment.sh
 
       - name: Run executor strategy experiment (hotspot, non-gate)
         run: |
           export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
-          cd trillionnium-rust
+          cd trillionnium
           TXS=10000 KEYS=256 READ_FANOUT=4 WRITE_EVERY=1 ./scripts/run_executor_hotspot_experiment.sh
 
       - name: Run aggressive-vs-original regression matrix
         run: |
           set -euo pipefail
           export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
-          cd trillionnium-rust
+          cd trillionnium
           TXS=${REGRESSION_MATRIX_TXS:-10000} ./scripts/run_bench_regression_matrix.sh
 
       - name: Build aggressive profiling summary
@@ -256,7 +256,7 @@ jobs:
         run: |
           set -euo pipefail
           export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
-          cd trillionnium-rust
+          cd trillionnium
 
           ./scripts/summarize_aggressive_profile.py
           latest_summary=$(ls -1t run/bench/aggressive-profile-summary-*.md | head -n 1)
@@ -270,7 +270,7 @@ jobs:
         run: |
           set -euo pipefail
           export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
-          cd trillionnium-rust
+          cd trillionnium
           MODE=${AGGRESSIVE_REGRESSION_MODE:-hard} \
           AGGRESSIVE_MAX_RATIO_CLASSIC=${AGGRESSIVE_MAX_RATIO_CLASSIC:-2.20} \
           AGGRESSIVE_MAX_RATIO_MIXED=${AGGRESSIVE_MAX_RATIO_MIXED:-2.00} \
@@ -280,20 +280,20 @@ jobs:
       - name: Run auto-adaptive threshold sweep (non-gate)
         run: |
           export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
-          cd trillionnium-rust
+          cd trillionnium
           TXS=5000 KEYS=1000 READ_FANOUT=4 WRITE_EVERY=2 ./scripts/run_auto_adaptive_threshold_sweep.sh
 
       - name: Build executor profiling summary
         run: |
           export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
-          cd trillionnium-rust
+          cd trillionnium
           ./scripts/executor_profile_report.py
 
       - name: Enforce CI thresholds (warning + hard fail)
         run: |
           set -euo pipefail
           export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
-          cd trillionnium-rust
+          cd trillionnium
 
           # stage2 observation window enabled
           THRESHOLD_PROFILE=${THRESHOLD_PROFILE:-stage2} ./scripts/enforce_ci_thresholds.sh
@@ -303,7 +303,7 @@ jobs:
         run: |
           set -euo pipefail
           export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
-          cd trillionnium-rust
+          cd trillionnium
 
           ./scripts/suggest_auto_adaptive_thresholds.py
 
@@ -312,7 +312,7 @@ jobs:
         run: |
           set -euo pipefail
           export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
-          cd trillionnium-rust
+          cd trillionnium
 
           THRESHOLD_PROFILE=${THRESHOLD_PROFILE:-stage2} ./scripts/nightly_attribution.sh
 
@@ -321,7 +321,7 @@ jobs:
         run: |
           set -euo pipefail
           export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
-          cd trillionnium-rust
+          cd trillionnium
 
           ./scripts/render_nightly_summary.py
 
@@ -329,7 +329,7 @@ jobs:
         if: always()
         run: |
           set -euo pipefail
-          cd trillionnium-rust
+          cd trillionnium
 
           latest_summary=$(ls -1t run/health/nightly-summary-*.md | head -n 1)
           if [ -n "${GITHUB_STEP_SUMMARY:-}" ] && [ -f "${latest_summary}" ]; then
@@ -400,19 +400,19 @@ jobs:
         with:
           name: rust-l1-nightly-health-${{ github.run_id }}
           path: |
-            trillionnium-rust/run/audit/**
-            trillionnium-rust/run/bench/**
-            trillionnium-rust/run/health/**
-            trillionnium-rust/run/node*.log
-            trillionnium-rust/run/parallel-sanity.log
-            trillionnium-rust/run/event-field-check.log
-            trillionnium-rust/run/event-replay-smoke.log
-            trillionnium-rust/run/parallel-sanity-flaky-*.log
-            trillionnium-rust/run/bft4-*.txt
-            trillionnium-rust/run/bft4-node*.log
-            trillionnium-rust/run/bft-restart-recovery-*.txt
-            trillionnium-rust/run/bft-restart-*.log
-            trillionnium-rust/run/consensus-wal-restart-*/**
+            trillionnium/run/audit/**
+            trillionnium/run/bench/**
+            trillionnium/run/health/**
+            trillionnium/run/node*.log
+            trillionnium/run/parallel-sanity.log
+            trillionnium/run/event-field-check.log
+            trillionnium/run/event-replay-smoke.log
+            trillionnium/run/parallel-sanity-flaky-*.log
+            trillionnium/run/bft4-*.txt
+            trillionnium/run/bft4-node*.log
+            trillionnium/run/bft-restart-recovery-*.txt
+            trillionnium/run/bft-restart-*.log
+            trillionnium/run/consensus-wal-restart-*/**
             run/pr5-reconcile/**
             run/pr6-ops/**
             run/pr7-topn/**

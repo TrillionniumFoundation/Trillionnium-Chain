@@ -4,11 +4,11 @@ on:
   workflow_dispatch:
   pull_request:
     paths:
-      - 'trillionnium-rust/crates/trnm-rpc/**'
-      - 'trillionnium-rust/crates/trnm-worker-agent/**'
-      - 'trillionnium-rust/scripts/run_agent_user_phasea_gate.sh'
-      - 'trillionnium-rust/scripts/run_phasea_fault_injection_suite.sh'
-      - 'trillionnium-rust/scripts/run_phasea_soak_gate.sh'
+      - 'trillionnium/crates/trnm-rpc/**'
+      - 'trillionnium/crates/trnm-worker-agent/**'
+      - 'trillionnium/scripts/run_agent_user_phasea_gate.sh'
+      - 'trillionnium/scripts/run_phasea_fault_injection_suite.sh'
+      - 'trillionnium/scripts/run_phasea_soak_gate.sh'
       - 'scripts/v2/reliability_soak_harness.py'
       - 'scripts/v2/run_reliability_soak.sh'
       - 'docs/protocol/agent-user-p2p-communication-min-spec-v0.1.md'
@@ -19,11 +19,11 @@ on:
   push:
     branches: [main]
     paths:
-      - 'trillionnium-rust/crates/trnm-rpc/**'
-      - 'trillionnium-rust/crates/trnm-worker-agent/**'
-      - 'trillionnium-rust/scripts/run_agent_user_phasea_gate.sh'
-      - 'trillionnium-rust/scripts/run_phasea_fault_injection_suite.sh'
-      - 'trillionnium-rust/scripts/run_phasea_soak_gate.sh'
+      - 'trillionnium/crates/trnm-rpc/**'
+      - 'trillionnium/crates/trnm-worker-agent/**'
+      - 'trillionnium/scripts/run_agent_user_phasea_gate.sh'
+      - 'trillionnium/scripts/run_phasea_fault_injection_suite.sh'
+      - 'trillionnium/scripts/run_phasea_soak_gate.sh'
       - 'scripts/v2/reliability_soak_harness.py'
       - 'scripts/v2/run_reliability_soak.sh'
       - 'docs/protocol/agent-user-p2p-communication-min-spec-v0.1.md'
@@ -64,7 +64,7 @@ jobs:
       - name: Run Agent↔User Phase A gate
         run: |
           set -euo pipefail
-          cd trillionnium-rust
+          cd trillionnium
           ./scripts/run_agent_user_phasea_gate.sh
 
       - name: Run reliability soak smoke (short)
@@ -75,13 +75,13 @@ jobs:
       - name: Run phaseA fault injection suite (smoke)
         run: |
           set -euo pipefail
-          cd trillionnium-rust
+          cd trillionnium
           OUT_DIR=run/health/phasea-fault-suite-ci RUNS=1 ./scripts/run_phasea_fault_injection_suite.sh
 
       - name: Run phaseA soak SLO gate
         run: |
           set -euo pipefail
-          cd trillionnium-rust
+          cd trillionnium
           SOAK_RESULT="$(ls -1t ../run/health/reliability-soak-*.json | head -n1)" \
           FAULT_RESULT=run/health/phasea-fault-suite-ci/summary.txt \
           ./scripts/run_phasea_soak_gate.sh
@@ -92,9 +92,9 @@ jobs:
         with:
           name: agent-user-phasea-gate-${{ github.run_id }}
           path: |
-            trillionnium-rust/run/health/agent-user-phasea-gate-*.txt
-            trillionnium-rust/run/health/phasea-soak-gate-*.txt
-            trillionnium-rust/run/health/phasea-fault-suite-ci/**
+            trillionnium/run/health/agent-user-phasea-gate-*.txt
+            trillionnium/run/health/phasea-soak-gate-*.txt
+            trillionnium/run/health/phasea-fault-suite-ci/**
             run/health/reliability-soak-*.json
             run/health/reliability-soak-*.txt
             run/health/reliability-soak-*.audit.jsonl

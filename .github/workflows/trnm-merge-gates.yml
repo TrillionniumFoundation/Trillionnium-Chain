@@ -5,7 +5,7 @@ on:
   pull_request:
     paths:
       - 'docs/**'
-      - 'trillionnium-rust/**'
+      - 'trillionnium/**'
       - 'web4-frontend/**'
       - 'scripts/**'
       - '.github/workflows/agent-user-phasea-gate.yml'
@@ -19,7 +19,7 @@ on:
     branches: [main]
     paths:
       - 'docs/**'
-      - 'trillionnium-rust/**'
+      - 'trillionnium/**'
       - 'web4-frontend/**'
       - 'scripts/**'
       - '.github/workflows/agent-user-phasea-gate.yml'
@@ -123,7 +123,7 @@ jobs:
         run: |
           set -euo pipefail
           export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
-          cd trillionnium-rust
+          cd trillionnium
           cargo test -p trnm-pouw --lib --locked
 
       - name: V1 proof backend CI gate (hard gate)
@@ -139,14 +139,14 @@ jobs:
           # Keep test scheduling deterministic across runner class changes to
           # reduce timing-sensitive flakes in RC merge-gate runs.
           export RUST_TEST_THREADS="${RUST_TEST_THREADS:-1}"
-          cd trillionnium-rust
+          cd trillionnium
           cargo test --workspace --locked
 
       - name: Run parallel mode sanity (hard gate)
         run: |
           set -euo pipefail
           export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
-          cd trillionnium-rust
+          cd trillionnium
           mkdir -p run run/bench
           cargo run -q -p trnm-node -- \
             --config configs/node1.toml \
@@ -165,7 +165,7 @@ jobs:
         run: |
           set -euo pipefail
           export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
-          cd trillionnium-rust
+          cd trillionnium
           MVP_MODE=prod ALLOW_MISSING_RESOLVE_EVENT=0 ./scripts/check_event_fields.sh
 
       - name: Challenge escrow/forfeit reconcile (hard gate)
@@ -216,42 +216,42 @@ jobs:
         run: |
           set -euo pipefail
           export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
-          cd trillionnium-rust
+          cd trillionnium
           MVP_MODE=prod ALLOW_PARTIAL_EVENT_REPLAY=0 ./scripts/check_event_replay_smoke.sh
 
       - name: BFT 4-node consensus smoke (hard gate)
         run: |
           set -euo pipefail
           export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
-          cd trillionnium-rust
+          cd trillionnium
           ./scripts/check_bft_4node_smoke.sh
 
       - name: BFT restart recovery (hard gate)
         run: |
           set -euo pipefail
           export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
-          cd trillionnium-rust
+          cd trillionnium
           RUNS=${BFT_RECOVERY_RUNS:-5} ./scripts/check_bft_restart_recovery.sh
 
       - name: BFT message auth anti-replay (hard gate)
         run: |
           set -euo pipefail
           export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
-          cd trillionnium-rust
+          cd trillionnium
           ./scripts/check_bft_message_auth.sh
 
       - name: BFT round-change + recovery liveness (hard gate)
         run: |
           set -euo pipefail
           export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
-          cd trillionnium-rust
+          cd trillionnium
           ./scripts/check_bft_round_change.sh
 
       - name: Consensus fault matrix (hard gate)
         run: |
           set -euo pipefail
           export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
-          cd trillionnium-rust
+          cd trillionnium
           BASELINE_MAX_FINALITY_P95_MS=${BASELINE_MAX_FINALITY_P95_MS:-100} \
           SLOW_BLOCK_MAX_FINALITY_P95_MS=${SLOW_BLOCK_MAX_FINALITY_P95_MS:-300} \
           RESTART_RECOVERY_MAX_FINALITY_P95_MS=${RESTART_RECOVERY_MAX_FINALITY_P95_MS:-200} \
@@ -264,14 +264,14 @@ jobs:
         run: |
           set -euo pipefail
           export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
-          cd trillionnium-rust
+          cd trillionnium
           ./scripts/run_request_fault_injection.sh
 
       - name: Request tx-hash binding (hard gate)
         run: |
           set -euo pipefail
           export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
-          cd trillionnium-rust
+          cd trillionnium
           ./scripts/check_request_tx_binding.sh
 
       - name: Challenge reexec bundle smoke (hard gate)
@@ -326,7 +326,7 @@ jobs:
         run: |
           set -euo pipefail
           export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
-          cd trillionnium-rust
+          cd trillionnium
 
           TXS=${PR_REGRESSION_MATRIX_TXS:-5000} ./scripts/run_bench_regression_matrix.sh
 
@@ -392,19 +392,19 @@ jobs:
         with:
           name: trnm-gate-artifacts-${{ github.run_id }}
           path: |
-            trillionnium-rust/run/parallel-sanity.log
-            trillionnium-rust/run/event-field-check.log
-            trillionnium-rust/run/event-replay-smoke.log
-            trillionnium-rust/run/bench/aggressive-regression-pr-*.txt
-            trillionnium-rust/run/bench/bench-regression-matrix-*.csv
-            trillionnium-rust/run/bench/aggressive-profile-summary-*.md
-            trillionnium-rust/run/bench/aggressive-scan-correlation-*.md
-            trillionnium-rust/run/health/**
-            trillionnium-rust/run/bft4-*.txt
-            trillionnium-rust/run/bft4-node*.log
-            trillionnium-rust/run/bft-restart-recovery-*.txt
-            trillionnium-rust/run/bft-restart-*.log
-            trillionnium-rust/run/consensus-wal-restart-*/**
+            trillionnium/run/parallel-sanity.log
+            trillionnium/run/event-field-check.log
+            trillionnium/run/event-replay-smoke.log
+            trillionnium/run/bench/aggressive-regression-pr-*.txt
+            trillionnium/run/bench/bench-regression-matrix-*.csv
+            trillionnium/run/bench/aggressive-profile-summary-*.md
+            trillionnium/run/bench/aggressive-scan-correlation-*.md
+            trillionnium/run/health/**
+            trillionnium/run/bft4-*.txt
+            trillionnium/run/bft4-node*.log
+            trillionnium/run/bft-restart-recovery-*.txt
+            trillionnium/run/bft-restart-*.log
+            trillionnium/run/consensus-wal-restart-*/**
             data/reexec-smoke/**
             data/reexec-bundles/**
             data/worker-onboard/**
