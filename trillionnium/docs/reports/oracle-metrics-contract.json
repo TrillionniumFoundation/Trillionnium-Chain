@@ -1,0 +1,114 @@
+{
+  "contract_version": "2026-03-11",
+  "lane": "L16",
+  "domain": "oracle_validation_bridge",
+  "status": "draft-stable",
+  "producer": {
+    "name": "scripts/oracle/benchmark_oracle_metrics.py",
+    "entrypoint": "./scripts/run_oracle_baseline.sh"
+  },
+  "metrics": [
+    {
+      "name": "oracle_ingest_latency_ms",
+      "type": "gauge",
+      "value_type": "float_ms",
+      "unit": "milliseconds",
+      "description": "End-to-end elapsed wall time for validating one offline baseline batch in the oracle validation bridge script.",
+      "aggregation": "single-run elapsed batch duration",
+      "notes": [
+        "This is an offline bridge/baseline metric, not the node runtime hot-path ingest latency.",
+        "Bench mode derives p50/p95/max from repeated runs of the same producer."
+      ]
+    },
+    {
+      "name": "oracle_stale_reject_total",
+      "type": "counter",
+      "value_type": "u64",
+      "unit": "count",
+      "description": "Number of snapshots rejected because at least one required source timestamp exceeded the staleness bound.",
+      "aggregation": "per baseline run"
+    },
+    {
+      "name": "oracle_quorum_reject_total",
+      "type": "counter",
+      "value_type": "u64",
+      "unit": "count",
+      "description": "Number of snapshots rejected because unique canonicalized sources were below the minimum quorum.",
+      "aggregation": "per baseline run"
+    },
+    {
+      "name": "oracle_drift_reject_total",
+      "type": "counter",
+      "value_type": "u64",
+      "unit": "count",
+      "description": "Number of snapshots rejected because any source deviated from the median beyond the configured deviation threshold.",
+      "aggregation": "per baseline run"
+    },
+    {
+      "name": "oracle_source_cardinality",
+      "type": "gauge",
+      "value_type": "u64",
+      "unit": "count",
+      "description": "Maximum canonicalized source cardinality observed among accepted snapshots in a baseline run.",
+      "aggregation": "max over accepted snapshots",
+      "notes": [
+        "This intentionally uses the max accepted source cardinality so late smaller accepted samples do not overwrite a stronger earlier signal."
+      ]
+    },
+    {
+      "name": "accepted_total",
+      "type": "counter",
+      "value_type": "u64",
+      "unit": "count",
+      "description": "Number of snapshots accepted by the baseline validator.",
+      "aggregation": "per baseline run"
+    },
+    {
+      "name": "sample_count",
+      "type": "counter",
+      "value_type": "u64",
+      "unit": "count",
+      "description": "Total number of snapshots processed by the baseline validator.",
+      "aggregation": "per baseline run"
+    }
+  ],
+  "bench_outputs": [
+    {
+      "name": "bench_rounds",
+      "type": "config_echo",
+      "value_type": "u64",
+      "unit": "count",
+      "description": "Requested number of benchmark rounds executed for the offline oracle metrics benchmark entrypoint."
+    },
+    {
+      "name": "bench_count",
+      "type": "config_echo",
+      "value_type": "u64",
+      "unit": "count",
+      "description": "Requested per-round iteration count executed by the offline oracle metrics benchmark entrypoint."
+    },
+    {
+      "name": "ingest_latency_p50_ms",
+      "type": "gauge",
+      "value_type": "float_ms",
+      "unit": "milliseconds"
+    },
+    {
+      "name": "ingest_latency_p95_ms",
+      "type": "gauge",
+      "value_type": "float_ms",
+      "unit": "milliseconds"
+    },
+    {
+      "name": "ingest_latency_max_ms",
+      "type": "gauge",
+      "value_type": "float_ms",
+      "unit": "milliseconds"
+    }
+  ],
+  "invariants": [
+    "Metric names are append-stable and must not be renamed without a contract version bump.",
+    "Reject counters are mutually exclusive for a single snapshot in the current bridge implementation.",
+    "accepted_total + oracle_stale_reject_total + oracle_quorum_reject_total + oracle_drift_reject_total == sample_count"
+  ]
+}

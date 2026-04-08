@@ -1,0 +1,10 @@
+{
+  "backend_id": "intel-tdx-qgs-quote-verifier",
+  "attestation_target": "tdx-qgs",
+  "measurement": "mrtd:demo-tdx-v1",
+  "quote": "quote-tdx-qgs-demo-v1",
+  "collateral": "intel-tdx-qgs-collateral-demo-v1",
+  "cert_chain": "intel-tdx-qgs-cert-chain-demo-v1",
+  "issuer": "intel",
+  "report_data_hash": "1111111111111111111111111111111111111111111111111111111111111111"
+}

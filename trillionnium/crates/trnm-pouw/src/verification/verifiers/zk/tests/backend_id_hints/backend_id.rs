@@ -1,0 +1,143 @@
+use super::*;
+
+#[test]
+fn zk_verifier_accepts_backend_id_prefix_system_hint_when_it_matches_vk_ref() {
+    let mut backends = ZkBackendRegistry::new();
+    backends.register(Arc::new(MockSystemSuccessBackend {
+        backend_id: "groth16-demo",
+        expected_system: "groth16",
+    }));
+
+    let verifier = ZkVerifier::from_config(&router_config(), Arc::new(backends));
+    let task = mock_task();
+    let payload = br#"ZK:{"task_id":99,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","backend_id":"groth16-demo","backend_version":"v1","schema_version":"trnm.zk.payload.v0","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["99","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]}}"#;
+    assert_eq!(
+        verifier.verify_proof(&task, payload),
+        VerificationResult::Valid
+    );
+}
+
+
+#[test]
+fn zk_verifier_rejects_backend_id_with_matching_prefix_but_mismatched_system_suffix() {
+    let mut backends = ZkBackendRegistry::new();
+    backends.register(Arc::new(MockSystemSuccessBackend {
+        backend_id: "groth16 plonk demo",
+        expected_system: "groth16",
+    }));
+
+    let verifier = ZkVerifier::from_config(&router_config(), Arc::new(backends));
+    let task = mock_task();
+    let payload = br#"ZK:{"task_id":99,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","backend_id":"groth16-plonk-demo","backend_version":"v1","schema_version":"trnm.zk.payload.v0","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["99","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]}}"#;
+    assert!(matches!(
+        verifier.verify_proof(&task, payload),
+        VerificationResult::Invalid(msg)
+            if msg.contains("backend_id 'groth16-plonk-demo'")
+                && msg.contains("multiple zk_system hints")
+    ));
+}
+
+
+#[test]
+fn zk_verifier_rejects_payload_backend_with_explicit_zk_family_prefix_and_multiple_system_hints(
+) {
+    let mut backends = ZkBackendRegistry::new();
+    backends.register(Arc::new(MockSystemSuccessBackend {
+        backend_id: "zk groth16 plonk demo",
+        expected_system: "groth16",
+    }));
+
+    let verifier = ZkVerifier::from_config(&router_config(), Arc::new(backends));
+    let task = mock_task();
+    let payload = br#"ZK:{"task_id":99,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","backend_id":"zk-groth16-plonk-demo","backend_version":"v1","schema_version":"trnm.zk.payload.v0","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["99","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]}}"#;
+
+    assert!(matches!(
+        verifier.verify_proof(&task, payload),
+        VerificationResult::Invalid(msg)
+            if msg.contains("backend_id 'zk-groth16-plonk-demo'")
+                && msg.contains("multiple zk_system hints")
+    ));
+}
+
+
+#[test]
+fn zk_verifier_rejects_selected_backend_with_multiple_system_hints() {
+    let mut backends = ZkBackendRegistry::new();
+    backends.register(Arc::new(MockSystemSuccessBackend {
+        backend_id: "groth16 plonk demo",
+        expected_system: "groth16",
+    }));
+
+    let mut config = router_config();
+    config.zk_backend = ZkBackendKind::Custom("groth16-plonk-demo".into());
+    let verifier = ZkVerifier::from_config(&config, Arc::new(backends));
+    let task = mock_task();
+    let payload = br#"ZK:{"task_id":99,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","schema_version":"trnm.zk.payload.v0","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["99","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]}}"#;
+    assert!(matches!(
+        verifier.verify_proof(&task, payload),
+        VerificationResult::Invalid(msg)
+            if msg.contains("backend 'groth16-plonk-demo'")
+                && msg.contains("multiple zk_system hints")
+    ));
+}
+
+
+#[test]
+fn zk_verifier_rejects_backend_id_prefix_system_hint_when_it_mismatches_vk_ref() {
+    let mut backends = ZkBackendRegistry::new();
+    backends.register(Arc::new(MockSystemSuccessBackend {
+        backend_id: "plonk-demo",
+        expected_system: "plonk",
+    }));
+
+    let verifier = ZkVerifier::from_config(&router_config(), Arc::new(backends));
+    let task = mock_task();
+    let payload = br#"ZK:{"task_id":99,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","backend_id":"plonk-demo","backend_version":"v1","schema_version":"trnm.zk.payload.v0","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["99","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]}}"#;
+    assert!(matches!(
+        verifier.verify_proof(&task, payload),
+        VerificationResult::Invalid(msg)
+            if msg.contains("backend_id 'plonk-demo'") && msg.contains("does not match vk_ref")
+    ));
+}
+
+
+#[test]
+fn zk_verifier_rejects_payload_backend_with_explicit_tee_family_prefix() {
+    let mut backends = ZkBackendRegistry::new();
+    backends.register(Arc::new(MockSystemSuccessBackend {
+        backend_id: "tee-groth16-demo",
+        expected_system: "groth16",
+    }));
+
+    let verifier = ZkVerifier::from_config(&router_config(), Arc::new(backends));
+    let task = mock_task();
+    let payload = br#"ZK:{"task_id":99,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","backend_id":"tee-groth16-demo","backend_version":"v1","schema_version":"trnm.zk.payload.v0","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["99","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]}}"#;
+    assert!(matches!(
+        verifier.verify_proof(&task, payload),
+        VerificationResult::Invalid(msg)
+            if msg.contains("backend_id 'tee-groth16-demo'")
+                && msg.contains("declares tee family")
+                && msg.contains("does not match zk vk_ref")
+    ));
+}
+
+
+#[test]
+fn zk_verifier_rejects_payload_backend_with_case_drifted_tee_family_prefix() {
+    let mut backends = ZkBackendRegistry::new();
+    backends.register(Arc::new(MockSystemSuccessBackend {
+        backend_id: "tee-groth16-demo",
+        expected_system: "groth16",
+    }));
+
+    let verifier = ZkVerifier::from_config(&router_config(), Arc::new(backends));
+    let task = mock_task();
+    let payload = br#"ZK:{"task_id":99,"worker":"worker-zk","proof_type":"zk","result_hash":"1111111111111111111111111111111111111111111111111111111111111111","zk_system":"groth16","backend_id":"TEE-GROTH16-DEMO","backend_version":"v1","schema_version":"trnm.zk.payload.v0","vk_ref":"vk://trnm/dev/mock-groth16/v1","proof_encoding":"hex","proof":"01020304","public_inputs":{"order":["task_id","proof_type","worker","result_hash"],"values":["99","zk","worker-zk","1111111111111111111111111111111111111111111111111111111111111111"]}}"#;
+    assert!(matches!(
+        verifier.verify_proof(&task, payload),
+        VerificationResult::Invalid(msg)
+            if msg.contains("backend_id 'TEE-GROTH16-DEMO'")
+                && msg.contains("declares tee family")
+                && msg.contains("does not match zk vk_ref")
+    ));
+}

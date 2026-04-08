@@ -1,0 +1,7 @@
+[package]
+name = "trnm-executor"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+trnm-types = { path = "../trnm-types" }

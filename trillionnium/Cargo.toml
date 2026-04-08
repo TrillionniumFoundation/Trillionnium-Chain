@@ -1,0 +1,21 @@
+[workspace]
+members = [
+  "crates/trnm-node",
+  "crates/trnm-types",
+  "crates/trnm-state",
+  "crates/trnm-pouw",
+  "crates/trnm-executor",
+  "crates/trnm-mempool",
+  "crates/trnm-rpc",
+  "crates/trnm-bench",
+  "crates/trnm-worker-agent",
+  "crates/trnm-cli",
+  "crates/trnm-bridge-poc",
+  "crates/trnm-oracle",
+]
+resolver = "2"
+
+[workspace.package]
+edition = "2021"
+license = "MIT"
+authors = ["Trillionnium Contributors"]

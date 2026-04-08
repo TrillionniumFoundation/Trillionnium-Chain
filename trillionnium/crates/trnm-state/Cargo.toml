@@ -1,0 +1,14 @@
+[package]
+name = "trnm-state"
+version = "0.1.0"
+edition = "2021"
+
+[features]
+default = []
+test-utils = []
+
+[dependencies]
+serde = { version = "1", features = ["derive"] }
+sha2 = "0.10"
+hex = "0.4"
+trnm-types = { path = "../trnm-types" }

@@ -1,0 +1,10 @@
+{
+  "backend_id": "intel-dcap-quote-verifier",
+  "attestation_target": "sgx-dcap",
+  "measurement": "mrenclave:demo-sgx-v1",
+  "quote": "quote-sgx-dcap-demo-v1",
+  "collateral": "intel-dcap-collateral-demo-v1",
+  "cert_chain": "intel-dcap-cert-chain-demo-v1",
+  "issuer": "intel",
+  "report_data_hash": "1111111111111111111111111111111111111111111111111111111111111111"
+}

@@ -1,0 +1,7 @@
+use trnm_types::{CapabilityScope, IdentityRegistry, InteropIdentityError};
+
+#[path = "i3_capability_nonexpiring_revoke_competition/i3_capability_nonexpiring_revoke_competition_boundary.rs"]
+mod i3_capability_nonexpiring_revoke_competition_boundary;
+
+#[path = "i3_capability_nonexpiring_revoke_competition/i3_capability_nonexpiring_revoke_competition_side_effects.rs"]
+mod i3_capability_nonexpiring_revoke_competition_side_effects;
