@@ -5,7 +5,7 @@ ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 WF="$ROOT/.github/workflows/rust-l1-nightly-health.yml"
 
 required_paths=(
-  "trillionnium-rust/**"
+  "trillionnium/**"
   "scripts/**"
   ".github/workflows/rust-l1-nightly-health.yml"
 )

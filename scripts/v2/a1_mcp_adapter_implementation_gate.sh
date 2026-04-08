@@ -2,7 +2,7 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
-cd "$ROOT/trillionnium-rust"
+cd "$ROOT/trillionnium"
 
 echo "[A1] MCP adapter implementation gate: runtime fail-closed + provenance canonicalization"
 

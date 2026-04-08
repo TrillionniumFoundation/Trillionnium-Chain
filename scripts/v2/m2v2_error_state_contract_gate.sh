@@ -2,7 +2,7 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
-RUST_ROOT="$ROOT/trillionnium-rust"
+RUST_ROOT="$ROOT/trillionnium"
 
 if [[ ! -f "$RUST_ROOT/Cargo.toml" ]]; then
   echo "[FAIL] missing Rust workspace Cargo.toml: $RUST_ROOT/Cargo.toml" >&2

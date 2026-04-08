@@ -11,7 +11,7 @@ fi
 
 required_lines=(
   'QUICK_GATE_SUMMARY_PATH=run/quick-gate/summary.json'
-  './scripts/quick_gate_shell.sh scripts trillionnium-rust/scripts'
+  './scripts/quick_gate_shell.sh scripts trillionnium/scripts'
 )
 
 for line in "${required_lines[@]}"; do

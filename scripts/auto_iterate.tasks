@@ -648,7 +648,7 @@ bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: che
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: check-parallel-flaky-replay-ci-timeout-guard-test" "./scripts/v2/check_parallel_flaky_replay_ci_timeout_guard_test.sh" "ci(gate): add check-parallel-flaky-replay-ci-timeout-guard-test regression to quick-check"
 
 # Auto-filled by dual-subagent task pool
-bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: p1-rust-sidecar-paths-coverage-guard-test" "./scripts/v2/p1_rust_sidecar_paths_coverage_guard_test.sh" "ci(gate): add p1-rust-sidecar-paths-coverage-guard-test regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: p1-trillionnium-paths-coverage-guard-test" "./scripts/v2/p1_trillionnium_paths_coverage_guard_test.sh" "ci(gate): add p1-trillionnium-paths-coverage-guard-test regression to quick-check"
 
 # Auto-filled by dual-subagent task pool
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: rust-l1-nightly-health-paths-coverage-guard-test" "./scripts/v2/rust_l1_nightly_health_paths_coverage_guard_test.sh" "ci(gate): add rust-l1-nightly-health-paths-coverage-guard-test regression to quick-check"
@@ -659,7 +659,7 @@ bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: nig
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: v1-proof-backend-ci-gate" "./scripts/v2/v1_proof_backend_ci_gate.sh" "ci(gate): add v1-proof-backend-ci-gate regression to quick-check"
 
 # Auto-filled by dual-subagent task pool
-bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: p1-rust-sidecar-deterministic-env-guard-test" "./scripts/v2/p1_rust_sidecar_deterministic_env_guard_test.sh" "ci(gate): add p1-rust-sidecar-deterministic-env-guard-test regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: p1-trillionnium-deterministic-env-guard-test" "./scripts/v2/p1_trillionnium_deterministic_env_guard_test.sh" "ci(gate): add p1-trillionnium-deterministic-env-guard-test regression to quick-check"
 
 # Auto-filled by dual-subagent task pool
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: e3-enterprise-runbook-deterministic-env-prefix-test" "./scripts/v2/e3_enterprise_runbook_deterministic_env_prefix_test.sh" "ci(gate): add e3-enterprise-runbook-deterministic-env-prefix-test regression to quick-check"
@@ -668,7 +668,7 @@ bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: e3-
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: m3-release-readiness-deterministic-prefix-guard-test" "./scripts/v2/m3_release_readiness_deterministic_prefix_guard_test.sh" "ci(gate): add m3-release-readiness-deterministic-prefix-guard-test regression to quick-check"
 
 # Auto-filled by dual-subagent task pool
-bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: p1-rust-sidecar-artifact-summary-guard-test" "./scripts/v2/p1_rust_sidecar_artifact_summary_guard_test.sh" "ci(gate): add p1-rust-sidecar-artifact-summary-guard-test regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: p1-trillionnium-artifact-summary-guard-test" "./scripts/v2/p1_trillionnium_artifact_summary_guard_test.sh" "ci(gate): add p1-trillionnium-artifact-summary-guard-test regression to quick-check"
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: pr7-alert-delivery-gate-empty-delivery-cmd-test" "./scripts/v2/pr7_alert_delivery_gate_empty_delivery_cmd_test.sh" "ci(gate): add pr7-alert-delivery-gate-empty-delivery-cmd-test regression to quick-check"
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: pr7-alert-delivery-gate-invalid-audit-utf8-test" "./scripts/v2/pr7_alert_delivery_gate_invalid_audit_utf8_test.sh" "ci(gate): add pr7-alert-delivery-gate-invalid-audit-utf8-test regression to quick-check"
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: pr7-alert-delivery-gate-invalid-fail-mode-test" "./scripts/v2/pr7_alert_delivery_gate_invalid_fail_mode_test.sh" "ci(gate): add pr7-alert-delivery-gate-invalid-fail-mode-test regression to quick-check"

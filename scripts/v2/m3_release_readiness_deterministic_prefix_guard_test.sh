@@ -19,7 +19,7 @@ for line in "${required_lines[@]}"; do
   fi
 done
 
-RC_SCRIPT="$ROOT/trillionnium-rust/scripts/release_rc.sh"
+RC_SCRIPT="$ROOT/trillionnium/scripts/release_rc.sh"
 if [[ ! -f "$RC_SCRIPT" ]]; then
   echo "[FAIL] missing RC evidence script: $RC_SCRIPT" >&2
   exit 1

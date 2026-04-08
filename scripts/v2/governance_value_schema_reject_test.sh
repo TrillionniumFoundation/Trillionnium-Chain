@@ -47,7 +47,7 @@ fi
 
 echo "[GATE] laneB governance: roadmap progress=${progress_pct}% pause_signal=${pause_signal} updated_at=${roadmap_updated_at} source=${roadmap_source}"
 
-cd "$ROOT/trillionnium-rust"
+cd "$ROOT/trillionnium"
 
 echo "[TEST] governance_value_schema_reject: invalid value should be rejected"
 cargo test -q -p trnm-state governance_param_schema_rejects_invalid_u64_values -- --nocapture

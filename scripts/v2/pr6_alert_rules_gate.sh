@@ -12,7 +12,7 @@ readonly RC_INVALID_ARG=2
 readonly RC_INPUT_MISSING=3
 readonly RC_REPORT_INVALID=4
 
-EVENT_LOG="${EVENT_LOG:-$ROOT/trillionnium-rust/run/event-field-check.log}"
+EVENT_LOG="${EVENT_LOG:-$ROOT/trillionnium/run/event-field-check.log}"
 REPORT="$RUN_DIR/summary.txt"
 
 require_non_negative_integer() {

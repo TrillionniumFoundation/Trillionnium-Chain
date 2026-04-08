@@ -237,7 +237,7 @@ def render_markdown(
 
 def main() -> int:
     ap = argparse.ArgumentParser(description="Generate PR-7 TopN anomaly markdown summary")
-    ap.add_argument("--event-log", default="trillionnium-rust/run/event-field-check.log")
+    ap.add_argument("--event-log", default="trillionnium/run/event-field-check.log")
     ap.add_argument("--pr5-reconcile-json", default="run/pr5-reconcile/latest/reconcile.json")
     ap.add_argument("--out", default="run/pr6-ops/topn-anomaly-summary.md")
     ap.add_argument("--top-n", type=int, default=5)

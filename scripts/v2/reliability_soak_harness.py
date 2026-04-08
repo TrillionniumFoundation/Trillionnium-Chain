@@ -111,7 +111,7 @@ def main() -> int:
     args = ap.parse_args()
 
     repo_root = Path(__file__).resolve().parents[2]
-    rust_root = repo_root / "trillionnium-rust"
+    rust_root = repo_root / "trillionnium"
     run_health = repo_root / "run" / "health"
     run_health.mkdir(parents=True, exist_ok=True)
 

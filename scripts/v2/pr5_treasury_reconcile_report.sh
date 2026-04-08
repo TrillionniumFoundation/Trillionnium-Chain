@@ -11,11 +11,11 @@ cd "$ROOT_DIR"
 SOURCE_LOG=${SOURCE_LOG:-}
 if [[ -z "$SOURCE_LOG" ]]; then
   for candidate in \
-    "trillionnium-rust/run/event-field-check.log" \
-    "trillionnium-rust/run/parallel-sanity.log" \
-    "trillionnium-rust/run/node1.log" \
-    "trillionnium-rust/run/node2.log" \
-    "trillionnium-rust/run/node3.log"; do
+    "trillionnium/run/event-field-check.log" \
+    "trillionnium/run/parallel-sanity.log" \
+    "trillionnium/run/node1.log" \
+    "trillionnium/run/node2.log" \
+    "trillionnium/run/node3.log"; do
     if [[ -f "$candidate" ]]; then
       SOURCE_LOG="$candidate"
       break
@@ -27,7 +27,7 @@ if [[ -z "$SOURCE_LOG" || ! -f "$SOURCE_LOG" ]]; then
   cat >"$OUT_DIR/summary.txt" <<EOF
 status=SKIP
 reason=no_event_log_found
-hint=provide SOURCE_LOG=trillionnium-rust/run/event-field-check.log
+hint=provide SOURCE_LOG=trillionnium/run/event-field-check.log
 EOF
   echo "[PR5][reconcile] no event log found; wrote $OUT_DIR/summary.txt"
   exit 0

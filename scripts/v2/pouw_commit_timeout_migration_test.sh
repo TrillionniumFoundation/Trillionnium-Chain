@@ -2,7 +2,7 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
-cd "$ROOT/trillionnium-rust"
+cd "$ROOT/trillionnium"
 export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
 
 echo "[TEST] pouw_commit_timeout_migration: commit -> timeout migration"

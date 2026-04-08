@@ -24,8 +24,8 @@ for ref in "${required_py_refs[@]}"; do
   fi
 done
 
-if ! grep -Fq -- "grep -Eo '(\\./scripts|scripts|trillionnium-rust/scripts)/[[:alnum:]_./-]+\\.(sh|py)'" "$SCRIPT"; then
-  echo "[FAIL] validate_workflow_script_refs.sh must scan ./scripts, scripts, and trillionnium-rust/scripts refs for both .sh and .py workflow refs" >&2
+if ! grep -Fq -- "grep -Eo '(\\./scripts|scripts|trillionnium/scripts)/[[:alnum:]_./-]+\\.(sh|py)'" "$SCRIPT"; then
+  echo "[FAIL] validate_workflow_script_refs.sh must scan ./scripts, scripts, and trillionnium/scripts refs for both .sh and .py workflow refs" >&2
   exit 1
 fi
 

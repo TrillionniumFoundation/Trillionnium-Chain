@@ -9,8 +9,8 @@ EXPECTED_BRANCH="$(git -C "$ROOT" branch --show-current)"
 EXPECTED_HEAD="$(git -C "$ROOT" rev-parse HEAD)"
 EXPECTED_BRANCH_REF="refs/heads/$EXPECTED_BRANCH"
 WORKSPACE_ROOT="$ROOT"
-if [[ -f "$ROOT/trillionnium-rust/Cargo.toml" ]]; then
-  WORKSPACE_ROOT="$ROOT/trillionnium-rust"
+if [[ -f "$ROOT/trillionnium/Cargo.toml" ]]; then
+  WORKSPACE_ROOT="$ROOT/trillionnium"
 fi
 EXPECTED_VALIDATOR_COUNT="$(find "$WORKSPACE_ROOT/configs" -maxdepth 1 -type f -name 'node*.toml' 2>/dev/null | wc -l | awk '{print $1}')"
 

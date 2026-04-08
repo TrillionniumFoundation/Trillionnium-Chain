@@ -5,7 +5,7 @@ ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 RUN_DIR="${RUN_DIR:-$ROOT/run/pr7-topn/$(date +%Y%m%d-%H%M%S)}"
 mkdir -p "$RUN_DIR"
 
-EVENT_LOG="${EVENT_LOG:-$ROOT/trillionnium-rust/run/event-field-check.log}"
+EVENT_LOG="${EVENT_LOG:-$ROOT/trillionnium/run/event-field-check.log}"
 TOP_N="${TOP_N:-5}"
 OUT_MD="$RUN_DIR/topn-anomaly-summary.md"
 GATE_REPORT="$RUN_DIR/summary.txt"

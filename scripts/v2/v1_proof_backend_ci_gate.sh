@@ -2,7 +2,7 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-cd "$ROOT/trillionnium-rust"
+cd "$ROOT/trillionnium"
 
 cargo test -p trnm-pouw --lib tee_verifier_requires_cryptographic_backend_after_bound_envelope_validation
 cargo test -p trnm-pouw --lib tee_verifier_backend_unavailable_maps_to_indeterminate

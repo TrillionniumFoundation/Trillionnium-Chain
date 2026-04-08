@@ -12,14 +12,14 @@ fi
 TMP_DIR="$(mktemp -d)"
 trap 'rm -rf "$TMP_DIR"' EXIT
 
-mkdir -p "$TMP_DIR/.github/workflows" "$TMP_DIR/scripts" "$TMP_DIR/trillionnium-rust/scripts"
+mkdir -p "$TMP_DIR/.github/workflows" "$TMP_DIR/scripts" "$TMP_DIR/trillionnium/scripts"
 cat >"$TMP_DIR/.github/workflows/test.yml" <<'YAML'
 name: test
 on:
   push:
     paths:
       - scripts/example.sh
-      - trillionnium-rust/scripts/example.sh
+      - trillionnium/scripts/example.sh
 jobs:
   guard:
     runs-on: ubuntu-latest
@@ -31,12 +31,12 @@ cat >"$TMP_DIR/scripts/example.sh" <<'SH'
 set -euo pipefail
 echo ok
 SH
-cat >"$TMP_DIR/trillionnium-rust/scripts/example.sh" <<'SH'
+cat >"$TMP_DIR/trillionnium/scripts/example.sh" <<'SH'
 #!/usr/bin/env bash
 set -euo pipefail
 echo ok
 SH
-chmod +x "$TMP_DIR/scripts/example.sh" "$TMP_DIR/trillionnium-rust/scripts/example.sh"
+chmod +x "$TMP_DIR/scripts/example.sh" "$TMP_DIR/trillionnium/scripts/example.sh"
 
 REL_SUMMARY="tmp/workflow-ref-summary.json"
 OUT="$TMP_DIR/out.log"

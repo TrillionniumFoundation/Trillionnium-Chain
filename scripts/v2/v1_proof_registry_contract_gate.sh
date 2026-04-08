@@ -2,7 +2,7 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-cd "$ROOT/trillionnium-rust"
+cd "$ROOT/trillionnium"
 
 cargo test -p trnm-pouw --lib registry_register_collapses_legacy_receipt_aliases_for_lookup
 cargo test -p trnm-pouw --lib registry_registered_proof_types_are_normalized_and_sorted

@@ -2,7 +2,7 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
-SCRIPT="$ROOT/trillionnium-rust/scripts/check_parallel_flaky.sh"
+SCRIPT="$ROOT/trillionnium/scripts/check_parallel_flaky.sh"
 
 if [[ ! -f "$SCRIPT" ]]; then
   echo "[FAIL] missing script: $SCRIPT" >&2

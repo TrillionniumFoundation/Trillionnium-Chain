@@ -5,11 +5,11 @@ ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 RUN_DIR="${RUN_DIR:-$ROOT/run/pr5-reconcile/$(date +%Y%m%d-%H%M%S)-triad}"
 mkdir -p "$RUN_DIR"
 
-EVENT_LOG="${EVENT_LOG:-$ROOT/trillionnium-rust/run/event-field-check.log}"
+EVENT_LOG="${EVENT_LOG:-$ROOT/trillionnium/run/event-field-check.log}"
 if [[ ! -f "$EVENT_LOG" ]]; then
   echo "[PR5][triad][INFO] event log not found, generating via check_event_fields.sh"
   (
-    cd "$ROOT/trillionnium-rust"
+    cd "$ROOT/trillionnium"
     MVP_MODE=prod ALLOW_MISSING_RESOLVE_EVENT=0 ./scripts/check_event_fields.sh
   ) >"$RUN_DIR/check_event_fields.log" 2>&1
 fi
@@ -25,7 +25,7 @@ PR5_SUMMARY="$PR5_OUT/summary.txt"
 
 RPC_JSON="$RUN_DIR/rpc-challenge-treasury.json"
 (
-  cd "$ROOT/trillionnium-rust"
+  cd "$ROOT/trillionnium"
   cargo run -q -p trnm-rpc -- query-challenge-treasury --limit "${PR5_RPC_LIMIT:-200}" --json >"$RPC_JSON"
 )
 

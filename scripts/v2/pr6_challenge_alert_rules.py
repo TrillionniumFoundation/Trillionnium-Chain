@@ -150,7 +150,7 @@ def summarize(events: list[dict], now_ms: int, window_hours: int) -> dict:
 
 def main() -> int:
     ap = argparse.ArgumentParser(description="PR-6 minimal anomaly alert rules")
-    ap.add_argument("--event-log", default="trillionnium-rust/run/event-field-check.log")
+    ap.add_argument("--event-log", default="trillionnium/run/event-field-check.log")
     ap.add_argument("--window-hours", type=int, default=48, help="analysis window (default: 48h)")
 
     ap.add_argument("--fail-unresolved-challenges", type=int, default=5)

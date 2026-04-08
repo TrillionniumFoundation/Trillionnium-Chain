@@ -45,7 +45,7 @@ fi
   echo "## checks"
 } > "$SUMMARY"
 
-run_step cargo_test_workspace bash -lc "cd '$ROOT/trillionnium-rust' && cargo test --workspace"
+run_step cargo_test_workspace bash -lc "cd '$ROOT/trillionnium' && cargo test --workspace"
 echo "- cargo test --workspace: PASS" >> "$SUMMARY"
 
 run_step web4_release_aggregate_gate bash -lc "cd '$ROOT' && ./scripts/v2/web4_release_aggregate_gate.sh"

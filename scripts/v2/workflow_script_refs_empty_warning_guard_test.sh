@@ -43,7 +43,7 @@ if int(data.get('empty_ref_count', -1)) != 1:
     raise SystemExit(f"[FAIL] expected empty_ref_count=1 for empty-ref workflow summary, got: {data}")
 stdout = open(stdout_path, 'r', encoding='utf-8').read()
 stderr = open(stderr_path, 'r', encoding='utf-8').read()
-expected = '[workflow-ref][WARN] no workflow script references found in workflows (expected ./scripts, scripts, or trillionnium-rust/scripts .sh/.py refs)'
+expected = '[workflow-ref][WARN] no workflow script references found in workflows (expected ./scripts, scripts, or trillionnium/scripts .sh/.py refs)'
 if expected not in stdout:
     raise SystemExit('[FAIL] missing aligned empty-ref warning in stdout')
 if '[workflow-ref] empty_ref_count=1' not in stdout:

@@ -37,8 +37,8 @@ CANONICAL_ROOT="$(cd "$ROOT" && pwd -P)"
 ROOT="$CANONICAL_ROOT"
 VERIFY_SCRIPT="$ROOT/scripts/v2/verify_lane_worktree.sh"
 DEFAULT_WORKSPACE_ROOT="$ROOT"
-if [[ -f "$ROOT/trillionnium-rust/Cargo.toml" ]]; then
-  DEFAULT_WORKSPACE_ROOT="$ROOT/trillionnium-rust"
+if [[ -f "$ROOT/trillionnium/Cargo.toml" ]]; then
+  DEFAULT_WORKSPACE_ROOT="$ROOT/trillionnium"
 fi
 WORKSPACE_ROOT="${WORKSPACE_ROOT:-$DEFAULT_WORKSPACE_ROOT}"
 if [[ ! -d "$WORKSPACE_ROOT" ]]; then

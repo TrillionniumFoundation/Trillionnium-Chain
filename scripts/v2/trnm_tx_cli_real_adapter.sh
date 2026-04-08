@@ -55,7 +55,7 @@ resolve_delegate_bin() {
 
   local root
   root="$(cd "$(dirname "$0")/../.." && pwd)"
-  local cargo_bin="$root/trillionnium-rust/target/debug/trnm-cli"
+  local cargo_bin="$root/trillionnium/target/debug/trnm-cli"
   if [[ "$candidate" == "trnm-cli" && -x "$cargo_bin" ]]; then
     printf "%s\n" "$cargo_bin"
     return 0

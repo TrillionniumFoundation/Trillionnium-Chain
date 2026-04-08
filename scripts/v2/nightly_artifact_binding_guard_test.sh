@@ -4,8 +4,8 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 WF="$ROOT/.github/workflows/rust-l1-nightly-health.yml"
 PR6="$ROOT/scripts/v2/pr6_daily_security_summary.py"
-CONS_SCRIPT="$ROOT/trillionnium-rust/scripts/run_consensus_fault_matrix.sh"
-ATTR_SCRIPT="$ROOT/trillionnium-rust/scripts/nightly_attribution.sh"
+CONS_SCRIPT="$ROOT/trillionnium/scripts/run_consensus_fault_matrix.sh"
+ATTR_SCRIPT="$ROOT/trillionnium/scripts/nightly_attribution.sh"
 
 python3 - "$WF" "$PR6" "$CONS_SCRIPT" "$ATTR_SCRIPT" <<'PY'
 import pathlib

@@ -10,7 +10,7 @@ ACK_LOG="${ACK_LOG:-/tmp/trnm-worker-agent-acks-${RUN_TAG}.jsonl}"
 WORKER="${WORKER:-worker1}"
 PAYLOAD="${PAYLOAD:-demo-payload}"
 
-cd "$ROOT/trillionnium-rust"
+cd "$ROOT/trillionnium"
 export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
 
 # Gate default: prefer command-mode adapter path (closer to real tx flow).
@@ -19,12 +19,12 @@ if [[ -z "${TRNM_TX_CLI:-}" ]]; then
   CANDIDATE=""
   if command -v trnm-cli >/dev/null 2>&1; then
     CANDIDATE="trnm-cli"
-  elif [[ -x "$ROOT/trillionnium-rust/target/debug/trnm-cli" ]]; then
-    CANDIDATE="$ROOT/trillionnium-rust/target/debug/trnm-cli"
+  elif [[ -x "$ROOT/trillionnium/target/debug/trnm-cli" ]]; then
+    CANDIDATE="$ROOT/trillionnium/target/debug/trnm-cli"
   elif command -v trnm-node >/dev/null 2>&1; then
     CANDIDATE="trnm-node"
-  elif [[ -x "$ROOT/trillionnium-rust/target/debug/trnm-node" ]]; then
-    CANDIDATE="$ROOT/trillionnium-rust/target/debug/trnm-node"
+  elif [[ -x "$ROOT/trillionnium/target/debug/trnm-node" ]]; then
+    CANDIDATE="$ROOT/trillionnium/target/debug/trnm-node"
   fi
 
   if [[ -n "$CANDIDATE" ]] && "$CANDIDATE" tx --help >/dev/null 2>&1; then

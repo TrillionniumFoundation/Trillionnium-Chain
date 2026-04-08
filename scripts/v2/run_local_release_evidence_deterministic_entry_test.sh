@@ -2,7 +2,7 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
-TARGET="$ROOT/trillionnium-rust/scripts/run_local_release_evidence.sh"
+TARGET="$ROOT/trillionnium/scripts/run_local_release_evidence.sh"
 
 if [[ ! -f "$TARGET" ]]; then
   echo "[FAIL] missing target script: $TARGET" >&2
@@ -59,7 +59,7 @@ if grep -q '<pending_resolution>' "$TARGET"; then
   exit 1
 fi
 
-RUNBOOK="$ROOT/trillionnium-rust/docs/runbooks/local-release-evidence.md"
+RUNBOOK="$ROOT/trillionnium/docs/runbooks/local-release-evidence.md"
 if [[ ! -f "$RUNBOOK" ]]; then
   echo "[FAIL] missing runbook: $RUNBOOK" >&2
   exit 1

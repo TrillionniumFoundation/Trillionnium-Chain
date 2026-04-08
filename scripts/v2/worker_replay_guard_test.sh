@@ -62,7 +62,7 @@ fi
 
 # 2) replay should be rejected with rc=9
 set +e
-cd trillionnium-rust
+cd trillionnium
 ./scripts/worker_tx_adapter.sh commit "$TASK_ID" worker1 deadbeef >"$REPLAY_OUT" 2>&1
 RC=$?
 set -e

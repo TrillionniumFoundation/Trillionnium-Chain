@@ -2,7 +2,7 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
-cd "$ROOT/trillionnium-rust"
+cd "$ROOT/trillionnium"
 
 pick_cargo() {
   if command -v cargo >/dev/null 2>&1; then
@@ -68,7 +68,7 @@ import time
 print(int(time.time()*1000))
 PY
 )
-DEFAULT_TX_CLI="${TRNM_TX_CLI:-$ROOT/trillionnium-rust/target/debug/trnm-cli}"
+DEFAULT_TX_CLI="${TRNM_TX_CLI:-$ROOT/trillionnium/target/debug/trnm-cli}"
 if [[ "$DEFAULT_TX_CLI" == ./* || "$DEFAULT_TX_CLI" == scripts/* ]]; then
   DEFAULT_TX_CLI="$ROOT/${DEFAULT_TX_CLI#./}"
 fi

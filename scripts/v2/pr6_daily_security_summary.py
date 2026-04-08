@@ -16,7 +16,7 @@ ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 OUT_DIR = os.path.join(ROOT, "run", "pr6-ops")
 OUT_MD = os.path.join(OUT_DIR, "daily-security-summary.md")
 
-RUST_ROOT = os.path.join(ROOT, "trillionnium-rust")
+RUST_ROOT = os.path.join(ROOT, "trillionnium")
 RUST_HEALTH = os.path.join(RUST_ROOT, "run", "health")
 RUST_BENCH = os.path.join(RUST_ROOT, "run", "bench")
 PR5_ROOT = os.path.join(ROOT, "run", "pr5-reconcile")

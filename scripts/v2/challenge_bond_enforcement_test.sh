@@ -2,7 +2,7 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
-cd "$ROOT/trillionnium-rust"
+cd "$ROOT/trillionnium"
 export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
 # Keep test discovery and ordering deterministic across CI locales/timezones.
 export LANG="${LANG:-C.UTF-8}"

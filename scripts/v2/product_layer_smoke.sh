@@ -40,7 +40,7 @@ extract_kv() {
 }
 
 run_cli() {
-  (cd "$ROOT/trillionnium-rust" && "${CLI_BIN_ARR[@]}" "$@")
+  (cd "$ROOT/trillionnium" && "${CLI_BIN_ARR[@]}" "$@")
 }
 
 # 1) wallet create

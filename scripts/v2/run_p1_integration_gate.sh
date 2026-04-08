@@ -44,13 +44,13 @@ assert_tx_terminal_from_log() {
 
 SDK_JS_QUICKSTART_CMD="${P1_GATE_SDK_JS_CMD:-cd '$ROOT/examples/sdk-js' && node --check quickstart.js && test -f README.md && test -f package.json}"
 PRODUCT_LAYER_SMOKE_CMD="${P1_GATE_PRODUCT_LAYER_CMD:-$ROOT/scripts/v2/product_layer_smoke.sh}"
-RPC_CONTRACT_V1_CMD="${P1_GATE_RPC_CONTRACT_CMD:-cd '$ROOT/trillionnium-rust' && cargo test -p trnm-rpc --test rpc_contract_v1}"
+RPC_CONTRACT_V1_CMD="${P1_GATE_RPC_CONTRACT_CMD:-cd '$ROOT/trillionnium' && cargo test -p trnm-rpc --test rpc_contract_v1}"
 X2_SETTLEMENT_GATE_CMD="${P1_GATE_X2_SETTLEMENT_CMD:-$ROOT/scripts/v2/x2_settlement_contract_gate.sh}"
 I2_TOKEN_LIFECYCLE_GATE_CMD="${P1_GATE_I2_TOKEN_LIFECYCLE_CMD:-$ROOT/scripts/v2/i2_token_lifecycle_gate.sh}"
-M2_POLICY_GATE_CMD="${P1_GATE_M2_POLICY_CMD:-cd '$ROOT/trillionnium-rust' && cargo test -p trnm-rpc market_m2_policy_gate_guards_default_drift_to_min_boundaries}"
+M2_POLICY_GATE_CMD="${P1_GATE_M2_POLICY_CMD:-cd '$ROOT/trillionnium' && cargo test -p trnm-rpc market_m2_policy_gate_guards_default_drift_to_min_boundaries}"
 V1_PROOF_REGISTRY_GATE_CMD="${P1_GATE_V1_PROOF_REGISTRY_CMD:-$ROOT/scripts/v2/v1_proof_registry_contract_gate.sh}"
 MV2_RECEIPT_CONTRACT_GATE_CMD="${P1_GATE_MV2_RECEIPT_CONTRACT_CMD:-$ROOT/scripts/v2/mv2_receipt_contract_freeze_doc_gate.sh}"
-D2_INTEROP_GATE_CMD="${P1_GATE_D2_INTEROP_CMD:-cd '$ROOT/trillionnium-rust' && cargo test -p trnm-types settlement_evidence_path_tracks_terminal_state_machine_outcome}"
+D2_INTEROP_GATE_CMD="${P1_GATE_D2_INTEROP_CMD:-cd '$ROOT/trillionnium' && cargo test -p trnm-types settlement_evidence_path_tracks_terminal_state_machine_outcome}"
 SKIP_TX_ASSERT="${P1_GATE_SKIP_TX_ASSERT:-0}"
 
 step sdk_js_quickstart_smoke bash -lc "$SDK_JS_QUICKSTART_CMD"

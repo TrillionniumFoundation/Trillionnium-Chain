@@ -26,7 +26,7 @@ jobs:
           ./scripts/quick_gate_shell.sh
           ./scripts/quick_gate_shell.sh scripts
           python3 scripts/summarize_aggressive_profile.py
-          cd trillionnium-rust
+          cd trillionnium
           ./scripts/check_bft_4node_smoke.sh
 YAML
 

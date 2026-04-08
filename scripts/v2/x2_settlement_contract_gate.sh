@@ -2,7 +2,7 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-cd "$ROOT/trillionnium-rust"
+cd "$ROOT/trillionnium"
 
 # X2 contract gate: require both finalize and compensation paths to stay green.
 # X3-prep contract guard: keep fallback compensation reason stable/replayable,

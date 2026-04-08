@@ -14,7 +14,7 @@ usage() {
   cat <<EOF
 Usage:
   AGENTS=3 ./scripts/v2/worker_agent_mining_onboard.sh
-  TRNM_TX_CLI=./trillionnium-rust/target/debug/trnm-cli ./scripts/v2/worker_agent_mining_onboard.sh
+  TRNM_TX_CLI=./trillionnium/target/debug/trnm-cli ./scripts/v2/worker_agent_mining_onboard.sh
   SKIP_GATES=1 AGENTS=5 ./scripts/v2/worker_agent_mining_onboard.sh
 
 Env:
@@ -54,7 +54,7 @@ if [[ "$SKIP_GATES" != "1" ]]; then
   fi
 fi
 
-cd "$ROOT/trillionnium-rust"
+cd "$ROOT/trillionnium"
 export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
 
 echo "[stage] multi-agent smoke: agents=$AGENTS parallel_submit=$PARALLEL_SUBMIT max_parallel=$MAX_PARALLEL"

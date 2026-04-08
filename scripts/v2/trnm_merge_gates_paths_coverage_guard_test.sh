@@ -6,7 +6,7 @@ WF="$ROOT/.github/workflows/trnm-merge-gates.yml"
 
 required_paths=(
   "docs/**"
-  "trillionnium-rust/**"
+  "trillionnium/**"
   "web4-frontend/**"
   "scripts/**"
   ".github/workflows/agent-user-phasea-gate.yml"

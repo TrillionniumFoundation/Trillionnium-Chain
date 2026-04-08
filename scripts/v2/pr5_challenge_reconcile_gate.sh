@@ -8,7 +8,7 @@ now_utc_compact() {
 RUN_DIR="${RUN_DIR:-$ROOT/run/pr5-reconcile/$(now_utc_compact)}"
 mkdir -p "$RUN_DIR"
 
-EVENT_LOG="${EVENT_LOG:-$ROOT/trillionnium-rust/run/event-field-check.log}"
+EVENT_LOG="${EVENT_LOG:-$ROOT/trillionnium/run/event-field-check.log}"
 REPORT="$RUN_DIR/reconcile-report.txt"
 
 require_non_negative_integer() {
@@ -32,7 +32,7 @@ require_bool_01() {
 if [[ ! -f "$EVENT_LOG" ]]; then
   echo "[PR5][INFO] event log not found, generating via check_event_fields.sh"
   (
-    cd "$ROOT/trillionnium-rust"
+    cd "$ROOT/trillionnium"
     MVP_MODE=prod ALLOW_MISSING_RESOLVE_EVENT=0 ./scripts/check_event_fields.sh
   ) >"$RUN_DIR/check_event_fields.log" 2>&1
 fi

@@ -20,7 +20,7 @@ for ref in "${required_relative_refs[@]}"; do
   fi
 done
 
-if ! grep -Fq -- "grep -Eo '(\\./scripts|scripts|trillionnium-rust/scripts)/[[:alnum:]_./-]+\\.(sh|py)'" "$SCRIPT"; then
+if ! grep -Fq -- "grep -Eo '(\\./scripts|scripts|trillionnium/scripts)/[[:alnum:]_./-]+\\.(sh|py)'" "$SCRIPT"; then
   echo "[FAIL] validate_workflow_script_refs.sh must scan scripts/ refs with and without ./ prefix" >&2
   exit 1
 fi

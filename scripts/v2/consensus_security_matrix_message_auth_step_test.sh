@@ -2,7 +2,7 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-SCRIPT="$ROOT/trillionnium-rust/scripts/run_consensus_security_matrix.sh"
+SCRIPT="$ROOT/trillionnium/scripts/run_consensus_security_matrix.sh"
 
 step='run_step "bft_message_auth" "./scripts/check_bft_message_auth.sh"'
 

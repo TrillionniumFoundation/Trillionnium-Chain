@@ -14,7 +14,7 @@ if [[ -f "$PID_FILE" ]] && ps -p "$(cat "$PID_FILE")" >/dev/null 2>&1; then
   exit 0
 fi
 
-nohup bash -lc "cd '$ROOT/trillionnium-rust' && cargo run -q -p trnm-rpc -- serve --host '$HOST' --port '$PORT'" >"$LOG_FILE" 2>&1 &
+nohup bash -lc "cd '$ROOT/trillionnium' && cargo run -q -p trnm-rpc -- serve --host '$HOST' --port '$PORT'" >"$LOG_FILE" 2>&1 &
 echo $! > "$PID_FILE"
 
 echo "rpc_service.started pid=$(cat "$PID_FILE") host=$HOST port=$PORT"

@@ -289,9 +289,9 @@ jobs:
         run: |
           ./scripts/v2/web4_frontend_ci_deterministic_env_guard_test.sh
 
-      - name: P1 rust sidecar deterministic env guard regression
+      - name: P1 trillionnium deterministic env guard regression
         run: |
-          ./scripts/v2/p1_rust_sidecar_deterministic_env_guard_test.sh
+          ./scripts/v2/p1_trillionnium_deterministic_env_guard_test.sh
 
       - name: PR5 reconcile skip-when-missing-log regression
         run: |
@@ -773,9 +773,9 @@ jobs:
         run: |
           ./scripts/v2/workflow_script_refs_python_coverage_guard_test.sh
 
-      - name: Auto regression: workflow-script-refs-trillionnium-rust-coverage-guard-test
+      - name: Auto regression: workflow-script-refs-trillionnium-coverage-guard-test
         run: |
-          ./scripts/v2/workflow_script_refs_trillionnium_rust_coverage_guard_test.sh
+          ./scripts/v2/workflow_script_refs_trillionnium_coverage_guard_test.sh
 
       - name: Auto regression: workflow-script-refs-relative-scripts-coverage-guard-test
         run: |

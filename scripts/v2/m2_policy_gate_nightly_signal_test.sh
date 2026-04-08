@@ -8,7 +8,7 @@ export LC_NUMERIC=C
 export TZ=UTC
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-cd "$ROOT/trillionnium-rust"
+cd "$ROOT/trillionnium"
 
 TAG="m2-nightly-signal-test-$$-$(date +%s)"
 AUDIT="run/audit/state-root-audit-${TAG}.txt"

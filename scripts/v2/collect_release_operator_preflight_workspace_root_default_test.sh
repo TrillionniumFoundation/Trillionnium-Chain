@@ -9,8 +9,8 @@ EXPECTED_BRANCH="$(git -C "$ROOT" branch --show-current)"
 EXPECTED_HEAD="$(git -C "$ROOT" rev-parse HEAD)"
 EXPECTED_BRANCH_REF="refs/heads/$EXPECTED_BRANCH"
 EXPECTED_WORKSPACE_ROOT="$ROOT"
-if [[ -f "$ROOT/trillionnium-rust/Cargo.toml" ]]; then
-  EXPECTED_WORKSPACE_ROOT="$ROOT/trillionnium-rust"
+if [[ -f "$ROOT/trillionnium/Cargo.toml" ]]; then
+  EXPECTED_WORKSPACE_ROOT="$ROOT/trillionnium"
 fi
 
 output="$(cd "$ROOT" && "$SCRIPT" \

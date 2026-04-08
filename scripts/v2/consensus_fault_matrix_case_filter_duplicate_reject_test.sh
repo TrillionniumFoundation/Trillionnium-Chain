@@ -2,7 +2,7 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
-SCRIPT="$ROOT/trillionnium-rust/scripts/run_consensus_fault_matrix.sh"
+SCRIPT="$ROOT/trillionnium/scripts/run_consensus_fault_matrix.sh"
 
 needle='duplicate case'
 if ! grep -Fq "$needle" "$SCRIPT"; then

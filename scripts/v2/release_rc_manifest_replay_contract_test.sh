@@ -2,7 +2,7 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-TARGET="$ROOT/trillionnium-rust/scripts/release_rc.sh"
+TARGET="$ROOT/trillionnium/scripts/release_rc.sh"
 
 if [[ ! -f "$TARGET" ]]; then
   echo "[FAIL] missing target script: $TARGET" >&2

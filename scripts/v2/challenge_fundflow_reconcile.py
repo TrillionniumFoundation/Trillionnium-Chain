@@ -209,7 +209,7 @@ def write_report(path: Path, status: str, window_desc: str, event_log: Path, sum
 
 def main() -> int:
     ap = argparse.ArgumentParser(description="Reconcile challenge escrow/forfeit against event flow")
-    ap.add_argument("--event-log", default="trillionnium-rust/run/event-field-check.log", help="node event log file")
+    ap.add_argument("--event-log", default="trillionnium/run/event-field-check.log", help="node event log file")
     w = ap.add_mutually_exclusive_group()
     w.add_argument("--hours", type=int, default=24, help="time window in hours (default: 24)")
     w.add_argument("--blocks", type=int, help="latest N blocks window")

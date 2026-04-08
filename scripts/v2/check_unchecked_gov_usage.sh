@@ -10,7 +10,7 @@ cd "$ROOT"
 # - trnm-state crate internal tests in lib.rs
 # - this check script itself / docs / workflow files
 
-hits=$(grep -RIn "set_gov_param_bootstrap_unchecked" trillionnium-rust/crates \
+hits=$(grep -RIn "set_gov_param_bootstrap_unchecked" trillionnium/crates \
   --exclude-dir target \
   --exclude-dir .git || true)
 
