@@ -165,21 +165,29 @@ pub fn replay_step<S: RpcPullReadSource, K: DurableReadSink>(
             block.height
         );
     }
+    if block.hash.trim().is_empty() || block.hash.trim() != block.hash {
+        bail!(
+            "rpc-pull returned non-canonical replay block hash at height {}",
+            block.height
+        );
+    }
     if block.height == 0 {
         if block.parent_hash.is_some() {
             bail!("rpc-pull returned non-canonical genesis parent hash");
         }
-    } else if block
-        .parent_hash
-        .as_deref()
-        .map(str::trim)
-        .filter(|value| !value.is_empty())
-        .is_none()
-    {
-        bail!(
-            "rpc-pull returned non-canonical replay block parent hash at height {}",
-            block.height
-        );
+    } else {
+        let Some(parent_hash) = block.parent_hash.as_deref() else {
+            bail!(
+                "rpc-pull returned non-canonical replay block parent hash at height {}",
+                block.height
+            );
+        };
+        if parent_hash.trim().is_empty() || parent_hash.trim() != parent_hash {
+            bail!(
+                "rpc-pull returned non-canonical replay block parent hash at height {}",
+                block.height
+            );
+        }
     }
 
     sink.persist_block_surface(&block)?;
@@ -407,6 +415,48 @@ mod tests {
             .to_string()
             .contains("non-canonical genesis parent hash"));
         assert_eq!(cursor.next_height, 0);
+        assert!(sink.persisted.is_empty());
+    }
+
+    #[test]
+    fn replay_step_rejects_wrapped_block_hash_before_persisting() {
+        let mut invalid_block = block(4, 4_000);
+        invalid_block.hash = " hash-4 ".into();
+        let mut source = FakeSource {
+            head: Some(head(4, 4_000)),
+            blocks: vec![invalid_block],
+        };
+        let mut sink = FakeSink::default();
+        let mut cursor = ReplayCursor { next_height: 4 };
+
+        let err = replay_step(&mut source, &mut sink, &mut cursor, Some(3), 5_000)
+            .expect_err("wrapped replay hash must fail closed");
+
+        assert!(err
+            .to_string()
+            .contains("non-canonical replay block hash"));
+        assert_eq!(cursor.next_height, 4);
+        assert!(sink.persisted.is_empty());
+    }
+
+    #[test]
+    fn replay_step_rejects_wrapped_parent_hash_before_persisting() {
+        let mut invalid_block = block(4, 4_000);
+        invalid_block.parent_hash = Some(" hash-3 ".into());
+        let mut source = FakeSource {
+            head: Some(head(4, 4_000)),
+            blocks: vec![invalid_block],
+        };
+        let mut sink = FakeSink::default();
+        let mut cursor = ReplayCursor { next_height: 4 };
+
+        let err = replay_step(&mut source, &mut sink, &mut cursor, Some(3), 5_000)
+            .expect_err("wrapped parent hash must fail closed");
+
+        assert!(err
+            .to_string()
+            .contains("non-canonical replay block parent hash"));
+        assert_eq!(cursor.next_height, 4);
         assert!(sink.persisted.is_empty());
     }
 }
