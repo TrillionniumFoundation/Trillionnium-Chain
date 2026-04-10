@@ -1679,6 +1679,68 @@ mod tests {
     }
 
     #[test]
+    fn load_config_rejects_ipv4_compatible_ipv6_and_scoped_ipv6_listeners_with_operator_facing_error(
+    ) {
+        for (field, addr, safe_peer_addr, expected_fragment) in [
+            (
+                "rpc_addr",
+                "[::7f00:1]:7000",
+                "[2001:4860::1]:7001",
+                "rpc_addr must not use an IPv4-compatible IPv6 address",
+            ),
+            (
+                "p2p_addr",
+                "[::c000:20a]:7001",
+                "[2001:4860::1]:7000",
+                "p2p_addr must not use an IPv4-compatible IPv6 address",
+            ),
+            (
+                "rpc_addr",
+                "[2001:db8::10%7]:7000",
+                "[2001:db8::10]:7001",
+                "rpc_addr must not use an IPv6 scope identifier",
+            ),
+            (
+                "p2p_addr",
+                "[2001:db8::10%9]:7001",
+                "[2001:db8::10]:7000",
+                "p2p_addr must not use an IPv6 scope identifier",
+            ),
+        ] {
+            let path = std::env::temp_dir().join(format!(
+                "trnm-node-config-{field}-listener-{}-{}.toml",
+                std::process::id(),
+                now_unix_ms()
+            ));
+            let body = if field == "rpc_addr" {
+                format!(
+                    "node_id = \"node-a\"\nrpc_addr = \"{addr}\"\np2p_addr = \"{safe_peer_addr}\"\n"
+                )
+            } else {
+                format!(
+                    "node_id = \"node-a\"\nrpc_addr = \"{safe_peer_addr}\"\np2p_addr = \"{addr}\"\n"
+                )
+            };
+            std::fs::write(&path, body).expect("write config");
+
+            let path_str = path.to_str().expect("utf8 path");
+            let err = load_config(path_str)
+                .expect_err("invalid IPv6 listener forms must fail closed when loaded from disk");
+            let err_surface = format!("{err:#}");
+            assert!(
+                err_surface.contains(expected_fragment),
+                "unexpected error for {field}: {err:#}"
+            );
+            assert!(
+                err_surface.contains(path_str),
+                "error surface for {field} must keep the operator-supplied config path visible: {err:#}"
+            );
+
+            let _ = std::fs::remove_file(path);
+        }
+    }
+
+    #[test]
     fn validate_node_config_rejects_invalid_socket_addresses() {
         let rpc_err = validate_node_config(
             NodeConfig {
