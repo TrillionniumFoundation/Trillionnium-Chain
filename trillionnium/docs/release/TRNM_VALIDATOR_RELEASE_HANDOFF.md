@@ -451,6 +451,11 @@ Record these fields in the release ticket or operator handoff note:
 - local evidence replay command (`summary_replay_command`, or `replay_command=` from `summary.txt` when quoting the raw artifact directly):
 - local evidence replay env challenge re-exec entry (`replay_env_trnm_challenge_reexec_entry`; preserve the literal helper/artifact value, including `<entry_not_found>`, when present):
 - local evidence challenge re-exec entry (`challenge_reexec_entry`; preserve the literal helper/artifact value, including `<entry_not_found>`, when present):
+- dr summary path (`dr_summary_path=` from `extract_validator_rotation_dr_fields.sh` / `run_validator_dr_rehearsal.sh` when the handoff covers validator replacement, rotation, or DR rebuild):
+- dr generated_at (`dr_generated_at=` from the DR helper output):
+- dr status (`dr_status=PASS` required when quoting DR evidence):
+- dr rollback command (`dr_rollback_command=` from the DR helper output; do not paraphrase cleanup steps):
+- dr replay command (`dr_replay_command=` from the DR helper output; preserve the exact shell):
 - rc manifest rollback command (`manifest_rollback_command`, or `rollback_command=` from `manifest.txt` when quoting the raw artifact directly):
 - rc manifest replay command (`manifest_replay_command`, or `replay_command=` from `manifest.txt` when quoting the raw artifact directly):
 
