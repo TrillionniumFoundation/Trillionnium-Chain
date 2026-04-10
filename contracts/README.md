@@ -99,9 +99,16 @@ contracts/
 
 ## 构建边界
 
-当前目录下还没有统一 workspace `Cargo.toml`，因此不要假设可以在 `contracts/` 根目录直接运行统一 workspace gate。
+当前目录下**已经有**统一 workspace `Cargo.toml`，因此可以在 `contracts/` 根目录运行统一 workspace gate。
 
-如需验证，当前应按 crate 单独执行，例如：
+例如：
+
+```bash
+cargo check --manifest-path contracts/Cargo.toml -q
+cargo test --manifest-path contracts/Cargo.toml -q
+```
+
+如需做更细粒度定位，也仍然可以按 crate 单独执行，例如：
 
 ```bash
 cd contracts/settlement-vault && cargo test

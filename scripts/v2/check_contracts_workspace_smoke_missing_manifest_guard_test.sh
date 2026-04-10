@@ -30,7 +30,7 @@ if [[ "$rc" -ne 1 ]]; then
   exit 1
 fi
 
-expected="[FAIL] contracts workspace manifest missing: $TEST_ROOT/contracts-rust/Cargo.toml"
+expected="[FAIL] contracts workspace manifest missing: $TEST_ROOT/contracts/Cargo.toml"
 if ! grep -Fq -- "$expected" "$TMP_DIR/stderr.log"; then
   echo "[FAIL] missing manifest guard message not found" >&2
   cat "$TMP_DIR/stderr.log" >&2
