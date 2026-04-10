@@ -4801,6 +4801,63 @@ mod tests {
     }
 
     #[test]
+    fn shipped_bootstrap_readme_tuples_match_loaded_configs_exactly() {
+        let manifest_dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR"));
+        let workspace_root = manifest_dir
+            .ancestors()
+            .nth(2)
+            .expect("trnm-node manifest should sit under trillionnium/crates/trnm-node");
+        let readme_path = workspace_root.join("configs").join("README.md");
+        let readme = std::fs::read_to_string(&readme_path).unwrap_or_else(|err| {
+            panic!(
+                "{} should stay readable for shipped bootstrap README tuple/config parity checks: {err}",
+                readme_path.display()
+            )
+        });
+
+        let documented_topology_lines = readme
+            .lines()
+            .filter(|line| line.starts_with("- `node") && line.contains("→ node id `node"))
+            .collect::<Vec<_>>();
+
+        let derived_topology_lines = [
+            "configs/node1.toml",
+            "configs/node2.toml",
+            "configs/node3.toml",
+            "configs/node4.toml",
+        ]
+        .into_iter()
+        .map(|relative_path| {
+            let path = workspace_root.join(relative_path);
+            let cfg = load_config(relative_path).unwrap_or_else(|err| {
+                panic!(
+                    "{} should remain loadable for shipped bootstrap README tuple/config parity checks: {err:#}",
+                    path.display()
+                )
+            });
+            let file_name = std::path::Path::new(relative_path)
+                .file_name()
+                .and_then(|name| name.to_str())
+                .expect("shipped bootstrap config path should end in utf-8 filename");
+            format!(
+                "- `{file_name}` → node id `{}`, P2P `{}`, RPC `{}`",
+                cfg.node_id, cfg.p2p_addr, cfg.rpc_addr
+            )
+        })
+        .collect::<Vec<_>>();
+        let derived_topology_line_refs = derived_topology_lines
+            .iter()
+            .map(String::as_str)
+            .collect::<Vec<_>>();
+
+        assert_eq!(
+            documented_topology_lines, derived_topology_line_refs,
+            "{} must keep README Day-1 tuples exactly aligned with the shipped bootstrap configs so peer topology docs cannot silently drift from fixture truth",
+            readme_path.display()
+        );
+    }
+
+    #[test]
     fn shipped_bootstrap_readme_keeps_single_authoritative_fail_closed_topology_rules() {
         let manifest_dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR"));
         let workspace_root = manifest_dir
