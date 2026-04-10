@@ -177,18 +177,18 @@ Operator input rule:
 - prefer the first emitted `tx_hash="0x..."` line from `trnm-cli` because it is shell-safe and maps directly to the canonical hash preserved in local pending state
 - do **not** strip the `0x` prefix or replace the original submit-path hash with a later explorer/log rendering; `trnm-cli tx query` and `trnm-cli tx wait` fail closed on bare hex input because a missing prefix is treated as ambiguous operator evidence, not harmless formatting drift
 - treat later bare-hex renderings, copied dashboard values, or explorer aliases as **display-only** until the operator manually confirms they normalize back to the same canonical `0x...` value; do not paste a non-canonical alias directly into follow-up commands
-- when the submit path is `trnm-cli` itself, preserve the first emitted `tx_hash=` line as the operator truth-source and keep the corresponding local pending-state record (`run/rpc/txs.json`, or `TRNM_RPC_TX_FILE` if overridden) until cutover validation is complete
+- when the submit path is `trnm-cli` itself, preserve the first emitted shell-safe `tx_hash="0x..."` line as the operator truth-source and keep the corresponding local pending-state record (`run/rpc/txs.json`, or `TRNM_RPC_TX_FILE` if overridden) until cutover validation is complete
 - if an operator clipboard, chat transcript, or ticket comment contains multiple hash renderings for the same action, keep the original submit-path `requested_tx_hash=` field unchanged and record the other values as comparison evidence instead of promoting them into the truth-source slot
 
 Record together:
 - `requested_tx_hash=` from the submit path exactly once
-- the first locally emitted `tx_hash=` line from the submit path (if `trnm-cli` produced it)
+- the first locally emitted shell-safe `tx_hash="0x..."` line from the submit path (if `trnm-cli` produced it)
 - local pending-state file path used for the cutover (`run/rpc/txs.json` by default, or `TRNM_RPC_TX_FILE=` override)
 - `query_tx_hash=` from `trnm-cli tx query`
 - `wait_tx_hash=` from `trnm-cli tx wait`
 
 Alias-handling rule:
-- later tooling may echo the same canonical value under aliases such as `tx_hash=`, `tx-hash=`, `transaction_hash=`, `transaction-hash=`, or `transactionHash=`
+- later tooling may echo the same canonical value under aliases such as `tx_hash="..."`, `txhash=`, `transaction_hash=`, `tx-hash=`, `transaction-hash=`, or `transactionHash=`
 - treat those as formatting aliases only after they normalize to the exact same canonical tx hash
 - do not overwrite the original `requested_tx_hash=` field with a later alias line; keep the first captured submit-path hash as the source of truth for the entire procedure
 
