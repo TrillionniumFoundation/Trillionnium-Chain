@@ -743,6 +743,32 @@ mod tests {
     }
 
     #[test]
+    fn unauthorized_pause_and_unpause_do_not_leak_state_or_append_audit_events() {
+        let mut vault = SettlementVault::new("owner");
+
+        assert_eq!(vault.pause("mallory").unwrap_err(), VaultError::Unauthorized);
+        assert!(!vault.is_paused());
+        assert!(vault.audit_log().is_empty());
+
+        vault.pause("owner").unwrap();
+        let audit_len_after_pause = vault.audit_log().len();
+        assert!(vault.is_paused());
+
+        assert_eq!(vault.pause("mallory").unwrap_err(), VaultError::Unauthorized);
+        assert_eq!(vault.unpause("mallory").unwrap_err(), VaultError::Unauthorized);
+        assert!(vault.is_paused());
+        assert_eq!(vault.audit_log().len(), audit_len_after_pause);
+
+        vault.unpause("owner").unwrap();
+        let audit_len_after_unpause = vault.audit_log().len();
+        assert!(!vault.is_paused());
+
+        assert_eq!(vault.unpause("mallory").unwrap_err(), VaultError::Unauthorized);
+        assert!(!vault.is_paused());
+        assert_eq!(vault.audit_log().len(), audit_len_after_unpause);
+    }
+
+    #[test]
     fn paused_duplicate_lock_request_fails_closed_without_leaking_duplicate_state() {
         let mut vault = SettlementVault::new("owner");
 
