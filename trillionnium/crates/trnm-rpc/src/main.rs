@@ -3153,7 +3153,7 @@ fn parse_query_events_limit_from_path(path: &str) -> std::result::Result<usize, 
     if query.is_empty()
         || query.contains('?')
         || query.contains('#')
-        || query.chars().any(|ch| ch.is_control() || ch.is_whitespace())
+        || query.chars().any(char::is_control)
     {
         return Err(http_json_response(
             "400 Bad Request",
