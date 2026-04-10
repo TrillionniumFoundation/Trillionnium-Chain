@@ -185,8 +185,8 @@ impl SettlementVault {
             } => {
                 let mut normalized = AuditEvent::new("settlement-vault", "vault.transferred");
                 normalized.actor = Some(caller.clone());
-                normalized.object_id = Some(to.clone());
-                normalized.related_id = Some(from.clone());
+                normalized.object_id = Some(from.clone());
+                normalized.related_id = Some(to.clone());
                 normalized.amount = Some(*amount);
                 normalized
             }
@@ -926,8 +926,8 @@ mod tests {
         assert!(normalized.iter().any(|event| {
             event.event_type == "vault.transferred"
                 && event.actor.as_deref() == Some("owner")
-                && event.object_id.as_deref() == Some("bob")
-                && event.related_id.as_deref() == Some("alice")
+                && event.object_id.as_deref() == Some("alice")
+                && event.related_id.as_deref() == Some("bob")
                 && event.amount == Some(20)
         }));
         assert!(normalized.iter().any(|event| {
