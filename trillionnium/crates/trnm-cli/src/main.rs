@@ -2680,6 +2680,10 @@ fn format_transaction_hash_hyphen_alias_line(tx_hash: &str) -> String {
     format!("transaction-hash={}", tx_hash)
 }
 
+fn format_transaction_hash_spaced_alias_line(tx_hash: &str) -> String {
+    format!("transaction hash={}", tx_hash)
+}
+
 fn emit_tx_hash_lines(tx_hash: &str) {
     println!("{}", format_tx_hash_line(tx_hash));
     println!("{}", format_tx_hash_alias_line(tx_hash));
@@ -2687,6 +2691,7 @@ fn emit_tx_hash_lines(tx_hash: &str) {
     println!("{}", format_transaction_hash_camel_alias_line(tx_hash));
     println!("{}", format_tx_hash_hyphen_alias_line(tx_hash));
     println!("{}", format_transaction_hash_hyphen_alias_line(tx_hash));
+    println!("{}", format_transaction_hash_spaced_alias_line(tx_hash));
 }
 
 fn emit_pending_tx_hash(tx_hash: &str) -> Result<()> {
@@ -4147,6 +4152,10 @@ mod tests {
             "transaction-hash=0xabc123".to_string()
         );
         assert_eq!(
+            format_transaction_hash_spaced_alias_line("0xabc123"),
+            "transaction hash=0xabc123".to_string()
+        );
+        assert_eq!(
             extract_tx_hash(&format_tx_hash_line("0xabc123")).as_deref(),
             Some("0xabc123")
         );
@@ -4168,6 +4177,10 @@ mod tests {
         );
         assert_eq!(
             extract_tx_hash(&format_transaction_hash_hyphen_alias_line("0xabc123")).as_deref(),
+            Some("0xabc123")
+        );
+        assert_eq!(
+            extract_tx_hash(&format_transaction_hash_spaced_alias_line("0xabc123")).as_deref(),
             Some("0xabc123")
         );
     }
@@ -5919,13 +5932,14 @@ mod tests {
         };
 
         let emitted = format!(
-            "{}\n{}\n{}\n{}\n{}\n{}\nstatus={}\n",
+            "{}\n{}\n{}\n{}\n{}\n{}\n{}\nstatus={}\n",
             format_tx_hash_line(&query.tx_hash),
             format_tx_hash_alias_line(&query.tx_hash),
             format_transaction_hash_alias_line(&query.tx_hash),
             format_transaction_hash_camel_alias_line(&query.tx_hash),
             format_tx_hash_hyphen_alias_line(&query.tx_hash),
             format_transaction_hash_hyphen_alias_line(&query.tx_hash),
+            format_transaction_hash_spaced_alias_line(&query.tx_hash),
             query.status
         );
 
@@ -5935,6 +5949,7 @@ mod tests {
         assert!(emitted.contains("transactionHash=0xabc123"));
         assert!(emitted.contains("tx-hash=0xabc123"));
         assert!(emitted.contains("transaction-hash=0xabc123"));
+        assert!(emitted.contains("transaction hash=0xabc123"));
         assert_eq!(extract_tx_hash(&emitted).as_deref(), Some("0xabc123"));
     }
 }
