@@ -99,9 +99,22 @@ contracts/
 
 ## 构建边界
 
-当前目录下还没有统一 workspace `Cargo.toml`，因此不要假设可以在 `contracts/` 根目录直接运行统一 workspace gate。
+当前目录下**已经有** 统一 workspace `Cargo.toml`，但它目前只覆盖 4 个已落地 crate：
 
-如需验证，当前应按 crate 单独执行，例如：
+- `audit-events`
+- `bridge-relay`
+- `governance-guard`
+- `settlement-vault`
+
+因此，可以在 `contracts/` 根目录直接运行当前 MVP 子树的统一 workspace gate，例如：
+
+```bash
+cargo test --manifest-path contracts/Cargo.toml
+```
+
+但这里仍然**不要**把这个最小 workspace 误读成架构文档里的完整 target layout 已经落地。当前 workspace 只代表现有 4 个 crate 的统一验证入口，**不等价于** `sdk/`、`runtime-spec/`、`integration-tests/` 已实现并接入 canonical host runtime。
+
+如需逐 crate 验证，也仍可单独执行，例如：
 
 ```bash
 cd contracts/settlement-vault && cargo test
