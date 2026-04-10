@@ -304,8 +304,10 @@ fn normalize_wallet_store_env_trims_shell_wrapped_quotes() {
     assert_eq!(normalize_wallet_store_env("/tmp/trnm⧸wallets"), None);
     assert_eq!(normalize_wallet_store_env("/tmp∕trnm-wallets"), None);
     assert_eq!(normalize_wallet_store_env("/tmp⁄trnm-wallets"), None);
+    assert_eq!(normalize_wallet_store_env("/tmp∖trnm-wallets"), None);
     assert_eq!(normalize_wallet_store_env("/tmp／trnm-wallets"), None);
     assert_eq!(normalize_wallet_store_env("/tmp＼trnm-wallets"), None);
+    assert_eq!(normalize_wallet_store_env("/tmp﹨trnm-wallets"), None);
     assert_eq!(normalize_wallet_store_env("/tmp⟋trnm-wallets"), None);
     assert_eq!(normalize_wallet_store_env("/tmp⟍trnm-wallets"), None);
 }

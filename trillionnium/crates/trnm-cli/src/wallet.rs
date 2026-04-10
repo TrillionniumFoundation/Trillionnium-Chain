@@ -125,7 +125,10 @@ fn is_suspicious_path_wrapper(c: char) -> bool {
 }
 
 fn is_suspicious_path_separator(c: char) -> bool {
-    matches!(c, '\\' | '∕' | '⁄' | '／' | '＼' | '⧵' | '⧸' | '⟋' | '⟍')
+    matches!(
+        c,
+        '\\' | '∕' | '⁄' | '∖' | '／' | '＼' | '﹨' | '⧵' | '⧸' | '⟋' | '⟍'
+    )
 }
 
 pub(crate) fn normalize_wallet_store_env(raw: &str) -> Option<&str> {
