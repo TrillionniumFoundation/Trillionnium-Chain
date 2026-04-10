@@ -84,7 +84,7 @@ python3 trillionnium/scripts/v2/check_validator_config_bundle.py \
 | `genesis_artifact_sha256=` | 缺失 | 需要与上面的真实 artifact 严格绑定的 64-char SHA256 |
 | `ceremony_id=` | 缺失 | 需要一个非模板、可审计、可引用的唯一 ceremony id |
 | `packet_generated_at=` | 可现场生成 | 需要在生成 packet 当时写入 UTC 时间戳 |
-| `packet_distribution_path=` | 缺失 | 需要一个真实共享分发路径（绝对路径 / ticket / artifact folder） |
+| `packet_distribution_path=` | 缺失 | 需要一个真实共享分发路径，且必须指向一份**明确的 ceremony packet 文件绝对路径**，不能只写 ticket、artifact folder 或目录根 |
 | `validator_set_version=` | 缺失 | 需要一个真实版本标签，不能继续用默认 `v1` |
 | `startup_order_note=` | 缺失 | 需要明确启动顺序或说明顺序不敏感 |
 | `rollback_owner=` | 缺失 | 需要明确谁有权宣布本轮 ceremony abort / rollback |
@@ -136,7 +136,7 @@ python3 trillionnium/scripts/v2/check_validator_config_bundle.py \
 ### 4.2 Ceremony metadata
 1. `ceremony_id=`（例如 `mn04-bootstrap-20260404-0130Z`）
 2. `packet_generated_at=`（UTC）
-3. `packet_distribution_path=`
+3. `packet_distribution_path=`（必须是那份共享给所有 operator 审阅的 ceremony packet 文件绝对路径，而不是目录 / ticket / bundle 根）
 4. `startup_order_note=`
 5. `rollback_owner=`
 
