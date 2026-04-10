@@ -56,10 +56,21 @@ The branch argument may be either the short branch name (for example `lane/mn07-
 EXPECTED_WORKTREE_ROOT="/abs/path/from-ticket"
 EXPECTED_BRANCH_REF="lane/assigned-branch"
 
+# From repo root:
+./scripts/v2/verify_lane_worktree.sh \
+  --expected-worktree-root "$EXPECTED_WORKTREE_ROOT" \
+  --expected-branch-ref "$EXPECTED_BRANCH_REF"
+
+# Or from ./trillionnium:
 ./scripts/v2/verify_lane_worktree.sh \
   --expected-worktree-root "$EXPECTED_WORKTREE_ROOT" \
   --expected-branch-ref "$EXPECTED_BRANCH_REF"
 ```
+
+Operator path rule:
+- if you are in the repository root, use `./scripts/v2/verify_lane_worktree.sh`
+- if you `cd trillionnium`, keep using `./scripts/v2/verify_lane_worktree.sh` from there instead of accidentally reaching for a stale `../trillionnium-rust/...` path
+- record the exact invocation you used verbatim in the handoff note
 
 Record verbatim:
 - `expected_worktree_root=`
@@ -152,8 +163,13 @@ TRNM_RPC_TX_FILE="$(pwd)/run/rpc/txs.json"
 export TRNM_RPC_TX_FILE
 printf 'recorded_tx_file=%s\n' "$TRNM_RPC_TX_FILE"
 
+# From ./trillionnium after building trnm-cli:
 ./target/debug/trnm-cli tx query "$REQUESTED_TX_HASH"
 ./target/debug/trnm-cli tx wait "$REQUESTED_TX_HASH" --timeout 30 --interval 2
+
+# From repo root without changing directories:
+cargo run --manifest-path trillionnium/Cargo.toml -p trnm-cli -- tx query "$REQUESTED_TX_HASH"
+cargo run --manifest-path trillionnium/Cargo.toml -p trnm-cli -- tx wait "$REQUESTED_TX_HASH" --timeout 30 --interval 2
 ```
 
 Operator safety rule:
@@ -166,7 +182,10 @@ If the submit path is `trnm-cli` itself, capture the first shell-safe hash line 
 
 ```bash
 SUBMIT_LOG=/tmp/trnm-submit.log
+# From ./trillionnium after building trnm-cli:
 ./target/debug/trnm-cli tx ... | tee "$SUBMIT_LOG"
+# From repo root, the equivalent shape is:
+# cargo run --manifest-path trillionnium/Cargo.toml -p trnm-cli -- tx ... | tee "$SUBMIT_LOG"
 REQUESTED_TX_HASH="$({
   grep -m1 -E '^tx_hash="0x[0-9A-Fa-f]+"$' "$SUBMIT_LOG" \
     || grep -m1 -E '^(txhash|transaction_hash|transaction-hash|transactionHash|tx-hash)=0x[0-9A-Fa-f]+$' "$SUBMIT_LOG" \
