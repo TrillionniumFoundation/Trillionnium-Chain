@@ -565,6 +565,30 @@ assert_contains "${TMP_DIR}/status-explicit-ipv6-host-override.out" "public_base
 assert_contains "${TMP_DIR}/status-explicit-ipv6-host-override.out" "health_url=http://[::]:18081/healthz"
 assert_contains "${TMP_DIR}/status-explicit-ipv6-host-override.out" "local_health_url=http://[::1]:18081/healthz"
 
+EXPLORER_HOST='' \
+  "${STATUS_SCRIPT}" >"${TMP_DIR}/status-empty-host-override.out" || true
+assert_contains "${TMP_DIR}/status-empty-host-override.out" "state=invalid-config"
+assert_contains "${TMP_DIR}/status-empty-host-override.out" "config_error=EXPLORER_HOST must not be empty"
+assert_contains "${TMP_DIR}/status-empty-host-override.out" "bind_host="
+assert_contains "${TMP_DIR}/status-empty-host-override.out" "health_probe=invalid-config"
+assert_contains "${TMP_DIR}/status-empty-host-override.out" "local_health_probe=invalid-config"
+
+EXPLORER_HOST='' \
+EXPLORER_PORT="${PORT}" \
+EXPLORER_PUBLIC_BASE_URL="${PUBLIC_BASE_URL}" \
+EXPLORER_HEALTH_URL="${HEALTH_URL}" \
+EXPLORER_RPC_BASE_URL="${RPC_BASE_URL}" \
+  "${UP_SCRIPT}" >"${TMP_DIR}/up-empty-host-override.out" 2>&1 || true
+assert_contains "${TMP_DIR}/up-empty-host-override.out" "refusing to start explorer service scaffold: EXPLORER_HOST must not be empty"
+assert_contains "${TMP_DIR}/up-empty-host-override.out" "state=invalid-config"
+assert_contains "${TMP_DIR}/up-empty-host-override.out" "config_error=EXPLORER_HOST must not be empty"
+
+EXPLORER_HOST='' \
+  "${DOWN_SCRIPT}" >"${TMP_DIR}/down-empty-host-override.out"
+assert_contains "${TMP_DIR}/down-empty-host-override.out" "config_warning=EXPLORER_HOST must not be empty"
+assert_contains "${TMP_DIR}/down-empty-host-override.out" "state=down"
+assert_contains "${TMP_DIR}/down-empty-host-override.out" "bind_host="
+
 CONFLICT_PORT=18083
 python3 -m http.server "${CONFLICT_PORT}" --bind 127.0.0.1 >"${TMP_DIR}/listener-conflict.log" 2>&1 &
 CONFLICT_PID=$!
