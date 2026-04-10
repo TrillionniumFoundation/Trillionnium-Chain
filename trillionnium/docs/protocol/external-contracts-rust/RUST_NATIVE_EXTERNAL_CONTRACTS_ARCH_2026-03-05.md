@@ -19,7 +19,7 @@ This document defines the architecture spec for external contracts on the curren
    - `BridgeRelay`
    - `GovernanceGuard`
 4. Define bridge boundaries to Rust L1 components (`trnm-state/trnm-node/trnm-rpc`).
-5. Provide migration path from prior legacy external-contract skeleton to `contracts-rust/`.
+5. Provide migration path from prior legacy external-contract skeleton to the current `contracts/` subtree and its future host-runtime closure.
 
 ---
 
@@ -44,20 +44,21 @@ Rationale:
 ## 1.2 Package Layout (target)
 
 ```text
-contracts-rust/
+contracts/
   sdk/                    # common macros, ABI types, codec, error/event defs
   runtime-spec/           # host ABI traits + fixture host for tests
   settlement-vault/
   bridge-relay/
   governance-guard/
   integration-tests/      # golden tests with deterministic replay
+  audit-events/           # shared audit-event schema crate (adjacent, not sdk/runtime closure)
 ```
 
 Current repository snapshot note:
 
-- The layout above is the **target architecture**, not a claim that the full workspace already exists in-tree.
-- The current repository already contains contract crates for `settlement-vault/`, `bridge-relay/`, and `governance-guard/`.
-- The current repository also contains `contracts-rust/audit-events/` as a shared audit-event schema crate adjacent to this target layout.
+- The layout above is the **target architecture inside the current `contracts/` subtree**, not a claim that the full workspace already exists in-tree.
+- The current repository already contains contract crates for `settlement-vault/`, `bridge-relay/`, and `governance-guard/` under `contracts/`.
+- The current repository also contains `contracts/audit-events/` as a shared audit-event schema crate adjacent to this target layout.
 - `audit-events/` is helpful for normalized event truthfulness, but it does **not** by itself mean `sdk/`, `runtime-spec/`, or `integration-tests/` are already implemented.
 - Until those pieces land and are wired to the host runtime, this document should be read as an architecture baseline and boundary spec, **not** as proof that canonical WASM host integration is complete.
 
@@ -313,7 +314,7 @@ RPC compatibility policy:
 
 ---
 
-## 7. Migration: Legacy External-Contract Skeleton -> `contracts-rust/`
+## 7. Migration: Legacy External-Contract Skeleton -> `contracts/`
 
 ## 7.1 Migration Steps
 
@@ -321,9 +322,9 @@ RPC compatibility policy:
    - Mark the legacy external-contract skeleton read-only.
    - Stop adding features; only archival reference.
 
-2. **Create Rust contract workspace**
-   - Initialize `contracts-rust/` with `sdk` + 3 contract crates.
-   - Add CI for `wasm32-unknown-unknown` build and size checks.
+2. **Evolve the current Rust contract subtree toward the target workspace**
+   - Grow `contracts/` toward the target `sdk` + contract-crate + runtime-spec layout instead of introducing a second parallel top-level path.
+   - Add CI for `wasm32-unknown-unknown` build and size checks once those target pieces begin to land.
    - Snapshot truthfulness note: the current repository already has `settlement-vault/`, `bridge-relay/`, `governance-guard/`, and adjacent `audit-events/`, but still does **not** have the target `sdk/`, `runtime-spec/`, or `integration-tests/` directories wired as one canonical host-runtime workspace.
 
 3. **Define ABI and codec lock**
@@ -396,7 +397,7 @@ Cutover acceptance requires all:
 
 ## 10. Immediate Next Deliverables
 
-1. `contracts-rust/sdk` minimal crate with ABI/event/error primitives.
+1. `contracts/sdk` minimal crate with ABI/event/error primitives.
 2. `trnm-node` host adapter trait + deterministic WASM executor feature flag.
 3. `trnm-state` contract storage delta API and root hashing inclusion.
 4. Contract-specific RFCs for SettlementVault/BridgeRelay/GovernanceGuard method schemas.
