@@ -183,9 +183,11 @@ fn proof_payload_is_blank(proof_payload: &[u8]) -> bool {
 }
 
 fn normalize_hex_string(raw: &str) -> String {
-    raw.trim()
+    let trimmed = raw.trim();
+    trimmed
         .strip_prefix("0x")
-        .unwrap_or(raw.trim())
+        .or_else(|| trimmed.strip_prefix("0X"))
+        .unwrap_or(trimmed)
         .to_ascii_lowercase()
 }
 
@@ -22420,5 +22422,10 @@ mod tests {
                 "token should fail closed as non-canonical: {token:?}"
             );
         }
+    }
+
+    #[test]
+    fn normalize_hex_string_strips_uppercase_hex_prefix() {
+        assert_eq!(normalize_hex_string(" 0XAbCd "), "abcd");
     }
 }
