@@ -691,7 +691,12 @@ mod tests {
 
     #[test]
     fn load_config_accepts_inner_curdir_markers_for_shipped_bootstrap_paths() {
-        for path in ["configs/./node1.toml", "./configs/./node1.toml"] {
+        for path in [
+            "configs/./node1.toml",
+            "./configs/./node1.toml",
+            "trillionnium/configs/./node1.toml",
+            "./trillionnium/configs/./node1.toml",
+        ] {
             let cfg = load_config(path).unwrap_or_else(|err| {
                 panic!("{path} should resolve for shipped bootstrap config anchoring: {err:#}")
             });
