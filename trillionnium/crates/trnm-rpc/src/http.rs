@@ -538,6 +538,27 @@ mod tests {
     }
 
     #[test]
+    fn parse_query_events_limit_rejects_wrapped_limit_keys() {
+        for path in [
+            "/query-events/42?%22limit%22=7",
+            "/query-events/42?'limit'=7",
+            "/query-events/42?`limit`=7",
+            "/query-events/42?%60limit%60=7",
+        ] {
+            let response = parse_query_events_limit_from_path(path);
+            assert!(response.is_err(), "path={path:?}");
+            assert_eq!(
+                response.unwrap_err(),
+                http_json_response(
+                    "400 Bad Request",
+                    "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid limit\"}"
+                ),
+                "path={path:?}"
+            );
+        }
+    }
+
+    #[test]
     fn parse_http_request_target_rejects_raw_and_encoded_dot_segments() {
         assert_eq!(
             parse_http_request_target("GET /query-events/../42?limit=1 HTTP/1.1"),

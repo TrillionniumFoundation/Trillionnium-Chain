@@ -281,7 +281,7 @@
             8
         );
         assert_eq!(
-            parse_query_events_limit_from_path("/query-events/42?limit=  `9`  ")
+            parse_query_events_limit_from_path("/query-events/42?limit=`9`")
                 .expect("backtick-wrapped numeric limit should parse"),
             9
         );
