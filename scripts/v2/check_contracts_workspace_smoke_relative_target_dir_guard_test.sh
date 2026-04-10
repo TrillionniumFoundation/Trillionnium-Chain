@@ -10,16 +10,16 @@ TMP_DIR="$(mktemp -d "${TMPDIR:-/tmp}/contracts-workspace-smoke-relative-target-
 trap 'rm -rf "$TMP_DIR"' EXIT
 
 TEST_ROOT="$TMP_DIR/repo"
-mkdir -p "$TEST_ROOT/scripts" "$TEST_ROOT/contracts-rust"
+mkdir -p "$TEST_ROOT/scripts" "$TEST_ROOT/contracts"
 TEST_ROOT="$(cd "$TEST_ROOT" && pwd)"
 cp "$SOURCE_SCRIPT" "$TEST_ROOT/scripts/check_contracts_workspace_smoke.sh"
 chmod +x "$TEST_ROOT/scripts/check_contracts_workspace_smoke.sh"
-cat >"$TEST_ROOT/contracts-rust/Cargo.toml" <<'EOF'
+cat >"$TEST_ROOT/contracts/Cargo.toml" <<'EOF'
 [workspace]
 members = []
 EOF
 
-BAD_TARGET_DIR="contracts-rust/target/contracts-rust-workspace-smoke"
+BAD_TARGET_DIR="contracts/target/contracts-workspace-smoke"
 set +e
 (
   cd "$TEST_ROOT"
@@ -29,25 +29,25 @@ rc=$?
 set -e
 
 if [[ "$rc" -eq 0 ]]; then
-  echo "[FAIL] contracts workspace smoke accepted relative contracts-rust-local target dir" >&2
+  echo "[FAIL] contracts workspace smoke accepted relative contracts-local target dir" >&2
   exit 1
 fi
 
 if [[ "$rc" -ne 1 ]]; then
-  echo "[FAIL] expected exit code 1 for relative contracts-rust-local target dir, got: $rc" >&2
+  echo "[FAIL] expected exit code 1 for relative contracts-local target dir, got: $rc" >&2
   exit 1
 fi
 
-expected="[FAIL] CARGO_TARGET_DIR must stay outside contracts-rust: $BAD_TARGET_DIR"
+expected="[FAIL] CARGO_TARGET_DIR must stay outside contracts: $BAD_TARGET_DIR"
 if ! grep -Fq -- "$expected" "$TMP_DIR/stderr.log"; then
-  echo "[FAIL] relative contracts-rust-local target dir guard message not found" >&2
+  echo "[FAIL] relative contracts-local target dir guard message not found" >&2
   cat "$TMP_DIR/stderr.log" >&2
   exit 1
 fi
 
-if [[ -e "$TEST_ROOT/contracts-rust/target/contracts-rust-workspace-smoke" ]]; then
-  echo "[FAIL] relative bad target dir should not be created under contracts-rust" >&2
+if [[ -e "$TEST_ROOT/contracts/target/contracts-workspace-smoke" ]]; then
+  echo "[FAIL] relative bad target dir should not be created under contracts" >&2
   exit 1
 fi
 
-echo "[PASS] contracts workspace smoke rejects relative contracts-rust-local cargo target dirs"
+echo "[PASS] contracts workspace smoke rejects relative contracts-local cargo target dirs"
