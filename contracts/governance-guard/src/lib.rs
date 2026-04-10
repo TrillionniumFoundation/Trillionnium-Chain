@@ -450,7 +450,7 @@ impl GovernanceGuard {
             return Err(Error::GuardianExecutorConflict);
         }
 
-        {
+        let proposal_proposer = {
             let proposal = self.proposal_mut(proposal_id)?;
 
             if proposal.kind != ProposalKind::EmergencyUnpause {
@@ -468,9 +468,15 @@ impl GovernanceGuard {
             if now < proposal.eta {
                 return Err(Error::NotReady);
             }
-            if proposal.proposer == caller {
-                return Err(Error::SelfExecutionForbidden);
-            }
+
+            proposal.proposer.clone()
+        };
+
+        if !self.guardians.contains(&proposal_proposer) {
+            return Err(Error::Unauthorized);
+        }
+        if proposal_proposer == caller {
+            return Err(Error::SelfExecutionForbidden);
         }
 
         if !self.bridge.emergency_paused {
@@ -1544,6 +1550,45 @@ mod tests {
         assert_eq!(proposal.executor, None);
         assert_eq!(proposal.executed_at, None);
         assert!(!gov.bridge_state().emergency_paused);
+        assert_eq!(gov.audit_log().len(), audit_len_before);
+        assert!(!gov.audit_log().iter().any(|event| matches!(
+            event,
+            GovernanceEvent::PauseRestoreExecuted { proposal_id, .. }
+                if *proposal_id == pid
+        )));
+        assert!(!gov.audit_log().iter().any(|event| matches!(
+            event,
+            GovernanceEvent::ProposalExecuted { proposal_id, .. }
+                if *proposal_id == pid
+        )));
+    }
+
+    #[test]
+    fn execute_unpause_fails_closed_if_guardian_role_revoked_after_schedule() {
+        let mut gov = setup();
+        let now = 7_050;
+        let eta = now + 60;
+
+        gov.emergency_pause("guardian", "incident-guardian-revoked")
+            .unwrap();
+        let pid = gov
+            .schedule_unpause("guardian", eta, "recover-guardian-revoked", now)
+            .unwrap();
+        let audit_len_before = gov.audit_log().len();
+
+        gov.set_guardian("admin", "guardian", false).unwrap();
+
+        assert_eq!(
+            gov.execute_unpause("exec", pid, eta).unwrap_err(),
+            Error::Unauthorized
+        );
+
+        let proposal = gov.proposal(pid).unwrap();
+        assert_eq!(proposal.kind, ProposalKind::EmergencyUnpause);
+        assert_eq!(proposal.status, ProposalStatus::Queued);
+        assert_eq!(proposal.executor, None);
+        assert_eq!(proposal.executed_at, None);
+        assert!(gov.bridge_state().emergency_paused);
         assert_eq!(gov.audit_log().len(), audit_len_before);
         assert!(!gov.audit_log().iter().any(|event| matches!(
             event,
