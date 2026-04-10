@@ -333,7 +333,7 @@ fn canonical_source_cardinality(sources: &[Value]) -> u32 {
     let mut unique = HashSet::new();
     for source in sources {
         let Some(source_id) = source.get("source_id").and_then(Value::as_str) else {
-            return sources.len() as u32;
+            continue;
         };
         let canonical = source_id.trim().to_ascii_lowercase();
         if canonical.is_empty() {

@@ -381,6 +381,50 @@ fn oracle_validate_snapshot_response_excludes_blank_source_ids_from_canonical_ca
 }
 
 #[test]
+fn oracle_validate_snapshot_response_excludes_missing_or_non_string_source_ids_from_canonical_cardinality() {
+    let policy_path = write_json_fixture("oracle-policy-malformed-source-cardinality", &oracle_policy_fixture());
+    let snapshot_path = write_json_fixture(
+        "oracle-snapshot-malformed-source-cardinality",
+        &serde_json::json!({
+            "observed_at_ms": 10_000,
+            "aggregate_price": 100_000,
+            "reference_price": 100_000,
+            "feed_id": "btc/usd",
+            "sources": [
+                {
+                    "source_id": "binance",
+                    "price": 100_000,
+                    "observed_at_ms": 10_000
+                },
+                {
+                    "source_id": 7,
+                    "price": 100_000,
+                    "observed_at_ms": 10_000
+                },
+                {
+                    "price": 100_000,
+                    "observed_at_ms": 10_000
+                }
+            ]
+        }),
+    );
+
+    let out = oracle_validate_snapshot_response(&snapshot_path, &policy_path, 10_100)
+        .expect("malformed-source-cardinality oracle validation response");
+
+    assert!(!out.ok);
+    assert_eq!(out.observation.outcome, "quorum");
+    assert_eq!(out.metrics.oracle_source_cardinality, 1);
+    assert_eq!(out.metrics.oracle_quorum_reject_total, 1);
+    assert_eq!(out.metrics.accepted_total, 0);
+    assert_eq!(out.metrics.sample_count, 1);
+    assert_eq!(out.error.as_deref(), Some("quorum reject"));
+
+    let _ = fs::remove_file(snapshot_path);
+    let _ = fs::remove_file(policy_path);
+}
+
+#[test]
 fn oracle_validate_snapshot_response_rejects_snapshot_without_sources_fail_closed() {
     let policy_path = write_json_fixture("oracle-policy-no-sources", &oracle_policy_fixture());
     let snapshot_path = write_json_fixture(
