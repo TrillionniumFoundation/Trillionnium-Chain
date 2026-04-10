@@ -265,6 +265,16 @@ if [ -z "$LANE_VERIFY_COMMAND" ] && grep -q '^lane_verify_command=' "$REPORT_PAT
   LANE_VERIFY_COMMAND="$(require_key "$REPORT_PATH" lane_verify_command)"
 fi
 
+if [ -n "$LANE_VERIFY_COMMAND" ]; then
+  case "$LANE_VERIFY_COMMAND" in
+    *verify_lane_worktree.sh*) ;;
+    *)
+      printf 'lane_verify_command must invoke verify_lane_worktree.sh in %s\n' "$REPORT_PATH" >&2
+      exit 1
+      ;;
+  esac
+fi
+
 if [ -n "$EXPECTED_WORKTREE_ROOT_RECORDED" ]; then
   case "$LANE_VERIFY_COMMAND" in
     *"--expected-worktree-root $EXPECTED_WORKTREE_ROOT_RECORDED"*) ;;
