@@ -488,7 +488,8 @@ impl BridgeRelay {
                 normalized.object_id = Some("bridge_config".to_string());
                 normalized.related_id = Some("config_version".to_string());
                 normalized.amount = Some(*new_version as u128);
-                normalized.reason = Some(format!("old_version={old_version}, new_version={new_version}"));
+                normalized.reason = Some("config_version_rotation".to_string());
+                normalized.note = Some(format!("old_version={old_version}, new_version={new_version}"));
                 normalized
             }
             BridgeRelayEvent::MinSignaturesUpdated { old_min, new_min } => {
@@ -497,7 +498,8 @@ impl BridgeRelay {
                 normalized.object_id = Some("bridge_config".to_string());
                 normalized.related_id = Some("min_signatures".to_string());
                 normalized.amount = Some(*new_min as u128);
-                normalized.reason = Some(format!("old_min={old_min}, new_min={new_min}"));
+                normalized.reason = Some("validator_threshold_rotation".to_string());
+                normalized.note = Some(format!("old_min={old_min}, new_min={new_min}"));
                 normalized
             }
             BridgeRelayEvent::ValidatorsUpdated {
@@ -509,7 +511,8 @@ impl BridgeRelay {
                 normalized.object_id = Some("bridge_config".to_string());
                 normalized.related_id = Some("validators".to_string());
                 normalized.amount = Some(*new_count as u128);
-                normalized.reason = Some(format!(
+                normalized.reason = Some("validator_set_rotation".to_string());
+                normalized.note = Some(format!(
                     "previous_count={previous_count}, new_count={new_count}"
                 ));
                 normalized
@@ -1851,21 +1854,24 @@ mod tests {
                 && event.amount == Some(4)
                 && event.object_id.as_deref() == Some("bridge_config")
                 && event.related_id.as_deref() == Some("config_version")
-                && event.reason.as_deref() == Some("old_version=3, new_version=4")
+                && event.reason.as_deref() == Some("config_version_rotation")
+                && event.note.as_deref() == Some("old_version=3, new_version=4")
         }));
         assert!(normalized.iter().any(|event| {
             event.event_type == "bridge_relay.min_signatures_updated"
                 && event.amount == Some(2)
                 && event.object_id.as_deref() == Some("bridge_config")
                 && event.related_id.as_deref() == Some("min_signatures")
-                && event.reason.as_deref() == Some("old_min=2, new_min=2")
+                && event.reason.as_deref() == Some("validator_threshold_rotation")
+                && event.note.as_deref() == Some("old_min=2, new_min=2")
         }));
         assert!(normalized.iter().any(|event| {
             event.event_type == "bridge_relay.validators_updated"
                 && event.amount == Some(2)
                 && event.object_id.as_deref() == Some("bridge_config")
                 && event.related_id.as_deref() == Some("validators")
-                && event.reason.as_deref() == Some("previous_count=1, new_count=2")
+                && event.reason.as_deref() == Some("validator_set_rotation")
+                && event.note.as_deref() == Some("previous_count=1, new_count=2")
         }));
 
         relay.consume_audit_log().into_iter().for_each(|event| {
