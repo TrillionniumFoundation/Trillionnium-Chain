@@ -77,24 +77,25 @@ Current CLI/signer flows are stronger than before, but still not sufficient to j
 - `trnm-cli`
 - wallet/query/tx MVP path
 - stronger hash/surface guardrails than earlier snapshots
+- signer rotation / suspected compromise SOP: `docs/runbooks/signer-rotation-compromise-sop.md`
 
 **What is still missing**
 - secure keystore model
-- offline signing path
+- operator-grade offline signing path tied to real submit/query/wait evidence
 - remote signer / HSM / multisig posture
-- key rotation and compromise response
-- operator-safe signing UX and runbook
+- release-packet-grade rotation / compromise rehearsal evidence
+- operator-safe signing UX beyond the current SOP/checklist baseline
 
 **Exit criteria**
 - one approved key-management model
 - one offline signing path that actually fits operator workflow
-- one rotation / compromise SOP
+- one exercised rotation / compromise SOP with evidence attached to the launch packet
 - one signer safety checklist attached to launch packet
 
 **Next actions**
 1. freeze signer threat model for Day-1
 2. pick keystore/offline-signing architecture
-3. write rotation / compromised-key runbook
+3. run one operator-grade offline-signing plus rotation/compromise evidence rehearsal against the existing SOP
 
 ---
 
