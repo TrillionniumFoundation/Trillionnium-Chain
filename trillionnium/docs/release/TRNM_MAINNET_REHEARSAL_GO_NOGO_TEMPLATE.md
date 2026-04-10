@@ -9,9 +9,9 @@ This template is intentionally fail-closed:
 
 Companion truth sources:
 - `RELEASE_READINESS.md`
-- `docs/release/TRNM_MAINNET_GAP_MATRIX_2026-03-26.md`
-- `docs/release/TRNM_VALIDATOR_RELEASE_HANDOFF.md`
-- `docs/release/TRNM_MAINNET_BLOCKER_BOARD_2026-03-31.md`
+- `trillionnium/docs/release/TRNM_MAINNET_GAP_MATRIX_2026-03-26.md`
+- `trillionnium/docs/release/TRNM_VALIDATOR_RELEASE_HANDOFF.md`
+- `trillionnium/docs/release/TRNM_MAINNET_BLOCKER_BOARD_2026-03-31.md`
 
 ---
 

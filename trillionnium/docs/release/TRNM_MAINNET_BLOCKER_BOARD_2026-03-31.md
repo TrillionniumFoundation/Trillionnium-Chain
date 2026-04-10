@@ -5,8 +5,8 @@
 - Repository snapshot evaluated: `origin/main = 8ff9f1fe45bdf3f027bce7d86ae51394c3df5d86`
 - Companion truth sources:
   - `RELEASE_READINESS.md`
-  - `docs/release/TRNM_MAINNET_GAP_MATRIX_2026-03-26.md`
-  - `docs/release/TRNM_VALIDATOR_RELEASE_HANDOFF.md`
+  - `trillionnium/docs/release/TRNM_MAINNET_GAP_MATRIX_2026-03-26.md`
+  - `trillionnium/docs/release/TRNM_VALIDATOR_RELEASE_HANDOFF.md`
 
 ## Headline judgment
 
@@ -290,7 +290,7 @@ Use `TRNM_MAINNET_GAP_MATRIX_2026-03-26.md` as the deeper taxonomy.
 Use `RELEASE_READINESS.md` as the canonical answer to whether the repository is already release-ready.
 
 For the economics-specific blocker, pair this file with:
-- `docs/release/TRNM_MAINNET_ECONOMICS_FREEZE_HELPER_2026-03-27.md`
+- `trillionnium/docs/release/TRNM_MAINNET_ECONOMICS_FREEZE_HELPER_2026-03-27.md`
 
 ## Bottom line
 
