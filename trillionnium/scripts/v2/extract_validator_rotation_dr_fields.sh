@@ -189,6 +189,23 @@ ROLLBACK_COMMAND="$(require_key "$REPORT_PATH" rollback_command)"
 REPLAY_COMMAND="$(require_key "$REPORT_PATH" replay_command)"
 STATUS="$(require_key "$REPORT_PATH" status)"
 
+GIT_WORKTREE_PATH_CANONICAL="$(canonicalize_path "$GIT_WORKTREE_PATH")" || {
+  printf 'report git_worktree_path is not accessible: %s\n' "$GIT_WORKTREE_PATH" >&2
+  exit 1
+}
+[ -f "$CONFIG_PATH" ] || {
+  printf 'report config_path must resolve to a file: %s\n' "$CONFIG_PATH" >&2
+  exit 1
+}
+CONFIG_PATH_CANONICAL="$(canonicalize_path "$(dirname "$CONFIG_PATH")")/$(basename "$CONFIG_PATH")"
+case "$CONFIG_PATH_CANONICAL" in
+  "$GIT_WORKTREE_PATH_CANONICAL"/*) ;;
+  *)
+    printf 'report config_path must live under report git_worktree_path: %s (worktree %s)\n' "$CONFIG_PATH_CANONICAL" "$GIT_WORKTREE_PATH_CANONICAL" >&2
+    exit 1
+    ;;
+esac
+
 if [ "$GIT_STATUS_SUMMARY" != "clean" ]; then
   printf 'report git_status_summary must be clean, got %s from %s\n' "$GIT_STATUS_SUMMARY" "$REPORT_PATH" >&2
   exit 1

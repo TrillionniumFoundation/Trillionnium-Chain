@@ -184,6 +184,33 @@ if bash "$SCRIPT" --report-path "$OUTSIDE_REPORT_PATH" >"$TMPDIR/out.txt" 2>"$TM
 fi
 grep -q "recovery report must live under current worktree run/: $OUTSIDE_REPORT_PATH_CANONICAL" "$TMPDIR/err.txt"
 
+OUTSIDE_CONFIG_ROOT="$TMPDIR/outside-config"
+mkdir -p "$OUTSIDE_CONFIG_ROOT"
+touch "$OUTSIDE_CONFIG_ROOT/node-outside.toml"
+OUTSIDE_CONFIG_PATH_CANONICAL="$(cd "$OUTSIDE_CONFIG_ROOT" && pwd -P)/node-outside.toml"
+cat >"$REPORT_PATH" <<EOF
+generated_at=2026-04-04T11:59:00Z
+config_path=$OUTSIDE_CONFIG_ROOT/node-outside.toml
+git_worktree_path=$WORKTREE_ROOT
+git_worktree_branch_ref=$BRANCH_REF
+git_branch=lane/mn05-operator-dr-rotation-lifecycle
+git_head=$HEAD_SHA
+git_status_summary=clean
+rollback_command=git reset --hard $HEAD_SHA
+replay_command=./scripts/check_bft_restart_recovery.sh --config $OUTSIDE_CONFIG_ROOT/node-outside.toml
+status=PASS
+expected_worktree_root=$WORKTREE_ROOT
+expected_branch_ref=lane/mn05-operator-dr-rotation-lifecycle
+lane_verify_command=./scripts/v2/verify_lane_worktree.sh --expected-worktree-root $WORKTREE_ROOT --expected-branch-ref lane/mn05-operator-dr-rotation-lifecycle --expected-head $HEAD_SHA
+expected_head=$HEAD_SHA
+EOF
+
+if bash "$SCRIPT" --report-path "$REPORT_PATH" >"$TMPDIR/out.txt" 2>"$TMPDIR/err.txt"; then
+  echo "expected config_path outside git_worktree_path to fail" >&2
+  exit 1
+fi
+grep -q "report config_path must live under report git_worktree_path: $OUTSIDE_CONFIG_PATH_CANONICAL (worktree $WORKTREE_ROOT)" "$TMPDIR/err.txt"
+
 cat >"$REPORT_PATH" <<EOF
 generated_at=2026-04-04T11:59:00Z
 config_path=$WORKTREE_ROOT/configs/node1.toml
