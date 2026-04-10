@@ -217,7 +217,7 @@ The codebase has meaningful anti-spam / QoS / sponsor / challenge-bond work, but
 **Evidence anchors for the launch packet**
 - admission boundary hard-stop: `cargo test --manifest-path trillionnium/Cargo.toml -p trnm-mempool --test lane_zero_capacity_public_contract_bound -q`
 - sponsor borrowed-slot discipline: `cargo test --manifest-path trillionnium/Cargo.toml -p trnm-mempool --test lane_borrowed_last_slot_backpressured_retry_reuse_bound -q`
-- sponsor revocation / drain-only duplicate retention: `cargo test --manifest-path trillionnium/Cargo.toml -p trnm-mempool --lib tests::hard_stop_idle_pop_preserves_restored_duplicate_metadata -- --exact -q`
+- sponsor revocation / drain-only duplicate retention: `cargo test --manifest-path trillionnium/Cargo.toml -p trnm-mempool --test lane_qos_snapshot_reserve_only_drain_only_duplicate_retention_bound -q`
 - anti-spam floor / sustained-load admission boundary: `cargo test --manifest-path trillionnium/Cargo.toml -p trnm-mempool --test lane_reserve_clamp_borrow_policy_bound -q`
 - retention timing freeze after challenge: `cargo test --manifest-path trillionnium/Cargo.toml -p trnm-pouw --lib tests::legacy_revealed_snapshot_freezes_resolve_timing_after_challenge_despite_later_gov_change -- --exact -q`
 - retention restore/canonicalization companion gate: `cargo test --manifest-path trillionnium/Cargo.toml -p trnm-state --test retention_restore_regression -q`
