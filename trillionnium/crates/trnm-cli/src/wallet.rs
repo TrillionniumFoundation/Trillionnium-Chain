@@ -672,6 +672,11 @@ pub(crate) fn ensure_safe_sign_message(message: &str) -> Result<()> {
             "wallet sign message contains leading or trailing whitespace; refusing ambiguous offline-signing output"
         );
     }
+    if message.contains("  ") {
+        bail!(
+            "wallet sign message must not contain repeated interior spaces; refusing ambiguous offline-signing output"
+        );
+    }
     if message.chars().any(|c| {
         is_unsafe_sign_message_char(c)
             || !c.is_ascii()
@@ -682,7 +687,7 @@ pub(crate) fn ensure_safe_sign_message(message: &str) -> Result<()> {
             )
     }) {
         bail!(
-            "wallet sign message must be single-line ASCII printable text with only interior ASCII spaces and no delimiter or wrapper punctuation; refusing unsafe offline-signing output"
+            "wallet sign message must be single-line ASCII printable text with only single interior ASCII spaces and no delimiter or wrapper punctuation; refusing unsafe offline-signing output"
         );
     }
     Ok(())

@@ -868,6 +868,14 @@ fn ensure_safe_sign_message_rejects_ambiguous_or_non_ascii_signer_text() {
         "unexpected error: {wrapper_punctuation_err}"
     );
 
+    let repeated_space_err = ensure_safe_sign_message("approve  tx").unwrap_err();
+    assert!(
+        repeated_space_err
+            .to_string()
+            .contains("repeated interior spaces"),
+        "unexpected error: {repeated_space_err}"
+    );
+
     let too_long_message = "a".repeat(4097);
     let too_long_err = ensure_safe_sign_message(&too_long_message).unwrap_err();
     assert!(
