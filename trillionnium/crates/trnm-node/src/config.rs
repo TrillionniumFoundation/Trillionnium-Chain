@@ -3279,6 +3279,7 @@ mod tests {
             "Triage them in shipped slot order: `trillionnium/configs/node1.toml` is the anchor, `trillionnium/configs/node2.toml` is follower slot 2, `trillionnium/configs/node3.toml` is follower slot 3, and `trillionnium/configs/node4.toml` is follower slot 4; do not relabel a later file as an earlier slot when diagnosing bootstrap failures.",
             "During incident triage, require the filename slot, `node_id`, and listener stride to agree (`nodeN.toml` ↔ `nodeN` ↔ `127.0.0.1:26656+1000*(N-1)` / `127.0.0.1:26657+1000*(N-1)`); if any one of the three surfaces drifts, treat it as slot drift and fail closed.",
             "If `load_config` reports an unknown field or tuple drift, fix the exact repo-root slot file named by the error surface and the exact field named in that error; do not guess across sibling configs or translate ad-hoc aliases by hand.",
+            "If the failing path is reported as `configs/nodeN.toml` or `./configs/nodeN.toml`, map it back to the same repo-root slot before editing and fail closed on any basename-only “looks similar” guess across sibling files.",
             "Do not add extra shipped topology files such as `node5.toml`, alternate slot aliases, or helper sidecar configs under `configs/`; the deterministic local bootstrap fixture remains exactly `README.md` plus `node1.toml` through `node4.toml` until a separate peer-management surface is introduced.",
             "The regression tests in `crates/trnm-node/src/config.rs` are the source of truth for the exact fixture invariants.",
         ] {
