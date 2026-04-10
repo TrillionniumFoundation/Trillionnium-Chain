@@ -26,7 +26,7 @@ This patch upgrades challenge handling from **status-only markers** to **minimal
 
 - Forfeited bond is currently recorded in treasury accounting (`treasury.challenge_forfeits`), but no downstream distribution policy (e.g., validator rewards/burn split) is implemented yet.
 - No dedicated `StakeObject` is introduced yet; balances are a minimal in-memory account ledger in `StateStore`.
-- Challenge and resolve now both enforce signer-based authorization in PoUW core (`signer==challenger` for challenge, `signer==resolve_authority` for resolve).
+- Challenge and resolve now both enforce signer-based authorization in PoCO core (`signer==challenger` for challenge, `signer==resolve_authority` for resolve).
 - Upstream transaction validation/signature plumbing is still required in production so signer context cannot be spoofed at integration boundaries.
 - `resolve_authority` defaults to the literal string `governance.resolve_authority` when governance value is absent; deployments should set an explicit authority account before enabling challenge/resolve flows.
 - `set_gov_param_unchecked(...)` bypasses timelock/rate-limit checks by design; production governance execution should prefer `set_gov_param(...)` and restrict unchecked usage to trusted bootstrap/test paths.
