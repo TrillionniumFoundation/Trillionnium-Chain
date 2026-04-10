@@ -165,7 +165,11 @@ If the submit path is `trnm-cli` itself, capture the first shell-safe hash line 
 ```bash
 SUBMIT_LOG=/tmp/trnm-submit.log
 ./target/debug/trnm-cli tx ... | tee "$SUBMIT_LOG"
-REQUESTED_TX_HASH="$({ grep -m1 -E '^(tx_hash|transaction_hash|transaction-hash|transactionHash|tx-hash)="0x' "$SUBMIT_LOG" || exit 1; } | sed -E 's/^[^=]+="([^"]+)"$/\1/')"
+REQUESTED_TX_HASH="$({
+  grep -m1 -E '^tx_hash="0x[0-9A-Fa-f]+"$' "$SUBMIT_LOG" \
+    || grep -m1 -E '^(txhash|transaction_hash|transaction-hash|transactionHash|tx-hash)=0x[0-9A-Fa-f]+$' "$SUBMIT_LOG" \
+    || exit 1
+} | sed -E 's/^[^=]+="?([^"]+)"?$/\1/')"
 [ -n "$REQUESTED_TX_HASH" ] || {
   echo "failed to capture canonical tx hash from submit output" >&2
   exit 1
