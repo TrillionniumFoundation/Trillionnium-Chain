@@ -277,7 +277,7 @@ fi
 
 if [ -n "$EXPECTED_WORKTREE_ROOT_RECORDED" ]; then
   case "$LANE_VERIFY_COMMAND" in
-    *"--expected-worktree-root $EXPECTED_WORKTREE_ROOT_RECORDED"*) ;;
+    *"--expected-worktree-root $EXPECTED_WORKTREE_ROOT_RECORDED"*|*"--expected-worktree-root \"$EXPECTED_WORKTREE_ROOT_RECORDED\""*|*"--expected-worktree-root '$EXPECTED_WORKTREE_ROOT_RECORDED'"*) ;;
     *)
       printf 'lane_verify_command missing --expected-worktree-root %s in %s\n' "$EXPECTED_WORKTREE_ROOT_RECORDED" "$REPORT_PATH" >&2
       exit 1
@@ -287,8 +287,7 @@ fi
 
 if [ -n "$EXPECTED_BRANCH_REF_RECORDED" ]; then
   case "$LANE_VERIFY_COMMAND" in
-    *"--expected-branch-ref $EXPECTED_BRANCH_REF_RECORDED"*) ;;
-    *"--expected-branch-ref $RECORDED_BRANCH_REF_CANONICAL"*) ;;
+    *"--expected-branch-ref $EXPECTED_BRANCH_REF_RECORDED"*|*"--expected-branch-ref \"$EXPECTED_BRANCH_REF_RECORDED\""*|*"--expected-branch-ref '$EXPECTED_BRANCH_REF_RECORDED'"*|*"--expected-branch-ref $RECORDED_BRANCH_REF_CANONICAL"*|*"--expected-branch-ref \"$RECORDED_BRANCH_REF_CANONICAL\""*|*"--expected-branch-ref '$RECORDED_BRANCH_REF_CANONICAL'"*) ;;
     *)
       printf 'lane_verify_command missing --expected-branch-ref %s in %s\n' "$EXPECTED_BRANCH_REF_RECORDED" "$REPORT_PATH" >&2
       exit 1
@@ -298,7 +297,7 @@ fi
 
 if [ -n "$EXPECTED_HEAD_RECORDED" ]; then
   case "$LANE_VERIFY_COMMAND" in
-    *"--expected-head $EXPECTED_HEAD_RECORDED"*) ;;
+    *"--expected-head $EXPECTED_HEAD_RECORDED"*|*"--expected-head \"$EXPECTED_HEAD_RECORDED\""*|*"--expected-head '$EXPECTED_HEAD_RECORDED'"*) ;;
     *)
       printf 'lane_verify_command missing --expected-head %s in %s\n' "$EXPECTED_HEAD_RECORDED" "$REPORT_PATH" >&2
       exit 1
