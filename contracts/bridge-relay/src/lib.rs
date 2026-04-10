@@ -688,7 +688,6 @@ pub fn settlement_id(message: &BridgeSettlementMessage) -> [u8; 32] {
     hasher.update(message.receiver);
     hasher.update(message.asset);
     hasher.update(message.amount.to_be_bytes());
-    hasher.update(message.config_version.to_be_bytes());
     hasher.finalize().into()
 }
 
@@ -1082,6 +1081,60 @@ mod tests {
             relay.audit_log().len(),
             audit_len_before,
             "terminal duplicate finalize must win over stale config version after governance change"
+        );
+    }
+
+    #[test]
+    fn duplicate_finalize_with_fresh_config_version_after_governance_change_still_stops_at_terminal_state() {
+        let mut relay = BridgeRelay::with_admin(2, vec![validator_pub(7)], b32(9));
+        relay
+            .set_validators(&b32(9), vec![validator_pub(7), validator_pub(8)])
+            .unwrap();
+        relay
+            .set_min_validator_signatures(&b32(9), 2)
+            .unwrap();
+
+        let mut msg = sample_msg();
+        msg.config_version = relay.config_version();
+
+        relay
+            .finalize_settlement(
+                &msg,
+                &[sig_for(&msg, 7), sig_for(&msg, 8)],
+                1_000,
+                999,
+                31337,
+                addr(9),
+            )
+            .unwrap();
+
+        relay.set_admin(&b32(9), b32(10)).unwrap();
+
+        let audit_len_before = relay.audit_log().len();
+        let mut replay = msg.clone();
+        replay.config_version = relay.config_version();
+        replay.nonce += 1;
+
+        let err = relay
+            .finalize_settlement(
+                &replay,
+                &[sig_for(&replay, 7), sig_for(&replay, 8)],
+                1_000,
+                999,
+                31337,
+                addr(9),
+            )
+            .unwrap_err();
+
+        assert!(matches!(
+            err,
+            BridgeRelayError::SettlementAlreadyFinalized { settlement_id: id }
+                if id == settlement_id(&msg)
+        ));
+        assert_eq!(
+            relay.audit_log().len(),
+            audit_len_before,
+            "fresh config version must not bypass settlement terminal state after governance drift"
         );
     }
 
