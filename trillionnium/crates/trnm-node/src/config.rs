@@ -2111,6 +2111,23 @@ mod tests {
     }
 
     #[test]
+    fn validate_node_config_rejects_non_ascii_node_id() {
+        let err = validate_node_config(
+            NodeConfig {
+                node_id: "节点-1".into(),
+                rpc_addr: "127.0.0.1:7000".into(),
+                p2p_addr: "127.0.0.1:7001".into(),
+            },
+            "inline",
+        )
+        .expect_err("non-ASCII node_id must fail closed");
+        assert!(
+            err.to_string().contains("node_id must use ASCII-only characters"),
+            "unexpected error: {err:#}"
+        );
+    }
+
+    #[test]
     fn validate_node_config_rejects_control_characters_in_node_id() {
         let err = validate_node_config(
             NodeConfig {
