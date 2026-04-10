@@ -362,7 +362,7 @@ impl GovernanceGuard {
             true
         } else if proposer == caller {
             match kind {
-                ProposalKind::ParamChange => true,
+                ProposalKind::ParamChange => self.proposers.contains(caller),
                 ProposalKind::EmergencyUnpause => self.guardians.contains(caller),
             }
         } else {
@@ -1759,6 +1759,42 @@ mod tests {
         assert_eq!(proposal.executor, None);
         assert_eq!(proposal.executed_at, None);
         assert!(gov.bridge_state().emergency_paused);
+        assert_eq!(gov.audit_log().len(), audit_len_before);
+        assert!(!gov.audit_log().iter().any(|event| matches!(
+            event,
+            GovernanceEvent::ProposalCancelled { proposal_id, .. }
+                if *proposal_id == pid
+        )));
+    }
+
+    #[test]
+    fn param_proposal_cancel_rejects_proposer_after_proposer_role_revoked() {
+        let mut gov = setup();
+        let now = 7_550;
+        let eta = now + 60;
+        let pid = gov
+            .propose(
+                "alice",
+                "challenge_window_blocks",
+                "100",
+                "181",
+                eta,
+                "reason-proposer-role-drift-cancel",
+                now,
+            )
+            .unwrap();
+        let audit_len_before = gov.audit_log().len();
+
+        gov.set_role("admin", "alice", false, false).unwrap();
+
+        assert_eq!(gov.cancel("alice", pid).unwrap_err(), Error::Unauthorized);
+
+        let proposal = gov.proposal(pid).unwrap();
+        assert_eq!(proposal.kind, ProposalKind::ParamChange);
+        assert_eq!(proposal.status, ProposalStatus::Pending);
+        assert_eq!(proposal.proposer, "alice");
+        assert_eq!(proposal.executor, None);
+        assert_eq!(proposal.executed_at, None);
         assert_eq!(gov.audit_log().len(), audit_len_before);
         assert!(!gov.audit_log().iter().any(|event| matches!(
             event,
