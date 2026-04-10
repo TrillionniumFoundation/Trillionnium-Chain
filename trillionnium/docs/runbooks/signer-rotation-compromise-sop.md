@@ -168,8 +168,9 @@ SUBMIT_LOG=/tmp/trnm-submit.log
 REQUESTED_TX_HASH="$({
   grep -m1 -E '^tx_hash="0x[0-9A-Fa-f]+"$' "$SUBMIT_LOG" \
     || grep -m1 -E '^(txhash|transaction_hash|transaction-hash|transactionHash|tx-hash)=0x[0-9A-Fa-f]+$' "$SUBMIT_LOG" \
+    || grep -m1 -E '^(tx hash|transaction hash)[[:space:]]*=[[:space:]]*0x[0-9A-Fa-f]+$' "$SUBMIT_LOG" \
     || exit 1
-} | sed -E 's/^[^=]+="?([^"]+)"?$/\1/')"
+} | sed -E 's/^[^=]+=[[:space:]]*"?([^"]+)"?$/\1/')"
 [ -n "$REQUESTED_TX_HASH" ] || {
   echo "failed to capture canonical tx hash from submit output" >&2
   exit 1
@@ -192,7 +193,7 @@ Record together:
 - `wait_tx_hash=` from `trnm-cli tx wait`
 
 Alias-handling rule:
-- later tooling may echo the same canonical value under aliases such as `tx_hash="..."`, `txhash=`, `transaction_hash=`, `tx-hash=`, `transaction-hash=`, or `transactionHash=`
+- later tooling may echo the same canonical value under aliases such as `tx_hash="..."`, `txhash=`, `transaction_hash=`, `tx-hash=`, `transaction-hash=`, `transactionHash=`, `tx hash=`, or `transaction hash=`
 - treat those as formatting aliases only after they normalize to the exact same canonical tx hash
 - do not overwrite the original `requested_tx_hash=` field with a later alias line; keep the first captured submit-path hash as the source of truth for the entire procedure
 
