@@ -1434,6 +1434,11 @@ fn ensure_safe_sign_message(message: &str) -> Result<()> {
             "wallet sign message contains leading or trailing whitespace; refusing ambiguous offline-signing output"
         );
     }
+    if message.contains("  ") {
+        bail!(
+            "wallet sign message must not contain repeated interior spaces; refusing ambiguous offline-signing output"
+        );
+    }
     if message.chars().any(|c| {
         is_unsafe_sign_message_char(c)
             || !c.is_ascii()
@@ -1444,7 +1449,7 @@ fn ensure_safe_sign_message(message: &str) -> Result<()> {
             )
     }) {
         bail!(
-            "wallet sign message must be single-line ASCII printable text with only interior ASCII spaces and no delimiter or wrapper punctuation; refusing unsafe offline-signing output"
+            "wallet sign message must be single-line ASCII printable text with only single interior ASCII spaces and no delimiter or wrapper punctuation; refusing unsafe offline-signing output"
         );
     }
     Ok(())
@@ -5367,6 +5372,15 @@ mod tests {
         assert!(
             err.to_string()
                 .contains("contains leading or trailing whitespace"),
+            "unexpected: {err}"
+        );
+    }
+
+    #[test]
+    fn ensure_safe_sign_message_rejects_repeated_interior_spaces() {
+        let err = ensure_safe_sign_message("rotate  signer to cold-key slot b").unwrap_err();
+        assert!(
+            err.to_string().contains("repeated interior spaces"),
             "unexpected: {err}"
         );
     }
