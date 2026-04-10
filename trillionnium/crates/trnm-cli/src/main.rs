@@ -158,11 +158,106 @@ enum QueryCommand {
     },
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 struct BalanceQueryResponse {
     address: String,
     balance: String,
     denom: String,
+}
+
+fn json_scalar_string(value: &serde_json::Value) -> Option<String> {
+    match value {
+        serde_json::Value::String(s) => Some(s.clone()),
+        serde_json::Value::Number(n) => Some(n.to_string()),
+        serde_json::Value::Bool(b) => Some(b.to_string()),
+        _ => None,
+    }
+}
+
+fn parse_balance_query_response(
+    raw: &str,
+    requested_address: &str,
+    requested_denom: &str,
+) -> Result<BalanceQueryResponse> {
+    if let Ok(resp) = serde_json::from_str::<BalanceQueryResponse>(raw) {
+        return Ok(resp);
+    }
+
+    if let Ok(value) = serde_json::from_str::<serde_json::Value>(raw) {
+        if let Some(balance) = json_scalar_string(&value) {
+            return Ok(BalanceQueryResponse {
+                address: requested_address.to_string(),
+                balance,
+                denom: requested_denom.to_string(),
+            });
+        }
+
+        for candidate in [
+            Some(&value),
+            value.get("result"),
+            value.get("data"),
+            value.get("response"),
+            value.get("response").and_then(|response| response.get("data")),
+        ] {
+            let Some(candidate) = candidate else {
+                continue;
+            };
+
+            let Some(balance) = candidate
+                .get("balance")
+                .and_then(json_scalar_string)
+                .or_else(|| candidate.get("amount").and_then(json_scalar_string))
+            else {
+                continue;
+            };
+
+            let address = candidate
+                .get("address")
+                .and_then(json_scalar_string)
+                .filter(|value| !value.is_empty())
+                .unwrap_or_else(|| requested_address.to_string());
+            let denom = candidate
+                .get("denom")
+                .and_then(json_scalar_string)
+                .filter(|value| !value.is_empty())
+                .unwrap_or_else(|| requested_denom.to_string());
+            return Ok(BalanceQueryResponse {
+                address,
+                balance,
+                denom,
+            });
+        }
+    }
+
+    let mut address = None;
+    let mut balance = None;
+    let mut denom = None;
+    for line in raw.lines() {
+        let mut pairs = Vec::new();
+        if let Some(pair) = parse_kv_line(line) {
+            pairs.push(pair);
+        }
+        for token in line.split_whitespace() {
+            if let Some(pair) = parse_inline_kv_token(token) {
+                pairs.push(pair);
+            }
+        }
+
+        for (key, value) in pairs {
+            match key.as_str() {
+                "address" => address = Some(value),
+                "balance" | "amount" => balance = Some(value),
+                "denom" => denom = Some(value),
+                _ => {}
+            }
+        }
+    }
+
+    Ok(BalanceQueryResponse {
+        address: address.unwrap_or_else(|| requested_address.to_string()),
+        balance: balance.unwrap_or_else(|| raw.trim().to_string()),
+        denom: denom.unwrap_or_else(|| requested_denom.to_string()),
+    })
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -2904,16 +2999,8 @@ fn main() -> Result<()> {
                     cmd = tpl(cmd, "address", &addr);
                     cmd = tpl(cmd, "denom", &denom);
                     let raw = run_template_raw(&cmd)?;
-                    if let Ok(resp) = serde_json::from_str::<BalanceQueryResponse>(&raw) {
-                        println!("{}", serde_json::to_string_pretty(&resp)?);
-                    } else {
-                        let out = BalanceQueryResponse {
-                            address: addr,
-                            balance: raw.trim().to_string(),
-                            denom,
-                        };
-                        println!("{}", serde_json::to_string_pretty(&out)?);
-                    }
+                    let out = parse_balance_query_response(&raw, &addr, &denom)?;
+                    println!("{}", serde_json::to_string_pretty(&out)?);
                 } else {
                     let seeded = hash(&["balance", &addr, &denom]);
                     let pseudo = u128::from_str_radix(&seeded[..16], 16).unwrap_or(0) % 1_000_000;
@@ -2991,6 +3078,55 @@ mod tests {
         .unwrap();
         assert_eq!(json_u64_at_path(&parsed, &["request", "task_id"]), Some(42));
         assert_eq!(json_u64_at_path(&parsed["events"][0], &["task_id"]), Some(42));
+    }
+
+    #[test]
+    fn balance_query_parser_accepts_wrapped_partial_json() {
+        let parsed = parse_balance_query_response(
+            r#"{"result":{"balance":"42","denom":"utrnm"}}"#,
+            "trnm1requested",
+            "trnm",
+        )
+        .unwrap();
+        assert_eq!(
+            parsed,
+            BalanceQueryResponse {
+                address: "trnm1requested".into(),
+                balance: "42".into(),
+                denom: "utrnm".into(),
+            }
+        );
+    }
+
+    #[test]
+    fn balance_query_parser_accepts_scalar_json_balance() {
+        let parsed = parse_balance_query_response("12345\n", "trnm1requested", "trnm").unwrap();
+        assert_eq!(
+            parsed,
+            BalanceQueryResponse {
+                address: "trnm1requested".into(),
+                balance: "12345".into(),
+                denom: "trnm".into(),
+            }
+        );
+    }
+
+    #[test]
+    fn balance_query_parser_accepts_kv_text_output() {
+        let parsed = parse_balance_query_response(
+            "address=trnm1adapter\nbalance=77\ndenom=utrnm\n",
+            "trnm1requested",
+            "trnm",
+        )
+        .unwrap();
+        assert_eq!(
+            parsed,
+            BalanceQueryResponse {
+                address: "trnm1adapter".into(),
+                balance: "77".into(),
+                denom: "utrnm".into(),
+            }
+        );
     }
 
     #[test]
