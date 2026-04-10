@@ -35,9 +35,14 @@ required_lines=(
   'commit_events_observed='
   'apply_error_seen='
   'rollback_seen='
+  'operator_ack='
+  'operator_ack_signature_path='
+  'dr_summary_path='
   'previous_stable_anchor='
   'rollback_entrypoint='
   'rollback_trigger=apply_error|height_stall|config_drift|binary_mismatch|operator_abort'
+  'dr_replay_command='
+  'dr_rollback_command='
   'window_outcome=pass|blocked|rolled-back'
   'blocker_summary='
   'next_safe_action='
@@ -57,4 +62,4 @@ for line in "${required_lines[@]}"; do
   fi
 done
 
-echo "[PASS] validator/operator release handoff template keeps fail-closed identity, binary/config binding, rollback, and blocked-window guard fields"
+echo "[PASS] validator/operator release handoff template keeps fail-closed identity, binary/config binding, DR acknowledgment/replay fields, rollback, and blocked-window guard fields"

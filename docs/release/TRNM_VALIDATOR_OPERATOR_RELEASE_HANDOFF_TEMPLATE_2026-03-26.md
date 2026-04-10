@@ -167,6 +167,9 @@ height_after=
 commit_events_observed=
 apply_error_seen=yes|no
 rollback_seen=yes|no
+operator_ack=yes|no
+operator_ack_signature_path=
+dr_summary_path=
 ```
 
 若是多节点滚动升级，按节点单列：
@@ -187,18 +190,22 @@ node1_binary_sha256=
 
 ## 6. Rollback discipline（回滚纪律）
 
-回滚描述必须能回答三件事：
+回滚描述必须能回答三件事，并且要让接手 operator 能直接重放：
 
 ```text
 previous_stable_anchor=
 rollback_entrypoint=
 rollback_trigger=
+dr_replay_command=
+dr_rollback_command=
 ```
 
 其中：
 - `previous_stable_anchor`：回到哪个 commit/tag；
 - `rollback_entrypoint`：通过哪条脚本/命令回滚；
-- `rollback_trigger`：为什么回滚，例如 `apply_error`、height stall、config drift、binary mismatch。
+- `rollback_trigger`：为什么回滚，例如 `apply_error`、height stall、config drift、binary mismatch；
+- `dr_replay_command`：如何在接手环境里重放这次 DR / handoff 证据采集；
+- `dr_rollback_command`：如何在接手环境里执行同一条 fail-closed 回滚入口。
 
 推荐把触发原因限定成简洁标签，避免事后口径发散：
 
@@ -222,6 +229,11 @@ cli_binary_sha256=
 config_set_id=
 previous_stable_anchor=
 rollback_entrypoint=
+operator_ack=
+operator_ack_signature_path=
+dr_summary_path=
+dr_replay_command=
+dr_rollback_command=
 window_outcome=pass|blocked|rolled-back
 ```
 
@@ -281,10 +293,15 @@ height_after=
 commit_events_observed=
 apply_error_seen=
 rollback_seen=
+operator_ack=
+operator_ack_signature_path=
+dr_summary_path=
 
 previous_stable_anchor=
 rollback_entrypoint=
 rollback_trigger=
+dr_replay_command=
+dr_rollback_command=
 
 window_outcome=
 blocker_summary=
@@ -303,4 +320,5 @@ next_safe_action=
 - `trnm-node` / `trnm-cli` 二进制未分开绑定；
 - validator 配置指纹未记录；
 - previous stable anchor / rollback entrypoint 未记录；
+- operator_ack / DR summary / replay-or-rollback command 未记录；
 - 窗口结果没有附上 blocker 或下一步安全动作。
