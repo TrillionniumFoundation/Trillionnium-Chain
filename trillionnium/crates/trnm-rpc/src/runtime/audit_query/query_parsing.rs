@@ -334,4 +334,21 @@ mod tests {
 
         assert_eq!(err, http_json_response("400 Bad Request", DUPLICATE_LIMIT_RESPONSE));
     }
+
+    #[test]
+    fn query_normalized_audit_events_rejects_source_event_type_prefix_drift() {
+        for path in [
+            "/query-normalized-audit-events?source=trnm.task&eventType=trnm.adapter.dispatch",
+            "/query-normalized-audit-events?source=trnm.adapter&eventType=trnm.task.commit",
+        ] {
+            let err = parse_query_normalized_audit_events_query_from_path(path)
+                .expect_err("source and eventType namespace drift must fail closed");
+
+            assert_eq!(
+                err,
+                http_json_response("400 Bad Request", INVALID_EVENT_TYPE_RESPONSE),
+                "path={path}"
+            );
+        }
+    }
 }
