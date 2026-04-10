@@ -334,7 +334,7 @@ fn validate_task_query_metadata_compatibility(parsed: &serde_json::Value) -> Res
 fn parse_task_query_response(raw: &str, requested_task_id: u64) -> Result<serde_json::Value> {
     let parsed: serde_json::Value = serde_json::from_str(raw)
         .map_err(|err| anyhow!("failed to parse task query response as json: {err}"))?;
-    let Some(task_id) = parsed.get("task_id").and_then(|v| v.as_u64()) else {
+    let Some(task_id) = json_u64_at_path(&parsed, &["task_id"]) else {
         bail!("task query response missing numeric task_id");
     };
     if task_id != requested_task_id {
@@ -355,7 +355,7 @@ fn parse_events_query_response(raw: &str, requested_task_id: u64) -> Result<serd
         bail!("events query response must be a json array");
     };
     for (idx, event) in events.iter().enumerate() {
-        let Some(task_id) = event.get("task_id").and_then(|v| v.as_u64()) else {
+        let Some(task_id) = json_u64_at_path(event, &["task_id"]) else {
             bail!("events query response item {} missing numeric task_id", idx);
         };
         if task_id != requested_task_id {
@@ -427,14 +427,14 @@ fn parse_request_full_query_response(
             request_id
         );
     }
-    let Some(task_id) = request.get("task_id").and_then(|v| v.as_u64()) else {
+    let Some(task_id) = json_u64_at_path(&parsed, &["request", "task_id"]) else {
         bail!("request-full response missing numeric request.task_id");
     };
     let Some(events) = parsed.get("events").and_then(|v| v.as_array()) else {
         bail!("request-full response missing events array");
     };
     for (idx, event) in events.iter().enumerate() {
-        let Some(event_task_id) = event.get("task_id").and_then(|v| v.as_u64()) else {
+        let Some(event_task_id) = json_u64_at_path(event, &["task_id"]) else {
             bail!(
                 "request-full response event {} missing numeric task_id",
                 idx
@@ -2967,6 +2967,30 @@ mod tests {
 
     fn canonical_temp_root() -> PathBuf {
         std::fs::canonicalize(std::env::temp_dir()).unwrap_or_else(|_| std::env::temp_dir())
+    }
+
+    #[test]
+    fn query_parsers_accept_stringified_task_ids_in_task_response() {
+        let parsed = parse_task_query_response(r#"{"task_id":"42"}"#, 42).unwrap();
+        assert_eq!(json_u64_at_path(&parsed, &["task_id"]), Some(42));
+    }
+
+    #[test]
+    fn query_parsers_accept_stringified_task_ids_in_events_response() {
+        let parsed = parse_events_query_response(r#"[{"task_id":"42","event_type":"accepted"}]"#, 42)
+            .unwrap();
+        assert_eq!(json_u64_at_path(&parsed[0], &["task_id"]), Some(42));
+    }
+
+    #[test]
+    fn query_parsers_accept_stringified_task_ids_in_request_full_response() {
+        let parsed = parse_request_full_query_response(
+            r#"{"request":{"request_id":"req-42","task_id":"42"},"events":[{"task_id":"42"}]}"#,
+            "req-42",
+        )
+        .unwrap();
+        assert_eq!(json_u64_at_path(&parsed, &["request", "task_id"]), Some(42));
+        assert_eq!(json_u64_at_path(&parsed["events"][0], &["task_id"]), Some(42));
     }
 
     #[test]
