@@ -800,6 +800,81 @@ mod tests {
     }
 
     #[test]
+    fn parse_query_capability_audit_subject_from_target_accepts_canonical_subject_path() {
+        assert_eq!(
+            parse_query_capability_audit_subject_from_target("/query-capability-audit/alice")
+                .expect("canonical subject path should parse"),
+            "alice"
+        );
+        assert_eq!(
+            parse_query_capability_audit_subject_from_target("/query-capability-audit/alice/")
+                .expect("single operator trailing slash should normalize"),
+            "alice"
+        );
+    }
+
+    #[test]
+    fn parse_query_capability_audit_subject_from_target_rejects_query_string() {
+        let err = parse_query_capability_audit_subject_from_target(
+            "/query-capability-audit/alice?limit=1",
+        )
+        .expect_err("capability audit route should fail closed on query strings");
+        assert_eq!(err, "invalid query");
+    }
+
+    #[test]
+    fn parse_query_capability_audit_subject_from_target_distinguishes_missing_from_malformed() {
+        assert_eq!(
+            parse_query_capability_audit_subject_from_target("/query-capability-audit/")
+                .expect_err("empty capability route should report missing subject"),
+            "missing token or subject"
+        );
+
+        for target in [
+            "/query-capability-audit///",
+            "/query-capability-audit/alice//",
+            "/query-capability-audit/alice/nested",
+        ] {
+            let err = parse_query_capability_audit_subject_from_target(target)
+                .expect_err("malformed capability audit path must fail closed as invalid query");
+            assert_eq!(err, "invalid query", "target={target}");
+        }
+    }
+
+    #[test]
+    fn parse_query_capability_audit_subject_from_target_rejects_fragments_and_whitespace() {
+        for target in [
+            "/query-capability-audit/alice#frag",
+            "/query-capability-audit/al ice",
+            "/query-capability-audit/alice\textra",
+        ] {
+            let err = parse_query_capability_audit_subject_from_target(target)
+                .expect_err("capability audit subject must stay a clean single path segment");
+            assert_eq!(err, "invalid query", "target={target}");
+        }
+    }
+
+    #[test]
+    fn parse_query_capability_audit_subject_from_target_rejects_encoded_delimiters_and_path_ambiguity() {
+        for target in [
+            "/query-capability-audit/alice%3Flimit=1",
+            "/query-capability-audit/alice%23frag",
+            "/query-capability-audit/alice%26cursor=1",
+            "/query-capability-audit/alice%2Fextra",
+            "/query-capability-audit/alice%2fextra",
+            "/query-capability-audit/alice%5Cextra",
+            "/query-capability-audit/alice%5cextra",
+            "/query-capability-audit/%2E",
+            "/query-capability-audit/%2e%2E",
+        ] {
+            let err = parse_query_capability_audit_subject_from_target(target).expect_err(
+                "capability audit subject must fail closed on encoded delimiters and ambiguous path encodings",
+            );
+            assert_eq!(err, "invalid query", "target={target}");
+        }
+    }
+
+    #[test]
     fn read_http_request_head_rejects_premature_eof_before_terminator() {
         use std::net::{Shutdown, TcpListener, TcpStream};
         use std::thread;
