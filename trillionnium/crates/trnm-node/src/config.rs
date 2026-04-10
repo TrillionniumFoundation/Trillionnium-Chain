@@ -3275,7 +3275,7 @@ mod tests {
             "During incident triage, require the filename slot, `node_id`, and listener stride to agree (`nodeN.toml` ↔ `nodeN` ↔ `127.0.0.1:26656+1000*(N-1)` / `127.0.0.1:26657+1000*(N-1)`); if any one of the three surfaces drifts, treat it as slot drift and fail closed.",
             "If `load_config` reports an unknown field or tuple drift, fix the exact repo-root slot file named by the error surface and the exact field named in that error; do not guess across sibling configs or translate ad-hoc aliases by hand.",
             "Do not add extra shipped topology files such as `node5.toml`, alternate slot aliases, or helper sidecar configs under `configs/`; the deterministic local bootstrap fixture remains exactly `README.md` plus `node1.toml` through `node4.toml` until a separate peer-management surface is introduced.",
-            "The regression tests in `crates/trnm-node/src/main.rs` are the source of truth for the exact fixture invariants.",
+            "The regression tests in `crates/trnm-node/src/config.rs` are the source of truth for the exact fixture invariants.",
         ] {
             assert!(
                 readme.contains(expected_phrase),
