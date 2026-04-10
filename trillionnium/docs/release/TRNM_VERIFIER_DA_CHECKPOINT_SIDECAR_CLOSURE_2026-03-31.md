@@ -139,6 +139,7 @@ Release-review invariants for this bundle:
 
 - a terminal mismatch must preserve both the requested tuple and the observed tuple in the same bundle;
 - a bounded retry must mint a fresh `attempt_id` and append a new bundle rather than overwrite the prior one;
+- the same `request_id` must stay bound to one canonical requested checkpoint tuple plus DA summary identity for its entire lifetime; if any of `requested_checkpoint_height`, `requested_checkpoint_state_root_hex`, `requested_checkpoint_wal_entry_hash_hex`, `requested_checkpoint_prev_hash_hex`, or `requested_da_summary_hash` changes, the caller must mint a new `request_id` instead of reusing the old audit handle;
 - a later successful retry may supersede the operational state, but it must not erase prior failed trust evidence for the same `request_id`.
 
 ### Example replay/audit evidence bundle
