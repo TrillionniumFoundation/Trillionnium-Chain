@@ -251,6 +251,13 @@ Or from inside `trillionnium/`:
 - If `trillionnium/run/explorer-service/explorer-service.env` exists, the scripts load it automatically.
 - For external exposure, prefer loopback-bound bind + reverse proxy.
 - `explorer_service_status.sh` reports `pid_file`, `log_file`, `health_url`, and explicitly marks `service_mode=operator-facing-static-scaffold`, `production_ready=false`.
+- To capture one deterministic operator handoff packet for this scaffold, use:
+
+```bash
+./trillionnium/scripts/v2/capture_explorer_scaffold_handoff.sh
+```
+
+- That helper is intentionally **placeholder-only**. It preserves blocker markers such as `deployment_evidence_scope=placeholder-only`, `rank1_read_surface_blocker=still-open`, and `durable_indexer_status=not-implemented-in-this-scaffold`, and it rejects drift if fetched `index.json` no longer matches the scaffold contract.
 - Current scaffold intentionally keeps durable-read anchors fail-closed:
   - `ingestion_source`
   - `checkpoint_store`
@@ -263,6 +270,8 @@ Or from inside `trillionnium/`:
   - `rank1_read_surface_blocker=still-open`
   - `durable_indexer_status=not-implemented-in-this-scaffold`
   - `durable_read_anchor_complete=false`
+- Use `trillionnium/docs/release/TRNM_EXPLORER_SCAFFOLD_HANDOFF_TEMPLATE_2026-04-04.md` for this scaffold path.
+- Do **not** switch to `TRNM_DURABLE_READ_SERVICE_HANDOFF_TEMPLATE_2026-04-04.md` until all six durable-read anchors exist and the service is no longer a placeholder scaffold.
 
 Only switch to durable handoff templates when all six durable-read anchors are truly implemented.
 
