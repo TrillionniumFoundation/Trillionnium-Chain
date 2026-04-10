@@ -820,6 +820,22 @@ fn ensure_safe_sign_message_rejects_ambiguous_or_non_ascii_signer_text() {
         "unexpected error: {bidi_err}"
     );
 
+    let line_separator_err = ensure_safe_sign_message("approve\u{2028}tx").unwrap_err();
+    assert!(
+        line_separator_err
+            .to_string()
+            .contains("ASCII printable text"),
+        "unexpected error: {line_separator_err}"
+    );
+
+    let paragraph_separator_err = ensure_safe_sign_message("approve\u{2029}tx").unwrap_err();
+    assert!(
+        paragraph_separator_err
+            .to_string()
+            .contains("ASCII printable text"),
+        "unexpected error: {paragraph_separator_err}"
+    );
+
     let invisible_separator_err = ensure_safe_sign_message("approve\u{2063}tx").unwrap_err();
     assert!(
         invisible_separator_err
