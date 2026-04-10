@@ -342,7 +342,7 @@ impl GovernanceGuard {
     }
 
     pub fn cancel(&mut self, caller: &str, proposal_id: ProposalId) -> Result<()> {
-        let (status, proposer) = {
+        let (status, proposer, kind) = {
             let proposal = self.proposal_mut(proposal_id)?;
             if matches!(
                 proposal.status,
@@ -351,10 +351,24 @@ impl GovernanceGuard {
                 return Err(Error::AlreadyFinalized);
             }
 
-            (proposal.status.clone(), proposal.proposer.clone())
+            (
+                proposal.status.clone(),
+                proposal.proposer.clone(),
+                proposal.kind.clone(),
+            )
         };
 
-        if proposer != caller && !self.guardians.contains(caller) {
+        let authorized = if self.guardians.contains(caller) {
+            true
+        } else if proposer == caller {
+            match kind {
+                ProposalKind::ParamChange => true,
+                ProposalKind::EmergencyUnpause => self.guardians.contains(caller),
+            }
+        } else {
+            false
+        };
+        if !authorized {
             return Err(Error::Unauthorized);
         }
 
@@ -1705,6 +1719,38 @@ mod tests {
         let audit_len_before = gov.audit_log().len();
 
         assert_eq!(gov.cancel("alice", pid).unwrap_err(), Error::Unauthorized);
+
+        let proposal = gov.proposal(pid).unwrap();
+        assert_eq!(proposal.kind, ProposalKind::EmergencyUnpause);
+        assert_eq!(proposal.status, ProposalStatus::Queued);
+        assert_eq!(proposal.proposer, "guardian");
+        assert_eq!(proposal.executor, None);
+        assert_eq!(proposal.executed_at, None);
+        assert!(gov.bridge_state().emergency_paused);
+        assert_eq!(gov.audit_log().len(), audit_len_before);
+        assert!(!gov.audit_log().iter().any(|event| matches!(
+            event,
+            GovernanceEvent::ProposalCancelled { proposal_id, .. }
+                if *proposal_id == pid
+        )));
+    }
+
+    #[test]
+    fn scheduled_unpause_cancel_rejects_proposer_after_guardian_role_revoked() {
+        let mut gov = setup();
+        let now = 7_500;
+        let eta = now + 60;
+
+        gov.emergency_pause("guardian", "incident-guardian-role-drift")
+            .unwrap();
+        let pid = gov
+            .schedule_unpause("guardian", eta, "recover-guardian-role-drift", now)
+            .unwrap();
+        let audit_len_before = gov.audit_log().len();
+
+        gov.set_guardian("admin", "guardian", false).unwrap();
+
+        assert_eq!(gov.cancel("guardian", pid).unwrap_err(), Error::Unauthorized);
 
         let proposal = gov.proposal(pid).unwrap();
         assert_eq!(proposal.kind, ProposalKind::EmergencyUnpause);
