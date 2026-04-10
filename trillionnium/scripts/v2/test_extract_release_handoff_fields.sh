@@ -62,11 +62,22 @@ bash "$SCRIPT" \
   --summary-path "$SUMMARY_PATH" \
   --manifest-path "$MANIFEST_PATH" \
   --expected-worktree-root "$WORKTREE_ROOT" \
-  --expected-branch-ref "$BRANCH_SHORT" >"$TMPDIR/out.txt"
+  --expected-branch-ref "$BRANCH_SHORT" >"$TMPDIR/out-short.txt"
 
-grep -q "^ticket_expected_branch_ref=$BRANCH_SHORT$" "$TMPDIR/out.txt"
-grep -q "^expected_branch_ref=$BRANCH_REF$" "$TMPDIR/out.txt"
-grep -q "^git_worktree_branch_ref=$BRANCH_REF$" "$TMPDIR/out.txt"
-grep -q "^git_expected_worktree_branch_ref=$BRANCH_REF$" "$TMPDIR/out.txt"
+grep -q "^ticket_expected_branch_ref=$BRANCH_SHORT$" "$TMPDIR/out-short.txt"
+grep -q "^expected_branch_ref=$BRANCH_REF$" "$TMPDIR/out-short.txt"
+grep -q "^git_worktree_branch_ref=$BRANCH_REF$" "$TMPDIR/out-short.txt"
+grep -q "^git_expected_worktree_branch_ref=$BRANCH_REF$" "$TMPDIR/out-short.txt"
+
+bash "$SCRIPT" \
+  --summary-path "$SUMMARY_PATH" \
+  --manifest-path "$MANIFEST_PATH" \
+  --expected-worktree-root "$WORKTREE_ROOT" \
+  --expected-branch-ref "$BRANCH_REF" >"$TMPDIR/out-full.txt"
+
+grep -q "^ticket_expected_branch_ref=$BRANCH_REF$" "$TMPDIR/out-full.txt"
+grep -q "^expected_branch_ref=$BRANCH_REF$" "$TMPDIR/out-full.txt"
+grep -q "^git_worktree_branch_ref=$BRANCH_REF$" "$TMPDIR/out-full.txt"
+grep -q "^git_expected_worktree_branch_ref=$BRANCH_REF$" "$TMPDIR/out-full.txt"
 
 echo "PASS"
