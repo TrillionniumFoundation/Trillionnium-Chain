@@ -114,3 +114,29 @@ fn ensure_recoverable_wal_state_allows_checkpoint_only_bootstrap_after_tail_repa
 
     let _ = fs::remove_dir_all(&wal_dir);
 }
+
+#[test]
+fn ensure_recoverable_wal_state_allows_single_block_lagging_checkpoint_resume() {
+    let wal_dir = temp_wal_dir("recover-guard-lagging-checkpoint-resume");
+    fs::create_dir_all(&wal_dir).unwrap();
+
+    let recovered = RecoveredWalState {
+        next_height: 8,
+        restored_lock: Some("h7".into()),
+        last_checkpoint: Some(CheckpointMeta {
+            height: 6,
+            state_root_hex: "r6".into(),
+            wal_entry_hash_hex: "h6".into(),
+        }),
+        truncated: false,
+        metadata_only_recovery: false,
+        wal_entries_retained: 2,
+        checkpoint_height_retained: Some(6),
+    };
+
+    ensure_recoverable_wal_state(&wal_dir, &recovered)
+        .expect("single-block lagging checkpoint resume should remain admissible for join/rejoin catch-up");
+    assert_eq!(recovery_startup_summary(&recovered), "retained_wal_entries=2 checkpoint_height_retained=6 checkpoint_tip_relation=behind:1 next_startup_height=8 wal_tail_truncated=false metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume_checkpoint_lagging");
+
+    let _ = fs::remove_dir_all(&wal_dir);
+}
