@@ -14,7 +14,7 @@ trap cleanup EXIT
 
 TEST_ROOT="$TMP_DIR/repo"
 mkdir -p "$TEST_ROOT/scripts" "$TEST_ROOT/contracts"
-TEST_ROOT="$(cd "$TEST_ROOT" && pwd)"
+TEST_ROOT="$(cd "$TEST_ROOT" && pwd -P)"
 cp "$SOURCE_SCRIPT" "$TEST_ROOT/scripts/check_contracts_workspace_smoke.sh"
 chmod +x "$TEST_ROOT/scripts/check_contracts_workspace_smoke.sh"
 cat >"$TEST_ROOT/contracts/Cargo.toml" <<'EOF'

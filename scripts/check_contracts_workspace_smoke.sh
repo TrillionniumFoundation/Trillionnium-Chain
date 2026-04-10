@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+ROOT="$(cd "$(dirname "$0")/.." && pwd -P)"
 cd "$ROOT"
 export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
 
@@ -11,13 +11,27 @@ if ! command -v "$CARGO_BIN" >/dev/null 2>&1; then
   exit 1
 fi
 
-MANIFEST="$ROOT/contracts/Cargo.toml"
+CONTRACTS_WORKSPACE_DIR="${CONTRACTS_WORKSPACE_DIR:-contracts}"
+if [[ "$CONTRACTS_WORKSPACE_DIR" = /* ]]; then
+  echo "[FAIL] CONTRACTS_WORKSPACE_DIR must be repo-relative: $CONTRACTS_WORKSPACE_DIR" >&2
+  exit 1
+fi
+
+CONTRACTS_ROOT="$(python3 -c 'import os, sys; print(os.path.realpath(sys.argv[1]))' "$ROOT/$CONTRACTS_WORKSPACE_DIR")"
+case "$CONTRACTS_ROOT" in
+  "$ROOT"|"$ROOT"/*)
+    ;;
+  *)
+    echo "[FAIL] CONTRACTS_WORKSPACE_DIR escapes repo root: $CONTRACTS_WORKSPACE_DIR -> $CONTRACTS_ROOT" >&2
+    exit 1
+    ;;
+esac
+
+MANIFEST="$CONTRACTS_ROOT/Cargo.toml"
 if [[ ! -f "$MANIFEST" ]]; then
   echo "[FAIL] contracts workspace manifest missing: $MANIFEST" >&2
   exit 1
 fi
-
-CONTRACTS_ROOT="$(python3 -c 'import os, sys; print(os.path.realpath(sys.argv[1]))' "$ROOT/contracts")"
 mkdir -p "$ROOT/run/health"
 TS="$(date +%Y%m%d-%H%M%S)"
 OUT="$ROOT/run/health/contracts-workspace-smoke-${TS}.log"
@@ -25,7 +39,7 @@ CARGO_TARGET_DIR="${CARGO_TARGET_DIR:-$ROOT/target/contracts-workspace-smoke}"
 CARGO_TARGET_DIR_ABS="$(python3 -c 'import os, sys; print(os.path.realpath(sys.argv[1]))' "$CARGO_TARGET_DIR")"
 case "$CARGO_TARGET_DIR_ABS" in
   "$CONTRACTS_ROOT"|"$CONTRACTS_ROOT"/*)
-    echo "[FAIL] CARGO_TARGET_DIR must stay outside contracts: $CARGO_TARGET_DIR" >&2
+    echo "[FAIL] CARGO_TARGET_DIR must stay outside contracts workspace: $CARGO_TARGET_DIR" >&2
     exit 1
     ;;
 esac
@@ -54,5 +68,6 @@ run_step "contracts workspace check" \
 run_step "contracts workspace tests" \
   env CARGO_TARGET_DIR="$CARGO_TARGET_DIR" "$CARGO_BIN" test --manifest-path "$MANIFEST" --locked -q
 
-printf '\n[INFO] cargo target dir: %s\n' "$CARGO_TARGET_DIR" | tee -a "$OUT"
+printf '\n[INFO] contracts workspace dir: %s\n' "$CONTRACTS_WORKSPACE_DIR" | tee -a "$OUT"
+printf '[INFO] cargo target dir: %s\n' "$CARGO_TARGET_DIR" | tee -a "$OUT"
 printf '[OK] contracts workspace smoke passed: %s\n' "$OUT" | tee -a "$OUT"
