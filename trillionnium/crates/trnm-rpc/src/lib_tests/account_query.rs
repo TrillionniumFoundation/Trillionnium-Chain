@@ -98,6 +98,30 @@ fn account_state_rejects_unknown_fields() {
 }
 
 #[test]
+fn account_balance_query_response_rejects_unknown_fields() {
+    let err = serde_json::from_value::<AccountBalanceQueryResponse>(json!({
+        "address": format!("trnm1{}", "1".repeat(40)),
+        "balance": 42,
+        "version": 3,
+        "unexpected": "schema-drift"
+    }))
+    .unwrap_err();
+    assert!(err.to_string().contains("unexpected"));
+}
+
+#[test]
+fn account_nonce_query_response_rejects_unknown_fields() {
+    let err = serde_json::from_value::<AccountNonceQueryResponse>(json!({
+        "address": format!("trnm1{}", "1".repeat(40)),
+        "nonce": 7,
+        "version": 3,
+        "unexpected": "schema-drift"
+    }))
+    .unwrap_err();
+    assert!(err.to_string().contains("unexpected"));
+}
+
+#[test]
 fn faucet_request_response_rejects_unknown_fields() {
     let err = serde_json::from_value::<FaucetRequestResponse>(json!({
         "ok": true,
