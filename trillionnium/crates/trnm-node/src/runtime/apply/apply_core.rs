@@ -117,6 +117,11 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         "invalid node config {}: node_id must not contain path or host-literal separators (/ \\ : [ ])",
         path
     );
+    anyhow::ensure!(
+        !node_id.contains('"') && !node_id.contains('\'') && !node_id.contains('`'),
+        "invalid node config {}: node_id must not contain quoting characters (\" ' `)",
+        path
+    );
     let bracketed_host_literal = node_id
         .strip_prefix('[')
         .and_then(|inner| inner.strip_suffix(']'))
@@ -186,6 +191,11 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
     anyhow::ensure!(
         !rpc_addr.chars().any(char::is_control),
         "invalid node config {}: rpc_addr must not contain control characters",
+        path
+    );
+    anyhow::ensure!(
+        !contains_invisible_or_bidi_format_chars(rpc_addr),
+        "invalid node config {}: rpc_addr must not contain invisible or bidirectional format characters",
         path
     );
     anyhow::ensure!(
@@ -284,6 +294,11 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
     anyhow::ensure!(
         !p2p_addr.chars().any(char::is_control),
         "invalid node config {}: p2p_addr must not contain control characters",
+        path
+    );
+    anyhow::ensure!(
+        !contains_invisible_or_bidi_format_chars(p2p_addr),
+        "invalid node config {}: p2p_addr must not contain invisible or bidirectional format characters",
         path
     );
     anyhow::ensure!(
@@ -1495,6 +1510,64 @@ mod tests {
             assert!(
                 err.to_string()
                     .contains("node_id must not contain invisible or bidirectional format characters"),
+                "unexpected error for {node_id:?}: {err:#}"
+            );
+        }
+    }
+
+    #[test]
+    fn validate_node_config_rejects_invisible_or_bidi_format_characters_in_listener_addresses() {
+        for (field, value, expected) in [
+            (
+                "rpc_addr",
+                format!("127.0.0.1:70\u{200B}00"),
+                "rpc_addr must not contain invisible or bidirectional format characters",
+            ),
+            (
+                "p2p_addr",
+                format!("127.0.0.1:70\u{202E}01"),
+                "p2p_addr must not contain invisible or bidirectional format characters",
+            ),
+        ] {
+            let err = validate_node_config(
+                NodeConfig {
+                    node_id: "node-a".into(),
+                    rpc_addr: if field == "rpc_addr" {
+                        value.clone()
+                    } else {
+                        "127.0.0.1:7000".into()
+                    },
+                    p2p_addr: if field == "p2p_addr" {
+                        value.clone()
+                    } else {
+                        "127.0.0.1:7001".into()
+                    },
+                },
+                "inline",
+            )
+            .expect_err("invisible or bidi listener characters must fail closed");
+            assert!(
+                err.to_string().contains(expected),
+                "unexpected error for {field}: {err:#}"
+            );
+        }
+    }
+
+    #[test]
+    fn validate_node_config_rejects_quoting_characters_in_node_id() {
+        for node_id in ["node\"a", "node'a", "node`a"] {
+            let err = validate_node_config(
+                NodeConfig {
+                    node_id: node_id.into(),
+                    rpc_addr: "127.0.0.1:7000".into(),
+                    p2p_addr: "127.0.0.1:7001".into(),
+                },
+                "inline",
+            )
+            .expect_err("quoted node_id must fail closed");
+            assert!(
+                err.to_string()
+                    .contains("node_id must not contain quoting characters"),
                 "unexpected error for {node_id:?}: {err:#}"
             );
         }
