@@ -107,6 +107,7 @@ This distinction matters during load balancer, sidecar, and operator triage beca
 - `critical_wait_active_height_share_ppm`
 - `rollback_block_total`
 - `rollback_active_heights`
+  - canonical vs compatibility: treat `rollback_block_total` as the descriptive block-count field and `rollback_active_heights` as the grep-stable compatibility alias for the same shipped rollback-height count until the contract is explicitly renamed end to end.
 - `rollback_block_rate`
 - `rollback_block_rate_ppm`
 - `rollback_active_height_rate_ppm`
@@ -173,6 +174,7 @@ This distinction matters during load balancer, sidecar, and operator triage beca
   - keep as the normalized density/share trio for dashboards and handoff notes.
 - `rollback_block_total` / `rollback_active_heights` / `rollback_block_rate` / `rollback_block_rate_ppm`
   - use together to separate absolute rollback volume from height-level blast radius.
+  - canonical vs compatibility: read `rollback_block_total` as the descriptive field name and `rollback_active_heights` as its compatibility alias; today they intentionally carry the same count.
 - `rollback_active_height_rate_ppm` / `rollback_active_observed_height_rate_ppm`
   - preserve both because rollback pressure against active heights and observed heights should remain grep-stable and comparable across summaries.
 - `rollback_density_avg` / `rollback_density_avg_milli` / `rollback_active_height_share_ppm`
