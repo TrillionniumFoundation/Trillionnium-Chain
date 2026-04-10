@@ -579,6 +579,12 @@ pub(crate) fn load_config(path: &str) -> Result<NodeConfig> {
     let resolved = resolve_config_path(path);
     ensure_config_path_stays_within_allowed_roots(path, &resolved)?;
     let canonical_resolved = resolved.canonicalize().unwrap_or_else(|_| resolved.clone());
+    anyhow::ensure!(
+        canonical_resolved.is_file(),
+        "read config failed: {} (resolved: {}): resolved config path must point to a file",
+        path,
+        canonical_resolved.display()
+    );
     let raw = fs::read_to_string(&resolved).with_context(|| {
         format!(
             "read config failed: {} (resolved: {})",
@@ -878,6 +884,26 @@ mod tests {
             err.to_string().contains("path must not be empty"),
             "unexpected error: {err:#}"
         );
+    }
+
+    #[test]
+    fn load_config_rejects_directory_path_fail_closed() {
+        for operator_path in ["trillionnium/configs", "./trillionnium/configs"] {
+            let err = load_config(operator_path).expect_err("config directory path must fail closed");
+            let err_surface = format!("{err:#}");
+            assert!(
+                err_surface.contains("resolved config path must point to a file"),
+                "unexpected error for {operator_path}: {err:#}"
+            );
+            assert!(
+                err_surface.contains(operator_path),
+                "directory path error must keep operator path visible for {operator_path}: {err:#}"
+            );
+            assert!(
+                err_surface.contains("trillionnium/configs"),
+                "directory path error must keep resolved path visible for {operator_path}: {err:#}"
+            );
+        }
     }
 
     #[test]
