@@ -257,6 +257,40 @@ fn oracle_validation_response_bridge_contract_consistent_accepts_trimmed_classif
 }
 
 #[test]
+fn oracle_validation_response_bridge_contract_consistent_accepts_structural_whitespace_wrapped_classified_error_label(
+) {
+    let report = OracleValidationReport {
+        ok: false,
+        now_ts_ms: 795,
+        observation: OracleValidationObservation {
+            stale_reject_total: 0,
+            quorum_reject_total: 1,
+            drift_reject_total: 0,
+            accepted_total: 0,
+        },
+        metrics: OracleValidationMetrics {
+            oracle_stale_reject_total: 0,
+            oracle_quorum_reject_total: 1,
+            oracle_drift_reject_total: 0,
+            oracle_source_cardinality: 2,
+            accepted_total: 0,
+            sample_count: 1,
+        },
+        error: Some("\u{200B}\u{2060}\n snapshot hash mismatch: expected=abc, actual=def \t\u{FEFF}".into()),
+    };
+
+    let out: OracleValidateSnapshotResponse = report.into();
+
+    assert!(out.observation_matches_metrics());
+    assert_eq!(out.classified_reject_total(), 1);
+    assert_eq!(out.observation_classified_reject_total(), 1);
+    assert_eq!(out.metrics.oracle_source_cardinality, 2);
+    assert!(out.classified_outcome_conserves_sample_count());
+    assert!(out.observation_classified_outcome_conserves_sample_count());
+    assert!(out.bridge_contract_consistent());
+}
+
+#[test]
 fn oracle_validation_response_bridge_contract_consistent_accepts_multi_source_single_snapshot_success() {
     let report = OracleValidationReport {
         ok: true,
