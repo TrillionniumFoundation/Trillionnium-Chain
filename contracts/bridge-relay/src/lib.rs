@@ -1834,12 +1834,16 @@ mod tests {
         assert!(logs.iter().any(|e| matches!(e, BridgeRelayEvent::ProofSubmittedAndStored { proof_digest: d } if *d == proof_digest)));
 
         let normalized = relay.normalized_audit_log();
-        assert!(normalized
-            .iter()
-            .any(|event| event.event_type == "bridge_relay.proof_submitted"));
-        assert!(normalized
-            .iter()
-            .any(|event| event.event_type == "bridge_relay.proof_submitted_and_stored"));
+        assert!(normalized.iter().any(|event| {
+            event.event_type == "bridge_relay.proof_submitted"
+                && event.object_id.as_deref() == Some(hex32(&proof_digest).as_str())
+                && event.amount == Some(2)
+                && event.note.as_deref() == Some("proof submitted")
+        }));
+        assert!(normalized.iter().any(|event| {
+            event.event_type == "bridge_relay.proof_submitted_and_stored"
+                && event.object_id.as_deref() == Some(hex32(&proof_digest).as_str())
+        }));
         assert!(normalized
             .iter()
             .any(|event| event.source == "bridge-relay"));
