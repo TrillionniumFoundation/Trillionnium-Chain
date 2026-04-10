@@ -48,6 +48,23 @@ worktree_status=clean|dirty
 
 该脚本会直接输出 `operator_id/window_type/change_ticket/started_at_utc`，避免 handoff 记录最前面的运行身份字段靠手工补写时遗漏。
 
+同时建议把 helper 输出直接 tee 到可审计文件，避免 handoff 字段靠终端回看或手工二次整理：
+
+```bash
+mkdir -p trillionnium/run/preflight
+./scripts/v2/collect_release_operator_preflight.sh \
+  --operator-id "$OPERATOR_ID" \
+  --window-type "$WINDOW_TYPE" \
+  --change-ticket "$CHANGE_TICKET" \
+  --started-at-utc "$STARTED_AT_UTC" \
+  --expected-worktree-root "$EXPECTED_WORKTREE_ROOT" \
+  --expected-branch-ref "$EXPECTED_BRANCH_REF" \
+  --expected-head "$EXPECTED_HEAD" \
+  --previous-stable-anchor "$PREVIOUS_STABLE_ANCHOR" \
+  --rollback-entrypoint "$ROLLBACK_ENTRYPOINT" \
+  | tee "trillionnium/run/preflight/operator-preflight-${STARTED_AT_UTC:-$(date -u +%Y%m%dT%H%M%SZ)}.txt"
+```
+
 如果只是先做 fail-closed 身份校验、暂时还不生成完整 handoff 记录，可先单独运行：
 
 ```bash
