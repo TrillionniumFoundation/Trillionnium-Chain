@@ -350,6 +350,32 @@ class CheckValidatorConfigBundleTests(unittest.TestCase):
             result.stderr,
         )
 
+    def test_public_mainnet_input_rejects_existing_directory_packet_distribution_path_without_trailing_slash(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            config = self.write_config(
+                root,
+                "node1.toml",
+                node_id="node1",
+                rpc_addr="127.0.0.1:7001",
+                p2p_addr="127.0.0.1:7002",
+            )
+            packet_dir = root / "handoff"
+            packet_dir.mkdir()
+            result = self.run_script(
+                *self.make_public_mainnet_args(
+                    config,
+                    "--packet-distribution-path",
+                    str(packet_dir),
+                )
+            )
+
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn(
+            "public-mainnet-input requires packet_distribution_path to name one exact packet file",
+            result.stderr,
+        )
+
     def test_public_mainnet_input_rejects_dot_segments_in_packet_distribution_path(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
@@ -391,6 +417,32 @@ class CheckValidatorConfigBundleTests(unittest.TestCase):
                     config,
                     "--genesis-artifact-path",
                     str(artifact_dir) + "/",
+                )
+            )
+
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn(
+            "public-mainnet-input requires genesis_artifact_path to name one exact artifact path",
+            result.stderr,
+        )
+
+    def test_public_mainnet_input_rejects_existing_directory_genesis_artifact_path_without_trailing_slash(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            config = self.write_config(
+                root,
+                "node1.toml",
+                node_id="node1",
+                rpc_addr="127.0.0.1:7001",
+                p2p_addr="127.0.0.1:7002",
+            )
+            artifact_dir = root / "genesis-bundle"
+            artifact_dir.mkdir()
+            result = self.run_script(
+                *self.make_public_mainnet_args(
+                    config,
+                    "--genesis-artifact-path",
+                    str(artifact_dir),
                 )
             )
 

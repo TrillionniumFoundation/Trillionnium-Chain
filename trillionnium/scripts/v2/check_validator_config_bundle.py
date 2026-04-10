@@ -292,11 +292,16 @@ def validate_packet_path(value: str, field: str) -> None:
 def validate_packet_file_path(value: str, field: str) -> None:
     validate_packet_path(value, field)
     normalized = value.rstrip("/")
+    path = Path(value)
     if not normalized or normalized == "/":
         fail(
             f"invalid ceremony packet arguments: public-mainnet-input requires {field} to name one exact packet file"
         )
-    if Path(value).name in {"", ".", ".."} or value.endswith("/"):
+    if path.name in {"", ".", ".."} or value.endswith("/"):
+        fail(
+            f"invalid ceremony packet arguments: public-mainnet-input requires {field} to name one exact packet file"
+        )
+    if path.exists() and path.is_dir():
         fail(
             f"invalid ceremony packet arguments: public-mainnet-input requires {field} to name one exact packet file"
         )
@@ -306,11 +311,16 @@ def validate_packet_file_path(value: str, field: str) -> None:
 def validate_packet_artifact_path(value: str, field: str) -> None:
     validate_packet_path(value, field)
     normalized = value.rstrip("/")
+    path = Path(value)
     if not normalized or normalized == "/":
         fail(
             f"invalid ceremony packet arguments: public-mainnet-input requires {field} to name one exact artifact path"
         )
-    if Path(value).name in {"", ".", ".."} or value.endswith("/"):
+    if path.name in {"", ".", ".."} or value.endswith("/"):
+        fail(
+            f"invalid ceremony packet arguments: public-mainnet-input requires {field} to name one exact artifact path"
+        )
+    if path.exists() and path.is_dir():
         fail(
             f"invalid ceremony packet arguments: public-mainnet-input requires {field} to name one exact artifact path"
         )
