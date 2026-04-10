@@ -951,7 +951,7 @@ fn normalize_wallet_store_env(raw: &str) -> Option<&str> {
         || normalized.chars().any(|c| {
             c.is_whitespace()
                 || contains_hidden_or_control(c)
-                || matches!(c, '\\' | '＼' | '∕' | '⁄' | '／' | '⧵' | '⧸' | '⟋' | '⟍')
+                || matches!(c, '\\' | '∖' | '／' | '＼' | '﹨' | '∕' | '⁄' | '⧵' | '⧸' | '⟋' | '⟍')
         })
     {
         return None;
@@ -980,7 +980,7 @@ fn wallet_store_path_is_safe(path: &Path) -> bool {
         && rendered.chars().all(|c| {
             !c.is_whitespace()
                 && !contains_hidden_or_control(c)
-                && !matches!(c, '\\' | '＼' | '∕' | '⁄' | '／' | '⧵' | '⧸' | '⟋' | '⟍')
+                && !matches!(c, '\\' | '∖' | '／' | '＼' | '﹨' | '∕' | '⁄' | '⧵' | '⧸' | '⟋' | '⟍')
         })
         && !path
             .components()
@@ -3079,6 +3079,8 @@ mod tests {
         assert_eq!(normalize_wallet_store_env("/tmp/trnm\n-wallets"), None);
         assert_eq!(normalize_wallet_store_env("/tmp/trnm\u{200b}-wallets"), None);
         assert_eq!(normalize_wallet_store_env("/tmp/trnm\u{202e}wallets"), None);
+        assert_eq!(normalize_wallet_store_env("/tmp/trnm∖wallets"), None);
+        assert_eq!(normalize_wallet_store_env("/tmp/trnm﹨wallets"), None);
         assert_eq!(normalize_wallet_store_env("/tmp/trnm⧸wallets"), None);
     }
 
@@ -3117,6 +3119,12 @@ mod tests {
         assert_eq!(default_wallet_store(), home.join(".trnm").join("wallets"));
 
         std::env::set_var("TRNM_WALLET_STORE", "/tmp／trnm-wallets");
+        assert_eq!(default_wallet_store(), home.join(".trnm").join("wallets"));
+
+        std::env::set_var("TRNM_WALLET_STORE", "/tmp∖trnm-wallets");
+        assert_eq!(default_wallet_store(), home.join(".trnm").join("wallets"));
+
+        std::env::set_var("TRNM_WALLET_STORE", "/tmp﹨trnm-wallets");
         assert_eq!(default_wallet_store(), home.join(".trnm").join("wallets"));
 
         std::env::set_var("TRNM_WALLET_STORE", "/tmp⧸trnm-wallets");
