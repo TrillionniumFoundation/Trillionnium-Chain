@@ -83,6 +83,34 @@ describe("api-contract client and retry hardening", () => {
     expect(String(calledUrl)).toContain("cursor=cursor-1");
   });
 
+  it("trims normalized audit query params before request serialization", async () => {
+    const fetchImpl = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({ events: [] }),
+    });
+
+    const client = createFrontendApiClient({
+      baseUrl: "http://127.0.0.1:8080",
+      fetchImpl: fetchImpl as unknown as typeof fetch,
+    });
+
+    await client.queryNormalizedAuditEvents({
+      source: "  governance-guard  ",
+      eventType: "\n governance.proposal_executed\t",
+      limit: 12,
+      cursor: "\u200B cursor-1 \uFEFF",
+    });
+
+    const calledUrl = String((fetchImpl.mock.calls[0] ?? [])[0]);
+    expect(calledUrl).toContain("source=governance-guard");
+    expect(calledUrl).toContain("eventType=governance.proposal_executed");
+    expect(calledUrl).toContain("cursor=cursor-1");
+    expect(calledUrl).not.toContain("%20%20governance-guard%20%20");
+    expect(calledUrl).not.toContain("%0A%20governance.proposal_executed%09");
+    expect(calledUrl).not.toContain("%E2%80%8B");
+    expect(calledUrl).not.toContain("%EF%BB%BF");
+  });
+
   it("fails closed on malformed normalized audit query params", async () => {
     const fetchImpl = vi.fn();
 
