@@ -110,6 +110,14 @@ npm run ci:check
 CI_RUN_E2E=1 npm run ci:check
 ```
 
+### 4.5 External contracts subtree smoke
+
+```bash
+cargo test --manifest-path contracts/Cargo.toml
+```
+
+This validates the current `contracts/` MVP workspace only, which today contains `settlement-vault/`, `bridge-relay/`, `governance-guard/`, and `audit-events/`. It should not be read as proof that the target `sdk/`, `runtime-spec/`, `integration-tests/`, or canonical Host ABI/runtime closure already exist in-tree.
+
 ---
 
 ## 5) Common Repo Commands
