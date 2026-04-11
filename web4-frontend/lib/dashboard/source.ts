@@ -392,6 +392,24 @@ const parseDashboardTime = (value: string): number => {
   return Number.MIN_SAFE_INTEGER;
 };
 
+const ensureUniqueDashboardEventIds = (
+  events: DashboardSnapshot["events"],
+): DashboardSnapshot["events"] => {
+  const seen = new Map<string, number>();
+
+  return events.map((event) => {
+    const count = seen.get(event.id) ?? 0;
+    seen.set(event.id, count + 1);
+
+    if (count === 0) return event;
+
+    return {
+      ...event,
+      id: `${event.id}#${count + 1}`,
+    };
+  });
+};
+
 async function fetchReadonlySnapshotFromApi(): Promise<DashboardSnapshot> {
   const client = createFrontendApiClient({ baseUrl: resolveQueryApiBaseUrl() });
   const dashboardTaskId = resolveDashboardTaskId();
@@ -455,7 +473,7 @@ async function fetchReadonlySnapshotFromApi(): Promise<DashboardSnapshot> {
         description: stringifyDashboardField(taskResp.task.metadata, "{}"),
       },
     ],
-    events: [
+    events: ensureUniqueDashboardEventIds([
       ...eventsResp.events.map((event) => {
         const normalizedType = normalizeDashboardEventToken(event.type, "unknown-event");
 
@@ -474,7 +492,7 @@ async function fetchReadonlySnapshotFromApi(): Promise<DashboardSnapshot> {
           eventsResp.events[0]?.timestamp ?? taskResp.task.createdAt,
         ),
       ),
-    ].sort((left, right) => parseDashboardTime(right.time) - parseDashboardTime(left.time)),
+    ]).sort((left, right) => parseDashboardTime(right.time) - parseDashboardTime(left.time)),
     audits: auditsResp.audits.map((audit, index) => ({
       id: `AUD-${index + 1}`,
       control: audit.capability,
