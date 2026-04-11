@@ -275,7 +275,7 @@ const toEventSortKey = (displayTime: string): number => {
 };
 
 const parsePositiveIntEnv = (value: string | undefined, fallback: number): number => {
-  const normalized = value?.trim();
+  const normalized = normalizeDashboardInput(value);
   if (!normalized) return fallback;
   if (!/^\d+$/.test(normalized)) return fallback;
 
