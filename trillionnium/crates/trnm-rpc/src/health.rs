@@ -357,6 +357,9 @@ mod tests {
         assert!(!is_health_probe_path("/healthcheck"));
         assert!(!is_health_probe_path("/-/healthcheck"));
         assert!(!is_health_probe_path("/-/readycheck"));
+        assert!(!is_health_probe_path("/-/statuscheck"));
+        assert!(!is_health_probe_path("/-/statusz//"));
+        assert!(!is_health_probe_path("/-/readyz/extra"));
     }
 
     #[test]
