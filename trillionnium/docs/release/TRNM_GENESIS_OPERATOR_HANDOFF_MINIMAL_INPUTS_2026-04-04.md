@@ -39,7 +39,7 @@ rollback_owner=
 ### node1
 ```text
 validator_owner=
-operator_contact=node1=
+operator_contact=node1=<chat/email/oncall-for-node1>
 operator_ack_status=
 operator_ack_signature_path=
 operator_ack_digest=
@@ -48,7 +48,7 @@ operator_ack_digest=
 ### node2
 ```text
 validator_owner=
-operator_contact=node2=
+operator_contact=node2=<chat/email/oncall-for-node2>
 operator_ack_status=
 operator_ack_signature_path=
 operator_ack_digest=
@@ -57,7 +57,7 @@ operator_ack_digest=
 ### node3
 ```text
 validator_owner=
-operator_contact=node3=
+operator_contact=node3=<chat/email/oncall-for-node3>
 operator_ack_status=
 operator_ack_signature_path=
 operator_ack_digest=
@@ -66,7 +66,7 @@ operator_ack_digest=
 ### node4
 ```text
 validator_owner=
-operator_contact=node4=
+operator_contact=node4=<chat/email/oncall-for-node4>
 operator_ack_status=
 operator_ack_signature_path=
 operator_ack_digest=

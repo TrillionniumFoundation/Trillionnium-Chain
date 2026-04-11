@@ -81,7 +81,7 @@ rollback_owner=
 #### node1
 ```text
 validator_owner=
-operator_contact=node1=
+operator_contact=node1=<chat/email/oncall-for-node1>
 operator_ack=<owner> checked genesis_artifact_sha256=0cf37d6ae68baa3ac1af1db89c3b225cf669f072aa3f531681448dbcf995108f;config_path=/Users/qianqi/.openclaw/workspace/TrillionniumChain/trillionnium/configs/node1.toml;validator_name=node1;validator_entry_hash=b1ce42b559cf4ec88ef6f9e116d7d00f029595fca0922eab191bb4694d5cc6f9
 operator_ack_signature_path=
 operator_ack_digest=
@@ -90,7 +90,7 @@ operator_ack_digest=
 #### node2
 ```text
 validator_owner=
-operator_contact=node2=
+operator_contact=node2=<chat/email/oncall-for-node2>
 operator_ack=<owner> checked genesis_artifact_sha256=0cf37d6ae68baa3ac1af1db89c3b225cf669f072aa3f531681448dbcf995108f;config_path=/Users/qianqi/.openclaw/workspace/TrillionniumChain/trillionnium/configs/node2.toml;validator_name=node2;validator_entry_hash=63492f510bdd87d87ab9bce5d5514586f2ed525ee8c9e76fab2f4ef4e60c9cd1
 operator_ack_signature_path=
 operator_ack_digest=
@@ -99,7 +99,7 @@ operator_ack_digest=
 #### node3
 ```text
 validator_owner=
-operator_contact=node3=
+operator_contact=node3=<chat/email/oncall-for-node3>
 operator_ack=<owner> checked genesis_artifact_sha256=0cf37d6ae68baa3ac1af1db89c3b225cf669f072aa3f531681448dbcf995108f;config_path=/Users/qianqi/.openclaw/workspace/TrillionniumChain/trillionnium/configs/node3.toml;validator_name=node3;validator_entry_hash=1aed1224c589b35402852190d2e475d92844f4caa0125c721c6c1824aa2cfb71
 operator_ack_signature_path=
 operator_ack_digest=
@@ -108,7 +108,7 @@ operator_ack_digest=
 #### node4
 ```text
 validator_owner=
-operator_contact=node4=
+operator_contact=node4=<chat/email/oncall-for-node4>
 operator_ack=<owner> checked genesis_artifact_sha256=0cf37d6ae68baa3ac1af1db89c3b225cf669f072aa3f531681448dbcf995108f;config_path=/Users/qianqi/.openclaw/workspace/TrillionniumChain/trillionnium/configs/node4.toml;validator_name=node4;validator_entry_hash=d53c3a6e5b4fee138ae14663bc1029a4eaeeed2b0a28eec2a05469bce7755441
 operator_ack_signature_path=
 operator_ack_digest=
