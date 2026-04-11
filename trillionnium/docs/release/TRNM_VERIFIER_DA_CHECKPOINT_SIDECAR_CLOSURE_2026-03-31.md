@@ -308,14 +308,16 @@ Together these anchors give release review one concrete trail for verifying that
 
 ### Minimal targeted replay commands
 
-When reviewers want a smallest-possible replay set instead of broad crate sweeps, start with these targeted commands from `trillionnium/`:
+When reviewers want a smallest-possible replay set instead of broad crate sweeps, start with these targeted commands from the **repo root** so the replay remains stable even when the operator shell is not already inside `trillionnium/`:
 
-- `cargo test -p trnm-state checkpoint_da_light_verifier_summary_is_canonical_and_includes_wal_linkage -q`
-- `cargo test -p trnm-state checkpoint_da_light_verifier_summary_fails_closed_on_non_ascii_wal_proposal_hash_surface -q`
-- `cargo test -p trnm-state checkpoint_da_light_verifier_summary_fails_closed_on_missing_non_genesis_wal_prev_hash_surface -q`
-- `cargo test -p trnm-state checkpoint_audit_summary_rejects_noncanonical_prev_hash_surface -q`
-- `cargo test -p trnm-state checkpoint_da_light_verifier_summary_fails_closed_on_uncommitted_wal_surface -q`
-- `cargo test -p trnm-node metadata_only_recovery_error_surfaces_da_unavailability_reason_when_checkpoint_wal_linkage_is_missing -q`
+- `cargo test --manifest-path trillionnium/Cargo.toml -p trnm-state checkpoint_da_light_verifier_summary_is_canonical_and_includes_wal_linkage -q`
+- `cargo test --manifest-path trillionnium/Cargo.toml -p trnm-state checkpoint_da_light_verifier_summary_fails_closed_on_non_ascii_wal_proposal_hash_surface -q`
+- `cargo test --manifest-path trillionnium/Cargo.toml -p trnm-state checkpoint_da_light_verifier_summary_fails_closed_on_missing_non_genesis_wal_prev_hash_surface -q`
+- `cargo test --manifest-path trillionnium/Cargo.toml -p trnm-state checkpoint_audit_summary_rejects_noncanonical_prev_hash_surface -q`
+- `cargo test --manifest-path trillionnium/Cargo.toml -p trnm-state checkpoint_da_light_verifier_summary_fails_closed_on_uncommitted_wal_surface -q`
+- `cargo test --manifest-path trillionnium/Cargo.toml -p trnm-node metadata_only_recovery_error_surfaces_da_unavailability_reason_when_checkpoint_wal_linkage_is_missing -q`
+
+If a reviewer prefers working from `trillionnium/`, the same commands may omit `--manifest-path trillionnium/Cargo.toml`, but the repo-root form is the safer release-review default because it removes cwd ambiguity from the evidence replay path.
 
 This replay set is intentionally narrow: one happy-path linkage proof, four fail-closed canonicalization regressions spanning WAL proposal-hash surfaces, non-genesis predecessor-link presence, non-canonical predecessor-link encoding, and uncommitted WAL rejection, plus one operator-facing DA-unavailability triage check.
 
