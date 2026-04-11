@@ -4,7 +4,7 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 SCRIPT="$ROOT/scripts/v2/extract_release_handoff_fields.sh"
 TMPDIR="$(mktemp -d)"
-trap 'rm -rf "$TMPDIR" "$SUMMARY_DIR" "$MANIFEST_DIR"' EXIT
+trap 'rm -rf "$TMPDIR" "$SUMMARY_DIR" "$MANIFEST_DIR"; rm -f "$PREFLIGHT_PATH"' EXIT
 
 cd "$ROOT"
 
@@ -14,10 +14,18 @@ BRANCH_REF="refs/heads/$BRANCH_SHORT"
 HEAD_SHA="$(git rev-parse HEAD)"
 SUMMARY_DIR="$ROOT/run/health/evidence-test-extract-release-handoff-fields-$$"
 MANIFEST_DIR="$ROOT/release/rc-test-extract-release-handoff-fields-$$"
+PREFLIGHT_DIR="$ROOT/run/preflight"
+PREFLIGHT_PATH="$PREFLIGHT_DIR/go-no-go-latest.txt"
 SUMMARY_PATH="$SUMMARY_DIR/summary.txt"
 MANIFEST_PATH="$MANIFEST_DIR/manifest.txt"
 
-mkdir -p "$SUMMARY_DIR" "$MANIFEST_DIR"
+mkdir -p "$SUMMARY_DIR" "$MANIFEST_DIR" "$PREFLIGHT_DIR"
+
+cat >"$PREFLIGHT_PATH" <<EOF
+result=PASS
+generated_at=2026-04-11T01:01:00Z
+git_status_summary=clean
+EOF
 
 cat >"$SUMMARY_PATH" <<EOF
 generated_at=2026-04-11T01:05:00Z
@@ -68,6 +76,7 @@ grep -q "^ticket_expected_branch_ref=$BRANCH_SHORT$" "$TMPDIR/out-short.txt"
 grep -q "^expected_branch_ref=$BRANCH_REF$" "$TMPDIR/out-short.txt"
 grep -q "^git_worktree_branch_ref=$BRANCH_REF$" "$TMPDIR/out-short.txt"
 grep -q "^git_expected_worktree_branch_ref=$BRANCH_REF$" "$TMPDIR/out-short.txt"
+grep -q "^preflight_summary_path=$PREFLIGHT_PATH$" "$TMPDIR/out-short.txt"
 
 bash "$SCRIPT" \
   --summary-path "$SUMMARY_PATH" \
