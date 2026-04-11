@@ -2979,6 +2979,26 @@ mod tests {
     }
 
     #[test]
+    fn reserve_only_idle_self_heal_clears_stale_fairness_before_new_mixed_ingress() {
+        let mut g = LaneAdmissionGate::new(2, 2);
+
+        // Simulate restored idle state with stale-hot fairness bookkeeping.
+        g.critical_served_streak = g.critical_burst_limit;
+
+        // Idle scheduler polls should cold-reset fairness even in reserve-only mode.
+        assert_eq!(g.pop_ready(), None);
+        assert_eq!(g.critical_served_streak, 0);
+
+        // New mixed ingress still shares the critical lane, so stale fairness must
+        // not fabricate a dedicated-normal turn after the first critical dequeue.
+        assert_eq!(g.admit(20, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(21, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.pop_ready(), Some(20));
+        assert_eq!(g.critical_served_streak, 0);
+        assert_eq!(g.pop_ready(), Some(21));
+    }
+
+    #[test]
     fn reserve_only_backpressured_tx_id_stays_fresh_until_headroom_reopens() {
         let mut g = LaneAdmissionGate::new(2, 2);
 
