@@ -21,7 +21,7 @@ npm run dev
 - [`docs/README.md`](./docs/README.md)：**前端文档统一入口**（开发 / API 合约 / 测试 / 运维）
 - [`docs/developer-guide.md`](./docs/developer-guide.md)：开发者本地启动、环境变量、提交流程
 - [`docs/operations-runbook.md`](./docs/operations-runbook.md)：operator / 发布 / 回滚 / 排障操作
-- [`../RELEASE_READINESS.md`](../RELEASE_READINESS.md)：**仓库级 release truth source**；判断 TRNM 是否可对外表述为 release-ready 时，以此为准
+- [`../RELEASE_READINESS.md`](../RELEASE_READINESS.md)：**仓库级 release truth source**；判断 TRNM 是否可对外表述为 release-ready 时，以此为准。引用该文件时，应同时记录当前 `git rev-parse origin/main` 输出，避免把旧快照当成实时结论
 - 若当前 checkout 含有 [`../docs/reports/TRNM_WEB4_PLATFORM_SCORECARD_2026-03-31.md`](../docs/reports/TRNM_WEB4_PLATFORM_SCORECARD_2026-03-31.md)，优先引用该 Web4 平台阶段评分卡来描述成熟度位置；它适用的仓库快照是 `main@9ea9e7751`，用于回答“当时大致处于哪个平台阶段”，**不等于** release-ready 证明，也不自动等于当前实时状态
 - 当前 checkout 中，`docs/WEB4_INFRA_PLATFORM_DEVELOPMENT_MASTER.md` **缺失**；不要把它当作当前 truth source，优先退回 `RELEASE_READINESS.md` 与 `web4-frontend/docs/README.md`
 
