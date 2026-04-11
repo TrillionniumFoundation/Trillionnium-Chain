@@ -208,9 +208,17 @@ const normalizeDashboardText = (value: string | undefined, fallback: string): st
   return normalized && normalized.length > 0 ? normalized : fallback;
 };
 
+const normalizeDashboardSignalTokens = (...values: Array<string | undefined>): string =>
+  values
+    .join(" ")
+    .replace(/[\u200B\u200C\u200D\u2060\u2063\uFEFF]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim();
+
 const mapNormalizedAuditSeverity = (event: NormalizedAuditEvent): DashboardSnapshot["events"][number]["severity"] => {
   const normalizedEventType = normalizeDashboardEventToken(event.event_type, "unknown-event");
-  const tokens = `${event.reason ?? ""} ${event.note ?? ""} ${normalizedEventType}`.toLowerCase();
+  const tokens = normalizeDashboardSignalTokens(event.reason, event.note, normalizedEventType);
 
   if (
     tokens.includes("critical") ||
