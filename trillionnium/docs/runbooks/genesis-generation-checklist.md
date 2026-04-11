@@ -172,6 +172,7 @@ Recommended for non-public rehearsal/handoff packets:
 Interpretation rule:
 - if operators receive different packet contents for the same `ceremony_id`, stop and normalize to one packet before startup
 - if `packet_distribution_path=` names only a folder, ticket, or bundle root without one exact packet file path, treat the handoff as ambiguous and regenerate/re-record the packet path before startup
+- if `packet_distribution_path=` resolves to the same file as `genesis_artifact_path=`, treat the packet as invalid and regenerate it with two distinct paths so the shared review packet cannot be mistaken for the genesis artifact itself
 - if a public-mainnet-input packet still contains placeholders, relative packet/genesis paths, truncated hashes, or the default `validator_set_version=v1`, do not treat it as ceremony-ready
 
 ## Rollback

@@ -125,6 +125,7 @@ Minimum packet fields:
 Required for `public-mainnet-input` packets:
 - `packet_generated_at=` in UTC so later evidence can tie the ceremony packet to the bootstrap window explicitly
 - `packet_distribution_path=` naming the exact generated ceremony packet file every operator reviewed (or the immutable bundle member that contains that packet); use one explicit absolute path so operators do not normalize different relative paths by hand or guess which file inside a folder/ticket was authoritative
+- `packet_distribution_path=` must name a different file than `genesis_artifact_path=` so operators do not confuse the shared review packet with the genesis artifact itself
 - `operator_contact=` repeated once per operator so a missing acknowledgment can be resolved without ambiguity
 - `abort_condition=` repeated for the specific fail-closed triggers that cause the ceremony to stop immediately (for example mismatched genesis hash, duplicate `node_id`, or wrong assigned worktree)
 
@@ -228,6 +229,7 @@ Fail-closed rule for generated packets:
 - if `ceremony_scope=public-mainnet-input`, require operators to replace the per-validator `<owner-for-<validator>>` / `<chat/email/oncall-for-<validator>>` placeholders plus any `<optional-ack-path>` / `<optional-sha256-of-ack>` placeholders before startup instead of relying on a later cleanup pass
 - if `ceremony_scope=public-mainnet-input`, do not treat a generated packet as signed/public-mainnet handoff evidence until every `validator_entry=` has a named owner/contact and every `operator_ack` / `operator_ack_signature_path` / `operator_ack_digest` line has been filled with the real acknowledgment artifact or digest for that validator; when `validator_entry_hash=` is emitted, each acknowledgment must quote the same hash verbatim, and each acknowledgment must also reuse the emitted absolute `config_path=` verbatim instead of rewriting it as a shell-relative path
 - if `ceremony_scope=public-mainnet-input`, require `genesis_artifact_path=` and `packet_distribution_path=` to be explicit absolute paths rather than relative paths copied from a local shell
+- if `ceremony_scope=public-mainnet-input` and `packet_distribution_path=` resolves to the same file as `genesis_artifact_path=`, stop and regenerate the packet with two distinct paths
 - if `ceremony_scope=public-mainnet-input`, require `genesis_artifact_sha256=` to be a real 64-character hex SHA-256 digest instead of a shorthand label or truncated checksum
 
 ### Signed handoff evidence bundle (public-mainnet-input)
