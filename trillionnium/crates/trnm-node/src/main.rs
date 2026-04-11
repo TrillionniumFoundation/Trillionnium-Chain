@@ -169,6 +169,21 @@ fn is_ipv4_compatible_ipv6(ip: std::net::IpAddr) -> bool {
     }
 }
 
+fn is_ipv4_translated_ipv6(ip: std::net::IpAddr) -> bool {
+    match ip {
+        std::net::IpAddr::V4(_) => false,
+        std::net::IpAddr::V6(addr) => {
+            let segments = addr.segments();
+            segments[0] == 0
+                && segments[1] == 0
+                && segments[2] == 0
+                && segments[3] == 0
+                && segments[4] == 0xffff
+                && segments[5] == 0
+        }
+    }
+}
+
 fn has_nonzero_ipv6_scope(socket: SocketAddr) -> bool {
     match socket {
         SocketAddr::V4(_) => false,
@@ -1922,6 +1937,11 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         path
     );
     anyhow::ensure!(
+        !is_ipv4_translated_ipv6(rpc_socket.ip()),
+        "invalid node config {}: rpc_addr must not use an IPv4-translated IPv6 address",
+        path
+    );
+    anyhow::ensure!(
         !has_nonzero_ipv6_scope(rpc_socket),
         "invalid node config {}: rpc_addr must not use an IPv6 scope identifier",
         path
@@ -2027,6 +2047,11 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
     anyhow::ensure!(
         !is_ipv4_compatible_ipv6(p2p_socket.ip()),
         "invalid node config {}: p2p_addr must not use an IPv4-compatible IPv6 address",
+        path
+    );
+    anyhow::ensure!(
+        !is_ipv4_translated_ipv6(p2p_socket.ip()),
+        "invalid node config {}: p2p_addr must not use an IPv4-translated IPv6 address",
         path
     );
     anyhow::ensure!(
@@ -6318,6 +6343,18 @@ mod tests {
                 "p2p_addr must not use an IPv4-compatible IPv6 address",
             ),
             (
+                "rpc-ipv4-translated",
+                "[::ffff:0:7f00:1]:7000",
+                "[2001:4860::1]:7001",
+                "rpc_addr must not use an IPv4-translated IPv6 address",
+            ),
+            (
+                "p2p-ipv4-translated",
+                "[2001:4860::1]:7000",
+                "[::ffff:0:7f00:1]:7001",
+                "p2p_addr must not use an IPv4-translated IPv6 address",
+            ),
+            (
                 "rpc-scope",
                 "[2001:4860::8888%7]:7000",
                 "[2001:4860::8888]:7001",
@@ -7953,6 +7990,32 @@ mod tests {
         assert!(p2p_ipv4_mapped_err
             .to_string()
             .contains("p2p_addr must not use an IPv4-mapped IPv6 address"));
+
+        let rpc_translated_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "[::ffff:0:7f00:1]:26657".into(),
+                p2p_addr: "[2001:4860:4860::8888]:26656".into(),
+            },
+            "node.toml",
+        )
+        .expect_err("rpc_addr IPv4-translated IPv6 bind must fail closed");
+        assert!(rpc_translated_err
+            .to_string()
+            .contains("rpc_addr must not use an IPv4-translated IPv6 address"));
+
+        let p2p_translated_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "[2001:4860:4860::8888]:26657".into(),
+                p2p_addr: "[::ffff:0:7f00:1]:26656".into(),
+            },
+            "node.toml",
+        )
+        .expect_err("p2p_addr IPv4-translated IPv6 bind must fail closed");
+        assert!(p2p_translated_err
+            .to_string()
+            .contains("p2p_addr must not use an IPv4-translated IPv6 address"));
 
         let rpc_scope_err = validate_node_config(
             NodeConfig {
