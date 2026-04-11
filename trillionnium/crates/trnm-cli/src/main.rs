@@ -1196,6 +1196,7 @@ fn ensure_wallet_name(name: &str) -> Result<()> {
     );
 
     if name.is_empty()
+        || !name.is_ascii()
         || name == "."
         || name == ".."
         || name.starts_with('.')
@@ -3676,6 +3677,8 @@ mod tests {
             "alice\u{2066}bob",
             "alice\u{2069}bob",
             "alice\u{0007}bob",
+            "аlice",
+            "alice猫",
         ] {
             let err = ensure_wallet_name(bad).unwrap_err();
             assert!(
