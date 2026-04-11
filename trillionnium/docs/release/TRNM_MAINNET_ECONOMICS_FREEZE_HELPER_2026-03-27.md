@@ -462,13 +462,13 @@ Until the final launch parameter surface exists, freeze review should at minimum
 existing targeted gates that exercise sponsor/free-ingress admission and retention
 consistency boundaries:
 
-- `cargo test --manifest-path trillionnium/Cargo.toml -p trnm-mempool lane_qos_snapshot_reserve_only_immediate_reopen_bound -q`
+- `cargo test --manifest-path trillionnium/Cargo.toml -p trnm-mempool --test lane_qos_snapshot_reserve_only_immediate_reopen_bound -q`
   - proves reserve-only shared-lane QoS observability does not falsely re-advertise
     sponsor/free-ingress headroom across guarded reopen boundaries
 - `cargo test --manifest-path trillionnium/Cargo.toml -p trnm-mempool --test lane_qos_snapshot_zero_capacity_stability_bound -q`
   - proves hard-stop mode keeps public admission closed even under repeated cross-class
     probe noise and idle scheduler polls
-- `cargo test --manifest-path trillionnium/Cargo.toml -p trnm-mempool lane_zero_capacity_public_contract_bound -q`
+- `cargo test --manifest-path trillionnium/Cargo.toml -p trnm-mempool --test lane_zero_capacity_public_contract_bound -q`
   - proves a fully hard-stopped lane keeps both sponsor-backed and free-ingress retries
     backpressured across repeated cross-class probes without poisoning tx ids into
     duplicate state or fabricating any queued admission surface
@@ -480,23 +480,23 @@ consistency boundaries:
   - proves repeated idle scheduler polls under a hard-stop / zero-budget lane keep both
     the public queued-count surface and QoS snapshot flat across fresh/retry cross-class
     noise, so freeze review covers public invariants in addition to duplicate retention
-- `cargo test --manifest-path trillionnium/Cargo.toml -p trnm-mempool lane_qos_snapshot_reserve_only_refill_boundary_bound -q`
+- `cargo test --manifest-path trillionnium/Cargo.toml -p trnm-mempool --test lane_qos_snapshot_reserve_only_refill_boundary_bound -q`
   - proves duplicate sponsor/free-ingress probe noise stays classification-only while
     reserve-only shared-lane mode still exposes the last real refill slot until fresh
     work actually consumes it
-- `cargo test --manifest-path trillionnium/Cargo.toml -p trnm-mempool lane_qos_snapshot_reserve_only_multi_refill_probe_stability_bound -q`
+- `cargo test --manifest-path trillionnium/Cargo.toml -p trnm-mempool --test lane_qos_snapshot_reserve_only_multi_refill_probe_stability_bound -q`
   - proves the same classification-only duplicate behavior when reserve-only mode has
     reopened more than one shared slot, so sponsor/free-ingress observability stays
     honest across partial drains instead of only at the final refill boundary
-- `cargo test --manifest-path trillionnium/Cargo.toml -p trnm-mempool lane_qos_snapshot_reserve_only_reopen_probe_stability_bound -q`
+- `cargo test --manifest-path trillionnium/Cargo.toml -p trnm-mempool --test lane_qos_snapshot_reserve_only_reopen_probe_stability_bound -q`
   - proves the first reopened shared slot in reserve-only mode closes again as soon as
     fresh sponsor-backed work actually consumes it, and that later cross-class fresh or
     duplicate probes remain classification-only instead of re-advertising phantom headroom
-- `cargo test --manifest-path trillionnium/Cargo.toml -p trnm-mempool lane_qos_snapshot_reserve_only_drained_retry_duplicate_noise_bound -q`
+- `cargo test --manifest-path trillionnium/Cargo.toml -p trnm-mempool --test lane_qos_snapshot_reserve_only_drained_retry_duplicate_noise_bound -q`
   - proves drain-only style duplicate retention stays classification-only after the shared
     lane drains, so already-seen sponsored ids cannot reopen sponsor/free-ingress headroom
     before fresh work actually re-consumes capacity
-- `cargo test --manifest-path trillionnium/Cargo.toml -p trnm-mempool lane_qos_snapshot_reserve_only_drained_retry_resaturates_bound -q`
+- `cargo test --manifest-path trillionnium/Cargo.toml -p trnm-mempool --test lane_qos_snapshot_reserve_only_drained_retry_resaturates_bound -q`
   - proves the same drained-retry boundary closes the externally visible sponsor/free-ingress
     snapshot again as soon as the drained id is re-admitted, so freeze review covers both the
     classification-only duplicate phase and the immediate re-saturation phase of shared-lane reuse
@@ -504,7 +504,7 @@ consistency boundaries:
   - proves partially reopened capacity does not falsely widen free-ingress observability:
     when the last reserved critical slot is still guarded, repeated fresh-normal and
     cross-class probe noise stays classification-only and cannot advertise phantom headroom
-- `cargo test --manifest-path trillionnium/Cargo.toml -p trnm-mempool lane_qos_snapshot_borrowed_last_slot_reopen_bound -q`
+- `cargo test --manifest-path trillionnium/Cargo.toml -p trnm-mempool --test lane_qos_snapshot_borrowed_last_slot_reopen_bound -q`
   - proves a borrowed final reserved slot re-advertises sponsor/free-ingress headroom
     immediately after the borrowed occupant drains, without requiring an extra idle
     scheduler poll to reopen the public admission surface
@@ -523,7 +523,7 @@ consistency boundaries:
   - specifically covers reserved sponsor/audit identities (`System`, governance pause /
     resolve placeholders, and treasury escrow/forfeit/slash accounts) so retention
     snapshots cannot masquerade as valid third-party challengers
-- `cargo test --manifest-path trillionnium/Cargo.toml -p trnm-state restore_task_rejects_terminal_challenge_retention_with_mixed_case_challenger_identity -q`
+- `cargo test --manifest-path trillionnium/Cargo.toml -p trnm-state --lib tests::restore_task_rejects_terminal_challenge_retention_with_mixed_case_challenger_identity -- --exact -q`
   - proves sponsor-funded retention trails reject mixed-case challenger aliases instead
     of silently canonicalizing them at restore time
   - keeps the freeze packet explicit that retained challenger identities are part of the
