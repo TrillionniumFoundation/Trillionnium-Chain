@@ -1,6 +1,13 @@
 import { z } from "zod";
 
-const optionalDetailField = z.string().min(1).catch("");
+const normalizeOptionalDetail = (value: string): string =>
+  value.replace(/[\u200B\u200C\u200D\u2060\u2063\uFEFF]/g, "").trim();
+
+const optionalDetailField = z
+  .string()
+  .transform(normalizeOptionalDetail)
+  .pipe(z.string().min(1))
+  .catch("");
 
 const kpiSchema = z.object({
   label: z.string().min(1),

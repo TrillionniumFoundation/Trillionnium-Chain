@@ -123,6 +123,48 @@ describe("adaptDashboardSnapshot", () => {
     expect(result.audits[0].notes).toBe("");
   });
 
+  it("normalizes blank or zero-width legacy detail fields to empty strings", () => {
+    const payload = {
+      kpis: [{ label: "K1", value: "1", delta: "+0", health: "healthy" }],
+      tasks: [
+        {
+          id: "TSK-4",
+          title: "task",
+          owner: "ops",
+          priority: "P1",
+          status: "Todo",
+          updatedAt: "2026-01-04",
+          description: " \u200B ",
+        },
+      ],
+      events: [
+        {
+          id: "EVT-4",
+          time: "2026-01-04",
+          category: "Deploy",
+          summary: "sum",
+          severity: "Info",
+          details: "\n\uFEFF\t",
+        },
+      ],
+      audits: [
+        {
+          id: "AUD-4",
+          control: "ctl",
+          result: "Pass",
+          reviewer: "sec",
+          reviewedAt: "2026-01-04",
+          notes: "   ",
+        },
+      ],
+    };
+
+    const result = adaptDashboardSnapshot(payload);
+    expect(result.tasks[0].description).toBe("");
+    expect(result.events[0].details).toBe("");
+    expect(result.audits[0].notes).toBe("");
+  });
+
   it("throws on invalid payload", () => {
     expect(() => adaptDashboardSnapshot({ tasks: [] })).toThrow(DashboardAdapterError);
   });
