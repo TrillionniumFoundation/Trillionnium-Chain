@@ -525,6 +525,10 @@ mod tests {
         assert!(is_health_probe_path("/-/ready/"));
         assert!(is_health_probe_path("/-/readyz"));
         assert!(is_health_probe_path("/-/readyz/"));
+        assert!(is_health_probe_path("/-/status"));
+        assert!(is_health_probe_path("/-/status/"));
+        assert!(is_health_probe_path("/-/statusz"));
+        assert!(is_health_probe_path("/-/statusz/"));
         assert!(is_health_probe_path("/-/STATUS"));
         assert!(is_health_probe_path("/-/STATUSZ/"));
         assert!(!is_health_probe_path("/healthcheck"));
