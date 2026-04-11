@@ -3303,6 +3303,7 @@ mod tests {
             "`node1` also owns the lowest shipped RPC port (`127.0.0.1:26657`); later slots must never drift downward into an equivalent anchor-shaped RPC tuple during startup, join, or rejoin.",
             "This fixture is local-only and rehearsal-scoped.",
             "Do not treat it as proof that public-mainnet bootstrap peer management, discovery, or sync closure is complete.",
+            "Do not copy these loopback tuples into a non-local environment; public-mainnet operators must replace them with reviewed, deployment-specific listener addresses instead of translating the shipped fixture by hand.",
             "Start `node1` first as the initial anchor.",
             "Start `node2`, `node3`, and `node4` in slot order.",
             "do not treat `node2`, `node3`, or `node4` as a valid replacement bootstrap anchor; restore the shipped `node1` anchor first and fail closed otherwise",
@@ -3370,6 +3371,7 @@ mod tests {
         for expected_phrase in [
             "## What this fixture is for",
             "Use these files to keep peer/bootstrap topology assumptions explicit while the public-mainnet bootstrap peer-management path is still being hardened.",
+            "Do not copy these loopback tuples into a non-local environment; public-mainnet operators must replace them with reviewed, deployment-specific listener addresses instead of translating the shipped fixture by hand.",
             "When logging startup/join/rejoin incidents, prefer the exact repo-root paths `trillionnium/configs/node1.toml`, `trillionnium/configs/node2.toml`, `trillionnium/configs/node3.toml`, and `trillionnium/configs/node4.toml` as the unambiguous slot references; `configs/nodeN.toml` and `./configs/nodeN.toml` should canonicalize to the same shipped files, but incident notes should name the repo-root path first.",
             "Triage them in shipped slot order: `trillionnium/configs/node1.toml` is the anchor, `trillionnium/configs/node2.toml` is follower slot 2, `trillionnium/configs/node3.toml` is follower slot 3, and `trillionnium/configs/node4.toml` is follower slot 4; do not relabel a later file as an earlier slot when diagnosing bootstrap failures.",
             "During incident triage, require the filename slot, `node_id`, and listener stride to agree (`nodeN.toml` ↔ `nodeN` ↔ `127.0.0.1:26656+1000*(N-1)` / `127.0.0.1:26657+1000*(N-1)`); if any one of the three surfaces drifts, treat it as slot drift and fail closed.",

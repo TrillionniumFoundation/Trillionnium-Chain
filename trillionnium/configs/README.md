@@ -16,7 +16,7 @@ All four nodes bind the same loopback IP (`127.0.0.1`), keep RPC exactly one por
 `node1` is the unique shipped bootstrap anchor because it alone owns the lowest shipped P2P port (`127.0.0.1:26656`); later slots must never reuse that listener or identity.
 `node1` also owns the lowest shipped RPC port (`127.0.0.1:26657`); later slots must never drift downward into an equivalent anchor-shaped RPC tuple during startup, join, or rejoin.
 
-This fixture is local-only and rehearsal-scoped. Do not treat it as proof that public-mainnet bootstrap peer management, discovery, or sync closure is complete.
+This fixture is local-only and rehearsal-scoped. Do not treat it as proof that public-mainnet bootstrap peer management, discovery, or sync closure is complete. Do not copy these loopback tuples into a non-local environment; public-mainnet operators must replace them with reviewed, deployment-specific listener addresses instead of translating the shipped fixture by hand.
 
 ## Startup / join / rejoin model
 
