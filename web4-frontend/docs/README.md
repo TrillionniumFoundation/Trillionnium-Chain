@@ -30,8 +30,8 @@
 
 - 仓库级 truth source：[`../../RELEASE_READINESS.md`](../../RELEASE_READINESS.md)
 - Web4 当前阶段评分卡：[`../../docs/reports/TRNM_WEB4_PLATFORM_SCORECARD_2026-03-31.md`](../../docs/reports/TRNM_WEB4_PLATFORM_SCORECARD_2026-03-31.md)（若当前 checkout 含有该文件，优先引用它描述平台成熟度；它是基于特定仓库快照的阶段评分卡，不等于当前 release-ready，也不自动等于实时状态）
-- Web4 平台主文档（若当前 checkout 含有该文件）：`../../docs/WEB4_INFRA_PLATFORM_DEVELOPMENT_MASTER.md`
-  - 当前文件在部分 checkout 中可能缺失；若缺失，优先回到 `../../RELEASE_READINESS.md` + 当前存在的 scorecard/本目录文档，不要把一个不存在的 master 链接当作实时 truth source
+- Web4 平台主文档：`../../docs/WEB4_INFRA_PLATFORM_DEVELOPMENT_MASTER.md`
+  - 当前 checkout 中该文件**缺失**；优先回到 `../../RELEASE_READINESS.md` + 当前存在的 scorecard/本目录文档，不要把一个不存在的 master 链接当作实时 truth source
 - Web4 阶段快照（历史状态，不等于当前 release-ready）：[`../../docs/archive/web4-history/WEB4_PHASE_B_MILESTONE_SNAPSHOT_2026-02-28.md`](../../docs/archive/web4-history/WEB4_PHASE_B_MILESTONE_SNAPSHOT_2026-02-28.md)
 - Web4 前端接口基线（历史基线，当前 contract 以 `api-contract.md` 为准）：[`../../docs/archive/web4-history/WEB4_FRONTEND_API_INTERFACE_V0.md`](../../docs/archive/web4-history/WEB4_FRONTEND_API_INTERFACE_V0.md)
 - Web4 修复证据（历史 run evidence，不等于当前 release-ready）：[`../../docs/archive/web4-history/web4-fix-sequence-2026-03-04-evidence.md`](../../docs/archive/web4-history/web4-fix-sequence-2026-03-04-evidence.md)
@@ -41,8 +41,8 @@
 | 你要回答的问题 | 应优先引用 | 不能顺手放大的结论 |
 | --- | --- | --- |
 | **现在整个 TRNM 仓库能否对外说 release-ready？** | [`../../RELEASE_READINESS.md`](../../RELEASE_READINESS.md) | 不能把某次 Web4 预检、RC 演练、历史 GO-ready 证据外推为“整个仓库已 ready” |
-| **当前 Web4 平台大致成熟到哪个阶段？** | 若当前 checkout 含有 `docs/reports/TRNM_WEB4_PLATFORM_SCORECARD_2026-03-31.md`，优先引用它；若缺失，则只回到 `../../docs/WEB4_INFRA_PLATFORM_DEVELOPMENT_MASTER.md`（若该文件在当前 checkout 确实存在）并明确这是路线/能力文档，不是阶段评分卡 | 不能把“Alpha 后段 / 接近 Beta-prep 之前”润色成“Beta”或“production-ready”，也不能把路线图目标写成当前成熟度事实 |
-| **平台路线图、能力域目标、下一阶段该补什么？** | `../../docs/WEB4_INFRA_PLATFORM_DEVELOPMENT_MASTER.md`（仅当当前 checkout 含有该文件）；若缺失，则以 scorecard + 本目录 runbook / developer guide 做保守说明，并明确“缺少 master truth doc” | 不能把路线图里的 To-Be 目标写成当前已完成事实 |
+| **当前 Web4 平台大致成熟到哪个阶段？** | 当前 checkout 直接优先引用 `../../docs/reports/TRNM_WEB4_PLATFORM_SCORECARD_2026-03-31.md`；它缺失时才回到 `../../docs/WEB4_INFRA_PLATFORM_DEVELOPMENT_MASTER.md`（且必须先确认该文件存在）并明确这是路线/能力文档，不是阶段评分卡 | 不能把“Alpha 后段 / 接近 Beta-prep 之前”润色成“Beta”或“production-ready”，也不能把路线图目标写成当前成熟度事实 |
+| **平台路线图、能力域目标、下一阶段该补什么？** | 当前 checkout 因缺少 `../../docs/WEB4_INFRA_PLATFORM_DEVELOPMENT_MASTER.md`，先以 scorecard + 本目录 runbook / developer guide 做保守说明，并明确“缺少 master truth doc” | 不能把路线图里的 To-Be 目标写成当前已完成事实 |
 
 > 一个好用的心智模型：
 > - `RELEASE_READINESS.md` 回答 **现在能不能放行**
