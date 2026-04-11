@@ -960,6 +960,7 @@ mod tests {
 
         gov.set_allowed_param_key("admin", "challenge_window_blocks", false)
             .unwrap();
+        let audit_len_before_rejected_execute = gov.audit_log().len();
 
         let err = gov.execute("exec", pid, eta).unwrap_err();
         assert_eq!(err, Error::InvalidParamKey);
@@ -975,6 +976,18 @@ mod tests {
                 .map(String::as_str),
             Some("100")
         );
+        assert_eq!(
+            gov.bridge_state()
+                .param_versions
+                .get("challenge_window_blocks")
+                .copied(),
+            None
+        );
+        assert_eq!(gov.audit_log().len(), audit_len_before_rejected_execute);
+        assert!(!gov.audit_log().iter().any(|event| matches!(
+            event,
+            GovernanceEvent::ProposalExecuted { proposal_id, .. } if *proposal_id == pid
+        )));
     }
 
     #[test]
