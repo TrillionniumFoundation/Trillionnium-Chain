@@ -1210,4 +1210,52 @@ mod tests {
         assert_eq!(vault.balance_of("bob"), 10);
         assert!(vault.balances.get("alice").is_none());
     }
+
+    #[test]
+    fn consume_audit_log_clears_buffer_and_preserves_normalized_semantics() {
+        let mut vault = SettlementVault::new("owner");
+
+        vault.deposit("owner", "alice", 50).unwrap();
+        vault.lock("owner", "req-consume", "alice", 20).unwrap();
+        vault.pause("owner").unwrap();
+
+        let consumed = vault.consume_audit_log();
+        assert_eq!(vault.audit_log().len(), 0);
+        assert!(vault.normalized_audit_log().is_empty());
+        assert_eq!(consumed.len(), 3);
+        assert!(matches!(
+            consumed[0],
+            VaultEvent::Deposited {
+                ref caller,
+                ref account,
+                amount
+            } if caller == "owner" && account == "alice" && amount == 50
+        ));
+        assert!(matches!(
+            consumed[1],
+            VaultEvent::Locked {
+                ref caller,
+                ref request_id,
+                ref account,
+                amount
+            } if caller == "owner"
+                && request_id == "req-consume"
+                && account == "alice"
+                && amount == 20
+        ));
+        assert!(matches!(
+            consumed[2],
+            VaultEvent::Paused { ref caller } if caller == "owner"
+        ));
+
+        vault.unpause("owner").unwrap();
+        let normalized = vault.normalized_audit_log();
+        assert_eq!(normalized.len(), 1);
+        assert_eq!(normalized[0].source, "settlement-vault");
+        assert_eq!(normalized[0].event_type, "vault.unpaused");
+        assert_eq!(normalized[0].actor.as_deref(), Some("owner"));
+        assert_eq!(normalized[0].object_id, None);
+        assert_eq!(normalized[0].related_id, None);
+        assert_eq!(normalized[0].amount, None);
+    }
 }
