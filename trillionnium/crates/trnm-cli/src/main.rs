@@ -822,6 +822,7 @@ fn is_hidden_env_wrapper(c: char) -> bool {
         || matches!(
             c,
             '\u{00AD}'
+                | '\u{034F}'
                 | '\u{061C}'
                 | '\u{180E}'
                 | '\u{200B}'
@@ -1102,6 +1103,7 @@ fn contains_hidden_or_control(c: char) -> bool {
         || matches!(
             c,
             '\u{00AD}'
+                | '\u{034F}'
                 | '\u{061C}'
                 | '\u{180E}'
                 | '\u{200B}'
@@ -1408,6 +1410,7 @@ fn is_unsafe_sign_message_char(c: char) -> bool {
             c,
             '='
                 | '\u{00ad}'
+                | '\u{034f}'
                 | '\u{061c}'
                 | '\u{180e}'
                 | '\u{200b}'

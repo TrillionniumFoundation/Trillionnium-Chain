@@ -516,6 +516,7 @@ fn smoke_wallet_sign_rejects_edge_whitespace_non_ascii_or_delimiter_payloads() {
         " approve tx",
         "approve tx ",
         "approve\u{00a0}tx",
+        "approve\u{034f}tx",
         "approve=tx",
         "approve:tx",
         "approve;tx",

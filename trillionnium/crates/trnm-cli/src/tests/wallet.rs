@@ -305,6 +305,7 @@ fn normalize_wallet_store_env_trims_shell_wrapped_quotes() {
     assert_eq!(normalize_wallet_store_env("/tmp/trnm\u{2065}wallets"), None);
     assert_eq!(normalize_wallet_store_env("/tmp/trnm\u{206a}wallets"), None);
     assert_eq!(normalize_wallet_store_env("/tmp/trnm\u{206f}wallets"), None);
+    assert_eq!(normalize_wallet_store_env("/tmp/trnm\u{034f}wallets"), None);
     assert_eq!(normalize_wallet_store_env("/tmp/trnm⧸wallets"), None);
     assert_eq!(normalize_wallet_store_env("/tmp∕trnm-wallets"), None);
     assert_eq!(normalize_wallet_store_env("/tmp⁄trnm-wallets"), None);
@@ -849,6 +850,14 @@ fn ensure_safe_sign_message_rejects_ambiguous_or_non_ascii_signer_text() {
             .to_string()
             .contains("ASCII printable text"),
         "unexpected error: {invisible_separator_err}"
+    );
+
+    let grapheme_joiner_err = ensure_safe_sign_message("approve\u{034f}tx").unwrap_err();
+    assert!(
+        grapheme_joiner_err
+            .to_string()
+            .contains("ASCII printable text"),
+        "unexpected error: {grapheme_joiner_err}"
     );
 
     let inhibit_symmetric_swap_err = ensure_safe_sign_message("approve\u{206a}tx").unwrap_err();
