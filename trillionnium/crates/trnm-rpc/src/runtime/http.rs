@@ -243,7 +243,31 @@ fn fallback_response_for_request(request: Option<(&str, &str)>) -> String {
 
 fn has_ambiguous_path_segment_encoding(segment: &str) -> bool {
     let lower = segment.to_ascii_lowercase();
-    lower.contains("%2f") || lower.contains("%5c") || is_encoded_dot_segment(&lower)
+    lower.contains("%2f")
+        || lower.contains("%5c")
+        || lower.contains("%3f")
+        || lower.contains("%23")
+        || contains_percent_encoded_control_or_space(&lower)
+        || is_encoded_dot_segment(&lower)
+}
+
+fn contains_percent_encoded_control_or_space(segment: &str) -> bool {
+    let bytes = segment.as_bytes();
+    let mut idx = 0;
+    while idx + 2 < bytes.len() {
+        if bytes[idx] == b'%' {
+            let hi = (bytes[idx + 1] as char).to_digit(16);
+            let lo = (bytes[idx + 2] as char).to_digit(16);
+            if let (Some(hi), Some(lo)) = (hi, lo) {
+                let decoded = ((hi << 4) | lo) as u8;
+                if decoded <= 0x20 || decoded == 0x7f {
+                    return true;
+                }
+            }
+        }
+        idx += 1;
+    }
+    false
 }
 
 fn is_encoded_dot_segment(segment: &str) -> bool {
@@ -794,6 +818,12 @@ mod tests {
         assert!(has_ambiguous_path_segment_encoding("alice%2fextra"));
         assert!(has_ambiguous_path_segment_encoding("alice%5Cextra"));
         assert!(has_ambiguous_path_segment_encoding("alice%5cextra"));
+        assert!(has_ambiguous_path_segment_encoding("alice%3Fprobe"));
+        assert!(has_ambiguous_path_segment_encoding("alice%23fragment"));
+        assert!(has_ambiguous_path_segment_encoding("alice%0Alog"));
+        assert!(has_ambiguous_path_segment_encoding("alice%0dlog"));
+        assert!(has_ambiguous_path_segment_encoding("alice%09log"));
+        assert!(has_ambiguous_path_segment_encoding("alice%20log"));
         assert!(has_ambiguous_path_segment_encoding("%2E"));
         assert!(has_ambiguous_path_segment_encoding(".%2e"));
         assert!(has_ambiguous_path_segment_encoding("%2E."));
