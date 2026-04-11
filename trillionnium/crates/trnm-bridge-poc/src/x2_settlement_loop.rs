@@ -81,6 +81,7 @@ fn degraded_reason_matches_prefix(normalized: &str, expected: &str) -> bool {
                         ch,
                         ':' | '：' | ';' | '；' | ',' | '，' | '、' | '.' | '．' | '。' | '(' | ')' | '[' | ']' | '{' | '}'
                             | '（' | '）' | '［' | '］' | '｛' | '｝' | '<' | '＜' | ' ' | '-' | '–' | '—' | '－'
+                            | '\'' | '"' | '‘' | '’' | '“' | '”'
                     )
                 })
                 .unwrap_or(false)
@@ -591,6 +592,20 @@ mod tests {
     fn degraded_reason_allows_invalid_embedded_metrics_for_em_dash_suffix() {
         assert!(degraded_reason_allows_invalid_embedded_metrics(
             "invalid heartbeat progression—target height exceeded source sample"
+        ));
+    }
+
+    #[test]
+    fn degraded_reason_allows_invalid_embedded_metrics_for_ascii_quoted_suffix() {
+        assert!(degraded_reason_allows_invalid_embedded_metrics(
+            "invalid heartbeat progression \"target height exceeded source sample\""
+        ));
+    }
+
+    #[test]
+    fn degraded_reason_allows_invalid_embedded_metrics_for_smart_quoted_suffix() {
+        assert!(degraded_reason_allows_invalid_embedded_metrics(
+            "invalid heartbeat progression “target height exceeded source sample”"
         ));
     }
 
