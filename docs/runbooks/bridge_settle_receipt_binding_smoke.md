@@ -23,6 +23,10 @@
 
 1. **bridge-relay**
    - `submit_proof_rejects_non_success_tx_receipt`
+   - `submit_proof_replay_after_finalize_stays_proof_replay_bound`
+     - 覆盖 finalize 终态后的 proof 重放保护，要求重复 proof 继续命中 `ProofAlreadyUsed`，不能因 settlement 已终结而落入其他错误路径。
+   - `proof_replay_rejection_is_side_effect_free`
+     - 覆盖 proof digest 重放拒绝时的副作用约束，要求审计日志不追加重复事件，且后续 fresh proof 仍可正常通过。
    - `finalize_settlement_rejects_non_success_tx_receipt`
    - `finalize_settlement_rejects_stale_config_version_after_governance_change`
      - 覆盖治理变更后 stale `config_version` 的 finalize fail-closed 路径，要求不写入 proof/nonce/finalize 审计副作用。

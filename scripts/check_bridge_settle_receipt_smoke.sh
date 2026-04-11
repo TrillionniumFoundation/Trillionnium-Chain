@@ -25,6 +25,12 @@ run_step() {
 run_step "bridge-relay: reject proof when receipt status is non-success" \
   bash -c 'cargo test --manifest-path contracts/bridge-relay/Cargo.toml --lib --tests submit_proof_rejects_non_success_tx_receipt -- --nocapture'
 
+run_step "bridge-relay: keep proof replay bound after finalize terminal state" \
+  bash -c 'cargo test --manifest-path contracts/bridge-relay/Cargo.toml --lib --tests submit_proof_replay_after_finalize_stays_proof_replay_bound -- --nocapture'
+
+run_step "bridge-relay: keep proof replay rejection side-effect free" \
+  bash -c 'cargo test --manifest-path contracts/bridge-relay/Cargo.toml --lib --tests proof_replay_rejection_is_side_effect_free -- --nocapture'
+
 run_step "bridge-relay: reject finalize when receipt status is non-success" \
   bash -c 'cargo test --manifest-path contracts/bridge-relay/Cargo.toml --lib --tests finalize_settlement_rejects_non_success_tx_receipt -- --nocapture'
 
