@@ -298,11 +298,19 @@ mod tests {
         let block_rate_idx = summary.find("rollback_block_rate=0.666667").unwrap();
         let block_rate_ppm_idx = summary.find("rollback_block_rate_ppm=666666").unwrap();
         let active_rate_idx = summary.find("rollback_active_height_rate_ppm=666666").unwrap();
+        let observed_rate_idx = summary
+            .find("rollback_active_observed_height_rate_ppm=400000")
+            .unwrap();
+        let density_idx = summary.find("rollback_density_avg=3").unwrap();
+        let density_milli_idx = summary.find("rollback_density_avg_milli=3500").unwrap();
 
         assert!(block_total_idx < active_heights_idx);
         assert!(active_heights_idx < block_rate_idx);
         assert!(block_rate_idx < block_rate_ppm_idx);
         assert!(block_rate_ppm_idx < active_rate_idx);
+        assert!(active_rate_idx < observed_rate_idx);
+        assert!(observed_rate_idx < density_idx);
+        assert!(density_idx < density_milli_idx);
     }
 
     #[test]

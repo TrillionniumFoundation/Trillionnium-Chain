@@ -108,7 +108,9 @@ fn rollback_metric_names_keep_budget_share_and_coverage_distinct() {
 fn rollback_review_bundle_keeps_commit_skip_coverage_pair_near_guardrail_pressure() {
     let guardrail_review_fields = [
         "rollback_peak_share_ppm",
+        "rollback_block_total",
         "rollback_active_heights",
+        "rollback_block_rate_ppm",
         "rollback_active_height_rate_ppm",
         "rollback_active_observed_height_rate_ppm",
         "bft_commit_observed_height_rate_ppm",
@@ -119,19 +121,23 @@ fn rollback_review_bundle_keeps_commit_skip_coverage_pair_near_guardrail_pressur
         "apply_error_rollback_share_bps",
     ];
 
-    assert_eq!(guardrail_review_fields.len(), 10);
+    assert_eq!(guardrail_review_fields.len(), 12);
     assert!(guardrail_review_fields[0].ends_with("_share_ppm"));
-    assert!(guardrail_review_fields[1].ends_with("_heights"));
-    assert!(guardrail_review_fields[2].ends_with("_rate_ppm"));
+    assert!(guardrail_review_fields[1].ends_with("_total"));
+    assert!(guardrail_review_fields[2].ends_with("_heights"));
     assert!(guardrail_review_fields[3].ends_with("_rate_ppm"));
     assert!(guardrail_review_fields[4].ends_with("_rate_ppm"));
-    assert!(guardrail_review_fields[5].ends_with("_total"));
+    assert!(guardrail_review_fields[5].ends_with("_rate_ppm"));
     assert!(guardrail_review_fields[6].ends_with("_rate_ppm"));
-    assert!(guardrail_review_fields[7].ends_with("_avg_milli"));
-    assert!(guardrail_review_fields[8].ends_with("_share_ppm"));
-    assert!(guardrail_review_fields[9].ends_with("_share_bps"));
-    assert_ne!(guardrail_review_fields[2], guardrail_review_fields[3]);
-    assert_ne!(guardrail_review_fields[4], guardrail_review_fields[6]);
-    assert_ne!(guardrail_review_fields[5], guardrail_review_fields[6]);
+    assert!(guardrail_review_fields[7].ends_with("_total"));
+    assert!(guardrail_review_fields[8].ends_with("_rate_ppm"));
+    assert!(guardrail_review_fields[9].ends_with("_avg_milli"));
+    assert!(guardrail_review_fields[10].ends_with("_share_ppm"));
+    assert!(guardrail_review_fields[11].ends_with("_share_bps"));
+    assert_ne!(guardrail_review_fields[1], guardrail_review_fields[2]);
+    assert_ne!(guardrail_review_fields[3], guardrail_review_fields[4]);
+    assert_ne!(guardrail_review_fields[4], guardrail_review_fields[5]);
+    assert_ne!(guardrail_review_fields[6], guardrail_review_fields[8]);
     assert_ne!(guardrail_review_fields[7], guardrail_review_fields[8]);
+    assert_ne!(guardrail_review_fields[9], guardrail_review_fields[10]);
 }
