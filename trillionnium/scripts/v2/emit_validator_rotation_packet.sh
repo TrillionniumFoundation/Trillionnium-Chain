@@ -17,6 +17,8 @@ Usage: emit_validator_rotation_packet.sh \
   [--config-bundle-check-log-path <path>] \
   [--handoff-signed-by <name>] \
   [--handoff-acknowledged-by <name>] \
+  [--operator-ack <text>] \
+  [--operator-ack-signature-path <path>] \
   [--handoff-summary-path <path>] \
   [--handoff-manifest-path <path>] \
   [--summary-generated-at <timestamp>] \
@@ -51,6 +53,8 @@ CONFIG_BUNDLE_CHECK_RESULT=""
 CONFIG_BUNDLE_CHECK_LOG_PATH=""
 HANDOFF_SIGNED_BY=""
 HANDOFF_ACKNOWLEDGED_BY=""
+OPERATOR_ACK=""
+OPERATOR_ACK_SIGNATURE_PATH=""
 HANDOFF_SUMMARY_PATH=""
 HANDOFF_MANIFEST_PATH=""
 SUMMARY_GENERATED_AT=""
@@ -149,6 +153,8 @@ while [ "$#" -gt 0 ]; do
     --config-bundle-check-log-path) CONFIG_BUNDLE_CHECK_LOG_PATH="${2-}"; shift 2 ;;
     --handoff-signed-by) HANDOFF_SIGNED_BY="${2-}"; shift 2 ;;
     --handoff-acknowledged-by) HANDOFF_ACKNOWLEDGED_BY="${2-}"; shift 2 ;;
+    --operator-ack) OPERATOR_ACK="${2-}"; shift 2 ;;
+    --operator-ack-signature-path) OPERATOR_ACK_SIGNATURE_PATH="${2-}"; shift 2 ;;
     --handoff-summary-path) HANDOFF_SUMMARY_PATH="${2-}"; shift 2 ;;
     --handoff-manifest-path) HANDOFF_MANIFEST_PATH="${2-}"; shift 2 ;;
     --summary-generated-at) SUMMARY_GENERATED_AT="${2-}"; shift 2 ;;
@@ -235,6 +241,11 @@ fi
 if [ "$CUTOVER_KIND" = "rotation" ] || [ "$CUTOVER_KIND" = "dr_rebuild" ]; then
   require_atom_value --handoff-signed-by "$HANDOFF_SIGNED_BY"
   require_atom_value --handoff-acknowledged-by "$HANDOFF_ACKNOWLEDGED_BY"
+  require_nonempty --operator-ack "$OPERATOR_ACK"
+fi
+
+if [ -n "$OPERATOR_ACK_SIGNATURE_PATH" ]; then
+  require_path_value --operator-ack-signature-path "$OPERATOR_ACK_SIGNATURE_PATH"
 fi
 
 if [ -n "$HANDOFF_SUMMARY_PATH" ] || [ -n "$HANDOFF_MANIFEST_PATH" ] || [ -n "$SUMMARY_GENERATED_AT" ] || [ -n "$MANIFEST_GENERATED_AT" ]; then
@@ -302,6 +313,12 @@ fi
 if [ -n "$HANDOFF_SIGNED_BY" ]; then
   printf 'handoff_signed_by=%s\n' "$HANDOFF_SIGNED_BY"
   printf 'handoff_acknowledged_by=%s\n' "$HANDOFF_ACKNOWLEDGED_BY"
+fi
+if [ -n "$OPERATOR_ACK" ]; then
+  printf 'operator_ack=%s\n' "$OPERATOR_ACK"
+fi
+if [ -n "$OPERATOR_ACK_SIGNATURE_PATH" ]; then
+  printf 'operator_ack_signature_path=%s\n' "$OPERATOR_ACK_SIGNATURE_PATH"
 fi
 if [ -n "$HANDOFF_SUMMARY_PATH" ]; then
   printf 'handoff_summary_path=%s\n' "$HANDOFF_SUMMARY_PATH"

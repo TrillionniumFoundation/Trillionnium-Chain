@@ -41,6 +41,8 @@ incoming_validator_identity=
 expected_genesis_or_checkpoint=
 handoff_signed_by=
 handoff_acknowledged_by=
+operator_ack=
+operator_ack_signature_path=
 rollback_command=
 config_bundle_check_command=
 config_bundle_check_result=
@@ -65,6 +67,8 @@ next_blocker=
 
 Rules:
 - `dr_summary_path=` / `dr_generated_at=` / `dr_status=` / `dr_replay_command=` / `dr_rollback_command=` may remain empty unless `cutover_kind=dr_rebuild`.
+- `operator_ack=` may remain empty only for `cutover_kind=replacement`; once the event crosses a human handoff boundary (`rotation` or `dr_rebuild`), preserve one explicit operator acknowledgment line rather than relying on the signer/acknowledger names alone.
+- `operator_ack_signature_path=` may remain empty when the acknowledgment is captured inline in the cutover note, but when a separate durable sign-off artifact exists, copy its immutable path verbatim.
 - when `cutover_kind=dr_rebuild`, copy `dr_status=` verbatim from the selected recovery report's `status=` field; do not infer it from shell exit status, wrapper success text, or a hand-written `PASS`.
 - `handoff_summary_path=` / `handoff_manifest_path=` / `summary_generated_at=` / `manifest_generated_at=` may remain empty unless release-evidence or RC artifacts are part of the handoff.
 - `expected_worktree_root=` / `expected_branch_ref=` / `expected_head=` / `lane_verify_command=` may remain empty until Step 1 finishes, but once lane binding is part of the ticket or handoff they must be copied verbatim from the verification/recovery step instead of reconstructed from chat or shell memory.
@@ -82,8 +86,8 @@ If any required row cannot be satisfied, treat the event as **No-Go** before exe
 | Cutover kind | Required identity fields | Required artifacts | Minimum stop condition if missing |
 | --- | --- | --- | --- |
 | `replacement` | `verified_worktree=` / `verified_branch_ref=` / `verified_head=` plus explicit outgoing and incoming validator identity/config | clean `git status --short`, config-bundle check output, exact `bootstrap_command=`, explicit `rollback_command=` | cannot name which validator identity is being retired vs activated |
-| `rotation` | all replacement fields plus `handoff_signed_by=` / `handoff_acknowledged_by=` and explicit lineage (`expected_genesis_or_checkpoint=`) | handoff note with signed/acknowledged ownership transfer, optional `handoff_summary_path=` / `handoff_manifest_path=` when release artifacts are part of the cutover | signer/acknowledger missing, or rotation lineage cannot be stated from the note |
-| `dr_rebuild` | all rotation fields plus `dr_summary_path=` / `dr_generated_at=` / `dr_status=` / `dr_replay_command=` / `dr_rollback_command=` | concrete recovery artifact from the current worktree, plus the bootstrap/re-bootstrap sanity command used after rebuild | DR claimed but no path-resolved recovery report exists for the rebuild |
+| `rotation` | all replacement fields plus `handoff_signed_by=` / `handoff_acknowledged_by=` / `operator_ack=` and explicit lineage (`expected_genesis_or_checkpoint=`) | handoff note with signed/acknowledged ownership transfer, operator acknowledgment text, optional `handoff_summary_path=` / `handoff_manifest_path=` when release artifacts are part of the cutover | signer/acknowledger missing, operator acknowledgment missing, or rotation lineage cannot be stated from the note |
+| `dr_rebuild` | all rotation fields plus `dr_summary_path=` / `dr_generated_at=` / `dr_status=` / `dr_replay_command=` / `dr_rollback_command=` | concrete recovery artifact from the current worktree, operator acknowledgment text, plus the bootstrap/re-bootstrap sanity command used after rebuild | DR claimed but no path-resolved recovery report exists for the rebuild |
 
 Interpretation rule:
 - `replacement` is a local operator-owner swap with explicit rollback and clean config proof.
@@ -163,11 +167,14 @@ Also record:
 - `incoming_validator_identity=`
 - `expected_genesis_or_checkpoint=`
 - `handoff_signed_by=` / `handoff_acknowledged_by=` when `cutover_kind=rotation` or `cutover_kind=dr_rebuild`
+- `operator_ack=` when `cutover_kind=rotation` or `cutover_kind=dr_rebuild`
+- `operator_ack_signature_path=` when a separate durable sign-off artifact exists
 - `rollback_command=`
 
 Interpretation rule:
 - if the outgoing or incoming validator identity cannot be named explicitly, stop
 - if `cutover_kind=rotation` or `cutover_kind=dr_rebuild` and either handoff signer/acknowledger is still unknown, stop
+- if `cutover_kind=rotation` or `cutover_kind=dr_rebuild` and `operator_ack=` is still empty, stop
 - copy `handoff_signed_by=` / `handoff_acknowledged_by=` as trimmed operator identifiers; leading/trailing whitespace is evidence-incomplete and should fail before packet generation
 - if `cutover_kind=replacement`, leave `handoff_signed_by=` / `handoff_acknowledged_by=` empty rather than inventing a fake approval boundary
 - if the rollback command is still "to be figured out later", stop

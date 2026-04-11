@@ -15,6 +15,7 @@ common_args=(
   --rollback-command 'rm -rf /tmp/cutover-note'
   --handoff-signed-by alice
   --handoff-acknowledged-by bob
+  --operator-ack 'alice acknowledged validator-new handoff against the cutover note'
   --dr-summary-path /tmp/run/bft-restart-recovery-1.txt
   --dr-generated-at 2026-04-03T06:14:00Z
   --dr-status PASS
@@ -52,8 +53,26 @@ if bash "$SCRIPT" \
   --incoming-validator-id validator-new \
   --incoming-config-path /tmp/configs/validator-new.json \
   --rollback-command 'rm -rf /tmp/cutover-note' \
+  --handoff-signed-by alice \
+  --handoff-acknowledged-by bob \
+  >/tmp/emit-packet.out 2>/tmp/emit-packet.err; then
+  echo "expected rotation without operator ack to fail" >&2
+  exit 1
+fi
+grep -q 'missing --operator-ack' /tmp/emit-packet.err
+
+if bash "$SCRIPT" \
+  --cutover-kind rotation \
+  --verified-worktree /tmp/trnm-lane \
+  --verified-branch-ref lane/mn05-operator-dr-rotation-lifecycle \
+  --verified-head 0123456789abcdef \
+  --outgoing-validator-id validator-old \
+  --incoming-validator-id validator-new \
+  --incoming-config-path /tmp/configs/validator-new.json \
+  --rollback-command 'rm -rf /tmp/cutover-note' \
   --handoff-signed-by ' alice' \
   --handoff-acknowledged-by bob \
+  --operator-ack 'alice acknowledged validator-new handoff against the cutover note' \
   >/tmp/emit-packet.out 2>/tmp/emit-packet.err; then
   echo "expected leading whitespace in handoff_signed_by to fail" >&2
   exit 1
@@ -137,6 +156,7 @@ if bash "$SCRIPT" \
   --rollback-command 'rm -rf /tmp/cutover-note' \
   --handoff-signed-by alice \
   --handoff-acknowledged-by bob \
+  --operator-ack 'alice acknowledged validator-new handoff against the cutover note' \
   --handoff-summary-path /tmp/run/health/evidence-20260403/summary.txt \
   >/tmp/emit-packet.out 2>/tmp/emit-packet.err; then
   echo "expected partial handoff release artifact fields to fail" >&2
@@ -155,6 +175,7 @@ if bash "$SCRIPT" \
   --rollback-command 'rm -rf /tmp/cutover-note' \
   --handoff-signed-by alice \
   --handoff-acknowledged-by bob \
+  --operator-ack 'alice acknowledged validator-new handoff against the cutover note' \
   --dr-summary-path /tmp/run/bft-restart-recovery-1.txt \
   >/tmp/emit-packet.out 2>/tmp/emit-packet.err; then
   echo "expected partial dr evidence fields to fail" >&2
@@ -173,6 +194,7 @@ if bash "$SCRIPT" \
   --rollback-command 'rm -rf /tmp/cutover-note' \
   --handoff-signed-by alice \
   --handoff-acknowledged-by bob \
+  --operator-ack 'alice acknowledged validator-new handoff against the cutover note' \
   --dr-summary-path /tmp/run/bft-restart-recovery-1.txt \
   --dr-generated-at 2026-04-03T06:14:00Z \
   --dr-status FAIL \
@@ -195,6 +217,7 @@ bash "$SCRIPT" \
   --rollback-command 'rm -rf /tmp/cutover-note' \
   --handoff-signed-by alice \
   --handoff-acknowledged-by bob \
+  --operator-ack 'alice acknowledged validator-new handoff against the cutover note' \
   --handoff-summary-path /tmp/release/summary.txt \
   --handoff-manifest-path /tmp/release/manifest.txt \
   --summary-generated-at 2026-04-04T11:45:00Z \
@@ -205,6 +228,7 @@ grep -q '^handoff_summary_path=/tmp/release/summary.txt$' /tmp/emit-packet.out
 grep -q '^handoff_manifest_path=/tmp/release/manifest.txt$' /tmp/emit-packet.out
 grep -q '^summary_generated_at=2026-04-04T11:45:00Z$' /tmp/emit-packet.out
 grep -q '^manifest_generated_at=2026-04-04T11:46:00Z$' /tmp/emit-packet.out
+grep -q '^operator_ack=alice acknowledged validator-new handoff against the cutover note$' /tmp/emit-packet.out
 
 if bash "$SCRIPT" \
   "${common_args[@]}" \
@@ -232,6 +256,7 @@ if bash "$SCRIPT" \
   --rollback-command 'rm -rf /tmp/cutover-note' \
   --handoff-signed-by alice \
   --handoff-acknowledged-by bob \
+  --operator-ack 'alice acknowledged validator-new handoff against the cutover note' \
   --dr-summary-path /tmp/run/bft-restart-recovery-1.txt \
   --dr-generated-at 2026-04-03T06:14:00Z \
   --dr-status ' PASS' \
@@ -276,6 +301,7 @@ bash "$SCRIPT" \
 grep -q '^expected_worktree_root=/Users/qianqi/.openclaw/workspace/trnm-mainnet-lanes/MN05-operator-dr-rotation-lifecycle$' /tmp/emit-packet.out
 grep -q '^handoff_summary_path=/tmp/run/health/evidence-20260403/summary.txt$' /tmp/emit-packet.out
 grep -q '^manifest_generated_at=2026-04-03T06:12:00Z$' /tmp/emit-packet.out
+grep -q '^operator_ack=alice acknowledged validator-new handoff against the cutover note$' /tmp/emit-packet.out
 grep -q '^dr_status=PASS$' /tmp/emit-packet.out
 
 bash "$SCRIPT" \
