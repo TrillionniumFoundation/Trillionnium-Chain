@@ -117,6 +117,11 @@ def main() -> int:
     ap.add_argument("--out", default="run/pr9/weekly-alert-governance.md")
     args = ap.parse_args()
 
+    if args.lookback_days < 1:
+        ap.error("--lookback-days must be >= 1")
+    if args.top_n < 1:
+        ap.error("--top-n must be >= 1")
+
     root = Path.cwd()
     out_path = root / args.out
 
