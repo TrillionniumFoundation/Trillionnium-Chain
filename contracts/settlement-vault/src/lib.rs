@@ -1018,6 +1018,8 @@ mod tests {
 
         vault.transfer("owner", "alice", "alice", 15).unwrap();
 
+        let normalized = vault.normalized_audit_log();
+
         assert_eq!(vault.balance_of("alice"), 40);
         assert_eq!(vault.audit_log().len(), audit_len_before + 1);
         assert!(matches!(
@@ -1025,6 +1027,13 @@ mod tests {
             Some(VaultEvent::Transferred { caller, from, to, amount })
                 if caller == "owner" && from == "alice" && to == "alice" && *amount == 15
         ));
+        assert!(normalized.iter().any(|event| {
+            event.event_type == "vault.transferred"
+                && event.actor.as_deref() == Some("owner")
+                && event.object_id.as_deref() == Some("alice")
+                && event.related_id.as_deref() == Some("alice")
+                && event.amount == Some(15)
+        }));
     }
 
     #[test]
