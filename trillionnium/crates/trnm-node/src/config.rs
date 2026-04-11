@@ -100,6 +100,13 @@ fn looks_like_dns_hostname(value: &str) -> bool {
     })
 }
 
+fn contains_uri_scheme_delimiter(value: &str) -> bool {
+    value
+        .as_bytes()
+        .windows(3)
+        .any(|window| window.eq_ignore_ascii_case(b"://"))
+}
+
 fn is_link_local_ip(ip: std::net::IpAddr) -> bool {
     match ip {
         std::net::IpAddr::V4(addr) => addr.is_link_local(),
@@ -263,7 +270,7 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         path
     );
     anyhow::ensure!(
-        !rpc_addr.contains("://"),
+        !contains_uri_scheme_delimiter(rpc_addr),
         "invalid node config {}: rpc_addr must be a raw socket address, not a URL",
         path
     );
@@ -305,7 +312,7 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         path
     );
     anyhow::ensure!(
-        !p2p_addr.contains("://"),
+        !contains_uri_scheme_delimiter(p2p_addr),
         "invalid node config {}: p2p_addr must be a raw socket address, not a URL",
         path
     );
@@ -552,7 +559,7 @@ fn validate_config_path_input(path: &str) -> Result<()> {
         "read config failed: path must not contain list separators (, ; |)"
     );
     anyhow::ensure!(
-        !path.contains("://"),
+        !contains_uri_scheme_delimiter(path),
         "read config failed: path must not be a URL"
     );
     anyhow::ensure!(
@@ -950,8 +957,9 @@ mod tests {
     fn load_config_rejects_url_style_paths_fail_closed() {
         for path in [
             "http://127.0.0.1:26657/node1.toml",
+            "HTTP://127.0.0.1:26657/node1.toml",
             "https://example.invalid/node1.toml",
-            "file:///tmp/node1.toml",
+            "FILE:///tmp/node1.toml",
         ] {
             let err = load_config(path).expect_err("URL-style config paths must fail closed");
             assert!(
@@ -2286,7 +2294,7 @@ mod tests {
         let rpc_err = validate_node_config(
             NodeConfig {
                 node_id: "node-a".into(),
-                rpc_addr: "http://127.0.0.1:7000".into(),
+                rpc_addr: "HTTP://127.0.0.1:7000".into(),
                 p2p_addr: "127.0.0.1:7001".into(),
             },
             "inline",
@@ -2303,7 +2311,7 @@ mod tests {
             NodeConfig {
                 node_id: "node-a".into(),
                 rpc_addr: "127.0.0.1:7000".into(),
-                p2p_addr: "tcp://127.0.0.1:7001".into(),
+                p2p_addr: "TCP://127.0.0.1:7001".into(),
             },
             "inline",
         )
