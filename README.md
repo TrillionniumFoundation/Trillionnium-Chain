@@ -157,7 +157,7 @@ TRNM_TX_CLI=./trillionnium/target/debug/trnm-cli \
 - Unified development scheduling (planning board): the historical `docs/development/DEVELOPMENT_MASTER_UNIFIED_2026-03-04.md` board is not present in this checkout; use repository docs under `docs/`, `trillionnium/docs/`, and the subproject READMEs as the live execution entrypoints instead.
 - Concurrency bottleneck map + 8-week roadmap: the historical `docs/reports/TRNM_CONCURRENCY_BOTTLENECK_MAP_AND_8W_ROADMAP_2026-03-10.md` report is not present in this checkout, so avoid citing it as a current local truth source.
 - External benchmark comparison: [docs/reports/TRNM_CONCURRENCY_COMPARISON_2026-03-05.md](docs/reports/TRNM_CONCURRENCY_COMPARISON_2026-03-05.md)
-- Web4 platform overview: the historical `docs/WEB4_INFRA_PLATFORM_DEVELOPMENT_MASTER.md` file is not present in this checkout, so treat `RELEASE_READINESS.md`, `docs/reports/TRNM_WEB4_PLATFORM_SCORECARD_2026-03-31.md`, and `web4-frontend/README.md` as the current Web4 truth-source entrypoints instead.
+- Web4 platform overview: the historical `docs/WEB4_INFRA_PLATFORM_DEVELOPMENT_MASTER.md` file is not present in this checkout, so treat `RELEASE_READINESS.md`, `docs/reports/TRNM_WEB4_PLATFORM_SCORECARD_2026-03-31.md`, `web4-frontend/docs/README.md`, and `web4-frontend/README.md` as the current Web4 truth-source entrypoints instead.
 - Rust-native external contracts baseline architecture: [trillionnium/docs/protocol/external-contracts-rust/RUST_NATIVE_EXTERNAL_CONTRACTS_ARCH_2026-03-05.md](trillionnium/docs/protocol/external-contracts-rust/RUST_NATIVE_EXTERNAL_CONTRACTS_ARCH_2026-03-05.md)
 - `contracts/` status and boundaries: [contracts/README.md](contracts/README.md)
 - PoUW mechanism: [trillionnium/docs/challenge-economics-minimal.md](trillionnium/docs/challenge-economics-minimal.md)
@@ -165,8 +165,8 @@ TRNM_TX_CLI=./trillionnium/target/debug/trnm-cli \
 - MCP adapter contract: [docs/agent/mcp_adapter_contract_v1.md](docs/agent/mcp_adapter_contract_v1.md)
 - Operations handbook: [OPERATIONS.md](OPERATIONS.md)
 - OpenClaw ops micro-runbook: [docs/development/OPENCLAW_OPS_MICRO_RUNBOOK.md](docs/development/OPENCLAW_OPS_MICRO_RUNBOOK.md)
-- Web4 frontend docs: [web4-frontend/README.md](web4-frontend/README.md)
-- Web4 documentation center:
+- Web4 frontend overview / quickstart: [web4-frontend/README.md](web4-frontend/README.md)
+- Web4 documentation center (primary docs entrypoint for operator/developer guidance):
   - [web4-frontend/docs/README.md](web4-frontend/docs/README.md)
   - [web4-frontend/docs/developer-guide.md](web4-frontend/docs/developer-guide.md)
   - [web4-frontend/docs/operations-runbook.md](web4-frontend/docs/operations-runbook.md)
