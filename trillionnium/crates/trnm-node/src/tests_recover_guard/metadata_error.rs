@@ -70,6 +70,9 @@ fn recover_metadata_only_error_reports_absent_checkpoint() {
     assert!(!err.contains("no retained checkpoint metadata"));
     assert!(err.contains("last retained checkpoint: none"));
     assert!(err.contains("next startup height: 1"));
+    assert!(err.contains(
+        "operator action: restart with a fresh --bft-wal-dir / --bft-wal-mode auto isolated run; if this node must rejoin from prior state, restore an application snapshot before retrying"
+    ));
 
     let _ = fs::remove_dir_all(&wal_dir);
 }
