@@ -15,7 +15,8 @@ Use this as a rehearsal/runbook reference until a fuller dashboard + alert pack 
 
 This document only freezes surfaces already evidenced in code/tests under:
 
-- `crates/trnm-rpc/src/runtime/http.rs` (runtime path) and `crates/trnm-rpc/src/health.rs` (mirrored compatibility path)
+- `crates/trnm-rpc/src/main.rs` (active RPC entrypoint health/read contract)
+- `crates/trnm-rpc/src/runtime/http.rs` and `crates/trnm-rpc/src/health.rs` (mirrored compatibility copies that should stay behaviorally aligned with the active entrypoint until retired)
 - `crates/trnm-node/src/runtime/metrics_aggregation/summary_format.rs`
 - `crates/trnm-worker-agent/src/workflow_ops.rs`
 - `crates/trnm-worker-agent/src/assigned.rs`
@@ -29,7 +30,7 @@ It should be read together with:
 ## 1. `trnm-rpc` health probe aliases
 
 The current `trnm-rpc` health server intentionally accepts the following case-insensitive aliases as health/readiness/liveness/status probes.
-The runtime implementation in `src/runtime/http.rs` is the primary truth source; the mirrored `src/health.rs` path should stay behaviorally aligned until the compatibility copy is retired:
+The active implementation currently lives in `src/main.rs`; the mirrored `src/runtime/http.rs` and `src/health.rs` copies should stay behaviorally aligned until those compatibility paths are retired:
 
 - `/health`, `/health/`, `/healthz`, `/healthz/`
 - `/live`, `/live/`, `/livez`, `/livez/`
