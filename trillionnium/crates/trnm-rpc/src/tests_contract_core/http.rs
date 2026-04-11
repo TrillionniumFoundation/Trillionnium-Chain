@@ -232,6 +232,23 @@ fn parse_query_events_limit_from_path_zero_uses_default_limit() {
 }
 
 #[test]
+fn parse_query_events_limit_from_path_rejects_noncanonical_route_shapes() {
+    for path in [
+        "/query-events",
+        "/query-events/",
+        "/query-events/not-a-u64?limit=1",
+        "/query-events/42/history?limit=1",
+        "/query-task/42?limit=1",
+        "/health?limit=1",
+    ] {
+        let err = parse_query_events_limit_from_path(path)
+            .expect_err("non-query-events routes must fail closed instead of inheriting the limit parser");
+        assert!(err.contains("400 Bad Request"), "path={path} err={err}");
+        assert!(err.contains("invalid limit"), "path={path} err={err}");
+    }
+}
+
+#[test]
 fn parse_query_events_limit_from_path_rejects_unrelated_query_keys() {
     for path in [
         "/query-events/42?foo=bar&limit=9",

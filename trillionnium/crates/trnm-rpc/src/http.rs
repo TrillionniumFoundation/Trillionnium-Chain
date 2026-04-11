@@ -228,6 +228,23 @@ pub(crate) fn parse_query_events_limit_from_path(path: &str) -> std::result::Res
         ));
     }
 
+    let Some(event_id_suffix) = path_without_query.strip_prefix("/query-events/") else {
+        return Err(http_json_response(
+            "400 Bad Request",
+            "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid limit\"}",
+        ));
+    };
+    let event_id_suffix = event_id_suffix.strip_suffix('/').unwrap_or(event_id_suffix);
+    if event_id_suffix.is_empty()
+        || event_id_suffix.contains('/')
+        || !event_id_suffix.chars().all(|ch| ch.is_ascii_digit())
+    {
+        return Err(http_json_response(
+            "400 Bad Request",
+            "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid limit\"}",
+        ));
+    }
+
     let Some(query) = path.split_once('?').map(|(_, query)| query) else {
         return Ok(QUERY_EVENTS_LIMIT_DEFAULT);
     };
@@ -619,6 +636,29 @@ mod tests {
                 .expect("single trailing slash should preserve default limit parsing"),
             QUERY_EVENTS_LIMIT_DEFAULT
         );
+    }
+
+    #[test]
+    fn parse_query_events_limit_rejects_noncanonical_route_shapes() {
+        for path in [
+            "/query-events",
+            "/query-events/",
+            "/query-events/not-a-u64?limit=1",
+            "/query-events/42/history?limit=1",
+            "/query-task/42?limit=1",
+            "/health?limit=1",
+        ] {
+            let response = parse_query_events_limit_from_path(path);
+            assert!(response.is_err(), "path={path}");
+            assert_eq!(
+                response.unwrap_err(),
+                http_json_response(
+                    "400 Bad Request",
+                    "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid limit\"}"
+                ),
+                "path={path}"
+            );
+        }
     }
 
     #[test]
