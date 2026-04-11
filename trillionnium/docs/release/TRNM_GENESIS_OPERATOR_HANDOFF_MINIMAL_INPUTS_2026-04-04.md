@@ -23,6 +23,9 @@ packet_distribution_path=
 validator_set_version=
 startup_order_note=
 rollback_owner=
+dr_summary_path=
+dr_replay_command=
+dr_rollback_command=
 ```
 
 说明：
@@ -75,7 +78,7 @@ operator_ack_digest=
 
 当且仅当下面这些都齐了，才值得从 fillable packet 生成下一版 **filled operator-handoff packet**：
 
-- Global 5 项全部有值
+- Global 8 项全部有值
 - `node1..node4` 的 `validator_owner` 全部有值
 - `node1..node4` 的 `operator_contact` 全部有值
 - `node1..node4` 的 `operator_ack_status` 全部明确（例如 `acknowledged` / `pending` / `blocked`）
@@ -88,7 +91,7 @@ operator_ack_digest=
 ## D. Fastest next move
 
 最快的推进顺序是：
-1. 先填 **Global 5 项**
+1. 先填 **Global 8 项**（含 `dr_summary_path` / `dr_replay_command` / `dr_rollback_command`）
 2. 再填 4 个 `validator_owner`
 3. 再填 4 个 `operator_contact`
 4. 最后补 `operator_ack_*`
