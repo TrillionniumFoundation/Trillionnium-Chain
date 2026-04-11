@@ -4,8 +4,13 @@ import { FrontendApiError } from "@/lib/api-contract/errors";
 import { withRetry } from "@/lib/api-contract/retry";
 
 describe("api-contract client and retry hardening", () => {
-  it("fails fast when baseUrl is blank", () => {
-    expect(() => createFrontendApiClient({ baseUrl: "   " })).toThrow(FrontendApiError);
+  it("fails fast with invalid payload when baseUrl is blank", () => {
+    expect(() => createFrontendApiClient({ baseUrl: "   " })).toThrowError(
+      expect.objectContaining({
+        code: "INVALID_PAYLOAD",
+        retryable: false,
+      }),
+    );
   });
 
   it("normalizes trailing slash in base url", async () => {

@@ -94,8 +94,9 @@ const normalizeBaseUrl = (baseUrl: string): string => {
   const trimmed = baseUrl.trim();
   if (!trimmed) {
     throw new FrontendApiError({
-      code: "UNKNOWN",
-      message: "Frontend API base URL is empty",
+      code: "INVALID_PAYLOAD",
+      message: "Frontend API base URL must be a non-empty string",
+      causeData: baseUrl,
       retryable: false,
     });
   }
