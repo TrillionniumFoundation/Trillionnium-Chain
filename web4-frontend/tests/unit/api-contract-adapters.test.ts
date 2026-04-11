@@ -617,6 +617,32 @@ describe("api-contract adapters", () => {
     ).toThrow(FrontendApiError);
   });
 
+  it("fails closed on canonical normalized audit-events items with blank source or event type", () => {
+    expect(() =>
+      adaptQueryNormalizedAuditEvents({
+        events: [
+          {
+            source: "   ",
+            event_type: "bridge_relay.proof_submitted",
+            actor: "validator-1",
+          },
+        ],
+      }),
+    ).toThrow(FrontendApiError);
+
+    expect(() =>
+      adaptQueryNormalizedAuditEvents({
+        events: [
+          {
+            source: "bridge-relay",
+            event_type: "\n\t",
+            actor: "validator-1",
+          },
+        ],
+      }),
+    ).toThrow(FrontendApiError);
+  });
+
   it("fails closed on malformed canonical normalized audit-events envelope", () => {
     expect(() =>
       adaptQueryNormalizedAuditEvents({
