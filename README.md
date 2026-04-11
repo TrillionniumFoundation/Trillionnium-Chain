@@ -258,6 +258,7 @@ Or from inside `trillionnium/`:
 ```
 
 - That helper is intentionally **placeholder-only**. It preserves blocker markers such as `deployment_evidence_scope=placeholder-only`, `rank1_read_surface_blocker=still-open`, and `durable_indexer_status=not-implemented-in-this-scaffold`, and it rejects drift if fetched `index.json` no longer matches the scaffold contract.
+- The emitted `summary.txt` is also a template-boundary packet, not just a file list. Reuse `template_selection`, `durable_template_allowed`, `durable_template_rejection_reason`, and every `truth_source_*` line verbatim instead of paraphrasing the scaffold into a durable-service handoff.
 - Current scaffold intentionally keeps durable-read anchors fail-closed:
   - `ingestion_source`
   - `checkpoint_store`
@@ -271,7 +272,7 @@ Or from inside `trillionnium/`:
   - `durable_indexer_status=not-implemented-in-this-scaffold`
   - `durable_read_anchor_complete=false`
 - Use `trillionnium/docs/release/TRNM_EXPLORER_SCAFFOLD_HANDOFF_TEMPLATE_2026-04-04.md` for this scaffold path.
-- Do **not** switch to `TRNM_DURABLE_READ_SERVICE_HANDOFF_TEMPLATE_2026-04-04.md` until all six durable-read anchors exist and the service is no longer a placeholder scaffold.
+- Do **not** switch to `TRNM_DURABLE_READ_SERVICE_HANDOFF_TEMPLATE_2026-04-04.md` until all six durable-read anchors exist, replay/restore/lag evidence is attached in the same packet, and `summary.txt` reports `durable_template_allowed=true`.
 
 Only switch to durable handoff templates when all six durable-read anchors are truly implemented.
 
