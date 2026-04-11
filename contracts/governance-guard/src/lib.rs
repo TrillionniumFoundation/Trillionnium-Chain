@@ -1861,6 +1861,39 @@ mod tests {
     }
 
     #[test]
+    fn active_guardian_can_cancel_scheduled_unpause_after_original_guardian_revoked() {
+        let mut gov = setup();
+        let now = 7_525;
+        let eta = now + 60;
+
+        gov.emergency_pause("guardian", "incident-guardian-handoff")
+            .unwrap();
+        let pid = gov
+            .schedule_unpause("guardian", eta, "recover-guardian-handoff", now)
+            .unwrap();
+        let audit_len_before = gov.audit_log().len();
+
+        gov.set_guardian("admin", "guardian", false).unwrap();
+        gov.set_guardian("admin", "guardian2", true).unwrap();
+
+        gov.cancel("guardian2", pid).unwrap();
+
+        let proposal = gov.proposal(pid).unwrap();
+        assert_eq!(proposal.kind, ProposalKind::EmergencyUnpause);
+        assert_eq!(proposal.status, ProposalStatus::Cancelled);
+        assert_eq!(proposal.proposer, "guardian");
+        assert_eq!(proposal.executor, None);
+        assert_eq!(proposal.executed_at, None);
+        assert!(gov.bridge_state().emergency_paused);
+        assert_eq!(gov.audit_log().len(), audit_len_before + 1);
+        assert!(gov.audit_log().iter().any(|event| matches!(
+            event,
+            GovernanceEvent::ProposalCancelled { proposal_id, actor }
+                if *proposal_id == pid && actor == "guardian2"
+        )));
+    }
+
+    #[test]
     fn param_proposal_cancel_rejects_proposer_after_proposer_role_revoked() {
         let mut gov = setup();
         let now = 7_550;
