@@ -7,10 +7,10 @@ This note does **not** expand bridge scope; it freezes the evidence operators sh
 
 For the current X2 settlement path, finalization remains fail-closed and bounded by the heartbeat sample embedded in the attempt:
 
-- required lower bound: `target < confirm`
+- required lower bound: `target < confirm` in normal ranges
 - required upper bound: `confirm <= source + 1`
 - stricter catch-up rule: once `target == source`, the only acceptable confirmation height is `source + 1`
-- saturated edge case: when `source == target == u64::MAX`, `confirm == u64::MAX` remains the only acceptable terminal value
+- saturated edge case: when `source == target == u64::MAX`, arithmetic saturates, so `confirm == u64::MAX` remains the only acceptable terminal value even though `target < confirm` can no longer be expressed literally
 
 Operationally, this means a stale target-height confirm must never be accepted as enough evidence once the target heartbeat has already caught up to the source head.
 
