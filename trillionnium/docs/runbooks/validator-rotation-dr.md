@@ -390,9 +390,11 @@ When handing this event to another operator, record:
 - config-bundle check log path when tee/log capture was used
 - pass/fail result
 - rollback command
+- DR summary/report path when DR evidence was required
 - DR report generated-at timestamp when DR evidence was required
 - DR report status when DR evidence was required
 - replay command when DR evidence was required
+- rollback command from the DR report when DR evidence was required
 - one-line blocker if the event is not reproducible
 
 ## Minimum signed operator ceremony packet
