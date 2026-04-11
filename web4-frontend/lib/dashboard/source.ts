@@ -160,10 +160,11 @@ const resolveDashboardAuditSubject = (): string =>
   resolveNonEmptyEnv(process.env.NEXT_PUBLIC_DASHBOARD_AUDIT_SUBJECT, "did:trnm:core-rpc");
 
 const toDisplayTime = (isoLike?: string): string => {
-  if (typeof isoLike !== "string" || isoLike.trim().length === 0) return "-";
+  const normalized = normalizeDashboardInput(isoLike);
+  if (!normalized) return "-";
 
-  const date = new Date(isoLike);
-  if (Number.isNaN(date.getTime())) return isoLike;
+  const date = new Date(normalized);
+  if (Number.isNaN(date.getTime())) return normalized;
 
   const fmt = new Intl.DateTimeFormat("sv-SE", {
     year: "numeric",

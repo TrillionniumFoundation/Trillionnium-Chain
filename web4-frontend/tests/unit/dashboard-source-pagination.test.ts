@@ -937,6 +937,58 @@ describe("dashboard source normalized audit pagination", () => {
     expect(snapshot.tasks[0]?.updatedAt).toBe("2026-03-01 08:05");
   });
 
+  it("normalizes zero-width timestamp noise before formatting readonly events and audits", async () => {
+    const mockClient = {
+      queryTask: vi.fn().mockResolvedValue({
+        task: {
+          id: "341-display-time-noise",
+          name: "display-time-noise",
+          owner: "ops",
+          status: "running",
+          createdAt: "2026-03-01T00:00:00.000Z",
+          updatedAt: "2026-03-01T00:05:00.000Z",
+          metadata: {},
+        },
+      }),
+      queryEvents: vi.fn().mockResolvedValue({
+        taskId: "341-display-time-noise",
+        events: [
+          {
+            id: "EVT-341-display-time-noise",
+            timestamp: "\u200B2026-03-01T00:04:00.000Z\uFEFF",
+            type: "deploy.completed",
+            level: "info",
+            payload: {},
+          },
+        ],
+      }),
+      queryCapabilityAudit: vi.fn().mockResolvedValue({
+        subject: "did:trnm:test",
+        audits: [
+          {
+            subject: "did:trnm:test",
+            capability: "AUDIT_READ",
+            granted: true,
+            checkedAt: "\u200B2026-03-01T00:06:00.000Z\uFEFF",
+          },
+        ],
+      }),
+      queryNormalizedAuditEvents: vi.fn().mockResolvedValue({
+        events: [],
+        hasMore: false,
+      }),
+    } as unknown as ReturnType<typeof apiContractClient.createFrontendApiClient>;
+
+    vi.spyOn(apiContractClient, "createFrontendApiClient").mockReturnValue(mockClient);
+
+    const snapshot = await fetchDashboardSnapshot();
+
+    expect(snapshot.events.find((event) => event.id === "EVT-341-display-time-noise")?.time).toBe(
+      "2026-03-01 08:04",
+    );
+    expect(snapshot.audits[0]?.reviewedAt).toBe("2026-03-01 08:06");
+  });
+
   it("falls back to a stable owner label when task owner is blank", async () => {
     const mockClient = {
       queryTask: vi.fn().mockResolvedValue({
