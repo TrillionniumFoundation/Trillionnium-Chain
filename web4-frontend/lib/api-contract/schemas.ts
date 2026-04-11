@@ -94,9 +94,4 @@ export const normalizedAuditEventsQuerySchema = z.object({
   cursor: paginationCursorSchema.optional(),
 }).strict();
 
-export const queryNormalizedAuditEventsResponseSchema = z.union([
-  queryNormalizedAuditEventsPageSchema,
-  z.object({
-    events: z.array(normalizedAuditEventSchema),
-  }).strict(),
-]);
+export const queryNormalizedAuditEventsResponseSchema = queryNormalizedAuditEventsPageSchema;

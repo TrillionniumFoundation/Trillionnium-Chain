@@ -600,6 +600,24 @@ describe("api-contract adapters", () => {
     expect(out.events[0]?.event_type).toBe("governance.proposal_executed");
   });
 
+  it("adapts canonical normalized audit-events payload with total on a terminal page", () => {
+    const out = adaptQueryNormalizedAuditEvents({
+      events: [
+        {
+          source: "governance-guard",
+          event_type: "governance.proposal_executed",
+          actor: "alice",
+          timestamp: "2026-03-03T00:00:00.000Z",
+        },
+      ],
+      total: 1,
+    });
+
+    expect(out.hasMore).toBe(false);
+    expect(out.nextCursor).toBeUndefined();
+    expect(out.total).toBe(1);
+  });
+
   it("fails closed on malformed canonical normalized audit-events items", () => {
     expect(() =>
       adaptQueryNormalizedAuditEvents({
