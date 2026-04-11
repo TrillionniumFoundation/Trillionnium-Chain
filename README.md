@@ -224,6 +224,7 @@ Please run the local minimum gates before creating PRs to reduce CI turnarounds.
   - `query-events/<id>/`
   - `query-capability-audit/<subject>/`
   - but **not** for `query-normalized-audit-events/` (currently exact path only).
+- For `query-events/<id>/`, the `limit` query contract is unchanged: `?limit=<n>` still parses normally, default remains `100`, and the same fail-closed rules apply.
 - All read endpoints remain fail-closed for extra segments, raw/encoded slash tricks, and query/fragment smuggling.
 
 ### Explorer scaffold (operator-facing)
