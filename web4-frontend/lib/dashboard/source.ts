@@ -335,12 +335,12 @@ const fetchNormalizedAuditEventsWithPagination = async (
       allEvents.push(event);
     }
 
-    const nextCursor = pageResp.nextCursor?.trim();
-    if (pageResp.hasMore === true && !(nextCursor && nextCursor.length > 0)) {
+    const nextCursor = normalizeOptionalCursor(pageResp.nextCursor);
+    if (pageResp.hasMore === true && nextCursor == null) {
       throw new Error("Normalized audit pagination declared more pages without a next cursor");
     }
 
-    hasMore = pageResp.hasMore === true && !!(nextCursor && nextCursor.length > 0);
+    hasMore = pageResp.hasMore === true && nextCursor != null;
 
     if (!hasMore || !nextCursor) break;
 

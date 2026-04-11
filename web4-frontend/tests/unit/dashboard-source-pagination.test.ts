@@ -291,6 +291,74 @@ describe("dashboard source normalized audit pagination", () => {
     expect(snapshot.kpis.find((kpi) => kpi.label === "Open Incidents")?.value).toBe("1");
   });
 
+  it("normalizes zero-width cursor noise before requesting the next normalized audit page", async () => {
+    const mockClient = {
+      queryTask: vi.fn().mockResolvedValue({
+        task: {
+          id: "341-cursor-noise",
+          owner: "ops",
+          status: "running",
+          createdAt: "2026-03-01T00:00:00.000Z",
+          metadata: {},
+        },
+      }),
+      queryEvents: vi.fn().mockResolvedValue({
+        taskId: "341-cursor-noise",
+        events: [],
+      }),
+      queryCapabilityAudit: vi.fn().mockResolvedValue({
+        subject: "did:trnm:test",
+        audits: [
+          {
+            subject: "did:trnm:test",
+            capability: "AUDIT_READ",
+            granted: true,
+            checkedAt: "2026-03-01T00:00:00.000Z",
+          },
+        ],
+      }),
+      queryNormalizedAuditEvents: vi
+        .fn()
+        .mockResolvedValueOnce({
+          events: [
+            {
+              source: "bridge-relay",
+              event_type: "bridge_relay.proof_submitted",
+              actor: "validator-a",
+              object_id: "proof-c1",
+              timestamp: "2026-03-01T00:01:00.000Z",
+              reason: "warn",
+            },
+          ],
+          hasMore: true,
+          nextCursor: "\uFEFF cursor-z\u200B ",
+        })
+        .mockResolvedValueOnce({
+          events: [
+            {
+              source: "bridge-relay",
+              event_type: "bridge_relay.proof_submitted",
+              actor: "validator-b",
+              object_id: "proof-c2",
+              timestamp: "2026-03-01T00:02:00.000Z",
+              reason: "warn",
+            },
+          ],
+          hasMore: false,
+        }),
+    } as unknown as ReturnType<typeof apiContractClient.createFrontendApiClient>;
+
+    vi.spyOn(apiContractClient, "createFrontendApiClient").mockReturnValue(mockClient);
+
+    const snapshot = await fetchDashboardSnapshot();
+
+    expect(mockClient.queryNormalizedAuditEvents).toHaveBeenNthCalledWith(2, {
+      limit: 60,
+      cursor: "cursor-z",
+    });
+    expect(snapshot.events.find((event) => event.id === "bridge-relay:proof-c2")).toBeDefined();
+  });
+
   it("keeps the readonly snapshot adaptable when task metadata or event payload are missing", async () => {
     const mockClient = {
       queryTask: vi
