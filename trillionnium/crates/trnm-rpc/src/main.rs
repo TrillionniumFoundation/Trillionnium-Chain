@@ -5568,6 +5568,21 @@ mod tests {
     }
 
     #[test]
+    fn parse_query_normalized_audit_events_query_from_path_rejects_query_key_case_drift() {
+        for path in [
+            "/query-normalized-audit-events?Limit=3",
+            "/query-normalized-audit-events?Source=trnm.task",
+            "/query-normalized-audit-events?eventtype=trnm.task.commit",
+            "/query-normalized-audit-events?Cursor=2",
+        ] {
+            let err = parse_query_normalized_audit_events_query_from_path(path)
+                .expect_err("query key case drift should fail closed");
+            assert!(err.contains("400 Bad Request"), "path={path} err={err}");
+            assert!(err.contains("invalid query"), "path={path} err={err}");
+        }
+    }
+
+    #[test]
     fn parse_query_normalized_audit_events_query_from_path_rejects_duplicate_limit() {
         let err = parse_query_normalized_audit_events_query_from_path(
             "/query-normalized-audit-events?limit=3&limit=4",
