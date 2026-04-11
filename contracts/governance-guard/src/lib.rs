@@ -1171,6 +1171,39 @@ mod tests {
     }
 
     #[test]
+    fn queue_rejects_proposer_after_proposer_role_revoked() {
+        let mut gov = setup();
+        let now = 2_875;
+        let eta = now + 60;
+        let pid = gov
+            .propose(
+                "alice",
+                "challenge_window_blocks",
+                "100",
+                "132",
+                eta,
+                "reason-queue-role-drift",
+                now,
+            )
+            .unwrap();
+        let audit_len_before = gov.audit_log().len();
+
+        gov.set_role("admin", "alice", false, false).unwrap();
+
+        assert_eq!(gov.queue("alice", pid).unwrap_err(), Error::Unauthorized);
+
+        let proposal = gov.proposal(pid).unwrap();
+        assert_eq!(proposal.status, ProposalStatus::Pending);
+        assert_eq!(proposal.executor, None);
+        assert_eq!(proposal.executed_at, None);
+        assert_eq!(gov.audit_log().len(), audit_len_before);
+        assert!(!gov.audit_log().iter().any(|event| matches!(
+            event,
+            GovernanceEvent::ProposalQueued { proposal_id, .. } if *proposal_id == pid
+        )));
+    }
+
+    #[test]
     fn proposer_can_cancel_own_proposal() {
         let mut gov = setup();
         let now = 2_900;
