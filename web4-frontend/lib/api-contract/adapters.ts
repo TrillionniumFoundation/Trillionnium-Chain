@@ -246,19 +246,56 @@ export const adaptQueryEvents = (
 ): QueryEventsResult => {
   const canonical = queryEventsResponseSchema.safeParse(payload);
   if (canonical.success) {
-    const hasMixedCanonicalTaskIds = canonical.data.events.some(
-      (event) => event.taskId !== canonical.data.taskId,
+    const normalizedCanonicalTaskId = normalizeOptionalTaskId(canonical.data.taskId);
+    const normalizedRequestedTaskId = normalizeOptionalTaskId(requestedTaskId);
+
+    if (!normalizedCanonicalTaskId) {
+      throw normalizeSchemaError({
+        message: "canonical query-events payload contains blank task id",
+      });
+    }
+
+    const normalizedEvents = canonical.data.events.map((event) => {
+      const normalizedEventTaskId = normalizeOptionalTaskId(event.taskId);
+      if (!normalizedEventTaskId) {
+        throw normalizeSchemaError({
+          message: "canonical query-events payload contains blank event task id",
+          eventId: event.id,
+        });
+      }
+
+      return {
+        ...normalizeCanonicalEventForM2V2(event),
+        taskId: normalizedEventTaskId,
+      };
+    });
+
+    const hasMixedCanonicalTaskIds = normalizedEvents.some(
+      (event) => event.taskId !== normalizedCanonicalTaskId,
     );
     if (hasMixedCanonicalTaskIds) {
       throw normalizeSchemaError({
         message: "canonical query-events payload contains mixed task ids",
-        taskId: canonical.data.taskId,
+        taskId: normalizedCanonicalTaskId,
+      });
+    }
+
+    if (
+      normalizedRequestedTaskId != null &&
+      normalizedRequestedTaskId !== normalizedCanonicalTaskId
+    ) {
+      throw normalizeSchemaError({
+        message: "canonical query-events payload task id mismatches requested task id",
+        requestedTaskId,
+        normalizedRequestedTaskId,
+        normalizedCanonicalTaskId,
       });
     }
 
     return {
       ...canonical.data,
-      events: canonical.data.events.map(normalizeCanonicalEventForM2V2),
+      taskId: normalizedCanonicalTaskId,
+      events: normalizedEvents,
     };
   }
 

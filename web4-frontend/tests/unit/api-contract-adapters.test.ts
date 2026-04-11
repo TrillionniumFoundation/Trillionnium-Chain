@@ -224,6 +224,49 @@ describe("api-contract adapters", () => {
     ).toThrow(FrontendApiError);
   });
 
+  it("normalizes canonical query-events task ids before enforcing invariants", () => {
+    const out = adaptQueryEvents(
+      {
+        taskId: " \uFEFF7\u200B ",
+        events: [
+          {
+            id: "e1x",
+            taskId: " 7 ",
+            type: "commit",
+            level: "info",
+            timestamp: "2026-03-03T00:00:00.000Z",
+            payload: {},
+          },
+        ],
+      },
+      "7",
+    );
+
+    expect(out.taskId).toBe("7");
+    expect(out.events[0]?.taskId).toBe("7");
+  });
+
+  it("fails closed when canonical query-events payload mismatches requested task id context", () => {
+    expect(() =>
+      adaptQueryEvents(
+        {
+          taskId: "7",
+          events: [
+            {
+              id: "e1y",
+              taskId: "7",
+              type: "commit",
+              level: "info",
+              timestamp: "2026-03-03T00:00:00.000Z",
+              payload: {},
+            },
+          ],
+        },
+        "8",
+      ),
+    ).toThrow(FrontendApiError);
+  });
+
   it("normalizes canonical events using snake_case resolution_code alias", () => {
     const out = adaptQueryEvents({
       taskId: "8",
