@@ -1181,4 +1181,20 @@ mod tests {
             "retained_wal_entries=0 checkpoint_height_retained=8 checkpoint_tip_relation=checkpoint_only:8 next_startup_height=9 wal_tail_truncated=false metadata_only_recovery=false join_rejoin_status=ready:checkpoint_only_rejoin_bootstrap"
         );
     }
+
+    #[test]
+    fn ensure_recoverable_wal_state_allows_truncated_checkpoint_only_rejoin_bootstrap() {
+        let recovered = recovered_state(0, 9, Some(8), true, false);
+
+        ensure_recoverable_wal_state(Path::new("/tmp/trnm-runtime-wal"), &recovered)
+            .expect("truncated checkpoint-only bootstrap should remain recoverable for runtime join/rejoin triage");
+        assert_eq!(
+            retained_wal_summary(&recovered),
+            "retained no committed WAL entries (last retained checkpoint height 8); repaired WAL tail required truncation"
+        );
+        assert_eq!(
+            recovery_startup_summary(&recovered),
+            "retained_wal_entries=0 checkpoint_height_retained=8 checkpoint_tip_relation=checkpoint_only:8 next_startup_height=9 wal_tail_truncated=true metadata_only_recovery=false join_rejoin_status=ready:checkpoint_only_rejoin_bootstrap_after_tail_repair"
+        );
+    }
 }
