@@ -116,6 +116,39 @@ fn ensure_recoverable_wal_state_allows_checkpoint_only_bootstrap_after_tail_repa
 }
 
 #[test]
+fn ensure_recoverable_wal_state_rejects_metadata_only_recovery_with_singular_checkpoint_lag() {
+    let wal_dir = temp_wal_dir("recover-guard-metadata-only-singular-lag");
+    fs::create_dir_all(&wal_dir).unwrap();
+
+    let recovered = RecoveredWalState {
+        next_height: 8,
+        restored_lock: None,
+        last_checkpoint: Some(CheckpointMeta {
+            height: 6,
+            state_root_hex: "r6".into(),
+            wal_entry_hash_hex: "h6".into(),
+        }),
+        truncated: false,
+        metadata_only_recovery: true,
+        wal_entries_retained: 2,
+        checkpoint_height_retained: Some(6),
+    };
+
+    let err = ensure_recoverable_wal_state(&wal_dir, &recovered).unwrap_err();
+    let err = format!("{err:#}");
+
+    assert!(err.contains("refusing metadata-only recovery"));
+    assert!(err.contains("retained 2 committed WAL entries through height 7"));
+    assert!(err.contains("checkpoint lags retained WAL tip by 1 block"));
+    assert!(!err.contains("checkpoint lags retained WAL tip by 1 blocks"));
+    assert!(err.contains("last retained checkpoint: 6"));
+    assert!(err.contains("next startup height: 8"));
+    assert!(err.contains("operator action: restore an application snapshot that covers the retained WAL tip before retrying join/rejoin; do not resume from metadata alone"));
+
+    let _ = fs::remove_dir_all(&wal_dir);
+}
+
+#[test]
 fn ensure_recoverable_wal_state_allows_single_block_lagging_checkpoint_resume() {
     let wal_dir = temp_wal_dir("recover-guard-lagging-checkpoint-resume");
     fs::create_dir_all(&wal_dir).unwrap();
