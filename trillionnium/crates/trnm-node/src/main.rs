@@ -4220,6 +4220,10 @@ mod tests {
                 format!("./configs/node{config_number}.toml"),
                 format!("trillionnium/configs/node{config_number}.toml"),
                 format!("./trillionnium/configs/node{config_number}.toml"),
+                format!("configs/./node{config_number}.toml"),
+                format!("./configs/./node{config_number}.toml"),
+                format!("trillionnium/configs/./node{config_number}.toml"),
+                format!("./trillionnium/configs/./node{config_number}.toml"),
             ] {
                 let cfg = load_config(&path).unwrap_or_else(|err| {
                     panic!(
