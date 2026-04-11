@@ -102,6 +102,7 @@ pub enum Error {
     WrongProposer,
     CurrentValueMismatch,
     ParamVersionMismatch,
+    PauseRestoreAlreadyScheduled,
 }
 
 pub type Result<T> = std::result::Result<T, Error>;
@@ -415,6 +416,12 @@ impl GovernanceGuard {
         }
         if eta < now.saturating_add(self.min_timelock_delay_secs) {
             return Err(Error::InvalidEta);
+        }
+        if self.proposals.values().any(|proposal| {
+            proposal.kind == ProposalKind::EmergencyUnpause
+                && matches!(proposal.status, ProposalStatus::Pending | ProposalStatus::Queued)
+        }) {
+            return Err(Error::PauseRestoreAlreadyScheduled);
         }
 
         let id = self.next_id();
@@ -1583,6 +1590,42 @@ mod tests {
             event,
             GovernanceEvent::PauseRestoreScheduled { .. }
         )));
+    }
+
+    #[test]
+    fn schedule_unpause_rejects_duplicate_active_restore_without_side_effects() {
+        let mut gov = setup();
+        let now = 6_150;
+        let eta = now + 60;
+
+        gov.emergency_pause("guardian", "incident-duplicate-restore")
+            .unwrap();
+        let first_pid = gov
+            .schedule_unpause("guardian", eta, "recover-first", now)
+            .unwrap();
+        let audit_len_before = gov.audit_log().len();
+
+        assert_eq!(
+            gov.schedule_unpause("guardian", eta + 60, "recover-second", now)
+                .unwrap_err(),
+            Error::PauseRestoreAlreadyScheduled
+        );
+
+        assert!(gov.bridge_state().emergency_paused);
+        assert_eq!(gov.proposals.len(), 1);
+        let proposal = gov.proposal(first_pid).unwrap();
+        assert_eq!(proposal.kind, ProposalKind::EmergencyUnpause);
+        assert_eq!(proposal.status, ProposalStatus::Queued);
+        assert_eq!(proposal.eta, eta);
+        assert_eq!(proposal.reason_hash, "recover-first");
+        assert_eq!(gov.audit_log().len(), audit_len_before);
+        assert_eq!(
+            gov.audit_log()
+                .iter()
+                .filter(|event| matches!(event, GovernanceEvent::PauseRestoreScheduled { .. }))
+                .count(),
+            1
+        );
     }
 
     #[test]

@@ -70,7 +70,8 @@ Rust 版外置治理骨架（in-memory state machine）：
 3. **版本漂移保护**：同参数并发提案会因版本改变而拒绝执行，避免覆盖
 4. **权限漂移**：撤销 proposer/executor/guardian 后调用失败
 5. **pause 恢复**：pause 立即生效；unpause 到期前失败、到期后成功
-6. **审计日志链路**：提案流转与暂停恢复路径会产生日志，支持链下查询与状态追踪
+6. **重复恢复调度拦截**：紧急暂停期间若已存在 active unpause proposal，再次 schedule 会 fail-closed，避免并发恢复单漂移
+7. **审计日志链路**：提案流转与暂停恢复路径会产生日志，支持链下查询与状态追踪
 
 ## 审计日志（v2）
 
