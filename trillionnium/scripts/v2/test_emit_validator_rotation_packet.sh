@@ -278,4 +278,19 @@ grep -q '^handoff_summary_path=/tmp/run/health/evidence-20260403/summary.txt$' /
 grep -q '^manifest_generated_at=2026-04-03T06:12:00Z$' /tmp/emit-packet.out
 grep -q '^dr_status=PASS$' /tmp/emit-packet.out
 
+bash "$SCRIPT" \
+  "${common_args[@]}" \
+  --expected-worktree-root /Users/qianqi/.openclaw/workspace/trnm-mainnet-lanes/MN05-operator-dr-rotation-lifecycle \
+  --expected-branch-ref lane/mn05-operator-dr-rotation-lifecycle \
+  --expected-head 0123456789abcdef \
+  --lane-verify-command './scripts/v2/verify_lane_worktree.sh --expected-worktree-root "/Users/qianqi/.openclaw/workspace/trnm-mainnet-lanes/MN05-operator-dr-rotation-lifecycle" --expected-branch-ref "lane/mn05-operator-dr-rotation-lifecycle" --expected-head "0123456789abcdef"' \
+  --handoff-summary-path /tmp/run/health/evidence-20260403/summary.txt \
+  --handoff-manifest-path /tmp/release/rc-20260403/manifest.txt \
+  --summary-generated-at 2026-04-03T06:11:00Z \
+  --manifest-generated-at 2026-04-03T06:12:00Z \
+  >/tmp/emit-packet.out
+
+grep -q '^expected_head=0123456789abcdef$' /tmp/emit-packet.out
+grep -q '^lane_verify_command=./scripts/v2/verify_lane_worktree.sh --expected-worktree-root "/Users/qianqi/.openclaw/workspace/trnm-mainnet-lanes/MN05-operator-dr-rotation-lifecycle" --expected-branch-ref "lane/mn05-operator-dr-rotation-lifecycle" --expected-head "0123456789abcdef"$' /tmp/emit-packet.out
+
 echo "PASS"

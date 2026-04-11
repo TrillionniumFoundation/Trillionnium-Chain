@@ -111,6 +111,29 @@ require_atom_value() {
   esac
 }
 
+command_has_flag_value() {
+  local command="$1"
+  local flag_name="$2"
+  local expected_value="$3"
+
+  python3 - "$command" "$flag_name" "$expected_value" <<'PY'
+import shlex
+import sys
+
+command, flag_name, expected_value = sys.argv[1:4]
+try:
+    tokens = shlex.split(command)
+except ValueError:
+    sys.exit(1)
+
+for i, token in enumerate(tokens[:-1]):
+    if token == flag_name and tokens[i + 1] == expected_value:
+        sys.exit(0)
+
+sys.exit(1)
+PY
+}
+
 while [ "$#" -gt 0 ]; do
   case "$1" in
     --cutover-kind) CUTOVER_KIND="${2-}"; shift 2 ;;
@@ -184,29 +207,20 @@ if [ -n "$EXPECTED_WORKTREE_ROOT" ] || [ -n "$EXPECTED_BRANCH_REF" ] || [ -n "$E
       exit 2
       ;;
   esac
-  case "$LANE_VERIFY_COMMAND" in
-    *"--expected-worktree-root $EXPECTED_WORKTREE_ROOT"*) ;;
-    *)
-      printf 'invalid --lane-verify-command: missing --expected-worktree-root %s\n' "$EXPECTED_WORKTREE_ROOT" >&2
-      exit 2
-      ;;
-  esac
-  case "$LANE_VERIFY_COMMAND" in
-    *"--expected-branch-ref $EXPECTED_BRANCH_REF"*) ;;
-    *)
-      printf 'invalid --lane-verify-command: missing --expected-branch-ref %s\n' "$EXPECTED_BRANCH_REF" >&2
-      exit 2
-      ;;
-  esac
+  if ! command_has_flag_value "$LANE_VERIFY_COMMAND" --expected-worktree-root "$EXPECTED_WORKTREE_ROOT"; then
+    printf 'invalid --lane-verify-command: missing --expected-worktree-root %s\n' "$EXPECTED_WORKTREE_ROOT" >&2
+    exit 2
+  fi
+  if ! command_has_flag_value "$LANE_VERIFY_COMMAND" --expected-branch-ref "$EXPECTED_BRANCH_REF"; then
+    printf 'invalid --lane-verify-command: missing --expected-branch-ref %s\n' "$EXPECTED_BRANCH_REF" >&2
+    exit 2
+  fi
   if [ -n "$EXPECTED_HEAD" ]; then
     require_token --expected-head "$EXPECTED_HEAD"
-    case "$LANE_VERIFY_COMMAND" in
-      *"--expected-head $EXPECTED_HEAD"*) ;;
-      *)
-        printf 'invalid --lane-verify-command: missing --expected-head %s\n' "$EXPECTED_HEAD" >&2
-        exit 2
-        ;;
-    esac
+    if ! command_has_flag_value "$LANE_VERIFY_COMMAND" --expected-head "$EXPECTED_HEAD"; then
+      printf 'invalid --lane-verify-command: missing --expected-head %s\n' "$EXPECTED_HEAD" >&2
+      exit 2
+    fi
   fi
 fi
 
