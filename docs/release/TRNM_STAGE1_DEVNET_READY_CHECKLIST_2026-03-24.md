@@ -146,7 +146,7 @@ done
 2. 实际启动的是哪一个 `trnm-node` 二进制；
 3. 参与 bring-up 的节点配置是否与证据记录一致。
 
-若仓库同时存在多个 lane worktree，建议在正式 bring-up 前先做一次 fail-closed 预检，避免把别的 worktree 的 branch/commit/binary 误抄到当前证据。**预期 worktree root 与预期 lane branch 必须同时固定**，若本轮要固化证据，还应把预期 `HEAD` 一并钉住。`verify_lane_worktree.sh` 的分支参数是二选一：传 `--expected-branch` **或** `--expected-branch-ref`，不要同时传。对 handoff / release 证据，优先固定完整 `refs/heads/...` 形式：
+若仓库同时存在多个 lane worktree，建议在正式 bring-up 前先做一次 fail-closed 预检，避免把别的 worktree 的 branch/commit/binary 误抄到当前证据。**预期 worktree root 与预期 lane branch 必须同时固定**，若本轮要固化证据，还应把预期 `HEAD` 一并钉住。`verify_lane_worktree.sh` 统一使用 `--expected-branch-ref`（可传短分支名或完整 `refs/heads/...`，脚本会规范化并 fail-closed 校验）；不要把别的 helper 支持的 `--expected-branch` 口径误套到这里。对 handoff / release 证据，优先固定完整 `refs/heads/...` 形式：
 
 ```bash
 EXPECTED_WORKTREE_ROOT="/absolute/path/to/this/worktree"
