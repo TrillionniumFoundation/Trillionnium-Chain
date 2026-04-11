@@ -11,6 +11,7 @@ pub enum VaultError {
     AlreadyPaused,
     NotPaused,
     InvalidAmount,
+    InvalidBeneficiary,
     InsufficientBalance,
     DuplicateRequest,
     RequestNotFound,
@@ -319,6 +320,10 @@ impl SettlementVault {
 
             (lock.account.clone(), lock.amount)
         };
+
+        if beneficiary == account {
+            return Err(VaultError::InvalidBeneficiary);
+        }
 
         self.ensure_creditable_balance(beneficiary, amount)?;
         self.locks
@@ -931,6 +936,26 @@ mod tests {
             vault.lock_record("req-2").unwrap().status,
             LockStatus::Slashed
         );
+    }
+
+    #[test]
+    fn slash_to_locked_account_is_rejected_without_state_or_audit_mutation() {
+        let mut vault = SettlementVault::new("owner");
+
+        vault.deposit("owner", "alice", 30).unwrap();
+        vault.lock("owner", "req-self-slash", "alice", 30).unwrap();
+        let audit_len_before = vault.audit_log().len();
+
+        let err = vault
+            .slash("owner", "req-self-slash", "alice")
+            .expect_err("slash beneficiary must differ from locked account");
+        assert_eq!(err, VaultError::InvalidBeneficiary);
+        assert_eq!(vault.balance_of("alice"), 0);
+        assert_eq!(
+            vault.lock_record("req-self-slash").unwrap().status,
+            LockStatus::Locked
+        );
+        assert_eq!(vault.audit_log().len(), audit_len_before);
     }
 
     #[test]
