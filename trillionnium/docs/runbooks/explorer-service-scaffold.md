@@ -181,14 +181,20 @@ Manual fallback if you are debugging the helper itself:
 ./trillionnium/scripts/v2/explorer_service_status.sh \
   | tee trillionnium/run/explorer-service/handoff-status.txt
 
-curl -fsS http://127.0.0.1:${EXPLORER_PORT:-8090}/index.json \
+INDEX_URL="$(grep '^index_url=' trillionnium/run/explorer-service/handoff-status.txt | tail -n1 | cut -d= -f2-)"
+[ -n "$INDEX_URL" ]
+
+curl -fsS "$INDEX_URL" \
   | tee trillionnium/run/explorer-service/handoff-index.json
 ```
+
+This is intentionally status-driven rather than shell-env-driven: if `explorer-service.env` pinned a non-default port or public base URL, reusing the emitted `index_url=` line keeps the fallback capture on the same concrete deployment boundary that `explorer_service_status.sh` just proved.
 
 If the public/reverse-proxy URL is the evidence target, capture that separately instead of replacing the local proof:
 
 ```bash
-curl -fsS "${EXPLORER_PUBLIC_BASE_URL:-http://127.0.0.1:${EXPLORER_PORT:-8090}}/index.json" \
+PUBLIC_INDEX_URL="$(grep '^public_base_url=' trillionnium/run/explorer-service/handoff-status.txt | tail -n1 | cut -d= -f2-)"/index.json
+curl -fsS "$PUBLIC_INDEX_URL" \
   | tee trillionnium/run/explorer-service/handoff-public-index.json
 ```
 
