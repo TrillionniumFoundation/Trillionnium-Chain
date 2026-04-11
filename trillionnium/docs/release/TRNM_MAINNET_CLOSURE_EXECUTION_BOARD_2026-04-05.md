@@ -286,7 +286,8 @@ Current code already carries substantial anti-spam / sponsor / fairness logic, b
 
 ### What is still missing
 - ingress class split
-- sponsor boundary and caps
+- sponsor boundary and caps, including revocation queue disposition
+- sponsor duplicate-retention stance during revocation/drain-only
 - retention pricing rule
 - anti-spam/admission floor
 - change authority / timelock for prelaunch updates
@@ -298,7 +299,7 @@ Current code already carries substantial anti-spam / sponsor / fairness logic, b
 - one launch packet citing the freeze tuple and evidence anchors
 
 ### Evidence expected in the closure packet
-- tuple freeze memo naming the Day-1 ingress split, sponsor boundary/caps, retention pricing rule, anti-spam floor, and prelaunch override authority/timelock
+- tuple freeze memo naming the Day-1 ingress split, sponsor boundary/caps, sponsor revocation queue disposition, sponsor duplicate-retention stance, retention pricing rule, anti-spam floor, and prelaunch override authority/timelock
 - anti-spam/admission evidence, anchored by at least:
   - `cargo test --manifest-path trillionnium/Cargo.toml -p trnm-mempool --test lane_qos_snapshot_reserve_only_drain_only_duplicate_retention_bound -q`
   - `cargo test --manifest-path trillionnium/Cargo.toml -p trnm-mempool --test lane_borrowed_last_slot_backpressured_retry_reuse_bound -q`
