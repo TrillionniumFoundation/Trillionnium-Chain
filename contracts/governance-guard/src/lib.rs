@@ -589,8 +589,9 @@ impl GovernanceGuard {
                 let mut normalized = AuditEvent::new("governance-guard", "governance.pause_set");
                 normalized.actor = Some(actor.clone());
                 normalized.object_id = Some("emergency_pause".to_string());
-                normalized.related_id = Some(format!("{previous_state}->{next_state}"));
+                normalized.related_id = Some("pause_state".to_string());
                 normalized.reason = Some(reason_hash.clone());
+                normalized.note = Some(format!("{previous_state}->{next_state}"));
                 normalized
             }
             GovernanceEvent::PauseRestoreScheduled {
@@ -1059,8 +1060,9 @@ mod tests {
         assert!(normalized.iter().any(|event| {
             event.event_type == "governance.pause_set"
                 && event.object_id.as_deref() == Some("emergency_pause")
-                && event.related_id.as_deref() == Some("false->true")
+                && event.related_id.as_deref() == Some("pause_state")
                 && event.reason.as_deref() == Some("incident")
+                && event.note.as_deref() == Some("false->true")
         }));
         assert!(normalized.iter().any(|event| {
             event.event_type == "governance.pause_restore_scheduled"

@@ -93,4 +93,5 @@ Rust 版外置治理骨架（in-memory state machine）：
 新增 `normalized_audit_log() -> Vec<AuditEvent>`（复用 `audit-events` 共享 schema）：
 - `source: "governance-guard"`
 - `event_type`：`governance.proposal_proposed` / `governance.proposal_queued` / `governance.proposal_executed` / `governance.proposal_cancelled` / `governance.pause_set` / `governance.pause_restore_scheduled` / `governance.pause_restore_executed`。
-- 可携带 `actor`（提案人/执行人/守护者）、`object_id`（提案 id）、`related_id`（参数名/前后状态）用于链下检索。
+- 可携带 `actor`（提案人/执行人/守护者）、`object_id`（提案 id 或 `emergency_pause`）、`related_id`（参数名或次级对象标签，如 `pause_state`）用于链下检索。
+- `governance.pause_set` 采用 `object_id=emergency_pause`、`related_id=pause_state`，并把状态迁移明细写入 `note`（如 `false->true`），避免把状态快照混进 ID 字段。
