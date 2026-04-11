@@ -372,10 +372,11 @@ To keep this blocker reviewable, attach one concrete answer for each item below:
    - owner of record for edits before launch
 2. **Operator inspection path**
    - exact command or runbook operators use to print the current tuple
-   - expected output fields: ingress classes, sponsor-only classes, sponsor authority/budget/classes, sponsor revocation duplicate-retention rule, retention window/payer, retention expiry disposition, anti-spam floor, anti-spam backpressure action, override authority
+   - expected output fields: ingress classes, sponsor-only classes, sponsor authority/budget/classes, sponsor revocation duplicate-retention rule, retention window/payer, retention expiry disposition, anti-spam floor, anti-spam backpressure action, override authority, override audit evidence
 3. **Behavioral evidence**
    - at least one mempool gate for ingress/sponsor boundaries
-   - at least one state gate for retention canonicalization
+   - at least one retention-side gate for retention canonicalization/freeze timing
+   - the tuple integrity compile-slice check: `cargo check --manifest-path trillionnium/Cargo.toml -p trnm-mempool -p trnm-pouw -q`
 4. **Launch-packet attachment metadata**
    - exact artifact path or release-note section where this freeze review is attached
    - commit/revision snapshot reviewers are signing off against
@@ -427,8 +428,7 @@ between helper docs, rehearsal artifacts, and the final GO/NOGO memo.
 Only mark the economics tuple `GO` when all of the following are true:
 - the full tuple is frozen with explicit values or named launch constants;
 - operator inspection path is written and reproducible from the repo/runbook surface;
-- at least one targeted mempool gate and one retention-side gate were run green against the
-  current tuple review;
+- at least one targeted mempool gate, one retention-side gate, and the tuple-integrity compile-slice check were run green against the current tuple review;
 - sponsor revocation semantics, duplicate-retention behavior, and retention payer fallback are
   stated without ambiguity;
 - operator/public wording matches the frozen tuple without broader marketing shorthand.
