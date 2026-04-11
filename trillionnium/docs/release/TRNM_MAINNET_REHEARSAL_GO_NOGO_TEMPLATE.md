@@ -13,6 +13,9 @@ Companion truth sources:
 - `trillionnium/docs/release/TRNM_VALIDATOR_RELEASE_HANDOFF.md`
 - `trillionnium/docs/release/TRNM_MAINNET_BLOCKER_BOARD_2026-03-31.md`
 
+Command-root note:
+- commands shown as `./scripts/...`, `run/...`, and `release/...` are meant to be executed from `trillionnium/` inside the assigned worktree; if you stay at the outer worktree root, prefix those relative paths with `trillionnium/` instead of silently resolving them from the wrong directory.
+
 ---
 
 ## 1. Decision header
