@@ -915,6 +915,18 @@ fn ensure_safe_sign_message_rejects_ambiguous_or_non_ascii_signer_text() {
         "unexpected error: {too_long_err}"
     );
 
+    let slash_path_err = ensure_safe_sign_message("approve /tmp/offline-payload").unwrap_err();
+    assert!(
+        slash_path_err.to_string().contains("path separators"),
+        "unexpected error: {slash_path_err}"
+    );
+
+    let unicode_path_err = ensure_safe_sign_message("approve tmp∕offline∕payload").unwrap_err();
+    assert!(
+        unicode_path_err.to_string().contains("path separators"),
+        "unexpected error: {unicode_path_err}"
+    );
+
     ensure_safe_sign_message("approve tx").unwrap();
     ensure_safe_sign_message(&"a".repeat(4096)).unwrap();
 }

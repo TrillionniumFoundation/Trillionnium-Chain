@@ -688,11 +688,37 @@ pub(crate) fn ensure_safe_sign_message(message: &str) -> Result<()> {
             || (!c.is_ascii_graphic() && c != ' ')
             || matches!(
                 c,
-                '=' | ':' | ';' | ',' | '|' | '"' | '\'' | '`' | '<' | '>' | '(' | ')' | '[' | ']' | '{' | '}'
+                '='
+                    | ':'
+                    | ';'
+                    | ','
+                    | '|'
+                    | '"'
+                    | '\''
+                    | '`'
+                    | '<'
+                    | '>'
+                    | '('
+                    | ')'
+                    | '['
+                    | ']'
+                    | '{'
+                    | '}'
+                    | '/'
+                    | '\\'
+                    | '∕'
+                    | '⁄'
+                    | '／'
+                    | '＼'
+                    | '⧵'
+                    | '⧸'
+                    | '⧹'
+                    | '⟋'
+                    | '⟍'
             )
     }) {
         bail!(
-            "wallet sign message must be single-line ASCII printable text with only single interior ASCII spaces and no delimiter or wrapper punctuation; refusing unsafe offline-signing output"
+            "wallet sign message must be single-line ASCII printable text with only single interior ASCII spaces and no delimiter, wrapper punctuation, or path separators; refusing unsafe offline-signing output"
         );
     }
     Ok(())
