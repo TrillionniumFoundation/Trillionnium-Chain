@@ -246,6 +246,7 @@ assert_contains "${CAPTURE_DIR}/summary.txt" "truth_source_release_readiness=REL
 assert_contains "${CAPTURE_DIR}/summary.txt" "truth_source_day1_contract=trillionnium/docs/release/TRNM_DAY1_PUBLIC_READ_CONTRACT_2026-04-03.md"
 assert_contains "${CAPTURE_DIR}/summary.txt" "truth_source_day1_contract_matrix=trillionnium/docs/release/TRNM_DAY1_PUBLIC_READ_CONTRACT_MATRIX_2026-04-03.md"
 assert_contains "${CAPTURE_DIR}/summary.txt" "truth_source_go_no_go_panel=trillionnium/docs/release/TRNM_PUBLIC_MAINNET_GO_NO_GO_PANEL_2026-04-04.md"
+assert_contains "${CAPTURE_DIR}/summary.txt" "truth_source_gap_matrix=trillionnium/docs/release/TRNM_MAINNET_GAP_MATRIX_2026-03-26.md"
 assert_contains "${CAPTURE_DIR}/summary.txt" "truth_source_rank1_task_board=trillionnium/docs/release/TRNM_RANK1_READ_SURFACE_TASK_BOARD_2026-04-03.md"
 assert_contains "${CAPTURE_DIR}/summary.txt" "truth_source_blocker_board=trillionnium/docs/release/TRNM_MAINNET_BLOCKER_BOARD_2026-03-31.md"
 assert_contains "${CAPTURE_DIR}/summary.txt" "replay_command=./trillionnium/scripts/v2/explorer_service_up.sh"
