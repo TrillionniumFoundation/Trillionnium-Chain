@@ -888,6 +888,8 @@ fn is_single_sided_env_quote(c: char) -> bool {
             | '〝'
             | '〞'
             | '〟'
+            | '｟'
+            | '｠'
     )
 }
 
@@ -1212,7 +1214,7 @@ fn ensure_wallet_name(name: &str) -> Result<()> {
         || name.contains([
             '“', '”', '‘', '’', '«', '»', '‹', '›', '「', '」', '『', '』', '《', '》',
             '〈', '〉', '｢', '｣', '（', '）', '［', '］', '｛', '｝', '＜', '＞', '【', '】',
-            '〔', '〕', '〖', '〗', '〘', '〙', '〚', '〛', '〝', '〞', '〟',
+            '〔', '〕', '〖', '〗', '〘', '〙', '〚', '〛', '〝', '〞', '〟', '｟', '｠',
         ])
         || has_hidden_or_whitespace
         || is_windows_reserved_device
@@ -3057,6 +3059,7 @@ mod tests {
         assert_eq!(normalize_wallet_store_env("\u{206a}《/tmp/trnm-wallets》\u{206f}"), Some("/tmp/trnm-wallets"));
         assert_eq!(normalize_wallet_store_env("〈/tmp/trnm-wallets〉"), Some("/tmp/trnm-wallets"));
         assert_eq!(normalize_wallet_store_env("⟨/tmp/trnm-wallets⟩"), Some("/tmp/trnm-wallets"));
+        assert_eq!(normalize_wallet_store_env("｟/tmp/trnm-wallets｠"), Some("/tmp/trnm-wallets"));
         assert_eq!(normalize_wallet_store_env("(/tmp/trnm-wallets)"), Some("/tmp/trnm-wallets"));
         assert_eq!(normalize_wallet_store_env("[/tmp/trnm-wallets]"), Some("/tmp/trnm-wallets"));
         assert_eq!(normalize_wallet_store_env("{/tmp/trnm-wallets}"), Some("/tmp/trnm-wallets"));
@@ -3301,6 +3304,7 @@ mod tests {
             PathBuf::from(" /tmp/trnm-wallets"),
             PathBuf::from("/tmp/trnm\u{200b}wallets"),
             PathBuf::from("/tmp/《trnm-wallets》"),
+            PathBuf::from("/tmp/｟trnm-wallets｠"),
         ] {
             let err = resolve_wallet_store(Some(invalid_explicit.clone())).unwrap_err();
             assert!(
