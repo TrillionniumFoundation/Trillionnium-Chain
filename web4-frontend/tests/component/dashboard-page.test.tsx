@@ -159,6 +159,16 @@ describe("dashboard page", () => {
     expect(mockedFetch).toHaveBeenCalledWith({ mode: "mock" });
   });
 
+  it("normalizes mode query params with surrounding whitespace or invisible separators", async () => {
+    mockedFetch.mockResolvedValue(snapshot);
+    window.history.replaceState({}, "", "/?mode=%E2%80%8B%20mock%20%EF%BB%BF");
+
+    render(<Home />);
+
+    expect(await screen.findByText("Task Digest")).toBeInTheDocument();
+    expect(mockedFetch).toHaveBeenCalledWith({ mode: "mock" });
+  });
+
   it("shows adapter error state", async () => {
     mockedFetch.mockRejectedValue(new Error("Dashboard backend unavailable"));
     window.history.replaceState({}, "", "/?mode=error");
