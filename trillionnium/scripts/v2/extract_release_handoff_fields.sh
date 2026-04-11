@@ -145,10 +145,11 @@ fi
 
 resolve_path() {
   local path="$1"
-  local dir base
-  dir="$(cd "$(dirname "$path")" && pwd -P)"
-  base="$(basename "$path")"
-  printf '%s/%s\n' "$dir" "$base"
+  python3 - "$path" <<'PY'
+import os
+import sys
+print(os.path.realpath(sys.argv[1]))
+PY
 }
 
 require_path_within_trnm_root() {
@@ -181,6 +182,10 @@ optional_key() {
 if [ -n "$PREFLIGHT_SUMMARY_PATH" ]; then
   PREFLIGHT_SUMMARY_PATH="$(resolve_path "$PREFLIGHT_SUMMARY_PATH")"
   require_path_within_trnm_root preflight_summary_path "$PREFLIGHT_SUMMARY_PATH"
+  if [ "$PREFLIGHT_SUMMARY_PATH" = "$SUMMARY_PATH" ] || [ "$PREFLIGHT_SUMMARY_PATH" = "$MANIFEST_PATH" ]; then
+    printf 'preflight summary path must be distinct from summary/manifest artifacts: %s\n' "$PREFLIGHT_SUMMARY_PATH" >&2
+    exit 1
+  fi
   PREFLIGHT_RESULT="$(optional_key "$PREFLIGHT_SUMMARY_PATH" result)"
   PREFLIGHT_GENERATED_AT="$(optional_key "$PREFLIGHT_SUMMARY_PATH" generated_at)"
   PREFLIGHT_GIT_STATUS_SUMMARY="$(optional_key "$PREFLIGHT_SUMMARY_PATH" git_status_summary)"

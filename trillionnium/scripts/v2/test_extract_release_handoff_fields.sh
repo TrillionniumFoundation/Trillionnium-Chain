@@ -131,6 +131,30 @@ if bash "$SCRIPT" \
 fi
 grep -q '^artifact mismatch for preflight git_worktree_branch_ref:' "$TMPDIR/err-mismatch.txt"
 
+rm -f "$PREFLIGHT_PATH"
+ln -s "$SUMMARY_PATH" "$PREFLIGHT_PATH"
+if bash "$SCRIPT" \
+  --summary-path "$SUMMARY_PATH" \
+  --manifest-path "$MANIFEST_PATH" \
+  --expected-worktree-root "$WORKTREE_ROOT" \
+  --expected-branch-ref "$BRANCH_SHORT" >"$TMPDIR/out-preflight-same-summary.txt" 2>"$TMPDIR/err-preflight-same-summary.txt"; then
+  echo "expected preflight artifact aliasing summary to fail" >&2
+  exit 1
+fi
+grep -q "^preflight summary path must be distinct from summary/manifest artifacts: $SUMMARY_PATH$" "$TMPDIR/err-preflight-same-summary.txt"
+
+rm -f "$PREFLIGHT_PATH"
+cat >"$PREFLIGHT_PATH" <<EOF
+result=PASS
+generated_at=2026-04-11T01:01:00Z
+git_status_summary=clean
+git_worktree_path=$WORKTREE_ROOT
+git_worktree_branch_ref=$BRANCH_REF
+git_worktree_branch_ref_match=true
+rollback_command=git checkout -- run/preflight/go-no-go-latest.txt
+replay_command=./scripts/testnet_preflight.sh
+EOF
+
 if bash "$SCRIPT" \
   --summary-path "$SUMMARY_PATH" \
   --manifest-path "$SUMMARY_PATH" \
