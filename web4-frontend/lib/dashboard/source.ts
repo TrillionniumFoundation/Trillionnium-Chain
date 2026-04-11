@@ -206,7 +206,9 @@ const normalizeDashboardEventToken = (value: string | undefined, fallback: strin
 };
 
 const normalizeDashboardText = (value: string | undefined, fallback: string): string => {
-  const normalized = value?.trim();
+  const normalized = value
+    ?.replace(/[\u200B\u200C\u200D\u2060\u2063\uFEFF]/g, "")
+    .trim();
   return normalized && normalized.length > 0 ? normalized : fallback;
 };
 
@@ -311,17 +313,17 @@ const resolveNormalizedAuditMaxPages = (): number =>
 
 const getNormalizedAuditEventKey = (event: NormalizedAuditEvent): string =>
   [
-    event.source,
-    event.event_type,
-    event.object_id ?? "",
-    event.related_id ?? "",
-    event.actor ?? "",
-    event.subject ?? "",
-    event.timestamp ?? "",
-    event.checkedAt ?? "",
+    normalizeDashboardEventToken(event.source, "unknown-source"),
+    normalizeDashboardEventToken(event.event_type, "unknown-event"),
+    normalizeDashboardText(event.object_id, ""),
+    normalizeDashboardText(event.related_id, ""),
+    normalizeDashboardText(event.actor, ""),
+    normalizeDashboardText(event.subject, ""),
+    normalizeDashboardText(event.timestamp, ""),
+    normalizeDashboardText(event.checkedAt, ""),
     event.amount == null ? "" : String(event.amount),
-    event.reason ?? "",
-    event.note ?? "",
+    normalizeDashboardText(event.reason, ""),
+    normalizeDashboardText(event.note, ""),
   ].join("\u001f");
 
 const fetchNormalizedAuditEventsWithPagination = async (

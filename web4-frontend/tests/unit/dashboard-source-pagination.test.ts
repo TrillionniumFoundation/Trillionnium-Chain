@@ -291,6 +291,75 @@ describe("dashboard source normalized audit pagination", () => {
     expect(snapshot.kpis.find((kpi) => kpi.label === "Open Incidents")?.value).toBe("1");
   });
 
+  it("deduplicates normalized audit events when later pages only differ by zero-width field noise", async () => {
+    const mockClient = {
+      queryTask: vi.fn().mockResolvedValue({
+        task: {
+          id: "341-dedupe-noise",
+          owner: "ops",
+          status: "running",
+          createdAt: "2026-03-01T00:00:00.000Z",
+          metadata: {},
+        },
+      }),
+      queryEvents: vi.fn().mockResolvedValue({
+        taskId: "341-dedupe-noise",
+        events: [],
+      }),
+      queryCapabilityAudit: vi.fn().mockResolvedValue({
+        subject: "did:trnm:test",
+        audits: [
+          {
+            subject: "did:trnm:test",
+            capability: "AUDIT_READ",
+            granted: true,
+            checkedAt: "2026-03-01T00:00:00.000Z",
+          },
+        ],
+      }),
+      queryNormalizedAuditEvents: vi
+        .fn()
+        .mockResolvedValueOnce({
+          events: [
+            {
+              source: "bridge-relay",
+              event_type: "bridge_relay.proof_submitted",
+              actor: "validator-a",
+              object_id: "proof-dedupe-1",
+              timestamp: "2026-03-01T00:07:00.000Z",
+              reason: "critical",
+              note: "signature invalid",
+            },
+          ],
+          hasMore: true,
+          nextCursor: "cursor-dedupe",
+        })
+        .mockResolvedValueOnce({
+          events: [
+            {
+              source: "bridge\u200D-relay",
+              event_type: "bridge_relay.proof_submitted",
+              actor: "validator-a",
+              object_id: "proof\u2060-dedupe-1",
+              timestamp: "2026-03-01T00:07:00.000Z",
+              reason: "crit\u200Bical",
+              note: "signature invalid",
+            },
+          ],
+          hasMore: false,
+        }),
+    } as unknown as ReturnType<typeof apiContractClient.createFrontendApiClient>;
+
+    vi.spyOn(apiContractClient, "createFrontendApiClient").mockReturnValue(mockClient);
+
+    const snapshot = await fetchDashboardSnapshot();
+
+    expect(mockClient.queryNormalizedAuditEvents).toHaveBeenCalledTimes(2);
+    expect(
+      snapshot.events.filter((event) => event.summary === "bridge-relay · bridge_relay.proof_submitted"),
+    ).toHaveLength(1);
+  });
+
   it("normalizes zero-width cursor noise before requesting the next normalized audit page", async () => {
     const mockClient = {
       queryTask: vi.fn().mockResolvedValue({

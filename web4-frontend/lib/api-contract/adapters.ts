@@ -204,6 +204,14 @@ function normalizeOptionalText(value: unknown): string | undefined {
   return trimmed.length > 0 ? trimmed : undefined;
 }
 
+function normalizeRequiredText(value: unknown, field: string): string {
+  const normalized = normalizeOptionalText(value);
+  if (normalized == null) {
+    throw new Error(`invalid ${field}`);
+  }
+  return normalized;
+}
+
 export const adaptQueryTask = (payload: unknown): QueryTaskResult => {
   const canonical = queryTaskResponseSchema.safeParse(payload);
   if (canonical.success) return canonical.data;
@@ -336,8 +344,17 @@ export const adaptQueryNormalizedAuditEvents = (
 
     return {
       events: canonical.data.events.map((event) => ({
-        ...event,
+        source: normalizeRequiredText(event.source, "normalized audit source"),
+        event_type: normalizeRequiredText(event.event_type, "normalized audit event_type"),
+        actor: normalizeOptionalText(event.actor),
+        object_id: normalizeOptionalText(event.object_id),
+        related_id: normalizeOptionalText(event.related_id),
+        amount: event.amount,
+        reason: normalizeOptionalText(event.reason),
+        note: normalizeOptionalText(event.note),
         checkedAt: event.checkedAt == null ? undefined : toCheckedAt(event.checkedAt),
+        timestamp: event.timestamp,
+        subject: normalizeOptionalText(event.subject),
       })),
       nextCursor: normalizedNextCursor,
       hasMore: normalizedHasMore,
@@ -364,17 +381,17 @@ export const adaptQueryNormalizedAuditEvents = (
   if (!rpc.success) throw normalizeSchemaError(rpc.error.flatten());
 
   const events = rpc.data.map((event) => ({
-    source: event.source,
-    event_type: event.eventType,
-    actor: event.actor,
-    object_id: event.objectId,
-    related_id: event.relatedId,
+    source: normalizeRequiredText(event.source, "normalized audit source"),
+    event_type: normalizeRequiredText(event.eventType, "normalized audit eventType"),
+    actor: normalizeOptionalText(event.actor),
+    object_id: normalizeOptionalText(event.objectId),
+    related_id: normalizeOptionalText(event.relatedId),
     amount: event.amount,
-    reason: event.reason,
-    note: event.note,
+    reason: normalizeOptionalText(event.reason),
+    note: normalizeOptionalText(event.note),
     checkedAt: event.checkedAt == null ? undefined : toCheckedAt(event.checkedAt),
     timestamp: event.recordedAt,
-    subject: event.subject,
+    subject: normalizeOptionalText(event.subject),
   }));
 
   return { events, hasMore: false };
