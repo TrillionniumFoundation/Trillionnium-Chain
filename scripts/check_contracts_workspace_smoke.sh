@@ -35,11 +35,21 @@ fi
 mkdir -p "$ROOT/run/health"
 TS="$(date +%Y%m%d-%H%M%S)"
 OUT="$ROOT/run/health/contracts-workspace-smoke-${TS}.log"
-CARGO_TARGET_DIR="${CARGO_TARGET_DIR:-$ROOT/target/contracts-workspace-smoke}"
-CARGO_TARGET_DIR_ABS="$(python3 -c 'import os, sys; print(os.path.realpath(sys.argv[1]))' "$CARGO_TARGET_DIR")"
+CARGO_TARGET_DIR_INPUT="${CARGO_TARGET_DIR:-target/contracts-workspace-smoke}"
+if [[ "$CARGO_TARGET_DIR_INPUT" = /* ]]; then
+  CARGO_TARGET_DIR_ABS="$(python3 -c 'import os, sys; print(os.path.realpath(sys.argv[1]))' "$CARGO_TARGET_DIR_INPUT")"
+else
+  CARGO_TARGET_DIR_ABS="$(python3 -c 'import os, sys; print(os.path.realpath(sys.argv[1]))' "$ROOT/$CARGO_TARGET_DIR_INPUT")"
+fi
 case "$CARGO_TARGET_DIR_ABS" in
   "$CONTRACTS_ROOT"|"$CONTRACTS_ROOT"/*)
-    echo "[FAIL] CARGO_TARGET_DIR must stay outside contracts workspace: $CARGO_TARGET_DIR" >&2
+    echo "[FAIL] CARGO_TARGET_DIR must stay outside contracts workspace: $CARGO_TARGET_DIR_INPUT" >&2
+    exit 1
+    ;;
+  "$ROOT"|"$ROOT"/*)
+    ;;
+  *)
+    echo "[FAIL] CARGO_TARGET_DIR must stay under repo root: $CARGO_TARGET_DIR_INPUT -> $CARGO_TARGET_DIR_ABS" >&2
     exit 1
     ;;
 esac
