@@ -12,6 +12,10 @@ if ! command -v "$CARGO_BIN" >/dev/null 2>&1; then
 fi
 
 CONTRACTS_WORKSPACE_DIR="${CONTRACTS_WORKSPACE_DIR:-contracts}"
+if [[ -z "$CONTRACTS_WORKSPACE_DIR" || "$CONTRACTS_WORKSPACE_DIR" = "." ]]; then
+  echo "[FAIL] CONTRACTS_WORKSPACE_DIR must point to a dedicated repo-relative workspace dir, got: $CONTRACTS_WORKSPACE_DIR" >&2
+  exit 1
+fi
 if [[ "$CONTRACTS_WORKSPACE_DIR" = /* ]]; then
   echo "[FAIL] CONTRACTS_WORKSPACE_DIR must be repo-relative: $CONTRACTS_WORKSPACE_DIR" >&2
   exit 1
