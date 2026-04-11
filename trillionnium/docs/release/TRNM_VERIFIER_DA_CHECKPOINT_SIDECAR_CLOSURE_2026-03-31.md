@@ -293,6 +293,8 @@ Reviewers should not treat the helper names above as prose-only claims. The curr
   - `checkpoint_da_light_verifier_summary_fails_closed_on_missing_non_genesis_wal_prev_hash_surface`
   - `checkpoint_da_light_verifier_summary_fails_closed_on_uncommitted_wal_surface`
   - `node_recovery_checkpoint_rejects_non_genesis_prev_hash_with_carriage_return_control_drift`
+- `trillionnium/crates/trnm-state/tests/state_root_regression/regression/canonicalization.rs`
+  - `checkpoint_audit_summary_rejects_noncanonical_prev_hash_surface`
 - `trillionnium/crates/trnm-node/src/tests.rs`
   - `metadata_only_recovery_error_surfaces_da_unavailability_reason_when_checkpoint_wal_linkage_is_missing`
 
@@ -311,10 +313,11 @@ When reviewers want a smallest-possible replay set instead of broad crate sweeps
 - `cargo test -p trnm-state checkpoint_da_light_verifier_summary_is_canonical_and_includes_wal_linkage -q`
 - `cargo test -p trnm-state checkpoint_da_light_verifier_summary_fails_closed_on_non_ascii_wal_proposal_hash_surface -q`
 - `cargo test -p trnm-state checkpoint_da_light_verifier_summary_fails_closed_on_missing_non_genesis_wal_prev_hash_surface -q`
+- `cargo test -p trnm-state checkpoint_audit_summary_rejects_noncanonical_prev_hash_surface -q`
 - `cargo test -p trnm-state checkpoint_da_light_verifier_summary_fails_closed_on_uncommitted_wal_surface -q`
 - `cargo test -p trnm-node metadata_only_recovery_error_surfaces_da_unavailability_reason_when_checkpoint_wal_linkage_is_missing -q`
 
-This replay set is intentionally narrow: one happy-path linkage proof, three fail-closed canonicalization regressions spanning WAL proposal-hash surfaces, non-genesis predecessor-link presence, and uncommitted WAL rejection, plus one operator-facing DA-unavailability triage check.
+This replay set is intentionally narrow: one happy-path linkage proof, four fail-closed canonicalization regressions spanning WAL proposal-hash surfaces, non-genesis predecessor-link presence, non-canonical predecessor-link encoding, and uncommitted WAL rejection, plus one operator-facing DA-unavailability triage check.
 
 ### What the current helper surface already proves
 
