@@ -193,6 +193,10 @@ fn normalize_wallet_store_env_trims_shell_wrapped_quotes() {
         Some("/tmp/trnm-wallets")
     );
     assert_eq!(
+        normalize_wallet_store_env("｟/tmp/trnm-wallets｠"),
+        Some("/tmp/trnm-wallets")
+    );
+    assert_eq!(
         normalize_wallet_store_env("〈/tmp/trnm-wallets〉"),
         Some("/tmp/trnm-wallets")
     );
@@ -311,6 +315,7 @@ fn normalize_wallet_store_env_trims_shell_wrapped_quotes() {
     assert_eq!(normalize_wallet_store_env("/tmp⧹trnm-wallets"), None);
     assert_eq!(normalize_wallet_store_env("/tmp⟋trnm-wallets"), None);
     assert_eq!(normalize_wallet_store_env("/tmp⟍trnm-wallets"), None);
+    assert_eq!(normalize_wallet_store_env("/tmp/｟trnm-wallets｠"), None);
 }
 
 #[test]
@@ -423,6 +428,7 @@ fn resolve_wallet_store_fail_closes_on_invalid_env_and_prefers_explicit_store() 
         std::path::PathBuf::from(" /tmp/trnm-wallets"),
         std::path::PathBuf::from("/tmp/trnm\u{200b}wallets"),
         std::path::PathBuf::from("/tmp/《trnm-wallets》"),
+        std::path::PathBuf::from("/tmp/｟trnm-wallets｠"),
     ] {
         let err = resolve_wallet_store(Some(invalid_explicit.clone())).unwrap_err();
         assert!(
