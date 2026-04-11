@@ -603,8 +603,8 @@ impl GovernanceGuard {
                 let mut normalized =
                     AuditEvent::new("governance-guard", "governance.pause_restore_scheduled");
                 normalized.actor = Some(proposer.clone());
-                normalized.object_id = Some(proposal_id.to_string());
-                normalized.related_id = Some("emergency_pause".to_string());
+                normalized.object_id = Some("emergency_pause".to_string());
+                normalized.related_id = Some(proposal_id.to_string());
                 normalized.reason = Some(reason_hash.clone());
                 normalized.note = Some(format!("eta={eta}"));
                 normalized
@@ -617,8 +617,8 @@ impl GovernanceGuard {
                 let mut normalized =
                     AuditEvent::new("governance-guard", "governance.pause_restore_executed");
                 normalized.actor = Some(actor.clone());
-                normalized.object_id = Some(proposal_id.to_string());
-                normalized.related_id = Some("emergency_pause".to_string());
+                normalized.object_id = Some("emergency_pause".to_string());
+                normalized.related_id = Some(proposal_id.to_string());
                 normalized.reason = Some(reason_hash.clone());
                 normalized
             }
@@ -1066,14 +1066,14 @@ mod tests {
         }));
         assert!(normalized.iter().any(|event| {
             event.event_type == "governance.pause_restore_scheduled"
-                && event.object_id.as_deref() == Some(&restore_id.to_string())
-                && event.related_id.as_deref() == Some("emergency_pause")
+                && event.object_id.as_deref() == Some("emergency_pause")
+                && event.related_id.as_deref() == Some(&restore_id.to_string())
                 && event.reason.as_deref() == Some("recover")
         }));
         assert!(normalized.iter().any(|event| {
             event.event_type == "governance.pause_restore_executed"
-                && event.object_id.as_deref() == Some(&restore_id.to_string())
-                && event.related_id.as_deref() == Some("emergency_pause")
+                && event.object_id.as_deref() == Some("emergency_pause")
+                && event.related_id.as_deref() == Some(&restore_id.to_string())
                 && event.reason.as_deref() == Some("recover")
         }));
         assert!(normalized
