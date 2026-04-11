@@ -77,4 +77,9 @@ cargo test
 新增 `normalized_audit_log() -> Vec<AuditEvent>`（复用 `audit-events` 共享 schema）：
 - `source: "bridge-relay"`
 - `event_type`：`bridge_relay.proof_submitted` / `bridge_relay.proof_submitted_and_stored` / `bridge_relay.settlement_finalized` / `bridge_relay.nonce_consumed` / `bridge_relay.admin_updated` / `bridge_relay.min_signatures_updated` / `bridge_relay.validators_updated` / `bridge_relay.config_version_updated`
-- 关键字段填充：`object_id` 常用于 `proof_digest/settlement_id/nonce_key`，`amount` 记录签名阈值或签名计数。
+- 字段纪律：
+  - `object_id` 承载主对象主键，例如 `proof_digest` / `settlement_id` / `nonce_key`，以及配置类事件中的 `bridge_config`。
+  - `related_id` 仅承载次级关联对象，例如 `settlement_finalized -> proof_digest`，或配置类事件中的 `config_version` / `min_signatures` / `validators`。
+  - `reason` 仅承载归因标签，不复用为主键字段；当前配置类事件分别使用 `admin_rotation` / `config_version_rotation` / `validator_threshold_rotation` / `validator_set_rotation`。
+  - `amount` 仅承载计数值或阈值，不与 ID 字段混用；当前用于签名计数、配置版本号、新阈值、新 validator 数。
+- `admin_updated` 采用 `actor=caller`、`object_id=new_admin`、`related_id=old_admin`，保持“主对象=当前生效对象，关联对象=被替换对象”的归一化约定。
