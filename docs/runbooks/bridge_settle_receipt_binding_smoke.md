@@ -17,7 +17,7 @@
 ./scripts/check_bridge_settle_receipt_smoke.sh
 ```
 
-默认会按时间戳写入日志到：
+默认会先做 manifest 预检，确认当前仓库布局仍是 `contracts/bridge-relay` 与 `trillionnium/Cargo.toml`，再按时间戳写入日志到：
 
 - `run/health/bridge-settle-receipt-smoke-YYYYMMDD-HHMMSS.log`
 
@@ -63,6 +63,7 @@
 
 - `bridge-relay` 用例失败：检查 `tx_receipt_status` 是否在提交的 `BridgeSettlementMessage` 上正确设置（默认示例值必须为成功态）。
 - `trnm-types` 用例失败：检查 `SettlementRecord::apply_status_with_receipt_status` 是否被误改，重点看 `SETTLEMENT_TX_RECEIPT_SUCCESS` 与 `InteropIdentityError::InvalidSettlementReceiptStatus`。
+- 若脚本一开始就报 missing manifest：优先检查是否误在过时目录布局下执行。当前有效路径必须包含 `contracts/bridge-relay/Cargo.toml` 与 `trillionnium/Cargo.toml`，旧的 `contracts-rust/bridge-relay` 引用应视为文档漂移。
 - 若日志长时间无输出：确认 `cargo` 工具链可用，`PATH` 包含 rustup bin（脚本默认预设 `PATH="/opt/homebrew/opt/rustup/bin:$PATH"`）。
 
 ## 回归建议
