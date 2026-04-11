@@ -113,7 +113,9 @@ const normalizeRequiredPathParam = (value: unknown, label: string): string => {
     });
   }
 
-  const trimmed = value.trim();
+  const trimmed = value
+    .replace(/[\u200B\u200C\u200D\u2060\u2063\uFEFF]/g, "")
+    .trim();
   if (!trimmed) {
     throw new FrontendApiError({
       code: "INVALID_PAYLOAD",

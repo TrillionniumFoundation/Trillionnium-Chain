@@ -252,6 +252,28 @@ describe("api-contract client and retry hardening", () => {
     );
   });
 
+  it("strips zero-width cursor noise from capability audit subject before path construction", async () => {
+    const fetchImpl = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        subject: "did:trnm:alice/ops",
+        audits: [],
+      }),
+    });
+
+    const client = createFrontendApiClient({
+      baseUrl: "http://127.0.0.1:8080",
+      fetchImpl: fetchImpl as unknown as typeof fetch,
+    });
+
+    await client.queryCapabilityAudit("\uFEFF did:trnm:alice/ops\u200B ");
+
+    expect(fetchImpl).toHaveBeenCalledWith(
+      "http://127.0.0.1:8080/query-capability-audit/did%3Atrnm%3Aalice%2Fops",
+      expect.objectContaining({ method: "GET" }),
+    );
+  });
+
   it("fails closed on blank capability audit subject before request", async () => {
     const fetchImpl = vi.fn();
 
