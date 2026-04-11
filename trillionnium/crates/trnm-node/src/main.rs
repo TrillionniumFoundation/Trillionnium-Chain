@@ -944,7 +944,10 @@ fn metadata_only_operator_action(recovered: &RecoveredWalState) -> String {
             )
         }
         Some(_) => {
-            "operator action: restore the corresponding application snapshot before retrying join/rejoin; do not resume from metadata alone".into()
+            format!(
+                "operator action: restore the application snapshot that matches retained WAL tip height {} before retrying join/rejoin; do not resume from metadata alone",
+                tip_height,
+            )
         }
     }
 }
@@ -18288,7 +18291,7 @@ locked_block_hash = "stale-lock"
             "incident clue: retained_wal_entries=2 checkpoint_height_retained=2 checkpoint_tip_relation=aligned next_startup_height=3 wal_tail_truncated=false metadata_only_recovery=true join_rejoin_status=blocked:metadata_only_recovery"
         ));
         assert!(err.contains(
-            "restore the corresponding application snapshot before retrying join/rejoin; do not resume from metadata alone"
+            "restore the application snapshot that matches retained WAL tip height 2 before retrying join/rejoin; do not resume from metadata alone"
         ));
         assert!(!err.contains("checkpoint lags retained WAL tip"));
         assert!(!err.contains("no retained checkpoint metadata"));
@@ -18631,7 +18634,7 @@ locked_block_hash = "stale-lock"
                 wal_entries_retained: 2,
                 checkpoint_height_retained: Some(11),
             }),
-            "operator action: restore the corresponding application snapshot before retrying join/rejoin; do not resume from metadata alone"
+            "operator action: restore the application snapshot that matches retained WAL tip height 11 before retrying join/rejoin; do not resume from metadata alone"
         );
         assert_eq!(
             metadata_only_operator_action(&RecoveredWalState {
