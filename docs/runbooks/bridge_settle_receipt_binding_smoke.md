@@ -6,6 +6,7 @@
 
 - `contracts/bridge-relay`：`submit_proof`/`finalize_settlement` 的 `tx_receipt_status` 约束
 - `trnm-types`：`SettlementRecord::apply_status_with_receipt_status` 的最终化回执检查
+- 桥接结算审计语义：结合 `trillionnium/docs/release/TRNM_BRIDGE_SETTLEMENT_AUDIT_NOTE_2026-04-02.md` 一起解读，避免把回执烟雾测试通过误读成“可放宽 settlement confirm 边界”
 
 ## 快速执行
 
@@ -55,6 +56,8 @@
 
 - `bridge-relay` 用例失败：检查 `tx_receipt_status` 是否在提交的 `BridgeSettlementMessage` 上正确设置（默认示例值必须为成功态）。
 - `trnm-types` 用例失败：检查 `SettlementRecord::apply_status_with_receipt_status` 是否被误改，重点看 `SETTLEMENT_TX_RECEIPT_SUCCESS` 与 `InteropIdentityError::InvalidSettlementReceiptStatus`。
+- 若回执相关测试通过，但桥接结算 incident 仍表现异常，回到 `trillionnium/docs/release/TRNM_BRIDGE_SETTLEMENT_AUDIT_NOTE_2026-04-02.md` 核对当前 replay 证据是否仍满足 fail-closed 边界：`target < confirm <= source + 1`，且当 `target == source` 时只能接受 `confirm == source + 1`。
+- 做 incident 摘要时，优先引用冻结审计元组而不是自由文本日志，推荐模板：`phase=<phase> hb=(<source>,<target>,<latency_ms>) confirm_height=<confirm_height> confirm_reason=<confirm_reason>`。
 - 若日志长时间无输出：确认 `cargo` 工具链可用，`PATH` 包含 rustup bin（脚本默认预设 `PATH="/opt/homebrew/opt/rustup/bin:$PATH"`）。
 
 ## 回归建议
