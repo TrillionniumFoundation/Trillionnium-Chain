@@ -254,6 +254,12 @@ blocker_summary=
 next_safe_action=
 ```
 
+额外 fail-closed 约束：
+- `window_outcome=pass` 时，`operator_ack` 必须为 `yes`，且 `operator_ack_signature_path` 不得为空。
+- `window_outcome=pass` 时，`dr_status` 必须明确为 `ready` 或 `not_needed`，不能留空或写自由文本。
+- `dr_status=ready` 时，`dr_summary_path`、`dr_generated_at`、`dr_replay_command`、`dr_rollback_command` 必须同时存在；缺任一项都应改判为 `blocked`。
+- `dr_status=not_needed` 时，也必须给出 `previous_stable_anchor` 与 `rollback_entrypoint`，避免把“本轮未触发 DR”误写成“无需回滚入口”。
+
 推荐 `next_safe_action` 只写下一步可执行动作，不写泛泛建议。例如：
 - `rebuild trnm-cli from current head and re-run preflight capture`
 - `restore previous stable anchor and re-check validator config hashes`
