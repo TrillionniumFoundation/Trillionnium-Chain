@@ -3228,7 +3228,7 @@ mod tests {
             "| `node2` missing during startup or rejoin | Keep `node3` and `node4` stopped until `node2` returns with `node2.toml` and its shipped tuple | Reject while a later follower tries to skip the missing `node2` slot |",
             "| `node3` missing during startup or rejoin | Keep `node4` stopped until `node3` returns with `node3.toml` and its shipped tuple | Reject while `node4` tries to skip the missing `node3` slot |",
             "| `node4` missing during startup or rejoin | Keep `node1` through `node3` in their shipped slots; if `node4` returns, bring it back only with `node4.toml` and its shipped tuple | Accept the remaining slots only while no other config is renamed or promoted into the `node4` role |",
-            "| Any tuple drift or config mutation | Stop and review before startup | Reject on renamed files, swapped slots, duplicated listener tuples, unknown fields, whitespace drift, non-canonical socket literals, port-spacing drift, or listener-family drift |",
+            "| Any tuple drift or config mutation | Stop and review before startup | Reject on renamed files, swapped slots, duplicated or cross-slot-spliced listener tuples, unknown fields, whitespace drift, non-canonical socket literals, port-spacing drift, or listener-family drift |",
         ];
         let expected_table_lines = [
             "| Scenario | Expected operator action | Acceptance |",
