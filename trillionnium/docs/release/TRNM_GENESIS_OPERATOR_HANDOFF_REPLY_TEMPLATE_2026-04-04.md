@@ -66,8 +66,9 @@ node4.operator_ack_digest=
 - 至少填一个
 
 ### 未知值
-- 还不知道时可先写：`TBD`
-- 但如果 `rollback_owner` / `validator_owner` 全是 `TBD`，我不会把 packet 视为 usable handoff packet
+- 只有非门槛备注字段才允许临时写 `TBD`，例如某个 validator 的补充说明
+- `ceremony_id / packet_generated_at / packet_distribution_path / validator_set_version / genesis_artifact_path / genesis_artifact_sha256` 这些门槛字段不要写 `TBD`
+- `rollback_owner / validator_owner / operator_contact / operator_ack_*` 如果仍是 `TBD` 或等价 placeholder，只能把它视为 draft，不算 usable handoff packet，更不能拿去当 `public-mainnet-input`
 
 ---
 
