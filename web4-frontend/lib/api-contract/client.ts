@@ -137,33 +137,53 @@ const isLikelyNetworkError = (err: unknown): boolean => {
 const LEGACY_ABORT_ERROR_CODE = 20;
 const LEGACY_TIMEOUT_ERROR_CODE = 23;
 
+type ErrorLikeRecord = Record<string, unknown>;
+
+const collectErrorLikeChain = (value: unknown, maxDepth = 4): ErrorLikeRecord[] => {
+  const seen = new Set<unknown>();
+  const queue: Array<{ value: unknown; depth: number }> = [{ value, depth: 0 }];
+  const chain: ErrorLikeRecord[] = [];
+
+  while (queue.length > 0) {
+    const current = queue.shift();
+    if (!current) break;
+
+    const { value: candidate, depth } = current;
+    if (!(candidate && typeof candidate === "object") || seen.has(candidate)) {
+      continue;
+    }
+
+    seen.add(candidate);
+    chain.push(candidate as ErrorLikeRecord);
+
+    if (depth >= maxDepth) {
+      continue;
+    }
+
+    const cause = "cause" in candidate ? candidate.cause : undefined;
+    const reason = "reason" in candidate ? candidate.reason : undefined;
+
+    if (cause && typeof cause === "object") {
+      queue.push({ value: cause, depth: depth + 1 });
+    }
+    if (reason && typeof reason === "object") {
+      queue.push({ value: reason, depth: depth + 1 });
+    }
+  }
+
+  return chain;
+};
+
 const isAbortLikeErrorCode = (code: unknown): boolean => {
   return code === "ABORT_ERR" || code === LEGACY_ABORT_ERROR_CODE;
 };
 
 const isAbortLikeError = (err: unknown): boolean => {
-  if (!(err && typeof err === "object")) return false;
-
-  const name = "name" in err ? err.name : undefined;
-  const code = "code" in err ? err.code : undefined;
-  const cause = "cause" in err ? err.cause : undefined;
-  const reason = "reason" in err ? err.reason : undefined;
-
-  if (name === "AbortError" || isAbortLikeErrorCode(code)) {
-    return true;
-  }
-
-  for (const nested of [cause, reason]) {
-    if (nested && typeof nested === "object") {
-      const nestedName = "name" in nested ? nested.name : undefined;
-      const nestedCode = "code" in nested ? nested.code : undefined;
-      if (nestedName === "AbortError" || isAbortLikeErrorCode(nestedCode)) {
-        return true;
-      }
-    }
-  }
-
-  return false;
+  return collectErrorLikeChain(err).some((candidate) => {
+    const name = "name" in candidate ? candidate.name : undefined;
+    const code = "code" in candidate ? candidate.code : undefined;
+    return name === "AbortError" || isAbortLikeErrorCode(code);
+  });
 };
 
 const TIMEOUT_ERROR_CODES = new Set([
@@ -179,29 +199,11 @@ const isTimeoutErrorCode = (code: unknown): boolean => {
 };
 
 const isTimeoutLikeError = (err: unknown): boolean => {
-  if (!(err && typeof err === "object")) return false;
-
-  const name = "name" in err ? err.name : undefined;
-  const code = "code" in err ? err.code : undefined;
-  const cause = "cause" in err ? err.cause : undefined;
-  const reason = "reason" in err ? err.reason : undefined;
-
-  if (name === "TimeoutError") return true;
-  if (isTimeoutErrorCode(code)) {
-    return true;
-  }
-
-  for (const nested of [cause, reason]) {
-    if (nested && typeof nested === "object") {
-      const nestedName = "name" in nested ? nested.name : undefined;
-      const nestedCode = "code" in nested ? nested.code : undefined;
-      if (nestedName === "TimeoutError" || isTimeoutErrorCode(nestedCode)) {
-        return true;
-      }
-    }
-  }
-
-  return false;
+  return collectErrorLikeChain(err).some((candidate) => {
+    const name = "name" in candidate ? candidate.name : undefined;
+    const code = "code" in candidate ? candidate.code : undefined;
+    return name === "TimeoutError" || isTimeoutErrorCode(code);
+  });
 };
 
 export function createFrontendApiClient(config: BaseClientConfig) {
