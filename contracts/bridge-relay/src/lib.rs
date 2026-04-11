@@ -1718,6 +1718,7 @@ mod tests {
 
         let current_version = relay.config_version();
         let audit_len_before = relay.audit_log().len();
+        let normalized_before = relay.normalized_audit_log();
 
         let mut stale = sample_msg();
         stale.config_version = stale_version;
@@ -1737,6 +1738,11 @@ mod tests {
             audit_len_before,
             "stale proof must not append audit events"
         );
+        assert_eq!(
+            relay.normalized_audit_log(),
+            normalized_before,
+            "stale proof must not append normalized audit events"
+        );
 
         let err = relay
             .set_validators_with_version(&admin, stale_version, vec![validator_pub(7)])
@@ -1752,6 +1758,11 @@ mod tests {
             relay.audit_log().len(),
             audit_len_before,
             "stale validator rotation must not append governance audit events"
+        );
+        assert_eq!(
+            relay.normalized_audit_log(),
+            normalized_before,
+            "stale validator rotation must not append normalized governance audit events"
         );
 
         let mut rotated = sample_msg();
