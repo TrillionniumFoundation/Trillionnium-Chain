@@ -643,6 +643,37 @@ describe("api-contract client and retry hardening", () => {
     });
     expect(retryableFetch).toHaveBeenCalledTimes(2);
 
+    const tooEarlyFetch = vi
+      .fn()
+      .mockResolvedValueOnce({
+        ok: false,
+        status: 425,
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          task: {
+            id: "43",
+            status: "queued",
+            owner: "bob",
+            createdAt: "2026-03-01T00:00:00.000Z",
+            metadata: {},
+          },
+        }),
+      });
+
+    const tooEarlyClient = createFrontendApiClient({
+      baseUrl: "http://127.0.0.1:8080",
+      fetchImpl: tooEarlyFetch as unknown as typeof fetch,
+    });
+
+    await expect(
+      tooEarlyClient.queryTask("43", { retries: 1, baseDelayMs: 0, maxDelayMs: 0 }),
+    ).resolves.toMatchObject({
+      task: expect.objectContaining({ id: "43" }),
+    });
+    expect(tooEarlyFetch).toHaveBeenCalledTimes(2);
+
     const failClosedFetch = vi.fn().mockResolvedValue({
       ok: false,
       status: 501,

@@ -30,7 +30,7 @@ export class FrontendApiError extends Error {
   }
 }
 
-const RETRYABLE_HTTP_STATUSES = new Set([408, 429, 500, 502, 503, 504]);
+const RETRYABLE_HTTP_STATUSES = new Set([408, 425, 429, 500, 502, 503, 504]);
 
 export const isRetryableStatus = (status: number): boolean => {
   return RETRYABLE_HTTP_STATUSES.has(status);
