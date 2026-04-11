@@ -3533,6 +3533,16 @@ fn json_response_for_method(method: &str, status_line: &str, body: &str) -> Stri
     }
 }
 
+fn health_probe_body(ts_unix_ms: u128) -> String {
+    serde_json::json!({
+        "ok": true,
+        "service": "trnm-rpc",
+        "ts_unix_ms": ts_unix_ms,
+        "version": 1
+    })
+    .to_string()
+}
+
 fn has_ambiguous_path_segment_encoding(segment: &str) -> bool {
     let lower = segment.to_ascii_lowercase();
     lower.contains("%2f")
@@ -3624,13 +3634,7 @@ fn serve_health(host: &str, port: u16) -> Result<()> {
 
         let response = match (request, path, target) {
             (Some((method, _)), Some(path), _) if is_health_probe_path(path) => {
-                let body = serde_json::json!({
-                    "ok": true,
-                    "service": "trnm-rpc",
-                    "ts_unix_ms": now_ms(),
-                    "version": 1
-                })
-                .to_string();
+                let body = health_probe_body(now_ms());
                 json_response_for_method(method, "200 OK", &body)
             }
             (Some((method, _)), Some(path), Some(_)) if path.starts_with("/query-task/") => {
@@ -5904,6 +5908,31 @@ mod tests {
         assert!(bad_request.starts_with("HTTP/1.1 400 Bad Request\r\n"));
         assert!(bad_request.ends_with("\r\n\r\n"));
         assert!(!bad_request.ends_with("BAD_REQUEST\"}"));
+    }
+
+    #[test]
+    fn health_probe_body_keeps_minimum_operator_contract_fields_stable() {
+        let body = health_probe_body(42);
+        let value: serde_json::Value =
+            serde_json::from_str(&body).expect("health probe body stays valid json");
+        let object = value
+            .as_object()
+            .expect("health probe body should serialize as a json object");
+
+        assert_eq!(object.len(), 4, "health body should stay minimal for probes");
+        assert_eq!(object.get("ok"), Some(&serde_json::Value::Bool(true)));
+        assert_eq!(
+            object.get("service"),
+            Some(&serde_json::Value::String("trnm-rpc".to_string()))
+        );
+        assert_eq!(
+            object.get("ts_unix_ms").and_then(serde_json::Value::as_u64),
+            Some(42)
+        );
+        assert_eq!(
+            object.get("version"),
+            Some(&serde_json::Value::Number(1u64.into()))
+        );
     }
 
     #[test]
