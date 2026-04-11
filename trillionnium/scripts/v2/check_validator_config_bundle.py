@@ -353,7 +353,13 @@ def validate_ceremony_packet_metadata(args: argparse.Namespace) -> None:
     for field, value in packet_atom_values.items():
         validate_packet_atom_value(value, field)
 
+    normalized_genesis_artifact_path = Path(args.genesis_artifact_path).resolve(strict=False)
+    normalized_packet_distribution_path = Path(args.packet_distribution_path).resolve(strict=False)
     if args.ceremony_scope != "public-mainnet-input":
+        if normalized_genesis_artifact_path == normalized_packet_distribution_path:
+            fail(
+                "invalid ceremony packet arguments: packet_distribution_path and genesis_artifact_path must name different files"
+            )
         return
 
     required_exact_values = {
@@ -398,8 +404,6 @@ def validate_ceremony_packet_metadata(args: argparse.Namespace) -> None:
 
     validate_packet_artifact_path(args.genesis_artifact_path, "genesis_artifact_path")
     validate_packet_file_path(args.packet_distribution_path, "packet_distribution_path")
-    normalized_genesis_artifact_path = Path(args.genesis_artifact_path).resolve(strict=False)
-    normalized_packet_distribution_path = Path(args.packet_distribution_path).resolve(strict=False)
     if normalized_genesis_artifact_path == normalized_packet_distribution_path:
         fail(
             "invalid ceremony packet arguments: public-mainnet-input requires packet_distribution_path and genesis_artifact_path to name different files"

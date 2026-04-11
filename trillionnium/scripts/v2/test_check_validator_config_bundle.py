@@ -276,6 +276,32 @@ class CheckValidatorConfigBundleTests(unittest.TestCase):
             result.stderr,
         )
 
+    def test_emit_ceremony_packet_rejects_packet_distribution_path_equal_to_genesis_artifact_path(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            config = self.write_config(
+                root,
+                "node1.toml",
+                node_id="node1",
+                rpc_addr="127.0.0.1:7001",
+                p2p_addr="127.0.0.1:7002",
+            )
+            shared_path = str(root / "shared.packet.txt")
+            result = self.run_script(
+                "--emit-ceremony-packet",
+                "--packet-distribution-path",
+                shared_path,
+                "--genesis-artifact-path",
+                shared_path,
+                str(config),
+            )
+
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn(
+            "packet_distribution_path and genesis_artifact_path must name different files",
+            result.stderr,
+        )
+
     def test_public_mainnet_input_rejects_relative_packet_distribution_path(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
