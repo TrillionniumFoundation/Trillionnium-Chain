@@ -31,20 +31,36 @@ export const NORMALIZED_AUDIT_EVENTS_QUERY_PARAM_KEYS = {
   cursor: "cursor",
 } as const satisfies Record<keyof NormalizedAuditEventsQuery, string>;
 
+const normalizeOptionalQueryToken = (value: string | undefined): string | undefined => {
+  if (typeof value !== "string") return undefined;
+
+  const normalized = value
+    .replace(/[\u200B\u200C\u200D\u2060\u2063\uFEFF]/g, "")
+    .trim();
+
+  return normalized.length > 0 ? normalized : undefined;
+};
+
 export const buildNormalizedAuditEventsQueryParams = (
   query: NormalizedAuditEventsQuery,
 ): URLSearchParams => {
   const params = new URLSearchParams();
 
-  if (query.source) {
-    params.set(NORMALIZED_AUDIT_EVENTS_QUERY_PARAM_KEYS.source, query.source);
+  const normalizedSource = normalizeOptionalQueryToken(query.source);
+  if (normalizedSource) {
+    params.set(NORMALIZED_AUDIT_EVENTS_QUERY_PARAM_KEYS.source, normalizedSource);
   }
-  if (query.eventType) {
-    params.set(NORMALIZED_AUDIT_EVENTS_QUERY_PARAM_KEYS.eventType, query.eventType);
+
+  const normalizedEventType = normalizeOptionalQueryToken(query.eventType);
+  if (normalizedEventType) {
+    params.set(NORMALIZED_AUDIT_EVENTS_QUERY_PARAM_KEYS.eventType, normalizedEventType);
   }
-  if (query.cursor) {
-    params.set(NORMALIZED_AUDIT_EVENTS_QUERY_PARAM_KEYS.cursor, query.cursor);
+
+  const normalizedCursor = normalizeOptionalQueryToken(query.cursor);
+  if (normalizedCursor) {
+    params.set(NORMALIZED_AUDIT_EVENTS_QUERY_PARAM_KEYS.cursor, normalizedCursor);
   }
+
   if (query.limit != null) {
     params.set(NORMALIZED_AUDIT_EVENTS_QUERY_PARAM_KEYS.limit, String(query.limit));
   }

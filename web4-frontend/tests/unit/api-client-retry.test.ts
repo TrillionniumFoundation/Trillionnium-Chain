@@ -83,6 +83,30 @@ describe("api-contract client and retry hardening", () => {
     expect(String(calledUrl)).toContain("cursor=cursor-1");
   });
 
+  it("normalizes whitespace and zero-width noise in normalized audit query params before request", async () => {
+    const fetchImpl = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({ events: [] }),
+    });
+
+    const client = createFrontendApiClient({
+      baseUrl: "http://127.0.0.1:8080",
+      fetchImpl: fetchImpl as unknown as typeof fetch,
+    });
+
+    await client.queryNormalizedAuditEvents({
+      source: " \uFEFF governance-guard\u200B ",
+      eventType: "\n governance.proposal_executed \u2060",
+      limit: 12,
+      cursor: "\u200D cursor-1 \u200B",
+    });
+
+    expect(fetchImpl).toHaveBeenCalledWith(
+      "http://127.0.0.1:8080/query-normalized-audit-events?source=governance-guard&eventType=governance.proposal_executed&cursor=cursor-1&limit=12",
+      expect.objectContaining({ method: "GET" }),
+    );
+  });
+
   it("fails closed on malformed normalized audit query params", async () => {
     const fetchImpl = vi.fn();
 
