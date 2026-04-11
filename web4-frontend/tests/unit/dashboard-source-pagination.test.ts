@@ -884,7 +884,7 @@ describe("dashboard source normalized audit pagination", () => {
     expect(snapshot.tasks[0]?.owner).toBe("Unassigned");
   });
 
-  it("falls back to stable task title and audit notes when API fields are blank", async () => {
+  it("falls back to stable task title, audit control, and audit notes when API fields are blank", async () => {
     const mockClient = {
       queryTask: vi.fn().mockResolvedValue({
         task: {
@@ -906,7 +906,7 @@ describe("dashboard source normalized audit pagination", () => {
         audits: [
           {
             subject: "did:trnm:test",
-            capability: "AUDIT_READ",
+            capability: "   ",
             granted: false,
             checkedAt: "2026-03-01T00:00:00.000Z",
             reason: "   ",
@@ -924,6 +924,7 @@ describe("dashboard source normalized audit pagination", () => {
     const snapshot = await fetchDashboardSnapshot();
 
     expect(snapshot.tasks[0]?.title).toBe("task-341-title");
+    expect(snapshot.audits[0]?.control).toBe("unknown-capability");
     expect(snapshot.audits[0]?.notes).toBe("No reason provided");
   });
 

@@ -503,7 +503,7 @@ async function fetchReadonlySnapshotFromApi(): Promise<DashboardSnapshot> {
     ]).sort((left, right) => parseDashboardTime(right.time) - parseDashboardTime(left.time)),
     audits: auditsResp.audits.map((audit, index) => ({
       id: `AUD-${index + 1}`,
-      control: audit.capability,
+      control: normalizeDashboardText(audit.capability, "unknown-capability"),
       result: mapAuditResult(audit),
       reviewer: "Capability",
       reviewedAt: toDisplayTime(audit.checkedAt),
