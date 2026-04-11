@@ -245,6 +245,7 @@ if [ "$CUTOVER_KIND" = "rotation" ] || [ "$CUTOVER_KIND" = "dr_rebuild" ]; then
 fi
 
 if [ -n "$OPERATOR_ACK_SIGNATURE_PATH" ]; then
+  require_nonempty --operator-ack "$OPERATOR_ACK"
   require_path_value --operator-ack-signature-path "$OPERATOR_ACK_SIGNATURE_PATH"
 fi
 
