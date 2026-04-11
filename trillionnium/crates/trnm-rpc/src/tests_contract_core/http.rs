@@ -551,6 +551,11 @@ fn parse_query_capability_audit_subject_from_target_rejects_query_string() {
 #[test]
 fn parse_query_capability_audit_subject_from_target_distinguishes_missing_from_malformed() {
     assert_eq!(
+        parse_query_capability_audit_subject_from_target("/query-capability-audit")
+            .expect_err("bare capability route should report missing subject"),
+        "missing token or subject"
+    );
+    assert_eq!(
         parse_query_capability_audit_subject_from_target("/query-capability-audit/")
             .expect_err("empty capability route should report missing subject"),
         "missing token or subject"
