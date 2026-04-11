@@ -1698,8 +1698,10 @@ fn json_value_tx_hash(v: &serde_json::Value) -> Option<String> {
     let direct = [
         "tx_hash",
         "txhash",
+        "tx-hash",
         "txHash",
         "transaction_hash",
+        "transaction-hash",
         "transactionHash",
     ];
     for key in direct {
@@ -4447,6 +4449,14 @@ mod tests {
         assert_eq!(
             extract_tx_hash("{\"txHash\":\"ABCDEF012345\",\"status\":\"ok\"}").as_deref(),
             Some("abcdef012345")
+        );
+        assert_eq!(
+            extract_tx_hash("{\"tx-hash\":\"0xFEED1234\",\"status\":\"ok\"}").as_deref(),
+            Some("0xfeed1234")
+        );
+        assert_eq!(
+            extract_tx_hash("{\"transaction-hash\":\"BEEF5678\",\"status\":\"ok\"}").as_deref(),
+            Some("beef5678")
         );
     }
 
