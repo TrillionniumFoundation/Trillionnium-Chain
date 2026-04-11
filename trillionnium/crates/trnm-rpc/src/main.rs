@@ -3877,6 +3877,93 @@ fn query_task_from_node_events(
     })
 }
 
+fn adapter_kind_query_order(kind: &str) -> u8 {
+    match kind {
+        "commit" => 0,
+        "reveal" => 1,
+        _ => 2,
+    }
+}
+
+fn normalize_result_hash_replay_identity(value: Option<&str>) -> Option<String> {
+    value.map(str::trim).and_then(|value| {
+        if value.is_empty() {
+            None
+        } else {
+            let normalized = normalize_tx_hash_lookup(value);
+            if is_hex_like_tx_hash(&normalized) {
+                Some(normalized)
+            } else {
+                Some(value.to_string())
+            }
+        }
+    })
+}
+
+fn sorted_task_adapter_records<'a>(
+    task_id: u64,
+    recs: &'a [AdapterRecord],
+) -> Vec<&'a AdapterRecord> {
+    let mut task_recs: Vec<&AdapterRecord> = recs
+        .iter()
+        .filter(|r| {
+            r.task_id == task_id
+                && r.status == "accepted"
+                && matches!(r.kind.as_str(), "commit" | "reveal")
+                && r.worker
+                    .as_deref()
+                    .and_then(normalize_actor_or_signer)
+                    .is_some()
+        })
+        .collect();
+    task_recs.sort_by(|a, b| {
+        (
+            a.ts,
+            adapter_kind_query_order(&a.kind),
+            a.worker
+                .as_deref()
+                .and_then(normalize_actor_or_signer)
+                .unwrap_or_default(),
+            a.tx_hash
+                .as_deref()
+                .map(normalize_tx_hash_lookup)
+                .unwrap_or_default(),
+            normalize_result_hash_replay_identity(a.result_hash.as_deref()).unwrap_or_default(),
+        )
+            .cmp(&(
+                b.ts,
+                adapter_kind_query_order(&b.kind),
+                b.worker
+                    .as_deref()
+                    .and_then(normalize_actor_or_signer)
+                    .unwrap_or_default(),
+                b.tx_hash
+                    .as_deref()
+                    .map(normalize_tx_hash_lookup)
+                    .unwrap_or_default(),
+                normalize_result_hash_replay_identity(b.result_hash.as_deref()).unwrap_or_default(),
+            ))
+    });
+    let mut seen = std::collections::BTreeSet::new();
+    task_recs.retain(|record| {
+        seen.insert((
+            record.kind.clone(),
+            record
+                .worker
+                .as_deref()
+                .and_then(normalize_actor_or_signer)
+                .unwrap_or_default(),
+            record
+                .tx_hash
+                .as_deref()
+                .map(normalize_tx_hash_lookup)
+                .unwrap_or_default(),
+            normalize_result_hash_replay_identity(record.result_hash.as_deref()).unwrap_or_default(),
+        ))
+    });
+    task_recs
+}
+
 fn query_task_response(
     task_id: u64,
     node_events: &[NodeEventRecord],
@@ -3890,18 +3977,7 @@ fn query_task_response(
         return Ok(out);
     }
 
-    let task_recs: Vec<&AdapterRecord> = recs
-        .iter()
-        .filter(|r| {
-            r.task_id == task_id
-                && r.status == "accepted"
-                && matches!(r.kind.as_str(), "commit" | "reveal")
-                && r.worker
-                    .as_deref()
-                    .and_then(normalize_actor_or_signer)
-                    .is_some()
-        })
-        .collect();
+    let task_recs = sorted_task_adapter_records(task_id, recs);
     if task_recs.is_empty() {
         bail!("task not found: {}", task_id);
     }
@@ -3920,10 +3996,12 @@ fn query_task_response(
     } else {
         TaskStatus::Open
     };
-    let worker = task_recs.iter().find_map(|r| r.worker.clone());
+    let worker = task_recs
+        .iter()
+        .find_map(|r| r.worker.as_deref().and_then(normalize_actor_or_signer));
     let result_hash_hex = task_recs.iter().rev().find_map(|r| {
         if r.kind == "reveal" {
-            r.result_hash.clone()
+            normalize_result_hash_replay_identity(r.result_hash.as_deref())
         } else {
             None
         }
@@ -3995,10 +4073,7 @@ fn query_events_response(
     if events.is_empty() {
         let mut tx_id = 1u64;
         let mut has_commit = false;
-        for r in recs
-            .iter()
-            .filter(|r| r.task_id == task_id && r.status == "accepted")
-        {
+        for r in sorted_task_adapter_records(task_id, recs) {
             let Some(actor) = r.worker.as_deref().and_then(normalize_actor_or_signer) else {
                 continue;
             };
@@ -8596,6 +8671,58 @@ mod tests {
         let out = query_events_response(9, 20, &events, &[]).expect("events expected");
         assert_eq!(out.len(), 1);
         assert_eq!(out[0].event_type, "accept");
+    }
+
+    #[test]
+    fn adapter_fallback_dedupes_replayed_rows_even_when_timestamps_drift() {
+        let recs = vec![
+            AdapterRecord {
+                ts: 20,
+                kind: "reveal".into(),
+                task_id: 51,
+                worker: Some(" worker-a ".into()),
+                result_hash: Some("0xABCD".into()),
+                status: "accepted".into(),
+                tx_hash: Some("0x1234".into()),
+            },
+            AdapterRecord {
+                ts: 10,
+                kind: "commit".into(),
+                task_id: 51,
+                worker: Some("worker-a".into()),
+                result_hash: None,
+                status: "accepted".into(),
+                tx_hash: Some("0x1234".into()),
+            },
+            AdapterRecord {
+                ts: 30,
+                kind: "commit".into(),
+                task_id: 51,
+                worker: Some("worker-a".into()),
+                result_hash: None,
+                status: "accepted".into(),
+                tx_hash: Some("0x1234".into()),
+            },
+            AdapterRecord {
+                ts: 40,
+                kind: "reveal".into(),
+                task_id: 51,
+                worker: Some("worker-a".into()),
+                result_hash: Some("0xabcd".into()),
+                status: "accepted".into(),
+                tx_hash: Some("0x1234".into()),
+            },
+        ];
+
+        let task = query_task_response(51, &[], &recs).expect("task expected");
+        assert_eq!(task.version, 2, "replayed adapter rows must not inflate read-model version");
+        assert_eq!(task.worker.as_deref(), Some("worker-a"));
+        assert_eq!(task.result_hash_hex.as_deref(), Some("0xabcd"));
+
+        let events = query_events_response(51, 20, &[], &recs).expect("events expected");
+        assert_eq!(events.len(), 2, "historical replay must not duplicate commit/reveal rows");
+        assert_eq!(events[0].event_type, "commit");
+        assert_eq!(events[1].event_type, "reveal");
     }
 
     #[test]
