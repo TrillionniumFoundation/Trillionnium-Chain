@@ -4603,6 +4603,34 @@ fn restore_pending_resolve_invalid_snapshot_fails_closed_to_canonical_root() {
 }
 
 #[test]
+fn restore_pending_resolve_case_variant_duplicate_authority_members_fails_closed_to_canonical_root(
+) {
+    let mut state = StateStore::new();
+
+    let empty_root = state.state_root();
+    state.restore_pending_resolve_approval(
+        5_198,
+        Some(PendingResolveApprovalSnapshot {
+            slash_worker: true,
+            confirmations: 1,
+            first_approver: "resolver-a".into(),
+            authority_set: "resolver-a,RESOLVER-A".into(),
+            task_version: 7,
+        }),
+    );
+
+    assert!(
+        state.pending_resolve_approval_snapshot(5_198).is_none(),
+        "restore_pending_resolve_approval should fail closed when authority metadata uses case-variant duplicate members that would fake a two-party quorum"
+    );
+    assert_eq!(
+        state.state_root(),
+        empty_root,
+        "case-variant duplicate pending resolve authority members must not perturb the canonical empty root"
+    );
+}
+
+#[test]
 fn restore_pending_resolve_outer_object_version_drift_is_state_root_noop() {
     let mut state = StateStore::new();
     let task_ref = state
