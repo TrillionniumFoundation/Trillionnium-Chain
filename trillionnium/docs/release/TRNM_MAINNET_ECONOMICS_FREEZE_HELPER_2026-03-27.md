@@ -204,6 +204,7 @@ rehearsal, append these focused checks to the same packet:
 cargo test --manifest-path trillionnium/Cargo.toml -p trnm-mempool --test lane_qos_snapshot_zero_capacity_stability_bound -q
 cargo test --manifest-path trillionnium/Cargo.toml -p trnm-mempool --test lane_qos_snapshot_guarded_reopen_probe_stability_bound -q
 cargo test --manifest-path trillionnium/Cargo.toml -p trnm-mempool --test lane_qos_snapshot_reserve_only_drain_only_duplicate_retention_bound -q
+cargo test --manifest-path trillionnium/Cargo.toml -p trnm-mempool --test lane_qos_snapshot_reserve_only_full_drain_releases_duplicate_retention_bound -q
 ```
 
 Why these are useful extensions:
@@ -218,6 +219,10 @@ Why these are useful extensions:
   demonstrates the exact `drain-only` revocation edge: already-seen sponsored ids stay
   duplicate-classified until the surviving queued work truly drains, so replay probes do
   not fabricate sponsor-backed headroom during revocation.
+- `--test lane_qos_snapshot_reserve_only_full_drain_releases_duplicate_retention_bound`
+  proves the matching release edge: once the last queued survivor really leaves the lane,
+  duplicate retention is cleared and the shared sponsor/free-ingress headroom becomes
+  audibly fresh again instead of staying artificially frozen.
 
 These are still targeted economics-boundary checks, not a substitute for the frozen tuple
 itself; use them to harden evidence when sponsor revocation or reserve-only visibility is
