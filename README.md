@@ -41,7 +41,7 @@ TrillionniumChain/
 ├── web4-frontend/                  # Web4 frontend (Next.js + Vitest + Playwright)
 ├── scripts/                        # Repo-level CI/automation scripts
 ├── docs/                           # Architecture, protocol, runbooks, and reports
-├── contracts/                      # Rust-native external contracts subtree (active MVP scaffolding)
+├── contracts/                      # Rust-native external contracts subtree (4-crate MVP, not full runtime-spec/sdk closure)
 ├── config/                         # Policy and alerting config
 ├── data/                           # Acceptance data and experiment artifacts
 ├── run/                            # Runtime logs and gate outputs
@@ -154,10 +154,10 @@ TRNM_TX_CLI=./trillionnium/target/debug/trnm-cli \
 - Project status log: [docs/archive/root-history/STATUS.md](docs/archive/root-history/STATUS.md)
 - Historical roadmap: [docs/archive/root-history/ROADMAP.md](docs/archive/root-history/ROADMAP.md)
 - Historical backlog snapshots: [docs/archive/root-history/BACKLOG.md](docs/archive/root-history/BACKLOG.md)
-- Unified development scheduling (planning board): [docs/development/DEVELOPMENT_MASTER_UNIFIED_2026-03-04.md](docs/development/DEVELOPMENT_MASTER_UNIFIED_2026-03-04.md)
-- Concurrency bottleneck map + 8-week roadmap: [docs/reports/TRNM_CONCURRENCY_BOTTLENECK_MAP_AND_8W_ROADMAP_2026-03-10.md](docs/reports/TRNM_CONCURRENCY_BOTTLENECK_MAP_AND_8W_ROADMAP_2026-03-10.md)
+- Unified development scheduling (historical planning board): [docs/archive/dev-plans/DEVELOPMENT_MASTER_UNIFIED_2026-03-04.md](docs/archive/dev-plans/DEVELOPMENT_MASTER_UNIFIED_2026-03-04.md)
 - External benchmark comparison: [docs/reports/TRNM_CONCURRENCY_COMPARISON_2026-03-05.md](docs/reports/TRNM_CONCURRENCY_COMPARISON_2026-03-05.md)
-- Web4 platform overview: [docs/WEB4_INFRA_PLATFORM_DEVELOPMENT_MASTER.md](docs/WEB4_INFRA_PLATFORM_DEVELOPMENT_MASTER.md)
+- Concurrency bottleneck map + 8-week roadmap: currently referenced from `RELEASE_READINESS.md` as a truth-source pointer, but the standalone markdown file is not present in this repo snapshot.
+- Web4 platform overview (historical planning doc): [docs/archive/dev-plans/WEB4_INFRA_PLATFORM_DEVELOPMENT_MASTER.md](docs/archive/dev-plans/WEB4_INFRA_PLATFORM_DEVELOPMENT_MASTER.md)
 - Rust-native external contracts baseline architecture: [trillionnium/docs/protocol/external-contracts-rust/RUST_NATIVE_EXTERNAL_CONTRACTS_ARCH_2026-03-05.md](trillionnium/docs/protocol/external-contracts-rust/RUST_NATIVE_EXTERNAL_CONTRACTS_ARCH_2026-03-05.md)
 - `contracts/` status and boundaries: [contracts/README.md](contracts/README.md)
 - PoUW mechanism: [trillionnium/docs/challenge-economics-minimal.md](trillionnium/docs/challenge-economics-minimal.md)
@@ -194,8 +194,10 @@ Please run the local minimum gates before creating PRs to reduce CI turnarounds.
 - Main development entry is `trillionnium/`.
 - `legacy/` is for archival history only.
 - Whether the project is currently **release-ready** is defined by [RELEASE_READINESS.md](RELEASE_READINESS.md); historical evidence documents are not automatically equivalent to live state.
-- `contracts/` is an **independent Rust-native external-contract subtree / MVP contract scaffolding**. It is not yet the full `sdk / runtime-spec / integration-tests` target layout.
+- `contracts/` is an **independent Rust-native external-contract subtree / MVP contract scaffolding**. Today it contains 4 landed crates: `settlement-vault/`, `bridge-relay/`, `governance-guard/`, and `audit-events/`.
+- `contracts/` is **not yet** the full `sdk / runtime-spec / integration-tests` target layout, and its current crates should not be described as completed Host ABI/runtime integration.
 - `audit-events/` under `contracts/` is a shared audit-event schema-adjacent layer; it is not a proof that canonical `sdk`, `runtime-spec`, or `wasm32-unknown-unknown` Host ABI/runtime integration is complete.
+- Presence of `contracts/` does **not** by itself move external contracts into Day-1 mainnet minimum scope; that boundary still follows `RELEASE_READINESS.md` plus `trillionnium/docs/release/TRNM_MAINNET_GAP_MATRIX_2026-03-26.md`.
 - Web4 currently uses a read-only API client by default; it falls back to local mock snapshots only when explicitly launched with `?mode=mock`, and write paths are not exposed by default.
 - If you see `/api/v0/web4/*` references in docs, treat them as historical naming only; current frontend consumption is around:
   - `query-task`
