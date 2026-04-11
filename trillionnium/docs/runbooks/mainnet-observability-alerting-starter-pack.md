@@ -15,9 +15,9 @@ Companion truth sources:
 - `RELEASE_READINESS.md`
 - `docs/release/TRNM_MAINNET_GAP_MATRIX_2026-03-26.md`
 - `docs/release/TRNM_MAINNET_BLOCKER_BOARD_2026-03-31.md`
-- `docs/runbooks/local-release-evidence.md`
-- `docs/runbooks/bft-checkpoint-wal-recovery.md`
-- `docs/runbooks/oracle-observability-alerts.md`
+- `trillionnium/docs/runbooks/local-release-evidence.md`
+- `trillionnium/docs/runbooks/bft-checkpoint-wal-recovery.md`
+- `trillionnium/docs/runbooks/oracle-observability-alerts.md`
 
 ## What this starter pack closes vs. what remains open
 
@@ -104,7 +104,7 @@ Rules:
 - `needs_replay=yes` for every `sev0` / `sev1` incident.
 - `needs_rollback=yes` only when a concrete emitted `rollback_command=` exists or rollback is the active mitigation choice.
 - `first_stop=` must exactly match one stable panel name from this runbook; use `unknown` rather than inventing a new alias.
-- set `verdict=n/a` for non-oracle incidents; for `service=oracle`, preserve `verdict=<accepts-stalled|stale-wave|quorum-collapse|drift-anomaly|contract-drift>` from `docs/runbooks/oracle-observability-alerts.md`.
+- set `verdict=n/a` for non-oracle incidents; for `service=oracle`, preserve `verdict=<accepts-stalled|stale-wave|quorum-collapse|drift-anomaly|contract-drift>` from `trillionnium/docs/runbooks/oracle-observability-alerts.md`.
 - if a screenshot or dashboard link is shared without this label block, treat the handoff as incomplete.
 
 ---
@@ -209,7 +209,7 @@ These are the minimum launch-blocker-oriented alert families from the gap matrix
 | `replay-failure` | recovery / replay drill or emitted evidence cannot be reproduced with emitted `replay_command=` | `sev1` | `yes` | `yes` until rollback path is explicitly ruled out by the incident lead | Page on-call and classify handoff as incomplete until replay/evidence alignment is restored. |
 | `rpc-unhealthy` | rpc health/readiness path fails for 2 consecutive windows or query error rate dominates the healthy baseline | `sev1` | `yes` | `no` by default; promote to `yes` if the regression began after deploy, schema change, or read-model cutover | Page on-call, capture failing endpoint, and attach current rollback / replay context. |
 | `worker-failure` | worker receipts/submissions stall or repeated worker execution failures persist for 2 consecutive windows | `sev1` | `yes` | `no` by default; promote to `yes` if queue drain, receipt replay, or recent worker release cannot safely stabilize the flow | Page on-call, capture affected worker ids / queues, and link the active worker runbook or receipt evidence. |
-| `oracle-anomaly` | use the severity rules from `docs/runbooks/oracle-observability-alerts.md` | inherited | inherited from the oracle runbook | inherited from the oracle runbook; do not drop the shared field in the ticket/page payload | Use the oracle runbook as source of truth; preserve the shared label block here. |
+| `oracle-anomaly` | use the severity rules from `trillionnium/docs/runbooks/oracle-observability-alerts.md` | inherited | inherited from the oracle runbook | inherited from the oracle runbook; do not drop the shared field in the ticket/page payload | Use the oracle runbook as source of truth; preserve the shared label block here. |
 | `bridge-anomaly` | bridge relay or settlement heartbeat stalls for 2 consecutive windows | `sev2` by default | `no` by default; promote to `yes` if settlement integrity or replay evidence is in doubt | `no` by default; promote to `yes` if settlement integrity or replay evidence is in doubt | Open incident, gather evidence, and promote if settlement integrity or operator trust is at risk. |
 | `contract-drift` | dashboard math / label mapping / evidence fields drift so the signal cannot be trusted | `sev0` | `yes` | `yes` | Page immediately and freeze automated interpretation until corrected. |
 
@@ -302,10 +302,10 @@ Why:
 
 At minimum link out to:
 
-- oracle dashboard bundle from `docs/runbooks/oracle-observability-alerts.md`
-- bridge settlement / relay drill-down: settlement heartbeat trend, relay/backlog evidence, and the matching release evidence block from `docs/runbooks/local-release-evidence.md`
-- recovery / WAL runbook from `docs/runbooks/bft-checkpoint-wal-recovery.md`
-- release evidence runbook from `docs/runbooks/local-release-evidence.md`
+- oracle dashboard bundle from `trillionnium/docs/runbooks/oracle-observability-alerts.md`
+- bridge settlement / relay drill-down: settlement heartbeat trend, relay/backlog evidence, and the matching release evidence block from `trillionnium/docs/runbooks/local-release-evidence.md`
+- recovery / WAL runbook from `trillionnium/docs/runbooks/bft-checkpoint-wal-recovery.md`
+- release evidence runbook from `trillionnium/docs/runbooks/local-release-evidence.md`
 
 ### 7. Bridge relay / settlement integrity
 
@@ -333,7 +333,7 @@ Use one append-stable routing table so the first responder does not have to gues
 | `node` | `node-down` + rollback/backoff churn | **Consensus instability / rollback pressure** | `rollback_total`, round-change/backoff trend, leader-miss or auth-replay spike, and the latest recovery evidence pointer | gives responders one explicit first stop when availability symptoms coincide with rollback pressure instead of forcing them to infer consensus stress from unrelated panels |
 | `rpc` | `rpc-unhealthy` | **RPC health / read surface** | failing endpoint, query success/failure trend, latest rollback/replay pointer if the failure followed deploy or rehearsal | preserves the public read surface as its own first-class operator plane |
 | `worker` | `worker-failure` | **Worker execution / receipt flow** | affected worker ids/queues, retry/exhaustion trend, linked worker receipt evidence | separates queue starvation from execution or submission failure before escalation |
-| `oracle` | `oracle-anomaly` | **Oracle-specific drill-down** | labels from `docs/runbooks/oracle-observability-alerts.md`, matching `severity`, `needs_replay`, and evidence pointers | oracle triage already has a service-specific contract; use it without dropping the shared labels |
+| `oracle` | `oracle-anomaly` | **Oracle-specific drill-down** | labels from `trillionnium/docs/runbooks/oracle-observability-alerts.md`, matching `severity`, `needs_replay`, and evidence pointers | oracle triage already has a service-specific contract; use it without dropping the shared labels |
 | `bridge` | `bridge-anomaly` | **Bridge relay / settlement integrity** | bridge relay/settlement heartbeat evidence, settlement blast radius, replay/rollback pointers if integrity is in doubt | bridge incidents often start as sev2 but can promote quickly when settlement trust is threatened |
 | `any` | `contract-drift` | **Evidence / replay integrity** | label block completeness, dashboard math/field drift, `truth_source=`, `evidence_scope=`, identity-match fields | if the contract is drifting, operators must stop trusting the dashboard before anything else |
 
