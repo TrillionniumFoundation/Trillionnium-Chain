@@ -4895,7 +4895,7 @@ mod tests {
             "prefer the exact repo-root paths `trillionnium/configs/node1.toml`, `trillionnium/configs/node2.toml`, `trillionnium/configs/node3.toml`, and `trillionnium/configs/node4.toml` as the unambiguous slot references",
             "require the filename slot, `node_id`, and listener stride to agree",
             "fix the exact repo-root slot file named by the error surface and the exact field named in that error",
-            "Do not add extra shipped topology files such as `node5.toml`, alternate slot aliases, or helper sidecar configs under `configs/`",
+            "Do not add extra shipped topology files such as `node0.toml` or `node5.toml`, alternate slot aliases, or helper sidecar configs under `configs/`",
             "Do not substitute IPv6 loopback `[::1]` for the shipped IPv4 loopback `127.0.0.1` during bootstrap or rejoin",
             "The regression tests in `crates/trnm-node/src/main.rs` are the source of truth for the exact fixture invariants.",
         ] {
