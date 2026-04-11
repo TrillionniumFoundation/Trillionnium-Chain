@@ -136,13 +136,13 @@ fn ensure_recoverable_wal_state_allows_single_block_lagging_checkpoint_resume() 
 
     ensure_recoverable_wal_state(&wal_dir, &recovered)
         .expect("single-block lagging checkpoint resume should remain admissible for join/rejoin catch-up");
-    assert_eq!(recovery_startup_summary(&recovered), "retained_wal_entries=2 checkpoint_height_retained=6 checkpoint_tip_relation=behind:1 next_startup_height=8 wal_tail_truncated=false metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume_checkpoint_lagging");
+    assert_eq!(recovery_startup_summary(&recovered), "retained_wal_entries=2 checkpoint_height_retained=6 checkpoint_tip_relation=behind:1 next_startup_height=8 wal_tail_truncated=false metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume_checkpoint_lagging_1block");
 
     let _ = fs::remove_dir_all(&wal_dir);
 }
 
 #[test]
-fn ensure_recoverable_wal_state_allows_single_block_lagging_checkpoint_resume_after_tail_repair() {
+fn ensure_recoverable_wal_state_allows_truncated_single_block_lagging_checkpoint_resume() {
     let wal_dir = temp_wal_dir("recover-guard-truncated-single-block-lagging-checkpoint-resume");
     fs::create_dir_all(&wal_dir).unwrap();
 
@@ -163,7 +163,7 @@ fn ensure_recoverable_wal_state_allows_single_block_lagging_checkpoint_resume_af
     ensure_recoverable_wal_state(&wal_dir, &recovered).expect(
         "truncated single-block lagging checkpoint resume should remain admissible for join/rejoin catch-up",
     );
-    assert_eq!(recovery_startup_summary(&recovered), "retained_wal_entries=2 checkpoint_height_retained=6 checkpoint_tip_relation=behind:1 next_startup_height=8 wal_tail_truncated=true metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume_checkpoint_lagging_after_tail_repair");
+    assert_eq!(recovery_startup_summary(&recovered), "retained_wal_entries=2 checkpoint_height_retained=6 checkpoint_tip_relation=behind:1 next_startup_height=8 wal_tail_truncated=true metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume_checkpoint_lagging_1block_after_tail_repair");
 
     let _ = fs::remove_dir_all(&wal_dir);
 }
