@@ -867,6 +867,39 @@ mod tests {
     }
 
     #[test]
+    fn zero_capacity_hard_stop_idle_polls_preserve_restored_duplicate_knowledge_from_all_seen_caches() {
+        let mut g = LaneAdmissionGate::new(0, 0);
+
+        // Simulate restored duplicate metadata skew across every seen cache. Idle
+        // polls in hard-stop mode must preserve this recovery knowledge instead of
+        // silently clearing it before a real queue-backed drain can occur.
+        g.critical.seen.insert(55);
+        g.seen_global.insert(55);
+
+        for _ in 0..3 {
+            assert_eq!(g.pop_ready(), None);
+            assert_eq!(g.admit(55, IngressClass::Normal), AdmitOutcome::Duplicate);
+            assert_eq!(g.admit(55, IngressClass::Critical), AdmitOutcome::Duplicate);
+            assert_eq!(
+                g.qos_snapshot(),
+                LaneQosSnapshot {
+                    normal_queued: 0,
+                    critical_queued: 0,
+                    total_queued: 0,
+                    normal_headroom: 0,
+                    critical_headroom: 0,
+                    total_headroom: 0,
+                    fresh_normal_admissible: false,
+                    fresh_critical_admissible: false,
+                }
+            );
+        }
+
+        assert_eq!(g.admit(56, IngressClass::Normal), AdmitOutcome::Backpressured);
+        assert_eq!(g.admit(56, IngressClass::Critical), AdmitOutcome::Backpressured);
+    }
+
+    #[test]
     fn qos_snapshot_zero_reserve_recloses_after_critical_spillover_consumes_last_normal_slot() {
         let mut g = LaneAdmissionGate::new(2, 0);
 
