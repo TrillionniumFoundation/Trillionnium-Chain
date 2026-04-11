@@ -98,6 +98,7 @@ pub enum BridgeRelayEvent {
         validator_count: usize,
     },
     ConfigVersionUpdated {
+        actor: [u8; 32],
         old_version: u64,
         new_version: u64,
     },
@@ -112,14 +113,17 @@ pub enum BridgeRelayEvent {
         nonce_key: [u8; 32],
     },
     AdminUpdated {
+        actor: [u8; 32],
         old_admin: [u8; 32],
         new_admin: [u8; 32],
     },
     MinSignaturesUpdated {
+        actor: [u8; 32],
         old_min: usize,
         new_min: usize,
     },
     ValidatorsUpdated {
+        actor: [u8; 32],
         previous_count: usize,
         new_count: usize,
     },
@@ -251,11 +255,13 @@ impl BridgeRelay {
         self.admin = new_admin;
         self.config_version = new_version;
         self.audit_log.push(BridgeRelayEvent::AdminUpdated {
+            actor: *caller,
             old_admin,
             new_admin,
         });
         self.audit_log
             .push(BridgeRelayEvent::ConfigVersionUpdated {
+                actor: *caller,
                 old_version,
                 new_version,
             });
@@ -277,10 +283,12 @@ impl BridgeRelay {
         self.min_validator_signatures = min;
         self.config_version = new_version;
         self.audit_log.push(BridgeRelayEvent::MinSignaturesUpdated {
+            actor: *caller,
             old_min,
             new_min: min,
         });
         self.audit_log.push(BridgeRelayEvent::ConfigVersionUpdated {
+            actor: *caller,
             old_version,
             new_version,
         });
@@ -305,11 +313,13 @@ impl BridgeRelay {
         self.config_version = new_version;
 
         self.audit_log.push(BridgeRelayEvent::ValidatorsUpdated {
+            actor: *caller,
             previous_count,
             new_count: self.validators.len(),
         });
         self.audit_log
             .push(BridgeRelayEvent::ConfigVersionUpdated {
+                actor: *caller,
                 old_version,
                 new_version,
             });
@@ -471,21 +481,25 @@ impl BridgeRelay {
                 normalized
             }
             BridgeRelayEvent::AdminUpdated {
+                actor,
                 old_admin,
                 new_admin,
             } => {
                 let mut normalized = AuditEvent::new("bridge-relay", "bridge_relay.admin_updated");
+                normalized.actor = Some(hex32(actor));
                 normalized.object_id = Some(hex32(new_admin));
                 normalized.related_id = Some(hex32(old_admin));
                 normalized.reason = Some("admin_rotation".to_string());
                 normalized
             }
             BridgeRelayEvent::ConfigVersionUpdated {
+                actor,
                 old_version,
                 new_version,
             } => {
                 let mut normalized =
                     AuditEvent::new("bridge-relay", "bridge_relay.config_version_updated");
+                normalized.actor = Some(hex32(actor));
                 normalized.object_id = Some("bridge_config".to_string());
                 normalized.related_id = Some("config_version".to_string());
                 normalized.amount = Some(*new_version as u128);
@@ -493,9 +507,10 @@ impl BridgeRelay {
                 normalized.note = Some(format!("old_version={old_version}, new_version={new_version}"));
                 normalized
             }
-            BridgeRelayEvent::MinSignaturesUpdated { old_min, new_min } => {
+            BridgeRelayEvent::MinSignaturesUpdated { actor, old_min, new_min } => {
                 let mut normalized =
                     AuditEvent::new("bridge-relay", "bridge_relay.min_signatures_updated");
+                normalized.actor = Some(hex32(actor));
                 normalized.object_id = Some("bridge_config".to_string());
                 normalized.related_id = Some("min_signatures".to_string());
                 normalized.amount = Some(*new_min as u128);
@@ -504,11 +519,13 @@ impl BridgeRelay {
                 normalized
             }
             BridgeRelayEvent::ValidatorsUpdated {
+                actor,
                 previous_count,
                 new_count,
             } => {
                 let mut normalized =
                     AuditEvent::new("bridge-relay", "bridge_relay.validators_updated");
+                normalized.actor = Some(hex32(actor));
                 normalized.object_id = Some("bridge_config".to_string());
                 normalized.related_id = Some("validators".to_string());
                 normalized.amount = Some(*new_count as u128);
@@ -1851,12 +1868,14 @@ mod tests {
             .any(|event| event.source == "bridge-relay"));
         assert!(normalized.iter().any(|event| {
             event.event_type == "bridge_relay.admin_updated"
+                && event.actor == Some(hex32(&old_admin))
                 && event.object_id == Some(hex32(&new_admin))
                 && event.related_id == Some(hex32(&old_admin))
                 && event.reason.as_deref() == Some("admin_rotation")
         }));
         assert!(normalized.iter().any(|event| {
             event.event_type == "bridge_relay.config_version_updated"
+                && event.actor == Some(hex32(&new_admin))
                 && event.amount == Some(4)
                 && event.object_id.as_deref() == Some("bridge_config")
                 && event.related_id.as_deref() == Some("config_version")
@@ -1865,6 +1884,7 @@ mod tests {
         }));
         assert!(normalized.iter().any(|event| {
             event.event_type == "bridge_relay.min_signatures_updated"
+                && event.actor == Some(hex32(&new_admin))
                 && event.amount == Some(2)
                 && event.object_id.as_deref() == Some("bridge_config")
                 && event.related_id.as_deref() == Some("min_signatures")
@@ -1873,6 +1893,7 @@ mod tests {
         }));
         assert!(normalized.iter().any(|event| {
             event.event_type == "bridge_relay.validators_updated"
+                && event.actor == Some(hex32(&new_admin))
                 && event.amount == Some(2)
                 && event.object_id.as_deref() == Some("bridge_config")
                 && event.related_id.as_deref() == Some("validators")
