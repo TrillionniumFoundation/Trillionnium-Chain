@@ -25,6 +25,11 @@ cat >"$PREFLIGHT_PATH" <<EOF
 result=PASS
 generated_at=2026-04-11T01:01:00Z
 git_status_summary=clean
+git_worktree_path=$WORKTREE_ROOT
+git_worktree_branch_ref=$BRANCH_REF
+git_worktree_branch_ref_match=true
+rollback_command=git checkout -- run/preflight/go-no-go-latest.txt
+replay_command=./scripts/testnet_preflight.sh
 EOF
 
 cat >"$SUMMARY_PATH" <<EOF
@@ -77,6 +82,14 @@ grep -q "^expected_branch_ref=$BRANCH_REF$" "$TMPDIR/out-short.txt"
 grep -q "^git_worktree_branch_ref=$BRANCH_REF$" "$TMPDIR/out-short.txt"
 grep -q "^git_expected_worktree_branch_ref=$BRANCH_REF$" "$TMPDIR/out-short.txt"
 grep -q "^preflight_summary_path=$PREFLIGHT_PATH$" "$TMPDIR/out-short.txt"
+grep -q '^preflight_result=PASS$' "$TMPDIR/out-short.txt"
+grep -q '^preflight_generated_at=2026-04-11T01:01:00Z$' "$TMPDIR/out-short.txt"
+grep -q '^preflight_git_status_summary=clean$' "$TMPDIR/out-short.txt"
+grep -q "^preflight_git_worktree_path=$WORKTREE_ROOT$" "$TMPDIR/out-short.txt"
+grep -q "^preflight_git_worktree_branch_ref=$BRANCH_REF$" "$TMPDIR/out-short.txt"
+grep -q '^preflight_git_worktree_branch_ref_match=true$' "$TMPDIR/out-short.txt"
+grep -q '^preflight_rollback_command=git checkout -- run/preflight/go-no-go-latest.txt$' "$TMPDIR/out-short.txt"
+grep -q '^preflight_replay_command=./scripts/testnet_preflight.sh$' "$TMPDIR/out-short.txt"
 
 bash "$SCRIPT" \
   --summary-path "$SUMMARY_PATH" \

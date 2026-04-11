@@ -29,6 +29,14 @@ VERIFIED_BRANCH_REF=""
 VERIFIED_HEAD=""
 EXPECTED_HEAD=""
 PREFLIGHT_SUMMARY_PATH=""
+PREFLIGHT_RESULT=""
+PREFLIGHT_GENERATED_AT=""
+PREFLIGHT_GIT_STATUS_SUMMARY=""
+PREFLIGHT_GIT_WORKTREE_PATH=""
+PREFLIGHT_GIT_WORKTREE_BRANCH_REF=""
+PREFLIGHT_GIT_WORKTREE_BRANCH_REF_MATCH=""
+PREFLIGHT_ROLLBACK_COMMAND=""
+PREFLIGHT_REPLAY_COMMAND=""
 
 canonicalize_branch_ref() {
   local ref="$1"
@@ -164,9 +172,23 @@ if [ "$SUMMARY_PATH" = "$MANIFEST_PATH" ]; then
   printf 'summary and manifest paths must be distinct artifacts: %s\n' "$SUMMARY_PATH" >&2
   exit 1
 fi
+optional_key() {
+  local path="$1"
+  local key="$2"
+  awk -F= -v key="$key" '$1 == key { sub(/^[^=]*=/, ""); print; exit }' "$path"
+}
+
 if [ -n "$PREFLIGHT_SUMMARY_PATH" ]; then
   PREFLIGHT_SUMMARY_PATH="$(resolve_path "$PREFLIGHT_SUMMARY_PATH")"
   require_path_within_trnm_root preflight_summary_path "$PREFLIGHT_SUMMARY_PATH"
+  PREFLIGHT_RESULT="$(optional_key "$PREFLIGHT_SUMMARY_PATH" result)"
+  PREFLIGHT_GENERATED_AT="$(optional_key "$PREFLIGHT_SUMMARY_PATH" generated_at)"
+  PREFLIGHT_GIT_STATUS_SUMMARY="$(optional_key "$PREFLIGHT_SUMMARY_PATH" git_status_summary)"
+  PREFLIGHT_GIT_WORKTREE_PATH="$(optional_key "$PREFLIGHT_SUMMARY_PATH" git_worktree_path)"
+  PREFLIGHT_GIT_WORKTREE_BRANCH_REF="$(optional_key "$PREFLIGHT_SUMMARY_PATH" git_worktree_branch_ref)"
+  PREFLIGHT_GIT_WORKTREE_BRANCH_REF_MATCH="$(optional_key "$PREFLIGHT_SUMMARY_PATH" git_worktree_branch_ref_match)"
+  PREFLIGHT_ROLLBACK_COMMAND="$(optional_key "$PREFLIGHT_SUMMARY_PATH" rollback_command)"
+  PREFLIGHT_REPLAY_COMMAND="$(optional_key "$PREFLIGHT_SUMMARY_PATH" replay_command)"
 fi
 
 require_key() {
@@ -176,12 +198,6 @@ require_key() {
   value="$(awk -F= -v key="$key" '$1 == key { sub(/^[^=]*=/, ""); print; exit }' "$path")"
   [ -n "$value" ] || { printf 'missing %s in %s\n' "$key" "$path" >&2; exit 1; }
   printf '%s' "$value"
-}
-
-optional_key() {
-  local path="$1"
-  local key="$2"
-  awk -F= -v key="$key" '$1 == key { sub(/^[^=]*=/, ""); print; exit }' "$path"
 }
 
 assert_equal() {
@@ -374,6 +390,30 @@ if [ -n "$VERIFIED_HEAD" ]; then
 fi
 if [ -n "$PREFLIGHT_SUMMARY_PATH" ]; then
   printf 'preflight_summary_path=%s\n' "$PREFLIGHT_SUMMARY_PATH"
+  if [ -n "$PREFLIGHT_RESULT" ]; then
+    printf 'preflight_result=%s\n' "$PREFLIGHT_RESULT"
+  fi
+  if [ -n "$PREFLIGHT_GENERATED_AT" ]; then
+    printf 'preflight_generated_at=%s\n' "$PREFLIGHT_GENERATED_AT"
+  fi
+  if [ -n "$PREFLIGHT_GIT_STATUS_SUMMARY" ]; then
+    printf 'preflight_git_status_summary=%s\n' "$PREFLIGHT_GIT_STATUS_SUMMARY"
+  fi
+  if [ -n "$PREFLIGHT_GIT_WORKTREE_PATH" ]; then
+    printf 'preflight_git_worktree_path=%s\n' "$PREFLIGHT_GIT_WORKTREE_PATH"
+  fi
+  if [ -n "$PREFLIGHT_GIT_WORKTREE_BRANCH_REF" ]; then
+    printf 'preflight_git_worktree_branch_ref=%s\n' "$PREFLIGHT_GIT_WORKTREE_BRANCH_REF"
+  fi
+  if [ -n "$PREFLIGHT_GIT_WORKTREE_BRANCH_REF_MATCH" ]; then
+    printf 'preflight_git_worktree_branch_ref_match=%s\n' "$PREFLIGHT_GIT_WORKTREE_BRANCH_REF_MATCH"
+  fi
+  if [ -n "$PREFLIGHT_ROLLBACK_COMMAND" ]; then
+    printf 'preflight_rollback_command=%s\n' "$PREFLIGHT_ROLLBACK_COMMAND"
+  fi
+  if [ -n "$PREFLIGHT_REPLAY_COMMAND" ]; then
+    printf 'preflight_replay_command=%s\n' "$PREFLIGHT_REPLAY_COMMAND"
+  fi
 else
   printf 'preflight_summary_path=%s\n' '<missing>'
 fi
