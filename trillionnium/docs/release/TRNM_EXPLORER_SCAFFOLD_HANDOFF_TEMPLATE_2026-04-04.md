@@ -72,8 +72,22 @@ handoff_date=<YYYY-MM-DD>
 operator=<name-or-team>
 repo_snapshot=<git-sha>
 runbook=trillionnium/docs/runbooks/explorer-service-scaffold.md
+template_path=trillionnium/docs/release/TRNM_EXPLORER_SCAFFOLD_HANDOFF_TEMPLATE_2026-04-04.md
+durable_template_path=trillionnium/docs/release/TRNM_DURABLE_READ_SERVICE_HANDOFF_TEMPLATE_2026-04-04.md
+template_selection=placeholder-scaffold-only
+durable_template_allowed=false
+durable_template_rejection_reason=scaffold-capture-is-placeholder-only-and-missing-durable-read-anchors
+deployment_template_boundary=use-scaffold-template-until-non-placeholder-deployment-and-all-6-durable-read-anchors-exist
+truth_source_scaffold_handoff_template=trillionnium/docs/release/TRNM_EXPLORER_SCAFFOLD_HANDOFF_TEMPLATE_2026-04-04.md
+truth_source_scaffold_runbook=trillionnium/docs/runbooks/explorer-service-scaffold.md
+truth_source_durable_handoff_template=trillionnium/docs/release/TRNM_DURABLE_READ_SERVICE_HANDOFF_TEMPLATE_2026-04-04.md
+truth_source_release_readiness=RELEASE_READINESS.md
+truth_source_go_no_go_panel=trillionnium/docs/release/TRNM_PUBLIC_MAINNET_GO_NO_GO_PANEL_2026-04-04.md
+truth_source_gap_matrix=trillionnium/docs/release/TRNM_MAINNET_GAP_MATRIX_2026-03-26.md
 truth_source_day1_contract=trillionnium/docs/release/TRNM_DAY1_PUBLIC_READ_CONTRACT_2026-04-03.md
 truth_source_day1_contract_matrix=trillionnium/docs/release/TRNM_DAY1_PUBLIC_READ_CONTRACT_MATRIX_2026-04-03.md
+truth_source_rank1_task_board=trillionnium/docs/release/TRNM_RANK1_READ_SURFACE_TASK_BOARD_2026-04-03.md
+truth_source_blocker_board=trillionnium/docs/release/TRNM_MAINNET_BLOCKER_BOARD_2026-03-31.md
 
 # runtime knobs (copy exact values)
 EXPLORER_HOST=<value>
