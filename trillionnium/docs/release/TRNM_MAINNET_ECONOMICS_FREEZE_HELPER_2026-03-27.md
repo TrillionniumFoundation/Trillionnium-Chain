@@ -171,9 +171,9 @@ frozen sheet. Run the commands below from the **repo root** (the directory that 
 
 ```bash
 cargo check --manifest-path trillionnium/Cargo.toml -p trnm-mempool -p trnm-pouw -q
-cargo test --manifest-path trillionnium/Cargo.toml -p trnm-mempool lane_zero_capacity_public_contract_bound -q
-cargo test --manifest-path trillionnium/Cargo.toml -p trnm-mempool lane_qos_snapshot_reserve_only_drained_retry_resaturates_bound -q
-cargo test --manifest-path trillionnium/Cargo.toml -p trnm-mempool lane_borrowed_last_slot_backpressured_retry_reuse_bound -q
+cargo test --manifest-path trillionnium/Cargo.toml -p trnm-mempool --test lane_zero_capacity_public_contract_bound -q
+cargo test --manifest-path trillionnium/Cargo.toml -p trnm-mempool --test lane_qos_snapshot_reserve_only_drained_retry_resaturates_bound -q
+cargo test --manifest-path trillionnium/Cargo.toml -p trnm-mempool --test lane_borrowed_last_slot_backpressured_retry_reuse_bound -q
 cargo test --manifest-path trillionnium/Cargo.toml -p trnm-state --test retention_restore_regression -q
 ```
 
