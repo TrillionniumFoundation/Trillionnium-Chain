@@ -5675,6 +5675,80 @@ mod tests {
     }
 
     #[test]
+    fn load_config_rejects_port_zero_listener_with_operator_facing_error() {
+        let rpc_path = std::env::temp_dir().join(format!(
+            "trnm-node-config-port-zero-rpc-{}-{}.toml",
+            std::process::id(),
+            std::thread::current().name().unwrap_or("unnamed")
+        ));
+        std::fs::write(
+            &rpc_path,
+            "node_id = \"node-a\"\nrpc_addr = \"127.0.0.1:0\"\np2p_addr = \"127.0.0.1:26656\"\n",
+        )
+        .expect("write config");
+        let rpc_err = load_config(rpc_path.to_str().expect("utf8 path"))
+            .expect_err("port-zero rpc listener loaded from disk must fail closed");
+        let rpc_err_surface = format!("{rpc_err:#}");
+        assert!(rpc_err_surface.contains("rpc_addr must not use port 0"));
+        assert!(rpc_err_surface.contains(rpc_path.to_str().expect("utf8 path")));
+        let _ = std::fs::remove_file(rpc_path);
+
+        let p2p_path = std::env::temp_dir().join(format!(
+            "trnm-node-config-port-zero-p2p-{}-{}.toml",
+            std::process::id(),
+            std::thread::current().name().unwrap_or("unnamed")
+        ));
+        std::fs::write(
+            &p2p_path,
+            "node_id = \"node-a\"\nrpc_addr = \"127.0.0.1:26657\"\np2p_addr = \"127.0.0.1:0\"\n",
+        )
+        .expect("write config");
+        let p2p_err = load_config(p2p_path.to_str().expect("utf8 path"))
+            .expect_err("port-zero p2p listener loaded from disk must fail closed");
+        let p2p_err_surface = format!("{p2p_err:#}");
+        assert!(p2p_err_surface.contains("p2p_addr must not use port 0"));
+        assert!(p2p_err_surface.contains(p2p_path.to_str().expect("utf8 path")));
+        let _ = std::fs::remove_file(p2p_path);
+    }
+
+    #[test]
+    fn load_config_rejects_privileged_listener_port_with_operator_facing_error() {
+        let rpc_path = std::env::temp_dir().join(format!(
+            "trnm-node-config-privileged-rpc-{}-{}.toml",
+            std::process::id(),
+            std::thread::current().name().unwrap_or("unnamed")
+        ));
+        std::fs::write(
+            &rpc_path,
+            "node_id = \"node-a\"\nrpc_addr = \"127.0.0.1:443\"\np2p_addr = \"127.0.0.1:26656\"\n",
+        )
+        .expect("write config");
+        let rpc_err = load_config(rpc_path.to_str().expect("utf8 path"))
+            .expect_err("privileged rpc listener loaded from disk must fail closed");
+        let rpc_err_surface = format!("{rpc_err:#}");
+        assert!(rpc_err_surface.contains("rpc_addr must not use a privileged port below 1024"));
+        assert!(rpc_err_surface.contains(rpc_path.to_str().expect("utf8 path")));
+        let _ = std::fs::remove_file(rpc_path);
+
+        let p2p_path = std::env::temp_dir().join(format!(
+            "trnm-node-config-privileged-p2p-{}-{}.toml",
+            std::process::id(),
+            std::thread::current().name().unwrap_or("unnamed")
+        ));
+        std::fs::write(
+            &p2p_path,
+            "node_id = \"node-a\"\nrpc_addr = \"127.0.0.1:26657\"\np2p_addr = \"127.0.0.1:443\"\n",
+        )
+        .expect("write config");
+        let p2p_err = load_config(p2p_path.to_str().expect("utf8 path"))
+            .expect_err("privileged p2p listener loaded from disk must fail closed");
+        let p2p_err_surface = format!("{p2p_err:#}");
+        assert!(p2p_err_surface.contains("p2p_addr must not use a privileged port below 1024"));
+        assert!(p2p_err_surface.contains(p2p_path.to_str().expect("utf8 path")));
+        let _ = std::fs::remove_file(p2p_path);
+    }
+
+    #[test]
     fn load_config_rejects_unspecified_listener_after_operator_trimming() {
         let path = std::env::temp_dir().join(format!(
             "trnm-node-config-unspecified-listener-{}-{}.toml",
