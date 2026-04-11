@@ -451,6 +451,38 @@ describe("api-contract client and retry hardening", () => {
     expect(fetchImpl).toHaveBeenCalledTimes(2);
   });
 
+  it("classifies code-only socket failures as retryable network errors", async () => {
+    const fetchImpl = vi
+      .fn()
+      .mockRejectedValueOnce({
+        message: "Connection reset by peer",
+        code: "ECONNRESET",
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          task: {
+            id: "44",
+            status: "running",
+            owner: "alice",
+            createdAt: "2026-03-01T00:00:00.000Z",
+            metadata: {},
+          },
+        }),
+      });
+
+    const client = createFrontendApiClient({
+      baseUrl: "http://127.0.0.1:8080",
+      fetchImpl: fetchImpl as unknown as typeof fetch,
+    });
+
+    await expect(client.queryTask("44", { retries: 1, baseDelayMs: 0, maxDelayMs: 0 })).resolves
+      .toMatchObject({
+        task: expect.objectContaining({ id: "44" }),
+      });
+    expect(fetchImpl).toHaveBeenCalledTimes(2);
+  });
+
   it("classifies TimeoutError-shaped failures as timeout and keeps them retryable", async () => {
     const fetchImpl = vi.fn().mockRejectedValue({
       name: "TimeoutError",

@@ -126,12 +126,28 @@ const normalizeRequiredPathParam = (value: unknown, label: string): string => {
   return trimmed;
 };
 
+const NETWORK_ERROR_CODES = new Set([
+  "ECONNRESET",
+  "ECONNREFUSED",
+  "ENOTFOUND",
+  "EAI_AGAIN",
+  "UND_ERR_SOCKET",
+]);
+
 const isLikelyNetworkError = (err: unknown): boolean => {
   if (err instanceof TypeError) return true;
   if (!(err && typeof err === "object")) return false;
 
-  const name = "name" in err ? err.name : undefined;
-  return name === "TypeError" || name === "NetworkError" || name === "FetchError";
+  return collectErrorLikeChain(err).some((candidate) => {
+    const name = "name" in candidate ? candidate.name : undefined;
+    const code = "code" in candidate ? candidate.code : undefined;
+    return (
+      name === "TypeError" ||
+      name === "NetworkError" ||
+      name === "FetchError" ||
+      (typeof code === "string" && NETWORK_ERROR_CODES.has(code))
+    );
+  });
 };
 
 const LEGACY_ABORT_ERROR_CODE = 20;
