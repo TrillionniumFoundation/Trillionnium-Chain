@@ -144,6 +144,28 @@ fi
 grep -q "^preflight summary path must be distinct from summary/manifest artifacts: $SUMMARY_PATH$" "$TMPDIR/err-preflight-same-summary.txt"
 
 rm -f "$PREFLIGHT_PATH"
+STAMPED_PREFLIGHT_PATH="$PREFLIGHT_DIR/go-no-go-20260411T010500Z.txt"
+cat >"$STAMPED_PREFLIGHT_PATH" <<EOF
+result=PASS
+generated_at=2026-04-11T01:05:00Z
+git_status_summary=clean
+git_worktree_path=$WORKTREE_ROOT
+git_worktree_branch_ref=$BRANCH_REF
+git_worktree_branch_ref_match=true
+rollback_command=git checkout -- $STAMPED_PREFLIGHT_PATH
+replay_command=./scripts/testnet_preflight.sh --from stamped
+EOF
+bash "$SCRIPT" \
+  --summary-path "$SUMMARY_PATH" \
+  --manifest-path "$MANIFEST_PATH" \
+  --expected-worktree-root "$WORKTREE_ROOT" \
+  --expected-branch-ref "$BRANCH_SHORT" >"$TMPDIR/out-preflight-stamped.txt"
+grep -q "^preflight_summary_path=$STAMPED_PREFLIGHT_PATH$" "$TMPDIR/out-preflight-stamped.txt"
+grep -q '^preflight_generated_at=2026-04-11T01:05:00Z$' "$TMPDIR/out-preflight-stamped.txt"
+grep -q "^preflight_rollback_command=git checkout -- $STAMPED_PREFLIGHT_PATH$" "$TMPDIR/out-preflight-stamped.txt"
+grep -q '^preflight_replay_command=./scripts/testnet_preflight.sh --from stamped$' "$TMPDIR/out-preflight-stamped.txt"
+rm -f "$STAMPED_PREFLIGHT_PATH"
+
 cat >"$PREFLIGHT_PATH" <<EOF
 result=PASS
 generated_at=2026-04-11T01:01:00Z
