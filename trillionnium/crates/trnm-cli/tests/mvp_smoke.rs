@@ -355,29 +355,32 @@ fn smoke_wallet_sign_rejects_invalid_env_store_fallback() {
 
 #[test]
 fn smoke_wallet_sign_rejects_invalid_explicit_store_path() {
-    let out = Command::new(bin())
-        .args([
-            "wallet",
-            "sign",
-            "--name",
-            "alice",
-            "--message",
-            "approve tx",
-            "--store",
-            "./wallets",
-        ])
-        .output()
-        .unwrap();
-    assert!(
-        !out.status.success(),
-        "relative explicit keystore path should fail closed"
-    );
-    let stderr = String::from_utf8_lossy(&out.stderr);
-    assert!(
-        stderr.contains("explicit wallet store './wallets' must be an absolute normalized symlink-free path"),
-        "unexpected stderr: {}",
-        stderr
-    );
+    for invalid_store in ["./wallets", "/"] {
+        let out = Command::new(bin())
+            .args([
+                "wallet",
+                "sign",
+                "--name",
+                "alice",
+                "--message",
+                "approve tx",
+                "--store",
+                invalid_store,
+            ])
+            .output()
+            .unwrap();
+        assert!(
+            !out.status.success(),
+            "invalid explicit keystore path should fail closed: {invalid_store:?}"
+        );
+        let stderr = String::from_utf8_lossy(&out.stderr);
+        assert!(
+            stderr.contains("explicit wallet store")
+                && stderr.contains("must be an absolute normalized symlink-free path"),
+            "unexpected stderr for {invalid_store:?}: {}",
+            stderr
+        );
+    }
 }
 
 #[cfg(unix)]

@@ -425,6 +425,7 @@ fn resolve_wallet_store_fail_closes_on_invalid_env_and_prefers_explicit_store() 
 
     for invalid_explicit in [
         std::path::PathBuf::from("./wallets"),
+        std::path::PathBuf::from("/"),
         std::path::PathBuf::from("/tmp/trnm-wallets "),
         std::path::PathBuf::from(" /tmp/trnm-wallets"),
         std::path::PathBuf::from("/tmp/trnm\u{200b}wallets"),
