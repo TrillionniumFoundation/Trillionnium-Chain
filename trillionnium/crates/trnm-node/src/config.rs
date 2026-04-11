@@ -1054,6 +1054,41 @@ mod tests {
     }
 
     #[test]
+    fn load_config_rejects_generic_bootstrap_alias_with_operator_facing_error() {
+        let current_dir = std::env::current_dir().expect("current dir");
+        let file_name = format!(
+            "trnm-node-config-unknown-field-bootstrap-{}-{}.toml",
+            std::process::id(),
+            now_unix_ms()
+        );
+        let path = current_dir.join(&file_name);
+        std::fs::write(
+            &path,
+            "node_id = \"node1\"\nrpc_addr = \"127.0.0.1:26657\"\np2p_addr = \"127.0.0.1:26656\"\nbootstrap = \"127.0.0.1:27656\"\n",
+        )
+        .expect("write temp config");
+
+        let canonical_path = std::fs::canonicalize(&path).expect("canonicalize temp config path");
+        let operator_path = format!("./{file_name}");
+        let err = load_config(&operator_path).expect_err("generic bootstrap alias must fail closed");
+        let err_surface = format!("{err:#}");
+        assert!(
+            err_surface.contains("parse toml failed") && err_surface.contains("unknown field `bootstrap`"),
+            "unexpected error for generic bootstrap alias: {err:#}"
+        );
+        assert!(
+            err_surface.contains(&operator_path),
+            "generic bootstrap alias surface must keep the operator path visible: {err:#}"
+        );
+        assert!(
+            err_surface.contains(canonical_path.to_string_lossy().as_ref()),
+            "generic bootstrap alias surface must keep the resolved path visible: {err:#}"
+        );
+
+        let _ = std::fs::remove_file(path);
+    }
+
+    #[test]
     fn load_config_rejects_blank_node_id_with_operator_facing_error() {
         let path = std::env::temp_dir().join(format!(
             "trnm-node-config-blank-node-id-{}-{}.toml",
