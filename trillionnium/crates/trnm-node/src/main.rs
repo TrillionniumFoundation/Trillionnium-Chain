@@ -853,7 +853,13 @@ fn recovery_startup_summary(recovered: &RecoveredWalState) -> String {
             Some(checkpoint_height) => {
                 let tip_height = recovered.next_height.saturating_sub(1);
                 if checkpoint_height < tip_height {
-                    if recovered.truncated {
+                    if tip_height - checkpoint_height == 1 {
+                        if recovered.truncated {
+                            "ready:retained_wal_resume_checkpoint_lagging_1block_after_tail_repair"
+                        } else {
+                            "ready:retained_wal_resume_checkpoint_lagging_1block"
+                        }
+                    } else if recovered.truncated {
                         "ready:retained_wal_resume_checkpoint_lagging_after_tail_repair"
                     } else {
                         "ready:retained_wal_resume_checkpoint_lagging"
@@ -18741,7 +18747,7 @@ locked_block_hash = "stale-lock"
         assert_eq!(
             recovery_startup_summary(&recovered),
             format!(
-                "retained_wal_entries=1 checkpoint_height_retained={} checkpoint_tip_relation=behind:1 next_startup_height={} wal_tail_truncated=false metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume_checkpoint_lagging",
+                "retained_wal_entries=1 checkpoint_height_retained={} checkpoint_tip_relation=behind:1 next_startup_height={} wal_tail_truncated=false metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume_checkpoint_lagging_1block",
                 u64::MAX - 2,
                 u64::MAX,
             )
@@ -18766,7 +18772,7 @@ locked_block_hash = "stale-lock"
 
         assert_eq!(
             recovery_startup_summary(&recovered),
-            "retained_wal_entries=2 checkpoint_height_retained=10 checkpoint_tip_relation=behind:1 next_startup_height=12 wal_tail_truncated=false metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume_checkpoint_lagging"
+            "retained_wal_entries=2 checkpoint_height_retained=10 checkpoint_tip_relation=behind:1 next_startup_height=12 wal_tail_truncated=false metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume_checkpoint_lagging_1block"
         );
     }
 
@@ -18798,7 +18804,7 @@ locked_block_hash = "stale-lock"
         assert_eq!(
             recovery_startup_summary(&recovered),
             format!(
-                "retained_wal_entries=1 checkpoint_height_retained={} checkpoint_tip_relation=behind:1 next_startup_height={} wal_tail_truncated=true metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume_checkpoint_lagging_after_tail_repair",
+                "retained_wal_entries=1 checkpoint_height_retained={} checkpoint_tip_relation=behind:1 next_startup_height={} wal_tail_truncated=true metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume_checkpoint_lagging_1block_after_tail_repair",
                 u64::MAX - 2,
                 u64::MAX,
             )
@@ -18829,7 +18835,7 @@ locked_block_hash = "stale-lock"
         );
         assert_eq!(
             recovery_startup_summary(&recovered),
-            "retained_wal_entries=2 checkpoint_height_retained=6 checkpoint_tip_relation=behind:1 next_startup_height=8 wal_tail_truncated=false metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume_checkpoint_lagging"
+            "retained_wal_entries=2 checkpoint_height_retained=6 checkpoint_tip_relation=behind:1 next_startup_height=8 wal_tail_truncated=false metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume_checkpoint_lagging_1block"
         );
     }
 
@@ -19529,7 +19535,7 @@ locked_block_hash = "stale-lock"
             .expect("truncated single-block lagging checkpoint resume should remain recoverable for safe join/rejoin");
         assert_eq!(
             recovery_startup_summary(&recovered),
-            "retained_wal_entries=2 checkpoint_height_retained=6 checkpoint_tip_relation=behind:1 next_startup_height=8 wal_tail_truncated=true metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume_checkpoint_lagging_after_tail_repair"
+            "retained_wal_entries=2 checkpoint_height_retained=6 checkpoint_tip_relation=behind:1 next_startup_height=8 wal_tail_truncated=true metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume_checkpoint_lagging_1block_after_tail_repair"
         );
         assert_eq!(
             retained_wal_summary(&recovered),
