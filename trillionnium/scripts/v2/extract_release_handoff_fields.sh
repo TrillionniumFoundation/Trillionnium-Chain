@@ -93,6 +93,29 @@ fi
 
 SCRIPT_DIR="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"
 TRNM_ROOT="$(CDPATH= cd -- "$SCRIPT_DIR/../.." && pwd)"
+VERIFY_LANE_WORKTREE_HELPER="$SCRIPT_DIR/verify_lane_worktree.sh"
+
+if [ -n "$EXPECTED_WORKTREE_ROOT" ]; then
+  [ -x "$VERIFY_LANE_WORKTREE_HELPER" ] || {
+    printf 'missing verify helper: %s\n' "$VERIFY_LANE_WORKTREE_HELPER" >&2
+    exit 1
+  }
+
+  VERIFY_OUTPUT="$(
+    cd "$EXPECTED_WORKTREE_ROOT"
+    "$VERIFY_LANE_WORKTREE_HELPER" \
+      --expected-worktree-root "$EXPECTED_WORKTREE_ROOT" \
+      --expected-branch-ref "$EXPECTED_BRANCH_REF"
+  )"
+
+  VERIFIED_WORKTREE="$(printf '%s\n' "$VERIFY_OUTPUT" | awk -F= '/^verified_worktree=/ { print substr($0, index($0, "=") + 1); exit }')"
+  VERIFIED_BRANCH_REF="$(printf '%s\n' "$VERIFY_OUTPUT" | awk -F= '/^verified_branch_ref=/ { print substr($0, index($0, "=") + 1); exit }')"
+  VERIFIED_HEAD="$(printf '%s\n' "$VERIFY_OUTPUT" | awk -F= '/^verified_head=/ { print substr($0, index($0, "=") + 1); exit }')"
+
+  [ -n "$VERIFIED_WORKTREE" ] || { echo 'verify helper did not emit verified_worktree' >&2; exit 1; }
+  [ -n "$VERIFIED_BRANCH_REF" ] || { echo 'verify helper did not emit verified_branch_ref' >&2; exit 1; }
+  [ -n "$VERIFIED_HEAD" ] || { echo 'verify helper did not emit verified_head' >&2; exit 1; }
+fi
 
 if [ -z "$SUMMARY_PATH" ]; then
   latest_evidence_dir="$(ls -dt "$TRNM_ROOT"/run/health/evidence-* 2>/dev/null | head -n 1)"
