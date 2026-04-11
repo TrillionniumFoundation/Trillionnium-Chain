@@ -789,10 +789,15 @@ mod tests {
         let n4 = relay
             .consume_nonce(1, b32(1), 31337, addr(10), action_settlement_finalize(), 10)
             .unwrap();
+        let n5 = relay
+            .consume_nonce(1, b32(1), 31338, addr(9), action_settlement_finalize(), 10)
+            .unwrap();
 
         assert_ne!(n1, n3, "different source bridge ids should isolate nonce domains");
         assert_ne!(n1, n4, "different target bridges should isolate nonce domains");
+        assert_ne!(n1, n5, "different target chain ids should isolate nonce domains");
         assert_ne!(n3, n4, "source and target bridge domains should stay independently isolated");
+        assert_ne!(n4, n5, "target bridge and target chain must stay independently isolated");
 
         let err = relay
             .consume_nonce(1, b32(1), 31337, addr(9), action_settlement_finalize(), 10)
