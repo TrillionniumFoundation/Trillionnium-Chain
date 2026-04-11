@@ -94,7 +94,7 @@ Every alert page, dashboard share link, and incident ticket should carry the sam
 - `service=<node|rpc|worker|oracle|bridge|any>`
 - `severity=<sev0|sev1|sev2|sev3>`
 - `signal=<node-down|sync-lag|replay-failure|rpc-unhealthy|worker-failure|oracle-anomaly|bridge-anomaly|contract-drift>`
-- `verdict=<accepts-stalled|stale-wave|quorum-collapse|drift-anomaly|contract-drift|n/a>`
+- `verdict=<accepts-stalled|stale-wave|quorum-collapse|drift-anomaly|ingest-latency|contract-drift|n/a>`
 - `needs_replay=<yes|no>`
 - `needs_rollback=<yes|no>`
 - `first_stop=<stable-panel-name-from-this-runbook|unknown>`
@@ -388,7 +388,7 @@ Annotation rules:
 - if the dashboard tool cannot render all fields inline, put the missing fields into the linked incident/ticket body and treat the dashboard share as incomplete until that link exists;
 - if `needs_rollback=yes` but `rollback=missing`, classify the dashboard annotation as insufficient until the page or linked ticket quotes the current `rollback_command=` or explicitly records it as `unknown`;
 - if `replay=missing` and `rollback=missing` during a live `sev0` / `sev1` incident, classify the dashboard annotation as insufficient even if the graph looks obvious;
-- for `service=oracle`, also preserve `verdict=<accepts-stalled|stale-wave|quorum-collapse|drift-anomaly|contract-drift>` next to the shared fields so the oracle-specific subtype is visible in the dashboard layer too.
+- for `service=oracle`, also preserve `verdict=<accepts-stalled|stale-wave|quorum-collapse|drift-anomaly|ingest-latency|contract-drift>` next to the shared fields so the oracle-specific subtype is visible in the dashboard layer too.
 
 Example annotation lines:
 
