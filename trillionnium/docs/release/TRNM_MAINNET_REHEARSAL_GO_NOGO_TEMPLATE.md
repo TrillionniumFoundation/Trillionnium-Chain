@@ -47,12 +47,16 @@ Single-signer / process exclusivity note (required for any validator/operator-bo
 - checked_listener_command=`lsof -iTCP -sTCP:LISTEN | grep -E '26656|26657|26658|26660'`
 - checked_listener_output=
 
-Capture the fail-closed helper output verbatim before any release/evidence script runs:
+Capture the fail-closed helper output verbatim before any release/evidence script runs, and preserve it as a first-class artifact instead of terminal-only scrollback:
 
 ```bash
+preflight_helper_output_path="run/preflight/verify-lane-worktree-$(date -u +%Y%m%dT%H%M%SZ).txt"
+mkdir -p "$(dirname "$preflight_helper_output_path")"
 ./scripts/v2/verify_lane_worktree.sh \
   --expected-worktree-root "/abs/path/from-ticket" \
-  --expected-branch-ref "refs/heads/lane/assigned-branch"
+  --expected-branch-ref "refs/heads/lane/assigned-branch" \
+  | tee "$preflight_helper_output_path"
+printf 'preflight_helper_output_path=%s\n' "$preflight_helper_output_path"
 ```
 
 `--expected-branch-ref` may be either the short branch name from the ticket (for example `lane/assigned-branch`) or the fully qualified ref (`refs/heads/lane/assigned-branch`), but the memo should preserve exactly which form the ticket assigned.
@@ -61,6 +65,7 @@ Record:
 - signer_exclusivity_note=
 - checked_process_output=
 - checked_listener_output=
+- preflight_helper_output_path=
 - verified_worktree=
 - verified_branch_ref=
 - verified_head=
@@ -68,7 +73,7 @@ Record:
 - `git status --short` result:
 
 Rule:
-- if signer ownership is ambiguous, if either exclusivity check output is missing, if the helper fails, if `git status --short` is non-empty, or if the recorded values were inferred from the shell instead of the assigned ticket values, decision = **NO-GO**
+- if signer ownership is ambiguous, if either exclusivity check output is missing, if `preflight_helper_output_path=` is missing or unresolved, if the helper fails, if `git status --short` is non-empty, or if the recorded values were inferred from the shell instead of the assigned ticket values, decision = **NO-GO**
 
 ## 3. Artifact path resolution
 
@@ -110,7 +115,7 @@ printf 'handoff_helper_output_path=%s\n' "$handoff_helper_output_path"
 
 As with the pre-run helper, `--expected-branch-ref` may be supplied as either the short branch name from the ticket or the full ref. Preserve both forms in the memo: record `ticket_expected_branch_ref=` from the helper output as the exact ticket-assigned form, and record `expected_branch_ref=` / `git_expected_worktree_branch_ref=` as the canonicalized branch ref emitted by the helper/artifacts.
 
-Treat the helper output as a first-class artifact for memo assembly, not throwaway terminal scrollback. Preserve it (or an equivalent saved transcript) so `summary_generated_at=`, `manifest_generated_at=`, `git_expected_worktree_branch_ref=`, `git_status_summary=`, `truth_source=`, `historical_evidence_only=`, `evidence_scope=`, `summary_rollback_command=`, `summary_replay_command=`, `manifest_rollback_command=`, and `manifest_replay_command=` can all be quoted from the helper/artifacts rather than recopied from memory.
+Treat both helper outputs as first-class artifacts for memo assembly, not throwaway terminal scrollback. Preserve `preflight_helper_output_path=` for lane-binding proof before any release/evidence script runs, and preserve `handoff_helper_output_path=` (or equivalent saved transcripts) so `summary_generated_at=`, `manifest_generated_at=`, `git_expected_worktree_branch_ref=`, `git_status_summary=`, `truth_source=`, `historical_evidence_only=`, `evidence_scope=`, `summary_rollback_command=`, `summary_replay_command=`, `manifest_rollback_command=`, and `manifest_replay_command=` can all be quoted from helper/artifacts rather than recopied from memory.
 
 Record:
 - preflight_path= (stable alias used for operator lookup)
