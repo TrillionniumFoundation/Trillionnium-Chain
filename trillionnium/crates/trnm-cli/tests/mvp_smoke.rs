@@ -266,6 +266,53 @@ fn smoke_wallet_sign_rejects_bidi_control_message() {
 }
 
 #[test]
+fn smoke_wallet_sign_accepts_wrapped_absolute_env_store() {
+    let store = tmp_dir("wallet-sign-valid-wrapped-env-store");
+    let pk = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+    let import = Command::new(bin())
+        .args([
+            "wallet",
+            "import",
+            "--name",
+            "alice",
+            "--private-key-hex",
+            pk,
+            "--out",
+            store.to_string_lossy().as_ref(),
+        ])
+        .output()
+        .unwrap();
+    assert!(
+        import.status.success(),
+        "stderr: {}",
+        String::from_utf8_lossy(&import.stderr)
+    );
+
+    let wrapped_store = format!(" \u{2068}({{[{}]}})\u{2069} ", store.display());
+    let out = Command::new(bin())
+        .args([
+            "wallet",
+            "sign",
+            "--name",
+            "alice",
+            "--message",
+            "approve tx",
+        ])
+        .env("TRNM_WALLET_STORE", wrapped_store)
+        .output()
+        .unwrap();
+    assert!(
+        out.status.success(),
+        "wrapped absolute env keystore path should stay usable for offline signing, stderr: {}",
+        String::from_utf8_lossy(&out.stderr)
+    );
+    let stdout = String::from_utf8_lossy(&out.stdout);
+    assert!(stdout.contains("wallet_name=alice"), "unexpected stdout: {}", stdout);
+    assert!(stdout.contains("message_sha256="), "unexpected stdout: {}", stdout);
+    assert!(stdout.contains("signature="), "unexpected stdout: {}", stdout);
+}
+
+#[test]
 fn smoke_wallet_sign_rejects_invalid_env_store_fallback() {
     let store = tmp_dir("wallet-sign-invalid-env-store");
     let pk = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
