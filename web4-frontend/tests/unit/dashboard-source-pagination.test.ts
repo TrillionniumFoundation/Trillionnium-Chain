@@ -501,6 +501,58 @@ describe("dashboard source normalized audit pagination", () => {
     });
   });
 
+  it("falls back to a stable readonly event id when the query event id is blank", async () => {
+    const mockClient = {
+      queryTask: vi
+        .fn()
+        .mockResolvedValue({
+          task: {
+            id: "344e-id",
+            owner: "ops",
+            status: "running",
+            createdAt: "2026-03-01T00:00:00.000Z",
+            metadata: {},
+          },
+        }),
+      queryEvents: vi.fn().mockResolvedValue({
+        taskId: "344e-id",
+        events: [
+          {
+            id: "   ",
+            timestamp: "2026-03-01T00:01:00.000Z",
+            type: "deploy.completed",
+            level: "info",
+            payload: {},
+          },
+        ],
+      }),
+      queryCapabilityAudit: vi.fn().mockResolvedValue({
+        subject: "did:trnm:test",
+        audits: [
+          {
+            subject: "did:trnm:test",
+            capability: "AUDIT_READ",
+            granted: true,
+            checkedAt: "2026-03-01T00:00:00.000Z",
+          },
+        ],
+      }),
+      queryNormalizedAuditEvents: vi
+        .fn()
+        .mockResolvedValue({
+          events: [],
+          hasMore: false,
+        }),
+    } as unknown as ReturnType<typeof apiContractClient.createFrontendApiClient>;
+
+    vi.spyOn(apiContractClient, "createFrontendApiClient").mockReturnValue(mockClient);
+
+    const snapshot = await fetchDashboardSnapshot();
+    const event = snapshot.events.find((item) => item.summary === "deploy.completed");
+
+    expect(event?.id).toBe("deploy.completed:2026-03-01T00:01:00.000Z:info");
+  });
+
   it("falls back when task metadata, readonly payload, or normalized audit details are not JSON-serializable", async () => {
     const mockClient = {
       queryTask: vi

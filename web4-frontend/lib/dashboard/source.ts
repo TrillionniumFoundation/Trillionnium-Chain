@@ -203,6 +203,11 @@ const normalizeDashboardEventToken = (value: string | undefined, fallback: strin
   return normalized && normalized.length > 0 ? normalized : fallback;
 };
 
+const normalizeDashboardEventId = (value: string | undefined, fallback: string): string => {
+  const normalized = value?.trim();
+  return normalized && normalized.length > 0 ? normalized : fallback;
+};
+
 const normalizeDashboardText = (value: string | undefined, fallback: string): string => {
   const normalized = value?.trim();
   return normalized && normalized.length > 0 ? normalized : fallback;
@@ -478,7 +483,10 @@ async function fetchReadonlySnapshotFromApi(): Promise<DashboardSnapshot> {
         const normalizedType = normalizeDashboardEventToken(event.type, "unknown-event");
 
         return {
-          id: event.id,
+          id: normalizeDashboardEventId(
+            event.id,
+            [normalizedType, event.timestamp ?? "unknown-time", event.level].join(":"),
+          ),
           time: toDisplayTime(event.timestamp),
           category: mapEventCategory(normalizedType),
           summary: normalizedType,
