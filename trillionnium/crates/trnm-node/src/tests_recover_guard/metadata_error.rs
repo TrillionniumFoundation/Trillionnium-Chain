@@ -103,6 +103,9 @@ fn recover_metadata_only_error_reports_plural_retained_entries_and_height() {
     assert!(err.contains(
         "does not yet restore application StateStore snapshots or replay committed blocks"
     ));
+    assert!(err.contains(
+        "operator action: restore an application snapshot that covers the retained WAL tip before retrying join/rejoin; do not resume from metadata alone"
+    ));
 
     let _ = fs::remove_dir_all(&wal_dir);
 }
