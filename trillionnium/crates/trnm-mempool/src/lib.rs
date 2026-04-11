@@ -2974,6 +2974,44 @@ mod tests {
     }
 
     #[test]
+    fn reserve_only_reopened_shared_slot_ignores_stale_critical_seen_metadata() {
+        let mut g = LaneAdmissionGate::new(2, 2);
+
+        assert_eq!(g.admit(70, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(71, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.queued_counts(), (0, 2, 2));
+        assert_eq!(g.critical_free_slots(), 0);
+        assert!(!g.normal_can_borrow_critical_headroom());
+
+        assert_eq!(g.pop_ready(), Some(70));
+
+        // Reserve-only mode shares the critical lane across both classes, so stale
+        // duplicate metadata alone must not fabricate active backlog or hide the
+        // reopened shared slot from fresh ingress.
+        g.critical.seen.insert(999);
+
+        assert_eq!(g.critical_free_slots(), 1);
+        assert!(g.normal_can_borrow_critical_headroom());
+        assert_eq!(
+            g.qos_snapshot(),
+            LaneQosSnapshot {
+                normal_queued: 0,
+                critical_queued: 1,
+                total_queued: 1,
+                normal_headroom: 0,
+                critical_headroom: 1,
+                total_headroom: 1,
+                fresh_normal_admissible: true,
+                fresh_critical_admissible: true,
+            }
+        );
+
+        assert_eq!(g.admit(72, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.queued_counts(), (0, 2, 2));
+        assert_eq!(g.seen_global.len(), 2);
+    }
+
+    #[test]
     fn reserve_guarded_normal_retry_burst_keeps_queue_counts_flat_until_critical_slot_reopens() {
         let mut g = LaneAdmissionGate::new(5, 2);
 
