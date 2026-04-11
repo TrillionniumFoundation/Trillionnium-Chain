@@ -329,6 +329,7 @@ template_selection=placeholder-scaffold-only
 durable_template_allowed=false
 durable_template_rejection_reason=scaffold-capture-is-placeholder-only-and-missing-durable-read-anchors
 deployment_template_boundary=use-scaffold-template-until-non-placeholder-deployment-and-all-6-durable-read-anchors-exist
+truth_source_scaffold_handoff_template=${TRUTH_SOURCE_TEMPLATE_PATH}
 truth_source_scaffold_runbook=${TRUTH_SOURCE_SCAFFOLD_RUNBOOK}
 truth_source_durable_handoff_template=${TRUTH_SOURCE_DURABLE_TEMPLATE_PATH}
 truth_source_release_readiness=${TRUTH_SOURCE_RELEASE_READINESS}

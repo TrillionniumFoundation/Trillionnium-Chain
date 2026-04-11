@@ -245,6 +245,7 @@ assert_contains "${CAPTURE_DIR}/summary.txt" "template_selection=placeholder-sca
 assert_contains "${CAPTURE_DIR}/summary.txt" "durable_template_allowed=false"
 assert_contains "${CAPTURE_DIR}/summary.txt" "durable_template_rejection_reason=scaffold-capture-is-placeholder-only-and-missing-durable-read-anchors"
 assert_contains "${CAPTURE_DIR}/summary.txt" "deployment_template_boundary=use-scaffold-template-until-non-placeholder-deployment-and-all-6-durable-read-anchors-exist"
+assert_contains "${CAPTURE_DIR}/summary.txt" "truth_source_scaffold_handoff_template=trillionnium/docs/release/TRNM_EXPLORER_SCAFFOLD_HANDOFF_TEMPLATE_2026-04-04.md"
 assert_contains "${CAPTURE_DIR}/summary.txt" "truth_source_scaffold_runbook=trillionnium/docs/runbooks/explorer-service-scaffold.md"
 assert_contains "${CAPTURE_DIR}/summary.txt" "truth_source_durable_handoff_template=trillionnium/docs/release/TRNM_DURABLE_READ_SERVICE_HANDOFF_TEMPLATE_2026-04-04.md"
 assert_contains "${CAPTURE_DIR}/summary.txt" "truth_source_release_readiness=RELEASE_READINESS.md"
