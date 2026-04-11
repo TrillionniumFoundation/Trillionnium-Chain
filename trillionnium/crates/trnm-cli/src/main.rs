@@ -984,7 +984,25 @@ fn wallet_store_path_is_safe(path: &Path) -> bool {
         && rendered.chars().all(|c| {
             !c.is_whitespace()
                 && !contains_hidden_or_control(c)
-                && !matches!(c, '\\' | '∖' | '／' | '＼' | '﹨' | '∕' | '⁄' | '⧵' | '⧸' | '⟋' | '⟍')
+                && !matches!(
+                    c,
+                    '\\'
+                        | '∖'
+                        | '／'
+                        | '＼'
+                        | '﹨'
+                        | '∕'
+                        | '⁄'
+                        | '⧵'
+                        | '⧸'
+                        | '⟋'
+                        | '⟍'
+                        | '．'
+                        | '。'
+                        | '｡'
+                        | '﹒'
+                        | '․'
+                )
         })
         && !path
             .components()
@@ -3300,6 +3318,8 @@ mod tests {
             "《/》",
             " //tmp/trnm-wallets ",
             "/tmp/trnm-wallets/",
+            "/tmp/trnm-wallets/․/keys",
+            "/tmp/trnm-wallets/﹒/keys",
         ] {
             std::env::set_var("TRNM_WALLET_STORE", invalid_env);
             let err = resolve_wallet_store(None).unwrap_err();
@@ -3349,6 +3369,8 @@ mod tests {
             PathBuf::from("/tmp/《trnm-wallets》"),
             PathBuf::from("/tmp/｟trnm-wallets｠"),
             PathBuf::from("/tmp/trnm-wallets/"),
+            PathBuf::from("/tmp/trnm-wallets/․/keys"),
+            PathBuf::from("/tmp/trnm-wallets/﹒/keys"),
         ] {
             let err = resolve_wallet_store(Some(invalid_explicit.clone())).unwrap_err();
             assert!(
@@ -3550,6 +3572,19 @@ mod tests {
                 .to_string()
                 .contains("must be an absolute normalized path"),
             "unexpected error: {hidden_read_err}"
+        );
+
+        let dot_confusable_write_err = write_key(
+            std::path::Path::new("/tmp/trnm-wallets/․/keys"),
+            "alice",
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        )
+        .unwrap_err();
+        assert!(
+            dot_confusable_write_err
+                .to_string()
+                .contains("must be an absolute normalized path"),
+            "unexpected error: {dot_confusable_write_err}"
         );
 
         let backslash_write_err = write_key(
