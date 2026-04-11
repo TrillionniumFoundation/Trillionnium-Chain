@@ -164,6 +164,7 @@ assert_contains "${TMP_DIR}/capture.out" "handoff_capture_output_dir=${CAPTURE_D
 assert_contains "${TMP_DIR}/capture.out" "handoff_capture_status_path=${CAPTURE_DIR}/status.txt"
 assert_contains "${TMP_DIR}/capture.out" "handoff_capture_index_path=${CAPTURE_DIR}/index.json"
 assert_contains "${TMP_DIR}/capture.out" "handoff_capture_summary_path=${CAPTURE_DIR}/summary.txt"
+assert_contains "${TMP_DIR}/capture.out" "handoff_capture_env_snapshot_path=${CAPTURE_DIR}/env.snapshot"
 assert_contains "${TMP_DIR}/capture.out" "handoff_capture_template_path=trillionnium/docs/release/TRNM_EXPLORER_SCAFFOLD_HANDOFF_TEMPLATE_2026-04-04.md"
 assert_contains "${TMP_DIR}/capture.out" "handoff_capture_durable_template_path=trillionnium/docs/release/TRNM_DURABLE_READ_SERVICE_HANDOFF_TEMPLATE_2026-04-04.md"
 assert_contains "${TMP_DIR}/capture.out" "handoff_capture_template_selection=placeholder-scaffold-only"
@@ -184,6 +185,7 @@ assert_json_contains "${CAPTURE_DIR}/index.json" '"deployment_evidence_scope":"p
 assert_json_contains "${CAPTURE_DIR}/index.json" '"durable_indexer_status":"not-implemented-in-this-scaffold"'
 assert_contains "${CAPTURE_DIR}/summary.txt" "service_mode=operator-facing-static-scaffold"
 assert_contains "${CAPTURE_DIR}/summary.txt" "production_ready=false"
+assert_contains "${CAPTURE_DIR}/summary.txt" "env_snapshot_path=${CAPTURE_DIR}/env.snapshot"
 assert_contains "${CAPTURE_DIR}/summary.txt" "public_base_url=${PUBLIC_BASE_URL}"
 assert_contains "${CAPTURE_DIR}/summary.txt" "health_url=${HEALTH_URL}"
 assert_contains "${CAPTURE_DIR}/summary.txt" "local_health_url=${HEALTH_URL}"
@@ -267,6 +269,11 @@ assert_contains "${CAPTURE_DIR}/summary.txt" "durable_read_anchor_replay_start_a
 assert_contains "${CAPTURE_DIR}/summary.txt" "durable_read_anchor_retention_scope=rpc-window-bounded"
 assert_contains "${CAPTURE_DIR}/summary.txt" "durable_read_anchor_archive_owner=missing-placeholder-scaffold"
 assert_contains "${CAPTURE_DIR}/summary.txt" "durable_read_anchor_lag_slo=missing-placeholder-scaffold"
+assert_contains "${CAPTURE_DIR}/env.snapshot" "EXPLORER_HOST=127.0.0.1"
+assert_contains "${CAPTURE_DIR}/env.snapshot" "EXPLORER_PORT=${PORT}"
+assert_contains "${CAPTURE_DIR}/env.snapshot" "EXPLORER_PUBLIC_BASE_URL=${PUBLIC_BASE_URL}"
+assert_contains "${CAPTURE_DIR}/env.snapshot" "EXPLORER_HEALTH_URL=${HEALTH_URL}"
+assert_contains "${CAPTURE_DIR}/env.snapshot" "EXPLORER_RPC_BASE_URL=${RPC_BASE_URL}"
 
 python3 - <<'PY' "${RUN_ROOT}/public/index.json"
 import json

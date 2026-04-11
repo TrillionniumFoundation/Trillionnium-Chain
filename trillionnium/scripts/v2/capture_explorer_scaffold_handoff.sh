@@ -83,6 +83,7 @@ mkdir -p "${OUTPUT_DIR}"
 STATUS_OUT="${OUTPUT_DIR}/status.txt"
 INDEX_OUT="${OUTPUT_DIR}/index.json"
 SUMMARY_OUT="${OUTPUT_DIR}/summary.txt"
+ENV_SNAPSHOT_OUT="${OUTPUT_DIR}/env.snapshot"
 
 "${STATUS_SCRIPT}" | tee "${STATUS_OUT}"
 
@@ -218,6 +219,8 @@ else
   INDEX_FETCH_COMMAND="cp ${INDEX_FILE} ${INDEX_OUT}"
 fi
 
+cp "${ENV_FILE_PATH}" "${ENV_SNAPSHOT_OUT}"
+
 assert_index_json_fragment() {
   local expected="$1"
   if ! grep -Fq "${expected}" "${INDEX_OUT}"; then
@@ -258,6 +261,7 @@ bind_port=${BIND_PORT}
 pid_file=${PID_FILE_PATH}
 log_file=${LOG_FILE_PATH}
 env_file=${ENV_FILE_PATH}
+env_snapshot_path=${ENV_SNAPSHOT_OUT}
 public_dir=${PUBLIC_DIR_PATH}
 health_file=${HEALTH_FILE_PATH}
 index_file=${INDEX_FILE_PATH}
@@ -356,6 +360,7 @@ echo "handoff_capture_output_dir=${OUTPUT_DIR}"
 echo "handoff_capture_status_path=${STATUS_OUT}"
 echo "handoff_capture_index_path=${INDEX_OUT}"
 echo "handoff_capture_summary_path=${SUMMARY_OUT}"
+echo "handoff_capture_env_snapshot_path=${ENV_SNAPSHOT_OUT}"
 echo "handoff_capture_template_path=${TEMPLATE_PATH}"
 echo "handoff_capture_durable_template_path=${DURABLE_TEMPLATE_PATH}"
 echo "handoff_capture_template_selection=placeholder-scaffold-only"
