@@ -45,11 +45,11 @@
 | `ceremony_scope` | `operator-handoff` | keep |
 | `ceremony_id` | `genesis-operator-handoff-draft-20260404-0100Z` | 可保留，或在正式发出前改成最终 ticket id |
 | `packet_generated_at` | `2026-04-04T01:00:16Z` | 若重发 packet，应重新生成 |
-| `packet_distribution_path` | candidate tar path | 确认最终共享的 **ceremony packet 文件绝对路径**，不能只写 artifact folder / ticket / 目录根 |
+| `packet_distribution_path` | `<absolute-path-to-ceremony-packet>` | 确认最终共享的 **ceremony packet 文件绝对路径**，不能只写 artifact folder / ticket / 目录根 |
 | `validator_set_version` | `operator-handoff-b74758fac` | 确认是否保留，或替换成更正式版本标签 |
-| `startup_order_note` | 当前是 draft note | 需要改成真实 4-node controlled bootstrap 顺序 |
+| `startup_order_note` | `<controlled-4-node-bootstrap-order>` | 需要改成真实 4-node controlled bootstrap 顺序 |
 | `rollback_owner` | `primary-operator` | 需要确认真实责任人 / 值班 owner |
-| `genesis_artifact_path` | candidate tar path | keep unless artifact path changes, but final handoff must still point to one exact artifact file/bundle absolute path |
+| `genesis_artifact_path` | `<absolute-path-to-genesis-artifact>` | keep unless artifact path changes, but final handoff must still point to one exact artifact file/bundle absolute path |
 | `genesis_artifact_sha256` | `0cf37d6ae68baa3ac1af1db89c3b225cf669f072aa3f531681448dbcf995108f` | keep unless artifact changes |
 
 ### 建议最终填写区
