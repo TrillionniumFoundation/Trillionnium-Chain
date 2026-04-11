@@ -258,6 +258,25 @@ assert_equal truth_source "$summary_truth_source" "$manifest_truth_source"
 assert_equal historical_evidence_only "$summary_historical_evidence_only" "$manifest_historical_evidence_only"
 assert_equal evidence_scope "$summary_evidence_scope" "$manifest_evidence_scope"
 
+if [ -n "$PREFLIGHT_SUMMARY_PATH" ]; then
+  if [ -n "$PREFLIGHT_GIT_WORKTREE_PATH" ] && [ "$PREFLIGHT_GIT_WORKTREE_PATH" != "$summary_worktree_path" ]; then
+    printf 'artifact mismatch for preflight git_worktree_path: preflight=%s summary=%s\n' "$PREFLIGHT_GIT_WORKTREE_PATH" "$summary_worktree_path" >&2
+    exit 1
+  fi
+  if [ -n "$PREFLIGHT_GIT_WORKTREE_BRANCH_REF" ] && [ "$PREFLIGHT_GIT_WORKTREE_BRANCH_REF" != "$summary_worktree_branch_ref" ]; then
+    printf 'artifact mismatch for preflight git_worktree_branch_ref: preflight=%s summary=%s\n' "$PREFLIGHT_GIT_WORKTREE_BRANCH_REF" "$summary_worktree_branch_ref" >&2
+    exit 1
+  fi
+  if [ -n "$PREFLIGHT_GIT_WORKTREE_BRANCH_REF_MATCH" ] && [ "$PREFLIGHT_GIT_WORKTREE_BRANCH_REF_MATCH" != "true" ]; then
+    printf 'artifact mismatch for preflight git_worktree_branch_ref_match: expected true got %s\n' "$PREFLIGHT_GIT_WORKTREE_BRANCH_REF_MATCH" >&2
+    exit 1
+  fi
+  if [ -n "$PREFLIGHT_GIT_STATUS_SUMMARY" ] && [ "$PREFLIGHT_GIT_STATUS_SUMMARY" != "clean" ]; then
+    printf 'artifact mismatch for preflight git_status_summary: expected clean got %s\n' "$PREFLIGHT_GIT_STATUS_SUMMARY" >&2
+    exit 1
+  fi
+fi
+
 if [ -n "$EXPECTED_WORKTREE_ROOT" ]; then
   [ "$summary_worktree_path" = "$EXPECTED_WORKTREE_ROOT" ] || {
     printf 'artifact mismatch for expected worktree root: expected=%s summary=%s\n' "$EXPECTED_WORKTREE_ROOT" "$summary_worktree_path" >&2

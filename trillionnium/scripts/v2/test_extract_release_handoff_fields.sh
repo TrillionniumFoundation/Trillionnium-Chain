@@ -91,6 +91,37 @@ grep -q '^preflight_git_worktree_branch_ref_match=true$' "$TMPDIR/out-short.txt"
 grep -q '^preflight_rollback_command=git checkout -- run/preflight/go-no-go-latest.txt$' "$TMPDIR/out-short.txt"
 grep -q '^preflight_replay_command=./scripts/testnet_preflight.sh$' "$TMPDIR/out-short.txt"
 
+cat >"$PREFLIGHT_PATH" <<EOF
+result=PASS
+generated_at=2026-04-11T01:02:00Z
+git_status_summary=clean
+git_worktree_path=$WORKTREE_ROOT
+git_worktree_branch_ref=refs/heads/lane/not-this-lane
+git_worktree_branch_ref_match=true
+rollback_command=git checkout -- run/preflight/go-no-go-latest.txt
+replay_command=./scripts/testnet_preflight.sh
+EOF
+if bash "$SCRIPT" \
+  --summary-path "$SUMMARY_PATH" \
+  --manifest-path "$MANIFEST_PATH" \
+  --expected-worktree-root "$WORKTREE_ROOT" \
+  --expected-branch-ref "$BRANCH_SHORT" >"$TMPDIR/out-mismatch.txt" 2>"$TMPDIR/err-mismatch.txt"; then
+  echo "expected preflight branch mismatch to fail" >&2
+  exit 1
+fi
+grep -q '^artifact mismatch for preflight git_worktree_branch_ref:' "$TMPDIR/err-mismatch.txt"
+
+cat >"$PREFLIGHT_PATH" <<EOF
+result=PASS
+generated_at=2026-04-11T01:01:00Z
+git_status_summary=clean
+git_worktree_path=$WORKTREE_ROOT
+git_worktree_branch_ref=$BRANCH_REF
+git_worktree_branch_ref_match=true
+rollback_command=git checkout -- run/preflight/go-no-go-latest.txt
+replay_command=./scripts/testnet_preflight.sh
+EOF
+
 bash "$SCRIPT" \
   --summary-path "$SUMMARY_PATH" \
   --manifest-path "$MANIFEST_PATH" \
