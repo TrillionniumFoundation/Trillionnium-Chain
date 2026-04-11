@@ -5609,6 +5609,16 @@ mod tests {
     }
 
     #[test]
+    fn parse_query_normalized_audit_events_query_from_path_rejects_exact_trailing_slash() {
+        let err = parse_query_normalized_audit_events_query_from_path(
+            "/query-normalized-audit-events/?source=trnm.task",
+        )
+        .expect_err("exact trailing slash must fail closed for frozen Day-1 path");
+        assert!(err.contains("400 Bad Request"));
+        assert!(err.contains("invalid query"));
+    }
+
+    #[test]
     fn parse_query_normalized_audit_events_query_from_path_rejects_percent_encoded_null_and_del_controls(
     ) {
         for path in [
