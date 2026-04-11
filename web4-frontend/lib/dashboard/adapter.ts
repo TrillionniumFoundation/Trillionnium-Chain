@@ -2,12 +2,14 @@ import { z } from "zod";
 
 const optionalDetailField = z.string().min(1).catch("");
 
-const kpiSchema = z.object({
-  label: z.string().min(1),
-  value: z.string().min(1),
-  delta: z.string().min(1),
-  health: z.enum(["healthy", "degraded", "risk"]),
-});
+const kpiSchema = z
+  .object({
+    label: z.string().min(1),
+    value: z.string().min(1),
+    delta: z.string().min(1),
+    health: z.enum(["healthy", "degraded", "risk"]),
+  })
+  .strict();
 
 const taskSchema = z
   .object({
@@ -19,6 +21,7 @@ const taskSchema = z
     updatedAt: z.string().min(1),
     description: optionalDetailField,
   })
+  .strict()
   .or(
     z
       .object({
@@ -30,6 +33,7 @@ const taskSchema = z
         updated_at: z.string().min(1),
         description: optionalDetailField,
       })
+      .strict()
       .transform(({ updated_at, ...rest }) => ({ ...rest, updatedAt: updated_at }))
   );
 
@@ -42,6 +46,7 @@ const eventSchema = z
     severity: z.enum(["Info", "Warning", "Critical"]),
     details: optionalDetailField,
   })
+  .strict()
   .or(
     z
       .object({
@@ -52,6 +57,7 @@ const eventSchema = z
         severity: z.enum(["Info", "Warning", "Critical"]),
         details: optionalDetailField,
       })
+      .strict()
       .transform(({ event_time, ...rest }) => ({ ...rest, time: event_time }))
   );
 
@@ -64,6 +70,7 @@ const auditSchema = z
     reviewedAt: z.string().min(1),
     notes: optionalDetailField,
   })
+  .strict()
   .or(
     z
       .object({
@@ -74,15 +81,18 @@ const auditSchema = z
         reviewed_at: z.string().min(1),
         notes: optionalDetailField,
       })
+      .strict()
       .transform(({ reviewed_at, ...rest }) => ({ ...rest, reviewedAt: reviewed_at }))
   );
 
-const dashboardSnapshotSchema = z.object({
-  kpis: z.array(kpiSchema),
-  tasks: z.array(taskSchema),
-  events: z.array(eventSchema),
-  audits: z.array(auditSchema),
-});
+const dashboardSnapshotSchema = z
+  .object({
+    kpis: z.array(kpiSchema),
+    tasks: z.array(taskSchema),
+    events: z.array(eventSchema),
+    audits: z.array(auditSchema),
+  })
+  .strict();
 
 export type DashboardSnapshot = z.infer<typeof dashboardSnapshotSchema>;
 

@@ -123,6 +123,29 @@ describe("adaptDashboardSnapshot", () => {
     expect(result.audits[0].notes).toBe("");
   });
 
+  it("fails closed when dashboard entries contain unknown fields", () => {
+    expect(() =>
+      adaptDashboardSnapshot({
+        kpis: [{ label: "K1", value: "1", delta: "+0", health: "healthy", extra: true }],
+        tasks: [],
+        events: [],
+        audits: [],
+      }),
+    ).toThrow(DashboardAdapterError);
+  });
+
+  it("fails closed when the snapshot envelope contains unknown fields", () => {
+    expect(() =>
+      adaptDashboardSnapshot({
+        kpis: [{ label: "K1", value: "1", delta: "+0", health: "healthy" }],
+        tasks: [],
+        events: [],
+        audits: [],
+        extra: true,
+      }),
+    ).toThrow(DashboardAdapterError);
+  });
+
   it("throws on invalid payload", () => {
     expect(() => adaptDashboardSnapshot({ tasks: [] })).toThrow(DashboardAdapterError);
   });
