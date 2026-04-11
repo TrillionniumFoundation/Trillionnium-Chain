@@ -172,6 +172,10 @@ operator_ack_signature_path=
 dr_summary_path=
 ```
 
+字段约束：
+- `operator_ack_signature_path`：必须指向本次窗口专属、不可变的签字/回执文件；若只有口头确认或聊天截图，视为未完成 ack 绑定。
+- `dr_summary_path`：必须指向同一窗口目录下的 DR 摘要（包含触发条件、执行者、观察者、产物索引）；若路径跨窗口复用，视为证据失效。
+
 若是多节点滚动升级，按节点单列：
 
 ```text
@@ -206,6 +210,10 @@ dr_rollback_command=
 - `rollback_trigger`：为什么回滚，例如 `apply_error`、height stall、config drift、binary mismatch；
 - `dr_replay_command`：如何在接手环境里重放这次 DR / handoff 证据采集；
 - `dr_rollback_command`：如何在接手环境里执行同一条 fail-closed 回滚入口。
+
+命令约束：
+- `dr_replay_command` 应显式包含本次窗口的 `worktree_root` 或 `workspace_root`，避免在错误 worktree 上重放。
+- `dr_rollback_command` 应显式落到当前 `previous_stable_anchor` 或 `rollback_entrypoint`，不能只写模糊的人肉说明。
 
 推荐把触发原因限定成简洁标签，避免事后口径发散：
 
