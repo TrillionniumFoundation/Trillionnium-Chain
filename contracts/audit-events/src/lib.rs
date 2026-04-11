@@ -24,6 +24,42 @@ impl AuditEvent {
             note: None,
         }
     }
+
+    #[must_use]
+    pub fn with_actor(mut self, actor: impl Into<String>) -> Self {
+        self.actor = Some(actor.into());
+        self
+    }
+
+    #[must_use]
+    pub fn with_object_id(mut self, object_id: impl Into<String>) -> Self {
+        self.object_id = Some(object_id.into());
+        self
+    }
+
+    #[must_use]
+    pub fn with_related_id(mut self, related_id: impl Into<String>) -> Self {
+        self.related_id = Some(related_id.into());
+        self
+    }
+
+    #[must_use]
+    pub fn with_amount(mut self, amount: u128) -> Self {
+        self.amount = Some(amount);
+        self
+    }
+
+    #[must_use]
+    pub fn with_reason(mut self, reason: impl Into<String>) -> Self {
+        self.reason = Some(reason.into());
+        self
+    }
+
+    #[must_use]
+    pub fn with_note(mut self, note: impl Into<String>) -> Self {
+        self.note = Some(note.into());
+        self
+    }
 }
 
 #[cfg(test)]
@@ -48,5 +84,23 @@ mod tests {
         assert_eq!(event.amount, None);
         assert_eq!(event.reason, None);
         assert_eq!(event.note, None);
+    }
+
+    #[test]
+    fn builder_setters_fill_normalized_fields() {
+        let event = AuditEvent::new("settlement-vault", "vault.locked")
+            .with_actor("operator")
+            .with_object_id("req-7")
+            .with_related_id("alice")
+            .with_amount(42)
+            .with_reason("manual_review")
+            .with_note("eta=123");
+
+        assert_eq!(event.actor.as_deref(), Some("operator"));
+        assert_eq!(event.object_id.as_deref(), Some("req-7"));
+        assert_eq!(event.related_id.as_deref(), Some("alice"));
+        assert_eq!(event.amount, Some(42));
+        assert_eq!(event.reason.as_deref(), Some("manual_review"));
+        assert_eq!(event.note.as_deref(), Some("eta=123"));
     }
 }
