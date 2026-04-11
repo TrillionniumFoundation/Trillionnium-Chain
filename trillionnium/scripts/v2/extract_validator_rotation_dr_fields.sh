@@ -56,6 +56,27 @@ require_worktree_root_value() {
   esac
 }
 
+require_atom_value() {
+  local flag_name="$1"
+  local value="$2"
+
+  require_nonempty_value "$flag_name" "$value"
+
+  case "$value" in
+    [[:space:]]*|*[[:space:]])
+      printf 'invalid %s: must not start or end with whitespace: %q\n' "$flag_name" "$value" >&2
+      exit 2
+      ;;
+  esac
+
+  case "$value" in
+    *[$'\001'-$'\037']*|*$'\177'*)
+      printf 'invalid %s: must not contain control characters\n' "$flag_name" >&2
+      exit 2
+      ;;
+  esac
+}
+
 require_ref_token() {
   local flag_name="$1"
   local value="$2"
@@ -188,6 +209,17 @@ GIT_STATUS_SUMMARY="$(require_key "$REPORT_PATH" git_status_summary)"
 ROLLBACK_COMMAND="$(require_key "$REPORT_PATH" rollback_command)"
 REPLAY_COMMAND="$(require_key "$REPORT_PATH" replay_command)"
 STATUS="$(require_key "$REPORT_PATH" status)"
+
+require_atom_value generated_at "$GENERATED_AT"
+require_worktree_root_value config_path "$CONFIG_PATH"
+require_worktree_root_value git_worktree_path "$GIT_WORKTREE_PATH"
+require_ref_token git_worktree_branch_ref "$GIT_WORKTREE_BRANCH_REF"
+require_ref_token git_branch "$GIT_BRANCH"
+require_ref_token git_head "$GIT_HEAD"
+require_atom_value git_status_summary "$GIT_STATUS_SUMMARY"
+require_nonempty_value rollback_command "$ROLLBACK_COMMAND"
+require_nonempty_value replay_command "$REPLAY_COMMAND"
+require_atom_value status "$STATUS"
 
 GIT_WORKTREE_PATH_CANONICAL="$(canonicalize_path "$GIT_WORKTREE_PATH")" || {
   printf 'report git_worktree_path is not accessible: %s\n' "$GIT_WORKTREE_PATH" >&2
