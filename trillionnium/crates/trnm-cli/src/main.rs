@@ -978,6 +978,7 @@ fn wallet_store_path_is_safe(path: &Path) -> bool {
     path.is_absolute()
         && path.parent().is_some()
         && !rendered.contains("//")
+        && !rendered.ends_with(std::path::MAIN_SEPARATOR)
         && !path_text_has_dot_segments(path)
         && rendered.chars().all(|c| {
             !c.is_whitespace()
@@ -3163,6 +3164,9 @@ mod tests {
         };
         assert_eq!(default_wallet_store(), expected_trimmed_absolute);
 
+        std::env::set_var("TRNM_WALLET_STORE", "/tmp/trnm-wallets/");
+        assert_eq!(default_wallet_store(), home.join(".trnm").join("wallets"));
+
         match original_store {
             Some(value) => std::env::set_var("TRNM_WALLET_STORE", value),
             None => std::env::remove_var("TRNM_WALLET_STORE"),
@@ -3258,6 +3262,7 @@ mod tests {
             "'/'",
             "《/》",
             " //tmp/trnm-wallets ",
+            "/tmp/trnm-wallets/",
         ] {
             std::env::set_var("TRNM_WALLET_STORE", invalid_env);
             let err = resolve_wallet_store(None).unwrap_err();
@@ -3306,6 +3311,7 @@ mod tests {
             PathBuf::from("/tmp/trnm\u{200b}wallets"),
             PathBuf::from("/tmp/《trnm-wallets》"),
             PathBuf::from("/tmp/｟trnm-wallets｠"),
+            PathBuf::from("/tmp/trnm-wallets/"),
         ] {
             let err = resolve_wallet_store(Some(invalid_explicit.clone())).unwrap_err();
             assert!(
