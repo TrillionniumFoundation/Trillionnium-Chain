@@ -114,6 +114,24 @@ fn tx_query_parse_rejects_invalid_tx_hash_if_field_is_present() {
         "unexpected: {err_json}"
     );
 
+    let null_json = "{\"tx_hash\":null,\"status\":\"committed\"}";
+    let err_null_json = parse_tx_query_response(null_json, "0xabc").unwrap_err();
+    assert!(
+        err_null_json
+            .to_string()
+            .contains("invalid tx_hash field in tx query response"),
+        "unexpected: {err_null_json}"
+    );
+
+    let numeric_json = "{\"tx_hash\":12345,\"status\":\"committed\"}";
+    let err_numeric_json = parse_tx_query_response(numeric_json, "0xabc").unwrap_err();
+    assert!(
+        err_numeric_json
+            .to_string()
+            .contains("invalid tx_hash field in tx query response"),
+        "unexpected: {err_numeric_json}"
+    );
+
     let bad_kv = "tx_hash=not-a-hash\nstatus=committed\n";
     let err_kv = parse_tx_query_response(bad_kv, "0xabc").unwrap_err();
     assert!(

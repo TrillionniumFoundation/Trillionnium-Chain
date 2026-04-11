@@ -768,11 +768,14 @@ pub(crate) fn parse_tx_query_response(
                     "transactionHash",
                 ],
             )
-        })
-        .and_then(|x| x.as_str());
+        });
         let tx_hash = match raw_tx_hash {
-            Some(raw_hash) => normalize_tx_hash(raw_hash)
-                .ok_or_else(|| anyhow!("invalid tx_hash field in tx query response"))?,
+            Some(raw_hash) => normalize_tx_hash(
+                raw_hash
+                    .as_str()
+                    .ok_or_else(|| anyhow!("invalid tx_hash field in tx query response"))?,
+            )
+            .ok_or_else(|| anyhow!("invalid tx_hash field in tx query response"))?,
             None => normalize_tx_hash(requested_tx_hash)
                 .unwrap_or_else(|| requested_tx_hash.to_string()),
         };
