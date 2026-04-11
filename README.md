@@ -3,7 +3,7 @@
 **TRNM** is a Rust-native Layer 1 focused on **Decentralized AI Compute** (PoUW).
 
 - Active mainline: `trillionnium/`
-- Historical archive: `legacy/`
+- Historical status/archive docs live under `docs/archive/`
 
 ---
 
@@ -40,13 +40,12 @@ TrillionniumChain/
 │   └── run/
 ├── web4-frontend/                  # Web4 frontend (Next.js + Vitest + Playwright)
 ├── scripts/                        # Repo-level CI/automation scripts
-├── docs/                           # Architecture, protocol, runbooks, and reports
+├── docs/                           # Architecture, protocol, runbooks, reports, and historical archive docs
 ├── contracts/                      # Rust-native external contracts subtree (4-crate MVP, not full runtime-spec/sdk closure)
 ├── config/                         # Policy and alerting config
-├── data/                           # Acceptance data and experiment artifacts
-├── run/                            # Runtime logs and gate outputs
 ├── examples/                       # SDK and demo examples
-└── legacy/                         # Historical frozen branches / archival code
+├── OPERATIONS.md                   # Operator-facing handbook
+└── RELEASE_READINESS.md            # Current release truth source
 ```
 
 ---
@@ -192,7 +191,7 @@ Please run the local minimum gates before creating PRs to reduce CI turnarounds.
 ## 8) Current State Notes (Operational Boundaries)
 
 - Main development entry is `trillionnium/`.
-- `legacy/` is for archival history only.
+- Historical/archive material in this repo currently lives under `docs/archive/`; do not assume a top-level `legacy/` directory exists in every snapshot.
 - Whether the project is currently **release-ready** is defined by [RELEASE_READINESS.md](RELEASE_READINESS.md); historical evidence documents are not automatically equivalent to live state.
 - `contracts/` is an **independent Rust-native external-contract subtree / MVP contract scaffolding**. Today it contains 4 landed crates: `settlement-vault/`, `bridge-relay/`, `governance-guard/`, and `audit-events/`.
 - `contracts/` is **not yet** the full `sdk / runtime-spec / integration-tests` target layout, and its current crates should not be described as completed Host ABI/runtime integration.
