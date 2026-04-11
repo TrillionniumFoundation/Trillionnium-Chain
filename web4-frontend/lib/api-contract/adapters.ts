@@ -136,6 +136,10 @@ function normalizeOptionalCursor(cursor: string | undefined): string | undefined
   return normalized.length > 0 ? normalized : undefined;
 }
 
+function normalizeOptionalTaskId(taskId: string | undefined): string | undefined {
+  return normalizeOptionalCursor(taskId);
+}
+
 const rpcCapabilityAuditSchema = z.object({
   token: z.object({
     subject_did: z.string().min(1),
@@ -253,11 +257,7 @@ export const adaptQueryEvents = (
 
   const events = rpc.data;
   const normalizedTaskId =
-    events[0] != null
-      ? String(events[0].task_id)
-      : requestedTaskId && requestedTaskId.trim().length > 0
-        ? requestedTaskId
-        : "";
+    events[0] != null ? String(events[0].task_id) : normalizeOptionalTaskId(requestedTaskId) ?? "";
 
   if (!normalizedTaskId) {
     throw normalizeSchemaError({

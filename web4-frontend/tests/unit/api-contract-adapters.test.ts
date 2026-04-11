@@ -977,6 +977,17 @@ describe("api-contract adapters", () => {
     expect(() => adaptQueryEvents({ bad: true }, "1")).toThrow(FrontendApiError);
   });
 
+  it("normalizes requested task id context for empty rpc query-events payloads", () => {
+    const out = adaptQueryEvents([], " \uFEFF7\u200B ");
+
+    expect(out.taskId).toBe("7");
+    expect(out.events).toEqual([]);
+  });
+
+  it("fails closed when empty rpc query-events payload has blank requested task id context", () => {
+    expect(() => adaptQueryEvents([], " \uFEFF\u200B ")).toThrow(FrontendApiError);
+  });
+
   it("fails closed when rpc events contain mixed task ids", () => {
     expect(() =>
       adaptQueryEvents(
