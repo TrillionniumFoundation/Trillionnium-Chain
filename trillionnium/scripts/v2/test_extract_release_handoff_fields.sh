@@ -131,6 +131,16 @@ if bash "$SCRIPT" \
 fi
 grep -q '^artifact mismatch for preflight git_worktree_branch_ref:' "$TMPDIR/err-mismatch.txt"
 
+if bash "$SCRIPT" \
+  --summary-path "$SUMMARY_PATH" \
+  --manifest-path "$SUMMARY_PATH" \
+  --expected-worktree-root "$WORKTREE_ROOT" \
+  --expected-branch-ref "$BRANCH_SHORT" >"$TMPDIR/out-same-artifact.txt" 2>"$TMPDIR/err-same-artifact.txt"; then
+  echo "expected identical summary/manifest path to fail" >&2
+  exit 1
+fi
+grep -q "^summary and manifest paths must be distinct artifacts: $SUMMARY_PATH$" "$TMPDIR/err-same-artifact.txt"
+
 cat >"$PREFLIGHT_PATH" <<EOF
 result=PASS
 generated_at=2026-04-11T01:01:00Z
