@@ -5707,6 +5707,22 @@ mod tests {
     }
 
     #[test]
+    fn parse_query_normalized_audit_events_query_from_path_rejects_percent_encoded_query_delimiters(
+    ) {
+        for path in [
+            "/query-normalized-audit-events?source=trnm.task%26limit=2",
+            "/query-normalized-audit-events?eventType%3Dtrnm.task.commit",
+            "/query-normalized-audit-events?cursor=1%3Flimit=2",
+            "/query-normalized-audit-events?limit=3%23tail",
+        ] {
+            let err = parse_query_normalized_audit_events_query_from_path(path)
+                .expect_err("encoded query delimiters must fail closed");
+            assert!(err.contains("400 Bad Request"), "path={path} err={err}");
+            assert!(err.contains("invalid query"), "path={path} err={err}");
+        }
+    }
+
+    #[test]
     fn query_normalized_audit_events_supports_pagination_and_event_filters() {
         let events = vec![
             NodeEventRecord {
