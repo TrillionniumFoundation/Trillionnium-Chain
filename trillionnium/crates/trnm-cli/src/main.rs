@@ -203,10 +203,19 @@ fn parse_balance_query_response(
                 continue;
             };
 
+            let nested_balance = candidate
+                .get("balance")
+                .filter(|value| value.is_object())
+                .or_else(|| candidate.get("amount").filter(|value| value.is_object()));
             let Some(balance) = candidate
                 .get("balance")
                 .and_then(json_scalar_string)
                 .or_else(|| candidate.get("amount").and_then(json_scalar_string))
+                .or_else(|| {
+                    nested_balance
+                        .and_then(|value| value.get("amount"))
+                        .and_then(json_scalar_string)
+                })
             else {
                 continue;
             };
@@ -216,10 +225,16 @@ fn parse_balance_query_response(
                 .and_then(json_scalar_string)
                 .filter(|value| !value.is_empty())
                 .unwrap_or_else(|| requested_address.to_string());
-            let denom = candidate
-                .get("denom")
+            let denom = nested_balance
+                .and_then(|value| value.get("denom"))
                 .and_then(json_scalar_string)
                 .filter(|value| !value.is_empty())
+                .or_else(|| {
+                    candidate
+                        .get("denom")
+                        .and_then(json_scalar_string)
+                        .filter(|value| !value.is_empty())
+                })
                 .unwrap_or_else(|| requested_denom.to_string());
             return Ok(BalanceQueryResponse {
                 address,
@@ -3107,6 +3122,24 @@ mod tests {
                 address: "trnm1requested".into(),
                 balance: "12345".into(),
                 denom: "trnm".into(),
+            }
+        );
+    }
+
+    #[test]
+    fn balance_query_parser_accepts_nested_balance_amount_object() {
+        let parsed = parse_balance_query_response(
+            r#"{"response":{"data":{"address":"trnm1adapter","balance":{"amount":"77","denom":"utrnm"}}}}"#,
+            "trnm1requested",
+            "trnm",
+        )
+        .unwrap();
+        assert_eq!(
+            parsed,
+            BalanceQueryResponse {
+                address: "trnm1adapter".into(),
+                balance: "77".into(),
+                denom: "utrnm".into(),
             }
         );
     }
