@@ -249,11 +249,15 @@ Show:
 - `rollback_total`
 - `bft_round_change_total`
 - `bft_round_change_backoff_total_ms`
+- `bft_round_change_backoff_wall_share_ppm`
+- `bft_round_change_backoff_share_ppm`
+  - treat `bft_round_change_backoff_wall_share_ppm` as the descriptive wall-clock share field and `bft_round_change_backoff_share_ppm` as the grep-stable compatibility alias; today they intentionally carry the same value.
 - `bft_leader_missed_total`
 - `bft_double_vote_total`
 - `bft_auth_reject_replay_total`
 - `bft_auth_reject_stale_total`
 - `bft_auth_reject_stale_nonce_total`
+  - treat `bft_auth_reject_stale_nonce_total` as the descriptive stale-nonce counter and `bft_auth_reject_stale_total` as the grep-stable compatibility alias until the broader metrics contract is explicitly split.
 
 Why:
 
