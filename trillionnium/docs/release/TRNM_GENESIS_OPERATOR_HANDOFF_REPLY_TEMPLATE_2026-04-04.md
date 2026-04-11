@@ -18,6 +18,7 @@
 GENESIS_OPERATOR_HANDOFF_REPLY
 
 ceremony_id=
+packet_generated_at=
 packet_distribution_path=
 validator_set_version=
 startup_order_note=
@@ -73,10 +74,16 @@ node4.operator_ack_digest=
 ## Fastest fill order
 
 建议按这个顺序回：
-1. 先填 `ceremony_id / packet_distribution_path / validator_set_version / startup_order_note / rollback_owner`
+1. 先填 `ceremony_id / packet_generated_at / packet_distribution_path / validator_set_version / startup_order_note / rollback_owner`
 2. 再填 4 个 `validator_owner`
 3. 再填 4 个 `operator_contact`
 4. 最后填 `operator_ack_*`
+
+补充约束：
+- `packet_generated_at` 必须是这次实际发出的 packet 生成时间；如果重发 packet，不要沿用旧时间戳
+- `packet_distribution_path` 必须填写为共享给所有 operator 审阅的同一份 ceremony packet 文件绝对路径，不能只写目录 / ticket / artifact folder
+- `packet_distribution_path` 不能与 `genesis_artifact_path` 指向同一文件
+- `validator_set_version` 必须是具体、非默认的版本标签，不要回落到模板默认 `v1`
 
 ---
 
