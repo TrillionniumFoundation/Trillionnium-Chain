@@ -82,6 +82,7 @@ pub enum GovernanceEvent {
     PauseRestoreExecuted {
         proposal_id: ProposalId,
         actor: String,
+        reason_hash: String,
     },
     AuditLogCleared,
 }
@@ -469,9 +470,11 @@ impl GovernanceGuard {
         proposal.status = ProposalStatus::Executed;
         proposal.executor = Some(caller.to_owned());
         proposal.executed_at = Some(now);
+        let reason_hash = proposal.reason_hash.clone();
         self.audit_log.push(GovernanceEvent::PauseRestoreExecuted {
             proposal_id,
             actor: caller.to_owned(),
+            reason_hash,
         });
         self.audit_log.push(GovernanceEvent::ProposalExecuted {
             proposal_id,
@@ -605,13 +608,17 @@ impl GovernanceGuard {
                 normalized.note = Some(format!("eta={eta}"));
                 normalized
             }
-            GovernanceEvent::PauseRestoreExecuted { proposal_id, actor } => {
+            GovernanceEvent::PauseRestoreExecuted {
+                proposal_id,
+                actor,
+                reason_hash,
+            } => {
                 let mut normalized =
                     AuditEvent::new("governance-guard", "governance.pause_restore_executed");
                 normalized.actor = Some(actor.clone());
                 normalized.object_id = Some(proposal_id.to_string());
                 normalized.related_id = Some("emergency_pause".to_string());
-                normalized.reason = Some("pause_restore_execute".to_string());
+                normalized.reason = Some(reason_hash.clone());
                 normalized
             }
             GovernanceEvent::AuditLogCleared => {
@@ -1037,9 +1044,13 @@ mod tests {
         )));
         assert!(logs.iter().any(|event| matches!(
             event,
-            GovernanceEvent::PauseRestoreExecuted { proposal_id, actor }
-                if *proposal_id == restore_id
-                    && actor == "exec"
+            GovernanceEvent::PauseRestoreExecuted {
+                proposal_id,
+                actor,
+                reason_hash,
+            } if *proposal_id == restore_id
+                && actor == "exec"
+                && reason_hash == "recover"
         )));
 
         assert!(normalized
@@ -1061,7 +1072,7 @@ mod tests {
             event.event_type == "governance.pause_restore_executed"
                 && event.object_id.as_deref() == Some(&restore_id.to_string())
                 && event.related_id.as_deref() == Some("emergency_pause")
-                && event.reason.as_deref() == Some("pause_restore_execute")
+                && event.reason.as_deref() == Some("recover")
         }));
         assert!(normalized
             .iter()
