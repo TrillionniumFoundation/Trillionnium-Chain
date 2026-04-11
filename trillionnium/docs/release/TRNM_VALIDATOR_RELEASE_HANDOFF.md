@@ -102,7 +102,7 @@ EXPECTED_BRANCH_REF="refs/heads/lane/assigned-branch"
   --expected-branch-ref "$EXPECTED_BRANCH_REF"
 ```
 
-If you only have the short branch name from the ticket, pass it with `--expected-branch` instead of sending it to `--expected-branch-ref`; the branch-ref flag is reserved for full `refs/heads/...` values so the helper can fail closed against the exact ref namespace.
+If the ticket only gives the short branch name, pass that short value directly to `--expected-branch-ref`; the helper canonicalizes it to `refs/heads/...` internally while still preserving the ticket-assigned form in downstream artifacts.
 
 After the helper passes, record its `verified_worktree=`, `verified_branch_ref=`, and `verified_head=` output verbatim in the ticket / handoff note before generating evidence artifacts. Those three lines are the pre-run identity anchor that later `summary.txt` / `manifest.txt` fields must match; do not replace them with paraphrases like "same branch as before".
 
