@@ -96,11 +96,13 @@ For multi-worktree validator rehearsals, prefer the shared fail-closed helper in
 
 ```bash
 EXPECTED_WORKTREE_ROOT="/abs/path/from-ticket"
-EXPECTED_BRANCH_REF="lane/assigned-branch" # or refs/heads/lane/assigned-branch
+EXPECTED_BRANCH_REF="refs/heads/lane/assigned-branch"
 ./scripts/v2/verify_lane_worktree.sh \
   --expected-worktree-root "$EXPECTED_WORKTREE_ROOT" \
   --expected-branch-ref "$EXPECTED_BRANCH_REF"
 ```
+
+If you only have the short branch name from the ticket, pass it with `--expected-branch` instead of sending it to `--expected-branch-ref`; the branch-ref flag is reserved for full `refs/heads/...` values so the helper can fail closed against the exact ref namespace.
 
 After the helper passes, record its `verified_worktree=`, `verified_branch_ref=`, and `verified_head=` output verbatim in the ticket / handoff note before generating evidence artifacts. Those three lines are the pre-run identity anchor that later `summary.txt` / `manifest.txt` fields must match; do not replace them with paraphrases like "same branch as before".
 
