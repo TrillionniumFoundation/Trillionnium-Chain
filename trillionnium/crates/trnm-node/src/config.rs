@@ -694,18 +694,25 @@ mod tests {
 
     #[test]
     fn load_config_accepts_inner_curdir_markers_for_shipped_bootstrap_paths() {
-        for path in [
-            "configs/./node1.toml",
-            "./configs/./node1.toml",
-            "trillionnium/configs/./node1.toml",
-            "./trillionnium/configs/./node1.toml",
+        for (slot, expected_node_id, expected_rpc_addr, expected_p2p_addr) in [
+            (1_u16, "node1", "127.0.0.1:26657", "127.0.0.1:26656"),
+            (2_u16, "node2", "127.0.0.1:27657", "127.0.0.1:27656"),
+            (3_u16, "node3", "127.0.0.1:28657", "127.0.0.1:28656"),
+            (4_u16, "node4", "127.0.0.1:29657", "127.0.0.1:29656"),
         ] {
-            let cfg = load_config(path).unwrap_or_else(|err| {
-                panic!("{path} should resolve for shipped bootstrap config anchoring: {err:#}")
-            });
-            assert_eq!(cfg.node_id, "node1", "unexpected node_id for {path}");
-            assert_eq!(cfg.rpc_addr, "127.0.0.1:26657", "unexpected rpc_addr for {path}");
-            assert_eq!(cfg.p2p_addr, "127.0.0.1:26656", "unexpected p2p_addr for {path}");
+            for path in [
+                format!("configs/./node{slot}.toml"),
+                format!("./configs/./node{slot}.toml"),
+                format!("trillionnium/configs/./node{slot}.toml"),
+                format!("./trillionnium/configs/./node{slot}.toml"),
+            ] {
+                let cfg = load_config(&path).unwrap_or_else(|err| {
+                    panic!("{path} should resolve for shipped bootstrap config anchoring: {err:#}")
+                });
+                assert_eq!(cfg.node_id, expected_node_id, "unexpected node_id for {path}");
+                assert_eq!(cfg.rpc_addr, expected_rpc_addr, "unexpected rpc_addr for {path}");
+                assert_eq!(cfg.p2p_addr, expected_p2p_addr, "unexpected p2p_addr for {path}");
+            }
         }
     }
 
