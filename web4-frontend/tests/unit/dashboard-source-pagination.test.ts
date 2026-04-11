@@ -563,6 +563,74 @@ describe("dashboard source normalized audit pagination", () => {
     expect(snapshot.events.find((event) => event.id === "bridge-relay:proof-9")?.details).toBe("{}");
   });
 
+  it("strips invisible cursor characters before loading the next normalized-audit page", async () => {
+    const mockClient = {
+      queryTask: vi.fn().mockResolvedValue({
+        task: {
+          id: "341-cursor",
+          owner: "ops",
+          status: "running",
+          createdAt: "2026-03-01T00:00:00.000Z",
+          metadata: {},
+        },
+      }),
+      queryEvents: vi.fn().mockResolvedValue({
+        taskId: "341-cursor",
+        events: [],
+      }),
+      queryCapabilityAudit: vi.fn().mockResolvedValue({
+        subject: "did:trnm:test",
+        audits: [
+          {
+            subject: "did:trnm:test",
+            capability: "AUDIT_READ",
+            granted: true,
+            checkedAt: "2026-03-01T00:00:00.000Z",
+          },
+        ],
+      }),
+      queryNormalizedAuditEvents: vi
+        .fn()
+        .mockResolvedValueOnce({
+          events: [
+            {
+              source: "bridge-relay",
+              event_type: "bridge_relay.proof_submitted",
+              actor: "validator-a",
+              object_id: "proof-341a",
+              timestamp: "2026-03-01T00:02:00.000Z",
+              reason: "warn",
+            },
+          ],
+          hasMore: true,
+          nextCursor: "\u200B cursor-zwsp \uFEFF",
+        })
+        .mockResolvedValueOnce({
+          events: [
+            {
+              source: "bridge-relay",
+              event_type: "bridge_relay.proof_submitted",
+              actor: "validator-b",
+              object_id: "proof-341b",
+              timestamp: "2026-03-01T00:03:00.000Z",
+              reason: "warn",
+            },
+          ],
+          hasMore: false,
+        }),
+    } as unknown as ReturnType<typeof apiContractClient.createFrontendApiClient>;
+
+    vi.spyOn(apiContractClient, "createFrontendApiClient").mockReturnValue(mockClient);
+
+    const snapshot = await fetchDashboardSnapshot();
+
+    expect(mockClient.queryNormalizedAuditEvents).toHaveBeenNthCalledWith(2, {
+      limit: 60,
+      cursor: "cursor-zwsp",
+    });
+    expect(snapshot.events.find((event) => event.id === "bridge-relay:proof-341b")).toBeDefined();
+  });
+
   it("falls back to default ids when task/audit env values are blank", async () => {
     const previousTaskId = process.env.NEXT_PUBLIC_DASHBOARD_TASK_ID;
     const previousAuditSubject = process.env.NEXT_PUBLIC_DASHBOARD_AUDIT_SUBJECT;
