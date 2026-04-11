@@ -15,14 +15,16 @@ describe("api-contract client and retry hardening", () => {
       fetchImpl: fetchImpl as unknown as typeof fetch,
     });
 
-    try {
-      client.queryTask("   ");
-      throw new Error("expected blank task id to throw");
-    } catch (error) {
-      expect(error).toMatchObject({
-        code: "INVALID_PAYLOAD",
-        retryable: false,
-      });
+    for (const invalidTaskId of ["   ", "\n\t", "\u200B\uFEFF "]) {
+      try {
+        client.queryTask(invalidTaskId);
+        throw new Error("expected blank task id to throw");
+      } catch (error) {
+        expect(error).toMatchObject({
+          code: "INVALID_PAYLOAD",
+          retryable: false,
+        });
+      }
     }
 
     try {
@@ -302,7 +304,7 @@ describe("api-contract client and retry hardening", () => {
       fetchImpl: fetchImpl as unknown as typeof fetch,
     });
 
-    await client.queryCapabilityAudit("  did:trnm:alice/ops  ");
+    await client.queryCapabilityAudit("\u200B  did:trnm:alice/ops  \uFEFF");
 
     expect(fetchImpl).toHaveBeenCalledWith(
       "http://127.0.0.1:8080/query-capability-audit/did%3Atrnm%3Aalice%2Fops",

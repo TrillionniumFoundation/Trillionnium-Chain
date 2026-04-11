@@ -31,17 +31,18 @@ export const NORMALIZED_AUDIT_EVENTS_QUERY_PARAM_KEYS = {
   cursor: "cursor",
 } as const satisfies Record<keyof NormalizedAuditEventsQuery, string>;
 
-const normalizeNormalizedAuditQueryToken = (
-  value: string | undefined,
-): string | undefined => {
+const INVISIBLE_TOKEN_CHARS = /[\u200B\u200C\u200D\u2060\u2063\uFEFF]/g;
+
+const normalizeFrontendToken = (value: string | undefined): string | undefined => {
   if (value == null) return undefined;
 
-  const normalized = value
-    .replace(/[\u200B\u200C\u200D\u2060\u2063\uFEFF]/g, "")
-    .trim();
-
+  const normalized = value.replace(INVISIBLE_TOKEN_CHARS, "").trim();
   return normalized.length > 0 ? normalized : undefined;
 };
+
+const normalizeNormalizedAuditQueryToken = (
+  value: string | undefined,
+): string | undefined => normalizeFrontendToken(value);
 
 export const buildNormalizedAuditEventsQueryParams = (
   query: NormalizedAuditEventsQuery,
@@ -129,8 +130,8 @@ const normalizeRequiredPathParam = (value: unknown, label: string): string => {
     });
   }
 
-  const trimmed = value.trim();
-  if (!trimmed) {
+  const normalized = normalizeFrontendToken(value);
+  if (!normalized) {
     throw new FrontendApiError({
       code: "INVALID_PAYLOAD",
       message: `${label} must be a non-empty string`,
@@ -139,7 +140,7 @@ const normalizeRequiredPathParam = (value: unknown, label: string): string => {
     });
   }
 
-  return trimmed;
+  return normalized;
 };
 
 const isLikelyNetworkError = (err: unknown): boolean => {
