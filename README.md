@@ -247,10 +247,10 @@ Or from inside `trillionnium/`:
 ```
 
 - Service status defaults to `http://127.0.0.1:8090/healthz`.
-- Environment overrides: `EXPLORER_HOST`, `EXPLORER_PORT`, or `EXPLORER_HEALTH_URL`.
-- If `trillionnium/run/explorer-service/explorer-service.env` exists, the scripts load it automatically.
-- For external exposure, prefer loopback-bound bind + reverse proxy.
-- `explorer_service_status.sh` reports `pid_file`, `log_file`, `health_url`, and explicitly marks `service_mode=operator-facing-static-scaffold`, `production_ready=false`.
+- Environment overrides: `EXPLORER_HOST`, `EXPLORER_PORT`, `EXPLORER_PUBLIC_BASE_URL`, `EXPLORER_HEALTH_URL`, and `EXPLORER_RPC_BASE_URL`.
+- If `trillionnium/run/explorer-service/explorer-service.env` exists, the scripts load it automatically and preserve it as the operator-local source of truth across `up` / `status` / `down`.
+- For external exposure, prefer loopback-bound bind + reverse proxy, and keep the emitted `local_health_url` as the local liveness target even when `public_base_url` points at a proxy-facing URL.
+- `explorer_service_status.sh` reports `pid_file`, `log_file`, `public_base_url`, `health_url`, `local_health_url`, `rpc_base_url`, and explicitly marks `service_mode=operator-facing-static-scaffold`, `production_ready=false`.
 - To capture one deterministic operator handoff packet for this scaffold, use:
 
 ```bash
