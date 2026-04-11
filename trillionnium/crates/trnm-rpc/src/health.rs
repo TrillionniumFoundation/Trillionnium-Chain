@@ -497,6 +497,10 @@ mod tests {
         assert_eq!(parse_path_u64_suffix("/query-events/42%0d", "/query-events/"), None);
         assert_eq!(parse_path_u64_suffix("/query-events/42%09", "/query-events/"), None);
         assert_eq!(parse_path_u64_suffix("/query-events/42%20", "/query-events/"), None);
+        assert_eq!(parse_path_u64_suffix("/query-events/42%3Flimit=9", "/query-events/"), None);
+        assert_eq!(parse_path_u64_suffix("/query-events/42%3flimit=9", "/query-events/"), None);
+        assert_eq!(parse_path_u64_suffix("/query-events/42%23frag", "/query-events/"), None);
+        assert_eq!(parse_path_u64_suffix("/query-events/42%23", "/query-events/"), None);
     }
 
     #[test]
