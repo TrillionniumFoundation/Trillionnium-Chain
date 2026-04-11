@@ -7924,6 +7924,35 @@ mod tests {
     }
 
     #[test]
+    fn validate_node_config_rejects_hostname_shaped_operator_addresses() {
+        let rpc_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "localhost:26657".into(),
+                p2p_addr: "127.0.0.1:26656".into(),
+            },
+            "node.toml",
+        )
+        .expect_err("hostname-shaped rpc_addr must fail closed");
+        assert!(rpc_err
+            .to_string()
+            .contains("rpc_addr must be a valid socket address"));
+
+        let p2p_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "127.0.0.1:26657".into(),
+                p2p_addr: "LOCALHOST:26656".into(),
+            },
+            "node.toml",
+        )
+        .expect_err("hostname-shaped p2p_addr must fail closed");
+        assert!(p2p_err
+            .to_string()
+            .contains("p2p_addr must be a valid socket address"));
+    }
+
+    #[test]
     fn validate_node_config_rejects_mixed_ip_families() {
         let err = validate_node_config(
             NodeConfig {
