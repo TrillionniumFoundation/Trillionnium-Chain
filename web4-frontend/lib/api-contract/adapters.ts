@@ -375,7 +375,7 @@ export const adaptQueryEvents = (
         level:
           isM2V2Error || event.to_status === "Slashed"
             ? "error"
-            : event.event_type === "challenge"
+            : normalizedEventType === "challenge"
               ? "warn"
               : "info",
         timestamp: toIsoFromUnixMs(event.ts_unix_ms),

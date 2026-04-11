@@ -180,6 +180,28 @@ describe("api-contract adapters", () => {
     expect(out.events[0]?.taskId).toBe("7");
   });
 
+  it("normalizes rpc challenge event type noise before level classification", () => {
+    const out = adaptQueryEvents(
+      [
+        {
+          event_type: "  challenge\u200B ",
+          task_id: 7,
+          from_status: "Revealed",
+          to_status: "Challenged",
+          actor: "did:trnm:bob",
+          tx_id: 12,
+          block_height: 23,
+          state_root: "root-2",
+          ts_unix_ms: 1700000001000,
+        },
+      ],
+      "7",
+    );
+
+    expect(out.events[0]?.type).toBe("challenge");
+    expect(out.events[0]?.level).toBe("warn");
+  });
+
   it("treats DID registration history as non-grant in rpc capability audit fallback", () => {
     const out = adaptQueryCapabilityAudit({
       token: {
