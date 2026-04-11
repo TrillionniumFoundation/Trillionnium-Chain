@@ -95,6 +95,21 @@ describe("normalized audit query contract", () => {
     expect(params.toString()).not.toContain("eventType=");
   });
 
+  it("omits query tokens that normalize to empty whitespace or zero-width noise", () => {
+    const params = buildNormalizedAuditEventsQueryParams({
+      source: "\u200B \uFEFF",
+      eventType: "\u2060\u2063\t\n",
+      cursor: " \u200C\u200D ",
+      limit: 25,
+    });
+
+    expect(params.has("source")).toBe(false);
+    expect(params.has("eventType")).toBe(false);
+    expect(params.has("cursor")).toBe(false);
+    expect(params.get("limit")).toBe("25");
+    expect(Array.from(params.keys())).toEqual(["limit"]);
+  });
+
   it("serializes the currently supported scalar query keys with stable names", () => {
     const params = buildNormalizedAuditEventsQueryParams({
       source: "governance-guard",
