@@ -536,6 +536,27 @@ describe("api-contract adapters", () => {
     expect(out.total).toBe(42);
   });
 
+  it("normalizes canonical normalized audit pagination cursors before exposing them", () => {
+    const out = adaptQueryNormalizedAuditEvents({
+      events: [
+        {
+          source: "bridge-relay",
+          event_type: "bridge_relay.proof_submitted",
+          actor: "validator-1",
+          checkedAt: "height:777",
+          note: "cursor normalized",
+        },
+      ],
+      hasMore: true,
+      nextCursor: "\uFEFF  c2\u200B ",
+      total: 42,
+    });
+
+    expect(out.hasMore).toBe(true);
+    expect(out.nextCursor).toBe("c2");
+    expect(out.total).toBe(42);
+  });
+
   it("fails closed when canonical normalized audit pagination reports hasMore without usable cursor", () => {
     expect(() =>
       adaptQueryNormalizedAuditEvents({
