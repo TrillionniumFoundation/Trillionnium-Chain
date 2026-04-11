@@ -28,6 +28,9 @@ rollback_owner=
 说明：
 - `packet_generated_at=` 建议在最终回填/重生成 packet 时由脚本自动使用当时 UTC 时间，不需要现在先定死。
 - `genesis_artifact_path=` 与 `genesis_artifact_sha256=` 当前已经冻结，不在此清单中重复要求。
+- `packet_distribution_path=` 必须填写为共享给所有 operator 审阅的**同一份 ceremony packet 文件绝对路径**，不能只写目录、ticket、bundle 根路径或聊天线程名。
+- `validator_set_version=` 必须填写为一个**真实、具体、非默认**的版本标签（例如 `mainnet-candidate-2026-03-31`），不能继续留空，也不能回落到模板默认 `v1`。
+- `ceremony_id=` 一旦对外分发，不要在不同 packet 内容之间复用；如果 packet 内容变化，应重新生成 packet 并分配新的 `ceremony_id=`。
 
 ---
 
@@ -88,7 +91,7 @@ operator_ack_digest=
 ## D. Fastest next move
 
 最快的推进顺序是：
-1. 先填 **Global 5 项**
+1. 先填 **Global 5 项**，其中优先确认 `packet_distribution_path=` 已经指向一份真实、唯一的 packet 文件绝对路径，且 `validator_set_version=` 不是默认模板值
 2. 再填 4 个 `validator_owner`
 3. 再填 4 个 `operator_contact`
 4. 最后补 `operator_ack_*`
