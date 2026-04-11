@@ -7393,6 +7393,43 @@ fn checkpoint_da_light_verifier_summary_fails_closed_on_uppercase_checkpoint_sta
 }
 
 #[test]
+fn checkpoint_da_light_verifier_summary_fails_closed_on_carriage_return_checkpoint_state_root_surface() {
+    let wal = WalMeta {
+        height: 4,
+        round: 1,
+        proposal_hash: "proposal-4".into(),
+        committed: true,
+        state_root_hex: "ab".repeat(32),
+        prev_hash_hex: Some("cd".repeat(32)),
+    };
+    let checkpoint = CheckpointMeta {
+        height: wal.height,
+        state_root_hex: wal.state_root_hex.clone(),
+        wal_entry_hash_hex: wal.content_hash_hex(),
+    };
+
+    let mut bad_checkpoint = checkpoint.clone();
+    bad_checkpoint.state_root_hex.push('\r');
+
+    assert!(
+        checkpoint_evidence_surface_is_canonical(&checkpoint, &wal),
+        "sanity: canonical checkpoint/WAL evidence should stay audit-ready before the carriage-return checkpoint-state-root regression mutation"
+    );
+    assert!(
+        checkpoint_da_light_verifier_summary(&checkpoint, &wal).is_some(),
+        "sanity: canonical checkpoint/WAL evidence should summarize before the carriage-return checkpoint-state-root regression mutation"
+    );
+    assert!(
+        !checkpoint_evidence_surface_is_canonical(&bad_checkpoint, &wal),
+        "checkpoint evidence surfaces must reject checkpoint state_root_hex values with carriage-return control drift"
+    );
+    assert!(
+        checkpoint_da_light_verifier_summary(&bad_checkpoint, &wal).is_none(),
+        "checkpoint state_root_hex surfaces with carriage-return drift must fail closed instead of emitting a DA/light-verifier summary"
+    );
+}
+
+#[test]
 fn checkpoint_da_light_verifier_summary_fails_closed_on_height_mismatch_surface() {
     let wal = WalMeta {
         height: 4,
