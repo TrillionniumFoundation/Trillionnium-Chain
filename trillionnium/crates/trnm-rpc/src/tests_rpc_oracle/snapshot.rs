@@ -372,6 +372,9 @@ pub(crate) fn oracle_validate_snapshot_response(
     if source_count == 0 {
         return Err("snapshot has no sources".to_string());
     }
+    if snapshot_val.sample_count == 0 {
+        return Err("invalid snapshot: sample_count must be > 0".to_string());
+    }
 
     let mut outcome = "accepted";
     let mut stale_reject_total = 0;
