@@ -321,7 +321,7 @@ impl SettlementVault {
             (lock.account.clone(), lock.amount)
         };
 
-        if beneficiary == account {
+        if beneficiary.is_empty() || beneficiary == account {
             return Err(VaultError::InvalidBeneficiary);
         }
 
@@ -939,7 +939,7 @@ mod tests {
     }
 
     #[test]
-    fn slash_to_locked_account_is_rejected_without_state_or_audit_mutation() {
+    fn slash_to_locked_or_empty_beneficiary_is_rejected_without_state_or_audit_mutation() {
         let mut vault = SettlementVault::new("owner");
 
         vault.deposit("owner", "alice", 30).unwrap();
@@ -951,6 +951,18 @@ mod tests {
             .expect_err("slash beneficiary must differ from locked account");
         assert_eq!(err, VaultError::InvalidBeneficiary);
         assert_eq!(vault.balance_of("alice"), 0);
+        assert_eq!(
+            vault.lock_record("req-self-slash").unwrap().status,
+            LockStatus::Locked
+        );
+        assert_eq!(vault.audit_log().len(), audit_len_before);
+
+        let err = vault
+            .slash("owner", "req-self-slash", "")
+            .expect_err("slash beneficiary must not be empty");
+        assert_eq!(err, VaultError::InvalidBeneficiary);
+        assert_eq!(vault.balance_of("alice"), 0);
+        assert_eq!(vault.balance_of(""), 0);
         assert_eq!(
             vault.lock_record("req-self-slash").unwrap().status,
             LockStatus::Locked
