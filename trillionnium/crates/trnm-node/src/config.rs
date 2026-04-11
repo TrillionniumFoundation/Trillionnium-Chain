@@ -57,6 +57,7 @@ const FORBIDDEN_BOOTSTRAP_ALIAS_FIELDS: &[(&str, &str)] = &[
     ("bootPeers", "[\"127.0.0.1:27656\"]"),
     ("bootPeer", "\"127.0.0.1:27656\""),
     ("persistent_peers", "[\"127.0.0.1:27656\"]"),
+    ("persistent-peers", "[\"127.0.0.1:27656\"]"),
     ("persistent_peer", "\"127.0.0.1:27656\""),
     ("persistent_addr", "\"127.0.0.1:27656\""),
     ("persistent_addrs", "[\"127.0.0.1:27656\"]"),
