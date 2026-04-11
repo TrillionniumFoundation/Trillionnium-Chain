@@ -313,6 +313,53 @@ mod tests {
             );
         }
     }
+
+    #[test]
+    fn restore_pending_resolve_approval_from_snapshot_rejects_reserved_first_approver_alias() {
+        let mut st = StateStore::default();
+        st.set_gov_param(
+            98_300,
+            7_998,
+            "resolve_authority".into(),
+            "authority-c,authority-d".into(),
+        )
+        .expect("resolve authority set should install");
+
+        let _ = challenged_task_fixture(&mut st, 8_116);
+        st.set_gov_param(98_306, 7_999, "emergency_pause".into(), "true".into())
+            .expect("pause toggle must apply immediately");
+        assert!(st.is_emergency_paused());
+
+        let before_task = st.get_task(8_116).unwrap();
+
+        restore_pending_resolve_approval_from_snapshot(
+            &mut st,
+            8_116,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: false,
+                confirmations: 1,
+                first_approver: "governance.resolve_authority".into(),
+                authority_set: "authority-c,authority-d".into(),
+                task_version: before_task.version,
+            }),
+        );
+
+        assert_eq!(
+            st.pending_resolve_approval(8_116),
+            None,
+            "rollback restore must fail closed when first approver reuses a reserved canonical alias"
+        );
+        assert_eq!(
+            st.pending_resolve_first_approver(8_116),
+            None,
+            "reserved first approver aliases must not materialize a staged approver during paused restore"
+        );
+        assert_eq!(
+            st.pending_resolve_approval_snapshot(8_116),
+            None,
+            "reserved first approver aliases must not persist paused rollback metadata"
+        );
+    }
 }
 
 pub(crate) fn rollback_tx_snapshot(st: &mut StateStore, snapshot: TxRollbackSnapshot) {
