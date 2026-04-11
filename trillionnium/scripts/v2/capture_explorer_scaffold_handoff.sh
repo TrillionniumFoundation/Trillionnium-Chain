@@ -15,6 +15,7 @@ GAP_MATRIX_PATH="trillionnium/docs/release/TRNM_MAINNET_GAP_MATRIX_2026-03-26.md
 DAY1_CONTRACT_PATH="trillionnium/docs/release/TRNM_DAY1_PUBLIC_READ_CONTRACT_2026-04-03.md"
 DAY1_CONTRACT_MATRIX_PATH="trillionnium/docs/release/TRNM_DAY1_PUBLIC_READ_CONTRACT_MATRIX_2026-04-03.md"
 RANK1_TASK_BOARD_PATH="trillionnium/docs/release/TRNM_RANK1_READ_SURFACE_TASK_BOARD_2026-04-03.md"
+RANK1_DESIGN_PACKET_PATH="trillionnium/docs/release/TRNM_RANK1_IMPLEMENTATION_DESIGN_PACKET_2026-04-05.md"
 BLOCKER_BOARD_PATH="trillionnium/docs/release/TRNM_MAINNET_BLOCKER_BOARD_2026-03-31.md"
 
 truth_source_value() {
@@ -74,6 +75,7 @@ TRUTH_SOURCE_GAP_MATRIX="$(truth_source_value "${GAP_MATRIX_PATH}")"
 TRUTH_SOURCE_DAY1_CONTRACT="$(truth_source_value "${DAY1_CONTRACT_PATH}")"
 TRUTH_SOURCE_DAY1_CONTRACT_MATRIX="$(truth_source_value "${DAY1_CONTRACT_MATRIX_PATH}")"
 TRUTH_SOURCE_RANK1_TASK_BOARD="$(truth_source_value "${RANK1_TASK_BOARD_PATH}")"
+TRUTH_SOURCE_RANK1_DESIGN_PACKET="$(truth_source_value "${RANK1_DESIGN_PACKET_PATH}")"
 TRUTH_SOURCE_BLOCKER_BOARD="$(truth_source_value "${BLOCKER_BOARD_PATH}")"
 if [[ -z "${OUTPUT_DIR}" ]]; then
   OUTPUT_DIR="${RUN_ROOT}/handoff-${TIMESTAMP_UTC}"
@@ -338,6 +340,7 @@ truth_source_gap_matrix=${TRUTH_SOURCE_GAP_MATRIX}
 truth_source_day1_contract=${TRUTH_SOURCE_DAY1_CONTRACT}
 truth_source_day1_contract_matrix=${TRUTH_SOURCE_DAY1_CONTRACT_MATRIX}
 truth_source_rank1_task_board=${TRUTH_SOURCE_RANK1_TASK_BOARD}
+truth_source_rank1_design_packet=${TRUTH_SOURCE_RANK1_DESIGN_PACKET}
 truth_source_blocker_board=${TRUTH_SOURCE_BLOCKER_BOARD}
 replay_command=./trillionnium/scripts/v2/explorer_service_up.sh
 status_command=./trillionnium/scripts/v2/explorer_service_status.sh
