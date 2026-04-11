@@ -190,6 +190,10 @@ function toCheckedAt(value: z.infer<typeof checkedAtSchema>): CheckedAt {
   return value as CheckedAt;
 }
 
+function toIsoDatetimeString(value: string): IsoDatetimeString {
+  return value as IsoDatetimeString;
+}
+
 function toOptionalHeightMarker(height: unknown): string | undefined {
   if (height == null) return undefined;
   if (typeof height === "string" && height.trim().length === 0) return undefined;
@@ -204,14 +208,26 @@ function normalizeOptionalText(value: unknown): string | undefined {
 
 export const adaptQueryTask = (payload: unknown): QueryTaskResult => {
   const canonical = queryTaskResponseSchema.safeParse(payload);
-  if (canonical.success) return canonical.data;
+  if (canonical.success) {
+    return {
+      task: {
+        ...canonical.data.task,
+        createdAt: toIsoDatetimeString(canonical.data.task.createdAt),
+        updatedAt:
+          canonical.data.task.updatedAt == null
+            ? undefined
+            : toIsoDatetimeString(canonical.data.task.updatedAt),
+      },
+    };
+  }
 
   const rpc = rpcTaskSchema.safeParse(payload);
   if (!rpc.success) throw normalizeSchemaError(rpc.error.flatten());
 
   const task = rpc.data;
-  const derivedIso =
-    task.version != null ? new Date(task.version * 1000).toISOString() : new Date(0).toISOString();
+  const derivedIso = toIsoDatetimeString(
+    task.version != null ? new Date(task.version * 1000).toISOString() : new Date(0).toISOString(),
+  );
 
   return {
     task: {
@@ -244,7 +260,12 @@ export const adaptQueryEvents = (
   if (canonical.success) {
     return {
       ...canonical.data,
-      events: canonical.data.events.map(normalizeCanonicalEventForM2V2),
+      events: canonical.data.events
+        .map((event) => ({
+          ...event,
+          timestamp: toIsoDatetimeString(event.timestamp),
+        }))
+        .map(normalizeCanonicalEventForM2V2),
     };
   }
 
@@ -335,6 +356,7 @@ export const adaptQueryNormalizedAuditEvents = (
     const events = canonical.data.events.map((event) => ({
       ...event,
       checkedAt: event.checkedAt == null ? undefined : toCheckedAt(event.checkedAt),
+      timestamp: event.timestamp == null ? undefined : toIsoDatetimeString(event.timestamp),
     }));
     const total = "total" in canonical.data ? canonical.data.total : undefined;
 
@@ -383,7 +405,7 @@ export const adaptQueryNormalizedAuditEvents = (
     reason: event.reason,
     note: event.note,
     checkedAt: event.checkedAt == null ? undefined : toCheckedAt(event.checkedAt),
-    timestamp: event.recordedAt,
+    timestamp: event.recordedAt == null ? undefined : toIsoDatetimeString(event.recordedAt),
     subject: event.subject,
   }));
 
