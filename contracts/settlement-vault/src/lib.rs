@@ -1114,6 +1114,27 @@ mod tests {
     }
 
     #[test]
+    fn paused_self_transfer_fails_closed_without_audit_mutation() {
+        let mut vault = SettlementVault::new("owner");
+
+        vault.deposit("owner", "alice", 40).unwrap();
+        vault.pause("owner").unwrap();
+        let audit_len_while_paused = vault.audit_log().len();
+
+        let err = vault.transfer("owner", "alice", "alice", 15).unwrap_err();
+        assert_eq!(err, VaultError::Paused);
+        assert_eq!(vault.balance_of("alice"), 40);
+        assert_eq!(vault.audit_log().len(), audit_len_while_paused);
+        assert!(!vault.normalized_audit_log().iter().any(|event| {
+            event.event_type == "vault.transferred"
+                && event.actor.as_deref() == Some("owner")
+                && event.object_id.as_deref() == Some("alice")
+                && event.related_id.as_deref() == Some("alice")
+                && event.amount == Some(15)
+        }));
+    }
+
+    #[test]
     fn overflow_paths_fail_closed_without_partial_state_mutation() {
         let mut vault = SettlementVault::new("owner");
         vault.deposit("owner", "alice", 5).unwrap();
