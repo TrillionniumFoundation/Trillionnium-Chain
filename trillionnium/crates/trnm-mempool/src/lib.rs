@@ -4491,4 +4491,58 @@ mod tests {
         // cross-class retry instead of remaining poisoned by stale lane-wide membership.
         assert_eq!(g.admit(99, IngressClass::Normal), AdmitOutcome::Accepted);
     }
+
+    #[test]
+    fn reserve_guard_seen_cache_skew_does_not_poison_fresh_retry_after_critical_backlog_clears() {
+        let mut g = LaneAdmissionGate::new(4, 2);
+
+        assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(90, IngressClass::Critical), AdmitOutcome::Accepted);
+
+        let guarded_snapshot = LaneQosSnapshot {
+            normal_queued: 2,
+            critical_queued: 1,
+            total_queued: 3,
+            normal_headroom: 0,
+            critical_headroom: 1,
+            total_headroom: 1,
+            fresh_normal_admissible: false,
+            fresh_critical_admissible: true,
+        };
+        assert_eq!(g.qos_snapshot(), guarded_snapshot);
+
+        // Simulate restored-state skew: one real normal id disappears from seen caches
+        // and is replaced by a ghost id while queue contents stay authoritative.
+        g.normal.seen.remove(&2);
+        g.normal.seen.insert(999);
+        g.seen_global.remove(&2);
+        g.seen_global.insert(999);
+        assert_eq!(g.normal.seen.len() + g.critical.seen.len(), 3);
+        assert_eq!(g.seen_global.len(), 3);
+
+        // With the final slot still guarded for fresh critical ingress, the ghost id
+        // must remain fresh/backpressured and must not perturb the public QoS surface.
+        assert_eq!(g.admit(999, IngressClass::Normal), AdmitOutcome::Backpressured);
+        assert_eq!(g.qos_snapshot(), guarded_snapshot);
+
+        // Once the active critical backlog drains, the reserved headroom really reopens.
+        assert_eq!(g.pop_ready(), Some(90));
+        let reopened_snapshot = LaneQosSnapshot {
+            normal_queued: 2,
+            critical_queued: 0,
+            total_queued: 2,
+            normal_headroom: 0,
+            critical_headroom: 2,
+            total_headroom: 2,
+            fresh_normal_admissible: true,
+            fresh_critical_admissible: true,
+        };
+        assert_eq!(g.qos_snapshot(), reopened_snapshot);
+
+        // The previously blocked ghost id must admit cleanly after the real reopen,
+        // while the real queued id still self-heals back to duplicate semantics.
+        assert_eq!(g.admit(999, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(2, IngressClass::Critical), AdmitOutcome::Duplicate);
+    }
 }
