@@ -1111,6 +1111,55 @@ mod tests {
     }
 
     #[test]
+    fn execute_fails_closed_if_executor_role_revoked_after_queue() {
+        let mut gov = setup();
+        let now = 3_360;
+        let eta = now + 60;
+
+        let pid = gov
+            .propose(
+                "alice",
+                "challenge_window_blocks",
+                "100",
+                "140",
+                eta,
+                "reason-executor-role-drift",
+                now,
+            )
+            .unwrap();
+        gov.queue("alice", pid).unwrap();
+        gov.set_role("admin", "exec", true, false).unwrap();
+        let audit_len_before_rejected_execute = gov.audit_log().len();
+
+        let err = gov.execute("exec", pid, eta).unwrap_err();
+        assert_eq!(err, Error::Unauthorized);
+
+        let proposal = gov.proposal(pid).unwrap();
+        assert_eq!(proposal.status, ProposalStatus::Queued);
+        assert_eq!(proposal.executor, None);
+        assert_eq!(proposal.executed_at, None);
+        assert_eq!(
+            gov.bridge_state()
+                .gov_params
+                .get("challenge_window_blocks")
+                .map(String::as_str),
+            Some("100")
+        );
+        assert_eq!(
+            gov.bridge_state()
+                .param_versions
+                .get("challenge_window_blocks")
+                .copied(),
+            None
+        );
+        assert_eq!(gov.audit_log().len(), audit_len_before_rejected_execute);
+        assert!(!gov.audit_log().iter().any(|event| matches!(
+            event,
+            GovernanceEvent::ProposalExecuted { proposal_id, .. } if *proposal_id == pid
+        )));
+    }
+
+    #[test]
     fn queue_rejects_non_proposer_caller() {
         let mut gov = setup();
         gov.set_role("admin", "bob", true, false).unwrap();
