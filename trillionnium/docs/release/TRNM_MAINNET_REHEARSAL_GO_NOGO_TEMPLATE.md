@@ -75,9 +75,11 @@ Rule:
 Resolve the exact evidence files from disk before quoting any PASS / GO language:
 
 ```bash
-latest_preflight_path="run/preflight/go-no-go-latest.txt"
-[ -f "$latest_preflight_path" ] || { echo "missing preflight artifact" >&2; exit 1; }
-printf 'preflight_path=%s\n' "$latest_preflight_path"
+latest_preflight_alias="run/preflight/go-no-go-latest.txt"
+[ -f "$latest_preflight_alias" ] || { echo "missing preflight artifact alias" >&2; exit 1; }
+latest_preflight_path="$(ls -dt run/preflight/go-no-go-*.txt 2>/dev/null | grep -v '/go-no-go-latest.txt$' | head -n 1)"
+[ -n "$latest_preflight_path" ] || { echo "missing timestamped preflight artifact" >&2; exit 1; }
+printf 'preflight_path=%s\n' "$latest_preflight_alias"
 printf 'preflight_summary_path=%s\n' "$latest_preflight_path"
 awk -F= '/^(result|generated_at|git_toplevel|git_branch|git_head|git_head_state|git_status_summary|git_worktree_path|git_worktree_branch_ref|git_worktree_branch_ref_match|expected_worktree_root|ticket_expected_branch_ref|expected_branch_ref|expected_head|rollback_command|replay_command)=/ { print }' "$latest_preflight_path"
 
@@ -111,8 +113,8 @@ As with the pre-run helper, `--expected-branch-ref` may be supplied as either th
 Treat the helper output as a first-class artifact for memo assembly, not throwaway terminal scrollback. Preserve it (or an equivalent saved transcript) so `summary_generated_at=`, `manifest_generated_at=`, `git_expected_worktree_branch_ref=`, `git_status_summary=`, `truth_source=`, `historical_evidence_only=`, `evidence_scope=`, `summary_rollback_command=`, `summary_replay_command=`, `manifest_rollback_command=`, and `manifest_replay_command=` can all be quoted from the helper/artifacts rather than recopied from memory.
 
 Record:
-- preflight_path=
-- preflight_summary_path=
+- preflight_path= (stable alias used for operator lookup)
+- preflight_summary_path= (resolved timestamped artifact quoted in the packet)
 - evidence_dir=
 - summary_path=
 - rc_dir=
@@ -140,6 +142,7 @@ Record:
 
 Rule:
 - if `preflight_path`, `preflight_summary_path`, `evidence_dir`, `summary_path`, `rc_dir`, or `manifest_path` is missing or unresolved, decision = **NO-GO**
+- `preflight_path` alone is not enough for a path-resolved packet; the memo must also preserve the concrete timestamped `preflight_summary_path=` that was actually quoted
 - if the preflight artifact/helper transcript does not preserve `result=`, `generated_at=`, `git_status_summary=`, `git_worktree_path=`, `git_worktree_branch_ref=`, `git_worktree_branch_ref_match=`, `expected_worktree_root=`, `ticket_expected_branch_ref=`, `expected_branch_ref=`, `rollback_command=`, and `replay_command=`, decision = **NO-GO**
 - if the ticket assigned an expected head, preserve `expected_head=` verbatim from the preflight artifact and require it to match the ticket-assigned value; do not silently downgrade that field into an optional note
 - treat `expected_worktree_root=` plus `ticket_expected_branch_ref=` as the ticket-binding proof for the rehearsal packet, and keep `expected_branch_ref=` as the canonicalized companion field rather than a replacement for the ticket-original form
@@ -253,7 +256,7 @@ Mark each item explicitly:
 - [ ] `verified_worktree_entry=` preserved from helper output / `git worktree list --porcelain` stanza
 - [ ] `git status --short` empty before evidence generation
 - [ ] `preflight_path` resolved from disk
-- [ ] `preflight_summary_path` resolved from disk
+- [ ] `preflight_summary_path` resolved from disk as the timestamped artifact actually quoted
 - [ ] `evidence_dir` resolved from disk
 - [ ] `summary_path` resolved from disk
 - [ ] `rc_dir` resolved from disk
@@ -310,8 +313,8 @@ verified_worktree=<helper output>
 verified_branch_ref=<helper output>
 verified_head=<helper output>
 verified_worktree_entry=<captured current-path stanza from helper output or git worktree list --porcelain>
-preflight_path=<resolved path>
-preflight_summary_path=<resolved path>
+preflight_path=<resolved alias path>
+preflight_summary_path=<resolved timestamped artifact path>
 evidence_dir=<resolved directory>
 summary_path=<resolved path>
 rc_dir=<resolved directory>
