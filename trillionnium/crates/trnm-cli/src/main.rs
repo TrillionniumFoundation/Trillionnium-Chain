@@ -527,8 +527,13 @@ fn parse_request_full_query_response(
     let Some(request) = parsed.get("request") else {
         bail!("request-full response missing request object");
     };
-    let Some(request_id) = request.get("request_id").and_then(|v| v.as_str()) else {
-        bail!("request-full response missing string request.request_id");
+    let Some(request_id) = request
+        .get("request_id")
+        .and_then(json_scalar_string)
+        .map(|value| value.trim().to_string())
+        .filter(|value| !value.is_empty())
+    else {
+        bail!("request-full response missing scalar request.request_id");
     };
     if request_id != requested_request_id {
         bail!(
@@ -3102,6 +3107,18 @@ mod tests {
             "req-42",
         )
         .unwrap();
+        assert_eq!(json_u64_at_path(&parsed, &["request", "task_id"]), Some(42));
+        assert_eq!(json_u64_at_path(&parsed["events"][0], &["task_id"]), Some(42));
+    }
+
+    #[test]
+    fn query_parsers_accept_scalar_request_ids_in_request_full_response() {
+        let parsed = parse_request_full_query_response(
+            r#"{"request":{"request_id":42,"task_id":42},"events":[{"task_id":42}]}"#,
+            "42",
+        )
+        .unwrap();
+        assert_eq!(parsed["request"]["request_id"], serde_json::json!(42));
         assert_eq!(json_u64_at_path(&parsed, &["request", "task_id"]), Some(42));
         assert_eq!(json_u64_at_path(&parsed["events"][0], &["task_id"]), Some(42));
     }
