@@ -228,6 +228,21 @@ Threshold rules:
 
 For mainnet rehearsal, keep one small dashboard pack with stable panel names.
 
+### Stable first-stop panel names
+
+These strings are the exact append-stable panel names that `first_stop=` and `first_stop_panel=` must use across pages, dashboard annotations, and incident tickets.
+Do not shorten, title-case drift, or replace slash wording during rehearsal.
+
+- `Node liveness / height progress`
+- `Consensus instability / rollback pressure`
+- `RPC health / read surface`
+- `Worker execution / receipt flow`
+- `Evidence / replay integrity`
+- `Oracle-specific drill-down`
+- `Bridge relay / settlement integrity`
+
+If a dashboard implementation needs a subtitle, keep it outside the stable name rather than mutating the name itself.
+
 ### 1. Node liveness / height progress
 
 Show:
