@@ -154,13 +154,13 @@ authority_note=all operators must acknowledge the exact packet above before any 
 validator_entry=validator_name=node1;validator_owner=alice;node_id=node1;config_path=/abs/path/to/configs/node1.toml;p2p_addr=127.0.0.1:26656;rpc_addr=127.0.0.1:26657
 validator_entry_hash=<deterministic-sha256-from-validator_name/node_id/config_path/p2p_addr/rpc_addr>
 operator_contact=node1=<chat/email/oncall-for-node1>
-operator_ack=alice checked genesis_artifact_sha256=<64-character-genesis-sha256>;config_path=/abs/path/to/configs/node1.toml;validator_name=node1;validator_entry_hash=<deterministic-sha256-from-validator_name/node_id/config_path/p2p_addr/rpc_addr>
+operator_ack=alice checked ceremony_id=mn04-bootstrap-YYYYMMDD-HHMMZ;genesis_artifact_sha256=<64-character-genesis-sha256>;config_path=/abs/path/to/configs/node1.toml;validator_name=node1;validator_entry_hash=<deterministic-sha256-from-validator_name/node_id/config_path/p2p_addr/rpc_addr>
 operator_ack_signature_path=/abs/path/to/alice-ack.txt
 
 validator_entry=validator_name=node2;validator_owner=bob;node_id=node2;config_path=/abs/path/to/configs/node2.toml;p2p_addr=127.0.0.1:27656;rpc_addr=127.0.0.1:27657
 validator_entry_hash=<deterministic-sha256-from-validator_name/node_id/config_path/p2p_addr/rpc_addr>
 operator_contact=node2=<chat/email/oncall-for-node2>
-operator_ack=bob checked genesis_artifact_sha256=<64-character-genesis-sha256>;config_path=/abs/path/to/configs/node2.toml;validator_name=node2;validator_entry_hash=<deterministic-sha256-from-validator_name/node_id/config_path/p2p_addr/rpc_addr>
+operator_ack=bob checked ceremony_id=mn04-bootstrap-YYYYMMDD-HHMMZ;genesis_artifact_sha256=<64-character-genesis-sha256>;config_path=/abs/path/to/configs/node2.toml;validator_name=node2;validator_entry_hash=<deterministic-sha256-from-validator_name/node_id/config_path/p2p_addr/rpc_addr>
 operator_ack_digest=<optional-sha256-of-bob-ack>
 ```
 
@@ -237,7 +237,7 @@ Fail-closed rule for generated packets:
 For any packet that will be cited outside a local rehearsal, archive one small evidence bundle alongside the packet instead of relying on chat history:
 - the exact generated ceremony packet file referenced by `packet_distribution_path=`
 - the exact genesis artifact digest record used by the packet (`genesis_artifact_path=` + `genesis_artifact_sha256=`)
-- one acknowledgment artifact per validator owner, where each artifact names the same `ceremony_id=`, `validator_name=`, `config_path=`, and `genesis_artifact_sha256=` that appear in the shared packet
+- one acknowledgment artifact per validator owner, where each artifact names the same `ceremony_id=`, `validator_name=`, `config_path=`, and `genesis_artifact_sha256=` that appear in the shared packet; generated `operator_ack=` lines should already quote that same `ceremony_id=` verbatim so later review does not have to infer which ceremony a chat-style acknowledgment belonged to
 - if `validator_entry_hash=` is used, require each operator acknowledgment artifact to quote the same hash so later review can tie the acknowledgment back to one immutable validator descriptor
 
 Minimum review rule:

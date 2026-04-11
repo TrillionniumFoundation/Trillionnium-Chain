@@ -472,7 +472,8 @@ def emit_ceremony_packet(args: argparse.Namespace, entries: list[dict[str, str]]
         print(f"operator_contact={validator_name}={operator_contact_placeholder}")
         print(
             "operator_ack="
-            f"{validator_owner_placeholder} checked genesis_artifact_sha256={args.genesis_artifact_sha256};"
+            f"{validator_owner_placeholder} checked ceremony_id={args.ceremony_id};"
+            f"genesis_artifact_sha256={args.genesis_artifact_sha256};"
             f"config_path={config_path};"
             f"validator_name={validator_name};"
             f"validator_entry_hash={validator_entry_hash}"

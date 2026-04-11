@@ -657,6 +657,7 @@ class CheckValidatorConfigBundleTests(unittest.TestCase):
             line for line in result.stdout.splitlines() if line.startswith("operator_ack=")
         )
         validator_entry_hash = hash_line.split("=", 1)[1]
+        self.assertIn("ceremony_id=mn04-bootstrap-20260331-0621Z", ack_line)
         self.assertIn(f"genesis_artifact_sha256={VALID_SHA256}", ack_line)
         self.assertIn("<owner-for-node1> checked", ack_line)
         self.assertIn("validator_name=node1", ack_line)
