@@ -3176,7 +3176,7 @@ mod tests {
             "| `node2` missing during startup or rejoin | Keep `node3` and `node4` stopped until `node2` returns with `node2.toml` and its shipped tuple | Reject while a later follower tries to skip the missing `node2` slot |",
             "| `node3` missing during startup or rejoin | Keep `node4` stopped until `node3` returns with `node3.toml` and its shipped tuple | Reject while `node4` tries to skip the missing `node3` slot |",
             "| `node4` missing during startup or rejoin | Keep `node1` through `node3` in their shipped slots; if `node4` returns, bring it back only with `node4.toml` and its shipped tuple | Accept the remaining slots only while no other config is renamed or promoted into the `node4` role |",
-            "| Any tuple drift or config mutation | Stop and review before startup | Reject on renamed files, swapped slots, unknown fields, whitespace drift, non-canonical socket literals, port-spacing drift, or listener-family drift |",
+            "| Any tuple drift or config mutation | Stop and review before startup | Reject on renamed files, swapped slots, duplicated listener tuples, unknown fields, whitespace drift, non-canonical socket literals, port-spacing drift, or listener-family drift |",
         ];
         let expected_table_lines = [
             "| Scenario | Expected operator action | Acceptance |",
@@ -3281,6 +3281,7 @@ mod tests {
             "During incident triage, require the filename slot, `node_id`, and listener stride to agree (`nodeN.toml` ↔ `nodeN` ↔ `127.0.0.1:26656+1000*(N-1)` / `127.0.0.1:26657+1000*(N-1)`); if any one of the three surfaces drifts, treat it as slot drift and fail closed.",
             "If the anchor tuple in `trillionnium/configs/node1.toml` drifts while `node2` through `node4` are still running, stop those later slots before restoring `node1`; a healthy follower never proves that a drifted anchor is safe.",
             "If an earlier slot is missing or drifted while a later slot is still running, stop the later slot first and restore the earlier shipped slot before any restart attempt; a healthy later follower never proves that the skipped topology gap is safe.",
+            "If two shipped slot files ever converge on the same `rpc_addr`/`p2p_addr` tuple, stop both peers and restore the original slot-bound files before retrying; duplicated listeners are topology drift, not an interchangeable bootstrap shortcut.",
             "Never promote a later slot based on a basename match or on the `+1000` listener pattern alone; require the repo-root slot path, `node_id`, and both listener literals to agree before editing or restarting a peer.",
             "If `load_config` reports an unknown field or tuple drift, fix the exact repo-root slot file named by the error surface and the exact field named in that error; do not guess across sibling configs or translate ad-hoc aliases by hand.",
             "If the failing path is reported as `configs/nodeN.toml` or `./configs/nodeN.toml`, map it back to the same repo-root slot before editing and fail closed on any basename-only “looks similar” guess across sibling files.",
