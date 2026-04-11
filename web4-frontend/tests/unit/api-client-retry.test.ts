@@ -611,7 +611,38 @@ describe("api-contract client and retry hardening", () => {
     expect(attempts).toBe(1);
   });
 
-  it("retries transient http statuses but fails closed on non-transient 5xx", async () => {
+  it("retries timeout-shaped and transient http statuses but fails closed on non-transient 5xx", async () => {
+    const requestTimeoutFetch = vi
+      .fn()
+      .mockResolvedValueOnce({
+        ok: false,
+        status: 408,
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          task: {
+            id: "41",
+            status: "running",
+            owner: "alice",
+            createdAt: "2026-03-01T00:00:00.000Z",
+            metadata: {},
+          },
+        }),
+      });
+
+    const requestTimeoutClient = createFrontendApiClient({
+      baseUrl: "http://127.0.0.1:8080",
+      fetchImpl: requestTimeoutFetch as unknown as typeof fetch,
+    });
+
+    await expect(
+      requestTimeoutClient.queryTask("41", { retries: 1, baseDelayMs: 0, maxDelayMs: 0 }),
+    ).resolves.toMatchObject({
+      task: expect.objectContaining({ id: "41" }),
+    });
+    expect(requestTimeoutFetch).toHaveBeenCalledTimes(2);
+
     const retryableFetch = vi
       .fn()
       .mockResolvedValueOnce({

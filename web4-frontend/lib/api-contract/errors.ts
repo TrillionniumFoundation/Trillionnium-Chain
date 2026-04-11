@@ -42,6 +42,8 @@ export const classifyHttpStatusCode = (status: number): ApiErrorCode => {
       return "BAD_REQUEST";
     case 404:
       return "NOT_FOUND";
+    case 408:
+      return "TIMEOUT";
     default:
       return "HTTP_STATUS";
   }

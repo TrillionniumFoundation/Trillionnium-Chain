@@ -228,7 +228,8 @@ export function createFrontendApiClient(config: BaseClientConfig) {
             code,
             message: `Query failed with HTTP ${response.status}`,
             status: response.status,
-            retryable: code === "HTTP_STATUS" ? isRetryableStatus(response.status) : false,
+            retryable:
+              isRetryableStatus(response.status) && (code === "HTTP_STATUS" || code === "TIMEOUT"),
           });
         }
 
