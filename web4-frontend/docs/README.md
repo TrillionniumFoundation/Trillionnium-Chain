@@ -28,7 +28,7 @@
 
 发布/RC/对外口径引用时，建议按下面顺序取材，避免把历史证据误写成当前 readiness：
 
-- 仓库级 truth source：[`../../RELEASE_READINESS.md`](../../RELEASE_READINESS.md)
+- 仓库级 truth source：[`../../RELEASE_READINESS.md`](../../RELEASE_READINESS.md)（引用时应同时记录当前 `git rev-parse origin/main` 输出，避免把旧快照误当成实时结论）
 - Web4 当前阶段评分卡：[`../../docs/reports/TRNM_WEB4_PLATFORM_SCORECARD_2026-03-31.md`](../../docs/reports/TRNM_WEB4_PLATFORM_SCORECARD_2026-03-31.md)（若当前 checkout 含有该文件，优先引用它描述平台成熟度；它是基于特定仓库快照的阶段评分卡，不等于当前 release-ready，也不自动等于实时状态）
 - Web4 平台主文档（仅当文件实际存在时才可引用）：`../../docs/WEB4_INFRA_PLATFORM_DEVELOPMENT_MASTER.md`
   - 当前 checkout 中该文件**缺失**；优先回到 `../../RELEASE_READINESS.md`、当前存在的 scorecard、仓库根 `../../README.md` 的 Documentation Entry Points，以及本目录文档，不要把一个不存在的 master 链接当作实时 truth source
