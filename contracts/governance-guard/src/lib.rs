@@ -1746,11 +1746,13 @@ mod tests {
                 if *proposal_id == pid && actor == "guardian"
         )));
 
+        let audit_len_before_failed_execute = gov.audit_log().len();
         assert_eq!(
             gov.execute_unpause("exec", pid, eta).unwrap_err(),
             Error::AlreadyFinalized
         );
         assert!(gov.bridge_state().emergency_paused);
+        assert_eq!(gov.audit_log().len(), audit_len_before_failed_execute);
         assert!(!gov.audit_log().iter().any(|event| matches!(
             event,
             GovernanceEvent::PauseRestoreExecuted { proposal_id, .. }
