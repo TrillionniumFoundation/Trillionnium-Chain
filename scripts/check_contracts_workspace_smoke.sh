@@ -39,7 +39,7 @@ fi
 mkdir -p "$ROOT/run/health"
 TS="$(date +%Y%m%d-%H%M%S)"
 OUT="$ROOT/run/health/contracts-workspace-smoke-${TS}.log"
-CARGO_TARGET_DIR_INPUT="${CARGO_TARGET_DIR:-target/contracts-workspace-smoke}"
+CARGO_TARGET_DIR_INPUT="${CARGO_TARGET_DIR:-run/target/contracts-workspace-smoke}"
 if [[ "$CARGO_TARGET_DIR_INPUT" = /* ]]; then
   CARGO_TARGET_DIR_ABS="$(python3 -c 'import os, sys; print(os.path.realpath(sys.argv[1]))' "$CARGO_TARGET_DIR_INPUT")"
 else

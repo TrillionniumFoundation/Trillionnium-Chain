@@ -57,7 +57,7 @@ if [[ "$rc" -ne 0 ]]; then
   exit 1
 fi
 
-EXPECTED_TARGET_DIR="$(python3 -c 'import os, sys; print(os.path.realpath(sys.argv[1]))' "$TEST_ROOT/target/contracts-workspace-smoke")"
+EXPECTED_TARGET_DIR="$(python3 -c 'import os, sys; print(os.path.realpath(sys.argv[1]))' "$TEST_ROOT/run/target/contracts-workspace-smoke")"
 if [[ ! -d "$EXPECTED_TARGET_DIR" ]]; then
   echo "[FAIL] expected target dir missing: $EXPECTED_TARGET_DIR" >&2
   exit 1
