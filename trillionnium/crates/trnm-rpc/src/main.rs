@@ -3055,15 +3055,12 @@ fn parse_http_request_target(first_line: &str) -> Option<(&str, &str)> {
     if path.contains('#') || normalized.contains("%23") {
         return None;
     }
-    if normalized.contains("%00")
-        || normalized.contains("%0d")
-        || normalized.contains("%0a")
-        || normalized.contains("%09")
-        || normalized.contains("%0b")
-        || normalized.contains("%0c")
-        || normalized.contains("%20")
-        || normalized.contains("%7f")
+    if contains_malformed_percent_encoding(path)
+        || contains_percent_encoded_control_or_space(path)
     {
+        return None;
+    }
+    if path.matches('?').count() > 1 {
         return None;
     }
 
@@ -5257,6 +5254,34 @@ mod tests {
         assert_eq!(parse_http_get_path("GET /health%7Fcheck HTTP/1.1"), None);
         assert_eq!(parse_http_get_path("GET /query-events/7%00 HTTP/1.1"), None);
         assert_eq!(parse_http_get_path("GET /query-events/7%7f HTTP/1.1"), None);
+    }
+
+    #[test]
+    fn parse_http_request_target_rejects_multiple_raw_query_delimiters_fail_closed() {
+        assert_eq!(
+            parse_http_request_target("GET /query-task/42??shadow HTTP/1.1"),
+            None
+        );
+        assert_eq!(
+            parse_http_request_target("HEAD /query-events/7?limit=9?shadow HTTP/1.1"),
+            None
+        );
+    }
+
+    #[test]
+    fn parse_http_request_target_rejects_percent_encoded_controls_and_spaces_fail_closed() {
+        assert_eq!(
+            parse_http_request_target("GET /health%01check HTTP/1.1"),
+            None
+        );
+        assert_eq!(
+            parse_http_request_target("HEAD /readyz%1F HTTP/1.1"),
+            None
+        );
+        assert_eq!(
+            parse_http_request_target("GET /health%20check HTTP/1.1"),
+            None
+        );
     }
 
     #[test]

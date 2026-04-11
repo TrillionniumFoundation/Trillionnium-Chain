@@ -167,6 +167,34 @@ fn parse_http_request_target_rejects_encoded_query_delimiter_fail_closed() {
 }
 
 #[test]
+fn parse_http_request_target_rejects_multiple_raw_query_delimiters_fail_closed() {
+    assert_eq!(
+        parse_http_request_target("GET /query-task/42??shadow HTTP/1.1"),
+        None
+    );
+    assert_eq!(
+        parse_http_request_target("HEAD /query-events/7?limit=9?shadow HTTP/1.1"),
+        None
+    );
+}
+
+#[test]
+fn parse_http_request_target_rejects_percent_encoded_controls_and_spaces_fail_closed() {
+    assert_eq!(
+        parse_http_request_target("GET /health%01check HTTP/1.1"),
+        None
+    );
+    assert_eq!(
+        parse_http_request_target("HEAD /readyz%1F HTTP/1.1"),
+        None
+    );
+    assert_eq!(
+        parse_http_request_target("GET /health%20check HTTP/1.1"),
+        None
+    );
+}
+
+#[test]
 fn parse_http_request_target_rejects_malformed_percent_encoding_fail_closed() {
     for first_line in [
         "GET /query-task/42% HTTP/1.1",
