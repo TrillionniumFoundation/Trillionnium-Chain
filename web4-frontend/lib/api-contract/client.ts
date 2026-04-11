@@ -162,12 +162,20 @@ const collectErrorLikeChain = (value: unknown, maxDepth = 4): ErrorLikeRecord[] 
 
     const cause = "cause" in candidate ? candidate.cause : undefined;
     const reason = "reason" in candidate ? candidate.reason : undefined;
+    const nestedErrors = "errors" in candidate ? candidate.errors : undefined;
 
     if (cause && typeof cause === "object") {
       queue.push({ value: cause, depth: depth + 1 });
     }
     if (reason && typeof reason === "object") {
       queue.push({ value: reason, depth: depth + 1 });
+    }
+    if (Array.isArray(nestedErrors)) {
+      for (const nested of nestedErrors) {
+        if (nested && typeof nested === "object") {
+          queue.push({ value: nested, depth: depth + 1 });
+        }
+      }
     }
   }
 

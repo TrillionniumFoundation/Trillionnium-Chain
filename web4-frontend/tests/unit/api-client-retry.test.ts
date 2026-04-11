@@ -576,6 +576,39 @@ describe("api-contract client and retry hardening", () => {
     expect(fetchImpl).toHaveBeenCalledTimes(1);
   });
 
+  it("classifies AggregateError timeout members as timeout and keeps them retryable", async () => {
+    const fetchImpl = vi.fn().mockRejectedValue({
+      name: "AggregateError",
+      message: "All connection attempts failed",
+      errors: [
+        {
+          name: "Error",
+          code: "ECONNREFUSED",
+          message: "Connection refused",
+        },
+        {
+          name: "TypeError",
+          message: "fetch failed",
+          cause: {
+            code: "UND_ERR_CONNECT_TIMEOUT",
+            message: "Connect timeout",
+          },
+        },
+      ],
+    });
+
+    const client = createFrontendApiClient({
+      baseUrl: "http://127.0.0.1:8080",
+      fetchImpl: fetchImpl as unknown as typeof fetch,
+    });
+
+    await expect(client.queryTask("42", { retries: 0 })).rejects.toMatchObject({
+      code: "TIMEOUT",
+      retryable: true,
+    });
+    expect(fetchImpl).toHaveBeenCalledTimes(1);
+  });
+
   it("does not retry unknown non-FrontendApiError failures in retry helper", async () => {
     let attempts = 0;
 
