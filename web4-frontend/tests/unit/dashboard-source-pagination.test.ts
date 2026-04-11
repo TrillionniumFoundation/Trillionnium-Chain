@@ -1453,4 +1453,60 @@ describe("dashboard source normalized audit pagination", () => {
       category: "Security",
     });
   });
+
+  it("strips zero-width noise from normalized-audit dashboard ids and summaries", async () => {
+    const mockClient = {
+      queryTask: vi
+        .fn()
+        .mockResolvedValue({
+          task: {
+            id: "350",
+            owner: "ops",
+            status: "running",
+            createdAt: "2026-03-01T00:00:00.000Z",
+            updatedAt: "2026-03-01T00:05:00.000Z",
+            metadata: {},
+          },
+        }),
+      queryEvents: vi.fn().mockResolvedValue({
+        taskId: "350",
+        events: [],
+      }),
+      queryCapabilityAudit: vi.fn().mockResolvedValue({
+        subject: "did:trnm:test",
+        audits: [
+          {
+            subject: "did:trnm:test",
+            capability: "AUDIT_READ",
+            granted: true,
+            checkedAt: "2026-03-01T00:00:00.000Z",
+          },
+        ],
+      }),
+      queryNormalizedAuditEvents: vi.fn().mockResolvedValue({
+        events: [
+          {
+            source: "\uFEFF bridge-relay \u200B",
+            event_type: "\u200D bridge_relay.proof_submitted \u2060",
+            actor: "\u2063 validator-noise \uFEFF",
+            object_id: "\u200B proof-350 \u200D",
+            timestamp: "2026-03-01T00:02:00.000Z",
+            reason: "warn",
+          },
+        ],
+        hasMore: false,
+      }),
+    } as unknown as ReturnType<typeof apiContractClient.createFrontendApiClient>;
+
+    vi.spyOn(apiContractClient, "createFrontendApiClient").mockReturnValue(mockClient);
+
+    const snapshot = await fetchDashboardSnapshot();
+    const normalizedEvent = snapshot.events.find((event) => event.id === "bridge-relay:proof-350");
+
+    expect(normalizedEvent).toMatchObject({
+      summary: "bridge-relay · bridge_relay.proof_submitted",
+      severity: "Warning",
+      category: "Security",
+    });
+  });
 });
