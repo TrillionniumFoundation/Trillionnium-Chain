@@ -252,10 +252,13 @@ Show:
 - `bft_leader_missed_total`
 - `bft_double_vote_total`
 - `bft_auth_reject_replay_total`
+- `bft_auth_reject_stale_total`
+- `bft_auth_reject_stale_nonce_total`
 
 Why:
 
 - turns node-level instability into one visible operator surface
+- keeps stale-auth churn visible beside replay rejects, using the same emitted summary fields that `trnm-node` already exports for operator-facing consensus summaries
 - links incident review to replay/recovery instead of guesswork
 
 ### 3. RPC health / read surface
