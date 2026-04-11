@@ -38,6 +38,8 @@
      - 覆盖 finalize 终态优先级：即使重放请求携带 fresh `nonce` 且 `tx_receipt_status` 失败，只要 `settlement_id` 相同，仍必须先返回 `SettlementAlreadyFinalized`，避免 fresh nonce + bad receipt 组合绕过 terminal state 或污染审计。
    - `duplicate_finalize_with_stale_config_version_after_governance_change_still_stops_at_terminal_state`
      - 覆盖 finalize 终态优先级：即使治理已推进 `config_version`，对已终结 settlement 的重复 finalize 也必须先返回 `SettlementAlreadyFinalized`，避免被 stale config drift 改写成其他错误路径。
+   - `duplicate_finalize_with_fresh_config_version_after_governance_change_still_stops_at_terminal_state`
+     - 覆盖 finalize 终态优先级：即使重放请求已经跟上最新 `config_version`，对已终结 settlement 的重复 finalize 也必须先返回 `SettlementAlreadyFinalized`，避免 fresh config 被错误当成可重入放行条件。
    - `governance_write_with_stale_config_version_is_fail_closed_and_side_effect_free`
      - 覆盖治理写路径使用 stale `config_version` 时的 fail-closed 语义，要求 admin / config_version / audit_log 均保持不变。
    - `stale_validator_rotation_is_fail_closed_and_side_effect_free`

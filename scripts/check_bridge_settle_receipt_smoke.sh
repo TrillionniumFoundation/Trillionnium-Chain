@@ -49,6 +49,9 @@ run_step "bridge-relay: keep finalized settlement terminal even with fresh nonce
 run_step "bridge-relay: keep finalized settlement terminal even after governance config drift" \
   bash -c 'cargo test --manifest-path contracts/bridge-relay/Cargo.toml --lib --tests duplicate_finalize_with_stale_config_version_after_governance_change_still_stops_at_terminal_state -- --nocapture'
 
+run_step "bridge-relay: keep finalized settlement terminal even with fresh config after governance drift" \
+  bash -c 'cargo test --manifest-path contracts/bridge-relay/Cargo.toml --lib --tests duplicate_finalize_with_fresh_config_version_after_governance_change_still_stops_at_terminal_state -- --nocapture'
+
 run_step "bridge-relay: reject stale governance write with stale config version" \
   bash -c 'cargo test --manifest-path contracts/bridge-relay/Cargo.toml --lib --tests governance_write_with_stale_config_version_is_fail_closed_and_side_effect_free -- --nocapture'
 
