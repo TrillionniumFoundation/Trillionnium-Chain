@@ -38,6 +38,18 @@
 
 ### 5.1 三类问题，分别引用哪份文档
 
+在 demo / handoff / operator 记录前，建议先跑一次最小 truth-source 核对，避免把缺失文件或旧快照写成当前事实：
+
+```bash
+git rev-parse origin/main
+ls ../../docs/reports/TRNM_WEB4_PLATFORM_SCORECARD_2026-03-31.md ../../docs/WEB4_INFRA_PLATFORM_DEVELOPMENT_MASTER.md
+```
+
+- 第一行用于记录当前仓库级 truth source 绑定到哪个 `origin/main`
+- 第二行用于显式确认：scorecard 是否存在、master 文档是否缺失
+- 若 `WEB4_INFRA_PLATFORM_DEVELOPMENT_MASTER.md` 不存在，应在记录里直接写明“master 文档缺失，已退回 `RELEASE_READINESS.md` + scorecard + 本目录 live docs”
+
+
 | 你要回答的问题 | 应优先引用 | 不能顺手放大的结论 |
 | --- | --- | --- |
 | **现在整个 TRNM 仓库能否对外说 release-ready？** | [`../../RELEASE_READINESS.md`](../../RELEASE_READINESS.md) | 不能把某次 Web4 预检、RC 演练、历史 GO-ready 证据外推为“整个仓库已 ready” |
