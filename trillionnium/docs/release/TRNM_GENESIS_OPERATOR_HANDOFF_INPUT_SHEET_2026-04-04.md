@@ -45,7 +45,7 @@
 | `ceremony_scope` | `operator-handoff` | keep |
 | `ceremony_id` | `genesis-operator-handoff-draft-20260404-0100Z` | 可保留，或在正式发出前改成最终 ticket id |
 | `packet_generated_at` | `2026-04-04T01:00:16Z` | 若重发 packet，应重新生成 |
-| `packet_distribution_path` | `<absolute-path-to-ceremony-packet>` | 确认最终共享的 **ceremony packet 文件绝对路径**，不能只写 artifact folder / ticket / 目录根 |
+| `packet_distribution_path` | `<absolute-path-to-ceremony-packet>` | 确认最终共享的 **ceremony packet 文件绝对路径**，不能只写 artifact folder / ticket / 目录根；并且必须与 `genesis_artifact_path` 指向不同文件，避免把共享审阅 packet 和 genesis artifact 混成同一物 |
 | `validator_set_version` | `operator-handoff-b74758fac` | 确认是否保留，或替换成更正式版本标签 |
 | `startup_order_note` | `<controlled-4-node-bootstrap-order>` | 需要改成真实 4-node controlled bootstrap 顺序 |
 | `rollback_owner` | `primary-operator` | 需要确认真实责任人 / 值班 owner |
@@ -130,6 +130,7 @@ operator_ack_digest=
 - `rollback_owner=` 已明确
 - `startup_order_note=` 已明确成真实 bootstrap 顺序
 - `packet_distribution_path=` 指向一个真实共享的 **ceremony packet 文件绝对路径**，而不是仅本地临时路径、目录、artifact folder 或 ticket 根
+- `packet_distribution_path=` 与 `genesis_artifact_path=` 必须指向不同文件，避免 operator 把共享审阅 packet 误当成 genesis artifact 本体
 
 ### 仍然不等于 public mainnet closure
 即便上面都填完，仍然还差：
