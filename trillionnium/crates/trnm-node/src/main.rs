@@ -19326,6 +19326,8 @@ locked_block_hash = "stale-lock"
         assert!(!err.contains(
             "retained checkpoint height 12 is ahead of retained WAL tip height 11 by 1 blocks"
         ));
+        assert!(err.contains("operator action: investigate WAL/checkpoint mismatch (retained WAL tip height 11, checkpoint height 12, checkpoint leads tip by 1 block), rebuild the recovery inputs, and only retry join/rejoin once WAL tip and checkpoint evidence agree"));
+        assert!(!err.contains("checkpoint leads tip by 1 blocks"));
         assert!(err.contains("last retained checkpoint: 12"));
         assert!(err.contains("next startup height: 12"));
         assert!(err.contains(
