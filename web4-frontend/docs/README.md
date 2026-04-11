@@ -30,7 +30,7 @@
 
 - 仓库级 truth source：[`../../RELEASE_READINESS.md`](../../RELEASE_READINESS.md)
 - Web4 当前阶段评分卡：[`../../docs/reports/TRNM_WEB4_PLATFORM_SCORECARD_2026-03-31.md`](../../docs/reports/TRNM_WEB4_PLATFORM_SCORECARD_2026-03-31.md)（若当前 checkout 含有该文件，优先引用它描述平台成熟度；它是基于特定仓库快照的阶段评分卡，不等于当前 release-ready，也不自动等于实时状态）
-- Web4 平台主文档：`../../docs/WEB4_INFRA_PLATFORM_DEVELOPMENT_MASTER.md`
+- Web4 平台主文档（仅当文件实际存在时才可引用）：`../../docs/WEB4_INFRA_PLATFORM_DEVELOPMENT_MASTER.md`
   - 当前 checkout 中该文件**缺失**；优先回到 `../../RELEASE_READINESS.md`、当前存在的 scorecard、仓库根 `../../README.md` 的 Documentation Entry Points，以及本目录文档，不要把一个不存在的 master 链接当作实时 truth source
 - Web4 阶段快照（历史状态，不等于当前 release-ready）：[`../../docs/archive/web4-history/WEB4_PHASE_B_MILESTONE_SNAPSHOT_2026-02-28.md`](../../docs/archive/web4-history/WEB4_PHASE_B_MILESTONE_SNAPSHOT_2026-02-28.md)
 - Web4 前端接口基线（历史基线，当前 contract 以 `api-contract.md` 为准）：[`../../docs/archive/web4-history/WEB4_FRONTEND_API_INTERFACE_V0.md`](../../docs/archive/web4-history/WEB4_FRONTEND_API_INTERFACE_V0.md)
@@ -47,7 +47,8 @@
 > 一个好用的心智模型：
 > - `RELEASE_READINESS.md` 回答 **现在能不能放行**
 > - Scorecard 回答 **现在大概到哪一阶段**
-> - Master 文档回答 **接下来应该往哪补**
+> - Master 文档**若当前 checkout 实际存在**，才回答 **接下来应该往哪补**
+> - 若 Master 文档缺失，就退回仓库根 `README.md` 的 Documentation Entry Points 与本目录现有文档做保守说明
 
 > 当前更准确的外部口径应是：**强链核 + 初步平台壳的 Alpha 后段项目**，而不是 Beta / production-ready Web4 platform。
 >
