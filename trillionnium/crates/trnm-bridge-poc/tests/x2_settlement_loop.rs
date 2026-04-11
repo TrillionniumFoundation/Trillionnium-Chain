@@ -2464,3 +2464,45 @@ fn x3_prep_retry_pending_heartbeat_does_not_override_confirm_failure_terminal_co
         &BridgeStatus::Reverted("settlement confirm failed: target confirm timeout".to_string())
     );
 }
+
+#[test]
+fn x3_prep_failed_confirm_reason_sanitizes_unicode_controls_and_preserves_heartbeat_metrics() {
+    let mut request = SettlementRequest::new(1, "0xfailed-confirm-sanitized-reason".to_string());
+    let token = operator_token();
+
+    let mut monitor = RelayHeartbeatMonitor::new(RelayHeartbeatConfig::new(5, 2));
+    let heartbeat = monitor.record_success(310, 309, 25);
+
+    let out = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &heartbeat,
+        SettlementConfirm::Failed {
+            reason: "target\u{2060} confirm\u{2028}timeout\u{FFF9} signal".to_string(),
+        },
+    )
+    .expect("confirm failure reason should sanitize before recording audit evidence");
+
+    assert_eq!(
+        out,
+        SettlementStep::Compensated {
+            reason: "settlement confirm failed: target confirm timeout signal".to_string(),
+            event: trnm_bridge_poc::x2_settlement_loop::SettlementEvent {
+                phase: "settlement_confirm_failed",
+                heartbeat_source_height: Some(310),
+                heartbeat_target_height: Some(309),
+                heartbeat_latency_ms: Some(25),
+                confirm_height: None,
+                confirm_reason: Some(
+                    "settlement confirm failed: target confirm timeout signal".to_string(),
+                ),
+            },
+        }
+    );
+    assert_eq!(
+        current_status(&request),
+        &BridgeStatus::Reverted(
+            "settlement confirm failed: target confirm timeout signal".to_string()
+        )
+    );
+}
