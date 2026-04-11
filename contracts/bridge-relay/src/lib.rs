@@ -1490,12 +1490,14 @@ mod tests {
         )
         .unwrap();
         let audit_len_before = relay.audit_log().len();
+        let normalized_before = relay.normalized_audit_log();
 
         let err = relay
             .finalize_settlement(&msg, &[sig_for(&msg, 7)], 1_000, 999, 31337, addr(9))
             .unwrap_err();
         assert!(matches!(err, BridgeRelayError::NonceAlreadyUsed { .. }));
         assert_eq!(relay.audit_log().len(), audit_len_before);
+        assert_eq!(relay.normalized_audit_log(), normalized_before);
 
         let proof_digest = relay
             .submit_proof(&msg, &[sig_for(&msg, 7)], 1_000, 999, 31337, addr(9))
