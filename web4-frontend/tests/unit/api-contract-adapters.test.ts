@@ -709,6 +709,33 @@ describe("api-contract adapters", () => {
     ).toThrow(FrontendApiError);
   });
 
+  it("fails closed on canonical normalized audit-event entries with blank identifier fields", () => {
+    expect(() =>
+      adaptQueryNormalizedAuditEvents({
+        events: [
+          {
+            source: "bridge-relay",
+            event_type: "bridge_relay.proof_submitted",
+            actor: "validator-1",
+            object_id: "",
+          },
+        ],
+      }),
+    ).toThrow(FrontendApiError);
+
+    expect(() =>
+      adaptQueryNormalizedAuditEvents({
+        events: [
+          {
+            source: "bridge-relay",
+            event_type: "bridge_relay.proof_submitted",
+            subject: "",
+          },
+        ],
+      }),
+    ).toThrow(FrontendApiError);
+  });
+
   it("fails closed on canonical normalized audit-events page nextCursor type mismatch", () => {
     expect(() =>
       adaptQueryNormalizedAuditEvents({

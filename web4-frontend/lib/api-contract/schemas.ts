@@ -63,14 +63,14 @@ export const normalizedAuditEventSchema = z.object({
   source: z.string().min(1),
   event_type: z.string().min(1),
   actor: z.string().min(1).optional(),
-  object_id: z.string().optional(),
-  related_id: z.string().optional(),
+  object_id: z.string().min(1).optional(),
+  related_id: z.string().min(1).optional(),
   amount: z.union([z.string(), z.number().nonnegative()]).optional(),
   reason: z.string().optional(),
   note: z.string().optional(),
   checkedAt: checkedAtSchema.optional(),
   timestamp: z.string().datetime().optional(),
-  subject: z.string().optional(),
+  subject: z.string().min(1).optional(),
 }).strict();
 
 export const queryNormalizedAuditEventsPageSchema = z.object({
