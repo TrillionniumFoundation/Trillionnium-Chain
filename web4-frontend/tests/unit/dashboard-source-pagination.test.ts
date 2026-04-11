@@ -155,6 +155,72 @@ describe("dashboard source normalized audit pagination", () => {
     }
   });
 
+  it("fails closed to default readonly query config when env values are blank", async () => {
+    const previousBaseUrl = process.env.NEXT_PUBLIC_QUERY_API_BASE_URL;
+    const previousTaskId = process.env.NEXT_PUBLIC_DASHBOARD_TASK_ID;
+    const previousAuditSubject = process.env.NEXT_PUBLIC_DASHBOARD_AUDIT_SUBJECT;
+
+    process.env.NEXT_PUBLIC_QUERY_API_BASE_URL = "   ";
+    process.env.NEXT_PUBLIC_DASHBOARD_TASK_ID = "   ";
+    process.env.NEXT_PUBLIC_DASHBOARD_AUDIT_SUBJECT = "\t";
+
+    try {
+      const mockClient = {
+        queryTask: vi.fn().mockResolvedValue({
+          task: {
+            id: "341",
+            owner: "ops",
+            status: "running",
+            createdAt: "2026-03-01T00:00:00.000Z",
+            metadata: {},
+          },
+        }),
+        queryEvents: vi.fn().mockResolvedValue({
+          taskId: "341",
+          events: [],
+        }),
+        queryCapabilityAudit: vi.fn().mockResolvedValue({
+          subject: "did:trnm:core-rpc",
+          audits: [],
+        }),
+        queryNormalizedAuditEvents: vi.fn().mockResolvedValue({
+          events: [],
+          hasMore: false,
+        }),
+      } as unknown as ReturnType<typeof apiContractClient.createFrontendApiClient>;
+
+      const createClientSpy = vi
+        .spyOn(apiContractClient, "createFrontendApiClient")
+        .mockReturnValue(mockClient);
+
+      await fetchDashboardSnapshot();
+
+      expect(createClientSpy).toHaveBeenCalledWith({
+        baseUrl: window.location.origin,
+      });
+      expect(mockClient.queryTask).toHaveBeenCalledWith("341");
+      expect(mockClient.queryCapabilityAudit).toHaveBeenCalledWith("did:trnm:core-rpc");
+    } finally {
+      if (previousBaseUrl === undefined) {
+        delete process.env.NEXT_PUBLIC_QUERY_API_BASE_URL;
+      } else {
+        process.env.NEXT_PUBLIC_QUERY_API_BASE_URL = previousBaseUrl;
+      }
+
+      if (previousTaskId === undefined) {
+        delete process.env.NEXT_PUBLIC_DASHBOARD_TASK_ID;
+      } else {
+        process.env.NEXT_PUBLIC_DASHBOARD_TASK_ID = previousTaskId;
+      }
+
+      if (previousAuditSubject === undefined) {
+        delete process.env.NEXT_PUBLIC_DASHBOARD_AUDIT_SUBJECT;
+      } else {
+        process.env.NEXT_PUBLIC_DASHBOARD_AUDIT_SUBJECT = previousAuditSubject;
+      }
+    }
+  });
+
   it("falls back to default pagination limit when env is zero", async () => {
     const previousLimit = process.env.NEXT_PUBLIC_DASHBOARD_NORMALIZED_AUDIT_EVENT_LIMIT;
 
