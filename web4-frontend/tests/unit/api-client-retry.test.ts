@@ -330,6 +330,28 @@ describe("api-contract client and retry hardening", () => {
     expect(fetchImpl).toHaveBeenCalledTimes(1);
   });
 
+  it("classifies undici abort codes as aborted and does not retry", async () => {
+    const fetchImpl = vi.fn().mockRejectedValue({
+      name: "TypeError",
+      message: "fetch failed",
+      cause: {
+        code: "UND_ERR_ABORTED",
+        message: "Request aborted",
+      },
+    });
+
+    const client = createFrontendApiClient({
+      baseUrl: "http://127.0.0.1:8080",
+      fetchImpl: fetchImpl as unknown as typeof fetch,
+    });
+
+    await expect(client.queryTask("42", { retries: 2 })).rejects.toMatchObject({
+      code: "ABORTED",
+      retryable: false,
+    });
+    expect(fetchImpl).toHaveBeenCalledTimes(1);
+  });
+
   it("classifies reason-nested abort errors as aborted and does not retry", async () => {
     const fetchImpl = vi.fn().mockRejectedValue({
       name: "TypeError",

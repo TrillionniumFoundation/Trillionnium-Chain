@@ -175,7 +175,7 @@ const collectErrorLikeChain = (value: unknown, maxDepth = 4): ErrorLikeRecord[] 
 };
 
 const isAbortLikeErrorCode = (code: unknown): boolean => {
-  return code === "ABORT_ERR" || code === LEGACY_ABORT_ERROR_CODE;
+  return code === "ABORT_ERR" || code === "UND_ERR_ABORTED" || code === LEGACY_ABORT_ERROR_CODE;
 };
 
 const isAbortLikeError = (err: unknown): boolean => {
