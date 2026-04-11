@@ -108,4 +108,26 @@ describe("normalized audit query contract", () => {
     expect(params.get("cursor")).toBe("cursor-2");
     expect(params.get("limit")).toBe("50");
   });
+
+  it("normalizes exported query-param helper inputs before serialization", () => {
+    const params = buildNormalizedAuditEventsQueryParams({
+      source: "\uFEFF  governance-guard\u200B ",
+      eventType: "\u200D governance.proposal_executed \u2060",
+      cursor: "\uFEFF cursor-2\u200B ",
+      limit: 50,
+    });
+
+    expect(params.get("source")).toBe("governance-guard");
+    expect(params.get("eventType")).toBe("governance.proposal_executed");
+    expect(params.get("cursor")).toBe("cursor-2");
+    expect(params.get("limit")).toBe("50");
+  });
+
+  it("fails closed when the exported query-param helper receives invalid filters", () => {
+    expect(() =>
+      buildNormalizedAuditEventsQueryParams({
+        source: "\uFEFF \u200B\u200D ",
+      }),
+    ).toThrow();
+  });
 });
