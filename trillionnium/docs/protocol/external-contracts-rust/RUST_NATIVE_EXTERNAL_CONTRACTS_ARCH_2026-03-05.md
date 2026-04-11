@@ -59,6 +59,7 @@ Current repository snapshot note:
 - The layout above is the **target architecture inside the current `contracts/` subtree**, not a claim that the full workspace already exists in-tree.
 - The current repository already contains contract crates for `settlement-vault/`, `bridge-relay/`, and `governance-guard/` under `contracts/`.
 - The current repository also contains `contracts/audit-events/` as a shared audit-event schema crate adjacent to this target layout.
+- Validation and workspace-root references should therefore point at `contracts/Cargo.toml` in the current tree, not a nonexistent `contracts-rust/Cargo.toml` path.
 - `audit-events/` is helpful for normalized event truthfulness, but it does **not** by itself mean `sdk/`, `runtime-spec/`, or `integration-tests/` are already implemented.
 - Until those pieces land and are wired to the host runtime, this document should be read as an architecture baseline and boundary spec, **not** as proof that canonical WASM host integration is complete.
 
