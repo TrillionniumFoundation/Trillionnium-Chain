@@ -7,6 +7,8 @@
 - `contracts/bridge-relay`：`submit_proof`/`finalize_settlement` 的 `tx_receipt_status` 约束
 - `trnm-types`：`SettlementRecord::apply_status_with_receipt_status` 的最终化回执检查
 
+> 路径提示：本 runbook 以当前仓库布局 `contracts/bridge-relay` 为准。若其他遗留文档仍写成 `contracts-rust/bridge-relay`，请按过时路径处理，避免在错误目录执行验证。
+
 ## 快速执行
 
 在仓库根目录执行：

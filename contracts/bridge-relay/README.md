@@ -47,6 +47,8 @@ Rust 版本的 BridgeRelay 最小可测试合约骨架（状态机模型），�
 
 ## 运行测试
 
+> 当前实际 crate 路径是 `contracts/bridge-relay`。若仍看到历史文档或 lane 提示里的 `contracts-rust/bridge-relay`，应视为过时路径，不要在旧路径上执行 smoke / cargo 命令。
+
 ```bash
 cd contracts/bridge-relay
 cargo test
