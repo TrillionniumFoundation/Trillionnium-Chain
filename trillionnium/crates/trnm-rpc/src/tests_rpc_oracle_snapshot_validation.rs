@@ -848,6 +848,50 @@ fn oracle_validate_snapshot_response_rejects_zero_sample_count_fail_closed() {
 }
 
 #[test]
+fn oracle_validate_snapshot_response_rejects_undercounted_sample_count_fail_closed() {
+    let policy_path = write_json_fixture(
+        "oracle-policy-undercounted-sample-count",
+        &serde_json::json!({
+            "max_staleness_ms": 60_000,
+            "min_source_count": 2,
+            "max_deviation_bps": 500,
+            "max_update_rate_per_window": 60,
+            "feed_id": "btc/usd",
+        }),
+    );
+    let snapshot_path = write_json_fixture(
+        "oracle-snapshot-undercounted-sample-count",
+        &serde_json::json!({
+            "observed_at_ms": 10_000,
+            "aggregate_price": 100_000,
+            "reference_price": 100_000,
+            "sample_count": 1,
+            "feed_id": "btc/usd",
+            "sources": [
+                {
+                    "source_id": "binance",
+                    "price": 100_000,
+                    "observed_at_ms": 10_000
+                },
+                {
+                    "source_id": "coinbase",
+                    "price": 100_000,
+                    "observed_at_ms": 10_000
+                }
+            ]
+        }),
+    );
+
+    let err = oracle_validate_snapshot_response(&snapshot_path, &policy_path, 10_100)
+        .expect_err("undercounted sample_count must fail closed before quorum admission");
+
+    assert_eq!(err, "inconsistent sample count: sources=2, sample_count=1");
+
+    let _ = fs::remove_file(snapshot_path);
+    let _ = fs::remove_file(policy_path);
+}
+
+#[test]
 fn oracle_validate_snapshot_response_accepts_sample_count_at_exact_policy_cap() {
     let policy_path = write_json_fixture(
         "oracle-policy-rate-cap-boundary",
