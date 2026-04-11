@@ -2110,10 +2110,6 @@ fn resolve_config_path(path: &str) -> PathBuf {
 }
 
 fn ensure_config_path_stays_within_allowed_roots(requested: &str, resolved: &Path) -> Result<()> {
-    if !resolved.exists() {
-        return Ok(());
-    }
-
     let canonical_resolved = resolved
         .canonicalize()
         .unwrap_or_else(|_| resolved.to_path_buf());
@@ -2140,6 +2136,17 @@ fn ensure_config_path_stays_within_allowed_roots(requested: &str, resolved: &Pat
     };
     #[cfg(not(test))]
     let allowed_by_test_temp = false;
+
+    anyhow::ensure!(
+        !resolved.is_absolute() || allowed_by_workspace_or_cwd || allowed_by_test_temp,
+        "read config failed: {} resolves outside allowed roots (resolved: {})",
+        requested,
+        canonical_resolved.display()
+    );
+
+    if !resolved.exists() {
+        return Ok(());
+    }
 
     anyhow::ensure!(
         allowed_by_workspace_or_cwd || allowed_by_test_temp,
@@ -4526,6 +4533,49 @@ mod tests {
         assert!(
             err_surface.contains(canonical_target.to_string_lossy().as_ref()),
             "absolute symlink escape error must keep the resolved escape target visible: {err:#}"
+        );
+    }
+
+    #[test]
+    fn load_config_rejects_missing_absolute_path_outside_workspace_and_cwd() {
+        use std::time::{SystemTime, UNIX_EPOCH};
+
+        let outside_path = std::env::temp_dir().join(format!(
+            "trnm-node-config-missing-absolute-outside-{}-{}.toml",
+            std::process::id(),
+            SystemTime::now()
+                .duration_since(UNIX_EPOCH)
+                .expect("clock should be after unix epoch")
+                .as_millis()
+        ));
+        let requested = outside_path.to_str().expect("utf8 path");
+        let workspace_root = super::workspace_root()
+            .canonicalize()
+            .expect("workspace root should canonicalize");
+        let current_dir = std::env::current_dir()
+            .expect("capture cwd")
+            .canonicalize()
+            .expect("cwd should canonicalize");
+
+        let err = load_config(requested)
+            .expect_err("missing absolute config path outside allowed roots must fail closed");
+        let err_surface = format!("{err:#}");
+
+        assert!(
+            !outside_path.starts_with(&workspace_root) && !outside_path.starts_with(&current_dir),
+            "test fixture must stay outside both allowed roots"
+        );
+        assert!(
+            err_surface.contains("resolves outside allowed roots"),
+            "unexpected error: {err:#}"
+        );
+        assert!(
+            err_surface.contains(requested),
+            "missing outside-root error must keep the operator-supplied absolute path visible: {err:#}"
+        );
+        assert!(
+            err_surface.contains(outside_path.to_string_lossy().as_ref()),
+            "missing outside-root error must keep the resolved absolute path visible: {err:#}"
         );
     }
 
