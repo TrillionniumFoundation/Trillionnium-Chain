@@ -202,7 +202,9 @@ Interpretation rule:
 Recommended evidence-capture shape for the cutover note:
 
 ```bash
-config_bundle_check_log_path="/tmp/trnm-config-bundle-check.log"
+config_bundle_check_log_dir="run/validator-cutover"
+mkdir -p "$config_bundle_check_log_dir"
+config_bundle_check_log_path="$config_bundle_check_log_dir/config-bundle-check-$(date -u +%Y%m%dT%H%M%SZ).log"
 config_bundle_check_command="python3 scripts/v2/check_validator_config_bundle.py configs/validator-new.toml"
 config_bundle_check_result="$(python3 scripts/v2/check_validator_config_bundle.py configs/validator-new.toml 2>&1 | tee "$config_bundle_check_log_path" | tail -n 1)"
 printf 'config_bundle_check_command=%s\n' "$config_bundle_check_command"
@@ -212,8 +214,9 @@ printf 'config_bundle_check_log_path=%s\n' "$config_bundle_check_log_path"
 
 Interpretation rule:
 - replace `configs/validator-new.toml` with the exact incoming bundle named in the cutover note (and append any additional config files to the same command when the bundle spans more than one file)
+- preserve `config_bundle_check_log_path=` under the current worktree's `run/` directory rather than `/tmp` or another ephemeral location, so the handoff still points to a durable, lane-local log after shell exit or operator changeover
 - keep the emitted `config_bundle_check_command=` / `config_bundle_check_result=` / `config_bundle_check_log_path=` lines adjacent in the handoff note so another operator can audit the exact bundle, terminal verdict, and full stderr/stdout capture together
-- if the last line is ambiguous or truncated, preserve the full log path (for example `/tmp/trnm-config-bundle-check.log`) next to the handoff note rather than paraphrasing the result from memory
+- if the last line is ambiguous or truncated, preserve the full log path (for example `run/validator-cutover/config-bundle-check-<timestamp>.log`) next to the handoff note rather than paraphrasing the result from memory
 
 ### 3a. Fail-closed config bundle evidence capture order
 
