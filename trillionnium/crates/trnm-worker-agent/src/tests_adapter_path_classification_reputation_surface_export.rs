@@ -94,6 +94,18 @@ fn exported_canonical_reputation_surfaces_fail_closed_on_cross_signal_hybrids() 
         None,
         "surface lookup must reject cross-signal normalized score hybrids"
     );
+    assert_eq!(
+        reputation_signal_from_surface(
+            accepted.label,
+            accepted.delta,
+            accepted.tier,
+            accepted.weight_bps,
+            accepted.score_bps,
+            retryable.rank_ordinal,
+        ),
+        None,
+        "surface lookup must reject cross-signal rank hybrids"
+    );
 }
 
 #[test]
