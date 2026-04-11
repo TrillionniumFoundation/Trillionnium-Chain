@@ -173,10 +173,16 @@ pub(crate) fn parse_http_request_target(first_line: &str) -> Option<(&str, &str)
     if path.chars().any(|ch| ch.is_control() || ch.is_whitespace()) {
         return None;
     }
+    if path.matches('?').count() > 1 {
+        return None;
+    }
     if path.contains('\\') || normalized.contains("%5c") {
         return None;
     }
     if path.contains('#') || normalized.contains("%23") {
+        return None;
+    }
+    if normalized.contains("%3f") {
         return None;
     }
     if contains_malformed_percent_encoding(path) || contains_percent_encoded_control_or_space(path)
@@ -588,6 +594,22 @@ mod tests {
         assert_eq!(
             parse_http_get_path("GET /-/ready?verbose=1 HTTP/1.1"),
             Some("/-/ready")
+        );
+    }
+
+    #[test]
+    fn parse_http_request_target_rejects_ambiguous_query_delimiters_fail_closed() {
+        assert_eq!(
+            parse_http_request_target("GET /healthz?probe=lb?shadow=1 HTTP/1.1"),
+            None
+        );
+        assert_eq!(
+            parse_http_request_target("HEAD /-/readyz%3Fprobe=lb HTTP/1.1"),
+            None
+        );
+        assert_eq!(
+            parse_http_request_target("GET /-/statusz%3fprobe=lb HTTP/1.1"),
+            None
         );
     }
 

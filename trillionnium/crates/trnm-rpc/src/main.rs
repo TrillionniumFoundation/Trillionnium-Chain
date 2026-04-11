@@ -3049,13 +3049,17 @@ fn parse_http_request_target(first_line: &str) -> Option<(&str, &str)> {
     }
 
     let normalized = path.to_ascii_lowercase();
+    if path.matches('?').count() > 1 {
+        return None;
+    }
     if path.contains('\\') || normalized.contains("%5c") {
         return None;
     }
     if path.contains('#') || normalized.contains("%23") {
         return None;
     }
-    if normalized.contains("%00")
+    if normalized.contains("%3f")
+        || normalized.contains("%00")
         || normalized.contains("%0d")
         || normalized.contains("%0a")
         || normalized.contains("%09")
@@ -5909,6 +5913,22 @@ mod tests {
         assert_eq!(
             parse_http_get_path("GET /-/readyz?probe=lb HTTP/1.1"),
             Some("/-/readyz")
+        );
+    }
+
+    #[test]
+    fn parse_http_request_target_rejects_ambiguous_query_delimiters_fail_closed() {
+        assert_eq!(
+            parse_http_request_target("GET /healthz?probe=lb?shadow=1 HTTP/1.1"),
+            None
+        );
+        assert_eq!(
+            parse_http_request_target("HEAD /-/readyz%3Fprobe=lb HTTP/1.1"),
+            None
+        );
+        assert_eq!(
+            parse_http_request_target("GET /-/statusz%3fprobe=lb HTTP/1.1"),
+            None
         );
     }
 
