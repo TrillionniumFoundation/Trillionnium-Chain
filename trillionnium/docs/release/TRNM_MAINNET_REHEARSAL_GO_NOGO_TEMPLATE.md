@@ -83,12 +83,14 @@ awk -F= '/^(result|generated_at|git_toplevel|git_branch|git_head|git_head_state|
 
 latest_evidence_dir="$(ls -dt run/health/evidence-* 2>/dev/null | head -n 1)"
 [ -n "$latest_evidence_dir" ] || { echo "missing release evidence dir" >&2; exit 1; }
+printf 'evidence_dir=%s\n' "$latest_evidence_dir"
 summary_path="$latest_evidence_dir/summary.txt"
 [ -f "$summary_path" ] || { echo "missing summary artifact" >&2; exit 1; }
 printf 'summary_path=%s\n' "$summary_path"
 
 latest_rc_dir="$(ls -dt release/rc-* 2>/dev/null | head -n 1)"
 [ -n "$latest_rc_dir" ] || { echo "missing release rc dir" >&2; exit 1; }
+printf 'rc_dir=%s\n' "$latest_rc_dir"
 manifest_path="$latest_rc_dir/manifest.txt"
 [ -f "$manifest_path" ] || { echo "missing manifest artifact" >&2; exit 1; }
 printf 'manifest_path=%s\n' "$manifest_path"
@@ -111,7 +113,9 @@ Treat the helper output as a first-class artifact for memo assembly, not throwaw
 Record:
 - preflight_path=
 - preflight_summary_path=
+- evidence_dir=
 - summary_path=
+- rc_dir=
 - manifest_path=
 - handoff_helper_output_path=
 - preflight_result=
@@ -135,7 +139,7 @@ Record:
 - git_expected_worktree_branch_ref=
 
 Rule:
-- if `preflight_path`, `preflight_summary_path`, `summary_path`, or `manifest_path` is missing or unresolved, decision = **NO-GO**
+- if `preflight_path`, `preflight_summary_path`, `evidence_dir`, `summary_path`, `rc_dir`, or `manifest_path` is missing or unresolved, decision = **NO-GO**
 - if the preflight artifact/helper transcript does not preserve `result=`, `generated_at=`, `git_status_summary=`, `git_worktree_path=`, `git_worktree_branch_ref=`, `git_worktree_branch_ref_match=`, `expected_worktree_root=`, `ticket_expected_branch_ref=`, `expected_branch_ref=`, `rollback_command=`, and `replay_command=`, decision = **NO-GO**
 - if the ticket assigned an expected head, preserve `expected_head=` verbatim from the preflight artifact and require it to match the ticket-assigned value; do not silently downgrade that field into an optional note
 - treat `expected_worktree_root=` plus `ticket_expected_branch_ref=` as the ticket-binding proof for the rehearsal packet, and keep `expected_branch_ref=` as the canonicalized companion field rather than a replacement for the ticket-original form
@@ -250,7 +254,9 @@ Mark each item explicitly:
 - [ ] `git status --short` empty before evidence generation
 - [ ] `preflight_path` resolved from disk
 - [ ] `preflight_summary_path` resolved from disk
+- [ ] `evidence_dir` resolved from disk
 - [ ] `summary_path` resolved from disk
+- [ ] `rc_dir` resolved from disk
 - [ ] `manifest_path` resolved from disk
 - [ ] `handoff_helper_output_path` resolved from disk and preserved as a first-class artifact
 - [ ] summary/manifest identity fields match each other
@@ -306,7 +312,9 @@ verified_head=<helper output>
 verified_worktree_entry=<captured current-path stanza from helper output or git worktree list --porcelain>
 preflight_path=<resolved path>
 preflight_summary_path=<resolved path>
+evidence_dir=<resolved directory>
 summary_path=<resolved path>
+rc_dir=<resolved directory>
 manifest_path=<resolved path>
 handoff_helper_output_path=<resolved saved helper transcript path>
 preflight_result=<GO|NO-GO>
