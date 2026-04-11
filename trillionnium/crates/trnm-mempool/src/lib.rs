@@ -3041,6 +3041,19 @@ mod tests {
         assert_eq!(g.admit(70, IngressClass::Critical), AdmitOutcome::Accepted);
         assert_eq!(g.queued_counts(), (3, 1, 4));
 
+        let guarded_snapshot = LaneQosSnapshot {
+            normal_queued: 3,
+            critical_queued: 1,
+            total_queued: 4,
+            normal_headroom: 0,
+            critical_headroom: 1,
+            total_headroom: 1,
+            fresh_normal_admissible: false,
+            fresh_critical_admissible: true,
+        };
+        assert_eq!(g.qos_snapshot(), guarded_snapshot);
+        assert_eq!(g.seen_global.len(), 4);
+
         // Fresh normal ingress is blocked by the final reserved critical slot, but the
         // rejected tx id must stay fresh rather than poisoning cross-class dedupe.
         assert_eq!(
@@ -3051,7 +3064,9 @@ mod tests {
             g.admit(99, IngressClass::Normal),
             AdmitOutcome::Backpressured
         );
+        assert_eq!(g.qos_snapshot(), guarded_snapshot);
         assert_eq!(g.queued_counts(), (3, 1, 4));
+        assert_eq!(g.seen_global.len(), 4);
 
         // Once the active critical backlog drains, the previously guarded tx id should
         // admit cleanly instead of being misclassified as a duplicate.
