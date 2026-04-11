@@ -2189,6 +2189,10 @@ fn validate_config_path_input(path: &str) -> Result<()> {
         "read config failed: path must not be a URL"
     );
     anyhow::ensure!(
+        !path.starts_with('~'),
+        "read config failed: path must not rely on home-directory expansion (~)"
+    );
+    anyhow::ensure!(
         !Path::new(path)
             .components()
             .any(|component| matches!(component, std::path::Component::ParentDir)),
@@ -5291,6 +5295,28 @@ mod tests {
                 "unexpected error for {path:?}: {err:#}"
             );
         }
+    }
+
+    #[test]
+    fn load_config_rejects_home_expansion_style_paths_fail_closed() {
+        for path in ["~/configs/node1.toml", "~\\configs\\node1.toml", "~qianqi/configs/node1.toml"] {
+            let err = load_config(path)
+                .expect_err("config path home-expansion markers must fail closed");
+            assert!(
+                err.to_string()
+                    .contains("path must not rely on home-directory expansion (~)"),
+                "unexpected error for {path:?}: {err:#}"
+            );
+        }
+    }
+
+    #[test]
+    fn load_config_prefers_explicit_paths_over_home_expansion_guessing() {
+        let cfg = load_config("trillionnium/configs/node1.toml")
+            .expect("explicit repo-root config path should remain supported");
+        assert_eq!(cfg.node_id, "node1");
+        assert_eq!(cfg.rpc_addr, "127.0.0.1:26657");
+        assert_eq!(cfg.p2p_addr, "127.0.0.1:26656");
     }
 
     const FORBIDDEN_BOOTSTRAP_ALIAS_FIELDS: &[(&str, &str)] = &[
