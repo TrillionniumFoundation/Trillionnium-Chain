@@ -246,6 +246,16 @@ export const adaptQueryEvents = (
 ): QueryEventsResult => {
   const canonical = queryEventsResponseSchema.safeParse(payload);
   if (canonical.success) {
+    const hasMixedCanonicalTaskIds = canonical.data.events.some(
+      (event) => event.taskId !== canonical.data.taskId,
+    );
+    if (hasMixedCanonicalTaskIds) {
+      throw normalizeSchemaError({
+        message: "canonical query-events payload contains mixed task ids",
+        taskId: canonical.data.taskId,
+      });
+    }
+
     return {
       ...canonical.data,
       events: canonical.data.events.map(normalizeCanonicalEventForM2V2),

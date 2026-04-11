@@ -198,6 +198,32 @@ describe("api-contract adapters", () => {
     });
   });
 
+  it("fails closed when canonical query-events payload contains mixed task ids", () => {
+    expect(() =>
+      adaptQueryEvents({
+        taskId: "7",
+        events: [
+          {
+            id: "e1",
+            taskId: "7",
+            type: "commit",
+            level: "info",
+            timestamp: "2026-03-03T00:00:00.000Z",
+            payload: {},
+          },
+          {
+            id: "e2",
+            taskId: "8",
+            type: "reveal",
+            level: "warn",
+            timestamp: "2026-03-03T00:00:01.000Z",
+            payload: {},
+          },
+        ],
+      }),
+    ).toThrow(FrontendApiError);
+  });
+
   it("normalizes canonical events using snake_case resolution_code alias", () => {
     const out = adaptQueryEvents({
       taskId: "8",
