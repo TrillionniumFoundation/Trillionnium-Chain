@@ -18574,6 +18574,18 @@ locked_block_hash = "stale-lock"
         );
         assert_eq!(
             metadata_only_operator_action(&RecoveredWalState {
+                next_height: 1,
+                restored_lock: None,
+                last_checkpoint: None,
+                truncated: false,
+                metadata_only_recovery: true,
+                wal_entries_retained: 0,
+                checkpoint_height_retained: None,
+            }),
+            "operator action: restart with a fresh --bft-wal-dir / --bft-wal-mode auto isolated run; if this node must rejoin from prior state, restore an application snapshot before retrying"
+        );
+        assert_eq!(
+            metadata_only_operator_action(&RecoveredWalState {
                 next_height: 9,
                 restored_lock: None,
                 last_checkpoint: None,
