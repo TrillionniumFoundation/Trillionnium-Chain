@@ -70,4 +70,24 @@ mod tests {
         assert_eq!(gate.normal.queue.len(), gate.normal.capacity);
         assert_eq!(gate.critical.queue.len(), gate.critical.capacity);
     }
+
+    #[test]
+    fn reserve_only_mode_never_fabricates_critical_spillover_headroom() {
+        let mut gate = LaneAdmissionGate::new(2, 2);
+
+        assert_eq!(gate.normal.capacity, 0);
+        assert!(!gate.normal_has_capacity_for_critical_spillover());
+
+        // In reserve-only mode, normal ingress may borrow true critical headroom,
+        // but critical ingress must never "spill" into a nonexistent normal lane.
+        assert_eq!(gate.admit(10, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(gate.admit(11, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(gate.critical.queue.len(), gate.critical.capacity);
+        assert_eq!(gate.normal.queue.len(), 0);
+        assert!(!gate.normal_has_capacity_for_critical_spillover());
+
+        assert_eq!(gate.admit(12, IngressClass::Critical), AdmitOutcome::Backpressured);
+        assert_eq!(gate.critical.queue.len(), gate.critical.capacity);
+        assert_eq!(gate.normal.queue.len(), 0);
+    }
 }
