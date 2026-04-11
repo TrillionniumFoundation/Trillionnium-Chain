@@ -65,6 +65,9 @@ while [[ $# -gt 0 ]]; do
 done
 
 TIMESTAMP_UTC="$(date -u +"%Y%m%dT%H%M%SZ")"
+TRUTH_SOURCE_TEMPLATE_PATH="$(truth_source_value "${TEMPLATE_PATH}")"
+TRUTH_SOURCE_DURABLE_TEMPLATE_PATH="$(truth_source_value "${DURABLE_TEMPLATE_PATH}")"
+TRUTH_SOURCE_SCAFFOLD_RUNBOOK="$(truth_source_value "${SCAFFOLD_RUNBOOK_PATH}")"
 TRUTH_SOURCE_RELEASE_READINESS="$(truth_source_value "${RELEASE_READINESS_PATH}")"
 TRUTH_SOURCE_GO_NO_GO_PANEL="$(truth_source_value "${GO_NO_GO_PANEL_PATH}")"
 TRUTH_SOURCE_GAP_MATRIX="$(truth_source_value "${GAP_MATRIX_PATH}")"
@@ -313,14 +316,14 @@ durability_boundary=${DURABILITY_BOUNDARY}
 archive_strategy=${ARCHIVE_STRATEGY}
 deployment_topology=${DEPLOYMENT_TOPOLOGY}
 read_replica_strategy=${READ_REPLICA_STRATEGY}
-template_path=${TEMPLATE_PATH}
-durable_template_path=${DURABLE_TEMPLATE_PATH}
+template_path=${TRUTH_SOURCE_TEMPLATE_PATH}
+durable_template_path=${TRUTH_SOURCE_DURABLE_TEMPLATE_PATH}
 template_selection=placeholder-scaffold-only
 durable_template_allowed=false
 durable_template_rejection_reason=scaffold-capture-is-placeholder-only-and-missing-durable-read-anchors
 deployment_template_boundary=use-scaffold-template-until-non-placeholder-deployment-and-all-6-durable-read-anchors-exist
-truth_source_scaffold_runbook=${SCAFFOLD_RUNBOOK_PATH}
-truth_source_durable_handoff_template=${DURABLE_TEMPLATE_PATH}
+truth_source_scaffold_runbook=${TRUTH_SOURCE_SCAFFOLD_RUNBOOK}
+truth_source_durable_handoff_template=${TRUTH_SOURCE_DURABLE_TEMPLATE_PATH}
 truth_source_release_readiness=${TRUTH_SOURCE_RELEASE_READINESS}
 truth_source_go_no_go_panel=${TRUTH_SOURCE_GO_NO_GO_PANEL}
 truth_source_gap_matrix=${TRUTH_SOURCE_GAP_MATRIX}
