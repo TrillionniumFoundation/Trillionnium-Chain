@@ -206,11 +206,6 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         path
     );
     anyhow::ensure!(
-        !node_id.contains('[') && !node_id.contains(']'),
-        "invalid node config {}: node_id must not contain bracketed host delimiters ([ ])",
-        path
-    );
-    anyhow::ensure!(
         !node_id.contains('@')
             && !node_id.contains('?')
             && !node_id.contains('#')
@@ -2412,7 +2407,7 @@ mod tests {
 
     #[test]
     fn validate_node_config_rejects_path_separators_in_node_id() {
-        for node_id in ["node/alpha", r"node\\alpha", "node:alpha", "[::1]"] {
+        for node_id in ["node/alpha", r"node\\alpha", "node:alpha", "node[alpha", "node]alpha", "[::1]"] {
             let err = validate_node_config(
                 NodeConfig {
                     node_id: node_id.into(),
