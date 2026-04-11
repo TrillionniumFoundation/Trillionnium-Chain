@@ -1773,6 +1773,27 @@ mod tests {
                 got: 1,
             }
         ));
+
+        let mut retained_validator = sample_msg();
+        retained_validator.config_version = current_version;
+        retained_validator.nonce = 126;
+        let proof_digest = relay
+            .submit_proof(
+                &retained_validator,
+                &[
+                    sig_for(&retained_validator, 7),
+                    sig_for(&retained_validator, 8),
+                ],
+                1_000,
+                999,
+                31337,
+                addr(9),
+            )
+            .expect("stale validator rotation must leave the prior validator set intact");
+        assert!(
+            relay.proof_used.contains(&proof_digest),
+            "successful proof should confirm validator 8 remained allowlisted"
+        );
     }
 
     #[test]
