@@ -308,7 +308,7 @@ printf 'handoff_helper_output_path=%s\n' "$handoff_helper_output_path"
 
 Operator rule:
 - treat `handoff_helper_output_path=` as a first-class artifact, not throwaway terminal scrollback
-- quote `summary_generated_at=`, `manifest_generated_at=`, `git_status_summary=`, `git_worktree_path=`, `git_worktree_branch_ref=`, `git_expected_worktree_branch_ref=`, `git_worktree_branch_ref_match=`, `rollback_command=`, and `replay_command=` from that saved transcript or the underlying artifacts, not from memory
+- quote `preflight_summary_path=`, `summary_generated_at=`, `manifest_generated_at=`, `git_status_summary=`, `git_worktree_path=`, `git_worktree_branch_ref=`, `git_expected_worktree_branch_ref=`, `git_worktree_branch_ref_match=`, `rollback_command=`, and `replay_command=` from that saved transcript or the underlying artifacts, not from memory
 - if the helper output was not saved anywhere path-resolved, the handoff remains evidence-incomplete even if the terminal showed the expected lines once
 
 If you need the raw shell extraction for an air-gapped/debugging context, the equivalent block is:
