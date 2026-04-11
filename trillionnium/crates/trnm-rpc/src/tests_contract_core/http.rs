@@ -232,6 +232,20 @@ fn parse_query_events_limit_from_path_zero_uses_default_limit() {
 }
 
 #[test]
+fn parse_query_events_limit_from_path_accepts_single_trailing_slash_with_same_limit_contract() {
+    assert_eq!(
+        parse_query_events_limit_from_path("/query-events/42/?limit=7")
+            .expect("single trailing slash should preserve explicit limit parsing"),
+        7
+    );
+    assert_eq!(
+        parse_query_events_limit_from_path("/query-events/42/")
+            .expect("single trailing slash should keep the default limit contract"),
+        QUERY_EVENTS_LIMIT_DEFAULT
+    );
+}
+
+#[test]
 fn parse_query_events_limit_from_path_rejects_noncanonical_route_shapes() {
     for path in [
         "/query-events",
