@@ -393,6 +393,58 @@ describe("dashboard source normalized audit pagination", () => {
     expect(snapshot.events.find((event) => event.id === "EVT-344b")?.details).toBe("human-readable payload");
   });
 
+  it("trims whitespace and zero-width noise from plain string metadata and payload values", async () => {
+    const mockClient = {
+      queryTask: vi
+        .fn()
+        .mockResolvedValue({
+          task: {
+            id: "344b-trimmed",
+            owner: "ops",
+            status: "running",
+            createdAt: "2026-03-01T00:00:00.000Z",
+            metadata: " \u200Bmanual note\uFEFF  ",
+          },
+        }),
+      queryEvents: vi.fn().mockResolvedValue({
+        taskId: "344b-trimmed",
+        events: [
+          {
+            id: "EVT-344b-trimmed",
+            timestamp: "2026-03-01T00:01:00.000Z",
+            type: "deploy.completed",
+            level: "info",
+            payload: "\n\u200Bhuman-readable payload\uFEFF\t",
+          },
+        ],
+      }),
+      queryCapabilityAudit: vi.fn().mockResolvedValue({
+        subject: "did:trnm:test",
+        audits: [
+          {
+            subject: "did:trnm:test",
+            capability: "AUDIT_READ",
+            granted: true,
+            checkedAt: "2026-03-01T00:00:00.000Z",
+          },
+        ],
+      }),
+      queryNormalizedAuditEvents: vi
+        .fn()
+        .mockResolvedValue({
+          events: [],
+          hasMore: false,
+        }),
+    } as unknown as ReturnType<typeof apiContractClient.createFrontendApiClient>;
+
+    vi.spyOn(apiContractClient, "createFrontendApiClient").mockReturnValue(mockClient);
+
+    const snapshot = await fetchDashboardSnapshot();
+
+    expect(snapshot.tasks[0]?.description).toBe("manual note");
+    expect(snapshot.events.find((event) => event.id === "EVT-344b-trimmed")?.details).toBe("human-readable payload");
+  });
+
   it("falls back when task metadata or event payload are blank strings", async () => {
     const mockClient = {
       queryTask: vi
