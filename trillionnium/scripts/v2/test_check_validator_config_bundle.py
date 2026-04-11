@@ -696,6 +696,7 @@ class CheckValidatorConfigBundleTests(unittest.TestCase):
 
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertIn("packet_distribution_path=<absolute-path-to-ceremony-packet>", result.stdout)
+        self.assertIn("startup_order_note=<controlled-4-node-bootstrap-order>", result.stdout)
         self.assertIn("genesis_artifact_path=<absolute-path-to-genesis-artifact>", result.stdout)
         self.assertIn("genesis_artifact_sha256=<64-character-genesis-sha256>", result.stdout)
 

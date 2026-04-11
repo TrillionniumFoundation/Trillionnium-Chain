@@ -97,7 +97,7 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     )
     parser.add_argument(
         "--startup-order-note",
-        default="<startup-order>",
+        default="<controlled-4-node-bootstrap-order>",
         help=(
             "startup_order_note value to print when --emit-ceremony-packet is used; "
             "public-mainnet-input requires replacing placeholder/default wording"
