@@ -3270,6 +3270,7 @@ mod tests {
             "If `node4` is absent, keep `node1` through `node3` in their shipped slots; do not rename another config into the `node4` role, and if `node4` returns it must come back with `node4.toml` and its shipped tuple.",
             "unknown fields, whitespace drift, host-like or path-like ids, URI-like delimiters, non-canonical socket literals, privileged ports, wildcard listeners, reserved documentation/benchmarking listener ranges, or mixed listener IP families, the config loader must fail closed",
             "Do not substitute IPv6 loopback `[::1]` for the shipped IPv4 loopback `127.0.0.1` during bootstrap or rejoin; listener-family drift is invalid even if both addresses are loopback.",
+            "If two shipped slot files ever converge on the same `rpc_addr`/`p2p_addr` tuple, stop both peers and restore the original slot-bound files before retrying; duplicated listeners are topology drift, not an interchangeable bootstrap shortcut.",
             "## Join / rejoin acceptance table",
             expected_rows_in_order[0],
             expected_rows_in_order[1],
