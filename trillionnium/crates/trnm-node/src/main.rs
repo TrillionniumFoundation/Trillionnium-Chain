@@ -18596,21 +18596,26 @@ locked_block_hash = "stale-lock"
             }),
             "operator action: rebuild or restore checkpoint metadata so it covers retained WAL tip height 8 before retrying join/rejoin; do not resume from metadata alone"
         );
-        assert_eq!(
-            metadata_only_operator_action(&RecoveredWalState {
-                next_height: 12,
-                restored_lock: None,
-                last_checkpoint: Some(CheckpointMeta {
-                    height: 10,
-                    state_root_hex: "r10".into(),
-                    wal_entry_hash_hex: "h10".into(),
-                }),
-                truncated: false,
-                metadata_only_recovery: true,
-                wal_entries_retained: 2,
-                checkpoint_height_retained: Some(10),
+        let single_block_lagging_rejoin = RecoveredWalState {
+            next_height: 12,
+            restored_lock: None,
+            last_checkpoint: Some(CheckpointMeta {
+                height: 10,
+                state_root_hex: "r10".into(),
+                wal_entry_hash_hex: "h10".into(),
             }),
+            truncated: false,
+            metadata_only_recovery: true,
+            wal_entries_retained: 2,
+            checkpoint_height_retained: Some(10),
+        };
+        assert_eq!(
+            metadata_only_operator_action(&single_block_lagging_rejoin),
             "operator action: restore an application snapshot that covers the retained WAL tip before retrying join/rejoin; do not resume from metadata alone"
+        );
+        assert_eq!(
+            recovery_startup_summary(&single_block_lagging_rejoin),
+            "retained_wal_entries=2 checkpoint_height_retained=10 checkpoint_tip_relation=behind:1 next_startup_height=12 wal_tail_truncated=false metadata_only_recovery=true join_rejoin_status=blocked:metadata_only_recovery"
         );
         assert_eq!(
             metadata_only_operator_action(&RecoveredWalState {
