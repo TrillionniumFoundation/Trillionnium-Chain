@@ -303,14 +303,16 @@ export function createFrontendApiClient(config: BaseClientConfig) {
 
   return {
     queryTask(taskId: string, options?: QueryOptions): Promise<QueryTaskResult> {
-      return getJson(`/query-task/${encodeURIComponent(taskId)}`, options).then(
+      const normalizedTaskId = normalizeRequiredPathParam(taskId, "Task id");
+      return getJson(`/query-task/${encodeURIComponent(normalizedTaskId)}`, options).then(
         adaptQueryTask,
       );
     },
 
     queryEvents(taskId: string, options?: QueryOptions): Promise<QueryEventsResult> {
-      return getJson(`/query-events/${encodeURIComponent(taskId)}`, options).then(
-        (payload) => adaptQueryEvents(payload, taskId),
+      const normalizedTaskId = normalizeRequiredPathParam(taskId, "Task id");
+      return getJson(`/query-events/${encodeURIComponent(normalizedTaskId)}`, options).then(
+        (payload) => adaptQueryEvents(payload, normalizedTaskId),
       );
     },
 

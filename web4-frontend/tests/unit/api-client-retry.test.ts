@@ -8,6 +8,36 @@ describe("api-contract client and retry hardening", () => {
     expect(() => createFrontendApiClient({ baseUrl: "   " })).toThrow(FrontendApiError);
   });
 
+  it("fails closed when task id path params are blank", () => {
+    const fetchImpl = vi.fn();
+    const client = createFrontendApiClient({
+      baseUrl: "http://127.0.0.1:8080",
+      fetchImpl: fetchImpl as unknown as typeof fetch,
+    });
+
+    try {
+      client.queryTask("   ");
+      throw new Error("expected blank task id to throw");
+    } catch (error) {
+      expect(error).toMatchObject({
+        code: "INVALID_PAYLOAD",
+        retryable: false,
+      });
+    }
+
+    try {
+      client.queryEvents("\n\t");
+      throw new Error("expected blank event task id to throw");
+    } catch (error) {
+      expect(error).toMatchObject({
+        code: "INVALID_PAYLOAD",
+        retryable: false,
+      });
+    }
+
+    expect(fetchImpl).not.toHaveBeenCalled();
+  });
+
   it("normalizes trailing slash in base url", async () => {
     const fetchImpl = vi.fn().mockResolvedValue({
       ok: true,
