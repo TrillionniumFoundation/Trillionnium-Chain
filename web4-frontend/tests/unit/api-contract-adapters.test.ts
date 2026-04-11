@@ -884,6 +884,31 @@ describe("api-contract adapters", () => {
     });
   });
 
+  it("treats zero-width rpc capability audit note noise as blank and falls back to action", () => {
+    const out = adaptQueryCapabilityAudit({
+      token: {
+        subject_did: "did:trnm:carol",
+        scope: "AUDIT_READ",
+      },
+      owner_history: [
+        {
+          action: "CAPABILITY_REVOKED",
+          at_height: 127,
+          note: "\uFEFF \u200B\u200D ",
+        },
+      ],
+    });
+
+    expect(out.subject).toBe("did:trnm:carol");
+    expect(out.audits[0]).toEqual({
+      subject: "did:trnm:carol",
+      capability: "AUDIT_READ",
+      granted: false,
+      reason: "CAPABILITY_REVOKED",
+      checkedAt: "height:127",
+    });
+  });
+
   it("accepts canonical capability audit payload with height marker checkedAt", () => {
     const out = adaptQueryCapabilityAudit({
       subject: "did:trnm:bob",
