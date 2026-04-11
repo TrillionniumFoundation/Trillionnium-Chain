@@ -321,7 +321,7 @@ impl SettlementVault {
             (lock.account.clone(), lock.amount)
         };
 
-        if beneficiary.is_empty() || beneficiary == account {
+        if beneficiary.trim().is_empty() || beneficiary == account {
             return Err(VaultError::InvalidBeneficiary);
         }
 
@@ -963,6 +963,18 @@ mod tests {
         assert_eq!(err, VaultError::InvalidBeneficiary);
         assert_eq!(vault.balance_of("alice"), 0);
         assert_eq!(vault.balance_of(""), 0);
+        assert_eq!(
+            vault.lock_record("req-self-slash").unwrap().status,
+            LockStatus::Locked
+        );
+        assert_eq!(vault.audit_log().len(), audit_len_before);
+
+        let err = vault
+            .slash("owner", "req-self-slash", "   ")
+            .expect_err("slash beneficiary must reject whitespace-only values");
+        assert_eq!(err, VaultError::InvalidBeneficiary);
+        assert_eq!(vault.balance_of("alice"), 0);
+        assert_eq!(vault.balance_of("   "), 0);
         assert_eq!(
             vault.lock_record("req-self-slash").unwrap().status,
             LockStatus::Locked
