@@ -115,6 +115,18 @@ require_atom_value() {
   esac
 }
 
+canonicalize_branch_ref() {
+  local ref="$1"
+  case "$ref" in
+    refs/*)
+      printf '%s' "$ref"
+      ;;
+    *)
+      printf 'refs/heads/%s' "$ref"
+      ;;
+  esac
+}
+
 command_has_flag_value() {
   local command="$1"
   local flag_name="$2"
@@ -132,6 +144,37 @@ except ValueError:
 
 for i, token in enumerate(tokens[:-1]):
     if token == flag_name and tokens[i + 1] == expected_value:
+        sys.exit(0)
+
+sys.exit(1)
+PY
+}
+
+command_has_equivalent_branch_ref() {
+  local command="$1"
+  local flag_name="$2"
+  local expected_value="$3"
+  local expected_canonical
+
+  expected_canonical="$(canonicalize_branch_ref "$expected_value")"
+
+  python3 - "$command" "$flag_name" "$expected_canonical" <<'PY'
+import shlex
+import sys
+
+command, flag_name, expected_canonical = sys.argv[1:4]
+try:
+    tokens = shlex.split(command)
+except ValueError:
+    sys.exit(1)
+
+for i, token in enumerate(tokens[:-1]):
+    if token != flag_name:
+        continue
+    candidate = tokens[i + 1]
+    if not candidate.startswith("refs/"):
+        candidate = f"refs/heads/{candidate}"
+    if candidate == expected_canonical:
         sys.exit(0)
 
 sys.exit(1)
@@ -217,7 +260,7 @@ if [ -n "$EXPECTED_WORKTREE_ROOT" ] || [ -n "$EXPECTED_BRANCH_REF" ] || [ -n "$E
     printf 'invalid --lane-verify-command: missing --expected-worktree-root %s\n' "$EXPECTED_WORKTREE_ROOT" >&2
     exit 2
   fi
-  if ! command_has_flag_value "$LANE_VERIFY_COMMAND" --expected-branch-ref "$EXPECTED_BRANCH_REF"; then
+  if ! command_has_equivalent_branch_ref "$LANE_VERIFY_COMMAND" --expected-branch-ref "$EXPECTED_BRANCH_REF"; then
     printf 'invalid --lane-verify-command: missing --expected-branch-ref %s\n' "$EXPECTED_BRANCH_REF" >&2
     exit 2
   fi

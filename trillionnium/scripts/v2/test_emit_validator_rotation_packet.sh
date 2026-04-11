@@ -131,6 +131,24 @@ if bash "$SCRIPT" \
 fi
 grep -q 'invalid --lane-verify-command: missing --expected-branch-ref lane/mn05-operator-dr-rotation-lifecycle' /tmp/emit-packet.err
 
+bash "$SCRIPT" \
+  --cutover-kind replacement \
+  --verified-worktree /tmp/trnm-lane \
+  --verified-branch-ref lane/mn05-operator-dr-rotation-lifecycle \
+  --verified-head 0123456789abcdef \
+  --outgoing-validator-id validator-old \
+  --incoming-validator-id validator-new \
+  --incoming-config-path /tmp/configs/validator-new.json \
+  --rollback-command 'rm -rf /tmp/cutover-note' \
+  --expected-worktree-root /Users/qianqi/.openclaw/workspace/trnm-mainnet-lanes/MN05-operator-dr-rotation-lifecycle \
+  --expected-branch-ref refs/heads/lane/mn05-operator-dr-rotation-lifecycle \
+  --lane-verify-command './scripts/v2/verify_lane_worktree.sh --expected-worktree-root /Users/qianqi/.openclaw/workspace/trnm-mainnet-lanes/MN05-operator-dr-rotation-lifecycle --expected-branch-ref lane/mn05-operator-dr-rotation-lifecycle' \
+  >/tmp/emit-packet.out
+
+grep -q '^expected_branch_ref=refs/heads/lane/mn05-operator-dr-rotation-lifecycle$' /tmp/emit-packet.out
+
+grep -q '^lane_verify_command=./scripts/v2/verify_lane_worktree.sh --expected-worktree-root /Users/qianqi/.openclaw/workspace/trnm-mainnet-lanes/MN05-operator-dr-rotation-lifecycle --expected-branch-ref lane/mn05-operator-dr-rotation-lifecycle$' /tmp/emit-packet.out
+
 if bash "$SCRIPT" \
   --cutover-kind replacement \
   --verified-worktree /tmp/trnm-lane \
