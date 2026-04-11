@@ -5287,6 +5287,8 @@ mod tests {
             "/query-events/42?limit=9&foo=bar",
             "/query-events/42?foo=bar",
             "/query-events/42?limit=9&bar=baz",
+            "/query-events/42?Limit=9",
+            "/query-events/42?LIMIT=9",
         ] {
             let err = parse_query_events_limit_from_path(path)
                 .expect_err("unrelated query keys must fail closed instead of being ignored");
