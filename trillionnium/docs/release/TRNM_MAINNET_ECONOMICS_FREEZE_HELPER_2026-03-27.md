@@ -137,6 +137,7 @@ If launch review has not frozen a field yet, do **not** let operator wording or 
 | `anti_spam_floor` | treat public sustained-load admission as not frozen / not launch-ready |
 | `anti_spam_backpressure_action` | treat cap-hit behavior as fail-closed reject / no-new-admission until an explicit operator-visible action is frozen |
 | `override_authority` / `override_timelock_or_bypass` | treat tuple changes as unauthorized for launch review evidence |
+| `override_audit_evidence` | require a concrete auditable artifact before any prelaunch tuple override is considered valid; otherwise treat the tuple as unchanged and any claimed override as unauthorized |
 
 These defaults are not the target economics policy. They are a review discipline: when a field is blank, the burden stays on the reviewer to freeze it explicitly rather than letting ambiguity widen subsidy, retention, or admission behavior.
 
