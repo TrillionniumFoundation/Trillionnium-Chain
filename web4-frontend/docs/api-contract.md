@@ -107,10 +107,10 @@ const normalizedEvents = await api.queryNormalizedAuditEvents({
 ## 统一审计事件分页约定（可选）
 
 `queryNormalizedAuditEvents(query?, options?)` 支持分页参数：
-- `source`：按合约来源过滤（如 `"bridge-relay"` / `"governance-guard"` / `"settlement-vault"`）
-- `eventType`：按事件类型过滤（支持前缀或全量匹配）
+- `source`：按合约来源过滤（如 `"bridge-relay"` / `"governance-guard"` / `"settlement-vault"`），会先做去首尾空白/零宽字符归一化，归一化后不能为空
+- `eventType`：按事件类型过滤（支持前缀或全量匹配），会先做去首尾空白/零宽字符归一化，归一化后不能为空
 - `limit`：每页数量（正整数）
-- `cursor`：游标（上一次返回 `nextCursor` 继续拉取）
+- `cursor`：游标（上一次返回 `nextCursor` 继续拉取），会先做去首尾空白/零宽字符归一化，归一化后不能为空
 
 响应可选返回字段：
 - `nextCursor`：下一页游标

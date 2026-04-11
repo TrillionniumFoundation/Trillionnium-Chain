@@ -4,6 +4,7 @@ const normalizeNonEmptyCursor = (value: string): string =>
   value.replace(/[\u200B\u200C\u200D\u2060\u2063\uFEFF]/g, "").trim();
 
 const paginationCursorSchema = z.string().transform(normalizeNonEmptyCursor).pipe(z.string().min(1));
+const normalizedQueryFilterSchema = z.string().transform(normalizeNonEmptyCursor).pipe(z.string().min(1));
 
 export const taskStatusSchema = z.enum([
   "pending",
@@ -88,8 +89,8 @@ export const queryNormalizedAuditEventsPageSchema = z.object({
 });
 
 export const normalizedAuditEventsQuerySchema = z.object({
-  source: z.string().trim().min(1).optional(),
-  eventType: z.string().trim().min(1).optional(),
+  source: normalizedQueryFilterSchema.optional(),
+  eventType: normalizedQueryFilterSchema.optional(),
   limit: z.number().int().positive().optional(),
   cursor: paginationCursorSchema.optional(),
 }).strict();

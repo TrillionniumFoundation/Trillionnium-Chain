@@ -6,6 +6,7 @@ import {
   adaptQueryTask,
 } from "@/lib/api-contract/adapters";
 import { FrontendApiError } from "@/lib/api-contract/errors";
+import { normalizedAuditEventsQuerySchema } from "@/lib/api-contract/schemas";
 
 describe("api-contract adapters", () => {
   it("accepts canonical query-task payload", () => {
@@ -512,6 +513,36 @@ describe("api-contract adapters", () => {
         m2v2ErrorCode: code,
       });
     });
+  });
+
+  it("normalizes normalized audit-events query filters before dispatch", () => {
+    const parsed = normalizedAuditEventsQuerySchema.parse({
+      source: "\uFEFF  bridge-relay\u200B ",
+      eventType: "\u200D governance.proposal_executed \u2060",
+      cursor: "\uFEFF cursor-1\u200B ",
+      limit: 20,
+    });
+
+    expect(parsed).toEqual({
+      source: "bridge-relay",
+      eventType: "governance.proposal_executed",
+      cursor: "cursor-1",
+      limit: 20,
+    });
+  });
+
+  it("fails closed on normalized audit-events query filters that normalize to empty", () => {
+    expect(() =>
+      normalizedAuditEventsQuerySchema.parse({
+        source: "\uFEFF \u200B\u200D ",
+      }),
+    ).toThrow();
+
+    expect(() =>
+      normalizedAuditEventsQuerySchema.parse({
+        eventType: "\u2060   ",
+      }),
+    ).toThrow();
   });
 
   it("adapts canonical paginated normalized audit-events payload", () => {
