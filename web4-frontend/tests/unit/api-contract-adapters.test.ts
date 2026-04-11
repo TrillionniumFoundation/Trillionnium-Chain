@@ -115,6 +115,20 @@ describe("api-contract adapters", () => {
     ).toThrow(FrontendApiError);
   });
 
+  it("fails closed on rpc query-task payloads with unknown fields", () => {
+    expect(() =>
+      adaptQueryTask({
+        task_id: 42,
+        status: "Completed",
+        worker: "did:trnm:alice",
+        bounty: 100,
+        result_hash_hex: "abcd",
+        version: 9,
+        unexpected_flag: true,
+      }),
+    ).toThrow(FrontendApiError);
+  });
+
   it("adapts rpc query-events array payload", () => {
     const out = adaptQueryEvents(
       [
@@ -1186,6 +1200,28 @@ describe("api-contract adapters", () => {
             block_height: 22,
             state_root: "root",
             ts_unix_ms: 1700000000000,
+          },
+        ],
+        "7",
+      ),
+    ).toThrow(FrontendApiError);
+  });
+
+  it("fails closed when rpc query-events payload contains unknown fields", () => {
+    expect(() =>
+      adaptQueryEvents(
+        [
+          {
+            event_type: "commit",
+            task_id: 7,
+            from_status: "Assigned",
+            to_status: "Committed",
+            actor: "did:trnm:alice",
+            tx_id: 11,
+            block_height: 22,
+            state_root: "root",
+            ts_unix_ms: 1700000000000,
+            unexpected_flag: true,
           },
         ],
         "7",

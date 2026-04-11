@@ -28,41 +28,45 @@ function normalizeSchemaError(error: unknown): FrontendApiError {
   });
 }
 
-const rpcTaskSchema = z.object({
-  task_id: z.number().int().nonnegative(),
-  status: z.enum([
-    "Open",
-    "Assigned",
-    "Committed",
-    "Revealed",
-    "Challenged",
-    "Completed",
-    "Slashed",
-  ]),
-  worker: z.string().min(1).nullable().optional(),
-  bounty: z.union([z.number(), z.string()]).optional(),
-  result_hash_hex: z.string().min(1).nullable().optional(),
-  version: z.number().int().nonnegative().optional(),
-});
+const rpcTaskSchema = z
+  .object({
+    task_id: z.number().int().nonnegative(),
+    status: z.enum([
+      "Open",
+      "Assigned",
+      "Committed",
+      "Revealed",
+      "Challenged",
+      "Completed",
+      "Slashed",
+    ]),
+    worker: z.string().min(1).nullable().optional(),
+    bounty: z.union([z.number(), z.string()]).optional(),
+    result_hash_hex: z.string().min(1).nullable().optional(),
+    version: z.number().int().nonnegative().optional(),
+  })
+  .strict();
 
-const rpcEventSchema = z.object({
-  event_type: z.string().min(1),
-  task_id: z.number().int().nonnegative(),
-  from_status: z.string().min(1),
-  to_status: z.string().min(1),
-  actor: z.string().min(1),
-  tx_id: z.number().int().nonnegative(),
-  block_height: z.number().int().nonnegative(),
-  state_root: z.string().min(1),
-  ts_unix_ms: z.union([z.number(), z.string()]),
-  signer: z.string().min(1).optional(),
-  challenger: z.string().min(1).nullable().optional(),
-  tx_hash: z.string().min(1).nullable().optional(),
-  resolution_code: z.string().min(1).nullable().optional(),
-  treasury_delta: z.union([z.number(), z.string()]).nullable().optional(),
-  challenger_delta: z.union([z.number(), z.string()]).nullable().optional(),
-  bond_disposition: z.string().min(1).nullable().optional(),
-});
+const rpcEventSchema = z
+  .object({
+    event_type: z.string().min(1),
+    task_id: z.number().int().nonnegative(),
+    from_status: z.string().min(1),
+    to_status: z.string().min(1),
+    actor: z.string().min(1),
+    tx_id: z.number().int().nonnegative(),
+    block_height: z.number().int().nonnegative(),
+    state_root: z.string().min(1),
+    ts_unix_ms: z.union([z.number(), z.string()]),
+    signer: z.string().min(1).optional(),
+    challenger: z.string().min(1).nullable().optional(),
+    tx_hash: z.string().min(1).nullable().optional(),
+    resolution_code: z.string().min(1).nullable().optional(),
+    treasury_delta: z.union([z.number(), z.string()]).nullable().optional(),
+    challenger_delta: z.union([z.number(), z.string()]).nullable().optional(),
+    bond_disposition: z.string().min(1).nullable().optional(),
+  })
+  .strict();
 
 const m2v2ErrorCodes = [
   "ERR_M2V2_PROOF_MISSING",
