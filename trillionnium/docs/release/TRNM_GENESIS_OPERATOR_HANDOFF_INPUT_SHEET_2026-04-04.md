@@ -123,10 +123,10 @@ operator_ack_digest=
 ### 最小完成标准
 - 4 个 `validator_owner=` 全部填写
 - 4 个 `operator_contact=` 全部填写
-- 4 个 `operator_ack=` 全部填写
+- 4 个 `operator_ack=` 全部填写，且必须原样复用同一 validator 的 `config_path=` 与 `validator_entry_hash=`，不要手工改成相对路径或重算 hash
 - 每个 validator 至少有：
-  - `operator_ack_signature_path=` **或**
-  - `operator_ack_digest=`
+  - `operator_ack_signature_path=`，且如果填写路径，必须是那份 acknowledgment artifact 的**明确绝对路径**，不能只写目录、ticket 或相对路径
+  - **或** `operator_ack_digest=`，且如果填写 digest，必须是该 acknowledgment artifact 的 **64 字符 SHA-256**
 - `rollback_owner=` 已明确
 - `startup_order_note=` 已明确成真实 bootstrap 顺序
 - `packet_distribution_path=` 指向一个真实共享的 **ceremony packet 文件绝对路径**，而不是仅本地临时路径、目录、artifact folder 或 ticket 根
