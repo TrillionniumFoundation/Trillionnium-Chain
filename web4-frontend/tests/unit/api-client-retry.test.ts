@@ -625,6 +625,29 @@ describe("api-contract client and retry hardening", () => {
     expect(attempts).toBe(1);
   });
 
+  it("fails closed when aborted frontend errors are accidentally marked retryable", async () => {
+    let attempts = 0;
+
+    await expect(
+      withRetry(
+        async () => {
+          attempts += 1;
+          throw new FrontendApiError({
+            code: "ABORTED",
+            message: "caller cancelled",
+            retryable: true,
+          });
+        },
+        { retries: 2, baseDelayMs: 0, maxDelayMs: 0 },
+      ),
+    ).rejects.toMatchObject({
+      code: "ABORTED",
+      retryable: true,
+    });
+
+    expect(attempts).toBe(1);
+  });
+
   it("clamps invalid retry options to safe defaults", async () => {
     let attempts = 0;
     await expect(
