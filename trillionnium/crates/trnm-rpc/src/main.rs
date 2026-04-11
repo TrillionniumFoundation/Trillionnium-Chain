@@ -2953,7 +2953,7 @@ fn is_supported_http_version(version: &str) -> bool {
 
 fn http_json_response(status_line: &str, body: &str) -> String {
     format!(
-        "HTTP/1.1 {status_line}\r\nContent-Type: application/json\r\nContent-Length: {}\r\nConnection: close\r\n\r\n{}",
+        "HTTP/1.1 {status_line}\r\nContent-Type: application/json\r\nCache-Control: no-store\r\nContent-Length: {}\r\nConnection: close\r\n\r\n{}",
         body.len(),
         body
     )
@@ -2961,7 +2961,7 @@ fn http_json_response(status_line: &str, body: &str) -> String {
 
 fn http_json_head_response(status_line: &str, body_len: usize) -> String {
     format!(
-        "HTTP/1.1 {status_line}\r\nContent-Type: application/json\r\nContent-Length: {body_len}\r\nConnection: close\r\n\r\n"
+        "HTTP/1.1 {status_line}\r\nContent-Type: application/json\r\nCache-Control: no-store\r\nContent-Length: {body_len}\r\nConnection: close\r\n\r\n"
     )
 }
 
@@ -5875,6 +5875,7 @@ mod tests {
         let response = json_response_for_method(request.0, "200 OK", "{\"ok\":true}");
 
         assert!(response.starts_with("HTTP/1.1 200 OK\r\n"));
+        assert!(response.contains("Cache-Control: no-store\r\n"));
         assert!(response.contains("Content-Length: 11\r\n"));
         assert!(response.ends_with("\r\n\r\n"));
         assert!(!response.ends_with("{\"ok\":true}"));
@@ -5896,6 +5897,7 @@ mod tests {
     fn json_response_for_method_preserves_head_semantics_for_error_paths() {
         let not_found = json_response_for_method("HEAD", "404 Not Found", "{\"ok\":false}");
         assert!(not_found.starts_with("HTTP/1.1 404 Not Found\r\n"));
+        assert!(not_found.contains("Cache-Control: no-store\r\n"));
         assert!(not_found.ends_with("\r\n\r\n"));
         assert!(!not_found.ends_with("{\"ok\":false}"));
         assert!(not_found.contains("Content-Length: 12\r\n"));

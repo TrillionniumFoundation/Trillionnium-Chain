@@ -68,6 +68,7 @@ Operational meaning:
 For accepted probe aliases, the transport semantics are also part of the minimum contract:
 
 - `GET` returns the JSON body above.
+- accepted probe responses currently send `Cache-Control: no-store` so load balancers, sidecars, and browser-adjacent tooling do not cache stale health answers.
 - `HEAD` returns the same status code and `Content-Length` that the equivalent `GET` body would have produced, but with no response body bytes.
   This stays true even when operators probe an accepted alias with a query string (for example `HEAD /-/readyz?probe=lb&from=ops HTTP/1.1`).
 
@@ -81,9 +82,9 @@ Operators should not over-read it as indexer/read-model closure.
 
 The minimum operator-facing contract also includes the current fail-closed transport split around this probe surface:
 
-- a **recognized** probe alias returns `200 OK` with the schema above for `GET`, or the equivalent header-only response for `HEAD`
-- an **unknown but otherwise valid** HTTP request path returns `404 Not Found` with the current JSON error envelope `{"ok":false,"code":"NOT_FOUND"}` for `GET`, or the equivalent header-only response for `HEAD`
-- a **malformed** HTTP request line returns `400 Bad Request` with the current JSON error envelope `{"ok":false,"code":"BAD_REQUEST","message":"invalid http request"}`
+- a **recognized** probe alias returns `200 OK` with the schema above for `GET`, or the equivalent header-only response for `HEAD`, and currently includes `Cache-Control: no-store`
+- an **unknown but otherwise valid** HTTP request path returns `404 Not Found` with the current JSON error envelope `{"ok":false,"code":"NOT_FOUND"}` for `GET`, or the equivalent header-only response for `HEAD`, and currently includes `Cache-Control: no-store`
+- a **malformed** HTTP request line returns `400 Bad Request` with the current JSON error envelope `{"ok":false,"code":"BAD_REQUEST","message":"invalid http request"}`, and the current active entrypoint also keeps `Cache-Control: no-store` on that JSON error response
 
 Operational meaning:
 
