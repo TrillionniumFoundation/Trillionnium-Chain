@@ -127,7 +127,7 @@ fn is_suspicious_path_wrapper(c: char) -> bool {
 fn is_suspicious_path_separator(c: char) -> bool {
     matches!(
         c,
-        '\\' | '∕' | '⁄' | '∖' | '／' | '＼' | '﹨' | '⧵' | '⧸' | '⟋' | '⟍'
+        '\\' | '∕' | '⁄' | '∖' | '／' | '＼' | '﹨' | '⧵' | '⧸' | '⧹' | '⟋' | '⟍'
     )
 }
 
@@ -395,7 +395,7 @@ pub(crate) fn ensure_wallet_name(name: &str) -> Result<()> {
         || name.contains(['‐', '‑', '‒', '–', '—', '―', '−', '﹣', '－'])
         || name.contains(['：', '﹕', '＝', '﹦', '｜', '￨', '＆', '﹠', '？', '﹖', '，', '；', '！', '﹗'])
         || name.contains(['＊', '﹡'])
-        || name.contains(['∕', '⁄', '／', '＼', '⧵', '⧸', '⟋', '⟍'])
+        || name.contains(['∕', '⁄', '／', '＼', '⧵', '⧸', '⧹', '⟋', '⟍'])
         || name.contains(['.', '．', '。', '｡', '﹒', '․'])
         || name.contains(['"', '\'', '`', '<', '>', '(', ')', '[', ']', '{', '}', ',', ';'])
         || name.contains([

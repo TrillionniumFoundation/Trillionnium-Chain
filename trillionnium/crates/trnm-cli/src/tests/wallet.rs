@@ -308,6 +308,7 @@ fn normalize_wallet_store_env_trims_shell_wrapped_quotes() {
     assert_eq!(normalize_wallet_store_env("/tmp／trnm-wallets"), None);
     assert_eq!(normalize_wallet_store_env("/tmp＼trnm-wallets"), None);
     assert_eq!(normalize_wallet_store_env("/tmp﹨trnm-wallets"), None);
+    assert_eq!(normalize_wallet_store_env("/tmp⧹trnm-wallets"), None);
     assert_eq!(normalize_wallet_store_env("/tmp⟋trnm-wallets"), None);
     assert_eq!(normalize_wallet_store_env("/tmp⟍trnm-wallets"), None);
 }
@@ -1003,6 +1004,7 @@ fn wallet_name_rejects_path_like_values() {
         "alice\u{2066}bob",
         "alice\u{2069}bob",
         "alice\u{0007}bob",
+        "alice⧹bob",
         "con",
         "PRN",
         "aux",
