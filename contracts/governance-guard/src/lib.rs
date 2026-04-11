@@ -388,6 +388,10 @@ impl GovernanceGuard {
     pub fn emergency_pause(&mut self, caller: &str, reason_hash: impl Into<String>) -> Result<()> {
         self.require_guardian(caller)?;
         let previous_state = self.bridge.emergency_paused;
+        if previous_state {
+            return Ok(());
+        }
+
         self.bridge.emergency_paused = true;
         self.audit_log.push(GovernanceEvent::PauseSet {
             actor: caller.to_owned(),
@@ -1379,6 +1383,38 @@ mod tests {
 
         gov.execute_unpause("exec", pid, eta).unwrap();
         assert!(!gov.bridge_state().emergency_paused);
+    }
+
+    #[test]
+    fn repeated_emergency_pause_is_idempotent_and_does_not_duplicate_audit() {
+        let mut gov = setup();
+
+        gov.emergency_pause("guardian", "incident-initial").unwrap();
+        let audit_len_after_first_pause = gov.audit_log().len();
+
+        gov.emergency_pause("guardian", "incident-repeat").unwrap();
+
+        assert!(gov.bridge_state().emergency_paused);
+        assert_eq!(gov.audit_log().len(), audit_len_after_first_pause);
+        assert_eq!(
+            gov.audit_log()
+                .iter()
+                .filter(|event| matches!(event, GovernanceEvent::PauseSet { .. }))
+                .count(),
+            1
+        );
+        assert!(gov.audit_log().iter().any(|event| matches!(
+            event,
+            GovernanceEvent::PauseSet {
+                actor,
+                previous_state,
+                next_state,
+                reason_hash,
+            } if actor == "guardian"
+                && !*previous_state
+                && *next_state
+                && reason_hash == "incident-initial"
+        )));
     }
 
     #[test]
