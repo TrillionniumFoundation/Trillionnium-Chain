@@ -2,9 +2,9 @@ use serde_json::json;
 use trnm_rpc::{
     AccountBalanceQueryResponse, AccountNonceQueryResponse, AccountState, EventQueryResponse,
     FaucetRequestResponse, GetTxResponse, GovParamQueryResponse, GovProposalQueryResponse,
-    OracleValidateSnapshotResponse, RequestFullQueryResponse, RpcErrorResponse, SendTxResponse,
-    TaskMeteringDerivedQueryResponse, TaskMeteringPolicyQueryResponse,
-    TaskMeteringQueryResponse, TaskQueryResponse, TxStatus,
+    MessageRequestQueryResponse, OracleValidateSnapshotResponse, RequestFullQueryResponse,
+    RpcErrorResponse, SendTxResponse, TaskMeteringDerivedQueryResponse,
+    TaskMeteringPolicyQueryResponse, TaskMeteringQueryResponse, TaskQueryResponse, TxStatus,
 };
 
 #[test]
@@ -204,6 +204,104 @@ fn contract_event_shape_includes_metering_when_present() {
     assert_eq!(v["metering"]["normalized_work_units"], json!(192));
     assert_eq!(v["metering"]["policy"]["snapshot_version"], json!(1));
     assert_eq!(v["metering"]["derived"]["challenge_bonus_total"], json!(2));
+}
+
+#[test]
+fn contract_task_shape_omits_optional_fields_when_absent() {
+    let v = serde_json::to_value(TaskQueryResponse {
+        task_id: 7,
+        status: trnm_types::TaskStatus::Open,
+        worker: None,
+        bounty: 42,
+        result_hash_hex: None,
+        version: 3,
+        metadata_compatibility: None,
+        metadata_runtime_compatible: None,
+        metadata_requires_governance_upgrade: None,
+        metadata_primary_compatibility_finding: None,
+        metadata_compatibility_findings: None,
+        metering: None,
+    })
+    .unwrap();
+    assert_eq!(
+        v,
+        json!({
+            "task_id":7,
+            "status":"Open",
+            "worker":null,
+            "bounty":42,
+            "result_hash_hex":null,
+            "version":3
+        })
+    );
+}
+
+#[test]
+fn contract_gov_proposal_shape_stable() {
+    let v = serde_json::to_value(GovProposalQueryResponse {
+        proposal_id: 9,
+        title: "freeze economics tuple".into(),
+        proposer: "validator-1".into(),
+        status: trnm_types::GovProposalStatus::Voting,
+        version: 2,
+    })
+    .unwrap();
+    assert_eq!(
+        v,
+        json!({
+            "proposal_id":9,
+            "title":"freeze economics tuple",
+            "proposer":"validator-1",
+            "status":"Voting",
+            "version":2
+        })
+    );
+}
+
+#[test]
+fn contract_request_full_shape_stable() {
+    let v = serde_json::to_value(RequestFullQueryResponse {
+        request: MessageRequestQueryResponse {
+            request_id: "req-1".into(),
+            task_id: 7,
+            channel: "discord".into(),
+            user_id: "u-1".into(),
+            session_id: "s-1".into(),
+            text: "hello".into(),
+            idempotency_key: "idem-1".into(),
+            status: "accepted".into(),
+            created_at_unix_ms: 123,
+        },
+        verifier_status: None,
+        resolution_code: None,
+        result_hash: None,
+        commit_tx_hash: None,
+        reveal_tx_hash: None,
+        events: vec![],
+    })
+    .unwrap();
+    assert_eq!(
+        v,
+        json!({
+            "request": {
+                "request_id":"req-1",
+                "task_id":7,
+                "channel":"discord",
+                "user_id":"u-1",
+                "session_id":"s-1",
+                "text":"hello",
+                "idempotency_key":"idem-1",
+                "status":"accepted",
+                "created_at_unix_ms":123
+            },
+            "verifier_status":null,
+            "resolution_code":null,
+            "result_hash":null,
+            "commit_tx_hash":null,
+            "reveal_tx_hash":null,
+            "events":[]
+        })
+    );
 }
 
 #[test]
