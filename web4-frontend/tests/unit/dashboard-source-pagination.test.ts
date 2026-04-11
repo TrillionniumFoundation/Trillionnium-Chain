@@ -359,6 +359,56 @@ describe("dashboard source normalized audit pagination", () => {
     expect(snapshot.events.find((event) => event.id === "bridge-relay:proof-c2")).toBeDefined();
   });
 
+  it("maps normalized audit events with explicit critical tokens to critical dashboard severity", async () => {
+    const mockClient = {
+      queryTask: vi.fn().mockResolvedValue({
+        task: {
+          id: "341-critical-token",
+          owner: "ops",
+          status: "running",
+          createdAt: "2026-03-01T00:00:00.000Z",
+          metadata: {},
+        },
+      }),
+      queryEvents: vi.fn().mockResolvedValue({
+        taskId: "341-critical-token",
+        events: [],
+      }),
+      queryCapabilityAudit: vi.fn().mockResolvedValue({
+        subject: "did:trnm:test",
+        audits: [
+          {
+            subject: "did:trnm:test",
+            capability: "AUDIT_READ",
+            granted: true,
+            checkedAt: "2026-03-01T00:00:00.000Z",
+          },
+        ],
+      }),
+      queryNormalizedAuditEvents: vi.fn().mockResolvedValue({
+        events: [
+          {
+            source: "governance-guard",
+            event_type: "governance.proposal_reviewed",
+            actor: "reviewer-a",
+            object_id: "gov-crit-1",
+            timestamp: "2026-03-01T00:05:00.000Z",
+            note: "critical policy drift",
+          },
+        ],
+        hasMore: false,
+      }),
+    } as unknown as ReturnType<typeof apiContractClient.createFrontendApiClient>;
+
+    vi.spyOn(apiContractClient, "createFrontendApiClient").mockReturnValue(mockClient);
+
+    const snapshot = await fetchDashboardSnapshot();
+
+    expect(
+      snapshot.events.find((event) => event.id === "governance-guard:gov-crit-1"),
+    ).toMatchObject({ severity: "Critical" });
+  });
+
   it("keeps the readonly snapshot adaptable when task metadata or event payload are missing", async () => {
     const mockClient = {
       queryTask: vi

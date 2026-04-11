@@ -213,6 +213,7 @@ const mapNormalizedAuditSeverity = (event: NormalizedAuditEvent): DashboardSnaps
   const tokens = `${event.reason ?? ""} ${event.note ?? ""} ${normalizedEventType}`.toLowerCase();
 
   if (
+    tokens.includes("critical") ||
     tokens.includes("error") ||
     tokens.includes("fail") ||
     tokens.includes("reject") ||
