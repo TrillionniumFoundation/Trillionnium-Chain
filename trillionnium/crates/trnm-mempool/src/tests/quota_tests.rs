@@ -234,6 +234,33 @@ fn reserve_only_active_backlog_duplicate_probe_keeps_reopened_shared_headroom_fl
 }
 
 #[test]
+fn reserve_only_backpressured_tx_id_stays_fresh_until_headroom_reopens() {
+    let mut g = LaneAdmissionGate::new(2, 2);
+
+    // Reserve-only mode routes both classes through the shared critical lane.
+    assert_eq!(g.admit(1, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(g.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(g.queued_counts(), (0, 2, 2));
+    assert_eq!(g.seen_global.len(), 2);
+
+    // A fresh id rejected under aggregate saturation must stay fresh across
+    // both ingress classes rather than poisoning cross-class idempotency.
+    assert_eq!(g.admit(30, IngressClass::Normal), AdmitOutcome::Backpressured);
+    assert_eq!(g.admit(30, IngressClass::Critical), AdmitOutcome::Backpressured);
+    assert_eq!(g.queued_counts(), (0, 2, 2));
+    assert_eq!(g.seen_global.len(), 2);
+
+    assert_eq!(g.pop_ready(), Some(1));
+
+    // Once one shared slot really reopens, the previously backpressured id
+    // should admit cleanly and then become globally duplicate again.
+    assert_eq!(g.admit(30, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(g.admit(30, IngressClass::Normal), AdmitOutcome::Duplicate);
+    assert_eq!(g.queued_counts(), (0, 2, 2));
+    assert_eq!(g.seen_global.len(), 2);
+}
+
+#[test]
 fn borrowed_last_idle_reserved_slot_recloses_to_normal_once_critical_backlog_appears() {
     let mut g = LaneAdmissionGate::new(3, 1);
 
