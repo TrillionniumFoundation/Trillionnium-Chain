@@ -3872,6 +3872,27 @@ mod tests {
     }
 
     #[test]
+    fn hot_bucket_hint_non_power_of_two_keeps_zero_primary_duplicate_heavy_domains_lane_stable() {
+        let buckets_n = 97usize;
+        let write_narrow = tx(1, vec![o(0), o(11), o(11), o(13)], vec![o(0), o(7), o(7)]);
+        let read_narrow = tx(2, vec![o(0), o(7), o(7)], vec![o(0), o(11), o(11), o(13)]);
+
+        // Duplicate-heavy mixed domains that preserve the same canonical lane keys
+        // must also keep the same non-power-of-two hot-bucket hint, otherwise retry
+        // placement can drift between modulo buckets when read/write roles flip.
+        assert_eq!(hot_bucket_keys(&write_narrow), (0, 7));
+        assert_eq!(hot_bucket_keys(&write_narrow), hot_bucket_keys(&read_narrow));
+        assert_eq!(
+            hot_bucket_hint(&write_narrow, buckets_n),
+            hot_bucket_hint(&read_narrow, buckets_n)
+        );
+        assert_eq!(
+            hot_bucket_hint(&write_narrow, buckets_n),
+            ((0u64 ^ 7u64.rotate_left(7)) % buckets_n as u64) as usize
+        );
+    }
+
+    #[test]
     fn hot_bucket_hint_power_of_two_fast_path_matches_modulo_mapping() {
         let txs = [
             tx(1, vec![], vec![o(1)]),
