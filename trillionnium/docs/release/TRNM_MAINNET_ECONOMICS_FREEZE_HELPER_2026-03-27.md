@@ -118,6 +118,7 @@ For launch review, the team should be able to fill in this sheet with concrete v
 | `anti_spam_backpressure_action` | When public caps are reached, what exact fail-closed action happens: reject, queue-with-budget, sponsor-only, or another explicitly named path? |
 | `override_authority` | Who can change these values before launch? |
 | `override_timelock_or_bypass` | What timelock or emergency rule governs changes? |
+| `override_audit_evidence` | What audit artifact or recorded evidence must exist before a prelaunch override is considered valid? |
 
 ## Fail-closed defaults for unresolved freeze fields
 
@@ -158,7 +159,7 @@ Minimum wording checks:
 - `sponsor-backed` / `sponsor-only` wording must match the frozen `sponsor_only_classes`, sponsor authority, epoch budget, refill rule, and revocation semantics; never imply unrestricted third-party subsidy when the tuple says allowlist or protocol-only.
 - retention wording must name the payer-of-record and exhaustion fallback, so operators do not infer indefinite free storage for proof/evidence-heavy paths.
 - anti-spam wording must point to the actual floor/budget/bond rule and the cap-hit backpressure action rather than generic QoS language.
-- prelaunch change wording must name the override authority plus timelock/bypass rule, so readers can tell whether the tuple is still mutable.
+- prelaunch change wording must name the override authority plus timelock/bypass rule, and it must cite the audit evidence required to exercise that path, so readers can tell whether the tuple is still mutable or silently bypassable.
 
 If any operator runbook, launch checklist, or public release note describes a broader or softer ingress surface than the frozen tuple, treat the economics freeze as evidence-incomplete until the wording is corrected.
 
@@ -405,6 +406,7 @@ TRNM mainnet economics freeze review
 - anti-spam backpressure action:
 - override authority:
 - override timelock or emergency bypass:
+- override audit evidence required:
 - mempool evidence gate(s):
 - state evidence gate(s):
 - tightening rollback action:
