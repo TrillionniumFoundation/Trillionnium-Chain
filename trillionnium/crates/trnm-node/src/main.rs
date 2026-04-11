@@ -4205,6 +4205,26 @@ mod tests {
     }
 
     #[test]
+    fn load_config_rejects_singular_config_dir_near_miss_for_bootstrap_slot_paths() {
+        let err = load_config("config/node1.toml")
+            .expect_err("singular config/ near-miss must not resolve to shipped bootstrap slots");
+        let err_surface = format!("{err:#}");
+
+        assert!(
+            err_surface.contains("read config failed: config/node1.toml"),
+            "operator-facing error should keep the exact near-miss path visible: {err_surface}"
+        );
+        assert!(
+            err_surface.contains("resolved: config/node1.toml"),
+            "resolved path should stay on the near-miss config/ path instead of silently rewriting to configs/: {err_surface}"
+        );
+        assert!(
+            !err_surface.contains("configs/node1.toml"),
+            "near-miss config/ path must fail closed instead of implying the shipped configs/ slot was loaded: {err_surface}"
+        );
+    }
+
+    #[test]
     fn load_config_keeps_all_shipped_bootstrap_slots_path_alias_stable() {
         let expected = [
             ("node1", "127.0.0.1:26657", "127.0.0.1:26656"),
