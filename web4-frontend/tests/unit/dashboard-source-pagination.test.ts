@@ -844,6 +844,47 @@ describe("dashboard source normalized audit pagination", () => {
     expect(snapshot.tasks[0]?.updatedAt).toBe("2026-03-01 08:00");
   });
 
+  it("normalizes zero-width timestamp noise before choosing updatedAt", async () => {
+    const mockClient = {
+      queryTask: vi.fn().mockResolvedValue({
+        task: {
+          id: "341-updated-at-noise",
+          name: "noisy-updated-at",
+          owner: "ops",
+          status: "running",
+          createdAt: "2026-03-01T00:00:00.000Z",
+          updatedAt: "\u200B2026-03-01T00:05:00.000Z\uFEFF",
+          metadata: {},
+        },
+      }),
+      queryEvents: vi.fn().mockResolvedValue({
+        taskId: "341-updated-at-noise",
+        events: [],
+      }),
+      queryCapabilityAudit: vi.fn().mockResolvedValue({
+        subject: "did:trnm:test",
+        audits: [
+          {
+            subject: "did:trnm:test",
+            capability: "AUDIT_READ",
+            granted: true,
+            checkedAt: "2026-03-01T00:00:00.000Z",
+          },
+        ],
+      }),
+      queryNormalizedAuditEvents: vi.fn().mockResolvedValue({
+        events: [],
+        hasMore: false,
+      }),
+    } as unknown as ReturnType<typeof apiContractClient.createFrontendApiClient>;
+
+    vi.spyOn(apiContractClient, "createFrontendApiClient").mockReturnValue(mockClient);
+
+    const snapshot = await fetchDashboardSnapshot();
+
+    expect(snapshot.tasks[0]?.updatedAt).toBe("2026-03-01 08:05");
+  });
+
   it("falls back to a stable owner label when task owner is blank", async () => {
     const mockClient = {
       queryTask: vi.fn().mockResolvedValue({

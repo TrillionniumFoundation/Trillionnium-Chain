@@ -133,14 +133,20 @@ const resolveQueryApiBaseUrl = (): string => {
   return "http://127.0.0.1:8080";
 };
 
-const resolveNonEmptyEnv = (value: string | undefined, fallback: string): string => {
-  const normalized = value?.trim();
-  return normalized && normalized.length > 0 ? normalized : fallback;
+const normalizeDashboardInput = (value: string | undefined): string | undefined => {
+  const normalized = value
+    ?.replace(/[\u200B\u200C\u200D\u2060\u2063\uFEFF]/g, "")
+    .trim();
+
+  return normalized && normalized.length > 0 ? normalized : undefined;
 };
+
+const resolveNonEmptyEnv = (value: string | undefined, fallback: string): string =>
+  normalizeDashboardInput(value) ?? fallback;
 
 const resolvePreferredTimestamp = (...candidates: Array<string | undefined>): string | undefined => {
   for (const candidate of candidates) {
-    const normalized = candidate?.trim();
+    const normalized = normalizeDashboardInput(candidate);
     if (normalized) return normalized;
   }
 
@@ -198,21 +204,14 @@ const mapEventCategory = (
   return "Incident";
 };
 
-const normalizeDashboardEventToken = (value: string | undefined, fallback: string): string => {
-  const normalized = value?.trim();
-  return normalized && normalized.length > 0 ? normalized : fallback;
-};
+const normalizeDashboardEventToken = (value: string | undefined, fallback: string): string =>
+  normalizeDashboardInput(value) ?? fallback;
 
-const normalizeDashboardEventId = (value: string | undefined, fallback: string): string => {
-  const normalized = value?.trim();
-  return normalized && normalized.length > 0 ? normalized : fallback;
-};
+const normalizeDashboardEventId = (value: string | undefined, fallback: string): string =>
+  normalizeDashboardInput(value) ?? fallback;
 
-const normalizeDashboardText = (value: string | undefined, fallback: string): string => {
-  const normalized = value?.trim();
-  return normalized && normalized.length > 0 ? normalized : fallback;
-};
-
+const normalizeDashboardText = (value: string | undefined, fallback: string): string =>
+  normalizeDashboardInput(value) ?? fallback;
 const mapNormalizedAuditSeverity = (event: NormalizedAuditEvent): DashboardSnapshot["events"][number]["severity"] => {
   const normalizedEventType = normalizeDashboardEventToken(event.event_type, "unknown-event");
   const tokens = `${event.reason ?? ""} ${event.note ?? ""} ${normalizedEventType}`.toLowerCase();
@@ -285,15 +284,8 @@ const parsePositiveIntEnv = (value: string | undefined, fallback: number): numbe
   return parsed;
 };
 
-const normalizeOptionalCursor = (cursor: string | undefined): string | undefined => {
-  if (cursor == null) return undefined;
-
-  const normalized = cursor
-    .replace(/[\u200B\u200C\u200D\u2060\u2063\uFEFF]/g, "")
-    .trim();
-
-  return normalized.length > 0 ? normalized : undefined;
-};
+const normalizeOptionalCursor = (cursor: string | undefined): string | undefined =>
+  normalizeDashboardInput(cursor);
 
 const resolveNormalizedAuditPageLimit = (): number =>
   parsePositiveIntEnv(process.env.NEXT_PUBLIC_DASHBOARD_NORMALIZED_AUDIT_EVENT_LIMIT, 60);
