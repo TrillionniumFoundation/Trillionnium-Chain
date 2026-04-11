@@ -38,7 +38,7 @@ if [[ "$rc" -ne 1 ]]; then
   exit 1
 fi
 
-expected="[FAIL] CARGO_TARGET_DIR must stay outside contracts: $BAD_TARGET_DIR"
+expected="[FAIL] CARGO_TARGET_DIR must stay outside contracts workspace: $BAD_TARGET_DIR"
 if ! grep -Fq -- "$expected" "$TMP_DIR/stderr.log"; then
   echo "[FAIL] relative contracts-local target dir guard message not found" >&2
   cat "$TMP_DIR/stderr.log" >&2
