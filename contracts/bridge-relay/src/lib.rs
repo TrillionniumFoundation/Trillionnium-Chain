@@ -452,6 +452,7 @@ impl BridgeRelay {
                 let mut normalized =
                     AuditEvent::new("bridge-relay", "bridge_relay.proof_submitted_and_stored");
                 normalized.object_id = Some(hex32(proof_digest));
+                normalized.note = Some("proof stored".to_string());
                 normalized
             }
             BridgeRelayEvent::SettlementFinalized {
@@ -1843,6 +1844,7 @@ mod tests {
         assert!(normalized.iter().any(|event| {
             event.event_type == "bridge_relay.proof_submitted_and_stored"
                 && event.object_id.as_deref() == Some(hex32(&proof_digest).as_str())
+                && event.note.as_deref() == Some("proof stored")
         }));
         assert!(normalized
             .iter()
