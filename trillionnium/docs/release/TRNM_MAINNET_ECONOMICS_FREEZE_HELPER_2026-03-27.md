@@ -203,7 +203,7 @@ rehearsal, append these focused checks to the same packet:
 ```bash
 cargo test --manifest-path trillionnium/Cargo.toml -p trnm-mempool --test lane_qos_snapshot_zero_capacity_stability_bound -q
 cargo test --manifest-path trillionnium/Cargo.toml -p trnm-mempool --test lane_qos_snapshot_guarded_reopen_probe_stability_bound -q
-cargo test --manifest-path trillionnium/Cargo.toml -p trnm-mempool --lib tests::hard_stop_idle_pop_preserves_restored_duplicate_metadata -- --exact -q
+cargo test --manifest-path trillionnium/Cargo.toml -p trnm-mempool --test lane_qos_snapshot_reserve_only_drain_only_duplicate_retention_bound -q
 ```
 
 Why these are useful extensions:
@@ -214,10 +214,10 @@ Why these are useful extensions:
   runs the integration gate showing that partially reopened capacity does not falsely
   widen the externally visible sponsor/free-ingress surface while the last reserved
   critical slot is still guarded.
-- `hard_stop_idle_pop_preserves_restored_duplicate_metadata` demonstrates that a
-  zero-budget/hard-stop lane preserves already-seen duplicate knowledge across idle-pop
-  recovery, which matters when sponsor revocation is using a `drain-only`-style duplicate
-  retention rule.
+- `--test lane_qos_snapshot_reserve_only_drain_only_duplicate_retention_bound`
+  demonstrates the exact `drain-only` revocation edge: already-seen sponsored ids stay
+  duplicate-classified until the surviving queued work truly drains, so replay probes do
+  not fabricate sponsor-backed headroom during revocation.
 
 These are still targeted economics-boundary checks, not a substitute for the frozen tuple
 itself; use them to harden evidence when sponsor revocation or reserve-only visibility is
@@ -234,7 +234,7 @@ keeps that review bounded and auditable.
 | ingress class split | `cargo test --manifest-path trillionnium/Cargo.toml -p trnm-mempool --test lane_zero_capacity_public_contract_bound -q` | When public capacity is hard-stopped, sponsor-backed and free-ingress probe noise cannot make the externally visible admission surface look open again. |
 | sponsor boundary / duplicate retention | `cargo test --manifest-path trillionnium/Cargo.toml -p trnm-mempool --test lane_qos_snapshot_reserve_only_drained_retry_resaturates_bound -q` | Once a reopened shared slot is re-consumed, sponsor/free-ingress retries remain classification-only until a real drain happens again; retry noise cannot silently widen sponsor-backed headroom. |
 | sponsor boundary / borrowed-slot discipline | `cargo test --manifest-path trillionnium/Cargo.toml -p trnm-mempool --test lane_borrowed_last_slot_backpressured_retry_reuse_bound -q` | If the last admissible shared slot is already borrowed, fresh cross-class retries stay backpressured until that exact borrowed occupant drains. |
-| sponsor revocation / drain-only duplicate retention | `cargo test --manifest-path trillionnium/Cargo.toml -p trnm-mempool --lib tests::hard_stop_idle_pop_preserves_restored_duplicate_metadata -- --exact -q` | A hard-stopped / zero-budget lane preserves already-seen duplicate knowledge across idle-pop recovery, so a drain-only sponsor revocation path cannot silently reopen sponsor-backed headroom before the queue truly drains. |
+| sponsor revocation / drain-only duplicate retention | `cargo test --manifest-path trillionnium/Cargo.toml -p trnm-mempool --test lane_qos_snapshot_reserve_only_drain_only_duplicate_retention_bound -q` | The reserve-only revocation gate keeps already-seen sponsored ids duplicate-classified until the surviving queued work truly drains, so replay probes cannot silently reopen sponsor-backed headroom during a `drain-only` sponsor shutdown. |
 | anti-spam floor / hard admission boundary | `cargo test --manifest-path trillionnium/Cargo.toml -p trnm-mempool --test lane_reserve_clamp_borrow_policy_bound -q` | Under an oversized-reserve clamp, the final truly free shared slot remains borrowable until aggregate anti-spam capacity is actually exhausted, then fresh normal ingress fails closed once that floor is consumed. This gives the freeze packet one explicit gate tied to the sustained-load admission floor rather than only to sponsor/duplicate semantics. |
 | retention timing freeze after challenge | `cargo test --manifest-path trillionnium/Cargo.toml -p trnm-pouw --lib tests::legacy_revealed_snapshot_freezes_resolve_timing_after_challenge_despite_later_gov_change -- --exact -q` | Once challenge-side retention timing is snapshotted, later governance changes do not silently rewrite the resolve window. This keeps the retention window side of the economics tuple frozen at the task/challenge boundary instead of drifting with later config edits. |
 | retention pricing / retention safety | `cargo test --manifest-path trillionnium/Cargo.toml -p trnm-state --test retention_restore_regression -q` | Retained proof/collateral metadata remains canonical and fail-closed under restore/replay pressure, which keeps the future payer/audit path reviewable instead of silently accepting malformed identities. This remains a **required companion gate** even though it lives outside the mempool/`trnm-pouw` compile slice. |
@@ -472,7 +472,7 @@ consistency boundaries:
   - proves a fully hard-stopped lane keeps both sponsor-backed and free-ingress retries
     backpressured across repeated cross-class probes without poisoning tx ids into
     duplicate state or fabricating any queued admission surface
-- `cargo test --manifest-path trillionnium/Cargo.toml -p trnm-mempool --lib tests::hard_stop_idle_pop_preserves_restored_duplicate_metadata -- --exact -q`
+- `cargo test --manifest-path trillionnium/Cargo.toml -p trnm-mempool --test lane_qos_snapshot_reserve_only_drain_only_duplicate_retention_bound -q`
   - proves a zero-budget / hard-stop lane can preserve restored duplicate knowledge for
     already-seen ids without fabricating queue state or re-opening sponsor/free-ingress
     headroom during idle polling
