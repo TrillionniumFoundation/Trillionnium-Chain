@@ -332,14 +332,26 @@ export const adaptQueryNormalizedAuditEvents = (
         ? normalizedNextCursor != null && normalizedNextCursor !== normalizedRequestedCursor
         : rawHasMore;
 
+    const events = canonical.data.events.map((event) => ({
+      ...event,
+      checkedAt: event.checkedAt == null ? undefined : toCheckedAt(event.checkedAt),
+    }));
+    const total = "total" in canonical.data ? canonical.data.total : undefined;
+
+    if (normalizedHasMore === true && normalizedNextCursor != null) {
+      return {
+        events,
+        hasMore: true,
+        nextCursor: normalizedNextCursor,
+        total,
+      };
+    }
+
     return {
-      events: canonical.data.events.map((event) => ({
-        ...event,
-        checkedAt: event.checkedAt == null ? undefined : toCheckedAt(event.checkedAt),
-      })),
+      events,
+      hasMore: false,
       nextCursor: normalizedNextCursor,
-      hasMore: normalizedHasMore,
-      total: "total" in canonical.data ? canonical.data.total : undefined,
+      total,
     };
   }
 

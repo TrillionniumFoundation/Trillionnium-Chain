@@ -66,12 +66,20 @@ export type NormalizedAuditEvent = Readonly<{
   subject?: string;
 }>;
 
-export type QueryNormalizedAuditEventsResult = Readonly<{
+type QueryNormalizedAuditEventsBase = Readonly<{
   events: ReadonlyArray<NormalizedAuditEvent>;
-  nextCursor?: string;
-  hasMore?: boolean;
   total?: number;
 }>;
+
+export type QueryNormalizedAuditEventsResult =
+  | (QueryNormalizedAuditEventsBase & Readonly<{
+      hasMore: true;
+      nextCursor: string;
+    }> )
+  | (QueryNormalizedAuditEventsBase & Readonly<{
+      hasMore?: false;
+      nextCursor?: string;
+    }>);
 
 export type NormalizedAuditEventsQuery = Readonly<{
   source?: string;

@@ -118,3 +118,7 @@ const normalizedEvents = await api.queryNormalizedAuditEvents({
 - `total`：后端可选的总记录数估计
 
 额外约束：若响应声明 `hasMore: true`，则必须同时返回**去空白/去零宽字符后仍非空**的 `nextCursor`；否则前端按合约违规 fail-closed 处理。
+
+类型对齐约定：TypeScript 合约层同样保持这条不变量，`QueryNormalizedAuditEventsResult` 仅允许两种形态：
+- `hasMore: true` + 非空 `nextCursor`
+- `hasMore` 缺省/`false`，此时 `nextCursor` 可选
