@@ -5839,16 +5839,65 @@ mod tests {
     }
 
     #[test]
-    fn health_probe_aliases_include_dash_prefixed_operator_paths() {
-        assert!(is_health_probe_path("/-/health"));
-        assert!(is_health_probe_path("/-/healthz/"));
-        assert!(is_health_probe_path("/-/live"));
-        assert!(is_health_probe_path("/-/readyz/"));
-        assert!(is_health_probe_path("/-/status"));
-        assert!(is_health_probe_path("/-/STATUSZ/"));
-        assert!(!is_health_probe_path("/-/statuscheck"));
-        assert!(!is_health_probe_path("/-/statusz//"));
-        assert!(!is_health_probe_path("/-/readyz/extra"));
+    fn health_probe_aliases_cover_operator_and_plain_probe_paths() {
+        for alias in [
+            "/health",
+            "/health/",
+            "/healthz",
+            "/healthz/",
+            "/live",
+            "/live/",
+            "/livez",
+            "/livez/",
+            "/ready",
+            "/ready/",
+            "/readyz",
+            "/readyz/",
+            "/status",
+            "/status/",
+            "/statusz",
+            "/statusz/",
+            "/-/health",
+            "/-/health/",
+            "/-/healthz",
+            "/-/healthz/",
+            "/-/live",
+            "/-/live/",
+            "/-/livez",
+            "/-/livez/",
+            "/-/ready",
+            "/-/ready/",
+            "/-/readyz",
+            "/-/readyz/",
+            "/-/status",
+            "/-/status/",
+            "/-/statusz",
+            "/-/statusz/",
+            "/HEALTHZ",
+            "/LIVE",
+            "/Ready/",
+            "/ReadyZ/",
+            "/STATUS",
+            "/STATUSZ",
+            "/-/STATUS",
+            "/-/STATUSZ/",
+        ] {
+            assert!(is_health_probe_path(alias), "alias should stay accepted: {alias}");
+        }
+
+        for rejected in [
+            "/healthcheck",
+            "/-/healthcheck",
+            "/-/readycheck",
+            "/-/statuscheck",
+            "/-/statusz//",
+            "/-/readyz/extra",
+        ] {
+            assert!(
+                !is_health_probe_path(rejected),
+                "non-alias should stay rejected: {rejected}"
+            );
+        }
     }
 
     #[test]
