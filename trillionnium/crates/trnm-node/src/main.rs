@@ -2235,7 +2235,33 @@ fn load_config(path: &str) -> Result<NodeConfig> {
     validate_config_path_input(path)?;
     let resolved = resolve_config_path(path);
     ensure_config_path_stays_within_allowed_roots(path, &resolved)?;
+    let display_resolved = if resolved.is_absolute() {
+        resolved.clone()
+    } else {
+        std::env::current_dir()
+            .unwrap_or_else(|_| PathBuf::from("."))
+            .join(&resolved)
+    };
+    let resolved_metadata = fs::symlink_metadata(&resolved).with_context(|| {
+        format!(
+            "read config failed: {} (resolved: {})",
+            path,
+            display_resolved.display()
+        )
+    })?;
+    anyhow::ensure!(
+        !resolved_metadata.file_type().is_symlink(),
+        "read config failed: {} (resolved: {}): config path must not be a symlink",
+        path,
+        display_resolved.display()
+    );
     let canonical_resolved = resolved.canonicalize().unwrap_or_else(|_| resolved.clone());
+    anyhow::ensure!(
+        resolved_metadata.file_type().is_file(),
+        "read config failed: {} (resolved: {}): resolved config path must point to a file",
+        path,
+        canonical_resolved.display()
+    );
     let raw = fs::read_to_string(&resolved).with_context(|| {
         format!(
             "read config failed: {} (resolved: {})",
@@ -4465,6 +4491,58 @@ mod tests {
         assert!(
             err_surface.contains(escaped_resolved.to_string_lossy().as_ref()),
             "symlink escape error must keep the resolved escape target visible: {err:#}"
+        );
+    }
+
+    #[test]
+    fn load_config_rejects_in_root_symlink_alias_even_when_target_stays_within_allowed_roots() {
+        let _cwd_guard = cwd_test_lock().lock().unwrap();
+        use std::os::unix::fs::symlink;
+
+        let temp_root = std::env::temp_dir().join(format!(
+            "trnm-node-config-symlink-alias-{}-{}",
+            std::process::id(),
+            SystemTime::now()
+                .duration_since(UNIX_EPOCH)
+                .expect("clock should be after unix epoch")
+                .as_millis()
+        ));
+        let workspace_shadow = temp_root.join("workspace-shadow");
+        let configs_dir = workspace_shadow.join("configs");
+        std::fs::create_dir_all(&configs_dir).expect("workspace shadow config dir should be creatable");
+        std::fs::write(
+            configs_dir.join("node1.toml"),
+            "node_id = \"node1\"\nrpc_addr = \"127.0.0.1:26657\"\np2p_addr = \"127.0.0.1:26656\"\n",
+        )
+        .expect("primary config should be writable");
+        symlink(
+            configs_dir.join("node1.toml"),
+            configs_dir.join("node1-alias.toml"),
+        )
+        .expect("in-root symlink alias should be creatable");
+
+        let requested_path = "configs/node1-alias.toml";
+        let resolved_path = workspace_shadow.join(requested_path);
+
+        let original_cwd = std::env::current_dir().expect("capture cwd");
+        std::env::set_current_dir(&workspace_shadow).expect("enter shadow cwd");
+        let err = load_config(requested_path)
+            .expect_err("symlinked config aliases inside allowed roots must fail closed");
+        std::env::set_current_dir(&original_cwd).expect("restore cwd");
+        let _ = std::fs::remove_dir_all(&temp_root);
+
+        let err_surface = format!("{err:#}");
+        assert!(
+            err_surface.contains("config path must not be a symlink"),
+            "unexpected error: {err:#}"
+        );
+        assert!(
+            err_surface.contains(requested_path),
+            "in-root symlink rejection must keep the operator-supplied path visible: {err:#}"
+        );
+        assert!(
+            err_surface.contains(resolved_path.to_string_lossy().as_ref()),
+            "in-root symlink rejection must keep the resolved symlink path visible: {err:#}"
         );
     }
 
