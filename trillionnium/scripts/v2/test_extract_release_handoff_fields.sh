@@ -8,7 +8,7 @@ trap 'rm -rf "$TMPDIR" "$SUMMARY_DIR" "$MANIFEST_DIR"' EXIT
 
 cd "$ROOT"
 
-WORKTREE_ROOT="$(pwd -P)"
+WORKTREE_ROOT="$(git rev-parse --show-toplevel)"
 BRANCH_SHORT="$(git branch --show-current)"
 BRANCH_REF="refs/heads/$BRANCH_SHORT"
 HEAD_SHA="$(git rev-parse HEAD)"
@@ -79,5 +79,10 @@ grep -q "^ticket_expected_branch_ref=$BRANCH_REF$" "$TMPDIR/out-full.txt"
 grep -q "^expected_branch_ref=$BRANCH_REF$" "$TMPDIR/out-full.txt"
 grep -q "^git_worktree_branch_ref=$BRANCH_REF$" "$TMPDIR/out-full.txt"
 grep -q "^git_expected_worktree_branch_ref=$BRANCH_REF$" "$TMPDIR/out-full.txt"
+
+[ "$(grep -c '^challenge_reexec_entry=<entry_not_found>$' "$TMPDIR/out-short.txt")" -eq 1 ]
+[ "$(grep -c '^replay_env_trnm_challenge_reexec_entry=<entry_not_found>$' "$TMPDIR/out-short.txt")" -eq 1 ]
+[ "$(grep -c '^challenge_reexec_entry=<entry_not_found>$' "$TMPDIR/out-full.txt")" -eq 1 ]
+[ "$(grep -c '^replay_env_trnm_challenge_reexec_entry=<entry_not_found>$' "$TMPDIR/out-full.txt")" -eq 1 ]
 
 echo "PASS"

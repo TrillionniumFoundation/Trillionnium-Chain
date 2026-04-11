@@ -402,8 +402,6 @@ if [ -n "$summary_replay_env_trnm_challenge_reexec_entry" ]; then
 fi
 printf 'summary_rollback_command=%s\n' "$summary_rollback"
 printf 'summary_replay_command=%s\n' "$summary_replay"
-printf 'challenge_reexec_entry=%s\n' "$summary_challenge_reexec_entry"
-printf 'replay_env_trnm_challenge_reexec_entry=%s\n' "$summary_replay_env_trnm_challenge_reexec_entry"
 printf 'manifest_rollback_command=%s\n' "$manifest_rollback"
 printf 'manifest_replay_command=%s\n' "$manifest_replay"
 
