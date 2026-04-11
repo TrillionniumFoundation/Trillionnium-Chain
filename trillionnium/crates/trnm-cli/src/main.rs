@@ -1452,11 +1452,37 @@ fn ensure_safe_sign_message(message: &str) -> Result<()> {
             || (!c.is_ascii_graphic() && c != ' ')
             || matches!(
                 c,
-                '=' | ':' | ';' | ',' | '|' | '"' | '\'' | '`' | '<' | '>' | '(' | ')' | '[' | ']' | '{' | '}'
+                '='
+                    | ':'
+                    | ';'
+                    | ','
+                    | '|'
+                    | '"'
+                    | '\''
+                    | '`'
+                    | '<'
+                    | '>'
+                    | '('
+                    | ')'
+                    | '['
+                    | ']'
+                    | '{'
+                    | '}'
+                    | '/'
+                    | '\\'
+                    | '∕'
+                    | '⁄'
+                    | '／'
+                    | '＼'
+                    | '⧵'
+                    | '⧸'
+                    | '⧹'
+                    | '⟋'
+                    | '⟍'
             )
     }) {
         bail!(
-            "wallet sign message must be single-line ASCII printable text with only single interior ASCII spaces and no delimiter or wrapper punctuation; refusing unsafe offline-signing output"
+            "wallet sign message must be single-line ASCII printable text with only single interior ASCII spaces and no delimiter, wrapper punctuation, or path separators; refusing unsafe offline-signing output"
         );
     }
     Ok(())
@@ -5589,6 +5615,26 @@ mod tests {
                 "unexpected for {bad:?}: {err}"
             );
         }
+    }
+
+    #[test]
+    fn ensure_safe_sign_message_rejects_path_separator_text() {
+        for bad in ["approve /tmp/offline-payload", "approve C:\\offline\\payload"] {
+            let err = ensure_safe_sign_message(bad).unwrap_err();
+            assert!(
+                err.to_string().contains("path separators"),
+                "unexpected for {bad:?}: {err}"
+            );
+        }
+    }
+
+    #[test]
+    fn ensure_safe_sign_message_rejects_unicode_path_separator_homoglyph_text() {
+        let err = ensure_safe_sign_message("approve tmp∕offline∕payload").unwrap_err();
+        assert!(
+            err.to_string().contains("ASCII printable text"),
+            "unexpected: {err}"
+        );
     }
 
     #[test]
