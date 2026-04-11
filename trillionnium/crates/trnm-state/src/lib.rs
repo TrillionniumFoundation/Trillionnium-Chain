@@ -5190,6 +5190,28 @@ mod tests {
     }
 
     #[test]
+    fn checkpoint_evidence_surface_rejects_short_non_genesis_prev_hash() {
+        let wal_entry = WalMeta {
+            height: 2,
+            round: 0,
+            proposal_hash: "proposal-2".into(),
+            committed: true,
+            state_root_hex: "cd".repeat(32),
+            prev_hash_hex: Some("ab".repeat(31)),
+        };
+        let checkpoint = CheckpointMeta {
+            height: wal_entry.height,
+            state_root_hex: wal_entry.state_root_hex.clone(),
+            wal_entry_hash_hex: wal_entry.content_hash_hex(),
+        };
+
+        assert!(
+            !checkpoint_evidence_surface_is_canonical(&checkpoint, &wal_entry),
+            "checkpoint audit surfaces must reject short non-genesis prev_hash_hex values so predecessor links stay width-canonical before DA/light-verifier sidecars consume the checkpoint evidence"
+        );
+    }
+
+    #[test]
     fn checkpoint_evidence_surface_rejects_zero_height_and_uncommitted_wal() {
         let zero_height_wal = WalMeta {
             height: 0,
