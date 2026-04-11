@@ -429,9 +429,8 @@ The scaffold writes two static files before launching the HTTP server:
 - `query-normalized-audit-events?source=<source>&eventType=<type>&limit=<n>&cursor=<cursor>`
 
 Fail-closed boundary for operator handoff: this placeholder contract does **not** currently imply public Day-1 support for `block`, `tx`, or `account` queries. Until the durable indexer / historical read-model track closes, keep those surfaces out of scaffold-generated handoff language instead of inferring them from future explorer aspirations or upstream RPC internals.
-- `query-normalized-audit-events?source=<source>&eventType=<type>&limit=<n>&cursor=<cursor>`
 
-Fail-closed boundary for operator handoff: this placeholder contract does **not** currently imply public Day-1 support for `block`, `tx`, or `account` queries. Until the durable indexer / historical read-model track closes, keep those surfaces out of scaffold-generated handoff language instead of inferring them from future explorer aspirations or upstream RPC internals.
+Operator evidence boundary: treat the served `index.json` payload as a mirror of the current scaffold/status contract, not as independent proof that durable replay, checkpoint persistence, or archive retention exists. If a ticket needs those durable-read claims, attach the non-placeholder handoff packet with all 6 durable-read anchors instead of extending the static scaffold payload by prose.
 
 Additional contract markers carried in `index.json`:
 
