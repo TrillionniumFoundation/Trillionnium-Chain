@@ -237,6 +237,8 @@ When `trnm-worker-agent` runs in submit mode, the current operator-visible submi
 
 - `submitted=true submit_log=<path>`
 
+Current source of truth: `crates/trnm-worker-agent/src/workflow_ops.rs` (line builder) plus its contract test in the same file.
+
 Operational meaning:
 
 - `submitted=true` tells the operator the submit branch actually executed.
@@ -252,6 +254,8 @@ If richer structured logging lands later, prefer adding fields rather than renam
 When `trnm-worker-agent` finishes an assigned-run batch, the current operator-visible summary line is:
 
 - `[agent] run-assigned processed=<n> skipped=<reason=count|none> ingress=<path> submit_log=<path> adapter=<name> adapter_retries=<n> adapter_backoff_ms=<n> adapter_timeout_ms=<n>`
+
+Current source of truth: `crates/trnm-worker-agent/src/assigned.rs` (summary formatter) plus its contract tests in the same file.
   - if `skipped` is not `none`, preserve the current lexicographically ordered comma-separated `reason=count` encoding rather than reordering pairs by count or recency.
 
 Operational meaning:
