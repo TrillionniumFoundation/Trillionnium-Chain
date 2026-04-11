@@ -675,6 +675,30 @@ mod tests {
     }
 
     #[test]
+    fn unauthorized_duplicate_lock_attempt_fails_closed_without_leaking_request_state() {
+        let mut vault = SettlementVault::new("owner");
+
+        vault.deposit("owner", "alice", 25).unwrap();
+        vault.lock("owner", "req-owned", "alice", 10).unwrap();
+        let audit_len_after_lock = vault.audit_log().len();
+
+        assert_eq!(
+            vault.lock("mallory", "req-owned", "alice", 1).unwrap_err(),
+            VaultError::Unauthorized
+        );
+        assert_eq!(vault.balance_of("alice"), 15);
+        assert_eq!(
+            vault.lock_record("req-owned").unwrap(),
+            &LockRecord {
+                account: "alice".to_string(),
+                amount: 10,
+                status: LockStatus::Locked,
+            }
+        );
+        assert_eq!(vault.audit_log().len(), audit_len_after_lock);
+    }
+
+    #[test]
     fn illegal_state_transition_is_rejected() {
         let mut vault = SettlementVault::new("owner");
 
