@@ -133,6 +133,45 @@ fn smoke_wallet_create_rejects_symlinked_ancestor_out_path() {
     assert!(!real_parent.join("wallets").join("alice.key").exists());
 }
 
+#[cfg(unix)]
+#[test]
+fn smoke_wallet_import_rejects_symlinked_final_out_path() {
+    use std::os::unix::fs::symlink;
+
+    let root = tmp_dir("wallet-import-symlink-final-store");
+    let real_store = root.join("real-store");
+    let linked_store = root.join("linked-store");
+    std::fs::create_dir_all(&real_store).unwrap();
+    symlink(&real_store, &linked_store).unwrap();
+
+    let out = Command::new(bin())
+        .args([
+            "wallet",
+            "import",
+            "--name",
+            "alice",
+            "--private-key-hex",
+            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "--out",
+            linked_store.to_string_lossy().as_ref(),
+        ])
+        .output()
+        .unwrap();
+
+    assert!(
+        !out.status.success(),
+        "symlinked final keystore path should fail closed for wallet import"
+    );
+    let stderr = String::from_utf8_lossy(&out.stderr);
+    assert!(
+        stderr.contains("explicit wallet store")
+            || stderr.contains("is a symlink; refusing to write keys through non-regular wallet store path"),
+        "unexpected stderr: {}",
+        stderr
+    );
+    assert!(!real_store.join("alice.key").exists());
+}
+
 #[test]
 fn smoke_wallet_sign_rejects_multiline_message() {
     let store = tmp_dir("wallet-sign-message-guard");
