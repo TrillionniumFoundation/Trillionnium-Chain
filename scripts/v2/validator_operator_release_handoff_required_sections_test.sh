@@ -38,6 +38,8 @@ required_lines=(
   'operator_ack='
   'operator_ack_signature_path='
   'dr_summary_path='
+  'dr_generated_at='
+  'dr_status='
   '`operator_ack_signature_path`：必须指向本次窗口专属、不可变的签字/回执文件'
   '`dr_summary_path`：必须指向同一窗口目录下的 DR 摘要'
   'previous_stable_anchor='
@@ -57,6 +59,7 @@ required_lines=(
   'handoff 给下一位 operator / release owner 时，至少附：'
   '若 `window_outcome != pass`，必须再附：'
   '不要使用“release-ready”“validator handoff complete”“upgrade finished”之类表述'
+  'operator_ack / DR summary / DR generated-at / DR status / replay-or-rollback command 未记录'
 )
 
 for line in "${required_lines[@]}"; do
@@ -66,4 +69,4 @@ for line in "${required_lines[@]}"; do
   fi
 done
 
-echo "[PASS] validator/operator release handoff template keeps fail-closed identity, binary/config binding, DR acknowledgment/replay fields, rollback, and blocked-window guard fields"
+echo "[PASS] validator/operator release handoff template keeps fail-closed identity, binary/config binding, DR acknowledgment/status/timestamp/replay fields, rollback, and blocked-window guard fields"

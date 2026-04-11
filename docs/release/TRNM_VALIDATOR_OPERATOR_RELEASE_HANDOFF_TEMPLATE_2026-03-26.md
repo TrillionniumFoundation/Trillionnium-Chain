@@ -240,6 +240,8 @@ rollback_entrypoint=
 operator_ack=
 operator_ack_signature_path=
 dr_summary_path=
+dr_generated_at=
+dr_status=
 dr_replay_command=
 dr_rollback_command=
 window_outcome=pass|blocked|rolled-back
@@ -304,6 +306,8 @@ rollback_seen=
 operator_ack=
 operator_ack_signature_path=
 dr_summary_path=
+dr_generated_at=
+dr_status=
 
 previous_stable_anchor=
 rollback_entrypoint=
@@ -328,5 +332,5 @@ next_safe_action=
 - `trnm-node` / `trnm-cli` 二进制未分开绑定；
 - validator 配置指纹未记录；
 - previous stable anchor / rollback entrypoint 未记录；
-- operator_ack / DR summary / replay-or-rollback command 未记录；
+- operator_ack / DR summary / DR generated-at / DR status / replay-or-rollback command 未记录；
 - 窗口结果没有附上 blocker 或下一步安全动作。
