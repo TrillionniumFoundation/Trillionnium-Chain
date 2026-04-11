@@ -310,6 +310,24 @@ describe("api-contract adapters", () => {
     ).toThrow(FrontendApiError);
   });
 
+  it("fails closed when canonical query-events payload contains blank event type noise", () => {
+    expect(() =>
+      adaptQueryEvents({
+        taskId: "7",
+        events: [
+          {
+            id: "e1z",
+            taskId: "7",
+            type: " \uFEFF\u200B ",
+            level: "info",
+            timestamp: "2026-03-03T00:00:00.000Z",
+            payload: {},
+          },
+        ],
+      }),
+    ).toThrow(FrontendApiError);
+  });
+
   it("normalizes canonical events using snake_case resolution_code alias", () => {
     const out = adaptQueryEvents({
       taskId: "8",
@@ -1125,6 +1143,27 @@ describe("api-contract adapters", () => {
             block_height: 23,
             state_root: "root-2",
             ts_unix_ms: 1700000001000,
+          },
+        ],
+        "7",
+      ),
+    ).toThrow(FrontendApiError);
+  });
+
+  it("fails closed when rpc query-events payload contains blank event type noise", () => {
+    expect(() =>
+      adaptQueryEvents(
+        [
+          {
+            event_type: " \uFEFF\u200B ",
+            task_id: 7,
+            from_status: "Assigned",
+            to_status: "Committed",
+            actor: "did:trnm:alice",
+            tx_id: 11,
+            block_height: 22,
+            state_root: "root",
+            ts_unix_ms: 1700000000000,
           },
         ],
         "7",

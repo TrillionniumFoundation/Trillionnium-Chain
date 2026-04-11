@@ -140,6 +140,20 @@ function normalizeOptionalTaskId(taskId: string | undefined): string | undefined
   return normalizeOptionalCursor(taskId);
 }
 
+function normalizeRequiredEventType(
+  eventType: string,
+  context: { source: "canonical" | "rpc"; eventId?: string; taskId?: string | number },
+): string {
+  const normalized = normalizeOptionalCursor(eventType);
+  if (normalized != null) return normalized;
+
+  throw normalizeSchemaError({
+    message: `${context.source} query-events payload contains blank event type`,
+    eventId: context.eventId,
+    taskId: context.taskId,
+  });
+}
+
 const rpcCapabilityAuditSchema = z.object({
   token: z.object({
     subject_did: z.string().min(1),
@@ -264,9 +278,16 @@ export const adaptQueryEvents = (
         });
       }
 
+      const normalizedEventType = normalizeRequiredEventType(event.type, {
+        source: "canonical",
+        eventId: event.id,
+        taskId: normalizedEventTaskId,
+      });
+
       return {
         ...normalizeCanonicalEventForM2V2(event),
         taskId: normalizedEventTaskId,
+        type: normalizedEventType,
       };
     });
 
@@ -342,11 +363,15 @@ export const adaptQueryEvents = (
     events: events.map((event) => {
       const resolutionCode = canonicalizeResolutionCode(event.resolution_code ?? undefined);
       const isM2V2Error = isM2V2ErrorCode(resolutionCode);
+      const normalizedEventType = normalizeRequiredEventType(event.event_type, {
+        source: "rpc",
+        taskId: event.task_id,
+      });
 
       return {
-        id: `${event.task_id}:${event.tx_id}:${event.event_type}`,
+        id: `${event.task_id}:${event.tx_id}:${normalizedEventType}`,
         taskId: String(event.task_id),
-        type: event.event_type,
+        type: normalizedEventType,
         level:
           isM2V2Error || event.to_status === "Slashed"
             ? "error"
