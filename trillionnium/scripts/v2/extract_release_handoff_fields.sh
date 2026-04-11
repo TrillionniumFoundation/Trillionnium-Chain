@@ -95,6 +95,19 @@ fi
 SCRIPT_DIR="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"
 TRNM_ROOT="$(CDPATH= cd -- "$SCRIPT_DIR/../.." && pwd)"
 
+if [ -n "$EXPECTED_WORKTREE_ROOT" ]; then
+  verify_output="$("$SCRIPT_DIR/verify_lane_worktree.sh" \
+    --expected-worktree-root "$EXPECTED_WORKTREE_ROOT" \
+    --expected-branch-ref "$EXPECTED_BRANCH_REF")"
+  VERIFIED_WORKTREE="$(printf '%s\n' "$verify_output" | awk -F= '$1 == "verified_worktree" { print $2; exit }')"
+  VERIFIED_BRANCH_REF="$(printf '%s\n' "$verify_output" | awk -F= '$1 == "verified_branch_ref" { print $2; exit }')"
+  VERIFIED_HEAD="$(printf '%s\n' "$verify_output" | awk -F= '$1 == "verified_head" { print $2; exit }')"
+
+  [ -n "$VERIFIED_WORKTREE" ] || { echo "missing verified_worktree from verify_lane_worktree.sh" >&2; exit 1; }
+  [ -n "$VERIFIED_BRANCH_REF" ] || { echo "missing verified_branch_ref from verify_lane_worktree.sh" >&2; exit 1; }
+  [ -n "$VERIFIED_HEAD" ] || { echo "missing verified_head from verify_lane_worktree.sh" >&2; exit 1; }
+fi
+
 if [ -z "$SUMMARY_PATH" ]; then
   latest_evidence_dir="$(ls -dt "$TRNM_ROOT"/run/health/evidence-* 2>/dev/null | head -n 1)"
   [ -n "$latest_evidence_dir" ] || { echo "missing local evidence directory under $TRNM_ROOT/run/health" >&2; exit 1; }
