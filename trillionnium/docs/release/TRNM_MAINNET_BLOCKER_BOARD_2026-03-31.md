@@ -267,6 +267,7 @@ Becomes P0 if day-1 positioning depends on oracle-backed features.
 
 ### P1.2 Bridge productionization
 The crate is still honestly named `trnm-bridge-poc`; keep it P1 unless bridge is part of the public Day-1 promise.
+For the current bridge settlement boundary and operator-facing audit tuple, pair this board with `docs/release/TRNM_BRIDGE_SETTLEMENT_AUDIT_NOTE_2026-04-02.md` so replay reviews cite the frozen `phase` / heartbeat / confirm evidence fields instead of ad-hoc log phrasing.
 
 ### P1.3 Verifier / DA witness / sidecar productization
 Becomes P0 only if mainnet Day-1 positioning requires verifier-backed external proof serving.
