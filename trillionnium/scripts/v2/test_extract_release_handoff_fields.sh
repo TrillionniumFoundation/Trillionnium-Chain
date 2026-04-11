@@ -92,6 +92,26 @@ grep -q '^preflight_rollback_command=git checkout -- run/preflight/go-no-go-late
 grep -q '^preflight_replay_command=./scripts/testnet_preflight.sh$' "$TMPDIR/out-short.txt"
 
 cat >"$PREFLIGHT_PATH" <<EOF
+result=FAIL
+generated_at=2026-04-11T01:01:30Z
+git_status_summary=clean
+git_worktree_path=$WORKTREE_ROOT
+git_worktree_branch_ref=$BRANCH_REF
+git_worktree_branch_ref_match=true
+rollback_command=git checkout -- run/preflight/go-no-go-latest.txt
+replay_command=./scripts/testnet_preflight.sh
+EOF
+if bash "$SCRIPT" \
+  --summary-path "$SUMMARY_PATH" \
+  --manifest-path "$MANIFEST_PATH" \
+  --expected-worktree-root "$WORKTREE_ROOT" \
+  --expected-branch-ref "$BRANCH_SHORT" >"$TMPDIR/out-preflight-fail.txt" 2>"$TMPDIR/err-preflight-fail.txt"; then
+  echo "expected failing preflight result to fail closed" >&2
+  exit 1
+fi
+grep -q '^artifact mismatch for preflight result: expected PASS got FAIL$' "$TMPDIR/err-preflight-fail.txt"
+
+cat >"$PREFLIGHT_PATH" <<EOF
 result=PASS
 generated_at=2026-04-11T01:02:00Z
 git_status_summary=clean

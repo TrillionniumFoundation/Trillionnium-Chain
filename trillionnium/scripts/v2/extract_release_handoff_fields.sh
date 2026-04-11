@@ -259,6 +259,10 @@ assert_equal historical_evidence_only "$summary_historical_evidence_only" "$mani
 assert_equal evidence_scope "$summary_evidence_scope" "$manifest_evidence_scope"
 
 if [ -n "$PREFLIGHT_SUMMARY_PATH" ]; then
+  if [ -n "$PREFLIGHT_RESULT" ] && [ "$PREFLIGHT_RESULT" != "PASS" ]; then
+    printf 'artifact mismatch for preflight result: expected PASS got %s\n' "$PREFLIGHT_RESULT" >&2
+    exit 1
+  fi
   if [ -n "$PREFLIGHT_GIT_WORKTREE_PATH" ] && [ "$PREFLIGHT_GIT_WORKTREE_PATH" != "$summary_worktree_path" ]; then
     printf 'artifact mismatch for preflight git_worktree_path: preflight=%s summary=%s\n' "$PREFLIGHT_GIT_WORKTREE_PATH" "$summary_worktree_path" >&2
     exit 1
