@@ -216,6 +216,11 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         path
     );
     anyhow::ensure!(
+        !node_id.starts_with('.') && !node_id.ends_with('.'),
+        "invalid node config {}: node_id must not contain leading or trailing dots",
+        path
+    );
+    anyhow::ensure!(
         !node_id.contains('[') && !node_id.contains(']'),
         "invalid node config {}: node_id must not contain bracketed host delimiters ([ ])",
         path
@@ -1150,7 +1155,38 @@ mod tests {
                 .expect_err("localhost-style node_id must fail closed");
             assert!(
                 err.to_string()
-                    .contains("node_id must not look like a host or socket literal"),
+                    .contains("node_id must not look like a host or socket literal")
+                    || err
+                        .to_string()
+                        .contains("node_id must not contain leading or trailing dots"),
+                "unexpected error for {node_id:?}: {err:#}"
+            );
+
+            let _ = std::fs::remove_file(path);
+        }
+    }
+
+    #[test]
+    fn load_config_rejects_boundary_dot_node_id_with_operator_facing_error() {
+        for node_id in ["node1.", ".node1", "peer-7.", ".peer-7"] {
+            let path = std::env::temp_dir().join(format!(
+                "trnm-node-config-boundary-dot-node-id-{}-{}-{node_id}.toml",
+                std::process::id(),
+                std::thread::current().name().unwrap_or("unnamed")
+            ));
+            std::fs::write(
+                &path,
+                format!(
+                    "node_id = \"{node_id}\"\nrpc_addr = \"127.0.0.1:7000\"\np2p_addr = \"127.0.0.1:7001\"\n"
+                ),
+            )
+            .expect("write config");
+
+            let err = load_config(path.to_str().expect("utf8 path"))
+                .expect_err("boundary-dot node_id must fail closed");
+            assert!(
+                err.to_string()
+                    .contains("node_id must not contain leading or trailing dots"),
                 "unexpected error for {node_id:?}: {err:#}"
             );
 
