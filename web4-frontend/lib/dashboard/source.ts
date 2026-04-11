@@ -244,10 +244,10 @@ const mapNormalizedAuditToDashboardEvent = (event: NormalizedAuditEvent, fallbac
   const source = normalizeDashboardEventToken(event.source, "unknown-source");
   const eventType = normalizeDashboardEventToken(event.event_type, "unknown-event");
   const actor = normalizeDashboardEventToken(event.actor, "system");
-  const objectId = event.object_id?.trim();
+  const objectId = normalizeDashboardInput(event.object_id);
 
   return {
-    id: objectId && objectId.length > 0
+    id: objectId
       ? `${source}:${objectId}`
       : `${source}:${eventType}:${actor}`,
     time: toDisplayTime(event.timestamp ?? event.checkedAt ?? fallbackTime),
