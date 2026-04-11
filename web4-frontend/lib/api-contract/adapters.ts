@@ -303,8 +303,9 @@ export const adaptQueryEvents = (
   if (!rpc.success) throw normalizeSchemaError(rpc.error.flatten());
 
   const events = rpc.data;
+  const normalizedRequestedTaskId = normalizeOptionalTaskId(requestedTaskId);
   const normalizedTaskId =
-    events[0] != null ? String(events[0].task_id) : normalizeOptionalTaskId(requestedTaskId) ?? "";
+    events[0] != null ? String(events[0].task_id) : normalizedRequestedTaskId ?? "";
 
   if (!normalizedTaskId) {
     throw normalizeSchemaError({
@@ -319,6 +320,19 @@ export const adaptQueryEvents = (
     throw normalizeSchemaError({
       message: "query-events payload contains mixed task ids",
       requestedTaskId,
+      normalizedTaskId,
+    });
+  }
+
+  if (
+    normalizedRequestedTaskId != null &&
+    events[0] != null &&
+    normalizedRequestedTaskId !== normalizedTaskId
+  ) {
+    throw normalizeSchemaError({
+      message: "query-events payload task id mismatches requested task id",
+      requestedTaskId,
+      normalizedRequestedTaskId,
       normalizedTaskId,
     });
   }

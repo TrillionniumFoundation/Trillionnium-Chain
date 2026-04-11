@@ -137,6 +137,49 @@ describe("api-contract adapters", () => {
     expect(out.events[0]?.level).toBe("info");
   });
 
+  it("fails closed when rpc query-events payload mismatches requested task id context", () => {
+    expect(() =>
+      adaptQueryEvents(
+        [
+          {
+            event_type: "commit",
+            task_id: 7,
+            from_status: "Assigned",
+            to_status: "Committed",
+            actor: "did:trnm:alice",
+            tx_id: 11,
+            block_height: 22,
+            state_root: "root",
+            ts_unix_ms: 1700000000000,
+          },
+        ],
+        "8",
+      ),
+    ).toThrow(FrontendApiError);
+  });
+
+  it("normalizes requested task id noise before rpc query-events context enforcement", () => {
+    const out = adaptQueryEvents(
+      [
+        {
+          event_type: "commit",
+          task_id: 7,
+          from_status: "Assigned",
+          to_status: "Committed",
+          actor: "did:trnm:alice",
+          tx_id: 11,
+          block_height: 22,
+          state_root: "root",
+          ts_unix_ms: 1700000000000,
+        },
+      ],
+      " \uFEFF7\u200B ",
+    );
+
+    expect(out.taskId).toBe("7");
+    expect(out.events[0]?.taskId).toBe("7");
+  });
+
   it("treats DID registration history as non-grant in rpc capability audit fallback", () => {
     const out = adaptQueryCapabilityAudit({
       token: {
