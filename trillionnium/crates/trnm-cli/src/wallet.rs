@@ -360,6 +360,7 @@ pub(crate) fn wallet_file(store: &Path, name: &str) -> PathBuf {
 
 pub(crate) fn ensure_wallet_name(name: &str) -> Result<()> {
     let has_hidden_or_whitespace = name.chars().any(is_hidden_text_control);
+    let has_non_ascii = !name.is_ascii();
     let uppercase = name.to_ascii_uppercase();
     let is_windows_reserved_device = matches!(
         uppercase.as_str(),
@@ -407,10 +408,11 @@ pub(crate) fn ensure_wallet_name(name: &str) -> Result<()> {
             '〔', '〕', '〖', '〗', '〘', '〙', '〚', '〛', '〝', '〞', '〟',
         ])
         || has_hidden_or_whitespace
+        || has_non_ascii
         || is_windows_reserved_device
     {
         bail!(
-            "invalid wallet name '{}': use a simple local name without path separators or reserved device names",
+            "invalid wallet name '{}': use a simple ASCII local name without path separators or reserved device names",
             name
         );
     }

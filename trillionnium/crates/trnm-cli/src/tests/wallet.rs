@@ -1033,6 +1033,10 @@ fn wallet_name_rejects_path_like_values() {
         "alice\u{2069}bob",
         "alice\u{0007}bob",
         "alice⧹bob",
+        "alicé",
+        "аlice",
+        "alice猫",
+        "Ａlice",
         "con",
         "PRN",
         "aux",
@@ -1048,7 +1052,22 @@ fn wallet_name_rejects_path_like_values() {
             "unexpected error for {bad:?}: {err}"
         );
     }
+
+    ensure_wallet_name("alice").unwrap();
+    ensure_wallet_name("alice_01").unwrap();
+    ensure_wallet_name("alice-01").unwrap();
+    ensure_wallet_name("ALICE01").unwrap();
 }
+
+#[test]
+fn wallet_name_error_mentions_ascii_requirement() {
+    let err = ensure_wallet_name("аlice").unwrap_err();
+    assert!(
+        err.to_string().contains("ASCII local name"),
+        "unexpected error: {err}"
+    );
+}
+
 
 #[test]
 fn write_key_rejects_non_normalized_private_key_hex() {
