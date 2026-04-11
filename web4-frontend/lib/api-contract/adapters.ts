@@ -182,8 +182,10 @@ function toIsoFromUnixMs(ts: unknown): IsoDatetimeString {
 
 function toHeightMarker(height: unknown): HeightCheckedAt {
   const num = typeof height === "string" ? Number(height) : height;
-  if (!Number.isFinite(num)) throw new Error("invalid height");
-  return `height:${Math.trunc(Number(num))}` as HeightCheckedAt;
+  if (!Number.isFinite(num) || !Number.isInteger(num) || Number(num) < 0) {
+    throw new Error("invalid height");
+  }
+  return `height:${Number(num)}` as HeightCheckedAt;
 }
 
 function toCheckedAt(value: z.infer<typeof checkedAtSchema>): CheckedAt {

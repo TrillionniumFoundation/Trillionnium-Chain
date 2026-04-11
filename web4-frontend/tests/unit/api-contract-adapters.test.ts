@@ -1010,6 +1010,24 @@ describe("api-contract adapters", () => {
     ).toThrow(FrontendApiError);
   });
 
+  it("fails closed when rpc capability audit contains negative or fractional heights", () => {
+    expect(() =>
+      adaptQueryCapabilityAudit({
+        token: {
+          subject_did: "did:trnm:bob",
+          scope: "AUDIT_READ",
+          revoked_at: 456.5,
+        },
+        owner_history: [
+          {
+            action: "CAPABILITY_ISSUED",
+            at_height: -1,
+          },
+        ],
+      }),
+    ).toThrow(FrontendApiError);
+  });
+
   it("fails closed when rpc capability audit token subject is missing", () => {
     expect(() =>
       adaptQueryCapabilityAudit({
