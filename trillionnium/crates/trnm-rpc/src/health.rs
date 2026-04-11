@@ -169,6 +169,28 @@ fn parse_nonempty_path_suffix<'a>(path: &'a str, prefix: &str) -> Option<&'a str
         .filter(|suffix| !has_ambiguous_path_segment_encoding(suffix))
 }
 
+fn parse_query_capability_audit_subject_from_target<'a>(
+    target: &'a str,
+) -> std::result::Result<&'a str, &'static str> {
+    let (path, query) = match target.split_once('?') {
+        Some((path, query)) => (path, Some(query)),
+        None => (target, None),
+    };
+
+    if query.is_some() {
+        return Err("invalid query");
+    }
+
+    match parse_nonempty_path_suffix(path, "/query-capability-audit/") {
+        Some(subject) => Ok(subject),
+        None if path == "/query-capability-audit" || path == "/query-capability-audit/" => {
+            Err("missing token or subject")
+        }
+        None if path.starts_with("/query-capability-audit/") => Err("invalid query"),
+        None => Err("missing token or subject"),
+    }
+}
+
 pub(crate) fn serve_health(host: &str, port: u16) -> Result<()> {
     let addr = format!("{}:{}", host, port);
     let listener = TcpListener::bind(&addr)?;
@@ -265,9 +287,9 @@ pub(crate) fn serve_health(host: &str, port: u16) -> Result<()> {
                     }
                 }
             }
-            (Some((method, _)), Some(path), Some(_)) if path.starts_with("/query-capability-audit/") => {
-                match parse_nonempty_path_suffix(path, "/query-capability-audit/") {
-                    Some(subject_or_token) => {
+            (Some((method, _)), Some(path), Some(target)) if path.starts_with("/query-capability-audit/") => {
+                match parse_query_capability_audit_subject_from_target(target) {
+                    Ok(subject_or_token) => {
                         let registry = load_identity_registry(&identity_registry_file());
                         if let Some(token_id) =
                             resolve_capability_token_subject_or_token(&registry, subject_or_token)
@@ -289,7 +311,11 @@ pub(crate) fn serve_health(host: &str, port: u16) -> Result<()> {
                             json_response_for_method(method, "404 Not Found", body)
                         }
                     }
-                    None => {
+                    Err("invalid query") => {
+                        let body = "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid query\"}";
+                        json_response_for_method(method, "400 Bad Request", body)
+                    }
+                    Err(_) => {
                         let body = "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"missing token or subject\"}";
                         json_response_for_method(method, "400 Bad Request", body)
                     }
@@ -309,7 +335,7 @@ mod tests {
     use super::{
         fallback_response_for_request, has_ambiguous_path_segment_encoding, health_probe_body,
         is_health_probe_path, json_response_for_method, parse_nonempty_path_suffix,
-        parse_path_u64_suffix,
+        parse_path_u64_suffix, parse_query_capability_audit_subject_from_target,
     };
 
     #[test]
@@ -678,6 +704,31 @@ mod tests {
                 "/query-capability-audit/"
             ),
             None
+        );
+    }
+
+    #[test]
+    fn parse_query_capability_audit_subject_from_target_accepts_canonical_subject_path() {
+        assert_eq!(
+            parse_query_capability_audit_subject_from_target("/query-capability-audit/alice")
+                .unwrap(),
+            "alice"
+        );
+        assert_eq!(
+            parse_query_capability_audit_subject_from_target("/query-capability-audit/alice/")
+                .unwrap(),
+            "alice"
+        );
+    }
+
+    #[test]
+    fn parse_query_capability_audit_subject_from_target_rejects_query_string() {
+        assert_eq!(
+            parse_query_capability_audit_subject_from_target(
+                "/query-capability-audit/alice?limit=2"
+            )
+            .unwrap_err(),
+            "invalid query"
         );
     }
 
