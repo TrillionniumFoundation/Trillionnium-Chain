@@ -2022,6 +2022,50 @@ mod tests {
     }
 
     #[test]
+    fn cancelled_unpause_allows_new_restore_schedule() {
+        let mut gov = setup();
+        let now = 7_540;
+        let eta = now + 60;
+
+        gov.emergency_pause("guardian", "incident-reschedule").unwrap();
+        let first_pid = gov
+            .schedule_unpause("guardian", eta, "recover-first", now)
+            .unwrap();
+        gov.cancel("guardian", first_pid).unwrap();
+
+        let second_pid = gov
+            .schedule_unpause("guardian", eta + 60, "recover-second", now)
+            .unwrap();
+
+        let first = gov.proposal(first_pid).unwrap();
+        assert_eq!(first.kind, ProposalKind::EmergencyUnpause);
+        assert_eq!(first.status, ProposalStatus::Cancelled);
+        assert!(gov.bridge_state().emergency_paused);
+
+        let second = gov.proposal(second_pid).unwrap();
+        assert_eq!(second.kind, ProposalKind::EmergencyUnpause);
+        assert_eq!(second.status, ProposalStatus::Queued);
+        assert_eq!(second.eta, eta + 60);
+        assert_eq!(second.reason_hash, "recover-second");
+
+        assert_eq!(
+            gov.audit_log()
+                .iter()
+                .filter(|event| matches!(
+                    event,
+                    GovernanceEvent::PauseRestoreScheduled { .. }
+                ))
+                .count(),
+            2
+        );
+        assert!(gov.audit_log().iter().any(|event| matches!(
+            event,
+            GovernanceEvent::ProposalCancelled { proposal_id, actor }
+                if *proposal_id == first_pid && actor == "guardian"
+        )));
+    }
+
+    #[test]
     fn param_proposal_cancel_rejects_proposer_after_proposer_role_revoked() {
         let mut gov = setup();
         let now = 7_550;
