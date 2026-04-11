@@ -252,7 +252,9 @@ Mark each item explicitly:
 
 - [ ] assigned worktree / branch recorded from ticket
 - [ ] signer/process exclusivity checked and recorded
+- [ ] `checked_process_command=` preserved next to signer exclusivity note
 - [ ] `checked_process_output=` preserved next to signer exclusivity note
+- [ ] `checked_listener_command=` preserved next to signer exclusivity note
 - [ ] `checked_listener_output=` preserved next to signer exclusivity note
 - [ ] `verify_lane_worktree.sh` passed using ticket-assigned values
 - [ ] `verified_worktree=` preserved from helper output
@@ -312,7 +314,9 @@ evaluated_repo_root=<git rev-parse --show-toplevel>
 evaluated_branch=<git branch --show-current>
 evaluated_head=<git rev-parse HEAD>
 signer_exclusivity_note=<one line>
+checked_process_command=<exact command used for process exclusivity check>
 checked_process_output=<captured command output or explicit "no matching process">
+checked_listener_command=<exact command used for listener exclusivity check>
 checked_listener_output=<captured command output or explicit "no matching listener">
 verified_worktree=<helper output>
 verified_branch_ref=<helper output>
