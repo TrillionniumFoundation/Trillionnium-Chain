@@ -2438,6 +2438,33 @@ mod tests {
     }
 
     #[test]
+    fn guarded_normal_retry_can_escalate_via_critical_path_without_pre_poisoning_duplicate_state() {
+        let mut g = LaneAdmissionGate::new(5, 2);
+
+        // Fill dedicated normal capacity and arm active critical backlog while one
+        // aggregate slot remains reachable only by fresh critical spillover.
+        assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(3, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(90, IngressClass::Critical), AdmitOutcome::Accepted);
+
+        // A fresh normal id blocked by the reserve guard must remain fresh, not become
+        // duplicate metadata just because it first arrived through the normal path.
+        assert_eq!(
+            g.admit(77, IngressClass::Normal),
+            AdmitOutcome::Backpressured
+        );
+        assert_eq!(g.queued_counts(), (3, 1, 4));
+
+        // The same tx id may still claim the final guarded slot through the critical
+        // path, and only after that real admission should duplicate semantics engage.
+        assert_eq!(g.admit(77, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.queued_counts(), (3, 2, 5));
+        assert_eq!(g.admit(77, IngressClass::Normal), AdmitOutcome::Duplicate);
+        assert_eq!(g.admit(77, IngressClass::Critical), AdmitOutcome::Duplicate);
+    }
+
+    #[test]
     fn borrowed_last_idle_critical_slot_reopens_critical_retry_after_drain() {
         let mut g = LaneAdmissionGate::new(3, 1);
 
