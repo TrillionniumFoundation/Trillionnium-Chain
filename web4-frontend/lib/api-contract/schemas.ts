@@ -1,5 +1,10 @@
 import { z } from "zod";
 
+const normalizeNonEmptyCursor = (value: string): string =>
+  value.replace(/[\u200B\u200C\u200D\u2060\u2063\uFEFF]/g, "").trim();
+
+const paginationCursorSchema = z.string().transform(normalizeNonEmptyCursor).pipe(z.string().min(1));
+
 export const taskStatusSchema = z.enum([
   "pending",
   "queued",
@@ -69,7 +74,7 @@ export const normalizedAuditEventSchema = z.object({
 
 export const queryNormalizedAuditEventsPageSchema = z.object({
   events: z.array(normalizedAuditEventSchema),
-  nextCursor: z.string().min(1).optional(),
+  nextCursor: paginationCursorSchema.optional(),
   hasMore: z.boolean().optional(),
   total: z.number().int().nonnegative().optional(),
 }).strict().superRefine((payload, ctx) => {
@@ -86,7 +91,7 @@ export const normalizedAuditEventsQuerySchema = z.object({
   source: z.string().trim().min(1).optional(),
   eventType: z.string().trim().min(1).optional(),
   limit: z.number().int().positive().optional(),
-  cursor: z.string().trim().min(1).optional(),
+  cursor: paginationCursorSchema.optional(),
 }).strict();
 
 export const queryNormalizedAuditEventsResponseSchema = z.union([
