@@ -13,15 +13,15 @@ It closes one practical gap called out by the mainnet blocker docs:
 Companion truth sources:
 
 - `RELEASE_READINESS.md`
-- `docs/release/TRNM_MAINNET_GAP_MATRIX_2026-03-26.md`
-- `docs/release/TRNM_MAINNET_BLOCKER_BOARD_2026-03-31.md`
-- `docs/runbooks/mainnet-observability-minimum-contract.md`
-- `docs/runbooks/local-release-evidence.md`
-- `docs/runbooks/bft-checkpoint-wal-recovery.md`
-- `docs/runbooks/oracle-observability-alerts.md`
+- `trillionnium/docs/release/TRNM_MAINNET_GAP_MATRIX_2026-03-26.md`
+- `trillionnium/docs/release/TRNM_MAINNET_BLOCKER_BOARD_2026-03-31.md`
+- `trillionnium/docs/runbooks/mainnet-observability-minimum-contract.md`
+- `trillionnium/docs/runbooks/local-release-evidence.md`
+- `trillionnium/docs/runbooks/bft-checkpoint-wal-recovery.md`
+- `trillionnium/docs/runbooks/oracle-observability-alerts.md`
 
 Interpret this starter pack on top of the frozen minimum operator-visible contract in
-`docs/runbooks/mainnet-observability-minimum-contract.md`.
+`trillionnium/docs/runbooks/mainnet-observability-minimum-contract.md`.
 That file is the source of truth for the currently shipped `trnm-rpc` health aliases/body,
 `trnm-node` incident-summary field names, and `trnm-worker-agent` handoff line shapes.
 This starter pack layers severity, dashboard, and incident-routing semantics on top of those

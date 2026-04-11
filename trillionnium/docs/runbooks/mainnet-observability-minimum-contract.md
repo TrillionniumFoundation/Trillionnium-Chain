@@ -24,8 +24,8 @@ This document only freezes surfaces already evidenced in code/tests under:
 It should be read together with:
 
 - `RELEASE_READINESS.md`
-- `docs/release/TRNM_MAINNET_GAP_MATRIX_2026-03-26.md`
-- `docs/release/TRNM_MAINNET_BLOCKER_BOARD_2026-03-31.md`
+- `trillionnium/docs/release/TRNM_MAINNET_GAP_MATRIX_2026-03-26.md`
+- `trillionnium/docs/release/TRNM_MAINNET_BLOCKER_BOARD_2026-03-31.md`
 
 ## 1. `trnm-rpc` health probe aliases
 
