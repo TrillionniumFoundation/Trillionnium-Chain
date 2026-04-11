@@ -427,6 +427,14 @@ Record these fields in the release ticket or operator handoff note:
 - worktree:
 - worktree branch ref:
 - worktree branch ref match (`true` required):
+- expected worktree root (copy `expected_worktree_root=` verbatim when lane binding is in scope):
+- expected branch ref (copy `expected_branch_ref=` verbatim when lane binding is in scope):
+- expected head (copy `expected_head=` verbatim when lane binding is in scope, else leave empty rather than guessing):
+- lane verify command (copy `lane_verify_command=` verbatim when lane binding is in scope):
+- handoff signed by (copy `handoff_signed_by=` verbatim for replacement/rotation ownership transfer):
+- handoff acknowledged by (copy `handoff_acknowledged_by=` verbatim for replacement/rotation ownership transfer):
+- operator ack (copy `operator_ack=` verbatim whenever the event crosses a human handoff boundary):
+- operator ack signature path (copy `operator_ack_signature_path=` verbatim when a durable sign-off artifact exists, else leave empty):
 - git status summary (`clean` required):
 - preflight summary path:
 - preflight result:
