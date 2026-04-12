@@ -45,11 +45,11 @@
 | `ceremony_scope` | `operator-handoff` | keep |
 | `ceremony_id` | `genesis-operator-handoff-draft-20260404-0100Z` | 可保留，或在正式发出前改成最终 ticket id |
 | `packet_generated_at` | `2026-04-04T01:00:16Z` | 若重发 packet，应重新生成 |
-| `packet_distribution_path` | `<absolute-path-to-ceremony-packet>` | 确认最终共享的 **ceremony packet 文件绝对路径**；必须是 absolute path、必须指向**单一 packet 文件**、不能包含 `.` / `..` path segment、并且必须与 `genesis_artifact_path` 指向不同文件，避免把共享审阅 packet 和 genesis artifact 混成同一物 |
+| `packet_distribution_path` | `<absolute-path-to-ceremony-packet>` | 确认最终共享的 **ceremony packet 文件绝对路径**；必须是 absolute path、必须指向**单一 packet 文件**、不能包含 `.` / `..` path segment、不能出现重复 `//` path separator、并且必须与 `genesis_artifact_path` 指向不同文件，避免把共享审阅 packet 和 genesis artifact 混成同一物 |
 | `validator_set_version` | `operator-handoff-b74758fac` | 保留或替换都可以，但最终值必须是**真实、具体、非默认**的版本标签，且不能含 `;` / `=` separator |
 | `startup_order_note` | `<controlled-4-node-bootstrap-order>` | 需要改成真实 4-node controlled bootstrap 顺序 |
 | `rollback_owner` | `primary-operator` | 需要确认真实责任人 / 值班 owner |
-| `genesis_artifact_path` | `<absolute-path-to-genesis-artifact>` | keep unless artifact path changes, but final handoff must still point to one exact artifact file/bundle absolute path |
+| `genesis_artifact_path` | `<absolute-path-to-genesis-artifact>` | keep unless artifact path changes, but final handoff must still point to one exact artifact file/bundle absolute path，且不要带 `.` / `..` path segment 或重复 `//` path separator |
 | `genesis_artifact_sha256` | `0cf37d6ae68baa3ac1af1db89c3b225cf669f072aa3f531681448dbcf995108f` | keep unless artifact changes |
 
 ### 建议最终填写区
@@ -69,7 +69,7 @@ rollback_owner=
 
 - `packet_distribution_path=`
   - 必须是给所有 operator 审阅的**同一份 ceremony packet 文件绝对路径**
-  - 不接受目录、artifact folder、ticket 根、聊天线程名、相对路径、或带 `.` / `..` path segment 的路径
+  - 不接受目录、artifact folder、ticket 根、聊天线程名、相对路径、带 `.` / `..` path segment 的路径，或包含重复 `//` path separator 的别名路径
   - 不得与 `genesis_artifact_path=` 指向同一文件
 - `validator_set_version=`
   - 必须是**真实、具体、非默认**的版本标签

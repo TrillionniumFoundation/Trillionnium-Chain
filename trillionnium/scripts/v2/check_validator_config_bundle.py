@@ -284,6 +284,10 @@ def validate_packet_path(value: str, field: str) -> None:
         fail(
             f"invalid ceremony packet arguments: public-mainnet-input requires {field} to be an absolute path"
         )
+    if value.startswith("//") or "//" in value[1:]:
+        fail(
+            f"invalid ceremony packet arguments: public-mainnet-input requires {field} to avoid repeated '/' path separators"
+        )
     if value.startswith("/./") or "/./" in value or value.endswith("/.") or any(
         part in {".", ".."} for part in path.parts
     ):
