@@ -5,6 +5,7 @@ usage() {
   cat <<'EOF' >&2
 Usage: extract_release_handoff_fields.sh [--summary-path <path>] [--manifest-path <path>]
                                          [--expected-worktree-root <path>] [--expected-branch-ref <ref>]
+                                         [--expected-head <sha>]
 
 Resolve the latest local-evidence summary and RC manifest (unless paths are
 provided explicitly), then print the canonical handoff fields directly from the
@@ -15,7 +16,9 @@ mismatch across artifacts.
 When --expected-worktree-root / --expected-branch-ref are provided, the helper
 also verifies that both artifacts match the ticket-assigned lane binding.
 --expected-branch-ref accepts either a short branch name (for example
-lane/foo) or a full ref (for example refs/heads/lane/foo).
+lane/foo) or a full ref (for example refs/heads/lane/foo). When
+--expected-head is provided, the helper also fail-closes on head drift from
+that ticket-assigned commit.
 EOF
 }
 
@@ -72,6 +75,11 @@ while [ "$#" -gt 0 ]; do
       EXPECTED_BRANCH_REF="$2"
       shift 2
       ;;
+    --expected-head)
+      [ "$#" -ge 2 ] || { echo "missing value for $1" >&2; usage; exit 2; }
+      EXPECTED_HEAD="$2"
+      shift 2
+      ;;
     -h|--help)
       usage
       exit 0
@@ -96,6 +104,12 @@ if [ -n "$EXPECTED_BRANCH_REF" ] && [ -z "$EXPECTED_WORKTREE_ROOT" ]; then
   exit 2
 fi
 
+if [ -n "$EXPECTED_HEAD" ] && { [ -z "$EXPECTED_WORKTREE_ROOT" ] || [ -z "$EXPECTED_BRANCH_REF" ]; }; then
+  echo "--expected-worktree-root and --expected-branch-ref are required when --expected-head is set" >&2
+  usage
+  exit 2
+fi
+
 if [ -n "$EXPECTED_BRANCH_REF" ]; then
   EXPECTED_BRANCH_REF_CANONICAL="$(canonicalize_branch_ref "$EXPECTED_BRANCH_REF")"
 fi
@@ -104,9 +118,14 @@ SCRIPT_DIR="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"
 TRNM_ROOT="$(CDPATH= cd -- "$SCRIPT_DIR/../.." && pwd)"
 
 if [ -n "$EXPECTED_WORKTREE_ROOT" ]; then
-  verify_output="$("$SCRIPT_DIR/verify_lane_worktree.sh" \
-    --expected-worktree-root "$EXPECTED_WORKTREE_ROOT" \
-    --expected-branch-ref "$EXPECTED_BRANCH_REF")"
+  verify_args=(
+    --expected-worktree-root "$EXPECTED_WORKTREE_ROOT"
+    --expected-branch-ref "$EXPECTED_BRANCH_REF"
+  )
+  if [ -n "$EXPECTED_HEAD" ]; then
+    verify_args+=(--expected-head "$EXPECTED_HEAD")
+  fi
+  verify_output="$("$SCRIPT_DIR/verify_lane_worktree.sh" "${verify_args[@]}")"
   VERIFIED_WORKTREE="$(printf '%s\n' "$verify_output" | awk -F= '$1 == "verified_worktree" { print $2; exit }')"
   VERIFIED_BRANCH_REF="$(printf '%s\n' "$verify_output" | awk -F= '$1 == "verified_branch_ref" { print $2; exit }')"
   VERIFIED_HEAD="$(printf '%s\n' "$verify_output" | awk -F= '$1 == "verified_head" { print $2; exit }')"
@@ -507,4 +526,7 @@ if [ -n "$EXPECTED_WORKTREE_ROOT" ]; then
   printf 'expected_worktree_root=%s\n' "$EXPECTED_WORKTREE_ROOT"
   printf 'ticket_expected_branch_ref=%s\n' "$EXPECTED_BRANCH_REF"
   printf 'expected_branch_ref=%s\n' "$EXPECTED_BRANCH_REF_CANONICAL"
+  if [ -n "$EXPECTED_HEAD" ]; then
+    printf 'expected_head=%s\n' "$EXPECTED_HEAD"
+  fi
 fi

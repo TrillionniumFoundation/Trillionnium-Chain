@@ -75,10 +75,12 @@ bash "$SCRIPT" \
   --summary-path "$SUMMARY_PATH" \
   --manifest-path "$MANIFEST_PATH" \
   --expected-worktree-root "$WORKTREE_ROOT" \
-  --expected-branch-ref "$BRANCH_SHORT" >"$TMPDIR/out-short.txt"
+  --expected-branch-ref "$BRANCH_SHORT" \
+  --expected-head "$HEAD_SHA" >"$TMPDIR/out-short.txt"
 
 grep -q "^ticket_expected_branch_ref=$BRANCH_SHORT$" "$TMPDIR/out-short.txt"
 grep -q "^expected_branch_ref=$BRANCH_REF$" "$TMPDIR/out-short.txt"
+grep -q "^expected_head=$HEAD_SHA$" "$TMPDIR/out-short.txt"
 grep -q "^git_worktree_branch_ref=$BRANCH_REF$" "$TMPDIR/out-short.txt"
 grep -q "^git_expected_worktree_branch_ref=$BRANCH_REF$" "$TMPDIR/out-short.txt"
 grep -q "^preflight_summary_path=$PREFLIGHT_PATH$" "$TMPDIR/out-short.txt"
@@ -90,6 +92,18 @@ grep -q "^preflight_git_worktree_branch_ref=$BRANCH_REF$" "$TMPDIR/out-short.txt
 grep -q '^preflight_git_worktree_branch_ref_match=true$' "$TMPDIR/out-short.txt"
 grep -q '^preflight_rollback_command=git checkout -- run/preflight/go-no-go-latest.txt$' "$TMPDIR/out-short.txt"
 grep -q '^preflight_replay_command=./scripts/testnet_preflight.sh$' "$TMPDIR/out-short.txt"
+
+BAD_HEAD="0000000000000000000000000000000000000000"
+if bash "$SCRIPT" \
+  --summary-path "$SUMMARY_PATH" \
+  --manifest-path "$MANIFEST_PATH" \
+  --expected-worktree-root "$WORKTREE_ROOT" \
+  --expected-branch-ref "$BRANCH_SHORT" \
+  --expected-head "$BAD_HEAD" >"$TMPDIR/out-bad-head.txt" 2>"$TMPDIR/err-bad-head.txt"; then
+  echo "expected head mismatch to fail closed" >&2
+  exit 1
+fi
+grep -q "^head mismatch: expected $BAD_HEAD got $HEAD_SHA$" "$TMPDIR/err-bad-head.txt"
 
 cat >"$SUMMARY_PATH" <<EOF
 generated_at=2026-04-11T01:05:00Z
@@ -317,10 +331,12 @@ bash "$SCRIPT" \
   --summary-path "$SUMMARY_PATH" \
   --manifest-path "$MANIFEST_PATH" \
   --expected-worktree-root "$WORKTREE_ROOT" \
-  --expected-branch-ref "$BRANCH_REF" >"$TMPDIR/out-full.txt"
+  --expected-branch-ref "$BRANCH_REF" \
+  --expected-head "$HEAD_SHA" >"$TMPDIR/out-full.txt"
 
 grep -q "^ticket_expected_branch_ref=$BRANCH_REF$" "$TMPDIR/out-full.txt"
 grep -q "^expected_branch_ref=$BRANCH_REF$" "$TMPDIR/out-full.txt"
+grep -q "^expected_head=$HEAD_SHA$" "$TMPDIR/out-full.txt"
 grep -q "^git_worktree_branch_ref=$BRANCH_REF$" "$TMPDIR/out-full.txt"
 grep -q "^git_expected_worktree_branch_ref=$BRANCH_REF$" "$TMPDIR/out-full.txt"
 
