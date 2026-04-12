@@ -143,7 +143,7 @@ fn ensure_recoverable_wal_state_rejects_metadata_only_recovery_with_singular_che
     assert!(!err.contains("checkpoint lags retained WAL tip by 1 blocks"));
     assert!(err.contains("last retained checkpoint: 6"));
     assert!(err.contains("next startup height: 8"));
-    assert!(err.contains("operator action: restore an application snapshot that covers the retained WAL tip before retrying join/rejoin; do not resume from metadata alone"));
+    assert!(err.contains("operator action: restore an application snapshot that covers retained WAL tip height 7 before retrying join/rejoin; retained checkpoint height 6 is 1 block behind, so do not resume from metadata alone"));
 
     let _ = fs::remove_dir_all(&wal_dir);
 }

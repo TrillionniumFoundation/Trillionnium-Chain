@@ -342,7 +342,15 @@ fn metadata_only_operator_action(recovered: &RecoveredWalState) -> String {
         let tip_height = recovered.next_height.saturating_sub(1);
         match recovered.checkpoint_height_retained {
             Some(checkpoint_height) if checkpoint_height < tip_height => {
-                "operator action: restore an application snapshot that covers the retained WAL tip before retrying join/rejoin; do not resume from metadata alone".into()
+                let checkpoint_lag = tip_height - checkpoint_height;
+                let lag_blocks = if checkpoint_lag == 1 { "block" } else { "blocks" };
+                format!(
+                    "operator action: restore an application snapshot that covers retained WAL tip height {} before retrying join/rejoin; retained checkpoint height {} is {} {} behind, so do not resume from metadata alone",
+                    tip_height,
+                    checkpoint_height,
+                    checkpoint_lag,
+                    lag_blocks,
+                )
             }
             Some(checkpoint_height) if checkpoint_height > tip_height => {
                 let checkpoint_lead = checkpoint_height - tip_height;
@@ -497,7 +505,7 @@ mod tests {
         assert!(error.contains("checkpoint_tip_relation=behind:1"));
         assert!(error.contains("next_startup_height=12"));
         assert!(error.contains(
-            "operator action: restore an application snapshot that covers the retained WAL tip before retrying join/rejoin; do not resume from metadata alone; note: this startup already truncated a malformed WAL tail, so keep the repaired WAL/checkpoint artifacts for incident review if join/rejoin still fails"
+            "operator action: restore an application snapshot that covers retained WAL tip height 11 before retrying join/rejoin; retained checkpoint height 10 is 1 block behind, so do not resume from metadata alone; note: this startup already truncated a malformed WAL tail, so keep the repaired WAL/checkpoint artifacts for incident review if join/rejoin still fails"
         ));
     }
 
@@ -831,7 +839,7 @@ mod tests {
                 && err.contains("last retained checkpoint: 5")
                 && err.contains("next startup height: 8")
                 && err.contains("incident clue: retained_wal_entries=2 checkpoint_height_retained=5 checkpoint_tip_relation=behind:2 next_startup_height=8 wal_tail_truncated=true metadata_only_recovery=true join_rejoin_status=blocked:metadata_only_recovery")
-                && err.contains("operator action: restore an application snapshot that covers the retained WAL tip before retrying join/rejoin; do not resume from metadata alone; note: this startup already truncated a malformed WAL tail, so keep the repaired WAL/checkpoint artifacts for incident review if join/rejoin still fails"),
+                && err.contains("operator action: restore an application snapshot that covers retained WAL tip height 7 before retrying join/rejoin; retained checkpoint height 5 is 2 blocks behind, so do not resume from metadata alone; note: this startup already truncated a malformed WAL tail, so keep the repaired WAL/checkpoint artifacts for incident review if join/rejoin still fails"),
             "unexpected metadata-only recovery error: {err}"
         );
     }
