@@ -91,14 +91,15 @@ rollback_owner=
 
 ### 3.1 Tabular sheet
 
-| validator_name | node_id | config_path | p2p_addr | rpc_addr | validator_entry_hash | validator_owner | operator_contact | operator_ack_status | operator_ack_signature_path | operator_ack_digest |
-|---|---|---|---|---|---|---|---|---|---|---|
-| node1 | node1 | `/Users/qianqi/.openclaw/workspace/TrillionniumChain/trillionnium/configs/node1.toml` | `127.0.0.1:26656` | `127.0.0.1:26657` | `b1ce42b559cf4ec88ef6f9e116d7d00f029595fca0922eab191bb4694d5cc6f9` |  |  |  |  |  |
-| node2 | node2 | `/Users/qianqi/.openclaw/workspace/TrillionniumChain/trillionnium/configs/node2.toml` | `127.0.0.1:27656` | `127.0.0.1:27657` | `63492f510bdd87d87ab9bce5d5514586f2ed525ee8c9e76fab2f4ef4e60c9cd1` |  |  |  |  |  |
-| node3 | node3 | `/Users/qianqi/.openclaw/workspace/TrillionniumChain/trillionnium/configs/node3.toml` | `127.0.0.1:28656` | `127.0.0.1:28657` | `1aed1224c589b35402852190d2e475d92844f4caa0125c721c6c1824aa2cfb71` |  |  |  |  |  |
-| node4 | node4 | `/Users/qianqi/.openclaw/workspace/TrillionniumChain/trillionnium/configs/node4.toml` | `127.0.0.1:29656` | `127.0.0.1:29657` | `d53c3a6e5b4fee138ae14663bc1029a4eaeeed2b0a28eec2a05469bce7755441` |  |  |  |  |  |
+| validator_name | node_id | config_path | p2p_addr | rpc_addr | validator_entry_hash | validator_owner | operator_contact | operator_ack | operator_ack_status | operator_ack_signature_path | operator_ack_digest |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| node1 | node1 | `/Users/qianqi/.openclaw/workspace/TrillionniumChain/trillionnium/configs/node1.toml` | `127.0.0.1:26656` | `127.0.0.1:26657` | `b1ce42b559cf4ec88ef6f9e116d7d00f029595fca0922eab191bb4694d5cc6f9` |  |  |  |  |  |  |
+| node2 | node2 | `/Users/qianqi/.openclaw/workspace/TrillionniumChain/trillionnium/configs/node2.toml` | `127.0.0.1:27656` | `127.0.0.1:27657` | `63492f510bdd87d87ab9bce5d5514586f2ed525ee8c9e76fab2f4ef4e60c9cd1` |  |  |  |  |  |  |
+| node3 | node3 | `/Users/qianqi/.openclaw/workspace/TrillionniumChain/trillionnium/configs/node3.toml` | `127.0.0.1:28656` | `127.0.0.1:28657` | `1aed1224c589b35402852190d2e475d92844f4caa0125c721c6c1824aa2cfb71` |  |  |  |  |  |  |
+| node4 | node4 | `/Users/qianqi/.openclaw/workspace/TrillionniumChain/trillionnium/configs/node4.toml` | `127.0.0.1:29656` | `127.0.0.1:29657` | `d53c3a6e5b4fee138ae14663bc1029a4eaeeed2b0a28eec2a05469bce7755441` |  |  |  |  |  |  |
 
 表内 fail-closed 约束：
+- `operator_ack` 这一列必须直接填写该 validator owner 的真实确认文本，且要原样复用共享 packet 里的同一 `ceremony_id=`、`genesis_artifact_sha256=`、`config_path=`、`validator_name=` 与 `validator_entry_hash=`，不要只在 3.2 的 block 里另存、也不要手工改成相对路径或重算 hash
 - 只有当同一 validator 的 `operator_ack=` 已经形成真实确认文本，且 `operator_ack_signature_path` 或 `operator_ack_digest` 至少一项已有真实值时，才可把 `operator_ack_status` 标记为 `acknowledged`
 - 如果 durable acknowledgment evidence 还没落盘，就把 `operator_ack_status` 保持为 `pending` 或 `blocked`，并把 `operator_ack_signature_path` / `operator_ack_digest` 留空，不要先塞 placeholder 路径、ticket、聊天线程名或伪摘要
 
