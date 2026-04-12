@@ -149,6 +149,20 @@ fn serve_health_probe_negative_paths_keep_head_404_and_bad_request_json_distinct
     );
     assert!(head_body.is_empty(), "HEAD 404 response must stay bodyless");
 
+    let lower_head_not_found = send_http_request(port, "head /missing?probe=lb HTTP/1.1");
+    let (lower_head_headers, lower_head_body) = split_http_response(&lower_head_not_found);
+    assert!(lower_head_headers.starts_with("HTTP/1.1 404 Not Found\r\n"));
+    assert!(lower_head_headers.contains("Content-Type: application/json\r\n"));
+    assert!(lower_head_headers.contains("Cache-Control: no-store\r\n"));
+    assert_eq!(
+        response_content_length(lower_head_headers),
+        "{\"ok\":false,\"code\":\"NOT_FOUND\"}".len()
+    );
+    assert!(
+        lower_head_body.is_empty(),
+        "lowercase HEAD 404 response must stay bodyless"
+    );
+
     let bad_request = send_http_request(port, "GET /health#bridge HTTP/1.1");
     let (bad_headers, bad_body) = split_http_response(&bad_request);
     assert!(bad_headers.starts_with("HTTP/1.1 400 Bad Request\r\n"));
