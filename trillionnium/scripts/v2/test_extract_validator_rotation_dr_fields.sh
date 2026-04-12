@@ -21,6 +21,8 @@ BRANCH_REF="refs/heads/lane/mn05-operator-dr-rotation-lifecycle"
 HEAD_SHA="$(git rev-parse HEAD)"
 REPORT_PATH="$REPO/run/bft-restart-recovery-20260404.txt"
 REPORT_PATH_CANONICAL="$(cd "$(dirname "$REPORT_PATH")" && pwd -P)/$(basename "$REPORT_PATH")"
+REPLAY_COMMAND="env EXPECTED_WORKTREE_ROOT=$WORKTREE_ROOT EXPECTED_BRANCH_REF=$BRANCH_REF EXPECTED_HEAD=$HEAD_SHA ./scripts/check_bft_restart_recovery.sh --config $WORKTREE_ROOT/configs/node1.toml"
+REPLAY_COMMAND_QUOTED="env EXPECTED_WORKTREE_ROOT=\"$WORKTREE_ROOT\" EXPECTED_BRANCH_REF=\"$BRANCH_REF\" EXPECTED_HEAD=\"$HEAD_SHA\" ./scripts/check_bft_restart_recovery.sh --config \"$WORKTREE_ROOT/configs/node1.toml\""
 
 cat >"$REPORT_PATH" <<EOF
 generated_at=2026-04-04T11:59:00Z
@@ -31,7 +33,7 @@ git_branch=lane/mn05-operator-dr-rotation-lifecycle
 git_head=$HEAD_SHA
 git_status_summary=clean
 rollback_command=git reset --hard $HEAD_SHA
-replay_command=./scripts/check_bft_restart_recovery.sh --config $WORKTREE_ROOT/configs/node1.toml
+replay_command=$REPLAY_COMMAND
 status=PASS
 expected_worktree_root=$WORKTREE_ROOT
 expected_branch_ref=lane/mn05-operator-dr-rotation-lifecycle
@@ -63,7 +65,7 @@ git_branch=lane/mn05-operator-dr-rotation-lifecycle
 git_head=$HEAD_SHA
 git_status_summary=clean
 rollback_command=git reset --hard $HEAD_SHA
-replay_command=./scripts/check_bft_restart_recovery.sh --config $WORKTREE_ROOT/configs/node1.toml
+replay_command=$REPLAY_COMMAND
 status=PASS
 expected_worktree_root=$WORKTREE_ROOT
 expected_branch_ref=$BRANCH_REF
@@ -84,7 +86,7 @@ git_branch=lane/mn05-operator-dr-rotation-lifecycle
 git_head=$HEAD_SHA
 git_status_summary=clean
 rollback_command=git reset --hard $HEAD_SHA
-replay_command=./scripts/check_bft_restart_recovery.sh --config "$WORKTREE_ROOT/configs/node1.toml"
+replay_command=$REPLAY_COMMAND_QUOTED
 status=PASS
 expected_worktree_root=$WORKTREE_ROOT
 expected_branch_ref=lane/mn05-operator-dr-rotation-lifecycle
@@ -96,7 +98,7 @@ bash "$SCRIPT" --report-path "$REPORT_PATH" >"$TMPDIR/out.txt"
 grep -q "^expected_branch_ref=lane/mn05-operator-dr-rotation-lifecycle$" "$TMPDIR/out.txt"
 grep -q '^lane_verify_command=./scripts/v2/verify_lane_worktree.sh --expected-worktree-root "'"$WORKTREE_ROOT"'" --expected-branch-ref "lane/mn05-operator-dr-rotation-lifecycle" --expected-head "'"$HEAD_SHA"'"$' "$TMPDIR/out.txt"
 
-grep -q '^dr_replay_command=./scripts/check_bft_restart_recovery.sh --config "'"$WORKTREE_ROOT/configs/node1.toml"'"$' "$TMPDIR/out.txt"
+grep -q '^dr_replay_command=env EXPECTED_WORKTREE_ROOT="'"$WORKTREE_ROOT"'" EXPECTED_BRANCH_REF="'"$BRANCH_REF"'" EXPECTED_HEAD="'"$HEAD_SHA"'" ./scripts/check_bft_restart_recovery.sh --config "'"$WORKTREE_ROOT/configs/node1.toml"'"$' "$TMPDIR/out.txt"
 
 cat >"$REPORT_PATH" <<EOF
 generated_at=2026-04-04T11:59:00Z
@@ -107,7 +109,53 @@ git_branch=lane/mn05-operator-dr-rotation-lifecycle
 git_head=$HEAD_SHA
 git_status_summary=clean
 rollback_command=git reset --hard $HEAD_SHA
-replay_command=./scripts/check_bft_restart_recovery.sh --config $WORKTREE_ROOT/configs/node1.toml
+replay_command=env EXPECTED_BRANCH_REF=$BRANCH_REF EXPECTED_HEAD=$HEAD_SHA ./scripts/check_bft_restart_recovery.sh --config $WORKTREE_ROOT/configs/node1.toml
+status=PASS
+expected_worktree_root=$WORKTREE_ROOT
+expected_branch_ref=lane/mn05-operator-dr-rotation-lifecycle
+lane_verify_command=./scripts/v2/verify_lane_worktree.sh --expected-worktree-root $WORKTREE_ROOT --expected-branch-ref lane/mn05-operator-dr-rotation-lifecycle --expected-head $HEAD_SHA
+expected_head=$HEAD_SHA
+EOF
+
+if bash "$SCRIPT" --report-path "$REPORT_PATH" >"$TMPDIR/out.txt" 2>"$TMPDIR/err.txt"; then
+  echo "expected replay_command missing EXPECTED_WORKTREE_ROOT to fail" >&2
+  exit 1
+fi
+grep -q "replay_command missing EXPECTED_WORKTREE_ROOT=$WORKTREE_ROOT in $REPORT_PATH_CANONICAL" "$TMPDIR/err.txt"
+
+cat >"$REPORT_PATH" <<EOF
+generated_at=2026-04-04T11:59:00Z
+config_path=$WORKTREE_ROOT/configs/node1.toml
+git_worktree_path=$WORKTREE_ROOT
+git_worktree_branch_ref=$BRANCH_REF
+git_branch=lane/mn05-operator-dr-rotation-lifecycle
+git_head=$HEAD_SHA
+git_status_summary=clean
+rollback_command=git reset --hard $HEAD_SHA
+replay_command=env EXPECTED_WORKTREE_ROOT=$WORKTREE_ROOT EXPECTED_BRANCH_REF=$BRANCH_REF ./scripts/check_bft_restart_recovery.sh --config $WORKTREE_ROOT/configs/node1.toml
+status=PASS
+expected_worktree_root=$WORKTREE_ROOT
+expected_branch_ref=lane/mn05-operator-dr-rotation-lifecycle
+lane_verify_command=./scripts/v2/verify_lane_worktree.sh --expected-worktree-root $WORKTREE_ROOT --expected-branch-ref lane/mn05-operator-dr-rotation-lifecycle --expected-head $HEAD_SHA
+expected_head=$HEAD_SHA
+EOF
+
+if bash "$SCRIPT" --report-path "$REPORT_PATH" >"$TMPDIR/out.txt" 2>"$TMPDIR/err.txt"; then
+  echo "expected replay_command missing EXPECTED_HEAD to fail" >&2
+  exit 1
+fi
+grep -q "replay_command missing EXPECTED_HEAD=$HEAD_SHA in $REPORT_PATH_CANONICAL" "$TMPDIR/err.txt"
+
+cat >"$REPORT_PATH" <<EOF
+generated_at=2026-04-04T11:59:00Z
+config_path=$WORKTREE_ROOT/configs/node1.toml
+git_worktree_path=$WORKTREE_ROOT
+git_worktree_branch_ref=$BRANCH_REF
+git_branch=lane/mn05-operator-dr-rotation-lifecycle
+git_head=$HEAD_SHA
+git_status_summary=clean
+rollback_command=git reset --hard $HEAD_SHA
+replay_command=$REPLAY_COMMAND
 status=PASS
 expected_worktree_root=$WORKTREE_ROOT
 expected_branch_ref=lane/mn05-operator-dr-rotation-lifecycle
@@ -130,7 +178,7 @@ git_branch=lane/mn05-operator-dr-rotation-lifecycle
 git_head=$HEAD_SHA
 git_status_summary=clean
 rollback_command=git reset --hard $HEAD_SHA
-replay_command=./scripts/check_bft_restart_recovery.sh --config $WORKTREE_ROOT/configs/node1.toml
+replay_command=$REPLAY_COMMAND
 status=PASS
 expected_worktree_root=$WORKTREE_ROOT
 expected_branch_ref=lane/mn05-operator-dr-rotation-lifecycle
@@ -153,7 +201,7 @@ git_branch=lane/mn05-operator-dr-rotation-lifecycle
 git_head=$HEAD_SHA
 git_status_summary=clean
 rollback_command=git reset --hard $HEAD_SHA
-replay_command=./scripts/check_bft_restart_recovery.sh --config $WORKTREE_ROOT/configs/node1.toml
+replay_command=$REPLAY_COMMAND
 status=PASS
 expected_worktree_root=$WORKTREE_ROOT
 expected_branch_ref=lane/mn05-operator-dr-rotation-lifecycle
@@ -171,6 +219,7 @@ OUTSIDE_ROOT="$TMPDIR/outside"
 mkdir -p "$OUTSIDE_ROOT/run"
 OUTSIDE_REPORT_PATH="$OUTSIDE_ROOT/run/$(basename "$REPORT_PATH")"
 OUTSIDE_REPORT_PATH_CANONICAL="$(cd "$(dirname "$OUTSIDE_REPORT_PATH")" && pwd -P)/$(basename "$OUTSIDE_REPORT_PATH")"
+OUTSIDE_REPLAY_COMMAND="env EXPECTED_WORKTREE_ROOT=$WORKTREE_ROOT EXPECTED_BRANCH_REF=$BRANCH_REF EXPECTED_HEAD=$HEAD_SHA ./scripts/check_bft_restart_recovery.sh --config $WORKTREE_ROOT/configs/node1.toml"
 cat >"$OUTSIDE_REPORT_PATH" <<EOF
 generated_at=2026-04-04T11:59:00Z
 config_path=$WORKTREE_ROOT/configs/node1.toml
@@ -180,7 +229,7 @@ git_branch=lane/mn05-operator-dr-rotation-lifecycle
 git_head=$HEAD_SHA
 git_status_summary=clean
 rollback_command=git reset --hard $HEAD_SHA
-replay_command=./scripts/check_bft_restart_recovery.sh --config $WORKTREE_ROOT/configs/node1.toml
+replay_command=$OUTSIDE_REPLAY_COMMAND
 status=PASS
 expected_worktree_root=$WORKTREE_ROOT
 expected_branch_ref=lane/mn05-operator-dr-rotation-lifecycle
@@ -198,6 +247,7 @@ OUTSIDE_CONFIG_ROOT="$TMPDIR/outside-config"
 mkdir -p "$OUTSIDE_CONFIG_ROOT"
 touch "$OUTSIDE_CONFIG_ROOT/node-outside.toml"
 OUTSIDE_CONFIG_PATH_CANONICAL="$(cd "$OUTSIDE_CONFIG_ROOT" && pwd -P)/node-outside.toml"
+OUTSIDE_CONFIG_REPLAY_COMMAND="env EXPECTED_WORKTREE_ROOT=$WORKTREE_ROOT EXPECTED_BRANCH_REF=$BRANCH_REF EXPECTED_HEAD=$HEAD_SHA ./scripts/check_bft_restart_recovery.sh --config $OUTSIDE_CONFIG_ROOT/node-outside.toml"
 cat >"$REPORT_PATH" <<EOF
 generated_at=2026-04-04T11:59:00Z
 config_path=$OUTSIDE_CONFIG_ROOT/node-outside.toml
@@ -207,7 +257,7 @@ git_branch=lane/mn05-operator-dr-rotation-lifecycle
 git_head=$HEAD_SHA
 git_status_summary=clean
 rollback_command=git reset --hard $HEAD_SHA
-replay_command=./scripts/check_bft_restart_recovery.sh --config $OUTSIDE_CONFIG_ROOT/node-outside.toml
+replay_command=$OUTSIDE_CONFIG_REPLAY_COMMAND
 status=PASS
 expected_worktree_root=$WORKTREE_ROOT
 expected_branch_ref=lane/mn05-operator-dr-rotation-lifecycle
