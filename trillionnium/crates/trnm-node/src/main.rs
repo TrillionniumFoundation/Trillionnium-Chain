@@ -853,13 +853,25 @@ fn recovery_startup_summary(recovered: &RecoveredWalState) -> String {
             Some(checkpoint_height) => {
                 let tip_height = recovered.next_height.saturating_sub(1);
                 if checkpoint_height < tip_height {
-                    if recovered.truncated {
+                    if tip_height - checkpoint_height == 1 {
+                        if recovered.truncated {
+                            "ready:retained_wal_resume_checkpoint_lagging_1block_after_tail_repair"
+                        } else {
+                            "ready:retained_wal_resume_checkpoint_lagging_1block"
+                        }
+                    } else if recovered.truncated {
                         "ready:retained_wal_resume_checkpoint_lagging_after_tail_repair"
                     } else {
                         "ready:retained_wal_resume_checkpoint_lagging"
                     }
                 } else if checkpoint_height > tip_height {
-                    if recovered.truncated {
+                    if checkpoint_height - tip_height == 1 {
+                        if recovered.truncated {
+                            "ready:retained_wal_resume_checkpoint_ahead_mismatch_1block_after_tail_repair"
+                        } else {
+                            "ready:retained_wal_resume_checkpoint_ahead_mismatch_1block"
+                        }
+                    } else if recovered.truncated {
                         "ready:retained_wal_resume_checkpoint_ahead_mismatch_after_tail_repair"
                     } else {
                         "ready:retained_wal_resume_checkpoint_ahead_mismatch"
@@ -903,8 +915,11 @@ fn recovery_startup_summary(recovered: &RecoveredWalState) -> String {
 fn metadata_only_operator_action(recovered: &RecoveredWalState) -> String {
     if recovered.wal_entries_retained == 0 {
         return match recovered.checkpoint_height_retained {
-            Some(_) => {
-                "operator action: checkpoint-only bootstrap is acceptable with a fresh --bft-wal-dir / --bft-wal-mode auto isolated run; if this node must rejoin from prior state, restore an application snapshot before retrying".into()
+            Some(checkpoint_height) => {
+                format!(
+                    "operator action: checkpoint-only bootstrap from retained checkpoint height {} is acceptable with a fresh --bft-wal-dir / --bft-wal-mode auto isolated run; if this node must rejoin from prior state, restore an application snapshot before retrying",
+                    checkpoint_height,
+                )
             }
             None => {
                 "operator action: restart with a fresh --bft-wal-dir / --bft-wal-mode auto isolated run; if this node must rejoin from prior state, restore an application snapshot before retrying".into()
@@ -915,7 +930,15 @@ fn metadata_only_operator_action(recovered: &RecoveredWalState) -> String {
     let tip_height = recovered.next_height.saturating_sub(1);
     match recovered.checkpoint_height_retained {
         Some(checkpoint_height) if checkpoint_height < tip_height => {
-            "operator action: restore an application snapshot that covers the retained WAL tip before retrying join/rejoin; do not resume from metadata alone".into()
+            let checkpoint_lag = tip_height - checkpoint_height;
+            let lag_blocks = if checkpoint_lag == 1 { "block" } else { "blocks" };
+            format!(
+                "operator action: restore an application snapshot that covers retained WAL tip height {} before retrying join/rejoin; retained checkpoint height {} is {} {} behind, so do not resume from metadata alone",
+                tip_height,
+                checkpoint_height,
+                checkpoint_lag,
+                lag_blocks,
+            )
         }
         Some(checkpoint_height) if checkpoint_height > tip_height => {
             let checkpoint_lead = checkpoint_height - tip_height;
@@ -935,7 +958,10 @@ fn metadata_only_operator_action(recovered: &RecoveredWalState) -> String {
             )
         }
         Some(_) => {
-            "operator action: restore the corresponding application snapshot before retrying join/rejoin; do not resume from metadata alone".into()
+            format!(
+                "operator action: restore the application snapshot that matches retained WAL tip height {} before retrying join/rejoin; do not resume from metadata alone",
+                tip_height,
+            )
         }
     }
 }
@@ -18577,7 +18603,7 @@ locked_block_hash = "stale-lock"
         assert!(err.contains("last retained checkpoint: 8"));
         assert!(err.contains("next startup height: 9"));
         assert!(err.contains(
-            "operator action: checkpoint-only bootstrap is acceptable with a fresh --bft-wal-dir / --bft-wal-mode auto isolated run; if this node must rejoin from prior state, restore an application snapshot before retrying"
+            "operator action: checkpoint-only bootstrap from retained checkpoint height 8 is acceptable with a fresh --bft-wal-dir / --bft-wal-mode auto isolated run; if this node must rejoin from prior state, restore an application snapshot before retrying"
         ));
         assert!(err.contains(
             "incident clue: retained_wal_entries=0 checkpoint_height_retained=8 checkpoint_tip_relation=checkpoint_only:8 next_startup_height=9 wal_tail_truncated=true metadata_only_recovery=true join_rejoin_status=blocked:metadata_only_recovery"
@@ -18614,7 +18640,7 @@ locked_block_hash = "stale-lock"
             "incident clue: retained_wal_entries=2 checkpoint_height_retained=2 checkpoint_tip_relation=aligned next_startup_height=3 wal_tail_truncated=false metadata_only_recovery=true join_rejoin_status=blocked:metadata_only_recovery"
         ));
         assert!(err.contains(
-            "restore the corresponding application snapshot before retrying join/rejoin; do not resume from metadata alone"
+            "restore the application snapshot that matches retained WAL tip height 2 before retrying join/rejoin; do not resume from metadata alone"
         ));
         assert!(!err.contains("checkpoint lags retained WAL tip"));
         assert!(!err.contains("no retained checkpoint metadata"));
@@ -18742,6 +18768,53 @@ locked_block_hash = "stale-lock"
     }
 
     #[test]
+    fn recovery_startup_summary_keeps_fresh_bootstrap_saturated_at_max_height() {
+        let recovered = RecoveredWalState {
+            next_height: u64::MAX,
+            restored_lock: None,
+            last_checkpoint: None,
+            truncated: false,
+            metadata_only_recovery: false,
+            wal_entries_retained: 0,
+            checkpoint_height_retained: None,
+        };
+
+        ensure_recoverable_wal_state(Path::new("/tmp/trnm-wal"), &recovered)
+            .expect("max-height fresh bootstrap should remain recoverable for safe join/rejoin");
+        assert_eq!(
+            recovery_startup_summary(&recovered),
+            format!(
+                "retained_wal_entries=0 checkpoint_height_retained=none checkpoint_tip_relation=none next_startup_height={} wal_tail_truncated=false metadata_only_recovery=false join_rejoin_status=ready:fresh_bootstrap",
+                u64::MAX,
+            )
+        );
+    }
+
+    #[test]
+    fn recovery_startup_summary_keeps_truncated_fresh_bootstrap_saturated_at_max_height() {
+        let recovered = RecoveredWalState {
+            next_height: u64::MAX,
+            restored_lock: None,
+            last_checkpoint: None,
+            truncated: true,
+            metadata_only_recovery: false,
+            wal_entries_retained: 0,
+            checkpoint_height_retained: None,
+        };
+
+        ensure_recoverable_wal_state(Path::new("/tmp/trnm-wal"), &recovered).expect(
+            "truncated max-height fresh bootstrap should remain recoverable for safe join/rejoin",
+        );
+        assert_eq!(
+            recovery_startup_summary(&recovered),
+            format!(
+                "retained_wal_entries=0 checkpoint_height_retained=none checkpoint_tip_relation=none next_startup_height={} wal_tail_truncated=true metadata_only_recovery=false join_rejoin_status=ready:fresh_bootstrap_after_tail_repair",
+                u64::MAX,
+            )
+        );
+    }
+
+    #[test]
     fn recovery_startup_summary_reports_retained_wal_resume_join_surface() {
         let recovered = RecoveredWalState {
             next_height: 12,
@@ -18849,7 +18922,19 @@ locked_block_hash = "stale-lock"
                 wal_entries_retained: 0,
                 checkpoint_height_retained: Some(8),
             }),
-            "operator action: checkpoint-only bootstrap is acceptable with a fresh --bft-wal-dir / --bft-wal-mode auto isolated run; if this node must rejoin from prior state, restore an application snapshot before retrying"
+            "operator action: checkpoint-only bootstrap from retained checkpoint height 8 is acceptable with a fresh --bft-wal-dir / --bft-wal-mode auto isolated run; if this node must rejoin from prior state, restore an application snapshot before retrying"
+        );
+        assert_eq!(
+            metadata_only_operator_action(&RecoveredWalState {
+                next_height: 1,
+                restored_lock: None,
+                last_checkpoint: None,
+                truncated: false,
+                metadata_only_recovery: true,
+                wal_entries_retained: 0,
+                checkpoint_height_retained: None,
+            }),
+            "operator action: restart with a fresh --bft-wal-dir / --bft-wal-mode auto isolated run; if this node must rejoin from prior state, restore an application snapshot before retrying"
         );
         assert_eq!(
             metadata_only_operator_action(&RecoveredWalState {
@@ -18863,21 +18948,42 @@ locked_block_hash = "stale-lock"
             }),
             "operator action: rebuild or restore checkpoint metadata so it covers retained WAL tip height 8 before retrying join/rejoin; do not resume from metadata alone"
         );
+        let single_block_lagging_rejoin = RecoveredWalState {
+            next_height: 12,
+            restored_lock: None,
+            last_checkpoint: Some(CheckpointMeta {
+                height: 10,
+                state_root_hex: "r10".into(),
+                wal_entry_hash_hex: "h10".into(),
+            }),
+            truncated: false,
+            metadata_only_recovery: true,
+            wal_entries_retained: 2,
+            checkpoint_height_retained: Some(10),
+        };
+        assert_eq!(
+            metadata_only_operator_action(&single_block_lagging_rejoin),
+            "operator action: restore an application snapshot that covers retained WAL tip height 11 before retrying join/rejoin; retained checkpoint height 10 is 1 block behind, so do not resume from metadata alone"
+        );
+        assert_eq!(
+            recovery_startup_summary(&single_block_lagging_rejoin),
+            "retained_wal_entries=2 checkpoint_height_retained=10 checkpoint_tip_relation=behind:1 next_startup_height=12 wal_tail_truncated=false metadata_only_recovery=true join_rejoin_status=blocked:metadata_only_recovery"
+        );
         assert_eq!(
             metadata_only_operator_action(&RecoveredWalState {
                 next_height: 12,
                 restored_lock: None,
                 last_checkpoint: Some(CheckpointMeta {
-                    height: 10,
-                    state_root_hex: "r10".into(),
-                    wal_entry_hash_hex: "h10".into(),
+                    height: 9,
+                    state_root_hex: "r9".into(),
+                    wal_entry_hash_hex: "h9".into(),
                 }),
                 truncated: false,
                 metadata_only_recovery: true,
                 wal_entries_retained: 2,
-                checkpoint_height_retained: Some(10),
+                checkpoint_height_retained: Some(9),
             }),
-            "operator action: restore an application snapshot that covers the retained WAL tip before retrying join/rejoin; do not resume from metadata alone"
+            "operator action: restore an application snapshot that covers retained WAL tip height 11 before retrying join/rejoin; retained checkpoint height 9 is 2 blocks behind, so do not resume from metadata alone"
         );
         assert_eq!(
             metadata_only_operator_action(&RecoveredWalState {
@@ -18893,7 +18999,7 @@ locked_block_hash = "stale-lock"
                 wal_entries_retained: 2,
                 checkpoint_height_retained: Some(11),
             }),
-            "operator action: restore the corresponding application snapshot before retrying join/rejoin; do not resume from metadata alone"
+            "operator action: restore the application snapshot that matches retained WAL tip height 11 before retrying join/rejoin; do not resume from metadata alone"
         );
         assert_eq!(
             metadata_only_operator_action(&RecoveredWalState {
@@ -18926,6 +19032,31 @@ locked_block_hash = "stale-lock"
                 checkpoint_height_retained: Some(15),
             }),
             "operator action: investigate WAL/checkpoint mismatch (retained WAL tip height 11, checkpoint height 15, checkpoint leads tip by 4 blocks), rebuild the recovery inputs, and only retry join/rejoin once WAL tip and checkpoint evidence agree"
+        );
+    }
+
+    #[test]
+    fn metadata_only_operator_action_keeps_aligned_retained_wal_tip_height_saturated_at_max_height() {
+        let recovered = RecoveredWalState {
+            next_height: u64::MAX,
+            restored_lock: None,
+            last_checkpoint: Some(CheckpointMeta {
+                height: u64::MAX - 1,
+                state_root_hex: "r-max-1".into(),
+                wal_entry_hash_hex: "h-max-1".into(),
+            }),
+            truncated: false,
+            metadata_only_recovery: true,
+            wal_entries_retained: 2,
+            checkpoint_height_retained: Some(u64::MAX - 1),
+        };
+
+        assert_eq!(
+            metadata_only_operator_action(&recovered),
+            format!(
+                "operator action: restore the application snapshot that matches retained WAL tip height {} before retrying join/rejoin; do not resume from metadata alone",
+                u64::MAX - 1,
+            )
         );
     }
 
@@ -19017,7 +19148,7 @@ locked_block_hash = "stale-lock"
 
         assert_eq!(
             recovery_startup_summary(&recovered),
-            "retained_wal_entries=2 checkpoint_height_retained=12 checkpoint_tip_relation=ahead:1 next_startup_height=12 wal_tail_truncated=true metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume_checkpoint_ahead_mismatch_after_tail_repair"
+            "retained_wal_entries=2 checkpoint_height_retained=12 checkpoint_tip_relation=ahead:1 next_startup_height=12 wal_tail_truncated=true metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume_checkpoint_ahead_mismatch_1block_after_tail_repair"
         );
         assert_eq!(
             retained_wal_summary(&recovered),
@@ -19073,7 +19204,7 @@ locked_block_hash = "stale-lock"
         assert_eq!(
             recovery_startup_summary(&recovered),
             format!(
-                "retained_wal_entries=1 checkpoint_height_retained={} checkpoint_tip_relation=behind:1 next_startup_height={} wal_tail_truncated=false metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume_checkpoint_lagging",
+                "retained_wal_entries=1 checkpoint_height_retained={} checkpoint_tip_relation=behind:1 next_startup_height={} wal_tail_truncated=false metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume_checkpoint_lagging_1block",
                 u64::MAX - 2,
                 u64::MAX,
             )
@@ -19098,7 +19229,7 @@ locked_block_hash = "stale-lock"
 
         assert_eq!(
             recovery_startup_summary(&recovered),
-            "retained_wal_entries=2 checkpoint_height_retained=10 checkpoint_tip_relation=behind:1 next_startup_height=12 wal_tail_truncated=false metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume_checkpoint_lagging"
+            "retained_wal_entries=2 checkpoint_height_retained=10 checkpoint_tip_relation=behind:1 next_startup_height=12 wal_tail_truncated=false metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume_checkpoint_lagging_1block"
         );
     }
 
@@ -19130,7 +19261,7 @@ locked_block_hash = "stale-lock"
         assert_eq!(
             recovery_startup_summary(&recovered),
             format!(
-                "retained_wal_entries=1 checkpoint_height_retained={} checkpoint_tip_relation=behind:1 next_startup_height={} wal_tail_truncated=true metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume_checkpoint_lagging_after_tail_repair",
+                "retained_wal_entries=1 checkpoint_height_retained={} checkpoint_tip_relation=behind:1 next_startup_height={} wal_tail_truncated=true metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume_checkpoint_lagging_1block_after_tail_repair",
                 u64::MAX - 2,
                 u64::MAX,
             )
@@ -19161,7 +19292,7 @@ locked_block_hash = "stale-lock"
         );
         assert_eq!(
             recovery_startup_summary(&recovered),
-            "retained_wal_entries=2 checkpoint_height_retained=6 checkpoint_tip_relation=behind:1 next_startup_height=8 wal_tail_truncated=false metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume_checkpoint_lagging"
+            "retained_wal_entries=2 checkpoint_height_retained=6 checkpoint_tip_relation=behind:1 next_startup_height=8 wal_tail_truncated=false metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume_checkpoint_lagging_1block"
         );
     }
 
@@ -19218,6 +19349,43 @@ locked_block_hash = "stale-lock"
     }
 
     #[test]
+    fn recovery_startup_summary_keeps_checkpoint_ahead_join_surface_saturated_at_max_height() {
+        let recovered = RecoveredWalState {
+            next_height: u64::MAX,
+            restored_lock: None,
+            last_checkpoint: Some(CheckpointMeta {
+                height: u64::MAX,
+                state_root_hex: "r-max".into(),
+                wal_entry_hash_hex: "h-max".into(),
+            }),
+            truncated: false,
+            metadata_only_recovery: false,
+            wal_entries_retained: 1,
+            checkpoint_height_retained: Some(u64::MAX),
+        };
+
+        ensure_recoverable_wal_state(Path::new("/tmp/trnm-wal"), &recovered)
+            .expect("max-height checkpoint-ahead resume mismatch should remain recoverable while surfacing join/rejoin triage");
+        assert_eq!(
+            retained_wal_summary(&recovered),
+            format!(
+                "retained 1 committed WAL entry through height {} (retained checkpoint height {} is ahead of retained WAL tip height {} by 1 block; investigate WAL/checkpoint mismatch)",
+                u64::MAX - 1,
+                u64::MAX,
+                u64::MAX - 1,
+            )
+        );
+        assert_eq!(
+            recovery_startup_summary(&recovered),
+            format!(
+                "retained_wal_entries=1 checkpoint_height_retained={} checkpoint_tip_relation=ahead:1 next_startup_height={} wal_tail_truncated=false metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume_checkpoint_ahead_mismatch_1block",
+                u64::MAX,
+                u64::MAX,
+            )
+        );
+    }
+
+    #[test]
     fn recovery_startup_summary_keeps_truncated_checkpoint_ahead_join_surface_saturated_at_max_height() {
         let recovered = RecoveredWalState {
             next_height: u64::MAX,
@@ -19247,7 +19415,7 @@ locked_block_hash = "stale-lock"
         assert_eq!(
             recovery_startup_summary(&recovered),
             format!(
-                "retained_wal_entries=1 checkpoint_height_retained={} checkpoint_tip_relation=ahead:1 next_startup_height={} wal_tail_truncated=true metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume_checkpoint_ahead_mismatch_after_tail_repair",
+                "retained_wal_entries=1 checkpoint_height_retained={} checkpoint_tip_relation=ahead:1 next_startup_height={} wal_tail_truncated=true metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume_checkpoint_ahead_mismatch_1block_after_tail_repair",
                 u64::MAX,
                 u64::MAX,
             )
@@ -19278,7 +19446,7 @@ locked_block_hash = "stale-lock"
         );
         assert_eq!(
             recovery_startup_summary(&recovered),
-            "retained_wal_entries=2 checkpoint_height_retained=12 checkpoint_tip_relation=ahead:1 next_startup_height=12 wal_tail_truncated=false metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume_checkpoint_ahead_mismatch"
+            "retained_wal_entries=2 checkpoint_height_retained=12 checkpoint_tip_relation=ahead:1 next_startup_height=12 wal_tail_truncated=false metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume_checkpoint_ahead_mismatch_1block"
         );
     }
 
@@ -19306,7 +19474,7 @@ locked_block_hash = "stale-lock"
         );
         assert_eq!(
             recovery_startup_summary(&recovered),
-            "retained_wal_entries=2 checkpoint_height_retained=12 checkpoint_tip_relation=ahead:1 next_startup_height=12 wal_tail_truncated=true metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume_checkpoint_ahead_mismatch_after_tail_repair"
+            "retained_wal_entries=2 checkpoint_height_retained=12 checkpoint_tip_relation=ahead:1 next_startup_height=12 wal_tail_truncated=true metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume_checkpoint_ahead_mismatch_1block_after_tail_repair"
         );
     }
 
@@ -19447,6 +19615,42 @@ locked_block_hash = "stale-lock"
     }
 
     #[test]
+    fn recover_metadata_only_error_surfaces_single_block_lagging_operator_action() {
+        let wal_dir = temp_wal_dir("recover-metadata-only-error-single-block-lagging");
+        fs::create_dir_all(&wal_dir).unwrap();
+
+        let recovered = RecoveredWalState {
+            next_height: 4,
+            restored_lock: None,
+            last_checkpoint: Some(CheckpointMeta {
+                height: 2,
+                state_root_hex: "r2".into(),
+                wal_entry_hash_hex: "h2".into(),
+            }),
+            truncated: false,
+            metadata_only_recovery: true,
+            wal_entries_retained: 2,
+            checkpoint_height_retained: Some(2),
+        };
+
+        let err = metadata_only_recovery_error(&wal_dir, &recovered);
+
+        assert!(err.contains("retained 2 committed WAL entries through height 3"));
+        assert!(err.contains("checkpoint lags retained WAL tip by 1 block"));
+        assert!(!err.contains("checkpoint lags retained WAL tip by 1 blocks"));
+        assert!(err.contains(
+            "operator action: restore an application snapshot that covers retained WAL tip height 3 before retrying join/rejoin; retained checkpoint height 2 is 1 block behind, so do not resume from metadata alone"
+        ));
+        assert!(err.contains("last retained checkpoint: 2"));
+        assert!(err.contains("next startup height: 4"));
+        assert!(err.contains(
+            "incident clue: retained_wal_entries=2 checkpoint_height_retained=2 checkpoint_tip_relation=behind:1 next_startup_height=4 wal_tail_truncated=false metadata_only_recovery=true join_rejoin_status=blocked:metadata_only_recovery"
+        ));
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
     fn ensure_recoverable_wal_state_rejects_metadata_only_recovery_with_singular_checkpoint_lag() {
         let wal_dir = temp_wal_dir("recover-guard-metadata-only-singular-lag");
         fs::create_dir_all(&wal_dir).unwrap();
@@ -19515,6 +19719,8 @@ locked_block_hash = "stale-lock"
         assert!(!err.contains(
             "retained checkpoint height 12 is ahead of retained WAL tip height 11 by 1 blocks"
         ));
+        assert!(err.contains("operator action: investigate WAL/checkpoint mismatch (retained WAL tip height 11, checkpoint height 12, checkpoint leads tip by 1 block), rebuild the recovery inputs, and only retry join/rejoin once WAL tip and checkpoint evidence agree"));
+        assert!(!err.contains("checkpoint leads tip by 1 blocks"));
         assert!(err.contains("last retained checkpoint: 12"));
         assert!(err.contains("next startup height: 12"));
         assert!(err.contains(
@@ -19788,7 +19994,7 @@ locked_block_hash = "stale-lock"
             .expect("truncated single-block lagging checkpoint resume should remain recoverable for safe join/rejoin");
         assert_eq!(
             recovery_startup_summary(&recovered),
-            "retained_wal_entries=2 checkpoint_height_retained=6 checkpoint_tip_relation=behind:1 next_startup_height=8 wal_tail_truncated=true metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume_checkpoint_lagging_after_tail_repair"
+            "retained_wal_entries=2 checkpoint_height_retained=6 checkpoint_tip_relation=behind:1 next_startup_height=8 wal_tail_truncated=true metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume_checkpoint_lagging_1block_after_tail_repair"
         );
         assert_eq!(
             retained_wal_summary(&recovered),
@@ -20158,6 +20364,55 @@ locked_block_hash = "stale-lock"
         fs::write(
             checkpoint_file(&base),
             "# bootstrap placeholder\r\n   # retained until first checkpoint\r\n",
+        )
+        .unwrap();
+
+        let args = Args {
+            config: "configs/node1.toml".into(),
+            block_ms: 1000,
+            max_blocks: 10,
+            demo_tasks: 2,
+            demo_keys: 2,
+            parallel_workers: 4,
+            txs_per_block: 4,
+            validators: 4,
+            byzantine: 0,
+            bft_max_rounds: 3,
+            bft_fault_rounds: 0,
+            bft_missed_proposal_threshold: 2,
+            bft_leader_penalty_rounds: 2,
+            bft_round_change_backoff_ms: 5,
+            bft_round_change_backoff_max_ms: 40,
+            bft_wal_dir: DEFAULT_BFT_WAL_DIR.into(),
+            bft_wal_mode: WalDirMode::Auto,
+            bft_checkpoint_interval: 5,
+            pouw_timeout_scan: true,
+            pouw_timeout_scan_every_blocks: 1,
+            enable_da_ordering_decouple: false,
+            rl_advisor_shadow: false,
+            rl_advisor_shadow_topk: 4,
+        };
+
+        let cwd = std::env::current_dir().unwrap();
+        std::env::set_current_dir(&root).unwrap();
+        let (resolved, notice) = resolve_wal_dir(&args).unwrap();
+        std::env::set_current_dir(cwd).unwrap();
+
+        assert_eq!(resolved, PathBuf::from(DEFAULT_BFT_WAL_DIR));
+        assert!(notice.is_none());
+
+        let _ = fs::remove_dir_all(&root);
+    }
+
+    #[test]
+    fn resolve_wal_dir_auto_allows_builtin_default_when_only_bom_prefixed_comment_only_consensus_wal_scaffold_exists(
+    ) {
+        let root = temp_wal_dir("default-wal-bom-comment-consensus-only-root");
+        let base = root.join(DEFAULT_BFT_WAL_DIR);
+        fs::create_dir_all(&base).unwrap();
+        fs::write(
+            wal_file(&base),
+            "\u{feff}# operator left a rejoin note\n   # safe to reuse builtin default once catch-up succeeds\n",
         )
         .unwrap();
 

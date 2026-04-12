@@ -126,6 +126,14 @@ The chain runtime is much stronger than an empty prototype, but a public chain s
 2. write join/rejoin acceptance table
 3. run and record one multi-node sync/catch-up rehearsal
 
+**Join/rejoin acceptance table (minimum operator-facing cut)**
+
+| scenario | admission | operator reading |
+| --- | --- | --- |
+| retained WAL, checkpoint lags retained tip by 1 block (`checkpoint_tip_relation=behind:1`) | accept | resume join/rejoin catch-up, keep the lag visible as a retained-WAL resume rather than forcing fresh bootstrap |
+| retained WAL, checkpoint leads retained tip by 1 block (`checkpoint_tip_relation=ahead:1`) | conditionally accept | node may resume, but treat as WAL/checkpoint mismatch and investigate before declaring sync healthy |
+| metadata-only recovery (`join_rejoin_status=blocked:metadata_only_recovery`) | reject | restore application snapshot or restart from a fresh isolated WAL dir, do not rejoin from metadata alone |
+
 ---
 
 ### Rank 4 — Launch gate package: Integrated prelaunch rehearsal + evidence + GO/NOGO
