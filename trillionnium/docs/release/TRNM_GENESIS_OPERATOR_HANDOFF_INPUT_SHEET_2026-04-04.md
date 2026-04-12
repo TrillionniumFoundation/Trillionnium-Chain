@@ -61,6 +61,9 @@ packet_distribution_path=
 validator_set_version=
 startup_order_note=
 rollback_owner=
+dr_summary_path=
+dr_replay_command=
+dr_rollback_command=
 ```
 
 ### 2.1 Fail-closed fill contract for the two highest-risk globals
@@ -148,6 +151,7 @@ operator_ack_digest=
 当前这份 input sheet 被视为“填完即可把 draft packet 从 skeleton 推到 operator-handoff usable”的最小条件。
 
 ### 最小完成标准
+- `dr_summary_path=` / `dr_replay_command=` / `dr_rollback_command=` 全部填写，且三者指向同一次 DR / rotation / rollback 演练窗口
 - 4 个 `validator_owner=` 全部填写
 - 4 个 `operator_contact=` 全部填写
 - 4 个 `operator_ack=` 全部填写，且必须原样复用同一 validator 的 `ceremony_id=`、`config_path=` 与 `validator_entry_hash=`，不要手工改成相对路径、改写 ceremony id，或重算 hash
@@ -170,11 +174,12 @@ operator_ack_digest=
 ## 5. Recommended next action
 
 拿这份 input sheet 去补齐：
-1. 4 个 validator owner
-2. 4 个 operator contact
-3. 4 条 operator acknowledgment
-4. rollback owner
-5. startup order note
+1. `dr_summary_path` / `dr_replay_command` / `dr_rollback_command`
+2. 4 个 validator owner
+3. 4 个 operator contact
+4. 4 条 operator acknowledgment
+5. rollback owner
+6. startup order note
 
 优先编辑的文件建议改为：
 - `trillionnium/run/genesis-artifact-candidates/trnm-genesis-candidate-operator-handoff-fillable-2026-04-04-b74758fac.packet.txt`

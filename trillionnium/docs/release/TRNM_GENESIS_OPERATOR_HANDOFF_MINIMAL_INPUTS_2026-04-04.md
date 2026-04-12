@@ -23,6 +23,9 @@ packet_distribution_path=
 validator_set_version=
 startup_order_note=
 rollback_owner=
+dr_summary_path=
+dr_replay_command=
+dr_rollback_command=
 ```
 
 说明：
@@ -84,7 +87,7 @@ operator_ack_digest=
 
 当且仅当下面这些都齐了，才值得从 fillable packet 生成下一版 **filled operator-handoff packet**：
 
-- Global 5 项全部有值
+- Global 8 项全部有值
 - `node1..node4` 的 `validator_owner` 全部有值
 - `node1..node4` 的 `operator_contact` 全部有值
 - `node1..node4` 的 `operator_ack` 全部有值，且必须复用共享 packet 中同一 validator 的 `ceremony_id=`、`config_path=`、`validator_name=` 与 `validator_entry_hash=`，不要手工改写成相对路径、改掉 ceremony id，或重算 validator entry hash
@@ -99,7 +102,7 @@ operator_ack_digest=
 ## D. Fastest next move
 
 最快的推进顺序是：
-1. 先填 **Global 5 项**，其中优先确认 `packet_distribution_path=` 已经指向一份真实、唯一、且不同于 `genesis_artifact_path=` 的 packet 文件绝对路径，且 `validator_set_version=` 不是默认模板值
+1. 先填 **Global 8 项**（含 `dr_summary_path` / `dr_replay_command` / `dr_rollback_command`），其中优先确认 `packet_distribution_path=` 已经指向一份真实、唯一、且不同于 `genesis_artifact_path=` 的 packet 文件绝对路径，且 `validator_set_version=` 不是默认模板值
 2. 再填 4 个 `validator_owner`
 3. 再填 4 个 `operator_contact`
 4. 最后补 4 组 `operator_ack` 与对应 `operator_ack_*`

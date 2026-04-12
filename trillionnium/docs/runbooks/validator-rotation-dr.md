@@ -41,6 +41,8 @@ incoming_validator_identity=
 expected_genesis_or_checkpoint=
 handoff_signed_by=
 handoff_acknowledged_by=
+operator_ack=
+operator_ack_signature_path=
 rollback_command=
 config_bundle_check_command=
 config_bundle_check_result=
@@ -65,6 +67,8 @@ next_blocker=
 
 Rules:
 - `dr_summary_path=` / `dr_generated_at=` / `dr_status=` / `dr_replay_command=` / `dr_rollback_command=` may remain empty unless `cutover_kind=dr_rebuild`.
+- `operator_ack=` may remain empty only for `cutover_kind=replacement`; once the event crosses a human handoff boundary (`rotation` or `dr_rebuild`), preserve one explicit operator acknowledgment line rather than relying on the signer/acknowledger names alone.
+- `operator_ack_signature_path=` may remain empty when the acknowledgment is captured inline in the cutover note, but when a separate durable sign-off artifact exists, copy its immutable path verbatim.
 - when `cutover_kind=dr_rebuild`, copy `dr_status=` verbatim from the selected recovery report's `status=` field; do not infer it from shell exit status, wrapper success text, or a hand-written `PASS`.
 - `handoff_summary_path=` / `handoff_manifest_path=` / `summary_generated_at=` / `manifest_generated_at=` may remain empty unless release-evidence or RC artifacts are part of the handoff.
 - `expected_worktree_root=` / `expected_branch_ref=` / `expected_head=` / `lane_verify_command=` may remain empty until Step 1 finishes, but once lane binding is part of the ticket or handoff they must be copied verbatim from the verification/recovery step instead of reconstructed from chat or shell memory.
@@ -82,8 +86,8 @@ If any required row cannot be satisfied, treat the event as **No-Go** before exe
 | Cutover kind | Required identity fields | Required artifacts | Minimum stop condition if missing |
 | --- | --- | --- | --- |
 | `replacement` | `verified_worktree=` / `verified_branch_ref=` / `verified_head=` plus explicit outgoing and incoming validator identity/config | clean `git status --short`, config-bundle check output, exact `bootstrap_command=`, explicit `rollback_command=` | cannot name which validator identity is being retired vs activated |
-| `rotation` | all replacement fields plus `handoff_signed_by=` / `handoff_acknowledged_by=` and explicit lineage (`expected_genesis_or_checkpoint=`) | handoff note with signed/acknowledged ownership transfer, optional `handoff_summary_path=` / `handoff_manifest_path=` when release artifacts are part of the cutover | signer/acknowledger missing, or rotation lineage cannot be stated from the note |
-| `dr_rebuild` | all rotation fields plus `dr_summary_path=` / `dr_generated_at=` / `dr_status=` / `dr_replay_command=` / `dr_rollback_command=` | concrete recovery artifact from the current worktree, plus the bootstrap/re-bootstrap sanity command used after rebuild | DR claimed but no path-resolved recovery report exists for the rebuild |
+| `rotation` | all replacement fields plus `handoff_signed_by=` / `handoff_acknowledged_by=` / `operator_ack=` and explicit lineage (`expected_genesis_or_checkpoint=`) | handoff note with signed/acknowledged ownership transfer, operator acknowledgment text, optional `handoff_summary_path=` / `handoff_manifest_path=` when release artifacts are part of the cutover | signer/acknowledger missing, operator acknowledgment missing, or rotation lineage cannot be stated from the note |
+| `dr_rebuild` | all rotation fields plus `dr_summary_path=` / `dr_generated_at=` / `dr_status=` / `dr_replay_command=` / `dr_rollback_command=` | concrete recovery artifact from the current worktree, operator acknowledgment text, plus the bootstrap/re-bootstrap sanity command used after rebuild | DR claimed but no path-resolved recovery report exists for the rebuild |
 
 Interpretation rule:
 - `replacement` is a local operator-owner swap with explicit rollback and clean config proof.
@@ -163,11 +167,14 @@ Also record:
 - `incoming_validator_identity=`
 - `expected_genesis_or_checkpoint=`
 - `handoff_signed_by=` / `handoff_acknowledged_by=` when `cutover_kind=rotation` or `cutover_kind=dr_rebuild`
+- `operator_ack=` when `cutover_kind=rotation` or `cutover_kind=dr_rebuild`
+- `operator_ack_signature_path=` when a separate durable sign-off artifact exists
 - `rollback_command=`
 
 Interpretation rule:
 - if the outgoing or incoming validator identity cannot be named explicitly, stop
 - if `cutover_kind=rotation` or `cutover_kind=dr_rebuild` and either handoff signer/acknowledger is still unknown, stop
+- if `cutover_kind=rotation` or `cutover_kind=dr_rebuild` and `operator_ack=` is still empty, stop
 - copy `handoff_signed_by=` / `handoff_acknowledged_by=` as trimmed operator identifiers; leading/trailing whitespace is evidence-incomplete and should fail before packet generation
 - if `cutover_kind=replacement`, leave `handoff_signed_by=` / `handoff_acknowledged_by=` empty rather than inventing a fake approval boundary
 - if the rollback command is still "to be figured out later", stop
@@ -195,7 +202,9 @@ Interpretation rule:
 Recommended evidence-capture shape for the cutover note:
 
 ```bash
-config_bundle_check_log_path="/tmp/trnm-config-bundle-check.log"
+config_bundle_check_log_dir="run/validator-cutover"
+mkdir -p "$config_bundle_check_log_dir"
+config_bundle_check_log_path="$config_bundle_check_log_dir/config-bundle-check-$(date -u +%Y%m%dT%H%M%SZ).log"
 config_bundle_check_command="python3 scripts/v2/check_validator_config_bundle.py configs/validator-new.toml"
 config_bundle_check_result="$(python3 scripts/v2/check_validator_config_bundle.py configs/validator-new.toml 2>&1 | tee "$config_bundle_check_log_path" | tail -n 1)"
 printf 'config_bundle_check_command=%s\n' "$config_bundle_check_command"
@@ -205,8 +214,9 @@ printf 'config_bundle_check_log_path=%s\n' "$config_bundle_check_log_path"
 
 Interpretation rule:
 - replace `configs/validator-new.toml` with the exact incoming bundle named in the cutover note (and append any additional config files to the same command when the bundle spans more than one file)
+- preserve `config_bundle_check_log_path=` under the current worktree's `run/` directory rather than `/tmp` or another ephemeral location, so the handoff still points to a durable, lane-local log after shell exit or operator changeover
 - keep the emitted `config_bundle_check_command=` / `config_bundle_check_result=` / `config_bundle_check_log_path=` lines adjacent in the handoff note so another operator can audit the exact bundle, terminal verdict, and full stderr/stdout capture together
-- if the last line is ambiguous or truncated, preserve the full log path (for example `/tmp/trnm-config-bundle-check.log`) next to the handoff note rather than paraphrasing the result from memory
+- if the last line is ambiguous or truncated, preserve the full log path (for example `run/validator-cutover/config-bundle-check-<timestamp>.log`) next to the handoff note rather than paraphrasing the result from memory
 
 ### 3a. Fail-closed config bundle evidence capture order
 
@@ -260,16 +270,16 @@ If release-evidence or RC artifacts also exist for the same handoff, prefer extr
 ```
 
 When that helper is used, record at minimum:
-- `handoff_summary_path=`
-- `handoff_manifest_path=`
+- `handoff_summary_path=` copied from the helper's emitted `summary_path=`
+- `handoff_manifest_path=` copied from the helper's emitted `manifest_path=`
 - `summary_generated_at=`
 - `manifest_generated_at=`
 - `expected_worktree_root=`
+- `ticket_expected_branch_ref=`
 - `expected_branch_ref=`
 - `expected_head=` when the ticket or handoff pinned a commit
-- `lane_verify_command=`
 
-Keep the two generated-at fields distinct. They do not need to match, but both must survive the handoff note so another operator can audit artifact freshness without relying on shell memory. Keep the lane-binding fields adjacent to those artifact paths so the signed packet still proves the cutover was audited against the ticket-assigned worktree instead of a self-derived shell guess.
+Keep the two generated-at fields distinct. They do not need to match, but both must survive the handoff note so another operator can audit artifact freshness without relying on shell memory. Keep the expected-worktree and expected-branch fields adjacent to those artifact paths so the signed packet still proves the cutover was audited against the ticket-assigned worktree instead of a self-derived shell guess.
 
 ### 4a. Fail-closed DR evidence capture order
 
@@ -279,7 +289,7 @@ For a DR rebuild, preserve evidence in this order so the handoff can be audited 
 2. run `check_bft_restart_recovery.sh` and capture the emitted `report_path` for **this exact run** instead of resolving "latest" from disk afterwards
 3. copy `dr_summary_path=` / `dr_generated_at=` / `dr_status=` from that concrete report
 4. copy `dr_replay_command=` / `dr_rollback_command=` verbatim from the report
-5. if RC/release artifacts are part of the same event, run `extract_release_handoff_fields.sh` against the same expected worktree/branch and copy the emitted `handoff_*` / `*_generated_at` fields verbatim
+5. if RC/release artifacts are part of the same event, run `extract_release_handoff_fields.sh` against the same expected worktree/branch and copy the emitted `summary_path=` into `handoff_summary_path=`, copy `manifest_path=` into `handoff_manifest_path=`, and preserve the emitted `*_generated_at` fields verbatim
 
 Recommended shell shape:
 
@@ -380,9 +390,11 @@ When handing this event to another operator, record:
 - config-bundle check log path when tee/log capture was used
 - pass/fail result
 - rollback command
+- DR summary/report path when DR evidence was required
 - DR report generated-at timestamp when DR evidence was required
 - DR report status when DR evidence was required
 - replay command when DR evidence was required
+- rollback command from the DR report when DR evidence was required
 - one-line blocker if the event is not reproducible
 
 ## Minimum signed operator ceremony packet
@@ -406,7 +418,7 @@ Fail-closed interpretation:
 
 This packet does not make TRNM public-mainnet ready by itself, but it does close the operator-facing question "what exact signed evidence turns a local cutover rehearsal into an auditable handoff?"
 
-When operators prefer a generated packet instead of hand-copying the skeleton, `./scripts/v2/emit_validator_rotation_packet.sh` now accepts the release-artifact pair `--handoff-summary-path` / `--handoff-manifest-path` together with `--summary-generated-at` / `--manifest-generated-at`, and fails closed if only a partial release-artifact set is supplied. When lane binding is present, the same helper also requires `--expected-worktree-root`, `--expected-branch-ref`, and `--lane-verify-command` together (with optional `--expected-head`) so the generated packet cannot carry a half-copied lane identity. If any `--dr-*` evidence fields are supplied, the helper now also requires `--dr-status=PASS` so a generated packet cannot silently carry a failed or ambiguous DR report as if it were valid handoff evidence. Use that path when the same cutover packet needs to carry both ownership sign-off and concrete release-evidence lineage.
+When operators prefer a generated packet instead of hand-copying the skeleton, `./scripts/v2/emit_validator_rotation_packet.sh` now accepts the release-artifact pair `--handoff-summary-path` / `--handoff-manifest-path` together with `--summary-generated-at` / `--manifest-generated-at`, and fails closed if only a partial release-artifact set is supplied. When config-bundle evidence is included, the same helper now also rejects any `--config-bundle-check-command` that does not quote the exact `--incoming-config-path`, so a packet cannot silently reuse a green verdict from some other validator bundle. When lane binding is present, the same helper also requires `--expected-worktree-root`, `--expected-branch-ref`, and `--lane-verify-command` together (with optional `--expected-head`) so the generated packet cannot carry a half-copied lane identity. It also rejects packets whose `verified_worktree=` / `verified_branch_ref=` / `verified_head=` tuple drifts from that lane-bound expectation, so operators cannot pair a correct-looking verify command with a hand-copied packet body from the wrong lane tip. If any `--dr-*` evidence fields are supplied, the helper now also requires `--dr-status=PASS` and rejects any `--dr-summary-path` that resolves outside the current `verified_worktree` `run/` tree, so a generated packet cannot silently carry a failed, stale, or cross-worktree DR report as if it were valid handoff evidence. Use that path when the same cutover packet needs to carry both ownership sign-off and concrete release-evidence lineage.
 
 ### 6a. Copy-paste ceremony packet skeleton
 

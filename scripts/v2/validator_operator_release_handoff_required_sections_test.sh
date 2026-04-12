@@ -36,9 +36,23 @@ required_lines=(
   'commit_events_observed='
   'apply_error_seen='
   'rollback_seen='
+  'operator_ack='
+  'operator_ack_signature_path='
+  'dr_summary_path='
+  'dr_generated_at='
+  'dr_status='
+  '`operator_ack_signature_path`：必须指向本次窗口专属、不可变的签字/回执文件'
+  '`operator_ack_signature_path` 应落在当前 `worktree_root` 或 `workspace_root` 下'
+  '`dr_summary_path`：必须指向同一窗口目录下的 DR 摘要'
+  '`dr_summary_path` 应与 `operator_ack_signature_path` 共享同一窗口根目录'
   'previous_stable_anchor='
   'rollback_entrypoint='
   'rollback_trigger=apply_error|height_stall|config_drift|binary_mismatch|operator_abort'
+  'dr_replay_command='
+  '`dr_replay_command` 应显式包含本次窗口的 `worktree_root` 或 `workspace_root`'
+  '`dr_replay_command` 应显式引用当前窗口的 `dr_summary_path` 或同域窗口目录'
+  'dr_rollback_command='
+  '`dr_rollback_command` 应显式落到当前 `previous_stable_anchor` 或 `rollback_entrypoint`'
   'window_outcome=pass|blocked|rolled-back'
   'blocker_summary='
   'next_safe_action='
@@ -49,6 +63,7 @@ required_lines=(
   'handoff 给下一位 operator / release owner 时，至少附：'
   '若 `window_outcome != pass`，必须再附：'
   '不要使用“release-ready”“validator handoff complete”“upgrade finished”之类表述'
+  'operator_ack / DR summary / DR generated-at / DR status / replay-or-rollback command 未记录'
 )
 
 for line in "${required_lines[@]}"; do
@@ -58,4 +73,4 @@ for line in "${required_lines[@]}"; do
   fi
 done
 
-echo "[PASS] validator/operator release handoff template keeps fail-closed identity, binary/config binding, rollback, and blocked-window guard fields"
+echo "[PASS] validator/operator release handoff template keeps fail-closed identity, binary/config binding, DR acknowledgment/status/timestamp/replay fields, rollback, and blocked-window guard fields"

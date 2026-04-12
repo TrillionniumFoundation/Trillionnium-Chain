@@ -163,6 +163,12 @@ Required for `public-mainnet-input` evidence:
 - `operator_contact=` per validator owner so missing acknowledgments can be chased without ambiguity; each contact must identify one concrete validator-scoped route (for example one on-call alias/chat handle per validator) instead of reusing one generic team alias across the full packet
 - `operator_ack=` per validator owner
 - `operator_ack_signature_path=` or `operator_ack_digest=` when durable acknowledgment is required; for each validator/operator, fill at least one of these fields before treating the packet as signed/public-mainnet handoff evidence
+- `dr_summary_path=` pointing to the same bootstrap window's DR summary artifact, even when the outcome is `not_needed`, so the next operator can verify who owned rollback and which packet/artifact pair was in scope
+- `dr_generated_at=` in UTC for the DR summary above
+- `dr_status=ready|not_needed|blocked` so the handoff cannot hide whether replay/rollback evidence was actually captured
+- `dr_replay_command=` with an explicit worktree/workspace-scoped command for re-checking the packet, validator entries, and acknowledgment bindings in the takeover environment
+- `dr_rollback_command=` with the exact fail-closed rollback entrypoint for invalidating the packet or reverting to the previous stable artifact/hash
+- `previous_stable_anchor=` naming the last known-good genesis artifact/hash or ceremony packet anchor that rollback returns to
 - explicit `abort_condition=` lines for mismatched genesis hash, duplicate node identity, or wrong worktree/ref
 - a concrete `validator_set_version=` (for example `mainnet-candidate-2026-03-31`) instead of a template/default label
 
@@ -194,6 +200,13 @@ When passing genesis readiness to another operator, record:
 - validator set version
 - packet distribution path
 - validator entry hash(es) relied upon for operator acknowledgment binding
+- operator acknowledgment signature path or digest used for durable sign-off
+- DR summary path
+- DR generated-at timestamp
+- DR status
+- DR replay command
+- DR rollback command
+- previous stable anchor
 - commands run
 - pass/fail result
 - rollback command
@@ -208,6 +221,7 @@ Treat genesis generation/handoff as **No-Go** if any of the following is true:
 - the validator set version cannot be named
 - the shared ceremony packet disagrees with the artifact actually hashed
 - operator acknowledgment cannot be tied back to a specific `validator_entry=` / `validator_entry_hash=` in the shared packet
+- `dr_status=ready` but `dr_summary_path=`, `dr_generated_at=`, `dr_replay_command=`, or `dr_rollback_command=` is missing
 - the operator cannot provide a rollback action immediately
 
 This checklist closes part of the genesis-generation documentation gap, but it does **not** by itself close validator rotation, signer ceremony, network formation, or broader public-mainnet release readiness.

@@ -169,7 +169,16 @@ height_after=
 commit_events_observed=
 apply_error_seen=yes|no
 rollback_seen=yes|no
+operator_ack=yes|no
+operator_ack_signature_path=
+dr_summary_path=
 ```
+
+字段约束：
+- `operator_ack_signature_path`：必须指向本次窗口专属、不可变的签字/回执文件；若只有口头确认或聊天截图，视为未完成 ack 绑定。
+- `operator_ack_signature_path` 应落在当前 `worktree_root` 或 `workspace_root` 下，并与本次 `change_ticket` / `started_at_utc` 对应的窗口目录同域；若指向跨窗口复用路径或外部临时目录，视为未完成 durable ack 绑定。
+- `dr_summary_path`：必须指向同一窗口目录下的 DR 摘要（包含触发条件、执行者、观察者、产物索引）；若路径跨窗口复用，视为证据失效。
+- `dr_summary_path` 应与 `operator_ack_signature_path` 共享同一窗口根目录，避免把旧 rehearshal/rollback 摘要误挂到当前 handoff。
 
 若是多节点滚动升级，按节点单列：
 
@@ -189,18 +198,27 @@ node1_binary_sha256=
 
 ## 6. Rollback discipline（回滚纪律）
 
-回滚描述必须能回答三件事：
+回滚描述必须能回答三件事，并且要让接手 operator 能直接重放：
 
 ```text
 previous_stable_anchor=
 rollback_entrypoint=
 rollback_trigger=
+dr_replay_command=
+dr_rollback_command=
 ```
 
 其中：
 - `previous_stable_anchor`：回到哪个 commit/tag；
 - `rollback_entrypoint`：通过哪条脚本/命令回滚；
-- `rollback_trigger`：为什么回滚，例如 `apply_error`、height stall、config drift、binary mismatch。
+- `rollback_trigger`：为什么回滚，例如 `apply_error`、height stall、config drift、binary mismatch；
+- `dr_replay_command`：如何在接手环境里重放这次 DR / handoff 证据采集；
+- `dr_rollback_command`：如何在接手环境里执行同一条 fail-closed 回滚入口。
+
+命令约束：
+- `dr_replay_command` 应显式包含本次窗口的 `worktree_root` 或 `workspace_root`，避免在错误 worktree 上重放。
+- `dr_replay_command` 应显式引用当前窗口的 `dr_summary_path` 或同域窗口目录，避免 replay 到旧窗口产物。
+- `dr_rollback_command` 应显式落到当前 `previous_stable_anchor` 或 `rollback_entrypoint`，不能只写模糊的人肉说明。
 
 推荐把触发原因限定成简洁标签，避免事后口径发散：
 
@@ -224,6 +242,13 @@ cli_binary_sha256=
 config_set_id=
 previous_stable_anchor=
 rollback_entrypoint=
+operator_ack=
+operator_ack_signature_path=
+dr_summary_path=
+dr_generated_at=
+dr_status=
+dr_replay_command=
+dr_rollback_command=
 window_outcome=pass|blocked|rolled-back
 ```
 
@@ -233,6 +258,12 @@ window_outcome=pass|blocked|rolled-back
 blocker_summary=
 next_safe_action=
 ```
+
+额外 fail-closed 约束：
+- `window_outcome=pass` 时，`operator_ack` 必须为 `yes`，且 `operator_ack_signature_path` 不得为空。
+- `window_outcome=pass` 时，`dr_status` 必须明确为 `ready` 或 `not_needed`，不能留空或写自由文本。
+- `dr_status=ready` 时，`dr_summary_path`、`dr_generated_at`、`dr_replay_command`、`dr_rollback_command` 必须同时存在；缺任一项都应改判为 `blocked`。
+- `dr_status=not_needed` 时，也必须给出 `previous_stable_anchor` 与 `rollback_entrypoint`，避免把“本轮未触发 DR”误写成“无需回滚入口”。
 
 推荐 `next_safe_action` 只写下一步可执行动作，不写泛泛建议。例如：
 - `rebuild trnm-cli from current head and re-run preflight capture`
@@ -283,10 +314,17 @@ height_after=
 commit_events_observed=
 apply_error_seen=
 rollback_seen=
+operator_ack=
+operator_ack_signature_path=
+dr_summary_path=
+dr_generated_at=
+dr_status=
 
 previous_stable_anchor=
 rollback_entrypoint=
 rollback_trigger=
+dr_replay_command=
+dr_rollback_command=
 
 window_outcome=
 blocker_summary=
@@ -305,4 +343,5 @@ next_safe_action=
 - `trnm-node` / `trnm-cli` 二进制未分开绑定；
 - validator 配置指纹未记录；
 - previous stable anchor / rollback entrypoint 未记录；
+- operator_ack / DR summary / DR generated-at / DR status / replay-or-rollback command 未记录；
 - 窗口结果没有附上 blocker 或下一步安全动作。

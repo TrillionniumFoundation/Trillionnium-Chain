@@ -23,6 +23,9 @@ packet_distribution_path=
 validator_set_version=
 startup_order_note=
 rollback_owner=
+dr_summary_path=
+dr_replay_command=
+dr_rollback_command=
 
 node1.validator_owner=
 node1.operator_contact=
@@ -89,7 +92,7 @@ node4.operator_ack_digest=
 ## Fastest fill order
 
 建议按这个顺序回：
-1. 先填 `ceremony_id / packet_generated_at / packet_distribution_path / validator_set_version / startup_order_note / rollback_owner`
+1. 先填 `ceremony_id / packet_generated_at / packet_distribution_path / validator_set_version / startup_order_note / rollback_owner / dr_summary_path / dr_replay_command / dr_rollback_command`
 2. 再填 4 个 `validator_owner`
 3. 再填 4 个 `operator_contact`
 4. 最后填 4 组 `operator_ack` 与对应 `operator_ack_*`
@@ -108,4 +111,5 @@ node4.operator_ack_digest=
 收到回填后，可直接生成：
 1. updated / filled operator-handoff packet
 2. 对应的缺口检查（哪些字段还不能进 public-mainnet-input）
-3. 如需要，再生成一版 operator-ready summary
+3. DR 证据绑定检查（`dr_summary_path` / `dr_replay_command` / `dr_rollback_command` 是否成套）
+4. 如需要，再生成一版 operator-ready summary

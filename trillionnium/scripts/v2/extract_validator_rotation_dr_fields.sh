@@ -56,6 +56,27 @@ require_worktree_root_value() {
   esac
 }
 
+require_atom_value() {
+  local flag_name="$1"
+  local value="$2"
+
+  require_nonempty_value "$flag_name" "$value"
+
+  case "$value" in
+    [[:space:]]*|*[[:space:]])
+      printf 'invalid %s: must not start or end with whitespace: %q\n' "$flag_name" "$value" >&2
+      exit 2
+      ;;
+  esac
+
+  case "$value" in
+    *[$'\001'-$'\037']*|*$'\177'*)
+      printf 'invalid %s: must not contain control characters\n' "$flag_name" >&2
+      exit 2
+      ;;
+  esac
+}
+
 require_ref_token() {
   local flag_name="$1"
   local value="$2"
@@ -87,6 +108,62 @@ canonicalize_branch_ref() {
       printf 'refs/heads/%s' "$ref"
       ;;
   esac
+}
+
+command_has_env_value() {
+  local command="$1"
+  local env_name="$2"
+  local expected_value="$3"
+
+  python3 - "$command" "$env_name" "$expected_value" <<'PY'
+import shlex
+import sys
+
+command, env_name, expected_value = sys.argv[1:4]
+try:
+    tokens = shlex.split(command)
+except ValueError:
+    sys.exit(1)
+
+prefix = f"{env_name}="
+for token in tokens:
+    if token.startswith(prefix) and token[len(prefix):] == expected_value:
+        sys.exit(0)
+
+sys.exit(1)
+PY
+}
+
+command_has_equivalent_branch_env() {
+  local command="$1"
+  local env_name="$2"
+  local expected_value="$3"
+  local expected_canonical
+
+  expected_canonical="$(canonicalize_branch_ref "$expected_value")"
+
+  python3 - "$command" "$env_name" "$expected_canonical" <<'PY'
+import shlex
+import sys
+
+command, env_name, expected_canonical = sys.argv[1:4]
+try:
+    tokens = shlex.split(command)
+except ValueError:
+    sys.exit(1)
+
+prefix = f"{env_name}="
+for token in tokens:
+    if not token.startswith(prefix):
+        continue
+    candidate = token[len(prefix):]
+    if not candidate.startswith("refs/"):
+        candidate = f"refs/heads/{candidate}"
+    if candidate == expected_canonical:
+        sys.exit(0)
+
+sys.exit(1)
+PY
 }
 
 require_key() {
@@ -189,6 +266,34 @@ ROLLBACK_COMMAND="$(require_key "$REPORT_PATH" rollback_command)"
 REPLAY_COMMAND="$(require_key "$REPORT_PATH" replay_command)"
 STATUS="$(require_key "$REPORT_PATH" status)"
 
+require_atom_value generated_at "$GENERATED_AT"
+require_worktree_root_value config_path "$CONFIG_PATH"
+require_worktree_root_value git_worktree_path "$GIT_WORKTREE_PATH"
+require_ref_token git_worktree_branch_ref "$GIT_WORKTREE_BRANCH_REF"
+require_ref_token git_branch "$GIT_BRANCH"
+require_ref_token git_head "$GIT_HEAD"
+require_atom_value git_status_summary "$GIT_STATUS_SUMMARY"
+require_nonempty_value rollback_command "$ROLLBACK_COMMAND"
+require_nonempty_value replay_command "$REPLAY_COMMAND"
+require_atom_value status "$STATUS"
+
+GIT_WORKTREE_PATH_CANONICAL="$(canonicalize_path "$GIT_WORKTREE_PATH")" || {
+  printf 'report git_worktree_path is not accessible: %s\n' "$GIT_WORKTREE_PATH" >&2
+  exit 1
+}
+[ -f "$CONFIG_PATH" ] || {
+  printf 'report config_path must resolve to a file: %s\n' "$CONFIG_PATH" >&2
+  exit 1
+}
+CONFIG_PATH_CANONICAL="$(canonicalize_path "$(dirname "$CONFIG_PATH")")/$(basename "$CONFIG_PATH")"
+case "$CONFIG_PATH_CANONICAL" in
+  "$GIT_WORKTREE_PATH_CANONICAL"/*) ;;
+  *)
+    printf 'report config_path must live under report git_worktree_path: %s (worktree %s)\n' "$CONFIG_PATH_CANONICAL" "$GIT_WORKTREE_PATH_CANONICAL" >&2
+    exit 1
+    ;;
+esac
+
 if [ "$GIT_STATUS_SUMMARY" != "clean" ]; then
   printf 'report git_status_summary must be clean, got %s from %s\n' "$GIT_STATUS_SUMMARY" "$REPORT_PATH" >&2
   exit 1
@@ -265,9 +370,20 @@ if [ -z "$LANE_VERIFY_COMMAND" ] && grep -q '^lane_verify_command=' "$REPORT_PAT
   LANE_VERIFY_COMMAND="$(require_key "$REPORT_PATH" lane_verify_command)"
 fi
 
-if [ -n "$EXPECTED_WORKTREE_ROOT_RECORDED" ]; then
+if [ -n "$LANE_VERIFY_COMMAND" ]; then
   case "$LANE_VERIFY_COMMAND" in
-    *"--expected-worktree-root $EXPECTED_WORKTREE_ROOT_RECORDED"*) ;;
+    *verify_lane_worktree.sh*) ;;
+    *)
+      printf 'lane_verify_command must invoke verify_lane_worktree.sh in %s\n' "$REPORT_PATH" >&2
+      exit 1
+      ;;
+  esac
+fi
+
+if [ -n "$EXPECTED_WORKTREE_ROOT_RECORDED" ]; then
+  require_worktree_root_value expected_worktree_root "$EXPECTED_WORKTREE_ROOT_RECORDED"
+  case "$LANE_VERIFY_COMMAND" in
+    *"--expected-worktree-root $EXPECTED_WORKTREE_ROOT_RECORDED"*|*"--expected-worktree-root \"$EXPECTED_WORKTREE_ROOT_RECORDED\""*|*"--expected-worktree-root '$EXPECTED_WORKTREE_ROOT_RECORDED'"*) ;;
     *)
       printf 'lane_verify_command missing --expected-worktree-root %s in %s\n' "$EXPECTED_WORKTREE_ROOT_RECORDED" "$REPORT_PATH" >&2
       exit 1
@@ -276,9 +392,9 @@ if [ -n "$EXPECTED_WORKTREE_ROOT_RECORDED" ]; then
 fi
 
 if [ -n "$EXPECTED_BRANCH_REF_RECORDED" ]; then
+  require_ref_token expected_branch_ref "$EXPECTED_BRANCH_REF_RECORDED"
   case "$LANE_VERIFY_COMMAND" in
-    *"--expected-branch-ref $EXPECTED_BRANCH_REF_RECORDED"*) ;;
-    *"--expected-branch-ref $RECORDED_BRANCH_REF_CANONICAL"*) ;;
+    *"--expected-branch-ref $EXPECTED_BRANCH_REF_RECORDED"*|*"--expected-branch-ref \"$EXPECTED_BRANCH_REF_RECORDED\""*|*"--expected-branch-ref '$EXPECTED_BRANCH_REF_RECORDED'"*|*"--expected-branch-ref $RECORDED_BRANCH_REF_CANONICAL"*|*"--expected-branch-ref \"$RECORDED_BRANCH_REF_CANONICAL\""*|*"--expected-branch-ref '$RECORDED_BRANCH_REF_CANONICAL'"*) ;;
     *)
       printf 'lane_verify_command missing --expected-branch-ref %s in %s\n' "$EXPECTED_BRANCH_REF_RECORDED" "$REPORT_PATH" >&2
       exit 1
@@ -287,8 +403,9 @@ if [ -n "$EXPECTED_BRANCH_REF_RECORDED" ]; then
 fi
 
 if [ -n "$EXPECTED_HEAD_RECORDED" ]; then
+  require_ref_token expected_head "$EXPECTED_HEAD_RECORDED"
   case "$LANE_VERIFY_COMMAND" in
-    *"--expected-head $EXPECTED_HEAD_RECORDED"*) ;;
+    *"--expected-head $EXPECTED_HEAD_RECORDED"*|*"--expected-head \"$EXPECTED_HEAD_RECORDED\""*|*"--expected-head '$EXPECTED_HEAD_RECORDED'"*) ;;
     *)
       printf 'lane_verify_command missing --expected-head %s in %s\n' "$EXPECTED_HEAD_RECORDED" "$REPORT_PATH" >&2
       exit 1
@@ -309,6 +426,27 @@ if [ -n "$EXPECTED_WORKTREE_ROOT_RECORDED" ] || [ -n "$EXPECTED_BRANCH_REF_RECOR
     printf 'incomplete lane binding in %s: missing lane_verify_command\n' "$REPORT_PATH" >&2
     exit 1
   }
+fi
+
+if [ -n "$EXPECTED_WORKTREE_ROOT_RECORDED" ]; then
+  if ! command_has_env_value "$REPLAY_COMMAND" EXPECTED_WORKTREE_ROOT "$EXPECTED_WORKTREE_ROOT_RECORDED"; then
+    printf 'replay_command missing EXPECTED_WORKTREE_ROOT=%s in %s\n' "$EXPECTED_WORKTREE_ROOT_RECORDED" "$REPORT_PATH" >&2
+    exit 1
+  fi
+fi
+
+if [ -n "$EXPECTED_BRANCH_REF_RECORDED" ]; then
+  if ! command_has_equivalent_branch_env "$REPLAY_COMMAND" EXPECTED_BRANCH_REF "$EXPECTED_BRANCH_REF_RECORDED"; then
+    printf 'replay_command missing EXPECTED_BRANCH_REF=%s in %s\n' "$EXPECTED_BRANCH_REF_RECORDED" "$REPORT_PATH" >&2
+    exit 1
+  fi
+fi
+
+if [ -n "$EXPECTED_HEAD_RECORDED" ]; then
+  if ! command_has_env_value "$REPLAY_COMMAND" EXPECTED_HEAD "$EXPECTED_HEAD_RECORDED"; then
+    printf 'replay_command missing EXPECTED_HEAD=%s in %s\n' "$EXPECTED_HEAD_RECORDED" "$REPORT_PATH" >&2
+    exit 1
+  fi
 fi
 
 printf 'report_path=%s\n' "$REPORT_PATH"
