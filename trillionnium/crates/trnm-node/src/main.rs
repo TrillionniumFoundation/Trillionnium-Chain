@@ -2178,6 +2178,86 @@ fn contains_invisible_or_bidi_format_chars(value: &str) -> bool {
     })
 }
 
+fn find_forbidden_bootstrap_alias_field(raw: &str) -> Option<&'static str> {
+    const FORBIDDEN_BOOTSTRAP_ALIAS_FIELD_NAMES: &[&str] = &[
+        "bootstrap_nodes",
+        "bootstrap_node",
+        "bootstrap_peers",
+        "bootstrap_peer",
+        "bootstrapNodes",
+        "bootstrapNode",
+        "bootstrapPeers",
+        "bootstrapPeer",
+        "bootstrap_addr",
+        "bootstrap_addrs",
+        "bootstrapAddr",
+        "bootstrapAddrs",
+        "bootstrap-addr",
+        "bootstrap-addrs",
+        "bootstrap-node",
+        "bootstrap-peer",
+        "seed_nodes",
+        "seed_node",
+        "seed_peers",
+        "seed_peer",
+        "seed-node",
+        "seed-peer",
+        "seedNodes",
+        "seedNode",
+        "seedPeers",
+        "seedPeer",
+        "seed_addr",
+        "seed_addrs",
+        "seedAddr",
+        "seedAddrs",
+        "seed-addr",
+        "seed-addrs",
+        "seed",
+        "seeds",
+        "bootnodes",
+        "bootnode",
+        "boot_nodes",
+        "boot_node",
+        "bootNodes",
+        "bootNode",
+        "boot-node",
+        "boot_peers",
+        "boot_peer",
+        "boot-peer",
+        "boot_addr",
+        "boot_addrs",
+        "bootAddr",
+        "bootAddrs",
+        "boot-addr",
+        "boot-addrs",
+        "bootPeers",
+        "bootPeer",
+        "persistent_peers",
+        "persistent-peers",
+        "persistent_peer",
+        "persistent-peer",
+        "persistent_addr",
+        "persistent_addrs",
+        "persistentAddr",
+        "persistentAddrs",
+        "persistent-addr",
+        "persistent-addrs",
+        "persistentPeers",
+        "persistentPeer",
+        "persistent_nodes",
+        "persistent-nodes",
+        "persistent_node",
+        "persistent-node",
+        "persistentNodes",
+        "persistentNode",
+    ];
+
+    let parsed = raw.parse::<toml::Table>().ok()?;
+    FORBIDDEN_BOOTSTRAP_ALIAS_FIELD_NAMES
+        .iter()
+        .find_map(|field| parsed.contains_key(*field).then_some(*field))
+}
+
 fn validate_config_path_input(path: &str) -> Result<()> {
     anyhow::ensure!(!path.trim().is_empty(), "read config failed: path must not be empty");
     anyhow::ensure!(
@@ -2226,6 +2306,15 @@ fn load_config(path: &str) -> Result<NodeConfig> {
             canonical_resolved.display()
         )
     })?;
+    if let Some(forbidden_alias_field) = find_forbidden_bootstrap_alias_field(&raw) {
+        return Err(anyhow::anyhow!(
+            "parse toml failed: {} (resolved: {}): forbidden bootstrap alias field `{}` is not supported; remove `{}` and keep only `node_id`, `rpc_addr`, and `p2p_addr`",
+            path,
+            canonical_resolved.display(),
+            forbidden_alias_field,
+            forbidden_alias_field
+        ));
+    }
     let cfg: NodeConfig = toml::from_str(&raw).with_context(|| {
         format!(
             "parse toml failed: {} (resolved: {})",
@@ -5504,7 +5593,7 @@ mod tests {
     ];
 
     #[test]
-    fn load_config_rejects_unknown_fields_to_keep_bootstrap_config_fail_closed() {
+    fn load_config_rejects_forbidden_bootstrap_alias_fields_with_operator_facing_error() {
         use std::collections::BTreeSet;
 
         let _cwd_guard = cwd_test_lock().lock().unwrap();
@@ -5540,13 +5629,18 @@ mod tests {
                 path.to_str().expect("temp path utf-8").to_string(),
                 format!("./{file_name}"),
             ] {
-                let err = load_config(&operator_path)
-                    .expect_err("unknown config fields must fail closed");
+                let err =
+                    load_config(&operator_path).expect_err("bootstrap alias fields must fail closed");
                 let err_surface = format!("{err:#}");
                 assert!(
                     err_surface.contains("parse toml failed")
-                        && err_surface.contains(&format!("unknown field `{unknown_field}`")),
+                        && err_surface
+                            .contains(&format!("forbidden bootstrap alias field `{unknown_field}`")),
                     "unexpected error for {unknown_field}: {err:#}"
+                );
+                assert!(
+                    err_surface.contains(&format!("remove `{unknown_field}`")),
+                    "forbidden alias diagnostic for {unknown_field} must point operators at the exact fix target: {err:#}"
                 );
                 assert!(
                     err_surface.contains(&operator_path),
@@ -5559,6 +5653,47 @@ mod tests {
             }
             let _ = std::fs::remove_file(path);
         }
+    }
+
+    #[test]
+    fn load_config_rejects_arbitrary_unknown_fields_to_keep_bootstrap_config_fail_closed() {
+        let _cwd_guard = cwd_test_lock().lock().unwrap();
+        let current_dir = std::env::current_dir().expect("current dir");
+        let file_name = format!(
+            "trnm-node-config-unknown-field-generic-{}-{}.toml",
+            std::process::id(),
+            now_unix_ms()
+        );
+        let path = current_dir.join(&file_name);
+        std::fs::write(
+            &path,
+            "node_id = \"node1\"\nrpc_addr = \"127.0.0.1:26657\"\np2p_addr = \"127.0.0.1:26656\"\nunexpected_peer_hint = \"node2\"\n",
+        )
+        .expect("write temp config");
+
+        let canonical_path = path.canonicalize().expect("canonicalize temp config path");
+        for operator_path in [
+            path.to_str().expect("temp path utf-8").to_string(),
+            format!("./{file_name}"),
+        ] {
+            let err = load_config(&operator_path).expect_err("unexpected config fields must fail closed");
+            let err_surface = format!("{err:#}");
+            assert!(
+                err_surface.contains("parse toml failed")
+                    && err_surface.contains("unknown field `unexpected_peer_hint`"),
+                "unexpected error for generic unknown field: {err:#}"
+            );
+            assert!(
+                err_surface.contains(&operator_path),
+                "generic unknown-field error must keep the operator-supplied config path visible: {err:#}"
+            );
+            assert!(
+                err_surface.contains(canonical_path.to_string_lossy().as_ref()),
+                "generic unknown-field error must keep the canonical resolved path visible: {err:#}"
+            );
+        }
+
+        let _ = std::fs::remove_file(path);
     }
 
     #[test]
