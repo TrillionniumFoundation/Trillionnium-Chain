@@ -21,6 +21,7 @@ trap cleanup EXIT
 PORT="${EXPLORER_PORT:-18091}"
 PUBLIC_BASE_URL="http://127.0.0.1:${PORT}"
 HEALTH_URL="${PUBLIC_BASE_URL}/healthz"
+LOCAL_HEALTH_URL="${HEALTH_URL}"
 RPC_BASE_URL="http://127.0.0.1:7777"
 
 assert_contains() {
@@ -258,7 +259,7 @@ assert_contains "${CAPTURE_DIR}/summary.txt" "truth_source_blocker_board=trillio
 assert_contains "${CAPTURE_DIR}/summary.txt" "replay_command=./trillionnium/scripts/v2/explorer_service_up.sh"
 assert_contains "${CAPTURE_DIR}/summary.txt" "status_command=./trillionnium/scripts/v2/explorer_service_status.sh"
 assert_contains "${CAPTURE_DIR}/summary.txt" "public_health_fetch_command=curl --silent --show-error --fail --max-time 5 ${HEALTH_URL}"
-assert_contains "${CAPTURE_DIR}/summary.txt" "local_health_fetch_command=curl --silent --show-error --fail --max-time 5 ${HEALTH_URL}"
+assert_contains "${CAPTURE_DIR}/summary.txt" "local_health_fetch_command=curl --silent --show-error --fail --max-time 5 ${LOCAL_HEALTH_URL}"
 assert_contains "${CAPTURE_DIR}/summary.txt" "rollback_command=./trillionnium/scripts/v2/explorer_service_down.sh"
 assert_contains "${CAPTURE_DIR}/summary.txt" "deployment_evidence_scope=placeholder-only"
 assert_contains "${CAPTURE_DIR}/summary.txt" "rank1_read_surface_blocker=still-open"
