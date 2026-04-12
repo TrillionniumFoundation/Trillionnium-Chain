@@ -9,9 +9,12 @@ This template is intentionally fail-closed:
 
 Companion truth sources:
 - `RELEASE_READINESS.md`
-- `docs/release/TRNM_MAINNET_GAP_MATRIX_2026-03-26.md`
-- `docs/release/TRNM_VALIDATOR_RELEASE_HANDOFF.md`
-- `docs/release/TRNM_MAINNET_BLOCKER_BOARD_2026-03-31.md`
+- `trillionnium/docs/release/TRNM_MAINNET_GAP_MATRIX_2026-03-26.md`
+- `trillionnium/docs/release/TRNM_VALIDATOR_RELEASE_HANDOFF.md`
+- `trillionnium/docs/release/TRNM_MAINNET_BLOCKER_BOARD_2026-03-31.md`
+
+Command-root note:
+- commands shown as `./scripts/...`, `run/...`, and `release/...` are meant to be executed from `trillionnium/` inside the assigned worktree; if you stay at the outer worktree root, prefix those relative paths with `trillionnium/` instead of silently resolving them from the wrong directory.
 
 ---
 
@@ -44,12 +47,16 @@ Single-signer / process exclusivity note (required for any validator/operator-bo
 - checked_listener_command=`lsof -iTCP -sTCP:LISTEN | grep -E '26656|26657|26658|26660'`
 - checked_listener_output=
 
-Capture the fail-closed helper output verbatim before any release/evidence script runs:
+Capture the fail-closed helper output verbatim before any release/evidence script runs, and preserve it as a first-class artifact instead of terminal-only scrollback:
 
 ```bash
+preflight_helper_output_path="run/preflight/verify-lane-worktree-$(date -u +%Y%m%dT%H%M%SZ).txt"
+mkdir -p "$(dirname "$preflight_helper_output_path")"
 ./scripts/v2/verify_lane_worktree.sh \
   --expected-worktree-root "/abs/path/from-ticket" \
-  --expected-branch-ref "refs/heads/lane/assigned-branch"
+  --expected-branch-ref "refs/heads/lane/assigned-branch" \
+  | tee "$preflight_helper_output_path"
+printf 'preflight_helper_output_path=%s\n' "$preflight_helper_output_path"
 ```
 
 `--expected-branch-ref` may be either the short branch name from the ticket (for example `lane/assigned-branch`) or the fully qualified ref (`refs/heads/lane/assigned-branch`), but the memo should preserve exactly which form the ticket assigned.
@@ -58,6 +65,7 @@ Record:
 - signer_exclusivity_note=
 - checked_process_output=
 - checked_listener_output=
+- preflight_helper_output_path=
 - verified_worktree=
 - verified_branch_ref=
 - verified_head=
@@ -65,27 +73,31 @@ Record:
 - `git status --short` result:
 
 Rule:
-- if signer ownership is ambiguous, if either exclusivity check output is missing, if the helper fails, if `git status --short` is non-empty, or if the recorded values were inferred from the shell instead of the assigned ticket values, decision = **NO-GO**
+- if signer ownership is ambiguous, if either exclusivity check output is missing, if `preflight_helper_output_path=` is missing or unresolved, if the helper fails, if `git status --short` is non-empty, or if the recorded values were inferred from the shell instead of the assigned ticket values, decision = **NO-GO**
 
 ## 3. Artifact path resolution
 
 Resolve the exact evidence files from disk before quoting any PASS / GO language:
 
 ```bash
-latest_preflight_path="run/preflight/go-no-go-latest.txt"
-[ -f "$latest_preflight_path" ] || { echo "missing preflight artifact" >&2; exit 1; }
-printf 'preflight_path=%s\n' "$latest_preflight_path"
+latest_preflight_alias="run/preflight/go-no-go-latest.txt"
+[ -f "$latest_preflight_alias" ] || { echo "missing preflight artifact alias" >&2; exit 1; }
+latest_preflight_path="$(ls -dt run/preflight/go-no-go-*.txt 2>/dev/null | grep -v '/go-no-go-latest.txt$' | head -n 1)"
+[ -n "$latest_preflight_path" ] || { echo "missing timestamped preflight artifact" >&2; exit 1; }
+printf 'preflight_path=%s\n' "$latest_preflight_alias"
 printf 'preflight_summary_path=%s\n' "$latest_preflight_path"
 awk -F= '/^(result|generated_at|git_toplevel|git_branch|git_head|git_head_state|git_status_summary|git_worktree_path|git_worktree_branch_ref|git_worktree_branch_ref_match|expected_worktree_root|ticket_expected_branch_ref|expected_branch_ref|expected_head|rollback_command|replay_command)=/ { print }' "$latest_preflight_path"
 
 latest_evidence_dir="$(ls -dt run/health/evidence-* 2>/dev/null | head -n 1)"
 [ -n "$latest_evidence_dir" ] || { echo "missing release evidence dir" >&2; exit 1; }
+printf 'evidence_dir=%s\n' "$latest_evidence_dir"
 summary_path="$latest_evidence_dir/summary.txt"
 [ -f "$summary_path" ] || { echo "missing summary artifact" >&2; exit 1; }
 printf 'summary_path=%s\n' "$summary_path"
 
 latest_rc_dir="$(ls -dt release/rc-* 2>/dev/null | head -n 1)"
 [ -n "$latest_rc_dir" ] || { echo "missing release rc dir" >&2; exit 1; }
+printf 'rc_dir=%s\n' "$latest_rc_dir"
 manifest_path="$latest_rc_dir/manifest.txt"
 [ -f "$manifest_path" ] || { echo "missing manifest artifact" >&2; exit 1; }
 printf 'manifest_path=%s\n' "$manifest_path"
@@ -103,12 +115,14 @@ printf 'handoff_helper_output_path=%s\n' "$handoff_helper_output_path"
 
 As with the pre-run helper, `--expected-branch-ref` may be supplied as either the short branch name from the ticket or the full ref. Preserve both forms in the memo: record `ticket_expected_branch_ref=` from the helper output as the exact ticket-assigned form, and record `expected_branch_ref=` / `git_expected_worktree_branch_ref=` as the canonicalized branch ref emitted by the helper/artifacts.
 
-Treat the helper output as a first-class artifact for memo assembly, not throwaway terminal scrollback. Preserve it (or an equivalent saved transcript) so `summary_generated_at=`, `manifest_generated_at=`, `git_expected_worktree_branch_ref=`, `git_status_summary=`, `truth_source=`, `historical_evidence_only=`, `evidence_scope=`, `summary_rollback_command=`, `summary_replay_command=`, `manifest_rollback_command=`, and `manifest_replay_command=` can all be quoted from the helper/artifacts rather than recopied from memory.
+Treat both helper outputs as first-class artifacts for memo assembly, not throwaway terminal scrollback. Preserve `preflight_helper_output_path=` for lane-binding proof before any release/evidence script runs, and preserve `handoff_helper_output_path=` (or equivalent saved transcripts) so `preflight_path=` (stable alias), `preflight_summary_path=` (resolved timestamped preflight artifact), `summary_generated_at=`, `manifest_generated_at=`, `git_expected_worktree_branch_ref=`, `git_status_summary=`, `truth_source=`, `historical_evidence_only=`, `evidence_scope=`, `summary_rollback_command=`, `summary_replay_command=`, `manifest_rollback_command=`, and `manifest_replay_command=` can all be quoted from helper/artifacts rather than recopied from memory.
 
 Record:
-- preflight_path=
-- preflight_summary_path=
+- preflight_path= (stable alias used for operator lookup)
+- preflight_summary_path= (resolved timestamped artifact quoted in the packet)
+- evidence_dir=
 - summary_path=
+- rc_dir=
 - manifest_path=
 - handoff_helper_output_path=
 - preflight_result=
@@ -132,7 +146,9 @@ Record:
 - git_expected_worktree_branch_ref=
 
 Rule:
-- if `preflight_path`, `preflight_summary_path`, `summary_path`, or `manifest_path` is missing or unresolved, decision = **NO-GO**
+- if `preflight_path`, `preflight_summary_path`, `evidence_dir`, `summary_path`, `rc_dir`, or `manifest_path` is missing or unresolved, decision = **NO-GO**
+- `preflight_path=` is the stable alias for operator lookup, while `preflight_summary_path=` must resolve to the concrete timestamped file actually quoted in the packet; if they collapse to the same alias-only path, decision = **NO-GO**
+- `preflight_path` alone is not enough for a path-resolved packet; the memo must also preserve the concrete timestamped `preflight_summary_path=` that was actually quoted
 - if the preflight artifact/helper transcript does not preserve `result=`, `generated_at=`, `git_status_summary=`, `git_worktree_path=`, `git_worktree_branch_ref=`, `git_worktree_branch_ref_match=`, `expected_worktree_root=`, `ticket_expected_branch_ref=`, `expected_branch_ref=`, `rollback_command=`, and `replay_command=`, decision = **NO-GO**
 - if the ticket assigned an expected head, preserve `expected_head=` verbatim from the preflight artifact and require it to match the ticket-assigned value; do not silently downgrade that field into an optional note
 - treat `expected_worktree_root=` plus `ticket_expected_branch_ref=` as the ticket-binding proof for the rehearsal packet, and keep `expected_branch_ref=` as the canonicalized companion field rather than a replacement for the ticket-original form
@@ -237,7 +253,9 @@ Mark each item explicitly:
 
 - [ ] assigned worktree / branch recorded from ticket
 - [ ] signer/process exclusivity checked and recorded
+- [ ] `checked_process_command=` preserved next to signer exclusivity note
 - [ ] `checked_process_output=` preserved next to signer exclusivity note
+- [ ] `checked_listener_command=` preserved next to signer exclusivity note
 - [ ] `checked_listener_output=` preserved next to signer exclusivity note
 - [ ] `verify_lane_worktree.sh` passed using ticket-assigned values
 - [ ] `verified_worktree=` preserved from helper output
@@ -245,9 +263,12 @@ Mark each item explicitly:
 - [ ] `verified_head=` preserved from helper output
 - [ ] `verified_worktree_entry=` preserved from helper output / `git worktree list --porcelain` stanza
 - [ ] `git status --short` empty before evidence generation
+- [ ] `preflight_helper_output_path` resolved from disk and preserved as a first-class artifact
 - [ ] `preflight_path` resolved from disk
-- [ ] `preflight_summary_path` resolved from disk
+- [ ] `preflight_summary_path` resolved from disk as the timestamped artifact actually quoted
+- [ ] `evidence_dir` resolved from disk
 - [ ] `summary_path` resolved from disk
+- [ ] `rc_dir` resolved from disk
 - [ ] `manifest_path` resolved from disk
 - [ ] `handoff_helper_output_path` resolved from disk and preserved as a first-class artifact
 - [ ] summary/manifest identity fields match each other
@@ -291,16 +312,24 @@ decision=<GO|CONDITIONAL GO|NO-GO>
 decision_scope=<local rehearsal only|internal RC only|public-mainnet candidate review>
 assigned_worktree=<ticket path>
 assigned_branch_ref=<ticket ref>
+evaluated_repo_root=<git rev-parse --show-toplevel>
+evaluated_branch=<git branch --show-current>
+evaluated_head=<git rev-parse HEAD>
 signer_exclusivity_note=<one line>
+checked_process_command=<exact command used for process exclusivity check>
 checked_process_output=<captured command output or explicit "no matching process">
+checked_listener_command=<exact command used for listener exclusivity check>
 checked_listener_output=<captured command output or explicit "no matching listener">
 verified_worktree=<helper output>
 verified_branch_ref=<helper output>
 verified_head=<helper output>
 verified_worktree_entry=<captured current-path stanza from helper output or git worktree list --porcelain>
-preflight_path=<resolved path>
-preflight_summary_path=<resolved path>
+preflight_helper_output_path=<resolved saved helper transcript path>
+preflight_path=<resolved alias path>
+preflight_summary_path=<resolved timestamped artifact path>
+evidence_dir=<resolved directory>
 summary_path=<resolved path>
+rc_dir=<resolved directory>
 manifest_path=<resolved path>
 handoff_helper_output_path=<resolved saved helper transcript path>
 preflight_result=<GO|NO-GO>

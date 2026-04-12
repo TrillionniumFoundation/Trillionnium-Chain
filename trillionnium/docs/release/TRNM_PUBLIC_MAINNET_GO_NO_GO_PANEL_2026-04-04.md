@@ -4,6 +4,11 @@ Truth-source snapshot:
 - `origin/main = 35da4109e`
 - local `main = a057c25d7`
 
+Snapshot boundary:
+- This panel is a **2026-04-04 lane-era snapshot**, not a standing release verdict.
+- Reuse it only together with the contemporaneous `origin/main` and local `main` commits for the run being discussed.
+- If those commit identities are not re-stated, treat this panel as historical evidence only, not current GO/NO-GO authority.
+
 Companion truth sources:
 - `RELEASE_READINESS.md`
 - `trillionnium/docs/release/TRNM_MAINNET_GAP_MATRIX_2026-03-26.md`

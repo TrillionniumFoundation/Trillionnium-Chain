@@ -247,7 +247,7 @@ To turn this blocker into a ship/no-ship gate, freeze one explicit tuple before 
 
 If any one of these five elements is still "to be decided", economics should remain **NO-GO** for public-mainnet release.
 
-For a concrete review sheet, see `docs/release/TRNM_MAINNET_ECONOMICS_FREEZE_HELPER_2026-03-27.md`.
+For a concrete review sheet, see `trillionnium/docs/release/TRNM_MAINNET_ECONOMICS_FREEZE_HELPER_2026-03-27.md`.
 
 ---
 
@@ -284,8 +284,8 @@ That is the right level of honesty.
 - relayer trust model hardening
 - failure recovery + settlement audit trail
 - bridge operator runbook
-- explicit settlement confirmation boundary documentation so operators can state the fail-closed rule in plain terms (`target < confirm <= source + 1`, with the stricter `source + 1` requirement once target has already caught up to source); see `docs/release/TRNM_BRIDGE_SETTLEMENT_AUDIT_NOTE_2026-04-02.md`
-- frozen settlement audit field contract (`phase`, `heartbeat_source_height`, `heartbeat_target_height`, `heartbeat_latency_ms`, `confirm_height`, `confirm_reason`) so replay and incident review quote one canonical evidence surface instead of ad-hoc log phrasing; current operator note: `docs/release/TRNM_BRIDGE_SETTLEMENT_AUDIT_NOTE_2026-04-02.md`
+- explicit settlement confirmation boundary documentation so operators can state the fail-closed rule in plain terms (`target < confirm <= source + 1`, with the stricter `source + 1` requirement once target has already caught up to source); see `trillionnium/docs/release/TRNM_BRIDGE_SETTLEMENT_AUDIT_NOTE_2026-04-02.md`
+- frozen settlement audit field contract (`phase`, `heartbeat_source_height`, `heartbeat_target_height`, `heartbeat_latency_ms`, `confirm_height`, `confirm_reason`) so replay and incident review quote one canonical evidence surface instead of ad-hoc log phrasing; current operator note: `trillionnium/docs/release/TRNM_BRIDGE_SETTLEMENT_AUDIT_NOTE_2026-04-02.md`
 
 ### Launch effect
 If bridge is not part of day-1 launch promise, this can trail.
@@ -305,7 +305,7 @@ TEE / ZK / verification paths have meaningful code and contracts in motion, but 
 - audit/replay evidence path for verifier outages or mismatches
 
 ### Closure note
-- verifier / DA / checkpoint sidecar closure checklist: `docs/release/TRNM_VERIFIER_DA_CHECKPOINT_SIDECAR_CLOSURE_2026-03-31.md`
+- verifier / DA / checkpoint sidecar closure checklist: `trillionnium/docs/release/TRNM_VERIFIER_DA_CHECKPOINT_SIDECAR_CLOSURE_2026-03-31.md`
 
 ### Launch effect
 Can trail if day-1 mainnet only requires the core task lifecycle and local trust assumptions.

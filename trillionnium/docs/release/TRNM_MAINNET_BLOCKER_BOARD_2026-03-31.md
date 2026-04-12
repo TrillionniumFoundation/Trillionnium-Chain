@@ -5,8 +5,8 @@
 - Repository snapshot evaluated: `origin/main = 8ff9f1fe45bdf3f027bce7d86ae51394c3df5d86`
 - Companion truth sources:
   - `RELEASE_READINESS.md`
-  - `docs/release/TRNM_MAINNET_GAP_MATRIX_2026-03-26.md`
-  - `docs/release/TRNM_VALIDATOR_RELEASE_HANDOFF.md`
+  - `trillionnium/docs/release/TRNM_MAINNET_GAP_MATRIX_2026-03-26.md`
+  - `trillionnium/docs/release/TRNM_VALIDATOR_RELEASE_HANDOFF.md`
 
 ## Headline judgment
 
@@ -152,18 +152,20 @@ Even if all code-adjacent P0 items improve, TRNM still cannot claim public-mainn
 **What is still missing**
 - one integrated prelaunch rehearsal using the current mainline
 - one path-resolved evidence bundle suitable for launch review
+- one saved fail-closed preflight helper transcript proving the ticket-assigned worktree/root and branch ref before any release artifacts are quoted
 - one final GO / CONDITIONAL GO / NO-GO document
 - one rollback drill attached to the same decision packet
 
 **Exit criteria**
 - full prelaunch rehearsal green on current `origin/main`
-- artifact identities consistent across summary/manifest
+- artifact identities consistent across preflight/helper transcript, `summary.txt`, and `manifest.txt`
+- `summary_generated_at=` and `manifest_generated_at=` preserved next to the quoted identity fields rather than collapsed into one assumed timestamp
 - rollback command explicitly preserved
 - signed operator decision packet
 
 **Next actions**
 1. define rehearsal scope against current `origin/main`
-2. run full rehearsal with path-resolved evidence bundle
+2. run full rehearsal with a saved preflight helper transcript plus path-resolved evidence bundle
 3. produce formal GO/NOGO memo
 
 ---
@@ -299,7 +301,7 @@ Use `TRNM_MAINNET_GAP_MATRIX_2026-03-26.md` as the deeper taxonomy.
 Use `RELEASE_READINESS.md` as the canonical answer to whether the repository is already release-ready.
 
 For the economics-specific blocker, pair this file with:
-- `docs/release/TRNM_MAINNET_ECONOMICS_FREEZE_HELPER_2026-03-27.md`
+- `trillionnium/docs/release/TRNM_MAINNET_ECONOMICS_FREEZE_HELPER_2026-03-27.md`
 
 ## Bottom line
 
