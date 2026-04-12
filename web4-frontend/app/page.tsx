@@ -12,6 +12,8 @@ type LoadState =
   | { status: "error"; message: string }
   | { status: "ready"; data: DashboardSnapshot };
 
+type DashboardMode = "ok" | "empty" | "error" | "mock";
+
 function normalizeHealth(health: unknown): DashboardSnapshot["kpis"][number]["health"] {
   return health === "healthy" || health === "degraded" || health === "risk" ? health : "risk";
 }
@@ -41,6 +43,11 @@ function normalizeSnapshot(snapshot: DashboardSnapshot): DashboardSnapshot {
     events: Array.isArray(snapshot.events) ? snapshot.events : [],
     audits: Array.isArray(snapshot.audits) ? snapshot.audits : [],
   };
+}
+
+function normalizeDashboardMode(value: string | null): DashboardMode {
+  const normalized = value?.replace(/[\u200B\u200C\u200D\u2060\u2063\uFEFF]/g, "").trim();
+  return normalized === "empty" || normalized === "error" || normalized === "mock" ? normalized : "ok";
 }
 
 const healthClassMap: Record<DashboardSnapshot["kpis"][number]["health"], string> = {
@@ -127,9 +134,7 @@ export default function Home() {
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    const mode = params.get("mode");
-
-    const normalizedMode = mode === "empty" || mode === "error" || mode === "mock" ? mode : "ok";
+    const normalizedMode = normalizeDashboardMode(params.get("mode"));
 
     fetchDashboardSnapshot({
       mode: normalizedMode,

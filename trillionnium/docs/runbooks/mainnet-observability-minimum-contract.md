@@ -15,7 +15,8 @@ Use this as a rehearsal/runbook reference until a fuller dashboard + alert pack 
 
 This document only freezes surfaces already evidenced in code/tests under:
 
-- `crates/trnm-rpc/src/runtime/http.rs` (runtime path) and `crates/trnm-rpc/src/health.rs` (mirrored compatibility path)
+- `crates/trnm-rpc/src/main.rs` (active RPC entrypoint health/read contract)
+- `crates/trnm-rpc/src/runtime/http.rs` and `crates/trnm-rpc/src/health.rs` (mirrored compatibility copies that should stay behaviorally aligned with the active entrypoint until retired)
 - `crates/trnm-node/src/runtime/metrics_aggregation/summary_format.rs`
 - `crates/trnm-worker-agent/src/workflow_ops.rs`
 - `crates/trnm-worker-agent/src/assigned.rs`
@@ -23,13 +24,13 @@ This document only freezes surfaces already evidenced in code/tests under:
 It should be read together with:
 
 - `RELEASE_READINESS.md`
-- `docs/release/TRNM_MAINNET_GAP_MATRIX_2026-03-26.md`
-- `docs/release/TRNM_MAINNET_BLOCKER_BOARD_2026-03-31.md`
+- `trillionnium/docs/release/TRNM_MAINNET_GAP_MATRIX_2026-03-26.md`
+- `trillionnium/docs/release/TRNM_MAINNET_BLOCKER_BOARD_2026-03-31.md`
 
 ## 1. `trnm-rpc` health probe aliases
 
 The current `trnm-rpc` health server intentionally accepts the following case-insensitive aliases as health/readiness/liveness/status probes.
-The runtime implementation in `src/runtime/http.rs` is the primary truth source; the mirrored `src/health.rs` path should stay behaviorally aligned until the compatibility copy is retired:
+The active implementation currently lives in `src/main.rs`; the mirrored `src/runtime/http.rs` and `src/health.rs` copies should stay behaviorally aligned until those compatibility paths are retired:
 
 - `/health`, `/health/`, `/healthz`, `/healthz/`
 - `/live`, `/live/`, `/livez`, `/livez/`
@@ -67,6 +68,7 @@ Operational meaning:
 For accepted probe aliases, the transport semantics are also part of the minimum contract:
 
 - `GET` returns the JSON body above.
+- accepted probe responses currently send `Cache-Control: no-store` so load balancers, sidecars, and browser-adjacent tooling do not cache stale health answers.
 - `HEAD` returns the same status code and `Content-Length` that the equivalent `GET` body would have produced, but with no response body bytes.
   This stays true even when operators probe an accepted alias with a query string (for example `HEAD /-/readyz?probe=lb&from=ops HTTP/1.1`).
 
@@ -80,9 +82,9 @@ Operators should not over-read it as indexer/read-model closure.
 
 The minimum operator-facing contract also includes the current fail-closed transport split around this probe surface:
 
-- a **recognized** probe alias returns `200 OK` with the schema above for `GET`, or the equivalent header-only response for `HEAD`
-- an **unknown but otherwise valid** HTTP request path returns `404 Not Found` with the current JSON error envelope `{"ok":false,"code":"NOT_FOUND"}` for `GET`, or the equivalent header-only response for `HEAD`
-- a **malformed** HTTP request line returns `400 Bad Request` with the current JSON error envelope `{"ok":false,"code":"BAD_REQUEST","message":"invalid http request"}`
+- a **recognized** probe alias returns `200 OK` with the schema above for `GET`, or the equivalent header-only response for `HEAD`, and currently includes `Cache-Control: no-store`
+- an **unknown but otherwise valid** HTTP request path returns `404 Not Found` with the current JSON error envelope `{"ok":false,"code":"NOT_FOUND"}` for `GET`, or the equivalent header-only response for `HEAD`, and currently includes `Cache-Control: no-store`
+- a **malformed** HTTP request line returns `400 Bad Request` with the current JSON error envelope `{"ok":false,"code":"BAD_REQUEST","message":"invalid http request"}`, and the current active entrypoint also keeps `Cache-Control: no-store` on that JSON error response
 
 Operational meaning:
 
@@ -107,6 +109,7 @@ This distinction matters during load balancer, sidecar, and operator triage beca
 - `critical_wait_active_height_share_ppm`
 - `rollback_block_total`
 - `rollback_active_heights`
+  - canonical vs compatibility: treat `rollback_block_total` as the descriptive block-count field and `rollback_active_heights` as the grep-stable compatibility alias for the same shipped rollback-height count until the contract is explicitly renamed end to end.
 - `rollback_block_rate`
 - `rollback_block_rate_ppm`
 - `rollback_active_height_rate_ppm`
@@ -173,6 +176,7 @@ This distinction matters during load balancer, sidecar, and operator triage beca
   - keep as the normalized density/share trio for dashboards and handoff notes.
 - `rollback_block_total` / `rollback_active_heights` / `rollback_block_rate` / `rollback_block_rate_ppm`
   - use together to separate absolute rollback volume from height-level blast radius.
+  - canonical vs compatibility: read `rollback_block_total` as the descriptive field name and `rollback_active_heights` as its compatibility alias; today they intentionally carry the same count.
 - `rollback_active_height_rate_ppm` / `rollback_active_observed_height_rate_ppm`
   - preserve both because rollback pressure against active heights and observed heights should remain grep-stable and comparable across summaries.
 - `rollback_density_avg` / `rollback_density_avg_milli` / `rollback_active_height_share_ppm`
@@ -233,6 +237,8 @@ When `trnm-worker-agent` runs in submit mode, the current operator-visible submi
 
 - `submitted=true submit_log=<path>`
 
+Current source of truth: `crates/trnm-worker-agent/src/workflow_ops.rs` (line builder) plus its contract test in the same file.
+
 Operational meaning:
 
 - `submitted=true` tells the operator the submit branch actually executed.
@@ -248,6 +254,8 @@ If richer structured logging lands later, prefer adding fields rather than renam
 When `trnm-worker-agent` finishes an assigned-run batch, the current operator-visible summary line is:
 
 - `[agent] run-assigned processed=<n> skipped=<reason=count|none> ingress=<path> submit_log=<path> adapter=<name> adapter_retries=<n> adapter_backoff_ms=<n> adapter_timeout_ms=<n>`
+
+Current source of truth: `crates/trnm-worker-agent/src/assigned.rs` (summary formatter) plus its contract tests in the same file.
   - if `skipped` is not `none`, preserve the current lexicographically ordered comma-separated `reason=count` encoding rather than reordering pairs by count or recency.
 
 Operational meaning:

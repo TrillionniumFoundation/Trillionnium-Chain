@@ -88,6 +88,11 @@ fn normalize_task_state_snapshot_line(line: &str) -> &str {
     line.trim().trim_start_matches('\u{feff}').trim()
 }
 
+fn is_task_state_snapshot_line_candidate(line: &str) -> bool {
+    let line = normalize_task_state_snapshot_line(line);
+    !line.is_empty() && !line.starts_with('#')
+}
+
 pub(crate) fn load_task_state_snapshot() -> Result<Vec<TaskObject>> {
     let Some(path) = task_state_file() else {
         return Ok(vec![]);
@@ -106,10 +111,10 @@ pub(crate) fn load_task_state_snapshot() -> Result<Vec<TaskObject>> {
 
     let mut tasks = Vec::new();
     for (idx, line) in raw.lines().enumerate() {
-        let line = normalize_task_state_snapshot_line(line);
-        if line.is_empty() {
+        if !is_task_state_snapshot_line_candidate(line) {
             continue;
         }
+        let line = normalize_task_state_snapshot_line(line);
         let task = serde_json::from_str::<TaskObject>(line).map_err(|err| {
             anyhow!(
                 "failed to parse task state snapshot {} line {}: {}",

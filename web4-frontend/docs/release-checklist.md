@@ -16,6 +16,12 @@
 npm run release:preflight
 ```
 
+若要与 CI 的 E2E 口径完全对齐，请显式开启：
+
+```bash
+CI_RUN_E2E=1 npm run release:preflight
+```
+
 执行后报告会写入：`run/release-preflight-report.txt`
 
 ## CI 对齐检查
@@ -23,7 +29,7 @@ npm run release:preflight
 - [ ] GitHub Actions `web4-frontend-ci` 绿灯
 - [ ] PR 中仅修改前端路径时，前端门禁自动触发
 - [ ] `main` 分支 push 也会自动触发同一套门禁
-- [ ] CI 默认强制 E2E（`CI_RUN_E2E=1`），本地默认不强制
+- [ ] CI 默认强制 E2E（`CI_RUN_E2E=1`），本地默认不强制；需要本地复刻 CI 时，使用 `CI_RUN_E2E=1 npm run release:preflight`
 
 ## 发布自动化最小链路（版本 / Changelog / 预检）
 

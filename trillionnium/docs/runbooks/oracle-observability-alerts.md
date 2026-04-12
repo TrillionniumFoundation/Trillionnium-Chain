@@ -105,7 +105,7 @@ When opening an incident or handing off between operators, include one compact s
 
 Minimal template:
 
-- `plane=observability service=oracle severity=<sev0|sev1|sev2|sev3> signal=oracle-anomaly verdict=<accepts-stalled|stale-wave|quorum-collapse|drift-anomaly|contract-drift> needs_replay=<yes|no> needs_rollback=<yes|no> first_stop=<"Oracle-specific drill-down"|"Evidence / replay integrity"|unknown> sample_count=<n> accepted_total=<n> stale=<n> quorum=<n> drift=<n> source_cardinality=<n|unknown> ingest_latency_ms=<n|unknown> truth_source=<value|unknown> evidence_scope=<value|unknown> summary_path=<path|unknown> manifest_path=<path|unknown> git_worktree_path=<path|unknown> git_worktree_branch_ref=<refs/heads/...|unknown> git_expected_worktree_branch_ref=<refs/heads/...|unknown> git_worktree_branch_ref_match=<true|false|unknown> replay=<present|missing> rollback=<present|missing>`
+- `plane=observability service=oracle severity=<sev0|sev1|sev2|sev3> signal=oracle-anomaly verdict=<accepts-stalled|stale-wave|quorum-collapse|drift-anomaly|ingest-latency|contract-drift> needs_replay=<yes|no> needs_rollback=<yes|no> first_stop=<"Oracle-specific drill-down"|"Evidence / replay integrity"|unknown> sample_count=<n> accepted_total=<n> stale=<n> quorum=<n> drift=<n> source_cardinality=<n|unknown> ingest_latency_ms=<n|unknown> truth_source=<value|unknown> evidence_scope=<value|unknown> summary_path=<path|unknown> manifest_path=<path|unknown> git_worktree_path=<path|unknown> git_worktree_branch_ref=<refs/heads/...|unknown> git_expected_worktree_branch_ref=<refs/heads/...|unknown> git_worktree_branch_ref_match=<true|false|unknown> replay=<present|missing> rollback=<present|missing>`
 
 Use `first_stop="Oracle-specific drill-down"` for normal oracle triage and `first_stop="Evidence / replay integrity"` whenever `verdict=contract-drift` or emitted evidence contradicts dashboard math.
 
@@ -153,7 +153,7 @@ Minimum label block:
 - `plane=observability`
 - `severity=<sev0|sev1|sev2|sev3>`
 - `signal=oracle-anomaly`
-- `verdict=<accepts-stalled|stale-wave|quorum-collapse|drift-anomaly|contract-drift>`
+- `verdict=<accepts-stalled|stale-wave|quorum-collapse|drift-anomaly|ingest-latency|contract-drift>`
 - `needs_replay=<yes|no>`
 - `needs_rollback=<yes|no>`
 - `first_stop=<Oracle-specific drill-down|Evidence / replay integrity|unknown>`
@@ -279,7 +279,7 @@ Minimal incident evidence block:
 Responder rules:
 
 1. Prefer the exact `rollback_command=` / `replay_command=` emitted by generated artifacts.
-2. Keep `signal=oracle-anomaly` in every page/ticket/dashboard link, and use `verdict=` only for the oracle-specific subtype.
+2. Keep `signal=oracle-anomaly` in every page/ticket/dashboard link, and use `verdict=` only for the oracle-specific subtype, including `ingest-latency` when latency-only alerts are the active oracle condition.
 3. Set `first_stop_panel=Oracle-specific drill-down` for normal oracle triage; switch to `Evidence / replay integrity` when `verdict=contract-drift` or evidence/metrics disagree.
 4. If `truth_source=` or `evidence_scope=` says the artifact is local or historical-only, do not present it as public-mainnet proof.
 5. If the incident page lacks both replay and rollback pointers, classify the handoff as incomplete and keep the ticket at least `sev2` until fixed.

@@ -10,11 +10,11 @@ TMP_DIR="$(mktemp -d "${TMPDIR:-/tmp}/contracts-workspace-smoke-missing-cargo.XX
 trap 'rm -rf "$TMP_DIR"' EXIT
 
 TEST_ROOT="$TMP_DIR/repo"
-mkdir -p "$TEST_ROOT/scripts" "$TEST_ROOT/contracts-rust"
+mkdir -p "$TEST_ROOT/scripts" "$TEST_ROOT/contracts"
 TEST_ROOT="$(cd "$TEST_ROOT" && pwd)"
 cp "$SOURCE_SCRIPT" "$TEST_ROOT/scripts/check_contracts_workspace_smoke.sh"
 chmod +x "$TEST_ROOT/scripts/check_contracts_workspace_smoke.sh"
-cat >"$TEST_ROOT/contracts-rust/Cargo.toml" <<'EOF'
+cat >"$TEST_ROOT/contracts/Cargo.toml" <<'EOF'
 [workspace]
 members = []
 EOF

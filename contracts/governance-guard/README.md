@@ -70,7 +70,8 @@ Rust 版外置治理骨架（in-memory state machine）：
 3. **版本漂移保护**：同参数并发提案会因版本改变而拒绝执行，避免覆盖
 4. **权限漂移**：撤销 proposer/executor/guardian 后调用失败
 5. **pause 恢复**：pause 立即生效；unpause 到期前失败、到期后成功
-6. **审计日志链路**：提案流转与暂停恢复路径会产生日志，支持链下查询与状态追踪
+6. **重复恢复调度拦截**：紧急暂停期间若已存在 active unpause proposal，再次 schedule 会 fail-closed，避免并发恢复单漂移
+7. **审计日志链路**：提案流转与暂停恢复路径会产生日志，支持链下查询与状态追踪
 
 ## 审计日志（v2）
 
@@ -93,4 +94,7 @@ Rust 版外置治理骨架（in-memory state machine）：
 新增 `normalized_audit_log() -> Vec<AuditEvent>`（复用 `audit-events` 共享 schema）：
 - `source: "governance-guard"`
 - `event_type`：`governance.proposal_proposed` / `governance.proposal_queued` / `governance.proposal_executed` / `governance.proposal_cancelled` / `governance.pause_set` / `governance.pause_restore_scheduled` / `governance.pause_restore_executed`。
-- 可携带 `actor`（提案人/执行人/守护者）、`object_id`（提案 id）、`related_id`（参数名/前后状态）用于链下检索。
+- 可携带 `actor`（提案人/执行人/守护者）、`object_id`（主对象，如提案 id 或 `emergency_pause`）、`related_id`（参数名或次级关联对象）用于链下检索。
+- `reason` 仅承载稳定归因标签，不直接承载原始 `reason_hash` 之类的高变明细；具体上下文进入 `note`。
+- `governance.pause_set` 采用 `object_id=emergency_pause`、`related_id=pause_state`、`reason=pause_activation`，并把状态迁移与 `reason_hash` 写入 `note`（如 `state=false->true, reason_hash=incident`），避免把状态快照或原始原因散列混进 ID / reason 字段。
+- `governance.pause_restore_scheduled` / `governance.pause_restore_executed` 采用 `object_id=emergency_pause`、`related_id=proposal_id`，并分别使用 `reason=pause_restore_schedule` / `reason=pause_restore_execution`；`eta` 与 `reason_hash` 落入 `note`，保持“被恢复的主对象在前、恢复提案作为关联对象在后”的共享归一化约定。

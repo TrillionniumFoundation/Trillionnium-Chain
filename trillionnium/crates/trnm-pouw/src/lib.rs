@@ -183,9 +183,11 @@ fn proof_payload_is_blank(proof_payload: &[u8]) -> bool {
 }
 
 fn normalize_hex_string(raw: &str) -> String {
-    raw.trim()
+    let trimmed = raw.trim();
+    trimmed
         .strip_prefix("0x")
-        .unwrap_or(raw.trim())
+        .or_else(|| trimmed.strip_prefix("0X"))
+        .unwrap_or(trimmed)
         .to_ascii_lowercase()
 }
 
@@ -1687,6 +1689,9 @@ pub fn apply_challenge_at_height(
     let mut task = st
         .get_task(task_ref.id)
         .ok_or_else(|| PouwError::State("task not found".into()))?;
+    if task.version != task_ref.version {
+        return Err(PouwError::VersionConflict);
+    }
     if task.status != TaskStatus::Revealed {
         return Err(PouwError::InvalidTransition);
     }
@@ -22344,6 +22349,52 @@ mod tests {
     }
 
     #[test]
+    fn challenge_rejects_stale_task_ref_before_escrow_mutation() {
+        let mut st = seeded_state();
+        st.set_balance("challenger", 100);
+
+        let r1 = apply_create_task(&mut st, 8_961_28, "alice".into(), 10).unwrap();
+        let result_hash = [7u8; 32];
+        let reveal_salt = [8u8; 32];
+        let committed = compute_commitment(8_961_28, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
+        let stale_revealed = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, None).unwrap();
+
+        let mut current_task = st.get_task(stale_revealed.id).unwrap();
+        current_task.challenge_deadline_height = current_task
+            .challenge_deadline_height
+            .map(|height| height.saturating_add(1));
+        let current_revealed = st.update_task(stale_revealed.clone(), current_task).unwrap();
+
+        let before_task = st.get_task(current_revealed.id).unwrap();
+        let before_escrow = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
+        let before_challenger = st.balance_of("challenger");
+
+        let err = apply_challenge_at_height(
+            &mut st,
+            stale_revealed,
+            "challenger".into(),
+            10,
+            "challenger".into(),
+            1,
+        )
+        .expect_err("stale revealed refs must fail closed before challenge escrow movement");
+        assert!(matches!(err, PouwError::VersionConflict));
+
+        let after_task = st.get_task(current_revealed.id).unwrap();
+        assert_eq!(after_task.status, before_task.status);
+        assert_eq!(after_task.version, before_task.version);
+        assert_eq!(after_task.challenged_at_height, before_task.challenged_at_height);
+        assert_eq!(after_task.resolve_deadline_height, before_task.resolve_deadline_height);
+        assert_eq!(after_task.challenge_bond, before_task.challenge_bond);
+        assert_eq!(after_task.challenger, before_task.challenger);
+        assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
+        assert_eq!(st.balance_of("challenger"), before_challenger);
+    }
+
+    #[test]
     fn canonical_actor_id_rejects_hidden_unicode_aliases_fail_closed() {
         assert!(!is_canonical_actor_id("challenger\u{200b}"));
         assert!(!is_canonical_actor_id("worker\u{2060}one"));
@@ -22371,5 +22422,10 @@ mod tests {
                 "token should fail closed as non-canonical: {token:?}"
             );
         }
+    }
+
+    #[test]
+    fn normalize_hex_string_strips_uppercase_hex_prefix() {
+        assert_eq!(normalize_hex_string(" 0XAbCd "), "abcd");
     }
 }

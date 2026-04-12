@@ -15,6 +15,7 @@ Usage:
     [--cli-build-command <cmd>] \
     [--config-set-id <id>] \
     [--chain-id <id>] \
+    [--genesis-path <path-or-placeholder>] \
     [--genesis-sha256 <sha256-or-placeholder>] \
     [--validator-count <count>] \
     [--seed-mode <static|dynamic|mixed>] \
@@ -95,6 +96,7 @@ CLI_BINARY_PATH="${CLI_BINARY_PATH:-$WORKSPACE_ROOT/target/debug/trnm-cli}"
 CLI_BUILD_COMMAND="${CLI_BUILD_COMMAND:-cargo build -p trnm-cli}"
 CONFIG_SET_ID="${CONFIG_SET_ID:-<fill-me>}"
 CHAIN_ID="${CHAIN_ID:-<fill-me>}"
+GENESIS_PATH="${GENESIS_PATH:-<fill-me>}"
 GENESIS_SHA256="${GENESIS_SHA256:-<fill-me>}"
 VALIDATOR_COUNT="${VALIDATOR_COUNT:-}"
 SEED_MODE="${SEED_MODE:-<fill-me>}"
@@ -150,6 +152,10 @@ while [[ $# -gt 0 ]]; do
       ;;
     --chain-id)
       CHAIN_ID="${2:-}"
+      shift 2
+      ;;
+    --genesis-path)
+      GENESIS_PATH="${2:-}"
       shift 2
       ;;
     --genesis-sha256)
@@ -258,6 +264,11 @@ printf 'cli_binary_sha256=%s\n' "$(if [[ -x "$CLI_BINARY_PATH" ]]; then shasum -
 printf 'cli_build_command=%s\n' "$CLI_BUILD_COMMAND"
 printf 'config_set_id=%s\n' "$CONFIG_SET_ID"
 printf 'chain_id=%s\n' "$CHAIN_ID"
+if [[ "$GENESIS_PATH" == "<fill-me>" ]]; then
+  printf 'genesis_path=%s\n' "$GENESIS_PATH"
+else
+  printf 'genesis_path=%s\n' "$(normalize_report_path "$GENESIS_PATH" "$WORKSPACE_ROOT")"
+fi
 printf 'genesis_sha256=%s\n' "$GENESIS_SHA256"
 printf 'validator_count=%s\n' "$VALIDATOR_COUNT"
 printf 'seed_mode=%s\n' "$SEED_MODE"

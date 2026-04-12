@@ -155,11 +155,15 @@ By default this writes a packet under `trillionnium/run/explorer-service/handoff
 
 - `status.txt`
 - `index.json`
+- `env.snapshot`
 - `summary.txt`
 
-`summary.txt` is intentionally operator-facing rather than generic bookkeeping only: besides the output paths and template pointer, it freezes the current `service_mode`, `production_ready`, `bind_host`, `bind_port`, `env_file`, `pid_file`, `log_file`, `public_dir`, `health_file`, `index_file`, `public_base_url`, `health_url`, `local_health_url`, the actual probe results (`health`, `health_probe`, `health_probe_url`, `local_health`, `local_health_probe`, `local_health_probe_url`), `index_url`, the fetched `/index.json` evidence markers (`index_json_fetched_at`, `index_json_path_or_url`, `index_json_declares_day1_contract`, `index_json_declares_placeholder_only`, the served read-contract fields, and the durable-read-anchor placeholders as emitted by the payload), `rpc_base_url`, the placeholder scaffold truth-source pointer (`truth_source_scaffold_runbook=trillionnium/docs/runbooks/explorer-service-scaffold.md`), the fail-closed Day-1 read-surface markers (`read_contract_mode`, `read_contract_source`, `day1_surface`, `query_events_default_limit`, `query_events_max_limit`, `write_paths_exposed`, `historical_query_scope`, `durability_boundary`, `archive_strategy`, `read_replica_strategy`, `deployment_topology`), the durable-read-anchor placeholders, and the canonical bring-up / status / rollback / index-fetch commands. This keeps the placeholder deployment path and public-read boundary reproducible in one file instead of forcing the next operator to reconstruct local bind/probe details or limit/readonly semantics from `status.txt` by hand, and now also means `summary.txt` carries the served payload-side contract markers needed for a minimal ticket/handoff packet even when `index.json` is attached separately for raw evidence.
+`summary.txt` is intentionally operator-facing rather than generic bookkeeping only: besides the output paths and template pointer, it freezes the current `service_mode`, `production_ready`, `bind_host`, `bind_port`, `env_file`, `env_snapshot_path`, `pid_file`, `log_file`, `public_dir`, `health_file`, `index_file`, `public_base_url`, `health_url`, `local_health_url`, the actual probe results (`health`, `health_probe`, `health_probe_url`, `local_health`, `local_health_probe`, `local_health_probe_url`), `index_url`, `local_index_url`, the fetched `/index.json` evidence markers (`index_json_fetched_at`, `index_json_path_or_url`, `index_json_declares_day1_contract`, `index_json_declares_placeholder_only`, the served read-contract fields, and the durable-read-anchor placeholders as emitted by the payload), `rpc_base_url`, the placeholder scaffold truth-source pointer (`truth_source_scaffold_runbook=trillionnium/docs/runbooks/explorer-service-scaffold.md`), the explicit next-step durable-boundary pointer (`truth_source_rank1_design_packet=trillionnium/docs/release/TRNM_RANK1_IMPLEMENTATION_DESIGN_PACKET_2026-04-05.md` when present), the fail-closed Day-1 read-surface markers (`read_contract_mode`, `read_contract_source`, `day1_surface`, `query_events_default_limit`, `query_events_max_limit`, `write_paths_exposed`, `historical_query_scope`, `durability_boundary`, `archive_strategy`, `read_replica_strategy`, `deployment_topology`), the durable-read-anchor placeholders, and the canonical bring-up / status / rollback / health-fetch / index-fetch commands, including `local_index_fetch_command` for the local bind target. This keeps the placeholder deployment path and public-read boundary reproducible in one file instead of forcing the next operator to reconstruct local bind/probe details or limit/readonly semantics from `status.txt` by hand, and now also means `summary.txt` carries the served payload-side contract markers needed for a minimal ticket/handoff packet even when `index.json` is attached separately for raw evidence.
 
-Important truth-source boundary: preserve every emitted `truth_source_*=` line **verbatim**, including `truth_source_go_no_go_panel=` when it appears as `missing-in-this-snapshot:...`. That placeholder is a fail-closed statement about the current repo snapshot, not an invitation to hand-edit the packet into claiming a GO/NO-GO panel file that this snapshot does not actually carry.
+`env.snapshot` is a straight copy of the effective operator env file used for that capture. Treat it as the exact runtime-knob attachment for the packet rather than retyping `EXPLORER_HOST`, `EXPLORER_PORT`, `EXPLORER_PUBLIC_BASE_URL`, `EXPLORER_HEALTH_URL`, or `EXPLORER_RPC_BASE_URL` by hand into a ticket.
+If that effective env file is missing, the helper now fails closed before writing a packet, because a scaffold handoff without the runtime-knob snapshot is mechanically incomplete and should be recreated with `explorer_service_up.sh` first.
+
+Important truth-source boundary: preserve every emitted `truth_source_*=` line **verbatim**, including `truth_source_go_no_go_panel=` when it appears as `missing-in-this-snapshot:...` and `truth_source_rank1_design_packet=` when it appears as a real path or `missing-in-this-snapshot:...`. These are fail-closed statements about the current repo snapshot, not invitations to hand-edit the packet into claiming a GO/NO-GO panel or durable read implementation design file that this snapshot does not actually carry.
 
 If you need a deterministic destination for a ticket or operator bundle, pass it explicitly:
 
@@ -178,16 +182,24 @@ Manual fallback if you are debugging the helper itself:
 ./trillionnium/scripts/v2/explorer_service_status.sh \
   | tee trillionnium/run/explorer-service/handoff-status.txt
 
-curl -fsS http://127.0.0.1:${EXPLORER_PORT:-8090}/index.json \
+INDEX_URL="$(grep '^index_url=' trillionnium/run/explorer-service/handoff-status.txt | tail -n1 | cut -d= -f2-)"
+[ -n "$INDEX_URL" ]
+
+curl -fsS "$INDEX_URL" \
   | tee trillionnium/run/explorer-service/handoff-index.json
 ```
+
+This is intentionally status-driven rather than shell-env-driven: if `explorer-service.env` pinned a non-default port or public base URL, reusing the emitted `index_url=` line keeps the fallback capture on the same concrete deployment boundary that `explorer_service_status.sh` just proved.
 
 If the public/reverse-proxy URL is the evidence target, capture that separately instead of replacing the local proof:
 
 ```bash
-curl -fsS "${EXPLORER_PUBLIC_BASE_URL:-http://127.0.0.1:${EXPLORER_PORT:-8090}}/index.json" \
+PUBLIC_INDEX_URL="$(grep '^public_base_url=' trillionnium/run/explorer-service/handoff-status.txt | tail -n1 | cut -d= -f2-)"/index.json
+curl -fsS "$PUBLIC_INDEX_URL" \
   | tee trillionnium/run/explorer-service/handoff-public-index.json
 ```
+
+When the public URL and local bind target differ, also preserve the emitted `local_index_url=` and `local_index_fetch_command=` lines from `summary.txt` instead of reconstructing the local `/index.json` path by hand or by editing the public URL in place.
 
 Fail-closed capture rules:
 
@@ -420,9 +432,8 @@ The scaffold writes two static files before launching the HTTP server:
 - `query-normalized-audit-events?source=<source>&eventType=<type>&limit=<n>&cursor=<cursor>`
 
 Fail-closed boundary for operator handoff: this placeholder contract does **not** currently imply public Day-1 support for `block`, `tx`, or `account` queries. Until the durable indexer / historical read-model track closes, keep those surfaces out of scaffold-generated handoff language instead of inferring them from future explorer aspirations or upstream RPC internals.
-- `query-normalized-audit-events?source=<source>&eventType=<type>&limit=<n>&cursor=<cursor>`
 
-Fail-closed boundary for operator handoff: this placeholder contract does **not** currently imply public Day-1 support for `block`, `tx`, or `account` queries. Until the durable indexer / historical read-model track closes, keep those surfaces out of scaffold-generated handoff language instead of inferring them from future explorer aspirations or upstream RPC internals.
+Operator evidence boundary: treat the served `index.json` payload as a mirror of the current scaffold/status contract, not as independent proof that durable replay, checkpoint persistence, or archive retention exists. If a ticket needs those durable-read claims, attach the non-placeholder handoff packet with all 6 durable-read anchors instead of extending the static scaffold payload by prose.
 
 Additional contract markers carried in `index.json`:
 

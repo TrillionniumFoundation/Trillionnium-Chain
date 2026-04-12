@@ -39,6 +39,16 @@ contracts/
 
 > external-contract Rust 化方向已经起步，但 Host ABI/runtime boundary 仍处在“架构已冻结、工程接线未闭环”的阶段。
 
+### Truth-source path note
+
+为避免把旧目录名误写成当前事实，CR06 相关真值路径应按当前仓库快照引用为：
+
+- `trillionnium/docs/protocol/external-contracts-rust/RUST_NATIVE_EXTERNAL_CONTRACTS_ARCH_2026-03-05.md`
+- `trillionnium/docs/release/TRNM_MAINNET_GAP_MATRIX_2026-03-26.md`
+- `contracts/Cargo.toml`
+
+不要把历史/漂移写法 `trillionnium-rust/...` 或 `contracts-rust/...` 误当成当前 in-tree 路径。
+
 ## Runtime boundary（当前不要过度表述）
 
 当前仓内不应把这些 crate 表述成：
@@ -53,7 +63,7 @@ contracts/
 - external contracts 保持在 `contracts/` 独立子树，而不是物理并入 `trillionnium/`
 - 当前 crate 更接近 contract semantics / audit normalization / fail-closed behavior 的 Rust MVP
 - 当前仓内 **还没有** 已落地的 `sdk/`、`runtime-spec/`、`integration-tests/` 目录，因此不要把架构目标布局误读成“工程已接线完成”
-- 是否进入 Day-1 mainnet scope，应继续以 `RELEASE_READINESS.md` 与 `TRNM_MAINNET_GAP_MATRIX_2026-03-26.md` 的口径为准
+- 是否进入 Day-1 mainnet scope，应继续以 `RELEASE_READINESS.md` 与 `trillionnium/docs/release/TRNM_MAINNET_GAP_MATRIX_2026-03-26.md` 的口径为准
 
 ## 目录说明
 
@@ -93,15 +103,29 @@ contracts/
 - **不要说**：当前已经存在可复用的 canonical `HostAbiV1` 实现或稳定宿主 trait 接线
 - **不要说**：当前已经有 node-side deterministic WASM sandbox、gas metering、storage delta apply、RPC ABI versioning 的闭环集成
 - **不要说**：当前 `contracts/*` crates 已默认编译并交付为链上 canonical `wasm32-unknown-unknown` artifacts
-- **不要说**：当前 external contracts 已自动进入 public-mainnet Day-1 minimum scope；是否纳入 launch promise，仍取决于 `RELEASE_READINESS.md` 与 `TRNM_MAINNET_GAP_MATRIX_2026-03-26.md`
+- **不要说**：当前 external contracts 已自动进入 public-mainnet Day-1 minimum scope；是否纳入 launch promise，仍取决于 `RELEASE_READINESS.md` 与 `trillionnium/docs/release/TRNM_MAINNET_GAP_MATRIX_2026-03-26.md`
 
 这组边界的核心含义是：**架构方向已锁定，但 runtime 接线、ABI 冻结落地、以及 Day-1 scope 判定都还不能被提前宣称为完成。**
 
 ## 构建边界
 
-当前目录下还没有统一 workspace `Cargo.toml`，因此不要假设可以在 `contracts/` 根目录直接运行统一 workspace gate。
+当前目录下**已经有**统一 workspace `Cargo.toml`，但它目前只覆盖 4 个已落地 crate：
 
-如需验证，当前应按 crate 单独执行，例如：
+- `audit-events`
+- `bridge-relay`
+- `governance-guard`
+- `settlement-vault`
+
+因此，可以在 `contracts/` 根目录直接运行当前 MVP 子树的统一 workspace gate，例如：
+
+```bash
+cargo check --manifest-path contracts/Cargo.toml -q
+cargo test --manifest-path contracts/Cargo.toml
+```
+
+但这里仍然**不要**把这个最小 workspace 误读成架构文档里的完整 target layout 已经落地。当前 workspace 只代表现有 4 个 crate 的统一验证入口，**不等价于** `sdk/`、`runtime-spec/`、`integration-tests/` 已实现并接入 canonical host runtime。
+
+如需逐 crate 验证，也仍可单独执行，例如：
 
 ```bash
 cd contracts/settlement-vault && cargo test
@@ -115,7 +139,7 @@ cd ../audit-events && cargo test
 按当前 truth sources：
 
 - `RELEASE_READINESS.md`：仓库整体 **Not release-ready**
-- `TRNM_MAINNET_GAP_MATRIX_2026-03-26.md`：external contracts 更接近 launch-adjacent / scope-dependent 面，不自动属于 Day-1 core minimum
+- `trillionnium/docs/release/TRNM_MAINNET_GAP_MATRIX_2026-03-26.md`：external contracts 更接近 launch-adjacent / scope-dependent 面，不自动属于 Day-1 core minimum
 - `trillionnium/docs/protocol/external-contracts-rust/RUST_NATIVE_EXTERNAL_CONTRACTS_ARCH_2026-03-05.md`：定义的是目标 package layout / Host ABI / runtime boundary，不能把目标布局误读为当前工程已闭环
 
 ### Day-1 scope 判读（保持与 gap matrix 一致）

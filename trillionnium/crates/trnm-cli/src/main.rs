@@ -158,11 +158,121 @@ enum QueryCommand {
     },
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 struct BalanceQueryResponse {
     address: String,
     balance: String,
     denom: String,
+}
+
+fn json_scalar_string(value: &serde_json::Value) -> Option<String> {
+    match value {
+        serde_json::Value::String(s) => Some(s.clone()),
+        serde_json::Value::Number(n) => Some(n.to_string()),
+        serde_json::Value::Bool(b) => Some(b.to_string()),
+        _ => None,
+    }
+}
+
+fn parse_balance_query_response(
+    raw: &str,
+    requested_address: &str,
+    requested_denom: &str,
+) -> Result<BalanceQueryResponse> {
+    if let Ok(resp) = serde_json::from_str::<BalanceQueryResponse>(raw) {
+        return Ok(resp);
+    }
+
+    if let Ok(value) = serde_json::from_str::<serde_json::Value>(raw) {
+        if let Some(balance) = json_scalar_string(&value) {
+            return Ok(BalanceQueryResponse {
+                address: requested_address.to_string(),
+                balance,
+                denom: requested_denom.to_string(),
+            });
+        }
+
+        for candidate in [
+            Some(&value),
+            value.get("result"),
+            value.get("data"),
+            value.get("response"),
+            value.get("response").and_then(|response| response.get("data")),
+        ] {
+            let Some(candidate) = candidate else {
+                continue;
+            };
+
+            let nested_balance = candidate
+                .get("balance")
+                .filter(|value| value.is_object())
+                .or_else(|| candidate.get("amount").filter(|value| value.is_object()));
+            let Some(balance) = candidate
+                .get("balance")
+                .and_then(json_scalar_string)
+                .or_else(|| candidate.get("amount").and_then(json_scalar_string))
+                .or_else(|| {
+                    nested_balance
+                        .and_then(|value| value.get("amount"))
+                        .and_then(json_scalar_string)
+                })
+            else {
+                continue;
+            };
+
+            let address = candidate
+                .get("address")
+                .and_then(json_scalar_string)
+                .filter(|value| !value.is_empty())
+                .unwrap_or_else(|| requested_address.to_string());
+            let denom = nested_balance
+                .and_then(|value| value.get("denom"))
+                .and_then(json_scalar_string)
+                .filter(|value| !value.is_empty())
+                .or_else(|| {
+                    candidate
+                        .get("denom")
+                        .and_then(json_scalar_string)
+                        .filter(|value| !value.is_empty())
+                })
+                .unwrap_or_else(|| requested_denom.to_string());
+            return Ok(BalanceQueryResponse {
+                address,
+                balance,
+                denom,
+            });
+        }
+    }
+
+    let mut address = None;
+    let mut balance = None;
+    let mut denom = None;
+    for line in raw.lines() {
+        let mut pairs = Vec::new();
+        if let Some(pair) = parse_kv_line(line) {
+            pairs.push(pair);
+        }
+        for token in line.split_whitespace() {
+            if let Some(pair) = parse_inline_kv_token(token) {
+                pairs.push(pair);
+            }
+        }
+
+        for (key, value) in pairs {
+            match key.as_str() {
+                "address" => address = Some(value),
+                "balance" | "amount" => balance = Some(value),
+                "denom" => denom = Some(value),
+                _ => {}
+            }
+        }
+    }
+
+    Ok(BalanceQueryResponse {
+        address: address.unwrap_or_else(|| requested_address.to_string()),
+        balance: balance.unwrap_or_else(|| raw.trim().to_string()),
+        denom: denom.unwrap_or_else(|| requested_denom.to_string()),
+    })
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -334,7 +444,7 @@ fn validate_task_query_metadata_compatibility(parsed: &serde_json::Value) -> Res
 fn parse_task_query_response(raw: &str, requested_task_id: u64) -> Result<serde_json::Value> {
     let parsed: serde_json::Value = serde_json::from_str(raw)
         .map_err(|err| anyhow!("failed to parse task query response as json: {err}"))?;
-    let Some(task_id) = parsed.get("task_id").and_then(|v| v.as_u64()) else {
+    let Some(task_id) = json_u64_at_path(&parsed, &["task_id"]) else {
         bail!("task query response missing numeric task_id");
     };
     if task_id != requested_task_id {
@@ -355,7 +465,7 @@ fn parse_events_query_response(raw: &str, requested_task_id: u64) -> Result<serd
         bail!("events query response must be a json array");
     };
     for (idx, event) in events.iter().enumerate() {
-        let Some(task_id) = event.get("task_id").and_then(|v| v.as_u64()) else {
+        let Some(task_id) = json_u64_at_path(event, &["task_id"]) else {
             bail!("events query response item {} missing numeric task_id", idx);
         };
         if task_id != requested_task_id {
@@ -417,8 +527,13 @@ fn parse_request_full_query_response(
     let Some(request) = parsed.get("request") else {
         bail!("request-full response missing request object");
     };
-    let Some(request_id) = request.get("request_id").and_then(|v| v.as_str()) else {
-        bail!("request-full response missing string request.request_id");
+    let Some(request_id) = request
+        .get("request_id")
+        .and_then(json_scalar_string)
+        .map(|value| value.trim().to_string())
+        .filter(|value| !value.is_empty())
+    else {
+        bail!("request-full response missing scalar request.request_id");
     };
     if request_id != requested_request_id {
         bail!(
@@ -427,14 +542,14 @@ fn parse_request_full_query_response(
             request_id
         );
     }
-    let Some(task_id) = request.get("task_id").and_then(|v| v.as_u64()) else {
+    let Some(task_id) = json_u64_at_path(&parsed, &["request", "task_id"]) else {
         bail!("request-full response missing numeric request.task_id");
     };
     let Some(events) = parsed.get("events").and_then(|v| v.as_array()) else {
         bail!("request-full response missing events array");
     };
     for (idx, event) in events.iter().enumerate() {
-        let Some(event_task_id) = event.get("task_id").and_then(|v| v.as_u64()) else {
+        let Some(event_task_id) = json_u64_at_path(event, &["task_id"]) else {
             bail!(
                 "request-full response event {} missing numeric task_id",
                 idx
@@ -822,6 +937,7 @@ fn is_hidden_env_wrapper(c: char) -> bool {
         || matches!(
             c,
             '\u{00AD}'
+                | '\u{034F}'
                 | '\u{061C}'
                 | '\u{180E}'
                 | '\u{200B}'
@@ -888,6 +1004,8 @@ fn is_single_sided_env_quote(c: char) -> bool {
             | '〝'
             | '〞'
             | '〟'
+            | '｟'
+            | '｠'
     )
 }
 
@@ -951,7 +1069,7 @@ fn normalize_wallet_store_env(raw: &str) -> Option<&str> {
         || normalized.chars().any(|c| {
             c.is_whitespace()
                 || contains_hidden_or_control(c)
-                || matches!(c, '\\' | '＼' | '∕' | '⁄' | '／' | '⧵' | '⧸' | '⟋' | '⟍')
+                || matches!(c, '\\' | '∖' | '／' | '＼' | '﹨' | '∕' | '⁄' | '⧵' | '⧸' | '⧹' | '⟋' | '⟍')
         })
     {
         return None;
@@ -976,11 +1094,31 @@ fn wallet_store_path_is_safe(path: &Path) -> bool {
     path.is_absolute()
         && path.parent().is_some()
         && !rendered.contains("//")
+        && !rendered.ends_with(std::path::MAIN_SEPARATOR)
         && !path_text_has_dot_segments(path)
         && rendered.chars().all(|c| {
             !c.is_whitespace()
                 && !contains_hidden_or_control(c)
-                && !matches!(c, '\\' | '＼' | '∕' | '⁄' | '／' | '⧵' | '⧸' | '⟋' | '⟍')
+                && !matches!(
+                    c,
+                    '\\'
+                        | '∖'
+                        | '／'
+                        | '＼'
+                        | '﹨'
+                        | '∕'
+                        | '⁄'
+                        | '⧵'
+                        | '⧸'
+                        | '⧹'
+                        | '⟋'
+                        | '⟍'
+                        | '．'
+                        | '。'
+                        | '｡'
+                        | '﹒'
+                        | '․'
+                )
         })
         && !path
             .components()
@@ -1099,6 +1237,7 @@ fn contains_hidden_or_control(c: char) -> bool {
         || matches!(
             c,
             '\u{00AD}'
+                | '\u{034F}'
                 | '\u{061C}'
                 | '\u{180E}'
                 | '\u{200B}'
@@ -1166,6 +1305,10 @@ fn ensure_wallet_name(name: &str) -> Result<()> {
     let has_hidden_or_whitespace = name
         .chars()
         .any(|c| c.is_whitespace() || contains_hidden_or_control(c));
+    let has_non_ascii = !name.is_ascii();
+    let has_non_simple_ascii = name
+        .chars()
+        .any(|c| !c.is_ascii_alphanumeric() && c != '_' && c != '-');
     let uppercase = name.to_ascii_uppercase();
     let is_windows_reserved_device = matches!(
         uppercase.as_str(),
@@ -1194,6 +1337,7 @@ fn ensure_wallet_name(name: &str) -> Result<()> {
     );
 
     if name.is_empty()
+        || has_non_ascii
         || name == "."
         || name == ".."
         || name.starts_with('.')
@@ -1204,7 +1348,7 @@ fn ensure_wallet_name(name: &str) -> Result<()> {
         || name.contains(['‐', '‑', '‒', '–', '—', '―', '−', '﹣', '－'])
         || name.contains(['：', '﹕', '＝', '﹦', '｜', '￨', '＆', '﹠', '？', '﹖', '，', '；', '！', '﹗'])
         || name.contains(['＊', '﹡'])
-        || name.contains(['∕', '⁄', '／', '＼', '⧵', '⧸', '⟋', '⟍'])
+        || name.contains(['∕', '⁄', '／', '＼', '⧵', '⧸', '⧹', '⟋', '⟍'])
         || name.contains(['.', '．', '。', '｡', '﹒', '․'])
         || name.contains([
             '"', '\'', '`', '<', '>', '(', ')', '[', ']', '{', '}', ',', ';',
@@ -1212,13 +1356,14 @@ fn ensure_wallet_name(name: &str) -> Result<()> {
         || name.contains([
             '“', '”', '‘', '’', '«', '»', '‹', '›', '「', '」', '『', '』', '《', '》',
             '〈', '〉', '｢', '｣', '（', '）', '［', '］', '｛', '｝', '＜', '＞', '【', '】',
-            '〔', '〕', '〖', '〗', '〘', '〙', '〚', '〛', '〝', '〞', '〟',
+            '〔', '〕', '〖', '〗', '〘', '〙', '〚', '〛', '〝', '〞', '〟', '｟', '｠',
         ])
         || has_hidden_or_whitespace
+        || has_non_simple_ascii
         || is_windows_reserved_device
     {
         bail!(
-            "invalid wallet name '{}': use a simple local name without path separators or reserved device names",
+            "invalid wallet name '{}': use a simple ASCII local name with only letters, digits, '_' or '-' and no path separators or reserved device names",
             name
         );
     }
@@ -1404,6 +1549,7 @@ fn is_unsafe_sign_message_char(c: char) -> bool {
             c,
             '='
                 | '\u{00ad}'
+                | '\u{034f}'
                 | '\u{061c}'
                 | '\u{180e}'
                 | '\u{200b}'
@@ -1413,6 +1559,7 @@ fn is_unsafe_sign_message_char(c: char) -> bool {
                 | '\u{200f}'
                 | '\u{2060}'
                 | '\u{2061}'..='\u{2065}'
+                | '\u{206a}'..='\u{206f}'
                 | '\u{2028}'
                 | '\u{2029}'
                 | '\u{202a}'..='\u{202e}'
@@ -1433,17 +1580,48 @@ fn ensure_safe_sign_message(message: &str) -> Result<()> {
             "wallet sign message contains leading or trailing whitespace; refusing ambiguous offline-signing output"
         );
     }
+    if message.contains("  ") {
+        bail!(
+            "wallet sign message must not contain repeated interior spaces; refusing ambiguous offline-signing output"
+        );
+    }
     if message.chars().any(|c| {
         is_unsafe_sign_message_char(c)
             || !c.is_ascii()
             || (!c.is_ascii_graphic() && c != ' ')
             || matches!(
                 c,
-                '=' | ':' | ';' | ',' | '|' | '"' | '\'' | '`' | '<' | '>' | '(' | ')' | '[' | ']' | '{' | '}'
+                '='
+                    | ':'
+                    | ';'
+                    | ','
+                    | '|'
+                    | '"'
+                    | '\''
+                    | '`'
+                    | '<'
+                    | '>'
+                    | '('
+                    | ')'
+                    | '['
+                    | ']'
+                    | '{'
+                    | '}'
+                    | '/'
+                    | '\\'
+                    | '∕'
+                    | '⁄'
+                    | '／'
+                    | '＼'
+                    | '⧵'
+                    | '⧸'
+                    | '⧹'
+                    | '⟋'
+                    | '⟍'
             )
     }) {
         bail!(
-            "wallet sign message must be single-line ASCII printable text with only interior ASCII spaces and no delimiter or wrapper punctuation; refusing unsafe offline-signing output"
+            "wallet sign message must be single-line ASCII printable text with only single interior ASCII spaces and no delimiter, wrapper punctuation, or path separators; refusing unsafe offline-signing output"
         );
     }
     Ok(())
@@ -1588,20 +1766,20 @@ fn json_value_tx_hash(v: &serde_json::Value) -> Option<String> {
     let direct = [
         "tx_hash",
         "txhash",
+        "tx-hash",
         "txHash",
         "transaction_hash",
+        "transaction-hash",
         "transactionHash",
     ];
-    for key in direct {
-        if let Some(h) = v.get(key).and_then(|x| x.as_str()) {
-            if let Some(normalized) = normalize_tx_hash(h) {
-                return Some(normalized);
-            }
+    if let Some(h) = json_get_alias(v, &direct).and_then(|x| x.as_str()) {
+        if let Some(normalized) = normalize_tx_hash(h) {
+            return Some(normalized);
         }
     }
 
     for key in ["result", "tx_response", "txResponse", "response", "data"] {
-        if let Some(found) = v.get(key).and_then(json_value_tx_hash) {
+        if let Some(found) = json_get_alias(v, &[key]).and_then(json_value_tx_hash) {
             return Some(found);
         }
     }
@@ -1776,6 +1954,14 @@ fn trim_kv_key_noise(raw: &str) -> &str {
     })
 }
 
+fn canonical_kv_key(key: &str) -> String {
+    trim_kv_key_noise(key)
+        .chars()
+        .filter(|c| c.is_ascii_alphanumeric())
+        .map(|c| c.to_ascii_lowercase())
+        .collect()
+}
+
 fn parse_kv_line(line: &str) -> Option<(String, String)> {
     let trimmed = line.trim();
     let (key, value) = if let Some((k, v)) = trimmed.split_once('=') {
@@ -1873,7 +2059,7 @@ fn parse_kv_line(line: &str) -> Option<(String, String)> {
         return None;
     }
 
-    Some((key.to_ascii_lowercase(), value.to_string()))
+    Some((canonical_kv_key(key), value.to_string()))
 }
 
 fn parse_inline_kv_token(token: &str) -> Option<(String, String)> {
@@ -1955,7 +2141,7 @@ fn parse_inline_kv_token(token: &str) -> Option<(String, String)> {
     }
 
     Some((
-        key.to_ascii_lowercase(),
+        canonical_kv_key(key),
         value
             .trim_matches(|c: char| {
                 c.is_whitespace()
@@ -2219,6 +2405,24 @@ fn is_terminal_local_tx_status(status: &str) -> bool {
     matches!(normalize_tx_status(status).as_deref(), Some("committed" | "fail"))
 }
 
+fn canonical_json_key(key: &str) -> String {
+    key.chars()
+        .filter(|c| c.is_ascii_alphanumeric())
+        .map(|c| c.to_ascii_lowercase())
+        .collect()
+}
+
+fn json_get_alias<'a>(value: &'a serde_json::Value, aliases: &[&str]) -> Option<&'a serde_json::Value> {
+    let object = value.as_object()?;
+    object.iter().find_map(|(key, value)| {
+        let canonical = canonical_json_key(key);
+        aliases
+            .iter()
+            .any(|alias| canonical == canonical_json_key(alias))
+            .then_some(value)
+    })
+}
+
 fn json_u64_at_path(value: &serde_json::Value, path: &[&str]) -> Option<u64> {
     let mut current = value;
     for key in path {
@@ -2251,8 +2455,7 @@ fn infer_json_tx_status(value: &serde_json::Value) -> Option<String> {
 
 fn infer_kv_tx_status(key: &str, value: &str) -> Option<String> {
     match key {
-        "code" | "tx_code" | "txcode" | "transaction_code" | "transactioncode"
-        | "deliver_tx_code" | "delivertxcode" | "check_tx_code" | "checktxcode" => {
+        "code" | "txcode" | "transactioncode" | "delivertxcode" | "checktxcode" => {
             let cleaned = value
                 .trim()
                 .trim_matches('"')
@@ -2268,71 +2471,62 @@ fn infer_kv_tx_status(key: &str, value: &str) -> Option<String> {
 
 fn parse_tx_query_response(raw: &str, requested_tx_hash: &str) -> Result<TxQueryResponse> {
     if let Ok(v) = serde_json::from_str::<serde_json::Value>(raw) {
-        let payload = v.get("result").unwrap_or(&v);
-        let nested_tx_response = payload
-            .get("tx_response")
-            .or_else(|| payload.get("txResponse"))
-            .or_else(|| payload.get("response").and_then(|r| r.get("tx_response")))
-            .or_else(|| payload.get("response").and_then(|r| r.get("txResponse")));
-        let nested_response_data = payload
-            .get("response")
-            .and_then(|r| r.get("data"))
-            .or_else(|| payload.get("responseData"));
-        let primary = nested_tx_response
-            .or(nested_response_data)
-            .unwrap_or(payload);
-        let raw_tx_hash = primary
-            .get("tx_hash")
-            .or_else(|| primary.get("txhash"))
-            .or_else(|| primary.get("txHash"))
-            .or_else(|| primary.get("transaction_hash"))
-            .or_else(|| primary.get("transactionHash"))
-            .or_else(|| payload.get("tx_hash"))
-            .or_else(|| payload.get("txhash"))
-            .or_else(|| payload.get("txHash"))
-            .or_else(|| payload.get("transaction_hash"))
-            .or_else(|| payload.get("transactionHash"))
-            .and_then(|x| x.as_str());
+        let payload = json_get_alias(&v, &["result"]).unwrap_or(&v);
+        let response = json_get_alias(payload, &["response"]);
+        let nested_tx_response = json_get_alias(payload, &["tx_response", "txResponse"])
+            .or_else(|| response.and_then(|r| json_get_alias(r, &["tx_response", "txResponse"])));
+        let nested_response_data = response
+            .and_then(|r| json_get_alias(r, &["data"]))
+            .or_else(|| json_get_alias(payload, &["responseData"]));
+        let primary = nested_tx_response.or(nested_response_data).unwrap_or(payload);
+        let tx_hash_aliases = [
+            "tx_hash",
+            "txhash",
+            "tx-hash",
+            "txHash",
+            "transaction_hash",
+            "transaction-hash",
+            "transactionHash",
+        ];
+        let raw_tx_hash = json_get_alias(primary, &tx_hash_aliases)
+            .or_else(|| response.and_then(|r| json_get_alias(r, &tx_hash_aliases)))
+            .or_else(|| json_get_alias(payload, &tx_hash_aliases));
         let tx_hash = match raw_tx_hash {
-            Some(raw_hash) => normalize_tx_hash(raw_hash)
+            Some(raw_hash) => normalize_tx_hash(
+                raw_hash
+                    .as_str()
+                    .ok_or_else(|| anyhow!("invalid tx_hash field in tx query response"))?,
+            )
                 .ok_or_else(|| anyhow!("invalid tx_hash field in tx query response"))?,
             None => normalize_tx_hash(requested_tx_hash)
                 .unwrap_or_else(|| requested_tx_hash.to_string()),
         };
-        let status = primary
-            .get("status")
-            .or_else(|| primary.get("tx_status"))
-            .or_else(|| primary.get("txStatus"))
-            .or_else(|| primary.get("transaction_status"))
-            .or_else(|| primary.get("transactionStatus"))
-            .or_else(|| primary.get("state"))
-            .or_else(|| primary.get("tx_state"))
-            .or_else(|| primary.get("txState"))
-            .or_else(|| primary.get("transaction_state"))
-            .or_else(|| primary.get("transactionState"))
-            .or_else(|| payload.get("status"))
-            .or_else(|| payload.get("tx_status"))
-            .or_else(|| payload.get("txStatus"))
-            .or_else(|| payload.get("transaction_status"))
-            .or_else(|| payload.get("transactionStatus"))
-            .or_else(|| payload.get("state"))
-            .or_else(|| payload.get("tx_state"))
-            .or_else(|| payload.get("txState"))
-            .or_else(|| payload.get("transaction_state"))
-            .or_else(|| payload.get("transactionState"))
+        let status_aliases = [
+            "status",
+            "tx_status",
+            "tx-status",
+            "txStatus",
+            "transaction_status",
+            "transaction-status",
+            "transactionStatus",
+            "state",
+            "tx_state",
+            "tx-state",
+            "txState",
+            "transaction_state",
+            "transaction-state",
+            "transactionState",
+        ];
+        let status = json_get_alias(primary, &status_aliases)
+            .or_else(|| response.and_then(|r| json_get_alias(r, &status_aliases)))
+            .or_else(|| json_get_alias(payload, &status_aliases))
             .and_then(normalize_json_status)
             .or_else(|| infer_json_tx_status(primary))
             .or_else(|| infer_json_tx_status(payload))
             .ok_or_else(|| anyhow!("missing/invalid status field in tx query response"))?;
-        let error = primary
-            .get("error")
-            .or_else(|| primary.get("raw_log"))
-            .or_else(|| primary.get("rawLog"))
-            .or_else(|| primary.get("log"))
-            .or_else(|| payload.get("error"))
-            .or_else(|| payload.get("raw_log"))
-            .or_else(|| payload.get("rawLog"))
-            .or_else(|| payload.get("log"))
+        let error = json_get_alias(primary, &["error", "raw_log", "raw-log", "rawLog", "log"])
+            .or_else(|| response.and_then(|r| json_get_alias(r, &["error", "raw_log", "raw-log", "rawLog", "log"])))
+            .or_else(|| json_get_alias(payload, &["error", "raw_log", "raw-log", "rawLog", "log"]))
             .and_then(normalize_json_error);
         return Ok(TxQueryResponse {
             tx_hash,
@@ -2357,25 +2551,23 @@ fn parse_tx_query_response(raw: &str, requested_tx_hash: &str) -> Result<TxQuery
 
         for (key, value) in pairs {
             match key.as_str() {
-                "tx_hash" | "txhash" | "tx-hash" | "transaction_hash" | "transactionhash"
-                | "transaction-hash" => match normalize_tx_hash(&value) {
+                "txhash" | "transactionhash" => match normalize_tx_hash(&value) {
                     Some(normalized) => tx_hash = Some(normalized),
                     None => bail!("invalid tx_hash field in tx query response"),
                 },
-                "status" | "tx_status" | "txstatus" | "transaction_status"
-                | "transactionstatus" | "state" | "tx_state" | "txstate" | "transaction_state"
+                "status" | "txstatus" | "transactionstatus" | "state" | "txstate"
                 | "transactionstate" => {
                     if let Some(normalized) = normalize_tx_status(&value) {
                         status = Some(normalized);
                     }
                 }
-                "code" | "tx_code" | "txcode" | "transaction_code" | "transactioncode"
-                | "deliver_tx_code" | "delivertxcode" | "check_tx_code" | "checktxcode" => {
+                "code" | "txcode" | "transactioncode" | "delivertxcode"
+                | "checktxcode" => {
                     if status.is_none() {
                         status = infer_kv_tx_status(&key, &value);
                     }
                 }
-                "error" | "raw_log" | "rawlog" | "log" => {
+                "error" | "rawlog" | "log" => {
                     // Manual quote trimming since parse_kv_line no longer does it aggressively
                     let cleaned = value.trim_matches(|c| matches!(c, '"' | '\'' | '`'));
                     if !is_nullish_kv_value(cleaned) {
@@ -2680,13 +2872,23 @@ fn format_transaction_hash_hyphen_alias_line(tx_hash: &str) -> String {
     format!("transaction-hash={}", tx_hash)
 }
 
+fn format_transaction_hash_spaced_alias_line(tx_hash: &str) -> String {
+    format!("transaction hash={}", tx_hash)
+}
+
+fn format_tx_hash_spaced_alias_line(tx_hash: &str) -> String {
+    format!("tx hash={}", tx_hash)
+}
+
 fn emit_tx_hash_lines(tx_hash: &str) {
     println!("{}", format_tx_hash_line(tx_hash));
     println!("{}", format_tx_hash_alias_line(tx_hash));
     println!("{}", format_transaction_hash_alias_line(tx_hash));
     println!("{}", format_transaction_hash_camel_alias_line(tx_hash));
     println!("{}", format_tx_hash_hyphen_alias_line(tx_hash));
+    println!("{}", format_tx_hash_spaced_alias_line(tx_hash));
     println!("{}", format_transaction_hash_hyphen_alias_line(tx_hash));
+    println!("{}", format_transaction_hash_spaced_alias_line(tx_hash));
 }
 
 fn emit_pending_tx_hash(tx_hash: &str) -> Result<()> {
@@ -2877,8 +3079,8 @@ fn main() -> Result<()> {
                 store,
             } => {
                 ensure_sign_message(&message)?;
-                let store = resolve_wallet_store(store)?;
                 ensure_safe_sign_message(&message)?;
+                let store = resolve_wallet_store(store)?;
                 let priv_hex = read_key(&store, &name)?;
                 let sig = hash(&["trnm-sign-v1", &priv_hex, &message]);
                 let addr = derive_address_from_priv_hex(&priv_hex)?;
@@ -2904,16 +3106,8 @@ fn main() -> Result<()> {
                     cmd = tpl(cmd, "address", &addr);
                     cmd = tpl(cmd, "denom", &denom);
                     let raw = run_template_raw(&cmd)?;
-                    if let Ok(resp) = serde_json::from_str::<BalanceQueryResponse>(&raw) {
-                        println!("{}", serde_json::to_string_pretty(&resp)?);
-                    } else {
-                        let out = BalanceQueryResponse {
-                            address: addr,
-                            balance: raw.trim().to_string(),
-                            denom,
-                        };
-                        println!("{}", serde_json::to_string_pretty(&out)?);
-                    }
+                    let out = parse_balance_query_response(&raw, &addr, &denom)?;
+                    println!("{}", serde_json::to_string_pretty(&out)?);
                 } else {
                     let seeded = hash(&["balance", &addr, &denom]);
                     let pseudo = u128::from_str_radix(&seeded[..16], 16).unwrap_or(0) % 1_000_000;
@@ -2967,6 +3161,109 @@ mod tests {
 
     fn canonical_temp_root() -> PathBuf {
         std::fs::canonicalize(std::env::temp_dir()).unwrap_or_else(|_| std::env::temp_dir())
+    }
+
+    #[test]
+    fn query_parsers_accept_stringified_task_ids_in_task_response() {
+        let parsed = parse_task_query_response(r#"{"task_id":"42"}"#, 42).unwrap();
+        assert_eq!(json_u64_at_path(&parsed, &["task_id"]), Some(42));
+    }
+
+    #[test]
+    fn query_parsers_accept_stringified_task_ids_in_events_response() {
+        let parsed = parse_events_query_response(r#"[{"task_id":"42","event_type":"accepted"}]"#, 42)
+            .unwrap();
+        assert_eq!(json_u64_at_path(&parsed[0], &["task_id"]), Some(42));
+    }
+
+    #[test]
+    fn query_parsers_accept_stringified_task_ids_in_request_full_response() {
+        let parsed = parse_request_full_query_response(
+            r#"{"request":{"request_id":"req-42","task_id":"42"},"events":[{"task_id":"42"}]}"#,
+            "req-42",
+        )
+        .unwrap();
+        assert_eq!(json_u64_at_path(&parsed, &["request", "task_id"]), Some(42));
+        assert_eq!(json_u64_at_path(&parsed["events"][0], &["task_id"]), Some(42));
+    }
+
+    #[test]
+    fn query_parsers_accept_scalar_request_ids_in_request_full_response() {
+        let parsed = parse_request_full_query_response(
+            r#"{"request":{"request_id":42,"task_id":42},"events":[{"task_id":42}]}"#,
+            "42",
+        )
+        .unwrap();
+        assert_eq!(parsed["request"]["request_id"], serde_json::json!(42));
+        assert_eq!(json_u64_at_path(&parsed, &["request", "task_id"]), Some(42));
+        assert_eq!(json_u64_at_path(&parsed["events"][0], &["task_id"]), Some(42));
+    }
+
+    #[test]
+    fn balance_query_parser_accepts_wrapped_partial_json() {
+        let parsed = parse_balance_query_response(
+            r#"{"result":{"balance":"42","denom":"utrnm"}}"#,
+            "trnm1requested",
+            "trnm",
+        )
+        .unwrap();
+        assert_eq!(
+            parsed,
+            BalanceQueryResponse {
+                address: "trnm1requested".into(),
+                balance: "42".into(),
+                denom: "utrnm".into(),
+            }
+        );
+    }
+
+    #[test]
+    fn balance_query_parser_accepts_scalar_json_balance() {
+        let parsed = parse_balance_query_response("12345\n", "trnm1requested", "trnm").unwrap();
+        assert_eq!(
+            parsed,
+            BalanceQueryResponse {
+                address: "trnm1requested".into(),
+                balance: "12345".into(),
+                denom: "trnm".into(),
+            }
+        );
+    }
+
+    #[test]
+    fn balance_query_parser_accepts_nested_balance_amount_object() {
+        let parsed = parse_balance_query_response(
+            r#"{"response":{"data":{"address":"trnm1adapter","balance":{"amount":"77","denom":"utrnm"}}}}"#,
+            "trnm1requested",
+            "trnm",
+        )
+        .unwrap();
+        assert_eq!(
+            parsed,
+            BalanceQueryResponse {
+                address: "trnm1adapter".into(),
+                balance: "77".into(),
+                denom: "utrnm".into(),
+            }
+        );
+    }
+
+    #[test]
+    fn balance_query_parser_accepts_kv_text_output() {
+        let parsed = parse_balance_query_response(
+            "address=trnm1adapter\nbalance=77\ndenom=utrnm\n",
+            "trnm1requested",
+            "trnm",
+        )
+        .unwrap();
+        assert_eq!(
+            parsed,
+            BalanceQueryResponse {
+                address: "trnm1adapter".into(),
+                balance: "77".into(),
+                denom: "utrnm".into(),
+            }
+        );
     }
 
     #[test]
@@ -3051,9 +3348,18 @@ mod tests {
         assert_eq!(normalize_wallet_store_env("\u{206a}《/tmp/trnm-wallets》\u{206f}"), Some("/tmp/trnm-wallets"));
         assert_eq!(normalize_wallet_store_env("〈/tmp/trnm-wallets〉"), Some("/tmp/trnm-wallets"));
         assert_eq!(normalize_wallet_store_env("⟨/tmp/trnm-wallets⟩"), Some("/tmp/trnm-wallets"));
+        assert_eq!(normalize_wallet_store_env("｟/tmp/trnm-wallets｠"), Some("/tmp/trnm-wallets"));
         assert_eq!(normalize_wallet_store_env("(/tmp/trnm-wallets)"), Some("/tmp/trnm-wallets"));
         assert_eq!(normalize_wallet_store_env("[/tmp/trnm-wallets]"), Some("/tmp/trnm-wallets"));
         assert_eq!(normalize_wallet_store_env("{/tmp/trnm-wallets}"), Some("/tmp/trnm-wallets"));
+        assert_eq!(
+            normalize_wallet_store_env(" ({[/tmp/trnm-wallets]}) "),
+            Some("/tmp/trnm-wallets")
+        );
+        assert_eq!(
+            normalize_wallet_store_env("\u{2068}({/tmp/trnm-wallets})\u{2069}"),
+            Some("/tmp/trnm-wallets")
+        );
         assert_eq!(
             normalize_wallet_store_env("【『 /tmp/trnm-wallets 』】"),
             Some("/tmp/trnm-wallets")
@@ -3079,7 +3385,10 @@ mod tests {
         assert_eq!(normalize_wallet_store_env("/tmp/trnm\n-wallets"), None);
         assert_eq!(normalize_wallet_store_env("/tmp/trnm\u{200b}-wallets"), None);
         assert_eq!(normalize_wallet_store_env("/tmp/trnm\u{202e}wallets"), None);
+        assert_eq!(normalize_wallet_store_env("/tmp/trnm∖wallets"), None);
+        assert_eq!(normalize_wallet_store_env("/tmp/trnm﹨wallets"), None);
         assert_eq!(normalize_wallet_store_env("/tmp/trnm⧸wallets"), None);
+        assert_eq!(normalize_wallet_store_env("/tmp/trnm⧹wallets"), None);
     }
 
     #[test]
@@ -3119,6 +3428,12 @@ mod tests {
         std::env::set_var("TRNM_WALLET_STORE", "/tmp／trnm-wallets");
         assert_eq!(default_wallet_store(), home.join(".trnm").join("wallets"));
 
+        std::env::set_var("TRNM_WALLET_STORE", "/tmp∖trnm-wallets");
+        assert_eq!(default_wallet_store(), home.join(".trnm").join("wallets"));
+
+        std::env::set_var("TRNM_WALLET_STORE", "/tmp﹨trnm-wallets");
+        assert_eq!(default_wallet_store(), home.join(".trnm").join("wallets"));
+
         std::env::set_var("TRNM_WALLET_STORE", "/tmp⧸trnm-wallets");
         assert_eq!(default_wallet_store(), home.join(".trnm").join("wallets"));
 
@@ -3144,6 +3459,9 @@ mod tests {
             home.join(".trnm").join("wallets")
         };
         assert_eq!(default_wallet_store(), expected_trimmed_absolute);
+
+        std::env::set_var("TRNM_WALLET_STORE", "/tmp/trnm-wallets/");
+        assert_eq!(default_wallet_store(), home.join(".trnm").join("wallets"));
 
         match original_store {
             Some(value) => std::env::set_var("TRNM_WALLET_STORE", value),
@@ -3240,6 +3558,9 @@ mod tests {
             "'/'",
             "《/》",
             " //tmp/trnm-wallets ",
+            "/tmp/trnm-wallets/",
+            "/tmp/trnm-wallets/․/keys",
+            "/tmp/trnm-wallets/﹒/keys",
         ] {
             std::env::set_var("TRNM_WALLET_STORE", invalid_env);
             let err = resolve_wallet_store(None).unwrap_err();
@@ -3259,6 +3580,15 @@ mod tests {
                 "unexpected error for {empty_invalid_env:?}: {err}"
             );
         }
+
+        std::env::set_var("TRNM_WALLET_STORE", "/tmp/trnm⧹wallets");
+        let confusable_separator_err = resolve_wallet_store(None).unwrap_err();
+        assert!(
+            confusable_separator_err
+                .to_string()
+                .contains("TRNM_WALLET_STORE is set but invalid; refusing ambiguous keystore path fallback"),
+            "unexpected error for confusable separator env store: {confusable_separator_err}"
+        );
 
         let explicit_root = std::env::temp_dir()
             .canonicalize()
@@ -3287,6 +3617,11 @@ mod tests {
             PathBuf::from(" /tmp/trnm-wallets"),
             PathBuf::from("/tmp/trnm\u{200b}wallets"),
             PathBuf::from("/tmp/《trnm-wallets》"),
+            PathBuf::from("/tmp/｟trnm-wallets｠"),
+            PathBuf::from("/tmp/trnm⧹wallets"),
+            PathBuf::from("/tmp/trnm-wallets/"),
+            PathBuf::from("/tmp/trnm-wallets/․/keys"),
+            PathBuf::from("/tmp/trnm-wallets/﹒/keys"),
         ] {
             let err = resolve_wallet_store(Some(invalid_explicit.clone())).unwrap_err();
             assert!(
@@ -3490,6 +3825,19 @@ mod tests {
             "unexpected error: {hidden_read_err}"
         );
 
+        let dot_confusable_write_err = write_key(
+            std::path::Path::new("/tmp/trnm-wallets/․/keys"),
+            "alice",
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        )
+        .unwrap_err();
+        assert!(
+            dot_confusable_write_err
+                .to_string()
+                .contains("must be an absolute normalized path"),
+            "unexpected error: {dot_confusable_write_err}"
+        );
+
         let backslash_write_err = write_key(
             std::path::Path::new("/tmp\\trnm-wallets"),
             "alice",
@@ -3523,6 +3871,15 @@ mod tests {
                 .to_string()
                 .contains("must be an absolute normalized path"),
             "unexpected error: {big_solidus_write_err}"
+        );
+
+        let big_reverse_solidus_read_err =
+            read_key(std::path::Path::new("/tmp⧹trnm-wallets"), "alice").unwrap_err();
+        assert!(
+            big_reverse_solidus_read_err
+                .to_string()
+                .contains("must be an absolute normalized path"),
+            "unexpected error: {big_reverse_solidus_read_err}"
         );
 
         let duplicate_slash_write_err = write_key(
@@ -3643,6 +4000,9 @@ mod tests {
             "alice，",
             "alice;",
             "alice；",
+            "alice+backup",
+            "alice@prod",
+            "alice~1",
             "alice\n",
             "alice bob",
             " alice",
@@ -3658,6 +4018,16 @@ mod tests {
             "alice\u{2066}bob",
             "alice\u{2069}bob",
             "alice\u{0007}bob",
+            "con",
+            "PRN",
+            "aux",
+            "nul",
+            "com1",
+            "CoM9",
+            "lpt1",
+            "LPT9",
+            "аlice",
+            "alice猫",
         ] {
             let err = ensure_wallet_name(bad).unwrap_err();
             assert!(
@@ -3665,6 +4035,33 @@ mod tests {
                 "unexpected error for {bad:?}: {err}"
             );
         }
+
+        ensure_wallet_name("alice").unwrap();
+        ensure_wallet_name("alice_01").unwrap();
+        ensure_wallet_name("alice-01").unwrap();
+        ensure_wallet_name("ALICE01").unwrap();
+    }
+
+    #[test]
+    fn wallet_name_error_mentions_ascii_requirement() {
+        let err = ensure_wallet_name("аlice").unwrap_err();
+        assert!(
+            err.to_string().contains("ASCII local name"),
+            "unexpected error: {err}"
+        );
+        assert!(
+            err.to_string().contains("only letters, digits, '_' or '-'"),
+            "unexpected error: {err}"
+        );
+    }
+
+    #[test]
+    fn wallet_name_error_mentions_simple_ascii_charset() {
+        let err = ensure_wallet_name("alice+backup").unwrap_err();
+        assert!(
+            err.to_string().contains("only letters, digits, '_' or '-'"),
+            "unexpected error: {err}"
+        );
     }
 
     #[test]
@@ -4143,8 +4540,16 @@ mod tests {
             "tx-hash=0xabc123".to_string()
         );
         assert_eq!(
+            format_tx_hash_spaced_alias_line("0xabc123"),
+            "tx hash=0xabc123".to_string()
+        );
+        assert_eq!(
             format_transaction_hash_hyphen_alias_line("0xabc123"),
             "transaction-hash=0xabc123".to_string()
+        );
+        assert_eq!(
+            format_transaction_hash_spaced_alias_line("0xabc123"),
+            "transaction hash=0xabc123".to_string()
         );
         assert_eq!(
             extract_tx_hash(&format_tx_hash_line("0xabc123")).as_deref(),
@@ -4167,7 +4572,15 @@ mod tests {
             Some("0xabc123")
         );
         assert_eq!(
+            extract_tx_hash(&format_tx_hash_spaced_alias_line("0xabc123")).as_deref(),
+            Some("0xabc123")
+        );
+        assert_eq!(
             extract_tx_hash(&format_transaction_hash_hyphen_alias_line("0xabc123")).as_deref(),
+            Some("0xabc123")
+        );
+        assert_eq!(
+            extract_tx_hash(&format_transaction_hash_spaced_alias_line("0xabc123")).as_deref(),
             Some("0xabc123")
         );
     }
@@ -4245,6 +4658,27 @@ mod tests {
         assert_eq!(
             extract_tx_hash("{\"txHash\":\"ABCDEF012345\",\"status\":\"ok\"}").as_deref(),
             Some("abcdef012345")
+        );
+        assert_eq!(
+            extract_tx_hash("{\"tx-hash\":\"0xFEED1234\",\"status\":\"ok\"}").as_deref(),
+            Some("0xfeed1234")
+        );
+        assert_eq!(
+            extract_tx_hash("{\"transaction-hash\":\"BEEF5678\",\"status\":\"ok\"}").as_deref(),
+            Some("beef5678")
+        );
+    }
+
+    #[test]
+    fn extract_tx_hash_accepts_case_insensitive_json_key_aliases() {
+        assert_eq!(
+            extract_tx_hash("{\"TX_HASH\":\"0xFEED1234\",\"status\":\"ok\"}").as_deref(),
+            Some("0xfeed1234")
+        );
+        assert_eq!(
+            extract_tx_hash("{\"result\":{\"TX_RESPONSE\":{\"Transaction-Hash\":\"BEEF5678\"}}}")
+                .as_deref(),
+            Some("beef5678")
         );
     }
 
@@ -4441,6 +4875,15 @@ mod tests {
         let parsed_state_alias = parse_tx_query_response(state_alias, "0xfallback").unwrap();
         assert_eq!(parsed_state_alias.tx_hash, "0xeee");
         assert_eq!(parsed_state_alias.status, "committed");
+    }
+
+    #[test]
+    fn tx_query_parse_json_accepts_case_insensitive_response_wrapped_hyphenated_keys() {
+        let json = "{\"RESULT\":{\"RESPONSE\":{\"DATA\":{\"TX-HASH\":\"0xABCD\"},\"TX-STATUS\":\"SUCCESS\",\"RAW-LOG\":\"NULL\"}}}";
+        let parsed = parse_tx_query_response(json, "0xfallback").unwrap();
+        assert_eq!(parsed.tx_hash, "0xabcd");
+        assert_eq!(parsed.status, "committed");
+        assert_eq!(parsed.error, None);
     }
 
     #[test]
@@ -5363,6 +5806,15 @@ mod tests {
     }
 
     #[test]
+    fn ensure_safe_sign_message_rejects_repeated_interior_spaces() {
+        let err = ensure_safe_sign_message("rotate  signer to cold-key slot b").unwrap_err();
+        assert!(
+            err.to_string().contains("repeated interior spaces"),
+            "unexpected: {err}"
+        );
+    }
+
+    #[test]
     fn ensure_safe_sign_message_rejects_non_ascii_whitespace_text() {
         let err = ensure_safe_sign_message("rotate signer\u{00a0}to cold-key slot b").unwrap_err();
         assert!(
@@ -5542,6 +5994,26 @@ mod tests {
                 "unexpected for {bad:?}: {err}"
             );
         }
+    }
+
+    #[test]
+    fn ensure_safe_sign_message_rejects_path_separator_text() {
+        for bad in ["approve /tmp/offline-payload", "approve C:\\offline\\payload"] {
+            let err = ensure_safe_sign_message(bad).unwrap_err();
+            assert!(
+                err.to_string().contains("path separators"),
+                "unexpected for {bad:?}: {err}"
+            );
+        }
+    }
+
+    #[test]
+    fn ensure_safe_sign_message_rejects_unicode_path_separator_homoglyph_text() {
+        let err = ensure_safe_sign_message("approve tmp∕offline∕payload").unwrap_err();
+        assert!(
+            err.to_string().contains("ASCII printable text"),
+            "unexpected: {err}"
+        );
     }
 
     #[test]
@@ -5919,13 +6391,14 @@ mod tests {
         };
 
         let emitted = format!(
-            "{}\n{}\n{}\n{}\n{}\n{}\nstatus={}\n",
+            "{}\n{}\n{}\n{}\n{}\n{}\n{}\nstatus={}\n",
             format_tx_hash_line(&query.tx_hash),
             format_tx_hash_alias_line(&query.tx_hash),
             format_transaction_hash_alias_line(&query.tx_hash),
             format_transaction_hash_camel_alias_line(&query.tx_hash),
             format_tx_hash_hyphen_alias_line(&query.tx_hash),
             format_transaction_hash_hyphen_alias_line(&query.tx_hash),
+            format_transaction_hash_spaced_alias_line(&query.tx_hash),
             query.status
         );
 
@@ -5935,6 +6408,7 @@ mod tests {
         assert!(emitted.contains("transactionHash=0xabc123"));
         assert!(emitted.contains("tx-hash=0xabc123"));
         assert!(emitted.contains("transaction-hash=0xabc123"));
+        assert!(emitted.contains("transaction hash=0xabc123"));
         assert_eq!(extract_tx_hash(&emitted).as_deref(), Some("0xabc123"));
     }
 }

@@ -14,6 +14,13 @@ run_test() {
   cargo test -q -p "$pkg" "$test_name"
 }
 
+run_integration_test() {
+  local pkg="$1"
+  local target="$2"
+  echo "[gate][run] cargo test -q -p ${pkg} --test ${target}"
+  cargo test -q -p "$pkg" --test "$target"
+}
+
 start_ts="$(date +%s)"
 
 echo "[gate] tokenomics regression gate (R1-R24 core) start (script: run_tokenomics_r1_r14_regression_gate.sh)"
@@ -33,6 +40,12 @@ run_test trnm-pouw resolve_success_gives_challenger_more_than_bond_refund_baseli
 # R5: dynamic challenge bond floor anti-spam
 run_test trnm-pouw challenge_rejects_spam_like_low_bond_under_dynamic_bounty_floor
 run_test trnm-pouw challenge_dynamic_floor_boundary_ceil_passes_and_fails
+
+# R5b/R5c/R5d: admission hard-stop + sponsor boundary + drain-only duplicate retention
+run_integration_test trnm-mempool lane_zero_capacity_public_contract_bound
+run_integration_test trnm-mempool lane_borrowed_last_slot_backpressured_retry_reuse_bound
+run_integration_test trnm-mempool lane_qos_snapshot_reserve_only_drain_only_duplicate_retention_bound
+run_integration_test trnm-mempool lane_reserve_clamp_borrow_policy_bound
 
 # R6/R14: governance timelock + sensitive-key rate-limit (incl. resolve_authority)
 run_test trnm-state governance_sensitive_update_rejected_before_timelock_expiry

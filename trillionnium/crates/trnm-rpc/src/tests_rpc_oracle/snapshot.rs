@@ -333,7 +333,7 @@ fn canonical_source_cardinality(sources: &[Value]) -> u32 {
     let mut unique = HashSet::new();
     for source in sources {
         let Some(source_id) = source.get("source_id").and_then(Value::as_str) else {
-            return sources.len() as u32;
+            continue;
         };
         let canonical = source_id.trim().to_ascii_lowercase();
         if canonical.is_empty() {
@@ -371,6 +371,15 @@ pub(crate) fn oracle_validate_snapshot_response(
 
     if source_count == 0 {
         return Err("snapshot has no sources".to_string());
+    }
+    if snapshot_val.sample_count == 0 {
+        return Err("invalid snapshot: sample_count must be > 0".to_string());
+    }
+    if snapshot_val.sample_count < source_count {
+        return Err(format!(
+            "inconsistent sample count: sources={}, sample_count={}",
+            source_count, snapshot_val.sample_count
+        ));
     }
 
     let mut outcome = "accepted";
@@ -444,21 +453,15 @@ fn base_prometheus_text() -> String {
     "trnm_rpc_service_up{service=\"trnm-rpc\"} 1\ntrnm_rpc_service_info{service=\"trnm-rpc\",version=\"1\"} 1\n".to_string()
 }
 
-fn metrics_from_target(target: &str) -> String {
-    let req = parse_oracle_validate_snapshot_target(target).ok();
+fn metrics_from_target(target: &str) -> Result<String, String> {
+    let req = parse_oracle_validate_snapshot_target(target)?;
     let mut text = base_prometheus_text();
-    let Some(req) = req else {
-        return text;
-    };
 
     let report = oracle_validate_snapshot_response(
         Path::new(&req.snapshot),
         Path::new(&req.policy),
         req.now_ts_ms.unwrap_or(0),
-    );
-    let Ok(report) = report else {
-        return text;
-    };
+    )?;
 
     let outcome = report.observation.outcome.as_str();
     let out_count = if report.ok { 1 } else { 0 };
@@ -478,7 +481,7 @@ fn metrics_from_target(target: &str) -> String {
         "oracle_sample_count{{feed_id=\"{}\",outcome=\"{}\"}} {}\n",
         report.observation.feed_id, outcome, report.metrics.sample_count
     ));
-    text
+    Ok(text)
 }
 
 fn json_response<T: Serialize>(value: &T) -> String {
@@ -524,10 +527,10 @@ pub(crate) fn http_service_response_for_target(target: Option<&str>) -> String {
             );
         }
 
-        match parse_oracle_validate_snapshot_target(target) {
-            Ok(_) => format!(
+        match metrics_from_target(target) {
+            Ok(metrics) => format!(
                 "HTTP/1.1 200 OK\r\nContent-Type: text/plain; version=0.0.4; charset=utf-8\r\n\r\n{}",
-                metrics_from_target(target)
+                metrics
             ),
             Err(err) => error_response(&err),
         }

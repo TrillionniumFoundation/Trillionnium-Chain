@@ -11,9 +11,11 @@ DURABLE_TEMPLATE_PATH="trillionnium/docs/release/TRNM_DURABLE_READ_SERVICE_HANDO
 SCAFFOLD_RUNBOOK_PATH="trillionnium/docs/runbooks/explorer-service-scaffold.md"
 RELEASE_READINESS_PATH="RELEASE_READINESS.md"
 GO_NO_GO_PANEL_PATH="trillionnium/docs/release/TRNM_PUBLIC_MAINNET_GO_NO_GO_PANEL_2026-04-04.md"
+GAP_MATRIX_PATH="trillionnium/docs/release/TRNM_MAINNET_GAP_MATRIX_2026-03-26.md"
 DAY1_CONTRACT_PATH="trillionnium/docs/release/TRNM_DAY1_PUBLIC_READ_CONTRACT_2026-04-03.md"
 DAY1_CONTRACT_MATRIX_PATH="trillionnium/docs/release/TRNM_DAY1_PUBLIC_READ_CONTRACT_MATRIX_2026-04-03.md"
 RANK1_TASK_BOARD_PATH="trillionnium/docs/release/TRNM_RANK1_READ_SURFACE_TASK_BOARD_2026-04-03.md"
+RANK1_DESIGN_PACKET_PATH="trillionnium/docs/release/TRNM_RANK1_IMPLEMENTATION_DESIGN_PACKET_2026-04-05.md"
 BLOCKER_BOARD_PATH="trillionnium/docs/release/TRNM_MAINNET_BLOCKER_BOARD_2026-03-31.md"
 
 truth_source_value() {
@@ -64,11 +66,16 @@ while [[ $# -gt 0 ]]; do
 done
 
 TIMESTAMP_UTC="$(date -u +"%Y%m%dT%H%M%SZ")"
+TRUTH_SOURCE_TEMPLATE_PATH="$(truth_source_value "${TEMPLATE_PATH}")"
+TRUTH_SOURCE_DURABLE_TEMPLATE_PATH="$(truth_source_value "${DURABLE_TEMPLATE_PATH}")"
+TRUTH_SOURCE_SCAFFOLD_RUNBOOK="$(truth_source_value "${SCAFFOLD_RUNBOOK_PATH}")"
 TRUTH_SOURCE_RELEASE_READINESS="$(truth_source_value "${RELEASE_READINESS_PATH}")"
 TRUTH_SOURCE_GO_NO_GO_PANEL="$(truth_source_value "${GO_NO_GO_PANEL_PATH}")"
+TRUTH_SOURCE_GAP_MATRIX="$(truth_source_value "${GAP_MATRIX_PATH}")"
 TRUTH_SOURCE_DAY1_CONTRACT="$(truth_source_value "${DAY1_CONTRACT_PATH}")"
 TRUTH_SOURCE_DAY1_CONTRACT_MATRIX="$(truth_source_value "${DAY1_CONTRACT_MATRIX_PATH}")"
 TRUTH_SOURCE_RANK1_TASK_BOARD="$(truth_source_value "${RANK1_TASK_BOARD_PATH}")"
+TRUTH_SOURCE_RANK1_DESIGN_PACKET="$(truth_source_value "${RANK1_DESIGN_PACKET_PATH}")"
 TRUTH_SOURCE_BLOCKER_BOARD="$(truth_source_value "${BLOCKER_BOARD_PATH}")"
 if [[ -z "${OUTPUT_DIR}" ]]; then
   OUTPUT_DIR="${RUN_ROOT}/handoff-${TIMESTAMP_UTC}"
@@ -78,6 +85,7 @@ mkdir -p "${OUTPUT_DIR}"
 STATUS_OUT="${OUTPUT_DIR}/status.txt"
 INDEX_OUT="${OUTPUT_DIR}/index.json"
 SUMMARY_OUT="${OUTPUT_DIR}/summary.txt"
+ENV_SNAPSHOT_OUT="${OUTPUT_DIR}/env.snapshot"
 
 "${STATUS_SCRIPT}" | tee "${STATUS_OUT}"
 
@@ -108,6 +116,10 @@ HEALTH_URL="$(status_field health_url)"
 INDEX_URL="$(status_field index_url)"
 RPC_BASE_URL="$(status_field rpc_base_url)"
 LOCAL_HEALTH_URL="$(status_field local_health_url)"
+LOCAL_INDEX_URL="${LOCAL_HEALTH_URL%/healthz}/index.json"
+if [[ "${LOCAL_INDEX_URL}" == "${LOCAL_HEALTH_URL}" ]]; then
+  LOCAL_INDEX_URL="${PUBLIC_BASE_URL}/index.json"
+fi
 READ_CONTRACT_MODE="$(status_field read_contract_mode)"
 READ_CONTRACT_SOURCE="$(status_field read_contract_source)"
 DAY1_SURFACE="$(status_field day1_surface)"
@@ -213,6 +225,13 @@ else
   INDEX_FETCH_COMMAND="cp ${INDEX_FILE} ${INDEX_OUT}"
 fi
 
+if [[ ! -f "${ENV_FILE_PATH}" ]]; then
+  echo "refusing to capture handoff packet: effective env file is missing (${ENV_FILE_PATH}); rerun explorer_service_up.sh to recreate it before handoff capture" >&2
+  exit 1
+fi
+
+cp "${ENV_FILE_PATH}" "${ENV_SNAPSHOT_OUT}"
+
 assert_index_json_fragment() {
   local expected="$1"
   if ! grep -Fq "${expected}" "${INDEX_OUT}"; then
@@ -253,6 +272,7 @@ bind_port=${BIND_PORT}
 pid_file=${PID_FILE_PATH}
 log_file=${LOG_FILE_PATH}
 env_file=${ENV_FILE_PATH}
+env_snapshot_path=${ENV_SNAPSHOT_OUT}
 public_dir=${PUBLIC_DIR_PATH}
 health_file=${HEALTH_FILE_PATH}
 index_file=${INDEX_FILE_PATH}
@@ -262,10 +282,15 @@ local_health_url=${LOCAL_HEALTH_URL}
 health=${HEALTH}
 health_probe=${HEALTH_PROBE}
 health_probe_url=${HEALTH_PROBE_URL}
+health_probe_scope=operator-facing-health-url
 local_health=${LOCAL_HEALTH}
 local_health_probe=${LOCAL_HEALTH_PROBE}
 local_health_probe_url=${LOCAL_HEALTH_PROBE_URL}
+local_health_probe_scope=local-bind-target
+health_probe_boundary_note=health_url_may_differ_from_local_health_url_and_must_not_be_collapsed_in_handoff
 index_url=${INDEX_URL}
+local_index_url=${LOCAL_INDEX_URL}
+index_probe_boundary_note=index_url_may_differ_from_local_index_url_and_must_not_be_collapsed_in_handoff
 index_json_fetched_at=${TIMESTAMP_UTC}
 index_json_path_or_url=${INDEX_FETCH_SOURCE}
 index_json_declares_day1_contract=true
@@ -311,21 +336,28 @@ durability_boundary=${DURABILITY_BOUNDARY}
 archive_strategy=${ARCHIVE_STRATEGY}
 deployment_topology=${DEPLOYMENT_TOPOLOGY}
 read_replica_strategy=${READ_REPLICA_STRATEGY}
-template_path=${TEMPLATE_PATH}
-durable_template_path=${DURABLE_TEMPLATE_PATH}
+template_path=${TRUTH_SOURCE_TEMPLATE_PATH}
+durable_template_path=${TRUTH_SOURCE_DURABLE_TEMPLATE_PATH}
 template_selection=placeholder-scaffold-only
 durable_template_allowed=false
 durable_template_rejection_reason=scaffold-capture-is-placeholder-only-and-missing-durable-read-anchors
 deployment_template_boundary=use-scaffold-template-until-non-placeholder-deployment-and-all-6-durable-read-anchors-exist
-truth_source_scaffold_runbook=${SCAFFOLD_RUNBOOK_PATH}
+truth_source_scaffold_handoff_template=${TRUTH_SOURCE_TEMPLATE_PATH}
+truth_source_scaffold_runbook=${TRUTH_SOURCE_SCAFFOLD_RUNBOOK}
+truth_source_durable_handoff_template=${TRUTH_SOURCE_DURABLE_TEMPLATE_PATH}
 truth_source_release_readiness=${TRUTH_SOURCE_RELEASE_READINESS}
 truth_source_go_no_go_panel=${TRUTH_SOURCE_GO_NO_GO_PANEL}
+truth_source_gap_matrix=${TRUTH_SOURCE_GAP_MATRIX}
 truth_source_day1_contract=${TRUTH_SOURCE_DAY1_CONTRACT}
 truth_source_day1_contract_matrix=${TRUTH_SOURCE_DAY1_CONTRACT_MATRIX}
 truth_source_rank1_task_board=${TRUTH_SOURCE_RANK1_TASK_BOARD}
+truth_source_rank1_design_packet=${TRUTH_SOURCE_RANK1_DESIGN_PACKET}
 truth_source_blocker_board=${TRUTH_SOURCE_BLOCKER_BOARD}
 replay_command=./trillionnium/scripts/v2/explorer_service_up.sh
 status_command=./trillionnium/scripts/v2/explorer_service_status.sh
+public_health_fetch_command=curl --silent --show-error --fail --max-time 5 ${HEALTH_URL}
+local_health_fetch_command=curl --silent --show-error --fail --max-time 5 ${LOCAL_HEALTH_URL}
+local_index_fetch_command=curl --silent --show-error --fail --max-time 5 ${LOCAL_INDEX_URL}
 rollback_command=./trillionnium/scripts/v2/explorer_service_down.sh
 deployment_evidence_scope=${DEPLOYMENT_EVIDENCE_SCOPE}
 rank1_read_surface_blocker=${RANK1_BLOCKER}
@@ -346,6 +378,7 @@ echo "handoff_capture_output_dir=${OUTPUT_DIR}"
 echo "handoff_capture_status_path=${STATUS_OUT}"
 echo "handoff_capture_index_path=${INDEX_OUT}"
 echo "handoff_capture_summary_path=${SUMMARY_OUT}"
+echo "handoff_capture_env_snapshot_path=${ENV_SNAPSHOT_OUT}"
 echo "handoff_capture_template_path=${TEMPLATE_PATH}"
 echo "handoff_capture_durable_template_path=${DURABLE_TEMPLATE_PATH}"
 echo "handoff_capture_template_selection=placeholder-scaffold-only"

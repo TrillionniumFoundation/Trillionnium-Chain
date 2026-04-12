@@ -28,41 +28,45 @@ function normalizeSchemaError(error: unknown): FrontendApiError {
   });
 }
 
-const rpcTaskSchema = z.object({
-  task_id: z.number().int().nonnegative(),
-  status: z.enum([
-    "Open",
-    "Assigned",
-    "Committed",
-    "Revealed",
-    "Challenged",
-    "Completed",
-    "Slashed",
-  ]),
-  worker: z.string().min(1).nullable().optional(),
-  bounty: z.union([z.number(), z.string()]).optional(),
-  result_hash_hex: z.string().min(1).nullable().optional(),
-  version: z.number().int().nonnegative().optional(),
-});
+const rpcTaskSchema = z
+  .object({
+    task_id: z.number().int().nonnegative(),
+    status: z.enum([
+      "Open",
+      "Assigned",
+      "Committed",
+      "Revealed",
+      "Challenged",
+      "Completed",
+      "Slashed",
+    ]),
+    worker: z.string().min(1).nullable().optional(),
+    bounty: z.union([z.number(), z.string()]).optional(),
+    result_hash_hex: z.string().min(1).nullable().optional(),
+    version: z.number().int().nonnegative().optional(),
+  })
+  .strict();
 
-const rpcEventSchema = z.object({
-  event_type: z.string().min(1),
-  task_id: z.number().int().nonnegative(),
-  from_status: z.string().min(1),
-  to_status: z.string().min(1),
-  actor: z.string().min(1),
-  tx_id: z.number().int().nonnegative(),
-  block_height: z.number().int().nonnegative(),
-  state_root: z.string().min(1),
-  ts_unix_ms: z.union([z.number(), z.string()]),
-  signer: z.string().min(1).optional(),
-  challenger: z.string().min(1).nullable().optional(),
-  tx_hash: z.string().min(1).nullable().optional(),
-  resolution_code: z.string().min(1).nullable().optional(),
-  treasury_delta: z.union([z.number(), z.string()]).nullable().optional(),
-  challenger_delta: z.union([z.number(), z.string()]).nullable().optional(),
-  bond_disposition: z.string().min(1).nullable().optional(),
-});
+const rpcEventSchema = z
+  .object({
+    event_type: z.string().min(1),
+    task_id: z.number().int().nonnegative(),
+    from_status: z.string().min(1),
+    to_status: z.string().min(1),
+    actor: z.string().min(1),
+    tx_id: z.number().int().nonnegative(),
+    block_height: z.number().int().nonnegative(),
+    state_root: z.string().min(1),
+    ts_unix_ms: z.union([z.number(), z.string()]),
+    signer: z.string().min(1).optional(),
+    challenger: z.string().min(1).nullable().optional(),
+    tx_hash: z.string().min(1).nullable().optional(),
+    resolution_code: z.string().min(1).nullable().optional(),
+    treasury_delta: z.union([z.number(), z.string()]).nullable().optional(),
+    challenger_delta: z.union([z.number(), z.string()]).nullable().optional(),
+    bond_disposition: z.string().min(1).nullable().optional(),
+  })
+  .strict();
 
 const m2v2ErrorCodes = [
   "ERR_M2V2_PROOF_MISSING",
@@ -136,6 +140,71 @@ function normalizeOptionalCursor(cursor: string | undefined): string | undefined
   return normalized.length > 0 ? normalized : undefined;
 }
 
+function normalizeOptionalTaskId(taskId: string | undefined): string | undefined {
+  return normalizeOptionalCursor(taskId);
+}
+
+function normalizeRequiredTaskField(
+  value: string,
+  field: "id" | "name" | "owner",
+): string {
+  const normalized = normalizeOptionalCursor(value);
+  if (normalized != null) return normalized;
+
+  throw normalizeSchemaError({
+    message: `canonical query-task payload contains blank ${field}`,
+    field,
+  });
+}
+
+function normalizeOptionalTaskName(name: string | undefined): string | undefined {
+  if (name == null) return undefined;
+  return normalizeRequiredTaskField(name, "name");
+}
+
+function normalizeRequiredEventId(
+  eventId: string,
+  context: { taskId?: string | number },
+): string {
+  const normalized = normalizeOptionalCursor(eventId);
+  if (normalized != null) return normalized;
+
+  throw normalizeSchemaError({
+    message: "canonical query-events payload contains blank event id",
+    taskId: context.taskId,
+  });
+}
+
+function normalizeRequiredEventType(
+  eventType: string,
+  context: { source: "canonical" | "rpc"; eventId?: string; taskId?: string | number },
+): string {
+  const normalized = normalizeOptionalCursor(eventType);
+  if (normalized != null) return normalized;
+
+  throw normalizeSchemaError({
+    message: `${context.source} query-events payload contains blank event type`,
+    eventId: context.eventId,
+    taskId: context.taskId,
+  });
+}
+
+function normalizeRequiredEventField(
+  value: string,
+  field: "actor" | "from_status" | "to_status" | "state_root",
+  context: { source: "canonical" | "rpc"; eventId?: string; taskId?: string | number },
+): string {
+  const normalized = normalizeOptionalCursor(value);
+  if (normalized != null) return normalized;
+
+  throw normalizeSchemaError({
+    message: `${context.source} query-events payload contains blank ${field}`,
+    field,
+    eventId: context.eventId,
+    taskId: context.taskId,
+  });
+}
+
 const rpcCapabilityAuditSchema = z.object({
   token: z.object({
     subject_did: z.string().min(1),
@@ -182,12 +251,18 @@ function toIsoFromUnixMs(ts: unknown): IsoDatetimeString {
 
 function toHeightMarker(height: unknown): HeightCheckedAt {
   const num = typeof height === "string" ? Number(height) : height;
-  if (!Number.isFinite(num)) throw new Error("invalid height");
-  return `height:${Math.trunc(Number(num))}` as HeightCheckedAt;
+  if (!Number.isFinite(num) || !Number.isInteger(num) || Number(num) < 0) {
+    throw new Error("invalid height");
+  }
+  return `height:${Number(num)}` as HeightCheckedAt;
 }
 
 function toCheckedAt(value: z.infer<typeof checkedAtSchema>): CheckedAt {
   return value as CheckedAt;
+}
+
+function toIsoDatetimeString(value: string): IsoDatetimeString {
+  return value as IsoDatetimeString;
 }
 
 function toOptionalHeightMarker(height: unknown): string | undefined {
@@ -198,20 +273,45 @@ function toOptionalHeightMarker(height: unknown): string | undefined {
 
 function normalizeOptionalText(value: unknown): string | undefined {
   if (typeof value !== "string") return undefined;
-  const trimmed = value.trim();
+  const trimmed = value
+    .replace(/[\u200B\u200C\u200D\u2060\u2063\uFEFF]/g, "")
+    .trim();
   return trimmed.length > 0 ? trimmed : undefined;
+}
+
+function normalizeRequiredText(value: unknown, field: string): string {
+  const normalized = normalizeOptionalText(value);
+  if (normalized == null) {
+    throw new Error(`invalid ${field}`);
+  }
+  return normalized;
 }
 
 export const adaptQueryTask = (payload: unknown): QueryTaskResult => {
   const canonical = queryTaskResponseSchema.safeParse(payload);
-  if (canonical.success) return canonical.data;
+  if (canonical.success) {
+    return {
+      task: {
+        ...canonical.data.task,
+        id: normalizeRequiredTaskField(canonical.data.task.id, "id"),
+        name: normalizeOptionalTaskName(canonical.data.task.name),
+        owner: normalizeRequiredTaskField(canonical.data.task.owner, "owner"),
+        createdAt: toIsoDatetimeString(canonical.data.task.createdAt),
+        updatedAt:
+          canonical.data.task.updatedAt == null
+            ? undefined
+            : toIsoDatetimeString(canonical.data.task.updatedAt),
+      },
+    };
+  }
 
   const rpc = rpcTaskSchema.safeParse(payload);
   if (!rpc.success) throw normalizeSchemaError(rpc.error.flatten());
 
   const task = rpc.data;
-  const derivedIso =
-    task.version != null ? new Date(task.version * 1000).toISOString() : new Date(0).toISOString();
+  const derivedIso = toIsoDatetimeString(
+    task.version != null ? new Date(task.version * 1000).toISOString() : new Date(0).toISOString(),
+  );
 
   return {
     task: {
@@ -242,9 +342,83 @@ export const adaptQueryEvents = (
 ): QueryEventsResult => {
   const canonical = queryEventsResponseSchema.safeParse(payload);
   if (canonical.success) {
+    const normalizedCanonicalTaskId = normalizeOptionalTaskId(canonical.data.taskId);
+    const normalizedRequestedTaskId = normalizeOptionalTaskId(requestedTaskId);
+
+    if (!normalizedCanonicalTaskId) {
+      throw normalizeSchemaError({
+        message: "canonical query-events payload contains blank task id",
+      });
+    }
+
+    const normalizedEvents = canonical.data.events.map((event) => {
+      const normalizedEventTaskId = normalizeOptionalTaskId(event.taskId);
+      if (!normalizedEventTaskId) {
+        throw normalizeSchemaError({
+          message: "canonical query-events payload contains blank event task id",
+          eventId: event.id,
+        });
+      }
+
+      const normalizedEventId = normalizeRequiredEventId(event.id, {
+        taskId: normalizedEventTaskId,
+      });
+
+      const normalizedEventType = normalizeRequiredEventType(event.type, {
+        source: "canonical",
+        eventId: normalizedEventId,
+        taskId: normalizedEventTaskId,
+      });
+
+      return {
+        ...normalizeCanonicalEventForM2V2({
+          ...event,
+          timestamp: toIsoDatetimeString(event.timestamp),
+        }),
+        id: normalizedEventId,
+        taskId: normalizedEventTaskId,
+        type: normalizedEventType,
+      };
+    });
+
+    const normalizedEventIds = new Set<string>();
+    for (const event of normalizedEvents) {
+      if (normalizedEventIds.has(event.id)) {
+        throw normalizeSchemaError({
+          message: "canonical query-events payload contains duplicate normalized event ids",
+          eventId: event.id,
+          taskId: normalizedCanonicalTaskId,
+        });
+      }
+      normalizedEventIds.add(event.id);
+    }
+
+    const hasMixedCanonicalTaskIds = normalizedEvents.some(
+      (event) => event.taskId !== normalizedCanonicalTaskId,
+    );
+    if (hasMixedCanonicalTaskIds) {
+      throw normalizeSchemaError({
+        message: "canonical query-events payload contains mixed task ids",
+        taskId: normalizedCanonicalTaskId,
+      });
+    }
+
+    if (
+      normalizedRequestedTaskId != null &&
+      normalizedRequestedTaskId !== normalizedCanonicalTaskId
+    ) {
+      throw normalizeSchemaError({
+        message: "canonical query-events payload task id mismatches requested task id",
+        requestedTaskId,
+        normalizedRequestedTaskId,
+        normalizedCanonicalTaskId,
+      });
+    }
+
     return {
       ...canonical.data,
-      events: canonical.data.events.map(normalizeCanonicalEventForM2V2),
+      taskId: normalizedCanonicalTaskId,
+      events: normalizedEvents,
     };
   }
 
@@ -252,12 +426,9 @@ export const adaptQueryEvents = (
   if (!rpc.success) throw normalizeSchemaError(rpc.error.flatten());
 
   const events = rpc.data;
+  const normalizedRequestedTaskId = normalizeOptionalTaskId(requestedTaskId);
   const normalizedTaskId =
-    events[0] != null
-      ? String(events[0].task_id)
-      : requestedTaskId && requestedTaskId.trim().length > 0
-        ? requestedTaskId
-        : "";
+    events[0] != null ? String(events[0].task_id) : normalizedRequestedTaskId ?? "";
 
   if (!normalizedTaskId) {
     throw normalizeSchemaError({
@@ -276,29 +447,63 @@ export const adaptQueryEvents = (
     });
   }
 
+  if (
+    normalizedRequestedTaskId != null &&
+    events[0] != null &&
+    normalizedRequestedTaskId !== normalizedTaskId
+  ) {
+    throw normalizeSchemaError({
+      message: "query-events payload task id mismatches requested task id",
+      requestedTaskId,
+      normalizedRequestedTaskId,
+      normalizedTaskId,
+    });
+  }
+
   return {
     taskId: normalizedTaskId,
     events: events.map((event) => {
       const resolutionCode = canonicalizeResolutionCode(event.resolution_code ?? undefined);
       const isM2V2Error = isM2V2ErrorCode(resolutionCode);
+      const normalizedEventType = normalizeRequiredEventType(event.event_type, {
+        source: "rpc",
+        taskId: event.task_id,
+      });
+
+      const normalizedFromStatus = normalizeRequiredEventField(event.from_status, "from_status", {
+        source: "rpc",
+        taskId: event.task_id,
+      });
+      const normalizedToStatus = normalizeRequiredEventField(event.to_status, "to_status", {
+        source: "rpc",
+        taskId: event.task_id,
+      });
+      const normalizedActor = normalizeRequiredEventField(event.actor, "actor", {
+        source: "rpc",
+        taskId: event.task_id,
+      });
+      const normalizedStateRoot = normalizeRequiredEventField(event.state_root, "state_root", {
+        source: "rpc",
+        taskId: event.task_id,
+      });
 
       return {
-        id: `${event.task_id}:${event.tx_id}:${event.event_type}`,
+        id: `${event.task_id}:${event.tx_id}:${normalizedEventType}`,
         taskId: String(event.task_id),
-        type: event.event_type,
+        type: normalizedEventType,
         level:
-          isM2V2Error || event.to_status === "Slashed"
+          isM2V2Error || normalizedToStatus === "Slashed"
             ? "error"
-            : event.event_type === "challenge"
+            : normalizedEventType === "challenge"
               ? "warn"
               : "info",
         timestamp: toIsoFromUnixMs(event.ts_unix_ms),
         payload: {
-          fromStatus: event.from_status,
-          toStatus: event.to_status,
-          actor: event.actor,
+          fromStatus: normalizedFromStatus,
+          toStatus: normalizedToStatus,
+          actor: normalizedActor,
           blockHeight: event.block_height,
-          stateRoot: event.state_root,
+          stateRoot: normalizedStateRoot,
           signer: event.signer,
           challenger: event.challenger,
           txHash: event.tx_hash,
@@ -327,19 +532,47 @@ export const adaptQueryNormalizedAuditEvents = (
         : undefined;
     const normalizedRequestedCursor = normalizeOptionalCursor(parsedQuery?.cursor);
     const rawHasMore = "hasMore" in canonical.data ? canonical.data.hasMore : undefined;
+
+    if (rawHasMore === true && normalizedNextCursor == null) {
+      throw normalizeSchemaError({
+        message: "normalized audit page with hasMore=true must include a non-blank nextCursor",
+      });
+    }
+
     const normalizedHasMore =
       rawHasMore === true
-        ? normalizedNextCursor != null && normalizedNextCursor !== normalizedRequestedCursor
+        ? normalizedNextCursor !== normalizedRequestedCursor
         : rawHasMore;
 
+    const events = canonical.data.events.map((event) => ({
+      source: normalizeRequiredText(event.source, "normalized audit source"),
+      event_type: normalizeRequiredText(event.event_type, "normalized audit event_type"),
+      actor: normalizeOptionalText(event.actor),
+      object_id: normalizeOptionalText(event.object_id),
+      related_id: normalizeOptionalText(event.related_id),
+      amount: event.amount,
+      reason: normalizeOptionalText(event.reason),
+      note: normalizeOptionalText(event.note),
+      checkedAt: event.checkedAt == null ? undefined : toCheckedAt(event.checkedAt),
+      timestamp: event.timestamp == null ? undefined : toIsoDatetimeString(event.timestamp),
+      subject: normalizeOptionalText(event.subject),
+    }));
+    const total = "total" in canonical.data ? canonical.data.total : undefined;
+
+    if (normalizedHasMore === true && normalizedNextCursor != null) {
+      return {
+        events,
+        hasMore: true,
+        nextCursor: normalizedNextCursor,
+        total,
+      };
+    }
+
     return {
-      events: canonical.data.events.map((event) => ({
-        ...event,
-        checkedAt: event.checkedAt == null ? undefined : toCheckedAt(event.checkedAt),
-      })),
+      events,
+      hasMore: false,
       nextCursor: normalizedNextCursor,
-      hasMore: normalizedHasMore,
-      total: "total" in canonical.data ? canonical.data.total : undefined,
+      total,
     };
   }
 
@@ -355,24 +588,24 @@ export const adaptQueryNormalizedAuditEvents = (
       note: z.string().optional(),
       checkedAt: checkedAtSchema.optional(),
       recordedAt: z.string().datetime().optional(),
-      subject: z.string().optional(),
+      subject: z.string().min(1).optional(),
     }).strict(),
   ).safeParse(payload);
 
   if (!rpc.success) throw normalizeSchemaError(rpc.error.flatten());
 
   const events = rpc.data.map((event) => ({
-    source: event.source,
-    event_type: event.eventType,
-    actor: event.actor,
-    object_id: event.objectId,
-    related_id: event.relatedId,
+    source: normalizeRequiredText(event.source, "normalized audit source"),
+    event_type: normalizeRequiredText(event.eventType, "normalized audit eventType"),
+    actor: normalizeOptionalText(event.actor),
+    object_id: normalizeOptionalText(event.objectId),
+    related_id: normalizeOptionalText(event.relatedId),
     amount: event.amount,
-    reason: event.reason,
-    note: event.note,
+    reason: normalizeOptionalText(event.reason),
+    note: normalizeOptionalText(event.note),
     checkedAt: event.checkedAt == null ? undefined : toCheckedAt(event.checkedAt),
-    timestamp: event.recordedAt,
-    subject: event.subject,
+    timestamp: event.recordedAt == null ? undefined : toIsoDatetimeString(event.recordedAt),
+    subject: normalizeOptionalText(event.subject),
   }));
 
   return { events, hasMore: false };
@@ -383,24 +616,65 @@ export const adaptQueryCapabilityAudit = (
 ): QueryCapabilityAuditResult => {
   const canonical = queryCapabilityAuditResponseSchema.safeParse(payload);
   if (canonical.success) {
-    return {
-      subject: canonical.data.subject,
-      audits: canonical.data.audits.map((audit) => ({
-        ...audit,
-        checkedAt: toCheckedAt(audit.checkedAt),
-      })),
-    };
+    try {
+      const normalizedSubject = normalizeRequiredText(
+        canonical.data.subject,
+        "capability audit subject",
+      );
+
+      return {
+        subject: normalizedSubject,
+        audits: canonical.data.audits.map((audit) => {
+          const auditSubject = normalizeRequiredText(
+            audit.subject,
+            "capability audit subject",
+          );
+
+          if (auditSubject !== normalizedSubject) {
+            throw normalizeSchemaError({
+              message: "capability audit payload contains mixed subjects",
+              subject: normalizedSubject,
+              auditSubject,
+            });
+          }
+
+          return {
+            subject: auditSubject,
+            capability: normalizeRequiredText(
+              audit.capability,
+              "capability audit capability",
+            ),
+            granted: audit.granted,
+            reason: normalizeOptionalText(audit.reason),
+            checkedAt: toCheckedAt(audit.checkedAt),
+          };
+        }),
+      };
+    } catch (error) {
+      if (error instanceof FrontendApiError) {
+        throw error;
+      }
+      throw normalizeSchemaError(error);
+    }
   }
 
   const rpc = rpcCapabilityAuditSchema.safeParse(payload);
   if (!rpc.success) throw normalizeSchemaError(rpc.error.flatten());
 
   try {
+    const normalizedSubject = normalizeRequiredText(
+      rpc.data.token.subject_did,
+      "capability audit subject",
+    );
+    const normalizedCapability = normalizeRequiredText(
+      rpc.data.token.scope,
+      "capability audit capability",
+    );
     const tokenRevokedAt = toOptionalHeightMarker(rpc.data.token.revoked_at);
     const tokenIsRevoked = tokenRevokedAt != null;
 
     return {
-      subject: rpc.data.token.subject_did,
+      subject: normalizedSubject,
       audits: rpc.data.owner_history.map((entry) => {
         const actionGrantsCapability =
           entry.action === "CAPABILITY_ISSUED" || entry.action === "CAPABILITY_RENEWED";
@@ -413,8 +687,8 @@ export const adaptQueryCapabilityAudit = (
         const normalizedNote = normalizeOptionalText(entry.note);
 
         return {
-          subject: rpc.data.token.subject_did,
-          capability: rpc.data.token.scope,
+          subject: normalizedSubject,
+          capability: normalizedCapability,
           granted: actionGrantsCapability,
           reason:
             tokenIsRevoked && actionTouchesCapability

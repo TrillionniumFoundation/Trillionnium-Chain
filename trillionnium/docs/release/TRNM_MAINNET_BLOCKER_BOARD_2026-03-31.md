@@ -5,8 +5,8 @@
 - Repository snapshot evaluated: `origin/main = 8ff9f1fe45bdf3f027bce7d86ae51394c3df5d86`
 - Companion truth sources:
   - `RELEASE_READINESS.md`
-  - `docs/release/TRNM_MAINNET_GAP_MATRIX_2026-03-26.md`
-  - `docs/release/TRNM_VALIDATOR_RELEASE_HANDOFF.md`
+  - `trillionnium/docs/release/TRNM_MAINNET_GAP_MATRIX_2026-03-26.md`
+  - `trillionnium/docs/release/TRNM_VALIDATOR_RELEASE_HANDOFF.md`
 
 ## Headline judgment
 
@@ -77,24 +77,25 @@ Current CLI/signer flows are stronger than before, but still not sufficient to j
 - `trnm-cli`
 - wallet/query/tx MVP path
 - stronger hash/surface guardrails than earlier snapshots
+- signer rotation / suspected compromise SOP: `docs/runbooks/signer-rotation-compromise-sop.md`
 
 **What is still missing**
 - secure keystore model
-- offline signing path
+- operator-grade offline signing path tied to real submit/query/wait evidence
 - remote signer / HSM / multisig posture
-- key rotation and compromise response
-- operator-safe signing UX and runbook
+- release-packet-grade rotation / compromise rehearsal evidence
+- operator-safe signing UX beyond the current SOP/checklist baseline
 
 **Exit criteria**
 - one approved key-management model
 - one offline signing path that actually fits operator workflow
-- one rotation / compromise SOP
+- one exercised rotation / compromise SOP with evidence attached to the launch packet
 - one signer safety checklist attached to launch packet
 
 **Next actions**
 1. freeze signer threat model for Day-1
 2. pick keystore/offline-signing architecture
-3. write rotation / compromised-key runbook
+3. run one operator-grade offline-signing plus rotation/compromise evidence rehearsal against the existing SOP
 
 ---
 
@@ -126,6 +127,14 @@ The chain runtime is much stronger than an empty prototype, but a public chain s
 2. write join/rejoin acceptance table
 3. run and record one multi-node sync/catch-up rehearsal
 
+**Join/rejoin acceptance table (minimum operator-facing cut)**
+
+| scenario | admission | operator reading |
+| --- | --- | --- |
+| retained WAL, checkpoint lags retained tip by 1 block (`checkpoint_tip_relation=behind:1`) | accept | resume join/rejoin catch-up, keep the lag visible as a retained-WAL resume rather than forcing fresh bootstrap |
+| retained WAL, checkpoint leads retained tip by 1 block (`checkpoint_tip_relation=ahead:1`) | conditionally accept | node may resume, but treat as WAL/checkpoint mismatch and investigate before declaring sync healthy |
+| metadata-only recovery (`join_rejoin_status=blocked:metadata_only_recovery`) | reject | restore application snapshot or restart from a fresh isolated WAL dir, do not rejoin from metadata alone |
+
 ---
 
 ### Rank 4 — Launch gate package: Integrated prelaunch rehearsal + evidence + GO/NOGO
@@ -143,18 +152,20 @@ Even if all code-adjacent P0 items improve, TRNM still cannot claim public-mainn
 **What is still missing**
 - one integrated prelaunch rehearsal using the current mainline
 - one path-resolved evidence bundle suitable for launch review
+- one saved fail-closed preflight helper transcript proving the ticket-assigned worktree/root and branch ref before any release artifacts are quoted
 - one final GO / CONDITIONAL GO / NO-GO document
 - one rollback drill attached to the same decision packet
 
 **Exit criteria**
 - full prelaunch rehearsal green on current `origin/main`
-- artifact identities consistent across summary/manifest
+- artifact identities consistent across preflight/helper transcript, `summary.txt`, and `manifest.txt`
+- `summary_generated_at=` and `manifest_generated_at=` preserved next to the quoted identity fields rather than collapsed into one assumed timestamp
 - rollback command explicitly preserved
 - signed operator decision packet
 
 **Next actions**
 1. define rehearsal scope against current `origin/main`
-2. run full rehearsal with path-resolved evidence bundle
+2. run full rehearsal with a saved preflight helper transcript plus path-resolved evidence bundle
 3. produce formal GO/NOGO memo
 
 ---
@@ -217,9 +228,9 @@ The codebase has meaningful anti-spam / QoS / sponsor / challenge-bond work, but
 **Evidence anchors for the launch packet**
 - admission boundary hard-stop: `cargo test --manifest-path trillionnium/Cargo.toml -p trnm-mempool --test lane_zero_capacity_public_contract_bound -q`
 - sponsor borrowed-slot discipline: `cargo test --manifest-path trillionnium/Cargo.toml -p trnm-mempool --test lane_borrowed_last_slot_backpressured_retry_reuse_bound -q`
-- sponsor revocation / drain-only duplicate retention: `cargo test --manifest-path trillionnium/Cargo.toml -p trnm-mempool hard_stop_idle_pop_preserves_restored_duplicate_metadata -q`
-- anti-spam floor / sustained-load admission boundary: `cargo test --manifest-path trillionnium/Cargo.toml -p trnm-mempool non_reserve_only_normal_never_borrows_when_no_critical_headroom_remains -q`
-- retention timing freeze after challenge: `cargo test --manifest-path trillionnium/Cargo.toml -p trnm-pouw legacy_revealed_snapshot_freezes_resolve_timing_after_challenge_despite_later_gov_change -q`
+- sponsor revocation / drain-only duplicate retention: `cargo test --manifest-path trillionnium/Cargo.toml -p trnm-mempool --test lane_qos_snapshot_reserve_only_drain_only_duplicate_retention_bound -q`
+- anti-spam floor / sustained-load admission boundary: `cargo test --manifest-path trillionnium/Cargo.toml -p trnm-mempool --test lane_reserve_clamp_borrow_policy_bound -q`
+- retention timing freeze after challenge: `cargo test --manifest-path trillionnium/Cargo.toml -p trnm-pouw --lib tests::legacy_revealed_snapshot_freezes_resolve_timing_after_challenge_despite_later_gov_change -- --exact -q`
 - retention restore/canonicalization companion gate: `cargo test --manifest-path trillionnium/Cargo.toml -p trnm-state --test retention_restore_regression -q`
 - tuple integrity compile slice: `cargo check --manifest-path trillionnium/Cargo.toml -p trnm-mempool -p trnm-pouw -q`
 
@@ -267,6 +278,7 @@ Becomes P0 if day-1 positioning depends on oracle-backed features.
 
 ### P1.2 Bridge productionization
 The crate is still honestly named `trnm-bridge-poc`; keep it P1 unless bridge is part of the public Day-1 promise.
+For the current bridge settlement boundary and operator-facing audit tuple, pair this board with `docs/release/TRNM_BRIDGE_SETTLEMENT_AUDIT_NOTE_2026-04-02.md` so replay reviews cite the frozen `phase` / heartbeat / confirm evidence fields instead of ad-hoc log phrasing.
 
 ### P1.3 Verifier / DA witness / sidecar productization
 Becomes P0 only if mainnet Day-1 positioning requires verifier-backed external proof serving.
@@ -290,7 +302,7 @@ Use `TRNM_MAINNET_GAP_MATRIX_2026-03-26.md` as the deeper taxonomy.
 Use `RELEASE_READINESS.md` as the canonical answer to whether the repository is already release-ready.
 
 For the economics-specific blocker, pair this file with:
-- `docs/release/TRNM_MAINNET_ECONOMICS_FREEZE_HELPER_2026-03-27.md`
+- `trillionnium/docs/release/TRNM_MAINNET_ECONOMICS_FREEZE_HELPER_2026-03-27.md`
 
 ## Bottom line
 

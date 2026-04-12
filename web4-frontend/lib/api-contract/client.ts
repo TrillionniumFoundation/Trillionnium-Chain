@@ -31,22 +31,41 @@ export const NORMALIZED_AUDIT_EVENTS_QUERY_PARAM_KEYS = {
   cursor: "cursor",
 } as const satisfies Record<keyof NormalizedAuditEventsQuery, string>;
 
+const INVISIBLE_TOKEN_CHARS = /[\u200B\u200C\u200D\u2060\u2063\uFEFF]/g;
+
+const normalizeFrontendToken = (value: string | undefined): string | undefined => {
+  if (value == null) return undefined;
+
+  const normalized = value.replace(INVISIBLE_TOKEN_CHARS, "").trim();
+  return normalized.length > 0 ? normalized : undefined;
+};
+
+const normalizeNormalizedAuditQueryToken = (
+  value: string | undefined,
+): string | undefined => normalizeFrontendToken(value);
+
 export const buildNormalizedAuditEventsQueryParams = (
   query: NormalizedAuditEventsQuery,
 ): URLSearchParams => {
+  const parsedQuery = normalizedAuditEventsQuerySchema.parse(query);
   const params = new URLSearchParams();
 
-  if (query.source) {
-    params.set(NORMALIZED_AUDIT_EVENTS_QUERY_PARAM_KEYS.source, query.source);
+  const source = normalizeNormalizedAuditQueryToken(parsedQuery.source);
+  const eventType = normalizeNormalizedAuditQueryToken(parsedQuery.eventType);
+  const cursor = normalizeNormalizedAuditQueryToken(parsedQuery.cursor);
+
+  if (source) {
+    params.set(NORMALIZED_AUDIT_EVENTS_QUERY_PARAM_KEYS.source, source);
   }
-  if (query.eventType) {
-    params.set(NORMALIZED_AUDIT_EVENTS_QUERY_PARAM_KEYS.eventType, query.eventType);
+  if (eventType) {
+    params.set(NORMALIZED_AUDIT_EVENTS_QUERY_PARAM_KEYS.eventType, eventType);
   }
-  if (query.cursor) {
-    params.set(NORMALIZED_AUDIT_EVENTS_QUERY_PARAM_KEYS.cursor, query.cursor);
+  if (cursor) {
+    params.set(NORMALIZED_AUDIT_EVENTS_QUERY_PARAM_KEYS.cursor, cursor);
   }
-  if (query.limit != null) {
-    params.set(NORMALIZED_AUDIT_EVENTS_QUERY_PARAM_KEYS.limit, String(query.limit));
+
+  if (parsedQuery.limit != null) {
+    params.set(NORMALIZED_AUDIT_EVENTS_QUERY_PARAM_KEYS.limit, String(parsedQuery.limit));
   }
 
   return params;
@@ -94,13 +113,35 @@ const normalizeBaseUrl = (baseUrl: string): string => {
   const trimmed = baseUrl.trim();
   if (!trimmed) {
     throw new FrontendApiError({
-      code: "UNKNOWN",
-      message: "Frontend API base URL is empty",
+      code: "INVALID_PAYLOAD",
+      message: "Frontend API base URL must be a non-empty string",
+      causeData: baseUrl,
       retryable: false,
     });
   }
 
-  return trimmed.replace(/\/+$/, "");
+  let parsed: URL;
+  try {
+    parsed = new URL(trimmed);
+  } catch {
+    throw new FrontendApiError({
+      code: "INVALID_PAYLOAD",
+      message: "Frontend API base URL must be a valid http(s) URL",
+      causeData: baseUrl,
+      retryable: false,
+    });
+  }
+
+  if (parsed.protocol !== "http:" && parsed.protocol !== "https:") {
+    throw new FrontendApiError({
+      code: "INVALID_PAYLOAD",
+      message: "Frontend API base URL must be a valid http(s) URL",
+      causeData: baseUrl,
+      retryable: false,
+    });
+  }
+
+  return parsed.href.replace(/\/+$/, "");
 };
 
 const normalizeRequiredPathParam = (value: unknown, label: string): string => {
@@ -113,8 +154,8 @@ const normalizeRequiredPathParam = (value: unknown, label: string): string => {
     });
   }
 
-  const trimmed = value.trim();
-  if (!trimmed) {
+  const normalized = normalizeFrontendToken(value);
+  if (!normalized) {
     throw new FrontendApiError({
       code: "INVALID_PAYLOAD",
       message: `${label} must be a non-empty string`,
@@ -123,47 +164,93 @@ const normalizeRequiredPathParam = (value: unknown, label: string): string => {
     });
   }
 
-  return trimmed;
+  return normalized;
 };
+
+const NETWORK_ERROR_CODES = new Set([
+  "ECONNRESET",
+  "ECONNREFUSED",
+  "ENOTFOUND",
+  "EAI_AGAIN",
+  "EHOSTUNREACH",
+  "ENETUNREACH",
+  "UND_ERR_SOCKET",
+]);
 
 const isLikelyNetworkError = (err: unknown): boolean => {
   if (err instanceof TypeError) return true;
   if (!(err && typeof err === "object")) return false;
 
-  const name = "name" in err ? err.name : undefined;
-  return name === "TypeError" || name === "NetworkError" || name === "FetchError";
+  return collectErrorLikeChain(err).some((candidate) => {
+    const name = "name" in candidate ? candidate.name : undefined;
+    const code = "code" in candidate ? candidate.code : undefined;
+    return (
+      name === "TypeError" ||
+      name === "NetworkError" ||
+      name === "FetchError" ||
+      (typeof code === "string" && NETWORK_ERROR_CODES.has(code))
+    );
+  });
 };
 
 const LEGACY_ABORT_ERROR_CODE = 20;
 const LEGACY_TIMEOUT_ERROR_CODE = 23;
 
-const isAbortLikeErrorCode = (code: unknown): boolean => {
-  return code === "ABORT_ERR" || code === LEGACY_ABORT_ERROR_CODE;
-};
+type ErrorLikeRecord = Record<string, unknown>;
 
-const isAbortLikeError = (err: unknown): boolean => {
-  if (!(err && typeof err === "object")) return false;
+const collectErrorLikeChain = (value: unknown, maxDepth = 4): ErrorLikeRecord[] => {
+  const seen = new Set<unknown>();
+  const queue: Array<{ value: unknown; depth: number }> = [{ value, depth: 0 }];
+  const chain: ErrorLikeRecord[] = [];
 
-  const name = "name" in err ? err.name : undefined;
-  const code = "code" in err ? err.code : undefined;
-  const cause = "cause" in err ? err.cause : undefined;
-  const reason = "reason" in err ? err.reason : undefined;
+  while (queue.length > 0) {
+    const current = queue.shift();
+    if (!current) break;
 
-  if (name === "AbortError" || isAbortLikeErrorCode(code)) {
-    return true;
-  }
+    const { value: candidate, depth } = current;
+    if (!(candidate && typeof candidate === "object") || seen.has(candidate)) {
+      continue;
+    }
 
-  for (const nested of [cause, reason]) {
-    if (nested && typeof nested === "object") {
-      const nestedName = "name" in nested ? nested.name : undefined;
-      const nestedCode = "code" in nested ? nested.code : undefined;
-      if (nestedName === "AbortError" || isAbortLikeErrorCode(nestedCode)) {
-        return true;
+    seen.add(candidate);
+    chain.push(candidate as ErrorLikeRecord);
+
+    if (depth >= maxDepth) {
+      continue;
+    }
+
+    const cause = "cause" in candidate ? candidate.cause : undefined;
+    const reason = "reason" in candidate ? candidate.reason : undefined;
+    const nestedErrors = "errors" in candidate ? candidate.errors : undefined;
+
+    if (cause && typeof cause === "object") {
+      queue.push({ value: cause, depth: depth + 1 });
+    }
+    if (reason && typeof reason === "object") {
+      queue.push({ value: reason, depth: depth + 1 });
+    }
+    if (Array.isArray(nestedErrors)) {
+      for (const nested of nestedErrors) {
+        if (nested && typeof nested === "object") {
+          queue.push({ value: nested, depth: depth + 1 });
+        }
       }
     }
   }
 
-  return false;
+  return chain;
+};
+
+const isAbortLikeErrorCode = (code: unknown): boolean => {
+  return code === "ABORT_ERR" || code === "UND_ERR_ABORTED" || code === LEGACY_ABORT_ERROR_CODE;
+};
+
+const isAbortLikeError = (err: unknown): boolean => {
+  return collectErrorLikeChain(err).some((candidate) => {
+    const name = "name" in candidate ? candidate.name : undefined;
+    const code = "code" in candidate ? candidate.code : undefined;
+    return name === "AbortError" || isAbortLikeErrorCode(code);
+  });
 };
 
 const TIMEOUT_ERROR_CODES = new Set([
@@ -179,29 +266,11 @@ const isTimeoutErrorCode = (code: unknown): boolean => {
 };
 
 const isTimeoutLikeError = (err: unknown): boolean => {
-  if (!(err && typeof err === "object")) return false;
-
-  const name = "name" in err ? err.name : undefined;
-  const code = "code" in err ? err.code : undefined;
-  const cause = "cause" in err ? err.cause : undefined;
-  const reason = "reason" in err ? err.reason : undefined;
-
-  if (name === "TimeoutError") return true;
-  if (isTimeoutErrorCode(code)) {
-    return true;
-  }
-
-  for (const nested of [cause, reason]) {
-    if (nested && typeof nested === "object") {
-      const nestedName = "name" in nested ? nested.name : undefined;
-      const nestedCode = "code" in nested ? nested.code : undefined;
-      if (nestedName === "TimeoutError" || isTimeoutErrorCode(nestedCode)) {
-        return true;
-      }
-    }
-  }
-
-  return false;
+  return collectErrorLikeChain(err).some((candidate) => {
+    const name = "name" in candidate ? candidate.name : undefined;
+    const code = "code" in candidate ? candidate.code : undefined;
+    return name === "TimeoutError" || isTimeoutErrorCode(code);
+  });
 };
 
 export function createFrontendApiClient(config: BaseClientConfig) {
@@ -226,7 +295,8 @@ export function createFrontendApiClient(config: BaseClientConfig) {
             code,
             message: `Query failed with HTTP ${response.status}`,
             status: response.status,
-            retryable: code === "HTTP_STATUS" ? isRetryableStatus(response.status) : false,
+            retryable:
+              isRetryableStatus(response.status) && (code === "HTTP_STATUS" || code === "TIMEOUT"),
           });
         }
 
@@ -287,14 +357,16 @@ export function createFrontendApiClient(config: BaseClientConfig) {
 
   return {
     queryTask(taskId: string, options?: QueryOptions): Promise<QueryTaskResult> {
-      return getJson(`/query-task/${encodeURIComponent(taskId)}`, options).then(
+      const normalizedTaskId = normalizeRequiredPathParam(taskId, "Task id");
+      return getJson(`/query-task/${encodeURIComponent(normalizedTaskId)}`, options).then(
         adaptQueryTask,
       );
     },
 
     queryEvents(taskId: string, options?: QueryOptions): Promise<QueryEventsResult> {
-      return getJson(`/query-events/${encodeURIComponent(taskId)}`, options).then(
-        (payload) => adaptQueryEvents(payload, taskId),
+      const normalizedTaskId = normalizeRequiredPathParam(taskId, "Task id");
+      return getJson(`/query-events/${encodeURIComponent(normalizedTaskId)}`, options).then(
+        (payload) => adaptQueryEvents(payload, normalizedTaskId),
       );
     },
 
@@ -302,7 +374,28 @@ export function createFrontendApiClient(config: BaseClientConfig) {
       query: NormalizedAuditEventsQuery = {},
       options?: QueryOptions,
     ): Promise<QueryNormalizedAuditEventsResult> {
-      const normalizedQuery = normalizedAuditEventsQuerySchema.safeParse(query);
+      let normalizedQueryInput: NormalizedAuditEventsQuery;
+      try {
+        normalizedQueryInput = {
+          ...query,
+          source: normalizeNormalizedAuditQueryToken(query.source, "source"),
+          eventType: normalizeNormalizedAuditQueryToken(query.eventType, "eventType"),
+          cursor: normalizeNormalizedAuditQueryToken(query.cursor, "cursor"),
+          limit: query.limit,
+        };
+      } catch (error) {
+        if (error instanceof FrontendApiError) {
+          throw error;
+        }
+        throw new FrontendApiError({
+          code: "INVALID_PAYLOAD",
+          message: "Normalized audit query does not match frontend API contract",
+          causeData: error,
+          retryable: false,
+        });
+      }
+
+      const normalizedQuery = normalizedAuditEventsQuerySchema.safeParse(normalizedQueryInput);
       if (!normalizedQuery.success) {
         throw new FrontendApiError({
           code: "INVALID_PAYLOAD",

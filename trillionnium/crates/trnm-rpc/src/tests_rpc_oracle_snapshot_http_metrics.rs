@@ -156,3 +156,40 @@ fn http_service_response_for_metrics_appends_oracle_metrics_when_queried() {
     let _ = fs::remove_file(snapshot_path);
     let _ = fs::remove_file(policy_path);
 }
+
+#[test]
+fn http_service_response_for_oracle_metrics_fails_closed_when_snapshot_evidence_is_missing() {
+    let policy_path = write_json_fixture(
+        "oracle-policy-missing-snapshot-metrics",
+        &oracle_policy_fixture(),
+    );
+    let missing_snapshot = std::env::temp_dir().join(format!(
+        "trnm-rpc-missing-snapshot-{}.json",
+        std::process::id()
+    ));
+    let target = format!(
+        "/oracle/metrics?snapshot={}&policy={}&now_ts_ms=10100",
+        missing_snapshot.display(),
+        policy_path.display()
+    );
+
+    let response = http_service_response_for_target(Some(&target));
+
+    assert!(
+        response.starts_with("HTTP/1.1 400 Bad Request\r\n"),
+        "unexpected response: {}",
+        response
+    );
+    assert!(
+        response.contains("\"message\":\"failed to read snapshot\""),
+        "unexpected response: {}",
+        response
+    );
+    assert!(
+        !response.contains("trnm_rpc_service_up{service=\"trnm-rpc\"} 1"),
+        "missing snapshot must not silently fall back to base metrics: {}",
+        response
+    );
+
+    let _ = fs::remove_file(policy_path);
+}

@@ -1,5 +1,11 @@
 import { z } from "zod";
 
+const normalizeNonEmptyCursor = (value: string): string =>
+  value.replace(/[\u200B\u200C\u200D\u2060\u2063\uFEFF]/g, "").trim();
+
+const paginationCursorSchema = z.string().transform(normalizeNonEmptyCursor).pipe(z.string().min(1));
+const normalizedQueryFilterSchema = z.string().transform(normalizeNonEmptyCursor).pipe(z.string().min(1));
+
 export const taskStatusSchema = z.enum([
   "pending",
   "queued",
@@ -54,22 +60,22 @@ export const queryCapabilityAuditResponseSchema = z.object({
 
 
 export const normalizedAuditEventSchema = z.object({
-  source: z.string().min(1),
-  event_type: z.string().min(1),
+  source: z.string().trim().min(1),
+  event_type: z.string().trim().min(1),
   actor: z.string().min(1).optional(),
-  object_id: z.string().optional(),
-  related_id: z.string().optional(),
+  object_id: z.string().min(1).optional(),
+  related_id: z.string().min(1).optional(),
   amount: z.union([z.string(), z.number().nonnegative()]).optional(),
   reason: z.string().optional(),
   note: z.string().optional(),
   checkedAt: checkedAtSchema.optional(),
   timestamp: z.string().datetime().optional(),
-  subject: z.string().optional(),
+  subject: z.string().min(1).optional(),
 }).strict();
 
 export const queryNormalizedAuditEventsPageSchema = z.object({
   events: z.array(normalizedAuditEventSchema),
-  nextCursor: z.string().min(1).optional(),
+  nextCursor: paginationCursorSchema.optional(),
   hasMore: z.boolean().optional(),
   total: z.number().int().nonnegative().optional(),
 }).strict().superRefine((payload, ctx) => {
@@ -83,15 +89,10 @@ export const queryNormalizedAuditEventsPageSchema = z.object({
 });
 
 export const normalizedAuditEventsQuerySchema = z.object({
-  source: z.string().trim().min(1).optional(),
-  eventType: z.string().trim().min(1).optional(),
+  source: normalizedQueryFilterSchema.optional(),
+  eventType: normalizedQueryFilterSchema.optional(),
   limit: z.number().int().positive().optional(),
-  cursor: z.string().trim().min(1).optional(),
+  cursor: paginationCursorSchema.optional(),
 }).strict();
 
-export const queryNormalizedAuditEventsResponseSchema = z.union([
-  queryNormalizedAuditEventsPageSchema,
-  z.object({
-    events: z.array(normalizedAuditEventSchema),
-  }).strict(),
-]);
+export const queryNormalizedAuditEventsResponseSchema = queryNormalizedAuditEventsPageSchema;

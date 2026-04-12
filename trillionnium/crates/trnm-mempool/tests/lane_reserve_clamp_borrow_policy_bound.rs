@@ -27,8 +27,10 @@ fn oversized_reserve_clamp_keeps_last_free_shared_slot_borrowable_under_active_b
     assert_eq!(gate.qos_snapshot(), saturated);
 
     // Under the clamp, cross-class duplicates still dedupe globally and fresh
-    // work stays fail-closed once the final shared slot is consumed.
+    // work stays fail-closed for both ingress classes once the final shared slot
+    // is consumed.
     assert_eq!(gate.admit(42, IngressClass::Critical), AdmitOutcome::Duplicate);
     assert_eq!(gate.admit(99, IngressClass::Normal), AdmitOutcome::Backpressured);
+    assert_eq!(gate.admit(100, IngressClass::Critical), AdmitOutcome::Backpressured);
     assert_eq!(gate.qos_snapshot(), saturated);
 }

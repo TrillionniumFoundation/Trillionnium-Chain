@@ -95,6 +95,21 @@ describe("normalized audit query contract", () => {
     expect(params.toString()).not.toContain("eventType=");
   });
 
+  it("omits query tokens that normalize to empty whitespace or zero-width noise", () => {
+    const params = buildNormalizedAuditEventsQueryParams({
+      source: "\u200B \uFEFF",
+      eventType: "\u2060\u2063\t\n",
+      cursor: " \u200C\u200D ",
+      limit: 25,
+    });
+
+    expect(params.has("source")).toBe(false);
+    expect(params.has("eventType")).toBe(false);
+    expect(params.has("cursor")).toBe(false);
+    expect(params.get("limit")).toBe("25");
+    expect(Array.from(params.keys())).toEqual(["limit"]);
+  });
+
   it("serializes the currently supported scalar query keys with stable names", () => {
     const params = buildNormalizedAuditEventsQueryParams({
       source: "governance-guard",
@@ -107,5 +122,27 @@ describe("normalized audit query contract", () => {
     expect(params.get("eventType")).toBe("governance.proposal_executed");
     expect(params.get("cursor")).toBe("cursor-2");
     expect(params.get("limit")).toBe("50");
+  });
+
+  it("normalizes exported query-param helper inputs before serialization", () => {
+    const params = buildNormalizedAuditEventsQueryParams({
+      source: " \uFEFF governance-guard\u200B ",
+      eventType: "\n governance.proposal_executed \u2060",
+      cursor: "\u200D cursor-2 \u200B",
+      limit: 50,
+    });
+
+    expect(params.get("source")).toBe("governance-guard");
+    expect(params.get("eventType")).toBe("governance.proposal_executed");
+    expect(params.get("cursor")).toBe("cursor-2");
+    expect(params.get("limit")).toBe("50");
+  });
+
+  it("fails closed when the exported query-param helper receives invalid filters", () => {
+    expect(() =>
+      buildNormalizedAuditEventsQueryParams({
+        source: "\uFEFF \u200B\u200D ",
+      }),
+    ).toThrow();
   });
 });

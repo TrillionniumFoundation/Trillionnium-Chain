@@ -47,6 +47,8 @@ Rust 版本的 BridgeRelay 最小可测试合约骨架（状态机模型），�
 
 ## 运行测试
 
+> 当前实际 crate 路径是 `contracts/bridge-relay`。若仍看到历史文档或 lane 提示里的 `contracts-rust/bridge-relay`，应视为过时路径，不要在旧路径上执行 smoke / cargo 命令。
+
 ```bash
 cd contracts/bridge-relay
 cargo test
@@ -55,6 +57,7 @@ cargo test
 ## Runtime / ABI boundary（truthful snapshot）
 
 - 当前 crate 是 **Rust MVP / in-memory state machine**，用于先固定 BridgeRelay 的 fail-closed 语义、审计事件和配置版本约束；**不表示** 已接入 canonical `HostAbiV1` 或 `trnm-node` 的 deterministic WASM executor。
+- 按 `trillionnium/docs/protocol/external-contracts-rust/RUST_NATIVE_EXTERNAL_CONTRACTS_ARCH_2026-03-05.md`，`BridgeRelay` 未来应与 `sdk/`、`runtime-spec/`、`integration-tests/` 一起形成更完整的 external-contract workspace；但当前仓库里这些目标目录仍**不是** 已落地的 canonical host-runtime closure。
 - 当前 README 不应被解读为：本 crate 已默认产出链上 canonical `wasm32-unknown-unknown` artifacts，或已经完成 `sdk/` + `runtime-spec/` + integration replay 闭环。
 - `audit-events` 的标准化事件接线有助于后续 indexer / 风控统一口径，但它本身 **不等价于** host runtime integration 已闭合。
 - 是否进入 Day-1 / release-ready / public-mainnet scope，仍应以仓库根 `RELEASE_READINESS.md` 与 `trillionnium/docs/release/TRNM_MAINNET_GAP_MATRIX_2026-03-26.md` 为准。
@@ -77,4 +80,9 @@ cargo test
 新增 `normalized_audit_log() -> Vec<AuditEvent>`（复用 `audit-events` 共享 schema）：
 - `source: "bridge-relay"`
 - `event_type`：`bridge_relay.proof_submitted` / `bridge_relay.proof_submitted_and_stored` / `bridge_relay.settlement_finalized` / `bridge_relay.nonce_consumed` / `bridge_relay.admin_updated` / `bridge_relay.min_signatures_updated` / `bridge_relay.validators_updated` / `bridge_relay.config_version_updated`
-- 关键字段填充：`object_id` 常用于 `proof_digest/settlement_id/nonce_key`，`amount` 记录签名阈值或签名计数。
+- 字段纪律：
+  - `object_id` 承载主对象主键，例如 `proof_digest` / `settlement_id` / `nonce_key`，以及配置类事件中的 `bridge_config`。
+  - `related_id` 仅承载次级关联对象，例如 `settlement_finalized -> proof_digest`，或配置类事件中的 `config_version` / `min_signatures` / `validators`。
+  - `reason` 仅承载归因标签，不复用为主键字段；当前配置类事件分别使用 `admin_rotation` / `config_version_rotation` / `validator_threshold_rotation` / `validator_set_rotation`。
+  - `amount` 仅承载计数值或阈值，不与 ID 字段混用；当前用于签名计数、配置版本号、新阈值、新 validator 数。
+- `admin_updated` 采用 `actor=caller`、`object_id=new_admin`、`related_id=old_admin`，保持“主对象=当前生效对象，关联对象=被替换对象”的归一化约定。

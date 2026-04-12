@@ -13,11 +13,11 @@ cleanup() {
 trap cleanup EXIT
 
 TEST_ROOT="$TMP_DIR/repo"
-mkdir -p "$TEST_ROOT/scripts" "$TEST_ROOT/contracts-rust"
-TEST_ROOT="$(cd "$TEST_ROOT" && pwd)"
+mkdir -p "$TEST_ROOT/scripts" "$TEST_ROOT/contracts"
+TEST_ROOT="$(cd "$TEST_ROOT" && pwd -P)"
 cp "$SOURCE_SCRIPT" "$TEST_ROOT/scripts/check_contracts_workspace_smoke.sh"
 chmod +x "$TEST_ROOT/scripts/check_contracts_workspace_smoke.sh"
-cat >"$TEST_ROOT/contracts-rust/Cargo.toml" <<'EOF'
+cat >"$TEST_ROOT/contracts/Cargo.toml" <<'EOF'
 [workspace]
 members = []
 EOF
@@ -31,7 +31,7 @@ printf '%s\n' "${CARGO_TARGET_DIR:-}" >> "${FAKE_CARGO_LOG:?}"
 subcommand="${1:-}"
 case "$subcommand" in
   metadata)
-    printf '{"target_directory":"%s","workspace_root":"%s/contracts-rust"}\n' "${CARGO_TARGET_DIR:-}" "${PWD}"
+    printf '{"target_directory":"%s","workspace_root":"%s/contracts"}\n' "${CARGO_TARGET_DIR:-}" "${PWD}"
     exit 0
     ;;
   check|test)
@@ -57,7 +57,7 @@ if [[ "$rc" -ne 0 ]]; then
   exit 1
 fi
 
-EXPECTED_TARGET_DIR="$(python3 -c 'import os, sys; print(os.path.realpath(sys.argv[1]))' "$TEST_ROOT/target/contracts-rust-workspace-smoke")"
+EXPECTED_TARGET_DIR="$(python3 -c 'import os, sys; print(os.path.realpath(sys.argv[1]))' "$TEST_ROOT/run/target/contracts-workspace-smoke")"
 if [[ ! -d "$EXPECTED_TARGET_DIR" ]]; then
   echo "[FAIL] expected target dir missing: $EXPECTED_TARGET_DIR" >&2
   exit 1
@@ -82,9 +82,9 @@ while IFS= read -r line; do
   fi
 done < "$FAKE_CARGO_LOG"
 
-if [[ -e "$TEST_ROOT/contracts-rust/target" ]]; then
-  echo "[FAIL] contracts-rust/target should not be created by smoke script" >&2
+if [[ -e "$TEST_ROOT/contracts/target" ]]; then
+  echo "[FAIL] contracts/target should not be created by smoke script" >&2
   exit 1
 fi
 
-echo "[PASS] contracts workspace smoke keeps cargo artifacts outside contracts-rust/target"
+echo "[PASS] contracts workspace smoke keeps cargo artifacts outside contracts/target"

@@ -5,7 +5,7 @@ Verifies that a set of TRNM node config files is internally consistent for
 bootstrap/handoff use:
 - every file parses as TOML
 - node_id/rpc_addr/p2p_addr exist and are non-empty after trimming
-- node_id rejects boundary whitespace, list separators, path separators, and dot-segment aliases
+- node_id rejects boundary whitespace, packet/list separators, path separators, and dot-segment aliases
 - rpc_addr/p2p_addr are bare host:port listener addresses with ports in 1..65535
 - rpc_addr != p2p_addr within each file
 - node_id values are unique across the bundle
@@ -97,7 +97,7 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     )
     parser.add_argument(
         "--startup-order-note",
-        default="<startup-order>",
+        default="<controlled-4-node-bootstrap-order>",
         help=(
             "startup_order_note value to print when --emit-ceremony-packet is used; "
             "public-mainnet-input requires replacing placeholder/default wording"
@@ -159,8 +159,10 @@ def validate_node_id(raw_node_id: object, path: Path) -> str:
         fail(
             f"invalid node config {path}: node_id must not contain leading or trailing whitespace"
         )
-    if any(ch in node_id for ch in (",", ";", "|")):
-        fail(f"invalid node config {path}: node_id must not contain list separators (, ; |)")
+    if any(ch in node_id for ch in (",", ";", "|", "=")):
+        fail(
+            f"invalid node config {path}: node_id must not contain packet/list separators (, ; | =)"
+        )
     if any(ch in node_id for ch in ("/", "\\", ":")):
         fail(f"invalid node config {path}: node_id must not contain path separators (/ \\ :)")
     if node_id in {".", ".."}:
@@ -282,7 +284,13 @@ def validate_packet_path(value: str, field: str) -> None:
         fail(
             f"invalid ceremony packet arguments: public-mainnet-input requires {field} to be an absolute path"
         )
-    if "/./" in value or value.endswith("/.") or any(part == ".." for part in path.parts):
+    if value.startswith("//") or "//" in value[1:]:
+        fail(
+            f"invalid ceremony packet arguments: public-mainnet-input requires {field} to avoid repeated '/' path separators"
+        )
+    if value.startswith("/./") or "/./" in value or value.endswith("/.") or any(
+        part in {".", ".."} for part in path.parts
+    ):
         fail(
             f"invalid ceremony packet arguments: public-mainnet-input requires {field} to avoid '.' or '..' path segments"
         )
@@ -292,11 +300,16 @@ def validate_packet_path(value: str, field: str) -> None:
 def validate_packet_file_path(value: str, field: str) -> None:
     validate_packet_path(value, field)
     normalized = value.rstrip("/")
+    path = Path(value)
     if not normalized or normalized == "/":
         fail(
             f"invalid ceremony packet arguments: public-mainnet-input requires {field} to name one exact packet file"
         )
-    if Path(value).name in {"", ".", ".."} or value.endswith("/"):
+    if path.name in {"", ".", ".."} or value.endswith("/"):
+        fail(
+            f"invalid ceremony packet arguments: public-mainnet-input requires {field} to name one exact packet file"
+        )
+    if path.exists() and path.is_dir():
         fail(
             f"invalid ceremony packet arguments: public-mainnet-input requires {field} to name one exact packet file"
         )
@@ -306,11 +319,16 @@ def validate_packet_file_path(value: str, field: str) -> None:
 def validate_packet_artifact_path(value: str, field: str) -> None:
     validate_packet_path(value, field)
     normalized = value.rstrip("/")
+    path = Path(value)
     if not normalized or normalized == "/":
         fail(
             f"invalid ceremony packet arguments: public-mainnet-input requires {field} to name one exact artifact path"
         )
-    if Path(value).name in {"", ".", ".."} or value.endswith("/"):
+    if path.name in {"", ".", ".."} or value.endswith("/"):
+        fail(
+            f"invalid ceremony packet arguments: public-mainnet-input requires {field} to name one exact artifact path"
+        )
+    if path.exists() and path.is_dir():
         fail(
             f"invalid ceremony packet arguments: public-mainnet-input requires {field} to name one exact artifact path"
         )
@@ -343,7 +361,13 @@ def validate_ceremony_packet_metadata(args: argparse.Namespace) -> None:
     for field, value in packet_atom_values.items():
         validate_packet_atom_value(value, field)
 
+    normalized_genesis_artifact_path = Path(args.genesis_artifact_path).resolve(strict=False)
+    normalized_packet_distribution_path = Path(args.packet_distribution_path).resolve(strict=False)
     if args.ceremony_scope != "public-mainnet-input":
+        if normalized_genesis_artifact_path == normalized_packet_distribution_path:
+            fail(
+                "invalid ceremony packet arguments: packet_distribution_path and genesis_artifact_path must name different files"
+            )
         return
 
     required_exact_values = {
@@ -388,8 +412,6 @@ def validate_ceremony_packet_metadata(args: argparse.Namespace) -> None:
 
     validate_packet_artifact_path(args.genesis_artifact_path, "genesis_artifact_path")
     validate_packet_file_path(args.packet_distribution_path, "packet_distribution_path")
-    normalized_genesis_artifact_path = Path(args.genesis_artifact_path).resolve(strict=False)
-    normalized_packet_distribution_path = Path(args.packet_distribution_path).resolve(strict=False)
     if normalized_genesis_artifact_path == normalized_packet_distribution_path:
         fail(
             "invalid ceremony packet arguments: public-mainnet-input requires packet_distribution_path and genesis_artifact_path to name different files"
@@ -456,7 +478,8 @@ def emit_ceremony_packet(args: argparse.Namespace, entries: list[dict[str, str]]
         print(f"operator_contact={validator_name}={operator_contact_placeholder}")
         print(
             "operator_ack="
-            f"{validator_owner_placeholder} checked genesis_artifact_sha256={args.genesis_artifact_sha256};"
+            f"{validator_owner_placeholder} checked ceremony_id={args.ceremony_id};"
+            f"genesis_artifact_sha256={args.genesis_artifact_sha256};"
             f"config_path={config_path};"
             f"validator_name={validator_name};"
             f"validator_entry_hash={validator_entry_hash}"

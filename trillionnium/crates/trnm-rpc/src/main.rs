@@ -948,6 +948,11 @@ fn discover_default_node_event_log_sources(root: &Path) -> Vec<PathBuf> {
 
 fn load_node_event_log_sources(root: &Path) -> Vec<PathBuf> {
     let mut sources = BTreeSet::<PathBuf>::new();
+    let mut insert_if_file = |path: PathBuf| {
+        if path.is_file() {
+            sources.insert(path);
+        }
+    };
 
     if let Some(manifest_path) = normalized_path_from_env(NODE_EVENT_LOG_MANIFEST_ENV) {
         let manifest_path = if manifest_path.is_absolute() {
@@ -967,7 +972,7 @@ fn load_node_event_log_sources(root: &Path) -> Vec<PathBuf> {
                 } else {
                     normalize_lexical_path(manifest_dir.join(path))
                 };
-                sources.insert(resolved);
+                insert_if_file(resolved);
             }
         }
     }
@@ -979,7 +984,7 @@ fn load_node_event_log_sources(root: &Path) -> Vec<PathBuf> {
             } else {
                 normalize_lexical_path(root.join(path))
             };
-            sources.insert(resolved);
+            insert_if_file(resolved);
         }
     }
 
@@ -1369,6 +1374,11 @@ fn normalize_task_state_snapshot_line(line: &str) -> &str {
     line.trim().trim_start_matches('\u{feff}').trim()
 }
 
+fn is_task_state_snapshot_line_candidate(line: &str) -> bool {
+    let line = normalize_task_state_snapshot_line(line);
+    !line.is_empty() && !line.starts_with('#')
+}
+
 fn load_task_state_snapshot() -> Result<Vec<TaskObject>> {
     let Some(path) = task_state_file() else {
         return Ok(vec![]);
@@ -1387,10 +1397,10 @@ fn load_task_state_snapshot() -> Result<Vec<TaskObject>> {
 
     let mut tasks = Vec::new();
     for (idx, line) in raw.lines().enumerate() {
-        let line = normalize_task_state_snapshot_line(line);
-        if line.is_empty() {
+        if !is_task_state_snapshot_line_candidate(line) {
             continue;
         }
+        let line = normalize_task_state_snapshot_line(line);
         let task = serde_json::from_str::<TaskObject>(line).map_err(|err| {
             anyhow!(
                 "failed to parse task state snapshot {} line {}: {}",
@@ -2953,7 +2963,7 @@ fn is_supported_http_version(version: &str) -> bool {
 
 fn http_json_response(status_line: &str, body: &str) -> String {
     format!(
-        "HTTP/1.1 {status_line}\r\nContent-Type: application/json\r\nContent-Length: {}\r\nConnection: close\r\n\r\n{}",
+        "HTTP/1.1 {status_line}\r\nContent-Type: application/json\r\nCache-Control: no-store\r\nContent-Length: {}\r\nConnection: close\r\n\r\n{}",
         body.len(),
         body
     )
@@ -2961,7 +2971,7 @@ fn http_json_response(status_line: &str, body: &str) -> String {
 
 fn http_json_head_response(status_line: &str, body_len: usize) -> String {
     format!(
-        "HTTP/1.1 {status_line}\r\nContent-Type: application/json\r\nContent-Length: {body_len}\r\nConnection: close\r\n\r\n"
+        "HTTP/1.1 {status_line}\r\nContent-Type: application/json\r\nCache-Control: no-store\r\nContent-Length: {body_len}\r\nConnection: close\r\n\r\n"
     )
 }
 
@@ -3049,21 +3059,22 @@ fn parse_http_request_target(first_line: &str) -> Option<(&str, &str)> {
     }
 
     let normalized = path.to_ascii_lowercase();
+    if path.matches('?').count() > 1 {
+        return None;
+    }
     if path.contains('\\') || normalized.contains("%5c") {
         return None;
     }
     if path.contains('#') || normalized.contains("%23") {
         return None;
     }
-    if normalized.contains("%00")
-        || normalized.contains("%0d")
-        || normalized.contains("%0a")
-        || normalized.contains("%09")
-        || normalized.contains("%0b")
-        || normalized.contains("%0c")
-        || normalized.contains("%20")
-        || normalized.contains("%7f")
+    if normalized.contains("%3f")
+        || contains_malformed_percent_encoding(path)
+        || contains_percent_encoded_control_or_space(path)
     {
+        return None;
+    }
+    if path.matches('?').count() > 1 {
         return None;
     }
 
@@ -3091,12 +3102,42 @@ fn parse_http_get_path(first_line: &str) -> Option<&str> {
     }
 }
 
+fn normalize_wrapped_query_value(raw: &str) -> Option<&str> {
+    if raw.chars().any(|ch| ch.is_control()) {
+        return None;
+    }
+
+    let trimmed = raw.trim_matches(|ch: char| ch.is_ascii_whitespace());
+    if trimmed.is_empty() {
+        return None;
+    }
+
+    if trimmed.len() != raw.len() {
+        let wrapped_by_quotes = (trimmed.starts_with('"') && trimmed.ends_with('"'))
+            || (trimmed.starts_with('\'') && trimmed.ends_with('\''))
+            || (trimmed.starts_with('`') && trimmed.ends_with('`'));
+        if !wrapped_by_quotes {
+            return None;
+        }
+    }
+
+    let normalized = normalize_wrapped_env_value(raw);
+    if normalized.is_empty() {
+        None
+    } else {
+        Some(normalized)
+    }
+}
+
 fn parse_query_events_limit_from_path(path: &str) -> std::result::Result<usize, String> {
     let path_without_query = path.split('?').next().unwrap_or(path);
     let normalized_path = path_without_query.to_ascii_lowercase();
     if !path_without_query.starts_with('/')
         || path_without_query.contains('\\')
         || path_without_query.contains('#')
+        || path_without_query
+            .chars()
+            .any(|ch| ch.is_control() || ch.is_whitespace())
         || normalized_path.contains("%5c")
         || normalized_path.contains("%23")
         || normalized_path.contains("%2f")
@@ -3109,9 +3150,28 @@ fn parse_query_events_limit_from_path(path: &str) -> std::result::Result<usize, 
         || normalized_path.contains("%0c")
         || normalized_path.contains("%20")
         || normalized_path.contains("%7f")
+        || contains_malformed_percent_encoding(path_without_query)
+        || contains_percent_encoded_control_or_space(path_without_query)
         || path_without_query
             .split('/')
             .any(|segment| segment == "." || segment == "..")
+    {
+        return Err(http_json_response(
+            "400 Bad Request",
+            "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid limit\"}",
+        ));
+    }
+
+    let Some(event_id_suffix) = path_without_query.strip_prefix("/query-events/") else {
+        return Err(http_json_response(
+            "400 Bad Request",
+            "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid limit\"}",
+        ));
+    };
+    let event_id_suffix = event_id_suffix.strip_suffix('/').unwrap_or(event_id_suffix);
+    if event_id_suffix.is_empty()
+        || event_id_suffix.contains('/')
+        || !event_id_suffix.chars().all(|ch| ch.is_ascii_digit())
     {
         return Err(http_json_response(
             "400 Bad Request",
@@ -3126,7 +3186,7 @@ fn parse_query_events_limit_from_path(path: &str) -> std::result::Result<usize, 
     if query.is_empty()
         || query.contains('?')
         || query.contains('#')
-        || query.chars().any(|ch| ch.is_control() || ch.is_whitespace())
+        || query.chars().any(char::is_control)
     {
         return Err(http_json_response(
             "400 Bad Request",
@@ -3172,20 +3232,12 @@ fn parse_query_events_limit_from_path(path: &str) -> std::result::Result<usize, 
                 "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid limit\"}",
             ));
         }
-        if parsed_limit.is_some() {
-            return Err(http_json_response(
-                "400 Bad Request",
-                "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"duplicate limit\"}",
-            ));
-        }
-
-        let normalized = normalize_wrapped_env_value(value);
-        if normalized.is_empty() {
+        let Some(normalized) = normalize_wrapped_query_value(value) else {
             return Err(http_json_response(
                 "400 Bad Request",
                 "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid limit\"}",
             ));
-        }
+        };
 
         let requested = normalized.parse::<usize>().map_err(|_| {
             http_json_response(
@@ -3193,6 +3245,14 @@ fn parse_query_events_limit_from_path(path: &str) -> std::result::Result<usize, 
                 "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid limit\"}",
             )
         })?;
+
+        if parsed_limit.is_some() {
+            return Err(http_json_response(
+                "400 Bad Request",
+                "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"duplicate limit\"}",
+            ));
+        }
+
         parsed_limit = Some(clamp_limit(
             "QueryEventsHttp",
             requested,
@@ -3234,7 +3294,7 @@ fn contains_percent_encoded_control_or_space(value: &str) -> bool {
             let lo = (bytes[idx + 2] as char).to_digit(16);
             if let (Some(hi), Some(lo)) = (hi, lo) {
                 let decoded = ((hi << 4) | lo) as u8;
-                if decoded <= 0x20 || decoded == 0x7f {
+                if decoded <= 0x20 || decoded == 0x7f || (0x80..=0x9f).contains(&decoded) {
                     return true;
                 }
             }
@@ -3533,6 +3593,16 @@ fn json_response_for_method(method: &str, status_line: &str, body: &str) -> Stri
     }
 }
 
+fn health_probe_body(ts_unix_ms: u128) -> String {
+    serde_json::json!({
+        "ok": true,
+        "service": "trnm-rpc",
+        "ts_unix_ms": ts_unix_ms,
+        "version": 1
+    })
+    .to_string()
+}
+
 fn has_ambiguous_path_segment_encoding(segment: &str) -> bool {
     let lower = segment.to_ascii_lowercase();
     lower.contains("%2f")
@@ -3562,6 +3632,8 @@ fn parse_nonempty_path_suffix<'a>(path: &'a str, prefix: &str) -> Option<&'a str
         .filter(|suffix| !suffix.chars().any(|ch| ch.is_control() || ch.is_whitespace()))
         .filter(|suffix| !suffix.contains('/'))
         .filter(|suffix| !suffix.contains('\\'))
+        .filter(|suffix| !contains_malformed_percent_encoding(suffix))
+        .filter(|suffix| !contains_percent_encoded_control_or_space(suffix))
         .filter(|suffix| !has_ambiguous_path_segment_encoding(suffix))
 }
 
@@ -3624,13 +3696,7 @@ fn serve_health(host: &str, port: u16) -> Result<()> {
 
         let response = match (request, path, target) {
             (Some((method, _)), Some(path), _) if is_health_probe_path(path) => {
-                let body = serde_json::json!({
-                    "ok": true,
-                    "service": "trnm-rpc",
-                    "ts_unix_ms": now_ms(),
-                    "version": 1
-                })
-                .to_string();
+                let body = health_probe_body(now_ms());
                 json_response_for_method(method, "200 OK", &body)
             }
             (Some((method, _)), Some(path), Some(_)) if path.starts_with("/query-task/") => {
@@ -3867,6 +3933,93 @@ fn query_task_from_node_events(
     })
 }
 
+fn adapter_kind_query_order(kind: &str) -> u8 {
+    match kind {
+        "commit" => 0,
+        "reveal" => 1,
+        _ => 2,
+    }
+}
+
+fn normalize_result_hash_replay_identity(value: Option<&str>) -> Option<String> {
+    value.map(str::trim).and_then(|value| {
+        if value.is_empty() {
+            None
+        } else {
+            let normalized = normalize_tx_hash_lookup(value);
+            if is_hex_like_tx_hash(&normalized) {
+                Some(normalized)
+            } else {
+                Some(value.to_string())
+            }
+        }
+    })
+}
+
+fn sorted_task_adapter_records<'a>(
+    task_id: u64,
+    recs: &'a [AdapterRecord],
+) -> Vec<&'a AdapterRecord> {
+    let mut task_recs: Vec<&AdapterRecord> = recs
+        .iter()
+        .filter(|r| {
+            r.task_id == task_id
+                && r.status == "accepted"
+                && matches!(r.kind.as_str(), "commit" | "reveal")
+                && r.worker
+                    .as_deref()
+                    .and_then(normalize_actor_or_signer)
+                    .is_some()
+        })
+        .collect();
+    task_recs.sort_by(|a, b| {
+        (
+            a.ts,
+            adapter_kind_query_order(&a.kind),
+            a.worker
+                .as_deref()
+                .and_then(normalize_actor_or_signer)
+                .unwrap_or_default(),
+            a.tx_hash
+                .as_deref()
+                .map(normalize_tx_hash_lookup)
+                .unwrap_or_default(),
+            normalize_result_hash_replay_identity(a.result_hash.as_deref()).unwrap_or_default(),
+        )
+            .cmp(&(
+                b.ts,
+                adapter_kind_query_order(&b.kind),
+                b.worker
+                    .as_deref()
+                    .and_then(normalize_actor_or_signer)
+                    .unwrap_or_default(),
+                b.tx_hash
+                    .as_deref()
+                    .map(normalize_tx_hash_lookup)
+                    .unwrap_or_default(),
+                normalize_result_hash_replay_identity(b.result_hash.as_deref()).unwrap_or_default(),
+            ))
+    });
+    let mut seen = std::collections::BTreeSet::new();
+    task_recs.retain(|record| {
+        seen.insert((
+            record.kind.clone(),
+            record
+                .worker
+                .as_deref()
+                .and_then(normalize_actor_or_signer)
+                .unwrap_or_default(),
+            record
+                .tx_hash
+                .as_deref()
+                .map(normalize_tx_hash_lookup)
+                .unwrap_or_default(),
+            normalize_result_hash_replay_identity(record.result_hash.as_deref()).unwrap_or_default(),
+        ))
+    });
+    task_recs
+}
+
 fn query_task_response(
     task_id: u64,
     node_events: &[NodeEventRecord],
@@ -3880,18 +4033,7 @@ fn query_task_response(
         return Ok(out);
     }
 
-    let task_recs: Vec<&AdapterRecord> = recs
-        .iter()
-        .filter(|r| {
-            r.task_id == task_id
-                && r.status == "accepted"
-                && matches!(r.kind.as_str(), "commit" | "reveal")
-                && r.worker
-                    .as_deref()
-                    .and_then(normalize_actor_or_signer)
-                    .is_some()
-        })
-        .collect();
+    let task_recs = sorted_task_adapter_records(task_id, recs);
     if task_recs.is_empty() {
         bail!("task not found: {}", task_id);
     }
@@ -3910,10 +4052,12 @@ fn query_task_response(
     } else {
         TaskStatus::Open
     };
-    let worker = task_recs.iter().find_map(|r| r.worker.clone());
+    let worker = task_recs
+        .iter()
+        .find_map(|r| r.worker.as_deref().and_then(normalize_actor_or_signer));
     let result_hash_hex = task_recs.iter().rev().find_map(|r| {
         if r.kind == "reveal" {
-            r.result_hash.clone()
+            normalize_result_hash_replay_identity(r.result_hash.as_deref())
         } else {
             None
         }
@@ -3985,10 +4129,7 @@ fn query_events_response(
     if events.is_empty() {
         let mut tx_id = 1u64;
         let mut has_commit = false;
-        for r in recs
-            .iter()
-            .filter(|r| r.task_id == task_id && r.status == "accepted")
-        {
+        for r in sorted_task_adapter_records(task_id, recs) {
             let Some(actor) = r.worker.as_deref().and_then(normalize_actor_or_signer) else {
                 continue;
             };
@@ -5255,8 +5396,46 @@ mod tests {
     fn parse_http_get_path_rejects_percent_encoded_control_path_bytes_fail_closed() {
         assert_eq!(parse_http_get_path("GET /health%00check HTTP/1.1"), None);
         assert_eq!(parse_http_get_path("GET /health%7Fcheck HTTP/1.1"), None);
+        assert_eq!(parse_http_get_path("GET /health%80check HTTP/1.1"), None);
         assert_eq!(parse_http_get_path("GET /query-events/7%00 HTTP/1.1"), None);
         assert_eq!(parse_http_get_path("GET /query-events/7%7f HTTP/1.1"), None);
+        assert_eq!(parse_http_get_path("GET /query-events/7%9F HTTP/1.1"), None);
+    }
+
+    #[test]
+    fn parse_http_request_target_rejects_multiple_raw_query_delimiters_fail_closed() {
+        assert_eq!(
+            parse_http_request_target("GET /query-task/42??shadow HTTP/1.1"),
+            None
+        );
+        assert_eq!(
+            parse_http_request_target("HEAD /query-events/7?limit=9?shadow HTTP/1.1"),
+            None
+        );
+    }
+
+    #[test]
+    fn parse_http_request_target_rejects_percent_encoded_controls_and_spaces_fail_closed() {
+        assert_eq!(
+            parse_http_request_target("GET /health%01check HTTP/1.1"),
+            None
+        );
+        assert_eq!(
+            parse_http_request_target("HEAD /readyz%1F HTTP/1.1"),
+            None
+        );
+        assert_eq!(
+            parse_http_request_target("GET /health%20check HTTP/1.1"),
+            None
+        );
+        assert_eq!(
+            parse_http_request_target("GET /health%80check HTTP/1.1"),
+            None
+        );
+        assert_eq!(
+            parse_http_request_target("HEAD /readyz%9F HTTP/1.1"),
+            None
+        );
     }
 
     #[test]
@@ -5281,12 +5460,45 @@ mod tests {
     }
 
     #[test]
+    fn parse_query_events_limit_from_path_accepts_single_trailing_slash_with_same_limit_contract() {
+        assert_eq!(
+            parse_query_events_limit_from_path("/query-events/42/?limit=7")
+                .expect("single trailing slash should preserve explicit limit parsing"),
+            7
+        );
+        assert_eq!(
+            parse_query_events_limit_from_path("/query-events/42/")
+                .expect("single trailing slash should preserve default limit parsing"),
+            QUERY_EVENTS_LIMIT_DEFAULT
+        );
+    }
+
+    #[test]
+    fn parse_query_events_limit_from_path_rejects_noncanonical_route_shapes() {
+        for path in [
+            "/query-events",
+            "/query-events/",
+            "/query-events/not-a-u64?limit=1",
+            "/query-events/42/history?limit=1",
+            "/query-task/42?limit=1",
+            "/health?limit=1",
+        ] {
+            let err = parse_query_events_limit_from_path(path)
+                .expect_err("non-query-events routes must fail closed instead of inheriting the limit parser");
+            assert!(err.contains("400 Bad Request"), "path={path} err={err}");
+            assert!(err.contains("invalid limit"), "path={path} err={err}");
+        }
+    }
+
+    #[test]
     fn parse_query_events_limit_from_path_rejects_unrelated_query_keys() {
         for path in [
             "/query-events/42?foo=bar&limit=9",
             "/query-events/42?limit=9&foo=bar",
             "/query-events/42?foo=bar",
             "/query-events/42?limit=9&bar=baz",
+            "/query-events/42?Limit=9",
+            "/query-events/42?LIMIT=9",
         ] {
             let err = parse_query_events_limit_from_path(path)
                 .expect_err("unrelated query keys must fail closed instead of being ignored");
@@ -5339,7 +5551,7 @@ mod tests {
             8
         );
         assert_eq!(
-            parse_query_events_limit_from_path("/query-events/42?limit=  `9`  ")
+            parse_query_events_limit_from_path("/query-events/42?limit=`9`")
                 .expect("backtick-wrapped numeric limit should parse"),
             9
         );
@@ -5487,6 +5699,22 @@ mod tests {
     }
 
     #[test]
+    fn parse_query_events_limit_from_path_rejects_raw_and_encoded_backslash_path_smuggling() {
+        for path in [
+            "/query-events\\42?limit=7",
+            "/query-events/42\\history?limit=7",
+            "/query-events%5c42?limit=7",
+            "/query-events/42%5chistory?limit=7",
+            "/query-events/42%5Chistory?limit=7",
+        ] {
+            let err = parse_query_events_limit_from_path(path)
+                .expect_err("slash-like backslash path encodings must fail closed");
+            assert!(err.contains("400 Bad Request"), "path={path} err={err}");
+            assert!(err.contains("invalid limit"), "path={path} err={err}");
+        }
+    }
+
+    #[test]
     fn parse_query_normalized_audit_events_query_from_path_defaults_and_filters() {
         let out =
             parse_query_normalized_audit_events_query_from_path("/query-normalized-audit-events")
@@ -5524,6 +5752,21 @@ mod tests {
         .expect_err("invalid cursor should fail closed");
         assert!(err.contains("400 Bad Request"));
         assert!(err.contains("invalid cursor"));
+    }
+
+    #[test]
+    fn parse_query_normalized_audit_events_query_from_path_rejects_query_key_case_drift() {
+        for path in [
+            "/query-normalized-audit-events?Limit=3",
+            "/query-normalized-audit-events?Source=trnm.task",
+            "/query-normalized-audit-events?eventtype=trnm.task.commit",
+            "/query-normalized-audit-events?Cursor=2",
+        ] {
+            let err = parse_query_normalized_audit_events_query_from_path(path)
+                .expect_err("query key case drift should fail closed");
+            assert!(err.contains("400 Bad Request"), "path={path} err={err}");
+            assert!(err.contains("invalid query"), "path={path} err={err}");
+        }
     }
 
     #[test]
@@ -5609,16 +5852,44 @@ mod tests {
     }
 
     #[test]
+    fn parse_query_normalized_audit_events_query_from_path_rejects_exact_trailing_slash() {
+        let err = parse_query_normalized_audit_events_query_from_path(
+            "/query-normalized-audit-events/?source=trnm.task",
+        )
+        .expect_err("exact trailing slash must fail closed for frozen Day-1 path");
+        assert!(err.contains("400 Bad Request"));
+        assert!(err.contains("invalid query"));
+    }
+
+    #[test]
+    fn parse_query_normalized_audit_events_query_from_path_rejects_raw_route_delimiter_confusion() {
+        for path in [
+            "/query-normalized-audit-events#tail",
+            "/query-normalized-audit-events\\tail",
+            "/query-normalized-audit-events?source=trnm.task?limit=2",
+            "/query-normalized-audit-events?source=trnm.task#tail",
+        ] {
+            let err = parse_query_normalized_audit_events_query_from_path(path)
+                .expect_err("raw route delimiter confusion should fail closed");
+            assert!(err.contains("400 Bad Request"), "path={path} err={err}");
+            assert!(err.contains("invalid query"), "path={path} err={err}");
+        }
+    }
+
+    #[test]
     fn parse_query_normalized_audit_events_query_from_path_rejects_percent_encoded_null_and_del_controls(
     ) {
         for path in [
             "/query-normalized-audit-events?source=trnm.task%00shadow",
+            "/query-normalized-audit-events?source=trnm.task%80shadow",
             "/query-normalized-audit-events?eventType=trnm.task.commit%7ftrail",
+            "/query-normalized-audit-events?eventType=trnm.task.commit%9Ftrail",
             "/query-normalized-audit-events%00shadow?source=trnm.task",
             "/query-normalized-audit-events%7fshadow?source=trnm.task",
+            "/query-normalized-audit-events%80shadow?source=trnm.task",
         ] {
             let err = parse_query_normalized_audit_events_query_from_path(path)
-                .expect_err("encoded controls should fail closed");
+                .expect_err("encoded control bytes should fail closed");
             assert!(err.contains("400 Bad Request"), "path={path} err={err}");
             assert!(err.contains("invalid query"), "path={path} err={err}");
         }
@@ -5635,6 +5906,22 @@ mod tests {
         ] {
             let err = parse_query_normalized_audit_events_query_from_path(path)
                 .expect_err("uppercase encoded controls/spaces should fail closed");
+            assert!(err.contains("400 Bad Request"), "path={path} err={err}");
+            assert!(err.contains("invalid query"), "path={path} err={err}");
+        }
+    }
+
+    #[test]
+    fn parse_query_normalized_audit_events_query_from_path_rejects_percent_encoded_query_delimiters(
+    ) {
+        for path in [
+            "/query-normalized-audit-events?source=trnm.task%26limit=2",
+            "/query-normalized-audit-events?eventType%3Dtrnm.task.commit",
+            "/query-normalized-audit-events?cursor=1%3Flimit=2",
+            "/query-normalized-audit-events?limit=3%23tail",
+        ] {
+            let err = parse_query_normalized_audit_events_query_from_path(path)
+                .expect_err("encoded query delimiters must fail closed");
             assert!(err.contains("400 Bad Request"), "path={path} err={err}");
             assert!(err.contains("invalid query"), "path={path} err={err}");
         }
@@ -5835,16 +6122,65 @@ mod tests {
     }
 
     #[test]
-    fn health_probe_aliases_include_dash_prefixed_operator_paths() {
-        assert!(is_health_probe_path("/-/health"));
-        assert!(is_health_probe_path("/-/healthz/"));
-        assert!(is_health_probe_path("/-/live"));
-        assert!(is_health_probe_path("/-/readyz/"));
-        assert!(is_health_probe_path("/-/status"));
-        assert!(is_health_probe_path("/-/STATUSZ/"));
-        assert!(!is_health_probe_path("/-/statuscheck"));
-        assert!(!is_health_probe_path("/-/statusz//"));
-        assert!(!is_health_probe_path("/-/readyz/extra"));
+    fn health_probe_aliases_cover_operator_and_plain_probe_paths() {
+        for alias in [
+            "/health",
+            "/health/",
+            "/healthz",
+            "/healthz/",
+            "/live",
+            "/live/",
+            "/livez",
+            "/livez/",
+            "/ready",
+            "/ready/",
+            "/readyz",
+            "/readyz/",
+            "/status",
+            "/status/",
+            "/statusz",
+            "/statusz/",
+            "/-/health",
+            "/-/health/",
+            "/-/healthz",
+            "/-/healthz/",
+            "/-/live",
+            "/-/live/",
+            "/-/livez",
+            "/-/livez/",
+            "/-/ready",
+            "/-/ready/",
+            "/-/readyz",
+            "/-/readyz/",
+            "/-/status",
+            "/-/status/",
+            "/-/statusz",
+            "/-/statusz/",
+            "/HEALTHZ",
+            "/LIVE",
+            "/Ready/",
+            "/ReadyZ/",
+            "/STATUS",
+            "/STATUSZ",
+            "/-/STATUS",
+            "/-/STATUSZ/",
+        ] {
+            assert!(is_health_probe_path(alias), "alias should stay accepted: {alias}");
+        }
+
+        for rejected in [
+            "/healthcheck",
+            "/-/healthcheck",
+            "/-/readycheck",
+            "/-/statuscheck",
+            "/-/statusz//",
+            "/-/readyz/extra",
+        ] {
+            assert!(
+                !is_health_probe_path(rejected),
+                "non-alias should stay rejected: {rejected}"
+            );
+        }
     }
 
     #[test]
@@ -5860,6 +6196,22 @@ mod tests {
     }
 
     #[test]
+    fn parse_http_request_target_rejects_ambiguous_query_delimiters_fail_closed() {
+        assert_eq!(
+            parse_http_request_target("GET /healthz?probe=lb?shadow=1 HTTP/1.1"),
+            None
+        );
+        assert_eq!(
+            parse_http_request_target("HEAD /-/readyz%3Fprobe=lb HTTP/1.1"),
+            None
+        );
+        assert_eq!(
+            parse_http_request_target("GET /-/statusz%3fprobe=lb HTTP/1.1"),
+            None
+        );
+    }
+
+    #[test]
     fn mixed_case_status_health_alias_with_query_keeps_same_head_contract() {
         let request = parse_http_request_target("HEAD /-/STATUSZ/?from=ops&probe=lb HTTP/1.1")
             .expect("health alias request parses");
@@ -5871,6 +6223,7 @@ mod tests {
         let response = json_response_for_method(request.0, "200 OK", "{\"ok\":true}");
 
         assert!(response.starts_with("HTTP/1.1 200 OK\r\n"));
+        assert!(response.contains("Cache-Control: no-store\r\n"));
         assert!(response.contains("Content-Length: 11\r\n"));
         assert!(response.ends_with("\r\n\r\n"));
         assert!(!response.ends_with("{\"ok\":true}"));
@@ -5892,6 +6245,7 @@ mod tests {
     fn json_response_for_method_preserves_head_semantics_for_error_paths() {
         let not_found = json_response_for_method("HEAD", "404 Not Found", "{\"ok\":false}");
         assert!(not_found.starts_with("HTTP/1.1 404 Not Found\r\n"));
+        assert!(not_found.contains("Cache-Control: no-store\r\n"));
         assert!(not_found.ends_with("\r\n\r\n"));
         assert!(!not_found.ends_with("{\"ok\":false}"));
         assert!(not_found.contains("Content-Length: 12\r\n"));
@@ -5904,6 +6258,31 @@ mod tests {
         assert!(bad_request.starts_with("HTTP/1.1 400 Bad Request\r\n"));
         assert!(bad_request.ends_with("\r\n\r\n"));
         assert!(!bad_request.ends_with("BAD_REQUEST\"}"));
+    }
+
+    #[test]
+    fn health_probe_body_keeps_minimum_operator_contract_fields_stable() {
+        let body = health_probe_body(42);
+        let value: serde_json::Value =
+            serde_json::from_str(&body).expect("health probe body stays valid json");
+        let object = value
+            .as_object()
+            .expect("health probe body should serialize as a json object");
+
+        assert_eq!(object.len(), 4, "health body should stay minimal for probes");
+        assert_eq!(object.get("ok"), Some(&serde_json::Value::Bool(true)));
+        assert_eq!(
+            object.get("service"),
+            Some(&serde_json::Value::String("trnm-rpc".to_string()))
+        );
+        assert_eq!(
+            object.get("ts_unix_ms").and_then(serde_json::Value::as_u64),
+            Some(42)
+        );
+        assert_eq!(
+            object.get("version"),
+            Some(&serde_json::Value::Number(1u64.into()))
+        );
     }
 
     #[test]
@@ -6025,6 +6404,26 @@ mod tests {
             assert_eq!(
                 parse_query_capability_audit_subject_from_target(target)
                     .expect_err("malformed capability path must fail closed as invalid query"),
+                "invalid query",
+                "target={target}"
+            );
+        }
+    }
+
+    #[test]
+    fn parse_query_capability_audit_subject_from_target_rejects_percent_encoded_controls_and_malformed_escapes() {
+        for target in [
+            "/query-capability-audit/alice%00",
+            "/query-capability-audit/alice%0a",
+            "/query-capability-audit/alice%20",
+            "/query-capability-audit/alice%7F",
+            "/query-capability-audit/alice%",
+            "/query-capability-audit/alice%zz",
+        ] {
+            assert_eq!(
+                parse_query_capability_audit_subject_from_target(target).expect_err(
+                    "capability audit subject must fail closed on encoded controls and malformed percent escapes",
+                ),
                 "invalid query",
                 "target={target}"
             );
@@ -8589,6 +8988,58 @@ mod tests {
     }
 
     #[test]
+    fn adapter_fallback_dedupes_replayed_rows_even_when_timestamps_drift() {
+        let recs = vec![
+            AdapterRecord {
+                ts: 20,
+                kind: "reveal".into(),
+                task_id: 51,
+                worker: Some(" worker-a ".into()),
+                result_hash: Some("0xABCD".into()),
+                status: "accepted".into(),
+                tx_hash: Some("0x1234".into()),
+            },
+            AdapterRecord {
+                ts: 10,
+                kind: "commit".into(),
+                task_id: 51,
+                worker: Some("worker-a".into()),
+                result_hash: None,
+                status: "accepted".into(),
+                tx_hash: Some("0x1234".into()),
+            },
+            AdapterRecord {
+                ts: 30,
+                kind: "commit".into(),
+                task_id: 51,
+                worker: Some("worker-a".into()),
+                result_hash: None,
+                status: "accepted".into(),
+                tx_hash: Some("0x1234".into()),
+            },
+            AdapterRecord {
+                ts: 40,
+                kind: "reveal".into(),
+                task_id: 51,
+                worker: Some("worker-a".into()),
+                result_hash: Some("0xabcd".into()),
+                status: "accepted".into(),
+                tx_hash: Some("0x1234".into()),
+            },
+        ];
+
+        let task = query_task_response(51, &[], &recs).expect("task expected");
+        assert_eq!(task.version, 2, "replayed adapter rows must not inflate read-model version");
+        assert_eq!(task.worker.as_deref(), Some("worker-a"));
+        assert_eq!(task.result_hash_hex.as_deref(), Some("0xabcd"));
+
+        let events = query_events_response(51, 20, &[], &recs).expect("events expected");
+        assert_eq!(events.len(), 2, "historical replay must not duplicate commit/reveal rows");
+        assert_eq!(events[0].event_type, "commit");
+        assert_eq!(events[1].event_type, "reveal");
+    }
+
+    #[test]
     fn parse_event_log_kv_preserves_quoted_values_with_spaces() {
         let line = "[event] event_type=resolve task_id=7 from_status=Challenged to_status=Completed actor=authority tx_id=9 block_height=12 state_root=abc ts_unix_ms=1000 resolution_code=\"timeout reached\" bond_disposition='forfeit all'";
         let kv = parse_event_log_kv(line);
@@ -8948,6 +9399,95 @@ line2
         assert!(got.contains(&env_log));
         assert!(got.contains(&manifest_log));
         assert_eq!(got.len(), 2, "custom sources should replace defaults");
+
+        let _ = fs::remove_dir_all(root);
+    }
+
+    #[test]
+    fn load_node_event_log_sources_ignores_missing_entries_before_default_fallback() {
+        let _guard = lock_env();
+        let root = unique_tmp_path("trnm-rpc-log-sources-missing-entry-fallback", "dir");
+        let run_dir = root.join("run");
+        let manifest_dir = root.join("cfg/history");
+        fs::create_dir_all(&run_dir).expect("create run dir");
+        fs::create_dir_all(&manifest_dir).expect("create manifest dir");
+
+        let default_log = run_dir.join("event-field-check.log");
+        let manifest = manifest_dir.join("sources.txt");
+        fs::write(&default_log, "").expect("write default log");
+        fs::write(&manifest, "../../archive/missing-node4.log\n").expect("write manifest");
+
+        let prev_sources = std::env::var(NODE_EVENT_LOG_SOURCES_ENV).ok();
+        let prev_manifest = std::env::var(NODE_EVENT_LOG_MANIFEST_ENV).ok();
+        unsafe {
+            std::env::set_var(NODE_EVENT_LOG_SOURCES_ENV, "archive/missing-node5.log");
+            std::env::set_var(
+                NODE_EVENT_LOG_MANIFEST_ENV,
+                manifest.to_string_lossy().to_string(),
+            );
+        }
+
+        let got = load_node_event_log_sources(&root);
+
+        match prev_sources {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_SOURCES_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV) },
+        }
+        match prev_manifest {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_MANIFEST_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV) },
+        }
+
+        assert_eq!(
+            got,
+            vec![default_log],
+            "missing historical replay entries must not suppress durable default log discovery"
+        );
+
+        let _ = fs::remove_dir_all(root);
+    }
+
+    #[test]
+    fn load_node_event_log_sources_ignores_invalid_utf8_manifest_before_env_fallback() {
+        let _guard = lock_env();
+        let root = unique_tmp_path("trnm-rpc-log-sources-invalid-utf8-manifest-fallback", "dir");
+        let archive_dir = root.join("archive");
+        let manifest_dir = root.join("cfg/history");
+        fs::create_dir_all(&archive_dir).expect("create archive dir");
+        fs::create_dir_all(&manifest_dir).expect("create manifest dir");
+
+        let archived_log = archive_dir.join("node4.log");
+        let manifest = manifest_dir.join("sources.txt");
+        fs::write(&archived_log, "").expect("write archived log");
+        fs::write(&manifest, [0xff, 0xfe, b'#', b' ', b'b', b'a', b'd'])
+            .expect("write invalid manifest");
+
+        let prev_sources = std::env::var(NODE_EVENT_LOG_SOURCES_ENV).ok();
+        let prev_manifest = std::env::var(NODE_EVENT_LOG_MANIFEST_ENV).ok();
+        unsafe {
+            std::env::set_var(NODE_EVENT_LOG_SOURCES_ENV, "archive/node4.log");
+            std::env::set_var(
+                NODE_EVENT_LOG_MANIFEST_ENV,
+                manifest.to_string_lossy().to_string(),
+            );
+        }
+
+        let got = load_node_event_log_sources(&root);
+
+        match prev_sources {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_SOURCES_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV) },
+        }
+        match prev_manifest {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_MANIFEST_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV) },
+        }
+
+        assert_eq!(
+            got,
+            vec![archived_log],
+            "invalid-utf8 historical replay manifests must not suppress explicit env log sources"
+        );
 
         let _ = fs::remove_dir_all(root);
     }

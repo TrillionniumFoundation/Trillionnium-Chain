@@ -64,6 +64,8 @@ fn is_single_sided_env_quote(c: char) -> bool {
             | '〉'
             | '⟨'
             | '⟩'
+            | '｟'
+            | '｠'
             | '｢'
             | '｣'
             | '（'
@@ -125,7 +127,10 @@ fn is_suspicious_path_wrapper(c: char) -> bool {
 }
 
 fn is_suspicious_path_separator(c: char) -> bool {
-    matches!(c, '\\' | '∕' | '⁄' | '／' | '＼' | '⧵' | '⧸' | '⟋' | '⟍')
+    matches!(
+        c,
+        '\\' | '∕' | '⁄' | '∖' | '／' | '＼' | '﹨' | '⧵' | '⧸' | '⧹' | '⟋' | '⟍'
+    )
 }
 
 pub(crate) fn normalize_wallet_store_env(raw: &str) -> Option<&str> {
@@ -152,6 +157,7 @@ pub(crate) fn normalize_wallet_store_env(raw: &str) -> Option<&str> {
                 | (Some('〈'), Some('〉'))
                 | (Some('〈'), Some('〉'))
                 | (Some('⟨'), Some('⟩'))
+                | (Some('｟'), Some('｠'))
                 | (Some('｢'), Some('｣'))
                 | (Some('（'), Some('）'))
                 | (Some('［'), Some('］'))
@@ -354,6 +360,10 @@ pub(crate) fn wallet_file(store: &Path, name: &str) -> PathBuf {
 
 pub(crate) fn ensure_wallet_name(name: &str) -> Result<()> {
     let has_hidden_or_whitespace = name.chars().any(is_hidden_text_control);
+    let has_non_ascii = !name.is_ascii();
+    let has_non_simple_ascii = name
+        .chars()
+        .any(|c| !c.is_ascii_alphanumeric() && c != '_' && c != '-');
     let uppercase = name.to_ascii_uppercase();
     let is_windows_reserved_device = matches!(
         uppercase.as_str(),
@@ -392,7 +402,7 @@ pub(crate) fn ensure_wallet_name(name: &str) -> Result<()> {
         || name.contains(['‐', '‑', '‒', '–', '—', '―', '−', '﹣', '－'])
         || name.contains(['：', '﹕', '＝', '﹦', '｜', '￨', '＆', '﹠', '？', '﹖', '，', '；', '！', '﹗'])
         || name.contains(['＊', '﹡'])
-        || name.contains(['∕', '⁄', '／', '＼', '⧵', '⧸', '⟋', '⟍'])
+        || name.contains(['∕', '⁄', '／', '＼', '⧵', '⧸', '⧹', '⟋', '⟍'])
         || name.contains(['.', '．', '。', '｡', '﹒', '․'])
         || name.contains(['"', '\'', '`', '<', '>', '(', ')', '[', ']', '{', '}', ',', ';'])
         || name.contains([
@@ -401,10 +411,12 @@ pub(crate) fn ensure_wallet_name(name: &str) -> Result<()> {
             '〔', '〕', '〖', '〗', '〘', '〙', '〚', '〛', '〝', '〞', '〟',
         ])
         || has_hidden_or_whitespace
+        || has_non_ascii
+        || has_non_simple_ascii
         || is_windows_reserved_device
     {
         bail!(
-            "invalid wallet name '{}': use a simple local name without path separators or reserved device names",
+            "invalid wallet name '{}': use a simple ASCII local name with only letters, digits, '_' or '-' and no path separators or reserved device names",
             name
         );
     }
@@ -651,6 +663,8 @@ fn is_unsafe_sign_message_char(c: char) -> bool {
                 | '\u{2060}'
                 | '\u{2061}'..='\u{2065}'
                 | '\u{206a}'..='\u{206f}'
+                | '\u{2028}'
+                | '\u{2029}'
                 | '\u{202a}'..='\u{202e}'
                 | '\u{2066}'..='\u{2069}'
                 | '\u{feff}'
@@ -669,17 +683,48 @@ pub(crate) fn ensure_safe_sign_message(message: &str) -> Result<()> {
             "wallet sign message contains leading or trailing whitespace; refusing ambiguous offline-signing output"
         );
     }
+    if message.contains("  ") {
+        bail!(
+            "wallet sign message must not contain repeated interior spaces; refusing ambiguous offline-signing output"
+        );
+    }
     if message.chars().any(|c| {
         is_unsafe_sign_message_char(c)
             || !c.is_ascii()
             || (!c.is_ascii_graphic() && c != ' ')
             || matches!(
                 c,
-                '=' | ':' | ';' | ',' | '|' | '"' | '\'' | '`' | '<' | '>' | '(' | ')' | '[' | ']' | '{' | '}'
+                '='
+                    | ':'
+                    | ';'
+                    | ','
+                    | '|'
+                    | '"'
+                    | '\''
+                    | '`'
+                    | '<'
+                    | '>'
+                    | '('
+                    | ')'
+                    | '['
+                    | ']'
+                    | '{'
+                    | '}'
+                    | '/'
+                    | '\\'
+                    | '∕'
+                    | '⁄'
+                    | '／'
+                    | '＼'
+                    | '⧵'
+                    | '⧸'
+                    | '⧹'
+                    | '⟋'
+                    | '⟍'
             )
     }) {
         bail!(
-            "wallet sign message must be single-line ASCII printable text with only interior ASCII spaces and no delimiter or wrapper punctuation; refusing unsafe offline-signing output"
+            "wallet sign message must be single-line ASCII printable text with only single interior ASCII spaces and no delimiter, wrapper punctuation, or path separators; refusing unsafe offline-signing output"
         );
     }
     Ok(())

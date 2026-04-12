@@ -63,6 +63,10 @@ fn json_response_for_method(method: &str, status_line: &str, body: &str) -> Stri
     }
 }
 
+fn is_query_capability_audit_path(path: &str) -> bool {
+    path == "/query-capability-audit" || path.starts_with("/query-capability-audit/")
+}
+
 fn health_probe_body(ts_unix_ms: u64) -> String {
     serde_json::json!({
         "ok": true,
@@ -127,7 +131,7 @@ fn contains_percent_encoded_control_or_space(segment: &str) -> bool {
             let lo = (bytes[idx + 2] as char).to_digit(16);
             if let (Some(hi), Some(lo)) = (hi, lo) {
                 let decoded = ((hi << 4) | lo) as u8;
-                if decoded <= 0x20 || decoded == 0x7f {
+                if decoded <= 0x20 || decoded == 0x7f || (0x80..=0x9f).contains(&decoded) {
                     return true;
                 }
             }
@@ -167,6 +171,28 @@ fn parse_nonempty_path_suffix<'a>(path: &'a str, prefix: &str) -> Option<&'a str
         // Also reject encoded slash-like separators so ambiguous operator
         // paths are not silently accepted as opaque identifiers.
         .filter(|suffix| !has_ambiguous_path_segment_encoding(suffix))
+}
+
+fn parse_query_capability_audit_subject_from_target<'a>(
+    target: &'a str,
+) -> std::result::Result<&'a str, &'static str> {
+    let (path, query) = match target.split_once('?') {
+        Some((path, query)) => (path, Some(query)),
+        None => (target, None),
+    };
+
+    if query.is_some() {
+        return Err("invalid query");
+    }
+
+    match parse_nonempty_path_suffix(path, "/query-capability-audit/") {
+        Some(subject) => Ok(subject),
+        None if path == "/query-capability-audit" || path == "/query-capability-audit/" => {
+            Err("missing token or subject")
+        }
+        None if path.starts_with("/query-capability-audit/") => Err("invalid query"),
+        None => Err("missing token or subject"),
+    }
 }
 
 pub(crate) fn serve_health(host: &str, port: u16) -> Result<()> {
@@ -265,9 +291,9 @@ pub(crate) fn serve_health(host: &str, port: u16) -> Result<()> {
                     }
                 }
             }
-            (Some((method, _)), Some(path), Some(_)) if path.starts_with("/query-capability-audit/") => {
-                match parse_nonempty_path_suffix(path, "/query-capability-audit/") {
-                    Some(subject_or_token) => {
+            (Some((method, _)), Some(path), Some(target)) if is_query_capability_audit_path(path) => {
+                match parse_query_capability_audit_subject_from_target(target) {
+                    Ok(subject_or_token) => {
                         let registry = load_identity_registry(&identity_registry_file());
                         if let Some(token_id) =
                             resolve_capability_token_subject_or_token(&registry, subject_or_token)
@@ -289,7 +315,11 @@ pub(crate) fn serve_health(host: &str, port: u16) -> Result<()> {
                             json_response_for_method(method, "404 Not Found", body)
                         }
                     }
-                    None => {
+                    Err("invalid query") => {
+                        let body = "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid query\"}";
+                        json_response_for_method(method, "400 Bad Request", body)
+                    }
+                    Err(_) => {
                         let body = "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"missing token or subject\"}";
                         json_response_for_method(method, "400 Bad Request", body)
                     }
@@ -308,8 +338,9 @@ pub(crate) fn serve_health(host: &str, port: u16) -> Result<()> {
 mod tests {
     use super::{
         fallback_response_for_request, has_ambiguous_path_segment_encoding, health_probe_body,
-        is_health_probe_path, json_response_for_method, parse_nonempty_path_suffix,
-        parse_path_u64_suffix,
+        is_health_probe_path, is_query_capability_audit_path, json_response_for_method,
+        parse_nonempty_path_suffix, parse_path_u64_suffix,
+        parse_query_capability_audit_subject_from_target,
     };
 
     #[test]
@@ -348,11 +379,18 @@ mod tests {
         assert!(is_health_probe_path("/-/ready/"));
         assert!(is_health_probe_path("/-/readyz"));
         assert!(is_health_probe_path("/-/readyz/"));
+        assert!(is_health_probe_path("/-/status"));
+        assert!(is_health_probe_path("/-/status/"));
+        assert!(is_health_probe_path("/-/statusz"));
+        assert!(is_health_probe_path("/-/statusz/"));
         assert!(is_health_probe_path("/-/STATUS"));
         assert!(is_health_probe_path("/-/STATUSZ/"));
         assert!(!is_health_probe_path("/healthcheck"));
         assert!(!is_health_probe_path("/-/healthcheck"));
         assert!(!is_health_probe_path("/-/readycheck"));
+        assert!(!is_health_probe_path("/-/statuscheck"));
+        assert!(!is_health_probe_path("/-/statusz//"));
+        assert!(!is_health_probe_path("/-/readyz/extra"));
     }
 
     #[test]
@@ -368,6 +406,22 @@ mod tests {
         assert_eq!(
             parse_http_request_target("HEAD /-/readyz/?probe=lb&from=ops HTTP/1.1"),
             Some(("HEAD", "/-/readyz/?probe=lb&from=ops"))
+        );
+    }
+
+    #[test]
+    fn parse_http_request_target_rejects_ambiguous_query_delimiters_fail_closed() {
+        assert_eq!(
+            parse_http_request_target("GET /healthz?probe=lb?shadow=1 HTTP/1.1"),
+            None
+        );
+        assert_eq!(
+            parse_http_request_target("HEAD /-/readyz%3Fprobe=lb HTTP/1.1"),
+            None
+        );
+        assert_eq!(
+            parse_http_request_target("GET /-/statusz%3fprobe=lb HTTP/1.1"),
+            None
         );
     }
 
@@ -497,6 +551,10 @@ mod tests {
         assert_eq!(parse_path_u64_suffix("/query-events/42%0d", "/query-events/"), None);
         assert_eq!(parse_path_u64_suffix("/query-events/42%09", "/query-events/"), None);
         assert_eq!(parse_path_u64_suffix("/query-events/42%20", "/query-events/"), None);
+        assert_eq!(parse_path_u64_suffix("/query-events/42%3Flimit=9", "/query-events/"), None);
+        assert_eq!(parse_path_u64_suffix("/query-events/42%3flimit=9", "/query-events/"), None);
+        assert_eq!(parse_path_u64_suffix("/query-events/42%23frag", "/query-events/"), None);
+        assert_eq!(parse_path_u64_suffix("/query-events/42%23", "/query-events/"), None);
     }
 
     #[test]
@@ -679,6 +737,53 @@ mod tests {
             ),
             None
         );
+        assert_eq!(
+            parse_nonempty_path_suffix(
+                "/query-capability-audit/alice%85admin",
+                "/query-capability-audit/"
+            ),
+            None
+        );
+        assert_eq!(
+            parse_nonempty_path_suffix(
+                "/query-capability-audit/alice%9fadmin",
+                "/query-capability-audit/"
+            ),
+            None
+        );
+    }
+
+    #[test]
+    fn parse_query_capability_audit_subject_from_target_accepts_canonical_subject_path() {
+        assert_eq!(
+            parse_query_capability_audit_subject_from_target("/query-capability-audit/alice")
+                .unwrap(),
+            "alice"
+        );
+        assert_eq!(
+            parse_query_capability_audit_subject_from_target("/query-capability-audit/alice/")
+                .unwrap(),
+            "alice"
+        );
+    }
+
+    #[test]
+    fn query_capability_audit_dispatch_accepts_base_path_for_parser_owned_errors() {
+        assert!(is_query_capability_audit_path("/query-capability-audit"));
+        assert!(is_query_capability_audit_path("/query-capability-audit/"));
+        assert!(is_query_capability_audit_path("/query-capability-audit/alice"));
+        assert!(!is_query_capability_audit_path("/query-capability-auditish"));
+    }
+
+    #[test]
+    fn parse_query_capability_audit_subject_from_target_rejects_query_string() {
+        assert_eq!(
+            parse_query_capability_audit_subject_from_target(
+                "/query-capability-audit/alice?limit=2"
+            )
+            .unwrap_err(),
+            "invalid query"
+        );
     }
 
     #[test]
@@ -688,6 +793,8 @@ mod tests {
         assert!(contains_percent_encoded_control_or_space("alice%09admin"));
         assert!(contains_percent_encoded_control_or_space("alice%20admin"));
         assert!(contains_percent_encoded_control_or_space("alice%7fadmin"));
+        assert!(contains_percent_encoded_control_or_space("alice%85admin"));
+        assert!(contains_percent_encoded_control_or_space("alice%9fadmin"));
         assert!(!contains_percent_encoded_control_or_space("did:trn:alice"));
     }
 
@@ -712,6 +819,7 @@ mod tests {
     fn fallback_response_returns_400_for_malformed_http_request() {
         let response = fallback_response_for_request(None);
         assert!(response.starts_with("HTTP/1.1 400 Bad Request\r\n"));
+        assert!(response.contains("\r\nCache-Control: no-store\r\n"));
         assert!(response.ends_with("{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid http request\"}"));
     }
 
@@ -719,7 +827,35 @@ mod tests {
     fn fallback_response_preserves_404_for_unknown_valid_path() {
         let response = fallback_response_for_request(Some(("HEAD", "/unknown")));
         assert!(response.starts_with("HTTP/1.1 404 Not Found\r\n"));
+        assert!(response.contains("\r\nCache-Control: no-store\r\n"));
         assert!(response.ends_with("\r\n\r\n"));
         assert!(!response.ends_with("NOT_FOUND\"}"));
+    }
+
+    #[test]
+    fn parse_query_capability_audit_subject_from_target_distinguishes_missing_from_malformed() {
+        assert_eq!(
+            parse_query_capability_audit_subject_from_target("/query-capability-audit")
+                .expect_err("missing bare route should stay explicit"),
+            "missing token or subject"
+        );
+        assert_eq!(
+            parse_query_capability_audit_subject_from_target("/query-capability-audit/")
+                .expect_err("empty subject suffix should stay explicit"),
+            "missing token or subject"
+        );
+
+        for target in [
+            "/query-capability-audit/alice?from=ops",
+            "/query-capability-audit/alice/?from=ops",
+            "/query-capability-audit/alice/bob",
+        ] {
+            assert_eq!(
+                parse_query_capability_audit_subject_from_target(target)
+                    .expect_err("malformed target must fail closed as invalid query"),
+                "invalid query",
+                "target={target}"
+            );
+        }
     }
 }

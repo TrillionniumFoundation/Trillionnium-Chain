@@ -867,6 +867,39 @@ mod tests {
     }
 
     #[test]
+    fn zero_capacity_hard_stop_idle_polls_preserve_restored_duplicate_knowledge_from_all_seen_caches() {
+        let mut g = LaneAdmissionGate::new(0, 0);
+
+        // Simulate restored duplicate metadata skew across every seen cache. Idle
+        // polls in hard-stop mode must preserve this recovery knowledge instead of
+        // silently clearing it before a real queue-backed drain can occur.
+        g.critical.seen.insert(55);
+        g.seen_global.insert(55);
+
+        for _ in 0..3 {
+            assert_eq!(g.pop_ready(), None);
+            assert_eq!(g.admit(55, IngressClass::Normal), AdmitOutcome::Duplicate);
+            assert_eq!(g.admit(55, IngressClass::Critical), AdmitOutcome::Duplicate);
+            assert_eq!(
+                g.qos_snapshot(),
+                LaneQosSnapshot {
+                    normal_queued: 0,
+                    critical_queued: 0,
+                    total_queued: 0,
+                    normal_headroom: 0,
+                    critical_headroom: 0,
+                    total_headroom: 0,
+                    fresh_normal_admissible: false,
+                    fresh_critical_admissible: false,
+                }
+            );
+        }
+
+        assert_eq!(g.admit(56, IngressClass::Normal), AdmitOutcome::Backpressured);
+        assert_eq!(g.admit(56, IngressClass::Critical), AdmitOutcome::Backpressured);
+    }
+
+    #[test]
     fn qos_snapshot_zero_reserve_recloses_after_critical_spillover_consumes_last_normal_slot() {
         let mut g = LaneAdmissionGate::new(2, 0);
 
@@ -2438,6 +2471,33 @@ mod tests {
     }
 
     #[test]
+    fn guarded_normal_retry_can_escalate_via_critical_path_without_pre_poisoning_duplicate_state() {
+        let mut g = LaneAdmissionGate::new(5, 2);
+
+        // Fill dedicated normal capacity and arm active critical backlog while one
+        // aggregate slot remains reachable only by fresh critical spillover.
+        assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(3, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(90, IngressClass::Critical), AdmitOutcome::Accepted);
+
+        // A fresh normal id blocked by the reserve guard must remain fresh, not become
+        // duplicate metadata just because it first arrived through the normal path.
+        assert_eq!(
+            g.admit(77, IngressClass::Normal),
+            AdmitOutcome::Backpressured
+        );
+        assert_eq!(g.queued_counts(), (3, 1, 4));
+
+        // The same tx id may still claim the final guarded slot through the critical
+        // path, and only after that real admission should duplicate semantics engage.
+        assert_eq!(g.admit(77, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.queued_counts(), (3, 2, 5));
+        assert_eq!(g.admit(77, IngressClass::Normal), AdmitOutcome::Duplicate);
+        assert_eq!(g.admit(77, IngressClass::Critical), AdmitOutcome::Duplicate);
+    }
+
+    #[test]
     fn borrowed_last_idle_critical_slot_reopens_critical_retry_after_drain() {
         let mut g = LaneAdmissionGate::new(3, 1);
 
@@ -2919,6 +2979,26 @@ mod tests {
     }
 
     #[test]
+    fn reserve_only_idle_self_heal_clears_stale_fairness_before_new_mixed_ingress() {
+        let mut g = LaneAdmissionGate::new(2, 2);
+
+        // Simulate restored idle state with stale-hot fairness bookkeeping.
+        g.critical_served_streak = g.critical_burst_limit;
+
+        // Idle scheduler polls should cold-reset fairness even in reserve-only mode.
+        assert_eq!(g.pop_ready(), None);
+        assert_eq!(g.critical_served_streak, 0);
+
+        // New mixed ingress still shares the critical lane, so stale fairness must
+        // not fabricate a dedicated-normal turn after the first critical dequeue.
+        assert_eq!(g.admit(20, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(21, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.pop_ready(), Some(20));
+        assert_eq!(g.critical_served_streak, 0);
+        assert_eq!(g.pop_ready(), Some(21));
+    }
+
+    #[test]
     fn reserve_only_backpressured_tx_id_stays_fresh_until_headroom_reopens() {
         let mut g = LaneAdmissionGate::new(2, 2);
 
@@ -2944,6 +3024,44 @@ mod tests {
         // cleanly and then become globally Duplicate again.
         assert_eq!(g.admit(30, IngressClass::Critical), AdmitOutcome::Accepted);
         assert_eq!(g.admit(30, IngressClass::Normal), AdmitOutcome::Duplicate);
+    }
+
+    #[test]
+    fn reserve_only_reopened_shared_slot_ignores_stale_critical_seen_metadata() {
+        let mut g = LaneAdmissionGate::new(2, 2);
+
+        assert_eq!(g.admit(70, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(71, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.queued_counts(), (0, 2, 2));
+        assert_eq!(g.critical_free_slots(), 0);
+        assert!(!g.normal_can_borrow_critical_headroom());
+
+        assert_eq!(g.pop_ready(), Some(70));
+
+        // Reserve-only mode shares the critical lane across both classes, so stale
+        // duplicate metadata alone must not fabricate active backlog or hide the
+        // reopened shared slot from fresh ingress.
+        g.critical.seen.insert(999);
+
+        assert_eq!(g.critical_free_slots(), 1);
+        assert!(g.normal_can_borrow_critical_headroom());
+        assert_eq!(
+            g.qos_snapshot(),
+            LaneQosSnapshot {
+                normal_queued: 0,
+                critical_queued: 1,
+                total_queued: 1,
+                normal_headroom: 0,
+                critical_headroom: 1,
+                total_headroom: 1,
+                fresh_normal_admissible: true,
+                fresh_critical_admissible: true,
+            }
+        );
+
+        assert_eq!(g.admit(72, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.queued_counts(), (0, 2, 2));
+        assert_eq!(g.seen_global.len(), 2);
     }
 
     #[test]
@@ -3014,6 +3132,19 @@ mod tests {
         assert_eq!(g.admit(70, IngressClass::Critical), AdmitOutcome::Accepted);
         assert_eq!(g.queued_counts(), (3, 1, 4));
 
+        let guarded_snapshot = LaneQosSnapshot {
+            normal_queued: 3,
+            critical_queued: 1,
+            total_queued: 4,
+            normal_headroom: 0,
+            critical_headroom: 1,
+            total_headroom: 1,
+            fresh_normal_admissible: false,
+            fresh_critical_admissible: true,
+        };
+        assert_eq!(g.qos_snapshot(), guarded_snapshot);
+        assert_eq!(g.seen_global.len(), 4);
+
         // Fresh normal ingress is blocked by the final reserved critical slot, but the
         // rejected tx id must stay fresh rather than poisoning cross-class dedupe.
         assert_eq!(
@@ -3024,7 +3155,9 @@ mod tests {
             g.admit(99, IngressClass::Normal),
             AdmitOutcome::Backpressured
         );
+        assert_eq!(g.qos_snapshot(), guarded_snapshot);
         assert_eq!(g.queued_counts(), (3, 1, 4));
+        assert_eq!(g.seen_global.len(), 4);
 
         // Once the active critical backlog drains, the previously guarded tx id should
         // admit cleanly instead of being misclassified as a duplicate.
@@ -4377,5 +4510,59 @@ mod tests {
         // After self-heal plus freed capacity, the same ghost id must admit cleanly on a
         // cross-class retry instead of remaining poisoned by stale lane-wide membership.
         assert_eq!(g.admit(99, IngressClass::Normal), AdmitOutcome::Accepted);
+    }
+
+    #[test]
+    fn reserve_guard_seen_cache_skew_does_not_poison_fresh_retry_after_critical_backlog_clears() {
+        let mut g = LaneAdmissionGate::new(4, 2);
+
+        assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(90, IngressClass::Critical), AdmitOutcome::Accepted);
+
+        let guarded_snapshot = LaneQosSnapshot {
+            normal_queued: 2,
+            critical_queued: 1,
+            total_queued: 3,
+            normal_headroom: 0,
+            critical_headroom: 1,
+            total_headroom: 1,
+            fresh_normal_admissible: false,
+            fresh_critical_admissible: true,
+        };
+        assert_eq!(g.qos_snapshot(), guarded_snapshot);
+
+        // Simulate restored-state skew: one real normal id disappears from seen caches
+        // and is replaced by a ghost id while queue contents stay authoritative.
+        g.normal.seen.remove(&2);
+        g.normal.seen.insert(999);
+        g.seen_global.remove(&2);
+        g.seen_global.insert(999);
+        assert_eq!(g.normal.seen.len() + g.critical.seen.len(), 3);
+        assert_eq!(g.seen_global.len(), 3);
+
+        // With the final slot still guarded for fresh critical ingress, the ghost id
+        // must remain fresh/backpressured and must not perturb the public QoS surface.
+        assert_eq!(g.admit(999, IngressClass::Normal), AdmitOutcome::Backpressured);
+        assert_eq!(g.qos_snapshot(), guarded_snapshot);
+
+        // Once the active critical backlog drains, the reserved headroom really reopens.
+        assert_eq!(g.pop_ready(), Some(90));
+        let reopened_snapshot = LaneQosSnapshot {
+            normal_queued: 2,
+            critical_queued: 0,
+            total_queued: 2,
+            normal_headroom: 0,
+            critical_headroom: 2,
+            total_headroom: 2,
+            fresh_normal_admissible: true,
+            fresh_critical_admissible: true,
+        };
+        assert_eq!(g.qos_snapshot(), reopened_snapshot);
+
+        // The previously blocked ghost id must admit cleanly after the real reopen,
+        // while the real queued id still self-heals back to duplicate semantics.
+        assert_eq!(g.admit(999, IngressClass::Critical), AdmitOutcome::Accepted);
+        assert_eq!(g.admit(2, IngressClass::Critical), AdmitOutcome::Duplicate);
     }
 }

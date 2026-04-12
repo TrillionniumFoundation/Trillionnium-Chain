@@ -627,6 +627,25 @@ fn is_nullish_kv_value(raw: &str) -> bool {
                         | '》'
                         | '〈'
                         | '〉'
+                        | '｢'
+                        | '｣'
+                        | '«'
+                        | '»'
+                        | '‹'
+                        | '›'
+                        | '【'
+                        | '】'
+                        | '〔'
+                        | '〕'
+                        | '〖'
+                        | '〗'
+                        | '〘'
+                        | '〙'
+                        | '〚'
+                        | '〛'
+                        | '〝'
+                        | '〞'
+                        | '〟'
                 )
                 || matches!(
                     c,
@@ -735,14 +754,18 @@ pub(crate) fn parse_tx_query_response(
 ) -> Result<TxQueryResponse> {
     if let Ok(v) = serde_json::from_str::<serde_json::Value>(raw) {
         let payload = json_get_alias(&v, &["result"]).unwrap_or(&v);
+        let nested_response = json_get_alias(payload, &["response"]);
         let nested_tx_response = json_get_alias(payload, &["tx_response", "txResponse"]).or_else(|| {
-            json_get_alias(payload, &["response"]).and_then(|r| json_get_alias(r, &["tx_response", "txResponse"]))
+            nested_response.and_then(|r| json_get_alias(r, &["tx_response", "txResponse"]))
         });
-        let nested_response_data = json_get_alias(payload, &["response"])
+        let nested_response_data = nested_response
             .and_then(|r| json_get_alias(r, &["data"]))
             .or_else(|| json_get_alias(payload, &["responseData"]))
             .or_else(|| json_get_alias(payload, &["data"]));
-        let primary = nested_tx_response.or(nested_response_data).unwrap_or(payload);
+        let primary = nested_tx_response
+            .or(nested_response_data)
+            .or(nested_response)
+            .unwrap_or(payload);
         let raw_tx_hash = json_get_alias(
             primary,
             &[
@@ -768,11 +791,14 @@ pub(crate) fn parse_tx_query_response(
                     "transactionHash",
                 ],
             )
-        })
-        .and_then(|x| x.as_str());
+        });
         let tx_hash = match raw_tx_hash {
-            Some(raw_hash) => normalize_tx_hash(raw_hash)
-                .ok_or_else(|| anyhow!("invalid tx_hash field in tx query response"))?,
+            Some(raw_hash) => normalize_tx_hash(
+                raw_hash
+                    .as_str()
+                    .ok_or_else(|| anyhow!("invalid tx_hash field in tx query response"))?,
+            )
+            .ok_or_else(|| anyhow!("invalid tx_hash field in tx query response"))?,
             None => normalize_tx_hash(requested_tx_hash)
                 .unwrap_or_else(|| requested_tx_hash.to_string()),
         };

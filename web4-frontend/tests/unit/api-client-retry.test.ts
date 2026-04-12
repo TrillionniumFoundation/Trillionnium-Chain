@@ -4,8 +4,61 @@ import { FrontendApiError } from "@/lib/api-contract/errors";
 import { withRetry } from "@/lib/api-contract/retry";
 
 describe("api-contract client and retry hardening", () => {
-  it("fails fast when baseUrl is blank", () => {
-    expect(() => createFrontendApiClient({ baseUrl: "   " })).toThrow(FrontendApiError);
+  it("fails fast with invalid payload when baseUrl is blank", () => {
+    expect(() => createFrontendApiClient({ baseUrl: "   " })).toThrowError(
+      expect.objectContaining({
+        code: "INVALID_PAYLOAD",
+        retryable: false,
+      }),
+    );
+  });
+
+  it("fails fast with invalid payload when baseUrl is malformed or uses an unsupported scheme", () => {
+    expect(() => createFrontendApiClient({ baseUrl: "http://[" })).toThrowError(
+      expect.objectContaining({
+        code: "INVALID_PAYLOAD",
+        retryable: false,
+      }),
+    );
+
+    expect(() => createFrontendApiClient({ baseUrl: "ftp://127.0.0.1:8080" })).toThrowError(
+      expect.objectContaining({
+        code: "INVALID_PAYLOAD",
+        retryable: false,
+      }),
+    );
+  });
+
+  it("fails closed when task id path params are blank", () => {
+    const fetchImpl = vi.fn();
+    const client = createFrontendApiClient({
+      baseUrl: "http://127.0.0.1:8080",
+      fetchImpl: fetchImpl as unknown as typeof fetch,
+    });
+
+    for (const invalidTaskId of ["   ", "\n\t", "\u200B\uFEFF "]) {
+      try {
+        client.queryTask(invalidTaskId);
+        throw new Error("expected blank task id to throw");
+      } catch (error) {
+        expect(error).toMatchObject({
+          code: "INVALID_PAYLOAD",
+          retryable: false,
+        });
+      }
+    }
+
+    try {
+      client.queryEvents("\n\t");
+      throw new Error("expected blank event task id to throw");
+    } catch (error) {
+      expect(error).toMatchObject({
+        code: "INVALID_PAYLOAD",
+        retryable: false,
+      });
+    }
+
+    expect(fetchImpl).not.toHaveBeenCalled();
   });
 
   it("normalizes trailing slash in base url", async () => {
@@ -83,6 +136,35 @@ describe("api-contract client and retry hardening", () => {
     expect(String(calledUrl)).toContain("cursor=cursor-1");
   });
 
+  it("normalizes whitespace and zero-width noise in normalized audit query params before request", async () => {
+    const fetchImpl = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({ events: [] }),
+    });
+
+    const client = createFrontendApiClient({
+      baseUrl: "http://127.0.0.1:8080",
+      fetchImpl: fetchImpl as unknown as typeof fetch,
+    });
+
+    await client.queryNormalizedAuditEvents({
+      source: " \uFEFF governance-guard\u200B ",
+      eventType: "\n governance.proposal_executed\u2060",
+      limit: 12,
+      cursor: "\u200D cursor-1 \u200B",
+    });
+
+    const calledUrl = String((fetchImpl.mock.calls[0] ?? [])[0]);
+    expect(calledUrl).toContain("source=governance-guard");
+    expect(calledUrl).toContain("eventType=governance.proposal_executed");
+    expect(calledUrl).toContain("cursor=cursor-1");
+    expect(calledUrl).toContain("limit=12");
+    expect(calledUrl).not.toContain("%20%20governance-guard%20%20");
+    expect(calledUrl).not.toContain("%0A%20governance.proposal_executed");
+    expect(calledUrl).not.toContain("%E2%80%8B");
+    expect(calledUrl).not.toContain("%EF%BB%BF");
+  });
+
   it("fails closed on malformed normalized audit query params", async () => {
     const fetchImpl = vi.fn();
 
@@ -102,6 +184,33 @@ describe("api-contract client and retry hardening", () => {
       expect(error).toMatchObject({
         code: "INVALID_PAYLOAD",
       });
+    }
+
+    expect(fetchImpl).not.toHaveBeenCalled();
+  });
+
+  it("fails closed when normalized audit query params become blank after zero-width cleanup", async () => {
+    const fetchImpl = vi.fn();
+
+    const client = createFrontendApiClient({
+      baseUrl: "http://127.0.0.1:8080",
+      fetchImpl: fetchImpl as unknown as typeof fetch,
+    });
+
+    for (const invalidQuery of [
+      { source: "\uFEFF \u200B\u200D " },
+      { eventType: "\u2060 \uFEFF " },
+      { cursor: "\u200B \u2063 " },
+    ]) {
+      try {
+        client.queryNormalizedAuditEvents(invalidQuery);
+        throw new Error("expected zero-width-only query field to throw");
+      } catch (error) {
+        expect(error).toBeInstanceOf(FrontendApiError);
+        expect(error).toMatchObject({
+          code: "INVALID_PAYLOAD",
+        });
+      }
     }
 
     expect(fetchImpl).not.toHaveBeenCalled();
@@ -244,7 +353,29 @@ describe("api-contract client and retry hardening", () => {
       fetchImpl: fetchImpl as unknown as typeof fetch,
     });
 
-    await client.queryCapabilityAudit("  did:trnm:alice/ops  ");
+    await client.queryCapabilityAudit("\u200B  did:trnm:alice/ops  \uFEFF");
+
+    expect(fetchImpl).toHaveBeenCalledWith(
+      "http://127.0.0.1:8080/query-capability-audit/did%3Atrnm%3Aalice%2Fops",
+      expect.objectContaining({ method: "GET" }),
+    );
+  });
+
+  it("strips zero-width cursor noise from capability audit subject before path construction", async () => {
+    const fetchImpl = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        subject: "did:trnm:alice/ops",
+        audits: [],
+      }),
+    });
+
+    const client = createFrontendApiClient({
+      baseUrl: "http://127.0.0.1:8080",
+      fetchImpl: fetchImpl as unknown as typeof fetch,
+    });
+
+    await client.queryCapabilityAudit("\uFEFF did:trnm:alice/ops\u200B ");
 
     expect(fetchImpl).toHaveBeenCalledWith(
       "http://127.0.0.1:8080/query-capability-audit/did%3Atrnm%3Aalice%2Fops",
@@ -260,14 +391,16 @@ describe("api-contract client and retry hardening", () => {
       fetchImpl: fetchImpl as unknown as typeof fetch,
     });
 
-    try {
-      client.queryCapabilityAudit("   ");
-      throw new Error("expected blank subject to throw");
-    } catch (error) {
-      expect(error).toBeInstanceOf(FrontendApiError);
-      expect(error).toMatchObject({
-        code: "INVALID_PAYLOAD",
-      });
+    for (const invalidSubject of ["   ", "\n\t", "\u200B\u2060\uFEFF "]) {
+      try {
+        client.queryCapabilityAudit(invalidSubject);
+        throw new Error("expected blank subject to throw");
+      } catch (error) {
+        expect(error).toBeInstanceOf(FrontendApiError);
+        expect(error).toMatchObject({
+          code: "INVALID_PAYLOAD",
+        });
+      }
     }
 
     expect(fetchImpl).not.toHaveBeenCalled();
@@ -330,6 +463,28 @@ describe("api-contract client and retry hardening", () => {
     expect(fetchImpl).toHaveBeenCalledTimes(1);
   });
 
+  it("classifies undici abort codes as aborted and does not retry", async () => {
+    const fetchImpl = vi.fn().mockRejectedValue({
+      name: "TypeError",
+      message: "fetch failed",
+      cause: {
+        code: "UND_ERR_ABORTED",
+        message: "Request aborted",
+      },
+    });
+
+    const client = createFrontendApiClient({
+      baseUrl: "http://127.0.0.1:8080",
+      fetchImpl: fetchImpl as unknown as typeof fetch,
+    });
+
+    await expect(client.queryTask("42", { retries: 2 })).rejects.toMatchObject({
+      code: "ABORTED",
+      retryable: false,
+    });
+    expect(fetchImpl).toHaveBeenCalledTimes(1);
+  });
+
   it("classifies reason-nested abort errors as aborted and does not retry", async () => {
     const fetchImpl = vi.fn().mockRejectedValue({
       name: "TypeError",
@@ -369,6 +524,25 @@ describe("api-contract client and retry hardening", () => {
       retryable: false,
     });
     expect(fetchImpl).toHaveBeenCalledTimes(1);
+  });
+
+  it("fails closed before fetch when the caller signal is already aborted", async () => {
+    const fetchImpl = vi.fn();
+    const client = createFrontendApiClient({
+      baseUrl: "http://127.0.0.1:8080",
+      fetchImpl: fetchImpl as unknown as typeof fetch,
+    });
+
+    const controller = new AbortController();
+    controller.abort({ name: "TimeoutError", message: "Cancelled by caller" });
+
+    await expect(
+      client.queryTask("42", { retries: 2, signal: controller.signal }),
+    ).rejects.toMatchObject({
+      code: "ABORTED",
+      retryable: false,
+    });
+    expect(fetchImpl).not.toHaveBeenCalled();
   });
 
   it("treats caller-supplied aborts as aborted even when the abort reason looks timeout-like", async () => {
@@ -425,6 +599,74 @@ describe("api-contract client and retry hardening", () => {
     await expect(client.queryTask("42", { retries: 1, baseDelayMs: 0, maxDelayMs: 0 })).resolves
       .toMatchObject({
         task: expect.objectContaining({ id: "42" }),
+      });
+    expect(fetchImpl).toHaveBeenCalledTimes(2);
+  });
+
+  it("classifies code-only socket failures as retryable network errors", async () => {
+    const fetchImpl = vi
+      .fn()
+      .mockRejectedValueOnce({
+        message: "Connection reset by peer",
+        code: "ECONNRESET",
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          task: {
+            id: "44",
+            status: "running",
+            owner: "alice",
+            createdAt: "2026-03-01T00:00:00.000Z",
+            metadata: {},
+          },
+        }),
+      });
+
+    const client = createFrontendApiClient({
+      baseUrl: "http://127.0.0.1:8080",
+      fetchImpl: fetchImpl as unknown as typeof fetch,
+    });
+
+    await expect(client.queryTask("44", { retries: 1, baseDelayMs: 0, maxDelayMs: 0 })).resolves
+      .toMatchObject({
+        task: expect.objectContaining({ id: "44" }),
+      });
+    expect(fetchImpl).toHaveBeenCalledTimes(2);
+  });
+
+  it("classifies host-unreachable socket failures as retryable network errors", async () => {
+    const fetchImpl = vi
+      .fn()
+      .mockRejectedValueOnce({
+        name: "TypeError",
+        message: "fetch failed",
+        cause: {
+          code: "EHOSTUNREACH",
+          message: "No route to host",
+        },
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          task: {
+            id: "45",
+            status: "running",
+            owner: "alice",
+            createdAt: "2026-03-01T00:00:00.000Z",
+            metadata: {},
+          },
+        }),
+      });
+
+    const client = createFrontendApiClient({
+      baseUrl: "http://127.0.0.1:8080",
+      fetchImpl: fetchImpl as unknown as typeof fetch,
+    });
+
+    await expect(client.queryTask("45", { retries: 1, baseDelayMs: 0, maxDelayMs: 0 })).resolves
+      .toMatchObject({
+        task: expect.objectContaining({ id: "45" }),
       });
     expect(fetchImpl).toHaveBeenCalledTimes(2);
   });
@@ -491,6 +733,32 @@ describe("api-contract client and retry hardening", () => {
     expect(fetchImpl).toHaveBeenCalledTimes(1);
   });
 
+  it("classifies doubly nested timeout code failures as timeout and keeps them retryable", async () => {
+    const fetchImpl = vi.fn().mockRejectedValue({
+      name: "TypeError",
+      message: "fetch failed",
+      cause: {
+        name: "Error",
+        message: "outer wrapper",
+        cause: {
+          code: "UND_ERR_HEADERS_TIMEOUT",
+          message: "Headers timeout",
+        },
+      },
+    });
+
+    const client = createFrontendApiClient({
+      baseUrl: "http://127.0.0.1:8080",
+      fetchImpl: fetchImpl as unknown as typeof fetch,
+    });
+
+    await expect(client.queryTask("42", { retries: 0 })).rejects.toMatchObject({
+      code: "TIMEOUT",
+      retryable: true,
+    });
+    expect(fetchImpl).toHaveBeenCalledTimes(1);
+  });
+
   it("classifies socket timeout codes as timeout and keeps them retryable", async () => {
     const fetchImpl = vi.fn().mockRejectedValue({
       name: "Error",
@@ -528,6 +796,39 @@ describe("api-contract client and retry hardening", () => {
     expect(fetchImpl).toHaveBeenCalledTimes(1);
   });
 
+  it("classifies AggregateError timeout members as timeout and keeps them retryable", async () => {
+    const fetchImpl = vi.fn().mockRejectedValue({
+      name: "AggregateError",
+      message: "All connection attempts failed",
+      errors: [
+        {
+          name: "Error",
+          code: "ECONNREFUSED",
+          message: "Connection refused",
+        },
+        {
+          name: "TypeError",
+          message: "fetch failed",
+          cause: {
+            code: "UND_ERR_CONNECT_TIMEOUT",
+            message: "Connect timeout",
+          },
+        },
+      ],
+    });
+
+    const client = createFrontendApiClient({
+      baseUrl: "http://127.0.0.1:8080",
+      fetchImpl: fetchImpl as unknown as typeof fetch,
+    });
+
+    await expect(client.queryTask("42", { retries: 0 })).rejects.toMatchObject({
+      code: "TIMEOUT",
+      retryable: true,
+    });
+    expect(fetchImpl).toHaveBeenCalledTimes(1);
+  });
+
   it("does not retry unknown non-FrontendApiError failures in retry helper", async () => {
     let attempts = 0;
 
@@ -540,6 +841,29 @@ describe("api-contract client and retry hardening", () => {
         { retries: 2, baseDelayMs: 0, maxDelayMs: 0 },
       ),
     ).rejects.toThrow("boom");
+
+    expect(attempts).toBe(1);
+  });
+
+  it("fails closed when aborted frontend errors are accidentally marked retryable", async () => {
+    let attempts = 0;
+
+    await expect(
+      withRetry(
+        async () => {
+          attempts += 1;
+          throw new FrontendApiError({
+            code: "ABORTED",
+            message: "caller cancelled",
+            retryable: true,
+          });
+        },
+        { retries: 2, baseDelayMs: 0, maxDelayMs: 0 },
+      ),
+    ).rejects.toMatchObject({
+      code: "ABORTED",
+      retryable: true,
+    });
 
     expect(attempts).toBe(1);
   });
@@ -563,7 +887,38 @@ describe("api-contract client and retry hardening", () => {
     expect(attempts).toBe(1);
   });
 
-  it("retries transient http statuses but fails closed on non-transient 5xx", async () => {
+  it("retries timeout-shaped and transient http statuses but fails closed on non-transient 5xx", async () => {
+    const requestTimeoutFetch = vi
+      .fn()
+      .mockResolvedValueOnce({
+        ok: false,
+        status: 408,
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          task: {
+            id: "41",
+            status: "running",
+            owner: "alice",
+            createdAt: "2026-03-01T00:00:00.000Z",
+            metadata: {},
+          },
+        }),
+      });
+
+    const requestTimeoutClient = createFrontendApiClient({
+      baseUrl: "http://127.0.0.1:8080",
+      fetchImpl: requestTimeoutFetch as unknown as typeof fetch,
+    });
+
+    await expect(
+      requestTimeoutClient.queryTask("41", { retries: 1, baseDelayMs: 0, maxDelayMs: 0 }),
+    ).resolves.toMatchObject({
+      task: expect.objectContaining({ id: "41" }),
+    });
+    expect(requestTimeoutFetch).toHaveBeenCalledTimes(2);
+
     const retryableFetch = vi
       .fn()
       .mockResolvedValueOnce({
@@ -594,6 +949,37 @@ describe("api-contract client and retry hardening", () => {
       task: expect.objectContaining({ id: "42" }),
     });
     expect(retryableFetch).toHaveBeenCalledTimes(2);
+
+    const tooEarlyFetch = vi
+      .fn()
+      .mockResolvedValueOnce({
+        ok: false,
+        status: 425,
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          task: {
+            id: "43",
+            status: "queued",
+            owner: "bob",
+            createdAt: "2026-03-01T00:00:00.000Z",
+            metadata: {},
+          },
+        }),
+      });
+
+    const tooEarlyClient = createFrontendApiClient({
+      baseUrl: "http://127.0.0.1:8080",
+      fetchImpl: tooEarlyFetch as unknown as typeof fetch,
+    });
+
+    await expect(
+      tooEarlyClient.queryTask("43", { retries: 1, baseDelayMs: 0, maxDelayMs: 0 }),
+    ).resolves.toMatchObject({
+      task: expect.objectContaining({ id: "43" }),
+    });
+    expect(tooEarlyFetch).toHaveBeenCalledTimes(2);
 
     const failClosedFetch = vi.fn().mockResolvedValue({
       ok: false,

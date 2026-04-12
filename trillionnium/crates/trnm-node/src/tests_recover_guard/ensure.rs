@@ -114,3 +114,150 @@ fn ensure_recoverable_wal_state_allows_checkpoint_only_bootstrap_after_tail_repa
 
     let _ = fs::remove_dir_all(&wal_dir);
 }
+
+#[test]
+fn ensure_recoverable_wal_state_rejects_metadata_only_recovery_with_singular_checkpoint_lag() {
+    let wal_dir = temp_wal_dir("recover-guard-metadata-only-singular-lag");
+    fs::create_dir_all(&wal_dir).unwrap();
+
+    let recovered = RecoveredWalState {
+        next_height: 8,
+        restored_lock: None,
+        last_checkpoint: Some(CheckpointMeta {
+            height: 6,
+            state_root_hex: "r6".into(),
+            wal_entry_hash_hex: "h6".into(),
+        }),
+        truncated: false,
+        metadata_only_recovery: true,
+        wal_entries_retained: 2,
+        checkpoint_height_retained: Some(6),
+    };
+
+    let err = ensure_recoverable_wal_state(&wal_dir, &recovered).unwrap_err();
+    let err = format!("{err:#}");
+
+    assert!(err.contains("refusing metadata-only recovery"));
+    assert!(err.contains("retained 2 committed WAL entries through height 7"));
+    assert!(err.contains("checkpoint lags retained WAL tip by 1 block"));
+    assert!(!err.contains("checkpoint lags retained WAL tip by 1 blocks"));
+    assert!(err.contains("last retained checkpoint: 6"));
+    assert!(err.contains("next startup height: 8"));
+    assert!(err.contains("operator action: restore an application snapshot that covers retained WAL tip height 7 before retrying join/rejoin; retained checkpoint height 6 is 1 block behind, so do not resume from metadata alone"));
+
+    let _ = fs::remove_dir_all(&wal_dir);
+}
+
+#[test]
+fn ensure_recoverable_wal_state_allows_single_block_lagging_checkpoint_resume() {
+    let wal_dir = temp_wal_dir("recover-guard-lagging-checkpoint-resume");
+    fs::create_dir_all(&wal_dir).unwrap();
+
+    let recovered = RecoveredWalState {
+        next_height: 8,
+        restored_lock: Some("h7".into()),
+        last_checkpoint: Some(CheckpointMeta {
+            height: 6,
+            state_root_hex: "r6".into(),
+            wal_entry_hash_hex: "h6".into(),
+        }),
+        truncated: false,
+        metadata_only_recovery: false,
+        wal_entries_retained: 2,
+        checkpoint_height_retained: Some(6),
+    };
+
+    ensure_recoverable_wal_state(&wal_dir, &recovered)
+        .expect("single-block lagging checkpoint resume should remain admissible for join/rejoin catch-up");
+    assert_eq!(recovery_startup_summary(&recovered), "retained_wal_entries=2 checkpoint_height_retained=6 checkpoint_tip_relation=behind:1 next_startup_height=8 wal_tail_truncated=false metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume_checkpoint_lagging_1block");
+
+    let _ = fs::remove_dir_all(&wal_dir);
+}
+
+#[test]
+fn ensure_recoverable_wal_state_allows_truncated_single_block_lagging_checkpoint_resume() {
+    let wal_dir = temp_wal_dir("recover-guard-truncated-single-block-lagging-checkpoint-resume");
+    fs::create_dir_all(&wal_dir).unwrap();
+
+    let recovered = RecoveredWalState {
+        next_height: 8,
+        restored_lock: Some("h7".into()),
+        last_checkpoint: Some(CheckpointMeta {
+            height: 6,
+            state_root_hex: "r6".into(),
+            wal_entry_hash_hex: "h6".into(),
+        }),
+        truncated: true,
+        metadata_only_recovery: false,
+        wal_entries_retained: 2,
+        checkpoint_height_retained: Some(6),
+    };
+
+    ensure_recoverable_wal_state(&wal_dir, &recovered).expect(
+        "truncated single-block lagging checkpoint resume should remain admissible for join/rejoin catch-up",
+    );
+    assert_eq!(recovery_startup_summary(&recovered), "retained_wal_entries=2 checkpoint_height_retained=6 checkpoint_tip_relation=behind:1 next_startup_height=8 wal_tail_truncated=true metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume_checkpoint_lagging_1block_after_tail_repair");
+
+    let _ = fs::remove_dir_all(&wal_dir);
+}
+
+#[test]
+fn ensure_recoverable_wal_state_allows_single_block_checkpoint_ahead_mismatch_after_tail_repair() {
+    let wal_dir = temp_wal_dir("recover-guard-single-block-checkpoint-ahead-mismatch-after-tail-repair");
+    fs::create_dir_all(&wal_dir).unwrap();
+
+    let recovered = RecoveredWalState {
+        next_height: 8,
+        restored_lock: Some("h7".into()),
+        last_checkpoint: Some(CheckpointMeta {
+            height: 8,
+            state_root_hex: "r8".into(),
+            wal_entry_hash_hex: "h8".into(),
+        }),
+        truncated: true,
+        metadata_only_recovery: false,
+        wal_entries_retained: 2,
+        checkpoint_height_retained: Some(8),
+    };
+
+    ensure_recoverable_wal_state(&wal_dir, &recovered).expect(
+        "single-block checkpoint-ahead mismatch should remain admissible for join/rejoin catch-up after tail repair",
+    );
+    assert_eq!(recovery_startup_summary(&recovered), "retained_wal_entries=2 checkpoint_height_retained=8 checkpoint_tip_relation=ahead:1 next_startup_height=8 wal_tail_truncated=true metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume_checkpoint_ahead_mismatch_1block_after_tail_repair");
+
+    let _ = fs::remove_dir_all(&wal_dir);
+}
+
+#[test]
+fn ensure_recoverable_wal_state_rejects_metadata_only_recovery_with_singular_checkpoint_ahead_mismatch() {
+    let wal_dir = temp_wal_dir("recover-guard-metadata-only-singular-ahead-mismatch");
+    fs::create_dir_all(&wal_dir).unwrap();
+
+    let recovered = RecoveredWalState {
+        next_height: 8,
+        restored_lock: None,
+        last_checkpoint: Some(CheckpointMeta {
+            height: 8,
+            state_root_hex: "r8".into(),
+            wal_entry_hash_hex: "h8".into(),
+        }),
+        truncated: true,
+        metadata_only_recovery: true,
+        wal_entries_retained: 2,
+        checkpoint_height_retained: Some(8),
+    };
+
+    let err = ensure_recoverable_wal_state(&wal_dir, &recovered).unwrap_err();
+    let err = format!("{err:#}");
+
+    assert!(err.contains("refusing metadata-only recovery"));
+    assert!(err.contains("retained 2 committed WAL entries through height 7"));
+    assert!(err.contains("retained checkpoint height 8 is ahead of retained WAL tip height 7 by 1 block"));
+    assert!(!err.contains("retained checkpoint height 8 is ahead of retained WAL tip height 7 by 1 blocks"));
+    assert!(err.contains("last retained checkpoint: 8"));
+    assert!(err.contains("next startup height: 8"));
+    assert!(err.contains("operator action: investigate WAL/checkpoint mismatch (retained WAL tip height 7, checkpoint height 8, checkpoint leads tip by 1 block), rebuild the recovery inputs, and only retry join/rejoin once WAL tip and checkpoint evidence agree"));
+    assert!(err.contains("note: this startup already truncated a malformed WAL tail, so keep the repaired WAL/checkpoint artifacts for incident review if join/rejoin still fails"));
+
+    let _ = fs::remove_dir_all(&wal_dir);
+}

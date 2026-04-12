@@ -96,11 +96,13 @@ For multi-worktree validator rehearsals, prefer the shared fail-closed helper in
 
 ```bash
 EXPECTED_WORKTREE_ROOT="/abs/path/from-ticket"
-EXPECTED_BRANCH_REF="lane/assigned-branch" # or refs/heads/lane/assigned-branch
+EXPECTED_BRANCH_REF="refs/heads/lane/assigned-branch"
 ./scripts/v2/verify_lane_worktree.sh \
   --expected-worktree-root "$EXPECTED_WORKTREE_ROOT" \
   --expected-branch-ref "$EXPECTED_BRANCH_REF"
 ```
+
+If the ticket only gives the short branch name, pass that short value directly to `--expected-branch-ref`; the helper canonicalizes it to `refs/heads/...` internally while still preserving the ticket-assigned form in downstream artifacts.
 
 After the helper passes, record its `verified_worktree=`, `verified_branch_ref=`, and `verified_head=` output verbatim in the ticket / handoff note before generating evidence artifacts. Those three lines are the pre-run identity anchor that later `summary.txt` / `manifest.txt` fields must match; do not replace them with paraphrases like "same branch as before".
 
@@ -251,18 +253,22 @@ When multiple timestamped evidence directories exist, resolve the artifact path 
 
 ```bash
 # Latest preflight summary
-preflight_summary_path="run/preflight/go-no-go-latest.txt"
-if [ ! -f "$preflight_summary_path" ]; then
-  latest_preflight_summary=""
-  if compgen -G 'run/preflight/go-no-go-*.txt' >/dev/null; then
-    latest_preflight_summary="$(ls -dt run/preflight/go-no-go-*.txt 2>/dev/null | head -n 1)"
-  fi
-  if [ -n "$latest_preflight_summary" ]; then
-    preflight_summary_path="$latest_preflight_summary"
-  else
-    preflight_summary_path="<missing>"
-  fi
+preflight_path="run/preflight/go-no-go-latest.txt"
+latest_preflight_summary=""
+if compgen -G 'run/preflight/go-no-go-*.txt' >/dev/null; then
+  latest_preflight_summary="$(ls -dt run/preflight/go-no-go-*.txt 2>/dev/null | awk '!/\/go-no-go-latest\.txt$/ { print; exit }')"
 fi
+if [ -f "$preflight_path" ]; then
+  :
+else
+  preflight_path="<missing>"
+fi
+if [ -n "$latest_preflight_summary" ]; then
+  preflight_summary_path="$latest_preflight_summary"
+else
+  preflight_summary_path="<missing>"
+fi
+printf 'preflight_path=%s\n' "$preflight_path"
 printf 'preflight_summary_path=%s\n' "$preflight_summary_path"
 
 # Latest local-evidence summary
@@ -280,10 +286,11 @@ printf 'manifest_path=%s\n' "$manifest_path"
 
 Operator rule:
 - if the directory listing returns nothing, do not guess the path from memory; treat the step as not yet run or artifact retention as incomplete
-- if `run/preflight/go-no-go-latest.txt` is missing, treat preflight evidence retention as incomplete instead of silently omitting the path from the handoff note
+- if `run/preflight/go-no-go-latest.txt` is missing, treat `preflight_path=` as incomplete instead of silently omitting the operator-facing alias from the handoff note
+- if `preflight_summary_path=` is missing, treat the packet as not path-resolved yet even when the stable alias still exists
 - quote `summary_path` / `manifest_path` together with the `git_branch=` and `git_head=` fields from the file you just resolved
 - path resolution alone is **not** lane-identity proof: after resolving the files, also verify the artifact `git_worktree_path=` / `git_worktree_branch_ref=` against the lane-assigned worktree/ref from the ticket instead of assuming “latest artifact under this checkout” is automatically the assigned lane
-- prefer `./scripts/v2/extract_release_handoff_fields.sh --expected-worktree-root <lane-worktree> --expected-branch-ref <lane-branch-ref>` (or `./trillionnium/scripts/v2/extract_release_handoff_fields.sh ...` from the repo root) so artifact resolution and assigned-lane comparison fail closed in one step; when preflight artifacts exist, the helper now also emits `preflight_summary_path=` for the ticket/handoff note
+- prefer `./scripts/v2/extract_release_handoff_fields.sh --expected-worktree-root <lane-worktree> --expected-branch-ref <lane-branch-ref>` (or `./trillionnium/scripts/v2/extract_release_handoff_fields.sh ...` from the repo root) so artifact resolution and assigned-lane comparison fail closed in one step; when preflight artifacts exist, the helper now emits both `preflight_path=` (stable alias) and `preflight_summary_path=` (resolved timestamped artifact) for the ticket/handoff note
 
 Operator discipline:
 - quote `summary.txt` only for local-evidence conclusions
@@ -308,7 +315,7 @@ printf 'handoff_helper_output_path=%s\n' "$handoff_helper_output_path"
 
 Operator rule:
 - treat `handoff_helper_output_path=` as a first-class artifact, not throwaway terminal scrollback
-- quote `summary_generated_at=`, `manifest_generated_at=`, `git_status_summary=`, `git_worktree_path=`, `git_worktree_branch_ref=`, `git_expected_worktree_branch_ref=`, `git_worktree_branch_ref_match=`, `rollback_command=`, and `replay_command=` from that saved transcript or the underlying artifacts, not from memory
+- quote `preflight_summary_path=`, `summary_generated_at=`, `manifest_generated_at=`, `git_status_summary=`, `git_worktree_path=`, `git_worktree_branch_ref=`, `git_expected_worktree_branch_ref=`, `git_worktree_branch_ref_match=`, `summary_rollback_command=`, `summary_replay_command=`, `manifest_rollback_command=`, and `manifest_replay_command=` from that saved transcript (or the raw `rollback_command=` / `replay_command=` lines from the underlying artifacts), not from memory
 - if the helper output was not saved anywhere path-resolved, the handoff remains evidence-incomplete even if the terminal showed the expected lines once
 
 If you need the raw shell extraction for an air-gapped/debugging context, the equivalent block is:
@@ -316,17 +323,18 @@ If you need the raw shell extraction for an air-gapped/debugging context, the eq
 > Note: this raw block resolves artifact paths and field snippets, but it does **not** reproduce the helper's pre-run `verified_worktree=` / `verified_branch_ref=` / `verified_head=` anchor. When a ticket/lane assigns the worktree/ref, prefer the helper invocation above so the handoff keeps that fail-closed identity anchor instead of only comparing artifacts after the fact.
 
 ```bash
-preflight_summary_path="run/preflight/go-no-go-latest.txt"
-if [ ! -f "$preflight_summary_path" ]; then
-  latest_preflight_summary=""
-  if compgen -G 'run/preflight/go-no-go-*.txt' >/dev/null; then
-    latest_preflight_summary="$(ls -dt run/preflight/go-no-go-*.txt 2>/dev/null | head -n 1)"
-  fi
-  if [ -n "$latest_preflight_summary" ]; then
-    preflight_summary_path="$latest_preflight_summary"
-  else
-    preflight_summary_path="<missing>"
-  fi
+preflight_path="run/preflight/go-no-go-latest.txt"
+latest_preflight_summary=""
+if compgen -G 'run/preflight/go-no-go-*.txt' >/dev/null; then
+  latest_preflight_summary="$(ls -dt run/preflight/go-no-go-*.txt 2>/dev/null | awk '!/\/go-no-go-latest\.txt$/ { print; exit }')"
+fi
+if [ ! -f "$preflight_path" ]; then
+  preflight_path="<missing>"
+fi
+if [ -n "$latest_preflight_summary" ]; then
+  preflight_summary_path="$latest_preflight_summary"
+else
+  preflight_summary_path="<missing>"
 fi
 
 latest_evidence_dir="$(ls -dt run/health/evidence-* 2>/dev/null | head -n 1)"
@@ -338,6 +346,7 @@ latest_rc_dir="$(ls -dt release/rc-* 2>/dev/null | head -n 1)"
 summary_path="$latest_evidence_dir/summary.txt"
 manifest_path="$latest_rc_dir/manifest.txt"
 
+printf 'preflight_path=%s\n' "$preflight_path"
 printf 'preflight_summary_path=%s\n' "$preflight_summary_path"
 printf 'summary_path=%s\n' "$summary_path"
 printf 'manifest_path=%s\n' "$manifest_path"
@@ -379,7 +388,7 @@ Interpretation rule:
 
 Treat each of the following as a release-discipline violation, not a harmless convenience:
 - rerunning only the final script after switching branches or worktrees without regenerating the full evidence chain
-- copying `git_branch=`, `git_head=`, or `rollback_command=` from terminal scrollback instead of the generated artifact
+- copying `git_branch=`, `git_head=`, `summary_rollback_command=` / `manifest_rollback_command=` from helper scrollback, or raw `rollback_command=` lines from memory instead of the generated artifact/transcript
 - presenting a `CONDITIONAL GO` rehearsal as if it were `GO`
 - deleting a failed evidence directory before another operator can inspect the first failing artifact
 - claiming the nightly gate is the blocker when `nightly-streak.log` is missing, skipped, or locally overridden
@@ -427,6 +436,15 @@ Record these fields in the release ticket or operator handoff note:
 - worktree:
 - worktree branch ref:
 - worktree branch ref match (`true` required):
+- expected worktree root (copy `expected_worktree_root=` verbatim when lane binding is in scope):
+- expected branch ref (copy `expected_branch_ref=` verbatim when lane binding is in scope):
+- expected head (copy `expected_head=` verbatim when lane binding is in scope, else leave empty rather than guessing):
+- lane verify command (copy `lane_verify_command=` verbatim when lane binding is in scope):
+- handoff signed by (copy `handoff_signed_by=` verbatim for replacement/rotation ownership transfer):
+- handoff acknowledged by (copy `handoff_acknowledged_by=` verbatim for replacement/rotation ownership transfer):
+- operator ack (copy `operator_ack=` verbatim whenever the event crosses a human handoff boundary):
+- operator ack signature path (copy `operator_ack_signature_path=` verbatim when a durable sign-off artifact exists, else leave empty):
+- operator ack digest (copy `operator_ack_digest=` verbatim when only the durable ack digest is available, else leave empty):
 - git status summary (`clean` required):
 - preflight summary path:
 - preflight result:
@@ -451,6 +469,11 @@ Record these fields in the release ticket or operator handoff note:
 - local evidence replay command (`summary_replay_command`, or `replay_command=` from `summary.txt` when quoting the raw artifact directly):
 - local evidence replay env challenge re-exec entry (`replay_env_trnm_challenge_reexec_entry`; preserve the literal helper/artifact value, including `<entry_not_found>`, when present):
 - local evidence challenge re-exec entry (`challenge_reexec_entry`; preserve the literal helper/artifact value, including `<entry_not_found>`, when present):
+- dr summary path (`dr_summary_path=` from `extract_validator_rotation_dr_fields.sh` / `run_validator_dr_rehearsal.sh` when the handoff covers validator replacement, rotation, or DR rebuild):
+- dr generated_at (`dr_generated_at=` from the DR helper output):
+- dr status (`dr_status=PASS` required when quoting DR evidence):
+- dr rollback command (`dr_rollback_command=` from the DR helper output; do not paraphrase cleanup steps):
+- dr replay command (`dr_replay_command=` from the DR helper output; preserve the exact shell):
 - rc manifest rollback command (`manifest_rollback_command`, or `rollback_command=` from `manifest.txt` when quoting the raw artifact directly):
 - rc manifest replay command (`manifest_replay_command`, or `replay_command=` from `manifest.txt` when quoting the raw artifact directly):
 

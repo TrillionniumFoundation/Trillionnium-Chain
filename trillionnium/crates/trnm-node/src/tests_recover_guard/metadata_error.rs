@@ -70,6 +70,9 @@ fn recover_metadata_only_error_reports_absent_checkpoint() {
     assert!(!err.contains("no retained checkpoint metadata"));
     assert!(err.contains("last retained checkpoint: none"));
     assert!(err.contains("next startup height: 1"));
+    assert!(err.contains(
+        "operator action: restart with a fresh --bft-wal-dir / --bft-wal-mode auto isolated run; if this node must rejoin from prior state, restore an application snapshot before retrying"
+    ));
 
     let _ = fs::remove_dir_all(&wal_dir);
 }
@@ -102,6 +105,9 @@ fn recover_metadata_only_error_reports_plural_retained_entries_and_height() {
     assert!(err.contains("next startup height: 3"));
     assert!(err.contains(
         "does not yet restore application StateStore snapshots or replay committed blocks"
+    ));
+    assert!(err.contains(
+        "operator action: restore an application snapshot that covers retained WAL tip height 2 before retrying join/rejoin; retained checkpoint height 1 is 1 block behind, so do not resume from metadata alone"
     ));
 
     let _ = fs::remove_dir_all(&wal_dir);

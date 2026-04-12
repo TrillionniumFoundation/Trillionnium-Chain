@@ -416,6 +416,113 @@ fn x3_prep_invalid_heartbeat_height_prefix_allows_compensation_revert_with_embed
 }
 
 #[test]
+fn x3_prep_invalid_heartbeat_height_parenthesized_suffix_allows_compensation_revert() {
+    let mut request = SettlementRequest::new(
+        1,
+        "0xhb-invalid-height-parenthesized-suffix".to_string(),
+    );
+    let token = operator_token();
+
+    let degraded = trnm_bridge_poc::relay_heartbeat::HeartbeatOutcome {
+        heartbeat: Some(trnm_bridge_poc::relay_heartbeat::RelayHeartbeat {
+            source_height: 0,
+            target_height: 411,
+            latency_ms: 29,
+        }),
+        should_retry: false,
+        degraded: true,
+        message: "invalid heartbeat height (sampled target relay payload malformed)".to_string(),
+    };
+
+    let out = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &degraded,
+        SettlementConfirm::Failed {
+            reason: "target confirm timeout".to_string(),
+        },
+    )
+    .unwrap();
+
+    assert_eq!(
+        out,
+        SettlementStep::Compensated {
+            reason: "heartbeat degraded: invalid heartbeat height (sampled target relay payload malformed)".to_string(),
+            event: trnm_bridge_poc::x2_settlement_loop::SettlementEvent {
+                phase: "relay_heartbeat_degraded",
+                heartbeat_source_height: None,
+                heartbeat_target_height: None,
+                heartbeat_latency_ms: None,
+                confirm_height: None,
+                confirm_reason: Some(
+                    "heartbeat degraded: invalid heartbeat height (sampled target relay payload malformed)".to_string(),
+                ),
+            },
+        }
+    );
+    assert_eq!(
+        current_status(&request),
+        &BridgeStatus::Reverted(
+            "heartbeat degraded: invalid heartbeat height (sampled target relay payload malformed)"
+                .to_string()
+        )
+    );
+}
+
+#[test]
+fn x3_prep_invalid_heartbeat_progression_exclamation_suffix_allows_compensation_revert() {
+    let mut request = SettlementRequest::new(
+        1,
+        "0xhb-invalid-progression-exclamation-suffix".to_string(),
+    );
+    let token = operator_token();
+
+    let degraded = trnm_bridge_poc::relay_heartbeat::HeartbeatOutcome {
+        heartbeat: Some(trnm_bridge_poc::relay_heartbeat::RelayHeartbeat {
+            source_height: 411,
+            target_height: 412,
+            latency_ms: 29,
+        }),
+        should_retry: false,
+        degraded: true,
+        message: "invalid heartbeat progression! sampled target relay payload ahead of source".to_string(),
+    };
+
+    let out = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &degraded,
+        SettlementConfirm::Failed {
+            reason: "target confirm timeout".to_string(),
+        },
+    )
+    .unwrap();
+
+    assert_eq!(
+        out,
+        SettlementStep::Compensated {
+            reason: "heartbeat degraded: invalid heartbeat progression! sampled target relay payload ahead of source".to_string(),
+            event: trnm_bridge_poc::x2_settlement_loop::SettlementEvent {
+                phase: "relay_heartbeat_degraded",
+                heartbeat_source_height: None,
+                heartbeat_target_height: None,
+                heartbeat_latency_ms: None,
+                confirm_height: None,
+                confirm_reason: Some(
+                    "heartbeat degraded: invalid heartbeat progression! sampled target relay payload ahead of source".to_string(),
+                ),
+            },
+        }
+    );
+    assert_eq!(
+        current_status(&request),
+        &BridgeStatus::Reverted(
+            "heartbeat degraded: invalid heartbeat progression! sampled target relay payload ahead of source".to_string()
+        )
+    );
+}
+
+#[test]
 fn x3_prep_degraded_heartbeat_takes_precedence_over_timeout_confirm_failure() {
     let mut request = SettlementRequest::new(1, "0xstale-timeout".to_string());
     let token = operator_token();
@@ -2462,5 +2569,47 @@ fn x3_prep_retry_pending_heartbeat_does_not_override_confirm_failure_terminal_co
     assert_eq!(
         current_status(&request),
         &BridgeStatus::Reverted("settlement confirm failed: target confirm timeout".to_string())
+    );
+}
+
+#[test]
+fn x3_prep_failed_confirm_reason_sanitizes_unicode_controls_and_preserves_heartbeat_metrics() {
+    let mut request = SettlementRequest::new(1, "0xfailed-confirm-sanitized-reason".to_string());
+    let token = operator_token();
+
+    let mut monitor = RelayHeartbeatMonitor::new(RelayHeartbeatConfig::new(5, 2));
+    let heartbeat = monitor.record_success(310, 309, 25);
+
+    let out = drive_minimal_settlement(
+        &mut request,
+        &token,
+        &heartbeat,
+        SettlementConfirm::Failed {
+            reason: "target\u{2060} confirm\u{2028}timeout\u{FFF9} signal".to_string(),
+        },
+    )
+    .expect("confirm failure reason should sanitize before recording audit evidence");
+
+    assert_eq!(
+        out,
+        SettlementStep::Compensated {
+            reason: "settlement confirm failed: target confirm timeout signal".to_string(),
+            event: trnm_bridge_poc::x2_settlement_loop::SettlementEvent {
+                phase: "settlement_confirm_failed",
+                heartbeat_source_height: Some(310),
+                heartbeat_target_height: Some(309),
+                heartbeat_latency_ms: Some(25),
+                confirm_height: None,
+                confirm_reason: Some(
+                    "settlement confirm failed: target confirm timeout signal".to_string(),
+                ),
+            },
+        }
+    );
+    assert_eq!(
+        current_status(&request),
+        &BridgeStatus::Reverted(
+            "settlement confirm failed: target confirm timeout signal".to_string()
+        )
     );
 }

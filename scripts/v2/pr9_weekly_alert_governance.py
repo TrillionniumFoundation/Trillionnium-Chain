@@ -17,10 +17,12 @@ import argparse
 import datetime as dt
 import json
 import re
+import shlex
 from pathlib import Path
 
 
 ENV_RE = re.compile(r"^([A-Z0-9_]+)=(.*)$")
+ENV_KEY_RE = re.compile(r"^[A-Z0-9_]+$")
 
 
 def safe_json(path: Path) -> dict:
@@ -33,24 +35,66 @@ def safe_json(path: Path) -> dict:
         return {}
 
 
+
+def parse_env_line(raw: str) -> tuple[str, str] | None:
+    line = raw.strip()
+    if not line or line.startswith("#"):
+        return None
+
+    try:
+        tokens = shlex.split(line, comments=True, posix=True)
+    except ValueError:
+        tokens = []
+
+    if tokens:
+        if tokens[0] == "export":
+            tokens = tokens[1:]
+        if len(tokens) == 1 and "=" in tokens[0]:
+            key, value = tokens[0].split("=", 1)
+            if ENV_KEY_RE.fullmatch(key):
+                return key, value
+            return None
+
+    normalized = line
+    if normalized.startswith("export "):
+        normalized = normalized[len("export ") :].lstrip()
+    m = ENV_RE.match(normalized)
+    if not m:
+        return None
+    key, value = m.group(1), m.group(2)
+    if not ENV_KEY_RE.fullmatch(key):
+        return None
+    return key, value
+
+
+
 def parse_env(path: Path) -> dict[str, str]:
     out: dict[str, str] = {}
     if not path.exists():
         return out
     for raw in path.read_text(encoding="utf-8", errors="ignore").splitlines():
-        line = raw.strip()
-        if not line or line.startswith("#"):
+        parsed = parse_env_line(raw)
+        if parsed is None:
             continue
-        m = ENV_RE.match(line)
-        if not m:
-            continue
-        out[m.group(1)] = m.group(2)
+        key, value = parsed
+        out[key] = value
     return out
+
 
 
 def latest_file(pattern: str) -> Path | None:
     matches = sorted(Path.cwd().glob(pattern))
     return matches[-1] if matches else None
+
+
+
+def latest_history_snapshot(root: Path) -> tuple[Path | None, dict]:
+    matches = sorted((root / "run" / "pr9" / "history").glob("weekly-alert-governance-*.json"))
+    if not matches:
+        return None, {}
+    latest = matches[-1]
+    return latest, safe_json(latest)
+
 
 
 def read_dead_letters(path: Path, lookback_days: int) -> list[dict]:
@@ -79,6 +123,7 @@ def read_dead_letters(path: Path, lookback_days: int) -> list[dict]:
         if in_window:
             rows.append(obj)
     return rows
+
 
 
 def extract_topn_sections(md_path: Path) -> dict[str, list[str]]:
@@ -110,15 +155,74 @@ def extract_topn_sections(md_path: Path) -> dict[str, list[str]]:
     return sections
 
 
+
+def cleaned_top_rows(rows: list[str], top_n: int) -> list[str]:
+    cleaned_rows: list[str] = []
+    for row in rows[: max(1, top_n)]:
+        cleaned = re.sub(r"^\d+\.\s*", "", row)
+        cleaned = re.sub(r"^-\s*", "", cleaned)
+        cleaned_rows.append(cleaned)
+    return cleaned_rows
+
+
+
+def extract_previous_changed_keys(snapshot: dict) -> list[str]:
+    threshold = snapshot.get("threshold", {}) if isinstance(snapshot.get("threshold", {}), dict) else {}
+    changed = threshold.get("changed_keys", [])
+    if not isinstance(changed, list):
+        return []
+
+    keys: list[str] = []
+    for item in changed:
+        if not isinstance(item, dict):
+            continue
+        key = item.get("key")
+        if isinstance(key, str):
+            keys.append(key)
+    return sorted(set(keys))
+
+
+
+def build_week_over_week(current_changed_keys: list[dict[str, str]], baseline_path: Path | None, baseline: dict) -> dict:
+    current_keys = sorted({item["key"] for item in current_changed_keys})
+    if baseline_path is None:
+        return {
+            "available": False,
+            "baseline_json": None,
+            "threshold_changed_keys_delta": len(current_keys),
+            "threshold_new_keys_vs_last_week": current_keys,
+            "threshold_removed_keys_vs_last_week": [],
+        }
+
+    previous_keys = extract_previous_changed_keys(baseline)
+    previous_key_set = set(previous_keys)
+    current_key_set = set(current_keys)
+    return {
+        "available": True,
+        "baseline_json": str(baseline_path),
+        "threshold_changed_keys_delta": len(current_keys) - len(previous_keys),
+        "threshold_new_keys_vs_last_week": [key for key in current_keys if key not in previous_key_set],
+        "threshold_removed_keys_vs_last_week": [key for key in previous_keys if key not in current_key_set],
+    }
+
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description="Generate PR9 weekly alert governance markdown")
     ap.add_argument("--lookback-days", type=int, default=7)
     ap.add_argument("--top-n", type=int, default=5)
     ap.add_argument("--out", default="run/pr9/weekly-alert-governance.md")
+    ap.add_argument("--json-out", default="")
     args = ap.parse_args()
+
+    if args.lookback_days < 1:
+        ap.error("--lookback-days must be >= 1")
+    if args.top_n < 1:
+        ap.error("--top-n must be >= 1")
 
     root = Path.cwd()
     out_path = root / args.out
+    json_out_path = (root / args.json_out) if args.json_out else None
 
     state_path = root / "run/pr7-alert-delivery/state.json"
     dead_letter_path = root / "run/pr7-alert-delivery/dead-letter.jsonl"
@@ -126,6 +230,7 @@ def main() -> int:
     latest_advice = latest_file("run/pr7-threshold-advisor/*/threshold-advice.json")
     env_now_path = root / "run/pr9/alert-thresholds.env"
     env_prev_path = root / "run/pr9/alert-thresholds.previous.env"
+    baseline_path, baseline = latest_history_snapshot(root)
 
     state = safe_json(state_path)
     stats = state.get("stats", {}) if isinstance(state.get("stats", {}), dict) else {}
@@ -147,12 +252,25 @@ def main() -> int:
 
     env_now = parse_env(env_now_path)
     env_prev = parse_env(env_prev_path)
-    changed_keys = []
-    for k in sorted(set(env_now.keys()) | set(env_prev.keys())):
-        if env_now.get(k) != env_prev.get(k):
-            changed_keys.append((k, env_prev.get(k, "(missing)"), env_now.get(k, "(missing)")))
+    changed_keys: list[dict[str, str]] = []
+    for key in sorted(set(env_now.keys()) | set(env_prev.keys())):
+        if env_now.get(key) != env_prev.get(key):
+            changed_keys.append(
+                {
+                    "key": key,
+                    "old": env_prev.get(key, "(missing)"),
+                    "new": env_now.get(key, "(missing)"),
+                }
+            )
 
     now_utc = dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%d %H:%M:%SZ")
+    week_over_week = build_week_over_week(changed_keys, baseline_path, baseline)
+    topn_payload = {
+        "unresolved": cleaned_top_rows(sections.get("unresolved", []), args.top_n),
+        "forfeit": cleaned_top_rows(sections.get("forfeit", []), args.top_n),
+        "escrow": cleaned_top_rows(sections.get("escrow", []), args.top_n),
+    }
+
     lines: list[str] = []
     lines.append("# PR9 Weekly Alert Governance Report")
     lines.append("")
@@ -179,9 +297,7 @@ def main() -> int:
     def emit_top(title: str, rows: list[str]) -> None:
         lines.append(f"### {title}")
         if rows:
-            for i, r in enumerate(rows[: max(1, args.top_n)], 1):
-                cleaned = re.sub(r"^\d+\.\s*", "", r)
-                cleaned = re.sub(r"^-\s*", "", cleaned)
+            for i, cleaned in enumerate(cleaned_top_rows(rows, args.top_n), 1):
                 lines.append(f"{i}. {cleaned}")
         else:
             lines.append("- no data / section empty")
@@ -194,8 +310,8 @@ def main() -> int:
     lines.append("## 3) Threshold Suggestion Changes")
     if changed_keys:
         lines.append("### env diff (previous -> current)")
-        for k, old, new in changed_keys:
-            lines.append(f"- `{k}`: `{old}` -> `{new}`")
+        for item in changed_keys:
+            lines.append(f"- `{item['key']}`: `{item['old']}` -> `{item['new']}`")
     else:
         lines.append("- no env value changed vs run/pr9/alert-thresholds.previous.env")
     lines.append("")
@@ -224,12 +340,45 @@ def main() -> int:
     lines.append("python3 scripts/v2/pr9_weekly_alert_governance.py \\")
     lines.append("  --lookback-days 7 \\")
     lines.append("  --top-n 5 \\")
-    lines.append("  --out run/pr9/weekly-alert-governance.md")
+    if args.json_out:
+        lines.append(f"  --json-out {args.json_out} \\")
+    lines.append(f"  --out {args.out}")
     lines.append("```")
+
+    payload = {
+        "generated_at_utc": now_utc,
+        "lookback_days": args.lookback_days,
+        "sources": {
+            "pr7_delivery_state": str(state_path) if state_path.exists() else "MISSING",
+            "pr7_dead_letter": str(dead_letter_path) if dead_letter_path.exists() else "MISSING",
+            "pr7_topn_latest": str(latest_topn) if latest_topn else "MISSING",
+            "pr7_threshold_advice_latest": str(latest_advice) if latest_advice else "MISSING",
+        },
+        "metrics": {
+            "alerts_total": total,
+            "alerts_sent": sent,
+            "alerts_suppressed": suppressed,
+            "alerts_failed": failed,
+            "suppression_rate_pct": suppression_rate,
+            "failure_rate_pct": failure_rate,
+            "dead_letter_entries_last_nd": dead_letters_week,
+        },
+        "topn": topn_payload,
+        "threshold": {
+            "changed_keys": changed_keys,
+        },
+        "week_over_week": week_over_week,
+    }
 
     out_path.parent.mkdir(parents=True, exist_ok=True)
     out_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    if json_out_path is not None:
+        json_out_path.parent.mkdir(parents=True, exist_ok=True)
+        json_out_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+
     print(f"[OK] wrote {out_path}")
+    if json_out_path is not None:
+        print(f"[OK] wrote {json_out_path}")
     return 0
 
 

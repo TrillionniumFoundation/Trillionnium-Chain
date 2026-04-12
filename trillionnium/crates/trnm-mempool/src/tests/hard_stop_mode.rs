@@ -115,25 +115,55 @@ fn hard_stop_idle_pop_preserves_restored_duplicate_metadata() {
     g.seen_global.insert(43);
     g.critical_served_streak = 7;
 
+    let expected = LaneQosSnapshot {
+        normal_queued: 0,
+        critical_queued: 0,
+        total_queued: 0,
+        normal_headroom: 0,
+        critical_headroom: 0,
+        total_headroom: 0,
+        fresh_normal_admissible: false,
+        fresh_critical_admissible: false,
+    };
+
+    assert_eq!(g.qos_snapshot(), expected);
+    assert_eq!(g.queued_counts(), (0, 0, 0));
+
     assert_eq!(g.pop_ready(), None);
+    assert_eq!(g.qos_snapshot(), expected);
+    assert_eq!(g.queued_counts(), (0, 0, 0));
     assert_eq!(g.pop_ready(), None);
+    assert_eq!(g.qos_snapshot(), expected);
+    assert_eq!(g.queued_counts(), (0, 0, 0));
 
     // Duplicate semantics for restored ids must survive idle polling in hard-stop
-    // mode, while fairness bookkeeping still cold-resets.
+    // mode, while fairness bookkeeping still cold-resets and the operator-facing
+    // QoS surface stays fail-closed.
     assert_eq!(g.admit(41, IngressClass::Critical), AdmitOutcome::Duplicate);
+    assert_eq!(g.qos_snapshot(), expected);
+    assert_eq!(g.queued_counts(), (0, 0, 0));
     assert_eq!(g.admit(42, IngressClass::Normal), AdmitOutcome::Duplicate);
+    assert_eq!(g.qos_snapshot(), expected);
+    assert_eq!(g.queued_counts(), (0, 0, 0));
     assert_eq!(g.admit(43, IngressClass::Normal), AdmitOutcome::Duplicate);
+    assert_eq!(g.qos_snapshot(), expected);
+    assert_eq!(g.queued_counts(), (0, 0, 0));
     assert_eq!(g.critical_served_streak, 0);
 
-    // Fresh ids remain backpressured rather than being poisoned into duplicate.
+    // Fresh ids remain backpressured rather than being poisoned into duplicate,
+    // and must not fabricate any queue occupancy or visible headroom.
     assert_eq!(
         g.admit(99, IngressClass::Normal),
         AdmitOutcome::Backpressured
     );
+    assert_eq!(g.qos_snapshot(), expected);
+    assert_eq!(g.queued_counts(), (0, 0, 0));
     assert_eq!(
         g.admit(99, IngressClass::Critical),
         AdmitOutcome::Backpressured
     );
+    assert_eq!(g.qos_snapshot(), expected);
+    assert_eq!(g.queued_counts(), (0, 0, 0));
 }
 
 #[test]

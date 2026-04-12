@@ -4,6 +4,7 @@ use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use std::{
     collections::{BTreeMap, HashMap, HashSet, VecDeque},
+    ffi::OsString,
     fs,
     net::SocketAddr,
     path::{Path, PathBuf},
@@ -22,8 +23,8 @@ use trnm_pouw::{
     apply_create_task, apply_resolve_at_height, apply_reveal_result_at_height, apply_timeout,
 };
 use trnm_state::{
-    verify_wal_and_find_checkpoint_node_recovery, CheckpointMeta, PendingResolveApprovalSnapshot,
-    StateStore, WalMeta,
+    checkpoint_da_light_verifier_summary, verify_wal_and_find_checkpoint_node_recovery,
+    CheckpointMeta, PendingResolveApprovalSnapshot, StateStore, WalMeta,
 };
 use trnm_types::{Hash32, ObjectRef, TaskMeteringSnapshot, TaskStatus, Tx};
 
@@ -169,11 +170,51 @@ fn is_ipv4_compatible_ipv6(ip: std::net::IpAddr) -> bool {
     }
 }
 
+fn is_ipv4_translated_ipv6(ip: std::net::IpAddr) -> bool {
+    match ip {
+        std::net::IpAddr::V4(_) => false,
+        std::net::IpAddr::V6(addr) => {
+            let segments = addr.segments();
+            segments[0] == 0
+                && segments[1] == 0
+                && segments[2] == 0
+                && segments[3] == 0
+                && segments[4] == 0xffff
+                && segments[5] == 0
+        }
+    }
+}
+
 fn has_nonzero_ipv6_scope(socket: SocketAddr) -> bool {
     match socket {
         SocketAddr::V4(_) => false,
         SocketAddr::V6(addr) => addr.scope_id() != 0,
     }
+}
+
+fn ensure_listener_socket_uses_canonical_literal(
+    raw: &str,
+    socket: SocketAddr,
+    path: &str,
+    field: &str,
+) -> Result<()> {
+    if raw == socket.to_string() {
+        return Ok(());
+    }
+
+    if is_ipv4_translated_ipv6(socket.ip()) {
+        anyhow::bail!(
+            "invalid node config {}: {} must not use an IPv4-translated IPv6 address",
+            path,
+            field
+        );
+    }
+
+    anyhow::bail!(
+        "invalid node config {}: {} must use a canonical socket literal",
+        path,
+        field
+    );
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -277,6 +318,72 @@ struct BftHeightResult {
     round_change_backoff_max_ms: u64,
     leader_missed_snapshot: Vec<u64>,
 }
+
+fn format_bft_round_outcome_log_line(
+    committed: bool,
+    height: u64,
+    round: u64,
+    round_hash: &str,
+    precommit_count: usize,
+    validator_count: usize,
+    unique_voter_count: usize,
+    byzantine_votes: usize,
+    double_vote_events: usize,
+    reject_stats: &AuthRejectStats,
+) -> String {
+    if committed {
+        format!(
+            "[bft] height={} round={} step={:?} block_hash={} precommit={}/{} unique_voters={} byzantine_votes={} double_vote_events={} auth_reject_bad_sig={} auth_reject_replay={} auth_reject_stale={} auth_reject_stale_nonce={}",
+            height,
+            round,
+            RoundStep::Commit,
+            round_hash,
+            precommit_count,
+            validator_count,
+            unique_voter_count,
+            byzantine_votes,
+            double_vote_events,
+            reject_stats.bad_sig,
+            reject_stats.replay,
+            reject_stats.stale_nonce,
+            reject_stats.stale_nonce,
+        )
+    } else {
+        format!(
+            "[bft] height={} round={} step=RoundChange reason=no_quorum precommit={}/{} unique_voters={} byzantine_votes={} double_vote_events={} auth_reject_bad_sig={} auth_reject_replay={} auth_reject_stale={} auth_reject_stale_nonce={}",
+            height,
+            round,
+            precommit_count,
+            validator_count,
+            unique_voter_count,
+            byzantine_votes,
+            double_vote_events,
+            reject_stats.bad_sig,
+            reject_stats.replay,
+            reject_stats.stale_nonce,
+            reject_stats.stale_nonce,
+        )
+    }
+}
+
+fn format_bft_height_summary_log_line(height: u64, bft: &BftHeightResult) -> String {
+    format!(
+        "[bft] height={} committed_round={} prevote={} precommit={} round_changes={} round_backoff_ms={} leader_missed={:?} double_vote_events={} auth_reject_bad_sig={} auth_reject_replay={} auth_reject_stale={} auth_reject_stale_nonce={}",
+        height,
+        bft.committed_round,
+        bft.prevote_count,
+        bft.precommit_count,
+        bft.round_changes,
+        bft.round_change_backoff_total_ms,
+        bft.leader_missed_snapshot,
+        bft.double_vote_events,
+        bft.auth_reject_bad_sig,
+        bft.auth_reject_replay,
+        bft.auth_reject_stale_nonce,
+        bft.auth_reject_stale_nonce,
+    )
+}
+
 const CHALLENGE_ESCROW_ACCOUNT: &str = "treasury.challenge_escrow";
 const CHALLENGE_FORFEIT_TREASURY_ACCOUNT: &str = "treasury.challenge_forfeits";
 const WORKER_SLASH_TREASURY_ACCOUNT: &str = "treasury.worker_slashes";
@@ -853,13 +960,25 @@ fn recovery_startup_summary(recovered: &RecoveredWalState) -> String {
             Some(checkpoint_height) => {
                 let tip_height = recovered.next_height.saturating_sub(1);
                 if checkpoint_height < tip_height {
-                    if recovered.truncated {
+                    if tip_height - checkpoint_height == 1 {
+                        if recovered.truncated {
+                            "ready:retained_wal_resume_checkpoint_lagging_1block_after_tail_repair"
+                        } else {
+                            "ready:retained_wal_resume_checkpoint_lagging_1block"
+                        }
+                    } else if recovered.truncated {
                         "ready:retained_wal_resume_checkpoint_lagging_after_tail_repair"
                     } else {
                         "ready:retained_wal_resume_checkpoint_lagging"
                     }
                 } else if checkpoint_height > tip_height {
-                    if recovered.truncated {
+                    if checkpoint_height - tip_height == 1 {
+                        if recovered.truncated {
+                            "ready:retained_wal_resume_checkpoint_ahead_mismatch_1block_after_tail_repair"
+                        } else {
+                            "ready:retained_wal_resume_checkpoint_ahead_mismatch_1block"
+                        }
+                    } else if recovered.truncated {
                         "ready:retained_wal_resume_checkpoint_ahead_mismatch_after_tail_repair"
                     } else {
                         "ready:retained_wal_resume_checkpoint_ahead_mismatch"
@@ -903,8 +1022,11 @@ fn recovery_startup_summary(recovered: &RecoveredWalState) -> String {
 fn metadata_only_operator_action(recovered: &RecoveredWalState) -> String {
     if recovered.wal_entries_retained == 0 {
         return match recovered.checkpoint_height_retained {
-            Some(_) => {
-                "operator action: checkpoint-only bootstrap is acceptable with a fresh --bft-wal-dir / --bft-wal-mode auto isolated run; if this node must rejoin from prior state, restore an application snapshot before retrying".into()
+            Some(checkpoint_height) => {
+                format!(
+                    "operator action: checkpoint-only bootstrap from retained checkpoint height {} is acceptable with a fresh --bft-wal-dir / --bft-wal-mode auto isolated run; if this node must rejoin from prior state, restore an application snapshot before retrying",
+                    checkpoint_height,
+                )
             }
             None => {
                 "operator action: restart with a fresh --bft-wal-dir / --bft-wal-mode auto isolated run; if this node must rejoin from prior state, restore an application snapshot before retrying".into()
@@ -915,7 +1037,15 @@ fn metadata_only_operator_action(recovered: &RecoveredWalState) -> String {
     let tip_height = recovered.next_height.saturating_sub(1);
     match recovered.checkpoint_height_retained {
         Some(checkpoint_height) if checkpoint_height < tip_height => {
-            "operator action: restore an application snapshot that covers the retained WAL tip before retrying join/rejoin; do not resume from metadata alone".into()
+            let checkpoint_lag = tip_height - checkpoint_height;
+            let lag_blocks = if checkpoint_lag == 1 { "block" } else { "blocks" };
+            format!(
+                "operator action: restore an application snapshot that covers retained WAL tip height {} before retrying join/rejoin; retained checkpoint height {} is {} {} behind, so do not resume from metadata alone",
+                tip_height,
+                checkpoint_height,
+                checkpoint_lag,
+                lag_blocks,
+            )
         }
         Some(checkpoint_height) if checkpoint_height > tip_height => {
             let checkpoint_lead = checkpoint_height - tip_height;
@@ -935,15 +1065,51 @@ fn metadata_only_operator_action(recovered: &RecoveredWalState) -> String {
             )
         }
         Some(_) => {
-            "operator action: restore the corresponding application snapshot before retrying join/rejoin; do not resume from metadata alone".into()
+            format!(
+                "operator action: restore the application snapshot that matches retained WAL tip height {} before retrying join/rejoin; do not resume from metadata alone",
+                tip_height,
+            )
         }
     }
 }
 
+fn metadata_only_checkpoint_surfaces(
+    wal_dir: &Path,
+    recovered: &RecoveredWalState,
+) -> (String, String) {
+    let Some(checkpoint) = recovered.last_checkpoint.as_ref() else {
+        return ("none".into(), "unavailable:no_checkpoint".into());
+    };
+
+    let checkpoint_evidence = format!(
+        "checkpoint_height={} state_root={} wal_entry_hash={}",
+        checkpoint.height, checkpoint.state_root_hex, checkpoint.wal_entry_hash_hex,
+    );
+
+    let da_surface = load_wal_meta_entries(wal_dir)
+        .ok()
+        .and_then(|entries| {
+            entries.into_iter().find(|wal_entry| {
+                wal_entry.height == checkpoint.height
+                    && wal_entry.state_root_hex == checkpoint.state_root_hex
+                    && wal_entry.content_hash_hex() == checkpoint.wal_entry_hash_hex
+            })
+        })
+        .map(|wal_entry| {
+            checkpoint_da_light_verifier_summary(checkpoint, &wal_entry)
+                .unwrap_or_else(|| "unavailable:non_audit_ready_wal_surface".into())
+        })
+        .unwrap_or_else(|| "unavailable:no_matching_wal_entry".into());
+
+    (checkpoint_evidence, da_surface)
+}
+
 fn metadata_only_recovery_error(wal_dir: &Path, recovered: &RecoveredWalState) -> String {
     let operator_action = metadata_only_operator_action(recovered);
+    let (checkpoint_evidence, checkpoint_da_surface) =
+        metadata_only_checkpoint_surfaces(wal_dir, recovered);
     format!(
-        "refusing metadata-only recovery from {}: verified WAL/checkpoint metadata {} (last retained checkpoint: {}, next startup height: {}); incident clue: {} but trnm-node does not yet restore application StateStore snapshots or replay committed blocks; {}; implement state snapshot+replay recovery first if this restart path must remain supported",
+        "refusing metadata-only recovery from {}: verified WAL/checkpoint metadata {} (last retained checkpoint: {}, next startup height: {}); incident clue: {}; checkpoint_evidence: {}; checkpoint_da_surface: {} but trnm-node does not yet restore application StateStore snapshots or replay committed blocks; {}; implement state snapshot+replay recovery first if this restart path must remain supported",
         wal_dir.display(),
         retained_wal_summary(recovered),
         recovered
@@ -952,6 +1118,8 @@ fn metadata_only_recovery_error(wal_dir: &Path, recovered: &RecoveredWalState) -
             .unwrap_or_else(|| "none".into()),
         recovered.next_height,
         recovery_startup_summary(recovered),
+        checkpoint_evidence,
+        checkpoint_da_surface,
         operator_action,
     )
 }
@@ -1589,11 +1757,21 @@ fn simulate_bft_round(
     let double_vote_events = detect_double_votes(&votes, VoteType::Prevote)
         + detect_double_votes(&votes, VoteType::Precommit);
     let committed = precommit_count >= q;
-    if committed {
-        println!("[bft] height={} round={} step={:?} block_hash={} precommit={}/{} unique_voters={} byzantine_votes={} double_vote_events={} auth_reject_bad_sig={} auth_reject_replay={} auth_reject_stale={}", height, round, RoundStep::Commit, round_hash, precommit_count, n, unique_voters.len(), byzantine_votes, double_vote_events, reject_stats.bad_sig, reject_stats.replay, reject_stats.stale_nonce);
-    } else {
-        println!("[bft] height={} round={} step=RoundChange reason=no_quorum precommit={}/{} unique_voters={} byzantine_votes={} double_vote_events={} auth_reject_bad_sig={} auth_reject_replay={} auth_reject_stale={}", height, round, precommit_count, n, unique_voters.len(), byzantine_votes, double_vote_events, reject_stats.bad_sig, reject_stats.replay, reject_stats.stale_nonce);
-    }
+    println!(
+        "{}",
+        format_bft_round_outcome_log_line(
+            committed,
+            height,
+            round,
+            &round_hash,
+            precommit_count,
+            n,
+            unique_voters.len(),
+            byzantine_votes,
+            double_vote_events,
+            &reject_stats,
+        )
+    );
 
     (
         committed,
@@ -1823,6 +2001,11 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         "invalid node config {}: node_id must not look like a host or socket literal",
         path
     );
+    anyhow::ensure!(
+        !node_id.contains('.'),
+        "invalid node config {}: node_id must not contain dots",
+        path
+    );
 
     let rpc_addr = cfg.rpc_addr.trim();
     anyhow::ensure!(
@@ -1871,11 +2054,7 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
             path
         )
     })?;
-    anyhow::ensure!(
-        rpc_addr == rpc_socket.to_string(),
-        "invalid node config {}: rpc_addr must use a canonical socket literal",
-        path
-    );
+    ensure_listener_socket_uses_canonical_literal(rpc_addr, rpc_socket, path, "rpc_addr")?;
     anyhow::ensure!(
         rpc_socket.port() != 0,
         "invalid node config {}: rpc_addr must not use port 0",
@@ -1919,6 +2098,11 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
     anyhow::ensure!(
         !is_ipv4_compatible_ipv6(rpc_socket.ip()),
         "invalid node config {}: rpc_addr must not use an IPv4-compatible IPv6 address",
+        path
+    );
+    anyhow::ensure!(
+        !is_ipv4_translated_ipv6(rpc_socket.ip()),
+        "invalid node config {}: rpc_addr must not use an IPv4-translated IPv6 address",
         path
     );
     anyhow::ensure!(
@@ -1979,11 +2163,7 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
             path
         )
     })?;
-    anyhow::ensure!(
-        p2p_addr == p2p_socket.to_string(),
-        "invalid node config {}: p2p_addr must use a canonical socket literal",
-        path
-    );
+    ensure_listener_socket_uses_canonical_literal(p2p_addr, p2p_socket, path, "p2p_addr")?;
     anyhow::ensure!(
         p2p_socket.port() != 0,
         "invalid node config {}: p2p_addr must not use port 0",
@@ -2027,6 +2207,11 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
     anyhow::ensure!(
         !is_ipv4_compatible_ipv6(p2p_socket.ip()),
         "invalid node config {}: p2p_addr must not use an IPv4-compatible IPv6 address",
+        path
+    );
+    anyhow::ensure!(
+        !is_ipv4_translated_ipv6(p2p_socket.ip()),
+        "invalid node config {}: p2p_addr must not use an IPv4-translated IPv6 address",
         path
     );
     anyhow::ensure!(
@@ -2110,13 +2295,32 @@ fn resolve_config_path(path: &str) -> PathBuf {
 }
 
 fn ensure_config_path_stays_within_allowed_roots(requested: &str, resolved: &Path) -> Result<()> {
-    if !resolved.exists() {
-        return Ok(());
+    fn canonicalize_for_root_check(path: &Path) -> PathBuf {
+        let mut suffix = Vec::<OsString>::new();
+        let mut cursor = path;
+
+        loop {
+            if cursor.exists() {
+                let mut canonical = cursor.canonicalize().unwrap_or_else(|_| cursor.to_path_buf());
+                for component in suffix.iter().rev() {
+                    canonical.push(component);
+                }
+                return canonical;
+            }
+
+            let Some(component) = cursor.file_name() else {
+                return path.to_path_buf();
+            };
+            suffix.push(component.to_os_string());
+
+            let Some(parent) = cursor.parent() else {
+                return path.to_path_buf();
+            };
+            cursor = parent;
+        }
     }
 
-    let canonical_resolved = resolved
-        .canonicalize()
-        .unwrap_or_else(|_| resolved.to_path_buf());
+    let canonical_resolved = canonicalize_for_root_check(resolved);
     let workspace_root = workspace_root()
         .canonicalize()
         .unwrap_or_else(|_| workspace_root().to_path_buf());
@@ -2140,6 +2344,17 @@ fn ensure_config_path_stays_within_allowed_roots(requested: &str, resolved: &Pat
     };
     #[cfg(not(test))]
     let allowed_by_test_temp = false;
+
+    anyhow::ensure!(
+        !resolved.is_absolute() || allowed_by_workspace_or_cwd || allowed_by_test_temp,
+        "read config failed: {} resolves outside allowed roots (resolved: {})",
+        requested,
+        canonical_resolved.display()
+    );
+
+    if !resolved.exists() {
+        return Ok(());
+    }
 
     anyhow::ensure!(
         allowed_by_workspace_or_cwd || allowed_by_test_temp,
@@ -2166,6 +2381,86 @@ fn contains_invisible_or_bidi_format_chars(value: &str) -> bool {
     })
 }
 
+fn find_forbidden_bootstrap_alias_field(raw: &str) -> Option<&'static str> {
+    const FORBIDDEN_BOOTSTRAP_ALIAS_FIELD_NAMES: &[&str] = &[
+        "bootstrap_nodes",
+        "bootstrap_node",
+        "bootstrap_peers",
+        "bootstrap_peer",
+        "bootstrapNodes",
+        "bootstrapNode",
+        "bootstrapPeers",
+        "bootstrapPeer",
+        "bootstrap_addr",
+        "bootstrap_addrs",
+        "bootstrapAddr",
+        "bootstrapAddrs",
+        "bootstrap-addr",
+        "bootstrap-addrs",
+        "bootstrap-node",
+        "bootstrap-peer",
+        "seed_nodes",
+        "seed_node",
+        "seed_peers",
+        "seed_peer",
+        "seed-node",
+        "seed-peer",
+        "seedNodes",
+        "seedNode",
+        "seedPeers",
+        "seedPeer",
+        "seed_addr",
+        "seed_addrs",
+        "seedAddr",
+        "seedAddrs",
+        "seed-addr",
+        "seed-addrs",
+        "seed",
+        "seeds",
+        "bootnodes",
+        "bootnode",
+        "boot_nodes",
+        "boot_node",
+        "bootNodes",
+        "bootNode",
+        "boot-node",
+        "boot_peers",
+        "boot_peer",
+        "boot-peer",
+        "boot_addr",
+        "boot_addrs",
+        "bootAddr",
+        "bootAddrs",
+        "boot-addr",
+        "boot-addrs",
+        "bootPeers",
+        "bootPeer",
+        "persistent_peers",
+        "persistent-peers",
+        "persistent_peer",
+        "persistent-peer",
+        "persistent_addr",
+        "persistent_addrs",
+        "persistentAddr",
+        "persistentAddrs",
+        "persistent-addr",
+        "persistent-addrs",
+        "persistentPeers",
+        "persistentPeer",
+        "persistent_nodes",
+        "persistent-nodes",
+        "persistent_node",
+        "persistent-node",
+        "persistentNodes",
+        "persistentNode",
+    ];
+
+    let parsed = raw.parse::<toml::Table>().ok()?;
+    FORBIDDEN_BOOTSTRAP_ALIAS_FIELD_NAMES
+        .iter()
+        .find_map(|field| parsed.contains_key(*field).then_some(*field))
+}
+
 fn validate_config_path_input(path: &str) -> Result<()> {
     anyhow::ensure!(!path.trim().is_empty(), "read config failed: path must not be empty");
     anyhow::ensure!(
@@ -2189,6 +2484,10 @@ fn validate_config_path_input(path: &str) -> Result<()> {
         "read config failed: path must not be a URL"
     );
     anyhow::ensure!(
+        !path.starts_with('~'),
+        "read config failed: path must not rely on home-directory expansion (~)"
+    );
+    anyhow::ensure!(
         !Path::new(path)
             .components()
             .any(|component| matches!(component, std::path::Component::ParentDir)),
@@ -2206,7 +2505,33 @@ fn load_config(path: &str) -> Result<NodeConfig> {
     validate_config_path_input(path)?;
     let resolved = resolve_config_path(path);
     ensure_config_path_stays_within_allowed_roots(path, &resolved)?;
+    let display_resolved = if resolved.is_absolute() {
+        resolved.clone()
+    } else {
+        std::env::current_dir()
+            .unwrap_or_else(|_| PathBuf::from("."))
+            .join(&resolved)
+    };
+    let resolved_metadata = fs::symlink_metadata(&resolved).with_context(|| {
+        format!(
+            "read config failed: {} (resolved: {})",
+            path,
+            display_resolved.display()
+        )
+    })?;
+    anyhow::ensure!(
+        !resolved_metadata.file_type().is_symlink(),
+        "read config failed: {} (resolved: {}): config path must not be a symlink",
+        path,
+        display_resolved.display()
+    );
     let canonical_resolved = resolved.canonicalize().unwrap_or_else(|_| resolved.clone());
+    anyhow::ensure!(
+        resolved_metadata.file_type().is_file(),
+        "read config failed: {} (resolved: {}): resolved config path must point to a file",
+        path,
+        canonical_resolved.display()
+    );
     let raw = fs::read_to_string(&resolved).with_context(|| {
         format!(
             "read config failed: {} (resolved: {})",
@@ -2214,6 +2539,15 @@ fn load_config(path: &str) -> Result<NodeConfig> {
             canonical_resolved.display()
         )
     })?;
+    if let Some(forbidden_alias_field) = find_forbidden_bootstrap_alias_field(&raw) {
+        return Err(anyhow::anyhow!(
+            "parse toml failed: {} (resolved: {}): forbidden bootstrap alias field `{}` is not supported; remove `{}` and keep only `node_id`, `rpc_addr`, and `p2p_addr`",
+            path,
+            canonical_resolved.display(),
+            forbidden_alias_field,
+            forbidden_alias_field
+        ));
+    }
     let cfg: NodeConfig = toml::from_str(&raw).with_context(|| {
         format!(
             "parse toml failed: {} (resolved: {})",
@@ -3008,6 +3342,7 @@ fn canonicalize_resolve_authority_snapshot(raw: &str) -> Option<String> {
             || member_trimmed.chars().any(|c| c.is_whitespace())
             || has_forbidden_separator(member_trimmed)
             || !member_trimmed.is_ascii()
+            || member_trimmed.chars().any(|c| c.is_ascii_control())
             || member_trimmed.eq_ignore_ascii_case("governance.resolve_authority")
             || member_trimmed.eq_ignore_ascii_case("governance.emergency_pause")
             || member_trimmed.eq_ignore_ascii_case("system")
@@ -3040,6 +3375,7 @@ fn is_canonical_resolve_approver_snapshot(raw: &str) -> bool {
         && !trimmed.contains(';')
         && !trimmed.contains('|')
         && trimmed.is_ascii()
+        && !trimmed.chars().any(|c| c.is_ascii_control())
         && !trimmed.eq_ignore_ascii_case("governance.resolve_authority")
         && !trimmed.eq_ignore_ascii_case("governance.emergency_pause")
         && !trimmed.eq_ignore_ascii_case("system")
@@ -3747,6 +4083,74 @@ mod tests {
     use trnm_state::GovParamUpdateOutcome;
 
     #[test]
+    fn bft_round_outcome_log_line_keeps_stale_alias_and_nonce_field_together() {
+        let reject_stats = AuthRejectStats {
+            bad_sig: 2,
+            replay: 3,
+            stale_nonce: 5,
+        };
+
+        let committed = format_bft_round_outcome_log_line(
+            true,
+            7,
+            2,
+            "abc123",
+            4,
+            6,
+            5,
+            1,
+            2,
+            &reject_stats,
+        );
+        assert!(committed.contains("step=Commit block_hash=abc123"));
+        assert!(committed.contains("auth_reject_stale=5 auth_reject_stale_nonce=5"));
+        assert_eq!(committed.matches("auth_reject_stale=").count(), 1);
+        assert_eq!(committed.matches("auth_reject_stale_nonce=").count(), 1);
+
+        let round_change = format_bft_round_outcome_log_line(
+            false,
+            7,
+            2,
+            "abc123",
+            4,
+            6,
+            5,
+            1,
+            2,
+            &reject_stats,
+        );
+        assert!(round_change.contains("step=RoundChange reason=no_quorum"));
+        assert!(round_change.contains("auth_reject_stale=5 auth_reject_stale_nonce=5"));
+        assert_eq!(round_change.matches("auth_reject_stale=").count(), 1);
+        assert_eq!(round_change.matches("auth_reject_stale_nonce=").count(), 1);
+    }
+
+    #[test]
+    fn bft_height_summary_log_line_keeps_stale_alias_adjacent_to_nonce_field() {
+        let bft = BftHeightResult {
+            committed: true,
+            committed_round: 3,
+            round_changes: 4,
+            prevote_count: 5,
+            precommit_count: 6,
+            double_vote_events: 7,
+            auth_reject_bad_sig: 8,
+            auth_reject_replay: 9,
+            auth_reject_stale_nonce: 10,
+            round_change_backoff_total_ms: 11,
+            round_change_backoff_max_ms: 12,
+            leader_missed_snapshot: vec![1, 0, 2],
+        };
+
+        let line = format_bft_height_summary_log_line(22, &bft);
+        assert!(line.contains("height=22 committed_round=3"));
+        assert!(line.contains("leader_missed=[1, 0, 2]"));
+        assert!(line.contains("auth_reject_stale=10 auth_reject_stale_nonce=10"));
+        assert_eq!(line.matches("auth_reject_stale=").count(), 1);
+        assert_eq!(line.matches("auth_reject_stale_nonce=").count(), 1);
+    }
+
+    #[test]
     fn resolve_hotspot_summary_includes_shared_treasury_and_approval_labels() {
         let mut state = StateStore::new();
         state.set_balance("worker5001", 1_000);
@@ -4205,6 +4609,26 @@ mod tests {
     }
 
     #[test]
+    fn load_config_rejects_singular_config_dir_near_miss_for_bootstrap_slot_paths() {
+        let err = load_config("config/node1.toml")
+            .expect_err("singular config/ near-miss must not resolve to shipped bootstrap slots");
+        let err_surface = format!("{err:#}");
+
+        assert!(
+            err_surface.contains("read config failed: config/node1.toml"),
+            "operator-facing error should keep the exact near-miss path visible: {err_surface}"
+        );
+        assert!(
+            err_surface.contains("resolved: config/node1.toml"),
+            "resolved path should stay on the near-miss config/ path instead of silently rewriting to configs/: {err_surface}"
+        );
+        assert!(
+            !err_surface.contains("configs/node1.toml"),
+            "near-miss config/ path must fail closed instead of implying the shipped configs/ slot was loaded: {err_surface}"
+        );
+    }
+
+    #[test]
     fn load_config_keeps_all_shipped_bootstrap_slots_path_alias_stable() {
         let expected = [
             ("node1", "127.0.0.1:26657", "127.0.0.1:26656"),
@@ -4220,6 +4644,10 @@ mod tests {
                 format!("./configs/node{config_number}.toml"),
                 format!("trillionnium/configs/node{config_number}.toml"),
                 format!("./trillionnium/configs/node{config_number}.toml"),
+                format!("configs/./node{config_number}.toml"),
+                format!("./configs/./node{config_number}.toml"),
+                format!("trillionnium/configs/./node{config_number}.toml"),
+                format!("./trillionnium/configs/./node{config_number}.toml"),
             ] {
                 let cfg = load_config(&path).unwrap_or_else(|err| {
                     panic!(
@@ -4440,6 +4868,58 @@ mod tests {
     }
 
     #[test]
+    fn load_config_rejects_in_root_symlink_alias_even_when_target_stays_within_allowed_roots() {
+        let _cwd_guard = cwd_test_lock().lock().unwrap();
+        use std::os::unix::fs::symlink;
+
+        let temp_root = std::env::temp_dir().join(format!(
+            "trnm-node-config-symlink-alias-{}-{}",
+            std::process::id(),
+            SystemTime::now()
+                .duration_since(UNIX_EPOCH)
+                .expect("clock should be after unix epoch")
+                .as_millis()
+        ));
+        let workspace_shadow = temp_root.join("workspace-shadow");
+        let configs_dir = workspace_shadow.join("configs");
+        std::fs::create_dir_all(&configs_dir).expect("workspace shadow config dir should be creatable");
+        std::fs::write(
+            configs_dir.join("node1.toml"),
+            "node_id = \"node1\"\nrpc_addr = \"127.0.0.1:26657\"\np2p_addr = \"127.0.0.1:26656\"\n",
+        )
+        .expect("primary config should be writable");
+        symlink(
+            configs_dir.join("node1.toml"),
+            configs_dir.join("node1-alias.toml"),
+        )
+        .expect("in-root symlink alias should be creatable");
+
+        let requested_path = "configs/node1-alias.toml";
+        let resolved_path = workspace_shadow.join(requested_path);
+
+        let original_cwd = std::env::current_dir().expect("capture cwd");
+        std::env::set_current_dir(&workspace_shadow).expect("enter shadow cwd");
+        let err = load_config(requested_path)
+            .expect_err("symlinked config aliases inside allowed roots must fail closed");
+        std::env::set_current_dir(&original_cwd).expect("restore cwd");
+        let _ = std::fs::remove_dir_all(&temp_root);
+
+        let err_surface = format!("{err:#}");
+        assert!(
+            err_surface.contains("config path must not be a symlink"),
+            "unexpected error: {err:#}"
+        );
+        assert!(
+            err_surface.contains(requested_path),
+            "in-root symlink rejection must keep the operator-supplied path visible: {err:#}"
+        );
+        assert!(
+            err_surface.contains(resolved_path.to_string_lossy().as_ref()),
+            "in-root symlink rejection must keep the resolved symlink path visible: {err:#}"
+        );
+    }
+
+    #[test]
     fn load_config_rejects_absolute_symlink_path_that_escapes_allowed_roots() {
         use std::os::unix::fs::symlink;
         use std::time::{SystemTime, UNIX_EPOCH};
@@ -4502,6 +4982,55 @@ mod tests {
         assert!(
             err_surface.contains(canonical_target.to_string_lossy().as_ref()),
             "absolute symlink escape error must keep the resolved escape target visible: {err:#}"
+        );
+    }
+
+    #[test]
+    fn load_config_rejects_nonexistent_absolute_path_outside_workspace_cwd_and_test_temp() {
+        use std::time::{SystemTime, UNIX_EPOCH};
+
+        let workspace_root = super::workspace_root()
+            .canonicalize()
+            .expect("workspace root should canonicalize");
+        let current_dir = std::env::current_dir()
+            .expect("capture cwd")
+            .canonicalize()
+            .expect("cwd should canonicalize");
+        let temp_dir = std::env::temp_dir()
+            .canonicalize()
+            .unwrap_or_else(|_| std::env::temp_dir());
+        let outside_path = PathBuf::from(format!(
+            "/Users/{}/.trnm-node-config-outside-{}-{}.toml",
+            std::env::var("USER").unwrap_or_else(|_| String::from("qianqi")),
+            std::process::id(),
+            SystemTime::now()
+                .duration_since(UNIX_EPOCH)
+                .expect("clock should be after unix epoch")
+                .as_millis()
+        ));
+
+        let err = load_config(outside_path.to_str().expect("utf8 path")).expect_err(
+            "nonexistent absolute config path outside allowed roots should fail closed before file lookup",
+        );
+
+        assert!(
+            !outside_path.exists(),
+            "test fixture must stay nonexistent so the fail-closed path check covers unresolved absolute paths"
+        );
+        assert!(
+            !outside_path.starts_with(&workspace_root)
+                && !outside_path.starts_with(&current_dir)
+                && !outside_path.starts_with(&temp_dir),
+            "test fixture must stay outside workspace, cwd, and test temp allowances"
+        );
+        let err_surface = format!("{err:#}");
+        assert!(
+            err_surface.contains("resolves outside allowed roots"),
+            "unexpected error: {err:#}"
+        );
+        assert!(
+            err_surface.contains(outside_path.to_string_lossy().as_ref()),
+            "outside-path error must keep the operator-supplied absolute path visible: {err:#}"
         );
     }
 
@@ -4783,14 +5312,16 @@ mod tests {
             "Do not skip a missing earlier follower slot during startup or rejoin: if `node2` is absent, keep `node3` and `node4` stopped; if `node3` is absent, keep `node4` stopped until the earlier slot regains its shipped tuple.",
             "Keep `node1` through `node3` in their shipped slots; if `node4` returns, bring it back only with `node4.toml` and its shipped tuple",
             "Accept the remaining slots only while no other config is renamed or promoted into the `node4` role",
-            "unknown fields, whitespace drift, host-like or path-like ids, URI-like delimiters, non-canonical socket literals, privileged ports, wildcard listeners, reserved documentation/benchmarking listener ranges, or mixed listener IP families, the config loader must fail closed",
+            "unknown fields, whitespace drift, dotted, host-like, or path-like ids, URI-like delimiters, non-canonical socket literals, IPv4-mapped / IPv4-compatible / IPv4-translated IPv6 listener forms, privileged ports, wildcard listeners, reserved documentation/benchmarking listener ranges, or mixed listener IP families, the config loader must fail closed",
             "use both the operator-supplied config path and the resolved canonical path printed in the error to identify which shipped slot drifted",
             "prefer the exact repo-root paths `trillionnium/configs/node1.toml`, `trillionnium/configs/node2.toml`, `trillionnium/configs/node3.toml`, and `trillionnium/configs/node4.toml` as the unambiguous slot references",
             "require the filename slot, `node_id`, and listener stride to agree",
             "fix the exact repo-root slot file named by the error surface and the exact field named in that error",
+            "If the failing path is reported as `configs/nodeN.toml` or `./configs/nodeN.toml`, map it back to the same repo-root slot before editing and fail closed on any basename-only “looks similar” guess across sibling files.",
+            "Treat IPv4-mapped (`::ffff:a.b.c.d`), IPv4-compatible (`::a.b.c.d` / `::hhhh:hhhh`), and IPv4-translated (`::ffff:0:a.b.c.d`) IPv6 listener literals as invalid drift for these shipped fixtures, even when they still target loopback.",
             "Do not add extra shipped topology files such as `node5.toml`, alternate slot aliases, or helper sidecar configs under `configs/`",
             "Do not substitute IPv6 loopback `[::1]` for the shipped IPv4 loopback `127.0.0.1` during bootstrap or rejoin",
-            "The regression tests in `crates/trnm-node/src/main.rs` are the source of truth for the exact fixture invariants.",
+            "The regression tests in `crates/trnm-node/src/config.rs` are the source of truth for the exact fixture invariants.",
         ] {
             assert!(
                 readme.contains(expected_phrase),
@@ -4798,6 +5329,63 @@ mod tests {
                 readme_path.display()
             );
         }
+    }
+
+    #[test]
+    fn shipped_bootstrap_readme_tuples_match_loaded_configs_exactly() {
+        let manifest_dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR"));
+        let workspace_root = manifest_dir
+            .ancestors()
+            .nth(2)
+            .expect("trnm-node manifest should sit under trillionnium/crates/trnm-node");
+        let readme_path = workspace_root.join("configs").join("README.md");
+        let readme = std::fs::read_to_string(&readme_path).unwrap_or_else(|err| {
+            panic!(
+                "{} should stay readable for shipped bootstrap README tuple/config parity checks: {err}",
+                readme_path.display()
+            )
+        });
+
+        let documented_topology_lines = readme
+            .lines()
+            .filter(|line| line.starts_with("- `node") && line.contains("→ node id `node"))
+            .collect::<Vec<_>>();
+
+        let derived_topology_lines = [
+            "configs/node1.toml",
+            "configs/node2.toml",
+            "configs/node3.toml",
+            "configs/node4.toml",
+        ]
+        .into_iter()
+        .map(|relative_path| {
+            let path = workspace_root.join(relative_path);
+            let cfg = load_config(relative_path).unwrap_or_else(|err| {
+                panic!(
+                    "{} should remain loadable for shipped bootstrap README tuple/config parity checks: {err:#}",
+                    path.display()
+                )
+            });
+            let file_name = std::path::Path::new(relative_path)
+                .file_name()
+                .and_then(|name| name.to_str())
+                .expect("shipped bootstrap config path should end in utf-8 filename");
+            format!(
+                "- `{file_name}` → node id `{}`, P2P `{}`, RPC `{}`",
+                cfg.node_id, cfg.p2p_addr, cfg.rpc_addr
+            )
+        })
+        .collect::<Vec<_>>();
+        let derived_topology_line_refs = derived_topology_lines
+            .iter()
+            .map(String::as_str)
+            .collect::<Vec<_>>();
+
+        assert_eq!(
+            documented_topology_lines, derived_topology_line_refs,
+            "{} must keep README Day-1 tuples exactly aligned with the shipped bootstrap configs so peer topology docs cannot silently drift from fixture truth",
+            readme_path.display()
+        );
     }
 
     #[test]
@@ -5293,6 +5881,28 @@ mod tests {
         }
     }
 
+    #[test]
+    fn load_config_rejects_home_expansion_style_paths_fail_closed() {
+        for path in ["~/configs/node1.toml", "~\\configs\\node1.toml", "~qianqi/configs/node1.toml"] {
+            let err = load_config(path)
+                .expect_err("config path home-expansion markers must fail closed");
+            assert!(
+                err.to_string()
+                    .contains("path must not rely on home-directory expansion (~)"),
+                "unexpected error for {path:?}: {err:#}"
+            );
+        }
+    }
+
+    #[test]
+    fn load_config_prefers_explicit_paths_over_home_expansion_guessing() {
+        let cfg = load_config("trillionnium/configs/node1.toml")
+            .expect("explicit repo-root config path should remain supported");
+        assert_eq!(cfg.node_id, "node1");
+        assert_eq!(cfg.rpc_addr, "127.0.0.1:26657");
+        assert_eq!(cfg.p2p_addr, "127.0.0.1:26656");
+    }
+
     const FORBIDDEN_BOOTSTRAP_ALIAS_FIELDS: &[(&str, &str)] = &[
         ("bootstrap_nodes", "[\"127.0.0.1:27656\"]"),
         ("bootstrap_node", "\"127.0.0.1:27656\""),
@@ -5306,10 +5916,17 @@ mod tests {
         ("bootstrap_addrs", "[\"127.0.0.1:27656\"]"),
         ("bootstrapAddr", "\"127.0.0.1:27656\""),
         ("bootstrapAddrs", "[\"127.0.0.1:27656\"]"),
+        ("bootstrap-addr", "\"127.0.0.1:27656\""),
+        ("bootstrap-addrs", "[\"127.0.0.1:27656\"]"),
+        ("bootstrap-node", "\"127.0.0.1:27656\""),
+        ("bootstrap-peer", "\"127.0.0.1:27656\""),
+        ("bootstrap", "\"127.0.0.1:27656\""),
         ("seed_nodes", "[\"127.0.0.1:27656\"]"),
         ("seed_node", "\"127.0.0.1:27656\""),
         ("seed_peers", "[\"127.0.0.1:27656\"]"),
         ("seed_peer", "\"127.0.0.1:27656\""),
+        ("seed-node", "\"127.0.0.1:27656\""),
+        ("seed-peer", "\"127.0.0.1:27656\""),
         ("seedNodes", "[\"127.0.0.1:27656\"]"),
         ("seedNode", "\"127.0.0.1:27656\""),
         ("seedPeers", "[\"127.0.0.1:27656\"]"),
@@ -5318,6 +5935,9 @@ mod tests {
         ("seed_addrs", "[\"127.0.0.1:27656\"]"),
         ("seedAddr", "\"127.0.0.1:27656\""),
         ("seedAddrs", "[\"127.0.0.1:27656\"]"),
+        ("seed-addr", "\"127.0.0.1:27656\""),
+        ("seed-addrs", "[\"127.0.0.1:27656\"]"),
+        ("seed", "\"127.0.0.1:27656\""),
         ("seeds", "\"127.0.0.1:27656\""),
         ("bootnodes", "[\"127.0.0.1:27656\"]"),
         ("bootnode", "\"127.0.0.1:27656\""),
@@ -5325,85 +5945,55 @@ mod tests {
         ("boot_node", "\"127.0.0.1:27656\""),
         ("bootNodes", "[\"127.0.0.1:27656\"]"),
         ("bootNode", "\"127.0.0.1:27656\""),
+        ("boot-node", "\"127.0.0.1:27656\""),
         ("boot_peers", "[\"127.0.0.1:27656\"]"),
         ("boot_peer", "\"127.0.0.1:27656\""),
+        ("boot-peer", "\"127.0.0.1:27656\""),
         ("boot_addr", "\"127.0.0.1:27656\""),
         ("boot_addrs", "[\"127.0.0.1:27656\"]"),
         ("bootAddr", "\"127.0.0.1:27656\""),
         ("bootAddrs", "[\"127.0.0.1:27656\"]"),
+        ("boot-addr", "\"127.0.0.1:27656\""),
+        ("boot-addrs", "[\"127.0.0.1:27656\"]"),
         ("bootPeers", "[\"127.0.0.1:27656\"]"),
         ("bootPeer", "\"127.0.0.1:27656\""),
         ("persistent_peers", "[\"127.0.0.1:27656\"]"),
+        ("persistent-peers", "[\"127.0.0.1:27656\"]"),
         ("persistent_peer", "\"127.0.0.1:27656\""),
+        ("persistent-peer", "\"127.0.0.1:27656\""),
         ("persistent_addr", "\"127.0.0.1:27656\""),
         ("persistent_addrs", "[\"127.0.0.1:27656\"]"),
         ("persistentAddr", "\"127.0.0.1:27656\""),
         ("persistentAddrs", "[\"127.0.0.1:27656\"]"),
+        ("persistent-addr", "\"127.0.0.1:27656\""),
+        ("persistent-addrs", "[\"127.0.0.1:27656\"]"),
         ("persistentPeers", "[\"127.0.0.1:27656\"]"),
         ("persistentPeer", "\"127.0.0.1:27656\""),
         ("persistent_nodes", "[\"127.0.0.1:27656\"]"),
+        ("persistent-nodes", "[\"127.0.0.1:27656\"]"),
         ("persistent_node", "\"127.0.0.1:27656\""),
+        ("persistent-node", "\"127.0.0.1:27656\""),
         ("persistentNodes", "[\"127.0.0.1:27656\"]"),
         ("persistentNode", "\"127.0.0.1:27656\""),
     ];
 
     #[test]
-    fn load_config_rejects_unknown_fields_to_keep_bootstrap_config_fail_closed() {
+    fn load_config_rejects_forbidden_bootstrap_alias_fields_with_operator_facing_error() {
+        use std::collections::BTreeSet;
+
         let _cwd_guard = cwd_test_lock().lock().unwrap();
-        for (unknown_field, field_value) in [
-            ("bootstrap_nodes", "[\"127.0.0.1:27656\"]"),
-            ("bootstrap_node", "\"127.0.0.1:27656\""),
-            ("bootstrap_peers", "[\"127.0.0.1:27656\"]"),
-            ("bootstrap_peer", "\"127.0.0.1:27656\""),
-            ("bootstrapNodes", "[\"127.0.0.1:27656\"]"),
-            ("bootstrapNode", "\"127.0.0.1:27656\""),
-            ("bootstrapPeers", "[\"127.0.0.1:27656\"]"),
-            ("bootstrapPeer", "\"127.0.0.1:27656\""),
-            ("bootstrap_addr", "\"127.0.0.1:27656\""),
-            ("bootstrap_addrs", "[\"127.0.0.1:27656\"]"),
-            ("bootstrapAddr", "\"127.0.0.1:27656\""),
-            ("bootstrapAddrs", "[\"127.0.0.1:27656\"]"),
-            ("seed_nodes", "[\"127.0.0.1:27656\"]"),
-            ("seed_node", "\"127.0.0.1:27656\""),
-            ("seed_peers", "[\"127.0.0.1:27656\"]"),
-            ("seed_peer", "\"127.0.0.1:27656\""),
-            ("seedNodes", "[\"127.0.0.1:27656\"]"),
-            ("seedNode", "\"127.0.0.1:27656\""),
-            ("seedPeers", "[\"127.0.0.1:27656\"]"),
-            ("seedPeer", "\"127.0.0.1:27656\""),
-            ("seed_addr", "\"127.0.0.1:27656\""),
-            ("seed_addrs", "[\"127.0.0.1:27656\"]"),
-            ("seedAddr", "\"127.0.0.1:27656\""),
-            ("seedAddrs", "[\"127.0.0.1:27656\"]"),
-            ("seed", "\"127.0.0.1:27656\""),
-            ("seeds", "\"127.0.0.1:27656\""),
-            ("bootnodes", "[\"127.0.0.1:27656\"]"),
-            ("bootnode", "\"127.0.0.1:27656\""),
-            ("boot_nodes", "[\"127.0.0.1:27656\"]"),
-            ("boot_node", "\"127.0.0.1:27656\""),
-            ("bootNodes", "[\"127.0.0.1:27656\"]"),
-            ("bootNode", "\"127.0.0.1:27656\""),
-            ("boot_peers", "[\"127.0.0.1:27656\"]"),
-            ("boot_peer", "\"127.0.0.1:27656\""),
-            ("boot_addr", "\"127.0.0.1:27656\""),
-            ("boot_addrs", "[\"127.0.0.1:27656\"]"),
-            ("bootAddr", "\"127.0.0.1:27656\""),
-            ("bootAddrs", "[\"127.0.0.1:27656\"]"),
-            ("bootPeers", "[\"127.0.0.1:27656\"]"),
-            ("bootPeer", "\"127.0.0.1:27656\""),
-            ("persistent_peers", "[\"127.0.0.1:27656\"]"),
-            ("persistent_peer", "\"127.0.0.1:27656\""),
-            ("persistent_addr", "\"127.0.0.1:27656\""),
-            ("persistent_addrs", "[\"127.0.0.1:27656\"]"),
-            ("persistentAddr", "\"127.0.0.1:27656\""),
-            ("persistentAddrs", "[\"127.0.0.1:27656\"]"),
-            ("persistentPeers", "[\"127.0.0.1:27656\"]"),
-            ("persistentPeer", "\"127.0.0.1:27656\""),
-            ("persistent_nodes", "[\"127.0.0.1:27656\"]"),
-            ("persistent_node", "\"127.0.0.1:27656\""),
-            ("persistentNodes", "[\"127.0.0.1:27656\"]"),
-            ("persistentNode", "\"127.0.0.1:27656\""),
-        ] {
+        let alias_names = FORBIDDEN_BOOTSTRAP_ALIAS_FIELDS
+            .iter()
+            .map(|(field, _)| *field)
+            .collect::<Vec<_>>();
+        let alias_name_set = alias_names.iter().copied().collect::<BTreeSet<_>>();
+        assert_eq!(
+            alias_names.len(),
+            alias_name_set.len(),
+            "FORBIDDEN_BOOTSTRAP_ALIAS_FIELDS must not duplicate alias names or operator parse diagnostics can drift"
+        );
+
+        for &(unknown_field, field_value) in FORBIDDEN_BOOTSTRAP_ALIAS_FIELDS {
             let current_dir = std::env::current_dir().expect("current dir");
             let file_name = format!(
                 "trnm-node-config-unknown-field-{unknown_field}-{}-{}.toml",
@@ -5424,13 +6014,18 @@ mod tests {
                 path.to_str().expect("temp path utf-8").to_string(),
                 format!("./{file_name}"),
             ] {
-                let err = load_config(&operator_path)
-                    .expect_err("unknown config fields must fail closed");
+                let err =
+                    load_config(&operator_path).expect_err("bootstrap alias fields must fail closed");
                 let err_surface = format!("{err:#}");
                 assert!(
                     err_surface.contains("parse toml failed")
-                        && err_surface.contains(&format!("unknown field `{unknown_field}`")),
+                        && err_surface
+                            .contains(&format!("forbidden bootstrap alias field `{unknown_field}`")),
                     "unexpected error for {unknown_field}: {err:#}"
+                );
+                assert!(
+                    err_surface.contains(&format!("remove `{unknown_field}`")),
+                    "forbidden alias diagnostic for {unknown_field} must point operators at the exact fix target: {err:#}"
                 );
                 assert!(
                     err_surface.contains(&operator_path),
@@ -5443,6 +6038,47 @@ mod tests {
             }
             let _ = std::fs::remove_file(path);
         }
+    }
+
+    #[test]
+    fn load_config_rejects_arbitrary_unknown_fields_to_keep_bootstrap_config_fail_closed() {
+        let _cwd_guard = cwd_test_lock().lock().unwrap();
+        let current_dir = std::env::current_dir().expect("current dir");
+        let file_name = format!(
+            "trnm-node-config-unknown-field-generic-{}-{}.toml",
+            std::process::id(),
+            now_unix_ms()
+        );
+        let path = current_dir.join(&file_name);
+        std::fs::write(
+            &path,
+            "node_id = \"node1\"\nrpc_addr = \"127.0.0.1:26657\"\np2p_addr = \"127.0.0.1:26656\"\nunexpected_peer_hint = \"node2\"\n",
+        )
+        .expect("write temp config");
+
+        let canonical_path = path.canonicalize().expect("canonicalize temp config path");
+        for operator_path in [
+            path.to_str().expect("temp path utf-8").to_string(),
+            format!("./{file_name}"),
+        ] {
+            let err = load_config(&operator_path).expect_err("unexpected config fields must fail closed");
+            let err_surface = format!("{err:#}");
+            assert!(
+                err_surface.contains("parse toml failed")
+                    && err_surface.contains("unknown field `unexpected_peer_hint`"),
+                "unexpected error for generic unknown field: {err:#}"
+            );
+            assert!(
+                err_surface.contains(&operator_path),
+                "generic unknown-field error must keep the operator-supplied config path visible: {err:#}"
+            );
+            assert!(
+                err_surface.contains(canonical_path.to_string_lossy().as_ref()),
+                "generic unknown-field error must keep the canonical resolved path visible: {err:#}"
+            );
+        }
+
+        let _ = std::fs::remove_file(path);
     }
 
     #[test]
@@ -5469,20 +6105,7 @@ mod tests {
                 )
             });
 
-        for forbidden_alias in [
-            "bootstrap_nodes", "bootstrap_node", "bootstrap_peers", "bootstrap_peer",
-            "bootstrapNodes", "bootstrapNode", "bootstrapPeers", "bootstrapPeer",
-            "bootstrap_addr", "bootstrap_addrs", "bootstrapAddr", "bootstrapAddrs",
-            "seed_nodes", "seed_node", "seed_peers", "seed_peer",
-            "seedNodes", "seedNode", "seedPeers", "seedPeer",
-            "seed_addr", "seed_addrs", "seedAddr", "seedAddrs", "seed", "seeds",
-            "bootnodes", "bootnode", "boot_nodes", "boot_node",
-            "bootNodes", "bootNode", "boot_peers", "boot_peer",
-            "boot_addr", "boot_addrs", "bootAddr", "bootAddrs", "bootPeers", "bootPeer",
-            "persistent_peers", "persistent_peer", "persistent_addr", "persistent_addrs",
-            "persistentAddr", "persistentAddrs", "persistentPeers", "persistentPeer",
-            "persistent_nodes", "persistent_node", "persistentNodes", "persistentNode",
-        ] {
+        for forbidden_alias in FORBIDDEN_BOOTSTRAP_ALIAS_FIELDS.iter().map(|(field, _)| *field) {
             let mention_count = fixture_scope_section
                 .matches(&format!("`{forbidden_alias}`"))
                 .count();
@@ -5492,6 +6115,41 @@ mod tests {
                 readme_path.display()
             );
         }
+    }
+
+    #[test]
+    fn load_config_rejects_generic_bootstrap_alias_with_operator_facing_error() {
+        let current_dir = std::env::current_dir().expect("current dir");
+        let file_name = format!(
+            "trnm-node-config-unknown-field-bootstrap-{}-{}.toml",
+            std::process::id(),
+            now_unix_ms()
+        );
+        let path = current_dir.join(&file_name);
+        std::fs::write(
+            &path,
+            "node_id = \"node1\"\nrpc_addr = \"127.0.0.1:26657\"\np2p_addr = \"127.0.0.1:26656\"\nbootstrap = \"127.0.0.1:27656\"\n",
+        )
+        .expect("write temp config");
+
+        let canonical_path = std::fs::canonicalize(&path).expect("canonicalize temp config path");
+        let operator_path = format!("./{file_name}");
+        let err = load_config(&operator_path).expect_err("generic bootstrap alias must fail closed");
+        let err_surface = format!("{err:#}");
+        assert!(
+            err_surface.contains("parse toml failed") && err_surface.contains("unknown field `bootstrap`"),
+            "unexpected error for generic bootstrap alias: {err:#}"
+        );
+        assert!(
+            err_surface.contains(&operator_path),
+            "generic bootstrap alias surface must keep the operator path visible: {err:#}"
+        );
+        assert!(
+            err_surface.contains(canonical_path.to_string_lossy().as_ref()),
+            "generic bootstrap alias surface must keep the resolved path visible: {err:#}"
+        );
+
+        let _ = std::fs::remove_file(path);
     }
 
     #[test]
@@ -5635,6 +6293,37 @@ mod tests {
     }
 
     #[test]
+    fn load_config_rejects_malformed_dotted_node_id_with_operator_facing_error() {
+        for (suffix, node_id) in [
+            ("double-dot", "node..1"),
+            ("label-trailing-hyphen", "peer-.slot"),
+            ("label-leading-hyphen", "slot.-peer"),
+        ] {
+            let path = std::env::temp_dir().join(format!(
+                "trnm-node-config-malformed-dotted-node-id-{suffix}-{}-{}.toml",
+                std::process::id(),
+                std::thread::current().name().unwrap_or("unnamed")
+            ));
+            std::fs::write(
+                &path,
+                format!(
+                    "node_id = \"{node_id}\"\nrpc_addr = \"127.0.0.1:26657\"\np2p_addr = \"127.0.0.1:26656\"\n"
+                ),
+            )
+            .expect("write config");
+
+            let err = load_config(path.to_str().expect("utf8 path"))
+                .expect_err("malformed dotted node_id must fail closed");
+            assert!(
+                err.to_string().contains("node_id must not contain dots"),
+                "unexpected error for {node_id}: {err:#}"
+            );
+
+            let _ = std::fs::remove_file(path);
+        }
+    }
+
+    #[test]
     fn load_config_rejects_blank_rpc_addr_with_operator_facing_error() {
         let path = std::env::temp_dir().join(format!(
             "trnm-node-config-blank-rpc-{}-{}.toml",
@@ -5672,6 +6361,80 @@ mod tests {
         assert!(err.to_string().contains("p2p_addr must not be empty"));
 
         let _ = std::fs::remove_file(path);
+    }
+
+    #[test]
+    fn load_config_rejects_port_zero_listener_with_operator_facing_error() {
+        let rpc_path = std::env::temp_dir().join(format!(
+            "trnm-node-config-port-zero-rpc-{}-{}.toml",
+            std::process::id(),
+            std::thread::current().name().unwrap_or("unnamed")
+        ));
+        std::fs::write(
+            &rpc_path,
+            "node_id = \"node-a\"\nrpc_addr = \"127.0.0.1:0\"\np2p_addr = \"127.0.0.1:26656\"\n",
+        )
+        .expect("write config");
+        let rpc_err = load_config(rpc_path.to_str().expect("utf8 path"))
+            .expect_err("port-zero rpc listener loaded from disk must fail closed");
+        let rpc_err_surface = format!("{rpc_err:#}");
+        assert!(rpc_err_surface.contains("rpc_addr must not use port 0"));
+        assert!(rpc_err_surface.contains(rpc_path.to_str().expect("utf8 path")));
+        let _ = std::fs::remove_file(rpc_path);
+
+        let p2p_path = std::env::temp_dir().join(format!(
+            "trnm-node-config-port-zero-p2p-{}-{}.toml",
+            std::process::id(),
+            std::thread::current().name().unwrap_or("unnamed")
+        ));
+        std::fs::write(
+            &p2p_path,
+            "node_id = \"node-a\"\nrpc_addr = \"127.0.0.1:26657\"\np2p_addr = \"127.0.0.1:0\"\n",
+        )
+        .expect("write config");
+        let p2p_err = load_config(p2p_path.to_str().expect("utf8 path"))
+            .expect_err("port-zero p2p listener loaded from disk must fail closed");
+        let p2p_err_surface = format!("{p2p_err:#}");
+        assert!(p2p_err_surface.contains("p2p_addr must not use port 0"));
+        assert!(p2p_err_surface.contains(p2p_path.to_str().expect("utf8 path")));
+        let _ = std::fs::remove_file(p2p_path);
+    }
+
+    #[test]
+    fn load_config_rejects_privileged_listener_port_with_operator_facing_error() {
+        let rpc_path = std::env::temp_dir().join(format!(
+            "trnm-node-config-privileged-rpc-{}-{}.toml",
+            std::process::id(),
+            std::thread::current().name().unwrap_or("unnamed")
+        ));
+        std::fs::write(
+            &rpc_path,
+            "node_id = \"node-a\"\nrpc_addr = \"127.0.0.1:443\"\np2p_addr = \"127.0.0.1:26656\"\n",
+        )
+        .expect("write config");
+        let rpc_err = load_config(rpc_path.to_str().expect("utf8 path"))
+            .expect_err("privileged rpc listener loaded from disk must fail closed");
+        let rpc_err_surface = format!("{rpc_err:#}");
+        assert!(rpc_err_surface.contains("rpc_addr must not use a privileged port below 1024"));
+        assert!(rpc_err_surface.contains(rpc_path.to_str().expect("utf8 path")));
+        let _ = std::fs::remove_file(rpc_path);
+
+        let p2p_path = std::env::temp_dir().join(format!(
+            "trnm-node-config-privileged-p2p-{}-{}.toml",
+            std::process::id(),
+            std::thread::current().name().unwrap_or("unnamed")
+        ));
+        std::fs::write(
+            &p2p_path,
+            "node_id = \"node-a\"\nrpc_addr = \"127.0.0.1:26657\"\np2p_addr = \"127.0.0.1:443\"\n",
+        )
+        .expect("write config");
+        let p2p_err = load_config(p2p_path.to_str().expect("utf8 path"))
+            .expect_err("privileged p2p listener loaded from disk must fail closed");
+        let p2p_err_surface = format!("{p2p_err:#}");
+        assert!(p2p_err_surface.contains("p2p_addr must not use a privileged port below 1024"));
+        assert!(p2p_err_surface.contains(p2p_path.to_str().expect("utf8 path")));
+        let _ = std::fs::remove_file(p2p_path);
     }
 
     #[test]
@@ -5929,6 +6692,53 @@ mod tests {
             .contains("p2p_addr must not use a link-local address"));
 
         let _ = std::fs::remove_file(p2p_path);
+    }
+
+    #[test]
+    fn load_config_rejects_ipv6_scope_identifier_listener_with_operator_facing_error() {
+        for (field, addr, expected_fragment) in [
+            (
+                "rpc_addr",
+                "[2001:db8::10%7]:26657",
+                "rpc_addr must not use an IPv6 scope identifier",
+            ),
+            (
+                "p2p_addr",
+                "[2001:db8::10%9]:26656",
+                "p2p_addr must not use an IPv6 scope identifier",
+            ),
+        ] {
+            let path = std::env::temp_dir().join(format!(
+                "trnm-node-config-ipv6-scope-{field}-listener-{}-{}.toml",
+                std::process::id(),
+                now_unix_ms()
+            ));
+            let body = if field == "rpc_addr" {
+                format!(
+                    "node_id = \"node-a\"\nrpc_addr = \"{addr}\"\np2p_addr = \"[2001:4860::1]:26656\"\n"
+                )
+            } else {
+                format!(
+                    "node_id = \"node-a\"\nrpc_addr = \"[2001:4860::1]:26657\"\np2p_addr = \"{addr}\"\n"
+                )
+            };
+            std::fs::write(&path, body).expect("write config");
+
+            let path_str = path.to_str().expect("utf8 path");
+            let err = load_config(path_str)
+                .expect_err("IPv6 scope-id bootstrap listeners must fail closed");
+            let err_surface = format!("{err:#}");
+            assert!(
+                err_surface.contains(expected_fragment),
+                "unexpected error for {field}: {err:#}"
+            );
+            assert!(
+                err_surface.contains(path_str),
+                "error surface for {field} must keep the operator-supplied config path visible: {err:#}"
+            );
+
+            let _ = std::fs::remove_file(path);
+        }
     }
 
     #[test]
@@ -6216,6 +7026,30 @@ mod tests {
                 "[2001:4860::1]:7000",
                 "[::c000:20a]:7001",
                 "p2p_addr must not use an IPv4-compatible IPv6 address",
+            ),
+            (
+                "rpc-ipv4-translated",
+                "[::ffff:0:7f00:1]:7000",
+                "[2001:4860::1]:7001",
+                "rpc_addr must not use an IPv4-translated IPv6 address",
+            ),
+            (
+                "p2p-ipv4-translated",
+                "[2001:4860::1]:7000",
+                "[::ffff:0:7f00:1]:7001",
+                "p2p_addr must not use an IPv4-translated IPv6 address",
+            ),
+            (
+                "rpc-ipv4-translated-dotted-quad",
+                "[::ffff:0:127.0.0.1]:7000",
+                "[2001:4860::1]:7001",
+                "rpc_addr must not use an IPv4-translated IPv6 address",
+            ),
+            (
+                "p2p-ipv4-translated-dotted-quad",
+                "[2001:4860::1]:7000",
+                "[::ffff:0:127.0.0.1]:7001",
+                "p2p_addr must not use an IPv4-translated IPv6 address",
             ),
             (
                 "rpc-scope",
@@ -7709,6 +8543,35 @@ mod tests {
     }
 
     #[test]
+    fn validate_node_config_rejects_hostname_shaped_operator_addresses() {
+        let rpc_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "localhost:26657".into(),
+                p2p_addr: "127.0.0.1:26656".into(),
+            },
+            "node.toml",
+        )
+        .expect_err("hostname-shaped rpc_addr must fail closed");
+        assert!(rpc_err
+            .to_string()
+            .contains("rpc_addr must be a valid socket address"));
+
+        let p2p_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "127.0.0.1:26657".into(),
+                p2p_addr: "LOCALHOST:26656".into(),
+            },
+            "node.toml",
+        )
+        .expect_err("hostname-shaped p2p_addr must fail closed");
+        assert!(p2p_err
+            .to_string()
+            .contains("p2p_addr must be a valid socket address"));
+    }
+
+    #[test]
     fn validate_node_config_rejects_mixed_ip_families() {
         let err = validate_node_config(
             NodeConfig {
@@ -7853,6 +8716,64 @@ mod tests {
         assert!(p2p_ipv4_mapped_err
             .to_string()
             .contains("p2p_addr must not use an IPv4-mapped IPv6 address"));
+
+        let rpc_translated_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "[::ffff:0:7f00:1]:26657".into(),
+                p2p_addr: "[2001:4860:4860::8888]:26656".into(),
+            },
+            "node.toml",
+        )
+        .expect_err("rpc_addr IPv4-translated IPv6 bind must fail closed");
+        assert!(rpc_translated_err
+            .to_string()
+            .contains("rpc_addr must not use an IPv4-translated IPv6 address"));
+
+        let p2p_translated_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "[2001:4860:4860::8888]:26657".into(),
+                p2p_addr: "[::ffff:0:7f00:1]:26656".into(),
+            },
+            "node.toml",
+        )
+        .expect_err("p2p_addr IPv4-translated IPv6 bind must fail closed");
+        assert!(p2p_translated_err
+            .to_string()
+            .contains("p2p_addr must not use an IPv4-translated IPv6 address"));
+
+        let rpc_translated_dotted_quad_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "[::ffff:0:127.0.0.1]:26657".into(),
+                p2p_addr: "[2001:4860:4860::8888]:26656".into(),
+            },
+            "node.toml",
+        )
+        .expect_err("rpc_addr dotted-quad IPv4-translated IPv6 bind must fail closed");
+        assert!(
+            rpc_translated_dotted_quad_err
+                .to_string()
+                .contains("rpc_addr must not use an IPv4-translated IPv6 address"),
+            "unexpected error: {rpc_translated_dotted_quad_err:#}"
+        );
+
+        let p2p_translated_dotted_quad_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "[2001:4860:4860::8888]:26657".into(),
+                p2p_addr: "[::ffff:0:127.0.0.1]:26656".into(),
+            },
+            "node.toml",
+        )
+        .expect_err("p2p_addr dotted-quad IPv4-translated IPv6 bind must fail closed");
+        assert!(
+            p2p_translated_dotted_quad_err
+                .to_string()
+                .contains("p2p_addr must not use an IPv4-translated IPv6 address"),
+            "unexpected error: {p2p_translated_dotted_quad_err:#}"
+        );
 
         let rpc_scope_err = validate_node_config(
             NodeConfig {
@@ -8180,6 +9101,25 @@ mod tests {
             assert!(
                 err.to_string()
                     .contains("node_id must not look like a host or socket literal")
+            );
+        }
+    }
+
+    #[test]
+    fn validate_node_config_rejects_malformed_dotted_node_id() {
+        for node_id in ["node..1", "peer-.slot", "slot.-peer"] {
+            let err = validate_node_config(
+                NodeConfig {
+                    node_id: node_id.into(),
+                    rpc_addr: "127.0.0.1:26657".into(),
+                    p2p_addr: "127.0.0.1:26656".into(),
+                },
+                "node.toml",
+            )
+            .expect_err("malformed dotted node_id must fail closed");
+            assert!(
+                err.to_string().contains("node_id must not contain dots"),
+                "unexpected error for {node_id}: {err:#}"
             );
         }
     }
@@ -13081,8 +14021,107 @@ mod tests {
     }
 
     #[test]
-    fn rollback_snapshot_scrubs_pending_resolve_snapshot_with_reserved_worker_slash_authority_member()
-    {
+    fn rollback_snapshot_scrubs_pending_resolve_snapshot_with_control_byte_first_approver() {
+        let mut st = StateStore::new();
+        st.set_gov_param_bootstrap_unchecked(
+            9_505,
+            "resolve_authority".into(),
+            "authority-a,authority-b".into(),
+        )
+        .unwrap();
+        let _ = challenged_task_fixture(&mut st, 8_115);
+        let before_task = st.get_task(8_115).unwrap();
+        let before_escrow = st.balance_of("treasury.challenge_escrow");
+
+        let snapshot = TxRollbackSnapshot {
+            task_id: 8_115,
+            task: Some(before_task.clone()),
+            balances: vec![("treasury.challenge_escrow".into(), Some(before_escrow))],
+            pending_resolve_approval: Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a\u{0007}".into(),
+                authority_set: "authority-a,authority-b".into(),
+                task_version: before_task.version,
+            }),
+        };
+
+        rollback_tx_snapshot(&mut st, snapshot);
+
+        assert_eq!(st.get_task(8_115).unwrap(), before_task);
+        assert_eq!(st.balance_of("treasury.challenge_escrow"), before_escrow);
+        assert_eq!(
+            st.pending_resolve_approval(8_115),
+            None,
+            "rollback must scrub control-byte approvers instead of silently accepting them"
+        );
+        assert_eq!(st.pending_resolve_first_approver(8_115), None);
+        assert_eq!(st.pending_resolve_approval_snapshot(8_115), None);
+    }
+
+    #[test]
+    fn rollback_snapshot_scrubs_pending_resolve_snapshot_with_reserved_first_approver_aliases() {
+        for (idx, reserved_alias) in [
+            "governance.resolve_authority",
+            "governance.emergency_pause",
+            "system",
+            "treasury.challenge_escrow",
+            "treasury.challenge_forfeits",
+            "treasury.worker_slashes",
+        ]
+        .into_iter()
+        .enumerate()
+        {
+            let mut st = StateStore::new();
+            st.set_gov_param_bootstrap_unchecked(
+                9_506 + idx as u64,
+                "resolve_authority".into(),
+                "authority-a,authority-b".into(),
+            )
+            .unwrap();
+            let task_id = 8_116 + idx as u64;
+            let _ = challenged_task_fixture(&mut st, task_id);
+            let before_task = st.get_task(task_id).unwrap();
+            let before_escrow = st.balance_of("treasury.challenge_escrow");
+
+            let snapshot = TxRollbackSnapshot {
+                task_id,
+                task: Some(before_task.clone()),
+                balances: vec![("treasury.challenge_escrow".into(), Some(before_escrow))],
+                pending_resolve_approval: Some(PendingResolveApprovalSnapshot {
+                    slash_worker: true,
+                    confirmations: 1,
+                    first_approver: reserved_alias.into(),
+                    authority_set: "authority-a,authority-b".into(),
+                    task_version: before_task.version,
+                }),
+            };
+
+            rollback_tx_snapshot(&mut st, snapshot);
+
+            assert_eq!(st.get_task(task_id).unwrap(), before_task);
+            assert_eq!(st.balance_of("treasury.challenge_escrow"), before_escrow);
+            assert_eq!(
+                st.pending_resolve_approval(task_id),
+                None,
+                "rollback must scrub reserved first approver alias {reserved_alias} instead of accepting it"
+            );
+            assert_eq!(
+                st.pending_resolve_first_approver(task_id),
+                None,
+                "reserved first approver alias {reserved_alias} must not materialize rollback quorum metadata"
+            );
+            assert_eq!(
+                st.pending_resolve_approval_snapshot(task_id),
+                None,
+                "reserved first approver alias {reserved_alias} must not persist rollback quorum metadata"
+            );
+        }
+    }
+
+    #[test]
+    fn rollback_snapshot_scrubs_pending_resolve_snapshot_with_reserved_worker_slash_authority_member(
+    ) {
         let mut st = StateStore::new();
         st.set_gov_param_bootstrap_unchecked(
             9_506,
@@ -13115,6 +14154,43 @@ mod tests {
             st.pending_resolve_approval(8_117),
             None,
             "rollback must scrub authority snapshots that smuggle reserved treasury.worker_slashes members"
+        );
+    }
+
+    #[test]
+    fn rollback_snapshot_scrubs_pending_resolve_snapshot_with_control_byte_authority_member() {
+        let mut st = StateStore::new();
+        st.set_gov_param_bootstrap_unchecked(
+            9_506,
+            "resolve_authority".into(),
+            "authority-a,authority-b".into(),
+        )
+        .unwrap();
+        let _ = challenged_task_fixture(&mut st, 8_117);
+        let before_task = st.get_task(8_117).unwrap();
+        let before_escrow = st.balance_of("treasury.challenge_escrow");
+
+        let snapshot = TxRollbackSnapshot {
+            task_id: 8_117,
+            task: Some(before_task.clone()),
+            balances: vec![("treasury.challenge_escrow".into(), Some(before_escrow))],
+            pending_resolve_approval: Some(PendingResolveApprovalSnapshot {
+                slash_worker: true,
+                confirmations: 1,
+                first_approver: "authority-a".into(),
+                authority_set: "authority-a,authority-\u{0007}b".into(),
+                task_version: before_task.version,
+            }),
+        };
+
+        rollback_tx_snapshot(&mut st, snapshot);
+
+        assert_eq!(st.get_task(8_117).unwrap(), before_task);
+        assert_eq!(st.balance_of("treasury.challenge_escrow"), before_escrow);
+        assert_eq!(
+            st.pending_resolve_approval(8_117),
+            None,
+            "rollback must scrub authority snapshots with control-byte authority members"
         );
     }
 
@@ -17917,6 +18993,116 @@ locked_block_hash = "stale-lock"
     }
 
     #[test]
+    fn recover_metadata_only_error_exposes_checkpoint_da_surface_when_wal_linkage_is_canonical() {
+        let wal_dir = temp_wal_dir("recover-metadata-only-error-da-surface");
+        fs::create_dir_all(&wal_dir).unwrap();
+
+        let state_root_hex = "ab".repeat(32);
+        let e1 = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "proposal-1".into(),
+            committed: true,
+            state_root_hex: state_root_hex.clone(),
+            prev_hash_hex: None,
+        };
+        let h1 = e1.content_hash_hex();
+        persist_wal_meta_entries(&wal_dir, &[e1]).unwrap();
+        persist_checkpoint_meta(
+            &wal_dir,
+            &[CheckpointMeta {
+                height: 1,
+                state_root_hex: state_root_hex.clone(),
+                wal_entry_hash_hex: h1.clone(),
+            }],
+        )
+        .unwrap();
+
+        let recovered = recover_wal_state(&wal_dir).unwrap();
+        let err = metadata_only_recovery_error(&wal_dir, &recovered);
+
+        assert!(err.contains(&format!(
+            "checkpoint_evidence: checkpoint_height=1 state_root={} wal_entry_hash={}",
+            state_root_hex, h1
+        )));
+        assert!(err.contains("checkpoint_da_surface: da_light_surface=checkpoint-wal-v1"));
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
+    fn metadata_only_recovery_error_surfaces_non_audit_ready_da_reason_for_noncanonical_checkpoint_tuple() {
+        let wal_dir = temp_wal_dir("recover-da-surface-noncanonical-tuple");
+        fs::create_dir_all(&wal_dir).unwrap();
+
+        let e1 = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "proposal-1".into(),
+            committed: true,
+            state_root_hex: "r1".into(),
+            prev_hash_hex: None,
+        };
+        let h1 = e1.content_hash_hex();
+        persist_wal_meta_entries(&wal_dir, &[e1]).unwrap();
+
+        let recovered = RecoveredWalState {
+            wal_entries_retained: 1,
+            next_height: 2,
+            restored_lock: None,
+            last_checkpoint: Some(CheckpointMeta {
+                height: 1,
+                state_root_hex: "r1".into(),
+                wal_entry_hash_hex: h1,
+            }),
+            truncated: false,
+            metadata_only_recovery: true,
+            checkpoint_height_retained: Some(1),
+        };
+
+        let err = metadata_only_recovery_error(&wal_dir, &recovered);
+        assert!(err.contains("checkpoint_evidence: checkpoint_height=1 state_root=r1"));
+        assert!(err.contains("checkpoint_da_surface: unavailable:non_audit_ready_wal_surface"));
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
+    fn metadata_only_recovery_error_surfaces_da_unavailability_reason_when_checkpoint_wal_linkage_is_missing() {
+        let wal_dir = temp_wal_dir("recover-da-surface-missing-wal-linkage");
+        fs::create_dir_all(&wal_dir).unwrap();
+
+        let e1 = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "proposal-1".into(),
+            committed: true,
+            state_root_hex: "ab".repeat(32),
+            prev_hash_hex: None,
+        };
+        persist_wal_meta_entries(&wal_dir, &[e1]).unwrap();
+
+        let recovered = RecoveredWalState {
+            wal_entries_retained: 1,
+            next_height: 2,
+            restored_lock: None,
+            last_checkpoint: Some(CheckpointMeta {
+                height: 1,
+                state_root_hex: "ab".repeat(32),
+                wal_entry_hash_hex: "ff".repeat(32),
+            }),
+            truncated: false,
+            metadata_only_recovery: true,
+            checkpoint_height_retained: Some(1),
+        };
+
+        let err = metadata_only_recovery_error(&wal_dir, &recovered);
+        assert!(err.contains("checkpoint_da_surface: unavailable:no_matching_wal_entry"));
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
     fn recover_fully_checkpointed_wal_rewrites_stale_consensus_wal_lock_to_retained_tip() {
         let wal_dir = temp_wal_dir("recover-fully-checkpointed-no-wal-rewrite");
         fs::create_dir_all(&wal_dir).unwrap();
@@ -18242,7 +19428,7 @@ locked_block_hash = "stale-lock"
         assert!(err.contains("last retained checkpoint: 8"));
         assert!(err.contains("next startup height: 9"));
         assert!(err.contains(
-            "operator action: checkpoint-only bootstrap is acceptable with a fresh --bft-wal-dir / --bft-wal-mode auto isolated run; if this node must rejoin from prior state, restore an application snapshot before retrying"
+            "operator action: checkpoint-only bootstrap from retained checkpoint height 8 is acceptable with a fresh --bft-wal-dir / --bft-wal-mode auto isolated run; if this node must rejoin from prior state, restore an application snapshot before retrying"
         ));
         assert!(err.contains(
             "incident clue: retained_wal_entries=0 checkpoint_height_retained=8 checkpoint_tip_relation=checkpoint_only:8 next_startup_height=9 wal_tail_truncated=true metadata_only_recovery=true join_rejoin_status=blocked:metadata_only_recovery"
@@ -18279,7 +19465,7 @@ locked_block_hash = "stale-lock"
             "incident clue: retained_wal_entries=2 checkpoint_height_retained=2 checkpoint_tip_relation=aligned next_startup_height=3 wal_tail_truncated=false metadata_only_recovery=true join_rejoin_status=blocked:metadata_only_recovery"
         ));
         assert!(err.contains(
-            "restore the corresponding application snapshot before retrying join/rejoin; do not resume from metadata alone"
+            "restore the application snapshot that matches retained WAL tip height 2 before retrying join/rejoin; do not resume from metadata alone"
         ));
         assert!(!err.contains("checkpoint lags retained WAL tip"));
         assert!(!err.contains("no retained checkpoint metadata"));
@@ -18307,6 +19493,8 @@ locked_block_hash = "stale-lock"
         assert!(err.contains("retained no committed WAL entries"));
         assert!(err.contains("last retained checkpoint: none"));
         assert!(err.contains("next startup height: 1"));
+        assert!(err.contains("checkpoint_evidence: none"));
+        assert!(err.contains("checkpoint_da_surface: unavailable:no_checkpoint"));
 
         let _ = fs::remove_dir_all(&wal_dir);
     }
@@ -18403,6 +19591,53 @@ locked_block_hash = "stale-lock"
         assert_eq!(
             recovery_startup_summary(&recovered),
             "retained_wal_entries=0 checkpoint_height_retained=none checkpoint_tip_relation=none next_startup_height=1 wal_tail_truncated=true metadata_only_recovery=false join_rejoin_status=ready:fresh_bootstrap_after_tail_repair"
+        );
+    }
+
+    #[test]
+    fn recovery_startup_summary_keeps_fresh_bootstrap_saturated_at_max_height() {
+        let recovered = RecoveredWalState {
+            next_height: u64::MAX,
+            restored_lock: None,
+            last_checkpoint: None,
+            truncated: false,
+            metadata_only_recovery: false,
+            wal_entries_retained: 0,
+            checkpoint_height_retained: None,
+        };
+
+        ensure_recoverable_wal_state(Path::new("/tmp/trnm-wal"), &recovered)
+            .expect("max-height fresh bootstrap should remain recoverable for safe join/rejoin");
+        assert_eq!(
+            recovery_startup_summary(&recovered),
+            format!(
+                "retained_wal_entries=0 checkpoint_height_retained=none checkpoint_tip_relation=none next_startup_height={} wal_tail_truncated=false metadata_only_recovery=false join_rejoin_status=ready:fresh_bootstrap",
+                u64::MAX,
+            )
+        );
+    }
+
+    #[test]
+    fn recovery_startup_summary_keeps_truncated_fresh_bootstrap_saturated_at_max_height() {
+        let recovered = RecoveredWalState {
+            next_height: u64::MAX,
+            restored_lock: None,
+            last_checkpoint: None,
+            truncated: true,
+            metadata_only_recovery: false,
+            wal_entries_retained: 0,
+            checkpoint_height_retained: None,
+        };
+
+        ensure_recoverable_wal_state(Path::new("/tmp/trnm-wal"), &recovered).expect(
+            "truncated max-height fresh bootstrap should remain recoverable for safe join/rejoin",
+        );
+        assert_eq!(
+            recovery_startup_summary(&recovered),
+            format!(
+                "retained_wal_entries=0 checkpoint_height_retained=none checkpoint_tip_relation=none next_startup_height={} wal_tail_truncated=true metadata_only_recovery=false join_rejoin_status=ready:fresh_bootstrap_after_tail_repair",
+                u64::MAX,
+            )
         );
     }
 
@@ -18514,7 +19749,19 @@ locked_block_hash = "stale-lock"
                 wal_entries_retained: 0,
                 checkpoint_height_retained: Some(8),
             }),
-            "operator action: checkpoint-only bootstrap is acceptable with a fresh --bft-wal-dir / --bft-wal-mode auto isolated run; if this node must rejoin from prior state, restore an application snapshot before retrying"
+            "operator action: checkpoint-only bootstrap from retained checkpoint height 8 is acceptable with a fresh --bft-wal-dir / --bft-wal-mode auto isolated run; if this node must rejoin from prior state, restore an application snapshot before retrying"
+        );
+        assert_eq!(
+            metadata_only_operator_action(&RecoveredWalState {
+                next_height: 1,
+                restored_lock: None,
+                last_checkpoint: None,
+                truncated: false,
+                metadata_only_recovery: true,
+                wal_entries_retained: 0,
+                checkpoint_height_retained: None,
+            }),
+            "operator action: restart with a fresh --bft-wal-dir / --bft-wal-mode auto isolated run; if this node must rejoin from prior state, restore an application snapshot before retrying"
         );
         assert_eq!(
             metadata_only_operator_action(&RecoveredWalState {
@@ -18528,21 +19775,42 @@ locked_block_hash = "stale-lock"
             }),
             "operator action: rebuild or restore checkpoint metadata so it covers retained WAL tip height 8 before retrying join/rejoin; do not resume from metadata alone"
         );
+        let single_block_lagging_rejoin = RecoveredWalState {
+            next_height: 12,
+            restored_lock: None,
+            last_checkpoint: Some(CheckpointMeta {
+                height: 10,
+                state_root_hex: "r10".into(),
+                wal_entry_hash_hex: "h10".into(),
+            }),
+            truncated: false,
+            metadata_only_recovery: true,
+            wal_entries_retained: 2,
+            checkpoint_height_retained: Some(10),
+        };
+        assert_eq!(
+            metadata_only_operator_action(&single_block_lagging_rejoin),
+            "operator action: restore an application snapshot that covers retained WAL tip height 11 before retrying join/rejoin; retained checkpoint height 10 is 1 block behind, so do not resume from metadata alone"
+        );
+        assert_eq!(
+            recovery_startup_summary(&single_block_lagging_rejoin),
+            "retained_wal_entries=2 checkpoint_height_retained=10 checkpoint_tip_relation=behind:1 next_startup_height=12 wal_tail_truncated=false metadata_only_recovery=true join_rejoin_status=blocked:metadata_only_recovery"
+        );
         assert_eq!(
             metadata_only_operator_action(&RecoveredWalState {
                 next_height: 12,
                 restored_lock: None,
                 last_checkpoint: Some(CheckpointMeta {
-                    height: 10,
-                    state_root_hex: "r10".into(),
-                    wal_entry_hash_hex: "h10".into(),
+                    height: 9,
+                    state_root_hex: "r9".into(),
+                    wal_entry_hash_hex: "h9".into(),
                 }),
                 truncated: false,
                 metadata_only_recovery: true,
                 wal_entries_retained: 2,
-                checkpoint_height_retained: Some(10),
+                checkpoint_height_retained: Some(9),
             }),
-            "operator action: restore an application snapshot that covers the retained WAL tip before retrying join/rejoin; do not resume from metadata alone"
+            "operator action: restore an application snapshot that covers retained WAL tip height 11 before retrying join/rejoin; retained checkpoint height 9 is 2 blocks behind, so do not resume from metadata alone"
         );
         assert_eq!(
             metadata_only_operator_action(&RecoveredWalState {
@@ -18558,7 +19826,7 @@ locked_block_hash = "stale-lock"
                 wal_entries_retained: 2,
                 checkpoint_height_retained: Some(11),
             }),
-            "operator action: restore the corresponding application snapshot before retrying join/rejoin; do not resume from metadata alone"
+            "operator action: restore the application snapshot that matches retained WAL tip height 11 before retrying join/rejoin; do not resume from metadata alone"
         );
         assert_eq!(
             metadata_only_operator_action(&RecoveredWalState {
@@ -18591,6 +19859,31 @@ locked_block_hash = "stale-lock"
                 checkpoint_height_retained: Some(15),
             }),
             "operator action: investigate WAL/checkpoint mismatch (retained WAL tip height 11, checkpoint height 15, checkpoint leads tip by 4 blocks), rebuild the recovery inputs, and only retry join/rejoin once WAL tip and checkpoint evidence agree"
+        );
+    }
+
+    #[test]
+    fn metadata_only_operator_action_keeps_aligned_retained_wal_tip_height_saturated_at_max_height() {
+        let recovered = RecoveredWalState {
+            next_height: u64::MAX,
+            restored_lock: None,
+            last_checkpoint: Some(CheckpointMeta {
+                height: u64::MAX - 1,
+                state_root_hex: "r-max-1".into(),
+                wal_entry_hash_hex: "h-max-1".into(),
+            }),
+            truncated: false,
+            metadata_only_recovery: true,
+            wal_entries_retained: 2,
+            checkpoint_height_retained: Some(u64::MAX - 1),
+        };
+
+        assert_eq!(
+            metadata_only_operator_action(&recovered),
+            format!(
+                "operator action: restore the application snapshot that matches retained WAL tip height {} before retrying join/rejoin; do not resume from metadata alone",
+                u64::MAX - 1,
+            )
         );
     }
 
@@ -18682,7 +19975,7 @@ locked_block_hash = "stale-lock"
 
         assert_eq!(
             recovery_startup_summary(&recovered),
-            "retained_wal_entries=2 checkpoint_height_retained=12 checkpoint_tip_relation=ahead:1 next_startup_height=12 wal_tail_truncated=true metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume_checkpoint_ahead_mismatch_after_tail_repair"
+            "retained_wal_entries=2 checkpoint_height_retained=12 checkpoint_tip_relation=ahead:1 next_startup_height=12 wal_tail_truncated=true metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume_checkpoint_ahead_mismatch_1block_after_tail_repair"
         );
         assert_eq!(
             retained_wal_summary(&recovered),
@@ -18738,7 +20031,7 @@ locked_block_hash = "stale-lock"
         assert_eq!(
             recovery_startup_summary(&recovered),
             format!(
-                "retained_wal_entries=1 checkpoint_height_retained={} checkpoint_tip_relation=behind:1 next_startup_height={} wal_tail_truncated=false metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume_checkpoint_lagging",
+                "retained_wal_entries=1 checkpoint_height_retained={} checkpoint_tip_relation=behind:1 next_startup_height={} wal_tail_truncated=false metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume_checkpoint_lagging_1block",
                 u64::MAX - 2,
                 u64::MAX,
             )
@@ -18763,7 +20056,7 @@ locked_block_hash = "stale-lock"
 
         assert_eq!(
             recovery_startup_summary(&recovered),
-            "retained_wal_entries=2 checkpoint_height_retained=10 checkpoint_tip_relation=behind:1 next_startup_height=12 wal_tail_truncated=false metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume_checkpoint_lagging"
+            "retained_wal_entries=2 checkpoint_height_retained=10 checkpoint_tip_relation=behind:1 next_startup_height=12 wal_tail_truncated=false metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume_checkpoint_lagging_1block"
         );
     }
 
@@ -18795,7 +20088,7 @@ locked_block_hash = "stale-lock"
         assert_eq!(
             recovery_startup_summary(&recovered),
             format!(
-                "retained_wal_entries=1 checkpoint_height_retained={} checkpoint_tip_relation=behind:1 next_startup_height={} wal_tail_truncated=true metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume_checkpoint_lagging_after_tail_repair",
+                "retained_wal_entries=1 checkpoint_height_retained={} checkpoint_tip_relation=behind:1 next_startup_height={} wal_tail_truncated=true metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume_checkpoint_lagging_1block_after_tail_repair",
                 u64::MAX - 2,
                 u64::MAX,
             )
@@ -18826,7 +20119,7 @@ locked_block_hash = "stale-lock"
         );
         assert_eq!(
             recovery_startup_summary(&recovered),
-            "retained_wal_entries=2 checkpoint_height_retained=6 checkpoint_tip_relation=behind:1 next_startup_height=8 wal_tail_truncated=false metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume_checkpoint_lagging"
+            "retained_wal_entries=2 checkpoint_height_retained=6 checkpoint_tip_relation=behind:1 next_startup_height=8 wal_tail_truncated=false metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume_checkpoint_lagging_1block"
         );
     }
 
@@ -18883,6 +20176,43 @@ locked_block_hash = "stale-lock"
     }
 
     #[test]
+    fn recovery_startup_summary_keeps_checkpoint_ahead_join_surface_saturated_at_max_height() {
+        let recovered = RecoveredWalState {
+            next_height: u64::MAX,
+            restored_lock: None,
+            last_checkpoint: Some(CheckpointMeta {
+                height: u64::MAX,
+                state_root_hex: "r-max".into(),
+                wal_entry_hash_hex: "h-max".into(),
+            }),
+            truncated: false,
+            metadata_only_recovery: false,
+            wal_entries_retained: 1,
+            checkpoint_height_retained: Some(u64::MAX),
+        };
+
+        ensure_recoverable_wal_state(Path::new("/tmp/trnm-wal"), &recovered)
+            .expect("max-height checkpoint-ahead resume mismatch should remain recoverable while surfacing join/rejoin triage");
+        assert_eq!(
+            retained_wal_summary(&recovered),
+            format!(
+                "retained 1 committed WAL entry through height {} (retained checkpoint height {} is ahead of retained WAL tip height {} by 1 block; investigate WAL/checkpoint mismatch)",
+                u64::MAX - 1,
+                u64::MAX,
+                u64::MAX - 1,
+            )
+        );
+        assert_eq!(
+            recovery_startup_summary(&recovered),
+            format!(
+                "retained_wal_entries=1 checkpoint_height_retained={} checkpoint_tip_relation=ahead:1 next_startup_height={} wal_tail_truncated=false metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume_checkpoint_ahead_mismatch_1block",
+                u64::MAX,
+                u64::MAX,
+            )
+        );
+    }
+
+    #[test]
     fn recovery_startup_summary_keeps_truncated_checkpoint_ahead_join_surface_saturated_at_max_height() {
         let recovered = RecoveredWalState {
             next_height: u64::MAX,
@@ -18912,7 +20242,7 @@ locked_block_hash = "stale-lock"
         assert_eq!(
             recovery_startup_summary(&recovered),
             format!(
-                "retained_wal_entries=1 checkpoint_height_retained={} checkpoint_tip_relation=ahead:1 next_startup_height={} wal_tail_truncated=true metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume_checkpoint_ahead_mismatch_after_tail_repair",
+                "retained_wal_entries=1 checkpoint_height_retained={} checkpoint_tip_relation=ahead:1 next_startup_height={} wal_tail_truncated=true metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume_checkpoint_ahead_mismatch_1block_after_tail_repair",
                 u64::MAX,
                 u64::MAX,
             )
@@ -18943,7 +20273,7 @@ locked_block_hash = "stale-lock"
         );
         assert_eq!(
             recovery_startup_summary(&recovered),
-            "retained_wal_entries=2 checkpoint_height_retained=12 checkpoint_tip_relation=ahead:1 next_startup_height=12 wal_tail_truncated=false metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume_checkpoint_ahead_mismatch"
+            "retained_wal_entries=2 checkpoint_height_retained=12 checkpoint_tip_relation=ahead:1 next_startup_height=12 wal_tail_truncated=false metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume_checkpoint_ahead_mismatch_1block"
         );
     }
 
@@ -18971,7 +20301,7 @@ locked_block_hash = "stale-lock"
         );
         assert_eq!(
             recovery_startup_summary(&recovered),
-            "retained_wal_entries=2 checkpoint_height_retained=12 checkpoint_tip_relation=ahead:1 next_startup_height=12 wal_tail_truncated=true metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume_checkpoint_ahead_mismatch_after_tail_repair"
+            "retained_wal_entries=2 checkpoint_height_retained=12 checkpoint_tip_relation=ahead:1 next_startup_height=12 wal_tail_truncated=true metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume_checkpoint_ahead_mismatch_1block_after_tail_repair"
         );
     }
 
@@ -19112,6 +20442,42 @@ locked_block_hash = "stale-lock"
     }
 
     #[test]
+    fn recover_metadata_only_error_surfaces_single_block_lagging_operator_action() {
+        let wal_dir = temp_wal_dir("recover-metadata-only-error-single-block-lagging");
+        fs::create_dir_all(&wal_dir).unwrap();
+
+        let recovered = RecoveredWalState {
+            next_height: 4,
+            restored_lock: None,
+            last_checkpoint: Some(CheckpointMeta {
+                height: 2,
+                state_root_hex: "r2".into(),
+                wal_entry_hash_hex: "h2".into(),
+            }),
+            truncated: false,
+            metadata_only_recovery: true,
+            wal_entries_retained: 2,
+            checkpoint_height_retained: Some(2),
+        };
+
+        let err = metadata_only_recovery_error(&wal_dir, &recovered);
+
+        assert!(err.contains("retained 2 committed WAL entries through height 3"));
+        assert!(err.contains("checkpoint lags retained WAL tip by 1 block"));
+        assert!(!err.contains("checkpoint lags retained WAL tip by 1 blocks"));
+        assert!(err.contains(
+            "operator action: restore an application snapshot that covers retained WAL tip height 3 before retrying join/rejoin; retained checkpoint height 2 is 1 block behind, so do not resume from metadata alone"
+        ));
+        assert!(err.contains("last retained checkpoint: 2"));
+        assert!(err.contains("next startup height: 4"));
+        assert!(err.contains(
+            "incident clue: retained_wal_entries=2 checkpoint_height_retained=2 checkpoint_tip_relation=behind:1 next_startup_height=4 wal_tail_truncated=false metadata_only_recovery=true join_rejoin_status=blocked:metadata_only_recovery"
+        ));
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
     fn ensure_recoverable_wal_state_rejects_metadata_only_recovery_with_singular_checkpoint_lag() {
         let wal_dir = temp_wal_dir("recover-guard-metadata-only-singular-lag");
         fs::create_dir_all(&wal_dir).unwrap();
@@ -19180,6 +20546,8 @@ locked_block_hash = "stale-lock"
         assert!(!err.contains(
             "retained checkpoint height 12 is ahead of retained WAL tip height 11 by 1 blocks"
         ));
+        assert!(err.contains("operator action: investigate WAL/checkpoint mismatch (retained WAL tip height 11, checkpoint height 12, checkpoint leads tip by 1 block), rebuild the recovery inputs, and only retry join/rejoin once WAL tip and checkpoint evidence agree"));
+        assert!(!err.contains("checkpoint leads tip by 1 blocks"));
         assert!(err.contains("last retained checkpoint: 12"));
         assert!(err.contains("next startup height: 12"));
         assert!(err.contains(
@@ -19453,7 +20821,7 @@ locked_block_hash = "stale-lock"
             .expect("truncated single-block lagging checkpoint resume should remain recoverable for safe join/rejoin");
         assert_eq!(
             recovery_startup_summary(&recovered),
-            "retained_wal_entries=2 checkpoint_height_retained=6 checkpoint_tip_relation=behind:1 next_startup_height=8 wal_tail_truncated=true metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume_checkpoint_lagging_after_tail_repair"
+            "retained_wal_entries=2 checkpoint_height_retained=6 checkpoint_tip_relation=behind:1 next_startup_height=8 wal_tail_truncated=true metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume_checkpoint_lagging_1block_after_tail_repair"
         );
         assert_eq!(
             retained_wal_summary(&recovered),
@@ -19823,6 +21191,55 @@ locked_block_hash = "stale-lock"
         fs::write(
             checkpoint_file(&base),
             "# bootstrap placeholder\r\n   # retained until first checkpoint\r\n",
+        )
+        .unwrap();
+
+        let args = Args {
+            config: "configs/node1.toml".into(),
+            block_ms: 1000,
+            max_blocks: 10,
+            demo_tasks: 2,
+            demo_keys: 2,
+            parallel_workers: 4,
+            txs_per_block: 4,
+            validators: 4,
+            byzantine: 0,
+            bft_max_rounds: 3,
+            bft_fault_rounds: 0,
+            bft_missed_proposal_threshold: 2,
+            bft_leader_penalty_rounds: 2,
+            bft_round_change_backoff_ms: 5,
+            bft_round_change_backoff_max_ms: 40,
+            bft_wal_dir: DEFAULT_BFT_WAL_DIR.into(),
+            bft_wal_mode: WalDirMode::Auto,
+            bft_checkpoint_interval: 5,
+            pouw_timeout_scan: true,
+            pouw_timeout_scan_every_blocks: 1,
+            enable_da_ordering_decouple: false,
+            rl_advisor_shadow: false,
+            rl_advisor_shadow_topk: 4,
+        };
+
+        let cwd = std::env::current_dir().unwrap();
+        std::env::set_current_dir(&root).unwrap();
+        let (resolved, notice) = resolve_wal_dir(&args).unwrap();
+        std::env::set_current_dir(cwd).unwrap();
+
+        assert_eq!(resolved, PathBuf::from(DEFAULT_BFT_WAL_DIR));
+        assert!(notice.is_none());
+
+        let _ = fs::remove_dir_all(&root);
+    }
+
+    #[test]
+    fn resolve_wal_dir_auto_allows_builtin_default_when_only_bom_prefixed_comment_only_consensus_wal_scaffold_exists(
+    ) {
+        let root = temp_wal_dir("default-wal-bom-comment-consensus-only-root");
+        let base = root.join(DEFAULT_BFT_WAL_DIR);
+        fs::create_dir_all(&base).unwrap();
+        fs::write(
+            wal_file(&base),
+            "\u{feff}# operator left a rejoin note\n   # safe to reuse builtin default once catch-up succeeds\n",
         )
         .unwrap();
 
@@ -20496,20 +21913,7 @@ fn main() -> Result<()> {
             bft_leader_missed_active_heights += 1;
         }
         bft_leader_missed_previous_snapshot = bft.leader_missed_snapshot.clone();
-        println!(
-            "[bft] height={} committed_round={} prevote={} precommit={} round_changes={} round_backoff_ms={} leader_missed={:?} double_vote_events={} auth_reject_bad_sig={} auth_reject_replay={} auth_reject_stale_nonce={}",
-            height,
-            bft.committed_round,
-            bft.prevote_count,
-            bft.precommit_count,
-            bft.round_changes,
-            bft.round_change_backoff_total_ms,
-            bft.leader_missed_snapshot,
-            bft.double_vote_events,
-            bft.auth_reject_bad_sig,
-            bft.auth_reject_replay,
-            bft.auth_reject_stale_nonce
-        );
+        println!("{}", format_bft_height_summary_log_line(height, &bft));
         bft_committed_heights += 1;
 
         let mut applied = 0u64;

@@ -159,6 +159,16 @@ describe("dashboard page", () => {
     expect(mockedFetch).toHaveBeenCalledWith({ mode: "mock" });
   });
 
+  it("normalizes mode query params with surrounding whitespace or invisible separators", async () => {
+    mockedFetch.mockResolvedValue(snapshot);
+    window.history.replaceState({}, "", "/?mode=%E2%80%8B%20mock%20%EF%BB%BF");
+
+    render(<Home />);
+
+    expect(await screen.findByText("Task Digest")).toBeInTheDocument();
+    expect(mockedFetch).toHaveBeenCalledWith({ mode: "mock" });
+  });
+
   it("shows adapter error state", async () => {
     mockedFetch.mockRejectedValue(new Error("Dashboard backend unavailable"));
     window.history.replaceState({}, "", "/?mode=error");
@@ -264,6 +274,38 @@ describe("dashboard page", () => {
     fireEvent.change(screen.getByLabelText("Result filter"), { target: { value: "Warn" } });
     expect(await screen.findByText("Audit Detail · AUD-1")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /Readonly controls/i })).toHaveAttribute("aria-pressed", "true");
+  });
+
+  it("fail-closes stale readonly detail selections when filters remove every visible record", async () => {
+    mockedFetch.mockResolvedValue(snapshot);
+
+    render(<Home />);
+
+    await screen.findByText("Task Digest");
+
+    fireEvent.click(screen.getByRole("tab", { name: "Tasks" }));
+    fireEvent.click(screen.getByRole("button", { name: /TSK-2 Task two Core P0 Done 2026-03-03 11:00/i }));
+    expect(await screen.findByText("Task Detail · TSK-2")).toBeInTheDocument();
+
+    fireEvent.change(screen.getByLabelText("Status filter"), { target: { value: "Blocked" } });
+    await waitFor(() => expect(screen.queryByText("Task Detail · TSK-2")).not.toBeInTheDocument());
+    expect(await screen.findByRole("status")).toHaveTextContent("No tasks match current filter");
+
+    fireEvent.click(screen.getByRole("tab", { name: "Events" }));
+    fireEvent.click(screen.getByRole("button", { name: /Info event/i }));
+    expect(await screen.findByText("Event Detail · EVT-2")).toBeInTheDocument();
+
+    fireEvent.change(screen.getByLabelText("Severity filter"), { target: { value: "Warning" } });
+    await waitFor(() => expect(screen.queryByText("Event Detail · EVT-2")).not.toBeInTheDocument());
+    expect(await screen.findByRole("status")).toHaveTextContent("No events found");
+
+    fireEvent.click(screen.getByRole("tab", { name: "Audit" }));
+    fireEvent.click(screen.getByRole("button", { name: /Endpoint ACL/i }));
+    expect(await screen.findByText("Audit Detail · AUD-2")).toBeInTheDocument();
+
+    fireEvent.change(screen.getByLabelText("Result filter"), { target: { value: "Fail" } });
+    await waitFor(() => expect(screen.queryByText("Audit Detail · AUD-2")).not.toBeInTheDocument());
+    expect(await screen.findByRole("status")).toHaveTextContent("No audit controls found");
   });
 
   it("supports arrow/home/end keyboard navigation across readonly dashboard tabs", async () => {

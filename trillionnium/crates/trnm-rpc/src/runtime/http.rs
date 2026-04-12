@@ -73,7 +73,7 @@ fn contains_percent_encoded_control_or_space(value: &str) -> bool {
             let lo = (bytes[idx + 2] as char).to_digit(16);
             if let (Some(hi), Some(lo)) = (hi, lo) {
                 let decoded = ((hi << 4) | lo) as u8;
-                if decoded <= 0x20 || decoded == 0x7f {
+                if decoded <= 0x20 || decoded == 0x7f || (0x80..=0x9f).contains(&decoded) {
                     return true;
                 }
             }
@@ -173,10 +173,16 @@ pub(crate) fn parse_http_request_target(first_line: &str) -> Option<(&str, &str)
     if path.chars().any(|ch| ch.is_control() || ch.is_whitespace()) {
         return None;
     }
+    if path.matches('?').count() > 1 {
+        return None;
+    }
     if path.contains('\\') || normalized.contains("%5c") {
         return None;
     }
     if path.contains('#') || normalized.contains("%23") {
+        return None;
+    }
+    if normalized.contains("%3f") {
         return None;
     }
     if contains_malformed_percent_encoding(path) || contains_percent_encoded_control_or_space(path)
@@ -243,7 +249,31 @@ fn fallback_response_for_request(request: Option<(&str, &str)>) -> String {
 
 fn has_ambiguous_path_segment_encoding(segment: &str) -> bool {
     let lower = segment.to_ascii_lowercase();
-    lower.contains("%2f") || lower.contains("%5c") || is_encoded_dot_segment(&lower)
+    lower.contains("%2f")
+        || lower.contains("%5c")
+        || lower.contains("%3f")
+        || lower.contains("%23")
+        || contains_percent_encoded_control_or_space(&lower)
+        || is_encoded_dot_segment(&lower)
+}
+
+fn contains_percent_encoded_control_or_space(segment: &str) -> bool {
+    let bytes = segment.as_bytes();
+    let mut idx = 0;
+    while idx + 2 < bytes.len() {
+        if bytes[idx] == b'%' {
+            let hi = (bytes[idx + 1] as char).to_digit(16);
+            let lo = (bytes[idx + 2] as char).to_digit(16);
+            if let (Some(hi), Some(lo)) = (hi, lo) {
+                let decoded = ((hi << 4) | lo) as u8;
+                if decoded <= 0x20 || decoded == 0x7f {
+                    return true;
+                }
+            }
+        }
+        idx += 1;
+    }
+    false
 }
 
 fn is_encoded_dot_segment(segment: &str) -> bool {
@@ -525,6 +555,10 @@ mod tests {
         assert!(is_health_probe_path("/-/ready/"));
         assert!(is_health_probe_path("/-/readyz"));
         assert!(is_health_probe_path("/-/readyz/"));
+        assert!(is_health_probe_path("/-/status"));
+        assert!(is_health_probe_path("/-/status/"));
+        assert!(is_health_probe_path("/-/statusz"));
+        assert!(is_health_probe_path("/-/statusz/"));
         assert!(is_health_probe_path("/-/STATUS"));
         assert!(is_health_probe_path("/-/STATUSZ/"));
         assert!(!is_health_probe_path("/healthcheck"));
@@ -560,6 +594,22 @@ mod tests {
         assert_eq!(
             parse_http_get_path("GET /-/ready?verbose=1 HTTP/1.1"),
             Some("/-/ready")
+        );
+    }
+
+    #[test]
+    fn parse_http_request_target_rejects_ambiguous_query_delimiters_fail_closed() {
+        assert_eq!(
+            parse_http_request_target("GET /healthz?probe=lb?shadow=1 HTTP/1.1"),
+            None
+        );
+        assert_eq!(
+            parse_http_request_target("HEAD /-/readyz%3Fprobe=lb HTTP/1.1"),
+            None
+        );
+        assert_eq!(
+            parse_http_request_target("GET /-/statusz%3fprobe=lb HTTP/1.1"),
+            None
         );
     }
 
@@ -607,6 +657,18 @@ mod tests {
         assert_eq!(
             parse_http_get_path("GET /query-events/7/?limit=5 HTTP/1.1"),
             Some("/query-events/7/")
+        );
+    }
+
+    #[test]
+    fn parse_http_request_target_rejects_percent_encoded_c1_controls_fail_closed() {
+        assert_eq!(
+            parse_http_request_target("GET /health%80check HTTP/1.1"),
+            None
+        );
+        assert_eq!(
+            parse_http_request_target("HEAD /readyz%9F HTTP/1.1"),
+            None
         );
     }
 
@@ -676,6 +738,14 @@ mod tests {
         );
         assert_eq!(
             parse_path_u64_suffix("/query-events/7%5Chistory", "/query-events/"),
+            None
+        );
+        assert_eq!(
+            parse_path_u64_suffix("/query-events/7%2fhistory", "/query-events/"),
+            None
+        );
+        assert_eq!(
+            parse_path_u64_suffix("/query-events/7%5chistory", "/query-events/"),
             None
         );
         assert_eq!(parse_path_u64_suffix("/query-events/.", "/query-events/"), None);
@@ -790,6 +860,12 @@ mod tests {
         assert!(has_ambiguous_path_segment_encoding("alice%2fextra"));
         assert!(has_ambiguous_path_segment_encoding("alice%5Cextra"));
         assert!(has_ambiguous_path_segment_encoding("alice%5cextra"));
+        assert!(has_ambiguous_path_segment_encoding("alice%3Fprobe"));
+        assert!(has_ambiguous_path_segment_encoding("alice%23fragment"));
+        assert!(has_ambiguous_path_segment_encoding("alice%0Alog"));
+        assert!(has_ambiguous_path_segment_encoding("alice%0dlog"));
+        assert!(has_ambiguous_path_segment_encoding("alice%09log"));
+        assert!(has_ambiguous_path_segment_encoding("alice%20log"));
         assert!(has_ambiguous_path_segment_encoding("%2E"));
         assert!(has_ambiguous_path_segment_encoding(".%2e"));
         assert!(has_ambiguous_path_segment_encoding("%2E."));
@@ -797,6 +873,81 @@ mod tests {
         assert!(has_ambiguous_path_segment_encoding("."));
         assert!(has_ambiguous_path_segment_encoding(".."));
         assert!(!has_ambiguous_path_segment_encoding("did:trn:alice"));
+    }
+
+    #[test]
+    fn parse_query_capability_audit_subject_from_target_accepts_canonical_subject_path() {
+        assert_eq!(
+            parse_query_capability_audit_subject_from_target("/query-capability-audit/alice")
+                .expect("canonical subject path should parse"),
+            "alice"
+        );
+        assert_eq!(
+            parse_query_capability_audit_subject_from_target("/query-capability-audit/alice/")
+                .expect("single operator trailing slash should normalize"),
+            "alice"
+        );
+    }
+
+    #[test]
+    fn parse_query_capability_audit_subject_from_target_rejects_query_string() {
+        let err = parse_query_capability_audit_subject_from_target(
+            "/query-capability-audit/alice?limit=1",
+        )
+        .expect_err("capability audit route should fail closed on query strings");
+        assert_eq!(err, "invalid query");
+    }
+
+    #[test]
+    fn parse_query_capability_audit_subject_from_target_distinguishes_missing_from_malformed() {
+        assert_eq!(
+            parse_query_capability_audit_subject_from_target("/query-capability-audit/")
+                .expect_err("empty capability route should report missing subject"),
+            "missing token or subject"
+        );
+
+        for target in [
+            "/query-capability-audit///",
+            "/query-capability-audit/alice//",
+            "/query-capability-audit/alice/nested",
+        ] {
+            let err = parse_query_capability_audit_subject_from_target(target)
+                .expect_err("malformed capability audit path must fail closed as invalid query");
+            assert_eq!(err, "invalid query", "target={target}");
+        }
+    }
+
+    #[test]
+    fn parse_query_capability_audit_subject_from_target_rejects_fragments_and_whitespace() {
+        for target in [
+            "/query-capability-audit/alice#frag",
+            "/query-capability-audit/al ice",
+            "/query-capability-audit/alice\textra",
+        ] {
+            let err = parse_query_capability_audit_subject_from_target(target)
+                .expect_err("capability audit subject must stay a clean single path segment");
+            assert_eq!(err, "invalid query", "target={target}");
+        }
+    }
+
+    #[test]
+    fn parse_query_capability_audit_subject_from_target_rejects_encoded_delimiters_and_path_ambiguity() {
+        for target in [
+            "/query-capability-audit/alice%3Flimit=1",
+            "/query-capability-audit/alice%23frag",
+            "/query-capability-audit/alice%26cursor=1",
+            "/query-capability-audit/alice%2Fextra",
+            "/query-capability-audit/alice%2fextra",
+            "/query-capability-audit/alice%5Cextra",
+            "/query-capability-audit/alice%5cextra",
+            "/query-capability-audit/%2E",
+            "/query-capability-audit/%2e%2E",
+        ] {
+            let err = parse_query_capability_audit_subject_from_target(target).expect_err(
+                "capability audit subject must fail closed on encoded delimiters and ambiguous path encodings",
+            );
+            assert_eq!(err, "invalid query", "target={target}");
+        }
     }
 
     #[test]
