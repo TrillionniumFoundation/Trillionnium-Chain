@@ -1,6 +1,6 @@
 # Trillionnium Chain (TRNM)
 
-**TRNM** is a Rust-native Layer 1 focused on **Decentralized AI Compute** (PoUW).
+**TRNM** is a Rust-native Layer 1 focused on **Decentralized AI Compute** (PoCO).
 
 - Active mainline: `trillionnium/`
 - Historical status/archive docs live under `docs/archive/`
@@ -11,7 +11,7 @@
 
 TRNM is a Rust L1 protocol for task-based AI compute settlement and verification. Its core design goals are:
 
-- **PoUW state machine** for task lifecycle: create → commit → reveal → challenge → resolve
+- **PoCO state machine** for task lifecycle: create → commit → reveal → challenge → resolve
 - **High-concurrency execution** with conflict detection and grouped scheduling
 - **Auditable events + stable interfaces** for integration, replay, governance, and operations
 - **Worker Agent + CLI** loop from execution to on-chain submission
@@ -56,7 +56,7 @@ TrillionniumChain/
 
 - `trnm-node`: node runtime loop, execution wiring, event emission
 - `trnm-state`: versioned state store and `state_root`
-- `trnm-pouw`: PoUW task state machine and validation logic
+- `trnm-pouw`: PoCO task state machine and validation logic
 - `trnm-executor`: conflict detection and concurrent scheduling strategy
 - `trnm-mempool`: transaction pool and admission/packaging
 - `trnm-rpc`: RPC service and stable query APIs
@@ -168,7 +168,7 @@ TRNM_TX_CLI=./trillionnium/target/debug/trnm-cli \
 - Rust-native external contracts baseline architecture: [trillionnium/docs/protocol/external-contracts-rust/RUST_NATIVE_EXTERNAL_CONTRACTS_ARCH_2026-03-05.md](trillionnium/docs/protocol/external-contracts-rust/RUST_NATIVE_EXTERNAL_CONTRACTS_ARCH_2026-03-05.md)
 - `contracts/` status and boundaries: [contracts/README.md](contracts/README.md)
 - Historical path note for this perimeter: if an older prompt/doc still says `trillionnium-rust/docs/...` or `contracts-rust/...`, treat that as drift only. The current in-tree truth paths are `trillionnium/docs/...` and `contracts/...`.
-- PoUW mechanism: [trillionnium/docs/challenge-economics-minimal.md](trillionnium/docs/challenge-economics-minimal.md)
+- PoCO mechanism (challenge-economics / PoUW minimal packet): [trillionnium/docs/challenge-economics-minimal.md](trillionnium/docs/challenge-economics-minimal.md)
 - A2A adapter contract: [docs/agent/a2a_adapter_contract_v1.md](docs/agent/a2a_adapter_contract_v1.md)
 - MCP adapter contract: [docs/agent/mcp_adapter_contract_v1.md](docs/agent/mcp_adapter_contract_v1.md)
 - Operations handbook: [OPERATIONS.md](OPERATIONS.md)

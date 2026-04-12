@@ -5,7 +5,7 @@ use std::path::PathBuf;
 #[command(
     name = "trnm-worker-agent",
     version,
-    about = "Trillionnium PoUW worker-agent (MVP skeleton)"
+    about = "Trillionnium PoCO worker-agent (MVP skeleton)"
 )]
 pub(crate) struct Args {
     #[command(subcommand)]
