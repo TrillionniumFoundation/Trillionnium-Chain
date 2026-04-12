@@ -10,6 +10,7 @@ RUN_ROOT="${RUST_ROOT}/run/explorer-service"
 ENV_FILE="${RUN_ROOT}/explorer-service.env"
 PID_FILE="${RUN_ROOT}/explorer-service.pid"
 LOG_FILE="${RUN_ROOT}/explorer-service.log"
+SCAFFOLD_HANDOFF_TEMPLATE="${RUST_ROOT}/docs/release/TRNM_EXPLORER_SCAFFOLD_HANDOFF_TEMPLATE_2026-04-04.md"
 
 TMP_DIR="$(mktemp -d)"
 cleanup() {
@@ -256,6 +257,8 @@ assert_contains "${CAPTURE_DIR}/summary.txt" "truth_source_go_no_go_panel=trilli
 assert_contains "${CAPTURE_DIR}/summary.txt" "truth_source_gap_matrix=trillionnium/docs/release/TRNM_MAINNET_GAP_MATRIX_2026-03-26.md"
 assert_contains "${CAPTURE_DIR}/summary.txt" "truth_source_rank1_task_board=trillionnium/docs/release/TRNM_RANK1_READ_SURFACE_TASK_BOARD_2026-04-03.md"
 assert_contains "${CAPTURE_DIR}/summary.txt" "truth_source_blocker_board=trillionnium/docs/release/TRNM_MAINNET_BLOCKER_BOARD_2026-03-31.md"
+assert_contains "${SCAFFOLD_HANDOFF_TEMPLATE}" "deployment_topology=single-process-static-http-on-one-host"
+assert_contains "${SCAFFOLD_HANDOFF_TEMPLATE}" "index_json_deployment_topology=single-process-static-http-on-one-host"
 assert_contains "${CAPTURE_DIR}/summary.txt" "replay_command=./trillionnium/scripts/v2/explorer_service_up.sh"
 assert_contains "${CAPTURE_DIR}/summary.txt" "status_command=./trillionnium/scripts/v2/explorer_service_status.sh"
 assert_contains "${CAPTURE_DIR}/summary.txt" "public_health_fetch_command=curl --silent --show-error --fail --max-time 5 ${HEALTH_URL}"
