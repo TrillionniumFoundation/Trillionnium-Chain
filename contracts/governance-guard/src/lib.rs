@@ -1832,6 +1832,34 @@ mod tests {
     }
 
     #[test]
+    fn normalized_pause_restore_schedule_carries_reason_and_eta() {
+        let mut gov = setup();
+        let now = 7_080;
+        let eta = now + 60;
+
+        gov.emergency_pause("guardian", "incident-schedule-note")
+            .unwrap();
+        let pid = gov
+            .schedule_unpause("guardian", eta, "recover-schedule-note", now)
+            .unwrap();
+
+        let normalized = gov.normalized_audit_log();
+        let pid_s = pid.to_string();
+        let event = normalized
+            .iter()
+            .find(|event| {
+                event.event_type == "governance.pause_restore_scheduled"
+                    && event.object_id.as_deref() == Some(pid_s.as_str())
+            })
+            .unwrap();
+
+        assert_eq!(event.actor.as_deref(), Some("guardian"));
+        assert_eq!(event.related_id.as_deref(), Some("emergency_pause"));
+        assert_eq!(event.reason.as_deref(), Some("recover-schedule-note"));
+        assert_eq!(event.note.as_deref(), Some("eta=7140"));
+    }
+
+    #[test]
     fn normalized_unpause_execution_note_omits_placeholder_version_suffix() {
         let mut gov = setup();
         let now = 7_100;
