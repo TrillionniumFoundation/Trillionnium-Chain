@@ -353,6 +353,9 @@ impl SettlementVault {
         if amount == 0 {
             return Err(VaultError::InvalidAmount);
         }
+        if to.trim().is_empty() {
+            return Err(VaultError::InvalidBeneficiary);
+        }
 
         let available = self.balance_of(from);
         if available < amount {
@@ -1108,6 +1111,28 @@ mod tests {
             vault.transfer("owner", "alice", "bob", 999).unwrap_err(),
             VaultError::InsufficientBalance
         );
+    }
+
+    #[test]
+    fn transfer_to_blank_beneficiary_fails_closed_without_state_or_audit_mutation() {
+        let mut vault = SettlementVault::new("owner");
+
+        vault.deposit("owner", "alice", 30).unwrap();
+        let audit_len_before = vault.audit_log().len();
+
+        let err = vault
+            .transfer("owner", "alice", "   ", 10)
+            .expect_err("blank transfer recipient must be rejected");
+        assert_eq!(err, VaultError::InvalidBeneficiary);
+        assert_eq!(vault.balance_of("alice"), 30);
+        assert_eq!(vault.balance_of("   "), 0);
+        assert_eq!(vault.audit_log().len(), audit_len_before);
+        assert!(!vault.normalized_audit_log().iter().any(|event| {
+            event.event_type == "vault.transferred"
+                && event.actor.as_deref() == Some("owner")
+                && event.object_id.as_deref() == Some("   ")
+                && event.amount == Some(10)
+        }));
     }
 
     #[test]
