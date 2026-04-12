@@ -56,10 +56,21 @@ The branch argument may be either the short branch name (for example `lane/mn07-
 EXPECTED_WORKTREE_ROOT="/abs/path/from-ticket"
 EXPECTED_BRANCH_REF="lane/assigned-branch"
 
+# From repo root:
+./scripts/v2/verify_lane_worktree.sh \
+  --expected-worktree-root "$EXPECTED_WORKTREE_ROOT" \
+  --expected-branch-ref "$EXPECTED_BRANCH_REF"
+
+# Or from ./trillionnium:
 ./scripts/v2/verify_lane_worktree.sh \
   --expected-worktree-root "$EXPECTED_WORKTREE_ROOT" \
   --expected-branch-ref "$EXPECTED_BRANCH_REF"
 ```
+
+Operator path rule:
+- if you are in the repository root, use `./scripts/v2/verify_lane_worktree.sh`
+- if you `cd trillionnium`, keep using `./scripts/v2/verify_lane_worktree.sh` from there instead of accidentally reaching for a stale `../trillionnium-rust/...` path
+- record the exact invocation you used verbatim in the handoff note
 
 Record verbatim:
 - `expected_worktree_root=`
@@ -148,15 +159,25 @@ Minimum operator pattern after manual/offline submit:
 
 ```bash
 REQUESTED_TX_HASH="0x...captured-from-submit-path..."
-TRNM_RPC_TX_FILE="/absolute/path/to/run/rpc/txs.json"
-export TRNM_RPC_TX_FILE
 
+# If your current directory is ./trillionnium:
+TRNM_RPC_TX_FILE="$(pwd)/run/rpc/txs.json"
+export TRNM_RPC_TX_FILE
+printf 'recorded_tx_file=%s\n' "$TRNM_RPC_TX_FILE"
 ./target/debug/trnm-cli tx query "$REQUESTED_TX_HASH"
 ./target/debug/trnm-cli tx wait "$REQUESTED_TX_HASH" --timeout 30 --interval 2
+
+# If your current directory is repo root:
+TRNM_RPC_TX_FILE="$(pwd)/trillionnium/run/rpc/txs.json"
+export TRNM_RPC_TX_FILE
+printf 'recorded_tx_file=%s\n' "$TRNM_RPC_TX_FILE"
+cargo run --manifest-path trillionnium/Cargo.toml -p trnm-cli -- tx query "$REQUESTED_TX_HASH"
+cargo run --manifest-path trillionnium/Cargo.toml -p trnm-cli -- tx wait "$REQUESTED_TX_HASH" --timeout 30 --interval 2
 ```
 
 Operator safety rule:
 - pin `TRNM_RPC_TX_FILE` to the exact pending-state file that was active for the submit path before running any follow-up `tx query` / `tx wait` command
+- prefer freezing it as an absolute path from the active worktree, for example `TRNM_RPC_TX_FILE="$(pwd)/run/rpc/txs.json"` from `./trillionnium` or `TRNM_RPC_TX_FILE="$(pwd)/trillionnium/run/rpc/txs.json"` from repo root, and record that exact value next to `requested_tx_hash=` before any owner/worktree handoff
 - if the cutover moved to a different worktree/host, copy the submit-path pending-state file into the new owner context (or mount the same absolute path) before reusing `REQUESTED_TX_HASH`
 - do **not** let follow-up commands silently fall back to a different default `run/rpc/txs.json`; treat that as signer-path ambiguity until you can prove the pending-state file path is the same one recorded for the submit action
 
@@ -164,8 +185,16 @@ If the submit path is `trnm-cli` itself, capture the first shell-safe hash line 
 
 ```bash
 SUBMIT_LOG=/tmp/trnm-submit.log
+# From ./trillionnium after building trnm-cli:
 ./target/debug/trnm-cli tx ... | tee "$SUBMIT_LOG"
-REQUESTED_TX_HASH="$({ grep -m1 -E '^(tx_hash|transaction_hash|transaction-hash|transactionHash|tx-hash)="0x' "$SUBMIT_LOG" || exit 1; } | sed -E 's/^[^=]+="([^"]+)"$/\1/')"
+# From repo root, the equivalent shape is:
+# cargo run --manifest-path trillionnium/Cargo.toml -p trnm-cli -- tx ... | tee "$SUBMIT_LOG"
+REQUESTED_TX_HASH="$({
+  grep -m1 -E '^tx_hash="0x[0-9A-Fa-f]+"$' "$SUBMIT_LOG" \
+    || grep -m1 -E '^(txhash|transaction_hash|transaction-hash|transactionHash|tx-hash)=0x[0-9A-Fa-f]+$' "$SUBMIT_LOG" \
+    || grep -m1 -E '^(tx hash|transaction hash)[[:space:]]*=[[:space:]]*0x[0-9A-Fa-f]+$' "$SUBMIT_LOG" \
+    || exit 1
+} | sed -E 's/^[^=]+=[[:space:]]*"?([^"]+)"?$/\1/')"
 [ -n "$REQUESTED_TX_HASH" ] || {
   echo "failed to capture canonical tx hash from submit output" >&2
   exit 1
@@ -177,18 +206,18 @@ Operator input rule:
 - prefer the first emitted `tx_hash="0x..."` line from `trnm-cli` because it is shell-safe and maps directly to the canonical hash preserved in local pending state
 - do **not** strip the `0x` prefix or replace the original submit-path hash with a later explorer/log rendering; `trnm-cli tx query` and `trnm-cli tx wait` fail closed on bare hex input because a missing prefix is treated as ambiguous operator evidence, not harmless formatting drift
 - treat later bare-hex renderings, copied dashboard values, or explorer aliases as **display-only** until the operator manually confirms they normalize back to the same canonical `0x...` value; do not paste a non-canonical alias directly into follow-up commands
-- when the submit path is `trnm-cli` itself, preserve the first emitted `tx_hash=` line as the operator truth-source and keep the corresponding local pending-state record (`run/rpc/txs.json`, or `TRNM_RPC_TX_FILE` if overridden) until cutover validation is complete
+- when the submit path is `trnm-cli` itself, preserve the first emitted shell-safe `tx_hash="0x..."` line as the operator truth-source and keep the corresponding local pending-state record (`run/rpc/txs.json`, or `TRNM_RPC_TX_FILE` if overridden) until cutover validation is complete
 - if an operator clipboard, chat transcript, or ticket comment contains multiple hash renderings for the same action, keep the original submit-path `requested_tx_hash=` field unchanged and record the other values as comparison evidence instead of promoting them into the truth-source slot
 
 Record together:
 - `requested_tx_hash=` from the submit path exactly once
-- the first locally emitted `tx_hash=` line from the submit path (if `trnm-cli` produced it)
+- the first locally emitted shell-safe `tx_hash="0x..."` line from the submit path (if `trnm-cli` produced it)
 - local pending-state file path used for the cutover (`run/rpc/txs.json` by default, or `TRNM_RPC_TX_FILE=` override)
 - `query_tx_hash=` from `trnm-cli tx query`
 - `wait_tx_hash=` from `trnm-cli tx wait`
 
 Alias-handling rule:
-- later tooling may echo the same canonical value under aliases such as `tx_hash=`, `tx-hash=`, `transaction_hash=`, `transaction-hash=`, or `transactionHash=`
+- later tooling may echo the same canonical value under aliases such as `tx_hash="..."`, `txhash=`, `transaction_hash=`, `tx-hash=`, `transaction-hash=`, `transactionHash=`, `tx hash=`, or `transaction hash=`
 - treat those as formatting aliases only after they normalize to the exact same canonical tx hash
 - do not overwrite the original `requested_tx_hash=` field with a later alias line; keep the first captured submit-path hash as the source of truth for the entire procedure
 
