@@ -22,6 +22,7 @@ RC_DIR="$ROOT/release/rc-$STAMP"
 PREFLIGHT_DIR="$RUN_ROOT/preflight"
 PREFLIGHT_BACKUP=""
 PREFLIGHT_PATH="$PREFLIGHT_DIR/go-no-go-$STAMP.txt"
+PREFLIGHT_ALIAS_PATH="$PREFLIGHT_DIR/go-no-go-latest.txt"
 
 cleanup() {
   rm -rf "$EVIDENCE_DIR" "$RC_DIR"
@@ -44,6 +45,8 @@ SUMMARY_PATH="$EVIDENCE_DIR/summary.txt"
 MANIFEST_PATH="$RC_DIR/manifest.txt"
 SUMMARY_PATH_CANONICAL="$(cd "$(dirname "$SUMMARY_PATH")" && pwd -P)/$(basename "$SUMMARY_PATH")"
 MANIFEST_PATH_CANONICAL="$(cd "$(dirname "$MANIFEST_PATH")" && pwd -P)/$(basename "$MANIFEST_PATH")"
+PREFLIGHT_PATH_CANONICAL="$(cd "$(dirname "$PREFLIGHT_PATH")" && pwd -P)/$(basename "$PREFLIGHT_PATH")"
+PREFLIGHT_ALIAS_PATH_CANONICAL="$(cd "$(dirname "$PREFLIGHT_ALIAS_PATH")" && pwd -P)/$(basename "$PREFLIGHT_ALIAS_PATH")"
 
 cat >"$SUMMARY_PATH" <<EOF
 result=PASS
@@ -91,6 +94,7 @@ bash "$SCRIPT" \
   --expected-branch-ref "$BRANCH_REF" \
   >"$EVIDENCE_DIR/out-missing-preflight.txt"
 
+grep -q "^preflight_path=<missing>$" "$EVIDENCE_DIR/out-missing-preflight.txt"
 grep -q "^preflight_summary_path=<missing>$" "$EVIDENCE_DIR/out-missing-preflight.txt"
 grep -q "^summary_path=$SUMMARY_PATH_CANONICAL$" "$EVIDENCE_DIR/out-missing-preflight.txt"
 grep -q "^manifest_path=$MANIFEST_PATH_CANONICAL$" "$EVIDENCE_DIR/out-missing-preflight.txt"
@@ -99,6 +103,7 @@ cat >"$PREFLIGHT_PATH" <<EOF
 result=GO
 generated_at=2026-04-12T03:16:00Z
 EOF
+cp "$PREFLIGHT_PATH" "$PREFLIGHT_ALIAS_PATH"
 
 bash "$SCRIPT" \
   --summary-path "$SUMMARY_PATH" \
@@ -110,5 +115,7 @@ bash "$SCRIPT" \
 grep -q "^verified_branch_ref=$BRANCH_REF$" "$EVIDENCE_DIR/out-short-branch.txt"
 grep -q "^ticket_expected_branch_ref=$BRANCH_SHORT$" "$EVIDENCE_DIR/out-short-branch.txt"
 grep -q "^expected_branch_ref=$BRANCH_REF$" "$EVIDENCE_DIR/out-short-branch.txt"
+grep -q "^preflight_path=$PREFLIGHT_ALIAS_PATH_CANONICAL$" "$EVIDENCE_DIR/out-short-branch.txt"
+grep -q "^preflight_summary_path=$PREFLIGHT_PATH_CANONICAL$" "$EVIDENCE_DIR/out-short-branch.txt"
 
 echo "PASS"

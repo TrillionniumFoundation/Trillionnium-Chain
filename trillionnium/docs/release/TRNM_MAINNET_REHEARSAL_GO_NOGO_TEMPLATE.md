@@ -115,7 +115,7 @@ printf 'handoff_helper_output_path=%s\n' "$handoff_helper_output_path"
 
 As with the pre-run helper, `--expected-branch-ref` may be supplied as either the short branch name from the ticket or the full ref. Preserve both forms in the memo: record `ticket_expected_branch_ref=` from the helper output as the exact ticket-assigned form, and record `expected_branch_ref=` / `git_expected_worktree_branch_ref=` as the canonicalized branch ref emitted by the helper/artifacts.
 
-Treat both helper outputs as first-class artifacts for memo assembly, not throwaway terminal scrollback. Preserve `preflight_helper_output_path=` for lane-binding proof before any release/evidence script runs, and preserve `handoff_helper_output_path=` (or equivalent saved transcripts) so `summary_generated_at=`, `manifest_generated_at=`, `git_expected_worktree_branch_ref=`, `git_status_summary=`, `truth_source=`, `historical_evidence_only=`, `evidence_scope=`, `summary_rollback_command=`, `summary_replay_command=`, `manifest_rollback_command=`, and `manifest_replay_command=` can all be quoted from helper/artifacts rather than recopied from memory.
+Treat both helper outputs as first-class artifacts for memo assembly, not throwaway terminal scrollback. Preserve `preflight_helper_output_path=` for lane-binding proof before any release/evidence script runs, and preserve `handoff_helper_output_path=` (or equivalent saved transcripts) so `preflight_path=` (stable alias), `preflight_summary_path=` (resolved timestamped preflight artifact), `summary_generated_at=`, `manifest_generated_at=`, `git_expected_worktree_branch_ref=`, `git_status_summary=`, `truth_source=`, `historical_evidence_only=`, `evidence_scope=`, `summary_rollback_command=`, `summary_replay_command=`, `manifest_rollback_command=`, and `manifest_replay_command=` can all be quoted from helper/artifacts rather than recopied from memory.
 
 Record:
 - preflight_path= (stable alias used for operator lookup)
@@ -147,6 +147,7 @@ Record:
 
 Rule:
 - if `preflight_path`, `preflight_summary_path`, `evidence_dir`, `summary_path`, `rc_dir`, or `manifest_path` is missing or unresolved, decision = **NO-GO**
+- `preflight_path=` is the stable alias for operator lookup, while `preflight_summary_path=` must resolve to the concrete timestamped file actually quoted in the packet; if they collapse to the same alias-only path, decision = **NO-GO**
 - `preflight_path` alone is not enough for a path-resolved packet; the memo must also preserve the concrete timestamped `preflight_summary_path=` that was actually quoted
 - if the preflight artifact/helper transcript does not preserve `result=`, `generated_at=`, `git_status_summary=`, `git_worktree_path=`, `git_worktree_branch_ref=`, `git_worktree_branch_ref_match=`, `expected_worktree_root=`, `ticket_expected_branch_ref=`, `expected_branch_ref=`, `rollback_command=`, and `replay_command=`, decision = **NO-GO**
 - if the ticket assigned an expected head, preserve `expected_head=` verbatim from the preflight artifact and require it to match the ticket-assigned value; do not silently downgrade that field into an optional note

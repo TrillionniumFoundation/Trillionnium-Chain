@@ -28,6 +28,7 @@ VERIFIED_WORKTREE=""
 VERIFIED_BRANCH_REF=""
 VERIFIED_HEAD=""
 EXPECTED_HEAD=""
+PREFLIGHT_PATH=""
 PREFLIGHT_SUMMARY_PATH=""
 
 canonicalize_branch_ref() {
@@ -130,16 +131,16 @@ if [ -z "$MANIFEST_PATH" ]; then
   MANIFEST_PATH="$latest_rc_dir/manifest.txt"
 fi
 
+latest_preflight_summary=""
+if compgen -G "$TRNM_ROOT/run/preflight/go-no-go-*.txt" >/dev/null; then
+  latest_preflight_summary="$(ls -dt "$TRNM_ROOT"/run/preflight/go-no-go-*.txt 2>/dev/null | awk '!/\/go-no-go-latest\.txt$/ { print; exit }')"
+fi
+
 if [ -f "$TRNM_ROOT/run/preflight/go-no-go-latest.txt" ]; then
-  PREFLIGHT_SUMMARY_PATH="$TRNM_ROOT/run/preflight/go-no-go-latest.txt"
-else
-  latest_preflight_summary=""
-  if compgen -G "$TRNM_ROOT/run/preflight/go-no-go-*.txt" >/dev/null; then
-    latest_preflight_summary="$(ls -dt "$TRNM_ROOT"/run/preflight/go-no-go-*.txt 2>/dev/null | head -n 1)"
-  fi
-  if [ -n "$latest_preflight_summary" ]; then
-    PREFLIGHT_SUMMARY_PATH="$latest_preflight_summary"
-  fi
+  PREFLIGHT_PATH="$TRNM_ROOT/run/preflight/go-no-go-latest.txt"
+fi
+if [ -n "$latest_preflight_summary" ]; then
+  PREFLIGHT_SUMMARY_PATH="$latest_preflight_summary"
 fi
 
 [ -f "$SUMMARY_PATH" ] || { echo "missing summary file: $SUMMARY_PATH" >&2; exit 1; }
@@ -173,6 +174,10 @@ require_path_within_trnm_root manifest_path "$MANIFEST_PATH"
 if [ "$SUMMARY_PATH" = "$MANIFEST_PATH" ]; then
   printf 'summary and manifest paths must be distinct artifacts: %s\n' "$SUMMARY_PATH" >&2
   exit 1
+fi
+if [ -n "$PREFLIGHT_PATH" ]; then
+  PREFLIGHT_PATH="$(resolve_path "$PREFLIGHT_PATH")"
+  require_path_within_trnm_root preflight_path "$PREFLIGHT_PATH"
 fi
 if [ -n "$PREFLIGHT_SUMMARY_PATH" ]; then
   PREFLIGHT_SUMMARY_PATH="$(resolve_path "$PREFLIGHT_SUMMARY_PATH")"
@@ -381,6 +386,11 @@ if [ -n "$VERIFIED_BRANCH_REF" ]; then
 fi
 if [ -n "$VERIFIED_HEAD" ]; then
   printf 'verified_head=%s\n' "$VERIFIED_HEAD"
+fi
+if [ -n "$PREFLIGHT_PATH" ]; then
+  printf 'preflight_path=%s\n' "$PREFLIGHT_PATH"
+else
+  printf 'preflight_path=%s\n' '<missing>'
 fi
 if [ -n "$PREFLIGHT_SUMMARY_PATH" ]; then
   printf 'preflight_summary_path=%s\n' "$PREFLIGHT_SUMMARY_PATH"
