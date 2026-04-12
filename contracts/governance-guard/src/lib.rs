@@ -951,6 +951,61 @@ mod tests {
     }
 
     #[test]
+    fn execute_rejects_if_param_version_and_value_both_drift() {
+        let mut gov = setup();
+        let now = 3_275;
+        let eta = now + 60;
+
+        let pid = gov
+            .propose(
+                "alice",
+                "challenge_window_blocks",
+                "100",
+                "142",
+                eta,
+                "reason-version-and-value-drift",
+                now,
+            )
+            .unwrap();
+        gov.queue("alice", pid).unwrap();
+
+        gov.bridge
+            .gov_params
+            .insert("challenge_window_blocks".to_string(), "777".to_string());
+        gov.bridge
+            .param_versions
+            .insert("challenge_window_blocks".to_string(), 9);
+        let audit_len_before_rejected_execute = gov.audit_log().len();
+
+        let err = gov.execute("exec", pid, eta).unwrap_err();
+        assert_eq!(err, Error::ParamVersionMismatch);
+
+        let proposal = gov.proposal(pid).unwrap();
+        assert_eq!(proposal.status, ProposalStatus::Queued);
+        assert_eq!(proposal.executor, None);
+        assert_eq!(proposal.executed_at, None);
+        assert_eq!(
+            gov.bridge_state()
+                .gov_params
+                .get("challenge_window_blocks")
+                .map(String::as_str),
+            Some("777")
+        );
+        assert_eq!(
+            gov.bridge_state()
+                .param_versions
+                .get("challenge_window_blocks")
+                .copied(),
+            Some(9)
+        );
+        assert_eq!(gov.audit_log().len(), audit_len_before_rejected_execute);
+        assert!(!gov.audit_log().iter().any(|event| matches!(
+            event,
+            GovernanceEvent::ProposalExecuted { proposal_id, .. } if *proposal_id == pid
+        )));
+    }
+
+    #[test]
     fn execute_rejects_if_param_key_removed_after_queue() {
         let mut gov = setup();
         let now = 3_300;
