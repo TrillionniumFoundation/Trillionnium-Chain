@@ -2,12 +2,15 @@ use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use std::collections::BTreeMap;
 use std::sync::RwLock;
-use trnm_types::{
-    GovParamObject, GovProposalObject, GovProposalStatus, Hash32, EMERGENCY_PAUSE_KEY_ID,
-    ObjectRef, TaskObject, TaskStatus,
-};
 #[cfg(test)]
 use trnm_types::GovParamKey;
+use trnm_types::{
+    GovParamObject, GovProposalObject, GovProposalStatus, Hash32, ObjectRef, TaskObject,
+    TaskStatus, EMERGENCY_PAUSE_KEY_ID,
+};
+
+pub mod consumption;
+pub use consumption::{ConsumptionRecord, ConsumptionRecordKey, ConsumptionRecordStatus, TaskConsumptionSummary};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum ObjectValue {
@@ -23,6 +26,9 @@ pub struct StateStore {
     pending_gov_updates: BTreeMap<String, PendingGovParamUpdate>,
     gov_param_key_index: BTreeMap<String, u64>,
     pending_resolve_approvals: BTreeMap<u64, PendingResolveApproval>,
+    consumption_records: BTreeMap<ConsumptionRecordKey, ConsumptionRecord>,
+    consumer_consumption_nonces: BTreeMap<String, u64>,
+    task_consumption_summaries: BTreeMap<u64, TaskConsumptionSummary>,
     monetary_state: MonetaryState,
     state_root_cache: RwLock<Option<Hash32>>,
 }
@@ -58,6 +64,9 @@ impl Default for StateStore {
             pending_gov_updates: BTreeMap::new(),
             gov_param_key_index: BTreeMap::new(),
             pending_resolve_approvals: BTreeMap::new(),
+            consumption_records: BTreeMap::new(),
+            consumer_consumption_nonces: BTreeMap::new(),
+            task_consumption_summaries: BTreeMap::new(),
             monetary_state: MonetaryState::default(),
             state_root_cache: RwLock::new(None),
         }
@@ -77,6 +86,9 @@ impl Clone for StateStore {
             pending_gov_updates: self.pending_gov_updates.clone(),
             gov_param_key_index: self.gov_param_key_index.clone(),
             pending_resolve_approvals: self.pending_resolve_approvals.clone(),
+            consumption_records: self.consumption_records.clone(),
+            consumer_consumption_nonces: self.consumer_consumption_nonces.clone(),
+            task_consumption_summaries: self.task_consumption_summaries.clone(),
             monetary_state: self.monetary_state.clone(),
             state_root_cache: RwLock::new(cached),
         }
@@ -1518,6 +1530,57 @@ fn hash_pending_resolve_approval(
     hash_len_prefixed_str(hasher, &canonical_first_approver);
     hash_len_prefixed_str(hasher, &canonical_authority_set);
     hasher.update(pending.task_version.to_le_bytes());
+}
+
+fn hash_consumption_record(hasher: &mut Sha256, key: &ConsumptionRecordKey, record: &ConsumptionRecord) {
+    hasher.update(b"consumption_record");
+    hasher.update(key.task_id.to_le_bytes());
+    hash_len_prefixed_str(hasher, &key.consumer_id);
+    hash_len_prefixed_str(hasher, &key.output_hash);
+    hash_len_prefixed_str(hasher, &key.billing_window_id);
+    hash_len_prefixed_str(hasher, &record.worker_id);
+    hash_len_prefixed_str(hasher, &record.tokenizer_id);
+    hash_len_prefixed_str(hasher, &record.tokenizer_version);
+    hash_len_prefixed_str(hasher, &record.consumer_class);
+    hash_len_prefixed_str(hasher, &record.consumed_spans_root);
+    hasher.update(record.consumed_token_count.to_le_bytes());
+    hasher.update(record.claimed_consumption_units.to_le_bytes());
+    match record.credited_consumption_units {
+        Some(credited) => {
+            hasher.update([1]);
+            hasher.update(credited.to_le_bytes());
+        }
+        None => hasher.update([0]),
+    }
+    hasher.update(record.consumer_nonce.to_le_bytes());
+    hasher.update(record.accepted_at_unix_ms.to_le_bytes());
+    hasher.update([record.status as u8]);
+    match &record.resolution_code {
+        Some(code) => {
+            hasher.update([1]);
+            hash_len_prefixed_str(hasher, code);
+        }
+        None => hasher.update([0]),
+    }
+}
+
+fn hash_task_consumption_summary(hasher: &mut Sha256, task_id: u64, summary: &TaskConsumptionSummary) {
+    hasher.update(b"task_consumption_summary");
+    hasher.update(task_id.to_le_bytes());
+    hasher.update(summary.task_id.to_le_bytes());
+    hasher.update(summary.receipt_count.to_le_bytes());
+    hasher.update(summary.accepted_receipt_count.to_le_bytes());
+    hasher.update(summary.challenged_receipt_count.to_le_bytes());
+    hasher.update(summary.total_consumed_tokens.to_le_bytes());
+    hasher.update(summary.total_claimed_consumption_units.to_le_bytes());
+    hasher.update(summary.total_credited_consumption_units.to_le_bytes());
+    match summary.last_settlement_height {
+        Some(height) => {
+            hasher.update([1]);
+            hasher.update(height.to_le_bytes());
+        }
+        None => hasher.update([0]),
+    }
 }
 
 fn hash_task_metering_snapshot(hasher: &mut Sha256, metering: &trnm_types::TaskMeteringSnapshot) {
@@ -3552,6 +3615,65 @@ impl StateStore {
         })
     }
 
+    pub fn put_consumption_record(&mut self, record: ConsumptionRecord) -> Option<ConsumptionRecord> {
+        self.invalidate_state_root_cache();
+        self.consumption_records.insert(record.key.clone(), record)
+    }
+
+    pub fn consumption_record(&self, key: &ConsumptionRecordKey) -> Option<ConsumptionRecord> {
+        self.consumption_records.get(key).cloned()
+    }
+
+    pub fn consumption_records_for_task(&self, task_id: u64) -> Vec<ConsumptionRecord> {
+        self.consumption_records
+            .iter()
+            .filter_map(|(key, record)| (key.task_id == task_id).then_some(record.clone()))
+            .collect()
+    }
+
+    pub fn remove_consumption_record(&mut self, key: &ConsumptionRecordKey) -> Option<ConsumptionRecord> {
+        let removed = self.consumption_records.remove(key);
+        if removed.is_some() {
+            self.invalidate_state_root_cache();
+        }
+        removed
+    }
+
+    pub fn set_consumer_consumption_nonce(&mut self, consumer_id: &str, nonce: u64) {
+        self.invalidate_state_root_cache();
+        if nonce == 0 {
+            self.consumer_consumption_nonces.remove(consumer_id);
+        } else {
+            self.consumer_consumption_nonces
+                .insert(consumer_id.to_string(), nonce);
+        }
+    }
+
+    pub fn consumer_consumption_nonce(&self, consumer_id: &str) -> Option<u64> {
+        self.consumer_consumption_nonces.get(consumer_id).copied()
+    }
+
+    pub fn set_task_consumption_summary(
+        &mut self,
+        summary: TaskConsumptionSummary,
+    ) -> Option<TaskConsumptionSummary> {
+        self.invalidate_state_root_cache();
+        self.task_consumption_summaries
+            .insert(summary.task_id, summary)
+    }
+
+    pub fn task_consumption_summary(&self, task_id: u64) -> Option<TaskConsumptionSummary> {
+        self.task_consumption_summaries.get(&task_id).cloned()
+    }
+
+    pub fn clear_task_consumption_summary(&mut self, task_id: u64) -> Option<TaskConsumptionSummary> {
+        let removed = self.task_consumption_summaries.remove(&task_id);
+        if removed.is_some() {
+            self.invalidate_state_root_cache();
+        }
+        removed
+    }
+
     pub fn set_balance(&mut self, address: impl Into<String>, amount: u128) {
         self.invalidate_state_root_cache();
         let address = address.into();
@@ -3869,6 +3991,17 @@ impl StateStore {
         }
         for (task_id, pending) in &self.pending_resolve_approvals {
             hash_pending_resolve_approval(&mut hasher, *task_id, pending);
+        }
+        for (key, record) in &self.consumption_records {
+            hash_consumption_record(&mut hasher, key, record);
+        }
+        for (consumer_id, nonce) in &self.consumer_consumption_nonces {
+            hasher.update(b"consumption_consumer_nonce");
+            hash_len_prefixed_str(&mut hasher, consumer_id);
+            hasher.update(nonce.to_le_bytes());
+        }
+        for (task_id, summary) in &self.task_consumption_summaries {
+            hash_task_consumption_summary(&mut hasher, *task_id, summary);
         }
         hasher.update(b"monetary_state");
         hasher.update(self.monetary_state.last_tick_height.to_le_bytes());
