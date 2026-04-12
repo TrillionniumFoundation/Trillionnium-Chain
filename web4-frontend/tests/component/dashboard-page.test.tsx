@@ -276,6 +276,38 @@ describe("dashboard page", () => {
     expect(screen.getByRole("button", { name: /Readonly controls/i })).toHaveAttribute("aria-pressed", "true");
   });
 
+  it("fail-closes stale readonly detail selections when filters remove every visible record", async () => {
+    mockedFetch.mockResolvedValue(snapshot);
+
+    render(<Home />);
+
+    await screen.findByText("Task Digest");
+
+    fireEvent.click(screen.getByRole("tab", { name: "Tasks" }));
+    fireEvent.click(screen.getByRole("button", { name: /TSK-2 Task two Core P0 Done 2026-03-03 11:00/i }));
+    expect(await screen.findByText("Task Detail · TSK-2")).toBeInTheDocument();
+
+    fireEvent.change(screen.getByLabelText("Status filter"), { target: { value: "Blocked" } });
+    await waitFor(() => expect(screen.queryByText("Task Detail · TSK-2")).not.toBeInTheDocument());
+    expect(await screen.findByRole("status")).toHaveTextContent("No tasks match current filter");
+
+    fireEvent.click(screen.getByRole("tab", { name: "Events" }));
+    fireEvent.click(screen.getByRole("button", { name: /Info event/i }));
+    expect(await screen.findByText("Event Detail · EVT-2")).toBeInTheDocument();
+
+    fireEvent.change(screen.getByLabelText("Severity filter"), { target: { value: "Warning" } });
+    await waitFor(() => expect(screen.queryByText("Event Detail · EVT-2")).not.toBeInTheDocument());
+    expect(await screen.findByRole("status")).toHaveTextContent("No events found");
+
+    fireEvent.click(screen.getByRole("tab", { name: "Audit" }));
+    fireEvent.click(screen.getByRole("button", { name: /Endpoint ACL/i }));
+    expect(await screen.findByText("Audit Detail · AUD-2")).toBeInTheDocument();
+
+    fireEvent.change(screen.getByLabelText("Result filter"), { target: { value: "Fail" } });
+    await waitFor(() => expect(screen.queryByText("Audit Detail · AUD-2")).not.toBeInTheDocument());
+    expect(await screen.findByRole("status")).toHaveTextContent("No audit controls found");
+  });
+
   it("supports arrow/home/end keyboard navigation across readonly dashboard tabs", async () => {
     mockedFetch.mockResolvedValue(snapshot);
 
