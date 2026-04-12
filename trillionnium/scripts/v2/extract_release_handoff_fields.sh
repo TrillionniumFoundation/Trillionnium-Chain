@@ -5,6 +5,7 @@ usage() {
   cat <<'EOF' >&2
 Usage: extract_release_handoff_fields.sh [--summary-path <path>] [--manifest-path <path>]
                                          [--expected-worktree-root <path>] [--expected-branch-ref <ref>]
+                                         [--expected-head <sha>]
 
 Resolve the latest local-evidence summary and RC manifest (unless paths are
 provided explicitly), then print the canonical handoff fields directly from the
@@ -15,7 +16,9 @@ mismatch across artifacts.
 When --expected-worktree-root / --expected-branch-ref are provided, the helper
 also verifies that both artifacts match the ticket-assigned lane binding.
 --expected-branch-ref accepts either a short branch name (for example
-lane/foo) or a full ref (for example refs/heads/lane/foo).
+lane/foo) or a full ref (for example refs/heads/lane/foo). When
+--expected-head is provided, the helper also fail-closes on head drift from
+that ticket-assigned commit.
 EOF
 }
 
@@ -28,6 +31,15 @@ VERIFIED_WORKTREE=""
 VERIFIED_BRANCH_REF=""
 VERIFIED_HEAD=""
 EXPECTED_HEAD=""
+PREFLIGHT_SUMMARY_PATH=""
+PREFLIGHT_RESULT=""
+PREFLIGHT_GENERATED_AT=""
+PREFLIGHT_GIT_STATUS_SUMMARY=""
+PREFLIGHT_GIT_WORKTREE_PATH=""
+PREFLIGHT_GIT_WORKTREE_BRANCH_REF=""
+PREFLIGHT_GIT_WORKTREE_BRANCH_REF_MATCH=""
+PREFLIGHT_ROLLBACK_COMMAND=""
+PREFLIGHT_REPLAY_COMMAND=""
 
 canonicalize_branch_ref() {
   local ref="$1"
@@ -63,6 +75,11 @@ while [ "$#" -gt 0 ]; do
       EXPECTED_BRANCH_REF="$2"
       shift 2
       ;;
+    --expected-head)
+      [ "$#" -ge 2 ] || { echo "missing value for $1" >&2; usage; exit 2; }
+      EXPECTED_HEAD="$2"
+      shift 2
+      ;;
     -h|--help)
       usage
       exit 0
@@ -87,12 +104,36 @@ if [ -n "$EXPECTED_BRANCH_REF" ] && [ -z "$EXPECTED_WORKTREE_ROOT" ]; then
   exit 2
 fi
 
+if [ -n "$EXPECTED_HEAD" ] && { [ -z "$EXPECTED_WORKTREE_ROOT" ] || [ -z "$EXPECTED_BRANCH_REF" ]; }; then
+  echo "--expected-worktree-root and --expected-branch-ref are required when --expected-head is set" >&2
+  usage
+  exit 2
+fi
+
 if [ -n "$EXPECTED_BRANCH_REF" ]; then
   EXPECTED_BRANCH_REF_CANONICAL="$(canonicalize_branch_ref "$EXPECTED_BRANCH_REF")"
 fi
 
 SCRIPT_DIR="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"
 TRNM_ROOT="$(CDPATH= cd -- "$SCRIPT_DIR/../.." && pwd)"
+
+if [ -n "$EXPECTED_WORKTREE_ROOT" ]; then
+  verify_args=(
+    --expected-worktree-root "$EXPECTED_WORKTREE_ROOT"
+    --expected-branch-ref "$EXPECTED_BRANCH_REF"
+  )
+  if [ -n "$EXPECTED_HEAD" ]; then
+    verify_args+=(--expected-head "$EXPECTED_HEAD")
+  fi
+  verify_output="$("$SCRIPT_DIR/verify_lane_worktree.sh" "${verify_args[@]}")"
+  VERIFIED_WORKTREE="$(printf '%s\n' "$verify_output" | awk -F= '$1 == "verified_worktree" { print $2; exit }')"
+  VERIFIED_BRANCH_REF="$(printf '%s\n' "$verify_output" | awk -F= '$1 == "verified_branch_ref" { print $2; exit }')"
+  VERIFIED_HEAD="$(printf '%s\n' "$verify_output" | awk -F= '$1 == "verified_head" { print $2; exit }')"
+
+  [ -n "$VERIFIED_WORKTREE" ] || { echo "missing verified_worktree from verify_lane_worktree.sh" >&2; exit 1; }
+  [ -n "$VERIFIED_BRANCH_REF" ] || { echo "missing verified_branch_ref from verify_lane_worktree.sh" >&2; exit 1; }
+  [ -n "$VERIFIED_HEAD" ] || { echo "missing verified_head from verify_lane_worktree.sh" >&2; exit 1; }
+fi
 
 if [ -z "$SUMMARY_PATH" ]; then
   latest_evidence_dir="$(ls -dt "$TRNM_ROOT"/run/health/evidence-* 2>/dev/null | head -n 1)"
@@ -123,10 +164,11 @@ fi
 
 resolve_path() {
   local path="$1"
-  local dir base
-  dir="$(cd "$(dirname "$path")" && pwd -P)"
-  base="$(basename "$path")"
-  printf '%s/%s\n' "$dir" "$base"
+  python3 - "$path" <<'PY'
+import os
+import sys
+print(os.path.realpath(sys.argv[1]))
+PY
 }
 
 require_path_within_trnm_root() {
@@ -150,24 +192,66 @@ if [ "$SUMMARY_PATH" = "$MANIFEST_PATH" ]; then
   printf 'summary and manifest paths must be distinct artifacts: %s\n' "$SUMMARY_PATH" >&2
   exit 1
 fi
+count_keys() {
+  local path="$1"
+  local key="$2"
+  awk -F= -v key="$key" '$1 == key { count++ } END { print count + 0 }' "$path"
+}
+
+extract_unique_key() {
+  local path="$1"
+  local key="$2"
+  local key_count
+
+  key_count="$(count_keys "$path" "$key")"
+  if [ "$key_count" -gt 1 ]; then
+    printf 'duplicate %s in %s\n' "$key" "$path" >&2
+    exit 1
+  fi
+
+  [ "$key_count" -eq 1 ] || return 0
+  awk -F= -v key="$key" '$1 == key { sub(/^[^=]*=/, ""); print; exit }' "$path"
+}
+
+optional_key() {
+  local path="$1"
+  local key="$2"
+  extract_unique_key "$path" "$key"
+}
+
+require_nonempty_key() {
+  local path="$1"
+  local key="$2"
+  local value
+  value="$(optional_key "$path" "$key")"
+  [ -n "$value" ] || { printf 'missing %s in %s\n' "$key" "$path" >&2; exit 1; }
+  printf '%s' "$value"
+}
+
 if [ -n "$PREFLIGHT_SUMMARY_PATH" ]; then
   PREFLIGHT_SUMMARY_PATH="$(resolve_path "$PREFLIGHT_SUMMARY_PATH")"
   require_path_within_trnm_root preflight_summary_path "$PREFLIGHT_SUMMARY_PATH"
+  if [ "$PREFLIGHT_SUMMARY_PATH" = "$SUMMARY_PATH" ] || [ "$PREFLIGHT_SUMMARY_PATH" = "$MANIFEST_PATH" ]; then
+    printf 'preflight summary path must be distinct from summary/manifest artifacts: %s\n' "$PREFLIGHT_SUMMARY_PATH" >&2
+    exit 1
+  fi
+  PREFLIGHT_RESULT="$(require_nonempty_key "$PREFLIGHT_SUMMARY_PATH" result)"
+  PREFLIGHT_GENERATED_AT="$(require_nonempty_key "$PREFLIGHT_SUMMARY_PATH" generated_at)"
+  PREFLIGHT_GIT_STATUS_SUMMARY="$(require_nonempty_key "$PREFLIGHT_SUMMARY_PATH" git_status_summary)"
+  PREFLIGHT_GIT_WORKTREE_PATH="$(require_nonempty_key "$PREFLIGHT_SUMMARY_PATH" git_worktree_path)"
+  PREFLIGHT_GIT_WORKTREE_BRANCH_REF="$(require_nonempty_key "$PREFLIGHT_SUMMARY_PATH" git_worktree_branch_ref)"
+  PREFLIGHT_GIT_WORKTREE_BRANCH_REF_MATCH="$(require_nonempty_key "$PREFLIGHT_SUMMARY_PATH" git_worktree_branch_ref_match)"
+  PREFLIGHT_ROLLBACK_COMMAND="$(require_nonempty_key "$PREFLIGHT_SUMMARY_PATH" rollback_command)"
+  PREFLIGHT_REPLAY_COMMAND="$(require_nonempty_key "$PREFLIGHT_SUMMARY_PATH" replay_command)"
 fi
 
 require_key() {
   local path="$1"
   local key="$2"
   local value
-  value="$(awk -F= -v key="$key" '$1 == key { sub(/^[^=]*=/, ""); print; exit }' "$path")"
+  value="$(extract_unique_key "$path" "$key")"
   [ -n "$value" ] || { printf 'missing %s in %s\n' "$key" "$path" >&2; exit 1; }
   printf '%s' "$value"
-}
-
-optional_key() {
-  local path="$1"
-  local key="$2"
-  awk -F= -v key="$key" '$1 == key { sub(/^[^=]*=/, ""); print; exit }' "$path"
 }
 
 assert_equal() {
@@ -227,6 +311,29 @@ assert_equal git_status_summary "$summary_git_status_summary" "$manifest_git_sta
 assert_equal truth_source "$summary_truth_source" "$manifest_truth_source"
 assert_equal historical_evidence_only "$summary_historical_evidence_only" "$manifest_historical_evidence_only"
 assert_equal evidence_scope "$summary_evidence_scope" "$manifest_evidence_scope"
+
+if [ -n "$PREFLIGHT_SUMMARY_PATH" ]; then
+  if [ -n "$PREFLIGHT_RESULT" ] && [ "$PREFLIGHT_RESULT" != "PASS" ]; then
+    printf 'artifact mismatch for preflight result: expected PASS got %s\n' "$PREFLIGHT_RESULT" >&2
+    exit 1
+  fi
+  if [ -n "$PREFLIGHT_GIT_WORKTREE_PATH" ] && [ "$PREFLIGHT_GIT_WORKTREE_PATH" != "$summary_worktree_path" ]; then
+    printf 'artifact mismatch for preflight git_worktree_path: preflight=%s summary=%s\n' "$PREFLIGHT_GIT_WORKTREE_PATH" "$summary_worktree_path" >&2
+    exit 1
+  fi
+  if [ -n "$PREFLIGHT_GIT_WORKTREE_BRANCH_REF" ] && [ "$PREFLIGHT_GIT_WORKTREE_BRANCH_REF" != "$summary_worktree_branch_ref" ]; then
+    printf 'artifact mismatch for preflight git_worktree_branch_ref: preflight=%s summary=%s\n' "$PREFLIGHT_GIT_WORKTREE_BRANCH_REF" "$summary_worktree_branch_ref" >&2
+    exit 1
+  fi
+  if [ -n "$PREFLIGHT_GIT_WORKTREE_BRANCH_REF_MATCH" ] && [ "$PREFLIGHT_GIT_WORKTREE_BRANCH_REF_MATCH" != "true" ]; then
+    printf 'artifact mismatch for preflight git_worktree_branch_ref_match: expected true got %s\n' "$PREFLIGHT_GIT_WORKTREE_BRANCH_REF_MATCH" >&2
+    exit 1
+  fi
+  if [ -n "$PREFLIGHT_GIT_STATUS_SUMMARY" ] && [ "$PREFLIGHT_GIT_STATUS_SUMMARY" != "clean" ]; then
+    printf 'artifact mismatch for preflight git_status_summary: expected clean got %s\n' "$PREFLIGHT_GIT_STATUS_SUMMARY" >&2
+    exit 1
+  fi
+fi
 
 if [ -n "$EXPECTED_WORKTREE_ROOT" ]; then
   [ "$summary_worktree_path" = "$EXPECTED_WORKTREE_ROOT" ] || {
@@ -360,6 +467,30 @@ if [ -n "$VERIFIED_HEAD" ]; then
 fi
 if [ -n "$PREFLIGHT_SUMMARY_PATH" ]; then
   printf 'preflight_summary_path=%s\n' "$PREFLIGHT_SUMMARY_PATH"
+  if [ -n "$PREFLIGHT_RESULT" ]; then
+    printf 'preflight_result=%s\n' "$PREFLIGHT_RESULT"
+  fi
+  if [ -n "$PREFLIGHT_GENERATED_AT" ]; then
+    printf 'preflight_generated_at=%s\n' "$PREFLIGHT_GENERATED_AT"
+  fi
+  if [ -n "$PREFLIGHT_GIT_STATUS_SUMMARY" ]; then
+    printf 'preflight_git_status_summary=%s\n' "$PREFLIGHT_GIT_STATUS_SUMMARY"
+  fi
+  if [ -n "$PREFLIGHT_GIT_WORKTREE_PATH" ]; then
+    printf 'preflight_git_worktree_path=%s\n' "$PREFLIGHT_GIT_WORKTREE_PATH"
+  fi
+  if [ -n "$PREFLIGHT_GIT_WORKTREE_BRANCH_REF" ]; then
+    printf 'preflight_git_worktree_branch_ref=%s\n' "$PREFLIGHT_GIT_WORKTREE_BRANCH_REF"
+  fi
+  if [ -n "$PREFLIGHT_GIT_WORKTREE_BRANCH_REF_MATCH" ]; then
+    printf 'preflight_git_worktree_branch_ref_match=%s\n' "$PREFLIGHT_GIT_WORKTREE_BRANCH_REF_MATCH"
+  fi
+  if [ -n "$PREFLIGHT_ROLLBACK_COMMAND" ]; then
+    printf 'preflight_rollback_command=%s\n' "$PREFLIGHT_ROLLBACK_COMMAND"
+  fi
+  if [ -n "$PREFLIGHT_REPLAY_COMMAND" ]; then
+    printf 'preflight_replay_command=%s\n' "$PREFLIGHT_REPLAY_COMMAND"
+  fi
 else
   printf 'preflight_summary_path=%s\n' '<missing>'
 fi
@@ -388,8 +519,6 @@ if [ -n "$summary_replay_env_trnm_challenge_reexec_entry" ]; then
 fi
 printf 'summary_rollback_command=%s\n' "$summary_rollback"
 printf 'summary_replay_command=%s\n' "$summary_replay"
-printf 'challenge_reexec_entry=%s\n' "$summary_challenge_reexec_entry"
-printf 'replay_env_trnm_challenge_reexec_entry=%s\n' "$summary_replay_env_trnm_challenge_reexec_entry"
 printf 'manifest_rollback_command=%s\n' "$manifest_rollback"
 printf 'manifest_replay_command=%s\n' "$manifest_replay"
 
@@ -397,4 +526,7 @@ if [ -n "$EXPECTED_WORKTREE_ROOT" ]; then
   printf 'expected_worktree_root=%s\n' "$EXPECTED_WORKTREE_ROOT"
   printf 'ticket_expected_branch_ref=%s\n' "$EXPECTED_BRANCH_REF"
   printf 'expected_branch_ref=%s\n' "$EXPECTED_BRANCH_REF_CANONICAL"
+  if [ -n "$EXPECTED_HEAD" ]; then
+    printf 'expected_head=%s\n' "$EXPECTED_HEAD"
+  fi
 fi

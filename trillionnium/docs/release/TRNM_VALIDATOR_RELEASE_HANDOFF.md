@@ -308,7 +308,7 @@ printf 'handoff_helper_output_path=%s\n' "$handoff_helper_output_path"
 
 Operator rule:
 - treat `handoff_helper_output_path=` as a first-class artifact, not throwaway terminal scrollback
-- quote `summary_generated_at=`, `manifest_generated_at=`, `git_status_summary=`, `git_worktree_path=`, `git_worktree_branch_ref=`, `git_expected_worktree_branch_ref=`, `git_worktree_branch_ref_match=`, `rollback_command=`, and `replay_command=` from that saved transcript or the underlying artifacts, not from memory
+- quote `preflight_summary_path=`, `summary_generated_at=`, `manifest_generated_at=`, `git_status_summary=`, `git_worktree_path=`, `git_worktree_branch_ref=`, `git_expected_worktree_branch_ref=`, `git_worktree_branch_ref_match=`, `summary_rollback_command=`, `summary_replay_command=`, `manifest_rollback_command=`, and `manifest_replay_command=` from that saved transcript (or the raw `rollback_command=` / `replay_command=` lines from the underlying artifacts), not from memory
 - if the helper output was not saved anywhere path-resolved, the handoff remains evidence-incomplete even if the terminal showed the expected lines once
 
 If you need the raw shell extraction for an air-gapped/debugging context, the equivalent block is:
@@ -379,7 +379,7 @@ Interpretation rule:
 
 Treat each of the following as a release-discipline violation, not a harmless convenience:
 - rerunning only the final script after switching branches or worktrees without regenerating the full evidence chain
-- copying `git_branch=`, `git_head=`, or `rollback_command=` from terminal scrollback instead of the generated artifact
+- copying `git_branch=`, `git_head=`, `summary_rollback_command=` / `manifest_rollback_command=` from helper scrollback, or raw `rollback_command=` lines from memory instead of the generated artifact/transcript
 - presenting a `CONDITIONAL GO` rehearsal as if it were `GO`
 - deleting a failed evidence directory before another operator can inspect the first failing artifact
 - claiming the nightly gate is the blocker when `nightly-streak.log` is missing, skipped, or locally overridden
