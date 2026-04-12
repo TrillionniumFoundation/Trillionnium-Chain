@@ -954,7 +954,7 @@ fn normalize_wallet_store_env(raw: &str) -> Option<&str> {
         || normalized.chars().any(|c| {
             c.is_whitespace()
                 || contains_hidden_or_control(c)
-                || matches!(c, '\\' | '∖' | '／' | '＼' | '﹨' | '∕' | '⁄' | '⧵' | '⧸' | '⟋' | '⟍')
+                || matches!(c, '\\' | '∖' | '／' | '＼' | '﹨' | '∕' | '⁄' | '⧵' | '⧸' | '⧹' | '⟋' | '⟍')
         })
     {
         return None;
@@ -995,6 +995,7 @@ fn wallet_store_path_is_safe(path: &Path) -> bool {
                         | '⁄'
                         | '⧵'
                         | '⧸'
+                        | '⧹'
                         | '⟋'
                         | '⟍'
                         | '．'
@@ -3148,6 +3149,7 @@ mod tests {
         assert_eq!(normalize_wallet_store_env("/tmp/trnm∖wallets"), None);
         assert_eq!(normalize_wallet_store_env("/tmp/trnm﹨wallets"), None);
         assert_eq!(normalize_wallet_store_env("/tmp/trnm⧸wallets"), None);
+        assert_eq!(normalize_wallet_store_env("/tmp/trnm⧹wallets"), None);
     }
 
     #[test]
@@ -3340,6 +3342,15 @@ mod tests {
             );
         }
 
+        std::env::set_var("TRNM_WALLET_STORE", "/tmp/trnm⧹wallets");
+        let confusable_separator_err = resolve_wallet_store(None).unwrap_err();
+        assert!(
+            confusable_separator_err
+                .to_string()
+                .contains("TRNM_WALLET_STORE is set but invalid; refusing ambiguous keystore path fallback"),
+            "unexpected error for confusable separator env store: {confusable_separator_err}"
+        );
+
         let explicit_root = std::env::temp_dir()
             .canonicalize()
             .unwrap_or_else(|_| std::env::temp_dir());
@@ -3368,6 +3379,7 @@ mod tests {
             PathBuf::from("/tmp/trnm\u{200b}wallets"),
             PathBuf::from("/tmp/《trnm-wallets》"),
             PathBuf::from("/tmp/｟trnm-wallets｠"),
+            PathBuf::from("/tmp/trnm⧹wallets"),
             PathBuf::from("/tmp/trnm-wallets/"),
             PathBuf::from("/tmp/trnm-wallets/․/keys"),
             PathBuf::from("/tmp/trnm-wallets/﹒/keys"),
@@ -3620,6 +3632,15 @@ mod tests {
                 .to_string()
                 .contains("must be an absolute normalized path"),
             "unexpected error: {big_solidus_write_err}"
+        );
+
+        let big_reverse_solidus_read_err =
+            read_key(std::path::Path::new("/tmp⧹trnm-wallets"), "alice").unwrap_err();
+        assert!(
+            big_reverse_solidus_read_err
+                .to_string()
+                .contains("must be an absolute normalized path"),
+            "unexpected error: {big_reverse_solidus_read_err}"
         );
 
         let duplicate_slash_write_err = write_key(
