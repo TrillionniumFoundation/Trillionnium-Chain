@@ -301,7 +301,10 @@ fn metadata_only_operator_action(recovered: &RecoveredWalState) -> String {
                 )
             }
             Some(_) => {
-                "operator action: restore the corresponding application snapshot before retrying join/rejoin; do not resume from metadata alone".into()
+                format!(
+                    "operator action: restore the application snapshot that matches retained WAL tip height {} before retrying join/rejoin; do not resume from metadata alone",
+                    tip_height,
+                )
             }
         }
     };
@@ -878,7 +881,7 @@ mod tests {
         );
         assert_eq!(
             metadata_only_operator_action(&recovered_state(2, 12, Some(11), false, true)),
-            "operator action: restore the corresponding application snapshot before retrying join/rejoin; do not resume from metadata alone"
+            "operator action: restore the application snapshot that matches retained WAL tip height 11 before retrying join/rejoin; do not resume from metadata alone"
         );
         assert_eq!(
             metadata_only_operator_action(&recovered_state(2, 12, Some(15), false, true)),
@@ -898,7 +901,10 @@ mod tests {
         );
         assert_eq!(
             metadata_only_operator_action(&recovered_state(2, u64::MAX, Some(u64::MAX), false, true)),
-            "operator action: restore the corresponding application snapshot before retrying join/rejoin; do not resume from metadata alone"
+            &format!(
+                "operator action: restore the application snapshot that matches retained WAL tip height {} before retrying join/rejoin; do not resume from metadata alone",
+                u64::MAX - 1,
+            )
         );
         assert_eq!(
             metadata_only_operator_action(&recovered_state(2, 12, Some(10), true, true)),
@@ -919,6 +925,16 @@ mod tests {
         assert_eq!(
             metadata_only_operator_action(&recovered_state(0, 1, None, true, true)),
             "operator action: restart with a fresh --bft-wal-dir / --bft-wal-mode auto isolated run; if this node must rejoin from prior state, restore an application snapshot before retrying; note: this startup already truncated a malformed WAL tail, so keep the repaired WAL/checkpoint artifacts for incident review if join/rejoin still fails"
+        );
+    }
+
+    #[test]
+    fn metadata_only_operator_action_names_aligned_retained_wal_tip_height() {
+        let recovered = recovered_state(2, 12, Some(11), false, true);
+
+        assert_eq!(
+            metadata_only_operator_action(&recovered),
+            "operator action: restore the application snapshot that matches retained WAL tip height 11 before retrying join/rejoin; do not resume from metadata alone"
         );
     }
 

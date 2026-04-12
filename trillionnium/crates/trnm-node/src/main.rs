@@ -18671,6 +18671,31 @@ locked_block_hash = "stale-lock"
     }
 
     #[test]
+    fn metadata_only_operator_action_keeps_aligned_retained_wal_tip_height_saturated_at_max_height() {
+        let recovered = RecoveredWalState {
+            next_height: u64::MAX,
+            restored_lock: None,
+            last_checkpoint: Some(CheckpointMeta {
+                height: u64::MAX - 1,
+                state_root_hex: "r-max-1".into(),
+                wal_entry_hash_hex: "h-max-1".into(),
+            }),
+            truncated: false,
+            metadata_only_recovery: true,
+            wal_entries_retained: 2,
+            checkpoint_height_retained: Some(u64::MAX - 1),
+        };
+
+        assert_eq!(
+            metadata_only_operator_action(&recovered),
+            format!(
+                "operator action: restore the application snapshot that matches retained WAL tip height {} before retrying join/rejoin; do not resume from metadata alone",
+                u64::MAX - 1,
+            )
+        );
+    }
+
+    #[test]
     fn recovery_startup_summary_reports_checkpoint_ahead_of_retained_tip_as_blocked_metadata_only() {
         let recovered = RecoveredWalState {
             next_height: 12,
