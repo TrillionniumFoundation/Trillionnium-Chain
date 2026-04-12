@@ -26,24 +26,28 @@ rollback_owner=
 
 node1.validator_owner=
 node1.operator_contact=
+node1.operator_ack=
 node1.operator_ack_status=
 node1.operator_ack_signature_path=
 node1.operator_ack_digest=
 
 node2.validator_owner=
 node2.operator_contact=
+node2.operator_ack=
 node2.operator_ack_status=
 node2.operator_ack_signature_path=
 node2.operator_ack_digest=
 
 node3.validator_owner=
 node3.operator_contact=
+node3.operator_ack=
 node3.operator_ack_status=
 node3.operator_ack_signature_path=
 node3.operator_ack_digest=
 
 node4.validator_owner=
 node4.operator_contact=
+node4.operator_ack=
 node4.operator_ack_status=
 node4.operator_ack_signature_path=
 node4.operator_ack_digest=
@@ -53,12 +57,17 @@ node4.operator_ack_digest=
 
 ## Allowed shorthand
 
+### `operator_ack`
+- 必须填写成该 validator owner 的真实确认文本，不能只靠 `operator_ack_status=acknowledged` 口头代替
+- 应原样复用共享 packet 里的同一 `ceremony_id=`、`genesis_artifact_sha256=`、`config_path=`、`validator_name=` 与 `validator_entry_hash=`
+- `config_path=` 必须继续使用 packet 里那条绝对路径，不要手工改写成相对路径或别名路径
+
 ### `operator_ack_status`
 推荐值：
 - `acknowledged`
 - `pending`
 - `blocked`
-- `acknowledged` 只有在同一 node 的 `operator_ack_signature_path` 或 `operator_ack_digest` 已经填入真实值时才可使用
+- `acknowledged` 只有在同一 node 的 `operator_ack` 已经填成真实确认文本，且 `operator_ack_signature_path` 或 `operator_ack_digest` 已经填入真实值时才可使用
 - 如果 durable acknowledgment evidence 还没落盘，先用 `pending` 或 `blocked`，不要提前写成 `acknowledged`
 
 ### `operator_ack_signature_path` vs `operator_ack_digest`
@@ -73,7 +82,7 @@ node4.operator_ack_digest=
 ### 未知值
 - 只有非门槛备注字段才允许临时写 `TBD`，例如某个 validator 的补充说明
 - `ceremony_id / packet_generated_at / packet_distribution_path / validator_set_version / genesis_artifact_path / genesis_artifact_sha256` 这些门槛字段不要写 `TBD`
-- `rollback_owner / validator_owner / operator_contact / operator_ack_*` 如果仍是 `TBD` 或等价 placeholder，只能把它视为 draft，不算 usable handoff packet，更不能拿去当 `public-mainnet-input`
+- `rollback_owner / validator_owner / operator_contact / operator_ack / operator_ack_*` 如果仍是 `TBD` 或等价 placeholder，只能把它视为 draft，不算 usable handoff packet，更不能拿去当 `public-mainnet-input`
 
 ---
 
@@ -83,7 +92,7 @@ node4.operator_ack_digest=
 1. 先填 `ceremony_id / packet_generated_at / packet_distribution_path / validator_set_version / startup_order_note / rollback_owner`
 2. 再填 4 个 `validator_owner`
 3. 再填 4 个 `operator_contact`
-4. 最后填 `operator_ack_*`
+4. 最后填 4 组 `operator_ack` 与对应 `operator_ack_*`
 
 补充约束：
 - `packet_generated_at` 必须是这次实际发出的 packet 生成时间；如果重发 packet，不要沿用旧时间戳

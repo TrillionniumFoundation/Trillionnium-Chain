@@ -42,6 +42,7 @@ rollback_owner=
 ```text
 validator_owner=
 operator_contact=node1=<chat/email/oncall-for-node1>
+operator_ack=
 operator_ack_status=
 operator_ack_signature_path=
 operator_ack_digest=
@@ -51,6 +52,7 @@ operator_ack_digest=
 ```text
 validator_owner=
 operator_contact=node2=<chat/email/oncall-for-node2>
+operator_ack=
 operator_ack_status=
 operator_ack_signature_path=
 operator_ack_digest=
@@ -60,6 +62,7 @@ operator_ack_digest=
 ```text
 validator_owner=
 operator_contact=node3=<chat/email/oncall-for-node3>
+operator_ack=
 operator_ack_status=
 operator_ack_signature_path=
 operator_ack_digest=
@@ -69,6 +72,7 @@ operator_ack_digest=
 ```text
 validator_owner=
 operator_contact=node4=<chat/email/oncall-for-node4>
+operator_ack=
 operator_ack_status=
 operator_ack_signature_path=
 operator_ack_digest=
@@ -83,8 +87,9 @@ operator_ack_digest=
 - Global 5 项全部有值
 - `node1..node4` 的 `validator_owner` 全部有值
 - `node1..node4` 的 `operator_contact` 全部有值
+- `node1..node4` 的 `operator_ack` 全部有值，且必须复用共享 packet 中同一 validator 的 `ceremony_id=`、`config_path=`、`validator_name=` 与 `validator_entry_hash=`，不要手工改写成相对路径、改掉 ceremony id，或重算 validator entry hash
 - `node1..node4` 的 `operator_ack_status` 全部明确（例如 `acknowledged` / `pending` / `blocked`）
-- 如果某个 node 的 `operator_ack_status=acknowledged`，则同一 node 的 `operator_ack_signature_path` 或 `operator_ack_digest` 必须至少一项已有真实值；若两者都空，状态只能记为 `pending` 或 `blocked`
+- 如果某个 node 的 `operator_ack_status=acknowledged`，则同一 node 的 `operator_ack` 必须已经填成真实确认文本，且 `operator_ack_signature_path` 或 `operator_ack_digest` 必须至少一项已有真实值；若 `operator_ack` 仍空、或两项 evidence 都空，状态只能记为 `pending` 或 `blocked`
 - 每个节点至少有：
   - `operator_ack_signature_path` **或**
   - `operator_ack_digest`
@@ -97,7 +102,7 @@ operator_ack_digest=
 1. 先填 **Global 5 项**，其中优先确认 `packet_distribution_path=` 已经指向一份真实、唯一、且不同于 `genesis_artifact_path=` 的 packet 文件绝对路径，且 `validator_set_version=` 不是默认模板值
 2. 再填 4 个 `validator_owner`
 3. 再填 4 个 `operator_contact`
-4. 最后补 `operator_ack_*`
+4. 最后补 4 组 `operator_ack` 与对应 `operator_ack_*`
 
 这样就能最快把当前状态从：
 - draft / fillable template
