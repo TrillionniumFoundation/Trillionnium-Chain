@@ -455,3 +455,39 @@ fn checkpoint_audit_summary_rejects_noncanonical_prev_hash_surface() {
         "audit summaries must fail closed when WAL predecessor linkage is not canonical lower hex"
     );
 }
+
+#[test]
+fn checkpoint_audit_summary_rejects_uppercase_checkpoint_state_root_surface() {
+    let canonical_wal = WalMeta {
+        height: 4,
+        round: 1,
+        proposal_hash: "proposal-4".into(),
+        committed: true,
+        state_root_hex: "ab".repeat(32),
+        prev_hash_hex: Some("cd".repeat(32)),
+    };
+    let canonical_checkpoint = CheckpointMeta {
+        height: canonical_wal.height,
+        state_root_hex: canonical_wal.state_root_hex.clone(),
+        wal_entry_hash_hex: canonical_wal.content_hash_hex(),
+    };
+    let mut drifted_checkpoint = canonical_checkpoint.clone();
+    drifted_checkpoint.state_root_hex = drifted_checkpoint.state_root_hex.to_uppercase();
+
+    assert!(
+        checkpoint_evidence_surface_is_canonical(&canonical_checkpoint, &canonical_wal),
+        "sanity: canonical checkpoint/WAL evidence should remain audit-ready before the uppercase checkpoint state-root regression mutation"
+    );
+    assert!(
+        checkpoint_da_light_verifier_summary(&canonical_checkpoint, &canonical_wal).is_some(),
+        "sanity: canonical checkpoint/WAL evidence should emit an audit summary before the uppercase checkpoint state-root regression mutation"
+    );
+    assert!(
+        !checkpoint_evidence_surface_is_canonical(&drifted_checkpoint, &canonical_wal),
+        "checkpoint audit surfaces must reject uppercase checkpoint state_root_hex drift so audit bindings stay byte-canonical"
+    );
+    assert!(
+        checkpoint_da_light_verifier_summary(&drifted_checkpoint, &canonical_wal).is_none(),
+        "audit summaries must fail closed when checkpoint state_root_hex is not canonical lower hex"
+    );
+}

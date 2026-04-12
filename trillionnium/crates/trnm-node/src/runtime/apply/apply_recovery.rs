@@ -84,6 +84,7 @@ pub(crate) fn canonicalize_resolve_authority_snapshot(raw: &str) -> Option<Strin
             || member_trimmed.chars().any(|c| c.is_whitespace())
             || has_forbidden_separator(member_trimmed)
             || !member_trimmed.is_ascii()
+            || member_trimmed.chars().any(|c| c.is_ascii_control())
             || member_trimmed.eq_ignore_ascii_case("governance.resolve_authority")
             || member_trimmed.eq_ignore_ascii_case("governance.emergency_pause")
             || member_trimmed.eq_ignore_ascii_case("system")
@@ -116,6 +117,7 @@ pub(crate) fn is_canonical_resolve_approver_snapshot(raw: &str) -> bool {
         && !trimmed.contains(';')
         && !trimmed.contains('|')
         && trimmed.is_ascii()
+        && !trimmed.chars().any(|c| c.is_ascii_control())
         && !trimmed.eq_ignore_ascii_case("governance.resolve_authority")
         && !trimmed.eq_ignore_ascii_case("governance.emergency_pause")
         && !trimmed.eq_ignore_ascii_case("system")
@@ -305,13 +307,108 @@ mod tests {
             "authority-a,treasury.challenge_forfeits",
             "authority-a,treasury.worker_slashes",
             "authority-a,Authority-A",
+            "authority-a,authority-\u{0007}b",
         ] {
             assert_eq!(
                 canonicalize_resolve_authority_snapshot(raw),
                 None,
-                "reserved or aliased authority member must fail closed: {raw}"
+                "reserved, aliased, or control-byte authority member must fail closed: {raw:?}"
             );
         }
+    }
+
+    #[test]
+    fn restore_pending_resolve_approval_from_snapshot_rejects_control_byte_first_approver() {
+        let mut st = StateStore::default();
+        st.set_gov_param(
+            98_300,
+            7_998,
+            "resolve_authority".into(),
+            "authority-c,authority-d".into(),
+        )
+        .expect("resolve authority set should install");
+
+        let _ = challenged_task_fixture(&mut st, 8_116);
+        st.set_gov_param(98_306, 7_999, "emergency_pause".into(), "true".into())
+            .expect("pause toggle must apply immediately");
+        assert!(st.is_emergency_paused());
+
+        let before_task = st.get_task(8_116).unwrap();
+
+        restore_pending_resolve_approval_from_snapshot(
+            &mut st,
+            8_116,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: false,
+                confirmations: 1,
+                first_approver: "authority-\u{0007}d".into(),
+                authority_set: "authority-c,authority-d".into(),
+                task_version: before_task.version,
+            }),
+        );
+
+        assert_eq!(
+            st.pending_resolve_approval(8_116),
+            None,
+            "rollback restore must fail closed when first approver contains control bytes"
+        );
+        assert_eq!(
+            st.pending_resolve_first_approver(8_116),
+            None,
+            "control-byte first approvers must not materialize a staged approver during paused restore"
+        );
+        assert_eq!(
+            st.pending_resolve_approval_snapshot(8_116),
+            None,
+            "control-byte first approvers must not persist paused rollback metadata"
+        );
+    }
+
+    #[test]
+    fn restore_pending_resolve_approval_from_snapshot_rejects_reserved_first_approver_alias() {
+        let mut st = StateStore::default();
+        st.set_gov_param(
+            98_300,
+            7_998,
+            "resolve_authority".into(),
+            "authority-c,authority-d".into(),
+        )
+        .expect("resolve authority set should install");
+
+        let _ = challenged_task_fixture(&mut st, 8_116);
+        st.set_gov_param(98_306, 7_999, "emergency_pause".into(), "true".into())
+            .expect("pause toggle must apply immediately");
+        assert!(st.is_emergency_paused());
+
+        let before_task = st.get_task(8_116).unwrap();
+
+        restore_pending_resolve_approval_from_snapshot(
+            &mut st,
+            8_116,
+            Some(PendingResolveApprovalSnapshot {
+                slash_worker: false,
+                confirmations: 1,
+                first_approver: "governance.resolve_authority".into(),
+                authority_set: "authority-c,authority-d".into(),
+                task_version: before_task.version,
+            }),
+        );
+
+        assert_eq!(
+            st.pending_resolve_approval(8_116),
+            None,
+            "rollback restore must fail closed when first approver reuses a reserved canonical alias"
+        );
+        assert_eq!(
+            st.pending_resolve_first_approver(8_116),
+            None,
+            "reserved first approver aliases must not materialize a staged approver during paused restore"
+        );
+        assert_eq!(
+            st.pending_resolve_approval_snapshot(8_116),
+            None,
+            "reserved first approver aliases must not persist paused rollback metadata"
+        );
     }
 }
 

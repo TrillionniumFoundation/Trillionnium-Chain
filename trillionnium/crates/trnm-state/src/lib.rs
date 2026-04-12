@@ -4673,6 +4673,46 @@ mod tests {
     }
 
     #[test]
+    fn checkpoint_da_light_verifier_summary_fails_closed_on_mixed_case_checkpoint_digests() {
+        let wal = WalMeta {
+            height: 7,
+            round: 0,
+            proposal_hash: "proposal-7".into(),
+            committed: true,
+            state_root_hex: "ab".repeat(32),
+            prev_hash_hex: Some("01".repeat(32)),
+        };
+        let checkpoint = CheckpointMeta {
+            height: wal.height,
+            state_root_hex: wal.state_root_hex.clone(),
+            wal_entry_hash_hex: wal.content_hash_hex(),
+        };
+
+        assert!(
+            checkpoint_da_light_verifier_summary(&checkpoint, &wal).is_some(),
+            "sanity: canonical checkpoint/WAL evidence should emit a DA summary before mixed-case drift is introduced"
+        );
+
+        let mut uppercase_checkpoint_wal_hash = checkpoint.clone();
+        uppercase_checkpoint_wal_hash.wal_entry_hash_hex =
+            uppercase_checkpoint_wal_hash.wal_entry_hash_hex.to_uppercase();
+        assert_eq!(
+            checkpoint_da_light_verifier_summary(&uppercase_checkpoint_wal_hash, &wal),
+            None,
+            "DA/light-verifier summaries must fail closed when checkpoint wal_entry_hash_hex is not lowercase canonical hex"
+        );
+
+        let mut uppercase_checkpoint_state_root = checkpoint.clone();
+        uppercase_checkpoint_state_root.state_root_hex =
+            uppercase_checkpoint_state_root.state_root_hex.to_uppercase();
+        assert_eq!(
+            checkpoint_da_light_verifier_summary(&uppercase_checkpoint_state_root, &wal),
+            None,
+            "DA/light-verifier summaries must fail closed when checkpoint state_root_hex is not lowercase canonical hex"
+        );
+    }
+
+    #[test]
     fn checkpoint_da_light_verifier_summary_marks_genesis_wal_prev_hash_as_none() {
         let wal = WalMeta {
             height: 1,
@@ -5232,6 +5272,28 @@ mod tests {
         assert!(
             !checkpoint_evidence_surface_is_canonical(&checkpoint, &wal_entry),
             "checkpoint audit surfaces must reject non-genesis WAL metadata without prev_hash_hex so the predecessor link cannot disappear from checkpoint proofs"
+        );
+    }
+
+    #[test]
+    fn checkpoint_evidence_surface_rejects_short_non_genesis_prev_hash() {
+        let wal_entry = WalMeta {
+            height: 2,
+            round: 0,
+            proposal_hash: "proposal-2".into(),
+            committed: true,
+            state_root_hex: "cd".repeat(32),
+            prev_hash_hex: Some("ab".repeat(31)),
+        };
+        let checkpoint = CheckpointMeta {
+            height: wal_entry.height,
+            state_root_hex: wal_entry.state_root_hex.clone(),
+            wal_entry_hash_hex: wal_entry.content_hash_hex(),
+        };
+
+        assert!(
+            !checkpoint_evidence_surface_is_canonical(&checkpoint, &wal_entry),
+            "checkpoint audit surfaces must reject short non-genesis prev_hash_hex values so predecessor links stay width-canonical before DA/light-verifier sidecars consume the checkpoint evidence"
         );
     }
 

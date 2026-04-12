@@ -161,6 +161,31 @@ fn node_recovery_checkpoint_rejects_wal_entry_hash_with_newline_control_drift() 
 }
 
 #[test]
+fn node_recovery_checkpoint_rejects_wal_entry_hash_with_carriage_return_control_drift() {
+    let wal_entry = WalMeta {
+        height: 1,
+        round: 0,
+        proposal_hash: "proposal-1".into(),
+        committed: true,
+        state_root_hex: "ab".repeat(32),
+        prev_hash_hex: None,
+    };
+    let mut checkpoint = CheckpointMeta {
+        height: wal_entry.height,
+        state_root_hex: wal_entry.state_root_hex.clone(),
+        wal_entry_hash_hex: wal_entry.content_hash_hex(),
+    };
+    checkpoint.wal_entry_hash_hex.push('\r');
+
+    let got = verify_wal_and_find_checkpoint_node_recovery(&[checkpoint], &[wal_entry]).unwrap();
+
+    assert!(
+        got.is_none(),
+        "node recovery must reject checkpoint wal_entry_hash_hex with carriage-return drift so restart-time checkpoint proofs preserve canonical WAL digest framing across line-ending variants"
+    );
+}
+
+#[test]
 fn node_recovery_checkpoint_rejects_state_root_with_zero_width_layout_drift() {
     let wal_entry = WalMeta {
         height: 1,
@@ -207,6 +232,31 @@ fn node_recovery_checkpoint_rejects_state_root_with_newline_control_drift() {
     assert!(
         got.is_none(),
         "node recovery must reject checkpoint state_root_hex with control-character drift so restart-time checkpoint proofs cannot bind to newline-variant state-root surfaces"
+    );
+}
+
+#[test]
+fn node_recovery_checkpoint_rejects_state_root_with_carriage_return_control_drift() {
+    let wal_entry = WalMeta {
+        height: 1,
+        round: 0,
+        proposal_hash: "proposal-1".into(),
+        committed: true,
+        state_root_hex: "state-root-1".into(),
+        prev_hash_hex: None,
+    };
+    let mut checkpoint = CheckpointMeta {
+        height: wal_entry.height,
+        state_root_hex: wal_entry.state_root_hex.clone(),
+        wal_entry_hash_hex: wal_entry.content_hash_hex(),
+    };
+    checkpoint.state_root_hex.push('\r');
+
+    let got = verify_wal_and_find_checkpoint_node_recovery(&[checkpoint], &[wal_entry]).unwrap();
+
+    assert!(
+        got.is_none(),
+        "node recovery must reject checkpoint state_root_hex with carriage-return drift so restart-time checkpoint proofs preserve canonical state-root framing across line-ending variants"
     );
 }
 
@@ -4599,6 +4649,34 @@ fn restore_pending_resolve_invalid_snapshot_fails_closed_to_canonical_root() {
         state.state_root(),
         empty_root,
         "malformed pending resolve checkpoint evidence must not perturb the canonical empty root"
+    );
+}
+
+#[test]
+fn restore_pending_resolve_case_variant_duplicate_authority_members_fails_closed_to_canonical_root(
+) {
+    let mut state = StateStore::new();
+
+    let empty_root = state.state_root();
+    state.restore_pending_resolve_approval(
+        5_198,
+        Some(PendingResolveApprovalSnapshot {
+            slash_worker: true,
+            confirmations: 1,
+            first_approver: "resolver-a".into(),
+            authority_set: "resolver-a,RESOLVER-A".into(),
+            task_version: 7,
+        }),
+    );
+
+    assert!(
+        state.pending_resolve_approval_snapshot(5_198).is_none(),
+        "restore_pending_resolve_approval should fail closed when authority metadata uses case-variant duplicate members that would fake a two-party quorum"
+    );
+    assert_eq!(
+        state.state_root(),
+        empty_root,
+        "case-variant duplicate pending resolve authority members must not perturb the canonical empty root"
     );
 }
 
@@ -9328,6 +9406,42 @@ fn checkpoint_audit_summary_rejects_forged_genesis_prev_hash_surface() {
 }
 
 #[test]
+fn checkpoint_audit_summary_rejects_uppercase_checkpoint_wal_entry_hash_surface() {
+    let canonical_wal = WalMeta {
+        height: 5,
+        round: 0,
+        proposal_hash: "proposal-5".into(),
+        committed: true,
+        state_root_hex: "ef".repeat(32),
+        prev_hash_hex: Some("01".repeat(32)),
+    };
+    let canonical_checkpoint = CheckpointMeta {
+        height: canonical_wal.height,
+        state_root_hex: canonical_wal.state_root_hex.clone(),
+        wal_entry_hash_hex: canonical_wal.content_hash_hex(),
+    };
+    let mut drifted_checkpoint = canonical_checkpoint.clone();
+    drifted_checkpoint.wal_entry_hash_hex = drifted_checkpoint.wal_entry_hash_hex.to_uppercase();
+
+    assert!(
+        checkpoint_evidence_surface_is_canonical(&canonical_checkpoint, &canonical_wal),
+        "sanity: canonical checkpoint/WAL evidence should remain audit-ready before the uppercase checkpoint wal-entry-hash regression mutation"
+    );
+    assert!(
+        checkpoint_da_light_verifier_summary(&canonical_checkpoint, &canonical_wal).is_some(),
+        "sanity: canonical checkpoint/WAL evidence should emit an audit summary before the uppercase checkpoint wal-entry-hash regression mutation"
+    );
+    assert!(
+        !checkpoint_evidence_surface_is_canonical(&drifted_checkpoint, &canonical_wal),
+        "checkpoint audit surfaces must reject uppercase checkpoint wal_entry_hash_hex drift so WAL bindings stay byte-canonical"
+    );
+    assert!(
+        checkpoint_da_light_verifier_summary(&drifted_checkpoint, &canonical_wal).is_none(),
+        "audit summaries must fail closed when checkpoint wal_entry_hash_hex is not canonical lower hex"
+    );
+}
+
+#[test]
 fn wal_checkpoint_verification_falls_back_when_non_genesis_prev_hash_has_newline_drift() {
     let e1 = WalMeta {
         height: 1,
@@ -9894,6 +10008,53 @@ fn wal_checkpoint_accepts_identical_duplicate_checkpoint_evidence() {
         got,
         Some(checkpoint),
         "checkpoint recovery should accept byte-identical duplicate checkpoint tuples so duplicated canonical audit evidence does not fail closed merely because it was recorded twice"
+    );
+}
+
+#[test]
+fn wal_checkpoint_rejects_same_height_checkpoint_state_root_ambiguity_even_when_wal_hash_matches() {
+    let e1 = WalMeta {
+        height: 1,
+        round: 0,
+        proposal_hash: "p1".into(),
+        committed: true,
+        state_root_hex: "11".repeat(32),
+        prev_hash_hex: None,
+    };
+    let h1 = e1.content_hash_hex();
+    let e2 = WalMeta {
+        height: 2,
+        round: 0,
+        proposal_hash: "p2".into(),
+        committed: true,
+        state_root_hex: "22".repeat(32),
+        prev_hash_hex: Some(h1.clone()),
+    };
+    let e2_hash = e2.content_hash_hex();
+
+    let checkpoints = vec![
+        CheckpointMeta {
+            height: 1,
+            state_root_hex: e1.state_root_hex.clone(),
+            wal_entry_hash_hex: h1,
+        },
+        CheckpointMeta {
+            height: 2,
+            state_root_hex: e2.state_root_hex.clone(),
+            wal_entry_hash_hex: e2_hash.clone(),
+        },
+        CheckpointMeta {
+            height: 2,
+            state_root_hex: "33".repeat(32),
+            wal_entry_hash_hex: e2_hash,
+        },
+    ];
+
+    let got = verify_wal_and_find_checkpoint(&checkpoints, &[e1, e2]).unwrap();
+    assert_eq!(
+        got.map(|cp| cp.height),
+        Some(1),
+        "checkpoint recovery must fail closed back to the last unambiguous checkpoint when same-height checkpoint tuples reuse one canonical WAL hash but disagree on state_root_hex"
     );
 }
 
