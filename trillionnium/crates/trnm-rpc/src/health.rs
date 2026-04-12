@@ -63,6 +63,10 @@ fn json_response_for_method(method: &str, status_line: &str, body: &str) -> Stri
     }
 }
 
+fn is_query_capability_audit_path(path: &str) -> bool {
+    path == "/query-capability-audit" || path.starts_with("/query-capability-audit/")
+}
+
 fn health_probe_body(ts_unix_ms: u64) -> String {
     serde_json::json!({
         "ok": true,
@@ -287,7 +291,7 @@ pub(crate) fn serve_health(host: &str, port: u16) -> Result<()> {
                     }
                 }
             }
-            (Some((method, _)), Some(path), Some(target)) if path.starts_with("/query-capability-audit/") => {
+            (Some((method, _)), Some(path), Some(target)) if is_query_capability_audit_path(path) => {
                 match parse_query_capability_audit_subject_from_target(target) {
                     Ok(subject_or_token) => {
                         let registry = load_identity_registry(&identity_registry_file());
@@ -334,8 +338,9 @@ pub(crate) fn serve_health(host: &str, port: u16) -> Result<()> {
 mod tests {
     use super::{
         fallback_response_for_request, has_ambiguous_path_segment_encoding, health_probe_body,
-        is_health_probe_path, json_response_for_method, parse_nonempty_path_suffix,
-        parse_path_u64_suffix, parse_query_capability_audit_subject_from_target,
+        is_health_probe_path, is_query_capability_audit_path, json_response_for_method,
+        parse_nonempty_path_suffix, parse_path_u64_suffix,
+        parse_query_capability_audit_subject_from_target,
     };
 
     #[test]
@@ -719,6 +724,14 @@ mod tests {
                 .unwrap(),
             "alice"
         );
+    }
+
+    #[test]
+    fn query_capability_audit_dispatch_accepts_base_path_for_parser_owned_errors() {
+        assert!(is_query_capability_audit_path("/query-capability-audit"));
+        assert!(is_query_capability_audit_path("/query-capability-audit/"));
+        assert!(is_query_capability_audit_path("/query-capability-audit/alice"));
+        assert!(!is_query_capability_audit_path("/query-capability-auditish"));
     }
 
     #[test]
