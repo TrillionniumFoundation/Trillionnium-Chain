@@ -191,6 +191,31 @@ fn has_nonzero_ipv6_scope(socket: SocketAddr) -> bool {
     }
 }
 
+fn ensure_listener_socket_uses_canonical_literal(
+    raw: &str,
+    socket: SocketAddr,
+    path: &str,
+    field: &str,
+) -> Result<()> {
+    if raw == socket.to_string() {
+        return Ok(());
+    }
+
+    if is_ipv4_translated_ipv6(socket.ip()) {
+        anyhow::bail!(
+            "invalid node config {}: {} must not use an IPv4-translated IPv6 address",
+            path,
+            field
+        );
+    }
+
+    anyhow::bail!(
+        "invalid node config {}: {} must use a canonical socket literal",
+        path,
+        field
+    );
+}
+
 #[derive(Debug, Clone, PartialEq, Eq)]
 enum MockTx {
     CreateTask {
@@ -1886,11 +1911,7 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
             path
         )
     })?;
-    anyhow::ensure!(
-        rpc_addr == rpc_socket.to_string(),
-        "invalid node config {}: rpc_addr must use a canonical socket literal",
-        path
-    );
+    ensure_listener_socket_uses_canonical_literal(rpc_addr, rpc_socket, path, "rpc_addr")?;
     anyhow::ensure!(
         rpc_socket.port() != 0,
         "invalid node config {}: rpc_addr must not use port 0",
@@ -1999,11 +2020,7 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
             path
         )
     })?;
-    anyhow::ensure!(
-        p2p_addr == p2p_socket.to_string(),
-        "invalid node config {}: p2p_addr must use a canonical socket literal",
-        path
-    );
+    ensure_listener_socket_uses_canonical_literal(p2p_addr, p2p_socket, path, "p2p_addr")?;
     anyhow::ensure!(
         p2p_socket.port() != 0,
         "invalid node config {}: p2p_addr must not use port 0",
@@ -8159,6 +8176,38 @@ mod tests {
         assert!(p2p_translated_err
             .to_string()
             .contains("p2p_addr must not use an IPv4-translated IPv6 address"));
+
+        let rpc_translated_dotted_quad_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "[::ffff:0:127.0.0.1]:26657".into(),
+                p2p_addr: "[2001:4860:4860::8888]:26656".into(),
+            },
+            "node.toml",
+        )
+        .expect_err("rpc_addr dotted-quad IPv4-translated IPv6 bind must fail closed");
+        assert!(
+            rpc_translated_dotted_quad_err
+                .to_string()
+                .contains("rpc_addr must not use an IPv4-translated IPv6 address"),
+            "unexpected error: {rpc_translated_dotted_quad_err:#}"
+        );
+
+        let p2p_translated_dotted_quad_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "[2001:4860:4860::8888]:26657".into(),
+                p2p_addr: "[::ffff:0:127.0.0.1]:26656".into(),
+            },
+            "node.toml",
+        )
+        .expect_err("p2p_addr dotted-quad IPv4-translated IPv6 bind must fail closed");
+        assert!(
+            p2p_translated_dotted_quad_err
+                .to_string()
+                .contains("p2p_addr must not use an IPv4-translated IPv6 address"),
+            "unexpected error: {p2p_translated_dotted_quad_err:#}"
+        );
 
         let rpc_scope_err = validate_node_config(
             NodeConfig {
