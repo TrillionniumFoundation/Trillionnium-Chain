@@ -1011,6 +1011,9 @@ fn wallet_name_rejects_path_like_values() {
         "〚alice〛",
         "alice,",
         "alice;",
+        "alice+backup",
+        "alice@prod",
+        "alice~1",
         "alice\n",
         "alice bob",
         " alice",
@@ -1066,8 +1069,20 @@ fn wallet_name_error_mentions_ascii_requirement() {
         err.to_string().contains("ASCII local name"),
         "unexpected error: {err}"
     );
+    assert!(
+        err.to_string().contains("only letters, digits, '_' or '-'"),
+        "unexpected error: {err}"
+    );
 }
 
+#[test]
+fn wallet_name_error_mentions_simple_ascii_charset() {
+    let err = ensure_wallet_name("alice+backup").unwrap_err();
+    assert!(
+        err.to_string().contains("only letters, digits, '_' or '-'"),
+        "unexpected error: {err}"
+    );
+}
 
 #[test]
 fn write_key_rejects_non_normalized_private_key_hex() {
