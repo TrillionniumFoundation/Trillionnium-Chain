@@ -167,6 +167,42 @@ fn parse_http_request_target_rejects_encoded_query_delimiter_fail_closed() {
 }
 
 #[test]
+fn parse_http_request_target_rejects_multiple_raw_query_delimiters_fail_closed() {
+    assert_eq!(
+        parse_http_request_target("GET /query-task/42??shadow HTTP/1.1"),
+        None
+    );
+    assert_eq!(
+        parse_http_request_target("HEAD /query-events/7?limit=9?shadow HTTP/1.1"),
+        None
+    );
+}
+
+#[test]
+fn parse_http_request_target_rejects_percent_encoded_controls_and_spaces_fail_closed() {
+    assert_eq!(
+        parse_http_request_target("GET /health%01check HTTP/1.1"),
+        None
+    );
+    assert_eq!(
+        parse_http_request_target("HEAD /readyz%1F HTTP/1.1"),
+        None
+    );
+    assert_eq!(
+        parse_http_request_target("GET /health%20check HTTP/1.1"),
+        None
+    );
+    assert_eq!(
+        parse_http_request_target("GET /health%80check HTTP/1.1"),
+        None
+    );
+    assert_eq!(
+        parse_http_request_target("HEAD /readyz%9F HTTP/1.1"),
+        None
+    );
+}
+
+#[test]
 fn parse_http_request_target_rejects_malformed_percent_encoding_fail_closed() {
     for first_line in [
         "GET /query-task/42% HTTP/1.1",
@@ -201,6 +237,37 @@ fn parse_query_events_limit_from_path_zero_uses_default_limit() {
             .expect("zero limit should fall back to the bounded default"),
         QUERY_EVENTS_LIMIT_DEFAULT
     );
+}
+
+#[test]
+fn parse_query_events_limit_from_path_accepts_single_trailing_slash_with_same_limit_contract() {
+    assert_eq!(
+        parse_query_events_limit_from_path("/query-events/42/?limit=7")
+            .expect("single trailing slash should preserve explicit limit parsing"),
+        7
+    );
+    assert_eq!(
+        parse_query_events_limit_from_path("/query-events/42/")
+            .expect("single trailing slash should keep the default limit contract"),
+        QUERY_EVENTS_LIMIT_DEFAULT
+    );
+}
+
+#[test]
+fn parse_query_events_limit_from_path_rejects_noncanonical_route_shapes() {
+    for path in [
+        "/query-events",
+        "/query-events/",
+        "/query-events/not-a-u64?limit=1",
+        "/query-events/42/history?limit=1",
+        "/query-task/42?limit=1",
+        "/health?limit=1",
+    ] {
+        let err = parse_query_events_limit_from_path(path)
+            .expect_err("non-query-events routes must fail closed instead of inheriting the limit parser");
+        assert!(err.contains("400 Bad Request"), "path={path} err={err}");
+        assert!(err.contains("invalid limit"), "path={path} err={err}");
+    }
 }
 
 #[test]
@@ -267,7 +334,7 @@ fn parse_query_events_limit_from_path_accepts_wrapped_numeric_limit() {
         8
     );
     assert_eq!(
-        parse_query_events_limit_from_path("/query-events/42?limit=  `9`  ")
+        parse_query_events_limit_from_path("/query-events/42?limit=`9`")
             .expect("backtick-wrapped numeric limit should parse"),
         9
     );
@@ -417,6 +484,22 @@ fn parse_query_events_limit_from_path_rejects_percent_encoded_path_smuggling() {
 }
 
 #[test]
+fn parse_query_events_limit_from_path_rejects_raw_and_encoded_backslash_path_smuggling() {
+    for path in [
+        "/query-events\\42?limit=7",
+        "/query-events/42\\history?limit=7",
+        "/query-events%5c42?limit=7",
+        "/query-events/42%5chistory?limit=7",
+        "/query-events/42%5Chistory?limit=7",
+    ] {
+        let err = parse_query_events_limit_from_path(path)
+            .expect_err("slash-like backslash path encodings must fail closed");
+        assert!(err.contains("400 Bad Request"), "path={path} err={err}");
+        assert!(err.contains("invalid limit"), "path={path} err={err}");
+    }
+}
+
+#[test]
 fn parse_query_normalized_audit_events_query_from_path_defaults_and_filters() {
     let out = parse_query_normalized_audit_events_query_from_path("/query-normalized-audit-events")
         .expect("default should parse");
@@ -522,6 +605,11 @@ fn parse_query_capability_audit_subject_from_target_rejects_query_string() {
 
 #[test]
 fn parse_query_capability_audit_subject_from_target_distinguishes_missing_from_malformed() {
+    assert_eq!(
+        parse_query_capability_audit_subject_from_target("/query-capability-audit")
+            .expect_err("bare capability route should report missing subject"),
+        "missing token or subject"
+    );
     assert_eq!(
         parse_query_capability_audit_subject_from_target("/query-capability-audit/")
             .expect_err("empty capability route should report missing subject"),

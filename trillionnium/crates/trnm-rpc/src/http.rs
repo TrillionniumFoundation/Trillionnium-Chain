@@ -41,7 +41,7 @@ fn contains_percent_encoded_control_or_space(value: &str) -> bool {
             let lo = (bytes[idx + 2] as char).to_digit(16);
             if let (Some(hi), Some(lo)) = (hi, lo) {
                 let decoded = ((hi << 4) | lo) as u8;
-                if decoded <= 0x20 || decoded == 0x7f {
+                if decoded <= 0x20 || decoded == 0x7f || (0x80..=0x9f).contains(&decoded) {
                     return true;
                 }
             }
@@ -228,6 +228,23 @@ pub(crate) fn parse_query_events_limit_from_path(path: &str) -> std::result::Res
         ));
     }
 
+    let Some(event_id_suffix) = path_without_query.strip_prefix("/query-events/") else {
+        return Err(http_json_response(
+            "400 Bad Request",
+            "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid limit\"}",
+        ));
+    };
+    let event_id_suffix = event_id_suffix.strip_suffix('/').unwrap_or(event_id_suffix);
+    if event_id_suffix.is_empty()
+        || event_id_suffix.contains('/')
+        || !event_id_suffix.chars().all(|ch| ch.is_ascii_digit())
+    {
+        return Err(http_json_response(
+            "400 Bad Request",
+            "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid limit\"}",
+        ));
+    }
+
     let Some(query) = path.split_once('?').map(|(_, query)| query) else {
         return Ok(QUERY_EVENTS_LIMIT_DEFAULT);
     };
@@ -285,7 +302,7 @@ pub(crate) fn parse_query_events_limit_from_path(path: &str) -> std::result::Res
         }
 
         let normalized = normalize_wrapped_env_value(value);
-        if normalized.is_empty() {
+        if normalized.is_empty() || normalized != value {
             return Err(http_json_response(
                 "400 Bad Request",
                 "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid limit\"}",
@@ -382,6 +399,8 @@ mod tests {
         assert!(contains_percent_encoded_control_or_space("/health%1fcheck"));
         assert!(contains_percent_encoded_control_or_space("/health%20check"));
         assert!(contains_percent_encoded_control_or_space("/health%7Fcheck"));
+        assert!(contains_percent_encoded_control_or_space("/health%80check"));
+        assert!(contains_percent_encoded_control_or_space("/health%9fcheck"));
         assert!(!contains_percent_encoded_control_or_space("/oracle?snapshot=%2Ftmp%2Fs.json"));
     }
 
@@ -393,6 +412,14 @@ mod tests {
         );
         assert_eq!(
             parse_http_request_target("HEAD /readyz%1F HTTP/1.1"),
+            None
+        );
+        assert_eq!(
+            parse_http_request_target("GET /health%80check HTTP/1.1"),
+            None
+        );
+        assert_eq!(
+            parse_http_request_target("HEAD /readyz%9F HTTP/1.1"),
             None
         );
     }
@@ -538,6 +565,48 @@ mod tests {
     }
 
     #[test]
+    fn parse_query_events_limit_rejects_wrapped_limit_keys() {
+        for path in [
+            "/query-events/42?%22limit%22=7",
+            "/query-events/42?'limit'=7",
+            "/query-events/42?`limit`=7",
+            "/query-events/42?%60limit%60=7",
+        ] {
+            let response = parse_query_events_limit_from_path(path);
+            assert!(response.is_err(), "path={path:?}");
+            assert_eq!(
+                response.unwrap_err(),
+                http_json_response(
+                    "400 Bad Request",
+                    "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid limit\"}"
+                ),
+                "path={path:?}"
+            );
+        }
+    }
+
+    #[test]
+    fn parse_query_events_limit_rejects_wrapped_limit_values() {
+        for path in [
+            "/query-events/42?limit=%227%22",
+            "/query-events/42?limit='7'",
+            "/query-events/42?limit=`7`",
+            "/query-events/42?limit=\"7\"",
+        ] {
+            let response = parse_query_events_limit_from_path(path);
+            assert!(response.is_err(), "path={path:?}");
+            assert_eq!(
+                response.unwrap_err(),
+                http_json_response(
+                    "400 Bad Request",
+                    "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid limit\"}"
+                ),
+                "path={path:?}"
+            );
+        }
+    }
+
+    #[test]
     fn parse_http_request_target_rejects_raw_and_encoded_dot_segments() {
         assert_eq!(
             parse_http_request_target("GET /query-events/../42?limit=1 HTTP/1.1"),
@@ -584,6 +653,65 @@ mod tests {
                 "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid limit\"}"
             )
         );
+    }
+
+    #[test]
+    fn parse_query_events_limit_rejects_raw_and_encoded_backslash_path_smuggling() {
+        for path in [
+            "/query-events\\42?limit=7",
+            "/query-events/42\\history?limit=7",
+            "/query-events%5c42?limit=7",
+            "/query-events/42%5chistory?limit=7",
+            "/query-events/42%5Chistory?limit=7",
+        ] {
+            let response = parse_query_events_limit_from_path(path);
+            assert!(response.is_err(), "path={path}");
+            assert_eq!(
+                response.unwrap_err(),
+                http_json_response(
+                    "400 Bad Request",
+                    "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid limit\"}"
+                ),
+                "path={path}"
+            );
+        }
+    }
+
+    #[test]
+    fn parse_query_events_limit_accepts_single_trailing_slash_with_same_limit_contract() {
+        assert_eq!(
+            parse_query_events_limit_from_path("/query-events/42/?limit=7")
+                .expect("single trailing slash should preserve explicit limit parsing"),
+            7
+        );
+        assert_eq!(
+            parse_query_events_limit_from_path("/query-events/42/")
+                .expect("single trailing slash should preserve default limit parsing"),
+            QUERY_EVENTS_LIMIT_DEFAULT
+        );
+    }
+
+    #[test]
+    fn parse_query_events_limit_rejects_noncanonical_route_shapes() {
+        for path in [
+            "/query-events",
+            "/query-events/",
+            "/query-events/not-a-u64?limit=1",
+            "/query-events/42/history?limit=1",
+            "/query-task/42?limit=1",
+            "/health?limit=1",
+        ] {
+            let response = parse_query_events_limit_from_path(path);
+            assert!(response.is_err(), "path={path}");
+            assert_eq!(
+                response.unwrap_err(),
+                http_json_response(
+                    "400 Bad Request",
+                    "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid limit\"}"
+                ),
+                "path={path}"
+            );
+        }
     }
 
     #[test]

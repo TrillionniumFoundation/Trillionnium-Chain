@@ -3055,15 +3055,12 @@ fn parse_http_request_target(first_line: &str) -> Option<(&str, &str)> {
     if path.contains('#') || normalized.contains("%23") {
         return None;
     }
-    if normalized.contains("%00")
-        || normalized.contains("%0d")
-        || normalized.contains("%0a")
-        || normalized.contains("%09")
-        || normalized.contains("%0b")
-        || normalized.contains("%0c")
-        || normalized.contains("%20")
-        || normalized.contains("%7f")
+    if contains_malformed_percent_encoding(path)
+        || contains_percent_encoded_control_or_space(path)
     {
+        return None;
+    }
+    if path.matches('?').count() > 1 {
         return None;
     }
 
@@ -3097,6 +3094,9 @@ fn parse_query_events_limit_from_path(path: &str) -> std::result::Result<usize, 
     if !path_without_query.starts_with('/')
         || path_without_query.contains('\\')
         || path_without_query.contains('#')
+        || path_without_query
+            .chars()
+            .any(|ch| ch.is_control() || ch.is_whitespace())
         || normalized_path.contains("%5c")
         || normalized_path.contains("%23")
         || normalized_path.contains("%2f")
@@ -3109,9 +3109,28 @@ fn parse_query_events_limit_from_path(path: &str) -> std::result::Result<usize, 
         || normalized_path.contains("%0c")
         || normalized_path.contains("%20")
         || normalized_path.contains("%7f")
+        || contains_malformed_percent_encoding(path_without_query)
+        || contains_percent_encoded_control_or_space(path_without_query)
         || path_without_query
             .split('/')
             .any(|segment| segment == "." || segment == "..")
+    {
+        return Err(http_json_response(
+            "400 Bad Request",
+            "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid limit\"}",
+        ));
+    }
+
+    let Some(event_id_suffix) = path_without_query.strip_prefix("/query-events/") else {
+        return Err(http_json_response(
+            "400 Bad Request",
+            "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid limit\"}",
+        ));
+    };
+    let event_id_suffix = event_id_suffix.strip_suffix('/').unwrap_or(event_id_suffix);
+    if event_id_suffix.is_empty()
+        || event_id_suffix.contains('/')
+        || !event_id_suffix.chars().all(|ch| ch.is_ascii_digit())
     {
         return Err(http_json_response(
             "400 Bad Request",
@@ -3234,7 +3253,7 @@ fn contains_percent_encoded_control_or_space(value: &str) -> bool {
             let lo = (bytes[idx + 2] as char).to_digit(16);
             if let (Some(hi), Some(lo)) = (hi, lo) {
                 let decoded = ((hi << 4) | lo) as u8;
-                if decoded <= 0x20 || decoded == 0x7f {
+                if decoded <= 0x20 || decoded == 0x7f || (0x80..=0x9f).contains(&decoded) {
                     return true;
                 }
             }
@@ -3562,6 +3581,8 @@ fn parse_nonempty_path_suffix<'a>(path: &'a str, prefix: &str) -> Option<&'a str
         .filter(|suffix| !suffix.chars().any(|ch| ch.is_control() || ch.is_whitespace()))
         .filter(|suffix| !suffix.contains('/'))
         .filter(|suffix| !suffix.contains('\\'))
+        .filter(|suffix| !contains_malformed_percent_encoding(suffix))
+        .filter(|suffix| !contains_percent_encoded_control_or_space(suffix))
         .filter(|suffix| !has_ambiguous_path_segment_encoding(suffix))
 }
 
@@ -5255,8 +5276,46 @@ mod tests {
     fn parse_http_get_path_rejects_percent_encoded_control_path_bytes_fail_closed() {
         assert_eq!(parse_http_get_path("GET /health%00check HTTP/1.1"), None);
         assert_eq!(parse_http_get_path("GET /health%7Fcheck HTTP/1.1"), None);
+        assert_eq!(parse_http_get_path("GET /health%80check HTTP/1.1"), None);
         assert_eq!(parse_http_get_path("GET /query-events/7%00 HTTP/1.1"), None);
         assert_eq!(parse_http_get_path("GET /query-events/7%7f HTTP/1.1"), None);
+        assert_eq!(parse_http_get_path("GET /query-events/7%9F HTTP/1.1"), None);
+    }
+
+    #[test]
+    fn parse_http_request_target_rejects_multiple_raw_query_delimiters_fail_closed() {
+        assert_eq!(
+            parse_http_request_target("GET /query-task/42??shadow HTTP/1.1"),
+            None
+        );
+        assert_eq!(
+            parse_http_request_target("HEAD /query-events/7?limit=9?shadow HTTP/1.1"),
+            None
+        );
+    }
+
+    #[test]
+    fn parse_http_request_target_rejects_percent_encoded_controls_and_spaces_fail_closed() {
+        assert_eq!(
+            parse_http_request_target("GET /health%01check HTTP/1.1"),
+            None
+        );
+        assert_eq!(
+            parse_http_request_target("HEAD /readyz%1F HTTP/1.1"),
+            None
+        );
+        assert_eq!(
+            parse_http_request_target("GET /health%20check HTTP/1.1"),
+            None
+        );
+        assert_eq!(
+            parse_http_request_target("GET /health%80check HTTP/1.1"),
+            None
+        );
+        assert_eq!(
+            parse_http_request_target("HEAD /readyz%9F HTTP/1.1"),
+            None
+        );
     }
 
     #[test]
@@ -5281,12 +5340,45 @@ mod tests {
     }
 
     #[test]
+    fn parse_query_events_limit_from_path_accepts_single_trailing_slash_with_same_limit_contract() {
+        assert_eq!(
+            parse_query_events_limit_from_path("/query-events/42/?limit=7")
+                .expect("single trailing slash should preserve explicit limit parsing"),
+            7
+        );
+        assert_eq!(
+            parse_query_events_limit_from_path("/query-events/42/")
+                .expect("single trailing slash should preserve default limit parsing"),
+            QUERY_EVENTS_LIMIT_DEFAULT
+        );
+    }
+
+    #[test]
+    fn parse_query_events_limit_from_path_rejects_noncanonical_route_shapes() {
+        for path in [
+            "/query-events",
+            "/query-events/",
+            "/query-events/not-a-u64?limit=1",
+            "/query-events/42/history?limit=1",
+            "/query-task/42?limit=1",
+            "/health?limit=1",
+        ] {
+            let err = parse_query_events_limit_from_path(path)
+                .expect_err("non-query-events routes must fail closed instead of inheriting the limit parser");
+            assert!(err.contains("400 Bad Request"), "path={path} err={err}");
+            assert!(err.contains("invalid limit"), "path={path} err={err}");
+        }
+    }
+
+    #[test]
     fn parse_query_events_limit_from_path_rejects_unrelated_query_keys() {
         for path in [
             "/query-events/42?foo=bar&limit=9",
             "/query-events/42?limit=9&foo=bar",
             "/query-events/42?foo=bar",
             "/query-events/42?limit=9&bar=baz",
+            "/query-events/42?Limit=9",
+            "/query-events/42?LIMIT=9",
         ] {
             let err = parse_query_events_limit_from_path(path)
                 .expect_err("unrelated query keys must fail closed instead of being ignored");
@@ -5339,7 +5431,7 @@ mod tests {
             8
         );
         assert_eq!(
-            parse_query_events_limit_from_path("/query-events/42?limit=  `9`  ")
+            parse_query_events_limit_from_path("/query-events/42?limit=`9`")
                 .expect("backtick-wrapped numeric limit should parse"),
             9
         );
@@ -5487,6 +5579,22 @@ mod tests {
     }
 
     #[test]
+    fn parse_query_events_limit_from_path_rejects_raw_and_encoded_backslash_path_smuggling() {
+        for path in [
+            "/query-events\\42?limit=7",
+            "/query-events/42\\history?limit=7",
+            "/query-events%5c42?limit=7",
+            "/query-events/42%5chistory?limit=7",
+            "/query-events/42%5Chistory?limit=7",
+        ] {
+            let err = parse_query_events_limit_from_path(path)
+                .expect_err("slash-like backslash path encodings must fail closed");
+            assert!(err.contains("400 Bad Request"), "path={path} err={err}");
+            assert!(err.contains("invalid limit"), "path={path} err={err}");
+        }
+    }
+
+    #[test]
     fn parse_query_normalized_audit_events_query_from_path_defaults_and_filters() {
         let out =
             parse_query_normalized_audit_events_query_from_path("/query-normalized-audit-events")
@@ -5524,6 +5632,21 @@ mod tests {
         .expect_err("invalid cursor should fail closed");
         assert!(err.contains("400 Bad Request"));
         assert!(err.contains("invalid cursor"));
+    }
+
+    #[test]
+    fn parse_query_normalized_audit_events_query_from_path_rejects_query_key_case_drift() {
+        for path in [
+            "/query-normalized-audit-events?Limit=3",
+            "/query-normalized-audit-events?Source=trnm.task",
+            "/query-normalized-audit-events?eventtype=trnm.task.commit",
+            "/query-normalized-audit-events?Cursor=2",
+        ] {
+            let err = parse_query_normalized_audit_events_query_from_path(path)
+                .expect_err("query key case drift should fail closed");
+            assert!(err.contains("400 Bad Request"), "path={path} err={err}");
+            assert!(err.contains("invalid query"), "path={path} err={err}");
+        }
     }
 
     #[test]
@@ -5609,16 +5732,29 @@ mod tests {
     }
 
     #[test]
-    fn parse_query_normalized_audit_events_query_from_path_rejects_percent_encoded_null_and_del_controls(
+    fn parse_query_normalized_audit_events_query_from_path_rejects_exact_trailing_slash() {
+        let err = parse_query_normalized_audit_events_query_from_path(
+            "/query-normalized-audit-events/?source=trnm.task",
+        )
+        .expect_err("exact trailing slash must fail closed for frozen Day-1 path");
+        assert!(err.contains("400 Bad Request"));
+        assert!(err.contains("invalid query"));
+    }
+
+    #[test]
+    fn parse_query_normalized_audit_events_query_from_path_rejects_percent_encoded_control_bytes(
     ) {
         for path in [
             "/query-normalized-audit-events?source=trnm.task%00shadow",
+            "/query-normalized-audit-events?source=trnm.task%80shadow",
             "/query-normalized-audit-events?eventType=trnm.task.commit%7ftrail",
+            "/query-normalized-audit-events?eventType=trnm.task.commit%9Ftrail",
             "/query-normalized-audit-events%00shadow?source=trnm.task",
             "/query-normalized-audit-events%7fshadow?source=trnm.task",
+            "/query-normalized-audit-events%80shadow?source=trnm.task",
         ] {
             let err = parse_query_normalized_audit_events_query_from_path(path)
-                .expect_err("encoded controls should fail closed");
+                .expect_err("encoded control bytes should fail closed");
             assert!(err.contains("400 Bad Request"), "path={path} err={err}");
             assert!(err.contains("invalid query"), "path={path} err={err}");
         }
@@ -5635,6 +5771,22 @@ mod tests {
         ] {
             let err = parse_query_normalized_audit_events_query_from_path(path)
                 .expect_err("uppercase encoded controls/spaces should fail closed");
+            assert!(err.contains("400 Bad Request"), "path={path} err={err}");
+            assert!(err.contains("invalid query"), "path={path} err={err}");
+        }
+    }
+
+    #[test]
+    fn parse_query_normalized_audit_events_query_from_path_rejects_percent_encoded_query_delimiters(
+    ) {
+        for path in [
+            "/query-normalized-audit-events?source=trnm.task%26limit=2",
+            "/query-normalized-audit-events?eventType%3Dtrnm.task.commit",
+            "/query-normalized-audit-events?cursor=1%3Flimit=2",
+            "/query-normalized-audit-events?limit=3%23tail",
+        ] {
+            let err = parse_query_normalized_audit_events_query_from_path(path)
+                .expect_err("encoded query delimiters must fail closed");
             assert!(err.contains("400 Bad Request"), "path={path} err={err}");
             assert!(err.contains("invalid query"), "path={path} err={err}");
         }
@@ -6025,6 +6177,26 @@ mod tests {
             assert_eq!(
                 parse_query_capability_audit_subject_from_target(target)
                     .expect_err("malformed capability path must fail closed as invalid query"),
+                "invalid query",
+                "target={target}"
+            );
+        }
+    }
+
+    #[test]
+    fn parse_query_capability_audit_subject_from_target_rejects_percent_encoded_controls_and_malformed_escapes() {
+        for target in [
+            "/query-capability-audit/alice%00",
+            "/query-capability-audit/alice%0a",
+            "/query-capability-audit/alice%20",
+            "/query-capability-audit/alice%7F",
+            "/query-capability-audit/alice%",
+            "/query-capability-audit/alice%zz",
+        ] {
+            assert_eq!(
+                parse_query_capability_audit_subject_from_target(target).expect_err(
+                    "capability audit subject must fail closed on encoded controls and malformed percent escapes",
+                ),
                 "invalid query",
                 "target={target}"
             );

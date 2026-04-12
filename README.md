@@ -229,12 +229,13 @@ Please run the local minimum gates before creating PRs to reduce CI turnarounds.
 - `query-events/<task_id>` defaults to `100` and hard-caps at `500`; no assumption of infinite window.
 - `query-events/<task_id>` currently accepts only one `limit` key. Unknown keys, duplicated `limit`, case variants (`Limit=`), empty values, or query smuggling are fail-closed.
 - `query-capability-audit/<subject-or-token>` supports both capability token and subject DID.
-- `query-normalized-audit-events` currently accepts only `source / eventType / cursor / limit`; unknown keys, repeated keys, empty values, and smuggling are fail-closed.
+- `query-normalized-audit-events` currently accepts only `source / eventType / cursor / limit`; unknown keys, repeated keys, case variants (`Limit=` / `Source=` / `eventtype=` / `Cursor=`), empty values, and smuggling are fail-closed.
 - Paths with a single trailing slash are accepted for:
   - `query-task/<id>/`
   - `query-events/<id>/`
   - `query-capability-audit/<subject>/`
   - but **not** for `query-normalized-audit-events/` (currently exact path only).
+- For `query-events/<id>/`, the `limit` query contract is unchanged: `?limit=<n>` still parses normally, default remains `100`, and the same fail-closed rules apply.
 - All read endpoints remain fail-closed for extra segments, raw/encoded slash tricks, and query/fragment smuggling.
 
 ### Explorer scaffold (operator-facing)

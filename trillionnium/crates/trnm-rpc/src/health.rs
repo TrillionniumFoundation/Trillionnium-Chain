@@ -127,7 +127,7 @@ fn contains_percent_encoded_control_or_space(segment: &str) -> bool {
             let lo = (bytes[idx + 2] as char).to_digit(16);
             if let (Some(hi), Some(lo)) = (hi, lo) {
                 let decoded = ((hi << 4) | lo) as u8;
-                if decoded <= 0x20 || decoded == 0x7f {
+                if decoded <= 0x20 || decoded == 0x7f || (0x80..=0x9f).contains(&decoded) {
                     return true;
                 }
             }
@@ -497,6 +497,10 @@ mod tests {
         assert_eq!(parse_path_u64_suffix("/query-events/42%0d", "/query-events/"), None);
         assert_eq!(parse_path_u64_suffix("/query-events/42%09", "/query-events/"), None);
         assert_eq!(parse_path_u64_suffix("/query-events/42%20", "/query-events/"), None);
+        assert_eq!(parse_path_u64_suffix("/query-events/42%3Flimit=9", "/query-events/"), None);
+        assert_eq!(parse_path_u64_suffix("/query-events/42%3flimit=9", "/query-events/"), None);
+        assert_eq!(parse_path_u64_suffix("/query-events/42%23frag", "/query-events/"), None);
+        assert_eq!(parse_path_u64_suffix("/query-events/42%23", "/query-events/"), None);
     }
 
     #[test]
@@ -679,6 +683,20 @@ mod tests {
             ),
             None
         );
+        assert_eq!(
+            parse_nonempty_path_suffix(
+                "/query-capability-audit/alice%85admin",
+                "/query-capability-audit/"
+            ),
+            None
+        );
+        assert_eq!(
+            parse_nonempty_path_suffix(
+                "/query-capability-audit/alice%9fadmin",
+                "/query-capability-audit/"
+            ),
+            None
+        );
     }
 
     #[test]
@@ -688,6 +706,8 @@ mod tests {
         assert!(contains_percent_encoded_control_or_space("alice%09admin"));
         assert!(contains_percent_encoded_control_or_space("alice%20admin"));
         assert!(contains_percent_encoded_control_or_space("alice%7fadmin"));
+        assert!(contains_percent_encoded_control_or_space("alice%85admin"));
+        assert!(contains_percent_encoded_control_or_space("alice%9fadmin"));
         assert!(!contains_percent_encoded_control_or_space("did:trn:alice"));
     }
 
