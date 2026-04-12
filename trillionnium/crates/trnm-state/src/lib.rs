@@ -526,6 +526,7 @@ const GOV_ALLOWED_KEYS: &[&str] = &[
     "llm_meter_worker_slash_rebate_per_work_unit_num",
     "llm_meter_worker_slash_rebate_per_work_unit_den",
     "resolve_authority",
+    "hybrid_settlement_poco_weight_bps",
     "emergency_pause",
     "monetary_policy_tick_interval_blocks",
     "monetary_policy_tick_cooldown_blocks",
@@ -551,6 +552,7 @@ const GOV_SENSITIVE_KEYS: &[&str] = &[
     "challenge_min_bond_bounty_bps",
     "challenge_min_bond_worker_stake_bps",
     "resolve_authority",
+    "hybrid_settlement_poco_weight_bps",
 ];
 const GOV_EXPLICIT_VALIDATOR_KEYS: &[&str] = &[
     "max_block_ms",
@@ -573,6 +575,7 @@ const GOV_EXPLICIT_VALIDATOR_KEYS: &[&str] = &[
     "llm_meter_worker_slash_rebate_per_work_unit_num",
     "llm_meter_worker_slash_rebate_per_work_unit_den",
     "resolve_authority",
+    "hybrid_settlement_poco_weight_bps",
     "emergency_pause",
     "monetary_policy_tick_interval_blocks",
     "monetary_policy_tick_cooldown_blocks",
@@ -613,6 +616,7 @@ const GOV_SCHEMA_INVALID_SAMPLES: &[(&str, &str)] = &[
         "resolve_authority",
         "resolver-a,governance.resolve_authority",
     ),
+    ("hybrid_settlement_poco_weight_bps", "10001"),
     ("emergency_pause", "TRUE"),
     ("monetary_policy_tick_interval_blocks", "0"),
     ("monetary_policy_tick_cooldown_blocks", "0"),
@@ -1848,6 +1852,10 @@ fn validate_gov_param_value(key: &str, value: &str) -> Result<(), String> {
         }
         "resolve_authority" => validate_resolve_authority_governance_value(key, value)
             .map_err(|err| format!("invalid governance value for {}: {}", key, err)),
+        "hybrid_settlement_poco_weight_bps" => {
+            let _ = parse_u64_in_range(key, value, 0, 10_000)?;
+            Ok(())
+        }
         "emergency_pause" => {
             let _ = parse_bool_strict(key, value)?;
             Ok(())
@@ -10216,6 +10224,24 @@ mod tests {
             )
             .unwrap();
         assert_eq!(ok.version, 1);
+
+        let err = st
+            .set_gov_param_unchecked(
+                7107,
+                "hybrid_settlement_poco_weight_bps".into(),
+                "10001".into(),
+            )
+            .unwrap_err();
+        assert!(err.contains("out of range"));
+
+        let ok = st
+            .set_gov_param_unchecked(
+                7107,
+                "hybrid_settlement_poco_weight_bps".into(),
+                "4000".into(),
+            )
+            .unwrap();
+        assert_eq!(ok.version, 1);
     }
 
     #[test]
@@ -11882,6 +11908,56 @@ mod tests {
     }
 
     #[test]
+    fn governance_hybrid_settlement_poco_weight_is_sensitive_and_timelocked() {
+        let mut st = StateStore::new();
+        st.set_gov_param_unchecked(
+            7351,
+            "hybrid_settlement_poco_weight_bps".into(),
+            "2500".into(),
+        )
+        .unwrap();
+
+        let scheduled = st
+            .set_gov_param(
+                31_000,
+                7351,
+                "hybrid_settlement_poco_weight_bps".into(),
+                "3000".into(),
+            )
+            .unwrap();
+        assert!(matches!(
+            scheduled,
+            GovParamUpdateOutcome::Scheduled {
+                activate_at_height: 31_020
+            }
+        ));
+
+        let err = st
+            .set_gov_param(
+                31_010,
+                7351,
+                "hybrid_settlement_poco_weight_bps".into(),
+                "3000".into(),
+            )
+            .unwrap_err();
+        assert!(err.contains("timelock active"));
+
+        let applied = st
+            .set_gov_param(
+                31_020,
+                7351,
+                "hybrid_settlement_poco_weight_bps".into(),
+                "3000".into(),
+            )
+            .unwrap();
+        assert!(matches!(applied, GovParamUpdateOutcome::Applied(_)));
+        assert_eq!(
+            st.gov_param_u64("hybrid_settlement_poco_weight_bps"),
+            Some(3000)
+        );
+    }
+
+    #[test]
     fn governance_non_sensitive_param_unaffected_by_timelock() {
         let mut st = StateStore::new();
         let r1 = st
@@ -13537,6 +13613,7 @@ mod tests {
             ("challenge_min_bond_bounty_bps", true),
             ("challenge_min_bond_worker_stake_bps", true),
             ("resolve_authority", true),
+            ("hybrid_settlement_poco_weight_bps", true),
             ("emergency_pause", false),
         ];
 
