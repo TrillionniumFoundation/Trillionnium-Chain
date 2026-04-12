@@ -3102,6 +3102,33 @@ fn parse_http_get_path(first_line: &str) -> Option<&str> {
     }
 }
 
+fn normalize_wrapped_query_value(raw: &str) -> Option<&str> {
+    if raw.chars().any(|ch| ch.is_control()) {
+        return None;
+    }
+
+    let trimmed = raw.trim_matches(|ch: char| ch.is_ascii_whitespace());
+    if trimmed.is_empty() {
+        return None;
+    }
+
+    if trimmed.len() != raw.len() {
+        let wrapped_by_quotes = (trimmed.starts_with('"') && trimmed.ends_with('"'))
+            || (trimmed.starts_with('\'') && trimmed.ends_with('\''))
+            || (trimmed.starts_with('`') && trimmed.ends_with('`'));
+        if !wrapped_by_quotes {
+            return None;
+        }
+    }
+
+    let normalized = normalize_wrapped_env_value(raw);
+    if normalized.is_empty() {
+        None
+    } else {
+        Some(normalized)
+    }
+}
+
 fn parse_query_events_limit_from_path(path: &str) -> std::result::Result<usize, String> {
     let path_without_query = path.split('?').next().unwrap_or(path);
     let normalized_path = path_without_query.to_ascii_lowercase();
@@ -3159,7 +3186,7 @@ fn parse_query_events_limit_from_path(path: &str) -> std::result::Result<usize, 
     if query.is_empty()
         || query.contains('?')
         || query.contains('#')
-        || query.chars().any(|ch| ch.is_control() || ch.is_whitespace())
+        || query.chars().any(char::is_control)
     {
         return Err(http_json_response(
             "400 Bad Request",
@@ -3205,20 +3232,12 @@ fn parse_query_events_limit_from_path(path: &str) -> std::result::Result<usize, 
                 "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid limit\"}",
             ));
         }
-        if parsed_limit.is_some() {
-            return Err(http_json_response(
-                "400 Bad Request",
-                "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"duplicate limit\"}",
-            ));
-        }
-
-        let normalized = normalize_wrapped_env_value(value);
-        if normalized.is_empty() {
+        let Some(normalized) = normalize_wrapped_query_value(value) else {
             return Err(http_json_response(
                 "400 Bad Request",
                 "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid limit\"}",
             ));
-        }
+        };
 
         let requested = normalized.parse::<usize>().map_err(|_| {
             http_json_response(
@@ -3226,6 +3245,14 @@ fn parse_query_events_limit_from_path(path: &str) -> std::result::Result<usize, 
                 "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid limit\"}",
             )
         })?;
+
+        if parsed_limit.is_some() {
+            return Err(http_json_response(
+                "400 Bad Request",
+                "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"duplicate limit\"}",
+            ));
+        }
+
         parsed_limit = Some(clamp_limit(
             "QueryEventsHttp",
             requested,
