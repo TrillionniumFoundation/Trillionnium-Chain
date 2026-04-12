@@ -18,11 +18,12 @@ use trnm_mempool::{IngressClass, LaneAdmissionGate};
 use trnm_pouw::{
     apply_accept_task, apply_challenge, apply_commit_result, apply_resolve, apply_reveal_result,
     challenge_consumption_receipt_at_height, resolve_consumption_receipt_at_height,
-    submit_consumption_receipt_at_height, ConsumptionReceipt, ConsumptionResolveDecision,
+    ConsumptionResolveDecision,
 };
 use trnm_pouw::{
     apply_accept_task_at_height, apply_challenge_at_height, apply_commit_result_at_height,
     apply_create_task, apply_resolve_at_height, apply_reveal_result_at_height, apply_timeout,
+    submit_consumption_receipt_at_height, ConsumptionReceipt,
 };
 use trnm_state::{
     checkpoint_da_light_verifier_summary, verify_wal_and_find_checkpoint_node_recovery,
@@ -34,6 +35,92 @@ use trnm_types::{Hash32, ObjectRef, TaskMeteringSnapshot, TaskStatus, Tx};
 fn cwd_test_lock() -> &'static Mutex<()> {
     static LOCK: std::sync::OnceLock<Mutex<()>> = std::sync::OnceLock::new();
     LOCK.get_or_init(|| Mutex::new(()))
+}
+
+#[cfg(test)]
+fn sample_consumption_receipt(
+    task_id: u64,
+    worker_id: &str,
+    consumer_id: &str,
+    result_hash: Hash32,
+) -> ConsumptionReceipt {
+    ConsumptionReceipt {
+        settlement_schema: trnm_pouw::POCO_V1_SETTLEMENT_SCHEMA.to_string(),
+        task_id,
+        worker_id: worker_id.to_string(),
+        consumer_id: consumer_id.to_string(),
+        billing_window_id: "bw-1".to_string(),
+        tokenizer_id: "llama3-tokenizer".to_string(),
+        tokenizer_version: "1.0.0".to_string(),
+        output_hash: hex::encode(result_hash),
+        consumed_token_count: 17,
+        consumed_spans_root: "def456".to_string(),
+        consumer_class: "bonded_api_client".to_string(),
+        consumer_nonce: 7,
+        accepted_at_unix_ms: 1_775_683_200_123,
+        consumer_signature: "sig789".to_string(),
+        receipt_hash: String::new(),
+    }
+    .with_computed_receipt_hash()
+    .expect("hash")
+}
+
+#[cfg(test)]
+fn put_sample_poco_task(st: &mut StateStore, task_id: u64, worker: &str, result_hash: Hash32) {
+    use trnm_types::{ProofType, TaskMetadata, TaskObject};
+
+    st.put_task_new(TaskObject {
+        task_id,
+        creator: format!("creator-{}", task_id),
+        bounty: 100,
+        status: TaskStatus::Completed,
+        proof_type: ProofType::Fraud,
+        metadata: Some(TaskMetadata {
+            note: None,
+            task_type: Some("llm_inference".to_string()),
+            input_hash: None,
+            model: None,
+            provenance: None,
+            metering: Some(TaskMeteringSnapshot {
+                workload_class: "llm_inference".into(),
+                metering_schema: "llm_token_meter_v1".into(),
+                policy_snapshot_version: 1,
+                receipt_hash: "deadbeef".into(),
+                prompt_tokens: 10,
+                generated_tokens: 20,
+                decode_steps: 20,
+                kv_bytes_moved: 0,
+                normalized_work_units: 50,
+                prompt_token_weight: 1,
+                generated_token_weight: 1,
+                decode_step_weight: 1,
+                kv_byte_weight: 0,
+                min_accept_work_units: 0,
+                challenge_success_bounty_base: 0,
+                challenge_success_bounty_per_work_unit_num: 0,
+                challenge_success_bounty_per_work_unit_den: 1,
+                worker_completion_bonus_per_work_unit_num: 0,
+                worker_completion_bonus_per_work_unit_den: 1,
+                worker_slash_rebate_per_work_unit_num: 0,
+                worker_slash_rebate_per_work_unit_den: 1,
+            }),
+        }),
+        worker: Some(worker.to_string()),
+        committed_hash: None,
+        result_hash: Some(result_hash),
+        reveal_salt: None,
+        committed_at_height: None,
+        reveal_deadline_height: None,
+        challenge_deadline_height: Some(100),
+        challenge_window_blocks_snapshot: Some(100),
+        challenged_at_height: None,
+        resolve_deadline_height: None,
+        challenge_bond: None,
+        challenger: None,
+        challenge_bond_forfeited: None,
+        version: 0,
+    })
+    .expect("task");
 }
 
 #[derive(Debug, Parser)]
@@ -249,6 +336,9 @@ enum MockTx {
         task_id: u64,
         slash_worker: bool,
         resolver: String,
+    },
+    SubmitConsumptionReceipt {
+        receipt: ConsumptionReceipt,
     },
 }
 
@@ -2757,6 +2847,7 @@ fn task_id_of(tx: &MockTx) -> u64 {
         | MockTx::Reveal { task_id, .. }
         | MockTx::Challenge { task_id, .. }
         | MockTx::Resolve { task_id, .. } => *task_id,
+        MockTx::SubmitConsumptionReceipt { receipt } => receipt.task_id,
     }
 }
 
@@ -2768,6 +2859,7 @@ fn event_type_of(tx: &MockTx) -> &'static str {
         MockTx::Reveal { .. } => "reveal",
         MockTx::Challenge { .. } => "challenge",
         MockTx::Resolve { .. } => "resolve",
+        MockTx::SubmitConsumptionReceipt { .. } => "submit_consumption_receipt",
     }
 }
 
@@ -2864,6 +2956,7 @@ fn actor_of(st: &StateStore, tx: &MockTx) -> String {
             .unwrap_or_else(|| format!("worker{}", task_id)),
         MockTx::Challenge { challenger, .. } => challenger.clone(),
         MockTx::Resolve { resolver, .. } => resolver.clone(),
+        MockTx::SubmitConsumptionReceipt { receipt } => receipt.consumer_id.clone(),
     }
 }
 
@@ -3151,7 +3244,9 @@ fn emit_event(
     let challenger_delta_str = challenger_delta.map(|d| d.text.as_str()).unwrap_or("-");
     let bond_disposition_str = bond_disposition.unwrap_or("-");
     let settlement_suffix = match tx {
-        MockTx::Reveal { .. } | MockTx::Resolve { .. } => {
+        MockTx::Reveal { .. }
+        | MockTx::Resolve { .. }
+        | MockTx::SubmitConsumptionReceipt { .. } => {
             task_settlement_event_suffix(st, task_id)
         }
         _ => String::new(),
@@ -3274,7 +3369,8 @@ fn is_high_risk_tx(tx: &MockTx) -> bool {
         | MockTx::AcceptTask { .. }
         | MockTx::Commit { .. }
         | MockTx::Reveal { .. }
-        | MockTx::Challenge { .. } => true,
+        | MockTx::Challenge { .. }
+        | MockTx::SubmitConsumptionReceipt { .. } => true,
         // Resolve performs terminal challenged escrow settlement and must stay
         // frozen while emergency pause is active.
         MockTx::Resolve { .. } => true,
@@ -3335,7 +3431,10 @@ fn capture_rollback_snapshot(st: &StateStore, tx: &MockTx) -> TxRollbackSnapshot
                 }
             }
         }
-        MockTx::AcceptTask { .. } | MockTx::Commit { .. } | MockTx::Reveal { .. } => {}
+        MockTx::AcceptTask { .. }
+        | MockTx::Commit { .. }
+        | MockTx::Reveal { .. }
+        | MockTx::SubmitConsumptionReceipt { .. } => {}
     }
 
     TxRollbackSnapshot {
@@ -3560,6 +3659,9 @@ fn apply_one(st: &mut StateStore, tx: MockTx, current_height: u64) -> Result<()>
             let r = task_ref(st, task_id)?;
             let _ = apply_resolve_at_height(st, r, slash_worker, resolver, signer, current_height)?;
         }
+        MockTx::SubmitConsumptionReceipt { receipt } => {
+            let _ = submit_consumption_receipt_at_height(st, receipt, signer, current_height)?;
+        }
     }
     Ok(())
 }
@@ -3724,15 +3826,20 @@ fn scan_and_apply_timeouts(
     migrated
 }
 
-fn pseudo_object_id_for_account(account: &str) -> u64 {
+fn pseudo_object_id_for_state_slot(namespace: &str, label: &str) -> u64 {
     let mut h = Sha256::new();
-    h.update(b"balance:");
-    h.update(account.as_bytes());
+    h.update(namespace.as_bytes());
+    h.update(b":");
+    h.update(label.as_bytes());
     let digest = h.finalize();
     let mut bytes = [0u8; 8];
     bytes.copy_from_slice(&digest[..8]);
-    // keep account-derived ids in high range to avoid overlapping natural task ids
+    // keep derived ids in high range to avoid overlapping natural task ids
     u64::from_le_bytes(bytes) | (1u64 << 63)
+}
+
+fn pseudo_object_id_for_account(account: &str) -> u64 {
+    pseudo_object_id_for_state_slot("balance", account)
 }
 
 fn summarize_hot_objects(st: &StateStore, txs: &[MockTx]) -> HotObjectSummary {
@@ -3796,6 +3903,7 @@ fn read_write_decl(st: &StateStore, tx: &MockTx, tx_id: u64) -> Tx {
         | MockTx::Reveal { task_id, .. }
         | MockTx::Challenge { task_id, .. }
         | MockTx::Resolve { task_id, .. } => *task_id,
+        MockTx::SubmitConsumptionReceipt { receipt } => receipt.task_id,
     };
 
     let task_obj = ObjectRef {
@@ -3869,6 +3977,33 @@ fn read_write_decl(st: &StateStore, tx: &MockTx, tx_id: u64) -> Tx {
                 read_set.push(challenger_obj.clone());
                 write_set.push(challenger_obj);
             }
+        }
+        MockTx::SubmitConsumptionReceipt { receipt } => {
+            let replay_key = receipt.replay_key().storage_key();
+            let consumer_nonce_obj = ObjectRef {
+                id: pseudo_object_id_for_state_slot(
+                    "consumer_consumption_nonce",
+                    &receipt.consumer_id,
+                ),
+                version: 1,
+            };
+            let receipt_record_obj = ObjectRef {
+                id: pseudo_object_id_for_state_slot("consumption_record", &replay_key),
+                version: 1,
+            };
+            let task_summary_obj = ObjectRef {
+                id: pseudo_object_id_for_state_slot(
+                    "task_consumption_summary",
+                    &task_id.to_string(),
+                ),
+                version: 1,
+            };
+            read_set.push(consumer_nonce_obj.clone());
+            write_set.push(consumer_nonce_obj);
+            read_set.push(receipt_record_obj.clone());
+            write_set.push(receipt_record_obj);
+            read_set.push(task_summary_obj.clone());
+            write_set.push(task_summary_obj);
         }
         _ => {}
     }
@@ -13064,7 +13199,8 @@ mod tests {
             | MockTx::AcceptTask { .. }
             | MockTx::Commit { .. }
             | MockTx::Reveal { .. }
-            | MockTx::Challenge { .. } => true,
+            | MockTx::Challenge { .. }
+            | MockTx::SubmitConsumptionReceipt { .. } => true,
             // Resolve performs terminal challenged escrow settlement and must stay
             // frozen while emergency pause is active.
             MockTx::Resolve { .. } => true,
@@ -13106,6 +13242,9 @@ mod tests {
                 task_id: 1,
                 slash_worker: true,
                 resolver: "governance.resolve_authority".into(),
+            },
+            MockTx::SubmitConsumptionReceipt {
+                receipt: sample_consumption_receipt(1, "worker", "consumer", result_hash),
             },
         ];
 
@@ -13160,6 +13299,9 @@ mod tests {
                 slash_worker: true,
                 resolver: "governance.resolve_authority".into(),
             },
+            MockTx::SubmitConsumptionReceipt {
+                receipt: sample_consumption_receipt(1, "worker", "consumer", result_hash),
+            },
         ];
 
         for tx in &txs {
@@ -13207,6 +13349,9 @@ mod tests {
                 task_id: 42,
                 slash_worker: false,
                 resolver: "governance.resolve_authority".into(),
+            },
+            MockTx::SubmitConsumptionReceipt {
+                receipt: sample_consumption_receipt(42, "worker", "consumer", result_hash),
             },
         ];
 
@@ -15430,8 +15575,6 @@ mod tests {
 
     #[test]
     fn task_settlement_event_suffix_surfaces_poco_receipt_summary() {
-        use trnm_types::{ProofType, TaskMetadata, TaskObject};
-
         let mut st = StateStore::default();
         let _ = st.set_gov_param_bootstrap_unchecked(
             9_500,
@@ -15440,82 +15583,14 @@ mod tests {
         );
 
         let result_hash = [0x11; 32];
-        st.put_task_new(TaskObject {
-            task_id: 42,
-            creator: "creator-1".to_string(),
-            bounty: 100,
-            status: TaskStatus::Completed,
-            proof_type: ProofType::Fraud,
-            metadata: Some(TaskMetadata {
-                note: None,
-                task_type: Some("llm_inference".to_string()),
-                input_hash: None,
-                model: None,
-                provenance: None,
-                metering: Some(TaskMeteringSnapshot {
-                    workload_class: "llm_inference".into(),
-                    metering_schema: "llm_token_meter_v1".into(),
-                    policy_snapshot_version: 1,
-                    receipt_hash: "deadbeef".into(),
-                    prompt_tokens: 10,
-                    generated_tokens: 20,
-                    decode_steps: 20,
-                    kv_bytes_moved: 0,
-                    normalized_work_units: 50,
-                    prompt_token_weight: 1,
-                    generated_token_weight: 1,
-                    decode_step_weight: 1,
-                    kv_byte_weight: 0,
-                    min_accept_work_units: 0,
-                    challenge_success_bounty_base: 0,
-                    challenge_success_bounty_per_work_unit_num: 0,
-                    challenge_success_bounty_per_work_unit_den: 1,
-                    worker_completion_bonus_per_work_unit_num: 0,
-                    worker_completion_bonus_per_work_unit_den: 1,
-                    worker_slash_rebate_per_work_unit_num: 0,
-                    worker_slash_rebate_per_work_unit_den: 1,
-                }),
-            }),
-            worker: Some("worker-alpha".to_string()),
-            committed_hash: None,
-            result_hash: Some(result_hash),
-            reveal_salt: None,
-            committed_at_height: None,
-            reveal_deadline_height: None,
-            challenge_deadline_height: Some(100),
-            challenge_window_blocks_snapshot: Some(100),
-            challenged_at_height: None,
-            resolve_deadline_height: None,
-            challenge_bond: None,
-            challenger: None,
-            challenge_bond_forfeited: None,
-            version: 0,
-        })
-        .expect("task");
+        put_sample_poco_task(&mut st, 42, "worker-alpha", result_hash);
 
-        let receipt = ConsumptionReceipt {
-            settlement_schema: trnm_pouw::POCO_V1_SETTLEMENT_SCHEMA.to_string(),
-            task_id: 42,
-            worker_id: "worker-alpha".to_string(),
-            consumer_id: "consumer-bravo".to_string(),
-            billing_window_id: "bw-1".to_string(),
-            tokenizer_id: "llama3-tokenizer".to_string(),
-            tokenizer_version: "1.0.0".to_string(),
-            output_hash: hex::encode(result_hash),
-            consumed_token_count: 17,
-            consumed_spans_root: "def456".to_string(),
-            consumer_class: "bonded_api_client".to_string(),
-            consumer_nonce: 7,
-            accepted_at_unix_ms: 1_775_683_200_123,
-            consumer_signature: "sig789".to_string(),
-            receipt_hash: String::new(),
-        }
-        .with_computed_receipt_hash()
-        .expect("hash");
+        let receipt =
+            sample_consumption_receipt(42, "worker-alpha", "consumer-bravo", result_hash);
         let key = receipt.replay_key();
 
-        submit_consumption_receipt_at_height(&mut st, receipt, "consumer-bravo".to_string(), 10)
-            .expect("submit receipt");
+        apply_one(&mut st, MockTx::SubmitConsumptionReceipt { receipt }, 10)
+            .expect("apply receipt");
         challenge_consumption_receipt_at_height(
             &mut st,
             key.clone(),
@@ -15545,6 +15620,58 @@ mod tests {
         assert!(line.contains("settlement_total_claimed_consumption_units=17"));
         assert!(line.contains("settlement_total_credited_consumption_units=9"));
         assert!(line.contains("settlement_last_settlement_height=77"));
+    }
+
+    #[test]
+    fn submit_consumption_receipt_tx_maps_apply_event_and_rw_decl_stably() {
+        let mut st = StateStore::default();
+        let result_hash = [0x22; 32];
+        put_sample_poco_task(&mut st, 42, "worker-alpha", result_hash);
+
+        let receipt =
+            sample_consumption_receipt(42, "worker-alpha", "consumer-bravo", result_hash);
+        let tx = MockTx::SubmitConsumptionReceipt {
+            receipt: receipt.clone(),
+        };
+
+        assert_eq!(task_id_of(&tx), 42);
+        assert_eq!(event_type_of(&tx), "submit_consumption_receipt");
+        assert_eq!(actor_of(&st, &tx), "consumer-bravo");
+        assert_eq!(challenger_of(&tx), None);
+
+        let replay_key = receipt.replay_key().storage_key();
+        let expected_refs = vec![
+            ObjectRef { id: 42, version: 1 },
+            ObjectRef {
+                id: pseudo_object_id_for_state_slot(
+                    "consumer_consumption_nonce",
+                    "consumer-bravo",
+                ),
+                version: 1,
+            },
+            ObjectRef {
+                id: pseudo_object_id_for_state_slot("consumption_record", &replay_key),
+                version: 1,
+            },
+            ObjectRef {
+                id: pseudo_object_id_for_state_slot("task_consumption_summary", "42"),
+                version: 1,
+            },
+        ];
+        let decl = read_write_decl(&st, &tx, 9);
+        assert_eq!(decl.read_set, expected_refs);
+        assert_eq!(decl.write_set, decl.read_set);
+
+        apply_one(&mut st, tx, 10).expect("apply receipt");
+
+        let summary = st.task_consumption_summary(42).expect("summary");
+        assert_eq!(summary.receipt_count, 1);
+        assert_eq!(summary.total_claimed_consumption_units, 17);
+        assert_eq!(st.consumer_consumption_nonce("consumer-bravo"), Some(7));
+
+        let line = task_settlement_event_suffix(&st, 42);
+        assert!(line.contains("settlement_receipt_count=1"));
+        assert!(line.contains("settlement_total_claimed_consumption_units=17"));
     }
 
     #[test]
