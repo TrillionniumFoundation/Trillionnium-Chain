@@ -173,10 +173,31 @@ if [ "$SUMMARY_PATH" = "$MANIFEST_PATH" ]; then
   printf 'summary and manifest paths must be distinct artifacts: %s\n' "$SUMMARY_PATH" >&2
   exit 1
 fi
+count_keys() {
+  local path="$1"
+  local key="$2"
+  awk -F= -v key="$key" '$1 == key { count++ } END { print count + 0 }' "$path"
+}
+
+extract_unique_key() {
+  local path="$1"
+  local key="$2"
+  local key_count
+
+  key_count="$(count_keys "$path" "$key")"
+  if [ "$key_count" -gt 1 ]; then
+    printf 'duplicate %s in %s\n' "$key" "$path" >&2
+    exit 1
+  fi
+
+  [ "$key_count" -eq 1 ] || return 0
+  awk -F= -v key="$key" '$1 == key { sub(/^[^=]*=/, ""); print; exit }' "$path"
+}
+
 optional_key() {
   local path="$1"
   local key="$2"
-  awk -F= -v key="$key" '$1 == key { sub(/^[^=]*=/, ""); print; exit }' "$path"
+  extract_unique_key "$path" "$key"
 }
 
 require_nonempty_key() {
@@ -209,7 +230,7 @@ require_key() {
   local path="$1"
   local key="$2"
   local value
-  value="$(awk -F= -v key="$key" '$1 == key { sub(/^[^=]*=/, ""); print; exit }' "$path")"
+  value="$(extract_unique_key "$path" "$key")"
   [ -n "$value" ] || { printf 'missing %s in %s\n' "$key" "$path" >&2; exit 1; }
   printf '%s' "$value"
 }

@@ -91,6 +91,90 @@ grep -q '^preflight_git_worktree_branch_ref_match=true$' "$TMPDIR/out-short.txt"
 grep -q '^preflight_rollback_command=git checkout -- run/preflight/go-no-go-latest.txt$' "$TMPDIR/out-short.txt"
 grep -q '^preflight_replay_command=./scripts/testnet_preflight.sh$' "$TMPDIR/out-short.txt"
 
+cat >"$SUMMARY_PATH" <<EOF
+generated_at=2026-04-11T01:05:00Z
+git_toplevel=$WORKTREE_ROOT
+git_branch=$BRANCH_SHORT
+git_head=$HEAD_SHA
+git_head_state=attached
+git_worktree_path=$WORKTREE_ROOT
+git_worktree_branch_ref=$BRANCH_REF
+git_worktree_branch_ref=refs/heads/lane/not-this-lane
+git_expected_worktree_branch_ref=$BRANCH_REF
+git_worktree_branch_ref_match=true
+git_status_summary=clean
+truth_source=RELEASE_READINESS.md
+historical_evidence_only=true
+evidence_scope=local_rc_rehearsal
+result=PASS
+rollback_command=git checkout -- trillionnium/scripts/v2/extract_release_handoff_fields.sh
+replay_command=./scripts/run_local_release_evidence.sh
+challenge_reexec_entry=<entry_not_found>
+replay_env_trnm_challenge_reexec_entry=<entry_not_found>
+EOF
+if bash "$SCRIPT" \
+  --summary-path "$SUMMARY_PATH" \
+  --manifest-path "$MANIFEST_PATH" \
+  --expected-worktree-root "$WORKTREE_ROOT" \
+  --expected-branch-ref "$BRANCH_SHORT" >"$TMPDIR/out-summary-duplicate-key.txt" 2>"$TMPDIR/err-summary-duplicate-key.txt"; then
+  echo "expected duplicate summary git_worktree_branch_ref to fail closed" >&2
+  exit 1
+fi
+grep -q "^duplicate git_worktree_branch_ref in $SUMMARY_PATH$" "$TMPDIR/err-summary-duplicate-key.txt"
+
+cat >"$SUMMARY_PATH" <<EOF
+generated_at=2026-04-11T01:05:00Z
+git_toplevel=$WORKTREE_ROOT
+git_branch=$BRANCH_SHORT
+git_head=$HEAD_SHA
+git_head_state=attached
+git_worktree_path=$WORKTREE_ROOT
+git_worktree_branch_ref=$BRANCH_REF
+git_expected_worktree_branch_ref=$BRANCH_REF
+git_worktree_branch_ref_match=true
+git_status_summary=clean
+truth_source=RELEASE_READINESS.md
+historical_evidence_only=true
+evidence_scope=local_rc_rehearsal
+result=PASS
+rollback_command=git checkout -- trillionnium/scripts/v2/extract_release_handoff_fields.sh
+replay_command=./scripts/run_local_release_evidence.sh
+challenge_reexec_entry=<entry_not_found>
+replay_env_trnm_challenge_reexec_entry=<entry_not_found>
+EOF
+
+cat >"$PREFLIGHT_PATH" <<EOF
+result=PASS
+generated_at=2026-04-11T01:01:00Z
+git_status_summary=clean
+git_worktree_path=$WORKTREE_ROOT
+git_worktree_branch_ref=$BRANCH_REF
+git_worktree_branch_ref_match=true
+git_worktree_branch_ref_match=false
+rollback_command=git checkout -- run/preflight/go-no-go-latest.txt
+replay_command=./scripts/testnet_preflight.sh
+EOF
+if bash "$SCRIPT" \
+  --summary-path "$SUMMARY_PATH" \
+  --manifest-path "$MANIFEST_PATH" \
+  --expected-worktree-root "$WORKTREE_ROOT" \
+  --expected-branch-ref "$BRANCH_SHORT" >"$TMPDIR/out-preflight-duplicate-key.txt" 2>"$TMPDIR/err-preflight-duplicate-key.txt"; then
+  echo "expected duplicate preflight git_worktree_branch_ref_match to fail closed" >&2
+  exit 1
+fi
+grep -q "^duplicate git_worktree_branch_ref_match in $PREFLIGHT_PATH$" "$TMPDIR/err-preflight-duplicate-key.txt"
+
+cat >"$PREFLIGHT_PATH" <<EOF
+result=PASS
+generated_at=2026-04-11T01:01:00Z
+git_status_summary=clean
+git_worktree_path=$WORKTREE_ROOT
+git_worktree_branch_ref=$BRANCH_REF
+git_worktree_branch_ref_match=true
+rollback_command=git checkout -- run/preflight/go-no-go-latest.txt
+replay_command=./scripts/testnet_preflight.sh
+EOF
+
 cat >"$PREFLIGHT_PATH" <<EOF
 result=PASS
 generated_at=2026-04-11T01:01:15Z
