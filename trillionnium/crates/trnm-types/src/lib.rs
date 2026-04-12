@@ -232,6 +232,8 @@ pub struct TaskMetadata {
     pub provenance: Option<TaskProvenanceMetadata>,
     #[serde(default)]
     pub metering: Option<TaskMeteringSnapshot>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub settlement: Option<TaskSettlementSnapshot>,
 }
 
 fn has_canonical_metadata_atom(value: &str) -> bool {
@@ -280,13 +282,14 @@ impl TaskSettlementSnapshot {
 
 impl TaskMetadata {
     pub fn compatibility_report(&self) -> TaskMetadataCompatibilityReport {
-        self.compatibility_report_with_settlement_snapshot(None)
+        self.compatibility_report_with_settlement_snapshot(self.settlement.as_ref())
     }
 
     pub fn compatibility_report_with_settlement_snapshot(
         &self,
         settlement: Option<&TaskSettlementSnapshot>,
     ) -> TaskMetadataCompatibilityReport {
+        let settlement = settlement.or(self.settlement.as_ref());
         let legacy_note_only = self.note.is_some()
             && self.task_type.is_none()
             && self.input_hash.is_none()
@@ -665,7 +668,12 @@ mod tests {
         assert!(metadata.model.is_none());
         assert!(metadata.provenance.is_none());
         assert!(metadata.metering.is_none());
-        assert!(metadata.compatibility_profile().complete_settlement_snapshot);
+        assert!(metadata.settlement.is_none());
+        assert!(
+            metadata
+                .compatibility_profile()
+                .complete_settlement_snapshot
+        );
     }
 
     #[test]
@@ -707,6 +715,15 @@ mod tests {
                 worker_completion_bonus_per_work_unit_den: 256,
                 worker_slash_rebate_per_work_unit_num: 1,
                 worker_slash_rebate_per_work_unit_den: 384,
+            }),
+            settlement: Some(TaskSettlementSnapshot {
+                settlement_schema: "poco_v1".into(),
+                tokenizer_id: "llama3-tokenizer".into(),
+                tokenizer_version: "1.0.0".into(),
+                output_hash: format!("0x{}", "e".repeat(64)),
+                output_token_count: 512,
+                output_root: Some(format!("0x{}", "f".repeat(64))),
+                output_span_commitment: None,
             }),
         };
 
@@ -756,6 +773,7 @@ mod tests {
                 worker_slash_rebate_per_work_unit_num: 0,
                 worker_slash_rebate_per_work_unit_den: 1,
             }),
+            settlement: None,
         };
 
         let report = metadata.compatibility_report();
@@ -1109,6 +1127,42 @@ mod tests {
         };
 
         let report = metadata.compatibility_report_with_settlement_snapshot(Some(&settlement));
+
+        assert!(!report.compatibility.legacy_note_only);
+        assert!(report.compatibility.canonical_core_fields);
+        assert!(report.compatibility.complete_metering_snapshot);
+        assert!(!report.compatibility.complete_settlement_snapshot);
+        assert!(!report.compatibility.is_runtime_compatible());
+        assert!(report.requires_governance_upgrade);
+        assert_eq!(
+            report.findings,
+            vec![TaskMetadataCompatibilityFinding::IncompleteSettlementSnapshot]
+        );
+        assert_eq!(
+            report.primary_finding(),
+            Some(TaskMetadataCompatibilityFinding::IncompleteSettlementSnapshot)
+        );
+    }
+
+    #[test]
+    fn task_metadata_compatibility_report_uses_inline_settlement_snapshot() {
+        let metadata = TaskMetadata {
+            note: Some("interop".into()),
+            task_type: Some("inference".into()),
+            input_hash: Some("a".repeat(64)),
+            settlement: Some(TaskSettlementSnapshot {
+                settlement_schema: "poco_v1".into(),
+                tokenizer_id: "llama3-tokenizer".into(),
+                tokenizer_version: "1.0.0".into(),
+                output_hash: format!("0x{}", "1".repeat(64)),
+                output_token_count: 512,
+                output_root: None,
+                output_span_commitment: None,
+            }),
+            ..TaskMetadata::default()
+        };
+
+        let report = metadata.compatibility_report();
 
         assert!(!report.compatibility.legacy_note_only);
         assert!(report.compatibility.canonical_core_fields);
