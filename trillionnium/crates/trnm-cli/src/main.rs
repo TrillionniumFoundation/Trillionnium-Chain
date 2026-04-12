@@ -822,6 +822,7 @@ fn is_hidden_env_wrapper(c: char) -> bool {
         || matches!(
             c,
             '\u{00AD}'
+                | '\u{034F}'
                 | '\u{061C}'
                 | '\u{180E}'
                 | '\u{200B}'
@@ -888,6 +889,8 @@ fn is_single_sided_env_quote(c: char) -> bool {
             | '〝'
             | '〞'
             | '〟'
+            | '｟'
+            | '｠'
     )
 }
 
@@ -951,7 +954,7 @@ fn normalize_wallet_store_env(raw: &str) -> Option<&str> {
         || normalized.chars().any(|c| {
             c.is_whitespace()
                 || contains_hidden_or_control(c)
-                || matches!(c, '\\' | '＼' | '∕' | '⁄' | '／' | '⧵' | '⧸' | '⟋' | '⟍')
+                || matches!(c, '\\' | '∖' | '／' | '＼' | '﹨' | '∕' | '⁄' | '⧵' | '⧸' | '⧹' | '⟋' | '⟍')
         })
     {
         return None;
@@ -976,11 +979,31 @@ fn wallet_store_path_is_safe(path: &Path) -> bool {
     path.is_absolute()
         && path.parent().is_some()
         && !rendered.contains("//")
+        && !rendered.ends_with(std::path::MAIN_SEPARATOR)
         && !path_text_has_dot_segments(path)
         && rendered.chars().all(|c| {
             !c.is_whitespace()
                 && !contains_hidden_or_control(c)
-                && !matches!(c, '\\' | '＼' | '∕' | '⁄' | '／' | '⧵' | '⧸' | '⟋' | '⟍')
+                && !matches!(
+                    c,
+                    '\\'
+                        | '∖'
+                        | '／'
+                        | '＼'
+                        | '﹨'
+                        | '∕'
+                        | '⁄'
+                        | '⧵'
+                        | '⧸'
+                        | '⧹'
+                        | '⟋'
+                        | '⟍'
+                        | '．'
+                        | '。'
+                        | '｡'
+                        | '﹒'
+                        | '․'
+                )
         })
         && !path
             .components()
@@ -1099,6 +1122,7 @@ fn contains_hidden_or_control(c: char) -> bool {
         || matches!(
             c,
             '\u{00AD}'
+                | '\u{034F}'
                 | '\u{061C}'
                 | '\u{180E}'
                 | '\u{200B}'
@@ -1166,6 +1190,10 @@ fn ensure_wallet_name(name: &str) -> Result<()> {
     let has_hidden_or_whitespace = name
         .chars()
         .any(|c| c.is_whitespace() || contains_hidden_or_control(c));
+    let has_non_ascii = !name.is_ascii();
+    let has_non_simple_ascii = name
+        .chars()
+        .any(|c| !c.is_ascii_alphanumeric() && c != '_' && c != '-');
     let uppercase = name.to_ascii_uppercase();
     let is_windows_reserved_device = matches!(
         uppercase.as_str(),
@@ -1194,6 +1222,7 @@ fn ensure_wallet_name(name: &str) -> Result<()> {
     );
 
     if name.is_empty()
+        || has_non_ascii
         || name == "."
         || name == ".."
         || name.starts_with('.')
@@ -1204,7 +1233,7 @@ fn ensure_wallet_name(name: &str) -> Result<()> {
         || name.contains(['‐', '‑', '‒', '–', '—', '―', '−', '﹣', '－'])
         || name.contains(['：', '﹕', '＝', '﹦', '｜', '￨', '＆', '﹠', '？', '﹖', '，', '；', '！', '﹗'])
         || name.contains(['＊', '﹡'])
-        || name.contains(['∕', '⁄', '／', '＼', '⧵', '⧸', '⟋', '⟍'])
+        || name.contains(['∕', '⁄', '／', '＼', '⧵', '⧸', '⧹', '⟋', '⟍'])
         || name.contains(['.', '．', '。', '｡', '﹒', '․'])
         || name.contains([
             '"', '\'', '`', '<', '>', '(', ')', '[', ']', '{', '}', ',', ';',
@@ -1212,13 +1241,14 @@ fn ensure_wallet_name(name: &str) -> Result<()> {
         || name.contains([
             '“', '”', '‘', '’', '«', '»', '‹', '›', '「', '」', '『', '』', '《', '》',
             '〈', '〉', '｢', '｣', '（', '）', '［', '］', '｛', '｝', '＜', '＞', '【', '】',
-            '〔', '〕', '〖', '〗', '〘', '〙', '〚', '〛', '〝', '〞', '〟',
+            '〔', '〕', '〖', '〗', '〘', '〙', '〚', '〛', '〝', '〞', '〟', '｟', '｠',
         ])
         || has_hidden_or_whitespace
+        || has_non_simple_ascii
         || is_windows_reserved_device
     {
         bail!(
-            "invalid wallet name '{}': use a simple local name without path separators or reserved device names",
+            "invalid wallet name '{}': use a simple ASCII local name with only letters, digits, '_' or '-' and no path separators or reserved device names",
             name
         );
     }
@@ -1404,6 +1434,7 @@ fn is_unsafe_sign_message_char(c: char) -> bool {
             c,
             '='
                 | '\u{00ad}'
+                | '\u{034f}'
                 | '\u{061c}'
                 | '\u{180e}'
                 | '\u{200b}'
@@ -1413,6 +1444,7 @@ fn is_unsafe_sign_message_char(c: char) -> bool {
                 | '\u{200f}'
                 | '\u{2060}'
                 | '\u{2061}'..='\u{2065}'
+                | '\u{206a}'..='\u{206f}'
                 | '\u{2028}'
                 | '\u{2029}'
                 | '\u{202a}'..='\u{202e}'
@@ -1433,17 +1465,48 @@ fn ensure_safe_sign_message(message: &str) -> Result<()> {
             "wallet sign message contains leading or trailing whitespace; refusing ambiguous offline-signing output"
         );
     }
+    if message.contains("  ") {
+        bail!(
+            "wallet sign message must not contain repeated interior spaces; refusing ambiguous offline-signing output"
+        );
+    }
     if message.chars().any(|c| {
         is_unsafe_sign_message_char(c)
             || !c.is_ascii()
             || (!c.is_ascii_graphic() && c != ' ')
             || matches!(
                 c,
-                '=' | ':' | ';' | ',' | '|' | '"' | '\'' | '`' | '<' | '>' | '(' | ')' | '[' | ']' | '{' | '}'
+                '='
+                    | ':'
+                    | ';'
+                    | ','
+                    | '|'
+                    | '"'
+                    | '\''
+                    | '`'
+                    | '<'
+                    | '>'
+                    | '('
+                    | ')'
+                    | '['
+                    | ']'
+                    | '{'
+                    | '}'
+                    | '/'
+                    | '\\'
+                    | '∕'
+                    | '⁄'
+                    | '／'
+                    | '＼'
+                    | '⧵'
+                    | '⧸'
+                    | '⧹'
+                    | '⟋'
+                    | '⟍'
             )
     }) {
         bail!(
-            "wallet sign message must be single-line ASCII printable text with only interior ASCII spaces and no delimiter or wrapper punctuation; refusing unsafe offline-signing output"
+            "wallet sign message must be single-line ASCII printable text with only single interior ASCII spaces and no delimiter, wrapper punctuation, or path separators; refusing unsafe offline-signing output"
         );
     }
     Ok(())
@@ -2877,8 +2940,8 @@ fn main() -> Result<()> {
                 store,
             } => {
                 ensure_sign_message(&message)?;
-                let store = resolve_wallet_store(store)?;
                 ensure_safe_sign_message(&message)?;
+                let store = resolve_wallet_store(store)?;
                 let priv_hex = read_key(&store, &name)?;
                 let sig = hash(&["trnm-sign-v1", &priv_hex, &message]);
                 let addr = derive_address_from_priv_hex(&priv_hex)?;
@@ -3051,9 +3114,18 @@ mod tests {
         assert_eq!(normalize_wallet_store_env("\u{206a}《/tmp/trnm-wallets》\u{206f}"), Some("/tmp/trnm-wallets"));
         assert_eq!(normalize_wallet_store_env("〈/tmp/trnm-wallets〉"), Some("/tmp/trnm-wallets"));
         assert_eq!(normalize_wallet_store_env("⟨/tmp/trnm-wallets⟩"), Some("/tmp/trnm-wallets"));
+        assert_eq!(normalize_wallet_store_env("｟/tmp/trnm-wallets｠"), Some("/tmp/trnm-wallets"));
         assert_eq!(normalize_wallet_store_env("(/tmp/trnm-wallets)"), Some("/tmp/trnm-wallets"));
         assert_eq!(normalize_wallet_store_env("[/tmp/trnm-wallets]"), Some("/tmp/trnm-wallets"));
         assert_eq!(normalize_wallet_store_env("{/tmp/trnm-wallets}"), Some("/tmp/trnm-wallets"));
+        assert_eq!(
+            normalize_wallet_store_env(" ({[/tmp/trnm-wallets]}) "),
+            Some("/tmp/trnm-wallets")
+        );
+        assert_eq!(
+            normalize_wallet_store_env("\u{2068}({/tmp/trnm-wallets})\u{2069}"),
+            Some("/tmp/trnm-wallets")
+        );
         assert_eq!(
             normalize_wallet_store_env("【『 /tmp/trnm-wallets 』】"),
             Some("/tmp/trnm-wallets")
@@ -3079,7 +3151,10 @@ mod tests {
         assert_eq!(normalize_wallet_store_env("/tmp/trnm\n-wallets"), None);
         assert_eq!(normalize_wallet_store_env("/tmp/trnm\u{200b}-wallets"), None);
         assert_eq!(normalize_wallet_store_env("/tmp/trnm\u{202e}wallets"), None);
+        assert_eq!(normalize_wallet_store_env("/tmp/trnm∖wallets"), None);
+        assert_eq!(normalize_wallet_store_env("/tmp/trnm﹨wallets"), None);
         assert_eq!(normalize_wallet_store_env("/tmp/trnm⧸wallets"), None);
+        assert_eq!(normalize_wallet_store_env("/tmp/trnm⧹wallets"), None);
     }
 
     #[test]
@@ -3119,6 +3194,12 @@ mod tests {
         std::env::set_var("TRNM_WALLET_STORE", "/tmp／trnm-wallets");
         assert_eq!(default_wallet_store(), home.join(".trnm").join("wallets"));
 
+        std::env::set_var("TRNM_WALLET_STORE", "/tmp∖trnm-wallets");
+        assert_eq!(default_wallet_store(), home.join(".trnm").join("wallets"));
+
+        std::env::set_var("TRNM_WALLET_STORE", "/tmp﹨trnm-wallets");
+        assert_eq!(default_wallet_store(), home.join(".trnm").join("wallets"));
+
         std::env::set_var("TRNM_WALLET_STORE", "/tmp⧸trnm-wallets");
         assert_eq!(default_wallet_store(), home.join(".trnm").join("wallets"));
 
@@ -3144,6 +3225,9 @@ mod tests {
             home.join(".trnm").join("wallets")
         };
         assert_eq!(default_wallet_store(), expected_trimmed_absolute);
+
+        std::env::set_var("TRNM_WALLET_STORE", "/tmp/trnm-wallets/");
+        assert_eq!(default_wallet_store(), home.join(".trnm").join("wallets"));
 
         match original_store {
             Some(value) => std::env::set_var("TRNM_WALLET_STORE", value),
@@ -3240,6 +3324,9 @@ mod tests {
             "'/'",
             "《/》",
             " //tmp/trnm-wallets ",
+            "/tmp/trnm-wallets/",
+            "/tmp/trnm-wallets/․/keys",
+            "/tmp/trnm-wallets/﹒/keys",
         ] {
             std::env::set_var("TRNM_WALLET_STORE", invalid_env);
             let err = resolve_wallet_store(None).unwrap_err();
@@ -3259,6 +3346,15 @@ mod tests {
                 "unexpected error for {empty_invalid_env:?}: {err}"
             );
         }
+
+        std::env::set_var("TRNM_WALLET_STORE", "/tmp/trnm⧹wallets");
+        let confusable_separator_err = resolve_wallet_store(None).unwrap_err();
+        assert!(
+            confusable_separator_err
+                .to_string()
+                .contains("TRNM_WALLET_STORE is set but invalid; refusing ambiguous keystore path fallback"),
+            "unexpected error for confusable separator env store: {confusable_separator_err}"
+        );
 
         let explicit_root = std::env::temp_dir()
             .canonicalize()
@@ -3287,6 +3383,11 @@ mod tests {
             PathBuf::from(" /tmp/trnm-wallets"),
             PathBuf::from("/tmp/trnm\u{200b}wallets"),
             PathBuf::from("/tmp/《trnm-wallets》"),
+            PathBuf::from("/tmp/｟trnm-wallets｠"),
+            PathBuf::from("/tmp/trnm⧹wallets"),
+            PathBuf::from("/tmp/trnm-wallets/"),
+            PathBuf::from("/tmp/trnm-wallets/․/keys"),
+            PathBuf::from("/tmp/trnm-wallets/﹒/keys"),
         ] {
             let err = resolve_wallet_store(Some(invalid_explicit.clone())).unwrap_err();
             assert!(
@@ -3490,6 +3591,19 @@ mod tests {
             "unexpected error: {hidden_read_err}"
         );
 
+        let dot_confusable_write_err = write_key(
+            std::path::Path::new("/tmp/trnm-wallets/․/keys"),
+            "alice",
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        )
+        .unwrap_err();
+        assert!(
+            dot_confusable_write_err
+                .to_string()
+                .contains("must be an absolute normalized path"),
+            "unexpected error: {dot_confusable_write_err}"
+        );
+
         let backslash_write_err = write_key(
             std::path::Path::new("/tmp\\trnm-wallets"),
             "alice",
@@ -3523,6 +3637,15 @@ mod tests {
                 .to_string()
                 .contains("must be an absolute normalized path"),
             "unexpected error: {big_solidus_write_err}"
+        );
+
+        let big_reverse_solidus_read_err =
+            read_key(std::path::Path::new("/tmp⧹trnm-wallets"), "alice").unwrap_err();
+        assert!(
+            big_reverse_solidus_read_err
+                .to_string()
+                .contains("must be an absolute normalized path"),
+            "unexpected error: {big_reverse_solidus_read_err}"
         );
 
         let duplicate_slash_write_err = write_key(
@@ -3643,6 +3766,9 @@ mod tests {
             "alice，",
             "alice;",
             "alice；",
+            "alice+backup",
+            "alice@prod",
+            "alice~1",
             "alice\n",
             "alice bob",
             " alice",
@@ -3658,6 +3784,16 @@ mod tests {
             "alice\u{2066}bob",
             "alice\u{2069}bob",
             "alice\u{0007}bob",
+            "con",
+            "PRN",
+            "aux",
+            "nul",
+            "com1",
+            "CoM9",
+            "lpt1",
+            "LPT9",
+            "аlice",
+            "alice猫",
         ] {
             let err = ensure_wallet_name(bad).unwrap_err();
             assert!(
@@ -3665,6 +3801,33 @@ mod tests {
                 "unexpected error for {bad:?}: {err}"
             );
         }
+
+        ensure_wallet_name("alice").unwrap();
+        ensure_wallet_name("alice_01").unwrap();
+        ensure_wallet_name("alice-01").unwrap();
+        ensure_wallet_name("ALICE01").unwrap();
+    }
+
+    #[test]
+    fn wallet_name_error_mentions_ascii_requirement() {
+        let err = ensure_wallet_name("аlice").unwrap_err();
+        assert!(
+            err.to_string().contains("ASCII local name"),
+            "unexpected error: {err}"
+        );
+        assert!(
+            err.to_string().contains("only letters, digits, '_' or '-'"),
+            "unexpected error: {err}"
+        );
+    }
+
+    #[test]
+    fn wallet_name_error_mentions_simple_ascii_charset() {
+        let err = ensure_wallet_name("alice+backup").unwrap_err();
+        assert!(
+            err.to_string().contains("only letters, digits, '_' or '-'"),
+            "unexpected error: {err}"
+        );
     }
 
     #[test]
@@ -5363,6 +5526,15 @@ mod tests {
     }
 
     #[test]
+    fn ensure_safe_sign_message_rejects_repeated_interior_spaces() {
+        let err = ensure_safe_sign_message("rotate  signer to cold-key slot b").unwrap_err();
+        assert!(
+            err.to_string().contains("repeated interior spaces"),
+            "unexpected: {err}"
+        );
+    }
+
+    #[test]
     fn ensure_safe_sign_message_rejects_non_ascii_whitespace_text() {
         let err = ensure_safe_sign_message("rotate signer\u{00a0}to cold-key slot b").unwrap_err();
         assert!(
@@ -5542,6 +5714,26 @@ mod tests {
                 "unexpected for {bad:?}: {err}"
             );
         }
+    }
+
+    #[test]
+    fn ensure_safe_sign_message_rejects_path_separator_text() {
+        for bad in ["approve /tmp/offline-payload", "approve C:\\offline\\payload"] {
+            let err = ensure_safe_sign_message(bad).unwrap_err();
+            assert!(
+                err.to_string().contains("path separators"),
+                "unexpected for {bad:?}: {err}"
+            );
+        }
+    }
+
+    #[test]
+    fn ensure_safe_sign_message_rejects_unicode_path_separator_homoglyph_text() {
+        let err = ensure_safe_sign_message("approve tmp∕offline∕payload").unwrap_err();
+        assert!(
+            err.to_string().contains("ASCII printable text"),
+            "unexpected: {err}"
+        );
     }
 
     #[test]

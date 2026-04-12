@@ -193,6 +193,10 @@ fn normalize_wallet_store_env_trims_shell_wrapped_quotes() {
         Some("/tmp/trnm-wallets")
     );
     assert_eq!(
+        normalize_wallet_store_env("｟/tmp/trnm-wallets｠"),
+        Some("/tmp/trnm-wallets")
+    );
+    assert_eq!(
         normalize_wallet_store_env("〈/tmp/trnm-wallets〉"),
         Some("/tmp/trnm-wallets")
     );
@@ -301,13 +305,18 @@ fn normalize_wallet_store_env_trims_shell_wrapped_quotes() {
     assert_eq!(normalize_wallet_store_env("/tmp/trnm\u{2065}wallets"), None);
     assert_eq!(normalize_wallet_store_env("/tmp/trnm\u{206a}wallets"), None);
     assert_eq!(normalize_wallet_store_env("/tmp/trnm\u{206f}wallets"), None);
+    assert_eq!(normalize_wallet_store_env("/tmp/trnm\u{034f}wallets"), None);
     assert_eq!(normalize_wallet_store_env("/tmp/trnm⧸wallets"), None);
     assert_eq!(normalize_wallet_store_env("/tmp∕trnm-wallets"), None);
     assert_eq!(normalize_wallet_store_env("/tmp⁄trnm-wallets"), None);
+    assert_eq!(normalize_wallet_store_env("/tmp∖trnm-wallets"), None);
     assert_eq!(normalize_wallet_store_env("/tmp／trnm-wallets"), None);
     assert_eq!(normalize_wallet_store_env("/tmp＼trnm-wallets"), None);
+    assert_eq!(normalize_wallet_store_env("/tmp﹨trnm-wallets"), None);
+    assert_eq!(normalize_wallet_store_env("/tmp⧹trnm-wallets"), None);
     assert_eq!(normalize_wallet_store_env("/tmp⟋trnm-wallets"), None);
     assert_eq!(normalize_wallet_store_env("/tmp⟍trnm-wallets"), None);
+    assert_eq!(normalize_wallet_store_env("/tmp/｟trnm-wallets｠"), None);
 }
 
 #[test]
@@ -416,10 +425,12 @@ fn resolve_wallet_store_fail_closes_on_invalid_env_and_prefers_explicit_store() 
 
     for invalid_explicit in [
         std::path::PathBuf::from("./wallets"),
+        std::path::PathBuf::from("/"),
         std::path::PathBuf::from("/tmp/trnm-wallets "),
         std::path::PathBuf::from(" /tmp/trnm-wallets"),
         std::path::PathBuf::from("/tmp/trnm\u{200b}wallets"),
         std::path::PathBuf::from("/tmp/《trnm-wallets》"),
+        std::path::PathBuf::from("/tmp/｟trnm-wallets｠"),
     ] {
         let err = resolve_wallet_store(Some(invalid_explicit.clone())).unwrap_err();
         assert!(
@@ -818,12 +829,36 @@ fn ensure_safe_sign_message_rejects_ambiguous_or_non_ascii_signer_text() {
         "unexpected error: {bidi_err}"
     );
 
+    let line_separator_err = ensure_safe_sign_message("approve\u{2028}tx").unwrap_err();
+    assert!(
+        line_separator_err
+            .to_string()
+            .contains("ASCII printable text"),
+        "unexpected error: {line_separator_err}"
+    );
+
+    let paragraph_separator_err = ensure_safe_sign_message("approve\u{2029}tx").unwrap_err();
+    assert!(
+        paragraph_separator_err
+            .to_string()
+            .contains("ASCII printable text"),
+        "unexpected error: {paragraph_separator_err}"
+    );
+
     let invisible_separator_err = ensure_safe_sign_message("approve\u{2063}tx").unwrap_err();
     assert!(
         invisible_separator_err
             .to_string()
             .contains("ASCII printable text"),
         "unexpected error: {invisible_separator_err}"
+    );
+
+    let grapheme_joiner_err = ensure_safe_sign_message("approve\u{034f}tx").unwrap_err();
+    assert!(
+        grapheme_joiner_err
+            .to_string()
+            .contains("ASCII printable text"),
+        "unexpected error: {grapheme_joiner_err}"
     );
 
     let inhibit_symmetric_swap_err = ensure_safe_sign_message("approve\u{206a}tx").unwrap_err();
@@ -866,11 +901,31 @@ fn ensure_safe_sign_message_rejects_ambiguous_or_non_ascii_signer_text() {
         "unexpected error: {wrapper_punctuation_err}"
     );
 
+    let repeated_space_err = ensure_safe_sign_message("approve  tx").unwrap_err();
+    assert!(
+        repeated_space_err
+            .to_string()
+            .contains("repeated interior spaces"),
+        "unexpected error: {repeated_space_err}"
+    );
+
     let too_long_message = "a".repeat(4097);
     let too_long_err = ensure_safe_sign_message(&too_long_message).unwrap_err();
     assert!(
         too_long_err.to_string().contains("<= 4096 bytes"),
         "unexpected error: {too_long_err}"
+    );
+
+    let slash_path_err = ensure_safe_sign_message("approve /tmp/offline-payload").unwrap_err();
+    assert!(
+        slash_path_err.to_string().contains("path separators"),
+        "unexpected error: {slash_path_err}"
+    );
+
+    let unicode_path_err = ensure_safe_sign_message("approve tmp∕offline∕payload").unwrap_err();
+    assert!(
+        unicode_path_err.to_string().contains("path separators"),
+        "unexpected error: {unicode_path_err}"
     );
 
     ensure_safe_sign_message("approve tx").unwrap();
@@ -956,6 +1011,9 @@ fn wallet_name_rejects_path_like_values() {
         "〚alice〛",
         "alice,",
         "alice;",
+        "alice+backup",
+        "alice@prod",
+        "alice~1",
         "alice\n",
         "alice bob",
         " alice",
@@ -977,6 +1035,11 @@ fn wallet_name_rejects_path_like_values() {
         "alice\u{2066}bob",
         "alice\u{2069}bob",
         "alice\u{0007}bob",
+        "alice⧹bob",
+        "alicé",
+        "аlice",
+        "alice猫",
+        "Ａlice",
         "con",
         "PRN",
         "aux",
@@ -992,6 +1055,33 @@ fn wallet_name_rejects_path_like_values() {
             "unexpected error for {bad:?}: {err}"
         );
     }
+
+    ensure_wallet_name("alice").unwrap();
+    ensure_wallet_name("alice_01").unwrap();
+    ensure_wallet_name("alice-01").unwrap();
+    ensure_wallet_name("ALICE01").unwrap();
+}
+
+#[test]
+fn wallet_name_error_mentions_ascii_requirement() {
+    let err = ensure_wallet_name("аlice").unwrap_err();
+    assert!(
+        err.to_string().contains("ASCII local name"),
+        "unexpected error: {err}"
+    );
+    assert!(
+        err.to_string().contains("only letters, digits, '_' or '-'"),
+        "unexpected error: {err}"
+    );
+}
+
+#[test]
+fn wallet_name_error_mentions_simple_ascii_charset() {
+    let err = ensure_wallet_name("alice+backup").unwrap_err();
+    assert!(
+        err.to_string().contains("only letters, digits, '_' or '-'"),
+        "unexpected error: {err}"
+    );
 }
 
 #[test]
