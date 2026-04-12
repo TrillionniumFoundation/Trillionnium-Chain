@@ -220,6 +220,41 @@ if bash "$SCRIPT" \
 fi
 grep -q 'missing --operator-ack' /tmp/emit-packet.err
 
+if bash "$SCRIPT" \
+  --cutover-kind replacement \
+  --verified-worktree /tmp/trnm-lane \
+  --verified-branch-ref lane/mn05-operator-dr-rotation-lifecycle \
+  --verified-head 0123456789abcdef \
+  --outgoing-validator-id validator-old \
+  --incoming-validator-id validator-new \
+  --incoming-config-path /tmp/configs/validator-new.json \
+  --rollback-command 'rm -rf /tmp/cutover-note' \
+  --config-bundle-check-command 'python3 scripts/v2/check_validator_config_bundle.py /tmp/configs/validator-other.json' \
+  --config-bundle-check-result '[OK] validated /tmp/configs/validator-other.json' \
+  >/tmp/emit-packet.out 2>/tmp/emit-packet.err; then
+  echo "expected config bundle evidence for a different incoming config to fail" >&2
+  exit 1
+fi
+grep -q 'invalid --config-bundle-check-command: must include incoming config path /tmp/configs/validator-new.json' /tmp/emit-packet.err
+
+bash "$SCRIPT" \
+  --cutover-kind replacement \
+  --verified-worktree /tmp/trnm-lane \
+  --verified-branch-ref lane/mn05-operator-dr-rotation-lifecycle \
+  --verified-head 0123456789abcdef \
+  --outgoing-validator-id validator-old \
+  --incoming-validator-id validator-new \
+  --incoming-config-path /tmp/configs/validator-new.json \
+  --rollback-command 'rm -rf /tmp/cutover-note' \
+  --config-bundle-check-command 'python3 scripts/v2/check_validator_config_bundle.py /tmp/configs/validator-new.json /tmp/configs/validator-peer.json' \
+  --config-bundle-check-result '[OK] validated /tmp/configs/validator-new.json + peer bundle' \
+  --config-bundle-check-log-path /tmp/run/validator-cutover/config-bundle-check.log \
+  >/tmp/emit-packet.out
+
+grep -q '^config_bundle_check_command=python3 scripts/v2/check_validator_config_bundle.py /tmp/configs/validator-new.json /tmp/configs/validator-peer.json$' /tmp/emit-packet.out
+grep -q '^config_bundle_check_result=\[OK\] validated /tmp/configs/validator-new.json + peer bundle$' /tmp/emit-packet.out
+grep -q '^config_bundle_check_log_path=/tmp/run/validator-cutover/config-bundle-check.log$' /tmp/emit-packet.out
+
 bash "$SCRIPT" \
   --cutover-kind replacement \
   --verified-worktree /tmp/trnm-lane \

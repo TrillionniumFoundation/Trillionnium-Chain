@@ -181,6 +181,24 @@ sys.exit(1)
 PY
 }
 
+command_mentions_token() {
+  local command="$1"
+  local expected_token="$2"
+
+  python3 - "$command" "$expected_token" <<'PY'
+import shlex
+import sys
+
+command, expected_token = sys.argv[1:3]
+try:
+    tokens = shlex.split(command)
+except ValueError:
+    sys.exit(1)
+
+sys.exit(0 if expected_token in tokens else 1)
+PY
+}
+
 while [ "$#" -gt 0 ]; do
   case "$1" in
     --cutover-kind) CUTOVER_KIND="${2-}"; shift 2 ;;
@@ -288,6 +306,10 @@ fi
 if [ -n "$CONFIG_BUNDLE_CHECK_COMMAND" ] || [ -n "$CONFIG_BUNDLE_CHECK_RESULT" ] || [ -n "$CONFIG_BUNDLE_CHECK_LOG_PATH" ]; then
   require_nonempty --config-bundle-check-command "$CONFIG_BUNDLE_CHECK_COMMAND"
   require_nonempty --config-bundle-check-result "$CONFIG_BUNDLE_CHECK_RESULT"
+  if ! command_mentions_token "$CONFIG_BUNDLE_CHECK_COMMAND" "$INCOMING_CONFIG_PATH"; then
+    printf 'invalid --config-bundle-check-command: must include incoming config path %s\n' "$INCOMING_CONFIG_PATH" >&2
+    exit 2
+  fi
 fi
 if [ -n "$CONFIG_BUNDLE_CHECK_LOG_PATH" ]; then
   require_path_value --config-bundle-check-log-path "$CONFIG_BUNDLE_CHECK_LOG_PATH"
