@@ -158,6 +158,22 @@ function normalizeRequiredEventType(
   });
 }
 
+function normalizeRequiredEventField(
+  value: string,
+  field: "actor" | "from_status" | "to_status" | "state_root",
+  context: { source: "canonical" | "rpc"; eventId?: string; taskId?: string | number },
+): string {
+  const normalized = normalizeOptionalCursor(value);
+  if (normalized != null) return normalized;
+
+  throw normalizeSchemaError({
+    message: `${context.source} query-events payload contains blank ${field}`,
+    field,
+    eventId: context.eventId,
+    taskId: context.taskId,
+  });
+}
+
 const rpcCapabilityAuditSchema = z.object({
   token: z.object({
     subject_did: z.string().min(1),
@@ -372,23 +388,40 @@ export const adaptQueryEvents = (
         taskId: event.task_id,
       });
 
+      const normalizedFromStatus = normalizeRequiredEventField(event.from_status, "from_status", {
+        source: "rpc",
+        taskId: event.task_id,
+      });
+      const normalizedToStatus = normalizeRequiredEventField(event.to_status, "to_status", {
+        source: "rpc",
+        taskId: event.task_id,
+      });
+      const normalizedActor = normalizeRequiredEventField(event.actor, "actor", {
+        source: "rpc",
+        taskId: event.task_id,
+      });
+      const normalizedStateRoot = normalizeRequiredEventField(event.state_root, "state_root", {
+        source: "rpc",
+        taskId: event.task_id,
+      });
+
       return {
         id: `${event.task_id}:${event.tx_id}:${normalizedEventType}`,
         taskId: String(event.task_id),
         type: normalizedEventType,
         level:
-          isM2V2Error || event.to_status === "Slashed"
+          isM2V2Error || normalizedToStatus === "Slashed"
             ? "error"
             : normalizedEventType === "challenge"
               ? "warn"
               : "info",
         timestamp: toIsoFromUnixMs(event.ts_unix_ms),
         payload: {
-          fromStatus: event.from_status,
-          toStatus: event.to_status,
-          actor: event.actor,
+          fromStatus: normalizedFromStatus,
+          toStatus: normalizedToStatus,
+          actor: normalizedActor,
           blockHeight: event.block_height,
-          stateRoot: event.state_root,
+          stateRoot: normalizedStateRoot,
           signer: event.signer,
           challenger: event.challenger,
           txHash: event.tx_hash,

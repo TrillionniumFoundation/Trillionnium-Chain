@@ -216,6 +216,32 @@ describe("api-contract adapters", () => {
     expect(out.events[0]?.level).toBe("warn");
   });
 
+  it("trims rpc query-events required payload fields before returning canonical event payload", () => {
+    const out = adaptQueryEvents(
+      [
+        {
+          event_type: "commit",
+          task_id: 7,
+          from_status: " Assigned ",
+          to_status: " Committed ",
+          actor: " did:trnm:alice ",
+          tx_id: 11,
+          block_height: 22,
+          state_root: " root ",
+          ts_unix_ms: 1700000000000,
+        },
+      ],
+      "7",
+    );
+
+    expect(out.events[0]?.payload).toMatchObject({
+      fromStatus: "Assigned",
+      toStatus: "Committed",
+      actor: "did:trnm:alice",
+      stateRoot: "root",
+    });
+  });
+
   it("treats DID registration history as non-grant in rpc capability audit fallback", () => {
     const out = adaptQueryCapabilityAudit({
       token: {
@@ -1196,6 +1222,27 @@ describe("api-contract adapters", () => {
             from_status: "Assigned",
             to_status: "Committed",
             actor: "did:trnm:alice",
+            tx_id: 11,
+            block_height: 22,
+            state_root: "root",
+            ts_unix_ms: 1700000000000,
+          },
+        ],
+        "7",
+      ),
+    ).toThrow(FrontendApiError);
+  });
+
+  it("fails closed when rpc query-events payload contains blank required payload field noise", () => {
+    expect(() =>
+      adaptQueryEvents(
+        [
+          {
+            event_type: "commit",
+            task_id: 7,
+            from_status: "Assigned",
+            to_status: "Committed",
+            actor: " \uFEFF\u200B ",
             tx_id: 11,
             block_height: 22,
             state_root: "root",
