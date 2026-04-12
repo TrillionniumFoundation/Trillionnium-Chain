@@ -244,6 +244,25 @@ manifest_evidence_scope="$(require_key "$MANIFEST_PATH" evidence_scope)"
 manifest_rollback="$(require_key "$MANIFEST_PATH" rollback_command)"
 manifest_replay="$(require_key "$MANIFEST_PATH" replay_command)"
 
+if [ -n "$PREFLIGHT_SUMMARY_PATH" ]; then
+  preflight_result="$(require_key "$PREFLIGHT_SUMMARY_PATH" result)"
+  preflight_generated_at="$(require_key "$PREFLIGHT_SUMMARY_PATH" generated_at)"
+  preflight_toplevel="$(require_key "$PREFLIGHT_SUMMARY_PATH" git_toplevel)"
+  preflight_branch="$(require_key "$PREFLIGHT_SUMMARY_PATH" git_branch)"
+  preflight_head="$(require_key "$PREFLIGHT_SUMMARY_PATH" git_head)"
+  preflight_head_state="$(require_key "$PREFLIGHT_SUMMARY_PATH" git_head_state)"
+  preflight_git_status_summary="$(require_key "$PREFLIGHT_SUMMARY_PATH" git_status_summary)"
+  preflight_worktree_path="$(require_key "$PREFLIGHT_SUMMARY_PATH" git_worktree_path)"
+  preflight_worktree_branch_ref="$(require_key "$PREFLIGHT_SUMMARY_PATH" git_worktree_branch_ref)"
+  preflight_expected_worktree_branch_ref="$(require_key "$PREFLIGHT_SUMMARY_PATH" git_expected_worktree_branch_ref)"
+  preflight_worktree_branch_ref_match="$(require_key "$PREFLIGHT_SUMMARY_PATH" git_worktree_branch_ref_match)"
+  preflight_expected_worktree_root="$(require_key "$PREFLIGHT_SUMMARY_PATH" expected_worktree_root)"
+  preflight_expected_branch_ref="$(require_key "$PREFLIGHT_SUMMARY_PATH" expected_branch_ref)"
+  preflight_expected_head="$(optional_key "$PREFLIGHT_SUMMARY_PATH" expected_head)"
+  preflight_rollback="$(require_key "$PREFLIGHT_SUMMARY_PATH" rollback_command)"
+  preflight_replay="$(require_key "$PREFLIGHT_SUMMARY_PATH" replay_command)"
+fi
+
 assert_equal git_toplevel "$summary_toplevel" "$manifest_toplevel"
 assert_equal git_branch "$summary_branch" "$manifest_branch"
 assert_equal git_head "$summary_head" "$manifest_head"
@@ -256,6 +275,23 @@ assert_equal git_status_summary "$summary_git_status_summary" "$manifest_git_sta
 assert_equal truth_source "$summary_truth_source" "$manifest_truth_source"
 assert_equal historical_evidence_only "$summary_historical_evidence_only" "$manifest_historical_evidence_only"
 assert_equal evidence_scope "$summary_evidence_scope" "$manifest_evidence_scope"
+
+if [ -n "$PREFLIGHT_SUMMARY_PATH" ]; then
+  assert_equal preflight_git_toplevel "$preflight_toplevel" "$summary_toplevel"
+  assert_equal preflight_git_branch "$preflight_branch" "$summary_branch"
+  assert_equal preflight_git_head "$preflight_head" "$summary_head"
+  assert_equal preflight_git_head_state "$preflight_head_state" "$summary_head_state"
+  assert_equal preflight_git_worktree_path "$preflight_worktree_path" "$summary_worktree_path"
+  assert_equal preflight_git_worktree_branch_ref "$preflight_worktree_branch_ref" "$summary_worktree_branch_ref"
+  assert_equal preflight_git_expected_worktree_branch_ref "$preflight_expected_worktree_branch_ref" "$summary_expected_worktree_branch_ref"
+  assert_equal preflight_git_worktree_branch_ref_match "$preflight_worktree_branch_ref_match" "$summary_worktree_branch_ref_match"
+  assert_equal preflight_git_status_summary "$preflight_git_status_summary" "$summary_git_status_summary"
+
+  [ "$preflight_worktree_branch_ref_match" = "true" ] || {
+    printf 'preflight artifact mismatch for git_worktree_branch_ref_match: expected true got %s\n' "$preflight_worktree_branch_ref_match" >&2
+    exit 1
+  }
+fi
 
 if [ -n "$EXPECTED_WORKTREE_ROOT" ]; then
   [ "$summary_worktree_path" = "$EXPECTED_WORKTREE_ROOT" ] || {
@@ -270,6 +306,29 @@ if [ -n "$EXPECTED_WORKTREE_ROOT" ]; then
     printf 'artifact mismatch for expected artifact branch ref: expected=%s summary=%s\n' "$EXPECTED_BRANCH_REF_CANONICAL" "$summary_expected_worktree_branch_ref" >&2
     exit 1
   }
+
+  if [ -n "$PREFLIGHT_SUMMARY_PATH" ]; then
+    [ "$preflight_expected_worktree_root" = "$EXPECTED_WORKTREE_ROOT" ] || {
+      printf 'preflight expected_worktree_root mismatch: expected=%s got %s\n' "$EXPECTED_WORKTREE_ROOT" "$preflight_expected_worktree_root" >&2
+      exit 1
+    }
+    [ "$preflight_worktree_path" = "$EXPECTED_WORKTREE_ROOT" ] || {
+      printf 'preflight expected worktree mismatch: expected=%s got %s\n' "$EXPECTED_WORKTREE_ROOT" "$preflight_worktree_path" >&2
+      exit 1
+    }
+    [ "$preflight_expected_branch_ref" = "$EXPECTED_BRANCH_REF_CANONICAL" ] || {
+      printf 'preflight expected branch-ref mismatch: expected=%s got %s\n' "$EXPECTED_BRANCH_REF_CANONICAL" "$preflight_expected_branch_ref" >&2
+      exit 1
+    }
+    [ "$preflight_expected_worktree_branch_ref" = "$EXPECTED_BRANCH_REF_CANONICAL" ] || {
+      printf 'preflight expected artifact branch ref mismatch: expected=%s got %s\n' "$EXPECTED_BRANCH_REF_CANONICAL" "$preflight_expected_worktree_branch_ref" >&2
+      exit 1
+    }
+    [ "$preflight_worktree_branch_ref" = "$EXPECTED_BRANCH_REF_CANONICAL" ] || {
+      printf 'preflight worktree branch-ref mismatch: expected=%s got %s\n' "$EXPECTED_BRANCH_REF_CANONICAL" "$preflight_worktree_branch_ref" >&2
+      exit 1
+    }
+  fi
 fi
 
 [ "$summary_worktree_branch_ref_match" = "true" ] || {
@@ -344,6 +403,11 @@ if [ -n "$VERIFIED_WORKTREE" ] && [ "$summary_worktree_path" != "$VERIFIED_WORKT
   exit 1
 fi
 
+if [ -n "$VERIFIED_WORKTREE" ] && [ -n "$PREFLIGHT_SUMMARY_PATH" ] && [ "$preflight_worktree_path" != "$VERIFIED_WORKTREE" ]; then
+  printf 'preflight artifact mismatch for verified worktree: verified=%s preflight=%s\n' "$VERIFIED_WORKTREE" "$preflight_worktree_path" >&2
+  exit 1
+fi
+
 if [ -n "$VERIFIED_BRANCH_REF" ]; then
   if [ "$summary_worktree_branch_ref" != "$VERIFIED_BRANCH_REF" ]; then
     printf 'artifact mismatch for verified branch ref: verified=%s summary=%s\n' "$VERIFIED_BRANCH_REF" "$summary_worktree_branch_ref" >&2
@@ -351,6 +415,16 @@ if [ -n "$VERIFIED_BRANCH_REF" ]; then
   fi
   if [ "$summary_expected_worktree_branch_ref" != "$VERIFIED_BRANCH_REF" ]; then
     printf 'artifact mismatch for artifact expected branch ref vs verified branch ref: verified=%s summary=%s\n' "$VERIFIED_BRANCH_REF" "$summary_expected_worktree_branch_ref" >&2
+    exit 1
+  fi
+
+  if [ -n "$PREFLIGHT_SUMMARY_PATH" ] && [ "$preflight_worktree_branch_ref" != "$VERIFIED_BRANCH_REF" ]; then
+    printf 'preflight artifact mismatch for verified branch ref: verified=%s preflight=%s\n' "$VERIFIED_BRANCH_REF" "$preflight_worktree_branch_ref" >&2
+    exit 1
+  fi
+
+  if [ -n "$PREFLIGHT_SUMMARY_PATH" ] && [ "$preflight_expected_worktree_branch_ref" != "$VERIFIED_BRANCH_REF" ]; then
+    printf 'preflight artifact mismatch for expected branch ref vs verified branch ref: verified=%s preflight=%s\n' "$VERIFIED_BRANCH_REF" "$preflight_expected_worktree_branch_ref" >&2
     exit 1
   fi
 fi
@@ -364,6 +438,16 @@ if [ -n "$EXPECTED_BRANCH_REF_CANONICAL" ]; then
     printf 'artifact mismatch for artifact expected branch ref: expected=%s summary=%s\n' "$EXPECTED_BRANCH_REF_CANONICAL" "$summary_expected_worktree_branch_ref" >&2
     exit 1
   fi
+
+  if [ -n "$PREFLIGHT_SUMMARY_PATH" ] && [ "$preflight_worktree_branch_ref" != "$EXPECTED_BRANCH_REF_CANONICAL" ]; then
+    printf 'preflight artifact mismatch for expected worktree branch ref: expected=%s preflight=%s\n' "$EXPECTED_BRANCH_REF_CANONICAL" "$preflight_worktree_branch_ref" >&2
+    exit 1
+  fi
+
+  if [ -n "$PREFLIGHT_SUMMARY_PATH" ] && [ "$preflight_expected_worktree_branch_ref" != "$EXPECTED_BRANCH_REF_CANONICAL" ]; then
+    printf 'preflight artifact mismatch for expected artifact branch ref: expected=%s preflight=%s\n' "$EXPECTED_BRANCH_REF_CANONICAL" "$preflight_expected_worktree_branch_ref" >&2
+    exit 1
+  fi
 fi
 
 if [ -n "$EXPECTED_HEAD" ]; then
@@ -375,6 +459,11 @@ fi
 
 if [ -n "$VERIFIED_HEAD" ] && [ "$summary_head" != "$VERIFIED_HEAD" ]; then
   printf 'artifact mismatch for verified head: verified=%s summary=%s\n' "$VERIFIED_HEAD" "$summary_head" >&2
+  exit 1
+fi
+
+if [ -n "$VERIFIED_HEAD" ] && [ -n "$PREFLIGHT_SUMMARY_PATH" ] && [ "$preflight_head" != "$VERIFIED_HEAD" ]; then
+  printf 'preflight artifact mismatch for verified head: verified=%s preflight=%s\n' "$VERIFIED_HEAD" "$preflight_head" >&2
   exit 1
 fi
 
@@ -396,6 +485,32 @@ if [ -n "$PREFLIGHT_SUMMARY_PATH" ]; then
   printf 'preflight_summary_path=%s\n' "$PREFLIGHT_SUMMARY_PATH"
 else
   printf 'preflight_summary_path=%s\n' '<missing>'
+fi
+if [ -n "$PREFLIGHT_SUMMARY_PATH" ]; then
+  printf 'preflight_result=%s\n' "$preflight_result"
+  printf 'preflight_generated_at=%s\n' "$preflight_generated_at"
+  printf 'preflight_git_toplevel=%s\n' "$preflight_toplevel"
+  printf 'preflight_git_branch=%s\n' "$preflight_branch"
+  printf 'preflight_git_head=%s\n' "$preflight_head"
+  printf 'preflight_git_head_state=%s\n' "$preflight_head_state"
+  printf 'preflight_git_status_summary=%s\n' "$preflight_git_status_summary"
+  printf 'preflight_git_worktree_path=%s\n' "$preflight_worktree_path"
+  printf 'preflight_git_worktree_branch_ref=%s\n' "$preflight_worktree_branch_ref"
+  printf 'preflight_git_worktree_branch_ref_match=%s\n' "$preflight_worktree_branch_ref_match"
+  printf 'preflight_expected_worktree_root=%s\n' "$preflight_expected_worktree_root"
+  if [ -n "$EXPECTED_BRANCH_REF" ]; then
+    printf 'preflight_ticket_expected_branch_ref=%s\n' "$EXPECTED_BRANCH_REF"
+  else
+    printf 'preflight_ticket_expected_branch_ref=%s\n' '<unset>'
+  fi
+  printf 'preflight_expected_branch_ref=%s\n' "$preflight_expected_branch_ref"
+  if [ -n "$preflight_expected_head" ]; then
+    printf 'preflight_expected_head=%s\n' "$preflight_expected_head"
+  else
+    printf 'preflight_expected_head=%s\n' '<unset>'
+  fi
+  printf 'preflight_rollback_command=%s\n' "$preflight_rollback"
+  printf 'preflight_replay_command=%s\n' "$preflight_replay"
 fi
 printf 'summary_path=%s\n' "$SUMMARY_PATH"
 printf 'manifest_path=%s\n' "$MANIFEST_PATH"

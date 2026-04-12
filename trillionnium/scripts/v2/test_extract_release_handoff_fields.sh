@@ -102,6 +102,20 @@ grep -q "^manifest_path=$MANIFEST_PATH_CANONICAL$" "$EVIDENCE_DIR/out-missing-pr
 cat >"$PREFLIGHT_PATH" <<EOF
 result=GO
 generated_at=2026-04-12T03:16:00Z
+git_toplevel=$WORKTREE_ROOT
+git_branch=$BRANCH_SHORT
+git_head=$HEAD_SHA
+git_head_state=attached
+git_status_summary=clean
+git_worktree_path=$WORKTREE_ROOT
+git_worktree_branch_ref=$BRANCH_REF
+git_expected_worktree_branch_ref=$BRANCH_REF
+git_worktree_branch_ref_match=true
+expected_worktree_root=$WORKTREE_ROOT
+expected_branch_ref=$BRANCH_REF
+expected_head=<unset>
+rollback_command=rm -f '$PREFLIGHT_PATH' '$PREFLIGHT_ALIAS_PATH'
+replay_command=env TZ=UTC ./scripts/testnet_preflight.sh
 EOF
 cp "$PREFLIGHT_PATH" "$PREFLIGHT_ALIAS_PATH"
 
@@ -117,5 +131,13 @@ grep -q "^ticket_expected_branch_ref=$BRANCH_SHORT$" "$EVIDENCE_DIR/out-short-br
 grep -q "^expected_branch_ref=$BRANCH_REF$" "$EVIDENCE_DIR/out-short-branch.txt"
 grep -q "^preflight_path=$PREFLIGHT_ALIAS_PATH_CANONICAL$" "$EVIDENCE_DIR/out-short-branch.txt"
 grep -q "^preflight_summary_path=$PREFLIGHT_PATH_CANONICAL$" "$EVIDENCE_DIR/out-short-branch.txt"
+grep -q "^preflight_result=GO$" "$EVIDENCE_DIR/out-short-branch.txt"
+grep -q "^preflight_git_worktree_path=$WORKTREE_ROOT$" "$EVIDENCE_DIR/out-short-branch.txt"
+grep -q "^preflight_git_worktree_branch_ref=$BRANCH_REF$" "$EVIDENCE_DIR/out-short-branch.txt"
+grep -q "^preflight_ticket_expected_branch_ref=$BRANCH_SHORT$" "$EVIDENCE_DIR/out-short-branch.txt"
+grep -q "^preflight_expected_branch_ref=$BRANCH_REF$" "$EVIDENCE_DIR/out-short-branch.txt"
+grep -q '^preflight_expected_head=<unset>$' "$EVIDENCE_DIR/out-short-branch.txt"
+grep -q "^preflight_rollback_command=rm -f '$PREFLIGHT_PATH' '$PREFLIGHT_ALIAS_PATH'$" "$EVIDENCE_DIR/out-short-branch.txt"
+grep -q '^preflight_replay_command=env TZ=UTC \./scripts/testnet_preflight.sh$' "$EVIDENCE_DIR/out-short-branch.txt"
 
 echo "PASS"
