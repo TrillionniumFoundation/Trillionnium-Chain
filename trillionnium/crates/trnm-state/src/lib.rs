@@ -3713,6 +3713,28 @@ impl StateStore {
         self.billing_window_policies.get(billing_window_id).cloned()
     }
 
+    pub fn billing_window_policy_snapshot(
+        &self,
+        billing_window_id: &str,
+    ) -> Option<BillingWindowPolicy> {
+        self.billing_window_policy(billing_window_id)
+    }
+
+    pub fn restore_billing_window_policy(
+        &mut self,
+        billing_window_id: &str,
+        snapshot: Option<BillingWindowPolicy>,
+    ) {
+        match snapshot {
+            Some(snapshot) if snapshot.is_persistable_snapshot_for(billing_window_id) => {
+                let _ = self.set_billing_window_policy(snapshot);
+            }
+            _ => {
+                let _ = self.clear_billing_window_policy(billing_window_id);
+            }
+        }
+    }
+
     pub fn clear_billing_window_policy(
         &mut self,
         billing_window_id: &str,
@@ -3735,6 +3757,28 @@ impl StateStore {
 
     pub fn task_consumption_summary(&self, task_id: u64) -> Option<TaskConsumptionSummary> {
         self.task_consumption_summaries.get(&task_id).cloned()
+    }
+
+    pub fn task_consumption_summary_snapshot(
+        &self,
+        task_id: u64,
+    ) -> Option<TaskConsumptionSummary> {
+        self.task_consumption_summary(task_id)
+    }
+
+    pub fn restore_task_consumption_summary(
+        &mut self,
+        task_id: u64,
+        snapshot: Option<TaskConsumptionSummary>,
+    ) {
+        match snapshot {
+            Some(snapshot) if snapshot.is_persistable_snapshot_for(task_id) => {
+                let _ = self.set_task_consumption_summary(snapshot);
+            }
+            _ => {
+                let _ = self.clear_task_consumption_summary(task_id);
+            }
+        }
     }
 
     pub fn clear_task_consumption_summary(

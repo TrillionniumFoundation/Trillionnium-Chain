@@ -61,6 +61,27 @@ pub struct BillingWindowPolicy {
     pub policy_version: u64,
 }
 
+impl BillingWindowPolicy {
+    pub fn is_persistable_snapshot_for(&self, billing_window_id: &str) -> bool {
+        !billing_window_id.trim().is_empty()
+            && self.billing_window_id == billing_window_id
+            && self.open_at_unix_ms > 0
+            && self.close_at_unix_ms > self.open_at_unix_ms
+            && self.policy_version > 0
+            && self
+                .per_consumer_max_credited_units
+                .map_or(true, |cap| cap > 0)
+            && self.per_task_max_credited_units.map_or(true, |cap| cap > 0)
+            && match (
+                self.per_consumer_max_credited_units,
+                self.per_task_max_credited_units,
+            ) {
+                (Some(consumer_cap), Some(task_cap)) => consumer_cap <= task_cap,
+                _ => true,
+            }
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
 pub struct TaskConsumptionSummary {
     pub task_id: u64,
@@ -71,6 +92,19 @@ pub struct TaskConsumptionSummary {
     pub total_claimed_consumption_units: u128,
     pub total_credited_consumption_units: u128,
     pub last_settlement_height: Option<u64>,
+}
+
+impl TaskConsumptionSummary {
+    pub fn is_persistable_snapshot_for(&self, task_id: u64) -> bool {
+        task_id != 0
+            && self.task_id == task_id
+            && self.accepted_receipt_count <= self.receipt_count
+            && self.challenged_receipt_count <= self.receipt_count
+            && self.total_credited_consumption_units <= self.total_claimed_consumption_units
+            && self
+                .last_settlement_height
+                .map_or(true, |height| height > 0)
+    }
 }
 
 #[cfg(test)]
@@ -109,6 +143,19 @@ mod tests {
             per_consumer_max_credited_units: Some(1_000),
             per_task_max_credited_units: Some(10_000),
             policy_version: 1,
+        }
+    }
+
+    fn sample_task_consumption_summary() -> TaskConsumptionSummary {
+        TaskConsumptionSummary {
+            task_id: 42,
+            receipt_count: 2,
+            accepted_receipt_count: 1,
+            challenged_receipt_count: 1,
+            total_consumed_tokens: 34,
+            total_claimed_consumption_units: 34,
+            total_credited_consumption_units: 17,
+            last_settlement_height: Some(77),
         }
     }
 
@@ -165,5 +212,70 @@ mod tests {
         st.set_billing_window_policy(sample_billing_window_policy());
         let after = st.state_root();
         assert_ne!(before, after);
+    }
+
+    #[test]
+    fn billing_window_policy_snapshot_roundtrip_restores_policy_and_state_root() {
+        let mut st = StateStore::default();
+        let policy = sample_billing_window_policy();
+        st.set_billing_window_policy(policy.clone());
+        let expected_root = st.state_root();
+        let snapshot = st.billing_window_policy_snapshot(&policy.billing_window_id);
+
+        assert_eq!(
+            st.clear_billing_window_policy(&policy.billing_window_id),
+            Some(policy.clone())
+        );
+        st.restore_billing_window_policy(&policy.billing_window_id, snapshot);
+
+        assert_eq!(
+            st.billing_window_policy(&policy.billing_window_id),
+            Some(policy)
+        );
+        assert_eq!(st.state_root(), expected_root);
+    }
+
+    #[test]
+    fn restore_billing_window_policy_clears_invalid_snapshot() {
+        let mut st = StateStore::default();
+        let policy = sample_billing_window_policy();
+        st.set_billing_window_policy(policy.clone());
+
+        let mut invalid = policy;
+        invalid.close_at_unix_ms = invalid.open_at_unix_ms;
+        st.restore_billing_window_policy("bw-1", Some(invalid));
+
+        assert_eq!(st.billing_window_policy("bw-1"), None);
+    }
+
+    #[test]
+    fn task_consumption_summary_snapshot_roundtrip_restores_summary_and_state_root() {
+        let mut st = StateStore::default();
+        let summary = sample_task_consumption_summary();
+        st.set_task_consumption_summary(summary.clone());
+        let expected_root = st.state_root();
+        let snapshot = st.task_consumption_summary_snapshot(summary.task_id);
+
+        assert_eq!(
+            st.clear_task_consumption_summary(summary.task_id),
+            Some(summary.clone())
+        );
+        st.restore_task_consumption_summary(summary.task_id, snapshot);
+
+        assert_eq!(st.task_consumption_summary(summary.task_id), Some(summary));
+        assert_eq!(st.state_root(), expected_root);
+    }
+
+    #[test]
+    fn restore_task_consumption_summary_clears_inconsistent_snapshot() {
+        let mut st = StateStore::default();
+        let summary = sample_task_consumption_summary();
+        st.set_task_consumption_summary(summary.clone());
+
+        let mut invalid = summary;
+        invalid.accepted_receipt_count = invalid.receipt_count.saturating_add(1);
+        st.restore_task_consumption_summary(42, Some(invalid));
+
+        assert_eq!(st.task_consumption_summary(42), None);
     }
 }
