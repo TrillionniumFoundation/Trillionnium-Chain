@@ -787,6 +787,52 @@ describe("api-contract adapters", () => {
     expect(out.audits[0]?.checkedAt).toBe("height:123");
   });
 
+  it("normalizes rpc capability audit subject and capability before returning them", () => {
+    const out = adaptQueryCapabilityAudit({
+      token: {
+        subject_did: "\uFEFF did:trnm:bob \u200B",
+        scope: "\u200D AUDIT_READ \u2060",
+      },
+      owner_history: [
+        {
+          action: "CAPABILITY_ISSUED",
+          at_height: 123,
+          note: "ok",
+        },
+      ],
+    });
+
+    expect(out).toEqual({
+      subject: "did:trnm:bob",
+      audits: [
+        {
+          subject: "did:trnm:bob",
+          capability: "AUDIT_READ",
+          granted: true,
+          reason: "ok",
+          checkedAt: "height:123",
+        },
+      ],
+    });
+  });
+
+  it("fails closed when rpc capability audit scope becomes blank after normalization", () => {
+    expect(() =>
+      adaptQueryCapabilityAudit({
+        token: {
+          subject_did: "did:trnm:bob",
+          scope: "\uFEFF \u200B\u200D ",
+        },
+        owner_history: [
+          {
+            action: "CAPABILITY_ISSUED",
+            at_height: 123,
+          },
+        ],
+      }),
+    ).toThrow(FrontendApiError);
+  });
+
   it("preserves historical grant entries while annotating token-revoked capability audit state", () => {
     const out = adaptQueryCapabilityAudit({
       token: {

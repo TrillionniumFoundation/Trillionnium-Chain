@@ -455,11 +455,19 @@ export const adaptQueryCapabilityAudit = (
   if (!rpc.success) throw normalizeSchemaError(rpc.error.flatten());
 
   try {
+    const normalizedSubject = normalizeRequiredText(
+      rpc.data.token.subject_did,
+      "capability audit subject",
+    );
+    const normalizedCapability = normalizeRequiredText(
+      rpc.data.token.scope,
+      "capability audit capability",
+    );
     const tokenRevokedAt = toOptionalHeightMarker(rpc.data.token.revoked_at);
     const tokenIsRevoked = tokenRevokedAt != null;
 
     return {
-      subject: rpc.data.token.subject_did,
+      subject: normalizedSubject,
       audits: rpc.data.owner_history.map((entry) => {
         const actionGrantsCapability =
           entry.action === "CAPABILITY_ISSUED" || entry.action === "CAPABILITY_RENEWED";
@@ -472,8 +480,8 @@ export const adaptQueryCapabilityAudit = (
         const normalizedNote = normalizeOptionalText(entry.note);
 
         return {
-          subject: rpc.data.token.subject_did,
-          capability: rpc.data.token.scope,
+          subject: normalizedSubject,
+          capability: normalizedCapability,
           granted: actionGrantsCapability,
           reason:
             tokenIsRevoked && actionTouchesCapability
