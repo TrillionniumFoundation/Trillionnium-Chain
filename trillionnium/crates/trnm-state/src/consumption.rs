@@ -80,6 +80,15 @@ impl BillingWindowPolicy {
                 _ => true,
             }
     }
+
+    pub fn covers_acceptance_at(&self, accepted_at_unix_ms: u64) -> bool {
+        self.open_at_unix_ms <= accepted_at_unix_ms && accepted_at_unix_ms < self.close_at_unix_ms
+    }
+
+    pub fn is_receipt_compatible(&self, billing_window_id: &str, accepted_at_unix_ms: u64) -> bool {
+        self.is_persistable_snapshot_for(billing_window_id)
+            && self.covers_acceptance_at(accepted_at_unix_ms)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
@@ -259,6 +268,44 @@ mod tests {
 
         assert_eq!(st.set_billing_window_policy(invalid), Some(policy));
         assert_eq!(st.billing_window_policy("bw-1"), None);
+    }
+
+    #[test]
+    fn billing_window_policy_receipt_compatibility_uses_half_open_window() {
+        let policy = sample_billing_window_policy();
+
+        assert!(policy.is_receipt_compatible(&policy.billing_window_id, policy.open_at_unix_ms,));
+        assert!(
+            policy.is_receipt_compatible(&policy.billing_window_id, policy.close_at_unix_ms - 1,)
+        );
+        assert!(!policy.is_receipt_compatible(&policy.billing_window_id, policy.close_at_unix_ms,));
+        assert!(!policy.is_receipt_compatible("bw-2", policy.open_at_unix_ms,));
+    }
+
+    #[test]
+    fn state_store_billing_window_lookup_requires_covered_acceptance_time() {
+        let mut st = StateStore::default();
+        let policy = sample_billing_window_policy();
+        st.set_billing_window_policy(policy.clone());
+
+        assert_eq!(
+            st.billing_window_policy_for_acceptance(
+                &policy.billing_window_id,
+                policy.open_at_unix_ms,
+            ),
+            Some(policy.clone())
+        );
+        assert_eq!(
+            st.billing_window_policy_for_acceptance(
+                &policy.billing_window_id,
+                policy.close_at_unix_ms,
+            ),
+            None
+        );
+        assert_eq!(
+            st.billing_window_policy_for_acceptance("bw-2", policy.open_at_unix_ms),
+            None
+        );
     }
 
     #[test]

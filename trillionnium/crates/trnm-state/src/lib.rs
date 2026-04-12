@@ -3718,6 +3718,17 @@ impl StateStore {
         self.billing_window_policies.get(billing_window_id).cloned()
     }
 
+    pub fn billing_window_policy_for_acceptance(
+        &self,
+        billing_window_id: &str,
+        accepted_at_unix_ms: u64,
+    ) -> Option<BillingWindowPolicy> {
+        self.billing_window_policies
+            .get(billing_window_id)
+            .filter(|policy| policy.is_receipt_compatible(billing_window_id, accepted_at_unix_ms))
+            .cloned()
+    }
+
     pub fn billing_window_policy_snapshot(
         &self,
         billing_window_id: &str,
