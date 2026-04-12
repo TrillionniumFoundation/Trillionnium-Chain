@@ -6,7 +6,7 @@ export type TaskStatus =
   | "failed"
   | "canceled";
 
-export type HeightCheckedAt = `height:${bigint}`;
+export type HeightCheckedAt = Exclude<`height:${bigint}`, `height:-${string}`>;
 export type IsoDatetimeString = `${string}T${string}`;
 
 export type ChainTask = Readonly<{
