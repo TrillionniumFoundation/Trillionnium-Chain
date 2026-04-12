@@ -242,12 +242,12 @@ impl OracleValidateSnapshotResponse {
     fn has_explicit_unclassified_error_label(&self) -> bool {
         self.error
             .as_deref()
-            .map(str::trim)
+            .map(normalize_error_label_for_contract)
             .is_some_and(|label| {
                 !label.is_empty()
-                    && !Self::is_stale_error_label(label)
-                    && !Self::is_quorum_error_label(label)
-                    && !Self::is_drift_error_label(label)
+                    && !Self::is_stale_error_label(&label)
+                    && !Self::is_quorum_error_label(&label)
+                    && !Self::is_drift_error_label(&label)
             })
     }
 
@@ -301,16 +301,21 @@ impl OracleValidateSnapshotResponse {
             return self.error.is_none();
         }
 
-        let Some(label) = self.error.as_deref().map(str::trim) else {
+        let Some(label) = self
+            .error
+            .as_deref()
+            .map(normalize_error_label_for_contract)
+            .filter(|label| !label.is_empty())
+        else {
             return false;
         };
 
-        if Self::is_stale_error_label(label) {
+        if Self::is_stale_error_label(&label) {
             self.observation.stale_reject_total > 0 && self.metrics.oracle_stale_reject_total > 0
-        } else if Self::is_quorum_error_label(label) {
+        } else if Self::is_quorum_error_label(&label) {
             self.observation.quorum_reject_total > 0
                 && self.metrics.oracle_quorum_reject_total > 0
-        } else if Self::is_drift_error_label(label) {
+        } else if Self::is_drift_error_label(&label) {
             self.observation.drift_reject_total > 0 && self.metrics.oracle_drift_reject_total > 0
         } else {
             self.has_explicit_unclassified_error_label()

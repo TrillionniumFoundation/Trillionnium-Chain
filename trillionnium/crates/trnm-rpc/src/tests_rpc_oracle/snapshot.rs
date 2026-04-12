@@ -333,7 +333,7 @@ fn canonical_source_cardinality(sources: &[Value]) -> u32 {
     let mut unique = HashSet::new();
     for source in sources {
         let Some(source_id) = source.get("source_id").and_then(Value::as_str) else {
-            return sources.len() as u32;
+            continue;
         };
         let canonical = source_id.trim().to_ascii_lowercase();
         if canonical.is_empty() {
@@ -371,6 +371,15 @@ pub(crate) fn oracle_validate_snapshot_response(
 
     if source_count == 0 {
         return Err("snapshot has no sources".to_string());
+    }
+    if snapshot_val.sample_count == 0 {
+        return Err("invalid snapshot: sample_count must be > 0".to_string());
+    }
+    if snapshot_val.sample_count < source_count {
+        return Err(format!(
+            "inconsistent sample count: sources={}, sample_count={}",
+            source_count, snapshot_val.sample_count
+        ));
     }
 
     let mut outcome = "accepted";
