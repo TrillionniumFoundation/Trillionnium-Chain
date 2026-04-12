@@ -6486,6 +6486,18 @@ mod tests {
                 "p2p_addr must not use an IPv4-translated IPv6 address",
             ),
             (
+                "rpc-ipv4-translated-dotted-quad",
+                "[::ffff:0:127.0.0.1]:7000",
+                "[2001:4860::1]:7001",
+                "rpc_addr must not use an IPv4-translated IPv6 address",
+            ),
+            (
+                "p2p-ipv4-translated-dotted-quad",
+                "[2001:4860::1]:7000",
+                "[::ffff:0:127.0.0.1]:7001",
+                "p2p_addr must not use an IPv4-translated IPv6 address",
+            ),
+            (
                 "rpc-scope",
                 "[2001:4860::8888%7]:7000",
                 "[2001:4860::8888]:7001",
