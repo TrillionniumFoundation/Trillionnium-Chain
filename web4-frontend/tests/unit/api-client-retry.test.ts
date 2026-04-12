@@ -488,6 +488,42 @@ describe("api-contract client and retry hardening", () => {
     expect(fetchImpl).toHaveBeenCalledTimes(2);
   });
 
+  it("classifies host-unreachable socket failures as retryable network errors", async () => {
+    const fetchImpl = vi
+      .fn()
+      .mockRejectedValueOnce({
+        name: "TypeError",
+        message: "fetch failed",
+        cause: {
+          code: "EHOSTUNREACH",
+          message: "No route to host",
+        },
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          task: {
+            id: "45",
+            status: "running",
+            owner: "alice",
+            createdAt: "2026-03-01T00:00:00.000Z",
+            metadata: {},
+          },
+        }),
+      });
+
+    const client = createFrontendApiClient({
+      baseUrl: "http://127.0.0.1:8080",
+      fetchImpl: fetchImpl as unknown as typeof fetch,
+    });
+
+    await expect(client.queryTask("45", { retries: 1, baseDelayMs: 0, maxDelayMs: 0 })).resolves
+      .toMatchObject({
+        task: expect.objectContaining({ id: "45" }),
+      });
+    expect(fetchImpl).toHaveBeenCalledTimes(2);
+  });
+
   it("classifies TimeoutError-shaped failures as timeout and keeps them retryable", async () => {
     const fetchImpl = vi.fn().mockRejectedValue({
       name: "TimeoutError",
