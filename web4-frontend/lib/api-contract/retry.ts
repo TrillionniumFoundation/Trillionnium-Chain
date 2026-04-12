@@ -69,7 +69,8 @@ export async function withRetry<T>(
       return await fn();
     } catch (err) {
       lastErr = err;
-      const retryable = err instanceof FrontendApiError ? err.retryable : false;
+      const retryable =
+        err instanceof FrontendApiError ? err.retryable && err.code !== "ABORTED" : false;
       if (!retryable || attempt === retries) {
         throw err;
       }
