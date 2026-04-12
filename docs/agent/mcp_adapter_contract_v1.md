@@ -4,6 +4,8 @@
 
 定义 Web4 计算市场最小可用 MCP adapter 契约，确保任务请求可以在平台侧被标准化接入、结算并审计。
 
+平台边界说明：本文描述的是 **agent-facing ingress / adapter contract**，用于 MCP 平台接入、鉴权、审计与结算语义；它不是 `web4-frontend` 当前 dashboard 的只读 route contract，也不应被解读为前端已具备对应写路径。前端当前实际消费的 read-model / readonly query contract 以 `web4-frontend/docs/api-contract.md` 为准，两者应分开引用与表述。
+
 ## 2. 传输与鉴权
 
 - 传输层：HTTPS + JSON

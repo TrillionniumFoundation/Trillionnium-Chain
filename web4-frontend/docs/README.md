@@ -29,6 +29,7 @@
 发布/RC/对外口径引用时，建议按下面顺序取材，避免把历史证据误写成当前 readiness：
 
 - 仓库级 truth source：[`../../RELEASE_READINESS.md`](../../RELEASE_READINESS.md)（引用时应同时记录当前 `git rev-parse origin/main` 输出，避免把旧快照误当成实时结论）
+- Web4 平台主文档（规划/能力域参考，非 release truth）：[`../../docs/archive/dev-plans/WEB4_INFRA_PLATFORM_DEVELOPMENT_MASTER.md`](../../docs/archive/dev-plans/WEB4_INFRA_PLATFORM_DEVELOPMENT_MASTER.md)
 - Web4 当前阶段评分卡：[`../../docs/reports/TRNM_WEB4_PLATFORM_SCORECARD_2026-03-31.md`](../../docs/reports/TRNM_WEB4_PLATFORM_SCORECARD_2026-03-31.md)（若当前 checkout 含有该文件，优先引用它描述平台成熟度；它是基于特定仓库快照的阶段评分卡，不等于当前 release-ready，也不自动等于实时状态）
 - Web4 平台主文档（仅当文件实际存在时才可引用）：`../../docs/WEB4_INFRA_PLATFORM_DEVELOPMENT_MASTER.md`
   - 当前 checkout 中该文件**缺失**；优先回到 `../../RELEASE_READINESS.md`、当前存在的 scorecard、仓库根 `../../README.md` 的 Documentation Entry Points，以及本目录文档，不要把一个不存在的 master 链接当作实时 truth source
@@ -53,8 +54,8 @@ ls ../../docs/reports/TRNM_WEB4_PLATFORM_SCORECARD_2026-03-31.md ../../docs/WEB4
 | 你要回答的问题 | 应优先引用 | 不能顺手放大的结论 |
 | --- | --- | --- |
 | **现在整个 TRNM 仓库能否对外说 release-ready？** | [`../../RELEASE_READINESS.md`](../../RELEASE_READINESS.md) | 不能把某次 Web4 预检、RC 演练、历史 GO-ready 证据外推为“整个仓库已 ready” |
-| **当前 Web4 平台大致成熟到哪个阶段？** | 当前 checkout 直接优先引用 `../../docs/reports/TRNM_WEB4_PLATFORM_SCORECARD_2026-03-31.md`；它缺失时才回到 `../../docs/WEB4_INFRA_PLATFORM_DEVELOPMENT_MASTER.md`（且必须先确认该文件存在）并明确这是路线/能力文档，不是阶段评分卡 | 不能把“Alpha 后段 / 接近 Beta-prep 之前”润色成“Beta”或“production-ready”，也不能把路线图目标写成当前成熟度事实 |
-| **平台路线图、能力域目标、下一阶段该补什么？** | 当前 checkout 因缺少 `../../docs/WEB4_INFRA_PLATFORM_DEVELOPMENT_MASTER.md`，先以仓库根 `../../README.md` 的 Documentation Entry Points 盘点现有 live docs，再结合 scorecard + 本目录 runbook / developer guide 做保守说明，并明确“缺少 master truth doc” | 不能把路线图里的 To-Be 目标写成当前已完成事实 |
+| **当前 Web4 平台大致成熟到哪个阶段？** | 当前 checkout 直接优先引用 `../../docs/reports/TRNM_WEB4_PLATFORM_SCORECARD_2026-03-31.md`；它缺失时再回到 [`../../docs/archive/dev-plans/WEB4_INFRA_PLATFORM_DEVELOPMENT_MASTER.md`](../../docs/archive/dev-plans/WEB4_INFRA_PLATFORM_DEVELOPMENT_MASTER.md)，并明确后者是路线/能力文档，不是阶段评分卡 | 不能把“Alpha 后段 / 接近 Beta-prep 之前”润色成“Beta”或“production-ready”，也不能把路线图目标写成当前成熟度事实 |
+| **平台路线图、能力域目标、下一阶段该补什么？** | 优先引用 [`../../docs/archive/dev-plans/WEB4_INFRA_PLATFORM_DEVELOPMENT_MASTER.md`](../../docs/archive/dev-plans/WEB4_INFRA_PLATFORM_DEVELOPMENT_MASTER.md)；若当前 checkout 缺少 live master truth doc，就回到仓库根 `../../README.md` 的 Documentation Entry Points，再结合 scorecard + 本目录 runbook / developer guide 做保守说明，并明确缺的是 live master truth doc | 不能把路线图里的 To-Be 目标写成当前已完成事实 |
 
 > 一个好用的心智模型：
 > - `RELEASE_READINESS.md` 回答 **现在能不能放行**
