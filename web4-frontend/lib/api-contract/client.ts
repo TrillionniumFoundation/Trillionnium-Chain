@@ -41,6 +41,26 @@ const normalizeOptionalQueryToken = (value: string | undefined): string | undefi
   return normalized.length > 0 ? normalized : undefined;
 };
 
+const normalizeNormalizedAuditQueryToken = (
+  value: unknown,
+  label: string,
+): string | undefined => {
+  if (value == null) return undefined;
+  if (typeof value !== "string") return value as never;
+
+  const normalized = normalizeOptionalQueryToken(value);
+  if (normalized == null) {
+    throw new FrontendApiError({
+      code: "INVALID_PAYLOAD",
+      message: `Normalized audit query ${label} must be a non-empty string`,
+      causeData: value,
+      retryable: false,
+    });
+  }
+
+  return normalized;
+};
+
 export const buildNormalizedAuditEventsQueryParams = (
   query: NormalizedAuditEventsQuery,
 ): URLSearchParams => {
@@ -320,7 +340,28 @@ export function createFrontendApiClient(config: BaseClientConfig) {
       query: NormalizedAuditEventsQuery = {},
       options?: QueryOptions,
     ): Promise<QueryNormalizedAuditEventsResult> {
-      const normalizedQuery = normalizedAuditEventsQuerySchema.safeParse(query);
+      let normalizedQueryInput: NormalizedAuditEventsQuery;
+      try {
+        normalizedQueryInput = {
+          ...query,
+          source: normalizeNormalizedAuditQueryToken(query.source, "source"),
+          eventType: normalizeNormalizedAuditQueryToken(query.eventType, "eventType"),
+          cursor: normalizeNormalizedAuditQueryToken(query.cursor, "cursor"),
+          limit: query.limit,
+        };
+      } catch (error) {
+        if (error instanceof FrontendApiError) {
+          throw error;
+        }
+        throw new FrontendApiError({
+          code: "INVALID_PAYLOAD",
+          message: "Normalized audit query does not match frontend API contract",
+          causeData: error,
+          retryable: false,
+        });
+      }
+
+      const normalizedQuery = normalizedAuditEventsQuerySchema.safeParse(normalizedQueryInput);
       if (!normalizedQuery.success) {
         throw new FrontendApiError({
           code: "INVALID_PAYLOAD",

@@ -131,6 +131,33 @@ describe("api-contract client and retry hardening", () => {
     expect(fetchImpl).not.toHaveBeenCalled();
   });
 
+  it("fails closed when normalized audit query params become blank after zero-width cleanup", async () => {
+    const fetchImpl = vi.fn();
+
+    const client = createFrontendApiClient({
+      baseUrl: "http://127.0.0.1:8080",
+      fetchImpl: fetchImpl as unknown as typeof fetch,
+    });
+
+    for (const invalidQuery of [
+      { source: "\uFEFF \u200B\u200D " },
+      { eventType: "\u2060 \uFEFF " },
+      { cursor: "\u200B \u2063 " },
+    ]) {
+      try {
+        client.queryNormalizedAuditEvents(invalidQuery);
+        throw new Error("expected zero-width-only query field to throw");
+      } catch (error) {
+        expect(error).toBeInstanceOf(FrontendApiError);
+        expect(error).toMatchObject({
+          code: "INVALID_PAYLOAD",
+        });
+      }
+    }
+
+    expect(fetchImpl).not.toHaveBeenCalled();
+  });
+
   it("fails closed on unknown normalized audit query params", async () => {
     const fetchImpl = vi.fn();
 
