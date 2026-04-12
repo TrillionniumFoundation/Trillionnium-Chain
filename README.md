@@ -3,7 +3,7 @@
 **TRNM** is a Rust-native Layer 1 focused on **Decentralized AI Compute** (PoUW).
 
 - Active mainline: `trillionnium/`
-- Historical archive: `legacy/`
+- Historical status/archive docs live under `docs/archive/`
 
 ---
 
@@ -40,13 +40,12 @@ TrillionniumChain/
 │   └── run/
 ├── web4-frontend/                  # Web4 frontend (Next.js + Vitest + Playwright)
 ├── scripts/                        # Repo-level CI/automation scripts
-├── docs/                           # Architecture, protocol, runbooks, and reports
-├── contracts/                      # Rust-native external contracts subtree (active MVP scaffolding)
+├── docs/                           # Architecture, protocol, runbooks, reports, and historical archive docs
+├── contracts/                      # Rust-native external contracts subtree (4-crate MVP, not full runtime-spec/sdk closure)
 ├── config/                         # Policy and alerting config
-├── data/                           # Acceptance data and experiment artifacts
-├── run/                            # Runtime logs and gate outputs
 ├── examples/                       # SDK and demo examples
-└── legacy/                         # Historical frozen branches / archival code
+├── OPERATIONS.md                   # Operator-facing handbook
+└── RELEASE_READINESS.md            # Current release truth source
 ```
 
 ---
@@ -111,6 +110,14 @@ npm run ci:check
 CI_RUN_E2E=1 npm run ci:check
 ```
 
+### 4.5 External contracts subtree smoke
+
+```bash
+cargo test --manifest-path contracts/Cargo.toml
+```
+
+This validates the current `contracts/` MVP workspace only, which today contains `settlement-vault/`, `bridge-relay/`, `governance-guard/`, and `audit-events/`. It should not be read as proof that the target `sdk/`, `runtime-spec/`, `integration-tests/`, or canonical Host ABI/runtime closure already exist in-tree.
+
 ---
 
 ## 5) Common Repo Commands
@@ -154,12 +161,13 @@ TRNM_TX_CLI=./trillionnium/target/debug/trnm-cli \
 - Project status log: [docs/archive/root-history/STATUS.md](docs/archive/root-history/STATUS.md)
 - Historical roadmap: [docs/archive/root-history/ROADMAP.md](docs/archive/root-history/ROADMAP.md)
 - Historical backlog snapshots: [docs/archive/root-history/BACKLOG.md](docs/archive/root-history/BACKLOG.md)
-- Unified development scheduling (planning board): [docs/development/DEVELOPMENT_MASTER_UNIFIED_2026-03-04.md](docs/development/DEVELOPMENT_MASTER_UNIFIED_2026-03-04.md)
-- Concurrency bottleneck map + 8-week roadmap: [docs/reports/TRNM_CONCURRENCY_BOTTLENECK_MAP_AND_8W_ROADMAP_2026-03-10.md](docs/reports/TRNM_CONCURRENCY_BOTTLENECK_MAP_AND_8W_ROADMAP_2026-03-10.md)
+- Unified development scheduling (historical planning board): [docs/archive/dev-plans/DEVELOPMENT_MASTER_UNIFIED_2026-03-04.md](docs/archive/dev-plans/DEVELOPMENT_MASTER_UNIFIED_2026-03-04.md)
 - External benchmark comparison: [docs/reports/TRNM_CONCURRENCY_COMPARISON_2026-03-05.md](docs/reports/TRNM_CONCURRENCY_COMPARISON_2026-03-05.md)
-- Web4 platform overview: [docs/WEB4_INFRA_PLATFORM_DEVELOPMENT_MASTER.md](docs/WEB4_INFRA_PLATFORM_DEVELOPMENT_MASTER.md)
+- Concurrency bottleneck map + 8-week roadmap: currently referenced from `RELEASE_READINESS.md` as a truth-source pointer, but the standalone markdown file is not present in this repo snapshot.
+- Web4 platform overview (historical planning doc): [docs/archive/dev-plans/WEB4_INFRA_PLATFORM_DEVELOPMENT_MASTER.md](docs/archive/dev-plans/WEB4_INFRA_PLATFORM_DEVELOPMENT_MASTER.md)
 - Rust-native external contracts baseline architecture: [trillionnium/docs/protocol/external-contracts-rust/RUST_NATIVE_EXTERNAL_CONTRACTS_ARCH_2026-03-05.md](trillionnium/docs/protocol/external-contracts-rust/RUST_NATIVE_EXTERNAL_CONTRACTS_ARCH_2026-03-05.md)
 - `contracts/` status and boundaries: [contracts/README.md](contracts/README.md)
+- Historical path note for this perimeter: if an older prompt/doc still says `trillionnium-rust/docs/...` or `contracts-rust/...`, treat that as drift only. The current in-tree truth paths are `trillionnium/docs/...` and `contracts/...`.
 - PoUW mechanism: [trillionnium/docs/challenge-economics-minimal.md](trillionnium/docs/challenge-economics-minimal.md)
 - A2A adapter contract: [docs/agent/a2a_adapter_contract_v1.md](docs/agent/a2a_adapter_contract_v1.md)
 - MCP adapter contract: [docs/agent/mcp_adapter_contract_v1.md](docs/agent/mcp_adapter_contract_v1.md)
@@ -192,10 +200,13 @@ Please run the local minimum gates before creating PRs to reduce CI turnarounds.
 ## 8) Current State Notes (Operational Boundaries)
 
 - Main development entry is `trillionnium/`.
-- `legacy/` is for archival history only.
+- Historical/archive material in this repo currently lives under `docs/archive/`; do not assume a top-level `legacy/` directory exists in every snapshot.
 - Whether the project is currently **release-ready** is defined by [RELEASE_READINESS.md](RELEASE_READINESS.md); historical evidence documents are not automatically equivalent to live state.
-- `contracts/` is an **independent Rust-native external-contract subtree / MVP contract scaffolding**. It is not yet the full `sdk / runtime-spec / integration-tests` target layout.
+- `contracts/` is an **independent Rust-native external-contract subtree / MVP contract scaffolding**. Today it contains 4 landed crates: `settlement-vault/`, `bridge-relay/`, `governance-guard/`, and `audit-events/`.
+- `contracts/` is **not yet** the full `sdk / runtime-spec / integration-tests` target layout, and its current crates should not be described as completed Host ABI/runtime integration.
 - `audit-events/` under `contracts/` is a shared audit-event schema-adjacent layer; it is not a proof that canonical `sdk`, `runtime-spec`, or `wasm32-unknown-unknown` Host ABI/runtime integration is complete.
+- Presence of `contracts/` does **not** by itself move external contracts into Day-1 mainnet minimum scope; that boundary still follows `RELEASE_READINESS.md` plus `trillionnium/docs/release/TRNM_MAINNET_GAP_MATRIX_2026-03-26.md`.
+- When validating or citing this perimeter, prefer current-tree paths and commands, for example `cargo test --manifest-path contracts/Cargo.toml`; do not treat historical `contracts-rust/Cargo.toml` references as live workspace truth.
 - Web4 currently uses a read-only API client by default; it falls back to local mock snapshots only when explicitly launched with `?mode=mock`, and write paths are not exposed by default.
 - If you see `/api/v0/web4/*` references in docs, treat them as historical naming only; current frontend consumption is around:
   - `query-task`

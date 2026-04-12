@@ -57,6 +57,7 @@ cargo test
 ## Runtime / ABI boundary（truthful snapshot）
 
 - 当前 crate 是 **Rust MVP / in-memory state machine**，用于先固定 BridgeRelay 的 fail-closed 语义、审计事件和配置版本约束；**不表示** 已接入 canonical `HostAbiV1` 或 `trnm-node` 的 deterministic WASM executor。
+- 按 `trillionnium/docs/protocol/external-contracts-rust/RUST_NATIVE_EXTERNAL_CONTRACTS_ARCH_2026-03-05.md`，`BridgeRelay` 未来应与 `sdk/`、`runtime-spec/`、`integration-tests/` 一起形成更完整的 external-contract workspace；但当前仓库里这些目标目录仍**不是** 已落地的 canonical host-runtime closure。
 - 当前 README 不应被解读为：本 crate 已默认产出链上 canonical `wasm32-unknown-unknown` artifacts，或已经完成 `sdk/` + `runtime-spec/` + integration replay 闭环。
 - `audit-events` 的标准化事件接线有助于后续 indexer / 风控统一口径，但它本身 **不等价于** host runtime integration 已闭合。
 - 是否进入 Day-1 / release-ready / public-mainnet scope，仍应以仓库根 `RELEASE_READINESS.md` 与 `trillionnium/docs/release/TRNM_MAINNET_GAP_MATRIX_2026-03-26.md` 为准。
