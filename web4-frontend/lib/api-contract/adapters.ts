@@ -28,41 +28,45 @@ function normalizeSchemaError(error: unknown): FrontendApiError {
   });
 }
 
-const rpcTaskSchema = z.object({
-  task_id: z.number().int().nonnegative(),
-  status: z.enum([
-    "Open",
-    "Assigned",
-    "Committed",
-    "Revealed",
-    "Challenged",
-    "Completed",
-    "Slashed",
-  ]),
-  worker: z.string().min(1).nullable().optional(),
-  bounty: z.union([z.number(), z.string()]).optional(),
-  result_hash_hex: z.string().min(1).nullable().optional(),
-  version: z.number().int().nonnegative().optional(),
-});
+const rpcTaskSchema = z
+  .object({
+    task_id: z.number().int().nonnegative(),
+    status: z.enum([
+      "Open",
+      "Assigned",
+      "Committed",
+      "Revealed",
+      "Challenged",
+      "Completed",
+      "Slashed",
+    ]),
+    worker: z.string().min(1).nullable().optional(),
+    bounty: z.union([z.number(), z.string()]).optional(),
+    result_hash_hex: z.string().min(1).nullable().optional(),
+    version: z.number().int().nonnegative().optional(),
+  })
+  .strict();
 
-const rpcEventSchema = z.object({
-  event_type: z.string().min(1),
-  task_id: z.number().int().nonnegative(),
-  from_status: z.string().min(1),
-  to_status: z.string().min(1),
-  actor: z.string().min(1),
-  tx_id: z.number().int().nonnegative(),
-  block_height: z.number().int().nonnegative(),
-  state_root: z.string().min(1),
-  ts_unix_ms: z.union([z.number(), z.string()]),
-  signer: z.string().min(1).optional(),
-  challenger: z.string().min(1).nullable().optional(),
-  tx_hash: z.string().min(1).nullable().optional(),
-  resolution_code: z.string().min(1).nullable().optional(),
-  treasury_delta: z.union([z.number(), z.string()]).nullable().optional(),
-  challenger_delta: z.union([z.number(), z.string()]).nullable().optional(),
-  bond_disposition: z.string().min(1).nullable().optional(),
-});
+const rpcEventSchema = z
+  .object({
+    event_type: z.string().min(1),
+    task_id: z.number().int().nonnegative(),
+    from_status: z.string().min(1),
+    to_status: z.string().min(1),
+    actor: z.string().min(1),
+    tx_id: z.number().int().nonnegative(),
+    block_height: z.number().int().nonnegative(),
+    state_root: z.string().min(1),
+    ts_unix_ms: z.union([z.number(), z.string()]),
+    signer: z.string().min(1).optional(),
+    challenger: z.string().min(1).nullable().optional(),
+    tx_hash: z.string().min(1).nullable().optional(),
+    resolution_code: z.string().min(1).nullable().optional(),
+    treasury_delta: z.union([z.number(), z.string()]).nullable().optional(),
+    challenger_delta: z.union([z.number(), z.string()]).nullable().optional(),
+    bond_disposition: z.string().min(1).nullable().optional(),
+  })
+  .strict();
 
 const m2v2ErrorCodes = [
   "ERR_M2V2_PROOF_MISSING",
@@ -134,6 +138,71 @@ function normalizeOptionalCursor(cursor: string | undefined): string | undefined
     .trim();
 
   return normalized.length > 0 ? normalized : undefined;
+}
+
+function normalizeOptionalTaskId(taskId: string | undefined): string | undefined {
+  return normalizeOptionalCursor(taskId);
+}
+
+function normalizeRequiredTaskField(
+  value: string,
+  field: "id" | "name" | "owner",
+): string {
+  const normalized = normalizeOptionalCursor(value);
+  if (normalized != null) return normalized;
+
+  throw normalizeSchemaError({
+    message: `canonical query-task payload contains blank ${field}`,
+    field,
+  });
+}
+
+function normalizeOptionalTaskName(name: string | undefined): string | undefined {
+  if (name == null) return undefined;
+  return normalizeRequiredTaskField(name, "name");
+}
+
+function normalizeRequiredEventId(
+  eventId: string,
+  context: { taskId?: string | number },
+): string {
+  const normalized = normalizeOptionalCursor(eventId);
+  if (normalized != null) return normalized;
+
+  throw normalizeSchemaError({
+    message: "canonical query-events payload contains blank event id",
+    taskId: context.taskId,
+  });
+}
+
+function normalizeRequiredEventType(
+  eventType: string,
+  context: { source: "canonical" | "rpc"; eventId?: string; taskId?: string | number },
+): string {
+  const normalized = normalizeOptionalCursor(eventType);
+  if (normalized != null) return normalized;
+
+  throw normalizeSchemaError({
+    message: `${context.source} query-events payload contains blank event type`,
+    eventId: context.eventId,
+    taskId: context.taskId,
+  });
+}
+
+function normalizeRequiredEventField(
+  value: string,
+  field: "actor" | "from_status" | "to_status" | "state_root",
+  context: { source: "canonical" | "rpc"; eventId?: string; taskId?: string | number },
+): string {
+  const normalized = normalizeOptionalCursor(value);
+  if (normalized != null) return normalized;
+
+  throw normalizeSchemaError({
+    message: `${context.source} query-events payload contains blank ${field}`,
+    field,
+    eventId: context.eventId,
+    taskId: context.taskId,
+  });
 }
 
 const rpcCapabilityAuditSchema = z.object({
@@ -214,6 +283,9 @@ export const adaptQueryTask = (payload: unknown): QueryTaskResult => {
     return {
       task: {
         ...canonical.data.task,
+        id: normalizeRequiredTaskField(canonical.data.task.id, "id"),
+        name: normalizeOptionalTaskName(canonical.data.task.name),
+        owner: normalizeRequiredTaskField(canonical.data.task.owner, "owner"),
         createdAt: toIsoDatetimeString(canonical.data.task.createdAt),
         updatedAt:
           canonical.data.task.updatedAt == null
@@ -260,14 +332,83 @@ export const adaptQueryEvents = (
 ): QueryEventsResult => {
   const canonical = queryEventsResponseSchema.safeParse(payload);
   if (canonical.success) {
-    return {
-      ...canonical.data,
-      events: canonical.data.events
-        .map((event) => ({
+    const normalizedCanonicalTaskId = normalizeOptionalTaskId(canonical.data.taskId);
+    const normalizedRequestedTaskId = normalizeOptionalTaskId(requestedTaskId);
+
+    if (!normalizedCanonicalTaskId) {
+      throw normalizeSchemaError({
+        message: "canonical query-events payload contains blank task id",
+      });
+    }
+
+    const normalizedEvents = canonical.data.events.map((event) => {
+      const normalizedEventTaskId = normalizeOptionalTaskId(event.taskId);
+      if (!normalizedEventTaskId) {
+        throw normalizeSchemaError({
+          message: "canonical query-events payload contains blank event task id",
+          eventId: event.id,
+        });
+      }
+
+      const normalizedEventId = normalizeRequiredEventId(event.id, {
+        taskId: normalizedEventTaskId,
+      });
+
+      const normalizedEventType = normalizeRequiredEventType(event.type, {
+        source: "canonical",
+        eventId: normalizedEventId,
+        taskId: normalizedEventTaskId,
+      });
+
+      return {
+        ...normalizeCanonicalEventForM2V2({
           ...event,
           timestamp: toIsoDatetimeString(event.timestamp),
-        }))
-        .map(normalizeCanonicalEventForM2V2),
+        }),
+        id: normalizedEventId,
+        taskId: normalizedEventTaskId,
+        type: normalizedEventType,
+      };
+    });
+
+    const normalizedEventIds = new Set<string>();
+    for (const event of normalizedEvents) {
+      if (normalizedEventIds.has(event.id)) {
+        throw normalizeSchemaError({
+          message: "canonical query-events payload contains duplicate normalized event ids",
+          eventId: event.id,
+          taskId: normalizedCanonicalTaskId,
+        });
+      }
+      normalizedEventIds.add(event.id);
+    }
+
+    const hasMixedCanonicalTaskIds = normalizedEvents.some(
+      (event) => event.taskId !== normalizedCanonicalTaskId,
+    );
+    if (hasMixedCanonicalTaskIds) {
+      throw normalizeSchemaError({
+        message: "canonical query-events payload contains mixed task ids",
+        taskId: normalizedCanonicalTaskId,
+      });
+    }
+
+    if (
+      normalizedRequestedTaskId != null &&
+      normalizedRequestedTaskId !== normalizedCanonicalTaskId
+    ) {
+      throw normalizeSchemaError({
+        message: "canonical query-events payload task id mismatches requested task id",
+        requestedTaskId,
+        normalizedRequestedTaskId,
+        normalizedCanonicalTaskId,
+      });
+    }
+
+    return {
+      ...canonical.data,
+      taskId: normalizedCanonicalTaskId,
+      events: normalizedEvents,
     };
   }
 
@@ -275,12 +416,9 @@ export const adaptQueryEvents = (
   if (!rpc.success) throw normalizeSchemaError(rpc.error.flatten());
 
   const events = rpc.data;
+  const normalizedRequestedTaskId = normalizeOptionalTaskId(requestedTaskId);
   const normalizedTaskId =
-    events[0] != null
-      ? String(events[0].task_id)
-      : requestedTaskId && requestedTaskId.trim().length > 0
-        ? requestedTaskId
-        : "";
+    events[0] != null ? String(events[0].task_id) : normalizedRequestedTaskId ?? "";
 
   if (!normalizedTaskId) {
     throw normalizeSchemaError({
@@ -299,29 +437,63 @@ export const adaptQueryEvents = (
     });
   }
 
+  if (
+    normalizedRequestedTaskId != null &&
+    events[0] != null &&
+    normalizedRequestedTaskId !== normalizedTaskId
+  ) {
+    throw normalizeSchemaError({
+      message: "query-events payload task id mismatches requested task id",
+      requestedTaskId,
+      normalizedRequestedTaskId,
+      normalizedTaskId,
+    });
+  }
+
   return {
     taskId: normalizedTaskId,
     events: events.map((event) => {
       const resolutionCode = canonicalizeResolutionCode(event.resolution_code ?? undefined);
       const isM2V2Error = isM2V2ErrorCode(resolutionCode);
+      const normalizedEventType = normalizeRequiredEventType(event.event_type, {
+        source: "rpc",
+        taskId: event.task_id,
+      });
+
+      const normalizedFromStatus = normalizeRequiredEventField(event.from_status, "from_status", {
+        source: "rpc",
+        taskId: event.task_id,
+      });
+      const normalizedToStatus = normalizeRequiredEventField(event.to_status, "to_status", {
+        source: "rpc",
+        taskId: event.task_id,
+      });
+      const normalizedActor = normalizeRequiredEventField(event.actor, "actor", {
+        source: "rpc",
+        taskId: event.task_id,
+      });
+      const normalizedStateRoot = normalizeRequiredEventField(event.state_root, "state_root", {
+        source: "rpc",
+        taskId: event.task_id,
+      });
 
       return {
-        id: `${event.task_id}:${event.tx_id}:${event.event_type}`,
+        id: `${event.task_id}:${event.tx_id}:${normalizedEventType}`,
         taskId: String(event.task_id),
-        type: event.event_type,
+        type: normalizedEventType,
         level:
-          isM2V2Error || event.to_status === "Slashed"
+          isM2V2Error || normalizedToStatus === "Slashed"
             ? "error"
-            : event.event_type === "challenge"
+            : normalizedEventType === "challenge"
               ? "warn"
               : "info",
         timestamp: toIsoFromUnixMs(event.ts_unix_ms),
         payload: {
-          fromStatus: event.from_status,
-          toStatus: event.to_status,
-          actor: event.actor,
+          fromStatus: normalizedFromStatus,
+          toStatus: normalizedToStatus,
+          actor: normalizedActor,
           blockHeight: event.block_height,
-          stateRoot: event.state_root,
+          stateRoot: normalizedStateRoot,
           signer: event.signer,
           challenger: event.challenger,
           txHash: event.tx_hash,

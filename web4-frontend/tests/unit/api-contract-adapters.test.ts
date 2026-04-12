@@ -24,6 +24,66 @@ describe("api-contract adapters", () => {
     expect(out.task.status).toBe("running");
   });
 
+  it("normalizes canonical query-task id/owner/name noise before returning", () => {
+    const out = adaptQueryTask({
+      task: {
+        id: " \uFEFF1\u200B ",
+        name: " demo\u200B ",
+        status: "running",
+        owner: " \uFEFFdid:trnm:alice\u200B ",
+        createdAt: "2026-03-01T00:00:00.000Z",
+        metadata: {},
+      },
+    });
+
+    expect(out.task.id).toBe("1");
+    expect(out.task.name).toBe("demo");
+    expect(out.task.owner).toBe("did:trnm:alice");
+  });
+
+  it("fails closed on canonical query-task payloads whose task id normalizes to empty noise", () => {
+    expect(() =>
+      adaptQueryTask({
+        task: {
+          id: " \uFEFF\u200B ",
+          name: "demo",
+          status: "running",
+          owner: "alice",
+          createdAt: "2026-03-01T00:00:00.000Z",
+          metadata: {},
+        },
+      }),
+    ).toThrow(FrontendApiError);
+  });
+
+  it("fails closed on canonical query-task payloads whose owner or name normalize to empty noise", () => {
+    expect(() =>
+      adaptQueryTask({
+        task: {
+          id: "1",
+          name: " \uFEFF\u200B ",
+          status: "running",
+          owner: "alice",
+          createdAt: "2026-03-01T00:00:00.000Z",
+          metadata: {},
+        },
+      }),
+    ).toThrow(FrontendApiError);
+
+    expect(() =>
+      adaptQueryTask({
+        task: {
+          id: "1",
+          name: "demo",
+          status: "running",
+          owner: " \uFEFF\u200B ",
+          createdAt: "2026-03-01T00:00:00.000Z",
+          metadata: {},
+        },
+      }),
+    ).toThrow(FrontendApiError);
+  });
+
   it("fails closed on canonical query-task payloads with unknown fields", () => {
     expect(() =>
       adaptQueryTask({
@@ -116,6 +176,20 @@ describe("api-contract adapters", () => {
     ).toThrow(FrontendApiError);
   });
 
+  it("fails closed on rpc query-task payloads with unknown fields", () => {
+    expect(() =>
+      adaptQueryTask({
+        task_id: 42,
+        status: "Completed",
+        worker: "did:trnm:alice",
+        bounty: 100,
+        result_hash_hex: "abcd",
+        version: 9,
+        unexpected_flag: true,
+      }),
+    ).toThrow(FrontendApiError);
+  });
+
   it("adapts rpc query-events array payload", () => {
     const out = adaptQueryEvents(
       [
@@ -136,6 +210,97 @@ describe("api-contract adapters", () => {
     expect(out.taskId).toBe("7");
     expect(out.events[0]?.type).toBe("commit");
     expect(out.events[0]?.level).toBe("info");
+  });
+
+  it("fails closed when rpc query-events payload mismatches requested task id context", () => {
+    expect(() =>
+      adaptQueryEvents(
+        [
+          {
+            event_type: "commit",
+            task_id: 7,
+            from_status: "Assigned",
+            to_status: "Committed",
+            actor: "did:trnm:alice",
+            tx_id: 11,
+            block_height: 22,
+            state_root: "root",
+            ts_unix_ms: 1700000000000,
+          },
+        ],
+        "8",
+      ),
+    ).toThrow(FrontendApiError);
+  });
+
+  it("normalizes requested task id noise before rpc query-events context enforcement", () => {
+    const out = adaptQueryEvents(
+      [
+        {
+          event_type: "commit",
+          task_id: 7,
+          from_status: "Assigned",
+          to_status: "Committed",
+          actor: "did:trnm:alice",
+          tx_id: 11,
+          block_height: 22,
+          state_root: "root",
+          ts_unix_ms: 1700000000000,
+        },
+      ],
+      " \uFEFF7\u200B ",
+    );
+
+    expect(out.taskId).toBe("7");
+    expect(out.events[0]?.taskId).toBe("7");
+  });
+
+  it("normalizes rpc challenge event type noise before level classification", () => {
+    const out = adaptQueryEvents(
+      [
+        {
+          event_type: "  challenge\u200B ",
+          task_id: 7,
+          from_status: "Revealed",
+          to_status: "Challenged",
+          actor: "did:trnm:bob",
+          tx_id: 12,
+          block_height: 23,
+          state_root: "root-2",
+          ts_unix_ms: 1700000001000,
+        },
+      ],
+      "7",
+    );
+
+    expect(out.events[0]?.type).toBe("challenge");
+    expect(out.events[0]?.level).toBe("warn");
+  });
+
+  it("trims rpc query-events required payload fields before returning canonical event payload", () => {
+    const out = adaptQueryEvents(
+      [
+        {
+          event_type: "commit",
+          task_id: 7,
+          from_status: " Assigned ",
+          to_status: " Committed ",
+          actor: " did:trnm:alice ",
+          tx_id: 11,
+          block_height: 22,
+          state_root: " root ",
+          ts_unix_ms: 1700000000000,
+        },
+      ],
+      "7",
+    );
+
+    expect(out.events[0]?.payload).toMatchObject({
+      fromStatus: "Assigned",
+      toStatus: "Committed",
+      actor: "did:trnm:alice",
+      stateRoot: "root",
+    });
   });
 
   it("treats DID registration history as non-grant in rpc capability audit fallback", () => {
@@ -197,6 +362,155 @@ describe("api-contract adapters", () => {
       resolutionCode: "ERR_M2V2_PROOF_INVALID",
       m2v2ErrorCode: "ERR_M2V2_PROOF_INVALID",
     });
+  });
+
+  it("fails closed when canonical query-events payload contains mixed task ids", () => {
+    expect(() =>
+      adaptQueryEvents({
+        taskId: "7",
+        events: [
+          {
+            id: "e1",
+            taskId: "7",
+            type: "commit",
+            level: "info",
+            timestamp: "2026-03-03T00:00:00.000Z",
+            payload: {},
+          },
+          {
+            id: "e2",
+            taskId: "8",
+            type: "reveal",
+            level: "warn",
+            timestamp: "2026-03-03T00:00:01.000Z",
+            payload: {},
+          },
+        ],
+      }),
+    ).toThrow(FrontendApiError);
+  });
+
+  it("normalizes canonical query-events task ids before enforcing invariants", () => {
+    const out = adaptQueryEvents(
+      {
+        taskId: " \uFEFF7\u200B ",
+        events: [
+          {
+            id: "e1x",
+            taskId: " 7 ",
+            type: "commit",
+            level: "info",
+            timestamp: "2026-03-03T00:00:00.000Z",
+            payload: {},
+          },
+        ],
+      },
+      "7",
+    );
+
+    expect(out.taskId).toBe("7");
+    expect(out.events[0]?.taskId).toBe("7");
+  });
+
+  it("normalizes canonical query-events event ids before returning", () => {
+    const out = adaptQueryEvents({
+      taskId: "7",
+      events: [
+        {
+          id: " \uFEFFevent-7\u200B ",
+          taskId: "7",
+          type: "commit",
+          level: "info",
+          timestamp: "2026-03-03T00:00:00.000Z",
+          payload: {},
+        },
+      ],
+    });
+
+    expect(out.events[0]?.id).toBe("event-7");
+  });
+
+  it("fails closed when canonical query-events payload mismatches requested task id context", () => {
+    expect(() =>
+      adaptQueryEvents(
+        {
+          taskId: "7",
+          events: [
+            {
+              id: "e1y",
+              taskId: "7",
+              type: "commit",
+              level: "info",
+              timestamp: "2026-03-03T00:00:00.000Z",
+              payload: {},
+            },
+          ],
+        },
+        "8",
+      ),
+    ).toThrow(FrontendApiError);
+  });
+
+  it("fails closed when canonical query-events payload contains blank event id noise", () => {
+    expect(() =>
+      adaptQueryEvents({
+        taskId: "7",
+        events: [
+          {
+            id: " \uFEFF\u200B ",
+            taskId: "7",
+            type: "commit",
+            level: "info",
+            timestamp: "2026-03-03T00:00:00.000Z",
+            payload: {},
+          },
+        ],
+      }),
+    ).toThrow(FrontendApiError);
+  });
+
+  it("fails closed when canonical query-events payload contains duplicate normalized event ids", () => {
+    expect(() =>
+      adaptQueryEvents({
+        taskId: "7",
+        events: [
+          {
+            id: "event-7",
+            taskId: "7",
+            type: "commit",
+            level: "info",
+            timestamp: "2026-03-03T00:00:00.000Z",
+            payload: {},
+          },
+          {
+            id: " \uFEFFevent-7\u200B ",
+            taskId: "7",
+            type: "reveal",
+            level: "warn",
+            timestamp: "2026-03-03T00:00:01.000Z",
+            payload: {},
+          },
+        ],
+      }),
+    ).toThrow(FrontendApiError);
+  });
+
+  it("fails closed when canonical query-events payload contains blank event type noise", () => {
+    expect(() =>
+      adaptQueryEvents({
+        taskId: "7",
+        events: [
+          {
+            id: "e1z",
+            taskId: "7",
+            type: " \uFEFF\u200B ",
+            level: "info",
+            timestamp: "2026-03-03T00:00:00.000Z",
+            payload: {},
+          },
+        ],
+      }),
+    ).toThrow(FrontendApiError);
   });
 
   it("normalizes canonical events using snake_case resolution_code alias", () => {
@@ -1120,6 +1434,17 @@ describe("api-contract adapters", () => {
     expect(() => adaptQueryEvents({ bad: true }, "1")).toThrow(FrontendApiError);
   });
 
+  it("normalizes requested task id context for empty rpc query-events payloads", () => {
+    const out = adaptQueryEvents([], " \uFEFF7\u200B ");
+
+    expect(out.taskId).toBe("7");
+    expect(out.events).toEqual([]);
+  });
+
+  it("fails closed when empty rpc query-events payload has blank requested task id context", () => {
+    expect(() => adaptQueryEvents([], " \uFEFF\u200B ")).toThrow(FrontendApiError);
+  });
+
   it("fails closed when rpc events contain mixed task ids", () => {
     expect(() =>
       adaptQueryEvents(
@@ -1145,6 +1470,70 @@ describe("api-contract adapters", () => {
             block_height: 23,
             state_root: "root-2",
             ts_unix_ms: 1700000001000,
+          },
+        ],
+        "7",
+      ),
+    ).toThrow(FrontendApiError);
+  });
+
+  it("fails closed when rpc query-events payload contains blank event type noise", () => {
+    expect(() =>
+      adaptQueryEvents(
+        [
+          {
+            event_type: " \uFEFF\u200B ",
+            task_id: 7,
+            from_status: "Assigned",
+            to_status: "Committed",
+            actor: "did:trnm:alice",
+            tx_id: 11,
+            block_height: 22,
+            state_root: "root",
+            ts_unix_ms: 1700000000000,
+          },
+        ],
+        "7",
+      ),
+    ).toThrow(FrontendApiError);
+  });
+
+  it("fails closed when rpc query-events payload contains blank required payload field noise", () => {
+    expect(() =>
+      adaptQueryEvents(
+        [
+          {
+            event_type: "commit",
+            task_id: 7,
+            from_status: "Assigned",
+            to_status: "Committed",
+            actor: " \uFEFF\u200B ",
+            tx_id: 11,
+            block_height: 22,
+            state_root: "root",
+            ts_unix_ms: 1700000000000,
+          },
+        ],
+        "7",
+      ),
+    ).toThrow(FrontendApiError);
+  });
+
+  it("fails closed when rpc query-events payload contains unknown fields", () => {
+    expect(() =>
+      adaptQueryEvents(
+        [
+          {
+            event_type: "commit",
+            task_id: 7,
+            from_status: "Assigned",
+            to_status: "Committed",
+            actor: "did:trnm:alice",
+            tx_id: 11,
+            block_height: 22,
+            state_root: "root",
+            ts_unix_ms: 1700000000000,
+            unexpected_flag: true,
           },
         ],
         "7",
