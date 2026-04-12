@@ -17,6 +17,7 @@
 并包含 fail-closed 约束：
 
 - 重复请求（`DuplicateRequest`）拒绝
+- 空白或带首尾空白的请求 ID（`InvalidRequestId`）拒绝，避免锁定/释放/惩罚审计记录出现空主键或非 canonical 主键
 - 越权调用（`Unauthorized`）拒绝
 - 非法状态迁移（`InvalidStateTransition`）拒绝
 - 暂停期间所有状态变更入口拒绝（`Paused`）
@@ -57,5 +58,5 @@ trnm(contract-rs-vault): ...
 新增 `normalized_audit_log() -> Vec<AuditEvent>`（复用 `audit-events` 共享 schema）：
 - `source: "settlement-vault"`
 - `event_type`：`vault.deposited` / `vault.locked` / `vault.released` / `vault.slashed` / `vault.transferred` / `vault.paused` / `vault.unpaused`。
-- `amount` 承载金额；`object_id` 承载主对象（如 `request_id`，或转账发起账户）；`related_id` 承载次级关联对象（如账户、受益人、转账接收方），避免多主体事件归一化后丢键。
+- `amount` 承载金额；`object_id` 承载主对象（如 `request_id`，或转账接收账户）；`related_id` 承载次级关联对象（如锁定账户、转账发起账户），避免多主体事件归一化后丢键。
 - `vault.slashed` 的标准化事件使用 `related_id=locked_account`，并将 `beneficiary` 放入 `note`（如 `beneficiary=treasury`），避免把多个主体拼进同一个 ID 字段。
