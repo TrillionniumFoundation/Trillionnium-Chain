@@ -44,6 +44,16 @@ grep -q "^dr_summary_path=$REPORT_PATH_CANONICAL$" "$TMPDIR/out.txt"
 grep -q "^expected_branch_ref=lane/mn05-operator-dr-rotation-lifecycle$" "$TMPDIR/out.txt"
 grep -q "^lane_verify_command=./scripts/v2/verify_lane_worktree.sh --expected-worktree-root $WORKTREE_ROOT --expected-branch-ref lane/mn05-operator-dr-rotation-lifecycle --expected-head $HEAD_SHA$" "$TMPDIR/out.txt"
 
+bash "$SCRIPT" \
+  --report-path "$REPORT_PATH" \
+  --expected-worktree-root "$WORKTREE_ROOT" \
+  --expected-branch-ref "$BRANCH_REF" \
+  --expected-head "$HEAD_SHA" >"$TMPDIR/out.txt"
+grep -q "^expected_branch_ref=lane/mn05-operator-dr-rotation-lifecycle$" "$TMPDIR/out.txt"
+grep -q "^verified_branch_ref=$BRANCH_REF$" "$TMPDIR/out.txt"
+grep -q "^expected_head=$HEAD_SHA$" "$TMPDIR/out.txt"
+grep -q "^lane_verify_command=./scripts/v2/verify_lane_worktree.sh --expected-worktree-root $WORKTREE_ROOT --expected-branch-ref lane/mn05-operator-dr-rotation-lifecycle --expected-head $HEAD_SHA$" "$TMPDIR/out.txt"
+
 cat >"$REPORT_PATH" <<EOF
 generated_at=2026-04-04T11:59:00Z
 config_path=$WORKTREE_ROOT/configs/node1.toml
