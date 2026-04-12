@@ -3279,7 +3279,7 @@ mod tests {
             "| `node2` missing during startup or rejoin | Keep `node3` and `node4` stopped until `node2` returns with `node2.toml` and its shipped tuple | Reject while a later follower tries to skip the missing `node2` slot |",
             "| `node3` missing during startup or rejoin | Keep `node4` stopped until `node3` returns with `node3.toml` and its shipped tuple | Reject while `node4` tries to skip the missing `node3` slot |",
             "| `node4` missing during startup or rejoin | Keep `node1` through `node3` in their shipped slots; if `node4` returns, bring it back only with `node4.toml` and its shipped tuple | Accept the remaining slots only while no other config is renamed or promoted into the `node4` role |",
-            "| Any tuple drift or config mutation | Stop and review before startup | Reject on renamed files, swapped slots, duplicated or cross-slot-spliced listener tuples, unknown fields, whitespace drift, non-canonical socket literals, port-spacing drift, or listener-family drift |",
+            "| Any tuple drift or config mutation | Stop and review before startup | Reject on renamed files, swapped slots, `node_id` drift, duplicated or cross-slot-spliced listener tuples, unknown fields, whitespace drift, non-canonical socket literals, port-spacing drift, or listener-family drift |",
         ];
         let expected_table_lines = [
             "| Scenario | Expected operator action | Acceptance |",
@@ -3388,6 +3388,7 @@ mod tests {
             "If an earlier slot is missing or drifted while a later slot is still running, stop the later slot first and restore the earlier shipped slot before any restart attempt; a healthy later follower never proves that the skipped topology gap is safe.",
             "If two shipped slot files ever converge on the same `rpc_addr`/`p2p_addr` tuple, stop both peers and restore the original slot-bound files before retrying; duplicated listeners are topology drift, not an interchangeable bootstrap shortcut.",
             "If duplicated listeners appear under different `node_id` values, still treat that as topology drift and restore the original slot-bound files; peer-identity drift never legitimizes a reused listener tuple.",
+            "If the listener literals still look slot-compatible but the `node_id` alone drifts, still fail closed and restore the exact repo-root slot file; peer identity is part of the shipped bootstrap contract, not optional metadata.",
             "If a drifted config mixes the `rpc_addr` from one shipped slot with the `p2p_addr` from another, treat that as topology drift too and restore the exact repo-root slot file instead of \"repairing\" only the port that looks wrong.",
             "Never promote a later slot based on a basename match or on the `+1000` listener pattern alone; require the repo-root slot path, `node_id`, and both listener literals to agree before editing or restarting a peer.",
             "If `load_config` reports an unknown field or tuple drift, fix the exact repo-root slot file named by the error surface and the exact field named in that error; do not guess across sibling configs or translate ad-hoc aliases by hand.",
