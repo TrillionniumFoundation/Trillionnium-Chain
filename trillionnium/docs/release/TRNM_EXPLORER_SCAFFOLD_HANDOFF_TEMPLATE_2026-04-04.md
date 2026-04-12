@@ -106,6 +106,7 @@ public_base_url=<value>
 health_url=<value>
 local_health_url=<value>
 index_url=<value>
+local_index_url=<value>
 rpc_base_url=<value>
 pid_file=<value>
 log_file=<value>
@@ -194,6 +195,7 @@ blocker_note=this_evidence_does_not_close_durable_indexer_historical_read_model_
 replay_command=./trillionnium/scripts/v2/explorer_service_up.sh
 status_command=./trillionnium/scripts/v2/explorer_service_status.sh
 index_fetch_command=<curl-or-cat-command>
+local_index_fetch_command=<curl-command-for-local-bind-index-json>
 rollback_command=./trillionnium/scripts/v2/explorer_service_down.sh
 ```
 
@@ -207,11 +209,12 @@ rollback_command=./trillionnium/scripts/v2/explorer_service_down.sh
 6. Copy the status-side read-contract markers verbatim too: `read_contract_mode`, `read_contract_source`, `day1_surface`, `query_events_default_limit`, `query_events_max_limit`, `write_paths_exposed`, and `deployment_topology`. Do not rely on `service_mode` alone, because the handoff note should freeze the actual Day-1 read surface and the single-process static placeholder boundary rather than just the deployment shape.
 7. Preserve the matching `/index.json` contract markers (`index_json_read_contract_mode`, `index_json_read_contract_source`, `index_json_day1_surface`, limit fields, `index_json_deployment_topology`, placeholder scope/blocker markers, and durability markers) so operators can prove the served static payload matches the CLI/status contract instead of only asserting `index_json_declares_day1_contract=true`.
 8. If reverse proxy and local bind differ, preserve both `health_url` and `local_health_url`, plus the corresponding `health_probe_url` / `local_health_probe_url` fields.
-9. Preserve both `replay_command` and `rollback_command` so the same placeholder bring-up path can be re-run or torn down without reconstructing it from memory.
-10. When `summary.txt` is available, also preserve `template_path=`, `durable_template_path=`, `template_selection=`, `durable_template_allowed=`, `durable_template_rejection_reason=`, `deployment_template_boundary=`, and the `truth_source_*=` lines verbatim; they are the mechanical hint for which template the next operator is allowed to use.
-11. If `truth_source_go_no_go_panel=` is emitted as `missing-in-this-snapshot:...`, keep that exact value. It means the current repo snapshot does not carry that truth source locally; do not hand-edit the packet into claiming a GO/NO-GO panel file that the snapshot cannot actually prove.
-12. Preserve `durable_read_anchor_missing_count` together with `durable_read_anchor_missing_fields`; do not keep one while trimming the other, because the pair is the fail-closed proof that the scaffold still lacks all 6 durable-read anchors.
-13. If any durable-read anchor is later filled with a real value, stop using this placeholder-only template and move to a durable-service handoff packet instead.
+9. If reverse proxy and local bind differ for `/index.json` too, preserve both `index_url` and `local_index_url`, and keep `index_fetch_command` plus `local_index_fetch_command` together so the next operator can fetch the public-facing payload and the local-bind payload without rewriting URLs by hand.
+10. Preserve both `replay_command` and `rollback_command` so the same placeholder bring-up path can be re-run or torn down without reconstructing it from memory.
+11. When `summary.txt` is available, also preserve `template_path=`, `durable_template_path=`, `template_selection=`, `durable_template_allowed=`, `durable_template_rejection_reason=`, `deployment_template_boundary=`, and the `truth_source_*=` lines verbatim; they are the mechanical hint for which template the next operator is allowed to use.
+12. If `truth_source_go_no_go_panel=` is emitted as `missing-in-this-snapshot:...`, keep that exact value. It means the current repo snapshot does not carry that truth source locally; do not hand-edit the packet into claiming a GO/NO-GO panel file that the snapshot cannot actually prove.
+13. Preserve `durable_read_anchor_missing_count` together with `durable_read_anchor_missing_fields`; do not keep one while trimming the other, because the pair is the fail-closed proof that the scaffold still lacks all 6 durable-read anchors.
+14. If any durable-read anchor is later filled with a real value, stop using this placeholder-only template and move to a durable-service handoff packet instead.
 
 ## What this template intentionally does not claim
 
@@ -232,6 +235,7 @@ A scaffold handoff note is acceptable only if it includes all of the following:
 - one emitted status block with fail-closed markers intact, including `read_contract_mode`, `read_contract_source`, `day1_surface`, `query_events_default_limit`, `query_events_max_limit`, `write_paths_exposed`, `deployment_topology`, and `durable_read_anchor_missing_count` + `durable_read_anchor_missing_fields`
 - explicit local deployment-path fields (`bind_host`, `bind_port`, `public_base_url`, `env_file`)
 - explicit probe evidence (`health_probe_url`, `local_health_probe_url`)
+- explicit index-boundary evidence (`index_url`, and `local_index_url` too when the local bind target differs from the public URL)
 - one `/index.json` fetch proof that also preserves the served read-contract/durability markers, including `index_json_read_contract_source`, `index_json_deployment_evidence_scope`, `index_json_rank1_read_surface_blocker`, and `index_json_durable_indexer_status`, not just a boolean declaration
 - one explicit blocker note stating placeholder-only scope
 - one replay command

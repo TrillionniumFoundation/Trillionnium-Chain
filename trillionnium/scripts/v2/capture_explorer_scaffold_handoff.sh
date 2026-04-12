@@ -116,6 +116,10 @@ HEALTH_URL="$(status_field health_url)"
 INDEX_URL="$(status_field index_url)"
 RPC_BASE_URL="$(status_field rpc_base_url)"
 LOCAL_HEALTH_URL="$(status_field local_health_url)"
+LOCAL_INDEX_URL="${LOCAL_HEALTH_URL%/healthz}/index.json"
+if [[ "${LOCAL_INDEX_URL}" == "${LOCAL_HEALTH_URL}" ]]; then
+  LOCAL_INDEX_URL="${PUBLIC_BASE_URL}/index.json"
+fi
 READ_CONTRACT_MODE="$(status_field read_contract_mode)"
 READ_CONTRACT_SOURCE="$(status_field read_contract_source)"
 DAY1_SURFACE="$(status_field day1_surface)"
@@ -285,6 +289,8 @@ local_health_probe_url=${LOCAL_HEALTH_PROBE_URL}
 local_health_probe_scope=local-bind-target
 health_probe_boundary_note=health_url_may_differ_from_local_health_url_and_must_not_be_collapsed_in_handoff
 index_url=${INDEX_URL}
+local_index_url=${LOCAL_INDEX_URL}
+index_probe_boundary_note=index_url_may_differ_from_local_index_url_and_must_not_be_collapsed_in_handoff
 index_json_fetched_at=${TIMESTAMP_UTC}
 index_json_path_or_url=${INDEX_FETCH_SOURCE}
 index_json_declares_day1_contract=true
@@ -351,6 +357,7 @@ replay_command=./trillionnium/scripts/v2/explorer_service_up.sh
 status_command=./trillionnium/scripts/v2/explorer_service_status.sh
 public_health_fetch_command=curl --silent --show-error --fail --max-time 5 ${HEALTH_URL}
 local_health_fetch_command=curl --silent --show-error --fail --max-time 5 ${LOCAL_HEALTH_URL}
+local_index_fetch_command=curl --silent --show-error --fail --max-time 5 ${LOCAL_INDEX_URL}
 rollback_command=./trillionnium/scripts/v2/explorer_service_down.sh
 deployment_evidence_scope=${DEPLOYMENT_EVIDENCE_SCOPE}
 rank1_read_surface_blocker=${RANK1_BLOCKER}
