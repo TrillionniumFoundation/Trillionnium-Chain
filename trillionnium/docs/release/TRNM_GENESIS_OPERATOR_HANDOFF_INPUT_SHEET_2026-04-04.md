@@ -49,8 +49,8 @@
 | `validator_set_version` | `operator-handoff-b74758fac` | 保留或替换都可以，但最终值必须是**真实、具体、非默认**的版本标签，且不能含 `;` / `=` separator |
 | `startup_order_note` | `<controlled-4-node-bootstrap-order>` | 需要改成真实 4-node controlled bootstrap 顺序 |
 | `rollback_owner` | `primary-operator` | 需要确认真实责任人 / 值班 owner |
-| `genesis_artifact_path` | `<absolute-path-to-genesis-artifact>` | keep unless artifact path changes, but final handoff must still point to one exact artifact file/bundle absolute path，且不要带 `.` / `..` path segment 或重复 `//` path separator |
-| `genesis_artifact_sha256` | `0cf37d6ae68baa3ac1af1db89c3b225cf669f072aa3f531681448dbcf995108f` | keep unless artifact changes |
+| `genesis_artifact_path` | `<absolute-path-to-genesis-artifact>` | keep unless artifact path changes, but if this path changes you must re-freeze `genesis_artifact_sha256` in the same update; final handoff must still point to one exact artifact file/bundle absolute path，不能只写目录，且不要带 `.` / `..` path segment 或重复 `//` path separator |
+| `genesis_artifact_sha256` | `0cf37d6ae68baa3ac1af1db89c3b225cf669f072aa3f531681448dbcf995108f` | keep unless artifact bytes change；如果 `genesis_artifact_path` 改了，必须对新路径指向的同一份 artifact 重新计算完整 64-char SHA-256，不能沿用旧 hash |
 
 ### 建议最终填写区
 
@@ -77,6 +77,13 @@ rollback_owner=
   - 不接受包含 `;` 或 `=` 的拼接值，避免 packet key-value 边界被破坏
 
 如果准备切到 `public-mainnet-input`，应按上面口径先用 `trillionnium/scripts/v2/check_validator_config_bundle.py --emit-ceremony-packet --ceremony-scope public-mainnet-input ...` 预检；不要等 operator 收到 packet 后才发现字段本身不可用。
+
+### 2.2 Fail-closed contract for the frozen genesis artifact anchor
+
+- `genesis_artifact_path=` 与 `genesis_artifact_sha256=` 视为同一个冻结锚点: 要么两者都保持不变，要么两者一起更新；不接受只改 path 不改 hash，或只改 hash 不改 path
+- 如果其中任一项要变，应先回到 genesis artifact source / input sheet 重新冻结，再生成新的 handoff packet；不要在 operator reply 阶段临时口头修补
+- `genesis_artifact_path=` 必须指向一个明确 artifact 文件或 bundle member，不能只写目录、ticket、artifact folder 或“最新版本”别名
+- `genesis_artifact_sha256=` 必须是 `genesis_artifact_path=` 当前指向内容的完整 64-char SHA-256，而不是历史 checksum、简写标签或聊天里口头确认的摘要
 
 ---
 

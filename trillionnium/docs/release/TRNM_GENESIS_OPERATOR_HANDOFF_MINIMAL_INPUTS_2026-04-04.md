@@ -28,6 +28,7 @@ rollback_owner=
 说明：
 - `packet_generated_at=` 建议在最终回填/重生成 packet 时由脚本自动使用当时 UTC 时间，不需要现在先定死。
 - `genesis_artifact_path=` 与 `genesis_artifact_sha256=` 当前已经冻结，不在此清单中重复要求。
+- 但这两个字段必须继续视为同一个 frozen anchor: 如果其中任一项要改，就回到 input sheet / packet source 一起更新两项并重生成 packet；不要在当前回复里只改 path 或只改 hash。
 - `packet_distribution_path=` 必须填写为共享给所有 operator 审阅的**同一份 ceremony packet 文件绝对路径**，不能只写目录、ticket、bundle 根路径或聊天线程名。
 - `packet_distribution_path=` 还必须与 `genesis_artifact_path=` 指向**不同文件**，避免把共享审阅 packet 和 genesis artifact 本体混成同一物。
 - `validator_set_version=` 必须填写为一个**真实、具体、非默认**的版本标签（例如 `mainnet-candidate-2026-03-31`），不能继续留空，也不能回落到模板默认 `v1`。

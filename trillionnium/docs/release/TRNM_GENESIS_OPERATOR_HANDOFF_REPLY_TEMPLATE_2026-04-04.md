@@ -90,6 +90,7 @@ node4.operator_ack_digest=
 - `packet_distribution_path` 必须填写为共享给所有 operator 审阅的同一份 ceremony packet 文件绝对路径，不能只写目录 / ticket / artifact folder
 - `packet_distribution_path` 不能与 `genesis_artifact_path` 指向同一文件
 - `validator_set_version` 必须是具体、非默认的版本标签，不要回落到模板默认 `v1`
+- 本模板默认上一版 packet 中的 `genesis_artifact_path=` 与 `genesis_artifact_sha256=` 仍然构成有效冻结锚点；如果其中任一项需要变化，先停止使用这份 reply template，回到 input sheet / packet generator 同步更新两项并重生成 packet
 
 ---
 
