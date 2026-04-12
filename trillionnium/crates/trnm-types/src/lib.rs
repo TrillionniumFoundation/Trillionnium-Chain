@@ -409,6 +409,8 @@ pub enum GovParamKey {
     LlmMeterWorkerSlashRebatePerWorkUnitNum,
     LlmMeterWorkerSlashRebatePerWorkUnitDen,
     ResolveAuthority,
+    HybridSettlementPocoWeightBps,
+    ShadowSettlementCompareOnly,
     EmergencyPause,
     MonetaryPolicyTickIntervalBlocks,
     MonetaryPolicyTickCooldownBlocks,
@@ -451,6 +453,8 @@ impl GovParamKey {
                 "llm_meter_worker_slash_rebate_per_work_unit_den"
             }
             Self::ResolveAuthority => "resolve_authority",
+            Self::HybridSettlementPocoWeightBps => "hybrid_settlement_poco_weight_bps",
+            Self::ShadowSettlementCompareOnly => "shadow_settlement_compare_only",
             Self::EmergencyPause => "emergency_pause",
             Self::MonetaryPolicyTickIntervalBlocks => "monetary_policy_tick_interval_blocks",
             Self::MonetaryPolicyTickCooldownBlocks => "monetary_policy_tick_cooldown_blocks",
@@ -500,6 +504,8 @@ impl GovParamKey {
                 Self::LlmMeterWorkerSlashRebatePerWorkUnitDen
             }
             "resolve_authority" => Self::ResolveAuthority,
+            "hybrid_settlement_poco_weight_bps" => Self::HybridSettlementPocoWeightBps,
+            "shadow_settlement_compare_only" => Self::ShadowSettlementCompareOnly,
             "emergency_pause" => Self::EmergencyPause,
             "monetary_policy_tick_interval_blocks" => Self::MonetaryPolicyTickIntervalBlocks,
             "monetary_policy_tick_cooldown_blocks" => Self::MonetaryPolicyTickCooldownBlocks,
@@ -992,6 +998,16 @@ mod tests {
         let cases = [
             (GovParamKey::MaxBlockMs, "max_block_ms", None),
             (GovParamKey::ResolveAuthority, "resolve_authority", None),
+            (
+                GovParamKey::HybridSettlementPocoWeightBps,
+                "hybrid_settlement_poco_weight_bps",
+                None,
+            ),
+            (
+                GovParamKey::ShadowSettlementCompareOnly,
+                "shadow_settlement_compare_only",
+                None,
+            ),
             (
                 GovParamKey::EmergencyPause,
                 "emergency_pause",
