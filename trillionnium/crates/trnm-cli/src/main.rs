@@ -1709,16 +1709,14 @@ fn json_value_tx_hash(v: &serde_json::Value) -> Option<String> {
         "transaction-hash",
         "transactionHash",
     ];
-    for key in direct {
-        if let Some(h) = v.get(key).and_then(|x| x.as_str()) {
-            if let Some(normalized) = normalize_tx_hash(h) {
-                return Some(normalized);
-            }
+    if let Some(h) = json_get_alias(v, &direct).and_then(|x| x.as_str()) {
+        if let Some(normalized) = normalize_tx_hash(h) {
+            return Some(normalized);
         }
     }
 
     for key in ["result", "tx_response", "txResponse", "response", "data"] {
-        if let Some(found) = v.get(key).and_then(json_value_tx_hash) {
+        if let Some(found) = json_get_alias(v, &[key]).and_then(json_value_tx_hash) {
             return Some(found);
         }
     }
@@ -4473,6 +4471,19 @@ mod tests {
         );
         assert_eq!(
             extract_tx_hash("{\"transaction-hash\":\"BEEF5678\",\"status\":\"ok\"}").as_deref(),
+            Some("beef5678")
+        );
+    }
+
+    #[test]
+    fn extract_tx_hash_accepts_case_insensitive_json_key_aliases() {
+        assert_eq!(
+            extract_tx_hash("{\"TX_HASH\":\"0xFEED1234\",\"status\":\"ok\"}").as_deref(),
+            Some("0xfeed1234")
+        );
+        assert_eq!(
+            extract_tx_hash("{\"result\":{\"TX_RESPONSE\":{\"Transaction-Hash\":\"BEEF5678\"}}}")
+                .as_deref(),
             Some("beef5678")
         );
     }
