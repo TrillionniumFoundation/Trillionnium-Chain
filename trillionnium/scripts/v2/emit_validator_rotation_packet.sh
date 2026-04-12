@@ -127,6 +127,39 @@ canonicalize_branch_ref() {
   esac
 }
 
+normalize_path() {
+  local value="$1"
+  python3 - "$value" <<'PY'
+import os
+import sys
+
+print(os.path.realpath(sys.argv[1]))
+PY
+}
+
+path_resolves_under_root() {
+  local path_value="$1"
+  local root_value="$2"
+  local path_canonical
+  local root_canonical
+
+  path_canonical="$(normalize_path "$path_value")"
+  root_canonical="$(normalize_path "$root_value")"
+
+  python3 - "$path_canonical" "$root_canonical" <<'PY'
+import os
+import sys
+
+path_value, root_value = sys.argv[1:3]
+try:
+    common = os.path.commonpath([path_value, root_value])
+except ValueError:
+    sys.exit(1)
+
+sys.exit(0 if common == root_value else 1)
+PY
+}
+
 command_has_flag_value() {
   local command="$1"
   local flag_name="$2"
@@ -341,6 +374,10 @@ if [ -n "$DR_SUMMARY_PATH" ] || [ -n "$DR_GENERATED_AT" ] || [ -n "$DR_STATUS" ]
   require_nonempty --dr-rollback-command "$DR_ROLLBACK_COMMAND"
   if [ "$DR_STATUS" != "PASS" ]; then
     printf 'invalid --dr-status: expected PASS got %s\n' "$DR_STATUS" >&2
+    exit 2
+  fi
+  if ! path_resolves_under_root "$DR_SUMMARY_PATH" "$VERIFIED_WORKTREE/run"; then
+    printf 'invalid --dr-summary-path: must resolve under verified worktree run/ %s\n' "$(normalize_path "$VERIFIED_WORKTREE/run")" >&2
     exit 2
   fi
 fi

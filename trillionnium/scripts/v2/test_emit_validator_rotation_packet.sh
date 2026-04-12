@@ -16,11 +16,11 @@ common_args=(
   --handoff-signed-by alice
   --handoff-acknowledged-by bob
   --operator-ack 'alice acknowledged validator-new handoff against the cutover note'
-  --dr-summary-path /tmp/run/bft-restart-recovery-1.txt
+  --dr-summary-path /Users/qianqi/.openclaw/workspace/trnm-mainnet-lanes/MN05-operator-dr-rotation-lifecycle/run/bft-restart-recovery-1.txt
   --dr-generated-at 2026-04-03T06:14:00Z
   --dr-status PASS
   --dr-replay-command './scripts/check_bft_restart_recovery.sh --config /tmp/configs/validator-new.json'
-  --dr-rollback-command 'rm -rf /tmp/run/bft-restart-recovery-1.txt'
+  --dr-rollback-command 'rm -rf /Users/qianqi/.openclaw/workspace/trnm-mainnet-lanes/MN05-operator-dr-rotation-lifecycle/run/bft-restart-recovery-1.txt'
 )
 
 if bash "$SCRIPT" "${common_args[@]}" >/tmp/emit-packet.out 2>/tmp/emit-packet.err; then
@@ -329,6 +329,29 @@ if bash "$SCRIPT" \
   exit 1
 fi
 grep -q 'invalid --dr-status: expected PASS got FAIL' /tmp/emit-packet.err
+
+if bash "$SCRIPT" \
+  --cutover-kind rotation \
+  --verified-worktree /tmp/trnm-lane \
+  --verified-branch-ref lane/mn05-operator-dr-rotation-lifecycle \
+  --verified-head 0123456789abcdef \
+  --outgoing-validator-id validator-old \
+  --incoming-validator-id validator-new \
+  --incoming-config-path /tmp/configs/validator-new.json \
+  --rollback-command 'rm -rf /tmp/cutover-note' \
+  --handoff-signed-by alice \
+  --handoff-acknowledged-by bob \
+  --operator-ack 'alice acknowledged validator-new handoff against the cutover note' \
+  --dr-summary-path /tmp/run/bft-restart-recovery-1.txt \
+  --dr-generated-at 2026-04-03T06:14:00Z \
+  --dr-status PASS \
+  --dr-replay-command './scripts/check_bft_restart_recovery.sh --config /tmp/configs/validator-new.json' \
+  --dr-rollback-command 'rm -rf /tmp/run/bft-restart-recovery-1.txt' \
+  >/tmp/emit-packet.out 2>/tmp/emit-packet.err; then
+  echo "expected dr summary path outside verified worktree run/ to fail" >&2
+  exit 1
+fi
+grep -Eq 'invalid --dr-summary-path: must resolve under verified worktree run/ .*/tmp/trnm-lane/run' /tmp/emit-packet.err
 
 bash "$SCRIPT" \
   --cutover-kind rotation \
