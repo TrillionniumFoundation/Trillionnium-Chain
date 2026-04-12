@@ -134,6 +134,28 @@ class CheckValidatorConfigBundleTests(unittest.TestCase):
             result.stderr,
         )
 
+    def test_bundle_rejects_node_id_with_packet_separator(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            config = self.write_config(
+                root,
+                "node1.toml",
+                node_id="node=1",
+                rpc_addr="127.0.0.1:7001",
+                p2p_addr="127.0.0.1:7002",
+            )
+            result = self.run_script(str(config))
+
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn(
+            "invalid node config",
+            result.stderr,
+        )
+        self.assertIn(
+            "node_id must not contain packet/list separators (, ; | =)",
+            result.stderr,
+        )
+
     def test_emit_ceremony_packet_rejects_separator_in_validator_set_version(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
@@ -276,6 +298,32 @@ class CheckValidatorConfigBundleTests(unittest.TestCase):
             result.stderr,
         )
 
+    def test_emit_ceremony_packet_rejects_packet_distribution_path_equal_to_genesis_artifact_path(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            config = self.write_config(
+                root,
+                "node1.toml",
+                node_id="node1",
+                rpc_addr="127.0.0.1:7001",
+                p2p_addr="127.0.0.1:7002",
+            )
+            shared_path = str(root / "shared.packet.txt")
+            result = self.run_script(
+                "--emit-ceremony-packet",
+                "--packet-distribution-path",
+                shared_path,
+                "--genesis-artifact-path",
+                shared_path,
+                str(config),
+            )
+
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn(
+            "packet_distribution_path and genesis_artifact_path must name different files",
+            result.stderr,
+        )
+
     def test_public_mainnet_input_rejects_relative_packet_distribution_path(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
@@ -350,6 +398,32 @@ class CheckValidatorConfigBundleTests(unittest.TestCase):
             result.stderr,
         )
 
+    def test_public_mainnet_input_rejects_existing_directory_packet_distribution_path_without_trailing_slash(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            config = self.write_config(
+                root,
+                "node1.toml",
+                node_id="node1",
+                rpc_addr="127.0.0.1:7001",
+                p2p_addr="127.0.0.1:7002",
+            )
+            packet_dir = root / "handoff"
+            packet_dir.mkdir()
+            result = self.run_script(
+                *self.make_public_mainnet_args(
+                    config,
+                    "--packet-distribution-path",
+                    str(packet_dir),
+                )
+            )
+
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn(
+            "public-mainnet-input requires packet_distribution_path to name one exact packet file",
+            result.stderr,
+        )
+
     def test_public_mainnet_input_rejects_dot_segments_in_packet_distribution_path(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
@@ -374,6 +448,54 @@ class CheckValidatorConfigBundleTests(unittest.TestCase):
             result.stderr,
         )
 
+    def test_public_mainnet_input_rejects_leading_dot_segment_in_packet_distribution_path(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            config = self.write_config(
+                root,
+                "node1.toml",
+                node_id="node1",
+                rpc_addr="127.0.0.1:7001",
+                p2p_addr="127.0.0.1:7002",
+            )
+            result = self.run_script(
+                *self.make_public_mainnet_args(
+                    config,
+                    "--packet-distribution-path",
+                    "/./tmp/public-mainnet.packet.txt",
+                )
+            )
+
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn(
+            "public-mainnet-input requires packet_distribution_path to avoid '.' or '..' path segments",
+            result.stderr,
+        )
+
+    def test_public_mainnet_input_rejects_repeated_slashes_in_packet_distribution_path(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            config = self.write_config(
+                root,
+                "node1.toml",
+                node_id="node1",
+                rpc_addr="127.0.0.1:7001",
+                p2p_addr="127.0.0.1:7002",
+            )
+            result = self.run_script(
+                *self.make_public_mainnet_args(
+                    config,
+                    "--packet-distribution-path",
+                    f"{root}//handoff.packet.txt",
+                )
+            )
+
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn(
+            "public-mainnet-input requires packet_distribution_path to avoid repeated '/' path separators",
+            result.stderr,
+        )
+
     def test_public_mainnet_input_rejects_directory_genesis_artifact_path(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
@@ -391,6 +513,32 @@ class CheckValidatorConfigBundleTests(unittest.TestCase):
                     config,
                     "--genesis-artifact-path",
                     str(artifact_dir) + "/",
+                )
+            )
+
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn(
+            "public-mainnet-input requires genesis_artifact_path to name one exact artifact path",
+            result.stderr,
+        )
+
+    def test_public_mainnet_input_rejects_existing_directory_genesis_artifact_path_without_trailing_slash(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            config = self.write_config(
+                root,
+                "node1.toml",
+                node_id="node1",
+                rpc_addr="127.0.0.1:7001",
+                p2p_addr="127.0.0.1:7002",
+            )
+            artifact_dir = root / "genesis-bundle"
+            artifact_dir.mkdir()
+            result = self.run_script(
+                *self.make_public_mainnet_args(
+                    config,
+                    "--genesis-artifact-path",
+                    str(artifact_dir),
                 )
             )
 
@@ -421,6 +569,30 @@ class CheckValidatorConfigBundleTests(unittest.TestCase):
         self.assertNotEqual(result.returncode, 0)
         self.assertIn(
             "public-mainnet-input requires genesis_artifact_path to avoid '.' or '..' path segments",
+            result.stderr,
+        )
+
+    def test_public_mainnet_input_rejects_repeated_slashes_in_genesis_artifact_path(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            config = self.write_config(
+                root,
+                "node1.toml",
+                node_id="node1",
+                rpc_addr="127.0.0.1:7001",
+                p2p_addr="127.0.0.1:7002",
+            )
+            result = self.run_script(
+                *self.make_public_mainnet_args(
+                    config,
+                    "--genesis-artifact-path",
+                    f"{root}//artifacts/genesis.json",
+                )
+            )
+
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn(
+            "public-mainnet-input requires genesis_artifact_path to avoid repeated '/' path separators",
             result.stderr,
         )
 
@@ -555,6 +727,7 @@ class CheckValidatorConfigBundleTests(unittest.TestCase):
             line for line in result.stdout.splitlines() if line.startswith("operator_ack=")
         )
         validator_entry_hash = hash_line.split("=", 1)[1]
+        self.assertIn("ceremony_id=mn04-bootstrap-20260331-0621Z", ack_line)
         self.assertIn(f"genesis_artifact_sha256={VALID_SHA256}", ack_line)
         self.assertIn("<owner-for-node1> checked", ack_line)
         self.assertIn("validator_name=node1", ack_line)
@@ -618,6 +791,7 @@ class CheckValidatorConfigBundleTests(unittest.TestCase):
 
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertIn("packet_distribution_path=<absolute-path-to-ceremony-packet>", result.stdout)
+        self.assertIn("startup_order_note=<controlled-4-node-bootstrap-order>", result.stdout)
         self.assertIn("genesis_artifact_path=<absolute-path-to-genesis-artifact>", result.stdout)
         self.assertIn("genesis_artifact_sha256=<64-character-genesis-sha256>", result.stdout)
 

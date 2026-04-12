@@ -97,6 +97,7 @@ cli_build_command=
 ```text
 config_set_id=
 chain_id=
+genesis_path=
 genesis_sha256=
 validator_count=
 seed_mode=static|dynamic|mixed
@@ -125,6 +126,7 @@ done
 ```
 
 记录目的：
+- 防止 `genesis_sha256` 脱离具体文件路径单独流转，导致操作员拿着对的 digest 却校验了错的 genesis 文件；
 - 防止“同一份 smoke 证据”被错误复用到另一组 validator 配置；
 - 防止 rehearsal / testnet / day-1 launch 使用了不同 `chain_id` 或 genesis，但 handoff 仍被口头描述成“同一轮”；
 - 防止 peer / seed / 端口变更后，handoff 文本仍沿用旧指纹。
@@ -139,7 +141,7 @@ done
 - 已记录 `previous_stable_anchor`；
 - 已指定 `rollback_entrypoint`；
 - 已记录本轮使用的 `trnm-node` / `trnm-cli` 二进制指纹；
-- 已记录 validator 配置指纹，以及 `chain_id` / `genesis_sha256`；
+- 已记录 validator 配置指纹，以及 `chain_id` / `genesis_path` / `genesis_sha256`；
 - 已明确窗口角色：rehearsal / upgrade / rollback / handoff；
 - 已明确谁是执行者、谁是观察者、谁有 rollback 决策权。
 

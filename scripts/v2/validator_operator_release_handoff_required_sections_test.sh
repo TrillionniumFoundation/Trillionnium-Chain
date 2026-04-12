@@ -22,6 +22,7 @@ required_lines=(
   'cli_binary_sha256='
   'config_set_id='
   'chain_id='
+  'genesis_path='
   'genesis_sha256='
   'validator_count='
   'node1_config_sha256='
