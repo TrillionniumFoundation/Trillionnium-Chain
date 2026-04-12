@@ -5443,10 +5443,16 @@ mod tests {
         ("bootstrap_addrs", "[\"127.0.0.1:27656\"]"),
         ("bootstrapAddr", "\"127.0.0.1:27656\""),
         ("bootstrapAddrs", "[\"127.0.0.1:27656\"]"),
+        ("bootstrap-addr", "\"127.0.0.1:27656\""),
+        ("bootstrap-addrs", "[\"127.0.0.1:27656\"]"),
+        ("bootstrap-node", "\"127.0.0.1:27656\""),
+        ("bootstrap-peer", "\"127.0.0.1:27656\""),
         ("seed_nodes", "[\"127.0.0.1:27656\"]"),
         ("seed_node", "\"127.0.0.1:27656\""),
         ("seed_peers", "[\"127.0.0.1:27656\"]"),
         ("seed_peer", "\"127.0.0.1:27656\""),
+        ("seed-node", "\"127.0.0.1:27656\""),
+        ("seed-peer", "\"127.0.0.1:27656\""),
         ("seedNodes", "[\"127.0.0.1:27656\"]"),
         ("seedNode", "\"127.0.0.1:27656\""),
         ("seedPeers", "[\"127.0.0.1:27656\"]"),
@@ -5455,6 +5461,9 @@ mod tests {
         ("seed_addrs", "[\"127.0.0.1:27656\"]"),
         ("seedAddr", "\"127.0.0.1:27656\""),
         ("seedAddrs", "[\"127.0.0.1:27656\"]"),
+        ("seed-addr", "\"127.0.0.1:27656\""),
+        ("seed-addrs", "[\"127.0.0.1:27656\"]"),
+        ("seed", "\"127.0.0.1:27656\""),
         ("seeds", "\"127.0.0.1:27656\""),
         ("bootnodes", "[\"127.0.0.1:27656\"]"),
         ("bootnode", "\"127.0.0.1:27656\""),
@@ -5462,85 +5471,55 @@ mod tests {
         ("boot_node", "\"127.0.0.1:27656\""),
         ("bootNodes", "[\"127.0.0.1:27656\"]"),
         ("bootNode", "\"127.0.0.1:27656\""),
+        ("boot-node", "\"127.0.0.1:27656\""),
         ("boot_peers", "[\"127.0.0.1:27656\"]"),
         ("boot_peer", "\"127.0.0.1:27656\""),
+        ("boot-peer", "\"127.0.0.1:27656\""),
         ("boot_addr", "\"127.0.0.1:27656\""),
         ("boot_addrs", "[\"127.0.0.1:27656\"]"),
         ("bootAddr", "\"127.0.0.1:27656\""),
         ("bootAddrs", "[\"127.0.0.1:27656\"]"),
+        ("boot-addr", "\"127.0.0.1:27656\""),
+        ("boot-addrs", "[\"127.0.0.1:27656\"]"),
         ("bootPeers", "[\"127.0.0.1:27656\"]"),
         ("bootPeer", "\"127.0.0.1:27656\""),
         ("persistent_peers", "[\"127.0.0.1:27656\"]"),
+        ("persistent-peers", "[\"127.0.0.1:27656\"]"),
         ("persistent_peer", "\"127.0.0.1:27656\""),
+        ("persistent-peer", "\"127.0.0.1:27656\""),
         ("persistent_addr", "\"127.0.0.1:27656\""),
         ("persistent_addrs", "[\"127.0.0.1:27656\"]"),
         ("persistentAddr", "\"127.0.0.1:27656\""),
         ("persistentAddrs", "[\"127.0.0.1:27656\"]"),
+        ("persistent-addr", "\"127.0.0.1:27656\""),
+        ("persistent-addrs", "[\"127.0.0.1:27656\"]"),
         ("persistentPeers", "[\"127.0.0.1:27656\"]"),
         ("persistentPeer", "\"127.0.0.1:27656\""),
         ("persistent_nodes", "[\"127.0.0.1:27656\"]"),
+        ("persistent-nodes", "[\"127.0.0.1:27656\"]"),
         ("persistent_node", "\"127.0.0.1:27656\""),
+        ("persistent-node", "\"127.0.0.1:27656\""),
         ("persistentNodes", "[\"127.0.0.1:27656\"]"),
         ("persistentNode", "\"127.0.0.1:27656\""),
     ];
 
     #[test]
     fn load_config_rejects_unknown_fields_to_keep_bootstrap_config_fail_closed() {
+        use std::collections::BTreeSet;
+
         let _cwd_guard = cwd_test_lock().lock().unwrap();
-        for (unknown_field, field_value) in [
-            ("bootstrap_nodes", "[\"127.0.0.1:27656\"]"),
-            ("bootstrap_node", "\"127.0.0.1:27656\""),
-            ("bootstrap_peers", "[\"127.0.0.1:27656\"]"),
-            ("bootstrap_peer", "\"127.0.0.1:27656\""),
-            ("bootstrapNodes", "[\"127.0.0.1:27656\"]"),
-            ("bootstrapNode", "\"127.0.0.1:27656\""),
-            ("bootstrapPeers", "[\"127.0.0.1:27656\"]"),
-            ("bootstrapPeer", "\"127.0.0.1:27656\""),
-            ("bootstrap_addr", "\"127.0.0.1:27656\""),
-            ("bootstrap_addrs", "[\"127.0.0.1:27656\"]"),
-            ("bootstrapAddr", "\"127.0.0.1:27656\""),
-            ("bootstrapAddrs", "[\"127.0.0.1:27656\"]"),
-            ("seed_nodes", "[\"127.0.0.1:27656\"]"),
-            ("seed_node", "\"127.0.0.1:27656\""),
-            ("seed_peers", "[\"127.0.0.1:27656\"]"),
-            ("seed_peer", "\"127.0.0.1:27656\""),
-            ("seedNodes", "[\"127.0.0.1:27656\"]"),
-            ("seedNode", "\"127.0.0.1:27656\""),
-            ("seedPeers", "[\"127.0.0.1:27656\"]"),
-            ("seedPeer", "\"127.0.0.1:27656\""),
-            ("seed_addr", "\"127.0.0.1:27656\""),
-            ("seed_addrs", "[\"127.0.0.1:27656\"]"),
-            ("seedAddr", "\"127.0.0.1:27656\""),
-            ("seedAddrs", "[\"127.0.0.1:27656\"]"),
-            ("seed", "\"127.0.0.1:27656\""),
-            ("seeds", "\"127.0.0.1:27656\""),
-            ("bootnodes", "[\"127.0.0.1:27656\"]"),
-            ("bootnode", "\"127.0.0.1:27656\""),
-            ("boot_nodes", "[\"127.0.0.1:27656\"]"),
-            ("boot_node", "\"127.0.0.1:27656\""),
-            ("bootNodes", "[\"127.0.0.1:27656\"]"),
-            ("bootNode", "\"127.0.0.1:27656\""),
-            ("boot_peers", "[\"127.0.0.1:27656\"]"),
-            ("boot_peer", "\"127.0.0.1:27656\""),
-            ("boot_addr", "\"127.0.0.1:27656\""),
-            ("boot_addrs", "[\"127.0.0.1:27656\"]"),
-            ("bootAddr", "\"127.0.0.1:27656\""),
-            ("bootAddrs", "[\"127.0.0.1:27656\"]"),
-            ("bootPeers", "[\"127.0.0.1:27656\"]"),
-            ("bootPeer", "\"127.0.0.1:27656\""),
-            ("persistent_peers", "[\"127.0.0.1:27656\"]"),
-            ("persistent_peer", "\"127.0.0.1:27656\""),
-            ("persistent_addr", "\"127.0.0.1:27656\""),
-            ("persistent_addrs", "[\"127.0.0.1:27656\"]"),
-            ("persistentAddr", "\"127.0.0.1:27656\""),
-            ("persistentAddrs", "[\"127.0.0.1:27656\"]"),
-            ("persistentPeers", "[\"127.0.0.1:27656\"]"),
-            ("persistentPeer", "\"127.0.0.1:27656\""),
-            ("persistent_nodes", "[\"127.0.0.1:27656\"]"),
-            ("persistent_node", "\"127.0.0.1:27656\""),
-            ("persistentNodes", "[\"127.0.0.1:27656\"]"),
-            ("persistentNode", "\"127.0.0.1:27656\""),
-        ] {
+        let alias_names = FORBIDDEN_BOOTSTRAP_ALIAS_FIELDS
+            .iter()
+            .map(|(field, _)| *field)
+            .collect::<Vec<_>>();
+        let alias_name_set = alias_names.iter().copied().collect::<BTreeSet<_>>();
+        assert_eq!(
+            alias_names.len(),
+            alias_name_set.len(),
+            "FORBIDDEN_BOOTSTRAP_ALIAS_FIELDS must not duplicate alias names or operator parse diagnostics can drift"
+        );
+
+        for &(unknown_field, field_value) in FORBIDDEN_BOOTSTRAP_ALIAS_FIELDS {
             let current_dir = std::env::current_dir().expect("current dir");
             let file_name = format!(
                 "trnm-node-config-unknown-field-{unknown_field}-{}-{}.toml",
@@ -5606,20 +5585,7 @@ mod tests {
                 )
             });
 
-        for forbidden_alias in [
-            "bootstrap_nodes", "bootstrap_node", "bootstrap_peers", "bootstrap_peer",
-            "bootstrapNodes", "bootstrapNode", "bootstrapPeers", "bootstrapPeer",
-            "bootstrap_addr", "bootstrap_addrs", "bootstrapAddr", "bootstrapAddrs",
-            "seed_nodes", "seed_node", "seed_peers", "seed_peer",
-            "seedNodes", "seedNode", "seedPeers", "seedPeer",
-            "seed_addr", "seed_addrs", "seedAddr", "seedAddrs", "seed", "seeds",
-            "bootnodes", "bootnode", "boot_nodes", "boot_node",
-            "bootNodes", "bootNode", "boot_peers", "boot_peer",
-            "boot_addr", "boot_addrs", "bootAddr", "bootAddrs", "bootPeers", "bootPeer",
-            "persistent_peers", "persistent_peer", "persistent_addr", "persistent_addrs",
-            "persistentAddr", "persistentAddrs", "persistentPeers", "persistentPeer",
-            "persistent_nodes", "persistent_node", "persistentNodes", "persistentNode",
-        ] {
+        for forbidden_alias in FORBIDDEN_BOOTSTRAP_ALIAS_FIELDS.iter().map(|(field, _)| *field) {
             let mention_count = fixture_scope_section
                 .matches(&format!("`{forbidden_alias}`"))
                 .count();
