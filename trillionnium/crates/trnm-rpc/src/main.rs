@@ -2963,7 +2963,7 @@ fn is_supported_http_version(version: &str) -> bool {
 
 fn http_json_response(status_line: &str, body: &str) -> String {
     format!(
-        "HTTP/1.1 {status_line}\r\nContent-Type: application/json\r\nContent-Length: {}\r\nConnection: close\r\n\r\n{}",
+        "HTTP/1.1 {status_line}\r\nContent-Type: application/json\r\nCache-Control: no-store\r\nContent-Length: {}\r\nConnection: close\r\n\r\n{}",
         body.len(),
         body
     )
@@ -2971,7 +2971,7 @@ fn http_json_response(status_line: &str, body: &str) -> String {
 
 fn http_json_head_response(status_line: &str, body_len: usize) -> String {
     format!(
-        "HTTP/1.1 {status_line}\r\nContent-Type: application/json\r\nContent-Length: {body_len}\r\nConnection: close\r\n\r\n"
+        "HTTP/1.1 {status_line}\r\nContent-Type: application/json\r\nCache-Control: no-store\r\nContent-Length: {body_len}\r\nConnection: close\r\n\r\n"
     )
 }
 
@@ -3059,13 +3059,17 @@ fn parse_http_request_target(first_line: &str) -> Option<(&str, &str)> {
     }
 
     let normalized = path.to_ascii_lowercase();
+    if path.matches('?').count() > 1 {
+        return None;
+    }
     if path.contains('\\') || normalized.contains("%5c") {
         return None;
     }
     if path.contains('#') || normalized.contains("%23") {
         return None;
     }
-    if contains_malformed_percent_encoding(path)
+    if normalized.contains("%3f")
+        || contains_malformed_percent_encoding(path)
         || contains_percent_encoded_control_or_space(path)
     {
         return None;
@@ -3562,6 +3566,16 @@ fn json_response_for_method(method: &str, status_line: &str, body: &str) -> Stri
     }
 }
 
+fn health_probe_body(ts_unix_ms: u128) -> String {
+    serde_json::json!({
+        "ok": true,
+        "service": "trnm-rpc",
+        "ts_unix_ms": ts_unix_ms,
+        "version": 1
+    })
+    .to_string()
+}
+
 fn has_ambiguous_path_segment_encoding(segment: &str) -> bool {
     let lower = segment.to_ascii_lowercase();
     lower.contains("%2f")
@@ -3655,13 +3669,7 @@ fn serve_health(host: &str, port: u16) -> Result<()> {
 
         let response = match (request, path, target) {
             (Some((method, _)), Some(path), _) if is_health_probe_path(path) => {
-                let body = serde_json::json!({
-                    "ok": true,
-                    "service": "trnm-rpc",
-                    "ts_unix_ms": now_ms(),
-                    "version": 1
-                })
-                .to_string();
+                let body = health_probe_body(now_ms());
                 json_response_for_method(method, "200 OK", &body)
             }
             (Some((method, _)), Some(path), Some(_)) if path.starts_with("/query-task/") => {
@@ -6072,16 +6080,65 @@ mod tests {
     }
 
     #[test]
-    fn health_probe_aliases_include_dash_prefixed_operator_paths() {
-        assert!(is_health_probe_path("/-/health"));
-        assert!(is_health_probe_path("/-/healthz/"));
-        assert!(is_health_probe_path("/-/live"));
-        assert!(is_health_probe_path("/-/readyz/"));
-        assert!(is_health_probe_path("/-/status"));
-        assert!(is_health_probe_path("/-/STATUSZ/"));
-        assert!(!is_health_probe_path("/-/statuscheck"));
-        assert!(!is_health_probe_path("/-/statusz//"));
-        assert!(!is_health_probe_path("/-/readyz/extra"));
+    fn health_probe_aliases_cover_operator_and_plain_probe_paths() {
+        for alias in [
+            "/health",
+            "/health/",
+            "/healthz",
+            "/healthz/",
+            "/live",
+            "/live/",
+            "/livez",
+            "/livez/",
+            "/ready",
+            "/ready/",
+            "/readyz",
+            "/readyz/",
+            "/status",
+            "/status/",
+            "/statusz",
+            "/statusz/",
+            "/-/health",
+            "/-/health/",
+            "/-/healthz",
+            "/-/healthz/",
+            "/-/live",
+            "/-/live/",
+            "/-/livez",
+            "/-/livez/",
+            "/-/ready",
+            "/-/ready/",
+            "/-/readyz",
+            "/-/readyz/",
+            "/-/status",
+            "/-/status/",
+            "/-/statusz",
+            "/-/statusz/",
+            "/HEALTHZ",
+            "/LIVE",
+            "/Ready/",
+            "/ReadyZ/",
+            "/STATUS",
+            "/STATUSZ",
+            "/-/STATUS",
+            "/-/STATUSZ/",
+        ] {
+            assert!(is_health_probe_path(alias), "alias should stay accepted: {alias}");
+        }
+
+        for rejected in [
+            "/healthcheck",
+            "/-/healthcheck",
+            "/-/readycheck",
+            "/-/statuscheck",
+            "/-/statusz//",
+            "/-/readyz/extra",
+        ] {
+            assert!(
+                !is_health_probe_path(rejected),
+                "non-alias should stay rejected: {rejected}"
+            );
+        }
     }
 
     #[test]
@@ -6097,6 +6154,22 @@ mod tests {
     }
 
     #[test]
+    fn parse_http_request_target_rejects_ambiguous_query_delimiters_fail_closed() {
+        assert_eq!(
+            parse_http_request_target("GET /healthz?probe=lb?shadow=1 HTTP/1.1"),
+            None
+        );
+        assert_eq!(
+            parse_http_request_target("HEAD /-/readyz%3Fprobe=lb HTTP/1.1"),
+            None
+        );
+        assert_eq!(
+            parse_http_request_target("GET /-/statusz%3fprobe=lb HTTP/1.1"),
+            None
+        );
+    }
+
+    #[test]
     fn mixed_case_status_health_alias_with_query_keeps_same_head_contract() {
         let request = parse_http_request_target("HEAD /-/STATUSZ/?from=ops&probe=lb HTTP/1.1")
             .expect("health alias request parses");
@@ -6108,6 +6181,7 @@ mod tests {
         let response = json_response_for_method(request.0, "200 OK", "{\"ok\":true}");
 
         assert!(response.starts_with("HTTP/1.1 200 OK\r\n"));
+        assert!(response.contains("Cache-Control: no-store\r\n"));
         assert!(response.contains("Content-Length: 11\r\n"));
         assert!(response.ends_with("\r\n\r\n"));
         assert!(!response.ends_with("{\"ok\":true}"));
@@ -6129,6 +6203,7 @@ mod tests {
     fn json_response_for_method_preserves_head_semantics_for_error_paths() {
         let not_found = json_response_for_method("HEAD", "404 Not Found", "{\"ok\":false}");
         assert!(not_found.starts_with("HTTP/1.1 404 Not Found\r\n"));
+        assert!(not_found.contains("Cache-Control: no-store\r\n"));
         assert!(not_found.ends_with("\r\n\r\n"));
         assert!(!not_found.ends_with("{\"ok\":false}"));
         assert!(not_found.contains("Content-Length: 12\r\n"));
@@ -6141,6 +6216,31 @@ mod tests {
         assert!(bad_request.starts_with("HTTP/1.1 400 Bad Request\r\n"));
         assert!(bad_request.ends_with("\r\n\r\n"));
         assert!(!bad_request.ends_with("BAD_REQUEST\"}"));
+    }
+
+    #[test]
+    fn health_probe_body_keeps_minimum_operator_contract_fields_stable() {
+        let body = health_probe_body(42);
+        let value: serde_json::Value =
+            serde_json::from_str(&body).expect("health probe body stays valid json");
+        let object = value
+            .as_object()
+            .expect("health probe body should serialize as a json object");
+
+        assert_eq!(object.len(), 4, "health body should stay minimal for probes");
+        assert_eq!(object.get("ok"), Some(&serde_json::Value::Bool(true)));
+        assert_eq!(
+            object.get("service"),
+            Some(&serde_json::Value::String("trnm-rpc".to_string()))
+        );
+        assert_eq!(
+            object.get("ts_unix_ms").and_then(serde_json::Value::as_u64),
+            Some(42)
+        );
+        assert_eq!(
+            object.get("version"),
+            Some(&serde_json::Value::Number(1u64.into()))
+        );
     }
 
     #[test]

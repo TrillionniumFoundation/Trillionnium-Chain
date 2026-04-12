@@ -318,6 +318,72 @@ struct BftHeightResult {
     round_change_backoff_max_ms: u64,
     leader_missed_snapshot: Vec<u64>,
 }
+
+fn format_bft_round_outcome_log_line(
+    committed: bool,
+    height: u64,
+    round: u64,
+    round_hash: &str,
+    precommit_count: usize,
+    validator_count: usize,
+    unique_voter_count: usize,
+    byzantine_votes: usize,
+    double_vote_events: usize,
+    reject_stats: &AuthRejectStats,
+) -> String {
+    if committed {
+        format!(
+            "[bft] height={} round={} step={:?} block_hash={} precommit={}/{} unique_voters={} byzantine_votes={} double_vote_events={} auth_reject_bad_sig={} auth_reject_replay={} auth_reject_stale={} auth_reject_stale_nonce={}",
+            height,
+            round,
+            RoundStep::Commit,
+            round_hash,
+            precommit_count,
+            validator_count,
+            unique_voter_count,
+            byzantine_votes,
+            double_vote_events,
+            reject_stats.bad_sig,
+            reject_stats.replay,
+            reject_stats.stale_nonce,
+            reject_stats.stale_nonce,
+        )
+    } else {
+        format!(
+            "[bft] height={} round={} step=RoundChange reason=no_quorum precommit={}/{} unique_voters={} byzantine_votes={} double_vote_events={} auth_reject_bad_sig={} auth_reject_replay={} auth_reject_stale={} auth_reject_stale_nonce={}",
+            height,
+            round,
+            precommit_count,
+            validator_count,
+            unique_voter_count,
+            byzantine_votes,
+            double_vote_events,
+            reject_stats.bad_sig,
+            reject_stats.replay,
+            reject_stats.stale_nonce,
+            reject_stats.stale_nonce,
+        )
+    }
+}
+
+fn format_bft_height_summary_log_line(height: u64, bft: &BftHeightResult) -> String {
+    format!(
+        "[bft] height={} committed_round={} prevote={} precommit={} round_changes={} round_backoff_ms={} leader_missed={:?} double_vote_events={} auth_reject_bad_sig={} auth_reject_replay={} auth_reject_stale={} auth_reject_stale_nonce={}",
+        height,
+        bft.committed_round,
+        bft.prevote_count,
+        bft.precommit_count,
+        bft.round_changes,
+        bft.round_change_backoff_total_ms,
+        bft.leader_missed_snapshot,
+        bft.double_vote_events,
+        bft.auth_reject_bad_sig,
+        bft.auth_reject_replay,
+        bft.auth_reject_stale_nonce,
+        bft.auth_reject_stale_nonce,
+    )
+}
+
 const CHALLENGE_ESCROW_ACCOUNT: &str = "treasury.challenge_escrow";
 const CHALLENGE_FORFEIT_TREASURY_ACCOUNT: &str = "treasury.challenge_forfeits";
 const WORKER_SLASH_TREASURY_ACCOUNT: &str = "treasury.worker_slashes";
@@ -1656,11 +1722,21 @@ fn simulate_bft_round(
     let double_vote_events = detect_double_votes(&votes, VoteType::Prevote)
         + detect_double_votes(&votes, VoteType::Precommit);
     let committed = precommit_count >= q;
-    if committed {
-        println!("[bft] height={} round={} step={:?} block_hash={} precommit={}/{} unique_voters={} byzantine_votes={} double_vote_events={} auth_reject_bad_sig={} auth_reject_replay={} auth_reject_stale={}", height, round, RoundStep::Commit, round_hash, precommit_count, n, unique_voters.len(), byzantine_votes, double_vote_events, reject_stats.bad_sig, reject_stats.replay, reject_stats.stale_nonce);
-    } else {
-        println!("[bft] height={} round={} step=RoundChange reason=no_quorum precommit={}/{} unique_voters={} byzantine_votes={} double_vote_events={} auth_reject_bad_sig={} auth_reject_replay={} auth_reject_stale={}", height, round, precommit_count, n, unique_voters.len(), byzantine_votes, double_vote_events, reject_stats.bad_sig, reject_stats.replay, reject_stats.stale_nonce);
-    }
+    println!(
+        "{}",
+        format_bft_round_outcome_log_line(
+            committed,
+            height,
+            round,
+            &round_hash,
+            precommit_count,
+            n,
+            unique_voters.len(),
+            byzantine_votes,
+            double_vote_events,
+            &reject_stats,
+        )
+    );
 
     (
         committed,
@@ -3968,6 +4044,74 @@ fn decide_order_for_commit(
 mod tests {
     use super::*;
     use trnm_state::GovParamUpdateOutcome;
+
+    #[test]
+    fn bft_round_outcome_log_line_keeps_stale_alias_and_nonce_field_together() {
+        let reject_stats = AuthRejectStats {
+            bad_sig: 2,
+            replay: 3,
+            stale_nonce: 5,
+        };
+
+        let committed = format_bft_round_outcome_log_line(
+            true,
+            7,
+            2,
+            "abc123",
+            4,
+            6,
+            5,
+            1,
+            2,
+            &reject_stats,
+        );
+        assert!(committed.contains("step=Commit block_hash=abc123"));
+        assert!(committed.contains("auth_reject_stale=5 auth_reject_stale_nonce=5"));
+        assert_eq!(committed.matches("auth_reject_stale=").count(), 1);
+        assert_eq!(committed.matches("auth_reject_stale_nonce=").count(), 1);
+
+        let round_change = format_bft_round_outcome_log_line(
+            false,
+            7,
+            2,
+            "abc123",
+            4,
+            6,
+            5,
+            1,
+            2,
+            &reject_stats,
+        );
+        assert!(round_change.contains("step=RoundChange reason=no_quorum"));
+        assert!(round_change.contains("auth_reject_stale=5 auth_reject_stale_nonce=5"));
+        assert_eq!(round_change.matches("auth_reject_stale=").count(), 1);
+        assert_eq!(round_change.matches("auth_reject_stale_nonce=").count(), 1);
+    }
+
+    #[test]
+    fn bft_height_summary_log_line_keeps_stale_alias_adjacent_to_nonce_field() {
+        let bft = BftHeightResult {
+            committed: true,
+            committed_round: 3,
+            round_changes: 4,
+            prevote_count: 5,
+            precommit_count: 6,
+            double_vote_events: 7,
+            auth_reject_bad_sig: 8,
+            auth_reject_replay: 9,
+            auth_reject_stale_nonce: 10,
+            round_change_backoff_total_ms: 11,
+            round_change_backoff_max_ms: 12,
+            leader_missed_snapshot: vec![1, 0, 2],
+        };
+
+        let line = format_bft_height_summary_log_line(22, &bft);
+        assert!(line.contains("height=22 committed_round=3"));
+        assert!(line.contains("leader_missed=[1, 0, 2]"));
+        assert!(line.contains("auth_reject_stale=10 auth_reject_stale_nonce=10"));
+        assert_eq!(line.matches("auth_reject_stale=").count(), 1);
+        assert_eq!(line.matches("auth_reject_stale_nonce=").count(), 1);
+    }
 
     #[test]
     fn resolve_hotspot_summary_includes_shared_treasury_and_approval_labels() {
@@ -21484,20 +21628,7 @@ fn main() -> Result<()> {
             bft_leader_missed_active_heights += 1;
         }
         bft_leader_missed_previous_snapshot = bft.leader_missed_snapshot.clone();
-        println!(
-            "[bft] height={} committed_round={} prevote={} precommit={} round_changes={} round_backoff_ms={} leader_missed={:?} double_vote_events={} auth_reject_bad_sig={} auth_reject_replay={} auth_reject_stale_nonce={}",
-            height,
-            bft.committed_round,
-            bft.prevote_count,
-            bft.precommit_count,
-            bft.round_changes,
-            bft.round_change_backoff_total_ms,
-            bft.leader_missed_snapshot,
-            bft.double_vote_events,
-            bft.auth_reject_bad_sig,
-            bft.auth_reject_replay,
-            bft.auth_reject_stale_nonce
-        );
+        println!("{}", format_bft_height_summary_log_line(height, &bft));
         bft_committed_heights += 1;
 
         let mut applied = 0u64;

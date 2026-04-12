@@ -169,6 +169,28 @@ fn parse_nonempty_path_suffix<'a>(path: &'a str, prefix: &str) -> Option<&'a str
         .filter(|suffix| !has_ambiguous_path_segment_encoding(suffix))
 }
 
+fn parse_query_capability_audit_subject_from_target<'a>(
+    target: &'a str,
+) -> std::result::Result<&'a str, &'static str> {
+    let (path, query) = match target.split_once('?') {
+        Some((path, query)) => (path, Some(query)),
+        None => (target, None),
+    };
+
+    if query.is_some() {
+        return Err("invalid query");
+    }
+
+    match parse_nonempty_path_suffix(path, "/query-capability-audit/") {
+        Some(subject) => Ok(subject),
+        None if path == "/query-capability-audit" || path == "/query-capability-audit/" => {
+            Err("missing token or subject")
+        }
+        None if path.starts_with("/query-capability-audit/") => Err("invalid query"),
+        None => Err("missing token or subject"),
+    }
+}
+
 pub(crate) fn serve_health(host: &str, port: u16) -> Result<()> {
     let addr = format!("{}:{}", host, port);
     let listener = TcpListener::bind(&addr)?;
@@ -265,9 +287,9 @@ pub(crate) fn serve_health(host: &str, port: u16) -> Result<()> {
                     }
                 }
             }
-            (Some((method, _)), Some(path), Some(_)) if path.starts_with("/query-capability-audit/") => {
-                match parse_nonempty_path_suffix(path, "/query-capability-audit/") {
-                    Some(subject_or_token) => {
+            (Some((method, _)), Some(path), Some(target)) if path.starts_with("/query-capability-audit/") => {
+                match parse_query_capability_audit_subject_from_target(target) {
+                    Ok(subject_or_token) => {
                         let registry = load_identity_registry(&identity_registry_file());
                         if let Some(token_id) =
                             resolve_capability_token_subject_or_token(&registry, subject_or_token)
@@ -289,7 +311,11 @@ pub(crate) fn serve_health(host: &str, port: u16) -> Result<()> {
                             json_response_for_method(method, "404 Not Found", body)
                         }
                     }
-                    None => {
+                    Err("invalid query") => {
+                        let body = "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid query\"}";
+                        json_response_for_method(method, "400 Bad Request", body)
+                    }
+                    Err(_) => {
                         let body = "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"missing token or subject\"}";
                         json_response_for_method(method, "400 Bad Request", body)
                     }
@@ -348,11 +374,18 @@ mod tests {
         assert!(is_health_probe_path("/-/ready/"));
         assert!(is_health_probe_path("/-/readyz"));
         assert!(is_health_probe_path("/-/readyz/"));
+        assert!(is_health_probe_path("/-/status"));
+        assert!(is_health_probe_path("/-/status/"));
+        assert!(is_health_probe_path("/-/statusz"));
+        assert!(is_health_probe_path("/-/statusz/"));
         assert!(is_health_probe_path("/-/STATUS"));
         assert!(is_health_probe_path("/-/STATUSZ/"));
         assert!(!is_health_probe_path("/healthcheck"));
         assert!(!is_health_probe_path("/-/healthcheck"));
         assert!(!is_health_probe_path("/-/readycheck"));
+        assert!(!is_health_probe_path("/-/statuscheck"));
+        assert!(!is_health_probe_path("/-/statusz//"));
+        assert!(!is_health_probe_path("/-/readyz/extra"));
     }
 
     #[test]
@@ -368,6 +401,22 @@ mod tests {
         assert_eq!(
             parse_http_request_target("HEAD /-/readyz/?probe=lb&from=ops HTTP/1.1"),
             Some(("HEAD", "/-/readyz/?probe=lb&from=ops"))
+        );
+    }
+
+    #[test]
+    fn parse_http_request_target_rejects_ambiguous_query_delimiters_fail_closed() {
+        assert_eq!(
+            parse_http_request_target("GET /healthz?probe=lb?shadow=1 HTTP/1.1"),
+            None
+        );
+        assert_eq!(
+            parse_http_request_target("HEAD /-/readyz%3Fprobe=lb HTTP/1.1"),
+            None
+        );
+        assert_eq!(
+            parse_http_request_target("GET /-/statusz%3fprobe=lb HTTP/1.1"),
+            None
         );
     }
 
@@ -732,6 +781,7 @@ mod tests {
     fn fallback_response_returns_400_for_malformed_http_request() {
         let response = fallback_response_for_request(None);
         assert!(response.starts_with("HTTP/1.1 400 Bad Request\r\n"));
+        assert!(response.contains("\r\nCache-Control: no-store\r\n"));
         assert!(response.ends_with("{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid http request\"}"));
     }
 
@@ -739,7 +789,35 @@ mod tests {
     fn fallback_response_preserves_404_for_unknown_valid_path() {
         let response = fallback_response_for_request(Some(("HEAD", "/unknown")));
         assert!(response.starts_with("HTTP/1.1 404 Not Found\r\n"));
+        assert!(response.contains("\r\nCache-Control: no-store\r\n"));
         assert!(response.ends_with("\r\n\r\n"));
         assert!(!response.ends_with("NOT_FOUND\"}"));
+    }
+
+    #[test]
+    fn parse_query_capability_audit_subject_from_target_distinguishes_missing_from_malformed() {
+        assert_eq!(
+            parse_query_capability_audit_subject_from_target("/query-capability-audit")
+                .expect_err("missing bare route should stay explicit"),
+            "missing token or subject"
+        );
+        assert_eq!(
+            parse_query_capability_audit_subject_from_target("/query-capability-audit/")
+                .expect_err("empty subject suffix should stay explicit"),
+            "missing token or subject"
+        );
+
+        for target in [
+            "/query-capability-audit/alice?from=ops",
+            "/query-capability-audit/alice/?from=ops",
+            "/query-capability-audit/alice/bob",
+        ] {
+            assert_eq!(
+                parse_query_capability_audit_subject_from_target(target)
+                    .expect_err("malformed target must fail closed as invalid query"),
+                "invalid query",
+                "target={target}"
+            );
+        }
     }
 }
