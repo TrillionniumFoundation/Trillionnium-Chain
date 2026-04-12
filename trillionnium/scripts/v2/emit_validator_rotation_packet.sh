@@ -264,10 +264,22 @@ if [ -n "$EXPECTED_WORKTREE_ROOT" ] || [ -n "$EXPECTED_BRANCH_REF" ] || [ -n "$E
     printf 'invalid --lane-verify-command: missing --expected-branch-ref %s\n' "$EXPECTED_BRANCH_REF" >&2
     exit 2
   fi
+  if [ "$VERIFIED_WORKTREE" != "$EXPECTED_WORKTREE_ROOT" ]; then
+    printf 'invalid packet: verified_worktree drift, expected %s got %s\n' "$EXPECTED_WORKTREE_ROOT" "$VERIFIED_WORKTREE" >&2
+    exit 2
+  fi
+  if [ "$(canonicalize_branch_ref "$VERIFIED_BRANCH_REF")" != "$(canonicalize_branch_ref "$EXPECTED_BRANCH_REF")" ]; then
+    printf 'invalid packet: verified_branch_ref drift, expected %s got %s\n' "$(canonicalize_branch_ref "$EXPECTED_BRANCH_REF")" "$VERIFIED_BRANCH_REF" >&2
+    exit 2
+  fi
   if [ -n "$EXPECTED_HEAD" ]; then
     require_token --expected-head "$EXPECTED_HEAD"
     if ! command_has_flag_value "$LANE_VERIFY_COMMAND" --expected-head "$EXPECTED_HEAD"; then
       printf 'invalid --lane-verify-command: missing --expected-head %s\n' "$EXPECTED_HEAD" >&2
+      exit 2
+    fi
+    if [ "$VERIFIED_HEAD" != "$EXPECTED_HEAD" ]; then
+      printf 'invalid packet: verified_head drift, expected %s got %s\n' "$EXPECTED_HEAD" "$VERIFIED_HEAD" >&2
       exit 2
     fi
   fi
