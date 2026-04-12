@@ -6100,6 +6100,53 @@ mod tests {
     }
 
     #[test]
+    fn load_config_rejects_ipv6_scope_identifier_listener_with_operator_facing_error() {
+        for (field, addr, expected_fragment) in [
+            (
+                "rpc_addr",
+                "[2001:db8::10%7]:26657",
+                "rpc_addr must not use an IPv6 scope identifier",
+            ),
+            (
+                "p2p_addr",
+                "[2001:db8::10%9]:26656",
+                "p2p_addr must not use an IPv6 scope identifier",
+            ),
+        ] {
+            let path = std::env::temp_dir().join(format!(
+                "trnm-node-config-ipv6-scope-{field}-listener-{}-{}.toml",
+                std::process::id(),
+                now_unix_ms()
+            ));
+            let body = if field == "rpc_addr" {
+                format!(
+                    "node_id = \"node-a\"\nrpc_addr = \"{addr}\"\np2p_addr = \"[2001:4860::1]:26656\"\n"
+                )
+            } else {
+                format!(
+                    "node_id = \"node-a\"\nrpc_addr = \"[2001:4860::1]:26657\"\np2p_addr = \"{addr}\"\n"
+                )
+            };
+            std::fs::write(&path, body).expect("write config");
+
+            let path_str = path.to_str().expect("utf8 path");
+            let err = load_config(path_str)
+                .expect_err("IPv6 scope-id bootstrap listeners must fail closed");
+            let err_surface = format!("{err:#}");
+            assert!(
+                err_surface.contains(expected_fragment),
+                "unexpected error for {field}: {err:#}"
+            );
+            assert!(
+                err_surface.contains(path_str),
+                "error surface for {field} must keep the operator-supplied config path visible: {err:#}"
+            );
+
+            let _ = std::fs::remove_file(path);
+        }
+    }
+
+    #[test]
     fn load_config_rejects_path_style_operator_addresses() {
         let rpc_path = std::env::temp_dir().join(format!(
             "trnm-node-config-path-style-rpc-listener-{}-{}.toml",
