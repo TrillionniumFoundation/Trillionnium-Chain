@@ -3581,6 +3581,8 @@ fn parse_nonempty_path_suffix<'a>(path: &'a str, prefix: &str) -> Option<&'a str
         .filter(|suffix| !suffix.chars().any(|ch| ch.is_control() || ch.is_whitespace()))
         .filter(|suffix| !suffix.contains('/'))
         .filter(|suffix| !suffix.contains('\\'))
+        .filter(|suffix| !contains_malformed_percent_encoding(suffix))
+        .filter(|suffix| !contains_percent_encoded_control_or_space(suffix))
         .filter(|suffix| !has_ambiguous_path_segment_encoding(suffix))
 }
 
@@ -6175,6 +6177,26 @@ mod tests {
             assert_eq!(
                 parse_query_capability_audit_subject_from_target(target)
                     .expect_err("malformed capability path must fail closed as invalid query"),
+                "invalid query",
+                "target={target}"
+            );
+        }
+    }
+
+    #[test]
+    fn parse_query_capability_audit_subject_from_target_rejects_percent_encoded_controls_and_malformed_escapes() {
+        for target in [
+            "/query-capability-audit/alice%00",
+            "/query-capability-audit/alice%0a",
+            "/query-capability-audit/alice%20",
+            "/query-capability-audit/alice%7F",
+            "/query-capability-audit/alice%",
+            "/query-capability-audit/alice%zz",
+        ] {
+            assert_eq!(
+                parse_query_capability_audit_subject_from_target(target).expect_err(
+                    "capability audit subject must fail closed on encoded controls and malformed percent escapes",
+                ),
                 "invalid query",
                 "target={target}"
             );
