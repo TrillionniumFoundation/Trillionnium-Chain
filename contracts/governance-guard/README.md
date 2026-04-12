@@ -94,5 +94,6 @@ Rust 版外置治理骨架（in-memory state machine）：
 - `source: "governance-guard"`
 - `event_type`：`governance.proposal_proposed` / `governance.proposal_queued` / `governance.proposal_executed` / `governance.proposal_cancelled` / `governance.pause_set` / `governance.pause_restore_scheduled` / `governance.pause_restore_executed`。
 - 可携带 `actor`（提案人/执行人/守护者）、`object_id`（主对象，如提案 id 或 `emergency_pause`）、`related_id`（参数名或次级关联对象）用于链下检索。
-- `governance.pause_set` 采用 `object_id=emergency_pause`、`related_id=pause_state`，并把状态迁移明细写入 `note`（如 `false->true`），避免把状态快照混进 ID 字段。
-- `governance.pause_restore_scheduled` / `governance.pause_restore_executed` 采用 `object_id=emergency_pause`、`related_id=proposal_id`，保持“被恢复的主对象在前、恢复提案作为关联对象在后”的共享归一化约定。
+- `reason` 仅承载稳定归因标签，不直接承载原始 `reason_hash` 之类的高变明细；具体上下文进入 `note`。
+- `governance.pause_set` 采用 `object_id=emergency_pause`、`related_id=pause_state`、`reason=pause_activation`，并把状态迁移与 `reason_hash` 写入 `note`（如 `state=false->true, reason_hash=incident`），避免把状态快照或原始原因散列混进 ID / reason 字段。
+- `governance.pause_restore_scheduled` / `governance.pause_restore_executed` 采用 `object_id=emergency_pause`、`related_id=proposal_id`，并分别使用 `reason=pause_restore_schedule` / `reason=pause_restore_execution`；`eta` 与 `reason_hash` 落入 `note`，保持“被恢复的主对象在前、恢复提案作为关联对象在后”的共享归一化约定。

@@ -590,8 +590,8 @@ impl GovernanceGuard {
                 normalized.actor = Some(actor.clone());
                 normalized.object_id = Some("emergency_pause".to_string());
                 normalized.related_id = Some("pause_state".to_string());
-                normalized.reason = Some(reason_hash.clone());
-                normalized.note = Some(format!("{previous_state}->{next_state}"));
+                normalized.reason = Some("pause_activation".to_string());
+                normalized.note = Some(format!("state={previous_state}->{next_state}, reason_hash={reason_hash}"));
                 normalized
             }
             GovernanceEvent::PauseRestoreScheduled {
@@ -605,8 +605,8 @@ impl GovernanceGuard {
                 normalized.actor = Some(proposer.clone());
                 normalized.object_id = Some("emergency_pause".to_string());
                 normalized.related_id = Some(proposal_id.to_string());
-                normalized.reason = Some(reason_hash.clone());
-                normalized.note = Some(format!("eta={eta}"));
+                normalized.reason = Some("pause_restore_schedule".to_string());
+                normalized.note = Some(format!("eta={eta}, reason_hash={reason_hash}"));
                 normalized
             }
             GovernanceEvent::PauseRestoreExecuted {
@@ -619,7 +619,8 @@ impl GovernanceGuard {
                 normalized.actor = Some(actor.clone());
                 normalized.object_id = Some("emergency_pause".to_string());
                 normalized.related_id = Some(proposal_id.to_string());
-                normalized.reason = Some(reason_hash.clone());
+                normalized.reason = Some("pause_restore_execution".to_string());
+                normalized.note = Some(format!("reason_hash={reason_hash}"));
                 normalized
             }
             GovernanceEvent::AuditLogCleared => {
@@ -1061,20 +1062,22 @@ mod tests {
             event.event_type == "governance.pause_set"
                 && event.object_id.as_deref() == Some("emergency_pause")
                 && event.related_id.as_deref() == Some("pause_state")
-                && event.reason.as_deref() == Some("incident")
-                && event.note.as_deref() == Some("false->true")
+                && event.reason.as_deref() == Some("pause_activation")
+                && event.note.as_deref() == Some("state=false->true, reason_hash=incident")
         }));
         assert!(normalized.iter().any(|event| {
             event.event_type == "governance.pause_restore_scheduled"
                 && event.object_id.as_deref() == Some("emergency_pause")
                 && event.related_id.as_deref() == Some(&restore_id.to_string())
-                && event.reason.as_deref() == Some("recover")
+                && event.reason.as_deref() == Some("pause_restore_schedule")
+                && event.note.as_deref() == Some("eta=8120, reason_hash=recover")
         }));
         assert!(normalized.iter().any(|event| {
             event.event_type == "governance.pause_restore_executed"
                 && event.object_id.as_deref() == Some("emergency_pause")
                 && event.related_id.as_deref() == Some(&restore_id.to_string())
-                && event.reason.as_deref() == Some("recover")
+                && event.reason.as_deref() == Some("pause_restore_execution")
+                && event.note.as_deref() == Some("reason_hash=recover")
         }));
         assert!(normalized
             .iter()
