@@ -295,7 +295,8 @@ Reviewers should not treat the helper names above as prose-only claims. The curr
   - `node_recovery_checkpoint_rejects_non_genesis_prev_hash_with_carriage_return_control_drift`
 - `trillionnium/crates/trnm-state/tests/state_root_regression/regression/canonicalization.rs`
   - `checkpoint_audit_summary_rejects_noncanonical_prev_hash_surface`
-- `trillionnium/crates/trnm-node/src/tests.rs`
+- `trillionnium/crates/trnm-node/src/main.rs`
+  - `recover_metadata_only_error_exposes_checkpoint_da_surface_when_wal_linkage_is_canonical`
   - `metadata_only_recovery_error_surfaces_da_unavailability_reason_when_checkpoint_wal_linkage_is_missing`
 
 Together these anchors give release review one concrete trail for verifying that:
@@ -315,6 +316,7 @@ When reviewers want a smallest-possible replay set instead of broad crate sweeps
 - `cargo test --manifest-path trillionnium/Cargo.toml -p trnm-state checkpoint_da_light_verifier_summary_fails_closed_on_missing_non_genesis_wal_prev_hash_surface -q`
 - `cargo test --manifest-path trillionnium/Cargo.toml -p trnm-state checkpoint_audit_summary_rejects_noncanonical_prev_hash_surface -q`
 - `cargo test --manifest-path trillionnium/Cargo.toml -p trnm-state checkpoint_da_light_verifier_summary_fails_closed_on_uncommitted_wal_surface -q`
+- `cargo test --manifest-path trillionnium/Cargo.toml -p trnm-node recover_metadata_only_error_exposes_checkpoint_da_surface_when_wal_linkage_is_canonical -q`
 - `cargo test --manifest-path trillionnium/Cargo.toml -p trnm-node metadata_only_recovery_error_surfaces_da_unavailability_reason_when_checkpoint_wal_linkage_is_missing -q`
 
 If a reviewer prefers working from `trillionnium/`, the same commands may omit `--manifest-path trillionnium/Cargo.toml`, but the repo-root form is the safer release-review default because it removes cwd ambiguity from the evidence replay path.
