@@ -163,6 +163,18 @@ fi
 grep -q "^preflight summary path must be distinct from summary/manifest artifacts: $SUMMARY_PATH$" "$TMPDIR/err-preflight-same-summary.txt"
 
 rm -f "$PREFLIGHT_PATH"
+ln -s "$MANIFEST_PATH" "$PREFLIGHT_PATH"
+if bash "$SCRIPT" \
+  --summary-path "$SUMMARY_PATH" \
+  --manifest-path "$MANIFEST_PATH" \
+  --expected-worktree-root "$WORKTREE_ROOT" \
+  --expected-branch-ref "$BRANCH_SHORT" >"$TMPDIR/out-preflight-same-manifest.txt" 2>"$TMPDIR/err-preflight-same-manifest.txt"; then
+  echo "expected preflight artifact aliasing manifest to fail" >&2
+  exit 1
+fi
+grep -q "^preflight summary path must be distinct from summary/manifest artifacts: $MANIFEST_PATH$" "$TMPDIR/err-preflight-same-manifest.txt"
+
+rm -f "$PREFLIGHT_PATH"
 STAMPED_PREFLIGHT_PATH="$PREFLIGHT_DIR/go-no-go-20260411T010500Z.txt"
 cat >"$STAMPED_PREFLIGHT_PATH" <<EOF
 result=PASS
