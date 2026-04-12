@@ -134,6 +134,28 @@ class CheckValidatorConfigBundleTests(unittest.TestCase):
             result.stderr,
         )
 
+    def test_bundle_rejects_node_id_with_packet_separator(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            config = self.write_config(
+                root,
+                "node1.toml",
+                node_id="node=1",
+                rpc_addr="127.0.0.1:7001",
+                p2p_addr="127.0.0.1:7002",
+            )
+            result = self.run_script(str(config))
+
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn(
+            "invalid node config",
+            result.stderr,
+        )
+        self.assertIn(
+            "node_id must not contain packet/list separators (, ; | =)",
+            result.stderr,
+        )
+
     def test_emit_ceremony_packet_rejects_separator_in_validator_set_version(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

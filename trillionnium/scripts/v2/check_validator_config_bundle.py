@@ -5,7 +5,7 @@ Verifies that a set of TRNM node config files is internally consistent for
 bootstrap/handoff use:
 - every file parses as TOML
 - node_id/rpc_addr/p2p_addr exist and are non-empty after trimming
-- node_id rejects boundary whitespace, list separators, path separators, and dot-segment aliases
+- node_id rejects boundary whitespace, packet/list separators, path separators, and dot-segment aliases
 - rpc_addr/p2p_addr are bare host:port listener addresses with ports in 1..65535
 - rpc_addr != p2p_addr within each file
 - node_id values are unique across the bundle
@@ -159,8 +159,10 @@ def validate_node_id(raw_node_id: object, path: Path) -> str:
         fail(
             f"invalid node config {path}: node_id must not contain leading or trailing whitespace"
         )
-    if any(ch in node_id for ch in (",", ";", "|")):
-        fail(f"invalid node config {path}: node_id must not contain list separators (, ; |)")
+    if any(ch in node_id for ch in (",", ";", "|", "=")):
+        fail(
+            f"invalid node config {path}: node_id must not contain packet/list separators (, ; | =)"
+        )
     if any(ch in node_id for ch in ("/", "\\", ":")):
         fail(f"invalid node config {path}: node_id must not contain path separators (/ \\ :)")
     if node_id in {".", ".."}:
