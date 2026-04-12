@@ -155,6 +155,72 @@ describe("dashboard source normalized audit pagination", () => {
     }
   });
 
+  it("fails closed to default readonly query config when env values are blank", async () => {
+    const previousBaseUrl = process.env.NEXT_PUBLIC_QUERY_API_BASE_URL;
+    const previousTaskId = process.env.NEXT_PUBLIC_DASHBOARD_TASK_ID;
+    const previousAuditSubject = process.env.NEXT_PUBLIC_DASHBOARD_AUDIT_SUBJECT;
+
+    process.env.NEXT_PUBLIC_QUERY_API_BASE_URL = "   ";
+    process.env.NEXT_PUBLIC_DASHBOARD_TASK_ID = "   ";
+    process.env.NEXT_PUBLIC_DASHBOARD_AUDIT_SUBJECT = "	";
+
+    try {
+      const mockClient = {
+        queryTask: vi.fn().mockResolvedValue({
+          task: {
+            id: "341",
+            owner: "ops",
+            status: "running",
+            createdAt: "2026-03-01T00:00:00.000Z",
+            metadata: {},
+          },
+        }),
+        queryEvents: vi.fn().mockResolvedValue({
+          taskId: "341",
+          events: [],
+        }),
+        queryCapabilityAudit: vi.fn().mockResolvedValue({
+          subject: "did:trnm:core-rpc",
+          audits: [],
+        }),
+        queryNormalizedAuditEvents: vi.fn().mockResolvedValue({
+          events: [],
+          hasMore: false,
+        }),
+      } as unknown as ReturnType<typeof apiContractClient.createFrontendApiClient>;
+
+      const createClientSpy = vi
+        .spyOn(apiContractClient, "createFrontendApiClient")
+        .mockReturnValue(mockClient);
+
+      await fetchDashboardSnapshot();
+
+      expect(createClientSpy).toHaveBeenCalledWith({
+        baseUrl: window.location.origin,
+      });
+      expect(mockClient.queryTask).toHaveBeenCalledWith("341");
+      expect(mockClient.queryCapabilityAudit).toHaveBeenCalledWith("did:trnm:core-rpc");
+    } finally {
+      if (previousBaseUrl === undefined) {
+        delete process.env.NEXT_PUBLIC_QUERY_API_BASE_URL;
+      } else {
+        process.env.NEXT_PUBLIC_QUERY_API_BASE_URL = previousBaseUrl;
+      }
+
+      if (previousTaskId === undefined) {
+        delete process.env.NEXT_PUBLIC_DASHBOARD_TASK_ID;
+      } else {
+        process.env.NEXT_PUBLIC_DASHBOARD_TASK_ID = previousTaskId;
+      }
+
+      if (previousAuditSubject === undefined) {
+        delete process.env.NEXT_PUBLIC_DASHBOARD_AUDIT_SUBJECT;
+      } else {
+        process.env.NEXT_PUBLIC_DASHBOARD_AUDIT_SUBJECT = previousAuditSubject;
+      }
+    }
+  });
+
   it("accepts pagination env values after trimming zero-width noise", async () => {
     const previousLimit = process.env.NEXT_PUBLIC_DASHBOARD_NORMALIZED_AUDIT_EVENT_LIMIT;
     const previousPages = process.env.NEXT_PUBLIC_DASHBOARD_NORMALIZED_AUDIT_MAX_PAGES;
@@ -422,6 +488,73 @@ validator-z	",
     expect(mockClient.queryNormalizedAuditEvents).toHaveBeenCalledTimes(2);
     expect(matchingEvents).toHaveLength(1);
     expect(snapshot.kpis.find((kpi) => kpi.label === "Open Incidents")?.value).toBe("1");
+  });
+
+  it("deduplicates repeated normalized audit events across pagination pages", async () => {
+    const mockClient = {
+      queryTask: vi.fn().mockResolvedValue({
+        task: {
+          id: "341-dedupe",
+          owner: "ops",
+          status: "running",
+          createdAt: "2026-03-01T00:00:00.000Z",
+          updatedAt: "2026-03-01T00:05:00.000Z",
+          metadata: {},
+        },
+      }),
+      queryEvents: vi.fn().mockResolvedValue({
+        taskId: "341-dedupe",
+        events: [],
+      }),
+      queryCapabilityAudit: vi.fn().mockResolvedValue({
+        subject: "did:trnm:test",
+        audits: [
+          {
+            subject: "did:trnm:test",
+            capability: "AUDIT_READ",
+            granted: true,
+            checkedAt: "2026-03-01T00:00:00.000Z",
+          },
+        ],
+      }),
+      queryNormalizedAuditEvents: vi
+        .fn()
+        .mockResolvedValueOnce({
+          events: [
+            {
+              source: "bridge-relay",
+              event_type: "bridge_relay.proof_submitted",
+              actor: "validator",
+              object_id: "proof-dedupe",
+              timestamp: "2026-03-01T00:02:00.000Z",
+              reason: "warn",
+            },
+          ],
+          hasMore: true,
+          nextCursor: "cursor-dedupe-1",
+        })
+        .mockResolvedValueOnce({
+          events: [
+            {
+              source: "bridge-relay",
+              event_type: "bridge_relay.proof_submitted",
+              actor: "validator",
+              object_id: "proof-dedupe",
+              timestamp: "2026-03-01T00:02:00.000Z",
+              reason: "warn",
+            },
+          ],
+          hasMore: false,
+        }),
+    } as unknown as ReturnType<typeof apiContractClient.createFrontendApiClient>;
+
+    vi.spyOn(apiContractClient, "createFrontendApiClient").mockReturnValue(mockClient);
+
+    const snapshot = await fetchDashboardSnapshot();
+    const matching = snapshot.events.filter((event) => event.id === "bridge-relay:proof-dedupe");
+
+    expect(mockClient.queryNormalizedAuditEvents).toHaveBeenCalledTimes(2);
+    expect(matching).toHaveLength(1);
   });
 
   it("normalizes zero-width cursor noise before requesting the next normalized audit page", async () => {

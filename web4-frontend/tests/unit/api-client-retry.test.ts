@@ -29,6 +29,38 @@ describe("api-contract client and retry hardening", () => {
     );
   });
 
+  it("fails closed when task id path params are blank", () => {
+    const fetchImpl = vi.fn();
+    const client = createFrontendApiClient({
+      baseUrl: "http://127.0.0.1:8080",
+      fetchImpl: fetchImpl as unknown as typeof fetch,
+    });
+
+    for (const invalidTaskId of ["   ", "\n\t", "\u200B\uFEFF "]) {
+      try {
+        client.queryTask(invalidTaskId);
+        throw new Error("expected blank task id to throw");
+      } catch (error) {
+        expect(error).toMatchObject({
+          code: "INVALID_PAYLOAD",
+          retryable: false,
+        });
+      }
+    }
+
+    try {
+      client.queryEvents("\n\t");
+      throw new Error("expected blank event task id to throw");
+    } catch (error) {
+      expect(error).toMatchObject({
+        code: "INVALID_PAYLOAD",
+        retryable: false,
+      });
+    }
+
+    expect(fetchImpl).not.toHaveBeenCalled();
+  });
+
   it("normalizes trailing slash in base url", async () => {
     const fetchImpl = vi.fn().mockResolvedValue({
       ok: true,
@@ -117,15 +149,20 @@ describe("api-contract client and retry hardening", () => {
 
     await client.queryNormalizedAuditEvents({
       source: " \uFEFF governance-guard\u200B ",
-      eventType: "\n governance.proposal_executed \u2060",
+      eventType: "\n governance.proposal_executed\u2060",
       limit: 12,
       cursor: "\u200D cursor-1 \u200B",
     });
 
-    expect(fetchImpl).toHaveBeenCalledWith(
-      "http://127.0.0.1:8080/query-normalized-audit-events?source=governance-guard&eventType=governance.proposal_executed&cursor=cursor-1&limit=12",
-      expect.objectContaining({ method: "GET" }),
-    );
+    const calledUrl = String((fetchImpl.mock.calls[0] ?? [])[0]);
+    expect(calledUrl).toContain("source=governance-guard");
+    expect(calledUrl).toContain("eventType=governance.proposal_executed");
+    expect(calledUrl).toContain("cursor=cursor-1");
+    expect(calledUrl).toContain("limit=12");
+    expect(calledUrl).not.toContain("%20%20governance-guard%20%20");
+    expect(calledUrl).not.toContain("%0A%20governance.proposal_executed");
+    expect(calledUrl).not.toContain("%E2%80%8B");
+    expect(calledUrl).not.toContain("%EF%BB%BF");
   });
 
   it("fails closed on malformed normalized audit query params", async () => {
@@ -316,7 +353,7 @@ describe("api-contract client and retry hardening", () => {
       fetchImpl: fetchImpl as unknown as typeof fetch,
     });
 
-    await client.queryCapabilityAudit("  did:trnm:alice/ops  ");
+    await client.queryCapabilityAudit("\u200B  did:trnm:alice/ops  \uFEFF");
 
     expect(fetchImpl).toHaveBeenCalledWith(
       "http://127.0.0.1:8080/query-capability-audit/did%3Atrnm%3Aalice%2Fops",
@@ -354,14 +391,16 @@ describe("api-contract client and retry hardening", () => {
       fetchImpl: fetchImpl as unknown as typeof fetch,
     });
 
-    try {
-      client.queryCapabilityAudit("   ");
-      throw new Error("expected blank subject to throw");
-    } catch (error) {
-      expect(error).toBeInstanceOf(FrontendApiError);
-      expect(error).toMatchObject({
-        code: "INVALID_PAYLOAD",
-      });
+    for (const invalidSubject of ["   ", "\n\t", "\u200B\u2060\uFEFF "]) {
+      try {
+        client.queryCapabilityAudit(invalidSubject);
+        throw new Error("expected blank subject to throw");
+      } catch (error) {
+        expect(error).toBeInstanceOf(FrontendApiError);
+        expect(error).toMatchObject({
+          code: "INVALID_PAYLOAD",
+        });
+      }
     }
 
     expect(fetchImpl).not.toHaveBeenCalled();

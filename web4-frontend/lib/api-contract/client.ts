@@ -31,35 +31,18 @@ export const NORMALIZED_AUDIT_EVENTS_QUERY_PARAM_KEYS = {
   cursor: "cursor",
 } as const satisfies Record<keyof NormalizedAuditEventsQuery, string>;
 
-const normalizeOptionalQueryToken = (value: string | undefined): string | undefined => {
-  if (typeof value !== "string") return undefined;
+const INVISIBLE_TOKEN_CHARS = /[\u200B\u200C\u200D\u2060\u2063\uFEFF]/g;
 
-  const normalized = value
-    .replace(/[\u200B\u200C\u200D\u2060\u2063\uFEFF]/g, "")
-    .trim();
+const normalizeFrontendToken = (value: string | undefined): string | undefined => {
+  if (value == null) return undefined;
 
+  const normalized = value.replace(INVISIBLE_TOKEN_CHARS, "").trim();
   return normalized.length > 0 ? normalized : undefined;
 };
 
 const normalizeNormalizedAuditQueryToken = (
-  value: unknown,
-  label: string,
-): string | undefined => {
-  if (value == null) return undefined;
-  if (typeof value !== "string") return value as never;
-
-  const normalized = normalizeOptionalQueryToken(value);
-  if (normalized == null) {
-    throw new FrontendApiError({
-      code: "INVALID_PAYLOAD",
-      message: `Normalized audit query ${label} must be a non-empty string`,
-      causeData: value,
-      retryable: false,
-    });
-  }
-
-  return normalized;
-};
+  value: string | undefined,
+): string | undefined => normalizeFrontendToken(value);
 
 export const buildNormalizedAuditEventsQueryParams = (
   query: NormalizedAuditEventsQuery,
@@ -67,19 +50,18 @@ export const buildNormalizedAuditEventsQueryParams = (
   const parsedQuery = normalizedAuditEventsQuerySchema.parse(query);
   const params = new URLSearchParams();
 
-  const normalizedSource = normalizeOptionalQueryToken(parsedQuery.source);
-  if (normalizedSource) {
-    params.set(NORMALIZED_AUDIT_EVENTS_QUERY_PARAM_KEYS.source, normalizedSource);
-  }
+  const source = normalizeNormalizedAuditQueryToken(parsedQuery.source);
+  const eventType = normalizeNormalizedAuditQueryToken(parsedQuery.eventType);
+  const cursor = normalizeNormalizedAuditQueryToken(parsedQuery.cursor);
 
-  const normalizedEventType = normalizeOptionalQueryToken(parsedQuery.eventType);
-  if (normalizedEventType) {
-    params.set(NORMALIZED_AUDIT_EVENTS_QUERY_PARAM_KEYS.eventType, normalizedEventType);
+  if (source) {
+    params.set(NORMALIZED_AUDIT_EVENTS_QUERY_PARAM_KEYS.source, source);
   }
-
-  const normalizedCursor = normalizeOptionalQueryToken(parsedQuery.cursor);
-  if (normalizedCursor) {
-    params.set(NORMALIZED_AUDIT_EVENTS_QUERY_PARAM_KEYS.cursor, normalizedCursor);
+  if (eventType) {
+    params.set(NORMALIZED_AUDIT_EVENTS_QUERY_PARAM_KEYS.eventType, eventType);
+  }
+  if (cursor) {
+    params.set(NORMALIZED_AUDIT_EVENTS_QUERY_PARAM_KEYS.cursor, cursor);
   }
 
   if (parsedQuery.limit != null) {
@@ -172,10 +154,8 @@ const normalizeRequiredPathParam = (value: unknown, label: string): string => {
     });
   }
 
-  const trimmed = value
-    .replace(/[\u200B\u200C\u200D\u2060\u2063\uFEFF]/g, "")
-    .trim();
-  if (!trimmed) {
+  const normalized = normalizeFrontendToken(value);
+  if (!normalized) {
     throw new FrontendApiError({
       code: "INVALID_PAYLOAD",
       message: `${label} must be a non-empty string`,
@@ -184,7 +164,7 @@ const normalizeRequiredPathParam = (value: unknown, label: string): string => {
     });
   }
 
-  return trimmed;
+  return normalized;
 };
 
 const NETWORK_ERROR_CODES = new Set([
@@ -377,14 +357,16 @@ export function createFrontendApiClient(config: BaseClientConfig) {
 
   return {
     queryTask(taskId: string, options?: QueryOptions): Promise<QueryTaskResult> {
-      return getJson(`/query-task/${encodeURIComponent(taskId)}`, options).then(
+      const normalizedTaskId = normalizeRequiredPathParam(taskId, "Task id");
+      return getJson(`/query-task/${encodeURIComponent(normalizedTaskId)}`, options).then(
         adaptQueryTask,
       );
     },
 
     queryEvents(taskId: string, options?: QueryOptions): Promise<QueryEventsResult> {
-      return getJson(`/query-events/${encodeURIComponent(taskId)}`, options).then(
-        (payload) => adaptQueryEvents(payload, taskId),
+      const normalizedTaskId = normalizeRequiredPathParam(taskId, "Task id");
+      return getJson(`/query-events/${encodeURIComponent(normalizedTaskId)}`, options).then(
+        (payload) => adaptQueryEvents(payload, normalizedTaskId),
       );
     },
 
