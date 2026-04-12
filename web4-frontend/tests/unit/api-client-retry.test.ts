@@ -320,14 +320,16 @@ describe("api-contract client and retry hardening", () => {
       fetchImpl: fetchImpl as unknown as typeof fetch,
     });
 
-    try {
-      client.queryCapabilityAudit("   ");
-      throw new Error("expected blank subject to throw");
-    } catch (error) {
-      expect(error).toBeInstanceOf(FrontendApiError);
-      expect(error).toMatchObject({
-        code: "INVALID_PAYLOAD",
-      });
+    for (const invalidSubject of ["   ", "\n\t", "\u200B\u2060\uFEFF "]) {
+      try {
+        client.queryCapabilityAudit(invalidSubject);
+        throw new Error("expected blank subject to throw");
+      } catch (error) {
+        expect(error).toBeInstanceOf(FrontendApiError);
+        expect(error).toMatchObject({
+          code: "INVALID_PAYLOAD",
+        });
+      }
     }
 
     expect(fetchImpl).not.toHaveBeenCalled();
