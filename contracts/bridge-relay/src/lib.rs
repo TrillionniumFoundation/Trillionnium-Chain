@@ -688,7 +688,6 @@ pub fn settlement_id(message: &BridgeSettlementMessage) -> [u8; 32] {
     hasher.update(message.receiver);
     hasher.update(message.asset);
     hasher.update(message.amount.to_be_bytes());
-    hasher.update(message.config_version.to_be_bytes());
     hasher.finalize().into()
 }
 
@@ -790,10 +789,15 @@ mod tests {
         let n4 = relay
             .consume_nonce(1, b32(1), 31337, addr(10), action_settlement_finalize(), 10)
             .unwrap();
+        let n5 = relay
+            .consume_nonce(1, b32(1), 31338, addr(9), action_settlement_finalize(), 10)
+            .unwrap();
 
         assert_ne!(n1, n3, "different source bridge ids should isolate nonce domains");
         assert_ne!(n1, n4, "different target bridges should isolate nonce domains");
+        assert_ne!(n1, n5, "different target chain ids should isolate nonce domains");
         assert_ne!(n3, n4, "source and target bridge domains should stay independently isolated");
+        assert_ne!(n4, n5, "target bridge and target chain must stay independently isolated");
 
         let err = relay
             .consume_nonce(1, b32(1), 31337, addr(9), action_settlement_finalize(), 10)
@@ -1082,6 +1086,60 @@ mod tests {
             relay.audit_log().len(),
             audit_len_before,
             "terminal duplicate finalize must win over stale config version after governance change"
+        );
+    }
+
+    #[test]
+    fn duplicate_finalize_with_fresh_config_version_after_governance_change_still_stops_at_terminal_state() {
+        let mut relay = BridgeRelay::with_admin(2, vec![validator_pub(7)], b32(9));
+        relay
+            .set_validators(&b32(9), vec![validator_pub(7), validator_pub(8)])
+            .unwrap();
+        relay
+            .set_min_validator_signatures(&b32(9), 2)
+            .unwrap();
+
+        let mut msg = sample_msg();
+        msg.config_version = relay.config_version();
+
+        relay
+            .finalize_settlement(
+                &msg,
+                &[sig_for(&msg, 7), sig_for(&msg, 8)],
+                1_000,
+                999,
+                31337,
+                addr(9),
+            )
+            .unwrap();
+
+        relay.set_admin(&b32(9), b32(10)).unwrap();
+
+        let audit_len_before = relay.audit_log().len();
+        let mut replay = msg.clone();
+        replay.config_version = relay.config_version();
+        replay.nonce += 1;
+
+        let err = relay
+            .finalize_settlement(
+                &replay,
+                &[sig_for(&replay, 7), sig_for(&replay, 8)],
+                1_000,
+                999,
+                31337,
+                addr(9),
+            )
+            .unwrap_err();
+
+        assert!(matches!(
+            err,
+            BridgeRelayError::SettlementAlreadyFinalized { settlement_id: id }
+                if id == settlement_id(&msg)
+        ));
+        assert_eq!(
+            relay.audit_log().len(),
+            audit_len_before,
+            "fresh config version must not bypass settlement terminal state after governance drift"
         );
     }
 
@@ -1432,12 +1490,14 @@ mod tests {
         )
         .unwrap();
         let audit_len_before = relay.audit_log().len();
+        let normalized_before = relay.normalized_audit_log();
 
         let err = relay
             .finalize_settlement(&msg, &[sig_for(&msg, 7)], 1_000, 999, 31337, addr(9))
             .unwrap_err();
         assert!(matches!(err, BridgeRelayError::NonceAlreadyUsed { .. }));
         assert_eq!(relay.audit_log().len(), audit_len_before);
+        assert_eq!(relay.normalized_audit_log(), normalized_before);
 
         let proof_digest = relay
             .submit_proof(&msg, &[sig_for(&msg, 7)], 1_000, 999, 31337, addr(9))
@@ -1643,6 +1703,53 @@ mod tests {
     }
 
     #[test]
+    fn stale_min_signature_update_is_fail_closed_and_side_effect_free() {
+        let mut relay = BridgeRelay::with_admin(1, vec![validator_pub(7)], b32(9));
+        let admin = b32(9);
+
+        relay
+            .set_validators_with_version(&admin, relay.config_version(), vec![validator_pub(7), validator_pub(8)])
+            .unwrap();
+        let stale_version = relay.config_version();
+
+        relay.set_admin(&admin, b32(10)).unwrap();
+
+        let current_version = relay.config_version();
+        let audit_len_before = relay.audit_log().len();
+        let normalized_before = relay.normalized_audit_log();
+
+        let err = relay
+            .set_min_validator_signatures_with_version(&b32(10), stale_version, 2)
+            .unwrap_err();
+
+        assert!(matches!(
+            err,
+            BridgeRelayError::InvalidConfigVersion { expected, got }
+                if expected == current_version && got == stale_version
+        ));
+        assert_eq!(
+            relay.min_validator_signatures,
+            1,
+            "stale threshold write must leave the previous quorum intact"
+        );
+        assert_eq!(
+            relay.config_version(),
+            current_version,
+            "stale threshold write must not mutate config version"
+        );
+        assert_eq!(
+            relay.audit_log().len(),
+            audit_len_before,
+            "stale threshold write must not append governance audit events"
+        );
+        assert_eq!(
+            relay.normalized_audit_log(),
+            normalized_before,
+            "stale threshold write must not append normalized governance audit events"
+        );
+    }
+
+    #[test]
     fn stale_validator_rotation_is_fail_closed_and_side_effect_free() {
         let mut relay = BridgeRelay::with_admin(1, vec![validator_pub(7)], b32(9));
         let admin = b32(9);
@@ -1658,6 +1765,7 @@ mod tests {
 
         let current_version = relay.config_version();
         let audit_len_before = relay.audit_log().len();
+        let normalized_before = relay.normalized_audit_log();
 
         let mut stale = sample_msg();
         stale.config_version = stale_version;
@@ -1677,6 +1785,11 @@ mod tests {
             audit_len_before,
             "stale proof must not append audit events"
         );
+        assert_eq!(
+            relay.normalized_audit_log(),
+            normalized_before,
+            "stale proof must not append normalized audit events"
+        );
 
         let err = relay
             .set_validators_with_version(&admin, stale_version, vec![validator_pub(7)])
@@ -1692,6 +1805,11 @@ mod tests {
             relay.audit_log().len(),
             audit_len_before,
             "stale validator rotation must not append governance audit events"
+        );
+        assert_eq!(
+            relay.normalized_audit_log(),
+            normalized_before,
+            "stale validator rotation must not append normalized governance audit events"
         );
 
         let mut rotated = sample_msg();
@@ -1715,6 +1833,131 @@ mod tests {
                 got: 1,
             }
         ));
+
+        let mut retained_validator = sample_msg();
+        retained_validator.config_version = current_version;
+        retained_validator.nonce = 126;
+        let proof_digest = relay
+            .submit_proof(
+                &retained_validator,
+                &[
+                    sig_for(&retained_validator, 7),
+                    sig_for(&retained_validator, 8),
+                ],
+                1_000,
+                999,
+                31337,
+                addr(9),
+            )
+            .expect("stale validator rotation must leave the prior validator set intact");
+        assert!(
+            relay.proof_used.contains(&proof_digest),
+            "successful proof should confirm validator 8 remained allowlisted"
+        );
+    }
+
+    #[test]
+    fn stale_validator_rotation_does_not_admit_new_validator() {
+        let mut relay = BridgeRelay::with_admin(2, vec![validator_pub(7), validator_pub(8)], b32(9));
+        let admin = b32(9);
+        let stale_version = relay.config_version();
+
+        relay
+            .set_min_validator_signatures_with_version(&admin, stale_version, 2)
+            .unwrap();
+
+        let current_version = relay.config_version();
+        let audit_len_before = relay.audit_log().len();
+        let normalized_before = relay.normalized_audit_log();
+
+        let err = relay
+            .set_validators_with_version(
+                &admin,
+                stale_version,
+                vec![validator_pub(7), validator_pub(9)],
+            )
+            .unwrap_err();
+
+        assert!(matches!(
+            err,
+            BridgeRelayError::InvalidConfigVersion { expected, got }
+                if expected == current_version && got == stale_version
+        ));
+        assert!(
+            relay.validators.contains(&validator_pub(8)),
+            "stale rotation must keep the previously allowlisted validator"
+        );
+        assert!(
+            !relay.validators.contains(&validator_pub(9)),
+            "stale rotation must not admit a newly proposed validator"
+        );
+        assert_eq!(
+            relay.audit_log().len(),
+            audit_len_before,
+            "stale rotation must not append governance audit events"
+        );
+        assert_eq!(
+            relay.normalized_audit_log(),
+            normalized_before,
+            "stale rotation must not append normalized governance audit events"
+        );
+
+        let mut swapped_validator = sample_msg();
+        swapped_validator.config_version = current_version;
+        swapped_validator.nonce = 127;
+        let audit_len_before_unknown_validator = relay.audit_log().len();
+        let normalized_before_unknown_validator = relay.normalized_audit_log();
+
+        let err = relay
+            .submit_proof(
+                &swapped_validator,
+                &[
+                    sig_for(&swapped_validator, 7),
+                    sig_for(&swapped_validator, 9),
+                ],
+                1_000,
+                999,
+                31337,
+                addr(9),
+            )
+            .unwrap_err();
+
+        assert!(matches!(
+            err,
+            BridgeRelayError::UnknownValidator { validator }
+                if validator == validator_pub(9)
+        ));
+        assert_eq!(
+            relay.audit_log().len(),
+            audit_len_before_unknown_validator,
+            "unknown validator proof must not append audit events"
+        );
+        assert_eq!(
+            relay.normalized_audit_log(),
+            normalized_before_unknown_validator,
+            "unknown validator proof must not append normalized audit events"
+        );
+
+        let mut retained_validator = sample_msg();
+        retained_validator.config_version = current_version;
+        retained_validator.nonce = 128;
+        let proof_digest = relay
+            .submit_proof(
+                &retained_validator,
+                &[
+                    sig_for(&retained_validator, 7),
+                    sig_for(&retained_validator, 8),
+                ],
+                1_000,
+                999,
+                31337,
+                addr(9),
+            )
+            .expect("stale rotation must preserve the prior validator membership");
+        assert!(
+            relay.proof_used.contains(&proof_digest),
+            "successful proof should confirm validator 8 remained allowlisted"
+        );
     }
 
     #[test]
