@@ -161,6 +161,18 @@ jobs:
         run: |
           ./scripts/v2/check_contracts_workspace_smoke_repo_root_target_dir_guard_test.sh
 
+      - name: Contracts workspace smoke repo-root workspace dir guard regression
+        run: |
+          ./scripts/v2/check_contracts_workspace_smoke_repo_root_guard_test.sh
+
+      - name: Contracts workspace smoke workspace-dir escape guard regression
+        run: |
+          ./scripts/v2/check_contracts_workspace_smoke_workspace_dir_escape_guard_test.sh
+
+      - name: Contracts workspace smoke contracts-root target dir guard regression
+        run: |
+          ./scripts/v2/check_contracts_workspace_smoke_rejects_contracts_root_target_dir_guard_test.sh
+
       - name: Validate workflow script refs (exist + executable)
         run: |
           WORKFLOW_SCRIPT_REF_STRICT=1 \
