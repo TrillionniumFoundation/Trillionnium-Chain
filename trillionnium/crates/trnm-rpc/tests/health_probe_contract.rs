@@ -132,3 +132,31 @@ fn serve_health_probe_aliases_keep_minimum_get_and_head_contracts() {
         "HEAD health response must stay bodyless"
     );
 }
+
+#[test]
+fn serve_health_probe_negative_paths_keep_head_404_and_bad_request_json_distinct() {
+    let port = reserve_loopback_port();
+    let _process = spawn_rpc_serve(port);
+
+    let head_not_found = send_http_request(port, "HEAD /missing?probe=lb HTTP/1.1");
+    let (head_headers, head_body) = split_http_response(&head_not_found);
+    assert!(head_headers.starts_with("HTTP/1.1 404 Not Found\r\n"));
+    assert!(head_headers.contains("Content-Type: application/json\r\n"));
+    assert!(head_headers.contains("Cache-Control: no-store\r\n"));
+    assert_eq!(
+        response_content_length(head_headers),
+        "{\"ok\":false,\"code\":\"NOT_FOUND\"}".len()
+    );
+    assert!(head_body.is_empty(), "HEAD 404 response must stay bodyless");
+
+    let bad_request = send_http_request(port, "GET /health#bridge HTTP/1.1");
+    let (bad_headers, bad_body) = split_http_response(&bad_request);
+    assert!(bad_headers.starts_with("HTTP/1.1 400 Bad Request\r\n"));
+    assert!(bad_headers.contains("Content-Type: application/json\r\n"));
+    assert!(bad_headers.contains("Cache-Control: no-store\r\n"));
+    assert_eq!(response_content_length(bad_headers), bad_body.len());
+    assert_eq!(
+        bad_body,
+        "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid http request\"}"
+    );
+}
