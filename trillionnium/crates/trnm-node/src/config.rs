@@ -15,7 +15,7 @@ pub(crate) struct NodeConfig {
 }
 
 const MAX_NODE_ID_LEN: usize = 64;
-const FORBIDDEN_BOOTSTRAP_ALIAS_FIELDS: &[(&str, &str)] = &[
+pub(crate) const FORBIDDEN_BOOTSTRAP_ALIAS_FIELDS: &[(&str, &str)] = &[
     ("bootstrap_nodes", "[\"127.0.0.1:27656\"]"),
     ("bootstrap_node", "\"127.0.0.1:27656\""),
     ("bootstrap_peers", "[\"127.0.0.1:27656\"]"),
