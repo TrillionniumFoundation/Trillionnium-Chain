@@ -79,6 +79,19 @@ fn task_snapshot_for_poco(task: &TaskObject) -> Result<TaskMeteringSnapshot, Pou
         .ok_or_else(|| PouwError::State("poco requires task metering snapshot".into()))
 }
 
+fn reject_if_settlement_window_closed(
+    task: &TaskObject,
+    current_height: u64,
+) -> Result<(), PouwError> {
+    if matches!(task.status, TaskStatus::Revealed | TaskStatus::Completed) {
+        // Promotion step: once the canonical PoCO settlement window closes, all
+        // receipt settlement paths fail closed, even if the legacy task
+        // lifecycle already advanced to Completed.
+        reject_if_deadline_exceeded_optional(task.challenge_deadline_height, current_height)?;
+    }
+    Ok(())
+}
+
 fn validate_receipt_against_task(
     task: &TaskObject,
     receipt: &ConsumptionReceipt,
@@ -355,9 +368,7 @@ pub fn submit_consumption_receipt_at_height(
     let task = st
         .get_task(receipt.task_id)
         .ok_or_else(|| PouwError::State("task not found".into()))?;
-    if task.status == TaskStatus::Revealed {
-        reject_if_deadline_exceeded_optional(task.challenge_deadline_height, current_height)?;
-    }
+    reject_if_settlement_window_closed(&task, current_height)?;
     let _snapshot = validate_receipt_against_task(&task, &receipt)?;
     if signer != receipt.consumer_id {
         return Err(PouwError::Unauthorized);
@@ -441,9 +452,7 @@ pub fn challenge_consumption_receipt_at_height(
     let task = st
         .get_task(key.task_id)
         .ok_or_else(|| PouwError::State("task not found".into()))?;
-    if task.status == TaskStatus::Revealed {
-        reject_if_deadline_exceeded_optional(task.challenge_deadline_height, current_height)?;
-    }
+    reject_if_settlement_window_closed(&task, current_height)?;
 
     let record_key = ConsumptionRecordKey {
         task_id: key.task_id,
@@ -507,9 +516,7 @@ pub fn resolve_consumption_receipt_at_height(
     let task = st
         .get_task(key.task_id)
         .ok_or_else(|| PouwError::State("task not found".into()))?;
-    if task.status == TaskStatus::Revealed {
-        reject_if_deadline_exceeded_optional(task.challenge_deadline_height, current_height)?;
-    }
+    reject_if_settlement_window_closed(&task, current_height)?;
 
     let record_key = ConsumptionRecordKey {
         task_id: key.task_id,
@@ -854,5 +861,74 @@ mod tests {
 
         assert_eq!(primary_payout_work_units(&st, &task, 50), 9);
         assert_eq!(primary_payout_work_units(&st, &task, 7), 7);
+    }
+
+    #[test]
+    fn submit_consumption_receipt_rejects_closed_window_for_completed_task() {
+        let mut st = StateStore::default();
+        st.put_task_new(sample_task(TaskStatus::Completed))
+            .expect("task");
+
+        let err = submit_consumption_receipt_at_height(
+            &mut st,
+            sample_receipt(),
+            "consumer-bravo".to_string(),
+            101,
+        )
+        .expect_err("closed settlement window must reject late receipt submission");
+
+        assert!(matches!(err, PouwError::DeadlineExceeded));
+    }
+
+    #[test]
+    fn challenge_consumption_receipt_rejects_closed_window_for_completed_task() {
+        let mut st = StateStore::default();
+        st.put_task_new(sample_task(TaskStatus::Completed))
+            .expect("task");
+        let receipt = sample_receipt();
+        let key = receipt.replay_key();
+        submit_consumption_receipt_at_height(&mut st, receipt, "consumer-bravo".to_string(), 99)
+            .expect("submit receipt within settlement window");
+
+        let err = challenge_consumption_receipt_at_height(
+            &mut st,
+            key,
+            "auditor-1".to_string(),
+            "auditor-1".to_string(),
+            101,
+        )
+        .expect_err("closed settlement window must reject late receipt challenge");
+
+        assert!(matches!(err, PouwError::DeadlineExceeded));
+    }
+
+    #[test]
+    fn resolve_consumption_receipt_rejects_closed_window_for_completed_task() {
+        let mut st = StateStore::default();
+        let _ = st.set_gov_param_bootstrap_unchecked(
+            9_500,
+            "resolve_authority".into(),
+            "resolver-1,resolver-2".into(),
+        );
+        st.put_task_new(sample_task(TaskStatus::Completed))
+            .expect("task");
+        let receipt = sample_receipt();
+        let key = receipt.replay_key();
+        submit_consumption_receipt_at_height(&mut st, receipt, "consumer-bravo".to_string(), 99)
+            .expect("submit receipt within settlement window");
+
+        let err = resolve_consumption_receipt_at_height(
+            &mut st,
+            key,
+            ConsumptionResolveDecision::Accept,
+            None,
+            None,
+            "resolver-1".to_string(),
+            "resolver-1".to_string(),
+            101,
+        )
+        .expect_err("closed settlement window must reject late receipt resolution");
+
+        assert!(matches!(err, PouwError::DeadlineExceeded));
     }
 }
