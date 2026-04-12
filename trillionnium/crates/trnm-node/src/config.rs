@@ -3282,6 +3282,7 @@ mod tests {
             expected_rows_in_order[7],
             expected_rows_in_order[8],
             "port-spacing drift",
+            "cross-slot-spliced listener tuples",
             "This table is intentionally local-fixture scoped: it documents the minimum fail-closed acceptance rule for shipped bootstrap rehearsal, not a claim that public-mainnet peer discovery, sync, or dynamic topology management is complete.",
         ] {
             assert!(
