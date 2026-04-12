@@ -60,3 +60,4 @@ trnm(contract-rs-vault): ...
 - `event_type`：`vault.deposited` / `vault.locked` / `vault.released` / `vault.slashed` / `vault.transferred` / `vault.paused` / `vault.unpaused`。
 - `amount` 承载金额；`object_id` 承载主对象（如 `request_id`，或转账接收账户）；`related_id` 承载次级关联对象（如锁定账户、转账发起账户），避免多主体事件归一化后丢键。
 - `vault.slashed` 的标准化事件使用 `related_id=locked_account`，并将 `beneficiary` 放入 `note`（如 `beneficiary=treasury`），避免把多个主体拼进同一个 ID 字段。
+- `vault.transferred` 的标准化事件使用 `object_id=from`、`related_id=to`，保持“主对象在前、次级关联对象在后”的共享归一化约定。

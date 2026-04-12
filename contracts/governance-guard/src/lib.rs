@@ -82,6 +82,7 @@ pub enum GovernanceEvent {
     PauseRestoreExecuted {
         proposal_id: ProposalId,
         actor: String,
+        reason_hash: String,
     },
     AuditLogCleared,
 }
@@ -503,9 +504,11 @@ impl GovernanceGuard {
         proposal.status = ProposalStatus::Executed;
         proposal.executor = Some(caller.to_owned());
         proposal.executed_at = Some(now);
+        let reason_hash = proposal.reason_hash.clone();
         self.audit_log.push(GovernanceEvent::PauseRestoreExecuted {
             proposal_id,
             actor: caller.to_owned(),
+            reason_hash,
         });
         self.audit_log.push(GovernanceEvent::ProposalExecuted {
             proposal_id,
@@ -541,11 +544,26 @@ impl GovernanceGuard {
     pub fn normalized_audit_log(&self) -> Vec<AuditEvent> {
         self.audit_log
             .iter()
-            .map(Self::normalize_audit_event)
+            .map(|event| self.normalize_audit_event(event))
             .collect()
     }
 
-    fn normalize_audit_event(event: &GovernanceEvent) -> AuditEvent {
+    fn apply_normalized_proposal_context(
+        &self,
+        proposal_id: ProposalId,
+        normalized: &mut AuditEvent,
+    ) {
+        let Some(proposal) = self.proposals.get(&proposal_id) else {
+            return;
+        };
+
+        normalized.reason = Some(format!("kind={:?}", proposal.kind));
+        if !proposal.param_key.is_empty() {
+            normalized.related_id = Some(proposal.param_key.clone());
+        }
+    }
+
+    fn normalize_audit_event(&self, event: &GovernanceEvent) -> AuditEvent {
         match event {
             GovernanceEvent::ProposalProposed {
                 proposal_id,
@@ -570,6 +588,7 @@ impl GovernanceGuard {
                     AuditEvent::new("governance-guard", "governance.proposal_queued");
                 normalized.actor = Some(actor.clone());
                 normalized.object_id = Some(proposal_id.to_string());
+                self.apply_normalized_proposal_context(*proposal_id, &mut normalized);
                 normalized
             }
             GovernanceEvent::ProposalExecuted {
@@ -609,6 +628,7 @@ impl GovernanceGuard {
                     AuditEvent::new("governance-guard", "governance.proposal_cancelled");
                 normalized.actor = Some(actor.clone());
                 normalized.object_id = Some(proposal_id.to_string());
+                self.apply_normalized_proposal_context(*proposal_id, &mut normalized);
                 normalized
             }
             GovernanceEvent::PauseSet {
@@ -620,8 +640,9 @@ impl GovernanceGuard {
                 let mut normalized = AuditEvent::new("governance-guard", "governance.pause_set");
                 normalized.actor = Some(actor.clone());
                 normalized.object_id = Some("emergency_pause".to_string());
-                normalized.related_id = Some(format!("{previous_state}->{next_state}"));
-                normalized.reason = Some(reason_hash.clone());
+                normalized.related_id = Some("pause_state".to_string());
+                normalized.reason = Some("pause_activation".to_string());
+                normalized.note = Some(format!("state={previous_state}->{next_state}, reason_hash={reason_hash}"));
                 normalized
             }
             GovernanceEvent::PauseRestoreScheduled {
@@ -633,19 +654,24 @@ impl GovernanceGuard {
                 let mut normalized =
                     AuditEvent::new("governance-guard", "governance.pause_restore_scheduled");
                 normalized.actor = Some(proposer.clone());
-                normalized.object_id = Some(proposal_id.to_string());
-                normalized.related_id = Some("emergency_pause".to_string());
-                normalized.reason = Some(reason_hash.clone());
-                normalized.note = Some(format!("eta={eta}"));
+                normalized.object_id = Some("emergency_pause".to_string());
+                normalized.related_id = Some(proposal_id.to_string());
+                normalized.reason = Some("pause_restore_schedule".to_string());
+                normalized.note = Some(format!("eta={eta}, reason_hash={reason_hash}"));
                 normalized
             }
-            GovernanceEvent::PauseRestoreExecuted { proposal_id, actor } => {
+            GovernanceEvent::PauseRestoreExecuted {
+                proposal_id,
+                actor,
+                reason_hash,
+            } => {
                 let mut normalized =
                     AuditEvent::new("governance-guard", "governance.pause_restore_executed");
                 normalized.actor = Some(actor.clone());
-                normalized.object_id = Some(proposal_id.to_string());
-                normalized.related_id = Some("emergency_pause".to_string());
-                normalized.reason = Some("pause_restore_execute".to_string());
+                normalized.object_id = Some("emergency_pause".to_string());
+                normalized.related_id = Some(proposal_id.to_string());
+                normalized.reason = Some("pause_restore_execution".to_string());
+                normalized.note = Some(format!("reason_hash={reason_hash}"));
                 normalized
             }
             GovernanceEvent::AuditLogCleared => {
@@ -1139,9 +1165,13 @@ mod tests {
         )));
         assert!(logs.iter().any(|event| matches!(
             event,
-            GovernanceEvent::PauseRestoreExecuted { proposal_id, actor }
-                if *proposal_id == restore_id
-                    && actor == "exec"
+            GovernanceEvent::PauseRestoreExecuted {
+                proposal_id,
+                actor,
+                reason_hash,
+            } if *proposal_id == restore_id
+                && actor == "exec"
+                && reason_hash == "recover"
         )));
 
         assert!(normalized
@@ -1150,20 +1180,23 @@ mod tests {
         assert!(normalized.iter().any(|event| {
             event.event_type == "governance.pause_set"
                 && event.object_id.as_deref() == Some("emergency_pause")
-                && event.related_id.as_deref() == Some("false->true")
-                && event.reason.as_deref() == Some("incident")
+                && event.related_id.as_deref() == Some("pause_state")
+                && event.reason.as_deref() == Some("pause_activation")
+                && event.note.as_deref() == Some("state=false->true, reason_hash=incident")
         }));
         assert!(normalized.iter().any(|event| {
             event.event_type == "governance.pause_restore_scheduled"
-                && event.object_id.as_deref() == Some(&restore_id.to_string())
-                && event.related_id.as_deref() == Some("emergency_pause")
-                && event.reason.as_deref() == Some("recover")
+                && event.object_id.as_deref() == Some("emergency_pause")
+                && event.related_id.as_deref() == Some(&restore_id.to_string())
+                && event.reason.as_deref() == Some("pause_restore_schedule")
+                && event.note.as_deref() == Some("eta=8120, reason_hash=recover")
         }));
         assert!(normalized.iter().any(|event| {
             event.event_type == "governance.pause_restore_executed"
-                && event.object_id.as_deref() == Some(&restore_id.to_string())
-                && event.related_id.as_deref() == Some("emergency_pause")
-                && event.reason.as_deref() == Some("pause_restore_execute")
+                && event.object_id.as_deref() == Some("emergency_pause")
+                && event.related_id.as_deref() == Some(&restore_id.to_string())
+                && event.reason.as_deref() == Some("pause_restore_execution")
+                && event.note.as_deref() == Some("reason_hash=recover")
         }));
         assert!(normalized
             .iter()
@@ -1950,6 +1983,13 @@ mod tests {
 
         let normalized = gov.normalized_audit_log();
         let pid_s = pid.to_string();
+        let queued = normalized
+            .iter()
+            .find(|event| {
+                event.event_type == "governance.proposal_queued"
+                    && event.object_id.as_deref() == Some(pid_s.as_str())
+            })
+            .unwrap();
         let event = normalized
             .iter()
             .find(|event| {
@@ -1958,6 +1998,8 @@ mod tests {
             })
             .unwrap();
 
+        assert_eq!(queued.related_id.as_deref(), Some("challenge_window_blocks"));
+        assert_eq!(queued.reason.as_deref(), Some("kind=ParamChange"));
         assert_eq!(event.related_id.as_deref(), Some("challenge_window_blocks"));
         assert_eq!(event.amount, Some(1));
         assert_eq!(event.note.as_deref(), Some("value=100->175, version=0->1"));
@@ -2024,6 +2066,8 @@ mod tests {
         gov.cancel("guardian", pid).unwrap();
 
         let proposal = gov.proposal(pid).unwrap();
+        let normalized = gov.normalized_audit_log();
+        let pid_s = pid.to_string();
         assert_eq!(proposal.status, ProposalStatus::Cancelled);
         assert!(gov.bridge_state().emergency_paused);
         assert_eq!(gov.audit_log().len(), audit_len_before_cancel + 1);
@@ -2032,6 +2076,12 @@ mod tests {
             GovernanceEvent::ProposalCancelled { proposal_id, actor }
                 if *proposal_id == pid && actor == "guardian"
         )));
+        assert!(normalized.iter().any(|event| {
+            event.event_type == "governance.proposal_cancelled"
+                && event.object_id.as_deref() == Some(pid_s.as_str())
+                && event.related_id.as_deref() == Some("emergency_pause")
+                && event.reason.as_deref() == Some("kind=EmergencyUnpause")
+        }));
 
         let audit_len_before_failed_execute = gov.audit_log().len();
         assert_eq!(

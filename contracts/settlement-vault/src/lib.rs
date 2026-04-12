@@ -187,8 +187,8 @@ impl SettlementVault {
             } => {
                 let mut normalized = AuditEvent::new("settlement-vault", "vault.transferred");
                 normalized.actor = Some(caller.clone());
-                normalized.object_id = Some(to.clone());
-                normalized.related_id = Some(from.clone());
+                normalized.object_id = Some(from.clone());
+                normalized.related_id = Some(to.clone());
                 normalized.amount = Some(*amount);
                 normalized
             }
@@ -1116,8 +1116,8 @@ mod tests {
         assert!(normalized.iter().any(|event| {
             event.event_type == "vault.transferred"
                 && event.actor.as_deref() == Some("owner")
-                && event.object_id.as_deref() == Some("bob")
-                && event.related_id.as_deref() == Some("alice")
+                && event.object_id.as_deref() == Some("alice")
+                && event.related_id.as_deref() == Some("bob")
                 && event.amount == Some(20)
         }));
         assert!(normalized.iter().any(|event| {
@@ -1148,6 +1148,64 @@ mod tests {
         }));
 
         assert!(vault.audit_log().is_empty());
+    }
+
+    #[test]
+    fn normalized_vault_audit_mapping_keeps_field_discipline() {
+        let mut vault = SettlementVault::new("owner");
+
+        vault.deposit("owner", "alice", 100).unwrap();
+        vault.lock("owner", "req-map", "alice", 30).unwrap();
+        vault.release("owner", "req-map").unwrap();
+
+        vault.lock("owner", "req-slash-map", "alice", 10).unwrap();
+        vault.slash("owner", "req-slash-map", "treasury").unwrap();
+
+        let normalized = vault.normalized_audit_log();
+
+        let deposited = normalized
+            .iter()
+            .find(|event| event.event_type == "vault.deposited")
+            .expect("deposit should normalize");
+        assert_eq!(deposited.actor.as_deref(), Some("owner"));
+        assert_eq!(deposited.object_id.as_deref(), Some("alice"));
+        assert_eq!(deposited.related_id, None);
+        assert_eq!(deposited.amount, Some(100));
+        assert_eq!(deposited.reason, None);
+        assert_eq!(deposited.note, None);
+
+        let locked = normalized
+            .iter()
+            .find(|event| event.event_type == "vault.locked")
+            .expect("lock should normalize");
+        assert_eq!(locked.actor.as_deref(), Some("owner"));
+        assert_eq!(locked.object_id.as_deref(), Some("req-map"));
+        assert_eq!(locked.related_id.as_deref(), Some("alice"));
+        assert_eq!(locked.amount, Some(30));
+        assert_eq!(locked.reason, None);
+        assert_eq!(locked.note, None);
+
+        let released = normalized
+            .iter()
+            .find(|event| event.event_type == "vault.released")
+            .expect("release should normalize");
+        assert_eq!(released.actor.as_deref(), Some("owner"));
+        assert_eq!(released.object_id.as_deref(), Some("req-map"));
+        assert_eq!(released.related_id.as_deref(), Some("alice"));
+        assert_eq!(released.amount, Some(30));
+        assert_eq!(released.reason, None);
+        assert_eq!(released.note, None);
+
+        let slashed = normalized
+            .iter()
+            .find(|event| event.event_type == "vault.slashed")
+            .expect("slash should normalize");
+        assert_eq!(slashed.actor.as_deref(), Some("owner"));
+        assert_eq!(slashed.object_id.as_deref(), Some("req-slash-map"));
+        assert_eq!(slashed.related_id.as_deref(), Some("alice"));
+        assert_eq!(slashed.amount, Some(10));
+        assert_eq!(slashed.reason, None);
+        assert_eq!(slashed.note.as_deref(), Some("beneficiary=treasury"));
     }
 
     #[test]
