@@ -162,6 +162,19 @@ function normalizeOptionalTaskName(name: string | undefined): string | undefined
   return normalizeRequiredTaskField(name, "name");
 }
 
+function normalizeRequiredEventId(
+  eventId: string,
+  context: { taskId?: string | number },
+): string {
+  const normalized = normalizeOptionalCursor(eventId);
+  if (normalized != null) return normalized;
+
+  throw normalizeSchemaError({
+    message: "canonical query-events payload contains blank event id",
+    taskId: context.taskId,
+  });
+}
+
 function normalizeRequiredEventType(
   eventType: string,
   context: { source: "canonical" | "rpc"; eventId?: string; taskId?: string | number },
@@ -325,18 +338,35 @@ export const adaptQueryEvents = (
         });
       }
 
+      const normalizedEventId = normalizeRequiredEventId(event.id, {
+        taskId: normalizedEventTaskId,
+      });
+
       const normalizedEventType = normalizeRequiredEventType(event.type, {
         source: "canonical",
-        eventId: event.id,
+        eventId: normalizedEventId,
         taskId: normalizedEventTaskId,
       });
 
       return {
         ...normalizeCanonicalEventForM2V2(event),
+        id: normalizedEventId,
         taskId: normalizedEventTaskId,
         type: normalizedEventType,
       };
     });
+
+    const normalizedEventIds = new Set<string>();
+    for (const event of normalizedEvents) {
+      if (normalizedEventIds.has(event.id)) {
+        throw normalizeSchemaError({
+          message: "canonical query-events payload contains duplicate normalized event ids",
+          eventId: event.id,
+          taskId: normalizedCanonicalTaskId,
+        });
+      }
+      normalizedEventIds.add(event.id);
+    }
 
     const hasMixedCanonicalTaskIds = normalizedEvents.some(
       (event) => event.taskId !== normalizedCanonicalTaskId,

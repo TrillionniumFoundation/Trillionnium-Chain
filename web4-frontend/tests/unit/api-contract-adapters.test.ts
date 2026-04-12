@@ -411,6 +411,24 @@ describe("api-contract adapters", () => {
     expect(out.events[0]?.taskId).toBe("7");
   });
 
+  it("normalizes canonical query-events event ids before returning", () => {
+    const out = adaptQueryEvents({
+      taskId: "7",
+      events: [
+        {
+          id: " \uFEFFevent-7\u200B ",
+          taskId: "7",
+          type: "commit",
+          level: "info",
+          timestamp: "2026-03-03T00:00:00.000Z",
+          payload: {},
+        },
+      ],
+    });
+
+    expect(out.events[0]?.id).toBe("event-7");
+  });
+
   it("fails closed when canonical query-events payload mismatches requested task id context", () => {
     expect(() =>
       adaptQueryEvents(
@@ -429,6 +447,50 @@ describe("api-contract adapters", () => {
         },
         "8",
       ),
+    ).toThrow(FrontendApiError);
+  });
+
+  it("fails closed when canonical query-events payload contains blank event id noise", () => {
+    expect(() =>
+      adaptQueryEvents({
+        taskId: "7",
+        events: [
+          {
+            id: " \uFEFF\u200B ",
+            taskId: "7",
+            type: "commit",
+            level: "info",
+            timestamp: "2026-03-03T00:00:00.000Z",
+            payload: {},
+          },
+        ],
+      }),
+    ).toThrow(FrontendApiError);
+  });
+
+  it("fails closed when canonical query-events payload contains duplicate normalized event ids", () => {
+    expect(() =>
+      adaptQueryEvents({
+        taskId: "7",
+        events: [
+          {
+            id: "event-7",
+            taskId: "7",
+            type: "commit",
+            level: "info",
+            timestamp: "2026-03-03T00:00:00.000Z",
+            payload: {},
+          },
+          {
+            id: " \uFEFFevent-7\u200B ",
+            taskId: "7",
+            type: "reveal",
+            level: "warn",
+            timestamp: "2026-03-03T00:00:01.000Z",
+            payload: {},
+          },
+        ],
+      }),
     ).toThrow(FrontendApiError);
   });
 
