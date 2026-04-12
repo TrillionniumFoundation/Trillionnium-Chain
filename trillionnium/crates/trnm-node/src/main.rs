@@ -13122,8 +13122,68 @@ mod tests {
     }
 
     #[test]
-    fn rollback_snapshot_scrubs_pending_resolve_snapshot_with_reserved_worker_slash_authority_member()
-    {
+    fn rollback_snapshot_scrubs_pending_resolve_snapshot_with_reserved_first_approver_aliases() {
+        for (idx, reserved_alias) in [
+            "governance.resolve_authority",
+            "governance.emergency_pause",
+            "system",
+            "treasury.challenge_escrow",
+            "treasury.challenge_forfeits",
+            "treasury.worker_slashes",
+        ]
+        .into_iter()
+        .enumerate()
+        {
+            let mut st = StateStore::new();
+            st.set_gov_param_bootstrap_unchecked(
+                9_506 + idx as u64,
+                "resolve_authority".into(),
+                "authority-a,authority-b".into(),
+            )
+            .unwrap();
+            let task_id = 8_116 + idx as u64;
+            let _ = challenged_task_fixture(&mut st, task_id);
+            let before_task = st.get_task(task_id).unwrap();
+            let before_escrow = st.balance_of("treasury.challenge_escrow");
+
+            let snapshot = TxRollbackSnapshot {
+                task_id,
+                task: Some(before_task.clone()),
+                balances: vec![("treasury.challenge_escrow".into(), Some(before_escrow))],
+                pending_resolve_approval: Some(PendingResolveApprovalSnapshot {
+                    slash_worker: true,
+                    confirmations: 1,
+                    first_approver: reserved_alias.into(),
+                    authority_set: "authority-a,authority-b".into(),
+                    task_version: before_task.version,
+                }),
+            };
+
+            rollback_tx_snapshot(&mut st, snapshot);
+
+            assert_eq!(st.get_task(task_id).unwrap(), before_task);
+            assert_eq!(st.balance_of("treasury.challenge_escrow"), before_escrow);
+            assert_eq!(
+                st.pending_resolve_approval(task_id),
+                None,
+                "rollback must scrub reserved first approver alias {reserved_alias} instead of accepting it"
+            );
+            assert_eq!(
+                st.pending_resolve_first_approver(task_id),
+                None,
+                "reserved first approver alias {reserved_alias} must not materialize rollback quorum metadata"
+            );
+            assert_eq!(
+                st.pending_resolve_approval_snapshot(task_id),
+                None,
+                "reserved first approver alias {reserved_alias} must not persist rollback quorum metadata"
+            );
+        }
+    }
+
+    #[test]
+    fn rollback_snapshot_scrubs_pending_resolve_snapshot_with_reserved_worker_slash_authority_member(
+    ) {
         let mut st = StateStore::new();
         st.set_gov_param_bootstrap_unchecked(
             9_506,
