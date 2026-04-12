@@ -754,3 +754,7 @@ bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: col
 # Auto-filled by dual-subagent task pool
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: check-contracts-workspace-smoke-rejects-contracts-root-target-dir-guard-test" "./scripts/v2/check_contracts_workspace_smoke_rejects_contracts_root_target_dir_guard_test.sh" "ci(gate): add check-contracts-workspace-smoke-rejects-contracts-root-target-dir-guard-test regression to quick-check"
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: explorer-service-status" "./scripts/v2/explorer_service_status.sh" "ci(gate): add explorer-service-status regression to quick-check"
+
+# Auto-filled by dual-subagent task pool
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: genesis-generation-checklist-dr-evidence-required-sections-test" "./scripts/v2/genesis_generation_checklist_dr_evidence_required_sections_test.sh" "ci(gate): add genesis-generation-checklist-dr-evidence-required-sections-test regression to quick-check"
+bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: trnm-validator-release-handoff-branch-ref-contract-test" "./scripts/v2/trnm_validator_release_handoff_branch_ref_contract_test.sh" "ci(gate): add trnm-validator-release-handoff-branch-ref-contract-test regression to quick-check"
