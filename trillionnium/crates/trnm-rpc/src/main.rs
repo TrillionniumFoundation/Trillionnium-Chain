@@ -3094,6 +3094,9 @@ fn parse_query_events_limit_from_path(path: &str) -> std::result::Result<usize, 
     if !path_without_query.starts_with('/')
         || path_without_query.contains('\\')
         || path_without_query.contains('#')
+        || path_without_query
+            .chars()
+            .any(|ch| ch.is_control() || ch.is_whitespace())
         || normalized_path.contains("%5c")
         || normalized_path.contains("%23")
         || normalized_path.contains("%2f")
@@ -3106,9 +3109,28 @@ fn parse_query_events_limit_from_path(path: &str) -> std::result::Result<usize, 
         || normalized_path.contains("%0c")
         || normalized_path.contains("%20")
         || normalized_path.contains("%7f")
+        || contains_malformed_percent_encoding(path_without_query)
+        || contains_percent_encoded_control_or_space(path_without_query)
         || path_without_query
             .split('/')
             .any(|segment| segment == "." || segment == "..")
+    {
+        return Err(http_json_response(
+            "400 Bad Request",
+            "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid limit\"}",
+        ));
+    }
+
+    let Some(event_id_suffix) = path_without_query.strip_prefix("/query-events/") else {
+        return Err(http_json_response(
+            "400 Bad Request",
+            "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid limit\"}",
+        ));
+    };
+    let event_id_suffix = event_id_suffix.strip_suffix('/').unwrap_or(event_id_suffix);
+    if event_id_suffix.is_empty()
+        || event_id_suffix.contains('/')
+        || !event_id_suffix.chars().all(|ch| ch.is_ascii_digit())
     {
         return Err(http_json_response(
             "400 Bad Request",
@@ -5327,6 +5349,23 @@ mod tests {
                 .expect("single trailing slash should preserve default limit parsing"),
             QUERY_EVENTS_LIMIT_DEFAULT
         );
+    }
+
+    #[test]
+    fn parse_query_events_limit_from_path_rejects_noncanonical_route_shapes() {
+        for path in [
+            "/query-events",
+            "/query-events/",
+            "/query-events/not-a-u64?limit=1",
+            "/query-events/42/history?limit=1",
+            "/query-task/42?limit=1",
+            "/health?limit=1",
+        ] {
+            let err = parse_query_events_limit_from_path(path)
+                .expect_err("non-query-events routes must fail closed instead of inheriting the limit parser");
+            assert!(err.contains("400 Bad Request"), "path={path} err={err}");
+            assert!(err.contains("invalid limit"), "path={path} err={err}");
+        }
     }
 
     #[test]
