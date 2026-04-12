@@ -943,6 +943,50 @@ describe("api-contract adapters", () => {
     expect(out.audits[0]?.granted).toBe(false);
   });
 
+  it("normalizes canonical capability audit subjects and reasons before returning them", () => {
+    const out = adaptQueryCapabilityAudit({
+      subject: "\uFEFF did:trnm:bob \u200B",
+      audits: [
+        {
+          subject: "\u200D did:trnm:bob \u2060",
+          capability: "\uFEFF AUDIT_READ \u200B",
+          granted: true,
+          checkedAt: "height:321",
+          reason: "\uFEFF delegated \u200B",
+        },
+      ],
+    });
+
+    expect(out).toEqual({
+      subject: "did:trnm:bob",
+      audits: [
+        {
+          subject: "did:trnm:bob",
+          capability: "AUDIT_READ",
+          granted: true,
+          checkedAt: "height:321",
+          reason: "delegated",
+        },
+      ],
+    });
+  });
+
+  it("fails closed when canonical capability audit entries drift to a different subject", () => {
+    expect(() =>
+      adaptQueryCapabilityAudit({
+        subject: "did:trnm:bob",
+        audits: [
+          {
+            subject: "did:trnm:alice",
+            capability: "AUDIT_READ",
+            granted: true,
+            checkedAt: "height:321",
+          },
+        ],
+      }),
+    ).toThrow(FrontendApiError);
+  });
+
   it("fails closed on canonical capability audit entries with unknown fields", () => {
     expect(() =>
       adaptQueryCapabilityAudit({

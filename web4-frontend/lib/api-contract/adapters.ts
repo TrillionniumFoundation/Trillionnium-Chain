@@ -409,13 +409,46 @@ export const adaptQueryCapabilityAudit = (
 ): QueryCapabilityAuditResult => {
   const canonical = queryCapabilityAuditResponseSchema.safeParse(payload);
   if (canonical.success) {
-    return {
-      subject: canonical.data.subject,
-      audits: canonical.data.audits.map((audit) => ({
-        ...audit,
-        checkedAt: toCheckedAt(audit.checkedAt),
-      })),
-    };
+    try {
+      const normalizedSubject = normalizeRequiredText(
+        canonical.data.subject,
+        "capability audit subject",
+      );
+
+      return {
+        subject: normalizedSubject,
+        audits: canonical.data.audits.map((audit) => {
+          const auditSubject = normalizeRequiredText(
+            audit.subject,
+            "capability audit subject",
+          );
+
+          if (auditSubject !== normalizedSubject) {
+            throw normalizeSchemaError({
+              message: "capability audit payload contains mixed subjects",
+              subject: normalizedSubject,
+              auditSubject,
+            });
+          }
+
+          return {
+            subject: auditSubject,
+            capability: normalizeRequiredText(
+              audit.capability,
+              "capability audit capability",
+            ),
+            granted: audit.granted,
+            reason: normalizeOptionalText(audit.reason),
+            checkedAt: toCheckedAt(audit.checkedAt),
+          };
+        }),
+      };
+    } catch (error) {
+      if (error instanceof FrontendApiError) {
+        throw error;
+      }
+      throw normalizeSchemaError(error);
+    }
   }
 
   const rpc = rpcCapabilityAuditSchema.safeParse(payload);
