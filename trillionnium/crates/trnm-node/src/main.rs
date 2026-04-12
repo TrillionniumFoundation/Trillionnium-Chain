@@ -865,7 +865,13 @@ fn recovery_startup_summary(recovered: &RecoveredWalState) -> String {
                         "ready:retained_wal_resume_checkpoint_lagging"
                     }
                 } else if checkpoint_height > tip_height {
-                    if recovered.truncated {
+                    if checkpoint_height - tip_height == 1 {
+                        if recovered.truncated {
+                            "ready:retained_wal_resume_checkpoint_ahead_mismatch_1block_after_tail_repair"
+                        } else {
+                            "ready:retained_wal_resume_checkpoint_ahead_mismatch_1block"
+                        }
+                    } else if recovered.truncated {
                         "ready:retained_wal_resume_checkpoint_ahead_mismatch_after_tail_repair"
                     } else {
                         "ready:retained_wal_resume_checkpoint_ahead_mismatch"
@@ -18783,7 +18789,7 @@ locked_block_hash = "stale-lock"
 
         assert_eq!(
             recovery_startup_summary(&recovered),
-            "retained_wal_entries=2 checkpoint_height_retained=12 checkpoint_tip_relation=ahead:1 next_startup_height=12 wal_tail_truncated=true metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume_checkpoint_ahead_mismatch_after_tail_repair"
+            "retained_wal_entries=2 checkpoint_height_retained=12 checkpoint_tip_relation=ahead:1 next_startup_height=12 wal_tail_truncated=true metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume_checkpoint_ahead_mismatch_1block_after_tail_repair"
         );
         assert_eq!(
             retained_wal_summary(&recovered),
@@ -19013,7 +19019,7 @@ locked_block_hash = "stale-lock"
         assert_eq!(
             recovery_startup_summary(&recovered),
             format!(
-                "retained_wal_entries=1 checkpoint_height_retained={} checkpoint_tip_relation=ahead:1 next_startup_height={} wal_tail_truncated=false metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume_checkpoint_ahead_mismatch",
+                "retained_wal_entries=1 checkpoint_height_retained={} checkpoint_tip_relation=ahead:1 next_startup_height={} wal_tail_truncated=false metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume_checkpoint_ahead_mismatch_1block",
                 u64::MAX,
                 u64::MAX,
             )
@@ -19050,7 +19056,7 @@ locked_block_hash = "stale-lock"
         assert_eq!(
             recovery_startup_summary(&recovered),
             format!(
-                "retained_wal_entries=1 checkpoint_height_retained={} checkpoint_tip_relation=ahead:1 next_startup_height={} wal_tail_truncated=true metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume_checkpoint_ahead_mismatch_after_tail_repair",
+                "retained_wal_entries=1 checkpoint_height_retained={} checkpoint_tip_relation=ahead:1 next_startup_height={} wal_tail_truncated=true metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume_checkpoint_ahead_mismatch_1block_after_tail_repair",
                 u64::MAX,
                 u64::MAX,
             )
@@ -19081,7 +19087,7 @@ locked_block_hash = "stale-lock"
         );
         assert_eq!(
             recovery_startup_summary(&recovered),
-            "retained_wal_entries=2 checkpoint_height_retained=12 checkpoint_tip_relation=ahead:1 next_startup_height=12 wal_tail_truncated=false metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume_checkpoint_ahead_mismatch"
+            "retained_wal_entries=2 checkpoint_height_retained=12 checkpoint_tip_relation=ahead:1 next_startup_height=12 wal_tail_truncated=false metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume_checkpoint_ahead_mismatch_1block"
         );
     }
 
@@ -19109,7 +19115,7 @@ locked_block_hash = "stale-lock"
         );
         assert_eq!(
             recovery_startup_summary(&recovered),
-            "retained_wal_entries=2 checkpoint_height_retained=12 checkpoint_tip_relation=ahead:1 next_startup_height=12 wal_tail_truncated=true metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume_checkpoint_ahead_mismatch_after_tail_repair"
+            "retained_wal_entries=2 checkpoint_height_retained=12 checkpoint_tip_relation=ahead:1 next_startup_height=12 wal_tail_truncated=true metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume_checkpoint_ahead_mismatch_1block_after_tail_repair"
         );
     }
 
