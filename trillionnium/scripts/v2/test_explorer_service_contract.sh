@@ -279,6 +279,16 @@ assert_contains "${CAPTURE_DIR}/env.snapshot" "EXPLORER_PUBLIC_BASE_URL=${PUBLIC
 assert_contains "${CAPTURE_DIR}/env.snapshot" "EXPLORER_HEALTH_URL=${HEALTH_URL}"
 assert_contains "${CAPTURE_DIR}/env.snapshot" "EXPLORER_RPC_BASE_URL=${RPC_BASE_URL}"
 
+rm -f "${ENV_FILE}"
+EXPLORER_HOST=127.0.0.1 \
+EXPLORER_PORT="${PORT}" \
+EXPLORER_PUBLIC_BASE_URL="${PUBLIC_BASE_URL}" \
+EXPLORER_HEALTH_URL="${HEALTH_URL}" \
+EXPLORER_RPC_BASE_URL="${RPC_BASE_URL}" \
+  "${SCRIPT_DIR}/capture_explorer_scaffold_handoff.sh" --output-dir "${TMP_DIR}/capture-missing-env" >"${TMP_DIR}/capture-missing-env.out" 2>&1 || true
+assert_contains "${TMP_DIR}/capture-missing-env.out" "refusing to capture handoff packet: effective env file is missing (${ENV_FILE}); rerun explorer_service_up.sh to recreate it before handoff capture"
+cp "${CAPTURE_DIR}/env.snapshot" "${ENV_FILE}"
+
 python3 - <<'PY' "${RUN_ROOT}/public/index.json"
 import json
 import pathlib

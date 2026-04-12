@@ -221,6 +221,11 @@ else
   INDEX_FETCH_COMMAND="cp ${INDEX_FILE} ${INDEX_OUT}"
 fi
 
+if [[ ! -f "${ENV_FILE_PATH}" ]]; then
+  echo "refusing to capture handoff packet: effective env file is missing (${ENV_FILE_PATH}); rerun explorer_service_up.sh to recreate it before handoff capture" >&2
+  exit 1
+fi
+
 cp "${ENV_FILE_PATH}" "${ENV_SNAPSHOT_OUT}"
 
 assert_index_json_fragment() {
