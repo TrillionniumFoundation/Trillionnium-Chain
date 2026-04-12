@@ -4890,14 +4890,15 @@ mod tests {
             "Do not skip a missing earlier follower slot during startup or rejoin: if `node2` is absent, keep `node3` and `node4` stopped; if `node3` is absent, keep `node4` stopped until the earlier slot regains its shipped tuple.",
             "Keep `node1` through `node3` in their shipped slots; if `node4` returns, bring it back only with `node4.toml` and its shipped tuple",
             "Accept the remaining slots only while no other config is renamed or promoted into the `node4` role",
-            "unknown fields, whitespace drift, host-like or path-like ids, URI-like delimiters, non-canonical socket literals, privileged ports, wildcard listeners, reserved documentation/benchmarking listener ranges, or mixed listener IP families, the config loader must fail closed",
+            "unknown fields, whitespace drift, host-like or path-like ids, URI-like delimiters, non-canonical socket literals, IPv4-mapped / IPv4-compatible / IPv4-translated IPv6 listener forms, privileged ports, wildcard listeners, reserved documentation/benchmarking listener ranges, or mixed listener IP families, the config loader must fail closed",
             "use both the operator-supplied config path and the resolved canonical path printed in the error to identify which shipped slot drifted",
             "prefer the exact repo-root paths `trillionnium/configs/node1.toml`, `trillionnium/configs/node2.toml`, `trillionnium/configs/node3.toml`, and `trillionnium/configs/node4.toml` as the unambiguous slot references",
             "require the filename slot, `node_id`, and listener stride to agree",
             "fix the exact repo-root slot file named by the error surface and the exact field named in that error",
+            "Treat IPv4-mapped (`::ffff:a.b.c.d`), IPv4-compatible (`::a.b.c.d` / `::hhhh:hhhh`), and IPv4-translated (`::ffff:0:a.b.c.d`) IPv6 listener literals as invalid drift for these shipped fixtures, even when they still target loopback.",
             "Do not add extra shipped topology files such as `node5.toml`, alternate slot aliases, or helper sidecar configs under `configs/`",
             "Do not substitute IPv6 loopback `[::1]` for the shipped IPv4 loopback `127.0.0.1` during bootstrap or rejoin",
-            "The regression tests in `crates/trnm-node/src/config.rs` are the source of truth for the exact fixture invariants.",
+            "The regression tests in `crates/trnm-node/src/main.rs` are the source of truth for the exact fixture invariants.",
         ] {
             assert!(
                 readme.contains(expected_phrase),
