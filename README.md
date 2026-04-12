@@ -169,6 +169,8 @@ TRNM_TX_CLI=./trillionnium/target/debug/trnm-cli \
 - Web4 documentation center (primary docs entrypoint for operator/developer guidance):
   - [web4-frontend/docs/README.md](web4-frontend/docs/README.md)
   - [web4-frontend/docs/developer-guide.md](web4-frontend/docs/developer-guide.md)
+  - [web4-frontend/docs/api-contract.md](web4-frontend/docs/api-contract.md)
+  - [web4-frontend/docs/testing-ci.md](web4-frontend/docs/testing-ci.md)
   - [web4-frontend/docs/operations-runbook.md](web4-frontend/docs/operations-runbook.md)
   - [web4-frontend/docs/release-checklist.md](web4-frontend/docs/release-checklist.md)
 
