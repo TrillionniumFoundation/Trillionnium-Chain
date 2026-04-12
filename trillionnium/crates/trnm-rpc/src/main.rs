@@ -3231,7 +3231,7 @@ fn contains_percent_encoded_control_or_space(value: &str) -> bool {
             let lo = (bytes[idx + 2] as char).to_digit(16);
             if let (Some(hi), Some(lo)) = (hi, lo) {
                 let decoded = ((hi << 4) | lo) as u8;
-                if decoded <= 0x20 || decoded == 0x7f {
+                if decoded <= 0x20 || decoded == 0x7f || (0x80..=0x9f).contains(&decoded) {
                     return true;
                 }
             }
@@ -5252,8 +5252,10 @@ mod tests {
     fn parse_http_get_path_rejects_percent_encoded_control_path_bytes_fail_closed() {
         assert_eq!(parse_http_get_path("GET /health%00check HTTP/1.1"), None);
         assert_eq!(parse_http_get_path("GET /health%7Fcheck HTTP/1.1"), None);
+        assert_eq!(parse_http_get_path("GET /health%80check HTTP/1.1"), None);
         assert_eq!(parse_http_get_path("GET /query-events/7%00 HTTP/1.1"), None);
         assert_eq!(parse_http_get_path("GET /query-events/7%7f HTTP/1.1"), None);
+        assert_eq!(parse_http_get_path("GET /query-events/7%9F HTTP/1.1"), None);
     }
 
     #[test]
@@ -5280,6 +5282,14 @@ mod tests {
         );
         assert_eq!(
             parse_http_request_target("GET /health%20check HTTP/1.1"),
+            None
+        );
+        assert_eq!(
+            parse_http_request_target("GET /health%80check HTTP/1.1"),
+            None
+        );
+        assert_eq!(
+            parse_http_request_target("HEAD /readyz%9F HTTP/1.1"),
             None
         );
     }
@@ -5691,16 +5701,19 @@ mod tests {
     }
 
     #[test]
-    fn parse_query_normalized_audit_events_query_from_path_rejects_percent_encoded_null_and_del_controls(
+    fn parse_query_normalized_audit_events_query_from_path_rejects_percent_encoded_control_bytes(
     ) {
         for path in [
             "/query-normalized-audit-events?source=trnm.task%00shadow",
+            "/query-normalized-audit-events?source=trnm.task%80shadow",
             "/query-normalized-audit-events?eventType=trnm.task.commit%7ftrail",
+            "/query-normalized-audit-events?eventType=trnm.task.commit%9Ftrail",
             "/query-normalized-audit-events%00shadow?source=trnm.task",
             "/query-normalized-audit-events%7fshadow?source=trnm.task",
+            "/query-normalized-audit-events%80shadow?source=trnm.task",
         ] {
             let err = parse_query_normalized_audit_events_query_from_path(path)
-                .expect_err("encoded controls should fail closed");
+                .expect_err("encoded control bytes should fail closed");
             assert!(err.contains("400 Bad Request"), "path={path} err={err}");
             assert!(err.contains("invalid query"), "path={path} err={err}");
         }
