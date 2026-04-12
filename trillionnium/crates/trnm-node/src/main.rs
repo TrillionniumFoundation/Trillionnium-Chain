@@ -4,6 +4,7 @@ use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use std::{
     collections::{BTreeMap, HashMap, HashSet, VecDeque},
+    ffi::OsString,
     fs,
     net::SocketAddr,
     path::{Path, PathBuf},
@@ -2152,13 +2153,32 @@ fn resolve_config_path(path: &str) -> PathBuf {
 }
 
 fn ensure_config_path_stays_within_allowed_roots(requested: &str, resolved: &Path) -> Result<()> {
-    if !resolved.exists() {
-        return Ok(());
+    fn canonicalize_for_root_check(path: &Path) -> PathBuf {
+        let mut suffix = Vec::<OsString>::new();
+        let mut cursor = path;
+
+        loop {
+            if cursor.exists() {
+                let mut canonical = cursor.canonicalize().unwrap_or_else(|_| cursor.to_path_buf());
+                for component in suffix.iter().rev() {
+                    canonical.push(component);
+                }
+                return canonical;
+            }
+
+            let Some(component) = cursor.file_name() else {
+                return path.to_path_buf();
+            };
+            suffix.push(component.to_os_string());
+
+            let Some(parent) = cursor.parent() else {
+                return path.to_path_buf();
+            };
+            cursor = parent;
+        }
     }
 
-    let canonical_resolved = resolved
-        .canonicalize()
-        .unwrap_or_else(|_| resolved.to_path_buf());
+    let canonical_resolved = canonicalize_for_root_check(resolved);
     let workspace_root = workspace_root()
         .canonicalize()
         .unwrap_or_else(|_| workspace_root().to_path_buf());
@@ -4626,6 +4646,55 @@ mod tests {
         assert!(
             err_surface.contains(canonical_target.to_string_lossy().as_ref()),
             "absolute symlink escape error must keep the resolved escape target visible: {err:#}"
+        );
+    }
+
+    #[test]
+    fn load_config_rejects_nonexistent_absolute_path_outside_workspace_cwd_and_test_temp() {
+        use std::time::{SystemTime, UNIX_EPOCH};
+
+        let workspace_root = super::workspace_root()
+            .canonicalize()
+            .expect("workspace root should canonicalize");
+        let current_dir = std::env::current_dir()
+            .expect("capture cwd")
+            .canonicalize()
+            .expect("cwd should canonicalize");
+        let temp_dir = std::env::temp_dir()
+            .canonicalize()
+            .unwrap_or_else(|_| std::env::temp_dir());
+        let outside_path = PathBuf::from(format!(
+            "/Users/{}/.trnm-node-config-outside-{}-{}.toml",
+            std::env::var("USER").unwrap_or_else(|_| String::from("qianqi")),
+            std::process::id(),
+            SystemTime::now()
+                .duration_since(UNIX_EPOCH)
+                .expect("clock should be after unix epoch")
+                .as_millis()
+        ));
+
+        let err = load_config(outside_path.to_str().expect("utf8 path")).expect_err(
+            "nonexistent absolute config path outside allowed roots should fail closed before file lookup",
+        );
+
+        assert!(
+            !outside_path.exists(),
+            "test fixture must stay nonexistent so the fail-closed path check covers unresolved absolute paths"
+        );
+        assert!(
+            !outside_path.starts_with(&workspace_root)
+                && !outside_path.starts_with(&current_dir)
+                && !outside_path.starts_with(&temp_dir),
+            "test fixture must stay outside workspace, cwd, and test temp allowances"
+        );
+        let err_surface = format!("{err:#}");
+        assert!(
+            err_surface.contains("resolves outside allowed roots"),
+            "unexpected error: {err:#}"
+        );
+        assert!(
+            err_surface.contains(outside_path.to_string_lossy().as_ref()),
+            "outside-path error must keep the operator-supplied absolute path visible: {err:#}"
         );
     }
 
