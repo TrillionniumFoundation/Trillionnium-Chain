@@ -537,24 +537,21 @@ describe("api-contract adapters", () => {
   });
 
   it("fails closed when canonical normalized audit pagination reports hasMore without usable cursor", () => {
-    const out = adaptQueryNormalizedAuditEvents({
-      events: [
-        {
-          source: "bridge-relay",
-          event_type: "bridge_relay.proof_submitted",
-          actor: "validator-1",
-          checkedAt: "height:778",
-        },
-      ],
-      hasMore: true,
-      nextCursor: "   ",
-      total: 43,
-    });
-
-    expect(out.events[0]?.event_type).toBe("bridge_relay.proof_submitted");
-    expect(out.hasMore).toBe(false);
-    expect(out.nextCursor).toBeUndefined();
-    expect(out.total).toBe(43);
+    expect(() =>
+      adaptQueryNormalizedAuditEvents({
+        events: [
+          {
+            source: "bridge-relay",
+            event_type: "bridge_relay.proof_submitted",
+            actor: "validator-1",
+            checkedAt: "height:778",
+          },
+        ],
+        hasMore: true,
+        nextCursor: "   ",
+        total: 43,
+      }),
+    ).toThrow(FrontendApiError);
   });
 
   it("fails closed when canonical normalized audit pagination loops back to the requested cursor", () => {
@@ -960,6 +957,24 @@ describe("api-contract adapters", () => {
             unexpectedFlag: true,
           },
         ],
+      }),
+    ).toThrow(FrontendApiError);
+  });
+
+  it("fails closed when canonical normalized audit pagination advertises more pages with a blank cursor", () => {
+    expect(() =>
+      adaptQueryNormalizedAuditEvents({
+        events: [
+          {
+            source: "bridge-relay",
+            event_type: "bridge_relay.proof_submitted",
+            actor: "validator-a",
+            object_id: "proof-blank-cursor",
+            timestamp: "2026-03-03T00:00:00.000Z",
+          },
+        ],
+        hasMore: true,
+        nextCursor: " \u200B\uFEFF ",
       }),
     ).toThrow(FrontendApiError);
   });

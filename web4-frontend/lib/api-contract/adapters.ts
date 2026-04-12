@@ -337,9 +337,16 @@ export const adaptQueryNormalizedAuditEvents = (
         : undefined;
     const normalizedRequestedCursor = normalizeOptionalCursor(parsedQuery?.cursor);
     const rawHasMore = "hasMore" in canonical.data ? canonical.data.hasMore : undefined;
+
+    if (rawHasMore === true && normalizedNextCursor == null) {
+      throw normalizeSchemaError({
+        message: "normalized audit page with hasMore=true must include a non-blank nextCursor",
+      });
+    }
+
     const normalizedHasMore =
       rawHasMore === true
-        ? normalizedNextCursor != null && normalizedNextCursor !== normalizedRequestedCursor
+        ? normalizedNextCursor !== normalizedRequestedCursor
         : rawHasMore;
 
     return {
