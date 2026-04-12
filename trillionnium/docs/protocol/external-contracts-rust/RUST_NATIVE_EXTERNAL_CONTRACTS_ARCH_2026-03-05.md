@@ -41,6 +41,11 @@ Rationale:
 - Rust tooling uniformity with L1 codebase.
 - Better static analysis/testability than a mixed VM path in the current stack.
 
+Current snapshot truthfulness note:
+
+- The runtime model above is the **target execution model**, not a claim that the current `contracts/` crates already compile and ship as canonical `wasm32-unknown-unknown` + `#![no_std]` artifacts in this repo snapshot.
+- Until `sdk/`, `runtime-spec/`, and host-runtime wiring land, the current `contracts/` subtree should still be described as Rust MVP contract semantics plus adjacent shared audit-event schema, not as completed Host ABI/runtime closure.
+
 ## 1.2 Package Layout (target)
 
 ```text
@@ -65,9 +70,9 @@ Current repository snapshot note:
 
 ---
 
-## 2. Host ABI Specification
+## 2. Host ABI Specification (target boundary)
 
-Contracts cannot access state/network directly; all effects go through Host ABI.
+In the target runtime model, contracts cannot access state/network directly; all effects go through Host ABI.
 
 ## 2.1 ABI Versioning
 
@@ -271,7 +276,7 @@ Invariants:
 
 ---
 
-## 6. Bridge Boundaries to Rust L1
+## 6. Bridge Boundaries to Rust L1 (target closure)
 
 ## 6.1 `trnm-state` Boundary
 
