@@ -1943,4 +1943,25 @@ mod tests {
                 && event.related_id.as_deref() == Some(hex32(&proof_digest).as_str())
         }));
     }
+
+    #[test]
+    fn normalized_admin_rotation_keeps_caller_new_admin_and_old_admin_roles() {
+        let old_admin = b32(7);
+        let new_admin = b32(8);
+        let mut relay = BridgeRelay::with_admin(1, [validator_pub(7)], old_admin);
+
+        relay.set_admin(&old_admin, new_admin).unwrap();
+
+        let normalized = relay.normalized_audit_log();
+        let event = normalized
+            .iter()
+            .find(|event| event.event_type == "bridge_relay.admin_updated")
+            .expect("admin rotation should normalize");
+
+        assert_eq!(event.actor.as_deref(), Some(hex32(&old_admin).as_str()));
+        assert_eq!(event.object_id.as_deref(), Some(hex32(&new_admin).as_str()));
+        assert_eq!(event.related_id.as_deref(), Some(hex32(&old_admin).as_str()));
+        assert_eq!(event.reason.as_deref(), Some("admin_rotation"));
+        assert_eq!(event.amount, None);
+    }
 }
