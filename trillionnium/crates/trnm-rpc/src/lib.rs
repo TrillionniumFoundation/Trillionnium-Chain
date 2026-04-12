@@ -105,6 +105,35 @@ pub struct TaskConsumptionSummaryQueryResponse {
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
+pub struct TaskSettlementPreviewQueryResponse {
+    pub task_id: u64,
+    pub receipt_count: u64,
+    pub accepted_receipt_count: u64,
+    pub challenged_receipt_count: u64,
+    pub total_consumed_tokens: u128,
+    pub total_claimed_consumption_units: u128,
+    pub total_credited_consumption_units: u128,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub last_settlement_height: Option<u64>,
+}
+
+impl From<TaskConsumptionSummaryQueryResponse> for TaskSettlementPreviewQueryResponse {
+    fn from(summary: TaskConsumptionSummaryQueryResponse) -> Self {
+        Self {
+            task_id: summary.task_id,
+            receipt_count: summary.receipt_count,
+            accepted_receipt_count: summary.accepted_receipt_count,
+            challenged_receipt_count: summary.challenged_receipt_count,
+            total_consumed_tokens: summary.total_consumed_tokens,
+            total_claimed_consumption_units: summary.total_claimed_consumption_units,
+            total_credited_consumption_units: summary.total_credited_consumption_units,
+            last_settlement_height: summary.last_settlement_height,
+        }
+    }
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
 pub struct ConsumptionRecordQueryResponse {
     pub task_id: u64,
     pub consumer_id: String,
@@ -230,7 +259,13 @@ fn error_label_char_is_structural_whitespace(ch: char) -> bool {
 fn normalize_error_label_for_contract(label: &str) -> String {
     label
         .chars()
-        .map(|ch| if error_label_char_is_structural_whitespace(ch) { ' ' } else { ch })
+        .map(|ch| {
+            if error_label_char_is_structural_whitespace(ch) {
+                ' '
+            } else {
+                ch
+            }
+        })
         .collect::<String>()
         .split_whitespace()
         .collect::<Vec<_>>()
@@ -350,8 +385,7 @@ impl OracleValidateSnapshotResponse {
         if Self::is_stale_error_label(&label) {
             self.observation.stale_reject_total > 0 && self.metrics.oracle_stale_reject_total > 0
         } else if Self::is_quorum_error_label(&label) {
-            self.observation.quorum_reject_total > 0
-                && self.metrics.oracle_quorum_reject_total > 0
+            self.observation.quorum_reject_total > 0 && self.metrics.oracle_quorum_reject_total > 0
         } else if Self::is_drift_error_label(&label) {
             self.observation.drift_reject_total > 0 && self.metrics.oracle_drift_reject_total > 0
         } else {
@@ -662,6 +696,51 @@ mod tests {
             "unexpected": true
         }))
         .expect_err("task query schema should reject unknown fields");
+        assert!(err.to_string().contains("unexpected"));
+    }
+
+    #[test]
+    fn rpc_task_settlement_preview_query_from_summary_preserves_contract_shape() {
+        let preview =
+            TaskSettlementPreviewQueryResponse::from(TaskConsumptionSummaryQueryResponse {
+                task_id: 42,
+                receipt_count: 2,
+                accepted_receipt_count: 1,
+                challenged_receipt_count: 1,
+                total_consumed_tokens: 33,
+                total_claimed_consumption_units: 33,
+                total_credited_consumption_units: 21,
+                last_settlement_height: Some(88),
+            });
+        let v = serde_json::to_value(preview).unwrap();
+        assert_eq!(
+            v,
+            json!({
+                "task_id": 42,
+                "receipt_count": 2,
+                "accepted_receipt_count": 1,
+                "challenged_receipt_count": 1,
+                "total_consumed_tokens": 33,
+                "total_claimed_consumption_units": 33,
+                "total_credited_consumption_units": 21,
+                "last_settlement_height": 88
+            })
+        );
+    }
+
+    #[test]
+    fn rpc_task_settlement_preview_query_rejects_unknown_fields_fail_closed() {
+        let err = serde_json::from_value::<TaskSettlementPreviewQueryResponse>(json!({
+            "task_id": 1,
+            "receipt_count": 1,
+            "accepted_receipt_count": 1,
+            "challenged_receipt_count": 0,
+            "total_consumed_tokens": 10,
+            "total_claimed_consumption_units": 10,
+            "total_credited_consumption_units": 10,
+            "unexpected": true
+        }))
+        .expect_err("settlement preview schema should reject unknown fields");
         assert!(err.to_string().contains("unexpected"));
     }
 
@@ -1002,7 +1081,8 @@ mod tests {
     }
 
     #[test]
-    fn oracle_validation_response_bridge_contract_consistent_accepts_snapshot_future_label_variant() {
+    fn oracle_validation_response_bridge_contract_consistent_accepts_snapshot_future_label_variant()
+    {
         let out = OracleValidateSnapshotResponse {
             ok: false,
             now_ts_ms: 10_000,
@@ -1031,7 +1111,8 @@ mod tests {
     }
 
     #[test]
-    fn oracle_validation_response_bridge_contract_consistent_accepts_snapshot_stale_label_variant() {
+    fn oracle_validation_response_bridge_contract_consistent_accepts_snapshot_stale_label_variant()
+    {
         let out = OracleValidateSnapshotResponse {
             ok: false,
             now_ts_ms: 70_001,
@@ -1522,8 +1603,8 @@ mod tests {
     }
 
     #[test]
-    fn oracle_validation_response_bridge_contract_consistent_allows_unclassified_failures_with_repeated_observations()
-    {
+    fn oracle_validation_response_bridge_contract_consistent_allows_unclassified_failures_with_repeated_observations(
+    ) {
         let report = OracleValidationReport {
             ok: false,
             now_ts_ms: 794,
@@ -1929,26 +2010,27 @@ mod tests {
         .into();
         assert!(!err_with_whitespace_label.bridge_contract_consistent());
 
-        let err_with_invisible_only_label: OracleValidateSnapshotResponse = OracleValidationReport {
-            ok: false,
-            now_ts_ms: 799,
-            observation: OracleValidationObservation {
-                stale_reject_total: 0,
-                quorum_reject_total: 1,
-                drift_reject_total: 0,
-                accepted_total: 0,
-            },
-            metrics: OracleValidationMetrics {
-                oracle_stale_reject_total: 0,
-                oracle_quorum_reject_total: 1,
-                oracle_drift_reject_total: 0,
-                oracle_source_cardinality: 1,
-                accepted_total: 0,
-                sample_count: 1,
-            },
-            error: Some("\u{200B}\u{2060}\u{202E}\u{FEFF}".into()),
-        }
-        .into();
+        let err_with_invisible_only_label: OracleValidateSnapshotResponse =
+            OracleValidationReport {
+                ok: false,
+                now_ts_ms: 799,
+                observation: OracleValidationObservation {
+                    stale_reject_total: 0,
+                    quorum_reject_total: 1,
+                    drift_reject_total: 0,
+                    accepted_total: 0,
+                },
+                metrics: OracleValidationMetrics {
+                    oracle_stale_reject_total: 0,
+                    oracle_quorum_reject_total: 1,
+                    oracle_drift_reject_total: 0,
+                    oracle_source_cardinality: 1,
+                    accepted_total: 0,
+                    sample_count: 1,
+                },
+                error: Some("\u{200B}\u{2060}\u{202E}\u{FEFF}".into()),
+            }
+            .into();
         assert!(!err_with_invisible_only_label.bridge_contract_consistent());
     }
 
@@ -2046,7 +2128,8 @@ mod tests {
     }
 
     #[test]
-    fn oracle_validation_response_bridge_contract_consistent_accepts_repeated_observations_above_source_cardinality() {
+    fn oracle_validation_response_bridge_contract_consistent_accepts_repeated_observations_above_source_cardinality(
+    ) {
         let out: OracleValidateSnapshotResponse = OracleValidationReport {
             ok: true,
             now_ts_ms: 794,
