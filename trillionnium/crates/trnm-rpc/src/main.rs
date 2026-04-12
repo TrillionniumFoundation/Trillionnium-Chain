@@ -5528,6 +5528,22 @@ mod tests {
     }
 
     #[test]
+    fn parse_query_events_limit_from_path_rejects_raw_and_encoded_backslash_path_smuggling() {
+        for path in [
+            "/query-events\\42?limit=7",
+            "/query-events/42\\history?limit=7",
+            "/query-events%5c42?limit=7",
+            "/query-events/42%5chistory?limit=7",
+            "/query-events/42%5Chistory?limit=7",
+        ] {
+            let err = parse_query_events_limit_from_path(path)
+                .expect_err("slash-like backslash path encodings must fail closed");
+            assert!(err.contains("400 Bad Request"), "path={path} err={err}");
+            assert!(err.contains("invalid limit"), "path={path} err={err}");
+        }
+    }
+
+    #[test]
     fn parse_query_normalized_audit_events_query_from_path_defaults_and_filters() {
         let out =
             parse_query_normalized_audit_events_query_from_path("/query-normalized-audit-events")

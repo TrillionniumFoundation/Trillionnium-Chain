@@ -625,6 +625,28 @@ mod tests {
     }
 
     #[test]
+    fn parse_query_events_limit_rejects_raw_and_encoded_backslash_path_smuggling() {
+        for path in [
+            "/query-events\\42?limit=7",
+            "/query-events/42\\history?limit=7",
+            "/query-events%5c42?limit=7",
+            "/query-events/42%5chistory?limit=7",
+            "/query-events/42%5Chistory?limit=7",
+        ] {
+            let response = parse_query_events_limit_from_path(path);
+            assert!(response.is_err(), "path={path}");
+            assert_eq!(
+                response.unwrap_err(),
+                http_json_response(
+                    "400 Bad Request",
+                    "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid limit\"}"
+                ),
+                "path={path}"
+            );
+        }
+    }
+
+    #[test]
     fn parse_query_events_limit_accepts_single_trailing_slash_with_same_limit_contract() {
         assert_eq!(
             parse_query_events_limit_from_path("/query-events/42/?limit=7")
