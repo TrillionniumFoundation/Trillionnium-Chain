@@ -27,6 +27,19 @@ assert_contains() {
   }
 }
 
+assert_dashboard_annotation_contains() {
+  local needle="$1"
+  awk -v needle="$needle" '
+    /^## Dashboard annotation minimum$/ { in_section=1; next }
+    /^## Minimum incident evidence block$/ { in_section=0 }
+    in_section && $0 == needle { found=1 }
+    END { exit found ? 0 : 1 }
+  ' "${RUNBOOK_PATH}" || {
+    echo "missing dashboard annotation contract text: $needle" >&2
+    exit 1
+  }
+}
+
 assert_contains '### Stable first-stop panel names'
 assert_contains_once '- `Node liveness / height progress`'
 assert_contains_once '- `Consensus instability / rollback pressure`'
@@ -36,6 +49,7 @@ assert_contains_once '- `Evidence / replay integrity`'
 assert_contains_once '- `Oracle-specific drill-down`'
 assert_contains_once '- `Bridge relay / settlement integrity`'
 assert_contains '- `first_stop_panel`: `<Node liveness / height progress|Consensus instability / rollback pressure|RPC health / read surface|Worker execution / receipt flow|Evidence / replay integrity|Oracle-specific drill-down|Bridge relay / settlement integrity|unknown>`'
+assert_dashboard_annotation_contains '- `verdict=<accepts-stalled|stale-wave|quorum-collapse|drift-anomaly|ingest-latency|contract-drift|n/a>`'
 assert_contains '| `node` | `node-down` | **Node liveness / height progress** |'
 assert_contains '| `node` | `node-down` + rollback/backoff churn | **Consensus instability / rollback pressure** |'
 assert_contains '| `bridge` | `bridge-anomaly` | **Bridge relay / settlement integrity** |'
