@@ -79,6 +79,9 @@ run_step "bridge-relay: reject stale governance write with stale config version"
 run_step "bridge-relay: reject stale validator rotation with stale config version" \
   cargo test --manifest-path "$BRIDGE_RELAY_MANIFEST" --lib --tests stale_validator_rotation_is_fail_closed_and_side_effect_free -- --nocapture
 
+run_step "bridge-relay: reject stale validator rotation that tries to admit a new validator" \
+  cargo test --manifest-path "$BRIDGE_RELAY_MANIFEST" --lib --tests stale_validator_rotation_does_not_admit_new_validator -- --nocapture
+
 run_step "trnm-types: enforce receipt success for finalize helper" \
   cargo test --manifest-path "$TRNM_TYPES_MANIFEST" -p trnm-types --lib settlement_state_machine_enforces_receipt_success_for_finalization -- --nocapture
 

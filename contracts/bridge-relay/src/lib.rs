@@ -1857,6 +1857,110 @@ mod tests {
     }
 
     #[test]
+    fn stale_validator_rotation_does_not_admit_new_validator() {
+        let mut relay = BridgeRelay::with_admin(2, vec![validator_pub(7), validator_pub(8)], b32(9));
+        let admin = b32(9);
+        let stale_version = relay.config_version();
+
+        relay
+            .set_min_validator_signatures_with_version(&admin, stale_version, 2)
+            .unwrap();
+
+        let current_version = relay.config_version();
+        let audit_len_before = relay.audit_log().len();
+        let normalized_before = relay.normalized_audit_log();
+
+        let err = relay
+            .set_validators_with_version(
+                &admin,
+                stale_version,
+                vec![validator_pub(7), validator_pub(9)],
+            )
+            .unwrap_err();
+
+        assert!(matches!(
+            err,
+            BridgeRelayError::InvalidConfigVersion { expected, got }
+                if expected == current_version && got == stale_version
+        ));
+        assert!(
+            relay.validators.contains(&validator_pub(8)),
+            "stale rotation must keep the previously allowlisted validator"
+        );
+        assert!(
+            !relay.validators.contains(&validator_pub(9)),
+            "stale rotation must not admit a newly proposed validator"
+        );
+        assert_eq!(
+            relay.audit_log().len(),
+            audit_len_before,
+            "stale rotation must not append governance audit events"
+        );
+        assert_eq!(
+            relay.normalized_audit_log(),
+            normalized_before,
+            "stale rotation must not append normalized governance audit events"
+        );
+
+        let mut swapped_validator = sample_msg();
+        swapped_validator.config_version = current_version;
+        swapped_validator.nonce = 127;
+        let audit_len_before_unknown_validator = relay.audit_log().len();
+        let normalized_before_unknown_validator = relay.normalized_audit_log();
+
+        let err = relay
+            .submit_proof(
+                &swapped_validator,
+                &[
+                    sig_for(&swapped_validator, 7),
+                    sig_for(&swapped_validator, 9),
+                ],
+                1_000,
+                999,
+                31337,
+                addr(9),
+            )
+            .unwrap_err();
+
+        assert!(matches!(
+            err,
+            BridgeRelayError::UnknownValidator { validator }
+                if validator == validator_pub(9)
+        ));
+        assert_eq!(
+            relay.audit_log().len(),
+            audit_len_before_unknown_validator,
+            "unknown validator proof must not append audit events"
+        );
+        assert_eq!(
+            relay.normalized_audit_log(),
+            normalized_before_unknown_validator,
+            "unknown validator proof must not append normalized audit events"
+        );
+
+        let mut retained_validator = sample_msg();
+        retained_validator.config_version = current_version;
+        retained_validator.nonce = 128;
+        let proof_digest = relay
+            .submit_proof(
+                &retained_validator,
+                &[
+                    sig_for(&retained_validator, 7),
+                    sig_for(&retained_validator, 8),
+                ],
+                1_000,
+                999,
+                31337,
+                addr(9),
+            )
+            .expect("stale rotation must preserve the prior validator membership");
+        assert!(
+            relay.proof_used.contains(&proof_digest),
+            "successful proof should confirm validator 8 remained allowlisted"
+        );
+    }
+
+    #[test]
     fn config_version_gating_accepts_matching_version() {
         let mut relay = BridgeRelay::with_admin(2, vec![validator_pub(7)], b32(9));
         let expected = relay.config_version();

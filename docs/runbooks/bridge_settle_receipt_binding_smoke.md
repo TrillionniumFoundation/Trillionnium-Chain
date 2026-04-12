@@ -50,6 +50,8 @@
      - 覆盖治理写路径使用 stale `config_version` 时的 fail-closed 语义，要求 admin / config_version / audit_log 均保持不变。
    - `stale_validator_rotation_is_fail_closed_and_side_effect_free`
      - 覆盖 validator set 轮换写路径的 stale `config_version` fail-closed 语义，要求 validator 配置、`config_version` 与治理审计事件均保持不变。
+   - `stale_validator_rotation_does_not_admit_new_validator`
+     - 覆盖 stale validator 轮换的成员替换防线：过期版本的轮换请求不得把新 validator 偷带入 allowlist，且后续 proof 仍必须只接受旧集合中的签名。
 
 2. **trnm-types（核心状态机）**
    - `settlement_state_machine_enforces_receipt_success_for_finalization`
@@ -63,7 +65,7 @@
 
 - `bridge-relay` 用例失败：检查 `tx_receipt_status` 是否在提交的 `BridgeSettlementMessage` 上正确设置（默认示例值必须为成功态）。
 - `bridge-relay` 若失败集中在 duplicate/finalize terminal-state 用例：优先检查 `settlement_id` 终态短路是否仍先于 fresh `nonce`、stale/fresh `config_version`、以及 bad receipt 分支执行，避免重复 finalize 落入非终态错误路径。
-- `bridge-relay` 若失败集中在 stale validator/config_version 用例：检查治理写路径与 validator 轮换写路径是否继续 fail-closed，确认 stale 请求不会改写 validator 集、`config_version`、`audit_log` 或 `normalized_audit_log`。
+- `bridge-relay` 若失败集中在 stale validator/config_version 用例：检查治理写路径与 validator 轮换写路径是否继续 fail-closed，确认 stale 请求不会改写 validator 集、`config_version`、`audit_log` 或 `normalized_audit_log`，也不会把新 validator 偷带入 allowlist。
 - `trnm-types` 用例失败：检查 `SettlementRecord::apply_status_with_receipt_status` 是否被误改，重点看 `SETTLEMENT_TX_RECEIPT_SUCCESS` 与 `InteropIdentityError::InvalidSettlementReceiptStatus`。
 - 若脚本一开始就报 missing manifest：优先检查是否误在过时目录布局下执行。当前有效路径必须包含 `contracts/bridge-relay/Cargo.toml` 与 `trillionnium/Cargo.toml`，旧的 `contracts-rust/bridge-relay` 引用应视为文档漂移。
 - 若日志长时间无输出：确认 `cargo` 工具链可用，`PATH` 包含 rustup bin（脚本默认预设 `PATH="/opt/homebrew/opt/rustup/bin:$PATH"`）。
