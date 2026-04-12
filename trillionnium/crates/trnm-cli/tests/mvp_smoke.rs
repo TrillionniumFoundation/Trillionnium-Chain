@@ -384,6 +384,35 @@ fn smoke_wallet_sign_rejects_invalid_explicit_store_path() {
 }
 
 #[test]
+fn smoke_wallet_sign_rejects_unsafe_message_before_store_resolution() {
+    let out = Command::new(bin())
+        .args([
+            "wallet",
+            "sign",
+            "--name",
+            "alice",
+            "--message",
+            "approve=tx",
+            "--store",
+            "./wallets",
+        ])
+        .output()
+        .unwrap();
+
+    assert!(
+        !out.status.success(),
+        "unsafe signer input should fail closed before keystore resolution"
+    );
+    let stderr = String::from_utf8_lossy(&out.stderr);
+    assert!(
+        stderr.contains("wallet sign message must be single-line ASCII printable text")
+            && !stderr.contains("explicit wallet store"),
+        "unexpected stderr: {}",
+        stderr
+    );
+}
+
+#[test]
 fn smoke_wallet_sign_rejects_explicit_store_with_trailing_separator() {
     let store = tmp_dir("wallet-sign-trailing-separator");
     let pk = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";

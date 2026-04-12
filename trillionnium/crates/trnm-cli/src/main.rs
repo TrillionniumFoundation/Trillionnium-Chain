@@ -2940,8 +2940,8 @@ fn main() -> Result<()> {
                 store,
             } => {
                 ensure_sign_message(&message)?;
-                let store = resolve_wallet_store(store)?;
                 ensure_safe_sign_message(&message)?;
+                let store = resolve_wallet_store(store)?;
                 let priv_hex = read_key(&store, &name)?;
                 let sig = hash(&["trnm-sign-v1", &priv_hex, &message]);
                 let addr = derive_address_from_priv_hex(&priv_hex)?;
