@@ -158,11 +158,121 @@ enum QueryCommand {
     },
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 struct BalanceQueryResponse {
     address: String,
     balance: String,
     denom: String,
+}
+
+fn json_scalar_string(value: &serde_json::Value) -> Option<String> {
+    match value {
+        serde_json::Value::String(s) => Some(s.clone()),
+        serde_json::Value::Number(n) => Some(n.to_string()),
+        serde_json::Value::Bool(b) => Some(b.to_string()),
+        _ => None,
+    }
+}
+
+fn parse_balance_query_response(
+    raw: &str,
+    requested_address: &str,
+    requested_denom: &str,
+) -> Result<BalanceQueryResponse> {
+    if let Ok(resp) = serde_json::from_str::<BalanceQueryResponse>(raw) {
+        return Ok(resp);
+    }
+
+    if let Ok(value) = serde_json::from_str::<serde_json::Value>(raw) {
+        if let Some(balance) = json_scalar_string(&value) {
+            return Ok(BalanceQueryResponse {
+                address: requested_address.to_string(),
+                balance,
+                denom: requested_denom.to_string(),
+            });
+        }
+
+        for candidate in [
+            Some(&value),
+            value.get("result"),
+            value.get("data"),
+            value.get("response"),
+            value.get("response").and_then(|response| response.get("data")),
+        ] {
+            let Some(candidate) = candidate else {
+                continue;
+            };
+
+            let nested_balance = candidate
+                .get("balance")
+                .filter(|value| value.is_object())
+                .or_else(|| candidate.get("amount").filter(|value| value.is_object()));
+            let Some(balance) = candidate
+                .get("balance")
+                .and_then(json_scalar_string)
+                .or_else(|| candidate.get("amount").and_then(json_scalar_string))
+                .or_else(|| {
+                    nested_balance
+                        .and_then(|value| value.get("amount"))
+                        .and_then(json_scalar_string)
+                })
+            else {
+                continue;
+            };
+
+            let address = candidate
+                .get("address")
+                .and_then(json_scalar_string)
+                .filter(|value| !value.is_empty())
+                .unwrap_or_else(|| requested_address.to_string());
+            let denom = nested_balance
+                .and_then(|value| value.get("denom"))
+                .and_then(json_scalar_string)
+                .filter(|value| !value.is_empty())
+                .or_else(|| {
+                    candidate
+                        .get("denom")
+                        .and_then(json_scalar_string)
+                        .filter(|value| !value.is_empty())
+                })
+                .unwrap_or_else(|| requested_denom.to_string());
+            return Ok(BalanceQueryResponse {
+                address,
+                balance,
+                denom,
+            });
+        }
+    }
+
+    let mut address = None;
+    let mut balance = None;
+    let mut denom = None;
+    for line in raw.lines() {
+        let mut pairs = Vec::new();
+        if let Some(pair) = parse_kv_line(line) {
+            pairs.push(pair);
+        }
+        for token in line.split_whitespace() {
+            if let Some(pair) = parse_inline_kv_token(token) {
+                pairs.push(pair);
+            }
+        }
+
+        for (key, value) in pairs {
+            match key.as_str() {
+                "address" => address = Some(value),
+                "balance" | "amount" => balance = Some(value),
+                "denom" => denom = Some(value),
+                _ => {}
+            }
+        }
+    }
+
+    Ok(BalanceQueryResponse {
+        address: address.unwrap_or_else(|| requested_address.to_string()),
+        balance: balance.unwrap_or_else(|| raw.trim().to_string()),
+        denom: denom.unwrap_or_else(|| requested_denom.to_string()),
+    })
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -334,7 +444,7 @@ fn validate_task_query_metadata_compatibility(parsed: &serde_json::Value) -> Res
 fn parse_task_query_response(raw: &str, requested_task_id: u64) -> Result<serde_json::Value> {
     let parsed: serde_json::Value = serde_json::from_str(raw)
         .map_err(|err| anyhow!("failed to parse task query response as json: {err}"))?;
-    let Some(task_id) = parsed.get("task_id").and_then(|v| v.as_u64()) else {
+    let Some(task_id) = json_u64_at_path(&parsed, &["task_id"]) else {
         bail!("task query response missing numeric task_id");
     };
     if task_id != requested_task_id {
@@ -355,7 +465,7 @@ fn parse_events_query_response(raw: &str, requested_task_id: u64) -> Result<serd
         bail!("events query response must be a json array");
     };
     for (idx, event) in events.iter().enumerate() {
-        let Some(task_id) = event.get("task_id").and_then(|v| v.as_u64()) else {
+        let Some(task_id) = json_u64_at_path(event, &["task_id"]) else {
             bail!("events query response item {} missing numeric task_id", idx);
         };
         if task_id != requested_task_id {
@@ -417,8 +527,13 @@ fn parse_request_full_query_response(
     let Some(request) = parsed.get("request") else {
         bail!("request-full response missing request object");
     };
-    let Some(request_id) = request.get("request_id").and_then(|v| v.as_str()) else {
-        bail!("request-full response missing string request.request_id");
+    let Some(request_id) = request
+        .get("request_id")
+        .and_then(json_scalar_string)
+        .map(|value| value.trim().to_string())
+        .filter(|value| !value.is_empty())
+    else {
+        bail!("request-full response missing scalar request.request_id");
     };
     if request_id != requested_request_id {
         bail!(
@@ -427,14 +542,14 @@ fn parse_request_full_query_response(
             request_id
         );
     }
-    let Some(task_id) = request.get("task_id").and_then(|v| v.as_u64()) else {
+    let Some(task_id) = json_u64_at_path(&parsed, &["request", "task_id"]) else {
         bail!("request-full response missing numeric request.task_id");
     };
     let Some(events) = parsed.get("events").and_then(|v| v.as_array()) else {
         bail!("request-full response missing events array");
     };
     for (idx, event) in events.iter().enumerate() {
-        let Some(event_task_id) = event.get("task_id").and_then(|v| v.as_u64()) else {
+        let Some(event_task_id) = json_u64_at_path(event, &["task_id"]) else {
             bail!(
                 "request-full response event {} missing numeric task_id",
                 idx
@@ -1651,20 +1766,20 @@ fn json_value_tx_hash(v: &serde_json::Value) -> Option<String> {
     let direct = [
         "tx_hash",
         "txhash",
+        "tx-hash",
         "txHash",
         "transaction_hash",
+        "transaction-hash",
         "transactionHash",
     ];
-    for key in direct {
-        if let Some(h) = v.get(key).and_then(|x| x.as_str()) {
-            if let Some(normalized) = normalize_tx_hash(h) {
-                return Some(normalized);
-            }
+    if let Some(h) = json_get_alias(v, &direct).and_then(|x| x.as_str()) {
+        if let Some(normalized) = normalize_tx_hash(h) {
+            return Some(normalized);
         }
     }
 
     for key in ["result", "tx_response", "txResponse", "response", "data"] {
-        if let Some(found) = v.get(key).and_then(json_value_tx_hash) {
+        if let Some(found) = json_get_alias(v, &[key]).and_then(json_value_tx_hash) {
             return Some(found);
         }
     }
@@ -1839,6 +1954,14 @@ fn trim_kv_key_noise(raw: &str) -> &str {
     })
 }
 
+fn canonical_kv_key(key: &str) -> String {
+    trim_kv_key_noise(key)
+        .chars()
+        .filter(|c| c.is_ascii_alphanumeric())
+        .map(|c| c.to_ascii_lowercase())
+        .collect()
+}
+
 fn parse_kv_line(line: &str) -> Option<(String, String)> {
     let trimmed = line.trim();
     let (key, value) = if let Some((k, v)) = trimmed.split_once('=') {
@@ -1936,7 +2059,7 @@ fn parse_kv_line(line: &str) -> Option<(String, String)> {
         return None;
     }
 
-    Some((key.to_ascii_lowercase(), value.to_string()))
+    Some((canonical_kv_key(key), value.to_string()))
 }
 
 fn parse_inline_kv_token(token: &str) -> Option<(String, String)> {
@@ -2018,7 +2141,7 @@ fn parse_inline_kv_token(token: &str) -> Option<(String, String)> {
     }
 
     Some((
-        key.to_ascii_lowercase(),
+        canonical_kv_key(key),
         value
             .trim_matches(|c: char| {
                 c.is_whitespace()
@@ -2282,6 +2405,24 @@ fn is_terminal_local_tx_status(status: &str) -> bool {
     matches!(normalize_tx_status(status).as_deref(), Some("committed" | "fail"))
 }
 
+fn canonical_json_key(key: &str) -> String {
+    key.chars()
+        .filter(|c| c.is_ascii_alphanumeric())
+        .map(|c| c.to_ascii_lowercase())
+        .collect()
+}
+
+fn json_get_alias<'a>(value: &'a serde_json::Value, aliases: &[&str]) -> Option<&'a serde_json::Value> {
+    let object = value.as_object()?;
+    object.iter().find_map(|(key, value)| {
+        let canonical = canonical_json_key(key);
+        aliases
+            .iter()
+            .any(|alias| canonical == canonical_json_key(alias))
+            .then_some(value)
+    })
+}
+
 fn json_u64_at_path(value: &serde_json::Value, path: &[&str]) -> Option<u64> {
     let mut current = value;
     for key in path {
@@ -2314,8 +2455,7 @@ fn infer_json_tx_status(value: &serde_json::Value) -> Option<String> {
 
 fn infer_kv_tx_status(key: &str, value: &str) -> Option<String> {
     match key {
-        "code" | "tx_code" | "txcode" | "transaction_code" | "transactioncode"
-        | "deliver_tx_code" | "delivertxcode" | "check_tx_code" | "checktxcode" => {
+        "code" | "txcode" | "transactioncode" | "delivertxcode" | "checktxcode" => {
             let cleaned = value
                 .trim()
                 .trim_matches('"')
@@ -2331,71 +2471,62 @@ fn infer_kv_tx_status(key: &str, value: &str) -> Option<String> {
 
 fn parse_tx_query_response(raw: &str, requested_tx_hash: &str) -> Result<TxQueryResponse> {
     if let Ok(v) = serde_json::from_str::<serde_json::Value>(raw) {
-        let payload = v.get("result").unwrap_or(&v);
-        let nested_tx_response = payload
-            .get("tx_response")
-            .or_else(|| payload.get("txResponse"))
-            .or_else(|| payload.get("response").and_then(|r| r.get("tx_response")))
-            .or_else(|| payload.get("response").and_then(|r| r.get("txResponse")));
-        let nested_response_data = payload
-            .get("response")
-            .and_then(|r| r.get("data"))
-            .or_else(|| payload.get("responseData"));
-        let primary = nested_tx_response
-            .or(nested_response_data)
-            .unwrap_or(payload);
-        let raw_tx_hash = primary
-            .get("tx_hash")
-            .or_else(|| primary.get("txhash"))
-            .or_else(|| primary.get("txHash"))
-            .or_else(|| primary.get("transaction_hash"))
-            .or_else(|| primary.get("transactionHash"))
-            .or_else(|| payload.get("tx_hash"))
-            .or_else(|| payload.get("txhash"))
-            .or_else(|| payload.get("txHash"))
-            .or_else(|| payload.get("transaction_hash"))
-            .or_else(|| payload.get("transactionHash"))
-            .and_then(|x| x.as_str());
+        let payload = json_get_alias(&v, &["result"]).unwrap_or(&v);
+        let response = json_get_alias(payload, &["response"]);
+        let nested_tx_response = json_get_alias(payload, &["tx_response", "txResponse"])
+            .or_else(|| response.and_then(|r| json_get_alias(r, &["tx_response", "txResponse"])));
+        let nested_response_data = response
+            .and_then(|r| json_get_alias(r, &["data"]))
+            .or_else(|| json_get_alias(payload, &["responseData"]));
+        let primary = nested_tx_response.or(nested_response_data).unwrap_or(payload);
+        let tx_hash_aliases = [
+            "tx_hash",
+            "txhash",
+            "tx-hash",
+            "txHash",
+            "transaction_hash",
+            "transaction-hash",
+            "transactionHash",
+        ];
+        let raw_tx_hash = json_get_alias(primary, &tx_hash_aliases)
+            .or_else(|| response.and_then(|r| json_get_alias(r, &tx_hash_aliases)))
+            .or_else(|| json_get_alias(payload, &tx_hash_aliases));
         let tx_hash = match raw_tx_hash {
-            Some(raw_hash) => normalize_tx_hash(raw_hash)
+            Some(raw_hash) => normalize_tx_hash(
+                raw_hash
+                    .as_str()
+                    .ok_or_else(|| anyhow!("invalid tx_hash field in tx query response"))?,
+            )
                 .ok_or_else(|| anyhow!("invalid tx_hash field in tx query response"))?,
             None => normalize_tx_hash(requested_tx_hash)
                 .unwrap_or_else(|| requested_tx_hash.to_string()),
         };
-        let status = primary
-            .get("status")
-            .or_else(|| primary.get("tx_status"))
-            .or_else(|| primary.get("txStatus"))
-            .or_else(|| primary.get("transaction_status"))
-            .or_else(|| primary.get("transactionStatus"))
-            .or_else(|| primary.get("state"))
-            .or_else(|| primary.get("tx_state"))
-            .or_else(|| primary.get("txState"))
-            .or_else(|| primary.get("transaction_state"))
-            .or_else(|| primary.get("transactionState"))
-            .or_else(|| payload.get("status"))
-            .or_else(|| payload.get("tx_status"))
-            .or_else(|| payload.get("txStatus"))
-            .or_else(|| payload.get("transaction_status"))
-            .or_else(|| payload.get("transactionStatus"))
-            .or_else(|| payload.get("state"))
-            .or_else(|| payload.get("tx_state"))
-            .or_else(|| payload.get("txState"))
-            .or_else(|| payload.get("transaction_state"))
-            .or_else(|| payload.get("transactionState"))
+        let status_aliases = [
+            "status",
+            "tx_status",
+            "tx-status",
+            "txStatus",
+            "transaction_status",
+            "transaction-status",
+            "transactionStatus",
+            "state",
+            "tx_state",
+            "tx-state",
+            "txState",
+            "transaction_state",
+            "transaction-state",
+            "transactionState",
+        ];
+        let status = json_get_alias(primary, &status_aliases)
+            .or_else(|| response.and_then(|r| json_get_alias(r, &status_aliases)))
+            .or_else(|| json_get_alias(payload, &status_aliases))
             .and_then(normalize_json_status)
             .or_else(|| infer_json_tx_status(primary))
             .or_else(|| infer_json_tx_status(payload))
             .ok_or_else(|| anyhow!("missing/invalid status field in tx query response"))?;
-        let error = primary
-            .get("error")
-            .or_else(|| primary.get("raw_log"))
-            .or_else(|| primary.get("rawLog"))
-            .or_else(|| primary.get("log"))
-            .or_else(|| payload.get("error"))
-            .or_else(|| payload.get("raw_log"))
-            .or_else(|| payload.get("rawLog"))
-            .or_else(|| payload.get("log"))
+        let error = json_get_alias(primary, &["error", "raw_log", "raw-log", "rawLog", "log"])
+            .or_else(|| response.and_then(|r| json_get_alias(r, &["error", "raw_log", "raw-log", "rawLog", "log"])))
+            .or_else(|| json_get_alias(payload, &["error", "raw_log", "raw-log", "rawLog", "log"]))
             .and_then(normalize_json_error);
         return Ok(TxQueryResponse {
             tx_hash,
@@ -2420,25 +2551,23 @@ fn parse_tx_query_response(raw: &str, requested_tx_hash: &str) -> Result<TxQuery
 
         for (key, value) in pairs {
             match key.as_str() {
-                "tx_hash" | "txhash" | "tx-hash" | "transaction_hash" | "transactionhash"
-                | "transaction-hash" => match normalize_tx_hash(&value) {
+                "txhash" | "transactionhash" => match normalize_tx_hash(&value) {
                     Some(normalized) => tx_hash = Some(normalized),
                     None => bail!("invalid tx_hash field in tx query response"),
                 },
-                "status" | "tx_status" | "txstatus" | "transaction_status"
-                | "transactionstatus" | "state" | "tx_state" | "txstate" | "transaction_state"
+                "status" | "txstatus" | "transactionstatus" | "state" | "txstate"
                 | "transactionstate" => {
                     if let Some(normalized) = normalize_tx_status(&value) {
                         status = Some(normalized);
                     }
                 }
-                "code" | "tx_code" | "txcode" | "transaction_code" | "transactioncode"
-                | "deliver_tx_code" | "delivertxcode" | "check_tx_code" | "checktxcode" => {
+                "code" | "txcode" | "transactioncode" | "delivertxcode"
+                | "checktxcode" => {
                     if status.is_none() {
                         status = infer_kv_tx_status(&key, &value);
                     }
                 }
-                "error" | "raw_log" | "rawlog" | "log" => {
+                "error" | "rawlog" | "log" => {
                     // Manual quote trimming since parse_kv_line no longer does it aggressively
                     let cleaned = value.trim_matches(|c| matches!(c, '"' | '\'' | '`'));
                     if !is_nullish_kv_value(cleaned) {
@@ -2977,16 +3106,8 @@ fn main() -> Result<()> {
                     cmd = tpl(cmd, "address", &addr);
                     cmd = tpl(cmd, "denom", &denom);
                     let raw = run_template_raw(&cmd)?;
-                    if let Ok(resp) = serde_json::from_str::<BalanceQueryResponse>(&raw) {
-                        println!("{}", serde_json::to_string_pretty(&resp)?);
-                    } else {
-                        let out = BalanceQueryResponse {
-                            address: addr,
-                            balance: raw.trim().to_string(),
-                            denom,
-                        };
-                        println!("{}", serde_json::to_string_pretty(&out)?);
-                    }
+                    let out = parse_balance_query_response(&raw, &addr, &denom)?;
+                    println!("{}", serde_json::to_string_pretty(&out)?);
                 } else {
                     let seeded = hash(&["balance", &addr, &denom]);
                     let pseudo = u128::from_str_radix(&seeded[..16], 16).unwrap_or(0) % 1_000_000;
@@ -3040,6 +3161,109 @@ mod tests {
 
     fn canonical_temp_root() -> PathBuf {
         std::fs::canonicalize(std::env::temp_dir()).unwrap_or_else(|_| std::env::temp_dir())
+    }
+
+    #[test]
+    fn query_parsers_accept_stringified_task_ids_in_task_response() {
+        let parsed = parse_task_query_response(r#"{"task_id":"42"}"#, 42).unwrap();
+        assert_eq!(json_u64_at_path(&parsed, &["task_id"]), Some(42));
+    }
+
+    #[test]
+    fn query_parsers_accept_stringified_task_ids_in_events_response() {
+        let parsed = parse_events_query_response(r#"[{"task_id":"42","event_type":"accepted"}]"#, 42)
+            .unwrap();
+        assert_eq!(json_u64_at_path(&parsed[0], &["task_id"]), Some(42));
+    }
+
+    #[test]
+    fn query_parsers_accept_stringified_task_ids_in_request_full_response() {
+        let parsed = parse_request_full_query_response(
+            r#"{"request":{"request_id":"req-42","task_id":"42"},"events":[{"task_id":"42"}]}"#,
+            "req-42",
+        )
+        .unwrap();
+        assert_eq!(json_u64_at_path(&parsed, &["request", "task_id"]), Some(42));
+        assert_eq!(json_u64_at_path(&parsed["events"][0], &["task_id"]), Some(42));
+    }
+
+    #[test]
+    fn query_parsers_accept_scalar_request_ids_in_request_full_response() {
+        let parsed = parse_request_full_query_response(
+            r#"{"request":{"request_id":42,"task_id":42},"events":[{"task_id":42}]}"#,
+            "42",
+        )
+        .unwrap();
+        assert_eq!(parsed["request"]["request_id"], serde_json::json!(42));
+        assert_eq!(json_u64_at_path(&parsed, &["request", "task_id"]), Some(42));
+        assert_eq!(json_u64_at_path(&parsed["events"][0], &["task_id"]), Some(42));
+    }
+
+    #[test]
+    fn balance_query_parser_accepts_wrapped_partial_json() {
+        let parsed = parse_balance_query_response(
+            r#"{"result":{"balance":"42","denom":"utrnm"}}"#,
+            "trnm1requested",
+            "trnm",
+        )
+        .unwrap();
+        assert_eq!(
+            parsed,
+            BalanceQueryResponse {
+                address: "trnm1requested".into(),
+                balance: "42".into(),
+                denom: "utrnm".into(),
+            }
+        );
+    }
+
+    #[test]
+    fn balance_query_parser_accepts_scalar_json_balance() {
+        let parsed = parse_balance_query_response("12345\n", "trnm1requested", "trnm").unwrap();
+        assert_eq!(
+            parsed,
+            BalanceQueryResponse {
+                address: "trnm1requested".into(),
+                balance: "12345".into(),
+                denom: "trnm".into(),
+            }
+        );
+    }
+
+    #[test]
+    fn balance_query_parser_accepts_nested_balance_amount_object() {
+        let parsed = parse_balance_query_response(
+            r#"{"response":{"data":{"address":"trnm1adapter","balance":{"amount":"77","denom":"utrnm"}}}}"#,
+            "trnm1requested",
+            "trnm",
+        )
+        .unwrap();
+        assert_eq!(
+            parsed,
+            BalanceQueryResponse {
+                address: "trnm1adapter".into(),
+                balance: "77".into(),
+                denom: "utrnm".into(),
+            }
+        );
+    }
+
+    #[test]
+    fn balance_query_parser_accepts_kv_text_output() {
+        let parsed = parse_balance_query_response(
+            "address=trnm1adapter\nbalance=77\ndenom=utrnm\n",
+            "trnm1requested",
+            "trnm",
+        )
+        .unwrap();
+        assert_eq!(
+            parsed,
+            BalanceQueryResponse {
+                address: "trnm1adapter".into(),
+                balance: "77".into(),
+                denom: "utrnm".into(),
+            }
+        );
     }
 
     #[test]
@@ -4435,6 +4659,27 @@ mod tests {
             extract_tx_hash("{\"txHash\":\"ABCDEF012345\",\"status\":\"ok\"}").as_deref(),
             Some("abcdef012345")
         );
+        assert_eq!(
+            extract_tx_hash("{\"tx-hash\":\"0xFEED1234\",\"status\":\"ok\"}").as_deref(),
+            Some("0xfeed1234")
+        );
+        assert_eq!(
+            extract_tx_hash("{\"transaction-hash\":\"BEEF5678\",\"status\":\"ok\"}").as_deref(),
+            Some("beef5678")
+        );
+    }
+
+    #[test]
+    fn extract_tx_hash_accepts_case_insensitive_json_key_aliases() {
+        assert_eq!(
+            extract_tx_hash("{\"TX_HASH\":\"0xFEED1234\",\"status\":\"ok\"}").as_deref(),
+            Some("0xfeed1234")
+        );
+        assert_eq!(
+            extract_tx_hash("{\"result\":{\"TX_RESPONSE\":{\"Transaction-Hash\":\"BEEF5678\"}}}")
+                .as_deref(),
+            Some("beef5678")
+        );
     }
 
     #[test]
@@ -4630,6 +4875,15 @@ mod tests {
         let parsed_state_alias = parse_tx_query_response(state_alias, "0xfallback").unwrap();
         assert_eq!(parsed_state_alias.tx_hash, "0xeee");
         assert_eq!(parsed_state_alias.status, "committed");
+    }
+
+    #[test]
+    fn tx_query_parse_json_accepts_case_insensitive_response_wrapped_hyphenated_keys() {
+        let json = "{\"RESULT\":{\"RESPONSE\":{\"DATA\":{\"TX-HASH\":\"0xABCD\"},\"TX-STATUS\":\"SUCCESS\",\"RAW-LOG\":\"NULL\"}}}";
+        let parsed = parse_tx_query_response(json, "0xfallback").unwrap();
+        assert_eq!(parsed.tx_hash, "0xabcd");
+        assert_eq!(parsed.status, "committed");
+        assert_eq!(parsed.error, None);
     }
 
     #[test]

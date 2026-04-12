@@ -32,6 +32,15 @@ fn tx_query_parse_json_nested_top_level_data_payload() {
 }
 
 #[test]
+fn tx_query_parse_json_direct_response_payload() {
+    let json = "{\"response\":{\"tx_hash\":\"0xabc\",\"status\":\"success\",\"error\":null}}";
+    let parsed = parse_tx_query_response(json, "0xfallback").unwrap();
+    assert_eq!(parsed.tx_hash, "0xabc");
+    assert_eq!(parsed.status, "committed");
+    assert_eq!(parsed.error, None);
+}
+
+#[test]
 fn tx_query_parse_json_accepts_camel_transaction_and_hyphenated_hash_keys() {
     let camel = "{\"result\":{\"txHash\":\"0xabc\",\"status\":\"success\"}}";
     let parsed_camel = parse_tx_query_response(camel, "0xfallback").unwrap();
@@ -112,6 +121,24 @@ fn tx_query_parse_rejects_invalid_tx_hash_if_field_is_present() {
             .to_string()
             .contains("invalid tx_hash field in tx query response"),
         "unexpected: {err_json}"
+    );
+
+    let null_json = "{\"tx_hash\":null,\"status\":\"committed\"}";
+    let err_null_json = parse_tx_query_response(null_json, "0xabc").unwrap_err();
+    assert!(
+        err_null_json
+            .to_string()
+            .contains("invalid tx_hash field in tx query response"),
+        "unexpected: {err_null_json}"
+    );
+
+    let numeric_json = "{\"tx_hash\":12345,\"status\":\"committed\"}";
+    let err_numeric_json = parse_tx_query_response(numeric_json, "0xabc").unwrap_err();
+    assert!(
+        err_numeric_json
+            .to_string()
+            .contains("invalid tx_hash field in tx query response"),
+        "unexpected: {err_numeric_json}"
     );
 
     let bad_kv = "tx_hash=not-a-hash\nstatus=committed\n";
