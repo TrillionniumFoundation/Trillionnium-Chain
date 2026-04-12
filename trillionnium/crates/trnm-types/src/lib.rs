@@ -289,7 +289,10 @@ impl TaskMetadata {
         &self,
         settlement: Option<&TaskSettlementSnapshot>,
     ) -> TaskMetadataCompatibilityReport {
-        let settlement = settlement.or(self.settlement.as_ref());
+        // Prefer the inline settlement snapshot once it has been threaded into
+        // metadata, but keep the out-of-band fallback for legacy callers that
+        // have not lifted settlement into `TaskMetadata` yet.
+        let settlement = self.settlement.as_ref().or(settlement);
         let legacy_note_only = self.note.is_some()
             && self.task_type.is_none()
             && self.input_hash.is_none()
@@ -1178,6 +1181,46 @@ mod tests {
             report.primary_finding(),
             Some(TaskMetadataCompatibilityFinding::IncompleteSettlementSnapshot)
         );
+    }
+
+    #[test]
+    fn task_metadata_compatibility_report_prefers_threaded_settlement_snapshot() {
+        let metadata = TaskMetadata {
+            note: Some("interop".into()),
+            task_type: Some("inference".into()),
+            input_hash: Some("a".repeat(64)),
+            settlement: Some(TaskSettlementSnapshot {
+                settlement_schema: "poco_v1".into(),
+                tokenizer_id: "llama3-tokenizer".into(),
+                tokenizer_version: "1.0.0".into(),
+                output_hash: format!("0x{}", "2".repeat(64)),
+                output_token_count: 512,
+                output_root: Some(format!("0x{}", "3".repeat(64))),
+                output_span_commitment: None,
+            }),
+            ..TaskMetadata::default()
+        };
+        let fallback_settlement = TaskSettlementSnapshot {
+            settlement_schema: "poco_v1".into(),
+            tokenizer_id: "llama3-tokenizer".into(),
+            tokenizer_version: "1.0.0".into(),
+            output_hash: format!("0x{}", "4".repeat(64)),
+            output_token_count: 512,
+            output_root: None,
+            output_span_commitment: None,
+        };
+
+        let report =
+            metadata.compatibility_report_with_settlement_snapshot(Some(&fallback_settlement));
+
+        assert!(!report.compatibility.legacy_note_only);
+        assert!(report.compatibility.canonical_core_fields);
+        assert!(report.compatibility.complete_metering_snapshot);
+        assert!(report.compatibility.complete_settlement_snapshot);
+        assert!(report.compatibility.is_runtime_compatible());
+        assert!(!report.requires_governance_upgrade);
+        assert!(report.findings.is_empty());
+        assert_eq!(report.primary_finding(), None);
     }
 
     #[test]

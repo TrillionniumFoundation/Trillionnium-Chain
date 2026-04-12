@@ -630,6 +630,7 @@ mod tests {
                 model: None,
                 provenance: None,
                 metering: Some(sample_metering()),
+                settlement: None,
             }),
             worker: Some("worker-alpha".to_string()),
             committed_hash: None,
