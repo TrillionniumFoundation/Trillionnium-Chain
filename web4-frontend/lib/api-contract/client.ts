@@ -101,7 +101,28 @@ const normalizeBaseUrl = (baseUrl: string): string => {
     });
   }
 
-  return trimmed.replace(/\/+$/, "");
+  let parsed: URL;
+  try {
+    parsed = new URL(trimmed);
+  } catch {
+    throw new FrontendApiError({
+      code: "INVALID_PAYLOAD",
+      message: "Frontend API base URL must be a valid http(s) URL",
+      causeData: baseUrl,
+      retryable: false,
+    });
+  }
+
+  if (parsed.protocol !== "http:" && parsed.protocol !== "https:") {
+    throw new FrontendApiError({
+      code: "INVALID_PAYLOAD",
+      message: "Frontend API base URL must be a valid http(s) URL",
+      causeData: baseUrl,
+      retryable: false,
+    });
+  }
+
+  return parsed.href.replace(/\/+$/, "");
 };
 
 const normalizeRequiredPathParam = (value: unknown, label: string): string => {

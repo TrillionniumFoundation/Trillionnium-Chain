@@ -13,6 +13,22 @@ describe("api-contract client and retry hardening", () => {
     );
   });
 
+  it("fails fast with invalid payload when baseUrl is malformed or uses an unsupported scheme", () => {
+    expect(() => createFrontendApiClient({ baseUrl: "http://[" })).toThrowError(
+      expect.objectContaining({
+        code: "INVALID_PAYLOAD",
+        retryable: false,
+      }),
+    );
+
+    expect(() => createFrontendApiClient({ baseUrl: "ftp://127.0.0.1:8080" })).toThrowError(
+      expect.objectContaining({
+        code: "INVALID_PAYLOAD",
+        retryable: false,
+      }),
+    );
+  });
+
   it("normalizes trailing slash in base url", async () => {
     const fetchImpl = vi.fn().mockResolvedValue({
       ok: true,
