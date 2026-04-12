@@ -249,6 +249,9 @@ impl GovernanceGuard {
         if proposal.proposer != caller {
             return Err(Error::WrongProposer);
         }
+        if proposal.kind != ProposalKind::ParamChange {
+            return Err(Error::WrongProposalKind);
+        }
         if proposal.status == ProposalStatus::Queued {
             return Ok(());
         }
@@ -1282,6 +1285,46 @@ mod tests {
                 ))
                 .count(),
             1
+        );
+    }
+
+    #[test]
+    fn queue_rejects_scheduled_unpause_even_if_guardian_is_also_proposer() {
+        let mut gov = setup();
+        gov.set_role("admin", "guardian", true, false).unwrap();
+
+        let now = 2_860;
+        let eta = now + 60;
+        gov.emergency_pause("guardian", "incident-queue-wrong-kind")
+            .unwrap();
+        let pid = gov
+            .schedule_unpause("guardian", eta, "recover-queue-wrong-kind", now)
+            .unwrap();
+        let audit_len_before = gov.audit_log().len();
+
+        assert_eq!(
+            gov.queue("guardian", pid).unwrap_err(),
+            Error::WrongProposalKind
+        );
+
+        let proposal = gov.proposal(pid).unwrap();
+        assert_eq!(proposal.kind, ProposalKind::EmergencyUnpause);
+        assert_eq!(proposal.status, ProposalStatus::Queued);
+        assert_eq!(proposal.proposer, "guardian");
+        assert_eq!(proposal.executor, None);
+        assert_eq!(proposal.executed_at, None);
+        assert!(gov.bridge_state().emergency_paused);
+        assert_eq!(gov.audit_log().len(), audit_len_before);
+        assert_eq!(
+            gov.audit_log()
+                .iter()
+                .filter(|event| matches!(
+                    event,
+                    GovernanceEvent::ProposalQueued { proposal_id, actor }
+                        if *proposal_id == pid && actor == "guardian"
+                ))
+                .count(),
+            0
         );
     }
 
