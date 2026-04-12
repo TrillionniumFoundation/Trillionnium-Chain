@@ -23,6 +23,66 @@ describe("api-contract adapters", () => {
     expect(out.task.status).toBe("running");
   });
 
+  it("normalizes canonical query-task id/owner/name noise before returning", () => {
+    const out = adaptQueryTask({
+      task: {
+        id: " \uFEFF1\u200B ",
+        name: " demo\u200B ",
+        status: "running",
+        owner: " \uFEFFdid:trnm:alice\u200B ",
+        createdAt: "2026-03-01T00:00:00.000Z",
+        metadata: {},
+      },
+    });
+
+    expect(out.task.id).toBe("1");
+    expect(out.task.name).toBe("demo");
+    expect(out.task.owner).toBe("did:trnm:alice");
+  });
+
+  it("fails closed on canonical query-task payloads whose task id normalizes to empty noise", () => {
+    expect(() =>
+      adaptQueryTask({
+        task: {
+          id: " \uFEFF\u200B ",
+          name: "demo",
+          status: "running",
+          owner: "alice",
+          createdAt: "2026-03-01T00:00:00.000Z",
+          metadata: {},
+        },
+      }),
+    ).toThrow(FrontendApiError);
+  });
+
+  it("fails closed on canonical query-task payloads whose owner or name normalize to empty noise", () => {
+    expect(() =>
+      adaptQueryTask({
+        task: {
+          id: "1",
+          name: " \uFEFF\u200B ",
+          status: "running",
+          owner: "alice",
+          createdAt: "2026-03-01T00:00:00.000Z",
+          metadata: {},
+        },
+      }),
+    ).toThrow(FrontendApiError);
+
+    expect(() =>
+      adaptQueryTask({
+        task: {
+          id: "1",
+          name: "demo",
+          status: "running",
+          owner: " \uFEFF\u200B ",
+          createdAt: "2026-03-01T00:00:00.000Z",
+          metadata: {},
+        },
+      }),
+    ).toThrow(FrontendApiError);
+  });
+
   it("fails closed on canonical query-task payloads with unknown fields", () => {
     expect(() =>
       adaptQueryTask({

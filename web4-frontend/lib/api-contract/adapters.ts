@@ -144,6 +144,24 @@ function normalizeOptionalTaskId(taskId: string | undefined): string | undefined
   return normalizeOptionalCursor(taskId);
 }
 
+function normalizeRequiredTaskField(
+  value: string,
+  field: "id" | "name" | "owner",
+): string {
+  const normalized = normalizeOptionalCursor(value);
+  if (normalized != null) return normalized;
+
+  throw normalizeSchemaError({
+    message: `canonical query-task payload contains blank ${field}`,
+    field,
+  });
+}
+
+function normalizeOptionalTaskName(name: string | undefined): string | undefined {
+  if (name == null) return undefined;
+  return normalizeRequiredTaskField(name, "name");
+}
+
 function normalizeRequiredEventType(
   eventType: string,
   context: { source: "canonical" | "rpc"; eventId?: string; taskId?: string | number },
@@ -242,7 +260,16 @@ function normalizeOptionalText(value: unknown): string | undefined {
 
 export const adaptQueryTask = (payload: unknown): QueryTaskResult => {
   const canonical = queryTaskResponseSchema.safeParse(payload);
-  if (canonical.success) return canonical.data;
+  if (canonical.success) {
+    return {
+      task: {
+        ...canonical.data.task,
+        id: normalizeRequiredTaskField(canonical.data.task.id, "id"),
+        name: normalizeOptionalTaskName(canonical.data.task.name),
+        owner: normalizeRequiredTaskField(canonical.data.task.owner, "owner"),
+      },
+    };
+  }
 
   const rpc = rpcTaskSchema.safeParse(payload);
   if (!rpc.success) throw normalizeSchemaError(rpc.error.flatten());
