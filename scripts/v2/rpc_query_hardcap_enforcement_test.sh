@@ -20,4 +20,7 @@ cargo test -q -p trnm-rpc parse_query_events_limit_from_path_rejects_duplicate_l
 echo "[TEST] rpc_query_hardcap_enforcement: malformed limit keys fail closed"
 cargo test -q -p trnm-rpc parse_query_events_limit_from_path_rejects_malformed_limit_keys -- --nocapture
 
+echo "[TEST] rpc_query_hardcap_enforcement: raw query whitespace fails closed"
+cargo test -q -p trnm-rpc parse_query_events_limit_from_path_rejects_raw_query_whitespace -- --nocapture
+
 echo "[OK] rpc_query_hardcap_enforcement passed"
