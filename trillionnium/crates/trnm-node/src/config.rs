@@ -249,6 +249,11 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         "invalid node config {}: node_id must not look like a host or socket literal",
         path
     );
+    anyhow::ensure!(
+        !node_id.contains('.'),
+        "invalid node config {}: node_id must not contain dots",
+        path
+    );
 
     let rpc_addr = cfg.rpc_addr.trim();
     anyhow::ensure!(
@@ -1187,6 +1192,33 @@ mod tests {
             assert!(
                 err.to_string()
                     .contains("node_id must not contain leading or trailing dots"),
+                "unexpected error for {node_id:?}: {err:#}"
+            );
+
+            let _ = std::fs::remove_file(path);
+        }
+    }
+
+    #[test]
+    fn load_config_rejects_malformed_dotted_node_id_with_operator_facing_error() {
+        for node_id in ["node..1", "peer-.slot", "slot.-peer"] {
+            let path = std::env::temp_dir().join(format!(
+                "trnm-node-config-malformed-dotted-node-id-{}-{}-{node_id}.toml",
+                std::process::id(),
+                std::thread::current().name().unwrap_or("unnamed")
+            ));
+            std::fs::write(
+                &path,
+                format!(
+                    "node_id = \"{node_id}\"\nrpc_addr = \"127.0.0.1:7000\"\np2p_addr = \"127.0.0.1:7001\"\n"
+                ),
+            )
+            .expect("write config");
+
+            let err = load_config(path.to_str().expect("utf8 path"))
+                .expect_err("malformed dotted node_id must fail closed");
+            assert!(
+                err.to_string().contains("node_id must not contain dots"),
                 "unexpected error for {node_id:?}: {err:#}"
             );
 
@@ -2240,6 +2272,25 @@ mod tests {
     }
 
     #[test]
+    fn validate_node_config_rejects_malformed_dotted_node_id() {
+        for node_id in ["node..1", "peer-.slot", "slot.-peer"] {
+            let err = validate_node_config(
+                NodeConfig {
+                    node_id: node_id.into(),
+                    rpc_addr: "127.0.0.1:7000".into(),
+                    p2p_addr: "127.0.0.1:7001".into(),
+                },
+                "inline",
+            )
+            .expect_err("malformed dotted node_id must fail closed");
+            assert!(
+                err.to_string().contains("node_id must not contain dots"),
+                "unexpected error for {node_id}: {err:#}"
+            );
+        }
+    }
+
+    #[test]
     fn validate_node_config_rejects_url_like_listener_addresses() {
         let rpc_err = validate_node_config(
             NodeConfig {
@@ -3192,7 +3243,7 @@ mod tests {
             "5. Do not skip a missing earlier follower slot during startup or rejoin: if `node2` is absent, keep `node3` and `node4` stopped; if `node3` is absent, keep `node4` stopped until the earlier slot regains its shipped tuple.",
             "6. Treat `configs/node1.toml` through `configs/node4.toml` as slot-bound fixtures: do not rename them, swap them between peers, or reinterpret a later slot as the bootstrap anchor during operator recovery.",
             "7. If `node4` is absent, keep `node1` through `node3` in their shipped slots; do not rename another config into the `node4` role, and if `node4` returns it must come back with `node4.toml` and its shipped tuple.",
-            "8. If a config contains unknown fields, whitespace drift, host-like or path-like ids, URI-like delimiters, non-canonical socket literals, privileged ports, wildcard listeners, reserved documentation/benchmarking listener ranges, or mixed listener IP families, the config loader must fail closed.",
+            "8. If a config contains unknown fields, whitespace drift, dotted, host-like, or path-like ids, URI-like delimiters, non-canonical socket literals, privileged ports, wildcard listeners, reserved documentation/benchmarking listener ranges, or mixed listener IP families, the config loader must fail closed.",
             "9. If startup fails because a shipped config introduces an ad-hoc peer/bootstrap alias such as `bootstrap_nodes`, `seedPeers`, or `persistentNode`, treat the exact field named in the parse error as the operator fix target; do not guess or silently translate aliases.",
             "10. When `load_config` fails, use both the operator-supplied config path and the resolved canonical path printed in the error to identify which shipped slot drifted; do not “fix” a different file that merely looks similar.",
             "11. Do not substitute IPv6 loopback `[::1]` for the shipped IPv4 loopback `127.0.0.1` during bootstrap or rejoin; listener-family drift is invalid even if both addresses are loopback.",
@@ -3268,7 +3319,7 @@ mod tests {
             "Do not skip a missing earlier follower slot during startup or rejoin: if `node2` is absent, keep `node3` and `node4` stopped; if `node3` is absent, keep `node4` stopped until the earlier slot regains its shipped tuple.",
             "Treat `configs/node1.toml` through `configs/node4.toml` as slot-bound fixtures: do not rename them, swap them between peers, or reinterpret a later slot as the bootstrap anchor during operator recovery.",
             "If `node4` is absent, keep `node1` through `node3` in their shipped slots; do not rename another config into the `node4` role, and if `node4` returns it must come back with `node4.toml` and its shipped tuple.",
-            "unknown fields, whitespace drift, host-like or path-like ids, URI-like delimiters, non-canonical socket literals, privileged ports, wildcard listeners, reserved documentation/benchmarking listener ranges, or mixed listener IP families, the config loader must fail closed",
+            "unknown fields, whitespace drift, dotted, host-like, or path-like ids, URI-like delimiters, non-canonical socket literals, privileged ports, wildcard listeners, reserved documentation/benchmarking listener ranges, or mixed listener IP families, the config loader must fail closed",
             "Do not substitute IPv6 loopback `[::1]` for the shipped IPv4 loopback `127.0.0.1` during bootstrap or rejoin; listener-family drift is invalid even if both addresses are loopback.",
             "If two shipped slot files ever converge on the same `rpc_addr`/`p2p_addr` tuple, stop both peers and restore the original slot-bound files before retrying; duplicated listeners are topology drift, not an interchangeable bootstrap shortcut.",
             "## Join / rejoin acceptance table",
