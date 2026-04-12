@@ -259,10 +259,20 @@ Or from inside `trillionnium/`:
 ```
 
 - Service status defaults to `http://127.0.0.1:8090/healthz`.
-- Environment overrides: `EXPLORER_HOST`, `EXPLORER_PORT`, or `EXPLORER_HEALTH_URL`.
-- If `trillionnium/run/explorer-service/explorer-service.env` exists, the scripts load it automatically.
-- For external exposure, prefer loopback-bound bind + reverse proxy.
-- `explorer_service_status.sh` reports `pid_file`, `log_file`, `health_url`, and explicitly marks `service_mode=operator-facing-static-scaffold`, `production_ready=false`.
+- Environment overrides: `EXPLORER_HOST`, `EXPLORER_PORT`, `EXPLORER_PUBLIC_BASE_URL`, `EXPLORER_HEALTH_URL`, and `EXPLORER_RPC_BASE_URL`.
+- If `trillionnium/run/explorer-service/explorer-service.env` exists, the scripts load it automatically and preserve it as the operator-local source of truth across `up` / `status` / `down`.
+- For external exposure, prefer loopback-bound bind + reverse proxy, and keep the emitted `local_health_url` as the local liveness target even when `public_base_url` points at a proxy-facing URL.
+- `explorer_service_status.sh` reports `pid_file`, `log_file`, `public_base_url`, `health_url`, `local_health_url`, `rpc_base_url`, and explicitly marks `service_mode=operator-facing-static-scaffold`, `production_ready=false`.
+- To capture one deterministic operator handoff packet for this scaffold, use:
+
+```bash
+./trillionnium/scripts/v2/capture_explorer_scaffold_handoff.sh
+```
+
+- That helper is intentionally **placeholder-only**. It preserves blocker markers such as `deployment_evidence_scope=placeholder-only`, `rank1_read_surface_blocker=still-open`, and `durable_indexer_status=not-implemented-in-this-scaffold`, and it rejects drift if fetched `index.json` no longer matches the scaffold contract.
+- The emitted `summary.txt` is also a template-boundary packet, not just a file list. Reuse `template_selection`, `durable_template_allowed`, `durable_template_rejection_reason`, and every `truth_source_*` line verbatim instead of paraphrasing the scaffold into a durable-service handoff.
+- Build the packet from `explorer_service_status.sh` output first, then reuse the emitted `index_url`, `health_url`, and `local_health_url` instead of hand-typing proxy/local URLs from shell memory. If you also fetch a reverse-proxy/public URL, attach it as separate evidence rather than replacing the local status-driven proof.
+- When the public URL and local bind target differ, preserve the emitted `local_index_url` and `local_index_fetch_command` from `summary.txt` too. Do not reconstruct the local `/index.json` path by editing the public URL by hand.
 - Current scaffold intentionally keeps durable-read anchors fail-closed:
   - `ingestion_source`
   - `checkpoint_store`
@@ -275,6 +285,10 @@ Or from inside `trillionnium/`:
   - `rank1_read_surface_blocker=still-open`
   - `durable_indexer_status=not-implemented-in-this-scaffold`
   - `durable_read_anchor_complete=false`
+- Use `trillionnium/docs/release/TRNM_EXPLORER_SCAFFOLD_HANDOFF_TEMPLATE_2026-04-04.md` for this scaffold path.
+- Operator bring-up / reverse-proxy / systemd details live in `trillionnium/docs/runbooks/explorer-service-scaffold.md`; use that runbook to keep `health_url` and `local_health_url` aligned with the same deployed instance you hand off.
+- Do **not** switch to `TRNM_DURABLE_READ_SERVICE_HANDOFF_TEMPLATE_2026-04-04.md` until all six durable-read anchors exist, replay/restore/lag evidence is attached in the same packet, and `summary.txt` reports `durable_template_allowed=true`.
+- When the lane moves beyond placeholder scaffold work, the next implementation boundary is `trillionnium/docs/release/TRNM_RANK1_IMPLEMENTATION_DESIGN_PACKET_2026-04-05.md`, which defines the durable indexer/read-model path rather than more scaffold polish.
 
 Only switch to durable handoff templates when all six durable-read anchors are truly implemented.
 

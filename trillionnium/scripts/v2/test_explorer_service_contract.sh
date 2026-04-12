@@ -10,6 +10,7 @@ RUN_ROOT="${RUST_ROOT}/run/explorer-service"
 ENV_FILE="${RUN_ROOT}/explorer-service.env"
 PID_FILE="${RUN_ROOT}/explorer-service.pid"
 LOG_FILE="${RUN_ROOT}/explorer-service.log"
+SCAFFOLD_HANDOFF_TEMPLATE="${RUST_ROOT}/docs/release/TRNM_EXPLORER_SCAFFOLD_HANDOFF_TEMPLATE_2026-04-04.md"
 
 TMP_DIR="$(mktemp -d)"
 cleanup() {
@@ -21,6 +22,7 @@ trap cleanup EXIT
 PORT="${EXPLORER_PORT:-18091}"
 PUBLIC_BASE_URL="http://127.0.0.1:${PORT}"
 HEALTH_URL="${PUBLIC_BASE_URL}/healthz"
+LOCAL_HEALTH_URL="${HEALTH_URL}"
 RPC_BASE_URL="http://127.0.0.1:7777"
 
 assert_contains() {
@@ -164,6 +166,7 @@ assert_contains "${TMP_DIR}/capture.out" "handoff_capture_output_dir=${CAPTURE_D
 assert_contains "${TMP_DIR}/capture.out" "handoff_capture_status_path=${CAPTURE_DIR}/status.txt"
 assert_contains "${TMP_DIR}/capture.out" "handoff_capture_index_path=${CAPTURE_DIR}/index.json"
 assert_contains "${TMP_DIR}/capture.out" "handoff_capture_summary_path=${CAPTURE_DIR}/summary.txt"
+assert_contains "${TMP_DIR}/capture.out" "handoff_capture_env_snapshot_path=${CAPTURE_DIR}/env.snapshot"
 assert_contains "${TMP_DIR}/capture.out" "handoff_capture_template_path=trillionnium/docs/release/TRNM_EXPLORER_SCAFFOLD_HANDOFF_TEMPLATE_2026-04-04.md"
 assert_contains "${TMP_DIR}/capture.out" "handoff_capture_durable_template_path=trillionnium/docs/release/TRNM_DURABLE_READ_SERVICE_HANDOFF_TEMPLATE_2026-04-04.md"
 assert_contains "${TMP_DIR}/capture.out" "handoff_capture_template_selection=placeholder-scaffold-only"
@@ -184,11 +187,15 @@ assert_json_contains "${CAPTURE_DIR}/index.json" '"deployment_evidence_scope":"p
 assert_json_contains "${CAPTURE_DIR}/index.json" '"durable_indexer_status":"not-implemented-in-this-scaffold"'
 assert_contains "${CAPTURE_DIR}/summary.txt" "service_mode=operator-facing-static-scaffold"
 assert_contains "${CAPTURE_DIR}/summary.txt" "production_ready=false"
+assert_contains "${CAPTURE_DIR}/summary.txt" "env_snapshot_path=${CAPTURE_DIR}/env.snapshot"
 assert_contains "${CAPTURE_DIR}/summary.txt" "public_base_url=${PUBLIC_BASE_URL}"
 assert_contains "${CAPTURE_DIR}/summary.txt" "health_url=${HEALTH_URL}"
 assert_contains "${CAPTURE_DIR}/summary.txt" "local_health_url=${HEALTH_URL}"
 assert_contains "${CAPTURE_DIR}/summary.txt" "health_probe_url=${HEALTH_URL}"
+assert_contains "${CAPTURE_DIR}/summary.txt" "health_probe_scope=operator-facing-health-url"
 assert_contains "${CAPTURE_DIR}/summary.txt" "local_health_probe_url=${HEALTH_URL}"
+assert_contains "${CAPTURE_DIR}/summary.txt" "local_health_probe_scope=local-bind-target"
+assert_contains "${CAPTURE_DIR}/summary.txt" "health_probe_boundary_note=health_url_may_differ_from_local_health_url_and_must_not_be_collapsed_in_handoff"
 assert_contains "${CAPTURE_DIR}/summary.txt" "index_url=${PUBLIC_BASE_URL}/index.json"
 assert_contains "${CAPTURE_DIR}/summary.txt" "index_fetch_mode=curl"
 assert_contains "${CAPTURE_DIR}/summary.txt" "index_fetch_source=${PUBLIC_BASE_URL}/index.json"
@@ -240,15 +247,24 @@ assert_contains "${CAPTURE_DIR}/summary.txt" "template_selection=placeholder-sca
 assert_contains "${CAPTURE_DIR}/summary.txt" "durable_template_allowed=false"
 assert_contains "${CAPTURE_DIR}/summary.txt" "durable_template_rejection_reason=scaffold-capture-is-placeholder-only-and-missing-durable-read-anchors"
 assert_contains "${CAPTURE_DIR}/summary.txt" "deployment_template_boundary=use-scaffold-template-until-non-placeholder-deployment-and-all-6-durable-read-anchors-exist"
+assert_contains "${CAPTURE_DIR}/summary.txt" "truth_source_scaffold_handoff_template=trillionnium/docs/release/TRNM_EXPLORER_SCAFFOLD_HANDOFF_TEMPLATE_2026-04-04.md"
 assert_contains "${CAPTURE_DIR}/summary.txt" "truth_source_scaffold_runbook=trillionnium/docs/runbooks/explorer-service-scaffold.md"
+assert_contains "${CAPTURE_DIR}/summary.txt" "truth_source_durable_handoff_template=trillionnium/docs/release/TRNM_DURABLE_READ_SERVICE_HANDOFF_TEMPLATE_2026-04-04.md"
 assert_contains "${CAPTURE_DIR}/summary.txt" "truth_source_release_readiness=RELEASE_READINESS.md"
 assert_contains "${CAPTURE_DIR}/summary.txt" "truth_source_day1_contract=trillionnium/docs/release/TRNM_DAY1_PUBLIC_READ_CONTRACT_2026-04-03.md"
 assert_contains "${CAPTURE_DIR}/summary.txt" "truth_source_day1_contract_matrix=trillionnium/docs/release/TRNM_DAY1_PUBLIC_READ_CONTRACT_MATRIX_2026-04-03.md"
 assert_contains "${CAPTURE_DIR}/summary.txt" "truth_source_go_no_go_panel=trillionnium/docs/release/TRNM_PUBLIC_MAINNET_GO_NO_GO_PANEL_2026-04-04.md"
+assert_contains "${CAPTURE_DIR}/summary.txt" "truth_source_gap_matrix=trillionnium/docs/release/TRNM_MAINNET_GAP_MATRIX_2026-03-26.md"
 assert_contains "${CAPTURE_DIR}/summary.txt" "truth_source_rank1_task_board=trillionnium/docs/release/TRNM_RANK1_READ_SURFACE_TASK_BOARD_2026-04-03.md"
+assert_contains "${CAPTURE_DIR}/summary.txt" "truth_source_rank1_design_packet=trillionnium/docs/release/TRNM_RANK1_IMPLEMENTATION_DESIGN_PACKET_2026-04-05.md"
 assert_contains "${CAPTURE_DIR}/summary.txt" "truth_source_blocker_board=trillionnium/docs/release/TRNM_MAINNET_BLOCKER_BOARD_2026-03-31.md"
+assert_contains "${SCAFFOLD_HANDOFF_TEMPLATE}" "truth_source_rank1_design_packet=trillionnium/docs/release/TRNM_RANK1_IMPLEMENTATION_DESIGN_PACKET_2026-04-05.md"
+assert_contains "${SCAFFOLD_HANDOFF_TEMPLATE}" "deployment_topology=single-process-static-http-on-one-host"
+assert_contains "${SCAFFOLD_HANDOFF_TEMPLATE}" "index_json_deployment_topology=single-process-static-http-on-one-host"
 assert_contains "${CAPTURE_DIR}/summary.txt" "replay_command=./trillionnium/scripts/v2/explorer_service_up.sh"
 assert_contains "${CAPTURE_DIR}/summary.txt" "status_command=./trillionnium/scripts/v2/explorer_service_status.sh"
+assert_contains "${CAPTURE_DIR}/summary.txt" "public_health_fetch_command=curl --silent --show-error --fail --max-time 5 ${HEALTH_URL}"
+assert_contains "${CAPTURE_DIR}/summary.txt" "local_health_fetch_command=curl --silent --show-error --fail --max-time 5 ${LOCAL_HEALTH_URL}"
 assert_contains "${CAPTURE_DIR}/summary.txt" "rollback_command=./trillionnium/scripts/v2/explorer_service_down.sh"
 assert_contains "${CAPTURE_DIR}/summary.txt" "deployment_evidence_scope=placeholder-only"
 assert_contains "${CAPTURE_DIR}/summary.txt" "rank1_read_surface_blocker=still-open"
@@ -262,6 +278,21 @@ assert_contains "${CAPTURE_DIR}/summary.txt" "durable_read_anchor_replay_start_a
 assert_contains "${CAPTURE_DIR}/summary.txt" "durable_read_anchor_retention_scope=rpc-window-bounded"
 assert_contains "${CAPTURE_DIR}/summary.txt" "durable_read_anchor_archive_owner=missing-placeholder-scaffold"
 assert_contains "${CAPTURE_DIR}/summary.txt" "durable_read_anchor_lag_slo=missing-placeholder-scaffold"
+assert_contains "${CAPTURE_DIR}/env.snapshot" "EXPLORER_HOST=127.0.0.1"
+assert_contains "${CAPTURE_DIR}/env.snapshot" "EXPLORER_PORT=${PORT}"
+assert_contains "${CAPTURE_DIR}/env.snapshot" "EXPLORER_PUBLIC_BASE_URL=${PUBLIC_BASE_URL}"
+assert_contains "${CAPTURE_DIR}/env.snapshot" "EXPLORER_HEALTH_URL=${HEALTH_URL}"
+assert_contains "${CAPTURE_DIR}/env.snapshot" "EXPLORER_RPC_BASE_URL=${RPC_BASE_URL}"
+
+rm -f "${ENV_FILE}"
+EXPLORER_HOST=127.0.0.1 \
+EXPLORER_PORT="${PORT}" \
+EXPLORER_PUBLIC_BASE_URL="${PUBLIC_BASE_URL}" \
+EXPLORER_HEALTH_URL="${HEALTH_URL}" \
+EXPLORER_RPC_BASE_URL="${RPC_BASE_URL}" \
+  "${SCRIPT_DIR}/capture_explorer_scaffold_handoff.sh" --output-dir "${TMP_DIR}/capture-missing-env" >"${TMP_DIR}/capture-missing-env.out" 2>&1 || true
+assert_contains "${TMP_DIR}/capture-missing-env.out" "refusing to capture handoff packet: effective env file is missing (${ENV_FILE}); rerun explorer_service_up.sh to recreate it before handoff capture"
+cp "${CAPTURE_DIR}/env.snapshot" "${ENV_FILE}"
 
 python3 - <<'PY' "${RUN_ROOT}/public/index.json"
 import json
@@ -564,6 +595,30 @@ assert_contains "${TMP_DIR}/status-explicit-ipv6-host-override.out" "bind_port=1
 assert_contains "${TMP_DIR}/status-explicit-ipv6-host-override.out" "public_base_url=http://[::]:18081"
 assert_contains "${TMP_DIR}/status-explicit-ipv6-host-override.out" "health_url=http://[::]:18081/healthz"
 assert_contains "${TMP_DIR}/status-explicit-ipv6-host-override.out" "local_health_url=http://[::1]:18081/healthz"
+
+EXPLORER_HOST='' \
+  "${STATUS_SCRIPT}" >"${TMP_DIR}/status-empty-host-override.out" || true
+assert_contains "${TMP_DIR}/status-empty-host-override.out" "state=invalid-config"
+assert_contains "${TMP_DIR}/status-empty-host-override.out" "config_error=EXPLORER_HOST must not be empty"
+assert_contains "${TMP_DIR}/status-empty-host-override.out" "bind_host="
+assert_contains "${TMP_DIR}/status-empty-host-override.out" "health_probe=invalid-config"
+assert_contains "${TMP_DIR}/status-empty-host-override.out" "local_health_probe=invalid-config"
+
+EXPLORER_HOST='' \
+EXPLORER_PORT="${PORT}" \
+EXPLORER_PUBLIC_BASE_URL="${PUBLIC_BASE_URL}" \
+EXPLORER_HEALTH_URL="${HEALTH_URL}" \
+EXPLORER_RPC_BASE_URL="${RPC_BASE_URL}" \
+  "${UP_SCRIPT}" >"${TMP_DIR}/up-empty-host-override.out" 2>&1 || true
+assert_contains "${TMP_DIR}/up-empty-host-override.out" "refusing to start explorer service scaffold: EXPLORER_HOST must not be empty"
+assert_contains "${TMP_DIR}/up-empty-host-override.out" "state=invalid-config"
+assert_contains "${TMP_DIR}/up-empty-host-override.out" "config_error=EXPLORER_HOST must not be empty"
+
+EXPLORER_HOST='' \
+  "${DOWN_SCRIPT}" >"${TMP_DIR}/down-empty-host-override.out"
+assert_contains "${TMP_DIR}/down-empty-host-override.out" "config_warning=EXPLORER_HOST must not be empty"
+assert_contains "${TMP_DIR}/down-empty-host-override.out" "state=down"
+assert_contains "${TMP_DIR}/down-empty-host-override.out" "bind_host="
 
 CONFLICT_PORT=18083
 python3 -m http.server "${CONFLICT_PORT}" --bind 127.0.0.1 >"${TMP_DIR}/listener-conflict.log" 2>&1 &

@@ -77,17 +77,27 @@ if [[ -f "${ENV_FILE}" ]]; then
   load_env_defaults
 fi
 
-HOST="${EXPLORER_HOST:-127.0.0.1}"
-PORT="${EXPLORER_PORT:-8090}"
+env_or_default() {
+  local var_name="$1"
+  local default_value="$2"
+  if [[ -n "${!var_name+x}" ]]; then
+    printf '%s' "${!var_name}"
+  else
+    printf '%s' "${default_value}"
+  fi
+}
+
+HOST="$(env_or_default EXPLORER_HOST 127.0.0.1)"
+PORT="$(env_or_default EXPLORER_PORT 8090)"
 URL_HOST="${HOST}"
 if [[ "${URL_HOST}" == *:* && "${URL_HOST}" != \[*\] ]]; then
   URL_HOST="[${URL_HOST}]"
 fi
-PUBLIC_BASE_URL="${EXPLORER_PUBLIC_BASE_URL:-http://${URL_HOST}:${PORT}}"
+PUBLIC_BASE_URL="$(env_or_default EXPLORER_PUBLIC_BASE_URL "http://${URL_HOST}:${PORT}")"
 PUBLIC_BASE_URL="${PUBLIC_BASE_URL%/}"
-HEALTH_URL="${EXPLORER_HEALTH_URL:-${PUBLIC_BASE_URL}/healthz}"
+HEALTH_URL="$(env_or_default EXPLORER_HEALTH_URL "${PUBLIC_BASE_URL}/healthz")"
 INDEX_URL="${PUBLIC_BASE_URL}/index.json"
-RPC_BASE_URL="${EXPLORER_RPC_BASE_URL:-http://127.0.0.1:7777}"
+RPC_BASE_URL="$(env_or_default EXPLORER_RPC_BASE_URL http://127.0.0.1:7777)"
 RPC_BASE_URL="${RPC_BASE_URL%/}"
 LOCAL_PROBE_HOST="${HOST}"
 case "${HOST}" in
