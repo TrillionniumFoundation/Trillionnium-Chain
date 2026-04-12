@@ -8,12 +8,14 @@ use trnm_types::{
 pub mod consumption;
 pub mod metering;
 pub mod verification;
+use consumption::primary_payout_work_units;
 pub use consumption::{
-    challenge_consumption_receipt, challenge_consumption_receipt_at_height, claimed_consumption_units,
-    parse_consumption_receipt_json, parse_and_validate_consumption_receipt_json,
-    resolve_consumption_receipt, resolve_consumption_receipt_at_height, submit_consumption_receipt,
-    submit_consumption_receipt_at_height, ConsumptionError, ConsumptionReceipt, ConsumptionReplayKey,
-    ConsumptionResolveDecision, POCO_V1_SETTLEMENT_SCHEMA,
+    challenge_consumption_receipt, challenge_consumption_receipt_at_height,
+    claimed_consumption_units, parse_and_validate_consumption_receipt_json,
+    parse_consumption_receipt_json, resolve_consumption_receipt,
+    resolve_consumption_receipt_at_height, submit_consumption_receipt,
+    submit_consumption_receipt_at_height, ConsumptionError, ConsumptionReceipt,
+    ConsumptionReplayKey, ConsumptionResolveDecision, POCO_V1_SETTLEMENT_SCHEMA,
 };
 pub use metering::{
     parse_and_validate_llm_token_meter_v1_receipt_json, parse_llm_token_meter_v1_receipt_json,
@@ -1336,8 +1338,9 @@ fn llm_meter_worker_completion_bonus(
     let Some(policy) = llm_token_meter_policy_for_snapshot_or_state(st, Some(snapshot_ref))? else {
         return Ok(0);
     };
+    let payout_work_units = primary_payout_work_units(st, task, snapshot_ref.normalized_work_units);
 
-    Ok(policy.worker_completion_bonus(snapshot_ref.normalized_work_units))
+    Ok(policy.worker_completion_bonus(payout_work_units))
 }
 
 fn llm_meter_worker_slash_rebate(
@@ -1355,8 +1358,9 @@ fn llm_meter_worker_slash_rebate(
     let Some(policy) = llm_token_meter_policy_for_snapshot_or_state(st, Some(snapshot_ref))? else {
         return Ok(0);
     };
+    let payout_work_units = primary_payout_work_units(st, task, snapshot_ref.normalized_work_units);
 
-    Ok(policy.worker_slash_rebate(snapshot_ref.normalized_work_units, locked))
+    Ok(policy.worker_slash_rebate(payout_work_units, locked))
 }
 
 fn effective_challenge_success_bounty(
@@ -22413,13 +22417,16 @@ mod tests {
 
         let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
         let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
-        let stale_revealed = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, None).unwrap();
+        let stale_revealed =
+            apply_reveal_result(&mut st, r3, result_hash, reveal_salt, None).unwrap();
 
         let mut current_task = st.get_task(stale_revealed.id).unwrap();
         current_task.challenge_deadline_height = current_task
             .challenge_deadline_height
             .map(|height| height.saturating_add(1));
-        let current_revealed = st.update_task(stale_revealed.clone(), current_task).unwrap();
+        let current_revealed = st
+            .update_task(stale_revealed.clone(), current_task)
+            .unwrap();
 
         let before_task = st.get_task(current_revealed.id).unwrap();
         let before_escrow = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
@@ -22439,8 +22446,14 @@ mod tests {
         let after_task = st.get_task(current_revealed.id).unwrap();
         assert_eq!(after_task.status, before_task.status);
         assert_eq!(after_task.version, before_task.version);
-        assert_eq!(after_task.challenged_at_height, before_task.challenged_at_height);
-        assert_eq!(after_task.resolve_deadline_height, before_task.resolve_deadline_height);
+        assert_eq!(
+            after_task.challenged_at_height,
+            before_task.challenged_at_height
+        );
+        assert_eq!(
+            after_task.resolve_deadline_height,
+            before_task.resolve_deadline_height
+        );
         assert_eq!(after_task.challenge_bond, before_task.challenge_bond);
         assert_eq!(after_task.challenger, before_task.challenger);
         assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);

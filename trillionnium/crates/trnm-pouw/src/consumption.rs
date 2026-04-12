@@ -1,7 +1,10 @@
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use thiserror::Error;
-use trnm_state::{ConsumptionRecord, ConsumptionRecordKey, ConsumptionRecordStatus, StateStore, TaskConsumptionSummary};
+use trnm_state::{
+    ConsumptionRecord, ConsumptionRecordKey, ConsumptionRecordStatus, StateStore,
+    TaskConsumptionSummary,
+};
 use trnm_types::{TaskMeteringSnapshot, TaskObject, TaskStatus};
 
 use crate::{
@@ -121,6 +124,22 @@ fn validate_receipt_against_task(
 
 pub fn claimed_consumption_units(receipt: &ConsumptionReceipt) -> u128 {
     receipt.consumed_token_count as u128
+}
+
+pub(crate) fn primary_payout_work_units(
+    st: &StateStore,
+    task: &TaskObject,
+    metering_work_units: u128,
+) -> u128 {
+    st.task_consumption_summary(task.task_id)
+        .filter(|summary| summary.accepted_receipt_count > 0)
+        .map(|summary| {
+            // Migration step: accepted PoCO receipts become the primary payout
+            // authority when present, while legacy metering/proof work units stay
+            // as the evidence ceiling during the additive cutover.
+            metering_work_units.min(summary.total_credited_consumption_units)
+        })
+        .unwrap_or(metering_work_units)
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -520,7 +539,11 @@ pub fn resolve_consumption_receipt_at_height(
                         .into(),
                 ));
             }
-            (ConsumptionRecordStatus::Accepted, Some(credited), "accepted")
+            (
+                ConsumptionRecordStatus::Accepted,
+                Some(credited),
+                "accepted",
+            )
         }
         ConsumptionResolveDecision::Discount => {
             let credited = credited_consumption_units.ok_or_else(|| {
@@ -532,7 +555,11 @@ pub fn resolve_consumption_receipt_at_height(
                         .into(),
                 ));
             }
-            (ConsumptionRecordStatus::Discounted, Some(credited), "accepted_discounted")
+            (
+                ConsumptionRecordStatus::Discounted,
+                Some(credited),
+                "accepted_discounted",
+            )
         }
         ConsumptionResolveDecision::Reject => {
             if credited_consumption_units.unwrap_or(0) != 0 {
@@ -540,7 +567,11 @@ pub fn resolve_consumption_receipt_at_height(
                     "poco reject requires zero credited_consumption_units".into(),
                 ));
             }
-            (ConsumptionRecordStatus::Rejected, None, "rejected_invalid_receipt")
+            (
+                ConsumptionRecordStatus::Rejected,
+                None,
+                "rejected_invalid_receipt",
+            )
         }
         ConsumptionResolveDecision::Slash => {
             if credited_consumption_units.unwrap_or(0) != 0 {
@@ -548,7 +579,11 @@ pub fn resolve_consumption_receipt_at_height(
                     "poco slash requires zero credited_consumption_units".into(),
                 ));
             }
-            (ConsumptionRecordStatus::Slashed, None, "slashed_fraudulent_receipt")
+            (
+                ConsumptionRecordStatus::Slashed,
+                None,
+                "slashed_fraudulent_receipt",
+            )
         }
     };
 
@@ -565,7 +600,10 @@ pub fn resolve_consumption_receipt_at_height(
     st.put_consumption_record(record.clone());
 
     let mut summary = current_summary(st, record.key.task_id);
-    if matches!(record.status, ConsumptionRecordStatus::Accepted | ConsumptionRecordStatus::Discounted) {
+    if matches!(
+        record.status,
+        ConsumptionRecordStatus::Accepted | ConsumptionRecordStatus::Discounted
+    ) {
         summary.accepted_receipt_count = summary.accepted_receipt_count.saturating_add(1);
         summary.total_credited_consumption_units = summary
             .total_credited_consumption_units
@@ -707,7 +745,8 @@ mod tests {
     #[test]
     fn submit_consumption_receipt_persists_record_and_summary() {
         let mut st = StateStore::default();
-        st.put_task_new(sample_task(TaskStatus::Revealed)).expect("task");
+        st.put_task_new(sample_task(TaskStatus::Revealed))
+            .expect("task");
 
         let record = submit_consumption_receipt_at_height(
             &mut st,
@@ -727,7 +766,8 @@ mod tests {
     #[test]
     fn submit_consumption_receipt_rejects_nonce_replay() {
         let mut st = StateStore::default();
-        st.put_task_new(sample_task(TaskStatus::Revealed)).expect("task");
+        st.put_task_new(sample_task(TaskStatus::Revealed))
+            .expect("task");
         submit_consumption_receipt_at_height(
             &mut st,
             sample_receipt(),
@@ -739,13 +779,9 @@ mod tests {
         let mut replay = sample_receipt();
         replay.billing_window_id = "bw-2".to_string();
         replay = replay.with_computed_receipt_hash().expect("hash");
-        let err = submit_consumption_receipt_at_height(
-            &mut st,
-            replay,
-            "consumer-bravo".to_string(),
-            11,
-        )
-        .expect_err("nonce replay should fail");
+        let err =
+            submit_consumption_receipt_at_height(&mut st, replay, "consumer-bravo".to_string(), 11)
+                .expect_err("nonce replay should fail");
         assert!(matches!(err, PouwError::State(_)));
     }
 
@@ -791,5 +827,32 @@ mod tests {
         assert_eq!(summary.accepted_receipt_count, 1);
         assert_eq!(summary.total_credited_consumption_units, 9);
         assert_eq!(summary.last_settlement_height, Some(77));
+    }
+
+    #[test]
+    fn primary_payout_work_units_falls_back_to_metering_without_accepted_receipts() {
+        let st = StateStore::default();
+        let task = sample_task(TaskStatus::Completed);
+
+        assert_eq!(primary_payout_work_units(&st, &task, 50), 50);
+    }
+
+    #[test]
+    fn primary_payout_work_units_caps_metering_by_credited_consumption_units() {
+        let mut st = StateStore::default();
+        let task = sample_task(TaskStatus::Completed);
+        st.set_task_consumption_summary(TaskConsumptionSummary {
+            task_id: task.task_id,
+            receipt_count: 2,
+            accepted_receipt_count: 1,
+            challenged_receipt_count: 0,
+            total_consumed_tokens: 17,
+            total_claimed_consumption_units: 17,
+            total_credited_consumption_units: 9,
+            last_settlement_height: Some(77),
+        });
+
+        assert_eq!(primary_payout_work_units(&st, &task, 50), 9);
+        assert_eq!(primary_payout_work_units(&st, &task, 7), 7);
     }
 }
