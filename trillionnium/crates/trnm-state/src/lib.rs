@@ -4872,7 +4872,7 @@ mod tests {
         let wal = WalMeta {
             height: 7,
             round: 3,
-            proposal_hash: "proposal-7-owl".into(),
+            proposal_hash: "proposal-7-猫头鹰".into(),
             committed: true,
             state_root_hex: "ab".repeat(32),
             prev_hash_hex: Some("ef".repeat(32)),
