@@ -623,6 +623,7 @@ fn new_tasks_canonicalize_embedded_version_for_state_root() {
                 privacy_tier: Some(PrivacyTier::Internal),
             }),
             metering: None,
+            settlement: None,
         }),
         worker: Some("worker-a".into()),
         committed_hash: Some([0x11; 32]),
@@ -816,6 +817,7 @@ fn task_with_boundary_metering(workload_class: &str, metering_schema: &str) -> T
                 worker_slash_rebate_per_work_unit_num: 29,
                 worker_slash_rebate_per_work_unit_den: 31,
             }),
+            settlement: None,
         }),
         worker: Some("worker-a".into()),
         committed_hash: Some([0x11; 32]),
@@ -1468,6 +1470,7 @@ fn task_metadata_string_field_boundaries_should_affect_state_root() {
             model: None,
             provenance: None,
             metering: None,
+            settlement: None,
         }),
         worker: None,
         committed_hash: None,
@@ -1492,6 +1495,7 @@ fn task_metadata_string_field_boundaries_should_affect_state_root() {
         model: None,
         provenance: None,
         metering: None,
+        settlement: None,
     });
 
     st1.put_task_new(task1).unwrap();
@@ -1567,6 +1571,7 @@ fn task_model_metadata_string_field_boundaries_should_affect_state_root() {
             }),
             provenance: None,
             metering: None,
+            settlement: None,
         }),
         worker: None,
         committed_hash: None,
@@ -1596,6 +1601,7 @@ fn task_model_metadata_string_field_boundaries_should_affect_state_root() {
         }),
         provenance: None,
         metering: None,
+        settlement: None,
     });
 
     st1.put_task_new(base_task).unwrap();
@@ -1648,6 +1654,7 @@ fn task_metering_snapshot_should_affect_state_root() {
                 worker_slash_rebate_per_work_unit_num: 11,
                 worker_slash_rebate_per_work_unit_den: 12,
             }),
+            settlement: None,
         }),
         worker: None,
         committed_hash: None,
@@ -1725,6 +1732,7 @@ fn task_metering_min_accept_work_units_should_affect_state_root() {
                 worker_slash_rebate_per_work_unit_num: 11,
                 worker_slash_rebate_per_work_unit_den: 12,
             }),
+            settlement: None,
         }),
         worker: None,
         committed_hash: None,
@@ -1802,6 +1810,7 @@ fn task_metering_reward_terms_should_affect_state_root_even_when_usage_metrics_m
                 worker_slash_rebate_per_work_unit_num: 11,
                 worker_slash_rebate_per_work_unit_den: 12,
             }),
+            settlement: None,
         }),
         worker: None,
         committed_hash: None,
@@ -1888,6 +1897,7 @@ fn task_metadata_and_proof_type_should_affect_state_root() {
             privacy_tier: Some(PrivacyTier::Internal),
         }),
         metering: None,
+        settlement: None,
     });
     st2.put_task_new(changed_task).unwrap();
 
@@ -2007,6 +2017,7 @@ fn task_provenance_privacy_tier_should_affect_state_root() {
                 privacy_tier: Some(PrivacyTier::Internal),
             }),
             metering: None,
+            settlement: None,
         }),
         worker: None,
         committed_hash: None,
@@ -2936,6 +2947,7 @@ fn restore_task_same_snapshot_scrubs_pending_resolve_after_proof_and_metadata_dr
                 model: None,
                 provenance: None,
                 metering: None,
+                settlement: None,
             }),
             worker: None,
             committed_hash: None,
@@ -2986,6 +2998,7 @@ fn restore_task_same_snapshot_scrubs_pending_resolve_after_proof_and_metadata_dr
         model: None,
         provenance: None,
         metering: None,
+        settlement: None,
     });
     state.restore_task(10, Some(drifted_snapshot));
 
@@ -3571,6 +3584,7 @@ fn restore_task_snapshot_rewinds_state_root_after_proof_and_metadata_mutation() 
                 privacy_tier: Some(PrivacyTier::Internal),
             }),
             metering: None,
+            settlement: None,
         }),
         worker: Some("worker-a".into()),
         committed_hash: Some([0x11; 32]),
@@ -3613,6 +3627,7 @@ fn restore_task_snapshot_rewinds_state_root_after_proof_and_metadata_mutation() 
             privacy_tier: Some(PrivacyTier::Restricted),
         }),
         metering: None,
+        settlement: None,
     });
     state
         .update_task(task_ref, changed_task)
@@ -3684,6 +3699,7 @@ fn restore_task_incomplete_metering_metadata_fails_closed_and_rewinds_to_baselin
                     worker_slash_rebate_per_work_unit_num: 11,
                     worker_slash_rebate_per_work_unit_den: 12,
                 }),
+                settlement: None,
             }),
             worker: Some("worker-a".into()),
             committed_hash: Some([0x21; 32]),
@@ -3805,6 +3821,7 @@ fn restore_task_mismatched_slot_fails_closed_and_keeps_canonical_task_root() {
                 privacy_tier: Some(PrivacyTier::Internal),
             }),
             metering: None,
+            settlement: None,
         }),
         worker: Some("worker-a".into()),
         committed_hash: Some([0x21; 32]),

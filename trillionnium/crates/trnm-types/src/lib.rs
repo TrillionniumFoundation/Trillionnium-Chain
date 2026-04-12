@@ -285,14 +285,21 @@ impl TaskMetadata {
         self.compatibility_report_with_settlement_snapshot(self.settlement.as_ref())
     }
 
+    /// Prefer the inline settlement snapshot once it has been threaded into
+    /// metadata, but keep the out-of-band fallback for legacy callers that
+    /// have not lifted settlement into `TaskMetadata` yet.
+    pub fn effective_settlement_snapshot<'a>(
+        &'a self,
+        settlement: Option<&'a TaskSettlementSnapshot>,
+    ) -> Option<&'a TaskSettlementSnapshot> {
+        self.settlement.as_ref().or(settlement)
+    }
+
     pub fn compatibility_report_with_settlement_snapshot(
         &self,
         settlement: Option<&TaskSettlementSnapshot>,
     ) -> TaskMetadataCompatibilityReport {
-        // Prefer the inline settlement snapshot once it has been threaded into
-        // metadata, but keep the out-of-band fallback for legacy callers that
-        // have not lifted settlement into `TaskMetadata` yet.
-        let settlement = self.settlement.as_ref().or(settlement);
+        let settlement = self.effective_settlement_snapshot(settlement);
         let legacy_note_only = self.note.is_some()
             && self.task_type.is_none()
             && self.input_hash.is_none()
