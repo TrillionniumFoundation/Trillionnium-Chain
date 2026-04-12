@@ -527,6 +527,7 @@ const GOV_ALLOWED_KEYS: &[&str] = &[
     "llm_meter_worker_slash_rebate_per_work_unit_den",
     "resolve_authority",
     "hybrid_settlement_poco_weight_bps",
+    "shadow_settlement_compare_only",
     "emergency_pause",
     "monetary_policy_tick_interval_blocks",
     "monetary_policy_tick_cooldown_blocks",
@@ -553,6 +554,7 @@ const GOV_SENSITIVE_KEYS: &[&str] = &[
     "challenge_min_bond_worker_stake_bps",
     "resolve_authority",
     "hybrid_settlement_poco_weight_bps",
+    "shadow_settlement_compare_only",
 ];
 const GOV_EXPLICIT_VALIDATOR_KEYS: &[&str] = &[
     "max_block_ms",
@@ -576,6 +578,7 @@ const GOV_EXPLICIT_VALIDATOR_KEYS: &[&str] = &[
     "llm_meter_worker_slash_rebate_per_work_unit_den",
     "resolve_authority",
     "hybrid_settlement_poco_weight_bps",
+    "shadow_settlement_compare_only",
     "emergency_pause",
     "monetary_policy_tick_interval_blocks",
     "monetary_policy_tick_cooldown_blocks",
@@ -617,6 +620,7 @@ const GOV_SCHEMA_INVALID_SAMPLES: &[(&str, &str)] = &[
         "resolver-a,governance.resolve_authority",
     ),
     ("hybrid_settlement_poco_weight_bps", "10001"),
+    ("shadow_settlement_compare_only", "TRUE"),
     ("emergency_pause", "TRUE"),
     ("monetary_policy_tick_interval_blocks", "0"),
     ("monetary_policy_tick_cooldown_blocks", "0"),
@@ -1854,6 +1858,10 @@ fn validate_gov_param_value(key: &str, value: &str) -> Result<(), String> {
             .map_err(|err| format!("invalid governance value for {}: {}", key, err)),
         "hybrid_settlement_poco_weight_bps" => {
             let _ = parse_u64_in_range(key, value, 0, 10_000)?;
+            Ok(())
+        }
+        "shadow_settlement_compare_only" => {
+            let _ = parse_bool_strict(key, value)?;
             Ok(())
         }
         "emergency_pause" => {
@@ -11958,6 +11966,56 @@ mod tests {
     }
 
     #[test]
+    fn governance_shadow_settlement_compare_only_is_sensitive_and_timelocked() {
+        let mut st = StateStore::new();
+        st.set_gov_param_unchecked(
+            7352,
+            "shadow_settlement_compare_only".into(),
+            "false".into(),
+        )
+        .unwrap();
+
+        let scheduled = st
+            .set_gov_param(
+                31_100,
+                7352,
+                "shadow_settlement_compare_only".into(),
+                "true".into(),
+            )
+            .unwrap();
+        assert!(matches!(
+            scheduled,
+            GovParamUpdateOutcome::Scheduled {
+                activate_at_height: 31_120
+            }
+        ));
+
+        let err = st
+            .set_gov_param(
+                31_110,
+                7352,
+                "shadow_settlement_compare_only".into(),
+                "true".into(),
+            )
+            .unwrap_err();
+        assert!(err.contains("timelock active"));
+
+        let applied = st
+            .set_gov_param(
+                31_120,
+                7352,
+                "shadow_settlement_compare_only".into(),
+                "true".into(),
+            )
+            .unwrap();
+        assert!(matches!(applied, GovParamUpdateOutcome::Applied(_)));
+        assert_eq!(
+            st.gov_param_string("shadow_settlement_compare_only"),
+            Some("true".into())
+        );
+    }
+
+    #[test]
     fn governance_non_sensitive_param_unaffected_by_timelock() {
         let mut st = StateStore::new();
         let r1 = st
@@ -13614,6 +13672,7 @@ mod tests {
             ("challenge_min_bond_worker_stake_bps", true),
             ("resolve_authority", true),
             ("hybrid_settlement_poco_weight_bps", true),
+            ("shadow_settlement_compare_only", true),
             ("emergency_pause", false),
         ];
 
