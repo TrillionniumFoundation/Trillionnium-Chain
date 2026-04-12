@@ -421,6 +421,14 @@ async function fetchReadonlySnapshotFromApi(): Promise<DashboardSnapshot> {
     fetchNormalizedAuditEventsWithPagination(client),
   ]);
 
+  const grantedAuditCount = auditsResp.audits.filter((item) => item.granted).length;
+  const totalAuditCount = auditsResp.audits.length;
+  const auditCoverageHealth = totalAuditCount === 0
+    ? ("risk" as const)
+    : grantedAuditCount === totalAuditCount
+      ? ("healthy" as const)
+      : ("degraded" as const);
+
   const mapped = {
     kpis: [
       {
@@ -450,12 +458,9 @@ async function fetchReadonlySnapshotFromApi(): Promise<DashboardSnapshot> {
       },
       {
         label: "Audit Coverage",
-        value: `${Math.round((auditsResp.audits.filter((item) => item.granted).length / Math.max(auditsResp.audits.length, 1)) * 100)}%`,
+        value: `${Math.round((grantedAuditCount / Math.max(totalAuditCount, 1)) * 100)}%`,
         delta: "live",
-        health:
-          auditsResp.audits.every((item) => item.granted)
-            ? ("healthy" as const)
-            : ("degraded" as const),
+        health: auditCoverageHealth,
       },
     ],
     tasks: [

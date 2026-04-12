@@ -1134,6 +1134,45 @@ describe("dashboard source normalized audit pagination", () => {
     expect(snapshot.audits[0]?.notes).toBe("No reason provided");
   });
 
+  it("fails closed audit coverage when capability audit data is empty", async () => {
+    const mockClient = {
+      queryTask: vi.fn().mockResolvedValue({
+        task: {
+          id: "341-audit-empty",
+          name: "audit-empty",
+          owner: "ops",
+          status: "running",
+          createdAt: "2026-03-01T00:00:00.000Z",
+          updatedAt: "2026-03-01T00:05:00.000Z",
+          metadata: {},
+        },
+      }),
+      queryEvents: vi.fn().mockResolvedValue({
+        taskId: "341-audit-empty",
+        events: [],
+      }),
+      queryCapabilityAudit: vi.fn().mockResolvedValue({
+        subject: "did:trnm:test",
+        audits: [],
+      }),
+      queryNormalizedAuditEvents: vi.fn().mockResolvedValue({
+        events: [],
+        hasMore: false,
+      }),
+    } as unknown as ReturnType<typeof apiContractClient.createFrontendApiClient>;
+
+    vi.spyOn(apiContractClient, "createFrontendApiClient").mockReturnValue(mockClient);
+
+    const snapshot = await fetchDashboardSnapshot();
+    const auditCoverage = snapshot.kpis.find((kpi) => kpi.label === "Audit Coverage");
+
+    expect(auditCoverage).toMatchObject({
+      value: "0%",
+      health: "risk",
+    });
+    expect(snapshot.audits).toEqual([]);
+  });
+
   it("fails closed when normalized audit pagination cannot be loaded", async () => {
     const mockClient = {
       queryTask: vi
