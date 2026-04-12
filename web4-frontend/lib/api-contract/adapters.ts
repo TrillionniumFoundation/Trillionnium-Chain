@@ -273,8 +273,18 @@ function toOptionalHeightMarker(height: unknown): string | undefined {
 
 function normalizeOptionalText(value: unknown): string | undefined {
   if (typeof value !== "string") return undefined;
-  const trimmed = value.trim();
+  const trimmed = value
+    .replace(/[\u200B\u200C\u200D\u2060\u2063\uFEFF]/g, "")
+    .trim();
   return trimmed.length > 0 ? trimmed : undefined;
+}
+
+function normalizeRequiredText(value: unknown, field: string): string {
+  const normalized = normalizeOptionalText(value);
+  if (normalized == null) {
+    throw new Error(`invalid ${field}`);
+  }
+  return normalized;
 }
 
 export const adaptQueryTask = (payload: unknown): QueryTaskResult => {
@@ -522,15 +532,30 @@ export const adaptQueryNormalizedAuditEvents = (
         : undefined;
     const normalizedRequestedCursor = normalizeOptionalCursor(parsedQuery?.cursor);
     const rawHasMore = "hasMore" in canonical.data ? canonical.data.hasMore : undefined;
+
+    if (rawHasMore === true && normalizedNextCursor == null) {
+      throw normalizeSchemaError({
+        message: "normalized audit page with hasMore=true must include a non-blank nextCursor",
+      });
+    }
+
     const normalizedHasMore =
       rawHasMore === true
-        ? normalizedNextCursor != null && normalizedNextCursor !== normalizedRequestedCursor
+        ? normalizedNextCursor !== normalizedRequestedCursor
         : rawHasMore;
 
     const events = canonical.data.events.map((event) => ({
-      ...event,
+      source: normalizeRequiredText(event.source, "normalized audit source"),
+      event_type: normalizeRequiredText(event.event_type, "normalized audit event_type"),
+      actor: normalizeOptionalText(event.actor),
+      object_id: normalizeOptionalText(event.object_id),
+      related_id: normalizeOptionalText(event.related_id),
+      amount: event.amount,
+      reason: normalizeOptionalText(event.reason),
+      note: normalizeOptionalText(event.note),
       checkedAt: event.checkedAt == null ? undefined : toCheckedAt(event.checkedAt),
       timestamp: event.timestamp == null ? undefined : toIsoDatetimeString(event.timestamp),
+      subject: normalizeOptionalText(event.subject),
     }));
     const total = "total" in canonical.data ? canonical.data.total : undefined;
 
@@ -570,17 +595,17 @@ export const adaptQueryNormalizedAuditEvents = (
   if (!rpc.success) throw normalizeSchemaError(rpc.error.flatten());
 
   const events = rpc.data.map((event) => ({
-    source: event.source,
-    event_type: event.eventType,
-    actor: event.actor,
-    object_id: event.objectId,
-    related_id: event.relatedId,
+    source: normalizeRequiredText(event.source, "normalized audit source"),
+    event_type: normalizeRequiredText(event.eventType, "normalized audit eventType"),
+    actor: normalizeOptionalText(event.actor),
+    object_id: normalizeOptionalText(event.objectId),
+    related_id: normalizeOptionalText(event.relatedId),
     amount: event.amount,
-    reason: event.reason,
-    note: event.note,
+    reason: normalizeOptionalText(event.reason),
+    note: normalizeOptionalText(event.note),
     checkedAt: event.checkedAt == null ? undefined : toCheckedAt(event.checkedAt),
     timestamp: event.recordedAt == null ? undefined : toIsoDatetimeString(event.recordedAt),
-    subject: event.subject,
+    subject: normalizeOptionalText(event.subject),
   }));
 
   return { events, hasMore: false };
@@ -591,24 +616,65 @@ export const adaptQueryCapabilityAudit = (
 ): QueryCapabilityAuditResult => {
   const canonical = queryCapabilityAuditResponseSchema.safeParse(payload);
   if (canonical.success) {
-    return {
-      subject: canonical.data.subject,
-      audits: canonical.data.audits.map((audit) => ({
-        ...audit,
-        checkedAt: toCheckedAt(audit.checkedAt),
-      })),
-    };
+    try {
+      const normalizedSubject = normalizeRequiredText(
+        canonical.data.subject,
+        "capability audit subject",
+      );
+
+      return {
+        subject: normalizedSubject,
+        audits: canonical.data.audits.map((audit) => {
+          const auditSubject = normalizeRequiredText(
+            audit.subject,
+            "capability audit subject",
+          );
+
+          if (auditSubject !== normalizedSubject) {
+            throw normalizeSchemaError({
+              message: "capability audit payload contains mixed subjects",
+              subject: normalizedSubject,
+              auditSubject,
+            });
+          }
+
+          return {
+            subject: auditSubject,
+            capability: normalizeRequiredText(
+              audit.capability,
+              "capability audit capability",
+            ),
+            granted: audit.granted,
+            reason: normalizeOptionalText(audit.reason),
+            checkedAt: toCheckedAt(audit.checkedAt),
+          };
+        }),
+      };
+    } catch (error) {
+      if (error instanceof FrontendApiError) {
+        throw error;
+      }
+      throw normalizeSchemaError(error);
+    }
   }
 
   const rpc = rpcCapabilityAuditSchema.safeParse(payload);
   if (!rpc.success) throw normalizeSchemaError(rpc.error.flatten());
 
   try {
+    const normalizedSubject = normalizeRequiredText(
+      rpc.data.token.subject_did,
+      "capability audit subject",
+    );
+    const normalizedCapability = normalizeRequiredText(
+      rpc.data.token.scope,
+      "capability audit capability",
+    );
     const tokenRevokedAt = toOptionalHeightMarker(rpc.data.token.revoked_at);
     const tokenIsRevoked = tokenRevokedAt != null;
 
     return {
-      subject: rpc.data.token.subject_did,
+      subject: normalizedSubject,
       audits: rpc.data.owner_history.map((entry) => {
         const actionGrantsCapability =
           entry.action === "CAPABILITY_ISSUED" || entry.action === "CAPABILITY_RENEWED";
@@ -621,8 +687,8 @@ export const adaptQueryCapabilityAudit = (
         const normalizedNote = normalizeOptionalText(entry.note);
 
         return {
-          subject: rpc.data.token.subject_did,
-          capability: rpc.data.token.scope,
+          subject: normalizedSubject,
+          capability: normalizedCapability,
           granted: actionGrantsCapability,
           reason:
             tokenIsRevoked && actionTouchesCapability

@@ -199,20 +199,33 @@ const mapEventCategory = (
 };
 
 const normalizeDashboardEventToken = (value: string | undefined, fallback: string): string => {
-  const normalized = value?.trim();
+  const normalized = value
+    ?.replace(/[\u200B\u200C\u200D\u2060\u2063\uFEFF]/g, "")
+    .trim();
   return normalized && normalized.length > 0 ? normalized : fallback;
 };
 
 const normalizeDashboardText = (value: string | undefined, fallback: string): string => {
-  const normalized = value?.trim();
+  const normalized = value
+    ?.replace(/[\u200B\u200C\u200D\u2060\u2063\uFEFF]/g, "")
+    .trim();
   return normalized && normalized.length > 0 ? normalized : fallback;
 };
 
+const normalizeDashboardSignalTokens = (...values: Array<string | undefined>): string =>
+  values
+    .join(" ")
+    .replace(/[\u200B\u200C\u200D\u2060\u2063\uFEFF]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim();
+
 const mapNormalizedAuditSeverity = (event: NormalizedAuditEvent): DashboardSnapshot["events"][number]["severity"] => {
   const normalizedEventType = normalizeDashboardEventToken(event.event_type, "unknown-event");
-  const tokens = `${event.reason ?? ""} ${event.note ?? ""} ${normalizedEventType}`.toLowerCase();
+  const tokens = normalizeDashboardSignalTokens(event.reason, event.note, normalizedEventType);
 
   if (
+    tokens.includes("critical") ||
     tokens.includes("error") ||
     tokens.includes("fail") ||
     tokens.includes("reject") ||
@@ -240,7 +253,9 @@ const mapNormalizedAuditToDashboardEvent = (event: NormalizedAuditEvent, fallbac
   const source = normalizeDashboardEventToken(event.source, "unknown-source");
   const eventType = normalizeDashboardEventToken(event.event_type, "unknown-event");
   const actor = normalizeDashboardEventToken(event.actor, "system");
-  const objectId = event.object_id?.trim();
+  const objectId = event.object_id
+    ?.replace(/[\u200B\u200C\u200D\u2060\u2063\uFEFF]/g, "")
+    .trim();
 
   return {
     id: objectId && objectId.length > 0
@@ -298,17 +313,17 @@ const resolveNormalizedAuditMaxPages = (): number =>
 
 const getNormalizedAuditEventKey = (event: NormalizedAuditEvent): string =>
   [
-    event.source,
-    event.event_type,
-    event.object_id ?? "",
-    event.related_id ?? "",
-    event.actor ?? "",
-    event.subject ?? "",
-    event.timestamp ?? "",
-    event.checkedAt ?? "",
+    normalizeDashboardEventToken(event.source, "unknown-source"),
+    normalizeDashboardEventToken(event.event_type, "unknown-event"),
+    normalizeDashboardText(event.object_id, ""),
+    normalizeDashboardText(event.related_id, ""),
+    normalizeDashboardText(event.actor, ""),
+    normalizeDashboardText(event.subject, ""),
+    normalizeDashboardText(event.timestamp, ""),
+    normalizeDashboardText(event.checkedAt, ""),
     event.amount == null ? "" : String(event.amount),
-    event.reason ?? "",
-    event.note ?? "",
+    normalizeDashboardText(event.reason, ""),
+    normalizeDashboardText(event.note, ""),
   ].join("\u001f");
 
 const fetchNormalizedAuditEventsWithPagination = async (
@@ -335,12 +350,12 @@ const fetchNormalizedAuditEventsWithPagination = async (
       allEvents.push(event);
     }
 
-    const nextCursor = pageResp.nextCursor?.trim();
-    if (pageResp.hasMore === true && !(nextCursor && nextCursor.length > 0)) {
+    const nextCursor = normalizeOptionalCursor(pageResp.nextCursor);
+    if (pageResp.hasMore === true && nextCursor == null) {
       throw new Error("Normalized audit pagination declared more pages without a next cursor");
     }
 
-    hasMore = pageResp.hasMore === true && !!(nextCursor && nextCursor.length > 0);
+    hasMore = pageResp.hasMore === true && nextCursor != null;
 
     if (!hasMore || !nextCursor) break;
 

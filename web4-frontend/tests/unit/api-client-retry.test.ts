@@ -104,6 +104,30 @@ describe("api-contract client and retry hardening", () => {
     expect(String(calledUrl)).toContain("cursor=cursor-1");
   });
 
+  it("normalizes whitespace and zero-width noise in normalized audit query params before request", async () => {
+    const fetchImpl = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({ events: [] }),
+    });
+
+    const client = createFrontendApiClient({
+      baseUrl: "http://127.0.0.1:8080",
+      fetchImpl: fetchImpl as unknown as typeof fetch,
+    });
+
+    await client.queryNormalizedAuditEvents({
+      source: " \uFEFF governance-guard\u200B ",
+      eventType: "\n governance.proposal_executed \u2060",
+      limit: 12,
+      cursor: "\u200D cursor-1 \u200B",
+    });
+
+    expect(fetchImpl).toHaveBeenCalledWith(
+      "http://127.0.0.1:8080/query-normalized-audit-events?source=governance-guard&eventType=governance.proposal_executed&cursor=cursor-1&limit=12",
+      expect.objectContaining({ method: "GET" }),
+    );
+  });
+
   it("fails closed on malformed normalized audit query params", async () => {
     const fetchImpl = vi.fn();
 
@@ -123,6 +147,33 @@ describe("api-contract client and retry hardening", () => {
       expect(error).toMatchObject({
         code: "INVALID_PAYLOAD",
       });
+    }
+
+    expect(fetchImpl).not.toHaveBeenCalled();
+  });
+
+  it("fails closed when normalized audit query params become blank after zero-width cleanup", async () => {
+    const fetchImpl = vi.fn();
+
+    const client = createFrontendApiClient({
+      baseUrl: "http://127.0.0.1:8080",
+      fetchImpl: fetchImpl as unknown as typeof fetch,
+    });
+
+    for (const invalidQuery of [
+      { source: "\uFEFF \u200B\u200D " },
+      { eventType: "\u2060 \uFEFF " },
+      { cursor: "\u200B \u2063 " },
+    ]) {
+      try {
+        client.queryNormalizedAuditEvents(invalidQuery);
+        throw new Error("expected zero-width-only query field to throw");
+      } catch (error) {
+        expect(error).toBeInstanceOf(FrontendApiError);
+        expect(error).toMatchObject({
+          code: "INVALID_PAYLOAD",
+        });
+      }
     }
 
     expect(fetchImpl).not.toHaveBeenCalled();
@@ -266,6 +317,28 @@ describe("api-contract client and retry hardening", () => {
     });
 
     await client.queryCapabilityAudit("  did:trnm:alice/ops  ");
+
+    expect(fetchImpl).toHaveBeenCalledWith(
+      "http://127.0.0.1:8080/query-capability-audit/did%3Atrnm%3Aalice%2Fops",
+      expect.objectContaining({ method: "GET" }),
+    );
+  });
+
+  it("strips zero-width cursor noise from capability audit subject before path construction", async () => {
+    const fetchImpl = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        subject: "did:trnm:alice/ops",
+        audits: [],
+      }),
+    });
+
+    const client = createFrontendApiClient({
+      baseUrl: "http://127.0.0.1:8080",
+      fetchImpl: fetchImpl as unknown as typeof fetch,
+    });
+
+    await client.queryCapabilityAudit("\uFEFF did:trnm:alice/ops\u200B ");
 
     expect(fetchImpl).toHaveBeenCalledWith(
       "http://127.0.0.1:8080/query-capability-audit/did%3Atrnm%3Aalice%2Fops",

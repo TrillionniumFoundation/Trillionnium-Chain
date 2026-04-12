@@ -31,21 +31,57 @@ export const NORMALIZED_AUDIT_EVENTS_QUERY_PARAM_KEYS = {
   cursor: "cursor",
 } as const satisfies Record<keyof NormalizedAuditEventsQuery, string>;
 
+const normalizeOptionalQueryToken = (value: string | undefined): string | undefined => {
+  if (typeof value !== "string") return undefined;
+
+  const normalized = value
+    .replace(/[\u200B\u200C\u200D\u2060\u2063\uFEFF]/g, "")
+    .trim();
+
+  return normalized.length > 0 ? normalized : undefined;
+};
+
+const normalizeNormalizedAuditQueryToken = (
+  value: unknown,
+  label: string,
+): string | undefined => {
+  if (value == null) return undefined;
+  if (typeof value !== "string") return value as never;
+
+  const normalized = normalizeOptionalQueryToken(value);
+  if (normalized == null) {
+    throw new FrontendApiError({
+      code: "INVALID_PAYLOAD",
+      message: `Normalized audit query ${label} must be a non-empty string`,
+      causeData: value,
+      retryable: false,
+    });
+  }
+
+  return normalized;
+};
+
 export const buildNormalizedAuditEventsQueryParams = (
   query: NormalizedAuditEventsQuery,
 ): URLSearchParams => {
   const parsedQuery = normalizedAuditEventsQuerySchema.parse(query);
   const params = new URLSearchParams();
 
-  if (parsedQuery.source) {
-    params.set(NORMALIZED_AUDIT_EVENTS_QUERY_PARAM_KEYS.source, parsedQuery.source);
+  const normalizedSource = normalizeOptionalQueryToken(parsedQuery.source);
+  if (normalizedSource) {
+    params.set(NORMALIZED_AUDIT_EVENTS_QUERY_PARAM_KEYS.source, normalizedSource);
   }
-  if (parsedQuery.eventType) {
-    params.set(NORMALIZED_AUDIT_EVENTS_QUERY_PARAM_KEYS.eventType, parsedQuery.eventType);
+
+  const normalizedEventType = normalizeOptionalQueryToken(parsedQuery.eventType);
+  if (normalizedEventType) {
+    params.set(NORMALIZED_AUDIT_EVENTS_QUERY_PARAM_KEYS.eventType, normalizedEventType);
   }
-  if (parsedQuery.cursor) {
-    params.set(NORMALIZED_AUDIT_EVENTS_QUERY_PARAM_KEYS.cursor, parsedQuery.cursor);
+
+  const normalizedCursor = normalizeOptionalQueryToken(parsedQuery.cursor);
+  if (normalizedCursor) {
+    params.set(NORMALIZED_AUDIT_EVENTS_QUERY_PARAM_KEYS.cursor, normalizedCursor);
   }
+
   if (parsedQuery.limit != null) {
     params.set(NORMALIZED_AUDIT_EVENTS_QUERY_PARAM_KEYS.limit, String(parsedQuery.limit));
   }
@@ -136,7 +172,9 @@ const normalizeRequiredPathParam = (value: unknown, label: string): string => {
     });
   }
 
-  const trimmed = value.trim();
+  const trimmed = value
+    .replace(/[\u200B\u200C\u200D\u2060\u2063\uFEFF]/g, "")
+    .trim();
   if (!trimmed) {
     throw new FrontendApiError({
       code: "INVALID_PAYLOAD",
@@ -354,7 +392,28 @@ export function createFrontendApiClient(config: BaseClientConfig) {
       query: NormalizedAuditEventsQuery = {},
       options?: QueryOptions,
     ): Promise<QueryNormalizedAuditEventsResult> {
-      const normalizedQuery = normalizedAuditEventsQuerySchema.safeParse(query);
+      let normalizedQueryInput: NormalizedAuditEventsQuery;
+      try {
+        normalizedQueryInput = {
+          ...query,
+          source: normalizeNormalizedAuditQueryToken(query.source, "source"),
+          eventType: normalizeNormalizedAuditQueryToken(query.eventType, "eventType"),
+          cursor: normalizeNormalizedAuditQueryToken(query.cursor, "cursor"),
+          limit: query.limit,
+        };
+      } catch (error) {
+        if (error instanceof FrontendApiError) {
+          throw error;
+        }
+        throw new FrontendApiError({
+          code: "INVALID_PAYLOAD",
+          message: "Normalized audit query does not match frontend API contract",
+          causeData: error,
+          retryable: false,
+        });
+      }
+
+      const normalizedQuery = normalizedAuditEventsQuerySchema.safeParse(normalizedQueryInput);
       if (!normalizedQuery.success) {
         throw new FrontendApiError({
           code: "INVALID_PAYLOAD",

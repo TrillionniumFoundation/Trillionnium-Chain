@@ -111,9 +111,9 @@ describe("normalized audit query contract", () => {
 
   it("normalizes exported query-param helper inputs before serialization", () => {
     const params = buildNormalizedAuditEventsQueryParams({
-      source: "\uFEFF  governance-guard\u200B ",
-      eventType: "\u200D governance.proposal_executed \u2060",
-      cursor: "\uFEFF cursor-2\u200B ",
+      source: " \uFEFF governance-guard\u200B ",
+      eventType: "\n governance.proposal_executed \u2060",
+      cursor: "\u200D cursor-2 \u200B",
       limit: 50,
     });
 

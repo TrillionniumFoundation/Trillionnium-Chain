@@ -60,8 +60,8 @@ export const queryCapabilityAuditResponseSchema = z.object({
 
 
 export const normalizedAuditEventSchema = z.object({
-  source: z.string().min(1),
-  event_type: z.string().min(1),
+  source: z.string().trim().min(1),
+  event_type: z.string().trim().min(1),
   actor: z.string().min(1).optional(),
   object_id: z.string().min(1).optional(),
   related_id: z.string().min(1).optional(),

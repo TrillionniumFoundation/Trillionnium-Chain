@@ -998,6 +998,32 @@ describe("api-contract adapters", () => {
     ).toThrow(FrontendApiError);
   });
 
+  it("fails closed on canonical normalized audit-events items with blank source or event type", () => {
+    expect(() =>
+      adaptQueryNormalizedAuditEvents({
+        events: [
+          {
+            source: "   ",
+            event_type: "bridge_relay.proof_submitted",
+            actor: "validator-1",
+          },
+        ],
+      }),
+    ).toThrow(FrontendApiError);
+
+    expect(() =>
+      adaptQueryNormalizedAuditEvents({
+        events: [
+          {
+            source: "bridge-relay",
+            event_type: "\n\t",
+            actor: "validator-1",
+          },
+        ],
+      }),
+    ).toThrow(FrontendApiError);
+  });
+
   it("fails closed on malformed canonical normalized audit-events envelope", () => {
     expect(() =>
       adaptQueryNormalizedAuditEvents({
@@ -1203,6 +1229,52 @@ describe("api-contract adapters", () => {
     expect(out.audits[0]?.checkedAt).toBe("height:123");
   });
 
+  it("normalizes rpc capability audit subject and capability before returning them", () => {
+    const out = adaptQueryCapabilityAudit({
+      token: {
+        subject_did: "\uFEFF did:trnm:bob \u200B",
+        scope: "\u200D AUDIT_READ \u2060",
+      },
+      owner_history: [
+        {
+          action: "CAPABILITY_ISSUED",
+          at_height: 123,
+          note: "ok",
+        },
+      ],
+    });
+
+    expect(out).toEqual({
+      subject: "did:trnm:bob",
+      audits: [
+        {
+          subject: "did:trnm:bob",
+          capability: "AUDIT_READ",
+          granted: true,
+          reason: "ok",
+          checkedAt: "height:123",
+        },
+      ],
+    });
+  });
+
+  it("fails closed when rpc capability audit scope becomes blank after normalization", () => {
+    expect(() =>
+      adaptQueryCapabilityAudit({
+        token: {
+          subject_did: "did:trnm:bob",
+          scope: "\uFEFF \u200B\u200D ",
+        },
+        owner_history: [
+          {
+            action: "CAPABILITY_ISSUED",
+            at_height: 123,
+          },
+        ],
+      }),
+    ).toThrow(FrontendApiError);
+  });
+
   it("preserves historical grant entries while annotating token-revoked capability audit state", () => {
     const out = adaptQueryCapabilityAudit({
       token: {
@@ -1297,6 +1369,31 @@ describe("api-contract adapters", () => {
     });
   });
 
+  it("treats zero-width rpc capability audit note noise as blank and falls back to action", () => {
+    const out = adaptQueryCapabilityAudit({
+      token: {
+        subject_did: "did:trnm:carol",
+        scope: "AUDIT_READ",
+      },
+      owner_history: [
+        {
+          action: "CAPABILITY_REVOKED",
+          at_height: 127,
+          note: "\uFEFF \u200B\u200D ",
+        },
+      ],
+    });
+
+    expect(out.subject).toBe("did:trnm:carol");
+    expect(out.audits[0]).toEqual({
+      subject: "did:trnm:carol",
+      capability: "AUDIT_READ",
+      granted: false,
+      reason: "CAPABILITY_REVOKED",
+      checkedAt: "height:127",
+    });
+  });
+
   it("accepts canonical capability audit payload with height marker checkedAt", () => {
     const out = adaptQueryCapabilityAudit({
       subject: "did:trnm:bob",
@@ -1334,6 +1431,50 @@ describe("api-contract adapters", () => {
     expect(out.audits[0]?.granted).toBe(false);
   });
 
+  it("normalizes canonical capability audit subjects and reasons before returning them", () => {
+    const out = adaptQueryCapabilityAudit({
+      subject: "\uFEFF did:trnm:bob \u200B",
+      audits: [
+        {
+          subject: "\u200D did:trnm:bob \u2060",
+          capability: "\uFEFF AUDIT_READ \u200B",
+          granted: true,
+          checkedAt: "height:321",
+          reason: "\uFEFF delegated \u200B",
+        },
+      ],
+    });
+
+    expect(out).toEqual({
+      subject: "did:trnm:bob",
+      audits: [
+        {
+          subject: "did:trnm:bob",
+          capability: "AUDIT_READ",
+          granted: true,
+          checkedAt: "height:321",
+          reason: "delegated",
+        },
+      ],
+    });
+  });
+
+  it("fails closed when canonical capability audit entries drift to a different subject", () => {
+    expect(() =>
+      adaptQueryCapabilityAudit({
+        subject: "did:trnm:bob",
+        audits: [
+          {
+            subject: "did:trnm:alice",
+            capability: "AUDIT_READ",
+            granted: true,
+            checkedAt: "height:321",
+          },
+        ],
+      }),
+    ).toThrow(FrontendApiError);
+  });
+
   it("fails closed on canonical capability audit entries with unknown fields", () => {
     expect(() =>
       adaptQueryCapabilityAudit({
@@ -1348,6 +1489,24 @@ describe("api-contract adapters", () => {
             unexpectedFlag: true,
           },
         ],
+      }),
+    ).toThrow(FrontendApiError);
+  });
+
+  it("fails closed when canonical normalized audit pagination advertises more pages with a blank cursor", () => {
+    expect(() =>
+      adaptQueryNormalizedAuditEvents({
+        events: [
+          {
+            source: "bridge-relay",
+            event_type: "bridge_relay.proof_submitted",
+            actor: "validator-a",
+            object_id: "proof-blank-cursor",
+            timestamp: "2026-03-03T00:00:00.000Z",
+          },
+        ],
+        hasMore: true,
+        nextCursor: " \u200B\uFEFF ",
       }),
     ).toThrow(FrontendApiError);
   });
