@@ -405,6 +405,22 @@ mod tests {
     }
 
     #[test]
+    fn parse_http_request_target_rejects_ambiguous_query_delimiters_fail_closed() {
+        assert_eq!(
+            parse_http_request_target("GET /healthz?probe=lb?shadow=1 HTTP/1.1"),
+            None
+        );
+        assert_eq!(
+            parse_http_request_target("HEAD /-/readyz%3Fprobe=lb HTTP/1.1"),
+            None
+        );
+        assert_eq!(
+            parse_http_request_target("GET /-/statusz%3fprobe=lb HTTP/1.1"),
+            None
+        );
+    }
+
+    #[test]
     fn query_string_is_ignored_for_health_probe_alias_matching() {
         let request = parse_http_request_target("HEAD /-/STATUSZ/?from=ops HTTP/1.1").unwrap();
         let path = request.1.split('?').next().unwrap();
