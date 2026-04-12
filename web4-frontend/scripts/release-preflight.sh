@@ -18,24 +18,41 @@ mkdir -p "$REPORT_DIR"
   echo "[release-preflight] started: $(date -u '+%Y-%m-%dT%H:%M:%SZ')"
   echo "[release-preflight] root: $ROOT_DIR"
 
+  if [[ "${CI_RUN_E2E:-0}" == "1" ]]; then
+    echo "[release-preflight] e2e: enabled via CI_RUN_E2E=1"
+    total_steps=6
+  else
+    echo "[release-preflight] e2e: skipped (set CI_RUN_E2E=1 to enable)"
+    total_steps=5
+  fi
+
   echo
-  echo "== 1/5 lint =="
+  echo "== 1/${total_steps} lint =="
   npm run lint
 
   echo
-  echo "== 2/5 typecheck =="
+  echo "== 2/${total_steps} typecheck =="
   npm run typecheck
 
   echo
-  echo "== 3/5 test =="
+  echo "== 3/${total_steps} test =="
   npm run test
 
   echo
-  echo "== 4/5 contract =="
+  echo "== 4/${total_steps} contract =="
   npm run test:contract
 
+  if [[ "${CI_RUN_E2E:-0}" == "1" ]]; then
+    echo
+    echo "== 5/${total_steps} e2e =="
+    npm run --if-present test:e2e
+    build_step=6
+  else
+    build_step=5
+  fi
+
   echo
-  echo "== 5/5 build =="
+  echo "== ${build_step}/${total_steps} build =="
   if [[ -d .next ]]; then
     echo "[release-preflight] cleaning previous .next artifacts"
     rm -rf .next
