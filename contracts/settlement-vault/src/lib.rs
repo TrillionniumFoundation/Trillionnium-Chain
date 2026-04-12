@@ -12,6 +12,7 @@ pub enum VaultError {
     NotPaused,
     InvalidAmount,
     InvalidBeneficiary,
+    InvalidRequestId,
     InsufficientBalance,
     DuplicateRequest,
     RequestNotFound,
@@ -229,6 +230,7 @@ impl SettlementVault {
     ) -> Result<(), VaultError> {
         self.ensure_owner(caller)?;
         self.ensure_not_paused()?;
+        self.ensure_request_id(request_id)?;
 
         if amount == 0 {
             return Err(VaultError::InvalidAmount);
@@ -270,6 +272,7 @@ impl SettlementVault {
     pub fn release(&mut self, caller: &str, request_id: &str) -> Result<(), VaultError> {
         self.ensure_owner(caller)?;
         self.ensure_not_paused()?;
+        self.ensure_request_id(request_id)?;
 
         let (account, amount) = {
             let lock = self
@@ -307,6 +310,7 @@ impl SettlementVault {
     ) -> Result<(), VaultError> {
         self.ensure_owner(caller)?;
         self.ensure_not_paused()?;
+        self.ensure_request_id(request_id)?;
 
         let (account, amount) = {
             let lock = self
@@ -427,6 +431,13 @@ impl SettlementVault {
         Ok(())
     }
 
+    fn ensure_request_id(&self, request_id: &str) -> Result<(), VaultError> {
+        if request_id.trim().is_empty() {
+            return Err(VaultError::InvalidRequestId);
+        }
+        Ok(())
+    }
+
     fn ensure_creditable_balance(&self, account: &str, amount: u128) -> Result<(), VaultError> {
         self.balance_of(account)
             .checked_add(amount)
@@ -524,6 +535,38 @@ mod tests {
         assert!(vault.balances.get("ghost").is_none());
         assert!(vault.lock_record("req-missing").is_none());
         assert!(vault.audit_log().is_empty());
+    }
+
+    #[test]
+    fn blank_request_ids_are_rejected_without_state_or_audit_mutation() {
+        let mut vault = SettlementVault::new("owner");
+
+        vault.deposit("owner", "alice", 50).unwrap();
+        let audit_len_after_deposit = vault.audit_log().len();
+
+        assert_eq!(
+            vault.lock("owner", "   ", "alice", 10).unwrap_err(),
+            VaultError::InvalidRequestId
+        );
+        assert_eq!(vault.balance_of("alice"), 50);
+        assert!(vault.lock_record("   ").is_none());
+        assert_eq!(vault.audit_log().len(), audit_len_after_deposit);
+
+        assert_eq!(
+            vault.release("owner", "   ").unwrap_err(),
+            VaultError::InvalidRequestId
+        );
+        assert_eq!(
+            vault.slash("owner", "   ", "treasury").unwrap_err(),
+            VaultError::InvalidRequestId
+        );
+        assert_eq!(vault.audit_log().len(), audit_len_after_deposit);
+        assert!(!vault.normalized_audit_log().iter().any(|event| {
+            matches!(
+                &event.event_type[..],
+                "vault.locked" | "vault.released" | "vault.slashed"
+            ) && event.object_id.as_deref() == Some("   ")
+        }));
     }
 
     #[test]
