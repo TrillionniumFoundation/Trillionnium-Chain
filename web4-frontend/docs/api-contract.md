@@ -28,7 +28,7 @@
 
 约定：只读查询 contract 在 TypeScript 层按 `Readonly` / `ReadonlyArray` 暴露，调用方不应原地修改解析后的响应对象或事件数组；需要派生视图时请复制后处理。
 
-补充：`checkedAt` 目前是共享 contract 字段，语义只接受两类值——链高度标记（`height:<non-negative integer>`）或 ISO-8601 时间字符串。类型层与 zod schema 需保持同步；TypeScript 合约侧应保持为收窄后的 `HeightCheckedAt | IsoDatetimeString`，不应把它当成任意自由格式时间文本。
+补充：`checkedAt` 目前是共享 contract 字段，语义只接受两类值——链高度标记（`height:<non-negative integer>`）或 ISO-8601 时间字符串。类型层与 zod schema 需保持同步；TypeScript 合约侧应保持为收窄后的 `HeightCheckedAt | IsoDatetimeString`，其中 `HeightCheckedAt` 应显式排除负高度标记，不应把它当成任意自由格式时间文本。
 
 ## 错误模型（FrontendApiError.code）
 
@@ -107,14 +107,20 @@ const normalizedEvents = await api.queryNormalizedAuditEvents({
 ## 统一审计事件分页约定（可选）
 
 `queryNormalizedAuditEvents(query?, options?)` 支持分页参数：
-- `source`：按合约来源过滤（如 `"bridge-relay"` / `"governance-guard"` / `"settlement-vault"`）
-- `eventType`：按事件类型过滤（支持前缀或全量匹配）
+- `source`：按合约来源过滤（如 `"bridge-relay"` / `"governance-guard"` / `"settlement-vault"`），会先做去首尾空白/零宽字符归一化，归一化后不能为空
+- `eventType`：按事件类型过滤（支持前缀或全量匹配），会先做去首尾空白/零宽字符归一化，归一化后不能为空
 - `limit`：每页数量（正整数）
-- `cursor`：游标（上一次返回 `nextCursor` 继续拉取）
+- `cursor`：游标（上一次返回 `nextCursor` 继续拉取），会先做去首尾空白/零宽字符归一化，归一化后不能为空
 
 响应可选返回字段：
 - `nextCursor`：下一页游标
 - `hasMore`：是否有更多
 - `total`：后端可选的总记录数估计
 
-额外约束：若响应声明 `hasMore: true`，则必须同时返回非空 `nextCursor`；否则前端按合约违规 fail-closed 处理。
+额外约束：若响应声明 `hasMore: true`，则必须同时返回**去空白/去零宽字符后仍非空**的 `nextCursor`；否则前端按合约违规 fail-closed 处理。
+
+前端还会对 `nextCursor` 做一次同口径归一化。如果归一化后的游标与本次请求的 `cursor` 相同，会被视为分页回环并降级为终页（`hasMore: false`），避免只读查询面陷入自循环。
+
+类型对齐约定：TypeScript 合约层同样保持这条不变量，`QueryNormalizedAuditEventsResult` 仅允许两种形态：
+- `hasMore: true` + 非空 `nextCursor`
+- `hasMore` 缺省/`false`，此时 `nextCursor` 可选

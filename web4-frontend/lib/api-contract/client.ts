@@ -34,19 +34,20 @@ export const NORMALIZED_AUDIT_EVENTS_QUERY_PARAM_KEYS = {
 export const buildNormalizedAuditEventsQueryParams = (
   query: NormalizedAuditEventsQuery,
 ): URLSearchParams => {
+  const parsedQuery = normalizedAuditEventsQuerySchema.parse(query);
   const params = new URLSearchParams();
 
-  if (query.source) {
-    params.set(NORMALIZED_AUDIT_EVENTS_QUERY_PARAM_KEYS.source, query.source);
+  if (parsedQuery.source) {
+    params.set(NORMALIZED_AUDIT_EVENTS_QUERY_PARAM_KEYS.source, parsedQuery.source);
   }
-  if (query.eventType) {
-    params.set(NORMALIZED_AUDIT_EVENTS_QUERY_PARAM_KEYS.eventType, query.eventType);
+  if (parsedQuery.eventType) {
+    params.set(NORMALIZED_AUDIT_EVENTS_QUERY_PARAM_KEYS.eventType, parsedQuery.eventType);
   }
-  if (query.cursor) {
-    params.set(NORMALIZED_AUDIT_EVENTS_QUERY_PARAM_KEYS.cursor, query.cursor);
+  if (parsedQuery.cursor) {
+    params.set(NORMALIZED_AUDIT_EVENTS_QUERY_PARAM_KEYS.cursor, parsedQuery.cursor);
   }
-  if (query.limit != null) {
-    params.set(NORMALIZED_AUDIT_EVENTS_QUERY_PARAM_KEYS.limit, String(query.limit));
+  if (parsedQuery.limit != null) {
+    params.set(NORMALIZED_AUDIT_EVENTS_QUERY_PARAM_KEYS.limit, String(parsedQuery.limit));
   }
 
   return params;

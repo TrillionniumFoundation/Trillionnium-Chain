@@ -182,12 +182,18 @@ function toIsoFromUnixMs(ts: unknown): IsoDatetimeString {
 
 function toHeightMarker(height: unknown): HeightCheckedAt {
   const num = typeof height === "string" ? Number(height) : height;
-  if (!Number.isFinite(num)) throw new Error("invalid height");
-  return `height:${Math.trunc(Number(num))}` as HeightCheckedAt;
+  if (!Number.isFinite(num) || !Number.isInteger(num) || Number(num) < 0) {
+    throw new Error("invalid height");
+  }
+  return `height:${Number(num)}` as HeightCheckedAt;
 }
 
 function toCheckedAt(value: z.infer<typeof checkedAtSchema>): CheckedAt {
   return value as CheckedAt;
+}
+
+function toIsoDatetimeString(value: string): IsoDatetimeString {
+  return value as IsoDatetimeString;
 }
 
 function toOptionalHeightMarker(height: unknown): string | undefined {
@@ -204,14 +210,26 @@ function normalizeOptionalText(value: unknown): string | undefined {
 
 export const adaptQueryTask = (payload: unknown): QueryTaskResult => {
   const canonical = queryTaskResponseSchema.safeParse(payload);
-  if (canonical.success) return canonical.data;
+  if (canonical.success) {
+    return {
+      task: {
+        ...canonical.data.task,
+        createdAt: toIsoDatetimeString(canonical.data.task.createdAt),
+        updatedAt:
+          canonical.data.task.updatedAt == null
+            ? undefined
+            : toIsoDatetimeString(canonical.data.task.updatedAt),
+      },
+    };
+  }
 
   const rpc = rpcTaskSchema.safeParse(payload);
   if (!rpc.success) throw normalizeSchemaError(rpc.error.flatten());
 
   const task = rpc.data;
-  const derivedIso =
-    task.version != null ? new Date(task.version * 1000).toISOString() : new Date(0).toISOString();
+  const derivedIso = toIsoDatetimeString(
+    task.version != null ? new Date(task.version * 1000).toISOString() : new Date(0).toISOString(),
+  );
 
   return {
     task: {
@@ -244,7 +262,12 @@ export const adaptQueryEvents = (
   if (canonical.success) {
     return {
       ...canonical.data,
-      events: canonical.data.events.map(normalizeCanonicalEventForM2V2),
+      events: canonical.data.events
+        .map((event) => ({
+          ...event,
+          timestamp: toIsoDatetimeString(event.timestamp),
+        }))
+        .map(normalizeCanonicalEventForM2V2),
     };
   }
 
@@ -332,14 +355,27 @@ export const adaptQueryNormalizedAuditEvents = (
         ? normalizedNextCursor != null && normalizedNextCursor !== normalizedRequestedCursor
         : rawHasMore;
 
+    const events = canonical.data.events.map((event) => ({
+      ...event,
+      checkedAt: event.checkedAt == null ? undefined : toCheckedAt(event.checkedAt),
+      timestamp: event.timestamp == null ? undefined : toIsoDatetimeString(event.timestamp),
+    }));
+    const total = "total" in canonical.data ? canonical.data.total : undefined;
+
+    if (normalizedHasMore === true && normalizedNextCursor != null) {
+      return {
+        events,
+        hasMore: true,
+        nextCursor: normalizedNextCursor,
+        total,
+      };
+    }
+
     return {
-      events: canonical.data.events.map((event) => ({
-        ...event,
-        checkedAt: event.checkedAt == null ? undefined : toCheckedAt(event.checkedAt),
-      })),
+      events,
+      hasMore: false,
       nextCursor: normalizedNextCursor,
-      hasMore: normalizedHasMore,
-      total: "total" in canonical.data ? canonical.data.total : undefined,
+      total,
     };
   }
 
@@ -355,7 +391,7 @@ export const adaptQueryNormalizedAuditEvents = (
       note: z.string().optional(),
       checkedAt: checkedAtSchema.optional(),
       recordedAt: z.string().datetime().optional(),
-      subject: z.string().optional(),
+      subject: z.string().min(1).optional(),
     }).strict(),
   ).safeParse(payload);
 
@@ -371,7 +407,7 @@ export const adaptQueryNormalizedAuditEvents = (
     reason: event.reason,
     note: event.note,
     checkedAt: event.checkedAt == null ? undefined : toCheckedAt(event.checkedAt),
-    timestamp: event.recordedAt,
+    timestamp: event.recordedAt == null ? undefined : toIsoDatetimeString(event.recordedAt),
     subject: event.subject,
   }));
 

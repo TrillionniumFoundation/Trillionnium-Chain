@@ -6,13 +6,16 @@ export type TaskStatus =
   | "failed"
   | "canceled";
 
+export type HeightCheckedAt = Exclude<`height:${bigint}`, `height:-${string}`>;
+export type IsoDatetimeString = `${string}T${string}`;
+
 export type ChainTask = Readonly<{
   id: string;
   name?: string;
   status: TaskStatus;
   owner: string;
-  createdAt: string;
-  updatedAt?: string;
+  createdAt: IsoDatetimeString;
+  updatedAt?: IsoDatetimeString;
   metadata: Readonly<Record<string, unknown>>;
 }>;
 
@@ -21,12 +24,9 @@ export type ChainEvent = Readonly<{
   taskId: string;
   type: string;
   level: "info" | "warn" | "error";
-  timestamp: string;
+  timestamp: IsoDatetimeString;
   payload: Readonly<Record<string, unknown>>;
 }>;
-
-export type HeightCheckedAt = `height:${number}`;
-export type IsoDatetimeString = `${string}T${string}`;
 export type CheckedAt = HeightCheckedAt | IsoDatetimeString;
 
 export type CapabilityAuditEntry = Readonly<{
@@ -62,16 +62,24 @@ export type NormalizedAuditEvent = Readonly<{
   reason?: string;
   note?: string;
   checkedAt?: CheckedAt;
-  timestamp?: string;
+  timestamp?: IsoDatetimeString;
   subject?: string;
 }>;
 
-export type QueryNormalizedAuditEventsResult = Readonly<{
+type QueryNormalizedAuditEventsBase = Readonly<{
   events: ReadonlyArray<NormalizedAuditEvent>;
-  nextCursor?: string;
-  hasMore?: boolean;
   total?: number;
 }>;
+
+export type QueryNormalizedAuditEventsResult =
+  | (QueryNormalizedAuditEventsBase & Readonly<{
+      hasMore: true;
+      nextCursor: string;
+    }> )
+  | (QueryNormalizedAuditEventsBase & Readonly<{
+      hasMore?: false;
+      nextCursor?: string;
+    }>);
 
 export type NormalizedAuditEventsQuery = Readonly<{
   source?: string;

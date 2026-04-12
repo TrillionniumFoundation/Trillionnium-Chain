@@ -6,6 +6,7 @@ import {
   adaptQueryTask,
 } from "@/lib/api-contract/adapters";
 import { FrontendApiError } from "@/lib/api-contract/errors";
+import { normalizedAuditEventsQuerySchema } from "@/lib/api-contract/schemas";
 
 describe("api-contract adapters", () => {
   it("accepts canonical query-task payload", () => {
@@ -514,6 +515,36 @@ describe("api-contract adapters", () => {
     });
   });
 
+  it("normalizes normalized audit-events query filters before dispatch", () => {
+    const parsed = normalizedAuditEventsQuerySchema.parse({
+      source: "\uFEFF  bridge-relay\u200B ",
+      eventType: "\u200D governance.proposal_executed \u2060",
+      cursor: "\uFEFF cursor-1\u200B ",
+      limit: 20,
+    });
+
+    expect(parsed).toEqual({
+      source: "bridge-relay",
+      eventType: "governance.proposal_executed",
+      cursor: "cursor-1",
+      limit: 20,
+    });
+  });
+
+  it("fails closed on normalized audit-events query filters that normalize to empty", () => {
+    expect(() =>
+      normalizedAuditEventsQuerySchema.parse({
+        source: "\uFEFF \u200B\u200D ",
+      }),
+    ).toThrow();
+
+    expect(() =>
+      normalizedAuditEventsQuerySchema.parse({
+        eventType: "\u2060   ",
+      }),
+    ).toThrow();
+  });
+
   it("adapts canonical paginated normalized audit-events payload", () => {
     const out = adaptQueryNormalizedAuditEvents({
       events: [
@@ -536,25 +567,43 @@ describe("api-contract adapters", () => {
     expect(out.total).toBe(42);
   });
 
-  it("fails closed when canonical normalized audit pagination reports hasMore without usable cursor", () => {
+  it("normalizes canonical normalized audit pagination cursors before exposing them", () => {
     const out = adaptQueryNormalizedAuditEvents({
       events: [
         {
           source: "bridge-relay",
           event_type: "bridge_relay.proof_submitted",
           actor: "validator-1",
-          checkedAt: "height:778",
+          checkedAt: "height:777",
+          note: "cursor normalized",
         },
       ],
       hasMore: true,
-      nextCursor: "   ",
-      total: 43,
+      nextCursor: "\uFEFF  c2\u200B ",
+      total: 42,
     });
 
-    expect(out.events[0]?.event_type).toBe("bridge_relay.proof_submitted");
-    expect(out.hasMore).toBe(false);
-    expect(out.nextCursor).toBeUndefined();
-    expect(out.total).toBe(43);
+    expect(out.hasMore).toBe(true);
+    expect(out.nextCursor).toBe("c2");
+    expect(out.total).toBe(42);
+  });
+
+  it("fails closed when canonical normalized audit pagination reports hasMore without usable cursor", () => {
+    expect(() =>
+      adaptQueryNormalizedAuditEvents({
+        events: [
+          {
+            source: "bridge-relay",
+            event_type: "bridge_relay.proof_submitted",
+            actor: "validator-1",
+            checkedAt: "height:778",
+          },
+        ],
+        hasMore: true,
+        nextCursor: "   ",
+        total: 43,
+      }),
+    ).toThrow(FrontendApiError);
   });
 
   it("fails closed when canonical normalized audit pagination loops back to the requested cursor", () => {
@@ -603,6 +652,24 @@ describe("api-contract adapters", () => {
     expect(out.events[0]?.event_type).toBe("governance.proposal_executed");
   });
 
+  it("adapts canonical normalized audit-events payload with total on a terminal page", () => {
+    const out = adaptQueryNormalizedAuditEvents({
+      events: [
+        {
+          source: "governance-guard",
+          event_type: "governance.proposal_executed",
+          actor: "alice",
+          timestamp: "2026-03-03T00:00:00.000Z",
+        },
+      ],
+      total: 1,
+    });
+
+    expect(out.hasMore).toBe(false);
+    expect(out.nextCursor).toBeUndefined();
+    expect(out.total).toBe(1);
+  });
+
   it("fails closed on malformed canonical normalized audit-events items", () => {
     expect(() =>
       adaptQueryNormalizedAuditEvents({
@@ -642,6 +709,33 @@ describe("api-contract adapters", () => {
     ).toThrow(FrontendApiError);
   });
 
+  it("fails closed on canonical normalized audit-event entries with blank identifier fields", () => {
+    expect(() =>
+      adaptQueryNormalizedAuditEvents({
+        events: [
+          {
+            source: "bridge-relay",
+            event_type: "bridge_relay.proof_submitted",
+            actor: "validator-1",
+            object_id: "",
+          },
+        ],
+      }),
+    ).toThrow(FrontendApiError);
+
+    expect(() =>
+      adaptQueryNormalizedAuditEvents({
+        events: [
+          {
+            source: "bridge-relay",
+            event_type: "bridge_relay.proof_submitted",
+            subject: "",
+          },
+        ],
+      }),
+    ).toThrow(FrontendApiError);
+  });
+
   it("fails closed on canonical normalized audit-events page nextCursor type mismatch", () => {
     expect(() =>
       adaptQueryNormalizedAuditEvents({
@@ -654,6 +748,23 @@ describe("api-contract adapters", () => {
           },
         ],
         nextCursor: 123,
+      }),
+    ).toThrow(FrontendApiError);
+  });
+
+  it("fails closed on canonical normalized audit-events page nextCursor zero-width noise", () => {
+    expect(() =>
+      adaptQueryNormalizedAuditEvents({
+        events: [
+          {
+            source: "bridge-relay",
+            event_type: "bridge_relay.proof_submitted",
+            actor: "validator-1",
+            checkedAt: "height:777",
+          },
+        ],
+        hasMore: true,
+        nextCursor: "\uFEFF \u200B\u200D ",
       }),
     ).toThrow(FrontendApiError);
   });
@@ -738,6 +849,20 @@ describe("api-contract adapters", () => {
           note: "deposit",
           recordedAt: "2026-03-03T00:01:00.000Z",
           unexpectedFlag: true,
+        },
+      ]),
+    ).toThrow(FrontendApiError);
+  });
+
+  it("fails closed on fallback normalized audit-events entries with blank subject identifiers", () => {
+    expect(() =>
+      adaptQueryNormalizedAuditEvents([
+        {
+          source: "settlement-vault",
+          eventType: "vault.deposited",
+          actor: "alice",
+          subject: "",
+          recordedAt: "2026-03-03T00:01:00.000Z",
         },
       ]),
     ).toThrow(FrontendApiError);
@@ -951,6 +1076,24 @@ describe("api-contract adapters", () => {
           {
             action: "CAPABILITY_ISSUED",
             at_height: "still-not-a-height",
+          },
+        ],
+      }),
+    ).toThrow(FrontendApiError);
+  });
+
+  it("fails closed when rpc capability audit contains negative or fractional heights", () => {
+    expect(() =>
+      adaptQueryCapabilityAudit({
+        token: {
+          subject_did: "did:trnm:bob",
+          scope: "AUDIT_READ",
+          revoked_at: 456.5,
+        },
+        owner_history: [
+          {
+            action: "CAPABILITY_ISSUED",
+            at_height: -1,
           },
         ],
       }),
