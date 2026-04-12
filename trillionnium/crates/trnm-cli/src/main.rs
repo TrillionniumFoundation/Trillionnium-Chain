@@ -1891,6 +1891,14 @@ fn trim_kv_key_noise(raw: &str) -> &str {
     })
 }
 
+fn canonical_kv_key(key: &str) -> String {
+    trim_kv_key_noise(key)
+        .chars()
+        .filter(|c| c.is_ascii_alphanumeric())
+        .map(|c| c.to_ascii_lowercase())
+        .collect()
+}
+
 fn parse_kv_line(line: &str) -> Option<(String, String)> {
     let trimmed = line.trim();
     let (key, value) = if let Some((k, v)) = trimmed.split_once('=') {
@@ -1988,7 +1996,7 @@ fn parse_kv_line(line: &str) -> Option<(String, String)> {
         return None;
     }
 
-    Some((key.to_ascii_lowercase(), value.to_string()))
+    Some((canonical_kv_key(key), value.to_string()))
 }
 
 fn parse_inline_kv_token(token: &str) -> Option<(String, String)> {
@@ -2070,7 +2078,7 @@ fn parse_inline_kv_token(token: &str) -> Option<(String, String)> {
     }
 
     Some((
-        key.to_ascii_lowercase(),
+        canonical_kv_key(key),
         value
             .trim_matches(|c: char| {
                 c.is_whitespace()
@@ -2384,8 +2392,7 @@ fn infer_json_tx_status(value: &serde_json::Value) -> Option<String> {
 
 fn infer_kv_tx_status(key: &str, value: &str) -> Option<String> {
     match key {
-        "code" | "tx_code" | "txcode" | "transaction_code" | "transactioncode"
-        | "deliver_tx_code" | "delivertxcode" | "check_tx_code" | "checktxcode" => {
+        "code" | "txcode" | "transactioncode" | "delivertxcode" | "checktxcode" => {
             let cleaned = value
                 .trim()
                 .trim_matches('"')
@@ -2481,25 +2488,23 @@ fn parse_tx_query_response(raw: &str, requested_tx_hash: &str) -> Result<TxQuery
 
         for (key, value) in pairs {
             match key.as_str() {
-                "tx_hash" | "txhash" | "tx-hash" | "transaction_hash" | "transactionhash"
-                | "transaction-hash" => match normalize_tx_hash(&value) {
+                "txhash" | "transactionhash" => match normalize_tx_hash(&value) {
                     Some(normalized) => tx_hash = Some(normalized),
                     None => bail!("invalid tx_hash field in tx query response"),
                 },
-                "status" | "tx_status" | "txstatus" | "transaction_status"
-                | "transactionstatus" | "state" | "tx_state" | "txstate" | "transaction_state"
+                "status" | "txstatus" | "transactionstatus" | "state" | "txstate"
                 | "transactionstate" => {
                     if let Some(normalized) = normalize_tx_status(&value) {
                         status = Some(normalized);
                     }
                 }
-                "code" | "tx_code" | "txcode" | "transaction_code" | "transactioncode"
-                | "deliver_tx_code" | "delivertxcode" | "check_tx_code" | "checktxcode" => {
+                "code" | "txcode" | "transactioncode" | "delivertxcode"
+                | "checktxcode" => {
                     if status.is_none() {
                         status = infer_kv_tx_status(&key, &value);
                     }
                 }
-                "error" | "raw_log" | "rawlog" | "log" => {
+                "error" | "rawlog" | "log" => {
                     // Manual quote trimming since parse_kv_line no longer does it aggressively
                     let cleaned = value.trim_matches(|c| matches!(c, '"' | '\'' | '`'));
                     if !is_nullish_kv_value(cleaned) {
