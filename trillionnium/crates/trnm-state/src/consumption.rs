@@ -249,6 +249,19 @@ mod tests {
     }
 
     #[test]
+    fn set_billing_window_policy_clears_invalid_policy() {
+        let mut st = StateStore::default();
+        let policy = sample_billing_window_policy();
+        st.set_billing_window_policy(policy.clone());
+
+        let mut invalid = policy.clone();
+        invalid.per_consumer_max_credited_units = Some(0);
+
+        assert_eq!(st.set_billing_window_policy(invalid), Some(policy));
+        assert_eq!(st.billing_window_policy("bw-1"), None);
+    }
+
+    #[test]
     fn task_consumption_summary_snapshot_roundtrip_restores_summary_and_state_root() {
         let mut st = StateStore::default();
         let summary = sample_task_consumption_summary();
@@ -276,6 +289,19 @@ mod tests {
         invalid.accepted_receipt_count = invalid.receipt_count.saturating_add(1);
         st.restore_task_consumption_summary(42, Some(invalid));
 
+        assert_eq!(st.task_consumption_summary(42), None);
+    }
+
+    #[test]
+    fn set_task_consumption_summary_clears_inconsistent_summary() {
+        let mut st = StateStore::default();
+        let summary = sample_task_consumption_summary();
+        st.set_task_consumption_summary(summary.clone());
+
+        let mut invalid = summary.clone();
+        invalid.accepted_receipt_count = invalid.receipt_count.saturating_add(1);
+
+        assert_eq!(st.set_task_consumption_summary(invalid), Some(summary));
         assert_eq!(st.task_consumption_summary(42), None);
     }
 }

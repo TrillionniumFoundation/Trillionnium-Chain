@@ -3704,9 +3704,14 @@ impl StateStore {
         &mut self,
         policy: BillingWindowPolicy,
     ) -> Option<BillingWindowPolicy> {
+        let billing_window_id = policy.billing_window_id.clone();
+        if !policy.is_persistable_snapshot_for(&billing_window_id) {
+            return self.clear_billing_window_policy(&billing_window_id);
+        }
+
         self.invalidate_state_root_cache();
         self.billing_window_policies
-            .insert(policy.billing_window_id.clone(), policy)
+            .insert(billing_window_id, policy)
     }
 
     pub fn billing_window_policy(&self, billing_window_id: &str) -> Option<BillingWindowPolicy> {
@@ -3750,9 +3755,13 @@ impl StateStore {
         &mut self,
         summary: TaskConsumptionSummary,
     ) -> Option<TaskConsumptionSummary> {
+        let task_id = summary.task_id;
+        if !summary.is_persistable_snapshot_for(task_id) {
+            return self.clear_task_consumption_summary(task_id);
+        }
+
         self.invalidate_state_root_cache();
-        self.task_consumption_summaries
-            .insert(summary.task_id, summary)
+        self.task_consumption_summaries.insert(task_id, summary)
     }
 
     pub fn task_consumption_summary(&self, task_id: u64) -> Option<TaskConsumptionSummary> {
