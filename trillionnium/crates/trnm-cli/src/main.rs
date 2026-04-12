@@ -3706,6 +3706,49 @@ mod tests {
     }
 
     #[test]
+    fn consumption_settlement_cli_parser_accepts_consumption_summary_query_command() {
+        let args = Args::try_parse_from([
+            "trnm-cli",
+            "query",
+            "consumption-summary",
+            "42",
+        ])
+        .expect("parse consumption-summary args");
+
+        match args.cmd {
+            Command::Query {
+                query: QueryCommand::ConsumptionSummary { task_id },
+            } => {
+                assert_eq!(task_id, 42);
+            }
+            other => panic!("unexpected parsed args: {other:?}"),
+        }
+    }
+
+    #[test]
+    fn consumption_settlement_cli_parser_accepts_consumption_receipts_query_command() {
+        let args = Args::try_parse_from([
+            "trnm-cli",
+            "query",
+            "consumption-receipts",
+            "42",
+            "--limit",
+            "7",
+        ])
+        .expect("parse consumption-receipts args");
+
+        match args.cmd {
+            Command::Query {
+                query: QueryCommand::ConsumptionReceipts { task_id, limit },
+            } => {
+                assert_eq!(task_id, 42);
+                assert_eq!(limit, 7);
+            }
+            other => panic!("unexpected parsed args: {other:?}"),
+        }
+    }
+
+    #[test]
     fn load_consumption_receipt_tx_input_extracts_replay_key_fields() {
         let unique = format!(
             "trnm-cli-consumption-receipt-input-test-{}-{}",
