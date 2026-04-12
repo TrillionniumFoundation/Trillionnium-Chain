@@ -89,6 +89,43 @@ pub struct TaskQueryResponse {
     pub metering: Option<TaskMeteringQueryResponse>,
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct TaskConsumptionSummaryQueryResponse {
+    pub task_id: u64,
+    pub receipt_count: u64,
+    pub accepted_receipt_count: u64,
+    pub challenged_receipt_count: u64,
+    pub total_consumed_tokens: u128,
+    pub total_claimed_consumption_units: u128,
+    pub total_credited_consumption_units: u128,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub last_settlement_height: Option<u64>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+pub struct ConsumptionRecordQueryResponse {
+    pub task_id: u64,
+    pub consumer_id: String,
+    pub output_hash: String,
+    pub billing_window_id: String,
+    pub worker_id: String,
+    pub tokenizer_id: String,
+    pub tokenizer_version: String,
+    pub consumer_class: String,
+    pub consumed_spans_root: String,
+    pub consumed_token_count: u64,
+    pub claimed_consumption_units: u128,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub credited_consumption_units: Option<u128>,
+    pub consumer_nonce: u64,
+    pub accepted_at_unix_ms: u64,
+    pub status: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub resolution_code: Option<String>,
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct GovProposalQueryResponse {

@@ -148,6 +148,14 @@ enum QueryCommand {
         #[arg(long, default_value_t = false)]
         summary: bool,
     },
+    /// Query task PoCO consumption summary via RPC
+    ConsumptionSummary { task_id: u64 },
+    /// Query task PoCO consumption receipts via RPC
+    ConsumptionReceipts {
+        task_id: u64,
+        #[arg(long, default_value_t = 20)]
+        limit: usize,
+    },
     /// Query full request timeline / audit view via RPC
     RequestFull {
         request_id: String,
@@ -516,6 +524,125 @@ fn events_query(task_id: u64, limit: usize) -> Result<serde_json::Value> {
         );
     }
     parse_events_query_response(&stdout, task_id)
+}
+
+fn parse_consumption_summary_query_response(
+    raw: &str,
+    requested_task_id: u64,
+) -> Result<serde_json::Value> {
+    let parsed: serde_json::Value = serde_json::from_str(raw)
+        .map_err(|err| anyhow!("failed to parse consumption summary response as json: {err}"))?;
+    let Some(task_id) = parsed.get("task_id").and_then(|v| v.as_u64()) else {
+        bail!("consumption summary response missing numeric task_id");
+    };
+    if task_id != requested_task_id {
+        bail!(
+            "consumption summary response task_id mismatch: requested={}, got={}",
+            requested_task_id,
+            task_id
+        );
+    }
+    Ok(parsed)
+}
+
+fn consumption_summary_query(task_id: u64) -> Result<serde_json::Value> {
+    if let Ok(template) = std::env::var("TRNM_QUERY_CONSUMPTION_SUMMARY_CMD") {
+        let cmd = tpl(template, "task_id", &task_id.to_string());
+        let raw = run_template_raw(&cmd)?;
+        return parse_consumption_summary_query_response(&raw, task_id);
+    }
+
+    let rpc_workspace = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .parent()
+        .and_then(|p| p.parent())
+        .map(|p| p.to_path_buf())
+        .unwrap_or_else(|| PathBuf::from("."));
+    let cmd = format!(
+        "cargo run -q -p trnm-rpc -- query-consumption-summary {}",
+        task_id
+    );
+    let (program, args) = parse_template_command(&cmd)?;
+    let out = ProcCommand::new(program)
+        .args(args)
+        .current_dir(&rpc_workspace)
+        .output()?;
+    let stdout = String::from_utf8_lossy(&out.stdout);
+    let stderr = String::from_utf8_lossy(&out.stderr);
+    if !out.status.success() {
+        bail!(
+            "consumption summary query command failed rc={}: {}{}",
+            out.status.code().unwrap_or(1),
+            stdout,
+            stderr
+        );
+    }
+    parse_consumption_summary_query_response(&stdout, task_id)
+}
+
+fn parse_consumption_receipts_query_response(
+    raw: &str,
+    requested_task_id: u64,
+) -> Result<serde_json::Value> {
+    let parsed: serde_json::Value = serde_json::from_str(raw)
+        .map_err(|err| anyhow!("failed to parse consumption receipts response as json: {err}"))?;
+    let Some(receipts) = parsed.as_array() else {
+        bail!("consumption receipts response must be a json array");
+    };
+    for (idx, receipt) in receipts.iter().enumerate() {
+        let Some(task_id) = receipt.get("task_id").and_then(|v| v.as_u64()) else {
+            bail!(
+                "consumption receipts response item {} missing numeric task_id",
+                idx
+            );
+        };
+        if task_id != requested_task_id {
+            bail!(
+                "consumption receipts response task_id mismatch at item {}: requested={}, got={}",
+                idx,
+                requested_task_id,
+                task_id
+            );
+        }
+    }
+    Ok(parsed)
+}
+
+fn consumption_receipts_query(task_id: u64, limit: usize) -> Result<serde_json::Value> {
+    if let Ok(template) = std::env::var("TRNM_QUERY_CONSUMPTION_RECEIPTS_CMD") {
+        let cmd = tpl(
+            tpl(template, "task_id", &task_id.to_string()),
+            "limit",
+            &limit.to_string(),
+        );
+        let raw = run_template_raw(&cmd)?;
+        return parse_consumption_receipts_query_response(&raw, task_id);
+    }
+
+    let rpc_workspace = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .parent()
+        .and_then(|p| p.parent())
+        .map(|p| p.to_path_buf())
+        .unwrap_or_else(|| PathBuf::from("."));
+    let cmd = format!(
+        "cargo run -q -p trnm-rpc -- query-consumption-receipts {} --limit {}",
+        task_id, limit
+    );
+    let (program, args) = parse_template_command(&cmd)?;
+    let out = ProcCommand::new(program)
+        .args(args)
+        .current_dir(&rpc_workspace)
+        .output()?;
+    let stdout = String::from_utf8_lossy(&out.stdout);
+    let stderr = String::from_utf8_lossy(&out.stderr);
+    if !out.status.success() {
+        bail!(
+            "consumption receipts query command failed rc={}: {}{}",
+            out.status.code().unwrap_or(1),
+            stdout,
+            stderr
+        );
+    }
+    parse_consumption_receipts_query_response(&stdout, task_id)
 }
 
 fn parse_request_full_query_response(
@@ -3134,6 +3261,14 @@ fn main() -> Result<()> {
                 } else {
                     println!("{}", serde_json::to_string_pretty(&out)?);
                 }
+            }
+            QueryCommand::ConsumptionSummary { task_id } => {
+                let out = consumption_summary_query(task_id)?;
+                println!("{}", serde_json::to_string_pretty(&out)?);
+            }
+            QueryCommand::ConsumptionReceipts { task_id, limit } => {
+                let out = consumption_receipts_query(task_id, limit)?;
+                println!("{}", serde_json::to_string_pretty(&out)?);
             }
             QueryCommand::RequestFull {
                 request_id,
@@ -6410,5 +6545,26 @@ mod tests {
         assert!(emitted.contains("transaction-hash=0xabc123"));
         assert!(emitted.contains("transaction hash=0xabc123"));
         assert_eq!(extract_tx_hash(&emitted).as_deref(), Some("0xabc123"));
+    }
+
+    #[test]
+    fn parse_consumption_summary_query_response_rejects_mismatched_task_id() {
+        let err = parse_consumption_summary_query_response(
+            r#"{"task_id":7,"receipt_count":1,"accepted_receipt_count":1,"challenged_receipt_count":0,"total_consumed_tokens":17,"total_claimed_consumption_units":17,"total_credited_consumption_units":17}"#,
+            42,
+        )
+        .unwrap_err()
+        .to_string();
+        assert!(err.contains("requested=42, got=7"), "unexpected error: {err}");
+    }
+
+    #[test]
+    fn parse_consumption_receipts_query_response_accepts_matching_task_ids() {
+        let parsed = parse_consumption_receipts_query_response(
+            r#"[{"task_id":42,"consumer_id":"consumer-bravo","output_hash":"abc123","billing_window_id":"bw-1","worker_id":"worker-alpha","tokenizer_id":"tok","tokenizer_version":"1.0.0","consumer_class":"bonded_api_client","consumed_spans_root":"def456","consumed_token_count":17,"claimed_consumption_units":17,"credited_consumption_units":9,"consumer_nonce":7,"accepted_at_unix_ms":1775683200123,"status":"Discounted","resolution_code":"accepted_discounted"}]"#,
+            42,
+        )
+        .expect("parse consumption receipts");
+        assert_eq!(parsed.as_array().map(Vec::len), Some(1));
     }
 }
