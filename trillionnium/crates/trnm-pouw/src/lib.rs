@@ -5,8 +5,16 @@ use trnm_types::{
     Hash32, ObjectRef, ProofType, TaskMetadata, TaskMeteringSnapshot, TaskObject, TaskStatus,
 };
 
+pub mod consumption;
 pub mod metering;
 pub mod verification;
+pub use consumption::{
+    challenge_consumption_receipt, challenge_consumption_receipt_at_height, claimed_consumption_units,
+    parse_consumption_receipt_json, parse_and_validate_consumption_receipt_json,
+    resolve_consumption_receipt, resolve_consumption_receipt_at_height, submit_consumption_receipt,
+    submit_consumption_receipt_at_height, ConsumptionError, ConsumptionReceipt, ConsumptionReplayKey,
+    ConsumptionResolveDecision, POCO_V1_SETTLEMENT_SCHEMA,
+};
 pub use metering::{
     parse_and_validate_llm_token_meter_v1_receipt_json, parse_llm_token_meter_v1_receipt_json,
     LlmTokenMeterError, LlmTokenMeterV1Receipt, LlmTokenMeterV1WorkUnitCoefficients,
@@ -2378,17 +2386,28 @@ mod tests {
             "authority".into(),
         )
         .expect_err("non-canonical legacy creator must fail closed before resolve settlement");
-        assert!(matches!(err, PouwError::State(msg) if msg.contains("non-canonical creator account")));
+        assert!(
+            matches!(err, PouwError::State(msg) if msg.contains("non-canonical creator account"))
+        );
         assert_eq!(st.pending_resolve_approval(421), None);
 
         let after_task = st.get_task(421).unwrap();
         assert_eq!(after_task.status, before_task.status);
         assert_eq!(after_task.creator, before_task.creator);
         assert_eq!(after_task.challenge_bond, before_task.challenge_bond);
-        assert_eq!(after_task.challenge_bond_forfeited, before_task.challenge_bond_forfeited);
+        assert_eq!(
+            after_task.challenge_bond_forfeited,
+            before_task.challenge_bond_forfeited
+        );
         assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
-        assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), before_forfeit);
-        assert_eq!(st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT), before_worker_slash);
+        assert_eq!(
+            st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+            before_forfeit
+        );
+        assert_eq!(
+            st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT),
+            before_worker_slash
+        );
         assert_eq!(st.balance_of("challenger"), before_challenger);
         assert_eq!(st.balance_of("worker1"), before_worker);
         assert_eq!(st.balance_of(&worker_stake_lock_account(421)), before_lock);
@@ -9029,7 +9048,9 @@ mod tests {
         let bad_ref = st.update_task(done, bad).unwrap();
 
         let err = apply_timeout(&mut st, bad_ref, 212).unwrap_err();
-        assert!(matches!(err, PouwError::State(msg) if msg.contains("terminal non-challenged task has stale challenge timing fields")));
+        assert!(
+            matches!(err, PouwError::State(msg) if msg.contains("terminal non-challenged task has stale challenge timing fields"))
+        );
     }
 
     #[test]
@@ -9142,7 +9163,9 @@ mod tests {
         let bad_ref = st.update_task(done, bad).unwrap();
 
         let err = apply_timeout(&mut st, bad_ref, 222).unwrap_err();
-        assert!(matches!(err, PouwError::State(msg) if msg.contains("terminal challenge bond outcome requires challenge bond fields")));
+        assert!(
+            matches!(err, PouwError::State(msg) if msg.contains("terminal challenge bond outcome requires challenge bond fields"))
+        );
     }
 
     #[test]
@@ -9171,7 +9194,9 @@ mod tests {
         let bad_ref = st.update_task(done, bad).unwrap();
 
         let err = apply_timeout(&mut st, bad_ref, 212).unwrap_err();
-        assert!(matches!(err, PouwError::State(msg) if msg.contains("terminal challenge bond outcome requires challenge bond fields")));
+        assert!(
+            matches!(err, PouwError::State(msg) if msg.contains("terminal challenge bond outcome requires challenge bond fields"))
+        );
     }
 
     #[test]
@@ -9210,7 +9235,9 @@ mod tests {
         let bad_ref = st.update_task(done, bad).unwrap();
 
         let err = apply_timeout(&mut st, bad_ref, 222).unwrap_err();
-        assert!(matches!(err, PouwError::State(msg) if msg.contains("inconsistent challenge fields")));
+        assert!(
+            matches!(err, PouwError::State(msg) if msg.contains("inconsistent challenge fields"))
+        );
     }
 
     #[test]
@@ -9362,7 +9389,9 @@ mod tests {
         let bad_ref = st.update_task(r4, bad).unwrap();
 
         let err = apply_timeout(&mut st, bad_ref, 211).unwrap_err();
-        assert!(matches!(err, PouwError::State(msg) if msg.contains("invalid retained challenge_window_blocks_snapshot")));
+        assert!(
+            matches!(err, PouwError::State(msg) if msg.contains("invalid retained challenge_window_blocks_snapshot"))
+        );
     }
 
     #[test]
@@ -9537,7 +9566,9 @@ mod tests {
             "authority".into(),
         )
         .unwrap_err();
-        assert!(matches!(err, PouwError::State(msg) if msg.contains("requires challenged_at_height, challenge_deadline_height, and resolve_deadline_height")));
+        assert!(
+            matches!(err, PouwError::State(msg) if msg.contains("requires challenged_at_height, challenge_deadline_height, and resolve_deadline_height"))
+        );
         assert_eq!(st.get_task(39023).unwrap().status, TaskStatus::Challenged);
         assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), 10);
         assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), 0);
@@ -14545,8 +14576,14 @@ mod tests {
         assert_eq!(task.challenge_bond_forfeited, Some(false));
         assert_eq!(st.balance_of("challenger"), before_challenger + 10);
         assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow - 10);
-        assert_eq!(st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT), before_forfeit);
-        assert_eq!(st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT), before_slash_treasury);
+        assert_eq!(
+            st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
+            before_forfeit
+        );
+        assert_eq!(
+            st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT),
+            before_slash_treasury
+        );
     }
 
     #[test]
@@ -14888,9 +14925,8 @@ mod tests {
         let before_lock = st.balance_of(&worker_stake_lock_account(40_223));
         let before_slash_treasury = st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT);
 
-        let err = maybe_pay_challenge_success_bounty(&mut st, &task).expect_err(
-            "challenge success bounty must fail closed for blank challenger identity",
-        );
+        let err = maybe_pay_challenge_success_bounty(&mut st, &task)
+            .expect_err("challenge success bounty must fail closed for blank challenger identity");
         assert!(matches!(err, PouwError::State(msg) if msg.contains("blank challenger identity")));
         assert_eq!(st.balance_of("challenger"), before_challenger);
         assert_eq!(
@@ -15181,7 +15217,8 @@ mod tests {
     }
 
     #[test]
-    fn challenge_success_bounty_rejects_terminal_task_with_non_monotonic_retained_challenge_timing() {
+    fn challenge_success_bounty_rejects_terminal_task_with_non_monotonic_retained_challenge_timing()
+    {
         let mut st = seeded_state();
         st.set_balance("challenger", 100);
         st.set_balance("worker1", 50);
@@ -18783,7 +18820,9 @@ mod tests {
         let before = st.clone();
         let err =
             apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into()).unwrap_err();
-        assert!(matches!(err, PouwError::State(msg) if msg.contains("non-canonical worker account")));
+        assert!(
+            matches!(err, PouwError::State(msg) if msg.contains("non-canonical worker account"))
+        );
 
         let task = st.get_task(8_994_1).unwrap();
         assert_eq!(task.status, TaskStatus::Revealed);
@@ -19341,7 +19380,9 @@ mod tests {
 
         let err = preflight_resolve_transfers(&st, &task, true)
             .expect_err("resolve preflight must fail closed on dangling challenger metadata");
-        assert!(matches!(err, PouwError::State(msg) if msg.contains("without posted challenge bond")));
+        assert!(
+            matches!(err, PouwError::State(msg) if msg.contains("without posted challenge bond"))
+        );
     }
 
     #[test]
@@ -19636,7 +19677,9 @@ mod tests {
 
         let err = preflight_resolve_transfers(&st, &task, true)
             .expect_err("resolve preflight must fail closed when retained forfeiture marker disagrees with slash outcome");
-        assert!(matches!(err, PouwError::State(msg) if msg.contains("marker conflicts with slash outcome")));
+        assert!(
+            matches!(err, PouwError::State(msg) if msg.contains("marker conflicts with slash outcome"))
+        );
     }
 
     #[test]
@@ -19722,7 +19765,8 @@ mod tests {
     }
 
     #[test]
-    fn resolve_preflight_rejects_hidden_char_challenger_identity_on_refund_path_without_balance_mutation() {
+    fn resolve_preflight_rejects_hidden_char_challenger_identity_on_refund_path_without_balance_mutation(
+    ) {
         let mut st = seeded_state();
         st.set_balance(CHALLENGE_ESCROW_ACCOUNT, 10);
 
@@ -19795,7 +19839,9 @@ mod tests {
 
         let err = preflight_timeout_transfers(&st, &task, true, false)
             .expect_err("timeout preflight must fail closed on dangling challenger metadata");
-        assert!(matches!(err, PouwError::State(msg) if msg.contains("without posted challenge bond")));
+        assert!(
+            matches!(err, PouwError::State(msg) if msg.contains("without posted challenge bond"))
+        );
     }
 
     #[test]
@@ -19977,9 +20023,12 @@ mod tests {
             version: 0,
         };
 
-        let err = preflight_timeout_transfers(&st, &task, true, false)
-            .expect_err("timeout settlement must fail closed when retained marker disagrees with forfeit mode");
-        assert!(matches!(err, PouwError::State(msg) if msg.contains("marker conflicts with transfer mode")));
+        let err = preflight_timeout_transfers(&st, &task, true, false).expect_err(
+            "timeout settlement must fail closed when retained marker disagrees with forfeit mode",
+        );
+        assert!(
+            matches!(err, PouwError::State(msg) if msg.contains("marker conflicts with transfer mode"))
+        );
     }
 
     #[test]
@@ -20011,7 +20060,9 @@ mod tests {
         let err = preflight_timeout_transfers(&st, &task, false, false).expect_err(
             "timeout settlement must fail closed when retained terminal marker exists but no transfer mode is selected",
         );
-        assert!(matches!(err, PouwError::State(msg) if msg.contains("marker conflicts with transfer mode")));
+        assert!(
+            matches!(err, PouwError::State(msg) if msg.contains("marker conflicts with transfer mode"))
+        );
     }
 
     #[test]
@@ -20087,7 +20138,9 @@ mod tests {
 
         let err = preflight_timeout_transfers(&st, &task, false, true)
             .expect_err("timeout settlement must fail closed when challenge escrow is underfunded");
-        assert!(matches!(err, PouwError::State(msg) if msg.contains("insufficient balance") && msg.contains(CHALLENGE_ESCROW_ACCOUNT)));
+        assert!(
+            matches!(err, PouwError::State(msg) if msg.contains("insufficient balance") && msg.contains(CHALLENGE_ESCROW_ACCOUNT))
+        );
     }
 
     #[test]
@@ -22416,7 +22469,14 @@ mod tests {
 
     #[test]
     fn canonical_actor_id_rejects_blank_whitespace_and_control_aliases_fail_closed() {
-        for token in ["", " worker", "worker ", "worker one", "worker\n", "worker\t"] {
+        for token in [
+            "",
+            " worker",
+            "worker ",
+            "worker one",
+            "worker\n",
+            "worker\t",
+        ] {
             assert!(
                 !is_canonical_actor_id(token),
                 "token should fail closed as non-canonical: {token:?}"
