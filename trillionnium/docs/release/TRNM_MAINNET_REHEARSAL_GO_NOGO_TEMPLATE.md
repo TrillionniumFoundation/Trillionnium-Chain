@@ -262,6 +262,7 @@ Mark each item explicitly:
 - [ ] `verified_head=` preserved from helper output
 - [ ] `verified_worktree_entry=` preserved from helper output / `git worktree list --porcelain` stanza
 - [ ] `git status --short` empty before evidence generation
+- [ ] `preflight_helper_output_path` resolved from disk and preserved as a first-class artifact
 - [ ] `preflight_path` resolved from disk
 - [ ] `preflight_summary_path` resolved from disk as the timestamped artifact actually quoted
 - [ ] `evidence_dir` resolved from disk
@@ -322,6 +323,7 @@ verified_worktree=<helper output>
 verified_branch_ref=<helper output>
 verified_head=<helper output>
 verified_worktree_entry=<captured current-path stanza from helper output or git worktree list --porcelain>
+preflight_helper_output_path=<resolved saved helper transcript path>
 preflight_path=<resolved alias path>
 preflight_summary_path=<resolved timestamped artifact path>
 evidence_dir=<resolved directory>
