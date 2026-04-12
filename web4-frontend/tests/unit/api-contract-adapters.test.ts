@@ -854,6 +854,20 @@ describe("api-contract adapters", () => {
     ).toThrow(FrontendApiError);
   });
 
+  it("fails closed on fallback normalized audit-events entries with blank subject identifiers", () => {
+    expect(() =>
+      adaptQueryNormalizedAuditEvents([
+        {
+          source: "settlement-vault",
+          eventType: "vault.deposited",
+          actor: "alice",
+          subject: "",
+          recordedAt: "2026-03-03T00:01:00.000Z",
+        },
+      ]),
+    ).toThrow(FrontendApiError);
+  });
+
   it("adapts rpc capability audit payload", () => {
 
     const out = adaptQueryCapabilityAudit({

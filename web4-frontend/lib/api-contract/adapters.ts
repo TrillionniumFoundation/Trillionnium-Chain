@@ -391,7 +391,7 @@ export const adaptQueryNormalizedAuditEvents = (
       note: z.string().optional(),
       checkedAt: checkedAtSchema.optional(),
       recordedAt: z.string().datetime().optional(),
-      subject: z.string().optional(),
+      subject: z.string().min(1).optional(),
     }).strict(),
   ).safeParse(payload);
 
