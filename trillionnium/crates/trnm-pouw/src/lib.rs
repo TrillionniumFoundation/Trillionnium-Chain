@@ -1371,9 +1371,9 @@ fn effective_challenge_success_bounty(
     if let Some(snapshot_ref) = snapshot.as_ref() {
         if let Some(policy) = llm_token_meter_policy_for_snapshot_or_state(st, Some(snapshot_ref))?
         {
-            return Ok(
-                policy.effective_challenge_success_bounty(snapshot_ref.normalized_work_units)
-            );
+            let payout_work_units =
+                primary_payout_work_units(st, task, snapshot_ref.normalized_work_units);
+            return Ok(policy.effective_challenge_success_bounty(payout_work_units));
         }
     }
 
@@ -10410,6 +10410,69 @@ mod tests {
             "0".into(),
         )
         .unwrap();
+        let r5 =
+            apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into()).unwrap();
+
+        let staged = apply_resolve(
+            &mut st,
+            r5.clone(),
+            true,
+            "authority".into(),
+            "authority".into(),
+        )
+        .unwrap_err();
+        assert!(matches!(staged, PouwError::ResolveApprovalStaged));
+        let r6 =
+            apply_resolve(&mut st, r5, true, "authority2".into(), "authority2".into()).unwrap();
+
+        let resolved = st.get_task(r6.id).unwrap();
+        assert_eq!(resolved.status, TaskStatus::Slashed);
+        assert_eq!(st.balance_of("challenger"), 102);
+    }
+
+    #[test]
+    fn resolve_slashed_uses_poco_primary_settlement_units_for_challenge_success_bounty() {
+        let mut st = seeded_state();
+        st.set_balance("challenger", 100);
+        st.set_gov_param_bootstrap_unchecked(9_983, "min_worker_stake".into(), "40".into())
+            .unwrap();
+        st.set_gov_param_bootstrap_unchecked(9_984, "challenge_success_bounty".into(), "1".into())
+            .unwrap();
+        st.set_gov_param_bootstrap_unchecked(
+            9_985,
+            "llm_meter_challenge_success_bounty_per_work_unit_num".into(),
+            "1".into(),
+        )
+        .unwrap();
+        st.set_gov_param_bootstrap_unchecked(
+            9_986,
+            "llm_meter_challenge_success_bounty_per_work_unit_den".into(),
+            "100".into(),
+        )
+        .unwrap();
+        st.set_balance("worker1", 40);
+        set_resolve_authority(&mut st, "authority,authority2");
+
+        let task_id = 29_916u64;
+        let r1 = apply_create_task(&mut st, task_id, "alice".into(), 10).unwrap();
+        let result_hash = [1u8; 32];
+        let reveal_salt = [2u8; 32];
+        let committed = compute_commitment(task_id, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
+        let proof = sample_llm_token_meter_receipt_json(task_id, "worker1", result_hash);
+        let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, Some(proof)).unwrap();
+        st.set_task_consumption_summary(trnm_state::TaskConsumptionSummary {
+            task_id,
+            receipt_count: 1,
+            accepted_receipt_count: 1,
+            challenged_receipt_count: 0,
+            total_consumed_tokens: 9,
+            total_claimed_consumption_units: 9,
+            total_credited_consumption_units: 9,
+            last_settlement_height: Some(77),
+        });
         let r5 =
             apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into()).unwrap();
 
