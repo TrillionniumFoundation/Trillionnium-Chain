@@ -16,12 +16,13 @@ use std::{
 use trnm_rpc::{
     get_tx, query_account_state, submit_tx, validate_trnm_address, AccountBalanceQueryResponse,
     AccountNonceQueryResponse, AccountState, EventQueryResponse, FaucetRequestResponse, GetTxError,
+    ConsumptionRecordQueryResponse,
     GovParamQueryResponse, GovProposalQueryResponse, InMemoryTransferLedger,
     MessageRequestQueryResponse, RequestFullQueryResponse, RpcErrorResponse,
     TaskMeteringDerivedQueryResponse, TaskMeteringPolicyQueryResponse, TaskMeteringQueryResponse,
-    TaskQueryResponse, TxLifecycleRecord,
+    TaskConsumptionSummaryQueryResponse, TaskQueryResponse, TxLifecycleRecord,
 };
-use trnm_state::StateStore;
+use trnm_state::{ConsumptionRecord, ConsumptionRecordStatus, StateStore, TaskConsumptionSummary};
 use trnm_types::{
     AuditAction, AuditEvent, CapabilityToken, GovProposalObject, GovProposalStatus, IdentityRegistry,
     PrivacyTier, RequestStatus, TaskMetadata, TaskMeteringSnapshot, TaskObject, TaskStatus,
@@ -30,6 +31,8 @@ use trnm_types::{
 
 const QUERY_EVENTS_LIMIT_DEFAULT: usize = 100;
 const QUERY_EVENTS_LIMIT_MAX: usize = 500;
+const QUERY_CONSUMPTION_RECEIPTS_LIMIT_DEFAULT: usize = 50;
+const QUERY_CONSUMPTION_RECEIPTS_LIMIT_MAX: usize = 500;
 const QUERY_NORMALIZED_AUDIT_EVENTS_LIMIT_DEFAULT: usize = 60;
 const QUERY_NORMALIZED_AUDIT_EVENTS_LIMIT_MAX: usize = 500;
 const QUERY_FULL_LIMIT_DEFAULT: usize = 50;
@@ -54,6 +57,7 @@ const FAUCET_MAX_REQUESTS_MIN: u32 = 1;
 const EMERGENCY_PAUSE_KEY_ID: u64 = 7_999;
 const MARKET_REPUTATION_FILE_ENV: &str = "TRNM_RPC_MARKET_REPUTATION_FILE";
 const TASK_STATE_FILE_ENV: &str = "TRNM_RPC_TASK_STATE_FILE";
+const CONSUMPTION_STATE_FILE_ENV: &str = "TRNM_RPC_CONSUMPTION_STATE_FILE";
 const MARKET_PRICE_WEIGHT_ENV: &str = "TRNM_RPC_MARKET_PRICE_WEIGHT";
 const MARKET_REPUTATION_WEIGHT_ENV: &str = "TRNM_RPC_MARKET_REPUTATION_WEIGHT";
 const MARKET_REPUTATION_CLAMP_ENV: &str = "TRNM_RPC_MARKET_REPUTATION_CLAMP";
@@ -99,6 +103,14 @@ enum Command {
     QueryEvents {
         task_id: u64,
         #[arg(long, default_value_t = QUERY_EVENTS_LIMIT_DEFAULT)]
+        limit: usize,
+    },
+    QueryConsumptionSummary {
+        task_id: u64,
+    },
+    QueryConsumptionReceipts {
+        task_id: u64,
+        #[arg(long, default_value_t = QUERY_CONSUMPTION_RECEIPTS_LIMIT_DEFAULT)]
         limit: usize,
     },
     QueryCapabilityAudit {
@@ -2479,6 +2491,67 @@ struct FaucetRateEntry {
     count_in_window: u32,
 }
 
+#[derive(Debug, Clone, Deserialize, Default)]
+#[serde(deny_unknown_fields)]
+struct ConsumptionStateSnapshot {
+    #[serde(default)]
+    consumption_records: Vec<ConsumptionRecord>,
+    #[serde(default)]
+    task_consumption_summaries: Vec<TaskConsumptionSummary>,
+    #[serde(default)]
+    consumer_consumption_nonces: BTreeMap<String, u64>,
+}
+
+fn consumption_state_file() -> PathBuf {
+    if let Some(path) = normalized_path_from_env(CONSUMPTION_STATE_FILE_ENV) {
+        return path;
+    }
+    run_root().join("run/rpc/consumption_state.json")
+}
+
+fn load_consumption_state_snapshot() -> Result<StateStore> {
+    let path = consumption_state_file();
+    let raw = match fs::read(&path) {
+        Ok(raw) => String::from_utf8_lossy(&raw).into_owned(),
+        Err(err) if err.kind() == std::io::ErrorKind::NotFound => return Ok(StateStore::new()),
+        Err(err) => {
+            return Err(anyhow!(
+                "failed to read consumption state snapshot {}: {}",
+                path.display(),
+                err
+            ))
+        }
+    };
+
+    let normalized = raw
+        .trim_start_matches(char::is_whitespace)
+        .trim_start_matches('\u{feff}')
+        .trim_start_matches(char::is_whitespace);
+    if normalized.is_empty() {
+        return Ok(StateStore::new());
+    }
+
+    let snapshot = serde_json::from_str::<ConsumptionStateSnapshot>(normalized).map_err(|err| {
+        anyhow!(
+            "failed to parse consumption state snapshot {}: {}",
+            path.display(),
+            err
+        )
+    })?;
+
+    let mut st = StateStore::new();
+    for record in snapshot.consumption_records {
+        st.put_consumption_record(record);
+    }
+    for summary in snapshot.task_consumption_summaries {
+        st.set_task_consumption_summary(summary);
+    }
+    for (consumer_id, nonce) in snapshot.consumer_consumption_nonces {
+        st.set_consumer_consumption_nonce(&consumer_id, nonce);
+    }
+    Ok(st)
+}
+
 fn faucet_limits_file() -> PathBuf {
     if let Some(path) = normalized_path_from_env("TRNM_RPC_FAUCET_LIMITS_FILE") {
         return path;
@@ -3129,7 +3202,13 @@ fn normalize_wrapped_query_value(raw: &str) -> Option<&str> {
     }
 }
 
-fn parse_query_events_limit_from_path(path: &str) -> std::result::Result<usize, String> {
+fn parse_single_limit_query_from_path(
+    path: &str,
+    route_prefix: &str,
+    metric_name: &str,
+    default_limit: usize,
+    max_limit: usize,
+) -> std::result::Result<usize, String> {
     let path_without_query = path.split('?').next().unwrap_or(path);
     let normalized_path = path_without_query.to_ascii_lowercase();
     if !path_without_query.starts_with('/')
@@ -3162,16 +3241,16 @@ fn parse_query_events_limit_from_path(path: &str) -> std::result::Result<usize, 
         ));
     }
 
-    let Some(event_id_suffix) = path_without_query.strip_prefix("/query-events/") else {
+    let Some(route_id_suffix) = path_without_query.strip_prefix(route_prefix) else {
         return Err(http_json_response(
             "400 Bad Request",
             "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid limit\"}",
         ));
     };
-    let event_id_suffix = event_id_suffix.strip_suffix('/').unwrap_or(event_id_suffix);
-    if event_id_suffix.is_empty()
-        || event_id_suffix.contains('/')
-        || !event_id_suffix.chars().all(|ch| ch.is_ascii_digit())
+    let route_id_suffix = route_id_suffix.strip_suffix('/').unwrap_or(route_id_suffix);
+    if route_id_suffix.is_empty()
+        || route_id_suffix.contains('/')
+        || !route_id_suffix.chars().all(|ch| ch.is_ascii_digit())
     {
         return Err(http_json_response(
             "400 Bad Request",
@@ -3180,7 +3259,7 @@ fn parse_query_events_limit_from_path(path: &str) -> std::result::Result<usize, 
     }
 
     let Some(query) = path.split_once('?').map(|(_, query)| query) else {
-        return Ok(QUERY_EVENTS_LIMIT_DEFAULT);
+        return Ok(default_limit);
     };
 
     if query.is_empty()
@@ -3253,15 +3332,32 @@ fn parse_query_events_limit_from_path(path: &str) -> std::result::Result<usize, 
             ));
         }
 
-        parsed_limit = Some(clamp_limit(
-            "QueryEventsHttp",
-            requested,
-            QUERY_EVENTS_LIMIT_DEFAULT,
-            QUERY_EVENTS_LIMIT_MAX,
-        ));
+        parsed_limit = Some(clamp_limit(metric_name, requested, default_limit, max_limit));
     }
 
-    Ok(parsed_limit.unwrap_or(QUERY_EVENTS_LIMIT_DEFAULT))
+    Ok(parsed_limit.unwrap_or(default_limit))
+}
+
+fn parse_query_events_limit_from_path(path: &str) -> std::result::Result<usize, String> {
+    parse_single_limit_query_from_path(
+        path,
+        "/query-events/",
+        "QueryEventsHttp",
+        QUERY_EVENTS_LIMIT_DEFAULT,
+        QUERY_EVENTS_LIMIT_MAX,
+    )
+}
+
+fn parse_query_consumption_receipts_limit_from_path(
+    path: &str,
+) -> std::result::Result<usize, String> {
+    parse_single_limit_query_from_path(
+        path,
+        "/query-consumption-receipts/",
+        "QueryConsumptionReceiptsHttp",
+        QUERY_CONSUMPTION_RECEIPTS_LIMIT_DEFAULT,
+        QUERY_CONSUMPTION_RECEIPTS_LIMIT_MAX,
+    )
 }
 
 fn contains_malformed_percent_encoding(value: &str) -> bool {
@@ -3757,6 +3853,72 @@ fn serve_health(host: &str, port: u16) -> Result<()> {
                     }
                 }
             }
+            (Some((method, _)), Some(path), Some(_))
+                if path.starts_with("/query-consumption-summary/") =>
+            {
+                let task_id = path
+                    .trim_start_matches("/query-consumption-summary/")
+                    .trim_end_matches('/')
+                    .parse::<u64>();
+                match task_id {
+                    Ok(task_id) => match load_consumption_state_snapshot() {
+                        Ok(st) => match query_consumption_summary_response(task_id, &st) {
+                            Ok(out) => {
+                                let body = serde_json::to_string(&out).unwrap_or_else(|_| {
+                                    "{\"ok\":false,\"code\":\"SERDE_ERROR\"}".to_string()
+                                });
+                                json_response_for_method(method, "200 OK", &body)
+                            }
+                            Err(err) => {
+                                let body = serde_json::json!({"ok": false, "code": "NOT_FOUND", "message": err.to_string()}).to_string();
+                                json_response_for_method(method, "404 Not Found", &body)
+                            }
+                        },
+                        Err(err) => {
+                            let body = serde_json::json!({"ok": false, "code": "INTERNAL_ERROR", "message": err.to_string()}).to_string();
+                            json_response_for_method(method, "500 Internal Server Error", &body)
+                        }
+                    },
+                    Err(_) => {
+                        let body = "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid task_id\"}";
+                        json_response_for_method(method, "400 Bad Request", body)
+                    }
+                }
+            }
+            (Some((method, _)), Some(path), Some(target))
+                if path.starts_with("/query-consumption-receipts/") =>
+            {
+                let task_id = path
+                    .trim_start_matches("/query-consumption-receipts/")
+                    .trim_end_matches('/')
+                    .parse::<u64>();
+                let limit = parse_query_consumption_receipts_limit_from_path(target);
+                match (task_id, limit) {
+                    (Ok(task_id), Ok(limit)) => match load_consumption_state_snapshot() {
+                        Ok(st) => match query_consumption_receipts_response(task_id, limit, &st) {
+                            Ok(out) => {
+                                let body = serde_json::to_string(&out).unwrap_or_else(|_| {
+                                    "{\"ok\":false,\"code\":\"SERDE_ERROR\"}".to_string()
+                                });
+                                json_response_for_method(method, "200 OK", &body)
+                            }
+                            Err(err) => {
+                                let body = serde_json::json!({"ok": false, "code": "NOT_FOUND", "message": err.to_string()}).to_string();
+                                json_response_for_method(method, "404 Not Found", &body)
+                            }
+                        },
+                        Err(err) => {
+                            let body = serde_json::json!({"ok": false, "code": "INTERNAL_ERROR", "message": err.to_string()}).to_string();
+                            json_response_for_method(method, "500 Internal Server Error", &body)
+                        }
+                    },
+                    (_, Err(err)) => http_response_for_method(method, &err),
+                    (Err(_), _) => {
+                        let body = "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid task_id\"}";
+                        json_response_for_method(method, "400 Bad Request", body)
+                    }
+                }
+            }
             (Some((method, _)), Some(path), Some(target))
                 if path == "/query-normalized-audit-events" =>
             {
@@ -4078,6 +4240,113 @@ fn query_task_response(
     })
 }
 
+fn consumption_status_label(status: ConsumptionRecordStatus) -> &'static str {
+    match status {
+        ConsumptionRecordStatus::Submitted => "Submitted",
+        ConsumptionRecordStatus::Challenged => "Challenged",
+        ConsumptionRecordStatus::Accepted => "Accepted",
+        ConsumptionRecordStatus::Discounted => "Discounted",
+        ConsumptionRecordStatus::Rejected => "Rejected",
+        ConsumptionRecordStatus::Slashed => "Slashed",
+    }
+}
+
+fn consumption_record_query_response(record: ConsumptionRecord) -> ConsumptionRecordQueryResponse {
+    ConsumptionRecordQueryResponse {
+        task_id: record.key.task_id,
+        consumer_id: record.key.consumer_id,
+        output_hash: record.key.output_hash,
+        billing_window_id: record.key.billing_window_id,
+        worker_id: record.worker_id,
+        tokenizer_id: record.tokenizer_id,
+        tokenizer_version: record.tokenizer_version,
+        consumer_class: record.consumer_class,
+        consumed_spans_root: record.consumed_spans_root,
+        consumed_token_count: record.consumed_token_count,
+        claimed_consumption_units: record.claimed_consumption_units,
+        credited_consumption_units: record.credited_consumption_units,
+        consumer_nonce: record.consumer_nonce,
+        accepted_at_unix_ms: record.accepted_at_unix_ms,
+        status: consumption_status_label(record.status).to_string(),
+        resolution_code: record.resolution_code,
+    }
+}
+
+fn derive_task_consumption_summary(
+    task_id: u64,
+    records: &[ConsumptionRecord],
+) -> TaskConsumptionSummary {
+    let mut summary = TaskConsumptionSummary {
+        task_id,
+        receipt_count: records.len() as u64,
+        ..TaskConsumptionSummary::default()
+    };
+    for record in records {
+        if matches!(
+            record.status,
+            ConsumptionRecordStatus::Accepted | ConsumptionRecordStatus::Discounted
+        ) {
+            summary.accepted_receipt_count = summary.accepted_receipt_count.saturating_add(1);
+            summary.total_credited_consumption_units = summary
+                .total_credited_consumption_units
+                .saturating_add(record.credited_consumption_units.unwrap_or(0));
+        }
+        if record.status == ConsumptionRecordStatus::Challenged {
+            summary.challenged_receipt_count = summary.challenged_receipt_count.saturating_add(1);
+        }
+        summary.total_consumed_tokens = summary
+            .total_consumed_tokens
+            .saturating_add(record.consumed_token_count as u128);
+        summary.total_claimed_consumption_units = summary
+            .total_claimed_consumption_units
+            .saturating_add(record.claimed_consumption_units);
+    }
+    summary
+}
+
+fn query_consumption_summary_response(
+    task_id: u64,
+    st: &StateStore,
+) -> Result<TaskConsumptionSummaryQueryResponse> {
+    let records = st.consumption_records_for_task(task_id);
+    let summary = st
+        .task_consumption_summary(task_id)
+        .or_else(|| (!records.is_empty()).then(|| derive_task_consumption_summary(task_id, &records)))
+        .ok_or_else(|| anyhow!("consumption summary not found for task {}", task_id))?;
+    Ok(TaskConsumptionSummaryQueryResponse {
+        task_id: summary.task_id,
+        receipt_count: summary.receipt_count,
+        accepted_receipt_count: summary.accepted_receipt_count,
+        challenged_receipt_count: summary.challenged_receipt_count,
+        total_consumed_tokens: summary.total_consumed_tokens,
+        total_claimed_consumption_units: summary.total_claimed_consumption_units,
+        total_credited_consumption_units: summary.total_credited_consumption_units,
+        last_settlement_height: summary.last_settlement_height,
+    })
+}
+
+fn query_consumption_receipts_response(
+    task_id: u64,
+    limit: usize,
+    st: &StateStore,
+) -> Result<Vec<ConsumptionRecordQueryResponse>> {
+    let limit = clamp_limit(
+        "QueryConsumptionReceipts",
+        limit,
+        QUERY_CONSUMPTION_RECEIPTS_LIMIT_DEFAULT,
+        QUERY_CONSUMPTION_RECEIPTS_LIMIT_MAX,
+    );
+    let records = st.consumption_records_for_task(task_id);
+    if records.is_empty() {
+        bail!("consumption receipts not found for task {}", task_id);
+    }
+    let mut out = Vec::new();
+    for record in records {
+        push_tail_limited(&mut out, consumption_record_query_response(record), limit);
+    }
+    Ok(out)
+}
+
 fn query_events_response(
     task_id: u64,
     limit: usize,
@@ -4389,6 +4658,16 @@ fn main() -> Result<()> {
             let node_events = load_node_events(NodeEventScanMode::Authoritative);
             let events = query_events_response(task_id, limit, &node_events.events, &recs)?;
             println!("{}", serde_json::to_string_pretty(&events)?);
+        }
+        Command::QueryConsumptionSummary { task_id } => {
+            let st = load_consumption_state_snapshot()?;
+            let out = query_consumption_summary_response(task_id, &st)?;
+            println!("{}", serde_json::to_string_pretty(&out)?);
+        }
+        Command::QueryConsumptionReceipts { task_id, limit } => {
+            let st = load_consumption_state_snapshot()?;
+            let out = query_consumption_receipts_response(task_id, limit, &st)?;
+            println!("{}", serde_json::to_string_pretty(&out)?);
         }
         Command::QueryCapabilityAudit { token_id } => {
             let registry = load_identity_registry(&identity_registry_file());
@@ -5203,6 +5482,7 @@ mod tests {
             "TRNM_RPC_INGRESS_FILE",
             MARKET_REPUTATION_FILE_ENV,
             TASK_STATE_FILE_ENV,
+            CONSUMPTION_STATE_FILE_ENV,
         ];
         let prev: Vec<(String, Option<String>)> = keys
             .iter()
@@ -10961,6 +11241,208 @@ line2
         assert_eq!(tx.error, None);
         assert_eq!(tx.submitted_at_unix_ms, 12);
         assert_eq!(tx.updated_at_unix_ms, 13);
+
+        let _ = fs::remove_file(&path);
+    }
+
+    #[test]
+    fn query_consumption_summary_response_reads_state_summary() {
+        let mut st = StateStore::default();
+        st.set_task_consumption_summary(TaskConsumptionSummary {
+            task_id: 42,
+            receipt_count: 2,
+            accepted_receipt_count: 1,
+            challenged_receipt_count: 1,
+            total_consumed_tokens: 33,
+            total_claimed_consumption_units: 33,
+            total_credited_consumption_units: 21,
+            last_settlement_height: Some(88),
+        });
+
+        let out = query_consumption_summary_response(42, &st).expect("summary");
+        assert_eq!(out.task_id, 42);
+        assert_eq!(out.receipt_count, 2);
+        assert_eq!(out.accepted_receipt_count, 1);
+        assert_eq!(out.challenged_receipt_count, 1);
+        assert_eq!(out.total_consumed_tokens, 33);
+        assert_eq!(out.total_claimed_consumption_units, 33);
+        assert_eq!(out.total_credited_consumption_units, 21);
+        assert_eq!(out.last_settlement_height, Some(88));
+    }
+
+    #[test]
+    fn query_consumption_receipts_response_reads_task_records() {
+        let mut st = StateStore::default();
+        st.put_consumption_record(ConsumptionRecord {
+            key: trnm_state::ConsumptionRecordKey {
+                task_id: 42,
+                consumer_id: "consumer-bravo".into(),
+                output_hash: "abc123".into(),
+                billing_window_id: "bw-1".into(),
+            },
+            worker_id: "worker-alpha".into(),
+            tokenizer_id: "tok".into(),
+            tokenizer_version: "1.0.0".into(),
+            consumer_class: "bonded_api_client".into(),
+            consumed_spans_root: "def456".into(),
+            consumed_token_count: 17,
+            claimed_consumption_units: 17,
+            credited_consumption_units: Some(9),
+            consumer_nonce: 7,
+            accepted_at_unix_ms: 1_775_683_200_123,
+            status: ConsumptionRecordStatus::Discounted,
+            resolution_code: Some("accepted_discounted".into()),
+        });
+
+        let out = query_consumption_receipts_response(42, 20, &st).expect("receipts");
+        assert_eq!(out.len(), 1);
+        assert_eq!(out[0].task_id, 42);
+        assert_eq!(out[0].consumer_id, "consumer-bravo");
+        assert_eq!(out[0].worker_id, "worker-alpha");
+        assert_eq!(out[0].consumed_token_count, 17);
+        assert_eq!(out[0].credited_consumption_units, Some(9));
+        assert_eq!(out[0].status, "Discounted");
+    }
+
+    #[test]
+    fn parse_query_consumption_receipts_limit_from_path_defaults_and_accepts_explicit_limit() {
+        assert_eq!(
+            parse_query_consumption_receipts_limit_from_path("/query-consumption-receipts/42")
+                .expect("default limit"),
+            QUERY_CONSUMPTION_RECEIPTS_LIMIT_DEFAULT,
+        );
+        assert_eq!(
+            parse_query_consumption_receipts_limit_from_path(
+                "/query-consumption-receipts/42?limit=7"
+            )
+            .expect("explicit limit"),
+            7,
+        );
+    }
+
+    #[test]
+    fn parse_query_consumption_receipts_limit_from_path_rejects_query_events_route_shape() {
+        let err = parse_query_consumption_receipts_limit_from_path("/query-events/42?limit=7")
+            .expect_err("query-events route must not be accepted by consumption receipts parser");
+        assert!(err.contains("400 Bad Request"));
+        assert!(err.contains("invalid limit"));
+    }
+
+    #[test]
+    fn query_consumption_summary_response_derives_from_records_when_summary_missing() {
+        let mut st = StateStore::default();
+        st.put_consumption_record(ConsumptionRecord {
+            key: trnm_state::ConsumptionRecordKey {
+                task_id: 42,
+                consumer_id: "consumer-bravo".into(),
+                output_hash: "abc123".into(),
+                billing_window_id: "bw-1".into(),
+            },
+            worker_id: "worker-alpha".into(),
+            tokenizer_id: "tok".into(),
+            tokenizer_version: "1.0.0".into(),
+            consumer_class: "bonded_api_client".into(),
+            consumed_spans_root: "def456".into(),
+            consumed_token_count: 17,
+            claimed_consumption_units: 17,
+            credited_consumption_units: Some(9),
+            consumer_nonce: 7,
+            accepted_at_unix_ms: 1_775_683_200_123,
+            status: ConsumptionRecordStatus::Discounted,
+            resolution_code: Some("accepted_discounted".into()),
+        });
+        st.put_consumption_record(ConsumptionRecord {
+            key: trnm_state::ConsumptionRecordKey {
+                task_id: 42,
+                consumer_id: "consumer-charlie".into(),
+                output_hash: "ghi789".into(),
+                billing_window_id: "bw-2".into(),
+            },
+            worker_id: "worker-beta".into(),
+            tokenizer_id: "tok".into(),
+            tokenizer_version: "1.0.0".into(),
+            consumer_class: "bonded_api_client".into(),
+            consumed_spans_root: "jkl012".into(),
+            consumed_token_count: 5,
+            claimed_consumption_units: 5,
+            credited_consumption_units: None,
+            consumer_nonce: 8,
+            accepted_at_unix_ms: 1_775_683_200_456,
+            status: ConsumptionRecordStatus::Challenged,
+            resolution_code: None,
+        });
+
+        let out = query_consumption_summary_response(42, &st).expect("summary derived from records");
+        assert_eq!(out.task_id, 42);
+        assert_eq!(out.receipt_count, 2);
+        assert_eq!(out.accepted_receipt_count, 1);
+        assert_eq!(out.challenged_receipt_count, 1);
+        assert_eq!(out.total_consumed_tokens, 22);
+        assert_eq!(out.total_claimed_consumption_units, 22);
+        assert_eq!(out.total_credited_consumption_units, 9);
+        assert_eq!(out.last_settlement_height, None);
+    }
+
+    #[test]
+    fn load_consumption_state_snapshot_reads_records_summaries_and_nonces() {
+        let path = unique_tmp_path("rpc-consumption-state", "json");
+        let _ = fs::remove_file(&path);
+        fs::write(
+            &path,
+            format!(
+                "\u{feff}\n{}",
+                serde_json::json!({
+                    "consumption_records": [{
+                        "key": {
+                            "task_id": 42,
+                            "consumer_id": "consumer-bravo",
+                            "output_hash": "abc123",
+                            "billing_window_id": "bw-1"
+                        },
+                        "worker_id": "worker-alpha",
+                        "tokenizer_id": "tok",
+                        "tokenizer_version": "1.0.0",
+                        "consumer_class": "bonded_api_client",
+                        "consumed_spans_root": "def456",
+                        "consumed_token_count": 17,
+                        "claimed_consumption_units": 17,
+                        "credited_consumption_units": 9,
+                        "consumer_nonce": 7,
+                        "accepted_at_unix_ms": 1775683200123u64,
+                        "status": "Accepted",
+                        "resolution_code": "accepted"
+                    }],
+                    "task_consumption_summaries": [{
+                        "task_id": 42,
+                        "receipt_count": 1,
+                        "accepted_receipt_count": 1,
+                        "challenged_receipt_count": 0,
+                        "total_consumed_tokens": 17,
+                        "total_claimed_consumption_units": 17,
+                        "total_credited_consumption_units": 9,
+                        "last_settlement_height": 88
+                    }],
+                    "consumer_consumption_nonces": {
+                        "consumer-bravo": 7
+                    }
+                })
+            ),
+        )
+        .expect("write consumption snapshot");
+
+        with_market_path_env(&[(CONSUMPTION_STATE_FILE_ENV, path.to_str())], || {
+            let st = load_consumption_state_snapshot().expect("load consumption snapshot");
+            let records = st.consumption_records_for_task(42);
+            assert_eq!(records.len(), 1);
+            assert_eq!(records[0].worker_id, "worker-alpha");
+            assert_eq!(records[0].status, ConsumptionRecordStatus::Accepted);
+            assert_eq!(st.consumer_consumption_nonce("consumer-bravo"), Some(7));
+
+            let summary = st.task_consumption_summary(42).expect("summary");
+            assert_eq!(summary.receipt_count, 1);
+            assert_eq!(summary.total_credited_consumption_units, 9);
+            assert_eq!(summary.last_settlement_height, Some(88));
+        });
 
         let _ = fs::remove_file(&path);
     }
