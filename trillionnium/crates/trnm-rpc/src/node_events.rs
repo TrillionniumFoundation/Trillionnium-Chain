@@ -468,6 +468,7 @@ mod tests {
 
     #[test]
     fn load_node_event_log_sources_accepts_comma_and_semicolon_separated_manifest_entries() {
+        let _guard = crate::test_support::lock_env();
         let root = unique_tmp_path("trnm-rpc-node-events-manifest-delimiters");
         let archive_dir = root.join("archive");
         let manifest_dir = root.join("cfg/history");

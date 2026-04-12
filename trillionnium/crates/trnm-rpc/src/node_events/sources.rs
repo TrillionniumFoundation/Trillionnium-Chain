@@ -146,6 +146,11 @@ pub(super) fn discover_default_node_event_log_sources(root: &Path) -> Vec<PathBu
 
 fn load_node_event_log_sources_impl(root: &Path) -> Vec<PathBuf> {
     let mut sources = BTreeSet::<PathBuf>::new();
+    let mut insert_if_file = |path: PathBuf| {
+        if path.is_file() {
+            sources.insert(path);
+        }
+    };
 
     if let Some(manifest_path) = normalized_path_from_env(NODE_EVENT_LOG_MANIFEST_ENV) {
         let manifest_path = if manifest_path.is_absolute() {
@@ -161,7 +166,7 @@ fn load_node_event_log_sources_impl(root: &Path) -> Vec<PathBuf> {
                 } else {
                     normalize_lexical_path(manifest_dir.join(path))
                 };
-                sources.insert(resolved);
+                insert_if_file(resolved);
             }
         }
     }
@@ -178,7 +183,7 @@ fn load_node_event_log_sources_impl(root: &Path) -> Vec<PathBuf> {
             } else {
                 normalize_lexical_path(root.join(path))
             };
-            sources.insert(resolved);
+            insert_if_file(resolved);
         }
     }
 
@@ -263,6 +268,50 @@ mod tests {
             got,
             vec![shared_log],
             "quoted historical replay env entries should resolve to canonical log sources"
+        );
+
+        let _ = fs::remove_dir_all(root);
+    }
+
+    #[test]
+    fn load_node_event_log_sources_ignores_missing_entries_before_default_fallback() {
+        let _guard = lock_env();
+        let root = unique_tmp_path("trnm-rpc-node-event-sources-missing-entry-fallback");
+        let run_dir = root.join("run");
+        let manifest_dir = root.join("cfg/history");
+        fs::create_dir_all(&run_dir).expect("create run dir");
+        fs::create_dir_all(&manifest_dir).expect("create manifest dir");
+
+        let default_log = run_dir.join("event-field-check.log");
+        let manifest = manifest_dir.join("sources.txt");
+        fs::write(&default_log, "").expect("write default log");
+        fs::write(&manifest, "../../archive/missing-node4.log\n").expect("write manifest");
+
+        let prev_sources = std::env::var(NODE_EVENT_LOG_SOURCES_ENV).ok();
+        let prev_manifest = std::env::var(NODE_EVENT_LOG_MANIFEST_ENV).ok();
+        unsafe {
+            std::env::set_var(NODE_EVENT_LOG_SOURCES_ENV, "archive/missing-node5.log");
+            std::env::set_var(
+                NODE_EVENT_LOG_MANIFEST_ENV,
+                manifest.to_string_lossy().to_string(),
+            );
+        }
+
+        let got = load_node_event_log_sources(&root);
+
+        match prev_sources {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_SOURCES_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV) },
+        }
+        match prev_manifest {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_MANIFEST_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV) },
+        }
+
+        assert_eq!(
+            got,
+            vec![default_log],
+            "missing historical replay entries must not suppress durable default log discovery"
         );
 
         let _ = fs::remove_dir_all(root);

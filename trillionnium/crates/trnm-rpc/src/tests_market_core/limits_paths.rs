@@ -152,6 +152,33 @@ fn load_task_state_snapshot_tolerates_invalid_utf8_prefix_before_valid_history_r
 }
 
 #[test]
+fn load_task_state_snapshot_ignores_comment_only_history_rows() {
+    let path = unique_tmp_path("rpc-task-state-comment-rows", "jsonl");
+    let _ = fs::remove_file(&path);
+    fs::write(
+        &path,
+        concat!(
+            "# archived historical replay note only\n",
+            "  \u{feff}# second operator note after bom\n",
+            "{\"task_id\":120,\"status\":\"Open\",\"worker\":null,\"bounty\":12,\"result_hash\":null,\"version\":1}\n",
+            "\n",
+            "{\"task_id\":120,\"status\":\"Assigned\",\"worker\":\"worker-12\",\"bounty\":12,\"result_hash\":null,\"version\":2}\n"
+        ),
+    )
+    .expect("write comment-only task snapshot rows");
+
+    with_market_path_env(&[(TASK_STATE_FILE_ENV, path.to_str())], || {
+        let tasks = load_task_state_snapshot().expect("task snapshot should parse past comment rows");
+        assert_eq!(tasks.len(), 2, "comment-only rows should not erase durable task history");
+        assert_eq!(tasks[0].task_id, 120);
+        assert_eq!(tasks[0].version, 1);
+        assert_eq!(tasks[1].version, 2);
+    });
+
+    let _ = fs::remove_file(&path);
+}
+
+#[test]
 fn push_tail_limited_keeps_only_most_recent_items_in_order() {
     let mut items = Vec::new();
     push_tail_limited(&mut items, 1, 3);

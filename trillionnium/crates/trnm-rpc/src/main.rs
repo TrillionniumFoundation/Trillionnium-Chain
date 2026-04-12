@@ -948,6 +948,11 @@ fn discover_default_node_event_log_sources(root: &Path) -> Vec<PathBuf> {
 
 fn load_node_event_log_sources(root: &Path) -> Vec<PathBuf> {
     let mut sources = BTreeSet::<PathBuf>::new();
+    let mut insert_if_file = |path: PathBuf| {
+        if path.is_file() {
+            sources.insert(path);
+        }
+    };
 
     if let Some(manifest_path) = normalized_path_from_env(NODE_EVENT_LOG_MANIFEST_ENV) {
         let manifest_path = if manifest_path.is_absolute() {
@@ -967,7 +972,7 @@ fn load_node_event_log_sources(root: &Path) -> Vec<PathBuf> {
                 } else {
                     normalize_lexical_path(manifest_dir.join(path))
                 };
-                sources.insert(resolved);
+                insert_if_file(resolved);
             }
         }
     }
@@ -979,7 +984,7 @@ fn load_node_event_log_sources(root: &Path) -> Vec<PathBuf> {
             } else {
                 normalize_lexical_path(root.join(path))
             };
-            sources.insert(resolved);
+            insert_if_file(resolved);
         }
     }
 
@@ -1369,6 +1374,11 @@ fn normalize_task_state_snapshot_line(line: &str) -> &str {
     line.trim().trim_start_matches('\u{feff}').trim()
 }
 
+fn is_task_state_snapshot_line_candidate(line: &str) -> bool {
+    let line = normalize_task_state_snapshot_line(line);
+    !line.is_empty() && !line.starts_with('#')
+}
+
 fn load_task_state_snapshot() -> Result<Vec<TaskObject>> {
     let Some(path) = task_state_file() else {
         return Ok(vec![]);
@@ -1387,10 +1397,10 @@ fn load_task_state_snapshot() -> Result<Vec<TaskObject>> {
 
     let mut tasks = Vec::new();
     for (idx, line) in raw.lines().enumerate() {
-        let line = normalize_task_state_snapshot_line(line);
-        if line.is_empty() {
+        if !is_task_state_snapshot_line_candidate(line) {
             continue;
         }
+        let line = normalize_task_state_snapshot_line(line);
         let task = serde_json::from_str::<TaskObject>(line).map_err(|err| {
             anyhow!(
                 "failed to parse task state snapshot {} line {}: {}",
@@ -3888,6 +3898,93 @@ fn query_task_from_node_events(
     })
 }
 
+fn adapter_kind_query_order(kind: &str) -> u8 {
+    match kind {
+        "commit" => 0,
+        "reveal" => 1,
+        _ => 2,
+    }
+}
+
+fn normalize_result_hash_replay_identity(value: Option<&str>) -> Option<String> {
+    value.map(str::trim).and_then(|value| {
+        if value.is_empty() {
+            None
+        } else {
+            let normalized = normalize_tx_hash_lookup(value);
+            if is_hex_like_tx_hash(&normalized) {
+                Some(normalized)
+            } else {
+                Some(value.to_string())
+            }
+        }
+    })
+}
+
+fn sorted_task_adapter_records<'a>(
+    task_id: u64,
+    recs: &'a [AdapterRecord],
+) -> Vec<&'a AdapterRecord> {
+    let mut task_recs: Vec<&AdapterRecord> = recs
+        .iter()
+        .filter(|r| {
+            r.task_id == task_id
+                && r.status == "accepted"
+                && matches!(r.kind.as_str(), "commit" | "reveal")
+                && r.worker
+                    .as_deref()
+                    .and_then(normalize_actor_or_signer)
+                    .is_some()
+        })
+        .collect();
+    task_recs.sort_by(|a, b| {
+        (
+            a.ts,
+            adapter_kind_query_order(&a.kind),
+            a.worker
+                .as_deref()
+                .and_then(normalize_actor_or_signer)
+                .unwrap_or_default(),
+            a.tx_hash
+                .as_deref()
+                .map(normalize_tx_hash_lookup)
+                .unwrap_or_default(),
+            normalize_result_hash_replay_identity(a.result_hash.as_deref()).unwrap_or_default(),
+        )
+            .cmp(&(
+                b.ts,
+                adapter_kind_query_order(&b.kind),
+                b.worker
+                    .as_deref()
+                    .and_then(normalize_actor_or_signer)
+                    .unwrap_or_default(),
+                b.tx_hash
+                    .as_deref()
+                    .map(normalize_tx_hash_lookup)
+                    .unwrap_or_default(),
+                normalize_result_hash_replay_identity(b.result_hash.as_deref()).unwrap_or_default(),
+            ))
+    });
+    let mut seen = std::collections::BTreeSet::new();
+    task_recs.retain(|record| {
+        seen.insert((
+            record.kind.clone(),
+            record
+                .worker
+                .as_deref()
+                .and_then(normalize_actor_or_signer)
+                .unwrap_or_default(),
+            record
+                .tx_hash
+                .as_deref()
+                .map(normalize_tx_hash_lookup)
+                .unwrap_or_default(),
+            normalize_result_hash_replay_identity(record.result_hash.as_deref()).unwrap_or_default(),
+        ))
+    });
+    task_recs
+}
+
 fn query_task_response(
     task_id: u64,
     node_events: &[NodeEventRecord],
@@ -3901,18 +3998,7 @@ fn query_task_response(
         return Ok(out);
     }
 
-    let task_recs: Vec<&AdapterRecord> = recs
-        .iter()
-        .filter(|r| {
-            r.task_id == task_id
-                && r.status == "accepted"
-                && matches!(r.kind.as_str(), "commit" | "reveal")
-                && r.worker
-                    .as_deref()
-                    .and_then(normalize_actor_or_signer)
-                    .is_some()
-        })
-        .collect();
+    let task_recs = sorted_task_adapter_records(task_id, recs);
     if task_recs.is_empty() {
         bail!("task not found: {}", task_id);
     }
@@ -3931,10 +4017,12 @@ fn query_task_response(
     } else {
         TaskStatus::Open
     };
-    let worker = task_recs.iter().find_map(|r| r.worker.clone());
+    let worker = task_recs
+        .iter()
+        .find_map(|r| r.worker.as_deref().and_then(normalize_actor_or_signer));
     let result_hash_hex = task_recs.iter().rev().find_map(|r| {
         if r.kind == "reveal" {
-            r.result_hash.clone()
+            normalize_result_hash_replay_identity(r.result_hash.as_deref())
         } else {
             None
         }
@@ -4006,10 +4094,7 @@ fn query_events_response(
     if events.is_empty() {
         let mut tx_id = 1u64;
         let mut has_commit = false;
-        for r in recs
-            .iter()
-            .filter(|r| r.task_id == task_id && r.status == "accepted")
-        {
+        for r in sorted_task_adapter_records(task_id, recs) {
             let Some(actor) = r.worker.as_deref().and_then(normalize_actor_or_signer) else {
                 continue;
             };
@@ -8761,6 +8846,58 @@ mod tests {
     }
 
     #[test]
+    fn adapter_fallback_dedupes_replayed_rows_even_when_timestamps_drift() {
+        let recs = vec![
+            AdapterRecord {
+                ts: 20,
+                kind: "reveal".into(),
+                task_id: 51,
+                worker: Some(" worker-a ".into()),
+                result_hash: Some("0xABCD".into()),
+                status: "accepted".into(),
+                tx_hash: Some("0x1234".into()),
+            },
+            AdapterRecord {
+                ts: 10,
+                kind: "commit".into(),
+                task_id: 51,
+                worker: Some("worker-a".into()),
+                result_hash: None,
+                status: "accepted".into(),
+                tx_hash: Some("0x1234".into()),
+            },
+            AdapterRecord {
+                ts: 30,
+                kind: "commit".into(),
+                task_id: 51,
+                worker: Some("worker-a".into()),
+                result_hash: None,
+                status: "accepted".into(),
+                tx_hash: Some("0x1234".into()),
+            },
+            AdapterRecord {
+                ts: 40,
+                kind: "reveal".into(),
+                task_id: 51,
+                worker: Some("worker-a".into()),
+                result_hash: Some("0xabcd".into()),
+                status: "accepted".into(),
+                tx_hash: Some("0x1234".into()),
+            },
+        ];
+
+        let task = query_task_response(51, &[], &recs).expect("task expected");
+        assert_eq!(task.version, 2, "replayed adapter rows must not inflate read-model version");
+        assert_eq!(task.worker.as_deref(), Some("worker-a"));
+        assert_eq!(task.result_hash_hex.as_deref(), Some("0xabcd"));
+
+        let events = query_events_response(51, 20, &[], &recs).expect("events expected");
+        assert_eq!(events.len(), 2, "historical replay must not duplicate commit/reveal rows");
+        assert_eq!(events[0].event_type, "commit");
+        assert_eq!(events[1].event_type, "reveal");
+    }
+
+    #[test]
     fn parse_event_log_kv_preserves_quoted_values_with_spaces() {
         let line = "[event] event_type=resolve task_id=7 from_status=Challenged to_status=Completed actor=authority tx_id=9 block_height=12 state_root=abc ts_unix_ms=1000 resolution_code=\"timeout reached\" bond_disposition='forfeit all'";
         let kv = parse_event_log_kv(line);
@@ -9120,6 +9257,95 @@ line2
         assert!(got.contains(&env_log));
         assert!(got.contains(&manifest_log));
         assert_eq!(got.len(), 2, "custom sources should replace defaults");
+
+        let _ = fs::remove_dir_all(root);
+    }
+
+    #[test]
+    fn load_node_event_log_sources_ignores_missing_entries_before_default_fallback() {
+        let _guard = lock_env();
+        let root = unique_tmp_path("trnm-rpc-log-sources-missing-entry-fallback", "dir");
+        let run_dir = root.join("run");
+        let manifest_dir = root.join("cfg/history");
+        fs::create_dir_all(&run_dir).expect("create run dir");
+        fs::create_dir_all(&manifest_dir).expect("create manifest dir");
+
+        let default_log = run_dir.join("event-field-check.log");
+        let manifest = manifest_dir.join("sources.txt");
+        fs::write(&default_log, "").expect("write default log");
+        fs::write(&manifest, "../../archive/missing-node4.log\n").expect("write manifest");
+
+        let prev_sources = std::env::var(NODE_EVENT_LOG_SOURCES_ENV).ok();
+        let prev_manifest = std::env::var(NODE_EVENT_LOG_MANIFEST_ENV).ok();
+        unsafe {
+            std::env::set_var(NODE_EVENT_LOG_SOURCES_ENV, "archive/missing-node5.log");
+            std::env::set_var(
+                NODE_EVENT_LOG_MANIFEST_ENV,
+                manifest.to_string_lossy().to_string(),
+            );
+        }
+
+        let got = load_node_event_log_sources(&root);
+
+        match prev_sources {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_SOURCES_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV) },
+        }
+        match prev_manifest {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_MANIFEST_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV) },
+        }
+
+        assert_eq!(
+            got,
+            vec![default_log],
+            "missing historical replay entries must not suppress durable default log discovery"
+        );
+
+        let _ = fs::remove_dir_all(root);
+    }
+
+    #[test]
+    fn load_node_event_log_sources_ignores_invalid_utf8_manifest_before_env_fallback() {
+        let _guard = lock_env();
+        let root = unique_tmp_path("trnm-rpc-log-sources-invalid-utf8-manifest-fallback", "dir");
+        let archive_dir = root.join("archive");
+        let manifest_dir = root.join("cfg/history");
+        fs::create_dir_all(&archive_dir).expect("create archive dir");
+        fs::create_dir_all(&manifest_dir).expect("create manifest dir");
+
+        let archived_log = archive_dir.join("node4.log");
+        let manifest = manifest_dir.join("sources.txt");
+        fs::write(&archived_log, "").expect("write archived log");
+        fs::write(&manifest, [0xff, 0xfe, b'#', b' ', b'b', b'a', b'd'])
+            .expect("write invalid manifest");
+
+        let prev_sources = std::env::var(NODE_EVENT_LOG_SOURCES_ENV).ok();
+        let prev_manifest = std::env::var(NODE_EVENT_LOG_MANIFEST_ENV).ok();
+        unsafe {
+            std::env::set_var(NODE_EVENT_LOG_SOURCES_ENV, "archive/node4.log");
+            std::env::set_var(
+                NODE_EVENT_LOG_MANIFEST_ENV,
+                manifest.to_string_lossy().to_string(),
+            );
+        }
+
+        let got = load_node_event_log_sources(&root);
+
+        match prev_sources {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_SOURCES_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_SOURCES_ENV) },
+        }
+        match prev_manifest {
+            Some(v) => unsafe { std::env::set_var(NODE_EVENT_LOG_MANIFEST_ENV, v) },
+            None => unsafe { std::env::remove_var(NODE_EVENT_LOG_MANIFEST_ENV) },
+        }
+
+        assert_eq!(
+            got,
+            vec![archived_log],
+            "invalid-utf8 historical replay manifests must not suppress explicit env log sources"
+        );
 
         let _ = fs::remove_dir_all(root);
     }
