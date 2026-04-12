@@ -17,7 +17,7 @@
 并包含 fail-closed 约束：
 
 - 重复请求（`DuplicateRequest`）拒绝
-- 空白请求 ID（`InvalidRequestId`）拒绝，避免锁定/释放/惩罚审计记录出现空主键
+- 空白或带首尾空白的请求 ID（`InvalidRequestId`）拒绝，避免锁定/释放/惩罚审计记录出现空主键或非 canonical 主键
 - 越权调用（`Unauthorized`）拒绝
 - 非法状态迁移（`InvalidStateTransition`）拒绝
 - 暂停期间所有状态变更入口拒绝（`Paused`）

@@ -432,7 +432,7 @@ impl SettlementVault {
     }
 
     fn ensure_request_id(&self, request_id: &str) -> Result<(), VaultError> {
-        if request_id.trim().is_empty() {
+        if request_id.trim().is_empty() || request_id != request_id.trim() {
             return Err(VaultError::InvalidRequestId);
         }
         Ok(())
@@ -538,7 +538,7 @@ mod tests {
     }
 
     #[test]
-    fn blank_request_ids_are_rejected_without_state_or_audit_mutation() {
+    fn blank_or_padded_request_ids_are_rejected_without_state_or_audit_mutation() {
         let mut vault = SettlementVault::new("owner");
 
         vault.deposit("owner", "alice", 50).unwrap();
@@ -560,12 +560,29 @@ mod tests {
             vault.slash("owner", "   ", "treasury").unwrap_err(),
             VaultError::InvalidRequestId
         );
+
+        assert_eq!(
+            vault.lock("owner", " req-padded ", "alice", 10).unwrap_err(),
+            VaultError::InvalidRequestId
+        );
+        assert!(vault.lock_record(" req-padded ").is_none());
+        assert_eq!(
+            vault.release("owner", " req-padded ").unwrap_err(),
+            VaultError::InvalidRequestId
+        );
+        assert_eq!(
+            vault
+                .slash("owner", " req-padded ", "treasury")
+                .unwrap_err(),
+            VaultError::InvalidRequestId
+        );
+
         assert_eq!(vault.audit_log().len(), audit_len_after_deposit);
         assert!(!vault.normalized_audit_log().iter().any(|event| {
             matches!(
                 &event.event_type[..],
                 "vault.locked" | "vault.released" | "vault.slashed"
-            ) && event.object_id.as_deref() == Some("   ")
+            ) && matches!(event.object_id.as_deref(), Some("   ") | Some(" req-padded "))
         }));
     }
 
