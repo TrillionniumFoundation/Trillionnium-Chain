@@ -352,6 +352,75 @@ describe("dashboard source normalized audit pagination", () => {
     expect(snapshot.kpis.find((kpi) => kpi.label === "Open Incidents")?.value).toBe("1");
   });
 
+  it("dedupes normalized audit pages after trimming invisible noise from event keys", async () => {
+    const mockClient = {
+      queryTask: vi.fn().mockResolvedValue({
+        task: {
+          id: "341-dedupe-noise",
+          owner: "ops",
+          status: "running",
+          createdAt: "2026-03-01T00:00:00.000Z",
+          metadata: {},
+        },
+      }),
+      queryEvents: vi.fn().mockResolvedValue({
+        taskId: "341-dedupe-noise",
+        events: [],
+      }),
+      queryCapabilityAudit: vi.fn().mockResolvedValue({
+        subject: "did:trnm:test",
+        audits: [
+          {
+            subject: "did:trnm:test",
+            capability: "AUDIT_READ",
+            granted: true,
+            checkedAt: "2026-03-01T00:00:00.000Z",
+          },
+        ],
+      }),
+      queryNormalizedAuditEvents: vi
+        .fn()
+        .mockResolvedValueOnce({
+          events: [
+            {
+              source: "bridge-relay",
+              event_type: "bridge_relay.proof_submitted",
+              actor: "validator-z",
+              object_id: "proof-dup",
+              timestamp: "2026-03-01T00:02:00.000Z",
+              reason: "critical",
+            },
+          ],
+          hasMore: true,
+          nextCursor: "cursor-dedupe",
+        })
+        .mockResolvedValueOnce({
+          events: [
+            {
+              source: " \u200Bbridge-relay\uFEFF ",
+              event_type: " bridge_relay.proof_submitted ",
+              actor: "\nvalidator-z\t",
+              object_id: "\u200Bproof-dup\uFEFF",
+              timestamp: "\u200B2026-03-01T00:02:00.000Z\uFEFF",
+              reason: " \u200Bcritical\uFEFF ",
+            },
+          ],
+          hasMore: false,
+        }),
+    } as unknown as ReturnType<typeof apiContractClient.createFrontendApiClient>;
+
+    vi.spyOn(apiContractClient, "createFrontendApiClient").mockReturnValue(mockClient);
+
+    const snapshot = await fetchDashboardSnapshot();
+    const matchingEvents = snapshot.events.filter(
+      (event) => event.id === "bridge-relay:proof-dup" && event.summary === "bridge-relay · bridge_relay.proof_submitted",
+    );
+
+    expect(mockClient.queryNormalizedAuditEvents).toHaveBeenCalledTimes(2);
+    expect(matchingEvents).toHaveLength(1);
+    expect(snapshot.kpis.find((kpi) => kpi.label === "Open Incidents")?.value).toBe("1");
+  });
+
   it("keeps the readonly snapshot adaptable when task metadata or event payload are missing", async () => {
     const mockClient = {
       queryTask: vi

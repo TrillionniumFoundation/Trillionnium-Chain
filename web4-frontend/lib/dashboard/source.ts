@@ -295,19 +295,22 @@ const resolveNormalizedAuditPageLimit = (): number =>
 const resolveNormalizedAuditMaxPages = (): number =>
   parsePositiveIntEnv(process.env.NEXT_PUBLIC_DASHBOARD_NORMALIZED_AUDIT_MAX_PAGES, 4);
 
+const normalizeDashboardDedupeToken = (value: string | undefined): string =>
+  normalizeDashboardInput(value) ?? "";
+
 const getNormalizedAuditEventKey = (event: NormalizedAuditEvent): string =>
   [
-    event.source,
-    event.event_type,
-    event.object_id ?? "",
-    event.related_id ?? "",
-    event.actor ?? "",
-    event.subject ?? "",
-    event.timestamp ?? "",
-    event.checkedAt ?? "",
-    event.amount == null ? "" : String(event.amount),
-    event.reason ?? "",
-    event.note ?? "",
+    normalizeDashboardDedupeToken(event.source),
+    normalizeDashboardDedupeToken(event.event_type),
+    normalizeDashboardDedupeToken(event.object_id),
+    normalizeDashboardDedupeToken(event.related_id),
+    normalizeDashboardDedupeToken(event.actor),
+    normalizeDashboardDedupeToken(event.subject),
+    normalizeDashboardDedupeToken(event.timestamp),
+    normalizeDashboardDedupeToken(event.checkedAt),
+    event.amount == null ? "" : normalizeDashboardDedupeToken(String(event.amount)),
+    normalizeDashboardDedupeToken(event.reason),
+    normalizeDashboardDedupeToken(event.note),
   ].join("\u001f");
 
 const fetchNormalizedAuditEventsWithPagination = async (
