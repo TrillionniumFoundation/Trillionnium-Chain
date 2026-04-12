@@ -435,6 +435,7 @@ Record these fields in the release ticket or operator handoff note:
 - handoff acknowledged by (copy `handoff_acknowledged_by=` verbatim for replacement/rotation ownership transfer):
 - operator ack (copy `operator_ack=` verbatim whenever the event crosses a human handoff boundary):
 - operator ack signature path (copy `operator_ack_signature_path=` verbatim when a durable sign-off artifact exists, else leave empty):
+- operator ack digest (copy `operator_ack_digest=` verbatim when only the durable ack digest is available, else leave empty):
 - git status summary (`clean` required):
 - preflight summary path:
 - preflight result:

@@ -19,6 +19,7 @@ Usage: emit_validator_rotation_packet.sh \
   [--handoff-acknowledged-by <name>] \
   [--operator-ack <text>] \
   [--operator-ack-signature-path <path>] \
+  [--operator-ack-digest <sha256>] \
   [--handoff-summary-path <path>] \
   [--handoff-manifest-path <path>] \
   [--summary-generated-at <timestamp>] \
@@ -55,6 +56,7 @@ HANDOFF_SIGNED_BY=""
 HANDOFF_ACKNOWLEDGED_BY=""
 OPERATOR_ACK=""
 OPERATOR_ACK_SIGNATURE_PATH=""
+OPERATOR_ACK_DIGEST=""
 HANDOFF_SUMMARY_PATH=""
 HANDOFF_MANIFEST_PATH=""
 SUMMARY_GENERATED_AT=""
@@ -305,6 +307,7 @@ while [ "$#" -gt 0 ]; do
     --handoff-acknowledged-by) HANDOFF_ACKNOWLEDGED_BY="${2-}"; shift 2 ;;
     --operator-ack) OPERATOR_ACK="${2-}"; shift 2 ;;
     --operator-ack-signature-path) OPERATOR_ACK_SIGNATURE_PATH="${2-}"; shift 2 ;;
+    --operator-ack-digest) OPERATOR_ACK_DIGEST="${2-}"; shift 2 ;;
     --handoff-summary-path) HANDOFF_SUMMARY_PATH="${2-}"; shift 2 ;;
     --handoff-manifest-path) HANDOFF_MANIFEST_PATH="${2-}"; shift 2 ;;
     --summary-generated-at) SUMMARY_GENERATED_AT="${2-}"; shift 2 ;;
@@ -415,6 +418,11 @@ if [ -n "$OPERATOR_ACK_SIGNATURE_PATH" ]; then
   require_path_value --operator-ack-signature-path "$OPERATOR_ACK_SIGNATURE_PATH"
 fi
 
+if [ -n "$OPERATOR_ACK_DIGEST" ]; then
+  require_nonempty --operator-ack "$OPERATOR_ACK"
+  require_token --operator-ack-digest "$OPERATOR_ACK_DIGEST"
+fi
+
 if [ -n "$HANDOFF_SUMMARY_PATH" ] || [ -n "$HANDOFF_MANIFEST_PATH" ] || [ -n "$SUMMARY_GENERATED_AT" ] || [ -n "$MANIFEST_GENERATED_AT" ]; then
   require_path_value --handoff-summary-path "$HANDOFF_SUMMARY_PATH"
   require_path_value --handoff-manifest-path "$HANDOFF_MANIFEST_PATH"
@@ -508,6 +516,9 @@ if [ -n "$OPERATOR_ACK" ]; then
 fi
 if [ -n "$OPERATOR_ACK_SIGNATURE_PATH" ]; then
   printf 'operator_ack_signature_path=%s\n' "$OPERATOR_ACK_SIGNATURE_PATH"
+fi
+if [ -n "$OPERATOR_ACK_DIGEST" ]; then
+  printf 'operator_ack_digest=%s\n' "$OPERATOR_ACK_DIGEST"
 fi
 if [ -n "$HANDOFF_SUMMARY_PATH" ]; then
   printf 'handoff_summary_path=%s\n' "$HANDOFF_SUMMARY_PATH"

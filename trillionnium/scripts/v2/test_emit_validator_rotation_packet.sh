@@ -229,6 +229,22 @@ if bash "$SCRIPT" \
   --incoming-validator-id validator-new \
   --incoming-config-path /tmp/configs/validator-new.json \
   --rollback-command 'rm -rf /tmp/cutover-note' \
+  --operator-ack-digest 0123456789abcdef \
+  >/tmp/emit-packet.out 2>/tmp/emit-packet.err; then
+  echo "expected digest without operator ack to fail" >&2
+  exit 1
+fi
+grep -q 'missing --operator-ack' /tmp/emit-packet.err
+
+if bash "$SCRIPT" \
+  --cutover-kind replacement \
+  --verified-worktree /tmp/trnm-lane \
+  --verified-branch-ref lane/mn05-operator-dr-rotation-lifecycle \
+  --verified-head 0123456789abcdef \
+  --outgoing-validator-id validator-old \
+  --incoming-validator-id validator-new \
+  --incoming-config-path /tmp/configs/validator-new.json \
+  --rollback-command 'rm -rf /tmp/cutover-note' \
   --config-bundle-check-command 'python3 scripts/v2/check_validator_config_bundle.py /tmp/configs/validator-other.json' \
   --config-bundle-check-result '[OK] validated /tmp/configs/validator-other.json' \
   >/tmp/emit-packet.out 2>/tmp/emit-packet.err; then
@@ -430,6 +446,23 @@ bash "$SCRIPT" \
   >/tmp/emit-packet.out
 
 grep -q '^operator_ack_signature_path=/tmp/evidence/operator-ack.txt$' /tmp/emit-packet.out
+
+bash "$SCRIPT" \
+  --cutover-kind rotation \
+  --verified-worktree /tmp/trnm-lane \
+  --verified-branch-ref lane/mn05-operator-dr-rotation-lifecycle \
+  --verified-head 0123456789abcdef \
+  --outgoing-validator-id validator-old \
+  --incoming-validator-id validator-new \
+  --incoming-config-path /tmp/configs/validator-new.json \
+  --rollback-command 'rm -rf /tmp/cutover-note' \
+  --handoff-signed-by alice \
+  --handoff-acknowledged-by bob \
+  --operator-ack 'alice acknowledged validator-new handoff against the cutover note' \
+  --operator-ack-digest 0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef \
+  >/tmp/emit-packet.out
+
+grep -q '^operator_ack_digest=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef$' /tmp/emit-packet.out
 
 if bash "$SCRIPT" \
   "${common_args[@]}" \
