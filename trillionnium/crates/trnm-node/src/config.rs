@@ -110,6 +110,13 @@ fn looks_like_dns_hostname(value: &str) -> bool {
     })
 }
 
+fn contains_uri_scheme_delimiter(value: &str) -> bool {
+    value
+        .as_bytes()
+        .windows(3)
+        .any(|window| window.eq_ignore_ascii_case(b"://"))
+}
+
 fn is_link_local_ip(ip: std::net::IpAddr) -> bool {
     match ip {
         std::net::IpAddr::V4(addr) => addr.is_link_local(),
@@ -288,7 +295,7 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         path
     );
     anyhow::ensure!(
-        !rpc_addr.contains("://"),
+        !contains_uri_scheme_delimiter(rpc_addr),
         "invalid node config {}: rpc_addr must be a raw socket address, not a URL",
         path
     );
@@ -330,7 +337,7 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         path
     );
     anyhow::ensure!(
-        !p2p_addr.contains("://"),
+        !contains_uri_scheme_delimiter(p2p_addr),
         "invalid node config {}: p2p_addr must be a raw socket address, not a URL",
         path
     );
@@ -577,7 +584,7 @@ fn validate_config_path_input(path: &str) -> Result<()> {
         "read config failed: path must not contain list separators (, ; |)"
     );
     anyhow::ensure!(
-        !path.contains("://"),
+        !contains_uri_scheme_delimiter(path),
         "read config failed: path must not be a URL"
     );
     anyhow::ensure!(
@@ -599,6 +606,12 @@ pub(crate) fn load_config(path: &str) -> Result<NodeConfig> {
     let resolved = resolve_config_path(path);
     ensure_config_path_stays_within_allowed_roots(path, &resolved)?;
     let canonical_resolved = resolved.canonicalize().unwrap_or_else(|_| resolved.clone());
+    anyhow::ensure!(
+        canonical_resolved.is_file(),
+        "read config failed: {} (resolved: {}): resolved config path must point to a file",
+        path,
+        canonical_resolved.display()
+    );
     let raw = fs::read_to_string(&resolved).with_context(|| {
         format!(
             "read config failed: {} (resolved: {})",
@@ -913,6 +926,26 @@ mod tests {
     }
 
     #[test]
+    fn load_config_rejects_directory_path_fail_closed() {
+        for operator_path in ["trillionnium/configs", "./trillionnium/configs"] {
+            let err = load_config(operator_path).expect_err("config directory path must fail closed");
+            let err_surface = format!("{err:#}");
+            assert!(
+                err_surface.contains("resolved config path must point to a file"),
+                "unexpected error for {operator_path}: {err:#}"
+            );
+            assert!(
+                err_surface.contains(operator_path),
+                "directory path error must keep operator path visible for {operator_path}: {err:#}"
+            );
+            assert!(
+                err_surface.contains("trillionnium/configs"),
+                "directory path error must keep resolved path visible for {operator_path}: {err:#}"
+            );
+        }
+    }
+
+    #[test]
     fn load_config_rejects_control_characters_in_path_fail_closed() {
         let err = load_config("configs/node1.toml\n")
             .expect_err("config path control characters must fail closed");
@@ -961,8 +994,9 @@ mod tests {
     fn load_config_rejects_url_style_paths_fail_closed() {
         for path in [
             "http://127.0.0.1:26657/node1.toml",
+            "HTTP://127.0.0.1:26657/node1.toml",
             "https://example.invalid/node1.toml",
-            "file:///tmp/node1.toml",
+            "FILE:///tmp/node1.toml",
         ] {
             let err = load_config(path).expect_err("URL-style config paths must fail closed");
             assert!(
@@ -1054,6 +1088,41 @@ mod tests {
 
             let _ = std::fs::remove_file(path);
         }
+    }
+
+    #[test]
+    fn load_config_rejects_generic_bootstrap_alias_with_operator_facing_error() {
+        let current_dir = std::env::current_dir().expect("current dir");
+        let file_name = format!(
+            "trnm-node-config-unknown-field-bootstrap-{}-{}.toml",
+            std::process::id(),
+            now_unix_ms()
+        );
+        let path = current_dir.join(&file_name);
+        std::fs::write(
+            &path,
+            "node_id = \"node1\"\nrpc_addr = \"127.0.0.1:26657\"\np2p_addr = \"127.0.0.1:26656\"\nbootstrap = \"127.0.0.1:27656\"\n",
+        )
+        .expect("write temp config");
+
+        let canonical_path = std::fs::canonicalize(&path).expect("canonicalize temp config path");
+        let operator_path = format!("./{file_name}");
+        let err = load_config(&operator_path).expect_err("generic bootstrap alias must fail closed");
+        let err_surface = format!("{err:#}");
+        assert!(
+            err_surface.contains("parse toml failed") && err_surface.contains("unknown field `bootstrap`"),
+            "unexpected error for generic bootstrap alias: {err:#}"
+        );
+        assert!(
+            err_surface.contains(&operator_path),
+            "generic bootstrap alias surface must keep the operator path visible: {err:#}"
+        );
+        assert!(
+            err_surface.contains(canonical_path.to_string_lossy().as_ref()),
+            "generic bootstrap alias surface must keep the resolved path visible: {err:#}"
+        );
+
+        let _ = std::fs::remove_file(path);
     }
 
     #[test]
@@ -1743,6 +1812,68 @@ mod tests {
     }
 
     #[test]
+    fn load_config_rejects_ipv4_compatible_ipv6_and_scoped_ipv6_listeners_with_operator_facing_error(
+    ) {
+        for (field, addr, safe_peer_addr, expected_fragment) in [
+            (
+                "rpc_addr",
+                "[::7f00:1]:7000",
+                "[2001:4860::1]:7001",
+                "rpc_addr must not use an IPv4-compatible IPv6 address",
+            ),
+            (
+                "p2p_addr",
+                "[::c000:20a]:7001",
+                "[2001:4860::1]:7000",
+                "p2p_addr must not use an IPv4-compatible IPv6 address",
+            ),
+            (
+                "rpc_addr",
+                "[2001:db8::10%7]:7000",
+                "[2001:db8::10]:7001",
+                "rpc_addr must not use an IPv6 scope identifier",
+            ),
+            (
+                "p2p_addr",
+                "[2001:db8::10%9]:7001",
+                "[2001:db8::10]:7000",
+                "p2p_addr must not use an IPv6 scope identifier",
+            ),
+        ] {
+            let path = std::env::temp_dir().join(format!(
+                "trnm-node-config-{field}-listener-{}-{}.toml",
+                std::process::id(),
+                now_unix_ms()
+            ));
+            let body = if field == "rpc_addr" {
+                format!(
+                    "node_id = \"node-a\"\nrpc_addr = \"{addr}\"\np2p_addr = \"{safe_peer_addr}\"\n"
+                )
+            } else {
+                format!(
+                    "node_id = \"node-a\"\nrpc_addr = \"{safe_peer_addr}\"\np2p_addr = \"{addr}\"\n"
+                )
+            };
+            std::fs::write(&path, body).expect("write config");
+
+            let path_str = path.to_str().expect("utf8 path");
+            let err = load_config(path_str)
+                .expect_err("invalid IPv6 listener forms must fail closed when loaded from disk");
+            let err_surface = format!("{err:#}");
+            assert!(
+                err_surface.contains(expected_fragment),
+                "unexpected error for {field}: {err:#}"
+            );
+            assert!(
+                err_surface.contains(path_str),
+                "error surface for {field} must keep the operator-supplied config path visible: {err:#}"
+            );
+
+            let _ = std::fs::remove_file(path);
+        }
+    }
+
+    #[test]
     fn validate_node_config_rejects_invalid_socket_addresses() {
         let rpc_err = validate_node_config(
             NodeConfig {
@@ -2175,6 +2306,23 @@ mod tests {
     }
 
     #[test]
+    fn validate_node_config_rejects_non_ascii_node_id() {
+        let err = validate_node_config(
+            NodeConfig {
+                node_id: "节点-1".into(),
+                rpc_addr: "127.0.0.1:7000".into(),
+                p2p_addr: "127.0.0.1:7001".into(),
+            },
+            "inline",
+        )
+        .expect_err("non-ASCII node_id must fail closed");
+        assert!(
+            err.to_string().contains("node_id must use ASCII-only characters"),
+            "unexpected error: {err:#}"
+        );
+    }
+
+    #[test]
     fn validate_node_config_rejects_control_characters_in_node_id() {
         let err = validate_node_config(
             NodeConfig {
@@ -2295,7 +2443,7 @@ mod tests {
         let rpc_err = validate_node_config(
             NodeConfig {
                 node_id: "node-a".into(),
-                rpc_addr: "http://127.0.0.1:7000".into(),
+                rpc_addr: "HTTP://127.0.0.1:7000".into(),
                 p2p_addr: "127.0.0.1:7001".into(),
             },
             "inline",
@@ -2312,7 +2460,7 @@ mod tests {
             NodeConfig {
                 node_id: "node-a".into(),
                 rpc_addr: "127.0.0.1:7000".into(),
-                p2p_addr: "tcp://127.0.0.1:7001".into(),
+                p2p_addr: "TCP://127.0.0.1:7001".into(),
             },
             "inline",
         )
@@ -2416,7 +2564,7 @@ mod tests {
 
     #[test]
     fn validate_node_config_rejects_path_separators_in_node_id() {
-        for node_id in ["node/alpha", r"node\\alpha", "node:alpha", "[::1]"] {
+        for node_id in ["node/alpha", r"node\\alpha", "node:alpha", "node[alpha", "node]alpha", "[::1]"] {
             let err = validate_node_config(
                 NodeConfig {
                     node_id: node_id.into(),
@@ -3312,6 +3460,7 @@ mod tests {
             "`node1` also owns the lowest shipped RPC port (`127.0.0.1:26657`); later slots must never drift downward into an equivalent anchor-shaped RPC tuple during startup, join, or rejoin.",
             "This fixture is local-only and rehearsal-scoped.",
             "Do not treat it as proof that public-mainnet bootstrap peer management, discovery, or sync closure is complete.",
+            "Do not copy these loopback tuples into a non-local environment; public-mainnet operators must replace them with reviewed, deployment-specific listener addresses instead of translating the shipped fixture by hand.",
             "Start `node1` first as the initial anchor.",
             "Start `node2`, `node3`, and `node4` in slot order.",
             "do not treat `node2`, `node3`, or `node4` as a valid replacement bootstrap anchor; restore the shipped `node1` anchor first and fail closed otherwise",
@@ -3381,6 +3530,7 @@ mod tests {
         for expected_phrase in [
             "## What this fixture is for",
             "Use these files to keep peer/bootstrap topology assumptions explicit while the public-mainnet bootstrap peer-management path is still being hardened.",
+            "Do not copy these loopback tuples into a non-local environment; public-mainnet operators must replace them with reviewed, deployment-specific listener addresses instead of translating the shipped fixture by hand.",
             "When logging startup/join/rejoin incidents, prefer the exact repo-root paths `trillionnium/configs/node1.toml`, `trillionnium/configs/node2.toml`, `trillionnium/configs/node3.toml`, and `trillionnium/configs/node4.toml` as the unambiguous slot references; `configs/nodeN.toml` and `./configs/nodeN.toml` should canonicalize to the same shipped files, but incident notes should name the repo-root path first.",
             "Triage them in shipped slot order: `trillionnium/configs/node1.toml` is the anchor, `trillionnium/configs/node2.toml` is follower slot 2, `trillionnium/configs/node3.toml` is follower slot 3, and `trillionnium/configs/node4.toml` is follower slot 4; do not relabel a later file as an earlier slot when diagnosing bootstrap failures.",
             "During incident triage, require the filename slot, `node_id`, and listener stride to agree (`nodeN.toml` ↔ `nodeN` ↔ `127.0.0.1:26656+1000*(N-1)` / `127.0.0.1:26657+1000*(N-1)`); if any one of the three surfaces drifts, treat it as slot drift and fail closed.",

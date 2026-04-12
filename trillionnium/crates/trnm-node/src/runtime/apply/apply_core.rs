@@ -1,5 +1,12 @@
 use super::*;
 
+fn is_ipv4_mapped_ipv6(ip: std::net::IpAddr) -> bool {
+    match ip {
+        std::net::IpAddr::V4(_) => false,
+        std::net::IpAddr::V6(addr) => addr.to_ipv4_mapped().is_some(),
+    }
+}
+
 fn is_ipv4_compatible_ipv6(ip: std::net::IpAddr) -> bool {
     match ip {
         std::net::IpAddr::V4(_) => false,
@@ -10,6 +17,13 @@ fn is_ipv4_compatible_ipv6(ip: std::net::IpAddr) -> bool {
                 && !addr.is_loopback()
                 && addr.to_ipv4_mapped().is_none()
         }
+    }
+}
+
+fn has_nonzero_ipv6_scope(socket: SocketAddr) -> bool {
+    match socket {
+        SocketAddr::V4(_) => false,
+        SocketAddr::V6(addr) => addr.scope_id() != 0,
     }
 }
 
@@ -103,6 +117,11 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         "invalid node config {}: node_id must not contain path or host-literal separators (/ \\ : [ ])",
         path
     );
+    anyhow::ensure!(
+        !node_id.contains('"') && !node_id.contains('\'') && !node_id.contains('`'),
+        "invalid node config {}: node_id must not contain quoting characters (\" ' `)",
+        path
+    );
     let bracketed_host_literal = node_id
         .strip_prefix('[')
         .and_then(|inner| inner.strip_suffix(']'))
@@ -175,6 +194,11 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         path
     );
     anyhow::ensure!(
+        !contains_invisible_or_bidi_format_chars(rpc_addr),
+        "invalid node config {}: rpc_addr must not contain invisible or bidirectional format characters",
+        path
+    );
+    anyhow::ensure!(
         !rpc_addr.contains(',') && !rpc_addr.contains(';') && !rpc_addr.contains('|'),
         "invalid node config {}: rpc_addr must not contain list separators (, ; |)",
         path
@@ -236,8 +260,18 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         path
     );
     anyhow::ensure!(
+        !is_ipv4_mapped_ipv6(rpc_socket.ip()),
+        "invalid node config {}: rpc_addr must not use an IPv4-mapped IPv6 address",
+        path
+    );
+    anyhow::ensure!(
         !is_ipv4_compatible_ipv6(rpc_socket.ip()),
         "invalid node config {}: rpc_addr must not use an IPv4-compatible IPv6 address",
+        path
+    );
+    anyhow::ensure!(
+        !has_nonzero_ipv6_scope(rpc_socket),
+        "invalid node config {}: rpc_addr must not use an IPv6 scope identifier",
         path
     );
 
@@ -260,6 +294,11 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
     anyhow::ensure!(
         !p2p_addr.chars().any(char::is_control),
         "invalid node config {}: p2p_addr must not contain control characters",
+        path
+    );
+    anyhow::ensure!(
+        !contains_invisible_or_bidi_format_chars(p2p_addr),
+        "invalid node config {}: p2p_addr must not contain invisible or bidirectional format characters",
         path
     );
     anyhow::ensure!(
@@ -324,8 +363,18 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         path
     );
     anyhow::ensure!(
+        !is_ipv4_mapped_ipv6(p2p_socket.ip()),
+        "invalid node config {}: p2p_addr must not use an IPv4-mapped IPv6 address",
+        path
+    );
+    anyhow::ensure!(
         !is_ipv4_compatible_ipv6(p2p_socket.ip()),
         "invalid node config {}: p2p_addr must not use an IPv4-compatible IPv6 address",
+        path
+    );
+    anyhow::ensure!(
+        !has_nonzero_ipv6_scope(p2p_socket),
+        "invalid node config {}: p2p_addr must not use an IPv6 scope identifier",
         path
     );
     anyhow::ensure!(
@@ -1027,6 +1076,38 @@ mod tests {
             "unexpected error: {p2p_err:#}"
         );
 
+        let rpc_ipv4_mapped_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "[::ffff:127.0.0.1]:26657".into(),
+                p2p_addr: "[2001:4860::1]:26656".into(),
+            },
+            "inline",
+        )
+        .expect_err("IPv4-mapped rpc_addr literals must fail closed");
+        assert!(
+            rpc_ipv4_mapped_err
+                .to_string()
+                .contains("rpc_addr must not use an IPv4-mapped IPv6 address"),
+            "unexpected error: {rpc_ipv4_mapped_err:#}"
+        );
+
+        let p2p_ipv4_mapped_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "[2001:4860::1]:26657".into(),
+                p2p_addr: "[::ffff:127.0.0.1]:26656".into(),
+            },
+            "inline",
+        )
+        .expect_err("IPv4-mapped p2p_addr literals must fail closed");
+        assert!(
+            p2p_ipv4_mapped_err
+                .to_string()
+                .contains("p2p_addr must not use an IPv4-mapped IPv6 address"),
+            "unexpected error: {p2p_ipv4_mapped_err:#}"
+        );
+
         let rpc_ipv4_compatible_err = validate_node_config(
             NodeConfig {
                 node_id: "node-a".into(),
@@ -1057,6 +1138,38 @@ mod tests {
                 .to_string()
                 .contains("p2p_addr must not use an IPv4-compatible IPv6 address"),
             "unexpected error: {p2p_ipv4_compatible_err:#}"
+        );
+
+        let rpc_scope_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "[2001:4860::10%7]:26657".into(),
+                p2p_addr: "[2001:4860::10]:26656".into(),
+            },
+            "inline",
+        )
+        .expect_err("IPv6 scope-id rpc_addr literals must fail closed");
+        assert!(
+            rpc_scope_err
+                .to_string()
+                .contains("rpc_addr must not use an IPv6 scope identifier"),
+            "unexpected error: {rpc_scope_err:#}"
+        );
+
+        let p2p_scope_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "[2001:4860::10]:26657".into(),
+                p2p_addr: "[2001:4860::10%9]:26656".into(),
+            },
+            "inline",
+        )
+        .expect_err("IPv6 scope-id p2p_addr literals must fail closed");
+        assert!(
+            p2p_scope_err
+                .to_string()
+                .contains("p2p_addr must not use an IPv6 scope identifier"),
+            "unexpected error: {p2p_scope_err:#}"
         );
     }
 
@@ -1348,6 +1461,117 @@ mod tests {
                 err.to_string()
                     .contains("node_id must not contain invisible or bidirectional format characters"),
                 "unexpected error for {node_id:?}: {err:#}"
+            );
+        }
+    }
+
+    #[test]
+    fn validate_node_config_rejects_invisible_or_bidi_format_characters_in_listener_addresses() {
+        for (field, value, expected) in [
+            (
+                "rpc_addr",
+                format!("127.0.0.1:70\u{200B}00"),
+                "rpc_addr must not contain invisible or bidirectional format characters",
+            ),
+            (
+                "p2p_addr",
+                format!("127.0.0.1:70\u{202E}01"),
+                "p2p_addr must not contain invisible or bidirectional format characters",
+            ),
+        ] {
+            let err = validate_node_config(
+                NodeConfig {
+                    node_id: "node-a".into(),
+                    rpc_addr: if field == "rpc_addr" {
+                        value.clone()
+                    } else {
+                        "127.0.0.1:7000".into()
+                    },
+                    p2p_addr: if field == "p2p_addr" {
+                        value.clone()
+                    } else {
+                        "127.0.0.1:7001".into()
+                    },
+                },
+                "inline",
+            )
+            .expect_err("invisible or bidi listener characters must fail closed");
+            assert!(
+                err.to_string().contains(expected),
+                "unexpected error for {field}: {err:#}"
+            );
+        }
+    }
+
+    #[test]
+    fn validate_node_config_rejects_quoting_characters_in_node_id() {
+        for node_id in ["node\"a", "node'a", "node`a"] {
+            let err = validate_node_config(
+                NodeConfig {
+                    node_id: node_id.into(),
+                    rpc_addr: "127.0.0.1:7000".into(),
+                    p2p_addr: "127.0.0.1:7001".into(),
+                },
+                "inline",
+            )
+            .expect_err("quoted node_id must fail closed");
+            assert!(
+                err.to_string()
+                    .contains("node_id must not contain quoting characters"),
+                "unexpected error for {node_id:?}: {err:#}"
+            );
+        }
+    }
+
+    #[test]
+    fn load_config_rejects_ipv6_literal_listener_edge_cases() {
+        for (suffix, rpc_addr, p2p_addr, expected_fragment) in [
+            (
+                "rpc-ipv4-mapped",
+                "[::ffff:127.0.0.1]:7000",
+                "[2001:4860::1]:7001",
+                "rpc_addr must not use an IPv4-mapped IPv6 address",
+            ),
+            (
+                "p2p-ipv4-mapped",
+                "[2001:4860::1]:7000",
+                "[::ffff:127.0.0.1]:7001",
+                "p2p_addr must not use an IPv4-mapped IPv6 address",
+            ),
+            (
+                "rpc-scope",
+                "[2001:4860::8888%7]:7000",
+                "[2001:4860::8888]:7001",
+                "rpc_addr must not use an IPv6 scope identifier",
+            ),
+            (
+                "p2p-scope",
+                "[2001:4860::8888]:7000",
+                "[2001:4860::8888%9]:7001",
+                "p2p_addr must not use an IPv6 scope identifier",
+            ),
+        ] {
+            let temp = tempfile::tempdir().expect("tempdir");
+            let path = temp.path().join(format!("{suffix}.toml"));
+            std::fs::write(
+                &path,
+                format!(
+                    "node_id = \"node-a\"\nrpc_addr = \"{rpc_addr}\"\np2p_addr = \"{p2p_addr}\"\n"
+                ),
+            )
+            .expect("write config");
+
+            let path_str = path.to_str().expect("utf8 path");
+            let err = load_config(path_str)
+                .expect_err("IPv6 listener edge cases must fail closed");
+            let err_surface = format!("{err:#}");
+            assert!(
+                err_surface.contains(expected_fragment),
+                "unexpected error for {suffix}: {err:#}"
+            );
+            assert!(
+                err_surface.contains(path_str),
+                "error surface for {suffix} must keep the operator-supplied apply config path visible: {err:#}"
             );
         }
     }

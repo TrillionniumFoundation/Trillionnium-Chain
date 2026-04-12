@@ -4,6 +4,7 @@ use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use std::{
     collections::{BTreeMap, HashMap, HashSet, VecDeque},
+    ffi::OsString,
     fs,
     net::SocketAddr,
     path::{Path, PathBuf},
@@ -169,11 +170,51 @@ fn is_ipv4_compatible_ipv6(ip: std::net::IpAddr) -> bool {
     }
 }
 
+fn is_ipv4_translated_ipv6(ip: std::net::IpAddr) -> bool {
+    match ip {
+        std::net::IpAddr::V4(_) => false,
+        std::net::IpAddr::V6(addr) => {
+            let segments = addr.segments();
+            segments[0] == 0
+                && segments[1] == 0
+                && segments[2] == 0
+                && segments[3] == 0
+                && segments[4] == 0xffff
+                && segments[5] == 0
+        }
+    }
+}
+
 fn has_nonzero_ipv6_scope(socket: SocketAddr) -> bool {
     match socket {
         SocketAddr::V4(_) => false,
         SocketAddr::V6(addr) => addr.scope_id() != 0,
     }
+}
+
+fn ensure_listener_socket_uses_canonical_literal(
+    raw: &str,
+    socket: SocketAddr,
+    path: &str,
+    field: &str,
+) -> Result<()> {
+    if raw == socket.to_string() {
+        return Ok(());
+    }
+
+    if is_ipv4_translated_ipv6(socket.ip()) {
+        anyhow::bail!(
+            "invalid node config {}: {} must not use an IPv4-translated IPv6 address",
+            path,
+            field
+        );
+    }
+
+    anyhow::bail!(
+        "invalid node config {}: {} must use a canonical socket literal",
+        path,
+        field
+    );
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -1902,11 +1943,7 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
             path
         )
     })?;
-    anyhow::ensure!(
-        rpc_addr == rpc_socket.to_string(),
-        "invalid node config {}: rpc_addr must use a canonical socket literal",
-        path
-    );
+    ensure_listener_socket_uses_canonical_literal(rpc_addr, rpc_socket, path, "rpc_addr")?;
     anyhow::ensure!(
         rpc_socket.port() != 0,
         "invalid node config {}: rpc_addr must not use port 0",
@@ -1950,6 +1987,11 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
     anyhow::ensure!(
         !is_ipv4_compatible_ipv6(rpc_socket.ip()),
         "invalid node config {}: rpc_addr must not use an IPv4-compatible IPv6 address",
+        path
+    );
+    anyhow::ensure!(
+        !is_ipv4_translated_ipv6(rpc_socket.ip()),
+        "invalid node config {}: rpc_addr must not use an IPv4-translated IPv6 address",
         path
     );
     anyhow::ensure!(
@@ -2010,11 +2052,7 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
             path
         )
     })?;
-    anyhow::ensure!(
-        p2p_addr == p2p_socket.to_string(),
-        "invalid node config {}: p2p_addr must use a canonical socket literal",
-        path
-    );
+    ensure_listener_socket_uses_canonical_literal(p2p_addr, p2p_socket, path, "p2p_addr")?;
     anyhow::ensure!(
         p2p_socket.port() != 0,
         "invalid node config {}: p2p_addr must not use port 0",
@@ -2058,6 +2096,11 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
     anyhow::ensure!(
         !is_ipv4_compatible_ipv6(p2p_socket.ip()),
         "invalid node config {}: p2p_addr must not use an IPv4-compatible IPv6 address",
+        path
+    );
+    anyhow::ensure!(
+        !is_ipv4_translated_ipv6(p2p_socket.ip()),
+        "invalid node config {}: p2p_addr must not use an IPv4-translated IPv6 address",
         path
     );
     anyhow::ensure!(
@@ -2141,9 +2184,32 @@ fn resolve_config_path(path: &str) -> PathBuf {
 }
 
 fn ensure_config_path_stays_within_allowed_roots(requested: &str, resolved: &Path) -> Result<()> {
-    let canonical_resolved = resolved
-        .canonicalize()
-        .unwrap_or_else(|_| resolved.to_path_buf());
+    fn canonicalize_for_root_check(path: &Path) -> PathBuf {
+        let mut suffix = Vec::<OsString>::new();
+        let mut cursor = path;
+
+        loop {
+            if cursor.exists() {
+                let mut canonical = cursor.canonicalize().unwrap_or_else(|_| cursor.to_path_buf());
+                for component in suffix.iter().rev() {
+                    canonical.push(component);
+                }
+                return canonical;
+            }
+
+            let Some(component) = cursor.file_name() else {
+                return path.to_path_buf();
+            };
+            suffix.push(component.to_os_string());
+
+            let Some(parent) = cursor.parent() else {
+                return path.to_path_buf();
+            };
+            cursor = parent;
+        }
+    }
+
+    let canonical_resolved = canonicalize_for_root_check(resolved);
     let workspace_root = workspace_root()
         .canonicalize()
         .unwrap_or_else(|_| workspace_root().to_path_buf());
@@ -2307,6 +2373,10 @@ fn validate_config_path_input(path: &str) -> Result<()> {
         "read config failed: path must not be a URL"
     );
     anyhow::ensure!(
+        !path.starts_with('~'),
+        "read config failed: path must not rely on home-directory expansion (~)"
+    );
+    anyhow::ensure!(
         !Path::new(path)
             .components()
             .any(|component| matches!(component, std::path::Component::ParentDir)),
@@ -2324,7 +2394,33 @@ fn load_config(path: &str) -> Result<NodeConfig> {
     validate_config_path_input(path)?;
     let resolved = resolve_config_path(path);
     ensure_config_path_stays_within_allowed_roots(path, &resolved)?;
+    let display_resolved = if resolved.is_absolute() {
+        resolved.clone()
+    } else {
+        std::env::current_dir()
+            .unwrap_or_else(|_| PathBuf::from("."))
+            .join(&resolved)
+    };
+    let resolved_metadata = fs::symlink_metadata(&resolved).with_context(|| {
+        format!(
+            "read config failed: {} (resolved: {})",
+            path,
+            display_resolved.display()
+        )
+    })?;
+    anyhow::ensure!(
+        !resolved_metadata.file_type().is_symlink(),
+        "read config failed: {} (resolved: {}): config path must not be a symlink",
+        path,
+        display_resolved.display()
+    );
     let canonical_resolved = resolved.canonicalize().unwrap_or_else(|_| resolved.clone());
+    anyhow::ensure!(
+        resolved_metadata.file_type().is_file(),
+        "read config failed: {} (resolved: {}): resolved config path must point to a file",
+        path,
+        canonical_resolved.display()
+    );
     let raw = fs::read_to_string(&resolved).with_context(|| {
         format!(
             "read config failed: {} (resolved: {})",
@@ -4591,6 +4687,58 @@ mod tests {
     }
 
     #[test]
+    fn load_config_rejects_in_root_symlink_alias_even_when_target_stays_within_allowed_roots() {
+        let _cwd_guard = cwd_test_lock().lock().unwrap();
+        use std::os::unix::fs::symlink;
+
+        let temp_root = std::env::temp_dir().join(format!(
+            "trnm-node-config-symlink-alias-{}-{}",
+            std::process::id(),
+            SystemTime::now()
+                .duration_since(UNIX_EPOCH)
+                .expect("clock should be after unix epoch")
+                .as_millis()
+        ));
+        let workspace_shadow = temp_root.join("workspace-shadow");
+        let configs_dir = workspace_shadow.join("configs");
+        std::fs::create_dir_all(&configs_dir).expect("workspace shadow config dir should be creatable");
+        std::fs::write(
+            configs_dir.join("node1.toml"),
+            "node_id = \"node1\"\nrpc_addr = \"127.0.0.1:26657\"\np2p_addr = \"127.0.0.1:26656\"\n",
+        )
+        .expect("primary config should be writable");
+        symlink(
+            configs_dir.join("node1.toml"),
+            configs_dir.join("node1-alias.toml"),
+        )
+        .expect("in-root symlink alias should be creatable");
+
+        let requested_path = "configs/node1-alias.toml";
+        let resolved_path = workspace_shadow.join(requested_path);
+
+        let original_cwd = std::env::current_dir().expect("capture cwd");
+        std::env::set_current_dir(&workspace_shadow).expect("enter shadow cwd");
+        let err = load_config(requested_path)
+            .expect_err("symlinked config aliases inside allowed roots must fail closed");
+        std::env::set_current_dir(&original_cwd).expect("restore cwd");
+        let _ = std::fs::remove_dir_all(&temp_root);
+
+        let err_surface = format!("{err:#}");
+        assert!(
+            err_surface.contains("config path must not be a symlink"),
+            "unexpected error: {err:#}"
+        );
+        assert!(
+            err_surface.contains(requested_path),
+            "in-root symlink rejection must keep the operator-supplied path visible: {err:#}"
+        );
+        assert!(
+            err_surface.contains(resolved_path.to_string_lossy().as_ref()),
+            "in-root symlink rejection must keep the resolved symlink path visible: {err:#}"
+        );
+    }
+
+    #[test]
     fn load_config_rejects_absolute_symlink_path_that_escapes_allowed_roots() {
         use std::os::unix::fs::symlink;
         use std::time::{SystemTime, UNIX_EPOCH};
@@ -4657,18 +4805,9 @@ mod tests {
     }
 
     #[test]
-    fn load_config_rejects_missing_absolute_path_outside_workspace_and_cwd() {
+    fn load_config_rejects_nonexistent_absolute_path_outside_workspace_cwd_and_test_temp() {
         use std::time::{SystemTime, UNIX_EPOCH};
 
-        let outside_path = std::env::temp_dir().join(format!(
-            "trnm-node-config-missing-absolute-outside-{}-{}.toml",
-            std::process::id(),
-            SystemTime::now()
-                .duration_since(UNIX_EPOCH)
-                .expect("clock should be after unix epoch")
-                .as_millis()
-        ));
-        let requested = outside_path.to_str().expect("utf8 path");
         let workspace_root = super::workspace_root()
             .canonicalize()
             .expect("workspace root should canonicalize");
@@ -4676,26 +4815,41 @@ mod tests {
             .expect("capture cwd")
             .canonicalize()
             .expect("cwd should canonicalize");
+        let temp_dir = std::env::temp_dir()
+            .canonicalize()
+            .unwrap_or_else(|_| std::env::temp_dir());
+        let outside_path = PathBuf::from(format!(
+            "/Users/{}/.trnm-node-config-outside-{}-{}.toml",
+            std::env::var("USER").unwrap_or_else(|_| String::from("qianqi")),
+            std::process::id(),
+            SystemTime::now()
+                .duration_since(UNIX_EPOCH)
+                .expect("clock should be after unix epoch")
+                .as_millis()
+        ));
 
-        let err = load_config(requested)
-            .expect_err("missing absolute config path outside allowed roots must fail closed");
-        let err_surface = format!("{err:#}");
+        let err = load_config(outside_path.to_str().expect("utf8 path")).expect_err(
+            "nonexistent absolute config path outside allowed roots should fail closed before file lookup",
+        );
 
         assert!(
-            !outside_path.starts_with(&workspace_root) && !outside_path.starts_with(&current_dir),
-            "test fixture must stay outside both allowed roots"
+            !outside_path.exists(),
+            "test fixture must stay nonexistent so the fail-closed path check covers unresolved absolute paths"
         );
+        assert!(
+            !outside_path.starts_with(&workspace_root)
+                && !outside_path.starts_with(&current_dir)
+                && !outside_path.starts_with(&temp_dir),
+            "test fixture must stay outside workspace, cwd, and test temp allowances"
+        );
+        let err_surface = format!("{err:#}");
         assert!(
             err_surface.contains("resolves outside allowed roots"),
             "unexpected error: {err:#}"
         );
         assert!(
-            err_surface.contains(requested),
-            "missing outside-root error must keep the operator-supplied absolute path visible: {err:#}"
-        );
-        assert!(
             err_surface.contains(outside_path.to_string_lossy().as_ref()),
-            "missing outside-root error must keep the resolved absolute path visible: {err:#}"
+            "outside-path error must keep the operator-supplied absolute path visible: {err:#}"
         );
     }
 
@@ -4977,12 +5131,13 @@ mod tests {
             "Do not skip a missing earlier follower slot during startup or rejoin: if `node2` is absent, keep `node3` and `node4` stopped; if `node3` is absent, keep `node4` stopped until the earlier slot regains its shipped tuple.",
             "Keep `node1` through `node3` in their shipped slots; if `node4` returns, bring it back only with `node4.toml` and its shipped tuple",
             "Accept the remaining slots only while no other config is renamed or promoted into the `node4` role",
-            "unknown fields, whitespace drift, dotted, host-like, or path-like ids, URI-like delimiters, non-canonical socket literals, privileged ports, wildcard listeners, reserved documentation/benchmarking listener ranges, or mixed listener IP families, the config loader must fail closed",
+            "unknown fields, whitespace drift, dotted, host-like, or path-like ids, URI-like delimiters, non-canonical socket literals, IPv4-mapped / IPv4-compatible / IPv4-translated IPv6 listener forms, privileged ports, wildcard listeners, reserved documentation/benchmarking listener ranges, or mixed listener IP families, the config loader must fail closed",
             "use both the operator-supplied config path and the resolved canonical path printed in the error to identify which shipped slot drifted",
             "prefer the exact repo-root paths `trillionnium/configs/node1.toml`, `trillionnium/configs/node2.toml`, `trillionnium/configs/node3.toml`, and `trillionnium/configs/node4.toml` as the unambiguous slot references",
             "require the filename slot, `node_id`, and listener stride to agree",
             "fix the exact repo-root slot file named by the error surface and the exact field named in that error",
             "If the failing path is reported as `configs/nodeN.toml` or `./configs/nodeN.toml`, map it back to the same repo-root slot before editing and fail closed on any basename-only “looks similar” guess across sibling files.",
+            "Treat IPv4-mapped (`::ffff:a.b.c.d`), IPv4-compatible (`::a.b.c.d` / `::hhhh:hhhh`), and IPv4-translated (`::ffff:0:a.b.c.d`) IPv6 listener literals as invalid drift for these shipped fixtures, even when they still target loopback.",
             "Do not add extra shipped topology files such as `node5.toml`, alternate slot aliases, or helper sidecar configs under `configs/`",
             "Do not substitute IPv6 loopback `[::1]` for the shipped IPv4 loopback `127.0.0.1` during bootstrap or rejoin",
             "The regression tests in `crates/trnm-node/src/config.rs` are the source of truth for the exact fixture invariants.",
@@ -5545,6 +5700,28 @@ mod tests {
         }
     }
 
+    #[test]
+    fn load_config_rejects_home_expansion_style_paths_fail_closed() {
+        for path in ["~/configs/node1.toml", "~\\configs\\node1.toml", "~qianqi/configs/node1.toml"] {
+            let err = load_config(path)
+                .expect_err("config path home-expansion markers must fail closed");
+            assert!(
+                err.to_string()
+                    .contains("path must not rely on home-directory expansion (~)"),
+                "unexpected error for {path:?}: {err:#}"
+            );
+        }
+    }
+
+    #[test]
+    fn load_config_prefers_explicit_paths_over_home_expansion_guessing() {
+        let cfg = load_config("trillionnium/configs/node1.toml")
+            .expect("explicit repo-root config path should remain supported");
+        assert_eq!(cfg.node_id, "node1");
+        assert_eq!(cfg.rpc_addr, "127.0.0.1:26657");
+        assert_eq!(cfg.p2p_addr, "127.0.0.1:26656");
+    }
+
     const FORBIDDEN_BOOTSTRAP_ALIAS_FIELDS: &[(&str, &str)] = &[
         ("bootstrap_nodes", "[\"127.0.0.1:27656\"]"),
         ("bootstrap_node", "\"127.0.0.1:27656\""),
@@ -5562,6 +5739,7 @@ mod tests {
         ("bootstrap-addrs", "[\"127.0.0.1:27656\"]"),
         ("bootstrap-node", "\"127.0.0.1:27656\""),
         ("bootstrap-peer", "\"127.0.0.1:27656\""),
+        ("bootstrap", "\"127.0.0.1:27656\""),
         ("seed_nodes", "[\"127.0.0.1:27656\"]"),
         ("seed_node", "\"127.0.0.1:27656\""),
         ("seed_peers", "[\"127.0.0.1:27656\"]"),
@@ -5756,6 +5934,41 @@ mod tests {
                 readme_path.display()
             );
         }
+    }
+
+    #[test]
+    fn load_config_rejects_generic_bootstrap_alias_with_operator_facing_error() {
+        let current_dir = std::env::current_dir().expect("current dir");
+        let file_name = format!(
+            "trnm-node-config-unknown-field-bootstrap-{}-{}.toml",
+            std::process::id(),
+            now_unix_ms()
+        );
+        let path = current_dir.join(&file_name);
+        std::fs::write(
+            &path,
+            "node_id = \"node1\"\nrpc_addr = \"127.0.0.1:26657\"\np2p_addr = \"127.0.0.1:26656\"\nbootstrap = \"127.0.0.1:27656\"\n",
+        )
+        .expect("write temp config");
+
+        let canonical_path = std::fs::canonicalize(&path).expect("canonicalize temp config path");
+        let operator_path = format!("./{file_name}");
+        let err = load_config(&operator_path).expect_err("generic bootstrap alias must fail closed");
+        let err_surface = format!("{err:#}");
+        assert!(
+            err_surface.contains("parse toml failed") && err_surface.contains("unknown field `bootstrap`"),
+            "unexpected error for generic bootstrap alias: {err:#}"
+        );
+        assert!(
+            err_surface.contains(&operator_path),
+            "generic bootstrap alias surface must keep the operator path visible: {err:#}"
+        );
+        assert!(
+            err_surface.contains(canonical_path.to_string_lossy().as_ref()),
+            "generic bootstrap alias surface must keep the resolved path visible: {err:#}"
+        );
+
+        let _ = std::fs::remove_file(path);
     }
 
     #[test]
@@ -5967,6 +6180,80 @@ mod tests {
         assert!(err.to_string().contains("p2p_addr must not be empty"));
 
         let _ = std::fs::remove_file(path);
+    }
+
+    #[test]
+    fn load_config_rejects_port_zero_listener_with_operator_facing_error() {
+        let rpc_path = std::env::temp_dir().join(format!(
+            "trnm-node-config-port-zero-rpc-{}-{}.toml",
+            std::process::id(),
+            std::thread::current().name().unwrap_or("unnamed")
+        ));
+        std::fs::write(
+            &rpc_path,
+            "node_id = \"node-a\"\nrpc_addr = \"127.0.0.1:0\"\np2p_addr = \"127.0.0.1:26656\"\n",
+        )
+        .expect("write config");
+        let rpc_err = load_config(rpc_path.to_str().expect("utf8 path"))
+            .expect_err("port-zero rpc listener loaded from disk must fail closed");
+        let rpc_err_surface = format!("{rpc_err:#}");
+        assert!(rpc_err_surface.contains("rpc_addr must not use port 0"));
+        assert!(rpc_err_surface.contains(rpc_path.to_str().expect("utf8 path")));
+        let _ = std::fs::remove_file(rpc_path);
+
+        let p2p_path = std::env::temp_dir().join(format!(
+            "trnm-node-config-port-zero-p2p-{}-{}.toml",
+            std::process::id(),
+            std::thread::current().name().unwrap_or("unnamed")
+        ));
+        std::fs::write(
+            &p2p_path,
+            "node_id = \"node-a\"\nrpc_addr = \"127.0.0.1:26657\"\np2p_addr = \"127.0.0.1:0\"\n",
+        )
+        .expect("write config");
+        let p2p_err = load_config(p2p_path.to_str().expect("utf8 path"))
+            .expect_err("port-zero p2p listener loaded from disk must fail closed");
+        let p2p_err_surface = format!("{p2p_err:#}");
+        assert!(p2p_err_surface.contains("p2p_addr must not use port 0"));
+        assert!(p2p_err_surface.contains(p2p_path.to_str().expect("utf8 path")));
+        let _ = std::fs::remove_file(p2p_path);
+    }
+
+    #[test]
+    fn load_config_rejects_privileged_listener_port_with_operator_facing_error() {
+        let rpc_path = std::env::temp_dir().join(format!(
+            "trnm-node-config-privileged-rpc-{}-{}.toml",
+            std::process::id(),
+            std::thread::current().name().unwrap_or("unnamed")
+        ));
+        std::fs::write(
+            &rpc_path,
+            "node_id = \"node-a\"\nrpc_addr = \"127.0.0.1:443\"\np2p_addr = \"127.0.0.1:26656\"\n",
+        )
+        .expect("write config");
+        let rpc_err = load_config(rpc_path.to_str().expect("utf8 path"))
+            .expect_err("privileged rpc listener loaded from disk must fail closed");
+        let rpc_err_surface = format!("{rpc_err:#}");
+        assert!(rpc_err_surface.contains("rpc_addr must not use a privileged port below 1024"));
+        assert!(rpc_err_surface.contains(rpc_path.to_str().expect("utf8 path")));
+        let _ = std::fs::remove_file(rpc_path);
+
+        let p2p_path = std::env::temp_dir().join(format!(
+            "trnm-node-config-privileged-p2p-{}-{}.toml",
+            std::process::id(),
+            std::thread::current().name().unwrap_or("unnamed")
+        ));
+        std::fs::write(
+            &p2p_path,
+            "node_id = \"node-a\"\nrpc_addr = \"127.0.0.1:26657\"\np2p_addr = \"127.0.0.1:443\"\n",
+        )
+        .expect("write config");
+        let p2p_err = load_config(p2p_path.to_str().expect("utf8 path"))
+            .expect_err("privileged p2p listener loaded from disk must fail closed");
+        let p2p_err_surface = format!("{p2p_err:#}");
+        assert!(p2p_err_surface.contains("p2p_addr must not use a privileged port below 1024"));
+        assert!(p2p_err_surface.contains(p2p_path.to_str().expect("utf8 path")));
+        let _ = std::fs::remove_file(p2p_path);
     }
 
     #[test]
@@ -6558,6 +6845,30 @@ mod tests {
                 "[2001:4860::1]:7000",
                 "[::c000:20a]:7001",
                 "p2p_addr must not use an IPv4-compatible IPv6 address",
+            ),
+            (
+                "rpc-ipv4-translated",
+                "[::ffff:0:7f00:1]:7000",
+                "[2001:4860::1]:7001",
+                "rpc_addr must not use an IPv4-translated IPv6 address",
+            ),
+            (
+                "p2p-ipv4-translated",
+                "[2001:4860::1]:7000",
+                "[::ffff:0:7f00:1]:7001",
+                "p2p_addr must not use an IPv4-translated IPv6 address",
+            ),
+            (
+                "rpc-ipv4-translated-dotted-quad",
+                "[::ffff:0:127.0.0.1]:7000",
+                "[2001:4860::1]:7001",
+                "rpc_addr must not use an IPv4-translated IPv6 address",
+            ),
+            (
+                "p2p-ipv4-translated-dotted-quad",
+                "[2001:4860::1]:7000",
+                "[::ffff:0:127.0.0.1]:7001",
+                "p2p_addr must not use an IPv4-translated IPv6 address",
             ),
             (
                 "rpc-scope",
@@ -8051,6 +8362,35 @@ mod tests {
     }
 
     #[test]
+    fn validate_node_config_rejects_hostname_shaped_operator_addresses() {
+        let rpc_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "localhost:26657".into(),
+                p2p_addr: "127.0.0.1:26656".into(),
+            },
+            "node.toml",
+        )
+        .expect_err("hostname-shaped rpc_addr must fail closed");
+        assert!(rpc_err
+            .to_string()
+            .contains("rpc_addr must be a valid socket address"));
+
+        let p2p_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "127.0.0.1:26657".into(),
+                p2p_addr: "LOCALHOST:26656".into(),
+            },
+            "node.toml",
+        )
+        .expect_err("hostname-shaped p2p_addr must fail closed");
+        assert!(p2p_err
+            .to_string()
+            .contains("p2p_addr must be a valid socket address"));
+    }
+
+    #[test]
     fn validate_node_config_rejects_mixed_ip_families() {
         let err = validate_node_config(
             NodeConfig {
@@ -8195,6 +8535,64 @@ mod tests {
         assert!(p2p_ipv4_mapped_err
             .to_string()
             .contains("p2p_addr must not use an IPv4-mapped IPv6 address"));
+
+        let rpc_translated_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "[::ffff:0:7f00:1]:26657".into(),
+                p2p_addr: "[2001:4860:4860::8888]:26656".into(),
+            },
+            "node.toml",
+        )
+        .expect_err("rpc_addr IPv4-translated IPv6 bind must fail closed");
+        assert!(rpc_translated_err
+            .to_string()
+            .contains("rpc_addr must not use an IPv4-translated IPv6 address"));
+
+        let p2p_translated_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "[2001:4860:4860::8888]:26657".into(),
+                p2p_addr: "[::ffff:0:7f00:1]:26656".into(),
+            },
+            "node.toml",
+        )
+        .expect_err("p2p_addr IPv4-translated IPv6 bind must fail closed");
+        assert!(p2p_translated_err
+            .to_string()
+            .contains("p2p_addr must not use an IPv4-translated IPv6 address"));
+
+        let rpc_translated_dotted_quad_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "[::ffff:0:127.0.0.1]:26657".into(),
+                p2p_addr: "[2001:4860:4860::8888]:26656".into(),
+            },
+            "node.toml",
+        )
+        .expect_err("rpc_addr dotted-quad IPv4-translated IPv6 bind must fail closed");
+        assert!(
+            rpc_translated_dotted_quad_err
+                .to_string()
+                .contains("rpc_addr must not use an IPv4-translated IPv6 address"),
+            "unexpected error: {rpc_translated_dotted_quad_err:#}"
+        );
+
+        let p2p_translated_dotted_quad_err = validate_node_config(
+            NodeConfig {
+                node_id: "node-a".into(),
+                rpc_addr: "[2001:4860:4860::8888]:26657".into(),
+                p2p_addr: "[::ffff:0:127.0.0.1]:26656".into(),
+            },
+            "node.toml",
+        )
+        .expect_err("p2p_addr dotted-quad IPv4-translated IPv6 bind must fail closed");
+        assert!(
+            p2p_translated_dotted_quad_err
+                .to_string()
+                .contains("p2p_addr must not use an IPv4-translated IPv6 address"),
+            "unexpected error: {p2p_translated_dotted_quad_err:#}"
+        );
 
         let rpc_scope_err = validate_node_config(
             NodeConfig {
