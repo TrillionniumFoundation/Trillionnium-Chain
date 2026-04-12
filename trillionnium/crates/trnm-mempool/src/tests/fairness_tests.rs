@@ -288,3 +288,32 @@ fn zero_reserve_shared_queue_duplicate_probes_do_not_invent_cross_domain_preempt
     assert_eq!(g.queued_counts(), (0, 0, 0));
     assert_eq!(g.critical_served_streak, 0);
 }
+
+#[test]
+fn zero_reserve_idle_self_heal_does_not_leak_stale_fairness_into_next_shared_batch() {
+    let mut g = LaneAdmissionGate::new(3, 0);
+
+    // Simulate restored idle state with stale fairness/bookkeeping. In zero-reserve
+    // mode, the next mixed batch still shares one FIFO lane and must not inherit a
+    // synthetic normal-vs-critical scheduling preference.
+    g.critical_served_streak = g.critical_burst_limit;
+    g.normal.seen.insert(7001);
+    g.seen_global.insert(7002);
+
+    assert_eq!(g.pop_ready(), None);
+    assert_eq!(g.critical_served_streak, 0);
+    assert!(g.normal.seen.is_empty());
+    assert!(g.critical.seen.is_empty());
+    assert!(g.seen_global.is_empty());
+
+    assert_eq!(g.admit(20, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(g.admit(10, IngressClass::Normal), AdmitOutcome::Accepted);
+    assert_eq!(g.admit(30, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(g.queued_counts(), (3, 0, 3));
+
+    // Zero-reserve mode must stay pure shared-lane FIFO after idle self-heal.
+    assert_eq!(g.pop_ready(), Some(20));
+    assert_eq!(g.pop_ready(), Some(10));
+    assert_eq!(g.pop_ready(), Some(30));
+    assert_eq!(g.critical_served_streak, 0);
+}
