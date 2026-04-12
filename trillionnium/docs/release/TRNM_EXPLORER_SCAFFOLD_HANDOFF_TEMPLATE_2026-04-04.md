@@ -15,6 +15,7 @@
 - `trillionnium/docs/runbooks/explorer-service-scaffold.md`
 - `trillionnium/docs/release/TRNM_DAY1_PUBLIC_READ_CONTRACT_2026-04-03.md`
 - `trillionnium/docs/release/TRNM_RANK1_READ_SURFACE_TASK_BOARD_2026-04-03.md`
+- `trillionnium/docs/release/TRNM_RANK1_IMPLEMENTATION_DESIGN_PACKET_2026-04-05.md`
 - `trillionnium/docs/release/TRNM_MAINNET_BLOCKER_BOARD_2026-03-31.md`
 
 ## Preferred capture flow
@@ -87,6 +88,7 @@ truth_source_gap_matrix=trillionnium/docs/release/TRNM_MAINNET_GAP_MATRIX_2026-0
 truth_source_day1_contract=trillionnium/docs/release/TRNM_DAY1_PUBLIC_READ_CONTRACT_2026-04-03.md
 truth_source_day1_contract_matrix=trillionnium/docs/release/TRNM_DAY1_PUBLIC_READ_CONTRACT_MATRIX_2026-04-03.md
 truth_source_rank1_task_board=trillionnium/docs/release/TRNM_RANK1_READ_SURFACE_TASK_BOARD_2026-04-03.md
+truth_source_rank1_design_packet=trillionnium/docs/release/TRNM_RANK1_IMPLEMENTATION_DESIGN_PACKET_2026-04-05.md
 truth_source_blocker_board=trillionnium/docs/release/TRNM_MAINNET_BLOCKER_BOARD_2026-03-31.md
 
 # runtime knobs (copy exact values)
@@ -212,9 +214,10 @@ rollback_command=./trillionnium/scripts/v2/explorer_service_down.sh
 9. If reverse proxy and local bind differ for `/index.json` too, preserve both `index_url` and `local_index_url`, and keep `index_fetch_command` plus `local_index_fetch_command` together so the next operator can fetch the public-facing payload and the local-bind payload without rewriting URLs by hand.
 10. Preserve both `replay_command` and `rollback_command` so the same placeholder bring-up path can be re-run or torn down without reconstructing it from memory.
 11. When `summary.txt` is available, also preserve `template_path=`, `durable_template_path=`, `template_selection=`, `durable_template_allowed=`, `durable_template_rejection_reason=`, `deployment_template_boundary=`, and the `truth_source_*=` lines verbatim; they are the mechanical hint for which template the next operator is allowed to use.
-12. If `truth_source_go_no_go_panel=` is emitted as `missing-in-this-snapshot:...`, keep that exact value. It means the current repo snapshot does not carry that truth source locally; do not hand-edit the packet into claiming a GO/NO-GO panel file that the snapshot cannot actually prove.
-13. Preserve `durable_read_anchor_missing_count` together with `durable_read_anchor_missing_fields`; do not keep one while trimming the other, because the pair is the fail-closed proof that the scaffold still lacks all 6 durable-read anchors.
-14. If any durable-read anchor is later filled with a real value, stop using this placeholder-only template and move to a durable-service handoff packet instead.
+12. Preserve `truth_source_rank1_design_packet=` too. That line is the explicit next-step durable-boundary pointer, so dropping it makes the scaffold packet easier to misread as “enough for durable closure” when it is not.
+13. If `truth_source_go_no_go_panel=` or `truth_source_rank1_design_packet=` is emitted as `missing-in-this-snapshot:...`, keep that exact value. It means the current repo snapshot does not carry that truth source locally; do not hand-edit the packet into claiming a GO/NO-GO panel or durable read implementation design file that the snapshot cannot actually prove.
+14. Preserve `durable_read_anchor_missing_count` together with `durable_read_anchor_missing_fields`; do not keep one while trimming the other, because the pair is the fail-closed proof that the scaffold still lacks all 6 durable-read anchors.
+15. If any durable-read anchor is later filled with a real value, stop using this placeholder-only template and move to a durable-service handoff packet instead.
 
 ## What this template intentionally does not claim
 
@@ -238,6 +241,7 @@ A scaffold handoff note is acceptable only if it includes all of the following:
 - explicit index-boundary evidence (`index_url`, and `local_index_url` too when the local bind target differs from the public URL)
 - one `/index.json` fetch proof that also preserves the served read-contract/durability markers, including `index_json_read_contract_source`, `index_json_deployment_evidence_scope`, `index_json_rank1_read_surface_blocker`, and `index_json_durable_indexer_status`, not just a boolean declaration
 - one explicit blocker note stating placeholder-only scope
+- one preserved `truth_source_rank1_design_packet=` line so the packet still points at the next non-placeholder durable boundary instead of stopping at scaffold-only sources
 - one replay command
 - one rollback command
 
