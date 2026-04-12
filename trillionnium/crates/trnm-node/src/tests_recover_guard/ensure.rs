@@ -200,3 +200,30 @@ fn ensure_recoverable_wal_state_allows_truncated_single_block_lagging_checkpoint
 
     let _ = fs::remove_dir_all(&wal_dir);
 }
+
+#[test]
+fn ensure_recoverable_wal_state_allows_single_block_checkpoint_ahead_mismatch_after_tail_repair() {
+    let wal_dir = temp_wal_dir("recover-guard-single-block-checkpoint-ahead-mismatch-after-tail-repair");
+    fs::create_dir_all(&wal_dir).unwrap();
+
+    let recovered = RecoveredWalState {
+        next_height: 8,
+        restored_lock: Some("h7".into()),
+        last_checkpoint: Some(CheckpointMeta {
+            height: 8,
+            state_root_hex: "r8".into(),
+            wal_entry_hash_hex: "h8".into(),
+        }),
+        truncated: true,
+        metadata_only_recovery: false,
+        wal_entries_retained: 2,
+        checkpoint_height_retained: Some(8),
+    };
+
+    ensure_recoverable_wal_state(&wal_dir, &recovered).expect(
+        "single-block checkpoint-ahead mismatch should remain admissible for join/rejoin catch-up after tail repair",
+    );
+    assert_eq!(recovery_startup_summary(&recovered), "retained_wal_entries=2 checkpoint_height_retained=8 checkpoint_tip_relation=ahead:1 next_startup_height=8 wal_tail_truncated=true metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume_checkpoint_ahead_mismatch_1block_after_tail_repair");
+
+    let _ = fs::remove_dir_all(&wal_dir);
+}
