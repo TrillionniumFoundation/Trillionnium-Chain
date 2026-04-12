@@ -11,7 +11,7 @@ trap 'rm -rf "$TMP_DIR"' EXIT
 
 TEST_ROOT="$TMP_DIR/repo"
 mkdir -p "$TEST_ROOT/scripts"
-TEST_ROOT="$(cd "$TEST_ROOT" && pwd)"
+TEST_ROOT="$(cd "$TEST_ROOT" && pwd -P)"
 cp "$SOURCE_SCRIPT" "$TEST_ROOT/scripts/check_contracts_workspace_smoke.sh"
 chmod +x "$TEST_ROOT/scripts/check_contracts_workspace_smoke.sh"
 
@@ -30,7 +30,7 @@ if [[ "$rc" -ne 1 ]]; then
   exit 1
 fi
 
-expected="[FAIL] contracts workspace manifest missing: $TEST_ROOT/contracts-rust/Cargo.toml"
+expected="[FAIL] contracts workspace manifest missing: $TEST_ROOT/contracts/Cargo.toml"
 if ! grep -Fq -- "$expected" "$TMP_DIR/stderr.log"; then
   echo "[FAIL] missing manifest guard message not found" >&2
   cat "$TMP_DIR/stderr.log" >&2
