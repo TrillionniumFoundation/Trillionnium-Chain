@@ -1703,6 +1703,53 @@ mod tests {
     }
 
     #[test]
+    fn stale_min_signature_update_is_fail_closed_and_side_effect_free() {
+        let mut relay = BridgeRelay::with_admin(1, vec![validator_pub(7)], b32(9));
+        let admin = b32(9);
+
+        relay
+            .set_validators_with_version(&admin, relay.config_version(), vec![validator_pub(7), validator_pub(8)])
+            .unwrap();
+        let stale_version = relay.config_version();
+
+        relay.set_admin(&admin, b32(10)).unwrap();
+
+        let current_version = relay.config_version();
+        let audit_len_before = relay.audit_log().len();
+        let normalized_before = relay.normalized_audit_log();
+
+        let err = relay
+            .set_min_validator_signatures_with_version(&b32(10), stale_version, 2)
+            .unwrap_err();
+
+        assert!(matches!(
+            err,
+            BridgeRelayError::InvalidConfigVersion { expected, got }
+                if expected == current_version && got == stale_version
+        ));
+        assert_eq!(
+            relay.min_validator_signatures,
+            1,
+            "stale threshold write must leave the previous quorum intact"
+        );
+        assert_eq!(
+            relay.config_version(),
+            current_version,
+            "stale threshold write must not mutate config version"
+        );
+        assert_eq!(
+            relay.audit_log().len(),
+            audit_len_before,
+            "stale threshold write must not append governance audit events"
+        );
+        assert_eq!(
+            relay.normalized_audit_log(),
+            normalized_before,
+            "stale threshold write must not append normalized governance audit events"
+        );
+    }
+
+    #[test]
     fn stale_validator_rotation_is_fail_closed_and_side_effect_free() {
         let mut relay = BridgeRelay::with_admin(1, vec![validator_pub(7)], b32(9));
         let admin = b32(9);
