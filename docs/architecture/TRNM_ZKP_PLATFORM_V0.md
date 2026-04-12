@@ -4,6 +4,7 @@
 - 范围：只定义平台抽象、契约、兼容策略；**不引入业务逻辑改动**
 - 目标：把 TRNM 的 ZKP 从当前“fail-closed 壳”推进为**可插拔、多 backend 的验证平台骨架**
 - 适用边界：当前仓内 PoUW / Verification 路径，尤其是 `ProofType::Zk` 的验证入口与回执语义
+- BL09 退役准备口径：本文若提到保留中的 PoUW / verification 回执边界，默认仅指迁移期兼容与 provenance / audit evidence，不应被解读为继续把 PoUW 作为 payout authority，也不为保留 work-unit payout 公式的默认结算路径背书
 
 ---
 

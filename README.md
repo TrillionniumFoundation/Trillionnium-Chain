@@ -15,6 +15,7 @@ TRNM is a Rust L1 protocol for task-based AI compute settlement and verification
 - **High-concurrency execution** with conflict detection and grouped scheduling
 - **Auditable events + stable interfaces** for integration, replay, governance, and operations
 - **Worker Agent + CLI** loop from execution to on-chain submission
+- **BL09 retirement-prep wording**: the retained `trnm-pouw` crate name and any residual PoUW fields should be read as migration-era compatibility or provenance/audit evidence, not as ongoing payout authority or a default work-unit payout path
 
 ---
 
@@ -56,7 +57,7 @@ TrillionniumChain/
 
 - `trnm-node`: node runtime loop, execution wiring, event emission
 - `trnm-state`: versioned state store and `state_root`
-- `trnm-pouw`: PoCO task state machine and validation logic
+- `trnm-pouw`: PoCO task state machine and validation logic (legacy crate name retained during migration; do not read it as current payout-authority wording)
 - `trnm-executor`: conflict detection and concurrent scheduling strategy
 - `trnm-mempool`: transaction pool and admission/packaging
 - `trnm-rpc`: RPC service and stable query APIs
