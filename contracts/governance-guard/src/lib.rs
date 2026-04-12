@@ -510,11 +510,26 @@ impl GovernanceGuard {
     pub fn normalized_audit_log(&self) -> Vec<AuditEvent> {
         self.audit_log
             .iter()
-            .map(Self::normalize_audit_event)
+            .map(|event| self.normalize_audit_event(event))
             .collect()
     }
 
-    fn normalize_audit_event(event: &GovernanceEvent) -> AuditEvent {
+    fn apply_normalized_proposal_context(
+        &self,
+        proposal_id: ProposalId,
+        normalized: &mut AuditEvent,
+    ) {
+        let Some(proposal) = self.proposals.get(&proposal_id) else {
+            return;
+        };
+
+        normalized.reason = Some(format!("kind={:?}", proposal.kind));
+        if !proposal.param_key.is_empty() {
+            normalized.related_id = Some(proposal.param_key.clone());
+        }
+    }
+
+    fn normalize_audit_event(&self, event: &GovernanceEvent) -> AuditEvent {
         match event {
             GovernanceEvent::ProposalProposed {
                 proposal_id,
@@ -539,6 +554,7 @@ impl GovernanceGuard {
                     AuditEvent::new("governance-guard", "governance.proposal_queued");
                 normalized.actor = Some(actor.clone());
                 normalized.object_id = Some(proposal_id.to_string());
+                self.apply_normalized_proposal_context(*proposal_id, &mut normalized);
                 normalized
             }
             GovernanceEvent::ProposalExecuted {
@@ -578,6 +594,7 @@ impl GovernanceGuard {
                     AuditEvent::new("governance-guard", "governance.proposal_cancelled");
                 normalized.actor = Some(actor.clone());
                 normalized.object_id = Some(proposal_id.to_string());
+                self.apply_normalized_proposal_context(*proposal_id, &mut normalized);
                 normalized
             }
             GovernanceEvent::PauseSet {
@@ -1607,6 +1624,13 @@ mod tests {
 
         let normalized = gov.normalized_audit_log();
         let pid_s = pid.to_string();
+        let queued = normalized
+            .iter()
+            .find(|event| {
+                event.event_type == "governance.proposal_queued"
+                    && event.object_id.as_deref() == Some(pid_s.as_str())
+            })
+            .unwrap();
         let event = normalized
             .iter()
             .find(|event| {
@@ -1615,6 +1639,8 @@ mod tests {
             })
             .unwrap();
 
+        assert_eq!(queued.related_id.as_deref(), Some("challenge_window_blocks"));
+        assert_eq!(queued.reason.as_deref(), Some("kind=ParamChange"));
         assert_eq!(event.related_id.as_deref(), Some("challenge_window_blocks"));
         assert_eq!(event.amount, Some(1));
         assert_eq!(event.note.as_deref(), Some("value=100->175, version=0->1"));
@@ -1681,6 +1707,8 @@ mod tests {
         gov.cancel("guardian", pid).unwrap();
 
         let proposal = gov.proposal(pid).unwrap();
+        let normalized = gov.normalized_audit_log();
+        let pid_s = pid.to_string();
         assert_eq!(proposal.status, ProposalStatus::Cancelled);
         assert!(gov.bridge_state().emergency_paused);
         assert_eq!(gov.audit_log().len(), audit_len_before_cancel + 1);
@@ -1689,6 +1717,12 @@ mod tests {
             GovernanceEvent::ProposalCancelled { proposal_id, actor }
                 if *proposal_id == pid && actor == "guardian"
         )));
+        assert!(normalized.iter().any(|event| {
+            event.event_type == "governance.proposal_cancelled"
+                && event.object_id.as_deref() == Some(pid_s.as_str())
+                && event.related_id.as_deref() == Some("emergency_pause")
+                && event.reason.as_deref() == Some("kind=EmergencyUnpause")
+        }));
 
         assert_eq!(
             gov.execute_unpause("exec", pid, eta).unwrap_err(),
