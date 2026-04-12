@@ -930,7 +930,15 @@ fn metadata_only_operator_action(recovered: &RecoveredWalState) -> String {
     let tip_height = recovered.next_height.saturating_sub(1);
     match recovered.checkpoint_height_retained {
         Some(checkpoint_height) if checkpoint_height < tip_height => {
-            "operator action: restore an application snapshot that covers the retained WAL tip before retrying join/rejoin; do not resume from metadata alone".into()
+            let checkpoint_lag = tip_height - checkpoint_height;
+            let lag_blocks = if checkpoint_lag == 1 { "block" } else { "blocks" };
+            format!(
+                "operator action: restore an application snapshot that covers retained WAL tip height {} before retrying join/rejoin; retained checkpoint height {} is {} {} behind, so do not resume from metadata alone",
+                tip_height,
+                checkpoint_height,
+                checkpoint_lag,
+                lag_blocks,
+            )
         }
         Some(checkpoint_height) if checkpoint_height > tip_height => {
             let checkpoint_lead = checkpoint_height - tip_height;
@@ -18620,11 +18628,27 @@ locked_block_hash = "stale-lock"
         };
         assert_eq!(
             metadata_only_operator_action(&single_block_lagging_rejoin),
-            "operator action: restore an application snapshot that covers the retained WAL tip before retrying join/rejoin; do not resume from metadata alone"
+            "operator action: restore an application snapshot that covers retained WAL tip height 11 before retrying join/rejoin; retained checkpoint height 10 is 1 block behind, so do not resume from metadata alone"
         );
         assert_eq!(
             recovery_startup_summary(&single_block_lagging_rejoin),
             "retained_wal_entries=2 checkpoint_height_retained=10 checkpoint_tip_relation=behind:1 next_startup_height=12 wal_tail_truncated=false metadata_only_recovery=true join_rejoin_status=blocked:metadata_only_recovery"
+        );
+        assert_eq!(
+            metadata_only_operator_action(&RecoveredWalState {
+                next_height: 12,
+                restored_lock: None,
+                last_checkpoint: Some(CheckpointMeta {
+                    height: 9,
+                    state_root_hex: "r9".into(),
+                    wal_entry_hash_hex: "h9".into(),
+                }),
+                truncated: false,
+                metadata_only_recovery: true,
+                wal_entries_retained: 2,
+                checkpoint_height_retained: Some(9),
+            }),
+            "operator action: restore an application snapshot that covers retained WAL tip height 11 before retrying join/rejoin; retained checkpoint height 9 is 2 blocks behind, so do not resume from metadata alone"
         );
         assert_eq!(
             metadata_only_operator_action(&RecoveredWalState {
@@ -19280,7 +19304,7 @@ locked_block_hash = "stale-lock"
         assert!(err.contains("checkpoint lags retained WAL tip by 1 block"));
         assert!(!err.contains("checkpoint lags retained WAL tip by 1 blocks"));
         assert!(err.contains(
-            "operator action: restore an application snapshot that covers the retained WAL tip before retrying join/rejoin; do not resume from metadata alone"
+            "operator action: restore an application snapshot that covers retained WAL tip height 3 before retrying join/rejoin; retained checkpoint height 2 is 1 block behind, so do not resume from metadata alone"
         ));
         assert!(err.contains("last retained checkpoint: 2"));
         assert!(err.contains("next startup height: 4"));
