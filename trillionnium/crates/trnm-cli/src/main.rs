@@ -1190,6 +1190,10 @@ fn ensure_wallet_name(name: &str) -> Result<()> {
     let has_hidden_or_whitespace = name
         .chars()
         .any(|c| c.is_whitespace() || contains_hidden_or_control(c));
+    let has_non_ascii = !name.is_ascii();
+    let has_non_simple_ascii = name
+        .chars()
+        .any(|c| !c.is_ascii_alphanumeric() && c != '_' && c != '-');
     let uppercase = name.to_ascii_uppercase();
     let is_windows_reserved_device = matches!(
         uppercase.as_str(),
@@ -1218,7 +1222,7 @@ fn ensure_wallet_name(name: &str) -> Result<()> {
     );
 
     if name.is_empty()
-        || !name.is_ascii()
+        || has_non_ascii
         || name == "."
         || name == ".."
         || name.starts_with('.')
@@ -1229,7 +1233,7 @@ fn ensure_wallet_name(name: &str) -> Result<()> {
         || name.contains(['‐', '‑', '‒', '–', '—', '―', '−', '﹣', '－'])
         || name.contains(['：', '﹕', '＝', '﹦', '｜', '￨', '＆', '﹠', '？', '﹖', '，', '；', '！', '﹗'])
         || name.contains(['＊', '﹡'])
-        || name.contains(['∕', '⁄', '／', '＼', '⧵', '⧸', '⟋', '⟍'])
+        || name.contains(['∕', '⁄', '／', '＼', '⧵', '⧸', '⧹', '⟋', '⟍'])
         || name.contains(['.', '．', '。', '｡', '﹒', '․'])
         || name.contains([
             '"', '\'', '`', '<', '>', '(', ')', '[', ']', '{', '}', ',', ';',
@@ -1240,10 +1244,11 @@ fn ensure_wallet_name(name: &str) -> Result<()> {
             '〔', '〕', '〖', '〗', '〘', '〙', '〚', '〛', '〝', '〞', '〟', '｟', '｠',
         ])
         || has_hidden_or_whitespace
+        || has_non_simple_ascii
         || is_windows_reserved_device
     {
         bail!(
-            "invalid wallet name '{}': use a simple local name without path separators or reserved device names",
+            "invalid wallet name '{}': use a simple ASCII local name with only letters, digits, '_' or '-' and no path separators or reserved device names",
             name
         );
     }
@@ -3761,6 +3766,9 @@ mod tests {
             "alice，",
             "alice;",
             "alice；",
+            "alice+backup",
+            "alice@prod",
+            "alice~1",
             "alice\n",
             "alice bob",
             " alice",
@@ -3776,6 +3784,14 @@ mod tests {
             "alice\u{2066}bob",
             "alice\u{2069}bob",
             "alice\u{0007}bob",
+            "con",
+            "PRN",
+            "aux",
+            "nul",
+            "com1",
+            "CoM9",
+            "lpt1",
+            "LPT9",
             "аlice",
             "alice猫",
         ] {
@@ -3785,6 +3801,33 @@ mod tests {
                 "unexpected error for {bad:?}: {err}"
             );
         }
+
+        ensure_wallet_name("alice").unwrap();
+        ensure_wallet_name("alice_01").unwrap();
+        ensure_wallet_name("alice-01").unwrap();
+        ensure_wallet_name("ALICE01").unwrap();
+    }
+
+    #[test]
+    fn wallet_name_error_mentions_ascii_requirement() {
+        let err = ensure_wallet_name("аlice").unwrap_err();
+        assert!(
+            err.to_string().contains("ASCII local name"),
+            "unexpected error: {err}"
+        );
+        assert!(
+            err.to_string().contains("only letters, digits, '_' or '-'"),
+            "unexpected error: {err}"
+        );
+    }
+
+    #[test]
+    fn wallet_name_error_mentions_simple_ascii_charset() {
+        let err = ensure_wallet_name("alice+backup").unwrap_err();
+        assert!(
+            err.to_string().contains("only letters, digits, '_' or '-'"),
+            "unexpected error: {err}"
+        );
     }
 
     #[test]
