@@ -1111,6 +1111,56 @@ mod tests {
     }
 
     #[test]
+    fn recovery_startup_summary_keeps_checkpoint_ahead_join_surface_saturated_at_max_height() {
+        let recovered = recovered_state(1, u64::MAX, Some(u64::MAX), false, false);
+
+        ensure_recoverable_wal_state(Path::new("/tmp/trnm-runtime-wal"), &recovered)
+            .expect("max-height checkpoint-ahead resume mismatch should remain recoverable for runtime join/rejoin triage");
+        assert_eq!(
+            retained_wal_summary(&recovered),
+            format!(
+                "retained 1 committed WAL entry through height {} (retained checkpoint height {} is ahead of retained WAL tip height {} by 1 block; investigate WAL/checkpoint mismatch)",
+                u64::MAX - 1,
+                u64::MAX,
+                u64::MAX - 1,
+            )
+        );
+        assert_eq!(
+            recovery_startup_summary(&recovered),
+            format!(
+                "retained_wal_entries=1 checkpoint_height_retained={} checkpoint_tip_relation=ahead:1 next_startup_height={} wal_tail_truncated=false metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume_checkpoint_ahead_mismatch_1block",
+                u64::MAX,
+                u64::MAX,
+            )
+        );
+    }
+
+    #[test]
+    fn recovery_startup_summary_keeps_truncated_checkpoint_ahead_join_surface_saturated_at_max_height() {
+        let recovered = recovered_state(1, u64::MAX, Some(u64::MAX), true, false);
+
+        ensure_recoverable_wal_state(Path::new("/tmp/trnm-runtime-wal"), &recovered)
+            .expect("truncated max-height checkpoint-ahead resume mismatch should remain recoverable for runtime join/rejoin triage");
+        assert_eq!(
+            retained_wal_summary(&recovered),
+            format!(
+                "retained 1 committed WAL entry through height {} (retained checkpoint height {} is ahead of retained WAL tip height {} by 1 block; investigate WAL/checkpoint mismatch); repaired WAL tail required truncation",
+                u64::MAX - 1,
+                u64::MAX,
+                u64::MAX - 1,
+            )
+        );
+        assert_eq!(
+            recovery_startup_summary(&recovered),
+            format!(
+                "retained_wal_entries=1 checkpoint_height_retained={} checkpoint_tip_relation=ahead:1 next_startup_height={} wal_tail_truncated=true metadata_only_recovery=false join_rejoin_status=ready:retained_wal_resume_checkpoint_ahead_mismatch_1block_after_tail_repair",
+                u64::MAX,
+                u64::MAX,
+            )
+        );
+    }
+
+    #[test]
     fn recovery_startup_summary_reports_checkpoint_ahead_of_retained_tip_as_blocked_metadata_only() {
         let recovered = recovered_state(2, 12, Some(15), false, true);
 
