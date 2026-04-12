@@ -4753,6 +4753,52 @@ mod tests {
     }
 
     #[test]
+    fn checkpoint_da_light_verifier_summary_fails_closed_on_zero_width_non_genesis_prev_hash() {
+        let wal = WalMeta {
+            height: 2,
+            round: 0,
+            proposal_hash: "proposal-2".into(),
+            committed: true,
+            state_root_hex: "34".repeat(32),
+            prev_hash_hex: Some(format!("{}\u{200b}", "56".repeat(32))),
+        };
+        let checkpoint = CheckpointMeta {
+            height: wal.height,
+            state_root_hex: wal.state_root_hex.clone(),
+            wal_entry_hash_hex: wal.content_hash_hex(),
+        };
+
+        assert_eq!(
+            checkpoint_da_light_verifier_summary(&checkpoint, &wal),
+            None,
+            "DA/light-verifier summaries must fail closed when non-genesis WAL metadata carries zero-width prev_hash_hex drift so sidecars never publish visually ambiguous predecessor links"
+        );
+    }
+
+    #[test]
+    fn checkpoint_da_light_verifier_summary_fails_closed_on_carriage_return_non_genesis_prev_hash() {
+        let wal = WalMeta {
+            height: 2,
+            round: 0,
+            proposal_hash: "proposal-2".into(),
+            committed: true,
+            state_root_hex: "34".repeat(32),
+            prev_hash_hex: Some(format!("{}\r", "56".repeat(32))),
+        };
+        let checkpoint = CheckpointMeta {
+            height: wal.height,
+            state_root_hex: wal.state_root_hex.clone(),
+            wal_entry_hash_hex: wal.content_hash_hex(),
+        };
+
+        assert_eq!(
+            checkpoint_da_light_verifier_summary(&checkpoint, &wal),
+            None,
+            "DA/light-verifier summaries must fail closed when non-genesis WAL metadata carries carriage-return prev_hash_hex drift so sidecars never publish CRLF-sensitive predecessor links"
+        );
+    }
+
+    #[test]
     fn checkpoint_da_light_verifier_summary_fails_closed_on_uncommitted_wal() {
         let wal = WalMeta {
             height: 7,
@@ -4826,7 +4872,7 @@ mod tests {
         let wal = WalMeta {
             height: 7,
             round: 3,
-            proposal_hash: "proposal-7-owl".into(),
+            proposal_hash: "proposal-7-猫头鹰".into(),
             committed: true,
             state_root_hex: "ab".repeat(32),
             prev_hash_hex: Some("ef".repeat(32)),

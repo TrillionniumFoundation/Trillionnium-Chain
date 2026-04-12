@@ -139,6 +139,7 @@ Release-review invariants for this bundle:
 
 - a terminal mismatch must preserve both the requested tuple and the observed tuple in the same bundle;
 - a bounded retry must mint a fresh `attempt_id` and append a new bundle rather than overwrite the prior one;
+- the same `request_id` must stay bound to one canonical requested checkpoint tuple plus DA summary identity for its entire lifetime; if any of `requested_checkpoint_height`, `requested_checkpoint_state_root_hex`, `requested_checkpoint_wal_entry_hash_hex`, `requested_checkpoint_prev_hash_hex`, or `requested_da_summary_hash` changes, the caller must mint a new `request_id` instead of reusing the old audit handle;
 - a later successful retry may supersede the operational state, but it must not erase prior failed trust evidence for the same `request_id`.
 
 ### Example replay/audit evidence bundle
@@ -237,8 +238,8 @@ Retry invariants for release review:
 
 Implementation note for current review surfaces:
 
-- compound/operator-facing diagnostics such as `unavailable:no_matching_wal_entry` should preserve the stable retry-class prefix (`unavailable`) **and** the more specific suffix (`no_matching_wal_entry`);
-- the prefix determines whether bounded retry is even eligible, while the suffix stays in the persisted evidence/log surface so operators can distinguish transport outage from concrete evidence lookup failure;
+- compound/operator-facing diagnostics such as `unavailable:no_matching_wal_entry` or `unavailable:non_audit_ready_wal_surface` should preserve the stable retry-class prefix (`unavailable`) **and** the more specific suffix;
+- the prefix determines whether bounded retry is even eligible, while the suffix stays in the persisted evidence/log surface so operators can distinguish transport outage from concrete evidence lookup failure or a locally present but non-audit-ready WAL tuple;
 - no compound code may be rewritten into `verified` without a fresh successful attempt carrying a new attempt/result identity.
 
 Fail-closed interpretation rule for compound codes:
@@ -292,7 +293,11 @@ Reviewers should not treat the helper names above as prose-only claims. The curr
   - `checkpoint_da_light_verifier_summary_fails_closed_on_missing_non_genesis_wal_prev_hash_surface`
   - `checkpoint_da_light_verifier_summary_fails_closed_on_uncommitted_wal_surface`
   - `node_recovery_checkpoint_rejects_non_genesis_prev_hash_with_carriage_return_control_drift`
-- `trillionnium/crates/trnm-node/src/tests.rs`
+- `trillionnium/crates/trnm-state/tests/state_root_regression/regression/canonicalization.rs`
+  - `checkpoint_audit_summary_rejects_noncanonical_prev_hash_surface`
+- `trillionnium/crates/trnm-node/src/main.rs`
+  - `recover_metadata_only_error_exposes_checkpoint_da_surface_when_wal_linkage_is_canonical`
+  - `metadata_only_recovery_error_surfaces_non_audit_ready_da_reason_for_noncanonical_checkpoint_tuple`
   - `metadata_only_recovery_error_surfaces_da_unavailability_reason_when_checkpoint_wal_linkage_is_missing`
 
 Together these anchors give release review one concrete trail for verifying that:
@@ -300,20 +305,26 @@ Together these anchors give release review one concrete trail for verifying that
 1. canonical checkpoint/WAL tuples emit a stable DA/light-verifier summary;
 2. speculative or malformed WAL evidence is rejected before it can be presented as audit-ready;
 3. proposal-hash surface drift is treated as a fail-closed trust problem before retry logic can blur malformed evidence into a generic outage story;
-4. predecessor-link drift — including a missing non-genesis `prev_hash_hex`, not just malformed casing/control-byte drift — is treated as a fail-closed trust problem rather than a transport/retry problem; and
-5. when checkpoint/WAL linkage cannot be reconstructed locally, the operator-facing recovery surface preserves the concrete `unavailable:no_matching_wal_entry` reason instead of collapsing it into a generic success/failure blur.
+4. predecessor-link drift — including a missing non-genesis `prev_hash_hex`, not just malformed casing/control-byte drift — is treated as a fail-closed trust problem rather than a transport/retry problem;
+5. when checkpoint/WAL linkage exists locally but is not audit-ready, the operator-facing recovery surface preserves the concrete `unavailable:non_audit_ready_wal_surface` reason instead of collapsing canonicalization failure into a generic outage story; and
+6. when checkpoint/WAL linkage cannot be reconstructed locally, the operator-facing recovery surface preserves the concrete `unavailable:no_matching_wal_entry` reason instead of collapsing it into a generic success/failure blur.
 
 ### Minimal targeted replay commands
 
-When reviewers want a smallest-possible replay set instead of broad crate sweeps, start with these targeted commands from `trillionnium/`:
+When reviewers want a smallest-possible replay set instead of broad crate sweeps, start with these targeted commands from the **repo root** so the replay remains stable even when the operator shell is not already inside `trillionnium/`:
 
-- `cargo test -p trnm-state checkpoint_da_light_verifier_summary_is_canonical_and_includes_wal_linkage -q`
-- `cargo test -p trnm-state checkpoint_da_light_verifier_summary_fails_closed_on_non_ascii_wal_proposal_hash_surface -q`
-- `cargo test -p trnm-state checkpoint_da_light_verifier_summary_fails_closed_on_missing_non_genesis_wal_prev_hash_surface -q`
-- `cargo test -p trnm-state checkpoint_da_light_verifier_summary_fails_closed_on_uncommitted_wal_surface -q`
-- `cargo test -p trnm-node metadata_only_recovery_error_surfaces_da_unavailability_reason_when_checkpoint_wal_linkage_is_missing -q`
+- `cargo test --manifest-path trillionnium/Cargo.toml -p trnm-state checkpoint_da_light_verifier_summary_is_canonical_and_includes_wal_linkage -q`
+- `cargo test --manifest-path trillionnium/Cargo.toml -p trnm-state checkpoint_da_light_verifier_summary_fails_closed_on_non_ascii_wal_proposal_hash_surface -q`
+- `cargo test --manifest-path trillionnium/Cargo.toml -p trnm-state checkpoint_da_light_verifier_summary_fails_closed_on_missing_non_genesis_wal_prev_hash_surface -q`
+- `cargo test --manifest-path trillionnium/Cargo.toml -p trnm-state checkpoint_audit_summary_rejects_noncanonical_prev_hash_surface -q`
+- `cargo test --manifest-path trillionnium/Cargo.toml -p trnm-state checkpoint_da_light_verifier_summary_fails_closed_on_uncommitted_wal_surface -q`
+- `cargo test --manifest-path trillionnium/Cargo.toml -p trnm-node recover_metadata_only_error_exposes_checkpoint_da_surface_when_wal_linkage_is_canonical -q`
+- `cargo test --manifest-path trillionnium/Cargo.toml -p trnm-node metadata_only_recovery_error_surfaces_non_audit_ready_da_reason_for_noncanonical_checkpoint_tuple -q`
+- `cargo test --manifest-path trillionnium/Cargo.toml -p trnm-node metadata_only_recovery_error_surfaces_da_unavailability_reason_when_checkpoint_wal_linkage_is_missing -q`
 
-This replay set is intentionally narrow: one happy-path linkage proof, three fail-closed canonicalization regressions spanning WAL proposal-hash surfaces, non-genesis predecessor-link presence, and uncommitted WAL rejection, plus one operator-facing DA-unavailability triage check.
+If a reviewer prefers working from `trillionnium/`, the same commands may omit `--manifest-path trillionnium/Cargo.toml`, but the repo-root form is the safer release-review default because it removes cwd ambiguity from the evidence replay path.
+
+This replay set is intentionally narrow: one happy-path linkage proof, four fail-closed canonicalization regressions spanning WAL proposal-hash surfaces, non-genesis predecessor-link presence, non-canonical predecessor-link encoding, and uncommitted WAL rejection, plus two operator-facing DA-unavailability triage checks that separate missing local linkage from locally present but non-audit-ready WAL tuples.
 
 ### What the current helper surface already proves
 

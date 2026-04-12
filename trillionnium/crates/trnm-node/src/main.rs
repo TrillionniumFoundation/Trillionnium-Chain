@@ -23,8 +23,8 @@ use trnm_pouw::{
     apply_create_task, apply_resolve_at_height, apply_reveal_result_at_height, apply_timeout,
 };
 use trnm_state::{
-    verify_wal_and_find_checkpoint_node_recovery, CheckpointMeta, PendingResolveApprovalSnapshot,
-    StateStore, WalMeta,
+    checkpoint_da_light_verifier_summary, verify_wal_and_find_checkpoint_node_recovery,
+    CheckpointMeta, PendingResolveApprovalSnapshot, StateStore, WalMeta,
 };
 use trnm_types::{Hash32, ObjectRef, TaskMeteringSnapshot, TaskStatus, Tx};
 
@@ -1073,10 +1073,43 @@ fn metadata_only_operator_action(recovered: &RecoveredWalState) -> String {
     }
 }
 
+fn metadata_only_checkpoint_surfaces(
+    wal_dir: &Path,
+    recovered: &RecoveredWalState,
+) -> (String, String) {
+    let Some(checkpoint) = recovered.last_checkpoint.as_ref() else {
+        return ("none".into(), "unavailable:no_checkpoint".into());
+    };
+
+    let checkpoint_evidence = format!(
+        "checkpoint_height={} state_root={} wal_entry_hash={}",
+        checkpoint.height, checkpoint.state_root_hex, checkpoint.wal_entry_hash_hex,
+    );
+
+    let da_surface = load_wal_meta_entries(wal_dir)
+        .ok()
+        .and_then(|entries| {
+            entries.into_iter().find(|wal_entry| {
+                wal_entry.height == checkpoint.height
+                    && wal_entry.state_root_hex == checkpoint.state_root_hex
+                    && wal_entry.content_hash_hex() == checkpoint.wal_entry_hash_hex
+            })
+        })
+        .map(|wal_entry| {
+            checkpoint_da_light_verifier_summary(checkpoint, &wal_entry)
+                .unwrap_or_else(|| "unavailable:non_audit_ready_wal_surface".into())
+        })
+        .unwrap_or_else(|| "unavailable:no_matching_wal_entry".into());
+
+    (checkpoint_evidence, da_surface)
+}
+
 fn metadata_only_recovery_error(wal_dir: &Path, recovered: &RecoveredWalState) -> String {
     let operator_action = metadata_only_operator_action(recovered);
+    let (checkpoint_evidence, checkpoint_da_surface) =
+        metadata_only_checkpoint_surfaces(wal_dir, recovered);
     format!(
-        "refusing metadata-only recovery from {}: verified WAL/checkpoint metadata {} (last retained checkpoint: {}, next startup height: {}); incident clue: {} but trnm-node does not yet restore application StateStore snapshots or replay committed blocks; {}; implement state snapshot+replay recovery first if this restart path must remain supported",
+        "refusing metadata-only recovery from {}: verified WAL/checkpoint metadata {} (last retained checkpoint: {}, next startup height: {}); incident clue: {}; checkpoint_evidence: {}; checkpoint_da_surface: {} but trnm-node does not yet restore application StateStore snapshots or replay committed blocks; {}; implement state snapshot+replay recovery first if this restart path must remain supported",
         wal_dir.display(),
         retained_wal_summary(recovered),
         recovered
@@ -1085,6 +1118,8 @@ fn metadata_only_recovery_error(wal_dir: &Path, recovered: &RecoveredWalState) -
             .unwrap_or_else(|| "none".into()),
         recovered.next_height,
         recovery_startup_summary(recovered),
+        checkpoint_evidence,
+        checkpoint_da_surface,
         operator_action,
     )
 }
@@ -18820,6 +18855,116 @@ locked_block_hash = "stale-lock"
     }
 
     #[test]
+    fn recover_metadata_only_error_exposes_checkpoint_da_surface_when_wal_linkage_is_canonical() {
+        let wal_dir = temp_wal_dir("recover-metadata-only-error-da-surface");
+        fs::create_dir_all(&wal_dir).unwrap();
+
+        let state_root_hex = "ab".repeat(32);
+        let e1 = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "proposal-1".into(),
+            committed: true,
+            state_root_hex: state_root_hex.clone(),
+            prev_hash_hex: None,
+        };
+        let h1 = e1.content_hash_hex();
+        persist_wal_meta_entries(&wal_dir, &[e1]).unwrap();
+        persist_checkpoint_meta(
+            &wal_dir,
+            &[CheckpointMeta {
+                height: 1,
+                state_root_hex: state_root_hex.clone(),
+                wal_entry_hash_hex: h1.clone(),
+            }],
+        )
+        .unwrap();
+
+        let recovered = recover_wal_state(&wal_dir).unwrap();
+        let err = metadata_only_recovery_error(&wal_dir, &recovered);
+
+        assert!(err.contains(&format!(
+            "checkpoint_evidence: checkpoint_height=1 state_root={} wal_entry_hash={}",
+            state_root_hex, h1
+        )));
+        assert!(err.contains("checkpoint_da_surface: da_light_surface=checkpoint-wal-v1"));
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
+    fn metadata_only_recovery_error_surfaces_non_audit_ready_da_reason_for_noncanonical_checkpoint_tuple() {
+        let wal_dir = temp_wal_dir("recover-da-surface-noncanonical-tuple");
+        fs::create_dir_all(&wal_dir).unwrap();
+
+        let e1 = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "proposal-1".into(),
+            committed: true,
+            state_root_hex: "r1".into(),
+            prev_hash_hex: None,
+        };
+        let h1 = e1.content_hash_hex();
+        persist_wal_meta_entries(&wal_dir, &[e1]).unwrap();
+
+        let recovered = RecoveredWalState {
+            wal_entries_retained: 1,
+            next_height: 2,
+            restored_lock: None,
+            last_checkpoint: Some(CheckpointMeta {
+                height: 1,
+                state_root_hex: "r1".into(),
+                wal_entry_hash_hex: h1,
+            }),
+            truncated: false,
+            metadata_only_recovery: true,
+            checkpoint_height_retained: Some(1),
+        };
+
+        let err = metadata_only_recovery_error(&wal_dir, &recovered);
+        assert!(err.contains("checkpoint_evidence: checkpoint_height=1 state_root=r1"));
+        assert!(err.contains("checkpoint_da_surface: unavailable:non_audit_ready_wal_surface"));
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
+    fn metadata_only_recovery_error_surfaces_da_unavailability_reason_when_checkpoint_wal_linkage_is_missing() {
+        let wal_dir = temp_wal_dir("recover-da-surface-missing-wal-linkage");
+        fs::create_dir_all(&wal_dir).unwrap();
+
+        let e1 = WalMeta {
+            height: 1,
+            round: 0,
+            proposal_hash: "proposal-1".into(),
+            committed: true,
+            state_root_hex: "ab".repeat(32),
+            prev_hash_hex: None,
+        };
+        persist_wal_meta_entries(&wal_dir, &[e1]).unwrap();
+
+        let recovered = RecoveredWalState {
+            wal_entries_retained: 1,
+            next_height: 2,
+            restored_lock: None,
+            last_checkpoint: Some(CheckpointMeta {
+                height: 1,
+                state_root_hex: "ab".repeat(32),
+                wal_entry_hash_hex: "ff".repeat(32),
+            }),
+            truncated: false,
+            metadata_only_recovery: true,
+            checkpoint_height_retained: Some(1),
+        };
+
+        let err = metadata_only_recovery_error(&wal_dir, &recovered);
+        assert!(err.contains("checkpoint_da_surface: unavailable:no_matching_wal_entry"));
+
+        let _ = fs::remove_dir_all(&wal_dir);
+    }
+
+    #[test]
     fn recover_fully_checkpointed_wal_rewrites_stale_consensus_wal_lock_to_retained_tip() {
         let wal_dir = temp_wal_dir("recover-fully-checkpointed-no-wal-rewrite");
         fs::create_dir_all(&wal_dir).unwrap();
@@ -19210,6 +19355,8 @@ locked_block_hash = "stale-lock"
         assert!(err.contains("retained no committed WAL entries"));
         assert!(err.contains("last retained checkpoint: none"));
         assert!(err.contains("next startup height: 1"));
+        assert!(err.contains("checkpoint_evidence: none"));
+        assert!(err.contains("checkpoint_da_surface: unavailable:no_checkpoint"));
 
         let _ = fs::remove_dir_all(&wal_dir);
     }
