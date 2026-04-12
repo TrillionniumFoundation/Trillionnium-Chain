@@ -146,6 +146,30 @@ fn http_json_responses_disable_caching_for_operator_probes() {
 }
 
 #[test]
+fn health_error_responses_keep_head_and_get_contracts_distinct() {
+    let head_not_found = fallback_response_for_request(Some(("HEAD", "/missing")));
+    assert!(head_not_found.starts_with("HTTP/1.1 404 Not Found\r\n"));
+    assert!(head_not_found.contains("Content-Length: 30\r\n"));
+    assert!(head_not_found.ends_with("\r\n\r\n"));
+    assert!(!head_not_found.ends_with("{\"ok\":false,\"code\":\"NOT_FOUND\"}"));
+
+    let get_not_found = fallback_response_for_request(Some(("GET", "/missing")));
+    assert!(get_not_found.starts_with("HTTP/1.1 404 Not Found\r\n"));
+    assert!(get_not_found.contains("Content-Length: 30\r\n"));
+    assert!(get_not_found.ends_with("{\"ok\":false,\"code\":\"NOT_FOUND\"}"));
+}
+
+#[test]
+fn malformed_http_request_keeps_bad_request_json_contract() {
+    let response = fallback_response_for_request(None);
+    assert!(response.starts_with("HTTP/1.1 400 Bad Request\r\n"));
+    assert!(response.contains("Content-Length: 63\r\n"));
+    assert!(response.ends_with(
+        "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid http request\"}"
+    ));
+}
+
+#[test]
 fn parse_http_get_path_rejects_fragment_suffixes_fail_closed() {
     assert_eq!(parse_http_get_path("GET /health#bridge HTTP/1.1"), None);
     assert_eq!(
