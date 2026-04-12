@@ -52,6 +52,16 @@ pub struct ConsumptionRecord {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
+pub struct BillingWindowPolicy {
+    pub billing_window_id: String,
+    pub open_at_unix_ms: u64,
+    pub close_at_unix_ms: u64,
+    pub per_consumer_max_credited_units: Option<u128>,
+    pub per_task_max_credited_units: Option<u128>,
+    pub policy_version: u64,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
 pub struct TaskConsumptionSummary {
     pub task_id: u64,
     pub receipt_count: u64,
@@ -91,6 +101,17 @@ mod tests {
         }
     }
 
+    fn sample_billing_window_policy() -> BillingWindowPolicy {
+        BillingWindowPolicy {
+            billing_window_id: "bw-1".to_string(),
+            open_at_unix_ms: 1_775_683_200_000,
+            close_at_unix_ms: 1_775_769_600_000,
+            per_consumer_max_credited_units: Some(1_000),
+            per_task_max_credited_units: Some(10_000),
+            policy_version: 1,
+        }
+    }
+
     #[test]
     fn consumption_record_key_storage_key_is_stable() {
         let key = ConsumptionRecordKey {
@@ -116,6 +137,32 @@ mod tests {
         let mut st = StateStore::default();
         let before = st.state_root();
         st.set_consumer_consumption_nonce("consumer-bravo", 7);
+        let after = st.state_root();
+        assert_ne!(before, after);
+    }
+
+    #[test]
+    fn billing_window_policy_roundtrip_persists_in_state_store() {
+        let mut st = StateStore::default();
+        let policy = sample_billing_window_policy();
+
+        assert!(st.set_billing_window_policy(policy.clone()).is_none());
+        assert_eq!(
+            st.billing_window_policy(&policy.billing_window_id),
+            Some(policy.clone())
+        );
+        assert_eq!(
+            st.clear_billing_window_policy(&policy.billing_window_id),
+            Some(policy)
+        );
+        assert_eq!(st.billing_window_policy("bw-1"), None);
+    }
+
+    #[test]
+    fn state_root_changes_when_billing_window_policy_changes() {
+        let mut st = StateStore::default();
+        let before = st.state_root();
+        st.set_billing_window_policy(sample_billing_window_policy());
         let after = st.state_root();
         assert_ne!(before, after);
     }

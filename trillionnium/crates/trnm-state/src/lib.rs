@@ -10,7 +10,10 @@ use trnm_types::{
 };
 
 pub mod consumption;
-pub use consumption::{ConsumptionRecord, ConsumptionRecordKey, ConsumptionRecordStatus, TaskConsumptionSummary};
+pub use consumption::{
+    BillingWindowPolicy, ConsumptionRecord, ConsumptionRecordKey, ConsumptionRecordStatus,
+    TaskConsumptionSummary,
+};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum ObjectValue {
@@ -28,6 +31,7 @@ pub struct StateStore {
     pending_resolve_approvals: BTreeMap<u64, PendingResolveApproval>,
     consumption_records: BTreeMap<ConsumptionRecordKey, ConsumptionRecord>,
     consumer_consumption_nonces: BTreeMap<String, u64>,
+    billing_window_policies: BTreeMap<String, BillingWindowPolicy>,
     task_consumption_summaries: BTreeMap<u64, TaskConsumptionSummary>,
     monetary_state: MonetaryState,
     state_root_cache: RwLock<Option<Hash32>>,
@@ -66,6 +70,7 @@ impl Default for StateStore {
             pending_resolve_approvals: BTreeMap::new(),
             consumption_records: BTreeMap::new(),
             consumer_consumption_nonces: BTreeMap::new(),
+            billing_window_policies: BTreeMap::new(),
             task_consumption_summaries: BTreeMap::new(),
             monetary_state: MonetaryState::default(),
             state_root_cache: RwLock::new(None),
@@ -88,6 +93,7 @@ impl Clone for StateStore {
             pending_resolve_approvals: self.pending_resolve_approvals.clone(),
             consumption_records: self.consumption_records.clone(),
             consumer_consumption_nonces: self.consumer_consumption_nonces.clone(),
+            billing_window_policies: self.billing_window_policies.clone(),
             task_consumption_summaries: self.task_consumption_summaries.clone(),
             monetary_state: self.monetary_state.clone(),
             state_root_cache: RwLock::new(cached),
@@ -1532,7 +1538,11 @@ fn hash_pending_resolve_approval(
     hasher.update(pending.task_version.to_le_bytes());
 }
 
-fn hash_consumption_record(hasher: &mut Sha256, key: &ConsumptionRecordKey, record: &ConsumptionRecord) {
+fn hash_consumption_record(
+    hasher: &mut Sha256,
+    key: &ConsumptionRecordKey,
+    record: &ConsumptionRecord,
+) {
     hasher.update(b"consumption_record");
     hasher.update(key.task_id.to_le_bytes());
     hash_len_prefixed_str(hasher, &key.consumer_id);
@@ -1564,7 +1574,11 @@ fn hash_consumption_record(hasher: &mut Sha256, key: &ConsumptionRecordKey, reco
     }
 }
 
-fn hash_task_consumption_summary(hasher: &mut Sha256, task_id: u64, summary: &TaskConsumptionSummary) {
+fn hash_task_consumption_summary(
+    hasher: &mut Sha256,
+    task_id: u64,
+    summary: &TaskConsumptionSummary,
+) {
     hasher.update(b"task_consumption_summary");
     hasher.update(task_id.to_le_bytes());
     hasher.update(summary.task_id.to_le_bytes());
@@ -1581,6 +1595,33 @@ fn hash_task_consumption_summary(hasher: &mut Sha256, task_id: u64, summary: &Ta
         }
         None => hasher.update([0]),
     }
+}
+
+fn hash_billing_window_policy(
+    hasher: &mut Sha256,
+    billing_window_id: &str,
+    policy: &BillingWindowPolicy,
+) {
+    hasher.update(b"billing_window_policy");
+    hash_len_prefixed_str(hasher, billing_window_id);
+    hash_len_prefixed_str(hasher, &policy.billing_window_id);
+    hasher.update(policy.open_at_unix_ms.to_le_bytes());
+    hasher.update(policy.close_at_unix_ms.to_le_bytes());
+    match policy.per_consumer_max_credited_units {
+        Some(cap) => {
+            hasher.update([1]);
+            hasher.update(cap.to_le_bytes());
+        }
+        None => hasher.update([0]),
+    }
+    match policy.per_task_max_credited_units {
+        Some(cap) => {
+            hasher.update([1]);
+            hasher.update(cap.to_le_bytes());
+        }
+        None => hasher.update([0]),
+    }
+    hasher.update(policy.policy_version.to_le_bytes());
 }
 
 fn hash_task_metering_snapshot(hasher: &mut Sha256, metering: &trnm_types::TaskMeteringSnapshot) {
@@ -3615,7 +3656,10 @@ impl StateStore {
         })
     }
 
-    pub fn put_consumption_record(&mut self, record: ConsumptionRecord) -> Option<ConsumptionRecord> {
+    pub fn put_consumption_record(
+        &mut self,
+        record: ConsumptionRecord,
+    ) -> Option<ConsumptionRecord> {
         self.invalidate_state_root_cache();
         self.consumption_records.insert(record.key.clone(), record)
     }
@@ -3631,7 +3675,10 @@ impl StateStore {
             .collect()
     }
 
-    pub fn remove_consumption_record(&mut self, key: &ConsumptionRecordKey) -> Option<ConsumptionRecord> {
+    pub fn remove_consumption_record(
+        &mut self,
+        key: &ConsumptionRecordKey,
+    ) -> Option<ConsumptionRecord> {
         let removed = self.consumption_records.remove(key);
         if removed.is_some() {
             self.invalidate_state_root_cache();
@@ -3653,6 +3700,30 @@ impl StateStore {
         self.consumer_consumption_nonces.get(consumer_id).copied()
     }
 
+    pub fn set_billing_window_policy(
+        &mut self,
+        policy: BillingWindowPolicy,
+    ) -> Option<BillingWindowPolicy> {
+        self.invalidate_state_root_cache();
+        self.billing_window_policies
+            .insert(policy.billing_window_id.clone(), policy)
+    }
+
+    pub fn billing_window_policy(&self, billing_window_id: &str) -> Option<BillingWindowPolicy> {
+        self.billing_window_policies.get(billing_window_id).cloned()
+    }
+
+    pub fn clear_billing_window_policy(
+        &mut self,
+        billing_window_id: &str,
+    ) -> Option<BillingWindowPolicy> {
+        let removed = self.billing_window_policies.remove(billing_window_id);
+        if removed.is_some() {
+            self.invalidate_state_root_cache();
+        }
+        removed
+    }
+
     pub fn set_task_consumption_summary(
         &mut self,
         summary: TaskConsumptionSummary,
@@ -3666,7 +3737,10 @@ impl StateStore {
         self.task_consumption_summaries.get(&task_id).cloned()
     }
 
-    pub fn clear_task_consumption_summary(&mut self, task_id: u64) -> Option<TaskConsumptionSummary> {
+    pub fn clear_task_consumption_summary(
+        &mut self,
+        task_id: u64,
+    ) -> Option<TaskConsumptionSummary> {
         let removed = self.task_consumption_summaries.remove(&task_id);
         if removed.is_some() {
             self.invalidate_state_root_cache();
@@ -3999,6 +4073,9 @@ impl StateStore {
             hasher.update(b"consumption_consumer_nonce");
             hash_len_prefixed_str(&mut hasher, consumer_id);
             hasher.update(nonce.to_le_bytes());
+        }
+        for (billing_window_id, policy) in &self.billing_window_policies {
+            hash_billing_window_policy(&mut hasher, billing_window_id, policy);
         }
         for (task_id, summary) in &self.task_consumption_summaries {
             hash_task_consumption_summary(&mut hasher, *task_id, summary);
@@ -4827,8 +4904,9 @@ mod tests {
         );
 
         let mut uppercase_checkpoint_wal_hash = checkpoint.clone();
-        uppercase_checkpoint_wal_hash.wal_entry_hash_hex =
-            uppercase_checkpoint_wal_hash.wal_entry_hash_hex.to_uppercase();
+        uppercase_checkpoint_wal_hash.wal_entry_hash_hex = uppercase_checkpoint_wal_hash
+            .wal_entry_hash_hex
+            .to_uppercase();
         assert_eq!(
             checkpoint_da_light_verifier_summary(&uppercase_checkpoint_wal_hash, &wal),
             None,
@@ -4836,8 +4914,9 @@ mod tests {
         );
 
         let mut uppercase_checkpoint_state_root = checkpoint.clone();
-        uppercase_checkpoint_state_root.state_root_hex =
-            uppercase_checkpoint_state_root.state_root_hex.to_uppercase();
+        uppercase_checkpoint_state_root.state_root_hex = uppercase_checkpoint_state_root
+            .state_root_hex
+            .to_uppercase();
         assert_eq!(
             checkpoint_da_light_verifier_summary(&uppercase_checkpoint_state_root, &wal),
             None,
@@ -4949,7 +5028,8 @@ mod tests {
     }
 
     #[test]
-    fn checkpoint_da_light_verifier_summary_fails_closed_on_carriage_return_non_genesis_prev_hash() {
+    fn checkpoint_da_light_verifier_summary_fails_closed_on_carriage_return_non_genesis_prev_hash()
+    {
         let wal = WalMeta {
             height: 2,
             round: 0,
