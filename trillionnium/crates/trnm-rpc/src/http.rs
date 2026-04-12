@@ -41,7 +41,7 @@ fn contains_percent_encoded_control_or_space(value: &str) -> bool {
             let lo = (bytes[idx + 2] as char).to_digit(16);
             if let (Some(hi), Some(lo)) = (hi, lo) {
                 let decoded = ((hi << 4) | lo) as u8;
-                if decoded <= 0x20 || decoded == 0x7f {
+                if decoded <= 0x20 || decoded == 0x7f || (0x80..=0x9f).contains(&decoded) {
                     return true;
                 }
             }
@@ -399,6 +399,8 @@ mod tests {
         assert!(contains_percent_encoded_control_or_space("/health%1fcheck"));
         assert!(contains_percent_encoded_control_or_space("/health%20check"));
         assert!(contains_percent_encoded_control_or_space("/health%7Fcheck"));
+        assert!(contains_percent_encoded_control_or_space("/health%80check"));
+        assert!(contains_percent_encoded_control_or_space("/health%9fcheck"));
         assert!(!contains_percent_encoded_control_or_space("/oracle?snapshot=%2Ftmp%2Fs.json"));
     }
 
@@ -410,6 +412,14 @@ mod tests {
         );
         assert_eq!(
             parse_http_request_target("HEAD /readyz%1F HTTP/1.1"),
+            None
+        );
+        assert_eq!(
+            parse_http_request_target("GET /health%80check HTTP/1.1"),
+            None
+        );
+        assert_eq!(
+            parse_http_request_target("HEAD /readyz%9F HTTP/1.1"),
             None
         );
     }

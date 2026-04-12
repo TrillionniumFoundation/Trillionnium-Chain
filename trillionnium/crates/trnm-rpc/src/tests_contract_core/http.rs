@@ -192,6 +192,14 @@ fn parse_http_request_target_rejects_percent_encoded_controls_and_spaces_fail_cl
         parse_http_request_target("GET /health%20check HTTP/1.1"),
         None
     );
+    assert_eq!(
+        parse_http_request_target("GET /health%80check HTTP/1.1"),
+        None
+    );
+    assert_eq!(
+        parse_http_request_target("HEAD /readyz%9F HTTP/1.1"),
+        None
+    );
 }
 
 #[test]

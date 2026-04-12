@@ -73,7 +73,7 @@ fn contains_percent_encoded_control_or_space(value: &str) -> bool {
             let lo = (bytes[idx + 2] as char).to_digit(16);
             if let (Some(hi), Some(lo)) = (hi, lo) {
                 let decoded = ((hi << 4) | lo) as u8;
-                if decoded <= 0x20 || decoded == 0x7f {
+                if decoded <= 0x20 || decoded == 0x7f || (0x80..=0x9f).contains(&decoded) {
                     return true;
                 }
             }
@@ -607,6 +607,18 @@ mod tests {
         assert_eq!(
             parse_http_get_path("GET /query-events/7/?limit=5 HTTP/1.1"),
             Some("/query-events/7/")
+        );
+    }
+
+    #[test]
+    fn parse_http_request_target_rejects_percent_encoded_c1_controls_fail_closed() {
+        assert_eq!(
+            parse_http_request_target("GET /health%80check HTTP/1.1"),
+            None
+        );
+        assert_eq!(
+            parse_http_request_target("HEAD /readyz%9F HTTP/1.1"),
+            None
         );
     }
 
