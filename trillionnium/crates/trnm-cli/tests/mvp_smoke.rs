@@ -383,6 +383,56 @@ fn smoke_wallet_sign_rejects_invalid_explicit_store_path() {
     }
 }
 
+#[test]
+fn smoke_wallet_sign_rejects_explicit_store_with_trailing_separator() {
+    let store = tmp_dir("wallet-sign-trailing-separator");
+    let pk = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+    let import = Command::new(bin())
+        .args([
+            "wallet",
+            "import",
+            "--name",
+            "alice",
+            "--private-key-hex",
+            pk,
+            "--out",
+            store.to_string_lossy().as_ref(),
+        ])
+        .output()
+        .unwrap();
+    assert!(
+        import.status.success(),
+        "stderr: {}",
+        String::from_utf8_lossy(&import.stderr)
+    );
+
+    let trailing_store = format!("{}/", store.display());
+    let out = Command::new(bin())
+        .args([
+            "wallet",
+            "sign",
+            "--name",
+            "alice",
+            "--message",
+            "approve tx",
+            "--store",
+            trailing_store.as_str(),
+        ])
+        .output()
+        .unwrap();
+    assert!(
+        !out.status.success(),
+        "trailing-separator explicit keystore path should fail closed"
+    );
+    let stderr = String::from_utf8_lossy(&out.stderr);
+    assert!(
+        stderr.contains("explicit wallet store")
+            && stderr.contains("must be an absolute normalized symlink-free path"),
+        "unexpected stderr: {}",
+        stderr
+    );
+}
+
 #[cfg(unix)]
 #[test]
 fn smoke_wallet_sign_rejects_explicit_store_with_symlinked_ancestor() {
