@@ -58,6 +58,8 @@ node4.operator_ack_digest=
 - `acknowledged`
 - `pending`
 - `blocked`
+- `acknowledged` 只有在同一 node 的 `operator_ack_signature_path` 或 `operator_ack_digest` 已经填入真实值时才可使用
+- 如果 durable acknowledgment evidence 还没落盘，先用 `pending` 或 `blocked`，不要提前写成 `acknowledged`
 
 ### `operator_ack_signature_path` vs `operator_ack_digest`
 - 如果有文件路径，填 `operator_ack_signature_path`
@@ -66,6 +68,7 @@ node4.operator_ack_digest=
 - `operator_ack_digest` 如果填写，必须是该 acknowledgment artifact 的 **64 字符 SHA-256**
 - 两者都填也可以
 - 至少填一个
+- 如果 `operator_ack_status` 还不是 `acknowledged`，这两项应保持为空，不要先填目录、ticket、聊天线程名或 placeholder 路径/摘要
 
 ### 未知值
 - 只有非门槛备注字段才允许临时写 `TBD`，例如某个 validator 的补充说明

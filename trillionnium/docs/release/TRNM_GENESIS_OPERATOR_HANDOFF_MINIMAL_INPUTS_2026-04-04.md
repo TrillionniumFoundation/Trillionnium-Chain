@@ -83,6 +83,7 @@ operator_ack_digest=
 - `node1..node4` 的 `validator_owner` 全部有值
 - `node1..node4` 的 `operator_contact` 全部有值
 - `node1..node4` 的 `operator_ack_status` 全部明确（例如 `acknowledged` / `pending` / `blocked`）
+- 如果某个 node 的 `operator_ack_status=acknowledged`，则同一 node 的 `operator_ack_signature_path` 或 `operator_ack_digest` 必须至少一项已有真实值；若两者都空，状态只能记为 `pending` 或 `blocked`
 - 每个节点至少有：
   - `operator_ack_signature_path` **或**
   - `operator_ack_digest`
