@@ -45,8 +45,8 @@
 | `ceremony_scope` | `operator-handoff` | keep |
 | `ceremony_id` | `genesis-operator-handoff-draft-20260404-0100Z` | 可保留，或在正式发出前改成最终 ticket id |
 | `packet_generated_at` | `2026-04-04T01:00:16Z` | 若重发 packet，应重新生成 |
-| `packet_distribution_path` | `<absolute-path-to-ceremony-packet>` | 确认最终共享的 **ceremony packet 文件绝对路径**，不能只写 artifact folder / ticket / 目录根；并且必须与 `genesis_artifact_path` 指向不同文件，避免把共享审阅 packet 和 genesis artifact 混成同一物 |
-| `validator_set_version` | `operator-handoff-b74758fac` | 确认是否保留，或替换成更正式版本标签 |
+| `packet_distribution_path` | `<absolute-path-to-ceremony-packet>` | 确认最终共享的 **ceremony packet 文件绝对路径**；必须是 absolute path、必须指向**单一 packet 文件**、不能包含 `.` / `..` path segment、并且必须与 `genesis_artifact_path` 指向不同文件，避免把共享审阅 packet 和 genesis artifact 混成同一物 |
+| `validator_set_version` | `operator-handoff-b74758fac` | 保留或替换都可以，但最终值必须是**真实、具体、非默认**的版本标签，且不能含 `;` / `=` separator |
 | `startup_order_note` | `<controlled-4-node-bootstrap-order>` | 需要改成真实 4-node controlled bootstrap 顺序 |
 | `rollback_owner` | `primary-operator` | 需要确认真实责任人 / 值班 owner |
 | `genesis_artifact_path` | `<absolute-path-to-genesis-artifact>` | keep unless artifact path changes, but final handoff must still point to one exact artifact file/bundle absolute path |
@@ -62,6 +62,21 @@ validator_set_version=
 startup_order_note=
 rollback_owner=
 ```
+
+### 2.1 Fail-closed fill contract for the two highest-risk globals
+
+在把 draft / fillable packet 往前推进时，优先把下面两项按**脚本会拒绝坏值**的口径填死，而不是只填一个“看起来像值”的字符串：
+
+- `packet_distribution_path=`
+  - 必须是给所有 operator 审阅的**同一份 ceremony packet 文件绝对路径**
+  - 不接受目录、artifact folder、ticket 根、聊天线程名、相对路径、或带 `.` / `..` path segment 的路径
+  - 不得与 `genesis_artifact_path=` 指向同一文件
+- `validator_set_version=`
+  - 必须是**真实、具体、非默认**的版本标签
+  - 不接受模板默认 `v1`
+  - 不接受包含 `;` 或 `=` 的拼接值，避免 packet key-value 边界被破坏
+
+如果准备切到 `public-mainnet-input`，应按上面口径先用 `trillionnium/scripts/v2/check_validator_config_bundle.py --emit-ceremony-packet --ceremony-scope public-mainnet-input ...` 预检；不要等 operator 收到 packet 后才发现字段本身不可用。
 
 ---
 
