@@ -123,7 +123,7 @@ const rawSnapshot: unknown = {
 };
 
 const resolveQueryApiBaseUrl = (): string => {
-  const fromEnv = process.env.NEXT_PUBLIC_QUERY_API_BASE_URL?.trim();
+  const fromEnv = normalizeDashboardInput(process.env.NEXT_PUBLIC_QUERY_API_BASE_URL);
   if (fromEnv) return fromEnv;
 
   if (typeof window !== "undefined") {
@@ -133,14 +133,20 @@ const resolveQueryApiBaseUrl = (): string => {
   return "http://127.0.0.1:8080";
 };
 
-const resolveNonEmptyEnv = (value: string | undefined, fallback: string): string => {
-  const normalized = value?.trim();
-  return normalized && normalized.length > 0 ? normalized : fallback;
+const normalizeDashboardInput = (value: string | undefined): string | undefined => {
+  const normalized = value
+    ?.replace(/[\u200B\u200C\u200D\u2060\u2063\uFEFF]/g, "")
+    .trim();
+
+  return normalized && normalized.length > 0 ? normalized : undefined;
 };
+
+const resolveNonEmptyEnv = (value: string | undefined, fallback: string): string =>
+  normalizeDashboardInput(value) ?? fallback;
 
 const resolvePreferredTimestamp = (...candidates: Array<string | undefined>): string | undefined => {
   for (const candidate of candidates) {
-    const normalized = candidate?.trim();
+    const normalized = normalizeDashboardInput(candidate);
     if (normalized) return normalized;
   }
 
@@ -154,10 +160,11 @@ const resolveDashboardAuditSubject = (): string =>
   resolveNonEmptyEnv(process.env.NEXT_PUBLIC_DASHBOARD_AUDIT_SUBJECT, "did:trnm:core-rpc");
 
 const toDisplayTime = (isoLike?: string): string => {
-  if (typeof isoLike !== "string" || isoLike.trim().length === 0) return "-";
+  const normalized = normalizeDashboardInput(isoLike);
+  if (!normalized) return "-";
 
-  const date = new Date(isoLike);
-  if (Number.isNaN(date.getTime())) return isoLike;
+  const date = new Date(normalized);
+  if (Number.isNaN(date.getTime())) return normalized;
 
   const fmt = new Intl.DateTimeFormat("sv-SE", {
     year: "numeric",
@@ -198,19 +205,14 @@ const mapEventCategory = (
   return "Incident";
 };
 
-const normalizeDashboardEventToken = (value: string | undefined, fallback: string): string => {
-  const normalized = value
-    ?.replace(/[\u200B\u200C\u200D\u2060\u2063\uFEFF]/g, "")
-    .trim();
-  return normalized && normalized.length > 0 ? normalized : fallback;
-};
+const normalizeDashboardEventToken = (value: string | undefined, fallback: string): string =>
+  normalizeDashboardInput(value) ?? fallback;
 
-const normalizeDashboardText = (value: string | undefined, fallback: string): string => {
-  const normalized = value
-    ?.replace(/[\u200B\u200C\u200D\u2060\u2063\uFEFF]/g, "")
-    .trim();
-  return normalized && normalized.length > 0 ? normalized : fallback;
-};
+const normalizeDashboardEventId = (value: string | undefined, fallback: string): string =>
+  normalizeDashboardInput(value) ?? fallback;
+
+const normalizeDashboardText = (value: string | undefined, fallback: string): string =>
+  normalizeDashboardInput(value) ?? fallback;
 
 const normalizeDashboardSignalTokens = (...values: Array<string | undefined>): string =>
   values
@@ -219,7 +221,6 @@ const normalizeDashboardSignalTokens = (...values: Array<string | undefined>): s
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, " ")
     .trim();
-
 const mapNormalizedAuditSeverity = (event: NormalizedAuditEvent): DashboardSnapshot["events"][number]["severity"] => {
   const normalizedEventType = normalizeDashboardEventToken(event.event_type, "unknown-event");
   const tokens = normalizeDashboardSignalTokens(event.reason, event.note, normalizedEventType);
@@ -253,12 +254,10 @@ const mapNormalizedAuditToDashboardEvent = (event: NormalizedAuditEvent, fallbac
   const source = normalizeDashboardEventToken(event.source, "unknown-source");
   const eventType = normalizeDashboardEventToken(event.event_type, "unknown-event");
   const actor = normalizeDashboardEventToken(event.actor, "system");
-  const objectId = event.object_id
-    ?.replace(/[\u200B\u200C\u200D\u2060\u2063\uFEFF]/g, "")
-    .trim();
+  const objectId = normalizeDashboardInput(event.object_id);
 
   return {
-    id: objectId && objectId.length > 0
+    id: objectId
       ? `${source}:${objectId}`
       : `${source}:${eventType}:${actor}`,
     time: toDisplayTime(event.timestamp ?? event.checkedAt ?? fallbackTime),
@@ -285,7 +284,7 @@ const toEventSortKey = (displayTime: string): number => {
 };
 
 const parsePositiveIntEnv = (value: string | undefined, fallback: number): number => {
-  const normalized = value?.trim();
+  const normalized = normalizeDashboardInput(value);
   if (!normalized) return fallback;
   if (!/^\d+$/.test(normalized)) return fallback;
 
@@ -295,15 +294,8 @@ const parsePositiveIntEnv = (value: string | undefined, fallback: number): numbe
   return parsed;
 };
 
-const normalizeOptionalCursor = (cursor: string | undefined): string | undefined => {
-  if (cursor == null) return undefined;
-
-  const normalized = cursor
-    .replace(/[\u200B\u200C\u200D\u2060\u2063\uFEFF]/g, "")
-    .trim();
-
-  return normalized.length > 0 ? normalized : undefined;
-};
+const normalizeOptionalCursor = (cursor: string | undefined): string | undefined =>
+  normalizeDashboardInput(cursor);
 
 const resolveNormalizedAuditPageLimit = (): number =>
   parsePositiveIntEnv(process.env.NEXT_PUBLIC_DASHBOARD_NORMALIZED_AUDIT_EVENT_LIMIT, 60);
@@ -311,19 +303,22 @@ const resolveNormalizedAuditPageLimit = (): number =>
 const resolveNormalizedAuditMaxPages = (): number =>
   parsePositiveIntEnv(process.env.NEXT_PUBLIC_DASHBOARD_NORMALIZED_AUDIT_MAX_PAGES, 4);
 
+const normalizeDashboardDedupeToken = (value: string | undefined): string =>
+  normalizeDashboardInput(value) ?? "";
+
 const getNormalizedAuditEventKey = (event: NormalizedAuditEvent): string =>
   [
-    normalizeDashboardEventToken(event.source, "unknown-source"),
-    normalizeDashboardEventToken(event.event_type, "unknown-event"),
-    normalizeDashboardText(event.object_id, ""),
-    normalizeDashboardText(event.related_id, ""),
-    normalizeDashboardText(event.actor, ""),
-    normalizeDashboardText(event.subject, ""),
-    normalizeDashboardText(event.timestamp, ""),
-    normalizeDashboardText(event.checkedAt, ""),
-    event.amount == null ? "" : String(event.amount),
-    normalizeDashboardText(event.reason, ""),
-    normalizeDashboardText(event.note, ""),
+    normalizeDashboardDedupeToken(event.source),
+    normalizeDashboardDedupeToken(event.event_type),
+    normalizeDashboardDedupeToken(event.object_id),
+    normalizeDashboardDedupeToken(event.related_id),
+    normalizeDashboardDedupeToken(event.actor),
+    normalizeDashboardDedupeToken(event.subject),
+    normalizeDashboardDedupeToken(event.timestamp),
+    normalizeDashboardDedupeToken(event.checkedAt),
+    event.amount == null ? "" : normalizeDashboardDedupeToken(String(event.amount)),
+    normalizeDashboardDedupeToken(event.reason),
+    normalizeDashboardDedupeToken(event.note),
   ].join("\u001f");
 
 const fetchNormalizedAuditEventsWithPagination = async (
@@ -385,7 +380,7 @@ const mapAuditResult = (
 const stringifyDashboardField = (value: unknown, fallback: string): string => {
   if (value == null) return fallback;
   if (typeof value === "string") {
-    return value.trim().length > 0 ? value : fallback;
+    return normalizeDashboardInput(value) ?? fallback;
   }
 
   try {
@@ -407,6 +402,24 @@ const parseDashboardTime = (value: string): number => {
   return Number.MIN_SAFE_INTEGER;
 };
 
+const ensureUniqueDashboardEventIds = (
+  events: DashboardSnapshot["events"],
+): DashboardSnapshot["events"] => {
+  const seen = new Map<string, number>();
+
+  return events.map((event) => {
+    const count = seen.get(event.id) ?? 0;
+    seen.set(event.id, count + 1);
+
+    if (count === 0) return event;
+
+    return {
+      ...event,
+      id: `${event.id}#${count + 1}`,
+    };
+  });
+};
+
 async function fetchReadonlySnapshotFromApi(): Promise<DashboardSnapshot> {
   const client = createFrontendApiClient({ baseUrl: resolveQueryApiBaseUrl() });
   const dashboardTaskId = resolveDashboardTaskId();
@@ -418,6 +431,14 @@ async function fetchReadonlySnapshotFromApi(): Promise<DashboardSnapshot> {
     client.queryCapabilityAudit(dashboardAuditSubject),
     fetchNormalizedAuditEventsWithPagination(client),
   ]);
+
+  const grantedAuditCount = auditsResp.audits.filter((item) => item.granted).length;
+  const totalAuditCount = auditsResp.audits.length;
+  const auditCoverageHealth = totalAuditCount === 0
+    ? ("risk" as const)
+    : grantedAuditCount === totalAuditCount
+      ? ("healthy" as const)
+      : ("degraded" as const);
 
   const mapped = {
     kpis: [
@@ -448,12 +469,9 @@ async function fetchReadonlySnapshotFromApi(): Promise<DashboardSnapshot> {
       },
       {
         label: "Audit Coverage",
-        value: `${Math.round((auditsResp.audits.filter((item) => item.granted).length / Math.max(auditsResp.audits.length, 1)) * 100)}%`,
+        value: `${Math.round((grantedAuditCount / Math.max(totalAuditCount, 1)) * 100)}%`,
         delta: "live",
-        health:
-          auditsResp.audits.every((item) => item.granted)
-            ? ("healthy" as const)
-            : ("degraded" as const),
+        health: auditCoverageHealth,
       },
     ],
     tasks: [
@@ -470,12 +488,15 @@ async function fetchReadonlySnapshotFromApi(): Promise<DashboardSnapshot> {
         description: stringifyDashboardField(taskResp.task.metadata, "{}"),
       },
     ],
-    events: [
+    events: ensureUniqueDashboardEventIds([
       ...eventsResp.events.map((event) => {
         const normalizedType = normalizeDashboardEventToken(event.type, "unknown-event");
 
         return {
-          id: event.id,
+          id: normalizeDashboardEventId(
+            event.id,
+            [normalizedType, event.timestamp ?? "unknown-time", event.level].join(":"),
+          ),
           time: toDisplayTime(event.timestamp),
           category: mapEventCategory(normalizedType),
           summary: normalizedType,
@@ -489,10 +510,10 @@ async function fetchReadonlySnapshotFromApi(): Promise<DashboardSnapshot> {
           eventsResp.events[0]?.timestamp ?? taskResp.task.createdAt,
         ),
       ),
-    ].sort((left, right) => parseDashboardTime(right.time) - parseDashboardTime(left.time)),
+    ]).sort((left, right) => parseDashboardTime(right.time) - parseDashboardTime(left.time)),
     audits: auditsResp.audits.map((audit, index) => ({
       id: `AUD-${index + 1}`,
-      control: audit.capability,
+      control: normalizeDashboardText(audit.capability, "unknown-capability"),
       result: mapAuditResult(audit),
       reviewer: "Capability",
       reviewedAt: toDisplayTime(audit.checkedAt),
