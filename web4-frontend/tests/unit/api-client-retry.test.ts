@@ -398,6 +398,25 @@ describe("api-contract client and retry hardening", () => {
     expect(fetchImpl).toHaveBeenCalledTimes(1);
   });
 
+  it("fails closed before fetch when the caller signal is already aborted", async () => {
+    const fetchImpl = vi.fn();
+    const client = createFrontendApiClient({
+      baseUrl: "http://127.0.0.1:8080",
+      fetchImpl: fetchImpl as unknown as typeof fetch,
+    });
+
+    const controller = new AbortController();
+    controller.abort({ name: "TimeoutError", message: "Cancelled by caller" });
+
+    await expect(
+      client.queryTask("42", { retries: 2, signal: controller.signal }),
+    ).rejects.toMatchObject({
+      code: "ABORTED",
+      retryable: false,
+    });
+    expect(fetchImpl).not.toHaveBeenCalled();
+  });
+
   it("treats caller-supplied aborts as aborted even when the abort reason looks timeout-like", async () => {
     const fetchImpl: typeof fetch = vi.fn(
       (_url: URL | RequestInfo, init?: RequestInit) =>
