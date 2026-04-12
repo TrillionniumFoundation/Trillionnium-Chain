@@ -93,6 +93,10 @@ fn default_task_metering_ratio_denominator() -> u128 {
     1
 }
 
+fn default_task_settlement_schema() -> String {
+    "poco_v1".to_string()
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct TaskMeteringSnapshot {
     pub workload_class: String,
@@ -127,16 +131,33 @@ pub struct TaskMeteringSnapshot {
     pub worker_slash_rebate_per_work_unit_den: u128,
 }
 
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct TaskSettlementSnapshot {
+    #[serde(default = "default_task_settlement_schema")]
+    pub settlement_schema: String,
+    pub tokenizer_id: String,
+    pub tokenizer_version: String,
+    pub output_hash: String,
+    pub output_token_count: u64,
+    #[serde(default)]
+    pub output_root: Option<String>,
+    #[serde(default)]
+    pub output_span_commitment: Option<String>,
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, Default)]
 pub struct TaskMetadataCompatibility {
     pub legacy_note_only: bool,
     pub canonical_core_fields: bool,
     pub complete_metering_snapshot: bool,
+    pub complete_settlement_snapshot: bool,
 }
 
 impl TaskMetadataCompatibility {
     pub fn is_runtime_compatible(&self) -> bool {
-        self.canonical_core_fields && self.complete_metering_snapshot
+        self.canonical_core_fields
+            && self.complete_metering_snapshot
+            && self.complete_settlement_snapshot
     }
 
     pub fn requires_governance_upgrade(&self) -> bool {
@@ -156,6 +177,9 @@ impl TaskMetadataCompatibility {
         if !self.complete_metering_snapshot {
             findings.push(TaskMetadataCompatibilityFinding::IncompleteMeteringSnapshot);
         }
+        if !self.complete_settlement_snapshot {
+            findings.push(TaskMetadataCompatibilityFinding::IncompleteSettlementSnapshot);
+        }
         findings
     }
 
@@ -170,6 +194,7 @@ pub enum TaskMetadataCompatibilityFinding {
     LegacyNoteOnlyPayload,
     NonCanonicalCoreFields,
     IncompleteMeteringSnapshot,
+    IncompleteSettlementSnapshot,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -222,14 +247,53 @@ impl TaskMeteringSnapshot {
     }
 }
 
+impl TaskSettlementSnapshot {
+    pub fn has_complete_core_fields(&self) -> bool {
+        let output_root_canonical = self
+            .output_root
+            .as_deref()
+            .map(has_canonical_metadata_atom)
+            .unwrap_or(false);
+        let output_span_commitment_canonical = self
+            .output_span_commitment
+            .as_deref()
+            .map(has_canonical_metadata_atom)
+            .unwrap_or(false);
+
+        has_canonical_metadata_atom(&self.settlement_schema)
+            && has_canonical_metadata_atom(&self.tokenizer_id)
+            && has_canonical_metadata_atom(&self.tokenizer_version)
+            && has_canonical_metadata_atom(&self.output_hash)
+            && self
+                .output_root
+                .as_deref()
+                .map(has_canonical_metadata_atom)
+                .unwrap_or(true)
+            && self
+                .output_span_commitment
+                .as_deref()
+                .map(has_canonical_metadata_atom)
+                .unwrap_or(true)
+            && (output_root_canonical || output_span_commitment_canonical)
+    }
+}
+
 impl TaskMetadata {
     pub fn compatibility_report(&self) -> TaskMetadataCompatibilityReport {
+        self.compatibility_report_with_settlement_snapshot(None)
+    }
+
+    pub fn compatibility_report_with_settlement_snapshot(
+        &self,
+        settlement: Option<&TaskSettlementSnapshot>,
+    ) -> TaskMetadataCompatibilityReport {
         let legacy_note_only = self.note.is_some()
             && self.task_type.is_none()
             && self.input_hash.is_none()
             && self.model.is_none()
             && self.provenance.is_none()
-            && self.metering.is_none();
+            && self.metering.is_none()
+            && settlement.is_none();
 
         // Keep top-level metadata canonicality distinct from the metering snapshot verdict.
         // This makes governance-upgrade diagnostics clearer at query time: malformed
@@ -297,11 +361,15 @@ impl TaskMetadata {
             .as_ref()
             .map(TaskMeteringSnapshot::has_complete_core_fields)
             .unwrap_or(true);
+        let complete_settlement_snapshot = settlement
+            .map(TaskSettlementSnapshot::has_complete_core_fields)
+            .unwrap_or(true);
 
         let compatibility = TaskMetadataCompatibility {
             legacy_note_only,
             canonical_core_fields,
             complete_metering_snapshot,
+            complete_settlement_snapshot,
         };
 
         let findings = compatibility.findings();
@@ -558,6 +626,36 @@ mod tests {
     }
 
     #[test]
+    fn task_settlement_snapshot_core_fields_accept_output_root_binding() {
+        let snapshot = TaskSettlementSnapshot {
+            settlement_schema: "poco_v1".into(),
+            tokenizer_id: "llama3-tokenizer".into(),
+            tokenizer_version: "1.0.0".into(),
+            output_hash: format!("0x{}", "a".repeat(64)),
+            output_token_count: 512,
+            output_root: Some(format!("0x{}", "b".repeat(64))),
+            output_span_commitment: None,
+        };
+
+        assert!(snapshot.has_complete_core_fields());
+    }
+
+    #[test]
+    fn task_settlement_snapshot_core_fields_accept_output_span_commitment_binding() {
+        let snapshot = TaskSettlementSnapshot {
+            settlement_schema: "poco_v1".into(),
+            tokenizer_id: "llama3-tokenizer".into(),
+            tokenizer_version: "1.0.0".into(),
+            output_hash: format!("0x{}", "c".repeat(64)),
+            output_token_count: 512,
+            output_root: None,
+            output_span_commitment: Some(format!("0x{}", "d".repeat(64))),
+        };
+
+        assert!(snapshot.has_complete_core_fields());
+    }
+
+    #[test]
     fn task_metadata_backward_compatible_with_legacy_note_only_payload() {
         let metadata: TaskMetadata = serde_json::from_str(r#"{"note":"legacy"}"#)
             .expect("legacy payload should deserialize");
@@ -567,6 +665,7 @@ mod tests {
         assert!(metadata.model.is_none());
         assert!(metadata.provenance.is_none());
         assert!(metadata.metering.is_none());
+        assert!(metadata.compatibility_profile().complete_settlement_snapshot);
     }
 
     #[test]
@@ -619,6 +718,7 @@ mod tests {
         assert!(!compatibility.legacy_note_only);
         assert!(compatibility.canonical_core_fields);
         assert!(compatibility.complete_metering_snapshot);
+        assert!(compatibility.complete_settlement_snapshot);
         assert!(compatibility.is_runtime_compatible());
         assert!(!compatibility.requires_governance_upgrade());
         assert!(!decoded.requires_runtime_metadata_upgrade());
@@ -690,6 +790,7 @@ mod tests {
         assert!(compatibility.legacy_note_only);
         assert!(compatibility.canonical_core_fields);
         assert!(compatibility.complete_metering_snapshot);
+        assert!(compatibility.complete_settlement_snapshot);
         assert!(compatibility.is_runtime_compatible());
         assert!(compatibility.requires_governance_upgrade());
         assert!(metadata.requires_runtime_metadata_upgrade());
@@ -715,6 +816,7 @@ mod tests {
             legacy_note_only: true,
             canonical_core_fields: false,
             complete_metering_snapshot: false,
+            complete_settlement_snapshot: false,
         };
 
         assert_eq!(
@@ -723,6 +825,7 @@ mod tests {
                 TaskMetadataCompatibilityFinding::LegacyNoteOnlyPayload,
                 TaskMetadataCompatibilityFinding::NonCanonicalCoreFields,
                 TaskMetadataCompatibilityFinding::IncompleteMeteringSnapshot,
+                TaskMetadataCompatibilityFinding::IncompleteSettlementSnapshot,
             ]
         );
         assert_eq!(
@@ -748,6 +851,11 @@ mod tests {
                 .expect("serialize finding"),
             serde_json::json!("incomplete_metering_snapshot")
         );
+        assert_eq!(
+            serde_json::to_value(TaskMetadataCompatibilityFinding::IncompleteSettlementSnapshot)
+                .expect("serialize finding"),
+            serde_json::json!("incomplete_settlement_snapshot")
+        );
     }
 
     #[test]
@@ -757,12 +865,14 @@ mod tests {
                 legacy_note_only: true,
                 canonical_core_fields: false,
                 complete_metering_snapshot: false,
+                complete_settlement_snapshot: false,
             },
             requires_governance_upgrade: true,
             findings: vec![
                 TaskMetadataCompatibilityFinding::LegacyNoteOnlyPayload,
                 TaskMetadataCompatibilityFinding::NonCanonicalCoreFields,
                 TaskMetadataCompatibilityFinding::IncompleteMeteringSnapshot,
+                TaskMetadataCompatibilityFinding::IncompleteSettlementSnapshot,
             ],
         };
 
@@ -776,6 +886,7 @@ mod tests {
                 TaskMetadataCompatibilityFinding::LegacyNoteOnlyPayload,
                 TaskMetadataCompatibilityFinding::NonCanonicalCoreFields,
                 TaskMetadataCompatibilityFinding::IncompleteMeteringSnapshot,
+                TaskMetadataCompatibilityFinding::IncompleteSettlementSnapshot,
             ])
         );
         assert_eq!(
@@ -784,13 +895,15 @@ mod tests {
                 "compatibility": {
                     "legacy_note_only": true,
                     "canonical_core_fields": false,
-                    "complete_metering_snapshot": false
+                    "complete_metering_snapshot": false,
+                    "complete_settlement_snapshot": false
                 },
                 "requires_governance_upgrade": true,
                 "findings": [
                     "legacy_note_only_payload",
                     "non_canonical_core_fields",
-                    "incomplete_metering_snapshot"
+                    "incomplete_metering_snapshot",
+                    "incomplete_settlement_snapshot"
                 ]
             })
         );
@@ -803,6 +916,7 @@ mod tests {
                 legacy_note_only: false,
                 canonical_core_fields: true,
                 complete_metering_snapshot: true,
+                complete_settlement_snapshot: true,
             },
             requires_governance_upgrade: false,
             findings: Vec::new(),
@@ -820,6 +934,7 @@ mod tests {
         assert!(compatibility.legacy_note_only);
         assert!(!compatibility.canonical_core_fields);
         assert!(compatibility.complete_metering_snapshot);
+        assert!(compatibility.complete_settlement_snapshot);
         assert!(!compatibility.is_runtime_compatible());
         assert!(compatibility.requires_governance_upgrade());
         assert!(metadata.requires_runtime_metadata_upgrade());
@@ -864,6 +979,7 @@ mod tests {
         assert!(!compatibility.legacy_note_only);
         assert!(!compatibility.canonical_core_fields);
         assert!(compatibility.complete_metering_snapshot);
+        assert!(compatibility.complete_settlement_snapshot);
         assert!(!compatibility.is_runtime_compatible());
         assert!(compatibility.requires_governance_upgrade());
         assert!(metadata.requires_runtime_metadata_upgrade());
@@ -906,6 +1022,7 @@ mod tests {
         assert!(!compatibility.legacy_note_only);
         assert!(compatibility.canonical_core_fields);
         assert!(!compatibility.complete_metering_snapshot);
+        assert!(compatibility.complete_settlement_snapshot);
         assert!(!compatibility.is_runtime_compatible());
         assert!(compatibility.requires_governance_upgrade());
         assert!(metadata.requires_runtime_metadata_upgrade());
@@ -952,6 +1069,7 @@ mod tests {
         assert!(!compatibility.legacy_note_only);
         assert!(compatibility.canonical_core_fields);
         assert!(!compatibility.complete_metering_snapshot);
+        assert!(compatibility.complete_settlement_snapshot);
         assert!(!compatibility.is_runtime_compatible());
         assert!(compatibility.requires_governance_upgrade());
         assert!(metadata.requires_runtime_metadata_upgrade());
@@ -968,6 +1086,43 @@ mod tests {
         assert_eq!(
             metadata.primary_compatibility_finding(),
             Some(TaskMetadataCompatibilityFinding::IncompleteMeteringSnapshot)
+        );
+    }
+
+    #[test]
+    fn task_metadata_compatibility_report_with_settlement_snapshot_keeps_settlement_verdict_distinct(
+    ) {
+        let metadata = TaskMetadata {
+            note: Some("interop".into()),
+            task_type: Some("inference".into()),
+            input_hash: Some("a".repeat(64)),
+            ..TaskMetadata::default()
+        };
+        let settlement = TaskSettlementSnapshot {
+            settlement_schema: "poco_v1".into(),
+            tokenizer_id: "llama3-tokenizer".into(),
+            tokenizer_version: "1.0.0".into(),
+            output_hash: format!("0x{}", "e".repeat(64)),
+            output_token_count: 512,
+            output_root: None,
+            output_span_commitment: None,
+        };
+
+        let report = metadata.compatibility_report_with_settlement_snapshot(Some(&settlement));
+
+        assert!(!report.compatibility.legacy_note_only);
+        assert!(report.compatibility.canonical_core_fields);
+        assert!(report.compatibility.complete_metering_snapshot);
+        assert!(!report.compatibility.complete_settlement_snapshot);
+        assert!(!report.compatibility.is_runtime_compatible());
+        assert!(report.requires_governance_upgrade);
+        assert_eq!(
+            report.findings,
+            vec![TaskMetadataCompatibilityFinding::IncompleteSettlementSnapshot]
+        );
+        assert_eq!(
+            report.primary_finding(),
+            Some(TaskMetadataCompatibilityFinding::IncompleteSettlementSnapshot)
         );
     }
 
