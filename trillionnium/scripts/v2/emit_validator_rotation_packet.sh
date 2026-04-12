@@ -214,6 +214,62 @@ sys.exit(1)
 PY
 }
 
+command_has_env_value() {
+  local command="$1"
+  local env_name="$2"
+  local expected_value="$3"
+
+  python3 - "$command" "$env_name" "$expected_value" <<'PY'
+import shlex
+import sys
+
+command, env_name, expected_value = sys.argv[1:4]
+try:
+    tokens = shlex.split(command)
+except ValueError:
+    sys.exit(1)
+
+prefix = f"{env_name}="
+for token in tokens:
+    if token.startswith(prefix) and token[len(prefix):] == expected_value:
+        sys.exit(0)
+
+sys.exit(1)
+PY
+}
+
+command_has_equivalent_branch_env() {
+  local command="$1"
+  local env_name="$2"
+  local expected_value="$3"
+  local expected_canonical
+
+  expected_canonical="$(canonicalize_branch_ref "$expected_value")"
+
+  python3 - "$command" "$env_name" "$expected_canonical" <<'PY'
+import shlex
+import sys
+
+command, env_name, expected_canonical = sys.argv[1:4]
+try:
+    tokens = shlex.split(command)
+except ValueError:
+    sys.exit(1)
+
+prefix = f"{env_name}="
+for token in tokens:
+    if not token.startswith(prefix):
+        continue
+    candidate = token[len(prefix):]
+    if not candidate.startswith("refs/"):
+        candidate = f"refs/heads/{candidate}"
+    if candidate == expected_canonical:
+        sys.exit(0)
+
+sys.exit(1)
+PY
+}
+
 command_mentions_token() {
   local command="$1"
   local expected_token="$2"
@@ -379,6 +435,24 @@ if [ -n "$DR_SUMMARY_PATH" ] || [ -n "$DR_GENERATED_AT" ] || [ -n "$DR_STATUS" ]
   if ! path_resolves_under_root "$DR_SUMMARY_PATH" "$VERIFIED_WORKTREE/run"; then
     printf 'invalid --dr-summary-path: must resolve under verified worktree run/ %s\n' "$(normalize_path "$VERIFIED_WORKTREE/run")" >&2
     exit 2
+  fi
+  if ! command_mentions_token "$DR_ROLLBACK_COMMAND" "$DR_SUMMARY_PATH"; then
+    printf 'invalid --dr-rollback-command: must mention dr summary path %s\n' "$DR_SUMMARY_PATH" >&2
+    exit 2
+  fi
+  if [ -n "$EXPECTED_WORKTREE_ROOT" ] || [ -n "$EXPECTED_BRANCH_REF" ] || [ -n "$EXPECTED_HEAD" ]; then
+    if ! command_has_env_value "$DR_REPLAY_COMMAND" EXPECTED_WORKTREE_ROOT "$EXPECTED_WORKTREE_ROOT"; then
+      printf 'invalid --dr-replay-command: missing EXPECTED_WORKTREE_ROOT=%s\n' "$EXPECTED_WORKTREE_ROOT" >&2
+      exit 2
+    fi
+    if ! command_has_equivalent_branch_env "$DR_REPLAY_COMMAND" EXPECTED_BRANCH_REF "$EXPECTED_BRANCH_REF"; then
+      printf 'invalid --dr-replay-command: missing EXPECTED_BRANCH_REF=%s\n' "$EXPECTED_BRANCH_REF" >&2
+      exit 2
+    fi
+    if [ -n "$EXPECTED_HEAD" ] && ! command_has_env_value "$DR_REPLAY_COMMAND" EXPECTED_HEAD "$EXPECTED_HEAD"; then
+      printf 'invalid --dr-replay-command: missing EXPECTED_HEAD=%s\n' "$EXPECTED_HEAD" >&2
+      exit 2
+    fi
   fi
 fi
 

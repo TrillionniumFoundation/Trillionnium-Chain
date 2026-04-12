@@ -19,7 +19,7 @@ common_args=(
   --dr-summary-path /Users/qianqi/.openclaw/workspace/trnm-mainnet-lanes/MN05-operator-dr-rotation-lifecycle/run/bft-restart-recovery-1.txt
   --dr-generated-at 2026-04-03T06:14:00Z
   --dr-status PASS
-  --dr-replay-command './scripts/check_bft_restart_recovery.sh --config /tmp/configs/validator-new.json'
+  --dr-replay-command 'env RUNS=3 EXPECTED_WORKTREE_ROOT=/Users/qianqi/.openclaw/workspace/trnm-mainnet-lanes/MN05-operator-dr-rotation-lifecycle EXPECTED_BRANCH_REF=refs/heads/lane/mn05-operator-dr-rotation-lifecycle EXPECTED_HEAD=0123456789abcdef ./scripts/check_bft_restart_recovery.sh'
   --dr-rollback-command 'rm -rf /Users/qianqi/.openclaw/workspace/trnm-mainnet-lanes/MN05-operator-dr-rotation-lifecycle/run/bft-restart-recovery-1.txt'
 )
 
@@ -352,6 +352,43 @@ if bash "$SCRIPT" \
   exit 1
 fi
 grep -Eq 'invalid --dr-summary-path: must resolve under verified worktree run/ .*/tmp/trnm-lane/run' /tmp/emit-packet.err
+
+if bash "$SCRIPT" \
+  "${common_args[@]}" \
+  --expected-worktree-root /Users/qianqi/.openclaw/workspace/trnm-mainnet-lanes/MN05-operator-dr-rotation-lifecycle \
+  --expected-branch-ref lane/mn05-operator-dr-rotation-lifecycle \
+  --lane-verify-command './scripts/v2/verify_lane_worktree.sh --expected-worktree-root /Users/qianqi/.openclaw/workspace/trnm-mainnet-lanes/MN05-operator-dr-rotation-lifecycle --expected-branch-ref lane/mn05-operator-dr-rotation-lifecycle' \
+  --dr-replay-command 'env RUNS=3 EXPECTED_BRANCH_REF=lane/mn05-operator-dr-rotation-lifecycle ./scripts/check_bft_restart_recovery.sh' \
+  >/tmp/emit-packet.out 2>/tmp/emit-packet.err; then
+  echo "expected dr replay command missing EXPECTED_WORKTREE_ROOT to fail" >&2
+  exit 1
+fi
+grep -q 'invalid --dr-replay-command: missing EXPECTED_WORKTREE_ROOT=/Users/qianqi/.openclaw/workspace/trnm-mainnet-lanes/MN05-operator-dr-rotation-lifecycle' /tmp/emit-packet.err
+
+if bash "$SCRIPT" \
+  "${common_args[@]}" \
+  --expected-worktree-root /Users/qianqi/.openclaw/workspace/trnm-mainnet-lanes/MN05-operator-dr-rotation-lifecycle \
+  --expected-branch-ref lane/mn05-operator-dr-rotation-lifecycle \
+  --expected-head 0123456789abcdef \
+  --lane-verify-command './scripts/v2/verify_lane_worktree.sh --expected-worktree-root /Users/qianqi/.openclaw/workspace/trnm-mainnet-lanes/MN05-operator-dr-rotation-lifecycle --expected-branch-ref lane/mn05-operator-dr-rotation-lifecycle --expected-head 0123456789abcdef' \
+  --dr-replay-command 'env RUNS=3 EXPECTED_WORKTREE_ROOT=/Users/qianqi/.openclaw/workspace/trnm-mainnet-lanes/MN05-operator-dr-rotation-lifecycle EXPECTED_BRANCH_REF=refs/heads/lane/mn05-operator-dr-rotation-lifecycle ./scripts/check_bft_restart_recovery.sh' \
+  >/tmp/emit-packet.out 2>/tmp/emit-packet.err; then
+  echo "expected dr replay command missing EXPECTED_HEAD to fail" >&2
+  exit 1
+fi
+grep -q 'invalid --dr-replay-command: missing EXPECTED_HEAD=0123456789abcdef' /tmp/emit-packet.err
+
+if bash "$SCRIPT" \
+  "${common_args[@]}" \
+  --expected-worktree-root /Users/qianqi/.openclaw/workspace/trnm-mainnet-lanes/MN05-operator-dr-rotation-lifecycle \
+  --expected-branch-ref lane/mn05-operator-dr-rotation-lifecycle \
+  --lane-verify-command './scripts/v2/verify_lane_worktree.sh --expected-worktree-root /Users/qianqi/.openclaw/workspace/trnm-mainnet-lanes/MN05-operator-dr-rotation-lifecycle --expected-branch-ref lane/mn05-operator-dr-rotation-lifecycle' \
+  --dr-rollback-command 'rm -rf /Users/qianqi/.openclaw/workspace/trnm-mainnet-lanes/MN05-operator-dr-rotation-lifecycle/run/other-report.txt' \
+  >/tmp/emit-packet.out 2>/tmp/emit-packet.err; then
+  echo "expected dr rollback command drift to fail" >&2
+  exit 1
+fi
+grep -q 'invalid --dr-rollback-command: must mention dr summary path /Users/qianqi/.openclaw/workspace/trnm-mainnet-lanes/MN05-operator-dr-rotation-lifecycle/run/bft-restart-recovery-1.txt' /tmp/emit-packet.err
 
 bash "$SCRIPT" \
   --cutover-kind rotation \
