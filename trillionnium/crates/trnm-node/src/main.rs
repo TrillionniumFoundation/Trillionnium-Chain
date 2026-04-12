@@ -17,6 +17,8 @@ use trnm_mempool::{IngressClass, LaneAdmissionGate};
 #[cfg(test)]
 use trnm_pouw::{
     apply_accept_task, apply_challenge, apply_commit_result, apply_resolve, apply_reveal_result,
+    challenge_consumption_receipt_at_height, resolve_consumption_receipt_at_height,
+    submit_consumption_receipt_at_height, ConsumptionReceipt, ConsumptionResolveDecision,
 };
 use trnm_pouw::{
     apply_accept_task_at_height, apply_challenge_at_height, apply_commit_result_at_height,
@@ -24,7 +26,7 @@ use trnm_pouw::{
 };
 use trnm_state::{
     checkpoint_da_light_verifier_summary, verify_wal_and_find_checkpoint_node_recovery,
-    CheckpointMeta, PendingResolveApprovalSnapshot, StateStore, WalMeta,
+    CheckpointMeta, PendingResolveApprovalSnapshot, StateStore, TaskConsumptionSummary, WalMeta,
 };
 use trnm_types::{Hash32, ObjectRef, TaskMeteringSnapshot, TaskStatus, Tx};
 
@@ -3075,12 +3077,35 @@ fn format_task_metering_event_fields(snapshot: &TaskMeteringSnapshot) -> String 
     )
 }
 
-fn task_metering_event_suffix(st: &StateStore, task_id: u64) -> String {
-    st.get_task(task_id)
+fn format_task_consumption_summary_event_fields(summary: &TaskConsumptionSummary) -> String {
+    format!(
+        " settlement_receipt_count={} settlement_accepted_receipt_count={} settlement_challenged_receipt_count={} settlement_total_consumed_tokens={} settlement_total_claimed_consumption_units={} settlement_total_credited_consumption_units={} settlement_last_settlement_height={}",
+        summary.receipt_count,
+        summary.accepted_receipt_count,
+        summary.challenged_receipt_count,
+        summary.total_consumed_tokens,
+        summary.total_claimed_consumption_units,
+        summary.total_credited_consumption_units,
+        summary
+            .last_settlement_height
+            .map(|height| height.to_string())
+            .unwrap_or_else(|| "-".to_string()),
+    )
+}
+
+fn task_settlement_event_suffix(st: &StateStore, task_id: u64) -> String {
+    let mut suffix = st
+        .get_task(task_id)
         .and_then(|task| task.metadata)
         .and_then(|metadata| metadata.metering)
         .map(|snapshot| format_task_metering_event_fields(&snapshot))
-        .unwrap_or_default()
+        .unwrap_or_default();
+
+    if let Some(summary) = st.task_consumption_summary(task_id) {
+        suffix.push_str(&format_task_consumption_summary_event_fields(&summary));
+    }
+
+    suffix
 }
 
 fn emit_event(
@@ -3125,8 +3150,10 @@ fn emit_event(
     };
     let challenger_delta_str = challenger_delta.map(|d| d.text.as_str()).unwrap_or("-");
     let bond_disposition_str = bond_disposition.unwrap_or("-");
-    let metering_suffix = match tx {
-        MockTx::Reveal { .. } | MockTx::Resolve { .. } => task_metering_event_suffix(st, task_id),
+    let settlement_suffix = match tx {
+        MockTx::Reveal { .. } | MockTx::Resolve { .. } => {
+            task_settlement_event_suffix(st, task_id)
+        }
         _ => String::new(),
     };
 
@@ -3156,7 +3183,7 @@ fn emit_event(
                 treasury_delta_str,
                 challenger_delta_str,
                 bond_disposition_str,
-                metering_suffix,
+                settlement_suffix,
             );
         }
         _ => {
@@ -3177,7 +3204,7 @@ fn emit_event(
                 treasury_delta_str,
                 challenger_delta_str,
                 bond_disposition_str,
-                metering_suffix,
+                settlement_suffix,
             );
         }
     }
@@ -3213,7 +3240,7 @@ fn emit_timeout_event(
     let treasury_delta_str = treasury_delta.text.as_str();
     let challenger_delta_str = challenger_delta.map(|d| d.text.as_str()).unwrap_or("-");
     let bond_disposition_str = bond_disposition.unwrap_or("-");
-    let metering_suffix = task_metering_event_suffix(st, task_id);
+    let settlement_suffix = task_settlement_event_suffix(st, task_id);
     let (slash_worker, resolution_code) = timeout_outcome_fields(to_status);
 
     println!(
@@ -3235,7 +3262,7 @@ fn emit_timeout_event(
         treasury_delta_str,
         challenger_delta_str,
         bond_disposition_str,
-        metering_suffix,
+        settlement_suffix,
     );
 }
 
@@ -15399,6 +15426,125 @@ mod tests {
         assert!(line.contains("metering_policy_snapshot_version=1"));
         assert!(line.contains("metering_min_accept_work_units=100"));
         assert!(line.contains("metering_worker_slash_rebate_per_work_unit_den=384"));
+    }
+
+    #[test]
+    fn task_settlement_event_suffix_surfaces_poco_receipt_summary() {
+        use trnm_types::{ProofType, TaskMetadata, TaskObject};
+
+        let mut st = StateStore::default();
+        let _ = st.set_gov_param_bootstrap_unchecked(
+            9_500,
+            "resolve_authority".into(),
+            "resolver-1,resolver-2".into(),
+        );
+
+        let result_hash = [0x11; 32];
+        st.put_task_new(TaskObject {
+            task_id: 42,
+            creator: "creator-1".to_string(),
+            bounty: 100,
+            status: TaskStatus::Completed,
+            proof_type: ProofType::Fraud,
+            metadata: Some(TaskMetadata {
+                note: None,
+                task_type: Some("llm_inference".to_string()),
+                input_hash: None,
+                model: None,
+                provenance: None,
+                metering: Some(TaskMeteringSnapshot {
+                    workload_class: "llm_inference".into(),
+                    metering_schema: "llm_token_meter_v1".into(),
+                    policy_snapshot_version: 1,
+                    receipt_hash: "deadbeef".into(),
+                    prompt_tokens: 10,
+                    generated_tokens: 20,
+                    decode_steps: 20,
+                    kv_bytes_moved: 0,
+                    normalized_work_units: 50,
+                    prompt_token_weight: 1,
+                    generated_token_weight: 1,
+                    decode_step_weight: 1,
+                    kv_byte_weight: 0,
+                    min_accept_work_units: 0,
+                    challenge_success_bounty_base: 0,
+                    challenge_success_bounty_per_work_unit_num: 0,
+                    challenge_success_bounty_per_work_unit_den: 1,
+                    worker_completion_bonus_per_work_unit_num: 0,
+                    worker_completion_bonus_per_work_unit_den: 1,
+                    worker_slash_rebate_per_work_unit_num: 0,
+                    worker_slash_rebate_per_work_unit_den: 1,
+                }),
+            }),
+            worker: Some("worker-alpha".to_string()),
+            committed_hash: None,
+            result_hash: Some(result_hash),
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: Some(100),
+            challenge_window_blocks_snapshot: Some(100),
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 0,
+        })
+        .expect("task");
+
+        let receipt = ConsumptionReceipt {
+            settlement_schema: trnm_pouw::POCO_V1_SETTLEMENT_SCHEMA.to_string(),
+            task_id: 42,
+            worker_id: "worker-alpha".to_string(),
+            consumer_id: "consumer-bravo".to_string(),
+            billing_window_id: "bw-1".to_string(),
+            tokenizer_id: "llama3-tokenizer".to_string(),
+            tokenizer_version: "1.0.0".to_string(),
+            output_hash: hex::encode(result_hash),
+            consumed_token_count: 17,
+            consumed_spans_root: "def456".to_string(),
+            consumer_class: "bonded_api_client".to_string(),
+            consumer_nonce: 7,
+            accepted_at_unix_ms: 1_775_683_200_123,
+            consumer_signature: "sig789".to_string(),
+            receipt_hash: String::new(),
+        }
+        .with_computed_receipt_hash()
+        .expect("hash");
+        let key = receipt.replay_key();
+
+        submit_consumption_receipt_at_height(&mut st, receipt, "consumer-bravo".to_string(), 10)
+            .expect("submit receipt");
+        challenge_consumption_receipt_at_height(
+            &mut st,
+            key.clone(),
+            "auditor-1".to_string(),
+            "auditor-1".to_string(),
+            11,
+        )
+        .expect("challenge receipt");
+        resolve_consumption_receipt_at_height(
+            &mut st,
+            key,
+            ConsumptionResolveDecision::Discount,
+            Some(9),
+            None,
+            "resolver-1".to_string(),
+            "resolver-1".to_string(),
+            77,
+        )
+        .expect("resolve receipt");
+
+        let line = task_settlement_event_suffix(&st, 42);
+        assert!(line.contains("metering_receipt_hash=deadbeef"));
+        assert!(line.contains("settlement_receipt_count=1"));
+        assert!(line.contains("settlement_accepted_receipt_count=1"));
+        assert!(line.contains("settlement_challenged_receipt_count=1"));
+        assert!(line.contains("settlement_total_consumed_tokens=17"));
+        assert!(line.contains("settlement_total_claimed_consumption_units=17"));
+        assert!(line.contains("settlement_total_credited_consumption_units=9"));
+        assert!(line.contains("settlement_last_settlement_height=77"));
     }
 
     #[test]
