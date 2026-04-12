@@ -1671,6 +1671,62 @@ describe("dashboard source normalized audit pagination", () => {
     });
   });
 
+  it("maps explicit critical normalized-audit markers to Critical severity", async () => {
+    const mockClient = {
+      queryTask: vi
+        .fn()
+        .mockResolvedValue({
+          task: {
+            id: "349c",
+            owner: "ops",
+            status: "running",
+            createdAt: "2026-03-01T00:00:00.000Z",
+            updatedAt: "2026-03-01T00:05:00.000Z",
+            metadata: {},
+          },
+        }),
+      queryEvents: vi.fn().mockResolvedValue({
+        taskId: "349c",
+        events: [],
+      }),
+      queryCapabilityAudit: vi.fn().mockResolvedValue({
+        subject: "did:trnm:test",
+        audits: [
+          {
+            subject: "did:trnm:test",
+            capability: "AUDIT_READ",
+            granted: true,
+            checkedAt: "2026-03-01T00:00:00.000Z",
+          },
+        ],
+      }),
+      queryNormalizedAuditEvents: vi.fn().mockResolvedValue({
+        events: [
+          {
+            source: "settlement-vault",
+            event_type: "vault.transfer",
+            actor: "guardian",
+            object_id: "vault-349c",
+            timestamp: "2026-03-01T00:02:00.000Z",
+            note: "critical threshold exceeded",
+          },
+        ],
+        hasMore: false,
+      }),
+    } as unknown as ReturnType<typeof apiContractClient.createFrontendApiClient>;
+
+    vi.spyOn(apiContractClient, "createFrontendApiClient").mockReturnValue(mockClient);
+
+    const snapshot = await fetchDashboardSnapshot();
+    const event = snapshot.events.find((item) => item.id === "settlement-vault:vault-349c");
+
+    expect(event).toMatchObject({
+      summary: "settlement-vault · vault.transfer",
+      severity: "Critical",
+      category: "Security",
+    });
+  });
+
   it("suffixes duplicate fallback event ids to keep dashboard event keys stable", async () => {
     const mockClient = {
       queryTask: vi
