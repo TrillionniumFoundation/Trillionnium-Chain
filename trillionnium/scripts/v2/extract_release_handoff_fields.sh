@@ -179,6 +179,15 @@ optional_key() {
   awk -F= -v key="$key" '$1 == key { sub(/^[^=]*=/, ""); print; exit }' "$path"
 }
 
+require_nonempty_key() {
+  local path="$1"
+  local key="$2"
+  local value
+  value="$(optional_key "$path" "$key")"
+  [ -n "$value" ] || { printf 'missing %s in %s\n' "$key" "$path" >&2; exit 1; }
+  printf '%s' "$value"
+}
+
 if [ -n "$PREFLIGHT_SUMMARY_PATH" ]; then
   PREFLIGHT_SUMMARY_PATH="$(resolve_path "$PREFLIGHT_SUMMARY_PATH")"
   require_path_within_trnm_root preflight_summary_path "$PREFLIGHT_SUMMARY_PATH"
@@ -186,14 +195,14 @@ if [ -n "$PREFLIGHT_SUMMARY_PATH" ]; then
     printf 'preflight summary path must be distinct from summary/manifest artifacts: %s\n' "$PREFLIGHT_SUMMARY_PATH" >&2
     exit 1
   fi
-  PREFLIGHT_RESULT="$(optional_key "$PREFLIGHT_SUMMARY_PATH" result)"
-  PREFLIGHT_GENERATED_AT="$(optional_key "$PREFLIGHT_SUMMARY_PATH" generated_at)"
-  PREFLIGHT_GIT_STATUS_SUMMARY="$(optional_key "$PREFLIGHT_SUMMARY_PATH" git_status_summary)"
-  PREFLIGHT_GIT_WORKTREE_PATH="$(optional_key "$PREFLIGHT_SUMMARY_PATH" git_worktree_path)"
-  PREFLIGHT_GIT_WORKTREE_BRANCH_REF="$(optional_key "$PREFLIGHT_SUMMARY_PATH" git_worktree_branch_ref)"
-  PREFLIGHT_GIT_WORKTREE_BRANCH_REF_MATCH="$(optional_key "$PREFLIGHT_SUMMARY_PATH" git_worktree_branch_ref_match)"
-  PREFLIGHT_ROLLBACK_COMMAND="$(optional_key "$PREFLIGHT_SUMMARY_PATH" rollback_command)"
-  PREFLIGHT_REPLAY_COMMAND="$(optional_key "$PREFLIGHT_SUMMARY_PATH" replay_command)"
+  PREFLIGHT_RESULT="$(require_nonempty_key "$PREFLIGHT_SUMMARY_PATH" result)"
+  PREFLIGHT_GENERATED_AT="$(require_nonempty_key "$PREFLIGHT_SUMMARY_PATH" generated_at)"
+  PREFLIGHT_GIT_STATUS_SUMMARY="$(require_nonempty_key "$PREFLIGHT_SUMMARY_PATH" git_status_summary)"
+  PREFLIGHT_GIT_WORKTREE_PATH="$(require_nonempty_key "$PREFLIGHT_SUMMARY_PATH" git_worktree_path)"
+  PREFLIGHT_GIT_WORKTREE_BRANCH_REF="$(require_nonempty_key "$PREFLIGHT_SUMMARY_PATH" git_worktree_branch_ref)"
+  PREFLIGHT_GIT_WORKTREE_BRANCH_REF_MATCH="$(require_nonempty_key "$PREFLIGHT_SUMMARY_PATH" git_worktree_branch_ref_match)"
+  PREFLIGHT_ROLLBACK_COMMAND="$(require_nonempty_key "$PREFLIGHT_SUMMARY_PATH" rollback_command)"
+  PREFLIGHT_REPLAY_COMMAND="$(require_nonempty_key "$PREFLIGHT_SUMMARY_PATH" replay_command)"
 fi
 
 require_key() {
