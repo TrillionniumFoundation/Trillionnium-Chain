@@ -856,6 +856,61 @@ describe("dashboard source normalized audit pagination", () => {
     }
   });
 
+  it("falls back to the default readonly base URL when base-url env is blank after stripping invisible noise", async () => {
+    const previousBaseUrl = process.env.NEXT_PUBLIC_QUERY_API_BASE_URL;
+
+    process.env.NEXT_PUBLIC_QUERY_API_BASE_URL = " \u200B\uFEFF ";
+
+    try {
+      const mockClient = {
+        queryTask: vi.fn().mockResolvedValue({
+          task: {
+            id: "341-base-url-default",
+            owner: "ops",
+            status: "running",
+            createdAt: "2026-03-01T00:00:00.000Z",
+            metadata: {},
+          },
+        }),
+        queryEvents: vi.fn().mockResolvedValue({
+          taskId: "341-base-url-default",
+          events: [],
+        }),
+        queryCapabilityAudit: vi.fn().mockResolvedValue({
+          subject: "did:trnm:test",
+          audits: [
+            {
+              subject: "did:trnm:test",
+              capability: "AUDIT_READ",
+              granted: true,
+              checkedAt: "2026-03-01T00:00:00.000Z",
+            },
+          ],
+        }),
+        queryNormalizedAuditEvents: vi.fn().mockResolvedValue({
+          events: [],
+          hasMore: false,
+        }),
+      } as unknown as ReturnType<typeof apiContractClient.createFrontendApiClient>;
+
+      const createClientSpy = vi
+        .spyOn(apiContractClient, "createFrontendApiClient")
+        .mockReturnValue(mockClient);
+
+      await fetchDashboardSnapshot();
+
+      expect(createClientSpy).toHaveBeenCalledWith({
+        baseUrl: window.location.origin.replace(/\/+$/, ""),
+      });
+    } finally {
+      if (previousBaseUrl === undefined) {
+        delete process.env.NEXT_PUBLIC_QUERY_API_BASE_URL;
+      } else {
+        process.env.NEXT_PUBLIC_QUERY_API_BASE_URL = previousBaseUrl;
+      }
+    }
+  });
+
   it("reads task/audit env overrides at fetch time instead of module load time", async () => {
     const previousTaskId = process.env.NEXT_PUBLIC_DASHBOARD_TASK_ID;
     const previousAuditSubject = process.env.NEXT_PUBLIC_DASHBOARD_AUDIT_SUBJECT;

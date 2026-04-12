@@ -123,7 +123,7 @@ const rawSnapshot: unknown = {
 };
 
 const resolveQueryApiBaseUrl = (): string => {
-  const fromEnv = process.env.NEXT_PUBLIC_QUERY_API_BASE_URL?.trim();
+  const fromEnv = normalizeDashboardInput(process.env.NEXT_PUBLIC_QUERY_API_BASE_URL);
   if (fromEnv) return fromEnv;
 
   if (typeof window !== "undefined") {
