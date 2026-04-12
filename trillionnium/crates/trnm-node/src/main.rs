@@ -1823,6 +1823,11 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         "invalid node config {}: node_id must not look like a host or socket literal",
         path
     );
+    anyhow::ensure!(
+        !node_id.contains('.'),
+        "invalid node config {}: node_id must not contain dots",
+        path
+    );
 
     let rpc_addr = cfg.rpc_addr.trim();
     anyhow::ensure!(
@@ -2110,10 +2115,6 @@ fn resolve_config_path(path: &str) -> PathBuf {
 }
 
 fn ensure_config_path_stays_within_allowed_roots(requested: &str, resolved: &Path) -> Result<()> {
-    if !resolved.exists() {
-        return Ok(());
-    }
-
     let canonical_resolved = resolved
         .canonicalize()
         .unwrap_or_else(|_| resolved.to_path_buf());
@@ -2142,6 +2143,17 @@ fn ensure_config_path_stays_within_allowed_roots(requested: &str, resolved: &Pat
     let allowed_by_test_temp = false;
 
     anyhow::ensure!(
+        !resolved.is_absolute() || allowed_by_workspace_or_cwd || allowed_by_test_temp,
+        "read config failed: {} resolves outside allowed roots (resolved: {})",
+        requested,
+        canonical_resolved.display()
+    );
+
+    if !resolved.exists() {
+        return Ok(());
+    }
+
+    anyhow::ensure!(
         allowed_by_workspace_or_cwd || allowed_by_test_temp,
         "read config failed: {} resolves outside allowed roots (resolved: {})",
         requested,
@@ -2164,6 +2176,86 @@ fn contains_invisible_or_bidi_format_chars(value: &str) -> bool {
                 | '\u{2066}'..='\u{2069}'
         )
     })
+}
+
+fn find_forbidden_bootstrap_alias_field(raw: &str) -> Option<&'static str> {
+    const FORBIDDEN_BOOTSTRAP_ALIAS_FIELD_NAMES: &[&str] = &[
+        "bootstrap_nodes",
+        "bootstrap_node",
+        "bootstrap_peers",
+        "bootstrap_peer",
+        "bootstrapNodes",
+        "bootstrapNode",
+        "bootstrapPeers",
+        "bootstrapPeer",
+        "bootstrap_addr",
+        "bootstrap_addrs",
+        "bootstrapAddr",
+        "bootstrapAddrs",
+        "bootstrap-addr",
+        "bootstrap-addrs",
+        "bootstrap-node",
+        "bootstrap-peer",
+        "seed_nodes",
+        "seed_node",
+        "seed_peers",
+        "seed_peer",
+        "seed-node",
+        "seed-peer",
+        "seedNodes",
+        "seedNode",
+        "seedPeers",
+        "seedPeer",
+        "seed_addr",
+        "seed_addrs",
+        "seedAddr",
+        "seedAddrs",
+        "seed-addr",
+        "seed-addrs",
+        "seed",
+        "seeds",
+        "bootnodes",
+        "bootnode",
+        "boot_nodes",
+        "boot_node",
+        "bootNodes",
+        "bootNode",
+        "boot-node",
+        "boot_peers",
+        "boot_peer",
+        "boot-peer",
+        "boot_addr",
+        "boot_addrs",
+        "bootAddr",
+        "bootAddrs",
+        "boot-addr",
+        "boot-addrs",
+        "bootPeers",
+        "bootPeer",
+        "persistent_peers",
+        "persistent-peers",
+        "persistent_peer",
+        "persistent-peer",
+        "persistent_addr",
+        "persistent_addrs",
+        "persistentAddr",
+        "persistentAddrs",
+        "persistent-addr",
+        "persistent-addrs",
+        "persistentPeers",
+        "persistentPeer",
+        "persistent_nodes",
+        "persistent-nodes",
+        "persistent_node",
+        "persistent-node",
+        "persistentNodes",
+        "persistentNode",
+    ];
+
+    let parsed = raw.parse::<toml::Table>().ok()?;
+    FORBIDDEN_BOOTSTRAP_ALIAS_FIELD_NAMES
+        .iter()
+        .find_map(|field| parsed.contains_key(*field).then_some(*field))
 }
 
 fn validate_config_path_input(path: &str) -> Result<()> {
@@ -2214,6 +2306,15 @@ fn load_config(path: &str) -> Result<NodeConfig> {
             canonical_resolved.display()
         )
     })?;
+    if let Some(forbidden_alias_field) = find_forbidden_bootstrap_alias_field(&raw) {
+        return Err(anyhow::anyhow!(
+            "parse toml failed: {} (resolved: {}): forbidden bootstrap alias field `{}` is not supported; remove `{}` and keep only `node_id`, `rpc_addr`, and `p2p_addr`",
+            path,
+            canonical_resolved.display(),
+            forbidden_alias_field,
+            forbidden_alias_field
+        ));
+    }
     let cfg: NodeConfig = toml::from_str(&raw).with_context(|| {
         format!(
             "parse toml failed: {} (resolved: {})",
@@ -4205,6 +4306,26 @@ mod tests {
     }
 
     #[test]
+    fn load_config_rejects_singular_config_dir_near_miss_for_bootstrap_slot_paths() {
+        let err = load_config("config/node1.toml")
+            .expect_err("singular config/ near-miss must not resolve to shipped bootstrap slots");
+        let err_surface = format!("{err:#}");
+
+        assert!(
+            err_surface.contains("read config failed: config/node1.toml"),
+            "operator-facing error should keep the exact near-miss path visible: {err_surface}"
+        );
+        assert!(
+            err_surface.contains("resolved: config/node1.toml"),
+            "resolved path should stay on the near-miss config/ path instead of silently rewriting to configs/: {err_surface}"
+        );
+        assert!(
+            !err_surface.contains("configs/node1.toml"),
+            "near-miss config/ path must fail closed instead of implying the shipped configs/ slot was loaded: {err_surface}"
+        );
+    }
+
+    #[test]
     fn load_config_keeps_all_shipped_bootstrap_slots_path_alias_stable() {
         let expected = [
             ("node1", "127.0.0.1:26657", "127.0.0.1:26656"),
@@ -4220,6 +4341,10 @@ mod tests {
                 format!("./configs/node{config_number}.toml"),
                 format!("trillionnium/configs/node{config_number}.toml"),
                 format!("./trillionnium/configs/node{config_number}.toml"),
+                format!("configs/./node{config_number}.toml"),
+                format!("./configs/./node{config_number}.toml"),
+                format!("trillionnium/configs/./node{config_number}.toml"),
+                format!("./trillionnium/configs/./node{config_number}.toml"),
             ] {
                 let cfg = load_config(&path).unwrap_or_else(|err| {
                     panic!(
@@ -4506,6 +4631,49 @@ mod tests {
     }
 
     #[test]
+    fn load_config_rejects_missing_absolute_path_outside_workspace_and_cwd() {
+        use std::time::{SystemTime, UNIX_EPOCH};
+
+        let outside_path = std::env::temp_dir().join(format!(
+            "trnm-node-config-missing-absolute-outside-{}-{}.toml",
+            std::process::id(),
+            SystemTime::now()
+                .duration_since(UNIX_EPOCH)
+                .expect("clock should be after unix epoch")
+                .as_millis()
+        ));
+        let requested = outside_path.to_str().expect("utf8 path");
+        let workspace_root = super::workspace_root()
+            .canonicalize()
+            .expect("workspace root should canonicalize");
+        let current_dir = std::env::current_dir()
+            .expect("capture cwd")
+            .canonicalize()
+            .expect("cwd should canonicalize");
+
+        let err = load_config(requested)
+            .expect_err("missing absolute config path outside allowed roots must fail closed");
+        let err_surface = format!("{err:#}");
+
+        assert!(
+            !outside_path.starts_with(&workspace_root) && !outside_path.starts_with(&current_dir),
+            "test fixture must stay outside both allowed roots"
+        );
+        assert!(
+            err_surface.contains("resolves outside allowed roots"),
+            "unexpected error: {err:#}"
+        );
+        assert!(
+            err_surface.contains(requested),
+            "missing outside-root error must keep the operator-supplied absolute path visible: {err:#}"
+        );
+        assert!(
+            err_surface.contains(outside_path.to_string_lossy().as_ref()),
+            "missing outside-root error must keep the resolved absolute path visible: {err:#}"
+        );
+    }
+
+    #[test]
     fn shipped_bootstrap_configs_keep_a_minimal_fail_closed_schema() {
         use std::collections::BTreeSet;
 
@@ -4783,14 +4951,15 @@ mod tests {
             "Do not skip a missing earlier follower slot during startup or rejoin: if `node2` is absent, keep `node3` and `node4` stopped; if `node3` is absent, keep `node4` stopped until the earlier slot regains its shipped tuple.",
             "Keep `node1` through `node3` in their shipped slots; if `node4` returns, bring it back only with `node4.toml` and its shipped tuple",
             "Accept the remaining slots only while no other config is renamed or promoted into the `node4` role",
-            "unknown fields, whitespace drift, host-like or path-like ids, URI-like delimiters, non-canonical socket literals, privileged ports, wildcard listeners, reserved documentation/benchmarking listener ranges, or mixed listener IP families, the config loader must fail closed",
+            "unknown fields, whitespace drift, dotted, host-like, or path-like ids, URI-like delimiters, non-canonical socket literals, privileged ports, wildcard listeners, reserved documentation/benchmarking listener ranges, or mixed listener IP families, the config loader must fail closed",
             "use both the operator-supplied config path and the resolved canonical path printed in the error to identify which shipped slot drifted",
             "prefer the exact repo-root paths `trillionnium/configs/node1.toml`, `trillionnium/configs/node2.toml`, `trillionnium/configs/node3.toml`, and `trillionnium/configs/node4.toml` as the unambiguous slot references",
             "require the filename slot, `node_id`, and listener stride to agree",
             "fix the exact repo-root slot file named by the error surface and the exact field named in that error",
+            "If the failing path is reported as `configs/nodeN.toml` or `./configs/nodeN.toml`, map it back to the same repo-root slot before editing and fail closed on any basename-only “looks similar” guess across sibling files.",
             "Do not add extra shipped topology files such as `node5.toml`, alternate slot aliases, or helper sidecar configs under `configs/`",
             "Do not substitute IPv6 loopback `[::1]` for the shipped IPv4 loopback `127.0.0.1` during bootstrap or rejoin",
-            "The regression tests in `crates/trnm-node/src/main.rs` are the source of truth for the exact fixture invariants.",
+            "The regression tests in `crates/trnm-node/src/config.rs` are the source of truth for the exact fixture invariants.",
         ] {
             assert!(
                 readme.contains(expected_phrase),
@@ -4798,6 +4967,63 @@ mod tests {
                 readme_path.display()
             );
         }
+    }
+
+    #[test]
+    fn shipped_bootstrap_readme_tuples_match_loaded_configs_exactly() {
+        let manifest_dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR"));
+        let workspace_root = manifest_dir
+            .ancestors()
+            .nth(2)
+            .expect("trnm-node manifest should sit under trillionnium/crates/trnm-node");
+        let readme_path = workspace_root.join("configs").join("README.md");
+        let readme = std::fs::read_to_string(&readme_path).unwrap_or_else(|err| {
+            panic!(
+                "{} should stay readable for shipped bootstrap README tuple/config parity checks: {err}",
+                readme_path.display()
+            )
+        });
+
+        let documented_topology_lines = readme
+            .lines()
+            .filter(|line| line.starts_with("- `node") && line.contains("→ node id `node"))
+            .collect::<Vec<_>>();
+
+        let derived_topology_lines = [
+            "configs/node1.toml",
+            "configs/node2.toml",
+            "configs/node3.toml",
+            "configs/node4.toml",
+        ]
+        .into_iter()
+        .map(|relative_path| {
+            let path = workspace_root.join(relative_path);
+            let cfg = load_config(relative_path).unwrap_or_else(|err| {
+                panic!(
+                    "{} should remain loadable for shipped bootstrap README tuple/config parity checks: {err:#}",
+                    path.display()
+                )
+            });
+            let file_name = std::path::Path::new(relative_path)
+                .file_name()
+                .and_then(|name| name.to_str())
+                .expect("shipped bootstrap config path should end in utf-8 filename");
+            format!(
+                "- `{file_name}` → node id `{}`, P2P `{}`, RPC `{}`",
+                cfg.node_id, cfg.p2p_addr, cfg.rpc_addr
+            )
+        })
+        .collect::<Vec<_>>();
+        let derived_topology_line_refs = derived_topology_lines
+            .iter()
+            .map(String::as_str)
+            .collect::<Vec<_>>();
+
+        assert_eq!(
+            documented_topology_lines, derived_topology_line_refs,
+            "{} must keep README Day-1 tuples exactly aligned with the shipped bootstrap configs so peer topology docs cannot silently drift from fixture truth",
+            readme_path.display()
+        );
     }
 
     #[test]
@@ -5306,10 +5532,16 @@ mod tests {
         ("bootstrap_addrs", "[\"127.0.0.1:27656\"]"),
         ("bootstrapAddr", "\"127.0.0.1:27656\""),
         ("bootstrapAddrs", "[\"127.0.0.1:27656\"]"),
+        ("bootstrap-addr", "\"127.0.0.1:27656\""),
+        ("bootstrap-addrs", "[\"127.0.0.1:27656\"]"),
+        ("bootstrap-node", "\"127.0.0.1:27656\""),
+        ("bootstrap-peer", "\"127.0.0.1:27656\""),
         ("seed_nodes", "[\"127.0.0.1:27656\"]"),
         ("seed_node", "\"127.0.0.1:27656\""),
         ("seed_peers", "[\"127.0.0.1:27656\"]"),
         ("seed_peer", "\"127.0.0.1:27656\""),
+        ("seed-node", "\"127.0.0.1:27656\""),
+        ("seed-peer", "\"127.0.0.1:27656\""),
         ("seedNodes", "[\"127.0.0.1:27656\"]"),
         ("seedNode", "\"127.0.0.1:27656\""),
         ("seedPeers", "[\"127.0.0.1:27656\"]"),
@@ -5318,6 +5550,9 @@ mod tests {
         ("seed_addrs", "[\"127.0.0.1:27656\"]"),
         ("seedAddr", "\"127.0.0.1:27656\""),
         ("seedAddrs", "[\"127.0.0.1:27656\"]"),
+        ("seed-addr", "\"127.0.0.1:27656\""),
+        ("seed-addrs", "[\"127.0.0.1:27656\"]"),
+        ("seed", "\"127.0.0.1:27656\""),
         ("seeds", "\"127.0.0.1:27656\""),
         ("bootnodes", "[\"127.0.0.1:27656\"]"),
         ("bootnode", "\"127.0.0.1:27656\""),
@@ -5325,85 +5560,55 @@ mod tests {
         ("boot_node", "\"127.0.0.1:27656\""),
         ("bootNodes", "[\"127.0.0.1:27656\"]"),
         ("bootNode", "\"127.0.0.1:27656\""),
+        ("boot-node", "\"127.0.0.1:27656\""),
         ("boot_peers", "[\"127.0.0.1:27656\"]"),
         ("boot_peer", "\"127.0.0.1:27656\""),
+        ("boot-peer", "\"127.0.0.1:27656\""),
         ("boot_addr", "\"127.0.0.1:27656\""),
         ("boot_addrs", "[\"127.0.0.1:27656\"]"),
         ("bootAddr", "\"127.0.0.1:27656\""),
         ("bootAddrs", "[\"127.0.0.1:27656\"]"),
+        ("boot-addr", "\"127.0.0.1:27656\""),
+        ("boot-addrs", "[\"127.0.0.1:27656\"]"),
         ("bootPeers", "[\"127.0.0.1:27656\"]"),
         ("bootPeer", "\"127.0.0.1:27656\""),
         ("persistent_peers", "[\"127.0.0.1:27656\"]"),
+        ("persistent-peers", "[\"127.0.0.1:27656\"]"),
         ("persistent_peer", "\"127.0.0.1:27656\""),
+        ("persistent-peer", "\"127.0.0.1:27656\""),
         ("persistent_addr", "\"127.0.0.1:27656\""),
         ("persistent_addrs", "[\"127.0.0.1:27656\"]"),
         ("persistentAddr", "\"127.0.0.1:27656\""),
         ("persistentAddrs", "[\"127.0.0.1:27656\"]"),
+        ("persistent-addr", "\"127.0.0.1:27656\""),
+        ("persistent-addrs", "[\"127.0.0.1:27656\"]"),
         ("persistentPeers", "[\"127.0.0.1:27656\"]"),
         ("persistentPeer", "\"127.0.0.1:27656\""),
         ("persistent_nodes", "[\"127.0.0.1:27656\"]"),
+        ("persistent-nodes", "[\"127.0.0.1:27656\"]"),
         ("persistent_node", "\"127.0.0.1:27656\""),
+        ("persistent-node", "\"127.0.0.1:27656\""),
         ("persistentNodes", "[\"127.0.0.1:27656\"]"),
         ("persistentNode", "\"127.0.0.1:27656\""),
     ];
 
     #[test]
-    fn load_config_rejects_unknown_fields_to_keep_bootstrap_config_fail_closed() {
+    fn load_config_rejects_forbidden_bootstrap_alias_fields_with_operator_facing_error() {
+        use std::collections::BTreeSet;
+
         let _cwd_guard = cwd_test_lock().lock().unwrap();
-        for (unknown_field, field_value) in [
-            ("bootstrap_nodes", "[\"127.0.0.1:27656\"]"),
-            ("bootstrap_node", "\"127.0.0.1:27656\""),
-            ("bootstrap_peers", "[\"127.0.0.1:27656\"]"),
-            ("bootstrap_peer", "\"127.0.0.1:27656\""),
-            ("bootstrapNodes", "[\"127.0.0.1:27656\"]"),
-            ("bootstrapNode", "\"127.0.0.1:27656\""),
-            ("bootstrapPeers", "[\"127.0.0.1:27656\"]"),
-            ("bootstrapPeer", "\"127.0.0.1:27656\""),
-            ("bootstrap_addr", "\"127.0.0.1:27656\""),
-            ("bootstrap_addrs", "[\"127.0.0.1:27656\"]"),
-            ("bootstrapAddr", "\"127.0.0.1:27656\""),
-            ("bootstrapAddrs", "[\"127.0.0.1:27656\"]"),
-            ("seed_nodes", "[\"127.0.0.1:27656\"]"),
-            ("seed_node", "\"127.0.0.1:27656\""),
-            ("seed_peers", "[\"127.0.0.1:27656\"]"),
-            ("seed_peer", "\"127.0.0.1:27656\""),
-            ("seedNodes", "[\"127.0.0.1:27656\"]"),
-            ("seedNode", "\"127.0.0.1:27656\""),
-            ("seedPeers", "[\"127.0.0.1:27656\"]"),
-            ("seedPeer", "\"127.0.0.1:27656\""),
-            ("seed_addr", "\"127.0.0.1:27656\""),
-            ("seed_addrs", "[\"127.0.0.1:27656\"]"),
-            ("seedAddr", "\"127.0.0.1:27656\""),
-            ("seedAddrs", "[\"127.0.0.1:27656\"]"),
-            ("seed", "\"127.0.0.1:27656\""),
-            ("seeds", "\"127.0.0.1:27656\""),
-            ("bootnodes", "[\"127.0.0.1:27656\"]"),
-            ("bootnode", "\"127.0.0.1:27656\""),
-            ("boot_nodes", "[\"127.0.0.1:27656\"]"),
-            ("boot_node", "\"127.0.0.1:27656\""),
-            ("bootNodes", "[\"127.0.0.1:27656\"]"),
-            ("bootNode", "\"127.0.0.1:27656\""),
-            ("boot_peers", "[\"127.0.0.1:27656\"]"),
-            ("boot_peer", "\"127.0.0.1:27656\""),
-            ("boot_addr", "\"127.0.0.1:27656\""),
-            ("boot_addrs", "[\"127.0.0.1:27656\"]"),
-            ("bootAddr", "\"127.0.0.1:27656\""),
-            ("bootAddrs", "[\"127.0.0.1:27656\"]"),
-            ("bootPeers", "[\"127.0.0.1:27656\"]"),
-            ("bootPeer", "\"127.0.0.1:27656\""),
-            ("persistent_peers", "[\"127.0.0.1:27656\"]"),
-            ("persistent_peer", "\"127.0.0.1:27656\""),
-            ("persistent_addr", "\"127.0.0.1:27656\""),
-            ("persistent_addrs", "[\"127.0.0.1:27656\"]"),
-            ("persistentAddr", "\"127.0.0.1:27656\""),
-            ("persistentAddrs", "[\"127.0.0.1:27656\"]"),
-            ("persistentPeers", "[\"127.0.0.1:27656\"]"),
-            ("persistentPeer", "\"127.0.0.1:27656\""),
-            ("persistent_nodes", "[\"127.0.0.1:27656\"]"),
-            ("persistent_node", "\"127.0.0.1:27656\""),
-            ("persistentNodes", "[\"127.0.0.1:27656\"]"),
-            ("persistentNode", "\"127.0.0.1:27656\""),
-        ] {
+        let alias_names = FORBIDDEN_BOOTSTRAP_ALIAS_FIELDS
+            .iter()
+            .map(|(field, _)| *field)
+            .collect::<Vec<_>>();
+        let alias_name_set = alias_names.iter().copied().collect::<BTreeSet<_>>();
+        assert_eq!(
+            alias_names.len(),
+            alias_name_set.len(),
+            "FORBIDDEN_BOOTSTRAP_ALIAS_FIELDS must not duplicate alias names or operator parse diagnostics can drift"
+        );
+
+        for &(unknown_field, field_value) in FORBIDDEN_BOOTSTRAP_ALIAS_FIELDS {
             let current_dir = std::env::current_dir().expect("current dir");
             let file_name = format!(
                 "trnm-node-config-unknown-field-{unknown_field}-{}-{}.toml",
@@ -5424,13 +5629,18 @@ mod tests {
                 path.to_str().expect("temp path utf-8").to_string(),
                 format!("./{file_name}"),
             ] {
-                let err = load_config(&operator_path)
-                    .expect_err("unknown config fields must fail closed");
+                let err =
+                    load_config(&operator_path).expect_err("bootstrap alias fields must fail closed");
                 let err_surface = format!("{err:#}");
                 assert!(
                     err_surface.contains("parse toml failed")
-                        && err_surface.contains(&format!("unknown field `{unknown_field}`")),
+                        && err_surface
+                            .contains(&format!("forbidden bootstrap alias field `{unknown_field}`")),
                     "unexpected error for {unknown_field}: {err:#}"
+                );
+                assert!(
+                    err_surface.contains(&format!("remove `{unknown_field}`")),
+                    "forbidden alias diagnostic for {unknown_field} must point operators at the exact fix target: {err:#}"
                 );
                 assert!(
                     err_surface.contains(&operator_path),
@@ -5443,6 +5653,47 @@ mod tests {
             }
             let _ = std::fs::remove_file(path);
         }
+    }
+
+    #[test]
+    fn load_config_rejects_arbitrary_unknown_fields_to_keep_bootstrap_config_fail_closed() {
+        let _cwd_guard = cwd_test_lock().lock().unwrap();
+        let current_dir = std::env::current_dir().expect("current dir");
+        let file_name = format!(
+            "trnm-node-config-unknown-field-generic-{}-{}.toml",
+            std::process::id(),
+            now_unix_ms()
+        );
+        let path = current_dir.join(&file_name);
+        std::fs::write(
+            &path,
+            "node_id = \"node1\"\nrpc_addr = \"127.0.0.1:26657\"\np2p_addr = \"127.0.0.1:26656\"\nunexpected_peer_hint = \"node2\"\n",
+        )
+        .expect("write temp config");
+
+        let canonical_path = path.canonicalize().expect("canonicalize temp config path");
+        for operator_path in [
+            path.to_str().expect("temp path utf-8").to_string(),
+            format!("./{file_name}"),
+        ] {
+            let err = load_config(&operator_path).expect_err("unexpected config fields must fail closed");
+            let err_surface = format!("{err:#}");
+            assert!(
+                err_surface.contains("parse toml failed")
+                    && err_surface.contains("unknown field `unexpected_peer_hint`"),
+                "unexpected error for generic unknown field: {err:#}"
+            );
+            assert!(
+                err_surface.contains(&operator_path),
+                "generic unknown-field error must keep the operator-supplied config path visible: {err:#}"
+            );
+            assert!(
+                err_surface.contains(canonical_path.to_string_lossy().as_ref()),
+                "generic unknown-field error must keep the canonical resolved path visible: {err:#}"
+            );
+        }
+
+        let _ = std::fs::remove_file(path);
     }
 
     #[test]
@@ -5469,20 +5720,7 @@ mod tests {
                 )
             });
 
-        for forbidden_alias in [
-            "bootstrap_nodes", "bootstrap_node", "bootstrap_peers", "bootstrap_peer",
-            "bootstrapNodes", "bootstrapNode", "bootstrapPeers", "bootstrapPeer",
-            "bootstrap_addr", "bootstrap_addrs", "bootstrapAddr", "bootstrapAddrs",
-            "seed_nodes", "seed_node", "seed_peers", "seed_peer",
-            "seedNodes", "seedNode", "seedPeers", "seedPeer",
-            "seed_addr", "seed_addrs", "seedAddr", "seedAddrs", "seed", "seeds",
-            "bootnodes", "bootnode", "boot_nodes", "boot_node",
-            "bootNodes", "bootNode", "boot_peers", "boot_peer",
-            "boot_addr", "boot_addrs", "bootAddr", "bootAddrs", "bootPeers", "bootPeer",
-            "persistent_peers", "persistent_peer", "persistent_addr", "persistent_addrs",
-            "persistentAddr", "persistentAddrs", "persistentPeers", "persistentPeer",
-            "persistent_nodes", "persistent_node", "persistentNodes", "persistentNode",
-        ] {
+        for forbidden_alias in FORBIDDEN_BOOTSTRAP_ALIAS_FIELDS.iter().map(|(field, _)| *field) {
             let mention_count = fixture_scope_section
                 .matches(&format!("`{forbidden_alias}`"))
                 .count();
@@ -5627,6 +5865,37 @@ mod tests {
                 .expect_err("host-like node_id must fail closed");
             assert!(
                 err.to_string().contains(expected_error),
+                "unexpected error for {node_id}: {err:#}"
+            );
+
+            let _ = std::fs::remove_file(path);
+        }
+    }
+
+    #[test]
+    fn load_config_rejects_malformed_dotted_node_id_with_operator_facing_error() {
+        for (suffix, node_id) in [
+            ("double-dot", "node..1"),
+            ("label-trailing-hyphen", "peer-.slot"),
+            ("label-leading-hyphen", "slot.-peer"),
+        ] {
+            let path = std::env::temp_dir().join(format!(
+                "trnm-node-config-malformed-dotted-node-id-{suffix}-{}-{}.toml",
+                std::process::id(),
+                std::thread::current().name().unwrap_or("unnamed")
+            ));
+            std::fs::write(
+                &path,
+                format!(
+                    "node_id = \"{node_id}\"\nrpc_addr = \"127.0.0.1:26657\"\np2p_addr = \"127.0.0.1:26656\"\n"
+                ),
+            )
+            .expect("write config");
+
+            let err = load_config(path.to_str().expect("utf8 path"))
+                .expect_err("malformed dotted node_id must fail closed");
+            assert!(
+                err.to_string().contains("node_id must not contain dots"),
                 "unexpected error for {node_id}: {err:#}"
             );
 
@@ -5929,6 +6198,53 @@ mod tests {
             .contains("p2p_addr must not use a link-local address"));
 
         let _ = std::fs::remove_file(p2p_path);
+    }
+
+    #[test]
+    fn load_config_rejects_ipv6_scope_identifier_listener_with_operator_facing_error() {
+        for (field, addr, expected_fragment) in [
+            (
+                "rpc_addr",
+                "[2001:db8::10%7]:26657",
+                "rpc_addr must not use an IPv6 scope identifier",
+            ),
+            (
+                "p2p_addr",
+                "[2001:db8::10%9]:26656",
+                "p2p_addr must not use an IPv6 scope identifier",
+            ),
+        ] {
+            let path = std::env::temp_dir().join(format!(
+                "trnm-node-config-ipv6-scope-{field}-listener-{}-{}.toml",
+                std::process::id(),
+                now_unix_ms()
+            ));
+            let body = if field == "rpc_addr" {
+                format!(
+                    "node_id = \"node-a\"\nrpc_addr = \"{addr}\"\np2p_addr = \"[2001:4860::1]:26656\"\n"
+                )
+            } else {
+                format!(
+                    "node_id = \"node-a\"\nrpc_addr = \"[2001:4860::1]:26657\"\np2p_addr = \"{addr}\"\n"
+                )
+            };
+            std::fs::write(&path, body).expect("write config");
+
+            let path_str = path.to_str().expect("utf8 path");
+            let err = load_config(path_str)
+                .expect_err("IPv6 scope-id bootstrap listeners must fail closed");
+            let err_surface = format!("{err:#}");
+            assert!(
+                err_surface.contains(expected_fragment),
+                "unexpected error for {field}: {err:#}"
+            );
+            assert!(
+                err_surface.contains(path_str),
+                "error surface for {field} must keep the operator-supplied config path visible: {err:#}"
+            );
+
+            let _ = std::fs::remove_file(path);
+        }
     }
 
     #[test]
@@ -8180,6 +8496,25 @@ mod tests {
             assert!(
                 err.to_string()
                     .contains("node_id must not look like a host or socket literal")
+            );
+        }
+    }
+
+    #[test]
+    fn validate_node_config_rejects_malformed_dotted_node_id() {
+        for node_id in ["node..1", "peer-.slot", "slot.-peer"] {
+            let err = validate_node_config(
+                NodeConfig {
+                    node_id: node_id.into(),
+                    rpc_addr: "127.0.0.1:26657".into(),
+                    p2p_addr: "127.0.0.1:26656".into(),
+                },
+                "node.toml",
+            )
+            .expect_err("malformed dotted node_id must fail closed");
+            assert!(
+                err.to_string().contains("node_id must not contain dots"),
+                "unexpected error for {node_id}: {err:#}"
             );
         }
     }
