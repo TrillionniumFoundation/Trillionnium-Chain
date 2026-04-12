@@ -27,6 +27,11 @@ npm run start
 3. **仓库级 release 口径单独判定**
    - 即使 `npm run release:ready` 通过，也只说明 `web4-frontend` 子项目本地预检链路通过。
    - 需要判断 TRNM 当前是否可对外表述为 release-ready 时，必须回到仓库根目录核对 `RELEASE_READINESS.md`。
+   - 记录结论时，附上当前 `git rev-parse origin/main` 输出，避免把旧快照误写成实时状态。
+
+4. **平台成熟度与路线图口径分开引用**
+   - 若需要描述“当前 Web4 大致到哪个阶段”，优先引用 `docs/reports/TRNM_WEB4_PLATFORM_SCORECARD_2026-03-31.md` 这类阶段评分卡。
+   - 若当前 checkout 缺少 `docs/WEB4_INFRA_PLATFORM_DEVELOPMENT_MASTER.md`，应直接写明 master 文档缺失，退回 `RELEASE_READINESS.md` + scorecard + 当前 live docs，不要把缺失文档或路线图目标写成现状。
 
 ## 回滚最小路径
 

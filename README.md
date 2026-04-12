@@ -161,10 +161,10 @@ TRNM_TX_CLI=./trillionnium/target/debug/trnm-cli \
 - Project status log: [docs/archive/root-history/STATUS.md](docs/archive/root-history/STATUS.md)
 - Historical roadmap: [docs/archive/root-history/ROADMAP.md](docs/archive/root-history/ROADMAP.md)
 - Historical backlog snapshots: [docs/archive/root-history/BACKLOG.md](docs/archive/root-history/BACKLOG.md)
-- Unified development scheduling (historical planning board): [docs/archive/dev-plans/DEVELOPMENT_MASTER_UNIFIED_2026-03-04.md](docs/archive/dev-plans/DEVELOPMENT_MASTER_UNIFIED_2026-03-04.md)
+- Unified development scheduling: historical planning boards have existed under archived docs, but if a referenced planning-board file is absent in this checkout, use repository docs under `docs/`, `trillionnium/docs/`, and the subproject READMEs as the live execution entrypoints instead.
 - External benchmark comparison: [docs/reports/TRNM_CONCURRENCY_COMPARISON_2026-03-05.md](docs/reports/TRNM_CONCURRENCY_COMPARISON_2026-03-05.md)
-- Concurrency bottleneck map + 8-week roadmap: currently referenced from `RELEASE_READINESS.md` as a truth-source pointer, but the standalone markdown file is not present in this repo snapshot.
-- Web4 platform overview (historical planning doc): [docs/archive/dev-plans/WEB4_INFRA_PLATFORM_DEVELOPMENT_MASTER.md](docs/archive/dev-plans/WEB4_INFRA_PLATFORM_DEVELOPMENT_MASTER.md)
+- Concurrency bottleneck map + 8-week roadmap: if an older report is referenced from `RELEASE_READINESS.md` but not present in this checkout, treat it as historical only and do not cite it as current local truth.
+- Web4 platform overview: if an older master-planning file is absent in this checkout, treat `RELEASE_READINESS.md`, `docs/reports/TRNM_WEB4_PLATFORM_SCORECARD_2026-03-31.md`, `web4-frontend/docs/README.md`, and `web4-frontend/README.md` as the current Web4 truth-source entrypoints.
 - Rust-native external contracts baseline architecture: [trillionnium/docs/protocol/external-contracts-rust/RUST_NATIVE_EXTERNAL_CONTRACTS_ARCH_2026-03-05.md](trillionnium/docs/protocol/external-contracts-rust/RUST_NATIVE_EXTERNAL_CONTRACTS_ARCH_2026-03-05.md)
 - `contracts/` status and boundaries: [contracts/README.md](contracts/README.md)
 - Historical path note for this perimeter: if an older prompt/doc still says `trillionnium-rust/docs/...` or `contracts-rust/...`, treat that as drift only. The current in-tree truth paths are `trillionnium/docs/...` and `contracts/...`.
@@ -173,10 +173,12 @@ TRNM_TX_CLI=./trillionnium/target/debug/trnm-cli \
 - MCP adapter contract: [docs/agent/mcp_adapter_contract_v1.md](docs/agent/mcp_adapter_contract_v1.md)
 - Operations handbook: [OPERATIONS.md](OPERATIONS.md)
 - OpenClaw ops micro-runbook: [docs/development/OPENCLAW_OPS_MICRO_RUNBOOK.md](docs/development/OPENCLAW_OPS_MICRO_RUNBOOK.md)
-- Web4 frontend docs: [web4-frontend/README.md](web4-frontend/README.md)
-- Web4 documentation center:
+- Web4 frontend overview / quickstart: [web4-frontend/README.md](web4-frontend/README.md)
+- Web4 documentation center (primary docs entrypoint for operator/developer guidance):
   - [web4-frontend/docs/README.md](web4-frontend/docs/README.md)
   - [web4-frontend/docs/developer-guide.md](web4-frontend/docs/developer-guide.md)
+  - [web4-frontend/docs/api-contract.md](web4-frontend/docs/api-contract.md)
+  - [web4-frontend/docs/testing-ci.md](web4-frontend/docs/testing-ci.md)
   - [web4-frontend/docs/operations-runbook.md](web4-frontend/docs/operations-runbook.md)
   - [web4-frontend/docs/release-checklist.md](web4-frontend/docs/release-checklist.md)
 
