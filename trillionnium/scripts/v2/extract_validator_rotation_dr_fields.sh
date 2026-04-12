@@ -325,6 +325,7 @@ if [ -n "$LANE_VERIFY_COMMAND" ]; then
 fi
 
 if [ -n "$EXPECTED_WORKTREE_ROOT_RECORDED" ]; then
+  require_worktree_root_value expected_worktree_root "$EXPECTED_WORKTREE_ROOT_RECORDED"
   case "$LANE_VERIFY_COMMAND" in
     *"--expected-worktree-root $EXPECTED_WORKTREE_ROOT_RECORDED"*|*"--expected-worktree-root \"$EXPECTED_WORKTREE_ROOT_RECORDED\""*|*"--expected-worktree-root '$EXPECTED_WORKTREE_ROOT_RECORDED'"*) ;;
     *)
@@ -335,6 +336,7 @@ if [ -n "$EXPECTED_WORKTREE_ROOT_RECORDED" ]; then
 fi
 
 if [ -n "$EXPECTED_BRANCH_REF_RECORDED" ]; then
+  require_ref_token expected_branch_ref "$EXPECTED_BRANCH_REF_RECORDED"
   case "$LANE_VERIFY_COMMAND" in
     *"--expected-branch-ref $EXPECTED_BRANCH_REF_RECORDED"*|*"--expected-branch-ref \"$EXPECTED_BRANCH_REF_RECORDED\""*|*"--expected-branch-ref '$EXPECTED_BRANCH_REF_RECORDED'"*|*"--expected-branch-ref $RECORDED_BRANCH_REF_CANONICAL"*|*"--expected-branch-ref \"$RECORDED_BRANCH_REF_CANONICAL\""*|*"--expected-branch-ref '$RECORDED_BRANCH_REF_CANONICAL'"*) ;;
     *)
@@ -345,6 +347,7 @@ if [ -n "$EXPECTED_BRANCH_REF_RECORDED" ]; then
 fi
 
 if [ -n "$EXPECTED_HEAD_RECORDED" ]; then
+  require_ref_token expected_head "$EXPECTED_HEAD_RECORDED"
   case "$LANE_VERIFY_COMMAND" in
     *"--expected-head $EXPECTED_HEAD_RECORDED"*|*"--expected-head \"$EXPECTED_HEAD_RECORDED\""*|*"--expected-head '$EXPECTED_HEAD_RECORDED'"*) ;;
     *)
