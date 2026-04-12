@@ -57,6 +57,10 @@ case "$CARGO_TARGET_DIR_ABS" in
     exit 1
     ;;
 esac
+if [[ "$CARGO_TARGET_DIR_ABS" = "$ROOT" ]]; then
+  echo "[FAIL] CARGO_TARGET_DIR must not be repo root: $CARGO_TARGET_DIR_INPUT -> $CARGO_TARGET_DIR_ABS" >&2
+  exit 1
+fi
 mkdir -p "$CARGO_TARGET_DIR_ABS"
 CARGO_TARGET_DIR="$CARGO_TARGET_DIR_ABS"
 

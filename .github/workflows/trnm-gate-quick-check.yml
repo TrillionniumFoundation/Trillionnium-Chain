@@ -161,6 +161,10 @@ jobs:
         run: |
           ./scripts/v2/check_contracts_workspace_smoke_repo_root_target_dir_guard_test.sh
 
+      - name: Contracts workspace smoke exact repo-root target dir guard regression
+        run: |
+          ./scripts/v2/check_contracts_workspace_smoke_exact_repo_root_target_dir_guard_test.sh
+
       - name: Contracts workspace smoke repo-root workspace dir guard regression
         run: |
           ./scripts/v2/check_contracts_workspace_smoke_repo_root_guard_test.sh
