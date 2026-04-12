@@ -5835,7 +5835,22 @@ mod tests {
     }
 
     #[test]
-    fn parse_query_normalized_audit_events_query_from_path_rejects_percent_encoded_control_bytes(
+    fn parse_query_normalized_audit_events_query_from_path_rejects_raw_route_delimiter_confusion() {
+        for path in [
+            "/query-normalized-audit-events#tail",
+            "/query-normalized-audit-events\\tail",
+            "/query-normalized-audit-events?source=trnm.task?limit=2",
+            "/query-normalized-audit-events?source=trnm.task#tail",
+        ] {
+            let err = parse_query_normalized_audit_events_query_from_path(path)
+                .expect_err("raw route delimiter confusion should fail closed");
+            assert!(err.contains("400 Bad Request"), "path={path} err={err}");
+            assert!(err.contains("invalid query"), "path={path} err={err}");
+        }
+    }
+
+    #[test]
+    fn parse_query_normalized_audit_events_query_from_path_rejects_percent_encoded_null_and_del_controls(
     ) {
         for path in [
             "/query-normalized-audit-events?source=trnm.task%00shadow",

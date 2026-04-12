@@ -79,8 +79,9 @@ fn degraded_reason_matches_prefix(normalized: &str, expected: &str) -> bool {
                 .map(|ch| {
                     matches!(
                         ch,
-                        ':' | '：' | ';' | '；' | ',' | '，' | '、' | '.' | '．' | '。' | '(' | ')' | '[' | ']' | '{' | '}'
-                            | '（' | '）' | '［' | '］' | '｛' | '｝' | '<' | '＜' | ' ' | '-' | '–' | '—' | '－'
+                        ':' | '：' | ';' | '；' | ',' | '，' | '、' | '.' | '．' | '。' | '!' | '！' | '?' | '？'
+                            | '(' | ')' | '[' | ']' | '{' | '}' | '（' | '）' | '［' | '］' | '｛' | '｝' | '<' | '＜'
+                            | ' ' | '-' | '–' | '—' | '－' | '\'' | '"' | '‘' | '’' | '“' | '”'
                     )
                 })
                 .unwrap_or(false)
@@ -434,6 +435,13 @@ mod tests {
     }
 
     #[test]
+    fn normalize_compensation_reason_strips_mixed_bidi_marks_and_embedding_isolates_for_replay_stability() {
+        let raw = "target\u{200E}\u{2066}relay\u{202E}timeout\u{2069}signal";
+        let normalized = normalize_compensation_reason(raw, "fallback");
+        assert_eq!(normalized, "target relay timeout signal");
+    }
+
+    #[test]
     fn normalize_compensation_reason_strips_soft_hyphen_for_replay_stability() {
         let raw = "target\u{00AD}relay timeout";
         let normalized = normalize_compensation_reason(raw, "fallback");
@@ -591,6 +599,34 @@ mod tests {
     fn degraded_reason_allows_invalid_embedded_metrics_for_em_dash_suffix() {
         assert!(degraded_reason_allows_invalid_embedded_metrics(
             "invalid heartbeat progression—target height exceeded source sample"
+        ));
+    }
+
+    #[test]
+    fn degraded_reason_allows_invalid_embedded_metrics_for_ascii_quoted_suffix() {
+        assert!(degraded_reason_allows_invalid_embedded_metrics(
+            "invalid heartbeat progression \"target height exceeded source sample\""
+        ));
+    }
+
+    #[test]
+    fn degraded_reason_allows_invalid_embedded_metrics_for_smart_quoted_suffix() {
+        assert!(degraded_reason_allows_invalid_embedded_metrics(
+            "invalid heartbeat progression “target height exceeded source sample”"
+        ));
+    }
+
+    #[test]
+    fn degraded_reason_allows_invalid_embedded_metrics_for_ascii_exclamation_suffix() {
+        assert!(degraded_reason_allows_invalid_embedded_metrics(
+            "invalid heartbeat progression! target height exceeded source sample"
+        ));
+    }
+
+    #[test]
+    fn degraded_reason_allows_invalid_embedded_metrics_for_fullwidth_question_suffix() {
+        assert!(degraded_reason_allows_invalid_embedded_metrics(
+            "invalid heartbeat height？source height is zero"
         ));
     }
 

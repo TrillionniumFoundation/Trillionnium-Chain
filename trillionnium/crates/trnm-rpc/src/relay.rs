@@ -2277,6 +2277,21 @@ mod tests {
     }
 
     #[test]
+    fn relay_proof_query_rejects_session_with_word_joiner() {
+        let relay = RelayService::new(RelayRouter::new());
+        let err = relay
+            .query_session_proof(RelaySessionProofQuery {
+                task_id: 1,
+                session_id: "sp\u{2060}canonical".into(),
+                from_seq: 1,
+                to_seq: 1,
+                source: None,
+            })
+            .unwrap_err();
+        assert!(err.to_string().contains("bad_request/invalid_session"));
+    }
+
+    #[test]
     fn relay_proof_query_rejects_reversed_range() {
         let mut router = RelayRouter::new();
         router.register("relay.echo", EchoHandler);

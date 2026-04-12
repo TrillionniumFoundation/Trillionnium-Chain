@@ -6,6 +6,7 @@
 
 - `contracts/bridge-relay`：`submit_proof`/`finalize_settlement` 的 `tx_receipt_status` 约束
 - `trnm-types`：`SettlementRecord::apply_status_with_receipt_status` 的最终化回执检查
+- 桥接结算审计语义：结合 `trillionnium/docs/release/TRNM_BRIDGE_SETTLEMENT_AUDIT_NOTE_2026-04-02.md` 一起解读，避免把回执烟雾测试通过误读成“可放宽 settlement confirm 边界”
 
 > 路径提示：本 runbook 以当前仓库布局 `contracts/bridge-relay` 为准。若其他遗留文档仍写成 `contracts-rust/bridge-relay`，请按过时路径处理，避免在错误目录执行验证。
 
@@ -68,6 +69,8 @@
 - `bridge-relay` 若失败集中在 stale validator/config_version 用例：检查治理写路径与 validator 轮换写路径是否继续 fail-closed，确认 stale 请求不会改写 validator 集、`config_version`、`audit_log` 或 `normalized_audit_log`，也不会把新 validator 偷带入 allowlist。
 - `trnm-types` 用例失败：检查 `SettlementRecord::apply_status_with_receipt_status` 是否被误改，重点看 `SETTLEMENT_TX_RECEIPT_SUCCESS` 与 `InteropIdentityError::InvalidSettlementReceiptStatus`。
 - 若脚本一开始就报 missing manifest：优先检查是否误在过时目录布局下执行。当前有效路径必须包含 `contracts/bridge-relay/Cargo.toml` 与 `trillionnium/Cargo.toml`，旧的 `contracts-rust/bridge-relay` 引用应视为文档漂移。
+- 若回执相关测试通过，但桥接结算 incident 仍表现异常，回到 `trillionnium/docs/release/TRNM_BRIDGE_SETTLEMENT_AUDIT_NOTE_2026-04-02.md` 核对当前 replay 证据是否仍满足 fail-closed 边界：`target < confirm <= source + 1`，且当 `target == source` 时只能接受 `confirm == source + 1`。
+- 做 incident 摘要时，优先引用冻结审计元组而不是自由文本日志，推荐模板：`phase=<phase> hb=(<source>,<target>,<latency_ms>) confirm_height=<confirm_height> confirm_reason=<confirm_reason>`。
 - 若日志长时间无输出：确认 `cargo` 工具链可用，`PATH` 包含 rustup bin（脚本默认预设 `PATH="/opt/homebrew/opt/rustup/bin:$PATH"`）。
 
 ## 回归建议
