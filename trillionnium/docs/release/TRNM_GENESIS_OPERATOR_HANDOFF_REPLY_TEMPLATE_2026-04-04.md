@@ -61,7 +61,9 @@ node4.operator_ack_digest=
 
 ### `operator_ack_signature_path` vs `operator_ack_digest`
 - 如果有文件路径，填 `operator_ack_signature_path`
+- `operator_ack_signature_path` 如果填写，必须是该 acknowledgment artifact 的**明确绝对文件路径**，不能只写目录、ticket、聊天线程名或相对路径
 - 如果只有摘要，填 `operator_ack_digest`
+- `operator_ack_digest` 如果填写，必须是该 acknowledgment artifact 的 **64 字符 SHA-256**
 - 两者都填也可以
 - 至少填一个
 
