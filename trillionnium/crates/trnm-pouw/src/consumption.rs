@@ -51,16 +51,8 @@ pub(crate) fn reject_if_primary_settlement_pending(
     st: &StateStore,
     task_id: u64,
 ) -> Result<(), PouwError> {
-    let unresolved_receipt_count = st
-        .consumption_records_for_task(task_id)
-        .into_iter()
-        .filter(|record| {
-            matches!(
-                record.status,
-                ConsumptionRecordStatus::Submitted | ConsumptionRecordStatus::Challenged
-            )
-        })
-        .count();
+    let unresolved_receipt_count =
+        unresolved_receipt_count(&st.consumption_records_for_task(task_id));
 
     if unresolved_receipt_count > 0 {
         return Err(PouwError::State(format!(
@@ -173,13 +165,38 @@ pub fn claimed_consumption_units(receipt: &ConsumptionReceipt) -> u128 {
     receipt.consumed_token_count as u128
 }
 
+fn unresolved_receipt_count(records: &[ConsumptionRecord]) -> usize {
+    records
+        .iter()
+        .filter(|record| {
+            matches!(
+                record.status,
+                ConsumptionRecordStatus::Submitted | ConsumptionRecordStatus::Challenged
+            )
+        })
+        .count()
+}
+
+fn total_credited_consumption_units(records: &[ConsumptionRecord]) -> u128 {
+    records
+        .iter()
+        .filter(|record| {
+            matches!(
+                record.status,
+                ConsumptionRecordStatus::Accepted | ConsumptionRecordStatus::Discounted
+            )
+        })
+        .map(|record| record.credited_consumption_units.unwrap_or(0))
+        .sum()
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 enum PrimaryPayoutWorkUnitPreview {
     MeteringEvidence {
         metering_work_units: u128,
     },
     PocoPendingSettlement {
-        submitted_receipt_count: u64,
+        unresolved_receipt_count: u64,
         metering_work_units: u128,
     },
     PocoResolvedCredits {
@@ -189,41 +206,67 @@ enum PrimaryPayoutWorkUnitPreview {
     PocoResolvedZeroCredit,
 }
 
+fn preview_primary_payout_work_units_from_summary(
+    summary: TaskConsumptionSummary,
+    metering_work_units: u128,
+) -> PrimaryPayoutWorkUnitPreview {
+    if summary.accepted_receipt_count > 0 {
+        let credited_work_units = summary.total_credited_consumption_units;
+        // Promotion step: once PoCO accepts credited consumption, that
+        // settlement becomes the primary payout authority and legacy
+        // metering/proof work units remain only as the evidence ceiling.
+        PrimaryPayoutWorkUnitPreview::PocoResolvedCredits {
+            credited_work_units,
+            payout_work_units: metering_work_units.min(credited_work_units),
+        }
+    } else if summary.receipt_count > 0 && summary.last_settlement_height.is_some() {
+        // Promotion step: a resolved zero-credit PoCO settlement must
+        // fail closed instead of falling back to legacy metering as the
+        // sole payout authority.
+        PrimaryPayoutWorkUnitPreview::PocoResolvedZeroCredit
+    } else if summary.receipt_count > 0 {
+        // Promotion step: make in-flight PoCO settlement explicit in the
+        // primary payout path even before we fully cut over terminal
+        // settlement finalization to dedicated PoCO helpers.
+        PrimaryPayoutWorkUnitPreview::PocoPendingSettlement {
+            unresolved_receipt_count: summary.receipt_count,
+            metering_work_units,
+        }
+    } else {
+        PrimaryPayoutWorkUnitPreview::MeteringEvidence {
+            metering_work_units,
+        }
+    }
+}
+
 fn preview_primary_payout_work_units(
     st: &StateStore,
     task: &TaskObject,
     metering_work_units: u128,
 ) -> PrimaryPayoutWorkUnitPreview {
-    st.task_consumption_summary(task.task_id)
-        .map(|summary| {
-            if summary.accepted_receipt_count > 0 {
-                let credited_work_units = summary.total_credited_consumption_units;
-                // Promotion step: once PoCO accepts credited consumption, that
-                // settlement becomes the primary payout authority and legacy
-                // metering/proof work units remain only as the evidence ceiling.
-                PrimaryPayoutWorkUnitPreview::PocoResolvedCredits {
-                    credited_work_units,
-                    payout_work_units: metering_work_units.min(credited_work_units),
-                }
-            } else if summary.receipt_count > 0 && summary.last_settlement_height.is_some() {
-                // Promotion step: a resolved zero-credit PoCO settlement must
-                // fail closed instead of falling back to legacy metering as the
-                // sole payout authority.
-                PrimaryPayoutWorkUnitPreview::PocoResolvedZeroCredit
-            } else if summary.receipt_count > 0 {
-                // Promotion step: make in-flight PoCO settlement explicit in the
-                // primary payout path even before we fully cut over terminal
-                // settlement finalization to dedicated PoCO helpers.
-                PrimaryPayoutWorkUnitPreview::PocoPendingSettlement {
-                    submitted_receipt_count: summary.receipt_count,
-                    metering_work_units,
-                }
-            } else {
-                PrimaryPayoutWorkUnitPreview::MeteringEvidence {
-                    metering_work_units,
-                }
+    let records = st.consumption_records_for_task(task.task_id);
+    if !records.is_empty() {
+        let unresolved_receipt_count = unresolved_receipt_count(&records) as u64;
+        if unresolved_receipt_count > 0 {
+            return PrimaryPayoutWorkUnitPreview::PocoPendingSettlement {
+                unresolved_receipt_count,
+                metering_work_units,
+            };
+        }
+
+        let credited_work_units = total_credited_consumption_units(&records);
+        return if credited_work_units > 0 {
+            PrimaryPayoutWorkUnitPreview::PocoResolvedCredits {
+                credited_work_units,
+                payout_work_units: metering_work_units.min(credited_work_units),
             }
-        })
+        } else {
+            PrimaryPayoutWorkUnitPreview::PocoResolvedZeroCredit
+        };
+    }
+
+    st.task_consumption_summary(task.task_id)
+        .map(|summary| preview_primary_payout_work_units_from_summary(summary, metering_work_units))
         .unwrap_or(PrimaryPayoutWorkUnitPreview::MeteringEvidence {
             metering_work_units,
         })
@@ -821,6 +864,34 @@ mod tests {
         .expect("hash")
     }
 
+    fn sample_record(
+        consumer_id: &str,
+        billing_window_id: &str,
+        status: ConsumptionRecordStatus,
+        credited_consumption_units: Option<u128>,
+    ) -> ConsumptionRecord {
+        ConsumptionRecord {
+            key: ConsumptionRecordKey {
+                task_id: 42,
+                consumer_id: consumer_id.to_string(),
+                output_hash: sample_output_hash_hex(),
+                billing_window_id: billing_window_id.to_string(),
+            },
+            worker_id: "worker-alpha".to_string(),
+            tokenizer_id: "llama3-tokenizer".to_string(),
+            tokenizer_version: "1.0.0".to_string(),
+            consumer_class: "bonded_api_client".to_string(),
+            consumed_spans_root: "def456".to_string(),
+            consumed_token_count: 17,
+            claimed_consumption_units: 17,
+            credited_consumption_units,
+            consumer_nonce: 7,
+            accepted_at_unix_ms: 1_775_683_200_123,
+            status,
+            resolution_code: None,
+        }
+    }
+
     fn mark_task_challenged(task: &mut TaskObject) {
         task.status = TaskStatus::Challenged;
         task.challenge_bond = Some(10);
@@ -1033,7 +1104,7 @@ mod tests {
         assert_eq!(
             preview_primary_payout_work_units(&st, &task, 50),
             PrimaryPayoutWorkUnitPreview::PocoPendingSettlement {
-                submitted_receipt_count: 1,
+                unresolved_receipt_count: 1,
                 metering_work_units: 50,
             }
         );
@@ -1060,6 +1131,66 @@ mod tests {
                 credited_work_units: 9,
                 payout_work_units: 9,
             }
+        );
+    }
+
+    #[test]
+    fn preview_primary_payout_work_units_prefers_pending_records_over_stale_summary_credit() {
+        let mut st = StateStore::default();
+        let task = sample_task(TaskStatus::Completed);
+        st.set_task_consumption_summary(TaskConsumptionSummary {
+            task_id: task.task_id,
+            receipt_count: 2,
+            accepted_receipt_count: 1,
+            challenged_receipt_count: 0,
+            total_consumed_tokens: 34,
+            total_claimed_consumption_units: 34,
+            total_credited_consumption_units: 9,
+            last_settlement_height: Some(77),
+        });
+        st.put_consumption_record(sample_record(
+            "consumer-bravo",
+            "bw-1",
+            ConsumptionRecordStatus::Accepted,
+            Some(9),
+        ));
+        st.put_consumption_record(sample_record(
+            "consumer-charlie",
+            "bw-2",
+            ConsumptionRecordStatus::Submitted,
+            None,
+        ));
+
+        assert_eq!(
+            preview_primary_payout_work_units(&st, &task, 50),
+            PrimaryPayoutWorkUnitPreview::PocoPendingSettlement {
+                unresolved_receipt_count: 1,
+                metering_work_units: 50,
+            }
+        );
+        assert_eq!(primary_payout_work_units(&st, &task, 50), 0);
+    }
+
+    #[test]
+    fn reject_if_primary_settlement_pending_counts_challenged_receipts_from_records() {
+        let mut st = StateStore::default();
+        st.put_consumption_record(sample_record(
+            "consumer-bravo",
+            "bw-1",
+            ConsumptionRecordStatus::Accepted,
+            Some(9),
+        ));
+        st.put_consumption_record(sample_record(
+            "consumer-charlie",
+            "bw-2",
+            ConsumptionRecordStatus::Challenged,
+            None,
+        ));
+
+        let err = reject_if_primary_settlement_pending(&st, 42)
+            .expect_err("challenged receipt must keep primary settlement pending");
+        assert!(
+            matches!(err, PouwError::State(msg) if msg.contains("1 unresolved consumption receipt"))
         );
     }
 
