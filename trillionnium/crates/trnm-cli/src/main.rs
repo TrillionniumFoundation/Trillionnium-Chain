@@ -339,8 +339,8 @@ fn load_consumption_receipt_tx_input(path: &Path) -> Result<ConsumptionReceiptTx
 
 fn submit_consumption_receipt_template_override() -> Option<String> {
     [
-        "TRNM_TX_SUBMIT_CONSUMPTION_RECEIPT_CMD",
         "TRNM_TX_SUBMIT_SETTLEMENT_RECEIPT_CMD",
+        "TRNM_TX_SUBMIT_CONSUMPTION_RECEIPT_CMD",
     ]
     .into_iter()
     .find_map(|name| std::env::var(name).ok())
@@ -387,8 +387,8 @@ fn submit_consumption_receipt_tx(receipt_json: PathBuf, signer: Option<String>) 
 
 fn challenge_consumption_template_override() -> Option<String> {
     [
-        "TRNM_TX_CHALLENGE_CONSUMPTION_CMD",
         "TRNM_TX_CHALLENGE_SETTLEMENT_CMD",
+        "TRNM_TX_CHALLENGE_CONSUMPTION_CMD",
     ]
     .into_iter()
     .find_map(|name| std::env::var(name).ok())
@@ -435,8 +435,8 @@ fn challenge_consumption_tx(
 
 fn resolve_consumption_template_override() -> Option<String> {
     [
-        "TRNM_TX_RESOLVE_CONSUMPTION_CMD",
         "TRNM_TX_RESOLVE_SETTLEMENT_CMD",
+        "TRNM_TX_RESOLVE_CONSUMPTION_CMD",
     ]
     .into_iter()
     .find_map(|name| std::env::var(name).ok())
@@ -4376,6 +4376,125 @@ mod tests {
 
         std::env::remove_var("TRNM_TX_SUBMIT_SETTLEMENT_RECEIPT_CMD");
         std::env::remove_var("TRNM_TX_CHALLENGE_SETTLEMENT_CMD");
+        std::env::remove_var("TRNM_TX_RESOLVE_SETTLEMENT_CMD");
+        std::env::remove_var("TRNM_RPC_TX_FILE");
+        let _ = std::fs::remove_dir_all(&root);
+    }
+
+    #[test]
+    fn consumption_settlement_write_paths_prefer_settlement_template_env_over_legacy_aliases() {
+        let _guard = ENV_LOCK.lock().unwrap();
+        std::env::remove_var("TRNM_TX_SUBMIT_CONSUMPTION_RECEIPT_CMD");
+        std::env::remove_var("TRNM_TX_SUBMIT_SETTLEMENT_RECEIPT_CMD");
+        std::env::remove_var("TRNM_TX_CHALLENGE_CONSUMPTION_CMD");
+        std::env::remove_var("TRNM_TX_CHALLENGE_SETTLEMENT_CMD");
+        std::env::remove_var("TRNM_TX_RESOLVE_CONSUMPTION_CMD");
+        std::env::remove_var("TRNM_TX_RESOLVE_SETTLEMENT_CMD");
+
+        let unique = format!(
+            "trnm-cli-consumption-settlement-env-precedence-test-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        );
+        let root = canonical_temp_root().join(unique);
+        std::fs::create_dir_all(&root).unwrap();
+
+        let receipt_path = root.join("receipt.json");
+        std::fs::write(
+            &receipt_path,
+            r#"{
+                "task_id":42,
+                "consumer_id":"consumer-bravo",
+                "output_hash":"0xabc123",
+                "billing_window_id":"bw-7",
+                "consumer_nonce":9
+            }"#,
+        )
+        .unwrap();
+
+        let tx_file = root.join("txs.json");
+        std::env::set_var("TRNM_RPC_TX_FILE", &tx_file);
+
+        let submit_hash = format!("0x{}", "d".repeat(64));
+        let legacy_submit_hash = format!("0x{}", "a".repeat(64));
+        let challenge_hash = format!("0x{}", "e".repeat(64));
+        let legacy_challenge_hash = format!("0x{}", "b".repeat(64));
+        let resolve_hash = format!("0x{}", "f".repeat(64));
+        let legacy_resolve_hash = format!("0x{}", "c".repeat(64));
+
+        std::env::set_var(
+            "TRNM_TX_SUBMIT_SETTLEMENT_RECEIPT_CMD",
+            format!("printf '%s' 'tx_hash={}'", submit_hash),
+        );
+        std::env::set_var(
+            "TRNM_TX_SUBMIT_CONSUMPTION_RECEIPT_CMD",
+            format!("printf '%s' 'tx_hash={}'", legacy_submit_hash),
+        );
+        std::env::set_var(
+            "TRNM_TX_CHALLENGE_SETTLEMENT_CMD",
+            format!("printf '%s' 'tx_hash={}'", challenge_hash),
+        );
+        std::env::set_var(
+            "TRNM_TX_CHALLENGE_CONSUMPTION_CMD",
+            format!("printf '%s' 'tx_hash={}'", legacy_challenge_hash),
+        );
+        std::env::set_var(
+            "TRNM_TX_RESOLVE_SETTLEMENT_CMD",
+            format!("printf '%s' 'tx_hash={}'", resolve_hash),
+        );
+        std::env::set_var(
+            "TRNM_TX_RESOLVE_CONSUMPTION_CMD",
+            format!("printf '%s' 'tx_hash={}'", legacy_resolve_hash),
+        );
+
+        submit_consumption_receipt_tx(receipt_path, None).unwrap();
+        challenge_consumption_tx(
+            42,
+            "consumer-bravo".into(),
+            "0xabc123".into(),
+            "bw-7".into(),
+            "arbiter-alpha".into(),
+            None,
+        )
+        .unwrap();
+        resolve_consumption_tx(
+            42,
+            "consumer-bravo".into(),
+            "0xabc123".into(),
+            "bw-7".into(),
+            ConsumptionResolutionDecisionArg::Accept,
+            None,
+            None,
+            "arbiter-alpha".into(),
+            None,
+        )
+        .unwrap();
+
+        let raw = std::fs::read_to_string(&tx_file).unwrap();
+        let parsed: serde_json::Value = serde_json::from_str(&raw).unwrap();
+        for tx_hash in [&submit_hash, &challenge_hash, &resolve_hash] {
+            assert_eq!(
+                parsed[tx_hash.as_str()]["tx_hash"].as_str(),
+                Some(tx_hash.as_str())
+            );
+            assert_eq!(parsed[tx_hash.as_str()]["status"].as_str(), Some("pending"));
+        }
+        for tx_hash in [
+            &legacy_submit_hash,
+            &legacy_challenge_hash,
+            &legacy_resolve_hash,
+        ] {
+            assert!(parsed.get(tx_hash.as_str()).is_none());
+        }
+
+        std::env::remove_var("TRNM_TX_SUBMIT_CONSUMPTION_RECEIPT_CMD");
+        std::env::remove_var("TRNM_TX_SUBMIT_SETTLEMENT_RECEIPT_CMD");
+        std::env::remove_var("TRNM_TX_CHALLENGE_CONSUMPTION_CMD");
+        std::env::remove_var("TRNM_TX_CHALLENGE_SETTLEMENT_CMD");
+        std::env::remove_var("TRNM_TX_RESOLVE_CONSUMPTION_CMD");
         std::env::remove_var("TRNM_TX_RESOLVE_SETTLEMENT_CMD");
         std::env::remove_var("TRNM_RPC_TX_FILE");
         let _ = std::fs::remove_dir_all(&root);
