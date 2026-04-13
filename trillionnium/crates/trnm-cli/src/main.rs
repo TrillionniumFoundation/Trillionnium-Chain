@@ -858,14 +858,23 @@ fn parse_consumption_summary_query_response(
     let response_data = response.and_then(|value| json_get_alias(value, &["data"]));
     let summary = [
         Some(&parsed),
-        json_get_alias(&parsed, &["settlement_preview", "summary"]),
+        json_get_alias(
+            &parsed,
+            &["settlement_preview", "consumption_summary", "summary"],
+        ),
         result,
-        result.and_then(|value| json_get_alias(value, &["settlement_preview", "summary"])),
+        result.and_then(|value| {
+            json_get_alias(value, &["settlement_preview", "consumption_summary", "summary"])
+        }),
         data,
-        data.and_then(|value| json_get_alias(value, &["settlement_preview", "summary"])),
+        data.and_then(|value| {
+            json_get_alias(value, &["settlement_preview", "consumption_summary", "summary"])
+        }),
         response,
         response_data,
-        response_data.and_then(|value| json_get_alias(value, &["settlement_preview", "summary"])),
+        response_data.and_then(|value| {
+            json_get_alias(value, &["settlement_preview", "consumption_summary", "summary"])
+        }),
     ]
     .into_iter()
     .flatten()
@@ -959,14 +968,20 @@ fn parse_consumption_receipts_query_response(
     let mut receipts = None;
     for candidate in [
         Some(&parsed),
-        json_get_alias(&parsed, &["settlement_receipts"]),
+        json_get_alias(&parsed, &["settlement_receipts", "consumption_receipts"]),
         result,
-        result.and_then(|value| json_get_alias(value, &["settlement_receipts"])),
+        result.and_then(|value| {
+            json_get_alias(value, &["settlement_receipts", "consumption_receipts"])
+        }),
         data,
-        data.and_then(|value| json_get_alias(value, &["settlement_receipts"])),
+        data.and_then(|value| {
+            json_get_alias(value, &["settlement_receipts", "consumption_receipts"])
+        }),
         response,
         response_data,
-        response_data.and_then(|value| json_get_alias(value, &["settlement_receipts"])),
+        response_data.and_then(|value| {
+            json_get_alias(value, &["settlement_receipts", "consumption_receipts"])
+        }),
     ]
     .into_iter()
     .flatten()
@@ -975,7 +990,11 @@ fn parse_consumption_receipts_query_response(
             receipts = Some(array);
             break;
         }
-        if let Some(array) = json_get_alias(candidate, &["receipts", "settlement_receipts"])
+        if let Some(array) =
+            json_get_alias(
+                candidate,
+                &["receipts", "settlement_receipts", "consumption_receipts"],
+            )
             .and_then(|value| value.as_array())
         {
             envelope_task_id = json_u64_alias(candidate, &["task_id"]);
@@ -8021,6 +8040,17 @@ mod tests {
     }
 
     #[test]
+    fn parse_consumption_summary_query_response_accepts_consumption_summary_wrapper() {
+        let parsed = parse_consumption_summary_query_response(
+            r#"{"consumption_summary":{"task_id":"42","receipt_count":1,"accepted_receipt_count":1}}"#,
+            42,
+        )
+        .expect("parse consumption_summary wrapper");
+        assert_eq!(json_u64_alias(&parsed, &["task_id"]), Some(42));
+        assert_eq!(parsed.get("receipt_count"), Some(&serde_json::json!(1)));
+    }
+
+    #[test]
     fn consumption_summary_query_prefers_settlement_preview_template_override() {
         let _guard = ENV_LOCK.lock().unwrap();
         std::env::remove_var("TRNM_QUERY_SETTLEMENT_PREVIEW_CMD");
@@ -8136,6 +8166,20 @@ mod tests {
             42,
         )
         .expect("parse settlement_receipts wrapper");
+        assert_eq!(parsed.as_array().map(Vec::len), Some(1));
+        assert_eq!(
+            parsed[0].get("consumer_id"),
+            Some(&serde_json::json!("consumer-bravo"))
+        );
+    }
+
+    #[test]
+    fn parse_consumption_receipts_query_response_accepts_consumption_receipts_wrapper() {
+        let parsed = parse_consumption_receipts_query_response(
+            r#"{"consumption_receipts":{"task_id":"42","receipts":[{"consumer_id":"consumer-bravo","output_hash":"abc123","billing_window_id":"bw-1"}]}}"#,
+            42,
+        )
+        .expect("parse consumption_receipts wrapper");
         assert_eq!(parsed.as_array().map(Vec::len), Some(1));
         assert_eq!(
             parsed[0].get("consumer_id"),
