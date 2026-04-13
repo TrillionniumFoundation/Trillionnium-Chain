@@ -92,10 +92,7 @@ enum TxCommand {
         signer: Option<String>,
     },
     /// Challenge a PoCO consumption receipt tx
-    #[command(
-        name = "challenge-consumption",
-        visible_alias = "challenge-settlement"
-    )]
+    #[command(name = "challenge-consumption", visible_alias = "challenge-settlement")]
     ChallengeConsumption {
         task_id: u64,
         #[arg(long)]
@@ -110,10 +107,7 @@ enum TxCommand {
         signer: Option<String>,
     },
     /// Resolve a PoCO consumption receipt tx
-    #[command(
-        name = "resolve-consumption",
-        visible_alias = "resolve-settlement"
-    )]
+    #[command(name = "resolve-consumption", visible_alias = "resolve-settlement")]
     ResolveConsumption {
         task_id: u64,
         #[arg(long)]
@@ -205,10 +199,7 @@ enum QueryCommand {
     #[command(visible_alias = "consumption-summary")]
     SettlementPreview { task_id: u64 },
     /// Query task PoCO settlement receipts via RPC
-    #[command(
-        name = "settlement-receipts",
-        visible_alias = "consumption-receipts"
-    )]
+    #[command(name = "settlement-receipts", visible_alias = "consumption-receipts")]
     ConsumptionReceipts {
         task_id: u64,
         #[arg(long, default_value_t = 20)]
@@ -4093,7 +4084,10 @@ mod tests {
         let rendered = err.to_string();
         assert!(rendered.contains("approve"), "unexpected error: {rendered}");
         assert!(rendered.contains("accept"), "unexpected error: {rendered}");
-        assert!(rendered.contains("discount"), "unexpected error: {rendered}");
+        assert!(
+            rendered.contains("discount"),
+            "unexpected error: {rendered}"
+        );
         assert!(rendered.contains("reject"), "unexpected error: {rendered}");
         assert!(rendered.contains("slash"), "unexpected error: {rendered}");
     }
@@ -4129,16 +4123,16 @@ mod tests {
     }
 
     #[test]
-    fn consumption_settlement_cli_parser_accepts_consumption_receipts_query_command() {
+    fn consumption_settlement_cli_parser_accepts_settlement_receipts_query_command() {
         let args = Args::try_parse_from([
             "trnm-cli",
             "query",
-            "consumption-receipts",
+            "settlement-receipts",
             "42",
             "--limit",
             "7",
         ])
-        .expect("parse consumption-receipts args");
+        .expect("parse settlement-receipts args");
 
         match args.cmd {
             Command::Query {
@@ -4152,16 +4146,16 @@ mod tests {
     }
 
     #[test]
-    fn consumption_settlement_cli_parser_accepts_settlement_receipts_query_alias() {
+    fn consumption_settlement_cli_parser_accepts_consumption_receipts_query_alias() {
         let args = Args::try_parse_from([
             "trnm-cli",
             "query",
-            "settlement-receipts",
+            "consumption-receipts",
             "42",
             "--limit",
             "7",
         ])
-        .expect("parse settlement-receipts args");
+        .expect("parse consumption-receipts args");
 
         match args.cmd {
             Command::Query {
@@ -4189,6 +4183,14 @@ mod tests {
         assert!(query_help.contains("consumption-summary"));
         assert!(query_help.contains("settlement-receipts"));
         assert!(query_help.contains("consumption-receipts"));
+        assert!(
+            query_help.find("settlement-preview") < query_help.find("consumption-summary"),
+            "query help should keep settlement-preview primary: {query_help}"
+        );
+        assert!(
+            query_help.find("settlement-receipts") < query_help.find("consumption-receipts"),
+            "query help should keep settlement-receipts primary: {query_help}"
+        );
 
         let mut root = Args::command();
         let tx = root
@@ -4203,6 +4205,18 @@ mod tests {
         assert!(tx_help.contains("challenge-settlement"));
         assert!(tx_help.contains("resolve-consumption"));
         assert!(tx_help.contains("resolve-settlement"));
+        assert!(
+            tx_help.find("submit-consumption-receipt") < tx_help.find("submit-settlement-receipt"),
+            "tx help should keep submit-consumption-receipt primary: {tx_help}"
+        );
+        assert!(
+            tx_help.find("challenge-consumption") < tx_help.find("challenge-settlement"),
+            "tx help should keep challenge-consumption primary: {tx_help}"
+        );
+        assert!(
+            tx_help.find("resolve-consumption") < tx_help.find("resolve-settlement"),
+            "tx help should keep resolve-consumption primary: {tx_help}"
+        );
     }
 
     #[test]
