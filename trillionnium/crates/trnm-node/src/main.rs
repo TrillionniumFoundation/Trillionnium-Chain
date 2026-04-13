@@ -3026,13 +3026,8 @@ fn challenger_from_consumption_resolution_code(code: &str) -> Option<String> {
 fn preapply_challenger_account_of(st: &StateStore, tx: &MockTx) -> Option<String> {
     match tx {
         MockTx::Resolve { task_id, .. } => st.get_task(*task_id).and_then(|task| task.challenger),
-        MockTx::ResolveConsumptionReceipt { key, .. } => st
-            .consumption_record(&ConsumptionRecordKey {
-                task_id: key.task_id,
-                consumer_id: key.consumer_id.clone(),
-                output_hash: key.output_hash.clone(),
-                billing_window_id: key.billing_window_id.clone(),
-            })
+        MockTx::ResolveConsumptionReceipt { .. } => consumption_record_key_of(tx)
+            .and_then(|key| st.consumption_record(&key))
             .and_then(|record| {
                 record
                     .resolution_code
@@ -3251,22 +3246,7 @@ fn format_task_consumption_summary_event_fields(summary: &TaskConsumptionSummary
 }
 
 fn consumption_record_key_for_event(tx: &MockTx) -> Option<ConsumptionRecordKey> {
-    match tx {
-        MockTx::SubmitConsumptionReceipt { receipt } => Some(ConsumptionRecordKey {
-            task_id: receipt.task_id,
-            consumer_id: receipt.consumer_id.clone(),
-            output_hash: receipt.output_hash.clone(),
-            billing_window_id: receipt.billing_window_id.clone(),
-        }),
-        MockTx::ChallengeConsumptionReceipt { key, .. }
-        | MockTx::ResolveConsumptionReceipt { key, .. } => Some(ConsumptionRecordKey {
-            task_id: key.task_id,
-            consumer_id: key.consumer_id.clone(),
-            output_hash: key.output_hash.clone(),
-            billing_window_id: key.billing_window_id.clone(),
-        }),
-        _ => None,
-    }
+    consumption_record_key_of(tx)
 }
 
 fn consumption_record_status_name(status: trnm_state::ConsumptionRecordStatus) -> &'static str {
@@ -4027,6 +4007,54 @@ fn pseudo_object_id_for_account(account: &str) -> u64 {
     pseudo_object_id_for_state_slot("balance", account)
 }
 
+fn consumer_consumption_nonce_ref(consumer_id: &str) -> ObjectRef {
+    ObjectRef {
+        id: pseudo_object_id_for_state_slot("consumer_consumption_nonce", consumer_id),
+        version: 1,
+    }
+}
+
+fn consumption_record_ref(key: &ConsumptionRecordKey) -> ObjectRef {
+    ObjectRef {
+        id: pseudo_object_id_for_state_slot("consumption_record", &key.storage_key()),
+        version: 1,
+    }
+}
+
+fn task_consumption_summary_ref(task_id: u64) -> ObjectRef {
+    ObjectRef {
+        id: pseudo_object_id_for_state_slot("task_consumption_summary", &task_id.to_string()),
+        version: 1,
+    }
+}
+
+fn consumption_record_key_of(tx: &MockTx) -> Option<ConsumptionRecordKey> {
+    match tx {
+        MockTx::SubmitConsumptionReceipt { receipt } => Some(ConsumptionRecordKey {
+            task_id: receipt.task_id,
+            consumer_id: receipt.consumer_id.clone(),
+            output_hash: receipt.output_hash.clone(),
+            billing_window_id: receipt.billing_window_id.clone(),
+        }),
+        MockTx::ChallengeConsumptionReceipt { key, .. }
+        | MockTx::ResolveConsumptionReceipt { key, .. } => Some(ConsumptionRecordKey {
+            task_id: key.task_id,
+            consumer_id: key.consumer_id.clone(),
+            output_hash: key.output_hash.clone(),
+            billing_window_id: key.billing_window_id.clone(),
+        }),
+        _ => None,
+    }
+}
+
+fn receipt_settlement_conflict_refs(key: &ConsumptionRecordKey) -> (ObjectRef, ObjectRef, ObjectRef) {
+    (
+        consumer_consumption_nonce_ref(&key.consumer_id),
+        consumption_record_ref(key),
+        task_consumption_summary_ref(key.task_id),
+    )
+}
+
 fn summarize_hot_objects(st: &StateStore, txs: &[MockTx]) -> HotObjectSummary {
     let mut labels = BTreeMap::new();
     let mut hot_tx_count = 0usize;
@@ -4165,26 +4193,9 @@ fn read_write_decl(st: &StateStore, tx: &MockTx, tx_id: u64) -> Tx {
                 write_set.push(challenger_obj);
             }
         }
-        MockTx::SubmitConsumptionReceipt { receipt } => {
-            let replay_key = receipt.replay_key().storage_key();
-            let consumer_nonce_obj = ObjectRef {
-                id: pseudo_object_id_for_state_slot(
-                    "consumer_consumption_nonce",
-                    &receipt.consumer_id,
-                ),
-                version: 1,
-            };
-            let receipt_record_obj = ObjectRef {
-                id: pseudo_object_id_for_state_slot("consumption_record", &replay_key),
-                version: 1,
-            };
-            let task_summary_obj = ObjectRef {
-                id: pseudo_object_id_for_state_slot(
-                    "task_consumption_summary",
-                    &task_id.to_string(),
-                ),
-                version: 1,
-            };
+        MockTx::SubmitConsumptionReceipt { .. } => {
+            let key = consumption_record_key_of(tx).expect("receipt tx key");
+            let (consumer_nonce_obj, receipt_record_obj, task_summary_obj) = receipt_settlement_conflict_refs(&key);
             read_set.push(consumer_nonce_obj.clone());
             write_set.push(consumer_nonce_obj);
             read_set.push(receipt_record_obj.clone());
@@ -4192,26 +4203,9 @@ fn read_write_decl(st: &StateStore, tx: &MockTx, tx_id: u64) -> Tx {
             read_set.push(task_summary_obj.clone());
             write_set.push(task_summary_obj);
         }
-        MockTx::ChallengeConsumptionReceipt { key, .. } => {
-            let replay_key = key.storage_key();
-            let consumer_nonce_obj = ObjectRef {
-                id: pseudo_object_id_for_state_slot(
-                    "consumer_consumption_nonce",
-                    &key.consumer_id,
-                ),
-                version: 1,
-            };
-            let receipt_record_obj = ObjectRef {
-                id: pseudo_object_id_for_state_slot("consumption_record", &replay_key),
-                version: 1,
-            };
-            let task_summary_obj = ObjectRef {
-                id: pseudo_object_id_for_state_slot(
-                    "task_consumption_summary",
-                    &task_id.to_string(),
-                ),
-                version: 1,
-            };
+        MockTx::ChallengeConsumptionReceipt { .. } => {
+            let key = consumption_record_key_of(tx).expect("receipt tx key");
+            let (consumer_nonce_obj, receipt_record_obj, task_summary_obj) = receipt_settlement_conflict_refs(&key);
             // Keep the consumer nonce lane visible across the full receipt lifecycle so
             // challenge ordering cannot bypass an in-flight submit for the same consumer.
             read_set.push(consumer_nonce_obj);
@@ -4220,26 +4214,9 @@ fn read_write_decl(st: &StateStore, tx: &MockTx, tx_id: u64) -> Tx {
             read_set.push(task_summary_obj.clone());
             write_set.push(task_summary_obj);
         }
-        MockTx::ResolveConsumptionReceipt { key, .. } => {
-            let replay_key = key.storage_key();
-            let consumer_nonce_obj = ObjectRef {
-                id: pseudo_object_id_for_state_slot(
-                    "consumer_consumption_nonce",
-                    &key.consumer_id,
-                ),
-                version: 1,
-            };
-            let receipt_record_obj = ObjectRef {
-                id: pseudo_object_id_for_state_slot("consumption_record", &replay_key),
-                version: 1,
-            };
-            let task_summary_obj = ObjectRef {
-                id: pseudo_object_id_for_state_slot(
-                    "task_consumption_summary",
-                    &task_id.to_string(),
-                ),
-                version: 1,
-            };
+        MockTx::ResolveConsumptionReceipt { .. } => {
+            let key = consumption_record_key_of(tx).expect("receipt tx key");
+            let (consumer_nonce_obj, receipt_record_obj, task_summary_obj) = receipt_settlement_conflict_refs(&key);
             let resolve_authority_obj = ObjectRef {
                 id: pseudo_object_id_for_state_slot("gov_param", "resolve_authority"),
                 version: 1,
@@ -15172,6 +15149,56 @@ mod tests {
             132,
         );
         assert_receipt_event_type(&resolve_line, "resolve_consumption_receipt");
+    }
+
+    #[test]
+    fn receipt_settlement_conflict_refs_stay_canonical_across_receipt_lifecycle() {
+        let result_hash = [0x2b; 32];
+        let receipt = sample_consumption_receipt(42, "worker-alpha", "consumer-bravo", result_hash);
+        let submit_tx = MockTx::SubmitConsumptionReceipt {
+            receipt: receipt.clone(),
+        };
+        let challenge_tx = MockTx::ChallengeConsumptionReceipt {
+            key: receipt.replay_key(),
+            challenger: "auditor-1".to_string(),
+        };
+        let resolve_tx = MockTx::ResolveConsumptionReceipt {
+            key: receipt.replay_key(),
+            decision: ConsumptionResolveDecision::Accept,
+            credited_consumption_units: Some(receipt.consumed_token_count.into()),
+            resolution_code: None,
+            resolver: "resolver-1".to_string(),
+        };
+
+        let canonical_key = consumption_record_key_of(&submit_tx).expect("submit key");
+        assert_eq!(consumption_record_key_of(&challenge_tx), Some(canonical_key.clone()));
+        assert_eq!(consumption_record_key_of(&resolve_tx), Some(canonical_key.clone()));
+
+        let (consumer_nonce_ref, record_ref, summary_ref) = receipt_settlement_conflict_refs(&canonical_key);
+
+        let submit_decl = read_write_decl(&StateStore::default(), &submit_tx, 1);
+        assert!(submit_decl.read_set.contains(&consumer_nonce_ref));
+        assert!(submit_decl.read_set.contains(&record_ref));
+        assert!(submit_decl.read_set.contains(&summary_ref));
+        assert!(submit_decl.write_set.contains(&consumer_nonce_ref));
+        assert!(submit_decl.write_set.contains(&record_ref));
+        assert!(submit_decl.write_set.contains(&summary_ref));
+
+        let challenge_decl = read_write_decl(&StateStore::default(), &challenge_tx, 2);
+        assert!(challenge_decl.read_set.contains(&consumer_nonce_ref));
+        assert!(challenge_decl.read_set.contains(&record_ref));
+        assert!(challenge_decl.read_set.contains(&summary_ref));
+        assert!(!challenge_decl.write_set.contains(&consumer_nonce_ref));
+        assert!(challenge_decl.write_set.contains(&record_ref));
+        assert!(challenge_decl.write_set.contains(&summary_ref));
+
+        let resolve_decl = read_write_decl(&StateStore::default(), &resolve_tx, 3);
+        assert!(resolve_decl.read_set.contains(&consumer_nonce_ref));
+        assert!(resolve_decl.read_set.contains(&record_ref));
+        assert!(resolve_decl.read_set.contains(&summary_ref));
+        assert!(!resolve_decl.write_set.contains(&consumer_nonce_ref));
+        assert!(resolve_decl.write_set.contains(&record_ref));
+        assert!(resolve_decl.write_set.contains(&summary_ref));
     }
 
     #[test]
