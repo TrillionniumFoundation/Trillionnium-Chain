@@ -1411,6 +1411,11 @@ fn maybe_pay_challenge_success_bounty(
     require_canonical_actor_id_state(challenger, "challenger identity").map_err(|_| {
         PouwError::State("challenge success bounty requires canonical challenger identity".into())
     })?;
+    // Promotion gate: challenger settlement must not bypass canonical PoCO
+    // receipt finality. Metering/proof inputs can still cap the eventual
+    // bounty, but they must not authorize payout while primary settlement is
+    // still pending.
+    reject_if_primary_settlement_pending(st, task.task_id)?;
 
     let configured_bounty = effective_challenge_success_bounty(st, task)?;
     if configured_bounty == 0 {
@@ -14910,7 +14915,7 @@ mod tests {
     }
 
     #[test]
-    fn challenge_success_bounty_rejects_zero_challenge_bond_metadata() {
+    fn challenge_success_bounty_rejects_pending_poco_primary_settlement() {
         let mut st = seeded_state();
         st.set_balance("challenger", 100);
         st.set_balance("worker1", 50);
@@ -14938,6 +14943,71 @@ mod tests {
         )
         .unwrap();
 
+        st.set_task_consumption_summary(trnm_state::TaskConsumptionSummary {
+            task_id: 40_223,
+            receipt_count: 1,
+            accepted_receipt_count: 0,
+            challenged_receipt_count: 0,
+            total_consumed_tokens: 9,
+            total_claimed_consumption_units: 9,
+            total_credited_consumption_units: 0,
+            last_settlement_height: None,
+        });
+
+        let mut malformed = st.get_task(r5.id).unwrap();
+        malformed.status = TaskStatus::Slashed;
+        malformed.challenge_bond_forfeited = Some(false);
+        let next = st.update_task(r5, malformed).unwrap();
+        let task = st.get_task(next.id).unwrap();
+        let before_challenger = st.balance_of("challenger");
+        let before_lock = st.balance_of(&worker_stake_lock_account(40_223));
+        let before_slash_treasury = st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT);
+
+        let err = maybe_pay_challenge_success_bounty(&mut st, &task)
+            .expect_err("pending PoCO settlement must block challenge-success bounty payout");
+        assert!(
+            matches!(err, PouwError::State(msg) if msg.contains("poco primary settlement pending"))
+        );
+        assert_eq!(st.balance_of("challenger"), before_challenger);
+        assert_eq!(
+            st.balance_of(&worker_stake_lock_account(40_223)),
+            before_lock
+        );
+        assert_eq!(
+            st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT),
+            before_slash_treasury
+        );
+    }
+
+    #[test]
+    fn challenge_success_bounty_rejects_zero_challenge_bond_metadata() {
+        let mut st = seeded_state();
+        st.set_balance("challenger", 100);
+        st.set_balance("worker1", 50);
+        st.set_gov_param_bootstrap_unchecked(40_241, "challenge_success_bounty".into(), "1".into())
+            .unwrap();
+        st.set_gov_param_bootstrap_unchecked(40_242, "min_worker_stake".into(), "50".into())
+            .unwrap();
+
+        let r1 = apply_create_task(&mut st, 40_243, "alice".into(), 10).unwrap();
+        let result_hash = [4u8; 32];
+        let reveal_salt = [8u8; 32];
+        let committed = compute_commitment(40_243, &result_hash, &reveal_salt, "worker1");
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 =
+            apply_commit_result_at_height(&mut st, r2, "worker1".into(), committed, 100).unwrap();
+        let r4 = apply_reveal_result_at_height(&mut st, r3, result_hash, reveal_salt, None, 110)
+            .unwrap();
+        let r5 = apply_challenge_at_height(
+            &mut st,
+            r4,
+            "challenger".into(),
+            10,
+            "challenger".into(),
+            120,
+        )
+        .unwrap();
+
         let mut malformed = st.get_task(r5.id).unwrap();
         malformed.status = TaskStatus::Slashed;
         malformed.challenge_bond = Some(0);
@@ -14945,7 +15015,7 @@ mod tests {
         let next = st.update_task(r5, malformed).unwrap();
         let task = st.get_task(next.id).unwrap();
         let before_challenger = st.balance_of("challenger");
-        let before_lock = st.balance_of(&worker_stake_lock_account(40_223));
+        let before_lock = st.balance_of(&worker_stake_lock_account(40_243));
         let before_slash_treasury = st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT);
 
         let err = maybe_pay_challenge_success_bounty(&mut st, &task).expect_err(
@@ -14956,7 +15026,7 @@ mod tests {
         );
         assert_eq!(st.balance_of("challenger"), before_challenger);
         assert_eq!(
-            st.balance_of(&worker_stake_lock_account(40_223)),
+            st.balance_of(&worker_stake_lock_account(40_243)),
             before_lock
         );
         assert_eq!(
