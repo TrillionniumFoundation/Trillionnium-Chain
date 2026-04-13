@@ -17,6 +17,8 @@
 3. `scripts/run_request_fault_injection.sh`
 4. challenge reexec 入口（必跑；优先使用 `TRNM_CHALLENGE_REEXEC_ENTRY` 显式固定入口，否则按脚本内置候选列表做确定性解析；若仍无法解析到入口则直接记为 FAIL）
 
+> BL09 retirement-prep note: 本页保留的 `trnm-pouw` 包名、测试切片与证据日志，只用于在 PoCO 迁移期间固定兼容性、留痕与 provenance / audit evidence。不要把这些引用解读为 PoUW 仍是默认 payout authority，或默认 work-unit payout path 仍被重新授权。
+
 输出目录统一为：
 
 - `run/health/evidence-<timestamp>/`
