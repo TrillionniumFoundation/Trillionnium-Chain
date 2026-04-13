@@ -139,28 +139,88 @@ pub fn claimed_consumption_units(receipt: &ConsumptionReceipt) -> u128 {
     receipt.consumed_token_count as u128
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum PrimaryPayoutWorkUnitPreview {
+    MeteringEvidence {
+        metering_work_units: u128,
+    },
+    PocoPendingSettlement {
+        submitted_receipt_count: u64,
+        metering_work_units: u128,
+    },
+    PocoResolvedCredits {
+        credited_work_units: u128,
+        payout_work_units: u128,
+    },
+    PocoResolvedZeroCredit,
+}
+
+fn preview_primary_payout_work_units(
+    st: &StateStore,
+    task: &TaskObject,
+    metering_work_units: u128,
+) -> PrimaryPayoutWorkUnitPreview {
+    st.task_consumption_summary(task.task_id)
+        .map(|summary| {
+            if summary.accepted_receipt_count > 0 {
+                let credited_work_units = summary.total_credited_consumption_units;
+                // Promotion step: once PoCO accepts credited consumption, that
+                // settlement becomes the primary payout authority and legacy
+                // metering/proof work units remain only as the evidence ceiling.
+                PrimaryPayoutWorkUnitPreview::PocoResolvedCredits {
+                    credited_work_units,
+                    payout_work_units: metering_work_units.min(credited_work_units),
+                }
+            } else if summary.receipt_count > 0 && summary.last_settlement_height.is_some() {
+                // Promotion step: a resolved zero-credit PoCO settlement must
+                // fail closed instead of falling back to legacy metering as the
+                // sole payout authority.
+                PrimaryPayoutWorkUnitPreview::PocoResolvedZeroCredit
+            } else if summary.receipt_count > 0 {
+                // Promotion step: make in-flight PoCO settlement explicit in the
+                // primary payout path even before we fully cut over terminal
+                // settlement finalization to dedicated PoCO helpers.
+                PrimaryPayoutWorkUnitPreview::PocoPendingSettlement {
+                    submitted_receipt_count: summary.receipt_count,
+                    metering_work_units,
+                }
+            } else {
+                PrimaryPayoutWorkUnitPreview::MeteringEvidence {
+                    metering_work_units,
+                }
+            }
+        })
+        .unwrap_or(PrimaryPayoutWorkUnitPreview::MeteringEvidence {
+            metering_work_units,
+        })
+}
+
+fn finalize_primary_payout_work_units(preview: PrimaryPayoutWorkUnitPreview) -> u128 {
+    match preview {
+        PrimaryPayoutWorkUnitPreview::MeteringEvidence {
+            metering_work_units,
+        }
+        | PrimaryPayoutWorkUnitPreview::PocoPendingSettlement {
+            metering_work_units,
+            ..
+        } => metering_work_units,
+        PrimaryPayoutWorkUnitPreview::PocoResolvedCredits {
+            payout_work_units, ..
+        } => payout_work_units,
+        PrimaryPayoutWorkUnitPreview::PocoResolvedZeroCredit => 0,
+    }
+}
+
 pub(crate) fn primary_payout_work_units(
     st: &StateStore,
     task: &TaskObject,
     metering_work_units: u128,
 ) -> u128 {
-    st.task_consumption_summary(task.task_id)
-        .map(|summary| {
-            if summary.accepted_receipt_count > 0 {
-                // Migration step: once PoCO accepts credited consumption, that
-                // settlement becomes the primary payout authority and legacy
-                // metering/proof work units remain only as the evidence ceiling.
-                metering_work_units.min(summary.total_credited_consumption_units)
-            } else if summary.receipt_count > 0 && summary.last_settlement_height.is_some() {
-                // Promotion step: a resolved zero-credit PoCO settlement must
-                // fail closed instead of falling back to legacy metering as the
-                // sole payout authority.
-                0
-            } else {
-                metering_work_units
-            }
-        })
-        .unwrap_or(metering_work_units)
+    finalize_primary_payout_work_units(preview_primary_payout_work_units(
+        st,
+        task,
+        metering_work_units,
+    ))
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -906,6 +966,54 @@ mod tests {
         });
 
         assert_eq!(primary_payout_work_units(&st, &task, 50), 50);
+    }
+
+    #[test]
+    fn preview_primary_payout_work_units_marks_pending_poco_settlement() {
+        let mut st = StateStore::default();
+        let task = sample_task(TaskStatus::Completed);
+        st.set_task_consumption_summary(TaskConsumptionSummary {
+            task_id: task.task_id,
+            receipt_count: 1,
+            accepted_receipt_count: 0,
+            challenged_receipt_count: 0,
+            total_consumed_tokens: 17,
+            total_claimed_consumption_units: 17,
+            total_credited_consumption_units: 0,
+            last_settlement_height: None,
+        });
+
+        assert_eq!(
+            preview_primary_payout_work_units(&st, &task, 50),
+            PrimaryPayoutWorkUnitPreview::PocoPendingSettlement {
+                submitted_receipt_count: 1,
+                metering_work_units: 50,
+            }
+        );
+    }
+
+    #[test]
+    fn preview_primary_payout_work_units_marks_resolved_poco_credit_authority() {
+        let mut st = StateStore::default();
+        let task = sample_task(TaskStatus::Completed);
+        st.set_task_consumption_summary(TaskConsumptionSummary {
+            task_id: task.task_id,
+            receipt_count: 2,
+            accepted_receipt_count: 1,
+            challenged_receipt_count: 0,
+            total_consumed_tokens: 17,
+            total_claimed_consumption_units: 17,
+            total_credited_consumption_units: 9,
+            last_settlement_height: Some(77),
+        });
+
+        assert_eq!(
+            preview_primary_payout_work_units(&st, &task, 50),
+            PrimaryPayoutWorkUnitPreview::PocoResolvedCredits {
+                credited_work_units: 9,
+                payout_work_units: 9,
+            }
+        );
     }
 
     #[test]
