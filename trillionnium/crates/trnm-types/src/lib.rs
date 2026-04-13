@@ -226,7 +226,7 @@ impl TaskMetadataCompatibilityReport {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Default)]
 pub struct TaskMetadata {
     #[serde(default)]
     pub note: Option<String>,
@@ -240,12 +240,47 @@ pub struct TaskMetadata {
     pub provenance: Option<TaskProvenanceMetadata>,
     #[serde(default)]
     pub metering: Option<TaskMeteringSnapshot>,
-    #[serde(
-        default,
-        alias = "settlement_snapshot",
-        skip_serializing_if = "Option::is_none"
-    )]
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     pub settlement: Option<TaskSettlementSnapshot>,
+}
+
+#[derive(Debug, Deserialize, Default)]
+struct TaskMetadataWire {
+    #[serde(default)]
+    note: Option<String>,
+    #[serde(default)]
+    task_type: Option<String>,
+    #[serde(default)]
+    input_hash: Option<String>,
+    #[serde(default)]
+    model: Option<TaskModelMetadata>,
+    #[serde(default)]
+    provenance: Option<TaskProvenanceMetadata>,
+    #[serde(default)]
+    metering: Option<TaskMeteringSnapshot>,
+    #[serde(default)]
+    settlement: Option<TaskSettlementSnapshot>,
+    #[serde(default)]
+    settlement_snapshot: Option<TaskSettlementSnapshot>,
+}
+
+impl<'de> Deserialize<'de> for TaskMetadata {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        let wire = TaskMetadataWire::deserialize(deserializer)?;
+
+        Ok(Self {
+            note: wire.note,
+            task_type: wire.task_type,
+            input_hash: wire.input_hash,
+            model: wire.model,
+            provenance: wire.provenance,
+            metering: wire.metering,
+            settlement: wire.settlement.or(wire.settlement_snapshot),
+        })
+    }
 }
 
 fn has_canonical_metadata_atom(value: &str) -> bool {

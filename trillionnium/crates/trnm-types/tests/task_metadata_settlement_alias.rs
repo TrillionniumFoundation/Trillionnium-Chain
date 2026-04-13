@@ -50,3 +50,46 @@ fn settlement_snapshot_alias_serializes_back_under_canonical_settlement_key() {
     assert!(value.get("settlement").is_some());
     assert!(value.get("settlement_snapshot").is_none());
 }
+
+#[test]
+fn canonical_settlement_wins_when_transitional_payload_sends_both_keys() {
+    let metadata: TaskMetadata = serde_json::from_str(
+        r#"{
+            "note": "interop",
+            "settlement": {
+                "settlement_schema": "poco_v1",
+                "tokenizer_id": "llama3-tokenizer",
+                "tokenizer_version": "1.0.0",
+                "output_hash": "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+                "output_token_count": 256,
+                "output_root": "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+            },
+            "settlement_snapshot": {
+                "settlement_schema": "poco_v1",
+                "tokenizer_id": "llama3-tokenizer",
+                "tokenizer_version": "1.0.0",
+                "output_hash": "0x1111111111111111111111111111111111111111111111111111111111111111",
+                "output_token_count": 256
+            }
+        }"#,
+    )
+    .expect("mixed transitional payload should deserialize without duplicate-field failure");
+
+    let settlement = metadata
+        .settlement
+        .as_ref()
+        .expect("canonical settlement should be retained");
+    assert_eq!(
+        settlement.output_hash,
+        "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+    );
+    assert_eq!(
+        metadata.settlement_snapshot_source(None),
+        TaskSettlementSnapshotSource::ThreadedMetadata
+    );
+    assert!(
+        metadata
+            .compatibility_profile()
+            .complete_settlement_snapshot
+    );
+}
