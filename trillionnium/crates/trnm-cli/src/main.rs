@@ -4059,6 +4059,35 @@ mod tests {
     }
 
     #[test]
+    fn consumption_settlement_cli_parser_rejects_unknown_resolution_decision() {
+        let err = Args::try_parse_from([
+            "trnm-cli",
+            "tx",
+            "resolve-consumption",
+            "42",
+            "--consumer-id",
+            "consumer-bravo",
+            "--output-hash",
+            "0xabc123",
+            "--billing-window-id",
+            "bw-7",
+            "--decision",
+            "approve",
+            "--resolver",
+            "arbiter-alpha",
+        ])
+        .unwrap_err();
+
+        assert_eq!(err.kind(), clap::error::ErrorKind::InvalidValue);
+        let rendered = err.to_string();
+        assert!(rendered.contains("approve"), "unexpected error: {rendered}");
+        assert!(rendered.contains("accept"), "unexpected error: {rendered}");
+        assert!(rendered.contains("discount"), "unexpected error: {rendered}");
+        assert!(rendered.contains("reject"), "unexpected error: {rendered}");
+        assert!(rendered.contains("slash"), "unexpected error: {rendered}");
+    }
+
+    #[test]
     fn consumption_settlement_cli_parser_accepts_settlement_preview_query_command() {
         let args = Args::try_parse_from(["trnm-cli", "query", "settlement-preview", "42"])
             .expect("parse settlement-preview args");
