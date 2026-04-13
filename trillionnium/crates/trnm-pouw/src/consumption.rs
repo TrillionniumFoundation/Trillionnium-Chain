@@ -56,6 +56,8 @@ const SUMMARY_SETTLEMENT_MARKER_WITHOUT_RECEIPTS: &str =
 const SUMMARY_CREDITED_UNITS_WITHOUT_ACCEPTED_RECEIPTS: &str =
     "poco summary credited units require at least one accepted receipt";
 const DUPLICATE_LOGICAL_REPLAY_KEY_REASON: &str = "duplicate logical consumption replay key";
+const MALFORMED_CANONICAL_CREDIT_STATE_REASON: &str =
+    "malformed canonical credited consumption state";
 
 fn summary_has_inconsistent_terminal_marker(summary: &TaskConsumptionSummary) -> bool {
     summary.receipt_count == 0
@@ -68,9 +70,7 @@ fn summary_has_inconsistent_terminal_marker(summary: &TaskConsumptionSummary) ->
 fn summary_inconsistency_reason(summary: &TaskConsumptionSummary) -> Option<&'static str> {
     if summary_has_inconsistent_terminal_marker(summary) {
         Some(SUMMARY_SETTLEMENT_MARKER_WITHOUT_RECEIPTS)
-    } else if summary.total_credited_consumption_units > 0
-        && summary.accepted_receipt_count == 0
-    {
+    } else if summary.total_credited_consumption_units > 0 && summary.accepted_receipt_count == 0 {
         Some(SUMMARY_CREDITED_UNITS_WITHOUT_ACCEPTED_RECEIPTS)
     } else {
         None
@@ -113,10 +113,10 @@ pub(crate) fn reject_if_primary_settlement_pending(
     task_id: u64,
 ) -> Result<(), PouwError> {
     let records = st.consumption_records_for_task(task_id);
-    if has_duplicate_logical_replay_keys(&records) {
+    if let Some(reason) = records_inconsistency_reason(&records) {
         return Err(PouwError::State(format!(
             "poco primary settlement pending: {}",
-            DUPLICATE_LOGICAL_REPLAY_KEY_REASON
+            reason
         )));
     }
 
@@ -317,6 +317,24 @@ fn total_credited_consumption_units(records: &[ConsumptionRecord]) -> u128 {
         .sum()
 }
 
+fn record_credit_state_inconsistency_reason(record: &ConsumptionRecord) -> Option<&'static str> {
+    match record.status {
+        ConsumptionRecordStatus::Accepted | ConsumptionRecordStatus::Discounted => {
+            match record.credited_consumption_units {
+                Some(credited) if credited > 0 => None,
+                _ => Some(MALFORMED_CANONICAL_CREDIT_STATE_REASON),
+            }
+        }
+        ConsumptionRecordStatus::Submitted
+        | ConsumptionRecordStatus::Challenged
+        | ConsumptionRecordStatus::Rejected
+        | ConsumptionRecordStatus::Slashed => match record.credited_consumption_units {
+            None => None,
+            _ => Some(MALFORMED_CANONICAL_CREDIT_STATE_REASON),
+        },
+    }
+}
+
 fn logical_replay_key_matches(lhs: &ConsumptionRecordKey, rhs: &ConsumptionRecordKey) -> bool {
     lhs.task_id == rhs.task_id
         && lhs.consumer_id == rhs.consumer_id
@@ -330,6 +348,16 @@ fn has_duplicate_logical_replay_keys(records: &[ConsumptionRecord]) -> bool {
             .iter()
             .any(|other| logical_replay_key_matches(&record.key, &other.key))
     })
+}
+
+fn records_inconsistency_reason(records: &[ConsumptionRecord]) -> Option<&'static str> {
+    if has_duplicate_logical_replay_keys(records) {
+        Some(DUPLICATE_LOGICAL_REPLAY_KEY_REASON)
+    } else {
+        records
+            .iter()
+            .find_map(record_credit_state_inconsistency_reason)
+    }
 }
 
 fn logical_replay_key_exists(st: &StateStore, key: &ConsumptionRecordKey) -> bool {
@@ -436,9 +464,9 @@ fn preview_primary_payout_work_units(
 ) -> PrimaryPayoutWorkUnitPreview {
     let records = st.consumption_records_for_task(task.task_id);
     if !records.is_empty() {
-        if has_duplicate_logical_replay_keys(&records) {
+        if let Some(reason) = records_inconsistency_reason(&records) {
             return PrimaryPayoutWorkUnitPreview::PocoInconsistentRecords {
-                reason: DUPLICATE_LOGICAL_REPLAY_KEY_REASON,
+                reason,
                 metering_work_units,
             };
         }
@@ -1195,17 +1223,20 @@ mod tests {
         replay.accepted_at_unix_ms += 1;
         replay = replay.with_computed_receipt_hash().expect("hash");
 
-        let err = submit_consumption_receipt_at_height(
-            &mut st,
-            replay,
-            "consumer-bravo".to_string(),
-            11,
-        )
-        .expect_err("logical replay key drift must still be rejected");
+        let err =
+            submit_consumption_receipt_at_height(&mut st, replay, "consumer-bravo".to_string(), 11)
+                .expect_err("logical replay key drift must still be rejected");
 
-        assert!(matches!(err, PouwError::State(msg) if msg.contains("poco duplicate consumption receipt replay key")));
+        assert!(
+            matches!(err, PouwError::State(msg) if msg.contains("poco duplicate consumption receipt replay key"))
+        );
         assert_eq!(st.consumer_consumption_nonce("consumer-bravo"), Some(7));
-        assert_eq!(st.task_consumption_summary(42).expect("summary").receipt_count, 1);
+        assert_eq!(
+            st.task_consumption_summary(42)
+                .expect("summary")
+                .receipt_count,
+            1
+        );
     }
 
     #[test]
@@ -1220,7 +1251,8 @@ mod tests {
             ConsumptionRecordStatus::Submitted,
             None,
         );
-        legacy_record.key.output_hash = format!("0X{}", sample_output_hash_hex().to_ascii_uppercase());
+        legacy_record.key.output_hash =
+            format!("0X{}", sample_output_hash_hex().to_ascii_uppercase());
         st.put_consumption_record(legacy_record);
 
         let challenged = challenge_consumption_receipt_at_height(
@@ -1574,6 +1606,46 @@ mod tests {
     }
 
     #[test]
+    fn primary_payout_work_units_fail_closed_for_accepted_record_without_canonical_credit_state() {
+        let mut st = StateStore::default();
+        let task = sample_task(TaskStatus::Completed);
+        st.put_consumption_record(sample_record(
+            "consumer-bravo",
+            "bw-1",
+            ConsumptionRecordStatus::Accepted,
+            None,
+        ));
+
+        assert_eq!(
+            preview_primary_payout_work_units(&st, &task, 50),
+            PrimaryPayoutWorkUnitPreview::PocoInconsistentRecords {
+                reason: MALFORMED_CANONICAL_CREDIT_STATE_REASON,
+                metering_work_units: 50,
+            }
+        );
+        assert_eq!(primary_payout_work_units(&st, &task, 50), 0);
+    }
+
+    #[test]
+    fn reject_if_primary_settlement_pending_fails_closed_for_accepted_record_without_canonical_credit_state(
+    ) {
+        let mut st = StateStore::default();
+        st.put_consumption_record(sample_record(
+            "consumer-bravo",
+            "bw-1",
+            ConsumptionRecordStatus::Accepted,
+            None,
+        ));
+
+        let err = reject_if_primary_settlement_pending(&st, 42).expect_err(
+            "accepted canonical records without explicit credited units must block primary settlement",
+        );
+        assert!(
+            matches!(err, PouwError::State(msg) if msg.contains(MALFORMED_CANONICAL_CREDIT_STATE_REASON))
+        );
+    }
+
+    #[test]
     fn reject_if_primary_settlement_pending_fails_closed_from_summary_without_records() {
         let mut st = StateStore::default();
         st.set_task_consumption_summary(TaskConsumptionSummary {
@@ -1715,8 +1787,8 @@ mod tests {
     }
 
     #[test]
-    fn reject_if_primary_settlement_pending_fails_closed_for_summary_only_credit_without_receipts(
-    ) {
+    fn reject_if_primary_settlement_pending_fails_closed_for_summary_only_credit_without_receipts()
+    {
         let mut st = StateStore::default();
         st.set_task_consumption_summary(TaskConsumptionSummary {
             task_id: 42,
