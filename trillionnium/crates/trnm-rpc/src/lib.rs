@@ -7,6 +7,7 @@ mod transfer;
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 use trnm_oracle::{OracleValidationMetrics, OracleValidationObservation, OracleValidationReport};
+use trnm_state::TaskConsumptionSummary;
 use trnm_types::{
     GovProposalStatus, TaskMetadataCompatibility, TaskMetadataCompatibilityFinding, TaskStatus,
 };
@@ -107,6 +108,21 @@ const AUTHORITATIVE_SETTLEMENT_SUMMARY_CONTRACT_ERROR: &str =
     "authoritative settlement summary violated RPC contract";
 
 impl TaskConsumptionSummaryQueryResponse {
+    pub fn try_from_authoritative_state_summary(
+        summary: TaskConsumptionSummary,
+    ) -> std::result::Result<Self, &'static str> {
+        Self::try_from_authoritative_summary(Self {
+            task_id: summary.task_id,
+            receipt_count: summary.receipt_count,
+            accepted_receipt_count: summary.accepted_receipt_count,
+            challenged_receipt_count: summary.challenged_receipt_count,
+            total_consumed_tokens: summary.total_consumed_tokens,
+            total_claimed_consumption_units: summary.total_claimed_consumption_units,
+            total_credited_consumption_units: summary.total_credited_consumption_units,
+            last_settlement_height: summary.last_settlement_height,
+        })
+    }
+
     pub fn settlement_contract_consistent(&self) -> bool {
         let Some(terminal_receipt_count) = self
             .accepted_receipt_count
@@ -158,6 +174,13 @@ impl TaskSettlementPreviewQueryResponse {
             total_credited_consumption_units: summary.total_credited_consumption_units,
             last_settlement_height: summary.last_settlement_height,
         }
+    }
+
+    pub fn try_from_authoritative_state_summary(
+        summary: TaskConsumptionSummary,
+    ) -> std::result::Result<Self, &'static str> {
+        TaskConsumptionSummaryQueryResponse::try_from_authoritative_state_summary(summary)
+            .map(Self::from_authoritative_summary)
     }
 
     pub fn try_from_authoritative_summary(
@@ -799,6 +822,50 @@ mod tests {
         assert_eq!(
             TaskSettlementPreviewQueryResponse::try_from_authoritative_summary(summary)
                 .expect_err("impossible terminal receipt totals must fail closed"),
+            "authoritative settlement summary violated RPC contract"
+        );
+    }
+
+    #[test]
+    fn rpc_task_consumption_summary_query_from_state_summary_preserves_contract_shape() {
+        let summary = TaskConsumptionSummary {
+            task_id: 42,
+            receipt_count: 2,
+            accepted_receipt_count: 1,
+            challenged_receipt_count: 1,
+            total_consumed_tokens: 33,
+            total_claimed_consumption_units: 33,
+            total_credited_consumption_units: 21,
+            last_settlement_height: Some(88),
+        };
+
+        let response =
+            TaskConsumptionSummaryQueryResponse::try_from_authoritative_state_summary(summary)
+                .expect("authoritative state summary should satisfy settlement contract");
+        let v = serde_json::to_value(response).unwrap();
+        assert_eq!(v["task_id"], json!(42));
+        assert_eq!(v["receipt_count"], json!(2));
+        assert_eq!(v["accepted_receipt_count"], json!(1));
+        assert_eq!(v["challenged_receipt_count"], json!(1));
+        assert_eq!(v["last_settlement_height"], json!(88));
+    }
+
+    #[test]
+    fn rpc_task_settlement_preview_query_from_state_summary_rejects_inconsistent_contract() {
+        let summary = TaskConsumptionSummary {
+            task_id: 42,
+            receipt_count: 1,
+            accepted_receipt_count: 1,
+            challenged_receipt_count: 1,
+            total_consumed_tokens: 33,
+            total_claimed_consumption_units: 33,
+            total_credited_consumption_units: 21,
+            last_settlement_height: Some(88),
+        };
+
+        assert_eq!(
+            TaskSettlementPreviewQueryResponse::try_from_authoritative_state_summary(summary)
+                .expect_err("impossible state summary must fail closed"),
             "authoritative settlement summary violated RPC contract"
         );
     }

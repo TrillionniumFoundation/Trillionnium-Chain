@@ -4353,24 +4353,14 @@ fn authoritative_task_consumption_summary_response(
     let summary = st
         .task_consumption_summary(task_id)
         .ok_or_else(|| anyhow!("consumption summary not found for task {}", task_id))?;
-    TaskConsumptionSummaryQueryResponse::try_from_authoritative_summary(
-        TaskConsumptionSummaryQueryResponse {
-            task_id: summary.task_id,
-            receipt_count: summary.receipt_count,
-            accepted_receipt_count: summary.accepted_receipt_count,
-            challenged_receipt_count: summary.challenged_receipt_count,
-            total_consumed_tokens: summary.total_consumed_tokens,
-            total_claimed_consumption_units: summary.total_claimed_consumption_units,
-            total_credited_consumption_units: summary.total_credited_consumption_units,
-            last_settlement_height: summary.last_settlement_height,
+    TaskConsumptionSummaryQueryResponse::try_from_authoritative_state_summary(summary).map_err(
+        |_| {
+            anyhow!(
+                "consumption summary violated settlement rpc contract for task {}",
+                task_id
+            )
         },
     )
-    .map_err(|_| {
-        anyhow!(
-            "consumption summary violated settlement rpc contract for task {}",
-            task_id
-        )
-    })
 }
 
 fn settlement_summary_query_error_response(method: &str, err: &anyhow::Error) -> String {
@@ -4395,8 +4385,17 @@ fn settlement_preview_response(
     task_id: u64,
     st: &StateStore,
 ) -> Result<TaskSettlementPreviewQueryResponse> {
-    authoritative_task_consumption_summary_response(task_id, st)
-        .map(TaskSettlementPreviewQueryResponse::from_authoritative_summary)
+    let summary = st
+        .task_consumption_summary(task_id)
+        .ok_or_else(|| anyhow!("consumption summary not found for task {}", task_id))?;
+    TaskSettlementPreviewQueryResponse::try_from_authoritative_state_summary(summary).map_err(
+        |_| {
+            anyhow!(
+                "consumption summary violated settlement rpc contract for task {}",
+                task_id
+            )
+        },
+    )
 }
 
 fn query_consumption_receipts_response(
