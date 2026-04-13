@@ -1172,6 +1172,8 @@ struct SettlementGovernanceQueryResponse {
     shadow_compare_only: bool,
     poco_weight_bps: u64,
     pouw_weight_bps: u64,
+    effective_poco_weight_bps: u64,
+    effective_pouw_weight_bps: u64,
     has_pending_updates: bool,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pending_shadow_compare_only: Option<PendingGovParamUpdateQueryResponse>,
@@ -1270,6 +1272,14 @@ fn settlement_governance_query_response(
     } else {
         SettlementGovernanceMode::Hybrid
     };
+    let (effective_poco_weight_bps, effective_pouw_weight_bps) = if shadow_compare_only {
+        (0, SETTLEMENT_WEIGHT_TOTAL_BPS)
+    } else {
+        (
+            poco_weight_bps,
+            SETTLEMENT_WEIGHT_TOTAL_BPS - poco_weight_bps,
+        )
+    };
 
     Ok(SettlementGovernanceQueryResponse {
         live_configuration_status,
@@ -1277,6 +1287,8 @@ fn settlement_governance_query_response(
         shadow_compare_only,
         poco_weight_bps,
         pouw_weight_bps: SETTLEMENT_WEIGHT_TOTAL_BPS - poco_weight_bps,
+        effective_poco_weight_bps,
+        effective_pouw_weight_bps,
         has_pending_updates: pending_shadow_compare_only.is_some()
             || pending_poco_weight_bps.is_some(),
         pending_shadow_compare_only,
@@ -1303,6 +1315,8 @@ mod settlement_governance_query_tests {
         assert!(!out.shadow_compare_only);
         assert_eq!(out.poco_weight_bps, 0);
         assert_eq!(out.pouw_weight_bps, 10_000);
+        assert_eq!(out.effective_poco_weight_bps, 0);
+        assert_eq!(out.effective_pouw_weight_bps, 10_000);
         assert!(!out.has_pending_updates);
         assert!(out.pending_shadow_compare_only.is_none());
         assert!(out.pending_poco_weight_bps.is_none());
@@ -1337,6 +1351,8 @@ mod settlement_governance_query_tests {
         assert_eq!(out.mode, SettlementGovernanceMode::PouwPrimary);
         assert_eq!(out.poco_weight_bps, 0);
         assert_eq!(out.pouw_weight_bps, 10_000);
+        assert_eq!(out.effective_poco_weight_bps, 0);
+        assert_eq!(out.effective_pouw_weight_bps, 10_000);
         assert!(out.has_pending_updates);
         assert_eq!(
             out.pending_poco_weight_bps,
@@ -1391,6 +1407,47 @@ mod settlement_governance_query_tests {
         assert!(!out.shadow_compare_only);
         assert_eq!(out.poco_weight_bps, 2_500);
         assert_eq!(out.pouw_weight_bps, 7_500);
+        assert_eq!(out.effective_poco_weight_bps, 2_500);
+        assert_eq!(out.effective_pouw_weight_bps, 7_500);
+        assert!(!out.has_pending_updates);
+    }
+
+    #[test]
+    fn settlement_governance_query_shadow_mode_masks_configured_hybrid_weights_in_effective_weights(
+    ) {
+        let mut st = StateStore::new();
+        st.restore_gov_param(
+            7_351,
+            Some(GovParamObject {
+                key_id: 7_351,
+                key: HYBRID_SETTLEMENT_POCO_WEIGHT_BPS_KEY.into(),
+                value: "2500".into(),
+                version: 1,
+            }),
+        );
+        st.restore_gov_param(
+            7_352,
+            Some(GovParamObject {
+                key_id: 7_352,
+                key: SHADOW_SETTLEMENT_COMPARE_ONLY_KEY.into(),
+                value: "true".into(),
+                version: 1,
+            }),
+        );
+
+        let out = settlement_governance_query_response(&st)
+            .expect("shadow settlement query should succeed");
+
+        assert_eq!(
+            out.live_configuration_status,
+            SettlementGovernanceConfigurationStatus::Configured
+        );
+        assert_eq!(out.mode, SettlementGovernanceMode::ShadowCompareOnly);
+        assert!(out.shadow_compare_only);
+        assert_eq!(out.poco_weight_bps, 2_500);
+        assert_eq!(out.pouw_weight_bps, 7_500);
+        assert_eq!(out.effective_poco_weight_bps, 0);
+        assert_eq!(out.effective_pouw_weight_bps, 10_000);
         assert!(!out.has_pending_updates);
     }
 }
