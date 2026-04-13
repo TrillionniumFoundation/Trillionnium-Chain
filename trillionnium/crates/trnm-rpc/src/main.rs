@@ -4284,11 +4284,12 @@ fn query_task_response(
     if let Some(out) = query_task_from_state_snapshot(task_id, &task_state_snapshot) {
         return Ok(out);
     }
+
+    enforce_settlement_aware_task_query_gate(task_id)?;
+
     if let Some(out) = query_task_from_node_events(task_id, node_events) {
         return Ok(out);
     }
-
-    enforce_settlement_aware_task_query_gate(task_id)?;
 
     let task_recs = sorted_task_adapter_records(task_id, recs);
     if task_recs.is_empty() {
@@ -9664,6 +9665,70 @@ mod tests {
     }
 
     #[test]
+    fn query_task_response_rejects_node_event_fallback_when_authoritative_settlement_summary_exists(
+    ) {
+        let path = unique_tmp_path("rpc-consumption-state", "json");
+        let _ = fs::remove_file(&path);
+        fs::write(
+            &path,
+            serde_json::json!({
+                "consumption_records": [],
+                "task_consumption_summaries": [{
+                    "task_id": 42,
+                    "receipt_count": 2,
+                    "accepted_receipt_count": 1,
+                    "challenged_receipt_count": 1,
+                    "total_consumed_tokens": 33,
+                    "total_claimed_consumption_units": 33,
+                    "total_credited_consumption_units": 21,
+                    "last_settlement_height": 88
+                }],
+                "consumer_consumption_nonces": {}
+            })
+            .to_string(),
+        )
+        .expect("write consumption snapshot");
+
+        let node_events = vec![NodeEventRecord {
+            event_type: "commit".into(),
+            task_id: 42,
+            from_status: "Assigned".into(),
+            to_status: "Committed".into(),
+            actor: "worker-a".into(),
+            tx_id: 10,
+            block_height: 77,
+            state_root: "state-root-1".into(),
+            ts_unix_ms: 1234,
+            signer: None,
+            challenger: None,
+            tx_hash: Some("0x1234".into()),
+            resolution_code: None,
+            treasury_delta: None,
+            challenger_delta: None,
+            bond_disposition: None,
+            metering: None,
+        }];
+
+        with_market_path_env(
+            &[
+                (TASK_STATE_FILE_ENV, None),
+                (CONSUMPTION_STATE_FILE_ENV, path.to_str()),
+            ],
+            || {
+                let err = query_task_response(42, &node_events, &[]).expect_err(
+                    "node-event fallback must fail closed once authoritative settlement summary exists",
+                );
+                assert_eq!(
+                    err.to_string(),
+                    "task query adapter fallback disabled for task 42 because authoritative settlement summary exists"
+                );
+            },
+        );
+
+        let _ = fs::remove_file(&path);
+    }
+
+    #[test]
     fn query_task_response_rejects_adapter_fallback_when_authoritative_settlement_summary_exists() {
         let path = unique_tmp_path("rpc-consumption-state", "json");
         let _ = fs::remove_file(&path);
@@ -9773,6 +9838,82 @@ mod tests {
                 assert_eq!(
                     err.to_string(),
                     "task query blocked by settlement rpc contract violation for task 42"
+                );
+            },
+        );
+
+        let _ = fs::remove_file(&path);
+    }
+
+    #[test]
+    fn query_task_response_rejects_node_event_fallback_when_authoritative_receipts_exist_without_summary(
+    ) {
+        let path = unique_tmp_path("rpc-consumption-state", "json");
+        let _ = fs::remove_file(&path);
+        fs::write(
+            &path,
+            serde_json::json!({
+                "consumption_records": [{
+                    "key": {
+                        "task_id": 42,
+                        "consumer_id": "consumer-alpha",
+                        "output_hash": "abc123",
+                        "billing_window_id": "bw-1"
+                    },
+                    "worker_id": "worker-a",
+                    "tokenizer_id": "tok",
+                    "tokenizer_version": "1.0.0",
+                    "consumer_class": "bonded_api_client",
+                    "consumed_spans_root": "def456",
+                    "consumed_token_count": 17,
+                    "claimed_consumption_units": 17,
+                    "credited_consumption_units": 9,
+                    "consumer_nonce": 7,
+                    "accepted_at_unix_ms": 1775683200123u64,
+                    "status": "Accepted",
+                    "resolution_code": "accepted"
+                }],
+                "task_consumption_summaries": [],
+                "consumer_consumption_nonces": {
+                    "consumer-alpha": 7
+                }
+            })
+            .to_string(),
+        )
+        .expect("write receipt-only consumption snapshot");
+
+        let node_events = vec![NodeEventRecord {
+            event_type: "commit".into(),
+            task_id: 42,
+            from_status: "Assigned".into(),
+            to_status: "Committed".into(),
+            actor: "worker-a".into(),
+            tx_id: 10,
+            block_height: 77,
+            state_root: "state-root-1".into(),
+            ts_unix_ms: 1234,
+            signer: None,
+            challenger: None,
+            tx_hash: Some("0x1234".into()),
+            resolution_code: None,
+            treasury_delta: None,
+            challenger_delta: None,
+            bond_disposition: None,
+            metering: None,
+        }];
+
+        with_market_path_env(
+            &[
+                (TASK_STATE_FILE_ENV, None),
+                (CONSUMPTION_STATE_FILE_ENV, path.to_str()),
+            ],
+            || {
+                let err = query_task_response(42, &node_events, &[]).expect_err(
+                    "receipt-backed authoritative settlement state must block legacy node-event fallback",
+                );
+                assert_eq!(
+                    err.to_string(),
+                    "task query adapter fallback disabled for task 42 because authoritative settlement receipts exist without a summary"
                 );
             },
         );
