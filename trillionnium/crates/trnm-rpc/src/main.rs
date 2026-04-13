@@ -1174,6 +1174,7 @@ struct SettlementGovernanceQueryResponse {
     pouw_weight_bps: u64,
     effective_poco_weight_bps: u64,
     effective_pouw_weight_bps: u64,
+    shadow_masks_nonzero_poco_weight: bool,
     has_pending_updates: bool,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     staged_configuration_status: Option<SettlementGovernanceConfigurationStatus>,
@@ -1183,6 +1184,8 @@ struct SettlementGovernanceQueryResponse {
     staged_effective_poco_weight_bps: Option<u64>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     staged_effective_pouw_weight_bps: Option<u64>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    staged_shadow_masks_nonzero_poco_weight: Option<bool>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pending_shadow_compare_only: Option<PendingGovParamUpdateQueryResponse>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -1198,6 +1201,7 @@ struct ResolvedSettlementGovernanceConfig {
     pouw_weight_bps: u64,
     effective_poco_weight_bps: u64,
     effective_pouw_weight_bps: u64,
+    shadow_masks_nonzero_poco_weight: bool,
 }
 
 fn parse_shadow_compare_only_value(key: &str, value: &str) -> Result<bool> {
@@ -1278,6 +1282,7 @@ fn resolve_settlement_governance_config(
         SettlementGovernanceMode::Hybrid
     };
     let pouw_weight_bps = SETTLEMENT_WEIGHT_TOTAL_BPS - poco_weight_bps;
+    let shadow_masks_nonzero_poco_weight = shadow_compare_only && poco_weight_bps > 0;
     let (effective_poco_weight_bps, effective_pouw_weight_bps) = if shadow_compare_only {
         (0, SETTLEMENT_WEIGHT_TOTAL_BPS)
     } else {
@@ -1292,6 +1297,7 @@ fn resolve_settlement_governance_config(
         pouw_weight_bps,
         effective_poco_weight_bps,
         effective_pouw_weight_bps,
+        shadow_masks_nonzero_poco_weight,
     })
 }
 
@@ -1342,11 +1348,14 @@ fn settlement_governance_query_response(
         pouw_weight_bps: live.pouw_weight_bps,
         effective_poco_weight_bps: live.effective_poco_weight_bps,
         effective_pouw_weight_bps: live.effective_pouw_weight_bps,
+        shadow_masks_nonzero_poco_weight: live.shadow_masks_nonzero_poco_weight,
         has_pending_updates,
         staged_configuration_status: staged.map(|config| config.configuration_status),
         staged_mode: staged.map(|config| config.mode),
         staged_effective_poco_weight_bps: staged.map(|config| config.effective_poco_weight_bps),
         staged_effective_pouw_weight_bps: staged.map(|config| config.effective_pouw_weight_bps),
+        staged_shadow_masks_nonzero_poco_weight: staged
+            .map(|config| config.shadow_masks_nonzero_poco_weight),
         pending_shadow_compare_only,
         pending_poco_weight_bps,
     })
@@ -1373,11 +1382,13 @@ mod settlement_governance_query_tests {
         assert_eq!(out.pouw_weight_bps, 10_000);
         assert_eq!(out.effective_poco_weight_bps, 0);
         assert_eq!(out.effective_pouw_weight_bps, 10_000);
+        assert!(!out.shadow_masks_nonzero_poco_weight);
         assert!(!out.has_pending_updates);
         assert!(out.staged_configuration_status.is_none());
         assert!(out.staged_mode.is_none());
         assert!(out.staged_effective_poco_weight_bps.is_none());
         assert!(out.staged_effective_pouw_weight_bps.is_none());
+        assert!(out.staged_shadow_masks_nonzero_poco_weight.is_none());
         assert!(out.pending_shadow_compare_only.is_none());
         assert!(out.pending_poco_weight_bps.is_none());
     }
@@ -1413,6 +1424,7 @@ mod settlement_governance_query_tests {
         assert_eq!(out.pouw_weight_bps, 10_000);
         assert_eq!(out.effective_poco_weight_bps, 0);
         assert_eq!(out.effective_pouw_weight_bps, 10_000);
+        assert!(!out.shadow_masks_nonzero_poco_weight);
         assert!(out.has_pending_updates);
         assert_eq!(
             out.staged_configuration_status,
@@ -1424,6 +1436,7 @@ mod settlement_governance_query_tests {
         );
         assert_eq!(out.staged_effective_poco_weight_bps, Some(0));
         assert_eq!(out.staged_effective_pouw_weight_bps, Some(10_000));
+        assert_eq!(out.staged_shadow_masks_nonzero_poco_weight, Some(true));
         assert_eq!(
             out.pending_poco_weight_bps,
             Some(PendingGovParamUpdateQueryResponse {
@@ -1464,6 +1477,7 @@ mod settlement_governance_query_tests {
             SettlementGovernanceConfigurationStatus::Defaulted
         );
         assert_eq!(out.mode, SettlementGovernanceMode::PouwPrimary);
+        assert!(!out.shadow_masks_nonzero_poco_weight);
         assert!(out.has_pending_updates);
         assert_eq!(
             out.staged_configuration_status,
@@ -1472,6 +1486,7 @@ mod settlement_governance_query_tests {
         assert_eq!(out.staged_mode, Some(SettlementGovernanceMode::Hybrid));
         assert_eq!(out.staged_effective_poco_weight_bps, Some(2_500));
         assert_eq!(out.staged_effective_pouw_weight_bps, Some(7_500));
+        assert_eq!(out.staged_shadow_masks_nonzero_poco_weight, Some(false));
         assert!(out.pending_shadow_compare_only.is_none());
         assert_eq!(
             out.pending_poco_weight_bps,
@@ -1519,11 +1534,13 @@ mod settlement_governance_query_tests {
         assert_eq!(out.pouw_weight_bps, 7_500);
         assert_eq!(out.effective_poco_weight_bps, 2_500);
         assert_eq!(out.effective_pouw_weight_bps, 7_500);
+        assert!(!out.shadow_masks_nonzero_poco_weight);
         assert!(!out.has_pending_updates);
         assert!(out.staged_configuration_status.is_none());
         assert!(out.staged_mode.is_none());
         assert!(out.staged_effective_poco_weight_bps.is_none());
         assert!(out.staged_effective_pouw_weight_bps.is_none());
+        assert!(out.staged_shadow_masks_nonzero_poco_weight.is_none());
     }
 
     #[test]
@@ -1562,11 +1579,13 @@ mod settlement_governance_query_tests {
         assert_eq!(out.pouw_weight_bps, 7_500);
         assert_eq!(out.effective_poco_weight_bps, 0);
         assert_eq!(out.effective_pouw_weight_bps, 10_000);
+        assert!(out.shadow_masks_nonzero_poco_weight);
         assert!(!out.has_pending_updates);
         assert!(out.staged_configuration_status.is_none());
         assert!(out.staged_mode.is_none());
         assert!(out.staged_effective_poco_weight_bps.is_none());
         assert!(out.staged_effective_pouw_weight_bps.is_none());
+        assert!(out.staged_shadow_masks_nonzero_poco_weight.is_none());
     }
 }
 
