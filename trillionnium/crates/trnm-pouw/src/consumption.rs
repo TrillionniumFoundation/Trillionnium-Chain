@@ -53,6 +53,7 @@ fn current_summary(st: &StateStore, task_id: u64) -> TaskConsumptionSummary {
 
 const SUMMARY_SETTLEMENT_MARKER_WITHOUT_RECEIPTS: &str =
     "poco summary settlement marker requires at least one receipt";
+const DUPLICATE_LOGICAL_REPLAY_KEY_REASON: &str = "duplicate logical consumption replay key";
 
 fn summary_has_inconsistent_terminal_marker(summary: &TaskConsumptionSummary) -> bool {
     summary.receipt_count == 0 && summary.last_settlement_height.is_some()
@@ -94,6 +95,13 @@ pub(crate) fn reject_if_primary_settlement_pending(
     task_id: u64,
 ) -> Result<(), PouwError> {
     let records = st.consumption_records_for_task(task_id);
+    if has_duplicate_logical_replay_keys(&records) {
+        return Err(PouwError::State(format!(
+            "poco primary settlement pending: {}",
+            DUPLICATE_LOGICAL_REPLAY_KEY_REASON
+        )));
+    }
+
     let unresolved_receipt_count = unresolved_receipt_count(&records) as u64;
     let summary_pending_reason = if records.is_empty() {
         st.task_consumption_summary(task_id).and_then(|summary| {
@@ -280,6 +288,14 @@ fn logical_replay_key_matches(lhs: &ConsumptionRecordKey, rhs: &ConsumptionRecor
         && canonical_output_hash(&lhs.output_hash) == canonical_output_hash(&rhs.output_hash)
 }
 
+fn has_duplicate_logical_replay_keys(records: &[ConsumptionRecord]) -> bool {
+    records.iter().enumerate().any(|(idx, record)| {
+        records[idx + 1..]
+            .iter()
+            .any(|other| logical_replay_key_matches(&record.key, &other.key))
+    })
+}
+
 fn logical_replay_key_exists(st: &StateStore, key: &ConsumptionRecordKey) -> bool {
     st.consumption_records_for_task(key.task_id)
         .into_iter()
@@ -317,6 +333,10 @@ enum PrimaryPayoutWorkUnitPreview {
         metering_work_units: u128,
     },
     PocoInconsistentSummary {
+        reason: &'static str,
+        metering_work_units: u128,
+    },
+    PocoInconsistentRecords {
         reason: &'static str,
         metering_work_units: u128,
     },
@@ -379,6 +399,13 @@ fn preview_primary_payout_work_units(
 ) -> PrimaryPayoutWorkUnitPreview {
     let records = st.consumption_records_for_task(task.task_id);
     if !records.is_empty() {
+        if has_duplicate_logical_replay_keys(&records) {
+            return PrimaryPayoutWorkUnitPreview::PocoInconsistentRecords {
+                reason: DUPLICATE_LOGICAL_REPLAY_KEY_REASON,
+                metering_work_units,
+            };
+        }
+
         let unresolved_receipt_count = unresolved_receipt_count(&records) as u64;
         if unresolved_receipt_count > 0 {
             return PrimaryPayoutWorkUnitPreview::PocoPendingSettlement {
@@ -411,7 +438,8 @@ fn finalize_primary_payout_work_units(preview: PrimaryPayoutWorkUnitPreview) -> 
             metering_work_units,
         } => metering_work_units,
         PrimaryPayoutWorkUnitPreview::PocoPendingSettlement { .. }
-        | PrimaryPayoutWorkUnitPreview::PocoInconsistentSummary { .. } => {
+        | PrimaryPayoutWorkUnitPreview::PocoInconsistentSummary { .. }
+        | PrimaryPayoutWorkUnitPreview::PocoInconsistentRecords { .. } => {
             // Promotion step: once PoCO settlement has started, or summary-only
             // settlement metadata is internally inconsistent, fail closed until
             // the receipt path reaches an explicit canonical outcome.
@@ -1386,6 +1414,64 @@ mod tests {
             .expect_err("challenged receipt must keep primary settlement pending");
         assert!(
             matches!(err, PouwError::State(msg) if msg.contains("1 unresolved consumption receipt"))
+        );
+    }
+
+    #[test]
+    fn primary_payout_work_units_fail_closed_for_duplicate_logical_replay_keys() {
+        let mut st = StateStore::default();
+        let task = sample_task(TaskStatus::Completed);
+        let first = sample_record(
+            "consumer-bravo",
+            "bw-1",
+            ConsumptionRecordStatus::Accepted,
+            Some(9),
+        );
+        let mut duplicate = sample_record(
+            "consumer-bravo",
+            "bw-1",
+            ConsumptionRecordStatus::Accepted,
+            Some(7),
+        );
+        duplicate.key.output_hash = format!("0X{}", sample_output_hash_hex().to_ascii_uppercase());
+
+        st.put_consumption_record(first);
+        st.put_consumption_record(duplicate);
+
+        assert_eq!(
+            preview_primary_payout_work_units(&st, &task, 50),
+            PrimaryPayoutWorkUnitPreview::PocoInconsistentRecords {
+                reason: DUPLICATE_LOGICAL_REPLAY_KEY_REASON,
+                metering_work_units: 50,
+            }
+        );
+        assert_eq!(primary_payout_work_units(&st, &task, 50), 0);
+    }
+
+    #[test]
+    fn reject_if_primary_settlement_pending_fails_closed_for_duplicate_logical_replay_keys() {
+        let mut st = StateStore::default();
+        let first = sample_record(
+            "consumer-bravo",
+            "bw-1",
+            ConsumptionRecordStatus::Accepted,
+            Some(9),
+        );
+        let mut duplicate = sample_record(
+            "consumer-bravo",
+            "bw-1",
+            ConsumptionRecordStatus::Accepted,
+            Some(7),
+        );
+        duplicate.key.output_hash = format!("0x{}", sample_output_hash_hex().to_ascii_uppercase());
+
+        st.put_consumption_record(first);
+        st.put_consumption_record(duplicate);
+
+        let err = reject_if_primary_settlement_pending(&st, 42)
+            .expect_err("duplicate logical replay keys must block primary settlement finalization");
+        assert!(
+            matches!(err, PouwError::State(msg) if msg.contains(DUPLICATE_LOGICAL_REPLAY_KEY_REASON))
         );
     }
 
