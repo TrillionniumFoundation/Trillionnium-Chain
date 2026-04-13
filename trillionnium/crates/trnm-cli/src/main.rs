@@ -12,6 +12,8 @@ use std::{
     time::{Duration, Instant},
 };
 
+const SETTLEMENT_WEIGHT_TOTAL_BPS: u64 = 10_000;
+
 #[derive(Debug, Parser)]
 #[command(
     name = "trnm-cli",
@@ -148,6 +150,8 @@ enum QueryCommand {
         #[arg(long, default_value_t = false)]
         summary: bool,
     },
+    /// Query shadow or hybrid settlement governance state via RPC
+    SettlementGovernance,
     /// Query task PoCO consumption summary via RPC
     ConsumptionSummary { task_id: u64 },
     /// Query task PoCO consumption receipts via RPC
@@ -577,6 +581,169 @@ fn consumption_summary_query(task_id: u64) -> Result<serde_json::Value> {
         );
     }
     parse_consumption_summary_query_response(&stdout, task_id)
+}
+
+fn parse_json_bool(value: Option<&serde_json::Value>) -> Option<bool> {
+    match value? {
+        serde_json::Value::Bool(v) => Some(*v),
+        serde_json::Value::String(v) => match v.trim() {
+            "true" => Some(true),
+            "false" => Some(false),
+            _ => None,
+        },
+        _ => None,
+    }
+}
+
+fn parse_settlement_governance_query_response(raw: &str) -> Result<serde_json::Value> {
+    let parsed: serde_json::Value = serde_json::from_str(raw)
+        .map_err(|err| anyhow!("failed to parse settlement governance response as json: {err}"))?;
+
+    let Some(mode) = parsed.get("mode").and_then(json_scalar_string) else {
+        bail!("settlement governance response missing scalar mode");
+    };
+    let Some(underlying_mode) = parsed.get("underlying_mode").and_then(json_scalar_string) else {
+        bail!("settlement governance response missing scalar underlying_mode");
+    };
+    let Some(_) = parsed.get("live_configuration_status").and_then(json_scalar_string) else {
+        bail!("settlement governance response missing scalar live_configuration_status");
+    };
+    let Some(_) = parsed.get("settlement_write_gate_status").and_then(json_scalar_string) else {
+        bail!("settlement governance response missing scalar settlement_write_gate_status");
+    };
+    let Some(shadow_compare_only) = parse_json_bool(parsed.get("shadow_compare_only")) else {
+        bail!("settlement governance response missing strict bool shadow_compare_only");
+    };
+    let Some(shadow_masks_nonzero_poco_weight) =
+        parse_json_bool(parsed.get("shadow_masks_nonzero_poco_weight"))
+    else {
+        bail!(
+            "settlement governance response missing strict bool shadow_masks_nonzero_poco_weight"
+        );
+    };
+
+    let Some(poco_weight_bps) = json_u64_at_path(&parsed, &["poco_weight_bps"]) else {
+        bail!("settlement governance response missing numeric poco_weight_bps");
+    };
+    let Some(pouw_weight_bps) = json_u64_at_path(&parsed, &["pouw_weight_bps"]) else {
+        bail!("settlement governance response missing numeric pouw_weight_bps");
+    };
+    let Some(effective_poco_weight_bps) = json_u64_at_path(&parsed, &["effective_poco_weight_bps"]) else {
+        bail!("settlement governance response missing numeric effective_poco_weight_bps");
+    };
+    let Some(effective_pouw_weight_bps) = json_u64_at_path(&parsed, &["effective_pouw_weight_bps"]) else {
+        bail!("settlement governance response missing numeric effective_pouw_weight_bps");
+    };
+
+    if poco_weight_bps + pouw_weight_bps != SETTLEMENT_WEIGHT_TOTAL_BPS {
+        bail!(
+            "settlement governance response weight split must sum to {} bps, got poco_weight_bps={} pouw_weight_bps={}",
+            SETTLEMENT_WEIGHT_TOTAL_BPS,
+            poco_weight_bps,
+            pouw_weight_bps
+        );
+    }
+    if effective_poco_weight_bps + effective_pouw_weight_bps != SETTLEMENT_WEIGHT_TOTAL_BPS {
+        bail!(
+            "settlement governance response effective weight split must sum to {} bps, got effective_poco_weight_bps={} effective_pouw_weight_bps={}",
+            SETTLEMENT_WEIGHT_TOTAL_BPS,
+            effective_poco_weight_bps,
+            effective_pouw_weight_bps
+        );
+    }
+
+    let expected_underlying_mode = if poco_weight_bps == 0 {
+        "pouw_primary"
+    } else if poco_weight_bps == SETTLEMENT_WEIGHT_TOTAL_BPS {
+        "poco_primary"
+    } else {
+        "hybrid"
+    };
+    if underlying_mode != expected_underlying_mode {
+        bail!(
+            "settlement governance response underlying_mode mismatch: expected={}, got={}",
+            expected_underlying_mode,
+            underlying_mode
+        );
+    }
+
+    if shadow_compare_only {
+        if mode != "shadow_compare_only" {
+            bail!(
+                "settlement governance response shadow_compare_only requires mode=shadow_compare_only, got {}",
+                mode
+            );
+        }
+        if effective_poco_weight_bps != 0 || effective_pouw_weight_bps != SETTLEMENT_WEIGHT_TOTAL_BPS {
+            bail!(
+                "settlement governance response shadow_compare_only must mask effective weights to poco=0 and pouw={}, got poco={} pouw={}",
+                SETTLEMENT_WEIGHT_TOTAL_BPS,
+                effective_poco_weight_bps,
+                effective_pouw_weight_bps
+            );
+        }
+        if shadow_masks_nonzero_poco_weight != (poco_weight_bps > 0) {
+            bail!(
+                "settlement governance response shadow mask flag mismatch: poco_weight_bps={} shadow_masks_nonzero_poco_weight={}",
+                poco_weight_bps,
+                shadow_masks_nonzero_poco_weight
+            );
+        }
+    } else {
+        if mode != expected_underlying_mode {
+            bail!(
+                "settlement governance response mode mismatch: expected={}, got={}",
+                expected_underlying_mode,
+                mode
+            );
+        }
+        if effective_poco_weight_bps != poco_weight_bps || effective_pouw_weight_bps != pouw_weight_bps {
+            bail!(
+                "settlement governance response non-shadow effective weights must match live weights, got live=({},{}) effective=({},{})",
+                poco_weight_bps,
+                pouw_weight_bps,
+                effective_poco_weight_bps,
+                effective_pouw_weight_bps
+            );
+        }
+        if shadow_masks_nonzero_poco_weight {
+            bail!(
+                "settlement governance response non-shadow mode must not report shadow_masks_nonzero_poco_weight=true"
+            );
+        }
+    }
+
+    Ok(parsed)
+}
+
+fn settlement_governance_query() -> Result<serde_json::Value> {
+    if let Ok(template) = std::env::var("TRNM_QUERY_SETTLEMENT_GOVERNANCE_CMD") {
+        let raw = run_template_raw(&template)?;
+        return parse_settlement_governance_query_response(&raw);
+    }
+
+    let rpc_workspace = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .parent()
+        .and_then(|p| p.parent())
+        .map(|p| p.to_path_buf())
+        .unwrap_or_else(|| PathBuf::from("."));
+    let cmd = "cargo run -q -p trnm-rpc -- query-settlement-governance";
+    let (program, args) = parse_template_command(cmd)?;
+    let out = ProcCommand::new(program)
+        .args(args)
+        .current_dir(&rpc_workspace)
+        .output()?;
+    let stdout = String::from_utf8_lossy(&out.stdout);
+    let stderr = String::from_utf8_lossy(&out.stderr);
+    if !out.status.success() {
+        bail!(
+            "settlement governance query command failed rc={}: {}{}",
+            out.status.code().unwrap_or(1),
+            stdout,
+            stderr
+        );
+    }
+    parse_settlement_governance_query_response(&stdout)
 }
 
 fn parse_consumption_receipts_query_response(
@@ -3261,6 +3428,10 @@ fn main() -> Result<()> {
                 } else {
                     println!("{}", serde_json::to_string_pretty(&out)?);
                 }
+            }
+            QueryCommand::SettlementGovernance => {
+                let out = settlement_governance_query()?;
+                println!("{}", serde_json::to_string_pretty(&out)?);
             }
             QueryCommand::ConsumptionSummary { task_id } => {
                 let out = consumption_summary_query(task_id)?;
@@ -6556,6 +6727,46 @@ mod tests {
         .unwrap_err()
         .to_string();
         assert!(err.contains("requested=42, got=7"), "unexpected error: {err}");
+    }
+
+    #[test]
+    fn parse_settlement_governance_query_response_accepts_shadow_mode_masked_weights() {
+        let parsed = parse_settlement_governance_query_response(
+            r#"{"live_configuration_status":"configured","mode":"shadow_compare_only","underlying_mode":"hybrid","settlement_write_gate_status":"open","shadow_compare_only":true,"poco_weight_bps":2500,"pouw_weight_bps":7500,"effective_poco_weight_bps":0,"effective_pouw_weight_bps":10000,"shadow_masks_nonzero_poco_weight":true,"has_pending_updates":false}"#,
+        )
+        .expect("shadow settlement governance response should parse");
+        assert_eq!(parsed["mode"], serde_json::json!("shadow_compare_only"));
+        assert_eq!(parsed["effective_poco_weight_bps"], serde_json::json!(0));
+    }
+
+    #[test]
+    fn parse_settlement_governance_query_response_rejects_unmasked_shadow_effective_weights() {
+        let err = parse_settlement_governance_query_response(
+            r#"{"live_configuration_status":"configured","mode":"shadow_compare_only","underlying_mode":"hybrid","settlement_write_gate_status":"open","shadow_compare_only":true,"poco_weight_bps":2500,"pouw_weight_bps":7500,"effective_poco_weight_bps":2500,"effective_pouw_weight_bps":7500,"shadow_masks_nonzero_poco_weight":true,"has_pending_updates":false}"#,
+        )
+        .unwrap_err()
+        .to_string();
+        assert!(
+            err.contains("shadow_compare_only must mask effective weights"),
+            "unexpected error: {err}"
+        );
+    }
+
+    #[test]
+    fn settlement_governance_query_uses_template_override_and_preserves_staged_fields() {
+        let _guard = ENV_LOCK.lock().unwrap();
+        std::env::set_var(
+            "TRNM_QUERY_SETTLEMENT_GOVERNANCE_CMD",
+            r#"printf '%s' '{"live_configuration_status":"configured","mode":"hybrid","underlying_mode":"hybrid","settlement_write_gate_status":"open","shadow_compare_only":false,"poco_weight_bps":2500,"pouw_weight_bps":7500,"effective_poco_weight_bps":2500,"effective_pouw_weight_bps":7500,"shadow_masks_nonzero_poco_weight":false,"has_pending_updates":true,"staged_configuration_status":"configured","staged_mode":"shadow_compare_only","staged_underlying_mode":"hybrid","staged_effective_poco_weight_bps":0,"staged_effective_pouw_weight_bps":10000,"staged_shadow_masks_nonzero_poco_weight":true}'"#,
+        );
+        let got = settlement_governance_query().expect("template settlement governance query");
+        std::env::remove_var("TRNM_QUERY_SETTLEMENT_GOVERNANCE_CMD");
+        assert_eq!(got["mode"], serde_json::json!("hybrid"));
+        assert_eq!(got["staged_mode"], serde_json::json!("shadow_compare_only"));
+        assert_eq!(
+            got["staged_shadow_masks_nonzero_poco_weight"],
+            serde_json::json!(true)
+        );
     }
 
     #[test]
