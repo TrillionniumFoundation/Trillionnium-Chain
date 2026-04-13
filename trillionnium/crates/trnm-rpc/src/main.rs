@@ -4399,9 +4399,16 @@ fn authoritative_task_consumption_summary_response(
     task_id: u64,
     st: &StateStore,
 ) -> Result<TaskConsumptionSummaryQueryResponse> {
-    let summary = st
-        .task_consumption_summary(task_id)
-        .ok_or_else(|| anyhow!("consumption summary not found for task {}", task_id))?;
+    let summary = match st.task_consumption_summary(task_id) {
+        Some(summary) => summary,
+        None if !st.consumption_records_for_task(task_id).is_empty() => {
+            bail!(
+                "consumption summary required for task {} because authoritative settlement receipts exist",
+                task_id
+            )
+        }
+        None => bail!("consumption summary not found for task {}", task_id),
+    };
     TaskConsumptionSummaryQueryResponse::try_from_authoritative_state_summary(summary).map_err(
         |_| {
             anyhow!(
@@ -4416,6 +4423,8 @@ fn settlement_summary_query_error_response(method: &str, err: &anyhow::Error) ->
     let message = err.to_string();
     let (status, code) = if message.starts_with("consumption summary not found for task ") {
         ("404 Not Found", "NOT_FOUND")
+    } else if message.starts_with("consumption summary required for task ") {
+        ("409 Conflict", "SETTLEMENT_SUMMARY_REQUIRED")
     } else if message.starts_with("consumption summary violated settlement rpc contract for task ") {
         (
             "500 Internal Server Error",
@@ -4459,17 +4468,8 @@ fn settlement_preview_response(
     task_id: u64,
     st: &StateStore,
 ) -> Result<TaskSettlementPreviewQueryResponse> {
-    let summary = st
-        .task_consumption_summary(task_id)
-        .ok_or_else(|| anyhow!("consumption summary not found for task {}", task_id))?;
-    TaskSettlementPreviewQueryResponse::try_from_authoritative_state_summary(summary).map_err(
-        |_| {
-            anyhow!(
-                "consumption summary violated settlement rpc contract for task {}",
-                task_id
-            )
-        },
-    )
+    authoritative_task_consumption_summary_response(task_id, st)
+        .map(TaskSettlementPreviewQueryResponse::from_authoritative_summary)
 }
 
 fn query_consumption_receipts_response(
@@ -12167,6 +12167,17 @@ line2
     }
 
     #[test]
+    fn settlement_summary_query_error_response_maps_missing_receipt_backed_summary_to_conflict() {
+        let err = anyhow!(
+            "consumption summary required for task 42 because authoritative settlement receipts exist"
+        );
+        let response = settlement_summary_query_error_response("GET", &err);
+        assert!(response.starts_with("HTTP/1.1 409 Conflict\r\n"));
+        assert!(response.contains("\"code\":\"SETTLEMENT_SUMMARY_REQUIRED\""));
+        assert!(response.contains("authoritative settlement receipts exist"));
+    }
+
+    #[test]
     fn settlement_summary_query_error_response_maps_contract_violation_to_settlement_rpc_contract_violation() {
         let err = anyhow!("consumption summary violated settlement rpc contract for task 42");
         let response = settlement_summary_query_error_response("GET", &err);
@@ -12250,7 +12261,10 @@ line2
 
         let err = query_consumption_summary_response(42, &st)
             .expect_err("summary must not silently derive from receipts");
-        assert_eq!(err.to_string(), "consumption summary not found for task 42");
+        assert_eq!(
+            err.to_string(),
+            "consumption summary required for task 42 because authoritative settlement receipts exist"
+        );
     }
 
     #[test]
@@ -12299,7 +12313,10 @@ line2
 
         let err = settlement_preview_response(42, &st)
             .expect_err("preview must not silently derive from receipts");
-        assert_eq!(err.to_string(), "consumption summary not found for task 42");
+        assert_eq!(
+            err.to_string(),
+            "consumption summary required for task 42 because authoritative settlement receipts exist"
+        );
     }
 
     #[test]
