@@ -80,16 +80,22 @@ enum TxCommand {
         #[arg(long)]
         store: Option<PathBuf>,
     },
-    /// Submit a PoCO consumption receipt tx
-    #[command(visible_alias = "submit-settlement-receipt")]
+    /// Submit a PoCO settlement receipt tx
+    #[command(
+        name = "submit-settlement-receipt",
+        visible_alias = "submit-consumption-receipt"
+    )]
     SubmitConsumptionReceipt {
         #[arg(long)]
         receipt_json: PathBuf,
         #[arg(long)]
         signer: Option<String>,
     },
-    /// Challenge a PoCO consumption receipt tx
-    #[command(visible_alias = "challenge-settlement")]
+    /// Challenge a PoCO settlement receipt tx
+    #[command(
+        name = "challenge-settlement",
+        visible_alias = "challenge-consumption"
+    )]
     ChallengeConsumption {
         task_id: u64,
         #[arg(long)]
@@ -103,8 +109,11 @@ enum TxCommand {
         #[arg(long)]
         signer: Option<String>,
     },
-    /// Resolve a PoCO consumption receipt tx
-    #[command(visible_alias = "resolve-settlement")]
+    /// Resolve a PoCO settlement receipt tx
+    #[command(
+        name = "resolve-settlement",
+        visible_alias = "resolve-consumption"
+    )]
     ResolveConsumption {
         task_id: u64,
         #[arg(long)]
@@ -195,8 +204,11 @@ enum QueryCommand {
     /// Query task PoCO settlement preview via RPC
     #[command(visible_alias = "consumption-summary")]
     SettlementPreview { task_id: u64 },
-    /// Query task PoCO consumption receipts via RPC
-    #[command(visible_alias = "settlement-receipts")]
+    /// Query task PoCO settlement receipts via RPC
+    #[command(
+        name = "settlement-receipts",
+        visible_alias = "consumption-receipts"
+    )]
     ConsumptionReceipts {
         task_id: u64,
         #[arg(long, default_value_t = 20)]
