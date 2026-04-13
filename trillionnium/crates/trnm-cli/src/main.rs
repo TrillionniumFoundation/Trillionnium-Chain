@@ -282,36 +282,69 @@ fn required_json_u64_field(
     aliases: &[&str],
     field_name: &'static str,
 ) -> Result<u64> {
-    json_u64_alias(value, aliases).ok_or_else(|| anyhow!("consumption receipt missing {}", field_name))
+    json_u64_alias(value, aliases)
+        .ok_or_else(|| anyhow!("consumption receipt missing {}", field_name))
 }
 
 fn load_consumption_receipt_tx_input(path: &Path) -> Result<ConsumptionReceiptTxInput> {
-    let raw = fs::read_to_string(path)
-        .map_err(|err| anyhow!("failed to read consumption receipt file {}: {err}", path.display()))?;
-    let value: serde_json::Value = serde_json::from_str(&raw)
-        .map_err(|err| anyhow!("failed to parse consumption receipt file {} as json: {err}", path.display()))?;
+    let raw = fs::read_to_string(path).map_err(|err| {
+        anyhow!(
+            "failed to read consumption receipt file {}: {err}",
+            path.display()
+        )
+    })?;
+    let value: serde_json::Value = serde_json::from_str(&raw).map_err(|err| {
+        anyhow!(
+            "failed to parse consumption receipt file {} as json: {err}",
+            path.display()
+        )
+    })?;
     if !value.is_object() {
-        bail!("consumption receipt file {} must contain a json object", path.display());
+        bail!(
+            "consumption receipt file {} must contain a json object",
+            path.display()
+        );
     }
 
     Ok(ConsumptionReceiptTxInput {
-        payload_json: serde_json::to_string(&value)
-            .map_err(|err| anyhow!("failed to canonicalize consumption receipt file {}: {err}", path.display()))?,
+        payload_json: serde_json::to_string(&value).map_err(|err| {
+            anyhow!(
+                "failed to canonicalize consumption receipt file {}: {err}",
+                path.display()
+            )
+        })?,
         task_id: required_json_u64_field(&value, &["task_id"], "task_id")?,
         consumer_id: required_json_string_field(&value, &["consumer_id"], "consumer_id")?,
         output_hash: required_json_string_field(&value, &["output_hash"], "output_hash")?,
-        billing_window_id: required_json_string_field(&value, &["billing_window_id"], "billing_window_id")?,
+        billing_window_id: required_json_string_field(
+            &value,
+            &["billing_window_id"],
+            "billing_window_id",
+        )?,
         consumer_nonce: required_json_u64_field(&value, &["consumer_nonce"], "consumer_nonce")?,
     })
+}
+
+fn submit_consumption_receipt_template_override() -> Option<String> {
+    [
+        "TRNM_TX_SUBMIT_CONSUMPTION_RECEIPT_CMD",
+        "TRNM_TX_SUBMIT_SETTLEMENT_RECEIPT_CMD",
+    ]
+    .into_iter()
+    .find_map(|name| std::env::var(name).ok())
 }
 
 fn submit_consumption_receipt_tx(receipt_json: PathBuf, signer: Option<String>) -> Result<()> {
     let receipt = load_consumption_receipt_tx_input(&receipt_json)?;
     let signer = signer.unwrap_or_else(|| receipt.consumer_id.clone());
 
-    if let Ok(template) = std::env::var("TRNM_TX_SUBMIT_CONSUMPTION_RECEIPT_CMD") {
+    if let Some(template) = submit_consumption_receipt_template_override() {
         let mut cmd = template;
-        cmd = tpl(cmd, "receipt_json_path", &receipt_json.display().to_string());
+        cmd = tpl(
+            cmd,
+            "receipt_json_path",
+            &receipt_json.display().to_string(),
+        );
         cmd = tpl(cmd, "receipt_json", &receipt.payload_json);
         cmd = tpl(cmd, "task_id", &receipt.task_id.to_string());
         cmd = tpl(cmd, "consumer_id", &receipt.consumer_id);
@@ -340,6 +373,15 @@ fn submit_consumption_receipt_tx(receipt_json: PathBuf, signer: Option<String>) 
     Ok(())
 }
 
+fn challenge_consumption_template_override() -> Option<String> {
+    [
+        "TRNM_TX_CHALLENGE_CONSUMPTION_CMD",
+        "TRNM_TX_CHALLENGE_SETTLEMENT_CMD",
+    ]
+    .into_iter()
+    .find_map(|name| std::env::var(name).ok())
+}
+
 fn challenge_consumption_tx(
     task_id: u64,
     consumer_id: String,
@@ -350,7 +392,7 @@ fn challenge_consumption_tx(
 ) -> Result<()> {
     let signer = signer.unwrap_or_else(|| challenger.clone());
 
-    if let Ok(template) = std::env::var("TRNM_TX_CHALLENGE_CONSUMPTION_CMD") {
+    if let Some(template) = challenge_consumption_template_override() {
         let mut cmd = template;
         cmd = tpl(cmd, "task_id", &task_id.to_string());
         cmd = tpl(cmd, "consumer_id", &consumer_id);
@@ -379,6 +421,15 @@ fn challenge_consumption_tx(
     Ok(())
 }
 
+fn resolve_consumption_template_override() -> Option<String> {
+    [
+        "TRNM_TX_RESOLVE_CONSUMPTION_CMD",
+        "TRNM_TX_RESOLVE_SETTLEMENT_CMD",
+    ]
+    .into_iter()
+    .find_map(|name| std::env::var(name).ok())
+}
+
 #[allow(clippy::too_many_arguments)]
 fn resolve_consumption_tx(
     task_id: u64,
@@ -393,17 +444,23 @@ fn resolve_consumption_tx(
 ) -> Result<()> {
     let signer = signer.unwrap_or_else(|| resolver.clone());
     let decision = decision.as_str();
-    let credited_consumption_units = credited_consumption_units.map(|value| value.to_string()).unwrap_or_default();
+    let credited_consumption_units = credited_consumption_units
+        .map(|value| value.to_string())
+        .unwrap_or_default();
     let resolution_code = resolution_code.unwrap_or_default();
 
-    if let Ok(template) = std::env::var("TRNM_TX_RESOLVE_CONSUMPTION_CMD") {
+    if let Some(template) = resolve_consumption_template_override() {
         let mut cmd = template;
         cmd = tpl(cmd, "task_id", &task_id.to_string());
         cmd = tpl(cmd, "consumer_id", &consumer_id);
         cmd = tpl(cmd, "output_hash", &output_hash);
         cmd = tpl(cmd, "billing_window_id", &billing_window_id);
         cmd = tpl(cmd, "decision", decision);
-        cmd = tpl(cmd, "credited_consumption_units", &credited_consumption_units);
+        cmd = tpl(
+            cmd,
+            "credited_consumption_units",
+            &credited_consumption_units,
+        );
         cmd = tpl(cmd, "resolution_code", &resolution_code);
         cmd = tpl(cmd, "resolver", &resolver);
         cmd = tpl(cmd, "signer", &signer);
@@ -454,7 +511,9 @@ fn parse_balance_query_response(
             value.get("result"),
             value.get("data"),
             value.get("response"),
-            value.get("response").and_then(|response| response.get("data")),
+            value
+                .get("response")
+                .and_then(|response| response.get("data")),
         ] {
             let Some(candidate) = candidate else {
                 continue;
@@ -790,7 +849,10 @@ fn parse_consumption_summary_query_response(
         parsed.get("data").and_then(|value| value.get("summary")),
         parsed.get("response"),
         parsed.get("response").and_then(|value| value.get("data")),
-        parsed.get("response").and_then(|value| value.get("data")).and_then(|value| value.get("summary")),
+        parsed
+            .get("response")
+            .and_then(|value| value.get("data"))
+            .and_then(|value| value.get("summary")),
     ]
     .into_iter()
     .flatten()
@@ -808,15 +870,24 @@ fn parse_consumption_summary_query_response(
 }
 
 fn settlement_preview_template_override() -> Option<String> {
-    ["TRNM_QUERY_SETTLEMENT_PREVIEW_CMD", "TRNM_QUERY_CONSUMPTION_SUMMARY_CMD"]
-        .into_iter()
-        .find_map(|name| std::env::var(name).ok())
+    [
+        "TRNM_QUERY_SETTLEMENT_PREVIEW_CMD",
+        "TRNM_QUERY_CONSUMPTION_SUMMARY_CMD",
+    ]
+    .into_iter()
+    .find_map(|name| std::env::var(name).ok())
 }
 
 fn settlement_preview_query_commands(task_id: u64) -> [String; 2] {
     [
-        format!("cargo run -q -p trnm-rpc -- query-settlement-preview {}", task_id),
-        format!("cargo run -q -p trnm-rpc -- query-consumption-summary {}", task_id),
+        format!(
+            "cargo run -q -p trnm-rpc -- query-settlement-preview {}",
+            task_id
+        ),
+        format!(
+            "cargo run -q -p trnm-rpc -- query-consumption-summary {}",
+            task_id
+        ),
     ]
 }
 
@@ -854,7 +925,10 @@ fn consumption_summary_query(task_id: u64) -> Result<serde_json::Value> {
         ));
     }
 
-    bail!("settlement preview query command failed: {}", failures.join(" | "))
+    bail!(
+        "settlement preview query command failed: {}",
+        failures.join(" | ")
+    )
 }
 
 fn parse_consumption_receipts_query_response(
@@ -1534,7 +1608,10 @@ fn normalize_wallet_store_env(raw: &str) -> Option<&str> {
         || normalized.chars().any(|c| {
             c.is_whitespace()
                 || contains_hidden_or_control(c)
-                || matches!(c, '\\' | '∖' | '／' | '＼' | '﹨' | '∕' | '⁄' | '⧵' | '⧸' | '⧹' | '⟋' | '⟍')
+                || matches!(
+                    c,
+                    '\\' | '∖' | '／' | '＼' | '﹨' | '∕' | '⁄' | '⧵' | '⧸' | '⧹' | '⟋' | '⟍'
+                )
         })
     {
         return None;
@@ -1566,8 +1643,7 @@ fn wallet_store_path_is_safe(path: &Path) -> bool {
                 && !contains_hidden_or_control(c)
                 && !matches!(
                     c,
-                    '\\'
-                        | '∖'
+                    '\\' | '∖'
                         | '／'
                         | '＼'
                         | '﹨'
@@ -1648,10 +1724,14 @@ fn default_wallet_store() -> PathBuf {
     let home_root = std::env::var("HOME")
         .ok()
         .and_then(|raw| normalize_wallet_store_env(&raw).map(PathBuf::from))
-        .filter(|path| wallet_store_path_is_safe(path) && wallet_store_path_and_ancestors_are_symlink_free(path))
+        .filter(|path| {
+            wallet_store_path_is_safe(path)
+                && wallet_store_path_and_ancestors_are_symlink_free(path)
+        })
         .or_else(|| {
             std::env::current_dir().ok().filter(|path| {
-                wallet_store_path_is_safe(path) && wallet_store_path_and_ancestors_are_symlink_free(path)
+                wallet_store_path_is_safe(path)
+                    && wallet_store_path_and_ancestors_are_symlink_free(path)
             })
         })
         .unwrap_or_else(|| PathBuf::from("/"));
@@ -1742,10 +1822,7 @@ fn ensure_sign_message(message: &str) -> Result<()> {
     if message.len() > 4096 {
         bail!("sign message must be <= 4096 bytes");
     }
-    if message
-        .chars()
-        .next()
-        .is_some_and(|c| c.is_whitespace())
+    if message.chars().next().is_some_and(|c| c.is_whitespace())
         || message
             .chars()
             .next_back()
@@ -1754,10 +1831,7 @@ fn ensure_sign_message(message: &str) -> Result<()> {
         bail!("sign message must not start or end with whitespace");
     }
     if message.chars().any(|c| {
-        c == '\r'
-            || c == '\n'
-            || contains_hidden_or_control(c)
-            || (c.is_whitespace() && c != ' ')
+        c == '\r' || c == '\n' || contains_hidden_or_control(c) || (c.is_whitespace() && c != ' ')
     }) {
         bail!(
             "sign message must be single-line printable text without control characters and with only interior ASCII spaces"
@@ -1811,7 +1885,9 @@ fn ensure_wallet_name(name: &str) -> Result<()> {
         || name.starts_with(['‐', '‑', '‒', '–', '—', '―', '−', '﹣', '－'])
         || name.contains(['/', '\\', ':', '=', '|', '&', '$', '*', '?', '!'])
         || name.contains(['‐', '‑', '‒', '–', '—', '―', '−', '﹣', '－'])
-        || name.contains(['：', '﹕', '＝', '﹦', '｜', '￨', '＆', '﹠', '？', '﹖', '，', '；', '！', '﹗'])
+        || name.contains([
+            '：', '﹕', '＝', '﹦', '｜', '￨', '＆', '﹠', '？', '﹖', '，', '；', '！', '﹗',
+        ])
         || name.contains(['＊', '﹡'])
         || name.contains(['∕', '⁄', '／', '＼', '⧵', '⧸', '⧹', '⟋', '⟍'])
         || name.contains(['.', '．', '。', '｡', '﹒', '․'])
@@ -1819,9 +1895,9 @@ fn ensure_wallet_name(name: &str) -> Result<()> {
             '"', '\'', '`', '<', '>', '(', ')', '[', ']', '{', '}', ',', ';',
         ])
         || name.contains([
-            '“', '”', '‘', '’', '«', '»', '‹', '›', '「', '」', '『', '』', '《', '》',
-            '〈', '〉', '｢', '｣', '（', '）', '［', '］', '｛', '｝', '＜', '＞', '【', '】',
-            '〔', '〕', '〖', '〗', '〘', '〙', '〚', '〛', '〝', '〞', '〟', '｟', '｠',
+            '“', '”', '‘', '’', '«', '»', '‹', '›', '「', '」', '『', '』', '《', '》', '〈', '〉',
+            '｢', '｣', '（', '）', '［', '］', '｛', '｝', '＜', '＞', '【', '】', '〔', '〕', '〖',
+            '〗', '〘', '〙', '〚', '〛', '〝', '〞', '〟', '｟', '｠',
         ])
         || has_hidden_or_whitespace
         || has_non_simple_ascii
@@ -1973,8 +2049,13 @@ fn read_key(store: &Path, name: &str) -> Result<String> {
     }
     ensure_owner_only_permissions(&store_meta, store, "wallet store")?;
     let f = wallet_file(store, name);
-    let file_meta = fs::symlink_metadata(&f)
-        .map_err(|e| anyhow!("failed to inspect wallet '{}' at {}: {e}", name, f.display()))?;
+    let file_meta = fs::symlink_metadata(&f).map_err(|e| {
+        anyhow!(
+            "failed to inspect wallet '{}' at {}: {e}",
+            name,
+            f.display()
+        )
+    })?;
     if file_meta.file_type().is_symlink() {
         bail!(
             "wallet '{}' at {} is a symlink; refusing to read key through non-regular wallet file path",
@@ -2056,8 +2137,7 @@ fn ensure_safe_sign_message(message: &str) -> Result<()> {
             || (!c.is_ascii_graphic() && c != ' ')
             || matches!(
                 c,
-                '='
-                    | ':'
+                '=' | ':'
                     | ';'
                     | ','
                     | '|'
@@ -2286,7 +2366,9 @@ fn extract_tx_hash(text: &str) -> Option<String> {
                 c.is_ascii_whitespace()
                     || matches!(c, ',' | ';' | '(' | ')' | '[' | ']' | '{' | '}' | '<' | '>')
             });
-            is_text_tx_hash_key(key).then(|| normalize_tx_hash(v)).flatten()
+            is_text_tx_hash_key(key)
+                .then(|| normalize_tx_hash(v))
+                .flatten()
         }) {
             return Some(v);
         }
@@ -2392,9 +2474,38 @@ fn trim_kv_key_noise(raw: &str) -> &str {
             || c.is_control()
             || matches!(
                 c,
-                ',' | ';' | '{' | '}' | '[' | ']' | '(' | ')' | '<' | '>'
-                    | '，' | '；' | '：' | '（' | '）' | '［' | '］' | '｛' | '｝' | '＜' | '＞'
-                    | '「' | '」' | '『' | '』' | '《' | '》' | '〈' | '〉' | '｢' | '｣' | '【' | '】'
+                ',' | ';'
+                    | '{'
+                    | '}'
+                    | '['
+                    | ']'
+                    | '('
+                    | ')'
+                    | '<'
+                    | '>'
+                    | '，'
+                    | '；'
+                    | '：'
+                    | '（'
+                    | '）'
+                    | '［'
+                    | '］'
+                    | '｛'
+                    | '｝'
+                    | '＜'
+                    | '＞'
+                    | '「'
+                    | '」'
+                    | '『'
+                    | '』'
+                    | '《'
+                    | '》'
+                    | '〈'
+                    | '〉'
+                    | '｢'
+                    | '｣'
+                    | '【'
+                    | '】'
             )
             || matches!(
                 c,
@@ -2867,7 +2978,10 @@ fn normalize_json_status(value: &serde_json::Value) -> Option<String> {
 }
 
 fn is_terminal_local_tx_status(status: &str) -> bool {
-    matches!(normalize_tx_status(status).as_deref(), Some("committed" | "fail"))
+    matches!(
+        normalize_tx_status(status).as_deref(),
+        Some("committed" | "fail")
+    )
 }
 
 fn canonical_json_key(key: &str) -> String {
@@ -2877,7 +2991,10 @@ fn canonical_json_key(key: &str) -> String {
         .collect()
 }
 
-fn json_get_alias<'a>(value: &'a serde_json::Value, aliases: &[&str]) -> Option<&'a serde_json::Value> {
+fn json_get_alias<'a>(
+    value: &'a serde_json::Value,
+    aliases: &[&str],
+) -> Option<&'a serde_json::Value> {
     let object = value.as_object()?;
     object.iter().find_map(|(key, value)| {
         let canonical = canonical_json_key(key);
@@ -2943,7 +3060,9 @@ fn parse_tx_query_response(raw: &str, requested_tx_hash: &str) -> Result<TxQuery
         let nested_response_data = response
             .and_then(|r| json_get_alias(r, &["data"]))
             .or_else(|| json_get_alias(payload, &["responseData"]));
-        let primary = nested_tx_response.or(nested_response_data).unwrap_or(payload);
+        let primary = nested_tx_response
+            .or(nested_response_data)
+            .unwrap_or(payload);
         let tx_hash_aliases = [
             "tx_hash",
             "txhash",
@@ -2962,7 +3081,7 @@ fn parse_tx_query_response(raw: &str, requested_tx_hash: &str) -> Result<TxQuery
                     .as_str()
                     .ok_or_else(|| anyhow!("invalid tx_hash field in tx query response"))?,
             )
-                .ok_or_else(|| anyhow!("invalid tx_hash field in tx query response"))?,
+            .ok_or_else(|| anyhow!("invalid tx_hash field in tx query response"))?,
             None => normalize_tx_hash(requested_tx_hash)
                 .unwrap_or_else(|| requested_tx_hash.to_string()),
         };
@@ -2990,7 +3109,11 @@ fn parse_tx_query_response(raw: &str, requested_tx_hash: &str) -> Result<TxQuery
             .or_else(|| infer_json_tx_status(payload))
             .ok_or_else(|| anyhow!("missing/invalid status field in tx query response"))?;
         let error = json_get_alias(primary, &["error", "raw_log", "raw-log", "rawLog", "log"])
-            .or_else(|| response.and_then(|r| json_get_alias(r, &["error", "raw_log", "raw-log", "rawLog", "log"])))
+            .or_else(|| {
+                response.and_then(|r| {
+                    json_get_alias(r, &["error", "raw_log", "raw-log", "rawLog", "log"])
+                })
+            })
             .or_else(|| json_get_alias(payload, &["error", "raw_log", "raw-log", "rawLog", "log"]))
             .and_then(normalize_json_error);
         return Ok(TxQueryResponse {
@@ -3026,8 +3149,7 @@ fn parse_tx_query_response(raw: &str, requested_tx_hash: &str) -> Result<TxQuery
                         status = Some(normalized);
                     }
                 }
-                "code" | "txcode" | "transactioncode" | "delivertxcode"
-                | "checktxcode" => {
+                "code" | "txcode" | "transactioncode" | "delivertxcode" | "checktxcode" => {
                     if status.is_none() {
                         status = infer_kv_tx_status(&key, &value);
                     }
@@ -3144,7 +3266,10 @@ fn tx_query(tx_hash: &str) -> Result<TxQueryResponse> {
 }
 
 fn is_terminal_tx_status(status: &str) -> bool {
-    matches!(normalize_tx_status(status).as_deref(), Some("committed" | "fail"))
+    matches!(
+        normalize_tx_status(status).as_deref(),
+        Some("committed" | "fail")
+    )
 }
 
 fn wait_for_tx<F>(
@@ -3172,10 +3297,7 @@ where
     loop {
         let resp = query_fn(&requested)?;
         if resp.tx_hash.trim().is_empty() {
-            bail!(
-                "tx wait response missing tx_hash: requested={}",
-                requested
-            );
+            bail!("tx wait response missing tx_hash: requested={}", requested);
         }
         let got = normalize_tx_hash(&resp.tx_hash).ok_or_else(|| {
             anyhow!(
@@ -3252,8 +3374,9 @@ fn query_local_tx_status(tx_hash: &str) -> Option<String> {
 }
 
 fn persist_local_pending_tx(tx_hash: &str) -> Result<()> {
-    let canonical = normalize_tx_hash(tx_hash)
-        .ok_or_else(|| anyhow!("invalid tx hash for local pending state (expected hex-like tx hash)"))?;
+    let canonical = normalize_tx_hash(tx_hash).ok_or_else(|| {
+        anyhow!("invalid tx hash for local pending state (expected hex-like tx hash)")
+    })?;
     if !canonical.starts_with("0x") {
         bail!("invalid tx hash for local pending state (expected 0x-prefixed hex tx hash)");
     }
@@ -3513,7 +3636,10 @@ fn main() -> Result<()> {
                     println!("{}", serde_json::to_string_pretty(&out)?);
                 }
             }
-            TxCommand::SubmitConsumptionReceipt { receipt_json, signer } => {
+            TxCommand::SubmitConsumptionReceipt {
+                receipt_json,
+                signer,
+            } => {
                 submit_consumption_receipt_tx(receipt_json, signer)?;
             }
             TxCommand::ChallengeConsumption {
@@ -3694,7 +3820,11 @@ mod tests {
 
         match args.cmd {
             Command::Tx {
-                tx: TxCommand::SubmitConsumptionReceipt { receipt_json, signer },
+                tx:
+                    TxCommand::SubmitConsumptionReceipt {
+                        receipt_json,
+                        signer,
+                    },
             } => {
                 assert_eq!(receipt_json, PathBuf::from("/tmp/receipt.json"));
                 assert_eq!(signer.as_deref(), Some("consumer-bravo"));
@@ -3716,7 +3846,11 @@ mod tests {
 
         match args.cmd {
             Command::Tx {
-                tx: TxCommand::SubmitConsumptionReceipt { receipt_json, signer },
+                tx:
+                    TxCommand::SubmitConsumptionReceipt {
+                        receipt_json,
+                        signer,
+                    },
             } => {
                 assert_eq!(receipt_json, PathBuf::from("/tmp/receipt.json"));
                 assert_eq!(signer, None);
@@ -3913,13 +4047,8 @@ mod tests {
 
     #[test]
     fn consumption_settlement_cli_parser_accepts_settlement_preview_query_command() {
-        let args = Args::try_parse_from([
-            "trnm-cli",
-            "query",
-            "settlement-preview",
-            "42",
-        ])
-        .expect("parse settlement-preview args");
+        let args = Args::try_parse_from(["trnm-cli", "query", "settlement-preview", "42"])
+            .expect("parse settlement-preview args");
 
         match args.cmd {
             Command::Query {
@@ -3933,13 +4062,8 @@ mod tests {
 
     #[test]
     fn consumption_settlement_cli_parser_accepts_consumption_summary_query_alias() {
-        let args = Args::try_parse_from([
-            "trnm-cli",
-            "query",
-            "consumption-summary",
-            "42",
-        ])
-        .expect("parse consumption-summary args");
+        let args = Args::try_parse_from(["trnm-cli", "query", "consumption-summary", "42"])
+            .expect("parse consumption-summary args");
 
         match args.cmd {
             Command::Query {
@@ -4037,8 +4161,11 @@ mod tests {
     fn consumption_settlement_write_paths_emit_pending_hashes_with_default_signers() {
         let _guard = ENV_LOCK.lock().unwrap();
         std::env::remove_var("TRNM_TX_SUBMIT_CONSUMPTION_RECEIPT_CMD");
+        std::env::remove_var("TRNM_TX_SUBMIT_SETTLEMENT_RECEIPT_CMD");
         std::env::remove_var("TRNM_TX_CHALLENGE_CONSUMPTION_CMD");
+        std::env::remove_var("TRNM_TX_CHALLENGE_SETTLEMENT_CMD");
         std::env::remove_var("TRNM_TX_RESOLVE_CONSUMPTION_CMD");
+        std::env::remove_var("TRNM_TX_RESOLVE_SETTLEMENT_CMD");
 
         let unique = format!(
             "trnm-cli-consumption-settlement-write-paths-test-{}-{}",
@@ -4133,11 +4260,111 @@ mod tests {
         let raw = std::fs::read_to_string(&tx_file).unwrap();
         let parsed: serde_json::Value = serde_json::from_str(&raw).unwrap();
         for tx_hash in [&submit_hash, &challenge_hash, &resolve_hash] {
-            assert_eq!(parsed[tx_hash.as_str()]["tx_hash"].as_str(), Some(tx_hash.as_str()));
+            assert_eq!(
+                parsed[tx_hash.as_str()]["tx_hash"].as_str(),
+                Some(tx_hash.as_str())
+            );
             assert_eq!(parsed[tx_hash.as_str()]["status"].as_str(), Some("pending"));
         }
-        assert_eq!(query_local_tx_status(&resolve_hash).as_deref(), Some("pending"));
+        assert_eq!(
+            query_local_tx_status(&resolve_hash).as_deref(),
+            Some("pending")
+        );
 
+        std::env::remove_var("TRNM_RPC_TX_FILE");
+        let _ = std::fs::remove_dir_all(&root);
+    }
+
+    #[test]
+    fn consumption_settlement_write_paths_accept_legacy_template_env_aliases() {
+        let _guard = ENV_LOCK.lock().unwrap();
+        std::env::remove_var("TRNM_TX_SUBMIT_CONSUMPTION_RECEIPT_CMD");
+        std::env::remove_var("TRNM_TX_SUBMIT_SETTLEMENT_RECEIPT_CMD");
+        std::env::remove_var("TRNM_TX_CHALLENGE_CONSUMPTION_CMD");
+        std::env::remove_var("TRNM_TX_CHALLENGE_SETTLEMENT_CMD");
+        std::env::remove_var("TRNM_TX_RESOLVE_CONSUMPTION_CMD");
+        std::env::remove_var("TRNM_TX_RESOLVE_SETTLEMENT_CMD");
+
+        let unique = format!(
+            "trnm-cli-consumption-settlement-legacy-env-test-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        );
+        let root = canonical_temp_root().join(unique);
+        std::fs::create_dir_all(&root).unwrap();
+
+        let receipt_path = root.join("receipt.json");
+        std::fs::write(
+            &receipt_path,
+            r#"{
+                "task_id":42,
+                "consumer_id":"consumer-bravo",
+                "output_hash":"0xabc123",
+                "billing_window_id":"bw-7",
+                "consumer_nonce":9
+            }"#,
+        )
+        .unwrap();
+
+        let tx_file = root.join("txs.json");
+        std::env::set_var("TRNM_RPC_TX_FILE", &tx_file);
+
+        let submit_hash = format!("0x{}", "a".repeat(64));
+        let challenge_hash = format!("0x{}", "b".repeat(64));
+        let resolve_hash = format!("0x{}", "c".repeat(64));
+
+        std::env::set_var(
+            "TRNM_TX_SUBMIT_SETTLEMENT_RECEIPT_CMD",
+            format!("printf '%s' 'tx_hash={}'", submit_hash),
+        );
+        std::env::set_var(
+            "TRNM_TX_CHALLENGE_SETTLEMENT_CMD",
+            format!("printf '%s' 'tx_hash={}'", challenge_hash),
+        );
+        std::env::set_var(
+            "TRNM_TX_RESOLVE_SETTLEMENT_CMD",
+            format!("printf '%s' 'tx_hash={}'", resolve_hash),
+        );
+
+        submit_consumption_receipt_tx(receipt_path, None).unwrap();
+        challenge_consumption_tx(
+            42,
+            "consumer-bravo".into(),
+            "0xabc123".into(),
+            "bw-7".into(),
+            "arbiter-alpha".into(),
+            None,
+        )
+        .unwrap();
+        resolve_consumption_tx(
+            42,
+            "consumer-bravo".into(),
+            "0xabc123".into(),
+            "bw-7".into(),
+            ConsumptionResolutionDecisionArg::Accept,
+            None,
+            None,
+            "arbiter-alpha".into(),
+            None,
+        )
+        .unwrap();
+
+        let raw = std::fs::read_to_string(&tx_file).unwrap();
+        let parsed: serde_json::Value = serde_json::from_str(&raw).unwrap();
+        for tx_hash in [&submit_hash, &challenge_hash, &resolve_hash] {
+            assert_eq!(
+                parsed[tx_hash.as_str()]["tx_hash"].as_str(),
+                Some(tx_hash.as_str())
+            );
+            assert_eq!(parsed[tx_hash.as_str()]["status"].as_str(), Some("pending"));
+        }
+
+        std::env::remove_var("TRNM_TX_SUBMIT_SETTLEMENT_RECEIPT_CMD");
+        std::env::remove_var("TRNM_TX_CHALLENGE_SETTLEMENT_CMD");
+        std::env::remove_var("TRNM_TX_RESOLVE_SETTLEMENT_CMD");
         std::env::remove_var("TRNM_RPC_TX_FILE");
         let _ = std::fs::remove_dir_all(&root);
     }
@@ -4150,8 +4377,9 @@ mod tests {
 
     #[test]
     fn query_parsers_accept_stringified_task_ids_in_events_response() {
-        let parsed = parse_events_query_response(r#"[{"task_id":"42","event_type":"accepted"}]"#, 42)
-            .unwrap();
+        let parsed =
+            parse_events_query_response(r#"[{"task_id":"42","event_type":"accepted"}]"#, 42)
+                .unwrap();
         assert_eq!(json_u64_at_path(&parsed[0], &["task_id"]), Some(42));
     }
 
@@ -4163,7 +4391,10 @@ mod tests {
         )
         .unwrap();
         assert_eq!(json_u64_at_path(&parsed, &["request", "task_id"]), Some(42));
-        assert_eq!(json_u64_at_path(&parsed["events"][0], &["task_id"]), Some(42));
+        assert_eq!(
+            json_u64_at_path(&parsed["events"][0], &["task_id"]),
+            Some(42)
+        );
     }
 
     #[test]
@@ -4175,7 +4406,10 @@ mod tests {
         .unwrap();
         assert_eq!(parsed["request"]["request_id"], serde_json::json!(42));
         assert_eq!(json_u64_at_path(&parsed, &["request", "task_id"]), Some(42));
-        assert_eq!(json_u64_at_path(&parsed["events"][0], &["task_id"]), Some(42));
+        assert_eq!(
+            json_u64_at_path(&parsed["events"][0], &["task_id"]),
+            Some(42)
+        );
     }
 
     #[test]
@@ -4323,14 +4557,38 @@ mod tests {
             normalize_wallet_store_env("\u{200e}\u{061c}《/tmp/trnm-wallets》\u{200f}"),
             Some("/tmp/trnm-wallets")
         );
-        assert_eq!(normalize_wallet_store_env("\u{00ad}\u{180e}《/tmp/trnm-wallets》\u{180e}\u{00ad}"), Some("/tmp/trnm-wallets"));
-        assert_eq!(normalize_wallet_store_env("\u{206a}《/tmp/trnm-wallets》\u{206f}"), Some("/tmp/trnm-wallets"));
-        assert_eq!(normalize_wallet_store_env("〈/tmp/trnm-wallets〉"), Some("/tmp/trnm-wallets"));
-        assert_eq!(normalize_wallet_store_env("⟨/tmp/trnm-wallets⟩"), Some("/tmp/trnm-wallets"));
-        assert_eq!(normalize_wallet_store_env("｟/tmp/trnm-wallets｠"), Some("/tmp/trnm-wallets"));
-        assert_eq!(normalize_wallet_store_env("(/tmp/trnm-wallets)"), Some("/tmp/trnm-wallets"));
-        assert_eq!(normalize_wallet_store_env("[/tmp/trnm-wallets]"), Some("/tmp/trnm-wallets"));
-        assert_eq!(normalize_wallet_store_env("{/tmp/trnm-wallets}"), Some("/tmp/trnm-wallets"));
+        assert_eq!(
+            normalize_wallet_store_env("\u{00ad}\u{180e}《/tmp/trnm-wallets》\u{180e}\u{00ad}"),
+            Some("/tmp/trnm-wallets")
+        );
+        assert_eq!(
+            normalize_wallet_store_env("\u{206a}《/tmp/trnm-wallets》\u{206f}"),
+            Some("/tmp/trnm-wallets")
+        );
+        assert_eq!(
+            normalize_wallet_store_env("〈/tmp/trnm-wallets〉"),
+            Some("/tmp/trnm-wallets")
+        );
+        assert_eq!(
+            normalize_wallet_store_env("⟨/tmp/trnm-wallets⟩"),
+            Some("/tmp/trnm-wallets")
+        );
+        assert_eq!(
+            normalize_wallet_store_env("｟/tmp/trnm-wallets｠"),
+            Some("/tmp/trnm-wallets")
+        );
+        assert_eq!(
+            normalize_wallet_store_env("(/tmp/trnm-wallets)"),
+            Some("/tmp/trnm-wallets")
+        );
+        assert_eq!(
+            normalize_wallet_store_env("[/tmp/trnm-wallets]"),
+            Some("/tmp/trnm-wallets")
+        );
+        assert_eq!(
+            normalize_wallet_store_env("{/tmp/trnm-wallets}"),
+            Some("/tmp/trnm-wallets")
+        );
         assert_eq!(
             normalize_wallet_store_env(" ({[/tmp/trnm-wallets]}) "),
             Some("/tmp/trnm-wallets")
@@ -4362,7 +4620,10 @@ mod tests {
         assert_eq!(normalize_wallet_store_env("/tmp/trnm wallets"), None);
         assert_eq!(normalize_wallet_store_env("/tmp/trnm\t-wallets"), None);
         assert_eq!(normalize_wallet_store_env("/tmp/trnm\n-wallets"), None);
-        assert_eq!(normalize_wallet_store_env("/tmp/trnm\u{200b}-wallets"), None);
+        assert_eq!(
+            normalize_wallet_store_env("/tmp/trnm\u{200b}-wallets"),
+            None
+        );
         assert_eq!(normalize_wallet_store_env("/tmp/trnm\u{202e}wallets"), None);
         assert_eq!(normalize_wallet_store_env("/tmp/trnm∖wallets"), None);
         assert_eq!(normalize_wallet_store_env("/tmp/trnm﹨wallets"), None);
@@ -4501,9 +4762,15 @@ mod tests {
         std::os::unix::fs::symlink(&real_parent, &linked_parent).unwrap();
 
         std::env::set_var("HOME", format!(" \"{}\" ", clean_home.display()));
-        assert_eq!(default_wallet_store(), clean_home.join(".trnm").join("wallets"));
+        assert_eq!(
+            default_wallet_store(),
+            clean_home.join(".trnm").join("wallets")
+        );
 
-        std::env::set_var("HOME", format!(" \u{2068}《{}》\u{2069} ", clean_home.display()));
+        std::env::set_var(
+            "HOME",
+            format!(" \u{2068}《{}》\u{2069} ", clean_home.display()),
+        );
         assert_eq!(
             default_wallet_store(),
             clean_home.join(".trnm").join("wallets"),
@@ -4511,7 +4778,13 @@ mod tests {
         );
 
         std::env::set_var("HOME", format!("{}", linked_parent.display()));
-        assert_eq!(default_wallet_store(), std::env::current_dir().unwrap().join(".trnm").join("wallets"));
+        assert_eq!(
+            default_wallet_store(),
+            std::env::current_dir()
+                .unwrap()
+                .join(".trnm")
+                .join("wallets")
+        );
 
         match original_store {
             Some(value) => std::env::set_var("TRNM_WALLET_STORE", value),
@@ -4563,9 +4836,9 @@ mod tests {
         std::env::set_var("TRNM_WALLET_STORE", "/tmp/trnm⧹wallets");
         let confusable_separator_err = resolve_wallet_store(None).unwrap_err();
         assert!(
-            confusable_separator_err
-                .to_string()
-                .contains("TRNM_WALLET_STORE is set but invalid; refusing ambiguous keystore path fallback"),
+            confusable_separator_err.to_string().contains(
+                "TRNM_WALLET_STORE is set but invalid; refusing ambiguous keystore path fallback"
+            ),
             "unexpected error for confusable separator env store: {confusable_separator_err}"
         );
 
@@ -4581,9 +4854,13 @@ mod tests {
                 .as_nanos()
         ));
         std::env::set_var("TRNM_WALLET_STORE", "\u{2068}\u{2069}");
-        assert_eq!(resolve_wallet_store(Some(explicit.clone())).unwrap(), explicit);
+        assert_eq!(
+            resolve_wallet_store(Some(explicit.clone())).unwrap(),
+            explicit
+        );
 
-        let explicit_relative_err = resolve_wallet_store(Some(PathBuf::from("./wallets"))).unwrap_err();
+        let explicit_relative_err =
+            resolve_wallet_store(Some(PathBuf::from("./wallets"))).unwrap_err();
         assert!(
             explicit_relative_err
                 .to_string()
@@ -4639,9 +4916,7 @@ mod tests {
 
         let explicit_err = resolve_wallet_store(Some(linked_store.clone())).unwrap_err();
         assert!(
-            explicit_err
-                .to_string()
-                .contains("explicit wallet store")
+            explicit_err.to_string().contains("explicit wallet store")
                 && explicit_err
                     .to_string()
                     .contains("must be an absolute normalized symlink-free path"),
@@ -4651,9 +4926,7 @@ mod tests {
         std::env::set_var("TRNM_WALLET_STORE", linked_store.as_os_str());
         let env_err = resolve_wallet_store(None).unwrap_err();
         assert!(
-            env_err
-                .to_string()
-                .contains("TRNM_WALLET_STORE")
+            env_err.to_string().contains("TRNM_WALLET_STORE")
                 && env_err
                     .to_string()
                     .contains("must be an absolute normalized symlink-free path"),
@@ -4690,9 +4963,7 @@ mod tests {
 
         let explicit_err = resolve_wallet_store(Some(store.clone())).unwrap_err();
         assert!(
-            explicit_err
-                .to_string()
-                .contains("explicit wallet store")
+            explicit_err.to_string().contains("explicit wallet store")
                 && explicit_err
                     .to_string()
                     .contains("must be an absolute normalized symlink-free path"),
@@ -4702,9 +4973,7 @@ mod tests {
         std::env::set_var("TRNM_WALLET_STORE", store.as_os_str());
         let env_err = resolve_wallet_store(None).unwrap_err();
         assert!(
-            env_err
-                .to_string()
-                .contains("TRNM_WALLET_STORE")
+            env_err.to_string().contains("TRNM_WALLET_STORE")
                 && env_err
                     .to_string()
                     .contains("must be an absolute normalized symlink-free path"),
@@ -5068,7 +5337,11 @@ mod tests {
         let mode = std::fs::metadata(&wallet).unwrap().permissions().mode() & 0o777;
         assert_eq!(mode, 0o600, "unexpected wallet file mode: {:o}", mode);
         let store_mode = std::fs::metadata(&store).unwrap().permissions().mode() & 0o777;
-        assert_eq!(store_mode, 0o700, "unexpected wallet store mode: {:o}", store_mode);
+        assert_eq!(
+            store_mode, 0o700,
+            "unexpected wallet store mode: {:o}",
+            store_mode
+        );
 
         let _ = std::fs::remove_file(&wallet);
         let _ = std::fs::remove_dir(&store);
@@ -5453,7 +5726,9 @@ mod tests {
         let err = wallet_create("alice".to_string(), None).unwrap_err();
         assert!(
             err.to_string().contains("traverses symlinked ancestor")
-                || err.to_string().contains("must be an absolute normalized symlink-free path"),
+                || err
+                    .to_string()
+                    .contains("must be an absolute normalized symlink-free path"),
             "unexpected error: {err}"
         );
 
@@ -6752,7 +7027,10 @@ mod tests {
     #[test]
     fn ensure_safe_sign_message_rejects_empty_text() {
         let err = ensure_safe_sign_message("").unwrap_err();
-        assert!(err.to_string().contains("must not be empty"), "unexpected: {err}");
+        assert!(
+            err.to_string().contains("must not be empty"),
+            "unexpected: {err}"
+        );
     }
 
     #[test]
@@ -6977,7 +7255,10 @@ mod tests {
 
     #[test]
     fn ensure_safe_sign_message_rejects_path_separator_text() {
-        for bad in ["approve /tmp/offline-payload", "approve C:\\offline\\payload"] {
+        for bad in [
+            "approve /tmp/offline-payload",
+            "approve C:\\offline\\payload",
+        ] {
             let err = ensure_safe_sign_message(bad).unwrap_err();
             assert!(
                 err.to_string().contains("path separators"),
@@ -7230,7 +7511,10 @@ mod tests {
         let parsed: serde_json::Value = serde_json::from_str(&raw).unwrap();
         assert!(parsed.get(raw_tx_hash).is_none());
         assert_eq!(parsed[canonical]["tx_hash"].as_str(), Some(canonical));
-        assert_eq!(query_local_tx_status(raw_tx_hash).as_deref(), Some("pending"));
+        assert_eq!(
+            query_local_tx_status(raw_tx_hash).as_deref(),
+            Some("pending")
+        );
 
         let _ = std::fs::remove_file(&path);
         std::env::remove_var("TRNM_RPC_TX_FILE");
@@ -7238,7 +7522,9 @@ mod tests {
 
     #[test]
     fn persist_local_pending_tx_rejects_non_prefixed_hex_hashes() {
-        let err = persist_local_pending_tx("deadbeef").unwrap_err().to_string();
+        let err = persist_local_pending_tx("deadbeef")
+            .unwrap_err()
+            .to_string();
         assert!(
             err.contains("expected 0x-prefixed hex tx hash"),
             "unexpected error: {err}"
@@ -7399,7 +7685,10 @@ mod tests {
         )
         .unwrap_err()
         .to_string();
-        assert!(err.contains("requested=42, got=7"), "unexpected error: {err}");
+        assert!(
+            err.contains("requested=42, got=7"),
+            "unexpected error: {err}"
+        );
     }
 
     #[test]
@@ -7441,14 +7730,23 @@ mod tests {
 
         std::env::remove_var("TRNM_QUERY_SETTLEMENT_PREVIEW_CMD");
         std::env::remove_var("TRNM_QUERY_CONSUMPTION_SUMMARY_CMD");
-        assert_eq!(got.get("source"), Some(&serde_json::json!("settlement-preview")));
+        assert_eq!(
+            got.get("source"),
+            Some(&serde_json::json!("settlement-preview"))
+        );
     }
 
     #[test]
     fn settlement_preview_query_commands_keep_legacy_fallback_after_cutover_name() {
         let commands = settlement_preview_query_commands(42);
-        assert_eq!(commands[0], "cargo run -q -p trnm-rpc -- query-settlement-preview 42");
-        assert_eq!(commands[1], "cargo run -q -p trnm-rpc -- query-consumption-summary 42");
+        assert_eq!(
+            commands[0],
+            "cargo run -q -p trnm-rpc -- query-settlement-preview 42"
+        );
+        assert_eq!(
+            commands[1],
+            "cargo run -q -p trnm-rpc -- query-consumption-summary 42"
+        );
     }
 
     #[test]
@@ -7470,7 +7768,10 @@ mod tests {
 
         std::env::remove_var("TRNM_QUERY_SETTLEMENT_RECEIPTS_CMD");
         std::env::remove_var("TRNM_QUERY_CONSUMPTION_RECEIPTS_CMD");
-        assert_eq!(got[0].get("source"), Some(&serde_json::json!("settlement-receipts")));
+        assert_eq!(
+            got[0].get("source"),
+            Some(&serde_json::json!("settlement-receipts"))
+        );
     }
 
     #[test]
@@ -7514,6 +7815,9 @@ mod tests {
         )
         .expect("parse wrapped consumption receipts payload");
         assert_eq!(parsed.as_array().map(Vec::len), Some(1));
-        assert_eq!(parsed[0].get("consumer_id"), Some(&serde_json::json!("consumer-bravo")));
+        assert_eq!(
+            parsed[0].get("consumer_id"),
+            Some(&serde_json::json!("consumer-bravo"))
+        );
     }
 }
