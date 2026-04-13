@@ -27,6 +27,10 @@ fn normalize_hex(raw: &str) -> &str {
         .unwrap_or(trimmed)
 }
 
+fn canonical_output_hash(raw: &str) -> String {
+    normalize_hex(raw).to_ascii_lowercase()
+}
+
 fn require_non_empty(value: &str, field: &'static str) -> Result<(), ConsumptionError> {
     if value.trim().is_empty() {
         Err(ConsumptionError::MissingField(field))
@@ -269,6 +273,40 @@ fn total_credited_consumption_units(records: &[ConsumptionRecord]) -> u128 {
         .sum()
 }
 
+fn logical_replay_key_matches(lhs: &ConsumptionRecordKey, rhs: &ConsumptionRecordKey) -> bool {
+    lhs.task_id == rhs.task_id
+        && lhs.consumer_id == rhs.consumer_id
+        && lhs.billing_window_id == rhs.billing_window_id
+        && canonical_output_hash(&lhs.output_hash) == canonical_output_hash(&rhs.output_hash)
+}
+
+fn logical_replay_key_exists(st: &StateStore, key: &ConsumptionRecordKey) -> bool {
+    st.consumption_records_for_task(key.task_id)
+        .into_iter()
+        .any(|record| logical_replay_key_matches(&record.key, key))
+}
+
+fn find_record_by_logical_replay_key(
+    st: &StateStore,
+    key: &ConsumptionRecordKey,
+) -> Result<ConsumptionRecord, PouwError> {
+    let mut matches = st
+        .consumption_records_for_task(key.task_id)
+        .into_iter()
+        .filter(|record| logical_replay_key_matches(&record.key, key));
+
+    let first = matches
+        .next()
+        .ok_or_else(|| PouwError::State("poco consumption record not found".into()))?;
+    if matches.next().is_some() {
+        return Err(PouwError::State(
+            "poco duplicate logical consumption replay key".into(),
+        ));
+    }
+
+    Ok(first)
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 enum PrimaryPayoutWorkUnitPreview {
     MeteringEvidence {
@@ -508,7 +546,7 @@ impl ConsumptionReceipt {
         ConsumptionReplayKey {
             task_id: self.task_id,
             consumer_id: self.consumer_id.clone(),
-            output_hash: self.output_hash.clone(),
+            output_hash: canonical_output_hash(&self.output_hash),
             billing_window_id: self.billing_window_id.clone(),
         }
     }
@@ -630,10 +668,10 @@ pub fn submit_consumption_receipt_at_height(
     let key = ConsumptionRecordKey {
         task_id: receipt.task_id,
         consumer_id: receipt.consumer_id.clone(),
-        output_hash: receipt.output_hash.clone(),
+        output_hash: canonical_output_hash(&receipt.output_hash),
         billing_window_id: receipt.billing_window_id.clone(),
     };
-    if st.consumption_record(&key).is_some() {
+    if logical_replay_key_exists(st, &key) {
         return Err(PouwError::State(
             "poco duplicate consumption receipt replay key".into(),
         ));
@@ -702,12 +740,10 @@ pub fn challenge_consumption_receipt_at_height(
     let record_key = ConsumptionRecordKey {
         task_id: key.task_id,
         consumer_id: key.consumer_id,
-        output_hash: key.output_hash,
+        output_hash: canonical_output_hash(&key.output_hash),
         billing_window_id: key.billing_window_id,
     };
-    let mut record = st
-        .consumption_record(&record_key)
-        .ok_or_else(|| PouwError::State("poco consumption record not found".into()))?;
+    let mut record = find_record_by_logical_replay_key(st, &record_key)?;
     match record.status {
         ConsumptionRecordStatus::Submitted => {}
         _ => return Err(PouwError::InvalidTransition),
@@ -766,12 +802,10 @@ pub fn resolve_consumption_receipt_at_height(
     let record_key = ConsumptionRecordKey {
         task_id: key.task_id,
         consumer_id: key.consumer_id,
-        output_hash: key.output_hash,
+        output_hash: canonical_output_hash(&key.output_hash),
         billing_window_id: key.billing_window_id,
     };
-    let mut record = st
-        .consumption_record(&record_key)
-        .ok_or_else(|| PouwError::State("poco consumption record not found".into()))?;
+    let mut record = find_record_by_logical_replay_key(st, &record_key)?;
     match record.status {
         ConsumptionRecordStatus::Submitted | ConsumptionRecordStatus::Challenged => {}
         _ => return Err(PouwError::InvalidTransition),
@@ -1073,6 +1107,70 @@ mod tests {
             submit_consumption_receipt_at_height(&mut st, replay, "consumer-bravo".to_string(), 11)
                 .expect_err("nonce replay should fail");
         assert!(matches!(err, PouwError::State(_)));
+    }
+
+    #[test]
+    fn submit_consumption_receipt_rejects_duplicate_logical_output_hash_hex_format_drift() {
+        let mut st = StateStore::default();
+        st.put_task_new(sample_task(TaskStatus::Revealed))
+            .expect("task");
+
+        submit_consumption_receipt_at_height(
+            &mut st,
+            sample_receipt(),
+            "consumer-bravo".to_string(),
+            10,
+        )
+        .expect("submit canonical receipt");
+
+        let mut replay = sample_receipt();
+        replay.output_hash = format!("0X{}", sample_output_hash_hex().to_ascii_uppercase());
+        replay.consumer_nonce = 8;
+        replay.accepted_at_unix_ms += 1;
+        replay = replay.with_computed_receipt_hash().expect("hash");
+
+        let err = submit_consumption_receipt_at_height(
+            &mut st,
+            replay,
+            "consumer-bravo".to_string(),
+            11,
+        )
+        .expect_err("logical replay key drift must still be rejected");
+
+        assert!(matches!(err, PouwError::State(msg) if msg.contains("poco duplicate consumption receipt replay key")));
+        assert_eq!(st.consumer_consumption_nonce("consumer-bravo"), Some(7));
+        assert_eq!(st.task_consumption_summary(42).expect("summary").receipt_count, 1);
+    }
+
+    #[test]
+    fn challenge_consumption_receipt_matches_legacy_logical_output_hash_hex_format_drift() {
+        let mut st = StateStore::default();
+        st.put_task_new(sample_task(TaskStatus::Completed))
+            .expect("task");
+
+        let mut legacy_record = sample_record(
+            "consumer-bravo",
+            "bw-1",
+            ConsumptionRecordStatus::Submitted,
+            None,
+        );
+        legacy_record.key.output_hash = format!("0X{}", sample_output_hash_hex().to_ascii_uppercase());
+        st.put_consumption_record(legacy_record);
+
+        let challenged = challenge_consumption_receipt_at_height(
+            &mut st,
+            sample_receipt().replay_key(),
+            "auditor-1".to_string(),
+            "auditor-1".to_string(),
+            99,
+        )
+        .expect("canonical replay key should match legacy hex-format drift");
+
+        assert_eq!(challenged.status, ConsumptionRecordStatus::Challenged);
+        assert_eq!(
+            challenged.key.output_hash,
+            format!("0X{}", sample_output_hash_hex().to_ascii_uppercase())
+        );
     }
 
     #[test]
