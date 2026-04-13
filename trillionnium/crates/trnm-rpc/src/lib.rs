@@ -103,13 +103,32 @@ pub struct TaskConsumptionSummaryQueryResponse {
     pub last_settlement_height: Option<u64>,
 }
 
+const AUTHORITATIVE_SETTLEMENT_SUMMARY_CONTRACT_ERROR: &str =
+    "authoritative settlement summary violated RPC contract";
+
 impl TaskConsumptionSummaryQueryResponse {
     pub fn settlement_contract_consistent(&self) -> bool {
-        self.accepted_receipt_count
+        let Some(terminal_receipt_count) = self
+            .accepted_receipt_count
             .checked_add(self.challenged_receipt_count)
-            .is_some_and(|terminal_receipt_count| terminal_receipt_count <= self.receipt_count)
+        else {
+            return false;
+        };
+
+        terminal_receipt_count <= self.receipt_count
             && self.total_credited_consumption_units <= self.total_claimed_consumption_units
             && (self.total_credited_consumption_units == 0 || self.accepted_receipt_count > 0)
+            && self.last_settlement_height.is_some() == (terminal_receipt_count > 0)
+    }
+
+    pub fn try_from_authoritative_summary(
+        summary: Self,
+    ) -> std::result::Result<Self, &'static str> {
+        if !summary.settlement_contract_consistent() {
+            return Err(AUTHORITATIVE_SETTLEMENT_SUMMARY_CONTRACT_ERROR);
+        }
+
+        Ok(summary)
     }
 }
 
@@ -144,11 +163,8 @@ impl TaskSettlementPreviewQueryResponse {
     pub fn try_from_authoritative_summary(
         summary: TaskConsumptionSummaryQueryResponse,
     ) -> std::result::Result<Self, &'static str> {
-        if !summary.settlement_contract_consistent() {
-            return Err("authoritative settlement summary violated RPC contract");
-        }
-
-        Ok(Self::from_authoritative_summary(summary))
+        TaskConsumptionSummaryQueryResponse::try_from_authoritative_summary(summary)
+            .map(Self::from_authoritative_summary)
     }
 }
 
@@ -801,6 +817,44 @@ mod tests {
         };
 
         assert!(!summary.settlement_contract_consistent());
+        assert_eq!(
+            TaskConsumptionSummaryQueryResponse::try_from_authoritative_summary(summary)
+                .expect_err("credited units without accepted receipts must fail closed"),
+            AUTHORITATIVE_SETTLEMENT_SUMMARY_CONTRACT_ERROR
+        );
+    }
+
+    #[test]
+    fn rpc_task_consumption_summary_query_rejects_settlement_height_mismatch() {
+        for summary in [
+            TaskConsumptionSummaryQueryResponse {
+                task_id: 42,
+                receipt_count: 1,
+                accepted_receipt_count: 1,
+                challenged_receipt_count: 0,
+                total_consumed_tokens: 33,
+                total_claimed_consumption_units: 33,
+                total_credited_consumption_units: 21,
+                last_settlement_height: None,
+            },
+            TaskConsumptionSummaryQueryResponse {
+                task_id: 42,
+                receipt_count: 1,
+                accepted_receipt_count: 0,
+                challenged_receipt_count: 0,
+                total_consumed_tokens: 33,
+                total_claimed_consumption_units: 33,
+                total_credited_consumption_units: 0,
+                last_settlement_height: Some(88),
+            },
+        ] {
+            assert!(!summary.settlement_contract_consistent());
+            assert_eq!(
+                TaskConsumptionSummaryQueryResponse::try_from_authoritative_summary(summary)
+                    .expect_err("settlement height drift must fail closed"),
+                AUTHORITATIVE_SETTLEMENT_SUMMARY_CONTRACT_ERROR
+            );
+        }
     }
 
     #[test]

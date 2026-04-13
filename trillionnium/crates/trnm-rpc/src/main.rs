@@ -3482,9 +3482,7 @@ fn parse_query_normalized_audit_events_query_from_path(
     if query.is_empty()
         || query.contains('?')
         || query.contains('#')
-        || query
-            .chars()
-            .any(|ch| ch.is_control() || ch.is_whitespace())
+        || query.chars().any(char::is_control)
     {
         return Err(http_json_response(
             "400 Bad Request",
@@ -3536,6 +3534,12 @@ fn parse_query_normalized_audit_events_query_from_path(
                 r#"{"ok":false,"code":"BAD_REQUEST","message":"invalid query"}"#,
             ));
         };
+        if key.chars().any(char::is_whitespace) {
+            return Err(http_json_response(
+                "400 Bad Request",
+                r#"{"ok":false,"code":"BAD_REQUEST","message":"invalid query"}"#,
+            ));
+        }
 
         let normalized_key = normalize_wrapped_env_value(key);
         match normalized_key {
@@ -3546,13 +3550,21 @@ fn parse_query_normalized_audit_events_query_from_path(
                         r#"{"ok":false,"code":"BAD_REQUEST","message":"duplicate source"}"#,
                     ));
                 }
-                let normalized = normalize_wrapped_env_value(value);
-                if normalized.is_empty() {
-                    return Err(http_json_response(
-                        "400 Bad Request",
-                        r#"{"ok":false,"code":"BAD_REQUEST","message":"invalid source"}"#,
-                    ));
-                }
+                let normalized = match normalize_wrapped_query_value(value) {
+                    Some(normalized) => normalized,
+                    None if value.chars().any(char::is_whitespace) => {
+                        return Err(http_json_response(
+                            "400 Bad Request",
+                            r#"{"ok":false,"code":"BAD_REQUEST","message":"invalid query"}"#,
+                        ));
+                    }
+                    None => {
+                        return Err(http_json_response(
+                            "400 Bad Request",
+                            r#"{"ok":false,"code":"BAD_REQUEST","message":"invalid source"}"#,
+                        ));
+                    }
+                };
                 query_params.source = Some(normalized.to_string());
             }
             key if key.eq_ignore_ascii_case("eventType") && key == "eventType" => {
@@ -3562,13 +3574,21 @@ fn parse_query_normalized_audit_events_query_from_path(
                         r#"{"ok":false,"code":"BAD_REQUEST","message":"duplicate eventType"}"#,
                     ));
                 }
-                let normalized = normalize_wrapped_env_value(value);
-                if normalized.is_empty() {
-                    return Err(http_json_response(
-                        "400 Bad Request",
-                        r#"{"ok":false,"code":"BAD_REQUEST","message":"invalid eventType"}"#,
-                    ));
-                }
+                let normalized = match normalize_wrapped_query_value(value) {
+                    Some(normalized) => normalized,
+                    None if value.chars().any(char::is_whitespace) => {
+                        return Err(http_json_response(
+                            "400 Bad Request",
+                            r#"{"ok":false,"code":"BAD_REQUEST","message":"invalid query"}"#,
+                        ));
+                    }
+                    None => {
+                        return Err(http_json_response(
+                            "400 Bad Request",
+                            r#"{"ok":false,"code":"BAD_REQUEST","message":"invalid eventType"}"#,
+                        ));
+                    }
+                };
                 query_params.event_type = Some(normalized.to_string());
             }
             key if key.eq_ignore_ascii_case("cursor") && key == "cursor" => {
@@ -3578,13 +3598,21 @@ fn parse_query_normalized_audit_events_query_from_path(
                         r#"{"ok":false,"code":"BAD_REQUEST","message":"duplicate cursor"}"#,
                     ));
                 }
-                let normalized = normalize_wrapped_env_value(value);
-                if normalized.is_empty() {
-                    return Err(http_json_response(
-                        "400 Bad Request",
-                        r#"{"ok":false,"code":"BAD_REQUEST","message":"invalid cursor"}"#,
-                    ));
-                }
+                let normalized = match normalize_wrapped_query_value(value) {
+                    Some(normalized) => normalized,
+                    None if value.chars().any(char::is_whitespace) => {
+                        return Err(http_json_response(
+                            "400 Bad Request",
+                            r#"{"ok":false,"code":"BAD_REQUEST","message":"invalid query"}"#,
+                        ));
+                    }
+                    None => {
+                        return Err(http_json_response(
+                            "400 Bad Request",
+                            r#"{"ok":false,"code":"BAD_REQUEST","message":"invalid cursor"}"#,
+                        ));
+                    }
+                };
                 let parsed = normalized.parse::<usize>().map_err(|_| {
                     http_json_response(
                         "400 Bad Request",
@@ -3600,13 +3628,21 @@ fn parse_query_normalized_audit_events_query_from_path(
                         r#"{"ok":false,"code":"BAD_REQUEST","message":"duplicate limit"}"#,
                     ));
                 }
-                let normalized = normalize_wrapped_env_value(value);
-                if normalized.is_empty() {
-                    return Err(http_json_response(
-                        "400 Bad Request",
-                        r#"{"ok":false,"code":"BAD_REQUEST","message":"invalid limit"}"#,
-                    ));
-                }
+                let normalized = match normalize_wrapped_query_value(value) {
+                    Some(normalized) => normalized,
+                    None if value.chars().any(char::is_whitespace) => {
+                        return Err(http_json_response(
+                            "400 Bad Request",
+                            r#"{"ok":false,"code":"BAD_REQUEST","message":"invalid query"}"#,
+                        ));
+                    }
+                    None => {
+                        return Err(http_json_response(
+                            "400 Bad Request",
+                            r#"{"ok":false,"code":"BAD_REQUEST","message":"invalid limit"}"#,
+                        ));
+                    }
+                };
                 let requested = normalized.parse::<usize>().map_err(|_| {
                     http_json_response(
                         "400 Bad Request",
@@ -3663,7 +3699,7 @@ fn parse_query_normalized_audit_events_query_from_path(
 }
 
 fn normalize_capability_subject_lookup(raw: &str) -> Option<String> {
-    let normalized = normalize_wrapped_env_value(raw)
+    let structural_normalized = raw
         .chars()
         .filter_map(|ch| match ch {
             '\u{061C}' | '\u{200B}' | '\u{200C}' | '\u{200D}' | '\u{200E}' | '\u{200F}'
@@ -3673,10 +3709,11 @@ fn normalize_capability_subject_lookup(raw: &str) -> Option<String> {
             _ => Some(ch),
         })
         .collect::<String>();
+    let normalized = normalize_wrapped_env_value(&structural_normalized);
     if normalized.is_empty() {
         None
     } else {
-        Some(normalized)
+        Some(normalized.to_string())
     }
 }
 
@@ -3895,10 +3932,7 @@ fn serve_health(host: &str, port: u16) -> Result<()> {
                                 });
                                 json_response_for_method(method, "200 OK", &body)
                             }
-                            Err(err) => {
-                                let body = serde_json::json!({"ok": false, "code": "NOT_FOUND", "message": err.to_string()}).to_string();
-                                json_response_for_method(method, "404 Not Found", &body)
-                            }
+                            Err(err) => settlement_summary_query_error_response(method, &err),
                         },
                         Err(err) => {
                             let body = serde_json::json!({"ok": false, "code": "INTERNAL_ERROR", "message": err.to_string()}).to_string();
@@ -3920,10 +3954,7 @@ fn serve_health(host: &str, port: u16) -> Result<()> {
                                 });
                                 json_response_for_method(method, "200 OK", &body)
                             }
-                            Err(err) => {
-                                let body = serde_json::json!({"ok": false, "code": "NOT_FOUND", "message": err.to_string()}).to_string();
-                                json_response_for_method(method, "404 Not Found", &body)
-                            }
+                            Err(err) => settlement_summary_query_error_response(method, &err),
                         },
                         Err(err) => {
                             let body = serde_json::json!({"ok": false, "code": "INTERNAL_ERROR", "message": err.to_string()}).to_string();
@@ -4315,76 +4346,14 @@ fn consumption_record_query_response(record: ConsumptionRecord) -> ConsumptionRe
     }
 }
 
-fn derive_task_consumption_summary(
-    task_id: u64,
-    records: &[ConsumptionRecord],
-) -> TaskConsumptionSummary {
-    let mut summary = TaskConsumptionSummary {
-        task_id,
-        receipt_count: records.len() as u64,
-        ..TaskConsumptionSummary::default()
-    };
-    for record in records {
-        if matches!(
-            record.status,
-            ConsumptionRecordStatus::Accepted | ConsumptionRecordStatus::Discounted
-        ) {
-            summary.accepted_receipt_count = summary.accepted_receipt_count.saturating_add(1);
-            summary.total_credited_consumption_units = summary
-                .total_credited_consumption_units
-                .saturating_add(record.credited_consumption_units.unwrap_or(0));
-        }
-        if record.status == ConsumptionRecordStatus::Challenged {
-            summary.challenged_receipt_count = summary.challenged_receipt_count.saturating_add(1);
-        }
-        summary.total_consumed_tokens = summary
-            .total_consumed_tokens
-            .saturating_add(record.consumed_token_count as u128);
-        summary.total_claimed_consumption_units = summary
-            .total_claimed_consumption_units
-            .saturating_add(record.claimed_consumption_units);
-    }
-    summary
-}
-
-fn query_consumption_summary_response(
+fn authoritative_task_consumption_summary_response(
     task_id: u64,
     st: &StateStore,
 ) -> Result<TaskConsumptionSummaryQueryResponse> {
     let summary = st
         .task_consumption_summary(task_id)
         .ok_or_else(|| anyhow!("consumption summary not found for task {}", task_id))?;
-    let out = TaskConsumptionSummaryQueryResponse {
-        task_id: summary.task_id,
-        receipt_count: summary.receipt_count,
-        accepted_receipt_count: summary.accepted_receipt_count,
-        challenged_receipt_count: summary.challenged_receipt_count,
-        total_consumed_tokens: summary.total_consumed_tokens,
-        total_claimed_consumption_units: summary.total_claimed_consumption_units,
-        total_credited_consumption_units: summary.total_credited_consumption_units,
-        last_settlement_height: summary.last_settlement_height,
-    };
-    if !out.settlement_contract_consistent() {
-        bail!(
-            "consumption summary violated settlement rpc contract for task {}",
-            task_id
-        );
-    }
-    Ok(out)
-}
-
-fn settlement_preview_response(
-    task_id: u64,
-    st: &StateStore,
-) -> Result<TaskSettlementPreviewQueryResponse> {
-    let records = st.consumption_records_for_task(task_id);
-    let summary = st
-        .task_consumption_summary(task_id)
-        .or_else(|| {
-            (!records.is_empty()).then(|| derive_task_consumption_summary(task_id, &records))
-        })
-        .ok_or_else(|| anyhow!("consumption summary not found for task {}", task_id))?;
-    TaskSettlementPreviewQueryResponse::try_from_authoritative_summary(
+    TaskConsumptionSummaryQueryResponse::try_from_authoritative_summary(
         TaskConsumptionSummaryQueryResponse {
             task_id: summary.task_id,
             receipt_count: summary.receipt_count,
@@ -4402,6 +4371,32 @@ fn settlement_preview_response(
             task_id
         )
     })
+}
+
+fn settlement_summary_query_error_response(method: &str, err: &anyhow::Error) -> String {
+    let message = err.to_string();
+    let (status, code) = if message.starts_with("consumption summary not found for task ") {
+        ("404 Not Found", "NOT_FOUND")
+    } else {
+        ("500 Internal Server Error", "INTERNAL_ERROR")
+    };
+    let body = serde_json::json!({"ok": false, "code": code, "message": message}).to_string();
+    json_response_for_method(method, status, &body)
+}
+
+fn query_consumption_summary_response(
+    task_id: u64,
+    st: &StateStore,
+) -> Result<TaskConsumptionSummaryQueryResponse> {
+    authoritative_task_consumption_summary_response(task_id, st)
+}
+
+fn settlement_preview_response(
+    task_id: u64,
+    st: &StateStore,
+) -> Result<TaskSettlementPreviewQueryResponse> {
+    authoritative_task_consumption_summary_response(task_id, st)
+        .map(TaskSettlementPreviewQueryResponse::from_authoritative_summary)
 }
 
 fn query_consumption_receipts_response(
@@ -11618,6 +11613,24 @@ line2
     }
 
     #[test]
+    fn settlement_summary_query_error_response_maps_missing_summary_to_not_found() {
+        let err = anyhow!("consumption summary not found for task 42");
+        let response = settlement_summary_query_error_response("GET", &err);
+        assert!(response.starts_with("HTTP/1.1 404 Not Found\r\n"));
+        assert!(response.contains("\"code\":\"NOT_FOUND\""));
+        assert!(response.contains("consumption summary not found for task 42"));
+    }
+
+    #[test]
+    fn settlement_summary_query_error_response_maps_contract_violation_to_internal_error() {
+        let err = anyhow!("consumption summary violated settlement rpc contract for task 42");
+        let response = settlement_summary_query_error_response("GET", &err);
+        assert!(response.starts_with("HTTP/1.1 500 Internal Server Error\r\n"));
+        assert!(response.contains("\"code\":\"INTERNAL_ERROR\""));
+        assert!(response.contains("settlement rpc contract"));
+    }
+
+    #[test]
     fn query_consumption_summary_response_rejects_missing_state_summary_even_when_records_exist() {
         let mut st = StateStore::default();
         st.put_consumption_record(ConsumptionRecord {
@@ -11667,7 +11680,7 @@ line2
     }
 
     #[test]
-    fn settlement_preview_response_derives_from_records_when_summary_missing() {
+    fn settlement_preview_response_rejects_missing_state_summary_even_when_records_exist() {
         let mut st = StateStore::default();
         st.put_consumption_record(ConsumptionRecord {
             key: trnm_state::ConsumptionRecordKey {
@@ -11710,15 +11723,9 @@ line2
             resolution_code: None,
         });
 
-        let out = settlement_preview_response(42, &st).expect("preview derived from records");
-        assert_eq!(out.task_id, 42);
-        assert_eq!(out.receipt_count, 2);
-        assert_eq!(out.accepted_receipt_count, 1);
-        assert_eq!(out.challenged_receipt_count, 1);
-        assert_eq!(out.total_consumed_tokens, 22);
-        assert_eq!(out.total_claimed_consumption_units, 22);
-        assert_eq!(out.total_credited_consumption_units, 9);
-        assert_eq!(out.last_settlement_height, None);
+        let err = settlement_preview_response(42, &st)
+            .expect_err("preview must not silently derive from receipts");
+        assert_eq!(err.to_string(), "consumption summary not found for task 42");
     }
 
     #[test]
