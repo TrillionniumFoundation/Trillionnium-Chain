@@ -80,10 +80,10 @@ enum TxCommand {
         #[arg(long)]
         store: Option<PathBuf>,
     },
-    /// Submit a PoCO settlement receipt tx
+    /// Submit a PoCO consumption receipt tx
     #[command(
-        name = "submit-settlement-receipt",
-        visible_alias = "submit-consumption-receipt"
+        name = "submit-consumption-receipt",
+        visible_alias = "submit-settlement-receipt"
     )]
     SubmitConsumptionReceipt {
         #[arg(long)]
@@ -91,10 +91,10 @@ enum TxCommand {
         #[arg(long)]
         signer: Option<String>,
     },
-    /// Challenge a PoCO settlement receipt tx
+    /// Challenge a PoCO consumption receipt tx
     #[command(
-        name = "challenge-settlement",
-        visible_alias = "challenge-consumption"
+        name = "challenge-consumption",
+        visible_alias = "challenge-settlement"
     )]
     ChallengeConsumption {
         task_id: u64,
@@ -109,10 +109,10 @@ enum TxCommand {
         #[arg(long)]
         signer: Option<String>,
     },
-    /// Resolve a PoCO settlement receipt tx
+    /// Resolve a PoCO consumption receipt tx
     #[command(
-        name = "resolve-settlement",
-        visible_alias = "resolve-consumption"
+        name = "resolve-consumption",
+        visible_alias = "resolve-settlement"
     )]
     ResolveConsumption {
         task_id: u64,
