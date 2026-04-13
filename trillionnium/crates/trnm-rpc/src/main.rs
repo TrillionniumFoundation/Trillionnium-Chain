@@ -4281,11 +4281,13 @@ fn query_task_response(
     recs: &[AdapterRecord],
 ) -> Result<TaskQueryResponse> {
     let task_state_snapshot = load_task_state_snapshot()?;
-    if let Some(out) = query_task_from_state_snapshot(task_id, &task_state_snapshot) {
-        return Ok(out);
-    }
+    let task_from_state_snapshot = query_task_from_state_snapshot(task_id, &task_state_snapshot);
 
     enforce_settlement_aware_task_query_gate(task_id)?;
+
+    if let Some(out) = task_from_state_snapshot {
+        return Ok(out);
+    }
 
     if let Some(out) = query_task_from_node_events(task_id, node_events) {
         return Ok(out);
@@ -4425,7 +4427,8 @@ fn settlement_summary_query_error_response(method: &str, err: &anyhow::Error) ->
         ("404 Not Found", "NOT_FOUND")
     } else if message.starts_with("consumption summary required for task ") {
         ("409 Conflict", "SETTLEMENT_SUMMARY_REQUIRED")
-    } else if message.starts_with("consumption summary violated settlement rpc contract for task ") {
+    } else if message.starts_with("consumption summary violated settlement rpc contract for task ")
+    {
         (
             "500 Internal Server Error",
             "SETTLEMENT_RPC_CONTRACT_VIOLATION",
@@ -5713,6 +5716,31 @@ mod tests {
 
         if let Err(panic) = run {
             std::panic::resume_unwind(panic);
+        }
+    }
+
+    fn sample_task_state_snapshot_task(task_id: u64) -> TaskObject {
+        TaskObject {
+            task_id,
+            creator: "alice".into(),
+            bounty: 777,
+            status: TaskStatus::Revealed,
+            proof_type: trnm_types::ProofType::Fraud,
+            metadata: None,
+            worker: Some("worker-a".into()),
+            committed_hash: None,
+            result_hash: Some([0xabu8; 32]),
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 9,
         }
     }
 
@@ -9486,8 +9514,8 @@ mod tests {
     }
 
     #[test]
-    fn query_events_response_rejects_adapter_fallback_when_authoritative_settlement_summary_exists(
-    ) {
+    fn query_events_response_rejects_adapter_fallback_when_authoritative_settlement_summary_exists()
+    {
         let path = unique_tmp_path("rpc-consumption-state", "json");
         let _ = fs::remove_file(&path);
         fs::write(
@@ -9662,6 +9690,61 @@ mod tests {
         );
         assert_eq!(events[0].event_type, "commit");
         assert_eq!(events[1].event_type, "reveal");
+    }
+
+    #[test]
+    fn query_task_response_rejects_state_snapshot_when_authoritative_settlement_summary_exists() {
+        let task_state_path = unique_tmp_path("rpc-task-state", "jsonl");
+        let consumption_path = unique_tmp_path("rpc-consumption-state", "json");
+        let _ = fs::remove_file(&task_state_path);
+        let _ = fs::remove_file(&consumption_path);
+        fs::write(
+            &task_state_path,
+            format!(
+                "{}\n",
+                serde_json::to_string(&sample_task_state_snapshot_task(42))
+                    .expect("serialize task state snapshot")
+            ),
+        )
+        .expect("write task state snapshot");
+        fs::write(
+            &consumption_path,
+            serde_json::json!({
+                "consumption_records": [],
+                "task_consumption_summaries": [{
+                    "task_id": 42,
+                    "receipt_count": 2,
+                    "accepted_receipt_count": 1,
+                    "challenged_receipt_count": 1,
+                    "total_consumed_tokens": 33,
+                    "total_claimed_consumption_units": 33,
+                    "total_credited_consumption_units": 21,
+                    "last_settlement_height": 88
+                }],
+                "consumer_consumption_nonces": {}
+            })
+            .to_string(),
+        )
+        .expect("write consumption snapshot");
+
+        with_market_path_env(
+            &[
+                (TASK_STATE_FILE_ENV, task_state_path.to_str()),
+                (CONSUMPTION_STATE_FILE_ENV, consumption_path.to_str()),
+            ],
+            || {
+                let err = query_task_response(42, &[], &[]).expect_err(
+                    "state snapshot task surface must fail closed once authoritative settlement summary exists",
+                );
+                assert_eq!(
+                    err.to_string(),
+                    "task query adapter fallback disabled for task 42 because authoritative settlement summary exists"
+                );
+            },
+        );
+
+        let _ = fs::remove_file(&task_state_path);
+        let _ = fs::remove_file(&consumption_path);
     }
 
     #[test]
@@ -9843,6 +9926,74 @@ mod tests {
         );
 
         let _ = fs::remove_file(&path);
+    }
+
+    #[test]
+    fn query_task_response_rejects_state_snapshot_when_authoritative_receipts_exist_without_summary(
+    ) {
+        let task_state_path = unique_tmp_path("rpc-task-state", "jsonl");
+        let consumption_path = unique_tmp_path("rpc-consumption-state", "json");
+        let _ = fs::remove_file(&task_state_path);
+        let _ = fs::remove_file(&consumption_path);
+        fs::write(
+            &task_state_path,
+            format!(
+                "{}\n",
+                serde_json::to_string(&sample_task_state_snapshot_task(42))
+                    .expect("serialize task state snapshot")
+            ),
+        )
+        .expect("write task state snapshot");
+        fs::write(
+            &consumption_path,
+            serde_json::json!({
+                "consumption_records": [{
+                    "key": {
+                        "task_id": 42,
+                        "consumer_id": "consumer-alpha",
+                        "output_hash": "abc123",
+                        "billing_window_id": "bw-1"
+                    },
+                    "worker_id": "worker-a",
+                    "tokenizer_id": "tok",
+                    "tokenizer_version": "1.0.0",
+                    "consumer_class": "bonded_api_client",
+                    "consumed_spans_root": "def456",
+                    "consumed_token_count": 17,
+                    "claimed_consumption_units": 17,
+                    "credited_consumption_units": 9,
+                    "consumer_nonce": 7,
+                    "accepted_at_unix_ms": 1775683200123u64,
+                    "status": "Accepted",
+                    "resolution_code": "accepted"
+                }],
+                "task_consumption_summaries": [],
+                "consumer_consumption_nonces": {
+                    "consumer-alpha": 7
+                }
+            })
+            .to_string(),
+        )
+        .expect("write receipt-only consumption snapshot");
+
+        with_market_path_env(
+            &[
+                (TASK_STATE_FILE_ENV, task_state_path.to_str()),
+                (CONSUMPTION_STATE_FILE_ENV, consumption_path.to_str()),
+            ],
+            || {
+                let err = query_task_response(42, &[], &[]).expect_err(
+                    "receipt-backed authoritative settlement state must block legacy state snapshot task surface",
+                );
+                assert_eq!(
+                    err.to_string(),
+                    "task query adapter fallback disabled for task 42 because authoritative settlement receipts exist without a summary"
+                );
+            },
+        );
+
+        let _ = fs::remove_file(&task_state_path);
+        let _ = fs::remove_file(&consumption_path);
     }
 
     #[test]
@@ -12178,7 +12329,8 @@ line2
     }
 
     #[test]
-    fn settlement_summary_query_error_response_maps_contract_violation_to_settlement_rpc_contract_violation() {
+    fn settlement_summary_query_error_response_maps_contract_violation_to_settlement_rpc_contract_violation(
+    ) {
         let err = anyhow!("consumption summary violated settlement rpc contract for task 42");
         let response = settlement_summary_query_error_response("GET", &err);
         assert!(response.starts_with("HTTP/1.1 500 Internal Server Error\r\n"));
