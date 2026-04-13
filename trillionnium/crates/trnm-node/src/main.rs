@@ -2880,10 +2880,11 @@ fn event_type_of(tx: &MockTx) -> &'static str {
 }
 
 fn event_type_for_apply_outcome(tx: &MockTx, err_kind: Option<&str>) -> &'static str {
-    if matches!(tx, MockTx::Resolve { .. }) && err_kind == Some("resolve_approval_staged") {
-        "resolve_approval_staged"
-    } else {
-        event_type_of(tx)
+    match (tx, err_kind) {
+        // Only legacy task resolve stages multisig approval. PoCO receipt settlement must keep
+        // dedicated event types even if a caller accidentally reuses the legacy err_kind marker.
+        (MockTx::Resolve { .. }, Some("resolve_approval_staged")) => "resolve_approval_staged",
+        _ => event_type_of(tx),
     }
 }
 
@@ -14985,6 +14986,46 @@ mod tests {
             "resolve_approval_staged"
         );
         assert_eq!(event_type_for_apply_outcome(&tx, None), "resolve");
+    }
+
+    #[test]
+    fn receipt_settlement_uses_distinct_event_type_under_legacy_staged_marker() {
+        let result_hash = [0x29; 32];
+        let receipt = sample_consumption_receipt(42, "worker-alpha", "consumer-bravo", result_hash);
+        let cases = [
+            (
+                MockTx::SubmitConsumptionReceipt {
+                    receipt: receipt.clone(),
+                },
+                "submit_consumption_receipt",
+            ),
+            (
+                MockTx::ChallengeConsumptionReceipt {
+                    key: receipt.replay_key(),
+                    challenger: "auditor-1".to_string(),
+                },
+                "challenge_consumption_receipt",
+            ),
+            (
+                MockTx::ResolveConsumptionReceipt {
+                    key: receipt.replay_key(),
+                    decision: ConsumptionResolveDecision::Accept,
+                    credited_consumption_units: Some(receipt.consumed_token_count.into()),
+                    resolution_code: None,
+                    resolver: "resolver-1".to_string(),
+                },
+                "resolve_consumption_receipt",
+            ),
+        ];
+
+        for (tx, expected_event_type) in cases {
+            assert_eq!(
+                event_type_for_apply_outcome(&tx, Some("resolve_approval_staged")),
+                expected_event_type,
+                "receipt settlement tx drifted onto legacy staged resolve alias: {:?}",
+                tx
+            );
+        }
     }
 
     #[test]
