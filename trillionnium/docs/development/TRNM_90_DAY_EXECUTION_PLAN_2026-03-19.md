@@ -352,7 +352,7 @@ Mitigation:
 ## 4. Over-borrowing from reference chains
 Mitigation:
 - borrow by layer, not by branding
-- keep PoUW and task lifecycle strictly TRNM-native
+- keep task lifecycle and retained PoUW compatibility/audit surfaces strictly TRNM-native while PoCO takes over payout authority
 
 ---
 
@@ -388,6 +388,6 @@ If execution starts today, the best next moves are:
 
 This plan assumes a key principle:
 
-> TRNM should borrow **execution shape** from Sui, **data-plane engineering** from Solana, **economics/finality support** from Conflux, and **proof/governance discipline** from Algorand — but keep PoUW itself unmistakably TRNM-native.
+> TRNM should borrow **execution shape** from Sui, **data-plane engineering** from Solana, **economics/finality support** from Conflux, and **proof/governance discipline** from Algorand, but keep TRNM's worker verification and migration-era PoUW compatibility surfaces unmistakably protocol-native.
 
 That is the highest-leverage path for the next 90 days.

@@ -20,7 +20,7 @@ The goal is to make TRNM:
 - more scalable under worker/verification load,
 - and more rigorous in governance / checkpoint / proof semantics,
 
-while preserving the **TRNM-native PoUW core**.
+while preserving **TRNM-native worker verification, challenge/resolve, and migration-era audit evidence surfaces**, without treating retained PoUW naming as ongoing payout authority.
 
 ---
 
@@ -53,9 +53,10 @@ TRNM should evolve as a layered hybrid:
   - formal governance key schema and timelock classes
   - smaller trusted execution surfaces
 
-- **PoUW / worker accounting / challenge-resolve → TRNM-native**
+- **Worker accounting / challenge-resolve / PoUW-compatibility surfaces → TRNM-native**
   - do not flatten this into a copy of any reference chain
-  - keep the task lifecycle, metering, challenge/resolve semantics, and worker accounting as protocol-native differentiators
+  - keep the task lifecycle, metering, challenge/resolve semantics, and worker accounting as protocol-native differentiators during migration
+  - BL09 retirement-prep note: retained PoUW naming or receipts here should be read as migration-era compatibility or provenance / audit evidence, not as the default payout authority once PoCO is primary
 
 ---
 
@@ -527,7 +528,7 @@ The right move is **selective borrowing by layer**, not chain cosplay.
 
 The strongest architectural trajectory for TRNM is:
 
-> **Sui-like state/execution kernel + Solana-like data plane + Conflux-inspired economics/finality layer + Algorand-like proof/governance discipline, while preserving a TRNM-native PoUW protocol core.**
+> **Sui-like state/execution kernel + Solana-like data plane + Conflux-inspired economics/finality layer + Algorand-like proof/governance discipline, while preserving TRNM-native worker verification and migration-era PoUW compatibility surfaces.**
 
 This is the highest-leverage path because it improves:
 - scalability,
