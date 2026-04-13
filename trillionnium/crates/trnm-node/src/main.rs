@@ -16556,6 +16556,81 @@ mod tests {
     }
 
     #[test]
+    fn resolve_consumption_receipt_event_line_preserves_preapply_challenger_with_custom_resolution_code(
+    ) {
+        let mut st = StateStore::default();
+        let _ = st.set_gov_param_bootstrap_unchecked(
+            9_500,
+            "resolve_authority".into(),
+            "resolver-1,resolver-2".into(),
+        );
+
+        let result_hash = [0x2f; 32];
+        put_sample_poco_task(&mut st, 42, "worker-alpha", result_hash);
+
+        let receipt =
+            sample_consumption_receipt(42, "worker-alpha", "consumer-bravo", result_hash);
+        apply_one(
+            &mut st,
+            MockTx::SubmitConsumptionReceipt {
+                receipt: receipt.clone(),
+            },
+            10,
+        )
+        .expect("apply receipt");
+        apply_one(
+            &mut st,
+            MockTx::ChallengeConsumptionReceipt {
+                key: receipt.replay_key(),
+                challenger: "auditor-1".to_string(),
+            },
+            11,
+        )
+        .expect("challenge receipt");
+
+        let tx = MockTx::ResolveConsumptionReceipt {
+            key: receipt.replay_key(),
+            decision: ConsumptionResolveDecision::Discount,
+            credited_consumption_units: Some(9),
+            resolution_code: Some("  manual_review_discounted  ".to_string()),
+            resolver: "resolver-1".to_string(),
+        };
+        let signer = verified_signer_of(&st, &tx);
+        let challenger = preapply_challenger_account_of(&st, &tx);
+        assert_eq!(challenger.as_deref(), Some("auditor-1"));
+
+        apply_one(&mut st, tx.clone(), 12).expect("resolve receipt");
+
+        let line = format_apply_event_line(
+            &st,
+            &tx,
+            &signer,
+            12,
+            12,
+            "Completed",
+            "Completed",
+            "root-resolve-custom",
+            &EventDelta {
+                numeric: Some(0),
+                text: "0".to_string(),
+            },
+            Some(&EventDelta {
+                numeric: Some(0),
+                text: "0".to_string(),
+            }),
+            challenger.as_deref(),
+            None,
+            126,
+        );
+
+        assert!(line.contains("event_type=resolve_consumption_receipt"));
+        assert!(line.contains("challenger=auditor-1"));
+        assert!(line.contains("settlement_record_status=discounted"));
+        assert!(line.contains("settlement_resolution_code=manual_review_discounted"));
+        assert!(!line.contains("settlement_resolution_code=  manual_review_discounted  "));
+    }
+
+    #[test]
     fn challenger_from_consumption_resolution_code_requires_canonical_marker() {
         assert_eq!(
             challenger_from_consumption_resolution_code("challenged_by:auditor-1"),
