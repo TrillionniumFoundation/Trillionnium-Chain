@@ -1373,6 +1373,37 @@ mod tests {
     }
 
     #[test]
+    fn task_metadata_compatibility_report_treats_threaded_settlement_as_non_legacy_shape() {
+        let metadata: TaskMetadata = serde_json::from_value(serde_json::json!({
+            "note": "legacy",
+            "settlement": {
+                "settlement_schema": "poco_v1",
+                "tokenizer_id": "llama3-tokenizer",
+                "tokenizer_version": "1.0.0",
+                "output_hash": format!("0x{}", "c".repeat(64)),
+                "output_token_count": 512,
+                "output_root": format!("0x{}", "d".repeat(64))
+            }
+        }))
+        .expect("threaded settlement payload should deserialize");
+
+        let report = metadata.compatibility_report();
+
+        assert_eq!(
+            metadata.settlement_snapshot_source(None),
+            TaskSettlementSnapshotSource::ThreadedMetadata
+        );
+        assert!(!report.compatibility.legacy_note_only);
+        assert!(report.compatibility.canonical_core_fields);
+        assert!(report.compatibility.complete_metering_snapshot);
+        assert!(report.compatibility.complete_settlement_snapshot);
+        assert!(report.compatibility.is_runtime_compatible());
+        assert!(!report.requires_governance_upgrade);
+        assert!(report.findings.is_empty());
+        assert_eq!(report.primary_finding(), None);
+    }
+
+    #[test]
     fn task_metadata_settlement_snapshot_helper_accessors_share_fallback_logic() {
         let metadata = TaskMetadata {
             note: Some("interop".into()),
