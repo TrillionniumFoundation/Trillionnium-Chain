@@ -160,6 +160,14 @@ impl ConsumptionSettlementStateSnapshot {
             && !self.key.billing_window_id.trim().is_empty()
     }
 
+    pub fn has_receipt_compatible_billing_window_policy(&self) -> bool {
+        match (&self.record, &self.billing_window_policy) {
+            (Some(record), Some(policy)) => policy
+                .is_receipt_compatible(&record.key.billing_window_id, record.accepted_at_unix_ms),
+            _ => true,
+        }
+    }
+
     pub fn is_persistable_snapshot_for(&self, key: &ConsumptionRecordKey) -> bool {
         self.matches_boundary(key)
             && self
@@ -170,6 +178,7 @@ impl ConsumptionSettlementStateSnapshot {
             && self.billing_window_policy.as_ref().map_or(true, |policy| {
                 policy.is_persistable_snapshot_for(&key.billing_window_id)
             })
+            && self.has_receipt_compatible_billing_window_policy()
             && self.task_summary.as_ref().map_or(true, |summary| {
                 summary.is_persistable_snapshot_for(key.task_id)
             })
@@ -466,5 +475,64 @@ mod tests {
         );
         assert_eq!(st.task_consumption_summary(key.task_id), Some(summary));
         assert_eq!(st.state_root(), expected_root);
+    }
+
+    #[test]
+    fn settlement_snapshot_rejects_billing_policy_outside_receipt_window() {
+        let record = sample_record();
+        let key = record.key.clone();
+        let summary = sample_task_consumption_summary();
+        let mut incompatible_policy = sample_billing_window_policy();
+        incompatible_policy.close_at_unix_ms = record.accepted_at_unix_ms;
+
+        let snapshot = ConsumptionSettlementStateSnapshot {
+            key: key.clone(),
+            record: Some(record.clone()),
+            consumer_nonce: Some(record.consumer_nonce),
+            billing_window_policy: Some(incompatible_policy),
+            task_summary: Some(summary),
+        };
+
+        assert!(!snapshot.has_receipt_compatible_billing_window_policy());
+        assert!(!snapshot.is_persistable_snapshot_for(&key));
+    }
+
+    #[test]
+    fn settlement_snapshot_omits_and_restore_discards_incompatible_billing_policy() {
+        let mut st = StateStore::default();
+        let record = sample_record();
+        let key = record.key.clone();
+        let summary = sample_task_consumption_summary();
+        let mut incompatible_policy = sample_billing_window_policy();
+        incompatible_policy.close_at_unix_ms = record.accepted_at_unix_ms;
+
+        st.put_consumption_record(record.clone());
+        st.set_consumer_consumption_nonce(&key.consumer_id, record.consumer_nonce);
+        st.set_billing_window_policy(incompatible_policy.clone());
+        st.set_task_consumption_summary(summary.clone());
+
+        let snapshot = st.consumption_settlement_state_snapshot(&key);
+        assert_eq!(snapshot.record, Some(record.clone()));
+        assert_eq!(snapshot.billing_window_policy, None);
+        assert!(snapshot.is_persistable_snapshot_for(&key));
+
+        st.restore_consumption_settlement_state(
+            &key,
+            ConsumptionSettlementStateSnapshot {
+                key: key.clone(),
+                record: Some(record.clone()),
+                consumer_nonce: Some(record.consumer_nonce),
+                billing_window_policy: Some(incompatible_policy),
+                task_summary: Some(summary.clone()),
+            },
+        );
+
+        assert_eq!(st.consumption_record(&key), Some(record));
+        assert_eq!(
+            st.consumer_consumption_nonce(&key.consumer_id),
+            Some(sample_record().consumer_nonce)
+        );
+        assert_eq!(st.billing_window_policy(&key.billing_window_id), None);
+        assert_eq!(st.task_consumption_summary(key.task_id), Some(summary));
     }
 }

@@ -3823,11 +3823,20 @@ impl StateStore {
         &self,
         key: &ConsumptionRecordKey,
     ) -> ConsumptionSettlementStateSnapshot {
+        let record = self.consumption_record_snapshot(key);
+        let billing_window_policy = match record.as_ref() {
+            Some(record) => self.billing_window_policy_for_acceptance(
+                &key.billing_window_id,
+                record.accepted_at_unix_ms,
+            ),
+            None => self.billing_window_policy_snapshot(&key.billing_window_id),
+        };
+
         ConsumptionSettlementStateSnapshot {
             key: key.clone(),
-            record: self.consumption_record_snapshot(key),
+            record,
             consumer_nonce: self.consumer_consumption_nonce_snapshot(&key.consumer_id),
-            billing_window_policy: self.billing_window_policy_snapshot(&key.billing_window_id),
+            billing_window_policy,
             task_summary: self.task_consumption_summary_snapshot(key.task_id),
         }
     }
@@ -3841,10 +3850,24 @@ impl StateStore {
             return;
         }
 
-        self.restore_consumption_record(key, snapshot.record);
-        self.restore_consumer_consumption_nonce(&key.consumer_id, snapshot.consumer_nonce);
-        self.restore_billing_window_policy(&key.billing_window_id, snapshot.billing_window_policy);
-        self.restore_task_consumption_summary(key.task_id, snapshot.task_summary);
+        let ConsumptionSettlementStateSnapshot {
+            record,
+            consumer_nonce,
+            billing_window_policy,
+            task_summary,
+            ..
+        } = snapshot;
+        let billing_window_policy = match record.as_ref() {
+            Some(record) => billing_window_policy.filter(|policy| {
+                policy.is_receipt_compatible(&key.billing_window_id, record.accepted_at_unix_ms)
+            }),
+            None => billing_window_policy,
+        };
+
+        self.restore_consumption_record(key, record);
+        self.restore_consumer_consumption_nonce(&key.consumer_id, consumer_nonce);
+        self.restore_billing_window_policy(&key.billing_window_id, billing_window_policy);
+        self.restore_task_consumption_summary(key.task_id, task_summary);
     }
 
     pub fn restore_task_consumption_summary(
