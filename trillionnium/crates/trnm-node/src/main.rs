@@ -3522,11 +3522,21 @@ fn is_rejected_by_emergency_pause(is_paused: bool, tx: &MockTx) -> bool {
 }
 
 #[derive(Debug, Clone)]
+struct ReceiptSettlementRollbackSnapshot {
+    consumer_id: String,
+    consumer_nonce: Option<u64>,
+    record_key: ConsumptionRecordKey,
+    record: Option<trnm_state::ConsumptionRecord>,
+    task_summary: Option<TaskConsumptionSummary>,
+}
+
+#[derive(Debug, Clone)]
 struct TxRollbackSnapshot {
     task_id: u64,
     task: Option<trnm_types::TaskObject>,
     balances: Vec<(String, Option<u128>)>,
     pending_resolve_approval: Option<PendingResolveApprovalSnapshot>,
+    receipt_settlement: Option<ReceiptSettlementRollbackSnapshot>,
 }
 
 fn balance_snapshot(st: &StateStore, address: &str) -> Option<u128> {
@@ -3538,10 +3548,24 @@ fn balance_snapshot(st: &StateStore, address: &str) -> Option<u128> {
     }
 }
 
+fn capture_receipt_settlement_rollback_snapshot(
+    st: &StateStore,
+    tx: &MockTx,
+) -> Option<ReceiptSettlementRollbackSnapshot> {
+    consumption_record_key_of(tx).map(|record_key| ReceiptSettlementRollbackSnapshot {
+        consumer_id: record_key.consumer_id.clone(),
+        consumer_nonce: st.consumer_consumption_nonce(&record_key.consumer_id),
+        record: st.consumption_record(&record_key),
+        task_summary: st.task_consumption_summary(record_key.task_id),
+        record_key,
+    })
+}
+
 fn capture_rollback_snapshot(st: &StateStore, tx: &MockTx) -> TxRollbackSnapshot {
     let task_id = task_id_of(tx);
     let task = st.get_task(task_id);
     let pending_resolve_approval = st.pending_resolve_approval_snapshot(task_id);
+    let receipt_settlement = capture_receipt_settlement_rollback_snapshot(st, tx);
     let mut balances: Vec<(String, Option<u128>)> = Vec::new();
     let mut push_balance = |address: &str| {
         if balances.iter().any(|(existing, _)| existing == address) {
@@ -3584,6 +3608,7 @@ fn capture_rollback_snapshot(st: &StateStore, tx: &MockTx) -> TxRollbackSnapshot
         task,
         balances,
         pending_resolve_approval,
+        receipt_settlement,
     }
 }
 
@@ -3706,6 +3731,38 @@ fn restore_pending_resolve_approval_from_snapshot(
     );
 }
 
+fn restore_receipt_settlement_rollback_snapshot(
+    st: &mut StateStore,
+    snapshot: Option<ReceiptSettlementRollbackSnapshot>,
+) {
+    let Some(snapshot) = snapshot else {
+        return;
+    };
+
+    match snapshot.record {
+        Some(record) => {
+            st.put_consumption_record(record);
+        }
+        None => {
+            st.remove_consumption_record(&snapshot.record_key);
+        }
+    }
+
+    match snapshot.task_summary {
+        Some(summary) => {
+            st.set_task_consumption_summary(summary);
+        }
+        None => {
+            st.clear_task_consumption_summary(snapshot.record_key.task_id);
+        }
+    }
+
+    st.set_consumer_consumption_nonce(
+        &snapshot.consumer_id,
+        snapshot.consumer_nonce.unwrap_or(0),
+    );
+}
+
 fn rollback_tx_snapshot(st: &mut StateStore, snapshot: TxRollbackSnapshot) {
     st.restore_task(snapshot.task_id, snapshot.task);
     for (address, balance) in snapshot.balances {
@@ -3716,6 +3773,7 @@ fn rollback_tx_snapshot(st: &mut StateStore, snapshot: TxRollbackSnapshot) {
         snapshot.task_id,
         snapshot.pending_resolve_approval,
     );
+    restore_receipt_settlement_rollback_snapshot(st, snapshot.receipt_settlement);
 }
 
 fn balance_deltas_from_snapshot(
@@ -13762,6 +13820,7 @@ mod tests {
                 authority_set: "authority-c,authority-d".into(),
                 task_version: before_task.version,
             }),
+            receipt_settlement: None,
         };
 
         rollback_tx_snapshot(&mut st, snapshot);
@@ -13846,6 +13905,7 @@ mod tests {
                 authority_set: "Authority-D,Authority-C".into(),
                 task_version: before_task.version,
             }),
+            receipt_settlement: None,
         };
 
         rollback_tx_snapshot(&mut st, snapshot);
@@ -13946,6 +14006,7 @@ mod tests {
                 authority_set: "authority-c,authority-d".into(),
                 task_version: before_task.version,
             }),
+            receipt_settlement: None,
         };
 
         rollback_tx_snapshot(&mut st, snapshot);
@@ -14034,6 +14095,7 @@ mod tests {
                 authority_set: "authority-c,authority-d".into(),
                 task_version: before_task.version,
             }),
+            receipt_settlement: None,
         };
 
         rollback_tx_snapshot(&mut st, snapshot);
@@ -14121,6 +14183,7 @@ mod tests {
                 authority_set: "authority-a,authority-b".into(),
                 task_version: before_task.version,
             }),
+            receipt_settlement: None,
         };
 
         rollback_tx_snapshot(&mut st, snapshot);
@@ -14165,6 +14228,7 @@ mod tests {
                 authority_set: "authority-a,authority-b".into(),
                 task_version: before_task.version,
             }),
+            receipt_settlement: None,
         };
 
         rollback_tx_snapshot(&mut st, snapshot);
@@ -14202,6 +14266,7 @@ mod tests {
                 authority_set: "authority-a,authority-b".into(),
                 task_version: before_task.version + 1,
             }),
+            receipt_settlement: None,
         };
 
         rollback_tx_snapshot(&mut st, snapshot);
@@ -14233,6 +14298,7 @@ mod tests {
                 authority_set: "authority-a,authority-b".into(),
                 task_version: before_task.version,
             }),
+            receipt_settlement: None,
         };
 
         rollback_tx_snapshot(&mut st, snapshot);
@@ -14264,6 +14330,7 @@ mod tests {
                 authority_set: "authority-a,authority-b".into(),
                 task_version: before_task.version,
             }),
+            receipt_settlement: None,
         };
 
         rollback_tx_snapshot(&mut st, snapshot);
@@ -14295,6 +14362,7 @@ mod tests {
                 authority_set: "authority-a,authority-b".into(),
                 task_version: before_task.version,
             }),
+            receipt_settlement: None,
         };
 
         rollback_tx_snapshot(&mut st, snapshot);
@@ -14326,6 +14394,7 @@ mod tests {
                 authority_set: "authority-a,authority-b".into(),
                 task_version: before_task.version,
             }),
+            receipt_settlement: None,
         };
 
         rollback_tx_snapshot(&mut st, snapshot);
@@ -14363,6 +14432,7 @@ mod tests {
                 authority_set: "authority-a；authority-b".into(),
                 task_version: before_task.version,
             }),
+            receipt_settlement: None,
         };
 
         rollback_tx_snapshot(&mut st, snapshot);
@@ -14400,6 +14470,7 @@ mod tests {
                 authority_set: "authority-a,authority-b".into(),
                 task_version: before_task.version,
             }),
+            receipt_settlement: None,
         };
 
         rollback_tx_snapshot(&mut st, snapshot);
@@ -14439,6 +14510,7 @@ mod tests {
                 authority_set: "authority-a,authority-b".into(),
                 task_version: before_task.version,
             }),
+            receipt_settlement: None,
         };
 
         rollback_tx_snapshot(&mut st, snapshot);
@@ -14490,6 +14562,7 @@ mod tests {
                     authority_set: "authority-a,authority-b".into(),
                     task_version: before_task.version,
                 }),
+                receipt_settlement: None,
             };
 
             rollback_tx_snapshot(&mut st, snapshot);
@@ -14539,6 +14612,7 @@ mod tests {
                 authority_set: "authority-a,treasury.worker_slashes".into(),
                 task_version: before_task.version,
             }),
+            receipt_settlement: None,
         };
 
         rollback_tx_snapshot(&mut st, snapshot);
@@ -14576,6 +14650,7 @@ mod tests {
                 authority_set: "authority-a,authority-\u{0007}b".into(),
                 task_version: before_task.version,
             }),
+            receipt_settlement: None,
         };
 
         rollback_tx_snapshot(&mut st, snapshot);
@@ -14613,6 +14688,7 @@ mod tests {
                 authority_set: "Authority-A,authority-a".into(),
                 task_version: before_task.version,
             }),
+            receipt_settlement: None,
         };
 
         rollback_tx_snapshot(&mut st, snapshot);
@@ -14645,6 +14721,7 @@ mod tests {
                 authority_set: "authority-a,authority-b".into(),
                 task_version: before_task.version,
             }),
+            receipt_settlement: None,
         };
 
         rollback_tx_snapshot(&mut st, snapshot);
@@ -16117,6 +16194,109 @@ mod tests {
         assert!(line.contains("settlement_total_claimed_consumption_units=17"));
         assert!(line.contains("settlement_total_credited_consumption_units=9"));
         assert!(line.contains("settlement_last_settlement_height=77"));
+    }
+
+    #[test]
+    fn rollback_snapshot_restores_receipt_settlement_state_across_submit_challenge_resolve() {
+        let mut st = StateStore::default();
+        let _ = st.set_gov_param_bootstrap_unchecked(
+            9_500,
+            "resolve_authority".into(),
+            "resolver-1,resolver-2".into(),
+        );
+
+        let result_hash = [0x21; 32];
+        put_sample_poco_task(&mut st, 42, "worker-alpha", result_hash);
+
+        let receipt =
+            sample_consumption_receipt(42, "worker-alpha", "consumer-bravo", result_hash);
+        let record_key = ConsumptionRecordKey {
+            task_id: receipt.task_id,
+            consumer_id: receipt.consumer_id.clone(),
+            output_hash: receipt.output_hash.clone(),
+            billing_window_id: receipt.billing_window_id.clone(),
+        };
+
+        let submit_tx = MockTx::SubmitConsumptionReceipt {
+            receipt: receipt.clone(),
+        };
+        let before_submit_root = st.state_root();
+        let submit_snapshot = capture_rollback_snapshot(&st, &submit_tx);
+        apply_one(&mut st, submit_tx.clone(), 10).expect("apply submit receipt");
+        assert!(st.consumption_record(&record_key).is_some());
+        assert_eq!(st.consumer_consumption_nonce("consumer-bravo"), Some(7));
+        assert!(st.task_consumption_summary(42).is_some());
+        rollback_tx_snapshot(&mut st, submit_snapshot);
+        assert_eq!(st.consumption_record(&record_key), None);
+        assert_eq!(st.consumer_consumption_nonce("consumer-bravo"), None);
+        assert_eq!(st.task_consumption_summary(42), None);
+        assert_eq!(st.state_root(), before_submit_root);
+
+        apply_one(&mut st, submit_tx, 10).expect("re-apply submit receipt");
+
+        let challenge_tx = MockTx::ChallengeConsumptionReceipt {
+            key: receipt.replay_key(),
+            challenger: "auditor-1".to_string(),
+        };
+        let before_challenge_root = st.state_root();
+        let before_challenge_record = st.consumption_record(&record_key);
+        let before_challenge_summary = st.task_consumption_summary(42);
+        let before_challenge_nonce = st.consumer_consumption_nonce("consumer-bravo");
+        let challenge_snapshot = capture_rollback_snapshot(&st, &challenge_tx);
+        apply_one(&mut st, challenge_tx.clone(), 11).expect("apply challenge receipt");
+        assert_eq!(
+            st.consumption_record(&record_key)
+                .expect("challenged record")
+                .status,
+            trnm_state::ConsumptionRecordStatus::Challenged
+        );
+        assert_eq!(
+            st.task_consumption_summary(42)
+                .expect("challenge summary")
+                .challenged_receipt_count,
+            1
+        );
+        rollback_tx_snapshot(&mut st, challenge_snapshot);
+        assert_eq!(st.consumption_record(&record_key), before_challenge_record);
+        assert_eq!(st.task_consumption_summary(42), before_challenge_summary);
+        assert_eq!(
+            st.consumer_consumption_nonce("consumer-bravo"),
+            before_challenge_nonce
+        );
+        assert_eq!(st.state_root(), before_challenge_root);
+
+        apply_one(&mut st, challenge_tx, 11).expect("re-apply challenge receipt");
+
+        let resolve_tx = MockTx::ResolveConsumptionReceipt {
+            key: receipt.replay_key(),
+            decision: ConsumptionResolveDecision::Discount,
+            credited_consumption_units: Some(9),
+            resolution_code: None,
+            resolver: "resolver-1".to_string(),
+        };
+        let before_resolve_root = st.state_root();
+        let before_resolve_record = st.consumption_record(&record_key);
+        let before_resolve_summary = st.task_consumption_summary(42);
+        let before_resolve_nonce = st.consumer_consumption_nonce("consumer-bravo");
+        let resolve_snapshot = capture_rollback_snapshot(&st, &resolve_tx);
+        apply_one(&mut st, resolve_tx, 12).expect("apply resolve receipt");
+        assert_eq!(
+            st.consumption_record(&record_key)
+                .expect("resolved record")
+                .status,
+            trnm_state::ConsumptionRecordStatus::Discounted
+        );
+        assert_eq!(
+            st.task_consumption_summary(42)
+                .expect("resolve summary")
+                .accepted_receipt_count,
+            1
+        );
+        rollback_tx_snapshot(&mut st, resolve_snapshot);
+        assert_eq!(st.consumption_record(&record_key), before_resolve_record);
+        assert_eq!(st.task_consumption_summary(42), before_resolve_summary);
+        assert_eq!(st.consumer_consumption_nonce("consumer-bravo"), before_resolve_nonce);
+        assert_eq!(st.state_root(), before_resolve_root);
     }
 
     #[test]
