@@ -362,3 +362,47 @@ fn settlement_threading_keeps_legacy_note_only_fallback_distinct_from_threaded_i
         Some(TaskMetadataCompatibilityFinding::IncompleteSettlementSnapshot)
     );
 }
+
+#[test]
+fn settlement_threading_serialization_keeps_legacy_note_only_shape_compact() {
+    let fallback_settlement = TaskSettlementSnapshot {
+        settlement_schema: "poco_v1".into(),
+        tokenizer_id: "llama3-tokenizer".into(),
+        tokenizer_version: "1.0.0".into(),
+        output_hash: format!("0x{}", "d".repeat(64)),
+        output_token_count: 512,
+        output_root: Some(format!("0x{}", "e".repeat(64))),
+        output_span_commitment: None,
+    };
+    let legacy_metadata = TaskMetadata {
+        note: Some("legacy".into()),
+        ..TaskMetadata::default()
+    };
+
+    assert_eq!(
+        serde_json::to_value(&legacy_metadata).expect("serialize legacy note-only metadata"),
+        serde_json::json!({
+            "note": "legacy",
+        })
+    );
+
+    let mut threaded_metadata = legacy_metadata.clone();
+    assert!(threaded_metadata.thread_settlement_snapshot(Some(&fallback_settlement)));
+
+    assert_eq!(
+        serde_json::to_value(&threaded_metadata)
+            .expect("serialize note-only metadata with threaded settlement"),
+        serde_json::json!({
+            "note": "legacy",
+            "settlement": {
+                "settlement_schema": "poco_v1",
+                "tokenizer_id": "llama3-tokenizer",
+                "tokenizer_version": "1.0.0",
+                "output_hash": format!("0x{}", "d".repeat(64)),
+                "output_token_count": 512,
+                "output_root": format!("0x{}", "e".repeat(64)),
+                "output_span_commitment": null,
+            }
+        })
+    );
+}

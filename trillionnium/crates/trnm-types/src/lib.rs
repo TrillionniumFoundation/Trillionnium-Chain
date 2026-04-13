@@ -238,17 +238,17 @@ impl TaskMetadataCompatibilityReport {
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Default)]
 pub struct TaskMetadata {
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     pub note: Option<String>,
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     pub task_type: Option<String>,
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     pub input_hash: Option<String>,
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     pub model: Option<TaskModelMetadata>,
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     pub provenance: Option<TaskProvenanceMetadata>,
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     pub metering: Option<TaskMeteringSnapshot>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub settlement: Option<TaskSettlementSnapshot>,
