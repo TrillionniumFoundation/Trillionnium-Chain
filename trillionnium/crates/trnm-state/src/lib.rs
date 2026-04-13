@@ -3825,10 +3825,12 @@ impl StateStore {
     ) -> ConsumptionSettlementStateSnapshot {
         let record = self.consumption_record_snapshot(key);
         let billing_window_policy = match record.as_ref() {
-            Some(record) => self.billing_window_policy_for_acceptance(
-                &key.billing_window_id,
-                record.accepted_at_unix_ms,
-            ),
+            Some(record) => self
+                .billing_window_policy_for_acceptance(
+                    &key.billing_window_id,
+                    record.accepted_at_unix_ms,
+                )
+                .filter(|policy| record.is_compatible_with_billing_window_policy(policy)),
             None => self.billing_window_policy_snapshot(&key.billing_window_id),
         };
 
@@ -3863,9 +3865,8 @@ impl StateStore {
             None => consumer_nonce,
         };
         let billing_window_policy = match record.as_ref() {
-            Some(record) => billing_window_policy.filter(|policy| {
-                policy.is_receipt_compatible(&key.billing_window_id, record.accepted_at_unix_ms)
-            }),
+            Some(record) => billing_window_policy
+                .filter(|policy| record.is_compatible_with_billing_window_policy(policy)),
             None => billing_window_policy,
         };
         let task_summary = match record.as_ref() {
