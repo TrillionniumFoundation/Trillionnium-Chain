@@ -15043,6 +15043,67 @@ mod tests {
     }
 
     #[test]
+    fn receipt_settlement_tx_metadata_contract_stays_stable() {
+        let mut st = StateStore::default();
+        let result_hash = [0x2a; 32];
+        put_sample_poco_task(&mut st, 42, "worker-alpha", result_hash);
+
+        let receipt =
+            sample_consumption_receipt(42, "worker-alpha", "consumer-bravo", result_hash);
+        let submit_tx = MockTx::SubmitConsumptionReceipt {
+            receipt: receipt.clone(),
+        };
+        assert_eq!(task_id_of(&submit_tx), 42);
+        assert_eq!(event_type_of(&submit_tx), "submit_consumption_receipt");
+        assert_eq!(actor_of(&st, &submit_tx), "consumer-bravo");
+        assert_eq!(verified_signer_of(&st, &submit_tx), "consumer-bravo");
+        assert_eq!(challenger_of(&submit_tx), None);
+        assert_eq!(preapply_challenger_account_of(&st, &submit_tx), None);
+
+        apply_one(&mut st, submit_tx, 10).expect("apply submit receipt");
+
+        let challenge_tx = MockTx::ChallengeConsumptionReceipt {
+            key: receipt.replay_key(),
+            challenger: "auditor-1".to_string(),
+        };
+        assert_eq!(task_id_of(&challenge_tx), 42);
+        assert_eq!(
+            event_type_of(&challenge_tx),
+            "challenge_consumption_receipt"
+        );
+        assert_eq!(actor_of(&st, &challenge_tx), "auditor-1");
+        assert_eq!(verified_signer_of(&st, &challenge_tx), "auditor-1");
+        assert_eq!(challenger_of(&challenge_tx), Some("auditor-1".to_string()));
+        assert_eq!(
+            preapply_challenger_account_of(&st, &challenge_tx),
+            Some("auditor-1".to_string())
+        );
+
+        apply_one(&mut st, challenge_tx, 11).expect("apply challenge receipt");
+
+        let resolve_tx = MockTx::ResolveConsumptionReceipt {
+            key: receipt.replay_key(),
+            decision: ConsumptionResolveDecision::Discount,
+            credited_consumption_units: Some(9),
+            resolution_code: None,
+            resolver: "resolver-1".to_string(),
+        };
+        assert_eq!(task_id_of(&resolve_tx), 42);
+        assert_eq!(event_type_of(&resolve_tx), "resolve_consumption_receipt");
+        assert_eq!(
+            event_type_for_apply_outcome(&resolve_tx, Some("resolve_approval_staged")),
+            "resolve_consumption_receipt"
+        );
+        assert_eq!(actor_of(&st, &resolve_tx), "resolver-1");
+        assert_eq!(verified_signer_of(&st, &resolve_tx), "resolver-1");
+        assert_eq!(challenger_of(&resolve_tx), None);
+        assert_eq!(
+            preapply_challenger_account_of(&st, &resolve_tx),
+            Some("auditor-1".to_string())
+        );
+    }
+
+    #[test]
     fn resolve_challenger_fallback_does_not_alias_resolver() {
         let tx = MockTx::Resolve {
             task_id: 9,
