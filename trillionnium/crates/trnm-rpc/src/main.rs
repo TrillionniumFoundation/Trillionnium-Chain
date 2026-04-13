@@ -4354,7 +4354,7 @@ fn query_consumption_summary_response(
     let summary = st
         .task_consumption_summary(task_id)
         .ok_or_else(|| anyhow!("consumption summary not found for task {}", task_id))?;
-    Ok(TaskConsumptionSummaryQueryResponse {
+    let out = TaskConsumptionSummaryQueryResponse {
         task_id: summary.task_id,
         receipt_count: summary.receipt_count,
         accepted_receipt_count: summary.accepted_receipt_count,
@@ -4363,7 +4363,14 @@ fn query_consumption_summary_response(
         total_claimed_consumption_units: summary.total_claimed_consumption_units,
         total_credited_consumption_units: summary.total_credited_consumption_units,
         last_settlement_height: summary.last_settlement_height,
-    })
+    };
+    if !out.settlement_contract_consistent() {
+        bail!(
+            "consumption summary violated settlement rpc contract for task {}",
+            task_id
+        );
+    }
+    Ok(out)
 }
 
 fn settlement_preview_response(
@@ -4377,7 +4384,7 @@ fn settlement_preview_response(
             (!records.is_empty()).then(|| derive_task_consumption_summary(task_id, &records))
         })
         .ok_or_else(|| anyhow!("consumption summary not found for task {}", task_id))?;
-    Ok(TaskSettlementPreviewQueryResponse::from_authoritative_summary(
+    TaskSettlementPreviewQueryResponse::try_from_authoritative_summary(
         TaskConsumptionSummaryQueryResponse {
             task_id: summary.task_id,
             receipt_count: summary.receipt_count,
@@ -4388,7 +4395,13 @@ fn settlement_preview_response(
             total_credited_consumption_units: summary.total_credited_consumption_units,
             last_settlement_height: summary.last_settlement_height,
         },
-    ))
+    )
+    .map_err(|_| {
+        anyhow!(
+            "consumption summary violated settlement rpc contract for task {}",
+            task_id
+        )
+    })
 }
 
 fn query_consumption_receipts_response(
@@ -11427,6 +11440,28 @@ line2
     }
 
     #[test]
+    fn query_consumption_summary_response_rejects_inconsistent_authoritative_summary() {
+        let mut st = StateStore::default();
+        st.set_task_consumption_summary(TaskConsumptionSummary {
+            task_id: 42,
+            receipt_count: 1,
+            accepted_receipt_count: 1,
+            challenged_receipt_count: 1,
+            total_consumed_tokens: 33,
+            total_claimed_consumption_units: 33,
+            total_credited_consumption_units: 21,
+            last_settlement_height: Some(88),
+        });
+
+        let err = query_consumption_summary_response(42, &st)
+            .expect_err("impossible authoritative summary must fail closed");
+        assert_eq!(
+            err.to_string(),
+            "consumption summary violated settlement rpc contract for task 42"
+        );
+    }
+
+    #[test]
     fn settlement_preview_response_uses_dedicated_contract_shape() {
         let mut st = StateStore::default();
         st.set_task_consumption_summary(TaskConsumptionSummary {
@@ -11447,6 +11482,28 @@ line2
         assert_eq!(v["accepted_receipt_count"], serde_json::json!(1));
         assert_eq!(v["challenged_receipt_count"], serde_json::json!(1));
         assert_eq!(v["last_settlement_height"], serde_json::json!(88));
+    }
+
+    #[test]
+    fn settlement_preview_response_rejects_inconsistent_authoritative_summary() {
+        let mut st = StateStore::default();
+        st.set_task_consumption_summary(TaskConsumptionSummary {
+            task_id: 42,
+            receipt_count: 1,
+            accepted_receipt_count: 0,
+            challenged_receipt_count: 1,
+            total_consumed_tokens: 33,
+            total_claimed_consumption_units: 33,
+            total_credited_consumption_units: 1,
+            last_settlement_height: Some(88),
+        });
+
+        let err = settlement_preview_response(42, &st)
+            .expect_err("invalid authoritative preview summary must fail closed");
+        assert_eq!(
+            err.to_string(),
+            "consumption summary violated settlement rpc contract for task 42"
+        );
     }
 
     #[test]
