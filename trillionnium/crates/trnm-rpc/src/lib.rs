@@ -90,7 +90,7 @@ pub struct TaskQueryResponse {
     pub metering: Option<TaskMeteringQueryResponse>,
 }
 
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 struct SettlementSummaryQueryResponseWire {
     task_id: u64,
@@ -138,7 +138,7 @@ impl std::convert::TryFrom<SettlementSummaryQueryResponseWire>
     }
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
 #[serde(deny_unknown_fields, try_from = "SettlementSummaryQueryResponseWire")]
 pub struct TaskConsumptionSummaryQueryResponse {
     pub task_id: u64,
@@ -154,6 +154,36 @@ pub struct TaskConsumptionSummaryQueryResponse {
 
 const AUTHORITATIVE_SETTLEMENT_SUMMARY_CONTRACT_ERROR: &str =
     "authoritative settlement summary violated RPC contract";
+
+impl From<&TaskConsumptionSummaryQueryResponse> for SettlementSummaryQueryResponseWire {
+    fn from(summary: &TaskConsumptionSummaryQueryResponse) -> Self {
+        Self {
+            task_id: summary.task_id,
+            receipt_count: summary.receipt_count,
+            accepted_receipt_count: summary.accepted_receipt_count,
+            challenged_receipt_count: summary.challenged_receipt_count,
+            total_consumed_tokens: summary.total_consumed_tokens,
+            total_claimed_consumption_units: summary.total_claimed_consumption_units,
+            total_credited_consumption_units: summary.total_credited_consumption_units,
+            last_settlement_height: summary.last_settlement_height,
+        }
+    }
+}
+
+impl Serialize for TaskConsumptionSummaryQueryResponse {
+    fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        if !self.settlement_contract_consistent() {
+            return Err(serde::ser::Error::custom(
+                AUTHORITATIVE_SETTLEMENT_SUMMARY_CONTRACT_ERROR,
+            ));
+        }
+
+        SettlementSummaryQueryResponseWire::from(self).serialize(serializer)
+    }
+}
 
 impl TaskConsumptionSummaryQueryResponse {
     pub fn try_from_authoritative_state_summary(
@@ -196,7 +226,7 @@ impl TaskConsumptionSummaryQueryResponse {
     }
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
 #[serde(deny_unknown_fields, try_from = "SettlementSummaryQueryResponseWire")]
 pub struct TaskSettlementPreviewQueryResponse {
     pub task_id: u64,
@@ -208,6 +238,36 @@ pub struct TaskSettlementPreviewQueryResponse {
     pub total_credited_consumption_units: u128,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub last_settlement_height: Option<u64>,
+}
+
+impl From<&TaskSettlementPreviewQueryResponse> for SettlementSummaryQueryResponseWire {
+    fn from(summary: &TaskSettlementPreviewQueryResponse) -> Self {
+        Self {
+            task_id: summary.task_id,
+            receipt_count: summary.receipt_count,
+            accepted_receipt_count: summary.accepted_receipt_count,
+            challenged_receipt_count: summary.challenged_receipt_count,
+            total_consumed_tokens: summary.total_consumed_tokens,
+            total_claimed_consumption_units: summary.total_claimed_consumption_units,
+            total_credited_consumption_units: summary.total_credited_consumption_units,
+            last_settlement_height: summary.last_settlement_height,
+        }
+    }
+}
+
+impl Serialize for TaskSettlementPreviewQueryResponse {
+    fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        if !self.settlement_contract_consistent() {
+            return Err(serde::ser::Error::custom(
+                AUTHORITATIVE_SETTLEMENT_SUMMARY_CONTRACT_ERROR,
+            ));
+        }
+
+        SettlementSummaryQueryResponseWire::from(self).serialize(serializer)
+    }
 }
 
 impl TaskSettlementPreviewQueryResponse {
@@ -222,6 +282,20 @@ impl TaskSettlementPreviewQueryResponse {
             total_credited_consumption_units: summary.total_credited_consumption_units,
             last_settlement_height: summary.last_settlement_height,
         }
+    }
+
+    fn settlement_contract_consistent(&self) -> bool {
+        TaskConsumptionSummaryQueryResponse {
+            task_id: self.task_id,
+            receipt_count: self.receipt_count,
+            accepted_receipt_count: self.accepted_receipt_count,
+            challenged_receipt_count: self.challenged_receipt_count,
+            total_consumed_tokens: self.total_consumed_tokens,
+            total_claimed_consumption_units: self.total_claimed_consumption_units,
+            total_credited_consumption_units: self.total_credited_consumption_units,
+            last_settlement_height: self.last_settlement_height,
+        }
+        .settlement_contract_consistent()
     }
 
     pub fn try_from_authoritative_state_summary(
@@ -1044,6 +1118,44 @@ mod tests {
                 AUTHORITATIVE_SETTLEMENT_SUMMARY_CONTRACT_ERROR
             );
         }
+    }
+
+    #[test]
+    fn rpc_task_consumption_summary_query_rejects_serializing_inconsistent_contract() {
+        let err = serde_json::to_value(TaskConsumptionSummaryQueryResponse {
+            task_id: 42,
+            receipt_count: 1,
+            accepted_receipt_count: 1,
+            challenged_receipt_count: 1,
+            total_consumed_tokens: 33,
+            total_claimed_consumption_units: 33,
+            total_credited_consumption_units: 21,
+            last_settlement_height: Some(88),
+        })
+        .expect_err("serializing inconsistent settlement summary must fail closed");
+
+        assert!(err
+            .to_string()
+            .contains(AUTHORITATIVE_SETTLEMENT_SUMMARY_CONTRACT_ERROR));
+    }
+
+    #[test]
+    fn rpc_task_settlement_preview_query_rejects_serializing_inconsistent_contract() {
+        let err = serde_json::to_value(TaskSettlementPreviewQueryResponse {
+            task_id: 42,
+            receipt_count: 1,
+            accepted_receipt_count: 1,
+            challenged_receipt_count: 1,
+            total_consumed_tokens: 33,
+            total_claimed_consumption_units: 33,
+            total_credited_consumption_units: 21,
+            last_settlement_height: Some(88),
+        })
+        .expect_err("serializing inconsistent settlement preview must fail closed");
+
+        assert!(err
+            .to_string()
+            .contains(AUTHORITATIVE_SETTLEMENT_SUMMARY_CONTRACT_ERROR));
     }
 
     #[test]
