@@ -3231,6 +3231,59 @@ fn format_task_consumption_summary_event_fields(summary: &TaskConsumptionSummary
     )
 }
 
+fn consumption_record_key_for_event(tx: &MockTx) -> Option<ConsumptionRecordKey> {
+    match tx {
+        MockTx::SubmitConsumptionReceipt { receipt } => Some(ConsumptionRecordKey {
+            task_id: receipt.task_id,
+            consumer_id: receipt.consumer_id.clone(),
+            output_hash: receipt.output_hash.clone(),
+            billing_window_id: receipt.billing_window_id.clone(),
+        }),
+        MockTx::ChallengeConsumptionReceipt { key, .. }
+        | MockTx::ResolveConsumptionReceipt { key, .. } => Some(ConsumptionRecordKey {
+            task_id: key.task_id,
+            consumer_id: key.consumer_id.clone(),
+            output_hash: key.output_hash.clone(),
+            billing_window_id: key.billing_window_id.clone(),
+        }),
+        _ => None,
+    }
+}
+
+fn consumption_record_status_name(status: trnm_state::ConsumptionRecordStatus) -> &'static str {
+    match status {
+        trnm_state::ConsumptionRecordStatus::Submitted => "submitted",
+        trnm_state::ConsumptionRecordStatus::Challenged => "challenged",
+        trnm_state::ConsumptionRecordStatus::Accepted => "accepted",
+        trnm_state::ConsumptionRecordStatus::Discounted => "discounted",
+        trnm_state::ConsumptionRecordStatus::Rejected => "rejected",
+        trnm_state::ConsumptionRecordStatus::Slashed => "slashed",
+    }
+}
+
+fn consumption_record_event_suffix(st: &StateStore, tx: &MockTx) -> String {
+    consumption_record_key_for_event(tx)
+        .and_then(|key| st.consumption_record(&key))
+        .map(|record| {
+            let credited_units = record
+                .credited_consumption_units
+                .map(|value| value.to_string())
+                .unwrap_or_else(|| "-".to_string());
+            let resolution_code = record.resolution_code.unwrap_or_else(|| "-".to_string());
+            format!(
+                " settlement_record_status={} settlement_consumer_id={} settlement_output_hash={} settlement_billing_window_id={} settlement_consumer_nonce={} settlement_credited_consumption_units={} settlement_resolution_code={}",
+                consumption_record_status_name(record.status),
+                record.key.consumer_id,
+                record.key.output_hash,
+                record.key.billing_window_id,
+                record.consumer_nonce,
+                credited_units,
+                resolution_code,
+            )
+        })
+        .unwrap_or_default()
+}
+
 fn task_settlement_event_suffix(st: &StateStore, task_id: u64) -> String {
     let mut suffix = st
         .get_task(task_id)
@@ -3323,12 +3376,13 @@ fn format_apply_event_line(
     let challenger_delta_str = challenger_delta.map(|d| d.text.as_str()).unwrap_or("-");
     let bond_disposition_str = bond_disposition.unwrap_or("-");
     let settlement_suffix = match tx {
-        MockTx::Reveal { .. }
-        | MockTx::Resolve { .. }
-        | MockTx::SubmitConsumptionReceipt { .. }
+        MockTx::Reveal { .. } | MockTx::Resolve { .. } => task_settlement_event_suffix(st, task_id),
+        MockTx::SubmitConsumptionReceipt { .. }
         | MockTx::ChallengeConsumptionReceipt { .. }
         | MockTx::ResolveConsumptionReceipt { .. } => {
-            task_settlement_event_suffix(st, task_id)
+            let mut suffix = task_settlement_event_suffix(st, task_id);
+            suffix.push_str(&consumption_record_event_suffix(st, tx));
+            suffix
         }
         _ => String::new(),
     };
@@ -15980,6 +16034,7 @@ mod tests {
     fn submit_consumption_receipt_event_line_is_stable() {
         let mut st = StateStore::default();
         let result_hash = [0x25; 32];
+        let expected_output_hash = hex::encode(result_hash);
         put_sample_poco_task(&mut st, 42, "worker-alpha", result_hash);
 
         let receipt =
@@ -16014,12 +16069,20 @@ mod tests {
         assert!(line.contains("signer=consumer-bravo"));
         assert!(line.contains("challenger=-"));
         assert!(line.contains("settlement_receipt_count=1"));
+        assert!(line.contains("settlement_record_status=submitted"));
+        assert!(line.contains("settlement_consumer_id=consumer-bravo"));
+        assert!(line.contains(&format!("settlement_output_hash={}", expected_output_hash)));
+        assert!(line.contains("settlement_billing_window_id=bw-1"));
+        assert!(line.contains("settlement_consumer_nonce=7"));
+        assert!(line.contains("settlement_credited_consumption_units=-"));
+        assert!(line.contains("settlement_resolution_code=-"));
     }
 
     #[test]
     fn challenge_consumption_receipt_event_line_is_stable() {
         let mut st = StateStore::default();
         let result_hash = [0x26; 32];
+        let expected_output_hash = hex::encode(result_hash);
         put_sample_poco_task(&mut st, 42, "worker-alpha", result_hash);
 
         let receipt =
@@ -16069,6 +16132,13 @@ mod tests {
         assert!(line.contains("signer=auditor-1"));
         assert!(line.contains("challenger=auditor-1"));
         assert!(line.contains("settlement_challenged_receipt_count=1"));
+        assert!(line.contains("settlement_record_status=challenged"));
+        assert!(line.contains("settlement_consumer_id=consumer-bravo"));
+        assert!(line.contains(&format!("settlement_output_hash={}", expected_output_hash)));
+        assert!(line.contains("settlement_billing_window_id=bw-1"));
+        assert!(line.contains("settlement_consumer_nonce=7"));
+        assert!(line.contains("settlement_credited_consumption_units=-"));
+        assert!(line.contains("settlement_resolution_code=challenged_by:auditor-1"));
     }
 
     #[test]
@@ -16081,6 +16151,7 @@ mod tests {
         );
 
         let result_hash = [0x27; 32];
+        let expected_output_hash = hex::encode(result_hash);
         put_sample_poco_task(&mut st, 42, "worker-alpha", result_hash);
 
         let receipt =
@@ -16144,6 +16215,13 @@ mod tests {
         assert!(line.contains("challenger=auditor-1"));
         assert!(line.contains("settlement_accepted_receipt_count=1"));
         assert!(line.contains("settlement_total_credited_consumption_units=9"));
+        assert!(line.contains("settlement_record_status=discounted"));
+        assert!(line.contains("settlement_consumer_id=consumer-bravo"));
+        assert!(line.contains(&format!("settlement_output_hash={}", expected_output_hash)));
+        assert!(line.contains("settlement_billing_window_id=bw-1"));
+        assert!(line.contains("settlement_consumer_nonce=7"));
+        assert!(line.contains("settlement_credited_consumption_units=9"));
+        assert!(line.contains("settlement_resolution_code=accepted_discounted"));
     }
 
     #[test]
