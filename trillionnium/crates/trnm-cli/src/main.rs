@@ -852,19 +852,20 @@ fn parse_consumption_summary_query_response(
 ) -> Result<serde_json::Value> {
     let parsed: serde_json::Value = serde_json::from_str(raw)
         .map_err(|err| anyhow!("failed to parse consumption summary response as json: {err}"))?;
+    let result = json_get_alias(&parsed, &["result"]);
+    let data = json_get_alias(&parsed, &["data"]);
+    let response = json_get_alias(&parsed, &["response"]);
+    let response_data = response.and_then(|value| json_get_alias(value, &["data"]));
     let summary = [
         Some(&parsed),
-        parsed.get("summary"),
-        parsed.get("result"),
-        parsed.get("result").and_then(|value| value.get("summary")),
-        parsed.get("data"),
-        parsed.get("data").and_then(|value| value.get("summary")),
-        parsed.get("response"),
-        parsed.get("response").and_then(|value| value.get("data")),
-        parsed
-            .get("response")
-            .and_then(|value| value.get("data"))
-            .and_then(|value| value.get("summary")),
+        json_get_alias(&parsed, &["settlement_preview", "summary"]),
+        result,
+        result.and_then(|value| json_get_alias(value, &["settlement_preview", "summary"])),
+        data,
+        data.and_then(|value| json_get_alias(value, &["settlement_preview", "summary"])),
+        response,
+        response_data,
+        response_data.and_then(|value| json_get_alias(value, &["settlement_preview", "summary"])),
     ]
     .into_iter()
     .flatten()
@@ -950,14 +951,22 @@ fn parse_consumption_receipts_query_response(
     let parsed: serde_json::Value = serde_json::from_str(raw)
         .map_err(|err| anyhow!("failed to parse consumption receipts response as json: {err}"))?;
 
+    let result = json_get_alias(&parsed, &["result"]);
+    let data = json_get_alias(&parsed, &["data"]);
+    let response = json_get_alias(&parsed, &["response"]);
+    let response_data = response.and_then(|value| json_get_alias(value, &["data"]));
     let mut envelope_task_id = None;
     let mut receipts = None;
     for candidate in [
         Some(&parsed),
-        parsed.get("result"),
-        parsed.get("data"),
-        parsed.get("response"),
-        parsed.get("response").and_then(|value| value.get("data")),
+        json_get_alias(&parsed, &["settlement_receipts"]),
+        result,
+        result.and_then(|value| json_get_alias(value, &["settlement_receipts"])),
+        data,
+        data.and_then(|value| json_get_alias(value, &["settlement_receipts"])),
+        response,
+        response_data,
+        response_data.and_then(|value| json_get_alias(value, &["settlement_receipts"])),
     ]
     .into_iter()
     .flatten()
@@ -966,7 +975,9 @@ fn parse_consumption_receipts_query_response(
             receipts = Some(array);
             break;
         }
-        if let Some(array) = candidate.get("receipts").and_then(|value| value.as_array()) {
+        if let Some(array) = json_get_alias(candidate, &["receipts", "settlement_receipts"])
+            .and_then(|value| value.as_array())
+        {
             envelope_task_id = json_u64_alias(candidate, &["task_id"]);
             receipts = Some(array);
             break;
@@ -7941,6 +7952,17 @@ mod tests {
     }
 
     #[test]
+    fn parse_consumption_summary_query_response_accepts_settlement_preview_wrapper() {
+        let parsed = parse_consumption_summary_query_response(
+            r#"{"settlement_preview":{"task_id":"42","receipt_count":1,"accepted_receipt_count":1}}"#,
+            42,
+        )
+        .expect("parse settlement_preview wrapper");
+        assert_eq!(json_u64_alias(&parsed, &["task_id"]), Some(42));
+        assert_eq!(parsed.get("receipt_count"), Some(&serde_json::json!(1)));
+    }
+
+    #[test]
     fn consumption_summary_query_prefers_settlement_preview_template_override() {
         let _guard = ENV_LOCK.lock().unwrap();
         std::env::remove_var("TRNM_QUERY_SETTLEMENT_PREVIEW_CMD");
@@ -8042,6 +8064,20 @@ mod tests {
             42,
         )
         .expect("parse wrapped consumption receipts payload");
+        assert_eq!(parsed.as_array().map(Vec::len), Some(1));
+        assert_eq!(
+            parsed[0].get("consumer_id"),
+            Some(&serde_json::json!("consumer-bravo"))
+        );
+    }
+
+    #[test]
+    fn parse_consumption_receipts_query_response_accepts_settlement_receipts_wrapper() {
+        let parsed = parse_consumption_receipts_query_response(
+            r#"{"settlement_receipts":{"task_id":"42","receipts":[{"consumer_id":"consumer-bravo","output_hash":"abc123","billing_window_id":"bw-1"}]}}"#,
+            42,
+        )
+        .expect("parse settlement_receipts wrapper");
         assert_eq!(parsed.as_array().map(Vec::len), Some(1));
         assert_eq!(
             parsed[0].get("consumer_id"),
