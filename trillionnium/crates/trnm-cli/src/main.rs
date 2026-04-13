@@ -192,9 +192,9 @@ enum QueryCommand {
         #[arg(long, default_value_t = false)]
         summary: bool,
     },
-    /// Query task PoCO consumption summary via RPC
-    #[command(visible_alias = "settlement-preview")]
-    ConsumptionSummary { task_id: u64 },
+    /// Query task PoCO settlement preview via RPC
+    #[command(visible_alias = "consumption-summary")]
+    SettlementPreview { task_id: u64 },
     /// Query task PoCO consumption receipts via RPC
     #[command(visible_alias = "settlement-receipts")]
     ConsumptionReceipts {
@@ -3551,7 +3551,7 @@ fn main() -> Result<()> {
                     println!("{}", serde_json::to_string_pretty(&out)?);
                 }
             }
-            QueryCommand::ConsumptionSummary { task_id } => {
+            QueryCommand::SettlementPreview { task_id } => {
                 let out = consumption_summary_query(task_id)?;
                 println!("{}", serde_json::to_string_pretty(&out)?);
             }
@@ -3820,27 +3820,7 @@ mod tests {
     }
 
     #[test]
-    fn consumption_settlement_cli_parser_accepts_consumption_summary_query_command() {
-        let args = Args::try_parse_from([
-            "trnm-cli",
-            "query",
-            "consumption-summary",
-            "42",
-        ])
-        .expect("parse consumption-summary args");
-
-        match args.cmd {
-            Command::Query {
-                query: QueryCommand::ConsumptionSummary { task_id },
-            } => {
-                assert_eq!(task_id, 42);
-            }
-            other => panic!("unexpected parsed args: {other:?}"),
-        }
-    }
-
-    #[test]
-    fn consumption_settlement_cli_parser_accepts_settlement_preview_query_alias() {
+    fn consumption_settlement_cli_parser_accepts_settlement_preview_query_command() {
         let args = Args::try_parse_from([
             "trnm-cli",
             "query",
@@ -3851,7 +3831,27 @@ mod tests {
 
         match args.cmd {
             Command::Query {
-                query: QueryCommand::ConsumptionSummary { task_id },
+                query: QueryCommand::SettlementPreview { task_id },
+            } => {
+                assert_eq!(task_id, 42);
+            }
+            other => panic!("unexpected parsed args: {other:?}"),
+        }
+    }
+
+    #[test]
+    fn consumption_settlement_cli_parser_accepts_consumption_summary_query_alias() {
+        let args = Args::try_parse_from([
+            "trnm-cli",
+            "query",
+            "consumption-summary",
+            "42",
+        ])
+        .expect("parse consumption-summary args");
+
+        match args.cmd {
+            Command::Query {
+                query: QueryCommand::SettlementPreview { task_id },
             } => {
                 assert_eq!(task_id, 42);
             }
