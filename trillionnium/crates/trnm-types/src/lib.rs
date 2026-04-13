@@ -1373,6 +1373,46 @@ mod tests {
     }
 
     #[test]
+    fn task_metadata_compatibility_report_keeps_legacy_note_only_with_incomplete_fallback_settlement(
+    ) {
+        let metadata: TaskMetadata = serde_json::from_str(r#"{"note":"legacy"}"#)
+            .expect("legacy payload should deserialize");
+        let settlement = TaskSettlementSnapshot {
+            settlement_schema: "poco_v1".into(),
+            tokenizer_id: "llama3-tokenizer".into(),
+            tokenizer_version: "1.0.0".into(),
+            output_hash: format!("0x{}", "c".repeat(64)),
+            output_token_count: 512,
+            output_root: None,
+            output_span_commitment: None,
+        };
+
+        let report = metadata.compatibility_report_with_settlement_snapshot(Some(&settlement));
+
+        assert_eq!(
+            metadata.settlement_snapshot_source(Some(&settlement)),
+            TaskSettlementSnapshotSource::LegacyFallback
+        );
+        assert!(report.compatibility.legacy_note_only);
+        assert!(report.compatibility.canonical_core_fields);
+        assert!(report.compatibility.complete_metering_snapshot);
+        assert!(!report.compatibility.complete_settlement_snapshot);
+        assert!(!report.compatibility.is_runtime_compatible());
+        assert!(report.requires_governance_upgrade);
+        assert_eq!(
+            report.findings,
+            vec![
+                TaskMetadataCompatibilityFinding::LegacyNoteOnlyPayload,
+                TaskMetadataCompatibilityFinding::IncompleteSettlementSnapshot,
+            ]
+        );
+        assert_eq!(
+            report.primary_finding(),
+            Some(TaskMetadataCompatibilityFinding::LegacyNoteOnlyPayload)
+        );
+    }
+
+    #[test]
     fn task_metadata_compatibility_report_treats_threaded_settlement_as_non_legacy_shape() {
         let metadata: TaskMetadata = serde_json::from_value(serde_json::json!({
             "note": "legacy",
