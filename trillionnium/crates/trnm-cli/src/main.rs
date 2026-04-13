@@ -917,8 +917,30 @@ fn parse_consumption_receipts_query_response(
     Ok(serde_json::Value::Array(receipts.to_vec()))
 }
 
+fn settlement_receipts_template_override() -> Option<String> {
+    [
+        "TRNM_QUERY_SETTLEMENT_RECEIPTS_CMD",
+        "TRNM_QUERY_CONSUMPTION_RECEIPTS_CMD",
+    ]
+    .into_iter()
+    .find_map(|name| std::env::var(name).ok())
+}
+
+fn settlement_receipts_query_commands(task_id: u64, limit: usize) -> [String; 2] {
+    [
+        format!(
+            "cargo run -q -p trnm-rpc -- query-settlement-receipts {} --limit {}",
+            task_id, limit
+        ),
+        format!(
+            "cargo run -q -p trnm-rpc -- query-consumption-receipts {} --limit {}",
+            task_id, limit
+        ),
+    ]
+}
+
 fn consumption_receipts_query(task_id: u64, limit: usize) -> Result<serde_json::Value> {
-    if let Ok(template) = std::env::var("TRNM_QUERY_CONSUMPTION_RECEIPTS_CMD") {
+    if let Some(template) = settlement_receipts_template_override() {
         let cmd = tpl(
             tpl(template, "task_id", &task_id.to_string()),
             "limit",
@@ -933,26 +955,32 @@ fn consumption_receipts_query(task_id: u64, limit: usize) -> Result<serde_json::
         .and_then(|p| p.parent())
         .map(|p| p.to_path_buf())
         .unwrap_or_else(|| PathBuf::from("."));
-    let cmd = format!(
-        "cargo run -q -p trnm-rpc -- query-consumption-receipts {} --limit {}",
-        task_id, limit
-    );
-    let (program, args) = parse_template_command(&cmd)?;
-    let out = ProcCommand::new(program)
-        .args(args)
-        .current_dir(&rpc_workspace)
-        .output()?;
-    let stdout = String::from_utf8_lossy(&out.stdout);
-    let stderr = String::from_utf8_lossy(&out.stderr);
-    if !out.status.success() {
-        bail!(
-            "consumption receipts query command failed rc={}: {}{}",
+    let mut failures = Vec::new();
+
+    for cmd in settlement_receipts_query_commands(task_id, limit) {
+        let (program, args) = parse_template_command(&cmd)?;
+        let out = ProcCommand::new(program)
+            .args(args)
+            .current_dir(&rpc_workspace)
+            .output()?;
+        let stdout = String::from_utf8_lossy(&out.stdout);
+        let stderr = String::from_utf8_lossy(&out.stderr);
+        if out.status.success() {
+            return parse_consumption_receipts_query_response(&stdout, task_id);
+        }
+        failures.push(format!(
+            "`{}` rc={}: {}{}",
+            cmd,
             out.status.code().unwrap_or(1),
             stdout,
             stderr
-        );
+        ));
     }
-    parse_consumption_receipts_query_response(&stdout, task_id)
+
+    bail!(
+        "consumption receipts query command failed: {}",
+        failures.join(" | ")
+    )
 }
 
 fn parse_request_full_query_response(
@@ -7312,6 +7340,41 @@ mod tests {
         let commands = settlement_preview_query_commands(42);
         assert_eq!(commands[0], "cargo run -q -p trnm-rpc -- query-settlement-preview 42");
         assert_eq!(commands[1], "cargo run -q -p trnm-rpc -- query-consumption-summary 42");
+    }
+
+    #[test]
+    fn consumption_receipts_query_prefers_settlement_receipts_template_override() {
+        let _guard = ENV_LOCK.lock().unwrap();
+        std::env::remove_var("TRNM_QUERY_SETTLEMENT_RECEIPTS_CMD");
+        std::env::remove_var("TRNM_QUERY_CONSUMPTION_RECEIPTS_CMD");
+        std::env::set_var(
+            "TRNM_QUERY_SETTLEMENT_RECEIPTS_CMD",
+            r#"printf '%s' '{"task_id":42,"receipts":[{"task_id":42,"source":"settlement-receipts"}]}'"#,
+        );
+        std::env::set_var(
+            "TRNM_QUERY_CONSUMPTION_RECEIPTS_CMD",
+            r#"printf '%s' '{"task_id":42,"receipts":[{"task_id":42,"source":"legacy-consumption-receipts"}]}'"#,
+        );
+
+        let got =
+            consumption_receipts_query(42, 7).expect("query via settlement-receipts env override");
+
+        std::env::remove_var("TRNM_QUERY_SETTLEMENT_RECEIPTS_CMD");
+        std::env::remove_var("TRNM_QUERY_CONSUMPTION_RECEIPTS_CMD");
+        assert_eq!(got[0].get("source"), Some(&serde_json::json!("settlement-receipts")));
+    }
+
+    #[test]
+    fn settlement_receipts_query_commands_keep_legacy_fallback_after_cutover_name() {
+        let commands = settlement_receipts_query_commands(42, 7);
+        assert_eq!(
+            commands[0],
+            "cargo run -q -p trnm-rpc -- query-settlement-receipts 42 --limit 7"
+        );
+        assert_eq!(
+            commands[1],
+            "cargo run -q -p trnm-rpc -- query-consumption-receipts 42 --limit 7"
+        );
     }
 
     #[test]
