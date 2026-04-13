@@ -27,7 +27,8 @@ use trnm_pouw::{
 };
 use trnm_state::{
     checkpoint_da_light_verifier_summary, verify_wal_and_find_checkpoint_node_recovery,
-    CheckpointMeta, PendingResolveApprovalSnapshot, StateStore, TaskConsumptionSummary, WalMeta,
+    CheckpointMeta, ConsumptionRecordKey, PendingResolveApprovalSnapshot, StateStore,
+    TaskConsumptionSummary, WalMeta,
 };
 use trnm_types::{Hash32, ObjectRef, TaskMeteringSnapshot, TaskStatus, Tx};
 
@@ -3001,6 +3002,25 @@ fn challenger_of(tx: &MockTx) -> Option<String> {
         MockTx::Resolve { .. } => None,
         MockTx::ResolveConsumptionReceipt { .. } => None,
         _ => None,
+    }
+}
+
+fn preapply_challenger_account_of(st: &StateStore, tx: &MockTx) -> Option<String> {
+    match tx {
+        MockTx::Resolve { task_id, .. } => st.get_task(*task_id).and_then(|task| task.challenger),
+        MockTx::ResolveConsumptionReceipt { key, .. } => st
+            .consumption_record(&ConsumptionRecordKey {
+                task_id: key.task_id,
+                consumer_id: key.consumer_id.clone(),
+                output_hash: key.output_hash.clone(),
+                billing_window_id: key.billing_window_id.clone(),
+            })
+            .and_then(|record| record.resolution_code)
+            .and_then(|code| {
+                code.strip_prefix("challenged_by:")
+                    .map(|challenger| challenger.to_string())
+            }),
+        _ => challenger_of(tx),
     }
 }
 
@@ -15878,6 +15898,10 @@ mod tests {
         assert_eq!(event_type_of(&tx), "resolve_consumption_receipt");
         assert_eq!(actor_of(&st, &tx), "resolver-1");
         assert_eq!(challenger_of(&tx), None);
+        assert_eq!(
+            preapply_challenger_account_of(&st, &tx),
+            Some("auditor-1".to_string())
+        );
 
         let expected_refs = vec![
             ObjectRef { id: 42, version: 1 },
@@ -22521,6 +22545,7 @@ fn main() -> Result<()> {
                 continue;
             }
 
+            let challenger_account = preapply_challenger_account_of(&state, &tx);
             let before = capture_rollback_snapshot(&state, &tx);
             if let Err(e) = apply_one(&mut state, tx.clone(), height) {
                 let err_kind = classify_apply_error(&e);
@@ -22533,13 +22558,6 @@ fn main() -> Result<()> {
                     let root = hex::encode(state.state_root());
                     state_root_total_ms += state_root_start.elapsed().as_millis();
                     last_state_root_hex = Some(root.clone());
-                    let challenger_account: Option<String> = match &tx {
-                        MockTx::Challenge { challenger, .. } => Some(challenger.clone()),
-                        MockTx::Resolve { .. } => {
-                            before.task.as_ref().and_then(|t| t.challenger.clone())
-                        }
-                        _ => None,
-                    };
                     let treasury_delta = EventDelta {
                         numeric: Some(0),
                         text: "0".to_string(),
@@ -22588,13 +22606,6 @@ fn main() -> Result<()> {
                 let root = hex::encode(state.state_root());
                 state_root_total_ms += state_root_start.elapsed().as_millis();
                 last_state_root_hex = Some(root.clone());
-                let challenger_account: Option<String> = match &tx {
-                    MockTx::Challenge { challenger, .. } => Some(challenger.clone()),
-                    MockTx::Resolve { .. } => {
-                        before.task.as_ref().and_then(|t| t.challenger.clone())
-                    }
-                    _ => None,
-                };
                 let (treasury_delta, challenger_delta) =
                     balance_deltas_from_snapshot(&before, &state, challenger_account.as_deref());
                 let signer = verified_signer_of(&state, &tx);
