@@ -1366,6 +1366,27 @@ mod settlement_governance_query_tests {
     use super::*;
 
     #[test]
+    fn settlement_governance_query_rejects_malformed_shadow_and_hybrid_values_fail_closed() {
+        let err = resolve_settlement_governance_config(Some("TRUE"), None)
+            .expect_err("shadow compare-only gate must reject non-strict bool literals");
+        assert!(
+            err.to_string().contains(
+                "invalid settlement governance value for shadow_settlement_compare_only"
+            ),
+            "unexpected shadow compare-only parse error: {err}"
+        );
+
+        let err = resolve_settlement_governance_config(Some("false"), Some("10001"))
+            .expect_err("hybrid settlement gate must reject weights above 10000 bps");
+        assert!(
+            err.to_string().contains(
+                "invalid settlement governance value for hybrid_settlement_poco_weight_bps"
+            ),
+            "unexpected hybrid weight parse error: {err}"
+        );
+    }
+
+    #[test]
     fn settlement_governance_query_defaults_to_pouw_primary_when_live_params_are_absent() {
         let st = StateStore::new();
 
