@@ -1,5 +1,7 @@
 # TRNM Proof Backend Observability v0（Lane 18 冻结草案）
 
+- BL09 退役准备口径：本文若提到 `trnm-pouw`、PoUW proof verification 或保留中的 challenge/resolve 验证边界，默认仅指迁移期兼容、provenance / audit evidence 与残余观测面；不应被解读为当前默认 payout authority，也不为默认 work-unit payout path 背书。对外付款判断与默认结算 authority 仍应以 PoCO settlement anchor 为准。
+
 ## 1. 目标
 
 为 `fraud / tee / zk` verification 平台冻结一套**最小可落地**的观测口径，满足：
