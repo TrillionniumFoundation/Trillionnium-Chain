@@ -398,20 +398,60 @@ impl TaskMetadata {
         self.compatibility_report().compatibility
     }
 
+    pub fn compatibility_profile_with_settlement_snapshot(
+        &self,
+        settlement: Option<&TaskSettlementSnapshot>,
+    ) -> TaskMetadataCompatibility {
+        self.compatibility_report_with_settlement_snapshot(settlement)
+            .compatibility
+    }
+
     pub fn compatibility_findings(&self) -> Vec<TaskMetadataCompatibilityFinding> {
         self.compatibility_report().findings
+    }
+
+    pub fn compatibility_findings_with_settlement_snapshot(
+        &self,
+        settlement: Option<&TaskSettlementSnapshot>,
+    ) -> Vec<TaskMetadataCompatibilityFinding> {
+        self.compatibility_report_with_settlement_snapshot(settlement)
+            .findings
     }
 
     pub fn compatibility_findings_nonempty(&self) -> Option<Vec<TaskMetadataCompatibilityFinding>> {
         self.compatibility_report().findings_nonempty()
     }
 
+    pub fn compatibility_findings_nonempty_with_settlement_snapshot(
+        &self,
+        settlement: Option<&TaskSettlementSnapshot>,
+    ) -> Option<Vec<TaskMetadataCompatibilityFinding>> {
+        self.compatibility_report_with_settlement_snapshot(settlement)
+            .findings_nonempty()
+    }
+
     pub fn primary_compatibility_finding(&self) -> Option<TaskMetadataCompatibilityFinding> {
         self.compatibility_report().primary_finding()
     }
 
+    pub fn primary_compatibility_finding_with_settlement_snapshot(
+        &self,
+        settlement: Option<&TaskSettlementSnapshot>,
+    ) -> Option<TaskMetadataCompatibilityFinding> {
+        self.compatibility_report_with_settlement_snapshot(settlement)
+            .primary_finding()
+    }
+
     pub fn requires_runtime_metadata_upgrade(&self) -> bool {
         self.compatibility_report().requires_governance_upgrade
+    }
+
+    pub fn requires_runtime_metadata_upgrade_with_settlement_snapshot(
+        &self,
+        settlement: Option<&TaskSettlementSnapshot>,
+    ) -> bool {
+        self.compatibility_report_with_settlement_snapshot(settlement)
+            .requires_governance_upgrade
     }
 }
 
@@ -1151,6 +1191,52 @@ mod tests {
         assert_eq!(
             report.primary_finding(),
             Some(TaskMetadataCompatibilityFinding::IncompleteSettlementSnapshot)
+        );
+    }
+
+    #[test]
+    fn task_metadata_settlement_snapshot_helper_accessors_share_fallback_logic() {
+        let metadata = TaskMetadata {
+            note: Some("interop".into()),
+            task_type: Some("inference".into()),
+            input_hash: Some("a".repeat(64)),
+            ..TaskMetadata::default()
+        };
+        let settlement = TaskSettlementSnapshot {
+            settlement_schema: "poco_v1".into(),
+            tokenizer_id: "llama3-tokenizer".into(),
+            tokenizer_version: "1.0.0".into(),
+            output_hash: format!("0x{}", "5".repeat(64)),
+            output_token_count: 512,
+            output_root: None,
+            output_span_commitment: None,
+        };
+
+        assert_eq!(
+            metadata.compatibility_profile_with_settlement_snapshot(Some(&settlement)),
+            TaskMetadataCompatibility {
+                legacy_note_only: false,
+                canonical_core_fields: true,
+                complete_metering_snapshot: true,
+                complete_settlement_snapshot: false,
+            }
+        );
+        assert_eq!(
+            metadata.compatibility_findings_with_settlement_snapshot(Some(&settlement)),
+            vec![TaskMetadataCompatibilityFinding::IncompleteSettlementSnapshot]
+        );
+        assert_eq!(
+            metadata.compatibility_findings_nonempty_with_settlement_snapshot(Some(&settlement)),
+            Some(vec![
+                TaskMetadataCompatibilityFinding::IncompleteSettlementSnapshot
+            ])
+        );
+        assert_eq!(
+            metadata.primary_compatibility_finding_with_settlement_snapshot(Some(&settlement)),
+            Some(TaskMetadataCompatibilityFinding::IncompleteSettlementSnapshot)
+        );
+        assert!(
+            metadata.requires_runtime_metadata_upgrade_with_settlement_snapshot(Some(&settlement))
         );
     }
 
