@@ -4194,6 +4194,13 @@ fn read_write_decl(st: &StateStore, tx: &MockTx, tx_id: u64) -> Tx {
         }
         MockTx::ChallengeConsumptionReceipt { key, .. } => {
             let replay_key = key.storage_key();
+            let consumer_nonce_obj = ObjectRef {
+                id: pseudo_object_id_for_state_slot(
+                    "consumer_consumption_nonce",
+                    &key.consumer_id,
+                ),
+                version: 1,
+            };
             let receipt_record_obj = ObjectRef {
                 id: pseudo_object_id_for_state_slot("consumption_record", &replay_key),
                 version: 1,
@@ -4205,6 +4212,9 @@ fn read_write_decl(st: &StateStore, tx: &MockTx, tx_id: u64) -> Tx {
                 ),
                 version: 1,
             };
+            // Keep the consumer nonce lane visible across the full receipt lifecycle so
+            // challenge ordering cannot bypass an in-flight submit for the same consumer.
+            read_set.push(consumer_nonce_obj);
             read_set.push(receipt_record_obj.clone());
             write_set.push(receipt_record_obj);
             read_set.push(task_summary_obj.clone());
@@ -4212,6 +4222,13 @@ fn read_write_decl(st: &StateStore, tx: &MockTx, tx_id: u64) -> Tx {
         }
         MockTx::ResolveConsumptionReceipt { key, .. } => {
             let replay_key = key.storage_key();
+            let consumer_nonce_obj = ObjectRef {
+                id: pseudo_object_id_for_state_slot(
+                    "consumer_consumption_nonce",
+                    &key.consumer_id,
+                ),
+                version: 1,
+            };
             let receipt_record_obj = ObjectRef {
                 id: pseudo_object_id_for_state_slot("consumption_record", &replay_key),
                 version: 1,
@@ -4227,6 +4244,7 @@ fn read_write_decl(st: &StateStore, tx: &MockTx, tx_id: u64) -> Tx {
                 id: pseudo_object_id_for_state_slot("gov_param", "resolve_authority"),
                 version: 1,
             };
+            read_set.push(consumer_nonce_obj);
             read_set.push(receipt_record_obj.clone());
             write_set.push(receipt_record_obj);
             read_set.push(task_summary_obj.clone());
@@ -16042,7 +16060,25 @@ mod tests {
         assert_eq!(actor_of(&st, &tx), "auditor-1");
         assert_eq!(challenger_of(&tx), Some("auditor-1".to_string()));
 
-        let expected_refs = vec![
+        let expected_read_refs = vec![
+            ObjectRef { id: 42, version: 1 },
+            ObjectRef {
+                id: pseudo_object_id_for_state_slot(
+                    "consumer_consumption_nonce",
+                    "consumer-bravo",
+                ),
+                version: 1,
+            },
+            ObjectRef {
+                id: pseudo_object_id_for_state_slot("consumption_record", &key.storage_key()),
+                version: 1,
+            },
+            ObjectRef {
+                id: pseudo_object_id_for_state_slot("task_consumption_summary", "42"),
+                version: 1,
+            },
+        ];
+        let expected_write_refs = vec![
             ObjectRef { id: 42, version: 1 },
             ObjectRef {
                 id: pseudo_object_id_for_state_slot("consumption_record", &key.storage_key()),
@@ -16054,8 +16090,8 @@ mod tests {
             },
         ];
         let decl = read_write_decl(&st, &tx, 11);
-        assert_eq!(decl.read_set, expected_refs);
-        assert_eq!(decl.write_set, decl.read_set);
+        assert_eq!(decl.read_set, expected_read_refs);
+        assert_eq!(decl.write_set, expected_write_refs);
 
         apply_one(&mut st, tx, 11).expect("challenge receipt");
 
@@ -16127,6 +16163,13 @@ mod tests {
 
         let expected_read_refs = vec![
             ObjectRef { id: 42, version: 1 },
+            ObjectRef {
+                id: pseudo_object_id_for_state_slot(
+                    "consumer_consumption_nonce",
+                    "consumer-bravo",
+                ),
+                version: 1,
+            },
             ObjectRef {
                 id: pseudo_object_id_for_state_slot("consumption_record", &key.storage_key()),
                 version: 1,
