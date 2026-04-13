@@ -3744,6 +3744,17 @@ impl StateStore {
         })
     }
 
+    fn billing_window_policy_preserves_persisted_version_boundary(
+        &self,
+        policy: &BillingWindowPolicy,
+    ) -> bool {
+        self.billing_window_policies
+            .get(&policy.billing_window_id)
+            .map_or(true, |persisted| {
+                policy.preserves_version_boundary_of(persisted)
+            })
+    }
+
     pub fn set_billing_window_policy(
         &mut self,
         policy: BillingWindowPolicy,
@@ -3753,6 +3764,9 @@ impl StateStore {
             || !self.billing_window_policy_is_compatible_with_persisted_records(&policy)
         {
             return self.clear_billing_window_policy(&billing_window_id);
+        }
+        if !self.billing_window_policy_preserves_persisted_version_boundary(&policy) {
+            return self.billing_window_policy(&billing_window_id);
         }
 
         self.invalidate_state_root_cache();

@@ -144,6 +144,12 @@ impl BillingWindowPolicy {
             }
     }
 
+    pub fn preserves_version_boundary_of(&self, persisted: &Self) -> bool {
+        self.billing_window_id == persisted.billing_window_id
+            && (self.policy_version > persisted.policy_version
+                || (self.policy_version == persisted.policy_version && self == persisted))
+    }
+
     pub fn covers_acceptance_at(&self, accepted_at_unix_ms: u64) -> bool {
         self.open_at_unix_ms <= accepted_at_unix_ms && accepted_at_unix_ms < self.close_at_unix_ms
     }
@@ -452,6 +458,64 @@ mod tests {
     }
 
     #[test]
+    fn billing_window_policy_version_boundary_requires_match_or_increment() {
+        let policy = sample_billing_window_policy();
+
+        let mut same_version_rewrite = policy.clone();
+        same_version_rewrite.close_at_unix_ms += 1;
+
+        let mut newer = policy.clone();
+        newer.policy_version += 1;
+
+        let mut regressed = newer.clone();
+        regressed.policy_version = policy.policy_version;
+
+        assert!(policy.preserves_version_boundary_of(&policy));
+        assert!(newer.preserves_version_boundary_of(&policy));
+        assert!(!same_version_rewrite.preserves_version_boundary_of(&policy));
+        assert!(!policy.preserves_version_boundary_of(&newer));
+        assert!(!regressed.preserves_version_boundary_of(&newer));
+    }
+
+    #[test]
+    fn set_billing_window_policy_preserves_current_policy_when_version_regresses() {
+        let mut st = StateStore::default();
+        let current = sample_billing_window_policy();
+        assert!(st.set_billing_window_policy(current.clone()).is_none());
+
+        let mut newer = current.clone();
+        newer.policy_version += 1;
+        newer.close_at_unix_ms += 60_000;
+        assert_eq!(st.set_billing_window_policy(newer.clone()), Some(current));
+
+        let mut regressed = newer.clone();
+        regressed.policy_version -= 1;
+
+        assert_eq!(st.set_billing_window_policy(regressed), Some(newer.clone()));
+        assert_eq!(
+            st.billing_window_policy(&newer.billing_window_id),
+            Some(newer)
+        );
+    }
+
+    #[test]
+    fn restore_billing_window_policy_preserves_current_policy_on_same_version_rewrite() {
+        let mut st = StateStore::default();
+        let current = sample_billing_window_policy();
+        st.set_billing_window_policy(current.clone());
+
+        let mut same_version_rewrite = current.clone();
+        same_version_rewrite.close_at_unix_ms += 60_000;
+
+        st.restore_billing_window_policy(&current.billing_window_id, Some(same_version_rewrite));
+
+        assert_eq!(
+            st.billing_window_policy(&current.billing_window_id),
+            Some(current)
+        );
+    }
+
+    #[test]
     fn billing_window_policy_receipt_compatibility_uses_half_open_window() {
         let policy = sample_billing_window_policy();
 
@@ -593,7 +657,10 @@ mod tests {
         assert!(partial.is_persistable_snapshot_for(&key));
         assert!(!partial.has_complete_persisted_state());
         assert!(!partial.is_complete_persistable_snapshot_for(&key));
-        assert_eq!(st.complete_consumption_settlement_state_snapshot(&key), None);
+        assert_eq!(
+            st.complete_consumption_settlement_state_snapshot(&key),
+            None
+        );
 
         st.set_consumer_consumption_nonce(&key.consumer_id, record.consumer_nonce);
         st.set_billing_window_policy(sample_billing_window_policy());
@@ -733,7 +800,10 @@ mod tests {
         assert_eq!(snapshot.billing_window_policy, None);
         assert!(snapshot.is_persistable_snapshot_for(&key));
         assert!(!snapshot.has_complete_persisted_state());
-        assert_eq!(st.complete_consumption_settlement_state_snapshot(&key), None);
+        assert_eq!(
+            st.complete_consumption_settlement_state_snapshot(&key),
+            None
+        );
 
         st.restore_consumption_settlement_state(
             &key,
