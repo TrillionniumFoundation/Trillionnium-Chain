@@ -807,8 +807,21 @@ fn parse_consumption_summary_query_response(
     Ok(summary.clone())
 }
 
+fn settlement_preview_template_override() -> Option<String> {
+    ["TRNM_QUERY_SETTLEMENT_PREVIEW_CMD", "TRNM_QUERY_CONSUMPTION_SUMMARY_CMD"]
+        .into_iter()
+        .find_map(|name| std::env::var(name).ok())
+}
+
+fn settlement_preview_query_commands(task_id: u64) -> [String; 2] {
+    [
+        format!("cargo run -q -p trnm-rpc -- query-settlement-preview {}", task_id),
+        format!("cargo run -q -p trnm-rpc -- query-consumption-summary {}", task_id),
+    ]
+}
+
 fn consumption_summary_query(task_id: u64) -> Result<serde_json::Value> {
-    if let Ok(template) = std::env::var("TRNM_QUERY_CONSUMPTION_SUMMARY_CMD") {
+    if let Some(template) = settlement_preview_template_override() {
         let cmd = tpl(template, "task_id", &task_id.to_string());
         let raw = run_template_raw(&cmd)?;
         return parse_consumption_summary_query_response(&raw, task_id);
@@ -819,26 +832,29 @@ fn consumption_summary_query(task_id: u64) -> Result<serde_json::Value> {
         .and_then(|p| p.parent())
         .map(|p| p.to_path_buf())
         .unwrap_or_else(|| PathBuf::from("."));
-    let cmd = format!(
-        "cargo run -q -p trnm-rpc -- query-consumption-summary {}",
-        task_id
-    );
-    let (program, args) = parse_template_command(&cmd)?;
-    let out = ProcCommand::new(program)
-        .args(args)
-        .current_dir(&rpc_workspace)
-        .output()?;
-    let stdout = String::from_utf8_lossy(&out.stdout);
-    let stderr = String::from_utf8_lossy(&out.stderr);
-    if !out.status.success() {
-        bail!(
-            "consumption summary query command failed rc={}: {}{}",
+    let mut failures = Vec::new();
+
+    for cmd in settlement_preview_query_commands(task_id) {
+        let (program, args) = parse_template_command(&cmd)?;
+        let out = ProcCommand::new(program)
+            .args(args)
+            .current_dir(&rpc_workspace)
+            .output()?;
+        let stdout = String::from_utf8_lossy(&out.stdout);
+        let stderr = String::from_utf8_lossy(&out.stderr);
+        if out.status.success() {
+            return parse_consumption_summary_query_response(&stdout, task_id);
+        }
+        failures.push(format!(
+            "`{}` rc={}: {}{}",
+            cmd,
             out.status.code().unwrap_or(1),
             stdout,
             stderr
-        );
+        ));
     }
-    parse_consumption_summary_query_response(&stdout, task_id)
+
+    bail!("settlement preview query command failed: {}", failures.join(" | "))
 }
 
 fn parse_consumption_receipts_query_response(
@@ -7268,6 +7284,34 @@ mod tests {
         .expect("parse wrapped consumption summary payload");
         assert_eq!(json_u64_alias(&parsed, &["task_id"]), Some(42));
         assert_eq!(parsed.get("receipt_count"), Some(&serde_json::json!(1)));
+    }
+
+    #[test]
+    fn consumption_summary_query_prefers_settlement_preview_template_override() {
+        let _guard = ENV_LOCK.lock().unwrap();
+        std::env::remove_var("TRNM_QUERY_SETTLEMENT_PREVIEW_CMD");
+        std::env::remove_var("TRNM_QUERY_CONSUMPTION_SUMMARY_CMD");
+        std::env::set_var(
+            "TRNM_QUERY_SETTLEMENT_PREVIEW_CMD",
+            r#"printf '%s' '{"task_id":42,"source":"settlement-preview"}'"#,
+        );
+        std::env::set_var(
+            "TRNM_QUERY_CONSUMPTION_SUMMARY_CMD",
+            r#"printf '%s' '{"task_id":42,"source":"legacy-consumption-summary"}'"#,
+        );
+
+        let got = consumption_summary_query(42).expect("query via settlement-preview env override");
+
+        std::env::remove_var("TRNM_QUERY_SETTLEMENT_PREVIEW_CMD");
+        std::env::remove_var("TRNM_QUERY_CONSUMPTION_SUMMARY_CMD");
+        assert_eq!(got.get("source"), Some(&serde_json::json!("settlement-preview")));
+    }
+
+    #[test]
+    fn settlement_preview_query_commands_keep_legacy_fallback_after_cutover_name() {
+        let commands = settlement_preview_query_commands(42);
+        assert_eq!(commands[0], "cargo run -q -p trnm-rpc -- query-settlement-preview 42");
+        assert_eq!(commands[1], "cargo run -q -p trnm-rpc -- query-consumption-summary 42");
     }
 
     #[test]
