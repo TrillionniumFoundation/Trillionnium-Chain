@@ -9,6 +9,8 @@
 
 本文件作为**开发调度入口**（planning board），不是 release truth source。
 
+> BL09 retirement-prep note: 本文保留的 PoUW / `trnm-pouw` 路线名、阶段名或兼容性描述，应视为迁移期兼容或 provenance / audit evidence 口径，不应解读为当前默认 payout authority，也不重新授权默认 work-unit payout path。
+
 - 日常推进：优先看本文件的 **第 3 节执行看板**
 - 新增子任务：先写到本文件再开工
 - 老文档不删，但视为“证据/历史”，不再作为主调度源
