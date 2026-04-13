@@ -354,6 +354,22 @@ mod tests {
     }
 
     #[test]
+    fn set_consumer_consumption_nonce_clears_nonce_incompatible_with_persisted_record() {
+        let mut st = StateStore::default();
+        let record = sample_record();
+        let key = record.key.clone();
+        st.put_consumption_record(record.clone());
+        st.set_consumer_consumption_nonce(&key.consumer_id, record.consumer_nonce);
+
+        st.set_consumer_consumption_nonce(&key.consumer_id, record.consumer_nonce - 1);
+
+        assert_eq!(st.consumer_consumption_nonce(&key.consumer_id), None);
+        let snapshot = st.consumption_settlement_state_snapshot(&key);
+        assert_eq!(snapshot.record, Some(record));
+        assert!(!snapshot.has_complete_persisted_state());
+    }
+
+    #[test]
     fn billing_window_policy_roundtrip_persists_in_state_store() {
         let mut st = StateStore::default();
         let policy = sample_billing_window_policy();
@@ -595,6 +611,26 @@ mod tests {
 
         assert_eq!(st.set_task_consumption_summary(invalid), Some(summary));
         assert_eq!(st.task_consumption_summary(42), None);
+    }
+
+    #[test]
+    fn set_task_consumption_summary_clears_summary_incompatible_with_persisted_record() {
+        let mut st = StateStore::default();
+        let record = sample_record();
+        st.put_consumption_record(record.clone());
+
+        let summary = sample_task_consumption_summary();
+        assert!(st.set_task_consumption_summary(summary.clone()).is_none());
+        assert_eq!(
+            st.task_consumption_summary(record.key.task_id),
+            Some(summary.clone())
+        );
+
+        let mut incompatible = summary.clone();
+        incompatible.total_claimed_consumption_units = record.claimed_consumption_units - 1;
+
+        assert_eq!(st.set_task_consumption_summary(incompatible), Some(summary));
+        assert_eq!(st.task_consumption_summary(record.key.task_id), None);
     }
 
     #[test]

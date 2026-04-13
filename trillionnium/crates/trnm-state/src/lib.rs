@@ -3708,9 +3708,24 @@ impl StateStore {
         }
     }
 
+    fn consumer_consumption_nonce_is_compatible_with_persisted_records(
+        &self,
+        consumer_id: &str,
+        nonce: u64,
+    ) -> bool {
+        self.consumption_records.iter().all(|(key, record)| {
+            key.consumer_id != consumer_id
+                || !record.is_persistable_snapshot_for(key)
+                || record.is_compatible_with_consumer_nonce(nonce)
+        })
+    }
+
     pub fn set_consumer_consumption_nonce(&mut self, consumer_id: &str, nonce: u64) {
         self.invalidate_state_root_cache();
-        if nonce == 0 {
+        if nonce == 0
+            || !self
+                .consumer_consumption_nonce_is_compatible_with_persisted_records(consumer_id, nonce)
+        {
             self.consumer_consumption_nonces.remove(consumer_id);
         } else {
             self.consumer_consumption_nonces
@@ -3822,12 +3837,25 @@ impl StateStore {
         removed
     }
 
+    fn task_consumption_summary_is_compatible_with_persisted_records(
+        &self,
+        summary: &TaskConsumptionSummary,
+    ) -> bool {
+        self.consumption_records.iter().all(|(key, record)| {
+            key.task_id != summary.task_id
+                || !record.is_persistable_snapshot_for(key)
+                || record.is_compatible_with_task_summary(summary)
+        })
+    }
+
     pub fn set_task_consumption_summary(
         &mut self,
         summary: TaskConsumptionSummary,
     ) -> Option<TaskConsumptionSummary> {
         let task_id = summary.task_id;
-        if !summary.is_persistable_snapshot_for(task_id) {
+        if !summary.is_persistable_snapshot_for(task_id)
+            || !self.task_consumption_summary_is_compatible_with_persisted_records(&summary)
+        {
             return self.clear_task_consumption_summary(task_id);
         }
 
