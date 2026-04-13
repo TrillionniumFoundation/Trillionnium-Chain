@@ -9,7 +9,7 @@ It assumes the following architectural direction:
 - ingress/data plane becomes more **Solana-like**
 - economics/finality support selectively borrow from **Conflux**
 - proof/governance discipline borrows from **Algorand**
-- **PoUW remains TRNM-native**
+- **PoUW verification and audit evidence remain TRNM-native during migration, but not as payout authority**
 
 This plan is intentionally execution-oriented.
 It prioritizes:
