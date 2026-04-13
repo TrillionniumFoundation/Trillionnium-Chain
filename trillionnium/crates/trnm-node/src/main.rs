@@ -4059,6 +4059,10 @@ fn receipt_settlement_conflict_refs(key: &ConsumptionRecordKey) -> (ObjectRef, O
     )
 }
 
+fn receipt_settlement_conflict_refs_of(tx: &MockTx) -> Option<(ObjectRef, ObjectRef, ObjectRef)> {
+    consumption_record_key_of(tx).map(|key| receipt_settlement_conflict_refs(&key))
+}
+
 fn summarize_hot_objects(st: &StateStore, txs: &[MockTx]) -> HotObjectSummary {
     let mut labels = BTreeMap::new();
     let mut hot_tx_count = 0usize;
@@ -4113,17 +4117,7 @@ fn missed_proposals_added_since(previous: &[u64], current: &[u64]) -> u64 {
 }
 
 fn read_write_decl(st: &StateStore, tx: &MockTx, tx_id: u64) -> Tx {
-    let task_id = match tx {
-        MockTx::CreateTask { task_id, .. }
-        | MockTx::AcceptTask { task_id, .. }
-        | MockTx::Commit { task_id, .. }
-        | MockTx::Reveal { task_id, .. }
-        | MockTx::Challenge { task_id, .. }
-        | MockTx::Resolve { task_id, .. } => *task_id,
-        MockTx::SubmitConsumptionReceipt { receipt } => receipt.task_id,
-        MockTx::ChallengeConsumptionReceipt { key, .. } => key.task_id,
-        MockTx::ResolveConsumptionReceipt { key, .. } => key.task_id,
-    };
+    let task_id = task_id_of(tx);
 
     let task_obj = ObjectRef {
         id: task_id,
@@ -4198,8 +4192,8 @@ fn read_write_decl(st: &StateStore, tx: &MockTx, tx_id: u64) -> Tx {
             }
         }
         MockTx::SubmitConsumptionReceipt { .. } => {
-            let key = consumption_record_key_of(tx).expect("receipt tx key");
-            let (consumer_nonce_obj, receipt_record_obj, task_summary_obj) = receipt_settlement_conflict_refs(&key);
+            let (consumer_nonce_obj, receipt_record_obj, task_summary_obj) =
+                receipt_settlement_conflict_refs_of(tx).expect("receipt tx key");
             read_set.push(consumer_nonce_obj.clone());
             write_set.push(consumer_nonce_obj);
             read_set.push(receipt_record_obj.clone());
@@ -4208,8 +4202,8 @@ fn read_write_decl(st: &StateStore, tx: &MockTx, tx_id: u64) -> Tx {
             write_set.push(task_summary_obj);
         }
         MockTx::ChallengeConsumptionReceipt { .. } => {
-            let key = consumption_record_key_of(tx).expect("receipt tx key");
-            let (consumer_nonce_obj, receipt_record_obj, task_summary_obj) = receipt_settlement_conflict_refs(&key);
+            let (consumer_nonce_obj, receipt_record_obj, task_summary_obj) =
+                receipt_settlement_conflict_refs_of(tx).expect("receipt tx key");
             // Keep the consumer nonce lane visible across the full receipt lifecycle so
             // challenge ordering cannot bypass an in-flight submit for the same consumer.
             read_set.push(consumer_nonce_obj);
@@ -4219,8 +4213,8 @@ fn read_write_decl(st: &StateStore, tx: &MockTx, tx_id: u64) -> Tx {
             write_set.push(task_summary_obj);
         }
         MockTx::ResolveConsumptionReceipt { .. } => {
-            let key = consumption_record_key_of(tx).expect("receipt tx key");
-            let (consumer_nonce_obj, receipt_record_obj, task_summary_obj) = receipt_settlement_conflict_refs(&key);
+            let (consumer_nonce_obj, receipt_record_obj, task_summary_obj) =
+                receipt_settlement_conflict_refs_of(tx).expect("receipt tx key");
             let resolve_authority_obj = ObjectRef {
                 id: pseudo_object_id_for_state_slot("gov_param", "resolve_authority"),
                 version: 1,
