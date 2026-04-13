@@ -3011,13 +3011,17 @@ fn challenger_of(tx: &MockTx) -> Option<String> {
     }
 }
 
+fn is_canonical_receipt_event_actor_id(actor: &str) -> bool {
+    !actor.is_empty()
+        && actor == actor.trim()
+        && actor.is_ascii()
+        && !actor.chars().any(|ch| ch.is_whitespace() || ch.is_control())
+        && !actor.chars().any(|ch| matches!(ch, ',' | ';' | ':' | '|' | '/' | '\\'))
+}
+
 fn challenger_from_consumption_resolution_code(code: &str) -> Option<String> {
     let challenger = code.strip_prefix("challenged_by:")?;
-    if challenger.is_empty()
-        || challenger
-            .chars()
-            .any(|ch| ch.is_whitespace() || ch.is_control())
-    {
+    if !is_canonical_receipt_event_actor_id(challenger) {
         return None;
     }
     Some(challenger.to_string())
@@ -16579,6 +16583,22 @@ mod tests {
             challenger_from_consumption_resolution_code("challenged_by:auditor\n1"),
             None
         );
+        assert_eq!(
+            challenger_from_consumption_resolution_code("challenged_by:auditor-1|shadow"),
+            None
+        );
+        assert_eq!(
+            challenger_from_consumption_resolution_code("challenged_by:auditor-1:shadow"),
+            None
+        );
+        assert_eq!(
+            challenger_from_consumption_resolution_code("challenged_by:auditor/1"),
+            None
+        );
+        assert_eq!(
+            challenger_from_consumption_resolution_code("challenged_by:审计员-1"),
+            None
+        );
     }
 
     #[test]
@@ -16615,46 +16635,62 @@ mod tests {
         )
         .expect("challenge receipt");
 
-        let mut record = st.consumption_record(&record_key).expect("record");
-        record.resolution_code = Some("challenged_by: auditor-1".to_string());
-        st.put_consumption_record(record);
+        for malformed_code in [
+            "challenged_by: auditor-1",
+            "challenged_by:auditor-1|shadow",
+            "challenged_by:auditor-1:shadow",
+        ] {
+            let mut record = st.consumption_record(&record_key).expect("record");
+            record.resolution_code = Some(malformed_code.to_string());
+            st.put_consumption_record(record);
 
-        let tx = MockTx::ResolveConsumptionReceipt {
-            key,
-            decision: ConsumptionResolveDecision::Discount,
-            credited_consumption_units: Some(9),
-            resolution_code: None,
-            resolver: "resolver-1".to_string(),
-        };
-        let signer = verified_signer_of(&st, &tx);
-        let challenger = preapply_challenger_account_of(&st, &tx);
+            let tx = MockTx::ResolveConsumptionReceipt {
+                key: key.clone(),
+                decision: ConsumptionResolveDecision::Discount,
+                credited_consumption_units: Some(9),
+                resolution_code: None,
+                resolver: "resolver-1".to_string(),
+            };
+            let signer = verified_signer_of(&st, &tx);
+            let challenger = preapply_challenger_account_of(&st, &tx);
 
-        assert_eq!(challenger, None);
+            assert_eq!(
+                challenger,
+                None,
+                "malformed marker should not surface challenger: {malformed_code}"
+            );
 
-        let line = format_apply_event_line(
-            &st,
-            &tx,
-            &signer,
-            12,
-            12,
-            "Completed",
-            "Completed",
-            "root-resolve-malformed",
-            &EventDelta {
-                numeric: Some(0),
-                text: "0".to_string(),
-            },
-            None,
-            challenger.as_deref(),
-            None,
-            126,
-        );
+            let line = format_apply_event_line(
+                &st,
+                &tx,
+                &signer,
+                12,
+                12,
+                "Completed",
+                "Completed",
+                "root-resolve-malformed",
+                &EventDelta {
+                    numeric: Some(0),
+                    text: "0".to_string(),
+                },
+                None,
+                challenger.as_deref(),
+                None,
+                126,
+            );
 
-        assert!(line.contains("event_type=resolve_consumption_receipt"));
-        assert!(line.contains("challenger=-"));
-        assert!(line.contains("settlement_challenged_receipt_count=1"));
-        assert!(line.contains("settlement_record_status=challenged"));
-        assert!(line.contains("settlement_resolution_code=challenged_by: auditor-1"));
+            assert!(line.contains("event_type=resolve_consumption_receipt"));
+            assert!(
+                line.contains("challenger=-"),
+                "malformed marker surfaced challenger: {line}"
+            );
+            assert!(line.contains("settlement_challenged_receipt_count=1"));
+            assert!(line.contains("settlement_record_status=challenged"));
+            assert!(
+                line.contains(&format!("settlement_resolution_code={malformed_code}")),
+                "event line lost malformed resolution code payload: {line}"
+            );
+        }
     }
 
     #[test]
