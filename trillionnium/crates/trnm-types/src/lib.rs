@@ -145,6 +145,14 @@ pub struct TaskSettlementSnapshot {
     pub output_span_commitment: Option<String>,
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum TaskSettlementSnapshotSource {
+    Absent,
+    LegacyFallback,
+    ThreadedMetadata,
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, Default)]
 pub struct TaskMetadataCompatibility {
     pub legacy_note_only: bool,
@@ -283,6 +291,22 @@ impl TaskSettlementSnapshot {
 impl TaskMetadata {
     pub fn compatibility_report(&self) -> TaskMetadataCompatibilityReport {
         self.compatibility_report_with_settlement_snapshot(self.settlement.as_ref())
+    }
+
+    /// Reuse the same inline-versus-fallback precedence as
+    /// `effective_settlement_snapshot` so downstream migration surfaces can
+    /// report whether settlement has been threaded into metadata yet.
+    pub fn settlement_snapshot_source(
+        &self,
+        settlement: Option<&TaskSettlementSnapshot>,
+    ) -> TaskSettlementSnapshotSource {
+        if self.settlement.is_some() {
+            TaskSettlementSnapshotSource::ThreadedMetadata
+        } else if settlement.is_some() {
+            TaskSettlementSnapshotSource::LegacyFallback
+        } else {
+            TaskSettlementSnapshotSource::Absent
+        }
     }
 
     /// Prefer the inline settlement snapshot once it has been threaded into
@@ -1314,6 +1338,55 @@ mod tests {
         assert!(!report.requires_governance_upgrade);
         assert!(report.findings.is_empty());
         assert_eq!(report.primary_finding(), None);
+    }
+
+    #[test]
+    fn task_metadata_settlement_snapshot_source_distinguishes_threaded_from_legacy_fallback() {
+        let fallback_settlement = TaskSettlementSnapshot {
+            settlement_schema: "poco_v1".into(),
+            tokenizer_id: "llama3-tokenizer".into(),
+            tokenizer_version: "1.0.0".into(),
+            output_hash: format!("0x{}", "6".repeat(64)),
+            output_token_count: 512,
+            output_root: Some(format!("0x{}", "7".repeat(64))),
+            output_span_commitment: None,
+        };
+
+        let legacy_metadata = TaskMetadata::default();
+        assert_eq!(
+            legacy_metadata.settlement_snapshot_source(None),
+            TaskSettlementSnapshotSource::Absent
+        );
+        assert_eq!(
+            legacy_metadata.settlement_snapshot_source(Some(&fallback_settlement)),
+            TaskSettlementSnapshotSource::LegacyFallback
+        );
+
+        let threaded_metadata = TaskMetadata {
+            settlement: Some(TaskSettlementSnapshot {
+                settlement_schema: "poco_v1".into(),
+                tokenizer_id: "llama3-tokenizer".into(),
+                tokenizer_version: "1.0.0".into(),
+                output_hash: format!("0x{}", "8".repeat(64)),
+                output_token_count: 512,
+                output_root: Some(format!("0x{}", "9".repeat(64))),
+                output_span_commitment: None,
+            }),
+            ..TaskMetadata::default()
+        };
+
+        assert_eq!(
+            threaded_metadata.settlement_snapshot_source(None),
+            TaskSettlementSnapshotSource::ThreadedMetadata
+        );
+        assert_eq!(
+            threaded_metadata.settlement_snapshot_source(Some(&fallback_settlement)),
+            TaskSettlementSnapshotSource::ThreadedMetadata
+        );
+        assert_eq!(
+            threaded_metadata.effective_settlement_snapshot(Some(&fallback_settlement)),
+            threaded_metadata.settlement.as_ref()
+        );
     }
 
     #[test]
