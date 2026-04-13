@@ -4269,6 +4269,8 @@ fn query_task_response(
         return Ok(out);
     }
 
+    enforce_settlement_aware_task_query_gate(task_id)?;
+
     let task_recs = sorted_task_adapter_records(task_id, recs);
     if task_recs.is_empty() {
         bail!("task not found: {}", task_id);
@@ -4312,6 +4314,33 @@ fn query_task_response(
         metadata_compatibility_findings: None,
         metering: None,
     })
+}
+
+fn enforce_settlement_aware_task_query_gate(task_id: u64) -> Result<()> {
+    let st = load_consumption_state_snapshot()?;
+
+    if let Some(summary) = st.task_consumption_summary(task_id) {
+        TaskConsumptionSummaryQueryResponse::try_from_authoritative_state_summary(summary)
+            .map_err(|_| {
+                anyhow!(
+                    "task query blocked by settlement rpc contract violation for task {}",
+                    task_id
+                )
+            })?;
+        bail!(
+            "task query adapter fallback disabled for task {} because authoritative settlement summary exists",
+            task_id
+        );
+    }
+
+    if !st.consumption_records_for_task(task_id).is_empty() {
+        bail!(
+            "task query adapter fallback disabled for task {} because authoritative settlement receipts exist without a summary",
+            task_id
+        );
+    }
+
+    Ok(())
 }
 
 fn consumption_status_label(status: ConsumptionRecordStatus) -> &'static str {
@@ -9439,6 +9468,189 @@ mod tests {
         );
         assert_eq!(events[0].event_type, "commit");
         assert_eq!(events[1].event_type, "reveal");
+    }
+
+    #[test]
+    fn query_task_response_rejects_adapter_fallback_when_authoritative_settlement_summary_exists() {
+        let path = unique_tmp_path("rpc-consumption-state", "json");
+        let _ = fs::remove_file(&path);
+        fs::write(
+            &path,
+            serde_json::json!({
+                "consumption_records": [],
+                "task_consumption_summaries": [{
+                    "task_id": 42,
+                    "receipt_count": 2,
+                    "accepted_receipt_count": 1,
+                    "challenged_receipt_count": 1,
+                    "total_consumed_tokens": 33,
+                    "total_claimed_consumption_units": 33,
+                    "total_credited_consumption_units": 21,
+                    "last_settlement_height": 88
+                }],
+                "consumer_consumption_nonces": {}
+            })
+            .to_string(),
+        )
+        .expect("write consumption snapshot");
+
+        let recs = vec![
+            AdapterRecord {
+                ts: 10,
+                kind: "commit".into(),
+                task_id: 42,
+                worker: Some("worker-a".into()),
+                result_hash: None,
+                status: "accepted".into(),
+                tx_hash: Some("0x1234".into()),
+            },
+            AdapterRecord {
+                ts: 20,
+                kind: "reveal".into(),
+                task_id: 42,
+                worker: Some("worker-a".into()),
+                result_hash: Some("0xabcd".into()),
+                status: "accepted".into(),
+                tx_hash: Some("0x1234".into()),
+            },
+        ];
+
+        with_market_path_env(
+            &[
+                (TASK_STATE_FILE_ENV, None),
+                (CONSUMPTION_STATE_FILE_ENV, path.to_str()),
+            ],
+            || {
+                let err = query_task_response(42, &[], &recs).expect_err(
+                    "adapter fallback must fail closed once authoritative settlement summary exists",
+                );
+                assert_eq!(
+                    err.to_string(),
+                    "task query adapter fallback disabled for task 42 because authoritative settlement summary exists"
+                );
+            },
+        );
+
+        let _ = fs::remove_file(&path);
+    }
+
+    #[test]
+    fn query_task_response_rejects_adapter_fallback_when_authoritative_settlement_summary_is_invalid(
+    ) {
+        let path = unique_tmp_path("rpc-consumption-state", "json");
+        let _ = fs::remove_file(&path);
+        fs::write(
+            &path,
+            serde_json::json!({
+                "consumption_records": [],
+                "task_consumption_summaries": [{
+                    "task_id": 42,
+                    "receipt_count": 1,
+                    "accepted_receipt_count": 1,
+                    "challenged_receipt_count": 1,
+                    "total_consumed_tokens": 33,
+                    "total_claimed_consumption_units": 33,
+                    "total_credited_consumption_units": 21,
+                    "last_settlement_height": 88
+                }],
+                "consumer_consumption_nonces": {}
+            })
+            .to_string(),
+        )
+        .expect("write invalid consumption snapshot");
+
+        let recs = vec![AdapterRecord {
+            ts: 10,
+            kind: "commit".into(),
+            task_id: 42,
+            worker: Some("worker-a".into()),
+            result_hash: None,
+            status: "accepted".into(),
+            tx_hash: Some("0x1234".into()),
+        }];
+
+        with_market_path_env(
+            &[
+                (TASK_STATE_FILE_ENV, None),
+                (CONSUMPTION_STATE_FILE_ENV, path.to_str()),
+            ],
+            || {
+                let err = query_task_response(42, &[], &recs)
+                    .expect_err("invalid authoritative settlement summary must block fallback");
+                assert_eq!(
+                    err.to_string(),
+                    "task query blocked by settlement rpc contract violation for task 42"
+                );
+            },
+        );
+
+        let _ = fs::remove_file(&path);
+    }
+
+    #[test]
+    fn query_task_response_rejects_adapter_fallback_when_authoritative_receipts_exist_without_summary(
+    ) {
+        let path = unique_tmp_path("rpc-consumption-state", "json");
+        let _ = fs::remove_file(&path);
+        fs::write(
+            &path,
+            serde_json::json!({
+                "consumption_records": [{
+                    "key": {
+                        "task_id": 42,
+                        "consumer_id": "consumer-alpha",
+                        "output_hash": "abc123",
+                        "billing_window_id": "bw-1"
+                    },
+                    "worker_id": "worker-a",
+                    "tokenizer_id": "tok",
+                    "tokenizer_version": "1.0.0",
+                    "consumer_class": "bonded_api_client",
+                    "consumed_spans_root": "def456",
+                    "consumed_token_count": 17,
+                    "claimed_consumption_units": 17,
+                    "credited_consumption_units": 9,
+                    "consumer_nonce": 7,
+                    "accepted_at_unix_ms": 1775683200123u64,
+                    "status": "Accepted",
+                    "resolution_code": "accepted"
+                }],
+                "task_consumption_summaries": [],
+                "consumer_consumption_nonces": {
+                    "consumer-alpha": 7
+                }
+            })
+            .to_string(),
+        )
+        .expect("write receipt-only consumption snapshot");
+
+        let recs = vec![AdapterRecord {
+            ts: 10,
+            kind: "commit".into(),
+            task_id: 42,
+            worker: Some("worker-a".into()),
+            result_hash: None,
+            status: "accepted".into(),
+            tx_hash: Some("0x1234".into()),
+        }];
+
+        with_market_path_env(
+            &[
+                (TASK_STATE_FILE_ENV, None),
+                (CONSUMPTION_STATE_FILE_ENV, path.to_str()),
+            ],
+            || {
+                let err = query_task_response(42, &[], &recs).expect_err(
+                    "receipt-backed authoritative settlement state must block legacy adapter fallback",
+                );
+                assert_eq!(
+                    err.to_string(),
+                    "task query adapter fallback disabled for task 42 because authoritative settlement receipts exist without a summary"
+                );
+            },
+        );
+
+        let _ = fs::remove_file(&path);
     }
 
     #[test]
