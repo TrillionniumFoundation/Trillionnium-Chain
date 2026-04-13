@@ -3019,8 +3019,17 @@ fn is_canonical_receipt_event_actor_id(actor: &str) -> bool {
         && !actor.chars().any(|ch| matches!(ch, ',' | ';' | ':' | '|' | '/' | '\\'))
 }
 
+fn normalized_consumption_resolution_code(code: &str) -> Option<&str> {
+    let trimmed = code.trim();
+    if trimmed.is_empty() {
+        None
+    } else {
+        Some(trimmed)
+    }
+}
+
 fn challenger_from_consumption_resolution_code(code: &str) -> Option<String> {
-    let challenger = code.strip_prefix("challenged_by:")?;
+    let challenger = normalized_consumption_resolution_code(code)?.strip_prefix("challenged_by:")?;
     if !is_canonical_receipt_event_actor_id(challenger) {
         return None;
     }
@@ -3272,7 +3281,12 @@ fn consumption_record_event_suffix(st: &StateStore, tx: &MockTx) -> String {
                 .credited_consumption_units
                 .map(|value| value.to_string())
                 .unwrap_or_else(|| "-".to_string());
-            let resolution_code = record.resolution_code.unwrap_or_else(|| "-".to_string());
+            let resolution_code = record
+                .resolution_code
+                .as_deref()
+                .and_then(normalized_consumption_resolution_code)
+                .unwrap_or("-")
+                .to_string();
             format!(
                 " settlement_record_status={} settlement_consumer_id={} settlement_output_hash={} settlement_billing_window_id={} settlement_consumer_nonce={} settlement_credited_consumption_units={} settlement_resolution_code={}",
                 consumption_record_status_name(record.status),
@@ -16811,9 +16825,101 @@ mod tests {
     }
 
     #[test]
+    fn resolve_consumption_receipt_event_line_recovers_challenger_from_padded_marker() {
+        let mut st = StateStore::default();
+        let _ = st.set_gov_param_bootstrap_unchecked(
+            9_500,
+            "resolve_authority".into(),
+            "resolver-1,resolver-2".into(),
+        );
+
+        let result_hash = [0x31; 32];
+        put_sample_poco_task(&mut st, 42, "worker-alpha", result_hash);
+
+        let receipt =
+            sample_consumption_receipt(42, "worker-alpha", "consumer-bravo", result_hash);
+        let key = receipt.replay_key();
+        let record_key = ConsumptionRecordKey {
+            task_id: key.task_id,
+            consumer_id: key.consumer_id.clone(),
+            output_hash: key.output_hash.clone(),
+            billing_window_id: key.billing_window_id.clone(),
+        };
+
+        apply_one(
+            &mut st,
+            MockTx::SubmitConsumptionReceipt {
+                receipt: receipt.clone(),
+            },
+            10,
+        )
+        .expect("apply receipt");
+        apply_one(
+            &mut st,
+            MockTx::ChallengeConsumptionReceipt {
+                key: key.clone(),
+                challenger: "auditor-1".to_string(),
+            },
+            11,
+        )
+        .expect("challenge receipt");
+
+        let padded_marker = " \nchallenged_by:auditor-1\t ";
+        let mut record = st.consumption_record(&record_key).expect("record");
+        record.resolution_code = Some(padded_marker.to_string());
+        st.put_consumption_record(record);
+
+        let tx = MockTx::ResolveConsumptionReceipt {
+            key,
+            decision: ConsumptionResolveDecision::Discount,
+            credited_consumption_units: Some(9),
+            resolution_code: None,
+            resolver: "resolver-1".to_string(),
+        };
+        let signer = verified_signer_of(&st, &tx);
+        let challenger = preapply_challenger_account_of(&st, &tx);
+
+        assert_eq!(challenger.as_deref(), Some("auditor-1"));
+
+        let line = format_apply_event_line(
+            &st,
+            &tx,
+            &signer,
+            12,
+            12,
+            "Completed",
+            "Completed",
+            "root-resolve-padded-marker",
+            &EventDelta {
+                numeric: Some(0),
+                text: "0".to_string(),
+            },
+            Some(&EventDelta {
+                numeric: Some(0),
+                text: "0".to_string(),
+            }),
+            challenger.as_deref(),
+            None,
+            126,
+        );
+
+        assert!(line.contains("event_type=resolve_consumption_receipt"));
+        assert!(line.contains("challenger=auditor-1"));
+        assert!(line.contains("settlement_record_status=challenged"));
+        assert!(line.contains("settlement_resolution_code=challenged_by:auditor-1"));
+        assert!(!line.contains(&format!("settlement_resolution_code={padded_marker}")));
+
+        apply_one(&mut st, tx, 12).expect("resolve receipt");
+    }
+
+    #[test]
     fn challenger_from_consumption_resolution_code_requires_canonical_marker() {
         assert_eq!(
             challenger_from_consumption_resolution_code("challenged_by:auditor-1"),
+            Some("auditor-1".to_string())
+        );
+        assert_eq!(
+            challenger_from_consumption_resolution_code(" \nchallenged_by:auditor-1\t "),
             Some("auditor-1".to_string())
         );
         assert_eq!(
