@@ -493,6 +493,9 @@ const CHALLENGE_FORFEIT_TREASURY_ACCOUNT: &str = "treasury.challenge_forfeits";
 const WORKER_SLASH_TREASURY_ACCOUNT: &str = "treasury.worker_slashes";
 const RESOLVE_PENDING_APPROVAL_HOT_LABEL: &str = "resolve.pending_approval";
 const RESOLVE_AUTHORITY_HOT_LABEL: &str = "governance.resolve_authority";
+const RECEIPT_CONSUMER_NONCE_HOT_LABEL_PREFIX: &str = "settlement.consumer_nonce";
+const RECEIPT_RECORD_HOT_LABEL_PREFIX: &str = "settlement.record";
+const RECEIPT_SUMMARY_HOT_LABEL_PREFIX: &str = "settlement.summary";
 
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
 struct HotObjectSummary {
@@ -4135,25 +4138,49 @@ fn receipt_settlement_conflict_refs_of(tx: &MockTx) -> Option<(ObjectRef, Object
     consumption_record_key_of(tx).map(|key| receipt_settlement_conflict_refs(&key))
 }
 
+fn receipt_settlement_hot_labels(key: &ConsumptionRecordKey) -> [String; 3] {
+    [
+        format!("{RECEIPT_CONSUMER_NONCE_HOT_LABEL_PREFIX}.{}", key.consumer_id),
+        format!("{RECEIPT_RECORD_HOT_LABEL_PREFIX}.{}", key.storage_key()),
+        format!("{RECEIPT_SUMMARY_HOT_LABEL_PREFIX}.{}", key.task_id),
+    ]
+}
+
 fn summarize_hot_objects(st: &StateStore, txs: &[MockTx]) -> HotObjectSummary {
     let mut labels = BTreeMap::new();
     let mut hot_tx_count = 0usize;
 
     for tx in txs {
-        if let MockTx::Resolve { task_id, .. } = tx {
-            hot_tx_count += 1;
-            for label in [
-                CHALLENGE_ESCROW_ACCOUNT,
-                CHALLENGE_FORFEIT_TREASURY_ACCOUNT,
-                WORKER_SLASH_TREASURY_ACCOUNT,
-                RESOLVE_PENDING_APPROVAL_HOT_LABEL,
-                RESOLVE_AUTHORITY_HOT_LABEL,
-            ] {
-                *labels.entry(label.to_string()).or_insert(0) += 1;
+        match tx {
+            MockTx::Resolve { task_id, .. } => {
+                hot_tx_count += 1;
+                for label in [
+                    CHALLENGE_ESCROW_ACCOUNT,
+                    CHALLENGE_FORFEIT_TREASURY_ACCOUNT,
+                    WORKER_SLASH_TREASURY_ACCOUNT,
+                    RESOLVE_PENDING_APPROVAL_HOT_LABEL,
+                    RESOLVE_AUTHORITY_HOT_LABEL,
+                ] {
+                    *labels.entry(label.to_string()).or_insert(0) += 1;
+                }
+                if let Some(challenger) = st.get_task(*task_id).and_then(|t| t.challenger) {
+                    *labels.entry(challenger).or_insert(0) += 1;
+                }
             }
-            if let Some(challenger) = st.get_task(*task_id).and_then(|t| t.challenger) {
-                *labels.entry(challenger).or_insert(0) += 1;
+            MockTx::SubmitConsumptionReceipt { .. }
+            | MockTx::ChallengeConsumptionReceipt { .. }
+            | MockTx::ResolveConsumptionReceipt { .. } => {
+                hot_tx_count += 1;
+                if let Some(key) = consumption_record_key_of(tx) {
+                    for label in receipt_settlement_hot_labels(&key) {
+                        *labels.entry(label).or_insert(0) += 1;
+                    }
+                }
+                if matches!(tx, MockTx::ResolveConsumptionReceipt { .. }) {
+                    *labels.entry(RESOLVE_AUTHORITY_HOT_LABEL.to_string()).or_insert(0) += 1;
+                }
             }
+            _ => {}
         }
     }
 
@@ -4647,6 +4674,48 @@ mod tests {
             .labels
             .contains_key(RESOLVE_PENDING_APPROVAL_HOT_LABEL));
         assert!(summary.labels.contains_key(RESOLVE_AUTHORITY_HOT_LABEL));
+    }
+
+    #[test]
+    fn receipt_settlement_hotspot_summary_tracks_shared_receipt_refs_across_lifecycle() {
+        let mut state = StateStore::default();
+        let result_hash = [0x2a; 32];
+        put_sample_poco_task(&mut state, 42, "worker-alpha", result_hash);
+
+        let receipt = sample_consumption_receipt(42, "worker-alpha", "consumer-bravo", result_hash);
+        let replay_key = receipt.replay_key();
+        let consumer_nonce_label = format!(
+            "{RECEIPT_CONSUMER_NONCE_HOT_LABEL_PREFIX}.{}",
+            replay_key.consumer_id
+        );
+        let record_label = format!("{RECEIPT_RECORD_HOT_LABEL_PREFIX}.{}", replay_key.storage_key());
+        let summary_label = format!("{RECEIPT_SUMMARY_HOT_LABEL_PREFIX}.{}", replay_key.task_id);
+
+        let summary = summarize_hot_objects(
+            &state,
+            &[
+                MockTx::SubmitConsumptionReceipt {
+                    receipt: receipt.clone(),
+                },
+                MockTx::ChallengeConsumptionReceipt {
+                    key: replay_key.clone(),
+                    challenger: "auditor-1".into(),
+                },
+                MockTx::ResolveConsumptionReceipt {
+                    key: replay_key,
+                    decision: ConsumptionResolveDecision::Accept,
+                    credited_consumption_units: Some(receipt.consumed_token_count.into()),
+                    resolution_code: None,
+                    resolver: "resolver-1".into(),
+                },
+            ],
+        );
+
+        assert_eq!(summary.hot_tx_count, 3);
+        assert_eq!(summary.labels.get(&consumer_nonce_label), Some(&3));
+        assert_eq!(summary.labels.get(&record_label), Some(&3));
+        assert_eq!(summary.labels.get(&summary_label), Some(&3));
+        assert_eq!(summary.labels.get(RESOLVE_AUTHORITY_HOT_LABEL), Some(&1));
     }
 
     #[test]
