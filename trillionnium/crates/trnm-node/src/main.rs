@@ -2879,12 +2879,17 @@ fn event_type_of(tx: &MockTx) -> &'static str {
     }
 }
 
+fn uses_legacy_resolve_approval_stage(tx: &MockTx, err_kind: Option<&str>) -> bool {
+    matches!((tx, err_kind), (MockTx::Resolve { .. }, Some("resolve_approval_staged")))
+}
+
 fn event_type_for_apply_outcome(tx: &MockTx, err_kind: Option<&str>) -> &'static str {
-    match (tx, err_kind) {
+    if uses_legacy_resolve_approval_stage(tx, err_kind) {
         // Only legacy task resolve stages multisig approval. PoCO receipt settlement must keep
         // dedicated event types even if a caller accidentally reuses the legacy err_kind marker.
-        (MockTx::Resolve { .. }, Some("resolve_approval_staged")) => "resolve_approval_staged",
-        _ => event_type_of(tx),
+        "resolve_approval_staged"
+    } else {
+        event_type_of(tx)
     }
 }
 
@@ -14981,6 +14986,10 @@ mod tests {
             slash_worker: true,
             resolver: "authority-a".into(),
         };
+        assert!(uses_legacy_resolve_approval_stage(
+            &tx,
+            Some("resolve_approval_staged")
+        ));
         assert_eq!(
             event_type_for_apply_outcome(&tx, Some("resolve_approval_staged")),
             "resolve_approval_staged"
@@ -15019,6 +15028,11 @@ mod tests {
         ];
 
         for (tx, expected_event_type) in cases {
+            assert!(
+                !uses_legacy_resolve_approval_stage(&tx, Some("resolve_approval_staged")),
+                "receipt settlement tx drifted into legacy staged resolve apply fast-path: {:?}",
+                tx
+            );
             assert_eq!(
                 event_type_for_apply_outcome(&tx, Some("resolve_approval_staged")),
                 expected_event_type,
@@ -23006,7 +23020,7 @@ fn main() -> Result<()> {
             if let Err(e) = apply_one(&mut state, tx.clone(), height) {
                 let err_kind = classify_apply_error(&e);
                 let err_text = e.to_string();
-                if err_kind == "resolve_approval_staged" {
+                if uses_legacy_resolve_approval_stage(&tx, Some(err_kind)) {
                     applied += 1;
                     known_task_ids.insert(task_id);
                     let to_status = status_name(&state, task_id);
