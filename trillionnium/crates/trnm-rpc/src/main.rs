@@ -3878,10 +3878,7 @@ fn serve_health(host: &str, port: u16) -> Result<()> {
                                 });
                                 json_response_for_method(method, "200 OK", &body)
                             }
-                            Err(err) => {
-                                let body = serde_json::json!({"ok": false, "code": "NOT_FOUND", "message": err.to_string()}).to_string();
-                                json_response_for_method(method, "404 Not Found", &body)
-                            }
+                            Err(err) => task_query_error_response(method, &err),
                         }
                     }
                     Err(_) => {
@@ -4396,6 +4393,31 @@ fn settlement_summary_query_error_response(method: &str, err: &anyhow::Error) ->
     let message = err.to_string();
     let (status, code) = if message.starts_with("consumption summary not found for task ") {
         ("404 Not Found", "NOT_FOUND")
+    } else if message.starts_with("consumption summary violated settlement rpc contract for task ") {
+        (
+            "500 Internal Server Error",
+            "SETTLEMENT_RPC_CONTRACT_VIOLATION",
+        )
+    } else {
+        ("500 Internal Server Error", "INTERNAL_ERROR")
+    };
+    let body = serde_json::json!({"ok": false, "code": code, "message": message}).to_string();
+    json_response_for_method(method, status, &body)
+}
+
+fn task_query_error_response(method: &str, err: &anyhow::Error) -> String {
+    let message = err.to_string();
+    let (status, code) = if message.starts_with("task not found: ") {
+        ("404 Not Found", "NOT_FOUND")
+    } else if message.starts_with("task query adapter fallback disabled for task ") {
+        ("409 Conflict", "SETTLEMENT_AWARE_TASK_QUERY_REQUIRED")
+    } else if message
+        .starts_with("task query blocked by settlement rpc contract violation for task ")
+    {
+        (
+            "500 Internal Server Error",
+            "SETTLEMENT_RPC_CONTRACT_VIOLATION",
+        )
     } else {
         ("500 Internal Server Error", "INTERNAL_ERROR")
     };
@@ -11833,12 +11855,41 @@ line2
     }
 
     #[test]
-    fn settlement_summary_query_error_response_maps_contract_violation_to_internal_error() {
+    fn settlement_summary_query_error_response_maps_contract_violation_to_settlement_rpc_contract_violation() {
         let err = anyhow!("consumption summary violated settlement rpc contract for task 42");
         let response = settlement_summary_query_error_response("GET", &err);
         assert!(response.starts_with("HTTP/1.1 500 Internal Server Error\r\n"));
-        assert!(response.contains("\"code\":\"INTERNAL_ERROR\""));
+        assert!(response.contains("\"code\":\"SETTLEMENT_RPC_CONTRACT_VIOLATION\""));
         assert!(response.contains("settlement rpc contract"));
+    }
+
+    #[test]
+    fn task_query_error_response_maps_missing_task_to_not_found() {
+        let err = anyhow!("task not found: 42");
+        let response = task_query_error_response("GET", &err);
+        assert!(response.starts_with("HTTP/1.1 404 Not Found\r\n"));
+        assert!(response.contains("\"code\":\"NOT_FOUND\""));
+        assert!(response.contains("task not found: 42"));
+    }
+
+    #[test]
+    fn task_query_error_response_maps_settlement_gate_to_conflict() {
+        let err = anyhow!(
+            "task query adapter fallback disabled for task 42 because authoritative settlement summary exists"
+        );
+        let response = task_query_error_response("GET", &err);
+        assert!(response.starts_with("HTTP/1.1 409 Conflict\r\n"));
+        assert!(response.contains("\"code\":\"SETTLEMENT_AWARE_TASK_QUERY_REQUIRED\""));
+        assert!(response.contains("authoritative settlement summary exists"));
+    }
+
+    #[test]
+    fn task_query_error_response_maps_contract_violation_to_internal_error() {
+        let err = anyhow!("task query blocked by settlement rpc contract violation for task 42");
+        let response = task_query_error_response("GET", &err);
+        assert!(response.starts_with("HTTP/1.1 500 Internal Server Error\r\n"));
+        assert!(response.contains("\"code\":\"SETTLEMENT_RPC_CONTRACT_VIOLATION\""));
+        assert!(response.contains("settlement rpc contract violation"));
     }
 
     #[test]
