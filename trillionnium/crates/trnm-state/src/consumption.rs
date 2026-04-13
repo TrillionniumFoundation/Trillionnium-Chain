@@ -51,6 +51,32 @@ pub struct ConsumptionRecord {
     pub resolution_code: Option<String>,
 }
 
+impl ConsumptionRecord {
+    pub fn is_persistable_snapshot_for(&self, key: &ConsumptionRecordKey) -> bool {
+        key.task_id != 0
+            && self.key == *key
+            && !key.consumer_id.trim().is_empty()
+            && !key.output_hash.trim().is_empty()
+            && !key.billing_window_id.trim().is_empty()
+            && !self.worker_id.trim().is_empty()
+            && !self.tokenizer_id.trim().is_empty()
+            && !self.tokenizer_version.trim().is_empty()
+            && !self.consumer_class.trim().is_empty()
+            && !self.consumed_spans_root.trim().is_empty()
+            && self.consumed_token_count > 0
+            && self.claimed_consumption_units > 0
+            && self.credited_consumption_units.map_or(true, |credited| {
+                credited > 0 && credited <= self.claimed_consumption_units
+            })
+            && self.consumer_nonce > 0
+            && self.accepted_at_unix_ms > 0
+            && self
+                .resolution_code
+                .as_ref()
+                .map_or(true, |code| !code.trim().is_empty())
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
 pub struct BillingWindowPolicy {
     pub billing_window_id: String,
@@ -113,6 +139,40 @@ impl TaskConsumptionSummary {
             && self
                 .last_settlement_height
                 .map_or(true, |height| height > 0)
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
+pub struct ConsumptionSettlementStateSnapshot {
+    pub key: ConsumptionRecordKey,
+    pub record: Option<ConsumptionRecord>,
+    pub consumer_nonce: Option<u64>,
+    pub billing_window_policy: Option<BillingWindowPolicy>,
+    pub task_summary: Option<TaskConsumptionSummary>,
+}
+
+impl ConsumptionSettlementStateSnapshot {
+    pub fn matches_boundary(&self, key: &ConsumptionRecordKey) -> bool {
+        self.key == *key
+            && self.key.task_id != 0
+            && !self.key.consumer_id.trim().is_empty()
+            && !self.key.output_hash.trim().is_empty()
+            && !self.key.billing_window_id.trim().is_empty()
+    }
+
+    pub fn is_persistable_snapshot_for(&self, key: &ConsumptionRecordKey) -> bool {
+        self.matches_boundary(key)
+            && self
+                .record
+                .as_ref()
+                .map_or(true, |record| record.is_persistable_snapshot_for(key))
+            && self.consumer_nonce.map_or(true, |nonce| nonce > 0)
+            && self.billing_window_policy.as_ref().map_or(true, |policy| {
+                policy.is_persistable_snapshot_for(&key.billing_window_id)
+            })
+            && self.task_summary.as_ref().map_or(true, |summary| {
+                summary.is_persistable_snapshot_for(key.task_id)
+            })
     }
 }
 
@@ -186,6 +246,19 @@ mod tests {
         st.put_consumption_record(sample_record());
         let after = st.state_root();
         assert_ne!(before, after);
+    }
+
+    #[test]
+    fn restore_consumption_record_clears_inconsistent_snapshot() {
+        let mut st = StateStore::default();
+        let record = sample_record();
+        st.put_consumption_record(record.clone());
+
+        let mut invalid = record.clone();
+        invalid.credited_consumption_units = Some(invalid.claimed_consumption_units + 1);
+        st.restore_consumption_record(&record.key, Some(invalid));
+
+        assert_eq!(st.consumption_record(&record.key), None);
     }
 
     #[test]
@@ -350,5 +423,48 @@ mod tests {
 
         assert_eq!(st.set_task_consumption_summary(invalid), Some(summary));
         assert_eq!(st.task_consumption_summary(42), None);
+    }
+
+    #[test]
+    fn consumption_settlement_state_snapshot_roundtrip_restores_state_root() {
+        let mut st = StateStore::default();
+        let record = sample_record();
+        let key = record.key.clone();
+        let policy = sample_billing_window_policy();
+        let summary = sample_task_consumption_summary();
+
+        st.put_consumption_record(record.clone());
+        st.set_consumer_consumption_nonce(&key.consumer_id, record.consumer_nonce);
+        st.set_billing_window_policy(policy.clone());
+        st.set_task_consumption_summary(summary.clone());
+
+        let expected_root = st.state_root();
+        let snapshot = st.consumption_settlement_state_snapshot(&key);
+        assert!(snapshot.is_persistable_snapshot_for(&key));
+
+        assert_eq!(st.remove_consumption_record(&key), Some(record.clone()));
+        st.set_consumer_consumption_nonce(&key.consumer_id, record.consumer_nonce + 1);
+        assert_eq!(
+            st.clear_billing_window_policy(&key.billing_window_id),
+            Some(policy.clone())
+        );
+        assert_eq!(
+            st.clear_task_consumption_summary(key.task_id),
+            Some(summary.clone())
+        );
+
+        st.restore_consumption_settlement_state(&key, snapshot);
+
+        assert_eq!(st.consumption_record(&key), Some(record));
+        assert_eq!(
+            st.consumer_consumption_nonce(&key.consumer_id),
+            Some(sample_record().consumer_nonce)
+        );
+        assert_eq!(
+            st.billing_window_policy(&key.billing_window_id),
+            Some(policy)
+        );
+        assert_eq!(st.task_consumption_summary(key.task_id), Some(summary));
+        assert_eq!(st.state_root(), expected_root);
     }
 }

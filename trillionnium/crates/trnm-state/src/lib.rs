@@ -12,7 +12,7 @@ use trnm_types::{
 pub mod consumption;
 pub use consumption::{
     BillingWindowPolicy, ConsumptionRecord, ConsumptionRecordKey, ConsumptionRecordStatus,
-    TaskConsumptionSummary,
+    ConsumptionSettlementStateSnapshot, TaskConsumptionSummary,
 };
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -3668,6 +3668,13 @@ impl StateStore {
         self.consumption_records.get(key).cloned()
     }
 
+    pub fn consumption_record_snapshot(
+        &self,
+        key: &ConsumptionRecordKey,
+    ) -> Option<ConsumptionRecord> {
+        self.consumption_record(key)
+    }
+
     pub fn consumption_records_for_task(&self, task_id: u64) -> Vec<ConsumptionRecord> {
         self.consumption_records
             .iter()
@@ -3686,6 +3693,21 @@ impl StateStore {
         removed
     }
 
+    pub fn restore_consumption_record(
+        &mut self,
+        key: &ConsumptionRecordKey,
+        snapshot: Option<ConsumptionRecord>,
+    ) {
+        match snapshot {
+            Some(snapshot) if snapshot.is_persistable_snapshot_for(key) => {
+                let _ = self.put_consumption_record(snapshot);
+            }
+            _ => {
+                let _ = self.remove_consumption_record(key);
+            }
+        }
+    }
+
     pub fn set_consumer_consumption_nonce(&mut self, consumer_id: &str, nonce: u64) {
         self.invalidate_state_root_cache();
         if nonce == 0 {
@@ -3698,6 +3720,17 @@ impl StateStore {
 
     pub fn consumer_consumption_nonce(&self, consumer_id: &str) -> Option<u64> {
         self.consumer_consumption_nonces.get(consumer_id).copied()
+    }
+
+    pub fn consumer_consumption_nonce_snapshot(&self, consumer_id: &str) -> Option<u64> {
+        self.consumer_consumption_nonce(consumer_id)
+    }
+
+    pub fn restore_consumer_consumption_nonce(&mut self, consumer_id: &str, snapshot: Option<u64>) {
+        match snapshot {
+            Some(nonce) if nonce > 0 => self.set_consumer_consumption_nonce(consumer_id, nonce),
+            _ => self.set_consumer_consumption_nonce(consumer_id, 0),
+        }
     }
 
     pub fn set_billing_window_policy(
@@ -3784,6 +3817,34 @@ impl StateStore {
         task_id: u64,
     ) -> Option<TaskConsumptionSummary> {
         self.task_consumption_summary(task_id)
+    }
+
+    pub fn consumption_settlement_state_snapshot(
+        &self,
+        key: &ConsumptionRecordKey,
+    ) -> ConsumptionSettlementStateSnapshot {
+        ConsumptionSettlementStateSnapshot {
+            key: key.clone(),
+            record: self.consumption_record_snapshot(key),
+            consumer_nonce: self.consumer_consumption_nonce_snapshot(&key.consumer_id),
+            billing_window_policy: self.billing_window_policy_snapshot(&key.billing_window_id),
+            task_summary: self.task_consumption_summary_snapshot(key.task_id),
+        }
+    }
+
+    pub fn restore_consumption_settlement_state(
+        &mut self,
+        key: &ConsumptionRecordKey,
+        snapshot: ConsumptionSettlementStateSnapshot,
+    ) {
+        if !snapshot.matches_boundary(key) {
+            return;
+        }
+
+        self.restore_consumption_record(key, snapshot.record);
+        self.restore_consumer_consumption_nonce(&key.consumer_id, snapshot.consumer_nonce);
+        self.restore_billing_window_policy(&key.billing_window_id, snapshot.billing_window_policy);
+        self.restore_task_consumption_summary(key.task_id, snapshot.task_summary);
     }
 
     pub fn restore_task_consumption_summary(
