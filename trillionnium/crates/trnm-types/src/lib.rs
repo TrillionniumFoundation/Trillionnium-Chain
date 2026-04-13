@@ -368,6 +368,26 @@ impl TaskMetadata {
         self.settlement.as_ref().or(settlement)
     }
 
+    /// Migration helper for write paths that still carry settlement out of
+    /// band. Thread the fallback snapshot into canonical task metadata only
+    /// when metadata does not already contain an inline settlement snapshot.
+    /// Returns true when the metadata payload changed.
+    pub fn thread_settlement_snapshot(
+        &mut self,
+        settlement: Option<&TaskSettlementSnapshot>,
+    ) -> bool {
+        if self.settlement.is_some() {
+            return false;
+        }
+
+        let Some(settlement) = settlement.cloned() else {
+            return false;
+        };
+
+        self.settlement = Some(settlement);
+        true
+    }
+
     pub fn compatibility_report_with_settlement_snapshot(
         &self,
         settlement: Option<&TaskSettlementSnapshot>,
