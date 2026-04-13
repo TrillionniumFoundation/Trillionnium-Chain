@@ -8,7 +8,6 @@ use trnm_types::{
 pub mod consumption;
 pub mod metering;
 pub mod verification;
-use consumption::primary_payout_work_units;
 pub use consumption::{
     challenge_consumption_receipt, challenge_consumption_receipt_at_height,
     claimed_consumption_units, parse_and_validate_consumption_receipt_json,
@@ -17,6 +16,7 @@ pub use consumption::{
     submit_consumption_receipt_at_height, ConsumptionError, ConsumptionReceipt,
     ConsumptionReplayKey, ConsumptionResolveDecision, POCO_V1_SETTLEMENT_SCHEMA,
 };
+use consumption::{primary_payout_work_units, reject_if_primary_settlement_pending};
 pub use metering::{
     parse_and_validate_llm_token_meter_v1_receipt_json, parse_llm_token_meter_v1_receipt_json,
     LlmTokenMeterError, LlmTokenMeterV1Receipt, LlmTokenMeterV1WorkUnitCoefficients,
@@ -1970,6 +1970,10 @@ pub fn apply_resolve_at_height(
         return Err(PouwError::Unauthorized);
     }
     reject_if_deadline_exceeded_optional(task.resolve_deadline_height, current_height)?;
+    if let Err(err) = reject_if_primary_settlement_pending(st, task.task_id) {
+        st.clear_pending_resolve_approval(task_ref.id);
+        return Err(err);
+    }
     task.status = if slash_worker {
         TaskStatus::Slashed
     } else {
@@ -2153,6 +2157,10 @@ pub fn apply_timeout(
                     "revealed task has invalid retained challenge_window_blocks_snapshot".into(),
                 ));
             }
+            if let Err(err) = reject_if_primary_settlement_pending(st, task.task_id) {
+                st.clear_pending_resolve_approval(task_ref.id);
+                return Err(err);
+            }
             task.status = TaskStatus::Completed;
             task.challenge_deadline_height = None;
             task.challenged_at_height = None;
@@ -2160,6 +2168,10 @@ pub fn apply_timeout(
         }
         TaskStatus::Challenged => {
             require_deadline_exceeded(task.resolve_deadline_height, current_height)?;
+            if let Err(err) = reject_if_primary_settlement_pending(st, task.task_id) {
+                st.clear_pending_resolve_approval(task_ref.id);
+                return Err(err);
+            }
             if let Some(bond) = task.challenge_bond {
                 ensure_balance_at_least(st, CHALLENGE_ESCROW_ACCOUNT, bond)?;
             }

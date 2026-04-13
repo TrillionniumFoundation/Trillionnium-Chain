@@ -47,6 +47,36 @@ fn current_summary(st: &StateStore, task_id: u64) -> TaskConsumptionSummary {
         })
 }
 
+pub(crate) fn reject_if_primary_settlement_pending(
+    st: &StateStore,
+    task_id: u64,
+) -> Result<(), PouwError> {
+    let unresolved_receipt_count = st
+        .consumption_records_for_task(task_id)
+        .into_iter()
+        .filter(|record| {
+            matches!(
+                record.status,
+                ConsumptionRecordStatus::Submitted | ConsumptionRecordStatus::Challenged
+            )
+        })
+        .count();
+
+    if unresolved_receipt_count > 0 {
+        return Err(PouwError::State(format!(
+            "poco primary settlement pending: {} unresolved consumption receipt{}",
+            unresolved_receipt_count,
+            if unresolved_receipt_count == 1 {
+                ""
+            } else {
+                "s"
+            }
+        )));
+    }
+
+    Ok(())
+}
+
 fn authority_members(st: &StateStore) -> Result<Vec<String>, PouwError> {
     let authority = resolve_authority_account(st);
     let members: Vec<String> = authority
@@ -700,6 +730,7 @@ pub fn resolve_consumption_receipt_at_height(
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::{apply_resolve_at_height, apply_timeout};
     use trnm_types::{ProofType, TaskMetadata, TaskObject};
 
     fn sample_result_hash() -> [u8; 32] {
@@ -788,6 +819,15 @@ mod tests {
         }
         .with_computed_receipt_hash()
         .expect("hash")
+    }
+
+    fn mark_task_challenged(task: &mut TaskObject) {
+        task.status = TaskStatus::Challenged;
+        task.challenge_bond = Some(10);
+        task.challenger = Some("auditor-1".to_string());
+        task.challenged_at_height = Some(95);
+        task.resolve_deadline_height = Some(110);
+        task.challenge_bond_forfeited = None;
     }
 
     #[test]
@@ -1175,6 +1215,107 @@ mod tests {
 
         assert!(
             matches!(err, PouwError::State(msg) if msg.contains("poco settlement window requires challenge_deadline_height"))
+        );
+    }
+
+    #[test]
+    fn timeout_revealed_pending_poco_primary_settlement_fail_closed() {
+        let mut st = StateStore::default();
+        let task_ref = st
+            .put_task_new(sample_task(TaskStatus::Revealed))
+            .expect("task");
+        let task_id = task_ref.id;
+        submit_consumption_receipt_at_height(
+            &mut st,
+            sample_receipt(),
+            "consumer-bravo".into(),
+            99,
+        )
+        .expect("submit receipt within settlement window");
+
+        let err = apply_timeout(&mut st, task_ref, 101)
+            .expect_err("pending PoCO settlement must block revealed timeout finalization");
+
+        assert!(
+            matches!(err, PouwError::State(msg) if msg.contains("poco primary settlement pending"))
+        );
+        assert_eq!(
+            st.get_task(task_id).expect("task").status,
+            TaskStatus::Revealed
+        );
+    }
+
+    #[test]
+    fn timeout_challenged_pending_poco_primary_settlement_fail_closed() {
+        let mut st = StateStore::default();
+        let task_ref = st
+            .put_task_new(sample_task(TaskStatus::Revealed))
+            .expect("task");
+        let task_id = task_ref.id;
+        submit_consumption_receipt_at_height(
+            &mut st,
+            sample_receipt(),
+            "consumer-bravo".into(),
+            99,
+        )
+        .expect("submit receipt within settlement window");
+
+        let mut challenged = st.get_task(task_id).expect("task");
+        mark_task_challenged(&mut challenged);
+        let challenged_ref = st.update_task(task_ref, challenged).expect("update task");
+
+        let err = apply_timeout(&mut st, challenged_ref, 111)
+            .expect_err("pending PoCO settlement must block challenged timeout finalization");
+
+        assert!(
+            matches!(err, PouwError::State(msg) if msg.contains("poco primary settlement pending"))
+        );
+        assert_eq!(
+            st.get_task(task_id).expect("task").status,
+            TaskStatus::Challenged
+        );
+    }
+
+    #[test]
+    fn resolve_pending_poco_primary_settlement_fail_closed() {
+        let mut st = StateStore::default();
+        let _ = st.set_gov_param_bootstrap_unchecked(
+            9_502,
+            "resolve_authority".into(),
+            "resolver-1,resolver-2".into(),
+        );
+        let task_ref = st
+            .put_task_new(sample_task(TaskStatus::Revealed))
+            .expect("task");
+        let task_id = task_ref.id;
+        submit_consumption_receipt_at_height(
+            &mut st,
+            sample_receipt(),
+            "consumer-bravo".into(),
+            99,
+        )
+        .expect("submit receipt within settlement window");
+
+        let mut challenged = st.get_task(task_id).expect("task");
+        mark_task_challenged(&mut challenged);
+        let challenged_ref = st.update_task(task_ref, challenged).expect("update task");
+
+        let err = apply_resolve_at_height(
+            &mut st,
+            challenged_ref,
+            false,
+            "resolver-1".to_string(),
+            "resolver-1".to_string(),
+            101,
+        )
+        .expect_err("pending PoCO settlement must block challenged resolve finalization");
+
+        assert!(
+            matches!(err, PouwError::State(msg) if msg.contains("poco primary settlement pending"))
+        );
+        assert_eq!(
+            st.get_task(task_id).expect("task").status,
+            TaskStatus::Challenged
         );
     }
 }
