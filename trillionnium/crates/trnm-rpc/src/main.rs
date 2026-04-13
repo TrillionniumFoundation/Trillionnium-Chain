@@ -1176,9 +1176,28 @@ struct SettlementGovernanceQueryResponse {
     effective_pouw_weight_bps: u64,
     has_pending_updates: bool,
     #[serde(default, skip_serializing_if = "Option::is_none")]
+    staged_configuration_status: Option<SettlementGovernanceConfigurationStatus>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    staged_mode: Option<SettlementGovernanceMode>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    staged_effective_poco_weight_bps: Option<u64>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    staged_effective_pouw_weight_bps: Option<u64>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     pending_shadow_compare_only: Option<PendingGovParamUpdateQueryResponse>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pending_poco_weight_bps: Option<PendingGovParamUpdateQueryResponse>,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+struct ResolvedSettlementGovernanceConfig {
+    configuration_status: SettlementGovernanceConfigurationStatus,
+    mode: SettlementGovernanceMode,
+    shadow_compare_only: bool,
+    poco_weight_bps: u64,
+    pouw_weight_bps: u64,
+    effective_poco_weight_bps: u64,
+    effective_pouw_weight_bps: u64,
 }
 
 fn parse_shadow_compare_only_value(key: &str, value: &str) -> Result<bool> {
@@ -1227,34 +1246,20 @@ fn pending_gov_update_query_response(
         })
 }
 
-fn settlement_governance_query_response(
-    st: &StateStore,
-) -> Result<SettlementGovernanceQueryResponse> {
-    let shadow_compare_only_raw = st.gov_param_string(SHADOW_SETTLEMENT_COMPARE_ONLY_KEY);
-    let poco_weight_bps_raw = st.gov_param_string(HYBRID_SETTLEMENT_POCO_WEIGHT_BPS_KEY);
-
-    let shadow_compare_only = match shadow_compare_only_raw.as_deref() {
+fn resolve_settlement_governance_config(
+    shadow_compare_only_raw: Option<&str>,
+    poco_weight_bps_raw: Option<&str>,
+) -> Result<ResolvedSettlementGovernanceConfig> {
+    let shadow_compare_only = match shadow_compare_only_raw {
         Some(value) => parse_shadow_compare_only_value(SHADOW_SETTLEMENT_COMPARE_ONLY_KEY, value)?,
         None => false,
     };
-    let poco_weight_bps = match poco_weight_bps_raw.as_deref() {
+    let poco_weight_bps = match poco_weight_bps_raw {
         Some(value) => parse_poco_weight_bps_value(HYBRID_SETTLEMENT_POCO_WEIGHT_BPS_KEY, value)?,
         None => 0,
     };
 
-    let pending_shadow_compare_only =
-        pending_gov_update_query_response(st, SHADOW_SETTLEMENT_COMPARE_ONLY_KEY);
-    if let Some(pending) = pending_shadow_compare_only.as_ref() {
-        parse_shadow_compare_only_value(&pending.key, &pending.value)?;
-    }
-
-    let pending_poco_weight_bps =
-        pending_gov_update_query_response(st, HYBRID_SETTLEMENT_POCO_WEIGHT_BPS_KEY);
-    if let Some(pending) = pending_poco_weight_bps.as_ref() {
-        parse_poco_weight_bps_value(&pending.key, &pending.value)?;
-    }
-
-    let live_configuration_status = match (
+    let configuration_status = match (
         shadow_compare_only_raw.is_some(),
         poco_weight_bps_raw.is_some(),
     ) {
@@ -1272,25 +1277,76 @@ fn settlement_governance_query_response(
     } else {
         SettlementGovernanceMode::Hybrid
     };
+    let pouw_weight_bps = SETTLEMENT_WEIGHT_TOTAL_BPS - poco_weight_bps;
     let (effective_poco_weight_bps, effective_pouw_weight_bps) = if shadow_compare_only {
         (0, SETTLEMENT_WEIGHT_TOTAL_BPS)
     } else {
-        (
-            poco_weight_bps,
-            SETTLEMENT_WEIGHT_TOTAL_BPS - poco_weight_bps,
-        )
+        (poco_weight_bps, pouw_weight_bps)
     };
 
-    Ok(SettlementGovernanceQueryResponse {
-        live_configuration_status,
+    Ok(ResolvedSettlementGovernanceConfig {
+        configuration_status,
         mode,
         shadow_compare_only,
         poco_weight_bps,
-        pouw_weight_bps: SETTLEMENT_WEIGHT_TOTAL_BPS - poco_weight_bps,
+        pouw_weight_bps,
         effective_poco_weight_bps,
         effective_pouw_weight_bps,
-        has_pending_updates: pending_shadow_compare_only.is_some()
-            || pending_poco_weight_bps.is_some(),
+    })
+}
+
+fn settlement_governance_query_response(
+    st: &StateStore,
+) -> Result<SettlementGovernanceQueryResponse> {
+    let shadow_compare_only_raw = st.gov_param_string(SHADOW_SETTLEMENT_COMPARE_ONLY_KEY);
+    let poco_weight_bps_raw = st.gov_param_string(HYBRID_SETTLEMENT_POCO_WEIGHT_BPS_KEY);
+    let live = resolve_settlement_governance_config(
+        shadow_compare_only_raw.as_deref(),
+        poco_weight_bps_raw.as_deref(),
+    )?;
+
+    let pending_shadow_compare_only =
+        pending_gov_update_query_response(st, SHADOW_SETTLEMENT_COMPARE_ONLY_KEY);
+    if let Some(pending) = pending_shadow_compare_only.as_ref() {
+        parse_shadow_compare_only_value(&pending.key, &pending.value)?;
+    }
+
+    let pending_poco_weight_bps =
+        pending_gov_update_query_response(st, HYBRID_SETTLEMENT_POCO_WEIGHT_BPS_KEY);
+    if let Some(pending) = pending_poco_weight_bps.as_ref() {
+        parse_poco_weight_bps_value(&pending.key, &pending.value)?;
+    }
+
+    let has_pending_updates =
+        pending_shadow_compare_only.is_some() || pending_poco_weight_bps.is_some();
+    let staged = if has_pending_updates {
+        Some(resolve_settlement_governance_config(
+            pending_shadow_compare_only
+                .as_ref()
+                .map(|pending| pending.value.as_str())
+                .or(shadow_compare_only_raw.as_deref()),
+            pending_poco_weight_bps
+                .as_ref()
+                .map(|pending| pending.value.as_str())
+                .or(poco_weight_bps_raw.as_deref()),
+        )?)
+    } else {
+        None
+    };
+
+    Ok(SettlementGovernanceQueryResponse {
+        live_configuration_status: live.configuration_status,
+        mode: live.mode,
+        shadow_compare_only: live.shadow_compare_only,
+        poco_weight_bps: live.poco_weight_bps,
+        pouw_weight_bps: live.pouw_weight_bps,
+        effective_poco_weight_bps: live.effective_poco_weight_bps,
+        effective_pouw_weight_bps: live.effective_pouw_weight_bps,
+        has_pending_updates,
+        staged_configuration_status: staged.map(|config| config.configuration_status),
+        staged_mode: staged.map(|config| config.mode),
+        staged_effective_poco_weight_bps: staged.map(|config| config.effective_poco_weight_bps),
+        staged_effective_pouw_weight_bps: staged.map(|config| config.effective_pouw_weight_bps),
         pending_shadow_compare_only,
         pending_poco_weight_bps,
     })
@@ -1318,6 +1374,10 @@ mod settlement_governance_query_tests {
         assert_eq!(out.effective_poco_weight_bps, 0);
         assert_eq!(out.effective_pouw_weight_bps, 10_000);
         assert!(!out.has_pending_updates);
+        assert!(out.staged_configuration_status.is_none());
+        assert!(out.staged_mode.is_none());
+        assert!(out.staged_effective_poco_weight_bps.is_none());
+        assert!(out.staged_effective_pouw_weight_bps.is_none());
         assert!(out.pending_shadow_compare_only.is_none());
         assert!(out.pending_poco_weight_bps.is_none());
     }
@@ -1355,6 +1415,16 @@ mod settlement_governance_query_tests {
         assert_eq!(out.effective_pouw_weight_bps, 10_000);
         assert!(out.has_pending_updates);
         assert_eq!(
+            out.staged_configuration_status,
+            Some(SettlementGovernanceConfigurationStatus::Configured)
+        );
+        assert_eq!(
+            out.staged_mode,
+            Some(SettlementGovernanceMode::ShadowCompareOnly)
+        );
+        assert_eq!(out.staged_effective_poco_weight_bps, Some(0));
+        assert_eq!(out.staged_effective_pouw_weight_bps, Some(10_000));
+        assert_eq!(
             out.pending_poco_weight_bps,
             Some(PendingGovParamUpdateQueryResponse {
                 key_id: 7_351,
@@ -1369,6 +1439,46 @@ mod settlement_governance_query_tests {
                 key_id: 7_352,
                 key: SHADOW_SETTLEMENT_COMPARE_ONLY_KEY.into(),
                 value: "true".into(),
+                activate_at_height: 62,
+            })
+        );
+    }
+
+    #[test]
+    fn settlement_governance_query_marks_partial_staged_rollouts_before_shadow_flag_lands() {
+        let mut st = StateStore::new();
+
+        st.set_gov_param(
+            42,
+            7_351,
+            HYBRID_SETTLEMENT_POCO_WEIGHT_BPS_KEY.into(),
+            "2500".into(),
+        )
+        .expect("hybrid settlement weight should stage through governance");
+
+        let out = settlement_governance_query_response(&st)
+            .expect("partial staged settlement query should succeed");
+
+        assert_eq!(
+            out.live_configuration_status,
+            SettlementGovernanceConfigurationStatus::Defaulted
+        );
+        assert_eq!(out.mode, SettlementGovernanceMode::PouwPrimary);
+        assert!(out.has_pending_updates);
+        assert_eq!(
+            out.staged_configuration_status,
+            Some(SettlementGovernanceConfigurationStatus::Partial)
+        );
+        assert_eq!(out.staged_mode, Some(SettlementGovernanceMode::Hybrid));
+        assert_eq!(out.staged_effective_poco_weight_bps, Some(2_500));
+        assert_eq!(out.staged_effective_pouw_weight_bps, Some(7_500));
+        assert!(out.pending_shadow_compare_only.is_none());
+        assert_eq!(
+            out.pending_poco_weight_bps,
+            Some(PendingGovParamUpdateQueryResponse {
+                key_id: 7_351,
+                key: HYBRID_SETTLEMENT_POCO_WEIGHT_BPS_KEY.into(),
+                value: "2500".into(),
                 activate_at_height: 62,
             })
         );
@@ -1410,6 +1520,10 @@ mod settlement_governance_query_tests {
         assert_eq!(out.effective_poco_weight_bps, 2_500);
         assert_eq!(out.effective_pouw_weight_bps, 7_500);
         assert!(!out.has_pending_updates);
+        assert!(out.staged_configuration_status.is_none());
+        assert!(out.staged_mode.is_none());
+        assert!(out.staged_effective_poco_weight_bps.is_none());
+        assert!(out.staged_effective_pouw_weight_bps.is_none());
     }
 
     #[test]
@@ -1449,6 +1563,10 @@ mod settlement_governance_query_tests {
         assert_eq!(out.effective_poco_weight_bps, 0);
         assert_eq!(out.effective_pouw_weight_bps, 10_000);
         assert!(!out.has_pending_updates);
+        assert!(out.staged_configuration_status.is_none());
+        assert!(out.staged_mode.is_none());
+        assert!(out.staged_effective_poco_weight_bps.is_none());
+        assert!(out.staged_effective_pouw_weight_bps.is_none());
     }
 }
 
