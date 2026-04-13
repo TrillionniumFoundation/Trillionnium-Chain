@@ -47,15 +47,35 @@ fn current_summary(st: &StateStore, task_id: u64) -> TaskConsumptionSummary {
         })
 }
 
-fn summary_pending_receipt_count(summary: TaskConsumptionSummary) -> u64 {
-    if summary.receipt_count > 0
-        && summary.accepted_receipt_count == 0
-        && summary.last_settlement_height.is_none()
-    {
-        summary.receipt_count
-    } else {
-        0
+fn summary_unproven_receipt_count(summary: TaskConsumptionSummary) -> u64 {
+    if summary.receipt_count == 0 {
+        return 0;
     }
+
+    if summary.accepted_receipt_count > summary.receipt_count {
+        return summary.receipt_count;
+    }
+
+    if summary.last_settlement_height.is_none() {
+        return summary.receipt_count;
+    }
+
+    if summary.receipt_count == 1 {
+        return 0;
+    }
+
+    if summary.accepted_receipt_count == summary.receipt_count {
+        return 0;
+    }
+
+    // Promotion step: summary-only settlement metadata does not retain
+    // terminal counts for rejected/slashed receipts, so multi-receipt states
+    // with fewer accepted receipts than submitted receipts cannot prove that
+    // PoCO settlement fully finalized. Fail closed until canonical per-receipt
+    // records are present or richer summary accounting lands.
+    summary
+        .receipt_count
+        .saturating_sub(summary.accepted_receipt_count)
 }
 
 pub(crate) fn reject_if_primary_settlement_pending(
@@ -68,7 +88,7 @@ pub(crate) fn reject_if_primary_settlement_pending(
         unresolved_receipt_count
     } else if records.is_empty() {
         st.task_consumption_summary(task_id)
-            .map(summary_pending_receipt_count)
+            .map(summary_unproven_receipt_count)
             .unwrap_or(0)
     } else {
         0
@@ -230,7 +250,17 @@ fn preview_primary_payout_work_units_from_summary(
     summary: TaskConsumptionSummary,
     metering_work_units: u128,
 ) -> PrimaryPayoutWorkUnitPreview {
-    if summary.accepted_receipt_count > 0 {
+    let unproven_receipt_count = summary_unproven_receipt_count(summary.clone());
+    if unproven_receipt_count > 0 {
+        // Promotion step: summary-only partial settlement must not authorize
+        // payout when it cannot prove every submitted receipt reached a
+        // terminal PoCO outcome. Fail closed until canonical receipt records
+        // or richer summary accounting can show the full settlement result.
+        PrimaryPayoutWorkUnitPreview::PocoPendingSettlement {
+            unresolved_receipt_count: unproven_receipt_count,
+            metering_work_units,
+        }
+    } else if summary.accepted_receipt_count > 0 {
         let credited_work_units = summary.total_credited_consumption_units;
         // Promotion step: once PoCO accepts credited consumption, that
         // settlement becomes the primary payout authority and legacy
@@ -244,14 +274,6 @@ fn preview_primary_payout_work_units_from_summary(
         // fail closed instead of falling back to legacy metering as the
         // sole payout authority.
         PrimaryPayoutWorkUnitPreview::PocoResolvedZeroCredit
-    } else if summary.receipt_count > 0 {
-        // Promotion step: make in-flight PoCO settlement explicit in the
-        // primary payout path even before we fully cut over terminal
-        // settlement finalization to dedicated PoCO helpers.
-        PrimaryPayoutWorkUnitPreview::PocoPendingSettlement {
-            unresolved_receipt_count: summary.receipt_count,
-            metering_work_units,
-        }
     } else {
         PrimaryPayoutWorkUnitPreview::MeteringEvidence {
             metering_work_units,
@@ -1057,7 +1079,7 @@ mod tests {
         st.set_task_consumption_summary(TaskConsumptionSummary {
             task_id: task.task_id,
             receipt_count: 2,
-            accepted_receipt_count: 1,
+            accepted_receipt_count: 2,
             challenged_receipt_count: 0,
             total_consumed_tokens: 17,
             total_claimed_consumption_units: 17,
@@ -1137,7 +1159,7 @@ mod tests {
         st.set_task_consumption_summary(TaskConsumptionSummary {
             task_id: task.task_id,
             receipt_count: 2,
-            accepted_receipt_count: 1,
+            accepted_receipt_count: 2,
             challenged_receipt_count: 0,
             total_consumed_tokens: 17,
             total_claimed_consumption_units: 17,
@@ -1232,6 +1254,83 @@ mod tests {
             .expect_err("summary-only pending receipt metadata must fail closed");
         assert!(
             matches!(err, PouwError::State(msg) if msg.contains("2 unresolved consumption receipts"))
+        );
+    }
+
+    #[test]
+    fn primary_payout_work_units_fail_closed_for_summary_only_partial_credit_without_records() {
+        let mut st = StateStore::default();
+        let task = sample_task(TaskStatus::Completed);
+        st.set_task_consumption_summary(TaskConsumptionSummary {
+            task_id: task.task_id,
+            receipt_count: 2,
+            accepted_receipt_count: 1,
+            challenged_receipt_count: 0,
+            total_consumed_tokens: 34,
+            total_claimed_consumption_units: 34,
+            total_credited_consumption_units: 9,
+            last_settlement_height: Some(77),
+        });
+
+        assert_eq!(
+            preview_primary_payout_work_units(&st, &task, 50),
+            PrimaryPayoutWorkUnitPreview::PocoPendingSettlement {
+                unresolved_receipt_count: 1,
+                metering_work_units: 50,
+            }
+        );
+        assert_eq!(primary_payout_work_units(&st, &task, 50), 0);
+    }
+
+    #[test]
+    fn reject_if_primary_settlement_pending_fails_closed_for_summary_only_partial_credit_without_records() {
+        let mut st = StateStore::default();
+        st.set_task_consumption_summary(TaskConsumptionSummary {
+            task_id: 42,
+            receipt_count: 2,
+            accepted_receipt_count: 1,
+            challenged_receipt_count: 0,
+            total_consumed_tokens: 34,
+            total_claimed_consumption_units: 34,
+            total_credited_consumption_units: 9,
+            last_settlement_height: Some(77),
+        });
+
+        let err = reject_if_primary_settlement_pending(&st, 42).expect_err(
+            "summary-only partial PoCO credit must not prove terminal settlement completeness",
+        );
+        assert!(
+            matches!(err, PouwError::State(msg) if msg.contains("1 unresolved consumption receipt"))
+        );
+    }
+
+    #[test]
+    fn timeout_revealed_summary_only_partial_credit_without_records_fail_closed() {
+        let mut st = StateStore::default();
+        let task_ref = st
+            .put_task_new(sample_task(TaskStatus::Revealed))
+            .expect("task");
+        let task_id = task_ref.id;
+        st.set_task_consumption_summary(TaskConsumptionSummary {
+            task_id,
+            receipt_count: 2,
+            accepted_receipt_count: 1,
+            challenged_receipt_count: 0,
+            total_consumed_tokens: 34,
+            total_claimed_consumption_units: 34,
+            total_credited_consumption_units: 9,
+            last_settlement_height: Some(77),
+        });
+
+        let err = apply_timeout(&mut st, task_ref, 101)
+            .expect_err("summary-only partial PoCO credit must block timeout finalization");
+
+        assert!(
+            matches!(err, PouwError::State(msg) if msg.contains("poco primary settlement pending"))
+        );
+        assert_eq!(
+            st.get_task(task_id).expect("task").status,
+            TaskStatus::Revealed
         );
     }
 
