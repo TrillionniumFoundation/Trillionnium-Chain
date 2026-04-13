@@ -5,28 +5,30 @@ use sha2::{Digest, Sha256};
 #[cfg(test)]
 use std::io::{Seek, SeekFrom};
 use std::{
+    cmp::Ordering,
     collections::{BTreeMap, BTreeSet, HashSet},
     fs::{self, OpenOptions},
     io::{Read, Write},
     net::{TcpListener, TcpStream},
-    cmp::Ordering,
     path::{Path, PathBuf},
     time::{Duration, Instant, SystemTime, UNIX_EPOCH},
 };
 use trnm_rpc::{
     get_tx, query_account_state, submit_tx, validate_trnm_address, AccountBalanceQueryResponse,
-    AccountNonceQueryResponse, AccountState, EventQueryResponse, FaucetRequestResponse, GetTxError,
-    ConsumptionRecordQueryResponse,
-    GovParamQueryResponse, GovProposalQueryResponse, InMemoryTransferLedger,
-    MessageRequestQueryResponse, RequestFullQueryResponse, RpcErrorResponse,
+    AccountNonceQueryResponse, AccountState, ConsumptionRecordQueryResponse, EventQueryResponse,
+    FaucetRequestResponse, GetTxError, GovParamQueryResponse, GovProposalQueryResponse,
+    InMemoryTransferLedger, MessageRequestQueryResponse, PendingGovParamUpdateQueryResponse,
+    RequestFullQueryResponse, RpcErrorResponse, TaskConsumptionSummaryQueryResponse,
     TaskMeteringDerivedQueryResponse, TaskMeteringPolicyQueryResponse, TaskMeteringQueryResponse,
-    TaskConsumptionSummaryQueryResponse, TaskQueryResponse, TxLifecycleRecord,
+    TaskQueryResponse, TxLifecycleRecord,
 };
 use trnm_state::{ConsumptionRecord, ConsumptionRecordStatus, StateStore, TaskConsumptionSummary};
+#[cfg(test)]
+use trnm_types::GovParamObject;
 use trnm_types::{
-    AuditAction, AuditEvent, CapabilityToken, GovProposalObject, GovProposalStatus, IdentityRegistry,
-    PrivacyTier, RequestStatus, TaskMetadata, TaskMeteringSnapshot, TaskObject, TaskStatus,
-    TransferTx,
+    AuditAction, AuditEvent, CapabilityToken, GovProposalObject, GovProposalStatus,
+    IdentityRegistry, PrivacyTier, RequestStatus, TaskMetadata, TaskMeteringSnapshot, TaskObject,
+    TaskStatus, TransferTx,
 };
 
 const QUERY_EVENTS_LIMIT_DEFAULT: usize = 100;
@@ -77,6 +79,9 @@ const HEALTH_SOCKET_READ_TIMEOUT_MS: u64 = 2_000;
 const HEALTH_SOCKET_WRITE_TIMEOUT_MS: u64 = 2_000;
 const HEALTH_REQUEST_HEADER_MAX_BYTES: usize = 4 * 1024;
 const SUBMIT_MESSAGE_MAX_BYTES_MIN: u64 = 1;
+const SHADOW_SETTLEMENT_COMPARE_ONLY_KEY: &str = "shadow_settlement_compare_only";
+const HYBRID_SETTLEMENT_POCO_WEIGHT_BPS_KEY: &str = "hybrid_settlement_poco_weight_bps";
+const SETTLEMENT_WEIGHT_TOTAL_BPS: u64 = 10_000;
 
 #[derive(Debug, Parser)]
 #[command(
@@ -100,6 +105,7 @@ enum Command {
     QueryParam {
         key: String,
     },
+    QuerySettlementGovernance,
     QueryEvents {
         task_id: u64,
         #[arg(long, default_value_t = QUERY_EVENTS_LIMIT_DEFAULT)]
@@ -907,8 +913,8 @@ fn normalize_node_event_log_source_entry(raw: &str) -> Option<String> {
     let normalized = inline_comment_idx
         .map(|idx| normalize_wrapped_env_value(normalized[..idx].trim_end()))
         .unwrap_or(normalized);
-    let normalized = normalize_leading_wrapped_log_source_comment_value(normalized)
-        .unwrap_or(normalized);
+    let normalized =
+        normalize_leading_wrapped_log_source_comment_value(normalized).unwrap_or(normalized);
     if normalized.is_empty() || normalized.starts_with('#') {
         return None;
     }
@@ -1141,6 +1147,254 @@ fn governance_state() -> StateStore {
     st
 }
 
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+enum SettlementGovernanceConfigurationStatus {
+    Defaulted,
+    Partial,
+    Configured,
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+enum SettlementGovernanceMode {
+    PouwPrimary,
+    Hybrid,
+    PocoPrimary,
+    ShadowCompareOnly,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+struct SettlementGovernanceQueryResponse {
+    live_configuration_status: SettlementGovernanceConfigurationStatus,
+    mode: SettlementGovernanceMode,
+    shadow_compare_only: bool,
+    poco_weight_bps: u64,
+    pouw_weight_bps: u64,
+    has_pending_updates: bool,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pending_shadow_compare_only: Option<PendingGovParamUpdateQueryResponse>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pending_poco_weight_bps: Option<PendingGovParamUpdateQueryResponse>,
+}
+
+fn parse_shadow_compare_only_value(key: &str, value: &str) -> Result<bool> {
+    match value {
+        "true" => Ok(true),
+        "false" => Ok(false),
+        _ => Err(anyhow!(
+            "invalid settlement governance value for {}: expected strict bool, got '{}'",
+            key,
+            value
+        )),
+    }
+}
+
+fn parse_poco_weight_bps_value(key: &str, value: &str) -> Result<u64> {
+    let parsed = value.parse::<u64>().map_err(|_| {
+        anyhow!(
+            "invalid settlement governance value for {}: expected u64 bps, got '{}'",
+            key,
+            value
+        )
+    })?;
+
+    if parsed > SETTLEMENT_WEIGHT_TOTAL_BPS {
+        bail!(
+            "invalid settlement governance value for {}: expected bps in [0, {}], got '{}'",
+            key,
+            SETTLEMENT_WEIGHT_TOTAL_BPS,
+            value
+        );
+    }
+
+    Ok(parsed)
+}
+
+fn pending_gov_update_query_response(
+    st: &StateStore,
+    key: &str,
+) -> Option<PendingGovParamUpdateQueryResponse> {
+    st.pending_gov_update(key)
+        .map(|pending| PendingGovParamUpdateQueryResponse {
+            key_id: pending.key_id,
+            key: pending.key,
+            value: pending.value,
+            activate_at_height: pending.activate_at_height,
+        })
+}
+
+fn settlement_governance_query_response(
+    st: &StateStore,
+) -> Result<SettlementGovernanceQueryResponse> {
+    let shadow_compare_only_raw = st.gov_param_string(SHADOW_SETTLEMENT_COMPARE_ONLY_KEY);
+    let poco_weight_bps_raw = st.gov_param_string(HYBRID_SETTLEMENT_POCO_WEIGHT_BPS_KEY);
+
+    let shadow_compare_only = match shadow_compare_only_raw.as_deref() {
+        Some(value) => parse_shadow_compare_only_value(SHADOW_SETTLEMENT_COMPARE_ONLY_KEY, value)?,
+        None => false,
+    };
+    let poco_weight_bps = match poco_weight_bps_raw.as_deref() {
+        Some(value) => parse_poco_weight_bps_value(HYBRID_SETTLEMENT_POCO_WEIGHT_BPS_KEY, value)?,
+        None => 0,
+    };
+
+    let pending_shadow_compare_only =
+        pending_gov_update_query_response(st, SHADOW_SETTLEMENT_COMPARE_ONLY_KEY);
+    if let Some(pending) = pending_shadow_compare_only.as_ref() {
+        parse_shadow_compare_only_value(&pending.key, &pending.value)?;
+    }
+
+    let pending_poco_weight_bps =
+        pending_gov_update_query_response(st, HYBRID_SETTLEMENT_POCO_WEIGHT_BPS_KEY);
+    if let Some(pending) = pending_poco_weight_bps.as_ref() {
+        parse_poco_weight_bps_value(&pending.key, &pending.value)?;
+    }
+
+    let live_configuration_status = match (
+        shadow_compare_only_raw.is_some(),
+        poco_weight_bps_raw.is_some(),
+    ) {
+        (false, false) => SettlementGovernanceConfigurationStatus::Defaulted,
+        (true, true) => SettlementGovernanceConfigurationStatus::Configured,
+        _ => SettlementGovernanceConfigurationStatus::Partial,
+    };
+
+    let mode = if shadow_compare_only {
+        SettlementGovernanceMode::ShadowCompareOnly
+    } else if poco_weight_bps == 0 {
+        SettlementGovernanceMode::PouwPrimary
+    } else if poco_weight_bps == SETTLEMENT_WEIGHT_TOTAL_BPS {
+        SettlementGovernanceMode::PocoPrimary
+    } else {
+        SettlementGovernanceMode::Hybrid
+    };
+
+    Ok(SettlementGovernanceQueryResponse {
+        live_configuration_status,
+        mode,
+        shadow_compare_only,
+        poco_weight_bps,
+        pouw_weight_bps: SETTLEMENT_WEIGHT_TOTAL_BPS - poco_weight_bps,
+        has_pending_updates: pending_shadow_compare_only.is_some()
+            || pending_poco_weight_bps.is_some(),
+        pending_shadow_compare_only,
+        pending_poco_weight_bps,
+    })
+}
+
+#[cfg(test)]
+mod settlement_governance_query_tests {
+    use super::*;
+
+    #[test]
+    fn settlement_governance_query_defaults_to_pouw_primary_when_live_params_are_absent() {
+        let st = StateStore::new();
+
+        let out = settlement_governance_query_response(&st)
+            .expect("default settlement query should succeed");
+
+        assert_eq!(
+            out.live_configuration_status,
+            SettlementGovernanceConfigurationStatus::Defaulted
+        );
+        assert_eq!(out.mode, SettlementGovernanceMode::PouwPrimary);
+        assert!(!out.shadow_compare_only);
+        assert_eq!(out.poco_weight_bps, 0);
+        assert_eq!(out.pouw_weight_bps, 10_000);
+        assert!(!out.has_pending_updates);
+        assert!(out.pending_shadow_compare_only.is_none());
+        assert!(out.pending_poco_weight_bps.is_none());
+    }
+
+    #[test]
+    fn settlement_governance_query_surfaces_staged_shadow_and_hybrid_updates() {
+        let mut st = StateStore::new();
+
+        st.set_gov_param(
+            42,
+            7_351,
+            HYBRID_SETTLEMENT_POCO_WEIGHT_BPS_KEY.into(),
+            "2500".into(),
+        )
+        .expect("hybrid settlement weight should stage through governance");
+        st.set_gov_param(
+            42,
+            7_352,
+            SHADOW_SETTLEMENT_COMPARE_ONLY_KEY.into(),
+            "true".into(),
+        )
+        .expect("shadow compare-only flag should stage through governance");
+
+        let out = settlement_governance_query_response(&st)
+            .expect("pending settlement query should succeed");
+
+        assert_eq!(
+            out.live_configuration_status,
+            SettlementGovernanceConfigurationStatus::Defaulted
+        );
+        assert_eq!(out.mode, SettlementGovernanceMode::PouwPrimary);
+        assert_eq!(out.poco_weight_bps, 0);
+        assert_eq!(out.pouw_weight_bps, 10_000);
+        assert!(out.has_pending_updates);
+        assert_eq!(
+            out.pending_poco_weight_bps,
+            Some(PendingGovParamUpdateQueryResponse {
+                key_id: 7_351,
+                key: HYBRID_SETTLEMENT_POCO_WEIGHT_BPS_KEY.into(),
+                value: "2500".into(),
+                activate_at_height: 62,
+            })
+        );
+        assert_eq!(
+            out.pending_shadow_compare_only,
+            Some(PendingGovParamUpdateQueryResponse {
+                key_id: 7_352,
+                key: SHADOW_SETTLEMENT_COMPARE_ONLY_KEY.into(),
+                value: "true".into(),
+                activate_at_height: 62,
+            })
+        );
+    }
+
+    #[test]
+    fn settlement_governance_query_derives_live_hybrid_mode_from_configured_params() {
+        let mut st = StateStore::new();
+        st.restore_gov_param(
+            7_351,
+            Some(GovParamObject {
+                key_id: 7_351,
+                key: HYBRID_SETTLEMENT_POCO_WEIGHT_BPS_KEY.into(),
+                value: "2500".into(),
+                version: 1,
+            }),
+        );
+        st.restore_gov_param(
+            7_352,
+            Some(GovParamObject {
+                key_id: 7_352,
+                key: SHADOW_SETTLEMENT_COMPARE_ONLY_KEY.into(),
+                value: "false".into(),
+                version: 1,
+            }),
+        );
+
+        let out = settlement_governance_query_response(&st)
+            .expect("configured settlement query should succeed");
+
+        assert_eq!(
+            out.live_configuration_status,
+            SettlementGovernanceConfigurationStatus::Configured
+        );
+        assert_eq!(out.mode, SettlementGovernanceMode::Hybrid);
+        assert!(!out.shadow_compare_only);
+        assert_eq!(out.poco_weight_bps, 2_500);
+        assert_eq!(out.pouw_weight_bps, 7_500);
+        assert!(!out.has_pending_updates);
+    }
+}
+
 fn run_root() -> PathBuf {
     PathBuf::from(env!("CARGO_MANIFEST_DIR"))
         .parent()
@@ -1338,7 +1592,9 @@ fn normalize_leading_wrapped_comment_value(raw: &str) -> Option<&str> {
         return None;
     }
 
-    Some(normalize_wrapped_env_value(&normalized[..closing_idx + quote.len_utf8()]))
+    Some(normalize_wrapped_env_value(
+        &normalized[..closing_idx + quote.len_utf8()],
+    ))
 }
 
 fn normalized_path_from_env(name: &str) -> Option<PathBuf> {
@@ -3332,7 +3588,12 @@ fn parse_single_limit_query_from_path(
             ));
         }
 
-        parsed_limit = Some(clamp_limit(metric_name, requested, default_limit, max_limit));
+        parsed_limit = Some(clamp_limit(
+            metric_name,
+            requested,
+            default_limit,
+            max_limit,
+        ));
     }
 
     Ok(parsed_limit.unwrap_or(default_limit))
@@ -3445,7 +3706,9 @@ fn parse_query_normalized_audit_events_query_from_path(
     if query.is_empty()
         || query.contains('?')
         || query.contains('#')
-        || query.chars().any(|ch| ch.is_control() || ch.is_whitespace())
+        || query
+            .chars()
+            .any(|ch| ch.is_control() || ch.is_whitespace())
     {
         return Err(http_json_response(
             "400 Bad Request",
@@ -3627,22 +3890,9 @@ fn normalize_capability_subject_lookup(raw: &str) -> Option<String> {
     let normalized = normalize_wrapped_env_value(raw)
         .chars()
         .filter_map(|ch| match ch {
-            '\u{061C}'
-            | '\u{200B}'
-            | '\u{200C}'
-            | '\u{200D}'
-            | '\u{200E}'
-            | '\u{200F}'
-            | '\u{2060}'
-            | '\u{2061}'
-            | '\u{2062}'
-            | '\u{2063}'
-            | '\u{2064}'
-            | '\u{2066}'
-            | '\u{2067}'
-            | '\u{2068}'
-            | '\u{2069}'
-            | '\u{FEFF}' => None,
+            '\u{061C}' | '\u{200B}' | '\u{200C}' | '\u{200D}' | '\u{200E}' | '\u{200F}'
+            | '\u{2060}' | '\u{2061}' | '\u{2062}' | '\u{2063}' | '\u{2064}' | '\u{2066}'
+            | '\u{2067}' | '\u{2068}' | '\u{2069}' | '\u{FEFF}' => None,
             _ if ch.is_control() => None,
             _ => Some(ch),
         })
@@ -3725,7 +3975,11 @@ fn parse_nonempty_path_suffix<'a>(path: &'a str, prefix: &str) -> Option<&'a str
         .filter(|suffix| !suffix.is_empty())
         .filter(|suffix| !matches!(*suffix, "." | ".."))
         .filter(|suffix| !suffix.contains(['#', '?']))
-        .filter(|suffix| !suffix.chars().any(|ch| ch.is_control() || ch.is_whitespace()))
+        .filter(|suffix| {
+            !suffix
+                .chars()
+                .any(|ch| ch.is_control() || ch.is_whitespace())
+        })
         .filter(|suffix| !suffix.contains('/'))
         .filter(|suffix| !suffix.contains('\\'))
         .filter(|suffix| !contains_malformed_percent_encoding(suffix))
@@ -3965,7 +4219,8 @@ fn serve_health(host: &str, port: u16) -> Result<()> {
                         }
                     }
                     Err("invalid query") => {
-                        let body = "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid query\"}";
+                        let body =
+                            "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid query\"}";
                         json_response_for_method(method, "400 Bad Request", body)
                     }
                     Err(_) => {
@@ -3974,18 +4229,16 @@ fn serve_health(host: &str, port: u16) -> Result<()> {
                     }
                 }
             }
-            _ => {
-                match request {
-                    Some((method, _)) => {
-                        let body = "{\"ok\":false,\"code\":\"NOT_FOUND\"}";
-                        json_response_for_method(method, "404 Not Found", body)
-                    }
-                    None => {
-                        let body = "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid http request\"}";
-                        http_json_response("400 Bad Request", body)
-                    }
+            _ => match request {
+                Some((method, _)) => {
+                    let body = "{\"ok\":false,\"code\":\"NOT_FOUND\"}";
+                    json_response_for_method(method, "404 Not Found", body)
                 }
-            }
+                None => {
+                    let body = "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid http request\"}";
+                    http_json_response("400 Bad Request", body)
+                }
+            },
         };
 
         let _ = stream.write_all(response.as_bytes());
@@ -4176,7 +4429,8 @@ fn sorted_task_adapter_records<'a>(
                 .as_deref()
                 .map(normalize_tx_hash_lookup)
                 .unwrap_or_default(),
-            normalize_result_hash_replay_identity(record.result_hash.as_deref()).unwrap_or_default(),
+            normalize_result_hash_replay_identity(record.result_hash.as_deref())
+                .unwrap_or_default(),
         ))
     });
     task_recs
@@ -4311,7 +4565,9 @@ fn query_consumption_summary_response(
     let records = st.consumption_records_for_task(task_id);
     let summary = st
         .task_consumption_summary(task_id)
-        .or_else(|| (!records.is_empty()).then(|| derive_task_consumption_summary(task_id, &records)))
+        .or_else(|| {
+            (!records.is_empty()).then(|| derive_task_consumption_summary(task_id, &records))
+        })
         .ok_or_else(|| anyhow!("consumption summary not found for task {}", task_id))?;
     Ok(TaskConsumptionSummaryQueryResponse {
         task_id: summary.task_id,
@@ -4575,11 +4831,36 @@ fn query_normalized_audit_events(
             .then_with(|| left.source.cmp(&right.source))
             .then_with(|| left.event_type.cmp(&right.event_type))
             .then_with(|| left.source.cmp(&right.source))
-            .then_with(|| left.object_id.as_deref().unwrap_or("").cmp(right.object_id.as_deref().unwrap_or("")))
-            .then_with(|| left.actor.as_deref().unwrap_or("").cmp(right.actor.as_deref().unwrap_or("")))
-            .then_with(|| left.checked_at.as_deref().unwrap_or("").cmp(right.checked_at.as_deref().unwrap_or("")))
-            .then_with(|| left.note.as_deref().unwrap_or("").cmp(right.note.as_deref().unwrap_or("")))
-            .then_with(|| left.reason.as_deref().unwrap_or("").cmp(right.reason.as_deref().unwrap_or("")))
+            .then_with(|| {
+                left.object_id
+                    .as_deref()
+                    .unwrap_or("")
+                    .cmp(right.object_id.as_deref().unwrap_or(""))
+            })
+            .then_with(|| {
+                left.actor
+                    .as_deref()
+                    .unwrap_or("")
+                    .cmp(right.actor.as_deref().unwrap_or(""))
+            })
+            .then_with(|| {
+                left.checked_at
+                    .as_deref()
+                    .unwrap_or("")
+                    .cmp(right.checked_at.as_deref().unwrap_or(""))
+            })
+            .then_with(|| {
+                left.note
+                    .as_deref()
+                    .unwrap_or("")
+                    .cmp(right.note.as_deref().unwrap_or(""))
+            })
+            .then_with(|| {
+                left.reason
+                    .as_deref()
+                    .unwrap_or("")
+                    .cmp(right.reason.as_deref().unwrap_or(""))
+            })
     });
 
     let total = events.len();
@@ -4652,6 +4933,10 @@ fn main() -> Result<()> {
                 version: p.version,
                 pending_update,
             };
+            println!("{}", serde_json::to_string_pretty(&out)?);
+        }
+        Command::QuerySettlementGovernance => {
+            let out = settlement_governance_query_response(&st)?;
             println!("{}", serde_json::to_string_pretty(&out)?);
         }
         Command::QueryEvents { task_id, limit } => {
@@ -5413,11 +5698,11 @@ fn main() -> Result<()> {
 mod tests {
     use super::*;
     use std::panic::{catch_unwind, AssertUnwindSafe};
-    use trnm_rpc::TxStatus;
     use std::sync::{
         atomic::{AtomicU64, Ordering},
         Mutex, MutexGuard, OnceLock,
     };
+    use trnm_rpc::TxStatus;
     use trnm_types::CapabilityScope;
 
     fn env_lock() -> &'static Mutex<()> {
@@ -5700,10 +5985,7 @@ mod tests {
             parse_http_request_target("GET /health%01check HTTP/1.1"),
             None
         );
-        assert_eq!(
-            parse_http_request_target("HEAD /readyz%1F HTTP/1.1"),
-            None
-        );
+        assert_eq!(parse_http_request_target("HEAD /readyz%1F HTTP/1.1"), None);
         assert_eq!(
             parse_http_request_target("GET /health%20check HTTP/1.1"),
             None
@@ -5712,10 +5994,7 @@ mod tests {
             parse_http_request_target("GET /health%80check HTTP/1.1"),
             None
         );
-        assert_eq!(
-            parse_http_request_target("HEAD /readyz%9F HTTP/1.1"),
-            None
-        );
+        assert_eq!(parse_http_request_target("HEAD /readyz%9F HTTP/1.1"), None);
     }
 
     #[test]
@@ -5763,8 +6042,9 @@ mod tests {
             "/query-task/42?limit=1",
             "/health?limit=1",
         ] {
-            let err = parse_query_events_limit_from_path(path)
-                .expect_err("non-query-events routes must fail closed instead of inheriting the limit parser");
+            let err = parse_query_events_limit_from_path(path).expect_err(
+                "non-query-events routes must fail closed instead of inheriting the limit parser",
+            );
             assert!(err.contains("400 Bad Request"), "path={path} err={err}");
             assert!(err.contains("invalid limit"), "path={path} err={err}");
         }
@@ -6445,7 +6725,10 @@ mod tests {
             "/-/STATUS",
             "/-/STATUSZ/",
         ] {
-            assert!(is_health_probe_path(alias), "alias should stay accepted: {alias}");
+            assert!(
+                is_health_probe_path(alias),
+                "alias should stay accepted: {alias}"
+            );
         }
 
         for rejected in [
@@ -6549,7 +6832,11 @@ mod tests {
             .as_object()
             .expect("health probe body should serialize as a json object");
 
-        assert_eq!(object.len(), 4, "health body should stay minimal for probes");
+        assert_eq!(
+            object.len(),
+            4,
+            "health body should stay minimal for probes"
+        );
         assert_eq!(object.get("ok"), Some(&serde_json::Value::Bool(true)));
         assert_eq!(
             object.get("service"),
@@ -6691,7 +6978,8 @@ mod tests {
     }
 
     #[test]
-    fn parse_query_capability_audit_subject_from_target_rejects_percent_encoded_controls_and_malformed_escapes() {
+    fn parse_query_capability_audit_subject_from_target_rejects_percent_encoded_controls_and_malformed_escapes(
+    ) {
         for target in [
             "/query-capability-audit/alice%00",
             "/query-capability-audit/alice%0a",
@@ -7097,9 +7385,18 @@ mod tests {
 
     #[test]
     fn normalize_actor_or_signer_collapses_hidden_and_control_separators() {
-        assert_eq!(normalize_actor_or_signer(" author\u{200b}ity "), Some("author ity".into()));
-        assert_eq!(normalize_actor_or_signer("auth\u{00ad}ority"), Some("authority".into()));
-        assert_eq!(normalize_actor_or_signer("system\u{0007}"), Some("system".into()));
+        assert_eq!(
+            normalize_actor_or_signer(" author\u{200b}ity "),
+            Some("author ity".into())
+        );
+        assert_eq!(
+            normalize_actor_or_signer("auth\u{00ad}ority"),
+            Some("authority".into())
+        );
+        assert_eq!(
+            normalize_actor_or_signer("system\u{0007}"),
+            Some("system".into())
+        );
         assert_eq!(
             normalize_actor_or_signer("\u{feff}worker \u{2060} one\n"),
             Some("worker one".into())
@@ -9309,12 +9606,19 @@ mod tests {
         ];
 
         let task = query_task_response(51, &[], &recs).expect("task expected");
-        assert_eq!(task.version, 2, "replayed adapter rows must not inflate read-model version");
+        assert_eq!(
+            task.version, 2,
+            "replayed adapter rows must not inflate read-model version"
+        );
         assert_eq!(task.worker.as_deref(), Some("worker-a"));
         assert_eq!(task.result_hash_hex.as_deref(), Some("0xabcd"));
 
         let events = query_events_response(51, 20, &[], &recs).expect("events expected");
-        assert_eq!(events.len(), 2, "historical replay must not duplicate commit/reveal rows");
+        assert_eq!(
+            events.len(),
+            2,
+            "historical replay must not duplicate commit/reveal rows"
+        );
         assert_eq!(events[0].event_type, "commit");
         assert_eq!(events[1].event_type, "reveal");
     }
@@ -10899,8 +11203,14 @@ line2
             }
         }
 
-        let previous = dir.join(format!("tx-adapter-20260403-{}-a.jsonl", std::process::id()));
-        let latest = dir.join(format!("tx-adapter-20260404-{}-z.jsonl", std::process::id()));
+        let previous = dir.join(format!(
+            "tx-adapter-20260403-{}-a.jsonl",
+            std::process::id()
+        ));
+        let latest = dir.join(format!(
+            "tx-adapter-20260404-{}-z.jsonl",
+            std::process::id()
+        ));
         fs::write(
             &previous,
             "{\"ts\":1772074584,\"mode\":\"mock\",\"kind\":\"commit\",\"task_id\":5252,\"worker\":\"worker1\",\"commit_hash\":\"764c7baf3e1d3d325511cdc3d7836fbc1fa71a289bd669edcc4b55d6baaee9d7\",\"nonce\":101001,\"tx_hash\":\"7336b90d593ebe324cb4b3e41e7e9d86d1e2418f230cca0162ca1d539f32c2b9\",\"status\":\"accepted\",\"rc\":0}\n",
@@ -10909,7 +11219,11 @@ line2
         fs::write(&latest, "\n  \n").expect("write empty latest adapter snapshot");
 
         let records = load_latest_adapter_records();
-        assert_eq!(records.len(), 1, "empty newest snapshot should not erase the last durable read-model snapshot");
+        assert_eq!(
+            records.len(),
+            1,
+            "empty newest snapshot should not erase the last durable read-model snapshot"
+        );
         assert_eq!(records[0].task_id, 5252);
 
         let _ = fs::remove_file(&previous);
@@ -10920,7 +11234,8 @@ line2
     }
 
     #[test]
-    fn load_latest_adapter_records_falls_back_to_previous_nonempty_snapshot_when_latest_contains_only_comment_noise() {
+    fn load_latest_adapter_records_falls_back_to_previous_nonempty_snapshot_when_latest_contains_only_comment_noise(
+    ) {
         let dir = run_root().join("run/worker-agent");
         fs::create_dir_all(&dir).expect("create worker-agent dir");
 
@@ -10943,15 +11258,24 @@ line2
             }
         }
 
-        let previous = dir.join(format!("tx-adapter-20260403-{}-a.jsonl", std::process::id()));
-        let latest = dir.join(format!("tx-adapter-20260404-{}-z.jsonl", std::process::id()));
+        let previous = dir.join(format!(
+            "tx-adapter-20260403-{}-a.jsonl",
+            std::process::id()
+        ));
+        let latest = dir.join(format!(
+            "tx-adapter-20260404-{}-z.jsonl",
+            std::process::id()
+        ));
         fs::write(
             &previous,
             "{\"ts\":1772074584,\"mode\":\"mock\",\"kind\":\"commit\",\"task_id\":6666,\"worker\":\"worker1\",\"commit_hash\":\"764c7baf3e1d3d325511cdc3d7836fbc1fa71a289bd669edcc4b55d6baaee9d7\",\"nonce\":101001,\"tx_hash\":\"7336b90d593ebe324cb4b3e41e7e9d86d1e2418f230cca0162ca1d539f32c2b9\",\"status\":\"accepted\",\"rc\":0}\n",
         )
         .expect("write previous adapter snapshot");
-        fs::write(&latest, "  # archived replay note only\n\t# no durable rows here either\n")
-            .expect("write comment-noise latest adapter snapshot");
+        fs::write(
+            &latest,
+            "  # archived replay note only\n\t# no durable rows here either\n",
+        )
+        .expect("write comment-noise latest adapter snapshot");
 
         let records = load_latest_adapter_records();
         assert_eq!(
@@ -10969,7 +11293,8 @@ line2
     }
 
     #[test]
-    fn load_latest_adapter_records_falls_back_to_previous_nonempty_snapshot_when_latest_is_corrupt() {
+    fn load_latest_adapter_records_falls_back_to_previous_nonempty_snapshot_when_latest_is_corrupt()
+    {
         let dir = run_root().join("run/worker-agent");
         fs::create_dir_all(&dir).expect("create worker-agent dir");
 
@@ -10992,8 +11317,14 @@ line2
             }
         }
 
-        let previous = dir.join(format!("tx-adapter-20260403-{}-a.jsonl", std::process::id()));
-        let latest = dir.join(format!("tx-adapter-20260404-{}-z.jsonl", std::process::id()));
+        let previous = dir.join(format!(
+            "tx-adapter-20260403-{}-a.jsonl",
+            std::process::id()
+        ));
+        let latest = dir.join(format!(
+            "tx-adapter-20260404-{}-z.jsonl",
+            std::process::id()
+        ));
         fs::write(
             &previous,
             "{\"ts\":1772074584,\"mode\":\"mock\",\"kind\":\"commit\",\"task_id\":4242,\"worker\":\"worker1\",\"commit_hash\":\"764c7baf3e1d3d325511cdc3d7836fbc1fa71a289bd669edcc4b55d6baaee9d7\",\"nonce\":101001,\"tx_hash\":\"7336b90d593ebe324cb4b3e41e7e9d86d1e2418f230cca0162ca1d539f32c2b9\",\"status\":\"accepted\",\"rc\":0}\n",
@@ -11040,7 +11371,10 @@ line2
             }
         }
 
-        let latest = dir.join(format!("tx-adapter-20260404-{}-z.jsonl", std::process::id()));
+        let latest = dir.join(format!(
+            "tx-adapter-20260404-{}-z.jsonl",
+            std::process::id()
+        ));
         fs::write(
             &latest,
             "\r\n  \u{feff}{\"ts\":1772074584,\"mode\":\"mock\",\"kind\":\"commit\",\"task_id\":6464,\"worker\":\"worker1\",\"commit_hash\":\"764c7baf3e1d3d325511cdc3d7836fbc1fa71a289bd669edcc4b55d6baaee9d7\",\"nonce\":101001,\"tx_hash\":\"7336b90d593ebe324cb4b3e41e7e9d86d1e2418f230cca0162ca1d539f32c2b9\",\"status\":\"accepted\",\"rc\":0}\r\n\r\n",
@@ -11062,7 +11396,8 @@ line2
     }
 
     #[test]
-    fn load_latest_adapter_records_skips_invalid_utf8_rows_without_dropping_same_snapshot_valid_rows() {
+    fn load_latest_adapter_records_skips_invalid_utf8_rows_without_dropping_same_snapshot_valid_rows(
+    ) {
         let dir = run_root().join("run/worker-agent");
         fs::create_dir_all(&dir).expect("create worker-agent dir");
 
@@ -11085,7 +11420,10 @@ line2
             }
         }
 
-        let latest = dir.join(format!("tx-adapter-20260404-{}-z.jsonl", std::process::id()));
+        let latest = dir.join(format!(
+            "tx-adapter-20260404-{}-z.jsonl",
+            std::process::id()
+        ));
         let mut raw = b"\xff\xfe\xfa not-utf8\n".to_vec();
         raw.extend_from_slice(b"{\"ts\":1772074584,\"mode\":\"mock\",\"kind\":\"commit\",\"task_id\":6565,\"worker\":\"worker1\",\"commit_hash\":\"764c7baf3e1d3d325511cdc3d7836fbc1fa71a289bd669edcc4b55d6baaee9d7\",\"nonce\":101001,\"tx_hash\":\"7336b90d593ebe324cb4b3e41e7e9d86d1e2418f230cca0162ca1d539f32c2b9\",\"status\":\"accepted\",\"rc\":0}\n");
         fs::write(&latest, raw).expect("write invalid utf8 + valid adapter snapshot");
@@ -11105,7 +11443,8 @@ line2
     }
 
     #[test]
-    fn load_latest_adapter_records_falls_back_to_previous_nonempty_snapshot_when_latest_is_invalid_utf8_only() {
+    fn load_latest_adapter_records_falls_back_to_previous_nonempty_snapshot_when_latest_is_invalid_utf8_only(
+    ) {
         let dir = run_root().join("run/worker-agent");
         fs::create_dir_all(&dir).expect("create worker-agent dir");
 
@@ -11128,8 +11467,14 @@ line2
             }
         }
 
-        let previous = dir.join(format!("tx-adapter-20260403-{}-a.jsonl", std::process::id()));
-        let latest = dir.join(format!("tx-adapter-20260404-{}-z.jsonl", std::process::id()));
+        let previous = dir.join(format!(
+            "tx-adapter-20260403-{}-a.jsonl",
+            std::process::id()
+        ));
+        let latest = dir.join(format!(
+            "tx-adapter-20260404-{}-z.jsonl",
+            std::process::id()
+        ));
         fs::write(
             &previous,
             "{\"ts\":1772074584,\"mode\":\"mock\",\"kind\":\"commit\",\"task_id\":6767,\"worker\":\"worker1\",\"commit_hash\":\"764c7baf3e1d3d325511cdc3d7836fbc1fa71a289bd669edcc4b55d6baaee9d7\",\"nonce\":101001,\"tx_hash\":\"7336b90d593ebe324cb4b3e41e7e9d86d1e2418f230cca0162ca1d539f32c2b9\",\"status\":\"accepted\",\"rc\":0}\n",
@@ -11372,7 +11717,8 @@ line2
             resolution_code: None,
         });
 
-        let out = query_consumption_summary_response(42, &st).expect("summary derived from records");
+        let out =
+            query_consumption_summary_response(42, &st).expect("summary derived from records");
         assert_eq!(out.task_id, 42);
         assert_eq!(out.receipt_count, 2);
         assert_eq!(out.accepted_receipt_count, 1);
