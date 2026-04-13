@@ -53,6 +53,8 @@ fn current_summary(st: &StateStore, task_id: u64) -> TaskConsumptionSummary {
 
 const SUMMARY_SETTLEMENT_MARKER_WITHOUT_RECEIPTS: &str =
     "poco summary settlement marker requires at least one receipt";
+const SUMMARY_ACCEPTED_RECEIPTS_WITHOUT_CREDITED_UNITS: &str =
+    "poco summary accepted receipts require positive credited units";
 const SUMMARY_CREDITED_UNITS_WITHOUT_ACCEPTED_RECEIPTS: &str =
     "poco summary credited units require at least one accepted receipt";
 const DUPLICATE_LOGICAL_REPLAY_KEY_REASON: &str = "duplicate logical consumption replay key";
@@ -70,6 +72,8 @@ fn summary_has_inconsistent_terminal_marker(summary: &TaskConsumptionSummary) ->
 fn summary_inconsistency_reason(summary: &TaskConsumptionSummary) -> Option<&'static str> {
     if summary_has_inconsistent_terminal_marker(summary) {
         Some(SUMMARY_SETTLEMENT_MARKER_WITHOUT_RECEIPTS)
+    } else if summary.accepted_receipt_count > 0 && summary.total_credited_consumption_units == 0 {
+        Some(SUMMARY_ACCEPTED_RECEIPTS_WITHOUT_CREDITED_UNITS)
     } else if summary.total_credited_consumption_units > 0 && summary.accepted_receipt_count == 0 {
         Some(SUMMARY_CREDITED_UNITS_WITHOUT_ACCEPTED_RECEIPTS)
     } else {
@@ -1805,6 +1809,53 @@ mod tests {
             .expect_err("summary-only credited PoCO settlement must require a receipt");
         assert!(
             matches!(err, PouwError::State(msg) if msg.contains(SUMMARY_SETTLEMENT_MARKER_WITHOUT_RECEIPTS))
+        );
+    }
+
+    #[test]
+    fn primary_payout_work_units_fail_closed_for_summary_accepted_receipt_without_credit() {
+        let mut st = StateStore::default();
+        let task = sample_task(TaskStatus::Completed);
+        st.set_task_consumption_summary(TaskConsumptionSummary {
+            task_id: task.task_id,
+            receipt_count: 1,
+            accepted_receipt_count: 1,
+            challenged_receipt_count: 0,
+            total_consumed_tokens: 17,
+            total_claimed_consumption_units: 17,
+            total_credited_consumption_units: 0,
+            last_settlement_height: Some(77),
+        });
+
+        assert_eq!(
+            preview_primary_payout_work_units(&st, &task, 50),
+            PrimaryPayoutWorkUnitPreview::PocoInconsistentSummary {
+                reason: SUMMARY_ACCEPTED_RECEIPTS_WITHOUT_CREDITED_UNITS,
+                metering_work_units: 50,
+            }
+        );
+        assert_eq!(primary_payout_work_units(&st, &task, 50), 0);
+    }
+
+    #[test]
+    fn reject_if_primary_settlement_pending_fails_closed_for_summary_accepted_receipt_without_credit(
+    ) {
+        let mut st = StateStore::default();
+        st.set_task_consumption_summary(TaskConsumptionSummary {
+            task_id: 42,
+            receipt_count: 1,
+            accepted_receipt_count: 1,
+            challenged_receipt_count: 0,
+            total_consumed_tokens: 17,
+            total_claimed_consumption_units: 17,
+            total_credited_consumption_units: 0,
+            last_settlement_height: Some(77),
+        });
+
+        let err = reject_if_primary_settlement_pending(&st, 42)
+            .expect_err("summary-only accepted receipts must retain positive credited PoCO units");
+        assert!(
+            matches!(err, PouwError::State(msg) if msg.contains(SUMMARY_ACCEPTED_RECEIPTS_WITHOUT_CREDITED_UNITS))
         );
     }
 
