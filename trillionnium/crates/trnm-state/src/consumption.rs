@@ -86,6 +86,9 @@ impl ConsumptionRecord {
                 policy
                     .per_consumer_max_credited_units
                     .map_or(true, |cap| credited <= cap)
+                    && policy
+                        .per_task_max_credited_units
+                        .map_or(true, |cap| credited <= cap)
             })
     }
 
@@ -574,6 +577,31 @@ mod tests {
     }
 
     #[test]
+    fn settlement_snapshot_rejects_billing_policy_that_undercaps_record_task_credit() {
+        let record = sample_record();
+        let key = record.key.clone();
+        let summary = sample_task_consumption_summary();
+        let mut incompatible_policy = sample_billing_window_policy();
+        incompatible_policy.per_task_max_credited_units = Some(
+            record
+                .credited_consumption_units
+                .expect("sample record credited units")
+                - 1,
+        );
+
+        let snapshot = ConsumptionSettlementStateSnapshot {
+            key: key.clone(),
+            record: Some(record.clone()),
+            consumer_nonce: Some(record.consumer_nonce),
+            billing_window_policy: Some(incompatible_policy),
+            task_summary: Some(summary),
+        };
+
+        assert!(!snapshot.has_record_compatible_billing_window_policy());
+        assert!(!snapshot.is_persistable_snapshot_for(&key));
+    }
+
+    #[test]
     fn settlement_snapshot_rejects_regressed_consumer_nonce() {
         let record = sample_record();
         let key = record.key.clone();
@@ -656,6 +684,50 @@ mod tests {
         let summary = sample_task_consumption_summary();
         let mut incompatible_policy = sample_billing_window_policy();
         incompatible_policy.per_consumer_max_credited_units = Some(
+            record
+                .credited_consumption_units
+                .expect("sample record credited units")
+                - 1,
+        );
+
+        st.put_consumption_record(record.clone());
+        st.set_consumer_consumption_nonce(&key.consumer_id, record.consumer_nonce);
+        st.set_billing_window_policy(incompatible_policy.clone());
+        st.set_task_consumption_summary(summary.clone());
+
+        let snapshot = st.consumption_settlement_state_snapshot(&key);
+        assert_eq!(snapshot.record, Some(record.clone()));
+        assert_eq!(snapshot.billing_window_policy, None);
+        assert!(snapshot.is_persistable_snapshot_for(&key));
+
+        st.restore_consumption_settlement_state(
+            &key,
+            ConsumptionSettlementStateSnapshot {
+                key: key.clone(),
+                record: Some(record.clone()),
+                consumer_nonce: Some(record.consumer_nonce),
+                billing_window_policy: Some(incompatible_policy),
+                task_summary: Some(summary.clone()),
+            },
+        );
+
+        assert_eq!(st.consumption_record(&key), Some(record));
+        assert_eq!(
+            st.consumer_consumption_nonce(&key.consumer_id),
+            Some(sample_record().consumer_nonce)
+        );
+        assert_eq!(st.billing_window_policy(&key.billing_window_id), None);
+        assert_eq!(st.task_consumption_summary(key.task_id), Some(summary));
+    }
+
+    #[test]
+    fn settlement_snapshot_omits_and_restore_discards_policy_that_undercaps_task_credit() {
+        let mut st = StateStore::default();
+        let record = sample_record();
+        let key = record.key.clone();
+        let summary = sample_task_consumption_summary();
+        let mut incompatible_policy = sample_billing_window_policy();
+        incompatible_policy.per_task_max_credited_units = Some(
             record
                 .credited_consumption_units
                 .expect("sample record credited units")
