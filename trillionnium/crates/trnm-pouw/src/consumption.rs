@@ -47,12 +47,32 @@ fn current_summary(st: &StateStore, task_id: u64) -> TaskConsumptionSummary {
         })
 }
 
+fn summary_pending_receipt_count(summary: TaskConsumptionSummary) -> u64 {
+    if summary.receipt_count > 0
+        && summary.accepted_receipt_count == 0
+        && summary.last_settlement_height.is_none()
+    {
+        summary.receipt_count
+    } else {
+        0
+    }
+}
+
 pub(crate) fn reject_if_primary_settlement_pending(
     st: &StateStore,
     task_id: u64,
 ) -> Result<(), PouwError> {
-    let unresolved_receipt_count =
-        unresolved_receipt_count(&st.consumption_records_for_task(task_id));
+    let records = st.consumption_records_for_task(task_id);
+    let unresolved_receipt_count = unresolved_receipt_count(&records) as u64;
+    let unresolved_receipt_count = if unresolved_receipt_count > 0 {
+        unresolved_receipt_count
+    } else if records.is_empty() {
+        st.task_consumption_summary(task_id)
+            .map(summary_pending_receipt_count)
+            .unwrap_or(0)
+    } else {
+        0
+    };
 
     if unresolved_receipt_count > 0 {
         return Err(PouwError::State(format!(
@@ -1191,6 +1211,27 @@ mod tests {
             .expect_err("challenged receipt must keep primary settlement pending");
         assert!(
             matches!(err, PouwError::State(msg) if msg.contains("1 unresolved consumption receipt"))
+        );
+    }
+
+    #[test]
+    fn reject_if_primary_settlement_pending_fails_closed_from_summary_without_records() {
+        let mut st = StateStore::default();
+        st.set_task_consumption_summary(TaskConsumptionSummary {
+            task_id: 42,
+            receipt_count: 2,
+            accepted_receipt_count: 0,
+            challenged_receipt_count: 0,
+            total_consumed_tokens: 34,
+            total_claimed_consumption_units: 34,
+            total_credited_consumption_units: 0,
+            last_settlement_height: None,
+        });
+
+        let err = reject_if_primary_settlement_pending(&st, 42)
+            .expect_err("summary-only pending receipt metadata must fail closed");
+        assert!(
+            matches!(err, PouwError::State(msg) if msg.contains("2 unresolved consumption receipts"))
         );
     }
 
