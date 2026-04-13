@@ -145,12 +145,20 @@ pub(crate) fn primary_payout_work_units(
     metering_work_units: u128,
 ) -> u128 {
     st.task_consumption_summary(task.task_id)
-        .filter(|summary| summary.accepted_receipt_count > 0)
         .map(|summary| {
-            // Migration step: accepted PoCO receipts become the primary payout
-            // authority when present, while legacy metering/proof work units stay
-            // as the evidence ceiling during the additive cutover.
-            metering_work_units.min(summary.total_credited_consumption_units)
+            if summary.accepted_receipt_count > 0 {
+                // Migration step: once PoCO accepts credited consumption, that
+                // settlement becomes the primary payout authority and legacy
+                // metering/proof work units remain only as the evidence ceiling.
+                metering_work_units.min(summary.total_credited_consumption_units)
+            } else if summary.receipt_count > 0 && summary.last_settlement_height.is_some() {
+                // Promotion step: a resolved zero-credit PoCO settlement must
+                // fail closed instead of falling back to legacy metering as the
+                // sole payout authority.
+                0
+            } else {
+                metering_work_units
+            }
         })
         .unwrap_or(metering_work_units)
 }
@@ -861,6 +869,43 @@ mod tests {
 
         assert_eq!(primary_payout_work_units(&st, &task, 50), 9);
         assert_eq!(primary_payout_work_units(&st, &task, 7), 7);
+    }
+
+    #[test]
+    fn primary_payout_work_units_zeroes_metering_after_resolved_zero_credit_settlement() {
+        let mut st = StateStore::default();
+        let task = sample_task(TaskStatus::Completed);
+        st.set_task_consumption_summary(TaskConsumptionSummary {
+            task_id: task.task_id,
+            receipt_count: 1,
+            accepted_receipt_count: 0,
+            challenged_receipt_count: 1,
+            total_consumed_tokens: 17,
+            total_claimed_consumption_units: 17,
+            total_credited_consumption_units: 0,
+            last_settlement_height: Some(77),
+        });
+
+        assert_eq!(primary_payout_work_units(&st, &task, 50), 0);
+        assert_eq!(primary_payout_work_units(&st, &task, 7), 0);
+    }
+
+    #[test]
+    fn primary_payout_work_units_waits_for_resolve_before_zeroing_metering() {
+        let mut st = StateStore::default();
+        let task = sample_task(TaskStatus::Completed);
+        st.set_task_consumption_summary(TaskConsumptionSummary {
+            task_id: task.task_id,
+            receipt_count: 1,
+            accepted_receipt_count: 0,
+            challenged_receipt_count: 0,
+            total_consumed_tokens: 17,
+            total_claimed_consumption_units: 17,
+            total_credited_consumption_units: 0,
+            last_settlement_height: None,
+        });
+
+        assert_eq!(primary_payout_work_units(&st, &task, 50), 50);
     }
 
     #[test]
