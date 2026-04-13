@@ -1164,12 +1164,20 @@ enum SettlementGovernanceMode {
     ShadowCompareOnly,
 }
 
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+enum SettlementWriteGateStatus {
+    Open,
+    EmergencyPaused,
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
 struct SettlementGovernanceQueryResponse {
     live_configuration_status: SettlementGovernanceConfigurationStatus,
     mode: SettlementGovernanceMode,
     underlying_mode: SettlementGovernanceMode,
+    settlement_write_gate_status: SettlementWriteGateStatus,
     shadow_compare_only: bool,
     poco_weight_bps: u64,
     pouw_weight_bps: u64,
@@ -1314,6 +1322,11 @@ fn settlement_governance_query_response(
 ) -> Result<SettlementGovernanceQueryResponse> {
     let shadow_compare_only_raw = st.gov_param_string(SHADOW_SETTLEMENT_COMPARE_ONLY_KEY);
     let poco_weight_bps_raw = st.gov_param_string(HYBRID_SETTLEMENT_POCO_WEIGHT_BPS_KEY);
+    let settlement_write_gate_status = if st.is_emergency_paused() {
+        SettlementWriteGateStatus::EmergencyPaused
+    } else {
+        SettlementWriteGateStatus::Open
+    };
     let live = resolve_settlement_governance_config(
         shadow_compare_only_raw.as_deref(),
         poco_weight_bps_raw.as_deref(),
@@ -1352,6 +1365,7 @@ fn settlement_governance_query_response(
         live_configuration_status: live.configuration_status,
         mode: live.mode,
         underlying_mode: live.underlying_mode,
+        settlement_write_gate_status,
         shadow_compare_only: live.shadow_compare_only,
         poco_weight_bps: live.poco_weight_bps,
         pouw_weight_bps: live.pouw_weight_bps,
@@ -1408,6 +1422,10 @@ mod settlement_governance_query_tests {
         );
         assert_eq!(out.mode, SettlementGovernanceMode::PouwPrimary);
         assert_eq!(out.underlying_mode, SettlementGovernanceMode::PouwPrimary);
+        assert_eq!(
+            out.settlement_write_gate_status,
+            SettlementWriteGateStatus::Open
+        );
         assert!(!out.shadow_compare_only);
         assert_eq!(out.poco_weight_bps, 0);
         assert_eq!(out.pouw_weight_bps, 10_000);
@@ -1734,6 +1752,10 @@ mod settlement_governance_query_tests {
         );
         assert_eq!(out.mode, SettlementGovernanceMode::ShadowCompareOnly);
         assert_eq!(out.underlying_mode, SettlementGovernanceMode::Hybrid);
+        assert_eq!(
+            out.settlement_write_gate_status,
+            SettlementWriteGateStatus::Open
+        );
         assert!(out.shadow_compare_only);
         assert_eq!(out.poco_weight_bps, 2_500);
         assert_eq!(out.pouw_weight_bps, 7_500);
@@ -1747,6 +1769,57 @@ mod settlement_governance_query_tests {
         assert!(out.staged_effective_poco_weight_bps.is_none());
         assert!(out.staged_effective_pouw_weight_bps.is_none());
         assert!(out.staged_shadow_masks_nonzero_poco_weight.is_none());
+    }
+
+    #[test]
+    fn settlement_governance_query_reports_emergency_pause_write_gate_over_live_hybrid_config() {
+        let mut st = StateStore::new();
+        st.restore_gov_param(
+            7_351,
+            Some(GovParamObject {
+                key_id: 7_351,
+                key: HYBRID_SETTLEMENT_POCO_WEIGHT_BPS_KEY.into(),
+                value: "2500".into(),
+                version: 1,
+            }),
+        );
+        st.restore_gov_param(
+            7_352,
+            Some(GovParamObject {
+                key_id: 7_352,
+                key: SHADOW_SETTLEMENT_COMPARE_ONLY_KEY.into(),
+                value: "false".into(),
+                version: 1,
+            }),
+        );
+        st.set_gov_param(
+            42,
+            EMERGENCY_PAUSE_KEY_ID,
+            "emergency_pause".into(),
+            "true".into(),
+        )
+        .expect("emergency pause should apply immediately");
+
+        let out = settlement_governance_query_response(&st)
+            .expect("paused settlement query should still succeed");
+
+        assert_eq!(
+            out.live_configuration_status,
+            SettlementGovernanceConfigurationStatus::Configured
+        );
+        assert_eq!(out.mode, SettlementGovernanceMode::Hybrid);
+        assert_eq!(out.underlying_mode, SettlementGovernanceMode::Hybrid);
+        assert_eq!(
+            out.settlement_write_gate_status,
+            SettlementWriteGateStatus::EmergencyPaused
+        );
+        assert!(!out.shadow_compare_only);
+        assert_eq!(out.poco_weight_bps, 2_500);
+        assert_eq!(out.pouw_weight_bps, 7_500);
+        assert_eq!(out.effective_poco_weight_bps, 2_500);
+        assert_eq!(out.effective_pouw_weight_bps, 7_500);
+        assert!(!out.shadow_masks_nonzero_poco_weight);
+        assert!(!out.has_pending_updates);
     }
 }
 
