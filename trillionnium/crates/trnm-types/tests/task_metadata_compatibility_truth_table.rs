@@ -134,6 +134,21 @@ fn metadata_compatibility_truth_table_preserves_typed_governance_upgrade_decisio
         (
             TaskMetadataCompatibility {
                 legacy_note_only: false,
+                canonical_core_fields: false,
+                complete_metering_snapshot: false,
+                complete_settlement_snapshot: false,
+            },
+            true,
+            Some(TaskMetadataCompatibilityFinding::NonCanonicalCoreFields),
+            vec![
+                TaskMetadataCompatibilityFinding::NonCanonicalCoreFields,
+                TaskMetadataCompatibilityFinding::IncompleteMeteringSnapshot,
+                TaskMetadataCompatibilityFinding::IncompleteSettlementSnapshot,
+            ],
+        ),
+        (
+            TaskMetadataCompatibility {
+                legacy_note_only: false,
                 canonical_core_fields: true,
                 complete_metering_snapshot: false,
                 complete_settlement_snapshot: false,
@@ -142,6 +157,21 @@ fn metadata_compatibility_truth_table_preserves_typed_governance_upgrade_decisio
             Some(TaskMetadataCompatibilityFinding::IncompleteMeteringSnapshot),
             vec![
                 TaskMetadataCompatibilityFinding::IncompleteMeteringSnapshot,
+                TaskMetadataCompatibilityFinding::IncompleteSettlementSnapshot,
+            ],
+        ),
+        (
+            TaskMetadataCompatibility {
+                legacy_note_only: true,
+                canonical_core_fields: false,
+                complete_metering_snapshot: true,
+                complete_settlement_snapshot: false,
+            },
+            true,
+            Some(TaskMetadataCompatibilityFinding::LegacyNoteOnlyPayload),
+            vec![
+                TaskMetadataCompatibilityFinding::LegacyNoteOnlyPayload,
+                TaskMetadataCompatibilityFinding::NonCanonicalCoreFields,
                 TaskMetadataCompatibilityFinding::IncompleteSettlementSnapshot,
             ],
         ),
@@ -163,6 +193,21 @@ fn metadata_compatibility_truth_table_preserves_typed_governance_upgrade_decisio
         (
             TaskMetadataCompatibility {
                 legacy_note_only: true,
+                canonical_core_fields: true,
+                complete_metering_snapshot: false,
+                complete_settlement_snapshot: false,
+            },
+            true,
+            Some(TaskMetadataCompatibilityFinding::LegacyNoteOnlyPayload),
+            vec![
+                TaskMetadataCompatibilityFinding::LegacyNoteOnlyPayload,
+                TaskMetadataCompatibilityFinding::IncompleteMeteringSnapshot,
+                TaskMetadataCompatibilityFinding::IncompleteSettlementSnapshot,
+            ],
+        ),
+        (
+            TaskMetadataCompatibility {
+                legacy_note_only: true,
                 canonical_core_fields: false,
                 complete_metering_snapshot: false,
                 complete_settlement_snapshot: false,
@@ -177,6 +222,12 @@ fn metadata_compatibility_truth_table_preserves_typed_governance_upgrade_decisio
             ],
         ),
     ];
+
+    assert_eq!(
+        cases.len(),
+        16,
+        "truth table should enumerate all 16 compatibility combinations"
+    );
 
     for (compatibility, requires_upgrade, primary_finding, findings) in cases {
         assert_eq!(
