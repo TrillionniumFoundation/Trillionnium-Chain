@@ -1544,6 +1544,114 @@ mod settlement_governance_query_tests {
     }
 
     #[test]
+    fn settlement_governance_query_distinguishes_explicit_pouw_rollback_from_default_absence() {
+        let mut st = StateStore::new();
+        st.restore_gov_param(
+            7_351,
+            Some(GovParamObject {
+                key_id: 7_351,
+                key: HYBRID_SETTLEMENT_POCO_WEIGHT_BPS_KEY.into(),
+                value: "0".into(),
+                version: 1,
+            }),
+        );
+        st.restore_gov_param(
+            7_352,
+            Some(GovParamObject {
+                key_id: 7_352,
+                key: SHADOW_SETTLEMENT_COMPARE_ONLY_KEY.into(),
+                value: "false".into(),
+                version: 1,
+            }),
+        );
+
+        let out = settlement_governance_query_response(&st)
+            .expect("configured rollback settlement query should succeed");
+
+        assert_eq!(
+            out.live_configuration_status,
+            SettlementGovernanceConfigurationStatus::Configured
+        );
+        assert_eq!(out.mode, SettlementGovernanceMode::PouwPrimary);
+        assert!(!out.shadow_compare_only);
+        assert_eq!(out.poco_weight_bps, 0);
+        assert_eq!(out.pouw_weight_bps, 10_000);
+        assert_eq!(out.effective_poco_weight_bps, 0);
+        assert_eq!(out.effective_pouw_weight_bps, 10_000);
+        assert!(!out.shadow_masks_nonzero_poco_weight);
+        assert!(!out.has_pending_updates);
+        assert!(out.staged_configuration_status.is_none());
+        assert!(out.staged_mode.is_none());
+        assert!(out.staged_effective_poco_weight_bps.is_none());
+        assert!(out.staged_effective_pouw_weight_bps.is_none());
+        assert!(out.staged_shadow_masks_nonzero_poco_weight.is_none());
+    }
+
+    #[test]
+    fn settlement_governance_query_projects_pending_hybrid_weight_step_within_governance_window() {
+        let mut st = StateStore::new();
+        st.restore_gov_param(
+            7_351,
+            Some(GovParamObject {
+                key_id: 7_351,
+                key: HYBRID_SETTLEMENT_POCO_WEIGHT_BPS_KEY.into(),
+                value: "2500".into(),
+                version: 1,
+            }),
+        );
+        st.restore_gov_param(
+            7_352,
+            Some(GovParamObject {
+                key_id: 7_352,
+                key: SHADOW_SETTLEMENT_COMPARE_ONLY_KEY.into(),
+                value: "false".into(),
+                version: 1,
+            }),
+        );
+        st.set_gov_param(
+            42,
+            7_351,
+            HYBRID_SETTLEMENT_POCO_WEIGHT_BPS_KEY.into(),
+            "2000".into(),
+        )
+        .expect("hybrid settlement weight step-down should stage through governance");
+
+        let out = settlement_governance_query_response(&st)
+            .expect("staged settlement step-down query should succeed");
+
+        assert_eq!(
+            out.live_configuration_status,
+            SettlementGovernanceConfigurationStatus::Configured
+        );
+        assert_eq!(out.mode, SettlementGovernanceMode::Hybrid);
+        assert!(!out.shadow_compare_only);
+        assert_eq!(out.poco_weight_bps, 2_500);
+        assert_eq!(out.pouw_weight_bps, 7_500);
+        assert_eq!(out.effective_poco_weight_bps, 2_500);
+        assert_eq!(out.effective_pouw_weight_bps, 7_500);
+        assert!(!out.shadow_masks_nonzero_poco_weight);
+        assert!(out.has_pending_updates);
+        assert_eq!(
+            out.staged_configuration_status,
+            Some(SettlementGovernanceConfigurationStatus::Configured)
+        );
+        assert_eq!(out.staged_mode, Some(SettlementGovernanceMode::Hybrid));
+        assert_eq!(out.staged_effective_poco_weight_bps, Some(2_000));
+        assert_eq!(out.staged_effective_pouw_weight_bps, Some(8_000));
+        assert_eq!(out.staged_shadow_masks_nonzero_poco_weight, Some(false));
+        assert!(out.pending_shadow_compare_only.is_none());
+        assert_eq!(
+            out.pending_poco_weight_bps,
+            Some(PendingGovParamUpdateQueryResponse {
+                key_id: 7_351,
+                key: HYBRID_SETTLEMENT_POCO_WEIGHT_BPS_KEY.into(),
+                value: "2000".into(),
+                activate_at_height: 62,
+            })
+        );
+    }
+
+    #[test]
     fn settlement_governance_query_shadow_mode_masks_configured_hybrid_weights_in_effective_weights(
     ) {
         let mut st = StateStore::new();
