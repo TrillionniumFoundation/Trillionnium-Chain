@@ -240,7 +240,11 @@ pub struct TaskMetadata {
     pub provenance: Option<TaskProvenanceMetadata>,
     #[serde(default)]
     pub metering: Option<TaskMeteringSnapshot>,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(
+        default,
+        alias = "settlement_snapshot",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub settlement: Option<TaskSettlementSnapshot>,
 }
 
