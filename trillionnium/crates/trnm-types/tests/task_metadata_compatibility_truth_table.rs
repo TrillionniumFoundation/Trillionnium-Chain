@@ -286,7 +286,10 @@ fn settlement_threading_promotes_legacy_fallback_without_breaking_note_only_comp
 
     let mut threaded_metadata = legacy_metadata.clone();
     assert!(threaded_metadata.thread_settlement_snapshot(Some(&fallback_settlement)));
-    assert_eq!(threaded_metadata.settlement.as_ref(), Some(&fallback_settlement));
+    assert_eq!(
+        threaded_metadata.settlement.as_ref(),
+        Some(&fallback_settlement)
+    );
     assert_eq!(
         threaded_metadata.settlement_snapshot_source(None),
         TaskSettlementSnapshotSource::ThreadedMetadata
@@ -306,7 +309,8 @@ fn settlement_threading_promotes_legacy_fallback_without_breaking_note_only_comp
 }
 
 #[test]
-fn settlement_threading_keeps_legacy_note_only_fallback_distinct_from_threaded_incomplete_snapshot() {
+fn settlement_threading_keeps_legacy_note_only_fallback_distinct_from_threaded_incomplete_snapshot()
+{
     let incomplete_fallback_settlement = TaskSettlementSnapshot {
         settlement_schema: "poco_v1".into(),
         tokenizer_id: "llama3-tokenizer".into(),
@@ -403,6 +407,60 @@ fn settlement_threading_serialization_keeps_legacy_note_only_shape_compact() {
                 "output_root": format!("0x{}", "e".repeat(64)),
                 "output_span_commitment": null,
             }
+        })
+    );
+}
+
+#[test]
+fn settlement_threading_report_serialization_preserves_fallback_vs_threaded_source() {
+    let fallback_settlement = TaskSettlementSnapshot {
+        settlement_schema: "poco_v1".into(),
+        tokenizer_id: "llama3-tokenizer".into(),
+        tokenizer_version: "1.0.0".into(),
+        output_hash: format!("0x{}", "f".repeat(64)),
+        output_token_count: 512,
+        output_root: Some(format!("0x{}", "1".repeat(64))),
+        output_span_commitment: None,
+    };
+    let legacy_metadata = TaskMetadata {
+        note: Some("legacy".into()),
+        ..TaskMetadata::default()
+    };
+
+    let legacy_report =
+        legacy_metadata.compatibility_report_with_settlement_snapshot(Some(&fallback_settlement));
+    assert_eq!(
+        serde_json::to_value(&legacy_report)
+            .expect("serialize legacy fallback compatibility report"),
+        serde_json::json!({
+            "compatibility": {
+                "legacy_note_only": true,
+                "canonical_core_fields": true,
+                "complete_metering_snapshot": true,
+                "complete_settlement_snapshot": true,
+            },
+            "requires_governance_upgrade": true,
+            "settlement_snapshot_source": "legacy_fallback",
+            "findings": ["legacy_note_only_payload"],
+        })
+    );
+
+    let mut threaded_metadata = legacy_metadata.clone();
+    assert!(threaded_metadata.thread_settlement_snapshot(Some(&fallback_settlement)));
+
+    let threaded_report = threaded_metadata.compatibility_report();
+    assert_eq!(
+        serde_json::to_value(&threaded_report).expect("serialize threaded compatibility report"),
+        serde_json::json!({
+            "compatibility": {
+                "legacy_note_only": false,
+                "canonical_core_fields": true,
+                "complete_metering_snapshot": true,
+                "complete_settlement_snapshot": true,
+            },
+            "requires_governance_upgrade": false,
+            "settlement_snapshot_source": "threaded_metadata",
+            "findings": [],
         })
     );
 }
