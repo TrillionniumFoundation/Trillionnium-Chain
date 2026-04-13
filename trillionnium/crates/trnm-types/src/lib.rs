@@ -859,6 +859,82 @@ mod tests {
     }
 
     #[test]
+    fn task_metadata_settlement_alias_deserializes_into_threaded_settlement() {
+        let metadata: TaskMetadata = serde_json::from_value(serde_json::json!({
+            "note": "interop",
+            "task_type": "inference",
+            "input_hash": format!("0x{}", "a".repeat(64)),
+            "settlement_snapshot": {
+                "settlement_schema": "poco_v1",
+                "tokenizer_id": "llama3-tokenizer",
+                "tokenizer_version": "1.0.0",
+                "output_hash": format!("0x{}", "b".repeat(64)),
+                "output_token_count": 512,
+                "output_root": format!("0x{}", "c".repeat(64))
+            }
+        }))
+        .expect("legacy settlement alias should deserialize");
+
+        let settlement = metadata
+            .settlement
+            .as_ref()
+            .expect("alias should populate threaded settlement field");
+        assert_eq!(settlement.output_hash, format!("0x{}", "b".repeat(64)));
+        assert_eq!(
+            settlement.output_root.as_deref(),
+            Some(format!("0x{}", "c".repeat(64)).as_str())
+        );
+        assert_eq!(
+            metadata.settlement_snapshot_source(None),
+            TaskSettlementSnapshotSource::ThreadedMetadata
+        );
+        assert!(
+            metadata
+                .compatibility_profile()
+                .complete_settlement_snapshot
+        );
+    }
+
+    #[test]
+    fn task_metadata_settlement_alias_yields_to_canonical_settlement_when_both_are_present() {
+        let metadata: TaskMetadata = serde_json::from_value(serde_json::json!({
+            "note": "interop",
+            "task_type": "inference",
+            "input_hash": format!("0x{}", "d".repeat(64)),
+            "settlement": {
+                "settlement_schema": "poco_v1",
+                "tokenizer_id": "llama3-tokenizer",
+                "tokenizer_version": "1.0.0",
+                "output_hash": format!("0x{}", "e".repeat(64)),
+                "output_token_count": 512,
+                "output_root": null,
+                "output_span_commitment": null
+            },
+            "settlement_snapshot": {
+                "settlement_schema": "poco_v1",
+                "tokenizer_id": "llama3-tokenizer",
+                "tokenizer_version": "1.0.0",
+                "output_hash": format!("0x{}", "f".repeat(64)),
+                "output_token_count": 512,
+                "output_root": format!("0x{}", "1".repeat(64))
+            }
+        }))
+        .expect("mixed canonical and alias settlement payload should deserialize");
+
+        let settlement = metadata
+            .settlement
+            .as_ref()
+            .expect("canonical settlement should remain threaded");
+        assert_eq!(settlement.output_hash, format!("0x{}", "e".repeat(64)));
+        assert!(settlement.output_root.is_none());
+        assert!(settlement.output_span_commitment.is_none());
+        assert_eq!(
+            metadata.compatibility_findings(),
+            vec![TaskMetadataCompatibilityFinding::IncompleteSettlementSnapshot]
+        );
+    }
+
+    #[test]
     fn task_metadata_compatibility_report_stays_consistent_with_helper_accessors() {
         let metadata = TaskMetadata {
             note: Some(" legacy ".into()),
