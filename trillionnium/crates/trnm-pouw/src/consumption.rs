@@ -199,11 +199,14 @@ fn finalize_primary_payout_work_units(preview: PrimaryPayoutWorkUnitPreview) -> 
     match preview {
         PrimaryPayoutWorkUnitPreview::MeteringEvidence {
             metering_work_units,
-        }
-        | PrimaryPayoutWorkUnitPreview::PocoPendingSettlement {
-            metering_work_units,
-            ..
         } => metering_work_units,
+        PrimaryPayoutWorkUnitPreview::PocoPendingSettlement { .. } => {
+            // Promotion step: once PoCO settlement has started, fail closed
+            // until the receipt path reaches an explicit settlement outcome.
+            // Legacy metering/proof data remains evidence for the eventual cap,
+            // not the sole payout authority while settlement is pending.
+            0
+        }
         PrimaryPayoutWorkUnitPreview::PocoResolvedCredits {
             payout_work_units, ..
         } => payout_work_units,
@@ -951,7 +954,7 @@ mod tests {
     }
 
     #[test]
-    fn primary_payout_work_units_waits_for_resolve_before_zeroing_metering() {
+    fn primary_payout_work_units_fail_closed_while_poco_settlement_is_pending() {
         let mut st = StateStore::default();
         let task = sample_task(TaskStatus::Completed);
         st.set_task_consumption_summary(TaskConsumptionSummary {
@@ -965,7 +968,7 @@ mod tests {
             last_settlement_height: None,
         });
 
-        assert_eq!(primary_payout_work_units(&st, &task, 50), 50);
+        assert_eq!(primary_payout_work_units(&st, &task, 50), 0);
     }
 
     #[test]
