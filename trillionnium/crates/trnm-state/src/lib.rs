@@ -3733,12 +3733,25 @@ impl StateStore {
         }
     }
 
+    fn billing_window_policy_is_compatible_with_persisted_records(
+        &self,
+        policy: &BillingWindowPolicy,
+    ) -> bool {
+        self.consumption_records.iter().all(|(key, record)| {
+            key.billing_window_id != policy.billing_window_id
+                || !record.is_persistable_snapshot_for(key)
+                || record.is_compatible_with_billing_window_policy(policy)
+        })
+    }
+
     pub fn set_billing_window_policy(
         &mut self,
         policy: BillingWindowPolicy,
     ) -> Option<BillingWindowPolicy> {
         let billing_window_id = policy.billing_window_id.clone();
-        if !policy.is_persistable_snapshot_for(&billing_window_id) {
+        if !policy.is_persistable_snapshot_for(&billing_window_id)
+            || !self.billing_window_policy_is_compatible_with_persisted_records(&policy)
+        {
             return self.clear_billing_window_policy(&billing_window_id);
         }
 

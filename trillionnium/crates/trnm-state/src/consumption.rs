@@ -407,6 +407,37 @@ mod tests {
     }
 
     #[test]
+    fn set_billing_window_policy_clears_policy_incompatible_with_persisted_record() {
+        let mut st = StateStore::default();
+        let record = sample_record();
+        let key = record.key.clone();
+        st.put_consumption_record(record.clone());
+
+        let mut incompatible = sample_billing_window_policy();
+        incompatible.close_at_unix_ms = record.accepted_at_unix_ms;
+
+        assert_eq!(st.set_billing_window_policy(incompatible), None);
+        assert_eq!(st.billing_window_policy(&key.billing_window_id), None);
+    }
+
+    #[test]
+    fn restore_billing_window_policy_clears_policy_incompatible_with_persisted_record() {
+        let mut st = StateStore::default();
+        let record = sample_record();
+        let key = record.key.clone();
+        let policy = sample_billing_window_policy();
+        st.put_consumption_record(record.clone());
+        st.set_billing_window_policy(policy.clone());
+
+        let mut incompatible = policy.clone();
+        incompatible.close_at_unix_ms = record.accepted_at_unix_ms;
+
+        st.restore_billing_window_policy(&key.billing_window_id, Some(incompatible));
+
+        assert_eq!(st.billing_window_policy(&key.billing_window_id), None);
+    }
+
+    #[test]
     fn billing_window_policy_receipt_compatibility_uses_half_open_window() {
         let policy = sample_billing_window_policy();
 
