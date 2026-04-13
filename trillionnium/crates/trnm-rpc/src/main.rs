@@ -4421,6 +4421,79 @@ fn authoritative_task_consumption_summary_response(
     )
 }
 
+fn extract_task_id_from_message(message: &str, prefix: &str, suffix: &str) -> Option<u64> {
+    message
+        .strip_prefix(prefix)
+        .and_then(|task_id| task_id.strip_suffix(suffix))
+        .and_then(|task_id| task_id.parse::<u64>().ok())
+}
+
+fn settlement_summary_query_hint_fields(
+    message: &str,
+) -> serde_json::Map<String, serde_json::Value> {
+    let mut fields = serde_json::Map::new();
+
+    if let Some(task_id) = extract_task_id_from_message(
+        message,
+        "consumption summary required for task ",
+        " because authoritative settlement receipts exist",
+    ) {
+        fields.insert(
+            "settlement_reason".into(),
+            serde_json::json!("AUTHORITATIVE_SETTLEMENT_SUMMARY_REQUIRED"),
+        );
+        fields.insert(
+            "query_consumption_receipts".into(),
+            serde_json::json!(format!("/query-consumption-receipts/{task_id}")),
+        );
+    }
+
+    fields
+}
+
+fn settlement_aware_task_query_hint_fields(
+    message: &str,
+) -> serde_json::Map<String, serde_json::Value> {
+    let mut fields = serde_json::Map::new();
+
+    if let Some(task_id) = extract_task_id_from_message(
+        message,
+        "task query adapter fallback disabled for task ",
+        " because authoritative settlement summary exists",
+    ) {
+        fields.insert(
+            "settlement_reason".into(),
+            serde_json::json!("AUTHORITATIVE_SETTLEMENT_SUMMARY_EXISTS"),
+        );
+        fields.insert(
+            "query_settlement_preview".into(),
+            serde_json::json!(format!("/query-settlement-preview/{task_id}")),
+        );
+        fields.insert(
+            "query_consumption_summary".into(),
+            serde_json::json!(format!("/query-consumption-summary/{task_id}")),
+        );
+        return fields;
+    }
+
+    if let Some(task_id) = extract_task_id_from_message(
+        message,
+        "task query adapter fallback disabled for task ",
+        " because authoritative settlement receipts exist without a summary",
+    ) {
+        fields.insert(
+            "settlement_reason".into(),
+            serde_json::json!("AUTHORITATIVE_SETTLEMENT_SUMMARY_REQUIRED"),
+        );
+        fields.insert(
+            "query_consumption_receipts".into(),
+            serde_json::json!(format!("/query-consumption-receipts/{task_id}")),
+        );
+    }
+
+    fields
+}
+
 fn settlement_summary_query_error_response(method: &str, err: &anyhow::Error) -> String {
     let message = err.to_string();
     let (status, code) = if message.starts_with("consumption summary not found for task ") {
@@ -4436,7 +4509,12 @@ fn settlement_summary_query_error_response(method: &str, err: &anyhow::Error) ->
     } else {
         ("500 Internal Server Error", "INTERNAL_ERROR")
     };
-    let body = serde_json::json!({"ok": false, "code": code, "message": message}).to_string();
+    let mut body = serde_json::Map::new();
+    body.insert("ok".into(), serde_json::json!(false));
+    body.insert("code".into(), serde_json::json!(code));
+    body.insert("message".into(), serde_json::json!(message.clone()));
+    body.extend(settlement_summary_query_hint_fields(&message));
+    let body = serde_json::Value::Object(body).to_string();
     json_response_for_method(method, status, &body)
 }
 
@@ -4456,7 +4534,12 @@ fn task_query_error_response(method: &str, err: &anyhow::Error) -> String {
     } else {
         ("500 Internal Server Error", "INTERNAL_ERROR")
     };
-    let body = serde_json::json!({"ok": false, "code": code, "message": message}).to_string();
+    let mut body = serde_json::Map::new();
+    body.insert("ok".into(), serde_json::json!(false));
+    body.insert("code".into(), serde_json::json!(code));
+    body.insert("message".into(), serde_json::json!(message.clone()));
+    body.extend(settlement_aware_task_query_hint_fields(&message));
+    let body = serde_json::Value::Object(body).to_string();
     json_response_for_method(method, status, &body)
 }
 
@@ -12326,6 +12409,11 @@ line2
         assert!(response.starts_with("HTTP/1.1 409 Conflict\r\n"));
         assert!(response.contains("\"code\":\"SETTLEMENT_SUMMARY_REQUIRED\""));
         assert!(response.contains("authoritative settlement receipts exist"));
+        assert!(response
+            .contains("\"settlement_reason\":\"AUTHORITATIVE_SETTLEMENT_SUMMARY_REQUIRED\""));
+        assert!(
+            response.contains("\"query_consumption_receipts\":\"/query-consumption-receipts/42\"")
+        );
     }
 
     #[test]
@@ -12356,6 +12444,28 @@ line2
         assert!(response.starts_with("HTTP/1.1 409 Conflict\r\n"));
         assert!(response.contains("\"code\":\"SETTLEMENT_AWARE_TASK_QUERY_REQUIRED\""));
         assert!(response.contains("authoritative settlement summary exists"));
+        assert!(
+            response.contains("\"settlement_reason\":\"AUTHORITATIVE_SETTLEMENT_SUMMARY_EXISTS\"")
+        );
+        assert!(response.contains("\"query_settlement_preview\":\"/query-settlement-preview/42\""));
+        assert!(
+            response.contains("\"query_consumption_summary\":\"/query-consumption-summary/42\"")
+        );
+    }
+
+    #[test]
+    fn task_query_error_response_maps_receipt_backed_gate_to_receipt_route_hint() {
+        let err = anyhow!(
+            "task query adapter fallback disabled for task 42 because authoritative settlement receipts exist without a summary"
+        );
+        let response = task_query_error_response("GET", &err);
+        assert!(response.starts_with("HTTP/1.1 409 Conflict\r\n"));
+        assert!(response.contains("\"code\":\"SETTLEMENT_AWARE_TASK_QUERY_REQUIRED\""));
+        assert!(response
+            .contains("\"settlement_reason\":\"AUTHORITATIVE_SETTLEMENT_SUMMARY_REQUIRED\""));
+        assert!(
+            response.contains("\"query_consumption_receipts\":\"/query-consumption-receipts/42\"")
+        );
     }
 
     #[test]
