@@ -464,3 +464,55 @@ fn task_metadata_compatibility_truth_table_settlement_threading_report_serializa
         })
     );
 }
+
+#[test]
+fn task_metadata_compatibility_truth_table_settlement_threading_prefers_incomplete_inline_settlement_over_complete_legacy_fallback() {
+    let inline_settlement = TaskSettlementSnapshot {
+        settlement_schema: "poco_v1".into(),
+        tokenizer_id: "llama3-tokenizer".into(),
+        tokenizer_version: "1.0.0".into(),
+        output_hash: format!("0x{}", "2".repeat(64)),
+        output_token_count: 512,
+        output_root: None,
+        output_span_commitment: None,
+    };
+    let fallback_settlement = TaskSettlementSnapshot {
+        settlement_schema: "poco_v1".into(),
+        tokenizer_id: "llama3-tokenizer".into(),
+        tokenizer_version: "1.0.0".into(),
+        output_hash: format!("0x{}", "3".repeat(64)),
+        output_token_count: 512,
+        output_root: Some(format!("0x{}", "4".repeat(64))),
+        output_span_commitment: None,
+    };
+    let metadata = TaskMetadata {
+        note: Some("threaded".into()),
+        settlement: Some(inline_settlement.clone()),
+        ..TaskMetadata::default()
+    };
+
+    assert_eq!(
+        metadata
+            .effective_settlement_snapshot(Some(&fallback_settlement))
+            .expect("inline settlement should remain authoritative once threaded")
+            .output_hash,
+        inline_settlement.output_hash
+    );
+
+    let report = metadata.compatibility_report_with_settlement_snapshot(Some(&fallback_settlement));
+    assert_eq!(
+        report.settlement_snapshot_source,
+        TaskSettlementSnapshotSource::ThreadedMetadata
+    );
+    assert!(!report.compatibility.legacy_note_only);
+    assert!(!report.compatibility.complete_settlement_snapshot);
+    assert!(report.requires_governance_upgrade);
+    assert_eq!(
+        report.findings,
+        vec![TaskMetadataCompatibilityFinding::IncompleteSettlementSnapshot]
+    );
+    assert_eq!(
+        report.primary_finding(),
+        Some(TaskMetadataCompatibilityFinding::IncompleteSettlementSnapshot)
+    );
+}
