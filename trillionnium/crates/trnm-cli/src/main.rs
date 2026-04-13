@@ -193,6 +193,7 @@ enum QueryCommand {
     #[command(visible_alias = "settlement-preview")]
     ConsumptionSummary { task_id: u64 },
     /// Query task PoCO consumption receipts via RPC
+    #[command(visible_alias = "settlement-receipts")]
     ConsumptionReceipts {
         task_id: u64,
         #[arg(long, default_value_t = 20)]
@@ -3757,6 +3758,29 @@ mod tests {
             "7",
         ])
         .expect("parse consumption-receipts args");
+
+        match args.cmd {
+            Command::Query {
+                query: QueryCommand::ConsumptionReceipts { task_id, limit },
+            } => {
+                assert_eq!(task_id, 42);
+                assert_eq!(limit, 7);
+            }
+            other => panic!("unexpected parsed args: {other:?}"),
+        }
+    }
+
+    #[test]
+    fn consumption_settlement_cli_parser_accepts_settlement_receipts_query_alias() {
+        let args = Args::try_parse_from([
+            "trnm-cli",
+            "query",
+            "settlement-receipts",
+            "42",
+            "--limit",
+            "7",
+        ])
+        .expect("parse settlement-receipts args");
 
         match args.cmd {
             Command::Query {
