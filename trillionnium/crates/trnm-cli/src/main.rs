@@ -781,8 +781,8 @@ fn parse_consumption_summary_query_response(
 ) -> Result<serde_json::Value> {
     let parsed: serde_json::Value = serde_json::from_str(raw)
         .map_err(|err| anyhow!("failed to parse consumption summary response as json: {err}"))?;
-    let Some(task_id) = parsed.get("task_id").and_then(|v| v.as_u64()) else {
-        bail!("consumption summary response missing numeric task_id");
+    let Some(task_id) = json_u64_alias(&parsed, &["task_id"]) else {
+        bail!("consumption summary response missing task_id");
     };
     if task_id != requested_task_id {
         bail!(
@@ -838,11 +838,8 @@ fn parse_consumption_receipts_query_response(
         bail!("consumption receipts response must be a json array");
     };
     for (idx, receipt) in receipts.iter().enumerate() {
-        let Some(task_id) = receipt.get("task_id").and_then(|v| v.as_u64()) else {
-            bail!(
-                "consumption receipts response item {} missing numeric task_id",
-                idx
-            );
+        let Some(task_id) = json_u64_alias(receipt, &["task_id"]) else {
+            bail!("consumption receipts response item {} missing task_id", idx);
         };
         if task_id != requested_task_id {
             bail!(
@@ -7205,12 +7202,32 @@ mod tests {
     }
 
     #[test]
+    fn parse_consumption_summary_query_response_accepts_stringified_task_id() {
+        let parsed = parse_consumption_summary_query_response(
+            r#"{"task_id":"42","receipt_count":1,"accepted_receipt_count":1,"challenged_receipt_count":0,"total_consumed_tokens":17,"total_claimed_consumption_units":17,"total_credited_consumption_units":17}"#,
+            42,
+        )
+        .expect("parse consumption summary with string task_id");
+        assert_eq!(json_u64_alias(&parsed, &["task_id"]), Some(42));
+    }
+
+    #[test]
     fn parse_consumption_receipts_query_response_accepts_matching_task_ids() {
         let parsed = parse_consumption_receipts_query_response(
             r#"[{"task_id":42,"consumer_id":"consumer-bravo","output_hash":"abc123","billing_window_id":"bw-1","worker_id":"worker-alpha","tokenizer_id":"tok","tokenizer_version":"1.0.0","consumer_class":"bonded_api_client","consumed_spans_root":"def456","consumed_token_count":17,"claimed_consumption_units":17,"credited_consumption_units":9,"consumer_nonce":7,"accepted_at_unix_ms":1775683200123,"status":"Discounted","resolution_code":"accepted_discounted"}]"#,
             42,
         )
         .expect("parse consumption receipts");
+        assert_eq!(parsed.as_array().map(Vec::len), Some(1));
+    }
+
+    #[test]
+    fn parse_consumption_receipts_query_response_accepts_stringified_task_ids() {
+        let parsed = parse_consumption_receipts_query_response(
+            r#"[{"task_id":"42","consumer_id":"consumer-bravo","output_hash":"abc123","billing_window_id":"bw-1","worker_id":"worker-alpha","tokenizer_id":"tok","tokenizer_version":"1.0.0","consumer_class":"bonded_api_client","consumed_spans_root":"def456","consumed_token_count":17,"claimed_consumption_units":17,"credited_consumption_units":9,"consumer_nonce":7,"accepted_at_unix_ms":1775683200123,"status":"Discounted","resolution_code":"accepted_discounted"}]"#,
+            42,
+        )
+        .expect("parse consumption receipts with string task_id");
         assert_eq!(parsed.as_array().map(Vec::len), Some(1));
     }
 }
