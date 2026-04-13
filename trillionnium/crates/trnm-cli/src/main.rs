@@ -781,9 +781,22 @@ fn parse_consumption_summary_query_response(
 ) -> Result<serde_json::Value> {
     let parsed: serde_json::Value = serde_json::from_str(raw)
         .map_err(|err| anyhow!("failed to parse consumption summary response as json: {err}"))?;
-    let Some(task_id) = json_u64_alias(&parsed, &["task_id"]) else {
-        bail!("consumption summary response missing task_id");
-    };
+    let summary = [
+        Some(&parsed),
+        parsed.get("summary"),
+        parsed.get("result"),
+        parsed.get("result").and_then(|value| value.get("summary")),
+        parsed.get("data"),
+        parsed.get("data").and_then(|value| value.get("summary")),
+        parsed.get("response"),
+        parsed.get("response").and_then(|value| value.get("data")),
+        parsed.get("response").and_then(|value| value.get("data")).and_then(|value| value.get("summary")),
+    ]
+    .into_iter()
+    .flatten()
+    .find(|candidate| candidate.is_object() && json_u64_alias(candidate, &["task_id"]).is_some())
+    .ok_or_else(|| anyhow!("consumption summary response missing task_id"))?;
+    let task_id = json_u64_alias(summary, &["task_id"]).expect("summary payload must have task_id");
     if task_id != requested_task_id {
         bail!(
             "consumption summary response task_id mismatch: requested={}, got={}",
@@ -791,7 +804,7 @@ fn parse_consumption_summary_query_response(
             task_id
         );
     }
-    Ok(parsed)
+    Ok(summary.clone())
 }
 
 fn consumption_summary_query(task_id: u64) -> Result<serde_json::Value> {
@@ -834,11 +847,46 @@ fn parse_consumption_receipts_query_response(
 ) -> Result<serde_json::Value> {
     let parsed: serde_json::Value = serde_json::from_str(raw)
         .map_err(|err| anyhow!("failed to parse consumption receipts response as json: {err}"))?;
-    let Some(receipts) = parsed.as_array() else {
-        bail!("consumption receipts response must be a json array");
+
+    let mut envelope_task_id = None;
+    let mut receipts = None;
+    for candidate in [
+        Some(&parsed),
+        parsed.get("result"),
+        parsed.get("data"),
+        parsed.get("response"),
+        parsed.get("response").and_then(|value| value.get("data")),
+    ]
+    .into_iter()
+    .flatten()
+    {
+        if let Some(array) = candidate.as_array() {
+            receipts = Some(array);
+            break;
+        }
+        if let Some(array) = candidate.get("receipts").and_then(|value| value.as_array()) {
+            envelope_task_id = json_u64_alias(candidate, &["task_id"]);
+            receipts = Some(array);
+            break;
+        }
+    }
+
+    let Some(receipts) = receipts else {
+        bail!("consumption receipts response must be a json array or wrapped receipts object");
     };
+
+    if let Some(task_id) = envelope_task_id {
+        if task_id != requested_task_id {
+            bail!(
+                "consumption receipts response task_id mismatch: requested={}, got={}",
+                requested_task_id,
+                task_id
+            );
+        }
+    }
+
     for (idx, receipt) in receipts.iter().enumerate() {
-        let Some(task_id) = json_u64_alias(receipt, &["task_id"]) else {
+        let Some(task_id) = json_u64_alias(receipt, &["task_id"]).or(envelope_task_id) else {
             bail!("consumption receipts response item {} missing task_id", idx);
         };
         if task_id != requested_task_id {
@@ -850,7 +898,7 @@ fn parse_consumption_receipts_query_response(
             );
         }
     }
-    Ok(parsed)
+    Ok(serde_json::Value::Array(receipts.to_vec()))
 }
 
 fn consumption_receipts_query(task_id: u64, limit: usize) -> Result<serde_json::Value> {
@@ -7212,6 +7260,17 @@ mod tests {
     }
 
     #[test]
+    fn parse_consumption_summary_query_response_accepts_wrapped_summary_payload() {
+        let parsed = parse_consumption_summary_query_response(
+            r#"{"result":{"summary":{"task_id":"42","receipt_count":1,"accepted_receipt_count":1,"challenged_receipt_count":0,"total_consumed_tokens":17,"total_claimed_consumption_units":17,"total_credited_consumption_units":17}}}"#,
+            42,
+        )
+        .expect("parse wrapped consumption summary payload");
+        assert_eq!(json_u64_alias(&parsed, &["task_id"]), Some(42));
+        assert_eq!(parsed.get("receipt_count"), Some(&serde_json::json!(1)));
+    }
+
+    #[test]
     fn parse_consumption_receipts_query_response_accepts_matching_task_ids() {
         let parsed = parse_consumption_receipts_query_response(
             r#"[{"task_id":42,"consumer_id":"consumer-bravo","output_hash":"abc123","billing_window_id":"bw-1","worker_id":"worker-alpha","tokenizer_id":"tok","tokenizer_version":"1.0.0","consumer_class":"bonded_api_client","consumed_spans_root":"def456","consumed_token_count":17,"claimed_consumption_units":17,"credited_consumption_units":9,"consumer_nonce":7,"accepted_at_unix_ms":1775683200123,"status":"Discounted","resolution_code":"accepted_discounted"}]"#,
@@ -7229,5 +7288,16 @@ mod tests {
         )
         .expect("parse consumption receipts with string task_id");
         assert_eq!(parsed.as_array().map(Vec::len), Some(1));
+    }
+
+    #[test]
+    fn parse_consumption_receipts_query_response_accepts_wrapped_receipts_payload() {
+        let parsed = parse_consumption_receipts_query_response(
+            r#"{"result":{"task_id":42,"receipts":[{"consumer_id":"consumer-bravo","output_hash":"abc123","billing_window_id":"bw-1","worker_id":"worker-alpha","tokenizer_id":"tok","tokenizer_version":"1.0.0","consumer_class":"bonded_api_client","consumed_spans_root":"def456","consumed_token_count":17,"claimed_consumption_units":17,"credited_consumption_units":9,"consumer_nonce":7,"accepted_at_unix_ms":1775683200123,"status":"Discounted","resolution_code":"accepted_discounted"}]}}"#,
+            42,
+        )
+        .expect("parse wrapped consumption receipts payload");
+        assert_eq!(parsed.as_array().map(Vec::len), Some(1));
+        assert_eq!(parsed[0].get("consumer_id"), Some(&serde_json::json!("consumer-bravo")));
     }
 }
