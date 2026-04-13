@@ -4,7 +4,7 @@ use trnm_types::{
 };
 
 #[test]
-fn metadata_compatibility_truth_table_preserves_typed_governance_upgrade_decisions() {
+fn task_metadata_compatibility_truth_table_preserves_typed_governance_upgrade_decisions() {
     let cases = [
         (
             TaskMetadataCompatibility {
@@ -256,7 +256,7 @@ fn metadata_compatibility_truth_table_preserves_typed_governance_upgrade_decisio
 }
 
 #[test]
-fn settlement_threading_promotes_legacy_fallback_without_breaking_note_only_compatibility() {
+fn task_metadata_compatibility_truth_table_settlement_threading_promotes_legacy_fallback_without_breaking_note_only_compatibility() {
     let fallback_settlement = TaskSettlementSnapshot {
         settlement_schema: "poco_v1".into(),
         tokenizer_id: "llama3-tokenizer".into(),
@@ -309,7 +309,7 @@ fn settlement_threading_promotes_legacy_fallback_without_breaking_note_only_comp
 }
 
 #[test]
-fn settlement_threading_keeps_legacy_note_only_fallback_distinct_from_threaded_incomplete_snapshot()
+fn task_metadata_compatibility_truth_table_settlement_threading_keeps_legacy_note_only_fallback_distinct_from_threaded_incomplete_snapshot()
 {
     let incomplete_fallback_settlement = TaskSettlementSnapshot {
         settlement_schema: "poco_v1".into(),
@@ -368,7 +368,7 @@ fn settlement_threading_keeps_legacy_note_only_fallback_distinct_from_threaded_i
 }
 
 #[test]
-fn settlement_threading_serialization_keeps_legacy_note_only_shape_compact() {
+fn task_metadata_compatibility_truth_table_settlement_threading_serialization_keeps_legacy_note_only_shape_compact() {
     let fallback_settlement = TaskSettlementSnapshot {
         settlement_schema: "poco_v1".into(),
         tokenizer_id: "llama3-tokenizer".into(),
@@ -412,7 +412,7 @@ fn settlement_threading_serialization_keeps_legacy_note_only_shape_compact() {
 }
 
 #[test]
-fn settlement_threading_report_serialization_preserves_fallback_vs_threaded_source() {
+fn task_metadata_compatibility_truth_table_settlement_threading_report_serialization_preserves_fallback_vs_threaded_source() {
     let fallback_settlement = TaskSettlementSnapshot {
         settlement_schema: "poco_v1".into(),
         tokenizer_id: "llama3-tokenizer".into(),
