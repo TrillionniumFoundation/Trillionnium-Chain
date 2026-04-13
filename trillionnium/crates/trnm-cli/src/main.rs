@@ -4170,6 +4170,42 @@ mod tests {
     }
 
     #[test]
+    fn load_consumption_receipt_tx_input_accepts_canonicalized_cutover_field_names() {
+        let unique = format!(
+            "trnm-cli-consumption-receipt-cutover-alias-test-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        );
+        let root = canonical_temp_root().join(unique);
+        std::fs::create_dir_all(&root).unwrap();
+        let path = root.join("receipt.json");
+        std::fs::write(
+            &path,
+            r#"{
+                "task-id":"42",
+                "consumerId":"consumer-bravo",
+                "outputHash":"0xabc123",
+                "billingWindowId":"bw-7",
+                "consumerNonce":"9"
+            }"#,
+        )
+        .unwrap();
+
+        let parsed = load_consumption_receipt_tx_input(&path).unwrap();
+        assert_eq!(parsed.task_id, 42);
+        assert_eq!(parsed.consumer_id, "consumer-bravo");
+        assert_eq!(parsed.output_hash, "0xabc123");
+        assert_eq!(parsed.billing_window_id, "bw-7");
+        assert_eq!(parsed.consumer_nonce, 9);
+
+        let _ = std::fs::remove_file(&path);
+        let _ = std::fs::remove_dir(&root);
+    }
+
+    #[test]
     fn consumption_settlement_write_paths_emit_pending_hashes_with_default_signers() {
         let _guard = ENV_LOCK.lock().unwrap();
         std::env::remove_var("TRNM_TX_SUBMIT_CONSUMPTION_RECEIPT_CMD");
