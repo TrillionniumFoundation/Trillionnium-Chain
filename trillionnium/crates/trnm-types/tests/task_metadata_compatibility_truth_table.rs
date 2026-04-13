@@ -304,3 +304,61 @@ fn settlement_threading_promotes_legacy_fallback_without_breaking_note_only_comp
     assert!(!threaded_report.requires_governance_upgrade);
     assert!(threaded_report.findings.is_empty());
 }
+
+#[test]
+fn settlement_threading_keeps_legacy_note_only_fallback_distinct_from_threaded_incomplete_snapshot() {
+    let incomplete_fallback_settlement = TaskSettlementSnapshot {
+        settlement_schema: "poco_v1".into(),
+        tokenizer_id: "llama3-tokenizer".into(),
+        tokenizer_version: "1.0.0".into(),
+        output_hash: format!("0x{}", "c".repeat(64)),
+        output_token_count: 512,
+        output_root: None,
+        output_span_commitment: None,
+    };
+    let legacy_metadata = TaskMetadata {
+        note: Some("legacy".into()),
+        ..TaskMetadata::default()
+    };
+
+    let legacy_report = legacy_metadata
+        .compatibility_report_with_settlement_snapshot(Some(&incomplete_fallback_settlement));
+    assert_eq!(
+        legacy_report.settlement_snapshot_source,
+        TaskSettlementSnapshotSource::LegacyFallback
+    );
+    assert!(legacy_report.compatibility.legacy_note_only);
+    assert!(!legacy_report.compatibility.complete_settlement_snapshot);
+    assert!(legacy_report.requires_governance_upgrade);
+    assert_eq!(
+        legacy_report.findings,
+        vec![
+            TaskMetadataCompatibilityFinding::LegacyNoteOnlyPayload,
+            TaskMetadataCompatibilityFinding::IncompleteSettlementSnapshot,
+        ]
+    );
+    assert_eq!(
+        legacy_report.primary_finding(),
+        Some(TaskMetadataCompatibilityFinding::LegacyNoteOnlyPayload)
+    );
+
+    let mut threaded_metadata = legacy_metadata.clone();
+    assert!(threaded_metadata.thread_settlement_snapshot(Some(&incomplete_fallback_settlement)));
+
+    let threaded_report = threaded_metadata.compatibility_report();
+    assert_eq!(
+        threaded_report.settlement_snapshot_source,
+        TaskSettlementSnapshotSource::ThreadedMetadata
+    );
+    assert!(!threaded_report.compatibility.legacy_note_only);
+    assert!(!threaded_report.compatibility.complete_settlement_snapshot);
+    assert!(threaded_report.requires_governance_upgrade);
+    assert_eq!(
+        threaded_report.findings,
+        vec![TaskMetadataCompatibilityFinding::IncompleteSettlementSnapshot]
+    );
+    assert_eq!(
+        threaded_report.primary_finding(),
+        Some(TaskMetadataCompatibilityFinding::IncompleteSettlementSnapshot)
+    );
+}
