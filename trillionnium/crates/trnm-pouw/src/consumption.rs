@@ -84,10 +84,14 @@ fn reject_if_settlement_window_closed(
     current_height: u64,
 ) -> Result<(), PouwError> {
     if matches!(task.status, TaskStatus::Revealed | TaskStatus::Completed) {
+        let challenge_deadline = task.challenge_deadline_height.ok_or_else(|| {
+            PouwError::State("poco settlement window requires challenge_deadline_height".into())
+        })?;
         // Promotion step: once the canonical PoCO settlement window closes, all
         // receipt settlement paths fail closed, even if the legacy task
-        // lifecycle already advanced to Completed.
-        reject_if_deadline_exceeded_optional(task.challenge_deadline_height, current_height)?;
+        // lifecycle already advanced to Completed. Missing canonical window
+        // metadata also fails closed instead of silently re-opening settlement.
+        reject_if_deadline_exceeded_optional(Some(challenge_deadline), current_height)?;
     }
     Ok(())
 }
@@ -1086,5 +1090,91 @@ mod tests {
         .expect_err("closed settlement window must reject late receipt resolution");
 
         assert!(matches!(err, PouwError::DeadlineExceeded));
+    }
+
+    #[test]
+    fn submit_consumption_receipt_rejects_missing_settlement_deadline_metadata() {
+        let mut st = StateStore::default();
+        let mut task = sample_task(TaskStatus::Completed);
+        task.challenge_deadline_height = None;
+        st.put_task_new(task).expect("task");
+
+        let err = submit_consumption_receipt_at_height(
+            &mut st,
+            sample_receipt(),
+            "consumer-bravo".to_string(),
+            99,
+        )
+        .expect_err("missing settlement deadline must fail closed");
+
+        assert!(
+            matches!(err, PouwError::State(msg) if msg.contains("poco settlement window requires challenge_deadline_height"))
+        );
+    }
+
+    #[test]
+    fn challenge_consumption_receipt_rejects_missing_settlement_deadline_metadata() {
+        let mut st = StateStore::default();
+        let task_ref = st
+            .put_task_new(sample_task(TaskStatus::Completed))
+            .expect("task");
+        let receipt = sample_receipt();
+        let key = receipt.replay_key();
+        submit_consumption_receipt_at_height(&mut st, receipt, "consumer-bravo".to_string(), 99)
+            .expect("submit receipt within settlement window");
+
+        let mut malformed = st.get_task(42).expect("task");
+        malformed.challenge_deadline_height = None;
+        st.update_task(task_ref, malformed).expect("update task");
+
+        let err = challenge_consumption_receipt_at_height(
+            &mut st,
+            key,
+            "auditor-1".to_string(),
+            "auditor-1".to_string(),
+            99,
+        )
+        .expect_err("missing settlement deadline must fail closed");
+
+        assert!(
+            matches!(err, PouwError::State(msg) if msg.contains("poco settlement window requires challenge_deadline_height"))
+        );
+    }
+
+    #[test]
+    fn resolve_consumption_receipt_rejects_missing_settlement_deadline_metadata() {
+        let mut st = StateStore::default();
+        let _ = st.set_gov_param_bootstrap_unchecked(
+            9_501,
+            "resolve_authority".into(),
+            "resolver-1,resolver-2".into(),
+        );
+        let task_ref = st
+            .put_task_new(sample_task(TaskStatus::Completed))
+            .expect("task");
+        let receipt = sample_receipt();
+        let key = receipt.replay_key();
+        submit_consumption_receipt_at_height(&mut st, receipt, "consumer-bravo".to_string(), 99)
+            .expect("submit receipt within settlement window");
+
+        let mut malformed = st.get_task(42).expect("task");
+        malformed.challenge_deadline_height = None;
+        st.update_task(task_ref, malformed).expect("update task");
+
+        let err = resolve_consumption_receipt_at_height(
+            &mut st,
+            key,
+            ConsumptionResolveDecision::Accept,
+            None,
+            None,
+            "resolver-1".to_string(),
+            "resolver-1".to_string(),
+            99,
+        )
+        .expect_err("missing settlement deadline must fail closed");
+
+        assert!(
+            matches!(err, PouwError::State(msg) if msg.contains("poco settlement window requires challenge_deadline_height"))
+        );
     }
 }
