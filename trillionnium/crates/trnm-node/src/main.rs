@@ -4293,6 +4293,10 @@ fn read_write_decl(st: &StateStore, tx: &MockTx, tx_id: u64) -> Tx {
         MockTx::SubmitConsumptionReceipt { .. } => {
             let (consumer_nonce_obj, receipt_record_obj, task_summary_obj) =
                 receipt_settlement_conflict_refs_of(tx).expect("receipt tx key");
+            // Receipt settlement validates task state via the read set, but the PoCO
+            // apply path only mutates the consumer nonce, receipt record, and task
+            // settlement summary slots.
+            write_set.clear();
             read_set.push(consumer_nonce_obj.clone());
             write_set.push(consumer_nonce_obj);
             read_set.push(receipt_record_obj.clone());
@@ -4305,6 +4309,7 @@ fn read_write_decl(st: &StateStore, tx: &MockTx, tx_id: u64) -> Tx {
                 receipt_settlement_conflict_refs_of(tx).expect("receipt tx key");
             // Keep the consumer nonce lane visible across the full receipt lifecycle so
             // challenge ordering cannot bypass an in-flight submit for the same consumer.
+            write_set.clear();
             read_set.push(consumer_nonce_obj);
             read_set.push(receipt_record_obj.clone());
             write_set.push(receipt_record_obj);
@@ -4318,6 +4323,7 @@ fn read_write_decl(st: &StateStore, tx: &MockTx, tx_id: u64) -> Tx {
                 id: pseudo_object_id_for_state_slot("gov_param", "resolve_authority"),
                 version: 1,
             };
+            write_set.clear();
             read_set.push(consumer_nonce_obj);
             read_set.push(receipt_record_obj.clone());
             write_set.push(receipt_record_obj);
@@ -16420,7 +16426,26 @@ mod tests {
         ];
         let decl = read_write_decl(&st, &tx, 9);
         assert_eq!(decl.read_set, expected_refs);
-        assert_eq!(decl.write_set, decl.read_set);
+        assert_eq!(
+            decl.write_set,
+            vec![
+                ObjectRef {
+                    id: pseudo_object_id_for_state_slot(
+                        "consumer_consumption_nonce",
+                        "consumer-bravo",
+                    ),
+                    version: 1,
+                },
+                ObjectRef {
+                    id: pseudo_object_id_for_state_slot("consumption_record", &replay_key),
+                    version: 1,
+                },
+                ObjectRef {
+                    id: pseudo_object_id_for_state_slot("task_consumption_summary", "42"),
+                    version: 1,
+                },
+            ]
+        );
 
         apply_one(&mut st, tx, 10).expect("apply receipt");
 
@@ -16481,7 +16506,6 @@ mod tests {
             },
         ];
         let expected_write_refs = vec![
-            ObjectRef { id: 42, version: 1 },
             ObjectRef {
                 id: pseudo_object_id_for_state_slot("consumption_record", &key.storage_key()),
                 version: 1,
@@ -16586,7 +16610,6 @@ mod tests {
             },
         ];
         let expected_write_refs = vec![
-            ObjectRef { id: 42, version: 1 },
             ObjectRef {
                 id: pseudo_object_id_for_state_slot("consumption_record", &key.storage_key()),
                 version: 1,
