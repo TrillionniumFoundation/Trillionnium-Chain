@@ -117,8 +117,8 @@ pub struct TaskSettlementPreviewQueryResponse {
     pub last_settlement_height: Option<u64>,
 }
 
-impl From<TaskConsumptionSummaryQueryResponse> for TaskSettlementPreviewQueryResponse {
-    fn from(summary: TaskConsumptionSummaryQueryResponse) -> Self {
+impl TaskSettlementPreviewQueryResponse {
+    pub fn from_authoritative_summary(summary: TaskConsumptionSummaryQueryResponse) -> Self {
         Self {
             task_id: summary.task_id,
             receipt_count: summary.receipt_count,
@@ -701,8 +701,8 @@ mod tests {
 
     #[test]
     fn rpc_task_settlement_preview_query_from_summary_preserves_contract_shape() {
-        let preview =
-            TaskSettlementPreviewQueryResponse::from(TaskConsumptionSummaryQueryResponse {
+        let preview = TaskSettlementPreviewQueryResponse::from_authoritative_summary(
+            TaskConsumptionSummaryQueryResponse {
                 task_id: 42,
                 receipt_count: 2,
                 accepted_receipt_count: 1,
@@ -711,7 +711,8 @@ mod tests {
                 total_claimed_consumption_units: 33,
                 total_credited_consumption_units: 21,
                 last_settlement_height: Some(88),
-            });
+            },
+        );
         let v = serde_json::to_value(preview).unwrap();
         assert_eq!(
             v,

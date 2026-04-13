@@ -4351,12 +4351,8 @@ fn query_consumption_summary_response(
     task_id: u64,
     st: &StateStore,
 ) -> Result<TaskConsumptionSummaryQueryResponse> {
-    let records = st.consumption_records_for_task(task_id);
     let summary = st
         .task_consumption_summary(task_id)
-        .or_else(|| {
-            (!records.is_empty()).then(|| derive_task_consumption_summary(task_id, &records))
-        })
         .ok_or_else(|| anyhow!("consumption summary not found for task {}", task_id))?;
     Ok(TaskConsumptionSummaryQueryResponse {
         task_id: summary.task_id,
@@ -4374,7 +4370,25 @@ fn settlement_preview_response(
     task_id: u64,
     st: &StateStore,
 ) -> Result<TaskSettlementPreviewQueryResponse> {
-    Ok(query_consumption_summary_response(task_id, st)?.into())
+    let records = st.consumption_records_for_task(task_id);
+    let summary = st
+        .task_consumption_summary(task_id)
+        .or_else(|| {
+            (!records.is_empty()).then(|| derive_task_consumption_summary(task_id, &records))
+        })
+        .ok_or_else(|| anyhow!("consumption summary not found for task {}", task_id))?;
+    Ok(TaskSettlementPreviewQueryResponse::from_authoritative_summary(
+        TaskConsumptionSummaryQueryResponse {
+            task_id: summary.task_id,
+            receipt_count: summary.receipt_count,
+            accepted_receipt_count: summary.accepted_receipt_count,
+            challenged_receipt_count: summary.challenged_receipt_count,
+            total_consumed_tokens: summary.total_consumed_tokens,
+            total_claimed_consumption_units: summary.total_claimed_consumption_units,
+            total_credited_consumption_units: summary.total_credited_consumption_units,
+            last_settlement_height: summary.last_settlement_height,
+        },
+    ))
 }
 
 fn query_consumption_receipts_response(
@@ -4736,8 +4750,12 @@ fn main() -> Result<()> {
             let events = query_events_response(task_id, limit, &node_events.events, &recs)?;
             println!("{}", serde_json::to_string_pretty(&events)?);
         }
-        Command::QueryConsumptionSummary { task_id }
-        | Command::QuerySettlementPreview { task_id } => {
+        Command::QueryConsumptionSummary { task_id } => {
+            let st = load_consumption_state_snapshot()?;
+            let out = query_consumption_summary_response(task_id, &st)?;
+            println!("{}", serde_json::to_string_pretty(&out)?);
+        }
+        Command::QuerySettlementPreview { task_id } => {
             let st = load_consumption_state_snapshot()?;
             let out = settlement_preview_response(task_id, &st)?;
             println!("{}", serde_json::to_string_pretty(&out)?);
@@ -11543,7 +11561,7 @@ line2
     }
 
     #[test]
-    fn query_consumption_summary_response_derives_from_records_when_summary_missing() {
+    fn query_consumption_summary_response_rejects_missing_state_summary_even_when_records_exist() {
         let mut st = StateStore::default();
         st.put_consumption_record(ConsumptionRecord {
             key: trnm_state::ConsumptionRecordKey {
@@ -11586,8 +11604,56 @@ line2
             resolution_code: None,
         });
 
-        let out =
-            query_consumption_summary_response(42, &st).expect("summary derived from records");
+        let err = query_consumption_summary_response(42, &st)
+            .expect_err("summary must not silently derive from receipts");
+        assert_eq!(err.to_string(), "consumption summary not found for task 42");
+    }
+
+    #[test]
+    fn settlement_preview_response_derives_from_records_when_summary_missing() {
+        let mut st = StateStore::default();
+        st.put_consumption_record(ConsumptionRecord {
+            key: trnm_state::ConsumptionRecordKey {
+                task_id: 42,
+                consumer_id: "consumer-bravo".into(),
+                output_hash: "abc123".into(),
+                billing_window_id: "bw-1".into(),
+            },
+            worker_id: "worker-alpha".into(),
+            tokenizer_id: "tok".into(),
+            tokenizer_version: "1.0.0".into(),
+            consumer_class: "bonded_api_client".into(),
+            consumed_spans_root: "def456".into(),
+            consumed_token_count: 17,
+            claimed_consumption_units: 17,
+            credited_consumption_units: Some(9),
+            consumer_nonce: 7,
+            accepted_at_unix_ms: 1_775_683_200_123,
+            status: ConsumptionRecordStatus::Discounted,
+            resolution_code: Some("accepted_discounted".into()),
+        });
+        st.put_consumption_record(ConsumptionRecord {
+            key: trnm_state::ConsumptionRecordKey {
+                task_id: 42,
+                consumer_id: "consumer-charlie".into(),
+                output_hash: "ghi789".into(),
+                billing_window_id: "bw-2".into(),
+            },
+            worker_id: "worker-beta".into(),
+            tokenizer_id: "tok".into(),
+            tokenizer_version: "1.0.0".into(),
+            consumer_class: "bonded_api_client".into(),
+            consumed_spans_root: "jkl012".into(),
+            consumed_token_count: 5,
+            claimed_consumption_units: 5,
+            credited_consumption_units: None,
+            consumer_nonce: 8,
+            accepted_at_unix_ms: 1_775_683_200_456,
+            status: ConsumptionRecordStatus::Challenged,
+            resolution_code: None,
+        });
+
+        let out = settlement_preview_response(42, &st).expect("preview derived from records");
         assert_eq!(out.task_id, 42);
         assert_eq!(out.receipt_count, 2);
         assert_eq!(out.accepted_receipt_count, 1);
