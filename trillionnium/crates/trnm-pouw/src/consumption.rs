@@ -56,7 +56,11 @@ const SUMMARY_SETTLEMENT_MARKER_WITHOUT_RECEIPTS: &str =
 const DUPLICATE_LOGICAL_REPLAY_KEY_REASON: &str = "duplicate logical consumption replay key";
 
 fn summary_has_inconsistent_terminal_marker(summary: &TaskConsumptionSummary) -> bool {
-    summary.receipt_count == 0 && summary.last_settlement_height.is_some()
+    summary.receipt_count == 0
+        && (summary.accepted_receipt_count > 0
+            || summary.challenged_receipt_count > 0
+            || summary.total_credited_consumption_units > 0
+            || summary.last_settlement_height.is_some())
 }
 
 fn summary_unproven_receipt_count(summary: TaskConsumptionSummary) -> u64 {
@@ -352,9 +356,9 @@ fn preview_primary_payout_work_units_from_summary(
     metering_work_units: u128,
 ) -> PrimaryPayoutWorkUnitPreview {
     if summary_has_inconsistent_terminal_marker(&summary) {
-        // Promotion step: a summary-only settlement marker without any
-        // submitted receipt must fail closed instead of letting legacy
-        // metering reassert itself as sole payout authority.
+        // Promotion step: summary-only settlement markers or credited totals
+        // without any submitted receipt must fail closed instead of letting
+        // legacy metering reassert itself as sole payout authority.
         return PrimaryPayoutWorkUnitPreview::PocoInconsistentSummary {
             reason: SUMMARY_SETTLEMENT_MARKER_WITHOUT_RECEIPTS,
             metering_work_units,
@@ -1586,6 +1590,53 @@ mod tests {
 
         let err = reject_if_primary_settlement_pending(&st, 42)
             .expect_err("summary-only settlement marker without receipts must fail closed");
+        assert!(
+            matches!(err, PouwError::State(msg) if msg.contains(SUMMARY_SETTLEMENT_MARKER_WITHOUT_RECEIPTS))
+        );
+    }
+
+    #[test]
+    fn primary_payout_work_units_fail_closed_for_summary_only_credit_without_receipts() {
+        let mut st = StateStore::default();
+        let task = sample_task(TaskStatus::Completed);
+        st.set_task_consumption_summary(TaskConsumptionSummary {
+            task_id: task.task_id,
+            receipt_count: 0,
+            accepted_receipt_count: 1,
+            challenged_receipt_count: 0,
+            total_consumed_tokens: 17,
+            total_claimed_consumption_units: 17,
+            total_credited_consumption_units: 9,
+            last_settlement_height: None,
+        });
+
+        assert_eq!(
+            preview_primary_payout_work_units(&st, &task, 50),
+            PrimaryPayoutWorkUnitPreview::PocoInconsistentSummary {
+                reason: SUMMARY_SETTLEMENT_MARKER_WITHOUT_RECEIPTS,
+                metering_work_units: 50,
+            }
+        );
+        assert_eq!(primary_payout_work_units(&st, &task, 50), 0);
+    }
+
+    #[test]
+    fn reject_if_primary_settlement_pending_fails_closed_for_summary_only_credit_without_receipts(
+    ) {
+        let mut st = StateStore::default();
+        st.set_task_consumption_summary(TaskConsumptionSummary {
+            task_id: 42,
+            receipt_count: 0,
+            accepted_receipt_count: 1,
+            challenged_receipt_count: 0,
+            total_consumed_tokens: 17,
+            total_claimed_consumption_units: 17,
+            total_credited_consumption_units: 9,
+            last_settlement_height: None,
+        });
+
+        let err = reject_if_primary_settlement_pending(&st, 42)
+            .expect_err("summary-only credited PoCO settlement must require a receipt");
         assert!(
             matches!(err, PouwError::State(msg) if msg.contains(SUMMARY_SETTLEMENT_MARKER_WITHOUT_RECEIPTS))
         );
