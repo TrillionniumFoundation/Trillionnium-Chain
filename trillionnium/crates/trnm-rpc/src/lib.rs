@@ -90,8 +90,56 @@ pub struct TaskQueryResponse {
     pub metering: Option<TaskMeteringQueryResponse>,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[derive(Debug, Clone, Deserialize)]
 #[serde(deny_unknown_fields)]
+struct SettlementSummaryQueryResponseWire {
+    task_id: u64,
+    receipt_count: u64,
+    accepted_receipt_count: u64,
+    challenged_receipt_count: u64,
+    total_consumed_tokens: u128,
+    total_claimed_consumption_units: u128,
+    total_credited_consumption_units: u128,
+    last_settlement_height: Option<u64>,
+}
+
+impl SettlementSummaryQueryResponseWire {
+    fn into_authoritative_summary(self) -> TaskConsumptionSummaryQueryResponse {
+        TaskConsumptionSummaryQueryResponse {
+            task_id: self.task_id,
+            receipt_count: self.receipt_count,
+            accepted_receipt_count: self.accepted_receipt_count,
+            challenged_receipt_count: self.challenged_receipt_count,
+            total_consumed_tokens: self.total_consumed_tokens,
+            total_claimed_consumption_units: self.total_claimed_consumption_units,
+            total_credited_consumption_units: self.total_credited_consumption_units,
+            last_settlement_height: self.last_settlement_height,
+        }
+    }
+}
+
+impl std::convert::TryFrom<SettlementSummaryQueryResponseWire>
+    for TaskConsumptionSummaryQueryResponse
+{
+    type Error = &'static str;
+
+    fn try_from(summary: SettlementSummaryQueryResponseWire) -> Result<Self, Self::Error> {
+        Self::try_from_authoritative_summary(summary.into_authoritative_summary())
+    }
+}
+
+impl std::convert::TryFrom<SettlementSummaryQueryResponseWire>
+    for TaskSettlementPreviewQueryResponse
+{
+    type Error = &'static str;
+
+    fn try_from(summary: SettlementSummaryQueryResponseWire) -> Result<Self, Self::Error> {
+        Self::try_from_authoritative_summary(summary.into_authoritative_summary())
+    }
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields, try_from = "SettlementSummaryQueryResponseWire")]
 pub struct TaskConsumptionSummaryQueryResponse {
     pub task_id: u64,
     pub receipt_count: u64,
@@ -149,7 +197,7 @@ impl TaskConsumptionSummaryQueryResponse {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
-#[serde(deny_unknown_fields)]
+#[serde(deny_unknown_fields, try_from = "SettlementSummaryQueryResponseWire")]
 pub struct TaskSettlementPreviewQueryResponse {
     pub task_id: u64,
     pub receipt_count: u64,
@@ -790,6 +838,43 @@ mod tests {
     }
 
     #[test]
+    fn rpc_task_consumption_summary_query_deserializes_consistent_json() {
+        let response = serde_json::from_value::<TaskConsumptionSummaryQueryResponse>(json!({
+            "task_id": 42,
+            "receipt_count": 2,
+            "accepted_receipt_count": 1,
+            "challenged_receipt_count": 1,
+            "total_consumed_tokens": 33,
+            "total_claimed_consumption_units": 33,
+            "total_credited_consumption_units": 21,
+            "last_settlement_height": 88
+        }))
+        .expect("consistent settlement summary json should deserialize");
+
+        assert_eq!(response.task_id, 42);
+        assert_eq!(response.last_settlement_height, Some(88));
+    }
+
+    #[test]
+    fn rpc_task_consumption_summary_query_rejects_inconsistent_json_contract() {
+        let err = serde_json::from_value::<TaskConsumptionSummaryQueryResponse>(json!({
+            "task_id": 42,
+            "receipt_count": 1,
+            "accepted_receipt_count": 1,
+            "challenged_receipt_count": 1,
+            "total_consumed_tokens": 33,
+            "total_claimed_consumption_units": 33,
+            "total_credited_consumption_units": 21,
+            "last_settlement_height": 88
+        }))
+        .expect_err("impossible terminal receipt totals must fail closed during deserialize");
+
+        assert!(err
+            .to_string()
+            .contains(AUTHORITATIVE_SETTLEMENT_SUMMARY_CONTRACT_ERROR));
+    }
+
+    #[test]
     fn rpc_task_settlement_preview_query_rejects_unknown_fields_fail_closed() {
         let err = serde_json::from_value::<TaskSettlementPreviewQueryResponse>(json!({
             "task_id": 1,
@@ -803,6 +888,43 @@ mod tests {
         }))
         .expect_err("settlement preview schema should reject unknown fields");
         assert!(err.to_string().contains("unexpected"));
+    }
+
+    #[test]
+    fn rpc_task_settlement_preview_query_deserializes_consistent_json() {
+        let response = serde_json::from_value::<TaskSettlementPreviewQueryResponse>(json!({
+            "task_id": 42,
+            "receipt_count": 2,
+            "accepted_receipt_count": 1,
+            "challenged_receipt_count": 1,
+            "total_consumed_tokens": 33,
+            "total_claimed_consumption_units": 33,
+            "total_credited_consumption_units": 21,
+            "last_settlement_height": 88
+        }))
+        .expect("consistent settlement preview json should deserialize");
+
+        assert_eq!(response.task_id, 42);
+        assert_eq!(response.last_settlement_height, Some(88));
+    }
+
+    #[test]
+    fn rpc_task_settlement_preview_query_rejects_inconsistent_json_contract() {
+        let err = serde_json::from_value::<TaskSettlementPreviewQueryResponse>(json!({
+            "task_id": 42,
+            "receipt_count": 1,
+            "accepted_receipt_count": 1,
+            "challenged_receipt_count": 1,
+            "total_consumed_tokens": 33,
+            "total_claimed_consumption_units": 33,
+            "total_credited_consumption_units": 21,
+            "last_settlement_height": 88
+        }))
+        .expect_err("impossible terminal receipt totals must fail closed during deserialize");
+
+        assert!(err
+            .to_string()
+            .contains(AUTHORITATIVE_SETTLEMENT_SUMMARY_CONTRACT_ERROR));
     }
 
     #[test]
