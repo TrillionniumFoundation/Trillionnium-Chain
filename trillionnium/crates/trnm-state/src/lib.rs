@@ -1623,6 +1623,31 @@ fn hash_task_metering_snapshot(hasher: &mut Sha256, metering: &trnm_types::TaskM
     hasher.update(metering.worker_slash_rebate_per_work_unit_den.to_le_bytes());
 }
 
+fn hash_task_settlement_snapshot(
+    hasher: &mut Sha256,
+    settlement: &trnm_types::TaskSettlementSnapshot,
+) {
+    hash_len_prefixed_str(hasher, &settlement.settlement_schema);
+    hash_len_prefixed_str(hasher, &settlement.tokenizer_id);
+    hash_len_prefixed_str(hasher, &settlement.tokenizer_version);
+    hash_len_prefixed_str(hasher, &settlement.output_hash);
+    hasher.update(settlement.output_token_count.to_le_bytes());
+    match &settlement.output_root {
+        Some(output_root) => {
+            hasher.update([1]);
+            hash_len_prefixed_str(hasher, output_root);
+        }
+        None => hasher.update([0]),
+    }
+    match &settlement.output_span_commitment {
+        Some(output_span_commitment) => {
+            hasher.update([1]);
+            hash_len_prefixed_str(hasher, output_span_commitment);
+        }
+        None => hasher.update([0]),
+    }
+}
+
 fn parse_u64_in_range(key: &str, value: &str, min: u64, max: u64) -> Result<u64, String> {
     let parsed = value.parse::<u64>().map_err(|_| {
         format!(
@@ -3853,6 +3878,13 @@ impl StateStore {
                                 Some(metering) => {
                                     hasher.update([1]);
                                     hash_task_metering_snapshot(&mut hasher, metering);
+                                }
+                                None => hasher.update([0]),
+                            }
+                            match &metadata.settlement {
+                                Some(settlement) => {
+                                    hasher.update([1]);
+                                    hash_task_settlement_snapshot(&mut hasher, settlement);
                                 }
                                 None => hasher.update([0]),
                             }
