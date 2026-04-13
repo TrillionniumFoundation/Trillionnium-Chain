@@ -289,6 +289,13 @@ fn required_json_u64_field(
         .ok_or_else(|| anyhow!("consumption receipt missing {}", field_name))
 }
 
+fn validate_consumption_receipt_tx_input(receipt: &ConsumptionReceiptTxInput) -> Result<()> {
+    if receipt.consumer_nonce == 0 {
+        bail!("consumption receipt consumer_nonce must be non-zero");
+    }
+    Ok(())
+}
+
 fn load_consumption_receipt_tx_input(path: &Path) -> Result<ConsumptionReceiptTxInput> {
     let raw = fs::read_to_string(path).map_err(|err| {
         anyhow!(
@@ -309,7 +316,7 @@ fn load_consumption_receipt_tx_input(path: &Path) -> Result<ConsumptionReceiptTx
         );
     }
 
-    Ok(ConsumptionReceiptTxInput {
+    let receipt = ConsumptionReceiptTxInput {
         payload_json: serde_json::to_string(&value).map_err(|err| {
             anyhow!(
                 "failed to canonicalize consumption receipt file {}: {err}",
@@ -325,7 +332,9 @@ fn load_consumption_receipt_tx_input(path: &Path) -> Result<ConsumptionReceiptTx
             "billing_window_id",
         )?,
         consumer_nonce: required_json_u64_field(&value, &["consumer_nonce"], "consumer_nonce")?,
-    })
+    };
+    validate_consumption_receipt_tx_input(&receipt)?;
+    Ok(receipt)
 }
 
 fn submit_consumption_receipt_template_override() -> Option<String> {
@@ -4286,6 +4295,41 @@ mod tests {
         assert_eq!(parsed.output_hash, "0xabc123");
         assert_eq!(parsed.billing_window_id, "bw-7");
         assert_eq!(parsed.consumer_nonce, 9);
+
+        let _ = std::fs::remove_file(&path);
+        let _ = std::fs::remove_dir(&root);
+    }
+
+    #[test]
+    fn load_consumption_receipt_tx_input_rejects_zero_consumer_nonce() {
+        let unique = format!(
+            "trnm-cli-consumption-receipt-zero-nonce-test-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        );
+        let root = canonical_temp_root().join(unique);
+        std::fs::create_dir_all(&root).unwrap();
+        let path = root.join("receipt.json");
+        std::fs::write(
+            &path,
+            r#"{
+                "task_id":42,
+                "consumer_id":"consumer-bravo",
+                "output_hash":"0xabc123",
+                "billing_window_id":"bw-7",
+                "consumer_nonce":0
+            }"#,
+        )
+        .unwrap();
+
+        let err = load_consumption_receipt_tx_input(&path).unwrap_err().to_string();
+        assert!(
+            err.contains("consumer_nonce must be non-zero"),
+            "unexpected error: {err}"
+        );
 
         let _ = std::fs::remove_file(&path);
         let _ = std::fs::remove_dir(&root);
