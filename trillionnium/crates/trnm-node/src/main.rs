@@ -3260,6 +3260,41 @@ fn emit_event(
     challenger: Option<&str>,
     err_kind: Option<&str>,
 ) {
+    println!(
+        "{}",
+        format_apply_event_line(
+            st,
+            tx,
+            signer,
+            tx_id,
+            block_height,
+            from_status,
+            to_status,
+            state_root,
+            treasury_delta,
+            challenger_delta,
+            challenger,
+            err_kind,
+            now_unix_ms(),
+        )
+    );
+}
+
+fn format_apply_event_line(
+    st: &StateStore,
+    tx: &MockTx,
+    signer: &str,
+    tx_id: u64,
+    block_height: u64,
+    from_status: &str,
+    to_status: &str,
+    state_root: &str,
+    treasury_delta: &EventDelta,
+    challenger_delta: Option<&EventDelta>,
+    challenger: Option<&str>,
+    err_kind: Option<&str>,
+    ts_unix_ms: u128,
+) -> String {
     let task_id = task_id_of(tx);
     let event_type = event_type_for_apply_outcome(tx, err_kind);
     let actor = actor_of(st, tx);
@@ -3268,7 +3303,6 @@ fn emit_event(
         .or_else(|| challenger_of(tx))
         .unwrap_or_else(|| "-".to_string());
     let tx_hash = tx_hash_of(tx_id);
-    let ts_unix_ms = now_unix_ms();
 
     let bond_disposition = match tx {
         MockTx::Challenge { .. } => Some("posted"),
@@ -3306,7 +3340,7 @@ fn emit_event(
             } else {
                 "completed"
             };
-            println!(
+            format!(
                 "[event] event_schema=v1 event_type={} task_id={} from_status={} to_status={} actor={} signer={} challenger={} tx_hash={} tx_id={} block_height={} state_root={} ts_unix_ms={} slash_worker={} resolution_code={} treasury_delta={} challenger_delta={} bond_disposition={}{}",
                 event_type,
                 task_id,
@@ -3326,10 +3360,10 @@ fn emit_event(
                 challenger_delta_str,
                 bond_disposition_str,
                 settlement_suffix,
-            );
+            )
         }
         _ => {
-            println!(
+            format!(
                 "[event] event_schema=v1 event_type={} task_id={} from_status={} to_status={} actor={} signer={} challenger={} tx_hash={} tx_id={} block_height={} state_root={} ts_unix_ms={} treasury_delta={} challenger_delta={} bond_disposition={}{}",
                 event_type,
                 task_id,
@@ -3347,7 +3381,7 @@ fn emit_event(
                 challenger_delta_str,
                 bond_disposition_str,
                 settlement_suffix,
-            );
+            )
         }
     }
 }
@@ -15940,6 +15974,176 @@ mod tests {
         assert!(line.contains("settlement_challenged_receipt_count=1"));
         assert!(line.contains("settlement_total_credited_consumption_units=9"));
         assert!(line.contains("settlement_last_settlement_height=12"));
+    }
+
+    #[test]
+    fn submit_consumption_receipt_event_line_is_stable() {
+        let mut st = StateStore::default();
+        let result_hash = [0x25; 32];
+        put_sample_poco_task(&mut st, 42, "worker-alpha", result_hash);
+
+        let receipt =
+            sample_consumption_receipt(42, "worker-alpha", "consumer-bravo", result_hash);
+        let tx = MockTx::SubmitConsumptionReceipt { receipt };
+        let signer = verified_signer_of(&st, &tx);
+
+        apply_one(&mut st, tx.clone(), 10).expect("apply receipt");
+
+        let line = format_apply_event_line(
+            &st,
+            &tx,
+            &signer,
+            9,
+            10,
+            "Completed",
+            "Completed",
+            "root-submit",
+            &EventDelta {
+                numeric: Some(0),
+                text: "0".to_string(),
+            },
+            None,
+            None,
+            None,
+            123,
+        );
+
+        assert!(line.contains("event_type=submit_consumption_receipt"));
+        assert!(line.contains("task_id=42"));
+        assert!(line.contains("actor=consumer-bravo"));
+        assert!(line.contains("signer=consumer-bravo"));
+        assert!(line.contains("challenger=-"));
+        assert!(line.contains("settlement_receipt_count=1"));
+    }
+
+    #[test]
+    fn challenge_consumption_receipt_event_line_is_stable() {
+        let mut st = StateStore::default();
+        let result_hash = [0x26; 32];
+        put_sample_poco_task(&mut st, 42, "worker-alpha", result_hash);
+
+        let receipt =
+            sample_consumption_receipt(42, "worker-alpha", "consumer-bravo", result_hash);
+        apply_one(
+            &mut st,
+            MockTx::SubmitConsumptionReceipt {
+                receipt: receipt.clone(),
+            },
+            10,
+        )
+        .expect("apply receipt");
+
+        let tx = MockTx::ChallengeConsumptionReceipt {
+            key: receipt.replay_key(),
+            challenger: "auditor-1".to_string(),
+        };
+        let signer = verified_signer_of(&st, &tx);
+
+        apply_one(&mut st, tx.clone(), 11).expect("challenge receipt");
+
+        let line = format_apply_event_line(
+            &st,
+            &tx,
+            &signer,
+            11,
+            11,
+            "Completed",
+            "Completed",
+            "root-challenge",
+            &EventDelta {
+                numeric: Some(0),
+                text: "0".to_string(),
+            },
+            Some(&EventDelta {
+                numeric: Some(0),
+                text: "0".to_string(),
+            }),
+            None,
+            None,
+            124,
+        );
+
+        assert!(line.contains("event_type=challenge_consumption_receipt"));
+        assert!(line.contains("task_id=42"));
+        assert!(line.contains("actor=auditor-1"));
+        assert!(line.contains("signer=auditor-1"));
+        assert!(line.contains("challenger=auditor-1"));
+        assert!(line.contains("settlement_challenged_receipt_count=1"));
+    }
+
+    #[test]
+    fn resolve_consumption_receipt_event_line_is_stable() {
+        let mut st = StateStore::default();
+        let _ = st.set_gov_param_bootstrap_unchecked(
+            9_500,
+            "resolve_authority".into(),
+            "resolver-1,resolver-2".into(),
+        );
+
+        let result_hash = [0x27; 32];
+        put_sample_poco_task(&mut st, 42, "worker-alpha", result_hash);
+
+        let receipt =
+            sample_consumption_receipt(42, "worker-alpha", "consumer-bravo", result_hash);
+        apply_one(
+            &mut st,
+            MockTx::SubmitConsumptionReceipt {
+                receipt: receipt.clone(),
+            },
+            10,
+        )
+        .expect("apply receipt");
+        apply_one(
+            &mut st,
+            MockTx::ChallengeConsumptionReceipt {
+                key: receipt.replay_key(),
+                challenger: "auditor-1".to_string(),
+            },
+            11,
+        )
+        .expect("challenge receipt");
+
+        let tx = MockTx::ResolveConsumptionReceipt {
+            key: receipt.replay_key(),
+            decision: ConsumptionResolveDecision::Discount,
+            credited_consumption_units: Some(9),
+            resolution_code: None,
+            resolver: "resolver-1".to_string(),
+        };
+        let signer = verified_signer_of(&st, &tx);
+        let challenger = preapply_challenger_account_of(&st, &tx);
+
+        apply_one(&mut st, tx.clone(), 12).expect("resolve receipt");
+
+        let line = format_apply_event_line(
+            &st,
+            &tx,
+            &signer,
+            12,
+            12,
+            "Completed",
+            "Completed",
+            "root-resolve",
+            &EventDelta {
+                numeric: Some(0),
+                text: "0".to_string(),
+            },
+            Some(&EventDelta {
+                numeric: Some(0),
+                text: "0".to_string(),
+            }),
+            challenger.as_deref(),
+            None,
+            125,
+        );
+
+        assert!(line.contains("event_type=resolve_consumption_receipt"));
+        assert!(line.contains("task_id=42"));
+        assert!(line.contains("actor=resolver-1"));
+        assert!(line.contains("signer=resolver-1"));
+        assert!(line.contains("challenger=auditor-1"));
+        assert!(line.contains("settlement_accepted_receipt_count=1"));
+        assert!(line.contains("settlement_total_credited_consumption_units=9"));
     }
 
     #[test]
