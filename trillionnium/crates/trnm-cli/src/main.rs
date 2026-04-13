@@ -81,6 +81,7 @@ enum TxCommand {
         store: Option<PathBuf>,
     },
     /// Submit a PoCO consumption receipt tx
+    #[command(visible_alias = "submit-settlement-receipt")]
     SubmitConsumptionReceipt {
         #[arg(long)]
         receipt_json: PathBuf,
@@ -88,6 +89,7 @@ enum TxCommand {
         signer: Option<String>,
     },
     /// Challenge a PoCO consumption receipt tx
+    #[command(visible_alias = "challenge-settlement")]
     ChallengeConsumption {
         task_id: u64,
         #[arg(long)]
@@ -102,6 +104,7 @@ enum TxCommand {
         signer: Option<String>,
     },
     /// Resolve a PoCO consumption receipt tx
+    #[command(visible_alias = "resolve-settlement")]
     ResolveConsumption {
         task_id: u64,
         #[arg(long)]
@@ -3612,6 +3615,28 @@ mod tests {
     }
 
     #[test]
+    fn consumption_settlement_cli_parser_accepts_submit_receipt_settlement_alias() {
+        let args = Args::try_parse_from([
+            "trnm-cli",
+            "tx",
+            "submit-settlement-receipt",
+            "--receipt-json",
+            "/tmp/receipt.json",
+        ])
+        .expect("parse submit-settlement-receipt args");
+
+        match args.cmd {
+            Command::Tx {
+                tx: TxCommand::SubmitConsumptionReceipt { receipt_json, signer },
+            } => {
+                assert_eq!(receipt_json, PathBuf::from("/tmp/receipt.json"));
+                assert_eq!(signer, None);
+            }
+            other => panic!("unexpected parsed args: {other:?}"),
+        }
+    }
+
+    #[test]
     fn consumption_settlement_cli_parser_accepts_challenge_command() {
         let args = Args::try_parse_from([
             "trnm-cli",
@@ -3628,6 +3653,47 @@ mod tests {
             "arbiter-alpha",
         ])
         .expect("parse challenge-consumption args");
+
+        match args.cmd {
+            Command::Tx {
+                tx:
+                    TxCommand::ChallengeConsumption {
+                        task_id,
+                        consumer_id,
+                        output_hash,
+                        billing_window_id,
+                        challenger,
+                        signer,
+                    },
+            } => {
+                assert_eq!(task_id, 42);
+                assert_eq!(consumer_id, "consumer-bravo");
+                assert_eq!(output_hash, "0xabc123");
+                assert_eq!(billing_window_id, "bw-7");
+                assert_eq!(challenger, "arbiter-alpha");
+                assert_eq!(signer, None);
+            }
+            other => panic!("unexpected parsed args: {other:?}"),
+        }
+    }
+
+    #[test]
+    fn consumption_settlement_cli_parser_accepts_challenge_settlement_alias() {
+        let args = Args::try_parse_from([
+            "trnm-cli",
+            "tx",
+            "challenge-settlement",
+            "42",
+            "--consumer-id",
+            "consumer-bravo",
+            "--output-hash",
+            "0xabc123",
+            "--billing-window-id",
+            "bw-7",
+            "--challenger",
+            "arbiter-alpha",
+        ])
+        .expect("parse challenge-settlement args");
 
         match args.cmd {
             Command::Tx {
@@ -3702,6 +3768,55 @@ mod tests {
                 assert_eq!(resolution_code.as_deref(), Some("accepted_discounted"));
                 assert_eq!(resolver, "arbiter-alpha");
                 assert_eq!(signer.as_deref(), Some("governance-key"));
+            }
+            other => panic!("unexpected parsed args: {other:?}"),
+        }
+    }
+
+    #[test]
+    fn consumption_settlement_cli_parser_accepts_resolve_settlement_alias() {
+        let args = Args::try_parse_from([
+            "trnm-cli",
+            "tx",
+            "resolve-settlement",
+            "42",
+            "--consumer-id",
+            "consumer-bravo",
+            "--output-hash",
+            "0xabc123",
+            "--billing-window-id",
+            "bw-7",
+            "--decision",
+            "accept",
+            "--resolver",
+            "arbiter-alpha",
+        ])
+        .expect("parse resolve-settlement args");
+
+        match args.cmd {
+            Command::Tx {
+                tx:
+                    TxCommand::ResolveConsumption {
+                        task_id,
+                        consumer_id,
+                        output_hash,
+                        billing_window_id,
+                        decision,
+                        credited_consumption_units,
+                        resolution_code,
+                        resolver,
+                        signer,
+                    },
+            } => {
+                assert_eq!(task_id, 42);
+                assert_eq!(consumer_id, "consumer-bravo");
+                assert_eq!(output_hash, "0xabc123");
+                assert_eq!(billing_window_id, "bw-7");
+                assert_eq!(decision, ConsumptionResolutionDecisionArg::Accept);
+                assert_eq!(credited_consumption_units, None);
+                assert_eq!(resolution_code, None);
+                assert_eq!(resolver, "arbiter-alpha");
+                assert_eq!(signer, None);
             }
             other => panic!("unexpected parsed args: {other:?}"),
         }
