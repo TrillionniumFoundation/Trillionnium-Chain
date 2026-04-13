@@ -145,12 +145,17 @@ pub struct TaskSettlementSnapshot {
     pub output_span_commitment: Option<String>,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, Default)]
 #[serde(rename_all = "snake_case")]
 pub enum TaskSettlementSnapshotSource {
+    #[default]
     Absent,
     LegacyFallback,
     ThreadedMetadata,
+}
+
+fn task_settlement_snapshot_source_is_absent(source: &TaskSettlementSnapshotSource) -> bool {
+    matches!(source, TaskSettlementSnapshotSource::Absent)
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, Default)]
@@ -209,6 +214,11 @@ pub enum TaskMetadataCompatibilityFinding {
 pub struct TaskMetadataCompatibilityReport {
     pub compatibility: TaskMetadataCompatibility,
     pub requires_governance_upgrade: bool,
+    #[serde(
+        default,
+        skip_serializing_if = "task_settlement_snapshot_source_is_absent"
+    )]
+    pub settlement_snapshot_source: TaskSettlementSnapshotSource,
     pub findings: Vec<TaskMetadataCompatibilityFinding>,
 }
 
@@ -363,6 +373,7 @@ impl TaskMetadata {
         settlement: Option<&TaskSettlementSnapshot>,
     ) -> TaskMetadataCompatibilityReport {
         let effective_settlement = self.effective_settlement_snapshot(settlement);
+        let settlement_snapshot_source = self.settlement_snapshot_source(settlement);
         let legacy_note_only = self.note.is_some()
             && self.task_type.is_none()
             && self.input_hash.is_none()
@@ -456,6 +467,7 @@ impl TaskMetadata {
         TaskMetadataCompatibilityReport {
             requires_governance_upgrade: compatibility.requires_governance_upgrade(),
             compatibility,
+            settlement_snapshot_source,
             findings,
         }
     }
@@ -1078,6 +1090,7 @@ mod tests {
                 complete_settlement_snapshot: false,
             },
             requires_governance_upgrade: true,
+            settlement_snapshot_source: TaskSettlementSnapshotSource::Absent,
             findings: vec![
                 TaskMetadataCompatibilityFinding::LegacyNoteOnlyPayload,
                 TaskMetadataCompatibilityFinding::NonCanonicalCoreFields,
@@ -1129,11 +1142,42 @@ mod tests {
                 complete_settlement_snapshot: true,
             },
             requires_governance_upgrade: false,
+            settlement_snapshot_source: TaskSettlementSnapshotSource::Absent,
             findings: Vec::new(),
         };
 
         assert_eq!(report.primary_finding(), None);
         assert_eq!(report.findings_nonempty(), None);
+    }
+
+    #[test]
+    fn task_metadata_compatibility_report_serializes_threaded_settlement_source_when_present() {
+        let report = TaskMetadataCompatibilityReport {
+            compatibility: TaskMetadataCompatibility {
+                legacy_note_only: false,
+                canonical_core_fields: true,
+                complete_metering_snapshot: true,
+                complete_settlement_snapshot: true,
+            },
+            requires_governance_upgrade: false,
+            settlement_snapshot_source: TaskSettlementSnapshotSource::ThreadedMetadata,
+            findings: Vec::new(),
+        };
+
+        assert_eq!(
+            serde_json::to_value(&report).expect("serialize report"),
+            serde_json::json!({
+                "compatibility": {
+                    "legacy_note_only": false,
+                    "canonical_core_fields": true,
+                    "complete_metering_snapshot": true,
+                    "complete_settlement_snapshot": true
+                },
+                "requires_governance_upgrade": false,
+                "settlement_snapshot_source": "threaded_metadata",
+                "findings": []
+            })
+        );
     }
 
     #[test]
@@ -1353,6 +1397,10 @@ mod tests {
         let report = metadata.compatibility_report_with_settlement_snapshot(Some(&settlement));
 
         assert_eq!(
+            report.settlement_snapshot_source,
+            TaskSettlementSnapshotSource::LegacyFallback
+        );
+        assert_eq!(
             metadata.settlement_snapshot_source(Some(&settlement)),
             TaskSettlementSnapshotSource::LegacyFallback
         );
@@ -1389,6 +1437,10 @@ mod tests {
 
         let report = metadata.compatibility_report_with_settlement_snapshot(Some(&settlement));
 
+        assert_eq!(
+            report.settlement_snapshot_source,
+            TaskSettlementSnapshotSource::LegacyFallback
+        );
         assert_eq!(
             metadata.settlement_snapshot_source(Some(&settlement)),
             TaskSettlementSnapshotSource::LegacyFallback
@@ -1429,6 +1481,10 @@ mod tests {
 
         let report = metadata.compatibility_report();
 
+        assert_eq!(
+            report.settlement_snapshot_source,
+            TaskSettlementSnapshotSource::ThreadedMetadata
+        );
         assert_eq!(
             metadata.settlement_snapshot_source(None),
             TaskSettlementSnapshotSource::ThreadedMetadata
@@ -1509,6 +1565,10 @@ mod tests {
 
         let report = metadata.compatibility_report();
 
+        assert_eq!(
+            report.settlement_snapshot_source,
+            TaskSettlementSnapshotSource::ThreadedMetadata
+        );
         assert!(!report.compatibility.legacy_note_only);
         assert!(report.compatibility.canonical_core_fields);
         assert!(report.compatibility.complete_metering_snapshot);
@@ -1555,6 +1615,10 @@ mod tests {
         let report =
             metadata.compatibility_report_with_settlement_snapshot(Some(&fallback_settlement));
 
+        assert_eq!(
+            report.settlement_snapshot_source,
+            TaskSettlementSnapshotSource::ThreadedMetadata
+        );
         assert!(!report.compatibility.legacy_note_only);
         assert!(report.compatibility.canonical_core_fields);
         assert!(report.compatibility.complete_metering_snapshot);
