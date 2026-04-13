@@ -145,15 +145,29 @@ fn reject_if_settlement_window_closed(
     task: &TaskObject,
     current_height: u64,
 ) -> Result<(), PouwError> {
-    if matches!(task.status, TaskStatus::Revealed | TaskStatus::Completed) {
-        let challenge_deadline = task.challenge_deadline_height.ok_or_else(|| {
-            PouwError::State("poco settlement window requires challenge_deadline_height".into())
-        })?;
-        // Promotion step: once the canonical PoCO settlement window closes, all
-        // receipt settlement paths fail closed, even if the legacy task
-        // lifecycle already advanced to Completed. Missing canonical window
-        // metadata also fails closed instead of silently re-opening settlement.
-        reject_if_deadline_exceeded_optional(Some(challenge_deadline), current_height)?;
+    match task.status {
+        TaskStatus::Revealed | TaskStatus::Completed => {
+            let challenge_deadline = task.challenge_deadline_height.ok_or_else(|| {
+                PouwError::State(
+                    "poco settlement window requires challenge_deadline_height".into(),
+                )
+            })?;
+            // Promotion step: once the canonical PoCO settlement window closes,
+            // all receipt settlement paths fail closed, even if the legacy task
+            // lifecycle already advanced to Completed. Missing canonical window
+            // metadata also fails closed instead of silently re-opening settlement.
+            reject_if_deadline_exceeded_optional(Some(challenge_deadline), current_height)?;
+        }
+        TaskStatus::Challenged => {
+            let resolve_deadline = task.resolve_deadline_height.ok_or_else(|| {
+                PouwError::State("poco settlement window requires resolve_deadline_height".into())
+            })?;
+            // Promotion step: once the task enters the challenged dispute path,
+            // receipt challenge/resolve must stay bounded by the canonical
+            // resolve window instead of drifting indefinitely as a sidecar flow.
+            reject_if_deadline_exceeded_optional(Some(resolve_deadline), current_height)?;
+        }
+        _ => {}
     }
     Ok(())
 }
@@ -1404,6 +1418,68 @@ mod tests {
     }
 
     #[test]
+    fn challenge_consumption_receipt_rejects_closed_window_for_challenged_task() {
+        let mut st = StateStore::default();
+        let task_ref = st
+            .put_task_new(sample_task(TaskStatus::Revealed))
+            .expect("task");
+        let receipt = sample_receipt();
+        let key = receipt.replay_key();
+        submit_consumption_receipt_at_height(&mut st, receipt, "consumer-bravo".to_string(), 99)
+            .expect("submit receipt within settlement window");
+
+        let mut challenged = st.get_task(42).expect("task");
+        mark_task_challenged(&mut challenged);
+        st.update_task(task_ref, challenged).expect("update task");
+
+        let err = challenge_consumption_receipt_at_height(
+            &mut st,
+            key,
+            "auditor-1".to_string(),
+            "auditor-1".to_string(),
+            111,
+        )
+        .expect_err("closed challenged resolve window must reject late receipt challenge");
+
+        assert!(matches!(err, PouwError::DeadlineExceeded));
+    }
+
+    #[test]
+    fn resolve_consumption_receipt_rejects_closed_window_for_challenged_task() {
+        let mut st = StateStore::default();
+        let _ = st.set_gov_param_bootstrap_unchecked(
+            9_503,
+            "resolve_authority".into(),
+            "resolver-1,resolver-2".into(),
+        );
+        let task_ref = st
+            .put_task_new(sample_task(TaskStatus::Revealed))
+            .expect("task");
+        let receipt = sample_receipt();
+        let key = receipt.replay_key();
+        submit_consumption_receipt_at_height(&mut st, receipt, "consumer-bravo".to_string(), 99)
+            .expect("submit receipt within settlement window");
+
+        let mut challenged = st.get_task(42).expect("task");
+        mark_task_challenged(&mut challenged);
+        st.update_task(task_ref, challenged).expect("update task");
+
+        let err = resolve_consumption_receipt_at_height(
+            &mut st,
+            key,
+            ConsumptionResolveDecision::Accept,
+            None,
+            None,
+            "resolver-1".to_string(),
+            "resolver-1".to_string(),
+            111,
+        )
+        .expect_err("closed challenged resolve window must reject late receipt resolution");
+
+        assert!(matches!(err, PouwError::DeadlineExceeded));
+    }
+
+    #[test]
     fn submit_consumption_receipt_rejects_missing_settlement_deadline_metadata() {
         let mut st = StateStore::default();
         let mut task = sample_task(TaskStatus::Completed);
@@ -1486,6 +1562,74 @@ mod tests {
 
         assert!(
             matches!(err, PouwError::State(msg) if msg.contains("poco settlement window requires challenge_deadline_height"))
+        );
+    }
+
+    #[test]
+    fn challenge_consumption_receipt_rejects_missing_resolve_deadline_metadata() {
+        let mut st = StateStore::default();
+        let task_ref = st
+            .put_task_new(sample_task(TaskStatus::Revealed))
+            .expect("task");
+        let receipt = sample_receipt();
+        let key = receipt.replay_key();
+        submit_consumption_receipt_at_height(&mut st, receipt, "consumer-bravo".to_string(), 99)
+            .expect("submit receipt within settlement window");
+
+        let mut challenged = st.get_task(42).expect("task");
+        mark_task_challenged(&mut challenged);
+        challenged.resolve_deadline_height = None;
+        st.update_task(task_ref, challenged).expect("update task");
+
+        let err = challenge_consumption_receipt_at_height(
+            &mut st,
+            key,
+            "auditor-1".to_string(),
+            "auditor-1".to_string(),
+            109,
+        )
+        .expect_err("missing challenged resolve deadline must fail closed");
+
+        assert!(
+            matches!(err, PouwError::State(msg) if msg.contains("poco settlement window requires resolve_deadline_height"))
+        );
+    }
+
+    #[test]
+    fn resolve_consumption_receipt_rejects_missing_resolve_deadline_metadata() {
+        let mut st = StateStore::default();
+        let _ = st.set_gov_param_bootstrap_unchecked(
+            9_504,
+            "resolve_authority".into(),
+            "resolver-1,resolver-2".into(),
+        );
+        let task_ref = st
+            .put_task_new(sample_task(TaskStatus::Revealed))
+            .expect("task");
+        let receipt = sample_receipt();
+        let key = receipt.replay_key();
+        submit_consumption_receipt_at_height(&mut st, receipt, "consumer-bravo".to_string(), 99)
+            .expect("submit receipt within settlement window");
+
+        let mut challenged = st.get_task(42).expect("task");
+        mark_task_challenged(&mut challenged);
+        challenged.resolve_deadline_height = None;
+        st.update_task(task_ref, challenged).expect("update task");
+
+        let err = resolve_consumption_receipt_at_height(
+            &mut st,
+            key,
+            ConsumptionResolveDecision::Accept,
+            None,
+            None,
+            "resolver-1".to_string(),
+            "resolver-1".to_string(),
+            109,
+        )
+        .expect_err("missing challenged resolve deadline must fail closed");
+
+        assert!(
+            matches!(err, PouwError::State(msg) if msg.contains("poco settlement window requires resolve_deadline_height"))
         );
     }
 
