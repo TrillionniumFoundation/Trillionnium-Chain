@@ -3896,21 +3896,38 @@ impl StateStore {
             task_summary,
             ..
         } = snapshot;
-        let consumer_nonce = match record.as_ref() {
-            Some(record) => consumer_nonce
-                .filter(|consumer_nonce| record.is_compatible_with_consumer_nonce(*consumer_nonce)),
-            None => consumer_nonce,
-        };
-        let billing_window_policy = match record.as_ref() {
-            Some(record) => billing_window_policy
-                .filter(|policy| record.is_compatible_with_billing_window_policy(policy)),
-            None => billing_window_policy,
-        };
-        let task_summary = match record.as_ref() {
-            Some(record) => {
-                task_summary.filter(|summary| record.is_compatible_with_task_summary(summary))
+        let snapshot_had_invalid_record = record
+            .as_ref()
+            .map_or(false, |record| !record.is_persistable_snapshot_for(key));
+        let record = record.filter(|record| record.is_persistable_snapshot_for(key));
+        let consumer_nonce = if snapshot_had_invalid_record {
+            None
+        } else {
+            match record.as_ref() {
+                Some(record) => consumer_nonce.filter(|consumer_nonce| {
+                    record.is_compatible_with_consumer_nonce(*consumer_nonce)
+                }),
+                None => consumer_nonce,
             }
-            None => task_summary,
+        };
+        let billing_window_policy = if snapshot_had_invalid_record {
+            None
+        } else {
+            match record.as_ref() {
+                Some(record) => billing_window_policy
+                    .filter(|policy| record.is_compatible_with_billing_window_policy(policy)),
+                None => billing_window_policy,
+            }
+        };
+        let task_summary = if snapshot_had_invalid_record {
+            None
+        } else {
+            match record.as_ref() {
+                Some(record) => {
+                    task_summary.filter(|summary| record.is_compatible_with_task_summary(summary))
+                }
+                None => task_summary,
+            }
         };
 
         self.restore_consumption_record(key, record);

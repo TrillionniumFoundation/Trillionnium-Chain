@@ -941,4 +941,29 @@ mod tests {
         );
         assert_eq!(st.task_consumption_summary(key.task_id), None);
     }
+
+    #[test]
+    fn settlement_snapshot_restore_discards_companion_state_for_invalid_record() {
+        let mut st = StateStore::default();
+        let record = sample_record();
+        let key = record.key.clone();
+        let mut invalid_record = record.clone();
+        invalid_record.claimed_consumption_units = 0;
+
+        st.restore_consumption_settlement_state(
+            &key,
+            ConsumptionSettlementStateSnapshot {
+                key: key.clone(),
+                record: Some(invalid_record),
+                consumer_nonce: Some(record.consumer_nonce),
+                billing_window_policy: Some(sample_billing_window_policy()),
+                task_summary: Some(sample_task_consumption_summary()),
+            },
+        );
+
+        assert_eq!(st.consumption_record(&key), None);
+        assert_eq!(st.consumer_consumption_nonce(&key.consumer_id), None);
+        assert_eq!(st.billing_window_policy(&key.billing_window_id), None);
+        assert_eq!(st.task_consumption_summary(key.task_id), None);
+    }
 }
