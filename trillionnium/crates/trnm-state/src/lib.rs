@@ -3856,6 +3856,16 @@ impl StateStore {
         }
     }
 
+    pub fn complete_consumption_settlement_state_snapshot(
+        &self,
+        key: &ConsumptionRecordKey,
+    ) -> Option<ConsumptionSettlementStateSnapshot> {
+        let snapshot = self.consumption_settlement_state_snapshot(key);
+        snapshot
+            .is_complete_persistable_snapshot_for(key)
+            .then_some(snapshot)
+    }
+
     pub fn restore_consumption_settlement_state(
         &mut self,
         key: &ConsumptionRecordKey,

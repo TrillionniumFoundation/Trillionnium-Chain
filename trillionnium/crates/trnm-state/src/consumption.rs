@@ -237,6 +237,20 @@ impl ConsumptionSettlementStateSnapshot {
             })
             && self.has_record_compatible_task_summary()
     }
+
+    pub fn has_complete_persisted_state(&self) -> bool {
+        self.record.is_some()
+            && self.consumer_nonce.is_some()
+            && self.billing_window_policy.is_some()
+            && self.task_summary.is_some()
+            && self.has_record_compatible_consumer_nonce()
+            && self.has_record_compatible_billing_window_policy()
+            && self.has_record_compatible_task_summary()
+    }
+
+    pub fn is_complete_persistable_snapshot_for(&self, key: &ConsumptionRecordKey) -> bool {
+        self.is_persistable_snapshot_for(key) && self.has_complete_persisted_state()
+    }
 }
 
 #[cfg(test)]
@@ -535,6 +549,11 @@ mod tests {
         let expected_root = st.state_root();
         let snapshot = st.consumption_settlement_state_snapshot(&key);
         assert!(snapshot.is_persistable_snapshot_for(&key));
+        assert!(snapshot.is_complete_persistable_snapshot_for(&key));
+        assert_eq!(
+            st.complete_consumption_settlement_state_snapshot(&key),
+            Some(snapshot.clone())
+        );
 
         assert_eq!(st.remove_consumption_record(&key), Some(record.clone()));
         st.set_consumer_consumption_nonce(&key.consumer_id, record.consumer_nonce + 1);
@@ -560,6 +579,33 @@ mod tests {
         );
         assert_eq!(st.task_consumption_summary(key.task_id), Some(summary));
         assert_eq!(st.state_root(), expected_root);
+    }
+
+    #[test]
+    fn complete_settlement_state_snapshot_requires_persisted_policy_nonce_and_summary() {
+        let mut st = StateStore::default();
+        let record = sample_record();
+        let key = record.key.clone();
+
+        st.put_consumption_record(record.clone());
+
+        let partial = st.consumption_settlement_state_snapshot(&key);
+        assert!(partial.is_persistable_snapshot_for(&key));
+        assert!(!partial.has_complete_persisted_state());
+        assert!(!partial.is_complete_persistable_snapshot_for(&key));
+        assert_eq!(st.complete_consumption_settlement_state_snapshot(&key), None);
+
+        st.set_consumer_consumption_nonce(&key.consumer_id, record.consumer_nonce);
+        st.set_billing_window_policy(sample_billing_window_policy());
+        st.set_task_consumption_summary(sample_task_consumption_summary());
+
+        let complete = st.consumption_settlement_state_snapshot(&key);
+        assert!(complete.has_complete_persisted_state());
+        assert!(complete.is_complete_persistable_snapshot_for(&key));
+        assert_eq!(
+            st.complete_consumption_settlement_state_snapshot(&key),
+            Some(complete)
+        );
     }
 
     #[test]
@@ -686,6 +732,8 @@ mod tests {
         assert_eq!(snapshot.record, Some(record.clone()));
         assert_eq!(snapshot.billing_window_policy, None);
         assert!(snapshot.is_persistable_snapshot_for(&key));
+        assert!(!snapshot.has_complete_persisted_state());
+        assert_eq!(st.complete_consumption_settlement_state_snapshot(&key), None);
 
         st.restore_consumption_settlement_state(
             &key,
