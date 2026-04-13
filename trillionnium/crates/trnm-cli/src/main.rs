@@ -3809,6 +3809,7 @@ fn main() -> Result<()> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use clap::CommandFactory;
     use std::{path::PathBuf, sync::Mutex};
 
     static ENV_LOCK: Mutex<()> = Mutex::new(());
@@ -4131,6 +4132,37 @@ mod tests {
             }
             other => panic!("unexpected parsed args: {other:?}"),
         }
+    }
+
+    #[test]
+    fn consumption_settlement_cli_help_keeps_cutover_names_primary() {
+        let mut root = Args::command();
+        let query = root
+            .find_subcommand_mut("query")
+            .expect("query subcommand in clap tree");
+        let mut query_help = Vec::new();
+        query
+            .write_long_help(&mut query_help)
+            .expect("render query help");
+        let query_help = String::from_utf8(query_help).expect("utf8 query help");
+        assert!(query_help.contains("settlement-preview"));
+        assert!(query_help.contains("consumption-summary"));
+        assert!(query_help.contains("settlement-receipts"));
+        assert!(query_help.contains("consumption-receipts"));
+
+        let mut root = Args::command();
+        let tx = root
+            .find_subcommand_mut("tx")
+            .expect("tx subcommand in clap tree");
+        let mut tx_help = Vec::new();
+        tx.write_long_help(&mut tx_help).expect("render tx help");
+        let tx_help = String::from_utf8(tx_help).expect("utf8 tx help");
+        assert!(tx_help.contains("submit-consumption-receipt"));
+        assert!(tx_help.contains("submit-settlement-receipt"));
+        assert!(tx_help.contains("challenge-consumption"));
+        assert!(tx_help.contains("challenge-settlement"));
+        assert!(tx_help.contains("resolve-consumption"));
+        assert!(tx_help.contains("resolve-settlement"));
     }
 
     #[test]
