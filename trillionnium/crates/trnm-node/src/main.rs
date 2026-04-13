@@ -3005,6 +3005,18 @@ fn challenger_of(tx: &MockTx) -> Option<String> {
     }
 }
 
+fn challenger_from_consumption_resolution_code(code: &str) -> Option<String> {
+    let challenger = code.strip_prefix("challenged_by:")?;
+    if challenger.is_empty()
+        || challenger
+            .chars()
+            .any(|ch| ch.is_whitespace() || ch.is_control())
+    {
+        return None;
+    }
+    Some(challenger.to_string())
+}
+
 fn preapply_challenger_account_of(st: &StateStore, tx: &MockTx) -> Option<String> {
     match tx {
         MockTx::Resolve { task_id, .. } => st.get_task(*task_id).and_then(|task| task.challenger),
@@ -3015,10 +3027,11 @@ fn preapply_challenger_account_of(st: &StateStore, tx: &MockTx) -> Option<String
                 output_hash: key.output_hash.clone(),
                 billing_window_id: key.billing_window_id.clone(),
             })
-            .and_then(|record| record.resolution_code)
-            .and_then(|code| {
-                code.strip_prefix("challenged_by:")
-                    .map(|challenger| challenger.to_string())
+            .and_then(|record| {
+                record
+                    .resolution_code
+                    .as_deref()
+                    .and_then(challenger_from_consumption_resolution_code)
             }),
         _ => challenger_of(tx),
     }
@@ -16242,6 +16255,106 @@ mod tests {
         assert!(line.contains("settlement_consumer_nonce=7"));
         assert!(line.contains("settlement_credited_consumption_units=9"));
         assert!(line.contains("settlement_resolution_code=accepted_discounted"));
+    }
+
+    #[test]
+    fn challenger_from_consumption_resolution_code_requires_canonical_marker() {
+        assert_eq!(
+            challenger_from_consumption_resolution_code("challenged_by:auditor-1"),
+            Some("auditor-1".to_string())
+        );
+        assert_eq!(
+            challenger_from_consumption_resolution_code("accepted_discounted"),
+            None
+        );
+        assert_eq!(
+            challenger_from_consumption_resolution_code("challenged_by:"),
+            None
+        );
+        assert_eq!(
+            challenger_from_consumption_resolution_code("challenged_by: auditor-1"),
+            None
+        );
+        assert_eq!(
+            challenger_from_consumption_resolution_code("challenged_by:auditor\n1"),
+            None
+        );
+    }
+
+    #[test]
+    fn resolve_consumption_receipt_event_line_omits_malformed_challenger_marker() {
+        let mut st = StateStore::default();
+        let result_hash = [0x28; 32];
+        put_sample_poco_task(&mut st, 42, "worker-alpha", result_hash);
+
+        let receipt =
+            sample_consumption_receipt(42, "worker-alpha", "consumer-bravo", result_hash);
+        let key = receipt.replay_key();
+        let record_key = ConsumptionRecordKey {
+            task_id: key.task_id,
+            consumer_id: key.consumer_id.clone(),
+            output_hash: key.output_hash.clone(),
+            billing_window_id: key.billing_window_id.clone(),
+        };
+
+        apply_one(
+            &mut st,
+            MockTx::SubmitConsumptionReceipt {
+                receipt: receipt.clone(),
+            },
+            10,
+        )
+        .expect("apply receipt");
+        apply_one(
+            &mut st,
+            MockTx::ChallengeConsumptionReceipt {
+                key: key.clone(),
+                challenger: "auditor-1".to_string(),
+            },
+            11,
+        )
+        .expect("challenge receipt");
+
+        let mut record = st.consumption_record(&record_key).expect("record");
+        record.resolution_code = Some("challenged_by: auditor-1".to_string());
+        st.put_consumption_record(record);
+
+        let tx = MockTx::ResolveConsumptionReceipt {
+            key,
+            decision: ConsumptionResolveDecision::Discount,
+            credited_consumption_units: Some(9),
+            resolution_code: None,
+            resolver: "resolver-1".to_string(),
+        };
+        let signer = verified_signer_of(&st, &tx);
+        let challenger = preapply_challenger_account_of(&st, &tx);
+
+        assert_eq!(challenger, None);
+
+        let line = format_apply_event_line(
+            &st,
+            &tx,
+            &signer,
+            12,
+            12,
+            "Completed",
+            "Completed",
+            "root-resolve-malformed",
+            &EventDelta {
+                numeric: Some(0),
+                text: "0".to_string(),
+            },
+            None,
+            challenger.as_deref(),
+            None,
+            126,
+        );
+
+        assert!(line.contains("event_type=resolve_consumption_receipt"));
+        assert!(line.contains("challenger=-"));
+        assert!(line.contains("settlement_challenged_receipt_count=1"));
+        assert!(line.contains("settlement_record_status=challenged"));
+        assert!(line.contains("settlement_resolution_code=challenged_by: auditor-1"));
     }
 
     #[test]
