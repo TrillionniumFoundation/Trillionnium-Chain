@@ -345,6 +345,19 @@ mod tests {
     }
 
     #[test]
+    fn put_consumption_record_clears_inconsistent_snapshot() {
+        let mut st = StateStore::default();
+        let record = sample_record();
+        st.put_consumption_record(record.clone());
+
+        let mut invalid = record.clone();
+        invalid.credited_consumption_units = Some(invalid.claimed_consumption_units + 1);
+
+        assert_eq!(st.put_consumption_record(invalid), Some(record.clone()));
+        assert_eq!(st.consumption_record(&record.key), None);
+    }
+
+    #[test]
     fn state_root_changes_when_consumer_consumption_nonce_changes() {
         let mut st = StateStore::default();
         let before = st.state_root();
@@ -1001,5 +1014,32 @@ mod tests {
         assert_eq!(st.consumer_consumption_nonce(&key.consumer_id), None);
         assert_eq!(st.billing_window_policy(&key.billing_window_id), None);
         assert_eq!(st.task_consumption_summary(key.task_id), None);
+    }
+
+    #[test]
+    fn invalid_record_replacement_clears_record_but_preserves_policy_persistence_state() {
+        let mut st = StateStore::default();
+        let record = sample_record();
+        let key = record.key.clone();
+        let policy = sample_billing_window_policy();
+        let summary = sample_task_consumption_summary();
+
+        st.put_consumption_record(record.clone());
+        st.set_consumer_consumption_nonce(&key.consumer_id, record.consumer_nonce);
+        st.set_billing_window_policy(policy.clone());
+        st.set_task_consumption_summary(summary.clone());
+
+        let mut invalid = record.clone();
+        invalid.claimed_consumption_units = 0;
+
+        assert_eq!(st.put_consumption_record(invalid), Some(record));
+
+        let snapshot = st.consumption_settlement_state_snapshot(&key);
+        assert_eq!(snapshot.record, None);
+        assert_eq!(snapshot.consumer_nonce, Some(sample_record().consumer_nonce));
+        assert_eq!(snapshot.billing_window_policy, Some(policy));
+        assert_eq!(snapshot.task_summary, Some(summary));
+        assert!(!snapshot.has_complete_persisted_state());
+        assert_eq!(st.complete_consumption_settlement_state_snapshot(&key), None);
     }
 }

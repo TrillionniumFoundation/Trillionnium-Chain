@@ -3660,8 +3660,13 @@ impl StateStore {
         &mut self,
         record: ConsumptionRecord,
     ) -> Option<ConsumptionRecord> {
+        let key = record.key.clone();
+        if !record.is_persistable_snapshot_for(&key) {
+            return self.remove_consumption_record(&key);
+        }
+
         self.invalidate_state_root_cache();
-        self.consumption_records.insert(record.key.clone(), record)
+        self.consumption_records.insert(key, record)
     }
 
     pub fn consumption_record(&self, key: &ConsumptionRecordKey) -> Option<ConsumptionRecord> {
