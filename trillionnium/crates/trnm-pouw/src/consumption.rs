@@ -106,7 +106,11 @@ pub(crate) fn reject_if_primary_settlement_pending(
         )));
     }
 
-    let unresolved_receipt_count = unresolved_receipt_count(&records) as u64;
+    let unresolved_receipt_count = if records.is_empty() {
+        0
+    } else {
+        unproven_receipt_count_with_summary(st, task_id, &records)
+    };
     let summary_pending_reason = if records.is_empty() {
         st.task_consumption_summary(task_id).and_then(|summary| {
             if summary_has_inconsistent_terminal_marker(&summary) {
@@ -272,6 +276,20 @@ fn unresolved_receipt_count(records: &[ConsumptionRecord]) -> usize {
         .count()
 }
 
+fn unproven_receipt_count_with_summary(
+    st: &StateStore,
+    task_id: u64,
+    records: &[ConsumptionRecord],
+) -> u64 {
+    let unresolved_records = unresolved_receipt_count(records) as u64;
+    let missing_canonical_records = st
+        .task_consumption_summary(task_id)
+        .map(|summary| summary.receipt_count.saturating_sub(records.len() as u64))
+        .unwrap_or(0);
+
+    unresolved_records.saturating_add(missing_canonical_records)
+}
+
 fn total_credited_consumption_units(records: &[ConsumptionRecord]) -> u128 {
     records
         .iter()
@@ -410,7 +428,8 @@ fn preview_primary_payout_work_units(
             };
         }
 
-        let unresolved_receipt_count = unresolved_receipt_count(&records) as u64;
+        let unresolved_receipt_count =
+            unproven_receipt_count_with_summary(st, task.task_id, &records);
         if unresolved_receipt_count > 0 {
             return PrimaryPayoutWorkUnitPreview::PocoPendingSettlement {
                 unresolved_receipt_count,
@@ -1396,6 +1415,66 @@ mod tests {
             }
         );
         assert_eq!(primary_payout_work_units(&st, &task, 50), 0);
+    }
+
+    #[test]
+    fn primary_payout_work_units_fail_closed_when_summary_advertises_more_receipts_than_records() {
+        let mut st = StateStore::default();
+        let task = sample_task(TaskStatus::Completed);
+        st.set_task_consumption_summary(TaskConsumptionSummary {
+            task_id: task.task_id,
+            receipt_count: 2,
+            accepted_receipt_count: 2,
+            challenged_receipt_count: 0,
+            total_consumed_tokens: 34,
+            total_claimed_consumption_units: 34,
+            total_credited_consumption_units: 18,
+            last_settlement_height: Some(77),
+        });
+        st.put_consumption_record(sample_record(
+            "consumer-bravo",
+            "bw-1",
+            ConsumptionRecordStatus::Accepted,
+            Some(9),
+        ));
+
+        assert_eq!(
+            preview_primary_payout_work_units(&st, &task, 50),
+            PrimaryPayoutWorkUnitPreview::PocoPendingSettlement {
+                unresolved_receipt_count: 1,
+                metering_work_units: 50,
+            }
+        );
+        assert_eq!(primary_payout_work_units(&st, &task, 50), 0);
+    }
+
+    #[test]
+    fn reject_if_primary_settlement_pending_fails_closed_when_summary_advertises_more_receipts_than_records(
+    ) {
+        let mut st = StateStore::default();
+        st.set_task_consumption_summary(TaskConsumptionSummary {
+            task_id: 42,
+            receipt_count: 2,
+            accepted_receipt_count: 2,
+            challenged_receipt_count: 0,
+            total_consumed_tokens: 34,
+            total_claimed_consumption_units: 34,
+            total_credited_consumption_units: 18,
+            last_settlement_height: Some(77),
+        });
+        st.put_consumption_record(sample_record(
+            "consumer-bravo",
+            "bw-1",
+            ConsumptionRecordStatus::Accepted,
+            Some(9),
+        ));
+
+        let err = reject_if_primary_settlement_pending(&st, 42).expect_err(
+            "summary receipt count beyond canonical records must keep settlement pending",
+        );
+        assert!(
+            matches!(err, PouwError::State(msg) if msg.contains("1 unresolved consumption receipt"))
+        );
     }
 
     #[test]
