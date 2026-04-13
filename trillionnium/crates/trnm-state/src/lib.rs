@@ -3857,11 +3857,22 @@ impl StateStore {
             task_summary,
             ..
         } = snapshot;
+        let consumer_nonce = match record.as_ref() {
+            Some(record) => consumer_nonce
+                .filter(|consumer_nonce| record.is_compatible_with_consumer_nonce(*consumer_nonce)),
+            None => consumer_nonce,
+        };
         let billing_window_policy = match record.as_ref() {
             Some(record) => billing_window_policy.filter(|policy| {
                 policy.is_receipt_compatible(&key.billing_window_id, record.accepted_at_unix_ms)
             }),
             None => billing_window_policy,
+        };
+        let task_summary = match record.as_ref() {
+            Some(record) => {
+                task_summary.filter(|summary| record.is_compatible_with_task_summary(summary))
+            }
+            None => task_summary,
         };
 
         self.restore_consumption_record(key, record);

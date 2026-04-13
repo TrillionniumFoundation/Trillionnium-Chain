@@ -75,6 +75,31 @@ impl ConsumptionRecord {
                 .as_ref()
                 .map_or(true, |code| !code.trim().is_empty())
     }
+
+    pub fn is_compatible_with_consumer_nonce(&self, consumer_nonce: u64) -> bool {
+        consumer_nonce >= self.consumer_nonce
+    }
+
+    pub fn is_compatible_with_task_summary(&self, summary: &TaskConsumptionSummary) -> bool {
+        summary.task_id == self.key.task_id
+            && summary.receipt_count > 0
+            && summary.total_consumed_tokens >= u128::from(self.consumed_token_count)
+            && summary.total_claimed_consumption_units >= self.claimed_consumption_units
+            && summary.total_credited_consumption_units
+                >= self.credited_consumption_units.unwrap_or_default()
+            && match self.status {
+                ConsumptionRecordStatus::Accepted | ConsumptionRecordStatus::Discounted => {
+                    summary.accepted_receipt_count > 0
+                }
+                _ => true,
+            }
+            && match self.status {
+                ConsumptionRecordStatus::Challenged
+                | ConsumptionRecordStatus::Rejected
+                | ConsumptionRecordStatus::Slashed => summary.challenged_receipt_count > 0,
+                _ => true,
+            }
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
@@ -168,6 +193,22 @@ impl ConsumptionSettlementStateSnapshot {
         }
     }
 
+    pub fn has_record_compatible_consumer_nonce(&self) -> bool {
+        match (&self.record, self.consumer_nonce) {
+            (Some(record), Some(consumer_nonce)) => {
+                record.is_compatible_with_consumer_nonce(consumer_nonce)
+            }
+            _ => true,
+        }
+    }
+
+    pub fn has_record_compatible_task_summary(&self) -> bool {
+        match (&self.record, &self.task_summary) {
+            (Some(record), Some(summary)) => record.is_compatible_with_task_summary(summary),
+            _ => true,
+        }
+    }
+
     pub fn is_persistable_snapshot_for(&self, key: &ConsumptionRecordKey) -> bool {
         self.matches_boundary(key)
             && self
@@ -175,6 +216,7 @@ impl ConsumptionSettlementStateSnapshot {
                 .as_ref()
                 .map_or(true, |record| record.is_persistable_snapshot_for(key))
             && self.consumer_nonce.map_or(true, |nonce| nonce > 0)
+            && self.has_record_compatible_consumer_nonce()
             && self.billing_window_policy.as_ref().map_or(true, |policy| {
                 policy.is_persistable_snapshot_for(&key.billing_window_id)
             })
@@ -182,6 +224,7 @@ impl ConsumptionSettlementStateSnapshot {
             && self.task_summary.as_ref().map_or(true, |summary| {
                 summary.is_persistable_snapshot_for(key.task_id)
             })
+            && self.has_record_compatible_task_summary()
     }
 }
 
@@ -498,6 +541,42 @@ mod tests {
     }
 
     #[test]
+    fn settlement_snapshot_rejects_regressed_consumer_nonce() {
+        let record = sample_record();
+        let key = record.key.clone();
+
+        let snapshot = ConsumptionSettlementStateSnapshot {
+            key: key.clone(),
+            record: Some(record.clone()),
+            consumer_nonce: Some(record.consumer_nonce - 1),
+            billing_window_policy: Some(sample_billing_window_policy()),
+            task_summary: Some(sample_task_consumption_summary()),
+        };
+
+        assert!(!snapshot.has_record_compatible_consumer_nonce());
+        assert!(!snapshot.is_persistable_snapshot_for(&key));
+    }
+
+    #[test]
+    fn settlement_snapshot_rejects_task_summary_that_undercounts_record() {
+        let record = sample_record();
+        let key = record.key.clone();
+        let mut summary = sample_task_consumption_summary();
+        summary.total_claimed_consumption_units = record.claimed_consumption_units - 1;
+
+        let snapshot = ConsumptionSettlementStateSnapshot {
+            key: key.clone(),
+            record: Some(record.clone()),
+            consumer_nonce: Some(record.consumer_nonce),
+            billing_window_policy: Some(sample_billing_window_policy()),
+            task_summary: Some(summary),
+        };
+
+        assert!(!snapshot.has_record_compatible_task_summary());
+        assert!(!snapshot.is_persistable_snapshot_for(&key));
+    }
+
+    #[test]
     fn settlement_snapshot_omits_and_restore_discards_incompatible_billing_policy() {
         let mut st = StateStore::default();
         let record = sample_record();
@@ -534,5 +613,34 @@ mod tests {
         );
         assert_eq!(st.billing_window_policy(&key.billing_window_id), None);
         assert_eq!(st.task_consumption_summary(key.task_id), Some(summary));
+    }
+
+    #[test]
+    fn settlement_snapshot_restore_discards_regressed_consumer_nonce_and_undercounted_summary() {
+        let mut st = StateStore::default();
+        let record = sample_record();
+        let key = record.key.clone();
+        let policy = sample_billing_window_policy();
+        let mut summary = sample_task_consumption_summary();
+        summary.total_claimed_consumption_units = record.claimed_consumption_units - 1;
+
+        st.restore_consumption_settlement_state(
+            &key,
+            ConsumptionSettlementStateSnapshot {
+                key: key.clone(),
+                record: Some(record.clone()),
+                consumer_nonce: Some(record.consumer_nonce - 1),
+                billing_window_policy: Some(policy.clone()),
+                task_summary: Some(summary),
+            },
+        );
+
+        assert_eq!(st.consumption_record(&key), Some(record));
+        assert_eq!(st.consumer_consumption_nonce(&key.consumer_id), None);
+        assert_eq!(
+            st.billing_window_policy(&key.billing_window_id),
+            Some(policy)
+        );
+        assert_eq!(st.task_consumption_summary(key.task_id), None);
     }
 }
