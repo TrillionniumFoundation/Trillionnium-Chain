@@ -4204,10 +4204,15 @@ fn read_write_decl(st: &StateStore, tx: &MockTx, tx_id: u64) -> Tx {
                 ),
                 version: 1,
             };
+            let resolve_authority_obj = ObjectRef {
+                id: pseudo_object_id_for_state_slot("gov_param", "resolve_authority"),
+                version: 1,
+            };
             read_set.push(receipt_record_obj.clone());
             write_set.push(receipt_record_obj);
             read_set.push(task_summary_obj.clone());
             write_set.push(task_summary_obj);
+            read_set.push(resolve_authority_obj);
         }
         _ => {}
     }
@@ -15991,7 +15996,22 @@ mod tests {
             Some("auditor-1".to_string())
         );
 
-        let expected_refs = vec![
+        let expected_read_refs = vec![
+            ObjectRef { id: 42, version: 1 },
+            ObjectRef {
+                id: pseudo_object_id_for_state_slot("consumption_record", &key.storage_key()),
+                version: 1,
+            },
+            ObjectRef {
+                id: pseudo_object_id_for_state_slot("task_consumption_summary", "42"),
+                version: 1,
+            },
+            ObjectRef {
+                id: pseudo_object_id_for_state_slot("gov_param", "resolve_authority"),
+                version: 1,
+            },
+        ];
+        let expected_write_refs = vec![
             ObjectRef { id: 42, version: 1 },
             ObjectRef {
                 id: pseudo_object_id_for_state_slot("consumption_record", &key.storage_key()),
@@ -16003,8 +16023,8 @@ mod tests {
             },
         ];
         let decl = read_write_decl(&st, &tx, 12);
-        assert_eq!(decl.read_set, expected_refs);
-        assert_eq!(decl.write_set, decl.read_set);
+        assert_eq!(decl.read_set, expected_read_refs);
+        assert_eq!(decl.write_set, expected_write_refs);
 
         apply_one(&mut st, tx, 12).expect("resolve receipt");
 
