@@ -1,8 +1,9 @@
 # PoUW LLM Token Meter v1 (Draft)
 
-Status: Draft  
-Scope: additive metering schema proposal for LLM-oriented workloads under PoUW  
+Status: Draft
+Scope: additive metering schema proposal for LLM-oriented workloads under PoUW-compatible task lifecycle semantics
 Compatibility: does **not** require redefining the existing PoUW state machine (`OPEN -> ASSIGNED -> COMMITTED -> REVEALED -> CHALLENGED -> COMPLETED/SLASHED`); instead introduces a new workload/metering class layered on top of it.
+BL09 retirement-prep note: during PoCO migration, treat this draft as legacy metering and challenge-compatibility guidance. Retained PoUW-specific receipts, policy snapshots, or crate names should be read as migration-era compatibility or provenance / audit evidence only, not as evidence that PoUW remains the default payout authority.
 
 ---
 
@@ -340,8 +341,9 @@ Because the existing Rust L1 v1 interface semantics are frozen, the safest path 
 2. add a new metering schema id
 3. route PoUW settlement through schema-aware validation
 4. treat `llm_token_meter_v1` as a new workload subtype
+5. during PoCO-primary migration, treat any retained PoUW metering path as compatibility or audit evidence support, not as the default payout authority
 
-This avoids silently redefining old PoUW field meanings.
+This avoids silently redefining old PoUW field meanings while keeping BL09 retirement-prep wording attached to the remaining compatibility surface.
 
 ### Current scaffold status (March 2026)
 
