@@ -4034,6 +4034,115 @@ mod tests {
     }
 
     #[test]
+    fn consumption_settlement_write_paths_emit_pending_hashes_with_default_signers() {
+        let _guard = ENV_LOCK.lock().unwrap();
+        std::env::remove_var("TRNM_TX_SUBMIT_CONSUMPTION_RECEIPT_CMD");
+        std::env::remove_var("TRNM_TX_CHALLENGE_CONSUMPTION_CMD");
+        std::env::remove_var("TRNM_TX_RESOLVE_CONSUMPTION_CMD");
+
+        let unique = format!(
+            "trnm-cli-consumption-settlement-write-paths-test-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        );
+        let root = canonical_temp_root().join(unique);
+        std::fs::create_dir_all(&root).unwrap();
+
+        let receipt_path = root.join("receipt.json");
+        std::fs::write(
+            &receipt_path,
+            r#"{
+                "task_id":42,
+                "consumer_id":"consumer-bravo",
+                "output_hash":"0xabc123",
+                "billing_window_id":"bw-7",
+                "consumer_nonce":9
+            }"#,
+        )
+        .unwrap();
+
+        let tx_file = root.join("txs.json");
+        std::env::set_var("TRNM_RPC_TX_FILE", &tx_file);
+
+        submit_consumption_receipt_tx(receipt_path.clone(), None).unwrap();
+        challenge_consumption_tx(
+            42,
+            "consumer-bravo".into(),
+            "0xabc123".into(),
+            "bw-7".into(),
+            "arbiter-alpha".into(),
+            None,
+        )
+        .unwrap();
+        resolve_consumption_tx(
+            42,
+            "consumer-bravo".into(),
+            "0xabc123".into(),
+            "bw-7".into(),
+            ConsumptionResolutionDecisionArg::Discount,
+            Some(11),
+            Some("accepted_discounted".into()),
+            "arbiter-alpha".into(),
+            None,
+        )
+        .unwrap();
+
+        let submit_hash = format!(
+            "0x{}",
+            hash(&[
+                "submit-consumption-receipt",
+                "42",
+                "consumer-bravo",
+                "0xabc123",
+                "bw-7",
+                "9",
+                "consumer-bravo",
+            ])
+        );
+        let challenge_hash = format!(
+            "0x{}",
+            hash(&[
+                "challenge-consumption",
+                "42",
+                "consumer-bravo",
+                "0xabc123",
+                "bw-7",
+                "arbiter-alpha",
+                "arbiter-alpha",
+            ])
+        );
+        let resolve_hash = format!(
+            "0x{}",
+            hash(&[
+                "resolve-consumption",
+                "42",
+                "consumer-bravo",
+                "0xabc123",
+                "bw-7",
+                "discount",
+                "11",
+                "accepted_discounted",
+                "arbiter-alpha",
+                "arbiter-alpha",
+            ])
+        );
+
+        let raw = std::fs::read_to_string(&tx_file).unwrap();
+        let parsed: serde_json::Value = serde_json::from_str(&raw).unwrap();
+        for tx_hash in [&submit_hash, &challenge_hash, &resolve_hash] {
+            assert_eq!(parsed[tx_hash.as_str()]["tx_hash"].as_str(), Some(tx_hash.as_str()));
+            assert_eq!(parsed[tx_hash.as_str()]["status"].as_str(), Some("pending"));
+        }
+        assert_eq!(query_local_tx_status(&resolve_hash).as_deref(), Some("pending"));
+
+        std::env::remove_var("TRNM_RPC_TX_FILE");
+        let _ = std::fs::remove_dir_all(&root);
+    }
+
+    #[test]
     fn query_parsers_accept_stringified_task_ids_in_task_response() {
         let parsed = parse_task_query_response(r#"{"task_id":"42"}"#, 42).unwrap();
         assert_eq!(json_u64_at_path(&parsed, &["task_id"]), Some(42));
