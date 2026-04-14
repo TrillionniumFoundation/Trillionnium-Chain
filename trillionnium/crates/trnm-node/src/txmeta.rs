@@ -75,13 +75,22 @@ pub(crate) fn normalized_consumption_resolution_code(code: &str) -> Option<&str>
     }
 }
 
-fn challenger_from_consumption_resolution_code(code: &str) -> Option<String> {
-    let challenger =
-        normalized_consumption_resolution_code(code)?.strip_prefix("challenged_by:")?;
-    if !is_canonical_receipt_event_actor_id(challenger) {
-        return None;
+pub(crate) fn canonical_consumption_resolution_code(code: &str) -> Option<String> {
+    let trimmed = normalized_consumption_resolution_code(code)?;
+    if let Some(challenger) = trimmed.strip_prefix("challenged_by:") {
+        let challenger = challenger.trim();
+        if !is_canonical_receipt_event_actor_id(challenger) {
+            return None;
+        }
+        return Some(format!("challenged_by:{challenger}"));
     }
-    Some(challenger.to_string())
+    Some(trimmed.to_string())
+}
+
+fn challenger_from_consumption_resolution_code(code: &str) -> Option<String> {
+    canonical_consumption_resolution_code(code)?
+        .strip_prefix("challenged_by:")
+        .map(|challenger| challenger.to_string())
 }
 
 pub(crate) fn consumption_record_key_of(tx: &MockTx) -> Option<ConsumptionRecordKey> {

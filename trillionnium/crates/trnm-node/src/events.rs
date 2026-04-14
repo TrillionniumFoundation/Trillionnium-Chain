@@ -3,7 +3,7 @@ use trnm_types::TaskMeteringSnapshot;
 
 use crate::accounting::EventDelta;
 use crate::txmeta::{
-    actor_of, challenger_of, consumption_record_key_of, normalized_consumption_resolution_code,
+    actor_of, canonical_consumption_resolution_code, challenger_of, consumption_record_key_of,
     now_unix_ms, task_id_of, tx_hash_of,
 };
 use crate::types::MockTx;
@@ -111,9 +111,8 @@ fn consumption_record_event_suffix(st: &StateStore, tx: &MockTx) -> String {
             let resolution_code = record
                 .resolution_code
                 .as_deref()
-                .and_then(normalized_consumption_resolution_code)
-                .unwrap_or("-")
-                .to_string();
+                .and_then(canonical_consumption_resolution_code)
+                .unwrap_or_else(|| "-".to_string());
             format!(
                 " settlement_record_status={} settlement_consumer_id={} settlement_output_hash={} settlement_billing_window_id={} settlement_consumer_nonce={} settlement_credited_consumption_units={} settlement_resolution_code={}",
                 consumption_record_status_name(record.status),
@@ -431,7 +430,7 @@ mod tests {
         )
         .expect("challenge receipt");
 
-        let padded_marker = " \nchallenged_by:auditor-1\t ";
+        let padded_marker = " \nchallenged_by: auditor-1\t ";
         let mut record = st.consumption_record(&record_key).expect("record");
         record.resolution_code = Some(padded_marker.to_string());
         st.put_consumption_record(record);

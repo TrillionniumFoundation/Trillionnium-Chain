@@ -3031,12 +3031,22 @@ fn normalized_consumption_resolution_code(code: &str) -> Option<&str> {
     }
 }
 
-fn challenger_from_consumption_resolution_code(code: &str) -> Option<String> {
-    let challenger = normalized_consumption_resolution_code(code)?.strip_prefix("challenged_by:")?;
-    if !is_canonical_receipt_event_actor_id(challenger) {
-        return None;
+fn canonical_consumption_resolution_code(code: &str) -> Option<String> {
+    let trimmed = normalized_consumption_resolution_code(code)?;
+    if let Some(challenger) = trimmed.strip_prefix("challenged_by:") {
+        let challenger = challenger.trim();
+        if !is_canonical_receipt_event_actor_id(challenger) {
+            return None;
+        }
+        return Some(format!("challenged_by:{challenger}"));
     }
-    Some(challenger.to_string())
+    Some(trimmed.to_string())
+}
+
+fn challenger_from_consumption_resolution_code(code: &str) -> Option<String> {
+    canonical_consumption_resolution_code(code)?
+        .strip_prefix("challenged_by:")
+        .map(|challenger| challenger.to_string())
 }
 
 fn preapply_challenger_account_of(st: &StateStore, tx: &MockTx) -> Option<String> {
@@ -3313,9 +3323,8 @@ fn consumption_record_event_suffix(st: &StateStore, tx: &MockTx) -> String {
             let resolution_code = record
                 .resolution_code
                 .as_deref()
-                .and_then(normalized_consumption_resolution_code)
-                .unwrap_or("-")
-                .to_string();
+                .and_then(canonical_consumption_resolution_code)
+                .unwrap_or_else(|| "-".to_string());
             format!(
                 " settlement_record_status={} settlement_consumer_id={} settlement_output_hash={} settlement_billing_window_id={} settlement_consumer_nonce={} settlement_credited_consumption_units={} settlement_resolution_code={}",
                 consumption_record_status_name(record.status),
