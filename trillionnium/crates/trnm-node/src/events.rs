@@ -403,6 +403,98 @@ mod tests {
     }
 
     #[test]
+    fn split_resolve_consumption_receipt_event_line_normalizes_padded_challenger_marker() {
+        let mut st = StateStore::default();
+        let _ = st.set_gov_param_bootstrap_unchecked(
+            9_500,
+            "resolve_authority".into(),
+            "resolver-1,resolver-2".into(),
+        );
+
+        let result_hash = [0x2a; 32];
+        crate::put_sample_poco_task(&mut st, 42, "worker-alpha", result_hash);
+
+        let receipt =
+            crate::sample_consumption_receipt(42, "worker-alpha", "consumer-bravo", result_hash);
+        let submit_tx = MockTx::SubmitConsumptionReceipt {
+            receipt: receipt.clone(),
+        };
+        let record_key = crate::consumption_record_key_of(&submit_tx).expect("record key");
+        crate::apply_one(&mut st, submit_tx, 10).expect("apply receipt");
+        crate::apply_one(
+            &mut st,
+            MockTx::ChallengeConsumptionReceipt {
+                key: receipt.replay_key(),
+                challenger: "auditor-1".to_string(),
+            },
+            11,
+        )
+        .expect("challenge receipt");
+
+        let padded_marker = " \nchallenged_by:auditor-1\t ";
+        let mut record = st.consumption_record(&record_key).expect("record");
+        record.resolution_code = Some(padded_marker.to_string());
+        st.put_consumption_record(record);
+
+        let tx = MockTx::ResolveConsumptionReceipt {
+            key: receipt.replay_key(),
+            decision: ConsumptionResolveDecision::Discount,
+            credited_consumption_units: Some(9),
+            resolution_code: None,
+            resolver: "resolver-1".to_string(),
+        };
+        let signer = verified_signer_of(&st, &tx);
+        let challenger = preapply_challenger_account_of(&st, &tx);
+
+        assert_eq!(challenger.as_deref(), Some("auditor-1"));
+        assert_eq!(challenger, crate::preapply_challenger_account_of(&st, &tx));
+
+        let zero_delta = EventDelta {
+            numeric: Some(0),
+            text: "0".to_string(),
+        };
+        let line = format_apply_event_line(
+            &st,
+            &tx,
+            &signer,
+            12,
+            12,
+            "Completed",
+            "Completed",
+            "split-root-resolve-padded-marker",
+            &zero_delta,
+            Some(&zero_delta),
+            challenger.as_deref(),
+            None,
+            126,
+        );
+        let main_line = crate::format_apply_event_line(
+            &st,
+            &tx,
+            &signer,
+            12,
+            12,
+            "Completed",
+            "Completed",
+            "split-root-resolve-padded-marker",
+            &zero_delta,
+            Some(&zero_delta),
+            challenger.as_deref(),
+            None,
+            126,
+        );
+
+        assert_eq!(line, main_line);
+        assert!(line.contains("event_type=resolve_consumption_receipt"));
+        assert!(line.contains("challenger=auditor-1"));
+        assert!(line.contains("settlement_record_status=challenged"));
+        assert!(line.contains("settlement_resolution_code=challenged_by:auditor-1"));
+        assert!(!line.contains(&format!("settlement_resolution_code={padded_marker}")));
+
+        crate::apply_one(&mut st, tx, 12).expect("resolve receipt");
+    }
+
+    #[test]
     fn split_receipt_settlement_event_and_txmeta_contract_matches_main() {
         let mut st = StateStore::default();
         let _ = st.set_gov_param_bootstrap_unchecked(
