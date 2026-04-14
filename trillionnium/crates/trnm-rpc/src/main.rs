@@ -3862,12 +3862,8 @@ fn serve_health(host: &str, port: u16) -> Result<()> {
                 let body = health_probe_body(now_ms());
                 json_response_for_method(method, "200 OK", &body)
             }
-            (Some((method, _)), Some(path), Some(_)) if path.starts_with("/query-task/") => {
-                let task_id = path
-                    .trim_start_matches("/query-task/")
-                    .trim_end_matches('/')
-                    .parse::<u64>();
-                match task_id {
+            (Some((method, _)), Some(path), Some(target)) if path.starts_with("/query-task/") => {
+                match parse_task_id_from_target(target, "/query-task/", false) {
                     Ok(task_id) => {
                         let node_events = load_node_events(NodeEventScanMode::Authoritative);
                         let recs = load_latest_adapter_records();
@@ -3881,17 +3877,11 @@ fn serve_health(host: &str, port: u16) -> Result<()> {
                             Err(err) => task_query_error_response(method, &err),
                         }
                     }
-                    Err(_) => {
-                        let body = "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid task_id\"}";
-                        json_response_for_method(method, "400 Bad Request", body)
-                    }
+                    Err(err) => http_response_for_method(method, &err),
                 }
             }
             (Some((method, _)), Some(path), Some(target)) if path.starts_with("/query-events/") => {
-                let task_id = path
-                    .trim_start_matches("/query-events/")
-                    .trim_end_matches('/')
-                    .parse::<u64>();
+                let task_id = parse_task_id_from_target(target, "/query-events/", true);
                 let limit = parse_query_events_limit_from_path(target);
                 match (task_id, limit) {
                     (Ok(task_id), Ok(limit)) => {
@@ -3904,39 +3894,11 @@ fn serve_health(host: &str, port: u16) -> Result<()> {
                                 });
                                 json_response_for_method(method, "200 OK", &body)
                             }
-                            Err(err) => {
-                                let message = err.to_string();
-                                let (status, code) = if message
-                                    .starts_with("events not found for task_id=")
-                                {
-                                    ("404 Not Found", "NOT_FOUND")
-                                } else if message
-                                    .starts_with("event query adapter fallback disabled for task ")
-                                {
-                                    (
-                                        "409 Conflict",
-                                        "SETTLEMENT_AWARE_EVENT_QUERY_REQUIRED",
-                                    )
-                                } else if message.starts_with(
-                                    "event query blocked by settlement rpc contract violation for task ",
-                                ) {
-                                    (
-                                        "500 Internal Server Error",
-                                        "SETTLEMENT_RPC_CONTRACT_VIOLATION",
-                                    )
-                                } else {
-                                    ("500 Internal Server Error", "INTERNAL_ERROR")
-                                };
-                                let body = serde_json::json!({"ok": false, "code": code, "message": message}).to_string();
-                                json_response_for_method(method, status, &body)
-                            }
+                            Err(err) => event_query_error_response(method, &err)
                         }
                     }
                     (_, Err(err)) => http_response_for_method(method, &err),
-                    (Err(_), _) => {
-                        let body = "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid task_id\"}";
-                        json_response_for_method(method, "400 Bad Request", body)
-                    }
+                    (Err(err), _) => http_response_for_method(method, &err),
                 }
             }
             (Some((method, _)), Some(path), Some(target))
@@ -4539,6 +4501,74 @@ fn task_query_error_response(method: &str, err: &anyhow::Error) -> String {
     body.insert("code".into(), serde_json::json!(code));
     body.insert("message".into(), serde_json::json!(message.clone()));
     body.extend(settlement_aware_task_query_hint_fields(&message));
+    let body = serde_json::Value::Object(body).to_string();
+    json_response_for_method(method, status, &body)
+}
+
+fn settlement_aware_event_query_hint_fields(
+    message: &str,
+) -> serde_json::Map<String, serde_json::Value> {
+    let mut fields = serde_json::Map::new();
+
+    if let Some(task_id) = extract_task_id_from_message(
+        message,
+        "event query adapter fallback disabled for task ",
+        " because authoritative settlement summary exists",
+    ) {
+        fields.insert(
+            "settlement_reason".into(),
+            serde_json::json!("AUTHORITATIVE_SETTLEMENT_SUMMARY_EXISTS"),
+        );
+        fields.insert(
+            "query_settlement_preview".into(),
+            serde_json::json!(format!("/query-settlement-preview/{task_id}")),
+        );
+        fields.insert(
+            "query_consumption_summary".into(),
+            serde_json::json!(format!("/query-consumption-summary/{task_id}")),
+        );
+        return fields;
+    }
+
+    if let Some(task_id) = extract_task_id_from_message(
+        message,
+        "event query adapter fallback disabled for task ",
+        " because authoritative settlement receipts exist without a summary",
+    ) {
+        fields.insert(
+            "settlement_reason".into(),
+            serde_json::json!("AUTHORITATIVE_SETTLEMENT_SUMMARY_REQUIRED"),
+        );
+        fields.insert(
+            "query_consumption_receipts".into(),
+            serde_json::json!(format!("/query-consumption-receipts/{task_id}")),
+        );
+    }
+
+    fields
+}
+
+fn event_query_error_response(method: &str, err: &anyhow::Error) -> String {
+    let message = err.to_string();
+    let (status, code) = if message.starts_with("events not found for task_id=") {
+        ("404 Not Found", "NOT_FOUND")
+    } else if message.starts_with("event query adapter fallback disabled for task ") {
+        ("409 Conflict", "SETTLEMENT_AWARE_EVENT_QUERY_REQUIRED")
+    } else if message.starts_with(
+        "event query blocked by settlement rpc contract violation for task ",
+    ) {
+        (
+            "500 Internal Server Error",
+            "SETTLEMENT_RPC_CONTRACT_VIOLATION",
+        )
+    } else {
+        ("500 Internal Server Error", "INTERNAL_ERROR")
+    };
+    let mut body = serde_json::Map::new();
+    body.insert("ok".into(), serde_json::json!(false));
+    body.insert("code".into(), serde_json::json!(code));
+    body.insert("message".into(), serde_json::json!(message.clone()));
+    body.extend(settlement_aware_event_query_hint_fields(&message));
     let body = serde_json::Value::Object(body).to_string();
     json_response_for_method(method, status, &body)
 }
@@ -12339,7 +12369,17 @@ line2
     }
 
     #[test]
-    fn parse_task_id_from_target_accepts_query_settlement_preview_and_receipts_shapes() {
+    fn parse_task_id_from_target_accepts_canonical_task_event_and_settlement_shapes() {
+        assert_eq!(
+            parse_task_id_from_target("/query-task/42", "/query-task/", false)
+                .expect("task task id"),
+            42
+        );
+        assert_eq!(
+            parse_task_id_from_target("/query-events/7?limit=5", "/query-events/", true)
+                .expect("event task id"),
+            7
+        );
         assert_eq!(
             parse_task_id_from_target(
                 "/query-settlement-preview/42",
@@ -12361,8 +12401,11 @@ line2
     }
 
     #[test]
-    fn parse_task_id_from_target_rejects_noncanonical_settlement_query_shapes() {
+    fn parse_task_id_from_target_rejects_noncanonical_task_event_and_settlement_query_shapes() {
         for (target, prefix, allow_query) in [
+            ("/query-task/42?verbose=1", "/query-task/", false),
+            ("/query-task/42//", "/query-task/", false),
+            ("/query-events/42//?limit=7", "/query-events/", true),
             (
                 "/query-settlement-preview/42?limit=7",
                 "/query-settlement-preview/",
@@ -12385,7 +12428,7 @@ line2
             ),
         ] {
             let err = parse_task_id_from_target(target, prefix, allow_query)
-                .expect_err("non-canonical settlement query shapes must fail closed");
+                .expect_err("non-canonical task/query shapes must fail closed");
             assert!(err.contains("400 Bad Request"));
             assert!(err.contains("invalid task_id"));
         }
@@ -12475,6 +12518,36 @@ line2
         assert!(response.starts_with("HTTP/1.1 500 Internal Server Error\r\n"));
         assert!(response.contains("\"code\":\"SETTLEMENT_RPC_CONTRACT_VIOLATION\""));
         assert!(response.contains("settlement rpc contract violation"));
+    }
+
+    #[test]
+    fn event_query_error_response_maps_settlement_gate_to_conflict_with_summary_hints() {
+        let err = anyhow!(
+            "event query adapter fallback disabled for task 42 because authoritative settlement summary exists"
+        );
+        let response = event_query_error_response("GET", &err);
+        assert!(response.starts_with("HTTP/1.1 409 Conflict\r\n"));
+        assert!(response.contains("\"code\":\"SETTLEMENT_AWARE_EVENT_QUERY_REQUIRED\""));
+        assert!(response.contains("authoritative settlement summary exists"));
+        assert!(response
+            .contains("\"settlement_reason\":\"AUTHORITATIVE_SETTLEMENT_SUMMARY_EXISTS\""));
+        assert!(response.contains("\"query_settlement_preview\":\"/query-settlement-preview/42\""));
+        assert!(response
+            .contains("\"query_consumption_summary\":\"/query-consumption-summary/42\""));
+    }
+
+    #[test]
+    fn event_query_error_response_maps_receipt_backed_gate_to_receipt_route_hint() {
+        let err = anyhow!(
+            "event query adapter fallback disabled for task 42 because authoritative settlement receipts exist without a summary"
+        );
+        let response = event_query_error_response("GET", &err);
+        assert!(response.starts_with("HTTP/1.1 409 Conflict\r\n"));
+        assert!(response.contains("\"code\":\"SETTLEMENT_AWARE_EVENT_QUERY_REQUIRED\""));
+        assert!(response
+            .contains("\"settlement_reason\":\"AUTHORITATIVE_SETTLEMENT_SUMMARY_REQUIRED\""));
+        assert!(response
+            .contains("\"query_consumption_receipts\":\"/query-consumption-receipts/42\""));
     }
 
     #[test]
