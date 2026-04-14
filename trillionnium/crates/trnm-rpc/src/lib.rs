@@ -67,8 +67,8 @@ pub struct TaskMeteringQueryResponse {
     pub derived: TaskMeteringDerivedQueryResponse,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
+#[derive(Debug, Clone, Deserialize)]
+#[serde(try_from = "TaskQueryResponseWire")]
 pub struct TaskQueryResponse {
     pub task_id: u64,
     pub status: TaskStatus,
@@ -90,6 +90,107 @@ pub struct TaskQueryResponse {
     pub metering: Option<TaskMeteringQueryResponse>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub settlement_preview: Option<TaskSettlementPreviewQueryResponse>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct TaskQueryResponseWire {
+    task_id: u64,
+    status: TaskStatus,
+    worker: Option<String>,
+    bounty: u128,
+    result_hash_hex: Option<String>,
+    version: u64,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    metadata_compatibility: Option<TaskMetadataCompatibility>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    metadata_runtime_compatible: Option<bool>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    metadata_requires_governance_upgrade: Option<bool>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    metadata_primary_compatibility_finding: Option<TaskMetadataCompatibilityFinding>,
+    #[serde(default, skip_serializing_if = "option_vec_is_none_or_empty")]
+    metadata_compatibility_findings: Option<Vec<TaskMetadataCompatibilityFinding>>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    metering: Option<TaskMeteringQueryResponse>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    settlement_preview: Option<TaskSettlementPreviewQueryResponse>,
+}
+
+const TASK_QUERY_SETTLEMENT_PREVIEW_CONTRACT_ERROR: &str =
+    "task query settlement preview violated RPC contract";
+
+impl From<&TaskQueryResponse> for TaskQueryResponseWire {
+    fn from(task: &TaskQueryResponse) -> Self {
+        Self {
+            task_id: task.task_id,
+            status: task.status.clone(),
+            worker: task.worker.clone(),
+            bounty: task.bounty,
+            result_hash_hex: task.result_hash_hex.clone(),
+            version: task.version,
+            metadata_compatibility: task.metadata_compatibility.clone(),
+            metadata_runtime_compatible: task.metadata_runtime_compatible,
+            metadata_requires_governance_upgrade: task.metadata_requires_governance_upgrade,
+            metadata_primary_compatibility_finding: task
+                .metadata_primary_compatibility_finding
+                .clone(),
+            metadata_compatibility_findings: task.metadata_compatibility_findings.clone(),
+            metering: task.metering.clone(),
+            settlement_preview: task.settlement_preview.clone(),
+        }
+    }
+}
+
+impl Serialize for TaskQueryResponse {
+    fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        if !self.settlement_preview_contract_consistent() {
+            return Err(serde::ser::Error::custom(
+                TASK_QUERY_SETTLEMENT_PREVIEW_CONTRACT_ERROR,
+            ));
+        }
+
+        TaskQueryResponseWire::from(self).serialize(serializer)
+    }
+}
+
+impl TryFrom<TaskQueryResponseWire> for TaskQueryResponse {
+    type Error = &'static str;
+
+    fn try_from(task: TaskQueryResponseWire) -> Result<Self, Self::Error> {
+        let task = Self {
+            task_id: task.task_id,
+            status: task.status,
+            worker: task.worker,
+            bounty: task.bounty,
+            result_hash_hex: task.result_hash_hex,
+            version: task.version,
+            metadata_compatibility: task.metadata_compatibility,
+            metadata_runtime_compatible: task.metadata_runtime_compatible,
+            metadata_requires_governance_upgrade: task.metadata_requires_governance_upgrade,
+            metadata_primary_compatibility_finding: task.metadata_primary_compatibility_finding,
+            metadata_compatibility_findings: task.metadata_compatibility_findings,
+            metering: task.metering,
+            settlement_preview: task.settlement_preview,
+        };
+
+        if !task.settlement_preview_contract_consistent() {
+            return Err(TASK_QUERY_SETTLEMENT_PREVIEW_CONTRACT_ERROR);
+        }
+
+        Ok(task)
+    }
+}
+
+impl TaskQueryResponse {
+    pub fn settlement_preview_contract_consistent(&self) -> bool {
+        self.settlement_preview
+            .as_ref()
+            .is_none_or(|settlement_preview| settlement_preview.task_id == self.task_id)
+    }
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -918,6 +1019,72 @@ mod tests {
         }))
         .expect_err("task query schema should reject unknown fields");
         assert!(err.to_string().contains("unexpected"));
+    }
+
+    #[test]
+    fn rpc_task_query_rejects_settlement_preview_task_id_mismatch_on_deserialize() {
+        let err = serde_json::from_value::<TaskQueryResponse>(json!({
+            "task_id": 7,
+            "status": "Completed",
+            "worker": "worker-1",
+            "bounty": 100,
+            "result_hash_hex": "abc123",
+            "version": 3,
+            "settlement_preview": {
+                "task_id": 8,
+                "receipt_count": 2,
+                "accepted_receipt_count": 1,
+                "challenged_receipt_count": 1,
+                "total_consumed_tokens": 33,
+                "total_claimed_consumption_units": 33,
+                "total_credited_consumption_units": 21,
+                "last_settlement_height": 88
+            }
+        }))
+        .expect_err("task query schema should reject mismatched settlement preview task ids");
+        assert!(err
+            .to_string()
+            .contains(TASK_QUERY_SETTLEMENT_PREVIEW_CONTRACT_ERROR));
+    }
+
+    #[test]
+    fn rpc_task_query_rejects_settlement_preview_task_id_mismatch_on_serialize() {
+        let task = TaskQueryResponse {
+            task_id: 7,
+            status: TaskStatus::Completed,
+            worker: Some("worker-1".into()),
+            bounty: 100,
+            result_hash_hex: Some("abc123".into()),
+            version: 3,
+            metadata_compatibility: None,
+            metadata_runtime_compatible: None,
+            metadata_requires_governance_upgrade: None,
+            metadata_primary_compatibility_finding: None,
+            metadata_compatibility_findings: None,
+            metering: None,
+            settlement_preview: Some(
+                TaskSettlementPreviewQueryResponse::try_from_authoritative_summary(
+                    TaskConsumptionSummaryQueryResponse {
+                        task_id: 8,
+                        receipt_count: 2,
+                        accepted_receipt_count: 1,
+                        challenged_receipt_count: 1,
+                        total_consumed_tokens: 33,
+                        total_claimed_consumption_units: 33,
+                        total_credited_consumption_units: 21,
+                        last_settlement_height: Some(88),
+                    },
+                )
+                .expect("preview summary should satisfy settlement contract"),
+            ),
+        };
+
+        let err = serde_json::to_value(task).expect_err(
+            "task query serialization should reject mismatched settlement preview task ids",
+        );
+        assert!(err
+            .to_string()
+            .contains(TASK_QUERY_SETTLEMENT_PREVIEW_CONTRACT_ERROR));
     }
 
     #[test]
