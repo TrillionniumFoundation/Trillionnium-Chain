@@ -44,42 +44,6 @@ enum Command {
 
 #[derive(Debug, Subcommand)]
 enum TxCommand {
-    /// Legacy commit-result tx (kept for compatibility)
-    CommitResult {
-        task_id: u64,
-        worker: String,
-        commit_hash: String,
-        nonce: u64,
-    },
-    /// Legacy reveal-result tx (kept for compatibility)
-    RevealResult {
-        task_id: u64,
-        result_hash: String,
-        salt_hex: String,
-    },
-    /// Query tx lifecycle status by hash
-    Query { tx_hash: String },
-    /// Wait until tx reaches committed/fail lifecycle state
-    Wait {
-        tx_hash: String,
-        #[arg(long, default_value_t = 30)]
-        timeout: u64,
-        #[arg(long, default_value_t = 2)]
-        interval: u64,
-    },
-    /// Transfer balance from one wallet to another
-    Transfer {
-        #[arg(long, default_value = "default")]
-        from: String,
-        #[arg(long)]
-        to: String,
-        #[arg(long)]
-        amount: u128,
-        #[arg(long, default_value = "trnm")]
-        denom: String,
-        #[arg(long)]
-        store: Option<PathBuf>,
-    },
     /// Submit a PoCO consumption receipt tx
     #[command(
         name = "submit-consumption-receipt",
@@ -126,6 +90,42 @@ enum TxCommand {
         resolver: String,
         #[arg(long)]
         signer: Option<String>,
+    },
+    /// Transfer balance from one wallet to another
+    Transfer {
+        #[arg(long, default_value = "default")]
+        from: String,
+        #[arg(long)]
+        to: String,
+        #[arg(long)]
+        amount: u128,
+        #[arg(long, default_value = "trnm")]
+        denom: String,
+        #[arg(long)]
+        store: Option<PathBuf>,
+    },
+    /// Query tx lifecycle status by hash
+    Query { tx_hash: String },
+    /// Wait until tx reaches committed/fail lifecycle state
+    Wait {
+        tx_hash: String,
+        #[arg(long, default_value_t = 30)]
+        timeout: u64,
+        #[arg(long, default_value_t = 2)]
+        interval: u64,
+    },
+    /// Legacy commit-result tx (kept for compatibility)
+    CommitResult {
+        task_id: u64,
+        worker: String,
+        commit_hash: String,
+        nonce: u64,
+    },
+    /// Legacy reveal-result tx (kept for compatibility)
+    RevealResult {
+        task_id: u64,
+        result_hash: String,
+        salt_hex: String,
     },
 }
 
@@ -4233,6 +4233,8 @@ mod tests {
         assert!(tx_help.contains("challenge-settlement"));
         assert!(tx_help.contains("resolve-consumption"));
         assert!(tx_help.contains("resolve-settlement"));
+        assert!(tx_help.contains("commit-result"));
+        assert!(tx_help.contains("reveal-result"));
         assert!(
             tx_help.find("submit-consumption-receipt") < tx_help.find("submit-settlement-receipt"),
             "tx help should keep submit-consumption-receipt primary: {tx_help}"
@@ -4244,6 +4246,18 @@ mod tests {
         assert!(
             tx_help.find("resolve-consumption") < tx_help.find("resolve-settlement"),
             "tx help should keep resolve-consumption primary: {tx_help}"
+        );
+        assert!(
+            tx_help.find("submit-consumption-receipt") < tx_help.find("commit-result"),
+            "tx help should surface submit-consumption-receipt ahead of legacy commit-result: {tx_help}"
+        );
+        assert!(
+            tx_help.find("challenge-consumption") < tx_help.find("commit-result"),
+            "tx help should surface challenge-consumption ahead of legacy commit-result: {tx_help}"
+        );
+        assert!(
+            tx_help.find("resolve-consumption") < tx_help.find("reveal-result"),
+            "tx help should surface resolve-consumption ahead of legacy reveal-result: {tx_help}"
         );
     }
 
