@@ -282,6 +282,13 @@ fn reject_if_settlement_window_closed(
             // resolve window instead of drifting indefinitely as a sidecar flow.
             reject_if_deadline_exceeded_optional(Some(resolve_deadline), current_height)?;
         }
+        TaskStatus::Slashed => {
+            // Promotion step: once the task has already reached a terminal
+            // slash outcome, receipt settlement must stop mutating state.
+            // Metering/proof inputs can still serve as audit evidence, but
+            // they must not reopen PoCO settlement after terminal slashing.
+            return Err(PouwError::InvalidTransition);
+        }
         _ => {}
     }
     Ok(())
@@ -2549,6 +2556,68 @@ mod tests {
         .expect_err("closed challenged resolve window must reject late receipt resolution");
 
         assert!(matches!(err, PouwError::DeadlineExceeded));
+    }
+
+    #[test]
+    fn challenge_consumption_receipt_rejects_terminal_slashed_task() {
+        let mut st = StateStore::default();
+        let task_ref = st
+            .put_task_new(sample_task(TaskStatus::Completed))
+            .expect("task");
+        let receipt = sample_receipt();
+        let key = receipt.replay_key();
+        submit_consumption_receipt_at_height(&mut st, receipt, "consumer-bravo".to_string(), 99)
+            .expect("submit receipt within settlement window");
+
+        let mut slashed = st.get_task(42).expect("task");
+        slashed.status = TaskStatus::Slashed;
+        st.update_task(task_ref, slashed).expect("update task");
+
+        let err = challenge_consumption_receipt_at_height(
+            &mut st,
+            key,
+            "auditor-1".to_string(),
+            "auditor-1".to_string(),
+            99,
+        )
+        .expect_err("terminal slashed task must reject receipt challenge");
+
+        assert!(matches!(err, PouwError::InvalidTransition));
+    }
+
+    #[test]
+    fn resolve_consumption_receipt_rejects_terminal_slashed_task() {
+        let mut st = StateStore::default();
+        let _ = st.set_gov_param_bootstrap_unchecked(
+            9_505,
+            "resolve_authority".into(),
+            "resolver-1,resolver-2".into(),
+        );
+        let task_ref = st
+            .put_task_new(sample_task(TaskStatus::Completed))
+            .expect("task");
+        let receipt = sample_receipt();
+        let key = receipt.replay_key();
+        submit_consumption_receipt_at_height(&mut st, receipt, "consumer-bravo".to_string(), 99)
+            .expect("submit receipt within settlement window");
+
+        let mut slashed = st.get_task(42).expect("task");
+        slashed.status = TaskStatus::Slashed;
+        st.update_task(task_ref, slashed).expect("update task");
+
+        let err = resolve_consumption_receipt_at_height(
+            &mut st,
+            key,
+            ConsumptionResolveDecision::Accept,
+            None,
+            None,
+            "resolver-1".to_string(),
+            "resolver-1".to_string(),
+            99,
+        )
+        .expect_err("terminal slashed task must reject receipt resolution");
+
+        assert!(matches!(err, PouwError::InvalidTransition));
     }
 
     #[test]
