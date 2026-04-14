@@ -201,16 +201,35 @@ impl TaskConsumptionSummaryQueryResponse {
         })
     }
 
-    pub fn settlement_contract_consistent(&self) -> bool {
-        let Some(terminal_receipt_count) = self
-            .accepted_receipt_count
+    /// Stable helper for downstream query gates so callers do not have to
+    /// re-encode terminal receipt math.
+    pub fn terminal_receipt_count(&self) -> Option<u64> {
+        self.accepted_receipt_count
             .checked_add(self.challenged_receipt_count)
-        else {
+    }
+
+    /// Stable helper for settlement-aware preview surfaces that need to know
+    /// whether any authoritative receipts are still in flight.
+    pub fn pending_receipt_count(&self) -> Option<u64> {
+        self.terminal_receipt_count()
+            .and_then(|terminal_receipt_count| {
+                self.receipt_count.checked_sub(terminal_receipt_count)
+            })
+    }
+
+    pub fn has_pending_receipts(&self) -> bool {
+        matches!(self.pending_receipt_count(), Some(pending_receipt_count) if pending_receipt_count > 0)
+    }
+
+    pub fn settlement_contract_consistent(&self) -> bool {
+        let Some(terminal_receipt_count) = self.terminal_receipt_count() else {
             return false;
         };
+        if self.pending_receipt_count().is_none() {
+            return false;
+        }
 
-        terminal_receipt_count <= self.receipt_count
-            && self.total_credited_consumption_units <= self.total_claimed_consumption_units
+        self.total_credited_consumption_units <= self.total_claimed_consumption_units
             && (self.total_credited_consumption_units == 0 || self.accepted_receipt_count > 0)
             && self.last_settlement_height.is_some() == (terminal_receipt_count > 0)
     }
@@ -284,18 +303,21 @@ impl TaskSettlementPreviewQueryResponse {
         }
     }
 
-    fn settlement_contract_consistent(&self) -> bool {
-        TaskConsumptionSummaryQueryResponse {
-            task_id: self.task_id,
-            receipt_count: self.receipt_count,
-            accepted_receipt_count: self.accepted_receipt_count,
-            challenged_receipt_count: self.challenged_receipt_count,
-            total_consumed_tokens: self.total_consumed_tokens,
-            total_claimed_consumption_units: self.total_claimed_consumption_units,
-            total_credited_consumption_units: self.total_credited_consumption_units,
-            last_settlement_height: self.last_settlement_height,
-        }
-        .settlement_contract_consistent()
+    pub fn terminal_receipt_count(&self) -> Option<u64> {
+        self.as_authoritative_summary().terminal_receipt_count()
+    }
+
+    pub fn pending_receipt_count(&self) -> Option<u64> {
+        self.as_authoritative_summary().pending_receipt_count()
+    }
+
+    pub fn has_pending_receipts(&self) -> bool {
+        self.as_authoritative_summary().has_pending_receipts()
+    }
+
+    pub fn settlement_contract_consistent(&self) -> bool {
+        self.as_authoritative_summary()
+            .settlement_contract_consistent()
     }
 
     pub fn try_from_authoritative_state_summary(
@@ -310,6 +332,19 @@ impl TaskSettlementPreviewQueryResponse {
     ) -> std::result::Result<Self, &'static str> {
         TaskConsumptionSummaryQueryResponse::try_from_authoritative_summary(summary)
             .map(Self::from_authoritative_summary)
+    }
+
+    fn as_authoritative_summary(&self) -> TaskConsumptionSummaryQueryResponse {
+        TaskConsumptionSummaryQueryResponse {
+            task_id: self.task_id,
+            receipt_count: self.receipt_count,
+            accepted_receipt_count: self.accepted_receipt_count,
+            challenged_receipt_count: self.challenged_receipt_count,
+            total_consumed_tokens: self.total_consumed_tokens,
+            total_claimed_consumption_units: self.total_claimed_consumption_units,
+            total_credited_consumption_units: self.total_credited_consumption_units,
+            last_settlement_height: self.last_settlement_height,
+        }
     }
 }
 
@@ -1044,6 +1079,67 @@ mod tests {
         assert_eq!(v["accepted_receipt_count"], json!(1));
         assert_eq!(v["challenged_receipt_count"], json!(1));
         assert_eq!(v["last_settlement_height"], json!(88));
+    }
+
+    #[test]
+    fn rpc_task_consumption_summary_query_exposes_pending_receipt_helpers() {
+        let summary = TaskConsumptionSummaryQueryResponse {
+            task_id: 42,
+            receipt_count: 5,
+            accepted_receipt_count: 2,
+            challenged_receipt_count: 1,
+            total_consumed_tokens: 55,
+            total_claimed_consumption_units: 55,
+            total_credited_consumption_units: 34,
+            last_settlement_height: Some(88),
+        };
+
+        assert_eq!(summary.terminal_receipt_count(), Some(3));
+        assert_eq!(summary.pending_receipt_count(), Some(2));
+        assert!(summary.has_pending_receipts());
+        assert!(summary.settlement_contract_consistent());
+    }
+
+    #[test]
+    fn rpc_task_consumption_summary_query_pending_receipt_helpers_fail_closed_on_inconsistent_totals(
+    ) {
+        let summary = TaskConsumptionSummaryQueryResponse {
+            task_id: 42,
+            receipt_count: 1,
+            accepted_receipt_count: 1,
+            challenged_receipt_count: 1,
+            total_consumed_tokens: 33,
+            total_claimed_consumption_units: 33,
+            total_credited_consumption_units: 21,
+            last_settlement_height: Some(88),
+        };
+
+        assert_eq!(summary.terminal_receipt_count(), Some(2));
+        assert_eq!(summary.pending_receipt_count(), None);
+        assert!(!summary.has_pending_receipts());
+        assert!(!summary.settlement_contract_consistent());
+    }
+
+    #[test]
+    fn rpc_task_settlement_preview_query_exposes_pending_receipt_helpers() {
+        let preview = TaskSettlementPreviewQueryResponse::try_from_authoritative_summary(
+            TaskConsumptionSummaryQueryResponse {
+                task_id: 42,
+                receipt_count: 5,
+                accepted_receipt_count: 2,
+                challenged_receipt_count: 1,
+                total_consumed_tokens: 55,
+                total_claimed_consumption_units: 55,
+                total_credited_consumption_units: 34,
+                last_settlement_height: Some(88),
+            },
+        )
+        .expect("authoritative summary should satisfy settlement contract");
+
+        assert_eq!(preview.terminal_receipt_count(), Some(3));
+        assert_eq!(preview.pending_receipt_count(), Some(2));
+        assert!(preview.has_pending_receipts());
+        assert!(preview.settlement_contract_consistent());
     }
 
     #[test]
