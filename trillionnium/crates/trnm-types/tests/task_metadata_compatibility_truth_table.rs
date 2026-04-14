@@ -576,6 +576,52 @@ fn task_metadata_compatibility_truth_table_task_object_threading_creates_metadat
 }
 
 #[test]
+fn task_metadata_compatibility_truth_table_task_object_threading_does_not_clobber_existing_inline_settlement(
+) {
+    let inline_settlement = TaskSettlementSnapshot {
+        settlement_schema: "poco_v1".into(),
+        tokenizer_id: "llama3-tokenizer".into(),
+        tokenizer_version: "1.0.0".into(),
+        output_hash: format!("0x{}", "6".repeat(64)),
+        output_token_count: 512,
+        output_root: Some(format!("0x{}", "7".repeat(64))),
+        output_span_commitment: None,
+    };
+    let fallback_settlement = TaskSettlementSnapshot {
+        settlement_schema: "poco_v1".into(),
+        tokenizer_id: "llama3-tokenizer".into(),
+        tokenizer_version: "1.0.0".into(),
+        output_hash: format!("0x{}", "8".repeat(64)),
+        output_token_count: 512,
+        output_root: Some(format!("0x{}", "9".repeat(64))),
+        output_span_commitment: None,
+    };
+    let mut task = task_with_metadata(Some(TaskMetadata {
+        note: Some("threaded".into()),
+        settlement: Some(inline_settlement.clone()),
+        ..TaskMetadata::default()
+    }));
+
+    assert!(!task.thread_settlement_snapshot(Some(&fallback_settlement)));
+    assert_eq!(
+        task.metadata
+            .as_ref()
+            .and_then(|metadata| metadata.settlement.as_ref()),
+        Some(&inline_settlement)
+    );
+    assert_eq!(
+        task.settlement_snapshot_source(Some(&fallback_settlement)),
+        TaskSettlementSnapshotSource::ThreadedMetadata
+    );
+    assert_eq!(
+        task.effective_settlement_snapshot(Some(&fallback_settlement))
+            .expect("existing inline settlement should remain authoritative")
+            .output_hash,
+        inline_settlement.output_hash
+    );
+}
+
+#[test]
 fn task_metadata_compatibility_truth_table_task_object_settlement_helpers_preserve_absent_fallback_and_threaded_precedence(
 ) {
     let fallback_settlement = TaskSettlementSnapshot {
