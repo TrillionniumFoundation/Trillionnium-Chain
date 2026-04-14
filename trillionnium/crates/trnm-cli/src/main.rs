@@ -82,7 +82,7 @@ enum TxCommand {
         billing_window_id: String,
         #[arg(long, value_enum)]
         decision: ConsumptionResolutionDecisionArg,
-        #[arg(long)]
+        #[arg(long, required_if_eq("decision", "discount"))]
         credited_consumption_units: Option<u128>,
         #[arg(long)]
         resolution_code: Option<String>,
@@ -4176,6 +4176,34 @@ mod tests {
         );
         assert!(rendered.contains("reject"), "unexpected error: {rendered}");
         assert!(rendered.contains("slash"), "unexpected error: {rendered}");
+    }
+
+    #[test]
+    fn consumption_settlement_cli_parser_rejects_discount_resolution_without_credited_units() {
+        let err = Args::try_parse_from([
+            "trnm-cli",
+            "tx",
+            "resolve-consumption",
+            "42",
+            "--consumer-id",
+            "consumer-bravo",
+            "--output-hash",
+            "0xabc123",
+            "--billing-window-id",
+            "bw-7",
+            "--decision",
+            "discount",
+            "--resolver",
+            "arbiter-alpha",
+        ])
+        .unwrap_err();
+
+        assert_eq!(err.kind(), clap::error::ErrorKind::MissingRequiredArgument);
+        let rendered = err.to_string();
+        assert!(
+            rendered.contains("--credited-consumption-units <CREDITED_CONSUMPTION_UNITS>"),
+            "unexpected error: {rendered}"
+        );
     }
 
     #[test]
