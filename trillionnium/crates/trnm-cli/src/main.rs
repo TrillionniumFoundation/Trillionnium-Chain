@@ -1,5 +1,5 @@
 use anyhow::{anyhow, bail, Result};
-use clap::{Parser, Subcommand};
+use clap::{Parser, Subcommand, ValueEnum};
 use ed25519_dalek::SigningKey;
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
@@ -44,28 +44,52 @@ enum Command {
 
 #[derive(Debug, Subcommand)]
 enum TxCommand {
-    /// Legacy commit-result tx (kept for compatibility)
-    CommitResult {
-        task_id: u64,
-        worker: String,
-        commit_hash: String,
-        nonce: u64,
+    /// Submit a PoCO consumption receipt tx
+    #[command(
+        name = "submit-consumption-receipt",
+        visible_alias = "submit-settlement-receipt"
+    )]
+    SubmitConsumptionReceipt {
+        #[arg(long)]
+        receipt_json: PathBuf,
+        #[arg(long)]
+        signer: Option<String>,
     },
-    /// Legacy reveal-result tx (kept for compatibility)
-    RevealResult {
+    /// Challenge a PoCO consumption receipt tx
+    #[command(name = "challenge-consumption", visible_alias = "challenge-settlement")]
+    ChallengeConsumption {
         task_id: u64,
-        result_hash: String,
-        salt_hex: String,
+        #[arg(long)]
+        consumer_id: String,
+        #[arg(long)]
+        output_hash: String,
+        #[arg(long)]
+        billing_window_id: String,
+        #[arg(long)]
+        challenger: String,
+        #[arg(long)]
+        signer: Option<String>,
     },
-    /// Query tx lifecycle status by hash
-    Query { tx_hash: String },
-    /// Wait until tx reaches committed/fail lifecycle state
-    Wait {
-        tx_hash: String,
-        #[arg(long, default_value_t = 30)]
-        timeout: u64,
-        #[arg(long, default_value_t = 2)]
-        interval: u64,
+    /// Resolve a PoCO consumption receipt tx
+    #[command(name = "resolve-consumption", visible_alias = "resolve-settlement")]
+    ResolveConsumption {
+        task_id: u64,
+        #[arg(long)]
+        consumer_id: String,
+        #[arg(long)]
+        output_hash: String,
+        #[arg(long)]
+        billing_window_id: String,
+        #[arg(long, value_enum)]
+        decision: ConsumptionResolutionDecisionArg,
+        #[arg(long, required_if_eq("decision", "discount"))]
+        credited_consumption_units: Option<u128>,
+        #[arg(long)]
+        resolution_code: Option<String>,
+        #[arg(long)]
+        resolver: String,
+        #[arg(long)]
+        signer: Option<String>,
     },
     /// Transfer balance from one wallet to another
     Transfer {
@@ -79,6 +103,29 @@ enum TxCommand {
         denom: String,
         #[arg(long)]
         store: Option<PathBuf>,
+    },
+    /// Query tx lifecycle status by hash
+    Query { tx_hash: String },
+    /// Wait until tx reaches committed/fail lifecycle state
+    Wait {
+        tx_hash: String,
+        #[arg(long, default_value_t = 30)]
+        timeout: u64,
+        #[arg(long, default_value_t = 2)]
+        interval: u64,
+    },
+    /// Legacy commit-result tx (kept for compatibility)
+    CommitResult {
+        task_id: u64,
+        worker: String,
+        commit_hash: String,
+        nonce: u64,
+    },
+    /// Legacy reveal-result tx (kept for compatibility)
+    RevealResult {
+        task_id: u64,
+        result_hash: String,
+        salt_hex: String,
     },
 }
 
@@ -148,9 +195,19 @@ enum QueryCommand {
         #[arg(long, default_value_t = false)]
         summary: bool,
     },
-    /// Query task PoCO consumption summary via RPC
-    ConsumptionSummary { task_id: u64 },
-    /// Query task PoCO consumption receipts via RPC
+    /// Query task PoCO settlement preview via RPC
+    #[command(visible_aliases = [
+        "consumption-summary",
+        "query-settlement-preview",
+        "query-consumption-summary"
+    ])]
+    SettlementPreview { task_id: u64 },
+    /// Query task PoCO settlement receipts via RPC
+    #[command(name = "settlement-receipts", visible_aliases = [
+        "consumption-receipts",
+        "query-settlement-receipts",
+        "query-consumption-receipts"
+    ])]
     ConsumptionReceipts {
         task_id: u64,
         #[arg(long, default_value_t = 20)]
@@ -166,11 +223,40 @@ enum QueryCommand {
     },
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq, ValueEnum)]
+enum ConsumptionResolutionDecisionArg {
+    Accept,
+    Discount,
+    Reject,
+    Slash,
+}
+
+impl ConsumptionResolutionDecisionArg {
+    fn as_str(self) -> &'static str {
+        match self {
+            Self::Accept => "accept",
+            Self::Discount => "discount",
+            Self::Reject => "reject",
+            Self::Slash => "slash",
+        }
+    }
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 struct BalanceQueryResponse {
     address: String,
     balance: String,
     denom: String,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+struct ConsumptionReceiptTxInput {
+    payload_json: String,
+    task_id: u64,
+    consumer_id: String,
+    output_hash: String,
+    billing_window_id: String,
+    consumer_nonce: u64,
 }
 
 fn json_scalar_string(value: &serde_json::Value) -> Option<String> {
@@ -180,6 +266,290 @@ fn json_scalar_string(value: &serde_json::Value) -> Option<String> {
         serde_json::Value::Bool(b) => Some(b.to_string()),
         _ => None,
     }
+}
+
+fn json_u64_alias(value: &serde_json::Value, aliases: &[&str]) -> Option<u64> {
+    match json_get_alias(value, aliases)? {
+        serde_json::Value::Number(n) => n.as_u64(),
+        serde_json::Value::String(s) => s.trim().parse::<u64>().ok(),
+        _ => None,
+    }
+}
+
+fn required_json_string_field(
+    value: &serde_json::Value,
+    aliases: &[&str],
+    field_name: &'static str,
+) -> Result<String> {
+    json_get_alias(value, aliases)
+        .and_then(json_scalar_string)
+        .map(|value| value.trim().to_string())
+        .filter(|value| !value.is_empty())
+        .ok_or_else(|| anyhow!("consumption receipt missing {}", field_name))
+}
+
+fn required_json_u64_field(
+    value: &serde_json::Value,
+    aliases: &[&str],
+    field_name: &'static str,
+) -> Result<u64> {
+    json_u64_alias(value, aliases)
+        .ok_or_else(|| anyhow!("consumption receipt missing {}", field_name))
+}
+
+fn validate_consumption_receipt_tx_input(receipt: &ConsumptionReceiptTxInput) -> Result<()> {
+    if receipt.consumer_nonce == 0 {
+        bail!("consumption receipt consumer_nonce must be non-zero");
+    }
+    Ok(())
+}
+
+fn validate_non_empty_cli_field(value: &str, field_name: &'static str) -> Result<()> {
+    if value.trim().is_empty() {
+        bail!("{} must not be empty", field_name);
+    }
+    Ok(())
+}
+
+fn validate_consumption_settlement_locator(
+    consumer_id: &str,
+    output_hash: &str,
+    billing_window_id: &str,
+) -> Result<()> {
+    validate_non_empty_cli_field(consumer_id, "consumer_id")?;
+    validate_non_empty_cli_field(output_hash, "output_hash")?;
+    validate_non_empty_cli_field(billing_window_id, "billing_window_id")?;
+    Ok(())
+}
+
+fn validate_resolve_consumption_decision_fields(
+    decision: ConsumptionResolutionDecisionArg,
+    credited_consumption_units: Option<u128>,
+) -> Result<()> {
+    match (decision, credited_consumption_units) {
+        (ConsumptionResolutionDecisionArg::Discount, Some(_)) => Ok(()),
+        (ConsumptionResolutionDecisionArg::Discount, None) => {
+            bail!("credited_consumption_units is required when decision=discount")
+        }
+        (_, None) => Ok(()),
+        (_, Some(_)) => bail!("credited_consumption_units is only allowed when decision=discount"),
+    }
+}
+
+fn load_consumption_receipt_tx_input(path: &Path) -> Result<ConsumptionReceiptTxInput> {
+    let raw = fs::read_to_string(path).map_err(|err| {
+        anyhow!(
+            "failed to read consumption receipt file {}: {err}",
+            path.display()
+        )
+    })?;
+    let value: serde_json::Value = serde_json::from_str(&raw).map_err(|err| {
+        anyhow!(
+            "failed to parse consumption receipt file {} as json: {err}",
+            path.display()
+        )
+    })?;
+    if !value.is_object() {
+        bail!(
+            "consumption receipt file {} must contain a json object",
+            path.display()
+        );
+    }
+
+    let receipt = ConsumptionReceiptTxInput {
+        payload_json: serde_json::to_string(&value).map_err(|err| {
+            anyhow!(
+                "failed to canonicalize consumption receipt file {}: {err}",
+                path.display()
+            )
+        })?,
+        task_id: required_json_u64_field(&value, &["task_id"], "task_id")?,
+        consumer_id: required_json_string_field(&value, &["consumer_id"], "consumer_id")?,
+        output_hash: required_json_string_field(&value, &["output_hash"], "output_hash")?,
+        billing_window_id: required_json_string_field(
+            &value,
+            &["billing_window_id"],
+            "billing_window_id",
+        )?,
+        consumer_nonce: required_json_u64_field(&value, &["consumer_nonce"], "consumer_nonce")?,
+    };
+    validate_consumption_receipt_tx_input(&receipt)?;
+    Ok(receipt)
+}
+
+fn submit_consumption_receipt_template_override() -> Option<String> {
+    [
+        "TRNM_TX_SUBMIT_SETTLEMENT_RECEIPT_CMD",
+        "TRNM_TX_SUBMIT_CONSUMPTION_RECEIPT_CMD",
+    ]
+    .into_iter()
+    .find_map(|name| std::env::var(name).ok())
+}
+
+fn submit_consumption_receipt_tx(receipt_json: PathBuf, signer: Option<String>) -> Result<()> {
+    let receipt = load_consumption_receipt_tx_input(&receipt_json)?;
+    let signer = signer.unwrap_or_else(|| receipt.consumer_id.clone());
+
+    validate_non_empty_cli_field(&signer, "signer")?;
+
+    if let Some(template) = submit_consumption_receipt_template_override() {
+        let mut cmd = template;
+        cmd = tpl(
+            cmd,
+            "receipt_json_path",
+            &receipt_json.display().to_string(),
+        );
+        cmd = tpl(cmd, "receipt_json", &receipt.payload_json);
+        cmd = tpl(cmd, "task_id", &receipt.task_id.to_string());
+        cmd = tpl(cmd, "consumer_id", &receipt.consumer_id);
+        cmd = tpl(cmd, "output_hash", &receipt.output_hash);
+        cmd = tpl(cmd, "billing_window_id", &receipt.billing_window_id);
+        cmd = tpl(cmd, "consumer_nonce", &receipt.consumer_nonce.to_string());
+        cmd = tpl(cmd, "signer", &signer);
+        let tx_hash = run_template(&cmd)?;
+        emit_pending_tx_hash(&tx_hash)?;
+    } else {
+        let tx_hash = format!(
+            "0x{}",
+            hash(&[
+                "submit-consumption-receipt",
+                &receipt.task_id.to_string(),
+                &receipt.consumer_id,
+                &receipt.output_hash,
+                &receipt.billing_window_id,
+                &receipt.consumer_nonce.to_string(),
+                &signer,
+            ])
+        );
+        emit_pending_tx_hash(&tx_hash)?;
+    }
+
+    Ok(())
+}
+
+fn challenge_consumption_template_override() -> Option<String> {
+    [
+        "TRNM_TX_CHALLENGE_SETTLEMENT_CMD",
+        "TRNM_TX_CHALLENGE_CONSUMPTION_CMD",
+    ]
+    .into_iter()
+    .find_map(|name| std::env::var(name).ok())
+}
+
+fn challenge_consumption_tx(
+    task_id: u64,
+    consumer_id: String,
+    output_hash: String,
+    billing_window_id: String,
+    challenger: String,
+    signer: Option<String>,
+) -> Result<()> {
+    let signer = signer.unwrap_or_else(|| challenger.clone());
+
+    validate_consumption_settlement_locator(&consumer_id, &output_hash, &billing_window_id)?;
+    validate_non_empty_cli_field(&challenger, "challenger")?;
+    validate_non_empty_cli_field(&signer, "signer")?;
+
+    if let Some(template) = challenge_consumption_template_override() {
+        let mut cmd = template;
+        cmd = tpl(cmd, "task_id", &task_id.to_string());
+        cmd = tpl(cmd, "consumer_id", &consumer_id);
+        cmd = tpl(cmd, "output_hash", &output_hash);
+        cmd = tpl(cmd, "billing_window_id", &billing_window_id);
+        cmd = tpl(cmd, "challenger", &challenger);
+        cmd = tpl(cmd, "signer", &signer);
+        let tx_hash = run_template(&cmd)?;
+        emit_pending_tx_hash(&tx_hash)?;
+    } else {
+        let tx_hash = format!(
+            "0x{}",
+            hash(&[
+                "challenge-consumption",
+                &task_id.to_string(),
+                &consumer_id,
+                &output_hash,
+                &billing_window_id,
+                &challenger,
+                &signer,
+            ])
+        );
+        emit_pending_tx_hash(&tx_hash)?;
+    }
+
+    Ok(())
+}
+
+fn resolve_consumption_template_override() -> Option<String> {
+    [
+        "TRNM_TX_RESOLVE_SETTLEMENT_CMD",
+        "TRNM_TX_RESOLVE_CONSUMPTION_CMD",
+    ]
+    .into_iter()
+    .find_map(|name| std::env::var(name).ok())
+}
+
+#[allow(clippy::too_many_arguments)]
+fn resolve_consumption_tx(
+    task_id: u64,
+    consumer_id: String,
+    output_hash: String,
+    billing_window_id: String,
+    decision: ConsumptionResolutionDecisionArg,
+    credited_consumption_units: Option<u128>,
+    resolution_code: Option<String>,
+    resolver: String,
+    signer: Option<String>,
+) -> Result<()> {
+    let signer = signer.unwrap_or_else(|| resolver.clone());
+
+    validate_consumption_settlement_locator(&consumer_id, &output_hash, &billing_window_id)?;
+    validate_resolve_consumption_decision_fields(decision, credited_consumption_units)?;
+    validate_non_empty_cli_field(&resolver, "resolver")?;
+    validate_non_empty_cli_field(&signer, "signer")?;
+
+    let decision = decision.as_str();
+    let credited_consumption_units = credited_consumption_units
+        .map(|value| value.to_string())
+        .unwrap_or_default();
+    let resolution_code = resolution_code.unwrap_or_default();
+
+    if let Some(template) = resolve_consumption_template_override() {
+        let mut cmd = template;
+        cmd = tpl(cmd, "task_id", &task_id.to_string());
+        cmd = tpl(cmd, "consumer_id", &consumer_id);
+        cmd = tpl(cmd, "output_hash", &output_hash);
+        cmd = tpl(cmd, "billing_window_id", &billing_window_id);
+        cmd = tpl(cmd, "decision", decision);
+        cmd = tpl(
+            cmd,
+            "credited_consumption_units",
+            &credited_consumption_units,
+        );
+        cmd = tpl(cmd, "resolution_code", &resolution_code);
+        cmd = tpl(cmd, "resolver", &resolver);
+        cmd = tpl(cmd, "signer", &signer);
+        let tx_hash = run_template(&cmd)?;
+        emit_pending_tx_hash(&tx_hash)?;
+    } else {
+        let tx_hash = format!(
+            "0x{}",
+            hash(&[
+                "resolve-consumption",
+                &task_id.to_string(),
+                &consumer_id,
+                &output_hash,
+                &billing_window_id,
+                decision,
+                &credited_consumption_units,
+                &resolution_code,
+                &resolver,
+                &signer,
+            ])
+        );
+        emit_pending_tx_hash(&tx_hash)?;
+    }
+
+    Ok(())
 }
 
 fn parse_balance_query_response(
@@ -205,7 +575,9 @@ fn parse_balance_query_response(
             value.get("result"),
             value.get("data"),
             value.get("response"),
-            value.get("response").and_then(|response| response.get("data")),
+            value
+                .get("response")
+                .and_then(|response| response.get("data")),
         ] {
             let Some(candidate) = candidate else {
                 continue;
@@ -532,9 +904,44 @@ fn parse_consumption_summary_query_response(
 ) -> Result<serde_json::Value> {
     let parsed: serde_json::Value = serde_json::from_str(raw)
         .map_err(|err| anyhow!("failed to parse consumption summary response as json: {err}"))?;
-    let Some(task_id) = parsed.get("task_id").and_then(|v| v.as_u64()) else {
-        bail!("consumption summary response missing numeric task_id");
-    };
+    let result = json_get_alias(&parsed, &["result"]);
+    let data = json_get_alias(&parsed, &["data"]);
+    let response = json_get_alias(&parsed, &["response"]);
+    let response_data = response.and_then(|value| json_get_alias(value, &["data"]));
+    let summary = [
+        Some(&parsed),
+        json_get_alias(
+            &parsed,
+            &["settlement_preview", "consumption_summary", "summary"],
+        ),
+        result,
+        result.and_then(|value| {
+            json_get_alias(
+                value,
+                &["settlement_preview", "consumption_summary", "summary"],
+            )
+        }),
+        data,
+        data.and_then(|value| {
+            json_get_alias(
+                value,
+                &["settlement_preview", "consumption_summary", "summary"],
+            )
+        }),
+        response,
+        response_data,
+        response_data.and_then(|value| {
+            json_get_alias(
+                value,
+                &["settlement_preview", "consumption_summary", "summary"],
+            )
+        }),
+    ]
+    .into_iter()
+    .flatten()
+    .find(|candidate| candidate.is_object() && json_u64_alias(candidate, &["task_id"]).is_some())
+    .ok_or_else(|| anyhow!("consumption summary response missing task_id"))?;
+    let task_id = json_u64_alias(summary, &["task_id"]).expect("summary payload must have task_id");
     if task_id != requested_task_id {
         bail!(
             "consumption summary response task_id mismatch: requested={}, got={}",
@@ -542,11 +949,33 @@ fn parse_consumption_summary_query_response(
             task_id
         );
     }
-    Ok(parsed)
+    Ok(summary.clone())
+}
+
+fn settlement_preview_template_override() -> Option<String> {
+    [
+        "TRNM_QUERY_SETTLEMENT_PREVIEW_CMD",
+        "TRNM_QUERY_CONSUMPTION_SUMMARY_CMD",
+    ]
+    .into_iter()
+    .find_map(|name| std::env::var(name).ok())
+}
+
+fn settlement_preview_query_commands(task_id: u64) -> [String; 2] {
+    [
+        format!(
+            "cargo run -q -p trnm-rpc -- query-settlement-preview {}",
+            task_id
+        ),
+        format!(
+            "cargo run -q -p trnm-rpc -- query-consumption-summary {}",
+            task_id
+        ),
+    ]
 }
 
 fn consumption_summary_query(task_id: u64) -> Result<serde_json::Value> {
-    if let Ok(template) = std::env::var("TRNM_QUERY_CONSUMPTION_SUMMARY_CMD") {
+    if let Some(template) = settlement_preview_template_override() {
         let cmd = tpl(template, "task_id", &task_id.to_string());
         let raw = run_template_raw(&cmd)?;
         return parse_consumption_summary_query_response(&raw, task_id);
@@ -557,26 +986,32 @@ fn consumption_summary_query(task_id: u64) -> Result<serde_json::Value> {
         .and_then(|p| p.parent())
         .map(|p| p.to_path_buf())
         .unwrap_or_else(|| PathBuf::from("."));
-    let cmd = format!(
-        "cargo run -q -p trnm-rpc -- query-consumption-summary {}",
-        task_id
-    );
-    let (program, args) = parse_template_command(&cmd)?;
-    let out = ProcCommand::new(program)
-        .args(args)
-        .current_dir(&rpc_workspace)
-        .output()?;
-    let stdout = String::from_utf8_lossy(&out.stdout);
-    let stderr = String::from_utf8_lossy(&out.stderr);
-    if !out.status.success() {
-        bail!(
-            "consumption summary query command failed rc={}: {}{}",
+    let mut failures = Vec::new();
+
+    for cmd in settlement_preview_query_commands(task_id) {
+        let (program, args) = parse_template_command(&cmd)?;
+        let out = ProcCommand::new(program)
+            .args(args)
+            .current_dir(&rpc_workspace)
+            .output()?;
+        let stdout = String::from_utf8_lossy(&out.stdout);
+        let stderr = String::from_utf8_lossy(&out.stderr);
+        if out.status.success() {
+            return parse_consumption_summary_query_response(&stdout, task_id);
+        }
+        failures.push(format!(
+            "`{}` rc={}: {}{}",
+            cmd,
             out.status.code().unwrap_or(1),
             stdout,
             stderr
-        );
+        ));
     }
-    parse_consumption_summary_query_response(&stdout, task_id)
+
+    bail!(
+        "settlement preview query command failed: {}",
+        failures.join(" | ")
+    )
 }
 
 fn parse_consumption_receipts_query_response(
@@ -585,15 +1020,66 @@ fn parse_consumption_receipts_query_response(
 ) -> Result<serde_json::Value> {
     let parsed: serde_json::Value = serde_json::from_str(raw)
         .map_err(|err| anyhow!("failed to parse consumption receipts response as json: {err}"))?;
-    let Some(receipts) = parsed.as_array() else {
-        bail!("consumption receipts response must be a json array");
+
+    let result = json_get_alias(&parsed, &["result"]);
+    let data = json_get_alias(&parsed, &["data"]);
+    let response = json_get_alias(&parsed, &["response"]);
+    let response_data = response.and_then(|value| json_get_alias(value, &["data"]));
+    let mut envelope_task_id = None;
+    let mut receipts = None;
+    for candidate in [
+        Some(&parsed),
+        json_get_alias(&parsed, &["settlement_receipts", "consumption_receipts"]),
+        result,
+        result.and_then(|value| {
+            json_get_alias(value, &["settlement_receipts", "consumption_receipts"])
+        }),
+        data,
+        data.and_then(|value| {
+            json_get_alias(value, &["settlement_receipts", "consumption_receipts"])
+        }),
+        response,
+        response_data,
+        response_data.and_then(|value| {
+            json_get_alias(value, &["settlement_receipts", "consumption_receipts"])
+        }),
+    ]
+    .into_iter()
+    .flatten()
+    {
+        if let Some(array) = candidate.as_array() {
+            receipts = Some(array);
+            break;
+        }
+        if let Some(array) = json_get_alias(
+            candidate,
+            &["receipts", "settlement_receipts", "consumption_receipts"],
+        )
+        .and_then(|value| value.as_array())
+        {
+            envelope_task_id = json_u64_alias(candidate, &["task_id"]);
+            receipts = Some(array);
+            break;
+        }
+    }
+
+    let Some(receipts) = receipts else {
+        bail!("consumption receipts response must be a json array or wrapped receipts object");
     };
-    for (idx, receipt) in receipts.iter().enumerate() {
-        let Some(task_id) = receipt.get("task_id").and_then(|v| v.as_u64()) else {
+
+    if let Some(task_id) = envelope_task_id {
+        if task_id != requested_task_id {
             bail!(
-                "consumption receipts response item {} missing numeric task_id",
-                idx
+                "consumption receipts response task_id mismatch: requested={}, got={}",
+                requested_task_id,
+                task_id
             );
+        }
+    }
+
+    for (idx, receipt) in receipts.iter().enumerate() {
+        let Some(task_id) = json_u64_alias(receipt, &["task_id"]).or(envelope_task_id) else {
+            bail!("consumption receipts response item {} missing task_id", idx);
         };
         if task_id != requested_task_id {
             bail!(
@@ -604,11 +1090,33 @@ fn parse_consumption_receipts_query_response(
             );
         }
     }
-    Ok(parsed)
+    Ok(serde_json::Value::Array(receipts.to_vec()))
+}
+
+fn settlement_receipts_template_override() -> Option<String> {
+    [
+        "TRNM_QUERY_SETTLEMENT_RECEIPTS_CMD",
+        "TRNM_QUERY_CONSUMPTION_RECEIPTS_CMD",
+    ]
+    .into_iter()
+    .find_map(|name| std::env::var(name).ok())
+}
+
+fn settlement_receipts_query_commands(task_id: u64, limit: usize) -> [String; 2] {
+    [
+        format!(
+            "cargo run -q -p trnm-rpc -- query-settlement-receipts {} --limit {}",
+            task_id, limit
+        ),
+        format!(
+            "cargo run -q -p trnm-rpc -- query-consumption-receipts {} --limit {}",
+            task_id, limit
+        ),
+    ]
 }
 
 fn consumption_receipts_query(task_id: u64, limit: usize) -> Result<serde_json::Value> {
-    if let Ok(template) = std::env::var("TRNM_QUERY_CONSUMPTION_RECEIPTS_CMD") {
+    if let Some(template) = settlement_receipts_template_override() {
         let cmd = tpl(
             tpl(template, "task_id", &task_id.to_string()),
             "limit",
@@ -623,26 +1131,32 @@ fn consumption_receipts_query(task_id: u64, limit: usize) -> Result<serde_json::
         .and_then(|p| p.parent())
         .map(|p| p.to_path_buf())
         .unwrap_or_else(|| PathBuf::from("."));
-    let cmd = format!(
-        "cargo run -q -p trnm-rpc -- query-consumption-receipts {} --limit {}",
-        task_id, limit
-    );
-    let (program, args) = parse_template_command(&cmd)?;
-    let out = ProcCommand::new(program)
-        .args(args)
-        .current_dir(&rpc_workspace)
-        .output()?;
-    let stdout = String::from_utf8_lossy(&out.stdout);
-    let stderr = String::from_utf8_lossy(&out.stderr);
-    if !out.status.success() {
-        bail!(
-            "consumption receipts query command failed rc={}: {}{}",
+    let mut failures = Vec::new();
+
+    for cmd in settlement_receipts_query_commands(task_id, limit) {
+        let (program, args) = parse_template_command(&cmd)?;
+        let out = ProcCommand::new(program)
+            .args(args)
+            .current_dir(&rpc_workspace)
+            .output()?;
+        let stdout = String::from_utf8_lossy(&out.stdout);
+        let stderr = String::from_utf8_lossy(&out.stderr);
+        if out.status.success() {
+            return parse_consumption_receipts_query_response(&stdout, task_id);
+        }
+        failures.push(format!(
+            "`{}` rc={}: {}{}",
+            cmd,
             out.status.code().unwrap_or(1),
             stdout,
             stderr
-        );
+        ));
     }
-    parse_consumption_receipts_query_response(&stdout, task_id)
+
+    bail!(
+        "consumption receipts query command failed: {}",
+        failures.join(" | ")
+    )
 }
 
 fn parse_request_full_query_response(
@@ -1196,7 +1710,10 @@ fn normalize_wallet_store_env(raw: &str) -> Option<&str> {
         || normalized.chars().any(|c| {
             c.is_whitespace()
                 || contains_hidden_or_control(c)
-                || matches!(c, '\\' | '∖' | '／' | '＼' | '﹨' | '∕' | '⁄' | '⧵' | '⧸' | '⧹' | '⟋' | '⟍')
+                || matches!(
+                    c,
+                    '\\' | '∖' | '／' | '＼' | '﹨' | '∕' | '⁄' | '⧵' | '⧸' | '⧹' | '⟋' | '⟍'
+                )
         })
     {
         return None;
@@ -1228,8 +1745,7 @@ fn wallet_store_path_is_safe(path: &Path) -> bool {
                 && !contains_hidden_or_control(c)
                 && !matches!(
                     c,
-                    '\\'
-                        | '∖'
+                    '\\' | '∖'
                         | '／'
                         | '＼'
                         | '﹨'
@@ -1310,10 +1826,14 @@ fn default_wallet_store() -> PathBuf {
     let home_root = std::env::var("HOME")
         .ok()
         .and_then(|raw| normalize_wallet_store_env(&raw).map(PathBuf::from))
-        .filter(|path| wallet_store_path_is_safe(path) && wallet_store_path_and_ancestors_are_symlink_free(path))
+        .filter(|path| {
+            wallet_store_path_is_safe(path)
+                && wallet_store_path_and_ancestors_are_symlink_free(path)
+        })
         .or_else(|| {
             std::env::current_dir().ok().filter(|path| {
-                wallet_store_path_is_safe(path) && wallet_store_path_and_ancestors_are_symlink_free(path)
+                wallet_store_path_is_safe(path)
+                    && wallet_store_path_and_ancestors_are_symlink_free(path)
             })
         })
         .unwrap_or_else(|| PathBuf::from("/"));
@@ -1404,10 +1924,7 @@ fn ensure_sign_message(message: &str) -> Result<()> {
     if message.len() > 4096 {
         bail!("sign message must be <= 4096 bytes");
     }
-    if message
-        .chars()
-        .next()
-        .is_some_and(|c| c.is_whitespace())
+    if message.chars().next().is_some_and(|c| c.is_whitespace())
         || message
             .chars()
             .next_back()
@@ -1416,10 +1933,7 @@ fn ensure_sign_message(message: &str) -> Result<()> {
         bail!("sign message must not start or end with whitespace");
     }
     if message.chars().any(|c| {
-        c == '\r'
-            || c == '\n'
-            || contains_hidden_or_control(c)
-            || (c.is_whitespace() && c != ' ')
+        c == '\r' || c == '\n' || contains_hidden_or_control(c) || (c.is_whitespace() && c != ' ')
     }) {
         bail!(
             "sign message must be single-line printable text without control characters and with only interior ASCII spaces"
@@ -1473,7 +1987,9 @@ fn ensure_wallet_name(name: &str) -> Result<()> {
         || name.starts_with(['‐', '‑', '‒', '–', '—', '―', '−', '﹣', '－'])
         || name.contains(['/', '\\', ':', '=', '|', '&', '$', '*', '?', '!'])
         || name.contains(['‐', '‑', '‒', '–', '—', '―', '−', '﹣', '－'])
-        || name.contains(['：', '﹕', '＝', '﹦', '｜', '￨', '＆', '﹠', '？', '﹖', '，', '；', '！', '﹗'])
+        || name.contains([
+            '：', '﹕', '＝', '﹦', '｜', '￨', '＆', '﹠', '？', '﹖', '，', '；', '！', '﹗',
+        ])
         || name.contains(['＊', '﹡'])
         || name.contains(['∕', '⁄', '／', '＼', '⧵', '⧸', '⧹', '⟋', '⟍'])
         || name.contains(['.', '．', '。', '｡', '﹒', '․'])
@@ -1481,9 +1997,9 @@ fn ensure_wallet_name(name: &str) -> Result<()> {
             '"', '\'', '`', '<', '>', '(', ')', '[', ']', '{', '}', ',', ';',
         ])
         || name.contains([
-            '“', '”', '‘', '’', '«', '»', '‹', '›', '「', '」', '『', '』', '《', '》',
-            '〈', '〉', '｢', '｣', '（', '）', '［', '］', '｛', '｝', '＜', '＞', '【', '】',
-            '〔', '〕', '〖', '〗', '〘', '〙', '〚', '〛', '〝', '〞', '〟', '｟', '｠',
+            '“', '”', '‘', '’', '«', '»', '‹', '›', '「', '」', '『', '』', '《', '》', '〈', '〉',
+            '｢', '｣', '（', '）', '［', '］', '｛', '｝', '＜', '＞', '【', '】', '〔', '〕', '〖',
+            '〗', '〘', '〙', '〚', '〛', '〝', '〞', '〟', '｟', '｠',
         ])
         || has_hidden_or_whitespace
         || has_non_simple_ascii
@@ -1635,8 +2151,13 @@ fn read_key(store: &Path, name: &str) -> Result<String> {
     }
     ensure_owner_only_permissions(&store_meta, store, "wallet store")?;
     let f = wallet_file(store, name);
-    let file_meta = fs::symlink_metadata(&f)
-        .map_err(|e| anyhow!("failed to inspect wallet '{}' at {}: {e}", name, f.display()))?;
+    let file_meta = fs::symlink_metadata(&f).map_err(|e| {
+        anyhow!(
+            "failed to inspect wallet '{}' at {}: {e}",
+            name,
+            f.display()
+        )
+    })?;
     if file_meta.file_type().is_symlink() {
         bail!(
             "wallet '{}' at {} is a symlink; refusing to read key through non-regular wallet file path",
@@ -1718,8 +2239,7 @@ fn ensure_safe_sign_message(message: &str) -> Result<()> {
             || (!c.is_ascii_graphic() && c != ' ')
             || matches!(
                 c,
-                '='
-                    | ':'
+                '=' | ':'
                     | ';'
                     | ','
                     | '|'
@@ -1948,7 +2468,9 @@ fn extract_tx_hash(text: &str) -> Option<String> {
                 c.is_ascii_whitespace()
                     || matches!(c, ',' | ';' | '(' | ')' | '[' | ']' | '{' | '}' | '<' | '>')
             });
-            is_text_tx_hash_key(key).then(|| normalize_tx_hash(v)).flatten()
+            is_text_tx_hash_key(key)
+                .then(|| normalize_tx_hash(v))
+                .flatten()
         }) {
             return Some(v);
         }
@@ -2054,9 +2576,38 @@ fn trim_kv_key_noise(raw: &str) -> &str {
             || c.is_control()
             || matches!(
                 c,
-                ',' | ';' | '{' | '}' | '[' | ']' | '(' | ')' | '<' | '>'
-                    | '，' | '；' | '：' | '（' | '）' | '［' | '］' | '｛' | '｝' | '＜' | '＞'
-                    | '「' | '」' | '『' | '』' | '《' | '》' | '〈' | '〉' | '｢' | '｣' | '【' | '】'
+                ',' | ';'
+                    | '{'
+                    | '}'
+                    | '['
+                    | ']'
+                    | '('
+                    | ')'
+                    | '<'
+                    | '>'
+                    | '，'
+                    | '；'
+                    | '：'
+                    | '（'
+                    | '）'
+                    | '［'
+                    | '］'
+                    | '｛'
+                    | '｝'
+                    | '＜'
+                    | '＞'
+                    | '「'
+                    | '」'
+                    | '『'
+                    | '』'
+                    | '《'
+                    | '》'
+                    | '〈'
+                    | '〉'
+                    | '｢'
+                    | '｣'
+                    | '【'
+                    | '】'
             )
             || matches!(
                 c,
@@ -2529,7 +3080,10 @@ fn normalize_json_status(value: &serde_json::Value) -> Option<String> {
 }
 
 fn is_terminal_local_tx_status(status: &str) -> bool {
-    matches!(normalize_tx_status(status).as_deref(), Some("committed" | "fail"))
+    matches!(
+        normalize_tx_status(status).as_deref(),
+        Some("committed" | "fail")
+    )
 }
 
 fn canonical_json_key(key: &str) -> String {
@@ -2539,7 +3093,10 @@ fn canonical_json_key(key: &str) -> String {
         .collect()
 }
 
-fn json_get_alias<'a>(value: &'a serde_json::Value, aliases: &[&str]) -> Option<&'a serde_json::Value> {
+fn json_get_alias<'a>(
+    value: &'a serde_json::Value,
+    aliases: &[&str],
+) -> Option<&'a serde_json::Value> {
     let object = value.as_object()?;
     object.iter().find_map(|(key, value)| {
         let canonical = canonical_json_key(key);
@@ -2605,7 +3162,9 @@ fn parse_tx_query_response(raw: &str, requested_tx_hash: &str) -> Result<TxQuery
         let nested_response_data = response
             .and_then(|r| json_get_alias(r, &["data"]))
             .or_else(|| json_get_alias(payload, &["responseData"]));
-        let primary = nested_tx_response.or(nested_response_data).unwrap_or(payload);
+        let primary = nested_tx_response
+            .or(nested_response_data)
+            .unwrap_or(payload);
         let tx_hash_aliases = [
             "tx_hash",
             "txhash",
@@ -2624,7 +3183,7 @@ fn parse_tx_query_response(raw: &str, requested_tx_hash: &str) -> Result<TxQuery
                     .as_str()
                     .ok_or_else(|| anyhow!("invalid tx_hash field in tx query response"))?,
             )
-                .ok_or_else(|| anyhow!("invalid tx_hash field in tx query response"))?,
+            .ok_or_else(|| anyhow!("invalid tx_hash field in tx query response"))?,
             None => normalize_tx_hash(requested_tx_hash)
                 .unwrap_or_else(|| requested_tx_hash.to_string()),
         };
@@ -2652,7 +3211,11 @@ fn parse_tx_query_response(raw: &str, requested_tx_hash: &str) -> Result<TxQuery
             .or_else(|| infer_json_tx_status(payload))
             .ok_or_else(|| anyhow!("missing/invalid status field in tx query response"))?;
         let error = json_get_alias(primary, &["error", "raw_log", "raw-log", "rawLog", "log"])
-            .or_else(|| response.and_then(|r| json_get_alias(r, &["error", "raw_log", "raw-log", "rawLog", "log"])))
+            .or_else(|| {
+                response.and_then(|r| {
+                    json_get_alias(r, &["error", "raw_log", "raw-log", "rawLog", "log"])
+                })
+            })
             .or_else(|| json_get_alias(payload, &["error", "raw_log", "raw-log", "rawLog", "log"]))
             .and_then(normalize_json_error);
         return Ok(TxQueryResponse {
@@ -2688,8 +3251,7 @@ fn parse_tx_query_response(raw: &str, requested_tx_hash: &str) -> Result<TxQuery
                         status = Some(normalized);
                     }
                 }
-                "code" | "txcode" | "transactioncode" | "delivertxcode"
-                | "checktxcode" => {
+                "code" | "txcode" | "transactioncode" | "delivertxcode" | "checktxcode" => {
                     if status.is_none() {
                         status = infer_kv_tx_status(&key, &value);
                     }
@@ -2806,7 +3368,10 @@ fn tx_query(tx_hash: &str) -> Result<TxQueryResponse> {
 }
 
 fn is_terminal_tx_status(status: &str) -> bool {
-    matches!(normalize_tx_status(status).as_deref(), Some("committed" | "fail"))
+    matches!(
+        normalize_tx_status(status).as_deref(),
+        Some("committed" | "fail")
+    )
 }
 
 fn wait_for_tx<F>(
@@ -2834,10 +3399,7 @@ where
     loop {
         let resp = query_fn(&requested)?;
         if resp.tx_hash.trim().is_empty() {
-            bail!(
-                "tx wait response missing tx_hash: requested={}",
-                requested
-            );
+            bail!("tx wait response missing tx_hash: requested={}", requested);
         }
         let got = normalize_tx_hash(&resp.tx_hash).ok_or_else(|| {
             anyhow!(
@@ -2914,8 +3476,9 @@ fn query_local_tx_status(tx_hash: &str) -> Option<String> {
 }
 
 fn persist_local_pending_tx(tx_hash: &str) -> Result<()> {
-    let canonical = normalize_tx_hash(tx_hash)
-        .ok_or_else(|| anyhow!("invalid tx hash for local pending state (expected hex-like tx hash)"))?;
+    let canonical = normalize_tx_hash(tx_hash).ok_or_else(|| {
+        anyhow!("invalid tx hash for local pending state (expected hex-like tx hash)")
+    })?;
     if !canonical.starts_with("0x") {
         bail!("invalid tx hash for local pending state (expected 0x-prefixed hex tx hash)");
     }
@@ -3175,6 +3738,52 @@ fn main() -> Result<()> {
                     println!("{}", serde_json::to_string_pretty(&out)?);
                 }
             }
+            TxCommand::SubmitConsumptionReceipt {
+                receipt_json,
+                signer,
+            } => {
+                submit_consumption_receipt_tx(receipt_json, signer)?;
+            }
+            TxCommand::ChallengeConsumption {
+                task_id,
+                consumer_id,
+                output_hash,
+                billing_window_id,
+                challenger,
+                signer,
+            } => {
+                challenge_consumption_tx(
+                    task_id,
+                    consumer_id,
+                    output_hash,
+                    billing_window_id,
+                    challenger,
+                    signer,
+                )?;
+            }
+            TxCommand::ResolveConsumption {
+                task_id,
+                consumer_id,
+                output_hash,
+                billing_window_id,
+                decision,
+                credited_consumption_units,
+                resolution_code,
+                resolver,
+                signer,
+            } => {
+                resolve_consumption_tx(
+                    task_id,
+                    consumer_id,
+                    output_hash,
+                    billing_window_id,
+                    decision,
+                    credited_consumption_units,
+                    resolution_code,
+                    resolver,
+                    signer,
+                )?;
+            }
         },
         Command::Wallet { wallet } => match wallet {
             WalletCommand::Create { name, out } | WalletCommand::Generate { name, out } => {
@@ -3262,7 +3871,7 @@ fn main() -> Result<()> {
                     println!("{}", serde_json::to_string_pretty(&out)?);
                 }
             }
-            QueryCommand::ConsumptionSummary { task_id } => {
+            QueryCommand::SettlementPreview { task_id } => {
                 let out = consumption_summary_query(task_id)?;
                 println!("{}", serde_json::to_string_pretty(&out)?);
             }
@@ -3290,12 +3899,1075 @@ fn main() -> Result<()> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use clap::CommandFactory;
     use std::{path::PathBuf, sync::Mutex};
 
     static ENV_LOCK: Mutex<()> = Mutex::new(());
 
     fn canonical_temp_root() -> PathBuf {
         std::fs::canonicalize(std::env::temp_dir()).unwrap_or_else(|_| std::env::temp_dir())
+    }
+
+    #[test]
+    fn consumption_settlement_cli_parser_accepts_submit_receipt_command() {
+        let args = Args::try_parse_from([
+            "trnm-cli",
+            "tx",
+            "submit-consumption-receipt",
+            "--receipt-json",
+            "/tmp/receipt.json",
+            "--signer",
+            "consumer-bravo",
+        ])
+        .expect("parse submit-consumption-receipt args");
+
+        match args.cmd {
+            Command::Tx {
+                tx:
+                    TxCommand::SubmitConsumptionReceipt {
+                        receipt_json,
+                        signer,
+                    },
+            } => {
+                assert_eq!(receipt_json, PathBuf::from("/tmp/receipt.json"));
+                assert_eq!(signer.as_deref(), Some("consumer-bravo"));
+            }
+            other => panic!("unexpected parsed args: {other:?}"),
+        }
+    }
+
+    #[test]
+    fn consumption_settlement_cli_parser_accepts_submit_receipt_settlement_alias() {
+        let args = Args::try_parse_from([
+            "trnm-cli",
+            "tx",
+            "submit-settlement-receipt",
+            "--receipt-json",
+            "/tmp/receipt.json",
+        ])
+        .expect("parse submit-settlement-receipt args");
+
+        match args.cmd {
+            Command::Tx {
+                tx:
+                    TxCommand::SubmitConsumptionReceipt {
+                        receipt_json,
+                        signer,
+                    },
+            } => {
+                assert_eq!(receipt_json, PathBuf::from("/tmp/receipt.json"));
+                assert_eq!(signer, None);
+            }
+            other => panic!("unexpected parsed args: {other:?}"),
+        }
+    }
+
+    #[test]
+    fn consumption_settlement_cli_parser_rejects_submit_receipt_without_receipt_json() {
+        let err = Args::try_parse_from(["trnm-cli", "tx", "submit-consumption-receipt"])
+            .unwrap_err();
+
+        assert_eq!(err.kind(), clap::error::ErrorKind::MissingRequiredArgument);
+        let rendered = err.to_string();
+        assert!(
+            rendered.contains("--receipt-json <RECEIPT_JSON>"),
+            "unexpected error: {rendered}"
+        );
+    }
+
+    #[test]
+    fn consumption_settlement_cli_parser_accepts_challenge_command() {
+        let args = Args::try_parse_from([
+            "trnm-cli",
+            "tx",
+            "challenge-consumption",
+            "42",
+            "--consumer-id",
+            "consumer-bravo",
+            "--output-hash",
+            "0xabc123",
+            "--billing-window-id",
+            "bw-7",
+            "--challenger",
+            "arbiter-alpha",
+        ])
+        .expect("parse challenge-consumption args");
+
+        match args.cmd {
+            Command::Tx {
+                tx:
+                    TxCommand::ChallengeConsumption {
+                        task_id,
+                        consumer_id,
+                        output_hash,
+                        billing_window_id,
+                        challenger,
+                        signer,
+                    },
+            } => {
+                assert_eq!(task_id, 42);
+                assert_eq!(consumer_id, "consumer-bravo");
+                assert_eq!(output_hash, "0xabc123");
+                assert_eq!(billing_window_id, "bw-7");
+                assert_eq!(challenger, "arbiter-alpha");
+                assert_eq!(signer, None);
+            }
+            other => panic!("unexpected parsed args: {other:?}"),
+        }
+    }
+
+    #[test]
+    fn consumption_settlement_cli_parser_accepts_challenge_settlement_alias() {
+        let args = Args::try_parse_from([
+            "trnm-cli",
+            "tx",
+            "challenge-settlement",
+            "42",
+            "--consumer-id",
+            "consumer-bravo",
+            "--output-hash",
+            "0xabc123",
+            "--billing-window-id",
+            "bw-7",
+            "--challenger",
+            "arbiter-alpha",
+        ])
+        .expect("parse challenge-settlement args");
+
+        match args.cmd {
+            Command::Tx {
+                tx:
+                    TxCommand::ChallengeConsumption {
+                        task_id,
+                        consumer_id,
+                        output_hash,
+                        billing_window_id,
+                        challenger,
+                        signer,
+                    },
+            } => {
+                assert_eq!(task_id, 42);
+                assert_eq!(consumer_id, "consumer-bravo");
+                assert_eq!(output_hash, "0xabc123");
+                assert_eq!(billing_window_id, "bw-7");
+                assert_eq!(challenger, "arbiter-alpha");
+                assert_eq!(signer, None);
+            }
+            other => panic!("unexpected parsed args: {other:?}"),
+        }
+    }
+
+    #[test]
+    fn consumption_settlement_cli_parser_accepts_resolve_command() {
+        let args = Args::try_parse_from([
+            "trnm-cli",
+            "tx",
+            "resolve-consumption",
+            "42",
+            "--consumer-id",
+            "consumer-bravo",
+            "--output-hash",
+            "0xabc123",
+            "--billing-window-id",
+            "bw-7",
+            "--decision",
+            "discount",
+            "--credited-consumption-units",
+            "11",
+            "--resolution-code",
+            "accepted_discounted",
+            "--resolver",
+            "arbiter-alpha",
+            "--signer",
+            "governance-key",
+        ])
+        .expect("parse resolve-consumption args");
+
+        match args.cmd {
+            Command::Tx {
+                tx:
+                    TxCommand::ResolveConsumption {
+                        task_id,
+                        consumer_id,
+                        output_hash,
+                        billing_window_id,
+                        decision,
+                        credited_consumption_units,
+                        resolution_code,
+                        resolver,
+                        signer,
+                    },
+            } => {
+                assert_eq!(task_id, 42);
+                assert_eq!(consumer_id, "consumer-bravo");
+                assert_eq!(output_hash, "0xabc123");
+                assert_eq!(billing_window_id, "bw-7");
+                assert_eq!(decision, ConsumptionResolutionDecisionArg::Discount);
+                assert_eq!(credited_consumption_units, Some(11));
+                assert_eq!(resolution_code.as_deref(), Some("accepted_discounted"));
+                assert_eq!(resolver, "arbiter-alpha");
+                assert_eq!(signer.as_deref(), Some("governance-key"));
+            }
+            other => panic!("unexpected parsed args: {other:?}"),
+        }
+    }
+
+    #[test]
+    fn consumption_settlement_cli_parser_accepts_resolve_settlement_alias() {
+        let args = Args::try_parse_from([
+            "trnm-cli",
+            "tx",
+            "resolve-settlement",
+            "42",
+            "--consumer-id",
+            "consumer-bravo",
+            "--output-hash",
+            "0xabc123",
+            "--billing-window-id",
+            "bw-7",
+            "--decision",
+            "accept",
+            "--resolver",
+            "arbiter-alpha",
+        ])
+        .expect("parse resolve-settlement args");
+
+        match args.cmd {
+            Command::Tx {
+                tx:
+                    TxCommand::ResolveConsumption {
+                        task_id,
+                        consumer_id,
+                        output_hash,
+                        billing_window_id,
+                        decision,
+                        credited_consumption_units,
+                        resolution_code,
+                        resolver,
+                        signer,
+                    },
+            } => {
+                assert_eq!(task_id, 42);
+                assert_eq!(consumer_id, "consumer-bravo");
+                assert_eq!(output_hash, "0xabc123");
+                assert_eq!(billing_window_id, "bw-7");
+                assert_eq!(decision, ConsumptionResolutionDecisionArg::Accept);
+                assert_eq!(credited_consumption_units, None);
+                assert_eq!(resolution_code, None);
+                assert_eq!(resolver, "arbiter-alpha");
+                assert_eq!(signer, None);
+            }
+            other => panic!("unexpected parsed args: {other:?}"),
+        }
+    }
+
+    #[test]
+    fn consumption_settlement_cli_parser_rejects_unknown_resolution_decision() {
+        let err = Args::try_parse_from([
+            "trnm-cli",
+            "tx",
+            "resolve-consumption",
+            "42",
+            "--consumer-id",
+            "consumer-bravo",
+            "--output-hash",
+            "0xabc123",
+            "--billing-window-id",
+            "bw-7",
+            "--decision",
+            "approve",
+            "--resolver",
+            "arbiter-alpha",
+        ])
+        .unwrap_err();
+
+        assert_eq!(err.kind(), clap::error::ErrorKind::InvalidValue);
+        let rendered = err.to_string();
+        assert!(rendered.contains("approve"), "unexpected error: {rendered}");
+        assert!(rendered.contains("accept"), "unexpected error: {rendered}");
+        assert!(
+            rendered.contains("discount"),
+            "unexpected error: {rendered}"
+        );
+        assert!(rendered.contains("reject"), "unexpected error: {rendered}");
+        assert!(rendered.contains("slash"), "unexpected error: {rendered}");
+    }
+
+    #[test]
+    fn consumption_settlement_cli_parser_rejects_discount_resolution_without_credited_units() {
+        let err = Args::try_parse_from([
+            "trnm-cli",
+            "tx",
+            "resolve-consumption",
+            "42",
+            "--consumer-id",
+            "consumer-bravo",
+            "--output-hash",
+            "0xabc123",
+            "--billing-window-id",
+            "bw-7",
+            "--decision",
+            "discount",
+            "--resolver",
+            "arbiter-alpha",
+        ])
+        .unwrap_err();
+
+        assert_eq!(err.kind(), clap::error::ErrorKind::MissingRequiredArgument);
+        let rendered = err.to_string();
+        assert!(
+            rendered.contains("--credited-consumption-units <CREDITED_CONSUMPTION_UNITS>"),
+            "unexpected error: {rendered}"
+        );
+    }
+
+    #[test]
+    fn consumption_settlement_cli_parser_accepts_settlement_preview_query_command() {
+        let args = Args::try_parse_from(["trnm-cli", "query", "settlement-preview", "42"])
+            .expect("parse settlement-preview args");
+
+        match args.cmd {
+            Command::Query {
+                query: QueryCommand::SettlementPreview { task_id },
+            } => {
+                assert_eq!(task_id, 42);
+            }
+            other => panic!("unexpected parsed args: {other:?}"),
+        }
+    }
+
+    #[test]
+    fn consumption_settlement_cli_parser_accepts_consumption_summary_query_alias() {
+        let args = Args::try_parse_from(["trnm-cli", "query", "consumption-summary", "42"])
+            .expect("parse consumption-summary args");
+
+        match args.cmd {
+            Command::Query {
+                query: QueryCommand::SettlementPreview { task_id },
+            } => {
+                assert_eq!(task_id, 42);
+            }
+            other => panic!("unexpected parsed args: {other:?}"),
+        }
+    }
+
+    #[test]
+    fn consumption_settlement_cli_parser_accepts_query_prefixed_settlement_preview_aliases() {
+        for alias in ["query-settlement-preview", "query-consumption-summary"] {
+            let args = Args::try_parse_from(["trnm-cli", "query", alias, "42"])
+                .unwrap_or_else(|err| panic!("parse {alias} args: {err}"));
+
+            match args.cmd {
+                Command::Query {
+                    query: QueryCommand::SettlementPreview { task_id },
+                } => {
+                    assert_eq!(task_id, 42, "unexpected task_id for alias {alias}");
+                }
+                other => panic!("unexpected parsed args for {alias}: {other:?}"),
+            }
+        }
+    }
+
+    #[test]
+    fn consumption_settlement_cli_parser_accepts_settlement_receipts_query_command() {
+        let args = Args::try_parse_from([
+            "trnm-cli",
+            "query",
+            "settlement-receipts",
+            "42",
+            "--limit",
+            "7",
+        ])
+        .expect("parse settlement-receipts args");
+
+        match args.cmd {
+            Command::Query {
+                query: QueryCommand::ConsumptionReceipts { task_id, limit },
+            } => {
+                assert_eq!(task_id, 42);
+                assert_eq!(limit, 7);
+            }
+            other => panic!("unexpected parsed args: {other:?}"),
+        }
+    }
+
+    #[test]
+    fn consumption_settlement_cli_parser_accepts_consumption_receipts_query_alias() {
+        let args = Args::try_parse_from([
+            "trnm-cli",
+            "query",
+            "consumption-receipts",
+            "42",
+            "--limit",
+            "7",
+        ])
+        .expect("parse consumption-receipts args");
+
+        match args.cmd {
+            Command::Query {
+                query: QueryCommand::ConsumptionReceipts { task_id, limit },
+            } => {
+                assert_eq!(task_id, 42);
+                assert_eq!(limit, 7);
+            }
+            other => panic!("unexpected parsed args: {other:?}"),
+        }
+    }
+
+    #[test]
+    fn consumption_settlement_cli_parser_accepts_query_prefixed_settlement_receipts_aliases() {
+        for alias in ["query-settlement-receipts", "query-consumption-receipts"] {
+            let args = Args::try_parse_from(["trnm-cli", "query", alias, "42", "--limit", "7"])
+                .unwrap_or_else(|err| panic!("parse {alias} args: {err}"));
+
+            match args.cmd {
+                Command::Query {
+                    query: QueryCommand::ConsumptionReceipts { task_id, limit },
+                } => {
+                    assert_eq!(task_id, 42, "unexpected task_id for alias {alias}");
+                    assert_eq!(limit, 7, "unexpected limit for alias {alias}");
+                }
+                other => panic!("unexpected parsed args for {alias}: {other:?}"),
+            }
+        }
+    }
+
+    #[test]
+    fn consumption_settlement_cli_help_keeps_cutover_names_primary() {
+        let mut root = Args::command();
+        let query = root
+            .find_subcommand_mut("query")
+            .expect("query subcommand in clap tree");
+        let mut query_help = Vec::new();
+        query
+            .write_long_help(&mut query_help)
+            .expect("render query help");
+        let query_help = String::from_utf8(query_help).expect("utf8 query help");
+        assert!(query_help.contains("settlement-preview"));
+        assert!(query_help.contains("consumption-summary"));
+        assert!(query_help.contains("query-settlement-preview"));
+        assert!(query_help.contains("query-consumption-summary"));
+        assert!(query_help.contains("settlement-receipts"));
+        assert!(query_help.contains("consumption-receipts"));
+        assert!(query_help.contains("query-settlement-receipts"));
+        assert!(query_help.contains("query-consumption-receipts"));
+        assert!(
+            query_help.find("settlement-preview") < query_help.find("consumption-summary"),
+            "query help should keep settlement-preview primary: {query_help}"
+        );
+        assert!(
+            query_help.find("settlement-preview") < query_help.find("query-settlement-preview"),
+            "query help should keep settlement-preview primary ahead of query-prefixed alias: {query_help}"
+        );
+        assert!(
+            query_help.find("settlement-receipts") < query_help.find("consumption-receipts"),
+            "query help should keep settlement-receipts primary: {query_help}"
+        );
+        assert!(
+            query_help.find("settlement-receipts") < query_help.find("query-settlement-receipts"),
+            "query help should keep settlement-receipts primary ahead of query-prefixed alias: {query_help}"
+        );
+
+        let mut root = Args::command();
+        let tx = root
+            .find_subcommand_mut("tx")
+            .expect("tx subcommand in clap tree");
+        let mut tx_help = Vec::new();
+        tx.write_long_help(&mut tx_help).expect("render tx help");
+        let tx_help = String::from_utf8(tx_help).expect("utf8 tx help");
+        assert!(tx_help.contains("submit-consumption-receipt"));
+        assert!(tx_help.contains("submit-settlement-receipt"));
+        assert!(tx_help.contains("challenge-consumption"));
+        assert!(tx_help.contains("challenge-settlement"));
+        assert!(tx_help.contains("resolve-consumption"));
+        assert!(tx_help.contains("resolve-settlement"));
+        assert!(tx_help.contains("commit-result"));
+        assert!(tx_help.contains("reveal-result"));
+        assert!(
+            tx_help.find("submit-consumption-receipt") < tx_help.find("submit-settlement-receipt"),
+            "tx help should keep submit-consumption-receipt primary: {tx_help}"
+        );
+        assert!(
+            tx_help.find("challenge-consumption") < tx_help.find("challenge-settlement"),
+            "tx help should keep challenge-consumption primary: {tx_help}"
+        );
+        assert!(
+            tx_help.find("resolve-consumption") < tx_help.find("resolve-settlement"),
+            "tx help should keep resolve-consumption primary: {tx_help}"
+        );
+        assert!(
+            tx_help.find("submit-consumption-receipt") < tx_help.find("commit-result"),
+            "tx help should surface submit-consumption-receipt ahead of legacy commit-result: {tx_help}"
+        );
+        assert!(
+            tx_help.find("challenge-consumption") < tx_help.find("commit-result"),
+            "tx help should surface challenge-consumption ahead of legacy commit-result: {tx_help}"
+        );
+        assert!(
+            tx_help.find("resolve-consumption") < tx_help.find("reveal-result"),
+            "tx help should surface resolve-consumption ahead of legacy reveal-result: {tx_help}"
+        );
+    }
+
+    #[test]
+    fn load_consumption_receipt_tx_input_extracts_replay_key_fields() {
+        let unique = format!(
+            "trnm-cli-consumption-receipt-input-test-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        );
+        let root = canonical_temp_root().join(unique);
+        std::fs::create_dir_all(&root).unwrap();
+        let path = root.join("receipt.json");
+        std::fs::write(
+            &path,
+            r#"{
+                "task_id":"42",
+                "consumer_id":"consumer-bravo",
+                "output_hash":"0xabc123",
+                "billing_window_id":"bw-7",
+                "consumer_nonce":9
+            }"#,
+        )
+        .unwrap();
+
+        let parsed = load_consumption_receipt_tx_input(&path).unwrap();
+        assert_eq!(parsed.task_id, 42);
+        assert_eq!(parsed.consumer_id, "consumer-bravo");
+        assert_eq!(parsed.output_hash, "0xabc123");
+        assert_eq!(parsed.billing_window_id, "bw-7");
+        assert_eq!(parsed.consumer_nonce, 9);
+
+        let _ = std::fs::remove_file(&path);
+        let _ = std::fs::remove_dir(&root);
+    }
+
+    #[test]
+    fn load_consumption_receipt_tx_input_accepts_canonicalized_cutover_field_names() {
+        let unique = format!(
+            "trnm-cli-consumption-receipt-cutover-alias-test-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        );
+        let root = canonical_temp_root().join(unique);
+        std::fs::create_dir_all(&root).unwrap();
+        let path = root.join("receipt.json");
+        std::fs::write(
+            &path,
+            r#"{
+                "task-id":"42",
+                "consumerId":"consumer-bravo",
+                "outputHash":"0xabc123",
+                "billingWindowId":"bw-7",
+                "consumerNonce":"9"
+            }"#,
+        )
+        .unwrap();
+
+        let parsed = load_consumption_receipt_tx_input(&path).unwrap();
+        assert_eq!(parsed.task_id, 42);
+        assert_eq!(parsed.consumer_id, "consumer-bravo");
+        assert_eq!(parsed.output_hash, "0xabc123");
+        assert_eq!(parsed.billing_window_id, "bw-7");
+        assert_eq!(parsed.consumer_nonce, 9);
+
+        let _ = std::fs::remove_file(&path);
+        let _ = std::fs::remove_dir(&root);
+    }
+
+    #[test]
+    fn load_consumption_receipt_tx_input_rejects_zero_consumer_nonce() {
+        let unique = format!(
+            "trnm-cli-consumption-receipt-zero-nonce-test-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        );
+        let root = canonical_temp_root().join(unique);
+        std::fs::create_dir_all(&root).unwrap();
+        let path = root.join("receipt.json");
+        std::fs::write(
+            &path,
+            r#"{
+                "task_id":42,
+                "consumer_id":"consumer-bravo",
+                "output_hash":"0xabc123",
+                "billing_window_id":"bw-7",
+                "consumer_nonce":0
+            }"#,
+        )
+        .unwrap();
+
+        let err = load_consumption_receipt_tx_input(&path)
+            .unwrap_err()
+            .to_string();
+        assert!(
+            err.contains("consumer_nonce must be non-zero"),
+            "unexpected error: {err}"
+        );
+
+        let _ = std::fs::remove_file(&path);
+        let _ = std::fs::remove_dir(&root);
+    }
+
+    #[test]
+    fn consumption_settlement_write_paths_emit_pending_hashes_with_default_signers() {
+        let _guard = ENV_LOCK.lock().unwrap();
+        std::env::remove_var("TRNM_TX_SUBMIT_CONSUMPTION_RECEIPT_CMD");
+        std::env::remove_var("TRNM_TX_SUBMIT_SETTLEMENT_RECEIPT_CMD");
+        std::env::remove_var("TRNM_TX_CHALLENGE_CONSUMPTION_CMD");
+        std::env::remove_var("TRNM_TX_CHALLENGE_SETTLEMENT_CMD");
+        std::env::remove_var("TRNM_TX_RESOLVE_CONSUMPTION_CMD");
+        std::env::remove_var("TRNM_TX_RESOLVE_SETTLEMENT_CMD");
+
+        let unique = format!(
+            "trnm-cli-consumption-settlement-write-paths-test-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        );
+        let root = canonical_temp_root().join(unique);
+        std::fs::create_dir_all(&root).unwrap();
+
+        let receipt_path = root.join("receipt.json");
+        std::fs::write(
+            &receipt_path,
+            r#"{
+                "task_id":42,
+                "consumer_id":"consumer-bravo",
+                "output_hash":"0xabc123",
+                "billing_window_id":"bw-7",
+                "consumer_nonce":9
+            }"#,
+        )
+        .unwrap();
+
+        let tx_file = root.join("txs.json");
+        std::env::set_var("TRNM_RPC_TX_FILE", &tx_file);
+
+        submit_consumption_receipt_tx(receipt_path.clone(), None).unwrap();
+        challenge_consumption_tx(
+            42,
+            "consumer-bravo".into(),
+            "0xabc123".into(),
+            "bw-7".into(),
+            "arbiter-alpha".into(),
+            None,
+        )
+        .unwrap();
+        resolve_consumption_tx(
+            42,
+            "consumer-bravo".into(),
+            "0xabc123".into(),
+            "bw-7".into(),
+            ConsumptionResolutionDecisionArg::Discount,
+            Some(11),
+            Some("accepted_discounted".into()),
+            "arbiter-alpha".into(),
+            None,
+        )
+        .unwrap();
+
+        let submit_hash = format!(
+            "0x{}",
+            hash(&[
+                "submit-consumption-receipt",
+                "42",
+                "consumer-bravo",
+                "0xabc123",
+                "bw-7",
+                "9",
+                "consumer-bravo",
+            ])
+        );
+        let challenge_hash = format!(
+            "0x{}",
+            hash(&[
+                "challenge-consumption",
+                "42",
+                "consumer-bravo",
+                "0xabc123",
+                "bw-7",
+                "arbiter-alpha",
+                "arbiter-alpha",
+            ])
+        );
+        let resolve_hash = format!(
+            "0x{}",
+            hash(&[
+                "resolve-consumption",
+                "42",
+                "consumer-bravo",
+                "0xabc123",
+                "bw-7",
+                "discount",
+                "11",
+                "accepted_discounted",
+                "arbiter-alpha",
+                "arbiter-alpha",
+            ])
+        );
+
+        let raw = std::fs::read_to_string(&tx_file).unwrap();
+        let parsed: serde_json::Value = serde_json::from_str(&raw).unwrap();
+        for tx_hash in [&submit_hash, &challenge_hash, &resolve_hash] {
+            assert_eq!(
+                parsed[tx_hash.as_str()]["tx_hash"].as_str(),
+                Some(tx_hash.as_str())
+            );
+            assert_eq!(parsed[tx_hash.as_str()]["status"].as_str(), Some("pending"));
+        }
+        assert_eq!(
+            query_local_tx_status(&resolve_hash).as_deref(),
+            Some("pending")
+        );
+
+        std::env::remove_var("TRNM_RPC_TX_FILE");
+        let _ = std::fs::remove_dir_all(&root);
+    }
+
+    #[test]
+    fn consumption_settlement_write_paths_reject_blank_locator_and_actor_fields() {
+        let _guard = ENV_LOCK.lock().unwrap();
+        std::env::remove_var("TRNM_TX_SUBMIT_CONSUMPTION_RECEIPT_CMD");
+        std::env::remove_var("TRNM_TX_SUBMIT_SETTLEMENT_RECEIPT_CMD");
+        std::env::remove_var("TRNM_TX_CHALLENGE_CONSUMPTION_CMD");
+        std::env::remove_var("TRNM_TX_CHALLENGE_SETTLEMENT_CMD");
+        std::env::remove_var("TRNM_TX_RESOLVE_CONSUMPTION_CMD");
+        std::env::remove_var("TRNM_TX_RESOLVE_SETTLEMENT_CMD");
+
+        let err = challenge_consumption_tx(
+            42,
+            "   ".into(),
+            "0xabc123".into(),
+            "bw-7".into(),
+            "arbiter-alpha".into(),
+            None,
+        )
+        .unwrap_err()
+        .to_string();
+        assert!(
+            err.contains("consumer_id must not be empty"),
+            "unexpected error: {err}"
+        );
+
+        let err = resolve_consumption_tx(
+            42,
+            "consumer-bravo".into(),
+            "0xabc123".into(),
+            "bw-7".into(),
+            ConsumptionResolutionDecisionArg::Discount,
+            Some(11),
+            Some("accepted_discounted".into()),
+            "   ".into(),
+            None,
+        )
+        .unwrap_err()
+        .to_string();
+        assert!(
+            err.contains("resolver must not be empty"),
+            "unexpected error: {err}"
+        );
+
+        let unique = format!(
+            "trnm-cli-consumption-settlement-blank-signer-test-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        );
+        let root = canonical_temp_root().join(unique);
+        std::fs::create_dir_all(&root).unwrap();
+        let receipt_path = root.join("receipt.json");
+        std::fs::write(
+            &receipt_path,
+            r#"{
+                "task_id":42,
+                "consumer_id":"consumer-bravo",
+                "output_hash":"0xabc123",
+                "billing_window_id":"bw-7",
+                "consumer_nonce":9
+            }"#,
+        )
+        .unwrap();
+
+        let err = submit_consumption_receipt_tx(receipt_path, Some("   ".into()))
+            .unwrap_err()
+            .to_string();
+        assert!(
+            err.contains("signer must not be empty"),
+            "unexpected error: {err}"
+        );
+
+        let _ = std::fs::remove_dir_all(&root);
+    }
+
+    #[test]
+    fn consumption_settlement_write_paths_reject_discount_resolution_without_credited_units_without_parser() {
+        let err = resolve_consumption_tx(
+            42,
+            "consumer-bravo".into(),
+            "0xabc123".into(),
+            "bw-7".into(),
+            ConsumptionResolutionDecisionArg::Discount,
+            None,
+            Some("accepted_discounted".into()),
+            "arbiter-alpha".into(),
+            None,
+        )
+        .unwrap_err()
+        .to_string();
+
+        assert!(
+            err.contains("credited_consumption_units is required when decision=discount"),
+            "unexpected error: {err}"
+        );
+    }
+
+    #[test]
+    fn consumption_settlement_write_paths_reject_non_discount_resolution_with_credited_units() {
+        let err = resolve_consumption_tx(
+            42,
+            "consumer-bravo".into(),
+            "0xabc123".into(),
+            "bw-7".into(),
+            ConsumptionResolutionDecisionArg::Accept,
+            Some(11),
+            None,
+            "arbiter-alpha".into(),
+            None,
+        )
+        .unwrap_err()
+        .to_string();
+
+        assert!(
+            err.contains("credited_consumption_units is only allowed when decision=discount"),
+            "unexpected error: {err}"
+        );
+    }
+
+    #[test]
+    fn consumption_settlement_write_paths_accept_legacy_template_env_aliases() {
+        let _guard = ENV_LOCK.lock().unwrap();
+        std::env::remove_var("TRNM_TX_SUBMIT_CONSUMPTION_RECEIPT_CMD");
+        std::env::remove_var("TRNM_TX_SUBMIT_SETTLEMENT_RECEIPT_CMD");
+        std::env::remove_var("TRNM_TX_CHALLENGE_CONSUMPTION_CMD");
+        std::env::remove_var("TRNM_TX_CHALLENGE_SETTLEMENT_CMD");
+        std::env::remove_var("TRNM_TX_RESOLVE_CONSUMPTION_CMD");
+        std::env::remove_var("TRNM_TX_RESOLVE_SETTLEMENT_CMD");
+
+        let unique = format!(
+            "trnm-cli-consumption-settlement-legacy-env-test-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        );
+        let root = canonical_temp_root().join(unique);
+        std::fs::create_dir_all(&root).unwrap();
+
+        let receipt_path = root.join("receipt.json");
+        std::fs::write(
+            &receipt_path,
+            r#"{
+                "task_id":42,
+                "consumer_id":"consumer-bravo",
+                "output_hash":"0xabc123",
+                "billing_window_id":"bw-7",
+                "consumer_nonce":9
+            }"#,
+        )
+        .unwrap();
+
+        let tx_file = root.join("txs.json");
+        std::env::set_var("TRNM_RPC_TX_FILE", &tx_file);
+
+        let submit_hash = format!("0x{}", "a".repeat(64));
+        let challenge_hash = format!("0x{}", "b".repeat(64));
+        let resolve_hash = format!("0x{}", "c".repeat(64));
+
+        std::env::set_var(
+            "TRNM_TX_SUBMIT_SETTLEMENT_RECEIPT_CMD",
+            format!("printf '%s' 'tx_hash={}'", submit_hash),
+        );
+        std::env::set_var(
+            "TRNM_TX_CHALLENGE_SETTLEMENT_CMD",
+            format!("printf '%s' 'tx_hash={}'", challenge_hash),
+        );
+        std::env::set_var(
+            "TRNM_TX_RESOLVE_SETTLEMENT_CMD",
+            format!("printf '%s' 'tx_hash={}'", resolve_hash),
+        );
+
+        submit_consumption_receipt_tx(receipt_path, None).unwrap();
+        challenge_consumption_tx(
+            42,
+            "consumer-bravo".into(),
+            "0xabc123".into(),
+            "bw-7".into(),
+            "arbiter-alpha".into(),
+            None,
+        )
+        .unwrap();
+        resolve_consumption_tx(
+            42,
+            "consumer-bravo".into(),
+            "0xabc123".into(),
+            "bw-7".into(),
+            ConsumptionResolutionDecisionArg::Accept,
+            None,
+            None,
+            "arbiter-alpha".into(),
+            None,
+        )
+        .unwrap();
+
+        let raw = std::fs::read_to_string(&tx_file).unwrap();
+        let parsed: serde_json::Value = serde_json::from_str(&raw).unwrap();
+        for tx_hash in [&submit_hash, &challenge_hash, &resolve_hash] {
+            assert_eq!(
+                parsed[tx_hash.as_str()]["tx_hash"].as_str(),
+                Some(tx_hash.as_str())
+            );
+            assert_eq!(parsed[tx_hash.as_str()]["status"].as_str(), Some("pending"));
+        }
+
+        std::env::remove_var("TRNM_TX_SUBMIT_SETTLEMENT_RECEIPT_CMD");
+        std::env::remove_var("TRNM_TX_CHALLENGE_SETTLEMENT_CMD");
+        std::env::remove_var("TRNM_TX_RESOLVE_SETTLEMENT_CMD");
+        std::env::remove_var("TRNM_RPC_TX_FILE");
+        let _ = std::fs::remove_dir_all(&root);
+    }
+
+    #[test]
+    fn consumption_settlement_write_paths_prefer_settlement_template_env_over_legacy_aliases() {
+        let _guard = ENV_LOCK.lock().unwrap();
+        std::env::remove_var("TRNM_TX_SUBMIT_CONSUMPTION_RECEIPT_CMD");
+        std::env::remove_var("TRNM_TX_SUBMIT_SETTLEMENT_RECEIPT_CMD");
+        std::env::remove_var("TRNM_TX_CHALLENGE_CONSUMPTION_CMD");
+        std::env::remove_var("TRNM_TX_CHALLENGE_SETTLEMENT_CMD");
+        std::env::remove_var("TRNM_TX_RESOLVE_CONSUMPTION_CMD");
+        std::env::remove_var("TRNM_TX_RESOLVE_SETTLEMENT_CMD");
+
+        let unique = format!(
+            "trnm-cli-consumption-settlement-env-precedence-test-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        );
+        let root = canonical_temp_root().join(unique);
+        std::fs::create_dir_all(&root).unwrap();
+
+        let receipt_path = root.join("receipt.json");
+        std::fs::write(
+            &receipt_path,
+            r#"{
+                "task_id":42,
+                "consumer_id":"consumer-bravo",
+                "output_hash":"0xabc123",
+                "billing_window_id":"bw-7",
+                "consumer_nonce":9
+            }"#,
+        )
+        .unwrap();
+
+        let tx_file = root.join("txs.json");
+        std::env::set_var("TRNM_RPC_TX_FILE", &tx_file);
+
+        let submit_hash = format!("0x{}", "d".repeat(64));
+        let legacy_submit_hash = format!("0x{}", "a".repeat(64));
+        let challenge_hash = format!("0x{}", "e".repeat(64));
+        let legacy_challenge_hash = format!("0x{}", "b".repeat(64));
+        let resolve_hash = format!("0x{}", "f".repeat(64));
+        let legacy_resolve_hash = format!("0x{}", "c".repeat(64));
+
+        std::env::set_var(
+            "TRNM_TX_SUBMIT_SETTLEMENT_RECEIPT_CMD",
+            format!("printf '%s' 'tx_hash={}'", submit_hash),
+        );
+        std::env::set_var(
+            "TRNM_TX_SUBMIT_CONSUMPTION_RECEIPT_CMD",
+            format!("printf '%s' 'tx_hash={}'", legacy_submit_hash),
+        );
+        std::env::set_var(
+            "TRNM_TX_CHALLENGE_SETTLEMENT_CMD",
+            format!("printf '%s' 'tx_hash={}'", challenge_hash),
+        );
+        std::env::set_var(
+            "TRNM_TX_CHALLENGE_CONSUMPTION_CMD",
+            format!("printf '%s' 'tx_hash={}'", legacy_challenge_hash),
+        );
+        std::env::set_var(
+            "TRNM_TX_RESOLVE_SETTLEMENT_CMD",
+            format!("printf '%s' 'tx_hash={}'", resolve_hash),
+        );
+        std::env::set_var(
+            "TRNM_TX_RESOLVE_CONSUMPTION_CMD",
+            format!("printf '%s' 'tx_hash={}'", legacy_resolve_hash),
+        );
+
+        submit_consumption_receipt_tx(receipt_path, None).unwrap();
+        challenge_consumption_tx(
+            42,
+            "consumer-bravo".into(),
+            "0xabc123".into(),
+            "bw-7".into(),
+            "arbiter-alpha".into(),
+            None,
+        )
+        .unwrap();
+        resolve_consumption_tx(
+            42,
+            "consumer-bravo".into(),
+            "0xabc123".into(),
+            "bw-7".into(),
+            ConsumptionResolutionDecisionArg::Accept,
+            None,
+            None,
+            "arbiter-alpha".into(),
+            None,
+        )
+        .unwrap();
+
+        let raw = std::fs::read_to_string(&tx_file).unwrap();
+        let parsed: serde_json::Value = serde_json::from_str(&raw).unwrap();
+        for tx_hash in [&submit_hash, &challenge_hash, &resolve_hash] {
+            assert_eq!(
+                parsed[tx_hash.as_str()]["tx_hash"].as_str(),
+                Some(tx_hash.as_str())
+            );
+            assert_eq!(parsed[tx_hash.as_str()]["status"].as_str(), Some("pending"));
+        }
+        for tx_hash in [
+            &legacy_submit_hash,
+            &legacy_challenge_hash,
+            &legacy_resolve_hash,
+        ] {
+            assert!(parsed.get(tx_hash.as_str()).is_none());
+        }
+
+        std::env::remove_var("TRNM_TX_SUBMIT_CONSUMPTION_RECEIPT_CMD");
+        std::env::remove_var("TRNM_TX_SUBMIT_SETTLEMENT_RECEIPT_CMD");
+        std::env::remove_var("TRNM_TX_CHALLENGE_CONSUMPTION_CMD");
+        std::env::remove_var("TRNM_TX_CHALLENGE_SETTLEMENT_CMD");
+        std::env::remove_var("TRNM_TX_RESOLVE_CONSUMPTION_CMD");
+        std::env::remove_var("TRNM_TX_RESOLVE_SETTLEMENT_CMD");
+        std::env::remove_var("TRNM_RPC_TX_FILE");
+        let _ = std::fs::remove_dir_all(&root);
     }
 
     #[test]
@@ -3306,8 +4978,9 @@ mod tests {
 
     #[test]
     fn query_parsers_accept_stringified_task_ids_in_events_response() {
-        let parsed = parse_events_query_response(r#"[{"task_id":"42","event_type":"accepted"}]"#, 42)
-            .unwrap();
+        let parsed =
+            parse_events_query_response(r#"[{"task_id":"42","event_type":"accepted"}]"#, 42)
+                .unwrap();
         assert_eq!(json_u64_at_path(&parsed[0], &["task_id"]), Some(42));
     }
 
@@ -3319,7 +4992,10 @@ mod tests {
         )
         .unwrap();
         assert_eq!(json_u64_at_path(&parsed, &["request", "task_id"]), Some(42));
-        assert_eq!(json_u64_at_path(&parsed["events"][0], &["task_id"]), Some(42));
+        assert_eq!(
+            json_u64_at_path(&parsed["events"][0], &["task_id"]),
+            Some(42)
+        );
     }
 
     #[test]
@@ -3331,7 +5007,10 @@ mod tests {
         .unwrap();
         assert_eq!(parsed["request"]["request_id"], serde_json::json!(42));
         assert_eq!(json_u64_at_path(&parsed, &["request", "task_id"]), Some(42));
-        assert_eq!(json_u64_at_path(&parsed["events"][0], &["task_id"]), Some(42));
+        assert_eq!(
+            json_u64_at_path(&parsed["events"][0], &["task_id"]),
+            Some(42)
+        );
     }
 
     #[test]
@@ -3479,14 +5158,38 @@ mod tests {
             normalize_wallet_store_env("\u{200e}\u{061c}《/tmp/trnm-wallets》\u{200f}"),
             Some("/tmp/trnm-wallets")
         );
-        assert_eq!(normalize_wallet_store_env("\u{00ad}\u{180e}《/tmp/trnm-wallets》\u{180e}\u{00ad}"), Some("/tmp/trnm-wallets"));
-        assert_eq!(normalize_wallet_store_env("\u{206a}《/tmp/trnm-wallets》\u{206f}"), Some("/tmp/trnm-wallets"));
-        assert_eq!(normalize_wallet_store_env("〈/tmp/trnm-wallets〉"), Some("/tmp/trnm-wallets"));
-        assert_eq!(normalize_wallet_store_env("⟨/tmp/trnm-wallets⟩"), Some("/tmp/trnm-wallets"));
-        assert_eq!(normalize_wallet_store_env("｟/tmp/trnm-wallets｠"), Some("/tmp/trnm-wallets"));
-        assert_eq!(normalize_wallet_store_env("(/tmp/trnm-wallets)"), Some("/tmp/trnm-wallets"));
-        assert_eq!(normalize_wallet_store_env("[/tmp/trnm-wallets]"), Some("/tmp/trnm-wallets"));
-        assert_eq!(normalize_wallet_store_env("{/tmp/trnm-wallets}"), Some("/tmp/trnm-wallets"));
+        assert_eq!(
+            normalize_wallet_store_env("\u{00ad}\u{180e}《/tmp/trnm-wallets》\u{180e}\u{00ad}"),
+            Some("/tmp/trnm-wallets")
+        );
+        assert_eq!(
+            normalize_wallet_store_env("\u{206a}《/tmp/trnm-wallets》\u{206f}"),
+            Some("/tmp/trnm-wallets")
+        );
+        assert_eq!(
+            normalize_wallet_store_env("〈/tmp/trnm-wallets〉"),
+            Some("/tmp/trnm-wallets")
+        );
+        assert_eq!(
+            normalize_wallet_store_env("⟨/tmp/trnm-wallets⟩"),
+            Some("/tmp/trnm-wallets")
+        );
+        assert_eq!(
+            normalize_wallet_store_env("｟/tmp/trnm-wallets｠"),
+            Some("/tmp/trnm-wallets")
+        );
+        assert_eq!(
+            normalize_wallet_store_env("(/tmp/trnm-wallets)"),
+            Some("/tmp/trnm-wallets")
+        );
+        assert_eq!(
+            normalize_wallet_store_env("[/tmp/trnm-wallets]"),
+            Some("/tmp/trnm-wallets")
+        );
+        assert_eq!(
+            normalize_wallet_store_env("{/tmp/trnm-wallets}"),
+            Some("/tmp/trnm-wallets")
+        );
         assert_eq!(
             normalize_wallet_store_env(" ({[/tmp/trnm-wallets]}) "),
             Some("/tmp/trnm-wallets")
@@ -3518,7 +5221,10 @@ mod tests {
         assert_eq!(normalize_wallet_store_env("/tmp/trnm wallets"), None);
         assert_eq!(normalize_wallet_store_env("/tmp/trnm\t-wallets"), None);
         assert_eq!(normalize_wallet_store_env("/tmp/trnm\n-wallets"), None);
-        assert_eq!(normalize_wallet_store_env("/tmp/trnm\u{200b}-wallets"), None);
+        assert_eq!(
+            normalize_wallet_store_env("/tmp/trnm\u{200b}-wallets"),
+            None
+        );
         assert_eq!(normalize_wallet_store_env("/tmp/trnm\u{202e}wallets"), None);
         assert_eq!(normalize_wallet_store_env("/tmp/trnm∖wallets"), None);
         assert_eq!(normalize_wallet_store_env("/tmp/trnm﹨wallets"), None);
@@ -3657,9 +5363,15 @@ mod tests {
         std::os::unix::fs::symlink(&real_parent, &linked_parent).unwrap();
 
         std::env::set_var("HOME", format!(" \"{}\" ", clean_home.display()));
-        assert_eq!(default_wallet_store(), clean_home.join(".trnm").join("wallets"));
+        assert_eq!(
+            default_wallet_store(),
+            clean_home.join(".trnm").join("wallets")
+        );
 
-        std::env::set_var("HOME", format!(" \u{2068}《{}》\u{2069} ", clean_home.display()));
+        std::env::set_var(
+            "HOME",
+            format!(" \u{2068}《{}》\u{2069} ", clean_home.display()),
+        );
         assert_eq!(
             default_wallet_store(),
             clean_home.join(".trnm").join("wallets"),
@@ -3667,7 +5379,13 @@ mod tests {
         );
 
         std::env::set_var("HOME", format!("{}", linked_parent.display()));
-        assert_eq!(default_wallet_store(), std::env::current_dir().unwrap().join(".trnm").join("wallets"));
+        assert_eq!(
+            default_wallet_store(),
+            std::env::current_dir()
+                .unwrap()
+                .join(".trnm")
+                .join("wallets")
+        );
 
         match original_store {
             Some(value) => std::env::set_var("TRNM_WALLET_STORE", value),
@@ -3719,9 +5437,9 @@ mod tests {
         std::env::set_var("TRNM_WALLET_STORE", "/tmp/trnm⧹wallets");
         let confusable_separator_err = resolve_wallet_store(None).unwrap_err();
         assert!(
-            confusable_separator_err
-                .to_string()
-                .contains("TRNM_WALLET_STORE is set but invalid; refusing ambiguous keystore path fallback"),
+            confusable_separator_err.to_string().contains(
+                "TRNM_WALLET_STORE is set but invalid; refusing ambiguous keystore path fallback"
+            ),
             "unexpected error for confusable separator env store: {confusable_separator_err}"
         );
 
@@ -3737,9 +5455,13 @@ mod tests {
                 .as_nanos()
         ));
         std::env::set_var("TRNM_WALLET_STORE", "\u{2068}\u{2069}");
-        assert_eq!(resolve_wallet_store(Some(explicit.clone())).unwrap(), explicit);
+        assert_eq!(
+            resolve_wallet_store(Some(explicit.clone())).unwrap(),
+            explicit
+        );
 
-        let explicit_relative_err = resolve_wallet_store(Some(PathBuf::from("./wallets"))).unwrap_err();
+        let explicit_relative_err =
+            resolve_wallet_store(Some(PathBuf::from("./wallets"))).unwrap_err();
         assert!(
             explicit_relative_err
                 .to_string()
@@ -3795,9 +5517,7 @@ mod tests {
 
         let explicit_err = resolve_wallet_store(Some(linked_store.clone())).unwrap_err();
         assert!(
-            explicit_err
-                .to_string()
-                .contains("explicit wallet store")
+            explicit_err.to_string().contains("explicit wallet store")
                 && explicit_err
                     .to_string()
                     .contains("must be an absolute normalized symlink-free path"),
@@ -3807,9 +5527,7 @@ mod tests {
         std::env::set_var("TRNM_WALLET_STORE", linked_store.as_os_str());
         let env_err = resolve_wallet_store(None).unwrap_err();
         assert!(
-            env_err
-                .to_string()
-                .contains("TRNM_WALLET_STORE")
+            env_err.to_string().contains("TRNM_WALLET_STORE")
                 && env_err
                     .to_string()
                     .contains("must be an absolute normalized symlink-free path"),
@@ -3846,9 +5564,7 @@ mod tests {
 
         let explicit_err = resolve_wallet_store(Some(store.clone())).unwrap_err();
         assert!(
-            explicit_err
-                .to_string()
-                .contains("explicit wallet store")
+            explicit_err.to_string().contains("explicit wallet store")
                 && explicit_err
                     .to_string()
                     .contains("must be an absolute normalized symlink-free path"),
@@ -3858,9 +5574,7 @@ mod tests {
         std::env::set_var("TRNM_WALLET_STORE", store.as_os_str());
         let env_err = resolve_wallet_store(None).unwrap_err();
         assert!(
-            env_err
-                .to_string()
-                .contains("TRNM_WALLET_STORE")
+            env_err.to_string().contains("TRNM_WALLET_STORE")
                 && env_err
                     .to_string()
                     .contains("must be an absolute normalized symlink-free path"),
@@ -4224,7 +5938,11 @@ mod tests {
         let mode = std::fs::metadata(&wallet).unwrap().permissions().mode() & 0o777;
         assert_eq!(mode, 0o600, "unexpected wallet file mode: {:o}", mode);
         let store_mode = std::fs::metadata(&store).unwrap().permissions().mode() & 0o777;
-        assert_eq!(store_mode, 0o700, "unexpected wallet store mode: {:o}", store_mode);
+        assert_eq!(
+            store_mode, 0o700,
+            "unexpected wallet store mode: {:o}",
+            store_mode
+        );
 
         let _ = std::fs::remove_file(&wallet);
         let _ = std::fs::remove_dir(&store);
@@ -4609,7 +6327,9 @@ mod tests {
         let err = wallet_create("alice".to_string(), None).unwrap_err();
         assert!(
             err.to_string().contains("traverses symlinked ancestor")
-                || err.to_string().contains("must be an absolute normalized symlink-free path"),
+                || err
+                    .to_string()
+                    .contains("must be an absolute normalized symlink-free path"),
             "unexpected error: {err}"
         );
 
@@ -5908,7 +7628,10 @@ mod tests {
     #[test]
     fn ensure_safe_sign_message_rejects_empty_text() {
         let err = ensure_safe_sign_message("").unwrap_err();
-        assert!(err.to_string().contains("must not be empty"), "unexpected: {err}");
+        assert!(
+            err.to_string().contains("must not be empty"),
+            "unexpected: {err}"
+        );
     }
 
     #[test]
@@ -6133,7 +7856,10 @@ mod tests {
 
     #[test]
     fn ensure_safe_sign_message_rejects_path_separator_text() {
-        for bad in ["approve /tmp/offline-payload", "approve C:\\offline\\payload"] {
+        for bad in [
+            "approve /tmp/offline-payload",
+            "approve C:\\offline\\payload",
+        ] {
             let err = ensure_safe_sign_message(bad).unwrap_err();
             assert!(
                 err.to_string().contains("path separators"),
@@ -6386,7 +8112,10 @@ mod tests {
         let parsed: serde_json::Value = serde_json::from_str(&raw).unwrap();
         assert!(parsed.get(raw_tx_hash).is_none());
         assert_eq!(parsed[canonical]["tx_hash"].as_str(), Some(canonical));
-        assert_eq!(query_local_tx_status(raw_tx_hash).as_deref(), Some("pending"));
+        assert_eq!(
+            query_local_tx_status(raw_tx_hash).as_deref(),
+            Some("pending")
+        );
 
         let _ = std::fs::remove_file(&path);
         std::env::remove_var("TRNM_RPC_TX_FILE");
@@ -6394,7 +8123,9 @@ mod tests {
 
     #[test]
     fn persist_local_pending_tx_rejects_non_prefixed_hex_hashes() {
-        let err = persist_local_pending_tx("deadbeef").unwrap_err().to_string();
+        let err = persist_local_pending_tx("deadbeef")
+            .unwrap_err()
+            .to_string();
         assert!(
             err.contains("expected 0x-prefixed hex tx hash"),
             "unexpected error: {err}"
@@ -6555,7 +8286,128 @@ mod tests {
         )
         .unwrap_err()
         .to_string();
-        assert!(err.contains("requested=42, got=7"), "unexpected error: {err}");
+        assert!(
+            err.contains("requested=42, got=7"),
+            "unexpected error: {err}"
+        );
+    }
+
+    #[test]
+    fn parse_consumption_summary_query_response_accepts_stringified_task_id() {
+        let parsed = parse_consumption_summary_query_response(
+            r#"{"task_id":"42","receipt_count":1,"accepted_receipt_count":1,"challenged_receipt_count":0,"total_consumed_tokens":17,"total_claimed_consumption_units":17,"total_credited_consumption_units":17}"#,
+            42,
+        )
+        .expect("parse consumption summary with string task_id");
+        assert_eq!(json_u64_alias(&parsed, &["task_id"]), Some(42));
+    }
+
+    #[test]
+    fn parse_consumption_summary_query_response_accepts_wrapped_summary_payload() {
+        let parsed = parse_consumption_summary_query_response(
+            r#"{"result":{"summary":{"task_id":"42","receipt_count":1,"accepted_receipt_count":1,"challenged_receipt_count":0,"total_consumed_tokens":17,"total_claimed_consumption_units":17,"total_credited_consumption_units":17}}}"#,
+            42,
+        )
+        .expect("parse wrapped consumption summary payload");
+        assert_eq!(json_u64_alias(&parsed, &["task_id"]), Some(42));
+        assert_eq!(parsed.get("receipt_count"), Some(&serde_json::json!(1)));
+    }
+
+    #[test]
+    fn parse_consumption_summary_query_response_accepts_settlement_preview_wrapper() {
+        let parsed = parse_consumption_summary_query_response(
+            r#"{"settlement_preview":{"task_id":"42","receipt_count":1,"accepted_receipt_count":1}}"#,
+            42,
+        )
+        .expect("parse settlement_preview wrapper");
+        assert_eq!(json_u64_alias(&parsed, &["task_id"]), Some(42));
+        assert_eq!(parsed.get("receipt_count"), Some(&serde_json::json!(1)));
+    }
+
+    #[test]
+    fn parse_consumption_summary_query_response_accepts_consumption_summary_wrapper() {
+        let parsed = parse_consumption_summary_query_response(
+            r#"{"consumption_summary":{"task_id":"42","receipt_count":1,"accepted_receipt_count":1}}"#,
+            42,
+        )
+        .expect("parse consumption_summary wrapper");
+        assert_eq!(json_u64_alias(&parsed, &["task_id"]), Some(42));
+        assert_eq!(parsed.get("receipt_count"), Some(&serde_json::json!(1)));
+    }
+
+    #[test]
+    fn consumption_summary_query_prefers_settlement_preview_template_override() {
+        let _guard = ENV_LOCK.lock().unwrap();
+        std::env::remove_var("TRNM_QUERY_SETTLEMENT_PREVIEW_CMD");
+        std::env::remove_var("TRNM_QUERY_CONSUMPTION_SUMMARY_CMD");
+        std::env::set_var(
+            "TRNM_QUERY_SETTLEMENT_PREVIEW_CMD",
+            r#"printf '%s' '{"task_id":42,"source":"settlement-preview"}'"#,
+        );
+        std::env::set_var(
+            "TRNM_QUERY_CONSUMPTION_SUMMARY_CMD",
+            r#"printf '%s' '{"task_id":42,"source":"legacy-consumption-summary"}'"#,
+        );
+
+        let got = consumption_summary_query(42).expect("query via settlement-preview env override");
+
+        std::env::remove_var("TRNM_QUERY_SETTLEMENT_PREVIEW_CMD");
+        std::env::remove_var("TRNM_QUERY_CONSUMPTION_SUMMARY_CMD");
+        assert_eq!(
+            got.get("source"),
+            Some(&serde_json::json!("settlement-preview"))
+        );
+    }
+
+    #[test]
+    fn settlement_preview_query_commands_keep_legacy_fallback_after_cutover_name() {
+        let commands = settlement_preview_query_commands(42);
+        assert_eq!(
+            commands[0],
+            "cargo run -q -p trnm-rpc -- query-settlement-preview 42"
+        );
+        assert_eq!(
+            commands[1],
+            "cargo run -q -p trnm-rpc -- query-consumption-summary 42"
+        );
+    }
+
+    #[test]
+    fn consumption_receipts_query_prefers_settlement_receipts_template_override() {
+        let _guard = ENV_LOCK.lock().unwrap();
+        std::env::remove_var("TRNM_QUERY_SETTLEMENT_RECEIPTS_CMD");
+        std::env::remove_var("TRNM_QUERY_CONSUMPTION_RECEIPTS_CMD");
+        std::env::set_var(
+            "TRNM_QUERY_SETTLEMENT_RECEIPTS_CMD",
+            r#"printf '%s' '{"task_id":42,"receipts":[{"task_id":42,"source":"settlement-receipts"}]}'"#,
+        );
+        std::env::set_var(
+            "TRNM_QUERY_CONSUMPTION_RECEIPTS_CMD",
+            r#"printf '%s' '{"task_id":42,"receipts":[{"task_id":42,"source":"legacy-consumption-receipts"}]}'"#,
+        );
+
+        let got =
+            consumption_receipts_query(42, 7).expect("query via settlement-receipts env override");
+
+        std::env::remove_var("TRNM_QUERY_SETTLEMENT_RECEIPTS_CMD");
+        std::env::remove_var("TRNM_QUERY_CONSUMPTION_RECEIPTS_CMD");
+        assert_eq!(
+            got[0].get("source"),
+            Some(&serde_json::json!("settlement-receipts"))
+        );
+    }
+
+    #[test]
+    fn settlement_receipts_query_commands_keep_legacy_fallback_after_cutover_name() {
+        let commands = settlement_receipts_query_commands(42, 7);
+        assert_eq!(
+            commands[0],
+            "cargo run -q -p trnm-rpc -- query-settlement-receipts 42 --limit 7"
+        );
+        assert_eq!(
+            commands[1],
+            "cargo run -q -p trnm-rpc -- query-consumption-receipts 42 --limit 7"
+        );
     }
 
     #[test]
@@ -6566,5 +8418,57 @@ mod tests {
         )
         .expect("parse consumption receipts");
         assert_eq!(parsed.as_array().map(Vec::len), Some(1));
+    }
+
+    #[test]
+    fn parse_consumption_receipts_query_response_accepts_stringified_task_ids() {
+        let parsed = parse_consumption_receipts_query_response(
+            r#"[{"task_id":"42","consumer_id":"consumer-bravo","output_hash":"abc123","billing_window_id":"bw-1","worker_id":"worker-alpha","tokenizer_id":"tok","tokenizer_version":"1.0.0","consumer_class":"bonded_api_client","consumed_spans_root":"def456","consumed_token_count":17,"claimed_consumption_units":17,"credited_consumption_units":9,"consumer_nonce":7,"accepted_at_unix_ms":1775683200123,"status":"Discounted","resolution_code":"accepted_discounted"}]"#,
+            42,
+        )
+        .expect("parse consumption receipts with string task_id");
+        assert_eq!(parsed.as_array().map(Vec::len), Some(1));
+    }
+
+    #[test]
+    fn parse_consumption_receipts_query_response_accepts_wrapped_receipts_payload() {
+        let parsed = parse_consumption_receipts_query_response(
+            r#"{"result":{"task_id":42,"receipts":[{"consumer_id":"consumer-bravo","output_hash":"abc123","billing_window_id":"bw-1","worker_id":"worker-alpha","tokenizer_id":"tok","tokenizer_version":"1.0.0","consumer_class":"bonded_api_client","consumed_spans_root":"def456","consumed_token_count":17,"claimed_consumption_units":17,"credited_consumption_units":9,"consumer_nonce":7,"accepted_at_unix_ms":1775683200123,"status":"Discounted","resolution_code":"accepted_discounted"}]}}"#,
+            42,
+        )
+        .expect("parse wrapped consumption receipts payload");
+        assert_eq!(parsed.as_array().map(Vec::len), Some(1));
+        assert_eq!(
+            parsed[0].get("consumer_id"),
+            Some(&serde_json::json!("consumer-bravo"))
+        );
+    }
+
+    #[test]
+    fn parse_consumption_receipts_query_response_accepts_settlement_receipts_wrapper() {
+        let parsed = parse_consumption_receipts_query_response(
+            r#"{"settlement_receipts":{"task_id":"42","receipts":[{"consumer_id":"consumer-bravo","output_hash":"abc123","billing_window_id":"bw-1"}]}}"#,
+            42,
+        )
+        .expect("parse settlement_receipts wrapper");
+        assert_eq!(parsed.as_array().map(Vec::len), Some(1));
+        assert_eq!(
+            parsed[0].get("consumer_id"),
+            Some(&serde_json::json!("consumer-bravo"))
+        );
+    }
+
+    #[test]
+    fn parse_consumption_receipts_query_response_accepts_consumption_receipts_wrapper() {
+        let parsed = parse_consumption_receipts_query_response(
+            r#"{"consumption_receipts":{"task_id":"42","receipts":[{"consumer_id":"consumer-bravo","output_hash":"abc123","billing_window_id":"bw-1"}]}}"#,
+            42,
+        )
+        .expect("parse consumption_receipts wrapper");
+        assert_eq!(parsed.as_array().map(Vec::len), Some(1));
+        assert_eq!(
+            parsed[0].get("consumer_id"),
+            Some(&serde_json::json!("consumer-bravo"))
+        );
     }
 }
