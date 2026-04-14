@@ -1,7 +1,10 @@
 use crate::bridge_status::{BridgeStatus, CapabilityToken, SettlementError, SettlementRequest};
 use crate::relay_heartbeat::HeartbeatOutcome;
 
-fn expected_terminal_state(confirm: &SettlementConfirm, heartbeat: &HeartbeatOutcome) -> &'static str {
+fn expected_terminal_state(
+    confirm: &SettlementConfirm,
+    heartbeat: &HeartbeatOutcome,
+) -> &'static str {
     if heartbeat.degraded || matches!(confirm, SettlementConfirm::Failed { .. }) {
         "reverted"
     } else {
@@ -39,10 +42,14 @@ pub enum SettlementStep {
 
 const MAX_COMPENSATION_REASON_CHARS: usize = 160;
 
-fn heartbeat_metrics_for_event(heartbeat: &HeartbeatOutcome) -> (Option<u64>, Option<u64>, Option<u64>) {
+fn heartbeat_metrics_for_event(
+    heartbeat: &HeartbeatOutcome,
+) -> (Option<u64>, Option<u64>, Option<u64>) {
     heartbeat
         .heartbeat
-        .filter(|h| h.source_height > 0 && h.target_height > 0 && h.target_height <= h.source_height)
+        .filter(|h| {
+            h.source_height > 0 && h.target_height > 0 && h.target_height <= h.source_height
+        })
         .map(|h| {
             (
                 Some(h.source_height),
@@ -79,9 +86,44 @@ fn degraded_reason_matches_prefix(normalized: &str, expected: &str) -> bool {
                 .map(|ch| {
                     matches!(
                         ch,
-                        ':' | '：' | ';' | '；' | ',' | '，' | '、' | '.' | '．' | '。' | '!' | '！' | '?' | '？'
-                            | '(' | ')' | '[' | ']' | '{' | '}' | '（' | '）' | '［' | '］' | '｛' | '｝' | '<' | '＜'
-                            | ' ' | '-' | '–' | '—' | '－' | '\'' | '"' | '‘' | '’' | '“' | '”'
+                        ':' | '：'
+                            | ';'
+                            | '；'
+                            | ','
+                            | '，'
+                            | '、'
+                            | '.'
+                            | '．'
+                            | '。'
+                            | '!'
+                            | '！'
+                            | '?'
+                            | '？'
+                            | '('
+                            | ')'
+                            | '['
+                            | ']'
+                            | '{'
+                            | '}'
+                            | '（'
+                            | '）'
+                            | '［'
+                            | '］'
+                            | '｛'
+                            | '｝'
+                            | '<'
+                            | '＜'
+                            | ' '
+                            | '-'
+                            | '–'
+                            | '—'
+                            | '－'
+                            | '\''
+                            | '"'
+                            | '‘'
+                            | '’'
+                            | '“'
+                            | '”'
                     )
                 })
                 .unwrap_or(false)
@@ -178,10 +220,7 @@ pub fn drive_minimal_settlement(
 
     if heartbeat.should_retry && !matches!(confirm, SettlementConfirm::Failed { .. }) {
         return Err(SettlementError::HeartbeatRetryPending {
-            reason: normalize_compensation_reason(
-                &heartbeat.message,
-                "heartbeat retry pending",
-            ),
+            reason: normalize_compensation_reason(&heartbeat.message, "heartbeat retry pending"),
         });
     }
 
@@ -435,7 +474,8 @@ mod tests {
     }
 
     #[test]
-    fn normalize_compensation_reason_strips_mixed_bidi_marks_and_embedding_isolates_for_replay_stability() {
+    fn normalize_compensation_reason_strips_mixed_bidi_marks_and_embedding_isolates_for_replay_stability(
+    ) {
         let raw = "target\u{200E}\u{2066}relay\u{202E}timeout\u{2069}signal";
         let normalized = normalize_compensation_reason(raw, "fallback");
         assert_eq!(normalized, "target relay timeout signal");
@@ -491,7 +531,8 @@ mod tests {
     }
 
     #[test]
-    fn normalize_compensation_reason_strips_mongolian_free_variation_selectors_for_replay_stability() {
+    fn normalize_compensation_reason_strips_mongolian_free_variation_selectors_for_replay_stability(
+    ) {
         let raw = "target\u{180B}relay\u{180C}timeout\u{180D}signal";
         let normalized = normalize_compensation_reason(raw, "fallback");
         assert_eq!(normalized, "target relay timeout signal");
@@ -522,7 +563,10 @@ mod tests {
     fn normalize_compensation_reason_collapses_general_punctuation_spaces() {
         let raw = "target\u{2000}relay\u{2001}timeout\u{2002}signal\u{2003}confirm\u{2004}lag\u{2005}audit\u{2006}trail";
         let normalized = normalize_compensation_reason(raw, "fallback");
-        assert_eq!(normalized, "target relay timeout signal confirm lag audit trail");
+        assert_eq!(
+            normalized,
+            "target relay timeout signal confirm lag audit trail"
+        );
     }
 
     #[test]
@@ -554,7 +598,8 @@ mod tests {
     }
 
     #[test]
-    fn normalize_compensation_reason_strips_bom_word_joiner_and_variation_selectors_for_replay_stability() {
+    fn normalize_compensation_reason_strips_bom_word_joiner_and_variation_selectors_for_replay_stability(
+    ) {
         let raw = "target\u{FEFF}relay\u{2060}timeout\u{FE0F}signal\u{E0100}";
         let normalized = normalize_compensation_reason(raw, "fallback");
         assert_eq!(normalized, "target relay timeout signal");
@@ -854,7 +899,8 @@ mod tests {
     }
 
     #[test]
-    fn drive_minimal_settlement_accepts_exact_source_plus_one_confirm_height_at_finality_boundary() {
+    fn drive_minimal_settlement_accepts_exact_source_plus_one_confirm_height_at_finality_boundary()
+    {
         let mut request = SettlementRequest::new(1, "0xconfirm-finality-boundary".to_string());
         let token = CapabilityToken {
             subject: "did:trn:settlement-operator".to_string(),
@@ -897,7 +943,8 @@ mod tests {
     }
 
     #[test]
-    fn drive_minimal_settlement_accepts_exact_source_plus_one_confirm_height_when_target_has_reached_source_head() {
+    fn drive_minimal_settlement_accepts_exact_source_plus_one_confirm_height_when_target_has_reached_source_head(
+    ) {
         let mut request = SettlementRequest::new(1, "0xconfirm-head-plus-one-boundary".to_string());
         let token = CapabilityToken {
             subject: "did:trn:settlement-operator".to_string(),
@@ -963,14 +1010,17 @@ mod tests {
             &heartbeat,
             SettlementConfirm::Confirmed { height: 700 },
         )
-        .expect_err("stale source-height confirmation must fail closed once target has reached source head");
+        .expect_err(
+            "stale source-height confirmation must fail closed once target has reached source head",
+        );
 
         assert_eq!(err, SettlementError::InvalidHeight { height: 700 });
         assert_eq!(request.status, BridgeStatus::Pending);
     }
 
     #[test]
-    fn drive_minimal_settlement_accepts_exact_u64_max_confirm_height_at_saturated_finality_boundary() {
+    fn drive_minimal_settlement_accepts_exact_u64_max_confirm_height_at_saturated_finality_boundary(
+    ) {
         let mut request = SettlementRequest::new(1, "0xconfirm-max-boundary".to_string());
         let token = CapabilityToken {
             subject: "did:trn:settlement-operator".to_string(),
@@ -1061,11 +1111,10 @@ mod tests {
     }
 
     #[test]
-    fn drive_minimal_settlement_degraded_heartbeat_with_sanitized_invalid_progression_still_compensates() {
-        let mut request = SettlementRequest::new(
-            1,
-            "0xdegraded-invalid-heartbeat-sanitized".to_string(),
-        );
+    fn drive_minimal_settlement_degraded_heartbeat_with_sanitized_invalid_progression_still_compensates(
+    ) {
+        let mut request =
+            SettlementRequest::new(1, "0xdegraded-invalid-heartbeat-sanitized".to_string());
         let token = CapabilityToken {
             subject: "did:trn:settlement-operator".to_string(),
             capabilities: vec![SettlementCapability::Finalize, SettlementCapability::Revert],
@@ -1112,11 +1161,10 @@ mod tests {
     }
 
     #[test]
-    fn drive_minimal_settlement_degraded_heartbeat_with_invalid_progression_suffix_still_compensates() {
-        let mut request = SettlementRequest::new(
-            1,
-            "0xdegraded-invalid-heartbeat-suffix".to_string(),
-        );
+    fn drive_minimal_settlement_degraded_heartbeat_with_invalid_progression_suffix_still_compensates(
+    ) {
+        let mut request =
+            SettlementRequest::new(1, "0xdegraded-invalid-heartbeat-suffix".to_string());
         let token = CapabilityToken {
             subject: "did:trn:settlement-operator".to_string(),
             capabilities: vec![SettlementCapability::Finalize, SettlementCapability::Revert],
@@ -1168,7 +1216,8 @@ mod tests {
     }
 
     #[test]
-    fn drive_minimal_settlement_degraded_heartbeat_with_invalid_progression_fullwidth_colon_suffix_still_compensates() {
+    fn drive_minimal_settlement_degraded_heartbeat_with_invalid_progression_fullwidth_colon_suffix_still_compensates(
+    ) {
         let mut request = SettlementRequest::new(
             1,
             "0xdegraded-invalid-heartbeat-fullwidth-colon".to_string(),
@@ -1194,7 +1243,9 @@ mod tests {
             &heartbeat,
             SettlementConfirm::Confirmed { height: 701 },
         )
-        .expect("fullwidth colon suffix on invalid progression should remain terminal compensation");
+        .expect(
+            "fullwidth colon suffix on invalid progression should remain terminal compensation",
+        );
 
         assert_eq!(
             out,
@@ -1224,11 +1275,10 @@ mod tests {
     }
 
     #[test]
-    fn drive_minimal_settlement_degraded_heartbeat_with_invalid_progression_hyphen_suffix_still_compensates() {
-        let mut request = SettlementRequest::new(
-            1,
-            "0xdegraded-invalid-heartbeat-hyphen-suffix".to_string(),
-        );
+    fn drive_minimal_settlement_degraded_heartbeat_with_invalid_progression_hyphen_suffix_still_compensates(
+    ) {
+        let mut request =
+            SettlementRequest::new(1, "0xdegraded-invalid-heartbeat-hyphen-suffix".to_string());
         let token = CapabilityToken {
             subject: "did:trn:settlement-operator".to_string(),
             capabilities: vec![SettlementCapability::Finalize, SettlementCapability::Revert],
@@ -1280,11 +1330,10 @@ mod tests {
     }
 
     #[test]
-    fn drive_minimal_settlement_degraded_heartbeat_with_invalid_progression_em_dash_suffix_still_compensates() {
-        let mut request = SettlementRequest::new(
-            1,
-            "0xdegraded-invalid-heartbeat-em-dash-suffix".to_string(),
-        );
+    fn drive_minimal_settlement_degraded_heartbeat_with_invalid_progression_em_dash_suffix_still_compensates(
+    ) {
+        let mut request =
+            SettlementRequest::new(1, "0xdegraded-invalid-heartbeat-em-dash-suffix".to_string());
         let token = CapabilityToken {
             subject: "did:trn:settlement-operator".to_string(),
             capabilities: vec![SettlementCapability::Finalize, SettlementCapability::Revert],
@@ -1336,7 +1385,8 @@ mod tests {
     }
 
     #[test]
-    fn drive_minimal_settlement_degraded_heartbeat_with_invalid_progression_fullwidth_hyphen_suffix_still_compensates() {
+    fn drive_minimal_settlement_degraded_heartbeat_with_invalid_progression_fullwidth_hyphen_suffix_still_compensates(
+    ) {
         let mut request = SettlementRequest::new(
             1,
             "0xdegraded-invalid-heartbeat-fullwidth-hyphen-suffix".to_string(),
@@ -1392,7 +1442,8 @@ mod tests {
     }
 
     #[test]
-    fn drive_minimal_settlement_degraded_heartbeat_with_invalid_progression_bracketed_suffix_still_compensates() {
+    fn drive_minimal_settlement_degraded_heartbeat_with_invalid_progression_bracketed_suffix_still_compensates(
+    ) {
         let mut request = SettlementRequest::new(
             1,
             "0xdegraded-invalid-heartbeat-bracketed-suffix".to_string(),
@@ -1448,7 +1499,8 @@ mod tests {
     }
 
     #[test]
-    fn drive_minimal_settlement_degraded_heartbeat_with_invalid_progression_fullwidth_bracketed_suffix_still_compensates() {
+    fn drive_minimal_settlement_degraded_heartbeat_with_invalid_progression_fullwidth_bracketed_suffix_still_compensates(
+    ) {
         let mut request = SettlementRequest::new(
             1,
             "0xdegraded-invalid-heartbeat-fullwidth-bracketed-suffix".to_string(),
@@ -1504,7 +1556,8 @@ mod tests {
     }
 
     #[test]
-    fn drive_minimal_settlement_degraded_heartbeat_with_invalid_progression_fullwidth_square_bracketed_suffix_still_compensates() {
+    fn drive_minimal_settlement_degraded_heartbeat_with_invalid_progression_fullwidth_square_bracketed_suffix_still_compensates(
+    ) {
         let mut request = SettlementRequest::new(
             1,
             "0xdegraded-invalid-heartbeat-fullwidth-square-bracketed-suffix".to_string(),
@@ -1560,7 +1613,8 @@ mod tests {
     }
 
     #[test]
-    fn drive_minimal_settlement_degraded_heartbeat_with_invalid_progression_angle_bracketed_suffix_still_compensates() {
+    fn drive_minimal_settlement_degraded_heartbeat_with_invalid_progression_angle_bracketed_suffix_still_compensates(
+    ) {
         let mut request = SettlementRequest::new(
             1,
             "0xdegraded-invalid-heartbeat-angle-bracketed-suffix".to_string(),
@@ -1616,7 +1670,8 @@ mod tests {
     }
 
     #[test]
-    fn drive_minimal_settlement_degraded_heartbeat_with_invalid_progression_fullwidth_angle_bracketed_suffix_still_compensates() {
+    fn drive_minimal_settlement_degraded_heartbeat_with_invalid_progression_fullwidth_angle_bracketed_suffix_still_compensates(
+    ) {
         let mut request = SettlementRequest::new(
             1,
             "0xdegraded-invalid-heartbeat-fullwidth-angle-bracketed-suffix".to_string(),
@@ -1672,7 +1727,8 @@ mod tests {
     }
 
     #[test]
-    fn drive_minimal_settlement_degraded_heartbeat_with_invalid_progression_fullwidth_curly_braced_suffix_still_compensates() {
+    fn drive_minimal_settlement_degraded_heartbeat_with_invalid_progression_fullwidth_curly_braced_suffix_still_compensates(
+    ) {
         let mut request = SettlementRequest::new(
             1,
             "0xdegraded-invalid-heartbeat-fullwidth-curly-braced-suffix".to_string(),
@@ -1776,11 +1832,10 @@ mod tests {
     }
 
     #[test]
-    fn drive_minimal_settlement_degraded_heartbeat_with_mixed_case_invalid_progression_still_compensates() {
-        let mut request = SettlementRequest::new(
-            1,
-            "0xdegraded-invalid-heartbeat-mixed-case".to_string(),
-        );
+    fn drive_minimal_settlement_degraded_heartbeat_with_mixed_case_invalid_progression_still_compensates(
+    ) {
+        let mut request =
+            SettlementRequest::new(1, "0xdegraded-invalid-heartbeat-mixed-case".to_string());
         let token = CapabilityToken {
             subject: "did:trn:settlement-operator".to_string(),
             capabilities: vec![SettlementCapability::Finalize, SettlementCapability::Revert],
@@ -1827,11 +1882,10 @@ mod tests {
     }
 
     #[test]
-    fn drive_minimal_settlement_degraded_heartbeat_with_sanitized_invalid_height_still_compensates() {
-        let mut request = SettlementRequest::new(
-            1,
-            "0xdegraded-invalid-height-sanitized".to_string(),
-        );
+    fn drive_minimal_settlement_degraded_heartbeat_with_sanitized_invalid_height_still_compensates()
+    {
+        let mut request =
+            SettlementRequest::new(1, "0xdegraded-invalid-height-sanitized".to_string());
         let token = CapabilityToken {
             subject: "did:trn:settlement-operator".to_string(),
             capabilities: vec![SettlementCapability::Finalize, SettlementCapability::Revert],
@@ -1879,10 +1933,7 @@ mod tests {
 
     #[test]
     fn drive_minimal_settlement_degraded_heartbeat_with_invalid_height_suffix_still_compensates() {
-        let mut request = SettlementRequest::new(
-            1,
-            "0xdegraded-invalid-height-suffix".to_string(),
-        );
+        let mut request = SettlementRequest::new(1, "0xdegraded-invalid-height-suffix".to_string());
         let token = CapabilityToken {
             subject: "did:trn:settlement-operator".to_string(),
             capabilities: vec![SettlementCapability::Finalize, SettlementCapability::Revert],
@@ -1904,7 +1955,9 @@ mod tests {
             &heartbeat,
             SettlementConfirm::Confirmed { height: 701 },
         )
-        .expect("diagnostic suffix on invalid heartbeat height should remain terminal compensation");
+        .expect(
+            "diagnostic suffix on invalid heartbeat height should remain terminal compensation",
+        );
 
         assert_eq!(
             out,
@@ -1933,11 +1986,10 @@ mod tests {
     }
 
     #[test]
-    fn drive_minimal_settlement_degraded_heartbeat_with_invalid_height_fullwidth_colon_suffix_still_compensates() {
-        let mut request = SettlementRequest::new(
-            1,
-            "0xdegraded-invalid-height-fullwidth-colon".to_string(),
-        );
+    fn drive_minimal_settlement_degraded_heartbeat_with_invalid_height_fullwidth_colon_suffix_still_compensates(
+    ) {
+        let mut request =
+            SettlementRequest::new(1, "0xdegraded-invalid-height-fullwidth-colon".to_string());
         let token = CapabilityToken {
             subject: "did:trn:settlement-operator".to_string(),
             capabilities: vec![SettlementCapability::Finalize, SettlementCapability::Revert],
@@ -1988,11 +2040,10 @@ mod tests {
     }
 
     #[test]
-    fn drive_minimal_settlement_degraded_heartbeat_with_invalid_height_fullwidth_comma_suffix_still_compensates() {
-        let mut request = SettlementRequest::new(
-            1,
-            "0xdegraded-invalid-height-fullwidth-comma".to_string(),
-        );
+    fn drive_minimal_settlement_degraded_heartbeat_with_invalid_height_fullwidth_comma_suffix_still_compensates(
+    ) {
+        let mut request =
+            SettlementRequest::new(1, "0xdegraded-invalid-height-fullwidth-comma".to_string());
         let token = CapabilityToken {
             subject: "did:trn:settlement-operator".to_string(),
             capabilities: vec![SettlementCapability::Finalize, SettlementCapability::Revert],
@@ -2043,7 +2094,8 @@ mod tests {
     }
 
     #[test]
-    fn drive_minimal_settlement_degraded_heartbeat_with_invalid_height_fullwidth_semicolon_suffix_still_compensates() {
+    fn drive_minimal_settlement_degraded_heartbeat_with_invalid_height_fullwidth_semicolon_suffix_still_compensates(
+    ) {
         let mut request = SettlementRequest::new(
             1,
             "0xdegraded-invalid-height-fullwidth-semicolon".to_string(),
@@ -2098,11 +2150,10 @@ mod tests {
     }
 
     #[test]
-    fn drive_minimal_settlement_degraded_heartbeat_with_invalid_height_ascii_semicolon_suffix_still_compensates() {
-        let mut request = SettlementRequest::new(
-            1,
-            "0xdegraded-invalid-height-ascii-semicolon".to_string(),
-        );
+    fn drive_minimal_settlement_degraded_heartbeat_with_invalid_height_ascii_semicolon_suffix_still_compensates(
+    ) {
+        let mut request =
+            SettlementRequest::new(1, "0xdegraded-invalid-height-ascii-semicolon".to_string());
         let token = CapabilityToken {
             subject: "did:trn:settlement-operator".to_string(),
             capabilities: vec![SettlementCapability::Finalize, SettlementCapability::Revert],
@@ -2153,11 +2204,10 @@ mod tests {
     }
 
     #[test]
-    fn drive_minimal_settlement_degraded_heartbeat_with_invalid_height_en_dash_suffix_still_compensates() {
-        let mut request = SettlementRequest::new(
-            1,
-            "0xdegraded-invalid-height-en-dash".to_string(),
-        );
+    fn drive_minimal_settlement_degraded_heartbeat_with_invalid_height_en_dash_suffix_still_compensates(
+    ) {
+        let mut request =
+            SettlementRequest::new(1, "0xdegraded-invalid-height-en-dash".to_string());
         let token = CapabilityToken {
             subject: "did:trn:settlement-operator".to_string(),
             capabilities: vec![SettlementCapability::Finalize, SettlementCapability::Revert],
@@ -2208,11 +2258,9 @@ mod tests {
     }
 
     #[test]
-    fn drive_minimal_settlement_degraded_heartbeat_with_invalid_height_period_suffix_still_compensates() {
-        let mut request = SettlementRequest::new(
-            1,
-            "0xdegraded-invalid-height-period".to_string(),
-        );
+    fn drive_minimal_settlement_degraded_heartbeat_with_invalid_height_period_suffix_still_compensates(
+    ) {
+        let mut request = SettlementRequest::new(1, "0xdegraded-invalid-height-period".to_string());
         let token = CapabilityToken {
             subject: "did:trn:settlement-operator".to_string(),
             capabilities: vec![SettlementCapability::Finalize, SettlementCapability::Revert],
@@ -2263,11 +2311,10 @@ mod tests {
     }
 
     #[test]
-    fn drive_minimal_settlement_degraded_heartbeat_with_invalid_height_em_dash_suffix_still_compensates() {
-        let mut request = SettlementRequest::new(
-            1,
-            "0xdegraded-invalid-height-em-dash".to_string(),
-        );
+    fn drive_minimal_settlement_degraded_heartbeat_with_invalid_height_em_dash_suffix_still_compensates(
+    ) {
+        let mut request =
+            SettlementRequest::new(1, "0xdegraded-invalid-height-em-dash".to_string());
         let token = CapabilityToken {
             subject: "did:trn:settlement-operator".to_string(),
             capabilities: vec![SettlementCapability::Finalize, SettlementCapability::Revert],
@@ -2318,7 +2365,8 @@ mod tests {
     }
 
     #[test]
-    fn drive_minimal_settlement_degraded_heartbeat_with_invalid_height_fullwidth_full_stop_suffix_still_compensates() {
+    fn drive_minimal_settlement_degraded_heartbeat_with_invalid_height_fullwidth_full_stop_suffix_still_compensates(
+    ) {
         let mut request = SettlementRequest::new(
             1,
             "0xdegraded-invalid-height-fullwidth-full-stop".to_string(),
@@ -2373,7 +2421,8 @@ mod tests {
     }
 
     #[test]
-    fn drive_minimal_settlement_degraded_heartbeat_with_invalid_height_ideographic_full_stop_suffix_still_compensates() {
+    fn drive_minimal_settlement_degraded_heartbeat_with_invalid_height_ideographic_full_stop_suffix_still_compensates(
+    ) {
         let mut request = SettlementRequest::new(
             1,
             "0xdegraded-invalid-height-ideographic-full-stop".to_string(),
@@ -2428,11 +2477,10 @@ mod tests {
     }
 
     #[test]
-    fn drive_minimal_settlement_degraded_heartbeat_with_invalid_height_bracketed_suffix_still_compensates() {
-        let mut request = SettlementRequest::new(
-            1,
-            "0xdegraded-invalid-height-bracketed-suffix".to_string(),
-        );
+    fn drive_minimal_settlement_degraded_heartbeat_with_invalid_height_bracketed_suffix_still_compensates(
+    ) {
+        let mut request =
+            SettlementRequest::new(1, "0xdegraded-invalid-height-bracketed-suffix".to_string());
         let token = CapabilityToken {
             subject: "did:trn:settlement-operator".to_string(),
             capabilities: vec![SettlementCapability::Finalize, SettlementCapability::Revert],
@@ -2477,14 +2525,14 @@ mod tests {
         assert_eq!(
             request.status,
             BridgeStatus::Reverted(
-                "heartbeat degraded: invalid heartbeat height [source=0 target=701]"
-                    .to_string(),
+                "heartbeat degraded: invalid heartbeat height [source=0 target=701]".to_string(),
             )
         );
     }
 
     #[test]
-    fn drive_minimal_settlement_degraded_heartbeat_with_invalid_height_fullwidth_bracketed_suffix_still_compensates() {
+    fn drive_minimal_settlement_degraded_heartbeat_with_invalid_height_fullwidth_bracketed_suffix_still_compensates(
+    ) {
         let mut request = SettlementRequest::new(
             1,
             "0xdegraded-invalid-height-fullwidth-bracketed-suffix".to_string(),
@@ -2533,14 +2581,14 @@ mod tests {
         assert_eq!(
             request.status,
             BridgeStatus::Reverted(
-                "heartbeat degraded: invalid heartbeat height（source=0 target=701）"
-                    .to_string(),
+                "heartbeat degraded: invalid heartbeat height（source=0 target=701）".to_string(),
             )
         );
     }
 
     #[test]
-    fn drive_minimal_settlement_degraded_heartbeat_with_invalid_height_fullwidth_square_bracketed_suffix_still_compensates() {
+    fn drive_minimal_settlement_degraded_heartbeat_with_invalid_height_fullwidth_square_bracketed_suffix_still_compensates(
+    ) {
         let mut request = SettlementRequest::new(
             1,
             "0xdegraded-invalid-height-fullwidth-square-bracketed-suffix".to_string(),
@@ -2589,14 +2637,14 @@ mod tests {
         assert_eq!(
             request.status,
             BridgeStatus::Reverted(
-                "heartbeat degraded: invalid heartbeat height［source=0 target=701］"
-                    .to_string(),
+                "heartbeat degraded: invalid heartbeat height［source=0 target=701］".to_string(),
             )
         );
     }
 
     #[test]
-    fn drive_minimal_settlement_degraded_heartbeat_with_invalid_height_fullwidth_curly_braced_suffix_still_compensates() {
+    fn drive_minimal_settlement_degraded_heartbeat_with_invalid_height_fullwidth_curly_braced_suffix_still_compensates(
+    ) {
         let mut request = SettlementRequest::new(
             1,
             "0xdegraded-invalid-height-fullwidth-curly-braced-suffix".to_string(),
@@ -2645,18 +2693,15 @@ mod tests {
         assert_eq!(
             request.status,
             BridgeStatus::Reverted(
-                "heartbeat degraded: invalid heartbeat height｛source=0 target=701｝"
-                    .to_string(),
+                "heartbeat degraded: invalid heartbeat height｛source=0 target=701｝".to_string(),
             )
         );
     }
 
     #[test]
     fn drive_minimal_settlement_degraded_heartbeat_with_invalid_height_slash_suffix_fails_closed() {
-        let mut request = SettlementRequest::new(
-            1,
-            "0xdegraded-invalid-height-slash-suffix".to_string(),
-        );
+        let mut request =
+            SettlementRequest::new(1, "0xdegraded-invalid-height-slash-suffix".to_string());
         let token = CapabilityToken {
             subject: "did:trn:settlement-operator".to_string(),
             capabilities: vec![SettlementCapability::Finalize, SettlementCapability::Revert],
@@ -2678,18 +2723,19 @@ mod tests {
             &heartbeat,
             SettlementConfirm::Confirmed { height: 701 },
         )
-        .expect_err("unsupported suffix delimiter must not weaken invalid-height fail-closed behavior");
+        .expect_err(
+            "unsupported suffix delimiter must not weaken invalid-height fail-closed behavior",
+        );
 
         assert_eq!(err, SettlementError::InvalidHeight { height: 701 });
         assert_eq!(request.status, BridgeStatus::Pending);
     }
 
     #[test]
-    fn drive_minimal_settlement_degraded_heartbeat_with_invalid_progression_slash_suffix_fails_closed() {
-        let mut request = SettlementRequest::new(
-            1,
-            "0xdegraded-invalid-progression-slash-suffix".to_string(),
-        );
+    fn drive_minimal_settlement_degraded_heartbeat_with_invalid_progression_slash_suffix_fails_closed(
+    ) {
+        let mut request =
+            SettlementRequest::new(1, "0xdegraded-invalid-progression-slash-suffix".to_string());
         let token = CapabilityToken {
             subject: "did:trn:settlement-operator".to_string(),
             capabilities: vec![SettlementCapability::Finalize, SettlementCapability::Revert],
@@ -2720,7 +2766,8 @@ mod tests {
     }
 
     #[test]
-    fn drive_minimal_settlement_degraded_heartbeat_with_invalid_progression_fullwidth_semicolon_suffix_still_compensates() {
+    fn drive_minimal_settlement_degraded_heartbeat_with_invalid_progression_fullwidth_semicolon_suffix_still_compensates(
+    ) {
         let mut request = SettlementRequest::new(
             1,
             "0xdegraded-invalid-progression-fullwidth-semicolon-suffix".to_string(),
@@ -2747,7 +2794,9 @@ mod tests {
             &heartbeat,
             SettlementConfirm::Confirmed { height: 701 },
         )
-        .expect("fullwidth semicolon suffix should preserve terminal invalid-progression compensation");
+        .expect(
+            "fullwidth semicolon suffix should preserve terminal invalid-progression compensation",
+        );
 
         assert_eq!(
             out,
@@ -2777,11 +2826,10 @@ mod tests {
     }
 
     #[test]
-    fn drive_minimal_settlement_degraded_heartbeat_with_invalid_progression_comma_suffix_still_compensates() {
-        let mut request = SettlementRequest::new(
-            1,
-            "0xdegraded-invalid-progression-comma-suffix".to_string(),
-        );
+    fn drive_minimal_settlement_degraded_heartbeat_with_invalid_progression_comma_suffix_still_compensates(
+    ) {
+        let mut request =
+            SettlementRequest::new(1, "0xdegraded-invalid-progression-comma-suffix".to_string());
         let token = CapabilityToken {
             subject: "did:trn:settlement-operator".to_string(),
             capabilities: vec![SettlementCapability::Finalize, SettlementCapability::Revert],
@@ -2834,7 +2882,8 @@ mod tests {
     }
 
     #[test]
-    fn drive_minimal_settlement_degraded_heartbeat_with_invalid_progression_ascii_semicolon_suffix_still_compensates() {
+    fn drive_minimal_settlement_degraded_heartbeat_with_invalid_progression_ascii_semicolon_suffix_still_compensates(
+    ) {
         let mut request = SettlementRequest::new(
             1,
             "0xdegraded-invalid-progression-ascii-semicolon-suffix".to_string(),
@@ -2891,7 +2940,8 @@ mod tests {
     }
 
     #[test]
-    fn drive_minimal_settlement_degraded_heartbeat_with_invalid_progression_period_suffix_still_compensates() {
+    fn drive_minimal_settlement_degraded_heartbeat_with_invalid_progression_period_suffix_still_compensates(
+    ) {
         let mut request = SettlementRequest::new(
             1,
             "0xdegraded-invalid-progression-period-suffix".to_string(),
@@ -2948,7 +2998,8 @@ mod tests {
     }
 
     #[test]
-    fn drive_minimal_settlement_degraded_heartbeat_with_invalid_progression_ideographic_full_stop_suffix_still_compensates() {
+    fn drive_minimal_settlement_degraded_heartbeat_with_invalid_progression_ideographic_full_stop_suffix_still_compensates(
+    ) {
         let mut request = SettlementRequest::new(
             1,
             "0xdegraded-invalid-progression-ideographic-full-stop-suffix".to_string(),
@@ -3005,7 +3056,8 @@ mod tests {
     }
 
     #[test]
-    fn drive_minimal_settlement_degraded_heartbeat_with_invalid_progression_fullwidth_comma_suffix_still_compensates() {
+    fn drive_minimal_settlement_degraded_heartbeat_with_invalid_progression_fullwidth_comma_suffix_still_compensates(
+    ) {
         let mut request = SettlementRequest::new(
             1,
             "0xdegraded-invalid-progression-fullwidth-comma-suffix".to_string(),
@@ -3062,11 +3114,10 @@ mod tests {
     }
 
     #[test]
-    fn drive_minimal_settlement_degraded_heartbeat_with_mixed_case_invalid_height_still_compensates() {
-        let mut request = SettlementRequest::new(
-            1,
-            "0xdegraded-invalid-height-mixed-case".to_string(),
-        );
+    fn drive_minimal_settlement_degraded_heartbeat_with_mixed_case_invalid_height_still_compensates(
+    ) {
+        let mut request =
+            SettlementRequest::new(1, "0xdegraded-invalid-height-mixed-case".to_string());
         let token = CapabilityToken {
             subject: "did:trn:settlement-operator".to_string(),
             capabilities: vec![SettlementCapability::Finalize, SettlementCapability::Revert],
@@ -3113,7 +3164,8 @@ mod tests {
     }
 
     #[test]
-    fn drive_minimal_settlement_retry_pending_heartbeat_with_invalid_progression_stays_retry_bounded() {
+    fn drive_minimal_settlement_retry_pending_heartbeat_with_invalid_progression_stays_retry_bounded(
+    ) {
         let mut request = SettlementRequest::new(1, "0xretry-invalid-heartbeat".to_string());
         let token = CapabilityToken {
             subject: "did:trn:settlement-operator".to_string(),
@@ -3148,7 +3200,8 @@ mod tests {
     }
 
     #[test]
-    fn drive_minimal_settlement_retrying_heartbeat_with_failed_confirm_compensates_terminal_failure() {
+    fn drive_minimal_settlement_retrying_heartbeat_with_failed_confirm_compensates_terminal_failure(
+    ) {
         let mut request = SettlementRequest::new(1, "0xretry-failed-confirm".to_string());
         let token = CapabilityToken {
             subject: "did:trn:settlement-operator".to_string(),
@@ -3194,7 +3247,8 @@ mod tests {
     }
 
     #[test]
-    fn drive_minimal_settlement_retrying_heartbeat_uses_settlement_scoped_fallback_when_message_sanitizes_empty() {
+    fn drive_minimal_settlement_retrying_heartbeat_uses_settlement_scoped_fallback_when_message_sanitizes_empty(
+    ) {
         let mut request = SettlementRequest::new(1, "0xretry-empty-heartbeat-message".to_string());
         let token = CapabilityToken {
             subject: "did:trn:settlement-operator".to_string(),
@@ -3251,7 +3305,8 @@ mod tests {
     }
 
     #[test]
-    fn drive_minimal_settlement_degraded_heartbeat_overrides_retry_pending_to_preserve_terminal_compensation() {
+    fn drive_minimal_settlement_degraded_heartbeat_overrides_retry_pending_to_preserve_terminal_compensation(
+    ) {
         let mut request = SettlementRequest::new(1, "0xdegraded-retrying-heartbeat".to_string());
         let token = CapabilityToken {
             subject: "did:trn:settlement-operator".to_string(),
@@ -3295,8 +3350,12 @@ mod tests {
     }
 
     #[test]
-    fn drive_minimal_settlement_degraded_invalid_heartbeat_progression_with_fullwidth_colon_allows_fail_closed_revert() {
-        let mut request = SettlementRequest::new(1, "0xdegraded-invalid-heartbeat-fullwidth-colon".to_string());
+    fn drive_minimal_settlement_degraded_invalid_heartbeat_progression_with_fullwidth_colon_allows_fail_closed_revert(
+    ) {
+        let mut request = SettlementRequest::new(
+            1,
+            "0xdegraded-invalid-heartbeat-fullwidth-colon".to_string(),
+        );
         let token = CapabilityToken {
             subject: "did:trn:settlement-operator".to_string(),
             capabilities: vec![SettlementCapability::Finalize, SettlementCapability::Revert],
@@ -3309,7 +3368,8 @@ mod tests {
             }),
             should_retry: false,
             degraded: true,
-            message: "Invalid heartbeat progression：target height exceeded source sample".to_string(),
+            message: "Invalid heartbeat progression：target height exceeded source sample"
+                .to_string(),
         };
 
         let out = drive_minimal_settlement(
@@ -3345,8 +3405,12 @@ mod tests {
     }
 
     #[test]
-    fn drive_minimal_settlement_degraded_invalid_heartbeat_height_with_case_insensitive_prefix_allows_fail_closed_revert() {
-        let mut request = SettlementRequest::new(1, "0xdegraded-invalid-heartbeat-casefold-prefix".to_string());
+    fn drive_minimal_settlement_degraded_invalid_heartbeat_height_with_case_insensitive_prefix_allows_fail_closed_revert(
+    ) {
+        let mut request = SettlementRequest::new(
+            1,
+            "0xdegraded-invalid-heartbeat-casefold-prefix".to_string(),
+        );
         let token = CapabilityToken {
             subject: "did:trn:settlement-operator".to_string(),
             capabilities: vec![SettlementCapability::Finalize, SettlementCapability::Revert],
@@ -3375,7 +3439,8 @@ mod tests {
         assert_eq!(
             out,
             SettlementStep::Compensated {
-                reason: "heartbeat degraded: INVALID HEARTBEAT HEIGHT - zero source sample".to_string(),
+                reason: "heartbeat degraded: INVALID HEARTBEAT HEIGHT - zero source sample"
+                    .to_string(),
                 event: SettlementEvent {
                     phase: "relay_heartbeat_degraded",
                     heartbeat_source_height: None,
@@ -3383,7 +3448,8 @@ mod tests {
                     heartbeat_latency_ms: None,
                     confirm_height: None,
                     confirm_reason: Some(
-                        "heartbeat degraded: INVALID HEARTBEAT HEIGHT - zero source sample".to_string(),
+                        "heartbeat degraded: INVALID HEARTBEAT HEIGHT - zero source sample"
+                            .to_string(),
                     ),
                 },
             }

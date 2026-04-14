@@ -191,8 +191,7 @@ fn is_disallowed_invisible_char(ch: char) -> bool {
             | '\u{FFF9}'
             | '\u{FFFA}'
             | '\u{FFFB}'
-    )
-        || ('\u{FE00}'..='\u{FE0F}').contains(&ch)
+    ) || ('\u{FE00}'..='\u{FE0F}').contains(&ch)
         || ('\u{1D173}'..='\u{1D17A}').contains(&ch)
         || ('\u{E0000}'..='\u{E007F}').contains(&ch)
         || ('\u{E0100}'..='\u{E01EF}').contains(&ch)
@@ -299,7 +298,8 @@ mod tests {
     }
 
     #[test]
-    fn normalize_failure_reason_strips_mongolian_free_variation_selector_four_for_replay_stability() {
+    fn normalize_failure_reason_strips_mongolian_free_variation_selector_four_for_replay_stability()
+    {
         let raw = "target\u{180F}relay timeout";
         let normalized = normalize_failure_reason(raw);
         assert_eq!(normalized, "target relay timeout");
@@ -355,8 +355,8 @@ mod tests {
     }
 
     #[test]
-    fn normalize_failure_reason_strips_bom_word_joiner_and_variation_selectors_for_replay_stability()
-    {
+    fn normalize_failure_reason_strips_bom_word_joiner_and_variation_selectors_for_replay_stability(
+    ) {
         let raw = "target\u{FEFF}relay\u{2060}timeout\u{FE0F}signal\u{E0100}";
         let normalized = normalize_failure_reason(raw);
         assert_eq!(normalized, "target relay timeout signal");
@@ -384,7 +384,8 @@ mod tests {
     }
 
     #[test]
-    fn normalize_failure_reason_strips_directional_marks_and_legacy_bidi_isolates_for_replay_stability() {
+    fn normalize_failure_reason_strips_directional_marks_and_legacy_bidi_isolates_for_replay_stability(
+    ) {
         let raw = "target\u{200E}\u{206A}relay\u{200F}timeout\u{206B}signal\u{206C}\u{206D}\u{206E}\u{206F}";
         let normalized = normalize_failure_reason(raw);
         assert_eq!(normalized, "target relay timeout signal");
@@ -405,7 +406,8 @@ mod tests {
     }
 
     #[test]
-    fn normalize_failure_reason_strips_mixed_bidi_marks_and_embedding_isolates_for_replay_stability() {
+    fn normalize_failure_reason_strips_mixed_bidi_marks_and_embedding_isolates_for_replay_stability(
+    ) {
         let raw = "target\u{200E}\u{2066}relay\u{202E}timeout\u{2069}signal";
         let normalized = normalize_failure_reason(raw);
         assert_eq!(normalized, "target relay timeout signal");

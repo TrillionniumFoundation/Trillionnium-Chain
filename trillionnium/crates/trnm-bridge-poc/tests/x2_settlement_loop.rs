@@ -417,10 +417,8 @@ fn x3_prep_invalid_heartbeat_height_prefix_allows_compensation_revert_with_embed
 
 #[test]
 fn x3_prep_invalid_heartbeat_height_parenthesized_suffix_allows_compensation_revert() {
-    let mut request = SettlementRequest::new(
-        1,
-        "0xhb-invalid-height-parenthesized-suffix".to_string(),
-    );
+    let mut request =
+        SettlementRequest::new(1, "0xhb-invalid-height-parenthesized-suffix".to_string());
     let token = operator_token();
 
     let degraded = trnm_bridge_poc::relay_heartbeat::HeartbeatOutcome {
@@ -471,10 +469,8 @@ fn x3_prep_invalid_heartbeat_height_parenthesized_suffix_allows_compensation_rev
 
 #[test]
 fn x3_prep_invalid_heartbeat_progression_exclamation_suffix_allows_compensation_revert() {
-    let mut request = SettlementRequest::new(
-        1,
-        "0xhb-invalid-progression-exclamation-suffix".to_string(),
-    );
+    let mut request =
+        SettlementRequest::new(1, "0xhb-invalid-progression-exclamation-suffix".to_string());
     let token = operator_token();
 
     let degraded = trnm_bridge_poc::relay_heartbeat::HeartbeatOutcome {
@@ -485,7 +481,8 @@ fn x3_prep_invalid_heartbeat_progression_exclamation_suffix_allows_compensation_
         }),
         should_retry: false,
         degraded: true,
-        message: "invalid heartbeat progression! sampled target relay payload ahead of source".to_string(),
+        message: "invalid heartbeat progression! sampled target relay payload ahead of source"
+            .to_string(),
     };
 
     let out = drive_minimal_settlement(
@@ -1870,8 +1867,8 @@ fn x3_prep_manual_degraded_heartbeat_target_ahead_embedded_metrics_fail_closed_w
 }
 
 #[test]
-fn x3_prep_manual_degraded_heartbeat_saturated_source_surfaces_max_invalid_height_without_state_drift()
-{
+fn x3_prep_manual_degraded_heartbeat_saturated_source_surfaces_max_invalid_height_without_state_drift(
+) {
     let mut request = SettlementRequest::new(1, "0xmanual-hbmetrics-saturated-source".to_string());
     let token = operator_token();
 
@@ -2522,7 +2519,6 @@ fn x3_prep_degraded_heartbeat_reason_unicode_over_cap_truncates_once_with_termin
 
     assert_eq!(current_status(&request), &BridgeStatus::Reverted(reason));
 }
-
 
 #[test]
 fn x3_prep_retry_pending_heartbeat_does_not_override_confirm_failure_terminal_compensation() {

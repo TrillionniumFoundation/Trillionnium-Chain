@@ -106,8 +106,7 @@ fn settlement_audit_view_normalizes_reverted_reason_from_legacy_state() {
 #[test]
 fn settlement_audit_view_omits_legacy_revert_reason_that_sanitizes_empty() {
     let mut reverted = SettlementRequest::new(7, "0xlegacy-empty".to_string());
-    reverted.status =
-        BridgeStatus::Reverted("\u{200B}\u{2065}\u{202E}\n\t\u{FEFF}".to_string());
+    reverted.status = BridgeStatus::Reverted("\u{200B}\u{2065}\u{202E}\n\t\u{FEFF}".to_string());
 
     assert_eq!(
         reverted.audit_view(),
@@ -217,9 +216,8 @@ fn settlement_request_collapses_plane14_tag_noise_in_revert_reason() {
 #[test]
 fn settlement_audit_view_normalizes_plane14_tag_noise_from_legacy_revert_reason() {
     let mut reverted = SettlementRequest::new(7, "0xlegacy-plane14".to_string());
-    reverted.status = BridgeStatus::Reverted(
-        "proof\u{E0100}mismatch\u{E0101}\u{E0001}trail".to_string(),
-    );
+    reverted.status =
+        BridgeStatus::Reverted("proof\u{E0100}mismatch\u{E0101}\u{E0001}trail".to_string());
 
     assert_eq!(
         reverted.audit_view(),
