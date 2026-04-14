@@ -267,6 +267,8 @@ Recommended set: combine the three checks above with `run_worker_receipt_gates_r
 
 ### PR-2 companion gates (Timeout + Challenge Bond)
 
+> BL09 retirement-prep note: retained `pouw_*` gate names in this section are migration-era compatibility and audit-evidence guardrails only. They keep legacy timeout and challenge coverage reviewable during cutover, but they do not imply that PoUW remains the default payout authority or default work-unit payout path once PoCO settlement is primary.
+
 Run from repository root:
 
 ```bash
