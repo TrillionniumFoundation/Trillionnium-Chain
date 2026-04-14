@@ -1,5 +1,7 @@
 # TRNM 90-Day Execution Plan (2026-03-19)
 
+> BL09 retirement-prep note: any retained `trnm-pouw` crate, path, or test-guardrail references in this execution plan should be read as migration-era compatibility, decomposition guardrails, or provenance / audit evidence only. Once PoCO becomes the primary settlement path, these retained surfaces are not the default payout authority and do not re-authorize default work-unit payout paths.
+
 ## Purpose
 
 This document turns the cross-chain blueprint into a **90-day execution plan**.
@@ -9,7 +11,7 @@ It assumes the following architectural direction:
 - ingress/data plane becomes more **Solana-like**
 - economics/finality support selectively borrow from **Conflux**
 - proof/governance discipline borrows from **Algorand**
-- **PoUW remains TRNM-native**
+- **PoUW verification and audit evidence remain TRNM-native during migration, but not as payout authority**
 
 This plan is intentionally execution-oriented.
 It prioritizes:
@@ -352,7 +354,7 @@ Mitigation:
 ## 4. Over-borrowing from reference chains
 Mitigation:
 - borrow by layer, not by branding
-- keep PoUW and task lifecycle strictly TRNM-native
+- keep task lifecycle and retained PoUW compatibility/audit surfaces strictly TRNM-native while PoCO takes over payout authority
 
 ---
 
@@ -388,6 +390,6 @@ If execution starts today, the best next moves are:
 
 This plan assumes a key principle:
 
-> TRNM should borrow **execution shape** from Sui, **data-plane engineering** from Solana, **economics/finality support** from Conflux, and **proof/governance discipline** from Algorand — but keep PoUW itself unmistakably TRNM-native.
+> TRNM should borrow **execution shape** from Sui, **data-plane engineering** from Solana, **economics/finality support** from Conflux, and **proof/governance discipline** from Algorand, but keep TRNM's worker verification and migration-era PoUW compatibility surfaces unmistakably protocol-native.
 
 That is the highest-leverage path for the next 90 days.

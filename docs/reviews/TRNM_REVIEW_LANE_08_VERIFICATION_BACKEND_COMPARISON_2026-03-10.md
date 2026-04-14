@@ -6,6 +6,8 @@
   - **TEE**：已有 **backend 抽象与路由骨架**，但默认只接 `noop`；当前仓内**没有真实 attestation verifier**，所以 reveal 会 fail-closed / indeterminate。
   - **ZK**：已有 **backend 抽象、payload 规范、router 入口**，但默认同样只接 `noop`；当前仓内**没有真实 Groth16 / Plonk / Halo2 / RISC Zero / SP1 verifier**，所以 reveal 会 fail-closed / indeterminate。
 
+BL09 retirement-prep note: 本评审文档保留的 `trnm-pouw` / PoUW / verification backend 现状与风险描述，仅应用于历史评审、迁移期兼容分析与 provenance / audit evidence 留痕，不能解读为当前默认 payout authority，也不重新授权默认 work-unit payout path。若 PoCO settlement 已成为主结算路径，对外付款判断与默认结算 authority 仍应以 PoCO settlement anchor 为准。
+
 ---
 
 ## 1. 对比总表

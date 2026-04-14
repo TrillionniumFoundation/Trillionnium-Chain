@@ -1,5 +1,7 @@
 # TRNM Mainnet Closure Execution Board (2026-04-05)
 
+> BL09 retirement-prep note: any retained `trnm-pouw` crate, path, command, or test-slice references in this closure board should be read as migration-era compatibility, release-closure guardrails, or provenance / audit evidence only. Once PoCO becomes the primary settlement path, these retained surfaces are not the default payout authority and do not re-authorize default work-unit payout paths.
+
 ## Truth-source snapshot
 
 This board is tied to the **current local integrated `main`** and should be read together with:

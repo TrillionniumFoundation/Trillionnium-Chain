@@ -1,5 +1,7 @@
 # TRNM 4-Week Sprint Plan (2026-03-19)
 
+BL09 retirement-prep note: any retained `trnm-pouw` crate, lane, or test-guardrail references in this sprint plan should be read as migration-era compatibility, decomposition guardrails, or provenance / audit evidence coverage only. If PoCO is the primary settlement path, these retained references are not the default payout authority and do not re-authorize default work-unit payout paths.
+
 ## Goal
 
 Translate the 90-day execution plan into a **4-week sprint plan** that can be executed immediately.

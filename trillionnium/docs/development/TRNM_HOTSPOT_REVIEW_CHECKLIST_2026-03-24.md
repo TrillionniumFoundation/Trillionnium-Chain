@@ -1,5 +1,7 @@
 # TRNM Hotspot Review Checklist (2026-03-24)
 
+BL09 retirement-prep note: any retained `trnm-pouw` file-path, hotspot, or settlement-adjacent references in this checklist should be read as migration-era compatibility review scope or provenance / audit evidence coverage only. If PoCO is the primary settlement path, these retained references are not the default payout authority and do not re-authorize default work-unit payout paths.
+
 ## Purpose
 
 This checklist is for reviewing the current highest-risk / highest-leverage files in the TRNM Rust workspace.

@@ -403,8 +403,9 @@ with `beta` gradually increasing.
 ### Phase 3: PoCO-primary
 
 - PoCO becomes the primary settlement basis
-- PoUW remains optional provenance / attestation support
+- retained PoUW fields remain optional provenance / audit evidence only, never primary payout authority
 - governance may retire PoUW-only rewards later
+- BL09 retirement-prep wording: once PoCO is primary, any retained `trnm-pouw` naming or residual PoUW fields on compatibility surfaces should be read as migration-era compatibility or provenance / audit evidence only, not as ongoing payout authority or the default work-unit payout path
 
 ---
 
@@ -412,7 +413,7 @@ with `beta` gradually increasing.
 
 ### 14.1 `trnm-pouw`
 
-This crate is still the best initial landing zone, even if its name lags the new semantics.
+This crate is still the best initial landing zone, even if its name lags the new semantics. During migration and BL09 retirement prep, treat the retained crate name as a compatibility label, not as evidence that PoUW remains the payout authority.
 
 Recommended additions:
 

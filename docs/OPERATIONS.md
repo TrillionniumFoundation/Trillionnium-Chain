@@ -237,6 +237,8 @@ CI：
 
 ## PR-5 运维查询与对账（Challenge Treasury / Forfeits）
 
+- BL09 退役准备口径：本节若引用保留中的 `trnm-pouw` challenge / resolve 对账字段，仅用于迁移期兼容、provenance / audit evidence 与残余资金流核对；对外付款判断与默认结算 authority 应以 PoCO 结算锚点为准，不能把这些保留字段写成 payout authority。
+
 ### 1) 快速查询（按 task）
 
 在 `trillionnium/` 下执行：

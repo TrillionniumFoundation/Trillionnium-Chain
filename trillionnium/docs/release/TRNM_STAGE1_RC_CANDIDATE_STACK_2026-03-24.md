@@ -1,5 +1,7 @@
 # TRNM Stage-1 RC Candidate Stack (2026-03-24)
 
+BL09 retirement-prep note: any retained `trnm-pouw` crate/path references in this historical candidate-stack snapshot should be read as migration-era compatibility, historical retention, or provenance / audit evidence only. If PoCO is the primary settlement path, these retained references are not the default payout authority and do not re-authorize default work-unit payout paths.
+
 ## Goal
 
 Define the **smallest credible candidate stack** for a stage-1 internal devnet / RC-prep branch, based on already-validated path-scoped commits harvested from the current dirty main worktree.

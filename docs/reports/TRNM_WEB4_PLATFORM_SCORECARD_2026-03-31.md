@@ -2,6 +2,8 @@
 
 适用快照：`main@9ea9e7751`
 
+BL09 退役准备口径：本文若提到 `trnm-pouw`、PoUW verification / proof backend 能力或保留中的 worker accounting / challenge/resolve 路径，默认仅指迁移期兼容、provenance / audit evidence 与残余平台能力盘点；不应被解读为当前默认 payout authority，也不重新授权默认 work-unit payout path。若 PoCO settlement 已成为主结算路径，对外付款判断与默认结算 authority 仍应以 PoCO settlement anchor 为准。
+
 ## 结论
 
 TRNM 当前若按 **Web4 平台项目** 而不是“单 Rust L1 仓库”来评估，最准确的位置是：

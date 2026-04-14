@@ -3,6 +3,7 @@
 - 状态：**Draft / architecture option**
 - 范围：定义 TRNM 如何**同时借鉴** Solana、Sui、Conflux 的分层方法；**不直接声明实现完成度，不覆盖发布口径**
 - 当前适用代码面：`trillionnium/` 主线，尤其是 `trnm-state`、`trnm-executor`、`trnm-node`、`trnm-mempool`、`trnm-rpc`、`trnm-pouw`
+- BL09 退役准备口径：本文若提到保留中的 PoUW 路径，默认仅指 provenance / audit evidence 与 challenge/resolve 残余边界，不应被解读为继续把 PoUW 作为长期 payout authority，也不为保留 work-unit payout 公式的默认结算路径背书。
 
 > 入口约定：
 > - 当前是否 release-ready：看仓库根 `RELEASE_READINESS.md`

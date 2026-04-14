@@ -26,6 +26,7 @@ done
 
 ## Notes
 
+- BL09 retirement-prep note: retained `trnm-pouw.tests.list` and the matching refresh command are migration-era compatibility and provenance / audit evidence only. They do not mean PoUW remains the default payout authority or that the default work-unit payout path is still authorized once PoCO settlement is primary.
 - `-- --list` 固定测试面，不等于全量通过。
 - BFT smoke 是当前 stage-1 最小正向 bring-up 证据。
 - full RC evidence 仍应通过 `scripts/run_local_release_evidence.sh` 与 `scripts/release_rc.sh` 生成。

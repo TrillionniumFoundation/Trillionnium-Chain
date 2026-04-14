@@ -1,5 +1,7 @@
 # TEE Attestation Contract v0
 
+> BL09 retirement-prep note: retained `trnm-pouw`, PoUW-era verifier wiring, and legacy verification-surface wording in this contract is migration-era compatibility plus provenance / audit evidence only. It does not define the default payout authority or re-authorize the default work-unit payout path once PoCO settlement is primary. Outward payout decisions and default settlement authority should follow the PoCO settlement anchor.
+
 This document defines the feature-gated TEE attestation contract used by `trnm-pouw` when `real-tee-backend` is enabled.
 
 ## Purpose

@@ -1,5 +1,7 @@
 # TRNM Mainnet Gap Matrix (2026-03-26)
 
+> BL09 retirement-prep note: references in this gap matrix to `trnm-pouw`, PoUW state-machine surfaces, or retained challenge/resolve evidence should be read as migration-era compatibility or provenance / audit evidence only. They should not be interpreted as ongoing payout authority or as reauthorizing a default work-unit payout path. Where payout/default-settlement authority is discussed, PoCO settlement anchors remain the intended default path once promoted.
+
 ## Goal
 
 Turn the current "what is still missing before public mainnet" discussion into a **single actionable gap matrix**.

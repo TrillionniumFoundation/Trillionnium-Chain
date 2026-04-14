@@ -1,5 +1,7 @@
 # TRNM Mainnet Economics Freeze Helper (2026-03-27)
 
+BL09 retirement-prep note: any retained `trnm-pouw` gate, receipt, timing, or authority reference in this helper should be read as migration-era compatibility, retention, or provenance / audit evidence only. Once PoCO becomes the primary settlement path, these retained surfaces are not the default payout authority and do not re-authorize default work-unit payout paths.
+
 ## Purpose
 
 Turn the broad `P0.6 Economics / anti-spam / fee boundary freeze` blocker into one reviewable launch checklist.

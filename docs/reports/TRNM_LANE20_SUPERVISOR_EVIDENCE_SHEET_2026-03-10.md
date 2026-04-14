@@ -1,6 +1,8 @@
 # TRNM Lane 20 Supervisor Rollup / Evidence Sheet — 2026-03-10
 
 > Scope note: this document is a **historical evidence rollup**, not the current release-readiness truth source. It must not be cited as current release sign-off. For current release/readiness status, see the repository-root `RELEASE_READINESS.md`.
+>
+> BL09 retirement-prep note: retained `trnm-pouw`, PoUW, or verification / lane evidence wording in this historical rollup is migration-era compatibility and provenance / audit evidence only. It must not be read as current default payout authority or as re-authorizing the default work-unit payout path once PoCO settlement is primary.
 
 ## Scope
 

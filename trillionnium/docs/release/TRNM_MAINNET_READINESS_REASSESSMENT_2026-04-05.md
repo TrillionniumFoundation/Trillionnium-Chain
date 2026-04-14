@@ -67,6 +67,11 @@ cargo check -p trnm-node -p trnm-rpc -p trnm-cli -p trnm-state -p trnm-pouw -p t
 Result at review time:
 - **PASS (warnings only)**
 
+BL09 retirement-prep note:
+- the retained `trnm-pouw` crate in this compile slice should be read as migration-era compatibility and provenance / audit evidence coverage only;
+- it does **not** mean PoUW remains the default payout authority;
+- it also does **not** re-authorize the default work-unit payout path.
+
 Interpretation:
 - the current integrated mainline is not obviously broken at the crate integration layer;
 - but compile-slice green is only a hygiene signal, not a public-mainnet release proof.

@@ -1,5 +1,7 @@
 # Tokenomics residual risk register (round4, post R1-R14 gate)
 
+> BL09 retirement-prep note: retained `trnm-pouw`, resolve-authority, timeout-forfeit, and staged-approval wording in this residual-risk register is migration-era compatibility and audit-review context only. It must not be read as the current default payout authority or as re-authorizing the default work-unit payout path once PoCO settlement is primary. Outward payout decisions and default settlement authority should follow the PoCO settlement anchor.
+
 ## Scope
 Residual / second-order risks after current fixes and `scripts/v2/run_tokenomics_r1_r14_regression_gate.sh`.
 

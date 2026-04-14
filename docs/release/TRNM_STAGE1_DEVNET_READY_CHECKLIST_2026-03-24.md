@@ -2,6 +2,8 @@
 
 适用范围：内部 devnet bring-up / smoke / evidence 收口，**不是** public release-ready 声明。
 
+BL09 退役准备口径：本文保留的 `trnm-pouw` crate / 测试清单 / 证据采集引用，只应视为迁移期兼容、历史留痕或 provenance / audit evidence。若 PoCO 已成为主结算路径，这些残余引用不构成默认 payout authority，也不重新授权默认 work-unit payout path。
+
 当前提交：`909a0c682` (`main`)
 
 ## 结论
