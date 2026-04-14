@@ -196,10 +196,18 @@ enum QueryCommand {
         summary: bool,
     },
     /// Query task PoCO settlement preview via RPC
-    #[command(visible_alias = "consumption-summary")]
+    #[command(visible_aliases = [
+        "consumption-summary",
+        "query-settlement-preview",
+        "query-consumption-summary"
+    ])]
     SettlementPreview { task_id: u64 },
     /// Query task PoCO settlement receipts via RPC
-    #[command(name = "settlement-receipts", visible_alias = "consumption-receipts")]
+    #[command(name = "settlement-receipts", visible_aliases = [
+        "consumption-receipts",
+        "query-settlement-receipts",
+        "query-consumption-receipts"
+    ])]
     ConsumptionReceipts {
         task_id: u64,
         #[arg(long, default_value_t = 20)]
@@ -4151,6 +4159,23 @@ mod tests {
     }
 
     #[test]
+    fn consumption_settlement_cli_parser_accepts_query_prefixed_settlement_preview_aliases() {
+        for alias in ["query-settlement-preview", "query-consumption-summary"] {
+            let args = Args::try_parse_from(["trnm-cli", "query", alias, "42"])
+                .unwrap_or_else(|err| panic!("parse {alias} args: {err}"));
+
+            match args.cmd {
+                Command::Query {
+                    query: QueryCommand::SettlementPreview { task_id },
+                } => {
+                    assert_eq!(task_id, 42, "unexpected task_id for alias {alias}");
+                }
+                other => panic!("unexpected parsed args for {alias}: {other:?}"),
+            }
+        }
+    }
+
+    #[test]
     fn consumption_settlement_cli_parser_accepts_settlement_receipts_query_command() {
         let args = Args::try_parse_from([
             "trnm-cli",
@@ -4197,6 +4222,24 @@ mod tests {
     }
 
     #[test]
+    fn consumption_settlement_cli_parser_accepts_query_prefixed_settlement_receipts_aliases() {
+        for alias in ["query-settlement-receipts", "query-consumption-receipts"] {
+            let args = Args::try_parse_from(["trnm-cli", "query", alias, "42", "--limit", "7"])
+                .unwrap_or_else(|err| panic!("parse {alias} args: {err}"));
+
+            match args.cmd {
+                Command::Query {
+                    query: QueryCommand::ConsumptionReceipts { task_id, limit },
+                } => {
+                    assert_eq!(task_id, 42, "unexpected task_id for alias {alias}");
+                    assert_eq!(limit, 7, "unexpected limit for alias {alias}");
+                }
+                other => panic!("unexpected parsed args for {alias}: {other:?}"),
+            }
+        }
+    }
+
+    #[test]
     fn consumption_settlement_cli_help_keeps_cutover_names_primary() {
         let mut root = Args::command();
         let query = root
@@ -4209,15 +4252,27 @@ mod tests {
         let query_help = String::from_utf8(query_help).expect("utf8 query help");
         assert!(query_help.contains("settlement-preview"));
         assert!(query_help.contains("consumption-summary"));
+        assert!(query_help.contains("query-settlement-preview"));
+        assert!(query_help.contains("query-consumption-summary"));
         assert!(query_help.contains("settlement-receipts"));
         assert!(query_help.contains("consumption-receipts"));
+        assert!(query_help.contains("query-settlement-receipts"));
+        assert!(query_help.contains("query-consumption-receipts"));
         assert!(
             query_help.find("settlement-preview") < query_help.find("consumption-summary"),
             "query help should keep settlement-preview primary: {query_help}"
         );
         assert!(
+            query_help.find("settlement-preview") < query_help.find("query-settlement-preview"),
+            "query help should keep settlement-preview primary ahead of query-prefixed alias: {query_help}"
+        );
+        assert!(
             query_help.find("settlement-receipts") < query_help.find("consumption-receipts"),
             "query help should keep settlement-receipts primary: {query_help}"
+        );
+        assert!(
+            query_help.find("settlement-receipts") < query_help.find("query-settlement-receipts"),
+            "query help should keep settlement-receipts primary ahead of query-prefixed alias: {query_help}"
         );
 
         let mut root = Args::command();
