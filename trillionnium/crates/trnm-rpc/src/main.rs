@@ -4240,6 +4240,50 @@ fn parse_query_consumption_receipts_limit_from_path(
     )
 }
 
+fn parse_query_settlement_governance_path(path: &str) -> std::result::Result<(), String> {
+    let path_without_query = path.split('?').next().unwrap_or(path);
+    let normalized_path = path_without_query.to_ascii_lowercase();
+    if !path_without_query.starts_with('/')
+        || path_without_query != "/query-settlement-governance"
+        || path_without_query.contains('\x5c')
+        || path_without_query.contains('#')
+        || path_without_query
+            .chars()
+            .any(|ch| ch.is_control() || ch.is_whitespace())
+        || normalized_path.contains("%5c")
+        || normalized_path.contains("%23")
+        || normalized_path.contains("%2f")
+        || normalized_path.contains("%2e")
+        || normalized_path.contains("%00")
+        || normalized_path.contains("%0d")
+        || normalized_path.contains("%0a")
+        || normalized_path.contains("%09")
+        || normalized_path.contains("%0b")
+        || normalized_path.contains("%0c")
+        || normalized_path.contains("%20")
+        || normalized_path.contains("%7f")
+        || contains_malformed_percent_encoding(path_without_query)
+        || contains_percent_encoded_control_or_space(path_without_query)
+        || path_without_query
+            .split('/')
+            .any(|segment| segment == "." || segment == "..")
+    {
+        return Err(http_json_response(
+            "400 Bad Request",
+            r#"{"ok":false,"code":"BAD_REQUEST","message":"invalid query"}"#,
+        ));
+    }
+
+    if path.contains('?') {
+        return Err(http_json_response(
+            "400 Bad Request",
+            r#"{"ok":false,"code":"BAD_REQUEST","message":"invalid query"}"#,
+        ));
+    }
+
+    Ok(())
+}
+
 fn contains_malformed_percent_encoding(value: &str) -> bool {
     let bytes = value.as_bytes();
     let mut idx = 0;
@@ -4558,6 +4602,32 @@ fn json_response_for_method(method: &str, status_line: &str, body: &str) -> Stri
     }
 }
 
+fn query_settlement_governance_http_response(
+    method: &str,
+    target: &str,
+    st: &StateStore,
+) -> String {
+    match parse_query_settlement_governance_path(target) {
+        Ok(()) => match settlement_governance_query_response(st) {
+            Ok(out) => {
+                let body = serde_json::to_string(&out)
+                    .unwrap_or_else(|_| r#"{"ok":false,"code":"SERDE_ERROR"}"#.to_string());
+                json_response_for_method(method, "200 OK", &body)
+            }
+            Err(err) => {
+                let body = serde_json::json!({
+                    "ok": false,
+                    "code": "INTERNAL_ERROR",
+                    "message": err.to_string(),
+                })
+                .to_string();
+                json_response_for_method(method, "500 Internal Server Error", &body)
+            }
+        },
+        Err(err) => http_response_for_method(method, &err),
+    }
+}
+
 fn health_probe_body(ts_unix_ms: u128) -> String {
     serde_json::json!({
         "ok": true,
@@ -4667,6 +4737,11 @@ fn serve_health(host: &str, port: u16) -> Result<()> {
             (Some((method, _)), Some(path), _) if is_health_probe_path(path) => {
                 let body = health_probe_body(now_ms());
                 json_response_for_method(method, "200 OK", &body)
+            }
+            (Some((method, _)), Some(path), Some(target))
+                if path == "/query-settlement-governance" =>
+            {
+                query_settlement_governance_http_response(method, target, &governance_state())
             }
             (Some((method, _)), Some(path), Some(_)) if path.starts_with("/query-task/") => {
                 let task_id = path
@@ -7088,6 +7163,40 @@ mod tests {
             assert!(err.contains("400 Bad Request"), "path={path} err={err}");
             assert!(err.contains("invalid query"), "path={path} err={err}");
         }
+    }
+
+    #[test]
+    fn parse_query_settlement_governance_path_accepts_exact_route_without_query() {
+        parse_query_settlement_governance_path("/query-settlement-governance")
+            .expect("exact settlement governance route must be accepted");
+    }
+
+    #[test]
+    fn parse_query_settlement_governance_path_rejects_queries_and_noncanonical_shapes() {
+        for path in [
+            "/query-settlement-governance?shadow=1",
+            "/query-settlement-governance/",
+            "/query-settlement-governance-shadow",
+            "/query-settlement-governance%2fshadow",
+            "/query-settlement-governance%00shadow",
+        ] {
+            let err = parse_query_settlement_governance_path(path)
+                .expect_err("noncanonical settlement governance routes must fail closed");
+            assert!(err.contains("400 Bad Request"), "path={path} err={err}");
+            assert!(err.contains("invalid query"), "path={path} err={err}");
+        }
+    }
+
+    #[test]
+    fn query_settlement_governance_http_response_returns_default_snapshot_for_exact_route() {
+        let st = StateStore::new();
+        let response =
+            query_settlement_governance_http_response("GET", "/query-settlement-governance", &st);
+
+        assert!(response.starts_with("HTTP/1.1 200 OK\r\n"));
+        assert!(response.contains(r#""live_configuration_status":"defaulted""#));
+        assert!(response.contains(r#""mode":"pouw_primary""#));
+        assert!(response.contains(r#""has_pending_updates":false"#));
     }
 
     #[test]
