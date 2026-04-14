@@ -3948,6 +3948,19 @@ mod tests {
     }
 
     #[test]
+    fn consumption_settlement_cli_parser_rejects_submit_receipt_without_receipt_json() {
+        let err = Args::try_parse_from(["trnm-cli", "tx", "submit-consumption-receipt"])
+            .unwrap_err();
+
+        assert_eq!(err.kind(), clap::error::ErrorKind::MissingRequiredArgument);
+        let rendered = err.to_string();
+        assert!(
+            rendered.contains("--receipt-json <RECEIPT_JSON>"),
+            "unexpected error: {rendered}"
+        );
+    }
+
+    #[test]
     fn consumption_settlement_cli_parser_accepts_challenge_command() {
         let args = Args::try_parse_from([
             "trnm-cli",
