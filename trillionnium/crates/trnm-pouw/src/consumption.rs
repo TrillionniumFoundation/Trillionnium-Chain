@@ -70,6 +70,7 @@ const SUMMARY_CHALLENGED_RECEIPTS_EXCEED_RECEIPTS: &str =
 const SUMMARY_SINGLE_RECEIPT_SETTLEMENT_MARKER_WITHOUT_OUTCOME_EVIDENCE: &str =
     "poco summary single receipt settlement marker lacks canonical outcome evidence";
 const DUPLICATE_LOGICAL_REPLAY_KEY_REASON: &str = "duplicate logical consumption replay key";
+const DUPLICATE_CONSUMER_NONCE_REASON: &str = "duplicate consumer consumption nonce";
 const MALFORMED_CANONICAL_CREDIT_STATE_REASON: &str =
     "malformed canonical credited consumption state";
 
@@ -461,9 +462,24 @@ fn has_duplicate_logical_replay_keys(records: &[ConsumptionRecord]) -> bool {
     })
 }
 
+fn has_duplicate_consumer_nonces(records: &[ConsumptionRecord]) -> bool {
+    records.iter().enumerate().any(|(idx, record)| {
+        records[idx + 1..].iter().any(|other| {
+            record.key.consumer_id == other.key.consumer_id
+                && record.consumer_nonce == other.consumer_nonce
+        })
+    })
+}
+
 fn records_inconsistency_reason(records: &[ConsumptionRecord]) -> Option<&'static str> {
     if has_duplicate_logical_replay_keys(records) {
         Some(DUPLICATE_LOGICAL_REPLAY_KEY_REASON)
+    } else if has_duplicate_consumer_nonces(records) {
+        // Promotion step: canonical PoCO receipts must preserve the per-consumer
+        // nonce replay fence even when records arrive through snapshot/replay or
+        // other state recovery paths. If the same consumer nonce appears twice,
+        // fail closed instead of letting duplicated evidence authorize payout.
+        Some(DUPLICATE_CONSUMER_NONCE_REASON)
     } else {
         records
             .iter()
@@ -1874,6 +1890,64 @@ mod tests {
             .expect_err("duplicate logical replay keys must block primary settlement finalization");
         assert!(
             matches!(err, PouwError::State(msg) if msg.contains(DUPLICATE_LOGICAL_REPLAY_KEY_REASON))
+        );
+    }
+
+    #[test]
+    fn primary_payout_work_units_fail_closed_for_duplicate_consumer_nonces() {
+        let mut st = StateStore::default();
+        let task = sample_task(TaskStatus::Completed);
+        let first = sample_record(
+            "consumer-bravo",
+            "bw-1",
+            ConsumptionRecordStatus::Discounted,
+            Some(9),
+        );
+        let mut duplicate_nonce = sample_record(
+            "consumer-bravo",
+            "bw-2",
+            ConsumptionRecordStatus::Discounted,
+            Some(7),
+        );
+        duplicate_nonce.key.output_hash = format!("{}ff", sample_output_hash_hex());
+
+        st.put_consumption_record(first);
+        st.put_consumption_record(duplicate_nonce);
+
+        assert_eq!(
+            preview_primary_payout_work_units(&st, &task, 50),
+            PrimaryPayoutWorkUnitPreview::PocoInconsistentRecords {
+                reason: DUPLICATE_CONSUMER_NONCE_REASON,
+                metering_work_units: 50,
+            }
+        );
+        assert_eq!(primary_payout_work_units(&st, &task, 50), 0);
+    }
+
+    #[test]
+    fn reject_if_primary_settlement_pending_fails_closed_for_duplicate_consumer_nonces() {
+        let mut st = StateStore::default();
+        let first = sample_record(
+            "consumer-bravo",
+            "bw-1",
+            ConsumptionRecordStatus::Discounted,
+            Some(9),
+        );
+        let mut duplicate_nonce = sample_record(
+            "consumer-bravo",
+            "bw-2",
+            ConsumptionRecordStatus::Discounted,
+            Some(7),
+        );
+        duplicate_nonce.key.output_hash = format!("{}ff", sample_output_hash_hex());
+
+        st.put_consumption_record(first);
+        st.put_consumption_record(duplicate_nonce);
+
+        let err = reject_if_primary_settlement_pending(&st, 42)
+            .expect_err("duplicate consumer nonces must block primary settlement finalization");
+        assert!(
+            matches!(err, PouwError::State(msg) if msg.contains(DUPLICATE_CONSUMER_NONCE_REASON))
         );
     }
 
