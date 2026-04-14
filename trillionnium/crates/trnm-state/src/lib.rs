@@ -1145,7 +1145,7 @@ fn terminal_challenge_retention_is_consistent(task: &TaskObject) -> bool {
     let has_challenger = task
         .challenger
         .as_deref()
-        .is_some_and(|challenger| validate_resolve_approver_token(challenger).is_ok());
+        .is_some_and(resolve_actor_is_strictly_canonical);
 
     if has_bond != has_challenger {
         return false;
@@ -1225,16 +1225,19 @@ fn validate_resolve_approver_token(raw: &str) -> Result<String, String> {
             RESOLVE_ACTOR_ID_MAX_LEN
         ));
     }
-    if resolve_actor_has_forbidden_separator(trimmed)
-        || !trimmed.is_ascii()
-        || trimmed.chars().any(|ch| ch.is_ascii_uppercase())
-    {
+    if resolve_actor_has_forbidden_separator(trimmed) || !trimmed.is_ascii() {
         return Err("resolve approval approver must be a single canonical actor id".into());
     }
     if resolve_actor_is_reserved(trimmed) {
         return Err("resolve approval approver must be an explicit non-system authority".into());
     }
     Ok(trimmed.to_ascii_lowercase())
+}
+
+fn resolve_actor_is_strictly_canonical(token: &str) -> bool {
+    validate_resolve_approver_token(token)
+        .map(|canonical| canonical == token)
+        .unwrap_or(false)
 }
 
 fn canonicalize_resolve_authority_set(raw: &str) -> Result<String, String> {
@@ -1409,16 +1412,28 @@ fn validated_restorable_pending_resolve_snapshot(
                 return None;
             }
 
+            let stored_as_canonical = !st.is_emergency_paused();
             return Some(PendingResolveApproval {
                 slash_worker: snapshot.slash_worker,
                 confirmations: snapshot.confirmations,
-                first_approver: first_approver_canonical,
-                authority_set: authority_canonical,
+                first_approver: if stored_as_canonical {
+                    first_approver_canonical
+                } else {
+                    snapshot.first_approver.clone()
+                },
+                authority_set: if stored_as_canonical {
+                    authority_canonical
+                } else {
+                    snapshot.authority_set.clone()
+                },
                 task_version: snapshot.task_version,
-                stored_as_canonical: false,
+                stored_as_canonical,
             });
         }
     };
+
+    let snapshot_is_canonical = first_approver_canonical == snapshot.first_approver
+        && authority_canonical == snapshot.authority_set;
 
     if task.status != TaskStatus::Challenged {
         return None;
@@ -1430,9 +1445,13 @@ fn validated_restorable_pending_resolve_snapshot(
         return None;
     }
 
-    let has_canonical_actor = |actor: &str| validate_resolve_approver_token(actor).is_ok();
+    let has_canonical_actor = |actor: &str| resolve_actor_is_strictly_canonical(actor);
     let has_resolve_authority = st.gov_param_string("resolve_authority").is_some()
         || st.pending_gov_update("resolve_authority").is_some();
+
+    if !has_resolve_authority && !snapshot_is_canonical && task_supports_pending_resolve_restore(&task) {
+        return None;
+    }
 
     if st.is_emergency_paused() {
         if !task.challenger.as_deref().is_some_and(has_canonical_actor) {
@@ -1502,6 +1521,7 @@ fn validated_restorable_pending_resolve_snapshot(
         authority_canonical.clone()
     };
 
+    let stored_as_canonical = !st.is_emergency_paused();
     Some(PendingResolveApproval {
         slash_worker: snapshot.slash_worker,
         confirmations: snapshot.confirmations,
@@ -1510,7 +1530,7 @@ fn validated_restorable_pending_resolve_snapshot(
         first_approver: stored_first_approver,
         authority_set: stored_authority_set,
         task_version: snapshot.task_version,
-        stored_as_canonical: false,
+        stored_as_canonical,
     })
 }
 
@@ -1986,7 +2006,7 @@ fn task_supports_pending_resolve_restore(task: &TaskObject) -> bool {
         && task
             .challenger
             .as_deref()
-            .is_some_and(|challenger| validate_resolve_approver_token(challenger).is_ok())
+            .is_some_and(resolve_actor_is_strictly_canonical)
 }
 
 fn task_supports_pending_resolve_snapshot_restore(task: &TaskObject) -> bool {
@@ -2057,7 +2077,11 @@ impl StateStore {
                     .or_insert(PendingResolveApproval {
                         slash_worker,
                         confirmations: 0,
-                        first_approver: approver_audit.clone(),
+                        first_approver: if is_emergency_paused {
+                            approver_audit.clone()
+                        } else {
+                            approver_canonical.clone()
+                        },
                         authority_set: authority_canonical.clone(),
                         task_version,
                         stored_as_canonical: !is_emergency_paused,
@@ -2149,7 +2173,7 @@ impl StateStore {
                 .or_insert(PendingResolveApproval {
                     slash_worker,
                     confirmations: 0,
-                    first_approver: approver_audit.clone(),
+                    first_approver: approver_canonical.clone(),
                     authority_set: authority_canonical.clone(),
                     task_version,
                     stored_as_canonical: true,
@@ -4486,10 +4510,23 @@ fn wal_state_root_surface_has_forbidden_layout(value: &str) -> bool {
 }
 
 fn wal_state_root_surface_is_canonical(wal_entry: &WalMeta) -> bool {
+    is_canonical_hex_digest(&wal_entry.state_root_hex)
+}
+
+fn wal_state_root_surface_is_checkpoint_recovery_compatible(wal_entry: &WalMeta) -> bool {
     let state_root_hex = wal_entry.state_root_hex.as_str();
 
-    !wal_state_root_surface_has_forbidden_layout(state_root_hex)
-        && is_canonical_hex_digest(state_root_hex)
+    if wal_state_root_surface_has_forbidden_layout(state_root_hex) {
+        return false;
+    }
+
+    if is_canonical_hex_digest(state_root_hex) {
+        return true;
+    }
+
+    let looks_like_noncanonical_hex_digest = state_root_hex.len() == 64
+        && state_root_hex.chars().all(|ch| ch.is_ascii_hexdigit());
+    !looks_like_noncanonical_hex_digest
 }
 
 fn checkpoint_hash_surfaces_are_canonical(
@@ -4705,7 +4742,7 @@ fn checkpoint_matches_wal_entry_for_recovery(
     if !wal_checkpoint_metadata_surfaces_are_canonical(wal_entry) {
         return false;
     }
-    if !wal_state_root_surface_is_canonical(wal_entry) {
+    if !wal_state_root_surface_is_checkpoint_recovery_compatible(wal_entry) {
         return false;
     }
     if !is_canonical_hex_digest(&checkpoint.wal_entry_hash_hex) {
@@ -4794,7 +4831,7 @@ pub fn verify_wal_and_find_checkpoint(
         }
 
         if !wal_checkpoint_metadata_surfaces_are_canonical(e)
-            || !wal_state_root_surface_is_canonical(e)
+            || !wal_state_root_surface_is_checkpoint_recovery_compatible(e)
         {
             return Ok(best_checkpoint);
         }
@@ -5008,7 +5045,7 @@ pub fn verify_wal_and_find_checkpoint_node_recovery(
         prev_height = Some(e.height);
 
         if !wal_checkpoint_metadata_surfaces_are_canonical(e)
-            || !wal_state_root_surface_is_canonical(e)
+            || !wal_state_root_surface_is_checkpoint_recovery_compatible(e)
         {
             return Ok(best_checkpoint);
         }
@@ -6011,7 +6048,7 @@ mod tests {
         let wal_entry = WalMeta {
             height: 1,
             round: 0,
-            proposal_hash: "proposal-owl".into(),
+            proposal_hash: "proposal-猫头鹰".into(),
             committed: true,
             state_root_hex: "ab".repeat(32),
             prev_hash_hex: None,
@@ -6252,7 +6289,7 @@ mod tests {
             round: 0,
             proposal_hash: "proposal-1".into(),
             committed: true,
-            state_root_hex: "state-root-owl".into(),
+            state_root_hex: "state-root-猫头鹰".into(),
             prev_hash_hex: None,
         };
         let checkpoint = CheckpointMeta {
