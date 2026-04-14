@@ -621,6 +621,54 @@ fn parse_settlement_governance_query_response(raw: &str) -> Result<serde_json::V
             "settlement governance response missing strict bool shadow_masks_nonzero_poco_weight"
         );
     };
+    let Some(has_pending_updates) = parse_json_bool(parsed.get("has_pending_updates")) else {
+        bail!("settlement governance response missing strict bool has_pending_updates");
+    };
+
+    let parse_optional_scalar = |key: &str| -> Result<Option<String>> {
+        match parsed.get(key) {
+            None | Some(serde_json::Value::Null) => Ok(None),
+            Some(value) => json_scalar_string(value).map(Some).ok_or_else(|| {
+                anyhow!(
+                    "settlement governance response {} must be scalar when present",
+                    key
+                )
+            }),
+        }
+    };
+    let parse_optional_bool = |key: &str| -> Result<Option<bool>> {
+        match parsed.get(key) {
+            None | Some(serde_json::Value::Null) => Ok(None),
+            Some(value) => parse_json_bool(Some(value)).map(Some).ok_or_else(|| {
+                anyhow!(
+                    "settlement governance response {} must be strict bool when present",
+                    key
+                )
+            }),
+        }
+    };
+    let parse_optional_u64 = |key: &str| -> Result<Option<u64>> {
+        match parsed.get(key) {
+            None | Some(serde_json::Value::Null) => Ok(None),
+            Some(_) => json_u64_at_path(&parsed, &[key]).map(Some).ok_or_else(|| {
+                anyhow!(
+                    "settlement governance response {} must be numeric when present",
+                    key
+                )
+            }),
+        }
+    };
+
+    let staged_activate_at_height = parse_optional_u64("staged_activate_at_height")?;
+    let staged_configuration_status = parse_optional_scalar("staged_configuration_status")?;
+    let staged_mode = parse_optional_scalar("staged_mode")?;
+    let staged_underlying_mode = parse_optional_scalar("staged_underlying_mode")?;
+    let staged_effective_poco_weight_bps =
+        parse_optional_u64("staged_effective_poco_weight_bps")?;
+    let staged_effective_pouw_weight_bps =
+        parse_optional_u64("staged_effective_pouw_weight_bps")?;
+    let staged_shadow_masks_nonzero_poco_weight =
+        parse_optional_bool("staged_shadow_masks_nonzero_poco_weight")?;
 
     let Some(poco_weight_bps) = json_u64_at_path(&parsed, &["poco_weight_bps"]) else {
         bail!("settlement governance response missing numeric poco_weight_bps");
@@ -711,6 +759,140 @@ fn parse_settlement_governance_query_response(raw: &str) -> Result<serde_json::V
                 "settlement governance response non-shadow mode must not report shadow_masks_nonzero_poco_weight=true"
             );
         }
+    }
+
+    let staged_fields_present = staged_activate_at_height.is_some()
+        || staged_configuration_status.is_some()
+        || staged_mode.is_some()
+        || staged_underlying_mode.is_some()
+        || staged_effective_poco_weight_bps.is_some()
+        || staged_effective_pouw_weight_bps.is_some()
+        || staged_shadow_masks_nonzero_poco_weight.is_some();
+
+    if has_pending_updates {
+        let Some(_) = staged_activate_at_height else {
+            bail!(
+                "settlement governance response has_pending_updates=true requires numeric staged_activate_at_height"
+            );
+        };
+        let Some(staged_configuration_status) = staged_configuration_status.as_deref() else {
+            bail!(
+                "settlement governance response has_pending_updates=true requires scalar staged_configuration_status"
+            );
+        };
+        if !matches!(staged_configuration_status, "defaulted" | "configured" | "partial") {
+            bail!(
+                "settlement governance response staged_configuration_status invalid: {}",
+                staged_configuration_status
+            );
+        }
+
+        let Some(staged_mode) = staged_mode.as_deref() else {
+            bail!("settlement governance response has_pending_updates=true requires scalar staged_mode");
+        };
+        let Some(staged_underlying_mode) = staged_underlying_mode.as_deref() else {
+            bail!(
+                "settlement governance response has_pending_updates=true requires scalar staged_underlying_mode"
+            );
+        };
+        if !matches!(staged_underlying_mode, "pouw_primary" | "hybrid" | "poco_primary") {
+            bail!(
+                "settlement governance response staged_underlying_mode invalid: {}",
+                staged_underlying_mode
+            );
+        }
+
+        let Some(staged_effective_poco_weight_bps) = staged_effective_poco_weight_bps else {
+            bail!(
+                "settlement governance response has_pending_updates=true requires numeric staged_effective_poco_weight_bps"
+            );
+        };
+        let Some(staged_effective_pouw_weight_bps) = staged_effective_pouw_weight_bps else {
+            bail!(
+                "settlement governance response has_pending_updates=true requires numeric staged_effective_pouw_weight_bps"
+            );
+        };
+        let Some(staged_shadow_masks_nonzero_poco_weight) =
+            staged_shadow_masks_nonzero_poco_weight
+        else {
+            bail!(
+                "settlement governance response has_pending_updates=true requires strict bool staged_shadow_masks_nonzero_poco_weight"
+            );
+        };
+
+        if staged_effective_poco_weight_bps + staged_effective_pouw_weight_bps
+            != SETTLEMENT_WEIGHT_TOTAL_BPS
+        {
+            bail!(
+                "settlement governance response staged effective weight split must sum to {} bps, got staged_effective_poco_weight_bps={} staged_effective_pouw_weight_bps={}",
+                SETTLEMENT_WEIGHT_TOTAL_BPS,
+                staged_effective_poco_weight_bps,
+                staged_effective_pouw_weight_bps
+            );
+        }
+
+        let expected_staged_effective_mode = if staged_effective_poco_weight_bps == 0 {
+            "pouw_primary"
+        } else if staged_effective_poco_weight_bps == SETTLEMENT_WEIGHT_TOTAL_BPS {
+            "poco_primary"
+        } else {
+            "hybrid"
+        };
+
+        match staged_mode {
+            "shadow_compare_only" => {
+                if staged_effective_poco_weight_bps != 0
+                    || staged_effective_pouw_weight_bps != SETTLEMENT_WEIGHT_TOTAL_BPS
+                {
+                    bail!(
+                        "settlement governance response staged shadow_compare_only must mask effective weights to poco=0 and pouw={}, got poco={} pouw={}",
+                        SETTLEMENT_WEIGHT_TOTAL_BPS,
+                        staged_effective_poco_weight_bps,
+                        staged_effective_pouw_weight_bps
+                    );
+                }
+
+                let expected_shadow_mask = staged_underlying_mode != "pouw_primary";
+                if staged_shadow_masks_nonzero_poco_weight != expected_shadow_mask {
+                    bail!(
+                        "settlement governance response staged shadow mask flag mismatch: staged_underlying_mode={} staged_shadow_masks_nonzero_poco_weight={}",
+                        staged_underlying_mode,
+                        staged_shadow_masks_nonzero_poco_weight
+                    );
+                }
+            }
+            "pouw_primary" | "hybrid" | "poco_primary" => {
+                if staged_mode != staged_underlying_mode {
+                    bail!(
+                        "settlement governance response staged mode mismatch: staged_mode={} staged_underlying_mode={}",
+                        staged_mode,
+                        staged_underlying_mode
+                    );
+                }
+                if staged_mode != expected_staged_effective_mode {
+                    bail!(
+                        "settlement governance response staged mode mismatch: expected={} from staged effective weights, got={}",
+                        expected_staged_effective_mode,
+                        staged_mode
+                    );
+                }
+                if staged_shadow_masks_nonzero_poco_weight {
+                    bail!(
+                        "settlement governance response non-shadow staged mode must not report staged_shadow_masks_nonzero_poco_weight=true"
+                    );
+                }
+            }
+            _ => {
+                bail!(
+                    "settlement governance response staged_mode invalid: {}",
+                    staged_mode
+                );
+            }
+        }
+    } else if staged_fields_present {
+        bail!(
+            "settlement governance response has_pending_updates=false must not include staged settlement projection fields"
+        );
     }
 
     Ok(parsed)
@@ -6753,11 +6935,51 @@ mod tests {
     }
 
     #[test]
+    fn parse_settlement_governance_query_response_rejects_pending_rollout_without_staged_projection(
+    ) {
+        let err = parse_settlement_governance_query_response(
+            r#"{"live_configuration_status":"configured","mode":"hybrid","underlying_mode":"hybrid","settlement_write_gate_status":"open","shadow_compare_only":false,"poco_weight_bps":2500,"pouw_weight_bps":7500,"effective_poco_weight_bps":2500,"effective_pouw_weight_bps":7500,"shadow_masks_nonzero_poco_weight":false,"has_pending_updates":true}"#,
+        )
+        .unwrap_err()
+        .to_string();
+        assert!(
+            err.contains("has_pending_updates=true requires numeric staged_activate_at_height"),
+            "unexpected error: {err}"
+        );
+    }
+
+    #[test]
+    fn parse_settlement_governance_query_response_rejects_unmasked_shadow_staged_projection() {
+        let err = parse_settlement_governance_query_response(
+            r#"{"live_configuration_status":"configured","mode":"hybrid","underlying_mode":"hybrid","settlement_write_gate_status":"open","shadow_compare_only":false,"poco_weight_bps":2500,"pouw_weight_bps":7500,"effective_poco_weight_bps":2500,"effective_pouw_weight_bps":7500,"shadow_masks_nonzero_poco_weight":false,"has_pending_updates":true,"staged_activate_at_height":62,"staged_configuration_status":"configured","staged_mode":"shadow_compare_only","staged_underlying_mode":"hybrid","staged_effective_poco_weight_bps":2500,"staged_effective_pouw_weight_bps":7500,"staged_shadow_masks_nonzero_poco_weight":true}"#,
+        )
+        .unwrap_err()
+        .to_string();
+        assert!(
+            err.contains("staged shadow_compare_only must mask effective weights"),
+            "unexpected error: {err}"
+        );
+    }
+
+    #[test]
+    fn parse_settlement_governance_query_response_rejects_nonshadow_staged_shadow_mask_flag() {
+        let err = parse_settlement_governance_query_response(
+            r#"{"live_configuration_status":"configured","mode":"hybrid","underlying_mode":"hybrid","settlement_write_gate_status":"open","shadow_compare_only":false,"poco_weight_bps":2500,"pouw_weight_bps":7500,"effective_poco_weight_bps":2500,"effective_pouw_weight_bps":7500,"shadow_masks_nonzero_poco_weight":false,"has_pending_updates":true,"staged_activate_at_height":62,"staged_configuration_status":"configured","staged_mode":"hybrid","staged_underlying_mode":"hybrid","staged_effective_poco_weight_bps":2500,"staged_effective_pouw_weight_bps":7500,"staged_shadow_masks_nonzero_poco_weight":true}"#,
+        )
+        .unwrap_err()
+        .to_string();
+        assert!(
+            err.contains("non-shadow staged mode must not report staged_shadow_masks_nonzero_poco_weight=true"),
+            "unexpected error: {err}"
+        );
+    }
+
+    #[test]
     fn settlement_governance_query_uses_template_override_and_preserves_staged_fields() {
         let _guard = ENV_LOCK.lock().unwrap();
         std::env::set_var(
             "TRNM_QUERY_SETTLEMENT_GOVERNANCE_CMD",
-            r#"printf '%s' '{"live_configuration_status":"configured","mode":"hybrid","underlying_mode":"hybrid","settlement_write_gate_status":"open","shadow_compare_only":false,"poco_weight_bps":2500,"pouw_weight_bps":7500,"effective_poco_weight_bps":2500,"effective_pouw_weight_bps":7500,"shadow_masks_nonzero_poco_weight":false,"has_pending_updates":true,"staged_configuration_status":"configured","staged_mode":"shadow_compare_only","staged_underlying_mode":"hybrid","staged_effective_poco_weight_bps":0,"staged_effective_pouw_weight_bps":10000,"staged_shadow_masks_nonzero_poco_weight":true}'"#,
+            r#"printf '%s' '{"live_configuration_status":"configured","mode":"hybrid","underlying_mode":"hybrid","settlement_write_gate_status":"open","shadow_compare_only":false,"poco_weight_bps":2500,"pouw_weight_bps":7500,"effective_poco_weight_bps":2500,"effective_pouw_weight_bps":7500,"shadow_masks_nonzero_poco_weight":false,"has_pending_updates":true,"staged_activate_at_height":62,"staged_configuration_status":"configured","staged_mode":"shadow_compare_only","staged_underlying_mode":"hybrid","staged_effective_poco_weight_bps":0,"staged_effective_pouw_weight_bps":10000,"staged_shadow_masks_nonzero_poco_weight":true}'"#,
         );
         let got = settlement_governance_query().expect("template settlement governance query");
         std::env::remove_var("TRNM_QUERY_SETTLEMENT_GOVERNANCE_CMD");
