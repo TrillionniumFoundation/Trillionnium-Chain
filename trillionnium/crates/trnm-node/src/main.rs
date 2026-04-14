@@ -17,13 +17,13 @@ use trnm_mempool::{IngressClass, LaneAdmissionGate};
 #[cfg(test)]
 use trnm_pouw::{
     apply_accept_task, apply_challenge, apply_commit_result, apply_resolve, apply_reveal_result,
-    resolve_consumption_receipt_at_height, ConsumptionResolveDecision,
 };
 use trnm_pouw::{
     apply_accept_task_at_height, apply_challenge_at_height, apply_commit_result_at_height,
     apply_create_task, apply_resolve_at_height, apply_reveal_result_at_height, apply_timeout,
-    challenge_consumption_receipt_at_height, submit_consumption_receipt_at_height,
-    ConsumptionReceipt, ConsumptionReplayKey,
+    challenge_consumption_receipt_at_height, resolve_consumption_receipt_at_height,
+    submit_consumption_receipt_at_height, ConsumptionReceipt, ConsumptionReplayKey,
+    ConsumptionResolveDecision,
 };
 use trnm_state::{
     checkpoint_da_light_verifier_summary, verify_wal_and_find_checkpoint_node_recovery,
