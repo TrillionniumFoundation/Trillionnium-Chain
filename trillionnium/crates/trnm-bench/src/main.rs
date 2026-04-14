@@ -655,9 +655,7 @@ fn build_hot_streak_txs(n: usize, keys: usize, read_fanout: usize, write_every: 
         for j in 1..read_fanout {
             let mut side = ((i + j * 11) % keys) as u64;
             let mut probes = 0usize;
-            while probes < keys
-                && read_set.iter().any(|existing| existing.id == side)
-            {
+            while probes < keys && read_set.iter().any(|existing| existing.id == side) {
                 side = ((side as usize + 1) % keys) as u64;
                 probes += 1;
             }
@@ -720,9 +718,8 @@ mod tests {
             .expect("isolated output dir should canonicalize after persistence");
 
         assert!(path.starts_with(&resolved_out_dir));
-        assert!(
-            content.contains("profile.report.artifact_basename=executor-profile-summary-1700000000.txt")
-        );
+        assert!(content
+            .contains("profile.report.artifact_basename=executor-profile-summary-1700000000.txt"));
         assert!(content.contains(&format!("profile.report.path={}", path.display())));
         assert!(content.contains(&format!(
             "profile.report.output_line_count={}",
@@ -820,7 +817,10 @@ mod tests {
                 "tx {idx} should keep the hot key in the first read slot"
             );
 
-            let unique = ids.iter().copied().collect::<std::collections::BTreeSet<_>>();
+            let unique = ids
+                .iter()
+                .copied()
+                .collect::<std::collections::BTreeSet<_>>();
             assert_eq!(
                 unique.len(),
                 ids.len(),
@@ -835,9 +835,20 @@ mod tests {
 
         assert_eq!(txs.len(), 4);
         for (idx, tx) in txs.iter().enumerate() {
-            assert_eq!(tx.read_set.len(), 1, "tx {idx} should clamp zero fanout to one read");
-            assert_eq!(tx.read_set[0].id, 0, "tx {idx} should clamp zero keyspace to one hot key");
-            assert_eq!(tx.write_set.len(), 1, "tx {idx} should clamp zero write stride to every tx");
+            assert_eq!(
+                tx.read_set.len(),
+                1,
+                "tx {idx} should clamp zero fanout to one read"
+            );
+            assert_eq!(
+                tx.read_set[0].id, 0,
+                "tx {idx} should clamp zero keyspace to one hot key"
+            );
+            assert_eq!(
+                tx.write_set.len(),
+                1,
+                "tx {idx} should clamp zero write stride to every tx"
+            );
             assert_eq!(tx.write_set[0].id, tx.read_set[0].id);
         }
     }
@@ -958,8 +969,7 @@ mod tests {
         assert!((profile.retry_scan_hit_rate() - (4.0 / 9.0)).abs() < f64::EPSILON);
         assert!((profile.retry_scan_miss_rate() - (5.0 / 9.0)).abs() < f64::EPSILON);
         assert!(
-            ((profile.retry_scan_hit_rate() + profile.retry_scan_miss_rate()) - 1.0).abs()
-                < 1e-12
+            ((profile.retry_scan_hit_rate() + profile.retry_scan_miss_rate()) - 1.0).abs() < 1e-12
         );
         assert!((profile.retry_scan_misses_per_tx() - (5.0 / 8.0)).abs() < f64::EPSILON);
         assert!((profile.retry_scan_misses_per_group() - (5.0 / 4.0)).abs() < f64::EPSILON);
