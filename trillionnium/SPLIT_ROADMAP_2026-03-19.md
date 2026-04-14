@@ -1,5 +1,7 @@
 # TRNM 拆分优先级路线图（2026-03-19）
 
+> BL09 retirement-prep note: 本路线图保留的 `trnm-pouw` crate、测试基线与拆分优先级描述，仅应用于迁移期兼容、decomposition guardrails 或 provenance / audit evidence 留痕，不能解读为当前默认 payout authority，也不重新授权默认 work-unit payout path。若 PoCO settlement 已成为主结算路径，对外付款判断与默认结算 authority 仍应以 PoCO settlement anchor 为准。
+
 ## 当前阶段判断
 
 项目已从“爆破巨石”进入“中后期收口 + 测试稳定化”阶段。
