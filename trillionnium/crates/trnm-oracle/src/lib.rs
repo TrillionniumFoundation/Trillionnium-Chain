@@ -502,14 +502,11 @@ impl OracleValidationReport {
     }
 
     fn has_explicit_unclassified_error_label(&self) -> bool {
-        self.error
-            .as_deref()
-            .map(str::trim)
-            .is_some_and(|label| {
-                !label.is_empty()
-                    && !matches!(label, "stale" | "quorum" | "drift")
-                    && !label.starts_with("snapshot hash mismatch:")
-            })
+        self.error.as_deref().map(str::trim).is_some_and(|label| {
+            !label.is_empty()
+                && !matches!(label, "stale" | "quorum" | "drift")
+                && !label.starts_with("snapshot hash mismatch:")
+        })
     }
 
     fn has_explicit_unclassified_failure_accounting(&self) -> bool {
@@ -731,7 +728,12 @@ mod tests {
 
     #[test]
     fn source_id_parse_rejects_internal_whitespace_and_control_chars() {
-        for raw in ["chain link", "chain\tlink", "chain\nlink", "chain\u{0007}link"] {
+        for raw in [
+            "chain link",
+            "chain\tlink",
+            "chain\nlink",
+            "chain\u{0007}link",
+        ] {
             let err = OracleSourceId::parse(raw)
                 .expect_err("source ids should fail closed on internal whitespace/control chars");
             assert_eq!(
@@ -797,7 +799,9 @@ mod tests {
                 2_000,
                 10_000,
             )
-            .expect_err("snapshot build should reject feed ids with internal whitespace/control chars");
+            .expect_err(
+                "snapshot build should reject feed ids with internal whitespace/control chars",
+            );
 
             assert_eq!(
                 err,
@@ -863,7 +867,10 @@ mod tests {
         .validate()
         .expect_err("policy should fail closed when staleness window is zero");
 
-        assert_eq!(err, OracleError::InvalidPolicy("max_staleness_ms must be > 0"));
+        assert_eq!(
+            err,
+            OracleError::InvalidPolicy("max_staleness_ms must be > 0")
+        );
     }
 
     #[test]
@@ -1140,10 +1147,7 @@ mod tests {
         )
         .expect_err("snapshot should reject zero sample accounting");
 
-        assert!(matches!(
-            err,
-            OracleError::InvalidSampleCount
-        ));
+        assert!(matches!(err, OracleError::InvalidSampleCount));
     }
 
     #[test]
@@ -2031,7 +2035,11 @@ mod tests {
     fn observed_report_preserves_snapshot_hash_mismatch_details_with_quorum_accounting() {
         let p = policy();
         let mut snap = snapshot_with(100_000, Some(100_100), 10_000);
-        let replacement = if snap.snapshot_hash.starts_with('0') { "1" } else { "0" };
+        let replacement = if snap.snapshot_hash.starts_with('0') {
+            "1"
+        } else {
+            "0"
+        };
         snap.snapshot_hash.replace_range(..1, replacement);
 
         let report = validate_snapshot_observed(&p, &snap, 10_100);
@@ -2060,7 +2068,11 @@ mod tests {
         let p = policy();
         let mut snap = snapshot_with(100_000, Some(100_100), 10_000);
         let expected = snap.compute_hash();
-        let replacement = if snap.snapshot_hash.starts_with('0') { "1" } else { "0" };
+        let replacement = if snap.snapshot_hash.starts_with('0') {
+            "1"
+        } else {
+            "0"
+        };
         snap.snapshot_hash.replace_range(..1, replacement);
 
         let report = validate_snapshot_observed(&p, &snap, 10_100);
@@ -2720,9 +2732,9 @@ mod tests {
         .expect("snapshot deserialize");
         snapshot.snapshot_hash = snapshot.compute_hash();
 
-        let err = policy()
-            .validate_snapshot(&snapshot, 10_100)
-            .expect_err("deserialized source aliases that collapse canonically must fail guardrail");
+        let err = policy().validate_snapshot(&snapshot, 10_100).expect_err(
+            "deserialized source aliases that collapse canonically must fail guardrail",
+        );
         assert_eq!(
             err,
             OracleError::NonCanonicalSourceId {
