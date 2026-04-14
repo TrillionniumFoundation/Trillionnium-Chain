@@ -63,6 +63,8 @@ const SUMMARY_CREDITED_UNITS_EXCEED_CLAIMED_UNITS: &str =
     "poco summary credited units exceed claimed consumption units";
 const SUMMARY_CREDITED_UNITS_EXCEED_CANONICAL_RECORD_CREDITS: &str =
     "poco summary credited units exceed canonical record credits";
+const SUMMARY_ACCEPTED_RECEIPTS_EXCEED_CANONICAL_ACCEPTED_RECORDS: &str =
+    "poco summary accepted receipts exceed canonical accepted record count";
 const SUMMARY_CHALLENGED_RECEIPTS_EXCEED_RECEIPTS: &str =
     "poco summary challenged receipts exceed submitted receipts";
 const DUPLICATE_LOGICAL_REPLAY_KEY_REASON: &str = "duplicate logical consumption replay key";
@@ -341,6 +343,18 @@ fn unproven_receipt_count_with_summary(
     unresolved_records.saturating_add(missing_canonical_records)
 }
 
+fn canonical_accepted_receipt_count(records: &[ConsumptionRecord]) -> u64 {
+    records
+        .iter()
+        .filter(|record| {
+            matches!(
+                record.status,
+                ConsumptionRecordStatus::Accepted | ConsumptionRecordStatus::Discounted
+            )
+        })
+        .count() as u64
+}
+
 fn total_credited_consumption_units(records: &[ConsumptionRecord]) -> u128 {
     records
         .iter()
@@ -358,9 +372,23 @@ fn summary_canonical_credit_drift_reason(
     summary: &TaskConsumptionSummary,
     records: &[ConsumptionRecord],
 ) -> Option<&'static str> {
-    (summary.receipt_count == records.len() as u64
-        && summary.total_credited_consumption_units > total_credited_consumption_units(records))
-        .then_some(SUMMARY_CREDITED_UNITS_EXCEED_CANONICAL_RECORD_CREDITS)
+    if summary.receipt_count == records.len() as u64
+        && summary.accepted_receipt_count > canonical_accepted_receipt_count(records)
+    {
+        // Promotion step: once summary metadata claims to cover the same
+        // canonical receipt set, its accepted counters must not outrun the
+        // accepted/discounted receipt records. If they do, the summary is
+        // inventing positive PoCO terminal outcomes that receipts never
+        // finalized, so fail closed instead of trusting summary metadata as a
+        // payout authority.
+        Some(SUMMARY_ACCEPTED_RECEIPTS_EXCEED_CANONICAL_ACCEPTED_RECORDS)
+    } else if summary.receipt_count == records.len() as u64
+        && summary.total_credited_consumption_units > total_credited_consumption_units(records)
+    {
+        Some(SUMMARY_CREDITED_UNITS_EXCEED_CANONICAL_RECORD_CREDITS)
+    } else {
+        None
+    }
 }
 
 fn record_credit_state_inconsistency_reason(record: &ConsumptionRecord) -> Option<&'static str> {
@@ -1852,6 +1880,81 @@ mod tests {
         assert!(
             matches!(err, PouwError::State(msg) if msg.contains(MALFORMED_CANONICAL_CREDIT_STATE_REASON))
         );
+    }
+
+    #[test]
+    fn primary_payout_work_units_fail_closed_for_summary_accepted_count_above_canonical_accepted_records(
+    ) {
+        let mut st = StateStore::default();
+        let task = sample_task(TaskStatus::Completed);
+        st.set_task_consumption_summary(TaskConsumptionSummary {
+            task_id: task.task_id,
+            receipt_count: 2,
+            accepted_receipt_count: 2,
+            challenged_receipt_count: 0,
+            total_consumed_tokens: 34,
+            total_claimed_consumption_units: 34,
+            total_credited_consumption_units: 9,
+            last_settlement_height: Some(77),
+        });
+        st.put_consumption_record(sample_record(
+            "consumer-bravo",
+            "bw-1",
+            ConsumptionRecordStatus::Discounted,
+            Some(9),
+        ));
+        st.put_consumption_record(sample_record(
+            "consumer-charlie",
+            "bw-2",
+            ConsumptionRecordStatus::Rejected,
+            None,
+        ));
+
+        assert_eq!(
+            preview_primary_payout_work_units(&st, &task, 50),
+            PrimaryPayoutWorkUnitPreview::PocoInconsistentSummary {
+                reason: SUMMARY_ACCEPTED_RECEIPTS_EXCEED_CANONICAL_ACCEPTED_RECORDS,
+                metering_work_units: 50,
+            }
+        );
+        assert_eq!(primary_payout_work_units(&st, &task, 50), 0);
+    }
+
+    #[test]
+    fn reject_if_primary_settlement_pending_fails_closed_for_summary_accepted_count_above_canonical_accepted_records(
+    ) {
+        let mut st = StateStore::default();
+        st.set_task_consumption_summary(TaskConsumptionSummary {
+            task_id: 42,
+            receipt_count: 2,
+            accepted_receipt_count: 2,
+            challenged_receipt_count: 0,
+            total_consumed_tokens: 34,
+            total_claimed_consumption_units: 34,
+            total_credited_consumption_units: 9,
+            last_settlement_height: Some(77),
+        });
+        st.put_consumption_record(sample_record(
+            "consumer-bravo",
+            "bw-1",
+            ConsumptionRecordStatus::Discounted,
+            Some(9),
+        ));
+        st.put_consumption_record(sample_record(
+            "consumer-charlie",
+            "bw-2",
+            ConsumptionRecordStatus::Rejected,
+            None,
+        ));
+
+        let err = reject_if_primary_settlement_pending(&st, 42).expect_err(
+            "summary accepted counts beyond canonical accepted records must block primary settlement",
+        );
+        assert!(matches!(
+            err,
+            PouwError::State(msg)
+                if msg.contains(SUMMARY_ACCEPTED_RECEIPTS_EXCEED_CANONICAL_ACCEPTED_RECORDS)
+        ));
     }
 
     #[test]
