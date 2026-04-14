@@ -3681,6 +3681,41 @@ impl StateStore {
         })
     }
 
+    fn scrub_incompatible_consumption_companion_state(
+        &mut self,
+        key: &ConsumptionRecordKey,
+    ) {
+        let consumer_nonce = self
+            .consumer_consumption_nonces
+            .get(&key.consumer_id)
+            .copied();
+        if consumer_nonce.is_some_and(|nonce| {
+            !self.consumer_consumption_nonce_is_compatible_with_persisted_records(
+                &key.consumer_id,
+                nonce,
+            )
+        }) {
+            self.consumer_consumption_nonces.remove(&key.consumer_id);
+        }
+
+        let billing_window_policy = self
+            .billing_window_policies
+            .get(&key.billing_window_id)
+            .cloned();
+        if billing_window_policy.as_ref().is_some_and(|policy| {
+            !self.billing_window_policy_is_compatible_with_persisted_records(policy)
+        }) {
+            self.billing_window_policies.remove(&key.billing_window_id);
+        }
+
+        let task_summary = self.task_consumption_summaries.get(&key.task_id).cloned();
+        if task_summary.as_ref().is_some_and(|summary| {
+            !self.task_consumption_summary_is_compatible_with_persisted_records(summary)
+        }) {
+            self.task_consumption_summaries.remove(&key.task_id);
+        }
+    }
+
     pub fn put_consumption_record(
         &mut self,
         record: ConsumptionRecord,
@@ -3691,7 +3726,9 @@ impl StateStore {
         }
 
         self.invalidate_state_root_cache();
-        self.consumption_records.insert(key, record)
+        let previous = self.consumption_records.insert(key.clone(), record);
+        self.scrub_incompatible_consumption_companion_state(&key);
+        previous
     }
 
     pub fn consumption_record(&self, key: &ConsumptionRecordKey) -> Option<ConsumptionRecord> {

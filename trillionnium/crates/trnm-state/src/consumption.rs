@@ -1017,6 +1017,39 @@ mod tests {
     }
 
     #[test]
+    fn put_consumption_record_scrubs_incompatible_companion_state_fail_closed() {
+        let mut st = StateStore::default();
+        let mut record = sample_record();
+        let key = record.key.clone();
+        let policy = sample_billing_window_policy();
+        let summary = sample_task_consumption_summary();
+
+        st.set_consumer_consumption_nonce(&key.consumer_id, record.consumer_nonce);
+        st.set_billing_window_policy(policy.clone());
+        st.set_task_consumption_summary(summary.clone());
+
+        record.consumer_nonce += 1;
+        record.accepted_at_unix_ms = policy.close_at_unix_ms;
+        record.consumed_token_count = 35;
+        record.claimed_consumption_units = 35;
+        record.credited_consumption_units = Some(18);
+
+        assert_eq!(st.put_consumption_record(record.clone()), None);
+        assert_eq!(st.consumption_record(&key), Some(record.clone()));
+        assert_eq!(st.consumer_consumption_nonce(&key.consumer_id), None);
+        assert_eq!(st.billing_window_policy(&key.billing_window_id), None);
+        assert_eq!(st.task_consumption_summary(key.task_id), None);
+
+        let snapshot = st.consumption_settlement_state_snapshot(&key);
+        assert_eq!(snapshot.record, Some(record));
+        assert_eq!(snapshot.consumer_nonce, None);
+        assert_eq!(snapshot.billing_window_policy, None);
+        assert_eq!(snapshot.task_summary, None);
+        assert!(!snapshot.has_complete_persisted_state());
+        assert_eq!(st.complete_consumption_settlement_state_snapshot(&key), None);
+    }
+
+    #[test]
     fn invalid_record_replacement_clears_record_but_preserves_policy_persistence_state() {
         let mut st = StateStore::default();
         let record = sample_record();
