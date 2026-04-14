@@ -184,12 +184,40 @@ pub(crate) fn format_task_metering_event_fields(snapshot: &TaskMeteringSnapshot)
     )
 }
 
+pub(crate) fn format_task_consumption_summary_event_fields(
+    summary: &trnm_state::TaskConsumptionSummary,
+) -> String {
+    format!(
+        " settlement_receipt_count={} settlement_accepted_receipt_count={} settlement_challenged_receipt_count={} settlement_total_consumed_tokens={} settlement_total_claimed_consumption_units={} settlement_total_credited_consumption_units={} settlement_last_settlement_height={}",
+        summary.receipt_count,
+        summary.accepted_receipt_count,
+        summary.challenged_receipt_count,
+        summary.total_consumed_tokens,
+        summary.total_claimed_consumption_units,
+        summary.total_credited_consumption_units,
+        summary
+            .last_settlement_height
+            .map(|height| height.to_string())
+            .unwrap_or_else(|| "-".to_string()),
+    )
+}
+
 pub(crate) fn task_metering_event_suffix(st: &StateStore, task_id: u64) -> String {
     st.get_task(task_id)
         .and_then(|task| task.metadata)
         .and_then(|metadata| metadata.metering)
         .map(|snapshot| format_task_metering_event_fields(&snapshot))
         .unwrap_or_default()
+}
+
+pub(crate) fn task_settlement_event_suffix(st: &StateStore, task_id: u64) -> String {
+    let mut suffix = task_metering_event_suffix(st, task_id);
+
+    if let Some(summary) = st.task_consumption_summary(task_id) {
+        suffix.push_str(&format_task_consumption_summary_event_fields(&summary));
+    }
+
+    suffix
 }
 
 pub(crate) fn emit_event(
@@ -233,7 +261,7 @@ pub(crate) fn emit_event(
     let challenger_delta_str = challenger_delta.map(|d| d.text.as_str()).unwrap_or("-");
     let bond_disposition_str = bond_disposition.unwrap_or("-");
     let metering_suffix = match tx {
-        MockTx::Reveal { .. } | MockTx::Resolve { .. } => task_metering_event_suffix(st, task_id),
+        MockTx::Reveal { .. } | MockTx::Resolve { .. } => task_settlement_event_suffix(st, task_id),
         _ => String::new(),
     };
 
@@ -319,7 +347,7 @@ pub(crate) fn emit_timeout_event(
     let treasury_delta_str = treasury_delta.text.as_str();
     let challenger_delta_str = challenger_delta.map(|d| d.text.as_str()).unwrap_or("-");
     let bond_disposition_str = bond_disposition.unwrap_or("-");
-    let metering_suffix = task_metering_event_suffix(st, task_id);
+    let metering_suffix = task_settlement_event_suffix(st, task_id);
     let (slash_worker, resolution_code) = timeout_outcome_fields(to_status);
 
     println!(
@@ -347,6 +375,7 @@ pub(crate) fn emit_timeout_event(
 
 #[cfg(test)]
 mod tests {
+    use super::format_task_consumption_summary_event_fields;
     use super::timeout_outcome_fields;
 
     #[test]
@@ -372,5 +401,28 @@ mod tests {
         assert_eq!(timeout_outcome_fields("completed"), ("false", "unknown"));
         assert_eq!(timeout_outcome_fields("slashed"), ("false", "unknown"));
         assert_eq!(timeout_outcome_fields(" Completed"), ("false", "unknown"));
+    }
+
+    #[test]
+    fn format_task_consumption_summary_event_fields_renders_stable_receipt_counters() {
+        let line =
+            format_task_consumption_summary_event_fields(&trnm_state::TaskConsumptionSummary {
+                task_id: 42,
+                receipt_count: 3,
+                accepted_receipt_count: 2,
+                challenged_receipt_count: 1,
+                total_consumed_tokens: 55,
+                total_claimed_consumption_units: 55,
+                total_credited_consumption_units: 49,
+                last_settlement_height: Some(88),
+            });
+
+        assert!(line.contains("settlement_receipt_count=3"));
+        assert!(line.contains("settlement_accepted_receipt_count=2"));
+        assert!(line.contains("settlement_challenged_receipt_count=1"));
+        assert!(line.contains("settlement_total_consumed_tokens=55"));
+        assert!(line.contains("settlement_total_claimed_consumption_units=55"));
+        assert!(line.contains("settlement_total_credited_consumption_units=49"));
+        assert!(line.contains("settlement_last_settlement_height=88"));
     }
 }
