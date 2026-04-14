@@ -585,6 +585,20 @@ pub struct TaskObject {
 }
 
 impl TaskObject {
+    /// Query helper for task-level callers that need a stable typed
+    /// compatibility report without open-coding metadata/fallback precedence
+    /// or materializing metadata by hand.
+    pub fn compatibility_report_with_settlement_snapshot(
+        &self,
+        settlement: Option<&TaskSettlementSnapshot>,
+    ) -> TaskMetadataCompatibilityReport {
+        if let Some(metadata) = self.metadata.as_ref() {
+            metadata.compatibility_report_with_settlement_snapshot(settlement)
+        } else {
+            TaskMetadata::default().compatibility_report_with_settlement_snapshot(settlement)
+        }
+    }
+
     /// Query helper for task-level callers that still carry settlement out of
     /// band. Reuses `TaskMetadata` precedence without materializing metadata
     /// just to explain whether settlement is absent, legacy fallback, or
