@@ -146,15 +146,31 @@ pub struct TaskSettlementSnapshot {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, Default)]
+#[serde(rename_all = "snake_case")]
+pub enum TaskSettlementSnapshotSource {
+    #[default]
+    Absent,
+    LegacyFallback,
+    ThreadedMetadata,
+}
+
+fn task_settlement_snapshot_source_is_absent(source: &TaskSettlementSnapshotSource) -> bool {
+    matches!(source, TaskSettlementSnapshotSource::Absent)
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, Default)]
 pub struct TaskMetadataCompatibility {
     pub legacy_note_only: bool,
     pub canonical_core_fields: bool,
     pub complete_metering_snapshot: bool,
+    pub complete_settlement_snapshot: bool,
 }
 
 impl TaskMetadataCompatibility {
     pub fn is_runtime_compatible(&self) -> bool {
-        self.canonical_core_fields && self.complete_metering_snapshot
+        self.canonical_core_fields
+            && self.complete_metering_snapshot
+            && self.complete_settlement_snapshot
     }
 
     pub fn requires_governance_upgrade(&self) -> bool {
@@ -174,6 +190,9 @@ impl TaskMetadataCompatibility {
         if !self.complete_metering_snapshot {
             findings.push(TaskMetadataCompatibilityFinding::IncompleteMeteringSnapshot);
         }
+        if !self.complete_settlement_snapshot {
+            findings.push(TaskMetadataCompatibilityFinding::IncompleteSettlementSnapshot);
+        }
         findings
     }
 
@@ -188,12 +207,18 @@ pub enum TaskMetadataCompatibilityFinding {
     LegacyNoteOnlyPayload,
     NonCanonicalCoreFields,
     IncompleteMeteringSnapshot,
+    IncompleteSettlementSnapshot,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct TaskMetadataCompatibilityReport {
     pub compatibility: TaskMetadataCompatibility,
     pub requires_governance_upgrade: bool,
+    #[serde(
+        default,
+        skip_serializing_if = "task_settlement_snapshot_source_is_absent"
+    )]
+    pub settlement_snapshot_source: TaskSettlementSnapshotSource,
     pub findings: Vec<TaskMetadataCompatibilityFinding>,
 }
 
@@ -211,7 +236,7 @@ impl TaskMetadataCompatibilityReport {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Default)]
 pub struct TaskMetadata {
     #[serde(default)]
     pub note: Option<String>,
@@ -225,6 +250,47 @@ pub struct TaskMetadata {
     pub provenance: Option<TaskProvenanceMetadata>,
     #[serde(default)]
     pub metering: Option<TaskMeteringSnapshot>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub settlement: Option<TaskSettlementSnapshot>,
+}
+
+#[derive(Debug, Deserialize, Default)]
+struct TaskMetadataWire {
+    #[serde(default)]
+    note: Option<String>,
+    #[serde(default)]
+    task_type: Option<String>,
+    #[serde(default)]
+    input_hash: Option<String>,
+    #[serde(default)]
+    model: Option<TaskModelMetadata>,
+    #[serde(default)]
+    provenance: Option<TaskProvenanceMetadata>,
+    #[serde(default)]
+    metering: Option<TaskMeteringSnapshot>,
+    #[serde(default)]
+    settlement: Option<TaskSettlementSnapshot>,
+    #[serde(default)]
+    settlement_snapshot: Option<TaskSettlementSnapshot>,
+}
+
+impl<'de> Deserialize<'de> for TaskMetadata {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        let wire = TaskMetadataWire::deserialize(deserializer)?;
+
+        Ok(Self {
+            note: wire.note,
+            task_type: wire.task_type,
+            input_hash: wire.input_hash,
+            model: wire.model,
+            provenance: wire.provenance,
+            metering: wire.metering,
+            settlement: wire.settlement.or(wire.settlement_snapshot),
+        })
+    }
 }
 
 fn has_canonical_metadata_atom(value: &str) -> bool {
@@ -273,12 +339,71 @@ impl TaskSettlementSnapshot {
 
 impl TaskMetadata {
     pub fn compatibility_report(&self) -> TaskMetadataCompatibilityReport {
+        self.compatibility_report_with_settlement_snapshot(self.settlement.as_ref())
+    }
+
+    /// Reuse the same inline-versus-fallback precedence as
+    /// `effective_settlement_snapshot` so downstream migration surfaces can
+    /// report whether settlement has been threaded into metadata yet.
+    pub fn settlement_snapshot_source(
+        &self,
+        settlement: Option<&TaskSettlementSnapshot>,
+    ) -> TaskSettlementSnapshotSource {
+        if self.settlement.is_some() {
+            TaskSettlementSnapshotSource::ThreadedMetadata
+        } else if settlement.is_some() {
+            TaskSettlementSnapshotSource::LegacyFallback
+        } else {
+            TaskSettlementSnapshotSource::Absent
+        }
+    }
+
+    /// Prefer the inline settlement snapshot once it has been threaded into
+    /// metadata, but keep the out-of-band fallback for legacy callers that
+    /// have not lifted settlement into `TaskMetadata` yet.
+    pub fn effective_settlement_snapshot<'a>(
+        &'a self,
+        settlement: Option<&'a TaskSettlementSnapshot>,
+    ) -> Option<&'a TaskSettlementSnapshot> {
+        self.settlement.as_ref().or(settlement)
+    }
+
+    /// Migration helper for write paths that still carry settlement out of
+    /// band. Thread the fallback snapshot into canonical task metadata only
+    /// when metadata does not already contain an inline settlement snapshot.
+    /// Returns true when the metadata payload changed.
+    pub fn thread_settlement_snapshot(
+        &mut self,
+        settlement: Option<&TaskSettlementSnapshot>,
+    ) -> bool {
+        if self.settlement.is_some() {
+            return false;
+        }
+
+        let Some(settlement) = settlement.cloned() else {
+            return false;
+        };
+
+        self.settlement = Some(settlement);
+        true
+    }
+
+    pub fn compatibility_report_with_settlement_snapshot(
+        &self,
+        settlement: Option<&TaskSettlementSnapshot>,
+    ) -> TaskMetadataCompatibilityReport {
+        let effective_settlement = self.effective_settlement_snapshot(settlement);
+        let settlement_snapshot_source = self.settlement_snapshot_source(settlement);
         let legacy_note_only = self.note.is_some()
             && self.task_type.is_none()
             && self.input_hash.is_none()
             && self.model.is_none()
             && self.provenance.is_none()
-            && self.metering.is_none();
+            && self.metering.is_none()
+            // Keep the legacy note-only verdict scoped to the metadata payload
+            // itself. A fallback settlement snapshot helps completeness checks,
+            // but should not rewrite the top-level legacy shape classification.
+            && self.settlement.is_none();
 
         // Keep top-level metadata canonicality distinct from the metering snapshot verdict.
         // This makes governance-upgrade diagnostics clearer at query time: malformed
@@ -346,11 +471,15 @@ impl TaskMetadata {
             .as_ref()
             .map(TaskMeteringSnapshot::has_complete_core_fields)
             .unwrap_or(true);
+        let complete_settlement_snapshot = effective_settlement
+            .map(TaskSettlementSnapshot::has_complete_core_fields)
+            .unwrap_or(true);
 
         let compatibility = TaskMetadataCompatibility {
             legacy_note_only,
             canonical_core_fields,
             complete_metering_snapshot,
+            complete_settlement_snapshot,
         };
 
         let findings = compatibility.findings();
@@ -358,6 +487,7 @@ impl TaskMetadata {
         TaskMetadataCompatibilityReport {
             requires_governance_upgrade: compatibility.requires_governance_upgrade(),
             compatibility,
+            settlement_snapshot_source,
             findings,
         }
     }
@@ -366,20 +496,60 @@ impl TaskMetadata {
         self.compatibility_report().compatibility
     }
 
+    pub fn compatibility_profile_with_settlement_snapshot(
+        &self,
+        settlement: Option<&TaskSettlementSnapshot>,
+    ) -> TaskMetadataCompatibility {
+        self.compatibility_report_with_settlement_snapshot(settlement)
+            .compatibility
+    }
+
     pub fn compatibility_findings(&self) -> Vec<TaskMetadataCompatibilityFinding> {
         self.compatibility_report().findings
+    }
+
+    pub fn compatibility_findings_with_settlement_snapshot(
+        &self,
+        settlement: Option<&TaskSettlementSnapshot>,
+    ) -> Vec<TaskMetadataCompatibilityFinding> {
+        self.compatibility_report_with_settlement_snapshot(settlement)
+            .findings
     }
 
     pub fn compatibility_findings_nonempty(&self) -> Option<Vec<TaskMetadataCompatibilityFinding>> {
         self.compatibility_report().findings_nonempty()
     }
 
+    pub fn compatibility_findings_nonempty_with_settlement_snapshot(
+        &self,
+        settlement: Option<&TaskSettlementSnapshot>,
+    ) -> Option<Vec<TaskMetadataCompatibilityFinding>> {
+        self.compatibility_report_with_settlement_snapshot(settlement)
+            .findings_nonempty()
+    }
+
     pub fn primary_compatibility_finding(&self) -> Option<TaskMetadataCompatibilityFinding> {
         self.compatibility_report().primary_finding()
     }
 
+    pub fn primary_compatibility_finding_with_settlement_snapshot(
+        &self,
+        settlement: Option<&TaskSettlementSnapshot>,
+    ) -> Option<TaskMetadataCompatibilityFinding> {
+        self.compatibility_report_with_settlement_snapshot(settlement)
+            .primary_finding()
+    }
+
     pub fn requires_runtime_metadata_upgrade(&self) -> bool {
         self.compatibility_report().requires_governance_upgrade
+    }
+
+    pub fn requires_runtime_metadata_upgrade_with_settlement_snapshot(
+        &self,
+        settlement: Option<&TaskSettlementSnapshot>,
+    ) -> bool {
+        self.compatibility_report_with_settlement_snapshot(settlement)
+            .requires_governance_upgrade
     }
 }
 
@@ -646,6 +816,12 @@ mod tests {
         assert!(metadata.model.is_none());
         assert!(metadata.provenance.is_none());
         assert!(metadata.metering.is_none());
+        assert!(metadata.settlement.is_none());
+        assert!(
+            metadata
+                .compatibility_profile()
+                .complete_settlement_snapshot
+        );
     }
 
     #[test]
@@ -688,6 +864,15 @@ mod tests {
                 worker_slash_rebate_per_work_unit_num: 1,
                 worker_slash_rebate_per_work_unit_den: 384,
             }),
+            settlement: Some(TaskSettlementSnapshot {
+                settlement_schema: "poco_v1".into(),
+                tokenizer_id: "llama3-tokenizer".into(),
+                tokenizer_version: "1.0.0".into(),
+                output_hash: format!("0x{}", "e".repeat(64)),
+                output_token_count: 512,
+                output_root: Some(format!("0x{}", "f".repeat(64))),
+                output_span_commitment: None,
+            }),
         };
 
         let raw = serde_json::to_string(&metadata).expect("serialize metadata");
@@ -698,10 +883,87 @@ mod tests {
         assert!(!compatibility.legacy_note_only);
         assert!(compatibility.canonical_core_fields);
         assert!(compatibility.complete_metering_snapshot);
+        assert!(compatibility.complete_settlement_snapshot);
         assert!(compatibility.is_runtime_compatible());
         assert!(!compatibility.requires_governance_upgrade());
         assert!(!decoded.requires_runtime_metadata_upgrade());
         assert_eq!(decoded.compatibility_findings_nonempty(), None);
+    }
+
+    #[test]
+    fn task_metadata_settlement_alias_deserializes_into_threaded_settlement() {
+        let metadata: TaskMetadata = serde_json::from_value(serde_json::json!({
+            "note": "interop",
+            "task_type": "inference",
+            "input_hash": format!("0x{}", "a".repeat(64)),
+            "settlement_snapshot": {
+                "settlement_schema": "poco_v1",
+                "tokenizer_id": "llama3-tokenizer",
+                "tokenizer_version": "1.0.0",
+                "output_hash": format!("0x{}", "b".repeat(64)),
+                "output_token_count": 512,
+                "output_root": format!("0x{}", "c".repeat(64))
+            }
+        }))
+        .expect("legacy settlement alias should deserialize");
+
+        let settlement = metadata
+            .settlement
+            .as_ref()
+            .expect("alias should populate threaded settlement field");
+        assert_eq!(settlement.output_hash, format!("0x{}", "b".repeat(64)));
+        assert_eq!(
+            settlement.output_root.as_deref(),
+            Some(format!("0x{}", "c".repeat(64)).as_str())
+        );
+        assert_eq!(
+            metadata.settlement_snapshot_source(None),
+            TaskSettlementSnapshotSource::ThreadedMetadata
+        );
+        assert!(
+            metadata
+                .compatibility_profile()
+                .complete_settlement_snapshot
+        );
+    }
+
+    #[test]
+    fn task_metadata_settlement_alias_yields_to_canonical_settlement_when_both_are_present() {
+        let metadata: TaskMetadata = serde_json::from_value(serde_json::json!({
+            "note": "interop",
+            "task_type": "inference",
+            "input_hash": format!("0x{}", "d".repeat(64)),
+            "settlement": {
+                "settlement_schema": "poco_v1",
+                "tokenizer_id": "llama3-tokenizer",
+                "tokenizer_version": "1.0.0",
+                "output_hash": format!("0x{}", "e".repeat(64)),
+                "output_token_count": 512,
+                "output_root": null,
+                "output_span_commitment": null
+            },
+            "settlement_snapshot": {
+                "settlement_schema": "poco_v1",
+                "tokenizer_id": "llama3-tokenizer",
+                "tokenizer_version": "1.0.0",
+                "output_hash": format!("0x{}", "f".repeat(64)),
+                "output_token_count": 512,
+                "output_root": format!("0x{}", "1".repeat(64))
+            }
+        }))
+        .expect("mixed canonical and alias settlement payload should deserialize");
+
+        let settlement = metadata
+            .settlement
+            .as_ref()
+            .expect("canonical settlement should remain threaded");
+        assert_eq!(settlement.output_hash, format!("0x{}", "e".repeat(64)));
+        assert!(settlement.output_root.is_none());
+        assert!(settlement.output_span_commitment.is_none());
+        assert_eq!(
+            metadata.compatibility_findings(),
+            vec![TaskMetadataCompatibilityFinding::IncompleteSettlementSnapshot]
+        );
     }
 
     #[test]
@@ -735,6 +997,7 @@ mod tests {
                 worker_slash_rebate_per_work_unit_num: 0,
                 worker_slash_rebate_per_work_unit_den: 1,
             }),
+            settlement: None,
         };
 
         let report = metadata.compatibility_report();
@@ -769,6 +1032,7 @@ mod tests {
         assert!(compatibility.legacy_note_only);
         assert!(compatibility.canonical_core_fields);
         assert!(compatibility.complete_metering_snapshot);
+        assert!(compatibility.complete_settlement_snapshot);
         assert!(compatibility.is_runtime_compatible());
         assert!(compatibility.requires_governance_upgrade());
         assert!(metadata.requires_runtime_metadata_upgrade());
@@ -794,6 +1058,7 @@ mod tests {
             legacy_note_only: true,
             canonical_core_fields: false,
             complete_metering_snapshot: false,
+            complete_settlement_snapshot: false,
         };
 
         assert_eq!(
@@ -802,6 +1067,7 @@ mod tests {
                 TaskMetadataCompatibilityFinding::LegacyNoteOnlyPayload,
                 TaskMetadataCompatibilityFinding::NonCanonicalCoreFields,
                 TaskMetadataCompatibilityFinding::IncompleteMeteringSnapshot,
+                TaskMetadataCompatibilityFinding::IncompleteSettlementSnapshot,
             ]
         );
         assert_eq!(
@@ -827,6 +1093,11 @@ mod tests {
                 .expect("serialize finding"),
             serde_json::json!("incomplete_metering_snapshot")
         );
+        assert_eq!(
+            serde_json::to_value(TaskMetadataCompatibilityFinding::IncompleteSettlementSnapshot)
+                .expect("serialize finding"),
+            serde_json::json!("incomplete_settlement_snapshot")
+        );
     }
 
     #[test]
@@ -836,12 +1107,15 @@ mod tests {
                 legacy_note_only: true,
                 canonical_core_fields: false,
                 complete_metering_snapshot: false,
+                complete_settlement_snapshot: false,
             },
             requires_governance_upgrade: true,
+            settlement_snapshot_source: TaskSettlementSnapshotSource::Absent,
             findings: vec![
                 TaskMetadataCompatibilityFinding::LegacyNoteOnlyPayload,
                 TaskMetadataCompatibilityFinding::NonCanonicalCoreFields,
                 TaskMetadataCompatibilityFinding::IncompleteMeteringSnapshot,
+                TaskMetadataCompatibilityFinding::IncompleteSettlementSnapshot,
             ],
         };
 
@@ -855,6 +1129,7 @@ mod tests {
                 TaskMetadataCompatibilityFinding::LegacyNoteOnlyPayload,
                 TaskMetadataCompatibilityFinding::NonCanonicalCoreFields,
                 TaskMetadataCompatibilityFinding::IncompleteMeteringSnapshot,
+                TaskMetadataCompatibilityFinding::IncompleteSettlementSnapshot,
             ])
         );
         assert_eq!(
@@ -863,13 +1138,15 @@ mod tests {
                 "compatibility": {
                     "legacy_note_only": true,
                     "canonical_core_fields": false,
-                    "complete_metering_snapshot": false
+                    "complete_metering_snapshot": false,
+                    "complete_settlement_snapshot": false
                 },
                 "requires_governance_upgrade": true,
                 "findings": [
                     "legacy_note_only_payload",
                     "non_canonical_core_fields",
-                    "incomplete_metering_snapshot"
+                    "incomplete_metering_snapshot",
+                    "incomplete_settlement_snapshot"
                 ]
             })
         );
@@ -882,13 +1159,45 @@ mod tests {
                 legacy_note_only: false,
                 canonical_core_fields: true,
                 complete_metering_snapshot: true,
+                complete_settlement_snapshot: true,
             },
             requires_governance_upgrade: false,
+            settlement_snapshot_source: TaskSettlementSnapshotSource::Absent,
             findings: Vec::new(),
         };
 
         assert_eq!(report.primary_finding(), None);
         assert_eq!(report.findings_nonempty(), None);
+    }
+
+    #[test]
+    fn task_metadata_compatibility_report_serializes_threaded_settlement_source_when_present() {
+        let report = TaskMetadataCompatibilityReport {
+            compatibility: TaskMetadataCompatibility {
+                legacy_note_only: false,
+                canonical_core_fields: true,
+                complete_metering_snapshot: true,
+                complete_settlement_snapshot: true,
+            },
+            requires_governance_upgrade: false,
+            settlement_snapshot_source: TaskSettlementSnapshotSource::ThreadedMetadata,
+            findings: Vec::new(),
+        };
+
+        assert_eq!(
+            serde_json::to_value(&report).expect("serialize report"),
+            serde_json::json!({
+                "compatibility": {
+                    "legacy_note_only": false,
+                    "canonical_core_fields": true,
+                    "complete_metering_snapshot": true,
+                    "complete_settlement_snapshot": true
+                },
+                "requires_governance_upgrade": false,
+                "settlement_snapshot_source": "threaded_metadata",
+                "findings": []
+            })
+        );
     }
 
     #[test]
@@ -899,6 +1208,7 @@ mod tests {
         assert!(compatibility.legacy_note_only);
         assert!(!compatibility.canonical_core_fields);
         assert!(compatibility.complete_metering_snapshot);
+        assert!(compatibility.complete_settlement_snapshot);
         assert!(!compatibility.is_runtime_compatible());
         assert!(compatibility.requires_governance_upgrade());
         assert!(metadata.requires_runtime_metadata_upgrade());
@@ -943,6 +1253,7 @@ mod tests {
         assert!(!compatibility.legacy_note_only);
         assert!(!compatibility.canonical_core_fields);
         assert!(compatibility.complete_metering_snapshot);
+        assert!(compatibility.complete_settlement_snapshot);
         assert!(!compatibility.is_runtime_compatible());
         assert!(compatibility.requires_governance_upgrade());
         assert!(metadata.requires_runtime_metadata_upgrade());
@@ -985,6 +1296,7 @@ mod tests {
         assert!(!compatibility.legacy_note_only);
         assert!(compatibility.canonical_core_fields);
         assert!(!compatibility.complete_metering_snapshot);
+        assert!(compatibility.complete_settlement_snapshot);
         assert!(!compatibility.is_runtime_compatible());
         assert!(compatibility.requires_governance_upgrade());
         assert!(metadata.requires_runtime_metadata_upgrade());
@@ -1031,6 +1343,7 @@ mod tests {
         assert!(!compatibility.legacy_note_only);
         assert!(compatibility.canonical_core_fields);
         assert!(!compatibility.complete_metering_snapshot);
+        assert!(compatibility.complete_settlement_snapshot);
         assert!(!compatibility.is_runtime_compatible());
         assert!(compatibility.requires_governance_upgrade());
         assert!(metadata.requires_runtime_metadata_upgrade());
@@ -1047,6 +1360,341 @@ mod tests {
         assert_eq!(
             metadata.primary_compatibility_finding(),
             Some(TaskMetadataCompatibilityFinding::IncompleteMeteringSnapshot)
+        );
+    }
+
+    #[test]
+    fn task_metadata_compatibility_report_with_settlement_snapshot_keeps_settlement_verdict_distinct(
+    ) {
+        let metadata = TaskMetadata {
+            note: Some("interop".into()),
+            task_type: Some("inference".into()),
+            input_hash: Some("a".repeat(64)),
+            ..TaskMetadata::default()
+        };
+        let settlement = TaskSettlementSnapshot {
+            settlement_schema: "poco_v1".into(),
+            tokenizer_id: "llama3-tokenizer".into(),
+            tokenizer_version: "1.0.0".into(),
+            output_hash: format!("0x{}", "e".repeat(64)),
+            output_token_count: 512,
+            output_root: None,
+            output_span_commitment: None,
+        };
+
+        let report = metadata.compatibility_report_with_settlement_snapshot(Some(&settlement));
+
+        assert!(!report.compatibility.legacy_note_only);
+        assert!(report.compatibility.canonical_core_fields);
+        assert!(report.compatibility.complete_metering_snapshot);
+        assert!(!report.compatibility.complete_settlement_snapshot);
+        assert!(!report.compatibility.is_runtime_compatible());
+        assert!(report.requires_governance_upgrade);
+        assert_eq!(
+            report.findings,
+            vec![TaskMetadataCompatibilityFinding::IncompleteSettlementSnapshot]
+        );
+        assert_eq!(
+            report.primary_finding(),
+            Some(TaskMetadataCompatibilityFinding::IncompleteSettlementSnapshot)
+        );
+    }
+
+    #[test]
+    fn task_metadata_compatibility_report_keeps_legacy_note_only_with_fallback_settlement() {
+        let metadata: TaskMetadata = serde_json::from_str(r#"{"note":"legacy"}"#)
+            .expect("legacy payload should deserialize");
+        let settlement = TaskSettlementSnapshot {
+            settlement_schema: "poco_v1".into(),
+            tokenizer_id: "llama3-tokenizer".into(),
+            tokenizer_version: "1.0.0".into(),
+            output_hash: format!("0x{}", "a".repeat(64)),
+            output_token_count: 512,
+            output_root: Some(format!("0x{}", "b".repeat(64))),
+            output_span_commitment: None,
+        };
+
+        let report = metadata.compatibility_report_with_settlement_snapshot(Some(&settlement));
+
+        assert_eq!(
+            report.settlement_snapshot_source,
+            TaskSettlementSnapshotSource::LegacyFallback
+        );
+        assert_eq!(
+            metadata.settlement_snapshot_source(Some(&settlement)),
+            TaskSettlementSnapshotSource::LegacyFallback
+        );
+        assert!(report.compatibility.legacy_note_only);
+        assert!(report.compatibility.canonical_core_fields);
+        assert!(report.compatibility.complete_metering_snapshot);
+        assert!(report.compatibility.complete_settlement_snapshot);
+        assert!(report.compatibility.is_runtime_compatible());
+        assert!(report.requires_governance_upgrade);
+        assert_eq!(
+            report.findings,
+            vec![TaskMetadataCompatibilityFinding::LegacyNoteOnlyPayload]
+        );
+        assert_eq!(
+            report.primary_finding(),
+            Some(TaskMetadataCompatibilityFinding::LegacyNoteOnlyPayload)
+        );
+    }
+
+    #[test]
+    fn task_metadata_compatibility_report_keeps_legacy_note_only_with_incomplete_fallback_settlement(
+    ) {
+        let metadata: TaskMetadata = serde_json::from_str(r#"{"note":"legacy"}"#)
+            .expect("legacy payload should deserialize");
+        let settlement = TaskSettlementSnapshot {
+            settlement_schema: "poco_v1".into(),
+            tokenizer_id: "llama3-tokenizer".into(),
+            tokenizer_version: "1.0.0".into(),
+            output_hash: format!("0x{}", "c".repeat(64)),
+            output_token_count: 512,
+            output_root: None,
+            output_span_commitment: None,
+        };
+
+        let report = metadata.compatibility_report_with_settlement_snapshot(Some(&settlement));
+
+        assert_eq!(
+            report.settlement_snapshot_source,
+            TaskSettlementSnapshotSource::LegacyFallback
+        );
+        assert_eq!(
+            metadata.settlement_snapshot_source(Some(&settlement)),
+            TaskSettlementSnapshotSource::LegacyFallback
+        );
+        assert!(report.compatibility.legacy_note_only);
+        assert!(report.compatibility.canonical_core_fields);
+        assert!(report.compatibility.complete_metering_snapshot);
+        assert!(!report.compatibility.complete_settlement_snapshot);
+        assert!(!report.compatibility.is_runtime_compatible());
+        assert!(report.requires_governance_upgrade);
+        assert_eq!(
+            report.findings,
+            vec![
+                TaskMetadataCompatibilityFinding::LegacyNoteOnlyPayload,
+                TaskMetadataCompatibilityFinding::IncompleteSettlementSnapshot,
+            ]
+        );
+        assert_eq!(
+            report.primary_finding(),
+            Some(TaskMetadataCompatibilityFinding::LegacyNoteOnlyPayload)
+        );
+    }
+
+    #[test]
+    fn task_metadata_compatibility_report_treats_threaded_settlement_as_non_legacy_shape() {
+        let metadata: TaskMetadata = serde_json::from_value(serde_json::json!({
+            "note": "legacy",
+            "settlement": {
+                "settlement_schema": "poco_v1",
+                "tokenizer_id": "llama3-tokenizer",
+                "tokenizer_version": "1.0.0",
+                "output_hash": format!("0x{}", "c".repeat(64)),
+                "output_token_count": 512,
+                "output_root": format!("0x{}", "d".repeat(64))
+            }
+        }))
+        .expect("threaded settlement payload should deserialize");
+
+        let report = metadata.compatibility_report();
+
+        assert_eq!(
+            report.settlement_snapshot_source,
+            TaskSettlementSnapshotSource::ThreadedMetadata
+        );
+        assert_eq!(
+            metadata.settlement_snapshot_source(None),
+            TaskSettlementSnapshotSource::ThreadedMetadata
+        );
+        assert!(!report.compatibility.legacy_note_only);
+        assert!(report.compatibility.canonical_core_fields);
+        assert!(report.compatibility.complete_metering_snapshot);
+        assert!(report.compatibility.complete_settlement_snapshot);
+        assert!(report.compatibility.is_runtime_compatible());
+        assert!(!report.requires_governance_upgrade);
+        assert!(report.findings.is_empty());
+        assert_eq!(report.primary_finding(), None);
+    }
+
+    #[test]
+    fn task_metadata_settlement_snapshot_helper_accessors_share_fallback_logic() {
+        let metadata = TaskMetadata {
+            note: Some("interop".into()),
+            task_type: Some("inference".into()),
+            input_hash: Some("a".repeat(64)),
+            ..TaskMetadata::default()
+        };
+        let settlement = TaskSettlementSnapshot {
+            settlement_schema: "poco_v1".into(),
+            tokenizer_id: "llama3-tokenizer".into(),
+            tokenizer_version: "1.0.0".into(),
+            output_hash: format!("0x{}", "5".repeat(64)),
+            output_token_count: 512,
+            output_root: None,
+            output_span_commitment: None,
+        };
+
+        assert_eq!(
+            metadata.compatibility_profile_with_settlement_snapshot(Some(&settlement)),
+            TaskMetadataCompatibility {
+                legacy_note_only: false,
+                canonical_core_fields: true,
+                complete_metering_snapshot: true,
+                complete_settlement_snapshot: false,
+            }
+        );
+        assert_eq!(
+            metadata.compatibility_findings_with_settlement_snapshot(Some(&settlement)),
+            vec![TaskMetadataCompatibilityFinding::IncompleteSettlementSnapshot]
+        );
+        assert_eq!(
+            metadata.compatibility_findings_nonempty_with_settlement_snapshot(Some(&settlement)),
+            Some(vec![
+                TaskMetadataCompatibilityFinding::IncompleteSettlementSnapshot
+            ])
+        );
+        assert_eq!(
+            metadata.primary_compatibility_finding_with_settlement_snapshot(Some(&settlement)),
+            Some(TaskMetadataCompatibilityFinding::IncompleteSettlementSnapshot)
+        );
+        assert!(
+            metadata.requires_runtime_metadata_upgrade_with_settlement_snapshot(Some(&settlement))
+        );
+    }
+
+    #[test]
+    fn task_metadata_compatibility_report_uses_inline_settlement_snapshot() {
+        let metadata = TaskMetadata {
+            note: Some("interop".into()),
+            task_type: Some("inference".into()),
+            input_hash: Some("a".repeat(64)),
+            settlement: Some(TaskSettlementSnapshot {
+                settlement_schema: "poco_v1".into(),
+                tokenizer_id: "llama3-tokenizer".into(),
+                tokenizer_version: "1.0.0".into(),
+                output_hash: format!("0x{}", "1".repeat(64)),
+                output_token_count: 512,
+                output_root: None,
+                output_span_commitment: None,
+            }),
+            ..TaskMetadata::default()
+        };
+
+        let report = metadata.compatibility_report();
+
+        assert_eq!(
+            report.settlement_snapshot_source,
+            TaskSettlementSnapshotSource::ThreadedMetadata
+        );
+        assert!(!report.compatibility.legacy_note_only);
+        assert!(report.compatibility.canonical_core_fields);
+        assert!(report.compatibility.complete_metering_snapshot);
+        assert!(!report.compatibility.complete_settlement_snapshot);
+        assert!(!report.compatibility.is_runtime_compatible());
+        assert!(report.requires_governance_upgrade);
+        assert_eq!(
+            report.findings,
+            vec![TaskMetadataCompatibilityFinding::IncompleteSettlementSnapshot]
+        );
+        assert_eq!(
+            report.primary_finding(),
+            Some(TaskMetadataCompatibilityFinding::IncompleteSettlementSnapshot)
+        );
+    }
+
+    #[test]
+    fn task_metadata_compatibility_report_prefers_threaded_settlement_snapshot() {
+        let metadata = TaskMetadata {
+            note: Some("interop".into()),
+            task_type: Some("inference".into()),
+            input_hash: Some("a".repeat(64)),
+            settlement: Some(TaskSettlementSnapshot {
+                settlement_schema: "poco_v1".into(),
+                tokenizer_id: "llama3-tokenizer".into(),
+                tokenizer_version: "1.0.0".into(),
+                output_hash: format!("0x{}", "2".repeat(64)),
+                output_token_count: 512,
+                output_root: Some(format!("0x{}", "3".repeat(64))),
+                output_span_commitment: None,
+            }),
+            ..TaskMetadata::default()
+        };
+        let fallback_settlement = TaskSettlementSnapshot {
+            settlement_schema: "poco_v1".into(),
+            tokenizer_id: "llama3-tokenizer".into(),
+            tokenizer_version: "1.0.0".into(),
+            output_hash: format!("0x{}", "4".repeat(64)),
+            output_token_count: 512,
+            output_root: None,
+            output_span_commitment: None,
+        };
+
+        let report =
+            metadata.compatibility_report_with_settlement_snapshot(Some(&fallback_settlement));
+
+        assert_eq!(
+            report.settlement_snapshot_source,
+            TaskSettlementSnapshotSource::ThreadedMetadata
+        );
+        assert!(!report.compatibility.legacy_note_only);
+        assert!(report.compatibility.canonical_core_fields);
+        assert!(report.compatibility.complete_metering_snapshot);
+        assert!(report.compatibility.complete_settlement_snapshot);
+        assert!(report.compatibility.is_runtime_compatible());
+        assert!(!report.requires_governance_upgrade);
+        assert!(report.findings.is_empty());
+        assert_eq!(report.primary_finding(), None);
+    }
+
+    #[test]
+    fn task_metadata_settlement_snapshot_source_distinguishes_threaded_from_legacy_fallback() {
+        let fallback_settlement = TaskSettlementSnapshot {
+            settlement_schema: "poco_v1".into(),
+            tokenizer_id: "llama3-tokenizer".into(),
+            tokenizer_version: "1.0.0".into(),
+            output_hash: format!("0x{}", "6".repeat(64)),
+            output_token_count: 512,
+            output_root: Some(format!("0x{}", "7".repeat(64))),
+            output_span_commitment: None,
+        };
+
+        let legacy_metadata = TaskMetadata::default();
+        assert_eq!(
+            legacy_metadata.settlement_snapshot_source(None),
+            TaskSettlementSnapshotSource::Absent
+        );
+        assert_eq!(
+            legacy_metadata.settlement_snapshot_source(Some(&fallback_settlement)),
+            TaskSettlementSnapshotSource::LegacyFallback
+        );
+
+        let threaded_metadata = TaskMetadata {
+            settlement: Some(TaskSettlementSnapshot {
+                settlement_schema: "poco_v1".into(),
+                tokenizer_id: "llama3-tokenizer".into(),
+                tokenizer_version: "1.0.0".into(),
+                output_hash: format!("0x{}", "8".repeat(64)),
+                output_token_count: 512,
+                output_root: Some(format!("0x{}", "9".repeat(64))),
+                output_span_commitment: None,
+            }),
+            ..TaskMetadata::default()
+        };
+
+        assert_eq!(
+            threaded_metadata.settlement_snapshot_source(None),
+            TaskSettlementSnapshotSource::ThreadedMetadata
+        );
+        assert_eq!(
+            threaded_metadata.settlement_snapshot_source(Some(&fallback_settlement)),
+            TaskSettlementSnapshotSource::ThreadedMetadata
+        );
+        assert_eq!(
+            threaded_metadata.effective_settlement_snapshot(Some(&fallback_settlement)),
+            threaded_metadata.settlement.as_ref()
         );
     }
 

@@ -64,6 +64,7 @@ fn rpc_task_query_includes_metadata_compatibility_when_present() {
             legacy_note_only: false,
             canonical_core_fields: true,
             complete_metering_snapshot: true,
+            complete_settlement_snapshot: true,
         }),
         metadata_runtime_compatible: Some(true),
         metadata_requires_governance_upgrade: Some(false),
@@ -79,6 +80,10 @@ fn rpc_task_query_includes_metadata_compatibility_when_present() {
     );
     assert_eq!(
         v["metadata_compatibility"]["complete_metering_snapshot"],
+        json!(true)
+    );
+    assert_eq!(
+        v["metadata_compatibility"]["complete_settlement_snapshot"],
         json!(true)
     );
     assert_eq!(v["metadata_runtime_compatible"], json!(true));
@@ -98,6 +103,7 @@ fn rpc_task_query_includes_metadata_compatibility_findings_when_present() {
             legacy_note_only: false,
             canonical_core_fields: false,
             complete_metering_snapshot: false,
+            complete_settlement_snapshot: true,
         }),
         metadata_runtime_compatible: Some(false),
         metadata_requires_governance_upgrade: Some(true),
@@ -136,6 +142,7 @@ fn rpc_task_query_omits_empty_metadata_compatibility_findings_array() {
             legacy_note_only: false,
             canonical_core_fields: true,
             complete_metering_snapshot: true,
+            complete_settlement_snapshot: true,
         }),
         metadata_runtime_compatible: Some(true),
         metadata_requires_governance_upgrade: Some(false),

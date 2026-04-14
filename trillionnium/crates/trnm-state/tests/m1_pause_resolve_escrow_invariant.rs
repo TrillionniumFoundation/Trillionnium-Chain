@@ -4351,6 +4351,7 @@ fn paused_state_restore_pending_resolve_snapshot_scrubs_non_canonical_model_meta
                     worker_slash_rebate_per_work_unit_num: 0,
                     worker_slash_rebate_per_work_unit_den: 1,
                 }),
+                settlement: None,
                 ..Default::default()
             }),
             worker: Some("worker-paused".into()),
@@ -4457,6 +4458,7 @@ fn paused_state_restore_pending_resolve_snapshot_accepts_case_and_order_equivale
                     worker_slash_rebate_per_work_unit_num: 0,
                     worker_slash_rebate_per_work_unit_den: 1,
                 }),
+                settlement: None,
                 ..Default::default()
             }),
             worker: Some("worker-paused".into()),
@@ -5101,6 +5103,7 @@ fn paused_state_restore_pending_resolve_snapshot_scrubs_reserved_worker_boundary
                 }),
                 model: None,
                 provenance: None,
+                settlement: None,
             }),
             worker: Some("treasury.challenge_forfeits".into()),
             committed_hash: None,
