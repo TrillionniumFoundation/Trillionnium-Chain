@@ -584,6 +584,25 @@ pub struct TaskObject {
     pub version: u64,
 }
 
+impl TaskObject {
+    /// Migration helper for settlement write paths that operate on whole task
+    /// objects. Creates canonical metadata on demand only when a fallback
+    /// settlement snapshot is present and has not already been threaded.
+    /// Returns true when the task payload changed.
+    pub fn thread_settlement_snapshot(
+        &mut self,
+        settlement: Option<&TaskSettlementSnapshot>,
+    ) -> bool {
+        let Some(settlement) = settlement else {
+            return false;
+        };
+
+        self.metadata
+            .get_or_insert_with(TaskMetadata::default)
+            .thread_settlement_snapshot(Some(settlement))
+    }
+}
+
 #[repr(u8)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub enum GovProposalStatus {

@@ -1,7 +1,32 @@
 use trnm_types::{
-    TaskMetadata, TaskMetadataCompatibility, TaskMetadataCompatibilityFinding,
-    TaskSettlementSnapshot, TaskSettlementSnapshotSource,
+    TaskMetadata, TaskMetadataCompatibility, TaskMetadataCompatibilityFinding, TaskObject,
+    TaskSettlementSnapshot, TaskSettlementSnapshotSource, TaskStatus,
 };
+
+fn task_with_metadata(metadata: Option<TaskMetadata>) -> TaskObject {
+    TaskObject {
+        task_id: 42,
+        creator: "did:trnm:creator:test".into(),
+        bounty: 777,
+        status: TaskStatus::Assigned,
+        proof_type: Default::default(),
+        metadata,
+        worker: None,
+        committed_hash: None,
+        result_hash: None,
+        reveal_salt: None,
+        committed_at_height: None,
+        reveal_deadline_height: None,
+        challenge_deadline_height: None,
+        challenge_window_blocks_snapshot: None,
+        challenged_at_height: None,
+        resolve_deadline_height: None,
+        challenge_bond: None,
+        challenger: None,
+        challenge_bond_forfeited: None,
+        version: 1,
+    }
+}
 
 #[test]
 fn task_metadata_compatibility_truth_table_preserves_typed_governance_upgrade_decisions() {
@@ -256,7 +281,8 @@ fn task_metadata_compatibility_truth_table_preserves_typed_governance_upgrade_de
 }
 
 #[test]
-fn task_metadata_compatibility_truth_table_settlement_threading_promotes_legacy_fallback_without_breaking_note_only_compatibility() {
+fn task_metadata_compatibility_truth_table_settlement_threading_promotes_legacy_fallback_without_breaking_note_only_compatibility(
+) {
     let fallback_settlement = TaskSettlementSnapshot {
         settlement_schema: "poco_v1".into(),
         tokenizer_id: "llama3-tokenizer".into(),
@@ -309,8 +335,8 @@ fn task_metadata_compatibility_truth_table_settlement_threading_promotes_legacy_
 }
 
 #[test]
-fn task_metadata_compatibility_truth_table_settlement_threading_keeps_legacy_note_only_fallback_distinct_from_threaded_incomplete_snapshot()
-{
+fn task_metadata_compatibility_truth_table_settlement_threading_keeps_legacy_note_only_fallback_distinct_from_threaded_incomplete_snapshot(
+) {
     let incomplete_fallback_settlement = TaskSettlementSnapshot {
         settlement_schema: "poco_v1".into(),
         tokenizer_id: "llama3-tokenizer".into(),
@@ -368,7 +394,8 @@ fn task_metadata_compatibility_truth_table_settlement_threading_keeps_legacy_not
 }
 
 #[test]
-fn task_metadata_compatibility_truth_table_settlement_threading_serialization_keeps_legacy_note_only_shape_compact() {
+fn task_metadata_compatibility_truth_table_settlement_threading_serialization_keeps_legacy_note_only_shape_compact(
+) {
     let fallback_settlement = TaskSettlementSnapshot {
         settlement_schema: "poco_v1".into(),
         tokenizer_id: "llama3-tokenizer".into(),
@@ -412,7 +439,8 @@ fn task_metadata_compatibility_truth_table_settlement_threading_serialization_ke
 }
 
 #[test]
-fn task_metadata_compatibility_truth_table_settlement_threading_report_serialization_preserves_fallback_vs_threaded_source() {
+fn task_metadata_compatibility_truth_table_settlement_threading_report_serialization_preserves_fallback_vs_threaded_source(
+) {
     let fallback_settlement = TaskSettlementSnapshot {
         settlement_schema: "poco_v1".into(),
         tokenizer_id: "llama3-tokenizer".into(),
@@ -466,7 +494,8 @@ fn task_metadata_compatibility_truth_table_settlement_threading_report_serializa
 }
 
 #[test]
-fn task_metadata_compatibility_truth_table_settlement_threading_prefers_incomplete_inline_settlement_over_complete_legacy_fallback() {
+fn task_metadata_compatibility_truth_table_settlement_threading_prefers_incomplete_inline_settlement_over_complete_legacy_fallback(
+) {
     let inline_settlement = TaskSettlementSnapshot {
         settlement_schema: "poco_v1".into(),
         tokenizer_id: "llama3-tokenizer".into(),
@@ -515,4 +544,43 @@ fn task_metadata_compatibility_truth_table_settlement_threading_prefers_incomple
         report.primary_finding(),
         Some(TaskMetadataCompatibilityFinding::IncompleteSettlementSnapshot)
     );
+}
+
+#[test]
+fn task_metadata_compatibility_truth_table_task_object_threading_creates_metadata_when_absent() {
+    let fallback_settlement = TaskSettlementSnapshot {
+        settlement_schema: "poco_v1".into(),
+        tokenizer_id: "llama3-tokenizer".into(),
+        tokenizer_version: "1.0.0".into(),
+        output_hash: format!("0x{}", "5".repeat(64)),
+        output_token_count: 512,
+        output_root: Some(format!("0x{}", "6".repeat(64))),
+        output_span_commitment: None,
+    };
+    let mut task = task_with_metadata(None);
+
+    assert!(task.thread_settlement_snapshot(Some(&fallback_settlement)));
+    assert_eq!(
+        task.metadata
+            .as_ref()
+            .and_then(|metadata| metadata.settlement.as_ref()),
+        Some(&fallback_settlement)
+    );
+    assert_eq!(
+        task.metadata
+            .as_ref()
+            .expect("threading should materialize task metadata")
+            .settlement_snapshot_source(None),
+        TaskSettlementSnapshotSource::ThreadedMetadata
+    );
+    assert!(!task.thread_settlement_snapshot(Some(&fallback_settlement)));
+}
+
+#[test]
+fn task_metadata_compatibility_truth_table_task_object_threading_ignores_absent_fallback_without_materializing_metadata(
+) {
+    let mut task = task_with_metadata(None);
+
+    assert!(!task.thread_settlement_snapshot(None));
+    assert!(task.metadata.is_none());
 }
