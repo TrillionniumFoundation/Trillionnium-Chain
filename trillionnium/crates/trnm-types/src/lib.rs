@@ -139,9 +139,9 @@ pub struct TaskSettlementSnapshot {
     pub tokenizer_version: String,
     pub output_hash: String,
     pub output_token_count: u64,
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     pub output_root: Option<String>,
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     pub output_span_commitment: Option<String>,
 }
 
@@ -238,17 +238,17 @@ impl TaskMetadataCompatibilityReport {
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Default)]
 pub struct TaskMetadata {
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     pub note: Option<String>,
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     pub task_type: Option<String>,
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     pub input_hash: Option<String>,
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     pub model: Option<TaskModelMetadata>,
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     pub provenance: Option<TaskProvenanceMetadata>,
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     pub metering: Option<TaskMeteringSnapshot>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub settlement: Option<TaskSettlementSnapshot>,
@@ -582,6 +582,69 @@ pub struct TaskObject {
     /// true = challenger bond forfeited/slashed; false = refunded
     pub challenge_bond_forfeited: Option<bool>,
     pub version: u64,
+}
+
+impl TaskObject {
+    /// Query helper for task-level callers that need a stable typed
+    /// compatibility report without open-coding metadata/fallback precedence
+    /// or materializing metadata by hand.
+    pub fn compatibility_report_with_settlement_snapshot(
+        &self,
+        settlement: Option<&TaskSettlementSnapshot>,
+    ) -> TaskMetadataCompatibilityReport {
+        if let Some(metadata) = self.metadata.as_ref() {
+            metadata.compatibility_report_with_settlement_snapshot(settlement)
+        } else {
+            TaskMetadata::default().compatibility_report_with_settlement_snapshot(settlement)
+        }
+    }
+
+    /// Query helper for task-level callers that still carry settlement out of
+    /// band. Reuses `TaskMetadata` precedence without materializing metadata
+    /// just to explain whether settlement is absent, legacy fallback, or
+    /// already threaded into canonical task metadata.
+    pub fn settlement_snapshot_source(
+        &self,
+        settlement: Option<&TaskSettlementSnapshot>,
+    ) -> TaskSettlementSnapshotSource {
+        if let Some(metadata) = self.metadata.as_ref() {
+            metadata.settlement_snapshot_source(settlement)
+        } else if settlement.is_some() {
+            TaskSettlementSnapshotSource::LegacyFallback
+        } else {
+            TaskSettlementSnapshotSource::Absent
+        }
+    }
+
+    /// Read-only helper for task-level callers that need the effective
+    /// settlement snapshot without open-coding metadata/fallback precedence.
+    pub fn effective_settlement_snapshot<'a>(
+        &'a self,
+        settlement: Option<&'a TaskSettlementSnapshot>,
+    ) -> Option<&'a TaskSettlementSnapshot> {
+        if let Some(metadata) = self.metadata.as_ref() {
+            metadata.effective_settlement_snapshot(settlement)
+        } else {
+            settlement
+        }
+    }
+
+    /// Migration helper for settlement write paths that operate on whole task
+    /// objects. Creates canonical metadata on demand only when a fallback
+    /// settlement snapshot is present and has not already been threaded.
+    /// Returns true when the task payload changed.
+    pub fn thread_settlement_snapshot(
+        &mut self,
+        settlement: Option<&TaskSettlementSnapshot>,
+    ) -> bool {
+        let Some(settlement) = settlement else {
+            return false;
+        };
+
+        self.metadata
+            .get_or_insert_with(TaskMetadata::default)
+            .thread_settlement_snapshot(Some(settlement))
+    }
 }
 
 #[repr(u8)]
