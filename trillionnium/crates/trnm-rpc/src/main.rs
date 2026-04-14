@@ -1853,6 +1853,80 @@ mod settlement_governance_query_tests {
     }
 
     #[test]
+    fn settlement_governance_query_projects_pending_shadow_flag_rollback_to_live_hybrid_weights() {
+        let mut st = StateStore::new();
+        st.restore_gov_param(
+            7_351,
+            Some(GovParamObject {
+                key_id: 7_351,
+                key: HYBRID_SETTLEMENT_POCO_WEIGHT_BPS_KEY.into(),
+                value: "2500".into(),
+                version: 1,
+            }),
+        );
+        st.restore_gov_param(
+            7_352,
+            Some(GovParamObject {
+                key_id: 7_352,
+                key: SHADOW_SETTLEMENT_COMPARE_ONLY_KEY.into(),
+                value: "true".into(),
+                version: 1,
+            }),
+        );
+        st.set_gov_param(
+            42,
+            7_352,
+            SHADOW_SETTLEMENT_COMPARE_ONLY_KEY.into(),
+            "false".into(),
+        )
+        .expect("shadow compare-only rollback should stage through governance");
+
+        let out = settlement_governance_query_response(&st)
+            .expect("staged shadow-flag rollback settlement query should succeed");
+
+        assert_eq!(
+            out.live_configuration_status,
+            SettlementGovernanceConfigurationStatus::Configured
+        );
+        assert_eq!(out.mode, SettlementGovernanceMode::ShadowCompareOnly);
+        assert_eq!(out.underlying_mode, SettlementGovernanceMode::Hybrid);
+        assert_eq!(
+            out.settlement_write_gate_status,
+            SettlementWriteGateStatus::Open
+        );
+        assert!(out.shadow_compare_only);
+        assert_eq!(out.poco_weight_bps, 2_500);
+        assert_eq!(out.pouw_weight_bps, 7_500);
+        assert_eq!(out.effective_poco_weight_bps, 0);
+        assert_eq!(out.effective_pouw_weight_bps, 10_000);
+        assert!(out.shadow_masks_nonzero_poco_weight);
+        assert!(out.has_pending_updates);
+        assert_eq!(out.staged_activate_at_height, Some(62));
+        assert_eq!(
+            out.staged_configuration_status,
+            Some(SettlementGovernanceConfigurationStatus::Configured)
+        );
+        assert_eq!(out.staged_mode, Some(SettlementGovernanceMode::Hybrid));
+        assert_eq!(
+            out.staged_underlying_mode,
+            Some(SettlementGovernanceMode::Hybrid)
+        );
+        assert_eq!(out.staged_effective_poco_weight_bps, Some(2_500));
+        assert_eq!(out.staged_effective_pouw_weight_bps, Some(7_500));
+        assert_eq!(out.staged_shadow_masks_nonzero_poco_weight, Some(false));
+        assert_eq!(
+            out.pending_shadow_compare_only,
+            Some(PendingGovParamUpdateQueryResponse {
+                key_id: 7_352,
+                key: SHADOW_SETTLEMENT_COMPARE_ONLY_KEY.into(),
+                value: "false".into(),
+                activate_at_height: 62,
+            })
+        );
+        assert!(out.pending_poco_weight_bps.is_none());
+    }
+
+    #[test]
     fn settlement_governance_query_reports_emergency_pause_write_gate_over_live_hybrid_config() {
         let mut st = StateStore::new();
         st.restore_gov_param(
