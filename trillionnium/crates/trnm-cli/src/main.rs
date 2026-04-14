@@ -4556,8 +4556,8 @@ mod tests {
 
     #[test]
     fn consumption_settlement_cli_parser_rejects_submit_receipt_without_receipt_json() {
-        let err = Args::try_parse_from(["trnm-cli", "tx", "submit-consumption-receipt"])
-            .unwrap_err();
+        let err =
+            Args::try_parse_from(["trnm-cli", "tx", "submit-consumption-receipt"]).unwrap_err();
 
         assert_eq!(err.kind(), clap::error::ErrorKind::MissingRequiredArgument);
         let rendered = err.to_string();
@@ -5306,7 +5306,8 @@ mod tests {
     }
 
     #[test]
-    fn consumption_settlement_write_paths_reject_discount_resolution_without_credited_units_without_parser() {
+    fn consumption_settlement_write_paths_reject_discount_resolution_without_credited_units_without_parser(
+    ) {
         let err = resolve_consumption_tx(
             42,
             "consumer-bravo".into(),

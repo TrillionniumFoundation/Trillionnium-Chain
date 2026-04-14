@@ -29,7 +29,9 @@ fn tmp_dir(label: &str) -> PathBuf {
         .duration_since(UNIX_EPOCH)
         .unwrap()
         .as_nanos();
-    let temp_root = std::env::temp_dir().canonicalize().unwrap_or_else(|_| std::env::temp_dir());
+    let temp_root = std::env::temp_dir()
+        .canonicalize()
+        .unwrap_or_else(|_| std::env::temp_dir());
     let p = temp_root.join(format!("trnm-cli-{label}-{ts}"));
     std::fs::create_dir_all(&p).unwrap();
     p
@@ -165,7 +167,9 @@ fn smoke_wallet_import_rejects_symlinked_final_out_path() {
     let stderr = String::from_utf8_lossy(&out.stderr);
     assert!(
         stderr.contains("explicit wallet store")
-            || stderr.contains("is a symlink; refusing to write keys through non-regular wallet store path"),
+            || stderr.contains(
+                "is a symlink; refusing to write keys through non-regular wallet store path"
+            ),
         "unexpected stderr: {}",
         stderr
     );
@@ -208,10 +212,14 @@ fn smoke_wallet_sign_rejects_multiline_message() {
         ])
         .output()
         .unwrap();
-    assert!(!out.status.success(), "multiline signer input should fail closed");
+    assert!(
+        !out.status.success(),
+        "multiline signer input should fail closed"
+    );
     let stderr = String::from_utf8_lossy(&out.stderr);
     assert!(
-        stderr.contains("sign message must be single-line printable text without control characters"),
+        stderr
+            .contains("sign message must be single-line printable text without control characters"),
         "unexpected stderr: {}",
         stderr
     );
@@ -259,7 +267,8 @@ fn smoke_wallet_sign_rejects_bidi_control_message() {
     );
     let stderr = String::from_utf8_lossy(&out.stderr);
     assert!(
-        stderr.contains("sign message must be single-line printable text without control characters"),
+        stderr
+            .contains("sign message must be single-line printable text without control characters"),
         "unexpected stderr: {}",
         stderr
     );
@@ -307,9 +316,21 @@ fn smoke_wallet_sign_accepts_wrapped_absolute_env_store() {
         String::from_utf8_lossy(&out.stderr)
     );
     let stdout = String::from_utf8_lossy(&out.stdout);
-    assert!(stdout.contains("wallet_name=alice"), "unexpected stdout: {}", stdout);
-    assert!(stdout.contains("message_sha256="), "unexpected stdout: {}", stdout);
-    assert!(stdout.contains("signature="), "unexpected stdout: {}", stdout);
+    assert!(
+        stdout.contains("wallet_name=alice"),
+        "unexpected stdout: {}",
+        stdout
+    );
+    assert!(
+        stdout.contains("message_sha256="),
+        "unexpected stdout: {}",
+        stdout
+    );
+    assert!(
+        stdout.contains("signature="),
+        "unexpected stdout: {}",
+        stdout
+    );
 }
 
 #[test]
@@ -336,7 +357,14 @@ fn smoke_wallet_sign_rejects_invalid_env_store_fallback() {
     );
 
     let out = Command::new(bin())
-        .args(["wallet", "sign", "--name", "alice", "--message", "approve tx"])
+        .args([
+            "wallet",
+            "sign",
+            "--name",
+            "alice",
+            "--message",
+            "approve tx",
+        ])
         .env("TRNM_WALLET_STORE", "\u{2068}\"./wallets\"\u{2069}")
         .output()
         .unwrap();
@@ -780,11 +808,17 @@ fn smoke_wallet_sign_emits_message_sha256_hint() {
         ])
         .output()
         .unwrap();
-    assert!(out.status.success(), "stderr: {}", String::from_utf8_lossy(&out.stderr));
+    assert!(
+        out.status.success(),
+        "stderr: {}",
+        String::from_utf8_lossy(&out.stderr)
+    );
     let s = String::from_utf8_lossy(&out.stdout);
     assert!(s.contains("wallet_name=alice"));
     assert!(s.contains(&format!("message={message}")));
-    assert!(s.contains("message_sha256=0921750d68e4f12cb9b90b90e66f3406f4bcf49e1a4a312e693fa5d8236d1cab"));
+    assert!(s.contains(
+        "message_sha256=0921750d68e4f12cb9b90b90e66f3406f4bcf49e1a4a312e693fa5d8236d1cab"
+    ));
     assert!(s.contains("signature="));
 }
 
@@ -954,8 +988,9 @@ fn smoke_tx_transfer_rejects_invalid_env_store_fallback() {
     );
     let stderr = String::from_utf8_lossy(&out.stderr);
     assert!(
-        stderr.contains("TRNM_WALLET_STORE is set but invalid; refusing ambiguous keystore path fallback")
-            || stderr.contains("must be an absolute normalized symlink-free path"),
+        stderr.contains(
+            "TRNM_WALLET_STORE is set but invalid; refusing ambiguous keystore path fallback"
+        ) || stderr.contains("must be an absolute normalized symlink-free path"),
         "unexpected stderr: {stderr}"
     );
 }
