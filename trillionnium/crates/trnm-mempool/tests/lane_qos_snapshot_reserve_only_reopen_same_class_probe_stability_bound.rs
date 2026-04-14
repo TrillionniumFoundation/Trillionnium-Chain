@@ -8,9 +8,15 @@ fn reserve_only_qos_snapshot_reopened_shared_slot_survives_same_class_duplicate_
     // lane. Fill it, drain one occupant, and verify the reopened shared slot stays
     // observable even when duplicate probes arrive from the same ingress class as
     // the still-queued ids.
-    assert_eq!(gate.admit(1, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(1, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
     assert_eq!(gate.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
-    assert_eq!(gate.admit(3, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(3, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
 
     assert_eq!(gate.pop_ready(), Some(1));
 
@@ -30,7 +36,10 @@ fn reserve_only_qos_snapshot_reopened_shared_slot_survives_same_class_duplicate_
     // reopened shared slot visible to both sponsor-backed and free ingress.
     assert_eq!(gate.admit(2, IngressClass::Normal), AdmitOutcome::Duplicate);
     assert_eq!(gate.qos_snapshot(), reopened);
-    assert_eq!(gate.admit(3, IngressClass::Critical), AdmitOutcome::Duplicate);
+    assert_eq!(
+        gate.admit(3, IngressClass::Critical),
+        AdmitOutcome::Duplicate
+    );
     assert_eq!(gate.qos_snapshot(), reopened);
 
     // The reopened slot should still accept fresh work immediately after the

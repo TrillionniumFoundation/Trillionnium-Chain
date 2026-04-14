@@ -1,7 +1,8 @@
 use trnm_mempool::{AdmitOutcome, IngressClass, LaneAdmissionGate, LaneQosSnapshot};
 
 #[test]
-fn borrowed_last_idle_critical_slot_snapshot_closes_normal_headroom_until_active_critical_backlog_truly_clears() {
+fn borrowed_last_idle_critical_slot_snapshot_closes_normal_headroom_until_active_critical_backlog_truly_clears(
+) {
     let mut gate = LaneAdmissionGate::new(4, 2);
 
     // Fill dedicated normal capacity, then borrow exactly one idle critical slot.
@@ -25,7 +26,10 @@ fn borrowed_last_idle_critical_slot_snapshot_closes_normal_headroom_until_active
 
     // Once live critical backlog consumes the final reserved slot, aggregate
     // saturation must close normal admission immediately.
-    assert_eq!(gate.admit(20, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(20, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
     assert_eq!(gate.queued_counts(), (2, 2, 4));
     assert_eq!(
         gate.qos_snapshot(),

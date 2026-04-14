@@ -39,8 +39,14 @@ fn oversized_critical_reserve_clamps_qos_snapshot_to_reserve_only_contract() {
 
     // Fresh retry noise from either class must not perturb the clamped reserve-only
     // QoS surface while the lane stays saturated.
-    assert_eq!(gate.admit(12, IngressClass::Normal), AdmitOutcome::Backpressured);
+    assert_eq!(
+        gate.admit(12, IngressClass::Normal),
+        AdmitOutcome::Backpressured
+    );
     assert_eq!(gate.qos_snapshot(), saturated);
-    assert_eq!(gate.admit(10, IngressClass::Critical), AdmitOutcome::Duplicate);
+    assert_eq!(
+        gate.admit(10, IngressClass::Critical),
+        AdmitOutcome::Duplicate
+    );
     assert_eq!(gate.qos_snapshot(), saturated);
 }

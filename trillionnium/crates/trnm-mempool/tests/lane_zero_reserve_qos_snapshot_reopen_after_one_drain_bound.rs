@@ -5,7 +5,10 @@ fn zero_reserve_qos_snapshot_reopens_both_classes_after_one_shared_slot_drains()
     let mut gate = LaneAdmissionGate::new(2, 0);
 
     // Zero-reserve mode routes both classes through the shared normal lane.
-    assert_eq!(gate.admit(10, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(10, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
     assert_eq!(gate.admit(20, IngressClass::Normal), AdmitOutcome::Accepted);
     assert_eq!(
         gate.qos_snapshot(),
@@ -39,6 +42,12 @@ fn zero_reserve_qos_snapshot_reopens_both_classes_after_one_shared_slot_drains()
         }
     );
 
-    assert_eq!(gate.admit(30, IngressClass::Critical), AdmitOutcome::Accepted);
-    assert_eq!(gate.admit(30, IngressClass::Normal), AdmitOutcome::Duplicate);
+    assert_eq!(
+        gate.admit(30, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
+    assert_eq!(
+        gate.admit(30, IngressClass::Normal),
+        AdmitOutcome::Duplicate
+    );
 }

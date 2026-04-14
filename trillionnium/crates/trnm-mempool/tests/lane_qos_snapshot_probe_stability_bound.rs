@@ -9,7 +9,10 @@ fn qos_snapshot_stays_stable_across_guarded_fresh_and_duplicate_probe_noise() {
     assert_eq!(gate.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
     assert_eq!(gate.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
     assert_eq!(gate.admit(3, IngressClass::Normal), AdmitOutcome::Accepted);
-    assert_eq!(gate.admit(10, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(10, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
 
     let expected = LaneQosSnapshot {
         normal_queued: 3,
@@ -28,14 +31,23 @@ fn qos_snapshot_stays_stable_across_guarded_fresh_and_duplicate_probe_noise() {
     // perturb observability while the final free slot remains protected for
     // critical ingress.
     for tx_id in [70_u64, 71, 72] {
-        assert_eq!(gate.admit(tx_id, IngressClass::Normal), AdmitOutcome::Backpressured);
+        assert_eq!(
+            gate.admit(tx_id, IngressClass::Normal),
+            AdmitOutcome::Backpressured
+        );
         assert_eq!(gate.qos_snapshot(), expected);
     }
 
     // Duplicate probes for the still-queued critical tx must also leave the
     // QoS snapshot untouched across ingress classes.
-    assert_eq!(gate.admit(10, IngressClass::Normal), AdmitOutcome::Duplicate);
+    assert_eq!(
+        gate.admit(10, IngressClass::Normal),
+        AdmitOutcome::Duplicate
+    );
     assert_eq!(gate.qos_snapshot(), expected);
-    assert_eq!(gate.admit(10, IngressClass::Critical), AdmitOutcome::Duplicate);
+    assert_eq!(
+        gate.admit(10, IngressClass::Critical),
+        AdmitOutcome::Duplicate
+    );
     assert_eq!(gate.qos_snapshot(), expected);
 }

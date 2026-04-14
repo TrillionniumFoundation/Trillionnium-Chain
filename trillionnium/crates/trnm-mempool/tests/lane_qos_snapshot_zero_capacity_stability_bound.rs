@@ -30,7 +30,10 @@ fn zero_capacity_qos_snapshot_stays_hard_stopped_across_probe_noise_and_idle_pol
 
     // Repeated probes for the same fresh id must likewise stay backpressured and
     // leave observability unchanged instead of poisoning duplicate state.
-    assert_eq!(gate.admit(70, IngressClass::Critical), AdmitOutcome::Backpressured);
+    assert_eq!(
+        gate.admit(70, IngressClass::Critical),
+        AdmitOutcome::Backpressured
+    );
     assert_eq!(gate.qos_snapshot(), expected);
 
     // Idle scheduler polls must preserve the hard-stop surface too.

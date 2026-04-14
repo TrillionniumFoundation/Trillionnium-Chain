@@ -6,7 +6,10 @@ fn reserve_only_qos_snapshot_reopens_immediately_after_last_borrowed_slot_drains
 
     // Reserve-only mode routes all ingress through the shared critical lane.
     assert_eq!(gate.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
-    assert_eq!(gate.admit(2, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(2, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
     assert_eq!(gate.admit(3, IngressClass::Normal), AdmitOutcome::Accepted);
     assert_eq!(gate.queued_counts(), (0, 3, 3));
     assert_eq!(

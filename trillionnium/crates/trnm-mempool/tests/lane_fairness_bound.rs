@@ -230,11 +230,20 @@ fn duplicate_probe_noise_does_not_make_warm_fairness_skip_oldest_normal() {
 
     // Replays of queued work across both classes should stay classificatory only:
     // they must not cool warm fairness or let the newer normal item jump ahead.
-    assert_eq!(gate.admit(1, IngressClass::Critical), AdmitOutcome::Duplicate);
-    assert_eq!(gate.admit(102, IngressClass::Normal), AdmitOutcome::Duplicate);
+    assert_eq!(
+        gate.admit(1, IngressClass::Critical),
+        AdmitOutcome::Duplicate
+    );
+    assert_eq!(
+        gate.admit(102, IngressClass::Normal),
+        AdmitOutcome::Duplicate
+    );
 
     // The anti-starvation turn should still serve the oldest normal item first.
     assert_eq!(gate.pop_ready(), Some(1));
     let second = gate.pop_ready();
-    assert!(matches!(second, Some(101) | Some(102) | Some(103) | Some(2)));
+    assert!(matches!(
+        second,
+        Some(101) | Some(102) | Some(103) | Some(2)
+    ));
 }

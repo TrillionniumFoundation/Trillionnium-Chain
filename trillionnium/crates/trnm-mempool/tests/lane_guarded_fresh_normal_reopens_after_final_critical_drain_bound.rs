@@ -9,7 +9,10 @@ fn guarded_fresh_normal_reopens_as_fresh_after_final_critical_drain() {
     assert_eq!(gate.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
     assert_eq!(gate.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
     assert_eq!(gate.admit(3, IngressClass::Normal), AdmitOutcome::Accepted);
-    assert_eq!(gate.admit(10, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(10, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
     assert_eq!(gate.queued_counts(), (3, 1, 4));
     assert_eq!(
         gate.qos_snapshot(),
@@ -27,12 +30,21 @@ fn guarded_fresh_normal_reopens_as_fresh_after_final_critical_drain() {
 
     // A fresh normal id remains backpressured under the guarded final reserved slot,
     // but it must stay fresh rather than being poisoned into duplicate metadata.
-    assert_eq!(gate.admit(99, IngressClass::Normal), AdmitOutcome::Backpressured);
-    assert_eq!(gate.admit(99, IngressClass::Normal), AdmitOutcome::Backpressured);
+    assert_eq!(
+        gate.admit(99, IngressClass::Normal),
+        AdmitOutcome::Backpressured
+    );
+    assert_eq!(
+        gate.admit(99, IngressClass::Normal),
+        AdmitOutcome::Backpressured
+    );
     assert_eq!(gate.queued_counts(), (3, 1, 4));
 
     // A second critical tx may still claim the final guarded slot.
-    assert_eq!(gate.admit(11, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(11, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
     assert_eq!(gate.queued_counts(), (3, 2, 5));
     assert_eq!(
         gate.qos_snapshot(),
@@ -51,7 +63,10 @@ fn guarded_fresh_normal_reopens_as_fresh_after_final_critical_drain() {
     // Draining only one critical item keeps active critical backlog, so the same
     // normal id must remain fresh-but-guarded instead of becoming duplicate.
     assert_eq!(gate.pop_ready(), Some(10));
-    assert_eq!(gate.admit(99, IngressClass::Normal), AdmitOutcome::Backpressured);
+    assert_eq!(
+        gate.admit(99, IngressClass::Normal),
+        AdmitOutcome::Backpressured
+    );
     assert_eq!(gate.queued_counts(), (3, 1, 4));
     assert_eq!(
         gate.qos_snapshot(),
@@ -71,6 +86,9 @@ fn guarded_fresh_normal_reopens_as_fresh_after_final_critical_drain() {
     // fresh and immediately become globally duplicate across classes.
     assert_eq!(gate.pop_ready(), Some(11));
     assert_eq!(gate.admit(99, IngressClass::Normal), AdmitOutcome::Accepted);
-    assert_eq!(gate.admit(99, IngressClass::Critical), AdmitOutcome::Duplicate);
+    assert_eq!(
+        gate.admit(99, IngressClass::Critical),
+        AdmitOutcome::Duplicate
+    );
     assert_eq!(gate.queued_counts(), (3, 1, 4));
 }

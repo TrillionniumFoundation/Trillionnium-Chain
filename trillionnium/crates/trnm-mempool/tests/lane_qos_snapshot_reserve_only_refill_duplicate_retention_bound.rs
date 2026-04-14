@@ -7,7 +7,10 @@ fn reserve_only_refilled_shared_slot_keeps_duplicate_retention_without_masking_r
     // Reserve-only mode models the launch-day sponsor/free-ingress boundary:
     // both ingress classes share one public admission surface.
     assert_eq!(gate.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
-    assert_eq!(gate.admit(2, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(2, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
     assert_eq!(gate.admit(3, IngressClass::Normal), AdmitOutcome::Accepted);
 
     let saturated = LaneQosSnapshot {
@@ -37,7 +40,10 @@ fn reserve_only_refilled_shared_slot_keeps_duplicate_retention_without_masking_r
     assert_eq!(gate.qos_snapshot(), reopened);
 
     // A fresh refill may consume the reopened slot through either ingress class.
-    assert_eq!(gate.admit(4, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(4, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
     assert_eq!(gate.qos_snapshot(), saturated);
 
     // Once the refilled id is queued, cross-class replay probes for that id must

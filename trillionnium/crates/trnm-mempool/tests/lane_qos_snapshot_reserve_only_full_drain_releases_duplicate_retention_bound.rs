@@ -8,7 +8,10 @@ fn reserve_only_full_drain_releases_duplicate_retention_and_restores_shared_head
     // both ingress classes share one public admission surface until the queued
     // survivors actually drain.
     assert_eq!(gate.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
-    assert_eq!(gate.admit(2, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(2, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
     assert_eq!(gate.admit(3, IngressClass::Normal), AdmitOutcome::Accepted);
 
     let saturated = LaneQosSnapshot {
@@ -38,7 +41,10 @@ fn reserve_only_full_drain_releases_duplicate_retention_and_restores_shared_head
     };
     assert_eq!(gate.qos_snapshot(), reopened);
     assert_eq!(gate.admit(2, IngressClass::Normal), AdmitOutcome::Duplicate);
-    assert_eq!(gate.admit(3, IngressClass::Critical), AdmitOutcome::Duplicate);
+    assert_eq!(
+        gate.admit(3, IngressClass::Critical),
+        AdmitOutcome::Duplicate
+    );
     assert_eq!(gate.qos_snapshot(), reopened);
 
     // Once the queued survivors truly leave the shared lane, retention must be
@@ -61,6 +67,9 @@ fn reserve_only_full_drain_releases_duplicate_retention_and_restores_shared_head
     assert_eq!(gate.qos_snapshot(), empty);
 
     // After the drain boundary, either class may re-enter as fresh work.
-    assert_eq!(gate.admit(2, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(2, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
     assert_eq!(gate.admit(3, IngressClass::Normal), AdmitOutcome::Accepted);
 }

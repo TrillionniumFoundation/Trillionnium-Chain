@@ -8,7 +8,10 @@ fn reserve_only_drain_only_full_drain_releases_duplicate_retention_and_restores_
     // drain-only sponsor revocation stance: surviving queued ids must remain
     // globally duplicate-classified until they truly leave the shared lane.
     assert_eq!(gate.admit(10, IngressClass::Normal), AdmitOutcome::Accepted);
-    assert_eq!(gate.admit(20, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(20, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
     assert_eq!(gate.admit(30, IngressClass::Normal), AdmitOutcome::Accepted);
 
     let saturated = LaneQosSnapshot {
@@ -37,8 +40,14 @@ fn reserve_only_drain_only_full_drain_releases_duplicate_retention_and_restores_
         fresh_critical_admissible: true,
     };
     assert_eq!(gate.qos_snapshot(), reopened_once);
-    assert_eq!(gate.admit(20, IngressClass::Normal), AdmitOutcome::Duplicate);
-    assert_eq!(gate.admit(30, IngressClass::Critical), AdmitOutcome::Duplicate);
+    assert_eq!(
+        gate.admit(20, IngressClass::Normal),
+        AdmitOutcome::Duplicate
+    );
+    assert_eq!(
+        gate.admit(30, IngressClass::Critical),
+        AdmitOutcome::Duplicate
+    );
     assert_eq!(gate.qos_snapshot(), reopened_once);
 
     // Even with two shared slots reopened, the final queued survivor must stay
@@ -55,7 +64,10 @@ fn reserve_only_drain_only_full_drain_releases_duplicate_retention_and_restores_
         fresh_critical_admissible: true,
     };
     assert_eq!(gate.qos_snapshot(), reopened_twice);
-    assert_eq!(gate.admit(30, IngressClass::Critical), AdmitOutcome::Duplicate);
+    assert_eq!(
+        gate.admit(30, IngressClass::Critical),
+        AdmitOutcome::Duplicate
+    );
     assert_eq!(gate.qos_snapshot(), reopened_twice);
 
     // Once the last queued survivor truly drains, duplicate retention must be
@@ -74,6 +86,9 @@ fn reserve_only_drain_only_full_drain_releases_duplicate_retention_and_restores_
         fresh_critical_admissible: true,
     };
     assert_eq!(gate.qos_snapshot(), empty);
-    assert_eq!(gate.admit(20, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(20, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
     assert_eq!(gate.admit(30, IngressClass::Normal), AdmitOutcome::Accepted);
 }

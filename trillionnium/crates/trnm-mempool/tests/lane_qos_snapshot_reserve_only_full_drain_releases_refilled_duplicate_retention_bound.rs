@@ -8,7 +8,10 @@ fn reserve_only_full_drain_releases_refilled_duplicate_retention_and_restores_cr
     // both ingress classes share one public admission surface until queued work
     // actually drains out of the lane.
     assert_eq!(gate.admit(10, IngressClass::Normal), AdmitOutcome::Accepted);
-    assert_eq!(gate.admit(20, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(20, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
     assert_eq!(gate.admit(30, IngressClass::Normal), AdmitOutcome::Accepted);
 
     let saturated = LaneQosSnapshot {
@@ -37,13 +40,22 @@ fn reserve_only_full_drain_releases_refilled_duplicate_retention_and_restores_cr
         fresh_critical_admissible: true,
     };
     assert_eq!(gate.qos_snapshot(), reopened);
-    assert_eq!(gate.admit(10, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(10, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
     assert_eq!(gate.qos_snapshot(), saturated);
 
     // While queued, both the refilled id and older survivors remain globally
     // duplicate-classified across ingress classes.
-    assert_eq!(gate.admit(10, IngressClass::Normal), AdmitOutcome::Duplicate);
-    assert_eq!(gate.admit(30, IngressClass::Critical), AdmitOutcome::Duplicate);
+    assert_eq!(
+        gate.admit(10, IngressClass::Normal),
+        AdmitOutcome::Duplicate
+    );
+    assert_eq!(
+        gate.admit(30, IngressClass::Critical),
+        AdmitOutcome::Duplicate
+    );
     assert_eq!(gate.qos_snapshot(), saturated);
 
     // After a true full drain, duplicate retention must be released for both the
@@ -64,6 +76,9 @@ fn reserve_only_full_drain_releases_refilled_duplicate_retention_and_restores_cr
         fresh_critical_admissible: true,
     };
     assert_eq!(gate.qos_snapshot(), empty);
-    assert_eq!(gate.admit(30, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(30, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
     assert_eq!(gate.admit(10, IngressClass::Normal), AdmitOutcome::Accepted);
 }

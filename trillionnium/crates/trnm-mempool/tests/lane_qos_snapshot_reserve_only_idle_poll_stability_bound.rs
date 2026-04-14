@@ -6,7 +6,10 @@ fn reserve_only_qos_snapshot_stays_cold_and_reopened_across_idle_polls_after_ful
 
     // Reserve-only mode routes all live work through the shared critical lane.
     assert_eq!(gate.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
-    assert_eq!(gate.admit(2, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(2, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
     assert_eq!(gate.admit(3, IngressClass::Normal), AdmitOutcome::Accepted);
 
     assert_eq!(gate.pop_ready(), Some(1));
@@ -36,7 +39,10 @@ fn reserve_only_qos_snapshot_stays_cold_and_reopened_across_idle_polls_after_ful
 
     // After the idle-poll noise, either ingress class should still be able to
     // consume freshly reopened shared capacity immediately.
-    assert_eq!(gate.admit(70, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(70, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
     assert_eq!(gate.qos_snapshot().total_queued, 1);
     assert!(gate.qos_snapshot().fresh_normal_admissible);
     assert!(gate.qos_snapshot().fresh_critical_admissible);

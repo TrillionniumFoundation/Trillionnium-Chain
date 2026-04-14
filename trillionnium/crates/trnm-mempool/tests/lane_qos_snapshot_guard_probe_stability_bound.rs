@@ -9,7 +9,10 @@ fn qos_snapshot_stays_stable_while_last_reserved_critical_slot_is_guarded() {
     assert_eq!(gate.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
     assert_eq!(gate.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
     assert_eq!(gate.admit(3, IngressClass::Normal), AdmitOutcome::Accepted);
-    assert_eq!(gate.admit(10, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(10, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
     assert_eq!(gate.queued_counts(), (3, 1, 4));
 
     let expected = LaneQosSnapshot {
@@ -28,20 +31,32 @@ fn qos_snapshot_stays_stable_while_last_reserved_critical_slot_is_guarded() {
     // While the final reserved slot is guard-owned, fresh normal retries must stay
     // backpressured and must not perturb the operator-facing QoS snapshot.
     for tx_id in [70_u64, 71_u64, 72_u64] {
-        assert_eq!(gate.admit(tx_id, IngressClass::Normal), AdmitOutcome::Backpressured);
+        assert_eq!(
+            gate.admit(tx_id, IngressClass::Normal),
+            AdmitOutcome::Backpressured
+        );
         assert_eq!(gate.qos_snapshot(), expected);
     }
 
     // Duplicate probes for the already queued critical item must also leave the
     // guarded snapshot unchanged across ingress classes.
-    assert_eq!(gate.admit(10, IngressClass::Critical), AdmitOutcome::Duplicate);
+    assert_eq!(
+        gate.admit(10, IngressClass::Critical),
+        AdmitOutcome::Duplicate
+    );
     assert_eq!(gate.qos_snapshot(), expected);
-    assert_eq!(gate.admit(10, IngressClass::Normal), AdmitOutcome::Duplicate);
+    assert_eq!(
+        gate.admit(10, IngressClass::Normal),
+        AdmitOutcome::Duplicate
+    );
     assert_eq!(gate.qos_snapshot(), expected);
 
     // Fresh critical ingress may still consume the guarded slot, after which the
     // snapshot should flip to fully saturated semantics.
-    assert_eq!(gate.admit(11, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(11, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
     assert_eq!(
         gate.qos_snapshot(),
         LaneQosSnapshot {

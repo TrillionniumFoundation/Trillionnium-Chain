@@ -1,14 +1,18 @@
 use trnm_mempool::{AdmitOutcome, IngressClass, LaneAdmissionGate, LaneQosSnapshot};
 
 #[test]
-fn reserve_only_drain_only_refilled_lane_keeps_survivor_duplicate_noise_from_masking_reopened_headroom() {
+fn reserve_only_drain_only_refilled_lane_keeps_survivor_duplicate_noise_from_masking_reopened_headroom(
+) {
     let mut gate = LaneAdmissionGate::new(3, 3);
 
     // Reserve-only mode models the Day-1 sponsor/free-ingress boundary under a
     // drain-only sponsor revocation stance: queued survivors stay globally
     // duplicate-classified until they truly leave the shared lane.
     assert_eq!(gate.admit(10, IngressClass::Normal), AdmitOutcome::Accepted);
-    assert_eq!(gate.admit(20, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(20, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
     assert_eq!(gate.admit(30, IngressClass::Normal), AdmitOutcome::Accepted);
 
     let saturated = LaneQosSnapshot {
@@ -37,7 +41,10 @@ fn reserve_only_drain_only_refilled_lane_keeps_survivor_duplicate_noise_from_mas
         fresh_critical_admissible: true,
     };
     assert_eq!(gate.qos_snapshot(), reopened);
-    assert_eq!(gate.admit(40, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(40, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
     assert_eq!(gate.qos_snapshot(), saturated);
 
     // After another real drain, the still-queued pre-revocation survivor and the
@@ -45,9 +52,15 @@ fn reserve_only_drain_only_refilled_lane_keeps_survivor_duplicate_noise_from_mas
     // purely classificatory and keep the newly reopened public headroom visible.
     assert_eq!(gate.pop_ready(), Some(20));
     assert_eq!(gate.qos_snapshot(), reopened);
-    assert_eq!(gate.admit(30, IngressClass::Critical), AdmitOutcome::Duplicate);
+    assert_eq!(
+        gate.admit(30, IngressClass::Critical),
+        AdmitOutcome::Duplicate
+    );
     assert_eq!(gate.qos_snapshot(), reopened);
-    assert_eq!(gate.admit(40, IngressClass::Normal), AdmitOutcome::Duplicate);
+    assert_eq!(
+        gate.admit(40, IngressClass::Normal),
+        AdmitOutcome::Duplicate
+    );
     assert_eq!(gate.qos_snapshot(), reopened);
 
     // The reopened shared slot must still be usable immediately for fresh work.

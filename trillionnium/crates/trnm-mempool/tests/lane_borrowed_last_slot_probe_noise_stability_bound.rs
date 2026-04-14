@@ -23,10 +23,16 @@ fn borrowed_last_idle_critical_slot_probe_noise_keeps_qos_snapshot_flat() {
 
     // Once the last reserved slot is borrowed, duplicate probes for the borrowed id
     // and fresh critical retries must not perturb operator-facing QoS state.
-    assert_eq!(gate.admit(3, IngressClass::Critical), AdmitOutcome::Duplicate);
+    assert_eq!(
+        gate.admit(3, IngressClass::Critical),
+        AdmitOutcome::Duplicate
+    );
     assert_eq!(gate.qos_snapshot(), borrowed_snapshot);
 
-    assert_eq!(gate.admit(99, IngressClass::Critical), AdmitOutcome::Backpressured);
+    assert_eq!(
+        gate.admit(99, IngressClass::Critical),
+        AdmitOutcome::Backpressured
+    );
     assert_eq!(gate.qos_snapshot(), borrowed_snapshot);
     assert_eq!(gate.queued_counts(), (2, 1, 3));
 }

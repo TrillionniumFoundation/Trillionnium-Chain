@@ -5,7 +5,10 @@ fn zero_reserve_qos_snapshot_stays_stable_across_saturated_fresh_and_duplicate_p
     let mut gate = LaneAdmissionGate::new(2, 0);
 
     // Zero-reserve mode routes all ingress through normal capacity.
-    assert_eq!(gate.admit(10, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(10, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
     assert_eq!(gate.admit(20, IngressClass::Normal), AdmitOutcome::Accepted);
 
     let expected = LaneQosSnapshot {
@@ -34,8 +37,14 @@ fn zero_reserve_qos_snapshot_stays_stable_across_saturated_fresh_and_duplicate_p
 
     // Already queued ids must remain Duplicate across classes, again without
     // changing the saturated snapshot surface exposed to operators.
-    assert_eq!(gate.admit(10, IngressClass::Normal), AdmitOutcome::Duplicate);
+    assert_eq!(
+        gate.admit(10, IngressClass::Normal),
+        AdmitOutcome::Duplicate
+    );
     assert_eq!(gate.qos_snapshot(), expected);
-    assert_eq!(gate.admit(20, IngressClass::Critical), AdmitOutcome::Duplicate);
+    assert_eq!(
+        gate.admit(20, IngressClass::Critical),
+        AdmitOutcome::Duplicate
+    );
     assert_eq!(gate.qos_snapshot(), expected);
 }

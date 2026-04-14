@@ -5,7 +5,10 @@ fn critical_spillover_requires_real_dedicated_normal_headroom_and_reopens_after_
     let mut gate = LaneAdmissionGate::new(3, 1);
 
     // Occupy the dedicated critical slot, then consume every dedicated normal slot.
-    assert_eq!(gate.admit(10, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(10, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
     assert_eq!(gate.admit(20, IngressClass::Normal), AdmitOutcome::Accepted);
     assert_eq!(gate.admit(21, IngressClass::Normal), AdmitOutcome::Accepted);
     assert_eq!(gate.queued_counts(), (2, 1, 3));
@@ -25,7 +28,10 @@ fn critical_spillover_requires_real_dedicated_normal_headroom_and_reopens_after_
 
     // With no dedicated normal slot left, further critical traffic must stay
     // backpressured rather than fabricating extra spillover capacity.
-    assert_eq!(gate.admit(30, IngressClass::Critical), AdmitOutcome::Backpressured);
+    assert_eq!(
+        gate.admit(30, IngressClass::Critical),
+        AdmitOutcome::Backpressured
+    );
     assert_eq!(gate.queued_counts(), (2, 1, 3));
     assert_eq!(
         gate.qos_snapshot(),
@@ -60,7 +66,13 @@ fn critical_spillover_requires_real_dedicated_normal_headroom_and_reopens_after_
         }
     );
 
-    assert_eq!(gate.admit(30, IngressClass::Critical), AdmitOutcome::Accepted);
-    assert_eq!(gate.admit(30, IngressClass::Normal), AdmitOutcome::Duplicate);
+    assert_eq!(
+        gate.admit(30, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
+    assert_eq!(
+        gate.admit(30, IngressClass::Normal),
+        AdmitOutcome::Duplicate
+    );
     assert_eq!(gate.queued_counts(), (2, 1, 3));
 }

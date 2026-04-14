@@ -1,14 +1,18 @@
 use trnm_mempool::{AdmitOutcome, IngressClass, LaneAdmissionGate, LaneQosSnapshot};
 
 #[test]
-fn reserve_only_reopened_snapshot_survives_duplicate_noise_before_same_class_drained_retry_resaturates() {
+fn reserve_only_reopened_snapshot_survives_duplicate_noise_before_same_class_drained_retry_resaturates(
+) {
     let mut gate = LaneAdmissionGate::new(3, 3);
 
     // Reserve-only mode routes both ingress classes through the shared critical
     // lane. After one occupant drains, observers should immediately see a single
     // reopened shared slot for either sponsor-backed or free ingress.
     assert_eq!(gate.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
-    assert_eq!(gate.admit(2, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(2, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
     assert_eq!(gate.admit(3, IngressClass::Normal), AdmitOutcome::Accepted);
     assert_eq!(gate.pop_ready(), Some(1));
 
@@ -28,7 +32,10 @@ fn reserve_only_reopened_snapshot_survives_duplicate_noise_before_same_class_dra
     // and leave the reopened shared slot visible before the drained id re-enters.
     assert_eq!(gate.admit(2, IngressClass::Normal), AdmitOutcome::Duplicate);
     assert_eq!(gate.qos_snapshot(), reopened);
-    assert_eq!(gate.admit(3, IngressClass::Critical), AdmitOutcome::Duplicate);
+    assert_eq!(
+        gate.admit(3, IngressClass::Critical),
+        AdmitOutcome::Duplicate
+    );
     assert_eq!(gate.qos_snapshot(), reopened);
 
     // The drained id must still be reusable immediately through its original

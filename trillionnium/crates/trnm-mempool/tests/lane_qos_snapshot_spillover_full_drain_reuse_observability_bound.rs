@@ -8,8 +8,14 @@ fn qos_snapshot_stays_consistent_when_spillover_lane_reuses_drained_id_after_ful
     // and another into borrowed normal headroom.
     assert_eq!(gate.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
     assert_eq!(gate.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
-    assert_eq!(gate.admit(50, IngressClass::Critical), AdmitOutcome::Accepted);
-    assert_eq!(gate.admit(51, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(50, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
+    assert_eq!(
+        gate.admit(51, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
     assert_eq!(gate.queued_counts(), (3, 1, 4));
 
     // Drain the entire batch without an intervening idle poll.
@@ -55,8 +61,14 @@ fn qos_snapshot_stays_consistent_when_spillover_lane_reuses_drained_id_after_ful
     // While re-queued, duplicate probes across either ingress class must still be
     // rejected without perturbing the externally visible snapshot.
     let expected = gate.qos_snapshot();
-    assert_eq!(gate.admit(50, IngressClass::Critical), AdmitOutcome::Duplicate);
+    assert_eq!(
+        gate.admit(50, IngressClass::Critical),
+        AdmitOutcome::Duplicate
+    );
     assert_eq!(gate.qos_snapshot(), expected);
-    assert_eq!(gate.admit(50, IngressClass::Normal), AdmitOutcome::Duplicate);
+    assert_eq!(
+        gate.admit(50, IngressClass::Normal),
+        AdmitOutcome::Duplicate
+    );
     assert_eq!(gate.qos_snapshot(), expected);
 }

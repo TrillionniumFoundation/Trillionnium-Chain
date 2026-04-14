@@ -7,7 +7,10 @@ fn oversized_reserve_clamp_keeps_last_free_shared_slot_borrowable_under_active_b
     // reserve > total clamps into reserve-only semantics. Even once one critical
     // occupant is queued, the final truly free shared slot must remain borrowable
     // until aggregate anti-spam capacity is actually exhausted.
-    assert_eq!(gate.admit(41, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(41, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
     assert_eq!(gate.queued_counts(), (0, 1, 1));
     assert_eq!(gate.qos_snapshot().fresh_normal_admissible, true);
     assert_eq!(gate.qos_snapshot().fresh_critical_admissible, true);
@@ -29,8 +32,17 @@ fn oversized_reserve_clamp_keeps_last_free_shared_slot_borrowable_under_active_b
     // Under the clamp, cross-class duplicates still dedupe globally and fresh
     // work stays fail-closed for both ingress classes once the final shared slot
     // is consumed.
-    assert_eq!(gate.admit(42, IngressClass::Critical), AdmitOutcome::Duplicate);
-    assert_eq!(gate.admit(99, IngressClass::Normal), AdmitOutcome::Backpressured);
-    assert_eq!(gate.admit(100, IngressClass::Critical), AdmitOutcome::Backpressured);
+    assert_eq!(
+        gate.admit(42, IngressClass::Critical),
+        AdmitOutcome::Duplicate
+    );
+    assert_eq!(
+        gate.admit(99, IngressClass::Normal),
+        AdmitOutcome::Backpressured
+    );
+    assert_eq!(
+        gate.admit(100, IngressClass::Critical),
+        AdmitOutcome::Backpressured
+    );
     assert_eq!(gate.qos_snapshot(), saturated);
 }

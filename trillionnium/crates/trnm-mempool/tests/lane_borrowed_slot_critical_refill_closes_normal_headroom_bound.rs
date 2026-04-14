@@ -26,7 +26,10 @@ fn borrowed_critical_headroom_closes_to_normal_ingress_after_real_critical_refil
 
     // A real critical refill must consume that reopened headroom and immediately
     // shut the borrowed path back down for fresh normal ingress.
-    assert_eq!(gate.admit(10, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(10, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
     assert_eq!(gate.queued_counts(), (2, 2, 4));
     assert_eq!(
         gate.qos_snapshot(),
@@ -42,5 +45,8 @@ fn borrowed_critical_headroom_closes_to_normal_ingress_after_real_critical_refil
         }
     );
 
-    assert_eq!(gate.admit(99, IngressClass::Normal), AdmitOutcome::Backpressured);
+    assert_eq!(
+        gate.admit(99, IngressClass::Normal),
+        AdmitOutcome::Backpressured
+    );
 }

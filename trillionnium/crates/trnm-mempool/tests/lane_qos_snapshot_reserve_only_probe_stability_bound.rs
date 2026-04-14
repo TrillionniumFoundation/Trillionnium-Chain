@@ -8,7 +8,10 @@ fn reserve_only_qos_snapshot_stays_stable_across_shared_lane_probe_noise() {
     // lane, so once it is full neither sponsor nor free-ingress probes should
     // perturb the externally visible admission snapshot.
     assert_eq!(gate.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
-    assert_eq!(gate.admit(2, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(2, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
     assert_eq!(gate.admit(3, IngressClass::Normal), AdmitOutcome::Accepted);
 
     let expected = LaneQosSnapshot {
@@ -39,6 +42,9 @@ fn reserve_only_qos_snapshot_stays_stable_across_shared_lane_probe_noise() {
     // untouched across both ingress classes sharing the same lane.
     assert_eq!(gate.admit(2, IngressClass::Normal), AdmitOutcome::Duplicate);
     assert_eq!(gate.qos_snapshot(), expected);
-    assert_eq!(gate.admit(1, IngressClass::Critical), AdmitOutcome::Duplicate);
+    assert_eq!(
+        gate.admit(1, IngressClass::Critical),
+        AdmitOutcome::Duplicate
+    );
     assert_eq!(gate.qos_snapshot(), expected);
 }

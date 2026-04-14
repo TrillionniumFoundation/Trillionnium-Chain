@@ -9,7 +9,10 @@ fn reserve_only_qos_snapshot_reopened_shared_slot_survives_cross_class_duplicate
     // observable even when still-queued ids are re-probed through the opposite
     // ingress class from the one that originally admitted them.
     assert_eq!(gate.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
-    assert_eq!(gate.admit(2, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(2, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
     assert_eq!(gate.admit(3, IngressClass::Normal), AdmitOutcome::Accepted);
 
     assert_eq!(gate.pop_ready(), Some(1));
@@ -30,12 +33,18 @@ fn reserve_only_qos_snapshot_reopened_shared_slot_survives_cross_class_duplicate
     // reopened shared slot visible to both sponsor-backed and free ingress.
     assert_eq!(gate.admit(2, IngressClass::Normal), AdmitOutcome::Duplicate);
     assert_eq!(gate.qos_snapshot(), reopened);
-    assert_eq!(gate.admit(3, IngressClass::Critical), AdmitOutcome::Duplicate);
+    assert_eq!(
+        gate.admit(3, IngressClass::Critical),
+        AdmitOutcome::Duplicate
+    );
     assert_eq!(gate.qos_snapshot(), reopened);
 
     // The reopened shared slot should still accept fresh work immediately after
     // the cross-class duplicate noise.
-    assert_eq!(gate.admit(4, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(4, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
     assert_eq!(
         gate.qos_snapshot(),
         LaneQosSnapshot {

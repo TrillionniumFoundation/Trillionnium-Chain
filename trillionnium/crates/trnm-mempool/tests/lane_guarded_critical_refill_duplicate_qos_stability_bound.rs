@@ -14,7 +14,10 @@ fn guarded_critical_refill_duplicate_probes_keep_qos_and_queue_counts_flat() {
     // reclose immediately while one aggregate slot remains reachable only by
     // critical spillover into still-free normal headroom.
     assert_eq!(gate.pop_ready(), Some(3));
-    assert_eq!(gate.admit(99, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(99, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
 
     let guarded_snapshot = LaneQosSnapshot {
         normal_queued: 2,
@@ -32,11 +35,17 @@ fn guarded_critical_refill_duplicate_probes_keep_qos_and_queue_counts_flat() {
     // Same-id retries from either ingress class must remain classification-only:
     // they should dedupe, not mutate queue occupancy, and not perturb the guarded
     // public QoS surface while the last reserved slot is actively owned.
-    assert_eq!(gate.admit(99, IngressClass::Critical), AdmitOutcome::Duplicate);
+    assert_eq!(
+        gate.admit(99, IngressClass::Critical),
+        AdmitOutcome::Duplicate
+    );
     assert_eq!(gate.queued_counts(), (2, 1, 3));
     assert_eq!(gate.qos_snapshot(), guarded_snapshot);
 
-    assert_eq!(gate.admit(99, IngressClass::Normal), AdmitOutcome::Duplicate);
+    assert_eq!(
+        gate.admit(99, IngressClass::Normal),
+        AdmitOutcome::Duplicate
+    );
     assert_eq!(gate.queued_counts(), (2, 1, 3));
     assert_eq!(gate.qos_snapshot(), guarded_snapshot);
 }

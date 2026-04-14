@@ -8,7 +8,10 @@ fn reserve_only_reopened_snapshot_survives_duplicate_noise_before_drained_retry_
     // lane. After one occupant drains, observers should immediately see a single
     // reopened shared slot for either sponsor-backed or free ingress.
     assert_eq!(gate.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
-    assert_eq!(gate.admit(2, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(2, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
     assert_eq!(gate.admit(3, IngressClass::Normal), AdmitOutcome::Accepted);
     assert_eq!(gate.pop_ready(), Some(1));
 
@@ -28,13 +31,19 @@ fn reserve_only_reopened_snapshot_survives_duplicate_noise_before_drained_retry_
     // classificatory and leave the reopened shared slot visible.
     assert_eq!(gate.admit(2, IngressClass::Normal), AdmitOutcome::Duplicate);
     assert_eq!(gate.qos_snapshot(), reopened);
-    assert_eq!(gate.admit(3, IngressClass::Critical), AdmitOutcome::Duplicate);
+    assert_eq!(
+        gate.admit(3, IngressClass::Critical),
+        AdmitOutcome::Duplicate
+    );
     assert_eq!(gate.qos_snapshot(), reopened);
 
     // The drained id must still be reusable immediately through the opposite
     // ingress class; once it retries, the shared lane saturates again and both
     // ingress classes should observe the closed snapshot right away.
-    assert_eq!(gate.admit(1, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(1, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
     let resaturated = LaneQosSnapshot {
         normal_queued: 0,
         critical_queued: 3,

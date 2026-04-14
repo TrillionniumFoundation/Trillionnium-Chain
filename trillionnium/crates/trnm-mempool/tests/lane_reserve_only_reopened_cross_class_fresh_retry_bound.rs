@@ -1,11 +1,15 @@
 use trnm_mempool::{AdmitOutcome, IngressClass, LaneAdmissionGate, LaneQosSnapshot};
 
 #[test]
-fn reserve_only_reopened_shared_slot_admits_prior_cross_class_fresh_retry_without_stale_duplicate_poisoning() {
+fn reserve_only_reopened_shared_slot_admits_prior_cross_class_fresh_retry_without_stale_duplicate_poisoning(
+) {
     let mut gate = LaneAdmissionGate::new(2, 2);
 
     // Reserve-only mode routes both classes through the shared critical lane.
-    assert_eq!(gate.admit(1, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(1, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
     assert_eq!(gate.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
     let saturated_snapshot = LaneQosSnapshot {
         normal_queued: 0,
@@ -21,9 +25,15 @@ fn reserve_only_reopened_shared_slot_admits_prior_cross_class_fresh_retry_withou
 
     // A fresh id rejected under saturation must stay fresh across class flips;
     // repeated probes must not fabricate duplicate state or perturb QoS.
-    assert_eq!(gate.admit(99, IngressClass::Critical), AdmitOutcome::Backpressured);
+    assert_eq!(
+        gate.admit(99, IngressClass::Critical),
+        AdmitOutcome::Backpressured
+    );
     assert_eq!(gate.qos_snapshot(), saturated_snapshot);
-    assert_eq!(gate.admit(99, IngressClass::Normal), AdmitOutcome::Backpressured);
+    assert_eq!(
+        gate.admit(99, IngressClass::Normal),
+        AdmitOutcome::Backpressured
+    );
     assert_eq!(gate.qos_snapshot(), saturated_snapshot);
     assert_eq!(gate.queued_counts(), (0, 2, 2));
 
@@ -46,5 +56,8 @@ fn reserve_only_reopened_shared_slot_admits_prior_cross_class_fresh_retry_withou
     assert_eq!(gate.admit(99, IngressClass::Normal), AdmitOutcome::Accepted);
     assert_eq!(gate.queued_counts(), (0, 2, 2));
     assert_eq!(gate.qos_snapshot(), saturated_snapshot);
-    assert_eq!(gate.admit(99, IngressClass::Critical), AdmitOutcome::Duplicate);
+    assert_eq!(
+        gate.admit(99, IngressClass::Critical),
+        AdmitOutcome::Duplicate
+    );
 }

@@ -24,17 +24,26 @@ fn exhausted_spillover_headroom_keeps_public_qos_surface_fail_closed() {
 
     // Cross-class duplicate probes against the borrowed occupant must stay purely
     // classificatory and must not reopen hidden headroom.
-    assert_eq!(gate.admit(3, IngressClass::Critical), AdmitOutcome::Duplicate);
+    assert_eq!(
+        gate.admit(3, IngressClass::Critical),
+        AdmitOutcome::Duplicate
+    );
     assert_eq!(gate.qos_snapshot(), saturated);
     assert_eq!(gate.queued_counts(), (2, 1, 3));
 
     // Once both the dedicated reserve and borrowed spillover slot are occupied,
     // fresh ingress from either class must remain fail-closed.
-    assert_eq!(gate.admit(50, IngressClass::Critical), AdmitOutcome::Backpressured);
+    assert_eq!(
+        gate.admit(50, IngressClass::Critical),
+        AdmitOutcome::Backpressured
+    );
     assert_eq!(gate.qos_snapshot(), saturated);
     assert_eq!(gate.queued_counts(), (2, 1, 3));
 
-    assert_eq!(gate.admit(51, IngressClass::Normal), AdmitOutcome::Backpressured);
+    assert_eq!(
+        gate.admit(51, IngressClass::Normal),
+        AdmitOutcome::Backpressured
+    );
     assert_eq!(gate.qos_snapshot(), saturated);
     assert_eq!(gate.queued_counts(), (2, 1, 3));
 }

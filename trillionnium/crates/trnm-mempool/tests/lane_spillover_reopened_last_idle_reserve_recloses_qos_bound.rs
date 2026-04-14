@@ -8,8 +8,14 @@ fn spillover_reopened_last_idle_reserve_admits_one_fresh_normal_borrow_then_recl
     // reserve and one spilled into borrowed normal headroom.
     assert_eq!(gate.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
     assert_eq!(gate.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
-    assert_eq!(gate.admit(50, IngressClass::Critical), AdmitOutcome::Accepted);
-    assert_eq!(gate.admit(51, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(50, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
+    assert_eq!(
+        gate.admit(51, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
     assert_eq!(gate.queued_counts(), (3, 1, 4));
 
     // Draining the dedicated reserve occupant reopens exactly one aggregate slot
@@ -45,8 +51,14 @@ fn spillover_reopened_last_idle_reserve_admits_one_fresh_normal_borrow_then_recl
 
     // Once the reopened last idle reserve slot is borrowed, both classes must see
     // the lane as fail-closed again until a real drain reopens headroom.
-    assert_eq!(gate.admit(100, IngressClass::Normal), AdmitOutcome::Backpressured);
+    assert_eq!(
+        gate.admit(100, IngressClass::Normal),
+        AdmitOutcome::Backpressured
+    );
     assert_eq!(gate.qos_snapshot(), reclosed_snapshot);
-    assert_eq!(gate.admit(200, IngressClass::Critical), AdmitOutcome::Backpressured);
+    assert_eq!(
+        gate.admit(200, IngressClass::Critical),
+        AdmitOutcome::Backpressured
+    );
     assert_eq!(gate.qos_snapshot(), reclosed_snapshot);
 }

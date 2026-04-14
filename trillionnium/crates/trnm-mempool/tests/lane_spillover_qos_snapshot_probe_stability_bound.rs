@@ -7,9 +7,15 @@ fn spillover_qos_snapshot_stays_stable_across_saturated_fresh_and_duplicate_prob
     // Fill the reserved critical slot plus the dedicated normal headroom, then
     // force one more critical tx to spill into the normal lane so aggregate
     // admission is fully saturated.
-    assert_eq!(gate.admit(10, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(10, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
     assert_eq!(gate.admit(20, IngressClass::Normal), AdmitOutcome::Accepted);
-    assert_eq!(gate.admit(11, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(11, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
 
     let expected = LaneQosSnapshot {
         normal_queued: 2,
@@ -37,8 +43,14 @@ fn spillover_qos_snapshot_stays_stable_across_saturated_fresh_and_duplicate_prob
 
     // The spillovered critical tx must remain globally deduped across classes,
     // again without mutating the saturated QoS snapshot.
-    assert_eq!(gate.admit(11, IngressClass::Critical), AdmitOutcome::Duplicate);
+    assert_eq!(
+        gate.admit(11, IngressClass::Critical),
+        AdmitOutcome::Duplicate
+    );
     assert_eq!(gate.qos_snapshot(), expected);
-    assert_eq!(gate.admit(11, IngressClass::Normal), AdmitOutcome::Duplicate);
+    assert_eq!(
+        gate.admit(11, IngressClass::Normal),
+        AdmitOutcome::Duplicate
+    );
     assert_eq!(gate.qos_snapshot(), expected);
 }

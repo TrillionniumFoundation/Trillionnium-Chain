@@ -8,7 +8,10 @@ fn reserve_only_drained_retry_resaturates_snapshot_and_backpressures_fresh_cross
     // lane. After one occupant drains, the reopened shared slot may be reused by
     // the drained id through the opposite ingress class.
     assert_eq!(gate.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
-    assert_eq!(gate.admit(2, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(2, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
     assert_eq!(gate.admit(3, IngressClass::Normal), AdmitOutcome::Accepted);
     assert_eq!(gate.pop_ready(), Some(1));
 
@@ -26,7 +29,10 @@ fn reserve_only_drained_retry_resaturates_snapshot_and_backpressures_fresh_cross
 
     // Once the drained id retries through the opposite ingress class, the shared
     // lane becomes saturated again and the externally visible snapshot must close.
-    assert_eq!(gate.admit(1, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(1, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
     let resaturated = LaneQosSnapshot {
         normal_queued: 0,
         critical_queued: 3,
@@ -41,7 +47,10 @@ fn reserve_only_drained_retry_resaturates_snapshot_and_backpressures_fresh_cross
 
     // Fresh work through the opposite ingress class must see immediate
     // backpressure instead of silently reopening sponsor/free-ingress headroom.
-    assert_eq!(gate.admit(99, IngressClass::Normal), AdmitOutcome::Backpressured);
+    assert_eq!(
+        gate.admit(99, IngressClass::Normal),
+        AdmitOutcome::Backpressured
+    );
     assert_eq!(gate.qos_snapshot(), resaturated);
 
     // Duplicate probes for surviving queued work remain classification-only and

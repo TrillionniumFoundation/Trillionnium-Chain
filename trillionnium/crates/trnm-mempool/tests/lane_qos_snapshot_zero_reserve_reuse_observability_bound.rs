@@ -5,7 +5,10 @@ fn zero_reserve_qos_snapshot_reopens_cleanly_for_cross_class_reuse_after_full_dr
     let mut gate = LaneAdmissionGate::new(2, 0);
 
     // Zero-reserve mode routes both ingress classes through normal-lane headroom.
-    assert_eq!(gate.admit(10, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(10, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
     assert_eq!(gate.admit(11, IngressClass::Normal), AdmitOutcome::Accepted);
     assert_eq!(gate.queued_counts(), (2, 0, 2));
 
@@ -51,8 +54,14 @@ fn zero_reserve_qos_snapshot_reopens_cleanly_for_cross_class_reuse_after_full_dr
     // purely classificatory and leave the reopened sponsor/free-ingress snapshot
     // untouched.
     let expected = gate.qos_snapshot();
-    assert_eq!(gate.admit(10, IngressClass::Critical), AdmitOutcome::Duplicate);
+    assert_eq!(
+        gate.admit(10, IngressClass::Critical),
+        AdmitOutcome::Duplicate
+    );
     assert_eq!(gate.qos_snapshot(), expected);
-    assert_eq!(gate.admit(10, IngressClass::Normal), AdmitOutcome::Duplicate);
+    assert_eq!(
+        gate.admit(10, IngressClass::Normal),
+        AdmitOutcome::Duplicate
+    );
     assert_eq!(gate.qos_snapshot(), expected);
 }

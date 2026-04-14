@@ -8,8 +8,14 @@ fn qos_snapshot_keeps_normal_guard_closed_until_last_active_critical_slot_truly_
     assert_eq!(gate.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
     assert_eq!(gate.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
     assert_eq!(gate.admit(3, IngressClass::Normal), AdmitOutcome::Accepted);
-    assert_eq!(gate.admit(10, IngressClass::Critical), AdmitOutcome::Accepted);
-    assert_eq!(gate.admit(11, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(10, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
+    assert_eq!(
+        gate.admit(11, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
     assert_eq!(gate.queued_counts(), (3, 2, 5));
 
     // One critical dequeue reopens aggregate headroom, but normal must stay guard-

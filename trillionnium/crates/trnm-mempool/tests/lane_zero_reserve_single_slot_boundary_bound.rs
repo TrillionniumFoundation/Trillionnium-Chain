@@ -7,7 +7,10 @@ fn zero_reserve_single_shared_slot_preserves_fail_closed_and_reopen_contract() {
     // With zero reserve and only one aggregate slot, both ingress classes share a
     // single normal-lane slot. Once either class claims it, QoS must fail closed
     // for both classes until a real dequeue reopens that same shared slot.
-    assert_eq!(gate.admit(41, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(41, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
     let saturated = LaneQosSnapshot {
         normal_queued: 1,
         critical_queued: 0,
@@ -23,9 +26,18 @@ fn zero_reserve_single_shared_slot_preserves_fail_closed_and_reopen_contract() {
 
     // While the only shared slot is occupied, queued ids remain globally
     // duplicate across classes and fresh retries remain backpressured.
-    assert_eq!(gate.admit(41, IngressClass::Normal), AdmitOutcome::Duplicate);
-    assert_eq!(gate.admit(99, IngressClass::Normal), AdmitOutcome::Backpressured);
-    assert_eq!(gate.admit(99, IngressClass::Critical), AdmitOutcome::Backpressured);
+    assert_eq!(
+        gate.admit(41, IngressClass::Normal),
+        AdmitOutcome::Duplicate
+    );
+    assert_eq!(
+        gate.admit(99, IngressClass::Normal),
+        AdmitOutcome::Backpressured
+    );
+    assert_eq!(
+        gate.admit(99, IngressClass::Critical),
+        AdmitOutcome::Backpressured
+    );
     assert_eq!(gate.qos_snapshot(), saturated);
     assert_eq!(gate.queued_counts(), (1, 0, 1));
 

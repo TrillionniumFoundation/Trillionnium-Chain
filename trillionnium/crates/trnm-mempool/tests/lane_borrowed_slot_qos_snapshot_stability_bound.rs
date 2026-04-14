@@ -26,8 +26,14 @@ fn borrowed_last_idle_critical_slot_keeps_qos_snapshot_flat_across_retry_and_dup
     // critical retries must stay backpressured and duplicate probes for the
     // borrowed id must stay duplicate, without perturbing the public snapshot.
     for _ in 0..3 {
-        assert_eq!(gate.admit(99, IngressClass::Critical), AdmitOutcome::Backpressured);
-        assert_eq!(gate.admit(3, IngressClass::Critical), AdmitOutcome::Duplicate);
+        assert_eq!(
+            gate.admit(99, IngressClass::Critical),
+            AdmitOutcome::Backpressured
+        );
+        assert_eq!(
+            gate.admit(3, IngressClass::Critical),
+            AdmitOutcome::Duplicate
+        );
         assert_eq!(gate.admit(3, IngressClass::Normal), AdmitOutcome::Duplicate);
         assert_eq!(gate.queued_counts(), (2, 1, 3));
         assert_eq!(gate.qos_snapshot(), borrowed_full);

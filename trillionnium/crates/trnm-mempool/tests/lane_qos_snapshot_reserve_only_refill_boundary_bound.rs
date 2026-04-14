@@ -7,7 +7,10 @@ fn reserve_only_qos_snapshot_preserves_refill_visibility_across_duplicate_probe_
     // Reserve-only mode routes both ingress classes through the shared critical
     // lane. Duplicate probes must stay classification-only so observability keeps
     // exposing the one remaining refill slot.
-    assert_eq!(gate.admit(10, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(10, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
     assert_eq!(gate.admit(11, IngressClass::Normal), AdmitOutcome::Accepted);
 
     let one_slot_left = LaneQosSnapshot {
@@ -24,15 +27,22 @@ fn reserve_only_qos_snapshot_preserves_refill_visibility_across_duplicate_probe_
 
     // Cross-class duplicate noise must not consume the remaining shared-lane
     // headroom or perturb the advertised sponsor/free-ingress admissibility.
-    assert_eq!(gate.admit(10, IngressClass::Normal), AdmitOutcome::Duplicate);
+    assert_eq!(
+        gate.admit(10, IngressClass::Normal),
+        AdmitOutcome::Duplicate
+    );
     assert_eq!(gate.qos_snapshot(), one_slot_left);
-    assert_eq!(gate.admit(11, IngressClass::Critical), AdmitOutcome::Duplicate);
+    assert_eq!(
+        gate.admit(11, IngressClass::Critical),
+        AdmitOutcome::Duplicate
+    );
     assert_eq!(gate.qos_snapshot(), one_slot_left);
 
     // The final shared slot should still admit fresh work from either ingress
     // class, after which the snapshot must close for both classes immediately.
     assert_eq!(gate.admit(12, IngressClass::Normal), AdmitOutcome::Accepted);
-    assert_eq!(gate.qos_snapshot(),
+    assert_eq!(
+        gate.qos_snapshot(),
         LaneQosSnapshot {
             normal_queued: 0,
             critical_queued: 3,

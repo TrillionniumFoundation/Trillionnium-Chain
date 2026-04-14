@@ -8,8 +8,14 @@ fn qos_snapshot_stays_stable_when_last_reserved_critical_slot_is_still_guarded_a
     assert_eq!(gate.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
     assert_eq!(gate.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
     assert_eq!(gate.admit(3, IngressClass::Normal), AdmitOutcome::Accepted);
-    assert_eq!(gate.admit(10, IngressClass::Critical), AdmitOutcome::Accepted);
-    assert_eq!(gate.admit(11, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(10, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
+    assert_eq!(
+        gate.admit(11, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
 
     // Draining one critical tx reopens aggregate capacity, but fresh normal ingress
     // must stay guard-blocked while the final reserved critical slot remains live.
@@ -30,16 +36,28 @@ fn qos_snapshot_stays_stable_when_last_reserved_critical_slot_is_still_guarded_a
 
     // Guarded fresh-normal probe noise must remain classification-only and leave
     // the externally visible QoS snapshot unchanged.
-    assert_eq!(gate.admit(70, IngressClass::Normal), AdmitOutcome::Backpressured);
+    assert_eq!(
+        gate.admit(70, IngressClass::Normal),
+        AdmitOutcome::Backpressured
+    );
     assert_eq!(gate.qos_snapshot(), guarded);
-    assert_eq!(gate.admit(71, IngressClass::Normal), AdmitOutcome::Backpressured);
+    assert_eq!(
+        gate.admit(71, IngressClass::Normal),
+        AdmitOutcome::Backpressured
+    );
     assert_eq!(gate.qos_snapshot(), guarded);
 
     // Cross-class duplicate probes for the still-queued critical tx must preserve
     // the guarded snapshot, while probing the already-drained id must degrade to
     // the same guarded backpressure path without reopening observability.
-    assert_eq!(gate.admit(remaining, IngressClass::Normal), AdmitOutcome::Duplicate);
+    assert_eq!(
+        gate.admit(remaining, IngressClass::Normal),
+        AdmitOutcome::Duplicate
+    );
     assert_eq!(gate.qos_snapshot(), guarded);
-    assert_eq!(gate.admit(drained, IngressClass::Normal), AdmitOutcome::Backpressured);
+    assert_eq!(
+        gate.admit(drained, IngressClass::Normal),
+        AdmitOutcome::Backpressured
+    );
     assert_eq!(gate.qos_snapshot(), guarded);
 }

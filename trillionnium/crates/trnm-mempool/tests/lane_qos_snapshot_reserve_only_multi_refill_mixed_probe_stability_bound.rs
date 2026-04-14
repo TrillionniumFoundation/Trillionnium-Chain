@@ -9,7 +9,10 @@ fn reserve_only_qos_snapshot_preserves_multi_slot_refill_visibility_across_mixed
     // slots immediately. Duplicate probes against the still-queued id must remain
     // classification-only even if a drained id is re-admitted in between.
     assert_eq!(gate.admit(20, IngressClass::Normal), AdmitOutcome::Accepted);
-    assert_eq!(gate.admit(21, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(21, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
     assert_eq!(gate.admit(22, IngressClass::Normal), AdmitOutcome::Accepted);
 
     assert_eq!(gate.pop_ready(), Some(20));
@@ -29,12 +32,18 @@ fn reserve_only_qos_snapshot_preserves_multi_slot_refill_visibility_across_mixed
 
     // Cross-class duplicate noise for the still-queued id must not perturb the
     // reopened sponsor/free-ingress surface.
-    assert_eq!(gate.admit(22, IngressClass::Critical), AdmitOutcome::Duplicate);
+    assert_eq!(
+        gate.admit(22, IngressClass::Critical),
+        AdmitOutcome::Duplicate
+    );
     assert_eq!(gate.qos_snapshot(), reopened);
 
     // A drained id may re-enter as fresh work and consume exactly one reopened
     // shared slot.
-    assert_eq!(gate.admit(20, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(20, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
     assert_eq!(
         gate.qos_snapshot(),
         LaneQosSnapshot {
@@ -52,8 +61,14 @@ fn reserve_only_qos_snapshot_preserves_multi_slot_refill_visibility_across_mixed
     // Duplicate probes for both the surviving original id and the freshly
     // re-admitted id must stay classification-only and leave the last reopened
     // shared slot visible until a truly fresh tx consumes it.
-    assert_eq!(gate.admit(22, IngressClass::Normal), AdmitOutcome::Duplicate);
-    assert_eq!(gate.admit(20, IngressClass::Normal), AdmitOutcome::Duplicate);
+    assert_eq!(
+        gate.admit(22, IngressClass::Normal),
+        AdmitOutcome::Duplicate
+    );
+    assert_eq!(
+        gate.admit(20, IngressClass::Normal),
+        AdmitOutcome::Duplicate
+    );
     assert_eq!(
         gate.qos_snapshot(),
         LaneQosSnapshot {

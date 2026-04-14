@@ -8,7 +8,10 @@ fn reserve_only_refilled_shared_slot_stays_closed_under_cross_class_duplicate_no
     // both ingress classes share one public admission surface until a real drain
     // reopens exactly one shared slot.
     assert_eq!(gate.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
-    assert_eq!(gate.admit(2, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(2, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
     assert_eq!(gate.admit(3, IngressClass::Normal), AdmitOutcome::Accepted);
 
     let saturated = LaneQosSnapshot {
@@ -37,7 +40,10 @@ fn reserve_only_refilled_shared_slot_stays_closed_under_cross_class_duplicate_no
     assert_eq!(gate.qos_snapshot(), reopened);
 
     // A fresh sponsor-backed refill may consume the only reopened shared slot.
-    assert_eq!(gate.admit(4, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(4, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
     assert_eq!(gate.qos_snapshot(), saturated);
 
     // Once the slot is refilled, duplicate probes from either surviving queued
@@ -45,7 +51,10 @@ fn reserve_only_refilled_shared_slot_stays_closed_under_cross_class_duplicate_no
     // public sponsor/free-ingress snapshot fail-closed.
     assert_eq!(gate.admit(2, IngressClass::Normal), AdmitOutcome::Duplicate);
     assert_eq!(gate.qos_snapshot(), saturated);
-    assert_eq!(gate.admit(3, IngressClass::Critical), AdmitOutcome::Duplicate);
+    assert_eq!(
+        gate.admit(3, IngressClass::Critical),
+        AdmitOutcome::Duplicate
+    );
     assert_eq!(gate.qos_snapshot(), saturated);
     assert_eq!(gate.admit(4, IngressClass::Normal), AdmitOutcome::Duplicate);
     assert_eq!(gate.qos_snapshot(), saturated);

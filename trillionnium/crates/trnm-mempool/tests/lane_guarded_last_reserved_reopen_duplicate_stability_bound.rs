@@ -1,14 +1,18 @@
 use trnm_mempool::{AdmitOutcome, IngressClass, LaneAdmissionGate, LaneQosSnapshot};
 
 #[test]
-fn guarded_last_reserved_reopens_cleanly_after_final_critical_drain_despite_cross_class_duplicate_noise() {
+fn guarded_last_reserved_reopens_cleanly_after_final_critical_drain_despite_cross_class_duplicate_noise(
+) {
     let mut gate = LaneAdmissionGate::new(5, 2);
 
     // Fill dedicated normal capacity and leave one reserved critical slot active.
     assert_eq!(gate.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
     assert_eq!(gate.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
     assert_eq!(gate.admit(3, IngressClass::Normal), AdmitOutcome::Accepted);
-    assert_eq!(gate.admit(10, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(10, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
     assert_eq!(gate.queued_counts(), (3, 1, 4));
 
     let guarded = LaneQosSnapshot {
@@ -39,14 +43,20 @@ fn guarded_last_reserved_reopens_cleanly_after_final_critical_drain_despite_cros
     };
     assert_eq!(gate.qos_snapshot(), reopened);
 
-    assert_eq!(gate.admit(2, IngressClass::Critical), AdmitOutcome::Duplicate);
+    assert_eq!(
+        gate.admit(2, IngressClass::Critical),
+        AdmitOutcome::Duplicate
+    );
     assert_eq!(gate.qos_snapshot(), reopened);
     assert_eq!(gate.admit(3, IngressClass::Normal), AdmitOutcome::Duplicate);
     assert_eq!(gate.qos_snapshot(), reopened);
 
     // Fresh critical ingress should still be able to consume reopened reserve
     // capacity immediately after the duplicate noise.
-    assert_eq!(gate.admit(11, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(11, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
     assert_eq!(gate.queued_counts(), (3, 1, 4));
     assert_eq!(gate.qos_snapshot(), guarded);
 }

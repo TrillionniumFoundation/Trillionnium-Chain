@@ -8,7 +8,10 @@ fn reserve_only_backpressured_retry_keeps_public_qos_surface_frozen_until_real_d
     // both classes share one public admission surface backed entirely by the
     // reserved lane.
     assert_eq!(gate.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
-    assert_eq!(gate.admit(2, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(2, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
 
     let saturated = LaneQosSnapshot {
         normal_queued: 0,
@@ -24,9 +27,15 @@ fn reserve_only_backpressured_retry_keeps_public_qos_surface_frozen_until_real_d
 
     // Fresh retry noise for the same tx id must stay backpressured across both
     // classes and must not perturb the advertised freeze boundary.
-    assert_eq!(gate.admit(77, IngressClass::Normal), AdmitOutcome::Backpressured);
+    assert_eq!(
+        gate.admit(77, IngressClass::Normal),
+        AdmitOutcome::Backpressured
+    );
     assert_eq!(gate.qos_snapshot(), saturated);
-    assert_eq!(gate.admit(77, IngressClass::Critical), AdmitOutcome::Backpressured);
+    assert_eq!(
+        gate.admit(77, IngressClass::Critical),
+        AdmitOutcome::Backpressured
+    );
     assert_eq!(gate.qos_snapshot(), saturated);
 
     // One real drain reopens exactly one shared public slot.
@@ -45,8 +54,14 @@ fn reserve_only_backpressured_retry_keeps_public_qos_surface_frozen_until_real_d
 
     // The previously backpressured id must still be fresh and may consume the
     // reopened shared slot from either class, immediately refreezing admission.
-    assert_eq!(gate.admit(77, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(77, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
     assert_eq!(gate.qos_snapshot(), saturated);
-    assert_eq!(gate.admit(77, IngressClass::Normal), AdmitOutcome::Duplicate);
+    assert_eq!(
+        gate.admit(77, IngressClass::Normal),
+        AdmitOutcome::Duplicate
+    );
     assert_eq!(gate.qos_snapshot(), saturated);
 }

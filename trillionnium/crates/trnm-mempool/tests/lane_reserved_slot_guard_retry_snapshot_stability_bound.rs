@@ -7,7 +7,10 @@ fn guarded_last_critical_slot_keeps_qos_snapshot_stable_across_repeated_normal_r
     assert_eq!(gate.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
     assert_eq!(gate.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
     assert_eq!(gate.admit(3, IngressClass::Normal), AdmitOutcome::Accepted);
-    assert_eq!(gate.admit(10, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(10, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
     assert_eq!(gate.queued_counts(), (3, 1, 4));
 
     let expected = LaneQosSnapshot {
@@ -26,7 +29,10 @@ fn guarded_last_critical_slot_keeps_qos_snapshot_stable_across_repeated_normal_r
     // backpressured without perturbing public QoS observability.
     for _ in 0..4 {
         assert_eq!(gate.qos_snapshot(), expected);
-        assert_eq!(gate.admit(99, IngressClass::Normal), AdmitOutcome::Backpressured);
+        assert_eq!(
+            gate.admit(99, IngressClass::Normal),
+            AdmitOutcome::Backpressured
+        );
         assert_eq!(gate.qos_snapshot(), expected);
         assert_eq!(gate.queued_counts(), (3, 1, 4));
     }

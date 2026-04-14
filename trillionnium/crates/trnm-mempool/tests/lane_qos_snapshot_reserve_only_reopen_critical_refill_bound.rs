@@ -1,14 +1,18 @@
 use trnm_mempool::{AdmitOutcome, IngressClass, LaneAdmissionGate, LaneQosSnapshot};
 
 #[test]
-fn reserve_only_qos_snapshot_closes_when_critical_consumes_reopened_shared_slot_after_duplicate_noise() {
+fn reserve_only_qos_snapshot_closes_when_critical_consumes_reopened_shared_slot_after_duplicate_noise(
+) {
     let mut gate = LaneAdmissionGate::new(3, 3);
 
     // Reserve-only mode routes both ingress classes through the shared critical
     // lane. Fill it first, then drain one occupant so observability reopens a
     // single shared slot for either sponsor-backed or free ingress.
     assert_eq!(gate.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
-    assert_eq!(gate.admit(2, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(2, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
     assert_eq!(gate.admit(3, IngressClass::Normal), AdmitOutcome::Accepted);
 
     assert_eq!(gate.pop_ready(), Some(1));
@@ -29,13 +33,19 @@ fn reserve_only_qos_snapshot_closes_when_critical_consumes_reopened_shared_slot_
     // classificatory and leave the one reopened shared slot observable.
     assert_eq!(gate.admit(2, IngressClass::Normal), AdmitOutcome::Duplicate);
     assert_eq!(gate.qos_snapshot(), reopened);
-    assert_eq!(gate.admit(3, IngressClass::Critical), AdmitOutcome::Duplicate);
+    assert_eq!(
+        gate.admit(3, IngressClass::Critical),
+        AdmitOutcome::Duplicate
+    );
     assert_eq!(gate.qos_snapshot(), reopened);
 
     // A fresh critical admission should be able to consume the reopened shared
     // slot directly; once it does, both ingress classes must observe the same
     // immediately closed snapshot.
-    assert_eq!(gate.admit(4, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(4, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
     assert_eq!(
         gate.qos_snapshot(),
         LaneQosSnapshot {

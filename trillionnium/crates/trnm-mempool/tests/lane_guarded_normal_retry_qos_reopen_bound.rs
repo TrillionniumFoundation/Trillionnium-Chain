@@ -29,8 +29,14 @@ fn guarded_normal_retry_noise_stays_fresh_and_qos_flat_until_reserved_slot_reope
 
     // Reserve-guarded retry noise must stay Backpressured, remain fresh, and leave
     // operator-facing QoS/accounting untouched while the final critical slot is owned.
-    assert_eq!(g.admit(77, IngressClass::Normal), AdmitOutcome::Backpressured);
-    assert_eq!(g.admit(77, IngressClass::Critical), AdmitOutcome::Backpressured);
+    assert_eq!(
+        g.admit(77, IngressClass::Normal),
+        AdmitOutcome::Backpressured
+    );
+    assert_eq!(
+        g.admit(77, IngressClass::Critical),
+        AdmitOutcome::Backpressured
+    );
     assert_eq!(g.qos_snapshot(), guarded);
     assert_eq!(g.queued_counts(), (2, 2, 4));
 
@@ -48,7 +54,10 @@ fn guarded_normal_retry_noise_stays_fresh_and_qos_flat_until_reserved_slot_reope
         fresh_critical_admissible: true,
     };
     assert_eq!(g.qos_snapshot(), still_guarded);
-    assert_eq!(g.admit(77, IngressClass::Normal), AdmitOutcome::Backpressured);
+    assert_eq!(
+        g.admit(77, IngressClass::Normal),
+        AdmitOutcome::Backpressured
+    );
     assert_eq!(g.qos_snapshot(), still_guarded);
 
     // Once the critical backlog fully drains, the previously guarded id should

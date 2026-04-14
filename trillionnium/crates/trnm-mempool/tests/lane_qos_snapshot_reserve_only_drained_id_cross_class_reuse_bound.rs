@@ -8,7 +8,10 @@ fn reserve_only_drained_id_can_cross_class_reuse_reopened_slot_while_survivor_st
     // classes share the same critical-backed lane and only real drains may reopen
     // public admission headroom.
     assert_eq!(gate.admit(10, IngressClass::Normal), AdmitOutcome::Accepted);
-    assert_eq!(gate.admit(20, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(20, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
     assert_eq!(gate.admit(30, IngressClass::Normal), AdmitOutcome::Accepted);
 
     let saturated = LaneQosSnapshot {
@@ -38,16 +41,31 @@ fn reserve_only_drained_id_can_cross_class_reuse_reopened_slot_while_survivor_st
     assert_eq!(gate.qos_snapshot(), reopened);
 
     // Duplicate probes against surviving queued ids must remain classification-only.
-    assert_eq!(gate.admit(20, IngressClass::Normal), AdmitOutcome::Duplicate);
-    assert_eq!(gate.admit(30, IngressClass::Critical), AdmitOutcome::Duplicate);
+    assert_eq!(
+        gate.admit(20, IngressClass::Normal),
+        AdmitOutcome::Duplicate
+    );
+    assert_eq!(
+        gate.admit(30, IngressClass::Critical),
+        AdmitOutcome::Duplicate
+    );
     assert_eq!(gate.qos_snapshot(), reopened);
 
     // The drained id may reuse the reopened shared slot even when it re-enters from
     // the opposite ingress class, and that reuse must immediately close the shared
     // surface again without refreshing surviving queued ids.
-    assert_eq!(gate.admit(10, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(10, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
     assert_eq!(gate.qos_snapshot(), saturated);
-    assert_eq!(gate.admit(20, IngressClass::Critical), AdmitOutcome::Duplicate);
-    assert_eq!(gate.admit(30, IngressClass::Normal), AdmitOutcome::Duplicate);
+    assert_eq!(
+        gate.admit(20, IngressClass::Critical),
+        AdmitOutcome::Duplicate
+    );
+    assert_eq!(
+        gate.admit(30, IngressClass::Normal),
+        AdmitOutcome::Duplicate
+    );
     assert_eq!(gate.qos_snapshot(), saturated);
 }

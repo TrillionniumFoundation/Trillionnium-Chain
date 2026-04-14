@@ -26,8 +26,14 @@ fn borrowed_normal_spillover_guards_final_reserved_slot_before_any_critical_arri
     // Once spillover is already using reserved headroom, the final reserved slot
     // must stay fail-closed to fresh normal ingress even before any critical tx
     // arrives, while still remaining immediately usable by critical traffic.
-    assert_eq!(gate.admit(4, IngressClass::Normal), AdmitOutcome::Backpressured);
+    assert_eq!(
+        gate.admit(4, IngressClass::Normal),
+        AdmitOutcome::Backpressured
+    );
     assert_eq!(gate.qos_snapshot(), guarded_snapshot);
-    assert_eq!(gate.admit(99, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(99, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
     assert_eq!(gate.queued_counts(), (2, 2, 4));
 }

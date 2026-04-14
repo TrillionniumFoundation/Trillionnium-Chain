@@ -867,7 +867,8 @@ mod tests {
     }
 
     #[test]
-    fn zero_capacity_hard_stop_idle_polls_preserve_restored_duplicate_knowledge_from_all_seen_caches() {
+    fn zero_capacity_hard_stop_idle_polls_preserve_restored_duplicate_knowledge_from_all_seen_caches(
+    ) {
         let mut g = LaneAdmissionGate::new(0, 0);
 
         // Simulate restored duplicate metadata skew across every seen cache. Idle
@@ -895,8 +896,14 @@ mod tests {
             );
         }
 
-        assert_eq!(g.admit(56, IngressClass::Normal), AdmitOutcome::Backpressured);
-        assert_eq!(g.admit(56, IngressClass::Critical), AdmitOutcome::Backpressured);
+        assert_eq!(
+            g.admit(56, IngressClass::Normal),
+            AdmitOutcome::Backpressured
+        );
+        assert_eq!(
+            g.admit(56, IngressClass::Critical),
+            AdmitOutcome::Backpressured
+        );
     }
 
     #[test]
@@ -2373,7 +2380,10 @@ mod tests {
             }
         );
 
-        assert_eq!(g.admit(23, IngressClass::Normal), AdmitOutcome::Backpressured);
+        assert_eq!(
+            g.admit(23, IngressClass::Normal),
+            AdmitOutcome::Backpressured
+        );
         assert_eq!(g.queued_counts(), (2, 2, 4));
     }
 
@@ -2390,7 +2400,10 @@ mod tests {
         assert_eq!(g.queued_counts(), (2, 2, 4));
 
         // With only the final guarded reserved slot free, fresh normal ingress must stay blocked.
-        assert_eq!(g.admit(22, IngressClass::Normal), AdmitOutcome::Backpressured);
+        assert_eq!(
+            g.admit(22, IngressClass::Normal),
+            AdmitOutcome::Backpressured
+        );
         assert_eq!(g.queued_counts(), (2, 2, 4));
 
         // After one critical dequeue, backlog is still active but one surplus reserved
@@ -2400,7 +2413,10 @@ mod tests {
         assert_eq!(g.queued_counts(), (2, 1, 3));
         assert_eq!(g.admit(22, IngressClass::Normal), AdmitOutcome::Accepted);
         assert_eq!(g.queued_counts(), (2, 2, 4));
-        assert_eq!(g.admit(23, IngressClass::Normal), AdmitOutcome::Backpressured);
+        assert_eq!(
+            g.admit(23, IngressClass::Normal),
+            AdmitOutcome::Backpressured
+        );
         assert_eq!(g.admit(12, IngressClass::Critical), AdmitOutcome::Accepted);
     }
 
@@ -3265,7 +3281,10 @@ mod tests {
         assert_eq!(g.admit(1, IngressClass::Normal), AdmitOutcome::Duplicate);
         assert_eq!(g.critical_served_streak, warmed);
 
-        assert_eq!(g.admit(9, IngressClass::Normal), AdmitOutcome::Backpressured);
+        assert_eq!(
+            g.admit(9, IngressClass::Normal),
+            AdmitOutcome::Backpressured
+        );
         assert_eq!(g.critical_served_streak, warmed);
     }
 
@@ -4543,7 +4562,10 @@ mod tests {
 
         // With the final slot still guarded for fresh critical ingress, the ghost id
         // must remain fresh/backpressured and must not perturb the public QoS surface.
-        assert_eq!(g.admit(999, IngressClass::Normal), AdmitOutcome::Backpressured);
+        assert_eq!(
+            g.admit(999, IngressClass::Normal),
+            AdmitOutcome::Backpressured
+        );
         assert_eq!(g.qos_snapshot(), guarded_snapshot);
 
         // Once the active critical backlog drains, the reserved headroom really reopens.

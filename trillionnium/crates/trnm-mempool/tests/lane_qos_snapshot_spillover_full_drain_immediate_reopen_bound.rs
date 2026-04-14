@@ -8,8 +8,14 @@ fn qos_snapshot_reopens_immediately_after_spillover_full_drain_without_idle_poll
     // one spilled into borrowed normal headroom.
     assert_eq!(gate.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
     assert_eq!(gate.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
-    assert_eq!(gate.admit(50, IngressClass::Critical), AdmitOutcome::Accepted);
-    assert_eq!(gate.admit(51, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(50, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
+    assert_eq!(
+        gate.admit(51, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
     assert_eq!(gate.queued_counts(), (3, 1, 4));
     assert_eq!(
         gate.qos_snapshot(),

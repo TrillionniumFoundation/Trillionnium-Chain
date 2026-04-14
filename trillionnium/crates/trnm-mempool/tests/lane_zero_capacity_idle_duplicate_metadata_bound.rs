@@ -72,6 +72,9 @@ fn zero_total_capacity_qos_snapshot_stays_hard_stopped_across_fresh_retry_noise_
         assert_eq!(gate.qos_snapshot(), expected);
     }
 
-    assert_eq!(gate.admit(99, IngressClass::Normal), AdmitOutcome::Backpressured);
+    assert_eq!(
+        gate.admit(99, IngressClass::Normal),
+        AdmitOutcome::Backpressured
+    );
     assert_eq!(gate.qos_snapshot(), expected);
 }

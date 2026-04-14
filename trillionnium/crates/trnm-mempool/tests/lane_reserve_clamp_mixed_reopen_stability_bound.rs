@@ -7,7 +7,10 @@ fn oversized_reserve_clamp_mixed_backlog_reopens_shared_slot_without_stale_dupli
     // reserve > total clamps into reserve-only semantics. Mixed-class ingress
     // shares the same critical queue, so both classes should consume the only two
     // real slots without fabricating dedicated normal headroom.
-    assert_eq!(gate.admit(41, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(41, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
     assert_eq!(gate.admit(42, IngressClass::Normal), AdmitOutcome::Accepted);
     let saturated = LaneQosSnapshot {
         normal_queued: 0,
@@ -22,8 +25,14 @@ fn oversized_reserve_clamp_mixed_backlog_reopens_shared_slot_without_stale_dupli
     assert_eq!(gate.qos_snapshot(), saturated);
 
     // Cross-class duplicate noise while saturated must remain classificatory only.
-    assert_eq!(gate.admit(42, IngressClass::Critical), AdmitOutcome::Duplicate);
-    assert_eq!(gate.admit(99, IngressClass::Normal), AdmitOutcome::Backpressured);
+    assert_eq!(
+        gate.admit(42, IngressClass::Critical),
+        AdmitOutcome::Duplicate
+    );
+    assert_eq!(
+        gate.admit(99, IngressClass::Normal),
+        AdmitOutcome::Backpressured
+    );
     assert_eq!(gate.qos_snapshot(), saturated);
 
     // One real drain should immediately reopen exactly one shared slot for both
@@ -43,7 +52,10 @@ fn oversized_reserve_clamp_mixed_backlog_reopens_shared_slot_without_stale_dupli
 
     // The drained id is fresh again, and the duplicate probe against the still-
     // queued borrowed occupant must not poison or consume the reopened slot.
-    assert_eq!(gate.admit(42, IngressClass::Normal), AdmitOutcome::Duplicate);
+    assert_eq!(
+        gate.admit(42, IngressClass::Normal),
+        AdmitOutcome::Duplicate
+    );
     assert_eq!(gate.qos_snapshot(), reopened);
     assert_eq!(gate.admit(41, IngressClass::Normal), AdmitOutcome::Accepted);
     assert_eq!(gate.qos_snapshot(), saturated);

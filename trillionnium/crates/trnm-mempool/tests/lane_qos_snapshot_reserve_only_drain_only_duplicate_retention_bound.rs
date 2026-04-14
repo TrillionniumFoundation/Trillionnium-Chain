@@ -1,7 +1,8 @@
 use trnm_mempool::{AdmitOutcome, IngressClass, LaneAdmissionGate, LaneQosSnapshot};
 
 #[test]
-fn reserve_only_drain_only_duplicate_retention_keeps_shared_snapshot_closed_until_survivor_drains() {
+fn reserve_only_drain_only_duplicate_retention_keeps_shared_snapshot_closed_until_survivor_drains()
+{
     let mut gate = LaneAdmissionGate::new(3, 3);
 
     // Reserve-only mode routes both ingress classes through the shared critical
@@ -9,7 +10,10 @@ fn reserve_only_drain_only_duplicate_retention_keeps_shared_snapshot_closed_unti
     // revocation falls back to drain-only: no replay probe should fabricate new
     // public headroom until the already-queued sponsored work truly drains.
     assert_eq!(gate.admit(10, IngressClass::Normal), AdmitOutcome::Accepted);
-    assert_eq!(gate.admit(20, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(20, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
     assert_eq!(gate.admit(30, IngressClass::Normal), AdmitOutcome::Accepted);
 
     let saturated = LaneQosSnapshot {
@@ -27,8 +31,14 @@ fn reserve_only_drain_only_duplicate_retention_keeps_shared_snapshot_closed_unti
     // One queued id drains, but surviving queued ids must remain duplicate-classified
     // across both ingress classes until they themselves leave the queue.
     assert_eq!(gate.pop_ready(), Some(10));
-    assert_eq!(gate.admit(20, IngressClass::Normal), AdmitOutcome::Duplicate);
-    assert_eq!(gate.admit(30, IngressClass::Critical), AdmitOutcome::Duplicate);
+    assert_eq!(
+        gate.admit(20, IngressClass::Normal),
+        AdmitOutcome::Duplicate
+    );
+    assert_eq!(
+        gate.admit(30, IngressClass::Critical),
+        AdmitOutcome::Duplicate
+    );
 
     let reopened = LaneQosSnapshot {
         normal_queued: 0,
@@ -44,13 +54,22 @@ fn reserve_only_drain_only_duplicate_retention_keeps_shared_snapshot_closed_unti
 
     // Fresh replay of the already-drained id may reuse the reopened slot, but the
     // remaining queued survivor must still stay duplicate-classified until it drains.
-    assert_eq!(gate.admit(10, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(10, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
     assert_eq!(gate.qos_snapshot(), saturated);
-    assert_eq!(gate.admit(30, IngressClass::Normal), AdmitOutcome::Duplicate);
+    assert_eq!(
+        gate.admit(30, IngressClass::Normal),
+        AdmitOutcome::Duplicate
+    );
     assert_eq!(gate.qos_snapshot(), saturated);
 
     assert_eq!(gate.pop_ready(), Some(20));
-    assert_eq!(gate.admit(30, IngressClass::Critical), AdmitOutcome::Duplicate);
+    assert_eq!(
+        gate.admit(30, IngressClass::Critical),
+        AdmitOutcome::Duplicate
+    );
     assert_eq!(gate.pop_ready(), Some(30));
 
     // Only after the survivor itself drains may it re-enter as fresh work.

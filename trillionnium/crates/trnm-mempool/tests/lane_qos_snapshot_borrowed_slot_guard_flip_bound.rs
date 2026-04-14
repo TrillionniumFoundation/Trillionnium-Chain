@@ -1,7 +1,8 @@
 use trnm_mempool::{AdmitOutcome, IngressClass, LaneAdmissionGate, LaneQosSnapshot};
 
 #[test]
-fn qos_snapshot_flips_from_borrowable_to_guarded_once_critical_backlog_claims_final_reserved_slot() {
+fn qos_snapshot_flips_from_borrowable_to_guarded_once_critical_backlog_claims_final_reserved_slot()
+{
     let mut gate = LaneAdmissionGate::new(5, 2);
 
     // Fill dedicated normal capacity, then borrow one idle critical slot to keep
@@ -27,7 +28,10 @@ fn qos_snapshot_flips_from_borrowable_to_guarded_once_critical_backlog_claims_fi
 
     // Once a real critical tx claims the final reserved slot, observability must
     // stop advertising any fresh admission headroom for either class.
-    assert_eq!(gate.admit(20, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(20, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
     assert_eq!(gate.queued_counts(), (3, 2, 5));
     let saturated = LaneQosSnapshot {
         normal_queued: 3,
@@ -42,6 +46,9 @@ fn qos_snapshot_flips_from_borrowable_to_guarded_once_critical_backlog_claims_fi
     assert_eq!(gate.qos_snapshot(), saturated);
 
     // Guarded fresh-normal probe noise must not perturb the saturated snapshot.
-    assert_eq!(gate.admit(99, IngressClass::Normal), AdmitOutcome::Backpressured);
+    assert_eq!(
+        gate.admit(99, IngressClass::Normal),
+        AdmitOutcome::Backpressured
+    );
     assert_eq!(gate.qos_snapshot(), saturated);
 }

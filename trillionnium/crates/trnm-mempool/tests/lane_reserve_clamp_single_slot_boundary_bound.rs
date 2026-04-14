@@ -23,8 +23,14 @@ fn oversized_reserve_single_slot_clamp_preserves_fail_closed_and_reopen_contract
 
     // While the only shared slot is occupied, queued ids remain globally
     // duplicate and fresh retries remain backpressured across ingress classes.
-    assert_eq!(gate.admit(41, IngressClass::Critical), AdmitOutcome::Duplicate);
-    assert_eq!(gate.admit(99, IngressClass::Critical), AdmitOutcome::Backpressured);
+    assert_eq!(
+        gate.admit(41, IngressClass::Critical),
+        AdmitOutcome::Duplicate
+    );
+    assert_eq!(
+        gate.admit(99, IngressClass::Critical),
+        AdmitOutcome::Backpressured
+    );
     assert_eq!(gate.qos_snapshot(), saturated);
     assert_eq!(gate.queued_counts(), (0, 1, 1));
 
@@ -46,6 +52,9 @@ fn oversized_reserve_single_slot_clamp_preserves_fail_closed_and_reopen_contract
     );
 
     // The drained id must re-enter as fresh once real headroom exists again.
-    assert_eq!(gate.admit(41, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(41, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
     assert_eq!(gate.queued_counts(), (0, 1, 1));
 }

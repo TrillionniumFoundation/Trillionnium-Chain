@@ -6,7 +6,10 @@ fn zero_reserve_probe_noise_keeps_qos_snapshot_flat_until_one_real_drain_reopens
 
     // Zero-reserve mode routes both ingress classes through the same shared
     // normal-lane headroom.
-    assert_eq!(gate.admit(10, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(10, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
     assert_eq!(gate.admit(20, IngressClass::Normal), AdmitOutcome::Accepted);
 
     let saturated_snapshot = LaneQosSnapshot {
@@ -24,13 +27,25 @@ fn zero_reserve_probe_noise_keeps_qos_snapshot_flat_until_one_real_drain_reopens
     // While the shared lane is full, duplicate probes and fresh retries from
     // either class must remain classification-only and must not perturb the
     // operator-facing QoS surface.
-    assert_eq!(gate.admit(10, IngressClass::Normal), AdmitOutcome::Duplicate);
+    assert_eq!(
+        gate.admit(10, IngressClass::Normal),
+        AdmitOutcome::Duplicate
+    );
     assert_eq!(gate.qos_snapshot(), saturated_snapshot);
-    assert_eq!(gate.admit(20, IngressClass::Critical), AdmitOutcome::Duplicate);
+    assert_eq!(
+        gate.admit(20, IngressClass::Critical),
+        AdmitOutcome::Duplicate
+    );
     assert_eq!(gate.qos_snapshot(), saturated_snapshot);
-    assert_eq!(gate.admit(30, IngressClass::Normal), AdmitOutcome::Backpressured);
+    assert_eq!(
+        gate.admit(30, IngressClass::Normal),
+        AdmitOutcome::Backpressured
+    );
     assert_eq!(gate.qos_snapshot(), saturated_snapshot);
-    assert_eq!(gate.admit(31, IngressClass::Critical), AdmitOutcome::Backpressured);
+    assert_eq!(
+        gate.admit(31, IngressClass::Critical),
+        AdmitOutcome::Backpressured
+    );
     assert_eq!(gate.qos_snapshot(), saturated_snapshot);
 
     // A single real dequeue should immediately reopen one shared slot for both
@@ -50,6 +65,12 @@ fn zero_reserve_probe_noise_keeps_qos_snapshot_flat_until_one_real_drain_reopens
 
     // A previously backpressured fresh id should now admit cleanly and become
     // globally duplicate across classes again.
-    assert_eq!(gate.admit(31, IngressClass::Critical), AdmitOutcome::Accepted);
-    assert_eq!(gate.admit(31, IngressClass::Normal), AdmitOutcome::Duplicate);
+    assert_eq!(
+        gate.admit(31, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
+    assert_eq!(
+        gate.admit(31, IngressClass::Normal),
+        AdmitOutcome::Duplicate
+    );
 }

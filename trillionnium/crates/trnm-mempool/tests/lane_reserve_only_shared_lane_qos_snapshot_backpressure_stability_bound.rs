@@ -8,9 +8,15 @@ fn reserve_only_shared_lane_fresh_retry_noise_keeps_qos_snapshot_stable_until_re
     // lane. Fresh retry noise must remain classification-only: repeated
     // backpressured probes must not perturb the operator-facing QoS snapshot
     // before any real dequeue/refill boundary occurs.
-    assert_eq!(gate.admit(10, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(10, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
     assert_eq!(gate.admit(11, IngressClass::Normal), AdmitOutcome::Accepted);
-    assert_eq!(gate.admit(12, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(12, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
 
     let expected_full = LaneQosSnapshot {
         normal_queued: 0,
@@ -27,9 +33,15 @@ fn reserve_only_shared_lane_fresh_retry_noise_keeps_qos_snapshot_stable_until_re
     // Repeated fresh retries from either class must stay backpressured without
     // fabricating queue growth, reopening headroom, or mutating class-specific
     // admissibility in the snapshot.
-    assert_eq!(gate.admit(90, IngressClass::Normal), AdmitOutcome::Backpressured);
+    assert_eq!(
+        gate.admit(90, IngressClass::Normal),
+        AdmitOutcome::Backpressured
+    );
     assert_eq!(gate.qos_snapshot(), expected_full);
-    assert_eq!(gate.admit(91, IngressClass::Critical), AdmitOutcome::Backpressured);
+    assert_eq!(
+        gate.admit(91, IngressClass::Critical),
+        AdmitOutcome::Backpressured
+    );
     assert_eq!(gate.qos_snapshot(), expected_full);
 
     // A real dequeue is the only event that may reopen the shared-lane snapshot.

@@ -10,7 +10,10 @@ fn critical_only_spillover_headroom_keeps_normal_closed_until_real_critical_refi
     assert_eq!(gate.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
     assert_eq!(gate.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
     assert_eq!(gate.admit(3, IngressClass::Normal), AdmitOutcome::Accepted);
-    assert_eq!(gate.admit(10, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(10, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
 
     let spillover_only_snapshot = LaneQosSnapshot {
         normal_queued: 3,
@@ -27,14 +30,23 @@ fn critical_only_spillover_headroom_keeps_normal_closed_until_real_critical_refi
     // Duplicate probes against the already-queued critical id and fresh normal
     // retry noise must stay classification-only. They must not fabricate normal
     // headroom or perturb the operator-facing snapshot before a real refill.
-    assert_eq!(gate.admit(10, IngressClass::Normal), AdmitOutcome::Duplicate);
+    assert_eq!(
+        gate.admit(10, IngressClass::Normal),
+        AdmitOutcome::Duplicate
+    );
     assert_eq!(gate.qos_snapshot(), spillover_only_snapshot);
-    assert_eq!(gate.admit(99, IngressClass::Normal), AdmitOutcome::Backpressured);
+    assert_eq!(
+        gate.admit(99, IngressClass::Normal),
+        AdmitOutcome::Backpressured
+    );
     assert_eq!(gate.qos_snapshot(), spillover_only_snapshot);
 
     // A real critical refill consumes the final reserved critical slot, after
     // which the lane must advertise itself as fully closed to fresh ingress.
-    assert_eq!(gate.admit(11, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(11, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
     assert_eq!(gate.queued_counts(), (3, 2, 5));
     assert_eq!(
         gate.qos_snapshot(),
@@ -52,5 +64,8 @@ fn critical_only_spillover_headroom_keeps_normal_closed_until_real_critical_refi
 
     // The earlier fresh normal retry must still remain fail-closed until a real
     // dequeue reopens capacity.
-    assert_eq!(gate.admit(99, IngressClass::Normal), AdmitOutcome::Backpressured);
+    assert_eq!(
+        gate.admit(99, IngressClass::Normal),
+        AdmitOutcome::Backpressured
+    );
 }

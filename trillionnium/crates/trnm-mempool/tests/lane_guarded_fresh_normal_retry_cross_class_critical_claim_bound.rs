@@ -27,8 +27,14 @@ fn guarded_fresh_normal_retry_does_not_poison_cross_class_critical_claim_on_last
     // Fresh normal retries are blocked by the reserve guard, but that must remain
     // purely classificatory: the tx id stays fresh and must not be poisoned into
     // Duplicate if it later arrives via the admissible critical path.
-    assert_eq!(g.admit(77, IngressClass::Normal), AdmitOutcome::Backpressured);
-    assert_eq!(g.admit(77, IngressClass::Normal), AdmitOutcome::Backpressured);
+    assert_eq!(
+        g.admit(77, IngressClass::Normal),
+        AdmitOutcome::Backpressured
+    );
+    assert_eq!(
+        g.admit(77, IngressClass::Normal),
+        AdmitOutcome::Backpressured
+    );
     assert_eq!(g.qos_snapshot(), guarded_snapshot);
     assert_eq!(g.queued_counts(), (3, 1, 4));
 

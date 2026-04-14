@@ -9,7 +9,10 @@ fn reserve_only_qos_snapshot_reopened_shared_slot_survives_mixed_duplicate_noise
     // stays visible while duplicate probes interleave same-class and cross-class
     // retries for the remaining queued ids.
     assert_eq!(gate.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
-    assert_eq!(gate.admit(2, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(2, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
     assert_eq!(gate.admit(3, IngressClass::Normal), AdmitOutcome::Accepted);
 
     assert_eq!(gate.pop_ready(), Some(1));
@@ -29,9 +32,15 @@ fn reserve_only_qos_snapshot_reopened_shared_slot_survives_mixed_duplicate_noise
     // Mixed same-class and cross-class duplicate probes must remain purely
     // classificatory and leave the reopened shared slot visible to both
     // sponsor-backed and free ingress.
-    assert_eq!(gate.admit(2, IngressClass::Critical), AdmitOutcome::Duplicate);
+    assert_eq!(
+        gate.admit(2, IngressClass::Critical),
+        AdmitOutcome::Duplicate
+    );
     assert_eq!(gate.qos_snapshot(), reopened);
-    assert_eq!(gate.admit(3, IngressClass::Critical), AdmitOutcome::Duplicate);
+    assert_eq!(
+        gate.admit(3, IngressClass::Critical),
+        AdmitOutcome::Duplicate
+    );
     assert_eq!(gate.qos_snapshot(), reopened);
     assert_eq!(gate.admit(2, IngressClass::Normal), AdmitOutcome::Duplicate);
     assert_eq!(gate.qos_snapshot(), reopened);

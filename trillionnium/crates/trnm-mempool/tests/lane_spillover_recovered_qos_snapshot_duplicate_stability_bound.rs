@@ -6,9 +6,15 @@ fn spillover_recovered_id_duplicate_probe_keeps_qos_snapshot_stable_until_next_r
 
     // Saturate the lane by filling the dedicated critical slot and both normal
     // slots, with the second critical tx spilling into normal capacity.
-    assert_eq!(gate.admit(100, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(100, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
     assert_eq!(gate.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
-    assert_eq!(gate.admit(101, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(101, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
     assert_eq!(gate.queued_counts(), (2, 1, 3));
     assert_eq!(
         gate.qos_snapshot(),
@@ -48,7 +54,10 @@ fn spillover_recovered_id_duplicate_probe_keeps_qos_snapshot_stable_until_next_r
     assert_eq!(gate.qos_snapshot(), recovered_snapshot);
 
     // The previously backpressured id recovers as fresh.
-    assert_eq!(gate.admit(999, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(999, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
     assert_eq!(gate.queued_counts(), (2, 1, 3));
 
     let saturated_again_snapshot = LaneQosSnapshot {
@@ -65,7 +74,10 @@ fn spillover_recovered_id_duplicate_probe_keeps_qos_snapshot_stable_until_next_r
 
     // Once recovered into the lane, duplicate probes from the opposite class must
     // stay Duplicate and must not perturb the public QoS surface.
-    assert_eq!(gate.admit(999, IngressClass::Normal), AdmitOutcome::Duplicate);
+    assert_eq!(
+        gate.admit(999, IngressClass::Normal),
+        AdmitOutcome::Duplicate
+    );
     assert_eq!(gate.qos_snapshot(), saturated_again_snapshot);
     assert_eq!(gate.queued_counts(), (2, 1, 3));
 }

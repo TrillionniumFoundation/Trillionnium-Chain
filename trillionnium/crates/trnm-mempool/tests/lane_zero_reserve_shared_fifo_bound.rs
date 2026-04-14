@@ -8,9 +8,15 @@ fn zero_reserve_mixed_ingress_preserves_shared_queue_fifo_order() {
     // lane headroom. Execution-domain isolation must not invent class-based
     // preemption inside that single shared queue.
     assert_eq!(gate.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
-    assert_eq!(gate.admit(100, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(100, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
     assert_eq!(gate.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
-    assert_eq!(gate.admit(101, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(101, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
     assert_eq!(gate.queued_counts(), (4, 0, 4));
 
     // In zero-reserve mode, dequeue order should stay FIFO across ingress classes

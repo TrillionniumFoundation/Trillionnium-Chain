@@ -6,8 +6,14 @@ fn reopened_dedicated_critical_reserve_stays_visible_through_cross_class_duplica
 
     assert_eq!(gate.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
     assert_eq!(gate.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
-    assert_eq!(gate.admit(10, IngressClass::Critical), AdmitOutcome::Accepted);
-    assert_eq!(gate.admit(11, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(10, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
+    assert_eq!(
+        gate.admit(11, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
 
     assert_eq!(gate.pop_ready(), Some(10));
 
@@ -23,7 +29,13 @@ fn reopened_dedicated_critical_reserve_stays_visible_through_cross_class_duplica
     };
     assert_eq!(gate.qos_snapshot(), reopened);
 
-    assert_eq!(gate.admit(11, IngressClass::Normal), AdmitOutcome::Duplicate);
-    assert_eq!(gate.admit(1, IngressClass::Critical), AdmitOutcome::Duplicate);
+    assert_eq!(
+        gate.admit(11, IngressClass::Normal),
+        AdmitOutcome::Duplicate
+    );
+    assert_eq!(
+        gate.admit(1, IngressClass::Critical),
+        AdmitOutcome::Duplicate
+    );
     assert_eq!(gate.qos_snapshot(), reopened);
 }

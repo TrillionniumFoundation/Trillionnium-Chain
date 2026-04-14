@@ -7,7 +7,10 @@ fn reserve_only_refilled_survivor_drain_reopens_shared_slot_without_duplicate_ma
     // Reserve-only mode models the launch-day sponsor/free-ingress boundary:
     // both ingress classes share one public admission surface.
     assert_eq!(gate.admit(10, IngressClass::Normal), AdmitOutcome::Accepted);
-    assert_eq!(gate.admit(20, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(20, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
     assert_eq!(gate.admit(30, IngressClass::Normal), AdmitOutcome::Accepted);
 
     let saturated = LaneQosSnapshot {
@@ -37,7 +40,10 @@ fn reserve_only_refilled_survivor_drain_reopens_shared_slot_without_duplicate_ma
     assert_eq!(gate.qos_snapshot(), reopened);
 
     // A drained id may immediately refill the reopened slot.
-    assert_eq!(gate.admit(10, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(10, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
     assert_eq!(gate.qos_snapshot(), saturated);
 
     // Once a different survivor drains, observers should see one shared slot reopen
@@ -45,9 +51,15 @@ fn reserve_only_refilled_survivor_drain_reopens_shared_slot_without_duplicate_ma
     // queued survivor across classes.
     assert_eq!(gate.pop_ready(), Some(20));
     assert_eq!(gate.qos_snapshot(), reopened);
-    assert_eq!(gate.admit(10, IngressClass::Normal), AdmitOutcome::Duplicate);
+    assert_eq!(
+        gate.admit(10, IngressClass::Normal),
+        AdmitOutcome::Duplicate
+    );
     assert_eq!(gate.qos_snapshot(), reopened);
-    assert_eq!(gate.admit(30, IngressClass::Critical), AdmitOutcome::Duplicate);
+    assert_eq!(
+        gate.admit(30, IngressClass::Critical),
+        AdmitOutcome::Duplicate
+    );
     assert_eq!(gate.qos_snapshot(), reopened);
 
     // The reopened shared slot should still accept truly fresh work immediately.

@@ -8,7 +8,10 @@ fn reserve_only_qos_snapshot_reopen_allows_drained_id_retry_across_ingress_class
     // lane. Once one occupant drains, the single reopened slot should be usable
     // immediately even if the drained id retries through the opposite ingress class.
     assert_eq!(gate.admit(1, IngressClass::Normal), AdmitOutcome::Accepted);
-    assert_eq!(gate.admit(2, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(2, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
     assert_eq!(gate.admit(3, IngressClass::Normal), AdmitOutcome::Accepted);
     assert_eq!(gate.pop_ready(), Some(1));
 
@@ -26,7 +29,10 @@ fn reserve_only_qos_snapshot_reopen_allows_drained_id_retry_across_ingress_class
 
     // The drained id must no longer be duplicate-poisoned after dequeue; retrying
     // it via the opposite ingress class should consume the reopened shared slot.
-    assert_eq!(gate.admit(1, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(1, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
     assert_eq!(
         gate.qos_snapshot(),
         LaneQosSnapshot {

@@ -6,7 +6,10 @@ fn reserve_only_fresh_normal_retry_does_not_poison_later_cross_class_critical_ad
 
     // Reserve-only mode routes both classes through the shared critical queue.
     // Fill it completely so fresh retry noise is forced onto the fail-closed path.
-    assert_eq!(gate.admit(1, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(1, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
     assert_eq!(gate.admit(2, IngressClass::Normal), AdmitOutcome::Accepted);
 
     let saturated = LaneQosSnapshot {
@@ -23,8 +26,14 @@ fn reserve_only_fresh_normal_retry_does_not_poison_later_cross_class_critical_ad
 
     // A fresh normal retry must stay backpressured, but that classification must
     // not mark the tx id as seen across the shared reserve-only lane.
-    assert_eq!(gate.admit(77, IngressClass::Normal), AdmitOutcome::Backpressured);
-    assert_eq!(gate.admit(77, IngressClass::Normal), AdmitOutcome::Backpressured);
+    assert_eq!(
+        gate.admit(77, IngressClass::Normal),
+        AdmitOutcome::Backpressured
+    );
+    assert_eq!(
+        gate.admit(77, IngressClass::Normal),
+        AdmitOutcome::Backpressured
+    );
     assert_eq!(gate.qos_snapshot(), saturated);
     assert_eq!(gate.queued_counts(), (0, 2, 2));
 
@@ -43,8 +52,17 @@ fn reserve_only_fresh_normal_retry_does_not_poison_later_cross_class_critical_ad
     };
     assert_eq!(gate.qos_snapshot(), reopened);
 
-    assert_eq!(gate.admit(77, IngressClass::Critical), AdmitOutcome::Accepted);
-    assert_eq!(gate.admit(77, IngressClass::Normal), AdmitOutcome::Duplicate);
-    assert_eq!(gate.admit(77, IngressClass::Critical), AdmitOutcome::Duplicate);
+    assert_eq!(
+        gate.admit(77, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
+    assert_eq!(
+        gate.admit(77, IngressClass::Normal),
+        AdmitOutcome::Duplicate
+    );
+    assert_eq!(
+        gate.admit(77, IngressClass::Critical),
+        AdmitOutcome::Duplicate
+    );
     assert_eq!(gate.queued_counts(), (0, 2, 2));
 }

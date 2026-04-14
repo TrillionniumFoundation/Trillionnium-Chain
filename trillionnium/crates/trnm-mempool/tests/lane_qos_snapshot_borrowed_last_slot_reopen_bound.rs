@@ -44,8 +44,14 @@ fn qos_snapshot_reopens_borrowable_last_reserved_slot_after_borrowed_occupant_dr
     // Cross-class duplicate probes for the surviving normal backlog must stay
     // purely classificatory and must not perturb the reopened sponsor/free-ingress
     // headroom now that the reserved slot is borrowable again.
-    assert_eq!(gate.admit(1, IngressClass::Critical), AdmitOutcome::Duplicate);
+    assert_eq!(
+        gate.admit(1, IngressClass::Critical),
+        AdmitOutcome::Duplicate
+    );
     assert_eq!(gate.qos_snapshot(), reopened);
-    assert_eq!(gate.admit(2, IngressClass::Critical), AdmitOutcome::Duplicate);
+    assert_eq!(
+        gate.admit(2, IngressClass::Critical),
+        AdmitOutcome::Duplicate
+    );
     assert_eq!(gate.qos_snapshot(), reopened);
 }

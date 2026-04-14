@@ -1,7 +1,8 @@
 use trnm_mempool::{AdmitOutcome, IngressClass, LaneAdmissionGate, LaneQosSnapshot};
 
 #[test]
-fn borrowed_last_idle_critical_slot_keeps_cross_class_fresh_retry_unpoisoned_until_normal_reopens() {
+fn borrowed_last_idle_critical_slot_keeps_cross_class_fresh_retry_unpoisoned_until_normal_reopens()
+{
     let mut g = LaneAdmissionGate::new(3, 1);
 
     // Fill dedicated normal headroom, then borrow the last idle reserved critical slot.
@@ -24,8 +25,14 @@ fn borrowed_last_idle_critical_slot_keeps_cross_class_fresh_retry_unpoisoned_unt
 
     // A fresh tx blocked on the critical path must stay fresh across opposite-class
     // retries while the borrowed slot remains occupied.
-    assert_eq!(g.admit(99, IngressClass::Critical), AdmitOutcome::Backpressured);
-    assert_eq!(g.admit(99, IngressClass::Normal), AdmitOutcome::Backpressured);
+    assert_eq!(
+        g.admit(99, IngressClass::Critical),
+        AdmitOutcome::Backpressured
+    );
+    assert_eq!(
+        g.admit(99, IngressClass::Normal),
+        AdmitOutcome::Backpressured
+    );
     assert_eq!(g.qos_snapshot(), borrowed_snapshot);
     assert_eq!(g.queued_counts(), (2, 1, 3));
 

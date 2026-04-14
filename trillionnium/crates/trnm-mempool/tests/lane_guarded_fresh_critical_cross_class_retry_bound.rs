@@ -24,7 +24,10 @@ fn guarded_fresh_critical_cross_class_retry_stays_fresh_and_admits_on_critical_p
 
     // A fresh tx first probed through the normal class is reserve-guarded here and
     // must remain fresh rather than being poisoned into duplicate metadata.
-    assert_eq!(g.admit(77, IngressClass::Normal), AdmitOutcome::Backpressured);
+    assert_eq!(
+        g.admit(77, IngressClass::Normal),
+        AdmitOutcome::Backpressured
+    );
     assert_eq!(g.qos_snapshot(), guarded_snapshot);
 
     // The same tx id should immediately admit through the critical path because the

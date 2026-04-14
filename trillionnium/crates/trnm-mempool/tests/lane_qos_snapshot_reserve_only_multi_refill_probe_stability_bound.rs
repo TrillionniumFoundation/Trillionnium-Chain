@@ -9,7 +9,10 @@ fn reserve_only_qos_snapshot_preserves_multi_slot_refill_visibility_across_dupli
     // slots immediately, and duplicate cross-class probes must stay
     // classification-only until fresh work actually consumes that headroom.
     assert_eq!(gate.admit(10, IngressClass::Normal), AdmitOutcome::Accepted);
-    assert_eq!(gate.admit(11, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(11, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
     assert_eq!(gate.admit(12, IngressClass::Normal), AdmitOutcome::Accepted);
 
     assert_eq!(gate.pop_ready(), Some(10));
@@ -30,9 +33,15 @@ fn reserve_only_qos_snapshot_preserves_multi_slot_refill_visibility_across_dupli
     // Surviving queued work and already-drained ids may both be probed through the
     // opposite ingress class; neither duplicate path should perturb the reopened
     // sponsor/free-ingress snapshot.
-    assert_eq!(gate.admit(12, IngressClass::Critical), AdmitOutcome::Duplicate);
+    assert_eq!(
+        gate.admit(12, IngressClass::Critical),
+        AdmitOutcome::Duplicate
+    );
     assert_eq!(gate.qos_snapshot(), reopened);
-    assert_eq!(gate.admit(10, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(10, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
     assert_eq!(gate.qos_snapshot().total_headroom, 1);
     assert!(gate.qos_snapshot().fresh_normal_admissible);
     assert!(gate.qos_snapshot().fresh_critical_admissible);

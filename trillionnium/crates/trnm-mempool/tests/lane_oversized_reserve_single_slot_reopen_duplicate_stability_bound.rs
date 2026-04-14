@@ -37,7 +37,10 @@ fn oversized_reserve_single_slot_reopen_stays_stable_across_duplicate_probe_nois
     assert_eq!(gate.qos_snapshot(), reopened_snapshot);
 
     // Once drained, the old tx id is fresh again and may reclaim the only slot.
-    assert_eq!(gate.admit(41, IngressClass::Critical), AdmitOutcome::Accepted);
+    assert_eq!(
+        gate.admit(41, IngressClass::Critical),
+        AdmitOutcome::Accepted
+    );
     let saturated_snapshot = LaneQosSnapshot {
         normal_queued: 0,
         critical_queued: 1,
@@ -52,7 +55,10 @@ fn oversized_reserve_single_slot_reopen_stays_stable_across_duplicate_probe_nois
 
     // Duplicate probes against the queued single-slot occupant must stay purely
     // classificatory and must not perturb the fail-closed QoS surface.
-    assert_eq!(gate.admit(41, IngressClass::Normal), AdmitOutcome::Duplicate);
+    assert_eq!(
+        gate.admit(41, IngressClass::Normal),
+        AdmitOutcome::Duplicate
+    );
     assert_eq!(gate.qos_snapshot(), saturated_snapshot);
 
     // After a second real drain, a fresh id must admit immediately into the same
