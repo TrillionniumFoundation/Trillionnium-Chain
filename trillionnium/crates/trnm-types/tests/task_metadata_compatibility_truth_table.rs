@@ -577,6 +577,55 @@ fn task_metadata_compatibility_truth_table_task_object_threading_creates_metadat
 }
 
 #[test]
+fn task_metadata_compatibility_truth_table_task_object_settlement_helpers_preserve_absent_fallback_and_threaded_precedence(
+) {
+    let fallback_settlement = TaskSettlementSnapshot {
+        settlement_schema: "poco_v1".into(),
+        tokenizer_id: "llama3-tokenizer".into(),
+        tokenizer_version: "1.0.0".into(),
+        output_hash: format!("0x{}", "7".repeat(64)),
+        output_token_count: 512,
+        output_root: Some(format!("0x{}", "8".repeat(64))),
+        output_span_commitment: None,
+    };
+    let competing_fallback = TaskSettlementSnapshot {
+        settlement_schema: "poco_v1".into(),
+        tokenizer_id: "llama3-tokenizer".into(),
+        tokenizer_version: "1.0.0".into(),
+        output_hash: format!("0x{}", "9".repeat(64)),
+        output_token_count: 512,
+        output_root: Some(format!("0x{}", "a".repeat(64))),
+        output_span_commitment: None,
+    };
+    let mut task = task_with_metadata(None);
+
+    assert_eq!(
+        task.settlement_snapshot_source(None),
+        TaskSettlementSnapshotSource::Absent
+    );
+    assert_eq!(
+        task.settlement_snapshot_source(Some(&fallback_settlement)),
+        TaskSettlementSnapshotSource::LegacyFallback
+    );
+    assert_eq!(
+        task.effective_settlement_snapshot(Some(&fallback_settlement)),
+        Some(&fallback_settlement)
+    );
+
+    assert!(task.thread_settlement_snapshot(Some(&fallback_settlement)));
+    assert_eq!(
+        task.settlement_snapshot_source(Some(&competing_fallback)),
+        TaskSettlementSnapshotSource::ThreadedMetadata
+    );
+    assert_eq!(
+        task.effective_settlement_snapshot(Some(&competing_fallback))
+            .expect("threaded task settlement should remain authoritative")
+            .output_hash,
+        fallback_settlement.output_hash
+    );
+}
+
+#[test]
 fn task_metadata_compatibility_truth_table_task_object_threading_ignores_absent_fallback_without_materializing_metadata(
 ) {
     let mut task = task_with_metadata(None);

@@ -585,6 +585,36 @@ pub struct TaskObject {
 }
 
 impl TaskObject {
+    /// Query helper for task-level callers that still carry settlement out of
+    /// band. Reuses `TaskMetadata` precedence without materializing metadata
+    /// just to explain whether settlement is absent, legacy fallback, or
+    /// already threaded into canonical task metadata.
+    pub fn settlement_snapshot_source(
+        &self,
+        settlement: Option<&TaskSettlementSnapshot>,
+    ) -> TaskSettlementSnapshotSource {
+        if let Some(metadata) = self.metadata.as_ref() {
+            metadata.settlement_snapshot_source(settlement)
+        } else if settlement.is_some() {
+            TaskSettlementSnapshotSource::LegacyFallback
+        } else {
+            TaskSettlementSnapshotSource::Absent
+        }
+    }
+
+    /// Read-only helper for task-level callers that need the effective
+    /// settlement snapshot without open-coding metadata/fallback precedence.
+    pub fn effective_settlement_snapshot<'a>(
+        &'a self,
+        settlement: Option<&'a TaskSettlementSnapshot>,
+    ) -> Option<&'a TaskSettlementSnapshot> {
+        if let Some(metadata) = self.metadata.as_ref() {
+            metadata.effective_settlement_snapshot(settlement)
+        } else {
+            settlement
+        }
+    }
+
     /// Migration helper for settlement write paths that operate on whole task
     /// objects. Creates canonical metadata on demand only when a fallback
     /// settlement snapshot is present and has not already been threaded.
