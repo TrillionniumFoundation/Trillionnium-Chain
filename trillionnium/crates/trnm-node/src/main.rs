@@ -3159,6 +3159,24 @@ struct EventDelta {
     text: String,
 }
 
+#[cfg(test)]
+mod accounting {
+    pub(crate) use super::EventDelta;
+}
+
+#[cfg(test)]
+mod types {
+    pub(crate) use super::MockTx;
+}
+
+#[cfg(test)]
+#[path = "txmeta.rs"]
+mod txmeta;
+
+#[cfg(test)]
+#[path = "events.rs"]
+mod events;
+
 fn classify_apply_error(err: &anyhow::Error) -> &'static str {
     if let Some(pouw) = err.downcast_ref::<trnm_pouw::PouwError>() {
         return match pouw {
