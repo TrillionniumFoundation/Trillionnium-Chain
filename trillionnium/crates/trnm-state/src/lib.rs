@@ -10,7 +10,10 @@ use trnm_types::{
 };
 
 pub mod consumption;
-pub use consumption::{ConsumptionRecord, ConsumptionRecordKey, ConsumptionRecordStatus, TaskConsumptionSummary};
+pub use consumption::{
+    BillingWindowPolicy, ConsumptionRecord, ConsumptionRecordKey, ConsumptionRecordStatus,
+    ConsumptionSettlementStateSnapshot, TaskConsumptionSummary,
+};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum ObjectValue {
@@ -28,6 +31,7 @@ pub struct StateStore {
     pending_resolve_approvals: BTreeMap<u64, PendingResolveApproval>,
     consumption_records: BTreeMap<ConsumptionRecordKey, ConsumptionRecord>,
     consumer_consumption_nonces: BTreeMap<String, u64>,
+    billing_window_policies: BTreeMap<String, BillingWindowPolicy>,
     task_consumption_summaries: BTreeMap<u64, TaskConsumptionSummary>,
     monetary_state: MonetaryState,
     state_root_cache: RwLock<Option<Hash32>>,
@@ -66,6 +70,7 @@ impl Default for StateStore {
             pending_resolve_approvals: BTreeMap::new(),
             consumption_records: BTreeMap::new(),
             consumer_consumption_nonces: BTreeMap::new(),
+            billing_window_policies: BTreeMap::new(),
             task_consumption_summaries: BTreeMap::new(),
             monetary_state: MonetaryState::default(),
             state_root_cache: RwLock::new(None),
@@ -88,6 +93,7 @@ impl Clone for StateStore {
             pending_resolve_approvals: self.pending_resolve_approvals.clone(),
             consumption_records: self.consumption_records.clone(),
             consumer_consumption_nonces: self.consumer_consumption_nonces.clone(),
+            billing_window_policies: self.billing_window_policies.clone(),
             task_consumption_summaries: self.task_consumption_summaries.clone(),
             monetary_state: self.monetary_state.clone(),
             state_root_cache: RwLock::new(cached),
@@ -1532,7 +1538,11 @@ fn hash_pending_resolve_approval(
     hasher.update(pending.task_version.to_le_bytes());
 }
 
-fn hash_consumption_record(hasher: &mut Sha256, key: &ConsumptionRecordKey, record: &ConsumptionRecord) {
+fn hash_consumption_record(
+    hasher: &mut Sha256,
+    key: &ConsumptionRecordKey,
+    record: &ConsumptionRecord,
+) {
     hasher.update(b"consumption_record");
     hasher.update(key.task_id.to_le_bytes());
     hash_len_prefixed_str(hasher, &key.consumer_id);
@@ -1564,7 +1574,11 @@ fn hash_consumption_record(hasher: &mut Sha256, key: &ConsumptionRecordKey, reco
     }
 }
 
-fn hash_task_consumption_summary(hasher: &mut Sha256, task_id: u64, summary: &TaskConsumptionSummary) {
+fn hash_task_consumption_summary(
+    hasher: &mut Sha256,
+    task_id: u64,
+    summary: &TaskConsumptionSummary,
+) {
     hasher.update(b"task_consumption_summary");
     hasher.update(task_id.to_le_bytes());
     hasher.update(summary.task_id.to_le_bytes());
@@ -1581,6 +1595,33 @@ fn hash_task_consumption_summary(hasher: &mut Sha256, task_id: u64, summary: &Ta
         }
         None => hasher.update([0]),
     }
+}
+
+fn hash_billing_window_policy(
+    hasher: &mut Sha256,
+    billing_window_id: &str,
+    policy: &BillingWindowPolicy,
+) {
+    hasher.update(b"billing_window_policy");
+    hash_len_prefixed_str(hasher, billing_window_id);
+    hash_len_prefixed_str(hasher, &policy.billing_window_id);
+    hasher.update(policy.open_at_unix_ms.to_le_bytes());
+    hasher.update(policy.close_at_unix_ms.to_le_bytes());
+    match policy.per_consumer_max_credited_units {
+        Some(cap) => {
+            hasher.update([1]);
+            hasher.update(cap.to_le_bytes());
+        }
+        None => hasher.update([0]),
+    }
+    match policy.per_task_max_credited_units {
+        Some(cap) => {
+            hasher.update([1]);
+            hasher.update(cap.to_le_bytes());
+        }
+        None => hasher.update([0]),
+    }
+    hasher.update(policy.policy_version.to_le_bytes());
 }
 
 fn hash_task_metering_snapshot(hasher: &mut Sha256, metering: &trnm_types::TaskMeteringSnapshot) {
@@ -3640,13 +3681,28 @@ impl StateStore {
         })
     }
 
-    pub fn put_consumption_record(&mut self, record: ConsumptionRecord) -> Option<ConsumptionRecord> {
+    pub fn put_consumption_record(
+        &mut self,
+        record: ConsumptionRecord,
+    ) -> Option<ConsumptionRecord> {
+        let key = record.key.clone();
+        if !record.is_persistable_snapshot_for(&key) {
+            return self.remove_consumption_record(&key);
+        }
+
         self.invalidate_state_root_cache();
-        self.consumption_records.insert(record.key.clone(), record)
+        self.consumption_records.insert(key, record)
     }
 
     pub fn consumption_record(&self, key: &ConsumptionRecordKey) -> Option<ConsumptionRecord> {
         self.consumption_records.get(key).cloned()
+    }
+
+    pub fn consumption_record_snapshot(
+        &self,
+        key: &ConsumptionRecordKey,
+    ) -> Option<ConsumptionRecord> {
+        self.consumption_record(key)
     }
 
     pub fn consumption_records_for_task(&self, task_id: u64) -> Vec<ConsumptionRecord> {
@@ -3656,7 +3712,10 @@ impl StateStore {
             .collect()
     }
 
-    pub fn remove_consumption_record(&mut self, key: &ConsumptionRecordKey) -> Option<ConsumptionRecord> {
+    pub fn remove_consumption_record(
+        &mut self,
+        key: &ConsumptionRecordKey,
+    ) -> Option<ConsumptionRecord> {
         let removed = self.consumption_records.remove(key);
         if removed.is_some() {
             self.invalidate_state_root_cache();
@@ -3664,9 +3723,39 @@ impl StateStore {
         removed
     }
 
+    pub fn restore_consumption_record(
+        &mut self,
+        key: &ConsumptionRecordKey,
+        snapshot: Option<ConsumptionRecord>,
+    ) {
+        match snapshot {
+            Some(snapshot) if snapshot.is_persistable_snapshot_for(key) => {
+                let _ = self.put_consumption_record(snapshot);
+            }
+            _ => {
+                let _ = self.remove_consumption_record(key);
+            }
+        }
+    }
+
+    fn consumer_consumption_nonce_is_compatible_with_persisted_records(
+        &self,
+        consumer_id: &str,
+        nonce: u64,
+    ) -> bool {
+        self.consumption_records.iter().all(|(key, record)| {
+            key.consumer_id != consumer_id
+                || !record.is_persistable_snapshot_for(key)
+                || record.is_compatible_with_consumer_nonce(nonce)
+        })
+    }
+
     pub fn set_consumer_consumption_nonce(&mut self, consumer_id: &str, nonce: u64) {
         self.invalidate_state_root_cache();
-        if nonce == 0 {
+        if nonce == 0
+            || !self
+                .consumer_consumption_nonce_is_compatible_with_persisted_records(consumer_id, nonce)
+        {
             self.consumer_consumption_nonces.remove(consumer_id);
         } else {
             self.consumer_consumption_nonces
@@ -3678,20 +3767,252 @@ impl StateStore {
         self.consumer_consumption_nonces.get(consumer_id).copied()
     }
 
+    pub fn consumer_consumption_nonce_snapshot(&self, consumer_id: &str) -> Option<u64> {
+        self.consumer_consumption_nonce(consumer_id)
+    }
+
+    pub fn restore_consumer_consumption_nonce(&mut self, consumer_id: &str, snapshot: Option<u64>) {
+        match snapshot {
+            Some(nonce) if nonce > 0 => self.set_consumer_consumption_nonce(consumer_id, nonce),
+            _ => self.set_consumer_consumption_nonce(consumer_id, 0),
+        }
+    }
+
+    fn billing_window_policy_is_compatible_with_persisted_records(
+        &self,
+        policy: &BillingWindowPolicy,
+    ) -> bool {
+        self.consumption_records.iter().all(|(key, record)| {
+            key.billing_window_id != policy.billing_window_id
+                || !record.is_persistable_snapshot_for(key)
+                || record.is_compatible_with_billing_window_policy(policy)
+        })
+    }
+
+    fn billing_window_policy_preserves_persisted_version_boundary(
+        &self,
+        policy: &BillingWindowPolicy,
+    ) -> bool {
+        self.billing_window_policies
+            .get(&policy.billing_window_id)
+            .map_or(true, |persisted| {
+                policy.preserves_version_boundary_of(persisted)
+            })
+    }
+
+    pub fn set_billing_window_policy(
+        &mut self,
+        policy: BillingWindowPolicy,
+    ) -> Option<BillingWindowPolicy> {
+        let billing_window_id = policy.billing_window_id.clone();
+        if !policy.is_persistable_snapshot_for(&billing_window_id)
+            || !self.billing_window_policy_is_compatible_with_persisted_records(&policy)
+        {
+            return self.clear_billing_window_policy(&billing_window_id);
+        }
+        if !self.billing_window_policy_preserves_persisted_version_boundary(&policy) {
+            return self.billing_window_policy(&billing_window_id);
+        }
+
+        self.invalidate_state_root_cache();
+        self.billing_window_policies
+            .insert(billing_window_id, policy)
+    }
+
+    pub fn billing_window_policy(&self, billing_window_id: &str) -> Option<BillingWindowPolicy> {
+        self.billing_window_policies.get(billing_window_id).cloned()
+    }
+
+    pub fn billing_window_policy_for_acceptance(
+        &self,
+        billing_window_id: &str,
+        accepted_at_unix_ms: u64,
+    ) -> Option<BillingWindowPolicy> {
+        self.billing_window_policies
+            .get(billing_window_id)
+            .filter(|policy| policy.is_receipt_compatible(billing_window_id, accepted_at_unix_ms))
+            .cloned()
+    }
+
+    pub fn billing_window_policy_snapshot(
+        &self,
+        billing_window_id: &str,
+    ) -> Option<BillingWindowPolicy> {
+        self.billing_window_policy(billing_window_id)
+    }
+
+    pub fn restore_billing_window_policy(
+        &mut self,
+        billing_window_id: &str,
+        snapshot: Option<BillingWindowPolicy>,
+    ) {
+        match snapshot {
+            Some(snapshot) if snapshot.is_persistable_snapshot_for(billing_window_id) => {
+                let _ = self.set_billing_window_policy(snapshot);
+            }
+            _ => {
+                let _ = self.clear_billing_window_policy(billing_window_id);
+            }
+        }
+    }
+
+    pub fn clear_billing_window_policy(
+        &mut self,
+        billing_window_id: &str,
+    ) -> Option<BillingWindowPolicy> {
+        let removed = self.billing_window_policies.remove(billing_window_id);
+        if removed.is_some() {
+            self.invalidate_state_root_cache();
+        }
+        removed
+    }
+
+    fn task_consumption_summary_is_compatible_with_persisted_records(
+        &self,
+        summary: &TaskConsumptionSummary,
+    ) -> bool {
+        self.consumption_records.iter().all(|(key, record)| {
+            key.task_id != summary.task_id
+                || !record.is_persistable_snapshot_for(key)
+                || record.is_compatible_with_task_summary(summary)
+        })
+    }
+
     pub fn set_task_consumption_summary(
         &mut self,
         summary: TaskConsumptionSummary,
     ) -> Option<TaskConsumptionSummary> {
+        let task_id = summary.task_id;
+        if !summary.is_persistable_snapshot_for(task_id)
+            || !self.task_consumption_summary_is_compatible_with_persisted_records(&summary)
+        {
+            return self.clear_task_consumption_summary(task_id);
+        }
+
         self.invalidate_state_root_cache();
-        self.task_consumption_summaries
-            .insert(summary.task_id, summary)
+        self.task_consumption_summaries.insert(task_id, summary)
     }
 
     pub fn task_consumption_summary(&self, task_id: u64) -> Option<TaskConsumptionSummary> {
         self.task_consumption_summaries.get(&task_id).cloned()
     }
 
-    pub fn clear_task_consumption_summary(&mut self, task_id: u64) -> Option<TaskConsumptionSummary> {
+    pub fn task_consumption_summary_snapshot(
+        &self,
+        task_id: u64,
+    ) -> Option<TaskConsumptionSummary> {
+        self.task_consumption_summary(task_id)
+    }
+
+    pub fn consumption_settlement_state_snapshot(
+        &self,
+        key: &ConsumptionRecordKey,
+    ) -> ConsumptionSettlementStateSnapshot {
+        let record = self.consumption_record_snapshot(key);
+        let billing_window_policy = match record.as_ref() {
+            Some(record) => self
+                .billing_window_policy_for_acceptance(
+                    &key.billing_window_id,
+                    record.accepted_at_unix_ms,
+                )
+                .filter(|policy| record.is_compatible_with_billing_window_policy(policy)),
+            None => self.billing_window_policy_snapshot(&key.billing_window_id),
+        };
+
+        ConsumptionSettlementStateSnapshot {
+            key: key.clone(),
+            record,
+            consumer_nonce: self.consumer_consumption_nonce_snapshot(&key.consumer_id),
+            billing_window_policy,
+            task_summary: self.task_consumption_summary_snapshot(key.task_id),
+        }
+    }
+
+    pub fn complete_consumption_settlement_state_snapshot(
+        &self,
+        key: &ConsumptionRecordKey,
+    ) -> Option<ConsumptionSettlementStateSnapshot> {
+        let snapshot = self.consumption_settlement_state_snapshot(key);
+        snapshot
+            .is_complete_persistable_snapshot_for(key)
+            .then_some(snapshot)
+    }
+
+    pub fn restore_consumption_settlement_state(
+        &mut self,
+        key: &ConsumptionRecordKey,
+        snapshot: ConsumptionSettlementStateSnapshot,
+    ) {
+        if !snapshot.matches_boundary(key) {
+            return;
+        }
+
+        let ConsumptionSettlementStateSnapshot {
+            record,
+            consumer_nonce,
+            billing_window_policy,
+            task_summary,
+            ..
+        } = snapshot;
+        let snapshot_had_invalid_record = record
+            .as_ref()
+            .map_or(false, |record| !record.is_persistable_snapshot_for(key));
+        let record = record.filter(|record| record.is_persistable_snapshot_for(key));
+        let consumer_nonce = if snapshot_had_invalid_record {
+            None
+        } else {
+            match record.as_ref() {
+                Some(record) => consumer_nonce.filter(|consumer_nonce| {
+                    record.is_compatible_with_consumer_nonce(*consumer_nonce)
+                }),
+                None => consumer_nonce,
+            }
+        };
+        let billing_window_policy = if snapshot_had_invalid_record {
+            None
+        } else {
+            match record.as_ref() {
+                Some(record) => billing_window_policy
+                    .filter(|policy| record.is_compatible_with_billing_window_policy(policy)),
+                None => billing_window_policy,
+            }
+        };
+        let task_summary = if snapshot_had_invalid_record {
+            None
+        } else {
+            match record.as_ref() {
+                Some(record) => {
+                    task_summary.filter(|summary| record.is_compatible_with_task_summary(summary))
+                }
+                None => task_summary,
+            }
+        };
+
+        self.restore_consumption_record(key, record);
+        self.restore_consumer_consumption_nonce(&key.consumer_id, consumer_nonce);
+        self.restore_billing_window_policy(&key.billing_window_id, billing_window_policy);
+        self.restore_task_consumption_summary(key.task_id, task_summary);
+    }
+
+    pub fn restore_task_consumption_summary(
+        &mut self,
+        task_id: u64,
+        snapshot: Option<TaskConsumptionSummary>,
+    ) {
+        match snapshot {
+            Some(snapshot) if snapshot.is_persistable_snapshot_for(task_id) => {
+                let _ = self.set_task_consumption_summary(snapshot);
+            }
+            _ => {
+                let _ = self.clear_task_consumption_summary(task_id);
+            }
+        }
+    }
+
+    pub fn clear_task_consumption_summary(
+        &mut self,
+        task_id: u64,
+    ) -> Option<TaskConsumptionSummary> {
         let removed = self.task_consumption_summaries.remove(&task_id);
         if removed.is_some() {
             self.invalidate_state_root_cache();
@@ -4031,6 +4352,9 @@ impl StateStore {
             hasher.update(b"consumption_consumer_nonce");
             hash_len_prefixed_str(&mut hasher, consumer_id);
             hasher.update(nonce.to_le_bytes());
+        }
+        for (billing_window_id, policy) in &self.billing_window_policies {
+            hash_billing_window_policy(&mut hasher, billing_window_id, policy);
         }
         for (task_id, summary) in &self.task_consumption_summaries {
             hash_task_consumption_summary(&mut hasher, *task_id, summary);
@@ -4859,8 +5183,9 @@ mod tests {
         );
 
         let mut uppercase_checkpoint_wal_hash = checkpoint.clone();
-        uppercase_checkpoint_wal_hash.wal_entry_hash_hex =
-            uppercase_checkpoint_wal_hash.wal_entry_hash_hex.to_uppercase();
+        uppercase_checkpoint_wal_hash.wal_entry_hash_hex = uppercase_checkpoint_wal_hash
+            .wal_entry_hash_hex
+            .to_uppercase();
         assert_eq!(
             checkpoint_da_light_verifier_summary(&uppercase_checkpoint_wal_hash, &wal),
             None,
@@ -4868,8 +5193,9 @@ mod tests {
         );
 
         let mut uppercase_checkpoint_state_root = checkpoint.clone();
-        uppercase_checkpoint_state_root.state_root_hex =
-            uppercase_checkpoint_state_root.state_root_hex.to_uppercase();
+        uppercase_checkpoint_state_root.state_root_hex = uppercase_checkpoint_state_root
+            .state_root_hex
+            .to_uppercase();
         assert_eq!(
             checkpoint_da_light_verifier_summary(&uppercase_checkpoint_state_root, &wal),
             None,
@@ -4981,7 +5307,8 @@ mod tests {
     }
 
     #[test]
-    fn checkpoint_da_light_verifier_summary_fails_closed_on_carriage_return_non_genesis_prev_hash() {
+    fn checkpoint_da_light_verifier_summary_fails_closed_on_carriage_return_non_genesis_prev_hash()
+    {
         let wal = WalMeta {
             height: 2,
             round: 0,
