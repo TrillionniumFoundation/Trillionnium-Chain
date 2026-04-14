@@ -3177,6 +3177,14 @@ mod txmeta;
 #[path = "events.rs"]
 mod events;
 
+#[cfg(test)]
+#[path = "apply.rs"]
+mod split_apply;
+
+#[cfg(test)]
+#[path = "runtime/ordering/rw_decl.rs"]
+mod split_rw_decl;
+
 fn classify_apply_error(err: &anyhow::Error) -> &'static str {
     if let Some(pouw) = err.downcast_ref::<trnm_pouw::PouwError>() {
         return match pouw {
