@@ -304,6 +304,24 @@ fn validate_consumption_receipt_tx_input(receipt: &ConsumptionReceiptTxInput) ->
     Ok(())
 }
 
+fn validate_non_empty_cli_field(value: &str, field_name: &'static str) -> Result<()> {
+    if value.trim().is_empty() {
+        bail!("{} must not be empty", field_name);
+    }
+    Ok(())
+}
+
+fn validate_consumption_settlement_locator(
+    consumer_id: &str,
+    output_hash: &str,
+    billing_window_id: &str,
+) -> Result<()> {
+    validate_non_empty_cli_field(consumer_id, "consumer_id")?;
+    validate_non_empty_cli_field(output_hash, "output_hash")?;
+    validate_non_empty_cli_field(billing_window_id, "billing_window_id")?;
+    Ok(())
+}
+
 fn load_consumption_receipt_tx_input(path: &Path) -> Result<ConsumptionReceiptTxInput> {
     let raw = fs::read_to_string(path).map_err(|err| {
         anyhow!(
@@ -357,6 +375,8 @@ fn submit_consumption_receipt_template_override() -> Option<String> {
 fn submit_consumption_receipt_tx(receipt_json: PathBuf, signer: Option<String>) -> Result<()> {
     let receipt = load_consumption_receipt_tx_input(&receipt_json)?;
     let signer = signer.unwrap_or_else(|| receipt.consumer_id.clone());
+
+    validate_non_empty_cli_field(&signer, "signer")?;
 
     if let Some(template) = submit_consumption_receipt_template_override() {
         let mut cmd = template;
@@ -412,6 +432,10 @@ fn challenge_consumption_tx(
 ) -> Result<()> {
     let signer = signer.unwrap_or_else(|| challenger.clone());
 
+    validate_consumption_settlement_locator(&consumer_id, &output_hash, &billing_window_id)?;
+    validate_non_empty_cli_field(&challenger, "challenger")?;
+    validate_non_empty_cli_field(&signer, "signer")?;
+
     if let Some(template) = challenge_consumption_template_override() {
         let mut cmd = template;
         cmd = tpl(cmd, "task_id", &task_id.to_string());
@@ -463,6 +487,11 @@ fn resolve_consumption_tx(
     signer: Option<String>,
 ) -> Result<()> {
     let signer = signer.unwrap_or_else(|| resolver.clone());
+
+    validate_consumption_settlement_locator(&consumer_id, &output_hash, &billing_window_id)?;
+    validate_non_empty_cli_field(&resolver, "resolver")?;
+    validate_non_empty_cli_field(&signer, "signer")?;
+
     let decision = decision.as_str();
     let credited_consumption_units = credited_consumption_units
         .map(|value| value.to_string())
@@ -872,16 +901,25 @@ fn parse_consumption_summary_query_response(
         ),
         result,
         result.and_then(|value| {
-            json_get_alias(value, &["settlement_preview", "consumption_summary", "summary"])
+            json_get_alias(
+                value,
+                &["settlement_preview", "consumption_summary", "summary"],
+            )
         }),
         data,
         data.and_then(|value| {
-            json_get_alias(value, &["settlement_preview", "consumption_summary", "summary"])
+            json_get_alias(
+                value,
+                &["settlement_preview", "consumption_summary", "summary"],
+            )
         }),
         response,
         response_data,
         response_data.and_then(|value| {
-            json_get_alias(value, &["settlement_preview", "consumption_summary", "summary"])
+            json_get_alias(
+                value,
+                &["settlement_preview", "consumption_summary", "summary"],
+            )
         }),
     ]
     .into_iter()
@@ -998,12 +1036,11 @@ fn parse_consumption_receipts_query_response(
             receipts = Some(array);
             break;
         }
-        if let Some(array) =
-            json_get_alias(
-                candidate,
-                &["receipts", "settlement_receipts", "consumption_receipts"],
-            )
-            .and_then(|value| value.as_array())
+        if let Some(array) = json_get_alias(
+            candidate,
+            &["receipts", "settlement_receipts", "consumption_receipts"],
+        )
+        .and_then(|value| value.as_array())
         {
             envelope_task_id = json_u64_alias(candidate, &["task_id"]);
             receipts = Some(array);
@@ -4413,7 +4450,9 @@ mod tests {
         )
         .unwrap();
 
-        let err = load_consumption_receipt_tx_input(&path).unwrap_err().to_string();
+        let err = load_consumption_receipt_tx_input(&path)
+            .unwrap_err()
+            .to_string();
         assert!(
             err.contains("consumer_nonce must be non-zero"),
             "unexpected error: {err}"
@@ -4538,6 +4577,83 @@ mod tests {
         );
 
         std::env::remove_var("TRNM_RPC_TX_FILE");
+        let _ = std::fs::remove_dir_all(&root);
+    }
+
+    #[test]
+    fn consumption_settlement_write_paths_reject_blank_locator_and_actor_fields() {
+        let _guard = ENV_LOCK.lock().unwrap();
+        std::env::remove_var("TRNM_TX_SUBMIT_CONSUMPTION_RECEIPT_CMD");
+        std::env::remove_var("TRNM_TX_SUBMIT_SETTLEMENT_RECEIPT_CMD");
+        std::env::remove_var("TRNM_TX_CHALLENGE_CONSUMPTION_CMD");
+        std::env::remove_var("TRNM_TX_CHALLENGE_SETTLEMENT_CMD");
+        std::env::remove_var("TRNM_TX_RESOLVE_CONSUMPTION_CMD");
+        std::env::remove_var("TRNM_TX_RESOLVE_SETTLEMENT_CMD");
+
+        let err = challenge_consumption_tx(
+            42,
+            "   ".into(),
+            "0xabc123".into(),
+            "bw-7".into(),
+            "arbiter-alpha".into(),
+            None,
+        )
+        .unwrap_err()
+        .to_string();
+        assert!(
+            err.contains("consumer_id must not be empty"),
+            "unexpected error: {err}"
+        );
+
+        let err = resolve_consumption_tx(
+            42,
+            "consumer-bravo".into(),
+            "0xabc123".into(),
+            "bw-7".into(),
+            ConsumptionResolutionDecisionArg::Discount,
+            Some(11),
+            Some("accepted_discounted".into()),
+            "   ".into(),
+            None,
+        )
+        .unwrap_err()
+        .to_string();
+        assert!(
+            err.contains("resolver must not be empty"),
+            "unexpected error: {err}"
+        );
+
+        let unique = format!(
+            "trnm-cli-consumption-settlement-blank-signer-test-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        );
+        let root = canonical_temp_root().join(unique);
+        std::fs::create_dir_all(&root).unwrap();
+        let receipt_path = root.join("receipt.json");
+        std::fs::write(
+            &receipt_path,
+            r#"{
+                "task_id":42,
+                "consumer_id":"consumer-bravo",
+                "output_hash":"0xabc123",
+                "billing_window_id":"bw-7",
+                "consumer_nonce":9
+            }"#,
+        )
+        .unwrap();
+
+        let err = submit_consumption_receipt_tx(receipt_path, Some("   ".into()))
+            .unwrap_err()
+            .to_string();
+        assert!(
+            err.contains("signer must not be empty"),
+            "unexpected error: {err}"
+        );
+
         let _ = std::fs::remove_dir_all(&root);
     }
 
