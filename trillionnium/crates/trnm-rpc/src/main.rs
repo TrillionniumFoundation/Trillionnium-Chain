@@ -1194,6 +1194,12 @@ struct SettlementGovernanceQueryResponse {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     staged_underlying_mode: Option<SettlementGovernanceMode>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
+    staged_shadow_compare_only: Option<bool>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    staged_poco_weight_bps: Option<u64>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    staged_pouw_weight_bps: Option<u64>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     staged_effective_poco_weight_bps: Option<u64>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     staged_effective_pouw_weight_bps: Option<u64>,
@@ -1397,6 +1403,9 @@ fn settlement_governance_query_response(
         staged_configuration_status: staged.map(|config| config.configuration_status),
         staged_mode: staged.map(|config| config.mode),
         staged_underlying_mode: staged.map(|config| config.underlying_mode),
+        staged_shadow_compare_only: staged.map(|config| config.shadow_compare_only),
+        staged_poco_weight_bps: staged.map(|config| config.poco_weight_bps),
+        staged_pouw_weight_bps: staged.map(|config| config.pouw_weight_bps),
         staged_effective_poco_weight_bps: staged.map(|config| config.effective_poco_weight_bps),
         staged_effective_pouw_weight_bps: staged.map(|config| config.effective_pouw_weight_bps),
         staged_shadow_masks_nonzero_poco_weight: staged
@@ -1458,6 +1467,9 @@ mod settlement_governance_query_tests {
         assert!(out.staged_configuration_status.is_none());
         assert!(out.staged_mode.is_none());
         assert!(out.staged_underlying_mode.is_none());
+        assert!(out.staged_shadow_compare_only.is_none());
+        assert!(out.staged_poco_weight_bps.is_none());
+        assert!(out.staged_pouw_weight_bps.is_none());
         assert!(out.staged_effective_poco_weight_bps.is_none());
         assert!(out.staged_effective_pouw_weight_bps.is_none());
         assert!(out.staged_shadow_masks_nonzero_poco_weight.is_none());
@@ -1512,6 +1524,9 @@ mod settlement_governance_query_tests {
             out.staged_underlying_mode,
             Some(SettlementGovernanceMode::Hybrid)
         );
+        assert_eq!(out.staged_shadow_compare_only, Some(true));
+        assert_eq!(out.staged_poco_weight_bps, Some(2_500));
+        assert_eq!(out.staged_pouw_weight_bps, Some(7_500));
         assert_eq!(out.staged_effective_poco_weight_bps, Some(0));
         assert_eq!(out.staged_effective_pouw_weight_bps, Some(10_000));
         assert_eq!(out.staged_shadow_masks_nonzero_poco_weight, Some(true));
@@ -1568,6 +1583,9 @@ mod settlement_governance_query_tests {
             out.staged_underlying_mode,
             Some(SettlementGovernanceMode::Hybrid)
         );
+        assert_eq!(out.staged_shadow_compare_only, Some(false));
+        assert_eq!(out.staged_poco_weight_bps, Some(2_500));
+        assert_eq!(out.staged_pouw_weight_bps, Some(7_500));
         assert_eq!(out.staged_effective_poco_weight_bps, Some(2_500));
         assert_eq!(out.staged_effective_pouw_weight_bps, Some(7_500));
         assert_eq!(out.staged_shadow_masks_nonzero_poco_weight, Some(false));
@@ -1617,6 +1635,9 @@ mod settlement_governance_query_tests {
             out.staged_underlying_mode,
             Some(SettlementGovernanceMode::Hybrid)
         );
+        assert_eq!(out.staged_shadow_compare_only, Some(false));
+        assert_eq!(out.staged_poco_weight_bps, Some(2_500));
+        assert_eq!(out.staged_pouw_weight_bps, Some(7_500));
         assert_eq!(out.staged_effective_poco_weight_bps, Some(2_500));
         assert_eq!(out.staged_effective_pouw_weight_bps, Some(7_500));
         assert_eq!(out.staged_shadow_masks_nonzero_poco_weight, Some(false));
@@ -1681,6 +1702,9 @@ mod settlement_governance_query_tests {
         assert!(out.staged_configuration_status.is_none());
         assert!(out.staged_mode.is_none());
         assert!(out.staged_underlying_mode.is_none());
+        assert!(out.staged_shadow_compare_only.is_none());
+        assert!(out.staged_poco_weight_bps.is_none());
+        assert!(out.staged_pouw_weight_bps.is_none());
         assert!(out.staged_effective_poco_weight_bps.is_none());
         assert!(out.staged_effective_pouw_weight_bps.is_none());
         assert!(out.staged_shadow_masks_nonzero_poco_weight.is_none());
@@ -1727,6 +1751,9 @@ mod settlement_governance_query_tests {
         assert!(out.staged_configuration_status.is_none());
         assert!(out.staged_mode.is_none());
         assert!(out.staged_underlying_mode.is_none());
+        assert!(out.staged_shadow_compare_only.is_none());
+        assert!(out.staged_poco_weight_bps.is_none());
+        assert!(out.staged_pouw_weight_bps.is_none());
         assert!(out.staged_effective_poco_weight_bps.is_none());
         assert!(out.staged_effective_pouw_weight_bps.is_none());
         assert!(out.staged_shadow_masks_nonzero_poco_weight.is_none());
@@ -1786,6 +1813,9 @@ mod settlement_governance_query_tests {
             out.staged_underlying_mode,
             Some(SettlementGovernanceMode::Hybrid)
         );
+        assert_eq!(out.staged_shadow_compare_only, Some(false));
+        assert_eq!(out.staged_poco_weight_bps, Some(2_000));
+        assert_eq!(out.staged_pouw_weight_bps, Some(8_000));
         assert_eq!(out.staged_effective_poco_weight_bps, Some(2_000));
         assert_eq!(out.staged_effective_pouw_weight_bps, Some(8_000));
         assert_eq!(out.staged_shadow_masks_nonzero_poco_weight, Some(false));
@@ -1847,6 +1877,9 @@ mod settlement_governance_query_tests {
         assert!(out.staged_configuration_status.is_none());
         assert!(out.staged_mode.is_none());
         assert!(out.staged_underlying_mode.is_none());
+        assert!(out.staged_shadow_compare_only.is_none());
+        assert!(out.staged_poco_weight_bps.is_none());
+        assert!(out.staged_pouw_weight_bps.is_none());
         assert!(out.staged_effective_poco_weight_bps.is_none());
         assert!(out.staged_effective_pouw_weight_bps.is_none());
         assert!(out.staged_shadow_masks_nonzero_poco_weight.is_none());
@@ -1911,6 +1944,9 @@ mod settlement_governance_query_tests {
             out.staged_underlying_mode,
             Some(SettlementGovernanceMode::Hybrid)
         );
+        assert_eq!(out.staged_shadow_compare_only, Some(false));
+        assert_eq!(out.staged_poco_weight_bps, Some(2_500));
+        assert_eq!(out.staged_pouw_weight_bps, Some(7_500));
         assert_eq!(out.staged_effective_poco_weight_bps, Some(2_500));
         assert_eq!(out.staged_effective_pouw_weight_bps, Some(7_500));
         assert_eq!(out.staged_shadow_masks_nonzero_poco_weight, Some(false));

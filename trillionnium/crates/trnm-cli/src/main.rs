@@ -766,6 +766,9 @@ fn parse_settlement_governance_query_response(raw: &str) -> Result<serde_json::V
     let staged_configuration_status = parse_optional_scalar("staged_configuration_status")?;
     let staged_mode = parse_optional_scalar("staged_mode")?;
     let staged_underlying_mode = parse_optional_scalar("staged_underlying_mode")?;
+    let staged_shadow_compare_only = parse_optional_bool("staged_shadow_compare_only")?;
+    let staged_poco_weight_bps = parse_optional_u64("staged_poco_weight_bps")?;
+    let staged_pouw_weight_bps = parse_optional_u64("staged_pouw_weight_bps")?;
     let staged_effective_poco_weight_bps = parse_optional_u64("staged_effective_poco_weight_bps")?;
     let staged_effective_pouw_weight_bps = parse_optional_u64("staged_effective_pouw_weight_bps")?;
     let staged_shadow_masks_nonzero_poco_weight =
@@ -886,6 +889,9 @@ fn parse_settlement_governance_query_response(raw: &str) -> Result<serde_json::V
         || staged_configuration_status.is_some()
         || staged_mode.is_some()
         || staged_underlying_mode.is_some()
+        || staged_shadow_compare_only.is_some()
+        || staged_poco_weight_bps.is_some()
+        || staged_pouw_weight_bps.is_some()
         || staged_effective_poco_weight_bps.is_some()
         || staged_effective_pouw_weight_bps.is_some()
         || staged_shadow_masks_nonzero_poco_weight.is_some();
@@ -987,6 +993,45 @@ fn parse_settlement_governance_query_response(raw: &str) -> Result<serde_json::V
                 "settlement governance response has_pending_updates=true requires strict bool staged_shadow_masks_nonzero_poco_weight"
             );
         };
+        let Some(staged_shadow_compare_only) = staged_shadow_compare_only else {
+            bail!(
+                "settlement governance response has_pending_updates=true requires strict bool staged_shadow_compare_only"
+            );
+        };
+        let Some(staged_poco_weight_bps) = staged_poco_weight_bps else {
+            bail!(
+                "settlement governance response has_pending_updates=true requires numeric staged_poco_weight_bps"
+            );
+        };
+        let Some(staged_pouw_weight_bps) = staged_pouw_weight_bps else {
+            bail!(
+                "settlement governance response has_pending_updates=true requires numeric staged_pouw_weight_bps"
+            );
+        };
+
+        if staged_poco_weight_bps + staged_pouw_weight_bps != SETTLEMENT_WEIGHT_TOTAL_BPS {
+            bail!(
+                "settlement governance response staged raw weight split must sum to {} bps, got staged_poco_weight_bps={} staged_pouw_weight_bps={}",
+                SETTLEMENT_WEIGHT_TOTAL_BPS,
+                staged_poco_weight_bps,
+                staged_pouw_weight_bps
+            );
+        }
+
+        let expected_staged_underlying_mode = if staged_poco_weight_bps == 0 {
+            "pouw_primary"
+        } else if staged_poco_weight_bps == SETTLEMENT_WEIGHT_TOTAL_BPS {
+            "poco_primary"
+        } else {
+            "hybrid"
+        };
+        if staged_underlying_mode != expected_staged_underlying_mode {
+            bail!(
+                "settlement governance response staged_underlying_mode mismatch: expected={} from staged raw weights, got={}",
+                expected_staged_underlying_mode,
+                staged_underlying_mode
+            );
+        }
 
         if staged_effective_poco_weight_bps + staged_effective_pouw_weight_bps
             != SETTLEMENT_WEIGHT_TOTAL_BPS
@@ -1009,6 +1054,11 @@ fn parse_settlement_governance_query_response(raw: &str) -> Result<serde_json::V
 
         match staged_mode {
             "shadow_compare_only" => {
+                if !staged_shadow_compare_only {
+                    bail!(
+                        "settlement governance response staged shadow_compare_only mode must report staged_shadow_compare_only=true"
+                    );
+                }
                 if staged_effective_poco_weight_bps != 0
                     || staged_effective_pouw_weight_bps != SETTLEMENT_WEIGHT_TOTAL_BPS
                 {
@@ -1020,16 +1070,21 @@ fn parse_settlement_governance_query_response(raw: &str) -> Result<serde_json::V
                     );
                 }
 
-                let expected_shadow_mask = staged_underlying_mode != "pouw_primary";
+                let expected_shadow_mask = staged_poco_weight_bps > 0;
                 if staged_shadow_masks_nonzero_poco_weight != expected_shadow_mask {
                     bail!(
-                        "settlement governance response staged shadow mask flag mismatch: staged_underlying_mode={} staged_shadow_masks_nonzero_poco_weight={}",
-                        staged_underlying_mode,
+                        "settlement governance response staged shadow mask flag mismatch: staged_poco_weight_bps={} staged_shadow_masks_nonzero_poco_weight={}",
+                        staged_poco_weight_bps,
                         staged_shadow_masks_nonzero_poco_weight
                     );
                 }
             }
             "pouw_primary" | "hybrid" | "poco_primary" => {
+                if staged_shadow_compare_only {
+                    bail!(
+                        "settlement governance response non-shadow staged mode must not report staged_shadow_compare_only=true"
+                    );
+                }
                 if staged_mode != staged_underlying_mode {
                     bail!(
                         "settlement governance response staged mode mismatch: staged_mode={} staged_underlying_mode={}",
@@ -1042,6 +1097,17 @@ fn parse_settlement_governance_query_response(raw: &str) -> Result<serde_json::V
                         "settlement governance response staged mode mismatch: expected={} from staged effective weights, got={}",
                         expected_staged_effective_mode,
                         staged_mode
+                    );
+                }
+                if staged_effective_poco_weight_bps != staged_poco_weight_bps
+                    || staged_effective_pouw_weight_bps != staged_pouw_weight_bps
+                {
+                    bail!(
+                        "settlement governance response non-shadow staged effective weights must match staged raw weights, got staged_raw=({},{}) staged_effective=({},{})",
+                        staged_poco_weight_bps,
+                        staged_pouw_weight_bps,
+                        staged_effective_poco_weight_bps,
+                        staged_effective_pouw_weight_bps
                     );
                 }
                 if staged_shadow_masks_nonzero_poco_weight {
@@ -7237,7 +7303,7 @@ mod tests {
     #[test]
     fn parse_settlement_governance_query_response_rejects_unmasked_shadow_staged_projection() {
         let err = parse_settlement_governance_query_response(
-            r#"{"live_configuration_status":"configured","mode":"hybrid","underlying_mode":"hybrid","settlement_write_gate_status":"open","shadow_compare_only":false,"poco_weight_bps":2500,"pouw_weight_bps":7500,"effective_poco_weight_bps":2500,"effective_pouw_weight_bps":7500,"shadow_masks_nonzero_poco_weight":false,"has_pending_updates":true,"staged_activate_at_height":62,"staged_configuration_status":"configured","staged_mode":"shadow_compare_only","staged_underlying_mode":"hybrid","staged_effective_poco_weight_bps":2500,"staged_effective_pouw_weight_bps":7500,"staged_shadow_masks_nonzero_poco_weight":true,"pending_shadow_compare_only":{"key_id":7352,"key":"shadow_settlement_compare_only","value":"true","activate_at_height":62},"pending_poco_weight_bps":{"key_id":7351,"key":"hybrid_settlement_poco_weight_bps","value":"2500","activate_at_height":62}}"#,
+            r#"{"live_configuration_status":"configured","mode":"hybrid","underlying_mode":"hybrid","settlement_write_gate_status":"open","shadow_compare_only":false,"poco_weight_bps":2500,"pouw_weight_bps":7500,"effective_poco_weight_bps":2500,"effective_pouw_weight_bps":7500,"shadow_masks_nonzero_poco_weight":false,"has_pending_updates":true,"staged_activate_at_height":62,"staged_configuration_status":"configured","staged_mode":"shadow_compare_only","staged_underlying_mode":"hybrid","staged_shadow_compare_only":true,"staged_poco_weight_bps":2500,"staged_pouw_weight_bps":7500,"staged_effective_poco_weight_bps":2500,"staged_effective_pouw_weight_bps":7500,"staged_shadow_masks_nonzero_poco_weight":true,"pending_shadow_compare_only":{"key_id":7352,"key":"shadow_settlement_compare_only","value":"true","activate_at_height":62},"pending_poco_weight_bps":{"key_id":7351,"key":"hybrid_settlement_poco_weight_bps","value":"2500","activate_at_height":62}}"#,
         )
         .unwrap_err()
         .to_string();
@@ -7248,9 +7314,25 @@ mod tests {
     }
 
     #[test]
+    fn parse_settlement_governance_query_response_rejects_shadow_staged_projection_without_shadow_flag(
+    ) {
+        let err = parse_settlement_governance_query_response(
+            r#"{"live_configuration_status":"configured","mode":"hybrid","underlying_mode":"hybrid","settlement_write_gate_status":"open","shadow_compare_only":false,"poco_weight_bps":2500,"pouw_weight_bps":7500,"effective_poco_weight_bps":2500,"effective_pouw_weight_bps":7500,"shadow_masks_nonzero_poco_weight":false,"has_pending_updates":true,"staged_activate_at_height":62,"staged_configuration_status":"configured","staged_mode":"shadow_compare_only","staged_underlying_mode":"hybrid","staged_shadow_compare_only":false,"staged_poco_weight_bps":2500,"staged_pouw_weight_bps":7500,"staged_effective_poco_weight_bps":0,"staged_effective_pouw_weight_bps":10000,"staged_shadow_masks_nonzero_poco_weight":true,"pending_shadow_compare_only":{"key_id":7352,"key":"shadow_settlement_compare_only","value":"true","activate_at_height":62},"pending_poco_weight_bps":{"key_id":7351,"key":"hybrid_settlement_poco_weight_bps","value":"2500","activate_at_height":62}}"#,
+        )
+        .unwrap_err()
+        .to_string();
+        assert!(
+            err.contains(
+                "staged shadow_compare_only mode must report staged_shadow_compare_only=true"
+            ),
+            "unexpected error: {err}"
+        );
+    }
+
+    #[test]
     fn parse_settlement_governance_query_response_rejects_nonshadow_staged_shadow_mask_flag() {
         let err = parse_settlement_governance_query_response(
-            r#"{"live_configuration_status":"configured","mode":"hybrid","underlying_mode":"hybrid","settlement_write_gate_status":"open","shadow_compare_only":false,"poco_weight_bps":2500,"pouw_weight_bps":7500,"effective_poco_weight_bps":2500,"effective_pouw_weight_bps":7500,"shadow_masks_nonzero_poco_weight":false,"has_pending_updates":true,"staged_activate_at_height":62,"staged_configuration_status":"configured","staged_mode":"hybrid","staged_underlying_mode":"hybrid","staged_effective_poco_weight_bps":2500,"staged_effective_pouw_weight_bps":7500,"staged_shadow_masks_nonzero_poco_weight":true,"pending_poco_weight_bps":{"key_id":7351,"key":"hybrid_settlement_poco_weight_bps","value":"2500","activate_at_height":62}}"#,
+            r#"{"live_configuration_status":"configured","mode":"hybrid","underlying_mode":"hybrid","settlement_write_gate_status":"open","shadow_compare_only":false,"poco_weight_bps":2500,"pouw_weight_bps":7500,"effective_poco_weight_bps":2500,"effective_pouw_weight_bps":7500,"shadow_masks_nonzero_poco_weight":false,"has_pending_updates":true,"staged_activate_at_height":62,"staged_configuration_status":"configured","staged_mode":"hybrid","staged_underlying_mode":"hybrid","staged_shadow_compare_only":false,"staged_poco_weight_bps":2500,"staged_pouw_weight_bps":7500,"staged_effective_poco_weight_bps":2500,"staged_effective_pouw_weight_bps":7500,"staged_shadow_masks_nonzero_poco_weight":true,"pending_poco_weight_bps":{"key_id":7351,"key":"hybrid_settlement_poco_weight_bps","value":"2500","activate_at_height":62}}"#,
         )
         .unwrap_err()
         .to_string();
@@ -7263,7 +7345,7 @@ mod tests {
     #[test]
     fn parse_settlement_governance_query_response_rejects_pending_update_key_id_mismatch() {
         let err = parse_settlement_governance_query_response(
-            r#"{"live_configuration_status":"configured","mode":"hybrid","underlying_mode":"hybrid","settlement_write_gate_status":"open","shadow_compare_only":false,"poco_weight_bps":2500,"pouw_weight_bps":7500,"effective_poco_weight_bps":2500,"effective_pouw_weight_bps":7500,"shadow_masks_nonzero_poco_weight":false,"has_pending_updates":true,"staged_activate_at_height":62,"staged_configuration_status":"configured","staged_mode":"hybrid","staged_underlying_mode":"hybrid","staged_effective_poco_weight_bps":2500,"staged_effective_pouw_weight_bps":7500,"staged_shadow_masks_nonzero_poco_weight":false,"pending_shadow_compare_only":{"key_id":7351,"key":"shadow_settlement_compare_only","value":"false","activate_at_height":62}}"#,
+            r#"{"live_configuration_status":"configured","mode":"hybrid","underlying_mode":"hybrid","settlement_write_gate_status":"open","shadow_compare_only":false,"poco_weight_bps":2500,"pouw_weight_bps":7500,"effective_poco_weight_bps":2500,"effective_pouw_weight_bps":7500,"shadow_masks_nonzero_poco_weight":false,"has_pending_updates":true,"staged_activate_at_height":62,"staged_configuration_status":"configured","staged_mode":"hybrid","staged_underlying_mode":"hybrid","staged_shadow_compare_only":false,"staged_poco_weight_bps":2500,"staged_pouw_weight_bps":7500,"staged_effective_poco_weight_bps":2500,"staged_effective_pouw_weight_bps":7500,"staged_shadow_masks_nonzero_poco_weight":false,"pending_shadow_compare_only":{"key_id":7351,"key":"shadow_settlement_compare_only","value":"false","activate_at_height":62}}"#,
         )
         .unwrap_err()
         .to_string();
@@ -7277,7 +7359,7 @@ mod tests {
     fn parse_settlement_governance_query_response_rejects_pending_update_height_that_skips_staged_projection(
     ) {
         let err = parse_settlement_governance_query_response(
-            r#"{"live_configuration_status":"configured","mode":"hybrid","underlying_mode":"hybrid","settlement_write_gate_status":"open","shadow_compare_only":false,"poco_weight_bps":2500,"pouw_weight_bps":7500,"effective_poco_weight_bps":2500,"effective_pouw_weight_bps":7500,"shadow_masks_nonzero_poco_weight":false,"has_pending_updates":true,"staged_activate_at_height":62,"staged_configuration_status":"configured","staged_mode":"hybrid","staged_underlying_mode":"hybrid","staged_effective_poco_weight_bps":2000,"staged_effective_pouw_weight_bps":8000,"staged_shadow_masks_nonzero_poco_weight":false,"pending_poco_weight_bps":{"key_id":7351,"key":"hybrid_settlement_poco_weight_bps","value":"2000","activate_at_height":63}}"#,
+            r#"{"live_configuration_status":"configured","mode":"hybrid","underlying_mode":"hybrid","settlement_write_gate_status":"open","shadow_compare_only":false,"poco_weight_bps":2500,"pouw_weight_bps":7500,"effective_poco_weight_bps":2500,"effective_pouw_weight_bps":7500,"shadow_masks_nonzero_poco_weight":false,"has_pending_updates":true,"staged_activate_at_height":62,"staged_configuration_status":"configured","staged_mode":"hybrid","staged_underlying_mode":"hybrid","staged_shadow_compare_only":false,"staged_poco_weight_bps":2000,"staged_pouw_weight_bps":8000,"staged_effective_poco_weight_bps":2000,"staged_effective_pouw_weight_bps":8000,"staged_shadow_masks_nonzero_poco_weight":false,"pending_poco_weight_bps":{"key_id":7351,"key":"hybrid_settlement_poco_weight_bps","value":"2000","activate_at_height":63}}"#,
         )
         .unwrap_err()
         .to_string();
@@ -7292,12 +7374,15 @@ mod tests {
         let _guard = ENV_LOCK.lock().unwrap();
         std::env::set_var(
             "TRNM_QUERY_SETTLEMENT_GOVERNANCE_CMD",
-            r#"printf '%s' '{"live_configuration_status":"configured","mode":"hybrid","underlying_mode":"hybrid","settlement_write_gate_status":"open","shadow_compare_only":false,"poco_weight_bps":2500,"pouw_weight_bps":7500,"effective_poco_weight_bps":2500,"effective_pouw_weight_bps":7500,"shadow_masks_nonzero_poco_weight":false,"has_pending_updates":true,"staged_activate_at_height":62,"staged_configuration_status":"configured","staged_mode":"shadow_compare_only","staged_underlying_mode":"hybrid","staged_effective_poco_weight_bps":0,"staged_effective_pouw_weight_bps":10000,"staged_shadow_masks_nonzero_poco_weight":true,"pending_shadow_compare_only":{"key_id":7352,"key":"shadow_settlement_compare_only","value":"true","activate_at_height":62},"pending_poco_weight_bps":{"key_id":7351,"key":"hybrid_settlement_poco_weight_bps","value":"2500","activate_at_height":62}}'"#,
+            r#"printf '%s' '{"live_configuration_status":"configured","mode":"hybrid","underlying_mode":"hybrid","settlement_write_gate_status":"open","shadow_compare_only":false,"poco_weight_bps":2500,"pouw_weight_bps":7500,"effective_poco_weight_bps":2500,"effective_pouw_weight_bps":7500,"shadow_masks_nonzero_poco_weight":false,"has_pending_updates":true,"staged_activate_at_height":62,"staged_configuration_status":"configured","staged_mode":"shadow_compare_only","staged_underlying_mode":"hybrid","staged_shadow_compare_only":true,"staged_poco_weight_bps":2500,"staged_pouw_weight_bps":7500,"staged_effective_poco_weight_bps":0,"staged_effective_pouw_weight_bps":10000,"staged_shadow_masks_nonzero_poco_weight":true,"pending_shadow_compare_only":{"key_id":7352,"key":"shadow_settlement_compare_only","value":"true","activate_at_height":62},"pending_poco_weight_bps":{"key_id":7351,"key":"hybrid_settlement_poco_weight_bps","value":"2500","activate_at_height":62}}'"#,
         );
         let got = settlement_governance_query().expect("template settlement governance query");
         std::env::remove_var("TRNM_QUERY_SETTLEMENT_GOVERNANCE_CMD");
         assert_eq!(got["mode"], serde_json::json!("hybrid"));
         assert_eq!(got["staged_mode"], serde_json::json!("shadow_compare_only"));
+        assert_eq!(got["staged_shadow_compare_only"], serde_json::json!(true));
+        assert_eq!(got["staged_poco_weight_bps"], serde_json::json!(2500));
+        assert_eq!(got["staged_pouw_weight_bps"], serde_json::json!(7500));
         assert_eq!(
             got["staged_shadow_masks_nonzero_poco_weight"],
             serde_json::json!(true)
