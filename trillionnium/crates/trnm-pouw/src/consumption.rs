@@ -61,6 +61,8 @@ const SUMMARY_CREDITED_UNITS_WITHOUT_ACCEPTED_RECEIPTS: &str =
     "poco summary credited units require at least one accepted receipt";
 const SUMMARY_CREDITED_UNITS_EXCEED_CLAIMED_UNITS: &str =
     "poco summary credited units exceed claimed consumption units";
+const SUMMARY_CANONICAL_TERMINAL_RECEIPTS_REQUIRE_SETTLEMENT_MARKER: &str =
+    "poco summary canonical terminal receipts require settlement marker";
 const SUMMARY_CREDITED_UNITS_EXCEED_CANONICAL_RECORD_CREDITS: &str =
     "poco summary credited units exceed canonical record credits";
 const SUMMARY_ACCEPTED_RECEIPTS_EXCEED_CANONICAL_ACCEPTED_RECORDS: &str =
@@ -398,6 +400,16 @@ fn summary_canonical_credit_drift_reason(
     records: &[ConsumptionRecord],
 ) -> Option<&'static str> {
     if summary.receipt_count == records.len() as u64
+        && unresolved_receipt_count(records) == 0
+        && summary.last_settlement_height.is_none()
+    {
+        // Promotion step: when summary metadata claims to cover the same
+        // canonical receipt set and every receipt is already in a terminal
+        // PoCO state, the summary must retain an explicit settlement marker.
+        // Otherwise fail closed instead of letting restored receipt records
+        // bypass the primary settlement finalize path.
+        Some(SUMMARY_CANONICAL_TERMINAL_RECEIPTS_REQUIRE_SETTLEMENT_MARKER)
+    } else if summary.receipt_count == records.len() as u64
         && summary.accepted_receipt_count > canonical_accepted_receipt_count(records)
     {
         // Promotion step: once summary metadata claims to cover the same
@@ -2164,6 +2176,69 @@ mod tests {
             err,
             PouwError::State(msg)
                 if msg.contains(SUMMARY_CREDITED_UNITS_EXCEED_CANONICAL_RECORD_CREDITS)
+        ));
+    }
+
+    #[test]
+    fn primary_payout_work_units_fail_closed_for_summary_without_terminal_marker_for_canonical_terminal_records(
+    ) {
+        let mut st = StateStore::default();
+        let task = sample_task(TaskStatus::Completed);
+        st.set_task_consumption_summary(TaskConsumptionSummary {
+            task_id: task.task_id,
+            receipt_count: 1,
+            accepted_receipt_count: 1,
+            challenged_receipt_count: 0,
+            total_consumed_tokens: 17,
+            total_claimed_consumption_units: 17,
+            total_credited_consumption_units: 9,
+            last_settlement_height: None,
+        });
+        st.put_consumption_record(sample_record(
+            "consumer-bravo",
+            "bw-1",
+            ConsumptionRecordStatus::Discounted,
+            Some(9),
+        ));
+
+        assert_eq!(
+            preview_primary_payout_work_units(&st, &task, 50),
+            PrimaryPayoutWorkUnitPreview::PocoInconsistentSummary {
+                reason: SUMMARY_CANONICAL_TERMINAL_RECEIPTS_REQUIRE_SETTLEMENT_MARKER,
+                metering_work_units: 50,
+            }
+        );
+        assert_eq!(primary_payout_work_units(&st, &task, 50), 0);
+    }
+
+    #[test]
+    fn reject_if_primary_settlement_pending_fails_closed_for_summary_without_terminal_marker_for_canonical_terminal_records(
+    ) {
+        let mut st = StateStore::default();
+        st.set_task_consumption_summary(TaskConsumptionSummary {
+            task_id: 42,
+            receipt_count: 1,
+            accepted_receipt_count: 1,
+            challenged_receipt_count: 0,
+            total_consumed_tokens: 17,
+            total_claimed_consumption_units: 17,
+            total_credited_consumption_units: 9,
+            last_settlement_height: None,
+        });
+        st.put_consumption_record(sample_record(
+            "consumer-bravo",
+            "bw-1",
+            ConsumptionRecordStatus::Discounted,
+            Some(9),
+        ));
+
+        let err = reject_if_primary_settlement_pending(&st, 42).expect_err(
+            "summary missing a terminal settlement marker must block canonical receipt settlement finalization",
+        );
+        assert!(matches!(
+            err,
+            PouwError::State(msg)
+                if msg.contains(SUMMARY_CANONICAL_TERMINAL_RECEIPTS_REQUIRE_SETTLEMENT_MARKER)
         ));
     }
 
