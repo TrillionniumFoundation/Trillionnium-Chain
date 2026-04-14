@@ -1,7 +1,10 @@
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use thiserror::Error;
-use trnm_state::{ConsumptionRecord, ConsumptionRecordKey, ConsumptionRecordStatus, StateStore, TaskConsumptionSummary};
+use trnm_state::{
+    ConsumptionRecord, ConsumptionRecordKey, ConsumptionRecordStatus, StateStore,
+    TaskConsumptionSummary,
+};
 use trnm_types::{TaskMeteringSnapshot, TaskObject, TaskStatus};
 
 use crate::{
@@ -24,6 +27,10 @@ fn normalize_hex(raw: &str) -> &str {
         .unwrap_or(trimmed)
 }
 
+fn canonical_output_hash(raw: &str) -> String {
+    normalize_hex(raw).to_ascii_lowercase()
+}
+
 fn require_non_empty(value: &str, field: &'static str) -> Result<(), ConsumptionError> {
     if value.trim().is_empty() {
         Err(ConsumptionError::MissingField(field))
@@ -42,6 +49,103 @@ fn current_summary(st: &StateStore, task_id: u64) -> TaskConsumptionSummary {
             task_id,
             ..TaskConsumptionSummary::default()
         })
+}
+
+const SUMMARY_SETTLEMENT_MARKER_WITHOUT_RECEIPTS: &str =
+    "poco summary settlement marker requires at least one receipt";
+const DUPLICATE_LOGICAL_REPLAY_KEY_REASON: &str = "duplicate logical consumption replay key";
+
+fn summary_has_inconsistent_terminal_marker(summary: &TaskConsumptionSummary) -> bool {
+    summary.receipt_count == 0 && summary.last_settlement_height.is_some()
+}
+
+fn summary_unproven_receipt_count(summary: TaskConsumptionSummary) -> u64 {
+    if summary.receipt_count == 0 {
+        return 0;
+    }
+
+    if summary.accepted_receipt_count > summary.receipt_count {
+        return summary.receipt_count;
+    }
+
+    if summary.last_settlement_height.is_none() {
+        return summary.receipt_count;
+    }
+
+    if summary.receipt_count == 1 {
+        return 0;
+    }
+
+    if summary.accepted_receipt_count == summary.receipt_count {
+        return 0;
+    }
+
+    // Promotion step: summary-only settlement metadata does not retain
+    // terminal counts for rejected/slashed receipts, so multi-receipt states
+    // with fewer accepted receipts than submitted receipts cannot prove that
+    // PoCO settlement fully finalized. Fail closed until canonical per-receipt
+    // records are present or richer summary accounting lands.
+    summary
+        .receipt_count
+        .saturating_sub(summary.accepted_receipt_count)
+}
+
+pub(crate) fn reject_if_primary_settlement_pending(
+    st: &StateStore,
+    task_id: u64,
+) -> Result<(), PouwError> {
+    let records = st.consumption_records_for_task(task_id);
+    if has_duplicate_logical_replay_keys(&records) {
+        return Err(PouwError::State(format!(
+            "poco primary settlement pending: {}",
+            DUPLICATE_LOGICAL_REPLAY_KEY_REASON
+        )));
+    }
+
+    let unresolved_receipt_count = unresolved_receipt_count(&records) as u64;
+    let summary_pending_reason = if records.is_empty() {
+        st.task_consumption_summary(task_id).and_then(|summary| {
+            if summary_has_inconsistent_terminal_marker(&summary) {
+                Some(SUMMARY_SETTLEMENT_MARKER_WITHOUT_RECEIPTS.to_string())
+            } else {
+                let unresolved_receipt_count = summary_unproven_receipt_count(summary);
+                (unresolved_receipt_count > 0).then(|| {
+                    format!(
+                        "{} unresolved consumption receipt{}",
+                        unresolved_receipt_count,
+                        if unresolved_receipt_count == 1 {
+                            ""
+                        } else {
+                            "s"
+                        }
+                    )
+                })
+            }
+        })
+    } else {
+        None
+    };
+
+    if unresolved_receipt_count > 0 {
+        return Err(PouwError::State(format!(
+            "poco primary settlement pending: {} unresolved consumption receipt{}",
+            unresolved_receipt_count,
+            if unresolved_receipt_count == 1 {
+                ""
+            } else {
+                "s"
+            }
+        )));
+    }
+
+    if let Some(reason) = summary_pending_reason {
+        return Err(PouwError::State(format!(
+            "poco primary settlement pending: {}",
+            reason
+        )));
+    }
+
+    Ok(())
 }
 
 fn authority_members(st: &StateStore) -> Result<Vec<String>, PouwError> {
@@ -74,6 +178,35 @@ fn validate_resolver(st: &StateStore, resolver: &str, signer: &str) -> Result<()
 fn task_snapshot_for_poco(task: &TaskObject) -> Result<TaskMeteringSnapshot, PouwError> {
     validate_task_metering_snapshot(task)?
         .ok_or_else(|| PouwError::State("poco requires task metering snapshot".into()))
+}
+
+fn reject_if_settlement_window_closed(
+    task: &TaskObject,
+    current_height: u64,
+) -> Result<(), PouwError> {
+    match task.status {
+        TaskStatus::Revealed | TaskStatus::Completed => {
+            let challenge_deadline = task.challenge_deadline_height.ok_or_else(|| {
+                PouwError::State("poco settlement window requires challenge_deadline_height".into())
+            })?;
+            // Promotion step: once the canonical PoCO settlement window closes,
+            // all receipt settlement paths fail closed, even if the legacy task
+            // lifecycle already advanced to Completed. Missing canonical window
+            // metadata also fails closed instead of silently re-opening settlement.
+            reject_if_deadline_exceeded_optional(Some(challenge_deadline), current_height)?;
+        }
+        TaskStatus::Challenged => {
+            let resolve_deadline = task.resolve_deadline_height.ok_or_else(|| {
+                PouwError::State("poco settlement window requires resolve_deadline_height".into())
+            })?;
+            // Promotion step: once the task enters the challenged dispute path,
+            // receipt challenge/resolve must stay bounded by the canonical
+            // resolve window instead of drifting indefinitely as a sidecar flow.
+            reject_if_deadline_exceeded_optional(Some(resolve_deadline), current_height)?;
+        }
+        _ => {}
+    }
+    Ok(())
 }
 
 fn validate_receipt_against_task(
@@ -121,6 +254,216 @@ fn validate_receipt_against_task(
 
 pub fn claimed_consumption_units(receipt: &ConsumptionReceipt) -> u128 {
     receipt.consumed_token_count as u128
+}
+
+fn unresolved_receipt_count(records: &[ConsumptionRecord]) -> usize {
+    records
+        .iter()
+        .filter(|record| {
+            matches!(
+                record.status,
+                ConsumptionRecordStatus::Submitted | ConsumptionRecordStatus::Challenged
+            )
+        })
+        .count()
+}
+
+fn total_credited_consumption_units(records: &[ConsumptionRecord]) -> u128 {
+    records
+        .iter()
+        .filter(|record| {
+            matches!(
+                record.status,
+                ConsumptionRecordStatus::Accepted | ConsumptionRecordStatus::Discounted
+            )
+        })
+        .map(|record| record.credited_consumption_units.unwrap_or(0))
+        .sum()
+}
+
+fn logical_replay_key_matches(lhs: &ConsumptionRecordKey, rhs: &ConsumptionRecordKey) -> bool {
+    lhs.task_id == rhs.task_id
+        && lhs.consumer_id == rhs.consumer_id
+        && lhs.billing_window_id == rhs.billing_window_id
+        && canonical_output_hash(&lhs.output_hash) == canonical_output_hash(&rhs.output_hash)
+}
+
+fn has_duplicate_logical_replay_keys(records: &[ConsumptionRecord]) -> bool {
+    records.iter().enumerate().any(|(idx, record)| {
+        records[idx + 1..]
+            .iter()
+            .any(|other| logical_replay_key_matches(&record.key, &other.key))
+    })
+}
+
+fn logical_replay_key_exists(st: &StateStore, key: &ConsumptionRecordKey) -> bool {
+    st.consumption_records_for_task(key.task_id)
+        .into_iter()
+        .any(|record| logical_replay_key_matches(&record.key, key))
+}
+
+fn find_record_by_logical_replay_key(
+    st: &StateStore,
+    key: &ConsumptionRecordKey,
+) -> Result<ConsumptionRecord, PouwError> {
+    let mut matches = st
+        .consumption_records_for_task(key.task_id)
+        .into_iter()
+        .filter(|record| logical_replay_key_matches(&record.key, key));
+
+    let first = matches
+        .next()
+        .ok_or_else(|| PouwError::State("poco consumption record not found".into()))?;
+    if matches.next().is_some() {
+        return Err(PouwError::State(
+            "poco duplicate logical consumption replay key".into(),
+        ));
+    }
+
+    Ok(first)
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum PrimaryPayoutWorkUnitPreview {
+    MeteringEvidence {
+        metering_work_units: u128,
+    },
+    PocoPendingSettlement {
+        unresolved_receipt_count: u64,
+        metering_work_units: u128,
+    },
+    PocoInconsistentSummary {
+        reason: &'static str,
+        metering_work_units: u128,
+    },
+    PocoInconsistentRecords {
+        reason: &'static str,
+        metering_work_units: u128,
+    },
+    PocoResolvedCredits {
+        credited_work_units: u128,
+        payout_work_units: u128,
+    },
+    PocoResolvedZeroCredit,
+}
+
+fn preview_primary_payout_work_units_from_summary(
+    summary: TaskConsumptionSummary,
+    metering_work_units: u128,
+) -> PrimaryPayoutWorkUnitPreview {
+    if summary_has_inconsistent_terminal_marker(&summary) {
+        // Promotion step: a summary-only settlement marker without any
+        // submitted receipt must fail closed instead of letting legacy
+        // metering reassert itself as sole payout authority.
+        return PrimaryPayoutWorkUnitPreview::PocoInconsistentSummary {
+            reason: SUMMARY_SETTLEMENT_MARKER_WITHOUT_RECEIPTS,
+            metering_work_units,
+        };
+    }
+
+    let unproven_receipt_count = summary_unproven_receipt_count(summary.clone());
+    if unproven_receipt_count > 0 {
+        // Promotion step: summary-only partial settlement must not authorize
+        // payout when it cannot prove every submitted receipt reached a
+        // terminal PoCO outcome. Fail closed until canonical receipt records
+        // or richer summary accounting can show the full settlement result.
+        PrimaryPayoutWorkUnitPreview::PocoPendingSettlement {
+            unresolved_receipt_count: unproven_receipt_count,
+            metering_work_units,
+        }
+    } else if summary.accepted_receipt_count > 0 {
+        let credited_work_units = summary.total_credited_consumption_units;
+        // Promotion step: once PoCO accepts credited consumption, that
+        // settlement becomes the primary payout authority and legacy
+        // metering/proof work units remain only as the evidence ceiling.
+        PrimaryPayoutWorkUnitPreview::PocoResolvedCredits {
+            credited_work_units,
+            payout_work_units: metering_work_units.min(credited_work_units),
+        }
+    } else if summary.receipt_count > 0 && summary.last_settlement_height.is_some() {
+        // Promotion step: a resolved zero-credit PoCO settlement must
+        // fail closed instead of falling back to legacy metering as the
+        // sole payout authority.
+        PrimaryPayoutWorkUnitPreview::PocoResolvedZeroCredit
+    } else {
+        PrimaryPayoutWorkUnitPreview::MeteringEvidence {
+            metering_work_units,
+        }
+    }
+}
+
+fn preview_primary_payout_work_units(
+    st: &StateStore,
+    task: &TaskObject,
+    metering_work_units: u128,
+) -> PrimaryPayoutWorkUnitPreview {
+    let records = st.consumption_records_for_task(task.task_id);
+    if !records.is_empty() {
+        if has_duplicate_logical_replay_keys(&records) {
+            return PrimaryPayoutWorkUnitPreview::PocoInconsistentRecords {
+                reason: DUPLICATE_LOGICAL_REPLAY_KEY_REASON,
+                metering_work_units,
+            };
+        }
+
+        let unresolved_receipt_count = unresolved_receipt_count(&records) as u64;
+        if unresolved_receipt_count > 0 {
+            return PrimaryPayoutWorkUnitPreview::PocoPendingSettlement {
+                unresolved_receipt_count,
+                metering_work_units,
+            };
+        }
+
+        let credited_work_units = total_credited_consumption_units(&records);
+        return if credited_work_units > 0 {
+            PrimaryPayoutWorkUnitPreview::PocoResolvedCredits {
+                credited_work_units,
+                payout_work_units: metering_work_units.min(credited_work_units),
+            }
+        } else {
+            PrimaryPayoutWorkUnitPreview::PocoResolvedZeroCredit
+        };
+    }
+
+    st.task_consumption_summary(task.task_id)
+        .map(|summary| preview_primary_payout_work_units_from_summary(summary, metering_work_units))
+        .unwrap_or(PrimaryPayoutWorkUnitPreview::MeteringEvidence {
+            metering_work_units,
+        })
+}
+
+fn finalize_primary_payout_work_units(preview: PrimaryPayoutWorkUnitPreview) -> u128 {
+    match preview {
+        PrimaryPayoutWorkUnitPreview::MeteringEvidence {
+            metering_work_units,
+        } => metering_work_units,
+        PrimaryPayoutWorkUnitPreview::PocoPendingSettlement { .. }
+        | PrimaryPayoutWorkUnitPreview::PocoInconsistentSummary { .. }
+        | PrimaryPayoutWorkUnitPreview::PocoInconsistentRecords { .. } => {
+            // Promotion step: once PoCO settlement has started, or summary-only
+            // settlement metadata is internally inconsistent, fail closed until
+            // the receipt path reaches an explicit canonical outcome.
+            // Legacy metering/proof data remains evidence for the eventual cap,
+            // not the sole payout authority while settlement is pending.
+            0
+        }
+        PrimaryPayoutWorkUnitPreview::PocoResolvedCredits {
+            payout_work_units, ..
+        } => payout_work_units,
+        PrimaryPayoutWorkUnitPreview::PocoResolvedZeroCredit => 0,
+    }
+}
+
+pub(crate) fn primary_payout_work_units(
+    st: &StateStore,
+    task: &TaskObject,
+    metering_work_units: u128,
+) -> u128 {
+    finalize_primary_payout_work_units(preview_primary_payout_work_units(
+        st,
+        task,
+        metering_work_units,
+    ))
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -231,7 +574,7 @@ impl ConsumptionReceipt {
         ConsumptionReplayKey {
             task_id: self.task_id,
             consumer_id: self.consumer_id.clone(),
-            output_hash: self.output_hash.clone(),
+            output_hash: canonical_output_hash(&self.output_hash),
             billing_window_id: self.billing_window_id.clone(),
         }
     }
@@ -336,9 +679,7 @@ pub fn submit_consumption_receipt_at_height(
     let task = st
         .get_task(receipt.task_id)
         .ok_or_else(|| PouwError::State("task not found".into()))?;
-    if task.status == TaskStatus::Revealed {
-        reject_if_deadline_exceeded_optional(task.challenge_deadline_height, current_height)?;
-    }
+    reject_if_settlement_window_closed(&task, current_height)?;
     let _snapshot = validate_receipt_against_task(&task, &receipt)?;
     if signer != receipt.consumer_id {
         return Err(PouwError::Unauthorized);
@@ -355,10 +696,10 @@ pub fn submit_consumption_receipt_at_height(
     let key = ConsumptionRecordKey {
         task_id: receipt.task_id,
         consumer_id: receipt.consumer_id.clone(),
-        output_hash: receipt.output_hash.clone(),
+        output_hash: canonical_output_hash(&receipt.output_hash),
         billing_window_id: receipt.billing_window_id.clone(),
     };
-    if st.consumption_record(&key).is_some() {
+    if logical_replay_key_exists(st, &key) {
         return Err(PouwError::State(
             "poco duplicate consumption receipt replay key".into(),
         ));
@@ -422,19 +763,15 @@ pub fn challenge_consumption_receipt_at_height(
     let task = st
         .get_task(key.task_id)
         .ok_or_else(|| PouwError::State("task not found".into()))?;
-    if task.status == TaskStatus::Revealed {
-        reject_if_deadline_exceeded_optional(task.challenge_deadline_height, current_height)?;
-    }
+    reject_if_settlement_window_closed(&task, current_height)?;
 
     let record_key = ConsumptionRecordKey {
         task_id: key.task_id,
         consumer_id: key.consumer_id,
-        output_hash: key.output_hash,
+        output_hash: canonical_output_hash(&key.output_hash),
         billing_window_id: key.billing_window_id,
     };
-    let mut record = st
-        .consumption_record(&record_key)
-        .ok_or_else(|| PouwError::State("poco consumption record not found".into()))?;
+    let mut record = find_record_by_logical_replay_key(st, &record_key)?;
     match record.status {
         ConsumptionRecordStatus::Submitted => {}
         _ => return Err(PouwError::InvalidTransition),
@@ -488,19 +825,15 @@ pub fn resolve_consumption_receipt_at_height(
     let task = st
         .get_task(key.task_id)
         .ok_or_else(|| PouwError::State("task not found".into()))?;
-    if task.status == TaskStatus::Revealed {
-        reject_if_deadline_exceeded_optional(task.challenge_deadline_height, current_height)?;
-    }
+    reject_if_settlement_window_closed(&task, current_height)?;
 
     let record_key = ConsumptionRecordKey {
         task_id: key.task_id,
         consumer_id: key.consumer_id,
-        output_hash: key.output_hash,
+        output_hash: canonical_output_hash(&key.output_hash),
         billing_window_id: key.billing_window_id,
     };
-    let mut record = st
-        .consumption_record(&record_key)
-        .ok_or_else(|| PouwError::State("poco consumption record not found".into()))?;
+    let mut record = find_record_by_logical_replay_key(st, &record_key)?;
     match record.status {
         ConsumptionRecordStatus::Submitted | ConsumptionRecordStatus::Challenged => {}
         _ => return Err(PouwError::InvalidTransition),
@@ -520,7 +853,11 @@ pub fn resolve_consumption_receipt_at_height(
                         .into(),
                 ));
             }
-            (ConsumptionRecordStatus::Accepted, Some(credited), "accepted")
+            (
+                ConsumptionRecordStatus::Accepted,
+                Some(credited),
+                "accepted",
+            )
         }
         ConsumptionResolveDecision::Discount => {
             let credited = credited_consumption_units.ok_or_else(|| {
@@ -532,7 +869,11 @@ pub fn resolve_consumption_receipt_at_height(
                         .into(),
                 ));
             }
-            (ConsumptionRecordStatus::Discounted, Some(credited), "accepted_discounted")
+            (
+                ConsumptionRecordStatus::Discounted,
+                Some(credited),
+                "accepted_discounted",
+            )
         }
         ConsumptionResolveDecision::Reject => {
             if credited_consumption_units.unwrap_or(0) != 0 {
@@ -540,7 +881,11 @@ pub fn resolve_consumption_receipt_at_height(
                     "poco reject requires zero credited_consumption_units".into(),
                 ));
             }
-            (ConsumptionRecordStatus::Rejected, None, "rejected_invalid_receipt")
+            (
+                ConsumptionRecordStatus::Rejected,
+                None,
+                "rejected_invalid_receipt",
+            )
         }
         ConsumptionResolveDecision::Slash => {
             if credited_consumption_units.unwrap_or(0) != 0 {
@@ -548,7 +893,11 @@ pub fn resolve_consumption_receipt_at_height(
                     "poco slash requires zero credited_consumption_units".into(),
                 ));
             }
-            (ConsumptionRecordStatus::Slashed, None, "slashed_fraudulent_receipt")
+            (
+                ConsumptionRecordStatus::Slashed,
+                None,
+                "slashed_fraudulent_receipt",
+            )
         }
     };
 
@@ -565,7 +914,10 @@ pub fn resolve_consumption_receipt_at_height(
     st.put_consumption_record(record.clone());
 
     let mut summary = current_summary(st, record.key.task_id);
-    if matches!(record.status, ConsumptionRecordStatus::Accepted | ConsumptionRecordStatus::Discounted) {
+    if matches!(
+        record.status,
+        ConsumptionRecordStatus::Accepted | ConsumptionRecordStatus::Discounted
+    ) {
         summary.accepted_receipt_count = summary.accepted_receipt_count.saturating_add(1);
         summary.total_credited_consumption_units = summary
             .total_credited_consumption_units
@@ -580,6 +932,7 @@ pub fn resolve_consumption_receipt_at_height(
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::{apply_resolve_at_height, apply_timeout};
     use trnm_types::{ProofType, TaskMetadata, TaskObject};
 
     fn sample_result_hash() -> [u8; 32] {
@@ -671,6 +1024,43 @@ mod tests {
         .expect("hash")
     }
 
+    fn sample_record(
+        consumer_id: &str,
+        billing_window_id: &str,
+        status: ConsumptionRecordStatus,
+        credited_consumption_units: Option<u128>,
+    ) -> ConsumptionRecord {
+        ConsumptionRecord {
+            key: ConsumptionRecordKey {
+                task_id: 42,
+                consumer_id: consumer_id.to_string(),
+                output_hash: sample_output_hash_hex(),
+                billing_window_id: billing_window_id.to_string(),
+            },
+            worker_id: "worker-alpha".to_string(),
+            tokenizer_id: "llama3-tokenizer".to_string(),
+            tokenizer_version: "1.0.0".to_string(),
+            consumer_class: "bonded_api_client".to_string(),
+            consumed_spans_root: "def456".to_string(),
+            consumed_token_count: 17,
+            claimed_consumption_units: 17,
+            credited_consumption_units,
+            consumer_nonce: 7,
+            accepted_at_unix_ms: 1_775_683_200_123,
+            status,
+            resolution_code: None,
+        }
+    }
+
+    fn mark_task_challenged(task: &mut TaskObject) {
+        task.status = TaskStatus::Challenged;
+        task.challenge_bond = Some(10);
+        task.challenger = Some("auditor-1".to_string());
+        task.challenged_at_height = Some(95);
+        task.resolve_deadline_height = Some(110);
+        task.challenge_bond_forfeited = None;
+    }
+
     #[test]
     fn consumption_receipt_hash_roundtrip_validates() {
         let receipt = sample_receipt();
@@ -708,7 +1098,8 @@ mod tests {
     #[test]
     fn submit_consumption_receipt_persists_record_and_summary() {
         let mut st = StateStore::default();
-        st.put_task_new(sample_task(TaskStatus::Revealed)).expect("task");
+        st.put_task_new(sample_task(TaskStatus::Revealed))
+            .expect("task");
 
         let record = submit_consumption_receipt_at_height(
             &mut st,
@@ -728,7 +1119,8 @@ mod tests {
     #[test]
     fn submit_consumption_receipt_rejects_nonce_replay() {
         let mut st = StateStore::default();
-        st.put_task_new(sample_task(TaskStatus::Revealed)).expect("task");
+        st.put_task_new(sample_task(TaskStatus::Revealed))
+            .expect("task");
         submit_consumption_receipt_at_height(
             &mut st,
             sample_receipt(),
@@ -740,14 +1132,74 @@ mod tests {
         let mut replay = sample_receipt();
         replay.billing_window_id = "bw-2".to_string();
         replay = replay.with_computed_receipt_hash().expect("hash");
+        let err =
+            submit_consumption_receipt_at_height(&mut st, replay, "consumer-bravo".to_string(), 11)
+                .expect_err("nonce replay should fail");
+        assert!(matches!(err, PouwError::State(_)));
+    }
+
+    #[test]
+    fn submit_consumption_receipt_rejects_duplicate_logical_output_hash_hex_format_drift() {
+        let mut st = StateStore::default();
+        st.put_task_new(sample_task(TaskStatus::Revealed))
+            .expect("task");
+
+        submit_consumption_receipt_at_height(
+            &mut st,
+            sample_receipt(),
+            "consumer-bravo".to_string(),
+            10,
+        )
+        .expect("submit canonical receipt");
+
+        let mut replay = sample_receipt();
+        replay.output_hash = format!("0X{}", sample_output_hash_hex().to_ascii_uppercase());
+        replay.consumer_nonce = 8;
+        replay.accepted_at_unix_ms += 1;
+        replay = replay.with_computed_receipt_hash().expect("hash");
+
         let err = submit_consumption_receipt_at_height(
             &mut st,
             replay,
             "consumer-bravo".to_string(),
             11,
         )
-        .expect_err("nonce replay should fail");
-        assert!(matches!(err, PouwError::State(_)));
+        .expect_err("logical replay key drift must still be rejected");
+
+        assert!(matches!(err, PouwError::State(msg) if msg.contains("poco duplicate consumption receipt replay key")));
+        assert_eq!(st.consumer_consumption_nonce("consumer-bravo"), Some(7));
+        assert_eq!(st.task_consumption_summary(42).expect("summary").receipt_count, 1);
+    }
+
+    #[test]
+    fn challenge_consumption_receipt_matches_legacy_logical_output_hash_hex_format_drift() {
+        let mut st = StateStore::default();
+        st.put_task_new(sample_task(TaskStatus::Completed))
+            .expect("task");
+
+        let mut legacy_record = sample_record(
+            "consumer-bravo",
+            "bw-1",
+            ConsumptionRecordStatus::Submitted,
+            None,
+        );
+        legacy_record.key.output_hash = format!("0X{}", sample_output_hash_hex().to_ascii_uppercase());
+        st.put_consumption_record(legacy_record);
+
+        let challenged = challenge_consumption_receipt_at_height(
+            &mut st,
+            sample_receipt().replay_key(),
+            "auditor-1".to_string(),
+            "auditor-1".to_string(),
+            99,
+        )
+        .expect("canonical replay key should match legacy hex-format drift");
+
+        assert_eq!(challenged.status, ConsumptionRecordStatus::Challenged);
+        assert_eq!(
+            challenged.key.output_hash,
+            format!("0X{}", sample_output_hash_hex().to_ascii_uppercase())
+        );
     }
 
     #[test]
@@ -792,5 +1244,767 @@ mod tests {
         assert_eq!(summary.accepted_receipt_count, 1);
         assert_eq!(summary.total_credited_consumption_units, 9);
         assert_eq!(summary.last_settlement_height, Some(77));
+    }
+
+    #[test]
+    fn primary_payout_work_units_falls_back_to_metering_without_accepted_receipts() {
+        let st = StateStore::default();
+        let task = sample_task(TaskStatus::Completed);
+
+        assert_eq!(primary_payout_work_units(&st, &task, 50), 50);
+    }
+
+    #[test]
+    fn primary_payout_work_units_caps_metering_by_credited_consumption_units() {
+        let mut st = StateStore::default();
+        let task = sample_task(TaskStatus::Completed);
+        st.set_task_consumption_summary(TaskConsumptionSummary {
+            task_id: task.task_id,
+            receipt_count: 2,
+            accepted_receipt_count: 2,
+            challenged_receipt_count: 0,
+            total_consumed_tokens: 17,
+            total_claimed_consumption_units: 17,
+            total_credited_consumption_units: 9,
+            last_settlement_height: Some(77),
+        });
+
+        assert_eq!(primary_payout_work_units(&st, &task, 50), 9);
+        assert_eq!(primary_payout_work_units(&st, &task, 7), 7);
+    }
+
+    #[test]
+    fn primary_payout_work_units_zeroes_metering_after_resolved_zero_credit_settlement() {
+        let mut st = StateStore::default();
+        let task = sample_task(TaskStatus::Completed);
+        st.set_task_consumption_summary(TaskConsumptionSummary {
+            task_id: task.task_id,
+            receipt_count: 1,
+            accepted_receipt_count: 0,
+            challenged_receipt_count: 1,
+            total_consumed_tokens: 17,
+            total_claimed_consumption_units: 17,
+            total_credited_consumption_units: 0,
+            last_settlement_height: Some(77),
+        });
+
+        assert_eq!(primary_payout_work_units(&st, &task, 50), 0);
+        assert_eq!(primary_payout_work_units(&st, &task, 7), 0);
+    }
+
+    #[test]
+    fn primary_payout_work_units_fail_closed_while_poco_settlement_is_pending() {
+        let mut st = StateStore::default();
+        let task = sample_task(TaskStatus::Completed);
+        st.set_task_consumption_summary(TaskConsumptionSummary {
+            task_id: task.task_id,
+            receipt_count: 1,
+            accepted_receipt_count: 0,
+            challenged_receipt_count: 0,
+            total_consumed_tokens: 17,
+            total_claimed_consumption_units: 17,
+            total_credited_consumption_units: 0,
+            last_settlement_height: None,
+        });
+
+        assert_eq!(primary_payout_work_units(&st, &task, 50), 0);
+    }
+
+    #[test]
+    fn preview_primary_payout_work_units_marks_pending_poco_settlement() {
+        let mut st = StateStore::default();
+        let task = sample_task(TaskStatus::Completed);
+        st.set_task_consumption_summary(TaskConsumptionSummary {
+            task_id: task.task_id,
+            receipt_count: 1,
+            accepted_receipt_count: 0,
+            challenged_receipt_count: 0,
+            total_consumed_tokens: 17,
+            total_claimed_consumption_units: 17,
+            total_credited_consumption_units: 0,
+            last_settlement_height: None,
+        });
+
+        assert_eq!(
+            preview_primary_payout_work_units(&st, &task, 50),
+            PrimaryPayoutWorkUnitPreview::PocoPendingSettlement {
+                unresolved_receipt_count: 1,
+                metering_work_units: 50,
+            }
+        );
+    }
+
+    #[test]
+    fn preview_primary_payout_work_units_marks_resolved_poco_credit_authority() {
+        let mut st = StateStore::default();
+        let task = sample_task(TaskStatus::Completed);
+        st.set_task_consumption_summary(TaskConsumptionSummary {
+            task_id: task.task_id,
+            receipt_count: 2,
+            accepted_receipt_count: 2,
+            challenged_receipt_count: 0,
+            total_consumed_tokens: 17,
+            total_claimed_consumption_units: 17,
+            total_credited_consumption_units: 9,
+            last_settlement_height: Some(77),
+        });
+
+        assert_eq!(
+            preview_primary_payout_work_units(&st, &task, 50),
+            PrimaryPayoutWorkUnitPreview::PocoResolvedCredits {
+                credited_work_units: 9,
+                payout_work_units: 9,
+            }
+        );
+    }
+
+    #[test]
+    fn preview_primary_payout_work_units_prefers_pending_records_over_stale_summary_credit() {
+        let mut st = StateStore::default();
+        let task = sample_task(TaskStatus::Completed);
+        st.set_task_consumption_summary(TaskConsumptionSummary {
+            task_id: task.task_id,
+            receipt_count: 2,
+            accepted_receipt_count: 1,
+            challenged_receipt_count: 0,
+            total_consumed_tokens: 34,
+            total_claimed_consumption_units: 34,
+            total_credited_consumption_units: 9,
+            last_settlement_height: Some(77),
+        });
+        st.put_consumption_record(sample_record(
+            "consumer-bravo",
+            "bw-1",
+            ConsumptionRecordStatus::Accepted,
+            Some(9),
+        ));
+        st.put_consumption_record(sample_record(
+            "consumer-charlie",
+            "bw-2",
+            ConsumptionRecordStatus::Submitted,
+            None,
+        ));
+
+        assert_eq!(
+            preview_primary_payout_work_units(&st, &task, 50),
+            PrimaryPayoutWorkUnitPreview::PocoPendingSettlement {
+                unresolved_receipt_count: 1,
+                metering_work_units: 50,
+            }
+        );
+        assert_eq!(primary_payout_work_units(&st, &task, 50), 0);
+    }
+
+    #[test]
+    fn reject_if_primary_settlement_pending_counts_challenged_receipts_from_records() {
+        let mut st = StateStore::default();
+        st.put_consumption_record(sample_record(
+            "consumer-bravo",
+            "bw-1",
+            ConsumptionRecordStatus::Accepted,
+            Some(9),
+        ));
+        st.put_consumption_record(sample_record(
+            "consumer-charlie",
+            "bw-2",
+            ConsumptionRecordStatus::Challenged,
+            None,
+        ));
+
+        let err = reject_if_primary_settlement_pending(&st, 42)
+            .expect_err("challenged receipt must keep primary settlement pending");
+        assert!(
+            matches!(err, PouwError::State(msg) if msg.contains("1 unresolved consumption receipt"))
+        );
+    }
+
+    #[test]
+    fn primary_payout_work_units_fail_closed_for_duplicate_logical_replay_keys() {
+        let mut st = StateStore::default();
+        let task = sample_task(TaskStatus::Completed);
+        let first = sample_record(
+            "consumer-bravo",
+            "bw-1",
+            ConsumptionRecordStatus::Accepted,
+            Some(9),
+        );
+        let mut duplicate = sample_record(
+            "consumer-bravo",
+            "bw-1",
+            ConsumptionRecordStatus::Accepted,
+            Some(7),
+        );
+        duplicate.key.output_hash = format!("0X{}", sample_output_hash_hex().to_ascii_uppercase());
+
+        st.put_consumption_record(first);
+        st.put_consumption_record(duplicate);
+
+        assert_eq!(
+            preview_primary_payout_work_units(&st, &task, 50),
+            PrimaryPayoutWorkUnitPreview::PocoInconsistentRecords {
+                reason: DUPLICATE_LOGICAL_REPLAY_KEY_REASON,
+                metering_work_units: 50,
+            }
+        );
+        assert_eq!(primary_payout_work_units(&st, &task, 50), 0);
+    }
+
+    #[test]
+    fn reject_if_primary_settlement_pending_fails_closed_for_duplicate_logical_replay_keys() {
+        let mut st = StateStore::default();
+        let first = sample_record(
+            "consumer-bravo",
+            "bw-1",
+            ConsumptionRecordStatus::Accepted,
+            Some(9),
+        );
+        let mut duplicate = sample_record(
+            "consumer-bravo",
+            "bw-1",
+            ConsumptionRecordStatus::Accepted,
+            Some(7),
+        );
+        duplicate.key.output_hash = format!("0x{}", sample_output_hash_hex().to_ascii_uppercase());
+
+        st.put_consumption_record(first);
+        st.put_consumption_record(duplicate);
+
+        let err = reject_if_primary_settlement_pending(&st, 42)
+            .expect_err("duplicate logical replay keys must block primary settlement finalization");
+        assert!(
+            matches!(err, PouwError::State(msg) if msg.contains(DUPLICATE_LOGICAL_REPLAY_KEY_REASON))
+        );
+    }
+
+    #[test]
+    fn reject_if_primary_settlement_pending_fails_closed_from_summary_without_records() {
+        let mut st = StateStore::default();
+        st.set_task_consumption_summary(TaskConsumptionSummary {
+            task_id: 42,
+            receipt_count: 2,
+            accepted_receipt_count: 0,
+            challenged_receipt_count: 0,
+            total_consumed_tokens: 34,
+            total_claimed_consumption_units: 34,
+            total_credited_consumption_units: 0,
+            last_settlement_height: None,
+        });
+
+        let err = reject_if_primary_settlement_pending(&st, 42)
+            .expect_err("summary-only pending receipt metadata must fail closed");
+        assert!(
+            matches!(err, PouwError::State(msg) if msg.contains("2 unresolved consumption receipts"))
+        );
+    }
+
+    #[test]
+    fn primary_payout_work_units_fail_closed_for_summary_only_partial_credit_without_records() {
+        let mut st = StateStore::default();
+        let task = sample_task(TaskStatus::Completed);
+        st.set_task_consumption_summary(TaskConsumptionSummary {
+            task_id: task.task_id,
+            receipt_count: 2,
+            accepted_receipt_count: 1,
+            challenged_receipt_count: 0,
+            total_consumed_tokens: 34,
+            total_claimed_consumption_units: 34,
+            total_credited_consumption_units: 9,
+            last_settlement_height: Some(77),
+        });
+
+        assert_eq!(
+            preview_primary_payout_work_units(&st, &task, 50),
+            PrimaryPayoutWorkUnitPreview::PocoPendingSettlement {
+                unresolved_receipt_count: 1,
+                metering_work_units: 50,
+            }
+        );
+        assert_eq!(primary_payout_work_units(&st, &task, 50), 0);
+    }
+
+    #[test]
+    fn reject_if_primary_settlement_pending_fails_closed_for_summary_only_partial_credit_without_records(
+    ) {
+        let mut st = StateStore::default();
+        st.set_task_consumption_summary(TaskConsumptionSummary {
+            task_id: 42,
+            receipt_count: 2,
+            accepted_receipt_count: 1,
+            challenged_receipt_count: 0,
+            total_consumed_tokens: 34,
+            total_claimed_consumption_units: 34,
+            total_credited_consumption_units: 9,
+            last_settlement_height: Some(77),
+        });
+
+        let err = reject_if_primary_settlement_pending(&st, 42).expect_err(
+            "summary-only partial PoCO credit must not prove terminal settlement completeness",
+        );
+        assert!(
+            matches!(err, PouwError::State(msg) if msg.contains("1 unresolved consumption receipt"))
+        );
+    }
+
+    #[test]
+    fn primary_payout_work_units_fail_closed_for_summary_only_terminal_marker_without_receipts() {
+        let mut st = StateStore::default();
+        let task = sample_task(TaskStatus::Completed);
+        st.set_task_consumption_summary(TaskConsumptionSummary {
+            task_id: task.task_id,
+            receipt_count: 0,
+            accepted_receipt_count: 0,
+            challenged_receipt_count: 0,
+            total_consumed_tokens: 0,
+            total_claimed_consumption_units: 0,
+            total_credited_consumption_units: 0,
+            last_settlement_height: Some(77),
+        });
+
+        assert_eq!(
+            preview_primary_payout_work_units(&st, &task, 50),
+            PrimaryPayoutWorkUnitPreview::PocoInconsistentSummary {
+                reason: SUMMARY_SETTLEMENT_MARKER_WITHOUT_RECEIPTS,
+                metering_work_units: 50,
+            }
+        );
+        assert_eq!(primary_payout_work_units(&st, &task, 50), 0);
+    }
+
+    #[test]
+    fn reject_if_primary_settlement_pending_fails_closed_for_summary_only_terminal_marker_without_receipts(
+    ) {
+        let mut st = StateStore::default();
+        st.set_task_consumption_summary(TaskConsumptionSummary {
+            task_id: 42,
+            receipt_count: 0,
+            accepted_receipt_count: 0,
+            challenged_receipt_count: 0,
+            total_consumed_tokens: 0,
+            total_claimed_consumption_units: 0,
+            total_credited_consumption_units: 0,
+            last_settlement_height: Some(77),
+        });
+
+        let err = reject_if_primary_settlement_pending(&st, 42)
+            .expect_err("summary-only settlement marker without receipts must fail closed");
+        assert!(
+            matches!(err, PouwError::State(msg) if msg.contains(SUMMARY_SETTLEMENT_MARKER_WITHOUT_RECEIPTS))
+        );
+    }
+
+    #[test]
+    fn timeout_revealed_summary_only_partial_credit_without_records_fail_closed() {
+        let mut st = StateStore::default();
+        let task_ref = st
+            .put_task_new(sample_task(TaskStatus::Revealed))
+            .expect("task");
+        let task_id = task_ref.id;
+        st.set_task_consumption_summary(TaskConsumptionSummary {
+            task_id,
+            receipt_count: 2,
+            accepted_receipt_count: 1,
+            challenged_receipt_count: 0,
+            total_consumed_tokens: 34,
+            total_claimed_consumption_units: 34,
+            total_credited_consumption_units: 9,
+            last_settlement_height: Some(77),
+        });
+
+        let err = apply_timeout(&mut st, task_ref, 101)
+            .expect_err("summary-only partial PoCO credit must block timeout finalization");
+
+        assert!(
+            matches!(err, PouwError::State(msg) if msg.contains("poco primary settlement pending"))
+        );
+        assert_eq!(
+            st.get_task(task_id).expect("task").status,
+            TaskStatus::Revealed
+        );
+    }
+
+    #[test]
+    fn submit_consumption_receipt_rejects_closed_window_for_completed_task() {
+        let mut st = StateStore::default();
+        st.put_task_new(sample_task(TaskStatus::Completed))
+            .expect("task");
+
+        let err = submit_consumption_receipt_at_height(
+            &mut st,
+            sample_receipt(),
+            "consumer-bravo".to_string(),
+            101,
+        )
+        .expect_err("closed settlement window must reject late receipt submission");
+
+        assert!(matches!(err, PouwError::DeadlineExceeded));
+    }
+
+    #[test]
+    fn challenge_consumption_receipt_rejects_closed_window_for_completed_task() {
+        let mut st = StateStore::default();
+        st.put_task_new(sample_task(TaskStatus::Completed))
+            .expect("task");
+        let receipt = sample_receipt();
+        let key = receipt.replay_key();
+        submit_consumption_receipt_at_height(&mut st, receipt, "consumer-bravo".to_string(), 99)
+            .expect("submit receipt within settlement window");
+
+        let err = challenge_consumption_receipt_at_height(
+            &mut st,
+            key,
+            "auditor-1".to_string(),
+            "auditor-1".to_string(),
+            101,
+        )
+        .expect_err("closed settlement window must reject late receipt challenge");
+
+        assert!(matches!(err, PouwError::DeadlineExceeded));
+    }
+
+    #[test]
+    fn resolve_consumption_receipt_rejects_closed_window_for_completed_task() {
+        let mut st = StateStore::default();
+        let _ = st.set_gov_param_bootstrap_unchecked(
+            9_500,
+            "resolve_authority".into(),
+            "resolver-1,resolver-2".into(),
+        );
+        st.put_task_new(sample_task(TaskStatus::Completed))
+            .expect("task");
+        let receipt = sample_receipt();
+        let key = receipt.replay_key();
+        submit_consumption_receipt_at_height(&mut st, receipt, "consumer-bravo".to_string(), 99)
+            .expect("submit receipt within settlement window");
+
+        let err = resolve_consumption_receipt_at_height(
+            &mut st,
+            key,
+            ConsumptionResolveDecision::Accept,
+            None,
+            None,
+            "resolver-1".to_string(),
+            "resolver-1".to_string(),
+            101,
+        )
+        .expect_err("closed settlement window must reject late receipt resolution");
+
+        assert!(matches!(err, PouwError::DeadlineExceeded));
+    }
+
+    #[test]
+    fn challenge_consumption_receipt_rejects_closed_window_for_challenged_task() {
+        let mut st = StateStore::default();
+        let task_ref = st
+            .put_task_new(sample_task(TaskStatus::Revealed))
+            .expect("task");
+        let receipt = sample_receipt();
+        let key = receipt.replay_key();
+        submit_consumption_receipt_at_height(&mut st, receipt, "consumer-bravo".to_string(), 99)
+            .expect("submit receipt within settlement window");
+
+        let mut challenged = st.get_task(42).expect("task");
+        mark_task_challenged(&mut challenged);
+        st.update_task(task_ref, challenged).expect("update task");
+
+        let err = challenge_consumption_receipt_at_height(
+            &mut st,
+            key,
+            "auditor-1".to_string(),
+            "auditor-1".to_string(),
+            111,
+        )
+        .expect_err("closed challenged resolve window must reject late receipt challenge");
+
+        assert!(matches!(err, PouwError::DeadlineExceeded));
+    }
+
+    #[test]
+    fn resolve_consumption_receipt_rejects_closed_window_for_challenged_task() {
+        let mut st = StateStore::default();
+        let _ = st.set_gov_param_bootstrap_unchecked(
+            9_503,
+            "resolve_authority".into(),
+            "resolver-1,resolver-2".into(),
+        );
+        let task_ref = st
+            .put_task_new(sample_task(TaskStatus::Revealed))
+            .expect("task");
+        let receipt = sample_receipt();
+        let key = receipt.replay_key();
+        submit_consumption_receipt_at_height(&mut st, receipt, "consumer-bravo".to_string(), 99)
+            .expect("submit receipt within settlement window");
+
+        let mut challenged = st.get_task(42).expect("task");
+        mark_task_challenged(&mut challenged);
+        st.update_task(task_ref, challenged).expect("update task");
+
+        let err = resolve_consumption_receipt_at_height(
+            &mut st,
+            key,
+            ConsumptionResolveDecision::Accept,
+            None,
+            None,
+            "resolver-1".to_string(),
+            "resolver-1".to_string(),
+            111,
+        )
+        .expect_err("closed challenged resolve window must reject late receipt resolution");
+
+        assert!(matches!(err, PouwError::DeadlineExceeded));
+    }
+
+    #[test]
+    fn submit_consumption_receipt_rejects_missing_settlement_deadline_metadata() {
+        let mut st = StateStore::default();
+        let mut task = sample_task(TaskStatus::Completed);
+        task.challenge_deadline_height = None;
+        st.put_task_new(task).expect("task");
+
+        let err = submit_consumption_receipt_at_height(
+            &mut st,
+            sample_receipt(),
+            "consumer-bravo".to_string(),
+            99,
+        )
+        .expect_err("missing settlement deadline must fail closed");
+
+        assert!(
+            matches!(err, PouwError::State(msg) if msg.contains("poco settlement window requires challenge_deadline_height"))
+        );
+    }
+
+    #[test]
+    fn challenge_consumption_receipt_rejects_missing_settlement_deadline_metadata() {
+        let mut st = StateStore::default();
+        let task_ref = st
+            .put_task_new(sample_task(TaskStatus::Completed))
+            .expect("task");
+        let receipt = sample_receipt();
+        let key = receipt.replay_key();
+        submit_consumption_receipt_at_height(&mut st, receipt, "consumer-bravo".to_string(), 99)
+            .expect("submit receipt within settlement window");
+
+        let mut malformed = st.get_task(42).expect("task");
+        malformed.challenge_deadline_height = None;
+        st.update_task(task_ref, malformed).expect("update task");
+
+        let err = challenge_consumption_receipt_at_height(
+            &mut st,
+            key,
+            "auditor-1".to_string(),
+            "auditor-1".to_string(),
+            99,
+        )
+        .expect_err("missing settlement deadline must fail closed");
+
+        assert!(
+            matches!(err, PouwError::State(msg) if msg.contains("poco settlement window requires challenge_deadline_height"))
+        );
+    }
+
+    #[test]
+    fn resolve_consumption_receipt_rejects_missing_settlement_deadline_metadata() {
+        let mut st = StateStore::default();
+        let _ = st.set_gov_param_bootstrap_unchecked(
+            9_501,
+            "resolve_authority".into(),
+            "resolver-1,resolver-2".into(),
+        );
+        let task_ref = st
+            .put_task_new(sample_task(TaskStatus::Completed))
+            .expect("task");
+        let receipt = sample_receipt();
+        let key = receipt.replay_key();
+        submit_consumption_receipt_at_height(&mut st, receipt, "consumer-bravo".to_string(), 99)
+            .expect("submit receipt within settlement window");
+
+        let mut malformed = st.get_task(42).expect("task");
+        malformed.challenge_deadline_height = None;
+        st.update_task(task_ref, malformed).expect("update task");
+
+        let err = resolve_consumption_receipt_at_height(
+            &mut st,
+            key,
+            ConsumptionResolveDecision::Accept,
+            None,
+            None,
+            "resolver-1".to_string(),
+            "resolver-1".to_string(),
+            99,
+        )
+        .expect_err("missing settlement deadline must fail closed");
+
+        assert!(
+            matches!(err, PouwError::State(msg) if msg.contains("poco settlement window requires challenge_deadline_height"))
+        );
+    }
+
+    #[test]
+    fn challenge_consumption_receipt_rejects_missing_resolve_deadline_metadata() {
+        let mut st = StateStore::default();
+        let task_ref = st
+            .put_task_new(sample_task(TaskStatus::Revealed))
+            .expect("task");
+        let receipt = sample_receipt();
+        let key = receipt.replay_key();
+        submit_consumption_receipt_at_height(&mut st, receipt, "consumer-bravo".to_string(), 99)
+            .expect("submit receipt within settlement window");
+
+        let mut challenged = st.get_task(42).expect("task");
+        mark_task_challenged(&mut challenged);
+        challenged.resolve_deadline_height = None;
+        st.update_task(task_ref, challenged).expect("update task");
+
+        let err = challenge_consumption_receipt_at_height(
+            &mut st,
+            key,
+            "auditor-1".to_string(),
+            "auditor-1".to_string(),
+            109,
+        )
+        .expect_err("missing challenged resolve deadline must fail closed");
+
+        assert!(
+            matches!(err, PouwError::State(msg) if msg.contains("poco settlement window requires resolve_deadline_height"))
+        );
+    }
+
+    #[test]
+    fn resolve_consumption_receipt_rejects_missing_resolve_deadline_metadata() {
+        let mut st = StateStore::default();
+        let _ = st.set_gov_param_bootstrap_unchecked(
+            9_504,
+            "resolve_authority".into(),
+            "resolver-1,resolver-2".into(),
+        );
+        let task_ref = st
+            .put_task_new(sample_task(TaskStatus::Revealed))
+            .expect("task");
+        let receipt = sample_receipt();
+        let key = receipt.replay_key();
+        submit_consumption_receipt_at_height(&mut st, receipt, "consumer-bravo".to_string(), 99)
+            .expect("submit receipt within settlement window");
+
+        let mut challenged = st.get_task(42).expect("task");
+        mark_task_challenged(&mut challenged);
+        challenged.resolve_deadline_height = None;
+        st.update_task(task_ref, challenged).expect("update task");
+
+        let err = resolve_consumption_receipt_at_height(
+            &mut st,
+            key,
+            ConsumptionResolveDecision::Accept,
+            None,
+            None,
+            "resolver-1".to_string(),
+            "resolver-1".to_string(),
+            109,
+        )
+        .expect_err("missing challenged resolve deadline must fail closed");
+
+        assert!(
+            matches!(err, PouwError::State(msg) if msg.contains("poco settlement window requires resolve_deadline_height"))
+        );
+    }
+
+    #[test]
+    fn timeout_revealed_pending_poco_primary_settlement_fail_closed() {
+        let mut st = StateStore::default();
+        let task_ref = st
+            .put_task_new(sample_task(TaskStatus::Revealed))
+            .expect("task");
+        let task_id = task_ref.id;
+        submit_consumption_receipt_at_height(
+            &mut st,
+            sample_receipt(),
+            "consumer-bravo".into(),
+            99,
+        )
+        .expect("submit receipt within settlement window");
+
+        let err = apply_timeout(&mut st, task_ref, 101)
+            .expect_err("pending PoCO settlement must block revealed timeout finalization");
+
+        assert!(
+            matches!(err, PouwError::State(msg) if msg.contains("poco primary settlement pending"))
+        );
+        assert_eq!(
+            st.get_task(task_id).expect("task").status,
+            TaskStatus::Revealed
+        );
+    }
+
+    #[test]
+    fn timeout_challenged_pending_poco_primary_settlement_fail_closed() {
+        let mut st = StateStore::default();
+        let task_ref = st
+            .put_task_new(sample_task(TaskStatus::Revealed))
+            .expect("task");
+        let task_id = task_ref.id;
+        submit_consumption_receipt_at_height(
+            &mut st,
+            sample_receipt(),
+            "consumer-bravo".into(),
+            99,
+        )
+        .expect("submit receipt within settlement window");
+
+        let mut challenged = st.get_task(task_id).expect("task");
+        mark_task_challenged(&mut challenged);
+        let challenged_ref = st.update_task(task_ref, challenged).expect("update task");
+
+        let err = apply_timeout(&mut st, challenged_ref, 111)
+            .expect_err("pending PoCO settlement must block challenged timeout finalization");
+
+        assert!(
+            matches!(err, PouwError::State(msg) if msg.contains("poco primary settlement pending"))
+        );
+        assert_eq!(
+            st.get_task(task_id).expect("task").status,
+            TaskStatus::Challenged
+        );
+    }
+
+    #[test]
+    fn resolve_pending_poco_primary_settlement_fail_closed() {
+        let mut st = StateStore::default();
+        let _ = st.set_gov_param_bootstrap_unchecked(
+            9_502,
+            "resolve_authority".into(),
+            "resolver-1,resolver-2".into(),
+        );
+        let task_ref = st
+            .put_task_new(sample_task(TaskStatus::Revealed))
+            .expect("task");
+        let task_id = task_ref.id;
+        submit_consumption_receipt_at_height(
+            &mut st,
+            sample_receipt(),
+            "consumer-bravo".into(),
+            99,
+        )
+        .expect("submit receipt within settlement window");
+
+        let mut challenged = st.get_task(task_id).expect("task");
+        mark_task_challenged(&mut challenged);
+        let challenged_ref = st.update_task(task_ref, challenged).expect("update task");
+
+        let err = apply_resolve_at_height(
+            &mut st,
+            challenged_ref,
+            false,
+            "resolver-1".to_string(),
+            "resolver-1".to_string(),
+            101,
+        )
+        .expect_err("pending PoCO settlement must block challenged resolve finalization");
+
+        assert!(
+            matches!(err, PouwError::State(msg) if msg.contains("poco primary settlement pending"))
+        );
+        assert_eq!(
+            st.get_task(task_id).expect("task").status,
+            TaskStatus::Challenged
+        );
     }
 }

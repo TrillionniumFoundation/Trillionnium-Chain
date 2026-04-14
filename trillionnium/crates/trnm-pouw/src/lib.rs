@@ -9,12 +9,14 @@ pub mod consumption;
 pub mod metering;
 pub mod verification;
 pub use consumption::{
-    challenge_consumption_receipt, challenge_consumption_receipt_at_height, claimed_consumption_units,
-    parse_consumption_receipt_json, parse_and_validate_consumption_receipt_json,
-    resolve_consumption_receipt, resolve_consumption_receipt_at_height, submit_consumption_receipt,
-    submit_consumption_receipt_at_height, ConsumptionError, ConsumptionReceipt, ConsumptionReplayKey,
-    ConsumptionResolveDecision, POCO_V1_SETTLEMENT_SCHEMA,
+    challenge_consumption_receipt, challenge_consumption_receipt_at_height,
+    claimed_consumption_units, parse_and_validate_consumption_receipt_json,
+    parse_consumption_receipt_json, resolve_consumption_receipt,
+    resolve_consumption_receipt_at_height, submit_consumption_receipt,
+    submit_consumption_receipt_at_height, ConsumptionError, ConsumptionReceipt,
+    ConsumptionReplayKey, ConsumptionResolveDecision, POCO_V1_SETTLEMENT_SCHEMA,
 };
+use consumption::{primary_payout_work_units, reject_if_primary_settlement_pending};
 pub use metering::{
     parse_and_validate_llm_token_meter_v1_receipt_json, parse_llm_token_meter_v1_receipt_json,
     LlmTokenMeterError, LlmTokenMeterV1Receipt, LlmTokenMeterV1WorkUnitCoefficients,
@@ -1336,8 +1338,9 @@ fn llm_meter_worker_completion_bonus(
     let Some(policy) = llm_token_meter_policy_for_snapshot_or_state(st, Some(snapshot_ref))? else {
         return Ok(0);
     };
+    let payout_work_units = primary_payout_work_units(st, task, snapshot_ref.normalized_work_units);
 
-    Ok(policy.worker_completion_bonus(snapshot_ref.normalized_work_units))
+    Ok(policy.worker_completion_bonus(payout_work_units))
 }
 
 fn llm_meter_worker_slash_rebate(
@@ -1355,8 +1358,9 @@ fn llm_meter_worker_slash_rebate(
     let Some(policy) = llm_token_meter_policy_for_snapshot_or_state(st, Some(snapshot_ref))? else {
         return Ok(0);
     };
+    let payout_work_units = primary_payout_work_units(st, task, snapshot_ref.normalized_work_units);
 
-    Ok(policy.worker_slash_rebate(snapshot_ref.normalized_work_units, locked))
+    Ok(policy.worker_slash_rebate(payout_work_units, locked))
 }
 
 fn effective_challenge_success_bounty(
@@ -1367,9 +1371,9 @@ fn effective_challenge_success_bounty(
     if let Some(snapshot_ref) = snapshot.as_ref() {
         if let Some(policy) = llm_token_meter_policy_for_snapshot_or_state(st, Some(snapshot_ref))?
         {
-            return Ok(
-                policy.effective_challenge_success_bounty(snapshot_ref.normalized_work_units)
-            );
+            let payout_work_units =
+                primary_payout_work_units(st, task, snapshot_ref.normalized_work_units);
+            return Ok(policy.effective_challenge_success_bounty(payout_work_units));
         }
     }
 
@@ -1966,6 +1970,10 @@ pub fn apply_resolve_at_height(
         return Err(PouwError::Unauthorized);
     }
     reject_if_deadline_exceeded_optional(task.resolve_deadline_height, current_height)?;
+    if let Err(err) = reject_if_primary_settlement_pending(st, task.task_id) {
+        st.clear_pending_resolve_approval(task_ref.id);
+        return Err(err);
+    }
     task.status = if slash_worker {
         TaskStatus::Slashed
     } else {
@@ -2149,6 +2157,10 @@ pub fn apply_timeout(
                     "revealed task has invalid retained challenge_window_blocks_snapshot".into(),
                 ));
             }
+            if let Err(err) = reject_if_primary_settlement_pending(st, task.task_id) {
+                st.clear_pending_resolve_approval(task_ref.id);
+                return Err(err);
+            }
             task.status = TaskStatus::Completed;
             task.challenge_deadline_height = None;
             task.challenged_at_height = None;
@@ -2156,6 +2168,10 @@ pub fn apply_timeout(
         }
         TaskStatus::Challenged => {
             require_deadline_exceeded(task.resolve_deadline_height, current_height)?;
+            if let Err(err) = reject_if_primary_settlement_pending(st, task.task_id) {
+                st.clear_pending_resolve_approval(task_ref.id);
+                return Err(err);
+            }
             if let Some(bond) = task.challenge_bond {
                 ensure_balance_at_least(st, CHALLENGE_ESCROW_ACCOUNT, bond)?;
             }
@@ -10406,6 +10422,69 @@ mod tests {
             "0".into(),
         )
         .unwrap();
+        let r5 =
+            apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into()).unwrap();
+
+        let staged = apply_resolve(
+            &mut st,
+            r5.clone(),
+            true,
+            "authority".into(),
+            "authority".into(),
+        )
+        .unwrap_err();
+        assert!(matches!(staged, PouwError::ResolveApprovalStaged));
+        let r6 =
+            apply_resolve(&mut st, r5, true, "authority2".into(), "authority2".into()).unwrap();
+
+        let resolved = st.get_task(r6.id).unwrap();
+        assert_eq!(resolved.status, TaskStatus::Slashed);
+        assert_eq!(st.balance_of("challenger"), 102);
+    }
+
+    #[test]
+    fn resolve_slashed_uses_poco_primary_settlement_units_for_challenge_success_bounty() {
+        let mut st = seeded_state();
+        st.set_balance("challenger", 100);
+        st.set_gov_param_bootstrap_unchecked(9_983, "min_worker_stake".into(), "40".into())
+            .unwrap();
+        st.set_gov_param_bootstrap_unchecked(9_984, "challenge_success_bounty".into(), "1".into())
+            .unwrap();
+        st.set_gov_param_bootstrap_unchecked(
+            9_985,
+            "llm_meter_challenge_success_bounty_per_work_unit_num".into(),
+            "1".into(),
+        )
+        .unwrap();
+        st.set_gov_param_bootstrap_unchecked(
+            9_986,
+            "llm_meter_challenge_success_bounty_per_work_unit_den".into(),
+            "100".into(),
+        )
+        .unwrap();
+        st.set_balance("worker1", 40);
+        set_resolve_authority(&mut st, "authority,authority2");
+
+        let task_id = 29_916u64;
+        let r1 = apply_create_task(&mut st, task_id, "alice".into(), 10).unwrap();
+        let result_hash = [1u8; 32];
+        let reveal_salt = [2u8; 32];
+        let committed = compute_commitment(task_id, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
+        let proof = sample_llm_token_meter_receipt_json(task_id, "worker1", result_hash);
+        let r4 = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, Some(proof)).unwrap();
+        st.set_task_consumption_summary(trnm_state::TaskConsumptionSummary {
+            task_id,
+            receipt_count: 1,
+            accepted_receipt_count: 1,
+            challenged_receipt_count: 0,
+            total_consumed_tokens: 9,
+            total_claimed_consumption_units: 9,
+            total_credited_consumption_units: 9,
+            last_settlement_height: Some(77),
+        });
         let r5 =
             apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into()).unwrap();
 
@@ -22413,13 +22492,16 @@ mod tests {
 
         let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
         let r3 = apply_commit_result(&mut st, r2, "worker1".into(), committed).unwrap();
-        let stale_revealed = apply_reveal_result(&mut st, r3, result_hash, reveal_salt, None).unwrap();
+        let stale_revealed =
+            apply_reveal_result(&mut st, r3, result_hash, reveal_salt, None).unwrap();
 
         let mut current_task = st.get_task(stale_revealed.id).unwrap();
         current_task.challenge_deadline_height = current_task
             .challenge_deadline_height
             .map(|height| height.saturating_add(1));
-        let current_revealed = st.update_task(stale_revealed.clone(), current_task).unwrap();
+        let current_revealed = st
+            .update_task(stale_revealed.clone(), current_task)
+            .unwrap();
 
         let before_task = st.get_task(current_revealed.id).unwrap();
         let before_escrow = st.balance_of(CHALLENGE_ESCROW_ACCOUNT);
@@ -22439,8 +22521,14 @@ mod tests {
         let after_task = st.get_task(current_revealed.id).unwrap();
         assert_eq!(after_task.status, before_task.status);
         assert_eq!(after_task.version, before_task.version);
-        assert_eq!(after_task.challenged_at_height, before_task.challenged_at_height);
-        assert_eq!(after_task.resolve_deadline_height, before_task.resolve_deadline_height);
+        assert_eq!(
+            after_task.challenged_at_height,
+            before_task.challenged_at_height
+        );
+        assert_eq!(
+            after_task.resolve_deadline_height,
+            before_task.resolve_deadline_height
+        );
         assert_eq!(after_task.challenge_bond, before_task.challenge_bond);
         assert_eq!(after_task.challenger, before_task.challenger);
         assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), before_escrow);
