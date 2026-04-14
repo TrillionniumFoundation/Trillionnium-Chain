@@ -13,6 +13,10 @@ use std::{
 };
 
 const SETTLEMENT_WEIGHT_TOTAL_BPS: u64 = 10_000;
+const HYBRID_SETTLEMENT_POCO_WEIGHT_BPS_KEY: &str = "hybrid_settlement_poco_weight_bps";
+const SHADOW_SETTLEMENT_COMPARE_ONLY_KEY: &str = "shadow_settlement_compare_only";
+const HYBRID_SETTLEMENT_POCO_WEIGHT_BPS_KEY_ID: u64 = 7_351;
+const SHADOW_SETTLEMENT_COMPARE_ONLY_KEY_ID: u64 = 7_352;
 
 #[derive(Debug, Parser)]
 #[command(
@@ -209,7 +213,9 @@ fn parse_balance_query_response(
             value.get("result"),
             value.get("data"),
             value.get("response"),
-            value.get("response").and_then(|response| response.get("data")),
+            value
+                .get("response")
+                .and_then(|response| response.get("data")),
         ] {
             let Some(candidate) = candidate else {
                 continue;
@@ -595,6 +601,97 @@ fn parse_json_bool(value: Option<&serde_json::Value>) -> Option<bool> {
     }
 }
 
+#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+struct PendingSettlementGovernanceUpdateQueryResponse {
+    key_id: u64,
+    key: String,
+    value: String,
+    activate_at_height: u64,
+}
+
+fn ensure_valid_shadow_compare_only_pending_value(key: &str, value: &str) -> Result<()> {
+    match value {
+        "true" | "false" => Ok(()),
+        _ => bail!(
+            "invalid settlement governance value for {}: expected strict bool, got '{}'",
+            key,
+            value
+        ),
+    }
+}
+
+fn ensure_valid_poco_weight_bps_pending_value(key: &str, value: &str) -> Result<()> {
+    let parsed = value.parse::<u64>().map_err(|_| {
+        anyhow!(
+            "invalid settlement governance value for {}: expected u64 bps, got '{}'",
+            key,
+            value
+        )
+    })?;
+
+    if parsed > SETTLEMENT_WEIGHT_TOTAL_BPS {
+        bail!(
+            "invalid settlement governance value for {}: expected bps in [0, {}], got '{}'",
+            key,
+            SETTLEMENT_WEIGHT_TOTAL_BPS,
+            value
+        );
+    }
+
+    Ok(())
+}
+
+fn parse_optional_pending_settlement_governance_update(
+    parsed: &serde_json::Value,
+    field_name: &str,
+    expected_key_id: u64,
+    expected_key: &str,
+    validate_value: fn(&str, &str) -> Result<()>,
+) -> Result<Option<PendingSettlementGovernanceUpdateQueryResponse>> {
+    let Some(value) = parsed.get(field_name) else {
+        return Ok(None);
+    };
+    if value.is_null() {
+        return Ok(None);
+    }
+
+    let update: PendingSettlementGovernanceUpdateQueryResponse = serde_json::from_value(value.clone())
+        .map_err(|err| {
+            anyhow!(
+                "settlement governance response {} must be object with key_id, key, value, activate_at_height: {}",
+                field_name,
+                err
+            )
+        })?;
+
+    if update.key_id != expected_key_id {
+        bail!(
+            "settlement governance response {} key_id mismatch: expected={}, got={}",
+            field_name,
+            expected_key_id,
+            update.key_id
+        );
+    }
+    if update.key != expected_key {
+        bail!(
+            "settlement governance response {} key mismatch: expected={}, got={}",
+            field_name,
+            expected_key,
+            update.key
+        );
+    }
+    validate_value(&update.key, &update.value).map_err(|err| {
+        anyhow!(
+            "settlement governance response {} invalid pending value: {}",
+            field_name,
+            err
+        )
+    })?;
+
+    Ok(Some(update))
+}
+
 fn parse_settlement_governance_query_response(raw: &str) -> Result<serde_json::Value> {
     let parsed: serde_json::Value = serde_json::from_str(raw)
         .map_err(|err| anyhow!("failed to parse settlement governance response as json: {err}"))?;
@@ -605,10 +702,16 @@ fn parse_settlement_governance_query_response(raw: &str) -> Result<serde_json::V
     let Some(underlying_mode) = parsed.get("underlying_mode").and_then(json_scalar_string) else {
         bail!("settlement governance response missing scalar underlying_mode");
     };
-    let Some(_) = parsed.get("live_configuration_status").and_then(json_scalar_string) else {
+    let Some(_) = parsed
+        .get("live_configuration_status")
+        .and_then(json_scalar_string)
+    else {
         bail!("settlement governance response missing scalar live_configuration_status");
     };
-    let Some(_) = parsed.get("settlement_write_gate_status").and_then(json_scalar_string) else {
+    let Some(_) = parsed
+        .get("settlement_write_gate_status")
+        .and_then(json_scalar_string)
+    else {
         bail!("settlement governance response missing scalar settlement_write_gate_status");
     };
     let Some(shadow_compare_only) = parse_json_bool(parsed.get("shadow_compare_only")) else {
@@ -663,12 +766,24 @@ fn parse_settlement_governance_query_response(raw: &str) -> Result<serde_json::V
     let staged_configuration_status = parse_optional_scalar("staged_configuration_status")?;
     let staged_mode = parse_optional_scalar("staged_mode")?;
     let staged_underlying_mode = parse_optional_scalar("staged_underlying_mode")?;
-    let staged_effective_poco_weight_bps =
-        parse_optional_u64("staged_effective_poco_weight_bps")?;
-    let staged_effective_pouw_weight_bps =
-        parse_optional_u64("staged_effective_pouw_weight_bps")?;
+    let staged_effective_poco_weight_bps = parse_optional_u64("staged_effective_poco_weight_bps")?;
+    let staged_effective_pouw_weight_bps = parse_optional_u64("staged_effective_pouw_weight_bps")?;
     let staged_shadow_masks_nonzero_poco_weight =
         parse_optional_bool("staged_shadow_masks_nonzero_poco_weight")?;
+    let pending_shadow_compare_only = parse_optional_pending_settlement_governance_update(
+        &parsed,
+        "pending_shadow_compare_only",
+        SHADOW_SETTLEMENT_COMPARE_ONLY_KEY_ID,
+        SHADOW_SETTLEMENT_COMPARE_ONLY_KEY,
+        ensure_valid_shadow_compare_only_pending_value,
+    )?;
+    let pending_poco_weight_bps = parse_optional_pending_settlement_governance_update(
+        &parsed,
+        "pending_poco_weight_bps",
+        HYBRID_SETTLEMENT_POCO_WEIGHT_BPS_KEY_ID,
+        HYBRID_SETTLEMENT_POCO_WEIGHT_BPS_KEY,
+        ensure_valid_poco_weight_bps_pending_value,
+    )?;
 
     let Some(poco_weight_bps) = json_u64_at_path(&parsed, &["poco_weight_bps"]) else {
         bail!("settlement governance response missing numeric poco_weight_bps");
@@ -676,10 +791,12 @@ fn parse_settlement_governance_query_response(raw: &str) -> Result<serde_json::V
     let Some(pouw_weight_bps) = json_u64_at_path(&parsed, &["pouw_weight_bps"]) else {
         bail!("settlement governance response missing numeric pouw_weight_bps");
     };
-    let Some(effective_poco_weight_bps) = json_u64_at_path(&parsed, &["effective_poco_weight_bps"]) else {
+    let Some(effective_poco_weight_bps) = json_u64_at_path(&parsed, &["effective_poco_weight_bps"])
+    else {
         bail!("settlement governance response missing numeric effective_poco_weight_bps");
     };
-    let Some(effective_pouw_weight_bps) = json_u64_at_path(&parsed, &["effective_pouw_weight_bps"]) else {
+    let Some(effective_pouw_weight_bps) = json_u64_at_path(&parsed, &["effective_pouw_weight_bps"])
+    else {
         bail!("settlement governance response missing numeric effective_pouw_weight_bps");
     };
 
@@ -722,7 +839,9 @@ fn parse_settlement_governance_query_response(raw: &str) -> Result<serde_json::V
                 mode
             );
         }
-        if effective_poco_weight_bps != 0 || effective_pouw_weight_bps != SETTLEMENT_WEIGHT_TOTAL_BPS {
+        if effective_poco_weight_bps != 0
+            || effective_pouw_weight_bps != SETTLEMENT_WEIGHT_TOTAL_BPS
+        {
             bail!(
                 "settlement governance response shadow_compare_only must mask effective weights to poco=0 and pouw={}, got poco={} pouw={}",
                 SETTLEMENT_WEIGHT_TOTAL_BPS,
@@ -745,7 +864,9 @@ fn parse_settlement_governance_query_response(raw: &str) -> Result<serde_json::V
                 mode
             );
         }
-        if effective_poco_weight_bps != poco_weight_bps || effective_pouw_weight_bps != pouw_weight_bps {
+        if effective_poco_weight_bps != poco_weight_bps
+            || effective_pouw_weight_bps != pouw_weight_bps
+        {
             bail!(
                 "settlement governance response non-shadow effective weights must match live weights, got live=({},{}) effective=({},{})",
                 poco_weight_bps,
@@ -768,19 +889,64 @@ fn parse_settlement_governance_query_response(raw: &str) -> Result<serde_json::V
         || staged_effective_poco_weight_bps.is_some()
         || staged_effective_pouw_weight_bps.is_some()
         || staged_shadow_masks_nonzero_poco_weight.is_some();
+    let pending_updates_present =
+        pending_shadow_compare_only.is_some() || pending_poco_weight_bps.is_some();
 
     if has_pending_updates {
-        let Some(_) = staged_activate_at_height else {
+        let Some(staged_activate_at_height) = staged_activate_at_height else {
             bail!(
                 "settlement governance response has_pending_updates=true requires numeric staged_activate_at_height"
             );
         };
+        if !pending_updates_present {
+            bail!(
+                "settlement governance response has_pending_updates=true requires at least one pending settlement update field"
+            );
+        }
+
+        let pending_activation_heights = [
+            pending_shadow_compare_only
+                .as_ref()
+                .map(|pending| pending.activate_at_height),
+            pending_poco_weight_bps
+                .as_ref()
+                .map(|pending| pending.activate_at_height),
+        ];
+
+        if !pending_activation_heights
+            .iter()
+            .flatten()
+            .any(|height| *height == staged_activate_at_height)
+        {
+            bail!(
+                "settlement governance response staged_activate_at_height={} must match at least one pending settlement update height",
+                staged_activate_at_height
+            );
+        }
+
+        if let Some(earlier_height) = pending_activation_heights
+            .iter()
+            .flatten()
+            .copied()
+            .filter(|height| *height < staged_activate_at_height)
+            .min()
+        {
+            bail!(
+                "settlement governance response pending settlement update height {} must not precede staged_activate_at_height={}",
+                earlier_height,
+                staged_activate_at_height
+            );
+        }
+
         let Some(staged_configuration_status) = staged_configuration_status.as_deref() else {
             bail!(
                 "settlement governance response has_pending_updates=true requires scalar staged_configuration_status"
             );
         };
-        if !matches!(staged_configuration_status, "defaulted" | "configured" | "partial") {
+        if !matches!(
+            staged_configuration_status,
+            "defaulted" | "configured" | "partial"
+        ) {
             bail!(
                 "settlement governance response staged_configuration_status invalid: {}",
                 staged_configuration_status
@@ -795,7 +961,10 @@ fn parse_settlement_governance_query_response(raw: &str) -> Result<serde_json::V
                 "settlement governance response has_pending_updates=true requires scalar staged_underlying_mode"
             );
         };
-        if !matches!(staged_underlying_mode, "pouw_primary" | "hybrid" | "poco_primary") {
+        if !matches!(
+            staged_underlying_mode,
+            "pouw_primary" | "hybrid" | "poco_primary"
+        ) {
             bail!(
                 "settlement governance response staged_underlying_mode invalid: {}",
                 staged_underlying_mode
@@ -812,8 +981,7 @@ fn parse_settlement_governance_query_response(raw: &str) -> Result<serde_json::V
                 "settlement governance response has_pending_updates=true requires numeric staged_effective_pouw_weight_bps"
             );
         };
-        let Some(staged_shadow_masks_nonzero_poco_weight) =
-            staged_shadow_masks_nonzero_poco_weight
+        let Some(staged_shadow_masks_nonzero_poco_weight) = staged_shadow_masks_nonzero_poco_weight
         else {
             bail!(
                 "settlement governance response has_pending_updates=true requires strict bool staged_shadow_masks_nonzero_poco_weight"
@@ -889,10 +1057,17 @@ fn parse_settlement_governance_query_response(raw: &str) -> Result<serde_json::V
                 );
             }
         }
-    } else if staged_fields_present {
-        bail!(
-            "settlement governance response has_pending_updates=false must not include staged settlement projection fields"
-        );
+    } else {
+        if staged_fields_present {
+            bail!(
+                "settlement governance response has_pending_updates=false must not include staged settlement projection fields"
+            );
+        }
+        if pending_updates_present {
+            bail!(
+                "settlement governance response has_pending_updates=false must not include pending settlement update fields"
+            );
+        }
     }
 
     Ok(parsed)
@@ -1545,7 +1720,10 @@ fn normalize_wallet_store_env(raw: &str) -> Option<&str> {
         || normalized.chars().any(|c| {
             c.is_whitespace()
                 || contains_hidden_or_control(c)
-                || matches!(c, '\\' | '∖' | '／' | '＼' | '﹨' | '∕' | '⁄' | '⧵' | '⧸' | '⧹' | '⟋' | '⟍')
+                || matches!(
+                    c,
+                    '\\' | '∖' | '／' | '＼' | '﹨' | '∕' | '⁄' | '⧵' | '⧸' | '⧹' | '⟋' | '⟍'
+                )
         })
     {
         return None;
@@ -1577,8 +1755,7 @@ fn wallet_store_path_is_safe(path: &Path) -> bool {
                 && !contains_hidden_or_control(c)
                 && !matches!(
                     c,
-                    '\\'
-                        | '∖'
+                    '\\' | '∖'
                         | '／'
                         | '＼'
                         | '﹨'
@@ -1659,10 +1836,14 @@ fn default_wallet_store() -> PathBuf {
     let home_root = std::env::var("HOME")
         .ok()
         .and_then(|raw| normalize_wallet_store_env(&raw).map(PathBuf::from))
-        .filter(|path| wallet_store_path_is_safe(path) && wallet_store_path_and_ancestors_are_symlink_free(path))
+        .filter(|path| {
+            wallet_store_path_is_safe(path)
+                && wallet_store_path_and_ancestors_are_symlink_free(path)
+        })
         .or_else(|| {
             std::env::current_dir().ok().filter(|path| {
-                wallet_store_path_is_safe(path) && wallet_store_path_and_ancestors_are_symlink_free(path)
+                wallet_store_path_is_safe(path)
+                    && wallet_store_path_and_ancestors_are_symlink_free(path)
             })
         })
         .unwrap_or_else(|| PathBuf::from("/"));
@@ -1753,10 +1934,7 @@ fn ensure_sign_message(message: &str) -> Result<()> {
     if message.len() > 4096 {
         bail!("sign message must be <= 4096 bytes");
     }
-    if message
-        .chars()
-        .next()
-        .is_some_and(|c| c.is_whitespace())
+    if message.chars().next().is_some_and(|c| c.is_whitespace())
         || message
             .chars()
             .next_back()
@@ -1765,10 +1943,7 @@ fn ensure_sign_message(message: &str) -> Result<()> {
         bail!("sign message must not start or end with whitespace");
     }
     if message.chars().any(|c| {
-        c == '\r'
-            || c == '\n'
-            || contains_hidden_or_control(c)
-            || (c.is_whitespace() && c != ' ')
+        c == '\r' || c == '\n' || contains_hidden_or_control(c) || (c.is_whitespace() && c != ' ')
     }) {
         bail!(
             "sign message must be single-line printable text without control characters and with only interior ASCII spaces"
@@ -1822,7 +1997,9 @@ fn ensure_wallet_name(name: &str) -> Result<()> {
         || name.starts_with(['‐', '‑', '‒', '–', '—', '―', '−', '﹣', '－'])
         || name.contains(['/', '\\', ':', '=', '|', '&', '$', '*', '?', '!'])
         || name.contains(['‐', '‑', '‒', '–', '—', '―', '−', '﹣', '－'])
-        || name.contains(['：', '﹕', '＝', '﹦', '｜', '￨', '＆', '﹠', '？', '﹖', '，', '；', '！', '﹗'])
+        || name.contains([
+            '：', '﹕', '＝', '﹦', '｜', '￨', '＆', '﹠', '？', '﹖', '，', '；', '！', '﹗',
+        ])
         || name.contains(['＊', '﹡'])
         || name.contains(['∕', '⁄', '／', '＼', '⧵', '⧸', '⧹', '⟋', '⟍'])
         || name.contains(['.', '．', '。', '｡', '﹒', '․'])
@@ -1830,9 +2007,9 @@ fn ensure_wallet_name(name: &str) -> Result<()> {
             '"', '\'', '`', '<', '>', '(', ')', '[', ']', '{', '}', ',', ';',
         ])
         || name.contains([
-            '“', '”', '‘', '’', '«', '»', '‹', '›', '「', '」', '『', '』', '《', '》',
-            '〈', '〉', '｢', '｣', '（', '）', '［', '］', '｛', '｝', '＜', '＞', '【', '】',
-            '〔', '〕', '〖', '〗', '〘', '〙', '〚', '〛', '〝', '〞', '〟', '｟', '｠',
+            '“', '”', '‘', '’', '«', '»', '‹', '›', '「', '」', '『', '』', '《', '》', '〈', '〉',
+            '｢', '｣', '（', '）', '［', '］', '｛', '｝', '＜', '＞', '【', '】', '〔', '〕', '〖',
+            '〗', '〘', '〙', '〚', '〛', '〝', '〞', '〟', '｟', '｠',
         ])
         || has_hidden_or_whitespace
         || has_non_simple_ascii
@@ -1984,8 +2161,13 @@ fn read_key(store: &Path, name: &str) -> Result<String> {
     }
     ensure_owner_only_permissions(&store_meta, store, "wallet store")?;
     let f = wallet_file(store, name);
-    let file_meta = fs::symlink_metadata(&f)
-        .map_err(|e| anyhow!("failed to inspect wallet '{}' at {}: {e}", name, f.display()))?;
+    let file_meta = fs::symlink_metadata(&f).map_err(|e| {
+        anyhow!(
+            "failed to inspect wallet '{}' at {}: {e}",
+            name,
+            f.display()
+        )
+    })?;
     if file_meta.file_type().is_symlink() {
         bail!(
             "wallet '{}' at {} is a symlink; refusing to read key through non-regular wallet file path",
@@ -2067,8 +2249,7 @@ fn ensure_safe_sign_message(message: &str) -> Result<()> {
             || (!c.is_ascii_graphic() && c != ' ')
             || matches!(
                 c,
-                '='
-                    | ':'
+                '=' | ':'
                     | ';'
                     | ','
                     | '|'
@@ -2297,7 +2478,9 @@ fn extract_tx_hash(text: &str) -> Option<String> {
                 c.is_ascii_whitespace()
                     || matches!(c, ',' | ';' | '(' | ')' | '[' | ']' | '{' | '}' | '<' | '>')
             });
-            is_text_tx_hash_key(key).then(|| normalize_tx_hash(v)).flatten()
+            is_text_tx_hash_key(key)
+                .then(|| normalize_tx_hash(v))
+                .flatten()
         }) {
             return Some(v);
         }
@@ -2403,9 +2586,38 @@ fn trim_kv_key_noise(raw: &str) -> &str {
             || c.is_control()
             || matches!(
                 c,
-                ',' | ';' | '{' | '}' | '[' | ']' | '(' | ')' | '<' | '>'
-                    | '，' | '；' | '：' | '（' | '）' | '［' | '］' | '｛' | '｝' | '＜' | '＞'
-                    | '「' | '」' | '『' | '』' | '《' | '》' | '〈' | '〉' | '｢' | '｣' | '【' | '】'
+                ',' | ';'
+                    | '{'
+                    | '}'
+                    | '['
+                    | ']'
+                    | '('
+                    | ')'
+                    | '<'
+                    | '>'
+                    | '，'
+                    | '；'
+                    | '：'
+                    | '（'
+                    | '）'
+                    | '［'
+                    | '］'
+                    | '｛'
+                    | '｝'
+                    | '＜'
+                    | '＞'
+                    | '「'
+                    | '」'
+                    | '『'
+                    | '』'
+                    | '《'
+                    | '》'
+                    | '〈'
+                    | '〉'
+                    | '｢'
+                    | '｣'
+                    | '【'
+                    | '】'
             )
             || matches!(
                 c,
@@ -2878,7 +3090,10 @@ fn normalize_json_status(value: &serde_json::Value) -> Option<String> {
 }
 
 fn is_terminal_local_tx_status(status: &str) -> bool {
-    matches!(normalize_tx_status(status).as_deref(), Some("committed" | "fail"))
+    matches!(
+        normalize_tx_status(status).as_deref(),
+        Some("committed" | "fail")
+    )
 }
 
 fn canonical_json_key(key: &str) -> String {
@@ -2888,7 +3103,10 @@ fn canonical_json_key(key: &str) -> String {
         .collect()
 }
 
-fn json_get_alias<'a>(value: &'a serde_json::Value, aliases: &[&str]) -> Option<&'a serde_json::Value> {
+fn json_get_alias<'a>(
+    value: &'a serde_json::Value,
+    aliases: &[&str],
+) -> Option<&'a serde_json::Value> {
     let object = value.as_object()?;
     object.iter().find_map(|(key, value)| {
         let canonical = canonical_json_key(key);
@@ -2954,7 +3172,9 @@ fn parse_tx_query_response(raw: &str, requested_tx_hash: &str) -> Result<TxQuery
         let nested_response_data = response
             .and_then(|r| json_get_alias(r, &["data"]))
             .or_else(|| json_get_alias(payload, &["responseData"]));
-        let primary = nested_tx_response.or(nested_response_data).unwrap_or(payload);
+        let primary = nested_tx_response
+            .or(nested_response_data)
+            .unwrap_or(payload);
         let tx_hash_aliases = [
             "tx_hash",
             "txhash",
@@ -2973,7 +3193,7 @@ fn parse_tx_query_response(raw: &str, requested_tx_hash: &str) -> Result<TxQuery
                     .as_str()
                     .ok_or_else(|| anyhow!("invalid tx_hash field in tx query response"))?,
             )
-                .ok_or_else(|| anyhow!("invalid tx_hash field in tx query response"))?,
+            .ok_or_else(|| anyhow!("invalid tx_hash field in tx query response"))?,
             None => normalize_tx_hash(requested_tx_hash)
                 .unwrap_or_else(|| requested_tx_hash.to_string()),
         };
@@ -3001,7 +3221,11 @@ fn parse_tx_query_response(raw: &str, requested_tx_hash: &str) -> Result<TxQuery
             .or_else(|| infer_json_tx_status(payload))
             .ok_or_else(|| anyhow!("missing/invalid status field in tx query response"))?;
         let error = json_get_alias(primary, &["error", "raw_log", "raw-log", "rawLog", "log"])
-            .or_else(|| response.and_then(|r| json_get_alias(r, &["error", "raw_log", "raw-log", "rawLog", "log"])))
+            .or_else(|| {
+                response.and_then(|r| {
+                    json_get_alias(r, &["error", "raw_log", "raw-log", "rawLog", "log"])
+                })
+            })
             .or_else(|| json_get_alias(payload, &["error", "raw_log", "raw-log", "rawLog", "log"]))
             .and_then(normalize_json_error);
         return Ok(TxQueryResponse {
@@ -3037,8 +3261,7 @@ fn parse_tx_query_response(raw: &str, requested_tx_hash: &str) -> Result<TxQuery
                         status = Some(normalized);
                     }
                 }
-                "code" | "txcode" | "transactioncode" | "delivertxcode"
-                | "checktxcode" => {
+                "code" | "txcode" | "transactioncode" | "delivertxcode" | "checktxcode" => {
                     if status.is_none() {
                         status = infer_kv_tx_status(&key, &value);
                     }
@@ -3155,7 +3378,10 @@ fn tx_query(tx_hash: &str) -> Result<TxQueryResponse> {
 }
 
 fn is_terminal_tx_status(status: &str) -> bool {
-    matches!(normalize_tx_status(status).as_deref(), Some("committed" | "fail"))
+    matches!(
+        normalize_tx_status(status).as_deref(),
+        Some("committed" | "fail")
+    )
 }
 
 fn wait_for_tx<F>(
@@ -3183,10 +3409,7 @@ where
     loop {
         let resp = query_fn(&requested)?;
         if resp.tx_hash.trim().is_empty() {
-            bail!(
-                "tx wait response missing tx_hash: requested={}",
-                requested
-            );
+            bail!("tx wait response missing tx_hash: requested={}", requested);
         }
         let got = normalize_tx_hash(&resp.tx_hash).ok_or_else(|| {
             anyhow!(
@@ -3263,8 +3486,9 @@ fn query_local_tx_status(tx_hash: &str) -> Option<String> {
 }
 
 fn persist_local_pending_tx(tx_hash: &str) -> Result<()> {
-    let canonical = normalize_tx_hash(tx_hash)
-        .ok_or_else(|| anyhow!("invalid tx hash for local pending state (expected hex-like tx hash)"))?;
+    let canonical = normalize_tx_hash(tx_hash).ok_or_else(|| {
+        anyhow!("invalid tx hash for local pending state (expected hex-like tx hash)")
+    })?;
     if !canonical.starts_with("0x") {
         bail!("invalid tx hash for local pending state (expected 0x-prefixed hex tx hash)");
     }
@@ -3659,8 +3883,9 @@ mod tests {
 
     #[test]
     fn query_parsers_accept_stringified_task_ids_in_events_response() {
-        let parsed = parse_events_query_response(r#"[{"task_id":"42","event_type":"accepted"}]"#, 42)
-            .unwrap();
+        let parsed =
+            parse_events_query_response(r#"[{"task_id":"42","event_type":"accepted"}]"#, 42)
+                .unwrap();
         assert_eq!(json_u64_at_path(&parsed[0], &["task_id"]), Some(42));
     }
 
@@ -3672,7 +3897,10 @@ mod tests {
         )
         .unwrap();
         assert_eq!(json_u64_at_path(&parsed, &["request", "task_id"]), Some(42));
-        assert_eq!(json_u64_at_path(&parsed["events"][0], &["task_id"]), Some(42));
+        assert_eq!(
+            json_u64_at_path(&parsed["events"][0], &["task_id"]),
+            Some(42)
+        );
     }
 
     #[test]
@@ -3684,7 +3912,10 @@ mod tests {
         .unwrap();
         assert_eq!(parsed["request"]["request_id"], serde_json::json!(42));
         assert_eq!(json_u64_at_path(&parsed, &["request", "task_id"]), Some(42));
-        assert_eq!(json_u64_at_path(&parsed["events"][0], &["task_id"]), Some(42));
+        assert_eq!(
+            json_u64_at_path(&parsed["events"][0], &["task_id"]),
+            Some(42)
+        );
     }
 
     #[test]
@@ -3832,14 +4063,38 @@ mod tests {
             normalize_wallet_store_env("\u{200e}\u{061c}《/tmp/trnm-wallets》\u{200f}"),
             Some("/tmp/trnm-wallets")
         );
-        assert_eq!(normalize_wallet_store_env("\u{00ad}\u{180e}《/tmp/trnm-wallets》\u{180e}\u{00ad}"), Some("/tmp/trnm-wallets"));
-        assert_eq!(normalize_wallet_store_env("\u{206a}《/tmp/trnm-wallets》\u{206f}"), Some("/tmp/trnm-wallets"));
-        assert_eq!(normalize_wallet_store_env("〈/tmp/trnm-wallets〉"), Some("/tmp/trnm-wallets"));
-        assert_eq!(normalize_wallet_store_env("⟨/tmp/trnm-wallets⟩"), Some("/tmp/trnm-wallets"));
-        assert_eq!(normalize_wallet_store_env("｟/tmp/trnm-wallets｠"), Some("/tmp/trnm-wallets"));
-        assert_eq!(normalize_wallet_store_env("(/tmp/trnm-wallets)"), Some("/tmp/trnm-wallets"));
-        assert_eq!(normalize_wallet_store_env("[/tmp/trnm-wallets]"), Some("/tmp/trnm-wallets"));
-        assert_eq!(normalize_wallet_store_env("{/tmp/trnm-wallets}"), Some("/tmp/trnm-wallets"));
+        assert_eq!(
+            normalize_wallet_store_env("\u{00ad}\u{180e}《/tmp/trnm-wallets》\u{180e}\u{00ad}"),
+            Some("/tmp/trnm-wallets")
+        );
+        assert_eq!(
+            normalize_wallet_store_env("\u{206a}《/tmp/trnm-wallets》\u{206f}"),
+            Some("/tmp/trnm-wallets")
+        );
+        assert_eq!(
+            normalize_wallet_store_env("〈/tmp/trnm-wallets〉"),
+            Some("/tmp/trnm-wallets")
+        );
+        assert_eq!(
+            normalize_wallet_store_env("⟨/tmp/trnm-wallets⟩"),
+            Some("/tmp/trnm-wallets")
+        );
+        assert_eq!(
+            normalize_wallet_store_env("｟/tmp/trnm-wallets｠"),
+            Some("/tmp/trnm-wallets")
+        );
+        assert_eq!(
+            normalize_wallet_store_env("(/tmp/trnm-wallets)"),
+            Some("/tmp/trnm-wallets")
+        );
+        assert_eq!(
+            normalize_wallet_store_env("[/tmp/trnm-wallets]"),
+            Some("/tmp/trnm-wallets")
+        );
+        assert_eq!(
+            normalize_wallet_store_env("{/tmp/trnm-wallets}"),
+            Some("/tmp/trnm-wallets")
+        );
         assert_eq!(
             normalize_wallet_store_env(" ({[/tmp/trnm-wallets]}) "),
             Some("/tmp/trnm-wallets")
@@ -3871,7 +4126,10 @@ mod tests {
         assert_eq!(normalize_wallet_store_env("/tmp/trnm wallets"), None);
         assert_eq!(normalize_wallet_store_env("/tmp/trnm\t-wallets"), None);
         assert_eq!(normalize_wallet_store_env("/tmp/trnm\n-wallets"), None);
-        assert_eq!(normalize_wallet_store_env("/tmp/trnm\u{200b}-wallets"), None);
+        assert_eq!(
+            normalize_wallet_store_env("/tmp/trnm\u{200b}-wallets"),
+            None
+        );
         assert_eq!(normalize_wallet_store_env("/tmp/trnm\u{202e}wallets"), None);
         assert_eq!(normalize_wallet_store_env("/tmp/trnm∖wallets"), None);
         assert_eq!(normalize_wallet_store_env("/tmp/trnm﹨wallets"), None);
@@ -4010,9 +4268,15 @@ mod tests {
         std::os::unix::fs::symlink(&real_parent, &linked_parent).unwrap();
 
         std::env::set_var("HOME", format!(" \"{}\" ", clean_home.display()));
-        assert_eq!(default_wallet_store(), clean_home.join(".trnm").join("wallets"));
+        assert_eq!(
+            default_wallet_store(),
+            clean_home.join(".trnm").join("wallets")
+        );
 
-        std::env::set_var("HOME", format!(" \u{2068}《{}》\u{2069} ", clean_home.display()));
+        std::env::set_var(
+            "HOME",
+            format!(" \u{2068}《{}》\u{2069} ", clean_home.display()),
+        );
         assert_eq!(
             default_wallet_store(),
             clean_home.join(".trnm").join("wallets"),
@@ -4020,7 +4284,13 @@ mod tests {
         );
 
         std::env::set_var("HOME", format!("{}", linked_parent.display()));
-        assert_eq!(default_wallet_store(), std::env::current_dir().unwrap().join(".trnm").join("wallets"));
+        assert_eq!(
+            default_wallet_store(),
+            std::env::current_dir()
+                .unwrap()
+                .join(".trnm")
+                .join("wallets")
+        );
 
         match original_store {
             Some(value) => std::env::set_var("TRNM_WALLET_STORE", value),
@@ -4072,9 +4342,9 @@ mod tests {
         std::env::set_var("TRNM_WALLET_STORE", "/tmp/trnm⧹wallets");
         let confusable_separator_err = resolve_wallet_store(None).unwrap_err();
         assert!(
-            confusable_separator_err
-                .to_string()
-                .contains("TRNM_WALLET_STORE is set but invalid; refusing ambiguous keystore path fallback"),
+            confusable_separator_err.to_string().contains(
+                "TRNM_WALLET_STORE is set but invalid; refusing ambiguous keystore path fallback"
+            ),
             "unexpected error for confusable separator env store: {confusable_separator_err}"
         );
 
@@ -4090,9 +4360,13 @@ mod tests {
                 .as_nanos()
         ));
         std::env::set_var("TRNM_WALLET_STORE", "\u{2068}\u{2069}");
-        assert_eq!(resolve_wallet_store(Some(explicit.clone())).unwrap(), explicit);
+        assert_eq!(
+            resolve_wallet_store(Some(explicit.clone())).unwrap(),
+            explicit
+        );
 
-        let explicit_relative_err = resolve_wallet_store(Some(PathBuf::from("./wallets"))).unwrap_err();
+        let explicit_relative_err =
+            resolve_wallet_store(Some(PathBuf::from("./wallets"))).unwrap_err();
         assert!(
             explicit_relative_err
                 .to_string()
@@ -4148,9 +4422,7 @@ mod tests {
 
         let explicit_err = resolve_wallet_store(Some(linked_store.clone())).unwrap_err();
         assert!(
-            explicit_err
-                .to_string()
-                .contains("explicit wallet store")
+            explicit_err.to_string().contains("explicit wallet store")
                 && explicit_err
                     .to_string()
                     .contains("must be an absolute normalized symlink-free path"),
@@ -4160,9 +4432,7 @@ mod tests {
         std::env::set_var("TRNM_WALLET_STORE", linked_store.as_os_str());
         let env_err = resolve_wallet_store(None).unwrap_err();
         assert!(
-            env_err
-                .to_string()
-                .contains("TRNM_WALLET_STORE")
+            env_err.to_string().contains("TRNM_WALLET_STORE")
                 && env_err
                     .to_string()
                     .contains("must be an absolute normalized symlink-free path"),
@@ -4199,9 +4469,7 @@ mod tests {
 
         let explicit_err = resolve_wallet_store(Some(store.clone())).unwrap_err();
         assert!(
-            explicit_err
-                .to_string()
-                .contains("explicit wallet store")
+            explicit_err.to_string().contains("explicit wallet store")
                 && explicit_err
                     .to_string()
                     .contains("must be an absolute normalized symlink-free path"),
@@ -4211,9 +4479,7 @@ mod tests {
         std::env::set_var("TRNM_WALLET_STORE", store.as_os_str());
         let env_err = resolve_wallet_store(None).unwrap_err();
         assert!(
-            env_err
-                .to_string()
-                .contains("TRNM_WALLET_STORE")
+            env_err.to_string().contains("TRNM_WALLET_STORE")
                 && env_err
                     .to_string()
                     .contains("must be an absolute normalized symlink-free path"),
@@ -4577,7 +4843,11 @@ mod tests {
         let mode = std::fs::metadata(&wallet).unwrap().permissions().mode() & 0o777;
         assert_eq!(mode, 0o600, "unexpected wallet file mode: {:o}", mode);
         let store_mode = std::fs::metadata(&store).unwrap().permissions().mode() & 0o777;
-        assert_eq!(store_mode, 0o700, "unexpected wallet store mode: {:o}", store_mode);
+        assert_eq!(
+            store_mode, 0o700,
+            "unexpected wallet store mode: {:o}",
+            store_mode
+        );
 
         let _ = std::fs::remove_file(&wallet);
         let _ = std::fs::remove_dir(&store);
@@ -4962,7 +5232,9 @@ mod tests {
         let err = wallet_create("alice".to_string(), None).unwrap_err();
         assert!(
             err.to_string().contains("traverses symlinked ancestor")
-                || err.to_string().contains("must be an absolute normalized symlink-free path"),
+                || err
+                    .to_string()
+                    .contains("must be an absolute normalized symlink-free path"),
             "unexpected error: {err}"
         );
 
@@ -6261,7 +6533,10 @@ mod tests {
     #[test]
     fn ensure_safe_sign_message_rejects_empty_text() {
         let err = ensure_safe_sign_message("").unwrap_err();
-        assert!(err.to_string().contains("must not be empty"), "unexpected: {err}");
+        assert!(
+            err.to_string().contains("must not be empty"),
+            "unexpected: {err}"
+        );
     }
 
     #[test]
@@ -6486,7 +6761,10 @@ mod tests {
 
     #[test]
     fn ensure_safe_sign_message_rejects_path_separator_text() {
-        for bad in ["approve /tmp/offline-payload", "approve C:\\offline\\payload"] {
+        for bad in [
+            "approve /tmp/offline-payload",
+            "approve C:\\offline\\payload",
+        ] {
             let err = ensure_safe_sign_message(bad).unwrap_err();
             assert!(
                 err.to_string().contains("path separators"),
@@ -6739,7 +7017,10 @@ mod tests {
         let parsed: serde_json::Value = serde_json::from_str(&raw).unwrap();
         assert!(parsed.get(raw_tx_hash).is_none());
         assert_eq!(parsed[canonical]["tx_hash"].as_str(), Some(canonical));
-        assert_eq!(query_local_tx_status(raw_tx_hash).as_deref(), Some("pending"));
+        assert_eq!(
+            query_local_tx_status(raw_tx_hash).as_deref(),
+            Some("pending")
+        );
 
         let _ = std::fs::remove_file(&path);
         std::env::remove_var("TRNM_RPC_TX_FILE");
@@ -6747,7 +7028,9 @@ mod tests {
 
     #[test]
     fn persist_local_pending_tx_rejects_non_prefixed_hex_hashes() {
-        let err = persist_local_pending_tx("deadbeef").unwrap_err().to_string();
+        let err = persist_local_pending_tx("deadbeef")
+            .unwrap_err()
+            .to_string();
         assert!(
             err.contains("expected 0x-prefixed hex tx hash"),
             "unexpected error: {err}"
@@ -6908,7 +7191,10 @@ mod tests {
         )
         .unwrap_err()
         .to_string();
-        assert!(err.contains("requested=42, got=7"), "unexpected error: {err}");
+        assert!(
+            err.contains("requested=42, got=7"),
+            "unexpected error: {err}"
+        );
     }
 
     #[test]
@@ -6951,7 +7237,7 @@ mod tests {
     #[test]
     fn parse_settlement_governance_query_response_rejects_unmasked_shadow_staged_projection() {
         let err = parse_settlement_governance_query_response(
-            r#"{"live_configuration_status":"configured","mode":"hybrid","underlying_mode":"hybrid","settlement_write_gate_status":"open","shadow_compare_only":false,"poco_weight_bps":2500,"pouw_weight_bps":7500,"effective_poco_weight_bps":2500,"effective_pouw_weight_bps":7500,"shadow_masks_nonzero_poco_weight":false,"has_pending_updates":true,"staged_activate_at_height":62,"staged_configuration_status":"configured","staged_mode":"shadow_compare_only","staged_underlying_mode":"hybrid","staged_effective_poco_weight_bps":2500,"staged_effective_pouw_weight_bps":7500,"staged_shadow_masks_nonzero_poco_weight":true}"#,
+            r#"{"live_configuration_status":"configured","mode":"hybrid","underlying_mode":"hybrid","settlement_write_gate_status":"open","shadow_compare_only":false,"poco_weight_bps":2500,"pouw_weight_bps":7500,"effective_poco_weight_bps":2500,"effective_pouw_weight_bps":7500,"shadow_masks_nonzero_poco_weight":false,"has_pending_updates":true,"staged_activate_at_height":62,"staged_configuration_status":"configured","staged_mode":"shadow_compare_only","staged_underlying_mode":"hybrid","staged_effective_poco_weight_bps":2500,"staged_effective_pouw_weight_bps":7500,"staged_shadow_masks_nonzero_poco_weight":true,"pending_shadow_compare_only":{"key_id":7352,"key":"shadow_settlement_compare_only","value":"true","activate_at_height":62},"pending_poco_weight_bps":{"key_id":7351,"key":"hybrid_settlement_poco_weight_bps","value":"2500","activate_at_height":62}}"#,
         )
         .unwrap_err()
         .to_string();
@@ -6964,7 +7250,7 @@ mod tests {
     #[test]
     fn parse_settlement_governance_query_response_rejects_nonshadow_staged_shadow_mask_flag() {
         let err = parse_settlement_governance_query_response(
-            r#"{"live_configuration_status":"configured","mode":"hybrid","underlying_mode":"hybrid","settlement_write_gate_status":"open","shadow_compare_only":false,"poco_weight_bps":2500,"pouw_weight_bps":7500,"effective_poco_weight_bps":2500,"effective_pouw_weight_bps":7500,"shadow_masks_nonzero_poco_weight":false,"has_pending_updates":true,"staged_activate_at_height":62,"staged_configuration_status":"configured","staged_mode":"hybrid","staged_underlying_mode":"hybrid","staged_effective_poco_weight_bps":2500,"staged_effective_pouw_weight_bps":7500,"staged_shadow_masks_nonzero_poco_weight":true}"#,
+            r#"{"live_configuration_status":"configured","mode":"hybrid","underlying_mode":"hybrid","settlement_write_gate_status":"open","shadow_compare_only":false,"poco_weight_bps":2500,"pouw_weight_bps":7500,"effective_poco_weight_bps":2500,"effective_pouw_weight_bps":7500,"shadow_masks_nonzero_poco_weight":false,"has_pending_updates":true,"staged_activate_at_height":62,"staged_configuration_status":"configured","staged_mode":"hybrid","staged_underlying_mode":"hybrid","staged_effective_poco_weight_bps":2500,"staged_effective_pouw_weight_bps":7500,"staged_shadow_masks_nonzero_poco_weight":true,"pending_poco_weight_bps":{"key_id":7351,"key":"hybrid_settlement_poco_weight_bps","value":"2500","activate_at_height":62}}"#,
         )
         .unwrap_err()
         .to_string();
@@ -6975,11 +7261,38 @@ mod tests {
     }
 
     #[test]
+    fn parse_settlement_governance_query_response_rejects_pending_update_key_id_mismatch() {
+        let err = parse_settlement_governance_query_response(
+            r#"{"live_configuration_status":"configured","mode":"hybrid","underlying_mode":"hybrid","settlement_write_gate_status":"open","shadow_compare_only":false,"poco_weight_bps":2500,"pouw_weight_bps":7500,"effective_poco_weight_bps":2500,"effective_pouw_weight_bps":7500,"shadow_masks_nonzero_poco_weight":false,"has_pending_updates":true,"staged_activate_at_height":62,"staged_configuration_status":"configured","staged_mode":"hybrid","staged_underlying_mode":"hybrid","staged_effective_poco_weight_bps":2500,"staged_effective_pouw_weight_bps":7500,"staged_shadow_masks_nonzero_poco_weight":false,"pending_shadow_compare_only":{"key_id":7351,"key":"shadow_settlement_compare_only","value":"false","activate_at_height":62}}"#,
+        )
+        .unwrap_err()
+        .to_string();
+        assert!(
+            err.contains("pending_shadow_compare_only key_id mismatch"),
+            "unexpected error: {err}"
+        );
+    }
+
+    #[test]
+    fn parse_settlement_governance_query_response_rejects_pending_update_height_that_skips_staged_projection(
+    ) {
+        let err = parse_settlement_governance_query_response(
+            r#"{"live_configuration_status":"configured","mode":"hybrid","underlying_mode":"hybrid","settlement_write_gate_status":"open","shadow_compare_only":false,"poco_weight_bps":2500,"pouw_weight_bps":7500,"effective_poco_weight_bps":2500,"effective_pouw_weight_bps":7500,"shadow_masks_nonzero_poco_weight":false,"has_pending_updates":true,"staged_activate_at_height":62,"staged_configuration_status":"configured","staged_mode":"hybrid","staged_underlying_mode":"hybrid","staged_effective_poco_weight_bps":2000,"staged_effective_pouw_weight_bps":8000,"staged_shadow_masks_nonzero_poco_weight":false,"pending_poco_weight_bps":{"key_id":7351,"key":"hybrid_settlement_poco_weight_bps","value":"2000","activate_at_height":63}}"#,
+        )
+        .unwrap_err()
+        .to_string();
+        assert!(
+            err.contains("staged_activate_at_height=62 must match at least one pending settlement update height"),
+            "unexpected error: {err}"
+        );
+    }
+
+    #[test]
     fn settlement_governance_query_uses_template_override_and_preserves_staged_fields() {
         let _guard = ENV_LOCK.lock().unwrap();
         std::env::set_var(
             "TRNM_QUERY_SETTLEMENT_GOVERNANCE_CMD",
-            r#"printf '%s' '{"live_configuration_status":"configured","mode":"hybrid","underlying_mode":"hybrid","settlement_write_gate_status":"open","shadow_compare_only":false,"poco_weight_bps":2500,"pouw_weight_bps":7500,"effective_poco_weight_bps":2500,"effective_pouw_weight_bps":7500,"shadow_masks_nonzero_poco_weight":false,"has_pending_updates":true,"staged_activate_at_height":62,"staged_configuration_status":"configured","staged_mode":"shadow_compare_only","staged_underlying_mode":"hybrid","staged_effective_poco_weight_bps":0,"staged_effective_pouw_weight_bps":10000,"staged_shadow_masks_nonzero_poco_weight":true}'"#,
+            r#"printf '%s' '{"live_configuration_status":"configured","mode":"hybrid","underlying_mode":"hybrid","settlement_write_gate_status":"open","shadow_compare_only":false,"poco_weight_bps":2500,"pouw_weight_bps":7500,"effective_poco_weight_bps":2500,"effective_pouw_weight_bps":7500,"shadow_masks_nonzero_poco_weight":false,"has_pending_updates":true,"staged_activate_at_height":62,"staged_configuration_status":"configured","staged_mode":"shadow_compare_only","staged_underlying_mode":"hybrid","staged_effective_poco_weight_bps":0,"staged_effective_pouw_weight_bps":10000,"staged_shadow_masks_nonzero_poco_weight":true,"pending_shadow_compare_only":{"key_id":7352,"key":"shadow_settlement_compare_only","value":"true","activate_at_height":62},"pending_poco_weight_bps":{"key_id":7351,"key":"hybrid_settlement_poco_weight_bps","value":"2500","activate_at_height":62}}'"#,
         );
         let got = settlement_governance_query().expect("template settlement governance query");
         std::env::remove_var("TRNM_QUERY_SETTLEMENT_GOVERNANCE_CMD");
@@ -6988,6 +7301,14 @@ mod tests {
         assert_eq!(
             got["staged_shadow_masks_nonzero_poco_weight"],
             serde_json::json!(true)
+        );
+        assert_eq!(
+            got["pending_shadow_compare_only"]["key_id"],
+            serde_json::json!(7352)
+        );
+        assert_eq!(
+            got["pending_poco_weight_bps"]["activate_at_height"],
+            serde_json::json!(62)
         );
     }
 
