@@ -322,6 +322,20 @@ fn validate_consumption_settlement_locator(
     Ok(())
 }
 
+fn validate_resolve_consumption_decision_fields(
+    decision: ConsumptionResolutionDecisionArg,
+    credited_consumption_units: Option<u128>,
+) -> Result<()> {
+    match (decision, credited_consumption_units) {
+        (ConsumptionResolutionDecisionArg::Discount, Some(_)) => Ok(()),
+        (ConsumptionResolutionDecisionArg::Discount, None) => {
+            bail!("credited_consumption_units is required when decision=discount")
+        }
+        (_, None) => Ok(()),
+        (_, Some(_)) => bail!("credited_consumption_units is only allowed when decision=discount"),
+    }
+}
+
 fn load_consumption_receipt_tx_input(path: &Path) -> Result<ConsumptionReceiptTxInput> {
     let raw = fs::read_to_string(path).map_err(|err| {
         anyhow!(
@@ -489,6 +503,7 @@ fn resolve_consumption_tx(
     let signer = signer.unwrap_or_else(|| resolver.clone());
 
     validate_consumption_settlement_locator(&consumer_id, &output_hash, &billing_window_id)?;
+    validate_resolve_consumption_decision_fields(decision, credited_consumption_units)?;
     validate_non_empty_cli_field(&resolver, "resolver")?;
     validate_non_empty_cli_field(&signer, "signer")?;
 
@@ -4696,6 +4711,50 @@ mod tests {
         );
 
         let _ = std::fs::remove_dir_all(&root);
+    }
+
+    #[test]
+    fn consumption_settlement_write_paths_reject_discount_resolution_without_credited_units_without_parser() {
+        let err = resolve_consumption_tx(
+            42,
+            "consumer-bravo".into(),
+            "0xabc123".into(),
+            "bw-7".into(),
+            ConsumptionResolutionDecisionArg::Discount,
+            None,
+            Some("accepted_discounted".into()),
+            "arbiter-alpha".into(),
+            None,
+        )
+        .unwrap_err()
+        .to_string();
+
+        assert!(
+            err.contains("credited_consumption_units is required when decision=discount"),
+            "unexpected error: {err}"
+        );
+    }
+
+    #[test]
+    fn consumption_settlement_write_paths_reject_non_discount_resolution_with_credited_units() {
+        let err = resolve_consumption_tx(
+            42,
+            "consumer-bravo".into(),
+            "0xabc123".into(),
+            "bw-7".into(),
+            ConsumptionResolutionDecisionArg::Accept,
+            Some(11),
+            None,
+            "arbiter-alpha".into(),
+            None,
+        )
+        .unwrap_err()
+        .to_string();
+
+        assert!(
+            err.contains("credited_consumption_units is only allowed when decision=discount"),
+            "unexpected error: {err}"
+        );
     }
 
     #[test]
