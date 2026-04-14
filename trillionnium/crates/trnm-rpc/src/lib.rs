@@ -114,7 +114,7 @@ struct TaskQueryResponseWire {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     metering: Option<TaskMeteringQueryResponse>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    settlement_preview: Option<TaskSettlementPreviewQueryResponse>,
+    settlement_preview: Option<SettlementSummaryQueryResponseWire>,
 }
 
 const TASK_QUERY_SETTLEMENT_PREVIEW_CONTRACT_ERROR: &str =
@@ -137,7 +137,7 @@ impl From<&TaskQueryResponse> for TaskQueryResponseWire {
                 .clone(),
             metadata_compatibility_findings: task.metadata_compatibility_findings.clone(),
             metering: task.metering.clone(),
-            settlement_preview: task.settlement_preview.clone(),
+            settlement_preview: task.settlement_preview.as_ref().map(Into::into),
         }
     }
 }
@@ -174,7 +174,11 @@ impl TryFrom<TaskQueryResponseWire> for TaskQueryResponse {
             metadata_primary_compatibility_finding: task.metadata_primary_compatibility_finding,
             metadata_compatibility_findings: task.metadata_compatibility_findings,
             metering: task.metering,
-            settlement_preview: task.settlement_preview,
+            settlement_preview: task
+                .settlement_preview
+                .map(TaskSettlementPreviewQueryResponse::try_from)
+                .transpose()
+                .map_err(|_| TASK_QUERY_SETTLEMENT_PREVIEW_CONTRACT_ERROR)?,
         };
 
         if !task.settlement_preview_contract_consistent() {
@@ -189,7 +193,10 @@ impl TaskQueryResponse {
     pub fn settlement_preview_contract_consistent(&self) -> bool {
         self.settlement_preview
             .as_ref()
-            .is_none_or(|settlement_preview| settlement_preview.task_id == self.task_id)
+            .is_none_or(|settlement_preview| {
+                settlement_preview.task_id == self.task_id
+                    && settlement_preview.settlement_contract_consistent()
+            })
     }
 }
 
@@ -1048,6 +1055,32 @@ mod tests {
     }
 
     #[test]
+    fn rpc_task_query_rejects_inconsistent_settlement_preview_contract_on_deserialize() {
+        let err = serde_json::from_value::<TaskQueryResponse>(json!({
+            "task_id": 7,
+            "status": "Completed",
+            "worker": "worker-1",
+            "bounty": 100,
+            "result_hash_hex": "abc123",
+            "version": 3,
+            "settlement_preview": {
+                "task_id": 7,
+                "receipt_count": 1,
+                "accepted_receipt_count": 1,
+                "challenged_receipt_count": 1,
+                "total_consumed_tokens": 33,
+                "total_claimed_consumption_units": 33,
+                "total_credited_consumption_units": 21,
+                "last_settlement_height": 88
+            }
+        }))
+        .expect_err("task query schema should reject inconsistent settlement preview payloads");
+        assert!(err
+            .to_string()
+            .contains(TASK_QUERY_SETTLEMENT_PREVIEW_CONTRACT_ERROR));
+    }
+
+    #[test]
     fn rpc_task_query_rejects_settlement_preview_task_id_mismatch_on_serialize() {
         let task = TaskQueryResponse {
             task_id: 7,
@@ -1081,6 +1114,41 @@ mod tests {
 
         let err = serde_json::to_value(task).expect_err(
             "task query serialization should reject mismatched settlement preview task ids",
+        );
+        assert!(err
+            .to_string()
+            .contains(TASK_QUERY_SETTLEMENT_PREVIEW_CONTRACT_ERROR));
+    }
+
+    #[test]
+    fn rpc_task_query_rejects_inconsistent_settlement_preview_contract_on_serialize() {
+        let task = TaskQueryResponse {
+            task_id: 7,
+            status: TaskStatus::Completed,
+            worker: Some("worker-1".into()),
+            bounty: 100,
+            result_hash_hex: Some("abc123".into()),
+            version: 3,
+            metadata_compatibility: None,
+            metadata_runtime_compatible: None,
+            metadata_requires_governance_upgrade: None,
+            metadata_primary_compatibility_finding: None,
+            metadata_compatibility_findings: None,
+            metering: None,
+            settlement_preview: Some(TaskSettlementPreviewQueryResponse {
+                task_id: 7,
+                receipt_count: 1,
+                accepted_receipt_count: 1,
+                challenged_receipt_count: 1,
+                total_consumed_tokens: 33,
+                total_claimed_consumption_units: 33,
+                total_credited_consumption_units: 21,
+                last_settlement_height: Some(88),
+            }),
+        };
+
+        let err = serde_json::to_value(task).expect_err(
+            "task query serialization should reject inconsistent settlement preview payloads",
         );
         assert!(err
             .to_string()
