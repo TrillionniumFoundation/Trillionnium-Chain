@@ -2,9 +2,9 @@ use anyhow::Result;
 use std::{fs, path::PathBuf};
 
 use crate::{
-    flush_submission::{process_submission_record, FlushRecordOutcome}, load_acked, now_ms,
-    resolve_path_arg_from_env, resolve_tx_retry_policy, SubmissionRecord, WORKER_EVENT_LOG_ENV,
-    WORKER_PROGRESS_LOG_ENV,
+    flush_submission::{process_submission_record, FlushRecordOutcome},
+    load_acked, now_ms, resolve_path_arg_from_env, resolve_tx_retry_policy, SubmissionRecord,
+    WORKER_EVENT_LOG_ENV, WORKER_PROGRESS_LOG_ENV,
 };
 
 #[allow(clippy::too_many_arguments)]

@@ -48,17 +48,35 @@ fn reputation_impact_exposes_stable_labels_deltas_and_tiers() {
 
 #[test]
 fn reputation_tiers_match_score_ordering() {
-    assert!(reputation_tier(ReputationSignal::Accepted) > reputation_tier(ReputationSignal::AdapterRetryExhausted));
-    assert!(reputation_tier(ReputationSignal::AdapterRetryExhausted) > reputation_tier(ReputationSignal::VerifierRejected));
-    assert!(reputation_tier(ReputationSignal::VerifierRejected) > reputation_tier(ReputationSignal::AdapterNonRetriable));
+    assert!(
+        reputation_tier(ReputationSignal::Accepted)
+            > reputation_tier(ReputationSignal::AdapterRetryExhausted)
+    );
+    assert!(
+        reputation_tier(ReputationSignal::AdapterRetryExhausted)
+            > reputation_tier(ReputationSignal::VerifierRejected)
+    );
+    assert!(
+        reputation_tier(ReputationSignal::VerifierRejected)
+            > reputation_tier(ReputationSignal::AdapterNonRetriable)
+    );
 }
 
 #[test]
 fn reputation_weight_bps_exposes_dense_deterministic_rank_surface() {
     assert_eq!(reputation_weight_bps(ReputationSignal::Accepted), 10_000);
-    assert_eq!(reputation_weight_bps(ReputationSignal::AdapterRetryExhausted), 6_666);
-    assert_eq!(reputation_weight_bps(ReputationSignal::VerifierRejected), 3_333);
-    assert_eq!(reputation_weight_bps(ReputationSignal::AdapterNonRetriable), 0);
+    assert_eq!(
+        reputation_weight_bps(ReputationSignal::AdapterRetryExhausted),
+        6_666
+    );
+    assert_eq!(
+        reputation_weight_bps(ReputationSignal::VerifierRejected),
+        3_333
+    );
+    assert_eq!(
+        reputation_weight_bps(ReputationSignal::AdapterNonRetriable),
+        0
+    );
 }
 
 #[test]
@@ -256,7 +274,10 @@ fn canonical_reputation_impact_table_matches_signal_order_and_mapping_helpers() 
     {
         assert_eq!(signal, ordered_signal);
         assert_eq!(reputation_impact(*signal), *impact);
-        assert_eq!(reputation_score_impact(*signal), (impact.label, impact.delta));
+        assert_eq!(
+            reputation_score_impact(*signal),
+            (impact.label, impact.delta)
+        );
         assert_eq!(reputation_tier(*signal), impact.tier);
         assert_eq!(reputation_signal_from_delta(impact.delta), Some(*signal));
         assert_eq!(reputation_impact_from_delta(impact.delta), Some(*impact));

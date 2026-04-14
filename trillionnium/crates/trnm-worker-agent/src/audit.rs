@@ -11,7 +11,7 @@ use std::{
 use crate::{
     load_ingress_records, normalized_agent_protocol, normalized_compliance_profile,
     normalized_optional_field, normalized_provenance_label, normalized_provider_request_id,
-    reputation_gap_bps_from_best, reputation_surface, reputation_signal_from_delta,
+    reputation_gap_bps_from_best, reputation_signal_from_delta, reputation_surface,
     trim_boundary_audit_fillers, MessageIngressRecord,
 };
 

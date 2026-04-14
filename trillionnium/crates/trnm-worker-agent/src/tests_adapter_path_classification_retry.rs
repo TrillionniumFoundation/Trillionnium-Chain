@@ -216,7 +216,11 @@ fn run_adapter_with_retry_prefers_latest_nonce_rejected_receipt_hash_and_stops()
         .expect("counter file should exist after adapter execution");
     let _ = std::fs::remove_file(&counter);
 
-    assert_eq!(attempts.trim(), "2", "nonce_rejected on retry should stop after the terminal receipt");
+    assert_eq!(
+        attempts.trim(),
+        "2",
+        "nonce_rejected on retry should stop after the terminal receipt"
+    );
     assert!(!res.ok);
     assert_eq!(res.rc, RC_NONCE_REJECTED);
     assert_eq!(res.tx_hash.as_deref(), Some("beef5678"));
@@ -237,14 +241,19 @@ fn run_adapter_with_retry_prefers_stdout_tx_hash_over_stderr_on_nonce_rejected_t
     let adapter_cmd = format!("python3 -c {script:?}");
     let action_args = vec![counter.display().to_string()];
 
-    let res = run_adapter_with_retry(&adapter_cmd, &action_args, 3, 0)
-        .expect("adapter execution should return terminal nonce_rejected result with stdout precedence");
+    let res = run_adapter_with_retry(&adapter_cmd, &action_args, 3, 0).expect(
+        "adapter execution should return terminal nonce_rejected result with stdout precedence",
+    );
 
     let attempts = std::fs::read_to_string(&counter)
         .expect("counter file should exist after adapter execution");
     let _ = std::fs::remove_file(&counter);
 
-    assert_eq!(attempts.trim(), "2", "nonce_rejected on retry should stop after the terminal receipt");
+    assert_eq!(
+        attempts.trim(),
+        "2",
+        "nonce_rejected on retry should stop after the terminal receipt"
+    );
     assert!(!res.ok);
     assert_eq!(res.rc, RC_NONCE_REJECTED);
     assert_eq!(res.tx_hash.as_deref(), Some("beef5678"));
@@ -252,7 +261,8 @@ fn run_adapter_with_retry_prefers_stdout_tx_hash_over_stderr_on_nonce_rejected_t
 }
 
 #[test]
-fn run_adapter_with_retry_falls_back_to_stderr_tx_hash_when_stdout_nonce_rejected_hash_is_malformed() {
+fn run_adapter_with_retry_falls_back_to_stderr_tx_hash_when_stdout_nonce_rejected_hash_is_malformed(
+) {
     let counter = std::env::temp_dir().join(format!(
         "trnm-worker-agent-run-adapter-nonce-rejected-stderr-fallback-counter-{}-{}.txt",
         std::process::id(),
@@ -272,7 +282,11 @@ fn run_adapter_with_retry_falls_back_to_stderr_tx_hash_when_stdout_nonce_rejecte
         .expect("counter file should exist after adapter execution");
     let _ = std::fs::remove_file(&counter);
 
-    assert_eq!(attempts.trim(), "2", "nonce_rejected on retry should stop after the terminal receipt");
+    assert_eq!(
+        attempts.trim(),
+        "2",
+        "nonce_rejected on retry should stop after the terminal receipt"
+    );
     assert!(!res.ok);
     assert_eq!(res.rc, RC_NONCE_REJECTED);
     assert_eq!(res.tx_hash.as_deref(), Some("beef5678"));
@@ -300,7 +314,11 @@ fn run_adapter_with_retry_prefers_latest_slo_violation_receipt_hash_and_stops() 
         .expect("counter file should exist after adapter execution");
     let _ = std::fs::remove_file(&counter);
 
-    assert_eq!(attempts.trim(), "2", "slo_violation on retry should stop after the terminal receipt");
+    assert_eq!(
+        attempts.trim(),
+        "2",
+        "slo_violation on retry should stop after the terminal receipt"
+    );
     assert!(!res.ok);
     assert_eq!(res.rc, RC_SLO_VIOLATION);
     assert_eq!(res.tx_hash.as_deref(), Some("beef5678"));
@@ -321,14 +339,19 @@ fn run_adapter_with_retry_prefers_stdout_tx_hash_over_stderr_on_slo_violation_te
     let adapter_cmd = format!("python3 -c {script:?}");
     let action_args = vec![counter.display().to_string()];
 
-    let res = run_adapter_with_retry(&adapter_cmd, &action_args, 3, 0)
-        .expect("adapter execution should return terminal slo_violation result with stdout precedence");
+    let res = run_adapter_with_retry(&adapter_cmd, &action_args, 3, 0).expect(
+        "adapter execution should return terminal slo_violation result with stdout precedence",
+    );
 
     let attempts = std::fs::read_to_string(&counter)
         .expect("counter file should exist after adapter execution");
     let _ = std::fs::remove_file(&counter);
 
-    assert_eq!(attempts.trim(), "2", "slo_violation on retry should stop after the terminal receipt");
+    assert_eq!(
+        attempts.trim(),
+        "2",
+        "slo_violation on retry should stop after the terminal receipt"
+    );
     assert!(!res.ok);
     assert_eq!(res.rc, RC_SLO_VIOLATION);
     assert_eq!(res.tx_hash.as_deref(), Some("beef5678"));
@@ -356,7 +379,11 @@ fn run_adapter_with_retry_ignores_malformed_nonce_rejected_receipt_hash_and_keep
         .expect("counter file should exist after adapter execution");
     let _ = std::fs::remove_file(&counter);
 
-    assert_eq!(attempts.trim(), "2", "nonce_rejected on retry should stop after the terminal receipt");
+    assert_eq!(
+        attempts.trim(),
+        "2",
+        "nonce_rejected on retry should stop after the terminal receipt"
+    );
     assert!(!res.ok);
     assert_eq!(res.rc, RC_NONCE_REJECTED);
     assert_eq!(
@@ -390,7 +417,11 @@ fn run_adapter_with_retry_zero_backoff_retries_without_observable_wait() {
         .expect("counter file should exist after adapter execution");
     let _ = std::fs::remove_file(&counter);
 
-    assert_eq!(attempts.trim(), "2", "max_retries=1 should execute two attempts");
+    assert_eq!(
+        attempts.trim(),
+        "2",
+        "max_retries=1 should execute two attempts"
+    );
     assert!(res.ok);
     assert_eq!(res.rc, RC_OK);
     assert!(res.terminal);
@@ -431,8 +462,15 @@ fn run_adapter_with_retry_stops_after_retriable_failure_followed_by_deterministi
     )
     .expect("adapter execution should stop once the deterministic rejection is observed");
 
-    assert_eq!(attempt, 2, "retry loop should stop immediately after the terminal rejection");
-    assert_eq!(slept, vec![25], "sleep should happen only before the second attempt");
+    assert_eq!(
+        attempt, 2,
+        "retry loop should stop immediately after the terminal rejection"
+    );
+    assert_eq!(
+        slept,
+        vec![25],
+        "sleep should happen only before the second attempt"
+    );
     assert!(!res.ok);
     assert_eq!(res.rc, RC_NONCE_REJECTED);
     assert_eq!(res.tx_hash.as_deref(), Some("beef5678"));

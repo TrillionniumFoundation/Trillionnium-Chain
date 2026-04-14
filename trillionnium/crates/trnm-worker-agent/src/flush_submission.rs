@@ -5,9 +5,9 @@ use anyhow::Result;
 use crate::{
     append_ack, append_event, append_progress, is_idempotent_duplicate_ok, is_task_acked,
     load_ingress_records, persisted_ack_hashes_for_task, run_adapter_with_retry,
-    save_ingress_records, should_execute_reveal, transition_request_status, trim_boundary_audit_fillers,
-    try_acquire_task_lock, AdapterExecResult, ProgressRecord, SubmissionRecord, WorkerEvent,
-    RC_SKIPPED,
+    save_ingress_records, should_execute_reveal, transition_request_status,
+    trim_boundary_audit_fillers, try_acquire_task_lock, AdapterExecResult, ProgressRecord,
+    SubmissionRecord, WorkerEvent, RC_SKIPPED,
 };
 
 #[derive(Debug, Clone, Copy)]
@@ -461,7 +461,8 @@ mod tests {
     }
 
     #[test]
-    fn classify_flush_ack_keeps_blank_persisted_commit_receipt_fail_closed_during_duplicate_resume() {
+    fn classify_flush_ack_keeps_blank_persisted_commit_receipt_fail_closed_during_duplicate_resume()
+    {
         let ack_log = std::env::temp_dir().join(format!(
             "trnm-worker-agent-flush-blank-{}-{}.jsonl",
             std::process::id(),
@@ -501,7 +502,8 @@ mod tests {
     }
 
     #[test]
-    fn classify_flush_ack_keeps_blank_persisted_reveal_receipt_fail_closed_during_duplicate_resume() {
+    fn classify_flush_ack_keeps_blank_persisted_reveal_receipt_fail_closed_during_duplicate_resume()
+    {
         let ack_log = std::env::temp_dir().join(format!(
             "trnm-worker-agent-flush-blank-reveal-{}-{}.jsonl",
             std::process::id(),
@@ -611,7 +613,8 @@ mod tests {
     }
 
     #[test]
-    fn stage_tx_hash_for_ack_reuses_previous_hash_when_duplicate_receipt_has_only_invisible_fillers() {
+    fn stage_tx_hash_for_ack_reuses_previous_hash_when_duplicate_receipt_has_only_invisible_fillers(
+    ) {
         let staged = super::stage_tx_hash_for_ack(
             super::normalize_adapter_tx_hash(Some("\u{feff}\u{200b}\u{2060}")),
             Some("previous-commit".to_string()),

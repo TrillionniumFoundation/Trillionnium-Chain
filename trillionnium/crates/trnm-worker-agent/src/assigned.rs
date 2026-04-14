@@ -1,13 +1,18 @@
 use anyhow::{anyhow, Result};
-use std::{collections::BTreeMap, env, path::{Path, PathBuf}, time::Duration};
+use std::{
+    collections::BTreeMap,
+    env,
+    path::{Path, PathBuf},
+    time::Duration,
+};
 
 use crate::proof_adapter::{build_proof_adapter, DEFAULT_PROOF_ADAPTER};
 use crate::{
     adapter_error_signal, append_submission, apply_reputation_signal, attach_llm_provenance,
     classify_adapter_error, commitment, execute_payload, load_ingress_records,
     reputation_gap_bps_from_best, reputation_gap_bps_from_worst, resolve_llm_adapter_policy,
-    run_llm_adapter_with_retry, save_ingress_records, transition_request_status,
-    AdapterErrorKind, LlmAdapterPolicy, ReputationSignal, PROOF_ADAPTER_ENV,
+    run_llm_adapter_with_retry, save_ingress_records, transition_request_status, AdapterErrorKind,
+    LlmAdapterPolicy, ReputationSignal, PROOF_ADAPTER_ENV,
 };
 use trnm_types::RequestStatus;
 
@@ -253,7 +258,11 @@ mod tests {
             "adapter_backoff_ms=",
             "adapter_timeout_ms=",
         ] {
-            assert_eq!(line.matches(token).count(), 1, "token should appear once: {token}");
+            assert_eq!(
+                line.matches(token).count(),
+                1,
+                "token should appear once: {token}"
+            );
         }
     }
 

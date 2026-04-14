@@ -992,10 +992,7 @@ fn truncate_for_error(raw: &str, max_chars: usize) -> String {
 
 fn trim_config_numeric_value(raw: &str) -> &str {
     raw.trim_matches(|c: char| {
-        c.is_whitespace()
-            || c.is_control()
-            || is_invisible_filler(c)
-            || is_receipt_quote_wrapper(c)
+        c.is_whitespace() || c.is_control() || is_invisible_filler(c) || is_receipt_quote_wrapper(c)
     })
 }
 
@@ -1966,9 +1963,11 @@ pub(crate) fn reputation_signal_from_label(label: &str) -> Option<ReputationSign
         return None;
     }
 
-    CANONICAL_REPUTATION_IMPACTS.iter().find_map(|(signal, impact)| {
-        context_matches_token(normalized, impact.label).then_some(*signal)
-    })
+    CANONICAL_REPUTATION_IMPACTS
+        .iter()
+        .find_map(|(signal, impact)| {
+            context_matches_token(normalized, impact.label).then_some(*signal)
+        })
 }
 
 pub(crate) fn reputation_impact_from_label(label: &str) -> Option<ReputationImpact> {

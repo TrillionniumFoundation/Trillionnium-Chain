@@ -210,7 +210,11 @@ fn run_adapter_with_retry_stops_after_duplicate_terminal_receipt() {
         .expect("counter file should exist after adapter execution");
     let _ = std::fs::remove_file(&counter);
 
-    assert_eq!(attempts.trim(), "1", "duplicate must fail fast without retrying");
+    assert_eq!(
+        attempts.trim(),
+        "1",
+        "duplicate must fail fast without retrying"
+    );
     assert!(!res.ok);
     assert_eq!(res.rc, RC_DUPLICATE);
     assert_eq!(res.tx_hash.as_deref(), Some("deadbeef"));
@@ -238,7 +242,11 @@ fn run_adapter_with_retry_stops_after_nonce_rejected_terminal_receipt() {
         .expect("counter file should exist after adapter execution");
     let _ = std::fs::remove_file(&counter);
 
-    assert_eq!(attempts.trim(), "1", "nonce_rejected must fail fast without retrying");
+    assert_eq!(
+        attempts.trim(),
+        "1",
+        "nonce_rejected must fail fast without retrying"
+    );
     assert!(!res.ok);
     assert_eq!(res.rc, RC_NONCE_REJECTED);
     assert_eq!(res.tx_hash.as_deref(), Some("deadbeef"));
@@ -266,7 +274,11 @@ fn run_adapter_with_retry_stops_after_slo_violation_terminal_receipt() {
         .expect("counter file should exist after adapter execution");
     let _ = std::fs::remove_file(&counter);
 
-    assert_eq!(attempts.trim(), "1", "slo_violation must fail fast without retrying");
+    assert_eq!(
+        attempts.trim(),
+        "1",
+        "slo_violation must fail fast without retrying"
+    );
     assert!(!res.ok);
     assert_eq!(res.rc, RC_SLO_VIOLATION);
     assert_eq!(res.tx_hash.as_deref(), Some("deadbeef"));
@@ -294,7 +306,11 @@ fn run_adapter_with_retry_keeps_last_seen_tx_hash_after_retriable_exhaustion() {
         .expect("counter file should exist after adapter execution");
     let _ = std::fs::remove_file(&counter);
 
-    assert_eq!(attempts.trim(), "3", "max_retries=2 should execute three attempts");
+    assert_eq!(
+        attempts.trim(),
+        "3",
+        "max_retries=2 should execute three attempts"
+    );
     assert!(!res.ok);
     assert_eq!(res.rc, 1);
     assert_eq!(res.tx_hash.as_deref(), Some("abcd1234"));
@@ -360,7 +376,10 @@ fn run_adapter_with_retry_skips_zero_backoff_sleep_between_retriable_attempts() 
     .expect("adapter execution should succeed within retry budget without sleeping");
 
     assert_eq!(attempt, 3);
-    assert!(slept.is_empty(), "zero backoff should skip sleep callbacks entirely");
+    assert!(
+        slept.is_empty(),
+        "zero backoff should skip sleep callbacks entirely"
+    );
     assert!(res.ok);
     assert_eq!(res.rc, RC_OK);
     assert_eq!(res.tx_hash.as_deref(), Some("beefcafe"));
@@ -386,7 +405,10 @@ fn run_adapter_with_retry_does_not_sleep_after_deterministic_terminal_rejection(
     .expect("adapter execution should stop on deterministic rejection");
 
     assert_eq!(attempt, 1, "deterministic rejections must not retry");
-    assert!(slept.is_empty(), "deterministic rejections must not sleep before stopping");
+    assert!(
+        slept.is_empty(),
+        "deterministic rejections must not sleep before stopping"
+    );
     assert!(!res.ok);
     assert_eq!(res.rc, RC_NONCE_REJECTED);
     assert_eq!(res.tx_hash.as_deref(), Some("deadbeef"));
@@ -411,8 +433,15 @@ fn run_adapter_with_retry_does_not_sleep_after_retry_budget_exhaustion() {
     )
     .expect("adapter execution should return exhausted retriable result");
 
-    assert_eq!(attempt, 3, "retry loop should attempt initial run plus the configured retries");
-    assert_eq!(slept, vec![25, 50], "sleep should happen only between attempts, never after the final exhausted attempt");
+    assert_eq!(
+        attempt, 3,
+        "retry loop should attempt initial run plus the configured retries"
+    );
+    assert_eq!(
+        slept,
+        vec![25, 50],
+        "sleep should happen only between attempts, never after the final exhausted attempt"
+    );
     assert!(!res.ok);
     assert_eq!(res.rc, 1);
     assert_eq!(res.tx_hash, None);
@@ -440,7 +469,11 @@ fn run_adapter_with_retry_preserves_last_seen_tx_hash_before_slo_violation_termi
         .expect("counter file should exist after adapter execution");
     let _ = std::fs::remove_file(&counter);
 
-    assert_eq!(attempts.trim(), "2", "slo_violation on retry should stop the loop immediately");
+    assert_eq!(
+        attempts.trim(),
+        "2",
+        "slo_violation on retry should stop the loop immediately"
+    );
     assert!(!res.ok);
     assert_eq!(res.rc, RC_SLO_VIOLATION);
     assert_eq!(res.tx_hash.as_deref(), Some("abcd1234"));
@@ -461,14 +494,19 @@ fn run_adapter_with_retry_prefers_stdout_tx_hash_over_stderr_on_slo_violation_te
     let adapter_cmd = format!("python3 -c {script:?}");
     let action_args = vec![counter.display().to_string()];
 
-    let res = run_adapter_with_retry(&adapter_cmd, &action_args, 3, 0)
-        .expect("adapter execution should return terminal slo_violation result with stdout precedence");
+    let res = run_adapter_with_retry(&adapter_cmd, &action_args, 3, 0).expect(
+        "adapter execution should return terminal slo_violation result with stdout precedence",
+    );
 
     let attempts = std::fs::read_to_string(&counter)
         .expect("counter file should exist after adapter execution");
     let _ = std::fs::remove_file(&counter);
 
-    assert_eq!(attempts.trim(), "2", "slo_violation on retry should stop after the terminal receipt");
+    assert_eq!(
+        attempts.trim(),
+        "2",
+        "slo_violation on retry should stop after the terminal receipt"
+    );
     assert!(!res.ok);
     assert_eq!(res.rc, RC_SLO_VIOLATION);
     assert_eq!(
@@ -480,7 +518,8 @@ fn run_adapter_with_retry_prefers_stdout_tx_hash_over_stderr_on_slo_violation_te
 }
 
 #[test]
-fn run_adapter_with_retry_falls_back_to_stderr_tx_hash_when_stdout_slo_violation_hash_is_malformed() {
+fn run_adapter_with_retry_falls_back_to_stderr_tx_hash_when_stdout_slo_violation_hash_is_malformed()
+{
     let counter = std::env::temp_dir().join(format!(
         "trnm-worker-agent-run-adapter-slo-stderr-fallback-counter-{}-{}.txt",
         std::process::id(),
@@ -501,7 +540,11 @@ fn run_adapter_with_retry_falls_back_to_stderr_tx_hash_when_stdout_slo_violation
         .expect("counter file should exist after adapter execution");
     let _ = std::fs::remove_file(&counter);
 
-    assert_eq!(attempts.trim(), "2", "slo_violation on retry should stop after the terminal receipt");
+    assert_eq!(
+        attempts.trim(),
+        "2",
+        "slo_violation on retry should stop after the terminal receipt"
+    );
     assert!(!res.ok);
     assert_eq!(res.rc, RC_SLO_VIOLATION);
     assert_eq!(res.tx_hash.as_deref(), Some("beef5678"));
@@ -529,7 +572,11 @@ fn run_adapter_with_retry_preserves_last_seen_tx_hash_before_duplicate_terminal_
         .expect("counter file should exist after adapter execution");
     let _ = std::fs::remove_file(&counter);
 
-    assert_eq!(attempts.trim(), "2", "duplicate on retry should stop the loop immediately");
+    assert_eq!(
+        attempts.trim(),
+        "2",
+        "duplicate on retry should stop the loop immediately"
+    );
     assert!(!res.ok);
     assert_eq!(res.rc, RC_DUPLICATE);
     assert_eq!(res.tx_hash.as_deref(), Some("abcd1234"));
@@ -550,14 +597,19 @@ fn run_adapter_with_retry_prefers_newest_tx_hash_from_duplicate_terminal_receipt
     let adapter_cmd = format!("python3 -c {script:?}");
     let action_args = vec![counter.display().to_string()];
 
-    let res = run_adapter_with_retry(&adapter_cmd, &action_args, 3, 0)
-        .expect("adapter execution should return terminal duplicate result with the latest receipt hash");
+    let res = run_adapter_with_retry(&adapter_cmd, &action_args, 3, 0).expect(
+        "adapter execution should return terminal duplicate result with the latest receipt hash",
+    );
 
     let attempts = std::fs::read_to_string(&counter)
         .expect("counter file should exist after adapter execution");
     let _ = std::fs::remove_file(&counter);
 
-    assert_eq!(attempts.trim(), "2", "duplicate on retry should stop after the terminal receipt");
+    assert_eq!(
+        attempts.trim(),
+        "2",
+        "duplicate on retry should stop after the terminal receipt"
+    );
     assert!(!res.ok);
     assert_eq!(res.rc, RC_DUPLICATE);
     assert_eq!(res.tx_hash.as_deref(), Some("beef5678"));
@@ -585,7 +637,11 @@ fn run_adapter_with_retry_ignores_malformed_duplicate_receipt_hash_and_keeps_las
         .expect("counter file should exist after adapter execution");
     let _ = std::fs::remove_file(&counter);
 
-    assert_eq!(attempts.trim(), "2", "duplicate on retry should stop after the terminal receipt");
+    assert_eq!(
+        attempts.trim(),
+        "2",
+        "duplicate on retry should stop after the terminal receipt"
+    );
     assert!(!res.ok);
     assert_eq!(res.rc, RC_DUPLICATE);
     assert_eq!(
@@ -617,7 +673,11 @@ fn run_adapter_with_retry_prefers_stdout_tx_hash_over_stderr_on_duplicate_termin
         .expect("counter file should exist after adapter execution");
     let _ = std::fs::remove_file(&counter);
 
-    assert_eq!(attempts.trim(), "2", "duplicate on retry should stop after the terminal receipt");
+    assert_eq!(
+        attempts.trim(),
+        "2",
+        "duplicate on retry should stop after the terminal receipt"
+    );
     assert!(!res.ok);
     assert_eq!(res.rc, RC_DUPLICATE);
     assert_eq!(
@@ -650,7 +710,11 @@ fn run_adapter_with_retry_falls_back_to_stderr_tx_hash_when_stdout_duplicate_has
         .expect("counter file should exist after adapter execution");
     let _ = std::fs::remove_file(&counter);
 
-    assert_eq!(attempts.trim(), "2", "duplicate on retry should stop after the terminal receipt");
+    assert_eq!(
+        attempts.trim(),
+        "2",
+        "duplicate on retry should stop after the terminal receipt"
+    );
     assert!(!res.ok);
     assert_eq!(res.rc, RC_DUPLICATE);
     assert_eq!(res.tx_hash.as_deref(), Some("beef5678"));
@@ -678,7 +742,11 @@ fn run_adapter_with_retry_preserves_last_seen_tx_hash_after_successful_retry() {
         .expect("counter file should exist after adapter execution");
     let _ = std::fs::remove_file(&counter);
 
-    assert_eq!(attempts.trim(), "2", "success on retry should stop after the first green attempt");
+    assert_eq!(
+        attempts.trim(),
+        "2",
+        "success on retry should stop after the first green attempt"
+    );
     assert!(res.ok);
     assert_eq!(res.rc, RC_OK);
     assert_eq!(res.tx_hash.as_deref(), Some("abcd1234"));
@@ -699,14 +767,19 @@ fn run_adapter_with_retry_prefers_stdout_tx_hash_over_stderr_on_nonce_rejected_t
     let adapter_cmd = format!("python3 -c {script:?}");
     let action_args = vec![counter.display().to_string()];
 
-    let res = run_adapter_with_retry(&adapter_cmd, &action_args, 3, 0)
-        .expect("adapter execution should return terminal nonce_rejected result with stdout precedence");
+    let res = run_adapter_with_retry(&adapter_cmd, &action_args, 3, 0).expect(
+        "adapter execution should return terminal nonce_rejected result with stdout precedence",
+    );
 
     let attempts = std::fs::read_to_string(&counter)
         .expect("counter file should exist after adapter execution");
     let _ = std::fs::remove_file(&counter);
 
-    assert_eq!(attempts.trim(), "2", "nonce_rejected on retry should stop after the terminal receipt");
+    assert_eq!(
+        attempts.trim(),
+        "2",
+        "nonce_rejected on retry should stop after the terminal receipt"
+    );
     assert!(!res.ok);
     assert_eq!(res.rc, RC_NONCE_REJECTED);
     assert_eq!(
@@ -738,7 +811,11 @@ fn run_adapter_with_retry_ignores_malformed_nonce_rejected_receipt_hash_and_keep
         .expect("counter file should exist after adapter execution");
     let _ = std::fs::remove_file(&counter);
 
-    assert_eq!(attempts.trim(), "2", "nonce_rejected on retry should stop after the terminal receipt");
+    assert_eq!(
+        attempts.trim(),
+        "2",
+        "nonce_rejected on retry should stop after the terminal receipt"
+    );
     assert!(!res.ok);
     assert_eq!(res.rc, RC_NONCE_REJECTED);
     assert_eq!(
@@ -763,14 +840,19 @@ fn run_adapter_with_retry_prefers_latest_success_receipt_hash_over_prior_retry_h
     let adapter_cmd = format!("python3 -c {script:?}");
     let action_args = vec![counter.display().to_string()];
 
-    let res = run_adapter_with_retry(&adapter_cmd, &action_args, 3, 0)
-        .expect("adapter execution should return successful retry result with the latest receipt hash");
+    let res = run_adapter_with_retry(&adapter_cmd, &action_args, 3, 0).expect(
+        "adapter execution should return successful retry result with the latest receipt hash",
+    );
 
     let attempts = std::fs::read_to_string(&counter)
         .expect("counter file should exist after adapter execution");
     let _ = std::fs::remove_file(&counter);
 
-    assert_eq!(attempts.trim(), "2", "success on retry should stop after the first green attempt");
+    assert_eq!(
+        attempts.trim(),
+        "2",
+        "success on retry should stop after the first green attempt"
+    );
     assert!(res.ok);
     assert_eq!(res.rc, RC_OK);
     assert_eq!(res.tx_hash.as_deref(), Some("beef5678"));
@@ -798,7 +880,11 @@ fn run_adapter_with_retry_prefers_stdout_tx_hash_over_stderr_on_successful_retry
         .expect("counter file should exist after adapter execution");
     let _ = std::fs::remove_file(&counter);
 
-    assert_eq!(attempts.trim(), "2", "success on retry should stop after the first green attempt");
+    assert_eq!(
+        attempts.trim(),
+        "2",
+        "success on retry should stop after the first green attempt"
+    );
     assert!(res.ok);
     assert_eq!(res.rc, RC_OK);
     assert_eq!(
@@ -831,7 +917,11 @@ fn run_adapter_with_retry_falls_back_to_stderr_tx_hash_when_stdout_success_hash_
         .expect("counter file should exist after adapter execution");
     let _ = std::fs::remove_file(&counter);
 
-    assert_eq!(attempts.trim(), "2", "success on retry should stop after the first green attempt");
+    assert_eq!(
+        attempts.trim(),
+        "2",
+        "success on retry should stop after the first green attempt"
+    );
     assert!(res.ok);
     assert_eq!(res.rc, RC_OK);
     assert_eq!(
@@ -845,7 +935,12 @@ fn run_adapter_with_retry_falls_back_to_stderr_tx_hash_when_stdout_success_hash_
 #[test]
 fn tx_retry_policy_accepts_zero_and_cli_overrides_invalid_env() {
     assert_eq!(
-        resolve_u32(Some(0), Some("not-a-number"), DEFAULT_TX_ADAPTER_MAX_RETRIES, 0),
+        resolve_u32(
+            Some(0),
+            Some("not-a-number"),
+            DEFAULT_TX_ADAPTER_MAX_RETRIES,
+            0
+        ),
         0
     );
     assert_eq!(
@@ -884,12 +979,7 @@ fn tx_retry_policy_trims_whitespace_wrapped_env_values() {
 
 #[test]
 fn tx_retry_policy_trims_quote_wrapped_env_values() {
-    let policy = resolve_tx_retry_policy_from_sources(
-        None,
-        None,
-        Some(" \"7\" "),
-        Some(" '900' "),
-    );
+    let policy = resolve_tx_retry_policy_from_sources(None, None, Some(" \"7\" "), Some(" '900' "));
 
     assert_eq!(
         policy,
@@ -902,12 +992,8 @@ fn tx_retry_policy_trims_quote_wrapped_env_values() {
 
 #[test]
 fn tx_retry_policy_trims_unicode_quotes_wrapped_env_values() {
-    let policy = resolve_tx_retry_policy_from_sources(
-        None,
-        None,
-        Some(" “７” "),
-        Some(" ‘９００’ "),
-    );
+    let policy =
+        resolve_tx_retry_policy_from_sources(None, None, Some(" “７” "), Some(" ‘９００’ "));
 
     assert_eq!(
         policy,
@@ -982,7 +1068,8 @@ fn tx_retry_policy_accepts_fullwidth_digits_and_signs_from_env_values() {
 
 #[test]
 fn tx_retry_policy_trims_fullwidth_spaces_around_unicode_env_values() {
-    let policy = resolve_tx_retry_policy_from_sources(None, None, Some("　＋３　"), Some("　４５０　"));
+    let policy =
+        resolve_tx_retry_policy_from_sources(None, None, Some("　＋３　"), Some("　４５０　"));
 
     assert_eq!(
         policy,
@@ -1031,12 +1118,7 @@ fn tx_retry_policy_ignores_embedded_bom_fillers_in_env_values() {
 
 #[test]
 fn tx_retry_policy_ignores_embedded_control_wrappers_in_env_values() {
-    let policy = resolve_tx_retry_policy_from_sources(
-        None,
-        None,
-        Some("2\r\n5"),
-        Some("4\t5\n0"),
-    );
+    let policy = resolve_tx_retry_policy_from_sources(None, None, Some("2\r\n5"), Some("4\t5\n0"));
 
     assert_eq!(
         policy,
@@ -2161,10 +2243,22 @@ fn reputation_surface_axes_round_trip_back_to_canonical_signal_and_impact() {
         assert_eq!(surface.score_bps, reputation_score_bps(*signal));
         assert_eq!(surface.rank_ordinal, expected_rank as u8);
 
-        assert_eq!(reputation_signal_from_weight_bps(surface.weight_bps), Some(*signal));
-        assert_eq!(reputation_impact_from_weight_bps(surface.weight_bps), Some(impact));
-        assert_eq!(reputation_signal_from_score_bps(surface.score_bps), Some(*signal));
-        assert_eq!(reputation_impact_from_score_bps(surface.score_bps), Some(impact));
+        assert_eq!(
+            reputation_signal_from_weight_bps(surface.weight_bps),
+            Some(*signal)
+        );
+        assert_eq!(
+            reputation_impact_from_weight_bps(surface.weight_bps),
+            Some(impact)
+        );
+        assert_eq!(
+            reputation_signal_from_score_bps(surface.score_bps),
+            Some(*signal)
+        );
+        assert_eq!(
+            reputation_impact_from_score_bps(surface.score_bps),
+            Some(impact)
+        );
         assert_eq!(
             reputation_signal_from_rank_ordinal(surface.rank_ordinal),
             Some(*signal)
@@ -2202,7 +2296,10 @@ fn reputation_surface_axes_round_trip_back_to_canonical_signal_and_impact() {
 #[test]
 fn reputation_surface_axes_fail_closed_on_cross_signal_hybrids() {
     let surfaces = canonical_reputation_surfaces();
-    assert!(surfaces.len() >= 2, "expected at least two canonical surfaces");
+    assert!(
+        surfaces.len() >= 2,
+        "expected at least two canonical surfaces"
+    );
 
     let accepted = surfaces[0];
     let retryable = surfaces[1];
@@ -2514,7 +2611,10 @@ fn llm_adapter_retry_skips_zero_backoff_sleep_between_retriable_attempts() {
 
     assert_eq!(res.output_text, "ok");
     assert_eq!(attempt, 3);
-    assert!(slept.is_empty(), "zero backoff should skip sleep callbacks entirely");
+    assert!(
+        slept.is_empty(),
+        "zero backoff should skip sleep callbacks entirely"
+    );
 }
 
 #[test]
@@ -3740,13 +3840,13 @@ fn export_audit_index_contains_task_status_provider_model_and_fingerprint_keys()
             agent_protocol: Some("a2a".to_string()),
             compliance_profile: Some("cn-moderate".to_string()),
             reputation_label: None,
-        reputation_delta: None,
-        reputation_tier: None,
-        reputation_weight_bps: None,
-        reputation_score_bps: None,
-        reputation_rank_ordinal: None,
-        reputation_gap_bps_from_best: None,
-    },
+            reputation_delta: None,
+            reputation_tier: None,
+            reputation_weight_bps: None,
+            reputation_score_bps: None,
+            reputation_rank_ordinal: None,
+            reputation_gap_bps_from_best: None,
+        },
         EnterpriseAuditExportRecord {
             request_id: "r2".to_string(),
             task_id: 7002,
@@ -3760,13 +3860,13 @@ fn export_audit_index_contains_task_status_provider_model_and_fingerprint_keys()
             agent_protocol: Some("a2a".to_string()),
             compliance_profile: Some("cn-moderate".to_string()),
             reputation_label: None,
-        reputation_delta: None,
-        reputation_tier: None,
-        reputation_weight_bps: None,
-        reputation_score_bps: None,
-        reputation_rank_ordinal: None,
-        reputation_gap_bps_from_best: None,
-    },
+            reputation_delta: None,
+            reputation_tier: None,
+            reputation_weight_bps: None,
+            reputation_score_bps: None,
+            reputation_rank_ordinal: None,
+            reputation_gap_bps_from_best: None,
+        },
     ];
 
     let index = build_audit_export_index(&rows);
@@ -3806,13 +3906,13 @@ fn export_audit_index_trims_and_drops_blank_provider_model_or_fingerprint_values
             agent_protocol: Some("a2a".to_string()),
             compliance_profile: Some("cn-moderate".to_string()),
             reputation_label: None,
-        reputation_delta: None,
-        reputation_tier: None,
-        reputation_weight_bps: None,
-        reputation_score_bps: None,
-        reputation_rank_ordinal: None,
-        reputation_gap_bps_from_best: None,
-    },
+            reputation_delta: None,
+            reputation_tier: None,
+            reputation_weight_bps: None,
+            reputation_score_bps: None,
+            reputation_rank_ordinal: None,
+            reputation_gap_bps_from_best: None,
+        },
         EnterpriseAuditExportRecord {
             request_id: "r2".to_string(),
             task_id: 7102,
@@ -3826,13 +3926,13 @@ fn export_audit_index_trims_and_drops_blank_provider_model_or_fingerprint_values
             agent_protocol: Some("a2a".to_string()),
             compliance_profile: Some("cn-moderate".to_string()),
             reputation_label: None,
-        reputation_delta: None,
-        reputation_tier: None,
-        reputation_weight_bps: None,
-        reputation_score_bps: None,
-        reputation_rank_ordinal: None,
-        reputation_gap_bps_from_best: None,
-    },
+            reputation_delta: None,
+            reputation_tier: None,
+            reputation_weight_bps: None,
+            reputation_score_bps: None,
+            reputation_rank_ordinal: None,
+            reputation_gap_bps_from_best: None,
+        },
     ];
 
     let index = build_audit_export_index(&rows);
@@ -3870,13 +3970,13 @@ fn export_audit_index_normalizes_uppercase_fingerprint_variants() {
             agent_protocol: Some("a2a".to_string()),
             compliance_profile: Some("cn-moderate".to_string()),
             reputation_label: None,
-        reputation_delta: None,
-        reputation_tier: None,
-        reputation_weight_bps: None,
-        reputation_score_bps: None,
-        reputation_rank_ordinal: None,
-        reputation_gap_bps_from_best: None,
-    },
+            reputation_delta: None,
+            reputation_tier: None,
+            reputation_weight_bps: None,
+            reputation_score_bps: None,
+            reputation_rank_ordinal: None,
+            reputation_gap_bps_from_best: None,
+        },
         EnterpriseAuditExportRecord {
             request_id: "r2".to_string(),
             task_id: 7202,
@@ -3890,13 +3990,13 @@ fn export_audit_index_normalizes_uppercase_fingerprint_variants() {
             agent_protocol: Some("a2a".to_string()),
             compliance_profile: Some("cn-moderate".to_string()),
             reputation_label: None,
-        reputation_delta: None,
-        reputation_tier: None,
-        reputation_weight_bps: None,
-        reputation_score_bps: None,
-        reputation_rank_ordinal: None,
-        reputation_gap_bps_from_best: None,
-    },
+            reputation_delta: None,
+            reputation_tier: None,
+            reputation_weight_bps: None,
+            reputation_score_bps: None,
+            reputation_rank_ordinal: None,
+            reputation_gap_bps_from_best: None,
+        },
     ];
 
     let index = build_audit_export_index(&rows);
@@ -3923,13 +4023,13 @@ fn export_audit_index_normalizes_agent_protocol_aliases_to_canonical_keys() {
             agent_protocol: Some("A2A-JSON-RPC-V2".to_string()),
             compliance_profile: Some("cn-moderate".to_string()),
             reputation_label: None,
-        reputation_delta: None,
-        reputation_tier: None,
-        reputation_weight_bps: None,
-        reputation_score_bps: None,
-        reputation_rank_ordinal: None,
-        reputation_gap_bps_from_best: None,
-    },
+            reputation_delta: None,
+            reputation_tier: None,
+            reputation_weight_bps: None,
+            reputation_score_bps: None,
+            reputation_rank_ordinal: None,
+            reputation_gap_bps_from_best: None,
+        },
         EnterpriseAuditExportRecord {
             request_id: "r2".to_string(),
             task_id: 7252,
@@ -3943,13 +4043,13 @@ fn export_audit_index_normalizes_agent_protocol_aliases_to_canonical_keys() {
             agent_protocol: Some(" model-context-protocol / stdio v1 ".to_string()),
             compliance_profile: Some("cn-moderate".to_string()),
             reputation_label: None,
-        reputation_delta: None,
-        reputation_tier: None,
-        reputation_weight_bps: None,
-        reputation_score_bps: None,
-        reputation_rank_ordinal: None,
-        reputation_gap_bps_from_best: None,
-    },
+            reputation_delta: None,
+            reputation_tier: None,
+            reputation_weight_bps: None,
+            reputation_score_bps: None,
+            reputation_rank_ordinal: None,
+            reputation_gap_bps_from_best: None,
+        },
         EnterpriseAuditExportRecord {
             request_id: "r3".to_string(),
             task_id: 7253,
@@ -3963,13 +4063,13 @@ fn export_audit_index_normalizes_agent_protocol_aliases_to_canonical_keys() {
             agent_protocol: Some("Google-Agent-to-Agent-Streamable-HTTP-v1".to_string()),
             compliance_profile: Some("cn-moderate".to_string()),
             reputation_label: None,
-        reputation_delta: None,
-        reputation_tier: None,
-        reputation_weight_bps: None,
-        reputation_score_bps: None,
-        reputation_rank_ordinal: None,
-        reputation_gap_bps_from_best: None,
-    },
+            reputation_delta: None,
+            reputation_tier: None,
+            reputation_weight_bps: None,
+            reputation_score_bps: None,
+            reputation_rank_ordinal: None,
+            reputation_gap_bps_from_best: None,
+        },
     ];
 
     let index = build_audit_export_index(&rows);
@@ -4000,13 +4100,13 @@ fn export_audit_index_normalizes_compliance_profile_aliases_to_canonical_keys() 
             agent_protocol: Some("a2a".to_string()),
             compliance_profile: Some("CN_PII_RESTRICTED".to_string()),
             reputation_label: None,
-        reputation_delta: None,
-        reputation_tier: None,
-        reputation_weight_bps: None,
-        reputation_score_bps: None,
-        reputation_rank_ordinal: None,
-        reputation_gap_bps_from_best: None,
-    },
+            reputation_delta: None,
+            reputation_tier: None,
+            reputation_weight_bps: None,
+            reputation_score_bps: None,
+            reputation_rank_ordinal: None,
+            reputation_gap_bps_from_best: None,
+        },
         EnterpriseAuditExportRecord {
             request_id: "r2".to_string(),
             task_id: 7282,
@@ -4020,13 +4120,13 @@ fn export_audit_index_normalizes_compliance_profile_aliases_to_canonical_keys() 
             agent_protocol: Some("a2a".to_string()),
             compliance_profile: Some(" cn/pii/restricted ".to_string()),
             reputation_label: None,
-        reputation_delta: None,
-        reputation_tier: None,
-        reputation_weight_bps: None,
-        reputation_score_bps: None,
-        reputation_rank_ordinal: None,
-        reputation_gap_bps_from_best: None,
-    },
+            reputation_delta: None,
+            reputation_tier: None,
+            reputation_weight_bps: None,
+            reputation_score_bps: None,
+            reputation_rank_ordinal: None,
+            reputation_gap_bps_from_best: None,
+        },
     ];
 
     let index = build_audit_export_index(&rows);
@@ -4058,13 +4158,13 @@ fn export_audit_index_drops_non_ascii_or_controlled_fingerprints() {
             agent_protocol: Some("a2a".to_string()),
             compliance_profile: Some("cn-moderate".to_string()),
             reputation_label: None,
-        reputation_delta: None,
-        reputation_tier: None,
-        reputation_weight_bps: None,
-        reputation_score_bps: None,
-        reputation_rank_ordinal: None,
-        reputation_gap_bps_from_best: None,
-    },
+            reputation_delta: None,
+            reputation_tier: None,
+            reputation_weight_bps: None,
+            reputation_score_bps: None,
+            reputation_rank_ordinal: None,
+            reputation_gap_bps_from_best: None,
+        },
         EnterpriseAuditExportRecord {
             request_id: "r2".to_string(),
             task_id: 7302,
@@ -4078,13 +4178,13 @@ fn export_audit_index_drops_non_ascii_or_controlled_fingerprints() {
             agent_protocol: Some("a2a".to_string()),
             compliance_profile: Some("cn-moderate".to_string()),
             reputation_label: None,
-        reputation_delta: None,
-        reputation_tier: None,
-        reputation_weight_bps: None,
-        reputation_score_bps: None,
-        reputation_rank_ordinal: None,
-        reputation_gap_bps_from_best: None,
-    },
+            reputation_delta: None,
+            reputation_tier: None,
+            reputation_weight_bps: None,
+            reputation_score_bps: None,
+            reputation_rank_ordinal: None,
+            reputation_gap_bps_from_best: None,
+        },
         EnterpriseAuditExportRecord {
             request_id: "r3".to_string(),
             task_id: 7303,
@@ -4098,13 +4198,13 @@ fn export_audit_index_drops_non_ascii_or_controlled_fingerprints() {
             agent_protocol: Some("a2a".to_string()),
             compliance_profile: Some("cn-moderate".to_string()),
             reputation_label: None,
-        reputation_delta: None,
-        reputation_tier: None,
-        reputation_weight_bps: None,
-        reputation_score_bps: None,
-        reputation_rank_ordinal: None,
-        reputation_gap_bps_from_best: None,
-    },
+            reputation_delta: None,
+            reputation_tier: None,
+            reputation_weight_bps: None,
+            reputation_score_bps: None,
+            reputation_rank_ordinal: None,
+            reputation_gap_bps_from_best: None,
+        },
     ];
 
     let index = build_audit_export_index(&rows);
@@ -4131,13 +4231,13 @@ fn query_audit_export_by_task_id_uses_index_offsets() {
             agent_protocol: Some("a2a".to_string()),
             compliance_profile: Some("cn-moderate".to_string()),
             reputation_label: None,
-        reputation_delta: None,
-        reputation_tier: None,
-        reputation_weight_bps: None,
-        reputation_score_bps: None,
-        reputation_rank_ordinal: None,
-        reputation_gap_bps_from_best: None,
-    },
+            reputation_delta: None,
+            reputation_tier: None,
+            reputation_weight_bps: None,
+            reputation_score_bps: None,
+            reputation_rank_ordinal: None,
+            reputation_gap_bps_from_best: None,
+        },
         EnterpriseAuditExportRecord {
             request_id: "r2".to_string(),
             task_id: 7002,
@@ -4151,13 +4251,13 @@ fn query_audit_export_by_task_id_uses_index_offsets() {
             agent_protocol: Some("a2a".to_string()),
             compliance_profile: Some("cn-moderate".to_string()),
             reputation_label: None,
-        reputation_delta: None,
-        reputation_tier: None,
-        reputation_weight_bps: None,
-        reputation_score_bps: None,
-        reputation_rank_ordinal: None,
-        reputation_gap_bps_from_best: None,
-    },
+            reputation_delta: None,
+            reputation_tier: None,
+            reputation_weight_bps: None,
+            reputation_score_bps: None,
+            reputation_rank_ordinal: None,
+            reputation_gap_bps_from_best: None,
+        },
     ];
 
     let index = build_audit_export_index(&rows);
