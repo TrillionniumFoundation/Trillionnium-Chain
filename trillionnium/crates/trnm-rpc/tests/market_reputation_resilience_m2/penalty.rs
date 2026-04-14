@@ -105,7 +105,9 @@ fn market_match_clamps_negative_reputation_penalty_explainability_to_configured_
     assert_eq!(reputation_weight, 0);
     assert_eq!(penalty, 4u128 * reputation_weight_unit);
     assert_eq!(
-        matched["reputation_penalty"].as_u64().expect("reputation_penalty") as u128,
+        matched["reputation_penalty"]
+            .as_u64()
+            .expect("reputation_penalty") as u128,
         penalty
     );
     assert_eq!(
@@ -227,7 +229,9 @@ fn market_match_exposes_penalty_explainability_fields_for_negative_reputation_wi
     assert_eq!(reputation_weight, 0);
     assert_eq!(penalty, 3u128 * reputation_weight_unit);
     assert_eq!(
-        matched["reputation_penalty"].as_u64().expect("reputation_penalty") as u128,
+        matched["reputation_penalty"]
+            .as_u64()
+            .expect("reputation_penalty") as u128,
         penalty
     );
     assert_eq!(

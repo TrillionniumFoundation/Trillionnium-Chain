@@ -643,7 +643,9 @@ fn contract_public_read_payloads_reject_unknown_top_level_fields() {
         }
     }))
     .expect_err("nested task metering policy contract should fail closed on unknown fields");
-    assert!(nested_task_metering_policy_err.to_string().contains("unexpected"));
+    assert!(nested_task_metering_policy_err
+        .to_string()
+        .contains("unexpected"));
 
     let nested_task_metering_derived_err = serde_json::from_value::<TaskQueryResponse>(json!({
         "task_id":7,
@@ -688,7 +690,9 @@ fn contract_public_read_payloads_reject_unknown_top_level_fields() {
         }
     }))
     .expect_err("nested task metering derived contract should fail closed on unknown fields");
-    assert!(nested_task_metering_derived_err.to_string().contains("unexpected"));
+    assert!(nested_task_metering_derived_err
+        .to_string()
+        .contains("unexpected"));
 
     let gov_param_err = serde_json::from_value::<GovParamQueryResponse>(json!({
         "key_id":1,

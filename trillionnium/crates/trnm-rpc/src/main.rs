@@ -2807,6 +2807,14 @@ fn market_reputation_score_delta(breakdown: &MarketScoreBreakdown) -> i128 {
     }
 }
 
+fn market_reputation_component_applied(breakdown: &MarketScoreBreakdown) -> u128 {
+    if breakdown.effective_reputation >= 0 {
+        breakdown.reputation_reward
+    } else {
+        breakdown.penalty
+    }
+}
+
 fn market_score_breakdown(
     price: u128,
     reputation: i64,
@@ -4845,7 +4853,7 @@ fn serve_health(host: &str, port: u16) -> Result<()> {
                                 });
                                 json_response_for_method(method, "200 OK", &body)
                             }
-                            Err(err) => event_query_error_response(method, &err)
+                            Err(err) => event_query_error_response(method, &err),
                         }
                     }
                     (_, Err(err)) => http_response_for_method(method, &err),
@@ -5525,9 +5533,9 @@ fn event_query_error_response(method: &str, err: &anyhow::Error) -> String {
         ("404 Not Found", "NOT_FOUND")
     } else if message.starts_with("event query adapter fallback disabled for task ") {
         ("409 Conflict", "SETTLEMENT_AWARE_EVENT_QUERY_REQUIRED")
-    } else if message.starts_with(
-        "event query blocked by settlement rpc contract violation for task ",
-    ) {
+    } else if message
+        .starts_with("event query blocked by settlement rpc contract violation for task ")
+    {
         (
             "500 Internal Server Error",
             "SETTLEMENT_RPC_CONTRACT_VIOLATION",
@@ -6556,10 +6564,25 @@ fn main() -> Result<()> {
                 .unwrap_or(0);
             let breakdown = market_score_breakdown(winner.price, winner_reputation, score_cfg);
             let winner_reputation_effective = breakdown.effective_reputation;
+            let winner_reputation_clamp_max = clamp_reputation_for_market(i64::MAX, score_cfg);
+            let winner_reputation_clamp_min = -winner_reputation_clamp_max;
             let base_score = breakdown.base_score;
             let reputation_weight = breakdown.reputation_reward;
             let penalty = breakdown.penalty;
+            let reputation_component_applied = market_reputation_component_applied(&breakdown);
             let reputation_score_delta = market_reputation_score_delta(&breakdown);
+            let reputation_adjustment_amount = if reputation_score_delta < 0 {
+                reputation_weight
+            } else {
+                penalty
+            };
+            let reputation_adjustment_direction = if reputation_score_delta < 0 {
+                "reward"
+            } else if reputation_score_delta > 0 {
+                "penalty"
+            } else {
+                "neutral"
+            };
             let winner_score = breakdown.effective_score;
 
             task.status = "matched".into();
@@ -6576,7 +6599,9 @@ fn main() -> Result<()> {
                 "winner_reputation_lookup_key": winner_reputation_lookup_key,
                 "winner_reputation_lookup_missing": winner_reputation_lookup_missing,
                 "winner_reputation_effective": winner_reputation_effective,
-                "winner_reputation_clamp_limit": clamp_reputation_for_market(i64::MAX, score_cfg),
+                "winner_reputation_clamp_min": winner_reputation_clamp_min,
+                "winner_reputation_clamp_max": winner_reputation_clamp_max,
+                "winner_reputation_clamp_limit": winner_reputation_clamp_max,
                 "winner_reputation_clamped": winner_reputation != winner_reputation_effective,
                 "score_floor_applied": breakdown.score_floor_applied,
                 "price_weight_unit": score_cfg.price_weight,
@@ -6584,8 +6609,16 @@ fn main() -> Result<()> {
                 "price_component": base_score,
                 "reputation_weight_unit": score_cfg.reputation_weight,
                 "reputation_weight": reputation_weight,
+                "reputation_weight_applied": reputation_component_applied,
+                "reputation_component": reputation_component_applied,
                 "reputation_reward": reputation_weight,
+                "reputation_reward_amount": reputation_weight,
                 "penalty": penalty,
+                "reputation_penalty": penalty,
+                "reputation_penalty_amount": penalty,
+                "penalty_amount": penalty,
+                "reputation_adjustment_direction": reputation_adjustment_direction,
+                "reputation_adjustment_amount": reputation_adjustment_amount,
                 "reputation_score_delta": reputation_score_delta,
                 "final_score": winner_score,
                 "effective_score": winner_score,
@@ -7407,15 +7440,13 @@ mod tests {
     }
 
     #[test]
-    fn parse_query_normalized_audit_events_query_from_path_accepts_wrapped_values() {
-        let out = parse_query_normalized_audit_events_query_from_path(
+    fn parse_query_normalized_audit_events_query_from_path_rejects_wrapped_values() {
+        let err = parse_query_normalized_audit_events_query_from_path(
             "/query-normalized-audit-events?source='trnm.task'&eventType=`trnm.task.commit`&limit=\"3\"&cursor=  '2'  ",
         )
-        .expect("wrapped values should normalize");
-        assert_eq!(out.source.as_deref(), Some("trnm.task"));
-        assert_eq!(out.event_type.as_deref(), Some("trnm.task.commit"));
-        assert_eq!(out.limit, 3);
-        assert_eq!(out.cursor, Some(2));
+        .expect_err("wrapped values with raw query whitespace must fail closed");
+        assert!(err.contains("400 Bad Request"));
+        assert!(err.contains("invalid query"));
     }
 
     #[test]
@@ -10302,6 +10333,7 @@ mod tests {
                     worker_slash_rebate_per_work_unit_num: 1,
                     worker_slash_rebate_per_work_unit_den: 384,
                 }),
+                settlement: None,
             }),
             worker: Some("worker-a".into()),
             committed_hash: None,
@@ -10365,6 +10397,7 @@ mod tests {
                     worker_slash_rebate_per_work_unit_num: 1,
                     worker_slash_rebate_per_work_unit_den: 384,
                 }),
+                settlement: None,
             }),
             worker: Some("worker-a".into()),
             committed_hash: None,
@@ -13511,13 +13544,16 @@ line2
         assert!(response.starts_with("HTTP/1.1 409 Conflict\r\n"));
         assert!(response.contains("\"code\":\"SETTLEMENT_AWARE_TASK_QUERY_REQUIRED\""));
         assert!(response.contains("authoritative settlement summary exists"));
-        assert!(response
-            .contains("\"settlement_reason\":\"AUTHORITATIVE_SETTLEMENT_SUMMARY_EXISTS\""));
+        assert!(
+            response.contains("\"settlement_reason\":\"AUTHORITATIVE_SETTLEMENT_SUMMARY_EXISTS\"")
+        );
         assert!(response.contains("\"query_settlement_preview\":\"/query-settlement-preview/42\""));
-        assert!(response
-            .contains("\"query_consumption_summary\":\"/query-consumption-summary/42\""));
-        assert!(response
-            .contains("\"query_consumption_receipts\":\"/query-consumption-receipts/42\""));
+        assert!(
+            response.contains("\"query_consumption_summary\":\"/query-consumption-summary/42\"")
+        );
+        assert!(
+            response.contains("\"query_consumption_receipts\":\"/query-consumption-receipts/42\"")
+        );
     }
 
     #[test]
@@ -13530,8 +13566,9 @@ line2
         assert!(response.contains("\"code\":\"SETTLEMENT_AWARE_TASK_QUERY_REQUIRED\""));
         assert!(response
             .contains("\"settlement_reason\":\"AUTHORITATIVE_SETTLEMENT_SUMMARY_REQUIRED\""));
-        assert!(response
-            .contains("\"query_consumption_receipts\":\"/query-consumption-receipts/42\""));
+        assert!(
+            response.contains("\"query_consumption_receipts\":\"/query-consumption-receipts/42\"")
+        );
     }
 
     #[test]
@@ -13552,13 +13589,16 @@ line2
         assert!(response.starts_with("HTTP/1.1 409 Conflict\r\n"));
         assert!(response.contains("\"code\":\"SETTLEMENT_AWARE_EVENT_QUERY_REQUIRED\""));
         assert!(response.contains("authoritative settlement summary exists"));
-        assert!(response
-            .contains("\"settlement_reason\":\"AUTHORITATIVE_SETTLEMENT_SUMMARY_EXISTS\""));
+        assert!(
+            response.contains("\"settlement_reason\":\"AUTHORITATIVE_SETTLEMENT_SUMMARY_EXISTS\"")
+        );
         assert!(response.contains("\"query_settlement_preview\":\"/query-settlement-preview/42\""));
-        assert!(response
-            .contains("\"query_consumption_summary\":\"/query-consumption-summary/42\""));
-        assert!(response
-            .contains("\"query_consumption_receipts\":\"/query-consumption-receipts/42\""));
+        assert!(
+            response.contains("\"query_consumption_summary\":\"/query-consumption-summary/42\"")
+        );
+        assert!(
+            response.contains("\"query_consumption_receipts\":\"/query-consumption-receipts/42\"")
+        );
     }
 
     #[test]
@@ -13571,8 +13611,9 @@ line2
         assert!(response.contains("\"code\":\"SETTLEMENT_AWARE_EVENT_QUERY_REQUIRED\""));
         assert!(response
             .contains("\"settlement_reason\":\"AUTHORITATIVE_SETTLEMENT_SUMMARY_REQUIRED\""));
-        assert!(response
-            .contains("\"query_consumption_receipts\":\"/query-consumption-receipts/42\""));
+        assert!(
+            response.contains("\"query_consumption_receipts\":\"/query-consumption-receipts/42\"")
+        );
     }
 
     #[test]

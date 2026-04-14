@@ -1196,7 +1196,11 @@ pub fn verify_session_proof(resp: &RelaySessionProofResponse) -> Result<()> {
     if resp.proof_count != resp.proofs.len() as u32 {
         bail!("proof_count does not match proofs length");
     }
-    let total_proof_steps: u32 = resp.proofs.iter().map(|entry| entry.proof.len() as u32).sum();
+    let total_proof_steps: u32 = resp
+        .proofs
+        .iter()
+        .map(|entry| entry.proof.len() as u32)
+        .sum();
     if resp.total_proof_steps != total_proof_steps {
         bail!("total_proof_steps does not match proof payload");
     }
@@ -2051,10 +2055,15 @@ mod tests {
             })
             .unwrap();
 
-        proof.segment_root_hex = format!("\u{FFF9}\u{E0001}0x{}\u{E007F}\u{FFFB}", proof.segment_root_hex);
+        proof.segment_root_hex = format!(
+            "\u{FFF9}\u{E0001}0x{}\u{E007F}\u{FFFB}",
+            proof.segment_root_hex
+        );
         for entry in proof.proofs.iter_mut() {
-            entry.leaf_hash_hex =
-                format!("\u{034F}\u{FE0F}{}\u{E0100}", entry.leaf_hash_hex.to_uppercase());
+            entry.leaf_hash_hex = format!(
+                "\u{034F}\u{FE0F}{}\u{E0100}",
+                entry.leaf_hash_hex.to_uppercase()
+            );
             for step in entry.proof.iter_mut() {
                 step.sibling_hash_hex = format!(
                     "\u{061C}\u{2061}0X{}\u{2064}\u{180F}",
@@ -2957,9 +2966,8 @@ mod tests {
 
         // Tag/BOM/variation-selector noise must also collapse into the same proof
         // attribution bucket instead of creating visually identical aliases.
-        let canonical_tag_noise = canonicalize_risk_source(Some(
-            "proof\u{FEFF}\u{E0020}\u{FE0F}source",
-        ));
+        let canonical_tag_noise =
+            canonicalize_risk_source(Some("proof\u{FEFF}\u{E0020}\u{FE0F}source"));
         assert_eq!(canonical_tag_noise, "proof source");
 
         // Lowercase/no-whitespace aliases should keep byte shape for hot-path speed.
@@ -3220,7 +3228,9 @@ mod tests {
                 to_seq: 1,
                 source: Some("proof-src".into()),
             })
-            .expect("full proof quota budget should remain available after rejected zero-from requests");
+            .expect(
+                "full proof quota budget should remain available after rejected zero-from requests",
+            );
 
         let err = relay
             .query_session_proof(RelaySessionProofQuery {

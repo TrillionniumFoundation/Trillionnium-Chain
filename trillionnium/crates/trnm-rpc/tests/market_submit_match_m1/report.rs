@@ -33,7 +33,10 @@ fn market_report_returns_zeroed_metrics_for_empty_state() {
     assert_eq!(report["match_config"]["reputation_weight"], 100);
     assert_eq!(report["match_config"]["reputation_clamp"], 1000);
     assert_eq!(report["match_config"]["max_reputation_score_delta"], 100000);
-    assert_eq!(report["match_config"]["min_reputation_score_delta"], -100000);
+    assert_eq!(
+        report["match_config"]["min_reputation_score_delta"],
+        -100000
+    );
 }
 
 #[test]

@@ -617,13 +617,18 @@ fn market_match_fails_closed_for_invalid_wrapped_weight_envs_in_output_config() 
         cfg.get("reputation_weight").and_then(Value::as_u64),
         Some(100)
     );
-    assert_eq!(cfg.get("reputation_clamp").and_then(Value::as_i64), Some(1000));
     assert_eq!(
-        cfg.get("max_reputation_score_delta").and_then(Value::as_u64),
+        cfg.get("reputation_clamp").and_then(Value::as_i64),
+        Some(1000)
+    );
+    assert_eq!(
+        cfg.get("max_reputation_score_delta")
+            .and_then(Value::as_u64),
         Some(100_000)
     );
     assert_eq!(
-        cfg.get("min_reputation_score_delta").and_then(Value::as_i64),
+        cfg.get("min_reputation_score_delta")
+            .and_then(Value::as_i64),
         Some(-100_000)
     );
     assert_eq!(matched["match_policy"], "price_reputation_weighted");
@@ -695,7 +700,10 @@ fn market_match_clamps_wrapped_overflow_weight_envs_in_output_config() {
     let cfg = matched["match_config"]
         .as_object()
         .expect("match_config object");
-    assert_eq!(cfg.get("price_weight").and_then(Value::as_u64), Some(1_000_000));
+    assert_eq!(
+        cfg.get("price_weight").and_then(Value::as_u64),
+        Some(1_000_000)
+    );
     assert_eq!(
         cfg.get("reputation_weight").and_then(Value::as_u64),
         Some(1_000_000)
@@ -705,11 +713,13 @@ fn market_match_clamps_wrapped_overflow_weight_envs_in_output_config() {
         Some(1_000_000)
     );
     assert_eq!(
-        cfg.get("max_reputation_score_delta").and_then(Value::as_u64),
+        cfg.get("max_reputation_score_delta")
+            .and_then(Value::as_u64),
         Some(1_000_000_000_000)
     );
     assert_eq!(
-        cfg.get("min_reputation_score_delta").and_then(Value::as_i64),
+        cfg.get("min_reputation_score_delta")
+            .and_then(Value::as_i64),
         Some(-1_000_000_000_000)
     );
     assert_eq!(matched["match_policy"], "price_reputation_weighted");

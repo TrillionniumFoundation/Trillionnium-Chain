@@ -432,9 +432,7 @@ mod tests {
         let err = replay_step(&mut source, &mut sink, &mut cursor, Some(3), 5_000)
             .expect_err("wrapped replay hash must fail closed");
 
-        assert!(err
-            .to_string()
-            .contains("non-canonical replay block hash"));
+        assert!(err.to_string().contains("non-canonical replay block hash"));
         assert_eq!(cursor.next_height, 4);
         assert!(sink.persisted.is_empty());
     }
