@@ -432,7 +432,6 @@ fn task_metadata_compatibility_truth_table_settlement_threading_serialization_ke
                 "output_hash": format!("0x{}", "d".repeat(64)),
                 "output_token_count": 512,
                 "output_root": format!("0x{}", "e".repeat(64)),
-                "output_span_commitment": null,
             }
         })
     );

@@ -139,9 +139,9 @@ pub struct TaskSettlementSnapshot {
     pub tokenizer_version: String,
     pub output_hash: String,
     pub output_token_count: u64,
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     pub output_root: Option<String>,
-    #[serde(default)]
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     pub output_span_commitment: Option<String>,
 }
 
