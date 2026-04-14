@@ -93,6 +93,10 @@ fn default_task_metering_ratio_denominator() -> u128 {
     1
 }
 
+fn default_task_settlement_schema() -> String {
+    "poco_v1".to_string()
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct TaskMeteringSnapshot {
     pub workload_class: String,
@@ -125,6 +129,20 @@ pub struct TaskMeteringSnapshot {
     pub worker_slash_rebate_per_work_unit_num: u128,
     #[serde(default = "default_task_metering_ratio_denominator")]
     pub worker_slash_rebate_per_work_unit_den: u128,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct TaskSettlementSnapshot {
+    #[serde(default = "default_task_settlement_schema")]
+    pub settlement_schema: String,
+    pub tokenizer_id: String,
+    pub tokenizer_version: String,
+    pub output_hash: String,
+    pub output_token_count: u64,
+    #[serde(default)]
+    pub output_root: Option<String>,
+    #[serde(default)]
+    pub output_span_commitment: Option<String>,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, Default)]
@@ -219,6 +237,37 @@ impl TaskMeteringSnapshot {
         has_canonical_metadata_atom(&self.workload_class)
             && has_canonical_metadata_atom(&self.metering_schema)
             && has_canonical_metadata_atom(&self.receipt_hash)
+    }
+}
+
+impl TaskSettlementSnapshot {
+    pub fn has_complete_core_fields(&self) -> bool {
+        let output_root_canonical = self
+            .output_root
+            .as_deref()
+            .map(has_canonical_metadata_atom)
+            .unwrap_or(false);
+        let output_span_commitment_canonical = self
+            .output_span_commitment
+            .as_deref()
+            .map(has_canonical_metadata_atom)
+            .unwrap_or(false);
+
+        has_canonical_metadata_atom(&self.settlement_schema)
+            && has_canonical_metadata_atom(&self.tokenizer_id)
+            && has_canonical_metadata_atom(&self.tokenizer_version)
+            && has_canonical_metadata_atom(&self.output_hash)
+            && self
+                .output_root
+                .as_deref()
+                .map(has_canonical_metadata_atom)
+                .unwrap_or(true)
+            && self
+                .output_span_commitment
+                .as_deref()
+                .map(has_canonical_metadata_atom)
+                .unwrap_or(true)
+            && (output_root_canonical || output_span_commitment_canonical)
     }
 }
 
@@ -555,6 +604,36 @@ mod tests {
         assert_eq!(tx.id, 1);
         assert_eq!(TaskStatus::Open, TaskStatus::Open);
         assert_eq!(GovProposalStatus::Draft, GovProposalStatus::Draft);
+    }
+
+    #[test]
+    fn task_settlement_snapshot_core_fields_accept_output_root_binding() {
+        let snapshot = TaskSettlementSnapshot {
+            settlement_schema: "poco_v1".into(),
+            tokenizer_id: "llama3-tokenizer".into(),
+            tokenizer_version: "1.0.0".into(),
+            output_hash: format!("0x{}", "a".repeat(64)),
+            output_token_count: 512,
+            output_root: Some(format!("0x{}", "b".repeat(64))),
+            output_span_commitment: None,
+        };
+
+        assert!(snapshot.has_complete_core_fields());
+    }
+
+    #[test]
+    fn task_settlement_snapshot_core_fields_accept_output_span_commitment_binding() {
+        let snapshot = TaskSettlementSnapshot {
+            settlement_schema: "poco_v1".into(),
+            tokenizer_id: "llama3-tokenizer".into(),
+            tokenizer_version: "1.0.0".into(),
+            output_hash: format!("0x{}", "c".repeat(64)),
+            output_token_count: 512,
+            output_root: None,
+            output_span_commitment: Some(format!("0x{}", "d".repeat(64))),
+        };
+
+        assert!(snapshot.has_complete_core_fields());
     }
 
     #[test]
