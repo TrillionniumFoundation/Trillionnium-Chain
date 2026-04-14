@@ -15316,6 +15316,121 @@ mod tests {
     }
 
     #[test]
+    fn receipt_settlement_event_lines_keep_stable_task_actor_and_challenger_fields() {
+        let mut st = StateStore::default();
+        let _ = st.set_gov_param_bootstrap_unchecked(
+            9_500,
+            "resolve_authority".into(),
+            "resolver-1,resolver-2".into(),
+        );
+
+        let result_hash = [0x2c; 32];
+        put_sample_poco_task(&mut st, 42, "worker-alpha", result_hash);
+
+        let receipt =
+            sample_consumption_receipt(42, "worker-alpha", "consumer-bravo", result_hash);
+
+        let submit_tx = MockTx::SubmitConsumptionReceipt {
+            receipt: receipt.clone(),
+        };
+        let submit_signer = verified_signer_of(&st, &submit_tx);
+        apply_one(&mut st, submit_tx.clone(), 10).expect("apply receipt");
+        let submit_line = format_apply_event_line(
+            &st,
+            &submit_tx,
+            &submit_signer,
+            10,
+            10,
+            "Completed",
+            "Completed",
+            "root-submit-stable-fields",
+            &EventDelta {
+                numeric: Some(0),
+                text: "0".to_string(),
+            },
+            None,
+            None,
+            None,
+            140,
+        );
+        assert!(submit_line.contains("event_type=submit_consumption_receipt"));
+        assert!(submit_line.contains("task_id=42"));
+        assert!(submit_line.contains("actor=consumer-bravo"));
+        assert!(submit_line.contains("signer=consumer-bravo"));
+        assert!(submit_line.contains("challenger=-"));
+
+        let challenge_tx = MockTx::ChallengeConsumptionReceipt {
+            key: receipt.replay_key(),
+            challenger: "auditor-1".to_string(),
+        };
+        let challenge_signer = verified_signer_of(&st, &challenge_tx);
+        apply_one(&mut st, challenge_tx.clone(), 11).expect("challenge receipt");
+        let challenge_line = format_apply_event_line(
+            &st,
+            &challenge_tx,
+            &challenge_signer,
+            11,
+            11,
+            "Completed",
+            "Completed",
+            "root-challenge-stable-fields",
+            &EventDelta {
+                numeric: Some(0),
+                text: "0".to_string(),
+            },
+            Some(&EventDelta {
+                numeric: Some(0),
+                text: "0".to_string(),
+            }),
+            None,
+            None,
+            141,
+        );
+        assert!(challenge_line.contains("event_type=challenge_consumption_receipt"));
+        assert!(challenge_line.contains("task_id=42"));
+        assert!(challenge_line.contains("actor=auditor-1"));
+        assert!(challenge_line.contains("signer=auditor-1"));
+        assert!(challenge_line.contains("challenger=auditor-1"));
+
+        let resolve_tx = MockTx::ResolveConsumptionReceipt {
+            key: receipt.replay_key(),
+            decision: ConsumptionResolveDecision::Discount,
+            credited_consumption_units: Some(9),
+            resolution_code: None,
+            resolver: "resolver-1".to_string(),
+        };
+        let resolve_signer = verified_signer_of(&st, &resolve_tx);
+        let resolve_challenger = preapply_challenger_account_of(&st, &resolve_tx);
+        apply_one(&mut st, resolve_tx.clone(), 12).expect("resolve receipt");
+        let resolve_line = format_apply_event_line(
+            &st,
+            &resolve_tx,
+            &resolve_signer,
+            12,
+            12,
+            "Completed",
+            "Completed",
+            "root-resolve-stable-fields",
+            &EventDelta {
+                numeric: Some(0),
+                text: "0".to_string(),
+            },
+            Some(&EventDelta {
+                numeric: Some(0),
+                text: "0".to_string(),
+            }),
+            resolve_challenger.as_deref(),
+            None,
+            142,
+        );
+        assert!(resolve_line.contains("event_type=resolve_consumption_receipt"));
+        assert!(resolve_line.contains("task_id=42"));
+        assert!(resolve_line.contains("actor=resolver-1"));
+        assert!(resolve_line.contains("signer=resolver-1"));
+        assert!(resolve_line.contains("challenger=auditor-1"));
+    }
+
+    #[test]
     fn receipt_settlement_conflict_refs_stay_canonical_across_receipt_lifecycle() {
         let result_hash = [0x2b; 32];
         let receipt = sample_consumption_receipt(42, "worker-alpha", "consumer-bravo", result_hash);
