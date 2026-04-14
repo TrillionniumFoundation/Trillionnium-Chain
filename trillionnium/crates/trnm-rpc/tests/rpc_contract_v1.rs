@@ -221,6 +221,7 @@ fn contract_task_shape_omits_optional_fields_when_absent() {
         metadata_primary_compatibility_finding: None,
         metadata_compatibility_findings: None,
         metering: None,
+        settlement_preview: None,
     })
     .unwrap();
     assert_eq!(

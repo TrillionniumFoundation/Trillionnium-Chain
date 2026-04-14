@@ -1525,6 +1525,7 @@ fn query_task_from_state_snapshot(task_id: u64, tasks: &[TaskObject]) -> Option<
             .and_then(|snapshot| {
                 task_metering_query_response(snapshot, task_status_path(task.status))
             }),
+        settlement_preview: None,
     })
 }
 
@@ -4146,6 +4147,7 @@ fn query_task_from_node_events(
         metadata_primary_compatibility_finding: None,
         metadata_compatibility_findings: None,
         metering: None,
+        settlement_preview: None,
     })
 }
 
@@ -4245,10 +4247,21 @@ fn query_task_response(
     let task_state_snapshot = load_task_state_snapshot()?;
     let task_from_state_snapshot = query_task_from_state_snapshot(task_id, &task_state_snapshot);
 
-    enforce_settlement_aware_task_query_gate(task_id)?;
+    let authoritative_settlement_preview =
+        authoritative_task_settlement_preview_for_query(task_id)?;
+    let has_authoritative_settlement_preview = authoritative_settlement_preview.is_some();
 
     if let Some(out) = task_from_state_snapshot {
+        let mut out = out;
+        out.settlement_preview = authoritative_settlement_preview;
         return Ok(out);
+    }
+
+    if has_authoritative_settlement_preview {
+        bail!(
+            "task query adapter fallback disabled for task {} because authoritative settlement summary exists",
+            task_id
+        );
     }
 
     if let Some(out) = query_task_from_node_events(task_id, node_events) {
@@ -4297,24 +4310,24 @@ fn query_task_response(
         metadata_primary_compatibility_finding: None,
         metadata_compatibility_findings: None,
         metering: None,
+        settlement_preview: None,
     })
 }
 
-fn enforce_settlement_aware_task_query_gate(task_id: u64) -> Result<()> {
+fn authoritative_task_settlement_preview_for_query(
+    task_id: u64,
+) -> Result<Option<TaskSettlementPreviewQueryResponse>> {
     let st = load_consumption_state_snapshot()?;
 
     if let Some(summary) = st.task_consumption_summary(task_id) {
-        TaskConsumptionSummaryQueryResponse::try_from_authoritative_state_summary(summary)
+        return TaskSettlementPreviewQueryResponse::try_from_authoritative_state_summary(summary)
             .map_err(|_| {
                 anyhow!(
                     "task query blocked by settlement rpc contract violation for task {}",
                     task_id
                 )
-            })?;
-        bail!(
-            "task query adapter fallback disabled for task {} because authoritative settlement summary exists",
-            task_id
-        );
+            })
+            .map(Some);
     }
 
     if !st.consumption_records_for_task(task_id).is_empty() {
@@ -4324,7 +4337,7 @@ fn enforce_settlement_aware_task_query_gate(task_id: u64) -> Result<()> {
         );
     }
 
-    Ok(())
+    Ok(None)
 }
 
 fn consumption_status_label(status: ConsumptionRecordStatus) -> &'static str {
@@ -4435,6 +4448,10 @@ fn settlement_aware_task_query_hint_fields(
             "query_consumption_summary".into(),
             serde_json::json!(format!("/query-consumption-summary/{task_id}")),
         );
+        fields.insert(
+            "query_consumption_receipts".into(),
+            serde_json::json!(format!("/query-consumption-receipts/{task_id}")),
+        );
         return fields;
     }
 
@@ -4526,6 +4543,10 @@ fn settlement_aware_event_query_hint_fields(
         fields.insert(
             "query_consumption_summary".into(),
             serde_json::json!(format!("/query-consumption-summary/{task_id}")),
+        );
+        fields.insert(
+            "query_consumption_receipts".into(),
+            serde_json::json!(format!("/query-consumption-receipts/{task_id}")),
         );
         return fields;
     }
@@ -9806,7 +9827,7 @@ mod tests {
     }
 
     #[test]
-    fn query_task_response_rejects_state_snapshot_when_authoritative_settlement_summary_exists() {
+    fn query_task_response_includes_settlement_preview_for_state_snapshot() {
         let task_state_path = unique_tmp_path("rpc-task-state", "jsonl");
         let consumption_path = unique_tmp_path("rpc-consumption-state", "json");
         let _ = fs::remove_file(&task_state_path);
@@ -9846,13 +9867,28 @@ mod tests {
                 (CONSUMPTION_STATE_FILE_ENV, consumption_path.to_str()),
             ],
             || {
-                let err = query_task_response(42, &[], &[]).expect_err(
-                    "state snapshot task surface must fail closed once authoritative settlement summary exists",
+                let task = query_task_response(42, &[], &[]).expect(
+                    "state snapshot task surface should inline authoritative settlement preview",
                 );
+                assert_eq!(task.task_id, 42);
+                assert_eq!(task.status, TaskStatus::Revealed);
+                assert_eq!(task.worker.as_deref(), Some("worker-a"));
+                assert_eq!(task.bounty, 777);
+                assert_eq!(task.version, 9);
                 assert_eq!(
-                    err.to_string(),
-                    "task query adapter fallback disabled for task 42 because authoritative settlement summary exists"
+                    task.result_hash_hex.as_deref(),
+                    Some("abababababababababababababababababababababababababababababababab")
                 );
+
+                let settlement_preview = task
+                    .settlement_preview
+                    .expect("authoritative settlement preview should be attached");
+                assert_eq!(settlement_preview.task_id, 42);
+                assert_eq!(settlement_preview.receipt_count, 2);
+                assert_eq!(settlement_preview.accepted_receipt_count, 1);
+                assert_eq!(settlement_preview.challenged_receipt_count, 1);
+                assert_eq!(settlement_preview.pending_receipt_count(), Some(0));
+                assert_eq!(settlement_preview.last_settlement_height, Some(88));
             },
         );
 
@@ -12487,13 +12523,13 @@ line2
         assert!(response.starts_with("HTTP/1.1 409 Conflict\r\n"));
         assert!(response.contains("\"code\":\"SETTLEMENT_AWARE_TASK_QUERY_REQUIRED\""));
         assert!(response.contains("authoritative settlement summary exists"));
-        assert!(
-            response.contains("\"settlement_reason\":\"AUTHORITATIVE_SETTLEMENT_SUMMARY_EXISTS\"")
-        );
+        assert!(response
+            .contains("\"settlement_reason\":\"AUTHORITATIVE_SETTLEMENT_SUMMARY_EXISTS\""));
         assert!(response.contains("\"query_settlement_preview\":\"/query-settlement-preview/42\""));
-        assert!(
-            response.contains("\"query_consumption_summary\":\"/query-consumption-summary/42\"")
-        );
+        assert!(response
+            .contains("\"query_consumption_summary\":\"/query-consumption-summary/42\""));
+        assert!(response
+            .contains("\"query_consumption_receipts\":\"/query-consumption-receipts/42\""));
     }
 
     #[test]
@@ -12506,9 +12542,8 @@ line2
         assert!(response.contains("\"code\":\"SETTLEMENT_AWARE_TASK_QUERY_REQUIRED\""));
         assert!(response
             .contains("\"settlement_reason\":\"AUTHORITATIVE_SETTLEMENT_SUMMARY_REQUIRED\""));
-        assert!(
-            response.contains("\"query_consumption_receipts\":\"/query-consumption-receipts/42\"")
-        );
+        assert!(response
+            .contains("\"query_consumption_receipts\":\"/query-consumption-receipts/42\""));
     }
 
     #[test]
@@ -12534,6 +12569,8 @@ line2
         assert!(response.contains("\"query_settlement_preview\":\"/query-settlement-preview/42\""));
         assert!(response
             .contains("\"query_consumption_summary\":\"/query-consumption-summary/42\""));
+        assert!(response
+            .contains("\"query_consumption_receipts\":\"/query-consumption-receipts/42\""));
     }
 
     #[test]

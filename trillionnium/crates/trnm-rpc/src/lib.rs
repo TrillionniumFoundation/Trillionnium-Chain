@@ -88,6 +88,8 @@ pub struct TaskQueryResponse {
     pub metadata_compatibility_findings: Option<Vec<TaskMetadataCompatibilityFinding>>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub metering: Option<TaskMeteringQueryResponse>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub settlement_preview: Option<TaskSettlementPreviewQueryResponse>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -865,6 +867,7 @@ mod tests {
             metadata_primary_compatibility_finding: None,
             metadata_compatibility_findings: None,
             metering: None,
+            settlement_preview: None,
         };
         let v = serde_json::to_value(task).unwrap();
         let obj = v.as_object().unwrap();
@@ -895,9 +898,11 @@ mod tests {
             metadata_primary_compatibility_finding: None,
             metadata_compatibility_findings: None,
             metering: None,
+            settlement_preview: None,
         };
         let v = serde_json::to_value(task).unwrap();
         assert!(v.get("metering").is_none());
+        assert!(v.get("settlement_preview").is_none());
     }
 
     #[test]
@@ -1335,6 +1340,21 @@ mod tests {
                     worker_slash_rebate: 1,
                 },
             }),
+            settlement_preview: Some(
+                TaskSettlementPreviewQueryResponse::try_from_authoritative_summary(
+                    TaskConsumptionSummaryQueryResponse {
+                        task_id: 1,
+                        receipt_count: 2,
+                        accepted_receipt_count: 1,
+                        challenged_receipt_count: 1,
+                        total_consumed_tokens: 160,
+                        total_claimed_consumption_units: 160,
+                        total_credited_consumption_units: 96,
+                        last_settlement_height: Some(88),
+                    },
+                )
+                .expect("authoritative summary should satisfy settlement contract"),
+            ),
         };
         let v = serde_json::to_value(task).unwrap();
         assert_eq!(v["metering"]["normalized_work_units"], json!(192));
@@ -1345,6 +1365,8 @@ mod tests {
         );
         assert_eq!(v["metering"]["derived"]["challenge_bonus_total"], json!(2));
         assert_eq!(v["metering"]["derived"]["accept_floor_pass"], json!(true));
+        assert_eq!(v["settlement_preview"]["receipt_count"], json!(2));
+        assert_eq!(v["settlement_preview"]["last_settlement_height"], json!(88));
     }
 
     #[test]
