@@ -20,6 +20,7 @@ fn restore_task_rejects_terminal_collateral_retention_with_zero_challenge_deadli
                 model: None,
                 provenance: None,
                 metering: None,
+                settlement: None,
             }),
             worker: Some("worker-a".into()),
             committed_hash: Some([0x11; 32]),
@@ -63,6 +64,7 @@ fn restore_task_rejects_terminal_collateral_retention_without_forfeit_outcome() 
                 model: None,
                 provenance: None,
                 metering: None,
+                settlement: None,
             }),
             worker: Some("worker-a".into()),
             committed_hash: Some([0x13; 32]),
@@ -106,6 +108,7 @@ fn restore_task_rejects_slashed_collateral_retention_without_forfeit_outcome() {
                 model: None,
                 provenance: None,
                 metering: None,
+                settlement: None,
             }),
             worker: Some("worker-a".into()),
             committed_hash: Some([0x15; 32]),
@@ -149,6 +152,7 @@ fn restore_task_rejects_slashed_collateral_retention_with_refund_outcome() {
                 model: None,
                 provenance: None,
                 metering: None,
+                settlement: None,
             }),
             worker: Some("worker-a".into()),
             committed_hash: Some([0x16; 32]),
@@ -192,6 +196,7 @@ fn restore_task_rejects_terminal_collateral_retention_with_forfeit_outcome_but_n
                 model: None,
                 provenance: None,
                 metering: None,
+                settlement: None,
             }),
             worker: Some("worker-a".into()),
             committed_hash: Some([0x14; 32]),
@@ -217,7 +222,8 @@ fn restore_task_rejects_terminal_collateral_retention_with_forfeit_outcome_but_n
 }
 
 #[test]
-fn restore_task_rejects_terminal_collateral_retention_with_embedded_control_in_challenger_identity() {
+fn restore_task_rejects_terminal_collateral_retention_with_embedded_control_in_challenger_identity()
+{
     let mut state = StateStore::new();
 
     state.restore_task(
@@ -235,6 +241,7 @@ fn restore_task_rejects_terminal_collateral_retention_with_embedded_control_in_c
                 model: None,
                 provenance: None,
                 metering: None,
+                settlement: None,
             }),
             worker: Some("worker-a".into()),
             committed_hash: Some([0x36; 32]),
@@ -278,6 +285,7 @@ fn restore_task_rejects_terminal_collateral_retention_with_zero_width_challenger
                 model: None,
                 provenance: None,
                 metering: None,
+                settlement: None,
             }),
             worker: Some("worker-a".into()),
             committed_hash: Some([0x37; 32]),
@@ -322,6 +330,7 @@ fn restore_task_rejects_terminal_collateral_retention_with_overlong_challenger_i
                 model: None,
                 provenance: None,
                 metering: None,
+                settlement: None,
             }),
             worker: Some("worker-a".into()),
             committed_hash: Some([0x39; 32]),
@@ -365,6 +374,7 @@ fn restore_task_rejects_terminal_collateral_retention_with_mixed_case_challenger
                 model: None,
                 provenance: None,
                 metering: None,
+                settlement: None,
             }),
             worker: Some("worker-a".into()),
             committed_hash: Some([0x3a; 32]),
@@ -408,6 +418,7 @@ fn restore_task_rejects_terminal_collateral_retention_with_reserved_system_ident
                 model: None,
                 provenance: None,
                 metering: None,
+                settlement: None,
             }),
             worker: Some("worker-a".into()),
             committed_hash: Some([0x44; 32]),
@@ -451,6 +462,7 @@ fn restore_task_rejects_terminal_collateral_retention_with_reserved_challenge_es
                 model: None,
                 provenance: None,
                 metering: None,
+                settlement: None,
             }),
             worker: Some("worker-a".into()),
             committed_hash: Some([0x45; 32]),
@@ -494,6 +506,7 @@ fn restore_task_rejects_terminal_collateral_retention_with_reserved_forfeit_trea
                 model: None,
                 provenance: None,
                 metering: None,
+                settlement: None,
             }),
             worker: Some("worker-a".into()),
             committed_hash: Some([0x77; 32]),
@@ -519,7 +532,8 @@ fn restore_task_rejects_terminal_collateral_retention_with_reserved_forfeit_trea
 }
 
 #[test]
-fn restore_task_rejects_terminal_collateral_retention_with_reserved_worker_slash_treasury_identity() {
+fn restore_task_rejects_terminal_collateral_retention_with_reserved_worker_slash_treasury_identity()
+{
     let mut state = StateStore::new();
 
     state.restore_task(
@@ -537,6 +551,7 @@ fn restore_task_rejects_terminal_collateral_retention_with_reserved_worker_slash
                 model: None,
                 provenance: None,
                 metering: None,
+                settlement: None,
             }),
             worker: Some("worker-a".into()),
             committed_hash: Some([0xaa; 32]),
@@ -562,7 +577,8 @@ fn restore_task_rejects_terminal_collateral_retention_with_reserved_worker_slash
 }
 
 #[test]
-fn restore_task_rejects_terminal_collateral_retention_with_exact_reserved_worker_slashes_treasury_identity() {
+fn restore_task_rejects_terminal_collateral_retention_with_exact_reserved_worker_slashes_treasury_identity(
+) {
     let mut state = StateStore::new();
 
     state.restore_task(
@@ -580,6 +596,7 @@ fn restore_task_rejects_terminal_collateral_retention_with_exact_reserved_worker
                 model: None,
                 provenance: None,
                 metering: None,
+                settlement: None,
             }),
             worker: Some("worker-a".into()),
             committed_hash: Some([0xab; 32]),
@@ -623,6 +640,7 @@ fn restore_task_rejects_terminal_collateral_retention_with_reserved_pause_identi
                 model: None,
                 provenance: None,
                 metering: None,
+                settlement: None,
             }),
             worker: Some("worker-a".into()),
             committed_hash: Some([0xdd; 32]),
@@ -648,7 +666,8 @@ fn restore_task_rejects_terminal_collateral_retention_with_reserved_pause_identi
 }
 
 #[test]
-fn restore_task_rejects_terminal_collateral_retention_with_reserved_resolve_authority_placeholder() {
+fn restore_task_rejects_terminal_collateral_retention_with_reserved_resolve_authority_placeholder()
+{
     let mut state = StateStore::new();
 
     state.restore_task(
@@ -666,6 +685,7 @@ fn restore_task_rejects_terminal_collateral_retention_with_reserved_resolve_auth
                 model: None,
                 provenance: None,
                 metering: None,
+                settlement: None,
             }),
             worker: Some("worker-a".into()),
             committed_hash: Some([0x10; 32]),
@@ -709,6 +729,7 @@ fn restore_task_rejects_terminal_collateral_retention_with_reserved_pause_alias(
                 model: None,
                 provenance: None,
                 metering: None,
+                settlement: None,
             }),
             worker: Some("worker-a".into()),
             committed_hash: Some([0x40; 32]),
@@ -752,6 +773,7 @@ fn restore_task_rejects_terminal_collateral_retention_with_zero_window_snapshot(
                 model: None,
                 provenance: None,
                 metering: None,
+                settlement: None,
             }),
             worker: Some("worker-a".into()),
             committed_hash: Some([0x70; 32]),
@@ -795,6 +817,7 @@ fn restore_task_rejects_slashed_retention_with_stale_challenge_start() {
                 model: None,
                 provenance: None,
                 metering: None,
+                settlement: None,
             }),
             worker: Some("worker-a".into()),
             committed_hash: Some([0x73; 32]),
@@ -838,6 +861,7 @@ fn restore_task_rejects_slashed_retention_with_stale_resolve_deadline() {
                 model: None,
                 provenance: None,
                 metering: None,
+                settlement: None,
             }),
             worker: Some("worker-a".into()),
             committed_hash: Some([0x76; 32]),
@@ -881,6 +905,7 @@ fn restore_task_rejects_terminal_collateral_retention_with_zero_challenge_start(
                 model: None,
                 provenance: None,
                 metering: None,
+                settlement: None,
             }),
             worker: Some("worker-a".into()),
             committed_hash: Some([0x70; 32]),
@@ -924,6 +949,7 @@ fn restore_task_rejects_slashed_retention_with_stale_challenger_identity() {
                 model: None,
                 provenance: None,
                 metering: None,
+                settlement: None,
             }),
             worker: Some("worker-a".into()),
             committed_hash: Some([0x79; 32]),
@@ -967,6 +993,7 @@ fn restore_task_rejects_slashed_retention_with_blank_challenger_identity() {
                 model: None,
                 provenance: None,
                 metering: None,
+                settlement: None,
             }),
             worker: Some("worker-a".into()),
             committed_hash: Some([0x80; 32]),
@@ -1010,6 +1037,7 @@ fn restore_task_rejects_slashed_retention_with_zero_width_challenger_identity() 
                 model: None,
                 provenance: None,
                 metering: None,
+                settlement: None,
             }),
             worker: Some("worker-a".into()),
             committed_hash: Some([0x80; 32]),
@@ -1054,6 +1082,7 @@ fn restore_task_rejects_slashed_retention_with_overlong_challenger_identity() {
                 model: None,
                 provenance: None,
                 metering: None,
+                settlement: None,
             }),
             worker: Some("worker-a".into()),
             committed_hash: Some([0x80; 32]),
@@ -1097,6 +1126,7 @@ fn restore_task_rejects_slashed_retention_with_reserved_system_identity() {
                 model: None,
                 provenance: None,
                 metering: None,
+                settlement: None,
             }),
             worker: Some("worker-a".into()),
             committed_hash: Some([0x87; 32]),
@@ -1140,6 +1170,7 @@ fn restore_task_rejects_slashed_retention_with_reserved_challenge_escrow_alias()
                 model: None,
                 provenance: None,
                 metering: None,
+                settlement: None,
             }),
             worker: Some("worker-a".into()),
             committed_hash: Some([0x81; 32]),
@@ -1183,6 +1214,7 @@ fn restore_task_rejects_slashed_retention_with_reserved_resolve_authority_alias(
                 model: None,
                 provenance: None,
                 metering: None,
+                settlement: None,
             }),
             worker: Some("worker-a".into()),
             committed_hash: Some([0x7c; 32]),
@@ -1226,6 +1258,7 @@ fn restore_task_rejects_slashed_retention_with_reserved_pause_alias() {
                 model: None,
                 provenance: None,
                 metering: None,
+                settlement: None,
             }),
             worker: Some("worker-a".into()),
             committed_hash: Some([0x84; 32]),
@@ -1269,6 +1302,7 @@ fn restore_task_rejects_slashed_retention_with_reserved_forfeit_treasury_alias()
                 model: None,
                 provenance: None,
                 metering: None,
+                settlement: None,
             }),
             worker: Some("worker-a".into()),
             committed_hash: Some([0x8a; 32]),
@@ -1312,6 +1346,7 @@ fn restore_task_rejects_slashed_retention_with_exact_reserved_forfeit_treasury_a
                 model: None,
                 provenance: None,
                 metering: None,
+                settlement: None,
             }),
             worker: Some("worker-a".into()),
             committed_hash: Some([0x8d; 32]),
@@ -1355,6 +1390,7 @@ fn restore_task_rejects_slashed_retention_with_reserved_worker_slash_treasury_al
                 model: None,
                 provenance: None,
                 metering: None,
+                settlement: None,
             }),
             worker: Some("worker-a".into()),
             committed_hash: Some([0x8d; 32]),
@@ -1398,6 +1434,7 @@ fn restore_task_rejects_slashed_retention_with_exact_reserved_worker_slashes_tre
                 model: None,
                 provenance: None,
                 metering: None,
+                settlement: None,
             }),
             worker: Some("worker-a".into()),
             committed_hash: Some([0x90; 32]),

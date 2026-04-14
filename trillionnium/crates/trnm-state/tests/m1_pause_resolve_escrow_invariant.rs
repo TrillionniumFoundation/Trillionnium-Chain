@@ -4010,7 +4010,10 @@ fn paused_state_restore_pending_resolve_snapshot_scrubs_finalized_pending_replac
             "authority-c,authority-d".into(),
         )
         .expect("replacement resolve_authority update should be scheduled");
-    assert!(matches!(replacement, GovParamUpdateOutcome::Scheduled { .. }));
+    assert!(matches!(
+        replacement,
+        GovParamUpdateOutcome::Scheduled { .. }
+    ));
 
     st.set_gov_param(98_262, 7_999, "emergency_pause".into(), "true".into())
         .expect("pause toggle must apply immediately");
@@ -4078,7 +4081,10 @@ fn paused_state_restore_pending_resolve_snapshot_scrubs_finalized_pending_replac
         st.balance_of(CHALLENGE_FORFEIT_TREASURY_ACCOUNT),
         forfeits_before
     );
-    assert_eq!(st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT), worker_slash_before);
+    assert_eq!(
+        st.balance_of(WORKER_SLASH_TREASURY_ACCOUNT),
+        worker_slash_before
+    );
 }
 
 #[test]
@@ -7841,14 +7847,8 @@ fn canonical_unpause_preserves_staged_first_approver_metadata_and_escrow_conserv
         .expect("pause toggle must apply immediately");
     assert!(st.is_emergency_paused());
 
-    st.stage_or_confirm_resolve_approval(
-        9_996,
-        1,
-        true,
-        "authority-a",
-        "authority-a,authority-b",
-    )
-    .expect("first approval stage should succeed while paused");
+    st.stage_or_confirm_resolve_approval(9_996, 1, true, "authority-a", "authority-a,authority-b")
+        .expect("first approval stage should succeed while paused");
     assert_eq!(st.pending_resolve_approval(9_996), Some((true, 1)));
     assert_eq!(
         st.pending_resolve_first_approver(9_996).as_deref(),
@@ -7870,5 +7870,8 @@ fn canonical_unpause_preserves_staged_first_approver_metadata_and_escrow_conserv
     );
     assert_eq!(st.pending_gov_update("resolve_authority"), None);
     assert_eq!(st.balance_of("treasury.challenge_escrow"), escrow_before);
-    assert_eq!(st.balance_of("treasury.challenge_forfeits"), forfeits_before);
+    assert_eq!(
+        st.balance_of("treasury.challenge_forfeits"),
+        forfeits_before
+    );
 }

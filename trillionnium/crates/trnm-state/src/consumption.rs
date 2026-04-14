@@ -1046,7 +1046,10 @@ mod tests {
         assert_eq!(snapshot.billing_window_policy, None);
         assert_eq!(snapshot.task_summary, None);
         assert!(!snapshot.has_complete_persisted_state());
-        assert_eq!(st.complete_consumption_settlement_state_snapshot(&key), None);
+        assert_eq!(
+            st.complete_consumption_settlement_state_snapshot(&key),
+            None
+        );
     }
 
     #[test]
@@ -1069,10 +1072,16 @@ mod tests {
 
         let snapshot = st.consumption_settlement_state_snapshot(&key);
         assert_eq!(snapshot.record, None);
-        assert_eq!(snapshot.consumer_nonce, Some(sample_record().consumer_nonce));
+        assert_eq!(
+            snapshot.consumer_nonce,
+            Some(sample_record().consumer_nonce)
+        );
         assert_eq!(snapshot.billing_window_policy, Some(policy));
         assert_eq!(snapshot.task_summary, Some(summary));
         assert!(!snapshot.has_complete_persisted_state());
-        assert_eq!(st.complete_consumption_settlement_state_snapshot(&key), None);
+        assert_eq!(
+            st.complete_consumption_settlement_state_snapshot(&key),
+            None
+        );
     }
 }

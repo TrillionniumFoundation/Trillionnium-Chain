@@ -4670,8 +4670,8 @@ fn restore_pending_resolve_invalid_snapshot_fails_closed_to_canonical_root() {
 }
 
 #[test]
-fn restore_pending_resolve_case_variant_duplicate_authority_members_fails_closed_to_canonical_root(
-) {
+fn restore_pending_resolve_case_variant_duplicate_authority_members_fails_closed_to_canonical_root()
+{
     let mut state = StateStore::new();
 
     let empty_root = state.state_root();
@@ -5145,7 +5145,8 @@ fn restore_gov_param_rejects_noncanonical_emergency_pause_key_id_without_aliasin
 }
 
 #[test]
-fn restore_gov_param_rejects_invalid_false_emergency_pause_literal_without_deleting_live_canonical_param() {
+fn restore_gov_param_rejects_invalid_false_emergency_pause_literal_without_deleting_live_canonical_param(
+) {
     let mut state = StateStore::new();
     state
         .set_gov_param(98_205, 7_999, "emergency_pause".into(), "true".into())
@@ -6776,7 +6777,8 @@ fn checkpoint_evidence_surface_requires_canonical_state_root_and_hash_hex() {
     whitespace_prev_hash_wal.prev_hash_hex = Some(format!(" {} ", "ab".repeat(32)));
     let mut whitespace_prev_hash_checkpoint = checkpoint.clone();
     whitespace_prev_hash_checkpoint.height = 2;
-    whitespace_prev_hash_checkpoint.wal_entry_hash_hex = whitespace_prev_hash_wal.content_hash_hex();
+    whitespace_prev_hash_checkpoint.wal_entry_hash_hex =
+        whitespace_prev_hash_wal.content_hash_hex();
     assert!(
         !checkpoint_evidence_surface_is_canonical(
             &whitespace_prev_hash_checkpoint,
@@ -6790,7 +6792,8 @@ fn checkpoint_evidence_surface_requires_canonical_state_root_and_hash_hex() {
     zero_width_prev_hash_wal.prev_hash_hex = Some(format!("{}\u{200b}", "ab".repeat(32)));
     let mut zero_width_prev_hash_checkpoint = checkpoint.clone();
     zero_width_prev_hash_checkpoint.height = 2;
-    zero_width_prev_hash_checkpoint.wal_entry_hash_hex = zero_width_prev_hash_wal.content_hash_hex();
+    zero_width_prev_hash_checkpoint.wal_entry_hash_hex =
+        zero_width_prev_hash_wal.content_hash_hex();
     assert!(
         !checkpoint_evidence_surface_is_canonical(
             &zero_width_prev_hash_checkpoint,
@@ -7580,7 +7583,8 @@ fn checkpoint_da_light_verifier_summary_fails_closed_on_uppercase_checkpoint_sta
 }
 
 #[test]
-fn checkpoint_da_light_verifier_summary_fails_closed_on_carriage_return_checkpoint_state_root_surface() {
+fn checkpoint_da_light_verifier_summary_fails_closed_on_carriage_return_checkpoint_state_root_surface(
+) {
     let wal = WalMeta {
         height: 4,
         round: 1,
@@ -7839,7 +7843,8 @@ fn checkpoint_da_light_verifier_summary_fails_closed_on_uncommitted_wal_surface(
 }
 
 #[test]
-fn checkpoint_da_light_verifier_summary_fails_closed_on_whitespace_padded_wal_proposal_hash_surface() {
+fn checkpoint_da_light_verifier_summary_fails_closed_on_whitespace_padded_wal_proposal_hash_surface(
+) {
     let wal = WalMeta {
         height: 4,
         round: 1,
@@ -7911,7 +7916,8 @@ fn checkpoint_da_light_verifier_summary_fails_closed_on_blank_wal_proposal_hash_
 }
 
 #[test]
-fn checkpoint_da_light_verifier_summary_fails_closed_on_internal_whitespace_wal_proposal_hash_surface() {
+fn checkpoint_da_light_verifier_summary_fails_closed_on_internal_whitespace_wal_proposal_hash_surface(
+) {
     let wal = WalMeta {
         height: 4,
         round: 1,
@@ -8093,7 +8099,8 @@ fn checkpoint_da_light_verifier_summary_fails_closed_on_short_non_genesis_wal_pr
 }
 
 #[test]
-fn checkpoint_da_light_verifier_summary_fails_closed_on_missing_non_genesis_wal_prev_hash_surface() {
+fn checkpoint_da_light_verifier_summary_fails_closed_on_missing_non_genesis_wal_prev_hash_surface()
+{
     let wal = WalMeta {
         height: 4,
         round: 1,
@@ -8161,7 +8168,8 @@ fn checkpoint_da_light_verifier_summary_fails_closed_on_blank_non_genesis_wal_pr
 }
 
 #[test]
-fn checkpoint_da_light_verifier_summary_fails_closed_on_edge_whitespace_non_genesis_wal_prev_hash_surface() {
+fn checkpoint_da_light_verifier_summary_fails_closed_on_edge_whitespace_non_genesis_wal_prev_hash_surface(
+) {
     let wal = WalMeta {
         height: 4,
         round: 1,
@@ -8195,7 +8203,8 @@ fn checkpoint_da_light_verifier_summary_fails_closed_on_edge_whitespace_non_gene
 }
 
 #[test]
-fn checkpoint_da_light_verifier_summary_fails_closed_on_control_char_non_genesis_wal_prev_hash_surface() {
+fn checkpoint_da_light_verifier_summary_fails_closed_on_control_char_non_genesis_wal_prev_hash_surface(
+) {
     let wal = WalMeta {
         height: 4,
         round: 1,
@@ -8229,7 +8238,8 @@ fn checkpoint_da_light_verifier_summary_fails_closed_on_control_char_non_genesis
 }
 
 #[test]
-fn checkpoint_da_light_verifier_summary_fails_closed_on_carriage_return_non_genesis_wal_prev_hash_surface() {
+fn checkpoint_da_light_verifier_summary_fails_closed_on_carriage_return_non_genesis_wal_prev_hash_surface(
+) {
     let wal = WalMeta {
         height: 4,
         round: 1,
@@ -8271,7 +8281,8 @@ fn checkpoint_da_light_verifier_summary_fails_closed_on_carriage_return_non_gene
 }
 
 #[test]
-fn checkpoint_da_light_verifier_summary_fails_closed_on_internal_whitespace_non_genesis_wal_prev_hash_surface() {
+fn checkpoint_da_light_verifier_summary_fails_closed_on_internal_whitespace_non_genesis_wal_prev_hash_surface(
+) {
     let wal = WalMeta {
         height: 4,
         round: 1,
@@ -8313,7 +8324,8 @@ fn checkpoint_da_light_verifier_summary_fails_closed_on_internal_whitespace_non_
 }
 
 #[test]
-fn checkpoint_da_light_verifier_summary_fails_closed_on_zero_width_non_genesis_wal_prev_hash_surface() {
+fn checkpoint_da_light_verifier_summary_fails_closed_on_zero_width_non_genesis_wal_prev_hash_surface(
+) {
     let wal = WalMeta {
         height: 4,
         round: 1,
@@ -8700,7 +8712,8 @@ fn wal_checkpoint_verification_rejects_blank_proposal_hash_even_when_checkpoint_
 }
 
 #[test]
-fn node_recovery_checkpoint_verification_rejects_blank_proposal_hash_even_when_checkpoint_matches() {
+fn node_recovery_checkpoint_verification_rejects_blank_proposal_hash_even_when_checkpoint_matches()
+{
     let wal = WalMeta {
         height: 1,
         round: 0,
@@ -8798,7 +8811,8 @@ fn node_recovery_checkpoint_verification_rejects_proposal_hash_with_edge_whitesp
 }
 
 #[test]
-fn node_recovery_checkpoint_verification_rejects_overlong_proposal_hash_even_when_checkpoint_matches() {
+fn node_recovery_checkpoint_verification_rejects_overlong_proposal_hash_even_when_checkpoint_matches(
+) {
     let wal = WalMeta {
         height: 1,
         round: 0,
@@ -8847,7 +8861,8 @@ fn node_recovery_checkpoint_verification_accepts_max_length_canonical_proposal_h
 }
 
 #[test]
-fn node_recovery_checkpoint_verification_rejects_control_char_proposal_hash_even_when_checkpoint_matches() {
+fn node_recovery_checkpoint_verification_rejects_control_char_proposal_hash_even_when_checkpoint_matches(
+) {
     let wal = WalMeta {
         height: 1,
         round: 0,
@@ -8871,7 +8886,8 @@ fn node_recovery_checkpoint_verification_rejects_control_char_proposal_hash_even
 }
 
 #[test]
-fn node_recovery_checkpoint_verification_rejects_zero_width_proposal_hash_even_when_checkpoint_matches() {
+fn node_recovery_checkpoint_verification_rejects_zero_width_proposal_hash_even_when_checkpoint_matches(
+) {
     let wal = WalMeta {
         height: 1,
         round: 0,
@@ -8895,7 +8911,8 @@ fn node_recovery_checkpoint_verification_rejects_zero_width_proposal_hash_even_w
 }
 
 #[test]
-fn node_recovery_checkpoint_verification_rejects_non_ascii_proposal_hash_even_when_checkpoint_matches() {
+fn node_recovery_checkpoint_verification_rejects_non_ascii_proposal_hash_even_when_checkpoint_matches(
+) {
     let wal = WalMeta {
         height: 1,
         round: 0,
@@ -9076,7 +9093,8 @@ fn checkpoint_evidence_surface_rejects_proposal_hash_with_zero_width_layout_drif
 }
 
 #[test]
-fn wal_checkpoint_verification_rejects_proposal_hash_with_edge_whitespace_even_when_checkpoint_matches() {
+fn wal_checkpoint_verification_rejects_proposal_hash_with_edge_whitespace_even_when_checkpoint_matches(
+) {
     let wal = WalMeta {
         height: 1,
         round: 0,
@@ -9238,8 +9256,8 @@ fn wal_checkpoint_verification_rejects_noncanonical_checkpoint_wal_hash_even_whe
 }
 
 #[test]
-fn wal_checkpoint_verification_rejects_zero_width_checkpoint_wal_hash_even_when_state_root_matches(
-) {
+fn wal_checkpoint_verification_rejects_zero_width_checkpoint_wal_hash_even_when_state_root_matches()
+{
     let wal = WalMeta {
         height: 1,
         round: 0,
@@ -9262,8 +9280,7 @@ fn wal_checkpoint_verification_rejects_zero_width_checkpoint_wal_hash_even_when_
 }
 
 #[test]
-fn wal_checkpoint_verification_rejects_newline_checkpoint_wal_hash_even_when_state_root_matches(
-) {
+fn wal_checkpoint_verification_rejects_newline_checkpoint_wal_hash_even_when_state_root_matches() {
     let wal = WalMeta {
         height: 1,
         round: 0,
@@ -9286,8 +9303,8 @@ fn wal_checkpoint_verification_rejects_newline_checkpoint_wal_hash_even_when_sta
 }
 
 #[test]
-fn wal_checkpoint_verification_rejects_non_ascii_checkpoint_wal_hash_even_when_state_root_matches(
-) {
+fn wal_checkpoint_verification_rejects_non_ascii_checkpoint_wal_hash_even_when_state_root_matches()
+{
     let wal = WalMeta {
         height: 1,
         round: 0,
@@ -9523,7 +9540,8 @@ fn wal_checkpoint_verification_rejects_noncanonical_wal_state_root_surface_even_
 }
 
 #[test]
-fn wal_checkpoint_verification_rejects_wal_state_root_with_edge_whitespace_even_when_checkpoint_matches() {
+fn wal_checkpoint_verification_rejects_wal_state_root_with_edge_whitespace_even_when_checkpoint_matches(
+) {
     let canonical_root = "ab".repeat(32);
     let wal = WalMeta {
         height: 1,
@@ -9706,7 +9724,8 @@ fn checkpoint_and_wal_evidence_summaries_expose_canonical_hex_and_boundary_field
         "checkpoint_state_root={}",
         checkpoint.state_root_hex
     )));
-    assert!(checkpoint_summary.contains("checkpoint_wal_entry_hash_source=checkpoint.wal_entry_hash_hex"));
+    assert!(checkpoint_summary
+        .contains("checkpoint_wal_entry_hash_source=checkpoint.wal_entry_hash_hex"));
     assert!(checkpoint_summary.contains(&format!(
         "checkpoint_wal_entry_hash={}",
         checkpoint.wal_entry_hash_hex
@@ -9735,7 +9754,9 @@ fn checkpoint_and_wal_evidence_summaries_expose_canonical_hex_and_boundary_field
     assert!(wal_summary.contains("wal_state_root_kind=canonical-hex-32b"));
     assert!(wal_summary.contains("wal_state_root_encoding=hex-lower"));
     assert!(wal_summary.contains("wal_state_root_bytes=32"));
-    assert!(wal_summary.contains("wal_proposal_hash_surface_policy=ascii-trimmed-no-ws-control-max256"));
+    assert!(
+        wal_summary.contains("wal_proposal_hash_surface_policy=ascii-trimmed-no-ws-control-max256")
+    );
     assert!(wal_summary.contains("wal_committed_encoding=u8"));
     assert!(wal_summary.contains("wal_prev_hash_present=true"));
     assert!(wal_summary.contains("wal_prev_hash_kind=linked"));
@@ -9805,7 +9826,9 @@ fn wal_evidence_summary_exposes_round_height_and_proposal_hash_surface_fields() 
     assert!(wal_summary.contains("wal_proposal_hash_present=true"));
     assert!(wal_summary.contains("wal_proposal_hash_kind=opaque-ascii"));
     assert!(wal_summary.contains("wal_proposal_hash_bytes=13"));
-    assert!(wal_summary.contains("wal_proposal_hash_surface_policy=ascii-trimmed-no-ws-control-max256"));
+    assert!(
+        wal_summary.contains("wal_proposal_hash_surface_policy=ascii-trimmed-no-ws-control-max256")
+    );
     assert!(wal_summary.contains("wal_prev_hash_present=true"));
     assert!(wal_summary.contains("wal_prev_hash_kind=linked"));
     assert!(wal_summary.contains("wal_committed=true"));
@@ -9957,7 +9980,8 @@ fn checkpoint_evidence_summary_marks_blank_digest_surfaces_noncanonical() {
 }
 
 #[test]
-fn wal_checkpoint_conflicting_same_height_same_root_metadata_falls_back_to_last_unambiguous_checkpoint() {
+fn wal_checkpoint_conflicting_same_height_same_root_metadata_falls_back_to_last_unambiguous_checkpoint(
+) {
     let e1 = WalMeta {
         height: 1,
         round: 0,
@@ -10076,7 +10100,8 @@ fn wal_checkpoint_rejects_same_height_checkpoint_state_root_ambiguity_even_when_
 }
 
 #[test]
-fn node_recovery_conflicting_same_height_same_root_metadata_falls_back_to_last_unambiguous_checkpoint() {
+fn node_recovery_conflicting_same_height_same_root_metadata_falls_back_to_last_unambiguous_checkpoint(
+) {
     let e1 = WalMeta {
         height: 1,
         round: 0,

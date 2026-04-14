@@ -3734,10 +3734,7 @@ impl StateStore {
         })
     }
 
-    fn scrub_incompatible_consumption_companion_state(
-        &mut self,
-        key: &ConsumptionRecordKey,
-    ) {
+    fn scrub_incompatible_consumption_companion_state(&mut self, key: &ConsumptionRecordKey) {
         let consumer_nonce = self
             .consumer_consumption_nonces
             .get(&key.consumer_id)
@@ -6712,6 +6709,7 @@ mod tests {
                 worker_slash_rebate_per_work_unit_num: 37,
                 worker_slash_rebate_per_work_unit_den: 41,
             }),
+            settlement: None,
         });
 
         without_metering.put_task_new(base_task).unwrap();
@@ -6752,6 +6750,7 @@ mod tests {
                     privacy_tier: Some(trnm_types::PrivacyTier::Internal),
                 }),
                 metering: None,
+                settlement: None,
             }),
             worker: Some("worker-a".into()),
             committed_hash: Some([0x11; 32]),
@@ -6934,6 +6933,7 @@ mod tests {
                     worker_slash_rebate_per_work_unit_num: 37,
                     worker_slash_rebate_per_work_unit_den: 41,
                 }),
+                settlement: None,
             }),
             worker: Some("worker-a".into()),
             committed_hash: Some([0x11; 32]),
@@ -6998,6 +6998,7 @@ mod tests {
                     worker_slash_rebate_per_work_unit_num: 37,
                     worker_slash_rebate_per_work_unit_den: 41,
                 }),
+                settlement: None,
             }),
             worker: Some("worker-a".into()),
             committed_hash: Some([0x11; 32]),
@@ -7040,6 +7041,7 @@ mod tests {
                 model: None,
                 provenance: None,
                 metering: None,
+                settlement: None,
             }),
             worker: Some("worker-a".into()),
             committed_hash: Some([0x11; 32]),
@@ -7082,6 +7084,7 @@ mod tests {
                 model: None,
                 provenance: None,
                 metering: None,
+                settlement: None,
             }),
             worker: Some("worker-a".into()),
             committed_hash: Some([0x11; 32]),
@@ -7124,6 +7127,7 @@ mod tests {
                 model: None,
                 provenance: None,
                 metering: None,
+                settlement: None,
             }),
             worker: Some("worker-a".into()),
             committed_hash: Some([0x11; 32]),
@@ -7166,6 +7170,7 @@ mod tests {
                 model: None,
                 provenance: None,
                 metering: None,
+                settlement: None,
             }),
             worker: Some("worker-a".into()),
             committed_hash: Some([0x11; 32]),
@@ -7208,6 +7213,7 @@ mod tests {
                 model: None,
                 provenance: None,
                 metering: None,
+                settlement: None,
             }),
             worker: Some("worker-a".into()),
             committed_hash: Some([0x11; 32]),
@@ -7250,6 +7256,7 @@ mod tests {
                 model: None,
                 provenance: None,
                 metering: None,
+                settlement: None,
             }),
             worker: Some("worker-a".into()),
             committed_hash: Some([0x11; 32]),
@@ -7292,6 +7299,7 @@ mod tests {
                 model: None,
                 provenance: None,
                 metering: None,
+                settlement: None,
             }),
             worker: Some("worker-a".into()),
             committed_hash: Some([0x11; 32]),
@@ -7334,6 +7342,7 @@ mod tests {
                 model: None,
                 provenance: None,
                 metering: None,
+                settlement: None,
             }),
             worker: Some("worker-a".into()),
             committed_hash: Some([0x11; 32]),
@@ -7376,6 +7385,7 @@ mod tests {
                 model: None,
                 provenance: None,
                 metering: None,
+                settlement: None,
             }),
             worker: Some("worker-a".into()),
             committed_hash: Some([0x11; 32]),
@@ -7418,6 +7428,7 @@ mod tests {
                 model: None,
                 provenance: None,
                 metering: None,
+                settlement: None,
             }),
             worker: Some("worker-a".into()),
             committed_hash: Some([0x11; 32]),

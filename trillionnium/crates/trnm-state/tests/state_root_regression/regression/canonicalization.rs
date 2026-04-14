@@ -27,6 +27,7 @@ fn new_tasks_canonicalize_embedded_version_for_state_root() {
                 privacy_tier: Some(PrivacyTier::Internal),
             }),
             metering: None,
+                    settlement: None,
         }),
         worker: Some("worker-a".into()),
         committed_hash: Some([0x11; 32]),

@@ -18,6 +18,7 @@ fn task_metadata_string_field_boundaries_should_affect_state_root() {
             model: None,
             provenance: None,
             metering: None,
+                    settlement: None,
         }),
         worker: None,
         committed_hash: None,
@@ -42,6 +43,7 @@ fn task_metadata_string_field_boundaries_should_affect_state_root() {
         model: None,
         provenance: None,
         metering: None,
+            settlement: None,
     });
 
     st1.put_task_new(task1).unwrap();
@@ -115,6 +117,7 @@ fn task_model_metadata_string_field_boundaries_should_affect_state_root() {
             }),
             provenance: None,
             metering: None,
+                    settlement: None,
         }),
         worker: None,
         committed_hash: None,
@@ -144,6 +147,7 @@ fn task_model_metadata_string_field_boundaries_should_affect_state_root() {
         }),
         provenance: None,
         metering: None,
+            settlement: None,
     });
 
     st1.put_task_new(base_task).unwrap();
@@ -203,6 +207,7 @@ fn task_metadata_and_proof_type_should_affect_state_root() {
             privacy_tier: Some(PrivacyTier::Internal),
         }),
         metering: None,
+            settlement: None,
     });
     st2.put_task_new(changed_task).unwrap();
 
@@ -239,6 +244,7 @@ fn task_version_must_affect_state_root_even_when_other_payload_matches() {
                 privacy_tier: Some(PrivacyTier::Internal),
             }),
             metering: None,
+                    settlement: None,
         }),
         worker: None,
         committed_hash: None,
@@ -485,6 +491,7 @@ fn task_metering_receipt_and_policy_version_should_affect_state_root() {
                 worker_slash_rebate_per_work_unit_num: 1,
                 worker_slash_rebate_per_work_unit_den: 4,
             }),
+                    settlement: None,
         }),
         worker: None,
         committed_hash: None,
@@ -572,6 +579,7 @@ fn task_metering_workload_class_should_affect_state_root_even_when_receipt_and_p
                 worker_slash_rebate_per_work_unit_num: 1,
                 worker_slash_rebate_per_work_unit_den: 4,
             }),
+                    settlement: None,
         }),
         worker: None,
         committed_hash: None,
@@ -658,6 +666,7 @@ fn task_metering_schema_should_affect_state_root_even_when_receipt_and_policy_ma
                 worker_slash_rebate_per_work_unit_num: 1,
                 worker_slash_rebate_per_work_unit_den: 4,
             }),
+                    settlement: None,
         }),
         worker: None,
         committed_hash: None,
@@ -744,6 +753,7 @@ fn task_metering_work_units_should_affect_state_root_even_when_receipt_metadata_
                 worker_slash_rebate_per_work_unit_num: 1,
                 worker_slash_rebate_per_work_unit_den: 4,
             }),
+                    settlement: None,
         }),
         worker: None,
         committed_hash: None,
@@ -808,6 +818,7 @@ fn task_provenance_index_should_affect_state_root() {
                 privacy_tier: Some(PrivacyTier::Internal),
             }),
             metering: None,
+                    settlement: None,
         }),
         worker: None,
         committed_hash: None,
@@ -872,6 +883,7 @@ fn task_provenance_privacy_tier_should_affect_state_root() {
                 privacy_tier: Some(PrivacyTier::Internal),
             }),
             metering: None,
+                    settlement: None,
         }),
         worker: None,
         committed_hash: None,
