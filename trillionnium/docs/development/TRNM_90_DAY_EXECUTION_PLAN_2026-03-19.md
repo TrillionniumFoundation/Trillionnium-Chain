@@ -1,5 +1,7 @@
 # TRNM 90-Day Execution Plan (2026-03-19)
 
+> BL09 retirement-prep note: any retained `trnm-pouw` crate, path, or test-guardrail references in this execution plan should be read as migration-era compatibility, decomposition guardrails, or provenance / audit evidence only. Once PoCO becomes the primary settlement path, these retained surfaces are not the default payout authority and do not re-authorize default work-unit payout paths.
+
 ## Purpose
 
 This document turns the cross-chain blueprint into a **90-day execution plan**.
