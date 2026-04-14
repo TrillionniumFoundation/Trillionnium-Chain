@@ -200,6 +200,12 @@ jobs:
           export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
           ./scripts/v2/governance_value_schema_reject_test.sh
 
+      - name: Settlement governance query gate (hard gate)
+        run: |
+          set -euo pipefail
+          export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
+          ./scripts/v2/settlement_governance_query_gate.sh
+
       - name: Emergency pause drill (hard gate)
         run: |
           set -euo pipefail

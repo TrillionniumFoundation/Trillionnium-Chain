@@ -6,7 +6,8 @@ use std::sync::RwLock;
 use trnm_types::GovParamKey;
 use trnm_types::{
     GovParamObject, GovProposalObject, GovProposalStatus, Hash32, ObjectRef, TaskObject,
-    TaskStatus, EMERGENCY_PAUSE_KEY_ID,
+    TaskStatus, EMERGENCY_PAUSE_KEY_ID, HYBRID_SETTLEMENT_POCO_WEIGHT_BPS_KEY_ID,
+    SHADOW_SETTLEMENT_COMPARE_ONLY_KEY_ID,
 };
 
 pub mod consumption;
@@ -311,7 +312,17 @@ pub enum GovPendingUpdateAction {
 const GOV_SENSITIVE_PARAM_TIMELOCK_BLOCKS: u64 = 20;
 const GOV_SENSITIVE_PARAM_MAX_CHANGE_BPS: u64 = 2_000;
 const NON_ALLOWLISTED_ALGORAND_GOVERNANCE_KEY_ID: &str = "algorand_governance_key_id";
-const GOV_PINNED_KEY_IDS: &[(&str, u64)] = &[("emergency_pause", EMERGENCY_PAUSE_KEY_ID)];
+const GOV_PINNED_KEY_IDS: &[(&str, u64)] = &[
+    (
+        "hybrid_settlement_poco_weight_bps",
+        HYBRID_SETTLEMENT_POCO_WEIGHT_BPS_KEY_ID,
+    ),
+    (
+        "shadow_settlement_compare_only",
+        SHADOW_SETTLEMENT_COMPARE_ONLY_KEY_ID,
+    ),
+    ("emergency_pause", EMERGENCY_PAUSE_KEY_ID),
+];
 
 fn governance_pinned_binding(
     key: Option<&str>,
@@ -532,6 +543,8 @@ const GOV_ALLOWED_KEYS: &[&str] = &[
     "llm_meter_worker_slash_rebate_per_work_unit_num",
     "llm_meter_worker_slash_rebate_per_work_unit_den",
     "resolve_authority",
+    "hybrid_settlement_poco_weight_bps",
+    "shadow_settlement_compare_only",
     "emergency_pause",
     "monetary_policy_tick_interval_blocks",
     "monetary_policy_tick_cooldown_blocks",
@@ -557,6 +570,8 @@ const GOV_SENSITIVE_KEYS: &[&str] = &[
     "challenge_min_bond_bounty_bps",
     "challenge_min_bond_worker_stake_bps",
     "resolve_authority",
+    "hybrid_settlement_poco_weight_bps",
+    "shadow_settlement_compare_only",
 ];
 const GOV_EXPLICIT_VALIDATOR_KEYS: &[&str] = &[
     "max_block_ms",
@@ -579,6 +594,8 @@ const GOV_EXPLICIT_VALIDATOR_KEYS: &[&str] = &[
     "llm_meter_worker_slash_rebate_per_work_unit_num",
     "llm_meter_worker_slash_rebate_per_work_unit_den",
     "resolve_authority",
+    "hybrid_settlement_poco_weight_bps",
+    "shadow_settlement_compare_only",
     "emergency_pause",
     "monetary_policy_tick_interval_blocks",
     "monetary_policy_tick_cooldown_blocks",
@@ -619,6 +636,8 @@ const GOV_SCHEMA_INVALID_SAMPLES: &[(&str, &str)] = &[
         "resolve_authority",
         "resolver-a,governance.resolve_authority",
     ),
+    ("hybrid_settlement_poco_weight_bps", "10001"),
+    ("shadow_settlement_compare_only", "TRUE"),
     ("emergency_pause", "TRUE"),
     ("monetary_policy_tick_interval_blocks", "0"),
     ("monetary_policy_tick_cooldown_blocks", "0"),
@@ -627,6 +646,7 @@ const GOV_SCHEMA_INVALID_SAMPLES: &[(&str, &str)] = &[
 ];
 const DEFAULT_RESOLVE_AUTHORITY_PLACEHOLDER: &str = "governance.resolve_authority";
 
+#[cfg(test)]
 fn governance_pinned_key_id_from_lists(pinned_key_ids: &[(&str, u64)], key: &str) -> Option<u64> {
     governance_expected_key_id(key).filter(|expected_id| {
         pinned_key_ids
@@ -635,11 +655,12 @@ fn governance_pinned_key_id_from_lists(pinned_key_ids: &[(&str, u64)], key: &str
     })
 }
 
-#[allow(dead_code)]
+#[cfg(test)]
 fn governance_pinned_key_id(key: &str) -> Option<u64> {
     governance_expected_key_id(key)
 }
 
+#[cfg(test)]
 fn validate_governance_key_id_from_lists(
     pinned_key_ids: &[(&str, u64)],
     key: &str,
@@ -672,7 +693,7 @@ fn validate_governance_key_id_from_lists(
     Ok(())
 }
 
-#[allow(dead_code)]
+#[cfg(test)]
 fn validate_governance_key_id(key: &str, key_id: u64) -> Result<(), String> {
     validate_gov_param_key_id_policy(key, key_id)
 }
@@ -1914,6 +1935,14 @@ fn validate_gov_param_value(key: &str, value: &str) -> Result<(), String> {
         }
         "resolve_authority" => validate_resolve_authority_governance_value(key, value)
             .map_err(|err| format!("invalid governance value for {}: {}", key, err)),
+        "hybrid_settlement_poco_weight_bps" => {
+            let _ = parse_u64_in_range(key, value, 0, 10_000)?;
+            Ok(())
+        }
+        "shadow_settlement_compare_only" => {
+            let _ = parse_bool_strict(key, value)?;
+            Ok(())
+        }
         "emergency_pause" => {
             let _ = parse_bool_strict(key, value)?;
             Ok(())
@@ -10612,6 +10641,24 @@ mod tests {
             )
             .unwrap();
         assert_eq!(ok.version, 1);
+
+        let err = st
+            .set_gov_param_unchecked(
+                7107,
+                "hybrid_settlement_poco_weight_bps".into(),
+                "10001".into(),
+            )
+            .unwrap_err();
+        assert!(err.contains("out of range"));
+
+        let ok = st
+            .set_gov_param_unchecked(
+                HYBRID_SETTLEMENT_POCO_WEIGHT_BPS_KEY_ID,
+                "hybrid_settlement_poco_weight_bps".into(),
+                "4000".into(),
+            )
+            .unwrap();
+        assert_eq!(ok.version, 1);
     }
 
     #[test]
@@ -11199,7 +11246,29 @@ mod tests {
     }
 
     #[test]
-    fn governance_emergency_pause_registry_stays_aligned_with_typed_key_registry() {
+    fn governance_pinned_key_registry_stays_aligned_with_typed_key_registry() {
+        let expected_pinned = [
+            (
+                GovParamKey::HybridSettlementPocoWeightBps.as_str(),
+                HYBRID_SETTLEMENT_POCO_WEIGHT_BPS_KEY_ID,
+            ),
+            (
+                GovParamKey::ShadowSettlementCompareOnly.as_str(),
+                SHADOW_SETTLEMENT_COMPARE_ONLY_KEY_ID,
+            ),
+            (GovParamKey::EmergencyPause.as_str(), EMERGENCY_PAUSE_KEY_ID),
+        ];
+
+        assert_eq!(
+            GovParamKey::HybridSettlementPocoWeightBps.canonical_key_id(),
+            Some(HYBRID_SETTLEMENT_POCO_WEIGHT_BPS_KEY_ID),
+            "typed governance key registry must retain the canonical hybrid settlement weight key id"
+        );
+        assert_eq!(
+            GovParamKey::ShadowSettlementCompareOnly.canonical_key_id(),
+            Some(SHADOW_SETTLEMENT_COMPARE_ONLY_KEY_ID),
+            "typed governance key registry must retain the canonical shadow settlement compare-only key id"
+        );
         assert_eq!(
             GovParamKey::EmergencyPause.as_str(),
             "emergency_pause",
@@ -11212,8 +11281,8 @@ mod tests {
         );
         assert_eq!(
             GOV_PINNED_KEY_IDS,
-            [(GovParamKey::EmergencyPause.as_str(), EMERGENCY_PAUSE_KEY_ID)],
-            "state-layer pinned governance registry must stay aligned with the typed emergency_pause binding"
+            expected_pinned,
+            "state-layer pinned governance registry must stay aligned with the typed pinned-governance bindings"
         );
     }
 
@@ -12278,6 +12347,106 @@ mod tests {
     }
 
     #[test]
+    fn governance_hybrid_settlement_poco_weight_is_sensitive_and_timelocked() {
+        let mut st = StateStore::new();
+        st.set_gov_param_unchecked(
+            7351,
+            "hybrid_settlement_poco_weight_bps".into(),
+            "2500".into(),
+        )
+        .unwrap();
+
+        let scheduled = st
+            .set_gov_param(
+                31_000,
+                7351,
+                "hybrid_settlement_poco_weight_bps".into(),
+                "3000".into(),
+            )
+            .unwrap();
+        assert!(matches!(
+            scheduled,
+            GovParamUpdateOutcome::Scheduled {
+                activate_at_height: 31_020
+            }
+        ));
+
+        let err = st
+            .set_gov_param(
+                31_010,
+                7351,
+                "hybrid_settlement_poco_weight_bps".into(),
+                "3000".into(),
+            )
+            .unwrap_err();
+        assert!(err.contains("timelock active"));
+
+        let applied = st
+            .set_gov_param(
+                31_020,
+                7351,
+                "hybrid_settlement_poco_weight_bps".into(),
+                "3000".into(),
+            )
+            .unwrap();
+        assert!(matches!(applied, GovParamUpdateOutcome::Applied(_)));
+        assert_eq!(
+            st.gov_param_u64("hybrid_settlement_poco_weight_bps"),
+            Some(3000)
+        );
+    }
+
+    #[test]
+    fn governance_shadow_settlement_compare_only_is_sensitive_and_timelocked() {
+        let mut st = StateStore::new();
+        st.set_gov_param_unchecked(
+            7352,
+            "shadow_settlement_compare_only".into(),
+            "false".into(),
+        )
+        .unwrap();
+
+        let scheduled = st
+            .set_gov_param(
+                31_100,
+                7352,
+                "shadow_settlement_compare_only".into(),
+                "true".into(),
+            )
+            .unwrap();
+        assert!(matches!(
+            scheduled,
+            GovParamUpdateOutcome::Scheduled {
+                activate_at_height: 31_120
+            }
+        ));
+
+        let err = st
+            .set_gov_param(
+                31_110,
+                7352,
+                "shadow_settlement_compare_only".into(),
+                "true".into(),
+            )
+            .unwrap_err();
+        assert!(err.contains("timelock active"));
+
+        let applied = st
+            .set_gov_param(
+                31_120,
+                7352,
+                "shadow_settlement_compare_only".into(),
+                "true".into(),
+            )
+            .unwrap();
+        assert!(matches!(applied, GovParamUpdateOutcome::Applied(_)));
+        assert_eq!(
+            st.gov_param_string("shadow_settlement_compare_only"),
+            Some("true".into())
+        );
+    }
+
+    #[test]
     fn governance_non_sensitive_param_unaffected_by_timelock() {
         let mut st = StateStore::new();
         let r1 = st
@@ -12374,25 +12543,29 @@ mod tests {
 
     #[test]
     fn governance_list_based_key_id_validation_reuses_shared_pinned_policy() {
-        assert!(validate_governance_key_id_from_lists(
-            GOV_PINNED_KEY_IDS,
-            "emergency_pause",
-            7_999
-        )
-        .is_ok());
+        for (key, expected_key_id) in GOV_PINNED_KEY_IDS {
+            assert!(
+                validate_governance_key_id_from_lists(GOV_PINNED_KEY_IDS, key, *expected_key_id)
+                    .is_ok(),
+                "{key} should accept its canonical pinned key id"
+            );
 
-        let err =
-            validate_governance_key_id_from_lists(GOV_PINNED_KEY_IDS, "emergency_pause", 8_000)
-                .expect_err("list-based validation must reject non-canonical pinned ids");
-        assert!(err.contains("expected_id=7999"), "{err}");
+            let err =
+                validate_governance_key_id_from_lists(GOV_PINNED_KEY_IDS, key, expected_key_id + 1)
+                    .expect_err("list-based validation must reject non-canonical pinned ids");
+            assert!(
+                err.contains(&format!("expected_id={expected_key_id}")),
+                "{err}"
+            );
 
-        let err = validate_governance_key_id_from_lists(
-            GOV_PINNED_KEY_IDS,
-            "resolve_authority",
-            EMERGENCY_PAUSE_KEY_ID,
-        )
-        .expect_err("list-based validation must reject reusing reserved ids across keys");
-        assert!(err.contains("expected_key=emergency_pause"), "{err}");
+            let err = validate_governance_key_id_from_lists(
+                GOV_PINNED_KEY_IDS,
+                "resolve_authority",
+                *expected_key_id,
+            )
+            .expect_err("list-based validation must reject reusing reserved ids across keys");
+            assert!(err.contains(&format!("expected_key={key}")), "{err}");
+        }
     }
 
     #[test]
@@ -13933,6 +14106,8 @@ mod tests {
             ("challenge_min_bond_bounty_bps", true),
             ("challenge_min_bond_worker_stake_bps", true),
             ("resolve_authority", true),
+            ("hybrid_settlement_poco_weight_bps", true),
+            ("shadow_settlement_compare_only", true),
             ("emergency_pause", false),
         ];
 
@@ -14283,7 +14458,17 @@ mod tests {
 
     #[test]
     fn governance_pinned_key_ids_merge_gate_is_explicit() {
-        let expected_pinned = [("emergency_pause", EMERGENCY_PAUSE_KEY_ID)];
+        let expected_pinned = [
+            (
+                "hybrid_settlement_poco_weight_bps",
+                HYBRID_SETTLEMENT_POCO_WEIGHT_BPS_KEY_ID,
+            ),
+            (
+                "shadow_settlement_compare_only",
+                SHADOW_SETTLEMENT_COMPARE_ONLY_KEY_ID,
+            ),
+            ("emergency_pause", EMERGENCY_PAUSE_KEY_ID),
+        ];
 
         for key in GOV_ALLOWED_KEYS {
             let pinned = governance_pinned_key_id(key);
