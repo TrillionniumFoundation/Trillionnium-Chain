@@ -67,6 +67,8 @@ const SUMMARY_ACCEPTED_RECEIPTS_EXCEED_CANONICAL_ACCEPTED_RECORDS: &str =
     "poco summary accepted receipts exceed canonical accepted record count";
 const SUMMARY_CHALLENGED_RECEIPTS_EXCEED_RECEIPTS: &str =
     "poco summary challenged receipts exceed submitted receipts";
+const SUMMARY_SINGLE_RECEIPT_SETTLEMENT_MARKER_WITHOUT_OUTCOME_EVIDENCE: &str =
+    "poco summary single receipt settlement marker lacks canonical outcome evidence";
 const DUPLICATE_LOGICAL_REPLAY_KEY_REASON: &str = "duplicate logical consumption replay key";
 const MALFORMED_CANONICAL_CREDIT_STATE_REASON: &str =
     "malformed canonical credited consumption state";
@@ -79,9 +81,24 @@ fn summary_has_inconsistent_terminal_marker(summary: &TaskConsumptionSummary) ->
             || summary.last_settlement_height.is_some())
 }
 
+fn summary_has_ambiguous_single_receipt_terminal_marker(summary: &TaskConsumptionSummary) -> bool {
+    summary.receipt_count == 1
+        && summary.accepted_receipt_count == 0
+        && summary.challenged_receipt_count == 0
+        && summary.total_credited_consumption_units == 0
+        && summary.last_settlement_height.is_some()
+}
+
 fn summary_inconsistency_reason(summary: &TaskConsumptionSummary) -> Option<&'static str> {
     if summary_has_inconsistent_terminal_marker(summary) {
         Some(SUMMARY_SETTLEMENT_MARKER_WITHOUT_RECEIPTS)
+    } else if summary_has_ambiguous_single_receipt_terminal_marker(summary) {
+        // Promotion step: summary-only metadata does not retain explicit
+        // rejected/slashed counts, so a single receipt with only a terminal
+        // height marker cannot prove that canonical PoCO settlement actually
+        // reached a zero-credit outcome. Fail closed until canonical per-
+        // receipt records or richer summary accounting provide outcome evidence.
+        Some(SUMMARY_SINGLE_RECEIPT_SETTLEMENT_MARKER_WITHOUT_OUTCOME_EVIDENCE)
     } else if summary.accepted_receipt_count > summary.receipt_count {
         // Promotion step: summary-only accepted counters must not outrun
         // submitted receipts. If they do, summary metadata is inventing
@@ -1459,6 +1476,57 @@ mod tests {
     }
 
     #[test]
+    fn primary_payout_work_units_fail_closed_for_summary_only_single_receipt_terminal_marker_without_outcome_evidence(
+    ) {
+        let mut st = StateStore::default();
+        let task = sample_task(TaskStatus::Completed);
+        st.set_task_consumption_summary(TaskConsumptionSummary {
+            task_id: task.task_id,
+            receipt_count: 1,
+            accepted_receipt_count: 0,
+            challenged_receipt_count: 0,
+            total_consumed_tokens: 17,
+            total_claimed_consumption_units: 17,
+            total_credited_consumption_units: 0,
+            last_settlement_height: Some(77),
+        });
+
+        assert_eq!(
+            preview_primary_payout_work_units(&st, &task, 50),
+            PrimaryPayoutWorkUnitPreview::PocoInconsistentSummary {
+                reason: SUMMARY_SINGLE_RECEIPT_SETTLEMENT_MARKER_WITHOUT_OUTCOME_EVIDENCE,
+                metering_work_units: 50,
+            }
+        );
+        assert_eq!(primary_payout_work_units(&st, &task, 50), 0);
+    }
+
+    #[test]
+    fn reject_if_primary_settlement_pending_fails_closed_for_summary_only_single_receipt_terminal_marker_without_outcome_evidence(
+    ) {
+        let mut st = StateStore::default();
+        st.set_task_consumption_summary(TaskConsumptionSummary {
+            task_id: 42,
+            receipt_count: 1,
+            accepted_receipt_count: 0,
+            challenged_receipt_count: 0,
+            total_consumed_tokens: 17,
+            total_claimed_consumption_units: 17,
+            total_credited_consumption_units: 0,
+            last_settlement_height: Some(77),
+        });
+
+        let err = reject_if_primary_settlement_pending(&st, 42).expect_err(
+            "summary-only single receipt terminal marker without outcome evidence must fail closed",
+        );
+        assert!(matches!(
+            err,
+            PouwError::State(msg)
+                if msg.contains(SUMMARY_SINGLE_RECEIPT_SETTLEMENT_MARKER_WITHOUT_OUTCOME_EVIDENCE)
+        ));
+    }
+
+    #[test]
     fn primary_payout_work_units_fail_closed_while_poco_settlement_is_pending() {
         let mut st = StateStore::default();
         let task = sample_task(TaskStatus::Completed);
@@ -2009,9 +2077,8 @@ mod tests {
             Some(9),
         ));
 
-        let err = reject_if_primary_settlement_pending(&st, 42).expect_err(
-            "summary credited units must not outrun canonical per-receipt credits",
-        );
+        let err = reject_if_primary_settlement_pending(&st, 42)
+            .expect_err("summary credited units must not outrun canonical per-receipt credits");
         assert!(matches!(
             err,
             PouwError::State(msg)
