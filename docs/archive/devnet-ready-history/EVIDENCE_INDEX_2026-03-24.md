@@ -1,5 +1,7 @@
 # Evidence index — devnet-ready (2026-03-24)
 
+BL09 retirement-prep note: 本索引中保留的 `trnm-pouw` crate / test inventory / devnet evidence 引用，仅应用于内部 bring-up 历史留痕、迁移期兼容说明与 provenance / audit evidence 汇总，不能解读为当前默认 payout authority，也不重新授权默认 work-unit payout path。若 PoCO settlement 已成为主结算路径，对外付款判断与默认结算 authority 仍应以 PoCO settlement anchor 为准。
+
 ## Positive evidence
 
 - Stage-1 checklist:
