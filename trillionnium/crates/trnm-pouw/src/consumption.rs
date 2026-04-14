@@ -59,6 +59,8 @@ const SUMMARY_CREDITED_UNITS_WITHOUT_ACCEPTED_RECEIPTS: &str =
     "poco summary credited units require at least one accepted receipt";
 const SUMMARY_CREDITED_UNITS_EXCEED_CLAIMED_UNITS: &str =
     "poco summary credited units exceed claimed consumption units";
+const SUMMARY_CHALLENGED_RECEIPTS_EXCEED_RECEIPTS: &str =
+    "poco summary challenged receipts exceed submitted receipts";
 const DUPLICATE_LOGICAL_REPLAY_KEY_REASON: &str = "duplicate logical consumption replay key";
 const MALFORMED_CANONICAL_CREDIT_STATE_REASON: &str =
     "malformed canonical credited consumption state";
@@ -74,6 +76,12 @@ fn summary_has_inconsistent_terminal_marker(summary: &TaskConsumptionSummary) ->
 fn summary_inconsistency_reason(summary: &TaskConsumptionSummary) -> Option<&'static str> {
     if summary_has_inconsistent_terminal_marker(summary) {
         Some(SUMMARY_SETTLEMENT_MARKER_WITHOUT_RECEIPTS)
+    } else if summary.challenged_receipt_count > summary.receipt_count {
+        // Promotion step: summary-only challenge counters must not outrun
+        // submitted receipts. If they do, the receipt summary cannot prove a
+        // canonical PoCO settlement result, so fail closed instead of letting
+        // the malformed summary authorize settlement finalization.
+        Some(SUMMARY_CHALLENGED_RECEIPTS_EXCEED_RECEIPTS)
     } else if summary.accepted_receipt_count > 0 && summary.total_credited_consumption_units == 0 {
         Some(SUMMARY_ACCEPTED_RECEIPTS_WITHOUT_CREDITED_UNITS)
     } else if summary.total_credited_consumption_units > 0 && summary.accepted_receipt_count == 0 {
@@ -1446,6 +1454,56 @@ mod tests {
                 payout_work_units: 9,
             }
         );
+    }
+
+    #[test]
+    fn primary_payout_work_units_fail_closed_for_summary_with_challenge_count_above_receipts() {
+        let mut st = StateStore::default();
+        let task = sample_task(TaskStatus::Completed);
+        st.set_task_consumption_summary(TaskConsumptionSummary {
+            task_id: task.task_id,
+            receipt_count: 1,
+            accepted_receipt_count: 0,
+            challenged_receipt_count: 2,
+            total_consumed_tokens: 17,
+            total_claimed_consumption_units: 17,
+            total_credited_consumption_units: 0,
+            last_settlement_height: Some(77),
+        });
+
+        assert_eq!(
+            preview_primary_payout_work_units(&st, &task, 50),
+            PrimaryPayoutWorkUnitPreview::PocoInconsistentSummary {
+                reason: SUMMARY_CHALLENGED_RECEIPTS_EXCEED_RECEIPTS,
+                metering_work_units: 50,
+            }
+        );
+        assert_eq!(primary_payout_work_units(&st, &task, 50), 0);
+    }
+
+    #[test]
+    fn reject_if_primary_settlement_pending_fails_closed_for_summary_with_challenge_count_above_receipts(
+    ) {
+        let mut st = StateStore::default();
+        st.set_task_consumption_summary(TaskConsumptionSummary {
+            task_id: 42,
+            receipt_count: 1,
+            accepted_receipt_count: 0,
+            challenged_receipt_count: 2,
+            total_consumed_tokens: 17,
+            total_claimed_consumption_units: 17,
+            total_credited_consumption_units: 0,
+            last_settlement_height: Some(77),
+        });
+
+        let err = reject_if_primary_settlement_pending(&st, 42).expect_err(
+            "summary challenge counts beyond submitted receipts must block primary settlement",
+        );
+        assert!(matches!(
+            err,
+            PouwError::State(msg)
+                if msg.contains(SUMMARY_CHALLENGED_RECEIPTS_EXCEED_RECEIPTS)
+        ));
     }
 
     #[test]
