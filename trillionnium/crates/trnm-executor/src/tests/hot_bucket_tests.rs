@@ -285,10 +285,10 @@ fn hot_bucket_interleave_short_circuits_single_mixed_domain_lane_without_role_fl
 #[test]
 fn hot_bucket_interleave_ignores_empty_access_noise_around_single_signaled_lane() {
     let mut txs = vec![
-        tx(91, vec![], vec![]),      // empty-access noise would default to bucket 0
-        tx(92, vec![], vec![o(1)]),  // real signaled lane bucket 1 under fanout=4
-        tx(93, vec![], vec![]),      // same empty-access noise
-        tx(94, vec![], vec![o(5)]),  // same real lane bucket 1 under fanout=4
+        tx(91, vec![], vec![]),     // empty-access noise would default to bucket 0
+        tx(92, vec![], vec![o(1)]), // real signaled lane bucket 1 under fanout=4
+        tx(93, vec![], vec![]),     // same empty-access noise
+        tx(94, vec![], vec![o(5)]), // same real lane bucket 1 under fanout=4
     ];
 
     reorder_for_strategy(&mut txs, GroupingStrategy::HotBucketInterleave);
@@ -304,10 +304,10 @@ fn hot_bucket_interleave_ignores_empty_access_noise_around_single_signaled_lane(
 #[test]
 fn hot_bucket_interleave_ignores_empty_access_noise_around_single_role_flipped_mixed_lane() {
     let mut txs = vec![
-        tx(95, vec![], vec![]),          // empty-access noise defaults to bucket 0
-        tx(96, vec![o(0)], vec![o(8)]),  // canonical mixed lane {0,8}
-        tx(97, vec![], vec![]),          // same empty-access noise
-        tx(98, vec![o(8)], vec![o(0)]),  // same mixed lane after read/write role flip
+        tx(95, vec![], vec![]),         // empty-access noise defaults to bucket 0
+        tx(96, vec![o(0)], vec![o(8)]), // canonical mixed lane {0,8}
+        tx(97, vec![], vec![]),         // same empty-access noise
+        tx(98, vec![o(8)], vec![o(0)]), // same mixed lane after read/write role flip
     ];
 
     reorder_for_strategy(&mut txs, GroupingStrategy::HotBucketInterleave);
@@ -326,10 +326,10 @@ fn hot_bucket_interleave_preserves_single_role_flipped_mixed_lane_under_clamped_
     let _buckets = EnvGuard::set("TRNM_HOT_BUCKETS", "4");
 
     let mut txs = vec![
-        tx(99, vec![], vec![]),           // empty-access noise still defaults to bucket 0
-        tx(100, vec![o(1)], vec![o(5)]),  // canonical mixed lane {1,5} -> bucket 1 when fanout=4
-        tx(101, vec![], vec![]),          // same empty-access noise
-        tx(102, vec![o(5)], vec![o(1)]),  // same mixed lane after read/write role flip
+        tx(99, vec![], vec![]), // empty-access noise still defaults to bucket 0
+        tx(100, vec![o(1)], vec![o(5)]), // canonical mixed lane {1,5} -> bucket 1 when fanout=4
+        tx(101, vec![], vec![]), // same empty-access noise
+        tx(102, vec![o(5)], vec![o(1)]), // same mixed lane after read/write role flip
     ];
 
     reorder_for_strategy(&mut txs, GroupingStrategy::HotBucketInterleave);
@@ -343,16 +343,17 @@ fn hot_bucket_interleave_preserves_single_role_flipped_mixed_lane_under_clamped_
 }
 
 #[test]
-fn hot_bucket_interleave_preserves_single_signaled_lane_under_input_clamped_fanout_with_empty_noise() {
+fn hot_bucket_interleave_preserves_single_signaled_lane_under_input_clamped_fanout_with_empty_noise(
+) {
     let _env = env_lock();
     let _buckets = EnvGuard::set("TRNM_HOT_BUCKETS", "8");
 
     let mut txs = vec![
-        tx(103, vec![], vec![]),      // empty-access noise defaults to bucket 0
-        tx(104, vec![], vec![o(1)]),  // only signaled lane once fanout clamps to len=5
-        tx(105, vec![], vec![]),      // same empty-access noise
-        tx(106, vec![], vec![o(6)]),  // same signaled lane under input-clamped fanout=5
-        tx(107, vec![], vec![]),      // same empty-access noise
+        tx(103, vec![], vec![]),     // empty-access noise defaults to bucket 0
+        tx(104, vec![], vec![o(1)]), // only signaled lane once fanout clamps to len=5
+        tx(105, vec![], vec![]),     // same empty-access noise
+        tx(106, vec![], vec![o(6)]), // same signaled lane under input-clamped fanout=5
+        tx(107, vec![], vec![]),     // same empty-access noise
     ];
 
     reorder_for_strategy(&mut txs, GroupingStrategy::HotBucketInterleave);
@@ -561,16 +562,8 @@ fn hot_bucket_hint_is_stable_for_single_write_single_read_role_flips() {
 #[test]
 fn hot_bucket_hint_stays_stable_when_echoed_primary_has_asymmetric_secondary_width() {
     let buckets_n = 97usize;
-    let write_heavy = tx(
-        961,
-        vec![o(5), o(9), o(11), o(11)],
-        vec![o(5), o(7), o(7)],
-    );
-    let read_heavy = tx(
-        962,
-        vec![o(5), o(7), o(7)],
-        vec![o(5), o(9), o(11), o(11)],
-    );
+    let write_heavy = tx(961, vec![o(5), o(9), o(11), o(11)], vec![o(5), o(7), o(7)]);
+    let read_heavy = tx(962, vec![o(5), o(7), o(7)], vec![o(5), o(9), o(11), o(11)]);
     let expected = ((5u64 ^ 7u64.rotate_left(7)) % buckets_n as u64) as usize;
 
     // If the canonical primary key is echoed across read/write domains but one
