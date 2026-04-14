@@ -5,28 +5,28 @@ use sha2::{Digest, Sha256};
 #[cfg(test)]
 use std::io::{Seek, SeekFrom};
 use std::{
+    cmp::Ordering,
     collections::{BTreeMap, BTreeSet, HashSet},
     fs::{self, OpenOptions},
     io::{Read, Write},
     net::{TcpListener, TcpStream},
-    cmp::Ordering,
     path::{Path, PathBuf},
     time::{Duration, Instant, SystemTime, UNIX_EPOCH},
 };
 use trnm_rpc::{
     get_tx, query_account_state, submit_tx, validate_trnm_address, AccountBalanceQueryResponse,
-    AccountNonceQueryResponse, AccountState, EventQueryResponse, FaucetRequestResponse, GetTxError,
-    ConsumptionRecordQueryResponse,
-    GovParamQueryResponse, GovProposalQueryResponse, InMemoryTransferLedger,
-    MessageRequestQueryResponse, RequestFullQueryResponse, RpcErrorResponse,
-    TaskMeteringDerivedQueryResponse, TaskMeteringPolicyQueryResponse, TaskMeteringQueryResponse,
-    TaskConsumptionSummaryQueryResponse, TaskQueryResponse, TxLifecycleRecord,
+    AccountNonceQueryResponse, AccountState, ConsumptionRecordQueryResponse, EventQueryResponse,
+    FaucetRequestResponse, GetTxError, GovParamQueryResponse, GovProposalQueryResponse,
+    InMemoryTransferLedger, MessageRequestQueryResponse, RequestFullQueryResponse,
+    RpcErrorResponse, TaskConsumptionSummaryQueryResponse, TaskMeteringDerivedQueryResponse,
+    TaskMeteringPolicyQueryResponse, TaskMeteringQueryResponse, TaskQueryResponse,
+    TaskSettlementPreviewQueryResponse, TxLifecycleRecord,
 };
 use trnm_state::{ConsumptionRecord, ConsumptionRecordStatus, StateStore, TaskConsumptionSummary};
 use trnm_types::{
-    AuditAction, AuditEvent, CapabilityToken, GovProposalObject, GovProposalStatus, IdentityRegistry,
-    PrivacyTier, RequestStatus, TaskMetadata, TaskMeteringSnapshot, TaskObject, TaskStatus,
-    TransferTx,
+    AuditAction, AuditEvent, CapabilityToken, GovProposalObject, GovProposalStatus,
+    IdentityRegistry, PrivacyTier, RequestStatus, TaskMetadata, TaskMeteringSnapshot, TaskObject,
+    TaskStatus, TransferTx,
 };
 
 const QUERY_EVENTS_LIMIT_DEFAULT: usize = 100;
@@ -106,6 +106,9 @@ enum Command {
         limit: usize,
     },
     QueryConsumptionSummary {
+        task_id: u64,
+    },
+    QuerySettlementPreview {
         task_id: u64,
     },
     QueryConsumptionReceipts {
@@ -907,8 +910,8 @@ fn normalize_node_event_log_source_entry(raw: &str) -> Option<String> {
     let normalized = inline_comment_idx
         .map(|idx| normalize_wrapped_env_value(normalized[..idx].trim_end()))
         .unwrap_or(normalized);
-    let normalized = normalize_leading_wrapped_log_source_comment_value(normalized)
-        .unwrap_or(normalized);
+    let normalized =
+        normalize_leading_wrapped_log_source_comment_value(normalized).unwrap_or(normalized);
     if normalized.is_empty() || normalized.starts_with('#') {
         return None;
     }
@@ -1338,7 +1341,9 @@ fn normalize_leading_wrapped_comment_value(raw: &str) -> Option<&str> {
         return None;
     }
 
-    Some(normalize_wrapped_env_value(&normalized[..closing_idx + quote.len_utf8()]))
+    Some(normalize_wrapped_env_value(
+        &normalized[..closing_idx + quote.len_utf8()],
+    ))
 }
 
 fn normalized_path_from_env(name: &str) -> Option<PathBuf> {
@@ -1520,6 +1525,7 @@ fn query_task_from_state_snapshot(task_id: u64, tasks: &[TaskObject]) -> Option<
             .and_then(|snapshot| {
                 task_metering_query_response(snapshot, task_status_path(task.status))
             }),
+        settlement_preview: None,
     })
 }
 
@@ -3332,7 +3338,12 @@ fn parse_single_limit_query_from_path(
             ));
         }
 
-        parsed_limit = Some(clamp_limit(metric_name, requested, default_limit, max_limit));
+        parsed_limit = Some(clamp_limit(
+            metric_name,
+            requested,
+            default_limit,
+            max_limit,
+        ));
     }
 
     Ok(parsed_limit.unwrap_or(default_limit))
@@ -3358,6 +3369,33 @@ fn parse_query_consumption_receipts_limit_from_path(
         QUERY_CONSUMPTION_RECEIPTS_LIMIT_DEFAULT,
         QUERY_CONSUMPTION_RECEIPTS_LIMIT_MAX,
     )
+}
+
+fn parse_task_id_from_target(
+    target: &str,
+    prefix: &str,
+    allow_query: bool,
+) -> std::result::Result<u64, String> {
+    let (path, query) = match target.split_once('?') {
+        Some((path, query)) => (path, Some(query)),
+        None => (target, None),
+    };
+
+    if !allow_query && query.is_some() {
+        return Err(http_json_response(
+            "400 Bad Request",
+            "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid task_id\"}",
+        ));
+    }
+
+    parse_nonempty_path_suffix(path, prefix)
+        .and_then(|suffix| suffix.parse::<u64>().ok())
+        .ok_or_else(|| {
+            http_json_response(
+                "400 Bad Request",
+                "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid task_id\"}",
+            )
+        })
 }
 
 fn contains_malformed_percent_encoding(value: &str) -> bool {
@@ -3445,7 +3483,7 @@ fn parse_query_normalized_audit_events_query_from_path(
     if query.is_empty()
         || query.contains('?')
         || query.contains('#')
-        || query.chars().any(|ch| ch.is_control() || ch.is_whitespace())
+        || query.chars().any(char::is_control)
     {
         return Err(http_json_response(
             "400 Bad Request",
@@ -3497,6 +3535,12 @@ fn parse_query_normalized_audit_events_query_from_path(
                 r#"{"ok":false,"code":"BAD_REQUEST","message":"invalid query"}"#,
             ));
         };
+        if key.chars().any(char::is_whitespace) {
+            return Err(http_json_response(
+                "400 Bad Request",
+                r#"{"ok":false,"code":"BAD_REQUEST","message":"invalid query"}"#,
+            ));
+        }
 
         let normalized_key = normalize_wrapped_env_value(key);
         match normalized_key {
@@ -3507,13 +3551,21 @@ fn parse_query_normalized_audit_events_query_from_path(
                         r#"{"ok":false,"code":"BAD_REQUEST","message":"duplicate source"}"#,
                     ));
                 }
-                let normalized = normalize_wrapped_env_value(value);
-                if normalized.is_empty() {
-                    return Err(http_json_response(
-                        "400 Bad Request",
-                        r#"{"ok":false,"code":"BAD_REQUEST","message":"invalid source"}"#,
-                    ));
-                }
+                let normalized = match normalize_wrapped_query_value(value) {
+                    Some(normalized) => normalized,
+                    None if value.chars().any(char::is_whitespace) => {
+                        return Err(http_json_response(
+                            "400 Bad Request",
+                            r#"{"ok":false,"code":"BAD_REQUEST","message":"invalid query"}"#,
+                        ));
+                    }
+                    None => {
+                        return Err(http_json_response(
+                            "400 Bad Request",
+                            r#"{"ok":false,"code":"BAD_REQUEST","message":"invalid source"}"#,
+                        ));
+                    }
+                };
                 query_params.source = Some(normalized.to_string());
             }
             key if key.eq_ignore_ascii_case("eventType") && key == "eventType" => {
@@ -3523,13 +3575,21 @@ fn parse_query_normalized_audit_events_query_from_path(
                         r#"{"ok":false,"code":"BAD_REQUEST","message":"duplicate eventType"}"#,
                     ));
                 }
-                let normalized = normalize_wrapped_env_value(value);
-                if normalized.is_empty() {
-                    return Err(http_json_response(
-                        "400 Bad Request",
-                        r#"{"ok":false,"code":"BAD_REQUEST","message":"invalid eventType"}"#,
-                    ));
-                }
+                let normalized = match normalize_wrapped_query_value(value) {
+                    Some(normalized) => normalized,
+                    None if value.chars().any(char::is_whitespace) => {
+                        return Err(http_json_response(
+                            "400 Bad Request",
+                            r#"{"ok":false,"code":"BAD_REQUEST","message":"invalid query"}"#,
+                        ));
+                    }
+                    None => {
+                        return Err(http_json_response(
+                            "400 Bad Request",
+                            r#"{"ok":false,"code":"BAD_REQUEST","message":"invalid eventType"}"#,
+                        ));
+                    }
+                };
                 query_params.event_type = Some(normalized.to_string());
             }
             key if key.eq_ignore_ascii_case("cursor") && key == "cursor" => {
@@ -3539,13 +3599,21 @@ fn parse_query_normalized_audit_events_query_from_path(
                         r#"{"ok":false,"code":"BAD_REQUEST","message":"duplicate cursor"}"#,
                     ));
                 }
-                let normalized = normalize_wrapped_env_value(value);
-                if normalized.is_empty() {
-                    return Err(http_json_response(
-                        "400 Bad Request",
-                        r#"{"ok":false,"code":"BAD_REQUEST","message":"invalid cursor"}"#,
-                    ));
-                }
+                let normalized = match normalize_wrapped_query_value(value) {
+                    Some(normalized) => normalized,
+                    None if value.chars().any(char::is_whitespace) => {
+                        return Err(http_json_response(
+                            "400 Bad Request",
+                            r#"{"ok":false,"code":"BAD_REQUEST","message":"invalid query"}"#,
+                        ));
+                    }
+                    None => {
+                        return Err(http_json_response(
+                            "400 Bad Request",
+                            r#"{"ok":false,"code":"BAD_REQUEST","message":"invalid cursor"}"#,
+                        ));
+                    }
+                };
                 let parsed = normalized.parse::<usize>().map_err(|_| {
                     http_json_response(
                         "400 Bad Request",
@@ -3561,13 +3629,21 @@ fn parse_query_normalized_audit_events_query_from_path(
                         r#"{"ok":false,"code":"BAD_REQUEST","message":"duplicate limit"}"#,
                     ));
                 }
-                let normalized = normalize_wrapped_env_value(value);
-                if normalized.is_empty() {
-                    return Err(http_json_response(
-                        "400 Bad Request",
-                        r#"{"ok":false,"code":"BAD_REQUEST","message":"invalid limit"}"#,
-                    ));
-                }
+                let normalized = match normalize_wrapped_query_value(value) {
+                    Some(normalized) => normalized,
+                    None if value.chars().any(char::is_whitespace) => {
+                        return Err(http_json_response(
+                            "400 Bad Request",
+                            r#"{"ok":false,"code":"BAD_REQUEST","message":"invalid query"}"#,
+                        ));
+                    }
+                    None => {
+                        return Err(http_json_response(
+                            "400 Bad Request",
+                            r#"{"ok":false,"code":"BAD_REQUEST","message":"invalid limit"}"#,
+                        ));
+                    }
+                };
                 let requested = normalized.parse::<usize>().map_err(|_| {
                     http_json_response(
                         "400 Bad Request",
@@ -3624,33 +3700,21 @@ fn parse_query_normalized_audit_events_query_from_path(
 }
 
 fn normalize_capability_subject_lookup(raw: &str) -> Option<String> {
-    let normalized = normalize_wrapped_env_value(raw)
+    let structural_normalized = raw
         .chars()
         .filter_map(|ch| match ch {
-            '\u{061C}'
-            | '\u{200B}'
-            | '\u{200C}'
-            | '\u{200D}'
-            | '\u{200E}'
-            | '\u{200F}'
-            | '\u{2060}'
-            | '\u{2061}'
-            | '\u{2062}'
-            | '\u{2063}'
-            | '\u{2064}'
-            | '\u{2066}'
-            | '\u{2067}'
-            | '\u{2068}'
-            | '\u{2069}'
-            | '\u{FEFF}' => None,
+            '\u{061C}' | '\u{200B}' | '\u{200C}' | '\u{200D}' | '\u{200E}' | '\u{200F}'
+            | '\u{2060}' | '\u{2061}' | '\u{2062}' | '\u{2063}' | '\u{2064}' | '\u{2066}'
+            | '\u{2067}' | '\u{2068}' | '\u{2069}' | '\u{FEFF}' => None,
             _ if ch.is_control() => None,
             _ => Some(ch),
         })
         .collect::<String>();
+    let normalized = normalize_wrapped_env_value(&structural_normalized);
     if normalized.is_empty() {
         None
     } else {
-        Some(normalized)
+        Some(normalized.to_string())
     }
 }
 
@@ -3725,7 +3789,11 @@ fn parse_nonempty_path_suffix<'a>(path: &'a str, prefix: &str) -> Option<&'a str
         .filter(|suffix| !suffix.is_empty())
         .filter(|suffix| !matches!(*suffix, "." | ".."))
         .filter(|suffix| !suffix.contains(['#', '?']))
-        .filter(|suffix| !suffix.chars().any(|ch| ch.is_control() || ch.is_whitespace()))
+        .filter(|suffix| {
+            !suffix
+                .chars()
+                .any(|ch| ch.is_control() || ch.is_whitespace())
+        })
         .filter(|suffix| !suffix.contains('/'))
         .filter(|suffix| !suffix.contains('\\'))
         .filter(|suffix| !contains_malformed_percent_encoding(suffix))
@@ -3795,12 +3863,8 @@ fn serve_health(host: &str, port: u16) -> Result<()> {
                 let body = health_probe_body(now_ms());
                 json_response_for_method(method, "200 OK", &body)
             }
-            (Some((method, _)), Some(path), Some(_)) if path.starts_with("/query-task/") => {
-                let task_id = path
-                    .trim_start_matches("/query-task/")
-                    .trim_end_matches('/')
-                    .parse::<u64>();
-                match task_id {
+            (Some((method, _)), Some(path), Some(target)) if path.starts_with("/query-task/") => {
+                match parse_task_id_from_target(target, "/query-task/", false) {
                     Ok(task_id) => {
                         let node_events = load_node_events(NodeEventScanMode::Authoritative);
                         let recs = load_latest_adapter_records();
@@ -3811,23 +3875,14 @@ fn serve_health(host: &str, port: u16) -> Result<()> {
                                 });
                                 json_response_for_method(method, "200 OK", &body)
                             }
-                            Err(err) => {
-                                let body = serde_json::json!({"ok": false, "code": "NOT_FOUND", "message": err.to_string()}).to_string();
-                                json_response_for_method(method, "404 Not Found", &body)
-                            }
+                            Err(err) => task_query_error_response(method, &err),
                         }
                     }
-                    Err(_) => {
-                        let body = "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid task_id\"}";
-                        json_response_for_method(method, "400 Bad Request", body)
-                    }
+                    Err(err) => http_response_for_method(method, &err),
                 }
             }
             (Some((method, _)), Some(path), Some(target)) if path.starts_with("/query-events/") => {
-                let task_id = path
-                    .trim_start_matches("/query-events/")
-                    .trim_end_matches('/')
-                    .parse::<u64>();
+                let task_id = parse_task_id_from_target(target, "/query-events/", true);
                 let limit = parse_query_events_limit_from_path(target);
                 match (task_id, limit) {
                     (Ok(task_id), Ok(limit)) => {
@@ -3840,27 +3895,39 @@ fn serve_health(host: &str, port: u16) -> Result<()> {
                                 });
                                 json_response_for_method(method, "200 OK", &body)
                             }
-                            Err(err) => {
-                                let body = serde_json::json!({"ok": false, "code": "NOT_FOUND", "message": err.to_string()}).to_string();
-                                json_response_for_method(method, "404 Not Found", &body)
-                            }
+                            Err(err) => event_query_error_response(method, &err)
                         }
                     }
                     (_, Err(err)) => http_response_for_method(method, &err),
-                    (Err(_), _) => {
-                        let body = "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid task_id\"}";
-                        json_response_for_method(method, "400 Bad Request", body)
-                    }
+                    (Err(err), _) => http_response_for_method(method, &err),
                 }
             }
-            (Some((method, _)), Some(path), Some(_))
+            (Some((method, _)), Some(path), Some(target))
+                if path.starts_with("/query-settlement-preview/") =>
+            {
+                match parse_task_id_from_target(target, "/query-settlement-preview/", false) {
+                    Ok(task_id) => match load_consumption_state_snapshot() {
+                        Ok(st) => match settlement_preview_response(task_id, &st) {
+                            Ok(out) => {
+                                let body = serde_json::to_string(&out).unwrap_or_else(|_| {
+                                    "{\"ok\":false,\"code\":\"SERDE_ERROR\"}".to_string()
+                                });
+                                json_response_for_method(method, "200 OK", &body)
+                            }
+                            Err(err) => settlement_summary_query_error_response(method, &err),
+                        },
+                        Err(err) => {
+                            let body = serde_json::json!({"ok": false, "code": "INTERNAL_ERROR", "message": err.to_string()}).to_string();
+                            json_response_for_method(method, "500 Internal Server Error", &body)
+                        }
+                    },
+                    Err(err) => http_response_for_method(method, &err),
+                }
+            }
+            (Some((method, _)), Some(path), Some(target))
                 if path.starts_with("/query-consumption-summary/") =>
             {
-                let task_id = path
-                    .trim_start_matches("/query-consumption-summary/")
-                    .trim_end_matches('/')
-                    .parse::<u64>();
-                match task_id {
+                match parse_task_id_from_target(target, "/query-consumption-summary/", false) {
                     Ok(task_id) => match load_consumption_state_snapshot() {
                         Ok(st) => match query_consumption_summary_response(task_id, &st) {
                             Ok(out) => {
@@ -3869,29 +3936,21 @@ fn serve_health(host: &str, port: u16) -> Result<()> {
                                 });
                                 json_response_for_method(method, "200 OK", &body)
                             }
-                            Err(err) => {
-                                let body = serde_json::json!({"ok": false, "code": "NOT_FOUND", "message": err.to_string()}).to_string();
-                                json_response_for_method(method, "404 Not Found", &body)
-                            }
+                            Err(err) => settlement_summary_query_error_response(method, &err),
                         },
                         Err(err) => {
                             let body = serde_json::json!({"ok": false, "code": "INTERNAL_ERROR", "message": err.to_string()}).to_string();
                             json_response_for_method(method, "500 Internal Server Error", &body)
                         }
                     },
-                    Err(_) => {
-                        let body = "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid task_id\"}";
-                        json_response_for_method(method, "400 Bad Request", body)
-                    }
+                    Err(err) => http_response_for_method(method, &err),
                 }
             }
             (Some((method, _)), Some(path), Some(target))
                 if path.starts_with("/query-consumption-receipts/") =>
             {
-                let task_id = path
-                    .trim_start_matches("/query-consumption-receipts/")
-                    .trim_end_matches('/')
-                    .parse::<u64>();
+                let task_id =
+                    parse_task_id_from_target(target, "/query-consumption-receipts/", true);
                 let limit = parse_query_consumption_receipts_limit_from_path(target);
                 match (task_id, limit) {
                     (Ok(task_id), Ok(limit)) => match load_consumption_state_snapshot() {
@@ -3913,10 +3972,7 @@ fn serve_health(host: &str, port: u16) -> Result<()> {
                         }
                     },
                     (_, Err(err)) => http_response_for_method(method, &err),
-                    (Err(_), _) => {
-                        let body = "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid task_id\"}";
-                        json_response_for_method(method, "400 Bad Request", body)
-                    }
+                    (Err(err), _) => http_response_for_method(method, &err),
                 }
             }
             (Some((method, _)), Some(path), Some(target))
@@ -3965,7 +4021,8 @@ fn serve_health(host: &str, port: u16) -> Result<()> {
                         }
                     }
                     Err("invalid query") => {
-                        let body = "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid query\"}";
+                        let body =
+                            "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid query\"}";
                         json_response_for_method(method, "400 Bad Request", body)
                     }
                     Err(_) => {
@@ -3974,18 +4031,16 @@ fn serve_health(host: &str, port: u16) -> Result<()> {
                     }
                 }
             }
-            _ => {
-                match request {
-                    Some((method, _)) => {
-                        let body = "{\"ok\":false,\"code\":\"NOT_FOUND\"}";
-                        json_response_for_method(method, "404 Not Found", body)
-                    }
-                    None => {
-                        let body = "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid http request\"}";
-                        http_json_response("400 Bad Request", body)
-                    }
+            _ => match request {
+                Some((method, _)) => {
+                    let body = "{\"ok\":false,\"code\":\"NOT_FOUND\"}";
+                    json_response_for_method(method, "404 Not Found", body)
                 }
-            }
+                None => {
+                    let body = "{\"ok\":false,\"code\":\"BAD_REQUEST\",\"message\":\"invalid http request\"}";
+                    http_json_response("400 Bad Request", body)
+                }
+            },
         };
 
         let _ = stream.write_all(response.as_bytes());
@@ -4092,6 +4147,7 @@ fn query_task_from_node_events(
         metadata_primary_compatibility_finding: None,
         metadata_compatibility_findings: None,
         metering: None,
+        settlement_preview: None,
     })
 }
 
@@ -4176,7 +4232,8 @@ fn sorted_task_adapter_records<'a>(
                 .as_deref()
                 .map(normalize_tx_hash_lookup)
                 .unwrap_or_default(),
-            normalize_result_hash_replay_identity(record.result_hash.as_deref()).unwrap_or_default(),
+            normalize_result_hash_replay_identity(record.result_hash.as_deref())
+                .unwrap_or_default(),
         ))
     });
     task_recs
@@ -4188,9 +4245,25 @@ fn query_task_response(
     recs: &[AdapterRecord],
 ) -> Result<TaskQueryResponse> {
     let task_state_snapshot = load_task_state_snapshot()?;
-    if let Some(out) = query_task_from_state_snapshot(task_id, &task_state_snapshot) {
+    let task_from_state_snapshot = query_task_from_state_snapshot(task_id, &task_state_snapshot);
+
+    let authoritative_settlement_preview =
+        authoritative_task_settlement_preview_for_query(task_id)?;
+    let has_authoritative_settlement_preview = authoritative_settlement_preview.is_some();
+
+    if let Some(out) = task_from_state_snapshot {
+        let mut out = out;
+        out.settlement_preview = authoritative_settlement_preview;
         return Ok(out);
     }
+
+    if has_authoritative_settlement_preview {
+        bail!(
+            "task query adapter fallback disabled for task {} because authoritative settlement summary exists",
+            task_id
+        );
+    }
+
     if let Some(out) = query_task_from_node_events(task_id, node_events) {
         return Ok(out);
     }
@@ -4237,7 +4310,34 @@ fn query_task_response(
         metadata_primary_compatibility_finding: None,
         metadata_compatibility_findings: None,
         metering: None,
+        settlement_preview: None,
     })
+}
+
+fn authoritative_task_settlement_preview_for_query(
+    task_id: u64,
+) -> Result<Option<TaskSettlementPreviewQueryResponse>> {
+    let st = load_consumption_state_snapshot()?;
+
+    if let Some(summary) = st.task_consumption_summary(task_id) {
+        return TaskSettlementPreviewQueryResponse::try_from_authoritative_state_summary(summary)
+            .map_err(|_| {
+                anyhow!(
+                    "task query blocked by settlement rpc contract violation for task {}",
+                    task_id
+                )
+            })
+            .map(Some);
+    }
+
+    if !st.consumption_records_for_task(task_id).is_empty() {
+        bail!(
+            "task query adapter fallback disabled for task {} because authoritative settlement receipts exist without a summary",
+            task_id
+        );
+    }
+
+    Ok(None)
 }
 
 fn consumption_status_label(status: ConsumptionRecordStatus) -> &'static str {
@@ -4272,57 +4372,241 @@ fn consumption_record_query_response(record: ConsumptionRecord) -> ConsumptionRe
     }
 }
 
-fn derive_task_consumption_summary(
+fn authoritative_task_consumption_summary_response(
     task_id: u64,
-    records: &[ConsumptionRecord],
-) -> TaskConsumptionSummary {
-    let mut summary = TaskConsumptionSummary {
-        task_id,
-        receipt_count: records.len() as u64,
-        ..TaskConsumptionSummary::default()
+    st: &StateStore,
+) -> Result<TaskConsumptionSummaryQueryResponse> {
+    let summary = match st.task_consumption_summary(task_id) {
+        Some(summary) => summary,
+        None if !st.consumption_records_for_task(task_id).is_empty() => {
+            bail!(
+                "consumption summary required for task {} because authoritative settlement receipts exist",
+                task_id
+            )
+        }
+        None => bail!("consumption summary not found for task {}", task_id),
     };
-    for record in records {
-        if matches!(
-            record.status,
-            ConsumptionRecordStatus::Accepted | ConsumptionRecordStatus::Discounted
-        ) {
-            summary.accepted_receipt_count = summary.accepted_receipt_count.saturating_add(1);
-            summary.total_credited_consumption_units = summary
-                .total_credited_consumption_units
-                .saturating_add(record.credited_consumption_units.unwrap_or(0));
-        }
-        if record.status == ConsumptionRecordStatus::Challenged {
-            summary.challenged_receipt_count = summary.challenged_receipt_count.saturating_add(1);
-        }
-        summary.total_consumed_tokens = summary
-            .total_consumed_tokens
-            .saturating_add(record.consumed_token_count as u128);
-        summary.total_claimed_consumption_units = summary
-            .total_claimed_consumption_units
-            .saturating_add(record.claimed_consumption_units);
+    TaskConsumptionSummaryQueryResponse::try_from_authoritative_state_summary(summary).map_err(
+        |_| {
+            anyhow!(
+                "consumption summary violated settlement rpc contract for task {}",
+                task_id
+            )
+        },
+    )
+}
+
+fn extract_task_id_from_message(message: &str, prefix: &str, suffix: &str) -> Option<u64> {
+    message
+        .strip_prefix(prefix)
+        .and_then(|task_id| task_id.strip_suffix(suffix))
+        .and_then(|task_id| task_id.parse::<u64>().ok())
+}
+
+fn settlement_summary_query_hint_fields(
+    message: &str,
+) -> serde_json::Map<String, serde_json::Value> {
+    let mut fields = serde_json::Map::new();
+
+    if let Some(task_id) = extract_task_id_from_message(
+        message,
+        "consumption summary required for task ",
+        " because authoritative settlement receipts exist",
+    ) {
+        fields.insert(
+            "settlement_reason".into(),
+            serde_json::json!("AUTHORITATIVE_SETTLEMENT_SUMMARY_REQUIRED"),
+        );
+        fields.insert(
+            "query_consumption_receipts".into(),
+            serde_json::json!(format!("/query-consumption-receipts/{task_id}")),
+        );
     }
-    summary
+
+    fields
+}
+
+fn settlement_aware_task_query_hint_fields(
+    message: &str,
+) -> serde_json::Map<String, serde_json::Value> {
+    let mut fields = serde_json::Map::new();
+
+    if let Some(task_id) = extract_task_id_from_message(
+        message,
+        "task query adapter fallback disabled for task ",
+        " because authoritative settlement summary exists",
+    ) {
+        fields.insert(
+            "settlement_reason".into(),
+            serde_json::json!("AUTHORITATIVE_SETTLEMENT_SUMMARY_EXISTS"),
+        );
+        fields.insert(
+            "query_settlement_preview".into(),
+            serde_json::json!(format!("/query-settlement-preview/{task_id}")),
+        );
+        fields.insert(
+            "query_consumption_summary".into(),
+            serde_json::json!(format!("/query-consumption-summary/{task_id}")),
+        );
+        fields.insert(
+            "query_consumption_receipts".into(),
+            serde_json::json!(format!("/query-consumption-receipts/{task_id}")),
+        );
+        return fields;
+    }
+
+    if let Some(task_id) = extract_task_id_from_message(
+        message,
+        "task query adapter fallback disabled for task ",
+        " because authoritative settlement receipts exist without a summary",
+    ) {
+        fields.insert(
+            "settlement_reason".into(),
+            serde_json::json!("AUTHORITATIVE_SETTLEMENT_SUMMARY_REQUIRED"),
+        );
+        fields.insert(
+            "query_consumption_receipts".into(),
+            serde_json::json!(format!("/query-consumption-receipts/{task_id}")),
+        );
+    }
+
+    fields
+}
+
+fn settlement_summary_query_error_response(method: &str, err: &anyhow::Error) -> String {
+    let message = err.to_string();
+    let (status, code) = if message.starts_with("consumption summary not found for task ") {
+        ("404 Not Found", "NOT_FOUND")
+    } else if message.starts_with("consumption summary required for task ") {
+        ("409 Conflict", "SETTLEMENT_SUMMARY_REQUIRED")
+    } else if message.starts_with("consumption summary violated settlement rpc contract for task ")
+    {
+        (
+            "500 Internal Server Error",
+            "SETTLEMENT_RPC_CONTRACT_VIOLATION",
+        )
+    } else {
+        ("500 Internal Server Error", "INTERNAL_ERROR")
+    };
+    let mut body = serde_json::Map::new();
+    body.insert("ok".into(), serde_json::json!(false));
+    body.insert("code".into(), serde_json::json!(code));
+    body.insert("message".into(), serde_json::json!(message.clone()));
+    body.extend(settlement_summary_query_hint_fields(&message));
+    let body = serde_json::Value::Object(body).to_string();
+    json_response_for_method(method, status, &body)
+}
+
+fn task_query_error_response(method: &str, err: &anyhow::Error) -> String {
+    let message = err.to_string();
+    let (status, code) = if message.starts_with("task not found: ") {
+        ("404 Not Found", "NOT_FOUND")
+    } else if message.starts_with("task query adapter fallback disabled for task ") {
+        ("409 Conflict", "SETTLEMENT_AWARE_TASK_QUERY_REQUIRED")
+    } else if message
+        .starts_with("task query blocked by settlement rpc contract violation for task ")
+    {
+        (
+            "500 Internal Server Error",
+            "SETTLEMENT_RPC_CONTRACT_VIOLATION",
+        )
+    } else {
+        ("500 Internal Server Error", "INTERNAL_ERROR")
+    };
+    let mut body = serde_json::Map::new();
+    body.insert("ok".into(), serde_json::json!(false));
+    body.insert("code".into(), serde_json::json!(code));
+    body.insert("message".into(), serde_json::json!(message.clone()));
+    body.extend(settlement_aware_task_query_hint_fields(&message));
+    let body = serde_json::Value::Object(body).to_string();
+    json_response_for_method(method, status, &body)
+}
+
+fn settlement_aware_event_query_hint_fields(
+    message: &str,
+) -> serde_json::Map<String, serde_json::Value> {
+    let mut fields = serde_json::Map::new();
+
+    if let Some(task_id) = extract_task_id_from_message(
+        message,
+        "event query adapter fallback disabled for task ",
+        " because authoritative settlement summary exists",
+    ) {
+        fields.insert(
+            "settlement_reason".into(),
+            serde_json::json!("AUTHORITATIVE_SETTLEMENT_SUMMARY_EXISTS"),
+        );
+        fields.insert(
+            "query_settlement_preview".into(),
+            serde_json::json!(format!("/query-settlement-preview/{task_id}")),
+        );
+        fields.insert(
+            "query_consumption_summary".into(),
+            serde_json::json!(format!("/query-consumption-summary/{task_id}")),
+        );
+        fields.insert(
+            "query_consumption_receipts".into(),
+            serde_json::json!(format!("/query-consumption-receipts/{task_id}")),
+        );
+        return fields;
+    }
+
+    if let Some(task_id) = extract_task_id_from_message(
+        message,
+        "event query adapter fallback disabled for task ",
+        " because authoritative settlement receipts exist without a summary",
+    ) {
+        fields.insert(
+            "settlement_reason".into(),
+            serde_json::json!("AUTHORITATIVE_SETTLEMENT_SUMMARY_REQUIRED"),
+        );
+        fields.insert(
+            "query_consumption_receipts".into(),
+            serde_json::json!(format!("/query-consumption-receipts/{task_id}")),
+        );
+    }
+
+    fields
+}
+
+fn event_query_error_response(method: &str, err: &anyhow::Error) -> String {
+    let message = err.to_string();
+    let (status, code) = if message.starts_with("events not found for task_id=") {
+        ("404 Not Found", "NOT_FOUND")
+    } else if message.starts_with("event query adapter fallback disabled for task ") {
+        ("409 Conflict", "SETTLEMENT_AWARE_EVENT_QUERY_REQUIRED")
+    } else if message.starts_with(
+        "event query blocked by settlement rpc contract violation for task ",
+    ) {
+        (
+            "500 Internal Server Error",
+            "SETTLEMENT_RPC_CONTRACT_VIOLATION",
+        )
+    } else {
+        ("500 Internal Server Error", "INTERNAL_ERROR")
+    };
+    let mut body = serde_json::Map::new();
+    body.insert("ok".into(), serde_json::json!(false));
+    body.insert("code".into(), serde_json::json!(code));
+    body.insert("message".into(), serde_json::json!(message.clone()));
+    body.extend(settlement_aware_event_query_hint_fields(&message));
+    let body = serde_json::Value::Object(body).to_string();
+    json_response_for_method(method, status, &body)
 }
 
 fn query_consumption_summary_response(
     task_id: u64,
     st: &StateStore,
 ) -> Result<TaskConsumptionSummaryQueryResponse> {
-    let records = st.consumption_records_for_task(task_id);
-    let summary = st
-        .task_consumption_summary(task_id)
-        .or_else(|| (!records.is_empty()).then(|| derive_task_consumption_summary(task_id, &records)))
-        .ok_or_else(|| anyhow!("consumption summary not found for task {}", task_id))?;
-    Ok(TaskConsumptionSummaryQueryResponse {
-        task_id: summary.task_id,
-        receipt_count: summary.receipt_count,
-        accepted_receipt_count: summary.accepted_receipt_count,
-        challenged_receipt_count: summary.challenged_receipt_count,
-        total_consumed_tokens: summary.total_consumed_tokens,
-        total_claimed_consumption_units: summary.total_claimed_consumption_units,
-        total_credited_consumption_units: summary.total_credited_consumption_units,
-        last_settlement_height: summary.last_settlement_height,
-    })
+    authoritative_task_consumption_summary_response(task_id, st)
+}
+
+fn settlement_preview_response(
+    task_id: u64,
+    st: &StateStore,
+) -> Result<TaskSettlementPreviewQueryResponse> {
+    authoritative_task_consumption_summary_response(task_id, st)
+        .map(TaskSettlementPreviewQueryResponse::from_authoritative_summary)
 }
 
 fn query_consumption_receipts_response(
@@ -4345,6 +4629,33 @@ fn query_consumption_receipts_response(
         push_tail_limited(&mut out, consumption_record_query_response(record), limit);
     }
     Ok(out)
+}
+
+fn enforce_settlement_aware_event_query_gate(task_id: u64) -> Result<()> {
+    let st = load_consumption_state_snapshot()?;
+
+    if let Some(summary) = st.task_consumption_summary(task_id) {
+        TaskConsumptionSummaryQueryResponse::try_from_authoritative_state_summary(summary)
+            .map_err(|_| {
+                anyhow!(
+                    "event query blocked by settlement rpc contract violation for task {}",
+                    task_id
+                )
+            })?;
+        bail!(
+            "event query adapter fallback disabled for task {} because authoritative settlement summary exists",
+            task_id
+        );
+    }
+
+    if !st.consumption_records_for_task(task_id).is_empty() {
+        bail!(
+            "event query adapter fallback disabled for task {} because authoritative settlement receipts exist without a summary",
+            task_id
+        );
+    }
+
+    Ok(())
 }
 
 fn query_events_response(
@@ -4396,6 +4707,8 @@ fn query_events_response(
     }
 
     if events.is_empty() {
+        enforce_settlement_aware_event_query_gate(task_id)?;
+
         let mut tx_id = 1u64;
         let mut has_commit = false;
         for r in sorted_task_adapter_records(task_id, recs) {
@@ -4575,11 +4888,36 @@ fn query_normalized_audit_events(
             .then_with(|| left.source.cmp(&right.source))
             .then_with(|| left.event_type.cmp(&right.event_type))
             .then_with(|| left.source.cmp(&right.source))
-            .then_with(|| left.object_id.as_deref().unwrap_or("").cmp(right.object_id.as_deref().unwrap_or("")))
-            .then_with(|| left.actor.as_deref().unwrap_or("").cmp(right.actor.as_deref().unwrap_or("")))
-            .then_with(|| left.checked_at.as_deref().unwrap_or("").cmp(right.checked_at.as_deref().unwrap_or("")))
-            .then_with(|| left.note.as_deref().unwrap_or("").cmp(right.note.as_deref().unwrap_or("")))
-            .then_with(|| left.reason.as_deref().unwrap_or("").cmp(right.reason.as_deref().unwrap_or("")))
+            .then_with(|| {
+                left.object_id
+                    .as_deref()
+                    .unwrap_or("")
+                    .cmp(right.object_id.as_deref().unwrap_or(""))
+            })
+            .then_with(|| {
+                left.actor
+                    .as_deref()
+                    .unwrap_or("")
+                    .cmp(right.actor.as_deref().unwrap_or(""))
+            })
+            .then_with(|| {
+                left.checked_at
+                    .as_deref()
+                    .unwrap_or("")
+                    .cmp(right.checked_at.as_deref().unwrap_or(""))
+            })
+            .then_with(|| {
+                left.note
+                    .as_deref()
+                    .unwrap_or("")
+                    .cmp(right.note.as_deref().unwrap_or(""))
+            })
+            .then_with(|| {
+                left.reason
+                    .as_deref()
+                    .unwrap_or("")
+                    .cmp(right.reason.as_deref().unwrap_or(""))
+            })
     });
 
     let total = events.len();
@@ -4662,6 +5000,11 @@ fn main() -> Result<()> {
         Command::QueryConsumptionSummary { task_id } => {
             let st = load_consumption_state_snapshot()?;
             let out = query_consumption_summary_response(task_id, &st)?;
+            println!("{}", serde_json::to_string_pretty(&out)?);
+        }
+        Command::QuerySettlementPreview { task_id } => {
+            let st = load_consumption_state_snapshot()?;
+            let out = settlement_preview_response(task_id, &st)?;
             println!("{}", serde_json::to_string_pretty(&out)?);
         }
         Command::QueryConsumptionReceipts { task_id, limit } => {
@@ -5413,11 +5756,11 @@ fn main() -> Result<()> {
 mod tests {
     use super::*;
     use std::panic::{catch_unwind, AssertUnwindSafe};
-    use trnm_rpc::TxStatus;
     use std::sync::{
         atomic::{AtomicU64, Ordering},
         Mutex, MutexGuard, OnceLock,
     };
+    use trnm_rpc::TxStatus;
     use trnm_types::CapabilityScope;
 
     fn env_lock() -> &'static Mutex<()> {
@@ -5507,6 +5850,31 @@ mod tests {
 
         if let Err(panic) = run {
             std::panic::resume_unwind(panic);
+        }
+    }
+
+    fn sample_task_state_snapshot_task(task_id: u64) -> TaskObject {
+        TaskObject {
+            task_id,
+            creator: "alice".into(),
+            bounty: 777,
+            status: TaskStatus::Revealed,
+            proof_type: trnm_types::ProofType::Fraud,
+            metadata: None,
+            worker: Some("worker-a".into()),
+            committed_hash: None,
+            result_hash: Some([0xabu8; 32]),
+            reveal_salt: None,
+            committed_at_height: None,
+            reveal_deadline_height: None,
+            challenge_deadline_height: None,
+            challenge_window_blocks_snapshot: None,
+            challenged_at_height: None,
+            resolve_deadline_height: None,
+            challenge_bond: None,
+            challenger: None,
+            challenge_bond_forfeited: None,
+            version: 9,
         }
     }
 
@@ -5700,10 +6068,7 @@ mod tests {
             parse_http_request_target("GET /health%01check HTTP/1.1"),
             None
         );
-        assert_eq!(
-            parse_http_request_target("HEAD /readyz%1F HTTP/1.1"),
-            None
-        );
+        assert_eq!(parse_http_request_target("HEAD /readyz%1F HTTP/1.1"), None);
         assert_eq!(
             parse_http_request_target("GET /health%20check HTTP/1.1"),
             None
@@ -5712,10 +6077,7 @@ mod tests {
             parse_http_request_target("GET /health%80check HTTP/1.1"),
             None
         );
-        assert_eq!(
-            parse_http_request_target("HEAD /readyz%9F HTTP/1.1"),
-            None
-        );
+        assert_eq!(parse_http_request_target("HEAD /readyz%9F HTTP/1.1"), None);
     }
 
     #[test]
@@ -5763,8 +6125,9 @@ mod tests {
             "/query-task/42?limit=1",
             "/health?limit=1",
         ] {
-            let err = parse_query_events_limit_from_path(path)
-                .expect_err("non-query-events routes must fail closed instead of inheriting the limit parser");
+            let err = parse_query_events_limit_from_path(path).expect_err(
+                "non-query-events routes must fail closed instead of inheriting the limit parser",
+            );
             assert!(err.contains("400 Bad Request"), "path={path} err={err}");
             assert!(err.contains("invalid limit"), "path={path} err={err}");
         }
@@ -6445,7 +6808,10 @@ mod tests {
             "/-/STATUS",
             "/-/STATUSZ/",
         ] {
-            assert!(is_health_probe_path(alias), "alias should stay accepted: {alias}");
+            assert!(
+                is_health_probe_path(alias),
+                "alias should stay accepted: {alias}"
+            );
         }
 
         for rejected in [
@@ -6549,7 +6915,11 @@ mod tests {
             .as_object()
             .expect("health probe body should serialize as a json object");
 
-        assert_eq!(object.len(), 4, "health body should stay minimal for probes");
+        assert_eq!(
+            object.len(),
+            4,
+            "health body should stay minimal for probes"
+        );
         assert_eq!(object.get("ok"), Some(&serde_json::Value::Bool(true)));
         assert_eq!(
             object.get("service"),
@@ -6691,7 +7061,8 @@ mod tests {
     }
 
     #[test]
-    fn parse_query_capability_audit_subject_from_target_rejects_percent_encoded_controls_and_malformed_escapes() {
+    fn parse_query_capability_audit_subject_from_target_rejects_percent_encoded_controls_and_malformed_escapes(
+    ) {
         for target in [
             "/query-capability-audit/alice%00",
             "/query-capability-audit/alice%0a",
@@ -7097,9 +7468,18 @@ mod tests {
 
     #[test]
     fn normalize_actor_or_signer_collapses_hidden_and_control_separators() {
-        assert_eq!(normalize_actor_or_signer(" author\u{200b}ity "), Some("author ity".into()));
-        assert_eq!(normalize_actor_or_signer("auth\u{00ad}ority"), Some("authority".into()));
-        assert_eq!(normalize_actor_or_signer("system\u{0007}"), Some("system".into()));
+        assert_eq!(
+            normalize_actor_or_signer(" author\u{200b}ity "),
+            Some("author ity".into())
+        );
+        assert_eq!(
+            normalize_actor_or_signer("auth\u{00ad}ority"),
+            Some("authority".into())
+        );
+        assert_eq!(
+            normalize_actor_or_signer("system\u{0007}"),
+            Some("system".into())
+        );
         assert_eq!(
             normalize_actor_or_signer("\u{feff}worker \u{2060} one\n"),
             Some("worker one".into())
@@ -9268,6 +9648,126 @@ mod tests {
     }
 
     #[test]
+    fn query_events_response_rejects_adapter_fallback_when_authoritative_settlement_summary_exists()
+    {
+        let path = unique_tmp_path("rpc-consumption-state", "json");
+        let _ = fs::remove_file(&path);
+        fs::write(
+            &path,
+            serde_json::json!({
+                "consumption_records": [],
+                "task_consumption_summaries": [{
+                    "task_id": 52,
+                    "receipt_count": 2,
+                    "accepted_receipt_count": 1,
+                    "challenged_receipt_count": 1,
+                    "total_consumed_tokens": 33,
+                    "total_claimed_consumption_units": 33,
+                    "total_credited_consumption_units": 21,
+                    "last_settlement_height": 88
+                }],
+                "consumer_consumption_nonces": {}
+            })
+            .to_string(),
+        )
+        .expect("write consumption snapshot");
+
+        let recs = vec![AdapterRecord {
+            ts: 10,
+            kind: "commit".into(),
+            task_id: 52,
+            worker: Some("worker-a".into()),
+            result_hash: None,
+            status: "accepted".into(),
+            tx_hash: Some("0xabc".into()),
+        }];
+
+        with_market_path_env(
+            &[
+                (TASK_STATE_FILE_ENV, None),
+                (CONSUMPTION_STATE_FILE_ENV, path.to_str()),
+            ],
+            || {
+                let err = query_events_response(52, 20, &[], &recs).expect_err(
+                    "adapter-backed event history must fail closed once authoritative settlement summary exists",
+                );
+                assert_eq!(
+                    err.to_string(),
+                    "event query adapter fallback disabled for task 52 because authoritative settlement summary exists"
+                );
+            },
+        );
+
+        let _ = fs::remove_file(&path);
+    }
+
+    #[test]
+    fn query_events_response_rejects_adapter_fallback_when_authoritative_receipts_exist_without_summary(
+    ) {
+        let path = unique_tmp_path("rpc-consumption-state", "json");
+        let _ = fs::remove_file(&path);
+        fs::write(
+            &path,
+            serde_json::json!({
+                "consumption_records": [{
+                    "key": {
+                        "task_id": 53,
+                        "consumer_id": "consumer-alpha",
+                        "output_hash": "abc123",
+                        "billing_window_id": "bw-1"
+                    },
+                    "worker_id": "worker-a",
+                    "tokenizer_id": "tok",
+                    "tokenizer_version": "1.0.0",
+                    "consumer_class": "bonded_api_client",
+                    "consumed_spans_root": "def456",
+                    "consumed_token_count": 17,
+                    "claimed_consumption_units": 17,
+                    "credited_consumption_units": 9,
+                    "consumer_nonce": 7,
+                    "accepted_at_unix_ms": 1775683200123u64,
+                    "status": "Accepted",
+                    "resolution_code": "accepted"
+                }],
+                "task_consumption_summaries": [],
+                "consumer_consumption_nonces": {
+                    "consumer-alpha": 7
+                }
+            })
+            .to_string(),
+        )
+        .expect("write receipt-only consumption snapshot");
+
+        let recs = vec![AdapterRecord {
+            ts: 10,
+            kind: "commit".into(),
+            task_id: 53,
+            worker: Some("worker-a".into()),
+            result_hash: None,
+            status: "accepted".into(),
+            tx_hash: Some("0xabc".into()),
+        }];
+
+        with_market_path_env(
+            &[
+                (TASK_STATE_FILE_ENV, None),
+                (CONSUMPTION_STATE_FILE_ENV, path.to_str()),
+            ],
+            || {
+                let err = query_events_response(53, 20, &[], &recs).expect_err(
+                    "receipt-backed authoritative settlement state must block legacy adapter-backed event history",
+                );
+                assert_eq!(
+                    err.to_string(),
+                    "event query adapter fallback disabled for task 53 because authoritative settlement receipts exist without a summary"
+                );
+            },
+        );
+
+        let _ = fs::remove_file(&path);
+    }
+
+    #[test]
     fn adapter_fallback_dedupes_replayed_rows_even_when_timestamps_drift() {
         let recs = vec![
             AdapterRecord {
@@ -9309,14 +9809,482 @@ mod tests {
         ];
 
         let task = query_task_response(51, &[], &recs).expect("task expected");
-        assert_eq!(task.version, 2, "replayed adapter rows must not inflate read-model version");
+        assert_eq!(
+            task.version, 2,
+            "replayed adapter rows must not inflate read-model version"
+        );
         assert_eq!(task.worker.as_deref(), Some("worker-a"));
         assert_eq!(task.result_hash_hex.as_deref(), Some("0xabcd"));
 
         let events = query_events_response(51, 20, &[], &recs).expect("events expected");
-        assert_eq!(events.len(), 2, "historical replay must not duplicate commit/reveal rows");
+        assert_eq!(
+            events.len(),
+            2,
+            "historical replay must not duplicate commit/reveal rows"
+        );
         assert_eq!(events[0].event_type, "commit");
         assert_eq!(events[1].event_type, "reveal");
+    }
+
+    #[test]
+    fn query_task_response_includes_settlement_preview_for_state_snapshot() {
+        let task_state_path = unique_tmp_path("rpc-task-state", "jsonl");
+        let consumption_path = unique_tmp_path("rpc-consumption-state", "json");
+        let _ = fs::remove_file(&task_state_path);
+        let _ = fs::remove_file(&consumption_path);
+        fs::write(
+            &task_state_path,
+            format!(
+                "{}\n",
+                serde_json::to_string(&sample_task_state_snapshot_task(42))
+                    .expect("serialize task state snapshot")
+            ),
+        )
+        .expect("write task state snapshot");
+        fs::write(
+            &consumption_path,
+            serde_json::json!({
+                "consumption_records": [],
+                "task_consumption_summaries": [{
+                    "task_id": 42,
+                    "receipt_count": 2,
+                    "accepted_receipt_count": 1,
+                    "challenged_receipt_count": 1,
+                    "total_consumed_tokens": 33,
+                    "total_claimed_consumption_units": 33,
+                    "total_credited_consumption_units": 21,
+                    "last_settlement_height": 88
+                }],
+                "consumer_consumption_nonces": {}
+            })
+            .to_string(),
+        )
+        .expect("write consumption snapshot");
+
+        with_market_path_env(
+            &[
+                (TASK_STATE_FILE_ENV, task_state_path.to_str()),
+                (CONSUMPTION_STATE_FILE_ENV, consumption_path.to_str()),
+            ],
+            || {
+                let task = query_task_response(42, &[], &[]).expect(
+                    "state snapshot task surface should inline authoritative settlement preview",
+                );
+                assert_eq!(task.task_id, 42);
+                assert_eq!(task.status, TaskStatus::Revealed);
+                assert_eq!(task.worker.as_deref(), Some("worker-a"));
+                assert_eq!(task.bounty, 777);
+                assert_eq!(task.version, 9);
+                assert_eq!(
+                    task.result_hash_hex.as_deref(),
+                    Some("abababababababababababababababababababababababababababababababab")
+                );
+
+                let settlement_preview = task
+                    .settlement_preview
+                    .expect("authoritative settlement preview should be attached");
+                assert_eq!(settlement_preview.task_id, 42);
+                assert_eq!(settlement_preview.receipt_count, 2);
+                assert_eq!(settlement_preview.accepted_receipt_count, 1);
+                assert_eq!(settlement_preview.challenged_receipt_count, 1);
+                assert_eq!(settlement_preview.pending_receipt_count(), Some(0));
+                assert_eq!(settlement_preview.last_settlement_height, Some(88));
+            },
+        );
+
+        let _ = fs::remove_file(&task_state_path);
+        let _ = fs::remove_file(&consumption_path);
+    }
+
+    #[test]
+    fn query_task_response_rejects_node_event_fallback_when_authoritative_settlement_summary_exists(
+    ) {
+        let path = unique_tmp_path("rpc-consumption-state", "json");
+        let _ = fs::remove_file(&path);
+        fs::write(
+            &path,
+            serde_json::json!({
+                "consumption_records": [],
+                "task_consumption_summaries": [{
+                    "task_id": 42,
+                    "receipt_count": 2,
+                    "accepted_receipt_count": 1,
+                    "challenged_receipt_count": 1,
+                    "total_consumed_tokens": 33,
+                    "total_claimed_consumption_units": 33,
+                    "total_credited_consumption_units": 21,
+                    "last_settlement_height": 88
+                }],
+                "consumer_consumption_nonces": {}
+            })
+            .to_string(),
+        )
+        .expect("write consumption snapshot");
+
+        let node_events = vec![NodeEventRecord {
+            event_type: "commit".into(),
+            task_id: 42,
+            from_status: "Assigned".into(),
+            to_status: "Committed".into(),
+            actor: "worker-a".into(),
+            tx_id: 10,
+            block_height: 77,
+            state_root: "state-root-1".into(),
+            ts_unix_ms: 1234,
+            signer: None,
+            challenger: None,
+            tx_hash: Some("0x1234".into()),
+            resolution_code: None,
+            treasury_delta: None,
+            challenger_delta: None,
+            bond_disposition: None,
+            metering: None,
+        }];
+
+        with_market_path_env(
+            &[
+                (TASK_STATE_FILE_ENV, None),
+                (CONSUMPTION_STATE_FILE_ENV, path.to_str()),
+            ],
+            || {
+                let err = query_task_response(42, &node_events, &[]).expect_err(
+                    "node-event fallback must fail closed once authoritative settlement summary exists",
+                );
+                assert_eq!(
+                    err.to_string(),
+                    "task query adapter fallback disabled for task 42 because authoritative settlement summary exists"
+                );
+            },
+        );
+
+        let _ = fs::remove_file(&path);
+    }
+
+    #[test]
+    fn query_task_response_rejects_adapter_fallback_when_authoritative_settlement_summary_exists() {
+        let path = unique_tmp_path("rpc-consumption-state", "json");
+        let _ = fs::remove_file(&path);
+        fs::write(
+            &path,
+            serde_json::json!({
+                "consumption_records": [],
+                "task_consumption_summaries": [{
+                    "task_id": 42,
+                    "receipt_count": 2,
+                    "accepted_receipt_count": 1,
+                    "challenged_receipt_count": 1,
+                    "total_consumed_tokens": 33,
+                    "total_claimed_consumption_units": 33,
+                    "total_credited_consumption_units": 21,
+                    "last_settlement_height": 88
+                }],
+                "consumer_consumption_nonces": {}
+            })
+            .to_string(),
+        )
+        .expect("write consumption snapshot");
+
+        let recs = vec![
+            AdapterRecord {
+                ts: 10,
+                kind: "commit".into(),
+                task_id: 42,
+                worker: Some("worker-a".into()),
+                result_hash: None,
+                status: "accepted".into(),
+                tx_hash: Some("0x1234".into()),
+            },
+            AdapterRecord {
+                ts: 20,
+                kind: "reveal".into(),
+                task_id: 42,
+                worker: Some("worker-a".into()),
+                result_hash: Some("0xabcd".into()),
+                status: "accepted".into(),
+                tx_hash: Some("0x1234".into()),
+            },
+        ];
+
+        with_market_path_env(
+            &[
+                (TASK_STATE_FILE_ENV, None),
+                (CONSUMPTION_STATE_FILE_ENV, path.to_str()),
+            ],
+            || {
+                let err = query_task_response(42, &[], &recs).expect_err(
+                    "adapter fallback must fail closed once authoritative settlement summary exists",
+                );
+                assert_eq!(
+                    err.to_string(),
+                    "task query adapter fallback disabled for task 42 because authoritative settlement summary exists"
+                );
+            },
+        );
+
+        let _ = fs::remove_file(&path);
+    }
+
+    #[test]
+    fn query_task_response_rejects_adapter_fallback_when_authoritative_settlement_summary_is_invalid(
+    ) {
+        let path = unique_tmp_path("rpc-consumption-state", "json");
+        let _ = fs::remove_file(&path);
+        fs::write(
+            &path,
+            serde_json::json!({
+                "consumption_records": [],
+                "task_consumption_summaries": [{
+                    "task_id": 42,
+                    "receipt_count": 1,
+                    "accepted_receipt_count": 1,
+                    "challenged_receipt_count": 1,
+                    "total_consumed_tokens": 33,
+                    "total_claimed_consumption_units": 33,
+                    "total_credited_consumption_units": 21,
+                    "last_settlement_height": 88
+                }],
+                "consumer_consumption_nonces": {}
+            })
+            .to_string(),
+        )
+        .expect("write invalid consumption snapshot");
+
+        let recs = vec![AdapterRecord {
+            ts: 10,
+            kind: "commit".into(),
+            task_id: 42,
+            worker: Some("worker-a".into()),
+            result_hash: None,
+            status: "accepted".into(),
+            tx_hash: Some("0x1234".into()),
+        }];
+
+        with_market_path_env(
+            &[
+                (TASK_STATE_FILE_ENV, None),
+                (CONSUMPTION_STATE_FILE_ENV, path.to_str()),
+            ],
+            || {
+                let err = query_task_response(42, &[], &recs)
+                    .expect_err("invalid authoritative settlement summary must block fallback");
+                assert_eq!(
+                    err.to_string(),
+                    "task query blocked by settlement rpc contract violation for task 42"
+                );
+            },
+        );
+
+        let _ = fs::remove_file(&path);
+    }
+
+    #[test]
+    fn query_task_response_rejects_state_snapshot_when_authoritative_receipts_exist_without_summary(
+    ) {
+        let task_state_path = unique_tmp_path("rpc-task-state", "jsonl");
+        let consumption_path = unique_tmp_path("rpc-consumption-state", "json");
+        let _ = fs::remove_file(&task_state_path);
+        let _ = fs::remove_file(&consumption_path);
+        fs::write(
+            &task_state_path,
+            format!(
+                "{}\n",
+                serde_json::to_string(&sample_task_state_snapshot_task(42))
+                    .expect("serialize task state snapshot")
+            ),
+        )
+        .expect("write task state snapshot");
+        fs::write(
+            &consumption_path,
+            serde_json::json!({
+                "consumption_records": [{
+                    "key": {
+                        "task_id": 42,
+                        "consumer_id": "consumer-alpha",
+                        "output_hash": "abc123",
+                        "billing_window_id": "bw-1"
+                    },
+                    "worker_id": "worker-a",
+                    "tokenizer_id": "tok",
+                    "tokenizer_version": "1.0.0",
+                    "consumer_class": "bonded_api_client",
+                    "consumed_spans_root": "def456",
+                    "consumed_token_count": 17,
+                    "claimed_consumption_units": 17,
+                    "credited_consumption_units": 9,
+                    "consumer_nonce": 7,
+                    "accepted_at_unix_ms": 1775683200123u64,
+                    "status": "Accepted",
+                    "resolution_code": "accepted"
+                }],
+                "task_consumption_summaries": [],
+                "consumer_consumption_nonces": {
+                    "consumer-alpha": 7
+                }
+            })
+            .to_string(),
+        )
+        .expect("write receipt-only consumption snapshot");
+
+        with_market_path_env(
+            &[
+                (TASK_STATE_FILE_ENV, task_state_path.to_str()),
+                (CONSUMPTION_STATE_FILE_ENV, consumption_path.to_str()),
+            ],
+            || {
+                let err = query_task_response(42, &[], &[]).expect_err(
+                    "receipt-backed authoritative settlement state must block legacy state snapshot task surface",
+                );
+                assert_eq!(
+                    err.to_string(),
+                    "task query adapter fallback disabled for task 42 because authoritative settlement receipts exist without a summary"
+                );
+            },
+        );
+
+        let _ = fs::remove_file(&task_state_path);
+        let _ = fs::remove_file(&consumption_path);
+    }
+
+    #[test]
+    fn query_task_response_rejects_node_event_fallback_when_authoritative_receipts_exist_without_summary(
+    ) {
+        let path = unique_tmp_path("rpc-consumption-state", "json");
+        let _ = fs::remove_file(&path);
+        fs::write(
+            &path,
+            serde_json::json!({
+                "consumption_records": [{
+                    "key": {
+                        "task_id": 42,
+                        "consumer_id": "consumer-alpha",
+                        "output_hash": "abc123",
+                        "billing_window_id": "bw-1"
+                    },
+                    "worker_id": "worker-a",
+                    "tokenizer_id": "tok",
+                    "tokenizer_version": "1.0.0",
+                    "consumer_class": "bonded_api_client",
+                    "consumed_spans_root": "def456",
+                    "consumed_token_count": 17,
+                    "claimed_consumption_units": 17,
+                    "credited_consumption_units": 9,
+                    "consumer_nonce": 7,
+                    "accepted_at_unix_ms": 1775683200123u64,
+                    "status": "Accepted",
+                    "resolution_code": "accepted"
+                }],
+                "task_consumption_summaries": [],
+                "consumer_consumption_nonces": {
+                    "consumer-alpha": 7
+                }
+            })
+            .to_string(),
+        )
+        .expect("write receipt-only consumption snapshot");
+
+        let node_events = vec![NodeEventRecord {
+            event_type: "commit".into(),
+            task_id: 42,
+            from_status: "Assigned".into(),
+            to_status: "Committed".into(),
+            actor: "worker-a".into(),
+            tx_id: 10,
+            block_height: 77,
+            state_root: "state-root-1".into(),
+            ts_unix_ms: 1234,
+            signer: None,
+            challenger: None,
+            tx_hash: Some("0x1234".into()),
+            resolution_code: None,
+            treasury_delta: None,
+            challenger_delta: None,
+            bond_disposition: None,
+            metering: None,
+        }];
+
+        with_market_path_env(
+            &[
+                (TASK_STATE_FILE_ENV, None),
+                (CONSUMPTION_STATE_FILE_ENV, path.to_str()),
+            ],
+            || {
+                let err = query_task_response(42, &node_events, &[]).expect_err(
+                    "receipt-backed authoritative settlement state must block legacy node-event fallback",
+                );
+                assert_eq!(
+                    err.to_string(),
+                    "task query adapter fallback disabled for task 42 because authoritative settlement receipts exist without a summary"
+                );
+            },
+        );
+
+        let _ = fs::remove_file(&path);
+    }
+
+    #[test]
+    fn query_task_response_rejects_adapter_fallback_when_authoritative_receipts_exist_without_summary(
+    ) {
+        let path = unique_tmp_path("rpc-consumption-state", "json");
+        let _ = fs::remove_file(&path);
+        fs::write(
+            &path,
+            serde_json::json!({
+                "consumption_records": [{
+                    "key": {
+                        "task_id": 42,
+                        "consumer_id": "consumer-alpha",
+                        "output_hash": "abc123",
+                        "billing_window_id": "bw-1"
+                    },
+                    "worker_id": "worker-a",
+                    "tokenizer_id": "tok",
+                    "tokenizer_version": "1.0.0",
+                    "consumer_class": "bonded_api_client",
+                    "consumed_spans_root": "def456",
+                    "consumed_token_count": 17,
+                    "claimed_consumption_units": 17,
+                    "credited_consumption_units": 9,
+                    "consumer_nonce": 7,
+                    "accepted_at_unix_ms": 1775683200123u64,
+                    "status": "Accepted",
+                    "resolution_code": "accepted"
+                }],
+                "task_consumption_summaries": [],
+                "consumer_consumption_nonces": {
+                    "consumer-alpha": 7
+                }
+            })
+            .to_string(),
+        )
+        .expect("write receipt-only consumption snapshot");
+
+        let recs = vec![AdapterRecord {
+            ts: 10,
+            kind: "commit".into(),
+            task_id: 42,
+            worker: Some("worker-a".into()),
+            result_hash: None,
+            status: "accepted".into(),
+            tx_hash: Some("0x1234".into()),
+        }];
+
+        with_market_path_env(
+            &[
+                (TASK_STATE_FILE_ENV, None),
+                (CONSUMPTION_STATE_FILE_ENV, path.to_str()),
+            ],
+            || {
+                let err = query_task_response(42, &[], &recs).expect_err(
+                    "receipt-backed authoritative settlement state must block legacy adapter fallback",
+                );
+                assert_eq!(
+                    err.to_string(),
+                    "task query adapter fallback disabled for task 42 because authoritative settlement receipts exist without a summary"
+                );
+            },
+        );
+
+        let _ = fs::remove_file(&path);
     }
 
     #[test]
@@ -10899,8 +11867,14 @@ line2
             }
         }
 
-        let previous = dir.join(format!("tx-adapter-20260403-{}-a.jsonl", std::process::id()));
-        let latest = dir.join(format!("tx-adapter-20260404-{}-z.jsonl", std::process::id()));
+        let previous = dir.join(format!(
+            "tx-adapter-20260403-{}-a.jsonl",
+            std::process::id()
+        ));
+        let latest = dir.join(format!(
+            "tx-adapter-20260404-{}-z.jsonl",
+            std::process::id()
+        ));
         fs::write(
             &previous,
             "{\"ts\":1772074584,\"mode\":\"mock\",\"kind\":\"commit\",\"task_id\":5252,\"worker\":\"worker1\",\"commit_hash\":\"764c7baf3e1d3d325511cdc3d7836fbc1fa71a289bd669edcc4b55d6baaee9d7\",\"nonce\":101001,\"tx_hash\":\"7336b90d593ebe324cb4b3e41e7e9d86d1e2418f230cca0162ca1d539f32c2b9\",\"status\":\"accepted\",\"rc\":0}\n",
@@ -10909,7 +11883,11 @@ line2
         fs::write(&latest, "\n  \n").expect("write empty latest adapter snapshot");
 
         let records = load_latest_adapter_records();
-        assert_eq!(records.len(), 1, "empty newest snapshot should not erase the last durable read-model snapshot");
+        assert_eq!(
+            records.len(),
+            1,
+            "empty newest snapshot should not erase the last durable read-model snapshot"
+        );
         assert_eq!(records[0].task_id, 5252);
 
         let _ = fs::remove_file(&previous);
@@ -10920,7 +11898,8 @@ line2
     }
 
     #[test]
-    fn load_latest_adapter_records_falls_back_to_previous_nonempty_snapshot_when_latest_contains_only_comment_noise() {
+    fn load_latest_adapter_records_falls_back_to_previous_nonempty_snapshot_when_latest_contains_only_comment_noise(
+    ) {
         let dir = run_root().join("run/worker-agent");
         fs::create_dir_all(&dir).expect("create worker-agent dir");
 
@@ -10943,15 +11922,24 @@ line2
             }
         }
 
-        let previous = dir.join(format!("tx-adapter-20260403-{}-a.jsonl", std::process::id()));
-        let latest = dir.join(format!("tx-adapter-20260404-{}-z.jsonl", std::process::id()));
+        let previous = dir.join(format!(
+            "tx-adapter-20260403-{}-a.jsonl",
+            std::process::id()
+        ));
+        let latest = dir.join(format!(
+            "tx-adapter-20260404-{}-z.jsonl",
+            std::process::id()
+        ));
         fs::write(
             &previous,
             "{\"ts\":1772074584,\"mode\":\"mock\",\"kind\":\"commit\",\"task_id\":6666,\"worker\":\"worker1\",\"commit_hash\":\"764c7baf3e1d3d325511cdc3d7836fbc1fa71a289bd669edcc4b55d6baaee9d7\",\"nonce\":101001,\"tx_hash\":\"7336b90d593ebe324cb4b3e41e7e9d86d1e2418f230cca0162ca1d539f32c2b9\",\"status\":\"accepted\",\"rc\":0}\n",
         )
         .expect("write previous adapter snapshot");
-        fs::write(&latest, "  # archived replay note only\n\t# no durable rows here either\n")
-            .expect("write comment-noise latest adapter snapshot");
+        fs::write(
+            &latest,
+            "  # archived replay note only\n\t# no durable rows here either\n",
+        )
+        .expect("write comment-noise latest adapter snapshot");
 
         let records = load_latest_adapter_records();
         assert_eq!(
@@ -10969,7 +11957,8 @@ line2
     }
 
     #[test]
-    fn load_latest_adapter_records_falls_back_to_previous_nonempty_snapshot_when_latest_is_corrupt() {
+    fn load_latest_adapter_records_falls_back_to_previous_nonempty_snapshot_when_latest_is_corrupt()
+    {
         let dir = run_root().join("run/worker-agent");
         fs::create_dir_all(&dir).expect("create worker-agent dir");
 
@@ -10992,8 +11981,14 @@ line2
             }
         }
 
-        let previous = dir.join(format!("tx-adapter-20260403-{}-a.jsonl", std::process::id()));
-        let latest = dir.join(format!("tx-adapter-20260404-{}-z.jsonl", std::process::id()));
+        let previous = dir.join(format!(
+            "tx-adapter-20260403-{}-a.jsonl",
+            std::process::id()
+        ));
+        let latest = dir.join(format!(
+            "tx-adapter-20260404-{}-z.jsonl",
+            std::process::id()
+        ));
         fs::write(
             &previous,
             "{\"ts\":1772074584,\"mode\":\"mock\",\"kind\":\"commit\",\"task_id\":4242,\"worker\":\"worker1\",\"commit_hash\":\"764c7baf3e1d3d325511cdc3d7836fbc1fa71a289bd669edcc4b55d6baaee9d7\",\"nonce\":101001,\"tx_hash\":\"7336b90d593ebe324cb4b3e41e7e9d86d1e2418f230cca0162ca1d539f32c2b9\",\"status\":\"accepted\",\"rc\":0}\n",
@@ -11040,7 +12035,10 @@ line2
             }
         }
 
-        let latest = dir.join(format!("tx-adapter-20260404-{}-z.jsonl", std::process::id()));
+        let latest = dir.join(format!(
+            "tx-adapter-20260404-{}-z.jsonl",
+            std::process::id()
+        ));
         fs::write(
             &latest,
             "\r\n  \u{feff}{\"ts\":1772074584,\"mode\":\"mock\",\"kind\":\"commit\",\"task_id\":6464,\"worker\":\"worker1\",\"commit_hash\":\"764c7baf3e1d3d325511cdc3d7836fbc1fa71a289bd669edcc4b55d6baaee9d7\",\"nonce\":101001,\"tx_hash\":\"7336b90d593ebe324cb4b3e41e7e9d86d1e2418f230cca0162ca1d539f32c2b9\",\"status\":\"accepted\",\"rc\":0}\r\n\r\n",
@@ -11062,7 +12060,8 @@ line2
     }
 
     #[test]
-    fn load_latest_adapter_records_skips_invalid_utf8_rows_without_dropping_same_snapshot_valid_rows() {
+    fn load_latest_adapter_records_skips_invalid_utf8_rows_without_dropping_same_snapshot_valid_rows(
+    ) {
         let dir = run_root().join("run/worker-agent");
         fs::create_dir_all(&dir).expect("create worker-agent dir");
 
@@ -11085,7 +12084,10 @@ line2
             }
         }
 
-        let latest = dir.join(format!("tx-adapter-20260404-{}-z.jsonl", std::process::id()));
+        let latest = dir.join(format!(
+            "tx-adapter-20260404-{}-z.jsonl",
+            std::process::id()
+        ));
         let mut raw = b"\xff\xfe\xfa not-utf8\n".to_vec();
         raw.extend_from_slice(b"{\"ts\":1772074584,\"mode\":\"mock\",\"kind\":\"commit\",\"task_id\":6565,\"worker\":\"worker1\",\"commit_hash\":\"764c7baf3e1d3d325511cdc3d7836fbc1fa71a289bd669edcc4b55d6baaee9d7\",\"nonce\":101001,\"tx_hash\":\"7336b90d593ebe324cb4b3e41e7e9d86d1e2418f230cca0162ca1d539f32c2b9\",\"status\":\"accepted\",\"rc\":0}\n");
         fs::write(&latest, raw).expect("write invalid utf8 + valid adapter snapshot");
@@ -11105,7 +12107,8 @@ line2
     }
 
     #[test]
-    fn load_latest_adapter_records_falls_back_to_previous_nonempty_snapshot_when_latest_is_invalid_utf8_only() {
+    fn load_latest_adapter_records_falls_back_to_previous_nonempty_snapshot_when_latest_is_invalid_utf8_only(
+    ) {
         let dir = run_root().join("run/worker-agent");
         fs::create_dir_all(&dir).expect("create worker-agent dir");
 
@@ -11128,8 +12131,14 @@ line2
             }
         }
 
-        let previous = dir.join(format!("tx-adapter-20260403-{}-a.jsonl", std::process::id()));
-        let latest = dir.join(format!("tx-adapter-20260404-{}-z.jsonl", std::process::id()));
+        let previous = dir.join(format!(
+            "tx-adapter-20260403-{}-a.jsonl",
+            std::process::id()
+        ));
+        let latest = dir.join(format!(
+            "tx-adapter-20260404-{}-z.jsonl",
+            std::process::id()
+        ));
         fs::write(
             &previous,
             "{\"ts\":1772074584,\"mode\":\"mock\",\"kind\":\"commit\",\"task_id\":6767,\"worker\":\"worker1\",\"commit_hash\":\"764c7baf3e1d3d325511cdc3d7836fbc1fa71a289bd669edcc4b55d6baaee9d7\",\"nonce\":101001,\"tx_hash\":\"7336b90d593ebe324cb4b3e41e7e9d86d1e2418f230cca0162ca1d539f32c2b9\",\"status\":\"accepted\",\"rc\":0}\n",
@@ -11271,6 +12280,73 @@ line2
     }
 
     #[test]
+    fn query_consumption_summary_response_rejects_inconsistent_authoritative_summary() {
+        let mut st = StateStore::default();
+        st.set_task_consumption_summary(TaskConsumptionSummary {
+            task_id: 42,
+            receipt_count: 1,
+            accepted_receipt_count: 1,
+            challenged_receipt_count: 1,
+            total_consumed_tokens: 33,
+            total_claimed_consumption_units: 33,
+            total_credited_consumption_units: 21,
+            last_settlement_height: Some(88),
+        });
+
+        let err = query_consumption_summary_response(42, &st)
+            .expect_err("impossible authoritative summary must fail closed");
+        assert_eq!(
+            err.to_string(),
+            "consumption summary violated settlement rpc contract for task 42"
+        );
+    }
+
+    #[test]
+    fn settlement_preview_response_uses_dedicated_contract_shape() {
+        let mut st = StateStore::default();
+        st.set_task_consumption_summary(TaskConsumptionSummary {
+            task_id: 42,
+            receipt_count: 2,
+            accepted_receipt_count: 1,
+            challenged_receipt_count: 1,
+            total_consumed_tokens: 33,
+            total_claimed_consumption_units: 33,
+            total_credited_consumption_units: 21,
+            last_settlement_height: Some(88),
+        });
+
+        let out = settlement_preview_response(42, &st).expect("settlement preview");
+        let v = serde_json::to_value(out).expect("preview json");
+        assert_eq!(v["task_id"], serde_json::json!(42));
+        assert_eq!(v["receipt_count"], serde_json::json!(2));
+        assert_eq!(v["accepted_receipt_count"], serde_json::json!(1));
+        assert_eq!(v["challenged_receipt_count"], serde_json::json!(1));
+        assert_eq!(v["last_settlement_height"], serde_json::json!(88));
+    }
+
+    #[test]
+    fn settlement_preview_response_rejects_inconsistent_authoritative_summary() {
+        let mut st = StateStore::default();
+        st.set_task_consumption_summary(TaskConsumptionSummary {
+            task_id: 42,
+            receipt_count: 1,
+            accepted_receipt_count: 0,
+            challenged_receipt_count: 1,
+            total_consumed_tokens: 33,
+            total_claimed_consumption_units: 33,
+            total_credited_consumption_units: 1,
+            last_settlement_height: Some(88),
+        });
+
+        let err = settlement_preview_response(42, &st)
+            .expect_err("invalid authoritative preview summary must fail closed");
+        assert_eq!(
+            err.to_string(),
+            "consumption summary violated settlement rpc contract for task 42"
+        );
+    }
+
+    #[test]
     fn query_consumption_receipts_response_reads_task_records() {
         let mut st = StateStore::default();
         st.put_consumption_record(ConsumptionRecord {
@@ -11329,7 +12405,190 @@ line2
     }
 
     #[test]
-    fn query_consumption_summary_response_derives_from_records_when_summary_missing() {
+    fn parse_task_id_from_target_accepts_canonical_task_event_and_settlement_shapes() {
+        assert_eq!(
+            parse_task_id_from_target("/query-task/42", "/query-task/", false)
+                .expect("task task id"),
+            42
+        );
+        assert_eq!(
+            parse_task_id_from_target("/query-events/7?limit=5", "/query-events/", true)
+                .expect("event task id"),
+            7
+        );
+        assert_eq!(
+            parse_task_id_from_target(
+                "/query-settlement-preview/42",
+                "/query-settlement-preview/",
+                false,
+            )
+            .expect("preview task id"),
+            42
+        );
+        assert_eq!(
+            parse_task_id_from_target(
+                "/query-consumption-receipts/42?limit=7",
+                "/query-consumption-receipts/",
+                true,
+            )
+            .expect("receipts task id"),
+            42
+        );
+    }
+
+    #[test]
+    fn parse_task_id_from_target_rejects_noncanonical_task_event_and_settlement_query_shapes() {
+        for (target, prefix, allow_query) in [
+            ("/query-task/42?verbose=1", "/query-task/", false),
+            ("/query-task/42//", "/query-task/", false),
+            ("/query-events/42//?limit=7", "/query-events/", true),
+            (
+                "/query-settlement-preview/42?limit=7",
+                "/query-settlement-preview/",
+                false,
+            ),
+            (
+                "/query-settlement-preview/42//",
+                "/query-settlement-preview/",
+                false,
+            ),
+            (
+                "/query-consumption-summary/42/extra",
+                "/query-consumption-summary/",
+                false,
+            ),
+            (
+                "/query-consumption-receipts/42%2Fhistory?limit=7",
+                "/query-consumption-receipts/",
+                true,
+            ),
+        ] {
+            let err = parse_task_id_from_target(target, prefix, allow_query)
+                .expect_err("non-canonical task/query shapes must fail closed");
+            assert!(err.contains("400 Bad Request"));
+            assert!(err.contains("invalid task_id"));
+        }
+    }
+
+    #[test]
+    fn settlement_summary_query_error_response_maps_missing_summary_to_not_found() {
+        let err = anyhow!("consumption summary not found for task 42");
+        let response = settlement_summary_query_error_response("GET", &err);
+        assert!(response.starts_with("HTTP/1.1 404 Not Found\r\n"));
+        assert!(response.contains("\"code\":\"NOT_FOUND\""));
+        assert!(response.contains("consumption summary not found for task 42"));
+    }
+
+    #[test]
+    fn settlement_summary_query_error_response_maps_missing_receipt_backed_summary_to_conflict() {
+        let err = anyhow!(
+            "consumption summary required for task 42 because authoritative settlement receipts exist"
+        );
+        let response = settlement_summary_query_error_response("GET", &err);
+        assert!(response.starts_with("HTTP/1.1 409 Conflict\r\n"));
+        assert!(response.contains("\"code\":\"SETTLEMENT_SUMMARY_REQUIRED\""));
+        assert!(response.contains("authoritative settlement receipts exist"));
+        assert!(response
+            .contains("\"settlement_reason\":\"AUTHORITATIVE_SETTLEMENT_SUMMARY_REQUIRED\""));
+        assert!(
+            response.contains("\"query_consumption_receipts\":\"/query-consumption-receipts/42\"")
+        );
+    }
+
+    #[test]
+    fn settlement_summary_query_error_response_maps_contract_violation_to_settlement_rpc_contract_violation(
+    ) {
+        let err = anyhow!("consumption summary violated settlement rpc contract for task 42");
+        let response = settlement_summary_query_error_response("GET", &err);
+        assert!(response.starts_with("HTTP/1.1 500 Internal Server Error\r\n"));
+        assert!(response.contains("\"code\":\"SETTLEMENT_RPC_CONTRACT_VIOLATION\""));
+        assert!(response.contains("settlement rpc contract"));
+    }
+
+    #[test]
+    fn task_query_error_response_maps_missing_task_to_not_found() {
+        let err = anyhow!("task not found: 42");
+        let response = task_query_error_response("GET", &err);
+        assert!(response.starts_with("HTTP/1.1 404 Not Found\r\n"));
+        assert!(response.contains("\"code\":\"NOT_FOUND\""));
+        assert!(response.contains("task not found: 42"));
+    }
+
+    #[test]
+    fn task_query_error_response_maps_settlement_gate_to_conflict() {
+        let err = anyhow!(
+            "task query adapter fallback disabled for task 42 because authoritative settlement summary exists"
+        );
+        let response = task_query_error_response("GET", &err);
+        assert!(response.starts_with("HTTP/1.1 409 Conflict\r\n"));
+        assert!(response.contains("\"code\":\"SETTLEMENT_AWARE_TASK_QUERY_REQUIRED\""));
+        assert!(response.contains("authoritative settlement summary exists"));
+        assert!(response
+            .contains("\"settlement_reason\":\"AUTHORITATIVE_SETTLEMENT_SUMMARY_EXISTS\""));
+        assert!(response.contains("\"query_settlement_preview\":\"/query-settlement-preview/42\""));
+        assert!(response
+            .contains("\"query_consumption_summary\":\"/query-consumption-summary/42\""));
+        assert!(response
+            .contains("\"query_consumption_receipts\":\"/query-consumption-receipts/42\""));
+    }
+
+    #[test]
+    fn task_query_error_response_maps_receipt_backed_gate_to_receipt_route_hint() {
+        let err = anyhow!(
+            "task query adapter fallback disabled for task 42 because authoritative settlement receipts exist without a summary"
+        );
+        let response = task_query_error_response("GET", &err);
+        assert!(response.starts_with("HTTP/1.1 409 Conflict\r\n"));
+        assert!(response.contains("\"code\":\"SETTLEMENT_AWARE_TASK_QUERY_REQUIRED\""));
+        assert!(response
+            .contains("\"settlement_reason\":\"AUTHORITATIVE_SETTLEMENT_SUMMARY_REQUIRED\""));
+        assert!(response
+            .contains("\"query_consumption_receipts\":\"/query-consumption-receipts/42\""));
+    }
+
+    #[test]
+    fn task_query_error_response_maps_contract_violation_to_internal_error() {
+        let err = anyhow!("task query blocked by settlement rpc contract violation for task 42");
+        let response = task_query_error_response("GET", &err);
+        assert!(response.starts_with("HTTP/1.1 500 Internal Server Error\r\n"));
+        assert!(response.contains("\"code\":\"SETTLEMENT_RPC_CONTRACT_VIOLATION\""));
+        assert!(response.contains("settlement rpc contract violation"));
+    }
+
+    #[test]
+    fn event_query_error_response_maps_settlement_gate_to_conflict_with_summary_hints() {
+        let err = anyhow!(
+            "event query adapter fallback disabled for task 42 because authoritative settlement summary exists"
+        );
+        let response = event_query_error_response("GET", &err);
+        assert!(response.starts_with("HTTP/1.1 409 Conflict\r\n"));
+        assert!(response.contains("\"code\":\"SETTLEMENT_AWARE_EVENT_QUERY_REQUIRED\""));
+        assert!(response.contains("authoritative settlement summary exists"));
+        assert!(response
+            .contains("\"settlement_reason\":\"AUTHORITATIVE_SETTLEMENT_SUMMARY_EXISTS\""));
+        assert!(response.contains("\"query_settlement_preview\":\"/query-settlement-preview/42\""));
+        assert!(response
+            .contains("\"query_consumption_summary\":\"/query-consumption-summary/42\""));
+        assert!(response
+            .contains("\"query_consumption_receipts\":\"/query-consumption-receipts/42\""));
+    }
+
+    #[test]
+    fn event_query_error_response_maps_receipt_backed_gate_to_receipt_route_hint() {
+        let err = anyhow!(
+            "event query adapter fallback disabled for task 42 because authoritative settlement receipts exist without a summary"
+        );
+        let response = event_query_error_response("GET", &err);
+        assert!(response.starts_with("HTTP/1.1 409 Conflict\r\n"));
+        assert!(response.contains("\"code\":\"SETTLEMENT_AWARE_EVENT_QUERY_REQUIRED\""));
+        assert!(response
+            .contains("\"settlement_reason\":\"AUTHORITATIVE_SETTLEMENT_SUMMARY_REQUIRED\""));
+        assert!(response
+            .contains("\"query_consumption_receipts\":\"/query-consumption-receipts/42\""));
+    }
+
+    #[test]
+    fn query_consumption_summary_response_rejects_missing_state_summary_even_when_records_exist() {
         let mut st = StateStore::default();
         st.put_consumption_record(ConsumptionRecord {
             key: trnm_state::ConsumptionRecordKey {
@@ -11372,15 +12631,64 @@ line2
             resolution_code: None,
         });
 
-        let out = query_consumption_summary_response(42, &st).expect("summary derived from records");
-        assert_eq!(out.task_id, 42);
-        assert_eq!(out.receipt_count, 2);
-        assert_eq!(out.accepted_receipt_count, 1);
-        assert_eq!(out.challenged_receipt_count, 1);
-        assert_eq!(out.total_consumed_tokens, 22);
-        assert_eq!(out.total_claimed_consumption_units, 22);
-        assert_eq!(out.total_credited_consumption_units, 9);
-        assert_eq!(out.last_settlement_height, None);
+        let err = query_consumption_summary_response(42, &st)
+            .expect_err("summary must not silently derive from receipts");
+        assert_eq!(
+            err.to_string(),
+            "consumption summary required for task 42 because authoritative settlement receipts exist"
+        );
+    }
+
+    #[test]
+    fn settlement_preview_response_rejects_missing_state_summary_even_when_records_exist() {
+        let mut st = StateStore::default();
+        st.put_consumption_record(ConsumptionRecord {
+            key: trnm_state::ConsumptionRecordKey {
+                task_id: 42,
+                consumer_id: "consumer-bravo".into(),
+                output_hash: "abc123".into(),
+                billing_window_id: "bw-1".into(),
+            },
+            worker_id: "worker-alpha".into(),
+            tokenizer_id: "tok".into(),
+            tokenizer_version: "1.0.0".into(),
+            consumer_class: "bonded_api_client".into(),
+            consumed_spans_root: "def456".into(),
+            consumed_token_count: 17,
+            claimed_consumption_units: 17,
+            credited_consumption_units: Some(9),
+            consumer_nonce: 7,
+            accepted_at_unix_ms: 1_775_683_200_123,
+            status: ConsumptionRecordStatus::Discounted,
+            resolution_code: Some("accepted_discounted".into()),
+        });
+        st.put_consumption_record(ConsumptionRecord {
+            key: trnm_state::ConsumptionRecordKey {
+                task_id: 42,
+                consumer_id: "consumer-charlie".into(),
+                output_hash: "ghi789".into(),
+                billing_window_id: "bw-2".into(),
+            },
+            worker_id: "worker-beta".into(),
+            tokenizer_id: "tok".into(),
+            tokenizer_version: "1.0.0".into(),
+            consumer_class: "bonded_api_client".into(),
+            consumed_spans_root: "jkl012".into(),
+            consumed_token_count: 5,
+            claimed_consumption_units: 5,
+            credited_consumption_units: None,
+            consumer_nonce: 8,
+            accepted_at_unix_ms: 1_775_683_200_456,
+            status: ConsumptionRecordStatus::Challenged,
+            resolution_code: None,
+        });
+
+        let err = settlement_preview_response(42, &st)
+            .expect_err("preview must not silently derive from receipts");
+        assert_eq!(
+            err.to_string(),
+            "consumption summary required for task 42 because authoritative settlement receipts exist"
+        );
     }
 
     #[test]

@@ -7,6 +7,7 @@ mod transfer;
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 use trnm_oracle::{OracleValidationMetrics, OracleValidationObservation, OracleValidationReport};
+use trnm_state::TaskConsumptionSummary;
 use trnm_types::{
     GovProposalStatus, TaskMetadataCompatibility, TaskMetadataCompatibilityFinding, TaskStatus,
 };
@@ -66,8 +67,8 @@ pub struct TaskMeteringQueryResponse {
     pub derived: TaskMeteringDerivedQueryResponse,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
+#[derive(Debug, Clone, Deserialize)]
+#[serde(try_from = "TaskQueryResponseWire")]
 pub struct TaskQueryResponse {
     pub task_id: u64,
     pub status: TaskStatus,
@@ -87,10 +88,168 @@ pub struct TaskQueryResponse {
     pub metadata_compatibility_findings: Option<Vec<TaskMetadataCompatibilityFinding>>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub metering: Option<TaskMeteringQueryResponse>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub settlement_preview: Option<TaskSettlementPreviewQueryResponse>,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
+struct TaskQueryResponseWire {
+    task_id: u64,
+    status: TaskStatus,
+    worker: Option<String>,
+    bounty: u128,
+    result_hash_hex: Option<String>,
+    version: u64,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    metadata_compatibility: Option<TaskMetadataCompatibility>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    metadata_runtime_compatible: Option<bool>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    metadata_requires_governance_upgrade: Option<bool>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    metadata_primary_compatibility_finding: Option<TaskMetadataCompatibilityFinding>,
+    #[serde(default, skip_serializing_if = "option_vec_is_none_or_empty")]
+    metadata_compatibility_findings: Option<Vec<TaskMetadataCompatibilityFinding>>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    metering: Option<TaskMeteringQueryResponse>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    settlement_preview: Option<SettlementSummaryQueryResponseWire>,
+}
+
+const TASK_QUERY_SETTLEMENT_PREVIEW_CONTRACT_ERROR: &str =
+    "task query settlement preview violated RPC contract";
+
+impl From<&TaskQueryResponse> for TaskQueryResponseWire {
+    fn from(task: &TaskQueryResponse) -> Self {
+        Self {
+            task_id: task.task_id,
+            status: task.status.clone(),
+            worker: task.worker.clone(),
+            bounty: task.bounty,
+            result_hash_hex: task.result_hash_hex.clone(),
+            version: task.version,
+            metadata_compatibility: task.metadata_compatibility.clone(),
+            metadata_runtime_compatible: task.metadata_runtime_compatible,
+            metadata_requires_governance_upgrade: task.metadata_requires_governance_upgrade,
+            metadata_primary_compatibility_finding: task
+                .metadata_primary_compatibility_finding
+                .clone(),
+            metadata_compatibility_findings: task.metadata_compatibility_findings.clone(),
+            metering: task.metering.clone(),
+            settlement_preview: task.settlement_preview.as_ref().map(Into::into),
+        }
+    }
+}
+
+impl Serialize for TaskQueryResponse {
+    fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        if !self.settlement_preview_contract_consistent() {
+            return Err(serde::ser::Error::custom(
+                TASK_QUERY_SETTLEMENT_PREVIEW_CONTRACT_ERROR,
+            ));
+        }
+
+        TaskQueryResponseWire::from(self).serialize(serializer)
+    }
+}
+
+impl TryFrom<TaskQueryResponseWire> for TaskQueryResponse {
+    type Error = &'static str;
+
+    fn try_from(task: TaskQueryResponseWire) -> Result<Self, Self::Error> {
+        let task = Self {
+            task_id: task.task_id,
+            status: task.status,
+            worker: task.worker,
+            bounty: task.bounty,
+            result_hash_hex: task.result_hash_hex,
+            version: task.version,
+            metadata_compatibility: task.metadata_compatibility,
+            metadata_runtime_compatible: task.metadata_runtime_compatible,
+            metadata_requires_governance_upgrade: task.metadata_requires_governance_upgrade,
+            metadata_primary_compatibility_finding: task.metadata_primary_compatibility_finding,
+            metadata_compatibility_findings: task.metadata_compatibility_findings,
+            metering: task.metering,
+            settlement_preview: task
+                .settlement_preview
+                .map(TaskSettlementPreviewQueryResponse::try_from)
+                .transpose()
+                .map_err(|_| TASK_QUERY_SETTLEMENT_PREVIEW_CONTRACT_ERROR)?,
+        };
+
+        if !task.settlement_preview_contract_consistent() {
+            return Err(TASK_QUERY_SETTLEMENT_PREVIEW_CONTRACT_ERROR);
+        }
+
+        Ok(task)
+    }
+}
+
+impl TaskQueryResponse {
+    pub fn settlement_preview_contract_consistent(&self) -> bool {
+        self.settlement_preview
+            .as_ref()
+            .is_none_or(|settlement_preview| {
+                settlement_preview.task_id == self.task_id
+                    && settlement_preview.settlement_contract_consistent()
+            })
+    }
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct SettlementSummaryQueryResponseWire {
+    task_id: u64,
+    receipt_count: u64,
+    accepted_receipt_count: u64,
+    challenged_receipt_count: u64,
+    total_consumed_tokens: u128,
+    total_claimed_consumption_units: u128,
+    total_credited_consumption_units: u128,
+    last_settlement_height: Option<u64>,
+}
+
+impl SettlementSummaryQueryResponseWire {
+    fn into_authoritative_summary(self) -> TaskConsumptionSummaryQueryResponse {
+        TaskConsumptionSummaryQueryResponse {
+            task_id: self.task_id,
+            receipt_count: self.receipt_count,
+            accepted_receipt_count: self.accepted_receipt_count,
+            challenged_receipt_count: self.challenged_receipt_count,
+            total_consumed_tokens: self.total_consumed_tokens,
+            total_claimed_consumption_units: self.total_claimed_consumption_units,
+            total_credited_consumption_units: self.total_credited_consumption_units,
+            last_settlement_height: self.last_settlement_height,
+        }
+    }
+}
+
+impl std::convert::TryFrom<SettlementSummaryQueryResponseWire>
+    for TaskConsumptionSummaryQueryResponse
+{
+    type Error = &'static str;
+
+    fn try_from(summary: SettlementSummaryQueryResponseWire) -> Result<Self, Self::Error> {
+        Self::try_from_authoritative_summary(summary.into_authoritative_summary())
+    }
+}
+
+impl std::convert::TryFrom<SettlementSummaryQueryResponseWire>
+    for TaskSettlementPreviewQueryResponse
+{
+    type Error = &'static str;
+
+    fn try_from(summary: SettlementSummaryQueryResponseWire) -> Result<Self, Self::Error> {
+        Self::try_from_authoritative_summary(summary.into_authoritative_summary())
+    }
+}
+
+#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields, try_from = "SettlementSummaryQueryResponseWire")]
 pub struct TaskConsumptionSummaryQueryResponse {
     pub task_id: u64,
     pub receipt_count: u64,
@@ -101,6 +260,202 @@ pub struct TaskConsumptionSummaryQueryResponse {
     pub total_credited_consumption_units: u128,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub last_settlement_height: Option<u64>,
+}
+
+const AUTHORITATIVE_SETTLEMENT_SUMMARY_CONTRACT_ERROR: &str =
+    "authoritative settlement summary violated RPC contract";
+
+impl From<&TaskConsumptionSummaryQueryResponse> for SettlementSummaryQueryResponseWire {
+    fn from(summary: &TaskConsumptionSummaryQueryResponse) -> Self {
+        Self {
+            task_id: summary.task_id,
+            receipt_count: summary.receipt_count,
+            accepted_receipt_count: summary.accepted_receipt_count,
+            challenged_receipt_count: summary.challenged_receipt_count,
+            total_consumed_tokens: summary.total_consumed_tokens,
+            total_claimed_consumption_units: summary.total_claimed_consumption_units,
+            total_credited_consumption_units: summary.total_credited_consumption_units,
+            last_settlement_height: summary.last_settlement_height,
+        }
+    }
+}
+
+impl Serialize for TaskConsumptionSummaryQueryResponse {
+    fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        if !self.settlement_contract_consistent() {
+            return Err(serde::ser::Error::custom(
+                AUTHORITATIVE_SETTLEMENT_SUMMARY_CONTRACT_ERROR,
+            ));
+        }
+
+        SettlementSummaryQueryResponseWire::from(self).serialize(serializer)
+    }
+}
+
+impl TaskConsumptionSummaryQueryResponse {
+    pub fn try_from_authoritative_state_summary(
+        summary: TaskConsumptionSummary,
+    ) -> std::result::Result<Self, &'static str> {
+        Self::try_from_authoritative_summary(Self {
+            task_id: summary.task_id,
+            receipt_count: summary.receipt_count,
+            accepted_receipt_count: summary.accepted_receipt_count,
+            challenged_receipt_count: summary.challenged_receipt_count,
+            total_consumed_tokens: summary.total_consumed_tokens,
+            total_claimed_consumption_units: summary.total_claimed_consumption_units,
+            total_credited_consumption_units: summary.total_credited_consumption_units,
+            last_settlement_height: summary.last_settlement_height,
+        })
+    }
+
+    /// Stable helper for downstream query gates so callers do not have to
+    /// re-encode terminal receipt math.
+    pub fn terminal_receipt_count(&self) -> Option<u64> {
+        self.accepted_receipt_count
+            .checked_add(self.challenged_receipt_count)
+    }
+
+    /// Stable helper for settlement-aware preview surfaces that need to know
+    /// whether any authoritative receipts are still in flight.
+    pub fn pending_receipt_count(&self) -> Option<u64> {
+        self.terminal_receipt_count()
+            .and_then(|terminal_receipt_count| {
+                self.receipt_count.checked_sub(terminal_receipt_count)
+            })
+    }
+
+    pub fn has_pending_receipts(&self) -> bool {
+        matches!(self.pending_receipt_count(), Some(pending_receipt_count) if pending_receipt_count > 0)
+    }
+
+    pub fn settlement_contract_consistent(&self) -> bool {
+        let Some(terminal_receipt_count) = self.terminal_receipt_count() else {
+            return false;
+        };
+        if self.pending_receipt_count().is_none() {
+            return false;
+        }
+
+        self.total_credited_consumption_units <= self.total_claimed_consumption_units
+            && (self.total_credited_consumption_units == 0 || self.accepted_receipt_count > 0)
+            && self.last_settlement_height.is_some() == (terminal_receipt_count > 0)
+    }
+
+    pub fn try_from_authoritative_summary(
+        summary: Self,
+    ) -> std::result::Result<Self, &'static str> {
+        if !summary.settlement_contract_consistent() {
+            return Err(AUTHORITATIVE_SETTLEMENT_SUMMARY_CONTRACT_ERROR);
+        }
+
+        Ok(summary)
+    }
+}
+
+#[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields, try_from = "SettlementSummaryQueryResponseWire")]
+pub struct TaskSettlementPreviewQueryResponse {
+    pub task_id: u64,
+    pub receipt_count: u64,
+    pub accepted_receipt_count: u64,
+    pub challenged_receipt_count: u64,
+    pub total_consumed_tokens: u128,
+    pub total_claimed_consumption_units: u128,
+    pub total_credited_consumption_units: u128,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub last_settlement_height: Option<u64>,
+}
+
+impl From<&TaskSettlementPreviewQueryResponse> for SettlementSummaryQueryResponseWire {
+    fn from(summary: &TaskSettlementPreviewQueryResponse) -> Self {
+        Self {
+            task_id: summary.task_id,
+            receipt_count: summary.receipt_count,
+            accepted_receipt_count: summary.accepted_receipt_count,
+            challenged_receipt_count: summary.challenged_receipt_count,
+            total_consumed_tokens: summary.total_consumed_tokens,
+            total_claimed_consumption_units: summary.total_claimed_consumption_units,
+            total_credited_consumption_units: summary.total_credited_consumption_units,
+            last_settlement_height: summary.last_settlement_height,
+        }
+    }
+}
+
+impl Serialize for TaskSettlementPreviewQueryResponse {
+    fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        if !self.settlement_contract_consistent() {
+            return Err(serde::ser::Error::custom(
+                AUTHORITATIVE_SETTLEMENT_SUMMARY_CONTRACT_ERROR,
+            ));
+        }
+
+        SettlementSummaryQueryResponseWire::from(self).serialize(serializer)
+    }
+}
+
+impl TaskSettlementPreviewQueryResponse {
+    pub fn from_authoritative_summary(summary: TaskConsumptionSummaryQueryResponse) -> Self {
+        Self {
+            task_id: summary.task_id,
+            receipt_count: summary.receipt_count,
+            accepted_receipt_count: summary.accepted_receipt_count,
+            challenged_receipt_count: summary.challenged_receipt_count,
+            total_consumed_tokens: summary.total_consumed_tokens,
+            total_claimed_consumption_units: summary.total_claimed_consumption_units,
+            total_credited_consumption_units: summary.total_credited_consumption_units,
+            last_settlement_height: summary.last_settlement_height,
+        }
+    }
+
+    pub fn terminal_receipt_count(&self) -> Option<u64> {
+        self.as_authoritative_summary().terminal_receipt_count()
+    }
+
+    pub fn pending_receipt_count(&self) -> Option<u64> {
+        self.as_authoritative_summary().pending_receipt_count()
+    }
+
+    pub fn has_pending_receipts(&self) -> bool {
+        self.as_authoritative_summary().has_pending_receipts()
+    }
+
+    pub fn settlement_contract_consistent(&self) -> bool {
+        self.as_authoritative_summary()
+            .settlement_contract_consistent()
+    }
+
+    pub fn try_from_authoritative_state_summary(
+        summary: TaskConsumptionSummary,
+    ) -> std::result::Result<Self, &'static str> {
+        TaskConsumptionSummaryQueryResponse::try_from_authoritative_state_summary(summary)
+            .map(Self::from_authoritative_summary)
+    }
+
+    pub fn try_from_authoritative_summary(
+        summary: TaskConsumptionSummaryQueryResponse,
+    ) -> std::result::Result<Self, &'static str> {
+        TaskConsumptionSummaryQueryResponse::try_from_authoritative_summary(summary)
+            .map(Self::from_authoritative_summary)
+    }
+
+    fn as_authoritative_summary(&self) -> TaskConsumptionSummaryQueryResponse {
+        TaskConsumptionSummaryQueryResponse {
+            task_id: self.task_id,
+            receipt_count: self.receipt_count,
+            accepted_receipt_count: self.accepted_receipt_count,
+            challenged_receipt_count: self.challenged_receipt_count,
+            total_consumed_tokens: self.total_consumed_tokens,
+            total_claimed_consumption_units: self.total_claimed_consumption_units,
+            total_credited_consumption_units: self.total_credited_consumption_units,
+            last_settlement_height: self.last_settlement_height,
+        }
+    }
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -230,7 +585,13 @@ fn error_label_char_is_structural_whitespace(ch: char) -> bool {
 fn normalize_error_label_for_contract(label: &str) -> String {
     label
         .chars()
-        .map(|ch| if error_label_char_is_structural_whitespace(ch) { ' ' } else { ch })
+        .map(|ch| {
+            if error_label_char_is_structural_whitespace(ch) {
+                ' '
+            } else {
+                ch
+            }
+        })
         .collect::<String>()
         .split_whitespace()
         .collect::<Vec<_>>()
@@ -350,8 +711,7 @@ impl OracleValidateSnapshotResponse {
         if Self::is_stale_error_label(&label) {
             self.observation.stale_reject_total > 0 && self.metrics.oracle_stale_reject_total > 0
         } else if Self::is_quorum_error_label(&label) {
-            self.observation.quorum_reject_total > 0
-                && self.metrics.oracle_quorum_reject_total > 0
+            self.observation.quorum_reject_total > 0 && self.metrics.oracle_quorum_reject_total > 0
         } else if Self::is_drift_error_label(&label) {
             self.observation.drift_reject_total > 0 && self.metrics.oracle_drift_reject_total > 0
         } else {
@@ -615,6 +975,7 @@ mod tests {
             metadata_primary_compatibility_finding: None,
             metadata_compatibility_findings: None,
             metering: None,
+            settlement_preview: None,
         };
         let v = serde_json::to_value(task).unwrap();
         let obj = v.as_object().unwrap();
@@ -645,9 +1006,11 @@ mod tests {
             metadata_primary_compatibility_finding: None,
             metadata_compatibility_findings: None,
             metering: None,
+            settlement_preview: None,
         };
         let v = serde_json::to_value(task).unwrap();
         assert!(v.get("metering").is_none());
+        assert!(v.get("settlement_preview").is_none());
     }
 
     #[test]
@@ -663,6 +1026,472 @@ mod tests {
         }))
         .expect_err("task query schema should reject unknown fields");
         assert!(err.to_string().contains("unexpected"));
+    }
+
+    #[test]
+    fn rpc_task_query_rejects_settlement_preview_task_id_mismatch_on_deserialize() {
+        let err = serde_json::from_value::<TaskQueryResponse>(json!({
+            "task_id": 7,
+            "status": "Completed",
+            "worker": "worker-1",
+            "bounty": 100,
+            "result_hash_hex": "abc123",
+            "version": 3,
+            "settlement_preview": {
+                "task_id": 8,
+                "receipt_count": 2,
+                "accepted_receipt_count": 1,
+                "challenged_receipt_count": 1,
+                "total_consumed_tokens": 33,
+                "total_claimed_consumption_units": 33,
+                "total_credited_consumption_units": 21,
+                "last_settlement_height": 88
+            }
+        }))
+        .expect_err("task query schema should reject mismatched settlement preview task ids");
+        assert!(err
+            .to_string()
+            .contains(TASK_QUERY_SETTLEMENT_PREVIEW_CONTRACT_ERROR));
+    }
+
+    #[test]
+    fn rpc_task_query_rejects_inconsistent_settlement_preview_contract_on_deserialize() {
+        let err = serde_json::from_value::<TaskQueryResponse>(json!({
+            "task_id": 7,
+            "status": "Completed",
+            "worker": "worker-1",
+            "bounty": 100,
+            "result_hash_hex": "abc123",
+            "version": 3,
+            "settlement_preview": {
+                "task_id": 7,
+                "receipt_count": 1,
+                "accepted_receipt_count": 1,
+                "challenged_receipt_count": 1,
+                "total_consumed_tokens": 33,
+                "total_claimed_consumption_units": 33,
+                "total_credited_consumption_units": 21,
+                "last_settlement_height": 88
+            }
+        }))
+        .expect_err("task query schema should reject inconsistent settlement preview payloads");
+        assert!(err
+            .to_string()
+            .contains(TASK_QUERY_SETTLEMENT_PREVIEW_CONTRACT_ERROR));
+    }
+
+    #[test]
+    fn rpc_task_query_rejects_settlement_preview_task_id_mismatch_on_serialize() {
+        let task = TaskQueryResponse {
+            task_id: 7,
+            status: TaskStatus::Completed,
+            worker: Some("worker-1".into()),
+            bounty: 100,
+            result_hash_hex: Some("abc123".into()),
+            version: 3,
+            metadata_compatibility: None,
+            metadata_runtime_compatible: None,
+            metadata_requires_governance_upgrade: None,
+            metadata_primary_compatibility_finding: None,
+            metadata_compatibility_findings: None,
+            metering: None,
+            settlement_preview: Some(
+                TaskSettlementPreviewQueryResponse::try_from_authoritative_summary(
+                    TaskConsumptionSummaryQueryResponse {
+                        task_id: 8,
+                        receipt_count: 2,
+                        accepted_receipt_count: 1,
+                        challenged_receipt_count: 1,
+                        total_consumed_tokens: 33,
+                        total_claimed_consumption_units: 33,
+                        total_credited_consumption_units: 21,
+                        last_settlement_height: Some(88),
+                    },
+                )
+                .expect("preview summary should satisfy settlement contract"),
+            ),
+        };
+
+        let err = serde_json::to_value(task).expect_err(
+            "task query serialization should reject mismatched settlement preview task ids",
+        );
+        assert!(err
+            .to_string()
+            .contains(TASK_QUERY_SETTLEMENT_PREVIEW_CONTRACT_ERROR));
+    }
+
+    #[test]
+    fn rpc_task_query_rejects_inconsistent_settlement_preview_contract_on_serialize() {
+        let task = TaskQueryResponse {
+            task_id: 7,
+            status: TaskStatus::Completed,
+            worker: Some("worker-1".into()),
+            bounty: 100,
+            result_hash_hex: Some("abc123".into()),
+            version: 3,
+            metadata_compatibility: None,
+            metadata_runtime_compatible: None,
+            metadata_requires_governance_upgrade: None,
+            metadata_primary_compatibility_finding: None,
+            metadata_compatibility_findings: None,
+            metering: None,
+            settlement_preview: Some(TaskSettlementPreviewQueryResponse {
+                task_id: 7,
+                receipt_count: 1,
+                accepted_receipt_count: 1,
+                challenged_receipt_count: 1,
+                total_consumed_tokens: 33,
+                total_claimed_consumption_units: 33,
+                total_credited_consumption_units: 21,
+                last_settlement_height: Some(88),
+            }),
+        };
+
+        let err = serde_json::to_value(task).expect_err(
+            "task query serialization should reject inconsistent settlement preview payloads",
+        );
+        assert!(err
+            .to_string()
+            .contains(TASK_QUERY_SETTLEMENT_PREVIEW_CONTRACT_ERROR));
+    }
+
+    #[test]
+    fn rpc_task_settlement_preview_query_from_summary_preserves_contract_shape() {
+        let preview = TaskSettlementPreviewQueryResponse::try_from_authoritative_summary(
+            TaskConsumptionSummaryQueryResponse {
+                task_id: 42,
+                receipt_count: 2,
+                accepted_receipt_count: 1,
+                challenged_receipt_count: 1,
+                total_consumed_tokens: 33,
+                total_claimed_consumption_units: 33,
+                total_credited_consumption_units: 21,
+                last_settlement_height: Some(88),
+            },
+        )
+        .expect("authoritative summary should satisfy settlement contract");
+        let v = serde_json::to_value(preview).unwrap();
+        assert_eq!(
+            v,
+            json!({
+                "task_id": 42,
+                "receipt_count": 2,
+                "accepted_receipt_count": 1,
+                "challenged_receipt_count": 1,
+                "total_consumed_tokens": 33,
+                "total_claimed_consumption_units": 33,
+                "total_credited_consumption_units": 21,
+                "last_settlement_height": 88
+            })
+        );
+    }
+
+    #[test]
+    fn rpc_task_consumption_summary_query_deserializes_consistent_json() {
+        let response = serde_json::from_value::<TaskConsumptionSummaryQueryResponse>(json!({
+            "task_id": 42,
+            "receipt_count": 2,
+            "accepted_receipt_count": 1,
+            "challenged_receipt_count": 1,
+            "total_consumed_tokens": 33,
+            "total_claimed_consumption_units": 33,
+            "total_credited_consumption_units": 21,
+            "last_settlement_height": 88
+        }))
+        .expect("consistent settlement summary json should deserialize");
+
+        assert_eq!(response.task_id, 42);
+        assert_eq!(response.last_settlement_height, Some(88));
+    }
+
+    #[test]
+    fn rpc_task_consumption_summary_query_rejects_inconsistent_json_contract() {
+        let err = serde_json::from_value::<TaskConsumptionSummaryQueryResponse>(json!({
+            "task_id": 42,
+            "receipt_count": 1,
+            "accepted_receipt_count": 1,
+            "challenged_receipt_count": 1,
+            "total_consumed_tokens": 33,
+            "total_claimed_consumption_units": 33,
+            "total_credited_consumption_units": 21,
+            "last_settlement_height": 88
+        }))
+        .expect_err("impossible terminal receipt totals must fail closed during deserialize");
+
+        assert!(err
+            .to_string()
+            .contains(AUTHORITATIVE_SETTLEMENT_SUMMARY_CONTRACT_ERROR));
+    }
+
+    #[test]
+    fn rpc_task_settlement_preview_query_rejects_unknown_fields_fail_closed() {
+        let err = serde_json::from_value::<TaskSettlementPreviewQueryResponse>(json!({
+            "task_id": 1,
+            "receipt_count": 1,
+            "accepted_receipt_count": 1,
+            "challenged_receipt_count": 0,
+            "total_consumed_tokens": 10,
+            "total_claimed_consumption_units": 10,
+            "total_credited_consumption_units": 10,
+            "unexpected": true
+        }))
+        .expect_err("settlement preview schema should reject unknown fields");
+        assert!(err.to_string().contains("unexpected"));
+    }
+
+    #[test]
+    fn rpc_task_settlement_preview_query_deserializes_consistent_json() {
+        let response = serde_json::from_value::<TaskSettlementPreviewQueryResponse>(json!({
+            "task_id": 42,
+            "receipt_count": 2,
+            "accepted_receipt_count": 1,
+            "challenged_receipt_count": 1,
+            "total_consumed_tokens": 33,
+            "total_claimed_consumption_units": 33,
+            "total_credited_consumption_units": 21,
+            "last_settlement_height": 88
+        }))
+        .expect("consistent settlement preview json should deserialize");
+
+        assert_eq!(response.task_id, 42);
+        assert_eq!(response.last_settlement_height, Some(88));
+    }
+
+    #[test]
+    fn rpc_task_settlement_preview_query_rejects_inconsistent_json_contract() {
+        let err = serde_json::from_value::<TaskSettlementPreviewQueryResponse>(json!({
+            "task_id": 42,
+            "receipt_count": 1,
+            "accepted_receipt_count": 1,
+            "challenged_receipt_count": 1,
+            "total_consumed_tokens": 33,
+            "total_claimed_consumption_units": 33,
+            "total_credited_consumption_units": 21,
+            "last_settlement_height": 88
+        }))
+        .expect_err("impossible terminal receipt totals must fail closed during deserialize");
+
+        assert!(err
+            .to_string()
+            .contains(AUTHORITATIVE_SETTLEMENT_SUMMARY_CONTRACT_ERROR));
+    }
+
+    #[test]
+    fn rpc_task_settlement_preview_query_rejects_inconsistent_authoritative_summary() {
+        let summary = TaskConsumptionSummaryQueryResponse {
+            task_id: 42,
+            receipt_count: 1,
+            accepted_receipt_count: 1,
+            challenged_receipt_count: 1,
+            total_consumed_tokens: 33,
+            total_claimed_consumption_units: 33,
+            total_credited_consumption_units: 21,
+            last_settlement_height: Some(88),
+        };
+
+        assert!(!summary.settlement_contract_consistent());
+        assert_eq!(
+            TaskSettlementPreviewQueryResponse::try_from_authoritative_summary(summary)
+                .expect_err("impossible terminal receipt totals must fail closed"),
+            "authoritative settlement summary violated RPC contract"
+        );
+    }
+
+    #[test]
+    fn rpc_task_consumption_summary_query_from_state_summary_preserves_contract_shape() {
+        let summary = TaskConsumptionSummary {
+            task_id: 42,
+            receipt_count: 2,
+            accepted_receipt_count: 1,
+            challenged_receipt_count: 1,
+            total_consumed_tokens: 33,
+            total_claimed_consumption_units: 33,
+            total_credited_consumption_units: 21,
+            last_settlement_height: Some(88),
+        };
+
+        let response =
+            TaskConsumptionSummaryQueryResponse::try_from_authoritative_state_summary(summary)
+                .expect("authoritative state summary should satisfy settlement contract");
+        let v = serde_json::to_value(response).unwrap();
+        assert_eq!(v["task_id"], json!(42));
+        assert_eq!(v["receipt_count"], json!(2));
+        assert_eq!(v["accepted_receipt_count"], json!(1));
+        assert_eq!(v["challenged_receipt_count"], json!(1));
+        assert_eq!(v["last_settlement_height"], json!(88));
+    }
+
+    #[test]
+    fn rpc_task_consumption_summary_query_exposes_pending_receipt_helpers() {
+        let summary = TaskConsumptionSummaryQueryResponse {
+            task_id: 42,
+            receipt_count: 5,
+            accepted_receipt_count: 2,
+            challenged_receipt_count: 1,
+            total_consumed_tokens: 55,
+            total_claimed_consumption_units: 55,
+            total_credited_consumption_units: 34,
+            last_settlement_height: Some(88),
+        };
+
+        assert_eq!(summary.terminal_receipt_count(), Some(3));
+        assert_eq!(summary.pending_receipt_count(), Some(2));
+        assert!(summary.has_pending_receipts());
+        assert!(summary.settlement_contract_consistent());
+    }
+
+    #[test]
+    fn rpc_task_consumption_summary_query_pending_receipt_helpers_fail_closed_on_inconsistent_totals(
+    ) {
+        let summary = TaskConsumptionSummaryQueryResponse {
+            task_id: 42,
+            receipt_count: 1,
+            accepted_receipt_count: 1,
+            challenged_receipt_count: 1,
+            total_consumed_tokens: 33,
+            total_claimed_consumption_units: 33,
+            total_credited_consumption_units: 21,
+            last_settlement_height: Some(88),
+        };
+
+        assert_eq!(summary.terminal_receipt_count(), Some(2));
+        assert_eq!(summary.pending_receipt_count(), None);
+        assert!(!summary.has_pending_receipts());
+        assert!(!summary.settlement_contract_consistent());
+    }
+
+    #[test]
+    fn rpc_task_settlement_preview_query_exposes_pending_receipt_helpers() {
+        let preview = TaskSettlementPreviewQueryResponse::try_from_authoritative_summary(
+            TaskConsumptionSummaryQueryResponse {
+                task_id: 42,
+                receipt_count: 5,
+                accepted_receipt_count: 2,
+                challenged_receipt_count: 1,
+                total_consumed_tokens: 55,
+                total_claimed_consumption_units: 55,
+                total_credited_consumption_units: 34,
+                last_settlement_height: Some(88),
+            },
+        )
+        .expect("authoritative summary should satisfy settlement contract");
+
+        assert_eq!(preview.terminal_receipt_count(), Some(3));
+        assert_eq!(preview.pending_receipt_count(), Some(2));
+        assert!(preview.has_pending_receipts());
+        assert!(preview.settlement_contract_consistent());
+    }
+
+    #[test]
+    fn rpc_task_settlement_preview_query_from_state_summary_rejects_inconsistent_contract() {
+        let summary = TaskConsumptionSummary {
+            task_id: 42,
+            receipt_count: 1,
+            accepted_receipt_count: 1,
+            challenged_receipt_count: 1,
+            total_consumed_tokens: 33,
+            total_claimed_consumption_units: 33,
+            total_credited_consumption_units: 21,
+            last_settlement_height: Some(88),
+        };
+
+        assert_eq!(
+            TaskSettlementPreviewQueryResponse::try_from_authoritative_state_summary(summary)
+                .expect_err("impossible state summary must fail closed"),
+            "authoritative settlement summary violated RPC contract"
+        );
+    }
+
+    #[test]
+    fn rpc_task_consumption_summary_query_rejects_credited_units_without_accepted_receipts() {
+        let summary = TaskConsumptionSummaryQueryResponse {
+            task_id: 42,
+            receipt_count: 1,
+            accepted_receipt_count: 0,
+            challenged_receipt_count: 1,
+            total_consumed_tokens: 33,
+            total_claimed_consumption_units: 33,
+            total_credited_consumption_units: 1,
+            last_settlement_height: Some(88),
+        };
+
+        assert!(!summary.settlement_contract_consistent());
+        assert_eq!(
+            TaskConsumptionSummaryQueryResponse::try_from_authoritative_summary(summary)
+                .expect_err("credited units without accepted receipts must fail closed"),
+            AUTHORITATIVE_SETTLEMENT_SUMMARY_CONTRACT_ERROR
+        );
+    }
+
+    #[test]
+    fn rpc_task_consumption_summary_query_rejects_settlement_height_mismatch() {
+        for summary in [
+            TaskConsumptionSummaryQueryResponse {
+                task_id: 42,
+                receipt_count: 1,
+                accepted_receipt_count: 1,
+                challenged_receipt_count: 0,
+                total_consumed_tokens: 33,
+                total_claimed_consumption_units: 33,
+                total_credited_consumption_units: 21,
+                last_settlement_height: None,
+            },
+            TaskConsumptionSummaryQueryResponse {
+                task_id: 42,
+                receipt_count: 1,
+                accepted_receipt_count: 0,
+                challenged_receipt_count: 0,
+                total_consumed_tokens: 33,
+                total_claimed_consumption_units: 33,
+                total_credited_consumption_units: 0,
+                last_settlement_height: Some(88),
+            },
+        ] {
+            assert!(!summary.settlement_contract_consistent());
+            assert_eq!(
+                TaskConsumptionSummaryQueryResponse::try_from_authoritative_summary(summary)
+                    .expect_err("settlement height drift must fail closed"),
+                AUTHORITATIVE_SETTLEMENT_SUMMARY_CONTRACT_ERROR
+            );
+        }
+    }
+
+    #[test]
+    fn rpc_task_consumption_summary_query_rejects_serializing_inconsistent_contract() {
+        let err = serde_json::to_value(TaskConsumptionSummaryQueryResponse {
+            task_id: 42,
+            receipt_count: 1,
+            accepted_receipt_count: 1,
+            challenged_receipt_count: 1,
+            total_consumed_tokens: 33,
+            total_claimed_consumption_units: 33,
+            total_credited_consumption_units: 21,
+            last_settlement_height: Some(88),
+        })
+        .expect_err("serializing inconsistent settlement summary must fail closed");
+
+        assert!(err
+            .to_string()
+            .contains(AUTHORITATIVE_SETTLEMENT_SUMMARY_CONTRACT_ERROR));
+    }
+
+    #[test]
+    fn rpc_task_settlement_preview_query_rejects_serializing_inconsistent_contract() {
+        let err = serde_json::to_value(TaskSettlementPreviewQueryResponse {
+            task_id: 42,
+            receipt_count: 1,
+            accepted_receipt_count: 1,
+            challenged_receipt_count: 1,
+            total_consumed_tokens: 33,
+            total_claimed_consumption_units: 33,
+            total_credited_consumption_units: 21,
+            last_settlement_height: Some(88),
+        })
+        .expect_err("serializing inconsistent settlement preview must fail closed");
+
+        assert!(err
+            .to_string()
+            .contains(AUTHORITATIVE_SETTLEMENT_SUMMARY_CONTRACT_ERROR));
     }
 
     #[test]
@@ -746,6 +1575,21 @@ mod tests {
                     worker_slash_rebate: 1,
                 },
             }),
+            settlement_preview: Some(
+                TaskSettlementPreviewQueryResponse::try_from_authoritative_summary(
+                    TaskConsumptionSummaryQueryResponse {
+                        task_id: 1,
+                        receipt_count: 2,
+                        accepted_receipt_count: 1,
+                        challenged_receipt_count: 1,
+                        total_consumed_tokens: 160,
+                        total_claimed_consumption_units: 160,
+                        total_credited_consumption_units: 96,
+                        last_settlement_height: Some(88),
+                    },
+                )
+                .expect("authoritative summary should satisfy settlement contract"),
+            ),
         };
         let v = serde_json::to_value(task).unwrap();
         assert_eq!(v["metering"]["normalized_work_units"], json!(192));
@@ -756,6 +1600,8 @@ mod tests {
         );
         assert_eq!(v["metering"]["derived"]["challenge_bonus_total"], json!(2));
         assert_eq!(v["metering"]["derived"]["accept_floor_pass"], json!(true));
+        assert_eq!(v["settlement_preview"]["receipt_count"], json!(2));
+        assert_eq!(v["settlement_preview"]["last_settlement_height"], json!(88));
     }
 
     #[test]
@@ -1002,7 +1848,8 @@ mod tests {
     }
 
     #[test]
-    fn oracle_validation_response_bridge_contract_consistent_accepts_snapshot_future_label_variant() {
+    fn oracle_validation_response_bridge_contract_consistent_accepts_snapshot_future_label_variant()
+    {
         let out = OracleValidateSnapshotResponse {
             ok: false,
             now_ts_ms: 10_000,
@@ -1031,7 +1878,8 @@ mod tests {
     }
 
     #[test]
-    fn oracle_validation_response_bridge_contract_consistent_accepts_snapshot_stale_label_variant() {
+    fn oracle_validation_response_bridge_contract_consistent_accepts_snapshot_stale_label_variant()
+    {
         let out = OracleValidateSnapshotResponse {
             ok: false,
             now_ts_ms: 70_001,
@@ -1522,8 +2370,8 @@ mod tests {
     }
 
     #[test]
-    fn oracle_validation_response_bridge_contract_consistent_allows_unclassified_failures_with_repeated_observations()
-    {
+    fn oracle_validation_response_bridge_contract_consistent_allows_unclassified_failures_with_repeated_observations(
+    ) {
         let report = OracleValidationReport {
             ok: false,
             now_ts_ms: 794,
@@ -1929,26 +2777,27 @@ mod tests {
         .into();
         assert!(!err_with_whitespace_label.bridge_contract_consistent());
 
-        let err_with_invisible_only_label: OracleValidateSnapshotResponse = OracleValidationReport {
-            ok: false,
-            now_ts_ms: 799,
-            observation: OracleValidationObservation {
-                stale_reject_total: 0,
-                quorum_reject_total: 1,
-                drift_reject_total: 0,
-                accepted_total: 0,
-            },
-            metrics: OracleValidationMetrics {
-                oracle_stale_reject_total: 0,
-                oracle_quorum_reject_total: 1,
-                oracle_drift_reject_total: 0,
-                oracle_source_cardinality: 1,
-                accepted_total: 0,
-                sample_count: 1,
-            },
-            error: Some("\u{200B}\u{2060}\u{202E}\u{FEFF}".into()),
-        }
-        .into();
+        let err_with_invisible_only_label: OracleValidateSnapshotResponse =
+            OracleValidationReport {
+                ok: false,
+                now_ts_ms: 799,
+                observation: OracleValidationObservation {
+                    stale_reject_total: 0,
+                    quorum_reject_total: 1,
+                    drift_reject_total: 0,
+                    accepted_total: 0,
+                },
+                metrics: OracleValidationMetrics {
+                    oracle_stale_reject_total: 0,
+                    oracle_quorum_reject_total: 1,
+                    oracle_drift_reject_total: 0,
+                    oracle_source_cardinality: 1,
+                    accepted_total: 0,
+                    sample_count: 1,
+                },
+                error: Some("\u{200B}\u{2060}\u{202E}\u{FEFF}".into()),
+            }
+            .into();
         assert!(!err_with_invisible_only_label.bridge_contract_consistent());
     }
 
@@ -2046,7 +2895,8 @@ mod tests {
     }
 
     #[test]
-    fn oracle_validation_response_bridge_contract_consistent_accepts_repeated_observations_above_source_cardinality() {
+    fn oracle_validation_response_bridge_contract_consistent_accepts_repeated_observations_above_source_cardinality(
+    ) {
         let out: OracleValidateSnapshotResponse = OracleValidationReport {
             ok: true,
             now_ts_ms: 794,
