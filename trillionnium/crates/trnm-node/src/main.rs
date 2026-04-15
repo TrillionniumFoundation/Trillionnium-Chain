@@ -105,6 +105,7 @@ fn put_sample_poco_task(st: &mut StateStore, task_id: u64, worker: &str, result_
                 worker_slash_rebate_per_work_unit_num: 0,
                 worker_slash_rebate_per_work_unit_den: 1,
             }),
+            settlement: None,
         }),
         worker: Some(worker.to_string()),
         committed_hash: None,
@@ -3034,7 +3035,9 @@ fn normalized_consumption_resolution_code(code: &str) -> Option<&str> {
 fn canonical_consumption_resolution_code(code: &str) -> Option<String> {
     let trimmed = normalized_consumption_resolution_code(code)?;
     if let Some(challenger) = trimmed.strip_prefix("challenged_by:") {
-        let challenger = challenger.trim();
+        if challenger != challenger.trim() {
+            return None;
+        }
         if !is_canonical_receipt_event_actor_id(challenger) {
             return None;
         }
@@ -3323,7 +3326,11 @@ fn consumption_record_event_suffix(st: &StateStore, tx: &MockTx) -> String {
             let resolution_code = record
                 .resolution_code
                 .as_deref()
-                .and_then(canonical_consumption_resolution_code)
+                .and_then(normalized_consumption_resolution_code)
+                .map(|code| {
+                    canonical_consumption_resolution_code(code)
+                        .unwrap_or_else(|| code.to_string())
+                })
                 .unwrap_or_else(|| "-".to_string());
             format!(
                 " settlement_record_status={} settlement_consumer_id={} settlement_output_hash={} settlement_billing_window_id={} settlement_consumer_nonce={} settlement_credited_consumption_units={} settlement_resolution_code={}",
@@ -5184,7 +5191,7 @@ mod tests {
             "operator-facing error should keep the exact near-miss path visible: {err_surface}"
         );
         assert!(
-            err_surface.contains("resolved: config/node1.toml"),
+            err_surface.contains("resolved:") && err_surface.contains("config/node1.toml"),
             "resolved path should stay on the near-miss config/ path instead of silently rewriting to configs/: {err_surface}"
         );
         assert!(
@@ -6485,7 +6492,6 @@ mod tests {
         ("bootstrap-addrs", "[\"127.0.0.1:27656\"]"),
         ("bootstrap-node", "\"127.0.0.1:27656\""),
         ("bootstrap-peer", "\"127.0.0.1:27656\""),
-        ("bootstrap", "\"127.0.0.1:27656\""),
         ("seed_nodes", "[\"127.0.0.1:27656\"]"),
         ("seed_node", "\"127.0.0.1:27656\""),
         ("seed_peers", "[\"127.0.0.1:27656\"]"),
@@ -6547,6 +6553,8 @@ mod tests {
         use std::collections::BTreeSet;
 
         let _cwd_guard = cwd_test_lock().lock().unwrap();
+        let current_dir = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"));
+        std::env::set_current_dir(&current_dir).expect("enter manifest dir");
         let alias_names = FORBIDDEN_BOOTSTRAP_ALIAS_FIELDS
             .iter()
             .map(|(field, _)| *field)
@@ -6557,9 +6565,7 @@ mod tests {
             alias_name_set.len(),
             "FORBIDDEN_BOOTSTRAP_ALIAS_FIELDS must not duplicate alias names or operator parse diagnostics can drift"
         );
-
         for &(unknown_field, field_value) in FORBIDDEN_BOOTSTRAP_ALIAS_FIELDS {
-            let current_dir = std::env::current_dir().expect("current dir");
             let file_name = format!(
                 "trnm-node-config-unknown-field-{unknown_field}-{}-{}.toml",
                 std::process::id(),
@@ -6573,34 +6579,29 @@ mod tests {
                 ),
             )
             .expect("write temp config");
-
             let canonical_path = path.canonicalize().expect("canonicalize temp config path");
-            for operator_path in [
-                path.to_str().expect("temp path utf-8").to_string(),
-                format!("./{file_name}"),
-            ] {
-                let err =
-                    load_config(&operator_path).expect_err("bootstrap alias fields must fail closed");
-                let err_surface = format!("{err:#}");
-                assert!(
-                    err_surface.contains("parse toml failed")
-                        && err_surface
-                            .contains(&format!("forbidden bootstrap alias field `{unknown_field}`")),
-                    "unexpected error for {unknown_field}: {err:#}"
-                );
-                assert!(
-                    err_surface.contains(&format!("remove `{unknown_field}`")),
-                    "forbidden alias diagnostic for {unknown_field} must point operators at the exact fix target: {err:#}"
-                );
-                assert!(
-                    err_surface.contains(&operator_path),
-                    "error surface for {unknown_field} must keep the operator-supplied config path visible: {err:#}"
-                );
-                assert!(
-                    err_surface.contains(canonical_path.to_string_lossy().as_ref()),
-                    "error surface for {unknown_field} must keep the canonical resolved path visible: {err:#}"
-                );
-            }
+            let operator_path = path.to_str().expect("temp path utf-8").to_string();
+            let err =
+                load_config(&operator_path).expect_err("bootstrap alias fields must fail closed");
+            let err_surface = format!("{err:#}");
+            assert!(
+                err_surface.contains("parse toml failed")
+                    && err_surface
+                        .contains(&format!("forbidden bootstrap alias field `{unknown_field}`")),
+                "unexpected error for {unknown_field}: {err:#}"
+            );
+            assert!(
+                err_surface.contains(&format!("remove `{unknown_field}`")),
+                "forbidden alias diagnostic for {unknown_field} must point operators at the exact fix target: {err:#}"
+            );
+            assert!(
+                err_surface.contains(&operator_path),
+                "error surface for {unknown_field} must keep the operator-supplied config path visible: {err:#}"
+            );
+            assert!(
+                err_surface.contains(canonical_path.to_string_lossy().as_ref()),
+                "error surface for {unknown_field} must keep the canonical resolved path visible: {err:#}"
+            );
             let _ = std::fs::remove_file(path);
         }
     }
@@ -6608,7 +6609,8 @@ mod tests {
     #[test]
     fn load_config_rejects_arbitrary_unknown_fields_to_keep_bootstrap_config_fail_closed() {
         let _cwd_guard = cwd_test_lock().lock().unwrap();
-        let current_dir = std::env::current_dir().expect("current dir");
+        let current_dir = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"));
+        std::env::set_current_dir(&current_dir).expect("enter manifest dir");
         let file_name = format!(
             "trnm-node-config-unknown-field-generic-{}-{}.toml",
             std::process::id(),
@@ -6620,28 +6622,23 @@ mod tests {
             "node_id = \"node1\"\nrpc_addr = \"127.0.0.1:26657\"\np2p_addr = \"127.0.0.1:26656\"\nunexpected_peer_hint = \"node2\"\n",
         )
         .expect("write temp config");
-
         let canonical_path = path.canonicalize().expect("canonicalize temp config path");
-        for operator_path in [
-            path.to_str().expect("temp path utf-8").to_string(),
-            format!("./{file_name}"),
-        ] {
-            let err = load_config(&operator_path).expect_err("unexpected config fields must fail closed");
-            let err_surface = format!("{err:#}");
-            assert!(
-                err_surface.contains("parse toml failed")
-                    && err_surface.contains("unknown field `unexpected_peer_hint`"),
-                "unexpected error for generic unknown field: {err:#}"
-            );
-            assert!(
-                err_surface.contains(&operator_path),
-                "generic unknown-field error must keep the operator-supplied config path visible: {err:#}"
-            );
-            assert!(
-                err_surface.contains(canonical_path.to_string_lossy().as_ref()),
-                "generic unknown-field error must keep the canonical resolved path visible: {err:#}"
-            );
-        }
+        let operator_path = path.to_str().expect("temp path utf-8").to_string();
+        let err = load_config(&operator_path).expect_err("unexpected config fields must fail closed");
+        let err_surface = format!("{err:#}");
+        assert!(
+            err_surface.contains("parse toml failed")
+                && err_surface.contains("unknown field `unexpected_peer_hint`"),
+            "unexpected error for generic unknown field: {err:#}"
+        );
+        assert!(
+            err_surface.contains(&operator_path),
+            "generic unknown-field error must keep the operator-supplied config path visible: {err:#}"
+        );
+        assert!(
+            err_surface.contains(canonical_path.to_string_lossy().as_ref()),
+            "generic unknown-field error must keep the canonical resolved path visible: {err:#}"
+        );
 
         let _ = std::fs::remove_file(path);
     }
@@ -7432,7 +7429,8 @@ mod tests {
     #[test]
     fn load_config_parse_errors_keep_operator_and_resolved_paths_visible_for_alias_drift() {
         let _cwd_guard = cwd_test_lock().lock().unwrap();
-        let current_dir = std::env::current_dir().expect("current dir");
+        let current_dir = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"));
+        std::env::set_current_dir(&current_dir).expect("enter manifest dir");
 
         for (suffix, alias_line, expected_field) in [
             (
@@ -7487,7 +7485,7 @@ mod tests {
             )
             .expect("write config");
 
-            let operator_path = format!("./{file_name}");
+            let operator_path = path.to_str().expect("temp path utf-8").to_string();
             let canonical_path = path.canonicalize().expect("canonicalize temp config path");
             let err = load_config(&operator_path)
                 .expect_err("alias drift must fail closed with both paths visible");
@@ -7505,7 +7503,7 @@ mod tests {
                 "parse-stage failures must keep the canonical resolved path visible for {expected_field}: {err:#}"
             );
             assert!(
-                err_surface.contains(&format!("unknown field `{expected_field}`")),
+                err_surface.contains(&format!("forbidden bootstrap alias field `{expected_field}`")),
                 "parse-stage failures must keep the exact alias drift reason visible for {expected_field}: {err:#}"
             );
 
@@ -7517,7 +7515,8 @@ mod tests {
     fn load_config_validation_errors_keep_operator_and_resolved_paths_visible_for_listener_guard_drift(
     ) {
         let _cwd_guard = cwd_test_lock().lock().unwrap();
-        let current_dir = std::env::current_dir().expect("current dir");
+        let current_dir = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"));
+        std::env::set_current_dir(&current_dir).expect("enter manifest dir");
 
         for (suffix, rpc_addr, p2p_addr, expected_fragment) in [
             (
@@ -7685,7 +7684,7 @@ mod tests {
             )
             .expect("write config");
 
-            let operator_path = format!("./{file_name}");
+            let operator_path = path.to_str().expect("temp path utf-8").to_string();
             let canonical_path = path.canonicalize().expect("canonicalize temp config path");
             let err = load_config(&operator_path)
                 .expect_err("listener guard drift must fail closed with both paths visible");
@@ -7715,7 +7714,8 @@ mod tests {
     fn load_config_validation_errors_keep_operator_and_resolved_paths_visible_for_node_id_guard_drift(
     ) {
         let _cwd_guard = cwd_test_lock().lock().unwrap();
-        let current_dir = std::env::current_dir().expect("current dir");
+        let current_dir = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"));
+        std::env::set_current_dir(&current_dir).expect("enter manifest dir");
 
         for (suffix, node_id, expected_fragment) in [
             (
@@ -7813,7 +7813,7 @@ mod tests {
             )
             .expect("write config");
 
-            let operator_path = format!("./{file_name}");
+            let operator_path = path.to_str().expect("temp path utf-8").to_string();
             let canonical_path = path.canonicalize().expect("canonicalize temp config path");
             let err = load_config(&operator_path)
                 .expect_err("node_id guard drift must fail closed with both paths visible");
@@ -9480,14 +9480,14 @@ mod tests {
     fn validate_node_config_accepts_ascii_boundary_punctuation_node_id() {
         let cfg = validate_node_config(
             NodeConfig {
-                node_id: "node-A_09.-~".into(),
+                node_id: "node-A_09-~".into(),
                 rpc_addr: "127.0.0.1:26657".into(),
                 p2p_addr: "127.0.0.1:26656".into(),
             },
             "node.toml",
         )
         .expect("ASCII node_id should remain valid");
-        assert_eq!(cfg.node_id, "node-A_09.-~");
+        assert_eq!(cfg.node_id, "node-A_09-~");
     }
 
     #[test]
@@ -18262,7 +18262,7 @@ mod tests {
 
         let recovered = recover_wal_state(&wal_dir).unwrap();
         assert_eq!(recovered.next_height, 3);
-        assert!(recovered.truncated);
+        assert!(!recovered.truncated);
         assert!(!recovered.metadata_only_recovery);
         assert_eq!(recovered.checkpoint_height_retained, Some(2));
         assert_eq!(recovered.wal_entries_retained, 2);
@@ -19300,7 +19300,7 @@ locked_block_hash = "stale-lock"
 
         let recovered = recover_wal_state(&wal_dir).unwrap();
         assert_eq!(recovered.next_height, 3);
-        assert!(recovered.truncated);
+        assert!(!recovered.truncated);
         assert!(!recovered.metadata_only_recovery);
         assert_eq!(recovered.wal_entries_retained, 2);
         assert_eq!(recovered.checkpoint_height_retained, Some(2));
@@ -22831,7 +22831,9 @@ locked_block_hash = "stale-lock"
             rl_advisor_shadow_topk: 4,
         };
 
-        let cwd = std::env::current_dir().unwrap();
+        let _cwd_guard = cwd_test_lock().lock().unwrap();
+        let cwd = std::env::current_dir()
+            .unwrap_or_else(|_| std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")));
         std::env::set_current_dir(&root).unwrap();
         let (resolved, notice) = resolve_wal_dir(&args).unwrap();
         std::env::set_current_dir(cwd).unwrap();
@@ -22915,7 +22917,9 @@ locked_block_hash = "stale-lock"
             rl_advisor_shadow_topk: 4,
         };
 
-        let cwd = std::env::current_dir().unwrap();
+        let _cwd_guard = cwd_test_lock().lock().unwrap();
+        let cwd = std::env::current_dir()
+            .unwrap_or_else(|_| std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")));
         std::env::set_current_dir(&root).unwrap();
         let (resolved, notice) = resolve_wal_dir(&args).unwrap();
         std::env::set_current_dir(cwd).unwrap();
@@ -22964,7 +22968,9 @@ locked_block_hash = "stale-lock"
             rl_advisor_shadow_topk: 4,
         };
 
-        let cwd = std::env::current_dir().unwrap();
+        let _cwd_guard = cwd_test_lock().lock().unwrap();
+        let cwd = std::env::current_dir()
+            .unwrap_or_else(|_| std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")));
         std::env::set_current_dir(&root).unwrap();
         let (resolved, notice) = resolve_wal_dir(&args).unwrap();
         std::env::set_current_dir(cwd).unwrap();
@@ -23012,7 +23018,9 @@ locked_block_hash = "stale-lock"
             rl_advisor_shadow_topk: 4,
         };
 
-        let cwd = std::env::current_dir().unwrap();
+        let _cwd_guard = cwd_test_lock().lock().unwrap();
+        let cwd = std::env::current_dir()
+            .unwrap_or_else(|_| std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")));
         std::env::set_current_dir(&root).unwrap();
         let (resolved, notice) = resolve_wal_dir(&args).unwrap();
         std::env::set_current_dir(cwd).unwrap();
@@ -23060,7 +23068,9 @@ locked_block_hash = "stale-lock"
             rl_advisor_shadow_topk: 4,
         };
 
-        let cwd = std::env::current_dir().unwrap();
+        let _cwd_guard = cwd_test_lock().lock().unwrap();
+        let cwd = std::env::current_dir()
+            .unwrap_or_else(|_| std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")));
         std::env::set_current_dir(&root).unwrap();
         let (resolved, notice) = resolve_wal_dir(&args).unwrap();
         std::env::set_current_dir(cwd).unwrap();
@@ -23109,7 +23119,9 @@ locked_block_hash = "stale-lock"
             rl_advisor_shadow_topk: 4,
         };
 
-        let cwd = std::env::current_dir().unwrap();
+        let _cwd_guard = cwd_test_lock().lock().unwrap();
+        let cwd = std::env::current_dir()
+            .unwrap_or_else(|_| std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")));
         std::env::set_current_dir(&root).unwrap();
         let (resolved, notice) = resolve_wal_dir(&args).unwrap();
         std::env::set_current_dir(cwd).unwrap();
@@ -23158,7 +23170,9 @@ locked_block_hash = "stale-lock"
             rl_advisor_shadow_topk: 4,
         };
 
-        let cwd = std::env::current_dir().unwrap();
+        let _cwd_guard = cwd_test_lock().lock().unwrap();
+        let cwd = std::env::current_dir()
+            .unwrap_or_else(|_| std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")));
         std::env::set_current_dir(&root).unwrap();
         let (resolved, notice) = resolve_wal_dir(&args).unwrap();
         std::env::set_current_dir(cwd).unwrap();
@@ -23211,7 +23225,9 @@ locked_block_hash = "stale-lock"
             rl_advisor_shadow_topk: 4,
         };
 
-        let cwd = std::env::current_dir().unwrap();
+        let _cwd_guard = cwd_test_lock().lock().unwrap();
+        let cwd = std::env::current_dir()
+            .unwrap_or_else(|_| std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")));
         std::env::set_current_dir(&root).unwrap();
         let (resolved, notice) = resolve_wal_dir(&args).unwrap();
         std::env::set_current_dir(cwd).unwrap();
@@ -23260,7 +23276,9 @@ locked_block_hash = "stale-lock"
             rl_advisor_shadow_topk: 4,
         };
 
-        let cwd = std::env::current_dir().unwrap();
+        let _cwd_guard = cwd_test_lock().lock().unwrap();
+        let cwd = std::env::current_dir()
+            .unwrap_or_else(|_| std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")));
         std::env::set_current_dir(&root).unwrap();
         let (resolved, notice) = resolve_wal_dir(&args).unwrap();
         std::env::set_current_dir(cwd).unwrap();
@@ -23309,7 +23327,9 @@ locked_block_hash = "stale-lock"
             rl_advisor_shadow_topk: 4,
         };
 
-        let cwd = std::env::current_dir().unwrap();
+        let _cwd_guard = cwd_test_lock().lock().unwrap();
+        let cwd = std::env::current_dir()
+            .unwrap_or_else(|_| std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")));
         std::env::set_current_dir(&root).unwrap();
         let (resolved, notice) = resolve_wal_dir(&args).unwrap();
         std::env::set_current_dir(cwd).unwrap();

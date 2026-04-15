@@ -430,7 +430,7 @@ mod tests {
         )
         .expect("challenge receipt");
 
-        let padded_marker = " \nchallenged_by: auditor-1\t ";
+        let padded_marker = " \nchallenged_by:auditor-1\t ";
         let mut record = st.consumption_record(&record_key).expect("record");
         record.resolution_code = Some(padded_marker.to_string());
         st.put_consumption_record(record);
