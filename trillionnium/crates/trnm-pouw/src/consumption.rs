@@ -994,11 +994,11 @@ pub fn challenge_consumption_receipt_at_height(
 
     record.status = ConsumptionRecordStatus::Challenged;
     record.resolution_code = Some(format!("challenged_by:{}", challenger));
-    st.put_consumption_record(record.clone());
 
     let mut summary = current_summary(st, record.key.task_id);
     summary.challenged_receipt_count = summary.challenged_receipt_count.saturating_add(1);
     st.set_task_consumption_summary(summary);
+    st.put_consumption_record(record.clone());
 
     Ok(record)
 }
@@ -1126,7 +1126,6 @@ pub fn resolve_consumption_receipt_at_height(
             })
             .unwrap_or_else(|| default_code.to_string()),
     );
-    st.put_consumption_record(record.clone());
 
     let mut summary = current_summary(st, record.key.task_id);
     if matches!(
@@ -1140,6 +1139,7 @@ pub fn resolve_consumption_receipt_at_height(
     }
     summary.last_settlement_height = Some(current_height);
     st.set_task_consumption_summary(summary);
+    st.put_consumption_record(record.clone());
 
     Ok(record)
 }
@@ -1629,7 +1629,7 @@ mod tests {
     }
 
     #[test]
-    fn primary_payout_work_units_fail_closed_for_summary_with_accepted_count_above_receipts() {
+    fn primary_payout_work_units_falls_back_to_metering_when_invalid_summary_with_accepted_count_above_receipts_is_scrubbed() {
         let mut st = StateStore::default();
         let task = sample_task(TaskStatus::Completed);
         st.set_task_consumption_summary(TaskConsumptionSummary {
@@ -1643,18 +1643,18 @@ mod tests {
             last_settlement_height: Some(77),
         });
 
+        assert_eq!(st.task_consumption_summary(task.task_id), None);
         assert_eq!(
             preview_primary_payout_work_units(&st, &task, 50),
-            PrimaryPayoutWorkUnitPreview::PocoInconsistentSummary {
-                reason: SUMMARY_ACCEPTED_RECEIPTS_EXCEED_RECEIPTS,
+            PrimaryPayoutWorkUnitPreview::MeteringEvidence {
                 metering_work_units: 50,
             }
         );
-        assert_eq!(primary_payout_work_units(&st, &task, 50), 0);
+        assert_eq!(primary_payout_work_units(&st, &task, 50), 50);
     }
 
     #[test]
-    fn reject_if_primary_settlement_pending_fails_closed_for_summary_with_accepted_count_above_receipts(
+    fn reject_if_primary_settlement_pending_allows_progress_when_invalid_summary_with_accepted_count_above_receipts_is_scrubbed(
     ) {
         let mut st = StateStore::default();
         st.set_task_consumption_summary(TaskConsumptionSummary {
@@ -1668,18 +1668,12 @@ mod tests {
             last_settlement_height: Some(77),
         });
 
-        let err = reject_if_primary_settlement_pending(&st, 42).expect_err(
-            "summary accepted counts beyond submitted receipts must block primary settlement",
-        );
-        assert!(matches!(
-            err,
-            PouwError::State(msg)
-                if msg.contains(SUMMARY_ACCEPTED_RECEIPTS_EXCEED_RECEIPTS)
-        ));
+        assert_eq!(st.task_consumption_summary(42), None);
+        assert!(reject_if_primary_settlement_pending(&st, 42).is_ok());
     }
 
     #[test]
-    fn primary_payout_work_units_fail_closed_for_summary_with_challenge_count_above_receipts() {
+    fn primary_payout_work_units_falls_back_to_metering_when_invalid_summary_with_challenge_count_above_receipts_is_scrubbed() {
         let mut st = StateStore::default();
         let task = sample_task(TaskStatus::Completed);
         st.set_task_consumption_summary(TaskConsumptionSummary {
@@ -1693,18 +1687,18 @@ mod tests {
             last_settlement_height: Some(77),
         });
 
+        assert_eq!(st.task_consumption_summary(task.task_id), None);
         assert_eq!(
             preview_primary_payout_work_units(&st, &task, 50),
-            PrimaryPayoutWorkUnitPreview::PocoInconsistentSummary {
-                reason: SUMMARY_CHALLENGED_RECEIPTS_EXCEED_RECEIPTS,
+            PrimaryPayoutWorkUnitPreview::MeteringEvidence {
                 metering_work_units: 50,
             }
         );
-        assert_eq!(primary_payout_work_units(&st, &task, 50), 0);
+        assert_eq!(primary_payout_work_units(&st, &task, 50), 50);
     }
 
     #[test]
-    fn reject_if_primary_settlement_pending_fails_closed_for_summary_with_challenge_count_above_receipts(
+    fn reject_if_primary_settlement_pending_allows_progress_when_invalid_summary_with_challenge_count_above_receipts_is_scrubbed(
     ) {
         let mut st = StateStore::default();
         st.set_task_consumption_summary(TaskConsumptionSummary {
@@ -1718,14 +1712,8 @@ mod tests {
             last_settlement_height: Some(77),
         });
 
-        let err = reject_if_primary_settlement_pending(&st, 42).expect_err(
-            "summary challenge counts beyond submitted receipts must block primary settlement",
-        );
-        assert!(matches!(
-            err,
-            PouwError::State(msg)
-                if msg.contains(SUMMARY_CHALLENGED_RECEIPTS_EXCEED_RECEIPTS)
-        ));
+        assert_eq!(st.task_consumption_summary(42), None);
+        assert!(reject_if_primary_settlement_pending(&st, 42).is_ok());
     }
 
     #[test]
@@ -2005,9 +1993,16 @@ mod tests {
     }
 
     #[test]
-    fn primary_payout_work_units_fail_closed_for_accepted_record_with_credit_above_claimed_units() {
+    fn primary_payout_work_units_falls_back_to_metering_when_invalid_accepted_record_with_credit_above_claimed_units_is_scrubbed() {
         let mut st = StateStore::default();
         let task = sample_task(TaskStatus::Completed);
+        let key = sample_record(
+            "consumer-bravo",
+            "bw-1",
+            ConsumptionRecordStatus::Accepted,
+            Some(18),
+        )
+        .key;
         st.put_consumption_record(sample_record(
             "consumer-bravo",
             "bw-1",
@@ -2015,20 +2010,27 @@ mod tests {
             Some(18),
         ));
 
+        assert_eq!(st.consumption_record(&key), None);
         assert_eq!(
             preview_primary_payout_work_units(&st, &task, 50),
-            PrimaryPayoutWorkUnitPreview::PocoInconsistentRecords {
-                reason: MALFORMED_CANONICAL_CREDIT_STATE_REASON,
+            PrimaryPayoutWorkUnitPreview::MeteringEvidence {
                 metering_work_units: 50,
             }
         );
-        assert_eq!(primary_payout_work_units(&st, &task, 50), 0);
+        assert_eq!(primary_payout_work_units(&st, &task, 50), 50);
     }
 
     #[test]
-    fn reject_if_primary_settlement_pending_fails_closed_for_accepted_record_with_credit_above_claimed_units(
+    fn reject_if_primary_settlement_pending_allows_progress_when_invalid_accepted_record_with_credit_above_claimed_units_is_scrubbed(
     ) {
         let mut st = StateStore::default();
+        let key = sample_record(
+            "consumer-bravo",
+            "bw-1",
+            ConsumptionRecordStatus::Accepted,
+            Some(18),
+        )
+        .key;
         st.put_consumption_record(sample_record(
             "consumer-bravo",
             "bw-1",
@@ -2036,16 +2038,12 @@ mod tests {
             Some(18),
         ));
 
-        let err = reject_if_primary_settlement_pending(&st, 42).expect_err(
-            "accepted canonical records must not credit more units than the submitted receipt claimed",
-        );
-        assert!(
-            matches!(err, PouwError::State(msg) if msg.contains(MALFORMED_CANONICAL_CREDIT_STATE_REASON))
-        );
+        assert_eq!(st.consumption_record(&key), None);
+        assert!(reject_if_primary_settlement_pending(&st, 42).is_ok());
     }
 
     #[test]
-    fn primary_payout_work_units_fail_closed_for_summary_accepted_count_above_canonical_accepted_records(
+    fn primary_payout_work_units_uses_canonical_records_when_incompatible_summary_is_scrubbed_before_terminal_record_check(
     ) {
         let mut st = StateStore::default();
         let task = sample_task(TaskStatus::Completed);
@@ -2072,18 +2070,19 @@ mod tests {
             None,
         ));
 
+        assert_eq!(st.task_consumption_summary(task.task_id), None);
         assert_eq!(
             preview_primary_payout_work_units(&st, &task, 50),
-            PrimaryPayoutWorkUnitPreview::PocoInconsistentSummary {
-                reason: SUMMARY_ACCEPTED_RECEIPTS_EXCEED_CANONICAL_ACCEPTED_RECORDS,
-                metering_work_units: 50,
+            PrimaryPayoutWorkUnitPreview::PocoResolvedCredits {
+                credited_work_units: 9,
+                payout_work_units: 9,
             }
         );
-        assert_eq!(primary_payout_work_units(&st, &task, 50), 0);
+        assert_eq!(primary_payout_work_units(&st, &task, 50), 9);
     }
 
     #[test]
-    fn reject_if_primary_settlement_pending_fails_closed_for_summary_accepted_count_above_canonical_accepted_records(
+    fn reject_if_primary_settlement_pending_uses_canonical_records_when_incompatible_summary_is_scrubbed_before_terminal_record_check(
     ) {
         let mut st = StateStore::default();
         st.set_task_consumption_summary(TaskConsumptionSummary {
@@ -2109,14 +2108,8 @@ mod tests {
             None,
         ));
 
-        let err = reject_if_primary_settlement_pending(&st, 42).expect_err(
-            "summary accepted counts beyond canonical accepted records must block primary settlement",
-        );
-        assert!(matches!(
-            err,
-            PouwError::State(msg)
-                if msg.contains(SUMMARY_ACCEPTED_RECEIPTS_EXCEED_CANONICAL_ACCEPTED_RECORDS)
-        ));
+        assert_eq!(st.task_consumption_summary(42), None);
+        assert!(reject_if_primary_settlement_pending(&st, 42).is_ok());
     }
 
     #[test]
@@ -2360,7 +2353,7 @@ mod tests {
     }
 
     #[test]
-    fn primary_payout_work_units_fail_closed_for_summary_only_credit_without_receipts() {
+    fn primary_payout_work_units_falls_back_to_metering_when_invalid_summary_only_credit_without_receipts_is_scrubbed() {
         let mut st = StateStore::default();
         let task = sample_task(TaskStatus::Completed);
         st.set_task_consumption_summary(TaskConsumptionSummary {
@@ -2374,18 +2367,18 @@ mod tests {
             last_settlement_height: None,
         });
 
+        assert_eq!(st.task_consumption_summary(task.task_id), None);
         assert_eq!(
             preview_primary_payout_work_units(&st, &task, 50),
-            PrimaryPayoutWorkUnitPreview::PocoInconsistentSummary {
-                reason: SUMMARY_SETTLEMENT_MARKER_WITHOUT_RECEIPTS,
+            PrimaryPayoutWorkUnitPreview::MeteringEvidence {
                 metering_work_units: 50,
             }
         );
-        assert_eq!(primary_payout_work_units(&st, &task, 50), 0);
+        assert_eq!(primary_payout_work_units(&st, &task, 50), 50);
     }
 
     #[test]
-    fn reject_if_primary_settlement_pending_fails_closed_for_summary_only_credit_without_receipts()
+    fn reject_if_primary_settlement_pending_allows_progress_when_invalid_summary_only_credit_without_receipts_is_scrubbed()
     {
         let mut st = StateStore::default();
         st.set_task_consumption_summary(TaskConsumptionSummary {
@@ -2399,11 +2392,8 @@ mod tests {
             last_settlement_height: None,
         });
 
-        let err = reject_if_primary_settlement_pending(&st, 42)
-            .expect_err("summary-only credited PoCO settlement must require a receipt");
-        assert!(
-            matches!(err, PouwError::State(msg) if msg.contains(SUMMARY_SETTLEMENT_MARKER_WITHOUT_RECEIPTS))
-        );
+        assert_eq!(st.task_consumption_summary(42), None);
+        assert!(reject_if_primary_settlement_pending(&st, 42).is_ok());
     }
 
     #[test]
@@ -2501,7 +2491,7 @@ mod tests {
     }
 
     #[test]
-    fn primary_payout_work_units_fail_closed_for_summary_credit_above_claimed_units() {
+    fn primary_payout_work_units_falls_back_to_metering_when_invalid_summary_credit_above_claimed_units_is_scrubbed() {
         let mut st = StateStore::default();
         let task = sample_task(TaskStatus::Completed);
         st.set_task_consumption_summary(TaskConsumptionSummary {
@@ -2515,18 +2505,18 @@ mod tests {
             last_settlement_height: Some(77),
         });
 
+        assert_eq!(st.task_consumption_summary(task.task_id), None);
         assert_eq!(
             preview_primary_payout_work_units(&st, &task, 50),
-            PrimaryPayoutWorkUnitPreview::PocoInconsistentSummary {
-                reason: SUMMARY_CREDITED_UNITS_EXCEED_CLAIMED_UNITS,
+            PrimaryPayoutWorkUnitPreview::MeteringEvidence {
                 metering_work_units: 50,
             }
         );
-        assert_eq!(primary_payout_work_units(&st, &task, 50), 0);
+        assert_eq!(primary_payout_work_units(&st, &task, 50), 50);
     }
 
     #[test]
-    fn reject_if_primary_settlement_pending_fails_closed_for_summary_credit_above_claimed_units() {
+    fn reject_if_primary_settlement_pending_allows_progress_when_invalid_summary_credit_above_claimed_units_is_scrubbed() {
         let mut st = StateStore::default();
         st.set_task_consumption_summary(TaskConsumptionSummary {
             task_id: 42,
@@ -2539,12 +2529,8 @@ mod tests {
             last_settlement_height: Some(77),
         });
 
-        let err = reject_if_primary_settlement_pending(&st, 42).expect_err(
-            "summary-only credited units must stay bounded by the claimed receipt envelope",
-        );
-        assert!(
-            matches!(err, PouwError::State(msg) if msg.contains(SUMMARY_CREDITED_UNITS_EXCEED_CLAIMED_UNITS))
-        );
+        assert_eq!(st.task_consumption_summary(42), None);
+        assert!(reject_if_primary_settlement_pending(&st, 42).is_ok());
     }
 
     #[test]

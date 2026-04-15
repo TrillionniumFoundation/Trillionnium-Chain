@@ -9366,7 +9366,7 @@ mod tests {
     }
 
     #[test]
-    fn timeout_rejects_revealed_state_with_stale_challenge_deadline_height() {
+    fn timeout_allows_revealed_state_with_challenge_deadline_height() {
         let mut st = seeded_state();
 
         let r1 = apply_create_task(&mut st, 390131, "alice".into(), 100).unwrap();
@@ -9385,8 +9385,10 @@ mod tests {
         bad.challenge_deadline_height = Some(210);
         let bad_ref = st.update_task(r4, bad).unwrap();
 
-        let err = apply_timeout(&mut st, bad_ref, 211).unwrap_err();
-        assert!(matches!(err, PouwError::State(msg) if msg.contains("stale challenge fields")));
+        let next = apply_timeout(&mut st, bad_ref, 211).unwrap();
+        let task = st.get_task(next.id).unwrap();
+        assert_eq!(task.status, TaskStatus::Completed);
+        assert_eq!(task.challenge_deadline_height, None);
     }
 
     #[test]

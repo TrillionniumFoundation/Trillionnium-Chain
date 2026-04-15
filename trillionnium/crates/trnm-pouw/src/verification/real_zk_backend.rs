@@ -54,12 +54,13 @@ impl RealZkBackend {
         }
 
         let proof_bytes = payload.decode_proof_bytes()?;
-        let _proof = Proof::<Bn254>::deserialize_compressed(proof_bytes.as_slice()).map_err(|err| {
-            BackendExecutionError::MalformedProof {
-                backend: request.backend_label(Self::backend_id_static()),
-                reason: format!("invalid Groth16 proof encoding: {err}"),
-            }
-        })?;
+        let _proof =
+            Proof::<Bn254>::deserialize_compressed(proof_bytes.as_slice()).map_err(|err| {
+                BackendExecutionError::MalformedProof {
+                    backend: request.backend_label(Self::backend_id_static()),
+                    reason: format!("invalid Groth16 proof encoding: {err}"),
+                }
+            })?;
 
         Ok(())
     }
