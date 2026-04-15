@@ -5066,13 +5066,6 @@ pub fn verify_wal_and_find_checkpoint_node_recovery(
             return Ok(best_checkpoint);
         }
         if !matching_hash_checkpoints.is_empty()
-            && checkpoints_at_height.iter().any(|cp| {
-                cp.state_root_hex == e.state_root_hex && cp.wal_entry_hash_hex != cur_hash
-            })
-        {
-            return Ok(best_checkpoint);
-        }
-        if !matching_hash_checkpoints.is_empty()
             && !matching_hash_checkpoints
                 .iter()
                 .all(|cp| checkpoint_matches_wal_entry_for_recovery(cp, e, &cur_hash))
