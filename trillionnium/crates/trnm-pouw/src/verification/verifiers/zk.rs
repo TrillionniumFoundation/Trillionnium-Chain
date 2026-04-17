@@ -683,6 +683,21 @@ mod tests {
     }
 
     #[test]
+    fn zk_verifier_rejects_legacy_receipt_alias_on_default_launch_path() {
+        let verifier = ZkVerifier::default();
+        let task = mock_task();
+
+        assert!(matches!(
+            verifier.verify_proof(
+                &task,
+                b"ZK:task_id=99;worker=worker-zk;proof_type=zk_receipt;result_hash=1111111111111111111111111111111111111111111111111111111111111111;receipt=legacy"
+            ),
+            VerificationResult::Invalid(msg)
+                if msg.contains("proof_type mismatch")
+        ));
+    }
+
+    #[test]
     fn zk_verifier_accepts_exact_configured_opaque_backend_when_payload_omits_backend_id() {
         let mut backends = ZkBackendRegistry::new();
         backends.register(Arc::new(MockSuccessBackend));

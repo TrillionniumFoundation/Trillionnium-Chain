@@ -271,6 +271,23 @@ cargo run -q -p trnm-node -- \
   --parallel-workers 4
 ```
 
+Before describing the start as healthy in a handoff note, preserve the first startup sync-diagnostic line that `trnm-node` prints through `[bft-recover]`.
+At minimum, capture the line carrying:
+
+- `checkpoint_tip_relation=`
+- `join_rejoin_status=`
+- `wal_tail_truncated=`
+- `metadata_only_recovery=`
+- `next_startup_height=`
+
+Interpretation rule for the startup sync-diagnostic line:
+- `checkpoint_tip_relation=none` plus `join_rejoin_status=ready:fresh_bootstrap` means a clean fresh bootstrap surface
+- `checkpoint_tip_relation=aligned` plus `join_rejoin_status=ready:retained_wal_resume` means a clean retained-WAL resume surface
+- `checkpoint_tip_relation=behind:<n>` means startup kept visible checkpoint lag behind the retained WAL tip; keep that lag fact in the handoff note instead of collapsing it into a generic "resumed"
+- `checkpoint_tip_relation=ahead:<n>` means startup kept visible checkpoint-ahead mismatch; preserve the mismatch evidence and do not silently restate it as caught up
+- `wal_tail_truncated=true` means the repair fact stays operator-visible; preserve the exact `join_rejoin_status=` literal, including any `_after_tail_repair` suffix, instead of rewriting it to the clean ready token
+- `metadata_only_recovery=true` or `join_rejoin_status=blocked:metadata_only_recovery` is fail-closed and should be treated as a bootstrap blocker, not a warning-only condition
+
 Interpretation rule:
 - use the exact config file you intend to hand off or compare against
 - if the bootstrap attempt requires unexplained one-off flags, record them explicitly or treat the run as non-reproducible
@@ -368,6 +385,7 @@ When passing bootstrap status to another validator/operator, record:
 - HEAD commit
 - genesis artifact/hash expected by this bootstrap
 - config file used for bootstrap
+- startup sync diagnostic line (`[bft-recover] ... checkpoint_tip_relation=... join_rejoin_status=...`)
 - commands run
 - pass/fail result
 - rollback command

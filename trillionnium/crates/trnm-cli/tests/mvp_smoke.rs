@@ -859,27 +859,42 @@ fn smoke_query_balance_fallback_json() {
 }
 
 #[test]
-fn smoke_tx_commit_query_fallback_roundtrip() {
-    let tx_file = tmp_dir("tx-query-fallback").join("txs.json");
+fn smoke_tx_submit_consumption_receipt_query_fallback_roundtrip() {
+    let root = tmp_dir("tx-query-fallback");
+    let tx_file = root.join("txs.json");
+    let receipt_path = root.join("receipt.json");
+    std::fs::write(
+        &receipt_path,
+        r#"{
+            "task_id":9999991,
+            "consumer_id":"worker_readiness",
+            "output_hash":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "billing_window_id":"bw-smoke",
+            "consumer_nonce":1
+        }"#,
+    )
+    .unwrap();
 
     let submit = Command::new(bin())
         .env("TRNM_RPC_TX_FILE", tx_file.to_string_lossy().as_ref())
         .args([
             "tx",
-            "commit-result",
-            "9999991",
-            "worker_readiness",
-            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            "1",
+            "submit-consumption-receipt",
+            "--receipt-json",
+            receipt_path.to_string_lossy().as_ref(),
         ])
         .output()
         .unwrap();
-    assert!(submit.status.success());
+    assert!(
+        submit.status.success(),
+        "stderr: {}",
+        String::from_utf8_lossy(&submit.stderr)
+    );
     let submit_stdout = String::from_utf8_lossy(&submit.stdout);
     let tx_hash_line = submit_stdout
         .lines()
         .find(|line| line.starts_with("tx_hash="))
-        .expect("commit-result should print tx_hash");
+        .expect("submit-consumption-receipt should print tx_hash");
     let tx_hash = tx_hash_line.trim_start_matches("tx_hash=");
     assert!(!tx_hash.is_empty());
 

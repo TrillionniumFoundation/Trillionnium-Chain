@@ -36,6 +36,20 @@ npx vitest run \
 当前实测结果（2026-04-03）：
 - `4 files passed / 105 tests passed`
 
+## 2026-04-16 repo-local freeze guard
+
+当前 `trillionnium` repo tree 不包含 `web4-frontend/`，因此上面的 `vitest` 命令只能继续作为 **external/frontend snapshot evidence pointer**，不能单独被当作当前 repo-local `main` 的 adapter signoff 证据。
+
+在当前仓内快照上引用本包时，必须同时附：
+- `TRNM_DAY1_PUBLIC_READ_CONTRACT_MATRIX_2026-04-03.md` 中的 `2026-04-15 Repo-local evidence refresh`
+- `crates/trnm-rpc/src/tests_contract_core/http.rs`
+- `crates/trnm-rpc/tests/query_capability_audit.rs`
+- `crates/trnm-rpc/tests/health_probe_contract.rs`
+
+repo-local 允许宣称的边界应收紧为：
+- `doc ↔ RPC coherence`: 有当前仓内证据
+- `adapter co-sign`: 仍依赖匹配的外部 `web4-frontend` truth-source snapshot，不得仅凭当前 repo 写成“adapter contract 已闭环”
+
 ---
 
 # A. Endpoint signoff matrix
@@ -301,7 +315,7 @@ Review expectation:
 
 如果现在要给 Group A 一个最小 signoff 结论，可写成：
 
-> 基于 `TRNM_DAY1_PUBLIC_READ_CONTRACT_2026-04-03.md`、`TRNM_DAY1_PUBLIC_READ_CONTRACT_MATRIX_2026-04-03.md`、`TRNM_QUERY_NORMALIZED_AUDIT_EVENTS_CONTRACT_TABLE_2026-04-03.md` 与当前最小证据命令（`4 files passed / 105 tests passed`），Group A 当前可将以下 Day-1 public read endpoints 视为 **contract signoff-ready within scope**：`query-task`、`query-events`、`query-capability-audit`、`query-normalized-audit-events`。`healthz` 当前为 **doc-guarded only**，不应按同等级自动化证据对待。Group A signoff 不扩展到 durable explorer backend、historical read-model、archive replay guarantee、block/tx/account public freeze，也不代表整体主网发布 GO。
+> 基于 `TRNM_DAY1_PUBLIC_READ_CONTRACT_2026-04-03.md`、`TRNM_DAY1_PUBLIC_READ_CONTRACT_MATRIX_2026-04-03.md`、`TRNM_QUERY_NORMALIZED_AUDIT_EVENTS_CONTRACT_TABLE_2026-04-03.md` 与匹配 external `web4-frontend` snapshot 的最小证据命令（`4 files passed / 105 tests passed`），Group A 可将以下 Day-1 public read endpoints 视为 **contract signoff-ready within scope**：`query-task`、`query-events`、`query-capability-audit`、`query-normalized-audit-events`。若评审对象仅限当前 repo-local `main`，则本仓现在只能宣称这些 endpoint 的 **doc ↔ RPC coherence** 已有最小证据，`adapter co-sign` 仍待外部 frontend truth-source snapshot 附带签入。`healthz` 当前为 **doc-guarded only**，不应按同等级自动化证据对待。Group A signoff 不扩展到 durable explorer backend、historical read-model、archive replay guarantee、block/tx/account public freeze，也不代表整体主网发布 GO。
 
 ---
 

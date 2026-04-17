@@ -1687,9 +1687,13 @@ fn sanitize_challenge_window_blocks(raw: u64) -> u64 {
 
 fn effective_challenge_window_blocks(st: &StateStore, task: &TaskObject) -> u64 {
     sanitize_challenge_window_blocks(task.challenge_window_blocks_snapshot.unwrap_or_else(|| {
-        // Legacy compatibility path for pre-snapshot Revealed tasks.
-        // Semantics are explicitly pinned to challenge-time governance value when no snapshot
-        // exists (instead of trying to infer reveal-time state that is no longer recoverable).
+        // RETIRE-R1 tracked in:
+        // docs/release/TRNM_POCO_BEHAVIOR_RISK_RETIREMENT_PLAN_2026-04-15.md
+        //
+        // This legacy compatibility path for pre-snapshot Revealed tasks is still live runtime
+        // behavior, not merely historical evidence. The current interpretation remains pinned to
+        // challenge-time governance value when no snapshot exists, but the long-term retirement
+        // target is to remove hidden fallback authority from launch-path semantics.
         st.gov_param_u64("challenge_window_blocks")
             .unwrap_or(DEFAULT_CHALLENGE_WINDOW_BLOCKS)
     }))
@@ -1725,6 +1729,17 @@ pub fn apply_challenge_at_height(
     // entry because it immediately debits challenger funds into escrow.
     if st.is_emergency_paused() {
         return Err(PouwError::InvalidTransition);
+    }
+    if current_height > 0 && task.challenge_window_blocks_snapshot.is_none() {
+        // First-round R1 cut: live challenge admission must no longer grant runtime
+        // authority to pre-snapshot Revealed tasks via implicit governance fallback.
+        // Check this before any stored deadline can re-authorize legacy runtime
+        // behavior on the live path.
+        // Height-0 replay/import paths retain the compatibility escape hatch so
+        // historical state can still be migrated and audited explicitly.
+        return Err(PouwError::State(
+            "snapshotless revealed task requires migration replay/import path".into(),
+        ));
     }
     reject_if_deadline_exceeded(task.challenge_deadline_height, current_height)?;
 
@@ -6383,7 +6398,7 @@ mod tests {
     }
 
     #[test]
-    fn challenge_legacy_fallback_none_snapshot_uses_default_window_when_gov_missing() {
+    fn legacy_snapshotless_revealed_is_rejected_on_live_challenge_when_gov_missing() {
         let mut st = seeded_state();
         st.set_balance("challenger", 100);
 
@@ -6403,8 +6418,9 @@ mod tests {
         legacy.challenge_window_blocks_snapshot = None;
         let r4 = st.update_task(r4, legacy).unwrap();
 
-        // Do not seed challenge_window_blocks governance: fallback should use default safely.
-        let r5 = apply_challenge_at_height(
+        // Do not seed challenge_window_blocks governance: live path should now reject
+        // snapshotless legacy Revealed state instead of reviving fallback authority.
+        let err = apply_challenge_at_height(
             &mut st,
             r4,
             "challenger".into(),
@@ -6412,16 +6428,8 @@ mod tests {
             "challenger".into(),
             111,
         )
-        .unwrap();
-        let task = st.get_task(r5.id).unwrap();
-        assert_eq!(
-            task.challenge_window_blocks_snapshot,
-            Some(DEFAULT_CHALLENGE_WINDOW_BLOCKS)
-        );
-        assert_eq!(
-            task.resolve_deadline_height,
-            Some(111 + DEFAULT_CHALLENGE_WINDOW_BLOCKS)
-        );
+        .unwrap_err();
+        assert!(matches!(err, PouwError::State(msg) if msg.contains("snapshotless revealed task requires migration replay/import path")));
     }
 
     #[test]
@@ -6471,7 +6479,7 @@ mod tests {
     }
 
     #[test]
-    fn legacy_revealed_without_snapshot_gets_snapshotted_on_challenge() {
+    fn legacy_snapshotless_revealed_is_rejected_on_live_challenge_after_gov_change() {
         let mut st = seeded_state();
         st.set_balance("challenger", 100);
         st.set_gov_param_bootstrap_unchecked(9130, "challenge_window_blocks".into(), "100".into())
@@ -6496,7 +6504,7 @@ mod tests {
         st.set_gov_param_bootstrap_unchecked(9130, "challenge_window_blocks".into(), "300".into())
             .unwrap();
 
-        let r5 = apply_challenge_at_height(
+        let err = apply_challenge_at_height(
             &mut st,
             r4,
             "challenger".into(),
@@ -6504,15 +6512,12 @@ mod tests {
             "challenger".into(),
             210,
         )
-        .unwrap();
-        let task = st.get_task(r5.id).unwrap();
-        assert_eq!(task.challenge_window_blocks_snapshot, Some(300));
-        assert_eq!(task.challenge_deadline_height, Some(210));
-        assert_eq!(task.resolve_deadline_height, Some(510));
+        .unwrap_err();
+        assert!(matches!(err, PouwError::State(msg) if msg.contains("snapshotless revealed task requires migration replay/import path")));
     }
 
     #[test]
-    fn legacy_revealed_snapshot_freezes_resolve_timing_after_challenge_despite_later_gov_change() {
+    fn legacy_snapshotless_revealed_cannot_enter_live_challenged_state() {
         let mut st = seeded_state();
         st.set_balance("challenger", 100);
         st.set_gov_param_bootstrap_unchecked(9133, "challenge_window_blocks".into(), "100".into())
@@ -6537,7 +6542,7 @@ mod tests {
         st.set_gov_param_bootstrap_unchecked(9133, "challenge_window_blocks".into(), "300".into())
             .unwrap();
 
-        let r5 = apply_challenge_at_height(
+        let err = apply_challenge_at_height(
             &mut st,
             r4,
             "challenger".into(),
@@ -6545,21 +6550,8 @@ mod tests {
             "challenger".into(),
             210,
         )
-        .unwrap();
-        let task = st.get_task(r5.id).unwrap();
-        assert_eq!(task.challenge_window_blocks_snapshot, Some(300));
-        assert_eq!(task.resolve_deadline_height, Some(510));
-
-        // Later governance updates must not affect already-derived challenged timing.
-        st.set_gov_param_bootstrap_unchecked(9133, "challenge_window_blocks".into(), "600".into())
-            .unwrap();
-
-        let err = apply_timeout(&mut st, r5.clone(), 510).unwrap_err();
-        assert!(matches!(err, PouwError::InvalidTransition));
-
-        let r6 = apply_timeout(&mut st, r5, 511).unwrap();
-        let timed_out = st.get_task(r6.id).unwrap();
-        assert_eq!(timed_out.status, TaskStatus::Completed);
+        .unwrap_err();
+        assert!(matches!(err, PouwError::State(msg) if msg.contains("snapshotless revealed task requires migration replay/import path")));
     }
 
     #[test]
@@ -6598,7 +6590,7 @@ mod tests {
             211,
         )
         .unwrap_err();
-        assert!(matches!(err, PouwError::DeadlineExceeded));
+        assert!(matches!(err, PouwError::State(msg) if msg.contains("snapshotless revealed task requires migration replay/import path")));
     }
 
     #[test]
@@ -6629,8 +6621,9 @@ mod tests {
         st.set_gov_param_bootstrap_unchecked(9132, "challenge_window_blocks".into(), "600".into())
             .unwrap();
 
-        // Challenge admission still respects stored reveal-time deadline (<= 210).
-        let r5 = apply_challenge_at_height(
+        // Live path now rejects snapshotless legacy Revealed state before any new
+        // escrow movement or challenged-state transition occurs.
+        let err = apply_challenge_at_height(
             &mut st,
             r4,
             "challenger".into(),
@@ -6638,27 +6631,42 @@ mod tests {
             "challenger".into(),
             210,
         )
-        .unwrap();
-        let task = st.get_task(r5.id).unwrap();
-        assert_eq!(task.challenge_deadline_height, Some(210));
-        assert_eq!(task.resolve_deadline_height, Some(810));
-
-        // Resolve remains signer-bound; payload resolver cannot bypass authority check.
-        let err = apply_resolve_at_height(
-            &mut st,
-            r5,
-            true,
-            "authority".into(),
-            "attacker".into(),
-            211,
-        )
         .unwrap_err();
-        assert!(matches!(err, PouwError::Unauthorized));
+        assert!(matches!(err, PouwError::State(msg) if msg.contains("snapshotless revealed task requires migration replay/import path")));
 
         let task = st.get_task(19132).unwrap();
+        assert_eq!(task.status, TaskStatus::Revealed);
+        assert_eq!(st.balance_of("challenger"), 100);
+        assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), 0);
+    }
+
+    #[test]
+    fn legacy_snapshotless_revealed_still_allows_height_zero_replay_import_path() {
+        let mut st = seeded_state();
+        st.set_balance("challenger", 100);
+        st.set_gov_param_bootstrap_unchecked(9134, "challenge_window_blocks".into(), "300".into())
+            .unwrap();
+
+        let r1 = apply_create_task(&mut st, 19134, "alice".into(), 10).unwrap();
+        let result_hash = [1u8; 32];
+        let reveal_salt = [2u8; 32];
+        let committed = compute_commitment(19134, &result_hash, &reveal_salt, "worker1");
+
+        let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+        let r3 =
+            apply_commit_result_at_height(&mut st, r2, "worker1".into(), committed, 100).unwrap();
+        let r4 = apply_reveal_result_at_height(&mut st, r3, result_hash, reveal_salt, None, 110)
+            .unwrap();
+
+        let mut legacy = st.get_task(r4.id).unwrap();
+        legacy.challenge_window_blocks_snapshot = None;
+        let r4 = st.update_task(r4, legacy).unwrap();
+
+        let r5 = apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into())
+            .unwrap();
+        let task = st.get_task(r5.id).unwrap();
+        assert_eq!(task.challenge_window_blocks_snapshot, Some(300));
         assert_eq!(task.status, TaskStatus::Challenged);
-        assert_eq!(st.balance_of("challenger"), 90);
-        assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), 10);
     }
 
     #[test]

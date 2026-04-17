@@ -153,7 +153,7 @@ impl Default for ZkFeatureFlags {
             zk_platform_v0: false,
             zk_backend_router: false,
             zk_payload_v0_envelope: false,
-            zk_allow_legacy_receipt_aliases: true,
+            zk_allow_legacy_receipt_aliases: false,
             zk_allow_backend_fallback: false,
             zk_explicit_backend_required: false,
         }

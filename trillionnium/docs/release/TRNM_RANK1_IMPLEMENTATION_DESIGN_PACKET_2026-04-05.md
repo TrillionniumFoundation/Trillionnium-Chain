@@ -143,8 +143,14 @@ Required keys:
 - `schema_version`
 - `service_mode` = `non-placeholder-durable-read-service`
 - `read_contract_source` = `rpc-pull-materialized-day1-surface`
+- `ingestion_source` = `rpc-pull`
+- `checkpoint_store` = `sqlite`
 - `replay_start_anchor` = `genesis`
+- `retention_scope` = `durable-archive` (bounded to the frozen Day-1 surface only)
 - `archive_owner` = `trnm-core-protocol-ops`
+- `lag_slo` = `<= 2 blocks or <= 30s while healthy`
+
+This lets the SQLite durable boundary persist the full frozen anchor tuple locally instead of relying on the design objective section alone.
 
 ## 3.2 `ingest_checkpoint`
 
@@ -271,6 +277,48 @@ Suggested columns:
 
 This table exists so later replay verification can detect unexpected drift for an already materialized height.
 
+## 3.8 `materialization_watermark`
+
+Purpose:
+- fail-closed linkage between the checkpoint cursor and the 4 Day-1 materialized surfaces.
+
+Suggested columns:
+- `projection_name TEXT PRIMARY KEY`
+- `last_materialized_height INTEGER NOT NULL`
+- `last_manifest_hash TEXT NOT NULL`
+- `last_materialized_at TEXT NOT NULL`
+
+Required `projection_name` values:
+- `task_projection`
+- `task_events`
+- `capability_audit_projection`
+- `normalized_audit_events`
+
+Bootstrap rule:
+- initialize one row per required projection with `last_materialized_height = 0` before replay starts.
+
+Consistency rule:
+- `ingest_checkpoint.last_completed_height` may advance to height `h` only after all 4 watermark rows also advance to `h` in the same SQLite transaction.
+- health/status output should treat any mismatch between checkpoint height and watermark minimum as `degraded/replaying`, not `healthy/current`.
+
+Why this table exists:
+- `height_ingest_manifest` proves what was materialized for a given height;
+- `materialization_watermark` proves every required Day-1 projection has caught up to the checkpoint cursor;
+- together they keep checkpoint advancement from silently outrunning one missing projection family.
+
+## 3.9 Checkpoint/materialization invariants
+
+The first implementation should keep the schema mechanically fail-closed around three invariants:
+
+1. **checkpoint parity**
+   - `ingest_checkpoint.last_completed_height` must equal the minimum `last_materialized_height` across all rows in `materialization_watermark` before the service reports steady-state health.
+2. **manifest parity**
+   - every `materialization_watermark.last_manifest_hash` for height `h` should match `height_ingest_manifest.content_hash` for the same height.
+3. **single-height atomicity**
+   - all row deletes/reinserts for height `h`, the manifest rewrite, the 4 watermark updates, and the checkpoint advance must commit or rollback together.
+
+These invariants are the smallest schema-level guardrail that keeps the SQLite durable boundary consistent with the design packet's replay/resume claims.
+
 ---
 
 # 4. Materialization strategy by endpoint
@@ -371,8 +419,9 @@ For each height `h`:
 3. open one SQLite transaction;
 4. insert/replace all rows derived for `h`;
 5. write `height_ingest_manifest(height=h, ...)`;
-6. update `ingest_checkpoint.last_completed_height = h`;
-7. commit transaction.
+6. update all 4 `materialization_watermark` rows to `last_materialized_height = h` with the same manifest hash;
+7. update `ingest_checkpoint.last_completed_height = h`;
+8. commit transaction.
 
 Fail-closed rule:
 - if any step fails, rollback the transaction;
@@ -388,7 +437,7 @@ Implementation rule:
 - or upsert using deterministic row IDs / content hashes.
 
 The simpler first implementation is:
-- **delete existing rows for height `h`, then reinsert, then rewrite manifest**.
+- **delete existing rows for height `h`, then reinsert, then rewrite manifest and watermark rows**.
 
 This is easier to verify than partial row-level conflict logic.
 
@@ -519,6 +568,7 @@ The first implementation packet should eventually produce these artifacts:
 - bootstrap transcript from genesis
 - replay resume transcript from non-zero checkpoint
 - one manifest proving checkpoint advancement
+- one status snapshot proving watermark parity with the checkpoint cursor
 
 ## Lag artifacts
 - one status output containing:
@@ -559,7 +609,8 @@ This packet should be considered implementation-ready once an engineer can start
 3. one bootstrap-from-genesis command,
 4. one steady-state poller,
 5. one health/lag status surface,
-6. one query server implementing the frozen Day-1 endpoints from SQLite.
+6. one query server implementing the frozen Day-1 endpoints from SQLite,
+7. one checkpoint/materialization parity check proving the checkpoint cursor cannot outrun any Day-1 projection.
 
 If an implementation still needs to re-decide:
 - ingest source,

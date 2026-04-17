@@ -22,7 +22,7 @@ const SHADOW_SETTLEMENT_COMPARE_ONLY_KEY_ID: u64 = 7_352;
 #[command(
     name = "trnm-cli",
     version,
-    about = "Trillionnium native CLI (wallet/query/tx MVP)"
+    about = "Trillionnium native CLI (wallet/query/tx tooling)"
 )]
 struct Args {
     #[command(subcommand)]
@@ -49,12 +49,12 @@ enum Command {
 }
 
 #[derive(Debug, Subcommand)]
+#[command(
+    after_long_help = "Migration note: legacy tx aliases are hidden from help during the migration window. Use `submit-consumption-receipt`, `challenge-consumption`, and `resolve-consumption`."
+)]
 enum TxCommand {
     /// Submit a PoCO consumption receipt tx
-    #[command(
-        name = "submit-consumption-receipt",
-        visible_alias = "submit-settlement-receipt"
-    )]
+    #[command(name = "submit-consumption-receipt", alias = "submit-settlement-receipt")]
     SubmitConsumptionReceipt {
         #[arg(long)]
         receipt_json: PathBuf,
@@ -62,7 +62,7 @@ enum TxCommand {
         signer: Option<String>,
     },
     /// Challenge a PoCO consumption receipt tx
-    #[command(name = "challenge-consumption", visible_alias = "challenge-settlement")]
+    #[command(name = "challenge-consumption", alias = "challenge-settlement")]
     ChallengeConsumption {
         task_id: u64,
         #[arg(long)]
@@ -77,7 +77,7 @@ enum TxCommand {
         signer: Option<String>,
     },
     /// Resolve a PoCO consumption receipt tx
-    #[command(name = "resolve-consumption", visible_alias = "resolve-settlement")]
+    #[command(name = "resolve-consumption", alias = "resolve-settlement")]
     ResolveConsumption {
         task_id: u64,
         #[arg(long)]
@@ -120,24 +120,11 @@ enum TxCommand {
         #[arg(long, default_value_t = 2)]
         interval: u64,
     },
-    /// Legacy commit-result tx (kept for compatibility)
-    CommitResult {
-        task_id: u64,
-        worker: String,
-        commit_hash: String,
-        nonce: u64,
-    },
-    /// Legacy reveal-result tx (kept for compatibility)
-    RevealResult {
-        task_id: u64,
-        result_hash: String,
-        salt_hex: String,
-    },
 }
 
 #[derive(Debug, Subcommand)]
 enum WalletCommand {
-    /// Create a new local wallet (MVP placeholder)
+    /// Create a new local wallet
     Create {
         #[arg(long, default_value = "default")]
         name: String,
@@ -167,7 +154,7 @@ enum WalletCommand {
         #[arg(long)]
         store: Option<PathBuf>,
     },
-    /// Sign arbitrary text (MVP deterministic signature)
+    /// Sign arbitrary text with a local wallet
     Sign {
         #[arg(long, default_value = "default")]
         name: String,
@@ -204,14 +191,14 @@ enum QueryCommand {
     /// Query shadow or hybrid settlement governance state via RPC
     SettlementGovernance,
     /// Query task PoCO settlement preview via RPC
-    #[command(visible_aliases = [
+    #[command(aliases = [
         "consumption-summary",
         "query-settlement-preview",
         "query-consumption-summary"
     ])]
     SettlementPreview { task_id: u64 },
     /// Query task PoCO settlement receipts via RPC
-    #[command(name = "settlement-receipts", visible_aliases = [
+    #[command(name = "settlement-receipts", aliases = [
         "consumption-receipts",
         "query-settlement-receipts",
         "query-consumption-receipts"
@@ -341,6 +328,34 @@ fn validate_resolve_consumption_decision_fields(
         }
         (_, None) => Ok(()),
         (_, Some(_)) => bail!("credited_consumption_units is only allowed when decision=discount"),
+    }
+}
+
+fn legacy_tx_surface_notice<S: AsRef<str>>(argv: &[S]) -> Option<&'static str> {
+    let [_, scope, command, ..] = argv else {
+        return None;
+    };
+    if scope.as_ref() != "tx" {
+        return None;
+    }
+
+    match command.as_ref() {
+        "submit-settlement-receipt" => Some(
+            "warning: `trnm-cli tx submit-settlement-receipt` is deprecated and hidden from help, use `trnm-cli tx submit-consumption-receipt` instead",
+        ),
+        "challenge-settlement" => Some(
+            "warning: `trnm-cli tx challenge-settlement` is deprecated and hidden from help, use `trnm-cli tx challenge-consumption` instead",
+        ),
+        "resolve-settlement" => Some(
+            "warning: `trnm-cli tx resolve-settlement` is deprecated and hidden from help, use `trnm-cli tx resolve-consumption` instead",
+        ),
+        "commit-result" => Some(
+            "warning: `trnm-cli tx commit-result` is retired from the active CLI surface, migrate to the PoCO receipt flow (`submit-consumption-receipt`, `challenge-consumption`, `resolve-consumption`)",
+        ),
+        "reveal-result" => Some(
+            "warning: `trnm-cli tx reveal-result` is retired from the active CLI surface, migrate to the PoCO receipt flow (`submit-consumption-receipt`, `challenge-consumption`, `resolve-consumption`)",
+        ),
+        _ => None,
     }
 }
 
@@ -4202,62 +4217,14 @@ fn resolve_address_for_query(
 }
 
 fn main() -> Result<()> {
-    let args = Args::parse();
+    let raw_args: Vec<String> = std::env::args().collect();
+    if let Some(notice) = legacy_tx_surface_notice(&raw_args) {
+        eprintln!("{notice}");
+    }
+
+    let args = Args::parse_from(raw_args);
     match args.cmd {
         Command::Tx { tx } => match tx {
-            TxCommand::CommitResult {
-                task_id,
-                worker,
-                commit_hash,
-                nonce,
-            } => {
-                if let Ok(template) = std::env::var("TRNM_TX_COMMIT_CMD") {
-                    let mut cmd = template;
-                    cmd = tpl(cmd, "task_id", &task_id.to_string());
-                    cmd = tpl(cmd, "worker", &worker);
-                    cmd = tpl(cmd, "commit_hash", &commit_hash);
-                    cmd = tpl(cmd, "nonce", &nonce.to_string());
-                    let tx_hash = run_template(&cmd)?;
-                    emit_pending_tx_hash(&tx_hash)?;
-                } else {
-                    let tx_hash = format!(
-                        "0x{}",
-                        hash(&[
-                            "commit-result",
-                            &task_id.to_string(),
-                            &worker,
-                            &commit_hash,
-                            &nonce.to_string(),
-                        ])
-                    );
-                    emit_pending_tx_hash(&tx_hash)?;
-                }
-            }
-            TxCommand::RevealResult {
-                task_id,
-                result_hash,
-                salt_hex,
-            } => {
-                if let Ok(template) = std::env::var("TRNM_TX_REVEAL_CMD") {
-                    let mut cmd = template;
-                    cmd = tpl(cmd, "task_id", &task_id.to_string());
-                    cmd = tpl(cmd, "result_hash", &result_hash);
-                    cmd = tpl(cmd, "salt_hex", &salt_hex);
-                    let tx_hash = run_template(&cmd)?;
-                    emit_pending_tx_hash(&tx_hash)?;
-                } else {
-                    let tx_hash = format!(
-                        "0x{}",
-                        hash(&[
-                            "reveal-result",
-                            &task_id.to_string(),
-                            &result_hash,
-                            &salt_hex,
-                        ])
-                    );
-                    emit_pending_tx_hash(&tx_hash)?;
-                }
-            }
             TxCommand::Query { tx_hash } => {
                 let resp = tx_query(&tx_hash)?;
                 emit_tx_hash_lines(&resp.tx_hash);
@@ -4754,6 +4721,103 @@ mod tests {
     }
 
     #[test]
+    fn consumption_settlement_cli_parser_rejects_legacy_commit_and_reveal_commands() {
+        for (legacy_cmd, argv) in [
+            (
+                "commit-result",
+                &[
+                    "trnm-cli",
+                    "tx",
+                    "commit-result",
+                    "42",
+                    "worker-alpha",
+                    "0xabc123",
+                    "9",
+                ][..],
+            ),
+            (
+                "reveal-result",
+                &[
+                    "trnm-cli",
+                    "tx",
+                    "reveal-result",
+                    "42",
+                    "0xdef456",
+                    "0xbeef",
+                ][..],
+            ),
+        ] {
+            let err = Args::try_parse_from(argv).unwrap_err();
+            assert_eq!(err.kind(), clap::error::ErrorKind::InvalidSubcommand);
+
+            let rendered = err.to_string();
+            assert!(
+                rendered.contains(legacy_cmd),
+                "legacy command name should stay visible in parser rejection: {rendered}"
+            );
+            assert!(
+                rendered.contains("Usage: trnm-cli tx <COMMAND>"),
+                "legacy parser rejection should stay scoped to the tx command surface: {rendered}"
+            );
+        }
+    }
+
+    #[test]
+    fn legacy_tx_surface_notice_guides_hidden_aliases_and_retired_commands() {
+        for (argv, legacy_name, canonical_name) in [
+            (
+                &["trnm-cli", "tx", "submit-settlement-receipt"][..],
+                "submit-settlement-receipt",
+                "submit-consumption-receipt",
+            ),
+            (
+                &["trnm-cli", "tx", "challenge-settlement"][..],
+                "challenge-settlement",
+                "challenge-consumption",
+            ),
+            (
+                &["trnm-cli", "tx", "resolve-settlement"][..],
+                "resolve-settlement",
+                "resolve-consumption",
+            ),
+            (
+                &["trnm-cli", "tx", "commit-result"][..],
+                "commit-result",
+                "submit-consumption-receipt",
+            ),
+            (
+                &["trnm-cli", "tx", "reveal-result"][..],
+                "reveal-result",
+                "resolve-consumption",
+            ),
+        ] {
+            let notice = legacy_tx_surface_notice(argv)
+                .unwrap_or_else(|| panic!("expected deprecation notice for {legacy_name}"));
+            assert!(
+                notice.contains(legacy_name),
+                "legacy command should stay visible in deprecation notice: {notice}"
+            );
+            assert!(
+                notice.contains(canonical_name),
+                "deprecation notice should point at the canonical surface: {notice}"
+            );
+        }
+    }
+
+    #[test]
+    fn legacy_tx_surface_notice_ignores_canonical_and_non_tx_commands() {
+        for argv in [
+            &["trnm-cli", "tx", "submit-consumption-receipt"][..],
+            &["trnm-cli", "tx", "challenge-consumption"][..],
+            &["trnm-cli", "tx", "resolve-consumption"][..],
+            &["trnm-cli", "query", "settlement-preview"][..],
+            &["trnm-cli", "wallet", "create"][..],
+        ] {
+            assert_eq!(legacy_tx_surface_notice(argv), None, "unexpected notice for {argv:?}");
+        }
+    }
+
+    #[test]
     fn consumption_settlement_cli_parser_rejects_unknown_resolution_decision() {
         let err = Args::try_parse_from([
             "trnm-cli",
@@ -4936,29 +5000,13 @@ mod tests {
             .expect("render query help");
         let query_help = String::from_utf8(query_help).expect("utf8 query help");
         assert!(query_help.contains("settlement-preview"));
-        assert!(query_help.contains("consumption-summary"));
-        assert!(query_help.contains("query-settlement-preview"));
-        assert!(query_help.contains("query-consumption-summary"));
         assert!(query_help.contains("settlement-receipts"));
-        assert!(query_help.contains("consumption-receipts"));
-        assert!(query_help.contains("query-settlement-receipts"));
-        assert!(query_help.contains("query-consumption-receipts"));
-        assert!(
-            query_help.find("settlement-preview") < query_help.find("consumption-summary"),
-            "query help should keep settlement-preview primary: {query_help}"
-        );
-        assert!(
-            query_help.find("settlement-preview") < query_help.find("query-settlement-preview"),
-            "query help should keep settlement-preview primary ahead of query-prefixed alias: {query_help}"
-        );
-        assert!(
-            query_help.find("settlement-receipts") < query_help.find("consumption-receipts"),
-            "query help should keep settlement-receipts primary: {query_help}"
-        );
-        assert!(
-            query_help.find("settlement-receipts") < query_help.find("query-settlement-receipts"),
-            "query help should keep settlement-receipts primary ahead of query-prefixed alias: {query_help}"
-        );
+        assert!(!query_help.contains("consumption-summary"));
+        assert!(!query_help.contains("query-settlement-preview"));
+        assert!(!query_help.contains("query-consumption-summary"));
+        assert!(!query_help.contains("consumption-receipts"));
+        assert!(!query_help.contains("query-settlement-receipts"));
+        assert!(!query_help.contains("query-consumption-receipts"));
 
         let mut root = Args::command();
         let tx = root
@@ -4968,37 +5016,87 @@ mod tests {
         tx.write_long_help(&mut tx_help).expect("render tx help");
         let tx_help = String::from_utf8(tx_help).expect("utf8 tx help");
         assert!(tx_help.contains("submit-consumption-receipt"));
-        assert!(tx_help.contains("submit-settlement-receipt"));
         assert!(tx_help.contains("challenge-consumption"));
-        assert!(tx_help.contains("challenge-settlement"));
         assert!(tx_help.contains("resolve-consumption"));
-        assert!(tx_help.contains("resolve-settlement"));
-        assert!(tx_help.contains("commit-result"));
-        assert!(tx_help.contains("reveal-result"));
-        assert!(
-            tx_help.find("submit-consumption-receipt") < tx_help.find("submit-settlement-receipt"),
-            "tx help should keep submit-consumption-receipt primary: {tx_help}"
-        );
-        assert!(
-            tx_help.find("challenge-consumption") < tx_help.find("challenge-settlement"),
-            "tx help should keep challenge-consumption primary: {tx_help}"
-        );
-        assert!(
-            tx_help.find("resolve-consumption") < tx_help.find("resolve-settlement"),
-            "tx help should keep resolve-consumption primary: {tx_help}"
-        );
-        assert!(
-            tx_help.find("submit-consumption-receipt") < tx_help.find("commit-result"),
-            "tx help should surface submit-consumption-receipt ahead of legacy commit-result: {tx_help}"
-        );
-        assert!(
-            tx_help.find("challenge-consumption") < tx_help.find("commit-result"),
-            "tx help should surface challenge-consumption ahead of legacy commit-result: {tx_help}"
-        );
-        assert!(
-            tx_help.find("resolve-consumption") < tx_help.find("reveal-result"),
-            "tx help should surface resolve-consumption ahead of legacy reveal-result: {tx_help}"
-        );
+        assert!(tx_help.contains("legacy tx aliases are hidden from help during the migration window"));
+        assert!(!tx_help.contains("submit-settlement-receipt"));
+        assert!(!tx_help.contains("challenge-settlement"));
+        assert!(!tx_help.contains("resolve-settlement"));
+        assert!(!tx_help.contains("commit-result"));
+        assert!(!tx_help.contains("reveal-result"));
+    }
+
+    #[test]
+    fn consumption_settlement_tx_subcommand_help_hides_hidden_aliases() {
+        let mut root = Args::command();
+        let tx = root
+            .find_subcommand_mut("tx")
+            .expect("tx subcommand in clap tree");
+
+        for name in [
+            "submit-consumption-receipt",
+            "challenge-consumption",
+            "resolve-consumption",
+        ] {
+            let command = tx
+                .find_subcommand_mut(name)
+                .unwrap_or_else(|| panic!("missing tx subcommand {name}"));
+            let mut help = Vec::new();
+            command
+                .write_long_help(&mut help)
+                .unwrap_or_else(|_| panic!("render help for {name}"));
+            let help = String::from_utf8(help).unwrap_or_else(|_| panic!("utf8 help for {name}"));
+
+            assert!(
+                help.contains(&format!("Usage: {name}")),
+                "canonical usage missing for {name}: {help}"
+            );
+            assert!(
+                !help.contains("submit-settlement-receipt"),
+                "submit-settlement-receipt leaked into {name} help: {help}"
+            );
+            assert!(
+                !help.contains("challenge-settlement"),
+                "challenge-settlement leaked into {name} help: {help}"
+            );
+            assert!(
+                !help.contains("resolve-settlement"),
+                "resolve-settlement leaked into {name} help: {help}"
+            );
+            assert!(
+                !help.contains("Visible aliases"),
+                "visible aliases unexpectedly surfaced for {name}: {help}"
+            );
+            assert!(
+                !help.contains("Aliases"),
+                "alias list unexpectedly surfaced for {name}: {help}"
+            );
+        }
+    }
+
+    #[test]
+    fn cli_help_retires_mvp_wording_on_root_and_wallet_surface() {
+        let mut root = Args::command();
+        let mut root_help = Vec::new();
+        root.write_long_help(&mut root_help)
+            .expect("render root help");
+        let root_help = String::from_utf8(root_help).expect("utf8 root help");
+        assert!(root_help.contains("Trillionnium native CLI (wallet/query/tx tooling)"));
+        assert!(!root_help.contains("wallet/query/tx MVP"));
+
+        let mut root = Args::command();
+        let wallet = root
+            .find_subcommand_mut("wallet")
+            .expect("wallet subcommand in clap tree");
+        let mut wallet_help = Vec::new();
+        wallet
+            .write_long_help(&mut wallet_help)
+            .expect("render wallet help");
+        let wallet_help = String::from_utf8(wallet_help).expect("utf8 wallet help");
+        assert!(wallet_help.contains("Create a new local wallet"));
+        assert!(wallet_help.contains("Sign arbitrary text with a local wallet"));
+        assert!(!wallet_help.contains("MVP placeholder"));
+        assert!(!wallet_help.contains("MVP deterministic signature"));
     }
 
     #[test]

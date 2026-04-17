@@ -222,9 +222,13 @@ pub(crate) fn sanitize_challenge_window_blocks(raw: u64) -> u64 {
 
 pub(crate) fn effective_challenge_window_blocks(st: &StateStore, task: &TaskObject) -> u64 {
     sanitize_challenge_window_blocks(task.challenge_window_blocks_snapshot.unwrap_or_else(|| {
-        // Legacy compatibility path for pre-snapshot Revealed tasks.
-        // Semantics are explicitly pinned to challenge-time governance value when no snapshot
-        // exists (instead of trying to infer reveal-time state that is no longer recoverable).
+        // RETIRE-R1 tracked in:
+        // docs/release/TRNM_POCO_BEHAVIOR_RISK_RETIREMENT_PLAN_2026-04-15.md
+        //
+        // This legacy compatibility path for pre-snapshot Revealed tasks is still live runtime
+        // behavior, not merely historical evidence. The current interpretation remains pinned to
+        // challenge-time governance value when no snapshot exists, but the long-term retirement
+        // target is to remove hidden fallback authority from launch-path semantics.
         st.gov_param_u64("challenge_window_blocks")
             .unwrap_or(DEFAULT_CHALLENGE_WINDOW_BLOCKS)
     }))
@@ -250,6 +254,17 @@ pub fn apply_challenge_at_height(
     // entry because it immediately debits challenger funds into escrow.
     if st.is_emergency_paused() {
         return Err(PouwError::InvalidTransition);
+    }
+    if current_height > 0 && task.challenge_window_blocks_snapshot.is_none() {
+        // First-round R1 cut: live challenge admission must no longer grant runtime
+        // authority to pre-snapshot Revealed tasks via implicit governance fallback.
+        // Check this before any stored deadline can re-authorize legacy runtime
+        // behavior on the live path.
+        // Height-0 replay/import paths retain the compatibility escape hatch so
+        // historical state can still be migrated and audited explicitly.
+        return Err(PouwError::State(
+            "snapshotless revealed task requires migration replay/import path".into(),
+        ));
     }
     reject_if_deadline_exceeded(task.challenge_deadline_height, current_height)?;
 

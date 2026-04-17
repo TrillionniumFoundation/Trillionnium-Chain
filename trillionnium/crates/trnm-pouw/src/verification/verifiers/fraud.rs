@@ -335,6 +335,20 @@ mod tests {
     }
 
     #[test]
+    fn fraud_verifier_rejects_legacy_receipt_alias_on_default_launch_path() {
+        let verifier = FraudVerifier;
+        let task = mock_task();
+
+        assert!(matches!(
+            verifier.verify_proof(
+                &task,
+                b"FRAUD:{\"task_id\":7,\"worker\":\"worker-fraud\",\"proof_type\":\"fraud_proof\"}"
+            ),
+            VerificationResult::Invalid(msg) if msg.contains("proof_type mismatch")
+        ));
+    }
+
+    #[test]
     fn fraud_verifier_rejects_worker_binding_with_cyrillic_homoglyph_spoof_fail_closed() {
         let verifier = FraudVerifier;
         let task = mock_task();

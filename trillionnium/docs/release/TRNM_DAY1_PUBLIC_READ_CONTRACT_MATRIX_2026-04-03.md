@@ -97,6 +97,19 @@
 
 ---
 
+## 2026-04-15 Repo-local evidence refresh
+
+本次 refresh 只更新 **repo-local 的 doc ↔ RPC contract evidence**，不把它改写成 durable-read closure，也不把 repo 外 adapter signoff 冒充为已完成。
+
+- Repo-local gate anchors：
+  - `crates/trnm-rpc/src/tests_contract_core/http.rs` 覆盖 `/query-task/:taskId`、`/query-events/:taskId`、`/query-normalized-audit-events` 的 path/query fail-closed 语义。
+  - `crates/trnm-rpc/tests/query_capability_audit.rs` 覆盖 `/query-capability-audit/:subjectOrToken` 的 success / not-found / bad-request contract。
+  - `crates/trnm-rpc/tests/health_probe_contract.rs` 覆盖 health probe 的最小 `ok/service/ts_unix_ms/version` JSON contract。
+- Health probe 解释仍冻结为 **operator-only minimum probe contract**。当前 RPC 接受 `/healthz`、`/readyz`、`/statusz` 及 `/-/` alias，并支持 `HEAD` probe parity，但这些 alias 只能视为运维兼容面，不能被改写成新增产品级 public read endpoint。
+- 当前 repo tree 不包含 `web4-frontend/lib/api-contract/{client,schemas,types,adapters}.ts`。因此本矩阵现在只能为当前 `main` 刷新 **doc ↔ RPC coherence**；adapter co-sign 仍依赖 frontend/external truth-source snapshot，不能仅凭本 repo 证据写成“adapter contract 已闭环”。
+
+---
+
 ## 下一步直连项
 
 - `TRNM_QUERY_NORMALIZED_AUDIT_EVENTS_CONTRACT_TABLE_2026-04-03.md`

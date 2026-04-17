@@ -6,7 +6,7 @@ use std::path::PathBuf;
 #[command(
     name = "trnm-cli",
     version,
-    about = "Trillionnium native CLI (wallet/query/tx MVP)"
+    about = "Trillionnium native CLI (wallet/query/tx tooling)"
 )]
 pub(crate) struct Args {
     #[command(subcommand)]
@@ -34,14 +34,14 @@ pub(crate) enum Command {
 
 #[derive(Debug, Subcommand)]
 pub(crate) enum TxCommand {
-    /// Legacy commit-result tx (kept for compatibility)
+    /// Legacy commit-result tx (compatibility-only; scheduled for retirement, do not use for new operator flows)
     CommitResult {
         task_id: u64,
         worker: String,
         commit_hash: String,
         nonce: u64,
     },
-    /// Legacy reveal-result tx (kept for compatibility)
+    /// Legacy reveal-result tx (compatibility-only; scheduled for retirement, do not use for new operator flows)
     RevealResult {
         task_id: u64,
         result_hash: String,
@@ -74,7 +74,7 @@ pub(crate) enum TxCommand {
 
 #[derive(Debug, Subcommand)]
 pub(crate) enum WalletCommand {
-    /// Create a new local wallet (MVP placeholder)
+    /// Create a new local wallet
     Create {
         #[arg(long, default_value = "default")]
         name: String,
@@ -104,7 +104,7 @@ pub(crate) enum WalletCommand {
         #[arg(long)]
         store: Option<PathBuf>,
     },
-    /// Sign arbitrary text (MVP deterministic signature)
+    /// Sign arbitrary text with a local wallet
     Sign {
         #[arg(long, default_value = "default")]
         name: String,

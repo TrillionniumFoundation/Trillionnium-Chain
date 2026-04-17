@@ -127,7 +127,7 @@ fn challenge_clamps_malformed_legacy_zero_snapshot_to_minimum_block() {
 }
 
 #[test]
-fn challenge_legacy_fallback_none_snapshot_uses_default_window_when_gov_missing() {
+fn legacy_snapshotless_revealed_is_rejected_on_live_challenge_when_gov_missing() {
     let mut st = seeded_state();
     st.set_balance("challenger", 100);
 
@@ -146,8 +146,9 @@ fn challenge_legacy_fallback_none_snapshot_uses_default_window_when_gov_missing(
     legacy.challenge_window_blocks_snapshot = None;
     let r4 = st.update_task(r4, legacy).unwrap();
 
-    // Do not seed challenge_window_blocks governance: fallback should use default safely.
-    let r5 = apply_challenge_at_height(
+    // Do not seed challenge_window_blocks governance: live path should now reject
+    // snapshotless legacy Revealed state instead of reviving fallback authority.
+    let err = apply_challenge_at_height(
         &mut st,
         r4,
         "challenger".into(),
@@ -155,16 +156,79 @@ fn challenge_legacy_fallback_none_snapshot_uses_default_window_when_gov_missing(
         "challenger".into(),
         111,
     )
-    .unwrap();
+    .unwrap_err();
+    assert!(matches!(err, PouwError::State(msg) if msg.contains("snapshotless revealed task requires migration replay/import path")));
+}
+
+#[test]
+fn legacy_snapshotless_revealed_still_allows_height_zero_replay_import_path() {
+    let mut st = seeded_state();
+    st.set_balance("challenger", 100);
+    st.set_gov_param_bootstrap_unchecked(9134, "challenge_window_blocks".into(), "300".into())
+        .unwrap();
+
+    let r1 = apply_create_task(&mut st, 19134, "alice".into(), 10).unwrap();
+    let result_hash = [1u8; 32];
+    let reveal_salt = [2u8; 32];
+    let committed = compute_commitment(19134, &result_hash, &reveal_salt, "worker1");
+
+    let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+    let r3 = apply_commit_result_at_height(&mut st, r2, "worker1".into(), committed, 100).unwrap();
+    let r4 =
+        apply_reveal_result_at_height(&mut st, r3, result_hash, reveal_salt, None, 110).unwrap();
+
+    let mut legacy = st.get_task(r4.id).unwrap();
+    legacy.challenge_window_blocks_snapshot = None;
+    let r4 = st.update_task(r4, legacy).unwrap();
+
+    let r5 = apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into())
+        .unwrap();
     let task = st.get_task(r5.id).unwrap();
-    assert_eq!(
-        task.challenge_window_blocks_snapshot,
-        Some(DEFAULT_CHALLENGE_WINDOW_BLOCKS)
-    );
-    assert_eq!(
-        task.resolve_deadline_height,
-        Some(111 + DEFAULT_CHALLENGE_WINDOW_BLOCKS)
-    );
+    assert_eq!(task.challenge_window_blocks_snapshot, Some(300));
+    assert_eq!(task.status, TaskStatus::Challenged);
+}
+
+#[test]
+fn challenge_live_path_rejects_snapshotless_legacy_revealed_after_governance_change() {
+    let mut st = seeded_state();
+    st.set_balance("challenger", 100);
+    st.set_gov_param_bootstrap_unchecked(9135, "challenge_window_blocks".into(), "100".into())
+        .unwrap();
+
+    let r1 = apply_create_task(&mut st, 19135, "alice".into(), 10).unwrap();
+    let result_hash = [1u8; 32];
+    let reveal_salt = [2u8; 32];
+    let committed = compute_commitment(19135, &result_hash, &reveal_salt, "worker1");
+
+    let r2 = apply_accept_task(&mut st, r1, "worker1".into()).unwrap();
+    let r3 = apply_commit_result_at_height(&mut st, r2, "worker1".into(), committed, 100).unwrap();
+    let r4 =
+        apply_reveal_result_at_height(&mut st, r3, result_hash, reveal_salt, None, 110).unwrap();
+
+    let mut legacy = st.get_task(r4.id).unwrap();
+    legacy.challenge_window_blocks_snapshot = None;
+    let r4 = st.update_task(r4, legacy).unwrap();
+    let task_id = r4.id;
+
+    st.set_gov_param_bootstrap_unchecked(9135, "challenge_window_blocks".into(), "300".into())
+        .unwrap();
+
+    let err = apply_challenge_at_height(
+        &mut st,
+        r4,
+        "challenger".into(),
+        10,
+        "challenger".into(),
+        210,
+    )
+    .unwrap_err();
+    assert!(matches!(err, PouwError::State(msg) if msg.contains("snapshotless revealed task requires migration replay/import path")));
+
+    let task = st.get_task(task_id).unwrap();
+    assert_eq!(task.status, TaskStatus::Revealed);
+    assert_eq!(task.challenge_window_blocks_snapshot, None);
+    assert_eq!(st.balance_of("challenger"), 100);
+    assert_eq!(st.balance_of(CHALLENGE_ESCROW_ACCOUNT), 0);
 }
 
 #[test]

@@ -39,6 +39,12 @@ outgoing_validator_identity=
 incoming_validator_config=
 incoming_validator_identity=
 expected_genesis_or_checkpoint=
+genesis_artifact_path=
+genesis_artifact_sha256=
+config_bundle_sha256=
+validator_identity_check=
+preflight_command=
+preflight_result=
 handoff_signed_by=
 handoff_acknowledged_by=
 operator_ack=
@@ -61,12 +67,14 @@ dr_status=
 dr_replay_command=
 dr_rollback_command=
 bootstrap_command=
+captured_at_utc=
 result=
 next_blocker=
 ```
 
 Rules:
 - `dr_summary_path=` / `dr_generated_at=` / `dr_status=` / `dr_replay_command=` / `dr_rollback_command=` may remain empty unless `cutover_kind=dr_rebuild`.
+- `genesis_artifact_path=` / `genesis_artifact_sha256=` / `config_bundle_sha256=` / `validator_identity_check=` / `preflight_command=` / `preflight_result=` / `captured_at_utc=` may remain empty unless `cutover_kind=dr_rebuild`; when the cutover is a rebuild, copy the genesis fields from the validated bootstrap packet and capture the remaining fields from the exact rebuild validation/bootstrap pass instead of reconstructing them from memory.
 - `operator_ack=` may remain empty only for `cutover_kind=replacement`; once the event crosses a human handoff boundary (`rotation` or `dr_rebuild`), preserve one explicit operator acknowledgment line rather than relying on the signer/acknowledger names alone.
 - `operator_ack_signature_path=` may remain empty when the acknowledgment is captured inline in the cutover note, but when a separate durable sign-off artifact exists, copy its immutable path verbatim.
 - when `cutover_kind=dr_rebuild`, copy `dr_status=` verbatim from the selected recovery report's `status=` field; do not infer it from shell exit status, wrapper success text, or a hand-written `PASS`.
@@ -87,7 +95,7 @@ If any required row cannot be satisfied, treat the event as **No-Go** before exe
 | --- | --- | --- | --- |
 | `replacement` | `verified_worktree=` / `verified_branch_ref=` / `verified_head=` plus explicit outgoing and incoming validator identity/config | clean `git status --short`, config-bundle check output, exact `bootstrap_command=`, explicit `rollback_command=` | cannot name which validator identity is being retired vs activated |
 | `rotation` | all replacement fields plus `handoff_signed_by=` / `handoff_acknowledged_by=` / `operator_ack=` and explicit lineage (`expected_genesis_or_checkpoint=`) | handoff note with signed/acknowledged ownership transfer, operator acknowledgment text, optional `handoff_summary_path=` / `handoff_manifest_path=` when release artifacts are part of the cutover | signer/acknowledger missing, operator acknowledgment missing, or rotation lineage cannot be stated from the note |
-| `dr_rebuild` | all rotation fields plus `dr_summary_path=` / `dr_generated_at=` / `dr_status=` / `dr_replay_command=` / `dr_rollback_command=` | concrete recovery artifact from the current worktree, operator acknowledgment text, plus the bootstrap/re-bootstrap sanity command used after rebuild | DR claimed but no path-resolved recovery report exists for the rebuild |
+| `dr_rebuild` | all rotation fields plus `genesis_artifact_path=` / `genesis_artifact_sha256=` / `config_bundle_sha256=` / `validator_identity_check=` / `preflight_command=` / `preflight_result=` / `captured_at_utc=` and `dr_summary_path=` / `dr_generated_at=` / `dr_status=` / `dr_replay_command=` / `dr_rollback_command=` | concrete recovery artifact from the current worktree, operator acknowledgment text, the bootstrap packet lineage cited by path/hash, and the bootstrap/re-bootstrap sanity command used after rebuild | DR claimed but no path-resolved recovery report exists for the rebuild, or the rebuild cannot be tied back to the validated bootstrap tuple |
 
 Interpretation rule:
 - `replacement` is a local operator-owner swap with explicit rollback and clean config proof.
@@ -390,6 +398,7 @@ When handing this event to another operator, record:
 - config-bundle check log path when tee/log capture was used
 - pass/fail result
 - rollback command
+- for `cutover_kind=dr_rebuild`, also preserve `genesis_artifact_path=` / `genesis_artifact_sha256=` from the validated bootstrap packet, `config_bundle_sha256=`, `validator_identity_check=`, `preflight_command=`, `preflight_result=`, and `captured_at_utc=` from the exact rebuild pass
 - DR summary/report path when DR evidence was required
 - DR report generated-at timestamp when DR evidence was required
 - DR report status when DR evidence was required
@@ -434,6 +443,12 @@ outgoing_validator_identity=<validator-id-or-key-fingerprint>
 incoming_validator_config=configs/validator-new.toml
 incoming_validator_identity=<validator-id-or-key-fingerprint>
 expected_genesis_or_checkpoint=<genesis-hash-or-checkpoint>
+genesis_artifact_path=<path copied from validated bootstrap packet when cutover_kind=dr_rebuild>
+genesis_artifact_sha256=<hash copied from validated bootstrap packet when cutover_kind=dr_rebuild>
+config_bundle_sha256=<checksum for the exact recovered config bundle when cutover_kind=dr_rebuild>
+validator_identity_check=<validator entry or node ID proved by the rebuild when cutover_kind=dr_rebuild>
+preflight_command=<exact validation command rerun after rebuild when cutover_kind=dr_rebuild>
+preflight_result=<verbatim result from the rebuild preflight command when cutover_kind=dr_rebuild>
 handoff_signed_by=<operator releasing ownership>
 handoff_acknowledged_by=<operator accepting ownership>
 rollback_command=<quoted verbatim from the cutover note or generated artifact>
@@ -454,6 +469,7 @@ dr_status=<verbatim status from recovery report when cutover_kind=dr_rebuild>
 dr_replay_command=<verbatim replay_command from recovery report when cutover_kind=dr_rebuild>
 dr_rollback_command=<verbatim rollback_command from recovery report when cutover_kind=dr_rebuild>
 bootstrap_command=<exact bootstrap or re-bootstrap command>
+captured_at_utc=<UTC timestamp recorded after the rebuild bootstrap sanity when cutover_kind=dr_rebuild>
 result=PASS|FAIL
 next_blocker=<one line or empty>
 ```

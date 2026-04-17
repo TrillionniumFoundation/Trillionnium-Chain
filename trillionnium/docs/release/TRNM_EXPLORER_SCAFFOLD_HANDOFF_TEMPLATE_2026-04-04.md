@@ -118,7 +118,7 @@ health_file=<value>
 index_file=<value>
 read_contract_mode=read-only
 read_contract_source=rpc-read-surface
-day1_surface=query-task/<task_id>,query-events/<task_id>?limit=<n>,query-capability-audit/<subject-or-token>,query-normalized-audit-events?source=<source>&eventType=<type>&limit=<n>&cursor=<cursor>
+day1_surface=query-task/<task_id>,query-events/<task_id>?limit=<n>,query-capability-audit/<subject-or-token>,query-normalized-audit-events?source=<source>&eventType=<type>&cursor=<cursor>&limit=<n>
 query_events_default_limit=100
 query_events_max_limit=500
 write_paths_exposed=false
@@ -161,7 +161,7 @@ index_json_health_url=<value>
 index_json_local_health_url=<value>
 index_json_read_contract_mode=read-only
 index_json_read_contract_source=rpc-read-surface
-index_json_day1_surface=query-task/<task_id>,query-events/<task_id>?limit=<n>,query-capability-audit/<subject-or-token>,query-normalized-audit-events?source=<source>&eventType=<type>&limit=<n>&cursor=<cursor>
+index_json_day1_surface=query-task/<task_id>,query-events/<task_id>?limit=<n>,query-capability-audit/<subject-or-token>,query-normalized-audit-events?source=<source>&eventType=<type>&cursor=<cursor>&limit=<n>
 index_json_query_events_default_limit=100
 index_json_query_events_max_limit=500
 index_json_write_paths_exposed=false

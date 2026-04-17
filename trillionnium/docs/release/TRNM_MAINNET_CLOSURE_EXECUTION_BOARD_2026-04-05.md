@@ -64,7 +64,14 @@ Optional P1 packages if Day-1 scope explicitly requires them:
 ## Public read surface / indexer / explorer / historical read-model
 
 ### Current status
-**OPEN — highest priority**
+**OPEN — highest priority, not placeholder, not closeable on current evidence**
+
+Rank1 refresh anchor on current local-main evidence:
+- `R7` keeps the Day-1 read contract passing on current `main` while repo-local adapter co-sign remains explicitly external
+- latest `R8` gate refresh now proves a future `height_ingest_manifest` row can commit by itself while `materialization_state` and `ingest_checkpoint` stay at the prior height, so the open atomicity gap now spans manifest, materialization, and checkpoint state instead of a placeholder-only scaffold concern
+- latest `R9` evidence set keeps the read surface substantive by passing unknown-local-height degrade, wrapped parent-hash rejection, corrupt-latest snapshot fallback, and degraded-before-stalled lag classification on top of the earlier resume and hash fail-closed coverage
+- `R11` freezes the historical replay / retention tuple and preserves the placeholder-versus-durable service-summary boundary for the intended durable target
+- latest `R10` evidence now records `WAITING_FOR_EVIDENCE_PACKET`: doc-only packet work is exhausted and no filled non-template `TRNM_DURABLE_READ_SERVICE_HANDOFF` packet with real non-placeholder deployment/runtime/replay/rollback evidence exists on the evaluated snapshot
 
 ### Why this package exists
 The chain kernel is much stronger than before, but TRNM still does not have a clearly closed durable public read surface.
@@ -109,7 +116,14 @@ The chain kernel is much stronger than before, but TRNM still does not have a cl
 ## Secure signer / keystore / offline signing
 
 ### Current status
-**OPEN — second highest priority**
+**OPEN — second highest priority, materially advanced but not closeable on current evidence**
+
+Signer refresh anchor on current local-main evidence:
+- `R14` now preserves one real offline-signing transcript path on the live `submit-consumption-receipt` -> `tx query` -> `tx wait` flow, but keeps closure conditional because ticket-path identity bind and clean-owner-context are still red
+- `R15` freezes the Day-1 keystore answer to one explicitly owned local cold signer using an ephemeral local wallet store and offline-first submit-later evidence
+- `R16` proves the signer rotation / compromise SOP fails closed on assignment-path versus git-root mismatch and on dirty shared owner context, so the rehearsal packet exists but the gate is still not ready to close
+- `R17` freezes remote signer / HSM / multisig as out-of-scope Day-1 launch dependencies unless separate operator evidence exists
+- `R15` and `R17` now each carry the Day-1 signer safety checklist excerpt, but no current operator-facing signing packet yet assembles the checklist, threat model, and chosen signer flow into one release handoff
 
 ### Why this package exists
 `trnm-cli` is clearly better hardened, but the signer path is still explicitly MVP-level and not yet a finished public-mainnet operator story.
@@ -119,13 +133,14 @@ The chain kernel is much stronger than before, but TRNM still does not have a cl
 - stronger keystore path hygiene
 - stronger signer input fail-closed behavior
 - signer-related hardening on current main
+- approved Day-1 keystore model frozen in `R15`
+- remote signer / HSM / multisig Day-1 posture frozen in `R17`
+- signer safety checklist excerpt now attached in the current signer architecture and threat-model packets
 
 ### What is still missing
-- approved Day-1 keystore model
 - operator-grade offline signing flow
-- remote signer / HSM / multisig posture
 - compromise / rotation response bound to launch
-- signer safety checklist in the release packet
+- one operator-facing signing packet that ties the frozen keystore model, threat model, checklist excerpt, and chosen signer flow into one release handoff
 
 ### Exit criteria
 - one approved keystore architecture

@@ -158,7 +158,7 @@ By default this writes a packet under `trillionnium/run/explorer-service/handoff
 - `env.snapshot`
 - `summary.txt`
 
-`summary.txt` is intentionally operator-facing rather than generic bookkeeping only: besides the output paths and template pointer, it freezes the current `service_mode`, `production_ready`, `bind_host`, `bind_port`, `env_file`, `env_snapshot_path`, `pid_file`, `log_file`, `public_dir`, `health_file`, `index_file`, `public_base_url`, `health_url`, `local_health_url`, the actual probe results (`health`, `health_probe`, `health_probe_url`, `local_health`, `local_health_probe`, `local_health_probe_url`), `index_url`, `local_index_url`, the fetched `/index.json` evidence markers (`index_json_fetched_at`, `index_json_path_or_url`, `index_json_declares_day1_contract`, `index_json_declares_placeholder_only`, the served read-contract fields, and the durable-read-anchor placeholders as emitted by the payload), `rpc_base_url`, the placeholder scaffold truth-source pointer (`truth_source_scaffold_runbook=trillionnium/docs/runbooks/explorer-service-scaffold.md`), the explicit next-step durable-boundary pointer (`truth_source_rank1_design_packet=trillionnium/docs/release/TRNM_RANK1_IMPLEMENTATION_DESIGN_PACKET_2026-04-05.md` when present), the fail-closed Day-1 read-surface markers (`read_contract_mode`, `read_contract_source`, `day1_surface`, `query_events_default_limit`, `query_events_max_limit`, `write_paths_exposed`, `historical_query_scope`, `durability_boundary`, `archive_strategy`, `read_replica_strategy`, `deployment_topology`), the durable-read-anchor placeholders, and the canonical bring-up / status / rollback / health-fetch / index-fetch commands, including `local_index_fetch_command` for the local bind target. This keeps the placeholder deployment path and public-read boundary reproducible in one file instead of forcing the next operator to reconstruct local bind/probe details or limit/readonly semantics from `status.txt` by hand, and now also means `summary.txt` carries the served payload-side contract markers needed for a minimal ticket/handoff packet even when `index.json` is attached separately for raw evidence.
+`summary.txt` is intentionally operator-facing rather than generic bookkeeping only: besides the output paths and template pointer, it freezes the current `service_mode`, `production_ready`, `bind_host`, `bind_port`, `env_file`, `env_snapshot_path`, `pid_file`, `log_file`, `public_dir`, `health_file`, `index_file`, `public_base_url`, `health_url`, `local_health_url`, the actual probe results (`health`, `health_probe`, `health_probe_url`, `local_health`, `local_health_probe`, `local_health_probe_url`), `index_url`, `local_index_url`, the fetched `/index.json` evidence markers (`index_json_fetched_at`, `index_json_path_or_url`, `index_json_declares_day1_contract`, `index_json_declares_placeholder_only`, the served read-contract fields, and the durable-read-anchor placeholders as emitted by the payload), `rpc_base_url`, the placeholder scaffold truth-source pointer (`truth_source_scaffold_runbook=trillionnium/docs/runbooks/explorer-service-scaffold.md`), the explicit next-step durable-boundary pointer (`truth_source_rank1_design_packet=trillionnium/docs/release/TRNM_RANK1_IMPLEMENTATION_DESIGN_PACKET_2026-04-05.md` when present), the fail-closed Day-1 read-surface markers (`read_contract_mode`, `read_contract_source`, `day1_surface`, `query_events_default_limit`, `query_events_max_limit`, `write_paths_exposed`, `historical_query_scope`, `durability_boundary`, `archive_strategy`, `read_replica_strategy`, `deployment_topology`), the durable-read-anchor placeholders, and the canonical bring-up / status / rollback / health-fetch / index-fetch commands, including `local_index_fetch_command` for the local bind target. For the placeholder scaffold, keep the emitted anchor placeholders literal, especially `durable_read_anchor_replay_start_anchor=missing-placeholder-scaffold`, `durable_read_anchor_retention_scope=rpc-window-bounded`, and `durable_read_anchor_archive_owner=missing-placeholder-scaffold`; do not hand-upgrade them inside the summary. Once a real non-placeholder durable packet exists, its service summary should switch to the frozen Rank 1 values `replay_start_anchor=genesis`, `retention_scope=durable-archive`, and `archive_owner=trnm-core-protocol-ops` exactly as named in the closure-board truth sources. This keeps the placeholder deployment path and public-read boundary reproducible in one file instead of forcing the next operator to reconstruct local bind/probe details or limit/readonly semantics from `status.txt` by hand, and now also means `summary.txt` carries the served payload-side contract markers needed for a minimal ticket/handoff packet even when `index.json` is attached separately for raw evidence.
 
 `env.snapshot` is a straight copy of the effective operator env file used for that capture. Treat it as the exact runtime-knob attachment for the packet rather than retyping `EXPLORER_HOST`, `EXPLORER_PORT`, `EXPLORER_PUBLIC_BASE_URL`, `EXPLORER_HEALTH_URL`, or `EXPLORER_RPC_BASE_URL` by hand into a ticket.
 If that effective env file is missing, the helper now fails closed before writing a packet, because a scaffold handoff without the runtime-knob snapshot is mechanically incomplete and should be recreated with `explorer_service_up.sh` first.
@@ -227,7 +227,7 @@ Do not replace this scaffold with a so-called "real" explorer/read service unles
 1. `ingestion_source=` — the canonical source of indexed data (`rpc-pull`, `event-stream`, `block-replay`, or a documented mixed mode)
 2. `checkpoint_store=` — where the durable cursor/checkpoint is persisted
 3. `replay_start_anchor=` — the exact genesis/checkpoint/archive anchor used for rebuilds
-4. `retention_scope=` — whether queries are `rpc-window-bounded`, `durable-hot`, or `durable+archive`
+4. `retention_scope=` — whether queries remain `rpc-window-bounded` (placeholder-only), move to `durable-hot`, or freeze at `durable-archive` for the Day-1 surface
 5. `archive_owner=` — which component/operator owns long-horizon historical retention and restore
 6. `lag_slo=` — the freshness/index-lag budget the operator is actually promising
 
@@ -383,7 +383,7 @@ The status output should include the operator contract fields below:
 - `production_ready=false`
 - `read_contract_mode=read-only`
 - `read_contract_source=rpc-read-surface`
-- `day1_surface=query-task/<task_id>,query-events/<task_id>?limit=<n>,query-capability-audit/<subject-or-token>,query-normalized-audit-events?source=<source>&eventType=<type>&limit=<n>&cursor=<cursor>`
+- `day1_surface=query-task/<task_id>,query-events/<task_id>?limit=<n>,query-capability-audit/<subject-or-token>,query-normalized-audit-events?source=<source>&eventType=<type>&cursor=<cursor>&limit=<n>`
 - `query_events_default_limit=100`
 - `query_events_max_limit=500`
 - `write_paths_exposed=false`
@@ -404,7 +404,7 @@ The status output should include the operator contract fields below:
 - `durable_read_anchor_archive_owner=missing-placeholder-scaffold`
 - `durable_read_anchor_lag_slo=missing-placeholder-scaffold`
 
-Important boundary note: `historical_query_scope=rpc-retention-bounded` and `durable_read_anchor_retention_scope=rpc-window-bounded` are intentionally related but **not interchangeable**. The former describes the current user-visible history guarantee of the placeholder scaffold (queries only work while upstream RPC still retains the data). The latter is the placeholder value for the future durable-read anchor named `retention_scope`, and it stays in the `durable_read_anchor_*` namespace precisely to show that no durable/archive retention contract has been filled yet. If an operator handoff collapses these into one generic “history supported” statement, treat that as blocker-language drift rather than evidence of durable read-model closure.
+Important boundary note: `historical_query_scope=rpc-retention-bounded` and `durable_read_anchor_retention_scope=rpc-window-bounded` are intentionally related but **not interchangeable**. The former describes the current user-visible history guarantee of the placeholder scaffold (queries only work while upstream RPC still retains the data). The latter is the placeholder value for the future durable-read anchor named `retention_scope`, and it stays in the `durable_read_anchor_*` namespace precisely to show that no durable/archive retention contract has been filled yet. When the deployment stops being placeholder-only, promote the emitted durable-service field to the frozen future-state value `retention_scope=durable-archive` for the Day-1 surface only, and keep `replay_start_anchor=genesis` plus `archive_owner=trnm-core-protocol-ops` aligned with the same packet. Do not invent synonyms like `durable+archive` or collapse the placeholder and durable values into one generic “history supported” statement; that is blocker-language drift, not evidence of durable read-model closure.
 - `health=ok`
 - `health_probe=active`
 - `health_probe_url=<the exact public/reverse-proxy-facing URL status checked>`
@@ -429,7 +429,7 @@ The scaffold writes two static files before launching the HTTP server:
 - `query-task/<task_id>`
 - `query-events/<task_id>?limit=<n>`
 - `query-capability-audit/<subject-or-token>`
-- `query-normalized-audit-events?source=<source>&eventType=<type>&limit=<n>&cursor=<cursor>`
+- `query-normalized-audit-events?source=<source>&eventType=<type>&cursor=<cursor>&limit=<n>`
 
 Fail-closed boundary for operator handoff: this placeholder contract does **not** currently imply public Day-1 support for `block`, `tx`, or `account` queries. Until the durable indexer / historical read-model track closes, keep those surfaces out of scaffold-generated handoff language instead of inferring them from future explorer aspirations or upstream RPC internals.
 
@@ -545,7 +545,7 @@ It also re-emits the same operator-facing contract fields as the up/status scrip
 - `production_ready=false`
 - `read_contract_mode=read-only`
 - `read_contract_source=rpc-read-surface`
-- `day1_surface=query-task/<task_id>,query-events/<task_id>?limit=<n>,query-capability-audit/<subject-or-token>,query-normalized-audit-events?source=<source>&eventType=<type>&limit=<n>&cursor=<cursor>`
+- `day1_surface=query-task/<task_id>,query-events/<task_id>?limit=<n>,query-capability-audit/<subject-or-token>,query-normalized-audit-events?source=<source>&eventType=<type>&cursor=<cursor>&limit=<n>`
 - `query_events_default_limit=100`
 - `query_events_max_limit=500`
 - `write_paths_exposed=false`

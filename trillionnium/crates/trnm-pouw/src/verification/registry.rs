@@ -196,77 +196,11 @@ impl VerifierRegistry {
             return None;
         }
 
-        let canonical = match collapsed.as_str() {
-            // Backward-compatible aliases from early V1/V2 proof/receipt naming.
-            "fraud proof" | "fraudproof" => "fraud",
-            "fraud proof v1" | "fraudproofv1" | "fraud proof v 1" => "fraud",
-            "fraud proof v2" | "fraudproofv2" | "fraud proof v 2" => "fraud",
-            "fraud proof v3" | "fraudproofv3" | "fraud proof v 3" => "fraud",
-            "fraud receipt" | "fraudreceipt" => "fraud",
-            "fraud receipt v1" | "fraudreceiptv1" | "fraud receipt v 1" | "fraud receiptv1" => {
-                "fraud"
-            }
-            "fraud receipt v2" | "fraudreceiptv2" | "fraud receipt v 2" | "fraud receiptv2" => {
-                "fraud"
-            }
-            "fraud receipt v3" | "fraudreceiptv3" | "fraud receipt v 3" | "fraud receiptv3" => {
-                "fraud"
-            }
-            "fraud challenge" | "fraudchallenge" => "fraud",
-            "fraud challenge v1" | "fraudchallengev1" | "fraud challenge v 1" => "fraud",
-            "fraud challenge v2" | "fraudchallengev2" | "fraud challenge v 2" => "fraud",
-            "fraud challenge v3" | "fraudchallengev3" | "fraud challenge v 3" => "fraud",
-            "tee proof" | "teeproof" => "tee",
-            "tee proof v1" | "teeproofv1" | "tee proof v 1" => "tee",
-            "tee proof v2" | "teeproofv2" | "tee proof v 2" => "tee",
-            "tee proof v3" | "teeproofv3" | "tee proof v 3" => "tee",
-            "tee receipt" | "teereceipt" => "tee",
-            "tee receipt v1" | "teereceiptv1" | "tee receipt v 1" | "tee receiptv1" => "tee",
-            "tee receipt v2" | "teereceiptv2" | "tee receipt v 2" | "tee receiptv2" => "tee",
-            "tee receipt v3" | "teereceiptv3" | "tee receipt v 3" | "tee receiptv3" => "tee",
-            "tee attestation" | "teeattestation" => "tee",
-            "tee attestation v1" | "teeattestationv1" | "tee attestation v 1" => "tee",
-            "tee attestation v2" | "teeattestationv2" | "tee attestation v 2" => "tee",
-            "tee attestation v3" | "teeattestationv3" | "tee attestation v 3" => "tee",
-            "remote attestation" | "remoteattestation" => "tee",
-            "remote attestation v1" | "remoteattestationv1" | "remote attestation v 1" => "tee",
-            "remote attestation v2" | "remoteattestationv2" | "remote attestation v 2" => "tee",
-            "remote attestation v3" | "remoteattestationv3" | "remote attestation v 3" => "tee",
-            "attestation report" | "attestationreport" => "tee",
-            "attestation report v1" | "attestationreportv1" | "attestation report v 1" => "tee",
-            "attestation report v2" | "attestationreportv2" | "attestation report v 2" => "tee",
-            "attestation report v3" | "attestationreportv3" | "attestation report v 3" => "tee",
-            "zkp" | "zk p" => "zk",
-            "zk proof" | "zkproof" => "zk",
-            "zk proof v1" | "zkproofv1" | "zk proof v 1" => "zk",
-            "zk proof v2" | "zkproofv2" | "zk proof v 2" => "zk",
-            "zk proof v3" | "zkproofv3" | "zk proof v 3" => "zk",
-            "zk receipt" | "zkreceipt" => "zk",
-            "zk receipt v1" | "zkreceiptv1" | "zk receipt v 1" | "zk receiptv1" => "zk",
-            "zk receipt v2" | "zkreceiptv2" | "zk receipt v 2" | "zk receiptv2" => "zk",
-            "zk receipt v3" | "zkreceiptv3" | "zk receipt v 3" | "zk receiptv3" => "zk",
-            "zero knowledge" | "zeroknowledge" => "zk",
-            "zero knowledge proof" | "zeroknowledgeproof" => "zk",
-            "zero knowledge proof v1" | "zeroknowledgeproofv1" | "zero knowledge proof v 1" => "zk",
-            "zero knowledge proof v2" | "zeroknowledgeproofv2" | "zero knowledge proof v 2" => "zk",
-            "zero knowledge proof v3" | "zeroknowledgeproofv3" | "zero knowledge proof v 3" => "zk",
-            "zero knowledge receipt" | "zeroknowledgereceipt" => "zk",
-            "zero knowledge receipt v1"
-            | "zeroknowledgereceiptv1"
-            | "zero knowledge receipt v 1"
-            | "zero knowledge receiptv1" => "zk",
-            "zero knowledge receipt v2"
-            | "zeroknowledgereceiptv2"
-            | "zero knowledge receipt v 2"
-            | "zero knowledge receiptv2" => "zk",
-            "zero knowledge receipt v3"
-            | "zeroknowledgereceiptv3"
-            | "zero knowledge receipt v 3"
-            | "zero knowledge receiptv3" => "zk",
-            _ => collapsed.as_str(),
-        };
-
-        Some(canonical.to_string())
+        // R2 default posture: verifier registrations must already name the
+        // canonical router key. We still normalize case and separators so
+        // canonical `fraud|tee|zk` keys are stable, but we no longer widen the
+        // live verifier registry by auto-upgrading legacy receipt/proof aliases.
+        Some(collapsed)
     }
 
     pub fn register(&mut self, verifier: Arc<dyn ProofVerifier + Send + Sync>) {
@@ -494,28 +428,80 @@ mod tests {
     }
 
     #[test]
-    fn registry_supports_zkp_alias_from_platform_contract() {
+    fn registry_rejects_zkp_alias_registration_on_default_launch_path() {
         let mut registry = VerifierRegistry::new();
         registry.register(Arc::new(AlwaysValidVerifier { kind: "zkp" }));
 
         let task = task_with_proof_type(ProofType::Zk);
-        assert_eq!(
+        assert!(matches!(
             registry.verify(&task, b"receipt"),
-            VerificationResult::Valid
-        );
+            VerificationResult::Indeterminate(msg)
+                if msg.contains("No verifier available for proof_type 'zk'")
+        ));
     }
 
     #[test]
-    fn registry_supports_zero_knowledge_proof_v2_alias_with_mixed_separators() {
+    fn registry_rejects_zero_knowledge_proof_v2_alias_registration_on_default_launch_path() {
         let mut registry = VerifierRegistry::new();
         registry.register(Arc::new(AlwaysValidVerifier {
             kind: "zero／knowledge-proof:v2",
         }));
 
         let task = task_with_proof_type(ProofType::Zk);
-        assert_eq!(
+        assert!(matches!(
             registry.verify(&task, b"receipt"),
-            VerificationResult::Valid
-        );
+            VerificationResult::Indeterminate(msg)
+                if msg.contains("No verifier available for proof_type 'zk'")
+        ));
+    }
+
+    #[test]
+    fn registry_rejects_legacy_receipt_alias_registrations_on_default_launch_path() {
+        let mut tee_registry = VerifierRegistry::new();
+        tee_registry.register(Arc::new(AlwaysValidVerifier {
+            kind: "tee_receipt",
+        }));
+        let tee_task = task_with_proof_type(ProofType::Tee);
+        assert!(matches!(
+            tee_registry.verify(&tee_task, b"receipt"),
+            VerificationResult::Indeterminate(msg)
+                if msg.contains("No verifier available for proof_type 'tee'")
+        ));
+
+        let mut zk_registry = VerifierRegistry::new();
+        zk_registry.register(Arc::new(AlwaysValidVerifier {
+            kind: "zk／receipt:v2",
+        }));
+        let zk_task = task_with_proof_type(ProofType::Zk);
+        assert!(matches!(
+            zk_registry.verify(&zk_task, b"receipt"),
+            VerificationResult::Indeterminate(msg)
+                if msg.contains("No verifier available for proof_type 'zk'")
+        ));
+    }
+
+    #[test]
+    fn registry_rejects_legacy_fraud_alias_registrations_on_default_launch_path() {
+        let mut proof_registry = VerifierRegistry::new();
+        proof_registry.register(Arc::new(AlwaysValidVerifier {
+            kind: "fraud_proof",
+        }));
+        let proof_task = task_with_proof_type(ProofType::Fraud);
+        assert!(matches!(
+            proof_registry.verify(&proof_task, b"receipt"),
+            VerificationResult::Indeterminate(msg)
+                if msg.contains("No verifier available for proof_type 'fraud'")
+        ));
+
+        let mut receipt_registry = VerifierRegistry::new();
+        receipt_registry.register(Arc::new(AlwaysValidVerifier {
+            kind: "fraud／receipt:v3",
+        }));
+        let receipt_task = task_with_proof_type(ProofType::Fraud);
+        assert!(matches!(
+            receipt_registry.verify(&receipt_task, b"receipt"),
+            VerificationResult::Indeterminate(msg)
+                if msg.contains("No verifier available for proof_type 'fraud'")
+        ));
     }
 }

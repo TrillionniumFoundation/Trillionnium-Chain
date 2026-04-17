@@ -24,6 +24,7 @@ Client-side request rule:
 - request 在发出前必须先经 `normalizedAuditEventsQuerySchema.parse(...)`
 - 只有 schema 接受且值存在的字段才会被编码进 URL query string
 - 未提供的可选字段必须被省略，而不是发送空字符串占位
+- repo-local RPC 解析仍冻结为：`cursor` / `limit` 在 URL 上以十进制字符串传输，但服务端必须 fail-closed 地把它们解析为整数语义，而不是接受任意 cursor token
 
 ---
 
@@ -34,7 +35,7 @@ Client-side request rule:
 | `source` | `string` | No | trimmed, min 1 | 按事件来源过滤；仅接受 schema 明确允许的来源值。 | 有值才写入 query string | 非法类型或 schema 外值必须直接报错，不得隐式忽略。 |
 | `eventType` | `string` | No | trimmed, min 1 | 按标准化事件类型过滤。 | 有值才写入 query string | 非法类型或 schema 外值必须直接报错，不得隐式忽略。 |
 | `limit` | `number` | No | integer, positive | 每页返回条数上限。 | 有值才写入 query string | 非正整数或超出 schema 上限时必须直接报错，不得静默截断到任意默认值。 |
-| `cursor` | `string` | No | trimmed, min 1 | 分页游标；仅接受非空字符串。 | 有值才写入 query string | 空字符串、非法类型或 schema 不接受的值必须直接报错，不得伪装成第一页。 |
+| `cursor` | `string`（wire） / `integer`（repo-local RPC parse） | No | trimmed, min 1, decimal integer only | 分页游标；URL 上传输为 query string，但当前 repo-local RPC 只接受可解析为十进制整数的 cursor。 | 有值才写入 query string | 空字符串、非十进制整数、非法类型或 schema 不接受的值必须直接报错，不得伪装成第一页。 |
 
 ### 当前 query key 序列化顺序（client 实现）
 
@@ -83,8 +84,8 @@ Client-side request rule:
 
 Day-1 只冻结当前代码已经表现出来的最小分页语义：
 
-1. `cursor` 是可选输入；缺失时表示从默认起始窗口查询。
-2. `limit` 是可选输入；若提供，必须先过 schema 校验。
+1. `cursor` 是可选输入；缺失时表示从默认起始窗口查询。若提供，wire 形态仍是 query string，但当前 repo-local RPC 必须把它 fail-closed 地解析成十进制整数 cursor。
+2. `limit` 是可选输入；若提供，必须先过 schema 校验，并在 repo-local RPC 侧保持整数解析语义。
 3. `nextCursor` 缺失，表示当前响应未显式给出下一页游标。
 4. `hasMore` 是显式布尔值；不存在时不允许由调用方自行猜测。
 5. `total` 若存在，必须视为当前 response contract 的一部分；若类型不合法，adapter 必须 fail-closed。

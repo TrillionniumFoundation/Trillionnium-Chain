@@ -142,6 +142,10 @@ pub struct ZkFeatureFlags {
     pub zk_platform_v0: bool,
     pub zk_backend_router: bool,
     pub zk_payload_v0_envelope: bool,
+    // RETIRE-R2 tracked in:
+    // docs/release/TRNM_POCO_BEHAVIOR_RISK_RETIREMENT_PLAN_2026-04-15.md
+    // Second-round hard cut: default launch path is now compatibility-closed for legacy receipt
+    // aliases. Replay/import flows must opt back in explicitly if they still need old shapes.
     pub zk_allow_legacy_receipt_aliases: bool,
     pub zk_allow_backend_fallback: bool,
     pub zk_explicit_backend_required: bool,
@@ -153,7 +157,7 @@ impl Default for ZkFeatureFlags {
             zk_platform_v0: false,
             zk_backend_router: false,
             zk_payload_v0_envelope: false,
-            zk_allow_legacy_receipt_aliases: true,
+            zk_allow_legacy_receipt_aliases: false,
             zk_allow_backend_fallback: false,
             zk_explicit_backend_required: false,
         }

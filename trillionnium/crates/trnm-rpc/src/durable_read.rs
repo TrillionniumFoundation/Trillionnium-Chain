@@ -37,7 +37,13 @@ pub struct ReplayCursor {
 
 impl ReplayCursor {
     pub fn genesis() -> Self {
-        Self { next_height: 0 }
+        Self::from_last_completed_height(0)
+    }
+
+    pub fn from_last_completed_height(last_completed_height: u64) -> Self {
+        Self {
+            next_height: last_completed_height.saturating_add(1),
+        }
     }
 
     pub fn advance_past(&mut self, applied_height: u64) {
@@ -83,11 +89,16 @@ impl LagSnapshot {
             .checked_div(1000)
             .and_then(|secs| u64::try_from(secs).ok())
             .unwrap_or(u64::MAX);
-        let classification = if height_lag <= HEALTHY_MAX_HEIGHT_LAG
-            || wall_clock_lag_secs <= HEALTHY_MAX_WALL_CLOCK_LAG_SECS
+        let height_within_healthy = height_lag <= HEALTHY_MAX_HEIGHT_LAG;
+        let wall_clock_within_healthy = wall_clock_lag_secs <= HEALTHY_MAX_WALL_CLOCK_LAG_SECS;
+        let classification = if local_height.is_some()
+            && height_within_healthy
+            && wall_clock_within_healthy
         {
             LagHealth::Healthy
-        } else if height_lag <= HEALTHY_MAX_HEIGHT_LAG.saturating_mul(5)
+        } else if height_within_healthy
+            || wall_clock_within_healthy
+            || height_lag <= HEALTHY_MAX_HEIGHT_LAG.saturating_mul(5)
             || wall_clock_lag_secs <= HEALTHY_MAX_WALL_CLOCK_LAG_SECS.saturating_mul(4)
         {
             LagHealth::Degraded
@@ -128,6 +139,17 @@ impl Default for PollTiming {
     }
 }
 
+fn validate_head(head: &RpcReadHead) -> Result<()> {
+    if head.hash.trim().is_empty() || head.hash.trim() != head.hash {
+        bail!(
+            "rpc-pull returned non-canonical remote head hash at height {}",
+            head.height
+        );
+    }
+
+    Ok(())
+}
+
 pub fn replay_step<S: RpcPullReadSource, K: DurableReadSink>(
     source: &mut S,
     sink: &mut K,
@@ -136,6 +158,7 @@ pub fn replay_step<S: RpcPullReadSource, K: DurableReadSink>(
     now_unix_ms: u128,
 ) -> Result<ReplayStep> {
     let head = source.fetch_head()?;
+    validate_head(&head)?;
     let requested_height = cursor.next_height;
 
     if requested_height > head.height {
@@ -168,6 +191,12 @@ pub fn replay_step<S: RpcPullReadSource, K: DurableReadSink>(
     if block.hash.trim().is_empty() || block.hash.trim() != block.hash {
         bail!(
             "rpc-pull returned non-canonical replay block hash at height {}",
+            block.height
+        );
+    }
+    if block.height == head.height && block.hash != head.hash {
+        bail!(
+            "rpc-pull returned tip block hash that disagrees with remote head at height {}",
             block.height
         );
     }
@@ -274,21 +303,30 @@ mod tests {
     }
 
     #[test]
-    fn lag_is_healthy_when_within_height_slo_even_if_wall_clock_exceeds_it() {
-        let head = head(102, 1_000);
-        let lag = LagSnapshot::classify(Some(100), &head, 40_000);
+    fn lag_is_healthy_only_when_both_height_and_wall_clock_are_within_slo() {
+        let head = head(102, 25_000);
+        let lag = LagSnapshot::classify(Some(100), &head, 30_000);
         assert_eq!(lag.height_lag, 2);
-        assert!(lag.wall_clock_lag_secs > HEALTHY_MAX_WALL_CLOCK_LAG_SECS);
+        assert_eq!(lag.wall_clock_lag_secs, 5);
         assert_eq!(lag.classification, LagHealth::Healthy);
     }
 
     #[test]
-    fn lag_is_healthy_when_within_wall_clock_slo_even_if_height_lag_exceeds_it() {
+    fn lag_degrades_when_only_height_slo_is_met() {
+        let head = head(102, 1_000);
+        let lag = LagSnapshot::classify(Some(100), &head, 40_000);
+        assert_eq!(lag.height_lag, 2);
+        assert!(lag.wall_clock_lag_secs > HEALTHY_MAX_WALL_CLOCK_LAG_SECS);
+        assert_eq!(lag.classification, LagHealth::Degraded);
+    }
+
+    #[test]
+    fn lag_degrades_when_only_wall_clock_slo_is_met() {
         let head = head(120, 25_000);
         let lag = LagSnapshot::classify(Some(100), &head, 30_000);
         assert!(lag.height_lag > HEALTHY_MAX_HEIGHT_LAG);
         assert_eq!(lag.wall_clock_lag_secs, 5);
-        assert_eq!(lag.classification, LagHealth::Healthy);
+        assert_eq!(lag.classification, LagHealth::Degraded);
     }
 
     #[test]
@@ -305,38 +343,39 @@ mod tests {
     fn replay_step_advances_cursor_only_after_persist() {
         let mut source = FakeSource {
             head: Some(head(3, 3_000)),
-            blocks: vec![block(0, 1_000)],
+            blocks: vec![block(1, 1_000)],
         };
         let mut sink = FakeSink::default();
         let mut cursor = ReplayCursor::genesis();
 
-        let out = replay_step(&mut source, &mut sink, &mut cursor, None, 5_000).expect("replay ok");
+        let out =
+            replay_step(&mut source, &mut sink, &mut cursor, Some(0), 5_000).expect("replay ok");
 
         assert_eq!(out.phase, ReadSyncPhase::BootstrapReplay);
-        assert_eq!(out.requested_height, 0);
-        assert_eq!(out.cursor.next_height, 1);
-        assert_eq!(cursor.next_height, 1);
+        assert_eq!(out.requested_height, 1);
+        assert_eq!(out.cursor.next_height, 2);
+        assert_eq!(cursor.next_height, 2);
         assert_eq!(sink.persisted.len(), 1);
-        assert_eq!(sink.persisted[0].height, 0);
+        assert_eq!(sink.persisted[0].height, 1);
     }
 
     #[test]
     fn replay_step_keeps_cursor_stable_on_persist_failure_fail_closed() {
         let mut source = FakeSource {
             head: Some(head(3, 3_000)),
-            blocks: vec![block(0, 1_000)],
+            blocks: vec![block(1, 1_000)],
         };
         let mut sink = FakeSink {
             persisted: Vec::new(),
-            fail_on_height: Some(0),
+            fail_on_height: Some(1),
         };
         let mut cursor = ReplayCursor::genesis();
 
-        let err = replay_step(&mut source, &mut sink, &mut cursor, None, 5_000)
+        let err = replay_step(&mut source, &mut sink, &mut cursor, Some(0), 5_000)
             .expect_err("persist failure should abort advancement");
 
         assert!(err.to_string().contains("injected persist failure"));
-        assert_eq!(cursor.next_height, 0);
+        assert_eq!(cursor.next_height, 1);
         assert!(sink.persisted.is_empty());
     }
 
@@ -406,7 +445,7 @@ mod tests {
             blocks: vec![invalid_block],
         };
         let mut sink = FakeSink::default();
-        let mut cursor = ReplayCursor::genesis();
+        let mut cursor = ReplayCursor { next_height: 0 };
 
         let err = replay_step(&mut source, &mut sink, &mut cursor, None, 2_000)
             .expect_err("genesis block with parent hash must fail closed");
@@ -456,5 +495,94 @@ mod tests {
             .contains("non-canonical replay block parent hash"));
         assert_eq!(cursor.next_height, 4);
         assert!(sink.persisted.is_empty());
+    }
+
+    #[test]
+    fn replay_step_rejects_non_canonical_replay_block_height_before_persisting() {
+        struct HeightSkewSource {
+            head: RpcReadHead,
+            block: RpcReadBlockSurface,
+        }
+
+        impl RpcPullReadSource for HeightSkewSource {
+            fn fetch_head(&mut self) -> Result<RpcReadHead> {
+                Ok(self.head.clone())
+            }
+
+            fn fetch_block_surface(&mut self, _height: u64) -> Result<Option<RpcReadBlockSurface>> {
+                Ok(Some(self.block.clone()))
+            }
+        }
+
+        let mut source = HeightSkewSource {
+            head: head(5, 5_000),
+            block: block(5, 5_000),
+        };
+        let mut sink = FakeSink::default();
+        let mut cursor = ReplayCursor { next_height: 4 };
+
+        let err = replay_step(&mut source, &mut sink, &mut cursor, Some(3), 6_000)
+            .expect_err("height-skewed replay block must fail closed");
+
+        assert!(err.to_string().contains("expected 4, got 5"));
+        assert_eq!(cursor.next_height, 4);
+        assert!(sink.persisted.is_empty());
+    }
+
+    #[test]
+    fn replay_step_rejects_non_canonical_remote_head_hash_before_steady_poll() {
+        let mut invalid_head = head(3, 3_000);
+        invalid_head.hash = " hash-3 ".into();
+        let mut source = FakeSource {
+            head: Some(invalid_head),
+            blocks: vec![],
+        };
+        let mut sink = FakeSink::default();
+        let mut cursor = ReplayCursor { next_height: 4 };
+
+        let err = replay_step(&mut source, &mut sink, &mut cursor, Some(3), 4_000)
+            .expect_err("non-canonical remote head hash must fail closed");
+
+        assert!(err
+            .to_string()
+            .contains("non-canonical remote head hash at height 3"));
+        assert_eq!(cursor.next_height, 4);
+        assert!(sink.persisted.is_empty());
+    }
+
+    #[test]
+    fn replay_step_rejects_tip_block_when_hash_disagrees_with_remote_head() {
+        let mut source = FakeSource {
+            head: Some(head(4, 4_000)),
+            blocks: vec![RpcReadBlockSurface {
+                height: 4,
+                hash: "hash-tip-mismatch".into(),
+                parent_hash: Some("hash-3".into()),
+                timestamp_unix_ms: 4_000,
+            }],
+        };
+        let mut sink = FakeSink::default();
+        let mut cursor = ReplayCursor { next_height: 4 };
+
+        let err = replay_step(&mut source, &mut sink, &mut cursor, Some(3), 5_000)
+            .expect_err("tip block hash mismatch must fail closed");
+
+        assert!(err
+            .to_string()
+            .contains("tip block hash that disagrees with remote head at height 4"));
+        assert_eq!(cursor.next_height, 4);
+        assert!(sink.persisted.is_empty());
+    }
+
+    #[test]
+    fn genesis_cursor_replays_from_first_post_checkpoint_height() {
+        let cursor = ReplayCursor::genesis();
+        assert_eq!(cursor.next_height, 1);
+    }
+
+    #[test]
+    fn resume_cursor_advances_past_last_completed_height() {
+        let cursor = ReplayCursor::from_last_completed_height(41);
+        assert_eq!(cursor.next_height, 42);
     }
 }

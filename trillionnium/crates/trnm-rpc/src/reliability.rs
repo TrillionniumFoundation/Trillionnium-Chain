@@ -24,21 +24,8 @@ pub struct ReliableMessage {
 }
 
 impl ReliableMessage {
-    fn requires_strict_fields(&self) -> bool {
-        let msg_type = self.msg_type.trim();
-        matches!(
-            msg_type,
-            "TASK_ACCEPT"
-                | "INPUT_CHUNK"
-                | "RESULT_META"
-                | "RESULT_POINTER"
-                | "ACK"
-                | "ERROR"
-                | "CLOSE"
-        )
-    }
     pub fn dedup_key(&self) -> Option<DedupKey> {
-        self.seq.or(self.nonce).map(|v| DedupKey {
+        self.seq.map(|v| DedupKey {
             from: self.from.clone(),
             seq_or_nonce: v,
         })
@@ -667,13 +654,6 @@ impl<S: ReliabilityStore> ReliabilityEngine<S> {
                 detail: "non-canonical msg_type".to_string(),
             };
         }
-        if msg.requires_strict_fields() && msg.seq.is_none() {
-            return Ack {
-                code: AckCode::BadRequest,
-                ack_id: "ack_invalid".to_string(),
-                detail: "missing seq".to_string(),
-            };
-        }
         if msg.seq.is_some() && msg.nonce.is_some() {
             return Ack {
                 code: AckCode::BadRequest,
@@ -681,24 +661,37 @@ impl<S: ReliabilityStore> ReliabilityEngine<S> {
                 detail: "ambiguous seq/nonce".to_string(),
             };
         }
+        if msg.nonce.is_some() {
+            return Ack {
+                code: AckCode::BadRequest,
+                ack_id: "ack_invalid".to_string(),
+                detail: "legacy nonce ingress removed; use seq".to_string(),
+            };
+        }
 
         let Some(dedup_key) = msg.dedup_key() else {
             return Ack {
                 code: AckCode::BadRequest,
                 ack_id: "ack_invalid".to_string(),
-                detail: "missing seq/nonce".to_string(),
+                detail: "missing seq".to_string(),
             };
         };
         if dedup_key.seq_or_nonce == 0 {
             return Ack {
                 code: AckCode::BadRequest,
                 ack_id: "ack_invalid".to_string(),
-                detail: "invalid zero seq/nonce".to_string(),
+                detail: "invalid zero seq".to_string(),
             };
         }
 
         let ack_id = format!("ack_{}_{}", dedup_key.from, dedup_key.seq_or_nonce);
         if self.store.contains_dedup_key(&dedup_key) {
+            // First-round R3 cut: when a duplicate hits a legacy seen_at=0 dedup row,
+            // refresh it to a real timestamp so migration-era compatibility state can
+            // age out under normal cleanup instead of living forever.
+            let _ = self
+                .store
+                .try_remember_dedup_key_with_ts(dedup_key.clone(), now_unix_ms);
             return Ack {
                 code: AckCode::Duplicate,
                 ack_id,
@@ -1258,6 +1251,12 @@ impl ReliabilityStore for SqliteReliabilityStore {
     }
 
     fn remember_dedup_key(&mut self, key: DedupKey) {
+        // RETIRE-R3 tracked in:
+        // docs/release/TRNM_POCO_BEHAVIOR_RISK_RETIREMENT_PLAN_2026-04-15.md
+        //
+        // `seen_at=0` is a migration-era compatibility shape that should eventually disappear
+        // from normal launch-path evidence once all retained dedup rows are rewritten with real
+        // timestamps.
         self.remember_dedup_key_with_ts(key, 0);
     }
 
@@ -1590,7 +1589,6 @@ mod tests {
 
         let mut missing_seq = mk_msg("alice", "s1", 1);
         missing_seq.seq = None;
-        missing_seq.nonce = Some(99);
         let ack = engine.receive(missing_seq, 1_000);
         assert_eq!(ack.code, AckCode::BadRequest);
         assert!(ack.detail.contains("missing seq"));
@@ -1717,7 +1715,7 @@ mod tests {
     }
 
     #[test]
-    fn legacy_message_without_msg_type_allows_nonce_path() {
+    fn rejects_nonce_only_legacy_message_after_cutover() {
         let store = InMemoryReliabilityStore::default();
         let mut engine = ReliabilityEngine::new(store, RetryConfig::default());
 
@@ -1731,7 +1729,8 @@ mod tests {
             payload: "legacy".to_string(),
         };
         let ack = engine.receive(msg, 1_000);
-        assert_eq!(ack.code, AckCode::Accepted);
+        assert_eq!(ack.code, AckCode::BadRequest);
+        assert!(ack.detail.contains("legacy nonce ingress removed; use seq"));
     }
 
     #[test]
@@ -1754,21 +1753,21 @@ mod tests {
     }
 
     #[test]
-    fn rejects_zero_seq_or_nonce_to_harden_replay_namespace() {
+    fn rejects_zero_seq_and_legacy_nonce_after_cutover() {
         let store = InMemoryReliabilityStore::default();
         let mut engine = ReliabilityEngine::new(store, RetryConfig::default());
 
         let mut msg = mk_msg("alice", "s1", 0);
         let ack = engine.receive(msg.clone(), 1_000);
         assert_eq!(ack.code, AckCode::BadRequest);
-        assert!(ack.detail.contains("invalid zero seq/nonce"));
+        assert!(ack.detail.contains("invalid zero seq"));
 
         msg.seq = None;
         msg.nonce = Some(0);
         msg.msg_type = String::new();
         let ack = engine.receive(msg, 1_001);
         assert_eq!(ack.code, AckCode::BadRequest);
-        assert!(ack.detail.contains("invalid zero seq/nonce"));
+        assert!(ack.detail.contains("legacy nonce ingress removed; use seq"));
     }
 
     #[test]
@@ -2061,6 +2060,49 @@ mod tests {
             store.contains_dedup_key(&key),
             "legacy seen_at=0 dedup entry should remain until rewritten with a timestamp"
         );
+    }
+
+    #[test]
+    fn duplicate_receive_rewrites_legacy_dedup_timestamp_for_future_cleanup() {
+        #[derive(Default)]
+        struct ProbeStore {
+            refreshed: bool,
+        }
+
+        impl ReliabilityStore for ProbeStore {
+            fn get_session(&self, _session_id: &str) -> Option<SessionState> {
+                None
+            }
+
+            fn upsert_session(&mut self, _session: SessionState) {}
+
+            fn remove_session(&mut self, _session_id: &str) {}
+
+            fn list_session_ids(&self) -> Vec<String> {
+                Vec::new()
+            }
+
+            fn contains_dedup_key(&self, _key: &DedupKey) -> bool {
+                true
+            }
+
+            fn remember_dedup_key(&mut self, _key: DedupKey) {}
+
+            fn try_remember_dedup_key_with_ts(
+                &mut self,
+                _key: DedupKey,
+                now_unix_ms: u128,
+            ) -> Result<(), ReliabilityStoreError> {
+                self.refreshed = now_unix_ms == 1_000;
+                Ok(())
+            }
+        }
+
+        let store = ProbeStore::default();
+        let mut engine = ReliabilityEngine::new(store, RetryConfig::default());
+        let ack = engine.receive(mk_msg("alice", "legacy-session", 7), 1_000);
+        assert_eq!(ack.code, AckCode::Duplicate);
+        assert!(engine.store.refreshed);
     }
 
     #[test]

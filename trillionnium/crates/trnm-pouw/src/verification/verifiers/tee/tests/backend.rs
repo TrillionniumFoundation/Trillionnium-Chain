@@ -113,7 +113,7 @@ fn tee_verifier_selection_error_maps_to_unavailable_prefix() {
 }
 
 #[test]
-fn tee_verifier_requires_cryptographic_backend_for_legacy_receipt_alias() {
+fn tee_verifier_rejects_legacy_receipt_alias_on_default_launch_path() {
     let verifier = TeeVerifier::default();
     let task = mock_task();
 
@@ -122,7 +122,7 @@ fn tee_verifier_requires_cryptographic_backend_for_legacy_receipt_alias() {
             &task,
             b"TEE:task_id=42,worker=worker1,proof_type=tee_receipt,result_hash=abababababababababababababababababababababababababababababababab,quote=abc"
         ),
-        VerificationResult::Indeterminate(msg)
-            if msg.contains("cryptographic verification backend not configured")
+        VerificationResult::Invalid(msg)
+            if msg.contains("proof_type mismatch")
     ));
 }

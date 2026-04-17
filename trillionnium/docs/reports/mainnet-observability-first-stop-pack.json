@@ -1,0 +1,343 @@
+{
+  "contract_version": "2026-04-16",
+  "lane": "MN-R26",
+  "domain": "mainnet_observability_first_stop_pack",
+  "status": "draft-stable",
+  "truth_sources": [
+    "docs/release/TRNM_MAINNET_CLOSURE_EXECUTION_BOARD_2026-04-05.md",
+    "docs/runbooks/mainnet-observability-alerting-starter-pack.md",
+    "docs/runbooks/mainnet-observability-minimum-contract.md",
+    "docs/runbooks/oracle-observability-alerts.md",
+    "docs/release/TRNM_R25_METRICS_CONTRACT_FREEZE_ALIGNMENT_EVIDENCE_2026-04-15.md"
+  ],
+  "shared_annotation_fields": [
+    "plane",
+    "service",
+    "severity",
+    "signal",
+    "verdict",
+    "needs_replay",
+    "needs_rollback",
+    "first_stop",
+    "truth_source",
+    "evidence_scope",
+    "summary_path",
+    "manifest_path",
+    "git_worktree_path",
+    "git_worktree_branch_ref",
+    "git_expected_worktree_branch_ref",
+    "git_worktree_branch_ref_match",
+    "replay",
+    "rollback"
+  ],
+  "panels": [
+    {
+      "name": "Node liveness / height progress",
+      "order": 1,
+      "services": [
+        "node"
+      ],
+      "signals": [
+        "node-down",
+        "sync-lag"
+      ],
+      "show": [
+        "scrape / health availability",
+        "observed height",
+        "committed height",
+        "sync lag or stalled-height indicator"
+      ],
+      "immediately_verify": [
+        "scrape/health availability",
+        "current host reachability note",
+        "committed vs observed height trend",
+        "lagging node id",
+        "latest replay_command= / recovery evidence pointer"
+      ],
+      "why": "Covers node-down and sync-lag before responders jump into replay or consensus-specific diagnosis."
+    },
+    {
+      "name": "Consensus instability / rollback pressure",
+      "order": 2,
+      "services": [
+        "node"
+      ],
+      "signals": [
+        "node-down",
+        "sync-lag",
+        "replay-failure"
+      ],
+      "show": [
+        "rollback_total",
+        "bft_round_change_total",
+        "bft_round_change_backoff_total_ms",
+        "bft_round_change_backoff_wall_share_ppm",
+        "bft_round_change_backoff_share_ppm",
+        "bft_leader_missed_total",
+        "bft_double_vote_total",
+        "bft_auth_reject_bad_sig_total",
+        "bft_auth_reject_replay_total",
+        "bft_auth_reject_stale_total",
+        "bft_auth_reject_stale_nonce_total"
+      ],
+      "immediately_verify": [
+        "rollback_total",
+        "round-change/backoff trend",
+        "leader-miss or auth-replay spike",
+        "latest recovery evidence pointer"
+      ],
+      "why": "Provides one explicit first stop when availability symptoms coincide with rollback, round-change, or auth churn."
+    },
+    {
+      "name": "RPC health / read surface",
+      "order": 3,
+      "services": [
+        "rpc"
+      ],
+      "signals": [
+        "rpc-unhealthy"
+      ],
+      "show": [
+        "rpc health/readiness status",
+        "query success vs failure trend",
+        "latency trend for the minimum Day-1 read path",
+        "probe_json.ok",
+        "probe_json.service",
+        "probe_json.ts_unix_ms",
+        "probe_json.version"
+      ],
+      "immediately_verify": [
+        "failing endpoint",
+        "query success/failure trend",
+        "latest rollback/replay pointer if the failure followed deploy or rehearsal"
+      ],
+      "why": "Preserves the public read surface as its own first-class operator plane."
+    },
+    {
+      "name": "Worker execution / receipt flow",
+      "order": 4,
+      "services": [
+        "worker"
+      ],
+      "signals": [
+        "worker-failure"
+      ],
+      "show": [
+        "worker pickup rate",
+        "submission / receipt success rate",
+        "retry / exhaustion / timeout trend",
+        "submitted=true submit_log=<path>",
+        "[agent] run-assigned processed=<n> skipped=<reason=count|none> ingress=<path> submit_log=<path> adapter=<name> adapter_retries=<n> adapter_backoff_ms=<n> adapter_timeout_ms=<n>"
+      ],
+      "immediately_verify": [
+        "affected worker ids/queues",
+        "retry/exhaustion trend",
+        "linked worker receipt evidence"
+      ],
+      "why": "Separates queue starvation from execution or submission failure before escalation."
+    },
+    {
+      "name": "Evidence / replay integrity",
+      "order": 5,
+      "services": [
+        "any"
+      ],
+      "signals": [
+        "replay-failure",
+        "contract-drift"
+      ],
+      "show": [
+        "latest summary.txt path",
+        "latest manifest.txt path when present",
+        "whether replay_command= and rollback_command= were captured",
+        "whether identity fields match the assigned worktree/branch for the active rehearsal"
+      ],
+      "immediately_verify": [
+        "replay_command=",
+        "rollback_command=",
+        "git_worktree_path=",
+        "git_worktree_branch_ref_match=",
+        "truth_source=",
+        "evidence_scope="
+      ],
+      "why": "Makes replay-failure and contract-drift visible without relying on shell history."
+    },
+    {
+      "name": "Oracle-specific drill-down",
+      "order": 6,
+      "services": [
+        "oracle"
+      ],
+      "signals": [
+        "oracle-anomaly"
+      ],
+      "show": [
+        "accepted_total",
+        "oracle_stale_reject_total",
+        "oracle_quorum_reject_total",
+        "oracle_drift_reject_total",
+        "sample_count",
+        "oracle_source_cardinality",
+        "oracle_ingest_latency_ms"
+      ],
+      "immediately_verify": [
+        "severity / signal / verdict label block",
+        "matching needs_replay and needs_rollback values",
+        "evidence pointers preserved beside the dashboard snapshot"
+      ],
+      "why": "Uses the oracle-specific contract without dropping the shared observability labels."
+    },
+    {
+      "name": "Bridge relay / settlement integrity",
+      "order": 7,
+      "services": [
+        "bridge"
+      ],
+      "signals": [
+        "bridge-anomaly"
+      ],
+      "show": [
+        "bridge relay heartbeat trend",
+        "settlement loop success vs failure trend",
+        "latest settlement evidence pointer or release summary.txt / manifest.txt when present",
+        "whether replay_command= and rollback_command= were captured when settlement integrity is in doubt"
+      ],
+      "immediately_verify": [
+        "bridge relay/settlement heartbeat evidence",
+        "settlement blast radius",
+        "replay/rollback pointers if integrity is in doubt"
+      ],
+      "why": "Keeps settlement trust incidents tied to evidence and rollback state instead of a generic placeholder."
+    }
+  ],
+  "alert_routes": [
+    {
+      "service": "node",
+      "signal": "node-down",
+      "default_severity": "sev1",
+      "needs_replay": "yes",
+      "needs_rollback": "no",
+      "first_stop": "Node liveness / height progress"
+    },
+    {
+      "service": "node",
+      "signal": "sync-lag",
+      "default_severity": "sev1",
+      "needs_replay": "yes",
+      "needs_rollback": "yes",
+      "first_stop": "Node liveness / height progress"
+    },
+    {
+      "service": "node",
+      "signal": "replay-failure",
+      "default_severity": "sev1",
+      "needs_replay": "yes",
+      "needs_rollback": "yes",
+      "first_stop": "Evidence / replay integrity"
+    },
+    {
+      "service": "rpc",
+      "signal": "rpc-unhealthy",
+      "default_severity": "sev1",
+      "needs_replay": "yes",
+      "needs_rollback": "no",
+      "first_stop": "RPC health / read surface"
+    },
+    {
+      "service": "worker",
+      "signal": "worker-failure",
+      "default_severity": "sev1",
+      "needs_replay": "yes",
+      "needs_rollback": "no",
+      "first_stop": "Worker execution / receipt flow"
+    },
+    {
+      "service": "oracle",
+      "signal": "oracle-anomaly",
+      "default_severity": "sev1",
+      "needs_replay": "yes",
+      "needs_rollback": "no",
+      "first_stop": "Oracle-specific drill-down"
+    },
+    {
+      "service": "bridge",
+      "signal": "bridge-anomaly",
+      "default_severity": "sev2",
+      "needs_replay": "no",
+      "needs_rollback": "no",
+      "first_stop": "Bridge relay / settlement integrity"
+    },
+    {
+      "service": "any",
+      "signal": "contract-drift",
+      "default_severity": "sev0",
+      "needs_replay": "yes",
+      "needs_rollback": "yes",
+      "first_stop": "Evidence / replay integrity"
+    }
+  ],
+  "routing_overrides": [
+    {
+      "service": "node",
+      "signals": [
+        "node-down",
+        "sync-lag"
+      ],
+      "requires_any_indicator": [
+        "rollback_total",
+        "bft_round_change_total",
+        "bft_round_change_backoff_total_ms",
+        "bft_leader_missed_total",
+        "bft_auth_reject_replay_total"
+      ],
+      "first_stop": "Consensus instability / rollback pressure",
+      "why": "When node availability symptoms coincide with rollback, round-change, leader-miss, or auth-replay churn, route responders to the consensus stress panel before treating the incident as pure host loss."
+    }
+  ],
+  "alert_annotation_examples": [
+    {
+      "service": "rpc",
+      "signal": "rpc-unhealthy",
+      "line": "plane=observability service=rpc severity=sev1 signal=rpc-unhealthy verdict=n/a needs_replay=yes needs_rollback=no first_stop=\"RPC health / read surface\" truth_source=local-release-evidence-v1 evidence_scope=release-handoff summary_path=/abs/run/health/evidence-20260331/summary.txt manifest_path=/abs/release/rc-20260331/manifest.txt git_worktree_path=/abs/lane/MN12 git_worktree_branch_ref=refs/heads/lane/mn12-alerting-dashboard-incident-sre git_expected_worktree_branch_ref=refs/heads/lane/mn12-alerting-dashboard-incident-sre git_worktree_branch_ref_match=true replay=present rollback=missing"
+    },
+    {
+      "service": "node",
+      "signal": "node-down",
+      "line": "plane=observability service=node severity=sev1 signal=node-down verdict=n/a needs_replay=yes needs_rollback=yes first_stop=\"Node liveness / height progress\" truth_source=local-release-evidence-v1 evidence_scope=release-handoff summary_path=/abs/run/health/evidence-20260331/summary.txt manifest_path=/abs/release/rc-20260331/manifest.txt git_worktree_path=/abs/lane/MN12 git_worktree_branch_ref=refs/heads/lane/mn12-alerting-dashboard-incident-sre git_expected_worktree_branch_ref=refs/heads/lane/mn12-alerting-dashboard-incident-sre git_worktree_branch_ref_match=true replay=present rollback=present"
+    },
+    {
+      "service": "worker",
+      "signal": "worker-failure",
+      "line": "plane=observability service=worker severity=sev1 signal=worker-failure verdict=n/a needs_replay=yes needs_rollback=no first_stop=\"Worker execution / receipt flow\" truth_source=local-release-evidence-v1 evidence_scope=release-handoff summary_path=/abs/run/health/evidence-20260331/summary.txt manifest_path=/abs/release/rc-20260331/manifest.txt git_worktree_path=/abs/lane/MN12 git_worktree_branch_ref=refs/heads/lane/mn12-alerting-dashboard-incident-sre git_expected_worktree_branch_ref=refs/heads/lane/mn12-alerting-dashboard-incident-sre git_worktree_branch_ref_match=true replay=present rollback=missing"
+    },
+    {
+      "service": "oracle",
+      "signal": "oracle-anomaly",
+      "line": "plane=observability service=oracle severity=sev1 signal=oracle-anomaly verdict=quorum-collapse needs_replay=yes needs_rollback=no first_stop=\"Oracle-specific drill-down\" truth_source=local-release-evidence-v1 evidence_scope=release-handoff summary_path=/abs/run/health/evidence-20260331/summary.txt manifest_path=/abs/release/rc-20260331/manifest.txt git_worktree_path=/abs/lane/MN12 git_worktree_branch_ref=refs/heads/lane/mn12-alerting-dashboard-incident-sre git_expected_worktree_branch_ref=refs/heads/lane/mn12-alerting-dashboard-incident-sre git_worktree_branch_ref_match=true replay=present rollback=missing"
+    },
+    {
+      "service": "bridge",
+      "signal": "bridge-anomaly",
+      "line": "plane=observability service=bridge severity=sev2 signal=bridge-anomaly verdict=n/a needs_replay=no needs_rollback=no first_stop=\"Bridge relay / settlement integrity\" truth_source=local-release-evidence-v1 evidence_scope=release-handoff summary_path=/abs/run/health/evidence-20260331/summary.txt manifest_path=/abs/release/rc-20260331/manifest.txt git_worktree_path=/abs/lane/MN12 git_worktree_branch_ref=refs/heads/lane/mn12-alerting-dashboard-incident-sre git_expected_worktree_branch_ref=refs/heads/lane/mn12-alerting-dashboard-incident-sre git_worktree_branch_ref_match=true replay=missing rollback=missing"
+    }
+  ],
+  "incident_summary_examples": [
+    {
+      "service": "node",
+      "signal": "sync-lag",
+      "line": "plane=observability service=node severity=sev1 signal=sync-lag verdict=n/a needs_replay=yes needs_rollback=yes first_stop=\"Node liveness / height progress\" observed=committed_height_flat impact=one-validator truth_source=local-release-evidence-v1 evidence_scope=release-handoff summary_path=/abs/run/health/evidence-20260331/summary.txt manifest_path=/abs/release/rc-20260331/manifest.txt git_worktree_path=/abs/lane/MN12 git_worktree_branch_ref=refs/heads/lane/mn12-alerting-dashboard-incident-sre git_expected_worktree_branch_ref=refs/heads/lane/mn12-alerting-dashboard-incident-sre git_worktree_branch_ref_match=true replay=present rollback=present"
+    },
+    {
+      "service": "any",
+      "signal": "contract-drift",
+      "line": "plane=observability service=any severity=sev0 signal=contract-drift verdict=n/a needs_replay=yes needs_rollback=yes first_stop=\"Evidence / replay integrity\" observed=label_block_mismatch impact=dashboard-routing-untrusted truth_source=local-release-evidence-v1 evidence_scope=release-handoff summary_path=/abs/run/health/evidence-20260331/summary.txt manifest_path=/abs/release/rc-20260331/manifest.txt git_worktree_path=/abs/lane/MN12 git_worktree_branch_ref=refs/heads/lane/mn12-alerting-dashboard-incident-sre git_expected_worktree_branch_ref=refs/heads/lane/mn12-alerting-dashboard-incident-sre git_worktree_branch_ref_match=true replay=present rollback=present"
+    }
+  ],
+  "alert_evidence_requirements": [
+    "Every sev0 / sev1 alert must preserve the shared annotation block from shared_annotation_fields.",
+    "Every first_stop value must exactly match one panel name from panels[].name.",
+    "Every alert must link summary_path and manifest_path when present; otherwise set them to unknown rather than omitting them.",
+    "If needs_rollback=yes, quote rollback_command= verbatim or record rollback=missing with rollback_command=unknown.",
+    "If observability output and emitted evidence disagree, promote the incident to service=any signal=contract-drift and route to Evidence / replay integrity first."
+  ]
+}

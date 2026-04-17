@@ -269,7 +269,8 @@ pub fn get_tx(
 pub enum TxStatus {
     Pending,
     Committed,
-    #[serde(alias = "failed", alias = "error")]
+    // First-round R4 cut: current public contract now accepts only the canonical
+    // lifecycle spelling `fail`.
     Fail,
 }
 
@@ -750,10 +751,18 @@ mod tests {
     }
 
     #[test]
-    fn tx_status_parser_accepts_legacy_failed_aliases() {
-        let failed: TxStatus = serde_json::from_str("\"failed\"").unwrap();
-        let error: TxStatus = serde_json::from_str("\"error\"").unwrap();
-        assert_eq!(failed, TxStatus::Fail);
-        assert_eq!(error, TxStatus::Fail);
+    fn tx_status_serializes_only_canonical_lifecycle_strings() {
+        assert_eq!(serde_json::to_string(&TxStatus::Pending).unwrap(), "\"pending\"");
+        assert_eq!(
+            serde_json::to_string(&TxStatus::Committed).unwrap(),
+            "\"committed\""
+        );
+        assert_eq!(serde_json::to_string(&TxStatus::Fail).unwrap(), "\"fail\"");
+    }
+
+    #[test]
+    fn tx_status_parser_rejects_legacy_failed_aliases() {
+        assert!(serde_json::from_str::<TxStatus>("\"failed\"").is_err());
+        assert!(serde_json::from_str::<TxStatus>("\"error\"").is_err());
     }
 }

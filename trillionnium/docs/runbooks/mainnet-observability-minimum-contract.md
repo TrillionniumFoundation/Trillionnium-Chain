@@ -6,6 +6,7 @@ Its purpose is narrower:
 
 - keep health probe aliases append-stable
 - keep the `trnm-rpc` health body contract explicit
+- keep the `trnm-node` bootstrap recovery sync-summary line explicit
 - preserve the existing `trnm-node` incident-summary metric bundle names
 - preserve the current `trnm-worker-agent` operator-visible handoff and batch-summary line shapes used in operator handoff
 
@@ -17,6 +18,7 @@ This document only freezes surfaces already evidenced in code/tests under:
 
 - `crates/trnm-rpc/src/main.rs` (active RPC entrypoint health/read contract)
 - `crates/trnm-rpc/src/runtime/http.rs` and `crates/trnm-rpc/src/health.rs` (mirrored compatibility copies that should stay behaviorally aligned with the active entrypoint until retired)
+- `crates/trnm-node/src/main.rs`, `crates/trnm-node/src/recovery.rs`, and `crates/trnm-node/src/run_bootstrap.rs`
 - `crates/trnm-node/src/runtime/metrics_aggregation/summary_format.rs`
 - `crates/trnm-worker-agent/src/workflow_ops.rs`
 - `crates/trnm-worker-agent/src/assigned.rs`
@@ -94,6 +96,39 @@ Operational meaning:
 - for a malformed request line that cannot be parsed into a trustworthy method/path pair, the current implementation fails closed with a JSON `400` body instead of attempting to preserve `HEAD`-style header-only semantics
 
 This distinction matters during load balancer, sidecar, and operator triage because it separates "wrong endpoint" from "broken request generation" without overloading the health/readiness meaning of `200`, while also documenting the current fail-closed behavior for malformed requests.
+
+## 1A. `trnm-node` bootstrap sync / join-rejoin recovery summary
+
+Current `trnm-node` bootstrap paths print one operator-visible startup sync summary line through the `[bft-recover]` surface:
+
+- `[bft-recover] retained_wal_entries=<n> checkpoint_height_retained=<height|none> checkpoint_tip_relation=<none|missing|aligned|behind:n|ahead:n|checkpoint_only:n> next_startup_height=<n> wal_tail_truncated=<true|false> metadata_only_recovery=<true|false> join_rejoin_status=<token>`
+
+This is currently emitted by the bootstrap/recovery path in `crates/trnm-node/src/run_bootstrap.rs` and built from the same field set in `crates/trnm-node/src/recovery.rs` plus the active entrypoint copy in `crates/trnm-node/src/main.rs`.
+
+Operational meaning:
+
+- `checkpoint_tip_relation=` is the first startup lag clue operators should read when deciding whether the node is resuming cleanly, resuming with checkpoint skew, or coming up from checkpoint-only state.
+- `join_rejoin_status=` is the current operator-visible admission token for bootstrap / join / rejoin triage on startup.
+- `wal_tail_truncated=true` means startup repaired retained WAL state before continuing, so the repair fact should stay attached to the handoff or incident note.
+- when `wal_tail_truncated=true`, preserve the exact `join_rejoin_status=` token, including `_after_tail_repair` variants, in operator notes and derived health outputs instead of normalizing it back to the clean ready token.
+- `metadata_only_recovery=true` means the retained startup state is not safe to treat as a normal resume path; the current fail-closed contract escalates this into `join_rejoin_status=blocked:metadata_only_recovery`.
+
+Minimum currently evidenced startup tokens that operators may rely on:
+
+- `checkpoint_tip_relation=none` with `join_rejoin_status=ready:fresh_bootstrap`
+- `checkpoint_tip_relation=none` with `join_rejoin_status=ready:fresh_bootstrap_after_tail_repair`
+- `checkpoint_tip_relation=aligned` with `join_rejoin_status=ready:retained_wal_resume`
+- `checkpoint_tip_relation=aligned` with `join_rejoin_status=ready:retained_wal_resume_after_tail_repair`
+- `checkpoint_tip_relation=missing` with `join_rejoin_status=ready:retained_wal_resume_missing_checkpoint_metadata`
+- `checkpoint_tip_relation=checkpoint_only:<height>` with `join_rejoin_status=ready:checkpoint_only_rejoin_bootstrap`
+- `checkpoint_tip_relation=behind:1` with `join_rejoin_status=ready:retained_wal_resume_checkpoint_lagging_1block`
+- `checkpoint_tip_relation=ahead:1` with `join_rejoin_status=ready:retained_wal_resume_checkpoint_ahead_mismatch_1block_after_tail_repair`
+- any `metadata_only_recovery=true` startup state with `join_rejoin_status=blocked:metadata_only_recovery`
+
+Scope boundary:
+
+- this is a startup recovery / join-rejoin diagnostic surface, not a full live-network caught-up verdict
+- operators should preserve the first `[bft-recover]` sync-summary line verbatim in the same handoff packet or incident note as the bootstrap result instead of rewriting it into a prose-only summary
 
 ## 2. `trnm-node` incident-summary bundle names
 
@@ -275,10 +310,11 @@ Until the unified dashboard/alert pack exists, apply these rules:
 
 1. Prefer **adding** aliases/fields/metrics over renaming existing ones.
 2. Treat the `trnm-rpc` health JSON body as append-stable.
-3. Treat the `trnm-node` incident bundle names above as append-stable.
-4. Treat `submitted=true submit_log=<path>` as the worker-agent minimum submit handoff line.
-5. Treat `[agent] run-assigned ... submit_log=<path> ...` as the worker-agent minimum assigned-batch summary line.
-6. If a new surface claims to supersede one of the above, keep a compatibility path or update this runbook in the same patch.
+3. Treat the `[bft-recover] ... checkpoint_tip_relation=... join_rejoin_status=...` startup sync-summary field names as append-stable.
+4. Treat the `trnm-node` incident bundle names above as append-stable.
+5. Treat `submitted=true submit_log=<path>` as the worker-agent minimum submit handoff line.
+6. Treat `[agent] run-assigned ... submit_log=<path> ...` as the worker-agent minimum assigned-batch summary line.
+7. If a new surface claims to supersede one of the above, keep a compatibility path or update this runbook in the same patch.
 
 ## 5. What this document does not claim
 

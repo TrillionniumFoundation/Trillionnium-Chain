@@ -3,7 +3,7 @@ use super::numeric::{find_numeric_field, has_duplicate_numeric_field};
 use super::token::{
     find_token_field, find_token_field_raw, has_duplicate_token_field, has_token_field_binding_attempt,
 };
-use crate::verification::{normalize_receipt_proof_type, proof_type_key, VerificationResult};
+use crate::verification::{proof_type_key, VerificationResult};
 use trnm_types::TaskObject;
 
 pub(super) fn verify_bound_envelope(
@@ -129,7 +129,7 @@ pub(super) fn verify_bound_envelope(
 
     let expected = proof_type_key(task.proof_type);
     match find_token_field(&body_text, "proof_type") {
-        Some(proof_type) if normalize_receipt_proof_type(&proof_type) == expected => {}
+        Some(proof_type) if proof_type.trim().eq_ignore_ascii_case(expected) => {}
         Some(_) => {
             return VerificationResult::Invalid(format!(
                 "Invalid {kind_name} envelope: proof_type mismatch"
@@ -144,4 +144,3 @@ pub(super) fn verify_bound_envelope(
 
     VerificationResult::Valid
 }
-

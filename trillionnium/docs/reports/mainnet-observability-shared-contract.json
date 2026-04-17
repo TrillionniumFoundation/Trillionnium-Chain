@@ -1,0 +1,255 @@
+{
+  "contract_version": "2026-04-17",
+  "lane": "MN-R25",
+  "domain": "mainnet_observability_shared_contract",
+  "status": "starter-pack-aligned",
+  "truth_sources": [
+    "docs/release/TRNM_MAINNET_CLOSURE_EXECUTION_BOARD_2026-04-05.md",
+    "docs/runbooks/mainnet-observability-alerting-starter-pack.md",
+    "docs/runbooks/mainnet-observability-minimum-contract.md",
+    "docs/runbooks/oracle-observability-alerts.md"
+  ],
+  "shared_dimensions": [
+    {
+      "name": "plane",
+      "values": ["observability"],
+      "scope": "shared"
+    },
+    {
+      "name": "service",
+      "values": ["node", "rpc", "worker", "oracle", "bridge", "any"],
+      "scope": "shared"
+    },
+    {
+      "name": "severity",
+      "values": ["sev0", "sev1", "sev2", "sev3"],
+      "scope": "shared"
+    },
+    {
+      "name": "signal",
+      "values": [
+        "node-down",
+        "sync-lag",
+        "replay-failure",
+        "rpc-unhealthy",
+        "worker-failure",
+        "oracle-anomaly",
+        "bridge-anomaly",
+        "contract-drift"
+      ],
+      "scope": "shared"
+    },
+    {
+      "name": "needs_replay",
+      "values": ["yes", "no"],
+      "scope": "shared"
+    },
+    {
+      "name": "needs_rollback",
+      "values": ["yes", "no"],
+      "scope": "shared"
+    },
+    {
+      "name": "first_stop",
+      "values": [
+        "Node liveness / height progress",
+        "Consensus instability / rollback pressure",
+        "RPC health / read surface",
+        "Worker execution / receipt flow",
+        "Evidence / replay integrity",
+        "Oracle-specific drill-down",
+        "Bridge relay / settlement integrity",
+        "unknown"
+      ],
+      "scope": "shared"
+    }
+  ],
+  "stable_first_stop_panels": [
+    "Node liveness / height progress",
+    "Consensus instability / rollback pressure",
+    "RPC health / read surface",
+    "Worker execution / receipt flow",
+    "Evidence / replay integrity",
+    "Oracle-specific drill-down",
+    "Bridge relay / settlement integrity"
+  ],
+  "exported_surfaces": {
+    "rpc_health_json": {
+      "service": "trnm-rpc",
+      "schema_version": 1,
+      "fields": ["ok", "service", "ts_unix_ms", "version"],
+      "body_example": {
+        "ok": true,
+        "service": "trnm-rpc",
+        "ts_unix_ms": 0,
+        "version": 1
+      }
+    },
+    "node_bootstrap_recovery_summary": {
+      "format": "space-delimited key=value summary line prefixed by [bft-recover]",
+      "template": "[bft-recover] retained_wal_entries=<n> checkpoint_height_retained=<height|none> checkpoint_tip_relation=<none|missing|aligned|behind:n|ahead:n|checkpoint_only:n> next_startup_height=<n> wal_tail_truncated=<true|false> metadata_only_recovery=<true|false> join_rejoin_status=<token>",
+      "required_fields": [
+        "retained_wal_entries",
+        "checkpoint_height_retained",
+        "checkpoint_tip_relation",
+        "next_startup_height",
+        "wal_tail_truncated",
+        "metadata_only_recovery",
+        "join_rejoin_status"
+      ],
+      "minimum_evidenced_tokens": [
+        "ready:fresh_bootstrap",
+        "ready:retained_wal_resume",
+        "ready:retained_wal_resume_missing_checkpoint_metadata",
+        "ready:checkpoint_only_rejoin_bootstrap",
+        "ready:retained_wal_resume_checkpoint_lagging_1block",
+        "ready:retained_wal_resume_checkpoint_ahead_mismatch_1block_after_tail_repair",
+        "blocked:metadata_only_recovery"
+      ]
+    },
+    "node_incident_summary": {
+      "format": "space-delimited key=value summary line",
+      "summary_metrics": [
+        "critical_wait_density_ppm",
+        "critical_wait_peak_density_ppm",
+        "critical_wait_active_heights",
+        "critical_wait_active_height_rate_ppm",
+        "critical_wait_active_observed_height_rate_ppm",
+        "critical_wait_density_avg",
+        "critical_wait_density_avg_milli",
+        "critical_wait_active_height_share_ppm",
+        "rollback_block_total",
+        "rollback_active_heights",
+        "rollback_block_rate",
+        "rollback_block_rate_ppm",
+        "rollback_active_height_rate_ppm",
+        "rollback_active_observed_height_rate_ppm",
+        "rollback_density_avg",
+        "rollback_density_avg_milli",
+        "rollback_active_height_share_ppm",
+        "apply_error_total",
+        "rollback_total",
+        "apply_error_rollback_share_bps",
+        "timeout_migrated_total",
+        "recovery_error_rate",
+        "bft_observed_heights",
+        "bft_committed_heights",
+        "bft_commit_observed_height_rate_ppm",
+        "bft_skipped_height_total",
+        "bft_skipped_observed_height_rate_ppm",
+        "bft_round_change_total",
+        "bft_round_change_per_height_ppm",
+        "bft_round_change_active_heights",
+        "bft_round_change_active_height_rate_ppm",
+        "bft_round_change_active_observed_height_rate_ppm",
+        "bft_round_change_density_avg",
+        "bft_round_change_density_avg_milli",
+        "bft_round_change_active_height_share_ppm",
+        "bft_round_change_backoff_total_ms",
+        "bft_round_change_backoff_avg_ms",
+        "bft_round_change_backoff_active_heights",
+        "bft_round_change_backoff_active_height_rate_ppm",
+        "bft_round_change_backoff_active_observed_height_rate_ppm",
+        "bft_round_change_backoff_density_avg_ms",
+        "bft_round_change_backoff_density_avg_milli",
+        "bft_round_change_backoff_active_height_share_ppm",
+        "bft_round_change_backoff_max_ms",
+        "bft_round_change_backoff_wall_share_ppm",
+        "bft_round_change_backoff_share_ppm",
+        "bft_leader_missed_total",
+        "bft_leader_missed_max",
+        "bft_leader_missed_top_share_ppm",
+        "bft_leader_missed_active_validators",
+        "bft_leader_missed_active_validator_share_ppm",
+        "bft_leader_missed_active_heights",
+        "bft_leader_missed_active_height_rate_ppm",
+        "bft_leader_missed_active_observed_height_rate_ppm",
+        "bft_leader_missed_density_avg",
+        "bft_leader_missed_density_avg_milli",
+        "bft_leader_missed_active_height_share_ppm",
+        "bft_leader_missed_proposals",
+        "bft_double_vote_total",
+        "bft_auth_reject_bad_sig_total",
+        "bft_auth_reject_replay_total",
+        "bft_auth_reject_stale_total",
+        "bft_auth_reject_stale_nonce_total"
+      ],
+      "compatibility_aliases": [
+        {
+          "canonical": "rollback_block_total",
+          "compatibility": "rollback_active_heights",
+          "note": "Preserve both names as shipped until the broader incident-summary contract is explicitly renamed end to end."
+        },
+        {
+          "canonical": "bft_round_change_backoff_wall_share_ppm",
+          "compatibility": "bft_round_change_backoff_share_ppm",
+          "note": "Today both carry the same wall-share signal; keep the compatibility alias grep-stable until an explicit split lands."
+        },
+        {
+          "canonical": "bft_auth_reject_stale_nonce_total",
+          "compatibility": "bft_auth_reject_stale_total",
+          "note": "Treat both spellings as the same stale-nonce family until a future contract explicitly separates them."
+        }
+      ]
+    },
+    "worker_submit_handoff": {
+      "format": "space-delimited key=value summary line",
+      "template": "submitted=true submit_log=<path>",
+      "required_fields": ["submitted", "submit_log"]
+    },
+    "worker_assigned_summary": {
+      "format": "space-delimited key=value summary line",
+      "template": "[agent] run-assigned processed=<n> skipped=<reason=count|none> ingress=<path> submit_log=<path> adapter=<name> adapter_retries=<n> adapter_backoff_ms=<n> adapter_timeout_ms=<n>",
+      "required_fields": [
+        "processed",
+        "skipped",
+        "ingress",
+        "submit_log",
+        "adapter",
+        "adapter_retries",
+        "adapter_backoff_ms",
+        "adapter_timeout_ms"
+      ]
+    },
+    "oracle_incident_summary": {
+      "format": "space-delimited key=value summary line",
+      "template": "plane=observability service=oracle severity=<sev0|sev1|sev2|sev3> signal=oracle-anomaly verdict=<accepts-stalled|stale-wave|quorum-collapse|drift-anomaly|ingest-latency|contract-drift> needs_replay=<yes|no> needs_rollback=<yes|no> first_stop=<\"Oracle-specific drill-down\"|\"Evidence / replay integrity\"|unknown> sample_count=<n> accepted_total=<n> stale=<n> quorum=<n> drift=<n> source_cardinality=<n|unknown> ingest_latency_ms=<n|unknown> truth_source=<value|unknown> evidence_scope=<value|unknown> summary_path=<path|unknown> manifest_path=<path|unknown> git_worktree_path=<path|unknown> git_worktree_branch_ref=<refs/heads/...|unknown> git_expected_worktree_branch_ref=<refs/heads/...|unknown> git_worktree_branch_ref_match=<true|false|unknown> replay=<present|missing> rollback=<present|missing>",
+      "required_fields": [
+        "plane",
+        "service",
+        "severity",
+        "signal",
+        "verdict",
+        "needs_replay",
+        "needs_rollback",
+        "first_stop",
+        "sample_count",
+        "accepted_total",
+        "stale",
+        "quorum",
+        "drift",
+        "source_cardinality",
+        "ingest_latency_ms",
+        "truth_source",
+        "evidence_scope",
+        "summary_path",
+        "manifest_path",
+        "git_worktree_path",
+        "git_worktree_branch_ref",
+        "git_expected_worktree_branch_ref",
+        "git_worktree_branch_ref_match",
+        "replay",
+        "rollback"
+      ]
+    }
+  },
+  "invariants": [
+    "Shared dimensions stay append-stable for starter-pack rehearsal windows.",
+    "New service-local fields may be added without replacing shared keys.",
+    "Missing shared labels or mismatched first_stop routing should be treated as contract-drift.",
+    "RPC health JSON remains append-stable with service=trnm-rpc and version=1 until updated in the same patch as its runbook truth source.",
+    "[bft-recover] bootstrap recovery summaries remain append-stable; preserve checkpoint_tip_relation and join_rejoin_status field names when extending the startup handoff line.",
+    "Worker handoff and assigned-run templates remain append-stable; additive fields are safer than renames or reordering.",
+    "Oracle incidents preserve the shared label block while keeping oracle-specific verdict and evidence-pointer fields."
+  ]
+}
