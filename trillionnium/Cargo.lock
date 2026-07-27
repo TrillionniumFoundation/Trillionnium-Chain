@@ -1354,6 +1354,7 @@ dependencies = [
  "clap",
  "ed25519-dalek",
  "hex",
+ "rusqlite",
  "serde",
  "serde_json",
  "tendermint-abci",

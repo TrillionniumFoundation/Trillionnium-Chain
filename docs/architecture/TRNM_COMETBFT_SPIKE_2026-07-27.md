@@ -24,8 +24,26 @@ Status: **four-validator recovery and fresh-node state sync proven locally**
   the same ordered transaction block.
 - A tampered signed envelope is rejected during proposal processing.
 - Finalization stages state without advancing committed height before `Commit`.
-- Committed application state is atomically persisted and survives an adapter
-  process restart while CometBFT remains running.
+- Committed application state uses a SQLite WAL store with `synchronous=FULL`.
+  Each `Commit` transaction writes only this block's object, command-ID, and
+  signer-nonce delta before atomically advancing the height/app-hash head.
+- `CheckTx`, `PrepareProposal`, and `ProcessProposal` use a touched-object
+  overlay instead of cloning the complete committed state. `PendingBlock` also
+  retains only the block delta; `FinalizeBlock` computes the canonical v2 root
+  once using a root-only Merkle path that is byte-compatible with the prior
+  proof-building implementation.
+- Legacy `trnm_cometbft_app_state_v2` JSON is hash-validated, backed up, and
+  migrated into SQLite. The JSON path then becomes a small recoverable
+  height/app-hash status mirror; SQLite remains authoritative if a crash occurs
+  after SQL commit but before mirror refresh.
+- Store corruption, chain/app-version mismatch, or a non-contiguous expected tip
+  fails closed. The store also binds the canonical authorized-signer policy, so
+  a signer ID, role, or key cannot drift silently across a restart. Unit
+  failpoints prove a crash before SQL commit restores the old tip and a crash
+  after SQL commit restores the new tip.
+- Backup/restore and file-authority rules are documented in
+  `docs/runbooks/TRNM_COMETBFT_APPLICATION_STORE.md`; the JSON status cache is
+  explicitly not sufficient backup evidence.
 - The reproducible live-process fixture is
   `trillionnium/scripts/consensus/spike_cometbft_single_node.sh`.
 - A real four-validator network commits identical application hashes, continues
@@ -41,6 +59,11 @@ Status: **four-validator recovery and fresh-node state sync proven locally**
 
 ## Not Yet Proven
 
+- A truly logarithmic keyed incremental Merkle tree is not implemented. App-hash
+  v2 compatibility still requires an ordered O(N) root pass during
+  `FinalizeBlock`, although it no longer builds inclusion proofs or clones full
+  object payloads. A sparse/Jellyfish-style v3 commitment requires an explicit
+  app-version and snapshot-format migration.
 - proposal/vote/commit crash-boundary recovery across four nodes;
 - `3-1` and `2-2` partition healing without conflicting finalized heights;
 - authenticated multi-host peer transport and remote validator bootstrap;

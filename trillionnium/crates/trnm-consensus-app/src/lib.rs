@@ -21,10 +21,14 @@ use tendermint_proto::v0_38::abci::{
 };
 use trnm_finality_types::{hash_domain, SignedCommandEnvelopeV1};
 use trnm_node::live::{
-    merkle::root_and_proofs,
-    node::{AuthorizedSignerV1, CommandInterpreter, RoutingCommandInterpreter},
+    merkle::root_only,
+    node::{AuthorizedSignerV1, CommandInterpreter, ObjectView, RoutingCommandInterpreter},
     store::StoredObject,
 };
+
+mod store;
+
+use store::ApplicationStore;
 
 pub const CONFIG_SCHEMA_V1: &str = "trnm_cometbft_app_config_v1";
 pub const GENESIS_SCHEMA_V1: &str = "trnm_cometbft_genesis_v1";
@@ -107,9 +111,27 @@ struct AppState {
 struct PendingBlock {
     height: u64,
     app_hash: [u8; 32],
+    delta: BlockDelta,
+}
+
+#[derive(Debug, Clone, Default)]
+struct BlockDelta {
     objects: BTreeMap<String, StoredObject>,
     command_ids: BTreeSet<String>,
     signer_nonces: BTreeSet<(String, u64)>,
+}
+
+struct OverlayObjects<'a> {
+    base: &'a BTreeMap<String, StoredObject>,
+    changes: &'a BTreeMap<String, StoredObject>,
+}
+
+impl ObjectView for OverlayObjects<'_> {
+    fn get(&self, object_key_hex: &str) -> Option<&StoredObject> {
+        self.changes
+            .get(object_key_hex)
+            .or_else(|| self.base.get(object_key_hex))
+    }
 }
 
 impl Default for AppState {
@@ -128,6 +150,7 @@ impl Default for AppState {
 struct AppCore {
     config: ConsensusAppConfig,
     interpreter: RoutingCommandInterpreter,
+    store: Option<ApplicationStore>,
     state: Mutex<AppState>,
     snapshots: Mutex<BTreeMap<u64, SnapshotRecord>>,
     snapshot_restore: Mutex<Option<SnapshotRestore>>,
@@ -228,8 +251,19 @@ impl CometBftApplication {
         config.validate()?;
         let interpreter =
             RoutingCommandInterpreter::from_authorized_signers(&config.authorized_signers)?;
-        let state = match &config.state_path {
-            Some(path) => load_state(path)?,
+        let store = config
+            .state_path
+            .as_ref()
+            .map(|path| {
+                ApplicationStore::open(
+                    path,
+                    &config.chain_id,
+                    &hex::encode(signer_policy_commitment(&config.authorized_signers)),
+                )
+            })
+            .transpose()?;
+        let state = match &store {
+            Some(store) => store.load_or_migrate()?,
             None => AppState::default(),
         };
         let mut snapshots = BTreeMap::new();
@@ -247,6 +281,7 @@ impl CometBftApplication {
             core: Arc::new(AppCore {
                 config,
                 interpreter,
+                store,
                 state: Mutex::new(state),
                 snapshots: Mutex::new(snapshots),
                 snapshot_restore: Mutex::new(None),
@@ -287,40 +322,34 @@ impl CometBftApplication {
         Ok(())
     }
 
+    fn plan_block(&self, state: &AppState, txs: &[Bytes], timestamp_ms: u64) -> Result<BlockDelta> {
+        let mut delta = BlockDelta::default();
+        for tx in txs {
+            self.apply_tx(state, &mut delta, tx, timestamp_ms)?;
+        }
+        Ok(delta)
+    }
+
     fn execute_block(
         &self,
         state: &AppState,
         txs: &[Bytes],
         timestamp_ms: u64,
     ) -> Result<PendingBlock> {
-        let mut objects = state.objects.clone();
-        let mut command_ids = state.command_ids.clone();
-        let mut signer_nonces = state.signer_nonces.clone();
-        for tx in txs {
-            self.apply_tx(
-                &mut objects,
-                &mut command_ids,
-                &mut signer_nonces,
-                tx,
-                timestamp_ms,
-            )?;
-        }
+        let delta = self.plan_block(state, txs, timestamp_ms)?;
         let next_height = state.height.saturating_add(1);
-        let app_hash = compute_app_hash(next_height, &objects, &command_ids, &signer_nonces);
+        let app_hash = compute_app_hash_with_delta(next_height, state, &delta);
         Ok(PendingBlock {
             height: next_height,
             app_hash,
-            objects,
-            command_ids,
-            signer_nonces,
+            delta,
         })
     }
 
     fn apply_tx(
         &self,
-        objects: &mut BTreeMap<String, StoredObject>,
-        command_ids: &mut BTreeSet<String>,
-        signer_nonces: &mut BTreeSet<(String, u64)>,
+        state: &AppState,
+        delta: &mut BlockDelta,
         tx: &[u8],
         timestamp_ms: u64,
     ) -> Result<()> {
@@ -328,28 +357,38 @@ impl CometBftApplication {
             serde_json::from_slice(tx).context("decode signed command envelope")?;
         self.validate_envelope(&envelope, timestamp_ms)?;
         ensure!(
-            command_ids.insert(envelope.command_id.clone()),
+            !state.command_ids.contains(&envelope.command_id)
+                && delta.command_ids.insert(envelope.command_id.clone()),
             "command_id replay rejected"
         );
+        let signer_nonce = (envelope.signer_id.clone(), envelope.nonce);
         ensure!(
-            signer_nonces.insert((envelope.signer_id.clone(), envelope.nonce)),
+            !state.signer_nonces.contains(&signer_nonce)
+                && delta.signer_nonces.insert(signer_nonce),
             "signer nonce replay rejected"
         );
-        let execution = self
-            .core
-            .interpreter
-            .prepare_execution(&envelope, objects)?;
+        let execution = {
+            let objects = OverlayObjects {
+                base: &state.objects,
+                changes: &delta.objects,
+            };
+            self.core
+                .interpreter
+                .prepare_execution(&envelope, &objects)?
+        };
         execution.validate()?;
         for mutation in execution.mutations {
-            let current_version = objects
+            let current_version = delta
+                .objects
                 .get(&mutation.object_key_hex)
+                .or_else(|| state.objects.get(&mutation.object_key_hex))
                 .map(|object| object.version);
             ensure!(
                 current_version == mutation.expected_version,
                 "object version precondition mismatch"
             );
             let stored = mutation.into_stored();
-            objects.insert(stored.object_key_hex.clone(), stored);
+            delta.objects.insert(stored.object_key_hex.clone(), stored);
         }
         Ok(())
     }
@@ -393,7 +432,7 @@ impl CometBftApplication {
 
     fn retain_snapshot(&self, state: &AppState) -> Result<()> {
         let disk_path = snapshot_path(&self.core.config, state.height);
-        if disk_path.is_some() && state.height % DISK_SNAPSHOT_INTERVAL != 0 {
+        if disk_path.is_some() && !state.height.is_multiple_of(DISK_SNAPSHOT_INTERVAL) {
             return Ok(());
         }
         let record = build_snapshot(&self.core.config.chain_id, state, disk_path)?;
@@ -423,7 +462,9 @@ impl CometBftApplication {
 
 impl Application for CometBftApplication {
     fn info(&self, _request: RequestInfo) -> ResponseInfo {
-        let (height, app_hash) = self.height_and_app_hash().unwrap_or((0, empty_app_hash()));
+        let (height, app_hash) = self
+            .height_and_app_hash()
+            .unwrap_or_else(|error| panic!("read committed state for ABCI Info: {error:#}"));
         ResponseInfo {
             data: "trnm-consensus-app".to_string(),
             version: env!("CARGO_PKG_VERSION").to_string(),
@@ -451,7 +492,7 @@ impl Application for CometBftApplication {
             Ok(state) => state,
             Err(_) => return check_tx_error("state lock poisoned"),
         };
-        match self.execute_block(&state, &[request.tx], now_unix_ms()) {
+        match self.plan_block(&state, &[request.tx], now_unix_ms()) {
             Ok(_) => ResponseCheckTx::default(),
             Err(error) => check_tx_error(&format!("{error:#}")),
         }
@@ -466,9 +507,7 @@ impl Application for CometBftApplication {
             _ => return ResponsePrepareProposal::default(),
         };
         let timestamp_ms = timestamp_ms(request.time.as_ref());
-        let mut objects = state.objects.clone();
-        let mut command_ids = state.command_ids.clone();
-        let mut signer_nonces = state.signer_nonces.clone();
+        let mut delta = BlockDelta::default();
         let mut total_bytes = 0usize;
         let max_bytes = usize::try_from(request.max_tx_bytes).unwrap_or(0);
         let mut txs = Vec::new();
@@ -477,24 +516,14 @@ impl Application for CometBftApplication {
             if next_total > max_bytes {
                 continue;
             }
-            let mut candidate_objects = objects.clone();
-            let mut candidate_command_ids = command_ids.clone();
-            let mut candidate_signer_nonces = signer_nonces.clone();
+            let mut candidate = delta.clone();
             if self
-                .apply_tx(
-                    &mut candidate_objects,
-                    &mut candidate_command_ids,
-                    &mut candidate_signer_nonces,
-                    &tx,
-                    timestamp_ms,
-                )
+                .apply_tx(&state, &mut candidate, &tx, timestamp_ms)
                 .is_err()
             {
                 continue;
             }
-            objects = candidate_objects;
-            command_ids = candidate_command_ids;
-            signer_nonces = candidate_signer_nonces;
+            delta = candidate;
             total_bytes = next_total;
             txs.push(tx);
         }
@@ -512,7 +541,7 @@ impl Application for CometBftApplication {
                     request.height == state.height as i64 + 1,
                     "proposal height mismatch"
                 );
-                self.execute_block(&state, &request.txs, timestamp_ms(request.time.as_ref()))?;
+                self.plan_block(&state, &request.txs, timestamp_ms(request.time.as_ref()))?;
                 Ok(())
             })
             .is_ok();
@@ -526,52 +555,61 @@ impl Application for CometBftApplication {
     }
 
     fn finalize_block(&self, request: RequestFinalizeBlock) -> ResponseFinalizeBlock {
-        let mut state = match self.core.state.lock() {
-            Ok(state) => state,
-            Err(_) => return finalize_error(request.txs.len(), "state lock poisoned"),
-        };
-        if request.height != state.height as i64 + 1 {
-            return finalize_error(request.txs.len(), "finalize height mismatch");
-        }
-        match self.execute_block(&state, &request.txs, timestamp_ms(request.time.as_ref())) {
-            Ok(pending) => {
-                let app_hash = Bytes::copy_from_slice(&pending.app_hash);
-                state.pending = Some(pending);
-                ResponseFinalizeBlock {
-                    tx_results: request
-                        .txs
-                        .iter()
-                        .map(|_| ExecTxResult::default())
-                        .collect(),
-                    app_hash,
-                    ..Default::default()
-                }
-            }
-            Err(error) => finalize_error(request.txs.len(), &format!("{error:#}")),
+        let mut state = self.core.state.lock().unwrap_or_else(|_| {
+            panic!("consensus application state lock poisoned during FinalizeBlock")
+        });
+        assert_eq!(
+            request.height,
+            state.height as i64 + 1,
+            "refuse non-contiguous FinalizeBlock height"
+        );
+        let pending = self
+            .execute_block(&state, &request.txs, timestamp_ms(request.time.as_ref()))
+            .unwrap_or_else(|error| {
+                panic!(
+                    "ProcessProposal accepted a block that FinalizeBlock cannot execute: {error:#}"
+                )
+            });
+        let app_hash = Bytes::copy_from_slice(&pending.app_hash);
+        state.pending = Some(pending);
+        ResponseFinalizeBlock {
+            tx_results: request
+                .txs
+                .iter()
+                .map(|_| ExecTxResult::default())
+                .collect(),
+            app_hash,
+            ..Default::default()
         }
     }
 
     fn commit(&self) -> ResponseCommit {
-        if let Ok(mut state) = self.core.state.lock() {
-            if let Some(pending) = state.pending.take() {
-                let next = AppState {
-                    height: pending.height,
-                    app_hash: pending.app_hash,
-                    objects: pending.objects,
-                    command_ids: pending.command_ids,
-                    signer_nonces: pending.signer_nonces,
-                    pending: None,
-                };
-                if let Some(path) = &self.core.config.state_path {
-                    persist_state(path, &next).unwrap_or_else(|error| {
-                        panic!("persist committed consensus application state: {error:#}")
-                    });
-                }
-                self.retain_snapshot(&next).unwrap_or_else(|error| {
-                    panic!("retain committed consensus application snapshot: {error:#}")
+        let mut state =
+            self.core.state.lock().unwrap_or_else(|_| {
+                panic!("consensus application state lock poisoned during commit")
+            });
+        let pending = state
+            .pending
+            .take()
+            .expect("refuse ABCI Commit without a finalized pending block");
+        if let Some(store) = &self.core.store {
+            store
+                .persist_transition(&state, &pending)
+                .unwrap_or_else(|error| {
+                    panic!("persist committed consensus application state: {error:#}")
                 });
-                *state = next;
-            }
+        }
+        state.height = pending.height;
+        state.app_hash = pending.app_hash;
+        for (key, object) in pending.delta.objects {
+            state.objects.insert(key, object);
+        }
+        state.command_ids.extend(pending.delta.command_ids);
+        state.signer_nonces.extend(pending.delta.signer_nonces);
+        if let Err(error) = self.retain_snapshot(&state) {
+            eprintln!(
+                "[trnm-cometbft-app] committed state but failed to retain optional snapshot: {error:#}"
+            );
         }
         ResponseCommit::default()
     }
@@ -764,9 +802,6 @@ impl CometBftApplication {
             hex::encode(next.app_hash) == restore.metadata.app_hash_hex,
             "restored app hash mismatch"
         );
-        if let Some(path) = &self.core.config.state_path {
-            persist_state_bytes(path, &bytes)?;
-        }
         let mut state = self
             .core
             .state
@@ -776,8 +811,15 @@ impl CometBftApplication {
             state.height == 0 && state.pending.is_none(),
             "application state changed during snapshot restore"
         );
+        if let Some(store) = &self.core.store {
+            store.replace_empty_state(&state, &next)?;
+        }
         *state = next;
-        self.retain_snapshot(&state)?;
+        if let Err(error) = self.retain_snapshot(&state) {
+            eprintln!(
+                "[trnm-cometbft-app] restored state but failed to retain optional snapshot: {error:#}"
+            );
+        }
         restore_guard.take();
         Ok(())
     }
@@ -815,19 +857,22 @@ fn canonical_signers(signers: &[AuthorizedSignerV1]) -> BTreeSet<(String, String
         .collect()
 }
 
-fn finalize_error(tx_count: usize, message: &str) -> ResponseFinalizeBlock {
-    ResponseFinalizeBlock {
-        tx_results: (0..tx_count)
-            .map(|_| ExecTxResult {
-                code: 1,
-                log: message.to_string(),
-                codespace: "trnm".to_string(),
-                ..Default::default()
-            })
-            .collect(),
-        app_hash: Bytes::copy_from_slice(&empty_app_hash()),
-        ..Default::default()
-    }
+fn signer_policy_commitment(signers: &[AuthorizedSignerV1]) -> [u8; 32] {
+    root_only(
+        "trnm.cometbft.authorized-signers.v1",
+        canonical_signers(signers)
+            .iter()
+            .map(|(signer_id, signer_role, public_key_hex)| {
+                hash_domain(
+                    "trnm.cometbft.authorized-signer.v1",
+                    &[
+                        signer_id.as_bytes(),
+                        signer_role.as_bytes(),
+                        public_key_hex.as_bytes(),
+                    ],
+                )
+            }),
+    )
 }
 
 fn empty_app_hash() -> [u8; 32] {
@@ -840,26 +885,101 @@ fn compute_app_hash(
     command_ids: &BTreeSet<String>,
     signer_nonces: &BTreeSet<(String, u64)>,
 ) -> [u8; 32] {
-    let object_leaves = objects
-        .values()
-        .map(StoredObject::leaf_hash)
-        .collect::<Vec<_>>();
-    let command_leaves = command_ids
-        .iter()
-        .map(|command_id| hash_domain("trnm.state.command-id.v1", &[command_id.as_bytes()]))
-        .collect::<Vec<_>>();
-    let nonce_leaves = signer_nonces
-        .iter()
-        .map(|(signer_id, nonce)| {
+    let object_root = root_only(
+        "trnm.state.objects.v1",
+        objects.values().map(StoredObject::leaf_hash),
+    );
+    let command_root = root_only(
+        "trnm.state.command-ids.v1",
+        command_ids
+            .iter()
+            .map(|command_id| hash_domain("trnm.state.command-id.v1", &[command_id.as_bytes()])),
+    );
+    let nonce_root = root_only(
+        "trnm.state.signer-nonces.v1",
+        signer_nonces.iter().map(|(signer_id, nonce)| {
             hash_domain(
                 "trnm.state.signer-nonce.v1",
                 &[signer_id.as_bytes(), &nonce.to_be_bytes()],
             )
-        })
-        .collect::<Vec<_>>();
-    let (object_root, _) = root_and_proofs("trnm.state.objects.v1", &object_leaves);
-    let (command_root, _) = root_and_proofs("trnm.state.command-ids.v1", &command_leaves);
-    let (nonce_root, _) = root_and_proofs("trnm.state.signer-nonces.v1", &nonce_leaves);
+        }),
+    );
+    compose_app_hash(height, object_root, command_root, nonce_root)
+}
+
+fn compute_app_hash_with_delta(height: u64, state: &AppState, delta: &BlockDelta) -> [u8; 32] {
+    let object_root = root_only(
+        "trnm.state.objects.v1",
+        merged_object_leaves(&state.objects, &delta.objects),
+    );
+    let command_root = root_only(
+        "trnm.state.command-ids.v1",
+        state
+            .command_ids
+            .union(&delta.command_ids)
+            .map(|command_id| hash_domain("trnm.state.command-id.v1", &[command_id.as_bytes()])),
+    );
+    let nonce_root = root_only(
+        "trnm.state.signer-nonces.v1",
+        state
+            .signer_nonces
+            .union(&delta.signer_nonces)
+            .map(|(signer_id, nonce)| {
+                hash_domain(
+                    "trnm.state.signer-nonce.v1",
+                    &[signer_id.as_bytes(), &nonce.to_be_bytes()],
+                )
+            }),
+    );
+    compose_app_hash(height, object_root, command_root, nonce_root)
+}
+
+fn merged_object_leaves(
+    base: &BTreeMap<String, StoredObject>,
+    changes: &BTreeMap<String, StoredObject>,
+) -> Vec<[u8; 32]> {
+    let mut base = base.iter().peekable();
+    let mut changes = changes.iter().peekable();
+    let mut leaves = Vec::with_capacity(base.len().saturating_add(changes.len()));
+    loop {
+        match (base.peek(), changes.peek()) {
+            (Some((base_key, base_object)), Some((change_key, change_object))) => {
+                match base_key.cmp(change_key) {
+                    std::cmp::Ordering::Less => {
+                        leaves.push(base_object.leaf_hash());
+                        base.next();
+                    }
+                    std::cmp::Ordering::Equal => {
+                        leaves.push(change_object.leaf_hash());
+                        base.next();
+                        changes.next();
+                    }
+                    std::cmp::Ordering::Greater => {
+                        leaves.push(change_object.leaf_hash());
+                        changes.next();
+                    }
+                }
+            }
+            (Some((_, object)), None) => {
+                leaves.push(object.leaf_hash());
+                base.next();
+            }
+            (None, Some((_, object))) => {
+                leaves.push(object.leaf_hash());
+                changes.next();
+            }
+            (None, None) => break,
+        }
+    }
+    leaves
+}
+
+fn compose_app_hash(
+    height: u64,
+    object_root: [u8; 32],
+    command_root: [u8; 32],
+    nonce_root: [u8; 32],
+) -> [u8; 32] {
     hash_domain(
         "trnm.cometbft.application.v2",
         &[
@@ -947,10 +1067,6 @@ fn decode_state(bytes: &[u8]) -> Result<AppState> {
         signer_nonces: persisted.signer_nonces,
         pending: None,
     })
-}
-
-fn persist_state(path: &Path, state: &AppState) -> Result<()> {
-    persist_state_bytes(path, &encode_state(state)?)
 }
 
 fn encode_state(state: &AppState) -> Result<Vec<u8>> {
@@ -1174,6 +1290,53 @@ mod tests {
     }
 
     #[test]
+    fn delta_app_hash_exactly_matches_materialized_v2_state() {
+        fn object(key: &str, version: u64, value: &[u8]) -> StoredObject {
+            StoredObject {
+                object_key_hex: key.to_string(),
+                object_type: "fixture".to_string(),
+                version,
+                value_hash_hex: hex::encode(hash_domain("trnm.state.object.value.v1", &[value])),
+                value_bytes: value.to_vec(),
+            }
+        }
+
+        let mut state = AppState::default();
+        state.objects.insert("a".to_string(), object("a", 1, b"a1"));
+        state.objects.insert("c".to_string(), object("c", 1, b"c1"));
+        state.command_ids.insert("command-old".to_string());
+        state
+            .signer_nonces
+            .insert(("did:operator:1".to_string(), 1));
+        state.height = 7;
+        state.app_hash = compute_app_hash(
+            state.height,
+            &state.objects,
+            &state.command_ids,
+            &state.signer_nonces,
+        );
+
+        let mut delta = BlockDelta::default();
+        delta.objects.insert("b".to_string(), object("b", 1, b"b1"));
+        delta.objects.insert("c".to_string(), object("c", 2, b"c2"));
+        delta.command_ids.insert("command-new".to_string());
+        delta
+            .signer_nonces
+            .insert(("did:operator:1".to_string(), u64::MAX));
+
+        let mut objects = state.objects.clone();
+        objects.extend(delta.objects.clone());
+        let mut command_ids = state.command_ids.clone();
+        command_ids.extend(delta.command_ids.clone());
+        let mut signer_nonces = state.signer_nonces.clone();
+        signer_nonces.extend(delta.signer_nonces.clone());
+        assert_eq!(
+            compute_app_hash_with_delta(8, &state, &delta),
+            compute_app_hash(8, &objects, &command_ids, &signer_nonces)
+        );
+    }
+
+    #[test]
     fn init_chain_binds_chain_identity_signers_and_app_version() {
         let (app, _) = fixture();
         let response = app.init_chain(genesis_request(&app));
@@ -1266,15 +1429,23 @@ mod tests {
     }
 
     #[test]
+    fn commit_without_finalize_fails_stop() {
+        let (app, _) = fixture();
+        assert!(std::panic::catch_unwind(|| app.commit()).is_err());
+    }
+
+    #[test]
     fn committed_state_survives_application_restart() {
         let root = std::env::temp_dir().join(format!(
-            "trnm-comet-state-{}-{}.json",
+            "trnm-comet-state-{}-{}",
             std::process::id(),
             now_unix_ms()
         ));
+        fs::create_dir_all(&root).unwrap();
+        let state_path = root.join("app-state.json");
         let (fixture_app, envelope) = fixture();
         let config = ConsensusAppConfig {
-            state_path: Some(root.clone()),
+            state_path: Some(state_path),
             ..fixture_app.core.config.clone()
         };
         let app = CometBftApplication::new(config.clone()).unwrap();
@@ -1291,7 +1462,8 @@ mod tests {
 
         let restarted = CometBftApplication::new(config).unwrap();
         assert_eq!(restarted.height_and_app_hash().unwrap(), expected);
-        let _ = fs::remove_file(root);
+        drop(restarted);
+        fs::remove_dir_all(root).unwrap();
     }
 
     #[test]
@@ -1310,12 +1482,14 @@ mod tests {
         assert_eq!(snapshot.height, source_state.0);
 
         let root = std::env::temp_dir().join(format!(
-            "trnm-comet-restored-state-{}-{}.json",
+            "trnm-comet-restored-state-{}-{}",
             std::process::id(),
             now_unix_ms()
         ));
+        fs::create_dir_all(&root).unwrap();
+        let state_path = root.join("app-state.json");
         let target = CometBftApplication::new(ConsensusAppConfig {
-            state_path: Some(root.clone()),
+            state_path: Some(state_path.clone()),
             ..source.core.config.clone()
         })
         .unwrap();
@@ -1346,12 +1520,13 @@ mod tests {
         drop(target);
 
         let restarted = CometBftApplication::new(ConsensusAppConfig {
-            state_path: Some(root.clone()),
+            state_path: Some(state_path),
             ..source.core.config.clone()
         })
         .unwrap();
         assert_eq!(restarted.height_and_app_hash().unwrap(), source_state);
-        let _ = fs::remove_file(root);
+        drop(restarted);
+        fs::remove_dir_all(root).unwrap();
     }
 
     #[test]
@@ -1393,6 +1568,89 @@ mod tests {
             response_apply_snapshot_chunk::Result::RejectSnapshot as i32
         );
         assert_eq!(target.height_and_app_hash().unwrap().0, 0);
+    }
+
+    #[test]
+    fn snapshot_restore_cas_cannot_overwrite_concurrently_committed_state() {
+        let (source, source_envelope) = fixture();
+        source.finalize_block(RequestFinalizeBlock {
+            txs: vec![Bytes::from(serde_json::to_vec(&source_envelope).unwrap())],
+            height: 1,
+            time: block_time(),
+            ..Default::default()
+        });
+        source.commit();
+        let source_state = source.height_and_app_hash().unwrap();
+        let snapshot = source.list_snapshots().snapshots.pop().unwrap();
+
+        let root = std::env::temp_dir().join(format!(
+            "trnm-comet-snapshot-cas-{}-{}",
+            std::process::id(),
+            now_unix_ms()
+        ));
+        fs::create_dir_all(&root).unwrap();
+        let state_path = root.join("app-state.json");
+        let target_config = ConsensusAppConfig {
+            state_path: Some(state_path),
+            ..source.core.config.clone()
+        };
+        let target = CometBftApplication::new(target_config.clone()).unwrap();
+        assert_eq!(
+            target
+                .offer_snapshot(RequestOfferSnapshot {
+                    snapshot: Some(snapshot.clone()),
+                    app_hash: Bytes::copy_from_slice(&source_state.1),
+                })
+                .result,
+            response_offer_snapshot::Result::Accept as i32
+        );
+
+        let signing_key = SigningKey::from_bytes(&[11u8; 32]);
+        let local_envelope = SignedCommandEnvelopeV1::sign(
+            "trnm-comet-spike",
+            "command-local-wins",
+            "did:operator:1",
+            "operator",
+            2,
+            1_000,
+            10_000,
+            "opaque_fixture_v1",
+            b"local-state",
+            &signing_key,
+        )
+        .unwrap();
+        target.finalize_block(RequestFinalizeBlock {
+            txs: vec![Bytes::from(serde_json::to_vec(&local_envelope).unwrap())],
+            height: 1,
+            time: block_time(),
+            ..Default::default()
+        });
+        target.commit();
+        let expected = target.height_and_app_hash().unwrap();
+
+        let chunk = source
+            .load_snapshot_chunk(RequestLoadSnapshotChunk {
+                height: snapshot.height,
+                format: snapshot.format,
+                chunk: 0,
+            })
+            .chunk;
+        let applied = target.apply_snapshot_chunk(RequestApplySnapshotChunk {
+            index: 0,
+            chunk,
+            sender: "stale-source".to_string(),
+        });
+        assert_eq!(
+            applied.result,
+            response_apply_snapshot_chunk::Result::RejectSnapshot as i32
+        );
+        assert_eq!(target.height_and_app_hash().unwrap(), expected);
+        drop(target);
+
+        let restarted = CometBftApplication::new(target_config).unwrap();
+        assert_eq!(restarted.height_and_app_hash().unwrap(), expected);
+        drop(restarted);
+        fs::remove_dir_all(root).unwrap();
     }
 
     #[test]
@@ -1440,6 +1698,301 @@ mod tests {
             chunk: 0,
         });
         assert!(!chunk.chunk.is_empty());
+        fs::remove_dir_all(root).unwrap();
+    }
+
+    #[test]
+    fn legacy_v2_json_migrates_once_to_sqlite_with_recoverable_backup() {
+        let root = std::env::temp_dir().join(format!(
+            "trnm-comet-store-migration-{}-{}",
+            std::process::id(),
+            now_unix_ms()
+        ));
+        fs::create_dir_all(&root).unwrap();
+        let state_path = root.join("app-state.json");
+        let (source, envelope) = fixture();
+        let response = source.finalize_block(RequestFinalizeBlock {
+            txs: vec![Bytes::from(serde_json::to_vec(&envelope).unwrap())],
+            height: 1,
+            time: block_time(),
+            ..Default::default()
+        });
+        assert_eq!(response.tx_results[0].code, 0);
+        source.commit();
+        let source_state = source.core.state.lock().unwrap().clone();
+        fs::write(&state_path, encode_state(&source_state).unwrap()).unwrap();
+
+        let migrated = CometBftApplication::new(ConsensusAppConfig {
+            state_path: Some(state_path.clone()),
+            ..source.core.config.clone()
+        })
+        .unwrap();
+        assert_eq!(
+            migrated.height_and_app_hash().unwrap(),
+            (source_state.height, source_state.app_hash)
+        );
+        assert!(state_path.with_extension("json.sqlite3").exists());
+        assert!(state_path.with_extension("json.legacy-v2").exists());
+        let status: serde_json::Value =
+            serde_json::from_slice(&fs::read(&state_path).unwrap()).unwrap();
+        assert_eq!(status["schema"], "trnm_cometbft_app_status_v1");
+        drop(migrated);
+        fs::remove_dir_all(root).unwrap();
+    }
+
+    #[test]
+    fn sqlite_head_wins_after_crash_between_database_commit_and_status_refresh() {
+        let root = std::env::temp_dir().join(format!(
+            "trnm-comet-store-recovery-{}-{}",
+            std::process::id(),
+            now_unix_ms()
+        ));
+        fs::create_dir_all(&root).unwrap();
+        let state_path = root.join("app-state.json");
+        let (fixture_app, envelope) = fixture();
+        let config = ConsensusAppConfig {
+            state_path: Some(state_path.clone()),
+            ..fixture_app.core.config.clone()
+        };
+        let app = CometBftApplication::new(config.clone()).unwrap();
+        app.finalize_block(RequestFinalizeBlock {
+            txs: vec![Bytes::from(serde_json::to_vec(&envelope).unwrap())],
+            height: 1,
+            time: block_time(),
+            ..Default::default()
+        });
+        app.commit();
+        let expected = app.height_and_app_hash().unwrap();
+        drop(app);
+
+        fs::write(
+            &state_path,
+            br#"{"schema":"trnm_cometbft_app_status_v1","height":0,"app_hash_hex":"stale"}"#,
+        )
+        .unwrap();
+        let restarted = CometBftApplication::new(config).unwrap();
+        assert_eq!(restarted.height_and_app_hash().unwrap(), expected);
+        let status: serde_json::Value =
+            serde_json::from_slice(&fs::read(&state_path).unwrap()).unwrap();
+        assert_eq!(status["height"], 1);
+        assert_eq!(status["app_hash_hex"], hex::encode(expected.1));
+        drop(restarted);
+        fs::remove_dir_all(root).unwrap();
+    }
+
+    #[test]
+    fn legacy_json_and_existing_sqlite_head_mismatch_fails_closed() {
+        let root = std::env::temp_dir().join(format!(
+            "trnm-comet-store-rollback-guard-{}-{}",
+            std::process::id(),
+            now_unix_ms()
+        ));
+        fs::create_dir_all(&root).unwrap();
+        let state_path = root.join("app-state.json");
+        let (fixture_app, envelope) = fixture();
+        let config = ConsensusAppConfig {
+            state_path: Some(state_path.clone()),
+            ..fixture_app.core.config.clone()
+        };
+        let app = CometBftApplication::new(config.clone()).unwrap();
+        app.finalize_block(RequestFinalizeBlock {
+            txs: vec![Bytes::from(serde_json::to_vec(&envelope).unwrap())],
+            height: 1,
+            time: block_time(),
+            ..Default::default()
+        });
+        app.commit();
+        drop(app);
+
+        fs::write(&state_path, encode_state(&AppState::default()).unwrap()).unwrap();
+        assert!(CometBftApplication::new(config).is_err());
+        fs::remove_dir_all(root).unwrap();
+    }
+
+    #[test]
+    fn sqlite_transaction_failpoints_recover_old_or_new_tip_atomically() {
+        let root = std::env::temp_dir().join(format!(
+            "trnm-comet-store-atomicity-{}-{}",
+            std::process::id(),
+            now_unix_ms()
+        ));
+        fs::create_dir_all(&root).unwrap();
+        let state_path = root.join("app-state.json");
+        let (fixture_app, envelope) = fixture();
+        let config = ConsensusAppConfig {
+            state_path: Some(state_path),
+            ..fixture_app.core.config.clone()
+        };
+        let tx = Bytes::from(serde_json::to_vec(&envelope).unwrap());
+
+        let app = CometBftApplication::new(config.clone()).unwrap();
+        let pending = {
+            let state = app.core.state.lock().unwrap();
+            app.execute_block(&state, std::slice::from_ref(&tx), 2_000)
+                .unwrap()
+        };
+        app.core
+            .store
+            .as_ref()
+            .unwrap()
+            .persist_transition_with_failpoint(
+                &app.core.state.lock().unwrap(),
+                &pending,
+                store::StoreFailpoint::BeforeSqlCommit,
+            )
+            .unwrap_err();
+        drop(app);
+        let app = CometBftApplication::new(config.clone()).unwrap();
+        assert_eq!(app.height_and_app_hash().unwrap().0, 0);
+
+        let pending = {
+            let state = app.core.state.lock().unwrap();
+            app.execute_block(&state, &[tx], 2_000).unwrap()
+        };
+        let expected = (pending.height, pending.app_hash);
+        app.core
+            .store
+            .as_ref()
+            .unwrap()
+            .persist_transition_with_failpoint(
+                &app.core.state.lock().unwrap(),
+                &pending,
+                store::StoreFailpoint::AfterSqlCommitBeforeStatus,
+            )
+            .unwrap_err();
+        drop(app);
+        let restarted = CometBftApplication::new(config).unwrap();
+        assert_eq!(restarted.height_and_app_hash().unwrap(), expected);
+        drop(restarted);
+        fs::remove_dir_all(root).unwrap();
+    }
+
+    #[test]
+    fn sqlite_object_corruption_fails_closed_on_restart() {
+        let root = std::env::temp_dir().join(format!(
+            "trnm-comet-store-corruption-{}-{}",
+            std::process::id(),
+            now_unix_ms()
+        ));
+        fs::create_dir_all(&root).unwrap();
+        let state_path = root.join("app-state.json");
+        let (fixture_app, envelope) = fixture();
+        let config = ConsensusAppConfig {
+            state_path: Some(state_path.clone()),
+            ..fixture_app.core.config.clone()
+        };
+        let app = CometBftApplication::new(config.clone()).unwrap();
+        app.finalize_block(RequestFinalizeBlock {
+            txs: vec![Bytes::from(serde_json::to_vec(&envelope).unwrap())],
+            height: 1,
+            time: block_time(),
+            ..Default::default()
+        });
+        app.commit();
+        drop(app);
+
+        let database =
+            rusqlite::Connection::open(state_path.with_extension("json.sqlite3")).unwrap();
+        database
+            .execute("UPDATE objects SET value_bytes=X'00'", [])
+            .unwrap();
+        drop(database);
+        assert!(CometBftApplication::new(config).is_err());
+        fs::remove_dir_all(root).unwrap();
+    }
+
+    #[test]
+    fn sqlite_store_preserves_full_u64_nonce_domain_and_chain_binding() {
+        let root = std::env::temp_dir().join(format!(
+            "trnm-comet-store-u64-{}-{}",
+            std::process::id(),
+            now_unix_ms()
+        ));
+        fs::create_dir_all(&root).unwrap();
+        let state_path = root.join("app-state.json");
+        let (fixture_app, _) = fixture();
+        let config = ConsensusAppConfig {
+            state_path: Some(state_path),
+            ..fixture_app.core.config.clone()
+        };
+        let app = CometBftApplication::new(config.clone()).unwrap();
+        let mut state = AppState {
+            height: 1,
+            ..Default::default()
+        };
+        state
+            .signer_nonces
+            .insert(("did:operator:1".to_string(), u64::MAX));
+        state.app_hash = compute_app_hash(
+            state.height,
+            &state.objects,
+            &state.command_ids,
+            &state.signer_nonces,
+        );
+        app.core
+            .store
+            .as_ref()
+            .unwrap()
+            .replace_state(&state)
+            .unwrap();
+        drop(app);
+
+        let restarted = CometBftApplication::new(config.clone()).unwrap();
+        assert!(restarted
+            .core
+            .state
+            .lock()
+            .unwrap()
+            .signer_nonces
+            .contains(&("did:operator:1".to_string(), u64::MAX)));
+        drop(restarted);
+
+        let wrong_chain = ConsensusAppConfig {
+            chain_id: "wrong-chain".to_string(),
+            ..config
+        };
+        assert!(CometBftApplication::new(wrong_chain).is_err());
+        fs::remove_dir_all(root).unwrap();
+    }
+
+    #[test]
+    fn sqlite_store_binds_authorized_signer_policy_across_restarts() {
+        let root = std::env::temp_dir().join(format!(
+            "trnm-comet-store-signer-policy-{}-{}",
+            std::process::id(),
+            now_unix_ms()
+        ));
+        fs::create_dir_all(&root).unwrap();
+        let state_path = root.join("app-state.json");
+        let (fixture_app, envelope) = fixture();
+        let config = ConsensusAppConfig {
+            state_path: Some(state_path),
+            ..fixture_app.core.config.clone()
+        };
+        let app = CometBftApplication::new(config.clone()).unwrap();
+        app.finalize_block(RequestFinalizeBlock {
+            txs: vec![Bytes::from(serde_json::to_vec(&envelope).unwrap())],
+            height: 1,
+            time: block_time(),
+            ..Default::default()
+        });
+        app.commit();
+        drop(app);
+
+        let mut changed_id = config.clone();
+        changed_id.authorized_signers[0].signer_id = "did:operator:changed".to_string();
+        assert!(CometBftApplication::new(changed_id).is_err());
+
+        let mut changed_role = config.clone();
+        changed_role.authorized_signers[0].signer_role = "hepta".to_string();
+        assert!(CometBftApplication::new(changed_role).is_err());
+
+        let mut changed_key = config.clone();
+        changed_key.authorized_signers[0].public_key_hex =
+            public_key_hex(&SigningKey::from_bytes(&[12u8; 32]));
+        assert!(CometBftApplication::new(changed_key).is_err());
+
+        assert!(CometBftApplication::new(config).is_ok());
         fs::remove_dir_all(root).unwrap();
     }
 }

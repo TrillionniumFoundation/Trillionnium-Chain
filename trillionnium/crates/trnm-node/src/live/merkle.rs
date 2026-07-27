@@ -59,6 +59,26 @@ pub fn root_and_proofs(tree_domain: &str, leaves: &[Hash32]) -> (Hash32, Vec<Mer
     (root, proofs)
 }
 
+pub fn root_only<I>(tree_domain: &str, leaves: I) -> Hash32
+where
+    I: IntoIterator<Item = Hash32>,
+{
+    let mut current = leaves.into_iter().collect::<Vec<_>>();
+    if current.is_empty() {
+        return empty_root(tree_domain);
+    }
+    while current.len() > 1 {
+        let mut next = Vec::with_capacity(current.len().div_ceil(2));
+        for pair in current.chunks(2) {
+            let left = pair[0];
+            let right = pair.get(1).copied().unwrap_or(left);
+            next.push(parent(tree_domain, &left, &right));
+        }
+        current = next;
+    }
+    current[0]
+}
+
 pub fn verify_proof(expected_root: &Hash32, proof: &MerkleProofV1) -> Result<()> {
     ensure!(
         proof.leaf_count > 0,
@@ -108,5 +128,18 @@ mod tests {
     #[test]
     fn empty_root_is_domain_separated() {
         assert_ne!(empty_root("transactions"), empty_root("objects"));
+    }
+
+    #[test]
+    fn root_only_matches_proof_builder_for_empty_even_and_odd_trees() {
+        for count in 0..=17 {
+            let leaves = (0..count)
+                .map(|index| hash_domain("leaf", &[&[index as u8]]))
+                .collect::<Vec<_>>();
+            assert_eq!(
+                root_only("equivalence", leaves.iter().copied()),
+                root_and_proofs("equivalence", &leaves).0
+            );
+        }
     }
 }

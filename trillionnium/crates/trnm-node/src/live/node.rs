@@ -156,11 +156,25 @@ impl LiveChainConfig {
     }
 }
 
+pub trait ObjectView {
+    fn get(&self, object_key_hex: &str) -> Option<&StoredObject>;
+
+    fn contains_key(&self, object_key_hex: &str) -> bool {
+        self.get(object_key_hex).is_some()
+    }
+}
+
+impl ObjectView for BTreeMap<String, StoredObject> {
+    fn get(&self, object_key_hex: &str) -> Option<&StoredObject> {
+        BTreeMap::get(self, object_key_hex)
+    }
+}
+
 pub trait CommandInterpreter: Send + Sync {
     fn prepare_execution(
         &self,
         envelope: &SignedCommandEnvelopeV1,
-        objects: &BTreeMap<String, StoredObject>,
+        objects: &dyn ObjectView,
     ) -> Result<CommandExecution>;
 }
 
@@ -205,7 +219,7 @@ impl CommandInterpreter for OpaqueCommitmentInterpreter {
     fn prepare_execution(
         &self,
         envelope: &SignedCommandEnvelopeV1,
-        objects: &BTreeMap<String, StoredObject>,
+        objects: &dyn ObjectView,
     ) -> Result<CommandExecution> {
         let key = hex::encode(hash_domain(
             "trnm.opaque.command.object-key.v1",
@@ -271,7 +285,7 @@ impl RoutingCommandInterpreter {
     fn prepare_research_execution(
         &self,
         envelope: &SignedCommandEnvelopeV1,
-        objects: &BTreeMap<String, StoredObject>,
+        objects: &dyn ObjectView,
     ) -> Result<CommandExecution> {
         let signed = SignedResearchCommandV1::from_canonical_bytes(&envelope.payload_bytes()?)
             .map_err(|error| anyhow!("decode canonical research command: {error}"))?;
@@ -378,7 +392,7 @@ impl CommandInterpreter for RoutingCommandInterpreter {
     fn prepare_execution(
         &self,
         envelope: &SignedCommandEnvelopeV1,
-        objects: &BTreeMap<String, StoredObject>,
+        objects: &dyn ObjectView,
     ) -> Result<CommandExecution> {
         if envelope.payload_type == RESEARCH_COMMAND_PAYLOAD_TYPE_V1 {
             self.prepare_research_execution(envelope, objects)
@@ -1129,7 +1143,7 @@ mod tests {
         fn prepare_execution(
             &self,
             envelope: &SignedCommandEnvelopeV1,
-            objects: &BTreeMap<String, StoredObject>,
+            objects: &dyn ObjectView,
         ) -> Result<CommandExecution> {
             ensure!(
                 envelope.payload_bytes()? != b"poison",
