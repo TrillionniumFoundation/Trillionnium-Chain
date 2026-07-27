@@ -91,20 +91,18 @@ impl LagSnapshot {
             .unwrap_or(u64::MAX);
         let height_within_healthy = height_lag <= HEALTHY_MAX_HEIGHT_LAG;
         let wall_clock_within_healthy = wall_clock_lag_secs <= HEALTHY_MAX_WALL_CLOCK_LAG_SECS;
-        let classification = if local_height.is_some()
-            && height_within_healthy
-            && wall_clock_within_healthy
-        {
-            LagHealth::Healthy
-        } else if height_within_healthy
-            || wall_clock_within_healthy
-            || height_lag <= HEALTHY_MAX_HEIGHT_LAG.saturating_mul(5)
-            || wall_clock_lag_secs <= HEALTHY_MAX_WALL_CLOCK_LAG_SECS.saturating_mul(4)
-        {
-            LagHealth::Degraded
-        } else {
-            LagHealth::Stalled
-        };
+        let classification =
+            if local_height.is_some() && height_within_healthy && wall_clock_within_healthy {
+                LagHealth::Healthy
+            } else if height_within_healthy
+                || wall_clock_within_healthy
+                || height_lag <= HEALTHY_MAX_HEIGHT_LAG.saturating_mul(5)
+                || wall_clock_lag_secs <= HEALTHY_MAX_WALL_CLOCK_LAG_SECS.saturating_mul(4)
+            {
+                LagHealth::Degraded
+            } else {
+                LagHealth::Stalled
+            };
 
         Self {
             local_height,

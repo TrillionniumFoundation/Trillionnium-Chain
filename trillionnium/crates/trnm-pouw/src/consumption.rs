@@ -1629,7 +1629,8 @@ mod tests {
     }
 
     #[test]
-    fn primary_payout_work_units_falls_back_to_metering_when_invalid_summary_with_accepted_count_above_receipts_is_scrubbed() {
+    fn primary_payout_work_units_falls_back_to_metering_when_invalid_summary_with_accepted_count_above_receipts_is_scrubbed(
+    ) {
         let mut st = StateStore::default();
         let task = sample_task(TaskStatus::Completed);
         st.set_task_consumption_summary(TaskConsumptionSummary {
@@ -1673,7 +1674,8 @@ mod tests {
     }
 
     #[test]
-    fn primary_payout_work_units_falls_back_to_metering_when_invalid_summary_with_challenge_count_above_receipts_is_scrubbed() {
+    fn primary_payout_work_units_falls_back_to_metering_when_invalid_summary_with_challenge_count_above_receipts_is_scrubbed(
+    ) {
         let mut st = StateStore::default();
         let task = sample_task(TaskStatus::Completed);
         st.set_task_consumption_summary(TaskConsumptionSummary {
@@ -1993,7 +1995,8 @@ mod tests {
     }
 
     #[test]
-    fn primary_payout_work_units_falls_back_to_metering_when_invalid_accepted_record_with_credit_above_claimed_units_is_scrubbed() {
+    fn primary_payout_work_units_falls_back_to_metering_when_invalid_accepted_record_with_credit_above_claimed_units_is_scrubbed(
+    ) {
         let mut st = StateStore::default();
         let task = sample_task(TaskStatus::Completed);
         let key = sample_record(
@@ -2353,7 +2356,8 @@ mod tests {
     }
 
     #[test]
-    fn primary_payout_work_units_falls_back_to_metering_when_invalid_summary_only_credit_without_receipts_is_scrubbed() {
+    fn primary_payout_work_units_falls_back_to_metering_when_invalid_summary_only_credit_without_receipts_is_scrubbed(
+    ) {
         let mut st = StateStore::default();
         let task = sample_task(TaskStatus::Completed);
         st.set_task_consumption_summary(TaskConsumptionSummary {
@@ -2378,8 +2382,8 @@ mod tests {
     }
 
     #[test]
-    fn reject_if_primary_settlement_pending_allows_progress_when_invalid_summary_only_credit_without_receipts_is_scrubbed()
-    {
+    fn reject_if_primary_settlement_pending_allows_progress_when_invalid_summary_only_credit_without_receipts_is_scrubbed(
+    ) {
         let mut st = StateStore::default();
         st.set_task_consumption_summary(TaskConsumptionSummary {
             task_id: 42,
@@ -2491,7 +2495,8 @@ mod tests {
     }
 
     #[test]
-    fn primary_payout_work_units_falls_back_to_metering_when_invalid_summary_credit_above_claimed_units_is_scrubbed() {
+    fn primary_payout_work_units_falls_back_to_metering_when_invalid_summary_credit_above_claimed_units_is_scrubbed(
+    ) {
         let mut st = StateStore::default();
         let task = sample_task(TaskStatus::Completed);
         st.set_task_consumption_summary(TaskConsumptionSummary {
@@ -2516,7 +2521,8 @@ mod tests {
     }
 
     #[test]
-    fn reject_if_primary_settlement_pending_allows_progress_when_invalid_summary_credit_above_claimed_units_is_scrubbed() {
+    fn reject_if_primary_settlement_pending_allows_progress_when_invalid_summary_credit_above_claimed_units_is_scrubbed(
+    ) {
         let mut st = StateStore::default();
         st.set_task_consumption_summary(TaskConsumptionSummary {
             task_id: 42,

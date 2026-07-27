@@ -1449,7 +1449,10 @@ fn validated_restorable_pending_resolve_snapshot(
     let has_resolve_authority = st.gov_param_string("resolve_authority").is_some()
         || st.pending_gov_update("resolve_authority").is_some();
 
-    if !has_resolve_authority && !snapshot_is_canonical && task_supports_pending_resolve_restore(&task) {
+    if !has_resolve_authority
+        && !snapshot_is_canonical
+        && task_supports_pending_resolve_restore(&task)
+    {
         return None;
     }
 
@@ -4521,8 +4524,8 @@ fn wal_state_root_surface_is_checkpoint_recovery_compatible(wal_entry: &WalMeta)
         return true;
     }
 
-    let looks_like_noncanonical_hex_digest = state_root_hex.len() == 64
-        && state_root_hex.chars().all(|ch| ch.is_ascii_hexdigit());
+    let looks_like_noncanonical_hex_digest =
+        state_root_hex.len() == 64 && state_root_hex.chars().all(|ch| ch.is_ascii_hexdigit());
     !looks_like_noncanonical_hex_digest
 }
 
@@ -5051,6 +5054,19 @@ pub fn verify_wal_and_find_checkpoint_node_recovery(
             .iter()
             .filter(|cp| cp.height == e.height)
             .collect();
+        let mut checkpoint_tuples: Vec<(&str, &str)> = checkpoints_at_height
+            .iter()
+            .map(|cp| (cp.state_root_hex.as_str(), cp.wal_entry_hash_hex.as_str()))
+            .collect();
+        checkpoint_tuples.sort_unstable();
+        checkpoint_tuples.dedup();
+        if checkpoint_tuples.len() > 1 {
+            // A recovery height is only trustworthy when every retained checkpoint
+            // record binds the same (state root, WAL hash) tuple. Byte-identical
+            // duplicates are harmless audit copies; any disagreement is ambiguous
+            // evidence and must fall back to the last proven height.
+            return Ok(best_checkpoint);
+        }
         let matching_hash_checkpoints: Vec<&CheckpointMeta> = checkpoints_at_height
             .iter()
             .copied()

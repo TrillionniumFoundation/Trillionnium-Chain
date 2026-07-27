@@ -99,6 +99,14 @@ pub trait ReliabilityStore {
         Ok(())
     }
 
+    fn refresh_legacy_dedup_key_with_ts(
+        &mut self,
+        _key: &DedupKey,
+        _now_unix_ms: u128,
+    ) -> Result<bool, ReliabilityStoreError> {
+        Ok(false)
+    }
+
     fn try_upsert_session_with_ts(
         &mut self,
         session: SessionState,
@@ -289,6 +297,21 @@ impl ReliabilityStore for InMemoryReliabilityStore {
         }
         self.remember_dedup_key_with_ts(key, now_unix_ms);
         Ok(())
+    }
+
+    fn refresh_legacy_dedup_key_with_ts(
+        &mut self,
+        key: &DedupKey,
+        now_unix_ms: u128,
+    ) -> Result<bool, ReliabilityStoreError> {
+        let Some(seen_at) = self.dedup.get_mut(key) else {
+            return Ok(false);
+        };
+        if *seen_at != 0 {
+            return Ok(false);
+        }
+        *seen_at = now_unix_ms;
+        Ok(true)
     }
 
     fn try_upsert_session_with_ts(
@@ -686,12 +709,12 @@ impl<S: ReliabilityStore> ReliabilityEngine<S> {
 
         let ack_id = format!("ack_{}_{}", dedup_key.from, dedup_key.seq_or_nonce);
         if self.store.contains_dedup_key(&dedup_key) {
-            // First-round R3 cut: when a duplicate hits a legacy seen_at=0 dedup row,
-            // refresh it to a real timestamp so migration-era compatibility state can
-            // age out under normal cleanup instead of living forever.
+            // Only migration-era seen_at=0 rows may be timestamped here. Refreshing
+            // a normal duplicate would extend its TTL on every replay and let an
+            // attacker retain dedup state indefinitely.
             let _ = self
                 .store
-                .try_remember_dedup_key_with_ts(dedup_key.clone(), now_unix_ms);
+                .refresh_legacy_dedup_key_with_ts(&dedup_key, now_unix_ms);
             return Ack {
                 code: AckCode::Duplicate,
                 ack_id,
@@ -1303,6 +1326,26 @@ impl ReliabilityStore for SqliteReliabilityStore {
         Ok(())
     }
 
+    fn refresh_legacy_dedup_key_with_ts(
+        &mut self,
+        key: &DedupKey,
+        now_unix_ms: u128,
+    ) -> Result<bool, ReliabilityStoreError> {
+        let seen = i64::try_from(now_unix_ms).unwrap_or(i64::MAX);
+        let changed = self
+            .conn
+            .execute(
+                "UPDATE reliability_dedup
+                 SET seen_at_unix_ms=?3
+                 WHERE from_addr=?1 AND seq_or_nonce=?2 AND seen_at_unix_ms=0",
+                rusqlite::params![key.from, key.seq_or_nonce, seen],
+            )
+            .map_err(|e| ReliabilityStoreError::InvalidState {
+                detail: format!("refresh legacy dedup row failed: {e}"),
+            })?;
+        Ok(changed == 1)
+    }
+
     fn forget_dedup_key(&mut self, key: &DedupKey) {
         let _ = self.conn.execute(
             "DELETE FROM reliability_dedup WHERE from_addr=?1 AND seq_or_nonce=?2",
@@ -1536,6 +1579,15 @@ mod tests {
             now_unix_ms: u128,
         ) -> Result<(), ReliabilityStoreError> {
             self.inner.try_remember_dedup_key_with_ts(key, now_unix_ms)
+        }
+
+        fn refresh_legacy_dedup_key_with_ts(
+            &mut self,
+            key: &DedupKey,
+            now_unix_ms: u128,
+        ) -> Result<bool, ReliabilityStoreError> {
+            self.inner
+                .refresh_legacy_dedup_key_with_ts(key, now_unix_ms)
         }
 
         fn forget_dedup_key(&mut self, key: &DedupKey) {
@@ -2088,13 +2140,13 @@ mod tests {
 
             fn remember_dedup_key(&mut self, _key: DedupKey) {}
 
-            fn try_remember_dedup_key_with_ts(
+            fn refresh_legacy_dedup_key_with_ts(
                 &mut self,
-                _key: DedupKey,
+                _key: &DedupKey,
                 now_unix_ms: u128,
-            ) -> Result<(), ReliabilityStoreError> {
+            ) -> Result<bool, ReliabilityStoreError> {
                 self.refreshed = now_unix_ms == 1_000;
-                Ok(())
+                Ok(true)
             }
         }
 

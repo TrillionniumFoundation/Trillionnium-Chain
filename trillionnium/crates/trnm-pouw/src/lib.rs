@@ -6429,7 +6429,9 @@ mod tests {
             111,
         )
         .unwrap_err();
-        assert!(matches!(err, PouwError::State(msg) if msg.contains("snapshotless revealed task requires migration replay/import path")));
+        assert!(
+            matches!(err, PouwError::State(msg) if msg.contains("snapshotless revealed task requires migration replay/import path"))
+        );
     }
 
     #[test]
@@ -6513,7 +6515,9 @@ mod tests {
             210,
         )
         .unwrap_err();
-        assert!(matches!(err, PouwError::State(msg) if msg.contains("snapshotless revealed task requires migration replay/import path")));
+        assert!(
+            matches!(err, PouwError::State(msg) if msg.contains("snapshotless revealed task requires migration replay/import path"))
+        );
     }
 
     #[test]
@@ -6551,7 +6555,9 @@ mod tests {
             210,
         )
         .unwrap_err();
-        assert!(matches!(err, PouwError::State(msg) if msg.contains("snapshotless revealed task requires migration replay/import path")));
+        assert!(
+            matches!(err, PouwError::State(msg) if msg.contains("snapshotless revealed task requires migration replay/import path"))
+        );
     }
 
     #[test]
@@ -6590,7 +6596,9 @@ mod tests {
             211,
         )
         .unwrap_err();
-        assert!(matches!(err, PouwError::State(msg) if msg.contains("snapshotless revealed task requires migration replay/import path")));
+        assert!(
+            matches!(err, PouwError::State(msg) if msg.contains("snapshotless revealed task requires migration replay/import path"))
+        );
     }
 
     #[test]
@@ -6632,7 +6640,9 @@ mod tests {
             210,
         )
         .unwrap_err();
-        assert!(matches!(err, PouwError::State(msg) if msg.contains("snapshotless revealed task requires migration replay/import path")));
+        assert!(
+            matches!(err, PouwError::State(msg) if msg.contains("snapshotless revealed task requires migration replay/import path"))
+        );
 
         let task = st.get_task(19132).unwrap();
         assert_eq!(task.status, TaskStatus::Revealed);
@@ -6662,8 +6672,8 @@ mod tests {
         legacy.challenge_window_blocks_snapshot = None;
         let r4 = st.update_task(r4, legacy).unwrap();
 
-        let r5 = apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into())
-            .unwrap();
+        let r5 =
+            apply_challenge(&mut st, r4, "challenger".into(), 10, "challenger".into()).unwrap();
         let task = st.get_task(r5.id).unwrap();
         assert_eq!(task.challenge_window_blocks_snapshot, Some(300));
         assert_eq!(task.status, TaskStatus::Challenged);

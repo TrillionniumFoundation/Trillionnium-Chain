@@ -12825,6 +12825,7 @@ line2
 
     #[test]
     fn load_latest_adapter_records_skips_invalid_jsonl_rows() {
+        let _guard = lock_env();
         let dir = run_root().join("run/worker-agent");
         fs::create_dir_all(&dir).expect("create worker-agent dir");
 
@@ -12866,6 +12867,7 @@ line2
 
     #[test]
     fn load_latest_adapter_records_falls_back_to_previous_nonempty_snapshot_when_latest_is_empty() {
+        let _guard = lock_env();
         let dir = run_root().join("run/worker-agent");
         fs::create_dir_all(&dir).expect("create worker-agent dir");
 
@@ -12921,6 +12923,7 @@ line2
     #[test]
     fn load_latest_adapter_records_falls_back_to_previous_nonempty_snapshot_when_latest_contains_only_comment_noise(
     ) {
+        let _guard = lock_env();
         let dir = run_root().join("run/worker-agent");
         fs::create_dir_all(&dir).expect("create worker-agent dir");
 
@@ -12980,6 +12983,7 @@ line2
     #[test]
     fn load_latest_adapter_records_falls_back_to_previous_nonempty_snapshot_when_latest_is_corrupt()
     {
+        let _guard = lock_env();
         let dir = run_root().join("run/worker-agent");
         fs::create_dir_all(&dir).expect("create worker-agent dir");
 
@@ -13034,6 +13038,7 @@ line2
 
     #[test]
     fn load_latest_adapter_records_accepts_crlf_separated_whitespace_prefixed_utf8_bom_snapshot() {
+        let _guard = lock_env();
         let dir = run_root().join("run/worker-agent");
         fs::create_dir_all(&dir).expect("create worker-agent dir");
 
@@ -13083,6 +13088,7 @@ line2
     #[test]
     fn load_latest_adapter_records_skips_invalid_utf8_rows_without_dropping_same_snapshot_valid_rows(
     ) {
+        let _guard = lock_env();
         let dir = run_root().join("run/worker-agent");
         fs::create_dir_all(&dir).expect("create worker-agent dir");
 
@@ -13130,6 +13136,7 @@ line2
     #[test]
     fn load_latest_adapter_records_falls_back_to_previous_nonempty_snapshot_when_latest_is_invalid_utf8_only(
     ) {
+        let _guard = lock_env();
         let dir = run_root().join("run/worker-agent");
         fs::create_dir_all(&dir).expect("create worker-agent dir");
 

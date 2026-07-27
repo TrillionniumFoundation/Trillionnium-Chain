@@ -231,8 +231,10 @@ fn is_documentation_or_benchmark_ip(ip: std::net::IpAddr) -> bool {
     match ip {
         std::net::IpAddr::V4(addr) => {
             let octets = addr.octets();
-            matches!(octets, [192, 0, 2, _] | [198, 51, 100, _] | [203, 0, 113, _])
-                || (octets[0] == 198 && octets[1] >= 18 && octets[1] <= 19)
+            matches!(
+                octets,
+                [192, 0, 2, _] | [198, 51, 100, _] | [203, 0, 113, _]
+            ) || (octets[0] == 198 && octets[1] >= 18 && octets[1] <= 19)
         }
         std::net::IpAddr::V6(addr) => {
             let segments = addr.segments();
@@ -1146,7 +1148,11 @@ fn metadata_only_operator_action(recovered: &RecoveredWalState) -> String {
     match recovered.checkpoint_height_retained {
         Some(checkpoint_height) if checkpoint_height < tip_height => {
             let checkpoint_lag = tip_height - checkpoint_height;
-            let lag_blocks = if checkpoint_lag == 1 { "block" } else { "blocks" };
+            let lag_blocks = if checkpoint_lag == 1 {
+                "block"
+            } else {
+                "blocks"
+            };
             format!(
                 "operator action: restore an application snapshot that covers retained WAL tip height {} before retrying join/rejoin; retained checkpoint height {} is {} {} behind, so do not resume from metadata alone",
                 tip_height,
@@ -1157,7 +1163,11 @@ fn metadata_only_operator_action(recovered: &RecoveredWalState) -> String {
         }
         Some(checkpoint_height) if checkpoint_height > tip_height => {
             let checkpoint_lead = checkpoint_height - tip_height;
-            let lead_blocks = if checkpoint_lead == 1 { "block" } else { "blocks" };
+            let lead_blocks = if checkpoint_lead == 1 {
+                "block"
+            } else {
+                "blocks"
+            };
             format!(
                 "operator action: investigate WAL/checkpoint mismatch (retained WAL tip height {}, checkpoint height {}, checkpoint leads tip by {} {}), rebuild the recovery inputs, and only retry join/rejoin once WAL tip and checkpoint evidence agree",
                 tip_height,
@@ -2089,17 +2099,14 @@ fn validate_node_config(cfg: NodeConfig, path: &str) -> Result<NodeConfig> {
         .and_then(|inner| inner.strip_suffix(']'))
         .is_some_and(|inner| inner.parse::<std::net::IpAddr>().is_ok());
     let normalized_node_id_host_candidate = node_id.strip_suffix('.').unwrap_or(node_id);
-    let dns_like_host_label = normalized_node_id_host_candidate
-        .split('.')
-        .all(|label| {
-            !label.is_empty()
-                && label
-                    .chars()
-                    .all(|ch| ch.is_ascii_alphanumeric() || ch == '-')
-                && !label.starts_with('-')
-                && !label.ends_with('-')
-        })
-        && normalized_node_id_host_candidate.contains('.');
+    let dns_like_host_label = normalized_node_id_host_candidate.split('.').all(|label| {
+        !label.is_empty()
+            && label
+                .chars()
+                .all(|ch| ch.is_ascii_alphanumeric() || ch == '-')
+            && !label.starts_with('-')
+            && !label.ends_with('-')
+    }) && normalized_node_id_host_candidate.contains('.');
     anyhow::ensure!(
         !normalized_node_id_host_candidate.eq_ignore_ascii_case("localhost")
             && node_id.parse::<std::net::IpAddr>().is_err()
@@ -2376,10 +2383,13 @@ fn resolve_config_path(path: &str) -> PathBuf {
     let workspace_anchor = workspace_root.file_name().map(Path::new);
     let workspace_anchor = workspace_anchor
         .and_then(|anchor| {
-            requested
-                .strip_prefix(anchor)
-                .ok()
-                .or_else(|| requested.strip_prefix(Path::new(".")).ok()?.strip_prefix(anchor).ok())
+            requested.strip_prefix(anchor).ok().or_else(|| {
+                requested
+                    .strip_prefix(Path::new("."))
+                    .ok()?
+                    .strip_prefix(anchor)
+                    .ok()
+            })
         })
         .unwrap_or(requested);
     let workspace_relative = workspace_root.join(workspace_anchor);
@@ -2409,7 +2419,9 @@ fn ensure_config_path_stays_within_allowed_roots(requested: &str, resolved: &Pat
 
         loop {
             if cursor.exists() {
-                let mut canonical = cursor.canonicalize().unwrap_or_else(|_| cursor.to_path_buf());
+                let mut canonical = cursor
+                    .canonicalize()
+                    .unwrap_or_else(|_| cursor.to_path_buf());
                 for component in suffix.iter().rev() {
                     canonical.push(component);
                 }
@@ -2570,7 +2582,10 @@ fn find_forbidden_bootstrap_alias_field(raw: &str) -> Option<&'static str> {
 }
 
 fn validate_config_path_input(path: &str) -> Result<()> {
-    anyhow::ensure!(!path.trim().is_empty(), "read config failed: path must not be empty");
+    anyhow::ensure!(
+        !path.trim().is_empty(),
+        "read config failed: path must not be empty"
+    );
     anyhow::ensure!(
         path == path.trim(),
         "read config failed: path must not contain leading or trailing whitespace"
@@ -2884,7 +2899,10 @@ fn event_type_of(tx: &MockTx) -> &'static str {
 }
 
 fn uses_legacy_resolve_approval_stage(tx: &MockTx, err_kind: Option<&str>) -> bool {
-    matches!((tx, err_kind), (MockTx::Resolve { .. }, Some("resolve_approval_staged")))
+    matches!(
+        (tx, err_kind),
+        (MockTx::Resolve { .. }, Some("resolve_approval_staged"))
+    )
 }
 
 fn event_type_for_apply_outcome(tx: &MockTx, err_kind: Option<&str>) -> &'static str {
@@ -3019,8 +3037,12 @@ fn is_canonical_receipt_event_actor_id(actor: &str) -> bool {
     !actor.is_empty()
         && actor == actor.trim()
         && actor.is_ascii()
-        && !actor.chars().any(|ch| ch.is_whitespace() || ch.is_control())
-        && !actor.chars().any(|ch| matches!(ch, ',' | ';' | ':' | '|' | '/' | '\\'))
+        && !actor
+            .chars()
+            .any(|ch| ch.is_whitespace() || ch.is_control())
+        && !actor
+            .chars()
+            .any(|ch| matches!(ch, ',' | ';' | ':' | '|' | '/' | '\\'))
 }
 
 fn normalized_consumption_resolution_code(code: &str) -> Option<&str> {
@@ -3816,10 +3838,7 @@ fn restore_receipt_settlement_rollback_snapshot(
         }
     }
 
-    st.set_consumer_consumption_nonce(
-        &snapshot.consumer_id,
-        snapshot.consumer_nonce.unwrap_or(0),
-    );
+    st.set_consumer_consumption_nonce(&snapshot.consumer_id, snapshot.consumer_nonce.unwrap_or(0));
 }
 
 fn rollback_tx_snapshot(st: &mut StateStore, snapshot: TxRollbackSnapshot) {
@@ -4168,7 +4187,9 @@ fn consumption_record_key_of(tx: &MockTx) -> Option<ConsumptionRecordKey> {
     }
 }
 
-fn receipt_settlement_conflict_refs(key: &ConsumptionRecordKey) -> (ObjectRef, ObjectRef, ObjectRef) {
+fn receipt_settlement_conflict_refs(
+    key: &ConsumptionRecordKey,
+) -> (ObjectRef, ObjectRef, ObjectRef) {
     (
         consumer_consumption_nonce_ref(&key.consumer_id),
         consumption_record_ref(key),
@@ -4182,7 +4203,10 @@ fn receipt_settlement_conflict_refs_of(tx: &MockTx) -> Option<(ObjectRef, Object
 
 fn receipt_settlement_hot_labels(key: &ConsumptionRecordKey) -> [String; 3] {
     [
-        format!("{RECEIPT_CONSUMER_NONCE_HOT_LABEL_PREFIX}.{}", key.consumer_id),
+        format!(
+            "{RECEIPT_CONSUMER_NONCE_HOT_LABEL_PREFIX}.{}",
+            key.consumer_id
+        ),
         format!("{RECEIPT_RECORD_HOT_LABEL_PREFIX}.{}", key.storage_key()),
         format!("{RECEIPT_SUMMARY_HOT_LABEL_PREFIX}.{}", key.task_id),
     ]
@@ -4219,7 +4243,9 @@ fn summarize_hot_objects(st: &StateStore, txs: &[MockTx]) -> HotObjectSummary {
                     }
                 }
                 if matches!(tx, MockTx::ResolveConsumptionReceipt { .. }) {
-                    *labels.entry(RESOLVE_AUTHORITY_HOT_LABEL.to_string()).or_insert(0) += 1;
+                    *labels
+                        .entry(RESOLVE_AUTHORITY_HOT_LABEL.to_string())
+                        .or_insert(0) += 1;
                 }
             }
             _ => {}
@@ -4620,35 +4646,15 @@ mod tests {
             stale_nonce: 5,
         };
 
-        let committed = format_bft_round_outcome_log_line(
-            true,
-            7,
-            2,
-            "abc123",
-            4,
-            6,
-            5,
-            1,
-            2,
-            &reject_stats,
-        );
+        let committed =
+            format_bft_round_outcome_log_line(true, 7, 2, "abc123", 4, 6, 5, 1, 2, &reject_stats);
         assert!(committed.contains("step=Commit block_hash=abc123"));
         assert!(committed.contains("auth_reject_stale=5 auth_reject_stale_nonce=5"));
         assert_eq!(committed.matches("auth_reject_stale=").count(), 1);
         assert_eq!(committed.matches("auth_reject_stale_nonce=").count(), 1);
 
-        let round_change = format_bft_round_outcome_log_line(
-            false,
-            7,
-            2,
-            "abc123",
-            4,
-            6,
-            5,
-            1,
-            2,
-            &reject_stats,
-        );
+        let round_change =
+            format_bft_round_outcome_log_line(false, 7, 2, "abc123", 4, 6, 5, 1, 2, &reject_stats);
         assert!(round_change.contains("step=RoundChange reason=no_quorum"));
         assert!(round_change.contains("auth_reject_stale=5 auth_reject_stale_nonce=5"));
         assert_eq!(round_change.matches("auth_reject_stale=").count(), 1);
@@ -4736,7 +4742,10 @@ mod tests {
             "{RECEIPT_CONSUMER_NONCE_HOT_LABEL_PREFIX}.{}",
             replay_key.consumer_id
         );
-        let record_label = format!("{RECEIPT_RECORD_HOT_LABEL_PREFIX}.{}", replay_key.storage_key());
+        let record_label = format!(
+            "{RECEIPT_RECORD_HOT_LABEL_PREFIX}.{}",
+            replay_key.storage_key()
+        );
         let summary_label = format!("{RECEIPT_SUMMARY_HOT_LABEL_PREFIX}.{}", replay_key.task_id);
 
         let summary = summarize_hot_objects(
@@ -5175,8 +5184,14 @@ mod tests {
                 panic!("{path} should resolve for shipped bootstrap config anchoring: {err:#}")
             });
             assert_eq!(cfg.node_id, "node1", "unexpected node_id for {path}");
-            assert_eq!(cfg.rpc_addr, "127.0.0.1:26657", "unexpected rpc_addr for {path}");
-            assert_eq!(cfg.p2p_addr, "127.0.0.1:26656", "unexpected p2p_addr for {path}");
+            assert_eq!(
+                cfg.rpc_addr, "127.0.0.1:26657",
+                "unexpected rpc_addr for {path}"
+            );
+            assert_eq!(
+                cfg.p2p_addr, "127.0.0.1:26656",
+                "unexpected p2p_addr for {path}"
+            );
         }
     }
 
@@ -5358,8 +5373,9 @@ mod tests {
         let original_cwd = std::env::current_dir().expect("capture cwd");
         std::env::set_current_dir(&temp_root).expect("enter shadow cwd");
 
-        let loaded = load_config("./trillionnium/configs/node1.toml")
-            .expect("curdir-prefixed repo-root path should keep resolving to shipped workspace config");
+        let loaded = load_config("./trillionnium/configs/node1.toml").expect(
+            "curdir-prefixed repo-root path should keep resolving to shipped workspace config",
+        );
 
         std::env::set_current_dir(&original_cwd).expect("restore cwd");
         let _ = std::fs::remove_dir_all(&temp_root);
@@ -5419,8 +5435,8 @@ mod tests {
 
         let original_cwd = std::env::current_dir().expect("capture cwd");
         std::env::set_current_dir(&workspace_shadow).expect("enter shadow cwd");
-        let err = load_config(requested_path)
-            .expect_err("relative symlink escape should fail closed");
+        let err =
+            load_config(requested_path).expect_err("relative symlink escape should fail closed");
         std::env::set_current_dir(&original_cwd).expect("restore cwd");
         let _ = std::fs::remove_dir_all(&temp_root);
 
@@ -5454,7 +5470,8 @@ mod tests {
         ));
         let workspace_shadow = temp_root.join("workspace-shadow");
         let configs_dir = workspace_shadow.join("configs");
-        std::fs::create_dir_all(&configs_dir).expect("workspace shadow config dir should be creatable");
+        std::fs::create_dir_all(&configs_dir)
+            .expect("workspace shadow config dir should be creatable");
         std::fs::write(
             configs_dir.join("node1.toml"),
             "node_id = \"node1\"\nrpc_addr = \"127.0.0.1:26657\"\np2p_addr = \"127.0.0.1:26656\"\n",
@@ -5833,7 +5850,8 @@ mod tests {
                 )
             });
         assert_eq!(
-            canonical_workspace_relative_readme_path, canonical_readme_path,
+            canonical_workspace_relative_readme_path,
+            canonical_readme_path,
             "{} must canonicalize to the same shipped bootstrap README as {}",
             workspace_relative_readme_path.display(),
             readme_path.display()
@@ -5847,7 +5865,8 @@ mod tests {
                 )
             });
         assert_eq!(
-            canonical_curdir_repo_relative_readme_path, canonical_readme_path,
+            canonical_curdir_repo_relative_readme_path,
+            canonical_readme_path,
             "{} must canonicalize to the same shipped bootstrap README as {}",
             curdir_repo_relative_readme_path.display(),
             readme_path.display()
@@ -6014,12 +6033,16 @@ mod tests {
         );
         assert_eq!(
             p2p_socket,
-            "127.0.0.1:26656".parse().expect("socket literal should parse"),
+            "127.0.0.1:26656"
+                .parse()
+                .expect("socket literal should parse"),
             "default trnm-node config must keep the shipped bootstrap anchor p2p tuple"
         );
         assert_eq!(
             rpc_socket,
-            "127.0.0.1:26657".parse().expect("socket literal should parse"),
+            "127.0.0.1:26657"
+                .parse()
+                .expect("socket literal should parse"),
             "default trnm-node config must keep the shipped bootstrap anchor rpc tuple"
         );
     }
@@ -6096,7 +6119,10 @@ mod tests {
             })
             .collect::<Option<Vec<_>>>()
             .expect("non-regular shipped bootstrap topology entries should stay excluded deterministically");
-        let shipped_topology_files = shipped_topology_file_names.iter().cloned().collect::<HashSet<_>>();
+        let shipped_topology_files = shipped_topology_file_names
+            .iter()
+            .cloned()
+            .collect::<HashSet<_>>();
         let expected_shipped_topology_files = HashSet::from([
             String::from("README.md"),
             String::from("node1.toml"),
@@ -6145,12 +6171,13 @@ mod tests {
                     .unwrap_or_else(|_| std::path::Path::new(config_path)),
             );
             let absolute_workspace_relative_path = workspace_root.join(workspace_relative_path);
-            let on_disk_metadata = std::fs::symlink_metadata(&absolute_config_path).unwrap_or_else(|err| {
-                panic!(
-                    "{} should stay stat-able for shipped bootstrap topology checks: {err}",
-                    absolute_config_path.display()
-                )
-            });
+            let on_disk_metadata =
+                std::fs::symlink_metadata(&absolute_config_path).unwrap_or_else(|err| {
+                    panic!(
+                        "{} should stay stat-able for shipped bootstrap topology checks: {err}",
+                        absolute_config_path.display()
+                    )
+                });
             assert!(
                 on_disk_metadata.file_type().is_file(),
                 "{} must remain a regular file for deterministic shipped bootstrap topology fixtures",
@@ -6319,7 +6346,8 @@ mod tests {
             anchor.0
         );
         assert_eq!(
-            anchor.2.port(), 26657,
+            anchor.2.port(),
+            26657,
             "{} must remain the unique shipped Day-1 bootstrap anchor RPC port",
             anchor.0
         );
@@ -6348,7 +6376,8 @@ mod tests {
             p2p_anchor.0
         );
         assert_eq!(
-            p2p_anchor.3.port(), 26656,
+            p2p_anchor.3.port(),
+            26656,
             "{} must remain the unique shipped Day-1 bootstrap anchor P2P port",
             p2p_anchor.0
         );
@@ -6404,7 +6433,8 @@ mod tests {
         let err = load_config("configs/node1.toml,configs/node2.toml")
             .expect_err("config path lists must fail closed");
         assert!(
-            err.to_string().contains("path must not contain list separators"),
+            err.to_string()
+                .contains("path must not contain list separators"),
             "unexpected error: {err:#}"
         );
     }
@@ -6455,9 +6485,13 @@ mod tests {
 
     #[test]
     fn load_config_rejects_home_expansion_style_paths_fail_closed() {
-        for path in ["~/configs/node1.toml", "~\\configs\\node1.toml", "~qianqi/configs/node1.toml"] {
-            let err = load_config(path)
-                .expect_err("config path home-expansion markers must fail closed");
+        for path in [
+            "~/configs/node1.toml",
+            "~\\configs\\node1.toml",
+            "~qianqi/configs/node1.toml",
+        ] {
+            let err =
+                load_config(path).expect_err("config path home-expansion markers must fail closed");
             assert!(
                 err.to_string()
                     .contains("path must not rely on home-directory expansion (~)"),
@@ -6586,8 +6620,9 @@ mod tests {
             let err_surface = format!("{err:#}");
             assert!(
                 err_surface.contains("parse toml failed")
-                    && err_surface
-                        .contains(&format!("forbidden bootstrap alias field `{unknown_field}`")),
+                    && err_surface.contains(&format!(
+                        "forbidden bootstrap alias field `{unknown_field}`"
+                    )),
                 "unexpected error for {unknown_field}: {err:#}"
             );
             assert!(
@@ -6624,7 +6659,8 @@ mod tests {
         .expect("write temp config");
         let canonical_path = path.canonicalize().expect("canonicalize temp config path");
         let operator_path = path.to_str().expect("temp path utf-8").to_string();
-        let err = load_config(&operator_path).expect_err("unexpected config fields must fail closed");
+        let err =
+            load_config(&operator_path).expect_err("unexpected config fields must fail closed");
         let err_surface = format!("{err:#}");
         assert!(
             err_surface.contains("parse toml failed")
@@ -6667,7 +6703,10 @@ mod tests {
                 )
             });
 
-        for forbidden_alias in FORBIDDEN_BOOTSTRAP_ALIAS_FIELDS.iter().map(|(field, _)| *field) {
+        for forbidden_alias in FORBIDDEN_BOOTSTRAP_ALIAS_FIELDS
+            .iter()
+            .map(|(field, _)| *field)
+        {
             let mention_count = fixture_scope_section
                 .matches(&format!("`{forbidden_alias}`"))
                 .count();
@@ -6696,10 +6735,12 @@ mod tests {
 
         let canonical_path = std::fs::canonicalize(&path).expect("canonicalize temp config path");
         let operator_path = format!("./{file_name}");
-        let err = load_config(&operator_path).expect_err("generic bootstrap alias must fail closed");
+        let err =
+            load_config(&operator_path).expect_err("generic bootstrap alias must fail closed");
         let err_surface = format!("{err:#}");
         assert!(
-            err_surface.contains("parse toml failed") && err_surface.contains("unknown field `bootstrap`"),
+            err_surface.contains("parse toml failed")
+                && err_surface.contains("unknown field `bootstrap`"),
             "unexpected error for generic bootstrap alias: {err:#}"
         );
         assert!(
@@ -7738,11 +7779,7 @@ mod tests {
                 "node'alpha",
                 "node_id must not contain quoting characters (\" ' `)",
             ),
-            (
-                "dot-segment",
-                ".",
-                "node_id must not be '.' or '..'",
-            ),
+            ("dot-segment", ".", "node_id must not be '.' or '..'"),
             (
                 "path-like",
                 "seed/slot",
@@ -8505,9 +8542,7 @@ mod tests {
                 );
 
                 let cfg = load_config(&config).unwrap_or_else(|err| {
-                    panic!(
-                        "{config} should load for shipped bootstrap slot {slot}: {err:#}"
-                    )
+                    panic!("{config} should load for shipped bootstrap slot {slot}: {err:#}")
                 });
                 assert_eq!(
                     cfg.node_id, node_id,
@@ -9422,8 +9457,7 @@ mod tests {
         )
         .expect_err("oversized node_id must fail closed");
         assert!(
-            err.to_string()
-                .contains("node_id must be at most 64 bytes"),
+            err.to_string().contains("node_id must be at most 64 bytes"),
             "unexpected error: {err:#}"
         );
     }
@@ -9569,7 +9603,14 @@ mod tests {
 
     #[test]
     fn validate_node_config_rejects_path_and_host_literal_separators_in_node_id() {
-        for node_id in ["seed/slot", "seed\\slot", "seed:slot", "[seed]", "seed]", "[seed"] {
+        for node_id in [
+            "seed/slot",
+            "seed\\slot",
+            "seed:slot",
+            "[seed]",
+            "seed]",
+            "[seed",
+        ] {
             let err = validate_node_config(
                 NodeConfig {
                     node_id: node_id.into(),
@@ -9663,10 +9704,9 @@ mod tests {
                 "node.toml",
             )
             .expect_err("host-like node_id literals must fail closed");
-            assert!(
-                err.to_string()
-                    .contains("node_id must not look like a host or socket literal")
-            );
+            assert!(err
+                .to_string()
+                .contains("node_id must not look like a host or socket literal"));
         }
     }
 
@@ -9702,7 +9742,8 @@ mod tests {
             )
             .expect_err("IPv6 literal or socket-shaped node_id must fail closed");
             assert!(
-                err.to_string().contains("node_id must not contain path or host-literal separators"),
+                err.to_string()
+                    .contains("node_id must not contain path or host-literal separators"),
                 "unexpected error for {node_id}: {err:#}"
             );
         }
@@ -11613,9 +11654,15 @@ mod tests {
         assert!(incident_review_fields[7].ends_with("_total"));
         assert!(incident_review_fields[8].ends_with("_ppm"));
         assert_eq!(incident_review_fields[1], "recovery_error_rate");
-        assert_eq!(incident_review_fields[4], "bft_commit_observed_height_rate_ppm");
+        assert_eq!(
+            incident_review_fields[4],
+            "bft_commit_observed_height_rate_ppm"
+        );
         assert_eq!(incident_review_fields[5], "bft_skipped_height_total");
-        assert_eq!(incident_review_fields[6], "bft_skipped_observed_height_rate_ppm");
+        assert_eq!(
+            incident_review_fields[6],
+            "bft_skipped_observed_height_rate_ppm"
+        );
         assert_eq!(incident_review_fields[7], "bft_round_change_total");
         assert_eq!(incident_review_fields[8], "bft_round_change_per_height_ppm");
         assert_ne!(incident_review_fields[4], incident_review_fields[6]);
@@ -15248,8 +15295,7 @@ mod tests {
         let result_hash = [0x2a; 32];
         put_sample_poco_task(&mut st, 42, "worker-alpha", result_hash);
 
-        let receipt =
-            sample_consumption_receipt(42, "worker-alpha", "consumer-bravo", result_hash);
+        let receipt = sample_consumption_receipt(42, "worker-alpha", "consumer-bravo", result_hash);
 
         let assert_receipt_event_type = |line: &str, expected_event_type: &str| {
             assert!(
@@ -15362,8 +15408,7 @@ mod tests {
         let result_hash = [0x2c; 32];
         put_sample_poco_task(&mut st, 42, "worker-alpha", result_hash);
 
-        let receipt =
-            sample_consumption_receipt(42, "worker-alpha", "consumer-bravo", result_hash);
+        let receipt = sample_consumption_receipt(42, "worker-alpha", "consumer-bravo", result_hash);
 
         let submit_tx = MockTx::SubmitConsumptionReceipt {
             receipt: receipt.clone(),
@@ -15485,10 +15530,17 @@ mod tests {
         };
 
         let canonical_key = consumption_record_key_of(&submit_tx).expect("submit key");
-        assert_eq!(consumption_record_key_of(&challenge_tx), Some(canonical_key.clone()));
-        assert_eq!(consumption_record_key_of(&resolve_tx), Some(canonical_key.clone()));
+        assert_eq!(
+            consumption_record_key_of(&challenge_tx),
+            Some(canonical_key.clone())
+        );
+        assert_eq!(
+            consumption_record_key_of(&resolve_tx),
+            Some(canonical_key.clone())
+        );
 
-        let (consumer_nonce_ref, record_ref, summary_ref) = receipt_settlement_conflict_refs(&canonical_key);
+        let (consumer_nonce_ref, record_ref, summary_ref) =
+            receipt_settlement_conflict_refs(&canonical_key);
 
         let submit_decl = read_write_decl(&StateStore::default(), &submit_tx, 1);
         assert!(submit_decl.read_set.contains(&consumer_nonce_ref));
@@ -15521,8 +15573,7 @@ mod tests {
         let result_hash = [0x2a; 32];
         put_sample_poco_task(&mut st, 42, "worker-alpha", result_hash);
 
-        let receipt =
-            sample_consumption_receipt(42, "worker-alpha", "consumer-bravo", result_hash);
+        let receipt = sample_consumption_receipt(42, "worker-alpha", "consumer-bravo", result_hash);
         let submit_tx = MockTx::SubmitConsumptionReceipt {
             receipt: receipt.clone(),
         };
@@ -16398,8 +16449,7 @@ mod tests {
         let result_hash = [0x11; 32];
         put_sample_poco_task(&mut st, 42, "worker-alpha", result_hash);
 
-        let receipt =
-            sample_consumption_receipt(42, "worker-alpha", "consumer-bravo", result_hash);
+        let receipt = sample_consumption_receipt(42, "worker-alpha", "consumer-bravo", result_hash);
         let key = receipt.replay_key();
 
         apply_one(&mut st, MockTx::SubmitConsumptionReceipt { receipt }, 10)
@@ -16447,8 +16497,7 @@ mod tests {
         let result_hash = [0x21; 32];
         put_sample_poco_task(&mut st, 42, "worker-alpha", result_hash);
 
-        let receipt =
-            sample_consumption_receipt(42, "worker-alpha", "consumer-bravo", result_hash);
+        let receipt = sample_consumption_receipt(42, "worker-alpha", "consumer-bravo", result_hash);
         let record_key = ConsumptionRecordKey {
             task_id: receipt.task_id,
             consumer_id: receipt.consumer_id.clone(),
@@ -16534,7 +16583,10 @@ mod tests {
         rollback_tx_snapshot(&mut st, resolve_snapshot);
         assert_eq!(st.consumption_record(&record_key), before_resolve_record);
         assert_eq!(st.task_consumption_summary(42), before_resolve_summary);
-        assert_eq!(st.consumer_consumption_nonce("consumer-bravo"), before_resolve_nonce);
+        assert_eq!(
+            st.consumer_consumption_nonce("consumer-bravo"),
+            before_resolve_nonce
+        );
         assert_eq!(st.state_root(), before_resolve_root);
     }
 
@@ -16544,8 +16596,7 @@ mod tests {
         let result_hash = [0x22; 32];
         put_sample_poco_task(&mut st, 42, "worker-alpha", result_hash);
 
-        let receipt =
-            sample_consumption_receipt(42, "worker-alpha", "consumer-bravo", result_hash);
+        let receipt = sample_consumption_receipt(42, "worker-alpha", "consumer-bravo", result_hash);
         let tx = MockTx::SubmitConsumptionReceipt {
             receipt: receipt.clone(),
         };
@@ -16559,10 +16610,7 @@ mod tests {
         let expected_refs = vec![
             ObjectRef { id: 42, version: 1 },
             ObjectRef {
-                id: pseudo_object_id_for_state_slot(
-                    "consumer_consumption_nonce",
-                    "consumer-bravo",
-                ),
+                id: pseudo_object_id_for_state_slot("consumer_consumption_nonce", "consumer-bravo"),
                 version: 1,
             },
             ObjectRef {
@@ -16615,8 +16663,7 @@ mod tests {
         let result_hash = [0x23; 32];
         put_sample_poco_task(&mut st, 42, "worker-alpha", result_hash);
 
-        let receipt =
-            sample_consumption_receipt(42, "worker-alpha", "consumer-bravo", result_hash);
+        let receipt = sample_consumption_receipt(42, "worker-alpha", "consumer-bravo", result_hash);
         apply_one(
             &mut st,
             MockTx::SubmitConsumptionReceipt {
@@ -16640,10 +16687,7 @@ mod tests {
         let expected_read_refs = vec![
             ObjectRef { id: 42, version: 1 },
             ObjectRef {
-                id: pseudo_object_id_for_state_slot(
-                    "consumer_consumption_nonce",
-                    "consumer-bravo",
-                ),
+                id: pseudo_object_id_for_state_slot("consumer_consumption_nonce", "consumer-bravo"),
                 version: 1,
             },
             ObjectRef {
@@ -16676,8 +16720,14 @@ mod tests {
             .into_iter()
             .next()
             .expect("record");
-        assert_eq!(record.status, trnm_state::ConsumptionRecordStatus::Challenged);
-        assert_eq!(record.resolution_code.as_deref(), Some("challenged_by:auditor-1"));
+        assert_eq!(
+            record.status,
+            trnm_state::ConsumptionRecordStatus::Challenged
+        );
+        assert_eq!(
+            record.resolution_code.as_deref(),
+            Some("challenged_by:auditor-1")
+        );
 
         let summary = st.task_consumption_summary(42).expect("summary");
         assert_eq!(summary.challenged_receipt_count, 1);
@@ -16698,8 +16748,7 @@ mod tests {
         let result_hash = [0x24; 32];
         put_sample_poco_task(&mut st, 42, "worker-alpha", result_hash);
 
-        let receipt =
-            sample_consumption_receipt(42, "worker-alpha", "consumer-bravo", result_hash);
+        let receipt = sample_consumption_receipt(42, "worker-alpha", "consumer-bravo", result_hash);
         apply_one(
             &mut st,
             MockTx::SubmitConsumptionReceipt {
@@ -16740,10 +16789,7 @@ mod tests {
         let expected_read_refs = vec![
             ObjectRef { id: 42, version: 1 },
             ObjectRef {
-                id: pseudo_object_id_for_state_slot(
-                    "consumer_consumption_nonce",
-                    "consumer-bravo",
-                ),
+                id: pseudo_object_id_for_state_slot("consumer_consumption_nonce", "consumer-bravo"),
                 version: 1,
             },
             ObjectRef {
@@ -16780,9 +16826,15 @@ mod tests {
             .into_iter()
             .next()
             .expect("record");
-        assert_eq!(record.status, trnm_state::ConsumptionRecordStatus::Discounted);
+        assert_eq!(
+            record.status,
+            trnm_state::ConsumptionRecordStatus::Discounted
+        );
         assert_eq!(record.credited_consumption_units, Some(9));
-        assert_eq!(record.resolution_code.as_deref(), Some("accepted_discounted"));
+        assert_eq!(
+            record.resolution_code.as_deref(),
+            Some("accepted_discounted")
+        );
 
         let summary = st.task_consumption_summary(42).expect("summary");
         assert_eq!(summary.accepted_receipt_count, 1);
@@ -16804,8 +16856,7 @@ mod tests {
         let expected_output_hash = hex::encode(result_hash);
         put_sample_poco_task(&mut st, 42, "worker-alpha", result_hash);
 
-        let receipt =
-            sample_consumption_receipt(42, "worker-alpha", "consumer-bravo", result_hash);
+        let receipt = sample_consumption_receipt(42, "worker-alpha", "consumer-bravo", result_hash);
         let tx = MockTx::SubmitConsumptionReceipt { receipt };
         let signer = verified_signer_of(&st, &tx);
 
@@ -16852,8 +16903,7 @@ mod tests {
         let expected_output_hash = hex::encode(result_hash);
         put_sample_poco_task(&mut st, 42, "worker-alpha", result_hash);
 
-        let receipt =
-            sample_consumption_receipt(42, "worker-alpha", "consumer-bravo", result_hash);
+        let receipt = sample_consumption_receipt(42, "worker-alpha", "consumer-bravo", result_hash);
         apply_one(
             &mut st,
             MockTx::SubmitConsumptionReceipt {
@@ -16921,8 +16971,7 @@ mod tests {
         let expected_output_hash = hex::encode(result_hash);
         put_sample_poco_task(&mut st, 42, "worker-alpha", result_hash);
 
-        let receipt =
-            sample_consumption_receipt(42, "worker-alpha", "consumer-bravo", result_hash);
+        let receipt = sample_consumption_receipt(42, "worker-alpha", "consumer-bravo", result_hash);
         apply_one(
             &mut st,
             MockTx::SubmitConsumptionReceipt {
@@ -17004,8 +17053,7 @@ mod tests {
         let result_hash = [0x2f; 32];
         put_sample_poco_task(&mut st, 42, "worker-alpha", result_hash);
 
-        let receipt =
-            sample_consumption_receipt(42, "worker-alpha", "consumer-bravo", result_hash);
+        let receipt = sample_consumption_receipt(42, "worker-alpha", "consumer-bravo", result_hash);
         apply_one(
             &mut st,
             MockTx::SubmitConsumptionReceipt {
@@ -17078,8 +17126,7 @@ mod tests {
         let result_hash = [0x31; 32];
         put_sample_poco_task(&mut st, 42, "worker-alpha", result_hash);
 
-        let receipt =
-            sample_consumption_receipt(42, "worker-alpha", "consumer-bravo", result_hash);
+        let receipt = sample_consumption_receipt(42, "worker-alpha", "consumer-bravo", result_hash);
         let key = receipt.replay_key();
         let record_key = ConsumptionRecordKey {
             task_id: key.task_id,
@@ -17204,8 +17251,7 @@ mod tests {
         let result_hash = [0x28; 32];
         put_sample_poco_task(&mut st, 42, "worker-alpha", result_hash);
 
-        let receipt =
-            sample_consumption_receipt(42, "worker-alpha", "consumer-bravo", result_hash);
+        let receipt = sample_consumption_receipt(42, "worker-alpha", "consumer-bravo", result_hash);
         let key = receipt.replay_key();
         let record_key = ConsumptionRecordKey {
             task_id: key.task_id,
@@ -17252,8 +17298,7 @@ mod tests {
             let challenger = preapply_challenger_account_of(&st, &tx);
 
             assert_eq!(
-                challenger,
-                None,
+                challenger, None,
                 "malformed marker should not surface challenger: {malformed_code}"
             );
 
@@ -17435,7 +17480,8 @@ mod tests {
     }
 
     #[test]
-    fn recover_clears_checkpoint_only_snapshot_with_empty_wal_meta_scaffold_without_consensus_wal() {
+    fn recover_clears_checkpoint_only_snapshot_with_empty_wal_meta_scaffold_without_consensus_wal()
+    {
         let wal_dir = temp_wal_dir("recover-checkpoint-only-empty-wal-meta-no-consensus-wal");
         fs::create_dir_all(&wal_dir).unwrap();
 
@@ -17933,7 +17979,7 @@ mod tests {
                 CheckpointMeta {
                     height: 1,
                     state_root_hex: "r1".into(),
-                    wal_entry_hash_hex: h1,
+                    wal_entry_hash_hex: h1.clone(),
                 },
                 CheckpointMeta {
                     height: 2,
@@ -18002,7 +18048,7 @@ mod tests {
                 CheckpointMeta {
                     height: 1,
                     state_root_hex: "r1".into(),
-                    wal_entry_hash_hex: h1,
+                    wal_entry_hash_hex: h1.clone(),
                 },
                 CheckpointMeta {
                     height: 2,
@@ -18172,8 +18218,8 @@ mod tests {
                 },
                 CheckpointMeta {
                     height: 2,
-                    state_root_hex: "r2-stale".into(),
-                    wal_entry_hash_hex: "stale-h2".into(),
+                    state_root_hex: "r2".into(),
+                    wal_entry_hash_hex: h2.clone(),
                 },
                 CheckpointMeta {
                     height: 2,
@@ -18319,8 +18365,8 @@ mod tests {
                 },
                 CheckpointMeta {
                     height: 2,
-                    state_root_hex: "stale-r2".into(),
-                    wal_entry_hash_hex: "stale-h2".into(),
+                    state_root_hex: "r2".into(),
+                    wal_entry_hash_hex: h2.clone(),
                 },
                 CheckpointMeta {
                     height: 2,
@@ -18341,7 +18387,7 @@ locked_block_hash = "stale-lock"
 
         let recovered = recover_wal_state(&wal_dir).unwrap();
         assert_eq!(recovered.next_height, 3);
-        assert!(recovered.truncated);
+        assert!(!recovered.truncated);
         assert!(!recovered.metadata_only_recovery);
         assert_eq!(recovered.checkpoint_height_retained, Some(2));
         assert_eq!(recovered.wal_entries_retained, 2);
@@ -18571,8 +18617,8 @@ locked_block_hash = "stale-lock"
                 },
                 CheckpointMeta {
                     height: 2,
-                    state_root_hex: replayed_e2.state_root_hex.clone(),
-                    wal_entry_hash_hex: replayed_e2.content_hash_hex(),
+                    state_root_hex: "r2".into(),
+                    wal_entry_hash_hex: h2.clone(),
                 },
             ],
         )
@@ -18675,8 +18721,8 @@ locked_block_hash = "stale-lock"
                 },
                 CheckpointMeta {
                     height: 2,
-                    state_root_hex: "stale-r2".into(),
-                    wal_entry_hash_hex: "stale-h2".into(),
+                    state_root_hex: "r2".into(),
+                    wal_entry_hash_hex: h2.clone(),
                 },
                 CheckpointMeta {
                     height: 2,
@@ -19011,8 +19057,8 @@ locked_block_hash = "stale-lock"
                 },
                 CheckpointMeta {
                     height: 2,
-                    state_root_hex: "stale-r2".into(),
-                    wal_entry_hash_hex: "stale-h2".into(),
+                    state_root_hex: "r2".into(),
+                    wal_entry_hash_hex: h2.clone(),
                 },
                 CheckpointMeta {
                     height: 2,
@@ -19025,7 +19071,7 @@ locked_block_hash = "stale-lock"
 
         let recovered = recover_wal_state(&wal_dir).unwrap();
         assert_eq!(recovered.next_height, 3);
-        assert!(recovered.truncated);
+        assert!(!recovered.truncated);
         assert!(!recovered.metadata_only_recovery);
         assert_eq!(recovered.wal_entries_retained, 2);
         assert_eq!(recovered.checkpoint_height_retained, Some(2));
@@ -19204,7 +19250,10 @@ locked_block_hash = "stale-lock"
         let first = raw.find("hash-a").unwrap();
         let second = raw.find("hash-c").unwrap();
         let third = raw.find("hash-b").unwrap();
-        assert!(first < second && second < third, "expected canonical disk order, got: {raw}");
+        assert!(
+            first < second && second < third,
+            "expected canonical disk order, got: {raw}"
+        );
 
         let checkpoints = load_checkpoint_meta(&wal_dir).unwrap();
         assert_eq!(checkpoints.len(), 3);
@@ -19840,8 +19889,8 @@ locked_block_hash = "stale-replay-lock"
                 },
                 CheckpointMeta {
                     height: 2,
-                    state_root_hex: "r2-replay".into(),
-                    wal_entry_hash_hex: "stale-replayed-h2".into(),
+                    state_root_hex: "r2".into(),
+                    wal_entry_hash_hex: h2.clone(),
                 },
             ],
         )
@@ -19894,12 +19943,12 @@ locked_block_hash = "stale-replay-lock"
                 CheckpointMeta {
                     height: 1,
                     state_root_hex: "r1".into(),
-                    wal_entry_hash_hex: h1,
+                    wal_entry_hash_hex: h1.clone(),
                 },
                 CheckpointMeta {
                     height: 1,
-                    state_root_hex: "r1-replay".into(),
-                    wal_entry_hash_hex: "stale-replayed-h1".into(),
+                    state_root_hex: "r1".into(),
+                    wal_entry_hash_hex: h1.clone(),
                 },
             ],
         )
@@ -19970,12 +20019,12 @@ locked_block_hash = "stale-genesis-replay-lock"
                 CheckpointMeta {
                     height: 1,
                     state_root_hex: "r1".into(),
-                    wal_entry_hash_hex: h1,
+                    wal_entry_hash_hex: h1.clone(),
                 },
                 CheckpointMeta {
                     height: 1,
-                    state_root_hex: "stale-r1".into(),
-                    wal_entry_hash_hex: "stale-identical-h1".into(),
+                    state_root_hex: "r1".into(),
+                    wal_entry_hash_hex: h1.clone(),
                 },
             ],
         )
@@ -20143,8 +20192,8 @@ locked_block_hash = "stale-duplicate-lock"
                 },
                 CheckpointMeta {
                     height: 2,
-                    state_root_hex: "r2-stale".into(),
-                    wal_entry_hash_hex: "stale-hash".into(),
+                    state_root_hex: "r2".into(),
+                    wal_entry_hash_hex: h2.clone(),
                 },
                 CheckpointMeta {
                     height: 2,
@@ -20196,8 +20245,7 @@ locked_block_hash = "stale-replay-lock"
     #[test]
     fn recover_committed_duplicate_height_tail_with_same_state_root_prunes_stale_checkpoint_linkage(
     ) {
-        let wal_dir =
-            temp_wal_dir("recover-committed-duplicate-height-tail-same-root-linkage");
+        let wal_dir = temp_wal_dir("recover-committed-duplicate-height-tail-same-root-linkage");
         fs::create_dir_all(&wal_dir).unwrap();
 
         let e1 = WalMeta {
@@ -20240,7 +20288,7 @@ locked_block_hash = "stale-replay-lock"
                 CheckpointMeta {
                     height: 2,
                     state_root_hex: "shared-root".into(),
-                    wal_entry_hash_hex: replayed_h2.clone(),
+                    wal_entry_hash_hex: h2.clone(),
                 },
                 CheckpointMeta {
                     height: 2,
@@ -20413,8 +20461,8 @@ locked_block_hash = "stale-shared-root-tail"
                 },
                 CheckpointMeta {
                     height: 2,
-                    state_root_hex: "r2-stale".into(),
-                    wal_entry_hash_hex: "stale-h2".into(),
+                    state_root_hex: "r2".into(),
+                    wal_entry_hash_hex: h2.clone(),
                 },
                 CheckpointMeta {
                     height: 2,
@@ -20622,8 +20670,8 @@ locked_block_hash = "stale-lock"
             &[
                 CheckpointMeta {
                     height: 1,
-                    state_root_hex: "stale-r1".into(),
-                    wal_entry_hash_hex: "stale-h1".into(),
+                    state_root_hex: "r1".into(),
+                    wal_entry_hash_hex: h1.clone(),
                 },
                 CheckpointMeta {
                     height: 1,
@@ -20791,8 +20839,8 @@ locked_block_hash = "stale-lock"
             &[
                 CheckpointMeta {
                     height: 1,
-                    state_root_hex: "r1-stale".into(),
-                    wal_entry_hash_hex: "stale-h1".into(),
+                    state_root_hex: "r1".into(),
+                    wal_entry_hash_hex: h1.clone(),
                 },
                 CheckpointMeta {
                     height: 1,
@@ -20920,7 +20968,8 @@ locked_block_hash = "stale-lock"
     }
 
     #[test]
-    fn metadata_only_recovery_error_surfaces_non_audit_ready_da_reason_for_noncanonical_checkpoint_tuple() {
+    fn metadata_only_recovery_error_surfaces_non_audit_ready_da_reason_for_noncanonical_checkpoint_tuple(
+    ) {
         let wal_dir = temp_wal_dir("recover-da-surface-noncanonical-tuple");
         fs::create_dir_all(&wal_dir).unwrap();
 
@@ -20957,7 +21006,8 @@ locked_block_hash = "stale-lock"
     }
 
     #[test]
-    fn metadata_only_recovery_error_surfaces_da_unavailability_reason_when_checkpoint_wal_linkage_is_missing() {
+    fn metadata_only_recovery_error_surfaces_da_unavailability_reason_when_checkpoint_wal_linkage_is_missing(
+    ) {
         let wal_dir = temp_wal_dir("recover-da-surface-missing-wal-linkage");
         fs::create_dir_all(&wal_dir).unwrap();
 
@@ -21283,7 +21333,9 @@ locked_block_hash = "stale-lock"
 
         let err = metadata_only_recovery_error(&wal_dir, &recovered);
 
-        assert!(err.contains("retained no committed WAL entries (last retained checkpoint height 8)"));
+        assert!(
+            err.contains("retained no committed WAL entries (last retained checkpoint height 8)")
+        );
         assert!(err.contains("last retained checkpoint: 8"));
         assert!(err.contains("next startup height: 9"));
 
@@ -21400,7 +21452,10 @@ locked_block_hash = "stale-lock"
             checkpoint_height_retained: None,
         };
 
-        assert_eq!(retained_wal_summary(&recovered), "retained no committed WAL entries");
+        assert_eq!(
+            retained_wal_summary(&recovered),
+            "retained no committed WAL entries"
+        );
     }
 
     #[test]
@@ -21575,7 +21630,8 @@ locked_block_hash = "stale-lock"
     }
 
     #[test]
-    fn recovery_startup_summary_reports_missing_checkpoint_metadata_after_tail_repair_surface_as_ready() {
+    fn recovery_startup_summary_reports_missing_checkpoint_metadata_after_tail_repair_surface_as_ready(
+    ) {
         let recovered = RecoveredWalState {
             next_height: 9,
             restored_lock: None,
@@ -21752,7 +21808,8 @@ locked_block_hash = "stale-lock"
     }
 
     #[test]
-    fn metadata_only_operator_action_keeps_aligned_retained_wal_tip_height_saturated_at_max_height() {
+    fn metadata_only_operator_action_keeps_aligned_retained_wal_tip_height_saturated_at_max_height()
+    {
         let recovered = RecoveredWalState {
             next_height: u64::MAX,
             restored_lock: None,
@@ -21777,7 +21834,8 @@ locked_block_hash = "stale-lock"
     }
 
     #[test]
-    fn recovery_startup_summary_reports_checkpoint_ahead_of_retained_tip_as_blocked_metadata_only() {
+    fn recovery_startup_summary_reports_checkpoint_ahead_of_retained_tip_as_blocked_metadata_only()
+    {
         let recovered = RecoveredWalState {
             next_height: 12,
             restored_lock: None,
@@ -21821,7 +21879,8 @@ locked_block_hash = "stale-lock"
     }
 
     #[test]
-    fn recovery_startup_summary_reports_checkpoint_ahead_resume_mismatch_after_tail_repair_surface() {
+    fn recovery_startup_summary_reports_checkpoint_ahead_resume_mismatch_after_tail_repair_surface()
+    {
         let recovered = RecoveredWalState {
             next_height: 12,
             restored_lock: None,
@@ -21847,7 +21906,8 @@ locked_block_hash = "stale-lock"
     }
 
     #[test]
-    fn recovery_startup_summary_keeps_single_block_checkpoint_ahead_mismatch_visible_after_tail_repair() {
+    fn recovery_startup_summary_keeps_single_block_checkpoint_ahead_mismatch_visible_after_tail_repair(
+    ) {
         let recovered = RecoveredWalState {
             next_height: 12,
             restored_lock: None,
@@ -22000,8 +22060,9 @@ locked_block_hash = "stale-lock"
             checkpoint_height_retained: Some(6),
         };
 
-        ensure_recoverable_wal_state(Path::new("/tmp/trnm-wal"), &recovered)
-            .expect("single-block lagging checkpoint resume should remain recoverable for safe join/rejoin");
+        ensure_recoverable_wal_state(Path::new("/tmp/trnm-wal"), &recovered).expect(
+            "single-block lagging checkpoint resume should remain recoverable for safe join/rejoin",
+        );
         assert_eq!(
             retained_wal_summary(&recovered),
             "retained 2 committed WAL entries through height 7 (checkpoint lags retained WAL tip by 1 block)"
@@ -22102,7 +22163,8 @@ locked_block_hash = "stale-lock"
     }
 
     #[test]
-    fn recovery_startup_summary_keeps_truncated_checkpoint_ahead_join_surface_saturated_at_max_height() {
+    fn recovery_startup_summary_keeps_truncated_checkpoint_ahead_join_surface_saturated_at_max_height(
+    ) {
         let recovered = RecoveredWalState {
             next_height: u64::MAX,
             restored_lock: None,
@@ -22167,7 +22229,8 @@ locked_block_hash = "stale-lock"
     }
 
     #[test]
-    fn ensure_recoverable_wal_state_keeps_single_block_checkpoint_ahead_mismatch_recoverable_after_tail_repair() {
+    fn ensure_recoverable_wal_state_keeps_single_block_checkpoint_ahead_mismatch_recoverable_after_tail_repair(
+    ) {
         let recovered = RecoveredWalState {
             next_height: 12,
             restored_lock: None,
@@ -22406,7 +22469,8 @@ locked_block_hash = "stale-lock"
     }
 
     #[test]
-    fn ensure_recoverable_wal_state_rejects_metadata_only_recovery_with_singular_checkpoint_ahead_mismatch() {
+    fn ensure_recoverable_wal_state_rejects_metadata_only_recovery_with_singular_checkpoint_ahead_mismatch(
+    ) {
         let wal_dir = temp_wal_dir("recover-guard-metadata-only-singular-ahead");
         fs::create_dir_all(&wal_dir).unwrap();
 
@@ -22550,7 +22614,8 @@ locked_block_hash = "stale-lock"
     }
 
     #[test]
-    fn recovery_startup_summary_keeps_truncated_checkpoint_only_join_surface_saturated_at_max_height() {
+    fn recovery_startup_summary_keeps_truncated_checkpoint_only_join_surface_saturated_at_max_height(
+    ) {
         let wal_dir = temp_wal_dir("recover-guard-max-truncated-checkpoint-only-rejoin");
         fs::create_dir_all(&wal_dir).unwrap();
 
@@ -22689,7 +22754,8 @@ locked_block_hash = "stale-lock"
 
     #[test]
     fn ensure_recoverable_wal_state_allows_truncated_single_block_lagging_checkpoint_resume() {
-        let wal_dir = temp_wal_dir("recover-guard-truncated-single-block-lagging-checkpoint-resume");
+        let wal_dir =
+            temp_wal_dir("recover-guard-truncated-single-block-lagging-checkpoint-resume");
         fs::create_dir_all(&wal_dir).unwrap();
 
         let recovered = RecoveredWalState {
@@ -22932,7 +22998,8 @@ locked_block_hash = "stale-lock"
     }
 
     #[test]
-    fn resolve_wal_dir_auto_allows_builtin_default_when_only_comment_only_checkpoint_scaffold_exists() {
+    fn resolve_wal_dir_auto_allows_builtin_default_when_only_comment_only_checkpoint_scaffold_exists(
+    ) {
         let root = temp_wal_dir("default-wal-comment-checkpoint-only-root");
         let base = root.join(DEFAULT_BFT_WAL_DIR);
         fs::create_dir_all(&base).unwrap();
@@ -23032,7 +23099,8 @@ locked_block_hash = "stale-lock"
     }
 
     #[test]
-    fn resolve_wal_dir_auto_allows_builtin_default_when_only_crlf_comment_only_wal_scaffold_exists() {
+    fn resolve_wal_dir_auto_allows_builtin_default_when_only_crlf_comment_only_wal_scaffold_exists()
+    {
         let root = temp_wal_dir("default-wal-crlf-comment-meta-only-root");
         let base = root.join(DEFAULT_BFT_WAL_DIR);
         fs::create_dir_all(&base).unwrap();
@@ -23184,7 +23252,8 @@ locked_block_hash = "stale-lock"
     }
 
     #[test]
-    fn resolve_wal_dir_auto_allows_builtin_default_when_only_bom_prefixed_comment_scaffolds_exist() {
+    fn resolve_wal_dir_auto_allows_builtin_default_when_only_bom_prefixed_comment_scaffolds_exist()
+    {
         let root = temp_wal_dir("default-wal-bom-comment-scaffold-root");
         let base = root.join(DEFAULT_BFT_WAL_DIR);
         fs::create_dir_all(&base).unwrap();

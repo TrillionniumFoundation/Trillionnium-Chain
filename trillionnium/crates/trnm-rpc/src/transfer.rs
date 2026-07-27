@@ -752,7 +752,10 @@ mod tests {
 
     #[test]
     fn tx_status_serializes_only_canonical_lifecycle_strings() {
-        assert_eq!(serde_json::to_string(&TxStatus::Pending).unwrap(), "\"pending\"");
+        assert_eq!(
+            serde_json::to_string(&TxStatus::Pending).unwrap(),
+            "\"pending\""
+        );
         assert_eq!(
             serde_json::to_string(&TxStatus::Committed).unwrap(),
             "\"committed\""
