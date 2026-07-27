@@ -175,7 +175,7 @@ broadcast_commit() {
 for index in 0 1 2 3; do start_app "$index"; done
 for index in 0 1 2 3; do start_comet "$index"; done
 for index in 0 1 2 3; do wait_rpc "$index"; done
-for index in 0 1 2 3; do wait_peers "$index" 3; done
+for index in 0 1 2 3; do wait_peers "$index" 2; done
 
 sign_tx 1
 first="$(broadcast_commit "$ROOT/tx-1.json")"

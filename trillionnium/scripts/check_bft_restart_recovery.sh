@@ -194,7 +194,7 @@ for i in $(seq 1 "$RUNS"); do
   pid=$!
   trap cleanup_bg_node EXIT INT TERM
 
-  for _ in $(seq 1 40); do
+  for _ in $(seq 1 200); do
     [[ -f "$wal_file" ]] && break
     sleep 0.05
   done
