@@ -5,24 +5,68 @@ SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 cd "$SCRIPT_DIR/../.."
 
 COMETBFT_BIN="${TRNM_COMETBFT_BIN:-cometbft}"
-ROOT="${TRNM_COMETBFT_SPIKE_ROOT:-$(mktemp -d /tmp/trnm-comet-four.XXXXXX)}"
 KEEP="${TRNM_COMETBFT_SPIKE_KEEP:-0}"
+CLEAN_ON_SUCCESS="${TRNM_COMETBFT_SPIKE_CLEAN_ON_SUCCESS:-}"
 BASE_RPC="${TRNM_COMETBFT_BASE_RPC_PORT:-28657}"
 BASE_P2P="${TRNM_COMETBFT_BASE_P2P_PORT:-28656}"
 BASE_ABCI="${TRNM_COMETBFT_BASE_ABCI_PORT:-28658}"
 APP_PIDS=("" "" "" "" "")
 COMET_PIDS=("" "" "" "" "")
+ROOT_CREATED_BY_SCRIPT=0
+ROOT_MARKER_NAME=".trnm-comet-four-root-v1"
+ROOT_MARKER_VALUE="trnm-comet-four-root-v1"
+
+if [[ -n "${TRNM_COMETBFT_SPIKE_ROOT:-}" ]]; then
+  ROOT="$TRNM_COMETBFT_SPIKE_ROOT"
+  if [[ ! -e "$ROOT" ]]; then
+    mkdir -p -- "$ROOT"
+    ROOT_CREATED_BY_SCRIPT=1
+  elif [[ ! -d "$ROOT" ]]; then
+    printf 'TRNM_COMETBFT_FOUR_VALIDATOR_FAILED reason=root_is_not_directory root=%s\n' \
+      "$ROOT" >&2
+    exit 2
+  fi
+  CLEAN_ON_SUCCESS="${CLEAN_ON_SUCCESS:-0}"
+else
+  ROOT="$(mktemp -d /tmp/trnm-comet-four.XXXXXX)"
+  ROOT_CREATED_BY_SCRIPT=1
+  CLEAN_ON_SUCCESS="${CLEAN_ON_SUCCESS:-1}"
+fi
+
+if [[ "$ROOT_CREATED_BY_SCRIPT" == "1" ]]; then
+  printf '%s\n' "$ROOT_MARKER_VALUE" >"$ROOT/$ROOT_MARKER_NAME"
+fi
+
+safe_to_remove_root() {
+  local base
+  [[ "$ROOT_CREATED_BY_SCRIPT" == "1" ]] || return 1
+  [[ -d "$ROOT" && ! -L "$ROOT" ]] || return 1
+  [[ -f "$ROOT/$ROOT_MARKER_NAME" && ! -L "$ROOT/$ROOT_MARKER_NAME" ]] || return 1
+  [[ "$(cat "$ROOT/$ROOT_MARKER_NAME")" == "$ROOT_MARKER_VALUE" ]] || return 1
+  base="$(basename -- "$ROOT")"
+  [[ "$base" == trnm-comet-four.* || "$base" == trnm-comet-four-* ]]
+}
 
 cleanup() {
+  local status=$?
+  trap - EXIT
   for pid in "${COMET_PIDS[@]}" "${APP_PIDS[@]}"; do
     test -z "$pid" || kill "$pid" 2>/dev/null || true
   done
   for pid in "${COMET_PIDS[@]}" "${APP_PIDS[@]}"; do
     test -z "$pid" || wait "$pid" 2>/dev/null || true
   done
-  if [[ "$KEEP" != "1" ]]; then
-    rm -rf "$ROOT"
+  if [[ "$status" == "0" && "$KEEP" != "1" && "$CLEAN_ON_SUCCESS" == "1" ]]; then
+    if safe_to_remove_root; then
+      rm -rf -- "$ROOT"
+    else
+      printf 'TRNM_COMETBFT_ROOT_PRESERVED reason=cleanup_safety_check_failed root=%s\n' \
+        "$ROOT" >&2
+    fi
+  else
+    printf 'TRNM_COMETBFT_ROOT_PRESERVED status=%s root=%s\n' "$status" "$ROOT" >&2
   fi
+  exit "$status"
 }
 trap cleanup EXIT
 trap 'printf "TRNM_COMETBFT_FOUR_VALIDATOR_FAILED line=%s root=%s\n" "$LINENO" "$ROOT" >&2' ERR
@@ -33,10 +77,18 @@ command -v jq >/dev/null
 command -v base64 >/dev/null
 command -v python3 >/dev/null
 
-cargo build -q -p trnm-consensus-app --bin trnm-cometbft-app
-cargo build -q -p trnm-node --bin trnm-chain-cli
-APP_BIN="$PWD/target/debug/trnm-cometbft-app"
-CLI_BIN="$PWD/target/debug/trnm-chain-cli"
+APP_BIN="${TRNM_COMETBFT_APP_BIN:-}"
+CLI_BIN="${TRNM_COMETBFT_CLI_BIN:-}"
+if [[ -z "$APP_BIN" ]]; then
+  cargo build -q -p trnm-consensus-app --bin trnm-cometbft-app
+  APP_BIN="$PWD/target/debug/trnm-cometbft-app"
+fi
+if [[ -z "$CLI_BIN" ]]; then
+  cargo build -q -p trnm-node --bin trnm-chain-cli
+  CLI_BIN="$PWD/target/debug/trnm-chain-cli"
+fi
+test -x "$APP_BIN"
+test -x "$CLI_BIN"
 
 mkdir -p "$ROOT"
 key_json="$($CLI_BIN keygen --output "$ROOT/operator.key")"
@@ -92,7 +144,7 @@ start_app() {
     --config "$ROOT/node$index/app.json" \
     --listen-addr "127.0.0.1:$abci_port" \
     >"$ROOT/node$index/app.log" 2>&1 &
-  APP_PIDS[$index]=$!
+  APP_PIDS[index]=$!
 }
 
 start_comet() {
@@ -117,7 +169,7 @@ start_comet() {
     --p2p.pex=false \
     --consensus.create_empty_blocks=false \
     >"$ROOT/node$index/comet.log" 2>&1 &
-  COMET_PIDS[$index]=$!
+  COMET_PIDS[index]=$!
 }
 
 wait_rpc() {
@@ -288,7 +340,25 @@ wait_height 4 "$latest_height"
 test "$(jq -r .height "$ROOT/node4/app-state.json")" -ge "$latest_height"
 
 wait_app_hash_convergence 0 1 2 3 4
+final_height="$(jq -r .height "$ROOT/node4/app-state.json")"
 app_hash="$(jq -r .app_hash_hex "$ROOT/node4/app-state.json")"
 
-printf 'TRNM_COMETBFT_FOUR_VALIDATOR_OK height=%s offline_tolerance=1 rejoin=verified state_sync=verified app_hash=%s root=%s\n' \
-  "$latest_height" "$app_hash" "$ROOT"
+evidence_dir="$ROOT/evidence"
+mkdir -p -- "$evidence_dir"
+python3 "$SCRIPT_DIR/assert_cometbft_safety.py" \
+  --expected-chain-id trnm-comet-four \
+  --json-out "$evidence_dir/safety-evidence.json" \
+  --tsv-out "$evidence_dir/safety-evidence.tsv" \
+  --history-node node0 \
+  --history-node node1 \
+  --history-node node2 \
+  --history-node node3 \
+  --node node0 "http://127.0.0.1:$BASE_RPC" "$ROOT/node0/app-state.json" \
+  --node node1 "http://127.0.0.1:$((BASE_RPC + 10))" "$ROOT/node1/app-state.json" \
+  --node node2 "http://127.0.0.1:$((BASE_RPC + 20))" "$ROOT/node2/app-state.json" \
+  --node node3 "http://127.0.0.1:$((BASE_RPC + 30))" "$ROOT/node3/app-state.json" \
+  --node node4 "http://127.0.0.1:$((BASE_RPC + 40))" "$ROOT/node4/app-state.json"
+test "$(jq -r .common_tip_height "$evidence_dir/safety-evidence.json")" = "$final_height"
+
+printf 'TRNM_COMETBFT_FOUR_VALIDATOR_OK height=%s offline_tolerance=1 rejoin=verified state_sync=verified safety_evidence=verified app_hash=%s root=%s\n' \
+  "$final_height" "$app_hash" "$ROOT"

@@ -33,6 +33,7 @@ jobs:
       COMETBFT_SHA256: "736592aea2e077a4bb934ed26b0ee670462ae3d8a37670e2d268dea33304bc52"
       CARGO_INCREMENTAL: "0"
       CARGO_TERM_COLOR: never
+      TRNM_COMETBFT_CI_ROOT: ${{ runner.temp }}/trnm-comet-four-${{ github.run_id }}-${{ github.run_attempt }}
 
     steps:
       - uses: actions/checkout@v4
@@ -47,11 +48,34 @@ jobs:
           tar -xzf /tmp/cometbft.tar.gz -C /tmp cometbft
           printf '%s  %s\n' "$COMETBFT_SHA256" /tmp/cometbft | sha256sum --check --strict
 
-      - name: Adapter unit and live-process gates
+      - name: Adapter unit gate
+        run: cargo test --manifest-path trillionnium/Cargo.toml --locked -p trnm-consensus-app
+
+      - name: Single-node live-process gate
         env:
           TRNM_COMETBFT_BIN: /tmp/cometbft
-        run: |
-          set -euo pipefail
-          cargo test --manifest-path trillionnium/Cargo.toml --locked -p trnm-consensus-app
-          trillionnium/scripts/consensus/spike_cometbft_single_node.sh
-          trillionnium/scripts/consensus/spike_cometbft_four_validator.sh
+        run: trillionnium/scripts/consensus/spike_cometbft_single_node.sh
+
+      - name: Four-validator safety and recovery gate
+        env:
+          TRNM_COMETBFT_BIN: /tmp/cometbft
+          TRNM_COMETBFT_SPIKE_CLEAN_ON_SUCCESS: "1"
+          TRNM_COMETBFT_SPIKE_ROOT: ${{ env.TRNM_COMETBFT_CI_ROOT }}
+        run: trillionnium/scripts/consensus/spike_cometbft_four_validator.sh
+
+      - name: Upload failed CometBFT safety evidence
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: trnm-cometbft-safety-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ env.TRNM_COMETBFT_CI_ROOT }}/evidence/**
+            ${{ env.TRNM_COMETBFT_CI_ROOT }}/genesis.json
+            ${{ env.TRNM_COMETBFT_CI_ROOT }}/node*/app.log
+            ${{ env.TRNM_COMETBFT_CI_ROOT }}/node*/comet.log
+            ${{ env.TRNM_COMETBFT_CI_ROOT }}/node*/app-state.json
+            ${{ env.TRNM_COMETBFT_CI_ROOT }}/node*/app-state.json.sqlite3
+            ${{ env.TRNM_COMETBFT_CI_ROOT }}/node*/config/config.toml
+            ${{ env.TRNM_COMETBFT_CI_ROOT }}/node*/config/genesis.json
+          if-no-files-found: warn
+          retention-days: 14
