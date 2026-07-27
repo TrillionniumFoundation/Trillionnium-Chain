@@ -11,7 +11,12 @@ fn reliability_persistent_store_smoke() {
     }
 
     let tmp = tempfile::tempdir().expect("tempdir");
-    let db_path = tmp.path().join("reliability-smoke.db");
+    let db_path = std::env::var_os("RELIABILITY_DB_PATH")
+        .map(std::path::PathBuf::from)
+        .unwrap_or_else(|| tmp.path().join("reliability-smoke.db"));
+    if let Some(parent) = db_path.parent() {
+        std::fs::create_dir_all(parent).expect("create sqlite parent directory");
+    }
 
     let mut engine = ReliabilityEngine::new(
         SqliteReliabilityStore::open(&db_path).expect("open sqlite store"),

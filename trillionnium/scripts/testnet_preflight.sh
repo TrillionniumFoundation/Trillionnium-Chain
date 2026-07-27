@@ -188,7 +188,7 @@ if grep -E '\[tx\] apply_error|rollback=true' "$ROOT/run/parallel-sanity.log" >/
   exit 2
 fi
 
-if ! grep -q '^\[consensus\] finality_p50_ms=' "$ROOT/run/parallel-sanity.log"; then
+if ! grep -q '^\[consensus\].*finality_p50_ms=' "$ROOT/run/parallel-sanity.log"; then
   log "parallel sanity failed: missing consensus finality metric"
   exit 3
 fi

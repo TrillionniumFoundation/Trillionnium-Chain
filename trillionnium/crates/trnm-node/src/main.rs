@@ -15239,6 +15239,60 @@ mod tests {
     }
 
     #[test]
+    fn legacy_resolve_event_line_keeps_frozen_fields() {
+        let state = StateStore::new();
+        let tx = MockTx::Resolve {
+            task_id: 7,
+            slash_worker: true,
+            resolver: "authority-a".into(),
+        };
+        let line = format_apply_event_line(
+            &state,
+            &tx,
+            "authority-a",
+            11,
+            12,
+            "Challenged",
+            "Completed",
+            "root",
+            &EventDelta {
+                numeric: Some(1),
+                text: "1".into(),
+            },
+            Some(&EventDelta {
+                numeric: Some(2),
+                text: "2".into(),
+            }),
+            Some("challenger-a"),
+            None,
+            13,
+        );
+
+        for token in [
+            "event_schema=v1",
+            "event_type=resolve",
+            "task_id=7",
+            "from_status=Challenged",
+            "to_status=Completed",
+            "actor=authority-a",
+            "signer=authority-a",
+            "challenger=challenger-a",
+            "tx_hash=",
+            "tx_id=11",
+            "block_height=12",
+            "state_root=root",
+            "ts_unix_ms=13",
+            "slash_worker=true",
+            "resolution_code=slashed",
+            "treasury_delta=1",
+            "challenger_delta=2",
+            "bond_disposition=refunded",
+        ] {
+            assert!(line.contains(token), "missing {token} in {line}");
+        }
+    }
+
+    #[test]
     fn receipt_settlement_uses_distinct_event_type_under_legacy_staged_marker() {
         let result_hash = [0x29; 32];
         let receipt = sample_consumption_receipt(42, "worker-alpha", "consumer-bravo", result_hash);
