@@ -10,7 +10,7 @@ OUT="$OUT_DIR/emergency-pause-drill-$(date +%Y%m%d-%H%M%S).txt"
 mkdir -p "$OUT_DIR"
 
 # 1) baseline with pause=false should not emit rejected_by_pause
-cargo run -q -p trnm-node -- --config configs/node1.toml --block-ms 5 --max-blocks 4 --demo-tasks 4 --demo-keys 2 --parallel-workers 4 > /tmp/trnm-node-baseline.log
+cargo run -q -p trnm-node --bin trnm-sim -- --config configs/node1.toml --block-ms 5 --max-blocks 4 --demo-tasks 4 --demo-keys 2 --parallel-workers 4 > /tmp/trnm-node-baseline.log
 if grep -q 'rejected_by_pause' /tmp/trnm-node-baseline.log; then
   echo "FAIL: baseline unexpectedly rejected by pause" | tee "$OUT"
   exit 1

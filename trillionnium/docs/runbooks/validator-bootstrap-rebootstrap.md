@@ -262,7 +262,7 @@ If the config bundle check fails, treat the bootstrap as blocked until the dupli
 For a local bootstrap sanity pass, start with the known config entrypoint instead of ad-hoc flags:
 
 ```bash
-cargo run -q -p trnm-node -- \
+cargo run -q -p trnm-node --bin trnm-sim -- \
   --config trillionnium/configs/node1.toml \
   --block-ms 5 \
   --max-blocks 6 \

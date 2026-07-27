@@ -12,6 +12,9 @@ members = [
   "crates/trnm-cli",
   "crates/trnm-bridge-poc",
   "crates/trnm-oracle",
+  "crates/trnm-research-protocol",
+  "crates/trnm-finality-types",
+  "crates/trnm-finality-verifier",
 ]
 resolver = "2"
 

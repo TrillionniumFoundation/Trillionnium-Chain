@@ -1218,6 +1218,28 @@ dependencies = [
 ]
 
 [[package]]
+name = "trnm-finality-types"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "ed25519-dalek",
+ "hex",
+ "serde",
+ "serde_json",
+ "sha2",
+]
+
+[[package]]
+name = "trnm-finality-verifier"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "ed25519-dalek",
+ "hex",
+ "trnm-finality-types",
+]
+
+[[package]]
 name = "trnm-mempool"
 version = "0.1.0"
 
@@ -1227,13 +1249,20 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "clap",
+ "ed25519-dalek",
  "hex",
+ "rand_core",
+ "rusqlite",
  "serde",
+ "serde_json",
  "sha2",
  "toml",
  "trnm-executor",
+ "trnm-finality-types",
+ "trnm-finality-verifier",
  "trnm-mempool",
  "trnm-pouw",
+ "trnm-research-protocol",
  "trnm-state",
  "trnm-types",
 ]
@@ -1267,6 +1296,18 @@ dependencies = [
  "thiserror",
  "trnm-state",
  "trnm-types",
+]
+
+[[package]]
+name = "trnm-research-protocol"
+version = "0.1.0"
+dependencies = [
+ "ed25519-dalek",
+ "hex",
+ "serde",
+ "serde_json",
+ "sha2",
+ "thiserror",
 ]
 
 [[package]]

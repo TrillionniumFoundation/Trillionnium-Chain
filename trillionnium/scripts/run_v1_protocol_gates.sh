@@ -15,7 +15,7 @@ echo '== v1 gate: event replay order =='
 ./scripts/check_event_replay_smoke.sh
 
 echo '== v1 gate: parallel sanity =='
-cargo run -q -p trnm-node -- \
+cargo run -q -p trnm-node --bin trnm-sim -- \
   --config configs/node1.toml \
   --block-ms 5 \
   --max-blocks 6 \

@@ -13,7 +13,7 @@ mkdir -p "$OUT_DIR"
 
 WAL_DIR="$OUT_DIR/consensus-wal-roundchange-$TS"
 
-cargo run -q -p trnm-node -- \
+cargo run -q -p trnm-node --bin trnm-sim -- \
   --config configs/node1.toml \
   --block-ms 5 \
   --max-blocks 4 \

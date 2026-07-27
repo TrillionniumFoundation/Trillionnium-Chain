@@ -10,7 +10,7 @@ OUT="run/event-field-check.log"
 WAL_DIR="run/event-field-check-wal"
 rm -rf "$WAL_DIR"
 
-cargo run -q -p trnm-node -- \
+cargo run -q -p trnm-node --bin trnm-sim -- \
   --config configs/node1.toml \
   --block-ms 1 \
   --max-blocks 8 \

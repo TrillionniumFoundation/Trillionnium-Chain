@@ -12,7 +12,7 @@ TS="$(date +%Y%m%d-%H%M%S)"
 pids=()
 for n in 1 2 3 4; do
   log="$OUT_DIR/bft4-node${n}-${TS}.log"
-  cargo run -q -p trnm-node -- \
+  cargo run -q -p trnm-node --bin trnm-sim -- \
     --config "configs/node${n}.toml" \
     --block-ms 5 \
     --max-blocks 4 \
