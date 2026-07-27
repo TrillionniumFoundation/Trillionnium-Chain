@@ -1,0 +1,93 @@
+name: TRNM Live Devnet Package
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/trnm-live-devnet-package.yml"
+      - "RELEASE_READINESS.md"
+      - "trillionnium/Cargo.lock"
+      - "trillionnium/Cargo.toml"
+      - "trillionnium/crates/trnm-node/**"
+      - "trillionnium/crates/trnm-finality-types/**"
+      - "trillionnium/crates/trnm-finality-verifier/**"
+      - "trillionnium/crates/trnm-research-protocol/**"
+      - "trillionnium/packaging/trnm_chain_devnet_v1/**"
+      - "trillionnium/scripts/release/**"
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/trnm-live-devnet-package.yml"
+      - "RELEASE_READINESS.md"
+      - "trillionnium/Cargo.lock"
+      - "trillionnium/Cargo.toml"
+      - "trillionnium/crates/trnm-node/**"
+      - "trillionnium/crates/trnm-finality-types/**"
+      - "trillionnium/crates/trnm-finality-verifier/**"
+      - "trillionnium/crates/trnm-research-protocol/**"
+      - "trillionnium/packaging/trnm_chain_devnet_v1/**"
+      - "trillionnium/scripts/release/**"
+
+permissions:
+  contents: read
+
+jobs:
+  clean-checkout-package:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      CARGO_INCREMENTAL: "0"
+      CARGO_TERM_COLOR: never
+      LC_ALL: C
+      LANG: C
+      TZ: UTC
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - name: Unit and live-node gates
+        run: |
+          set -euo pipefail
+          python3 trillionnium/scripts/release/test_trnm_chain_devnet_v1.py
+          cargo test --manifest-path trillionnium/Cargo.toml --locked \
+            -p trnm-finality-types \
+            -p trnm-finality-verifier \
+            -p trnm-node --lib
+
+      - name: Create ephemeral external trust anchor
+        run: |
+          set -euo pipefail
+          umask 077
+          openssl genpkey -algorithm Ed25519 -out /tmp/trnm-release.pem
+          openssl pkey -in /tmp/trnm-release.pem -pubout -out /tmp/trnm-release.pub.pem
+
+      - name: Build twice and verify reproducibility
+        env:
+          TRNM_RELEASE_SIGNING_KEY: /tmp/trnm-release.pem
+        run: |
+          set -euo pipefail
+          export SOURCE_DATE_EPOCH="$(git show -s --format=%ct HEAD)"
+          export TRNM_DEVNET_ALLOW_DIRTY=0
+          export TRNM_DEVNET_TARGET_DIR=/tmp/trnm-devnet-target
+
+          TRNM_DEVNET_RELEASE_OUT_DIR=/tmp/trnm-package-a \
+            trillionnium/scripts/release/build_trnm_chain_devnet_v1.sh
+          TRNM_DEVNET_RELEASE_OUT_DIR=/tmp/trnm-package-b \
+            trillionnium/scripts/release/build_trnm_chain_devnet_v1.sh
+
+          archive_a="$(find /tmp/trnm-package-a -maxdepth 1 -name '*.tar.gz' -print -quit)"
+          archive_b="$(find /tmp/trnm-package-b -maxdepth 1 -name '*.tar.gz' -print -quit)"
+          test -n "$archive_a" -a -n "$archive_b"
+          cmp "$archive_a" "$archive_b"
+          cmp "$archive_a.sha256" "$archive_b.sha256"
+          cmp "$archive_a.ed25519" "$archive_b.ed25519"
+
+          trillionnium/scripts/release/verify_trnm_chain_devnet_v1.sh \
+            "$archive_a" \
+            "$archive_a.sha256" \
+            "$archive_a.ed25519" \
+            /tmp/trnm-release.pub.pem
+
+      - name: Clean checkout remains clean
+        run: git diff --exit-code && test -z "$(git status --porcelain)"

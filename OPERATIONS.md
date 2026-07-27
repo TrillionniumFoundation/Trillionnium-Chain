@@ -2,6 +2,19 @@
 
 > Scope: main Trillionnium repository operational playbook (English rewrite).
 
+## Canonical Live Devnet Runtime
+
+- Run live nodes with `trnm-chain-node`, validators with
+  `trnm-chain-validator`, and initialization/signing workflows with
+  `trnm-chain-cli`.
+- `trnm-sim` is retained only for historical simulation, benchmark replay, and
+  legacy gates. Never use its output as live-chain release or finality evidence.
+- Build and verify the tracked signed package with
+  `trillionnium/scripts/release/build_trnm_chain_devnet_v1.sh` and
+  `trillionnium/scripts/release/verify_trnm_chain_devnet_v1.sh`.
+- Keep the trusted release public key outside the archive. A key bundled inside
+  the archive is not a trust anchor.
+
 ## Workload Module
 
 ### RequestUnbonding

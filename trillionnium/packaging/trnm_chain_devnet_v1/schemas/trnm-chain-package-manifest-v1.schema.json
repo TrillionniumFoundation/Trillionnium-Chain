@@ -1,0 +1,59 @@
+{
+  "$id": "https://trillionnium.invalid/schemas/trnm-chain-package-manifest-v1.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": true,
+  "properties": {
+    "development_only": {
+      "const": true
+    },
+    "git_head": {
+      "pattern": "^[0-9a-f]{40}$",
+      "type": "string"
+    },
+    "package_id": {
+      "const": "trnm_chain_devnet_v1"
+    },
+    "package_version": {
+      "const": 1
+    },
+    "private_keys_packaged": {
+      "const": false
+    },
+    "public_mainnet_ready": {
+      "const": false
+    },
+    "required_binaries": {
+      "const": [
+        "trnm-chain-node",
+        "trnm-chain-validator",
+        "trnm-chain-cli"
+      ]
+    },
+    "schema": {
+      "const": "trnm_chain_package_manifest_v1"
+    },
+    "scope": {
+      "const": "loopback-local-devnet"
+    },
+    "source_fingerprint_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    }
+  },
+  "required": [
+    "schema",
+    "package_id",
+    "package_version",
+    "scope",
+    "development_only",
+    "public_mainnet_ready",
+    "private_keys_packaged",
+    "required_binaries",
+    "git_head",
+    "source_state",
+    "source_fingerprint_sha256",
+    "rollback"
+  ],
+  "title": "TRNM Chain package manifest v1",
+  "type": "object"
+}

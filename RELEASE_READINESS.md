@@ -1,6 +1,6 @@
 # TRNM Release Readiness
 
-Updated date: 2026-03-28
+Updated date: 2026-07-27
 Scope: When citing this file, you must always record the current output of `git rev-parse origin/main`. Do not keep using a fixed commit hash from an older doc header as a permanent truth source.
 
 > This file is the active **release readiness truth source**.
@@ -12,6 +12,17 @@ Scope: When citing this file, you must always record the current output of `git 
 ## Current Conclusion
 
 **Conclusion: Not release-ready; do not claim external readiness.**
+
+### 2026-07-27 live-runtime truth
+
+- `trnm-chain-node` is the only canonical runtime for live testnet development.
+- The historical in-process runtime is named `trnm-sim`; its tests, benchmarks,
+  or fault simulations are not evidence that the live chain is valid or deployable.
+- `trnm-finality-types` and `trnm-finality-verifier` are the supported minimal
+  dependency boundary for receipt consumers. External services must not depend on
+  the complete `trnm-node` package merely to verify finality.
+- The signed package remains `loopback-local-devnet`, `development_only=true`, and
+  `public_mainnet_ready=false`.
 
 The repo has useful local gates, reusable partial evidence packs, and front-end pre-release checks, but there are still active risks of truth-source drift.
 

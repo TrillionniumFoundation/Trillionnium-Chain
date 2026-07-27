@@ -8,6 +8,8 @@
 /trillionnium/target/
 /trillionnium/run/
 /trillionnium/release/
+__pycache__/
+*.py[cod]
 
 # Runtime logs
 *.log

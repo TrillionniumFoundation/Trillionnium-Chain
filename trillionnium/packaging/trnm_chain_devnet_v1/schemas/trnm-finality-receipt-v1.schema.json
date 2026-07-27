@@ -1,0 +1,170 @@
+{
+  "$defs": {
+    "digest": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "merkleProof": {
+      "additionalProperties": false,
+      "properties": {
+        "leaf_count": {
+          "minimum": 1,
+          "type": "integer"
+        },
+        "leaf_hash_hex": {
+          "$ref": "#/$defs/digest"
+        },
+        "leaf_index": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "steps": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "sibling_hash_hex": {
+                "$ref": "#/$defs/digest"
+              },
+              "sibling_on_left": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "sibling_hash_hex",
+              "sibling_on_left"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "tree_domain": {
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "tree_domain",
+        "leaf_hash_hex",
+        "leaf_index",
+        "leaf_count",
+        "steps"
+      ],
+      "type": "object"
+    }
+  },
+  "$id": "https://trillionnium.invalid/schemas/trnm-finality-receipt-v1.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "block_hash_hex": {
+      "$ref": "#/$defs/digest"
+    },
+    "block_header": {
+      "type": "object"
+    },
+    "block_height": {
+      "minimum": 1,
+      "type": "integer"
+    },
+    "chain_id": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "command_id": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "object_inclusion_proof": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/merkleProof"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "object_ref": {
+      "oneOf": [
+        {
+          "additionalProperties": false,
+          "properties": {
+            "object_key_hex": {
+              "$ref": "#/$defs/digest"
+            },
+            "object_type": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "value_hash_hex": {
+              "$ref": "#/$defs/digest"
+            },
+            "version": {
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "object_key_hex",
+            "object_type",
+            "version",
+            "value_hash_hex"
+          ],
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "quorum_certificate": {
+      "type": "object"
+    },
+    "receipt_hash_hex": {
+      "$ref": "#/$defs/digest"
+    },
+    "schema": {
+      "const": "trnm_finality_receipt_v1"
+    },
+    "state_root_hex": {
+      "$ref": "#/$defs/digest"
+    },
+    "transaction_hash_hex": {
+      "$ref": "#/$defs/digest"
+    },
+    "transaction_inclusion_proof": {
+      "$ref": "#/$defs/merkleProof"
+    },
+    "transaction_index": {
+      "minimum": 0,
+      "type": "integer"
+    },
+    "transaction_root_hex": {
+      "$ref": "#/$defs/digest"
+    },
+    "validator_set_id": {
+      "minLength": 1,
+      "type": "string"
+    }
+  },
+  "required": [
+    "schema",
+    "chain_id",
+    "command_id",
+    "transaction_hash_hex",
+    "transaction_index",
+    "block_height",
+    "block_hash_hex",
+    "block_header",
+    "state_root_hex",
+    "transaction_root_hex",
+    "object_ref",
+    "transaction_inclusion_proof",
+    "object_inclusion_proof",
+    "validator_set_id",
+    "quorum_certificate",
+    "receipt_hash_hex"
+  ],
+  "title": "TRNM finality receipt v1",
+  "type": "object"
+}

@@ -1,0 +1,86 @@
+{
+  "$id": "https://trillionnium.invalid/schemas/trnm-signed-command-envelope-v1.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "chain_id": {
+      "maxLength": 128,
+      "minLength": 1,
+      "pattern": "^[a-z0-9._:/-]+$",
+      "type": "string"
+    },
+    "command_id": {
+      "maxLength": 160,
+      "minLength": 1,
+      "pattern": "^[a-z0-9._:/-]+$",
+      "type": "string"
+    },
+    "expires_at_unix_ms": {
+      "minimum": 1,
+      "type": "integer"
+    },
+    "issued_at_unix_ms": {
+      "minimum": 0,
+      "type": "integer"
+    },
+    "nonce": {
+      "minimum": 1,
+      "type": "integer"
+    },
+    "payload_hash_hex": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "payload_hex": {
+      "maxLength": 2097152,
+      "pattern": "^(?:[0-9a-f]{2})*$",
+      "type": "string"
+    },
+    "payload_type": {
+      "maxLength": 128,
+      "minLength": 1,
+      "pattern": "^[a-z0-9._:/-]+$",
+      "type": "string"
+    },
+    "public_key_hex": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "schema": {
+      "const": "trnm_signed_command_envelope_v1"
+    },
+    "signature_hex": {
+      "pattern": "^[0-9a-f]{128}$",
+      "type": "string"
+    },
+    "signer_id": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^[a-z0-9._:/-]+$",
+      "type": "string"
+    },
+    "signer_role": {
+      "maxLength": 64,
+      "minLength": 1,
+      "pattern": "^[a-z0-9._:/-]+$",
+      "type": "string"
+    }
+  },
+  "required": [
+    "schema",
+    "chain_id",
+    "command_id",
+    "signer_id",
+    "signer_role",
+    "public_key_hex",
+    "nonce",
+    "issued_at_unix_ms",
+    "expires_at_unix_ms",
+    "payload_type",
+    "payload_hex",
+    "payload_hash_hex",
+    "signature_hex"
+  ],
+  "title": "TRNM signed command envelope v1",
+  "type": "object"
+}

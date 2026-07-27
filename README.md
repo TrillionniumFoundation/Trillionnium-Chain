@@ -55,7 +55,11 @@ TrillionniumChain/
 
 ### Rust mainline (`trillionnium/crates`)
 
-- `trnm-node`: node runtime loop, execution wiring, event emission
+- `trnm-node`: package containing the canonical `trnm-chain-node` testnet runtime,
+  independent `trnm-chain-validator`, operator `trnm-chain-cli`, and the explicitly
+  non-canonical historical simulator binary `trnm-sim`
+- `trnm-finality-types` / `trnm-finality-verifier`: node-independent finality wire
+  types and receipt verification for external consumers
 - `trnm-state`: versioned state store and `state_root`
 - `trnm-pouw`: PoCO task state machine and validation logic (legacy crate name retained during migration; do not read it as current payout-authority wording)
 - `trnm-executor`: conflict detection and concurrent scheduling strategy
