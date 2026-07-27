@@ -54,7 +54,10 @@ enum Command {
 )]
 enum TxCommand {
     /// Submit a PoCO consumption receipt tx
-    #[command(name = "submit-consumption-receipt", alias = "submit-settlement-receipt")]
+    #[command(
+        name = "submit-consumption-receipt",
+        alias = "submit-settlement-receipt"
+    )]
     SubmitConsumptionReceipt {
         #[arg(long)]
         receipt_json: PathBuf,
@@ -2346,6 +2349,7 @@ fn wallet_store_path_is_safe(path: &Path) -> bool {
         && rendered.chars().all(|c| {
             !c.is_whitespace()
                 && !contains_hidden_or_control(c)
+                && !is_single_sided_env_quote(c)
                 && !matches!(
                     c,
                     '\\' | '∖'
@@ -4467,6 +4471,16 @@ mod tests {
         std::fs::canonicalize(std::env::temp_dir()).unwrap_or_else(|_| std::env::temp_dir())
     }
 
+    #[cfg(unix)]
+    fn set_test_store_owner_only(path: &Path) {
+        use std::os::unix::fs::PermissionsExt;
+
+        std::fs::set_permissions(path, std::fs::Permissions::from_mode(0o700)).unwrap();
+    }
+
+    #[cfg(not(unix))]
+    fn set_test_store_owner_only(_path: &Path) {}
+
     #[test]
     fn consumption_settlement_cli_parser_accepts_submit_receipt_command() {
         let args = Args::try_parse_from([
@@ -4813,7 +4827,11 @@ mod tests {
             &["trnm-cli", "query", "settlement-preview"][..],
             &["trnm-cli", "wallet", "create"][..],
         ] {
-            assert_eq!(legacy_tx_surface_notice(argv), None, "unexpected notice for {argv:?}");
+            assert_eq!(
+                legacy_tx_surface_notice(argv),
+                None,
+                "unexpected notice for {argv:?}"
+            );
         }
     }
 
@@ -5018,7 +5036,9 @@ mod tests {
         assert!(tx_help.contains("submit-consumption-receipt"));
         assert!(tx_help.contains("challenge-consumption"));
         assert!(tx_help.contains("resolve-consumption"));
-        assert!(tx_help.contains("legacy tx aliases are hidden from help during the migration window"));
+        assert!(
+            tx_help.contains("legacy tx aliases are hidden from help during the migration window")
+        );
         assert!(!tx_help.contains("submit-settlement-receipt"));
         assert!(!tx_help.contains("challenge-settlement"));
         assert!(!tx_help.contains("resolve-settlement"));
@@ -6654,6 +6674,7 @@ mod tests {
         );
         let store = canonical_temp_root().join(unique);
         std::fs::create_dir_all(&store).unwrap();
+        set_test_store_owner_only(&store);
         let wallet = wallet_file(&store, "alice");
         std::fs::write(
             &wallet,
@@ -6695,6 +6716,7 @@ mod tests {
         );
         let store = canonical_temp_root().join(unique);
         std::fs::create_dir_all(&store).unwrap();
+        set_test_store_owner_only(&store);
         let existing = wallet_file(&store, "alice");
         std::fs::write(
             &existing,
@@ -6737,6 +6759,7 @@ mod tests {
         );
         let store = canonical_temp_root().join(unique);
         std::fs::create_dir_all(&store).unwrap();
+        set_test_store_owner_only(&store);
         let existing = wallet_file(&store, "alice");
         symlink(store.join("missing-target.key"), &existing).unwrap();
 
@@ -6775,6 +6798,7 @@ mod tests {
         );
         let store = canonical_temp_root().join(unique);
         std::fs::create_dir_all(&store).unwrap();
+        set_test_store_owner_only(&store);
 
         let target = store.join("alice.real.key");
         std::fs::write(

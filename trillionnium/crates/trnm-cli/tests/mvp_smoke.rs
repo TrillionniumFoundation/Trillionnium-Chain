@@ -24,6 +24,16 @@ fn bin() -> String {
         .to_string()
 }
 
+fn create_owner_only_dir_all(path: &std::path::Path) {
+    std::fs::create_dir_all(path).unwrap();
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::PermissionsExt;
+
+        std::fs::set_permissions(path, std::fs::Permissions::from_mode(0o700)).unwrap();
+    }
+}
+
 fn tmp_dir(label: &str) -> PathBuf {
     let ts = SystemTime::now()
         .duration_since(UNIX_EPOCH)
@@ -33,7 +43,7 @@ fn tmp_dir(label: &str) -> PathBuf {
         .canonicalize()
         .unwrap_or_else(|_| std::env::temp_dir());
     let p = temp_root.join(format!("trnm-cli-{label}-{ts}"));
-    std::fs::create_dir_all(&p).unwrap();
+    create_owner_only_dir_all(&p);
     p
 }
 
@@ -105,7 +115,7 @@ fn smoke_wallet_create_rejects_symlinked_ancestor_out_path() {
     let root = tmp_dir("wallet-create-symlink-ancestor");
     let real_parent = root.join("real-parent");
     let linked_parent = root.join("linked-parent");
-    std::fs::create_dir_all(&real_parent).unwrap();
+    create_owner_only_dir_all(&real_parent);
     symlink(&real_parent, &linked_parent).unwrap();
     let store = linked_parent.join("wallets");
 
@@ -143,7 +153,7 @@ fn smoke_wallet_import_rejects_symlinked_final_out_path() {
     let root = tmp_dir("wallet-import-symlink-final-store");
     let real_store = root.join("real-store");
     let linked_store = root.join("linked-store");
-    std::fs::create_dir_all(&real_store).unwrap();
+    create_owner_only_dir_all(&real_store);
     symlink(&real_store, &linked_store).unwrap();
 
     let out = Command::new(bin())
@@ -499,7 +509,7 @@ fn smoke_wallet_sign_rejects_explicit_store_with_symlinked_ancestor() {
     let real_parent = root.join("real-parent");
     let linked_parent = root.join("linked-parent");
     let real_store = real_parent.join("wallets");
-    std::fs::create_dir_all(&real_store).unwrap();
+    create_owner_only_dir_all(&real_store);
     symlink(&real_parent, &linked_parent).unwrap();
 
     let pk = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
@@ -557,7 +567,7 @@ fn smoke_wallet_sign_rejects_explicit_store_with_symlinked_final_path() {
     let root = tmp_dir("wallet-sign-symlink-final-store");
     let real_store = root.join("real-store");
     let linked_store = root.join("linked-store");
-    std::fs::create_dir_all(&real_store).unwrap();
+    create_owner_only_dir_all(&real_store);
     symlink(&real_store, &linked_store).unwrap();
 
     let pk = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
@@ -656,7 +666,7 @@ fn smoke_wallet_address_rejects_explicit_store_with_symlinked_final_path() {
     let root = tmp_dir("wallet-address-symlink-final-store");
     let real_store = root.join("real-store");
     let linked_store = root.join("linked-store");
-    std::fs::create_dir_all(&real_store).unwrap();
+    create_owner_only_dir_all(&real_store);
     symlink(&real_store, &linked_store).unwrap();
 
     let pk = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
