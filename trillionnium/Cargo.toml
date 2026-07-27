@@ -15,6 +15,7 @@ members = [
   "crates/trnm-research-protocol",
   "crates/trnm-finality-types",
   "crates/trnm-finality-verifier",
+  "crates/trnm-consensus-app",
 ]
 resolver = "2"
 

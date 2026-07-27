@@ -172,7 +172,7 @@ pub struct CommandExecution {
 }
 
 impl CommandExecution {
-    pub(crate) fn validate(&self) -> Result<()> {
+    pub fn validate(&self) -> Result<()> {
         ensure!(
             !self.mutations.is_empty(),
             "command execution must contain at least one mutation"
@@ -235,7 +235,7 @@ impl CommandInterpreter for OpaqueCommitmentInterpreter {
 pub const RESEARCH_COMMAND_PAYLOAD_TYPE_V1: &str = "trnm_research_command_v1";
 const RESEARCH_SNAPSHOT_OBJECT_TYPE_V1: &str = "trnm_research_protocol_snapshot_v1";
 
-pub(crate) struct RoutingCommandInterpreter {
+pub struct RoutingCommandInterpreter {
     opaque: OpaqueCommitmentInterpreter,
     research_authorities: AuthoritySetV1,
 }
@@ -245,7 +245,7 @@ impl RoutingCommandInterpreter {
         Self::from_authorized_signers(&config.authorized_signers)
     }
 
-    pub(crate) fn from_authorized_signers(signers: &[AuthorizedSignerV1]) -> Result<Self> {
+    pub fn from_authorized_signers(signers: &[AuthorizedSignerV1]) -> Result<Self> {
         let mut nakama = Vec::new();
         let mut hepta = Vec::new();
         for signer in signers {

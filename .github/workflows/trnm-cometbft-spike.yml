@@ -1,0 +1,57 @@
+name: TRNM CometBFT Spike
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/trnm-cometbft-spike.yml"
+      - "trillionnium/Cargo.lock"
+      - "trillionnium/Cargo.toml"
+      - "trillionnium/crates/trnm-consensus-app/**"
+      - "trillionnium/crates/trnm-finality-types/**"
+      - "trillionnium/crates/trnm-node/**"
+      - "trillionnium/scripts/consensus/**"
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/trnm-cometbft-spike.yml"
+      - "trillionnium/Cargo.lock"
+      - "trillionnium/Cargo.toml"
+      - "trillionnium/crates/trnm-consensus-app/**"
+      - "trillionnium/crates/trnm-finality-types/**"
+      - "trillionnium/crates/trnm-node/**"
+      - "trillionnium/scripts/consensus/**"
+
+permissions:
+  contents: read
+
+jobs:
+  cometbft-four-validator:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      COMETBFT_VERSION: "0.38.17"
+      COMETBFT_SHA256: "736592aea2e077a4bb934ed26b0ee670462ae3d8a37670e2d268dea33304bc52"
+      CARGO_INCREMENTAL: "0"
+      CARGO_TERM_COLOR: never
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+
+      - name: Install checksum-pinned CometBFT
+        run: |
+          set -euo pipefail
+          curl --fail --location --retry 3 \
+            "https://github.com/cometbft/cometbft/releases/download/v${COMETBFT_VERSION}/cometbft_${COMETBFT_VERSION}_linux_amd64.tar.gz" \
+            --output /tmp/cometbft.tar.gz
+          tar -xzf /tmp/cometbft.tar.gz -C /tmp cometbft
+          printf '%s  %s\n' "$COMETBFT_SHA256" /tmp/cometbft | sha256sum --check --strict
+
+      - name: Adapter unit and live-process gates
+        env:
+          TRNM_COMETBFT_BIN: /tmp/cometbft
+        run: |
+          set -euo pipefail
+          cargo test --manifest-path trillionnium/Cargo.toml --locked -p trnm-consensus-app
+          trillionnium/scripts/consensus/spike_cometbft_single_node.sh
+          trillionnium/scripts/consensus/spike_cometbft_four_validator.sh
