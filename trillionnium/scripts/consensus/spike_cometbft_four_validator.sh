@@ -10,8 +10,8 @@ KEEP="${TRNM_COMETBFT_SPIKE_KEEP:-0}"
 BASE_RPC="${TRNM_COMETBFT_BASE_RPC_PORT:-28657}"
 BASE_P2P="${TRNM_COMETBFT_BASE_P2P_PORT:-28656}"
 BASE_ABCI="${TRNM_COMETBFT_BASE_ABCI_PORT:-28658}"
-APP_PIDS=("" "" "" "")
-COMET_PIDS=("" "" "" "")
+APP_PIDS=("" "" "" "" "")
+COMET_PIDS=("" "" "" "" "")
 
 cleanup() {
   for pid in "${COMET_PIDS[@]}" "${APP_PIDS[@]}"; do
@@ -25,11 +25,13 @@ cleanup() {
   fi
 }
 trap cleanup EXIT
+trap 'printf "TRNM_COMETBFT_FOUR_VALIDATOR_FAILED line=%s root=%s\n" "$LINENO" "$ROOT" >&2' ERR
 
 command -v "$COMETBFT_BIN" >/dev/null
 command -v curl >/dev/null
 command -v jq >/dev/null
 command -v base64 >/dev/null
+command -v python3 >/dev/null
 
 cargo build -q -p trnm-consensus-app --bin trnm-cometbft-app
 cargo build -q -p trnm-node --bin trnm-chain-cli
@@ -39,7 +41,7 @@ CLI_BIN="$PWD/target/debug/trnm-chain-cli"
 mkdir -p "$ROOT"
 key_json="$($CLI_BIN keygen --output "$ROOT/operator.key")"
 public_key="$(printf '%s' "$key_json" | jq -r .public_key_hex)"
-for index in 0 1 2 3; do
+for index in 0 1 2 3 4; do
   home="$ROOT/node$index"
   "$COMETBFT_BIN" init --home "$home" >/dev/null
   sed -i 's/^allow_duplicate_ip = false$/allow_duplicate_ip = true/' "$home/config/config.toml"
@@ -62,12 +64,12 @@ validators="$(for index in 0 1 2 3; do jq '.validators[0]' "$ROOT/node$index/con
 jq --argjson validators "$validators" \
   '.chain_id="trnm-comet-four" | .validators=$validators' \
   "$ROOT/node0/config/genesis.json" > "$ROOT/genesis.json"
-for index in 0 1 2 3; do
+for index in 0 1 2 3 4; do
   cp "$ROOT/genesis.json" "$ROOT/node$index/config/genesis.json"
 done
 
 node_ids=()
-for index in 0 1 2 3; do
+for index in 0 1 2 3 4; do
   node_ids+=("$($COMETBFT_BIN show-node-id --home "$ROOT/node$index")")
 done
 
@@ -147,6 +149,28 @@ wait_height() {
   return 1
 }
 
+wait_app_hash_convergence() {
+  local indexes=("$@")
+  local hashes=()
+  local index
+  for _ in $(seq 1 200); do
+    hashes=()
+    for index in "${indexes[@]}"; do
+      if [[ ! -f "$ROOT/node$index/app-state.json" ]]; then
+        hashes+=("missing-$index")
+      else
+        hashes+=("$(jq -r '.height | tostring' "$ROOT/node$index/app-state.json"):$(jq -r .app_hash_hex "$ROOT/node$index/app-state.json")")
+      fi
+    done
+    if [[ "$(printf '%s\n' "${hashes[@]}" | sort -u | wc -l)" = "1" ]]; then
+      return 0
+    fi
+    sleep 0.25
+  done
+  printf 'app state convergence timed out: %s\n' "${hashes[*]}" >&2
+  return 1
+}
+
 sign_tx() {
   local nonce="$1"
   printf 'four-validator-payload-%s' "$nonce" > "$ROOT/payload-$nonce.bin"
@@ -184,11 +208,7 @@ test "$(printf '%s' "$first" | jq -r '.result.tx_result.code')" = "0"
 first_height="$(printf '%s' "$first" | jq -r '.result.height | tonumber')"
 for index in 0 1 2 3; do wait_height "$index" "$first_height"; done
 
-app_hashes=()
-for index in 0 1 2 3; do
-  app_hashes+=("$(jq -r .app_hash_hex "$ROOT/node$index/app-state.json")")
-done
-test "$(printf '%s\n' "${app_hashes[@]}" | sort -u | wc -l)" = "1"
+wait_app_hash_convergence 0 1 2 3
 
 kill "${COMET_PIDS[3]}" "${APP_PIDS[3]}"
 wait "${COMET_PIDS[3]}" 2>/dev/null || true
@@ -210,11 +230,53 @@ wait_rpc 3
 wait_height 3 "$rejoin_height"
 test "$(jq -r .height "$ROOT/node3/app-state.json")" = "$rejoin_height"
 
-app_hashes=()
-for index in 0 1 2 3; do
-  app_hashes+=("$(jq -r .app_hash_hex "$ROOT/node$index/app-state.json")")
-done
-test "$(printf '%s\n' "${app_hashes[@]}" | sort -u | wc -l)" = "1"
+wait_app_hash_convergence 0 1 2 3
 
-printf 'TRNM_COMETBFT_FOUR_VALIDATOR_OK height=%s offline_tolerance=1 rejoin=verified app_hash=%s root=%s\n' \
-  "$rejoin_height" "${app_hashes[0]}" "$ROOT"
+for nonce in 3 4 5 6; do
+  sign_tx "$nonce"
+  committed="$(broadcast_commit "$ROOT/tx-$nonce.json")"
+  test "$(printf '%s' "$committed" | jq -r '.result.check_tx.code')" = "0"
+  test "$(printf '%s' "$committed" | jq -r '.result.tx_result.code')" = "0"
+done
+latest_height="$(curl -fsS "http://127.0.0.1:$BASE_RPC/status" | jq -r '.result.sync_info.latest_block_height | tonumber')"
+for index in 0 1 2 3; do wait_height "$index" "$latest_height"; done
+trust_height=$((latest_height - 2))
+test "$trust_height" -gt 0
+trust_hash="$(curl -fsS "http://127.0.0.1:$BASE_RPC/block?height=$trust_height" | jq -r '.result.block_id.hash')"
+test -n "$trust_hash"
+
+python3 - "$ROOT/node4/config/config.toml" \
+  "http://127.0.0.1:$BASE_RPC,http://127.0.0.1:$((BASE_RPC + 10))" \
+  "$trust_height" "$trust_hash" <<'PY'
+from pathlib import Path
+import sys
+
+path = Path(sys.argv[1])
+rpc_servers = sys.argv[2]
+trust_height = sys.argv[3]
+trust_hash = sys.argv[4]
+text = path.read_text()
+start = text.index("[statesync]")
+end = text.index("\n[", start + 1)
+section = text[start:end]
+section = section.replace("enable = false", "enable = true", 1)
+section = section.replace('rpc_servers = ""', f'rpc_servers = "{rpc_servers}"', 1)
+section = section.replace("trust_height = 0", f"trust_height = {trust_height}", 1)
+section = section.replace('trust_hash = ""', f'trust_hash = "{trust_hash}"', 1)
+section = section.replace('discovery_time = "15s"', 'discovery_time = "6s"', 1)
+path.write_text(text[:start] + section + text[end:])
+PY
+
+test ! -e "$ROOT/node4/app-state.json"
+start_app 4
+start_comet 4
+wait_rpc 4
+wait_peers 4 2
+wait_height 4 "$latest_height"
+test "$(jq -r .height "$ROOT/node4/app-state.json")" -ge "$latest_height"
+
+wait_app_hash_convergence 0 1 2 3 4
+app_hash="$(jq -r .app_hash_hex "$ROOT/node4/app-state.json")"
+
+printf 'TRNM_COMETBFT_FOUR_VALIDATOR_OK height=%s offline_tolerance=1 rejoin=verified state_sync=verified app_hash=%s root=%s\n' \
+  "$latest_height" "$app_hash" "$ROOT"

@@ -60,6 +60,8 @@ TrillionniumChain/
   non-canonical historical simulator binary `trnm-sim`
 - `trnm-finality-types` / `trnm-finality-verifier`: node-independent finality wire
   types and receipt verification for external consumers
+- `trnm-consensus-app`: deterministic CometBFT ABCI++ adapter prototype with
+  replay-safe app hashes and local fresh-node state sync evidence
 - `trnm-state`: versioned state store and `state_root`
 - `trnm-pouw`: PoCO task state machine and validation logic (legacy crate name retained during migration; do not read it as current payout-authority wording)
 - `trnm-executor`: conflict detection and concurrent scheduling strategy

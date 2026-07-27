@@ -11,9 +11,12 @@ use bytes::Bytes;
 use serde::{Deserialize, Serialize};
 use tendermint_abci::Application;
 use tendermint_proto::v0_38::abci::{
-    response_process_proposal, ExecTxResult, RequestCheckTx, RequestFinalizeBlock, RequestInfo,
-    RequestProcessProposal, ResponseCheckTx, ResponseCommit, ResponseFinalizeBlock, ResponseInfo,
-    ResponseProcessProposal,
+    response_apply_snapshot_chunk, response_offer_snapshot, response_process_proposal,
+    ExecTxResult, RequestApplySnapshotChunk, RequestCheckTx, RequestFinalizeBlock, RequestInfo,
+    RequestLoadSnapshotChunk, RequestOfferSnapshot, RequestProcessProposal,
+    ResponseApplySnapshotChunk, ResponseCheckTx, ResponseCommit, ResponseFinalizeBlock,
+    ResponseInfo, ResponseListSnapshots, ResponseLoadSnapshotChunk, ResponseOfferSnapshot,
+    ResponseProcessProposal, Snapshot,
 };
 use trnm_finality_types::{hash_domain, SignedCommandEnvelopeV1};
 use trnm_node::live::{
@@ -23,6 +26,10 @@ use trnm_node::live::{
 };
 
 pub const CONFIG_SCHEMA_V1: &str = "trnm_cometbft_app_config_v1";
+const SNAPSHOT_FORMAT_V1: u32 = 1;
+const SNAPSHOT_CHUNK_SIZE: usize = 1024 * 1024;
+const MAX_SNAPSHOT_CHUNKS: u32 = 4096;
+const RETAINED_SNAPSHOTS: usize = 16;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -109,11 +116,13 @@ struct AppCore {
     config: ConsensusAppConfig,
     interpreter: RoutingCommandInterpreter,
     state: Mutex<AppState>,
+    snapshots: Mutex<BTreeMap<u64, SnapshotRecord>>,
+    snapshot_restore: Mutex<Option<SnapshotRestore>>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
-struct PersistedAppStateV1 {
+struct PersistedAppStateV2 {
     schema: String,
     height: u64,
     app_hash_hex: String,
@@ -132,6 +141,30 @@ struct PersistedObjectV1 {
     value_hex: String,
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct SnapshotMetadataV1 {
+    schema: String,
+    chain_id: String,
+    height: u64,
+    app_hash_hex: String,
+    total_bytes: u64,
+    chunk_size: u32,
+}
+
+#[derive(Debug, Clone)]
+struct SnapshotRestore {
+    snapshot: Snapshot,
+    metadata: SnapshotMetadataV1,
+    chunks: Vec<Option<Bytes>>,
+}
+
+#[derive(Debug, Clone)]
+struct SnapshotRecord {
+    snapshot: Snapshot,
+    bytes: Vec<u8>,
+}
+
 #[derive(Clone)]
 pub struct CometBftApplication {
     core: Arc<AppCore>,
@@ -146,11 +179,17 @@ impl CometBftApplication {
             Some(path) => load_state(path)?,
             None => AppState::default(),
         };
+        let mut snapshots = BTreeMap::new();
+        if state.height > 0 {
+            snapshots.insert(state.height, build_snapshot(&config.chain_id, &state)?);
+        }
         Ok(Self {
             core: Arc::new(AppCore {
                 config,
                 interpreter,
                 state: Mutex::new(state),
+                snapshots: Mutex::new(snapshots),
+                snapshot_restore: Mutex::new(None),
             }),
         })
     }
@@ -226,16 +265,8 @@ impl CometBftApplication {
                 objects.insert(stored.object_key_hex.clone(), stored);
             }
         }
-        let leaves = objects
-            .values()
-            .map(StoredObject::leaf_hash)
-            .collect::<Vec<_>>();
-        let (state_root, _) = root_and_proofs("trnm.state.objects.v1", &leaves);
         let next_height = state.height.saturating_add(1);
-        let app_hash = hash_domain(
-            "trnm.cometbft.application.v1",
-            &[&next_height.to_be_bytes(), &state_root],
-        );
+        let app_hash = compute_app_hash(next_height, &objects, &command_ids, &signer_nonces);
         Ok(PendingBlock {
             height: next_height,
             app_hash,
@@ -243,6 +274,24 @@ impl CometBftApplication {
             command_ids,
             signer_nonces,
         })
+    }
+
+    fn retain_snapshot(&self, state: &AppState) -> Result<()> {
+        let record = build_snapshot(&self.core.config.chain_id, state)?;
+        let mut snapshots = self
+            .core
+            .snapshots
+            .lock()
+            .map_err(|_| anyhow!("snapshot store lock poisoned"))?;
+        snapshots.insert(state.height, record);
+        while snapshots.len() > RETAINED_SNAPSHOTS {
+            let oldest = *snapshots
+                .keys()
+                .next()
+                .expect("snapshot store is non-empty");
+            snapshots.remove(&oldest);
+        }
+        Ok(())
     }
 }
 
@@ -252,7 +301,7 @@ impl Application for CometBftApplication {
         ResponseInfo {
             data: "trnm-consensus-app".to_string(),
             version: env!("CARGO_PKG_VERSION").to_string(),
-            app_version: 1,
+            app_version: 2,
             last_block_height: height as i64,
             last_block_app_hash: Bytes::copy_from_slice(&app_hash),
         }
@@ -335,10 +384,233 @@ impl Application for CometBftApplication {
                         panic!("persist committed consensus application state: {error:#}")
                     });
                 }
+                self.retain_snapshot(&next).unwrap_or_else(|error| {
+                    panic!("retain committed consensus application snapshot: {error:#}")
+                });
                 *state = next;
             }
         }
         ResponseCommit::default()
+    }
+
+    fn list_snapshots(&self) -> ResponseListSnapshots {
+        let snapshots = match self.core.snapshots.lock() {
+            Ok(snapshots) => snapshots,
+            Err(_) => return ResponseListSnapshots::default(),
+        };
+        ResponseListSnapshots {
+            snapshots: snapshots
+                .values()
+                .rev()
+                .map(|record| record.snapshot.clone())
+                .collect(),
+        }
+    }
+
+    fn offer_snapshot(&self, request: RequestOfferSnapshot) -> ResponseOfferSnapshot {
+        let result = self
+            .validate_snapshot_offer(request)
+            .map(|restore| {
+                self.core
+                    .snapshot_restore
+                    .lock()
+                    .map_err(|_| anyhow!("snapshot restore lock poisoned"))?
+                    .replace(restore);
+                Ok::<_, anyhow::Error>(())
+            })
+            .and_then(|result| result)
+            .map(|_| response_offer_snapshot::Result::Accept)
+            .unwrap_or(response_offer_snapshot::Result::Reject);
+        ResponseOfferSnapshot {
+            result: result as i32,
+        }
+    }
+
+    fn load_snapshot_chunk(&self, request: RequestLoadSnapshotChunk) -> ResponseLoadSnapshotChunk {
+        let snapshots = match self.core.snapshots.lock() {
+            Ok(snapshots) => snapshots,
+            Err(_) => return ResponseLoadSnapshotChunk::default(),
+        };
+        let Some(record) = snapshots.get(&request.height) else {
+            return ResponseLoadSnapshotChunk::default();
+        };
+        if request.format != record.snapshot.format || request.chunk >= record.snapshot.chunks {
+            return ResponseLoadSnapshotChunk::default();
+        }
+        let start = request.chunk as usize * SNAPSHOT_CHUNK_SIZE;
+        let end = start
+            .saturating_add(SNAPSHOT_CHUNK_SIZE)
+            .min(record.bytes.len());
+        ResponseLoadSnapshotChunk {
+            chunk: Bytes::copy_from_slice(&record.bytes[start..end]),
+        }
+    }
+
+    fn apply_snapshot_chunk(
+        &self,
+        request: RequestApplySnapshotChunk,
+    ) -> ResponseApplySnapshotChunk {
+        match self.apply_snapshot_chunk_inner(request) {
+            Ok(()) => snapshot_apply_response(response_apply_snapshot_chunk::Result::Accept),
+            Err(error) if error.to_string().contains("retry snapshot chunk") => {
+                snapshot_apply_response(response_apply_snapshot_chunk::Result::Retry)
+            }
+            Err(_) => {
+                if let Ok(mut restore) = self.core.snapshot_restore.lock() {
+                    restore.take();
+                }
+                snapshot_apply_response(response_apply_snapshot_chunk::Result::RejectSnapshot)
+            }
+        }
+    }
+}
+
+impl CometBftApplication {
+    fn validate_snapshot_offer(&self, request: RequestOfferSnapshot) -> Result<SnapshotRestore> {
+        let snapshot = request
+            .snapshot
+            .ok_or_else(|| anyhow!("snapshot offer is missing snapshot metadata"))?;
+        ensure!(
+            snapshot.format == SNAPSHOT_FORMAT_V1,
+            "unsupported snapshot format"
+        );
+        ensure!(
+            snapshot.chunks > 0 && snapshot.chunks <= MAX_SNAPSHOT_CHUNKS,
+            "invalid snapshot chunk count"
+        );
+        ensure!(snapshot.hash.len() == 32, "invalid snapshot hash length");
+        let metadata: SnapshotMetadataV1 =
+            serde_json::from_slice(&snapshot.metadata).context("decode snapshot metadata")?;
+        ensure!(
+            metadata.schema == "trnm_cometbft_snapshot_metadata_v1",
+            "unsupported snapshot metadata schema"
+        );
+        ensure!(
+            metadata.chain_id == self.core.config.chain_id,
+            "snapshot chain mismatch"
+        );
+        ensure!(
+            metadata.height == snapshot.height,
+            "snapshot height mismatch"
+        );
+        ensure!(metadata.height > 0, "genesis snapshot is not restorable");
+        ensure!(
+            metadata.chunk_size == SNAPSHOT_CHUNK_SIZE as u32,
+            "snapshot chunk size mismatch"
+        );
+        ensure!(metadata.total_bytes > 0, "snapshot is empty");
+        ensure!(
+            metadata.total_bytes
+                <= (MAX_SNAPSHOT_CHUNKS as u64).saturating_mul(SNAPSHOT_CHUNK_SIZE as u64),
+            "snapshot byte length exceeds limit"
+        );
+        let total_bytes = usize::try_from(metadata.total_bytes)
+            .context("snapshot byte length exceeds platform capacity")?;
+        let expected_chunks = total_bytes.div_ceil(SNAPSHOT_CHUNK_SIZE) as u32;
+        ensure!(
+            expected_chunks == snapshot.chunks,
+            "snapshot byte length mismatch"
+        );
+        let app_hash =
+            trnm_finality_types::decode_hash32("snapshot app_hash", &metadata.app_hash_hex)?;
+        ensure!(
+            request.app_hash.as_ref() == app_hash,
+            "snapshot app hash mismatch"
+        );
+        let state = self
+            .core
+            .state
+            .lock()
+            .map_err(|_| anyhow!("consensus application state lock poisoned"))?;
+        ensure!(
+            state.height == 0 && state.pending.is_none(),
+            "snapshot restore requires empty application state"
+        );
+        drop(state);
+        Ok(SnapshotRestore {
+            chunks: vec![None; snapshot.chunks as usize],
+            snapshot,
+            metadata,
+        })
+    }
+
+    fn apply_snapshot_chunk_inner(&self, request: RequestApplySnapshotChunk) -> Result<()> {
+        let mut restore_guard = self
+            .core
+            .snapshot_restore
+            .lock()
+            .map_err(|_| anyhow!("snapshot restore lock poisoned"))?;
+        let restore = restore_guard
+            .as_mut()
+            .ok_or_else(|| anyhow!("snapshot chunk received without accepted offer"))?;
+        let index = request.index as usize;
+        ensure!(
+            index < restore.chunks.len(),
+            "snapshot chunk index out of range"
+        );
+        let expected_len = if index + 1 == restore.chunks.len() {
+            restore.metadata.total_bytes as usize - index * SNAPSHOT_CHUNK_SIZE
+        } else {
+            SNAPSHOT_CHUNK_SIZE
+        };
+        ensure!(
+            request.chunk.len() == expected_len,
+            "retry snapshot chunk: invalid length"
+        );
+        if let Some(existing) = &restore.chunks[index] {
+            ensure!(
+                existing == &request.chunk,
+                "conflicting duplicate snapshot chunk"
+            );
+        } else {
+            restore.chunks[index] = Some(request.chunk);
+        }
+        if restore.chunks.iter().any(Option::is_none) {
+            return Ok(());
+        }
+        let mut bytes = Vec::with_capacity(restore.metadata.total_bytes as usize);
+        for chunk in &restore.chunks {
+            bytes.extend_from_slice(chunk.as_ref().expect("all chunks checked"));
+        }
+        ensure!(
+            snapshot_hash(&bytes).as_slice() == restore.snapshot.hash.as_ref(),
+            "snapshot content hash mismatch"
+        );
+        let next = decode_state(&bytes)?;
+        ensure!(
+            next.height == restore.metadata.height,
+            "restored height mismatch"
+        );
+        ensure!(
+            hex::encode(next.app_hash) == restore.metadata.app_hash_hex,
+            "restored app hash mismatch"
+        );
+        if let Some(path) = &self.core.config.state_path {
+            persist_state_bytes(path, &bytes)?;
+        }
+        let mut state = self
+            .core
+            .state
+            .lock()
+            .map_err(|_| anyhow!("consensus application state lock poisoned"))?;
+        ensure!(
+            state.height == 0 && state.pending.is_none(),
+            "application state changed during snapshot restore"
+        );
+        *state = next;
+        self.retain_snapshot(&state)?;
+        restore_guard.take();
+        Ok(())
+    }
+}
+
+fn snapshot_apply_response(
+    result: response_apply_snapshot_chunk::Result,
+) -> ResponseApplySnapshotChunk {
+    ResponseApplySnapshotChunk {
+        result: result as i32,
+        refetch_chunks: Vec::new(),
+        reject_senders: Vec::new(),
     }
 }
 
@@ -370,6 +642,43 @@ fn empty_app_hash() -> [u8; 32] {
     hash_domain("trnm.cometbft.application.empty.v1", &[])
 }
 
+fn compute_app_hash(
+    height: u64,
+    objects: &BTreeMap<String, StoredObject>,
+    command_ids: &BTreeSet<String>,
+    signer_nonces: &BTreeSet<(String, u64)>,
+) -> [u8; 32] {
+    let object_leaves = objects
+        .values()
+        .map(StoredObject::leaf_hash)
+        .collect::<Vec<_>>();
+    let command_leaves = command_ids
+        .iter()
+        .map(|command_id| hash_domain("trnm.state.command-id.v1", &[command_id.as_bytes()]))
+        .collect::<Vec<_>>();
+    let nonce_leaves = signer_nonces
+        .iter()
+        .map(|(signer_id, nonce)| {
+            hash_domain(
+                "trnm.state.signer-nonce.v1",
+                &[signer_id.as_bytes(), &nonce.to_be_bytes()],
+            )
+        })
+        .collect::<Vec<_>>();
+    let (object_root, _) = root_and_proofs("trnm.state.objects.v1", &object_leaves);
+    let (command_root, _) = root_and_proofs("trnm.state.command-ids.v1", &command_leaves);
+    let (nonce_root, _) = root_and_proofs("trnm.state.signer-nonces.v1", &nonce_leaves);
+    hash_domain(
+        "trnm.cometbft.application.v2",
+        &[
+            &height.to_be_bytes(),
+            &object_root,
+            &command_root,
+            &nonce_root,
+        ],
+    )
+}
+
 fn timestamp_ms(timestamp: Option<&tendermint_proto::google::protobuf::Timestamp>) -> u64 {
     let Some(timestamp) = timestamp else {
         return now_unix_ms();
@@ -392,12 +701,15 @@ fn load_state(path: &Path) -> Result<AppState> {
     if !path.exists() {
         return Ok(AppState::default());
     }
-    let persisted: PersistedAppStateV1 = serde_json::from_slice(
-        &fs::read(path).with_context(|| format!("read app state {}", path.display()))?,
-    )
-    .with_context(|| format!("decode app state {}", path.display()))?;
+    decode_state(&fs::read(path).with_context(|| format!("read app state {}", path.display()))?)
+        .with_context(|| format!("decode app state {}", path.display()))
+}
+
+fn decode_state(bytes: &[u8]) -> Result<AppState> {
+    let persisted: PersistedAppStateV2 =
+        serde_json::from_slice(bytes).context("decode persisted application state")?;
     ensure!(
-        persisted.schema == "trnm_cometbft_app_state_v1",
+        persisted.schema == "trnm_cometbft_app_state_v2",
         "unsupported persisted app state schema"
     );
     let app_hash =
@@ -428,14 +740,11 @@ fn load_state(path: &Path) -> Result<AppState> {
             "duplicate persisted object key"
         );
     }
-    let leaves = objects
-        .values()
-        .map(StoredObject::leaf_hash)
-        .collect::<Vec<_>>();
-    let (state_root, _) = root_and_proofs("trnm.state.objects.v1", &leaves);
-    let expected = hash_domain(
-        "trnm.cometbft.application.v1",
-        &[&persisted.height.to_be_bytes(), &state_root],
+    let expected = compute_app_hash(
+        persisted.height,
+        &objects,
+        &persisted.command_ids,
+        &persisted.signer_nonces,
     );
     ensure!(expected == app_hash, "persisted application hash mismatch");
     Ok(AppState {
@@ -449,12 +758,16 @@ fn load_state(path: &Path) -> Result<AppState> {
 }
 
 fn persist_state(path: &Path, state: &AppState) -> Result<()> {
-    if let Some(parent) = path.parent() {
-        fs::create_dir_all(parent)
-            .with_context(|| format!("create app state directory {}", parent.display()))?;
-    }
-    let persisted = PersistedAppStateV1 {
-        schema: "trnm_cometbft_app_state_v1".to_string(),
+    persist_state_bytes(path, &encode_state(state)?)
+}
+
+fn encode_state(state: &AppState) -> Result<Vec<u8>> {
+    ensure!(
+        state.pending.is_none(),
+        "cannot encode pending application state"
+    );
+    let persisted = PersistedAppStateV2 {
+        schema: "trnm_cometbft_app_state_v2".to_string(),
         height: state.height,
         app_hash_hex: hex::encode(state.app_hash),
         objects: state
@@ -471,7 +784,49 @@ fn persist_state(path: &Path, state: &AppState) -> Result<()> {
         command_ids: state.command_ids.clone(),
         signer_nonces: state.signer_nonces.clone(),
     };
-    let bytes = serde_json::to_vec(&persisted)?;
+    Ok(serde_json::to_vec(&persisted)?)
+}
+
+fn snapshot_hash(bytes: &[u8]) -> [u8; 32] {
+    hash_domain("trnm.cometbft.snapshot.v1", &[bytes])
+}
+
+fn build_snapshot(chain_id: &str, state: &AppState) -> Result<SnapshotRecord> {
+    ensure!(
+        state.pending.is_none(),
+        "cannot snapshot pending application state"
+    );
+    let bytes = encode_state(state)?;
+    let chunk_count = bytes.len().div_ceil(SNAPSHOT_CHUNK_SIZE) as u32;
+    ensure!(
+        chunk_count > 0 && chunk_count <= MAX_SNAPSHOT_CHUNKS,
+        "application snapshot exceeds chunk limit"
+    );
+    let metadata = SnapshotMetadataV1 {
+        schema: "trnm_cometbft_snapshot_metadata_v1".to_string(),
+        chain_id: chain_id.to_string(),
+        height: state.height,
+        app_hash_hex: hex::encode(state.app_hash),
+        total_bytes: bytes.len() as u64,
+        chunk_size: SNAPSHOT_CHUNK_SIZE as u32,
+    };
+    Ok(SnapshotRecord {
+        snapshot: Snapshot {
+            height: state.height,
+            format: SNAPSHOT_FORMAT_V1,
+            chunks: chunk_count,
+            hash: Bytes::copy_from_slice(&snapshot_hash(&bytes)),
+            metadata: Bytes::from(serde_json::to_vec(&metadata)?),
+        },
+        bytes,
+    })
+}
+
+fn persist_state_bytes(path: &Path, bytes: &[u8]) -> Result<()> {
+    if let Some(parent) = path.parent() {
+        fs::create_dir_all(parent)
+            .with_context(|| format!("create app state directory {}", parent.display()))?;
+    }
     let temporary = path.with_extension(format!(
         "{}.tmp",
         path.extension()
@@ -484,7 +839,7 @@ fn persist_state(path: &Path, state: &AppState) -> Result<()> {
         .write(true)
         .open(&temporary)
         .with_context(|| format!("open temporary app state {}", temporary.display()))?;
-    file.write_all(&bytes)?;
+    file.write_all(bytes)?;
     file.sync_all()?;
     fs::rename(&temporary, path).with_context(|| {
         format!(
@@ -504,7 +859,10 @@ mod tests {
     use ed25519_dalek::SigningKey;
     use tendermint_proto::{
         google::protobuf::Timestamp,
-        v0_38::abci::{RequestFinalizeBlock, RequestProcessProposal},
+        v0_38::abci::{
+            RequestApplySnapshotChunk, RequestFinalizeBlock, RequestLoadSnapshotChunk,
+            RequestOfferSnapshot, RequestProcessProposal,
+        },
     };
     use trnm_finality_types::crypto::public_key_hex;
 
@@ -565,6 +923,28 @@ mod tests {
     }
 
     #[test]
+    fn application_hash_commits_replay_protection_state() {
+        let objects = BTreeMap::new();
+        let empty_commands = BTreeSet::new();
+        let empty_nonces = BTreeSet::new();
+        let base = compute_app_hash(1, &objects, &empty_commands, &empty_nonces);
+
+        let mut commands = BTreeSet::new();
+        commands.insert("command-1".to_string());
+        assert_ne!(
+            base,
+            compute_app_hash(1, &objects, &commands, &empty_nonces)
+        );
+
+        let mut nonces = BTreeSet::new();
+        nonces.insert(("did:operator:1".to_string(), 1));
+        assert_ne!(
+            base,
+            compute_app_hash(1, &objects, &empty_commands, &nonces)
+        );
+    }
+
+    #[test]
     fn process_proposal_rejects_tampered_envelope() {
         let (app, mut envelope) = fixture();
         envelope.payload_hex = hex::encode(b"tampered");
@@ -622,5 +1002,106 @@ mod tests {
         let restarted = CometBftApplication::new(config).unwrap();
         assert_eq!(restarted.height_and_app_hash().unwrap(), expected);
         let _ = fs::remove_file(root);
+    }
+
+    #[test]
+    fn snapshot_restores_fresh_application_and_persists_state() {
+        let (source, envelope) = fixture();
+        let response = source.finalize_block(RequestFinalizeBlock {
+            txs: vec![Bytes::from(serde_json::to_vec(&envelope).unwrap())],
+            height: 1,
+            time: block_time(),
+            ..Default::default()
+        });
+        assert_eq!(response.tx_results[0].code, 0);
+        source.commit();
+        let source_state = source.height_and_app_hash().unwrap();
+        let snapshot = source.list_snapshots().snapshots.pop().unwrap();
+        assert_eq!(snapshot.height, source_state.0);
+
+        let root = std::env::temp_dir().join(format!(
+            "trnm-comet-restored-state-{}-{}.json",
+            std::process::id(),
+            now_unix_ms()
+        ));
+        let target = CometBftApplication::new(ConsensusAppConfig {
+            state_path: Some(root.clone()),
+            ..source.core.config.clone()
+        })
+        .unwrap();
+        let offer = target.offer_snapshot(RequestOfferSnapshot {
+            snapshot: Some(snapshot.clone()),
+            app_hash: Bytes::copy_from_slice(&source_state.1),
+        });
+        assert_eq!(offer.result, response_offer_snapshot::Result::Accept as i32);
+        for index in 0..snapshot.chunks {
+            let chunk = source
+                .load_snapshot_chunk(RequestLoadSnapshotChunk {
+                    height: snapshot.height,
+                    format: snapshot.format,
+                    chunk: index,
+                })
+                .chunk;
+            let applied = target.apply_snapshot_chunk(RequestApplySnapshotChunk {
+                index,
+                chunk,
+                sender: "source-validator".to_string(),
+            });
+            assert_eq!(
+                applied.result,
+                response_apply_snapshot_chunk::Result::Accept as i32
+            );
+        }
+        assert_eq!(target.height_and_app_hash().unwrap(), source_state);
+        drop(target);
+
+        let restarted = CometBftApplication::new(ConsensusAppConfig {
+            state_path: Some(root.clone()),
+            ..source.core.config.clone()
+        })
+        .unwrap();
+        assert_eq!(restarted.height_and_app_hash().unwrap(), source_state);
+        let _ = fs::remove_file(root);
+    }
+
+    #[test]
+    fn snapshot_rejects_tampered_content_without_mutating_state() {
+        let (source, envelope) = fixture();
+        source.finalize_block(RequestFinalizeBlock {
+            txs: vec![Bytes::from(serde_json::to_vec(&envelope).unwrap())],
+            height: 1,
+            time: block_time(),
+            ..Default::default()
+        });
+        source.commit();
+        let source_state = source.height_and_app_hash().unwrap();
+        let snapshot = source.list_snapshots().snapshots.pop().unwrap();
+        assert_eq!(snapshot.chunks, 1);
+
+        let (target, _) = fixture();
+        let offer = target.offer_snapshot(RequestOfferSnapshot {
+            snapshot: Some(snapshot.clone()),
+            app_hash: Bytes::copy_from_slice(&source_state.1),
+        });
+        assert_eq!(offer.result, response_offer_snapshot::Result::Accept as i32);
+        let mut chunk = source
+            .load_snapshot_chunk(RequestLoadSnapshotChunk {
+                height: snapshot.height,
+                format: snapshot.format,
+                chunk: 0,
+            })
+            .chunk
+            .to_vec();
+        chunk[0] ^= 1;
+        let applied = target.apply_snapshot_chunk(RequestApplySnapshotChunk {
+            index: 0,
+            chunk: Bytes::from(chunk),
+            sender: "malicious-validator".to_string(),
+        });
+        assert_eq!(
+            applied.result,
+            response_apply_snapshot_chunk::Result::RejectSnapshot as i32
+        );
+        assert_eq!(target.height_and_app_hash().unwrap().0, 0);
     }
 }

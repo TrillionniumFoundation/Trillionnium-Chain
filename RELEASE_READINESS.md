@@ -21,6 +21,10 @@ Scope: When citing this file, you must always record the current output of `git 
 - `trnm-finality-types` and `trnm-finality-verifier` are the supported minimal
   dependency boundary for receipt consumers. External services must not depend on
   the complete `trnm-node` package merely to verify finality.
+- `trnm-consensus-app` is a CometBFT-backed public-testnet prototype. Local
+  four-validator offline/rejoin and fresh-node ABCI state sync pass, but transport
+  authentication, validator-set transitions, cross-host recovery, and soak evidence
+  are still incomplete.
 - The signed package remains `loopback-local-devnet`, `development_only=true`, and
   `public_mainnet_ready=false`.
 
