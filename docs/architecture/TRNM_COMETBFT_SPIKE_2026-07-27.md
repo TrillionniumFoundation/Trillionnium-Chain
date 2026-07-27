@@ -6,10 +6,17 @@ Status: **four-validator recovery and fresh-node state sync proven locally**
 
 - CometBFT `v0.38.17` runs against the Rust `tendermint-abci` `v0.40.4`
   ABCI++ adapter.
-- `CheckTx`, `ProcessProposal`, `FinalizeBlock`, `Commit`, and the ABCI snapshot
-  methods reuse TRNM signed
+- `CheckTx`, deterministic `PrepareProposal`, `ProcessProposal`,
+  `FinalizeBlock`, `Commit`, and the ABCI snapshot methods reuse TRNM signed
   command validation, authorized signer policy, deterministic command execution,
   and the canonical state commitment.
+- `PrepareProposal` applies transactions against a temporary ordered overlay and
+  filters malformed, expired, replayed command ID/signer nonce, conflicting, and
+  over-limit transactions before they can poison a proposal.
+- `InitChain` fails closed unless the CometBFT chain ID, genesis application
+  schema/version, and authorized signer set match the local application config.
+  The fixtures also pin `consensus_params.version.app=2`; omitting that pin was
+  proven to make a fresh node reject state sync with an app-version mismatch.
 - Application hash v2 commits the object state, accepted command IDs, and signer
   nonces so state sync cannot preserve the object root while weakening replay
   protection.

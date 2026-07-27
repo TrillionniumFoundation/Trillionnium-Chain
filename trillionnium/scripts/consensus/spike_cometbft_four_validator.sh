@@ -61,8 +61,20 @@ for index in 0 1 2 3 4; do
 done
 
 validators="$(for index in 0 1 2 3; do jq '.validators[0]' "$ROOT/node$index/config/genesis.json"; done | jq -s '.')"
-jq --argjson validators "$validators" \
-  '.chain_id="trnm-comet-four" | .validators=$validators' \
+jq --argjson validators "$validators" --arg public_key "$public_key" \
+  '.chain_id="trnm-comet-four"
+   | .validators=$validators
+   | .consensus_params.version.app="2"
+   | .app_state={
+       schema:"trnm_cometbft_genesis_v1",
+       chain_id:"trnm-comet-four",
+       app_version:2,
+       authorized_signers:[{
+         signer_id:"did:operator:1",
+         signer_role:"operator",
+         public_key_hex:$public_key
+       }]
+     }' \
   "$ROOT/node0/config/genesis.json" > "$ROOT/genesis.json"
 for index in 0 1 2 3 4; do
   cp "$ROOT/genesis.json" "$ROOT/node$index/config/genesis.json"

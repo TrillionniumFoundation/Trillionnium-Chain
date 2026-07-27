@@ -13,9 +13,10 @@ use tendermint_abci::Application;
 use tendermint_proto::v0_38::abci::{
     response_apply_snapshot_chunk, response_offer_snapshot, response_process_proposal,
     ExecTxResult, RequestApplySnapshotChunk, RequestCheckTx, RequestFinalizeBlock, RequestInfo,
-    RequestLoadSnapshotChunk, RequestOfferSnapshot, RequestProcessProposal,
-    ResponseApplySnapshotChunk, ResponseCheckTx, ResponseCommit, ResponseFinalizeBlock,
-    ResponseInfo, ResponseListSnapshots, ResponseLoadSnapshotChunk, ResponseOfferSnapshot,
+    RequestInitChain, RequestLoadSnapshotChunk, RequestOfferSnapshot, RequestPrepareProposal,
+    RequestProcessProposal, ResponseApplySnapshotChunk, ResponseCheckTx, ResponseCommit,
+    ResponseFinalizeBlock, ResponseInfo, ResponseInitChain, ResponseListSnapshots,
+    ResponseLoadSnapshotChunk, ResponseOfferSnapshot, ResponsePrepareProposal,
     ResponseProcessProposal, Snapshot,
 };
 use trnm_finality_types::{hash_domain, SignedCommandEnvelopeV1};
@@ -26,6 +27,7 @@ use trnm_node::live::{
 };
 
 pub const CONFIG_SCHEMA_V1: &str = "trnm_cometbft_app_config_v1";
+pub const GENESIS_SCHEMA_V1: &str = "trnm_cometbft_genesis_v1";
 const SNAPSHOT_FORMAT_V1: u32 = 1;
 const SNAPSHOT_CHUNK_SIZE: usize = 1024 * 1024;
 const MAX_SNAPSHOT_CHUNKS: u32 = 4096;
@@ -39,6 +41,15 @@ pub struct ConsensusAppConfig {
     pub authorized_signers: Vec<AuthorizedSignerV1>,
     #[serde(default)]
     pub state_path: Option<PathBuf>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct GenesisAppStateV1 {
+    pub schema: String,
+    pub chain_id: String,
+    pub app_version: u64,
+    pub authorized_signers: Vec<AuthorizedSignerV1>,
 }
 
 impl ConsensusAppConfig {
@@ -237,33 +248,13 @@ impl CometBftApplication {
         let mut command_ids = state.command_ids.clone();
         let mut signer_nonces = state.signer_nonces.clone();
         for tx in txs {
-            let envelope: SignedCommandEnvelopeV1 =
-                serde_json::from_slice(tx).context("decode signed command envelope")?;
-            self.validate_envelope(&envelope, timestamp_ms)?;
-            ensure!(
-                command_ids.insert(envelope.command_id.clone()),
-                "command_id replay rejected"
-            );
-            ensure!(
-                signer_nonces.insert((envelope.signer_id.clone(), envelope.nonce)),
-                "signer nonce replay rejected"
-            );
-            let execution = self
-                .core
-                .interpreter
-                .prepare_execution(&envelope, &objects)?;
-            execution.validate()?;
-            for mutation in execution.mutations {
-                let current_version = objects
-                    .get(&mutation.object_key_hex)
-                    .map(|object| object.version);
-                ensure!(
-                    current_version == mutation.expected_version,
-                    "object version precondition mismatch"
-                );
-                let stored = mutation.into_stored();
-                objects.insert(stored.object_key_hex.clone(), stored);
-            }
+            self.apply_tx(
+                &mut objects,
+                &mut command_ids,
+                &mut signer_nonces,
+                tx,
+                timestamp_ms,
+            )?;
         }
         let next_height = state.height.saturating_add(1);
         let app_hash = compute_app_hash(next_height, &objects, &command_ids, &signer_nonces);
@@ -274,6 +265,81 @@ impl CometBftApplication {
             command_ids,
             signer_nonces,
         })
+    }
+
+    fn apply_tx(
+        &self,
+        objects: &mut BTreeMap<String, StoredObject>,
+        command_ids: &mut BTreeSet<String>,
+        signer_nonces: &mut BTreeSet<(String, u64)>,
+        tx: &[u8],
+        timestamp_ms: u64,
+    ) -> Result<()> {
+        let envelope: SignedCommandEnvelopeV1 =
+            serde_json::from_slice(tx).context("decode signed command envelope")?;
+        self.validate_envelope(&envelope, timestamp_ms)?;
+        ensure!(
+            command_ids.insert(envelope.command_id.clone()),
+            "command_id replay rejected"
+        );
+        ensure!(
+            signer_nonces.insert((envelope.signer_id.clone(), envelope.nonce)),
+            "signer nonce replay rejected"
+        );
+        let execution = self
+            .core
+            .interpreter
+            .prepare_execution(&envelope, objects)?;
+        execution.validate()?;
+        for mutation in execution.mutations {
+            let current_version = objects
+                .get(&mutation.object_key_hex)
+                .map(|object| object.version);
+            ensure!(
+                current_version == mutation.expected_version,
+                "object version precondition mismatch"
+            );
+            let stored = mutation.into_stored();
+            objects.insert(stored.object_key_hex.clone(), stored);
+        }
+        Ok(())
+    }
+
+    fn validate_genesis(&self, request: &RequestInitChain) -> Result<()> {
+        ensure!(
+            request.chain_id == self.core.config.chain_id,
+            "genesis chain_id mismatch"
+        );
+        ensure!(
+            !request.app_state_bytes.is_empty(),
+            "genesis app_state must not be empty"
+        );
+        let genesis: GenesisAppStateV1 =
+            serde_json::from_slice(&request.app_state_bytes).context("decode genesis app_state")?;
+        ensure!(
+            genesis.schema == GENESIS_SCHEMA_V1,
+            "unsupported genesis schema"
+        );
+        ensure!(
+            genesis.chain_id == self.core.config.chain_id,
+            "genesis app_state chain_id mismatch"
+        );
+        ensure!(genesis.app_version == 2, "unsupported genesis app version");
+        ensure!(
+            canonical_signers(&genesis.authorized_signers)
+                == canonical_signers(&self.core.config.authorized_signers),
+            "genesis authorized signers do not match application config"
+        );
+        let state = self
+            .core
+            .state
+            .lock()
+            .map_err(|_| anyhow!("state lock poisoned"))?;
+        ensure!(
+            state.height == 0,
+            "InitChain cannot replace committed state"
+        );
+        Ok(())
     }
 
     fn retain_snapshot(&self, state: &AppState) -> Result<()> {
@@ -307,6 +373,19 @@ impl Application for CometBftApplication {
         }
     }
 
+    fn init_chain(&self, request: RequestInitChain) -> ResponseInitChain {
+        self.validate_genesis(&request)
+            .unwrap_or_else(|error| panic!("refuse incompatible CometBFT genesis: {error:#}"));
+        let (_, app_hash) = self
+            .height_and_app_hash()
+            .expect("read initialized application state");
+        ResponseInitChain {
+            consensus_params: request.consensus_params,
+            validators: request.validators,
+            app_hash: Bytes::copy_from_slice(&app_hash),
+        }
+    }
+
     fn check_tx(&self, request: RequestCheckTx) -> ResponseCheckTx {
         let state = match self.core.state.lock() {
             Ok(state) => state,
@@ -316,6 +395,50 @@ impl Application for CometBftApplication {
             Ok(_) => ResponseCheckTx::default(),
             Err(error) => check_tx_error(&format!("{error:#}")),
         }
+    }
+
+    fn prepare_proposal(&self, request: RequestPrepareProposal) -> ResponsePrepareProposal {
+        if request.max_tx_bytes <= 0 {
+            return ResponsePrepareProposal::default();
+        }
+        let state = match self.core.state.lock() {
+            Ok(state) if request.height == state.height as i64 + 1 => state,
+            _ => return ResponsePrepareProposal::default(),
+        };
+        let timestamp_ms = timestamp_ms(request.time.as_ref());
+        let mut objects = state.objects.clone();
+        let mut command_ids = state.command_ids.clone();
+        let mut signer_nonces = state.signer_nonces.clone();
+        let mut total_bytes = 0usize;
+        let max_bytes = usize::try_from(request.max_tx_bytes).unwrap_or(0);
+        let mut txs = Vec::new();
+        for tx in request.txs {
+            let next_total = total_bytes.saturating_add(tx.len());
+            if next_total > max_bytes {
+                continue;
+            }
+            let mut candidate_objects = objects.clone();
+            let mut candidate_command_ids = command_ids.clone();
+            let mut candidate_signer_nonces = signer_nonces.clone();
+            if self
+                .apply_tx(
+                    &mut candidate_objects,
+                    &mut candidate_command_ids,
+                    &mut candidate_signer_nonces,
+                    &tx,
+                    timestamp_ms,
+                )
+                .is_err()
+            {
+                continue;
+            }
+            objects = candidate_objects;
+            command_ids = candidate_command_ids;
+            signer_nonces = candidate_signer_nonces;
+            total_bytes = next_total;
+            txs.push(tx);
+        }
+        ResponsePrepareProposal { txs }
     }
 
     fn process_proposal(&self, request: RequestProcessProposal) -> ResponseProcessProposal {
@@ -623,6 +746,19 @@ fn check_tx_error(message: &str) -> ResponseCheckTx {
     }
 }
 
+fn canonical_signers(signers: &[AuthorizedSignerV1]) -> BTreeSet<(String, String, String)> {
+    signers
+        .iter()
+        .map(|signer| {
+            (
+                signer.signer_id.clone(),
+                signer.signer_role.clone(),
+                signer.public_key_hex.clone(),
+            )
+        })
+        .collect()
+}
+
 fn finalize_error(tx_count: usize, message: &str) -> ResponseFinalizeBlock {
     ResponseFinalizeBlock {
         tx_results: (0..tx_count)
@@ -860,8 +996,9 @@ mod tests {
     use tendermint_proto::{
         google::protobuf::Timestamp,
         v0_38::abci::{
-            RequestApplySnapshotChunk, RequestFinalizeBlock, RequestLoadSnapshotChunk,
-            RequestOfferSnapshot, RequestProcessProposal,
+            RequestApplySnapshotChunk, RequestFinalizeBlock, RequestInitChain,
+            RequestLoadSnapshotChunk, RequestOfferSnapshot, RequestPrepareProposal,
+            RequestProcessProposal,
         },
     };
     use trnm_finality_types::crypto::public_key_hex;
@@ -904,6 +1041,20 @@ mod tests {
         })
     }
 
+    fn genesis_request(app: &CometBftApplication) -> RequestInitChain {
+        let genesis = GenesisAppStateV1 {
+            schema: GENESIS_SCHEMA_V1.to_string(),
+            chain_id: app.core.config.chain_id.clone(),
+            app_version: 2,
+            authorized_signers: app.core.config.authorized_signers.clone(),
+        };
+        RequestInitChain {
+            chain_id: app.core.config.chain_id.clone(),
+            app_state_bytes: Bytes::from(serde_json::to_vec(&genesis).unwrap()),
+            ..Default::default()
+        }
+    }
+
     #[test]
     fn independent_apps_produce_identical_app_hashes() {
         let (left, envelope) = fixture();
@@ -942,6 +1093,67 @@ mod tests {
             base,
             compute_app_hash(1, &objects, &empty_commands, &nonces)
         );
+    }
+
+    #[test]
+    fn init_chain_binds_chain_identity_signers_and_app_version() {
+        let (app, _) = fixture();
+        let response = app.init_chain(genesis_request(&app));
+        assert_eq!(response.app_hash.as_ref(), empty_app_hash());
+
+        let mut wrong_chain = genesis_request(&app);
+        wrong_chain.chain_id = "wrong-chain".to_string();
+        assert!(std::panic::catch_unwind(|| app.init_chain(wrong_chain)).is_err());
+
+        let mut wrong_version = genesis_request(&app);
+        let mut genesis: GenesisAppStateV1 =
+            serde_json::from_slice(&wrong_version.app_state_bytes).unwrap();
+        genesis.app_version = 3;
+        wrong_version.app_state_bytes = Bytes::from(serde_json::to_vec(&genesis).unwrap());
+        assert!(std::panic::catch_unwind(|| app.init_chain(wrong_version)).is_err());
+    }
+
+    #[test]
+    fn prepare_proposal_filters_replays_and_invalid_transactions_deterministically() {
+        let (app, envelope) = fixture();
+        let valid = Bytes::from(serde_json::to_vec(&envelope).unwrap());
+        let invalid = Bytes::from_static(b"not-json");
+        let request = RequestPrepareProposal {
+            txs: vec![invalid, valid.clone(), valid.clone()],
+            max_tx_bytes: 1024 * 1024,
+            height: 1,
+            time: block_time(),
+            ..Default::default()
+        };
+        let left = app.prepare_proposal(request.clone());
+        let right = app.prepare_proposal(request);
+        assert_eq!(left.txs, vec![valid]);
+        assert_eq!(left, right);
+        assert_eq!(
+            app.process_proposal(RequestProcessProposal {
+                txs: left.txs,
+                height: 1,
+                time: block_time(),
+                ..Default::default()
+            })
+            .status,
+            response_process_proposal::ProposalStatus::Accept as i32
+        );
+    }
+
+    #[test]
+    fn prepare_proposal_enforces_max_bytes_without_blocking_later_small_tx() {
+        let (app, envelope) = fixture();
+        let valid = Bytes::from(serde_json::to_vec(&envelope).unwrap());
+        let oversized = Bytes::from(vec![0u8; valid.len() + 1]);
+        let response = app.prepare_proposal(RequestPrepareProposal {
+            txs: vec![oversized, valid.clone()],
+            max_tx_bytes: valid.len() as i64,
+            height: 1,
+            time: block_time(),
+            ..Default::default()
+        });
+        assert_eq!(response.txs, vec![valid]);
     }
 
     #[test]

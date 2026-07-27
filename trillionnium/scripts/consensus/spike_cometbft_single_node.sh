@@ -62,7 +62,20 @@ for nonce in 1 2; do
 done
 
 "$COMETBFT_BIN" init --home "$ROOT/comet" >/dev/null
-jq '.chain_id="trnm-comet-spike"' "$ROOT/comet/config/genesis.json" > "$ROOT/genesis.json"
+jq --arg public_key "$public_key" \
+  '.chain_id="trnm-comet-spike"
+   | .consensus_params.version.app="2"
+   | .app_state={
+       schema:"trnm_cometbft_genesis_v1",
+       chain_id:"trnm-comet-spike",
+       app_version:2,
+       authorized_signers:[{
+         signer_id:"did:operator:1",
+         signer_role:"operator",
+         public_key_hex:$public_key
+       }]
+     }' \
+  "$ROOT/comet/config/genesis.json" > "$ROOT/genesis.json"
 mv "$ROOT/genesis.json" "$ROOT/comet/config/genesis.json"
 
 start_app() {
