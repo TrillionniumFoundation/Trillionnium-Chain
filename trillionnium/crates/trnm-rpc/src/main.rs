@@ -11326,6 +11326,7 @@ mod tests {
 
     #[test]
     fn load_node_events_parses_llm_metering_audit_block() {
+        let _guard = lock_env();
         let root = tempfile::tempdir().expect("tempdir");
         let run = root.path().join("run");
         fs::create_dir_all(&run).expect("create run dir");
@@ -11352,6 +11353,7 @@ mod tests {
 
     #[test]
     fn load_node_events_skips_metering_block_with_u64_overflow_fields() {
+        let _guard = lock_env();
         let root = tempfile::tempdir().expect("tempdir");
         let run = root.path().join("run");
         fs::create_dir_all(&run).expect("create run dir");
@@ -11368,6 +11370,7 @@ mod tests {
 
     #[test]
     fn load_node_events_skips_metering_block_with_zero_policy_denominator() {
+        let _guard = lock_env();
         let root = tempfile::tempdir().expect("tempdir");
         let run = root.path().join("run");
         fs::create_dir_all(&run).expect("create run dir");
@@ -11432,6 +11435,7 @@ mod tests {
 
     #[test]
     fn load_node_events_recent_tail_marks_truncation_but_authoritative_keeps_history() {
+        let _guard = lock_env();
         let root = tempfile::tempdir().expect("tempdir");
         let run = root.path().join("run");
         fs::create_dir_all(&run).expect("create run dir");
