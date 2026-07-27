@@ -1,7 +1,7 @@
 use std::{
     collections::{BTreeMap, BTreeSet},
     fs,
-    io::Write,
+    io::{Read, Seek, SeekFrom, Write},
     path::{Path, PathBuf},
     sync::{Arc, Mutex},
 };
@@ -32,6 +32,8 @@ const SNAPSHOT_FORMAT_V1: u32 = 1;
 const SNAPSHOT_CHUNK_SIZE: usize = 1024 * 1024;
 const MAX_SNAPSHOT_CHUNKS: u32 = 4096;
 const RETAINED_SNAPSHOTS: usize = 16;
+const DISK_SNAPSHOT_INTERVAL: u64 = 5;
+const RETAINED_DISK_SNAPSHOTS: usize = 3;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -173,7 +175,47 @@ struct SnapshotRestore {
 #[derive(Debug, Clone)]
 struct SnapshotRecord {
     snapshot: Snapshot,
-    bytes: Vec<u8>,
+    payload: SnapshotPayload,
+}
+
+#[derive(Debug, Clone)]
+enum SnapshotPayload {
+    Memory(Vec<u8>),
+    File { path: PathBuf, len: usize },
+}
+
+impl SnapshotPayload {
+    fn read_chunk(&self, chunk: u32) -> Result<Bytes> {
+        let start = chunk as usize * SNAPSHOT_CHUNK_SIZE;
+        let len = match self {
+            Self::Memory(bytes) => bytes.len(),
+            Self::File { len, .. } => *len,
+        };
+        let end = start.saturating_add(SNAPSHOT_CHUNK_SIZE).min(len);
+        ensure!(start < end, "snapshot chunk is outside payload");
+        match self {
+            Self::Memory(bytes) => Ok(Bytes::copy_from_slice(&bytes[start..end])),
+            Self::File { path, .. } => {
+                let mut file = fs::File::open(path)
+                    .with_context(|| format!("open snapshot payload {}", path.display()))?;
+                file.seek(SeekFrom::Start(start as u64))?;
+                let mut bytes = vec![0u8; end - start];
+                file.read_exact(&mut bytes)?;
+                Ok(Bytes::from(bytes))
+            }
+        }
+    }
+
+    fn remove_file(&self) -> Result<()> {
+        if let Self::File { path, .. } = self {
+            match fs::remove_file(path) {
+                Ok(()) => {}
+                Err(error) if error.kind() == std::io::ErrorKind::NotFound => {}
+                Err(error) => return Err(error.into()),
+            }
+        }
+        Ok(())
+    }
 }
 
 #[derive(Clone)]
@@ -192,7 +234,14 @@ impl CometBftApplication {
         };
         let mut snapshots = BTreeMap::new();
         if state.height > 0 {
-            snapshots.insert(state.height, build_snapshot(&config.chain_id, &state)?);
+            snapshots.insert(
+                state.height,
+                build_snapshot(
+                    &config.chain_id,
+                    &state,
+                    snapshot_path(&config, state.height),
+                )?,
+            );
         }
         Ok(Self {
             core: Arc::new(AppCore {
@@ -343,19 +392,30 @@ impl CometBftApplication {
     }
 
     fn retain_snapshot(&self, state: &AppState) -> Result<()> {
-        let record = build_snapshot(&self.core.config.chain_id, state)?;
+        let disk_path = snapshot_path(&self.core.config, state.height);
+        if disk_path.is_some() && state.height % DISK_SNAPSHOT_INTERVAL != 0 {
+            return Ok(());
+        }
+        let record = build_snapshot(&self.core.config.chain_id, state, disk_path)?;
         let mut snapshots = self
             .core
             .snapshots
             .lock()
             .map_err(|_| anyhow!("snapshot store lock poisoned"))?;
         snapshots.insert(state.height, record);
-        while snapshots.len() > RETAINED_SNAPSHOTS {
+        let retained = if self.core.config.state_path.is_some() {
+            RETAINED_DISK_SNAPSHOTS
+        } else {
+            RETAINED_SNAPSHOTS
+        };
+        while snapshots.len() > retained {
             let oldest = *snapshots
                 .keys()
                 .next()
                 .expect("snapshot store is non-empty");
-            snapshots.remove(&oldest);
+            if let Some(record) = snapshots.remove(&oldest) {
+                record.payload.remove_file()?;
+            }
         }
         Ok(())
     }
@@ -560,12 +620,8 @@ impl Application for CometBftApplication {
         if request.format != record.snapshot.format || request.chunk >= record.snapshot.chunks {
             return ResponseLoadSnapshotChunk::default();
         }
-        let start = request.chunk as usize * SNAPSHOT_CHUNK_SIZE;
-        let end = start
-            .saturating_add(SNAPSHOT_CHUNK_SIZE)
-            .min(record.bytes.len());
         ResponseLoadSnapshotChunk {
-            chunk: Bytes::copy_from_slice(&record.bytes[start..end]),
+            chunk: record.payload.read_chunk(request.chunk).unwrap_or_default(),
         }
     }
 
@@ -927,7 +983,19 @@ fn snapshot_hash(bytes: &[u8]) -> [u8; 32] {
     hash_domain("trnm.cometbft.snapshot.v1", &[bytes])
 }
 
-fn build_snapshot(chain_id: &str, state: &AppState) -> Result<SnapshotRecord> {
+fn snapshot_path(config: &ConsensusAppConfig, height: u64) -> Option<PathBuf> {
+    config.state_path.as_ref().map(|state_path| {
+        state_path
+            .with_extension("snapshots")
+            .join(format!("{height:020}.snapshot"))
+    })
+}
+
+fn build_snapshot(
+    chain_id: &str,
+    state: &AppState,
+    disk_path: Option<PathBuf>,
+) -> Result<SnapshotRecord> {
     ensure!(
         state.pending.is_none(),
         "cannot snapshot pending application state"
@@ -946,15 +1014,25 @@ fn build_snapshot(chain_id: &str, state: &AppState) -> Result<SnapshotRecord> {
         total_bytes: bytes.len() as u64,
         chunk_size: SNAPSHOT_CHUNK_SIZE as u32,
     };
+    let content_hash = snapshot_hash(&bytes);
+    let payload = if let Some(path) = disk_path {
+        persist_state_bytes(&path, &bytes)?;
+        SnapshotPayload::File {
+            path,
+            len: bytes.len(),
+        }
+    } else {
+        SnapshotPayload::Memory(bytes)
+    };
     Ok(SnapshotRecord {
         snapshot: Snapshot {
             height: state.height,
             format: SNAPSHOT_FORMAT_V1,
             chunks: chunk_count,
-            hash: Bytes::copy_from_slice(&snapshot_hash(&bytes)),
+            hash: Bytes::copy_from_slice(&content_hash),
             metadata: Bytes::from(serde_json::to_vec(&metadata)?),
         },
-        bytes,
+        payload,
     })
 }
 
@@ -1315,5 +1393,53 @@ mod tests {
             response_apply_snapshot_chunk::Result::RejectSnapshot as i32
         );
         assert_eq!(target.height_and_app_hash().unwrap().0, 0);
+    }
+
+    #[test]
+    fn production_snapshots_are_periodic_disk_backed_and_bounded() {
+        let root = std::env::temp_dir().join(format!(
+            "trnm-comet-periodic-snapshots-{}-{}",
+            std::process::id(),
+            now_unix_ms()
+        ));
+        let state_path = root.join("app-state.json");
+        let (fixture_app, _) = fixture();
+        let app = CometBftApplication::new(ConsensusAppConfig {
+            state_path: Some(state_path.clone()),
+            ..fixture_app.core.config.clone()
+        })
+        .unwrap();
+        for height in 1..=20 {
+            let objects = BTreeMap::new();
+            let command_ids = BTreeSet::new();
+            let signer_nonces = BTreeSet::new();
+            let state = AppState {
+                height,
+                app_hash: compute_app_hash(height, &objects, &command_ids, &signer_nonces),
+                objects,
+                command_ids,
+                signer_nonces,
+                pending: None,
+            };
+            app.retain_snapshot(&state).unwrap();
+        }
+        let snapshots = app.list_snapshots().snapshots;
+        assert_eq!(
+            snapshots
+                .iter()
+                .map(|snapshot| snapshot.height)
+                .collect::<Vec<_>>(),
+            vec![20, 15, 10]
+        );
+        let snapshot_dir = state_path.with_extension("snapshots");
+        assert_eq!(fs::read_dir(&snapshot_dir).unwrap().count(), 3);
+        let newest = &snapshots[0];
+        let chunk = app.load_snapshot_chunk(RequestLoadSnapshotChunk {
+            height: newest.height,
+            format: newest.format,
+            chunk: 0,
+        });
+        assert!(!chunk.chunk.is_empty());
+        fs::remove_dir_all(root).unwrap();
     }
 }

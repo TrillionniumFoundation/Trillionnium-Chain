@@ -30,8 +30,10 @@ Status: **four-validator recovery and fresh-node state sync proven locally**
   `trillionnium/scripts/consensus/spike_cometbft_single_node.sh`.
 - A real four-validator network commits identical application hashes, continues
   with one validator offline, and catches that validator up after restart.
-- The adapter retains the latest 16 committed snapshots so a discovered snapshot
-  remains available while the network continues advancing.
+- Production configurations write an atomic disk-backed snapshot every five
+  committed heights and retain three generations. Snapshot chunks are served
+  directly from disk, avoiding the previous `16 × full_state` resident-memory
+  cost while keeping a discovered snapshot available as the chain advances.
 - A fifth node with no application state restores a light-client-verified ABCI
   snapshot, catches up, and converges on the same application hash.
 - The four-validator fixture is
