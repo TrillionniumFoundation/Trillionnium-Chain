@@ -7,6 +7,11 @@ authors.workspace = true
 autobins = false
 default-run = "trnm-chain-node"
 
+[package.metadata.trnm]
+lane = "legacy-harness"
+protocol_features_frozen = true
+production_candidate = false
+
 [[bin]]
 name = "trnm-sim"
 path = "src/main.rs"

@@ -438,23 +438,31 @@ submit_transition() {
   flush_mempools
 }
 
+CANONICAL_ACCOUNT_NONCE=0
 submit_opaque() {
   local label="$1"
-  local nonce="$2"
+  local envelope_nonce="$2"
+  CANONICAL_ACCOUNT_NONCE=$((CANONICAL_ACCOUNT_NONCE + 1))
+  local account_nonce="$CANONICAL_ACCOUNT_NONCE"
   local current
   current="$(latest_height)"
   SUBMITTED_HEIGHT=$((current + 1))
   local payload="$ROOT/opaque-$label-$SUBMITTED_HEIGHT.bin"
   local tx="$ROOT/opaque-$label-$SUBMITTED_HEIGHT.tx.json"
-  printf 'validator-lifecycle-%s-%s' "$label" "$SUBMITTED_HEIGHT" >"$payload"
+  jq -n \
+    --arg sender did:operator:1 \
+    --arg account "fixture:lifecycle:$label:$SUBMITTED_HEIGHT" \
+    --argjson nonce "$account_nonce" \
+    '{schema:"trnm_canonical_tx_v1",sender:$sender,nonce:$nonce,max_gas:100000,fee_limit:"100000",command:{type:"credit_account",account:$account,amount:"1"}}' \
+    >"$payload"
   "$CLI_BIN" sign \
     --private-key "$ROOT/operator.key" \
     --chain-id "$CHAIN_ID" \
     --command-id "lifecycle-$label-$SUBMITTED_HEIGHT" \
     --signer-id did:operator:1 \
     --signer-role operator \
-    --nonce "$nonce" \
-    --payload-type opaque_fixture_v1 \
+    --nonce "$envelope_nonce" \
+    --payload-type trnm.canonical.tx.v1 \
     --payload-file "$payload" \
     --output "$tx" \
     --ttl-seconds 600 >/dev/null

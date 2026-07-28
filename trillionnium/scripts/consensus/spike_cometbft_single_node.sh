@@ -121,9 +121,13 @@ jq -n \
     state_path:$state_path
   }' > "$ROOT/app.json"
 
-printf 'deterministic-cometbft-payload-1' > "$ROOT/payload-1.bin"
-printf 'deterministic-cometbft-payload-2' > "$ROOT/payload-2.bin"
 for nonce in 1 2; do
+  jq -n \
+    --arg sender did:operator:1 \
+    --arg account "fixture:single:$nonce" \
+    --argjson nonce "$nonce" \
+    '{schema:"trnm_canonical_tx_v1",sender:$sender,nonce:$nonce,max_gas:100000,fee_limit:"100000",command:{type:"credit_account",account:$account,amount:"1"}}' \
+    >"$ROOT/payload-$nonce.bin"
   "$CLI_BIN" sign \
     --private-key "$ROOT/operator.key" \
     --chain-id trnm-comet-spike \
@@ -131,7 +135,7 @@ for nonce in 1 2; do
     --signer-id did:operator:1 \
     --signer-role operator \
     --nonce "$nonce" \
-    --payload-type opaque_fixture_v1 \
+    --payload-type trnm.canonical.tx.v1 \
     --payload-file "$ROOT/payload-$nonce.bin" \
     --output "$ROOT/tx-$nonce.json" >/dev/null
 done

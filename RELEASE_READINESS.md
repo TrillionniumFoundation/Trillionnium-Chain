@@ -13,15 +13,24 @@ Scope: When citing this file, you must always record the current output of `git 
 
 **Conclusion: Not release-ready; do not claim external readiness.**
 
-### 2026-07-27 live-runtime truth
+### 2026-07-28 canonical-runtime truth
 
-- `trnm-chain-node` is the only canonical runtime for live testnet development.
-- The historical in-process runtime is named `trnm-sim`; its tests, benchmarks,
-  or fault simulations are not evidence that the live chain is valid or deployable.
+- `CometBFT + trnm-consensus-app + trnm-runtime` is the sole production-candidate
+  state-transition path. `trnm-chain-node`, `trnm-chain-validator`, `trnm-chain-cli`,
+  and `trnm-sim` are frozen legacy harnesses. Their tests, benchmarks, or fault
+  simulations are not evidence that the production candidate implements a feature.
 - `trnm-finality-types` and `trnm-finality-verifier` are the supported minimal
   dependency boundary for receipt consumers. External services must not depend on
   the complete `trnm-node` package merely to verify finality.
-- `trnm-consensus-app` is a CometBFT-backed public-testnet prototype. Local
+- `trnm-consensus-app` is a CometBFT-backed public-testnet prototype. It now rejects
+  unknown production payloads and executes typed account, sequential account nonce,
+  gas/fee, task escrow, assignment, commit/reveal, paid consumption, challenge,
+  resolution, settlement, deterministic deadline expiry, and fee-governance
+  transitions through the pure
+  `trnm-runtime` crate. A four-validator process gate now proves identical canonical
+  objects, account nonces, issued supply, fee collection/distribution, terminal balances,
+  block history, and AppHash while rejecting forced assignment, replay,
+  over-gas, unknown-payload transactions, and proof requests before AppHash v4. Local
   four-validator offline/rejoin, fresh-node ABCI state sync, deterministic proposal
   filtering, transactional SQLite-WAL delta persistence, and validator-lifecycle
   unit/crash-recovery gates pass. A six-node process fixture proves 4→5, 5→4,
@@ -34,6 +43,14 @@ Scope: When citing this file, you must always record the current output of `git 
   evidence are still incomplete.
 - The signed package remains `loopback-local-devnet`, `development_only=true`, and
   `public_mainnet_ready=false`.
+- The authoritative feature-to-runtime matrix and Day-1 freeze are in
+  `docs/architecture/TRNM_CANONICAL_RUNTIME_FREEZE_2026-07-28.md`. Features not
+  marked implemented in that matrix remain unimplemented regardless of legacy tests.
+- This branch still uses application version 3, store schema 2, and snapshot format
+  2. The new canonical transaction semantics are fresh-genesis/reset-only until
+  AppHash v4 supplies an explicit migration or reviewed export/new-genesis gate.
+- Transaction authentication remains a static authorized-signer allowlist; dynamic
+  public account-key onboarding is not implemented.
 
 The repo has useful local gates, reusable partial evidence packs, and front-end pre-release checks, but there are still active risks of truth-source drift.
 

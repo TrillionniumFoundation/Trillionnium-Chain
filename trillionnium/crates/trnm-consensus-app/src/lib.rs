@@ -11,20 +11,27 @@ use bytes::Bytes;
 use serde::{Deserialize, Serialize};
 use tendermint_abci::Application;
 use tendermint_proto::v0_38::abci::{
-    response_apply_snapshot_chunk, response_offer_snapshot, response_process_proposal,
-    ExecTxResult, RequestApplySnapshotChunk, RequestCheckTx, RequestFinalizeBlock, RequestInfo,
-    RequestInitChain, RequestLoadSnapshotChunk, RequestOfferSnapshot, RequestPrepareProposal,
-    RequestProcessProposal, ResponseApplySnapshotChunk, ResponseCheckTx, ResponseCommit,
-    ResponseFinalizeBlock, ResponseInfo, ResponseInitChain, ResponseListSnapshots,
-    ResponseLoadSnapshotChunk, ResponseOfferSnapshot, ResponsePrepareProposal,
-    ResponseProcessProposal, Snapshot, ValidatorUpdate,
+    response_apply_snapshot_chunk, response_offer_snapshot, response_process_proposal, Event,
+    EventAttribute, ExecTxResult, RequestApplySnapshotChunk, RequestCheckTx, RequestFinalizeBlock,
+    RequestInfo, RequestInitChain, RequestLoadSnapshotChunk, RequestOfferSnapshot,
+    RequestPrepareProposal, RequestProcessProposal, RequestQuery, ResponseApplySnapshotChunk,
+    ResponseCheckTx, ResponseCommit, ResponseFinalizeBlock, ResponseInfo, ResponseInitChain,
+    ResponseListSnapshots, ResponseLoadSnapshotChunk, ResponseOfferSnapshot,
+    ResponsePrepareProposal, ResponseProcessProposal, ResponseQuery, Snapshot, ValidatorUpdate,
 };
 use trnm_finality_types::{hash_domain, SignedCommandEnvelopeV1};
+#[cfg(test)]
+use trnm_node::live::node::{CommandInterpreter, RoutingCommandInterpreter};
 use trnm_node::live::{
     merkle::root_only,
-    node::{AuthorizedSignerV1, CommandInterpreter, ObjectView, RoutingCommandInterpreter},
-    store::StoredObject,
+    node::{AuthorizedSignerV1, ObjectView},
+    store::{ObjectMutation, StoredObject},
 };
+use trnm_protocol::{
+    account_key, fee_policy_key, task_key, CanonicalTxV1, FeePolicyV1,
+    CANONICAL_TX_PAYLOAD_TYPE_V1, FEE_POLICY_OBJECT_TYPE_V1,
+};
+use trnm_runtime::{ExecutionContext, StateObject, StateView as RuntimeStateView};
 
 mod store;
 mod validator_lifecycle;
@@ -165,6 +172,7 @@ struct AppState {
 struct PendingBlock {
     height: u64,
     app_hash: [u8; 32],
+    tx_results: Vec<ExecTxResult>,
     validator_updates: Vec<ValidatorUpdate>,
     delta: BlockDelta,
 }
@@ -190,6 +198,16 @@ impl ObjectView for OverlayObjects<'_> {
     }
 }
 
+impl RuntimeStateView for OverlayObjects<'_> {
+    fn get(&self, object_key_hex: &str) -> Option<StateObject> {
+        ObjectView::get(self, object_key_hex).map(|object| StateObject {
+            object_type: object.object_type.clone(),
+            version: object.version,
+            value_bytes: object.value_bytes.clone(),
+        })
+    }
+}
+
 impl Default for AppState {
     fn default() -> Self {
         Self {
@@ -206,6 +224,7 @@ impl Default for AppState {
 
 struct AppCore {
     config: ConsensusAppConfig,
+    #[cfg(test)]
     interpreter: RoutingCommandInterpreter,
     store: Option<ApplicationStore>,
     state: Mutex<AppState>,
@@ -328,6 +347,7 @@ impl CometBftApplication {
         test_crash_plan: Option<TestCrashPlan>,
     ) -> Result<Self> {
         config.validate()?;
+        #[cfg(test)]
         let interpreter =
             RoutingCommandInterpreter::from_authorized_signers(&config.authorized_signers)?;
         let store = config
@@ -362,6 +382,7 @@ impl CometBftApplication {
         Ok(Self {
             core: Arc::new(AppCore {
                 config,
+                #[cfg(test)]
                 interpreter,
                 store,
                 state: Mutex::new(state),
@@ -424,12 +445,18 @@ impl CometBftApplication {
         })
     }
 
-    fn plan_block(&self, state: &AppState, txs: &[Bytes], timestamp_ms: u64) -> Result<BlockDelta> {
+    fn plan_block(
+        &self,
+        state: &AppState,
+        txs: &[Bytes],
+        timestamp_ms: u64,
+    ) -> Result<(BlockDelta, Vec<ExecTxResult>)> {
         let mut delta = self.start_block_delta(state)?;
+        let mut tx_results = Vec::with_capacity(txs.len());
         for tx in txs {
-            self.apply_tx(state, &mut delta, tx, timestamp_ms)?;
+            tx_results.push(self.apply_tx(state, &mut delta, tx, timestamp_ms)?);
         }
-        Ok(delta)
+        Ok((delta, tx_results))
     }
 
     fn execute_block(
@@ -438,7 +465,7 @@ impl CometBftApplication {
         txs: &[Bytes],
         timestamp_ms: u64,
     ) -> Result<PendingBlock> {
-        let delta = self.plan_block(state, txs, timestamp_ms)?;
+        let (delta, tx_results) = self.plan_block(state, txs, timestamp_ms)?;
         let next_height = state.height.saturating_add(1);
         let app_hash = compute_app_hash_with_delta(next_height, state, &delta);
         let validator_updates = effective_validator_lifecycle(state, &delta)?
@@ -446,6 +473,7 @@ impl CometBftApplication {
         Ok(PendingBlock {
             height: next_height,
             app_hash,
+            tx_results,
             validator_updates,
             delta,
         })
@@ -457,7 +485,7 @@ impl CometBftApplication {
         delta: &mut BlockDelta,
         tx: &[u8],
         timestamp_ms: u64,
-    ) -> Result<()> {
+    ) -> Result<ExecTxResult> {
         let envelope: SignedCommandEnvelopeV1 =
             serde_json::from_slice(tx).context("decode signed command envelope")?;
         self.validate_envelope(&envelope, timestamp_ms)?;
@@ -486,19 +514,86 @@ impl CometBftApplication {
                 state.height.saturating_add(1),
             )?;
             delta.validator_lifecycle = Some(lifecycle);
-            return Ok(());
+            return Ok(ExecTxResult::default());
         }
-        let execution = {
+        let payload = envelope.payload_bytes()?;
+        let (mutations, tx_result) = if envelope.payload_type == CANONICAL_TX_PAYLOAD_TYPE_V1 {
+            let tx: CanonicalTxV1 =
+                serde_json::from_slice(&payload).context("decode canonical transaction")?;
             let objects = OverlayObjects {
                 base: &state.objects,
                 changes: &delta.objects,
             };
-            self.core
-                .interpreter
-                .prepare_execution(&envelope, &objects)?
+            let receipt = trnm_runtime::execute(
+                &tx,
+                ExecutionContext {
+                    height: state.height.saturating_add(1),
+                    signer_id: &envelope.signer_id,
+                    signer_role: &envelope.signer_role,
+                    payload_len: payload.len(),
+                },
+                &objects,
+            )?;
+            let tx_result = ExecTxResult {
+                gas_wanted: i64::try_from(tx.max_gas).unwrap_or(i64::MAX),
+                gas_used: i64::try_from(receipt.gas_used).unwrap_or(i64::MAX),
+                events: receipt
+                    .events
+                    .into_iter()
+                    .map(|event| Event {
+                        r#type: event.kind,
+                        attributes: event
+                            .attributes
+                            .into_iter()
+                            .map(|(key, value)| EventAttribute {
+                                key,
+                                value,
+                                index: true,
+                            })
+                            .collect(),
+                    })
+                    .collect(),
+                ..Default::default()
+            };
+            (
+                receipt
+                    .mutations
+                    .into_iter()
+                    .map(|mutation| ObjectMutation {
+                        object_key_hex: mutation.object_key_hex,
+                        object_type: mutation.object_type,
+                        expected_version: mutation.expected_version,
+                        next_version: mutation.next_version,
+                        value_bytes: mutation.value_bytes,
+                    })
+                    .collect::<Vec<_>>(),
+                tx_result,
+            )
+        } else {
+            #[cfg(test)]
+            {
+                if envelope.payload_type == "opaque_fixture_v1" {
+                    let objects = OverlayObjects {
+                        base: &state.objects,
+                        changes: &delta.objects,
+                    };
+                    (
+                        self.core
+                            .interpreter
+                            .prepare_execution(&envelope, &objects)?
+                            .mutations,
+                        ExecTxResult::default(),
+                    )
+                } else {
+                    return Err(anyhow!("unsupported payload_type"));
+                }
+            }
+            #[cfg(not(test))]
+            {
+                return Err(anyhow!("unsupported payload_type"));
+            }
         };
-        execution.validate()?;
-        for mutation in execution.mutations {
+        for mutation in mutations {
             let current_version = delta
                 .objects
                 .get(&mutation.object_key_hex)
@@ -511,7 +606,7 @@ impl CometBftApplication {
             let stored = mutation.into_stored();
             delta.objects.insert(stored.object_key_hex.clone(), stored);
         }
-        Ok(())
+        Ok(tx_result)
     }
 
     fn validate_genesis(&self, request: &RequestInitChain) -> Result<ValidatorLifecycleStateV1> {
@@ -629,13 +724,32 @@ impl Application for CometBftApplication {
             "InitChain cannot replace committed application state"
         );
         match state.validator_lifecycle.as_ref() {
-            Some(existing) => assert_eq!(
-                existing, &lifecycle,
-                "repeated InitChain validator lifecycle mismatch"
-            ),
+            Some(existing) => {
+                assert_eq!(
+                    existing, &lifecycle,
+                    "repeated InitChain validator lifecycle mismatch"
+                );
+                let fee_policy = default_fee_policy_object();
+                assert_eq!(
+                    state.objects.get(&fee_policy.object_key_hex),
+                    Some(&fee_policy),
+                    "repeated InitChain fee policy mismatch"
+                );
+            }
             None => {
                 let mut initialized = state.clone();
                 initialized.validator_lifecycle = Some(lifecycle);
+                let fee_policy = default_fee_policy_object();
+                match initialized.objects.get(&fee_policy.object_key_hex) {
+                    Some(existing) => {
+                        assert_eq!(existing, &fee_policy, "genesis fee policy object mismatch")
+                    }
+                    None => {
+                        initialized
+                            .objects
+                            .insert(fee_policy.object_key_hex.clone(), fee_policy);
+                    }
+                }
                 initialized.app_hash = compute_app_hash(
                     0,
                     &initialized.objects,
@@ -669,6 +783,44 @@ impl Application for CometBftApplication {
         match self.plan_block(&state, &[request.tx], now_unix_ms()) {
             Ok(_) => ResponseCheckTx::default(),
             Err(error) => check_tx_error(&format!("{error:#}")),
+        }
+    }
+
+    fn query(&self, request: RequestQuery) -> ResponseQuery {
+        if request.prove {
+            return query_error("proof queries are unavailable before AppHash v4");
+        }
+        let state = match self.core.state.lock() {
+            Ok(state) => state,
+            Err(_) => return query_error("state lock poisoned"),
+        };
+        if request.height != 0 && request.height != state.height as i64 {
+            return query_error("historical query height is unavailable");
+        }
+        let key = if let Some(account) = request.path.strip_prefix("/account/") {
+            account_key(account)
+        } else if let Some(task_id) = request.path.strip_prefix("/task/") {
+            task_key(task_id)
+        } else if let Some(object_key) = request.path.strip_prefix("/object/") {
+            object_key.to_string()
+        } else {
+            return query_error("unsupported query path");
+        };
+        let Some(object) = state.objects.get(&key) else {
+            return ResponseQuery {
+                code: 1,
+                log: "object not found".to_string(),
+                height: state.height as i64,
+                ..Default::default()
+            };
+        };
+        ResponseQuery {
+            code: 0,
+            key: Bytes::copy_from_slice(key.as_bytes()),
+            value: Bytes::copy_from_slice(&object.value_bytes),
+            height: state.height as i64,
+            log: object.object_type.clone(),
+            ..Default::default()
         }
     }
 
@@ -759,11 +911,12 @@ impl Application for CometBftApplication {
         let validator_updates = pending.validator_updates.clone();
         state.pending = Some(pending);
         ResponseFinalizeBlock {
-            tx_results: request
-                .txs
-                .iter()
-                .map(|_| ExecTxResult::default())
-                .collect(),
+            tx_results: state
+                .pending
+                .as_ref()
+                .expect("pending block installed")
+                .tx_results
+                .clone(),
             validator_updates,
             app_hash,
             ..Default::default()
@@ -1044,6 +1197,14 @@ fn check_tx_error(message: &str) -> ResponseCheckTx {
     }
 }
 
+fn query_error(message: &str) -> ResponseQuery {
+    ResponseQuery {
+        code: 1,
+        log: message.to_string(),
+        ..Default::default()
+    }
+}
+
 fn canonical_signers(signers: &[AuthorizedSignerV1]) -> BTreeSet<(String, String, String)> {
     signers
         .iter()
@@ -1055,6 +1216,18 @@ fn canonical_signers(signers: &[AuthorizedSignerV1]) -> BTreeSet<(String, String
             )
         })
         .collect()
+}
+
+fn default_fee_policy_object() -> StoredObject {
+    ObjectMutation {
+        object_key_hex: fee_policy_key(),
+        object_type: FEE_POLICY_OBJECT_TYPE_V1.to_string(),
+        expected_version: None,
+        next_version: 1,
+        value_bytes: serde_json::to_vec(&FeePolicyV1::default())
+            .expect("default fee policy serialization is infallible"),
+    }
+    .into_stored()
 }
 
 fn effective_validator_lifecycle<'a>(
@@ -1470,7 +1643,7 @@ mod tests {
         v0_38::abci::{
             RequestApplySnapshotChunk, RequestFinalizeBlock, RequestInitChain,
             RequestLoadSnapshotChunk, RequestOfferSnapshot, RequestPrepareProposal,
-            RequestProcessProposal,
+            RequestProcessProposal, RequestQuery,
         },
         v0_38::crypto::public_key,
         v0_38::types::{ConsensusParams, VersionParams},
@@ -1638,6 +1811,30 @@ mod tests {
         Bytes::from(serde_json::to_vec(&transition_envelope(transition, nonce)).unwrap())
     }
 
+    fn canonical_tx(
+        signing_key: &SigningKey,
+        command_id: &str,
+        signer_id: &str,
+        signer_role: &str,
+        envelope_nonce: u64,
+        tx: &CanonicalTxV1,
+    ) -> Bytes {
+        let envelope = SignedCommandEnvelopeV1::sign(
+            "trnm-comet-spike",
+            command_id,
+            signer_id,
+            signer_role,
+            envelope_nonce,
+            1_000,
+            10_000,
+            CANONICAL_TX_PAYLOAD_TYPE_V1,
+            &serde_json::to_vec(tx).unwrap(),
+            signing_key,
+        )
+        .unwrap();
+        Bytes::from(serde_json::to_vec(&envelope).unwrap())
+    }
+
     fn finalize_and_commit(
         app: &CometBftApplication,
         height: u64,
@@ -1698,6 +1895,166 @@ mod tests {
         assert_eq!(left_result.tx_results[0].code, 0);
         assert_eq!(left_result.app_hash, right_result.app_hash);
         assert_ne!(left_result.app_hash.as_ref(), empty_app_hash());
+    }
+
+    #[test]
+    fn canonical_transactions_emit_events_query_state_and_reject_bad_inputs() {
+        use trnm_protocol::{CanonicalCommandV1, CANONICAL_TX_SCHEMA_V1, TASK_OBJECT_TYPE_V1};
+
+        let operator_key = SigningKey::from_bytes(&[11u8; 32]);
+        let client_key = SigningKey::from_bytes(&[12u8; 32]);
+        let app = CometBftApplication::new(ConsensusAppConfig {
+            schema: CONFIG_SCHEMA_V1.to_string(),
+            chain_id: "trnm-comet-spike".to_string(),
+            authorized_signers: vec![
+                AuthorizedSignerV1 {
+                    signer_id: "did:operator:1".to_string(),
+                    signer_role: "operator".to_string(),
+                    public_key_hex: public_key_hex(&operator_key),
+                },
+                AuthorizedSignerV1 {
+                    signer_id: "did:client:1".to_string(),
+                    signer_role: "hepta".to_string(),
+                    public_key_hex: public_key_hex(&client_key),
+                },
+            ],
+            state_path: None,
+        })
+        .unwrap();
+        initialize(&app);
+
+        let credit = CanonicalTxV1 {
+            schema: CANONICAL_TX_SCHEMA_V1.to_string(),
+            sender: "did:operator:1".to_string(),
+            nonce: 1,
+            max_gas: 100_000,
+            fee_limit: 100_000,
+            command: CanonicalCommandV1::CreditAccount {
+                account: "did:client:1".to_string(),
+                amount: 100_000,
+            },
+        };
+        let credit_result = finalize_and_commit(
+            &app,
+            1,
+            vec![canonical_tx(
+                &operator_key,
+                "credit-client",
+                "did:operator:1",
+                "operator",
+                1,
+                &credit,
+            )],
+        );
+        assert_eq!(
+            credit_result.tx_results[0].events[0].r#type,
+            "account_credited"
+        );
+
+        let create = CanonicalTxV1 {
+            schema: CANONICAL_TX_SCHEMA_V1.to_string(),
+            sender: "did:client:1".to_string(),
+            nonce: 1,
+            max_gas: 100_000,
+            fee_limit: 100_000,
+            command: CanonicalCommandV1::CreateTask {
+                task_id: "task-1".to_string(),
+                reward: 10_000,
+                worker_stake: 5_000,
+                result_deadline_height: 20,
+                challenge_window_blocks: 10,
+            },
+        };
+        let create_bytes = canonical_tx(
+            &client_key,
+            "create-task",
+            "did:client:1",
+            "hepta",
+            1,
+            &create,
+        );
+        let create_result = finalize_and_commit(&app, 2, vec![create_bytes.clone()]);
+        assert!(create_result.tx_results[0]
+            .events
+            .iter()
+            .any(|event| event.r#type == "task_created"));
+        assert!(create_result.tx_results[0].gas_used > 0);
+
+        let query = app.query(RequestQuery {
+            path: "/task/task-1".to_string(),
+            ..Default::default()
+        });
+        assert_eq!(query.code, 0);
+        assert_eq!(query.log, TASK_OBJECT_TYPE_V1);
+        let task: trnm_protocol::TaskV1 = serde_json::from_slice(&query.value).unwrap();
+        assert_eq!(task.status, trnm_protocol::TaskStatusV1::Open);
+        let unimplemented_proof = app.query(RequestQuery {
+            path: "/task/task-1".to_string(),
+            prove: true,
+            ..Default::default()
+        });
+        assert_ne!(unimplemented_proof.code, 0);
+        assert!(unimplemented_proof.proof_ops.is_none());
+
+        let replay = app.process_proposal(RequestProcessProposal {
+            txs: vec![create_bytes],
+            height: 3,
+            time: block_time(),
+            ..Default::default()
+        });
+        assert_eq!(
+            replay.status,
+            response_process_proposal::ProposalStatus::Reject as i32
+        );
+
+        let mut over_gas = create;
+        over_gas.nonce = 2;
+        over_gas.max_gas = 1;
+        over_gas.command = CanonicalCommandV1::Transfer {
+            to: "did:operator:1".to_string(),
+            amount: 1,
+        };
+        let rejected = app.process_proposal(RequestProcessProposal {
+            txs: vec![canonical_tx(
+                &client_key,
+                "over-gas",
+                "did:client:1",
+                "hepta",
+                2,
+                &over_gas,
+            )],
+            height: 3,
+            time: block_time(),
+            ..Default::default()
+        });
+        assert_eq!(
+            rejected.status,
+            response_process_proposal::ProposalStatus::Reject as i32
+        );
+
+        let unknown = SignedCommandEnvelopeV1::sign(
+            "trnm-comet-spike",
+            "unknown-payload",
+            "did:client:1",
+            "hepta",
+            3,
+            1_000,
+            10_000,
+            "trnm.unknown.v1",
+            b"{}",
+            &client_key,
+        )
+        .unwrap();
+        let rejected = app.process_proposal(RequestProcessProposal {
+            txs: vec![Bytes::from(serde_json::to_vec(&unknown).unwrap())],
+            height: 3,
+            time: block_time(),
+            ..Default::default()
+        });
+        assert_eq!(
+            rejected.status,
+            response_process_proposal::ProposalStatus::Reject as i32
+        );
     }
 
     #[test]
@@ -1792,6 +2149,16 @@ mod tests {
         let (app, _) = fixture();
         let response = app.init_chain(genesis_request(&app));
         assert_ne!(response.app_hash.as_ref(), empty_app_hash());
+        let fee_policy = default_fee_policy_object();
+        assert_eq!(
+            app.core
+                .state
+                .lock()
+                .unwrap()
+                .objects
+                .get(&fee_policy.object_key_hex),
+            Some(&fee_policy)
+        );
 
         let mut wrong_chain = genesis_request(&app);
         wrong_chain.chain_id = "wrong-chain".to_string();

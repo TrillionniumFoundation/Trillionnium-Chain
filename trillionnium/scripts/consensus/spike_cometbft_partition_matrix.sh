@@ -623,7 +623,12 @@ sign_tx() {
   local label="$3"
   local payload="$ROOT/payload-$label.bin"
   local output="$ROOT/tx-$label.json"
-  printf 'partition-payload-%s-%s' "$nonce" "$label" >"$payload"
+  jq -n \
+    --arg sender did:operator:1 \
+    --arg account "fixture:partition:$label" \
+    --argjson nonce "$nonce" \
+    '{schema:"trnm_canonical_tx_v1",sender:$sender,nonce:$nonce,max_gas:100000,fee_limit:"100000",command:{type:"credit_account",account:$account,amount:"1"}}' \
+    >"$payload"
   "$CLI_BIN" sign \
     --private-key "$ROOT/operator.key" \
     --chain-id "$CHAIN_ID" \
@@ -631,7 +636,7 @@ sign_tx() {
     --signer-id did:operator:1 \
     --signer-role operator \
     --nonce "$nonce" \
-    --payload-type opaque_fixture_v1 \
+    --payload-type trnm.canonical.tx.v1 \
     --payload-file "$payload" \
     --output "$output" >/dev/null
   printf '%s\n' "$output"

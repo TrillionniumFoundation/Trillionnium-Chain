@@ -35,6 +35,9 @@ TrillionniumChain/
 │   │   ├── trnm-bench
 │   │   ├── trnm-worker-agent
 │   │   ├── trnm-cli
+│   │   ├── trnm-protocol
+│   │   ├── trnm-runtime
+│   │   ├── trnm-consensus-app
 │   │   └── trnm-bridge-poc
 │   ├── configs/
 │   ├── scripts/
@@ -55,15 +58,22 @@ TrillionniumChain/
 
 ### Rust mainline (`trillionnium/crates`)
 
-- `trnm-node`: package containing the canonical `trnm-chain-node` testnet runtime,
-  independent `trnm-chain-validator`, operator `trnm-chain-cli`, and the explicitly
-  non-canonical historical simulator binary `trnm-sim`
+- `trnm-node`: legacy harness package containing the bespoke `trnm-chain-node`,
+  `trnm-chain-validator`, `trnm-chain-cli`, and `trnm-sim` binaries; these paths
+  are frozen for compatibility and are not production-runtime evidence
 - `trnm-finality-types` / `trnm-finality-verifier`: node-independent finality wire
   types and receipt verification for external consumers
-- `trnm-consensus-app`: deterministic CometBFT ABCI++ adapter prototype with
+- `trnm-protocol` / `trnm-runtime`: the canonical typed transaction protocol and
+  pure deterministic state transition for accounts, fees, task escrow, PoCO
+  consumption settlement, challenge, and resolution
+- `trnm-consensus-app`: the sole production-candidate runtime boundary, using
+  CometBFT ABCI++ with typed canonical transactions, fail-closed unknown payloads,
+  account sequence nonces, gas/fees, indexed execution events,
   replay-safe app-hash v3, committed validator lifecycle, SQLite-WAL delta
   persistence, stable empty-block state roots, local fresh-node state sync,
-  four-node proposal/vote/finalize/commit crash recovery, six-node validator
+  a four-validator funded PoCO/challenge vertical slice with value-conservation
+  and negative resource/replay checks, four-node proposal/vote/finalize/commit
+  crash recovery, six-node validator
   rotation, and rootless partition-safety evidence
 - `trnm-state`: versioned state store and `state_root`
 - `trnm-pouw`: PoCO task state machine and validation logic (legacy crate name retained during migration; do not read it as current payout-authority wording)
@@ -75,6 +85,11 @@ TrillionniumChain/
 - `trnm-bench`: benchmarking and performance tooling
 - `trnm-types`: shared protocol types
 - `trnm-bridge-poc`: bridge proof-of-concept integration
+
+The frozen Day-1 scope and feature-to-runtime truth table are maintained in
+`docs/architecture/TRNM_CANONICAL_RUNTIME_FREEZE_2026-07-28.md`. Bridge, oracle,
+external contracts, and full ZK platform work are explicitly outside the Day-1
+production candidate until they execute through `trnm-runtime` under CometBFT.
 
 ### Web4 frontend (`web4-frontend`)
 
@@ -92,7 +107,7 @@ TrillionniumChain/
 
 ### 4.1 Environment
 
-- Rust stable (keep aligned with `rust-toolchain`/CI)
+- Rust 1.95.0 (exactly pinned by `rust-toolchain.toml` and CI)
 - Node.js 20+
 - Git
 

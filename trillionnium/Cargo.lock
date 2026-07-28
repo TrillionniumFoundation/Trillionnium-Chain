@@ -1362,6 +1362,8 @@ dependencies = [
  "tendermint-proto",
  "trnm-finality-types",
  "trnm-node",
+ "trnm-protocol",
+ "trnm-runtime",
 ]
 
 [[package]]
@@ -1453,6 +1455,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "trnm-protocol"
+version = "0.1.0"
+dependencies = [
+ "hex",
+ "serde",
+ "serde_json",
+ "sha2",
+ "thiserror",
+]
+
+[[package]]
 name = "trnm-research-protocol"
 version = "0.1.0"
 dependencies = [
@@ -1478,6 +1491,21 @@ dependencies = [
  "sha2",
  "tempfile",
  "trnm-oracle",
+ "trnm-state",
+ "trnm-types",
+]
+
+[[package]]
+name = "trnm-runtime"
+version = "0.1.0"
+dependencies = [
+ "hex",
+ "serde",
+ "serde_json",
+ "sha2",
+ "thiserror",
+ "trnm-pouw",
+ "trnm-protocol",
  "trnm-state",
  "trnm-types",
 ]

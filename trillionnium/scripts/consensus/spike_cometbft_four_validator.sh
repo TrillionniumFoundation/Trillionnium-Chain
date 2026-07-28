@@ -15,6 +15,8 @@ COMET_PIDS=("" "" "" "" "")
 APP_CRASH_STAGES=("" "" "" "" "")
 APP_CRASH_HEIGHTS=("" "" "" "" "")
 APP_CRASH_MARKERS=("" "" "" "" "")
+OPERATOR_ACCOUNT_NONCE=0
+FIXTURE_COMMIT_RESPONSE=""
 ROOT_CREATED_BY_SCRIPT=0
 ROOT_MARKER_NAME=".trnm-comet-four-root-v1"
 ROOT_MARKER_VALUE="trnm-comet-four-root-v1"
@@ -110,21 +112,34 @@ test -x "$CLI_BIN"
 mkdir -p "$ROOT"
 key_json="$($CLI_BIN keygen --output "$ROOT/operator.key")"
 public_key="$(printf '%s' "$key_json" | jq -r .public_key_hex)"
+client_public_key="$($CLI_BIN keygen --output "$ROOT/client.key" | jq -r .public_key_hex)"
+worker_public_key="$($CLI_BIN keygen --output "$ROOT/worker.key" | jq -r .public_key_hex)"
+consumer_public_key="$($CLI_BIN keygen --output "$ROOT/consumer.key" | jq -r .public_key_hex)"
+challenger_public_key="$($CLI_BIN keygen --output "$ROOT/challenger.key" | jq -r .public_key_hex)"
+authorized_signers="$(jq -n \
+  --arg operator "$public_key" \
+  --arg client "$client_public_key" \
+  --arg worker "$worker_public_key" \
+  --arg consumer "$consumer_public_key" \
+  --arg challenger "$challenger_public_key" \
+  '[
+    {signer_id:"did:operator:1",signer_role:"operator",public_key_hex:$operator},
+    {signer_id:"did:client:1",signer_role:"hepta",public_key_hex:$client},
+    {signer_id:"did:worker:1",signer_role:"nakama",public_key_hex:$worker},
+    {signer_id:"did:consumer:1",signer_role:"hepta",public_key_hex:$consumer},
+    {signer_id:"did:challenger:1",signer_role:"hepta",public_key_hex:$challenger}
+  ]')"
 for index in 0 1 2 3 4; do
   home="$ROOT/node$index"
   "$COMETBFT_BIN" init --home "$home" >/dev/null
   sed -i 's/^allow_duplicate_ip = false$/allow_duplicate_ip = true/' "$home/config/config.toml"
   jq -n \
-    --arg public_key "$public_key" \
+    --argjson authorized_signers "$authorized_signers" \
     --arg state_path "$home/app-state.json" \
     '{
       schema:"trnm_cometbft_app_config_v1",
       chain_id:"trnm-comet-four",
-      authorized_signers:[{
-        signer_id:"did:operator:1",
-        signer_role:"operator",
-        public_key_hex:$public_key
-      }],
+      authorized_signers:$authorized_signers,
       state_path:$state_path
     }' > "$home/app.json"
 done
@@ -146,7 +161,7 @@ result = [
 result.sort(key=lambda validator: validator["public_key_hex"])
 print(json.dumps(result, separators=(",", ":")))
 ')"
-jq --argjson validators "$validators" --argjson initial_validators "$initial_validators" --arg public_key "$public_key" \
+jq --argjson validators "$validators" --argjson initial_validators "$initial_validators" --argjson authorized_signers "$authorized_signers" \
   '.chain_id="trnm-comet-four"
    | .validators=$validators
    | .consensus_params.version.app="3"
@@ -154,11 +169,7 @@ jq --argjson validators "$validators" --argjson initial_validators "$initial_val
        schema:"trnm_cometbft_genesis_v2",
        chain_id:"trnm-comet-four",
        app_version:3,
-       authorized_signers:[{
-         signer_id:"did:operator:1",
-         signer_role:"operator",
-         public_key_hex:$public_key
-       }],
+       authorized_signers:$authorized_signers,
        validator_governance:{
          schema:"trnm_validator_governance_v1",
          signer_id:"did:operator:1",
@@ -332,18 +343,68 @@ wait_app_hash_convergence() {
 }
 
 sign_tx() {
-  local nonce="$1"
-  printf 'four-validator-payload-%s' "$nonce" > "$ROOT/payload-$nonce.bin"
+  local label="$1"
+  local account_nonce=$((OPERATOR_ACCOUNT_NONCE + 1))
+  jq -n \
+    --arg sender did:operator:1 \
+    --arg account "fixture:four:$label" \
+    --argjson nonce "$account_nonce" \
+    '{schema:"trnm_canonical_tx_v1",sender:$sender,nonce:$nonce,max_gas:100000,fee_limit:"100000",command:{type:"credit_account",account:$account,amount:"1"}}' \
+    >"$ROOT/payload-$label.bin"
   "$CLI_BIN" sign \
     --private-key "$ROOT/operator.key" \
     --chain-id trnm-comet-four \
-    --command-id "command-four-$nonce" \
+    --command-id "command-four-$label" \
     --signer-id did:operator:1 \
     --signer-role operator \
-    --nonce "$nonce" \
-    --payload-type opaque_fixture_v1 \
-    --payload-file "$ROOT/payload-$nonce.bin" \
-    --output "$ROOT/tx-$nonce.json" >/dev/null
+    --nonce "$account_nonce" \
+    --payload-type trnm.canonical.tx.v1 \
+    --payload-file "$ROOT/payload-$label.bin" \
+    --output "$ROOT/tx-$label.json" >/dev/null
+}
+
+commit_fixture_tx() {
+  local label="$1"
+  sign_tx "$label"
+  FIXTURE_COMMIT_RESPONSE="$(broadcast_commit "$ROOT/tx-$label.json")"
+  test "$(printf '%s' "$FIXTURE_COMMIT_RESPONSE" | jq -r '.result.check_tx.code')" = "0"
+  test "$(printf '%s' "$FIXTURE_COMMIT_RESPONSE" | jq -r '.result.tx_result.code')" = "0"
+  OPERATOR_ACCOUNT_NONCE=$((OPERATOR_ACCOUNT_NONCE + 1))
+}
+
+sign_canonical_tx() {
+  local label="$1"
+  local signer_id="$2"
+  local signer_role="$3"
+  local private_key="$4"
+  local envelope_nonce="$5"
+  local payload="$6"
+  local payload_file="$ROOT/vertical-$label.payload.json"
+  local tx_file="$ROOT/vertical-$label.tx.json"
+  printf '%s\n' "$payload" >"$payload_file"
+  "$CLI_BIN" sign \
+    --private-key "$private_key" \
+    --chain-id trnm-comet-four \
+    --command-id "vertical-$label" \
+    --signer-id "$signer_id" \
+    --signer-role "$signer_role" \
+    --nonce "$envelope_nonce" \
+    --payload-type trnm.canonical.tx.v1 \
+    --payload-file "$payload_file" \
+    --output "$tx_file" >/dev/null
+  printf '%s\n' "$tx_file"
+}
+
+submit_canonical_tx() {
+  local tx_file="$1"
+  local expected_event="$2"
+  local response
+  response="$(broadcast_commit "$tx_file")"
+  test "$(printf '%s' "$response" | jq -r '.result.check_tx.code')" = "0"
+  test "$(printf '%s' "$response" | jq -r '.result.tx_result.code')" = "0"
+  test "$(printf '%s' "$response" | jq -r '.result.tx_result.gas_used | tonumber')" -gt 0
+  test "$(printf '%s' "$response" | jq -r --arg event "$expected_event" '.result.tx_result.events | any(.type == $event)')" = "true"
+  printf '%s\n' "$response"
 }
 
 broadcast_commit() {
@@ -360,12 +421,8 @@ drive_until_test_crash() {
   local index="$1"
   shift
   local nonce
-  local committed
   for nonce in "$@"; do
-    sign_tx "$nonce"
-    committed="$(broadcast_commit "$ROOT/tx-$nonce.json")"
-    test "$(printf '%s' "$committed" | jq -r '.result.check_tx.code')" = "0"
-    test "$(printf '%s' "$committed" | jq -r '.result.tx_result.code')" = "0"
+    commit_fixture_tx "$nonce"
     if crash_marker_appeared "$index"; then
       break
     fi
@@ -378,10 +435,8 @@ for index in 0 1 2 3; do start_comet "$index"; done
 for index in 0 1 2 3; do wait_rpc "$index"; done
 for index in 0 1 2 3; do wait_peers "$index" 2; done
 
-sign_tx 1
-first="$(broadcast_commit "$ROOT/tx-1.json")"
-test "$(printf '%s' "$first" | jq -r '.result.check_tx.code')" = "0"
-test "$(printf '%s' "$first" | jq -r '.result.tx_result.code')" = "0"
+commit_fixture_tx 1
+first="$FIXTURE_COMMIT_RESPONSE"
 first_height="$(printf '%s' "$first" | jq -r '.result.height | tonumber')"
 for index in 0 1 2 3; do wait_height "$index" "$first_height"; done
 
@@ -390,14 +445,14 @@ wait_app_hash_convergence 0 1 2 3
 # Crash while one validator is processing the next proposal. The other three
 # validators must still finalize it, then the crashed validator must replay it.
 current_height="$(curl -fsS "http://127.0.0.1:$BASE_RPC/status" | jq -r '.result.sync_info.latest_block_height | tonumber')"
-proposal_height=$((current_height + 2))
+proposal_height=$((current_height + 4))
 terminate_pids "${COMET_PIDS[3]}" "${APP_PIDS[3]}"
 configure_test_crash 3 process-proposal "$proposal_height"
 start_app 3
 start_comet 3
 wait_rpc 3
 wait_peers 3 2
-drive_until_test_crash 3 2 3
+drive_until_test_crash 3 proposal-a proposal-b proposal-c proposal-d proposal-e
 wait_height 0 "$proposal_height"
 second_height="$(curl -fsS "http://127.0.0.1:$BASE_RPC/status" | jq -r '.result.sync_info.latest_block_height | tonumber')"
 test "$second_height" -ge "$proposal_height"
@@ -408,14 +463,14 @@ wait_app_hash_convergence 0 1 2 3
 # Crash after the consensus vote has selected a block but before the local
 # application can finalize it. Replay must recover from the previous tip.
 current_height="$(curl -fsS "http://127.0.0.1:$BASE_RPC/status" | jq -r '.result.sync_info.latest_block_height | tonumber')"
-vote_height=$((current_height + 2))
+vote_height=$((current_height + 3))
 terminate_pids "${COMET_PIDS[2]}" "${APP_PIDS[2]}"
 configure_test_crash 2 finalize-block "$vote_height"
 start_app 2
 start_comet 2
 wait_rpc 2
 wait_peers 2 2
-drive_until_test_crash 2 4 5
+drive_until_test_crash 2 finalize-a finalize-b finalize-c finalize-d
 wait_height 0 "$vote_height"
 third_height="$(curl -fsS "http://127.0.0.1:$BASE_RPC/status" | jq -r '.result.sync_info.latest_block_height | tonumber')"
 test "$third_height" -ge "$vote_height"
@@ -433,7 +488,7 @@ start_app 1
 start_comet 1
 wait_rpc 1
 wait_peers 1 2
-drive_until_test_crash 1 6 7
+drive_until_test_crash 1 commit-a commit-b commit-c
 wait_height 0 "$commit_height"
 fourth_height="$(curl -fsS "http://127.0.0.1:$BASE_RPC/status" | jq -r '.result.sync_info.latest_block_height | tonumber')"
 test "$fourth_height" -ge "$commit_height"
@@ -455,11 +510,152 @@ restart_node_after_test_crash 1 "$fourth_height"
 test "$(jq -r .height "$ROOT/node1/app-state.json")" = "$fourth_height"
 wait_app_hash_convergence 0 1 2 3
 
-for nonce in 8 9 10 11; do
-  sign_tx "$nonce"
-  committed="$(broadcast_commit "$ROOT/tx-$nonce.json")"
-  test "$(printf '%s' "$committed" | jq -r '.result.check_tx.code')" = "0"
-  test "$(printf '%s' "$committed" | jq -r '.result.tx_result.code')" = "0"
+vertical_height="$(curl -fsS "http://127.0.0.1:$BASE_RPC/status" | jq -r '.result.sync_info.latest_block_height | tonumber')"
+deadline_height=$((vertical_height + 40))
+for credit in \
+  'operator did:operator:1 100000' \
+  'client did:client:1 200000' \
+  'worker did:worker:1 100000' \
+  'consumer did:consumer:1 100000' \
+  'challenger did:challenger:1 100000'; do
+  read -r label account amount <<<"$credit"
+  operator_nonce=$((OPERATOR_ACCOUNT_NONCE + 1))
+  payload="$(jq -nc \
+    --arg sender did:operator:1 \
+    --arg account "$account" \
+    --arg amount "$amount" \
+    --argjson nonce "$operator_nonce" \
+    '{schema:"trnm_canonical_tx_v1",sender:$sender,nonce:$nonce,max_gas:100000,fee_limit:"100000",command:{type:"credit_account",account:$account,amount:$amount}}')"
+  tx_file="$(sign_canonical_tx "credit-$label" did:operator:1 operator "$ROOT/operator.key" "$operator_nonce" "$payload")"
+  submit_canonical_tx "$tx_file" account_credited >/dev/null
+  OPERATOR_ACCOUNT_NONCE=$operator_nonce
+done
+
+payload="$(jq -nc --argjson deadline "$deadline_height" '{schema:"trnm_canonical_tx_v1",sender:"did:client:1",nonce:1,max_gas:100000,fee_limit:"100000",command:{type:"create_task",task_id:"canonical-task-1",reward:"10000",worker_stake:"5000",result_deadline_height:$deadline,challenge_window_blocks:40}}')"
+tx_file="$(sign_canonical_tx create did:client:1 hepta "$ROOT/client.key" 1 "$payload")"
+submit_canonical_tx "$tx_file" task_created >/dev/null
+
+payload='{"schema":"trnm_canonical_tx_v1","sender":"did:client:1","nonce":2,"max_gas":100000,"fee_limit":"100000","command":{"type":"assign_task","task_id":"canonical-task-1","worker":"did:worker:1"}}'
+tx_file="$(sign_canonical_tx forced-assign did:client:1 hepta "$ROOT/client.key" 2 "$payload")"
+forced_assign_response="$(broadcast_commit "$tx_file")"
+test "$(printf '%s' "$forced_assign_response" | jq -r '.result.check_tx.code')" != "0"
+
+payload='{"schema":"trnm_canonical_tx_v1","sender":"did:worker:1","nonce":1,"max_gas":100000,"fee_limit":"100000","command":{"type":"assign_task","task_id":"canonical-task-1","worker":"did:worker:1"}}'
+tx_file="$(sign_canonical_tx assign did:worker:1 nakama "$ROOT/worker.key" 1 "$payload")"
+submit_canonical_tx "$tx_file" task_assigned >/dev/null
+
+result_hash="$(printf canonical-result | sha256sum | cut -d' ' -f1)"
+reveal_salt="$(printf canonical-reveal-salt | sha256sum | cut -d' ' -f1)"
+commitment="$(python3 - "$result_hash" "$reveal_salt" <<'PY'
+import hashlib
+import sys
+
+result_hash, reveal_salt = sys.argv[1:]
+fields = [
+    b"trnm.result-commitment.v1",
+    b"canonical-task-1",
+    b"did:worker:1",
+    bytes.fromhex(result_hash),
+    bytes.fromhex(reveal_salt),
+]
+digest = hashlib.sha256()
+for field in fields:
+    digest.update(len(field).to_bytes(8, "big"))
+    digest.update(field)
+print(digest.hexdigest())
+PY
+)"
+payload="$(jq -nc --arg hash "$commitment" '{schema:"trnm_canonical_tx_v1",sender:"did:worker:1",nonce:2,max_gas:100000,fee_limit:"100000",command:{type:"commit_result",task_id:"canonical-task-1",commitment_hex:$hash}}')"
+tx_file="$(sign_canonical_tx commit did:worker:1 nakama "$ROOT/worker.key" 2 "$payload")"
+submit_canonical_tx "$tx_file" result_committed >/dev/null
+
+replay_response="$(broadcast_commit "$tx_file")"
+test "$(printf '%s' "$replay_response" | jq -r '.result.check_tx.code')" != "0"
+
+payload="$(jq -nc --arg hash "$result_hash" --arg salt "$reveal_salt" '{schema:"trnm_canonical_tx_v1",sender:"did:worker:1",nonce:3,max_gas:100000,fee_limit:"100000",command:{type:"reveal_result",task_id:"canonical-task-1",result_hash_hex:$hash,reveal_salt_hex:$salt}}')"
+tx_file="$(sign_canonical_tx reveal did:worker:1 nakama "$ROOT/worker.key" 3 "$payload")"
+submit_canonical_tx "$tx_file" result_revealed >/dev/null
+
+receipt_hash="$(printf canonical-consumption | sha256sum | cut -d' ' -f1)"
+payload="$(jq -nc --arg hash "$receipt_hash" '{schema:"trnm_canonical_tx_v1",sender:"did:consumer:1",nonce:1,max_gas:100000,fee_limit:"100000",command:{type:"record_consumption",task_id:"canonical-task-1",units:100,payment:"2000",receipt_hash_hex:$hash}}')"
+tx_file="$(sign_canonical_tx consume did:consumer:1 hepta "$ROOT/consumer.key" 1 "$payload")"
+submit_canonical_tx "$tx_file" consumption_recorded >/dev/null
+
+payload='{"schema":"trnm_canonical_tx_v1","sender":"did:client:1","nonce":2,"max_gas":1,"fee_limit":"100000","command":{"type":"transfer","to":"did:consumer:1","amount":"1"}}'
+tx_file="$(sign_canonical_tx over-gas did:client:1 hepta "$ROOT/client.key" 3 "$payload")"
+over_gas_response="$(broadcast_commit "$tx_file")"
+test "$(printf '%s' "$over_gas_response" | jq -r '.result.check_tx.code')" != "0"
+
+printf '{"unsupported":true}\n' >"$ROOT/vertical-unknown.payload.json"
+"$CLI_BIN" sign \
+  --private-key "$ROOT/client.key" \
+  --chain-id trnm-comet-four \
+  --command-id vertical-unknown \
+  --signer-id did:client:1 \
+  --signer-role hepta \
+  --nonce 4 \
+  --payload-type trnm.unknown.v1 \
+  --payload-file "$ROOT/vertical-unknown.payload.json" \
+  --output "$ROOT/vertical-unknown.tx.json" >/dev/null
+unknown_response="$(broadcast_commit "$ROOT/vertical-unknown.tx.json")"
+test "$(printf '%s' "$unknown_response" | jq -r '.result.check_tx.code')" != "0"
+
+evidence_hash="$(printf canonical-evidence | sha256sum | cut -d' ' -f1)"
+payload="$(jq -nc --arg hash "$evidence_hash" '{schema:"trnm_canonical_tx_v1",sender:"did:challenger:1",nonce:1,max_gas:100000,fee_limit:"100000",command:{type:"open_challenge",task_id:"canonical-task-1",bond:"1000",evidence_hash_hex:$hash}}')"
+tx_file="$(sign_canonical_tx challenge did:challenger:1 hepta "$ROOT/challenger.key" 1 "$payload")"
+submit_canonical_tx "$tx_file" challenge_opened >/dev/null
+
+operator_nonce=$((OPERATOR_ACCOUNT_NONCE + 1))
+payload="$(jq -nc --argjson nonce "$operator_nonce" '{schema:"trnm_canonical_tx_v1",sender:"did:operator:1",nonce:$nonce,max_gas:100000,fee_limit:"100000",command:{type:"resolve_challenge",task_id:"canonical-task-1",accept_challenge:false}}')"
+tx_file="$(sign_canonical_tx resolve did:operator:1 operator "$ROOT/operator.key" "$operator_nonce" "$payload")"
+submit_canonical_tx "$tx_file" challenge_resolved >/dev/null
+OPERATOR_ACCOUNT_NONCE=$operator_nonce
+
+operator_nonce=$((OPERATOR_ACCOUNT_NONCE + 1))
+payload="$(jq -nc --argjson nonce "$operator_nonce" '{schema:"trnm_canonical_tx_v1",sender:"did:operator:1",nonce:$nonce,max_gas:100000,fee_limit:"0",command:{type:"set_fee_policy",gas_price:"1",base_gas:1000,byte_gas:2}}')"
+tx_file="$(sign_canonical_tx fee-policy did:operator:1 operator "$ROOT/operator.key" "$operator_nonce" "$payload")"
+submit_canonical_tx "$tx_file" fee_policy_updated >/dev/null
+OPERATOR_ACCOUNT_NONCE=$operator_nonce
+
+operator_nonce=$((OPERATOR_ACCOUNT_NONCE + 1))
+payload="$(jq -nc --argjson nonce "$operator_nonce" '{schema:"trnm_canonical_tx_v1",sender:"did:operator:1",nonce:$nonce,max_gas:100000,fee_limit:"0",command:{type:"distribute_fees",to:"did:treasury:1",amount:"1"}}')"
+tx_file="$(sign_canonical_tx distribute-fees did:operator:1 operator "$ROOT/operator.key" "$operator_nonce" "$payload")"
+submit_canonical_tx "$tx_file" fees_distributed >/dev/null
+OPERATOR_ACCOUNT_NONCE=$operator_nonce
+
+expiry_base_height="$(curl -fsS "http://127.0.0.1:$BASE_RPC/status" | jq -r '.result.sync_info.latest_block_height | tonumber')"
+expiry_deadline=$((expiry_base_height + 2))
+payload="$(jq -nc --argjson deadline "$expiry_deadline" '{schema:"trnm_canonical_tx_v1",sender:"did:client:1",nonce:2,max_gas:100000,fee_limit:"100000",command:{type:"create_task",task_id:"canonical-expiry-1",reward:"1000",worker_stake:"500",result_deadline_height:$deadline,challenge_window_blocks:10}}')"
+tx_file="$(sign_canonical_tx expiry-create did:client:1 hepta "$ROOT/client.key" 5 "$payload")"
+submit_canonical_tx "$tx_file" task_created >/dev/null
+
+payload='{"schema":"trnm_canonical_tx_v1","sender":"did:client:1","nonce":3,"max_gas":100000,"fee_limit":"100000","command":{"type":"expire_task","task_id":"canonical-expiry-1"}}'
+tx_file="$(sign_canonical_tx expiry-finalize did:client:1 hepta "$ROOT/client.key" 6 "$payload")"
+expiry_response="$(submit_canonical_tx "$tx_file" task_expired)"
+vertical_final_height="$(printf '%s' "$expiry_response" | jq -r '.result.height | tonumber')"
+test "$vertical_final_height" -ge "$expiry_deadline"
+for index in 0 1 2 3; do wait_height "$index" "$vertical_final_height"; done
+wait_app_hash_convergence 0 1 2 3
+
+task_query="$(curl -fsS -H 'Content-Type: application/json' \
+  -d '{"jsonrpc":"2.0","id":1,"method":"abci_query","params":{"path":"/task/canonical-task-1","data":"","height":"0","prove":false}}' \
+  "http://127.0.0.1:$BASE_RPC")"
+test "$(printf '%s' "$task_query" | jq -r '.result.response.code')" = "0"
+test "$(printf '%s' "$task_query" | jq -r '.result.response.log')" = "trnm.poco.task.v1"
+queried_task_status="$(printf '%s' "$task_query" | jq -r '.result.response.value' | base64 -d | jq -r .status)"
+test "$queried_task_status" = "resolved_for_worker"
+expiry_query="$(curl -fsS -H 'Content-Type: application/json' \
+  -d '{"jsonrpc":"2.0","id":1,"method":"abci_query","params":{"path":"/task/canonical-expiry-1","data":"","height":"0","prove":false}}' \
+  "http://127.0.0.1:$BASE_RPC")"
+test "$(printf '%s' "$expiry_query" | jq -r '.result.response.code')" = "0"
+test "$(printf '%s' "$expiry_query" | jq -r '.result.response.value' | base64 -d | jq -r .status)" = "expired"
+proof_query="$(curl -fsS -H 'Content-Type: application/json' \
+  -d '{"jsonrpc":"2.0","id":1,"method":"abci_query","params":{"path":"/task/canonical-task-1","data":"","height":"0","prove":true}}' \
+  "http://127.0.0.1:$BASE_RPC")"
+test "$(printf '%s' "$proof_query" | jq -r '.result.response.code')" != "0"
+
+for nonce in 14 15 16 17; do
+  commit_fixture_tx "$nonce"
 done
 latest_height="$(curl -fsS "http://127.0.0.1:$BASE_RPC/status" | jq -r '.result.sync_info.latest_block_height | tonumber')"
 for index in 0 1 2 3; do wait_height "$index" "$latest_height"; done
@@ -545,6 +741,72 @@ jq -n \
       }
     ]
   }' >"$evidence_dir/crash-boundary-evidence.json"
+python3 - \
+  "$ROOT/node0/app-state.json.sqlite3" \
+  "$ROOT/node1/app-state.json.sqlite3" \
+  "$ROOT/node2/app-state.json.sqlite3" \
+  "$ROOT/node3/app-state.json.sqlite3" \
+  "$OPERATOR_ACCOUNT_NONCE" \
+  "$evidence_dir/canonical-vertical-slice.json" <<'PY'
+import hashlib
+import json
+import sqlite3
+import sys
+
+*database_args, expected_operator_nonce, output = sys.argv[1:]
+databases = database_args
+node_rows = []
+for database in databases:
+    with sqlite3.connect(database) as connection:
+        rows = connection.execute(
+            "SELECT object_key_hex, object_type, version, value_bytes FROM objects ORDER BY object_key_hex"
+        ).fetchall()
+    node_rows.append(rows)
+assert all(rows == node_rows[0] for rows in node_rows[1:]), "canonical objects diverged across validators"
+
+objects = [json.loads(value) for _, _, _, value in node_rows[0]]
+task = next(item for item in objects if item.get("task_id") == "canonical-task-1")
+expired_task = next(item for item in objects if item.get("task_id") == "canonical-expiry-1")
+accounts = {item["account"]: item for item in objects if "account" in item}
+monetary = next(item for item in objects if "total_issued" in item)
+fee_policy = next(item for item in objects if "gas_price" in item and "base_gas" in item)
+assert task["status"] == "resolved_for_worker"
+assert expired_task["status"] == "expired"
+assert accounts["did:operator:1"]["nonce"] == int(expected_operator_nonce)
+assert accounts["did:client:1"]["nonce"] == 3
+assert accounts["did:worker:1"]["nonce"] == 3
+assert accounts["did:consumer:1"]["nonce"] == 1
+assert accounts["did:challenger:1"]["nonce"] == 1
+assert int(accounts["did:treasury:1"]["balance"]) == 1
+assert int(accounts["did:worker:1"]["balance"]) > 100_000
+assert int(accounts["trnm:fee:collector"]["balance"]) > 0
+assert fee_policy == {"gas_price": "1", "base_gas": 1000, "byte_gas": 2}
+assert sum(int(account["balance"]) for account in accounts.values()) == int(monetary["total_issued"])
+state_digest = hashlib.sha256()
+for key, object_type, version, value in node_rows[0]:
+    for field in (key.encode(), object_type.encode(), str(version).encode(), bytes(value)):
+        state_digest.update(len(field).to_bytes(8, "big"))
+        state_digest.update(field)
+with open(output, "w", encoding="utf-8") as handle:
+    json.dump({
+        "schema": "trnm_canonical_vertical_slice_evidence_v1",
+        "task": task,
+        "expired_task": expired_task,
+        "accounts": accounts,
+        "monetary_state": monetary,
+        "fee_policy": fee_policy,
+        "validator_count": len(databases),
+        "canonical_state_digest": state_digest.hexdigest(),
+        "rejections": {
+            "forced_worker_assignment": "rejected",
+            "replay": "rejected",
+            "over_gas": "rejected",
+            "unknown_payload": "rejected",
+            "proof_before_apphash_v4": "rejected",
+        },
+    }, handle, sort_keys=True, separators=(",", ":"))
+    handle.write("\n")
+PY
 python3 "$SCRIPT_DIR/assert_cometbft_safety.py" \
   --expected-chain-id trnm-comet-four \
   --json-out "$evidence_dir/safety-evidence.json" \
@@ -560,5 +822,5 @@ python3 "$SCRIPT_DIR/assert_cometbft_safety.py" \
   --node node4 "http://127.0.0.1:$((BASE_RPC + 40))" "$ROOT/node4/app-state.json"
 test "$(jq -r .common_tip_height "$evidence_dir/safety-evidence.json")" = "$final_height"
 
-printf 'TRNM_COMETBFT_FOUR_VALIDATOR_OK height=%s crash_proposal=verified crash_vote_finalize=verified crash_commit_after_persist=verified state_sync=verified safety_evidence=verified app_hash=%s root=%s\n' \
+printf 'TRNM_COMETBFT_FOUR_VALIDATOR_OK height=%s canonical_vertical_slice=verified crash_proposal=verified crash_vote_finalize=verified crash_commit_after_persist=verified state_sync=verified safety_evidence=verified app_hash=%s root=%s\n' \
   "$final_height" "$app_hash" "$ROOT"
