@@ -1,6 +1,6 @@
 use std::{
     collections::{BTreeMap, BTreeSet},
-    fs,
+    fs::{self, OpenOptions},
     io::{Read, Seek, SeekFrom, Write},
     path::{Path, PathBuf},
     sync::{Arc, Mutex},
@@ -44,6 +44,47 @@ const MAX_SNAPSHOT_CHUNKS: u32 = 4096;
 const RETAINED_SNAPSHOTS: usize = 16;
 const DISK_SNAPSHOT_INTERVAL: u64 = 5;
 const RETAINED_DISK_SNAPSHOTS: usize = 3;
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum TestCrashStage {
+    ProcessProposal,
+    FinalizeBlock,
+    CommitAfterPersist,
+}
+
+#[derive(Debug, Clone)]
+pub struct TestCrashPlan {
+    pub stage: TestCrashStage,
+    pub height: u64,
+    pub marker_path: PathBuf,
+}
+
+impl TestCrashPlan {
+    fn trigger_if_matching(&self, stage: TestCrashStage, height: u64) {
+        if self.stage != stage || self.height != height {
+            return;
+        }
+        let mut marker = match OpenOptions::new()
+            .write(true)
+            .create_new(true)
+            .open(&self.marker_path)
+        {
+            Ok(marker) => marker,
+            Err(error) if error.kind() == std::io::ErrorKind::AlreadyExists => return,
+            Err(error) => panic!(
+                "create test crash marker {}: {error}",
+                self.marker_path.display()
+            ),
+        };
+        writeln!(marker, "stage={stage:?} height={height}").expect("write test crash marker");
+        marker.sync_all().expect("sync test crash marker");
+        eprintln!(
+            "[trnm-cometbft-app] unsafe_test_crash stage={stage:?} height={height} marker={}",
+            self.marker_path.display()
+        );
+        std::process::exit(86);
+    }
+}
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -170,6 +211,7 @@ struct AppCore {
     state: Mutex<AppState>,
     snapshots: Mutex<BTreeMap<u64, SnapshotRecord>>,
     snapshot_restore: Mutex<Option<SnapshotRestore>>,
+    test_crash_plan: Option<TestCrashPlan>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -266,6 +308,25 @@ pub struct CometBftApplication {
 
 impl CometBftApplication {
     pub fn new(config: ConsensusAppConfig) -> Result<Self> {
+        Self::new_inner(config, None)
+    }
+
+    pub fn new_with_test_crash_plan(
+        config: ConsensusAppConfig,
+        crash_plan: TestCrashPlan,
+    ) -> Result<Self> {
+        ensure!(crash_plan.height > 0, "test crash height must be positive");
+        ensure!(
+            crash_plan.marker_path.parent().is_some(),
+            "test crash marker must have a parent directory"
+        );
+        Self::new_inner(config, Some(crash_plan))
+    }
+
+    fn new_inner(
+        config: ConsensusAppConfig,
+        test_crash_plan: Option<TestCrashPlan>,
+    ) -> Result<Self> {
         config.validate()?;
         let interpreter =
             RoutingCommandInterpreter::from_authorized_signers(&config.authorized_signers)?;
@@ -306,8 +367,15 @@ impl CometBftApplication {
                 state: Mutex::new(state),
                 snapshots: Mutex::new(snapshots),
                 snapshot_restore: Mutex::new(None),
+                test_crash_plan,
             }),
         })
+    }
+
+    fn trigger_test_crash(&self, stage: TestCrashStage, height: u64) {
+        if let Some(plan) = &self.core.test_crash_plan {
+            plan.trigger_if_matching(stage, height);
+        }
     }
 
     pub fn height_and_app_hash(&self) -> Result<(u64, [u8; 32])> {
@@ -640,6 +708,10 @@ impl Application for CometBftApplication {
     }
 
     fn process_proposal(&self, request: RequestProcessProposal) -> ResponseProcessProposal {
+        self.trigger_test_crash(
+            TestCrashStage::ProcessProposal,
+            u64::try_from(request.height).unwrap_or(0),
+        );
         let accepted = self
             .core
             .state
@@ -664,6 +736,10 @@ impl Application for CometBftApplication {
     }
 
     fn finalize_block(&self, request: RequestFinalizeBlock) -> ResponseFinalizeBlock {
+        self.trigger_test_crash(
+            TestCrashStage::FinalizeBlock,
+            u64::try_from(request.height).unwrap_or(0),
+        );
         let mut state = self.core.state.lock().unwrap_or_else(|_| {
             panic!("consensus application state lock poisoned during FinalizeBlock")
         });
@@ -710,6 +786,7 @@ impl Application for CometBftApplication {
                     panic!("persist committed consensus application state: {error:#}")
                 });
         }
+        self.trigger_test_crash(TestCrashStage::CommitAfterPersist, pending.height);
         state.height = pending.height;
         state.app_hash = pending.app_hash;
         for (key, object) in pending.delta.objects {

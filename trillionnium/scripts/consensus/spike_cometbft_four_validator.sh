@@ -12,6 +12,9 @@ BASE_P2P="${TRNM_COMETBFT_BASE_P2P_PORT:-28656}"
 BASE_ABCI="${TRNM_COMETBFT_BASE_ABCI_PORT:-28658}"
 APP_PIDS=("" "" "" "" "")
 COMET_PIDS=("" "" "" "" "")
+APP_CRASH_STAGES=("" "" "" "" "")
+APP_CRASH_HEIGHTS=("" "" "" "" "")
+APP_CRASH_MARKERS=("" "" "" "" "")
 ROOT_CREATED_BY_SCRIPT=0
 ROOT_MARKER_NAME=".trnm-comet-four-root-v1"
 ROOT_MARKER_VALUE="trnm-comet-four-root-v1"
@@ -177,11 +180,30 @@ done
 start_app() {
   local index="$1"
   local abci_port=$((BASE_ABCI + index * 10))
+  local crash_args=()
+  if [[ -n "${APP_CRASH_STAGES[index]}" ]]; then
+    crash_args=(
+      --unsafe-test-crash-stage "${APP_CRASH_STAGES[index]}"
+      --unsafe-test-crash-height "${APP_CRASH_HEIGHTS[index]}"
+      --unsafe-test-crash-marker "${APP_CRASH_MARKERS[index]}"
+    )
+  fi
   "$APP_BIN" \
     --config "$ROOT/node$index/app.json" \
     --listen-addr "127.0.0.1:$abci_port" \
+    "${crash_args[@]}" \
     >"$ROOT/node$index/app.log" 2>&1 &
   APP_PIDS[index]=$!
+}
+
+configure_test_crash() {
+  local index="$1"
+  local stage="$2"
+  local height="$3"
+  APP_CRASH_STAGES[index]="$stage"
+  APP_CRASH_HEIGHTS[index]="$height"
+  APP_CRASH_MARKERS[index]="$ROOT/node$index/crash-$stage-$height.marker"
+  test ! -e "${APP_CRASH_MARKERS[index]}"
 }
 
 start_comet() {
@@ -250,6 +272,43 @@ wait_height() {
   return 1
 }
 
+wait_test_crash() {
+  local index="$1"
+  local marker="${APP_CRASH_MARKERS[index]}"
+  for _ in $(seq 1 200); do
+    if [[ -s "$marker" ]] && ! kill -0 "${APP_PIDS[index]}" 2>/dev/null; then
+      return 0
+    fi
+    sleep 0.1
+  done
+  printf 'test crash timed out: node=%s stage=%s height=%s marker=%s\n' \
+    "$index" "${APP_CRASH_STAGES[index]}" "${APP_CRASH_HEIGHTS[index]}" "$marker" >&2
+  return 1
+}
+
+crash_marker_appeared() {
+  local index="$1"
+  local marker="${APP_CRASH_MARKERS[index]}"
+  for _ in $(seq 1 20); do
+    [[ -s "$marker" ]] && return 0
+    sleep 0.1
+  done
+  return 1
+}
+
+restart_node_after_test_crash() {
+  local index="$1"
+  local expected_height="$2"
+  terminate_pids "${COMET_PIDS[index]}" "${APP_PIDS[index]}"
+  COMET_PIDS[index]=""
+  APP_PIDS[index]=""
+  start_app "$index"
+  start_comet "$index"
+  wait_rpc "$index"
+  wait_peers "$index" 2
+  wait_height "$index" "$expected_height"
+}
+
 wait_app_hash_convergence() {
   local indexes=("$@")
   local hashes=()
@@ -297,6 +356,23 @@ broadcast_commit() {
     "http://127.0.0.1:$BASE_RPC"
 }
 
+drive_until_test_crash() {
+  local index="$1"
+  shift
+  local nonce
+  local committed
+  for nonce in "$@"; do
+    sign_tx "$nonce"
+    committed="$(broadcast_commit "$ROOT/tx-$nonce.json")"
+    test "$(printf '%s' "$committed" | jq -r '.result.check_tx.code')" = "0"
+    test "$(printf '%s' "$committed" | jq -r '.result.tx_result.code')" = "0"
+    if crash_marker_appeared "$index"; then
+      break
+    fi
+  done
+  wait_test_crash "$index"
+}
+
 for index in 0 1 2 3; do start_app "$index"; done
 for index in 0 1 2 3; do start_comet "$index"; done
 for index in 0 1 2 3; do wait_rpc "$index"; done
@@ -311,27 +387,75 @@ for index in 0 1 2 3; do wait_height "$index" "$first_height"; done
 
 wait_app_hash_convergence 0 1 2 3
 
+# Crash while one validator is processing the next proposal. The other three
+# validators must still finalize it, then the crashed validator must replay it.
+current_height="$(curl -fsS "http://127.0.0.1:$BASE_RPC/status" | jq -r '.result.sync_info.latest_block_height | tonumber')"
+proposal_height=$((current_height + 2))
 terminate_pids "${COMET_PIDS[3]}" "${APP_PIDS[3]}"
-COMET_PIDS[3]=""
-APP_PIDS[3]=""
-
-sign_tx 2
-second="$(broadcast_commit "$ROOT/tx-2.json")"
-test "$(printf '%s' "$second" | jq -r '.result.check_tx.code')" = "0"
-test "$(printf '%s' "$second" | jq -r '.result.tx_result.code')" = "0"
-second_height="$(printf '%s' "$second" | jq -r '.result.height | tonumber')"
-rejoin_height=$((second_height + 1))
-for index in 0 1 2; do wait_height "$index" "$rejoin_height"; done
-
+configure_test_crash 3 process-proposal "$proposal_height"
 start_app 3
 start_comet 3
 wait_rpc 3
-wait_height 3 "$rejoin_height"
-test "$(jq -r .height "$ROOT/node3/app-state.json")" = "$rejoin_height"
-
+wait_peers 3 2
+drive_until_test_crash 3 2 3
+wait_height 0 "$proposal_height"
+second_height="$(curl -fsS "http://127.0.0.1:$BASE_RPC/status" | jq -r '.result.sync_info.latest_block_height | tonumber')"
+test "$second_height" -ge "$proposal_height"
+for index in 0 1 2; do wait_height "$index" "$second_height"; done
+restart_node_after_test_crash 3 "$second_height"
 wait_app_hash_convergence 0 1 2 3
 
-for nonce in 3 4 5 6; do
+# Crash after the consensus vote has selected a block but before the local
+# application can finalize it. Replay must recover from the previous tip.
+current_height="$(curl -fsS "http://127.0.0.1:$BASE_RPC/status" | jq -r '.result.sync_info.latest_block_height | tonumber')"
+vote_height=$((current_height + 2))
+terminate_pids "${COMET_PIDS[2]}" "${APP_PIDS[2]}"
+configure_test_crash 2 finalize-block "$vote_height"
+start_app 2
+start_comet 2
+wait_rpc 2
+wait_peers 2 2
+drive_until_test_crash 2 4 5
+wait_height 0 "$vote_height"
+third_height="$(curl -fsS "http://127.0.0.1:$BASE_RPC/status" | jq -r '.result.sync_info.latest_block_height | tonumber')"
+test "$third_height" -ge "$vote_height"
+for index in 0 1 3; do wait_height "$index" "$third_height"; done
+restart_node_after_test_crash 2 "$third_height"
+wait_app_hash_convergence 0 1 2 3
+
+# Crash after SQLite has durably committed but before ABCI Commit returns. The
+# database tip must win over the stale JSON mirror during the handshake.
+current_height="$(curl -fsS "http://127.0.0.1:$BASE_RPC/status" | jq -r '.result.sync_info.latest_block_height | tonumber')"
+commit_height=$((current_height + 2))
+terminate_pids "${COMET_PIDS[1]}" "${APP_PIDS[1]}"
+configure_test_crash 1 commit-after-persist "$commit_height"
+start_app 1
+start_comet 1
+wait_rpc 1
+wait_peers 1 2
+drive_until_test_crash 1 6 7
+wait_height 0 "$commit_height"
+fourth_height="$(curl -fsS "http://127.0.0.1:$BASE_RPC/status" | jq -r '.result.sync_info.latest_block_height | tonumber')"
+test "$fourth_height" -ge "$commit_height"
+commit_persisted_height="$(python3 -c '
+import sqlite3
+import sys
+
+with sqlite3.connect(sys.argv[1]) as connection:
+    row = connection.execute(
+        "SELECT value FROM metadata WHERE key = ?", ("height",)
+    ).fetchone()
+if row is None:
+    raise SystemExit("missing persisted height")
+print(row[0])
+' "$ROOT/node1/app-state.json.sqlite3")"
+test "$commit_persisted_height" = "$commit_height"
+for index in 0 2 3; do wait_height "$index" "$fourth_height"; done
+restart_node_after_test_crash 1 "$fourth_height"
+test "$(jq -r .height "$ROOT/node1/app-state.json")" = "$fourth_height"
+wait_app_hash_convergence 0 1 2 3
+
+for nonce in 8 9 10 11; do
   sign_tx "$nonce"
   committed="$(broadcast_commit "$ROOT/tx-$nonce.json")"
   test "$(printf '%s' "$committed" | jq -r '.result.check_tx.code')" = "0"
@@ -380,6 +504,47 @@ app_hash="$(jq -r .app_hash_hex "$ROOT/node4/app-state.json")"
 
 evidence_dir="$ROOT/evidence"
 mkdir -p -- "$evidence_dir"
+jq -n \
+  --argjson proposal_target_height "$proposal_height" \
+  --argjson proposal_observed_tip "$second_height" \
+  --arg proposal_marker "$(cat "${APP_CRASH_MARKERS[3]}")" \
+  --argjson vote_finalize_target_height "$vote_height" \
+  --argjson vote_finalize_observed_tip "$third_height" \
+  --arg vote_finalize_marker "$(cat "${APP_CRASH_MARKERS[2]}")" \
+  --argjson commit_target_height "$commit_height" \
+  --argjson commit_observed_tip "$fourth_height" \
+  --argjson commit_persisted_height "$commit_persisted_height" \
+  --arg commit_marker "$(cat "${APP_CRASH_MARKERS[1]}")" \
+  '{
+    schema:"trnm_cometbft_crash_boundary_evidence_v1",
+    stages:[
+      {
+        stage:"process_proposal",
+        node:"node3",
+        target_height:$proposal_target_height,
+        observed_tip:$proposal_observed_tip,
+        marker:$proposal_marker,
+        recovery:"replayed_and_converged"
+      },
+      {
+        stage:"finalize_block",
+        node:"node2",
+        target_height:$vote_finalize_target_height,
+        observed_tip:$vote_finalize_observed_tip,
+        marker:$vote_finalize_marker,
+        recovery:"replayed_and_converged"
+      },
+      {
+        stage:"commit_after_persist",
+        node:"node1",
+        target_height:$commit_target_height,
+        observed_tip:$commit_observed_tip,
+        persisted_height:$commit_persisted_height,
+        marker:$commit_marker,
+        recovery:"sqlite_tip_won_and_converged"
+      }
+    ]
+  }' >"$evidence_dir/crash-boundary-evidence.json"
 python3 "$SCRIPT_DIR/assert_cometbft_safety.py" \
   --expected-chain-id trnm-comet-four \
   --json-out "$evidence_dir/safety-evidence.json" \
@@ -395,5 +560,5 @@ python3 "$SCRIPT_DIR/assert_cometbft_safety.py" \
   --node node4 "http://127.0.0.1:$((BASE_RPC + 40))" "$ROOT/node4/app-state.json"
 test "$(jq -r .common_tip_height "$evidence_dir/safety-evidence.json")" = "$final_height"
 
-printf 'TRNM_COMETBFT_FOUR_VALIDATOR_OK height=%s offline_tolerance=1 rejoin=verified state_sync=verified safety_evidence=verified app_hash=%s root=%s\n' \
+printf 'TRNM_COMETBFT_FOUR_VALIDATOR_OK height=%s crash_proposal=verified crash_vote_finalize=verified crash_commit_after_persist=verified state_sync=verified safety_evidence=verified app_hash=%s root=%s\n' \
   "$final_height" "$app_hash" "$ROOT"

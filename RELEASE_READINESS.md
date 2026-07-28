@@ -1,6 +1,6 @@
 # TRNM Release Readiness
 
-Updated date: 2026-07-27
+Updated date: 2026-07-28
 Scope: When citing this file, you must always record the current output of `git rev-parse origin/main`. Do not keep using a fixed commit hash from an older doc header as a permanent truth source.
 
 > This file is the active **release readiness truth source**.
@@ -26,8 +26,12 @@ Scope: When citing this file, you must always record the current output of `git 
   filtering, transactional SQLite-WAL delta persistence, and validator-lifecycle
   unit/crash-recovery gates pass. A six-node process fixture proves 4→5, 5→4,
   and one-key validator rotation, while rootless `3-1` and `2-2` partition gates
-  prove stall/progress/heal safety. Transport authentication, cross-host recovery,
-  threshold governance, HSM/KMS, and soak evidence are still incomplete.
+  prove stall/progress/heal safety. The four-validator fixture also injects
+  one-shot process crashes during `ProcessProposal`, `FinalizeBlock`, and after
+  durable SQLite commit but before the ABCI `Commit` response, then proves replay,
+  SQLite-tip recovery, continued finalization, and app-hash convergence. Transport
+  authentication, cross-host recovery, threshold governance, HSM/KMS, and soak
+  evidence are still incomplete.
 - The signed package remains `loopback-local-devnet`, `development_only=true`, and
   `public_mainnet_ready=false`.
 

@@ -57,7 +57,7 @@ jobs:
           TRNM_COMETBFT_BIN: /tmp/cometbft
         run: trillionnium/scripts/consensus/spike_cometbft_single_node.sh
 
-      - name: Four-validator safety and recovery gate
+      - name: Four-validator crash-boundary, safety, and state-sync gate
         env:
           TRNM_COMETBFT_BIN: /tmp/cometbft
           TRNM_COMETBFT_SPIKE_CLEAN_ON_SUCCESS: "1"

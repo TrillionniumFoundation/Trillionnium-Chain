@@ -29,6 +29,13 @@ An empty block therefore advances the durable height without changing the state
 root; this is required for CometBFT `create_empty_blocks=false` to quiesce when
 application content is unchanged.
 
+The four-validator live fixture injects a one-shot crash after the SQLite
+transaction commits but before ABCI `Commit` returns. On restart, the database
+height wins over the deliberately stale JSON cache, CometBFT completes its
+handshake, and all validators reconverge. The hidden `--unsafe-test-crash-*`
+arguments exist only for this loopback evidence gate and must never appear in an
+operator service definition.
+
 ## Safe backup
 
 Do not copy only the status JSON. Do not copy a live SQLite main file without

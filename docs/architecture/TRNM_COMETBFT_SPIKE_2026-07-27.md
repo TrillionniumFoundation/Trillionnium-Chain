@@ -1,6 +1,6 @@
 # TRNM CometBFT Adapter Spike — 2026-07-27
 
-Status: **four-validator recovery and fresh-node state sync proven locally**
+Status: **four-validator crash recovery and fresh-node state sync proven locally**
 
 ## Proven
 
@@ -54,8 +54,12 @@ Status: **four-validator recovery and fresh-node state sync proven locally**
   explicitly not sufficient backup evidence.
 - The reproducible live-process fixture is
   `trillionnium/scripts/consensus/spike_cometbft_single_node.sh`.
-- A real four-validator network commits identical application hashes, continues
-  with one validator offline, and catches that validator up after restart.
+- A real four-validator network commits identical application hashes and keeps
+  finalizing while one validator crashes during proposal processing, during
+  `FinalizeBlock` after the vote-selected block, and after durable SQLite commit
+  but before the ABCI `Commit` response. One-shot marker files make each boundary
+  deterministic. Every validator restarts, replays or accepts the authoritative
+  SQLite tip as appropriate, and converges without conflicting finalized heights.
 - Production configurations write an atomic disk-backed snapshot every five
   committed heights and retain three generations. Snapshot chunks are served
   directly from disk, avoiding the previous `16 × full_state` resident-memory
@@ -83,7 +87,6 @@ Status: **four-validator recovery and fresh-node state sync proven locally**
   `FinalizeBlock`, although it no longer builds inclusion proofs or clones full
   object payloads. A sparse/Jellyfish-style v4 commitment requires an explicit
   app-version and snapshot-format migration.
-- proposal/vote/commit crash-boundary recovery across four nodes;
 - authenticated multi-host peer transport and remote validator bootstrap;
 - threshold validator governance, HSM/KMS, production networking, cross-host
   fault recovery, long-duration soak, or public testnet SLOs.
