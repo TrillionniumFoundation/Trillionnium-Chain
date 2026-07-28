@@ -17,7 +17,7 @@ use tendermint_proto::v0_38::abci::{
     RequestProcessProposal, ResponseApplySnapshotChunk, ResponseCheckTx, ResponseCommit,
     ResponseFinalizeBlock, ResponseInfo, ResponseInitChain, ResponseListSnapshots,
     ResponseLoadSnapshotChunk, ResponseOfferSnapshot, ResponsePrepareProposal,
-    ResponseProcessProposal, Snapshot,
+    ResponseProcessProposal, Snapshot, ValidatorUpdate,
 };
 use trnm_finality_types::{hash_domain, SignedCommandEnvelopeV1};
 use trnm_node::live::{
@@ -27,12 +27,18 @@ use trnm_node::live::{
 };
 
 mod store;
+mod validator_lifecycle;
 
 use store::ApplicationStore;
+use validator_lifecycle::{
+    validators_from_abci, validators_to_abci, ConsensusValidatorV1, ValidatorGovernanceV1,
+    ValidatorLifecycleStateV1, ValidatorSetTransitionV1, VALIDATOR_TRANSITION_PAYLOAD_TYPE_V1,
+};
 
 pub const CONFIG_SCHEMA_V1: &str = "trnm_cometbft_app_config_v1";
-pub const GENESIS_SCHEMA_V1: &str = "trnm_cometbft_genesis_v1";
-const SNAPSHOT_FORMAT_V1: u32 = 1;
+pub const GENESIS_SCHEMA_V2: &str = "trnm_cometbft_genesis_v2";
+const APP_VERSION: u64 = 3;
+const SNAPSHOT_FORMAT_V2: u32 = 2;
 const SNAPSHOT_CHUNK_SIZE: usize = 1024 * 1024;
 const MAX_SNAPSHOT_CHUNKS: u32 = 4096;
 const RETAINED_SNAPSHOTS: usize = 16;
@@ -51,11 +57,13 @@ pub struct ConsensusAppConfig {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
-pub struct GenesisAppStateV1 {
+pub struct GenesisAppStateV2 {
     pub schema: String,
     pub chain_id: String,
     pub app_version: u64,
     pub authorized_signers: Vec<AuthorizedSignerV1>,
+    pub validator_governance: ValidatorGovernanceV1,
+    pub initial_validators: Vec<ConsensusValidatorV1>,
 }
 
 impl ConsensusAppConfig {
@@ -92,6 +100,10 @@ impl ConsensusAppConfig {
                 bytes.len() == 32,
                 "authorized signer public key must be 32 bytes"
             );
+            ensure!(
+                signer.public_key_hex == hex::encode(&bytes),
+                "authorized signer public key must use canonical lowercase hex"
+            );
         }
         Ok(())
     }
@@ -104,6 +116,7 @@ struct AppState {
     objects: BTreeMap<String, StoredObject>,
     command_ids: BTreeSet<String>,
     signer_nonces: BTreeSet<(String, u64)>,
+    validator_lifecycle: Option<ValidatorLifecycleStateV1>,
     pending: Option<PendingBlock>,
 }
 
@@ -111,6 +124,7 @@ struct AppState {
 struct PendingBlock {
     height: u64,
     app_hash: [u8; 32],
+    validator_updates: Vec<ValidatorUpdate>,
     delta: BlockDelta,
 }
 
@@ -119,6 +133,7 @@ struct BlockDelta {
     objects: BTreeMap<String, StoredObject>,
     command_ids: BTreeSet<String>,
     signer_nonces: BTreeSet<(String, u64)>,
+    validator_lifecycle: Option<ValidatorLifecycleStateV1>,
 }
 
 struct OverlayObjects<'a> {
@@ -142,6 +157,7 @@ impl Default for AppState {
             objects: BTreeMap::new(),
             command_ids: BTreeSet::new(),
             signer_nonces: BTreeSet::new(),
+            validator_lifecycle: None,
             pending: None,
         }
     }
@@ -158,13 +174,14 @@ struct AppCore {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
-struct PersistedAppStateV2 {
+struct PersistedAppStateV3 {
     schema: String,
     height: u64,
     app_hash_hex: String,
     objects: Vec<PersistedObjectV1>,
     command_ids: BTreeSet<String>,
     signer_nonces: BTreeSet<(String, u64)>,
+    validator_lifecycle: ValidatorLifecycleStateV1,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -179,11 +196,12 @@ struct PersistedObjectV1 {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
-struct SnapshotMetadataV1 {
+struct SnapshotMetadataV2 {
     schema: String,
     chain_id: String,
     height: u64,
     app_hash_hex: String,
+    app_version: u64,
     total_bytes: u64,
     chunk_size: u32,
 }
@@ -191,7 +209,7 @@ struct SnapshotMetadataV1 {
 #[derive(Debug, Clone)]
 struct SnapshotRestore {
     snapshot: Snapshot,
-    metadata: SnapshotMetadataV1,
+    metadata: SnapshotMetadataV2,
     chunks: Vec<Option<Bytes>>,
 }
 
@@ -266,6 +284,9 @@ impl CometBftApplication {
             Some(store) => store.load_or_migrate()?,
             None => AppState::default(),
         };
+        if let Some(lifecycle) = state.validator_lifecycle.as_ref() {
+            validate_lifecycle_authorization(&config, lifecycle)?;
+        }
         let mut snapshots = BTreeMap::new();
         if state.height > 0 {
             snapshots.insert(
@@ -322,8 +343,21 @@ impl CometBftApplication {
         Ok(())
     }
 
+    fn start_block_delta(&self, state: &AppState) -> Result<BlockDelta> {
+        let mut lifecycle = state
+            .validator_lifecycle
+            .clone()
+            .context("validator lifecycle is not initialized")?;
+        lifecycle.prepare_height(state.height.saturating_add(1))?;
+        Ok(BlockDelta {
+            validator_lifecycle: (Some(&lifecycle) != state.validator_lifecycle.as_ref())
+                .then_some(lifecycle),
+            ..Default::default()
+        })
+    }
+
     fn plan_block(&self, state: &AppState, txs: &[Bytes], timestamp_ms: u64) -> Result<BlockDelta> {
-        let mut delta = BlockDelta::default();
+        let mut delta = self.start_block_delta(state)?;
         for tx in txs {
             self.apply_tx(state, &mut delta, tx, timestamp_ms)?;
         }
@@ -339,9 +373,12 @@ impl CometBftApplication {
         let delta = self.plan_block(state, txs, timestamp_ms)?;
         let next_height = state.height.saturating_add(1);
         let app_hash = compute_app_hash_with_delta(next_height, state, &delta);
+        let validator_updates = effective_validator_lifecycle(state, &delta)?
+            .updates_due_at_finalize_height(next_height)?;
         Ok(PendingBlock {
             height: next_height,
             app_hash,
+            validator_updates,
             delta,
         })
     }
@@ -367,6 +404,22 @@ impl CometBftApplication {
                 && delta.signer_nonces.insert(signer_nonce),
             "signer nonce replay rejected"
         );
+        if envelope.payload_type == VALIDATOR_TRANSITION_PAYLOAD_TYPE_V1 {
+            let transition: ValidatorSetTransitionV1 =
+                serde_json::from_slice(&envelope.payload_bytes()?)
+                    .context("decode validator set transition")?;
+            let mut lifecycle = effective_validator_lifecycle(state, delta)?.clone();
+            lifecycle.schedule(
+                transition,
+                &envelope.command_id,
+                &envelope.signer_id,
+                &envelope.signer_role,
+                &self.core.config.chain_id,
+                state.height.saturating_add(1),
+            )?;
+            delta.validator_lifecycle = Some(lifecycle);
+            return Ok(());
+        }
         let execution = {
             let objects = OverlayObjects {
                 base: &state.objects,
@@ -393,7 +446,7 @@ impl CometBftApplication {
         Ok(())
     }
 
-    fn validate_genesis(&self, request: &RequestInitChain) -> Result<()> {
+    fn validate_genesis(&self, request: &RequestInitChain) -> Result<ValidatorLifecycleStateV1> {
         ensure!(
             request.chain_id == self.core.config.chain_id,
             "genesis chain_id mismatch"
@@ -402,32 +455,50 @@ impl CometBftApplication {
             !request.app_state_bytes.is_empty(),
             "genesis app_state must not be empty"
         );
-        let genesis: GenesisAppStateV1 =
+        let genesis: GenesisAppStateV2 =
             serde_json::from_slice(&request.app_state_bytes).context("decode genesis app_state")?;
         ensure!(
-            genesis.schema == GENESIS_SCHEMA_V1,
+            genesis.schema == GENESIS_SCHEMA_V2,
             "unsupported genesis schema"
         );
         ensure!(
             genesis.chain_id == self.core.config.chain_id,
             "genesis app_state chain_id mismatch"
         );
-        ensure!(genesis.app_version == 2, "unsupported genesis app version");
+        ensure!(
+            genesis.app_version == APP_VERSION,
+            "unsupported genesis app version"
+        );
+        ensure!(
+            request
+                .consensus_params
+                .as_ref()
+                .and_then(|params| params.version.as_ref())
+                .is_some_and(|version| version.app == APP_VERSION),
+            "genesis consensus params app version mismatch"
+        );
         ensure!(
             canonical_signers(&genesis.authorized_signers)
                 == canonical_signers(&self.core.config.authorized_signers),
             "genesis authorized signers do not match application config"
         );
-        let state = self
-            .core
-            .state
-            .lock()
-            .map_err(|_| anyhow!("state lock poisoned"))?;
+        genesis.validator_governance.validate()?;
+        let request_validators = validators_from_abci(&request.validators)?;
         ensure!(
-            state.height == 0,
-            "InitChain cannot replace committed state"
+            request_validators == genesis.initial_validators,
+            "genesis app_state validators do not match CometBFT validators"
         );
-        Ok(())
+        let lifecycle = ValidatorLifecycleStateV1::from_genesis(
+            self.core.config.chain_id.clone(),
+            APP_VERSION,
+            hex::encode(signer_policy_commitment(
+                &self.core.config.authorized_signers,
+            )),
+            genesis.validator_governance,
+            request_validators,
+        )?;
+        validate_lifecycle_authorization(&self.core.config, &lifecycle)?;
+        Ok(lifecycle)
     }
 
     fn retain_snapshot(&self, state: &AppState) -> Result<()> {
@@ -468,21 +539,56 @@ impl Application for CometBftApplication {
         ResponseInfo {
             data: "trnm-consensus-app".to_string(),
             version: env!("CARGO_PKG_VERSION").to_string(),
-            app_version: 2,
+            app_version: APP_VERSION,
             last_block_height: height as i64,
             last_block_app_hash: Bytes::copy_from_slice(&app_hash),
         }
     }
 
     fn init_chain(&self, request: RequestInitChain) -> ResponseInitChain {
-        self.validate_genesis(&request)
+        let lifecycle = self
+            .validate_genesis(&request)
             .unwrap_or_else(|error| panic!("refuse incompatible CometBFT genesis: {error:#}"));
-        let (_, app_hash) = self
-            .height_and_app_hash()
-            .expect("read initialized application state");
+        let validators = validators_to_abci(&lifecycle.active_validators)
+            .expect("validated genesis validators convert to ABCI");
+        let mut state = self
+            .core
+            .state
+            .lock()
+            .unwrap_or_else(|_| panic!("state lock poisoned during InitChain"));
+        assert_eq!(
+            state.height, 0,
+            "InitChain cannot replace committed application state"
+        );
+        match state.validator_lifecycle.as_ref() {
+            Some(existing) => assert_eq!(
+                existing, &lifecycle,
+                "repeated InitChain validator lifecycle mismatch"
+            ),
+            None => {
+                let mut initialized = state.clone();
+                initialized.validator_lifecycle = Some(lifecycle);
+                initialized.app_hash = compute_app_hash(
+                    0,
+                    &initialized.objects,
+                    &initialized.command_ids,
+                    &initialized.signer_nonces,
+                    initialized.validator_lifecycle.as_ref(),
+                );
+                if let Some(store) = &self.core.store {
+                    store
+                        .replace_empty_state(&state, &initialized)
+                        .unwrap_or_else(|error| {
+                            panic!("persist initialized validator lifecycle: {error:#}")
+                        });
+                }
+                *state = initialized;
+            }
+        }
+        let app_hash = state.app_hash;
         ResponseInitChain {
             consensus_params: request.consensus_params,
-            validators: request.validators,
+            validators,
             app_hash: Bytes::copy_from_slice(&app_hash),
         }
     }
@@ -507,7 +613,10 @@ impl Application for CometBftApplication {
             _ => return ResponsePrepareProposal::default(),
         };
         let timestamp_ms = timestamp_ms(request.time.as_ref());
-        let mut delta = BlockDelta::default();
+        let mut delta = match self.start_block_delta(&state) {
+            Ok(delta) => delta,
+            Err(_) => return ResponsePrepareProposal::default(),
+        };
         let mut total_bytes = 0usize;
         let max_bytes = usize::try_from(request.max_tx_bytes).unwrap_or(0);
         let mut txs = Vec::new();
@@ -571,6 +680,7 @@ impl Application for CometBftApplication {
                 )
             });
         let app_hash = Bytes::copy_from_slice(&pending.app_hash);
+        let validator_updates = pending.validator_updates.clone();
         state.pending = Some(pending);
         ResponseFinalizeBlock {
             tx_results: request
@@ -578,6 +688,7 @@ impl Application for CometBftApplication {
                 .iter()
                 .map(|_| ExecTxResult::default())
                 .collect(),
+            validator_updates,
             app_hash,
             ..Default::default()
         }
@@ -606,6 +717,9 @@ impl Application for CometBftApplication {
         }
         state.command_ids.extend(pending.delta.command_ids);
         state.signer_nonces.extend(pending.delta.signer_nonces);
+        if let Some(lifecycle) = pending.delta.validator_lifecycle {
+            state.validator_lifecycle = Some(lifecycle);
+        }
         if let Err(error) = self.retain_snapshot(&state) {
             eprintln!(
                 "[trnm-cometbft-app] committed state but failed to retain optional snapshot: {error:#}"
@@ -688,7 +802,7 @@ impl CometBftApplication {
             .snapshot
             .ok_or_else(|| anyhow!("snapshot offer is missing snapshot metadata"))?;
         ensure!(
-            snapshot.format == SNAPSHOT_FORMAT_V1,
+            snapshot.format == SNAPSHOT_FORMAT_V2,
             "unsupported snapshot format"
         );
         ensure!(
@@ -696,11 +810,15 @@ impl CometBftApplication {
             "invalid snapshot chunk count"
         );
         ensure!(snapshot.hash.len() == 32, "invalid snapshot hash length");
-        let metadata: SnapshotMetadataV1 =
+        let metadata: SnapshotMetadataV2 =
             serde_json::from_slice(&snapshot.metadata).context("decode snapshot metadata")?;
         ensure!(
-            metadata.schema == "trnm_cometbft_snapshot_metadata_v1",
+            metadata.schema == "trnm_cometbft_snapshot_metadata_v2",
             "unsupported snapshot metadata schema"
+        );
+        ensure!(
+            metadata.app_version == APP_VERSION,
+            "snapshot app version mismatch"
         );
         ensure!(
             metadata.chain_id == self.core.config.chain_id,
@@ -794,6 +912,11 @@ impl CometBftApplication {
             "snapshot content hash mismatch"
         );
         let next = decode_state(&bytes)?;
+        let lifecycle = next
+            .validator_lifecycle
+            .as_ref()
+            .context("restored snapshot is missing validator lifecycle")?;
+        validate_lifecycle_authorization(&self.core.config, lifecycle)?;
         ensure!(
             next.height == restore.metadata.height,
             "restored height mismatch"
@@ -857,6 +980,50 @@ fn canonical_signers(signers: &[AuthorizedSignerV1]) -> BTreeSet<(String, String
         .collect()
 }
 
+fn effective_validator_lifecycle<'a>(
+    state: &'a AppState,
+    delta: &'a BlockDelta,
+) -> Result<&'a ValidatorLifecycleStateV1> {
+    delta
+        .validator_lifecycle
+        .as_ref()
+        .or(state.validator_lifecycle.as_ref())
+        .context("validator lifecycle is not initialized")
+}
+
+fn validate_lifecycle_authorization(
+    config: &ConsensusAppConfig,
+    lifecycle: &ValidatorLifecycleStateV1,
+) -> Result<()> {
+    lifecycle.validate()?;
+    ensure!(
+        lifecycle.chain_id == config.chain_id,
+        "validator lifecycle chain_id differs from local application config"
+    );
+    ensure!(
+        lifecycle.app_version == APP_VERSION,
+        "validator lifecycle app version differs from local application"
+    );
+    ensure!(
+        lifecycle.authorized_signers_hash_hex
+            == hex::encode(signer_policy_commitment(&config.authorized_signers)),
+        "validator lifecycle authorized signer policy differs from local application config"
+    );
+    // v1 is deliberately fail-closed single-operator governance. The signer
+    // is explicit in committed state; threshold authorization is still required
+    // before public testnet readiness.
+    let signer = config
+        .authorized_signers
+        .iter()
+        .find(|signer| signer.signer_id == lifecycle.governance.signer_id)
+        .context("validator governance signer is not locally authorized")?;
+    ensure!(
+        signer.signer_role == "operator",
+        "validator governance signer must have operator role"
+    );
+    Ok(())
+}
+
 fn signer_policy_commitment(signers: &[AuthorizedSignerV1]) -> [u8; 32] {
     root_only(
         "trnm.cometbft.authorized-signers.v1",
@@ -876,14 +1043,15 @@ fn signer_policy_commitment(signers: &[AuthorizedSignerV1]) -> [u8; 32] {
 }
 
 fn empty_app_hash() -> [u8; 32] {
-    hash_domain("trnm.cometbft.application.empty.v1", &[])
+    hash_domain("trnm.cometbft.application.empty.v2", &[])
 }
 
 fn compute_app_hash(
-    height: u64,
+    _height: u64,
     objects: &BTreeMap<String, StoredObject>,
     command_ids: &BTreeSet<String>,
     signer_nonces: &BTreeSet<(String, u64)>,
+    validator_lifecycle: Option<&ValidatorLifecycleStateV1>,
 ) -> [u8; 32] {
     let object_root = root_only(
         "trnm.state.objects.v1",
@@ -904,10 +1072,15 @@ fn compute_app_hash(
             )
         }),
     );
-    compose_app_hash(height, object_root, command_root, nonce_root)
+    compose_app_hash(
+        object_root,
+        command_root,
+        nonce_root,
+        validator_lifecycle_commitment(validator_lifecycle),
+    )
 }
 
-fn compute_app_hash_with_delta(height: u64, state: &AppState, delta: &BlockDelta) -> [u8; 32] {
+fn compute_app_hash_with_delta(_height: u64, state: &AppState, delta: &BlockDelta) -> [u8; 32] {
     let object_root = root_only(
         "trnm.state.objects.v1",
         merged_object_leaves(&state.objects, &delta.objects),
@@ -931,7 +1104,17 @@ fn compute_app_hash_with_delta(height: u64, state: &AppState, delta: &BlockDelta
                 )
             }),
     );
-    compose_app_hash(height, object_root, command_root, nonce_root)
+    compose_app_hash(
+        object_root,
+        command_root,
+        nonce_root,
+        validator_lifecycle_commitment(
+            delta
+                .validator_lifecycle
+                .as_ref()
+                .or(state.validator_lifecycle.as_ref()),
+        ),
+    )
 }
 
 fn merged_object_leaves(
@@ -975,20 +1158,30 @@ fn merged_object_leaves(
 }
 
 fn compose_app_hash(
-    height: u64,
     object_root: [u8; 32],
     command_root: [u8; 32],
     nonce_root: [u8; 32],
+    validator_lifecycle_root: [u8; 32],
 ) -> [u8; 32] {
     hash_domain(
-        "trnm.cometbft.application.v2",
+        "trnm.cometbft.application.v3",
         &[
-            &height.to_be_bytes(),
             &object_root,
             &command_root,
             &nonce_root,
+            &validator_lifecycle_root,
         ],
     )
+}
+
+fn validator_lifecycle_commitment(lifecycle: Option<&ValidatorLifecycleStateV1>) -> [u8; 32] {
+    lifecycle
+        .map(|lifecycle| {
+            lifecycle
+                .commitment()
+                .expect("committed validator lifecycle must be valid")
+        })
+        .unwrap_or_else(|| hash_domain("trnm.cometbft.validator-lifecycle.empty.v1", &[]))
 }
 
 fn timestamp_ms(timestamp: Option<&tendermint_proto::google::protobuf::Timestamp>) -> u64 {
@@ -1018,14 +1211,15 @@ fn load_state(path: &Path) -> Result<AppState> {
 }
 
 fn decode_state(bytes: &[u8]) -> Result<AppState> {
-    let persisted: PersistedAppStateV2 =
+    let persisted: PersistedAppStateV3 =
         serde_json::from_slice(bytes).context("decode persisted application state")?;
     ensure!(
-        persisted.schema == "trnm_cometbft_app_state_v2",
+        persisted.schema == "trnm_cometbft_app_state_v3",
         "unsupported persisted app state schema"
     );
     let app_hash =
         trnm_finality_types::decode_hash32("persisted app_hash", &persisted.app_hash_hex)?;
+    persisted.validator_lifecycle.validate()?;
     let mut objects = BTreeMap::new();
     for object in persisted.objects {
         let value_bytes =
@@ -1057,6 +1251,7 @@ fn decode_state(bytes: &[u8]) -> Result<AppState> {
         &objects,
         &persisted.command_ids,
         &persisted.signer_nonces,
+        Some(&persisted.validator_lifecycle),
     );
     ensure!(expected == app_hash, "persisted application hash mismatch");
     Ok(AppState {
@@ -1065,6 +1260,7 @@ fn decode_state(bytes: &[u8]) -> Result<AppState> {
         objects,
         command_ids: persisted.command_ids,
         signer_nonces: persisted.signer_nonces,
+        validator_lifecycle: Some(persisted.validator_lifecycle),
         pending: None,
     })
 }
@@ -1074,8 +1270,8 @@ fn encode_state(state: &AppState) -> Result<Vec<u8>> {
         state.pending.is_none(),
         "cannot encode pending application state"
     );
-    let persisted = PersistedAppStateV2 {
-        schema: "trnm_cometbft_app_state_v2".to_string(),
+    let persisted = PersistedAppStateV3 {
+        schema: "trnm_cometbft_app_state_v3".to_string(),
         height: state.height,
         app_hash_hex: hex::encode(state.app_hash),
         objects: state
@@ -1091,12 +1287,16 @@ fn encode_state(state: &AppState) -> Result<Vec<u8>> {
             .collect(),
         command_ids: state.command_ids.clone(),
         signer_nonces: state.signer_nonces.clone(),
+        validator_lifecycle: state
+            .validator_lifecycle
+            .clone()
+            .context("cannot encode state before validator lifecycle initialization")?,
     };
     Ok(serde_json::to_vec(&persisted)?)
 }
 
 fn snapshot_hash(bytes: &[u8]) -> [u8; 32] {
-    hash_domain("trnm.cometbft.snapshot.v1", &[bytes])
+    hash_domain("trnm.cometbft.snapshot.v2", &[bytes])
 }
 
 fn snapshot_path(config: &ConsensusAppConfig, height: u64) -> Option<PathBuf> {
@@ -1122,11 +1322,12 @@ fn build_snapshot(
         chunk_count > 0 && chunk_count <= MAX_SNAPSHOT_CHUNKS,
         "application snapshot exceeds chunk limit"
     );
-    let metadata = SnapshotMetadataV1 {
-        schema: "trnm_cometbft_snapshot_metadata_v1".to_string(),
+    let metadata = SnapshotMetadataV2 {
+        schema: "trnm_cometbft_snapshot_metadata_v2".to_string(),
         chain_id: chain_id.to_string(),
         height: state.height,
         app_hash_hex: hex::encode(state.app_hash),
+        app_version: APP_VERSION,
         total_bytes: bytes.len() as u64,
         chunk_size: SNAPSHOT_CHUNK_SIZE as u32,
     };
@@ -1143,7 +1344,7 @@ fn build_snapshot(
     Ok(SnapshotRecord {
         snapshot: Snapshot {
             height: state.height,
-            format: SNAPSHOT_FORMAT_V1,
+            format: SNAPSHOT_FORMAT_V2,
             chunks: chunk_count,
             hash: Bytes::copy_from_slice(&content_hash),
             metadata: Bytes::from(serde_json::to_vec(&metadata)?),
@@ -1194,10 +1395,27 @@ mod tests {
             RequestLoadSnapshotChunk, RequestOfferSnapshot, RequestPrepareProposal,
             RequestProcessProposal,
         },
+        v0_38::crypto::public_key,
+        v0_38::types::{ConsensusParams, VersionParams},
     };
-    use trnm_finality_types::crypto::public_key_hex;
+    use trnm_finality_types::crypto::{public_key_hex, sign_hex};
 
     use super::*;
+    use crate::validator_lifecycle::{
+        validator_key_proof_message, ValidatorKeyProofV1, VALIDATOR_GOVERNANCE_SCHEMA_V1,
+        VALIDATOR_TRANSITION_SCHEMA_V1,
+    };
+
+    fn initial_validators() -> Vec<ConsensusValidatorV1> {
+        let mut validators = (21u8..=24)
+            .map(|seed| ConsensusValidatorV1 {
+                public_key_hex: public_key_hex(&SigningKey::from_bytes(&[seed; 32])),
+                voting_power: 10,
+            })
+            .collect::<Vec<_>>();
+        validators.sort_by(|left, right| left.public_key_hex.cmp(&right.public_key_hex));
+        validators
+    }
 
     fn fixture() -> (CometBftApplication, SignedCommandEnvelopeV1) {
         let signing_key = SigningKey::from_bytes(&[11u8; 32]);
@@ -1212,6 +1430,7 @@ mod tests {
             state_path: None,
         })
         .unwrap();
+        app.init_chain(genesis_request(&app));
         let envelope = SignedCommandEnvelopeV1::sign(
             "trnm-comet-spike",
             "command-1",
@@ -1236,17 +1455,154 @@ mod tests {
     }
 
     fn genesis_request(app: &CometBftApplication) -> RequestInitChain {
-        let genesis = GenesisAppStateV1 {
-            schema: GENESIS_SCHEMA_V1.to_string(),
+        let initial_validators = initial_validators();
+        let genesis = GenesisAppStateV2 {
+            schema: GENESIS_SCHEMA_V2.to_string(),
             chain_id: app.core.config.chain_id.clone(),
-            app_version: 2,
+            app_version: APP_VERSION,
             authorized_signers: app.core.config.authorized_signers.clone(),
+            validator_governance: ValidatorGovernanceV1 {
+                schema: VALIDATOR_GOVERNANCE_SCHEMA_V1.to_string(),
+                signer_id: "did:operator:1".to_string(),
+                min_activation_delay_blocks: 2,
+                unsafe_allow_single_validator_genesis: false,
+            },
+            initial_validators: initial_validators.clone(),
         };
         RequestInitChain {
             chain_id: app.core.config.chain_id.clone(),
             app_state_bytes: Bytes::from(serde_json::to_vec(&genesis).unwrap()),
+            consensus_params: Some(ConsensusParams {
+                version: Some(VersionParams { app: APP_VERSION }),
+                ..Default::default()
+            }),
+            validators: validators_to_abci(&initial_validators).unwrap(),
             ..Default::default()
         }
+    }
+
+    fn initialize(app: &CometBftApplication) {
+        app.init_chain(genesis_request(app));
+    }
+
+    fn validator(seed: u8, voting_power: u64) -> ConsensusValidatorV1 {
+        ConsensusValidatorV1 {
+            public_key_hex: public_key_hex(&SigningKey::from_bytes(&[seed; 32])),
+            voting_power,
+        }
+    }
+
+    fn validator_transition(
+        app: &CometBftApplication,
+        transition_id: &str,
+        activation_height: u64,
+        mut target_validators: Vec<ConsensusValidatorV1>,
+        proof_seeds: &[u8],
+    ) -> ValidatorSetTransitionV1 {
+        target_validators.sort_by(|left, right| left.public_key_hex.cmp(&right.public_key_hex));
+        let base_validator_set_hash_hex = app
+            .core
+            .state
+            .lock()
+            .unwrap()
+            .validator_lifecycle
+            .as_ref()
+            .unwrap()
+            .active_set_hash_hex()
+            .unwrap();
+        let message = validator_key_proof_message(
+            &app.core.config.chain_id,
+            transition_id,
+            &base_validator_set_hash_hex,
+            activation_height,
+            &target_validators,
+        )
+        .unwrap();
+        ValidatorSetTransitionV1 {
+            schema: VALIDATOR_TRANSITION_SCHEMA_V1.to_string(),
+            chain_id: app.core.config.chain_id.clone(),
+            transition_id: transition_id.to_string(),
+            base_validator_set_hash_hex,
+            activation_height,
+            target_validators,
+            new_validator_proofs: proof_seeds
+                .iter()
+                .map(|seed| {
+                    let key = SigningKey::from_bytes(&[*seed; 32]);
+                    ValidatorKeyProofV1 {
+                        public_key_hex: public_key_hex(&key),
+                        signature_hex: sign_hex(&key, &message),
+                    }
+                })
+                .collect(),
+        }
+    }
+
+    fn transition_envelope(
+        transition: &ValidatorSetTransitionV1,
+        nonce: u64,
+    ) -> SignedCommandEnvelopeV1 {
+        SignedCommandEnvelopeV1::sign(
+            &transition.chain_id,
+            &transition.transition_id,
+            "did:operator:1",
+            "operator",
+            nonce,
+            1_000,
+            10_000,
+            VALIDATOR_TRANSITION_SCHEMA_V1,
+            &serde_json::to_vec(transition).unwrap(),
+            &SigningKey::from_bytes(&[11u8; 32]),
+        )
+        .unwrap()
+    }
+
+    fn transition_tx(transition: &ValidatorSetTransitionV1, nonce: u64) -> Bytes {
+        Bytes::from(serde_json::to_vec(&transition_envelope(transition, nonce)).unwrap())
+    }
+
+    fn finalize_and_commit(
+        app: &CometBftApplication,
+        height: u64,
+        txs: Vec<Bytes>,
+    ) -> ResponseFinalizeBlock {
+        let response = app.finalize_block(RequestFinalizeBlock {
+            txs,
+            height: height as i64,
+            time: block_time(),
+            ..Default::default()
+        });
+        app.commit();
+        response
+    }
+
+    fn update_key_hex(update: &ValidatorUpdate) -> String {
+        match update
+            .pub_key
+            .as_ref()
+            .and_then(|key| key.sum.as_ref())
+            .unwrap()
+        {
+            public_key::Sum::Ed25519(bytes) => hex::encode(bytes),
+            _ => panic!("validator update did not contain an Ed25519 key"),
+        }
+    }
+
+    fn assert_transition_rejected(
+        app: &CometBftApplication,
+        transition: &ValidatorSetTransitionV1,
+        nonce: u64,
+    ) {
+        let response = app.process_proposal(RequestProcessProposal {
+            txs: vec![transition_tx(transition, nonce)],
+            height: 1,
+            time: block_time(),
+            ..Default::default()
+        });
+        assert_eq!(
+            response.status,
+            response_process_proposal::ProposalStatus::Reject as i32
+        );
     }
 
     #[test]
@@ -1272,25 +1628,36 @@ mod tests {
         let objects = BTreeMap::new();
         let empty_commands = BTreeSet::new();
         let empty_nonces = BTreeSet::new();
-        let base = compute_app_hash(1, &objects, &empty_commands, &empty_nonces);
+        let base = compute_app_hash(1, &objects, &empty_commands, &empty_nonces, None);
 
         let mut commands = BTreeSet::new();
         commands.insert("command-1".to_string());
         assert_ne!(
             base,
-            compute_app_hash(1, &objects, &commands, &empty_nonces)
+            compute_app_hash(1, &objects, &commands, &empty_nonces, None)
         );
 
         let mut nonces = BTreeSet::new();
         nonces.insert(("did:operator:1".to_string(), 1));
         assert_ne!(
             base,
-            compute_app_hash(1, &objects, &empty_commands, &nonces)
+            compute_app_hash(1, &objects, &empty_commands, &nonces, None)
         );
     }
 
     #[test]
-    fn delta_app_hash_exactly_matches_materialized_v2_state() {
+    fn application_hash_is_stable_when_only_height_advances() {
+        let objects = BTreeMap::new();
+        let command_ids = BTreeSet::new();
+        let signer_nonces = BTreeSet::new();
+        assert_eq!(
+            compute_app_hash(1, &objects, &command_ids, &signer_nonces, None),
+            compute_app_hash(u64::MAX, &objects, &command_ids, &signer_nonces, None)
+        );
+    }
+
+    #[test]
+    fn delta_app_hash_exactly_matches_materialized_v3_state() {
         fn object(key: &str, version: u64, value: &[u8]) -> StoredObject {
             StoredObject {
                 object_key_hex: key.to_string(),
@@ -1314,6 +1681,7 @@ mod tests {
             &state.objects,
             &state.command_ids,
             &state.signer_nonces,
+            state.validator_lifecycle.as_ref(),
         );
 
         let mut delta = BlockDelta::default();
@@ -1332,7 +1700,13 @@ mod tests {
         signer_nonces.extend(delta.signer_nonces.clone());
         assert_eq!(
             compute_app_hash_with_delta(8, &state, &delta),
-            compute_app_hash(8, &objects, &command_ids, &signer_nonces)
+            compute_app_hash(
+                8,
+                &objects,
+                &command_ids,
+                &signer_nonces,
+                state.validator_lifecycle.as_ref(),
+            )
         );
     }
 
@@ -1340,18 +1714,445 @@ mod tests {
     fn init_chain_binds_chain_identity_signers_and_app_version() {
         let (app, _) = fixture();
         let response = app.init_chain(genesis_request(&app));
-        assert_eq!(response.app_hash.as_ref(), empty_app_hash());
+        assert_ne!(response.app_hash.as_ref(), empty_app_hash());
 
         let mut wrong_chain = genesis_request(&app);
         wrong_chain.chain_id = "wrong-chain".to_string();
         assert!(std::panic::catch_unwind(|| app.init_chain(wrong_chain)).is_err());
 
         let mut wrong_version = genesis_request(&app);
-        let mut genesis: GenesisAppStateV1 =
+        let mut genesis: GenesisAppStateV2 =
             serde_json::from_slice(&wrong_version.app_state_bytes).unwrap();
-        genesis.app_version = 3;
+        genesis.app_version = APP_VERSION + 1;
         wrong_version.app_state_bytes = Bytes::from(serde_json::to_vec(&genesis).unwrap());
         assert!(std::panic::catch_unwind(|| app.init_chain(wrong_version)).is_err());
+
+        let mut changed_governance = genesis_request(&app);
+        let mut genesis: GenesisAppStateV2 =
+            serde_json::from_slice(&changed_governance.app_state_bytes).unwrap();
+        genesis.validator_governance.min_activation_delay_blocks = 3;
+        changed_governance.app_state_bytes = Bytes::from(serde_json::to_vec(&genesis).unwrap());
+        assert!(std::panic::catch_unwind(|| app.init_chain(changed_governance)).is_err());
+    }
+
+    #[test]
+    fn genesis_requires_safe_validator_power_unless_single_node_dev_mode_is_committed() {
+        let (fixture_app, _) = fixture();
+
+        let unsafe_single = |allow_unsafe: bool| {
+            let app = CometBftApplication::new(fixture_app.core.config.clone()).unwrap();
+            let mut request = genesis_request(&app);
+            let mut genesis: GenesisAppStateV2 =
+                serde_json::from_slice(&request.app_state_bytes).unwrap();
+            genesis.initial_validators = vec![validator(21, 10)];
+            genesis
+                .validator_governance
+                .unsafe_allow_single_validator_genesis = allow_unsafe;
+            request.validators = validators_to_abci(&genesis.initial_validators).unwrap();
+            request.app_state_bytes = Bytes::from(serde_json::to_vec(&genesis).unwrap());
+            (app, request)
+        };
+
+        let (rejected, request) = unsafe_single(false);
+        assert!(std::panic::catch_unwind(|| rejected.init_chain(request)).is_err());
+
+        let (accepted, request) = unsafe_single(true);
+        assert!(!accepted.init_chain(request).app_hash.is_empty());
+
+        let dominant = CometBftApplication::new(fixture_app.core.config.clone()).unwrap();
+        let mut request = genesis_request(&dominant);
+        let mut genesis: GenesisAppStateV2 =
+            serde_json::from_slice(&request.app_state_bytes).unwrap();
+        genesis.initial_validators = vec![
+            validator(21, 40),
+            validator(22, 10),
+            validator(23, 10),
+            validator(24, 10),
+        ];
+        genesis
+            .initial_validators
+            .sort_by(|left, right| left.public_key_hex.cmp(&right.public_key_hex));
+        request.validators = validators_to_abci(&genesis.initial_validators).unwrap();
+        request.app_state_bytes = Bytes::from(serde_json::to_vec(&genesis).unwrap());
+        assert!(std::panic::catch_unwind(|| dominant.init_chain(request)).is_err());
+    }
+
+    #[test]
+    fn validator_lifecycle_add_remove_and_key_rotation_activate_at_h_plus_two() {
+        let (app, _) = fixture();
+
+        let mut five = initial_validators();
+        five.push(validator(25, 10));
+        let add = validator_transition(&app, "validator-add-25", 3, five, &[25]);
+        let response = finalize_and_commit(&app, 1, vec![transition_tx(&add, 101)]);
+        assert_eq!(response.validator_updates.len(), 1);
+        assert_eq!(response.validator_updates[0].power, 10);
+        assert_eq!(
+            update_key_hex(&response.validator_updates[0]),
+            validator(25, 10).public_key_hex
+        );
+        {
+            let state = app.core.state.lock().unwrap();
+            let lifecycle = state.validator_lifecycle.as_ref().unwrap();
+            assert_eq!(lifecycle.active_validators.len(), 4);
+            assert_eq!(
+                lifecycle
+                    .pending_transition
+                    .as_ref()
+                    .unwrap()
+                    .activation_height,
+                3
+            );
+            let mut without_pending = lifecycle.clone();
+            without_pending.pending_transition = None;
+            assert_ne!(
+                state.app_hash,
+                compute_app_hash(
+                    state.height,
+                    &state.objects,
+                    &state.command_ids,
+                    &state.signer_nonces,
+                    Some(&without_pending),
+                )
+            );
+        }
+        assert!(finalize_and_commit(&app, 2, Vec::new())
+            .validator_updates
+            .is_empty());
+        finalize_and_commit(&app, 3, Vec::new());
+        {
+            let state = app.core.state.lock().unwrap();
+            let lifecycle = state.validator_lifecycle.as_ref().unwrap();
+            assert_eq!(lifecycle.active_validators.len(), 5);
+            assert!(lifecycle.pending_transition.is_none());
+            assert_eq!(
+                lifecycle.last_applied_transition_id.as_deref(),
+                Some("validator-add-25")
+            );
+        }
+
+        let removed_key = validator(21, 10).public_key_hex;
+        let four = app
+            .core
+            .state
+            .lock()
+            .unwrap()
+            .validator_lifecycle
+            .as_ref()
+            .unwrap()
+            .active_validators
+            .iter()
+            .filter(|validator| validator.public_key_hex != removed_key)
+            .cloned()
+            .collect::<Vec<_>>();
+        let remove = validator_transition(&app, "validator-remove-21", 6, four, &[]);
+        let response = finalize_and_commit(&app, 4, vec![transition_tx(&remove, 102)]);
+        assert_eq!(response.validator_updates.len(), 1);
+        assert_eq!(response.validator_updates[0].power, 0);
+        assert_eq!(update_key_hex(&response.validator_updates[0]), removed_key);
+        finalize_and_commit(&app, 5, Vec::new());
+        finalize_and_commit(&app, 6, Vec::new());
+        assert_eq!(
+            app.core
+                .state
+                .lock()
+                .unwrap()
+                .validator_lifecycle
+                .as_ref()
+                .unwrap()
+                .active_validators
+                .len(),
+            4
+        );
+
+        let rotated_out = validator(22, 10).public_key_hex;
+        let rotated_in = validator(26, 10).public_key_hex;
+        let mut rotated = app
+            .core
+            .state
+            .lock()
+            .unwrap()
+            .validator_lifecycle
+            .as_ref()
+            .unwrap()
+            .active_validators
+            .iter()
+            .filter(|validator| validator.public_key_hex != rotated_out)
+            .cloned()
+            .collect::<Vec<_>>();
+        rotated.push(validator(26, 10));
+        let rotation = validator_transition(&app, "validator-rotate-22-26", 9, rotated, &[26]);
+        let response = finalize_and_commit(&app, 7, vec![transition_tx(&rotation, 103)]);
+        let updates = response
+            .validator_updates
+            .iter()
+            .map(|update| (update_key_hex(update), update.power))
+            .collect::<BTreeMap<_, _>>();
+        assert_eq!(updates.get(&rotated_out), Some(&0));
+        assert_eq!(updates.get(&rotated_in), Some(&10));
+        finalize_and_commit(&app, 8, Vec::new());
+        finalize_and_commit(&app, 9, Vec::new());
+        let state = app.core.state.lock().unwrap();
+        let lifecycle = state.validator_lifecycle.as_ref().unwrap();
+        assert!(lifecycle
+            .active_validators
+            .iter()
+            .any(|validator| validator.public_key_hex == rotated_in));
+        assert!(!lifecycle
+            .active_validators
+            .iter()
+            .any(|validator| validator.public_key_hex == rotated_out));
+        assert_eq!(
+            lifecycle.last_applied_transition_id.as_deref(),
+            Some("validator-rotate-22-26")
+        );
+    }
+
+    #[test]
+    fn validator_lifecycle_rejects_missing_wrong_and_tampered_key_proofs() {
+        for case in ["missing", "wrong", "tampered"] {
+            let (app, _) = fixture();
+            let mut target = initial_validators();
+            target.push(validator(25, 10));
+            let mut transition =
+                validator_transition(&app, "validator-proof-case", 3, target, &[25]);
+            match case {
+                "missing" => transition.new_validator_proofs.clear(),
+                "wrong" => {
+                    let message = validator_key_proof_message(
+                        &transition.chain_id,
+                        &transition.transition_id,
+                        &transition.base_validator_set_hash_hex,
+                        transition.activation_height,
+                        &transition.target_validators,
+                    )
+                    .unwrap();
+                    transition.new_validator_proofs[0].signature_hex =
+                        sign_hex(&SigningKey::from_bytes(&[26u8; 32]), &message);
+                }
+                "tampered" => {
+                    transition.new_validator_proofs[0]
+                        .signature_hex
+                        .replace_range(0..2, "00");
+                }
+                _ => unreachable!(),
+            }
+            assert_transition_rejected(&app, &transition, 201);
+        }
+    }
+
+    #[test]
+    fn validator_lifecycle_rejects_stale_repeated_and_unsafe_transitions() {
+        let (stale_app, _) = fixture();
+        let mut target = initial_validators();
+        target.push(validator(25, 10));
+        let mut stale = validator_transition(&stale_app, "validator-stale-base", 3, target, &[25]);
+        stale.base_validator_set_hash_hex = "00".repeat(32);
+        assert_transition_rejected(&stale_app, &stale, 301);
+
+        let (pending_app, _) = fixture();
+        let mut first_target = initial_validators();
+        first_target.push(validator(25, 10));
+        let first = validator_transition(
+            &pending_app,
+            "validator-first-pending",
+            3,
+            first_target,
+            &[25],
+        );
+        let mut second_target = initial_validators();
+        second_target.push(validator(26, 10));
+        let second = validator_transition(
+            &pending_app,
+            "validator-second-pending",
+            3,
+            second_target,
+            &[26],
+        );
+        let response = pending_app.process_proposal(RequestProcessProposal {
+            txs: vec![transition_tx(&first, 302), transition_tx(&second, 303)],
+            height: 1,
+            time: block_time(),
+            ..Default::default()
+        });
+        assert_eq!(
+            response.status,
+            response_process_proposal::ProposalStatus::Reject as i32
+        );
+
+        let (small_app, _) = fixture();
+        let too_small = validator_transition(
+            &small_app,
+            "validator-too-small",
+            3,
+            initial_validators().into_iter().take(3).collect(),
+            &[],
+        );
+        assert_transition_rejected(&small_app, &too_small, 304);
+
+        let (power_app, _) = fixture();
+        let mut unsafe_power = initial_validators();
+        unsafe_power.push(validator(25, 30));
+        let unsafe_power =
+            validator_transition(&power_app, "validator-unsafe-power", 3, unsafe_power, &[25]);
+        assert_transition_rejected(&power_app, &unsafe_power, 305);
+
+        let (alias_app, _) = fixture();
+        let mut aliased_target = initial_validators();
+        aliased_target[0].public_key_hex = aliased_target[0].public_key_hex.to_uppercase();
+        let alias = ValidatorSetTransitionV1 {
+            schema: VALIDATOR_TRANSITION_SCHEMA_V1.to_string(),
+            chain_id: alias_app.core.config.chain_id.clone(),
+            transition_id: "validator-case-alias".to_string(),
+            base_validator_set_hash_hex: alias_app
+                .core
+                .state
+                .lock()
+                .unwrap()
+                .validator_lifecycle
+                .as_ref()
+                .unwrap()
+                .active_set_hash_hex()
+                .unwrap(),
+            activation_height: 3,
+            target_validators: aliased_target,
+            new_validator_proofs: Vec::new(),
+        };
+        assert_transition_rejected(&alias_app, &alias, 306);
+    }
+
+    #[test]
+    fn pending_validator_transition_survives_sqlite_restart_and_snapshot_restore() {
+        let root = std::env::temp_dir().join(format!(
+            "trnm-validator-lifecycle-persistence-{}-{}",
+            std::process::id(),
+            now_unix_ms()
+        ));
+        fs::create_dir_all(&root).unwrap();
+        let state_path = root.join("app-state.json");
+        let (fixture_app, _) = fixture();
+        let config = ConsensusAppConfig {
+            state_path: Some(state_path),
+            ..fixture_app.core.config.clone()
+        };
+        let app = CometBftApplication::new(config.clone()).unwrap();
+        initialize(&app);
+        let mut target = initial_validators();
+        target.push(validator(25, 10));
+        let transition = validator_transition(&app, "validator-persist-pending", 10, target, &[25]);
+        finalize_and_commit(&app, 1, vec![transition_tx(&transition, 401)]);
+        for height in 2..=5 {
+            finalize_and_commit(&app, height, Vec::new());
+        }
+        let expected = app.height_and_app_hash().unwrap();
+        let expected_pending = app
+            .core
+            .state
+            .lock()
+            .unwrap()
+            .validator_lifecycle
+            .as_ref()
+            .unwrap()
+            .pending_transition
+            .clone();
+        drop(app);
+
+        let source = CometBftApplication::new(config).unwrap();
+        assert_eq!(source.height_and_app_hash().unwrap(), expected);
+        assert_eq!(
+            source
+                .core
+                .state
+                .lock()
+                .unwrap()
+                .validator_lifecycle
+                .as_ref()
+                .unwrap()
+                .pending_transition,
+            expected_pending
+        );
+        let snapshot = source
+            .list_snapshots()
+            .snapshots
+            .into_iter()
+            .next()
+            .unwrap();
+        assert_eq!(snapshot.height, 5);
+
+        let target_app = CometBftApplication::new(ConsensusAppConfig {
+            state_path: None,
+            ..source.core.config.clone()
+        })
+        .unwrap();
+        assert_eq!(
+            target_app
+                .offer_snapshot(RequestOfferSnapshot {
+                    snapshot: Some(snapshot.clone()),
+                    app_hash: Bytes::copy_from_slice(&expected.1),
+                })
+                .result,
+            response_offer_snapshot::Result::Accept as i32
+        );
+        for index in 0..snapshot.chunks {
+            let chunk = source
+                .load_snapshot_chunk(RequestLoadSnapshotChunk {
+                    height: snapshot.height,
+                    format: snapshot.format,
+                    chunk: index,
+                })
+                .chunk;
+            assert_eq!(
+                target_app
+                    .apply_snapshot_chunk(RequestApplySnapshotChunk {
+                        index,
+                        chunk,
+                        sender: "source-validator".to_string(),
+                    })
+                    .result,
+                response_apply_snapshot_chunk::Result::Accept as i32
+            );
+        }
+        assert_eq!(target_app.height_and_app_hash().unwrap(), expected);
+        assert_eq!(
+            target_app
+                .core
+                .state
+                .lock()
+                .unwrap()
+                .validator_lifecycle
+                .as_ref()
+                .unwrap()
+                .pending_transition,
+            expected_pending
+        );
+
+        for height in 6..=10 {
+            let source_response = finalize_and_commit(&source, height, Vec::new());
+            let target_response = finalize_and_commit(&target_app, height, Vec::new());
+            assert_eq!(
+                source_response.validator_updates,
+                target_response.validator_updates
+            );
+            if height == 8 {
+                assert_eq!(source_response.validator_updates.len(), 1);
+                assert_eq!(source_response.validator_updates[0].power, 10);
+            } else {
+                assert!(source_response.validator_updates.is_empty());
+            }
+            assert_eq!(
+                source.height_and_app_hash().unwrap(),
+                target_app.height_and_app_hash().unwrap()
+            );
+        }
+        let source_lifecycle = source.core.state.lock().unwrap();
+        let source_lifecycle = source_lifecycle.validator_lifecycle.as_ref().unwrap();
+        assert!(source_lifecycle.pending_transition.is_none());
+        assert_eq!(source_lifecycle.active_validators.len(), 5);
+        assert_eq!(
+            source_lifecycle.last_applied_transition_id.as_deref(),
+            Some("validator-persist-pending")
+        );
+        fs::remove_dir_all(root).unwrap();
     }
 
     #[test]
@@ -1449,6 +2250,7 @@ mod tests {
             ..fixture_app.core.config.clone()
         };
         let app = CometBftApplication::new(config.clone()).unwrap();
+        initialize(&app);
         let response = app.finalize_block(RequestFinalizeBlock {
             txs: vec![Bytes::from(serde_json::to_vec(&envelope).unwrap())],
             height: 1,
@@ -1571,6 +2373,132 @@ mod tests {
     }
 
     #[test]
+    fn snapshot_rejects_invalid_lifecycle_without_panicking() {
+        let (source, envelope) = fixture();
+        finalize_and_commit(
+            &source,
+            1,
+            vec![Bytes::from(serde_json::to_vec(&envelope).unwrap())],
+        );
+        let source_state = source.height_and_app_hash().unwrap();
+        let mut snapshot = source.list_snapshots().snapshots.pop().unwrap();
+        let original = source
+            .load_snapshot_chunk(RequestLoadSnapshotChunk {
+                height: snapshot.height,
+                format: snapshot.format,
+                chunk: 0,
+            })
+            .chunk;
+        let mut persisted: serde_json::Value = serde_json::from_slice(&original).unwrap();
+        persisted["validator_lifecycle"]["governance"]["min_activation_delay_blocks"] =
+            serde_json::json!(1);
+        let tampered = serde_json::to_vec(&persisted).unwrap();
+        let mut metadata: SnapshotMetadataV2 = serde_json::from_slice(&snapshot.metadata).unwrap();
+        metadata.total_bytes = tampered.len() as u64;
+        snapshot.chunks = tampered.len().div_ceil(SNAPSHOT_CHUNK_SIZE) as u32;
+        snapshot.hash = Bytes::copy_from_slice(&snapshot_hash(&tampered));
+        snapshot.metadata = Bytes::from(serde_json::to_vec(&metadata).unwrap());
+
+        let target =
+            CometBftApplication::new(source.core.config.clone()).expect("fresh target app");
+        assert_eq!(
+            target
+                .offer_snapshot(RequestOfferSnapshot {
+                    snapshot: Some(snapshot),
+                    app_hash: Bytes::copy_from_slice(&source_state.1),
+                })
+                .result,
+            response_offer_snapshot::Result::Accept as i32
+        );
+        let applied = std::panic::catch_unwind(|| {
+            target.apply_snapshot_chunk(RequestApplySnapshotChunk {
+                index: 0,
+                chunk: Bytes::from(tampered),
+                sender: "malicious-validator".to_string(),
+            })
+        });
+        assert!(applied.is_ok());
+        assert_eq!(
+            applied.unwrap().result,
+            response_apply_snapshot_chunk::Result::RejectSnapshot as i32
+        );
+        assert_eq!(target.height_and_app_hash().unwrap().0, 0);
+    }
+
+    #[test]
+    fn snapshot_identity_rejects_wrong_chain_or_authorized_signer_policy() {
+        let (source, envelope) = fixture();
+        finalize_and_commit(
+            &source,
+            1,
+            vec![Bytes::from(serde_json::to_vec(&envelope).unwrap())],
+        );
+        let source_state = source.height_and_app_hash().unwrap();
+        let snapshot = source.list_snapshots().snapshots.pop().unwrap();
+        let chunk = source
+            .load_snapshot_chunk(RequestLoadSnapshotChunk {
+                height: snapshot.height,
+                format: snapshot.format,
+                chunk: 0,
+            })
+            .chunk;
+
+        let mut wrong_signer_config = source.core.config.clone();
+        wrong_signer_config.authorized_signers[0].public_key_hex =
+            public_key_hex(&SigningKey::from_bytes(&[12u8; 32]));
+        let wrong_signer = CometBftApplication::new(wrong_signer_config).unwrap();
+        assert_eq!(
+            wrong_signer
+                .offer_snapshot(RequestOfferSnapshot {
+                    snapshot: Some(snapshot.clone()),
+                    app_hash: Bytes::copy_from_slice(&source_state.1),
+                })
+                .result,
+            response_offer_snapshot::Result::Accept as i32
+        );
+        assert_eq!(
+            wrong_signer
+                .apply_snapshot_chunk(RequestApplySnapshotChunk {
+                    index: 0,
+                    chunk: chunk.clone(),
+                    sender: "source-validator".to_string(),
+                })
+                .result,
+            response_apply_snapshot_chunk::Result::RejectSnapshot as i32
+        );
+
+        let mut wrong_chain_snapshot = snapshot;
+        let mut metadata: SnapshotMetadataV2 =
+            serde_json::from_slice(&wrong_chain_snapshot.metadata).unwrap();
+        metadata.chain_id = "trnm-cloned-chain".to_string();
+        wrong_chain_snapshot.metadata = Bytes::from(serde_json::to_vec(&metadata).unwrap());
+        let wrong_chain = CometBftApplication::new(ConsensusAppConfig {
+            chain_id: "trnm-cloned-chain".to_string(),
+            ..source.core.config.clone()
+        })
+        .unwrap();
+        assert_eq!(
+            wrong_chain
+                .offer_snapshot(RequestOfferSnapshot {
+                    snapshot: Some(wrong_chain_snapshot),
+                    app_hash: Bytes::copy_from_slice(&source_state.1),
+                })
+                .result,
+            response_offer_snapshot::Result::Accept as i32
+        );
+        assert_eq!(
+            wrong_chain
+                .apply_snapshot_chunk(RequestApplySnapshotChunk {
+                    index: 0,
+                    chunk,
+                    sender: "cloned-chain-validator".to_string(),
+                })
+                .result,
+            response_apply_snapshot_chunk::Result::RejectSnapshot as i32
+        );
+    }
+
+    #[test]
     fn snapshot_restore_cas_cannot_overwrite_concurrently_committed_state() {
         let (source, source_envelope) = fixture();
         source.finalize_block(RequestFinalizeBlock {
@@ -1595,6 +2523,7 @@ mod tests {
             ..source.core.config.clone()
         };
         let target = CometBftApplication::new(target_config.clone()).unwrap();
+        initialize(&target);
         assert_eq!(
             target
                 .offer_snapshot(RequestOfferSnapshot {
@@ -1667,18 +2596,33 @@ mod tests {
             ..fixture_app.core.config.clone()
         })
         .unwrap();
+        let validator_lifecycle = fixture_app
+            .core
+            .state
+            .lock()
+            .unwrap()
+            .validator_lifecycle
+            .clone();
         for height in 1..=20 {
             let objects = BTreeMap::new();
             let command_ids = BTreeSet::new();
             let signer_nonces = BTreeSet::new();
-            let state = AppState {
+            let mut state = AppState {
                 height,
-                app_hash: compute_app_hash(height, &objects, &command_ids, &signer_nonces),
+                app_hash: [0u8; 32],
                 objects,
                 command_ids,
                 signer_nonces,
+                validator_lifecycle: validator_lifecycle.clone(),
                 pending: None,
             };
+            state.app_hash = compute_app_hash(
+                height,
+                &state.objects,
+                &state.command_ids,
+                &state.signer_nonces,
+                state.validator_lifecycle.as_ref(),
+            );
             app.retain_snapshot(&state).unwrap();
         }
         let snapshots = app.list_snapshots().snapshots;
@@ -1702,7 +2646,7 @@ mod tests {
     }
 
     #[test]
-    fn legacy_v2_json_migrates_once_to_sqlite_with_recoverable_backup() {
+    fn v3_json_migrates_once_to_sqlite_with_recoverable_backup() {
         let root = std::env::temp_dir().join(format!(
             "trnm-comet-store-migration-{}-{}",
             std::process::id(),
@@ -1732,10 +2676,11 @@ mod tests {
             (source_state.height, source_state.app_hash)
         );
         assert!(state_path.with_extension("json.sqlite3").exists());
-        assert!(state_path.with_extension("json.legacy-v2").exists());
+        assert!(state_path.with_extension("json.legacy-v3").exists());
         let status: serde_json::Value =
             serde_json::from_slice(&fs::read(&state_path).unwrap()).unwrap();
-        assert_eq!(status["schema"], "trnm_cometbft_app_status_v1");
+        assert_eq!(status["schema"], "trnm_cometbft_app_status_v2");
+        assert_eq!(status["app_version"], APP_VERSION);
         drop(migrated);
         fs::remove_dir_all(root).unwrap();
     }
@@ -1755,6 +2700,7 @@ mod tests {
             ..fixture_app.core.config.clone()
         };
         let app = CometBftApplication::new(config.clone()).unwrap();
+        initialize(&app);
         app.finalize_block(RequestFinalizeBlock {
             txs: vec![Bytes::from(serde_json::to_vec(&envelope).unwrap())],
             height: 1,
@@ -1767,7 +2713,7 @@ mod tests {
 
         fs::write(
             &state_path,
-            br#"{"schema":"trnm_cometbft_app_status_v1","height":0,"app_hash_hex":"stale"}"#,
+            br#"{"schema":"trnm_cometbft_app_status_v2","app_version":3,"height":0,"app_hash_hex":"stale"}"#,
         )
         .unwrap();
         let restarted = CometBftApplication::new(config).unwrap();
@@ -1795,6 +2741,7 @@ mod tests {
             ..fixture_app.core.config.clone()
         };
         let app = CometBftApplication::new(config.clone()).unwrap();
+        initialize(&app);
         app.finalize_block(RequestFinalizeBlock {
             txs: vec![Bytes::from(serde_json::to_vec(&envelope).unwrap())],
             height: 1,
@@ -1804,7 +2751,8 @@ mod tests {
         app.commit();
         drop(app);
 
-        fs::write(&state_path, encode_state(&AppState::default()).unwrap()).unwrap();
+        let stale = fixture_app.core.state.lock().unwrap().clone();
+        fs::write(&state_path, encode_state(&stale).unwrap()).unwrap();
         assert!(CometBftApplication::new(config).is_err());
         fs::remove_dir_all(root).unwrap();
     }
@@ -1818,14 +2766,18 @@ mod tests {
         ));
         fs::create_dir_all(&root).unwrap();
         let state_path = root.join("app-state.json");
-        let (fixture_app, envelope) = fixture();
+        let (fixture_app, _) = fixture();
         let config = ConsensusAppConfig {
             state_path: Some(state_path),
             ..fixture_app.core.config.clone()
         };
-        let tx = Bytes::from(serde_json::to_vec(&envelope).unwrap());
 
         let app = CometBftApplication::new(config.clone()).unwrap();
+        initialize(&app);
+        let mut target = initial_validators();
+        target.push(validator(25, 10));
+        let transition = validator_transition(&app, "validator-atomic-pending", 3, target, &[25]);
+        let tx = transition_tx(&transition, 501);
         let pending = {
             let state = app.core.state.lock().unwrap();
             app.execute_block(&state, std::slice::from_ref(&tx), 2_000)
@@ -1844,6 +2796,16 @@ mod tests {
         drop(app);
         let app = CometBftApplication::new(config.clone()).unwrap();
         assert_eq!(app.height_and_app_hash().unwrap().0, 0);
+        assert!(app
+            .core
+            .state
+            .lock()
+            .unwrap()
+            .validator_lifecycle
+            .as_ref()
+            .unwrap()
+            .pending_transition
+            .is_none());
 
         let pending = {
             let state = app.core.state.lock().unwrap();
@@ -1863,6 +2825,21 @@ mod tests {
         drop(app);
         let restarted = CometBftApplication::new(config).unwrap();
         assert_eq!(restarted.height_and_app_hash().unwrap(), expected);
+        assert_eq!(
+            restarted
+                .core
+                .state
+                .lock()
+                .unwrap()
+                .validator_lifecycle
+                .as_ref()
+                .unwrap()
+                .pending_transition
+                .as_ref()
+                .unwrap()
+                .transition_id,
+            "validator-atomic-pending"
+        );
         drop(restarted);
         fs::remove_dir_all(root).unwrap();
     }
@@ -1882,6 +2859,7 @@ mod tests {
             ..fixture_app.core.config.clone()
         };
         let app = CometBftApplication::new(config.clone()).unwrap();
+        initialize(&app);
         app.finalize_block(RequestFinalizeBlock {
             txs: vec![Bytes::from(serde_json::to_vec(&envelope).unwrap())],
             height: 1,
@@ -1918,6 +2896,13 @@ mod tests {
         let app = CometBftApplication::new(config.clone()).unwrap();
         let mut state = AppState {
             height: 1,
+            validator_lifecycle: fixture_app
+                .core
+                .state
+                .lock()
+                .unwrap()
+                .validator_lifecycle
+                .clone(),
             ..Default::default()
         };
         state
@@ -1928,6 +2913,7 @@ mod tests {
             &state.objects,
             &state.command_ids,
             &state.signer_nonces,
+            state.validator_lifecycle.as_ref(),
         );
         app.core
             .store
@@ -1970,6 +2956,7 @@ mod tests {
             ..fixture_app.core.config.clone()
         };
         let app = CometBftApplication::new(config.clone()).unwrap();
+        initialize(&app);
         app.finalize_block(RequestFinalizeBlock {
             txs: vec![Bytes::from(serde_json::to_vec(&envelope).unwrap())],
             height: 1,

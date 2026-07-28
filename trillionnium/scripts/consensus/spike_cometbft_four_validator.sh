@@ -47,15 +47,29 @@ safe_to_remove_root() {
   [[ "$base" == trnm-comet-four.* || "$base" == trnm-comet-four-* ]]
 }
 
+terminate_pids() {
+  local pid
+  local live=()
+  for pid in "$@"; do
+    [[ -z "$pid" ]] || live+=("$pid")
+  done
+  ((${#live[@]} > 0)) || return 0
+  for pid in "${live[@]}"; do
+    kill "$pid" 2>/dev/null || true
+  done
+  sleep 1
+  for pid in "${live[@]}"; do
+    kill -KILL "$pid" 2>/dev/null || true
+  done
+  for pid in "${live[@]}"; do
+    wait "$pid" 2>/dev/null || true
+  done
+}
+
 cleanup() {
   local status=$?
   trap - EXIT
-  for pid in "${COMET_PIDS[@]}" "${APP_PIDS[@]}"; do
-    test -z "$pid" || kill "$pid" 2>/dev/null || true
-  done
-  for pid in "${COMET_PIDS[@]}" "${APP_PIDS[@]}"; do
-    test -z "$pid" || wait "$pid" 2>/dev/null || true
-  done
+  terminate_pids "${COMET_PIDS[@]}" "${APP_PIDS[@]}"
   if [[ "$status" == "0" && "$KEEP" != "1" && "$CLEAN_ON_SUCCESS" == "1" ]]; then
     if safe_to_remove_root; then
       rm -rf -- "$ROOT"
@@ -113,19 +127,42 @@ for index in 0 1 2 3 4; do
 done
 
 validators="$(for index in 0 1 2 3; do jq '.validators[0]' "$ROOT/node$index/config/genesis.json"; done | jq -s '.')"
-jq --argjson validators "$validators" --arg public_key "$public_key" \
+initial_validators="$(printf '%s' "$validators" | python3 -c '
+import base64
+import json
+import sys
+
+validators = json.load(sys.stdin)
+result = [
+    {
+        "public_key_hex": base64.b64decode(validator["pub_key"]["value"]).hex(),
+        "voting_power": int(validator["power"]),
+    }
+    for validator in validators
+]
+result.sort(key=lambda validator: validator["public_key_hex"])
+print(json.dumps(result, separators=(",", ":")))
+')"
+jq --argjson validators "$validators" --argjson initial_validators "$initial_validators" --arg public_key "$public_key" \
   '.chain_id="trnm-comet-four"
    | .validators=$validators
-   | .consensus_params.version.app="2"
+   | .consensus_params.version.app="3"
    | .app_state={
-       schema:"trnm_cometbft_genesis_v1",
+       schema:"trnm_cometbft_genesis_v2",
        chain_id:"trnm-comet-four",
-       app_version:2,
+       app_version:3,
        authorized_signers:[{
          signer_id:"did:operator:1",
          signer_role:"operator",
          public_key_hex:$public_key
-       }]
+       }],
+       validator_governance:{
+         schema:"trnm_validator_governance_v1",
+         signer_id:"did:operator:1",
+         min_activation_delay_blocks:2,
+         unsafe_allow_single_validator_genesis:false
+       },
+       initial_validators:$initial_validators
      }' \
   "$ROOT/node0/config/genesis.json" > "$ROOT/genesis.json"
 for index in 0 1 2 3 4; do
@@ -274,9 +311,7 @@ for index in 0 1 2 3; do wait_height "$index" "$first_height"; done
 
 wait_app_hash_convergence 0 1 2 3
 
-kill "${COMET_PIDS[3]}" "${APP_PIDS[3]}"
-wait "${COMET_PIDS[3]}" 2>/dev/null || true
-wait "${APP_PIDS[3]}" 2>/dev/null || true
+terminate_pids "${COMET_PIDS[3]}" "${APP_PIDS[3]}"
 COMET_PIDS[3]=""
 APP_PIDS[3]=""
 

@@ -34,6 +34,7 @@ jobs:
       CARGO_INCREMENTAL: "0"
       CARGO_TERM_COLOR: never
       TRNM_COMETBFT_CI_ROOT: ${{ runner.temp }}/trnm-comet-four-${{ github.run_id }}-${{ github.run_attempt }}
+      TRNM_COMETBFT_LIFECYCLE_CI_ROOT: ${{ runner.temp }}/trnm-comet-lifecycle-${{ github.run_id }}-${{ github.run_attempt }}
 
     steps:
       - uses: actions/checkout@v4
@@ -63,6 +64,13 @@ jobs:
           TRNM_COMETBFT_SPIKE_ROOT: ${{ env.TRNM_COMETBFT_CI_ROOT }}
         run: trillionnium/scripts/consensus/spike_cometbft_four_validator.sh
 
+      - name: Six-node validator lifecycle gate
+        env:
+          TRNM_COMETBFT_BIN: /tmp/cometbft
+          TRNM_COMETBFT_LIFECYCLE_CLEAN_ON_SUCCESS: "1"
+          TRNM_COMETBFT_LIFECYCLE_ROOT: ${{ env.TRNM_COMETBFT_LIFECYCLE_CI_ROOT }}
+        run: trillionnium/scripts/consensus/spike_cometbft_validator_lifecycle.sh
+
       - name: Upload failed CometBFT safety evidence
         if: failure()
         uses: actions/upload-artifact@v4
@@ -77,5 +85,78 @@ jobs:
             ${{ env.TRNM_COMETBFT_CI_ROOT }}/node*/app-state.json.sqlite3
             ${{ env.TRNM_COMETBFT_CI_ROOT }}/node*/config/config.toml
             ${{ env.TRNM_COMETBFT_CI_ROOT }}/node*/config/genesis.json
+            ${{ env.TRNM_COMETBFT_LIFECYCLE_CI_ROOT }}/evidence/**
+            ${{ env.TRNM_COMETBFT_LIFECYCLE_CI_ROOT }}/*.response.json
+            ${{ env.TRNM_COMETBFT_LIFECYCLE_CI_ROOT }}/genesis.json
+            ${{ env.TRNM_COMETBFT_LIFECYCLE_CI_ROOT }}/node*/app.log
+            ${{ env.TRNM_COMETBFT_LIFECYCLE_CI_ROOT }}/node*/comet.log
+            ${{ env.TRNM_COMETBFT_LIFECYCLE_CI_ROOT }}/node*/app-state.json
+            ${{ env.TRNM_COMETBFT_LIFECYCLE_CI_ROOT }}/node*/app-state.json.sqlite3
+          if-no-files-found: warn
+          retention-days: 14
+
+  cometbft-partition-matrix:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        case: ["3-1", "2-2"]
+    env:
+      COMETBFT_VERSION: "0.38.17"
+      COMETBFT_SHA256: "736592aea2e077a4bb934ed26b0ee670462ae3d8a37670e2d268dea33304bc52"
+      CARGO_INCREMENTAL: "0"
+      CARGO_TERM_COLOR: never
+      TRNM_COMETBFT_APP_VERSION: "3"
+      TRNM_COMETBFT_APP_CONFIG_SCHEMA: trnm_cometbft_app_config_v1
+      TRNM_COMETBFT_GENESIS_SCHEMA: trnm_cometbft_genesis_v2
+      TRNM_COMETBFT_VALIDATOR_GOVERNANCE_SCHEMA: trnm_validator_governance_v1
+      TRNM_COMETBFT_PARTITION_ROOT: ${{ runner.temp }}/trnm-comet-partition-${{ matrix.case }}-${{ github.run_id }}-${{ github.run_attempt }}
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+
+      - name: Install checksum-pinned CometBFT
+        run: |
+          set -euo pipefail
+          curl --fail --location --retry 3 \
+            "https://github.com/cometbft/cometbft/releases/download/v${COMETBFT_VERSION}/cometbft_${COMETBFT_VERSION}_linux_amd64.tar.gz" \
+            --output /tmp/cometbft.tar.gz
+          tar -xzf /tmp/cometbft.tar.gz -C /tmp cometbft
+          printf '%s  %s\n' "$COMETBFT_SHA256" /tmp/cometbft | sha256sum --check --strict
+
+      - name: Build partition gate binaries
+        run: >-
+          cargo build --manifest-path trillionnium/Cargo.toml --locked
+          -p trnm-consensus-app --bin trnm-cometbft-app
+          -p trnm-node --bin trnm-chain-cli
+
+      - name: Rootless ${{ matrix.case }} partition safety gate
+        env:
+          TRNM_COMETBFT_BIN: /tmp/cometbft
+          TRNM_COMETBFT_APP_BIN: ${{ github.workspace }}/trillionnium/target/debug/trnm-cometbft-app
+          TRNM_COMETBFT_CLI_BIN: ${{ github.workspace }}/trillionnium/target/debug/trnm-chain-cli
+          TRNM_COMETBFT_PARTITION_CASE: ${{ matrix.case }}
+          TRNM_COMETBFT_PARTITION_CLEAN_ON_SUCCESS: "1"
+        run: trillionnium/scripts/consensus/spike_cometbft_partition_matrix.sh
+
+      - name: Upload failed partition safety evidence
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: trnm-cometbft-partition-${{ matrix.case }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ env.TRNM_COMETBFT_PARTITION_ROOT }}/evidence/**
+            ${{ env.TRNM_COMETBFT_PARTITION_ROOT }}/genesis.json
+            ${{ env.TRNM_COMETBFT_PARTITION_ROOT }}/proxy-config.json
+            ${{ env.TRNM_COMETBFT_PARTITION_ROOT }}/proxy.log
+            ${{ env.TRNM_COMETBFT_PARTITION_ROOT }}/proxy-control.log
+            ${{ env.TRNM_COMETBFT_PARTITION_ROOT }}/node*/app.log
+            ${{ env.TRNM_COMETBFT_PARTITION_ROOT }}/node*/comet.log
+            ${{ env.TRNM_COMETBFT_PARTITION_ROOT }}/node*/app-state.json
+            ${{ env.TRNM_COMETBFT_PARTITION_ROOT }}/node*/app-state.json.sqlite3
+            ${{ env.TRNM_COMETBFT_PARTITION_ROOT }}/node*/config/config.toml
+            ${{ env.TRNM_COMETBFT_PARTITION_ROOT }}/node*/config/genesis.json
           if-no-files-found: warn
           retention-days: 14

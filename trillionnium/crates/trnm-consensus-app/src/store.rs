@@ -9,11 +9,11 @@ use serde::Serialize;
 
 use super::{
     compute_app_hash, empty_app_hash, load_state, persist_state_bytes, AppState, PendingBlock,
-    StoredObject,
+    StoredObject, ValidatorLifecycleStateV1, APP_VERSION,
 };
 
-const STORE_SCHEMA_VERSION: &str = "1";
-const STATUS_SCHEMA_V1: &str = "trnm_cometbft_app_status_v1";
+const STORE_SCHEMA_VERSION: &str = "2";
+const STATUS_SCHEMA_V2: &str = "trnm_cometbft_app_status_v2";
 
 #[cfg_attr(not(test), allow(dead_code))]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -31,8 +31,9 @@ pub(super) struct ApplicationStore {
 }
 
 #[derive(Serialize)]
-struct PersistedStatusV1 {
+struct PersistedStatusV2 {
     schema: &'static str,
+    app_version: u64,
     height: u64,
     app_hash_hex: String,
 }
@@ -74,7 +75,7 @@ impl ApplicationStore {
                             .and_then(serde_json::Value::as_str)
                             .map(str::to_string)
                     });
-                if schema.as_deref() == Some("trnm_cometbft_app_state_v2") {
+                if schema.as_deref() == Some("trnm_cometbft_app_state_v3") {
                     let legacy = load_state(&self.status_path)?;
                     ensure!(
                         legacy.height == state.height && legacy.app_hash == state.app_hash,
@@ -99,8 +100,8 @@ impl ApplicationStore {
             .unwrap_or_default()
             .to_string();
         ensure!(
-            schema == "trnm_cometbft_app_state_v2",
-            "SQLite store is empty but status file is not a migratable v2 state"
+            schema == "trnm_cometbft_app_state_v3",
+            "SQLite store is empty but status file is not a migratable v3 state; v2 state predates committed validator lifecycle and must not be upgraded implicitly"
         );
         let state = load_state(&self.status_path)?;
         let backup = self.legacy_backup_path();
@@ -175,6 +176,13 @@ impl ApplicationStore {
                 params![signer_id, nonce.to_be_bytes().as_slice()],
             )?;
         }
+        let lifecycle = pending
+            .delta
+            .validator_lifecycle
+            .as_ref()
+            .or(current.validator_lifecycle.as_ref())
+            .context("cannot persist state before validator lifecycle initialization")?;
+        write_validator_lifecycle(&transaction, lifecycle)?;
         write_head_values(&transaction, pending.height, pending.app_hash)?;
         #[cfg(test)]
         if failpoint == Some(StoreFailpoint::BeforeSqlCommit) {
@@ -206,6 +214,7 @@ impl ApplicationStore {
             && state.objects.is_empty()
             && state.command_ids.is_empty()
             && state.signer_nonces.is_empty()
+            && state.validator_lifecycle.is_none()
         {
             empty_app_hash()
         } else {
@@ -214,6 +223,7 @@ impl ApplicationStore {
                 &state.objects,
                 &state.command_ids,
                 &state.signer_nonces,
+                state.validator_lifecycle.as_ref(),
             )
         };
         ensure!(
@@ -226,6 +236,7 @@ impl ApplicationStore {
         transaction.execute("DELETE FROM objects", [])?;
         transaction.execute("DELETE FROM command_ids", [])?;
         transaction.execute("DELETE FROM signer_nonces", [])?;
+        transaction.execute("DELETE FROM validator_lifecycle", [])?;
         for object in state.objects.values() {
             upsert_object(&transaction, object)?;
         }
@@ -240,6 +251,9 @@ impl ApplicationStore {
                 "INSERT INTO signer_nonces(signer_id, nonce) VALUES (?1, ?2)",
                 params![signer_id, nonce.to_be_bytes().as_slice()],
             )?;
+        }
+        if let Some(lifecycle) = &state.validator_lifecycle {
+            write_validator_lifecycle(&transaction, lifecycle)?;
         }
         write_head_values(&transaction, state.height, state.app_hash)?;
         transaction.commit()?;
@@ -280,6 +294,10 @@ impl ApplicationStore {
                 nonce BLOB NOT NULL CHECK(length(nonce)=8),
                 PRIMARY KEY (signer_id, nonce)
             ) STRICT;
+            CREATE TABLE IF NOT EXISTS validator_lifecycle (
+                singleton INTEGER PRIMARY KEY NOT NULL CHECK(singleton=1),
+                state_json BLOB NOT NULL
+            ) STRICT;
             ",
         )?;
         let schema: Option<String> = connection
@@ -302,7 +320,7 @@ impl ApplicationStore {
             }
         }
         ensure_metadata_binding(&connection, "chain_id", &self.chain_id)?;
-        ensure_metadata_binding(&connection, "app_version", "2")?;
+        ensure_metadata_binding(&connection, "app_version", &APP_VERSION.to_string())?;
         ensure_metadata_binding(
             &connection,
             "authorized_signers_hash_hex",
@@ -333,8 +351,9 @@ impl ApplicationStore {
     }
 
     fn write_status_values(&self, height: u64, app_hash: [u8; 32]) -> Result<()> {
-        let status = PersistedStatusV1 {
-            schema: STATUS_SCHEMA_V1,
+        let status = PersistedStatusV2 {
+            schema: STATUS_SCHEMA_V2,
+            app_version: APP_VERSION,
             height,
             app_hash_hex: hex::encode(app_hash),
         };
@@ -346,8 +365,8 @@ impl ApplicationStore {
             .status_path
             .extension()
             .and_then(|value| value.to_str())
-            .map(|value| format!("{value}.legacy-v2"))
-            .unwrap_or_else(|| "legacy-v2".to_string());
+            .map(|value| format!("{value}.legacy-v3"))
+            .unwrap_or_else(|| "legacy-v3".to_string());
         self.status_path.with_extension(extension)
     }
 }
@@ -410,6 +429,19 @@ fn upsert_object(transaction: &Transaction<'_>, object: &StoredObject) -> Result
             object.value_hash_hex,
             object.value_bytes,
         ],
+    )?;
+    Ok(())
+}
+
+fn write_validator_lifecycle(
+    transaction: &Transaction<'_>,
+    lifecycle: &ValidatorLifecycleStateV1,
+) -> Result<()> {
+    lifecycle.validate()?;
+    transaction.execute(
+        "INSERT INTO validator_lifecycle(singleton, state_json) VALUES (1, ?1)
+         ON CONFLICT(singleton) DO UPDATE SET state_json=excluded.state_json",
+        params![serde_json::to_vec(lifecycle)?],
     )?;
     Ok(())
 }
@@ -495,7 +527,24 @@ fn load_sqlite_state(connection: &Connection) -> Result<AppState> {
         );
     }
 
-    let expected = compute_app_hash(height, &objects, &command_ids, &signer_nonces);
+    let lifecycle_bytes: Vec<u8> = connection
+        .query_row(
+            "SELECT state_json FROM validator_lifecycle WHERE singleton=1",
+            [],
+            |row| row.get(0),
+        )
+        .context("application store is missing committed validator lifecycle")?;
+    let validator_lifecycle: ValidatorLifecycleStateV1 =
+        serde_json::from_slice(&lifecycle_bytes)
+            .context("decode application store validator lifecycle")?;
+    validator_lifecycle.validate()?;
+    let expected = compute_app_hash(
+        height,
+        &objects,
+        &command_ids,
+        &signer_nonces,
+        Some(&validator_lifecycle),
+    );
     ensure!(
         expected == app_hash,
         "application store content does not match committed app hash"
@@ -506,6 +555,7 @@ fn load_sqlite_state(connection: &Connection) -> Result<AppState> {
         objects,
         command_ids,
         signer_nonces,
+        validator_lifecycle: Some(validator_lifecycle),
         pending: None,
     })
 }

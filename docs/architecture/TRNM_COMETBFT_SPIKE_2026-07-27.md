@@ -14,12 +14,18 @@ Status: **four-validator recovery and fresh-node state sync proven locally**
   filters malformed, expired, replayed command ID/signer nonce, conflicting, and
   over-limit transactions before they can poison a proposal.
 - `InitChain` fails closed unless the CometBFT chain ID, genesis application
-  schema/version, and authorized signer set match the local application config.
-  The fixtures also pin `consensus_params.version.app=2`; omitting that pin was
+  schema/version, authorized signer set, validator set, and committed governance
+  policy match the local application config. The fixtures pin
+  `consensus_params.version.app=3`; omitting that pin was
   proven to make a fresh node reject state sync with an app-version mismatch.
-- Application hash v2 commits the object state, accepted command IDs, and signer
-  nonces so state sync cannot preserve the object root while weakening replay
-  protection.
+- Application hash v3 commits object state, accepted command IDs, signer nonces,
+  chain/app identity, authorized-signer policy, active validators, pending
+  transition, and governance policy. State sync therefore cannot preserve the
+  object root while weakening replay protection or changing validation identity.
+- Validator transitions use a full canonical target set, base-set-hash CAS,
+  delayed activation, bidirectional greater-than-two-thirds overlap, CometBFT
+  power ceilings, and Ed25519 possession proofs for every new consensus key.
+  The ABCI update is returned at `A-2` and becomes active at height `A`.
 - Two independent application instances produce the same application hash for
   the same ordered transaction block.
 - A tampered signed envelope is rejected during proposal processing.
@@ -29,11 +35,13 @@ Status: **four-validator recovery and fresh-node state sync proven locally**
   signer-nonce delta before atomically advancing the height/app-hash head.
 - `CheckTx`, `PrepareProposal`, and `ProcessProposal` use a touched-object
   overlay instead of cloning the complete committed state. `PendingBlock` also
-  retains only the block delta; `FinalizeBlock` computes the canonical v2 root
+  retains only the block delta; `FinalizeBlock` computes the canonical v3 root
   once using a root-only Merkle path that is byte-compatible with the prior
   proof-building implementation.
-- Legacy `trnm_cometbft_app_state_v2` JSON is hash-validated, backed up, and
-  migrated into SQLite. The JSON path then becomes a small recoverable
+- Store schema v2 persists the lifecycle atomically with the block delta. A
+  legacy `trnm_cometbft_app_state_v3` JSON is hash-validated, backed up, and
+  migrated into SQLite; v2 state is deliberately rejected because it predates
+  committed validator identity. The JSON path then becomes a small recoverable
   height/app-hash status mirror; SQLite remains authoritative if a crash occurs
   after SQL commit but before mirror refresh.
 - Store corruption, chain/app-version mismatch, or a non-contiguous expected tip
@@ -56,18 +64,29 @@ Status: **four-validator recovery and fresh-node state sync proven locally**
   snapshot, catches up, and converges on the same application hash.
 - The four-validator fixture is
   `trillionnium/scripts/consensus/spike_cometbft_four_validator.sh`.
+- App-hash v3 commits application content but not height metadata, so a truly
+  empty block keeps the same state root and does not force CometBFT into an
+  unbounded empty-block loop.
+- A six-node live fixture proves 4→5 addition, 5→4 removal, one-key rotation,
+  post-rotation liveness, identical application hashes, and per-height block-ID
+  uniqueness. The fixture is
+  `trillionnium/scripts/consensus/spike_cometbft_validator_lifecycle.sh`.
+- Rootless proxy-driven `3-1` and `2-2` cuts prove majority-only progress,
+  minority/half-split stall, conflicting-nonce resolution, healing, and
+  post-heal convergence without conflicting finalized heights. The fixture is
+  `trillionnium/scripts/consensus/spike_cometbft_partition_matrix.sh`.
 
 ## Not Yet Proven
 
 - A truly logarithmic keyed incremental Merkle tree is not implemented. App-hash
-  v2 compatibility still requires an ordered O(N) root pass during
+  v3 still requires an ordered O(N) root pass during
   `FinalizeBlock`, although it no longer builds inclusion proofs or clones full
-  object payloads. A sparse/Jellyfish-style v3 commitment requires an explicit
+  object payloads. A sparse/Jellyfish-style v4 commitment requires an explicit
   app-version and snapshot-format migration.
 - proposal/vote/commit crash-boundary recovery across four nodes;
-- `3-1` and `2-2` partition healing without conflicting finalized heights;
 - authenticated multi-host peer transport and remote validator bootstrap;
-- validator-set updates, HSM/KMS, production networking, or public testnet SLOs.
+- threshold validator governance, HSM/KMS, production networking, cross-host
+  fault recovery, long-duration soak, or public testnet SLOs.
 
 The adapter is a spike boundary, not a readiness claim. The existing bespoke
 loopback validator protocol must not be extended in parallel with this path.

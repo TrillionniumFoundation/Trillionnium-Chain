@@ -12,15 +12,22 @@ For a configured `state_path` such as `app-state.json`:
 - `app-state.json` is only a best-effort height/app-hash status cache. It is
   refreshed from SQLite at startup and must never be used as a backup.
 - `app-state.snapshots/*.snapshot` contains bounded ABCI state-sync snapshots.
-- `app-state.json.legacy-v2` is the validated pre-SQLite state retained during
+- `app-state.json.legacy-v3` is the validated pre-SQLite state retained during
   one-time migration.
 
-The store uses SQLite WAL, `synchronous=FULL`, an immediate write transaction,
-and an expected-tip compare before every block commit. The database advances
-before the status cache; a crash between those operations recovers from SQLite.
-Metadata binds the chain ID, app version, and canonical authorized-signer
-policy. Changing a signer ID, role, or public key in local configuration after
-the store is initialized fails closed on restart.
+Store schema v2 uses SQLite WAL, `synchronous=FULL`, an immediate write
+transaction, and an expected-tip compare before every block commit. The same
+transaction advances object/replay deltas, validator lifecycle, height, and app
+hash. The database advances before the status cache; a crash between those
+operations recovers from SQLite. Metadata binds chain ID, app version 3, and the
+canonical authorized-signer policy. The app hash also commits that immutable
+identity through the validator-lifecycle state, so a mismatched fresh state-sync
+target rejects the snapshot instead of diverging after recovery.
+
+Height remains authoritative store metadata but is not itself an app-hash leaf.
+An empty block therefore advances the durable height without changing the state
+root; this is required for CometBFT `create_empty_blocks=false` to quiesce when
+application content is unchanged.
 
 ## Safe backup
 
@@ -59,12 +66,16 @@ For an offline database restore:
 ## Migration
 
 If the database has no committed head and `state_path` contains a valid
-`trnm_cometbft_app_state_v2`, startup:
+`trnm_cometbft_app_state_v3`, startup:
 
 1. fully decodes and recomputes the legacy app hash;
-2. atomically writes and fsyncs a `.legacy-v2` backup;
+2. atomically writes and fsyncs a `.legacy-v3` backup;
 3. imports the full state in one SQLite transaction; and
 4. replaces the original JSON with the small status cache.
 
-If an existing SQLite head and a legacy v2 JSON disagree on height or app hash,
+If an existing SQLite head and a legacy v3 JSON disagree on height or app hash,
 startup refuses automatic recovery. Preserve both and resolve manually.
+
+Application state v2 and store schema v1 predate committed validator lifecycle
+and are not auto-migrated. Prototype devnets must archive evidence and reset
+from an app-version-3 genesis or a light-client-verified snapshot.

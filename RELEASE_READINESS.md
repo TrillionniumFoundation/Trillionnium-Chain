@@ -23,9 +23,11 @@ Scope: When citing this file, you must always record the current output of `git 
   the complete `trnm-node` package merely to verify finality.
 - `trnm-consensus-app` is a CometBFT-backed public-testnet prototype. Local
   four-validator offline/rejoin, fresh-node ABCI state sync, deterministic proposal
-  filtering, and transactional SQLite-WAL delta persistence pass, but transport
-  authentication, validator-set transitions, cross-host recovery, and soak evidence
-  are still incomplete.
+  filtering, transactional SQLite-WAL delta persistence, and validator-lifecycle
+  unit/crash-recovery gates pass. A six-node process fixture proves 4→5, 5→4,
+  and one-key validator rotation, while rootless `3-1` and `2-2` partition gates
+  prove stall/progress/heal safety. Transport authentication, cross-host recovery,
+  threshold governance, HSM/KMS, and soak evidence are still incomplete.
 - The signed package remains `loopback-local-devnet`, `development_only=true`, and
   `public_mainnet_ready=false`.
 

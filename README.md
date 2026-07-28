@@ -61,8 +61,9 @@ TrillionniumChain/
 - `trnm-finality-types` / `trnm-finality-verifier`: node-independent finality wire
   types and receipt verification for external consumers
 - `trnm-consensus-app`: deterministic CometBFT ABCI++ adapter prototype with
-  replay-safe app hashes, SQLite-WAL delta persistence, and local fresh-node
-  state sync evidence
+  replay-safe app-hash v3, committed validator lifecycle, SQLite-WAL delta
+  persistence, stable empty-block state roots, local fresh-node state sync,
+  six-node validator rotation, and rootless partition-safety evidence
 - `trnm-state`: versioned state store and `state_root`
 - `trnm-pouw`: PoCO task state machine and validation logic (legacy crate name retained during migration; do not read it as current payout-authority wording)
 - `trnm-executor`: conflict detection and concurrent scheduling strategy
