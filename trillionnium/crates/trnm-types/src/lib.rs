@@ -756,6 +756,7 @@ impl GovParamKey {
         }
     }
 
+    #[allow(clippy::should_implement_trait)]
     pub fn from_str(key: &str) -> Option<Self> {
         Some(match key {
             "max_block_ms" => Self::MaxBlockMs,

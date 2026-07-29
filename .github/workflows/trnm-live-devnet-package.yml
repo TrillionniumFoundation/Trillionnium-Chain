@@ -1,37 +1,13 @@
-name: TRNM Live Devnet Package
+name: TRNM Legacy Harness Reproducibility
 
 on:
-  pull_request:
-    paths:
-      - ".github/workflows/trnm-live-devnet-package.yml"
-      - "RELEASE_READINESS.md"
-      - "trillionnium/Cargo.lock"
-      - "trillionnium/Cargo.toml"
-      - "trillionnium/crates/trnm-node/**"
-      - "trillionnium/crates/trnm-finality-types/**"
-      - "trillionnium/crates/trnm-finality-verifier/**"
-      - "trillionnium/crates/trnm-research-protocol/**"
-      - "trillionnium/packaging/trnm_chain_devnet_v1/**"
-      - "trillionnium/scripts/release/**"
-  push:
-    branches: [main]
-    paths:
-      - ".github/workflows/trnm-live-devnet-package.yml"
-      - "RELEASE_READINESS.md"
-      - "trillionnium/Cargo.lock"
-      - "trillionnium/Cargo.toml"
-      - "trillionnium/crates/trnm-node/**"
-      - "trillionnium/crates/trnm-finality-types/**"
-      - "trillionnium/crates/trnm-finality-verifier/**"
-      - "trillionnium/crates/trnm-research-protocol/**"
-      - "trillionnium/packaging/trnm_chain_devnet_v1/**"
-      - "trillionnium/scripts/release/**"
+  workflow_dispatch:
 
 permissions:
   contents: read
 
 jobs:
-  clean-checkout-package:
+  legacy-harness-reproducibility:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     env:
@@ -40,13 +16,16 @@ jobs:
       LC_ALL: C
       LANG: C
       TZ: UTC
+      TRNM_LEGACY_HARNESS_ACKNOWLEDGED: "1"
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
 
-      - uses: dtolnay/rust-toolchain@stable
+      - uses: dtolnay/rust-toolchain@4cda84d5c5c54efe2404f9d843567869ab1699d4
+        with:
+          toolchain: 1.95.0
 
-      - name: Unit and live-node gates
+      - name: Unit and legacy-harness gates
         run: |
           set -euo pipefail
           python3 trillionnium/scripts/release/test_trnm_chain_devnet_v1.py

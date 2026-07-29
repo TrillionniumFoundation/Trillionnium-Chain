@@ -1,10 +1,15 @@
 # TRNM Release Readiness
 
-Updated date: 2026-07-28
-Scope: When citing this file, you must always record the current output of `git rev-parse origin/main`. Do not keep using a fixed commit hash from an older doc header as a permanent truth source.
+Updated date: 2026-07-29
+Scope: A citation must record the remote URL, fetch UTC/result, branch, `HEAD`,
+`refs/remotes/origin/main`, clean/dirty `git status --porcelain`, and this
+document's SHA-256. Run `git fetch --prune origin main` first. If fetch or
+authentication fails, label the remote baseline stale/unverified; never call a
+cached tracking ref contemporaneous.
 
 > This file is the active **release readiness truth source**.
-> In release, RC, or handoff contexts, it must be cited together with the contemporaneous `origin/main` commit so stale snapshots are not mistaken for current conclusions.
+> Release, RC, or handoff evidence is bound to the exact assessed tree above;
+> uncommitted results must not be presented as an `origin/main` repository baseline.
 > - `docs/archive/root-history/STATUS.md`: historical progression log / working journal, not used for current release determination.
 > - `docs/development/DEVELOPMENT_MASTER_UNIFIED_2026-03-04.md`: scheduling board for development, not release truth.
 > - `docs/archive/web4-history/GO_READY_EVIDENCE_WEB4_2026-03-03.md` and `docs/archive/web4-history/web4-fix-sequence-2026-03-04-evidence.md`: represent a historical fix/pass batch, not today's global release posture.
@@ -30,7 +35,15 @@ Scope: When citing this file, you must always record the current output of `git 
   `trnm-runtime` crate. A four-validator process gate now proves identical canonical
   objects, account nonces, issued supply, fee collection/distribution, terminal balances,
   block history, and AppHash while rejecting forced assignment, replay,
-  over-gas, unknown-payload transactions, and proof requests before AppHash v4. Local
+  over-gas, and unknown-payload transactions. AppHash v4 now uses a versioned
+  JMT root with ICS23 membership/non-membership queries, persisted pruning, and
+  format-3 manifest/chunk-hashed snapshots. A release-profile executable gate
+  completed exactly 1,000,000 initial objects plus 1,000,000 updates across 200
+  JMT versions in 142.5 seconds under a 5 GiB virtual-memory limit. Early/late
+  update-batch P95 was 697/960 ms; pruning retained 64 versions while preserving
+  the boundary/latest ICS23 proofs and latest root. Peak RSS was 4.44 GiB. This
+  is an in-memory JMT algorithm/retention gate, not SQLite fsync, CometBFT block,
+  or multi-host latency evidence; streaming large-state restore remains open. Local
   four-validator offline/rejoin, fresh-node ABCI state sync, deterministic proposal
   filtering, transactional SQLite-WAL delta persistence, and validator-lifecycle
   unit/crash-recovery gates pass. A six-node process fixture proves 4→5, 5→4,
@@ -41,14 +54,37 @@ Scope: When citing this file, you must always record the current output of `git 
   SQLite-tip recovery, continued finalization, and app-hash convergence. Transport
   authentication, cross-host recovery, threshold governance, HSM/KMS, and soak
   evidence are still incomplete.
-- The signed package remains `loopback-local-devnet`, `development_only=true`, and
-  `public_mainnet_ready=false`.
+- The canonical runtime exposes a latest-committed-state `/simulate` ABCI query.
+  It shares the exact gas/fee calculation with execution, returns a versioned
+  response with stable error codes, and discards all proposed mutations. Focused
+  tests prove simulation/CheckTx/finalized gas parity and unchanged height,
+  AppHash, objects, nonces, and pending state. This is transaction simulation and
+  fee estimation only; it is not an offline signer or secure key-custody solution.
+- Bounded deterministic runtime model tests cover issued-supply conservation,
+  sequential nonce/replay/gap rejection, failure immutability, and identical
+  state/receipt/event replay. Two isolated `cargo-fuzz` targets exercise canonical
+  transaction and signed-envelope public input boundaries. The checked-in fuzz
+  job is a short integration smoke, not evidence of a long-running campaign or
+  formal verification.
+- Local supply-chain hardening pins Rust 1.95.0 and every GitHub Action to a full
+  commit SHA, checks application, contract, and fuzz dependency graphs with
+  `cargo-deny`, checks the frontend lock with `npm audit`, and freezes the legacy
+  binary entrypoints and manifest. The wider no-new-legacy-capability rule is
+  still review-enforced because canonical and legacy paths share library modules.
+  `SECURITY.md` remains an unverified reporting-policy draft;
+  private-reporting enablement, an external audit, SBOM/provenance, and long fuzz
+  evidence remain open.
+- The historical signed package is a frozen legacy-harness reproducibility
+  artifact, `loopback-local-devnet`, `development_only=true`, and
+  `public_mainnet_ready=false`; it is no longer built automatically.
 - The authoritative feature-to-runtime matrix and Day-1 freeze are in
   `docs/architecture/TRNM_CANONICAL_RUNTIME_FREEZE_2026-07-28.md`. Features not
   marked implemented in that matrix remain unimplemented regardless of legacy tests.
-- This branch still uses application version 3, store schema 2, and snapshot format
-  2. The new canonical transaction semantics are fresh-genesis/reset-only until
-  AppHash v4 supplies an explicit migration or reviewed export/new-genesis gate.
+- This branch uses application version 4, store schema 3, and snapshot format 3.
+  It deliberately refuses in-place v3 root rewriting. The verified
+  `trnm-v3-export-new-genesis` tool emits a review-only bundle for a different
+  chain ID and leaves the old source untouched; operator review/signing and an
+  actual new-genesis ceremony remain required.
 - Transaction authentication remains a static authorized-signer allowlist; dynamic
   public account-key onboarding is not implemented.
 
@@ -78,7 +114,7 @@ Current major drift risks include:
 
 ### 2. Web4 Frontend
 - **Status**: Independent npm preflight chain exists. Frontend behavior is readonly query client with fail-closed handling; in dev/demo mode it can explicitly use mock fallback.
-- **Confirmed facts**: `web4-frontend/package.json` contains `ci:check` / `release:preflight` / `release:ready`, which call scripts in `web4-frontend/scripts/`; `web4-frontend/lib/api-contract/client.ts` currently consumes `GET /query-task/:taskId`, `GET /query-events/:taskId`, and `GET /query-capability-audit/:subject`.
+- **Confirmed facts**: `web4-frontend/package.json` contains `ci:check` / `release:preflight` / `release:ready`, which call scripts in `web4-frontend/scripts/`; `web4-frontend/lib/api-contract/client.ts` currently consumes `GET /query-task/:taskId`, `GET /query-events/:taskId`, and `GET /query-capability-audit/:subject`. The 2026-07-28 local clean-install gate passed dependency compatibility, audit with zero known vulnerabilities, lint, TypeScript, 201 unit/component tests, 83 contract tests, one real-browser Playwright E2E, and the Next.js production build.
 - **Limitation**: Historical GO-ready docs exist; no implementation exists for `/api/v0/web4/*` inside this repo, so it is incorrect to characterize Web4 as broadly production-ready or as an in-repo dashboard API write backend.
 
 ### 3. Verifier / Sidecar

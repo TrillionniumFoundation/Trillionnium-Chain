@@ -110,7 +110,7 @@ jobs:
     timeout-minutes: 45
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
 
       - name: Install shellcheck
         run: |
@@ -435,417 +435,417 @@ jobs:
         run: |
           ./scripts/v2/web4_release_aggregate_gate_regression_test.sh
 
-      - name: Auto regression: pr5-challenge-reconcile-gate
+      - name: "Auto regression: pr5-challenge-reconcile-gate"
         run: |
           ./scripts/v2/pr5_challenge_reconcile_gate.sh
 
-      - name: Auto regression: pr5-event-rpc-treasury-consistency-gate
+      - name: "Auto regression: pr5-event-rpc-treasury-consistency-gate"
         run: |
           ./scripts/v2/pr5_event_rpc_treasury_consistency_gate.sh
 
-      - name: Auto regression: pr5-event-rpc-treasury-consistency-test
+      - name: "Auto regression: pr5-event-rpc-treasury-consistency-test"
         run: |
           ./scripts/v2/pr5_event_rpc_treasury_consistency_test.sh
 
-      - name: Auto regression: pr5-reconcile-conservation-test
+      - name: "Auto regression: pr5-reconcile-conservation-test"
         run: |
           ./scripts/v2/pr5_reconcile_conservation_test.sh
 
-      - name: Auto regression: pr5-treasury-reconcile-report
+      - name: "Auto regression: pr5-treasury-reconcile-report"
         run: |
           ./scripts/v2/pr5_treasury_reconcile_report.sh
 
-      - name: Auto regression: pr6-alert-rules-gate
+      - name: "Auto regression: pr6-alert-rules-gate"
         run: |
           ./scripts/v2/pr6_alert_rules_gate.sh
 
-      - name: Auto regression: pr7-alert-delivery-gate
+      - name: "Auto regression: pr7-alert-delivery-gate"
         run: |
           ./scripts/v2/pr7_alert_delivery_gate.sh
 
-      - name: Auto regression: pr7-alert-delivery-gate-concurrency-guard-test
+      - name: "Auto regression: pr7-alert-delivery-gate-concurrency-guard-test"
         run: |
           ./scripts/v2/pr7_alert_delivery_gate_concurrency_guard_test.sh
 
-      - name: Auto regression: pr7-alert-delivery-gate-rc-observability-test
+      - name: "Auto regression: pr7-alert-delivery-gate-rc-observability-test"
         run: |
           ./scripts/v2/pr7_alert_delivery_gate_rc_observability_test.sh
 
-      - name: Auto regression: pr7-dead-letter-replay-idempotency-test
+      - name: "Auto regression: pr7-dead-letter-replay-idempotency-test"
         run: |
           ./scripts/v2/pr7_dead_letter_replay_idempotency_test.sh
 
-      - name: Auto regression: pr7-global-retry-budget-storm-test
+      - name: "Auto regression: pr7-global-retry-budget-storm-test"
         run: |
           ./scripts/v2/pr7_global_retry_budget_storm_test.sh
 
-      - name: Auto regression: pr7-partial-success-route-test
+      - name: "Auto regression: pr7-partial-success-route-test"
         run: |
           ./scripts/v2/pr7_partial_success_route_test.sh
 
-      - name: Auto regression: pr7-quiet-hours-status-alert-level-mismatch-test
+      - name: "Auto regression: pr7-quiet-hours-status-alert-level-mismatch-test"
         run: |
           ./scripts/v2/pr7_quiet_hours_status_alert_level_mismatch_test.sh
 
-      - name: Auto regression: pr7-quiet-hours-warn-escalation-bypass-test
+      - name: "Auto regression: pr7-quiet-hours-warn-escalation-bypass-test"
         run: |
           ./scripts/v2/pr7_quiet_hours_warn_escalation_bypass_test.sh
 
-      - name: Auto regression: pr7-topn-summary-gate
+      - name: "Auto regression: pr7-topn-summary-gate"
         run: |
           ./scripts/v2/pr7_topn_summary_gate.sh
 
-      - name: Auto regression: rpc-query-hardcap-enforcement-test
+      - name: "Auto regression: rpc-query-hardcap-enforcement-test"
         run: |
           ./scripts/v2/rpc_query_hardcap_enforcement_test.sh
 
-      - name: Challenge regression: pr4-challenge-fundflow-audit-gate
+      - name: "Challenge regression: pr4-challenge-fundflow-audit-gate"
         run: |
           ./scripts/v2/pr4_challenge_fundflow_audit_gate.sh
 
-      - name: Challenge regression: pr7-delivery-e2e-gate
+      - name: "Challenge regression: pr7-delivery-e2e-gate"
         run: |
           ./scripts/v2/pr7_delivery_e2e_gate.sh
 
-      - name: Backlog regression: pouw-commit-timeout-migration-test
+      - name: "Backlog regression: pouw-commit-timeout-migration-test"
         run: |
           ./scripts/v2/pouw_commit_timeout_migration_test.sh
 
-      - name: Backlog regression: pouw-challenge-timeout-migration-test
+      - name: "Backlog regression: pouw-challenge-timeout-migration-test"
         run: |
           ./scripts/v2/pouw_challenge_timeout_migration_test.sh
 
-      - name: Backlog regression: v1-proof-registry-contract-gate
+      - name: "Backlog regression: v1-proof-registry-contract-gate"
         run: |
           ./scripts/v2/v1_proof_registry_contract_gate.sh
 
-      - name: Backlog regression: worker-replay-guard-test
+      - name: "Backlog regression: worker-replay-guard-test"
         run: |
           ./scripts/v2/worker_replay_guard_test.sh
 
-      - name: Backlog regression: worker-resume-no-duplicate-test
+      - name: "Backlog regression: worker-resume-no-duplicate-test"
         run: |
           ./scripts/v2/worker_resume_no_duplicate_test.sh
 
-      - name: Auto regression: auto-iterate-task-add-json-escape-regression-gate
+      - name: "Auto regression: auto-iterate-task-add-json-escape-regression-gate"
         run: |
           ./scripts/v2/auto_iterate_task_add_json_escape_regression_gate.sh
 
-      - name: Auto regression: auto-iterate-task-add-pr5-skip-regression-gate
+      - name: "Auto regression: auto-iterate-task-add-pr5-skip-regression-gate"
         run: |
           ./scripts/v2/auto_iterate_task_add_pr5_skip_regression_gate.sh
 
-      - name: Auto regression: auto-iterate-task-add-pr6-missing-event-log-gate
+      - name: "Auto regression: auto-iterate-task-add-pr6-missing-event-log-gate"
         run: |
           ./scripts/v2/auto_iterate_task_add_pr6_missing_event_log_gate.sh
 
-      - name: Auto regression: auto-iterate-task-add-quickcheck-step
+      - name: "Auto regression: auto-iterate-task-add-quickcheck-step"
         run: |
           ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh
 
-      - name: Auto regression: challenge-bond-enforcement-test
+      - name: "Auto regression: challenge-bond-enforcement-test"
         run: |
           ./scripts/v2/challenge_bond_enforcement_test.sh
 
-      - name: Auto regression: dev-stack-down
+      - name: "Auto regression: dev-stack-down"
         run: |
           ./scripts/v2/dev_stack_down.sh
 
-      - name: Auto regression: dev-stack-up
+      - name: "Auto regression: dev-stack-up"
         run: |
           ./scripts/v2/dev_stack_up.sh
 
-      - name: Auto regression: ecosystem-alpha-check
+      - name: "Auto regression: ecosystem-alpha-check"
         run: |
           ./scripts/v2/ecosystem_alpha_check.sh
 
-      - name: Auto regression: ecosystem-examples-smoke
+      - name: "Auto regression: ecosystem-examples-smoke"
         run: |
           ./scripts/v2/ecosystem_examples_smoke.sh
 
-      - name: Auto regression: ecosystem-feedback-add
+      - name: "Auto regression: ecosystem-feedback-add"
         run: |
           ./scripts/v2/ecosystem_feedback_add.sh
 
-      - name: Auto regression: emergency-pause-drill
+      - name: "Auto regression: emergency-pause-drill"
         run: |
           ./scripts/v2/emergency_pause_drill.sh
 
-      - name: Auto regression: explorer-service-down
+      - name: "Auto regression: explorer-service-down"
         run: |
           ./scripts/v2/explorer_service_down.sh
 
-      - name: Auto regression: explorer-service-up
+      - name: "Auto regression: explorer-service-up"
         run: |
           ./scripts/v2/explorer_service_up.sh
 
-      - name: Auto regression: faucet-service-down
+      - name: "Auto regression: faucet-service-down"
         run: |
           ./scripts/v2/faucet_service_down.sh
 
-      - name: Auto regression: faucet-service-up
+      - name: "Auto regression: faucet-service-up"
         run: |
           ./scripts/v2/faucet_service_up.sh
 
-      - name: Auto regression: generate-monthly-benchmark-report
+      - name: "Auto regression: generate-monthly-benchmark-report"
         run: |
           ./scripts/v2/generate_monthly_benchmark_report.sh
 
-      - name: Auto regression: gov-mvp-simulation
+      - name: "Auto regression: gov-mvp-simulation"
         run: |
           ./scripts/v2/gov_mvp_simulation.sh
 
-      - name: Auto regression: p11-partial-success-metric-consistency-test
+      - name: "Auto regression: p11-partial-success-metric-consistency-test"
         run: |
           ./scripts/v2/p11_partial_success_metric_consistency_test.sh
 
-      - name: Auto regression: p11-policy-promote
+      - name: "Auto regression: p11-policy-promote"
         run: |
           ./scripts/v2/p11_policy_promote.sh
 
-      - name: Auto regression: p11-policy-promote-approval-bypass-test
+      - name: "Auto regression: p11-policy-promote-approval-bypass-test"
         run: |
           ./scripts/v2/p11_policy_promote_approval_bypass_test.sh
 
-      - name: Auto regression: p11-policy-promote-gate
+      - name: "Auto regression: p11-policy-promote-gate"
         run: |
           ./scripts/v2/p11_policy_promote_gate.sh
 
-      - name: Auto regression: p11-policy-rollback-guard
+      - name: "Auto regression: p11-policy-rollback-guard"
         run: |
           ./scripts/v2/p11_policy_rollback_guard.sh
 
-      - name: Auto regression: p11-policy-rollback-guard-rejected-attempts0-test
+      - name: "Auto regression: p11-policy-rollback-guard-rejected-attempts0-test"
         run: |
           ./scripts/v2/p11_policy_rollback_guard_rejected_attempts0_test.sh
 
-      - name: Auto regression: p11-policy-rollback-guard-window-rate-test
+      - name: "Auto regression: p11-policy-rollback-guard-window-rate-test"
         run: |
           ./scripts/v2/p11_policy_rollback_guard_window_rate_test.sh
 
-      - name: Auto regression: post-vote-verification
+      - name: "Auto regression: post-vote-verification"
         run: |
           ./scripts/v2/post_vote_verification.sh
 
-      - name: Auto regression: v1-proof-backend-ci-gate
+      - name: "Auto regression: v1-proof-backend-ci-gate"
         run: |
           ./scripts/v2/v1_proof_backend_ci_gate_regression_test.sh
 
-      - name: Auto regression: pr9-apply-thresholds-dry-run
+      - name: "Auto regression: pr9-apply-thresholds-dry-run"
         run: |
           ./scripts/v2/pr9_apply_thresholds_dry_run.sh
 
-      - name: Auto regression: pr9-rollback-thresholds
+      - name: "Auto regression: pr9-rollback-thresholds"
         run: |
           ./scripts/v2/pr9_rollback_thresholds.sh
 
-      - name: Auto regression: product-layer-smoke
+      - name: "Auto regression: product-layer-smoke"
         run: |
           ./scripts/v2/product_layer_smoke.sh
 
-      - name: Auto regression: rpc-service-down
+      - name: "Auto regression: rpc-service-down"
         run: |
           ./scripts/v2/rpc_service_down.sh
 
-      - name: Auto regression: rpc-service-up
+      - name: "Auto regression: rpc-service-up"
         run: |
           ./scripts/v2/rpc_service_up.sh
 
-      - name: Auto regression: run-p1-integration-gate
+      - name: "Auto regression: run-p1-integration-gate"
         run: |
           ./scripts/v2/run_p1_integration_gate.sh
 
-      - name: Regression: run-p1-integration-gate invokes lane XI gates (x2/i2/m2)
+      - name: "Regression: run-p1-integration-gate invokes lane XI gates (x2/i2/m2)"
         run: |
           ./scripts/v2/run_p1_integration_gate_lane_xi_invocation_test.sh
 
-      - name: Auto regression: run-reliability-soak
+      - name: "Auto regression: run-reliability-soak"
         run: |
           ./scripts/v2/run_reliability_soak.sh
 
-      - name: Auto regression: run-worker-receipt-gates
+      - name: "Auto regression: run-worker-receipt-gates"
         run: |
           ./scripts/v2/run_worker_receipt_gates.sh
 
-      - name: Auto regression: run-worker-receipt-gates-real-cli
+      - name: "Auto regression: run-worker-receipt-gates-real-cli"
         run: |
           ./scripts/v2/run_worker_receipt_gates_real_cli.sh
 
-      - name: Auto regression: soak-chunk
+      - name: "Auto regression: soak-chunk"
         run: |
           ./scripts/v2/soak_chunk.sh
 
-      - name: Auto regression: trnm-tx-cli-real-adapter
+      - name: "Auto regression: trnm-tx-cli-real-adapter"
         run: |
           ./scripts/v2/trnm_tx_cli_real_adapter.sh
 
-      - name: Auto regression: trnm-tx-cli-real-adapter.template
+      - name: "Auto regression: trnm-tx-cli-real-adapter.template"
         run: |
           ./scripts/v2/trnm_tx_cli_real_adapter.template.sh
 
-      - name: Auto regression: trnm-tx-cli-wrapper
+      - name: "Auto regression: trnm-tx-cli-wrapper"
         run: |
           ./scripts/v2/trnm_tx_cli_wrapper.sh
 
-      - name: Auto regression: worker-agent-e2e-demo
+      - name: "Auto regression: worker-agent-e2e-demo"
         run: |
           ./scripts/v2/worker_agent_e2e_demo.sh
 
-      - name: Auto regression: worker-agent-full-loop
+      - name: "Auto regression: worker-agent-full-loop"
         run: |
           ./scripts/v2/worker_agent_full_loop.sh
 
-      - name: Auto regression: worker-agent-mining-onboard
+      - name: "Auto regression: worker-agent-mining-onboard"
         run: |
           ./scripts/v2/worker_agent_mining_onboard.sh
 
-      - name: Auto regression: worker-agent-multi-onboard
+      - name: "Auto regression: worker-agent-multi-onboard"
         run: |
           ./scripts/v2/worker_agent_multi_onboard.sh
 
-      - name: Auto regression: worker-agent-onboard-mvp
+      - name: "Auto regression: worker-agent-onboard-mvp"
         run: |
           ./scripts/v2/worker_agent_onboard_mvp.sh
 
-      - name: Auto regression: worker-agent-verify-with-rpc
+      - name: "Auto regression: worker-agent-verify-with-rpc"
         run: |
           ./scripts/v2/worker_agent_verify_with_rpc.sh
 
-      - name: Auto regression: worker-failed-receipt-test
+      - name: "Auto regression: worker-failed-receipt-test"
         run: |
           ./scripts/v2/worker_failed_receipt_test.sh
 
-      - name: Auto regression: worker-real-cli-fake-wrapper-block-test
+      - name: "Auto regression: worker-real-cli-fake-wrapper-block-test"
         run: |
           ./scripts/v2/worker_real_cli_fake_wrapper_block_test.sh
 
-      - name: Auto regression: worker-real-cli-readiness
+      - name: "Auto regression: worker-real-cli-readiness"
         run: |
           ./scripts/v2/worker_real_cli_readiness.sh
 
-      - name: Auto regression: worker-retry-nonce-boundary-test
+      - name: "Auto regression: worker-retry-nonce-boundary-test"
         run: |
           ./scripts/v2/worker_retry_nonce_boundary_test.sh
 
-      - name: Auto regression: run-tokenomics-r1-r14-regression-gate
+      - name: "Auto regression: run-tokenomics-r1-r14-regression-gate"
         run: |
           ./scripts/v2/run_tokenomics_r1_r14_regression_gate.sh
 
-      - name: Auto regression: check-unchecked-gov-usage
+      - name: "Auto regression: check-unchecked-gov-usage"
         run: |
           ./scripts/v2/check_unchecked_gov_usage.sh
 
-      - name: Auto regression: x1-relay-heartbeat-smoke
+      - name: "Auto regression: x1-relay-heartbeat-smoke"
         run: |
           ./scripts/v2/x1_relay_heartbeat_smoke.sh
 
-      - name: Auto regression: x2-settlement-contract-gate
+      - name: "Auto regression: x2-settlement-contract-gate"
         run: |
           ./scripts/v2/x2_settlement_contract_gate.sh
 
-      - name: Auto regression: i2-token-lifecycle-gate
+      - name: "Auto regression: i2-token-lifecycle-gate"
         run: |
           ./scripts/v2/i2_token_lifecycle_gate.sh
 
-      - name: Auto regression: mv2-receipt-contract-freeze-doc-gate
+      - name: "Auto regression: mv2-receipt-contract-freeze-doc-gate"
         run: |
           ./scripts/v2/mv2_receipt_contract_freeze_doc_gate.sh
 
-      - name: Auto regression: mv2-receipt-contract-freeze-doc-gate-regression-test
+      - name: "Auto regression: mv2-receipt-contract-freeze-doc-gate-regression-test"
         run: |
           ./scripts/v2/mv2_receipt_contract_freeze_doc_gate_regression_test.sh
 
-      - name: Auto regression: e2-audit-report-generator-reject-schema-suffix-punct-test
+      - name: "Auto regression: e2-audit-report-generator-reject-schema-suffix-punct-test"
         run: |
           ./scripts/v2/e2_audit_report_generator_reject_schema_suffix_punct_test.sh
 
-      - name: Auto regression: e3-enterprise-runbook-required-sections-test
+      - name: "Auto regression: e3-enterprise-runbook-required-sections-test"
         run: |
           ./scripts/v2/e3_enterprise_runbook_required_sections_test.sh
 
-      - name: Auto regression: e3-enterprise-runbook-operator-id-template-test
+      - name: "Auto regression: e3-enterprise-runbook-operator-id-template-test"
         run: |
           ./scripts/v2/e3_enterprise_runbook_operator_id_template_test.sh
 
-      - name: Auto regression: e3-enterprise-runbook-root-cause-tag-format-test
+      - name: "Auto regression: e3-enterprise-runbook-root-cause-tag-format-test"
         run: |
           ./scripts/v2/e3_enterprise_runbook_root_cause_tag_format_test.sh
 
-      - name: Auto regression: e3-enterprise-runbook-audit-timestamp-determinism-test
+      - name: "Auto regression: e3-enterprise-runbook-audit-timestamp-determinism-test"
         run: |
           ./scripts/v2/e3_enterprise_runbook_audit_timestamp_determinism_test.sh
 
-      - name: Auto regression: e3-enterprise-runbook-rollback-request-id-anchor-test
+      - name: "Auto regression: e3-enterprise-runbook-rollback-request-id-anchor-test"
         run: |
           ./scripts/v2/e3_enterprise_runbook_rollback_request_id_anchor_test.sh
 
-      - name: Auto regression: e3-enterprise-runbook-replay-deterministic-env-prefix-test
+      - name: "Auto regression: e3-enterprise-runbook-replay-deterministic-env-prefix-test"
         run: |
           ./scripts/v2/e3_enterprise_runbook_replay_deterministic_env_prefix_test.sh
 
-      - name: Auto regression: e3-enterprise-runbook-deterministic-env-prefix-test
+      - name: "Auto regression: e3-enterprise-runbook-deterministic-env-prefix-test"
         run: |
           ./scripts/v2/e3_enterprise_runbook_deterministic_env_prefix_test.sh
 
-      - name: Auto regression: e3-enterprise-onboarding-runbook-rollback-contract-test
+      - name: "Auto regression: e3-enterprise-onboarding-runbook-rollback-contract-test"
         run: |
           ./scripts/v2/e3_enterprise_onboarding_runbook_rollback_contract_test.sh
 
-      - name: Auto regression: trnm-gate-quick-check-deterministic-env-guard-test
+      - name: "Auto regression: trnm-gate-quick-check-deterministic-env-guard-test"
         run: |
           ./scripts/v2/trnm_gate_quick_check_deterministic_env_guard_test.sh
 
-      - name: Auto regression: workflow-script-refs-python-coverage-guard-test
+      - name: "Auto regression: workflow-script-refs-python-coverage-guard-test"
         run: |
           ./scripts/v2/workflow_script_refs_python_coverage_guard_test.sh
 
-      - name: Auto regression: workflow-script-refs-trillionnium-coverage-guard-test
+      - name: "Auto regression: workflow-script-refs-trillionnium-coverage-guard-test"
         run: |
           ./scripts/v2/workflow_script_refs_trillionnium_coverage_guard_test.sh
 
-      - name: Auto regression: workflow-script-refs-relative-scripts-coverage-guard-test
+      - name: "Auto regression: workflow-script-refs-relative-scripts-coverage-guard-test"
         run: |
           ./scripts/v2/workflow_script_refs_relative_scripts_coverage_guard_test.sh
 
-      - name: Auto regression: workflow-script-refs-yaml-coverage-guard-test
+      - name: "Auto regression: workflow-script-refs-yaml-coverage-guard-test"
         run: |
           ./scripts/v2/workflow_script_refs_yaml_coverage_guard_test.sh
 
-      - name: Auto regression: workflow-script-refs-summary-path-guard-test
+      - name: "Auto regression: workflow-script-refs-summary-path-guard-test"
         run: |
           ./scripts/v2/workflow_script_refs_summary_path_guard_test.sh
 
-      - name: Auto regression: workflow-script-refs-missing-workflow-root-guard-test
+      - name: "Auto regression: workflow-script-refs-missing-workflow-root-guard-test"
         run: |
           ./scripts/v2/workflow_script_refs_missing_workflow_root_guard_test.sh
 
-      - name: Auto regression: workflow-script-refs-invalid-strict-mode-guard-test
+      - name: "Auto regression: workflow-script-refs-invalid-strict-mode-guard-test"
         run: |
           ./scripts/v2/workflow_script_refs_invalid_strict_mode_guard_test.sh
 
-      - name: Auto regression: workflow-script-refs-non-exec-strict-mode-guard-test
+      - name: "Auto regression: workflow-script-refs-non-exec-strict-mode-guard-test"
         run: |
           ./scripts/v2/workflow_script_refs_non_exec_strict_mode_guard_test.sh
 
-      - name: Auto regression: trnm-merge-gates-deterministic-env-guard-test
+      - name: "Auto regression: trnm-merge-gates-deterministic-env-guard-test"
         run: |
           ./scripts/v2/trnm_merge_gates_deterministic_env_guard_test.sh
 
-      - name: Auto regression: trnm-merge-gates-paths-coverage-guard-test
+      - name: "Auto regression: trnm-merge-gates-paths-coverage-guard-test"
         run: |
           ./scripts/v2/trnm_merge_gates_paths_coverage_guard_test.sh
 
-      - name: Auto regression: run-local-release-evidence-deterministic-entry-test
+      - name: "Auto regression: run-local-release-evidence-deterministic-entry-test"
         run: |
           ./scripts/v2/run_local_release_evidence_deterministic_entry_test.sh
 
-      - name: Auto regression: web4-frontend-ci-deterministic-env-guard-test
+      - name: "Auto regression: web4-frontend-ci-deterministic-env-guard-test"
         run: |
           ./scripts/v2/web4_frontend_ci_deterministic_env_guard_test.sh
 
       - name: Upload quick gate summary
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: quick-gate-summary
           path: run/quick-gate/*.json

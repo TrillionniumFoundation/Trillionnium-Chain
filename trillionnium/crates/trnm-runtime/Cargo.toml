@@ -9,11 +9,11 @@ authors.workspace = true
 serde = { version = "1", features = ["derive"] }
 serde_json = { version = "1", features = ["arbitrary_precision"] }
 thiserror = "1"
-trnm-protocol = { path = "../trnm-protocol" }
+trnm-protocol = { version = "0.1.0", path = "../trnm-protocol" }
 
 [dev-dependencies]
 hex = "0.4"
 sha2 = "0.10"
-trnm-pouw = { path = "../trnm-pouw" }
-trnm-state = { path = "../trnm-state" }
-trnm-types = { path = "../trnm-types" }
+trnm-pouw = { version = "0.1.0", path = "../trnm-pouw" }
+trnm-state = { version = "0.1.0", path = "../trnm-state" }
+trnm-types = { version = "0.1.0", path = "../trnm-types" }

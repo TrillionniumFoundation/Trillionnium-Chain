@@ -65,6 +65,41 @@ pub enum RuntimeError {
     ArithmeticOverflow,
 }
 
+impl RuntimeError {
+    /// Stable machine-readable identifier for transaction simulation and RPC clients.
+    ///
+    /// Display strings remain diagnostic and may include transaction-specific values;
+    /// callers should branch on this code instead.
+    pub const fn code(&self) -> &'static str {
+        match self {
+            Self::Protocol(_) => "protocol_validation_failed",
+            Self::SenderMismatch => "sender_mismatch",
+            Self::OperatorRequired => "operator_required",
+            Self::NonceMismatch { .. } => "nonce_mismatch",
+            Self::NonceExhausted => "nonce_exhausted",
+            Self::GasLimitExceeded { .. } => "gas_limit_exceeded",
+            Self::FeeLimitExceeded { .. } => "fee_limit_exceeded",
+            Self::InsufficientBalance { .. } => "insufficient_balance",
+            Self::ObjectType(_) => "object_type_mismatch",
+            Self::DecodeObject(_, _) => "object_decode_failed",
+            Self::EncodeObject(_) => "object_encode_failed",
+            Self::TaskAlreadyExists => "task_already_exists",
+            Self::TaskNotFound => "task_not_found",
+            Self::InvalidTaskTransition => "invalid_task_transition",
+            Self::TaskAuthorityMismatch => "task_authority_mismatch",
+            Self::DeadlineExceeded => "deadline_exceeded",
+            Self::ChallengeWindowOpen => "challenge_window_open",
+            Self::ChallengeWindowClosed => "challenge_window_closed",
+            Self::TaskExpiryUnavailable => "task_expiry_unavailable",
+            Self::WorkerAcceptanceRequired => "worker_acceptance_required",
+            Self::ConflictingTaskRole => "conflicting_task_role",
+            Self::ReservedSystemAccount => "reserved_system_account",
+            Self::ObjectVersionExhausted => "object_version_exhausted",
+            Self::ArithmeticOverflow => "arithmetic_overflow",
+        }
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct StateObject {
     pub object_type: String,
@@ -97,6 +132,12 @@ pub struct RuntimeReceipt {
     pub fee_charged: u128,
     pub events: Vec<RuntimeEvent>,
     pub mutations: Vec<RuntimeMutation>,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct ResourceEstimate {
+    pub gas_used: u64,
+    pub fee_estimate: u128,
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -306,6 +347,71 @@ pub fn execute(
     context: ExecutionContext<'_>,
     view: &dyn StateView,
 ) -> Result<RuntimeReceipt, RuntimeError> {
+    validate_transaction_context(tx, context)?;
+    let mut state = RuntimeState::new(view);
+    let estimate = estimate_resources_with_state(tx, context, &mut state)?;
+    if estimate.gas_used > tx.max_gas {
+        return Err(RuntimeError::GasLimitExceeded {
+            required: estimate.gas_used,
+            limit: tx.max_gas,
+        });
+    }
+    if estimate.fee_estimate > tx.fee_limit {
+        return Err(RuntimeError::FeeLimitExceeded {
+            required: estimate.fee_estimate,
+            limit: tx.fee_limit,
+        });
+    }
+
+    let expected_nonce = state
+        .account(&tx.sender)?
+        .value
+        .nonce
+        .checked_add(1)
+        .ok_or(RuntimeError::NonceExhausted)?;
+    if tx.nonce != expected_nonce {
+        return Err(RuntimeError::NonceMismatch {
+            expected: expected_nonce,
+            received: tx.nonce,
+        });
+    }
+    if !is_operator_command(&tx.command) {
+        state.debit(&tx.sender, estimate.fee_estimate)?;
+        state.credit(FEE_COLLECTOR_ACCOUNT_V1, estimate.fee_estimate)?;
+    }
+    let sender = state.account(&tx.sender)?;
+    sender.value.nonce = tx.nonce;
+    sender.dirty = true;
+
+    let mut events = Vec::new();
+    apply_command(&mut state, tx, context, &mut events)?;
+    Ok(RuntimeReceipt {
+        gas_used: estimate.gas_used,
+        fee_charged: estimate.fee_estimate,
+        events,
+        mutations: state.into_mutations()?,
+    })
+}
+
+/// Computes the exact gas and fee that [`execute`] will charge for the same
+/// transaction bytes, execution context, and state view.
+///
+/// Resource limits, nonce, balance, and command state transitions are not
+/// applied here. This lets callers return the required estimate even when a
+/// transaction's `max_gas` or `fee_limit` is too low.
+pub fn estimate_resources(
+    tx: &CanonicalTxV1,
+    context: ExecutionContext<'_>,
+    view: &dyn StateView,
+) -> Result<ResourceEstimate, RuntimeError> {
+    validate_transaction_context(tx, context)?;
+    estimate_resources_with_state(tx, context, &mut RuntimeState::new(view))
+}
+
+fn validate_transaction_context(
+    tx: &CanonicalTxV1,
+    context: ExecutionContext<'_>,
+) -> Result<(), RuntimeError> {
     tx.validate()
         .map_err(|error| RuntimeError::Protocol(error.to_string()))?;
     if tx.sender != context.signer_id {
@@ -314,16 +420,18 @@ pub fn execute(
     if tx.sender == FEE_COLLECTOR_ACCOUNT_V1 {
         return Err(RuntimeError::ReservedSystemAccount);
     }
-    let operator_command = matches!(
-        tx.command,
-        CanonicalCommandV1::CreditAccount { .. }
-            | CanonicalCommandV1::SetFeePolicy { .. }
-            | CanonicalCommandV1::DistributeFees { .. }
-    );
-    if operator_command && context.signer_role != "operator" {
+    if is_operator_command(&tx.command) && context.signer_role != "operator" {
         return Err(RuntimeError::OperatorRequired);
     }
-    let mut state = RuntimeState::new(view);
+    Ok(())
+}
+
+fn estimate_resources_with_state(
+    tx: &CanonicalTxV1,
+    context: ExecutionContext<'_>,
+    state: &mut RuntimeState<'_>,
+) -> Result<ResourceEstimate, RuntimeError> {
+    let operator_command = is_operator_command(&tx.command);
     // Recovery-capable operator commands use the immutable bootstrap gas schedule.
     // A corrupt or historically unsafe on-chain policy therefore cannot prevent an
     // authorized operator from replacing it.
@@ -341,12 +449,6 @@ pub fn execute(
         .checked_add(payload_gas)
         .and_then(|gas| gas.checked_add(tx.command.operation_gas()))
         .ok_or(RuntimeError::ArithmeticOverflow)?;
-    if gas_used > tx.max_gas {
-        return Err(RuntimeError::GasLimitExceeded {
-            required: gas_used,
-            limit: tx.max_gas,
-        });
-    }
     let fee = if operator_command {
         0
     } else {
@@ -354,41 +456,19 @@ pub fn execute(
             .checked_mul(policy.gas_price)
             .ok_or(RuntimeError::ArithmeticOverflow)?
     };
-    if fee > tx.fee_limit {
-        return Err(RuntimeError::FeeLimitExceeded {
-            required: fee,
-            limit: tx.fee_limit,
-        });
-    }
-
-    let expected_nonce = state
-        .account(&tx.sender)?
-        .value
-        .nonce
-        .checked_add(1)
-        .ok_or(RuntimeError::NonceExhausted)?;
-    if tx.nonce != expected_nonce {
-        return Err(RuntimeError::NonceMismatch {
-            expected: expected_nonce,
-            received: tx.nonce,
-        });
-    }
-    if !operator_command {
-        state.debit(&tx.sender, fee)?;
-        state.credit(FEE_COLLECTOR_ACCOUNT_V1, fee)?;
-    }
-    let sender = state.account(&tx.sender)?;
-    sender.value.nonce = tx.nonce;
-    sender.dirty = true;
-
-    let mut events = Vec::new();
-    apply_command(&mut state, tx, context, &mut events)?;
-    Ok(RuntimeReceipt {
+    Ok(ResourceEstimate {
         gas_used,
-        fee_charged: fee,
-        events,
-        mutations: state.into_mutations()?,
+        fee_estimate: fee,
     })
+}
+
+fn is_operator_command(command: &CanonicalCommandV1) -> bool {
+    matches!(
+        command,
+        CanonicalCommandV1::CreditAccount { .. }
+            | CanonicalCommandV1::SetFeePolicy { .. }
+            | CanonicalCommandV1::DistributeFees { .. }
+    )
 }
 
 fn apply_command(

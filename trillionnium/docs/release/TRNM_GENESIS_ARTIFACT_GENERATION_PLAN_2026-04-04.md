@@ -58,7 +58,7 @@ TRNM 当前 repo 中**没有现成已提交的真实 genesis artifact**，也**�
 已实际运行：
 
 ```bash
-cargo run -q -p trnm-node --bin trnm-sim -- \
+cargo run -q -p trnm-node --features legacy-harness --bin trnm-sim -- \
   --config configs/node1.toml \
   --max-blocks 1 \
   --demo-tasks 0 \

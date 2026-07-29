@@ -95,11 +95,11 @@ mkdir -p "$ROOT"
 APP_BIN="${TRNM_COMETBFT_APP_BIN:-}"
 CLI_BIN="${TRNM_COMETBFT_CLI_BIN:-}"
 if [[ -z "$APP_BIN" ]]; then
-  cargo build -q -p trnm-consensus-app --bin trnm-cometbft-app
+  cargo build -q -p trnm-consensus-app --bin trnm-cometbft-app --locked
   APP_BIN="$PWD/target/debug/trnm-cometbft-app"
 fi
 if [[ -z "$CLI_BIN" ]]; then
-  cargo build -q -p trnm-node --bin trnm-chain-cli
+  cargo build -q -p trnm-node --features legacy-harness --bin trnm-chain-cli --locked
   CLI_BIN="$PWD/target/debug/trnm-chain-cli"
 fi
 test -x "$APP_BIN"
@@ -161,11 +161,11 @@ PY
 )"
 jq --arg public_key "$public_key" --argjson initial_validators "$initial_validators" \
   '.chain_id="trnm-comet-spike"
-   | .consensus_params.version.app="3"
+   | .consensus_params.version.app="4"
    | .app_state={
        schema:"trnm_cometbft_genesis_v2",
        chain_id:"trnm-comet-spike",
-       app_version:3,
+       app_version:4,
        authorized_signers:[{
          signer_id:"did:operator:1",
          signer_role:"operator",

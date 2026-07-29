@@ -183,39 +183,6 @@ export default function Home() {
   const selectedEvent = filteredEvents.find((event) => event.id === selectedEventId) ?? filteredEvents[0];
   const selectedAudit = filteredAudits.find((audit) => audit.id === selectedAuditId) ?? filteredAudits[0];
 
-  useEffect(() => {
-    if (loadState.status !== "ready") {
-      return;
-    }
-
-    const nextTaskId = filteredTasks[0]?.id ?? null;
-    if (selectedTaskId !== nextTaskId && !filteredTasks.some((task) => task.id === selectedTaskId)) {
-      setSelectedTaskId(nextTaskId);
-    }
-  }, [filteredTasks, loadState.status, selectedTaskId]);
-
-  useEffect(() => {
-    if (loadState.status !== "ready") {
-      return;
-    }
-
-    const nextEventId = filteredEvents[0]?.id ?? null;
-    if (selectedEventId !== nextEventId && !filteredEvents.some((event) => event.id === selectedEventId)) {
-      setSelectedEventId(nextEventId);
-    }
-  }, [filteredEvents, loadState.status, selectedEventId]);
-
-  useEffect(() => {
-    if (loadState.status !== "ready") {
-      return;
-    }
-
-    const nextAuditId = filteredAudits[0]?.id ?? null;
-    if (selectedAuditId !== nextAuditId && !filteredAudits.some((audit) => audit.id === selectedAuditId)) {
-      setSelectedAuditId(nextAuditId);
-    }
-  }, [filteredAudits, loadState.status, selectedAuditId]);
-
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900">
       <main className="mx-auto w-full max-w-6xl px-4 py-10 md:px-8">
@@ -330,7 +297,10 @@ export default function Home() {
                     Status filter
                     <select
                       value={taskStatusFilter}
-                      onChange={(event) => setTaskStatusFilter(event.target.value as typeof taskStatusFilter)}
+                      onChange={(event) => {
+                        setTaskStatusFilter(event.target.value as typeof taskStatusFilter);
+                        setSelectedTaskId(null);
+                      }}
                       className="ml-2 rounded-md border border-slate-300 px-2 py-1 text-sm"
                     >
                       <option>All</option>
@@ -404,7 +374,10 @@ export default function Home() {
                   Severity filter
                   <select
                     value={eventSeverityFilter}
-                    onChange={(event) => setEventSeverityFilter(event.target.value as typeof eventSeverityFilter)}
+                    onChange={(event) => {
+                      setEventSeverityFilter(event.target.value as typeof eventSeverityFilter);
+                      setSelectedEventId(null);
+                    }}
                     className="ml-2 rounded-md border border-slate-300 px-2 py-1 text-sm"
                   >
                     <option>All</option>
@@ -473,7 +446,10 @@ export default function Home() {
                   Result filter
                   <select
                     value={auditResultFilter}
-                    onChange={(event) => setAuditResultFilter(event.target.value as typeof auditResultFilter)}
+                    onChange={(event) => {
+                      setAuditResultFilter(event.target.value as typeof auditResultFilter);
+                      setSelectedAuditId(null);
+                    }}
                     className="ml-2 rounded-md border border-slate-300 px-2 py-1 text-sm"
                   >
                     <option>All</option>

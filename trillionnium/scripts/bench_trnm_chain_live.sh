@@ -10,7 +10,7 @@ set -euo pipefail
 transactions="${TRNM_BENCH_TRANSACTIONS:-100}"
 payload_bytes="${TRNM_BENCH_PAYLOAD_BYTES:-256}"
 
-exec cargo run --locked --release -p trnm-node --bin trnm-chain-cli -- \
+exec cargo run --locked --release -p trnm-node --features legacy-harness --bin trnm-chain-cli -- \
   benchmark \
   --node-url "$TRNM_CHAIN_NODE_URL" \
   --private-key "$TRNM_CHAIN_SIGNER_KEY" \

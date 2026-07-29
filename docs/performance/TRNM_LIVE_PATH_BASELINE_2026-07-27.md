@@ -5,8 +5,9 @@ testnet or mainnet performance claim.
 
 ## Reproduction
 
-Run four `trnm-chain-validator` processes and one canonical
-`trnm-chain-node`, then execute:
+Run four legacy `trnm-chain-validator` processes and one legacy
+`trnm-chain-node`, then execute. This requires the explicit
+`legacy-harness` feature and is historical-only evidence:
 
 ```bash
 TRNM_BENCH_TRANSACTIONS=100 \

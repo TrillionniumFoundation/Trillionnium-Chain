@@ -14,5 +14,5 @@ sha2 = "0.10"
 hex = "0.4"
 shlex = "1"
 shell-escape = "0.1"
-trnm-types = { path = "../trnm-types" }
+trnm-types = { version = "0.1.0", path = "../trnm-types" }
 wait-timeout = "0.2"

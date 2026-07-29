@@ -6,7 +6,7 @@ description = "BridgeRelay Rust MVP state machine skeleton"
 license = "MIT"
 
 [dependencies]
-audit-events = { path = "../audit-events" }
+audit-events = { version = "0.1.0", path = "../audit-events" }
 sha2 = "0.10"
 ed25519-dalek = "2"
 sha3 = "0.10"

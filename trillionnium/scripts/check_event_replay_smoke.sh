@@ -11,7 +11,7 @@ OUT="run/event-replay-smoke.log"
 # Ensure smoke check starts from a clean consensus replay baseline.
 rm -rf run/consensus-wal
 
-cargo run -q -p trnm-node --bin trnm-sim -- \
+cargo run -q -p trnm-node --features legacy-harness --bin trnm-sim -- \
   --config configs/node1.toml \
   --block-ms 1 \
   --max-blocks 8 \

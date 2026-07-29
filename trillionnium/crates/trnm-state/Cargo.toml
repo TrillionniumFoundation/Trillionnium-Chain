@@ -2,6 +2,7 @@
 name = "trnm-state"
 version = "0.1.0"
 edition = "2021"
+license.workspace = true
 
 [features]
 default = []
@@ -11,4 +12,4 @@ test-utils = []
 serde = { version = "1", features = ["derive"] }
 sha2 = "0.10"
 hex = "0.4"
-trnm-types = { path = "../trnm-types" }
+trnm-types = { version = "0.1.0", path = "../trnm-types" }

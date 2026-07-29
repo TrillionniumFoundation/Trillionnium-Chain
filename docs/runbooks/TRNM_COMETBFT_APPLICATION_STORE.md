@@ -2,6 +2,12 @@
 
 Status: internal devnet prototype. This is not a public-testnet backup claim.
 
+The 2026-07-29 release-profile authenticated-tree gate completed exactly one
+million initial objects plus one million updates while retaining 64 proof
+versions. It verifies incremental JMT planning, pruning, and ICS23 proof
+correctness only. It does not measure this SQLite store's fsync latency,
+CometBFT end-to-end commit latency, large-state restart time, or multi-host SLOs.
+
 ## Files and authority
 
 For a configured `state_path` such as `app-state.json`:
@@ -12,14 +18,14 @@ For a configured `state_path` such as `app-state.json`:
 - `app-state.json` is only a best-effort height/app-hash status cache. It is
   refreshed from SQLite at startup and must never be used as a backup.
 - `app-state.snapshots/*.snapshot` contains bounded ABCI state-sync snapshots.
-- `app-state.json.legacy-v3` is the validated pre-SQLite state retained during
-  one-time migration.
+- No legacy file is rewritten automatically. A v3 source remains byte-for-byte
+  unchanged during explicit export/new-genesis review.
 
-Store schema v2 uses SQLite WAL, `synchronous=FULL`, an immediate write
+Store schema v3 uses SQLite WAL, `synchronous=FULL`, an immediate write
 transaction, and an expected-tip compare before every block commit. The same
-transaction advances object/replay deltas, validator lifecycle, height, and app
-hash. The database advances before the status cache; a crash between those
-operations recovers from SQLite. Metadata binds chain ID, app version 3, and the
+transaction advances object deltas, validator lifecycle, versioned JMT nodes,
+the raw JMT AppHash, and height. The database advances before the status cache; a crash between those
+operations recovers from SQLite. Metadata binds chain ID, app version 4, and the
 canonical authorized-signer policy. The app hash also commits that immutable
 identity through the validator-lifecycle state, so a mismatched fresh state-sync
 target rejects the snapshot instead of diverging after recovery.
@@ -72,17 +78,12 @@ For an offline database restore:
 
 ## Migration
 
-If the database has no committed head and `state_path` contains a valid
-`trnm_cometbft_app_state_v3`, startup:
+Startup never imports `trnm_cometbft_app_state_v3` in place because changing the
+AppHash at an already committed height would break the CometBFT handshake.
+Instead run `trnm-v3-export-new-genesis` as documented in
+`TRNM_V3_TO_V4_EXPORT_NEW_GENESIS.md`. It verifies the complete legacy root and
+creates an atomic, review-only bundle for a different chain ID. It does not
+produce a ready-to-start node: operators must review and sign the new genesis,
+and rollback remains the unchanged v3 network until cutover.
 
-1. fully decodes and recomputes the legacy app hash;
-2. atomically writes and fsyncs a `.legacy-v3` backup;
-3. imports the full state in one SQLite transaction; and
-4. replaces the original JSON with the small status cache.
-
-If an existing SQLite head and a legacy v3 JSON disagree on height or app hash,
-startup refuses automatic recovery. Preserve both and resolve manually.
-
-Application state v2 and store schema v1 predate committed validator lifecycle
-and are not auto-migrated. Prototype devnets must archive evidence and reset
-from an app-version-3 genesis or a light-client-verified snapshot.
+Application state v2 and store schemas 1/2 are also not auto-migrated.

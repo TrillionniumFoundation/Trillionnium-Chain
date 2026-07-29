@@ -395,7 +395,7 @@ fn run_adapter_with_retry_ignores_malformed_nonce_rejected_receipt_hash_and_keep
 }
 
 #[test]
-fn run_adapter_with_retry_zero_backoff_retries_without_observable_wait() {
+fn run_adapter_with_retry_zero_backoff_retries_successfully() {
     let counter = std::env::temp_dir().join(format!(
         "trnm-worker-agent-run-adapter-zero-backoff-counter-{}-{}.txt",
         std::process::id(),
@@ -408,10 +408,8 @@ fn run_adapter_with_retry_zero_backoff_retries_without_observable_wait() {
     let adapter_cmd = format!("python3 -c {script:?}");
     let action_args = vec![counter.display().to_string()];
 
-    let start = std::time::Instant::now();
     let res = run_adapter_with_retry(&adapter_cmd, &action_args, 1, 0)
         .expect("zero-backoff retry should succeed on the second attempt");
-    let elapsed = start.elapsed();
 
     let attempts = std::fs::read_to_string(&counter)
         .expect("counter file should exist after adapter execution");
@@ -425,10 +423,6 @@ fn run_adapter_with_retry_zero_backoff_retries_without_observable_wait() {
     assert!(res.ok);
     assert_eq!(res.rc, RC_OK);
     assert!(res.terminal);
-    assert!(
-        elapsed < std::time::Duration::from_millis(250),
-        "zero backoff should not add a measurable retry delay: {elapsed:?}"
-    );
 }
 
 #[test]

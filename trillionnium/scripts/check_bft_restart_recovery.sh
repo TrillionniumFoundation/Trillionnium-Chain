@@ -82,8 +82,6 @@ OUT_DIR="$ROOT/run"
 TS="$(date -u +%Y%m%d-%H%M%S)"
 REPORT="$OUT_DIR/bft-restart-recovery-$TS.txt"
 WAL_DIR="$OUT_DIR/consensus-wal-restart-$TS"
-PRE_LOG_GLOB="$OUT_DIR/bft-restart-pre-${TS}-*.log"
-POST_LOG_GLOB="$OUT_DIR/bft-restart-post-${TS}-*.log"
 GENERATED_AT="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 GIT_HEAD="$(git rev-parse HEAD 2>/dev/null || echo unknown)"
 GIT_BRANCH_NAME="$(git branch --show-current 2>/dev/null || true)"
@@ -180,7 +178,7 @@ for i in $(seq 1 "$RUNS"); do
   wal_file="$WAL_DIR/consensus-wal.toml"
   rm -f "$wal_file"
 
-  cargo run -q -p trnm-node --bin trnm-sim -- \
+  cargo run -q -p trnm-node --features legacy-harness --bin trnm-sim -- \
     --config configs/node1.toml \
     --block-ms 30 \
     --max-blocks 50 \
@@ -206,7 +204,7 @@ for i in $(seq 1 "$RUNS"); do
     exit 3
   fi
 
-  cargo run -q -p trnm-node --bin trnm-sim -- \
+  cargo run -q -p trnm-node --features legacy-harness --bin trnm-sim -- \
     --config configs/node1.toml \
     --block-ms 5 \
     --max-blocks 3 \

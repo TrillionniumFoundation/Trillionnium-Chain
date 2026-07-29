@@ -1,0 +1,1 @@
+{"schema":"trnm_canonical_tx_v1","sender":"client-1","nonce":2,"max_gas":10000,"fee_limit":"10000","command":{"type":"create_task","task_id":"task-1","reward":"1000","worker_stake":"250","result_deadline_height":100,"challenge_window_blocks":20}}

@@ -99,11 +99,11 @@ command -v python3 >/dev/null
 APP_BIN="${TRNM_COMETBFT_APP_BIN:-}"
 CLI_BIN="${TRNM_COMETBFT_CLI_BIN:-}"
 if [[ -z "$APP_BIN" ]]; then
-  cargo build -q -p trnm-consensus-app --bin trnm-cometbft-app
+  cargo build -q -p trnm-consensus-app --bin trnm-cometbft-app --locked
   APP_BIN="$PWD/target/debug/trnm-cometbft-app"
 fi
 if [[ -z "$CLI_BIN" ]]; then
-  cargo build -q -p trnm-node --bin trnm-chain-cli
+  cargo build -q -p trnm-node --features legacy-harness --bin trnm-chain-cli --locked
   CLI_BIN="$PWD/target/debug/trnm-chain-cli"
 fi
 test -x "$APP_BIN"
@@ -164,11 +164,11 @@ print(json.dumps(result, separators=(",", ":")))
 jq --argjson validators "$validators" --argjson initial_validators "$initial_validators" --argjson authorized_signers "$authorized_signers" \
   '.chain_id="trnm-comet-four"
    | .validators=$validators
-   | .consensus_params.version.app="3"
+   | .consensus_params.version.app="4"
    | .app_state={
        schema:"trnm_cometbft_genesis_v2",
        chain_id:"trnm-comet-four",
-       app_version:3,
+       app_version:4,
        authorized_signers:$authorized_signers,
        validator_governance:{
          schema:"trnm_validator_governance_v1",
@@ -626,11 +626,11 @@ OPERATOR_ACCOUNT_NONCE=$operator_nonce
 expiry_base_height="$(curl -fsS "http://127.0.0.1:$BASE_RPC/status" | jq -r '.result.sync_info.latest_block_height | tonumber')"
 expiry_deadline=$((expiry_base_height + 2))
 payload="$(jq -nc --argjson deadline "$expiry_deadline" '{schema:"trnm_canonical_tx_v1",sender:"did:client:1",nonce:2,max_gas:100000,fee_limit:"100000",command:{type:"create_task",task_id:"canonical-expiry-1",reward:"1000",worker_stake:"500",result_deadline_height:$deadline,challenge_window_blocks:10}}')"
-tx_file="$(sign_canonical_tx expiry-create did:client:1 hepta "$ROOT/client.key" 5 "$payload")"
+tx_file="$(sign_canonical_tx expiry-create did:client:1 hepta "$ROOT/client.key" 2 "$payload")"
 submit_canonical_tx "$tx_file" task_created >/dev/null
 
 payload='{"schema":"trnm_canonical_tx_v1","sender":"did:client:1","nonce":3,"max_gas":100000,"fee_limit":"100000","command":{"type":"expire_task","task_id":"canonical-expiry-1"}}'
-tx_file="$(sign_canonical_tx expiry-finalize did:client:1 hepta "$ROOT/client.key" 6 "$payload")"
+tx_file="$(sign_canonical_tx expiry-finalize did:client:1 hepta "$ROOT/client.key" 3 "$payload")"
 expiry_response="$(submit_canonical_tx "$tx_file" task_expired)"
 vertical_final_height="$(printf '%s' "$expiry_response" | jq -r '.result.height | tonumber')"
 test "$vertical_final_height" -ge "$expiry_deadline"
@@ -652,7 +652,24 @@ test "$(printf '%s' "$expiry_query" | jq -r '.result.response.value' | base64 -d
 proof_query="$(curl -fsS -H 'Content-Type: application/json' \
   -d '{"jsonrpc":"2.0","id":1,"method":"abci_query","params":{"path":"/task/canonical-task-1","data":"","height":"0","prove":true}}' \
   "http://127.0.0.1:$BASE_RPC")"
-test "$(printf '%s' "$proof_query" | jq -r '.result.response.code')" != "0"
+test "$(printf '%s' "$proof_query" | jq -r '.result.response.code')" = "0"
+test "$(printf '%s' "$proof_query" | jq -r '.result.response.log')" = "trnm.poco.task.v1"
+test "$(
+  printf '%s' "$proof_query" |
+    jq -r '(.result.response.proofOps.ops // .result.response.proof_ops.ops // []) | length'
+)" = "1"
+test "$(
+  printf '%s' "$proof_query" |
+    jq -r '(.result.response.proofOps.ops // .result.response.proof_ops.ops)[0].type'
+)" = "ics23:jmt:v1"
+test -n "$(
+  printf '%s' "$proof_query" |
+    jq -r '(.result.response.proofOps.ops // .result.response.proof_ops.ops)[0].key'
+)"
+test -n "$(
+  printf '%s' "$proof_query" |
+    jq -r '(.result.response.proofOps.ops // .result.response.proof_ops.ops)[0].data'
+)"
 
 for nonce in 14 15 16 17; do
   commit_fixture_tx "$nonce"

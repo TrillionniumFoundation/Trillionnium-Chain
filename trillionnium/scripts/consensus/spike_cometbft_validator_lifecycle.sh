@@ -92,11 +92,11 @@ python3 -c 'import cryptography' >/dev/null
 APP_BIN="${TRNM_COMETBFT_APP_BIN:-}"
 CLI_BIN="${TRNM_COMETBFT_CLI_BIN:-}"
 if [[ -z "$APP_BIN" ]]; then
-  cargo build -q -p trnm-consensus-app --bin trnm-cometbft-app
+  cargo build -q -p trnm-consensus-app --bin trnm-cometbft-app --locked
   APP_BIN="$PWD/target/debug/trnm-cometbft-app"
 fi
 if [[ -z "$CLI_BIN" ]]; then
-  cargo build -q -p trnm-node --bin trnm-chain-cli
+  cargo build -q -p trnm-node --features legacy-harness --bin trnm-chain-cli --locked
   CLI_BIN="$PWD/target/debug/trnm-chain-cli"
 fi
 test -x "$APP_BIN"
@@ -167,11 +167,11 @@ jq \
   --argjson initial_validators "$initial_validators" \
   '.chain_id=$chain_id
    | .validators=$validators
-   | .consensus_params.version.app="3"
+   | .consensus_params.version.app="4"
    | .app_state={
        schema:"trnm_cometbft_genesis_v2",
        chain_id:$chain_id,
-       app_version:3,
+       app_version:4,
        authorized_signers:[{
          signer_id:"did:operator:1",
          signer_role:"operator",
@@ -441,7 +441,6 @@ submit_transition() {
 CANONICAL_ACCOUNT_NONCE=0
 submit_opaque() {
   local label="$1"
-  local envelope_nonce="$2"
   CANONICAL_ACCOUNT_NONCE=$((CANONICAL_ACCOUNT_NONCE + 1))
   local account_nonce="$CANONICAL_ACCOUNT_NONCE"
   local current
@@ -461,7 +460,7 @@ submit_opaque() {
     --command-id "lifecycle-$label-$SUBMITTED_HEIGHT" \
     --signer-id did:operator:1 \
     --signer-role operator \
-    --nonce "$envelope_nonce" \
+    --nonce "$account_nonce" \
     --payload-type trnm.canonical.tx.v1 \
     --payload-file "$payload" \
     --output "$tx" \
@@ -478,14 +477,13 @@ SETTLED_HEIGHT=0
 drive_and_settle() {
   local target_height="$1"
   local label="$2"
-  local nonce_base="$3"
   local current
   while true; do
     current="$(latest_height)"
     if (( current >= target_height )); then
       break
     fi
-    submit_opaque "$label-$current" "$((nonce_base + current))"
+    submit_opaque "$label-$current"
   done
   SETTLED_HEIGHT="$(wait_settled_height_at_or_after "$target_height")"
 }
@@ -567,7 +565,7 @@ submit_transition \
   "$ROOT/node4/config/priv_validator_key.json"
 add_height="$SUBMITTED_HEIGHT"
 add_activation="$SUBMITTED_ACTIVATION"
-drive_and_settle "$add_activation" add-advance 1000
+drive_and_settle "$add_activation" add-advance
 add_active_height="$SETTLED_HEIGHT"
 assert_phase add-active "$add_active_height" "$ROOT/validator-set-added-5.json"
 assert_local_power 4 10
@@ -578,7 +576,7 @@ submit_transition \
   "$ROOT/validator-set-removed-4.json"
 remove_height="$SUBMITTED_HEIGHT"
 remove_activation="$SUBMITTED_ACTIVATION"
-drive_and_settle "$remove_activation" remove-advance 2000
+drive_and_settle "$remove_activation" remove-advance
 remove_active_height="$SETTLED_HEIGHT"
 assert_phase remove-active "$remove_active_height" "$ROOT/validator-set-removed-4.json"
 assert_local_power 0 0
@@ -590,13 +588,13 @@ submit_transition \
   "$ROOT/node5/config/priv_validator_key.json"
 rotation_height="$SUBMITTED_HEIGHT"
 rotation_activation="$SUBMITTED_ACTIVATION"
-drive_and_settle "$rotation_activation" rotation-advance 3000
+drive_and_settle "$rotation_activation" rotation-advance
 rotation_active_height="$SETTLED_HEIGHT"
 assert_phase rotation-active "$rotation_active_height" "$ROOT/validator-set-rotated-4.json"
 assert_local_power 1 0
 assert_local_power 5 10
 
-submit_opaque rotated-set-continues 4000
+submit_opaque rotated-set-continues
 final_height="$(wait_settled_height_at_or_after "$SUBMITTED_HEIGHT")"
 assert_phase rotated-set-continues "$final_height" "$ROOT/validator-set-rotated-4.json"
 

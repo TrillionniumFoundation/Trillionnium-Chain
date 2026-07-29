@@ -3,6 +3,11 @@ set -euo pipefail
 
 script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
+if [[ "${TRNM_LEGACY_HARNESS_ACKNOWLEDGED:-0}" != "1" ]]; then
+  echo "refusing to build frozen legacy harness package; set TRNM_LEGACY_HARNESS_ACKNOWLEDGED=1 for reproducibility audit only" >&2
+  exit 2
+fi
+
 args=(build)
 : "${TRNM_RELEASE_SIGNING_KEY:?TRNM_RELEASE_SIGNING_KEY must name an owner-only Ed25519 PEM private key}"
 args+=(--signing-key "$TRNM_RELEASE_SIGNING_KEY")

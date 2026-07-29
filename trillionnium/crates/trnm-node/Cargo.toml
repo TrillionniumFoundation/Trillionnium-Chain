@@ -5,7 +5,11 @@ edition.workspace = true
 license.workspace = true
 authors.workspace = true
 autobins = false
-default-run = "trnm-chain-node"
+publish = false
+
+[features]
+default = []
+legacy-harness = []
 
 [package.metadata.trnm]
 lane = "legacy-harness"
@@ -15,18 +19,22 @@ production_candidate = false
 [[bin]]
 name = "trnm-sim"
 path = "src/main.rs"
+required-features = ["legacy-harness"]
 
 [[bin]]
 name = "trnm-chain-node"
 path = "src/bin/trnm-chain-node.rs"
+required-features = ["legacy-harness"]
 
 [[bin]]
 name = "trnm-chain-validator"
 path = "src/bin/trnm-chain-validator.rs"
+required-features = ["legacy-harness"]
 
 [[bin]]
 name = "trnm-chain-cli"
 path = "src/bin/trnm-chain-cli.rs"
+required-features = ["legacy-harness"]
 
 [dependencies]
 anyhow = "1"
@@ -39,14 +47,14 @@ hex = "0.4"
 ed25519-dalek = "2"
 rand_core = { version = "0.6", features = ["getrandom"] }
 rusqlite = { version = "0.32", features = ["bundled"] }
-trnm-pouw = { path = "../trnm-pouw" }
-trnm-state = { path = "../trnm-state" }
-trnm-types = { path = "../trnm-types" }
-trnm-executor = { path = "../trnm-executor" }
-trnm-mempool = { path = "../trnm-mempool" }
-trnm-research-protocol = { path = "../trnm-research-protocol" }
-trnm-finality-types = { path = "../trnm-finality-types" }
-trnm-finality-verifier = { path = "../trnm-finality-verifier" }
+trnm-pouw = { version = "0.1.0", path = "../trnm-pouw" }
+trnm-state = { version = "0.1.0", path = "../trnm-state" }
+trnm-types = { version = "0.1.0", path = "../trnm-types" }
+trnm-executor = { version = "0.1.0", path = "../trnm-executor" }
+trnm-mempool = { version = "0.1.0", path = "../trnm-mempool" }
+trnm-research-protocol = { version = "0.1.0", path = "../trnm-research-protocol" }
+trnm-finality-types = { version = "0.1.0", path = "../trnm-finality-types" }
+trnm-finality-verifier = { version = "0.1.0", path = "../trnm-finality-verifier" }
 
 [dev-dependencies]
-trnm-state = { path = "../trnm-state", features = ["test-utils"] }
+trnm-state = { version = "0.1.0", path = "../trnm-state", features = ["test-utils"] }

@@ -47,7 +47,24 @@ const normalizeNormalizedAuditQueryToken = (
 export const buildNormalizedAuditEventsQueryParams = (
   query: NormalizedAuditEventsQuery,
 ): URLSearchParams => {
-  const parsedQuery = normalizedAuditEventsQuerySchema.parse(query);
+  const normalizedInput = {
+    ...query,
+    source: normalizeNormalizedAuditQueryToken(query.source),
+    eventType: normalizeNormalizedAuditQueryToken(query.eventType),
+    cursor: normalizeNormalizedAuditQueryToken(query.cursor),
+  };
+  const suppliedToken =
+    query.source !== undefined || query.eventType !== undefined || query.cursor !== undefined;
+  if (
+    suppliedToken &&
+    normalizedInput.source === undefined &&
+    normalizedInput.eventType === undefined &&
+    normalizedInput.cursor === undefined &&
+    query.limit === undefined
+  ) {
+    throw new Error("normalized audit query contains no usable filters");
+  }
+  const parsedQuery = normalizedAuditEventsQuerySchema.parse(normalizedInput);
   const params = new URLSearchParams();
 
   const source = normalizeNormalizedAuditQueryToken(parsedQuery.source);
@@ -376,11 +393,21 @@ export function createFrontendApiClient(config: BaseClientConfig) {
     ): Promise<QueryNormalizedAuditEventsResult> {
       let normalizedQueryInput: NormalizedAuditEventsQuery;
       try {
+        const source = normalizeNormalizedAuditQueryToken(query.source);
+        const eventType = normalizeNormalizedAuditQueryToken(query.eventType);
+        const cursor = normalizeNormalizedAuditQueryToken(query.cursor);
+        if (
+          (query.source !== undefined && source === undefined) ||
+          (query.eventType !== undefined && eventType === undefined) ||
+          (query.cursor !== undefined && cursor === undefined)
+        ) {
+          throw new Error("normalized audit query token became empty");
+        }
         normalizedQueryInput = {
           ...query,
-          source: normalizeNormalizedAuditQueryToken(query.source, "source"),
-          eventType: normalizeNormalizedAuditQueryToken(query.eventType, "eventType"),
-          cursor: normalizeNormalizedAuditQueryToken(query.cursor, "cursor"),
+          source,
+          eventType,
+          cursor,
           limit: query.limit,
         };
       } catch (error) {

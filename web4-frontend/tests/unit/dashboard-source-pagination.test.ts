@@ -466,8 +466,7 @@ describe("dashboard source normalized audit pagination", () => {
             {
               source: " ​bridge-relay﻿ ",
               event_type: " bridge_relay.proof_submitted ",
-              actor: "
-validator-z	",
+              actor: "\nvalidator-z\t",
               object_id: "​proof-dup﻿",
               timestamp: "​2026-03-01T00:02:00.000Z﻿",
               reason: " ​critical﻿ ",

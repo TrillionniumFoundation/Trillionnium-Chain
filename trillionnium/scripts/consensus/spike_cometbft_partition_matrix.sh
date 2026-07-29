@@ -5,7 +5,7 @@ SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 cd "$SCRIPT_DIR/../.."
 
 COMETBFT_BIN="${TRNM_COMETBFT_BIN:-cometbft}"
-APP_VERSION="${TRNM_COMETBFT_APP_VERSION:-3}"
+APP_VERSION="${TRNM_COMETBFT_APP_VERSION:-4}"
 APP_CONFIG_SCHEMA="${TRNM_COMETBFT_APP_CONFIG_SCHEMA:-trnm_cometbft_app_config_v1}"
 GENESIS_SCHEMA="${TRNM_COMETBFT_GENESIS_SCHEMA:-trnm_cometbft_genesis_v2}"
 VALIDATOR_GOVERNANCE_SCHEMA="${TRNM_COMETBFT_VALIDATOR_GOVERNANCE_SCHEMA:-trnm_validator_governance_v1}"
@@ -198,11 +198,11 @@ command -v python3 >/dev/null
 APP_BIN="${TRNM_COMETBFT_APP_BIN:-}"
 CLI_BIN="${TRNM_COMETBFT_CLI_BIN:-}"
 if [[ -z "$APP_BIN" ]]; then
-  cargo build -q -p trnm-consensus-app --bin trnm-cometbft-app
+  cargo build -q -p trnm-consensus-app --bin trnm-cometbft-app --locked
   APP_BIN="$PWD/target/debug/trnm-cometbft-app"
 fi
 if [[ -z "$CLI_BIN" ]]; then
-  cargo build -q -p trnm-node --bin trnm-chain-cli
+  cargo build -q -p trnm-node --features legacy-harness --bin trnm-chain-cli --locked
   CLI_BIN="$PWD/target/debug/trnm-chain-cli"
 fi
 test -x "$APP_BIN"

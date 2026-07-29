@@ -167,6 +167,7 @@ const toDisplayTime = (isoLike?: string): string => {
   if (Number.isNaN(date.getTime())) return normalized;
 
   const fmt = new Intl.DateTimeFormat("sv-SE", {
+    timeZone: "Asia/Shanghai",
     year: "numeric",
     month: "2-digit",
     day: "2-digit",
@@ -276,11 +277,6 @@ const mapNormalizedAuditToDashboardEvent = (event: NormalizedAuditEvent, fallbac
       "{}",
     ),
   };
-};
-
-const toEventSortKey = (displayTime: string): number => {
-  const parsed = Date.parse(displayTime);
-  return Number.isNaN(parsed) ? Number.NEGATIVE_INFINITY : parsed;
 };
 
 const parsePositiveIntEnv = (value: string | undefined, fallback: number): number => {

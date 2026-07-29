@@ -11,7 +11,7 @@ LOG="$OUT_DIR/bft-message-auth-$TS.log"
 REPORT="$OUT_DIR/bft-message-auth-$TS.txt"
 mkdir -p "$OUT_DIR"
 
-cargo run -q -p trnm-node --bin trnm-sim -- \
+cargo run -q -p trnm-node --features legacy-harness --bin trnm-sim -- \
   --config configs/node1.toml \
   --block-ms 5 \
   --max-blocks 3 \

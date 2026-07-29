@@ -12,7 +12,7 @@ sleep 2
 
 # single node deterministic execution demo
 export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
-cargo run -p trnm-node --bin trnm-sim -- --config configs/node1.toml --block-ms 20 --max-blocks 10 | tee run/day7/node-demo.log
+cargo run -p trnm-node --features legacy-harness --bin trnm-sim -- --config configs/node1.toml --block-ms 20 --max-blocks 10 | tee run/day7/node-demo.log
 
 # grouping benchmark
 ./scripts/run_bench.sh | tee run/day7/bench.log

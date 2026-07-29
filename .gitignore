@@ -6,6 +6,9 @@
 /dist/
 /contracts/target/
 /trillionnium/target/
+/trillionnium/fuzz/artifacts/
+/trillionnium/fuzz/coverage/
+/trillionnium/fuzz/target/
 /trillionnium/run/
 /trillionnium/release/
 __pycache__/

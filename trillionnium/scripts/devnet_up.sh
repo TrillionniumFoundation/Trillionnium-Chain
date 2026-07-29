@@ -15,11 +15,11 @@ NODE1_MAX_BLOCKS="${NODE1_MAX_BLOCKS:-5}"
 NODE2_MAX_BLOCKS="${NODE2_MAX_BLOCKS:-5}"
 NODE3_MAX_BLOCKS="${NODE3_MAX_BLOCKS:-5}"
 
-cargo run -p trnm-node --bin trnm-sim -- --config configs/node1.toml --block-ms "$NODE1_BLOCK_MS" --max-blocks "$NODE1_MAX_BLOCKS" > run/node1.log 2>&1 &
+cargo run -p trnm-node --features legacy-harness --bin trnm-sim -- --config configs/node1.toml --block-ms "$NODE1_BLOCK_MS" --max-blocks "$NODE1_MAX_BLOCKS" > run/node1.log 2>&1 &
 PID1=$!
-cargo run -p trnm-node --bin trnm-sim -- --config configs/node2.toml --block-ms "$NODE2_BLOCK_MS" --max-blocks "$NODE2_MAX_BLOCKS" > run/node2.log 2>&1 &
+cargo run -p trnm-node --features legacy-harness --bin trnm-sim -- --config configs/node2.toml --block-ms "$NODE2_BLOCK_MS" --max-blocks "$NODE2_MAX_BLOCKS" > run/node2.log 2>&1 &
 PID2=$!
-cargo run -p trnm-node --bin trnm-sim -- --config configs/node3.toml --block-ms "$NODE3_BLOCK_MS" --max-blocks "$NODE3_MAX_BLOCKS" > run/node3.log 2>&1 &
+cargo run -p trnm-node --features legacy-harness --bin trnm-sim -- --config configs/node3.toml --block-ms "$NODE3_BLOCK_MS" --max-blocks "$NODE3_MAX_BLOCKS" > run/node3.log 2>&1 &
 PID3=$!
 
 echo "$PID1" > run/node1.pid

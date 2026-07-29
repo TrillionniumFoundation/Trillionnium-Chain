@@ -128,7 +128,7 @@ NODE1_MAX_BLOCKS=${NODE1_MAX_BLOCKS:-8} \
 NODE2_MAX_BLOCKS=${NODE2_MAX_BLOCKS:-8} \
 NODE3_MAX_BLOCKS=${NODE3_MAX_BLOCKS:-8} \
 ./scripts/devnet_up.sh
-sleep ${DEVNET_AUDIT_WAIT_SECONDS:-20}
+sleep "${DEVNET_AUDIT_WAIT_SECONDS:-20}"
 ./scripts/devnet_down.sh || true
 
 AUDIT_RETRIES=${AUDIT_RETRIES:-3}
@@ -148,7 +148,7 @@ if [ "$audit_ok" -ne 1 ]; then
 fi
 
 # 3) parallel sanity
-cargo run -q -p trnm-node --bin trnm-sim -- \
+cargo run -q -p trnm-node --features legacy-harness --bin trnm-sim -- \
   --config configs/node1.toml \
   --block-ms 5 \
   --max-blocks 6 \

@@ -1,0 +1,57 @@
+name: TRNM Canonical Input Fuzz Smoke
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/trnm-canonical-input-fuzz-smoke.yml"
+      - "rust-toolchain.toml"
+      - "scripts/ci/check_canonical_fuzz_smoke.sh"
+      - "scripts/ci/install_cargo_fuzz.sh"
+      - "trillionnium/Cargo.lock"
+      - "trillionnium/Cargo.toml"
+      - "trillionnium/crates/trnm-finality-types/**"
+      - "trillionnium/crates/trnm-protocol/**"
+      - "trillionnium/fuzz/**"
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/trnm-canonical-input-fuzz-smoke.yml"
+      - "rust-toolchain.toml"
+      - "scripts/ci/check_canonical_fuzz_smoke.sh"
+      - "scripts/ci/install_cargo_fuzz.sh"
+      - "trillionnium/Cargo.lock"
+      - "trillionnium/Cargo.toml"
+      - "trillionnium/crates/trnm-finality-types/**"
+      - "trillionnium/crates/trnm-protocol/**"
+      - "trillionnium/fuzz/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  bounded-smoke:
+    name: Bounded public-input fuzz smoke (not a campaign)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: dtolnay/rust-toolchain@4cda84d5c5c54efe2404f9d843567869ab1699d4
+        with:
+          toolchain: nightly-2026-07-27
+      - name: Install checksum- and lock-pinned cargo-fuzz runner
+        run: |
+          scripts/ci/install_cargo_fuzz.sh "$RUNNER_TEMP/trnm-cargo-fuzz"
+          printf '%s\n' "$RUNNER_TEMP/trnm-cargo-fuzz/bin" >> "$GITHUB_PATH"
+      - name: Run bounded two-target smoke
+        env:
+          TRNM_FUZZ_SMOKE_SECONDS: "15"
+        run: scripts/ci/check_canonical_fuzz_smoke.sh
+      - name: Upload crash artifacts
+        if: failure()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: trnm-canonical-fuzz-${{ github.run_id }}-${{ github.run_attempt }}
+          path: trillionnium/fuzz/artifacts/**
+          if-no-files-found: ignore
+          retention-days: 14

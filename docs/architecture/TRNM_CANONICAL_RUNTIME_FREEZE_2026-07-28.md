@@ -19,6 +19,11 @@ binaries are legacy harnesses. No new protocol capability may be added to them.
 A legacy test cannot be cited as evidence that the canonical runtime supports a
 feature.
 
+The automated freeze gate currently checks only the legacy binary entrypoints
+and Cargo manifest. The broader no-new-capability rule is binding architecture
+policy but remains review-enforced while canonical and legacy code still share
+`trnm-node` library modules; it is not yet a full source-closure checksum.
+
 ## Frozen Day-1 Scope
 
 Day-1 includes only:
@@ -47,6 +52,7 @@ capabilities until they enter the canonical path with end-to-end evidence.
 | Accounts, balances, and issued-supply commitment | `trnm-runtime` | Implemented | Four-validator canonical slice |
 | Sequential account nonce | `trnm-runtime` | Implemented | Replay rejection on four validators |
 | Gas, fee charging, and explicit fee collector | `trnm-runtime` | Implemented | Resource rejection and balance evidence |
+| Transaction simulation and fee estimation | `trnm-runtime`, `trnm-consensus-app` | Implemented | latest-state `/simulate`; CheckTx/finalized gas parity and no-mutation tests |
 | Bounded fee-policy governance and fee distribution | `trnm-runtime` | Implemented | Four-validator policy/distribution slice |
 | Task reward escrow and worker-accepted stake | `trnm-runtime` | Implemented | Forced-assignment rejection and four-validator slice |
 | Salted commit/reveal and challenge window | `trnm-runtime` | Implemented | Runtime tests and four-validator slice |
@@ -57,9 +63,9 @@ capabilities until they enter the canonical path with end-to-end evidence.
 | Validator add/remove/rotation | `trnm-consensus-app` | Implemented | Six-process lifecycle gate |
 | State sync and crash recovery | `trnm-consensus-app` | Implemented | Four/five-process recovery gate |
 | Dynamic public account-key onboarding | none | Not implemented | static authorized-signer allowlist |
-| AppHash v4 incremental authenticated tree | none | Not implemented | v3 remains linear |
-| Proof query and pruning | none | Not implemented | blocker for scale phase |
-| Asynchronous resumable snapshots | none | Not implemented | v2 snapshot remains synchronous |
+| AppHash v4 incremental authenticated tree | `trnm-consensus-app` JMT | Implemented foundation | raw JMT root; release-profile 1M objects + 1M updates algorithm gate passed 2026-07-29; SQLite/CometBFT multi-host SLO still open |
+| Proof query and pruning | `trnm-consensus-app` | Implemented foundation | ICS23 queries and retained-history pruning/restart tests |
+| Asynchronous resumable snapshots | `trnm-consensus-app` | Implemented foundation | format 3 manifest/chunk hashes; streaming large-state restore still open |
 | Threshold governance and timelock | none | Not implemented | operator key only |
 | Staking, unbonding, jail, slashing | none | Not implemented | mainnet blocker |
 | Authenticated multi-host topology | deployment layer | Not implemented | local loopback only |
@@ -69,12 +75,13 @@ capabilities until they enter the canonical path with end-to-end evidence.
 
 ## Upgrade and Dependency Boundary
 
-This branch still reports application version 3, store schema 2, and snapshot
-format 2. The canonical transaction semantics in this freeze are therefore
-**fresh-genesis/reset-only** evidence. They must not be rolled into an existing
-app-version-3 network or restored from an older snapshot. The AppHash v4 phase
-must add an explicit versioned migration or a reviewed export/new-genesis
-procedure before any in-place upgrade claim.
+This branch reports application version 4, store schema 3, and snapshot format
+3. It must not rewrite an existing app-version-3 height because that would
+break the CometBFT handshake. `trnm-v3-export-new-genesis` validates the legacy
+root and emits an atomic, review-only export bundle for a new chain ID; it does
+not claim an in-place upgrade or a ready-to-start v4 node. The old source and
+AppHash remain unchanged and rollback means resuming the old network before
+the new genesis is signed.
 
 The `trnm-node` binaries are frozen legacy harnesses, but
 `trnm-consensus-app` temporarily imports storage, Merkle, and signer-policy
@@ -107,7 +114,8 @@ comparison remains part of the durable indexer gate.
 The same gate changes the bounded fee policy, distributes collected fees to a
 governed treasury account, expires a second task exactly at its exclusive result
 deadline, and rejects a client-forced worker assignment, an exact commit replay,
-an over-gas transaction, an unknown payload type, and a proof query before
-AppHash v4. The latest local evidence schema is
+an over-gas transaction, an unknown payload type, and invalid replay/resource
+inputs. AppHash v4 proof queries are exercised separately against the exact
+block root. The latest local evidence schema is
 `trnm_canonical_vertical_slice_evidence_v1`; a passing local run remains
 development evidence and is not multi-host public-testnet proof.

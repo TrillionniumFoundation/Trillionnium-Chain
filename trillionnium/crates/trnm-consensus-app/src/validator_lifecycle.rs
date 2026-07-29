@@ -90,9 +90,20 @@ pub struct ValidatorLifecycleStateV1 {
     pub app_version: u64,
     pub authorized_signers_hash_hex: String,
     pub governance: ValidatorGovernanceV1,
+    #[serde(default)]
+    pub governance_sequence: u64,
     pub active_validators: Vec<ConsensusValidatorV1>,
     pub pending_transition: Option<ScheduledValidatorTransitionV1>,
     pub last_applied_transition_id: Option<String>,
+}
+
+pub(super) struct ValidatorTransitionAuthorization<'a> {
+    pub command_id: &'a str,
+    pub signer_id: &'a str,
+    pub signer_role: &'a str,
+    pub nonce: u64,
+    pub chain_id: &'a str,
+    pub accepted_height: u64,
 }
 
 impl ValidatorLifecycleStateV1 {
@@ -112,6 +123,7 @@ impl ValidatorLifecycleStateV1 {
             app_version,
             authorized_signers_hash_hex,
             governance,
+            governance_sequence: 0,
             active_validators,
             pending_transition: None,
             last_applied_transition_id: None,
@@ -179,6 +191,7 @@ impl ValidatorLifecycleStateV1 {
         validator_set_hash_hex(&self.active_validators)
     }
 
+    #[cfg(test)]
     pub fn commitment(&self) -> Result<[u8; 32]> {
         self.validate()?;
         Ok(hash_domain(
@@ -213,11 +226,7 @@ impl ValidatorLifecycleStateV1 {
     pub fn schedule(
         &mut self,
         transition: ValidatorSetTransitionV1,
-        envelope_command_id: &str,
-        envelope_signer_id: &str,
-        envelope_signer_role: &str,
-        expected_chain_id: &str,
-        accepted_height: u64,
+        authorization: ValidatorTransitionAuthorization<'_>,
     ) -> Result<()> {
         self.validate()?;
         ensure!(
@@ -225,20 +234,25 @@ impl ValidatorLifecycleStateV1 {
             "unsupported validator transition schema"
         );
         ensure!(
-            transition.chain_id == expected_chain_id,
+            transition.chain_id == authorization.chain_id,
             "validator transition chain_id mismatch"
         );
         ensure!(
-            self.chain_id == expected_chain_id,
+            self.chain_id == authorization.chain_id,
             "committed validator lifecycle chain_id mismatch"
         );
         ensure!(
-            transition.transition_id == envelope_command_id,
+            transition.transition_id == authorization.command_id,
             "validator transition_id must equal envelope command_id"
         );
         ensure!(
-            envelope_signer_role == "operator" && envelope_signer_id == self.governance.signer_id,
+            authorization.signer_role == "operator"
+                && authorization.signer_id == self.governance.signer_id,
             "validator transition is not signed by the configured governance operator"
+        );
+        ensure!(
+            authorization.nonce == self.governance_sequence.saturating_add(1),
+            "validator governance sequence is not contiguous"
         );
         ensure!(
             self.pending_transition.is_none(),
@@ -250,7 +264,9 @@ impl ValidatorLifecycleStateV1 {
         );
         ensure!(
             transition.activation_height
-                >= accepted_height.saturating_add(self.governance.min_activation_delay_blocks),
+                >= authorization
+                    .accepted_height
+                    .saturating_add(self.governance.min_activation_delay_blocks),
             "validator transition activation height is too early"
         );
         let target_validators = canonicalize_validators(transition.target_validators.clone())?;
@@ -264,10 +280,11 @@ impl ValidatorLifecycleStateV1 {
         self.pending_transition = Some(ScheduledValidatorTransitionV1 {
             transition_id: transition.transition_id,
             base_validator_set_hash_hex: transition.base_validator_set_hash_hex,
-            accepted_height,
+            accepted_height: authorization.accepted_height,
             activation_height: transition.activation_height,
             target_validators,
         });
+        self.governance_sequence = authorization.nonce;
         self.validate()
     }
 

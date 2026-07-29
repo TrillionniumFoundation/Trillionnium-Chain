@@ -11,4 +11,4 @@ path = "src/lib.rs"
 
 [dependencies]
 
-audit-events = { path = "../audit-events" }
+audit-events = { version = "0.1.0", path = "../audit-events" }

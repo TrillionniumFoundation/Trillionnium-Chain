@@ -732,6 +732,8 @@ def build(args: argparse.Namespace) -> None:
         "--release",
         "-p",
         "trnm-node",
+        "--features",
+        "legacy-harness",
     ]
     for binary in REQUIRED_BINARIES:
         cargo_command.extend(["--bin", binary])
@@ -740,7 +742,7 @@ def build(args: argparse.Namespace) -> None:
     for binary in REQUIRED_BINARIES:
         path = binary_dir / binary
         if path.is_symlink() or not path.is_file():
-            fail(f"cargo build did not produce required live binary: {binary}")
+            fail(f"cargo build did not produce required legacy harness binary: {binary}")
         run([str(path), "--help"], capture=True)
 
     with tempfile.TemporaryDirectory(prefix="trnm-init-devnet-") as init_directory:

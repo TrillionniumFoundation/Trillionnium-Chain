@@ -7,5 +7,5 @@ authors.workspace = true
 
 [dependencies]
 clap = { version = "4", features = ["derive"] }
-trnm-executor = { path = "../trnm-executor" }
-trnm-types = { path = "../trnm-types" }
+trnm-executor = { version = "0.1.0", path = "../trnm-executor" }
+trnm-types = { version = "0.1.0", path = "../trnm-types" }

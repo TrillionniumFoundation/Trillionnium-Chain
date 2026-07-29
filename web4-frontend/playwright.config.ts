@@ -4,12 +4,15 @@ export default defineConfig({
   testDir: "./tests/e2e",
   fullyParallel: true,
   use: {
-    baseURL: "http://127.0.0.1:3000",
+    baseURL: "http://localhost:3000",
+    launchOptions: process.env.TRNM_PLAYWRIGHT_EXECUTABLE_PATH
+      ? { executablePath: process.env.TRNM_PLAYWRIGHT_EXECUTABLE_PATH }
+      : undefined,
     trace: "on-first-retry",
   },
   webServer: {
     command: "npm run dev",
-    url: "http://127.0.0.1:3000",
+    url: "http://localhost:3000",
     reuseExistingServer: true,
     timeout: 120000,
   },

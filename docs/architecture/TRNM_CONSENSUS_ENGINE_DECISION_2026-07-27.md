@@ -1,6 +1,10 @@
 # TRNM Consensus Engine Decision — 2026-07-27
 
-Status: **Accepted direction; integration not yet complete**
+Status: **Superseded by the 2026-07-28 canonical runtime freeze**
+
+The references below to `trnm-chain-node` describe the historical comparison
+fixture, not the production candidate. The binding path is now
+`CometBFT -> trnm-consensus-app -> trnm-runtime`.
 
 ## Decision
 
@@ -32,8 +36,8 @@ set transitions, and adversarial network testing.
 
 ## Spike exit criteria
 
-The selected engine must demonstrate all of the following with the canonical
-`trnm-chain-node` application path:
+The selected engine must demonstrate all of the following through the
+canonical CometBFT application path:
 
 1. deterministic proposal execution and application hash agreement;
 2. four validators tolerating one Byzantine/offline validator;

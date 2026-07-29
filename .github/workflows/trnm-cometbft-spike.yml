@@ -4,27 +4,78 @@ on:
   pull_request:
     paths:
       - ".github/workflows/trnm-cometbft-spike.yml"
+      - "config/legacy-harness-freeze.sha256"
+      - "deny.toml"
+      - "LICENSE"
+      - "rust-toolchain.toml"
+      - "contracts/Cargo.lock"
+      - "contracts/Cargo.toml"
+      - "contracts/**/Cargo.toml"
       - "trillionnium/Cargo.lock"
       - "trillionnium/Cargo.toml"
+      - "trillionnium/crates/**/Cargo.toml"
+      - "trillionnium/fuzz/**"
       - "trillionnium/crates/trnm-consensus-app/**"
       - "trillionnium/crates/trnm-finality-types/**"
+      - "trillionnium/crates/trnm-protocol/**"
+      - "trillionnium/crates/trnm-runtime/**"
       - "trillionnium/crates/trnm-node/**"
       - "trillionnium/scripts/consensus/**"
+      - "scripts/ci/check_legacy_harness_freeze.sh"
+      - "scripts/ci/install_cargo_deny.sh"
+      - "web4-frontend/**"
   push:
     branches: [main]
     paths:
       - ".github/workflows/trnm-cometbft-spike.yml"
+      - "config/legacy-harness-freeze.sha256"
+      - "deny.toml"
+      - "LICENSE"
+      - "rust-toolchain.toml"
+      - "contracts/Cargo.lock"
+      - "contracts/Cargo.toml"
+      - "contracts/**/Cargo.toml"
       - "trillionnium/Cargo.lock"
       - "trillionnium/Cargo.toml"
+      - "trillionnium/crates/**/Cargo.toml"
+      - "trillionnium/fuzz/**"
       - "trillionnium/crates/trnm-consensus-app/**"
       - "trillionnium/crates/trnm-finality-types/**"
+      - "trillionnium/crates/trnm-protocol/**"
+      - "trillionnium/crates/trnm-runtime/**"
       - "trillionnium/crates/trnm-node/**"
       - "trillionnium/scripts/consensus/**"
+      - "scripts/ci/check_legacy_harness_freeze.sh"
+      - "scripts/ci/install_cargo_deny.sh"
+      - "web4-frontend/**"
 
 permissions:
   contents: read
 
 jobs:
+  dependency-policy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: dtolnay/rust-toolchain@4cda84d5c5c54efe2404f9d843567869ab1699d4
+        with:
+          toolchain: 1.95.0
+      - name: Install checksum-pinned cargo-deny
+        run: |
+          scripts/ci/install_cargo_deny.sh "$RUNNER_TEMP/trnm-tools"
+          printf '%s\n' "$RUNNER_TEMP/trnm-tools" >> "$GITHUB_PATH"
+      - name: Check all Rust dependency policies
+        run: |
+          cargo deny --manifest-path trillionnium/Cargo.toml check
+          cargo deny --manifest-path contracts/Cargo.toml check
+          cargo deny --manifest-path trillionnium/fuzz/Cargo.toml check
+      - name: Check frontend dependency advisories
+        working-directory: web4-frontend
+        run: npm audit --package-lock-only --audit-level=high
+      - name: Enforce frozen legacy binary surfaces
+        run: bash scripts/ci/check_legacy_harness_freeze.sh
+
   cometbft-four-validator:
     runs-on: ubuntu-latest
     timeout-minutes: 20
@@ -37,8 +88,10 @@ jobs:
       TRNM_COMETBFT_LIFECYCLE_CI_ROOT: ${{ runner.temp }}/trnm-comet-lifecycle-${{ github.run_id }}-${{ github.run_attempt }}
 
     steps:
-      - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@stable
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: dtolnay/rust-toolchain@4cda84d5c5c54efe2404f9d843567869ab1699d4
+        with:
+          toolchain: 1.95.0
 
       - name: Install checksum-pinned CometBFT
         run: |
@@ -51,6 +104,23 @@ jobs:
 
       - name: Adapter unit gate
         run: cargo test --manifest-path trillionnium/Cargo.toml --locked -p trnm-consensus-app
+
+      - name: AppHash v4 scale smoke (10k objects + 10k updates; not the million gate)
+        run: |
+          set -euo pipefail
+          cargo run --manifest-path trillionnium/Cargo.toml --locked \
+            -p trnm-consensus-app \
+            --features scale-gate \
+            --bin trnm-auth-tree-scale -- \
+            --objects 10000 \
+            --updates 10000 \
+            --batch-size 1000 \
+            --live-set 1000 \
+            --window-batches 3 \
+            --max-late-p95-ratio 8 \
+            --latency-slack-us 10000 \
+            --prune-retain-versions 8 \
+            | tee "${RUNNER_TEMP}/trnm-apphash-v4-scale-smoke.json"
 
       - name: Single-node live-process gate
         env:
@@ -73,7 +143,7 @@ jobs:
 
       - name: Upload failed CometBFT safety evidence
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: trnm-cometbft-safety-${{ github.run_id }}-${{ github.run_attempt }}
           path: |
@@ -107,15 +177,17 @@ jobs:
       COMETBFT_SHA256: "736592aea2e077a4bb934ed26b0ee670462ae3d8a37670e2d268dea33304bc52"
       CARGO_INCREMENTAL: "0"
       CARGO_TERM_COLOR: never
-      TRNM_COMETBFT_APP_VERSION: "3"
+      TRNM_COMETBFT_APP_VERSION: "4"
       TRNM_COMETBFT_APP_CONFIG_SCHEMA: trnm_cometbft_app_config_v1
       TRNM_COMETBFT_GENESIS_SCHEMA: trnm_cometbft_genesis_v2
       TRNM_COMETBFT_VALIDATOR_GOVERNANCE_SCHEMA: trnm_validator_governance_v1
       TRNM_COMETBFT_PARTITION_ROOT: ${{ runner.temp }}/trnm-comet-partition-${{ matrix.case }}-${{ github.run_id }}-${{ github.run_attempt }}
 
     steps:
-      - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@stable
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: dtolnay/rust-toolchain@4cda84d5c5c54efe2404f9d843567869ab1699d4
+        with:
+          toolchain: 1.95.0
 
       - name: Install checksum-pinned CometBFT
         run: |
@@ -130,7 +202,7 @@ jobs:
         run: >-
           cargo build --manifest-path trillionnium/Cargo.toml --locked
           -p trnm-consensus-app --bin trnm-cometbft-app
-          -p trnm-node --bin trnm-chain-cli
+          -p trnm-node --features trnm-node/legacy-harness --bin trnm-chain-cli
 
       - name: Rootless ${{ matrix.case }} partition safety gate
         env:
@@ -143,7 +215,7 @@ jobs:
 
       - name: Upload failed partition safety evidence
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: trnm-cometbft-partition-${{ matrix.case }}-${{ github.run_id }}-${{ github.run_attempt }}
           path: |

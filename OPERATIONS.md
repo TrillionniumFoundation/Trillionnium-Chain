@@ -2,18 +2,19 @@
 
 > Scope: main Trillionnium repository operational playbook (English rewrite).
 
-## Canonical Live Devnet Runtime
+## Canonical Public-Testnet Candidate
 
-- Run live nodes with `trnm-chain-node`, validators with
-  `trnm-chain-validator`, and initialization/signing workflows with
-  `trnm-chain-cli`.
-- `trnm-sim` is retained only for historical simulation, benchmark replay, and
-  legacy gates. Never use its output as live-chain release or finality evidence.
-- Build and verify the tracked signed package with
-  `trillionnium/scripts/release/build_trnm_chain_devnet_v1.sh` and
-  `trillionnium/scripts/release/verify_trnm_chain_devnet_v1.sh`.
-- Keep the trusted release public key outside the archive. A key bundled inside
-  the archive is not a trust anchor.
+- Run the application with `trnm-cometbft-app` beside a pinned CometBFT node.
+  Canonical state transition is `CometBFT -> trnm-consensus-app -> trnm-runtime`.
+- `trnm-chain-node`, `trnm-chain-validator`, `trnm-chain-cli`, and `trnm-sim`
+  are frozen legacy harnesses. They require the explicit `legacy-harness`
+  Cargo feature and their output is not release or finality evidence.
+- The historical `trnm_chain_devnet_v1` signed package is retained only for
+  reproducibility audits. Building it requires an explicit
+  `TRNM_LEGACY_HARNESS_ACKNOWLEDGED=1` acknowledgement and does not produce a
+  public-testnet artifact.
+- Production packaging, remote-signer integration, and multi-host rollout are
+  still open readiness items; see `RELEASE_READINESS.md`.
 
 ## Workload Module
 

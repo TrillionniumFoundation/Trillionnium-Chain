@@ -9,6 +9,9 @@ on:
       - 'trillionnium/**'
       - '.github/workflows/rust-l1-nightly-health.yml'
 
+permissions:
+  contents: read
+
 concurrency:
   group: rust-l1-nightly-health-${{ github.ref }}
   cancel-in-progress: true
@@ -19,10 +22,12 @@ jobs:
     timeout-minutes: 45
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
 
       - name: Setup Rust toolchain
-        uses: dtolnay/rust-toolchain@stable
+        uses: dtolnay/rust-toolchain@4cda84d5c5c54efe2404f9d843567869ab1699d4
+        with:
+          toolchain: 1.95.0
 
       - name: Install GNU timeout
         run: brew install coreutils
@@ -31,7 +36,7 @@ jobs:
         run: |
           export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
           cd trillionnium
-          cargo test --workspace
+          cargo test --workspace --locked
 
       - name: Run devnet + state root audit (baseline)
         run: |
@@ -48,7 +53,7 @@ jobs:
           set -euo pipefail
           export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
           cd trillionnium
-          cargo run -q -p trnm-node --bin trnm-sim -- \
+          cargo run --locked -q -p trnm-node --features legacy-harness --bin trnm-sim -- \
             --config configs/node1.toml \
             --block-ms 5 \
             --max-blocks 6 \
@@ -192,11 +197,11 @@ jobs:
           SPOT="$OUT_DIR/executor-spotcheck-${GITHUB_RUN_ID:-local}.txt"
 
           echo "[spotcheck] classic (txs=20000, keys=1000, strategy=original)" | tee "$SPOT"
-          cargo run -q -p trnm-bench -- \
+          cargo run --locked -q -p trnm-bench -- \
             --txs 20000 --keys 1000 --strategy original --profile | tee -a "$SPOT"
 
           echo "[spotcheck] mixed (txs=20000, keys=2000, read_fanout=4, write_every=2, strategy=original)" | tee -a "$SPOT"
-          cargo run -q -p trnm-bench -- \
+          cargo run --locked -q -p trnm-bench -- \
             --txs 20000 --keys 2000 --workload mixed --read-fanout 4 --write-every 2 --strategy original --profile | tee -a "$SPOT"
 
           CLASSIC_HARD_MS=${SPOTCHECK_CLASSIC_HARD_MS:-180}
@@ -399,7 +404,7 @@ jobs:
           fi
       - name: Upload nightly health artifacts
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: rust-l1-nightly-health-${{ github.run_id }}
           path: |

@@ -2,6 +2,11 @@
   "name": "web4-frontend",
   "version": "0.1.0",
   "private": true,
+  "packageManager": "npm@11.16.0",
+  "engines": {
+    "node": ">=24.18.0 <25",
+    "npm": ">=11.16.0 <12"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -13,12 +18,13 @@
     "test:contract": "vitest run tests/unit/api-contract-adapters.test.ts",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
+    "dependency:compat": "node scripts/check-brace-expansion-compat.cjs",
     "ci:check": "bash ./scripts/ci-check.sh",
     "release:preflight": "bash ./scripts/release-preflight.sh",
     "release:ready": "bash ./scripts/release-ready.sh"
   },
   "dependencies": {
-    "next": "16.1.7",
+    "next": "^16.2.12",
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "zod": "^4.3.6"
@@ -31,11 +37,17 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "eslint": "^9",
-    "eslint-config-next": "16.1.6",
+    "brace-expansion": "file:vendor/brace-expansion-cjs-compat",
+    "eslint": "^9.39.3",
+    "eslint-config-next": "^16.2.12",
     "jsdom": "^25.0.1",
     "tailwindcss": "^4",
     "typescript": "^5",
     "vitest": "^4.1.2"
+  },
+  "overrides": {
+    "brace-expansion": "$brace-expansion",
+    "postcss": "8.5.23",
+    "sharp": "0.35.3"
   }
 }
