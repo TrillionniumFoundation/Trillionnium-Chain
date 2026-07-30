@@ -11,17 +11,18 @@ Status: **four-validator crash recovery and fresh-node state sync proven locally
   command validation, authorized signer policy, deterministic command execution,
   and the canonical state commitment.
 - `PrepareProposal` applies transactions against a temporary ordered overlay and
-  filters malformed, expired, replayed command ID/signer nonce, conflicting, and
-  over-limit transactions before they can poison a proposal.
+  filters malformed, expired, replayed sequential account nonce, conflicting,
+  and over-limit transactions before they can poison a proposal.
 - `InitChain` fails closed unless the CometBFT chain ID, genesis application
   schema/version, authorized signer set, validator set, and committed governance
   policy match the local application config. The fixtures pin
-  `consensus_params.version.app=3`; omitting that pin was
+  `consensus_params.version.app=4`; omitting that pin was
   proven to make a fresh node reject state sync with an app-version mismatch.
-- Application hash v3 commits object state, accepted command IDs, signer nonces,
-  chain/app identity, authorized-signer policy, active validators, pending
-  transition, and governance policy. State sync therefore cannot preserve the
-  object root while weakening replay protection or changing validation identity.
+- Application hash v4 is a versioned Jellyfish Merkle Tree root over namespaced
+  canonical objects, sequential account nonces, chain/app identity,
+  authorized-signer policy, active validators, pending transition, and governance
+  policy. State sync therefore cannot preserve the object root while weakening
+  replay protection or changing validation identity.
 - Validator transitions use a full canonical target set, base-set-hash CAS,
   delayed activation, bidirectional greater-than-two-thirds overlap, CometBFT
   power ceilings, and Ed25519 possession proofs for every new consensus key.
@@ -31,19 +32,22 @@ Status: **four-validator crash recovery and fresh-node state sync proven locally
 - A tampered signed envelope is rejected during proposal processing.
 - Finalization stages state without advancing committed height before `Commit`.
 - Committed application state uses a SQLite WAL store with `synchronous=FULL`.
-  Each `Commit` transaction writes only this block's object, command-ID, and
-  signer-nonce delta before atomically advancing the height/app-hash head.
+  Each production `Commit` transaction writes only this block's object, JMT, and
+  lifecycle delta before atomically advancing the height/app-hash head.
 - `CheckTx`, `PrepareProposal`, and `ProcessProposal` use a touched-object
   overlay instead of cloning the complete committed state. `PendingBlock` also
-  retains only the block delta; `FinalizeBlock` computes the canonical v3 root
-  once using a root-only Merkle path that is byte-compatible with the prior
-  proof-building implementation.
-- Store schema v2 persists the lifecycle atomically with the block delta. A
-  legacy `trnm_cometbft_app_state_v3` JSON is hash-validated, backed up, and
-  migrated into SQLite; v2 state is deliberately rejected because it predates
-  committed validator identity. The JSON path then becomes a small recoverable
-  height/app-hash status mirror; SQLite remains authoritative if a crash occurs
-  after SQL commit but before mirror refresh.
+  retains only the block delta; `FinalizeBlock` plans the next JMT version
+  directly against a pinned SQLite read transaction. Persistent startup and
+  point queries do not rebuild the complete tree or materialize all objects.
+- Store schema 3 persists lifecycle, canonical objects, JMT nodes/values,
+  preimages, stale indices, roots, and the application head atomically with the
+  block delta. The legacy `trnm_cometbft_app_state_v3` JSON is never migrated
+  in-place because changing an already committed root would break the CometBFT
+  handshake. `trnm-v3-export-new-genesis` instead emits an explicitly reviewed
+  bundle for a different chain ID while leaving the source untouched. The JSON
+  state path is now only a best-effort height/app-hash status mirror; SQLite
+  remains authoritative if a crash occurs after SQL commit but before mirror
+  refresh.
 - Store corruption, chain/app-version mismatch, or a non-contiguous expected tip
   fails closed. The store also binds the canonical authorized-signer policy, so
   a signer ID, role, or key cannot drift silently across a restart. Unit
@@ -60,15 +64,22 @@ Status: **four-validator crash recovery and fresh-node state sync proven locally
   but before the ABCI `Commit` response. One-shot marker files make each boundary
   deterministic. Every validator restarts, replays or accepts the authoritative
   SQLite tip as appropriate, and converges without conflicting finalized heights.
-- Production configurations write an atomic disk-backed snapshot every five
-  committed heights and retain three generations. Snapshot chunks are served
-  directly from disk, avoiding the previous `16 × full_state` resident-memory
-  cost while keeping a discovered snapshot available as the chain advances.
+- Production configurations request a pinned SQLite format-4 snapshot every
+  five committed heights, mark a busy worker for catch-up and pin the latest
+  committed head only when that worker is free, and retain three validated
+  generations. Snapshot chunks are served
+  directly from disk; receives are written at fixed offsets with a durable
+  resume journal instead of retaining or concatenating the payload in memory.
+  Correctness is covered for multi-chunk restart and hostile-input rejection;
+  million-object snapshot time, WAL retention, and temporary-disk peaks remain
+  open scale gates.
 - A fifth node with no application state restores a light-client-verified ABCI
-  snapshot, catches up, and converges on the same application hash.
+  format-4 snapshot, catches up, and converges on the same application hash.
+  The fixture asserts CometBFT's restored snapshot format/height and verified
+  ABCI AppHash and writes a dedicated state-sync evidence record.
 - The four-validator fixture is
   `trillionnium/scripts/consensus/spike_cometbft_four_validator.sh`.
-- App-hash v3 commits application content but not height metadata, so a truly
+- App-hash v4 commits application content but not height metadata, so a truly
   empty block keeps the same state root and does not force CometBFT into an
   unbounded empty-block loop.
 - A six-node live fixture proves 4→5 addition, 5→4 removal, one-key rotation,
@@ -82,11 +93,11 @@ Status: **four-validator crash recovery and fresh-node state sync proven locally
 
 ## Not Yet Proven
 
-- A truly logarithmic keyed incremental Merkle tree is not implemented. App-hash
-  v3 still requires an ordered O(N) root pass during
-  `FinalizeBlock`, although it no longer builds inclusion proofs or clones full
-  object payloads. A sparse/Jellyfish-style v4 commitment requires an explicit
-  app-version and snapshot-format migration.
+- The v4 JMT update path is incremental, but retained-history pruning and
+  startup/hostile-snapshot verification still perform scale-dependent full-tree
+  work. The 1M-object + 1M-update release gate covered the in-memory JMT
+  algorithm, not SQLite fsync, persistent restart/prune/restore latency, WAL and
+  temporary-disk peaks, or CometBFT block latency.
 - authenticated multi-host peer transport and remote validator bootstrap;
 - threshold validator governance, HSM/KMS, production networking, cross-host
   fault recovery, long-duration soak, or public testnet SLOs.

@@ -283,6 +283,21 @@ wait_height() {
   return 1
 }
 
+wait_app_height() {
+  local index="$1"
+  local expected="$2"
+  local status_path="$ROOT/node$index/app-state.json"
+  local height
+  for _ in $(seq 1 200); do
+    height="$(jq -r '.height // empty' "$status_path" 2>/dev/null || true)"
+    if [[ "$height" =~ ^[0-9]+$ ]] && (( height >= expected )); then
+      return 0
+    fi
+    sleep 0.25
+  done
+  return 1
+}
+
 wait_test_crash() {
   local index="$1"
   local marker="${APP_CRASH_MARKERS[index]}"
@@ -709,14 +724,46 @@ start_comet 4
 wait_rpc 4
 wait_peers 4 2
 wait_height 4 "$latest_height"
-test "$(jq -r .height "$ROOT/node4/app-state.json")" -ge "$latest_height"
+wait_app_height 4 "$latest_height"
 
 wait_app_hash_convergence 0 1 2 3 4
 final_height="$(jq -r .height "$ROOT/node4/app-state.json")"
 app_hash="$(jq -r .app_hash_hex "$ROOT/node4/app-state.json")"
+state_sync_line="$(
+  grep -E 'Snapshot restored.*height=[0-9]+.*format=4' "$ROOT/node4/comet.log" |
+    tail -n 1
+)"
+test -n "$state_sync_line"
+state_sync_height="$(
+  printf '%s\n' "$state_sync_line" |
+    sed -n 's/.*height=\([0-9][0-9]*\).*format=4.*/\1/p'
+)"
+test "$state_sync_height" -gt 0
+test "$state_sync_height" -le "$latest_height"
+state_sync_app_hash="$(
+  grep -E "Verified ABCI app.*height=$state_sync_height.*appHash=[0-9A-F]+" \
+    "$ROOT/node4/comet.log" |
+    tail -n 1 |
+    sed -n 's/.*appHash=\([0-9A-F][0-9A-F]*\).*/\1/p'
+)"
+test "${#state_sync_app_hash}" -eq 64
 
 evidence_dir="$ROOT/evidence"
 mkdir -p -- "$evidence_dir"
+jq -n \
+  --argjson snapshot_height "$state_sync_height" \
+  --arg snapshot_app_hash "$state_sync_app_hash" \
+  --argjson final_height "$final_height" \
+  '{
+    schema:"trnm_cometbft_state_sync_evidence_v1",
+    node:"node4",
+    snapshot_format:4,
+    snapshot_height:$snapshot_height,
+    snapshot_app_hash:$snapshot_app_hash,
+    light_client_and_abci_app:"verified",
+    recovery:"restored_and_caught_up",
+    final_height:$final_height
+  }' >"$evidence_dir/state-sync-evidence.json"
 jq -n \
   --argjson proposal_target_height "$proposal_height" \
   --argjson proposal_observed_tip "$second_height" \

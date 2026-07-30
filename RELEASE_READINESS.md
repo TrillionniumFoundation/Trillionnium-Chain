@@ -1,6 +1,6 @@
 # TRNM Release Readiness
 
-Updated date: 2026-07-29
+Updated date: 2026-07-30
 Scope: A citation must record the remote URL, fetch UTC/result, branch, `HEAD`,
 `refs/remotes/origin/main`, clean/dirty `git status --porcelain`, and this
 document's SHA-256. Run `git fetch --prune origin main` first. If fetch or
@@ -36,14 +36,25 @@ cached tracking ref contemporaneous.
   objects, account nonces, issued supply, fee collection/distribution, terminal balances,
   block history, and AppHash while rejecting forced assignment, replay,
   over-gas, and unknown-payload transactions. AppHash v4 now uses a versioned
-  JMT root with ICS23 membership/non-membership queries, persisted pruning, and
-  format-3 manifest/chunk-hashed snapshots. A release-profile executable gate
+  JMT root with SQLite-backed point planning, ICS23 membership/non-membership
+  queries, persisted pruning, and format-4 streaming SQLite snapshots. Persistent
+  startup no longer materializes the object set or JMT. Snapshot chunks and their
+  receive journal are synchronized incrementally, survive a process restart, and
+  are validated against an exact canonical SQLite schema, latest-only reachable
+  JMT closure, chain/signer bindings, and lifecycle authorization before install.
+  Persistent nodes reject the memory-concatenating legacy format 3. A
+  release-profile executable gate
   completed exactly 1,000,000 initial objects plus 1,000,000 updates across 200
   JMT versions in 142.5 seconds under a 5 GiB virtual-memory limit. Early/late
   update-batch P95 was 697/960 ms; pruning retained 64 versions while preserving
   the boundary/latest ICS23 proofs and latest root. Peak RSS was 4.44 GiB. This
   is an in-memory JMT algorithm/retention gate, not SQLite fsync, CometBFT block,
-  or multi-host latency evidence; streaming large-state restore remains open. Local
+  or multi-host latency evidence. A multi-chunk format-4 correctness gate now
+  covers repeated offer, receive-journal restart, catalog restart, hostile future
+  and unreachable rows, mutated schema, signer-policy rebinding, and non-destructive
+  rejection. Million-object persistent-store restart/prune/restore latency remains
+  open; retained-history pruning and full-store verification can still create
+  scale-dependent work. Local
   four-validator offline/rejoin, fresh-node ABCI state sync, deterministic proposal
   filtering, transactional SQLite-WAL delta persistence, and validator-lifecycle
   unit/crash-recovery gates pass. A six-node process fixture proves 4→5, 5→4,
@@ -80,7 +91,9 @@ cached tracking ref contemporaneous.
 - The authoritative feature-to-runtime matrix and Day-1 freeze are in
   `docs/architecture/TRNM_CANONICAL_RUNTIME_FREEZE_2026-07-28.md`. Features not
   marked implemented in that matrix remain unimplemented regardless of legacy tests.
-- This branch uses application version 4, store schema 3, and snapshot format 3.
+- This branch uses application version 4, store schema 3, and persistent snapshot
+  format 4. Snapshot format 3 is restricted to the memory-only compatibility
+  harness.
   It deliberately refuses in-place v3 root rewriting. The verified
   `trnm-v3-export-new-genesis` tool emits a review-only bundle for a different
   chain ID and leaves the old source untouched; operator review/signing and an

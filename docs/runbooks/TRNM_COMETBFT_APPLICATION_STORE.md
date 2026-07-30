@@ -17,7 +17,14 @@ For a configured `state_path` such as `app-state.json`:
   the application is running.
 - `app-state.json` is only a best-effort height/app-hash status cache. It is
   refreshed from SQLite at startup and must never be used as a backup.
-- `app-state.snapshots/*.snapshot` contains bounded ABCI state-sync snapshots.
+- `app-state.snapshots/*.snapshot` contains bounded, normalized SQLite ABCI
+  state-sync payloads. The matching `*.snapshot.manifest.json` file is the
+  crash-recoverable local catalog entry.
+- `app-state.restore/*.sqlite3.part` and `*.journal.json` are format-4 receive
+  staging. A repeated offer or process restart verifies completed chunks and
+  resumes. Accepting a valid offer removes staging for every other manifest;
+  rejecting or completing the active restore removes its pair. The active
+  manifest is still allowed up to the protocol's 4-GiB ceiling.
 - No legacy file is rewritten automatically. A v3 source remains byte-for-byte
   unchanged during explicit export/new-genesis review.
 
@@ -29,6 +36,46 @@ operations recovers from SQLite. Metadata binds chain ID, app version 4, and the
 canonical authorized-signer policy. The app hash also commits that immutable
 identity through the validator-lifecycle state, so a mismatched fresh state-sync
 target rejects the snapshot instead of diverging after recovery.
+
+Persistent startup keeps only the committed head and validator lifecycle in
+memory. Objects, replay lookups, JMT nodes, values, roots, and preimages remain
+SQLite-backed; point reads and proof planning use a single pinned read
+transaction and fail-stop on storage/authentication errors. The production
+path does not rebuild an in-memory JMT or materialize all objects at startup.
+
+## ABCI state sync
+
+Persistent nodes produce snapshot format 4. The producer pins the committed
+SQLite read view before releasing the commit lock, runs the SQLite online
+backup in a worker, reduces the copy to latest-only JMT history, checkpoints,
+switches the copy to rollback-journal mode, vacuums it, and then publishes the
+normalized payload followed by an atomically replaced manifest. Only one worker
+runs; while it is busy, later interval requests set a catch-up marker without
+opening another SQLite read transaction. Once free, the worker pins the then
+latest committed head and catches up. Three validated generations are retained.
+The producer catalog is reconstructed and invalid/orphaned `.snapshots`
+artifacts are removed at startup.
+
+The receiver writes each chunk at its fixed offset, synchronizes it, and
+atomically updates a receive journal. It never concatenates format-4 chunks in
+RAM. Before installation it verifies the metadata and payload hashes, exact
+canonical SQLite schema, `quick_check`, chain/app/signer bindings, latest-only
+root shape, absence of future or unreachable JMT rows, every authenticated
+object/lifecycle proof, and the local lifecycle authorization policy. Bad
+chunks return the requested refetch index and reject the sender. Re-offering
+the same manifest preserves verified progress. Before decoding untrusted rows,
+the validator also enforces per-row bounds for JMT nodes/values, key preimages,
+domain objects, lifecycle state, and identifiers.
+
+All semantic and local-policy checks run before installation. Once SQLite has
+accepted the authoritative backup into the live database, a later
+checkpoint/fsync/post-validation failure is fail-stop: the process aborts and
+must restart from SQLite rather than returning `RejectSnapshot` while retaining
+an installed disk head and an empty in-memory head.
+
+Persistent nodes reject legacy format 3 because that compatibility format
+retains and concatenates chunks in memory. Format 3 remains available only to
+the memory-only test harness.
 
 Height remains authoritative store metadata but is not itself an app-hash leaf.
 An empty block therefore advances the durable height without changing the state
@@ -60,6 +107,28 @@ For the current prototype, the simplest safe procedure is offline:
 
 Copying the live database, WAL, and SHM as unrelated filesystem operations is
 not an atomic backup.
+
+## Current scale boundary
+
+The format-4 tests include a multi-chunk payload, repeated offer, receive-journal
+restart, hostile future/unreachable rows, mutated DDL, signer-policy rebinding,
+and restart/catalog retention. They are correctness gates, not a million-object
+SQLite recovery benchmark.
+
+The remaining scale blockers are explicit:
+
+- retained-history pruning still performs whole-store verification and can
+  create a synchronous latency spike at a pruning boundary;
+- startup and hostile-snapshot validation are memory-bounded but still perform
+  full-tree work;
+- a pinned online backup can retain WAL pages until the worker finishes, and
+  `VACUUM` requires additional temporary disk;
+- the current protocol limit is 4096 one-MiB chunks (4 GiB);
+- the active receive stage can therefore consume 4 GiB before semantic
+  validation; there is not yet a deployment-level disk reservation or
+  time/work budget for hostile full-tree verification;
+- SQLite fsync latency, restore time, WAL/temp-disk peaks, disk-full recovery,
+  and multi-host P95/P99 have not passed the 1M/1M or public-testnet gates.
 
 ## Restore
 

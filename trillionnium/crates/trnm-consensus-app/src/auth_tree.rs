@@ -86,6 +86,47 @@ pub fn stored_object_key(object_key_hex: &str) -> Result<Vec<u8>> {
     namespaced_key(StateNamespace::Object, &[object_key_hex.as_bytes()])
 }
 
+pub(crate) fn stored_object_key_preimage(preimage: &[u8]) -> Result<String> {
+    let header_len = KEY_DOMAIN.len() + 1 + 1 + 2;
+    ensure!(
+        preimage.len() >= header_len + 4,
+        "authenticated object key preimage is truncated"
+    );
+    ensure!(
+        &preimage[..KEY_DOMAIN.len()] == KEY_DOMAIN,
+        "authenticated object key domain mismatch"
+    );
+    let mut cursor = KEY_DOMAIN.len();
+    ensure!(
+        preimage[cursor] == 0,
+        "authenticated object key domain separator mismatch"
+    );
+    cursor += 1;
+    ensure!(
+        preimage[cursor] == StateNamespace::Object as u8,
+        "authenticated key is not in the object namespace"
+    );
+    cursor += 1;
+    let component_count =
+        u16::from_be_bytes([preimage[cursor], preimage[cursor.saturating_add(1)]]);
+    cursor += 2;
+    ensure!(
+        component_count == 1,
+        "authenticated object key must have one component"
+    );
+    let component_len = u32::from_be_bytes(
+        preimage[cursor..cursor + 4]
+            .try_into()
+            .expect("object key length was checked"),
+    ) as usize;
+    cursor += 4;
+    ensure!(
+        component_len > 0 && cursor.saturating_add(component_len) == preimage.len(),
+        "authenticated object key component length mismatch"
+    );
+    String::from_utf8(preimage[cursor..].to_vec()).context("authenticated object key is not UTF-8")
+}
+
 #[cfg(test)]
 pub fn account_key(account_id: &str) -> Result<Vec<u8>> {
     namespaced_key(StateNamespace::Account, &[account_id.as_bytes()])
@@ -107,6 +148,10 @@ pub fn validator_state_key() -> Result<Vec<u8>> {
 fn key_hash(key: &[u8]) -> Result<KeyHash> {
     ensure!(!key.is_empty(), "authenticated key must be non-empty");
     Ok(KeyHash::with::<Sha256>(key))
+}
+
+pub(crate) fn authenticated_key_hash(key: &[u8]) -> Result<KeyHash> {
+    key_hash(key)
 }
 
 /// Exact value committed for an object leaf.
@@ -570,45 +615,7 @@ impl InMemoryAuthTree {
         version: Version,
         writes: impl IntoIterator<Item = AuthWrite>,
     ) -> Result<PlannedAuthUpdate> {
-        ensure!(
-            version == self.expected_next_version(),
-            "version {} is not the exact next version {}",
-            version,
-            self.expected_next_version()
-        );
-
-        let mut hashed_writes = BTreeMap::new();
-        let mut preimages = BTreeMap::new();
-        for write in writes {
-            let hash = key_hash(&write.key)?;
-            ensure!(
-                hashed_writes.insert(hash, write.value).is_none(),
-                "duplicate authenticated key in value set"
-            );
-            match preimages.entry(hash) {
-                std::collections::btree_map::Entry::Vacant(entry) => {
-                    entry.insert(write.key);
-                }
-                std::collections::btree_map::Entry::Occupied(entry) => {
-                    ensure!(
-                        entry.get() == &write.key,
-                        "SHA-256 authenticated key collision"
-                    );
-                }
-            }
-        }
-
-        let tree = Sha256Jmt::new(self);
-        let (root_hash, tree_update_batch) = tree
-            .put_value_set(hashed_writes, version)
-            .with_context(|| format!("plan authenticated tree version {version}"))?;
-
-        Ok(PlannedAuthUpdate {
-            version,
-            root_hash,
-            tree_update_batch,
-            preimages,
-        })
+        plan_put_value_set(self, self.expected_next_version(), version, writes)
     }
 
     /// Atomically applies a previously planned update.
@@ -664,21 +671,10 @@ impl InMemoryAuthTree {
 
     /// Generates an ICS23 membership or non-membership proof.
     pub fn prove(&self, version: Version, key: Vec<u8>) -> Result<AuthProof> {
-        ensure!(!key.is_empty(), "authenticated proof key must be non-empty");
         let root_hash = self
             .root_hash(version)
             .with_context(|| format!("missing authenticated root at version {version}"))?;
-        let tree = Sha256Jmt::new(self);
-        let (value, commitment_proof) = tree
-            .get_with_ics23_proof(key.clone(), version)
-            .with_context(|| format!("create ICS23 proof at version {version}"))?;
-        Ok(AuthProof {
-            version,
-            root_hash,
-            key,
-            value,
-            commitment_proof,
-        })
+        prove_with_reader(self, version, root_hash, key)
     }
 
     /// Returns every live key/value pair at `version` and verifies each value
@@ -833,6 +829,73 @@ impl InMemoryAuthTree {
 
         Ok(stats)
     }
+}
+
+pub(crate) fn plan_put_value_set<R: TreeReader>(
+    reader: &R,
+    expected_next_version: Version,
+    version: Version,
+    writes: impl IntoIterator<Item = AuthWrite>,
+) -> Result<PlannedAuthUpdate> {
+    ensure!(
+        version == expected_next_version,
+        "version {} is not the exact next version {}",
+        version,
+        expected_next_version
+    );
+
+    let mut hashed_writes = BTreeMap::new();
+    let mut preimages = BTreeMap::new();
+    for write in writes {
+        let hash = key_hash(&write.key)?;
+        ensure!(
+            hashed_writes.insert(hash, write.value).is_none(),
+            "duplicate authenticated key in value set"
+        );
+        match preimages.entry(hash) {
+            std::collections::btree_map::Entry::Vacant(entry) => {
+                entry.insert(write.key);
+            }
+            std::collections::btree_map::Entry::Occupied(entry) => {
+                ensure!(
+                    entry.get() == &write.key,
+                    "SHA-256 authenticated key collision"
+                );
+            }
+        }
+    }
+
+    let tree = Sha256Jmt::new(reader);
+    let (root_hash, tree_update_batch) = tree
+        .put_value_set(hashed_writes, version)
+        .with_context(|| format!("plan authenticated tree version {version}"))?;
+
+    Ok(PlannedAuthUpdate {
+        version,
+        root_hash,
+        tree_update_batch,
+        preimages,
+    })
+}
+
+pub(crate) fn prove_with_reader<R: TreeReader + HasPreimage>(
+    reader: &R,
+    version: Version,
+    root_hash: RootHash,
+    key: Vec<u8>,
+) -> Result<AuthProof> {
+    ensure!(!key.is_empty(), "authenticated proof key must be non-empty");
+    let tree = Sha256Jmt::new(reader);
+    let (value, commitment_proof) = tree
+        .get_with_ics23_proof(key.clone(), version)
+        .with_context(|| format!("create ICS23 proof at version {version}"))?;
+    Ok(AuthProof {
+        version,
+        root_hash,
+        key,
+        value,
+        commitment_proof,
+    })
 }
 
 impl TreeReader for InMemoryAuthTree {
