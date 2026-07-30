@@ -86,6 +86,7 @@ jobs:
       CARGO_TERM_COLOR: never
       TRNM_COMETBFT_CI_ROOT: ${{ runner.temp }}/trnm-comet-four-${{ github.run_id }}-${{ github.run_attempt }}
       TRNM_COMETBFT_LIFECYCLE_CI_ROOT: ${{ runner.temp }}/trnm-comet-lifecycle-${{ github.run_id }}-${{ github.run_attempt }}
+      TRNM_PERSISTENT_SCALE_CI_ROOT: ${{ runner.temp }}/trnm-persistent-scale-${{ github.run_id }}-${{ github.run_attempt }}
 
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
@@ -121,6 +122,12 @@ jobs:
             --latency-slack-us 10000 \
             --prune-retain-versions 8 \
             | tee "${RUNNER_TEMP}/trnm-apphash-v4-scale-smoke.json"
+
+      - name: Persistent SQLite AppHash v4 smoke (10k objects + 10k updates)
+        env:
+          TRNM_PERSISTENT_SCALE_PROFILE: smoke
+          TRNM_PERSISTENT_SCALE_EVIDENCE_ROOT: ${{ env.TRNM_PERSISTENT_SCALE_CI_ROOT }}
+        run: trillionnium/scripts/consensus/run_persistent_scale_gate.sh
 
       - name: Single-node live-process gate
         env:
@@ -162,6 +169,9 @@ jobs:
             ${{ env.TRNM_COMETBFT_LIFECYCLE_CI_ROOT }}/node*/comet.log
             ${{ env.TRNM_COMETBFT_LIFECYCLE_CI_ROOT }}/node*/app-state.json
             ${{ env.TRNM_COMETBFT_LIFECYCLE_CI_ROOT }}/node*/app-state.json.sqlite3
+            ${{ env.TRNM_PERSISTENT_SCALE_CI_ROOT }}/evidence.json
+            ${{ env.TRNM_PERSISTENT_SCALE_CI_ROOT }}/report.json
+            ${{ env.TRNM_PERSISTENT_SCALE_CI_ROOT }}/time.txt
           if-no-files-found: warn
           retention-days: 14
 

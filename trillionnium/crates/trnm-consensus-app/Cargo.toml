@@ -22,6 +22,11 @@ name = "trnm-auth-tree-scale"
 path = "src/bin/trnm-auth-tree-scale.rs"
 required-features = ["scale-gate"]
 
+[[bin]]
+name = "trnm-persistent-scale"
+path = "src/bin/trnm-persistent-scale.rs"
+required-features = ["scale-gate"]
+
 [dependencies]
 anyhow = "1"
 borsh = { version = "1", features = ["derive"] }

@@ -63,9 +63,9 @@ capabilities until they enter the canonical path with end-to-end evidence.
 | Validator add/remove/rotation | `trnm-consensus-app` | Implemented | Six-process lifecycle gate |
 | State sync and crash recovery | `trnm-consensus-app` | Implemented foundation | Four/five-process recovery gate plus format-4 multi-chunk/restart correctness; large-state/multi-host timing still open |
 | Dynamic public account-key onboarding | none | Not implemented | static authorized-signer allowlist |
-| AppHash v4 incremental authenticated tree | `trnm-consensus-app` JMT | Implemented foundation | raw JMT root; persistent path plans/queries from SQLite without rebuilding the tree; release-profile 1M objects + 1M updates algorithm gate passed 2026-07-29; persistent 1M gate and multi-host SLO still open |
-| Proof query and pruning | `trnm-consensus-app` | Implemented foundation | self-verifying SQLite-backed ICS23 queries and transaction-before-commit pruning validation; pruning-boundary latency remains scale-dependent |
-| Asynchronous resumable snapshots | `trnm-consensus-app` | Implemented foundation | persistent format 4 streams SQLite chunks to disk, journals/restarts receive progress, recovers a bounded catalog, and rejects hostile schema/JMT/lifecycle input; large-state timing/disk gates still open |
+| AppHash v4 incremental authenticated tree | `trnm-consensus-app` JMT | Implemented foundation | raw JMT root; persistent path plans/queries from SQLite without rebuilding the tree; release profiles cover the in-memory algorithm and single-host SQLite fsync/restart/prune/snapshot workload; multi-host SLO still open |
+| Proof query and pruning | `trnm-consensus-app` | Implemented foundation | self-verifying SQLite-backed ICS23 queries; schema-4 successor indices and a row/byte/time-budgeted worker collect history outside `Commit` and yield to writers/snapshot pins; final proof/fsync latency remains disk-dependent |
+| Asynchronous resumable snapshots | `trnm-consensus-app` | Implemented foundation | persistent format 4 streams SQLite chunks to disk, journals/restarts receive progress, recovers a bounded catalog, rejects hostile schema/JMT/lifecycle input, and is exercised by the persistent single-host scale gate; multi-host timing/disk-fault gates remain open |
 | Threshold governance and timelock | none | Not implemented | operator key only |
 | Staking, unbonding, jail, slashing | none | Not implemented | mainnet blocker |
 | Authenticated multi-host topology | deployment layer | Not implemented | local loopback only |
@@ -75,7 +75,7 @@ capabilities until they enter the canonical path with end-to-end evidence.
 
 ## Upgrade and Dependency Boundary
 
-This branch reports application version 4, store schema 3, and persistent
+This branch reports application version 4, store schema 4, and persistent
 snapshot format 4. Format 3 is accepted only by the memory-only compatibility
 harness. It must not rewrite an existing app-version-3 height because that would
 break the CometBFT handshake. `trnm-v3-export-new-genesis` validates the legacy

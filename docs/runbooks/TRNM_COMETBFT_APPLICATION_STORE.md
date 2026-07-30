@@ -5,8 +5,10 @@ Status: internal devnet prototype. This is not a public-testnet backup claim.
 The 2026-07-29 release-profile authenticated-tree gate completed exactly one
 million initial objects plus one million updates while retaining 64 proof
 versions. It verifies incremental JMT planning, pruning, and ICS23 proof
-correctness only. It does not measure this SQLite store's fsync latency,
-CometBFT end-to-end commit latency, large-state restart time, or multi-host SLOs.
+correctness only. The separate persistent gate described below exercises the
+SQLite `synchronous=FULL` path, restart, budgeted pruning, format-4
+snapshot/restore, WAL, and temporary-disk peaks. Neither gate is a multi-host or
+public-testnet SLO.
 
 ## Files and authority
 
@@ -28,14 +30,16 @@ For a configured `state_path` such as `app-state.json`:
 - No legacy file is rewritten automatically. A v3 source remains byte-for-byte
   unchanged during explicit export/new-genesis review.
 
-Store schema v3 uses SQLite WAL, `synchronous=FULL`, an immediate write
+Store schema v4 uses SQLite WAL, `synchronous=FULL`, an immediate write
 transaction, and an expected-tip compare before every block commit. The same
 transaction advances object deltas, validator lifecycle, versioned JMT nodes,
-the raw JMT AppHash, and height. The database advances before the status cache; a crash between those
-operations recovers from SQLite. Metadata binds chain ID, app version 4, and the
-canonical authorized-signer policy. The app hash also commits that immutable
-identity through the validator-lifecycle state, so a mismatched fresh state-sync
-target rejects the snapshot instead of diverging after recovery.
+the raw JMT AppHash, height, the durable proof-query floor, and successor
+indices for stale value versions. The database advances before the status
+cache; a crash between those operations recovers from SQLite. Metadata binds
+chain ID, app version 4, and the canonical authorized-signer policy. The app
+hash also commits that immutable identity through the validator-lifecycle
+state, so a mismatched fresh state-sync target rejects the snapshot instead of
+diverging after recovery.
 
 Persistent startup keeps only the committed head and validator lifecycle in
 memory. Objects, replay lookups, JMT nodes, values, roots, and preimages remain
@@ -108,27 +112,56 @@ For the current prototype, the simplest safe procedure is offline:
 Copying the live database, WAL, and SHM as unrelated filesystem operations is
 not an atomic backup.
 
+## Persistent scale evidence
+
+Run the release-profile smoke gate with:
+
+```bash
+TRNM_PERSISTENT_SCALE_PROFILE=smoke \
+  trillionnium/scripts/consensus/run_persistent_scale_gate.sh
+```
+
+The smoke profile runs 10,000 initial objects and 10,000 updates. The `formal`
+profile runs at least 1,000,000 of each and accepts only a clean checked-out
+HEAD that it builds itself. Both profiles preserve their evidence directory
+and require a valid JSON report, exact workload counts, durable final prune
+floor, value-history collection, prune/Commit/snapshot-pin collision, exact
+restart, format-4 restore and continuation, and database/snapshot/restore/temp
+disk peaks. Multi-chunk snapshots must resume across a receiver restart. The
+formal profile additionally requires a release build, million-gate
+classification, nonzero WAL observation, a working systemd user
+`MemoryMax=3G` scope, and hashed `report.json` and `/usr/bin/time` evidence.
+
+The workload is deliberately single-process and single-host. It bypasses
+CometBFT transaction transport and therefore must not be presented as
+end-to-end validator latency or public-testnet evidence.
+
 ## Current scale boundary
 
 The format-4 tests include a multi-chunk payload, repeated offer, receive-journal
 restart, hostile future/unreachable rows, mutated DDL, signer-policy rebinding,
-and restart/catalog retention. They are correctness gates, not a million-object
-SQLite recovery benchmark.
+and restart/catalog retention. The persistent scale gate adds the production
+SQLite planning/fsync path and large-state recovery measurements.
 
 The remaining scale blockers are explicit:
 
-- retained-history pruning still performs whole-store verification and can
-  create a synchronous latency spike at a pruning boundary;
+- production retained-history deletion is successor-indexed and runs outside
+  `Commit` in row/logical-byte/time-budgeted transactions. It yields to a
+  waiting consensus writer and to pinned snapshots. The final retained
+  lifecycle proofs and SQLite fsync are still scale- and disk-dependent;
 - startup and hostile-snapshot validation are memory-bounded but still perform
   full-tree work;
+- live-store preimages remain bounded by distinct historical keys rather than
+  the proof-retention window; latest-only snapshots collect dead-key
+  preimages;
 - a pinned online backup can retain WAL pages until the worker finishes, and
   `VACUUM` requires additional temporary disk;
 - the current protocol limit is 4096 one-MiB chunks (4 GiB);
 - the active receive stage can therefore consume 4 GiB before semantic
   validation; there is not yet a deployment-level disk reservation or
   time/work budget for hostile full-tree verification;
-- SQLite fsync latency, restore time, WAL/temp-disk peaks, disk-full recovery,
-  and multi-host P95/P99 have not passed the 1M/1M or public-testnet gates.
+- disk-full/OOM/clock-skew recovery, multi-host P95/P99, and long-duration soak
+  remain outside this single-host gate.
 
 ## Restore
 

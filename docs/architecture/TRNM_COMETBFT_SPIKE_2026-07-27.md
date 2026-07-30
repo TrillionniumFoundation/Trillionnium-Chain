@@ -39,15 +39,17 @@ Status: **four-validator crash recovery and fresh-node state sync proven locally
   retains only the block delta; `FinalizeBlock` plans the next JMT version
   directly against a pinned SQLite read transaction. Persistent startup and
   point queries do not rebuild the complete tree or materialize all objects.
-- Store schema 3 persists lifecycle, canonical objects, JMT nodes/values,
-  preimages, stale indices, roots, and the application head atomically with the
-  block delta. The legacy `trnm_cometbft_app_state_v3` JSON is never migrated
-  in-place because changing an already committed root would break the CometBFT
-  handshake. `trnm-v3-export-new-genesis` instead emits an explicitly reviewed
-  bundle for a different chain ID while leaving the source untouched. The JSON
-  state path is now only a best-effort height/app-hash status mirror; SQLite
-  remains authoritative if a crash occurs after SQL commit but before mirror
-  refresh.
+- Store schema 4 persists lifecycle, canonical objects, JMT nodes/values,
+  preimages, stale-node/value successor indices, roots, the durable proof-query
+  floor, and the application head atomically with the block delta. An indexed,
+  budgeted worker physically collects retained history outside `Commit` and
+  yields to consensus writes and pinned snapshots. The legacy
+  `trnm_cometbft_app_state_v3` JSON is never migrated in-place because changing
+  an already committed root would break the CometBFT handshake.
+  `trnm-v3-export-new-genesis` instead emits an explicitly reviewed bundle for
+  a different chain ID while leaving the source untouched. The JSON state path
+  is now only a best-effort height/app-hash status mirror; SQLite remains
+  authoritative if a crash occurs after SQL commit but before mirror refresh.
 - Store corruption, chain/app-version mismatch, or a non-contiguous expected tip
   fails closed. The store also binds the canonical authorized-signer policy, so
   a signer ID, role, or key cannot drift silently across a restart. Unit
@@ -70,9 +72,10 @@ Status: **four-validator crash recovery and fresh-node state sync proven locally
   generations. Snapshot chunks are served
   directly from disk; receives are written at fixed offsets with a durable
   resume journal instead of retaining or concatenating the payload in memory.
-  Correctness is covered for multi-chunk restart and hostile-input rejection;
-  million-object snapshot time, WAL retention, and temporary-disk peaks remain
-  open scale gates.
+  Correctness is covered for multi-chunk restart and hostile-input rejection.
+  A separate single-host release gate records persistent planning/fsync,
+  budgeted pruning, restart, format-4 resume/restore, and WAL/temporary-disk
+  peaks for smoke and formal million-object profiles.
 - A fifth node with no application state restores a light-client-verified ABCI
   format-4 snapshot, catches up, and converges on the same application hash.
   The fixture asserts CometBFT's restored snapshot format/height and verified
@@ -93,11 +96,11 @@ Status: **four-validator crash recovery and fresh-node state sync proven locally
 
 ## Not Yet Proven
 
-- The v4 JMT update path is incremental, but retained-history pruning and
-  startup/hostile-snapshot verification still perform scale-dependent full-tree
-  work. The 1M-object + 1M-update release gate covered the in-memory JMT
-  algorithm, not SQLite fsync, persistent restart/prune/restore latency, WAL and
-  temporary-disk peaks, or CometBFT block latency.
+- The v4 JMT update path and physical retained-history deletion are
+  incremental. Startup and hostile-snapshot verification still perform
+  scale-dependent full-tree work. The persistent release gate measures SQLite
+  fsync, restart/prune/restore, WAL, and temporary-disk peaks on one host; it
+  does not measure CometBFT end-to-end or multi-host block latency.
 - authenticated multi-host peer transport and remote validator bootstrap;
 - threshold validator governance, HSM/KMS, production networking, cross-host
   fault recovery, long-duration soak, or public testnet SLOs.

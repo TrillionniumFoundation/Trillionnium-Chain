@@ -1,8 +1,11 @@
 use std::{
     fs,
     path::{Path, PathBuf},
-    sync::Arc,
-    time::Duration,
+    sync::{
+        atomic::{AtomicUsize, Ordering},
+        Arc, Mutex, TryLockError,
+    },
+    time::{Duration, Instant},
 };
 
 use anyhow::{anyhow, ensure, Context, Result};
@@ -27,8 +30,12 @@ use super::{
     APP_VERSION, VALIDATOR_LIFECYCLE_SCHEMA_V1,
 };
 
-const STORE_SCHEMA_VERSION: &str = "3";
+const STORE_SCHEMA_VERSION: &str = "4";
+const PREVIOUS_STORE_SCHEMA_VERSION: &str = "3";
 const STATUS_SCHEMA_V2: &str = "trnm_cometbft_app_status_v2";
+const AUTH_QUERY_FLOOR_KEY: &str = "auth_query_floor";
+const AUTH_PRUNE_TARGET_KEY: &str = "auth_prune_target";
+const AUTH_PRUNE_BATCH_MAX_DURATION: Duration = Duration::from_millis(10);
 const MAX_SNAPSHOT_AUTH_NODE_BYTES: u64 = 64 * 1024;
 const MAX_SNAPSHOT_AUTH_VALUE_BYTES: u64 = 16 * 1024 * 1024;
 const MAX_SNAPSHOT_KEY_PREIMAGE_BYTES: u64 = 1024 * 1024;
@@ -79,6 +86,15 @@ const STORE_SCHEMA_SQL: &str = "
         node_key BLOB NOT NULL,
         PRIMARY KEY (stale_since_version_be, node_key)
     ) STRICT;
+    CREATE UNIQUE INDEX IF NOT EXISTS auth_stale_nodes_by_node_key
+        ON auth_stale_nodes(node_key);
+    CREATE TABLE IF NOT EXISTS auth_stale_values (
+        stale_since_version_be BLOB NOT NULL CHECK(length(stale_since_version_be)=8),
+        key_hash BLOB NOT NULL CHECK(length(key_hash)=32),
+        version_be BLOB NOT NULL CHECK(length(version_be)=8),
+        PRIMARY KEY (stale_since_version_be, key_hash, version_be),
+        UNIQUE (key_hash, version_be)
+    ) STRICT;
     CREATE TABLE IF NOT EXISTS auth_roots (
         version_be BLOB PRIMARY KEY NOT NULL CHECK(length(version_be)=8),
         root_hash BLOB NOT NULL CHECK(length(root_hash)=32)
@@ -98,10 +114,62 @@ pub(super) struct ApplicationStore {
     database_path: PathBuf,
     chain_id: String,
     signer_policy_hash_hex: String,
+    writer_gate: Arc<Mutex<()>>,
+    writer_waiters: Arc<AtomicUsize>,
+    maintenance_gate: Arc<Mutex<()>>,
+    active_snapshot_pins: Arc<AtomicUsize>,
 }
 
 pub(super) struct PinnedSnapshot {
-    source: Connection,
+    source: Option<Connection>,
+    active_snapshot_pins: Arc<AtomicUsize>,
+}
+
+impl PinnedSnapshot {
+    fn source(&self) -> Result<&Connection> {
+        self.source
+            .as_ref()
+            .context("pinned snapshot source was already released")
+    }
+
+    fn release(&mut self) -> Result<()> {
+        let Some(source) = self.source.take() else {
+            return Ok(());
+        };
+        let rollback = source.execute_batch("ROLLBACK");
+        drop(source);
+        self.active_snapshot_pins.fetch_sub(1, Ordering::AcqRel);
+        rollback?;
+        Ok(())
+    }
+}
+
+impl Drop for PinnedSnapshot {
+    fn drop(&mut self) {
+        if let Some(source) = self.source.take() {
+            let _ = source.execute_batch("ROLLBACK");
+            drop(source);
+            self.active_snapshot_pins.fetch_sub(1, Ordering::AcqRel);
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub(super) struct PruneBatchOutcome {
+    pub(super) stats: PruneStats,
+    pub(super) query_floor: Version,
+    pub(super) target: Version,
+    pub(super) complete: bool,
+    pub(super) rows_examined: usize,
+    pub(super) logical_bytes_examined: u64,
+    pub(super) elapsed: Duration,
+}
+
+#[cfg(any(test, feature = "scale-gate"))]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub(super) struct AuthPruneStatus {
+    pub(super) query_floor: Version,
+    pub(super) target: Option<Version>,
 }
 
 #[derive(Serialize)]
@@ -192,6 +260,13 @@ impl HasPreimage for SqliteAuthReader<'_> {
 }
 
 impl ApplicationStore {
+    fn lock_writer(&self) -> Result<std::sync::MutexGuard<'_, ()>> {
+        self.writer_waiters.fetch_add(1, Ordering::AcqRel);
+        let locked = self.writer_gate.lock();
+        self.writer_waiters.fetch_sub(1, Ordering::AcqRel);
+        locked.map_err(|_| anyhow!("application store writer gate poisoned"))
+    }
+
     pub(super) fn open(
         status_path: &Path,
         chain_id: &str,
@@ -207,6 +282,10 @@ impl ApplicationStore {
             database_path: status_path.with_extension(extension),
             chain_id: chain_id.to_string(),
             signer_policy_hash_hex: signer_policy_hash_hex.to_string(),
+            writer_gate: Arc::new(Mutex::new(())),
+            writer_waiters: Arc::new(AtomicUsize::new(0)),
+            maintenance_gate: Arc::new(Mutex::new(())),
+            active_snapshot_pins: Arc::new(AtomicUsize::new(0)),
         };
         Ok(store)
     }
@@ -318,6 +397,13 @@ impl ApplicationStore {
     pub(super) fn prove(&self, version: Version, key: Vec<u8>) -> Result<AuthProof> {
         let connection = self.connect_read()?;
         connection.execute_batch("BEGIN DEFERRED")?;
+        let query_floor = optional_metadata_version(&connection, AUTH_QUERY_FLOOR_KEY)?
+            .or(oldest_auth_version(&connection)?)
+            .unwrap_or(0);
+        ensure!(
+            version >= query_floor,
+            "authenticated version {version} was pruned; retained query floor is {query_floor}"
+        );
         let root_hash = auth_root(&connection, version)?
             .with_context(|| format!("missing authenticated root at version {version}"))?;
         let reader = SqliteAuthReader {
@@ -333,6 +419,381 @@ impl ApplicationStore {
         Ok(proof)
     }
 
+    /// Removes authenticated roots, stale nodes, and superseded values below
+    /// the durable query floor using one writer-budgeted transaction.
+    ///
+    /// A `None` result means the consensus writer currently owns the shared
+    /// gate. Callers must yield and retry; they must never wait in front of a
+    /// Commit. Preimages remain one-per-distinct-key in the live database;
+    /// latest-only snapshot compaction removes dead-key preimages.
+    pub(super) fn try_prune_auth_batch(
+        &self,
+        max_rows: usize,
+        max_logical_bytes: u64,
+    ) -> Result<Option<PruneBatchOutcome>> {
+        ensure!(max_rows > 0, "authenticated prune batch must allow a row");
+        ensure!(
+            max_logical_bytes > 0,
+            "authenticated prune batch must allow logical bytes"
+        );
+        let _maintenance = match self.maintenance_gate.try_lock() {
+            Ok(maintenance) => maintenance,
+            Err(TryLockError::WouldBlock) => return Ok(None),
+            Err(TryLockError::Poisoned(_)) => {
+                return Err(anyhow!("application store maintenance gate poisoned"));
+            }
+        };
+        if self.active_snapshot_pins.load(Ordering::Acquire) > 0 {
+            return Ok(None);
+        }
+        if self.writer_waiters.load(Ordering::Acquire) > 0 {
+            return Ok(None);
+        }
+        let _writer = match self.writer_gate.try_lock() {
+            Ok(writer) => writer,
+            Err(TryLockError::WouldBlock) => return Ok(None),
+            Err(TryLockError::Poisoned(_)) => {
+                return Err(anyhow!("application store writer gate poisoned"));
+            }
+        };
+        let started = Instant::now();
+        let mut connection = self.connect_maintenance()?;
+        let transaction = connection.transaction_with_behavior(TransactionBehavior::Immediate)?;
+        let query_floor = optional_metadata_version(&transaction, AUTH_QUERY_FLOOR_KEY)?
+            .context("application store is missing authenticated query floor")?;
+        let Some(target) = optional_metadata_version(&transaction, AUTH_PRUNE_TARGET_KEY)? else {
+            transaction.rollback()?;
+            return Ok(Some(PruneBatchOutcome {
+                stats: PruneStats::default(),
+                query_floor,
+                target: query_floor,
+                complete: true,
+                rows_examined: 0,
+                logical_bytes_examined: 0,
+                elapsed: started.elapsed(),
+            }));
+        };
+        let height = metadata(&transaction, "height")?
+            .parse::<u64>()
+            .context("parse application store height during authenticated pruning")?;
+        let app_hash = trnm_finality_types::decode_hash32(
+            "application store app_hash",
+            &metadata(&transaction, "app_hash_hex")?,
+        )?;
+        ensure!(
+            target <= query_floor && query_floor <= height,
+            "authenticated prune control exceeds the committed head"
+        );
+        ensure!(
+            auth_root(&transaction, target)?.is_some(),
+            "authenticated prune boundary root is absent"
+        );
+
+        let target_be = target.to_be_bytes();
+        let mut stats = PruneStats::default();
+        let mut rows_examined = 0_usize;
+        let mut logical_bytes_examined = 0_u64;
+        let mut budget_expired = false;
+
+        let root_versions = {
+            let mut statement = transaction.prepare(
+                "SELECT version_be
+                 FROM auth_roots
+                 WHERE version_be<?1
+                 ORDER BY version_be
+                 LIMIT ?2",
+            )?;
+            let rows = statement.query_map(
+                params![target_be.as_slice(), i64::try_from(max_rows)?],
+                |row| row.get::<_, Vec<u8>>(0),
+            )?;
+            rows.collect::<rusqlite::Result<Vec<_>>>()?
+        };
+        for encoded_version in root_versions {
+            let version = decode_version_be(&encoded_version)?;
+            let root_path: NibblePath = std::iter::empty().collect();
+            let encoded_key = borsh::to_vec(&NodeKey::new(version, root_path))
+                .context("encode authenticated root node key during pruning")?;
+            let node_bytes = transaction
+                .query_row(
+                    "SELECT length(node) FROM auth_nodes WHERE node_key=?1",
+                    params![encoded_key.as_slice()],
+                    |row| row.get::<_, u64>(0),
+                )
+                .optional()?
+                .unwrap_or(0)
+                .saturating_add(u64::try_from(encoded_key.len())?);
+            if rows_examined > 0
+                && (logical_bytes_examined.saturating_add(node_bytes) > max_logical_bytes
+                    || started.elapsed() >= AUTH_PRUNE_BATCH_MAX_DURATION)
+            {
+                budget_expired = true;
+                break;
+            }
+            rows_examined = rows_examined.saturating_add(1);
+            logical_bytes_examined = logical_bytes_examined.saturating_add(node_bytes);
+            stats.nodes_removed = stats.nodes_removed.saturating_add(transaction.execute(
+                "DELETE FROM auth_nodes WHERE node_key=?1",
+                params![encoded_key.as_slice()],
+            )?);
+            stats.roots_removed = stats.roots_removed.saturating_add(transaction.execute(
+                "DELETE FROM auth_roots WHERE version_be=?1",
+                params![encoded_version],
+            )?);
+        }
+
+        let old_roots_remain = transaction
+            .query_row(
+                "SELECT 1 FROM auth_roots WHERE version_be<?1 LIMIT 1",
+                params![target_be.as_slice()],
+                |_| Ok(()),
+            )
+            .optional()?
+            .is_some();
+        if !old_roots_remain && !budget_expired && rows_examined < max_rows {
+            let remaining = max_rows.saturating_sub(rows_examined);
+            let stale_rows = {
+                let mut statement = transaction.prepare(
+                    "SELECT stale.stale_since_version_be,
+                            stale.node_key,
+                            COALESCE(length(nodes.node), 0)
+                     FROM auth_stale_nodes AS stale
+                     LEFT JOIN auth_nodes AS nodes ON nodes.node_key=stale.node_key
+                     WHERE stale.stale_since_version_be<=?1
+                     ORDER BY stale.stale_since_version_be, stale.node_key
+                     LIMIT ?2",
+                )?;
+                let rows = statement.query_map(
+                    params![target_be.as_slice(), i64::try_from(remaining)?],
+                    |row| {
+                        Ok((
+                            row.get::<_, Vec<u8>>(0)?,
+                            row.get::<_, Vec<u8>>(1)?,
+                            row.get::<_, u64>(2)?,
+                        ))
+                    },
+                )?;
+                rows.collect::<rusqlite::Result<Vec<_>>>()?
+            };
+            for (stale_since, node_key, node_length) in stale_rows {
+                let logical_bytes = node_length.saturating_add(u64::try_from(node_key.len())?);
+                if rows_examined > 0
+                    && (logical_bytes_examined.saturating_add(logical_bytes) > max_logical_bytes
+                        || started.elapsed() >= AUTH_PRUNE_BATCH_MAX_DURATION)
+                {
+                    break;
+                }
+                rows_examined = rows_examined.saturating_add(1);
+                logical_bytes_examined = logical_bytes_examined.saturating_add(logical_bytes);
+                stats.nodes_removed = stats.nodes_removed.saturating_add(transaction.execute(
+                    "DELETE FROM auth_nodes WHERE node_key=?1",
+                    params![node_key.as_slice()],
+                )?);
+                stats.stale_indices_removed =
+                    stats
+                        .stale_indices_removed
+                        .saturating_add(transaction.execute(
+                            "DELETE FROM auth_stale_nodes
+                             WHERE stale_since_version_be=?1 AND node_key=?2",
+                            params![stale_since, node_key],
+                        )?);
+            }
+        }
+
+        let stale_nodes_remain = transaction
+            .query_row(
+                "SELECT 1
+                 FROM auth_stale_nodes
+                 WHERE stale_since_version_be<=?1
+                 LIMIT 1",
+                params![target_be.as_slice()],
+                |_| Ok(()),
+            )
+            .optional()?
+            .is_some();
+        if !old_roots_remain
+            && !stale_nodes_remain
+            && rows_examined < max_rows
+            && started.elapsed() < AUTH_PRUNE_BATCH_MAX_DURATION
+        {
+            let remaining = max_rows.saturating_sub(rows_examined);
+            let stale_values = {
+                let mut statement = transaction.prepare(
+                    "SELECT stale.stale_since_version_be,
+                            stale.key_hash,
+                            stale.version_be,
+                            history.key_hash IS NOT NULL,
+                            COALESCE(length(history.value), 0)
+                     FROM auth_stale_values AS stale
+                     LEFT JOIN auth_values AS history
+                       ON history.key_hash=stale.key_hash
+                      AND history.version_be=stale.version_be
+                     WHERE stale.stale_since_version_be<=?1
+                     ORDER BY stale.stale_since_version_be,
+                              stale.key_hash,
+                              stale.version_be
+                     LIMIT ?2",
+                )?;
+                let rows = statement.query_map(
+                    params![target_be.as_slice(), i64::try_from(remaining)?],
+                    |row| {
+                        Ok((
+                            row.get::<_, Vec<u8>>(0)?,
+                            row.get::<_, Vec<u8>>(1)?,
+                            row.get::<_, Vec<u8>>(2)?,
+                            row.get::<_, bool>(3)?,
+                            row.get::<_, u64>(4)?,
+                        ))
+                    },
+                )?;
+                rows.collect::<rusqlite::Result<Vec<_>>>()?
+            };
+            for (stale_since, key_hash, version_be, value_exists, value_length) in stale_values {
+                ensure!(
+                    value_exists,
+                    "authenticated stale-value index points to an absent value"
+                );
+                let logical_bytes = value_length
+                    .saturating_add(u64::try_from(key_hash.len())?)
+                    .saturating_add(u64::try_from(version_be.len())?);
+                if rows_examined > 0
+                    && (logical_bytes_examined.saturating_add(logical_bytes) > max_logical_bytes
+                        || started.elapsed() >= AUTH_PRUNE_BATCH_MAX_DURATION)
+                {
+                    break;
+                }
+                rows_examined = rows_examined.saturating_add(1);
+                logical_bytes_examined = logical_bytes_examined.saturating_add(logical_bytes);
+                let removed = transaction.execute(
+                    "DELETE FROM auth_values
+                     WHERE key_hash=?1 AND version_be=?2",
+                    params![key_hash.as_slice(), version_be.as_slice()],
+                )?;
+                ensure!(
+                    removed == 1,
+                    "authenticated stale value disappeared during pruning"
+                );
+                stats.value_versions_removed = stats.value_versions_removed.saturating_add(removed);
+                let index_removed = transaction.execute(
+                    "DELETE FROM auth_stale_values
+                     WHERE stale_since_version_be=?1
+                       AND key_hash=?2
+                       AND version_be=?3",
+                    params![
+                        stale_since.as_slice(),
+                        key_hash.as_slice(),
+                        version_be.as_slice(),
+                    ],
+                )?;
+                ensure!(
+                    index_removed == 1,
+                    "authenticated stale-value index disappeared during pruning"
+                );
+                stats.stale_indices_removed =
+                    stats.stale_indices_removed.saturating_add(index_removed);
+            }
+        }
+
+        let old_roots_remain = transaction
+            .query_row(
+                "SELECT 1 FROM auth_roots WHERE version_be<?1 LIMIT 1",
+                params![target_be.as_slice()],
+                |_| Ok(()),
+            )
+            .optional()?
+            .is_some();
+        let stale_nodes_remain = transaction
+            .query_row(
+                "SELECT 1
+                 FROM auth_stale_nodes
+                 WHERE stale_since_version_be<=?1
+                 LIMIT 1",
+                params![target_be.as_slice()],
+                |_| Ok(()),
+            )
+            .optional()?
+            .is_some();
+        let stale_values_remain = transaction
+            .query_row(
+                "SELECT 1
+                 FROM auth_stale_values
+                 WHERE stale_since_version_be<=?1
+                 LIMIT 1",
+                params![target_be.as_slice()],
+                |_| Ok(()),
+            )
+            .optional()?
+            .is_some();
+        let complete = !old_roots_remain && !stale_nodes_remain && !stale_values_remain;
+        if complete {
+            verify_retained_lifecycle_proofs(&transaction, height, app_hash, target)?;
+            transaction.execute(
+                "DELETE FROM metadata WHERE key=?1",
+                params![AUTH_PRUNE_TARGET_KEY],
+            )?;
+        }
+        transaction.commit()?;
+        Ok(Some(PruneBatchOutcome {
+            stats,
+            query_floor,
+            target,
+            complete,
+            rows_examined,
+            logical_bytes_examined,
+            elapsed: started.elapsed(),
+        }))
+    }
+
+    #[cfg(any(test, feature = "scale-gate"))]
+    pub(super) fn request_auth_prune(
+        &self,
+        retain_from_version: Version,
+    ) -> Result<AuthPruneStatus> {
+        let _writer = self.lock_writer()?;
+        let mut connection = self.connect()?;
+        let transaction = connection.transaction_with_behavior(TransactionBehavior::Immediate)?;
+        let height = metadata(&transaction, "height")?
+            .parse::<u64>()
+            .context("parse application store height during prune request")?;
+        ensure!(
+            retain_from_version <= height,
+            "cannot request a future authenticated query floor"
+        );
+        ensure!(
+            auth_root(&transaction, retain_from_version)?.is_some(),
+            "requested authenticated query floor has no root"
+        );
+        advance_auth_query_floor(&transaction, retain_from_version)?;
+        let status = AuthPruneStatus {
+            query_floor: optional_metadata_version(&transaction, AUTH_QUERY_FLOOR_KEY)?
+                .context("application store is missing authenticated query floor")?,
+            target: optional_metadata_version(&transaction, AUTH_PRUNE_TARGET_KEY)?,
+        };
+        transaction.commit()?;
+        Ok(status)
+    }
+
+    #[cfg(any(test, feature = "scale-gate"))]
+    pub(super) fn auth_prune_status(&self) -> Result<AuthPruneStatus> {
+        let connection = self.connect_read()?;
+        connection.execute_batch("BEGIN DEFERRED")?;
+        let status = AuthPruneStatus {
+            query_floor: optional_metadata_version(&connection, AUTH_QUERY_FLOOR_KEY)?
+                .context("application store is missing authenticated query floor")?,
+            target: optional_metadata_version(&connection, AUTH_PRUNE_TARGET_KEY)?,
+        };
+        connection.execute_batch("ROLLBACK")?;
+        Ok(status)
+    }
+
+    pub(super) fn has_pending_auth_prune(&self) -> Result<bool> {
+        let connection = self.connect_read()?;
+        connection.execute_batch("BEGIN DEFERRED")?;
+        let pending = optional_metadata_version(&connection, AUTH_PRUNE_TARGET_KEY)?.is_some();
+        connection.execute_batch("ROLLBACK")?;
+        Ok(pending)
+    }
+
     pub(super) fn prune_auth_versions_before(
         &self,
         state: &AppState,
@@ -346,12 +807,27 @@ impl ApplicationStore {
             retain_from_version <= state.height,
             "cannot retain a future authenticated version"
         );
+        let _maintenance = self
+            .maintenance_gate
+            .lock()
+            .map_err(|_| anyhow!("application store maintenance gate poisoned"))?;
+        ensure!(
+            self.active_snapshot_pins.load(Ordering::Acquire) == 0,
+            "cannot run full authenticated pruning while a snapshot is pinned"
+        );
+        let _writer = self.lock_writer()?;
         let mut connection = self.connect()?;
         let transaction = connection.transaction_with_behavior(TransactionBehavior::Immediate)?;
         verify_database_head(&transaction, state)?;
         ensure!(
             latest_auth_version(&transaction)? == Some(state.height),
             "authenticated tree head differs from application height"
+        );
+        let current_query_floor = optional_metadata_version(&transaction, AUTH_QUERY_FLOOR_KEY)?
+            .context("application store is missing authenticated query floor")?;
+        ensure!(
+            retain_from_version >= current_query_floor,
+            "authenticated query floor cannot move backwards"
         );
 
         transaction.execute_batch(
@@ -373,18 +849,25 @@ impl ApplicationStore {
         )?;
 
         {
-            let mut statement = transaction.prepare("SELECT node_key FROM auth_nodes")?;
-            let rows = statement.query_map([], |row| row.get::<_, Vec<u8>>(0))?;
+            let mut statement = transaction.prepare(
+                "SELECT version_be
+                 FROM auth_roots
+                 WHERE version_be<?1
+                 ORDER BY version_be",
+            )?;
+            let rows = statement.query_map(
+                params![retain_from_version.to_be_bytes().as_slice()],
+                |row| row.get::<_, Vec<u8>>(0),
+            )?;
             for row in rows {
-                let encoded_key = row?;
-                let node_key: NodeKey = borsh::from_slice(&encoded_key)
-                    .context("decode persisted JMT node key during pruning")?;
-                if node_key.nibble_path().is_empty() && node_key.version() < retain_from_version {
-                    transaction.execute(
-                        "INSERT OR IGNORE INTO trnm_prune_nodes(node_key) VALUES (?1)",
-                        params![encoded_key],
-                    )?;
-                }
+                let version = decode_version_be(&row?)?;
+                let root_path: NibblePath = std::iter::empty().collect();
+                let encoded_key = borsh::to_vec(&NodeKey::new(version, root_path))
+                    .context("encode historical JMT root node key during pruning")?;
+                transaction.execute(
+                    "INSERT OR IGNORE INTO trnm_prune_nodes(node_key) VALUES (?1)",
+                    params![encoded_key],
+                )?;
             }
         }
 
@@ -393,7 +876,7 @@ impl ApplicationStore {
              WHERE node_key IN (SELECT node_key FROM trnm_prune_nodes)",
             [],
         )?;
-        let stale_indices_removed = transaction.execute(
+        let stale_node_indices_removed = transaction.execute(
             "DELETE FROM auth_stale_nodes WHERE stale_since_version_be<=?1",
             params![retain_from_version.to_be_bytes().as_slice()],
         )?;
@@ -417,16 +900,23 @@ impl ApplicationStore {
         }
         let value_versions_removed = transaction.execute(
             "DELETE FROM auth_values AS candidate
-             WHERE candidate.version_be<?1
-               AND EXISTS (
-                   SELECT 1
-                   FROM auth_values AS newer
-                   WHERE newer.key_hash=candidate.key_hash
-                     AND newer.version_be<=?1
-                     AND newer.version_be>candidate.version_be
-               )",
+             WHERE EXISTS (
+                 SELECT 1
+                 FROM auth_stale_values AS stale
+                 WHERE stale.stale_since_version_be<=?1
+                   AND stale.key_hash=candidate.key_hash
+                   AND stale.version_be=candidate.version_be
+             )",
             params![retain_from_version.to_be_bytes().as_slice()],
         )?;
+        let stale_value_indices_removed = transaction.execute(
+            "DELETE FROM auth_stale_values WHERE stale_since_version_be<=?1",
+            params![retain_from_version.to_be_bytes().as_slice()],
+        )?;
+        ensure!(
+            value_versions_removed == stale_value_indices_removed,
+            "authenticated stale-value index differs from value history"
+        );
         let dead_value_versions_removed = if retain_from_version == state.height {
             transaction.execute(
                 "DELETE FROM auth_values
@@ -440,6 +930,11 @@ impl ApplicationStore {
             "DELETE FROM auth_preimages
              WHERE key_hash NOT IN (SELECT key_hash FROM trnm_live_preimages)",
             [],
+        )?;
+        write_metadata_version(&transaction, AUTH_QUERY_FLOOR_KEY, retain_from_version)?;
+        transaction.execute(
+            "DELETE FROM metadata WHERE key=?1",
+            params![AUTH_PRUNE_TARGET_KEY],
         )?;
 
         let retained_root = auth_root(&transaction, state.height)?
@@ -488,18 +983,14 @@ impl ApplicationStore {
                 "authenticated pruning damaged the retention-boundary proof"
             );
         }
-        let verified = load_sqlite_state(&transaction)?;
-        ensure!(
-            (verified.height, verified.app_hash) == (state.height, state.app_hash),
-            "authenticated pruning damaged the committed state"
-        );
         transaction.commit()?;
         Ok(PruneStats {
             nodes_removed,
             value_versions_removed: value_versions_removed
                 .saturating_add(dead_value_versions_removed),
             preimages_removed,
-            stale_indices_removed,
+            stale_indices_removed: stale_node_indices_removed
+                .saturating_add(stale_value_indices_removed),
             roots_removed,
         })
     }
@@ -508,7 +999,7 @@ impl ApplicationStore {
         &self,
         state: &AppState,
         destination: &Path,
-        pinned: PinnedSnapshot,
+        mut pinned: PinnedSnapshot,
     ) -> Result<AppState> {
         ensure!(
             state.height > 0 && state.pending.is_none(),
@@ -522,16 +1013,14 @@ impl ApplicationStore {
         remove_file_if_exists(&temporary)?;
         remove_sqlite_sidecars(&temporary)?;
 
-        let source = pinned.source;
         let mut target = Connection::open(&temporary)
             .with_context(|| format!("create SQLite snapshot {}", temporary.display()))?;
         {
-            let backup = Backup::new(&source, &mut target)?;
+            let backup = Backup::new(pinned.source()?, &mut target)?;
             backup.run_to_completion(256, Duration::from_millis(2), None)?;
         }
         drop(target);
-        source.execute_batch("ROLLBACK")?;
-        drop(source);
+        pinned.release()?;
 
         let snapshot_store = self.with_database_path(temporary.clone());
         snapshot_store.prune_auth_versions_before(state, state.height)?;
@@ -565,6 +1054,17 @@ impl ApplicationStore {
             state.height > 0 && state.pending.is_none(),
             "snapshot pin requires committed non-genesis state"
         );
+        let _maintenance = match self.maintenance_gate.try_lock() {
+            Ok(maintenance) => maintenance,
+            Err(TryLockError::WouldBlock) => {
+                return Err(anyhow!(
+                    "application store maintenance is busy; defer optional snapshot pin"
+                ));
+            }
+            Err(TryLockError::Poisoned(_)) => {
+                return Err(anyhow!("application store maintenance gate poisoned"));
+            }
+        };
         let source = self.connect_read()?;
         source.execute_batch("BEGIN DEFERRED")?;
         let pinned_height = metadata(&source, "height")?
@@ -578,7 +1078,11 @@ impl ApplicationStore {
             (pinned_height, pinned_hash) == (state.height, state.app_hash),
             "application store head differs from requested snapshot"
         );
-        Ok(PinnedSnapshot { source })
+        self.active_snapshot_pins.fetch_add(1, Ordering::AcqRel);
+        Ok(PinnedSnapshot {
+            source: Some(source),
+            active_snapshot_pins: Arc::clone(&self.active_snapshot_pins),
+        })
     }
 
     pub(super) fn install_snapshot_database(
@@ -595,6 +1099,15 @@ impl ApplicationStore {
         let restored =
             self.validate_snapshot_database(source_path, expected_height, expected_app_hash)?;
 
+        let _maintenance = self
+            .maintenance_gate
+            .lock()
+            .map_err(|_| anyhow!("application store maintenance gate poisoned"))?;
+        ensure!(
+            self.active_snapshot_pins.load(Ordering::Acquire) == 0,
+            "cannot install a snapshot while a live snapshot read is pinned"
+        );
+        let _writer = self.lock_writer()?;
         let mut destination = self.connect()?;
         {
             let transaction =
@@ -608,6 +1121,16 @@ impl ApplicationStore {
             None::<fn(rusqlite::backup::Progress)>,
         )?;
         let post_install = (|| -> Result<AppState> {
+            let installed_schema = metadata(&destination, "schema_version")?;
+            if installed_schema == PREVIOUS_STORE_SCHEMA_VERSION {
+                migrate_store_schema_v3_to_v4(&mut destination)?;
+            } else {
+                ensure!(
+                    installed_schema == STORE_SCHEMA_VERSION,
+                    "installed snapshot store schema is unsupported"
+                );
+                validate_auth_prune_metadata(&destination)?;
+            }
             let checkpoint =
                 destination.query_row("PRAGMA wal_checkpoint(TRUNCATE)", [], |row| {
                     Ok((
@@ -669,7 +1192,7 @@ impl ApplicationStore {
         ensure!(integrity == "ok", "SQLite snapshot quick_check failed");
         validate_snapshot_schema(&connection)?;
         validate_storage_resource_bounds(&connection)?;
-        self.verify_database_bindings(&connection)?;
+        let store_schema = self.verify_compatible_database_bindings(&connection)?;
         ensure!(
             metadata(&connection, "height")? == expected_height.to_string()
                 && metadata(&connection, "app_hash_hex")? == hex::encode(expected_app_hash),
@@ -682,10 +1205,28 @@ impl ApplicationStore {
             connection.query_row("SELECT COUNT(*) FROM auth_stale_nodes", [], |row| {
                 row.get::<_, u64>(0)
             })?;
+        let stale_value_count = if store_schema == STORE_SCHEMA_VERSION {
+            connection.query_row("SELECT COUNT(*) FROM auth_stale_values", [], |row| {
+                row.get::<_, u64>(0)
+            })?
+        } else {
+            0
+        };
         ensure!(
-            root_count == 1 && stale_count == 0,
+            root_count == 1 && stale_count == 0 && stale_value_count == 0,
             "SQLite snapshot must contain latest-only authenticated history"
         );
+        if store_schema == STORE_SCHEMA_VERSION {
+            ensure!(
+                optional_metadata_version(&connection, AUTH_QUERY_FLOOR_KEY)?
+                    == Some(expected_height),
+                "SQLite snapshot authenticated query floor is not latest-only"
+            );
+            ensure!(
+                optional_metadata_version(&connection, AUTH_PRUNE_TARGET_KEY)?.is_none(),
+                "SQLite snapshot contains unfinished authenticated maintenance"
+            );
+        }
         Self::validate_latest_only_auth_storage(&connection, expected_height)?;
         let restored = load_sqlite_state(&connection)?;
         ensure!(
@@ -801,6 +1342,10 @@ impl ApplicationStore {
             database_path,
             chain_id: self.chain_id.clone(),
             signer_policy_hash_hex: self.signer_policy_hash_hex.clone(),
+            writer_gate: Arc::new(Mutex::new(())),
+            writer_waiters: Arc::new(AtomicUsize::new(0)),
+            maintenance_gate: Arc::new(Mutex::new(())),
+            active_snapshot_pins: Arc::new(AtomicUsize::new(0)),
         }
     }
 
@@ -808,8 +1353,9 @@ impl ApplicationStore {
         &self,
         current: &AppState,
         pending: &PendingBlock,
+        query_floor: Version,
     ) -> Result<()> {
-        self.persist_transition_inner(current, pending, None)
+        self.persist_transition_inner(current, pending, query_floor, None)
     }
 
     #[cfg(test)]
@@ -819,13 +1365,14 @@ impl ApplicationStore {
         pending: &PendingBlock,
         failpoint: StoreFailpoint,
     ) -> Result<()> {
-        self.persist_transition_inner(current, pending, Some(failpoint))
+        self.persist_transition_inner(current, pending, 0, Some(failpoint))
     }
 
     fn persist_transition_inner(
         &self,
         current: &AppState,
         pending: &PendingBlock,
+        query_floor: Version,
         #[cfg_attr(not(test), allow(unused_variables))] failpoint: Option<StoreFailpoint>,
     ) -> Result<()> {
         ensure!(
@@ -836,7 +1383,12 @@ impl ApplicationStore {
             pending.auth_update.version == pending.height,
             "authenticated update version differs from pending height"
         );
+        ensure!(
+            query_floor <= pending.height,
+            "authenticated query floor exceeds pending height"
+        );
 
+        let _writer = self.lock_writer()?;
         let mut connection = self.connect()?;
         let transaction = connection.transaction_with_behavior(TransactionBehavior::Immediate)?;
         verify_database_head(&transaction, current)?;
@@ -882,6 +1434,7 @@ impl ApplicationStore {
         );
         persist_auth_update(&transaction, &pending.auth_update)?;
         write_head_values(&transaction, pending.height, pending.app_hash)?;
+        advance_auth_query_floor(&transaction, query_floor)?;
         #[cfg(test)]
         if failpoint == Some(StoreFailpoint::BeforeSqlCommit) {
             return Err(anyhow!("injected failure before SQLite COMMIT"));
@@ -913,6 +1466,7 @@ impl ApplicationStore {
                 && <[u8; 32]>::from(auth_update.root_hash) == state.app_hash,
             "replacement authenticated update does not match app head"
         );
+        let _writer = self.lock_writer()?;
         let mut connection = self.connect()?;
         let transaction = connection.transaction_with_behavior(TransactionBehavior::Immediate)?;
         verify_database_head(&transaction, expected)?;
@@ -944,6 +1498,7 @@ impl ApplicationStore {
                     == Some(state.app_hash),
             "replacement authenticated state does not match app head"
         );
+        let _writer = self.lock_writer()?;
         let mut connection = self.connect()?;
         let transaction = connection.transaction_with_behavior(TransactionBehavior::Immediate)?;
         verify_database_head(&transaction, expected)?;
@@ -962,17 +1517,22 @@ impl ApplicationStore {
                 format!("create application store directory {}", parent.display())
             })?;
         }
-        let connection = Connection::open(&self.database_path)
+        let initialize = !self.database_path.exists();
+        let mut connection = Connection::open(&self.database_path)
             .with_context(|| format!("open application store {}", self.database_path.display()))?;
+        connection.busy_timeout(Duration::from_secs(5))?;
+        if initialize {
+            connection.execute_batch("PRAGMA journal_mode=WAL;")?;
+        }
         connection.execute_batch(
             "
-            PRAGMA journal_mode=WAL;
             PRAGMA synchronous=FULL;
             PRAGMA foreign_keys=ON;
-            PRAGMA busy_timeout=5000;
             ",
         )?;
-        connection.execute_batch(STORE_SCHEMA_SQL)?;
+        if initialize {
+            connection.execute_batch(STORE_SCHEMA_SQL)?;
+        }
         let schema: Option<String> = connection
             .query_row(
                 "SELECT value FROM metadata WHERE key='schema_version'",
@@ -980,27 +1540,43 @@ impl ApplicationStore {
                 |row| row.get(0),
             )
             .optional()?;
-        match schema {
+        match schema.as_deref() {
             Some(schema) => ensure!(
-                schema == STORE_SCHEMA_VERSION,
+                schema == STORE_SCHEMA_VERSION || schema == PREVIOUS_STORE_SCHEMA_VERSION,
                 "unsupported application store schema version"
             ),
             None => {
+                ensure!(
+                    initialize,
+                    "existing application store is missing schema_version"
+                );
                 connection.execute(
                     "INSERT INTO metadata(key, value) VALUES ('schema_version', ?1)",
                     params![STORE_SCHEMA_VERSION],
                 )?;
+                connection.execute(
+                    "INSERT INTO metadata(key, value) VALUES (?1, '0')",
+                    params![AUTH_QUERY_FLOOR_KEY],
+                )?;
             }
         }
-        ensure_metadata_binding(&connection, "chain_id", &self.chain_id)?;
-        ensure_metadata_binding(&connection, "app_version", &APP_VERSION.to_string())?;
-        ensure_metadata_binding(
-            &connection,
-            "authorized_signers_hash_hex",
-            &self.signer_policy_hash_hex,
-        )?;
-        ensure_metadata_binding(&connection, "auth_tree", "jmt-sha256-v0.12.0")?;
-        ensure_metadata_binding(&connection, "auth_codec", "borsh-v1")?;
+        if schema.as_deref() == Some(PREVIOUS_STORE_SCHEMA_VERSION) {
+            migrate_store_schema_v3_to_v4(&mut connection)?;
+        }
+        if initialize {
+            ensure_metadata_binding(&connection, "chain_id", &self.chain_id)?;
+            ensure_metadata_binding(&connection, "app_version", &APP_VERSION.to_string())?;
+            ensure_metadata_binding(
+                &connection,
+                "authorized_signers_hash_hex",
+                &self.signer_policy_hash_hex,
+            )?;
+            ensure_metadata_binding(&connection, "auth_tree", "jmt-sha256-v0.12.0")?;
+            ensure_metadata_binding(&connection, "auth_codec", "borsh-v1")?;
+        } else {
+            self.verify_database_bindings(&connection)?;
+        }
+        validate_auth_prune_metadata(&connection)?;
         Ok(connection)
     }
 
@@ -1015,14 +1591,33 @@ impl ApplicationStore {
                 self.database_path.display()
             )
         })?;
+        connection.busy_timeout(Duration::from_secs(5))?;
         connection.execute_batch(
             "
             PRAGMA trusted_schema=OFF;
             PRAGMA query_only=ON;
-            PRAGMA busy_timeout=5000;
             ",
         )?;
         self.verify_database_bindings(&connection)?;
+        Ok(connection)
+    }
+
+    fn connect_maintenance(&self) -> Result<Connection> {
+        let connection = Connection::open(&self.database_path).with_context(|| {
+            format!(
+                "open application store maintenance connection {}",
+                self.database_path.display()
+            )
+        })?;
+        connection.busy_timeout(Duration::ZERO)?;
+        connection.execute_batch(
+            "
+            PRAGMA synchronous=FULL;
+            PRAGMA foreign_keys=ON;
+            ",
+        )?;
+        self.verify_database_bindings(&connection)?;
+        validate_auth_prune_metadata(&connection)?;
         Ok(connection)
     }
 
@@ -1039,13 +1634,33 @@ impl ApplicationStore {
         })?;
         validate_snapshot_schema(&connection)?;
         validate_storage_resource_bounds(&connection)?;
-        self.verify_database_bindings(&connection)
+        self.verify_compatible_database_bindings(&connection)?;
+        Ok(())
     }
 
     fn verify_database_bindings(&self, connection: &Connection) -> Result<()> {
+        ensure!(
+            self.verify_compatible_database_bindings(connection)? == STORE_SCHEMA_VERSION,
+            "existing application store requires schema migration"
+        );
+        Ok(())
+    }
+
+    fn verify_compatible_database_bindings(&self, connection: &Connection) -> Result<String> {
+        let schema_version: String = connection
+            .query_row(
+                "SELECT value FROM metadata WHERE key='schema_version'",
+                [],
+                |row| row.get(0),
+            )
+            .context("existing application store is missing or cannot read schema_version")?;
+        ensure!(
+            schema_version == STORE_SCHEMA_VERSION
+                || schema_version == PREVIOUS_STORE_SCHEMA_VERSION,
+            "existing application store schema version is unsupported"
+        );
         let app_version = APP_VERSION.to_string();
         let bindings = [
-            ("schema_version", STORE_SCHEMA_VERSION),
             ("chain_id", self.chain_id.as_str()),
             ("app_version", app_version.as_str()),
             (
@@ -1070,7 +1685,7 @@ impl ApplicationStore {
                 "existing application store {key} differs from configured value"
             );
         }
-        Ok(())
+        Ok(schema_version)
     }
 
     fn has_committed_state(&self, connection: &Connection) -> Result<bool> {
@@ -1146,12 +1761,28 @@ fn write_head_values(transaction: &Transaction<'_>, height: u64, app_hash: [u8; 
     Ok(())
 }
 
+fn advance_auth_query_floor(transaction: &Transaction<'_>, requested: Version) -> Result<()> {
+    let current = optional_metadata_version(transaction, AUTH_QUERY_FLOOR_KEY)?
+        .context("application store is missing authenticated query floor")?;
+    if requested <= current {
+        return Ok(());
+    }
+    write_metadata_version(transaction, AUTH_QUERY_FLOOR_KEY, requested)?;
+    write_metadata_version(transaction, AUTH_PRUNE_TARGET_KEY, requested)
+}
+
 fn clear_auth_tree(transaction: &Transaction<'_>) -> Result<()> {
     transaction.execute("DELETE FROM auth_nodes", [])?;
     transaction.execute("DELETE FROM auth_values", [])?;
     transaction.execute("DELETE FROM auth_preimages", [])?;
     transaction.execute("DELETE FROM auth_stale_nodes", [])?;
+    transaction.execute("DELETE FROM auth_stale_values", [])?;
     transaction.execute("DELETE FROM auth_roots", [])?;
+    write_metadata_version(transaction, AUTH_QUERY_FLOOR_KEY, 0)?;
+    transaction.execute(
+        "DELETE FROM metadata WHERE key=?1",
+        params![AUTH_PRUNE_TARGET_KEY],
+    )?;
     Ok(())
 }
 
@@ -1206,6 +1837,7 @@ fn persist_full_auth_tree(
             ],
         )?;
     }
+    rebuild_auth_stale_values(transaction)?;
     for (key_hash, preimage) in auth_tree.preimages() {
         transaction.execute(
             "INSERT INTO auth_preimages(key_hash, key_preimage) VALUES (?1, ?2)",
@@ -1242,6 +1874,31 @@ fn persist_auth_update(transaction: &Transaction<'_>, update: &PlannedAuthUpdate
         )?;
     }
     for ((version, key_hash), value) in update.tree_update_batch.node_batch.values() {
+        let previous_version: Option<Vec<u8>> = transaction
+            .query_row(
+                "SELECT version_be
+                 FROM auth_values
+                 WHERE key_hash=?1 AND version_be<?2
+                 ORDER BY version_be DESC
+                 LIMIT 1",
+                params![key_hash.0.as_slice(), version.to_be_bytes().as_slice()],
+                |row| row.get(0),
+            )
+            .optional()?;
+        if let Some(previous_version) = previous_version {
+            transaction.execute(
+                "INSERT INTO auth_stale_values(
+                    stale_since_version_be,
+                    key_hash,
+                    version_be
+                 ) VALUES (?1, ?2, ?3)",
+                params![
+                    version.to_be_bytes().as_slice(),
+                    key_hash.0.as_slice(),
+                    previous_version,
+                ],
+            )?;
+        }
         transaction.execute(
             "INSERT INTO auth_values(key_hash, version_be, value, is_deleted)
              VALUES (?1, ?2, ?3, ?4)",
@@ -1295,6 +1952,30 @@ fn decode_version_be(bytes: &[u8]) -> Result<Version> {
     )?))
 }
 
+fn rebuild_auth_stale_values(connection: &Connection) -> Result<()> {
+    connection.execute("DELETE FROM auth_stale_values", [])?;
+    connection.execute(
+        "INSERT INTO auth_stale_values(
+            stale_since_version_be,
+            key_hash,
+            version_be
+         )
+         SELECT next_version_be, key_hash, version_be
+         FROM (
+             SELECT key_hash,
+                    version_be,
+                    LEAD(version_be) OVER (
+                        PARTITION BY key_hash
+                        ORDER BY version_be
+                    ) AS next_version_be
+             FROM auth_values
+         )
+         WHERE next_version_be IS NOT NULL",
+        [],
+    )?;
+    Ok(())
+}
+
 fn upsert_object(transaction: &Transaction<'_>, object: &StoredObject) -> Result<()> {
     transaction.execute(
         "INSERT INTO objects(
@@ -1329,6 +2010,58 @@ fn write_validator_lifecycle(
     Ok(())
 }
 
+fn verify_retained_lifecycle_proofs(
+    connection: &Connection,
+    height: Version,
+    app_hash: [u8; 32],
+    boundary: Version,
+) -> Result<()> {
+    ensure!(
+        boundary <= height,
+        "authenticated proof boundary exceeds the committed head"
+    );
+    let retained_root = auth_root(connection, height)?
+        .context("authenticated maintenance removed the committed root")?;
+    ensure!(
+        <[u8; 32]>::from(retained_root) == app_hash,
+        "authenticated maintenance changed the committed AppHash"
+    );
+    let lifecycle_bytes: Vec<u8> = connection.query_row(
+        "SELECT state_json FROM validator_lifecycle WHERE singleton=1",
+        [],
+        |row| row.get(0),
+    )?;
+    let reader = SqliteAuthReader { connection };
+    let latest_proof = prove_with_reader(&reader, height, retained_root, validator_state_key()?)?;
+    let latest_value = latest_proof
+        .value
+        .as_deref()
+        .context("latest validator lifecycle proof is absent")?;
+    let lifecycle_record = AuthenticatedObjectRecord::decode(latest_value)?;
+    ensure!(
+        lifecycle_record.object_type == VALIDATOR_LIFECYCLE_SCHEMA_V1
+            && lifecycle_record.object_version <= height
+            && lifecycle_record.value == lifecycle_bytes
+            && verify_ics23_membership(&latest_proof, latest_value),
+        "authenticated maintenance damaged the latest validator lifecycle proof"
+    );
+    if boundary < height {
+        let boundary_root = auth_root(connection, boundary)?
+            .context("authenticated maintenance removed the retention-boundary root")?;
+        let boundary_proof =
+            prove_with_reader(&reader, boundary, boundary_root, validator_state_key()?)?;
+        let boundary_value = boundary_proof
+            .value
+            .as_deref()
+            .context("retention-boundary lifecycle proof is absent")?;
+        ensure!(
+            verify_ics23_membership(&boundary_proof, boundary_value),
+            "authenticated maintenance damaged the retention-boundary proof"
+        );
+    }
+    Ok(())
+}
+
 fn load_sqlite_state(connection: &Connection) -> Result<AppState> {
     let height = metadata(connection, "height")?
         .parse::<u64>()
@@ -1337,7 +2070,22 @@ fn load_sqlite_state(connection: &Connection) -> Result<AppState> {
         "application store app_hash",
         &metadata(connection, "app_hash_hex")?,
     )?;
+    if let Some(query_floor) = optional_metadata_version(connection, AUTH_QUERY_FLOOR_KEY)? {
+        ensure!(
+            query_floor <= height && auth_root(connection, query_floor)?.is_some(),
+            "application store authenticated query floor is invalid"
+        );
+        if let Some(target) = optional_metadata_version(connection, AUTH_PRUNE_TARGET_KEY)? {
+            ensure!(
+                target == query_floor,
+                "application store authenticated prune target differs from its query floor"
+            );
+        }
+    }
     validate_no_future_auth_rows(connection, height)?;
+    if metadata(connection, "schema_version")? == STORE_SCHEMA_VERSION {
+        validate_auth_stale_value_index(connection)?;
+    }
 
     let lifecycle_bytes: Vec<u8> = connection
         .query_row(
@@ -1453,11 +2201,18 @@ fn validate_no_future_auth_rows(connection: &Connection, height: u64) -> Result<
             );
         }
     }
-    for (table, column) in [
+    let mut version_columns = vec![
         ("auth_values", "version_be"),
         ("auth_roots", "version_be"),
         ("auth_stale_nodes", "stale_since_version_be"),
-    ] {
+    ];
+    if metadata(connection, "schema_version")? == STORE_SCHEMA_VERSION {
+        version_columns.extend([
+            ("auth_stale_values", "stale_since_version_be"),
+            ("auth_stale_values", "version_be"),
+        ]);
+    }
+    for (table, column) in version_columns {
         let query = format!("SELECT {column} FROM {table}");
         let mut statement = connection.prepare(&query)?;
         let rows = statement.query_map([], |row| row.get::<_, Vec<u8>>(0))?;
@@ -1468,6 +2223,69 @@ fn validate_no_future_auth_rows(connection: &Connection, height: u64) -> Result<
             );
         }
     }
+    Ok(())
+}
+
+fn validate_auth_stale_value_index(connection: &Connection) -> Result<()> {
+    let missing_or_wrong = connection
+        .query_row(
+            "WITH ordered AS (
+                 SELECT key_hash,
+                        version_be,
+                        LEAD(version_be) OVER (
+                            PARTITION BY key_hash
+                            ORDER BY version_be
+                        ) AS next_version_be
+                 FROM auth_values
+             )
+             SELECT 1
+             FROM ordered
+             LEFT JOIN auth_stale_values AS stale
+               ON stale.key_hash=ordered.key_hash
+              AND stale.version_be=ordered.version_be
+             WHERE ordered.next_version_be IS NOT NULL
+               AND (
+                   stale.stale_since_version_be IS NULL
+                   OR stale.stale_since_version_be<>ordered.next_version_be
+               )
+             LIMIT 1",
+            [],
+            |_| Ok(()),
+        )
+        .optional()?
+        .is_some();
+    ensure!(
+        !missing_or_wrong,
+        "application store authenticated stale-value index is incomplete"
+    );
+    let unexpected = connection
+        .query_row(
+            "WITH ordered AS (
+                 SELECT key_hash,
+                        version_be,
+                        LEAD(version_be) OVER (
+                            PARTITION BY key_hash
+                            ORDER BY version_be
+                        ) AS next_version_be
+                 FROM auth_values
+             )
+             SELECT 1
+             FROM auth_stale_values AS stale
+             LEFT JOIN ordered
+               ON ordered.key_hash=stale.key_hash
+              AND ordered.version_be=stale.version_be
+             WHERE ordered.next_version_be IS NULL
+                OR ordered.next_version_be<>stale.stale_since_version_be
+             LIMIT 1",
+            [],
+            |_| Ok(()),
+        )
+        .optional()?
+        .is_some();
+    ensure!(
+        !unexpected,
+        "application store authenticated stale-value index contains an invalid row"
+    );
     Ok(())
 }
 
@@ -1523,6 +2341,17 @@ fn latest_auth_version(connection: &Connection) -> Result<Option<Version>> {
     encoded.map(|bytes| decode_version_be(&bytes)).transpose()
 }
 
+fn oldest_auth_version(connection: &Connection) -> Result<Option<Version>> {
+    let encoded: Option<Vec<u8>> = connection
+        .query_row(
+            "SELECT version_be FROM auth_roots ORDER BY version_be ASC LIMIT 1",
+            [],
+            |row| row.get(0),
+        )
+        .optional()?;
+    encoded.map(|bytes| decode_version_be(&bytes)).transpose()
+}
+
 fn auth_root(connection: &Connection, version: Version) -> Result<Option<RootHash>> {
     let encoded: Option<Vec<u8>> = connection
         .query_row(
@@ -1540,6 +2369,27 @@ fn auth_root(connection: &Connection, version: Version) -> Result<Option<RootHas
         .transpose()
 }
 
+fn physical_prune_candidates_remain(connection: &Connection, target: Version) -> Result<bool> {
+    let target_be = target.to_be_bytes();
+    Ok(connection.query_row(
+        "SELECT
+             EXISTS(
+                 SELECT 1 FROM auth_roots
+                 WHERE version_be<?1
+             )
+             OR EXISTS(
+                 SELECT 1 FROM auth_stale_nodes
+                 WHERE stale_since_version_be<=?1
+             )
+             OR EXISTS(
+                 SELECT 1 FROM auth_stale_values
+                 WHERE stale_since_version_be<=?1
+             )",
+        params![target_be.as_slice()],
+        |row| row.get::<_, bool>(0),
+    )?)
+}
+
 fn metadata(connection: &Connection, key: &str) -> Result<String> {
     connection
         .query_row(
@@ -1548,6 +2398,121 @@ fn metadata(connection: &Connection, key: &str) -> Result<String> {
             |row| row.get(0),
         )
         .with_context(|| format!("application store is missing {key}"))
+}
+
+fn optional_metadata_version(connection: &Connection, key: &str) -> Result<Option<Version>> {
+    connection
+        .query_row(
+            "SELECT value FROM metadata WHERE key=?1",
+            params![key],
+            |row| row.get::<_, String>(0),
+        )
+        .optional()?
+        .map(|value| {
+            value
+                .parse::<Version>()
+                .with_context(|| format!("parse application store {key}"))
+        })
+        .transpose()
+}
+
+fn write_metadata_version(transaction: &Transaction<'_>, key: &str, value: Version) -> Result<()> {
+    transaction.execute(
+        "INSERT INTO metadata(key, value) VALUES (?1, ?2)
+         ON CONFLICT(key) DO UPDATE SET value=excluded.value",
+        params![key, value.to_string()],
+    )?;
+    Ok(())
+}
+
+fn validate_auth_prune_metadata(connection: &Connection) -> Result<()> {
+    let floor = optional_metadata_version(connection, AUTH_QUERY_FLOOR_KEY)?
+        .context("application store is missing authenticated query floor")?;
+    let target = optional_metadata_version(connection, AUTH_PRUNE_TARGET_KEY)?;
+    if let Some(target) = target {
+        ensure!(
+            target == floor,
+            "authenticated prune target differs from the query floor"
+        );
+    }
+    let height = connection
+        .query_row("SELECT value FROM metadata WHERE key='height'", [], |row| {
+            row.get::<_, String>(0)
+        })
+        .optional()?
+        .map(|value| {
+            value
+                .parse::<Version>()
+                .context("parse application store height during prune metadata validation")
+        })
+        .transpose()?;
+    match height {
+        Some(height) => {
+            ensure!(
+                floor <= height && auth_root(connection, floor)?.is_some(),
+                "application store authenticated query floor is invalid"
+            );
+            if target.is_none() {
+                ensure!(
+                    oldest_auth_version(connection)? == Some(floor),
+                    "completed authenticated maintenance differs from its query floor"
+                );
+                ensure!(
+                    !physical_prune_candidates_remain(connection, floor)?,
+                    "completed authenticated maintenance still has prune candidates"
+                );
+            }
+        }
+        None => ensure!(
+            floor == 0 && target.is_none(),
+            "empty application store contains authenticated maintenance state"
+        ),
+    }
+    Ok(())
+}
+
+fn migrate_store_schema_v3_to_v4(connection: &mut Connection) -> Result<()> {
+    let transaction = connection.transaction_with_behavior(TransactionBehavior::Immediate)?;
+    ensure!(
+        metadata(&transaction, "schema_version")? == PREVIOUS_STORE_SCHEMA_VERSION,
+        "application store schema changed before v3 to v4 migration"
+    );
+    transaction.execute_batch(
+        "
+        CREATE UNIQUE INDEX IF NOT EXISTS auth_stale_nodes_by_node_key
+            ON auth_stale_nodes(node_key);
+        CREATE TABLE IF NOT EXISTS auth_stale_values (
+            stale_since_version_be BLOB NOT NULL CHECK(length(stale_since_version_be)=8),
+            key_hash BLOB NOT NULL CHECK(length(key_hash)=32),
+            version_be BLOB NOT NULL CHECK(length(version_be)=8),
+            PRIMARY KEY (stale_since_version_be, key_hash, version_be),
+            UNIQUE (key_hash, version_be)
+        ) STRICT;
+        ",
+    )?;
+    let encoded: Option<Vec<u8>> = transaction
+        .query_row(
+            "SELECT version_be FROM auth_roots ORDER BY version_be ASC LIMIT 1",
+            [],
+            |row| row.get(0),
+        )
+        .optional()?;
+    let inferred_floor = encoded
+        .map(|bytes| decode_version_be(&bytes))
+        .transpose()?
+        .unwrap_or(0);
+    rebuild_auth_stale_values(&transaction)?;
+    write_metadata_version(&transaction, AUTH_QUERY_FLOOR_KEY, inferred_floor)?;
+    transaction.execute(
+        "DELETE FROM metadata WHERE key=?1",
+        params![AUTH_PRUNE_TARGET_KEY],
+    )?;
+    transaction.execute(
+        "UPDATE metadata SET value=?1 WHERE key='schema_version'",
+        params![STORE_SCHEMA_VERSION],
+    )?;
+    transaction.commit()?;
+    Ok(())
 }
 
 fn ensure_metadata_binding(connection: &Connection, key: &str, expected: &str) -> Result<()> {
@@ -1574,8 +2539,21 @@ fn ensure_metadata_binding(connection: &Connection, key: &str, expected: &str) -
 }
 
 fn validate_snapshot_schema(connection: &Connection) -> Result<()> {
+    let schema_version = metadata(connection, "schema_version")?;
+    ensure!(
+        schema_version == STORE_SCHEMA_VERSION || schema_version == PREVIOUS_STORE_SCHEMA_VERSION,
+        "SQLite snapshot store schema is unsupported"
+    );
     let canonical = Connection::open_in_memory()?;
     canonical.execute_batch(STORE_SCHEMA_SQL)?;
+    if schema_version == PREVIOUS_STORE_SCHEMA_VERSION {
+        canonical.execute_batch(
+            "
+            DROP INDEX auth_stale_nodes_by_node_key;
+            DROP TABLE auth_stale_values;
+            ",
+        )?;
+    }
     let expected = schema_objects(&canonical)?;
     let actual = schema_objects(connection)?;
     ensure!(

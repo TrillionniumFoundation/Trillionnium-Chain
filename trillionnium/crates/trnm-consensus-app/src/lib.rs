@@ -39,10 +39,16 @@ use trnm_runtime::{
 
 mod auth_tree;
 #[cfg(feature = "scale-gate")]
+mod persistent_scale;
+#[cfg(feature = "scale-gate")]
 mod scale;
 mod store;
 mod validator_lifecycle;
 
+#[cfg(feature = "scale-gate")]
+pub use persistent_scale::{
+    run_persistent_scale_gate, PersistentScaleConfig, PersistentScaleReport,
+};
 #[cfg(feature = "scale-gate")]
 pub use scale::{run_auth_tree_scale_gate, AuthTreeScaleConfig, AuthTreeScaleReport};
 
@@ -63,6 +69,8 @@ pub const SIMULATION_RESPONSE_SCHEMA_V1: &str = "trnm_canonical_simulation_respo
 const APP_VERSION: u64 = 4;
 const SNAPSHOT_FORMAT_V3: u32 = 3;
 const SNAPSHOT_FORMAT_V4: u32 = 4;
+const SNAPSHOT_SQLITE_STORE_SCHEMA_V3: u32 = 3;
+const SNAPSHOT_SQLITE_STORE_SCHEMA_V4: u32 = 4;
 const SNAPSHOT_CHUNK_SIZE: usize = 1024 * 1024;
 const MAX_SNAPSHOT_CHUNKS: u32 = 4096;
 const RETAINED_SNAPSHOTS: usize = 16;
@@ -70,10 +78,24 @@ const DISK_SNAPSHOT_INTERVAL: u64 = 5;
 const RETAINED_DISK_SNAPSHOTS: usize = 3;
 const AUTH_PROOF_RETENTION_VERSIONS: u64 = 8_192;
 const AUTH_PRUNE_INTERVAL: u64 = 256;
+const AUTH_PRUNE_BATCH_ROWS: usize = 256;
+const AUTH_PRUNE_BATCH_LOGICAL_BYTES: u64 = 4 * 1024 * 1024;
+const AUTH_PRUNE_RETRY_DELAY: std::time::Duration = std::time::Duration::from_millis(2);
+const AUTH_PRUNE_INTER_BATCH_DELAY: std::time::Duration = std::time::Duration::from_millis(1);
 const MAX_SIMULATION_TX_BYTES: usize = 1024 * 1024;
 const MAX_SNAPSHOT_METADATA_BYTES: usize = 1024 * 1024;
 const DISK_SNAPSHOT_MANIFEST_SCHEMA_V1: &str = "trnm_disk_snapshot_manifest_v1";
 const MAX_DISK_SNAPSHOT_MANIFEST_BYTES: u64 = 8 * 1024 * 1024;
+
+fn authenticated_query_floor(height: u64) -> u64 {
+    if height <= AUTH_PROOF_RETENTION_VERSIONS || !height.is_multiple_of(AUTH_PRUNE_INTERVAL) {
+        0
+    } else {
+        height
+            .saturating_sub(AUTH_PROOF_RETENTION_VERSIONS)
+            .saturating_add(1)
+    }
+}
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -290,6 +312,8 @@ struct AppCore {
     snapshots: Mutex<BTreeMap<u64, SnapshotRecord>>,
     snapshot_building: Mutex<SnapshotBuildQueue>,
     snapshot_restore: Mutex<Option<SnapshotRestore>>,
+    auth_prune_worker: Mutex<AuthPruneWorkerState>,
+    auth_prune_fatal: Mutex<Option<String>>,
     test_crash_plan: Option<TestCrashPlan>,
 }
 
@@ -297,6 +321,12 @@ struct AppCore {
 struct SnapshotBuildQueue {
     active: Option<u64>,
     catch_up_requested: bool,
+}
+
+#[derive(Default)]
+struct AuthPruneWorkerState {
+    active: bool,
+    wake_requested: bool,
 }
 
 struct PendingDiskSnapshot {
@@ -570,7 +600,7 @@ impl CometBftApplication {
                 }
             }
         }
-        Ok(Self {
+        let application = Self {
             core: Arc::new(AppCore {
                 config,
                 #[cfg(test)]
@@ -581,9 +611,17 @@ impl CometBftApplication {
                 snapshots: Mutex::new(snapshots),
                 snapshot_building: Mutex::new(SnapshotBuildQueue::default()),
                 snapshot_restore: Mutex::new(None),
+                auth_prune_worker: Mutex::new(AuthPruneWorkerState::default()),
+                auth_prune_fatal: Mutex::new(None),
                 test_crash_plan,
             }),
-        })
+        };
+        if let Some(store) = &application.core.store {
+            if store.has_pending_auth_prune()? {
+                application.wake_authenticated_prune_worker()?;
+            }
+        }
+        Ok(application)
     }
 
     fn trigger_test_crash(&self, stage: TestCrashStage, height: u64) {
@@ -1084,6 +1122,14 @@ impl CometBftApplication {
     }
 
     fn maybe_prune_authenticated_history(&self, state: &AppState) -> Result<()> {
+        if self.core.store.is_some() {
+            if state.height > AUTH_PROOF_RETENTION_VERSIONS
+                && state.height.is_multiple_of(AUTH_PRUNE_INTERVAL)
+            {
+                self.wake_authenticated_prune_worker()?;
+            }
+            return Ok(());
+        }
         if state.height <= AUTH_PROOF_RETENTION_VERSIONS
             || !state.height.is_multiple_of(AUTH_PRUNE_INTERVAL)
         {
@@ -1093,16 +1139,6 @@ impl CometBftApplication {
             .height
             .saturating_sub(AUTH_PROOF_RETENTION_VERSIONS)
             .saturating_add(1);
-        if let Some(store) = &self.core.store {
-            store.prune_auth_versions_before(state, retain_from)?;
-            let lifecycle_proof = store.prove(state.height, validator_state_key()?)?;
-            ensure!(
-                <[u8; 32]>::from(lifecycle_proof.root_hash) == state.app_hash
-                    && lifecycle_proof.value.is_some(),
-                "persisted authenticated pruning damaged the committed head"
-            );
-            return Ok(());
-        }
         let mut pruned = self
             .core
             .auth_tree
@@ -1120,6 +1156,44 @@ impl CometBftApplication {
             .lock()
             .map_err(|_| anyhow!("authenticated state tree lock poisoned"))? = pruned;
         Ok(())
+    }
+
+    fn wake_authenticated_prune_worker(&self) -> Result<()> {
+        if self.core.store.is_none() {
+            return Ok(());
+        }
+        let mut worker = self
+            .core
+            .auth_prune_worker
+            .lock()
+            .map_err(|_| anyhow!("authenticated prune worker lock poisoned"))?;
+        if worker.active {
+            worker.wake_requested = true;
+            return Ok(());
+        }
+        worker.active = true;
+        worker.wake_requested = false;
+        let core = Arc::clone(&self.core);
+        let spawn = std::thread::Builder::new()
+            .name("trnm-auth-prune".to_string())
+            .spawn(move || run_authenticated_prune_worker(core));
+        if let Err(error) = spawn {
+            worker.active = false;
+            return Err(error).context("spawn authenticated prune worker");
+        }
+        Ok(())
+    }
+
+    fn ensure_authenticated_maintenance_healthy(&self) {
+        let failure = self
+            .core
+            .auth_prune_fatal
+            .lock()
+            .unwrap_or_else(|_| panic!("authenticated maintenance fatal latch poisoned"))
+            .clone();
+        if let Some(failure) = failure {
+            panic!("authenticated maintenance failed closed: {failure}");
+        }
     }
 }
 
@@ -1182,6 +1256,103 @@ fn run_disk_snapshot_worker(
             break;
         };
         pending = next;
+    }
+}
+
+fn run_authenticated_prune_worker(core: Arc<AppCore>) {
+    let store = core
+        .store
+        .clone()
+        .expect("authenticated prune worker requires persistent storage");
+    loop {
+        let batch =
+            store.try_prune_auth_batch(AUTH_PRUNE_BATCH_ROWS, AUTH_PRUNE_BATCH_LOGICAL_BYTES);
+        match batch {
+            Ok(None) => {
+                std::thread::sleep(AUTH_PRUNE_RETRY_DELAY);
+            }
+            Ok(Some(outcome)) if outcome.complete => {
+                let mut worker = match core.auth_prune_worker.lock() {
+                    Ok(worker) => worker,
+                    Err(_) => {
+                        record_authenticated_prune_failure(
+                            &core,
+                            "authenticated prune worker lock poisoned".to_string(),
+                        );
+                        return;
+                    }
+                };
+                if worker.wake_requested {
+                    worker.wake_requested = false;
+                    drop(worker);
+                    std::thread::yield_now();
+                    continue;
+                }
+                worker.active = false;
+                return;
+            }
+            Ok(Some(outcome)) => {
+                if outcome.elapsed > std::time::Duration::from_millis(50) {
+                    let removed = outcome
+                        .stats
+                        .nodes_removed
+                        .saturating_add(outcome.stats.value_versions_removed)
+                        .saturating_add(outcome.stats.preimages_removed)
+                        .saturating_add(outcome.stats.stale_indices_removed)
+                        .saturating_add(outcome.stats.roots_removed);
+                    eprintln!(
+                        "[trnm-cometbft-app] authenticated prune batch exceeded the \
+                         50ms engineering guardrail: floor={} target={} rows={} \
+                         removed={} bytes={} elapsed_ms={}",
+                        outcome.query_floor,
+                        outcome.target,
+                        outcome.rows_examined,
+                        removed,
+                        outcome.logical_bytes_examined,
+                        outcome.elapsed.as_millis()
+                    );
+                }
+                std::thread::sleep(AUTH_PRUNE_INTER_BATCH_DELAY);
+            }
+            Err(error) if is_transient_sqlite_contention(&error) => {
+                std::thread::sleep(AUTH_PRUNE_RETRY_DELAY);
+            }
+            Err(error) => {
+                record_authenticated_prune_failure(&core, format!("{error:#}"));
+                if let Ok(mut worker) = core.auth_prune_worker.lock() {
+                    worker.active = false;
+                }
+                return;
+            }
+        }
+    }
+}
+
+fn is_transient_sqlite_contention(error: &anyhow::Error) -> bool {
+    error.chain().any(|source| {
+        source
+            .downcast_ref::<rusqlite::Error>()
+            .is_some_and(|error| {
+                matches!(
+                    error,
+                    rusqlite::Error::SqliteFailure(code, _)
+                        if matches!(
+                            code.code,
+                            rusqlite::ErrorCode::DatabaseBusy
+                                | rusqlite::ErrorCode::DatabaseLocked
+                        )
+                )
+            })
+    })
+}
+
+fn record_authenticated_prune_failure(core: &AppCore, failure: String) {
+    eprintln!(
+        "[trnm-cometbft-app] authenticated maintenance failed closed; \
+         consensus will stop before the next state transition: {failure}"
+    );
+    if let Ok(mut fatal) = core.auth_prune_fatal.lock() {
+        *fatal = Some(failure);
     }
 }
 
@@ -1520,6 +1691,7 @@ impl Application for CometBftApplication {
     }
 
     fn process_proposal(&self, request: RequestProcessProposal) -> ResponseProcessProposal {
+        self.ensure_authenticated_maintenance_healthy();
         self.trigger_test_crash(
             TestCrashStage::ProcessProposal,
             u64::try_from(request.height).unwrap_or(0),
@@ -1552,6 +1724,7 @@ impl Application for CometBftApplication {
     }
 
     fn finalize_block(&self, request: RequestFinalizeBlock) -> ResponseFinalizeBlock {
+        self.ensure_authenticated_maintenance_healthy();
         self.trigger_test_crash(
             TestCrashStage::FinalizeBlock,
             u64::try_from(request.height).unwrap_or(0),
@@ -1591,6 +1764,7 @@ impl Application for CometBftApplication {
     }
 
     fn commit(&self) -> ResponseCommit {
+        self.ensure_authenticated_maintenance_healthy();
         let mut state =
             self.core.state.lock().unwrap_or_else(|_| {
                 panic!("consensus application state lock poisoned during commit")
@@ -1601,7 +1775,7 @@ impl Application for CometBftApplication {
             .expect("refuse ABCI Commit without a finalized pending block");
         if let Some(store) = &self.core.store {
             store
-                .persist_transition(&state, &pending)
+                .persist_transition(&state, &pending, authenticated_query_floor(pending.height))
                 .unwrap_or_else(|error| {
                     panic!("persist committed consensus application state: {error:#}")
                 });
@@ -1787,7 +1961,10 @@ impl CometBftApplication {
             metadata.app_version == APP_VERSION,
             "snapshot app version mismatch"
         );
-        ensure!(metadata.store_schema == 3, "snapshot store schema mismatch");
+        ensure!(
+            metadata.store_schema == SNAPSHOT_SQLITE_STORE_SCHEMA_V3,
+            "snapshot store schema mismatch"
+        );
         ensure!(
             metadata.chain_id == self.core.config.chain_id,
             "snapshot chain mismatch"
@@ -1872,7 +2049,11 @@ impl CometBftApplication {
             "snapshot chain or height mismatch"
         );
         ensure!(
-            metadata.app_version == APP_VERSION && metadata.store_schema == 3,
+            metadata.app_version == APP_VERSION
+                && matches!(
+                    metadata.store_schema,
+                    SNAPSHOT_SQLITE_STORE_SCHEMA_V3 | SNAPSHOT_SQLITE_STORE_SCHEMA_V4
+                ),
             "snapshot app or store version mismatch"
         );
         ensure!(
@@ -2963,7 +3144,10 @@ fn load_disk_snapshot_record(
             && metadata.height == height
             && height <= state.height
             && metadata.app_version == APP_VERSION
-            && metadata.store_schema == 3
+            && matches!(
+                metadata.store_schema,
+                SNAPSHOT_SQLITE_STORE_SCHEMA_V3 | SNAPSHOT_SQLITE_STORE_SCHEMA_V4
+            )
             && metadata.state_codec == "sqlite-backup-v1"
             && metadata.auth_tree_codec == "jmt-sha256-v0.12.0+borsh-v1"
             && metadata.history_mode == "latest-only"
@@ -3065,7 +3249,7 @@ fn build_store_snapshot(
         height: snapshot_state.height,
         app_hash_hex: hex::encode(snapshot_state.app_hash),
         app_version: APP_VERSION,
-        store_schema: 3,
+        store_schema: SNAPSHOT_SQLITE_STORE_SCHEMA_V4,
         state_codec: "sqlite-backup-v1".to_string(),
         auth_tree_codec: "jmt-sha256-v0.12.0+borsh-v1".to_string(),
         history_mode: "latest-only".to_string(),
@@ -3131,7 +3315,7 @@ fn build_snapshot(
         height: state.height,
         app_hash_hex: hex::encode(state.app_hash),
         app_version: APP_VERSION,
-        store_schema: 3,
+        store_schema: SNAPSHOT_SQLITE_STORE_SCHEMA_V3,
         state_codec: "json-v4".to_string(),
         auth_tree_codec: "jmt-sha256-v0.12.0+borsh-v1".to_string(),
         oldest_auth_version: auth_tree
@@ -3229,6 +3413,14 @@ mod tests {
             .collect::<Vec<_>>();
         validators.sort_by(|left, right| left.public_key_hex.cmp(&right.public_key_hex));
         validators
+    }
+
+    #[test]
+    fn authenticated_query_floor_advances_only_on_retention_intervals() {
+        assert_eq!(authenticated_query_floor(8_192), 0);
+        assert_eq!(authenticated_query_floor(8_447), 0);
+        assert_eq!(authenticated_query_floor(8_448), 257);
+        assert_eq!(authenticated_query_floor(8_704), 513);
     }
 
     fn fixture() -> (CometBftApplication, SignedCommandEnvelopeV1) {
@@ -5569,6 +5761,232 @@ mod tests {
     }
 
     #[test]
+    fn schema3_sqlite_store_migrates_query_floor_atomically_and_continues() {
+        let root = std::env::temp_dir().join(format!(
+            "trnm-comet-store-schema4-migration-{}-{}",
+            std::process::id(),
+            now_unix_ms()
+        ));
+        fs::create_dir_all(&root).unwrap();
+        let state_path = root.join("app-state.json");
+        let (fixture_app, _) = fixture();
+        let config = ConsensusAppConfig {
+            state_path: Some(state_path.clone()),
+            ..fixture_app.core.config.clone()
+        };
+        let app = CometBftApplication::new(config.clone()).unwrap();
+        initialize(&app);
+        for height in 1..=3 {
+            finalize_and_commit(&app, height, Vec::new());
+        }
+        let expected = app.height_and_app_hash().unwrap();
+        drop(app);
+
+        let database_path = state_path.with_extension("json.sqlite3");
+        let database = rusqlite::Connection::open(&database_path).unwrap();
+        database
+            .execute(
+                "UPDATE metadata SET value='3' WHERE key='schema_version'",
+                [],
+            )
+            .unwrap();
+        database
+            .execute(
+                "DELETE FROM metadata
+                 WHERE key IN ('auth_query_floor', 'auth_prune_target')",
+                [],
+            )
+            .unwrap();
+        database
+            .execute_batch(
+                "
+                DROP INDEX auth_stale_nodes_by_node_key;
+                DROP TABLE auth_stale_values;
+                ",
+            )
+            .unwrap();
+        drop(database);
+
+        let restarted = CometBftApplication::new(config).unwrap();
+        assert_eq!(restarted.height_and_app_hash().unwrap(), expected);
+        let store = restarted.core.store.as_ref().unwrap();
+        assert_eq!(
+            store.auth_prune_status().unwrap(),
+            store::AuthPruneStatus {
+                query_floor: 0,
+                target: None,
+            }
+        );
+        let database = rusqlite::Connection::open(database_path).unwrap();
+        assert_eq!(
+            database
+                .query_row(
+                    "SELECT value FROM metadata WHERE key='schema_version'",
+                    [],
+                    |row| row.get::<_, String>(0),
+                )
+                .unwrap(),
+            "4"
+        );
+        drop(database);
+        finalize_and_commit(&restarted, 4, Vec::new());
+        drop(restarted);
+        fs::remove_dir_all(root).unwrap();
+    }
+
+    #[test]
+    fn schema3_latest_only_database_is_normalized_during_snapshot_install() {
+        let root = std::env::temp_dir().join(format!(
+            "trnm-comet-schema3-snapshot-install-{}-{}",
+            std::process::id(),
+            now_unix_ms()
+        ));
+        fs::create_dir_all(&root).unwrap();
+        let source_path = root.join("source-state.json");
+        let (source, _) = persistent_fixture(source_path);
+        for height in 1..=5 {
+            finalize_and_commit(&source, height, Vec::new());
+        }
+        wait_for_snapshot(&source, 5);
+        let expected = source.height_and_app_hash().unwrap();
+        let payload_path = {
+            let snapshots = source.core.snapshots.lock().unwrap();
+            match &snapshots.get(&5).unwrap().payload {
+                SnapshotPayload::File { path, .. } => path.clone(),
+                SnapshotPayload::Memory(_) => panic!("persistent snapshot must be disk-backed"),
+            }
+        };
+        let database = rusqlite::Connection::open(&payload_path).unwrap();
+        database
+            .execute(
+                "UPDATE metadata SET value='3' WHERE key='schema_version'",
+                [],
+            )
+            .unwrap();
+        database
+            .execute(
+                "DELETE FROM metadata
+                 WHERE key IN ('auth_query_floor', 'auth_prune_target')",
+                [],
+            )
+            .unwrap();
+        database
+            .execute_batch(
+                "
+                DROP INDEX auth_stale_nodes_by_node_key;
+                DROP TABLE auth_stale_values;
+                ",
+            )
+            .unwrap();
+        drop(database);
+
+        let target_path = root.join("target-state.json");
+        let target_config = ConsensusAppConfig {
+            state_path: Some(target_path),
+            ..source.core.config.clone()
+        };
+        let target = CometBftApplication::new(target_config.clone()).unwrap();
+        initialize(&target);
+        let empty = target.core.state.lock().unwrap().clone();
+        let installed = target
+            .core
+            .store
+            .as_ref()
+            .unwrap()
+            .install_snapshot_database(&empty, &payload_path, expected.0, expected.1)
+            .unwrap();
+        assert_eq!((installed.height, installed.app_hash), expected);
+        let store = target.core.store.as_ref().unwrap();
+        assert_eq!(
+            store.auth_prune_status().unwrap(),
+            store::AuthPruneStatus {
+                query_floor: expected.0,
+                target: None,
+            }
+        );
+        assert!(store
+            .prove(expected.0, validator_state_key().unwrap())
+            .is_ok());
+        drop(target);
+
+        let restarted = CometBftApplication::new(target_config).unwrap();
+        assert_eq!(restarted.height_and_app_hash().unwrap(), expected);
+        finalize_and_commit(&restarted, expected.0 + 1, Vec::new());
+        drop(restarted);
+        drop(source);
+        fs::remove_dir_all(root).unwrap();
+    }
+
+    #[test]
+    fn schema4_authenticated_prune_metadata_corruption_fails_closed() {
+        let root = std::env::temp_dir().join(format!(
+            "trnm-comet-store-schema4-prune-corruption-{}-{}",
+            std::process::id(),
+            now_unix_ms()
+        ));
+        fs::create_dir_all(&root).unwrap();
+        let base_state_path = root.join("base").join("app-state.json");
+        let (app, _) = persistent_fixture(base_state_path.clone());
+        for height in 1..=4 {
+            finalize_and_commit(&app, height, Vec::new());
+        }
+        app.core
+            .store
+            .as_ref()
+            .unwrap()
+            .request_auth_prune(3)
+            .unwrap();
+        let app_config = app.core.config.clone();
+        drop(app);
+        let base_database_path = base_state_path.with_extension("json.sqlite3");
+        let database = rusqlite::Connection::open(&base_database_path).unwrap();
+        database
+            .execute_batch("PRAGMA wal_checkpoint(TRUNCATE);")
+            .unwrap();
+        drop(database);
+
+        for (name, mutation) in [
+            (
+                "missing-floor",
+                "DELETE FROM metadata WHERE key='auth_query_floor'",
+            ),
+            (
+                "target-below-floor",
+                "UPDATE metadata SET value='2' WHERE key='auth_prune_target'",
+            ),
+            (
+                "target-above-floor",
+                "UPDATE metadata SET value='4' WHERE key='auth_prune_target'",
+            ),
+            (
+                "invalid-floor",
+                "UPDATE metadata SET value='invalid' WHERE key='auth_query_floor'",
+            ),
+            (
+                "missing-pending-target",
+                "DELETE FROM metadata WHERE key='auth_prune_target'",
+            ),
+        ] {
+            let state_path = root.join(name).join("app-state.json");
+            fs::create_dir_all(state_path.parent().unwrap()).unwrap();
+            let database_path = state_path.with_extension("json.sqlite3");
+            fs::copy(&base_database_path, &database_path).unwrap();
+            let database = rusqlite::Connection::open(database_path).unwrap();
+            database.execute_batch(mutation).unwrap();
+            drop(database);
+            assert!(
+                CometBftApplication::new(ConsensusAppConfig {
+                    state_path: Some(state_path),
+                    ..app_config.clone()
+                })
+                .is_err(),
+                "schema-4 prune metadata mutation {name} reopened"
+            );
+        }
+        fs::remove_dir_all(root).unwrap();
+    }
+
+    #[test]
     fn committed_sqlite_head_replaces_untrusted_legacy_status_file() {
         let root = std::env::temp_dir().join(format!(
             "trnm-comet-store-rollback-guard-{}-{}",
@@ -5853,6 +6271,244 @@ mod tests {
         finalize_and_commit(&restarted, 4, Vec::new());
         assert_eq!(restarted.height_and_app_hash().unwrap().0, 4);
         drop(restarted);
+        fs::remove_dir_all(root).unwrap();
+    }
+
+    #[test]
+    fn budgeted_authenticated_pruning_is_logical_first_resumable_and_proof_safe() {
+        let root = std::env::temp_dir().join(format!(
+            "trnm-comet-store-budgeted-prune-{}-{}",
+            std::process::id(),
+            now_unix_ms()
+        ));
+        fs::create_dir_all(&root).unwrap();
+        let state_path = root.join("app-state.json");
+        let (fixture_app, _) = fixture();
+        let config = ConsensusAppConfig {
+            state_path: Some(state_path),
+            ..fixture_app.core.config.clone()
+        };
+        let app = CometBftApplication::new(config.clone()).unwrap();
+        initialize(&app);
+        for height in 1..=3 {
+            finalize_and_commit(&app, height, Vec::new());
+        }
+        let pinned_head = app.height_and_app_hash().unwrap();
+        let store = app.core.store.as_ref().unwrap();
+        let status = store.request_auth_prune(2).unwrap();
+        assert_eq!(status.query_floor, 2);
+        assert_eq!(status.target, Some(2));
+        assert!(
+            store.prove(1, validator_state_key().unwrap()).is_err(),
+            "logical floor must reject old queries before physical deletion"
+        );
+        assert_eq!(
+            <[u8; 32]>::from(
+                store
+                    .prove(3, validator_state_key().unwrap())
+                    .unwrap()
+                    .root_hash
+            ),
+            pinned_head.1
+        );
+        let pinned = store
+            .pin_snapshot(&app.core.state.lock().unwrap().clone())
+            .unwrap();
+        assert!(
+            store
+                .try_prune_auth_batch(1, 1024 * 1024)
+                .unwrap()
+                .is_none(),
+            "physical pruning must yield while a live snapshot read is pinned"
+        );
+        finalize_and_commit(&app, 4, Vec::new());
+        let expected = app.height_and_app_hash().unwrap();
+        assert_eq!(
+            expected.1, pinned_head.1,
+            "empty collision commit changed the authenticated root"
+        );
+        assert!(
+            store
+                .try_prune_auth_batch(1, 1024 * 1024)
+                .unwrap()
+                .is_none(),
+            "physical pruning must continue yielding after a Commit advances a pinned head"
+        );
+        drop(pinned);
+        let first = store.try_prune_auth_batch(1, 1024 * 1024).unwrap().unwrap();
+        assert_eq!(first.rows_examined, 1);
+        assert!(!first.complete);
+        assert!(store.prove(2, validator_state_key().unwrap()).is_ok());
+        drop(app);
+
+        let restarted = CometBftApplication::new(config.clone()).unwrap();
+        assert_eq!(restarted.height_and_app_hash().unwrap(), expected);
+        let store = restarted.core.store.as_ref().unwrap();
+        for _ in 0..1_000 {
+            assert!(store.prove(2, validator_state_key().unwrap()).is_ok());
+            assert_eq!(
+                <[u8; 32]>::from(
+                    store
+                        .prove(4, validator_state_key().unwrap())
+                        .unwrap()
+                        .root_hash
+                ),
+                expected.1
+            );
+            if store.auth_prune_status().unwrap().target.is_none()
+                && !restarted.core.auth_prune_worker.lock().unwrap().active
+            {
+                break;
+            }
+            std::thread::sleep(std::time::Duration::from_millis(2));
+        }
+        assert_eq!(
+            store.auth_prune_status().unwrap(),
+            store::AuthPruneStatus {
+                query_floor: 2,
+                target: None,
+            }
+        );
+        assert!(store.prove(1, validator_state_key().unwrap()).is_err());
+        finalize_and_commit(&restarted, 5, Vec::new());
+        assert_eq!(restarted.height_and_app_hash().unwrap().0, 5);
+        wait_for_snapshot(&restarted, 5);
+        drop(restarted);
+        fs::remove_dir_all(root).unwrap();
+    }
+
+    #[test]
+    fn budgeted_authenticated_pruning_collects_superseded_value_history() {
+        let root = std::env::temp_dir().join(format!(
+            "trnm-comet-store-value-prune-{}-{}",
+            std::process::id(),
+            now_unix_ms()
+        ));
+        fs::create_dir_all(&root).unwrap();
+        let state_path = root.join("app-state.json");
+        let (app, _) = persistent_fixture(state_path.clone());
+        let store = app.core.store.as_ref().unwrap();
+        let mut state = app.core.state.lock().unwrap().clone();
+        let object_key = "persistent-value-prune-object";
+        for object_version in 1..=6 {
+            let mut delta = BlockDelta::default();
+            let object = ObjectMutation {
+                object_key_hex: object_key.to_string(),
+                object_type: "trnm_value_prune_fixture_v1".to_string(),
+                expected_version: (object_version > 1).then_some(object_version - 1),
+                next_version: object_version,
+                value_bytes: object_version.to_be_bytes().to_vec(),
+            }
+            .into_stored();
+            delta.objects.insert(object_key.to_string(), object);
+            let next_height = state.height + 1;
+            let writes = authenticated_writes_for_delta(next_height, &delta).unwrap();
+            let auth_update = store.plan_auth_update(next_height, writes).unwrap();
+            let pending = PendingBlock {
+                height: next_height,
+                app_hash: auth_update.root_hash.into(),
+                tx_results: Vec::new(),
+                validator_updates: Vec::new(),
+                delta,
+                auth_update,
+            };
+            store.persist_transition(&state, &pending, 0).unwrap();
+            state.height = pending.height;
+            state.app_hash = pending.app_hash;
+        }
+        let database_path = state_path.with_extension("json.sqlite3");
+        let before = rusqlite::Connection::open(&database_path)
+            .unwrap()
+            .query_row("SELECT COUNT(*) FROM auth_values", [], |row| {
+                row.get::<_, u64>(0)
+            })
+            .unwrap();
+        store.request_auth_prune(4).unwrap();
+        let mut removed_values = 0_usize;
+        for _ in 0..1_000 {
+            let outcome = store.try_prune_auth_batch(1, 1024 * 1024).unwrap().unwrap();
+            removed_values = removed_values.saturating_add(outcome.stats.value_versions_removed);
+            if outcome.complete {
+                break;
+            }
+        }
+        assert_eq!(store.auth_prune_status().unwrap().target, None);
+        assert!(
+            removed_values >= 3,
+            "superseded value history was not physically collected"
+        );
+        let database = rusqlite::Connection::open(database_path).unwrap();
+        let after = database
+            .query_row("SELECT COUNT(*) FROM auth_values", [], |row| {
+                row.get::<_, u64>(0)
+            })
+            .unwrap();
+        assert!(after < before);
+        assert_eq!(
+            database
+                .query_row(
+                    "SELECT COUNT(*)
+                     FROM auth_stale_values
+                     WHERE stale_since_version_be<=?1",
+                    rusqlite::params![4_u64.to_be_bytes().as_slice()],
+                    |row| row.get::<_, u64>(0),
+                )
+                .unwrap(),
+            0
+        );
+        drop(database);
+        let proof_key = stored_object_key(object_key).unwrap();
+        assert!(store.prove(3, proof_key.clone()).is_err());
+        assert!(store.prove(4, proof_key.clone()).unwrap().value.is_some());
+        assert!(store.prove(6, proof_key).unwrap().value.is_some());
+        drop(app);
+        fs::remove_dir_all(root).unwrap();
+    }
+
+    #[test]
+    fn background_authenticated_prune_worker_drains_the_requested_floor() {
+        let root = std::env::temp_dir().join(format!(
+            "trnm-comet-store-background-prune-{}-{}",
+            std::process::id(),
+            now_unix_ms()
+        ));
+        fs::create_dir_all(&root).unwrap();
+        let state_path = root.join("app-state.json");
+        let (app, _) = persistent_fixture(state_path);
+        for height in 1..=4 {
+            finalize_and_commit(&app, height, Vec::new());
+        }
+        let expected = app.height_and_app_hash().unwrap();
+        let store = app.core.store.as_ref().unwrap();
+        store.request_auth_prune(3).unwrap();
+        app.wake_authenticated_prune_worker().unwrap();
+        for _ in 0..1_000 {
+            if store.auth_prune_status().unwrap().target.is_none()
+                && !app.core.auth_prune_worker.lock().unwrap().active
+            {
+                break;
+            }
+            std::thread::sleep(std::time::Duration::from_millis(2));
+        }
+        assert_eq!(
+            store.auth_prune_status().unwrap(),
+            store::AuthPruneStatus {
+                query_floor: 3,
+                target: None,
+            }
+        );
+        assert!(!app.core.auth_prune_worker.lock().unwrap().active);
+        assert!(store.prove(2, validator_state_key().unwrap()).is_err());
+        assert_eq!(
+            <[u8; 32]>::from(
+                store
+                    .prove(4, validator_state_key().unwrap())
+                    .unwrap()
+                    .root_hash
+            ),
+            expected.1
+        );
+        drop(app);
         fs::remove_dir_all(root).unwrap();
     }
 
