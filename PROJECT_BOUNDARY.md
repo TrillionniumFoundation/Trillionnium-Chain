@@ -3,7 +3,8 @@
 - Project ID: `trillionnium-chain`
 - Canonical root: `/home/alex/projects/trillionnium-chain`
 - Lane: `chain-consensus`
-- Remote status: blocked until World and Chain have distinct remotes
+- Private remote: `TrillionniumFoundation/Trillionnium-Chain`
+- Legacy shared source: `legacy-shared` (fetch-only)
 
 ## Owns
 
