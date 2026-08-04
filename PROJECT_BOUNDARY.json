@@ -1,0 +1,34 @@
+{
+  "schema": 1,
+  "project_id": "trillionnium-chain",
+  "canonical_dir": "trillionnium-chain",
+  "lane": "chain-consensus",
+  "lifecycle": "active",
+  "development": true,
+  "remote": {
+    "policy": "blocked-until-split",
+    "legacy_slug": "TrillionniumFoundation/Trillionnium",
+    "upstream_required": true
+  },
+  "branch": {
+    "protected": [
+      "main",
+      "master"
+    ],
+    "development_regex": "^(feature|fix|chore|docs|test)/chain-[a-z0-9][a-z0-9._-]*$"
+  },
+  "cargo": {
+    "workspace_manifest": "trillionnium/Cargo.toml",
+    "required_packages": [
+      "trnm-consensus-app",
+      "trnm-runtime",
+      "trnm-state"
+    ],
+    "forbidden_packages": [
+      "trnm-first-contact",
+      "trnm-game-server"
+    ],
+    "external_path_dependencies": "forbid"
+  },
+  "deny_changed_paths_regex": "^trillionnium/crates/(trnm-first-contact|trnm-game-server|trnm-campaign-core|trnm-rts-|trnm-online-|trnm-economy-)"
+}
