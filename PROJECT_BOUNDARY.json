@@ -6,8 +6,9 @@
   "lifecycle": "active",
   "development": true,
   "remote": {
-    "policy": "blocked-until-split",
-    "legacy_slug": "TrillionniumFoundation/Trillionnium",
+    "policy": "required",
+    "canonical_slug": "TrillionniumFoundation/Trillionnium-Chain",
+    "visibility": "private",
     "upstream_required": true
   },
   "branch": {
