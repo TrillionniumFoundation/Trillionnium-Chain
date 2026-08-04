@@ -1,6 +1,10 @@
 [workspace]
 exclude = ["fuzz"]
 members = [
+  "crates/trnm-consensus-core",
+  "crates/trnm-consensus-crypto",
+  "crates/trnm-consensus-sim",
+  "crates/trnm-consensus-types",
   "crates/trnm-node",
   "crates/trnm-types",
   "crates/trnm-state",
@@ -26,3 +30,9 @@ resolver = "2"
 edition = "2021"
 license = "MIT"
 authors = ["Trillionnium Contributors"]
+
+[workspace.metadata.trnm]
+lane = "chain-protocol"
+consensus_target = "poco-bft-v0"
+production_consensus_activation = false
+cometbft_role = "development-differential-oracle"

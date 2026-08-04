@@ -52,6 +52,12 @@ deliberately reports `wire_conformance = false`.
   golden tests reproduce the independent proof digest and three retained
   mutations. The production proof verifier explicitly binds the parameter
   preimage, scheduled leader, three-header rule, and checked timestamp bounds.
+- `ProposalWitnessV0` and `SignedProposalV0` now retain the exact justify QC,
+  optional TC, optional epoch authorization, and proposer signature through one
+  shared production-validation path. `CertifiedHeaderV0` reuses that same
+  witness and can be constructed from an admitted signed proposal without
+  reconstructing or replacing its signed certificate variant. The refactor
+  leaves every frozen CertifiedHeader/finality byte and digest unchanged.
 
 These closures are necessary but do not imply complete wire conformance.
 

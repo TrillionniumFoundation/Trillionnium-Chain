@@ -1601,6 +1601,37 @@ dependencies = [
 ]
 
 [[package]]
+name = "trnm-consensus-core"
+version = "0.1.0"
+dependencies = [
+ "trnm-consensus-types",
+]
+
+[[package]]
+name = "trnm-consensus-crypto"
+version = "0.1.0"
+dependencies = [
+ "ed25519-dalek",
+ "trnm-consensus-types",
+]
+
+[[package]]
+name = "trnm-consensus-sim"
+version = "0.1.0"
+dependencies = [
+ "sha2",
+ "trnm-consensus-core",
+ "trnm-consensus-types",
+]
+
+[[package]]
+name = "trnm-consensus-types"
+version = "0.1.0"
+dependencies = [
+ "sha2",
+]
+
+[[package]]
 name = "trnm-executor"
 version = "0.1.0"
 dependencies = [
