@@ -1,0 +1,176 @@
+syntax = "proto3";
+
+package trnm.poco.bft.v0;
+
+import "trnm/poco/bft/v0/common.proto";
+import "trnm/poco/bft/v0/epoch.proto";
+
+// Transport encoding only. Protobuf bytes are NOT CEV0 signing bytes. Every
+// digest and Ed25519 signature is verified by reconstructing the exact logical
+// object, canonical field order, and domain frozen by the protocol docs.
+//
+// Decoder limits for the P0 reference profile:
+// - complete Block application_payload plus evidence_objects: at most 4 MiB;
+// - QC/TC signer lists: at most 100 entries, canonical validator_id order;
+// - referenced QCs in a TC: at most 100, unique and canonical digest order;
+// - containing WireEnvelope: at most 8 MiB.
+
+// Exact transport projection of BlockHeaderV0. Every hash/root/block ID is
+// exactly 32 bytes. next_epoch_commitment_hash is empty when absent or exactly
+// 32 bytes when present.
+message BlockHeader {
+  uint32 schema_version = 1; // Logical u16; MUST equal 0.
+  bytes genesis_hash = 2;
+  string chain_id = 3;
+  uint32 protocol_version = 4;
+  uint64 epoch = 5;
+  uint64 view = 6;
+  uint64 height = 7;
+  BlockKind block_kind = 8;
+  bytes parent_block_id = 9;
+  bytes proposer_id = 10;
+  bytes active_validator_set_hash = 11;
+  bytes consensus_parameters_hash = 12;
+  bytes payload_root = 13;
+  bytes state_root = 14;
+  bytes receipts_root = 15;
+  bytes evidence_root = 16;
+  uint64 timestamp_ms = 17;
+  bytes next_epoch_commitment_hash = 18; // Empty or exactly 32 bytes.
+
+  reserved 64 to 127;
+}
+
+message Block {
+  BlockHeader header = 1;
+  bytes application_payload = 2;
+  // Bounded decoded evidence transport objects. Their deterministic ordered
+  // commitment MUST equal header.evidence_root; these bytes are never signed.
+  repeated bytes evidence_objects = 3;
+
+  reserved 64 to 127;
+}
+
+// VoteSignV0 transport projection plus author/signature. context.message_kind
+// MUST be MESSAGE_KIND_VOTE and every context field must match the certified
+// block/validator set.
+message Vote {
+  CommonConsensusContext context = 1;
+  uint64 height = 2;
+  bytes block_id = 3;
+  bytes author_validator_id = 4;
+  bytes signature = 5; // Exactly 64 bytes.
+
+  reserved 64 to 127;
+}
+
+// Exact QuorumCertificateV0 projection. The signatures list contains the
+// canonical unique signer/signature pairs, not nested Vote objects. qc_digest
+// is recomputed and excluded from the canonical QC preimage.
+message QuorumCertificate {
+  uint32 schema_version = 1; // Logical u16; MUST equal 0.
+  bytes genesis_hash = 2;
+  string chain_id = 3;
+  uint32 protocol_version = 4;
+  uint64 epoch = 5;
+  bytes validator_set_hash = 6;
+  bytes consensus_parameters_hash = 7; // Must match the set preimage.
+  uint64 view = 8;
+  uint64 height = 9;
+  bytes block_id = 10;
+  repeated SignatureShare signatures = 11;
+  bytes qc_digest = 12; // trnm.poco-bft.qc.v0 digest; recomputed.
+
+  reserved 64 to 127;
+}
+
+// TimeoutSignV0 transport projection plus author/signature.
+message TimeoutVote {
+  CommonConsensusContext context = 1; // message_kind MUST be TIMEOUT.
+  HighQCSummary high_qc = 2;
+  bytes author_validator_id = 3;
+  bytes signature = 4; // Exactly 64 bytes.
+
+  reserved 64 to 127;
+}
+
+// Exact TimeoutCertificateV0 transport projection. Every counted entry's
+// HighQCSummary MUST resolve to one valid referenced_qcs item. QCs are unique
+// and canonical by qc_digest; selected high QC is the maximum by
+// (view, block_id, qc_digest). Same-view/different-block QCs invalidate the TC.
+message TimeoutCertificate {
+  uint32 schema_version = 1; // Logical u16; MUST equal 0.
+  bytes genesis_hash = 2;
+  string chain_id = 3;
+  uint32 protocol_version = 4;
+  uint64 epoch = 5;
+  bytes validator_set_hash = 6;
+  bytes consensus_parameters_hash = 7;
+  uint64 timed_out_view = 8;
+  repeated TimeoutVote entries = 9;
+  repeated QuorumCertificate referenced_qcs = 10;
+  bytes selected_high_qc_digest = 11;
+  bytes tc_digest = 12; // trnm.poco-bft.tc.v0 digest; recomputed.
+  // Transport-only authorization sidecar, present only while a TC references
+  // the view-0 EpochAnchorQC. It is excluded from the TC CEV0 preimage.
+  EpochAnchorAuthorization epoch_anchor_authorization = 13;
+
+  reserved 64 to 127;
+}
+
+// Atomic transport proof from which the new epoch's empty-signature view-0
+// EpochAnchorQC is reconstructed. This nested value has no independent hash
+// domain. The terminal QC and handoff certificate retain their own domains.
+message EpochAnchorAuthorization {
+  BlockHeader terminal_old_header = 1;
+  QuorumCertificate terminal_old_qc = 2;
+  JointHandoffCertificate handoff_certificate = 3;
+
+  reserved 64 to 127;
+}
+
+message SyncInfo {
+  uint32 schema_version = 1;
+  bytes genesis_hash = 2;
+  string chain_id = 3;
+  uint32 protocol_version = 4;
+  uint64 epoch = 5;
+  uint64 current_view = 6;
+  bytes validator_set_hash = 7;
+  bytes consensus_parameters_hash = 8;
+  QuorumCertificate high_qc = 9;
+  QuorumCertificate locked_qc = 10;
+  TimeoutCertificate high_tc = 11; // Message absence means no TC.
+  uint64 highest_finalized_height = 12;
+  bytes highest_finalized_block_id = 13;
+  bytes highest_finalized_state_root = 14;
+
+  reserved 64 to 127;
+}
+
+// ProposalSignV0 transport projection. justify_qc is always present. A timeout
+// proposal additionally carries timeout_certificate and its digest. The first
+// block of a non-genesis epoch additionally carries one atomic
+// epoch_anchor_authorization. Empty digest bytes mean the corresponding
+// optional message is absent; otherwise a digest is exactly 32 bytes and MUST
+// match the embedded message. GenesisQC/EpochAnchorQC are empty-signature QC
+// projections accepted only in their context-authorized view-0 positions.
+message Proposal {
+  CommonConsensusContext context = 1; // message_kind MUST be PROPOSAL.
+  bytes proposer_validator_id = 2;
+  uint64 height = 3;
+  Block block = 4;
+  bytes block_id = 5; // Recomputed from block.header.
+  QuorumCertificate justify_qc = 6;
+  bytes justify_qc_digest = 7;
+  TimeoutCertificate timeout_certificate = 8;
+  bytes timeout_certificate_digest = 9; // Empty or exactly 32 bytes.
+  bytes signature = 12; // Exactly 64-byte proposer Ed25519 signature.
+  EpochAnchorAuthorization epoch_anchor_authorization = 13;
+
+  // Removed pre-freeze split handoff fields. Authorization is atomic and its
+  // certificate digest is reconstructed for ProposalSignV0.
+  reserved 10, 11;
+
+  reserved 64 to 127;
+}

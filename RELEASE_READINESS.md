@@ -1,6 +1,6 @@
 # TRNM Release Readiness
 
-Updated date: 2026-07-30
+Updated date: 2026-08-05
 Scope: A citation must record the remote URL, fetch UTC/result, branch, `HEAD`,
 `refs/remotes/origin/main`, clean/dirty `git status --porcelain`, and this
 document's SHA-256. Run `git fetch --prune origin main` first. If fetch or
@@ -18,10 +18,33 @@ cached tracking ref contemporaneous.
 
 **Conclusion: Not release-ready; do not claim external readiness.**
 
-### 2026-07-28 canonical-runtime truth
+### 2026-08-04 PoCO-BFT target truth
 
-- `CometBFT + trnm-consensus-app + trnm-runtime` is the sole production-candidate
-  state-transition path. `trnm-chain-node`, `trnm-chain-validator`, `trnm-chain-cli`,
+- The production consensus target is the deterministic PoCO-BFT v0 architecture
+  frozen in `docs/architecture/TRNM_POCO_BFT_V0_FREEZE_2026-08-04.md`.
+- `trnm-runtime` and its authenticated JMT/ICS23 state boundary remain reusable.
+  CometBFT and `trnm-consensus-app` are retained as a development differential
+  oracle and migration fixture; they are not the target production finality
+  authority.
+- P0 protocol/schema/formalization and P1 kernel work are in progress. There is
+  no claim yet of a complete safety proof, production P2P/WAL/state sync/remote
+  signer, secure PoCO economic activation, remote multi-node evidence, external
+  audit, public testnet readiness, or mainnet readiness.
+- Release-blocking differences between the frozen protocol and the Rust
+  prototype are tracked explicitly in
+  `docs/protocol/poco-bft-v0/IMPLEMENTATION_GAP_REGISTER.md`. Any open critical
+  item keeps network signing and node deployment disabled.
+- Persistent services, LAN validation, public validation, and soak must run on
+  the designated remote validation host(s), not on the development workstation.
+
+The statements above supersede any later historical wording that calls the
+CometBFT path the sole production candidate.
+
+### 2026-07-28 preserved runtime/oracle evidence
+
+- `CometBFT + trnm-consensus-app + trnm-runtime` was the prior production-candidate
+  state-transition path and is now the development oracle fixture.
+  `trnm-chain-node`, `trnm-chain-validator`, `trnm-chain-cli`,
   and `trnm-sim` are frozen legacy harnesses. Their tests, benchmarks, or fault
   simulations are not evidence that the production candidate implements a feature.
 - `trnm-finality-types` and `trnm-finality-verifier` are the supported minimal

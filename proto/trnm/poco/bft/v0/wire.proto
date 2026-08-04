@@ -1,0 +1,74 @@
+syntax = "proto3";
+
+package trnm.poco.bft.v0;
+
+import "trnm/poco/bft/v0/common.proto";
+import "trnm/poco/bft/v0/consensus.proto";
+import "trnm/poco/bft/v0/epoch.proto";
+import "trnm/poco/bft/v0/evidence.proto";
+import "trnm/poco/bft/v0/light_client.proto";
+
+// Bounded top-level transport envelope. Encoded size MUST be <= 8 MiB and
+// exactly one body must be present. Protobuf bytes and body_semantic_hash are
+// never consensus signing bytes. Peer authentication belongs to authenticated
+// P2P; the envelope introduces no alternate consensus signature scheme.
+
+enum WireBodyKind {
+  WIRE_BODY_KIND_UNSPECIFIED = 0;
+  WIRE_BODY_KIND_PROPOSAL = 1;
+  WIRE_BODY_KIND_VOTE = 2;
+  WIRE_BODY_KIND_TIMEOUT_VOTE = 3;
+  WIRE_BODY_KIND_QUORUM_CERTIFICATE = 4;
+  WIRE_BODY_KIND_TIMEOUT_CERTIFICATE = 5;
+  WIRE_BODY_KIND_SYNC_INFO = 6;
+  WIRE_BODY_KIND_EQUIVOCATION_EVIDENCE = 7;
+  WIRE_BODY_KIND_HANDOFF_VOTE = 8;
+  WIRE_BODY_KIND_JOINT_HANDOFF_CERTIFICATE = 9;
+  WIRE_BODY_KIND_PROTOCOL_UPGRADE_PLAN = 10;
+  WIRE_BODY_KIND_NEXT_EPOCH_COMMITMENT = 11;
+  WIRE_BODY_KIND_VALIDATOR_SET = 12;
+  WIRE_BODY_KIND_CONSENSUS_PARAMETERS = 13;
+  WIRE_BODY_KIND_LIGHT_CLIENT_PROOF = 14;
+
+  reserved 32 to 63;
+}
+
+message WireEnvelope {
+  uint32 schema_version = 1; // Transport schema; MUST equal 0.
+  uint32 wire_version = 2; // MUST equal 0.
+  bytes genesis_hash = 3;
+  string chain_id = 4;
+  uint32 protocol_version = 5;
+  uint64 epoch = 6;
+  uint64 view = 7;
+  bytes validator_set_hash = 8;
+  bytes consensus_parameters_hash = 9;
+  // True only for proposal/vote/timeout/old-handoff/new-handoff bodies. When
+  // true, message_kind MUST exactly match the body's signed CEV0 context.
+  bool has_consensus_message_kind = 10;
+  MessageKind consensus_message_kind = 11;
+  WireBodyKind body_kind = 12;
+  bytes sender_node_id = 13; // Transport identity, not validator authority.
+  bytes message_id = 14; // Bounded transport deduplication identifier.
+  uint64 sender_sequence = 15;
+  bytes body_semantic_hash = 16; // Optional transport integrity/dedup hash.
+
+  oneof body {
+    Proposal proposal = 32;
+    Vote vote = 33;
+    TimeoutVote timeout_vote = 34;
+    QuorumCertificate quorum_certificate = 35;
+    TimeoutCertificate timeout_certificate = 36;
+    SyncInfo sync_info = 37;
+    EquivocationEvidence equivocation_evidence = 38;
+    HandoffVote handoff_vote = 39;
+    JointHandoffCertificate joint_handoff_certificate = 40;
+    ProtocolUpgradePlan protocol_upgrade_plan = 41;
+    NextEpochCommitment next_epoch_commitment = 42;
+    ValidatorSet validator_set = 43;
+    ConsensusParameters consensus_parameters = 44;
+    LightClientProof light_client_proof = 45;
+  }
+
+  reserved 64 to 127;
+}

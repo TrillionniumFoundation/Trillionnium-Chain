@@ -4,6 +4,10 @@
 
 - Active mainline: `trillionnium/`
 - Historical status/archive docs live under `docs/archive/`
+- Current consensus target: deterministic PoCO-BFT v0; see
+  `docs/architecture/TRNM_POCO_BFT_V0_FREEZE_2026-08-04.md`
+- CometBFT is retained as a development differential oracle, not the target
+  production finality authority.
 
 ---
 
@@ -37,6 +41,9 @@ TrillionniumChain/
 │   │   ├── trnm-cli
 │   │   ├── trnm-protocol
 │   │   ├── trnm-runtime
+│   │   ├── trnm-consensus-types
+│   │   ├── trnm-consensus-core
+│   │   ├── trnm-consensus-sim
 │   │   ├── trnm-consensus-app
 │   │   └── trnm-bridge-poc
 │   ├── configs/
@@ -66,8 +73,17 @@ TrillionniumChain/
 - `trnm-protocol` / `trnm-runtime`: the canonical typed transaction protocol and
   pure deterministic state transition for accounts, fees, task escrow, PoCO
   consumption settlement, challenge, and resolution
-- `trnm-consensus-app`: the sole production-candidate runtime boundary, using
-  CometBFT ABCI++ with typed canonical transactions, fail-closed unknown payloads,
+- `trnm-consensus-types`: network- and storage-independent PoCO-BFT v0 type
+  scaffold for canonical signing inputs, certificates, handoff, and evidence;
+  remaining conformance gaps are release-blocking and tracked explicitly
+- `trnm-consensus-core`: deterministic PoCO-BFT state-machine prototype. It has no
+  sockets, database, filesystem, wall-clock, or signer-device dependency and
+  requires persistence acknowledgement before requesting a signature
+- `trnm-consensus-sim`: deterministic, replayable fault simulator for the pure
+  core; it is test evidence, not a deployed network or production node
+- `trnm-consensus-app`: the preserved CometBFT development oracle and runtime
+  integration fixture, using ABCI++ with typed canonical transactions,
+  fail-closed unknown payloads,
   account sequence nonces, gas/fees, indexed execution events,
   replay-safe app-hash v3, committed validator lifecycle, SQLite-WAL delta
   persistence, stable empty-block state roots, local fresh-node state sync,
@@ -86,10 +102,12 @@ TrillionniumChain/
 - `trnm-types`: shared protocol types
 - `trnm-bridge-poc`: bridge proof-of-concept integration
 
-The frozen Day-1 scope and feature-to-runtime truth table are maintained in
-`docs/architecture/TRNM_CANONICAL_RUNTIME_FREEZE_2026-07-28.md`. Bridge, oracle,
-external contracts, and full ZK platform work are explicitly outside the Day-1
-production candidate until they execute through `trnm-runtime` under CometBFT.
+The PoCO-BFT v0 architecture target is maintained in
+`docs/architecture/TRNM_POCO_BFT_V0_FREEZE_2026-08-04.md`. The older Day-1
+runtime table in `docs/architecture/TRNM_CANONICAL_RUNTIME_FREEZE_2026-07-28.md`
+remains useful evidence for the reusable runtime/JMT boundary, but its CometBFT
+production-authority decision is superseded. Bridge, external contracts, and
+full ZK platform work remain outside the frozen PoCO-BFT v0 scope.
 
 ### Web4 frontend (`web4-frontend`)
 

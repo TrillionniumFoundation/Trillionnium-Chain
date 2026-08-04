@@ -1,0 +1,182 @@
+syntax = "proto3";
+
+package trnm.poco.bft.v0;
+
+// PoCO-BFT v0 protobuf messages are bounded transport containers only.
+// Serialized protobuf bytes are NOT CEV0 and MUST NOT be signed or hashed
+// directly. Implementations must strictly decode these messages, validate every
+// redundant scope/hash field, and reconstruct the normative domain-separated
+// CEV0 preimage before hashing or Ed25519 verification.
+//
+// Protocol-v0 fixed cryptography:
+// - digest: SHA-256, exactly 32 bytes;
+// - consensus public key: Ed25519, exactly 32 bytes;
+// - signature: strict Ed25519, exactly 64 bytes.
+//
+// Other bounds unless a field says otherwise:
+// - chain_id: 1..128 restricted-ASCII bytes represented as a protobuf string;
+// - validator_id: 1..128 bytes;
+// - validator/signature lists: at most 100 entries, canonical validator_id
+//   order, no duplicates;
+// - no maps, floats, alternate signature schemes, or implicit hash algorithms.
+
+// Exact normative message_kind discriminants used in signed CEV0 contexts.
+enum MessageKind {
+  MESSAGE_KIND_PROPOSAL = 0;
+  MESSAGE_KIND_VOTE = 1;
+  MESSAGE_KIND_TIMEOUT = 2;
+  MESSAGE_KIND_OLD_SET_HANDOFF_VOTE = 3;
+  MESSAGE_KIND_NEW_SET_HANDOFF_VOTE = 4;
+
+  reserved 16 to 31;
+}
+
+// Exact normative BlockHeaderV0 block_kind discriminants.
+enum BlockKind {
+  BLOCK_KIND_REGULAR = 0;
+  BLOCK_KIND_EPOCH_CHECKPOINT = 1;
+  BLOCK_KIND_EPOCH_SEAL_1 = 2;
+  BLOCK_KIND_EPOCH_SEAL_2 = 3;
+  BLOCK_KIND_EPOCH_HANDOFF = 4;
+
+  reserved 16 to 31;
+}
+
+enum LeaderSchedule {
+  LEADER_SCHEDULE_CANONICAL_VALIDATOR_ROUND_ROBIN = 0;
+
+  reserved 16 to 31;
+}
+
+enum RolloutPhase {
+  ROLLOUT_PHASE_SHADOW = 0;
+  ROLLOUT_PHASE_ELIGIBILITY_ONLY = 1;
+  ROLLOUT_PHASE_CAPPED_WEIGHT = 2;
+  ROLLOUT_PHASE_FULL = 3;
+
+  reserved 16 to 31;
+}
+
+// Transport-explicit scope for proposal, vote, and timeout signing objects.
+// schema_version and protocol_version MUST both be zero in protocol v0.
+// consensus_parameters_hash is redundant transport scope: it MUST match the
+// parameter hash inside the validator-set preimage. The normative signed common
+// context binds it transitively through validator_set_hash.
+message CommonConsensusContext {
+  uint32 schema_version = 1; // Logical CEV0 type is u16; MUST equal 0.
+  bytes genesis_hash = 2; // Exactly 32 bytes.
+  string chain_id = 3; // ConsensusString restricted ASCII, 1..128 bytes.
+  uint32 protocol_version = 4; // MUST equal 0 for this package.
+  uint64 epoch = 5;
+  bytes validator_set_hash = 6; // Exactly 32 bytes.
+  uint64 view = 7;
+  MessageKind message_kind = 8;
+  bytes consensus_parameters_hash = 9; // Exactly 32 bytes.
+
+  reserved 64 to 127;
+}
+
+message Validator {
+  bytes validator_id = 1; // 1..128 bytes.
+  bytes consensus_public_key = 2; // Exactly 32-byte Ed25519 key.
+  uint64 effective_weight = 3; // Positive.
+
+  reserved 64 to 127;
+}
+
+// Transport projection of normative ValidatorSetV0. validator_set_hash is the
+// recomputed trnm.poco-bft.validator-set.v0 digest and is not part of its own
+// canonical preimage.
+message ValidatorSet {
+  uint32 schema_version = 1; // Logical u16; MUST equal 0.
+  bytes genesis_hash = 2; // Exactly 32 bytes.
+  string chain_id = 3;
+  uint32 protocol_version = 4;
+  uint64 epoch = 5;
+  bytes consensus_parameters_hash = 6; // Exactly 32 bytes.
+  repeated Validator validators = 7; // 4..100, canonical order, unique IDs/keys.
+  bytes validator_set_hash = 8; // Exactly 32 bytes; recomputed, never trusted.
+
+  reserved 64 to 127;
+}
+
+message SignatureShare {
+  bytes validator_id = 1; // 1..128 bytes.
+  bytes signature = 2; // Exactly 64-byte strict Ed25519 signature.
+
+  reserved 64 to 127;
+}
+
+// Exact transport projection of HighQCSummaryV0.
+message HighQCSummary {
+  bytes qc_digest = 1; // Exactly 32 bytes.
+  uint64 qc_epoch = 2;
+  uint64 qc_view = 3;
+  uint64 qc_height = 4;
+  bytes qc_block_id = 5; // Exactly 32 bytes.
+
+  reserved 64 to 127;
+}
+
+// Exact transport projection of ConsensusParametersV0. The six u128 logical
+// quantities are exactly 16-byte unsigned big-endian values. parameters_hash is
+// recomputed under trnm.poco-bft.parameters.v0 and excluded from its preimage.
+message ConsensusParameters {
+  uint32 schema_version = 1; // Logical u16; MUST equal 0.
+  uint32 protocol_version = 2;
+  bool production_activation = 3;
+  uint32 max_chain_id_bytes = 4; // Logical u16.
+  uint32 max_validator_id_bytes = 5; // Logical u16.
+  uint32 max_block_bytes = 6;
+  uint32 max_consensus_message_bytes = 7;
+  uint32 min_validators = 8;
+  uint32 max_validators = 9;
+  uint32 quorum_numerator = 10;
+  uint32 quorum_denominator = 11;
+  uint32 quorum_addend = 12;
+  uint32 finality_certified_chain_length = 13; // Logical u8.
+  uint64 max_total_voting_power = 14;
+  uint64 max_block_time_step_ms = 15;
+  LeaderSchedule leader_schedule = 16;
+  bool require_full_payload_before_vote = 17;
+  uint64 base_timeout_ms = 18;
+  uint32 timeout_multiplier_numerator = 19;
+  uint32 timeout_multiplier_denominator = 20;
+  uint64 timeout_max_ms = 21;
+  uint64 epoch_length_blocks = 22;
+  uint32 epoch_seal_blocks = 23; // Logical u8; MUST equal 2.
+  uint64 snapshot_lead_blocks = 24;
+  bool joint_handoff_old_quorum = 25;
+  bool joint_handoff_new_quorum = 26;
+  uint64 upgrade_notice_epochs = 27;
+  uint32 max_protocol_version_jump = 28;
+  uint64 scale_ppm = 29;
+  uint64 maturity_epochs = 30;
+  uint64 max_certificate_age_epochs = 31;
+  uint64 decay_step_ppm_per_epoch = 32;
+  bytes per_certificate_unit_cap_u128_be = 33; // Exactly 16 bytes.
+  bytes per_consumer_provider_epoch_unit_cap_u128_be = 34; // 16 bytes.
+  bytes per_task_provider_epoch_unit_cap_u128_be = 35; // 16 bytes.
+  bytes per_provider_epoch_unit_cap_u128_be = 36; // Exactly 16 bytes.
+  bytes units_per_power_u128_be = 37; // Exactly 16 bytes.
+  bytes bond_atomic_units_per_power_u128_be = 38; // Exactly 16 bytes.
+  uint64 min_validator_power = 39;
+  uint64 max_validator_power = 40;
+  uint64 max_validator_share_ppm = 41;
+  uint64 capped_weight_alpha_ppm = 42;
+  uint64 full_weight_alpha_ppm = 43;
+  RolloutPhase rollout_phase = 44;
+  uint64 minimum_shadow_epochs = 45;
+  uint64 minimum_eligibility_only_epochs = 46;
+  uint64 minimum_capped_weight_epochs = 47;
+  bool automatic_promotion = 48;
+  uint64 evidence_window_epochs = 49;
+  uint64 unbonding_delay_epochs = 50;
+  uint64 jail_duration_epochs = 51;
+  uint64 trusting_period_epochs = 52;
+  bool require_trusting_period_less_than_evidence = 53;
+  bool require_evidence_window_le_unbonding_delay = 54;
+  bytes parameters_hash = 55; // Exactly 32 bytes; recomputed, never trusted.
+
+  reserved 64 to 127;
+}
