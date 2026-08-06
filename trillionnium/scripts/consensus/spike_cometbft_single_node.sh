@@ -92,6 +92,10 @@ command -v base64 >/dev/null
 command -v python3 >/dev/null
 
 mkdir -p "$ROOT"
+CARGO_OUTPUT_DIR="${CARGO_TARGET_DIR:-$PWD/target}"
+if [[ "$CARGO_OUTPUT_DIR" != /* ]]; then
+  CARGO_OUTPUT_DIR="$PWD/$CARGO_OUTPUT_DIR"
+fi
 APP_BIN="${TRNM_COMETBFT_APP_BIN:-}"
 CLI_BIN="${TRNM_COMETBFT_CLI_BIN:-}"
 RECEIPT_BIN="${TRNM_RESEARCH_RECEIPT_V2_BIN:-}"
@@ -99,15 +103,15 @@ RESEARCH_SIGNING_INPUT="${TRNM_RESEARCH_SIGNING_INPUT:-}"
 RESEARCH_PREREQUISITE_SIGNING_INPUT="${TRNM_RESEARCH_PREREQUISITE_SIGNING_INPUT:-}"
 if [[ -z "$APP_BIN" ]]; then
   cargo build -q -p trnm-consensus-app --bin trnm-cometbft-app --locked
-  APP_BIN="$PWD/target/debug/trnm-cometbft-app"
+  APP_BIN="$CARGO_OUTPUT_DIR/debug/trnm-cometbft-app"
 fi
 if [[ -z "$CLI_BIN" ]]; then
   cargo build -q -p trnm-node --features legacy-harness --bin trnm-chain-cli --locked
-  CLI_BIN="$PWD/target/debug/trnm-chain-cli"
+  CLI_BIN="$CARGO_OUTPUT_DIR/debug/trnm-chain-cli"
 fi
 if [[ -z "$RECEIPT_BIN" ]]; then
   cargo build -q -p trnm-finality-verifier --bin trnm-research-receipt-v2 --locked
-  RECEIPT_BIN="$PWD/target/debug/trnm-research-receipt-v2"
+  RECEIPT_BIN="$CARGO_OUTPUT_DIR/debug/trnm-research-receipt-v2"
 fi
 test -x "$APP_BIN"
 test -x "$CLI_BIN"
