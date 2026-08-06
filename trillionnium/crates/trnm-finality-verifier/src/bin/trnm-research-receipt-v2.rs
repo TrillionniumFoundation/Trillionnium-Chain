@@ -11,6 +11,7 @@ use anyhow::{anyhow, ensure, Context, Result};
 use base64::{engine::general_purpose::STANDARD as BASE64, Engine};
 use ed25519_dalek::SigningKey;
 use prost::Message;
+use serde::{Deserialize, Serialize};
 use serde_json::{json, Map, Value};
 use tendermint::{block, validator};
 use tendermint_proto::v0_38::{
@@ -41,7 +42,7 @@ const CLOCK_DRIFT_SECONDS: u64 = 10;
 
 fn usage(program: &str) -> anyhow::Error {
     anyhow!(
-        "usage:\n  {program} fixture-tx PRIVATE_KEY OUTPUT_TX\n  {program} assemble-and-verify EVIDENCE_DIR RECEIPT_OUTPUT TRUSTED_EXECUTION_HEADER_HASH_HEX"
+        "usage:\n  {program} fixture-tx PRIVATE_KEY OUTPUT_TX\n  {program} sign-and-wrap SIGNING_INPUT PRIVATE_KEY SIGNED_COMMAND_OUTPUT OUTPUT_TX\n  {program} assemble-and-verify EVIDENCE_DIR RECEIPT_OUTPUT TRUSTED_EXECUTION_HEADER_HASH_HEX"
     )
 }
 
@@ -453,10 +454,9 @@ fn external_key(namespace: &str, value: &str) -> Result<ExternalKey> {
         .map_err(|error| anyhow!("create fixture {namespace} key: {error}"))
 }
 
-fn fixture_tx(private_key: &Path, output: &Path) -> Result<()> {
+fn read_signing_key(private_key: &Path) -> Result<SigningKey> {
     let encoded_key = read_bounded(private_key, 256)?;
-    let encoded_key =
-        std::str::from_utf8(&encoded_key).context("fixture private key is not UTF-8")?;
+    let encoded_key = std::str::from_utf8(&encoded_key).context("private key is not UTF-8")?;
     let encoded_key = match encoded_key.as_bytes() {
         bytes if bytes.len() == 64 => encoded_key,
         bytes if bytes.len() == 65 && bytes[64] == b'\n' => &encoded_key[..64],
@@ -466,12 +466,120 @@ fn fixture_tx(private_key: &Path, output: &Path) -> Result<()> {
         encoded_key.len() == 64
             && encoded_key.bytes().all(|byte| byte.is_ascii_hexdigit())
             && encoded_key == encoded_key.to_ascii_lowercase(),
-        "fixture private key must be one lowercase-hex Ed25519 seed plus an optional newline"
+        "private key must be one lowercase-hex Ed25519 seed plus an optional newline"
     );
     let seed: [u8; 32] = hex::decode(encoded_key)?
         .try_into()
-        .map_err(|_| anyhow!("fixture private key must encode 32 bytes"))?;
-    let signing_key = SigningKey::from_bytes(&seed);
+        .map_err(|_| anyhow!("private key must encode 32 bytes"))?;
+    Ok(SigningKey::from_bytes(&seed))
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct SignAndWrapInputV1 {
+    schema: String,
+    chain_id: String,
+    command_namespace: String,
+    command_external_id: String,
+    signer_did: String,
+    signer_role: AuthorityRole,
+    nonce: u64,
+    max_gas: u64,
+    fee_limit: u128,
+    command: ResearchCommandV1,
+}
+
+#[derive(Serialize)]
+struct SignedCommandOutputV1 {
+    protocol: &'static str,
+    signed_command: SignedResearchCommandV1,
+}
+
+fn signer_role_name(role: AuthorityRole) -> &'static str {
+    match role {
+        AuthorityRole::NakamaAuthority => "nakama",
+        AuthorityRole::HeptaAuthority => "hepta",
+    }
+}
+
+fn sign_and_wrap(
+    signing_input: &Path,
+    private_key: &Path,
+    signed_command_output: &Path,
+    transaction_output: &Path,
+) -> Result<()> {
+    ensure!(
+        signed_command_output != transaction_output,
+        "signed command and transaction outputs must be distinct"
+    );
+    let input: SignAndWrapInputV1 =
+        serde_json::from_slice(&read_bounded(signing_input, MAX_BINARY_EVIDENCE_BYTES)?)
+            .with_context(|| format!("decode signing input {}", signing_input.display()))?;
+    ensure!(
+        input.schema == "trnm_research_sign_and_wrap_input_v1",
+        "unsupported signing input schema"
+    );
+    let signing_key = read_signing_key(private_key)?;
+    let command_id =
+        ExternalKey::from_external_id(&input.command_namespace, &input.command_external_id)
+            .map_err(|error| anyhow!("create command external key: {error}"))?;
+    let signed = SignedResearchCommandV1::sign(
+        input.chain_id,
+        command_id,
+        input.signer_did,
+        input.signer_role,
+        input.nonce,
+        input.command,
+        &signing_key,
+    )
+    .context("sign research command")?;
+    let research_tx =
+        CanonicalResearchTxV1::from_signed_command(&signed, input.max_gas, input.fee_limit)
+            .context("build canonical research transaction")?;
+    let issued_at_unix_ms = now_unix_ms()?;
+    let envelope = SignedCommandEnvelopeV1::sign(
+        signed.chain_id.clone(),
+        signed.command_id.to_hex(),
+        signed.signer_did.clone(),
+        signer_role_name(signed.signer_role),
+        signed.nonce,
+        issued_at_unix_ms,
+        issued_at_unix_ms.saturating_add(300_000),
+        CANONICAL_RESEARCH_TX_PAYLOAD_TYPE_V1,
+        &research_tx.canonical_bytes()?,
+        &signing_key,
+    )?;
+    let signed_output = serde_json::to_vec(&SignedCommandOutputV1 {
+        protocol: "hepta_signed_trnm_command_v1",
+        signed_command: signed.clone(),
+    })?;
+    write_new(signed_command_output, &signed_output)?;
+    if let Err(error) = write_new(transaction_output, &envelope.to_wire_bytes()?) {
+        fs::remove_file(signed_command_output).with_context(|| {
+            format!(
+                "remove incomplete signed command output {}",
+                signed_command_output.display()
+            )
+        })?;
+        return Err(error);
+    }
+    println!(
+        "{}",
+        serde_json::to_string(&json!({
+            "schema":"trnm_research_sign_and_wrap_result_v1",
+            "signed_command_path":signed_command_output,
+            "transaction_path":transaction_output,
+            "command_id":signed.command_id.to_hex(),
+            "command_fingerprint_hex":hex::encode(signed.command_fingerprint()),
+            "applied_command_logical_key":research_applied_command_key(signed.command_id)?,
+            "public_key_hex":hex::encode(signing_key.verifying_key().to_bytes())
+        }))?
+    );
+    Ok(())
+}
+
+fn fixture_tx(private_key: &Path, output: &Path) -> Result<()> {
+    let signing_key = read_signing_key(private_key)?;
     let signed = SignedResearchCommandV1::sign(
         "trnm-comet-spike".to_string(),
         external_key("trnm.command", "single-node-receipt-v2")?,
@@ -691,6 +799,12 @@ fn run() -> Result<()> {
         Some("fixture-tx") if arguments.len() == 4 => {
             fixture_tx(Path::new(&arguments[2]), Path::new(&arguments[3]))
         }
+        Some("sign-and-wrap") if arguments.len() == 6 => sign_and_wrap(
+            Path::new(&arguments[2]),
+            Path::new(&arguments[3]),
+            Path::new(&arguments[4]),
+            Path::new(&arguments[5]),
+        ),
         Some("assemble-and-verify") if arguments.len() == 5 => assemble_and_verify(
             Path::new(&arguments[2]),
             Path::new(&arguments[3]),
