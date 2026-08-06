@@ -1,4 +1,4 @@
-78626bb07cca4602506bea033e17088d1cc8a639ddc75988096d74e396f38016  trillionnium/crates/trnm-node/src/bin/trnm-chain-cli.rs
+bb168b7097c2ebd47e98a784203a91c27a9d98551e7081e099e98a72fbc23491  trillionnium/crates/trnm-node/src/bin/trnm-chain-cli.rs
 f52531f706cb71079437ece05262a842263eec791c01528ebbd536960a86a3a9  trillionnium/crates/trnm-node/src/bin/trnm-chain-node.rs
 0b375faa481457d70a1a051b19d0b8225b43503cd874179469533bc92badcc8f  trillionnium/crates/trnm-node/src/bin/trnm-chain-validator.rs
 71a8ac4fb7ecb779987144046f84d4d31f6f5a5151838cf59137c30bd4495655  trillionnium/crates/trnm-node/src/main.rs

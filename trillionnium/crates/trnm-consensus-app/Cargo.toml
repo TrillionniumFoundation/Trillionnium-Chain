@@ -45,6 +45,7 @@ tendermint-proto = "0.40.4"
 trnm-finality-types = { version = "0.1.0", path = "../trnm-finality-types" }
 trnm-node = { version = "0.1.0", path = "../trnm-node" }
 trnm-protocol = { version = "0.1.0", path = "../trnm-protocol" }
+trnm-research-protocol = { version = "0.1.0", path = "../trnm-research-protocol" }
 trnm-runtime = { version = "0.1.0", path = "../trnm-runtime" }
 
 [dev-dependencies]

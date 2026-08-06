@@ -9,12 +9,14 @@ use anyhow::{ensure, Context, Result};
 use clap::Parser;
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
+use trnm_consensus_app::{APP_VERSION, GENESIS_SCHEMA_V3};
 
 const SOURCE_SCHEMA_V3: &str = "trnm_cometbft_app_state_v3";
 const VALIDATOR_LIFECYCLE_SCHEMA_V1: &str = "trnm_validator_lifecycle_v1";
 const VALIDATOR_GOVERNANCE_SCHEMA_V1: &str = "trnm_validator_governance_v1";
 const SOURCE_APP_VERSION: u64 = 3;
-const TARGET_APP_VERSION: u64 = 4;
+const TARGET_APP_VERSION: u64 = APP_VERSION;
+const TARGET_GENESIS_SCHEMA: &str = GENESIS_SCHEMA_V3;
 const MAX_TOTAL_VOTING_POWER: u64 = (i64::MAX as u64) / 8;
 
 type Hash32 = [u8; 32];
@@ -22,7 +24,7 @@ type Hash32 = [u8; 32];
 #[derive(Debug, Parser)]
 #[command(
     name = "trnm-v3-export-new-genesis",
-    about = "Validate an offline v3 JSON state and export a review-only v4 new-genesis bundle"
+    about = "Validate an offline v3 JSON state and export a review-only current-version new-genesis bundle"
 )]
 struct Cli {
     /// Offline trnm_cometbft_app_state_v3 JSON. Live SQLite/status files are unsupported.
@@ -138,7 +140,7 @@ struct ReplayIndexesExport {
     source_app_hash_hex: String,
     command_ids: Vec<String>,
     signer_nonces: Vec<(String, u64)>,
-    automatic_v4_import_supported: bool,
+    automatic_target_import_supported: bool,
 }
 
 #[derive(Debug, Serialize)]
@@ -154,12 +156,14 @@ struct ValidatorLifecycleExport {
 
 #[derive(Debug, Serialize)]
 struct ProposedTargetGenesis {
+    schema: &'static str,
     app_version: u64,
     initial_validators: Vec<LegacyConsensusValidator>,
     governance: LegacyValidatorGovernance,
     source_pending_transition: Option<LegacyScheduledValidatorTransition>,
     carry_pending_transition_automatically: bool,
     authorized_signers_must_be_supplied_and_reviewed: bool,
+    research_authorities_must_be_supplied_and_reviewed: bool,
 }
 
 #[derive(Debug, Serialize)]
@@ -195,6 +199,7 @@ struct SourceManifest {
 #[derive(Debug, Serialize)]
 struct TargetManifest {
     chain_id: String,
+    genesis_schema: &'static str,
     app_version: u64,
     app_hash_hex: Option<String>,
     genesis_height_policy: &'static str,
@@ -306,27 +311,29 @@ fn build_and_publish_bundle(
         objects: state.objects.values().cloned().collect(),
     };
     let replay = ReplayIndexesExport {
-        schema: "trnm_v3_export_replay_indexes_v1",
+        schema: "trnm_v3_export_replay_indexes_v2",
         source_height: state.height,
         source_app_hash_hex: state.app_hash_hex.clone(),
         command_ids: state.command_ids.iter().cloned().collect(),
         signer_nonces: state.signer_nonces.iter().cloned().collect(),
-        automatic_v4_import_supported: false,
+        automatic_target_import_supported: false,
     };
     let lifecycle = ValidatorLifecycleExport {
-        schema: "trnm_v3_export_validator_lifecycle_review_v1",
+        schema: "trnm_v3_export_validator_lifecycle_review_v2",
         source_chain_id: state.validator_lifecycle.chain_id.clone(),
         target_chain_id: target_chain_id.to_string(),
         source_app_version: SOURCE_APP_VERSION,
         target_app_version: TARGET_APP_VERSION,
         source_lifecycle: state.validator_lifecycle.clone(),
         proposed_target_genesis: ProposedTargetGenesis {
+            schema: TARGET_GENESIS_SCHEMA,
             app_version: TARGET_APP_VERSION,
             initial_validators: state.validator_lifecycle.active_validators.clone(),
             governance: state.validator_lifecycle.governance.clone(),
             source_pending_transition: state.validator_lifecycle.pending_transition.clone(),
             carry_pending_transition_automatically: false,
             authorized_signers_must_be_supplied_and_reviewed: true,
+            research_authorities_must_be_supplied_and_reviewed: true,
         },
     };
 
@@ -358,7 +365,7 @@ fn build_and_publish_bundle(
         .unwrap_or("source-v3.json")
         .to_string();
     let manifest = ExportManifest {
-        schema: "trnm_v3_export_new_genesis_manifest_v1",
+        schema: "trnm_v3_export_new_genesis_manifest_v2",
         migration_mode: "offline-export-new-genesis-review-only",
         source: SourceManifest {
             file_name: source_file_name,
@@ -378,6 +385,7 @@ fn build_and_publish_bundle(
         },
         target: TargetManifest {
             chain_id: target_chain_id.to_string(),
+            genesis_schema: TARGET_GENESIS_SCHEMA,
             app_version: TARGET_APP_VERSION,
             app_hash_hex: None,
             genesis_height_policy: "fresh-new-chain-only; source height is evidence, not target live height",
@@ -389,11 +397,12 @@ fn build_and_publish_bundle(
         direct_node_start_supported: false,
         requires_manual_review_and_signature: true,
         warnings: vec![
-            "This bundle is not a v4 application database, snapshot, or CometBFT genesis file.",
+            "This bundle is not a target application database, snapshot, or CometBFT genesis file.",
             "Do not reuse the source CometBFT data directory or claim in-place migration.",
             "The v3 state contains only an authorized-signer commitment; target signer identities and keys require separate reviewed input.",
+            "The v3 state contains no Research authority set; target Nakama and Hepta authorities require separate reviewed input.",
             "Pending validator transitions are exported for review and are never carried automatically.",
-            "A separate reviewed genesis ceremony must construct, sign, and independently verify the target v4 genesis.",
+            "A separate reviewed genesis ceremony must construct, sign, and independently verify the target current-version genesis.",
         ],
     };
     write_new_synced_file(
@@ -833,7 +842,7 @@ fn review_readme(
     target_chain_id: &str,
 ) -> String {
     format!(
-        "# TRNM v3 → v4 Export-New-Genesis Review Bundle\n\
+        "# TRNM v3 → v{TARGET_APP_VERSION} Export-New-Genesis Review Bundle\n\
 \n\
 Status: **REVIEW REQUIRED — NOT A MIGRATED NODE, DATABASE, SNAPSHOT, OR GENESIS**\n\
 \n\
@@ -841,20 +850,22 @@ This bundle was produced from an offline, strictly validated v3 JSON state. The\
 source file SHA-256 is `{source_sha256_hex}`, source height is `{}`, and the\n\
 verified legacy AppHash is `{}`.\n\
 \n\
-The proposed target chain ID is `{target_chain_id}` and target application version\n\
-is 4. The target chain ID intentionally differs from the source chain ID `{}`.\n\
-No target v4 AppHash has been calculated by this exporter.\n\
+The proposed target chain ID is `{target_chain_id}`, target application version\n\
+is {TARGET_APP_VERSION}, and target genesis schema is `{TARGET_GENESIS_SCHEMA}`. The target chain ID\n\
+intentionally differs from the source chain ID `{}`. No target AppHash has been\n\
+calculated by this exporter.\n\
 \n\
 ## Mandatory review before any target genesis\n\
 \n\
 1. Independently verify the source SHA-256, source height, and legacy AppHash.\n\
 2. Review every object and the legacy replay indexes; do not silently discard replay protection.\n\
 3. Supply and review the complete authorized-signer identities and public keys; v3 stores only their commitment.\n\
-4. Review the active validators, governance policy, and any pending transition. Pending transitions are not carried automatically.\n\
-5. Decide how chain-ID-bearing object values and economic state are transformed for the new chain.\n\
-6. Construct a separate application-version-4 genesis through a reviewed ceremony.\n\
-7. Obtain the required human approvals/signatures and independently reproduce all artifact hashes.\n\
-8. Start from fresh CometBFT and application data directories. Never reuse source chain data.\n\
+4. Supply and review the complete Nakama and Hepta Research authority sets; v3 stores neither.\n\
+5. Review the active validators, governance policy, and any pending transition. Pending transitions are not carried automatically.\n\
+6. Decide how chain-ID-bearing object values and economic state are transformed for the new chain.\n\
+7. Construct a separate application-version-{TARGET_APP_VERSION} `{TARGET_GENESIS_SCHEMA}` genesis through a reviewed ceremony.\n\
+8. Obtain the required human approvals/signatures and independently reproduce all artifact hashes.\n\
+9. Start from fresh CometBFT and application data directories. Never reuse source chain data.\n\
 \n\
 `manifest.json` deliberately sets `direct_node_start_supported=false` and leaves\n\
 the target AppHash null. Treat any tooling that bypasses those boundaries as unsafe.\n",
@@ -876,7 +887,7 @@ If a `{target_chain_id}` network has already been started, there is no in-place\
 database rollback to application version 3. Stop the new network, preserve all\n\
 evidence, and make an explicit governance/operations decision. Resume the source\n\
 chain only from its independently verified original data and only if doing so is\n\
-safe for clients; never copy v4 state into the v3 store or reuse validator signing\n\
+safe for clients; never copy target state into the v3 store or reuse validator signing\n\
 state across the two chain IDs.\n",
         state.validator_lifecycle.chain_id
     )
@@ -971,7 +982,7 @@ mod tests {
         write_source(&source, &fixture);
         let original = fs::read(&source).unwrap();
 
-        let report = export_new_genesis(&source, "trnm-v4-new-chain", &output).unwrap();
+        let report = export_new_genesis(&source, "trnm-v5-new-chain", &output).unwrap();
         assert_eq!(report.source_height, 17);
         assert_eq!(fs::read(&source).unwrap(), original);
         for name in [
@@ -988,13 +999,41 @@ mod tests {
         let manifest: serde_json::Value =
             serde_json::from_slice(&fs::read(output.join("manifest.json")).unwrap()).unwrap();
         assert_eq!(manifest["source"]["height"], 17);
+        assert_eq!(manifest["source"]["app_version"], SOURCE_APP_VERSION);
         assert_eq!(manifest["source"]["app_hash_hex"], fixture.app_hash_hex);
-        assert_eq!(manifest["target"]["chain_id"], "trnm-v4-new-chain");
-        assert_eq!(manifest["target"]["app_version"], 4);
+        assert_eq!(manifest["schema"], "trnm_v3_export_new_genesis_manifest_v2");
+        assert_eq!(manifest["target"]["chain_id"], "trnm-v5-new-chain");
+        assert_eq!(manifest["target"]["genesis_schema"], GENESIS_SCHEMA_V3);
+        assert_eq!(manifest["target"]["app_version"], APP_VERSION);
         assert!(manifest["target"]["app_hash_hex"].is_null());
         assert_eq!(manifest["direct_node_start_supported"], false);
         assert_eq!(manifest["requires_manual_review_and_signature"], true);
         assert_eq!(manifest["old_height_app_hash_mutated"], false);
+
+        let lifecycle: serde_json::Value =
+            serde_json::from_slice(&fs::read(output.join("validator-lifecycle.json")).unwrap())
+                .unwrap();
+        assert_eq!(
+            lifecycle["schema"],
+            "trnm_v3_export_validator_lifecycle_review_v2"
+        );
+        assert_eq!(lifecycle["source_app_version"], SOURCE_APP_VERSION);
+        assert_eq!(lifecycle["target_app_version"], APP_VERSION);
+        assert_eq!(
+            lifecycle["proposed_target_genesis"]["schema"],
+            GENESIS_SCHEMA_V3
+        );
+        assert_eq!(
+            lifecycle["proposed_target_genesis"]
+                ["research_authorities_must_be_supplied_and_reviewed"],
+            true
+        );
+
+        let replay: serde_json::Value =
+            serde_json::from_slice(&fs::read(output.join("legacy-replay-indexes.json")).unwrap())
+                .unwrap();
+        assert_eq!(replay["schema"], "trnm_v3_export_replay_indexes_v2");
+        assert_eq!(replay["automatic_target_import_supported"], false);
     }
 
     #[test]
@@ -1010,6 +1049,22 @@ mod tests {
     }
 
     #[test]
+    fn preserves_strict_v3_source_boundary() {
+        let root = TestRoot::new();
+        let source = root.0.join("source-v3.json");
+        let output = root.0.join("review-bundle");
+        let mut state = fixture();
+        state.validator_lifecycle.app_version = APP_VERSION;
+        write_source(&source, &state);
+
+        let error = export_new_genesis(&source, "trnm-v5-new-chain", &output).unwrap_err();
+        assert!(error
+            .to_string()
+            .contains("source validator lifecycle app_version must be 3"));
+        assert!(!output.exists());
+    }
+
+    #[test]
     fn rejects_tampered_object_value_hash_without_partial_bundle() {
         let root = TestRoot::new();
         let source = root.0.join("source-v3.json");
@@ -1018,7 +1073,7 @@ mod tests {
         state.objects[0].value_hash_hex = hex::encode([0u8; 32]);
         write_source(&source, &state);
 
-        let error = export_new_genesis(&source, "trnm-v4-new-chain", &output).unwrap_err();
+        let error = export_new_genesis(&source, "trnm-v5-new-chain", &output).unwrap_err();
         assert!(error.to_string().contains("value hash mismatch"));
         assert!(!output.exists());
     }
@@ -1032,7 +1087,7 @@ mod tests {
         state.app_hash_hex = hex::encode([0u8; 32]);
         write_source(&source, &state);
 
-        let error = export_new_genesis(&source, "trnm-v4-new-chain", &output).unwrap_err();
+        let error = export_new_genesis(&source, "trnm-v5-new-chain", &output).unwrap_err();
         assert!(error.to_string().contains("application hash mismatch"));
         assert!(!output.exists());
     }

@@ -3,6 +3,7 @@ version = 2
 yanked = "deny"
 ignore = [
   { id = "RUSTSEC-2024-0436", reason = "owner: consensus; path: tendermint-proto -> flex-error; no patched compatible release as of 2026-07-28; review before 2026-10-28 or any tendermint upgrade" },
+  { id = "RUSTSEC-2026-0214", reason = "owner: finality; dev-only path: trnm-finality-verifier -> tendermint-testgen -> gumdrop; no runtime dependency and no compatible maintained testgen release as of 2026-08-07; replace the test generator or review before 2026-09-07" },
 ]
 
 [licenses]

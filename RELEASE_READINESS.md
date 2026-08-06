@@ -27,6 +27,14 @@ cached tracking ref contemporaneous.
 - `trnm-finality-types` and `trnm-finality-verifier` are the supported minimal
   dependency boundary for receipt consumers. External services must not depend on
   the complete `trnm-node` package merely to verify finality.
+- The typed Research/Receipt V2 development tranche defines an owned,
+  strict-canonical `CometBftTrustAnchorV1` and verifies the transaction at `H`
+  against the finalized AppHash and results commitments in `H + 1`. The anchor
+  remains externally authenticated, verification time is caller-supplied, and a
+  Receipt V2 cannot promote `H + 1` into a reusable trust root without separate
+  `H + 2` validator evidence.
+  Its stable fixtures are cross-repository contract diagnostics, not release
+  proof; see `docs/runbooks/TRNM_COMETBFT_RECEIPT_V2_TRUST_ANCHOR.md`.
 - `trnm-consensus-app` is a CometBFT-backed public-testnet prototype. It now rejects
   unknown production payloads and executes typed account, sequential account nonce,
   gas/fee, task escrow, assignment, commit/reveal, paid consumption, challenge,
@@ -103,6 +111,9 @@ cached tracking ref contemporaneous.
   `cargo-deny`, checks the frontend lock with `npm audit`, and freezes the legacy
   binary entrypoints and manifest. The wider no-new-legacy-capability rule is
   still review-enforced because canonical and legacy paths share library modules.
+  The Receipt V2 verifier's test-only `tendermint-testgen -> gumdrop` path has a
+  time-bounded unmaintained-crate exception through 2026-09-07; it is absent
+  from runtime dependencies and must be replaced or re-reviewed by that date.
   `SECURITY.md` remains an unverified reporting-policy draft;
   private-reporting enablement, an external audit, SBOM/provenance, and long fuzz
   evidence remain open.
@@ -112,13 +123,14 @@ cached tracking ref contemporaneous.
 - The authoritative feature-to-runtime matrix and Day-1 freeze are in
   `docs/architecture/TRNM_CANONICAL_RUNTIME_FREEZE_2026-07-28.md`. Features not
   marked implemented in that matrix remain unimplemented regardless of legacy tests.
-- This branch uses application version 4, store schema 4, and persistent snapshot
+- This branch uses application version 5, genesis schema 3, store schema 4, and persistent snapshot
   format 4. Snapshot format 3 is restricted to the memory-only compatibility
   harness.
   It deliberately refuses in-place v3 root rewriting. The verified
-  `trnm-v3-export-new-genesis` tool emits a review-only bundle for a different
-  chain ID and leaves the old source untouched; operator review/signing and an
-  actual new-genesis ceremony remain required.
+  `trnm-v3-export-new-genesis` tool emits a review-only application-version-5 /
+  genesis-schema-3 bundle for a different chain ID and leaves the old source
+  untouched; operator review/signing, explicit Research authority selection,
+  and an actual new-genesis ceremony remain required.
 - Transaction authentication remains a static authorized-signer allowlist; dynamic
   public account-key onboarding is not implemented.
 

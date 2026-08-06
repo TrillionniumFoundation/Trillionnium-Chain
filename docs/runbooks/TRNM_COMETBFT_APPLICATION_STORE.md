@@ -36,7 +36,7 @@ transaction advances object deltas, validator lifecycle, versioned JMT nodes,
 the raw JMT AppHash, height, the durable proof-query floor, and successor
 indices for stale value versions. The database advances before the status
 cache; a crash between those operations recovers from SQLite. Metadata binds
-chain ID, app version 4, and the canonical authorized-signer policy. The app
+chain ID, app version 5, and the canonical authorized-signer policy. The app
 hash also commits that immutable identity through the validator-lifecycle
 state, so a mismatched fresh state-sync target rejects the snapshot instead of
 diverging after recovery.
