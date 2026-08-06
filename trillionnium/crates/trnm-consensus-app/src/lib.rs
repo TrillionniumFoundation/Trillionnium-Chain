@@ -30,11 +30,14 @@ use trnm_node::live::{
     store::{ObjectMutation, StoredObject},
 };
 use trnm_protocol::{
-    account_key, fee_policy_key, task_key, CanonicalTxV1, FeePolicyV1,
-    CANONICAL_TX_PAYLOAD_TYPE_V1, FEE_POLICY_OBJECT_TYPE_V1,
+    account_key, fee_policy_key, research_applied_command_key, research_domain_object_key,
+    task_key, CanonicalResearchTxV1, CanonicalTxV1, FeePolicyV1,
+    CANONICAL_RESEARCH_TX_PAYLOAD_TYPE_V1, CANONICAL_TX_PAYLOAD_TYPE_V1, FEE_POLICY_OBJECT_TYPE_V1,
 };
+use trnm_research_protocol::{AuthorityRole, AuthoritySetV1};
 use trnm_runtime::{
-    ExecutionContext, ResourceEstimate, RuntimeEvent, StateObject, StateView as RuntimeStateView,
+    ExecutionContext, ResourceEstimate, RuntimeEvent, RuntimeReceipt, StateObject,
+    StateView as RuntimeStateView,
 };
 
 mod auth_tree;
@@ -65,8 +68,9 @@ use validator_lifecycle::{
 
 pub const CONFIG_SCHEMA_V1: &str = "trnm_cometbft_app_config_v1";
 pub const GENESIS_SCHEMA_V2: &str = "trnm_cometbft_genesis_v2";
+pub const GENESIS_SCHEMA_V3: &str = "trnm_cometbft_genesis_v3";
 pub const SIMULATION_RESPONSE_SCHEMA_V1: &str = "trnm_canonical_simulation_response_v1";
-const APP_VERSION: u64 = 4;
+pub const APP_VERSION: u64 = 5;
 const SNAPSHOT_FORMAT_V3: u32 = 3;
 const SNAPSHOT_FORMAT_V4: u32 = 4;
 const SNAPSHOT_SQLITE_STORE_SCHEMA_V3: u32 = 3;
@@ -175,6 +179,18 @@ pub struct GenesisAppStateV2 {
     pub chain_id: String,
     pub app_version: u64,
     pub authorized_signers: Vec<AuthorizedSignerV1>,
+    pub validator_governance: ValidatorGovernanceV1,
+    pub initial_validators: Vec<ConsensusValidatorV1>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct GenesisAppStateV3 {
+    pub schema: String,
+    pub chain_id: String,
+    pub app_version: u64,
+    pub authorized_signers: Vec<AuthorizedSignerV1>,
+    pub research_authorities: AuthoritySetV1,
     pub validator_governance: ValidatorGovernanceV1,
     pub initial_validators: Vec<ConsensusValidatorV1>,
 }
@@ -704,6 +720,7 @@ impl CometBftApplication {
         };
         let estimate_context = ExecutionContext {
             height: state.height.saturating_add(1),
+            chain_id: &self.core.config.chain_id,
             signer_id: &tx.sender,
             signer_role: estimate_role,
             payload_len: tx_bytes.len(),
@@ -723,6 +740,7 @@ impl CometBftApplication {
         };
         let execution_context = ExecutionContext {
             height: state.height.saturating_add(1),
+            chain_id: &self.core.config.chain_id,
             signer_id: &tx.sender,
             signer_role: &signer.signer_role,
             payload_len: tx_bytes.len(),
@@ -826,8 +844,11 @@ impl CometBftApplication {
         tx: &[u8],
         timestamp_ms: u64,
     ) -> Result<ExecTxResult> {
-        let envelope: SignedCommandEnvelopeV1 =
-            serde_json::from_slice(tx).context("decode signed command envelope")?;
+        // App v5 freezes the exact outer JSON wire for every payload type.
+        // Legacy CanonicalTxV1 and typed Research inner schemas remain
+        // unchanged; only their shared signed-envelope encoding is tightened.
+        let envelope = SignedCommandEnvelopeV1::from_canonical_wire_bytes(tx)
+            .context("decode canonical signed command envelope")?;
         self.validate_envelope(&envelope, timestamp_ms)?;
         let payload = envelope.payload_bytes()?;
         if envelope.payload_type == VALIDATOR_TRANSITION_PAYLOAD_TYPE_V1 {
@@ -848,7 +869,87 @@ impl CometBftApplication {
             delta.validator_lifecycle = Some(lifecycle);
             return Ok(ExecTxResult::default());
         }
-        let (mutations, tx_result) = if envelope.payload_type == CANONICAL_TX_PAYLOAD_TYPE_V1 {
+        let (mutations, tx_result) = if envelope.payload_type
+            == CANONICAL_RESEARCH_TX_PAYLOAD_TYPE_V1
+        {
+            let research_tx = CanonicalResearchTxV1::from_canonical_bytes(&payload)
+                .context("decode canonical Research transaction")?;
+            let signed = research_tx
+                .signed_research_command()
+                .context("decode signed Research command")?;
+            let expected_role = match signed.signer_role {
+                AuthorityRole::NakamaAuthority => "nakama",
+                AuthorityRole::HeptaAuthority => "hepta",
+            };
+            ensure!(
+                envelope.payload_type == research_tx.payload_type,
+                "Research payload type must equal envelope payload type"
+            );
+            ensure!(
+                envelope.chain_id == signed.chain_id,
+                "Research command chain_id must equal envelope chain_id"
+            );
+            ensure!(
+                envelope.command_id == research_tx.command_id
+                    && envelope.command_id == signed.command_id.to_hex(),
+                "Research command_id must equal envelope command_id"
+            );
+            ensure!(
+                envelope.signer_id == research_tx.sender && envelope.signer_id == signed.signer_did,
+                "Research signer must equal envelope signer"
+            );
+            ensure!(
+                envelope.signer_role == expected_role,
+                "Research signer role must equal envelope signer role"
+            );
+            ensure!(
+                envelope.public_key_hex == hex::encode(signed.public_key),
+                "Research signer public key must equal envelope signer public key"
+            );
+            ensure!(
+                envelope.nonce == research_tx.nonce && envelope.nonce == signed.nonce,
+                "Research nonce must equal envelope nonce"
+            );
+            let objects = OverlayObjects {
+                base: &state.objects,
+                changes: &delta.objects,
+                store: self.core.store.as_ref(),
+            };
+            let primary_object_ref = signed.command.primary_object_ref();
+            let mut receipt = trnm_runtime::execute_research(
+                &research_tx,
+                ExecutionContext {
+                    height: state.height.saturating_add(1),
+                    chain_id: &self.core.config.chain_id,
+                    signer_id: &envelope.signer_id,
+                    signer_role: &envelope.signer_role,
+                    payload_len: payload.len(),
+                },
+                &objects,
+            )?;
+            receipt.events = vec![RuntimeEvent {
+                kind: "trnm.research.applied.v1".to_string(),
+                attributes: BTreeMap::from([
+                    ("command_id".to_string(), signed.command_id.to_hex()),
+                    (
+                        "command_fingerprint_hex".to_string(),
+                        hex::encode(signed.command_fingerprint()),
+                    ),
+                    (
+                        "applied_command_object_key_hex".to_string(),
+                        research_applied_command_key(signed.command_id)?,
+                    ),
+                    (
+                        "primary_object_key_hex".to_string(),
+                        research_domain_object_key(
+                            primary_object_ref.kind,
+                            primary_object_ref.key,
+                        )?,
+                    ),
+                ]),
+            }];
+            runtime_receipt_result(research_tx.max_gas, receipt)
+        } else if envelope.payload_type == CANONICAL_TX_PAYLOAD_TYPE_V1 {
             let tx: CanonicalTxV1 =
                 serde_json::from_slice(&payload).context("decode canonical transaction")?;
             ensure!(
@@ -868,47 +969,14 @@ impl CometBftApplication {
                 &tx,
                 ExecutionContext {
                     height: state.height.saturating_add(1),
+                    chain_id: &self.core.config.chain_id,
                     signer_id: &envelope.signer_id,
                     signer_role: &envelope.signer_role,
                     payload_len: payload.len(),
                 },
                 &objects,
             )?;
-            let tx_result = ExecTxResult {
-                gas_wanted: i64::try_from(tx.max_gas).unwrap_or(i64::MAX),
-                gas_used: i64::try_from(receipt.gas_used).unwrap_or(i64::MAX),
-                events: receipt
-                    .events
-                    .into_iter()
-                    .map(|event| Event {
-                        r#type: event.kind,
-                        attributes: event
-                            .attributes
-                            .into_iter()
-                            .map(|(key, value)| EventAttribute {
-                                key,
-                                value,
-                                index: true,
-                            })
-                            .collect(),
-                    })
-                    .collect(),
-                ..Default::default()
-            };
-            (
-                receipt
-                    .mutations
-                    .into_iter()
-                    .map(|mutation| ObjectMutation {
-                        object_key_hex: mutation.object_key_hex,
-                        object_type: mutation.object_type,
-                        expected_version: mutation.expected_version,
-                        next_version: mutation.next_version,
-                        value_bytes: mutation.value_bytes,
-                    })
-                    .collect::<Vec<_>>(),
-                tx_result,
-            )
+            runtime_receipt_result(tx.max_gas, receipt)
         } else {
             #[cfg(test)]
             {
@@ -986,7 +1054,10 @@ impl CometBftApplication {
         Ok(tx_result)
     }
 
-    fn validate_genesis(&self, request: &RequestInitChain) -> Result<ValidatorLifecycleStateV1> {
+    fn validate_genesis(
+        &self,
+        request: &RequestInitChain,
+    ) -> Result<(ValidatorLifecycleStateV1, AuthoritySetV1)> {
         ensure!(
             request.chain_id == self.core.config.chain_id,
             "genesis chain_id mismatch"
@@ -995,10 +1066,10 @@ impl CometBftApplication {
             !request.app_state_bytes.is_empty(),
             "genesis app_state must not be empty"
         );
-        let genesis: GenesisAppStateV2 =
+        let genesis: GenesisAppStateV3 =
             serde_json::from_slice(&request.app_state_bytes).context("decode genesis app_state")?;
         ensure!(
-            genesis.schema == GENESIS_SCHEMA_V2,
+            genesis.schema == GENESIS_SCHEMA_V3,
             "unsupported genesis schema"
         );
         ensure!(
@@ -1022,6 +1093,7 @@ impl CometBftApplication {
                 == canonical_signers(&self.core.config.authorized_signers),
             "genesis authorized signers do not match application config"
         );
+        validate_research_authority_bindings(&self.core.config, &genesis.research_authorities)?;
         genesis.validator_governance.validate()?;
         let request_validators = validators_from_abci(&request.validators)?;
         ensure!(
@@ -1038,7 +1110,7 @@ impl CometBftApplication {
             request_validators,
         )?;
         validate_lifecycle_authorization(&self.core.config, &lifecycle)?;
-        Ok(lifecycle)
+        Ok((lifecycle, genesis.research_authorities))
     }
 
     fn retain_snapshot(&self, state: &AppState) -> Result<()> {
@@ -1393,9 +1465,11 @@ impl Application for CometBftApplication {
     }
 
     fn init_chain(&self, request: RequestInitChain) -> ResponseInitChain {
-        let lifecycle = self
+        let (lifecycle, research_authorities) = self
             .validate_genesis(&request)
             .unwrap_or_else(|error| panic!("refuse incompatible CometBFT genesis: {error:#}"));
+        let genesis_objects = genesis_objects(research_authorities)
+            .unwrap_or_else(|error| panic!("refuse invalid genesis objects: {error:#}"));
         let validators = validators_to_abci(&lifecycle.active_validators)
             .expect("validated genesis validators convert to ABCI");
         let mut state = self
@@ -1413,57 +1487,62 @@ impl Application for CometBftApplication {
                     existing, &lifecycle,
                     "repeated InitChain validator lifecycle mismatch"
                 );
-                let fee_policy = default_fee_policy_object();
-                let committed_fee_policy = state
-                    .objects
-                    .get(&fee_policy.object_key_hex)
-                    .cloned()
-                    .or_else(|| {
-                        self.core.store.as_ref().and_then(|store| {
-                            store
-                                .load_object(&fee_policy.object_key_hex)
-                                .unwrap_or_else(|error| {
-                                    panic!("load repeated genesis fee policy: {error:#}")
-                                })
+                for genesis_object in &genesis_objects {
+                    let committed_object = state
+                        .objects
+                        .get(&genesis_object.object_key_hex)
+                        .cloned()
+                        .or_else(|| {
+                            self.core.store.as_ref().and_then(|store| {
+                                store
+                                    .load_object(&genesis_object.object_key_hex)
+                                    .unwrap_or_else(|error| {
+                                        panic!("load repeated genesis object: {error:#}")
+                                    })
+                            })
+                        });
+                    assert_eq!(
+                        committed_object.as_ref(),
+                        Some(genesis_object),
+                        "repeated InitChain genesis object mismatch"
+                    );
+                    let auth_key = stored_object_key(&genesis_object.object_key_hex)
+                        .expect("genesis object has an authenticated key");
+                    let proof = if let Some(store) = &self.core.store {
+                        store.prove(0, auth_key).unwrap_or_else(|error| {
+                            panic!("prove repeated genesis state: {error:#}")
                         })
-                    });
-                assert_eq!(
-                    committed_fee_policy.as_ref(),
-                    Some(&fee_policy),
-                    "repeated InitChain fee policy mismatch"
-                );
-                let auth_key = stored_object_key(&fee_policy.object_key_hex)
-                    .expect("genesis fee policy has an authenticated key");
-                let proof = if let Some(store) = &self.core.store {
-                    store
-                        .prove(0, auth_key)
-                        .unwrap_or_else(|error| panic!("prove repeated genesis state: {error:#}"))
-                } else {
-                    self.core
-                        .auth_tree
-                        .lock()
-                        .unwrap_or_else(|_| panic!("authenticated state tree lock poisoned"))
-                        .prove(0, auth_key)
-                        .expect("prove repeated genesis state")
-                };
-                assert_eq!(
-                    <[u8; 32]>::from(proof.root_hash),
-                    state.app_hash,
-                    "repeated InitChain authenticated root mismatch"
-                );
+                    } else {
+                        self.core
+                            .auth_tree
+                            .lock()
+                            .unwrap_or_else(|_| panic!("authenticated state tree lock poisoned"))
+                            .prove(0, auth_key)
+                            .expect("prove repeated genesis state")
+                    };
+                    assert_eq!(
+                        <[u8; 32]>::from(proof.root_hash),
+                        state.app_hash,
+                        "repeated InitChain authenticated root mismatch"
+                    );
+                }
             }
             None => {
                 let mut initialized = state.clone();
                 initialized.validator_lifecycle = Some(lifecycle);
-                let fee_policy = default_fee_policy_object();
-                match initialized.objects.get(&fee_policy.object_key_hex) {
-                    Some(existing) => {
-                        assert_eq!(existing, &fee_policy, "genesis fee policy object mismatch")
-                    }
-                    None => {
-                        initialized
-                            .objects
-                            .insert(fee_policy.object_key_hex.clone(), fee_policy);
+                for genesis_object in genesis_objects {
+                    match initialized.objects.get(&genesis_object.object_key_hex) {
+                        Some(existing) => {
+                            assert_eq!(
+                                existing, &genesis_object,
+                                "genesis object does not match existing state"
+                            )
+                        }
+                        None => {
+                            initialized
+                                .objects
+                                .insert(genesis_object.object_key_hex.clone(), genesis_object);
+                        }
                     }
                 }
                 let writes = authenticated_writes_for_state(0, &initialized)
@@ -2384,6 +2463,45 @@ fn check_tx_error(message: &str) -> ResponseCheckTx {
     }
 }
 
+fn runtime_receipt_result(
+    max_gas: u64,
+    receipt: RuntimeReceipt,
+) -> (Vec<ObjectMutation>, ExecTxResult) {
+    let tx_result = ExecTxResult {
+        gas_wanted: i64::try_from(max_gas).unwrap_or(i64::MAX),
+        gas_used: i64::try_from(receipt.gas_used).unwrap_or(i64::MAX),
+        events: receipt
+            .events
+            .into_iter()
+            .map(|event| Event {
+                r#type: event.kind,
+                attributes: event
+                    .attributes
+                    .into_iter()
+                    .map(|(key, value)| EventAttribute {
+                        key,
+                        value,
+                        index: true,
+                    })
+                    .collect(),
+            })
+            .collect(),
+        ..Default::default()
+    };
+    let mutations = receipt
+        .mutations
+        .into_iter()
+        .map(|mutation| ObjectMutation {
+            object_key_hex: mutation.object_key_hex,
+            object_type: mutation.object_type,
+            expected_version: mutation.expected_version,
+            next_version: mutation.next_version,
+            value_bytes: mutation.value_bytes,
+        })
+        .collect();
+    (mutations, tx_result)
+}
+
 fn query_object_key(path: &str) -> Result<String> {
     if let Some(account) = path.strip_prefix("/account/") {
         ensure!(!account.is_empty(), "account query identifier is empty");
@@ -2420,6 +2538,31 @@ fn canonical_signers(signers: &[AuthorizedSignerV1]) -> BTreeSet<(String, String
         .collect()
 }
 
+fn validate_research_authority_bindings(
+    config: &ConsensusAppConfig,
+    authorities: &AuthoritySetV1,
+) -> Result<()> {
+    authorities
+        .validate()
+        .context("invalid genesis Research authority set")?;
+    for (role, identities) in [
+        ("nakama", &authorities.nakama_authorities),
+        ("hepta", &authorities.hepta_authorities),
+    ] {
+        for identity in identities {
+            ensure!(
+                config.authorized_signers.iter().any(|signer| {
+                    signer.signer_id == identity.signer_did
+                        && signer.signer_role == role
+                        && signer.public_key_hex == hex::encode(identity.public_key)
+                }),
+                "genesis Research authority is not bound to an authorized signer"
+            );
+        }
+    }
+    Ok(())
+}
+
 fn default_fee_policy_object() -> StoredObject {
     ObjectMutation {
         object_key_hex: fee_policy_key(),
@@ -2430,6 +2573,30 @@ fn default_fee_policy_object() -> StoredObject {
             .expect("default fee policy serialization is infallible"),
     }
     .into_stored()
+}
+
+fn research_genesis_object(authorities: AuthoritySetV1) -> Result<StoredObject> {
+    let mutation = trnm_runtime::research_genesis_mutation(authorities)
+        .context("build genesis Research authority set")?;
+    ensure!(
+        mutation.expected_version.is_none() && mutation.next_version == 1,
+        "genesis Research authority set must create object version 1"
+    );
+    Ok(ObjectMutation {
+        object_key_hex: mutation.object_key_hex,
+        object_type: mutation.object_type,
+        expected_version: mutation.expected_version,
+        next_version: mutation.next_version,
+        value_bytes: mutation.value_bytes,
+    }
+    .into_stored())
+}
+
+fn genesis_objects(authorities: AuthoritySetV1) -> Result<Vec<StoredObject>> {
+    Ok(vec![
+        default_fee_policy_object(),
+        research_genesis_object(authorities)?,
+    ])
 }
 
 fn effective_validator_lifecycle<'a>(
@@ -3397,6 +3564,10 @@ mod tests {
         v0_38::types::{ConsensusParams, VersionParams},
     };
     use trnm_finality_types::crypto::{public_key_hex, sign_hex};
+    use trnm_research_protocol::{
+        AuthorityIdentityV1, ExternalKey, MatchEvidenceCommitmentV1, ResearchCommandV1,
+        SignedResearchCommandV1,
+    };
 
     use super::*;
     use crate::validator_lifecycle::{
@@ -3472,12 +3643,20 @@ mod tests {
     }
 
     fn genesis_request(app: &CometBftApplication) -> RequestInitChain {
+        genesis_request_with_research_authorities(app, AuthoritySetV1::default())
+    }
+
+    fn genesis_request_with_research_authorities(
+        app: &CometBftApplication,
+        research_authorities: AuthoritySetV1,
+    ) -> RequestInitChain {
         let initial_validators = initial_validators();
-        let genesis = GenesisAppStateV2 {
-            schema: GENESIS_SCHEMA_V2.to_string(),
+        let genesis = GenesisAppStateV3 {
+            schema: GENESIS_SCHEMA_V3.to_string(),
             chain_id: app.core.config.chain_id.clone(),
             app_version: APP_VERSION,
             authorized_signers: app.core.config.authorized_signers.clone(),
+            research_authorities,
             validator_governance: ValidatorGovernanceV1 {
                 schema: VALIDATOR_GOVERNANCE_SCHEMA_V1.to_string(),
                 signer_id: "did:operator:1".to_string(),
@@ -3615,6 +3794,123 @@ mod tests {
         )
         .unwrap();
         Bytes::from(serde_json::to_vec(&envelope).unwrap())
+    }
+
+    fn external_key(namespace: &str, id: &str) -> ExternalKey {
+        ExternalKey::from_external_id(namespace, id).unwrap()
+    }
+
+    fn research_application() -> (CometBftApplication, SigningKey, SigningKey, AuthoritySetV1) {
+        let operator_key = SigningKey::from_bytes(&[11u8; 32]);
+        let nakama_key = SigningKey::from_bytes(&[31u8; 32]);
+        let nakama_signer_id = "did:trnm:nakama-authority";
+        let app = CometBftApplication::new(ConsensusAppConfig {
+            schema: CONFIG_SCHEMA_V1.to_string(),
+            chain_id: "trnm-comet-spike".to_string(),
+            authorized_signers: vec![
+                AuthorizedSignerV1 {
+                    signer_id: "did:operator:1".to_string(),
+                    signer_role: "operator".to_string(),
+                    public_key_hex: public_key_hex(&operator_key),
+                },
+                AuthorizedSignerV1 {
+                    signer_id: nakama_signer_id.to_string(),
+                    signer_role: "nakama".to_string(),
+                    public_key_hex: public_key_hex(&nakama_key),
+                },
+            ],
+            state_path: None,
+        })
+        .unwrap();
+        let authorities = AuthoritySetV1::new(
+            vec![AuthorityIdentityV1::new(
+                nakama_signer_id.to_string(),
+                nakama_key.verifying_key().to_bytes(),
+            )
+            .unwrap()],
+            Vec::new(),
+        )
+        .unwrap();
+        (app, operator_key, nakama_key, authorities)
+    }
+
+    fn signed_match_research_command(
+        chain_id: &str,
+        signer_id: &str,
+        nonce: u64,
+        signing_key: &SigningKey,
+    ) -> SignedResearchCommandV1 {
+        signed_match_research_command_with_event_root(
+            chain_id,
+            signer_id,
+            nonce,
+            [0x10; 32],
+            signing_key,
+        )
+    }
+
+    fn signed_match_research_command_with_event_root(
+        chain_id: &str,
+        signer_id: &str,
+        nonce: u64,
+        event_root: [u8; 32],
+        signing_key: &SigningKey,
+    ) -> SignedResearchCommandV1 {
+        SignedResearchCommandV1::sign(
+            chain_id.to_string(),
+            external_key("trnm.command", "match-evidence-001"),
+            signer_id.to_string(),
+            AuthorityRole::NakamaAuthority,
+            nonce,
+            ResearchCommandV1::MatchEvidenceCommitment(MatchEvidenceCommitmentV1 {
+                commitment_id: external_key("nakama.commitment", "commitment-001"),
+                match_id: external_key("nakama.match", "match-001"),
+                challenge_id: external_key("hepta.challenge", "challenge-001"),
+                event_root,
+                roster_root: [0x11; 32],
+                ruleset_hash: [0x12; 32],
+                dataset_hash: [0x13; 32],
+                archive_hash: [0x14; 32],
+                event_count: 42,
+                completed_at_unix_s: 1_753_449_600,
+            }),
+            signing_key,
+        )
+        .unwrap()
+    }
+
+    #[allow(clippy::too_many_arguments)]
+    fn research_envelope(
+        chain_id: &str,
+        command_id: &str,
+        signer_id: &str,
+        signer_role: &str,
+        nonce: u64,
+        payload: &[u8],
+        signing_key: &SigningKey,
+        now_unix_ms: u64,
+    ) -> Bytes {
+        let envelope = SignedCommandEnvelopeV1::sign(
+            chain_id,
+            command_id,
+            signer_id,
+            signer_role,
+            nonce,
+            now_unix_ms.saturating_sub(1_000),
+            now_unix_ms.saturating_add(60_000),
+            CANONICAL_RESEARCH_TX_PAYLOAD_TYPE_V1,
+            payload,
+            signing_key,
+        )
+        .unwrap();
+        Bytes::from(serde_json::to_vec(&envelope).unwrap())
+    }
+
+    fn timestamp_from_unix_ms(unix_ms: u64) -> Option<Timestamp> {
+        Some(Timestamp {
+            seconds: i64::try_from(unix_ms / 1_000).unwrap(),
+            nanos: i32::try_from((unix_ms % 1_000) * 1_000_000).unwrap(),
+        })
     }
 
     fn simulate(app: &CometBftApplication, tx: &CanonicalTxV1) -> SimulationResponseV1 {
@@ -3882,6 +4178,308 @@ mod tests {
             rejected.status,
             response_process_proposal::ProposalStatus::Reject as i32
         );
+    }
+
+    #[test]
+    fn research_ingress_uses_all_consensus_paths_and_emits_authenticated_event() {
+        use trnm_protocol::{
+            CanonicalCommandV1, CANONICAL_TX_SCHEMA_V1, RESEARCH_APPLIED_COMMAND_OBJECT_TYPE_V1,
+        };
+
+        let (app, operator_key, nakama_key, authorities) = research_application();
+        app.init_chain(genesis_request_with_research_authorities(&app, authorities));
+        let nakama_signer_id = "did:trnm:nakama-authority";
+        let credit = CanonicalTxV1 {
+            schema: CANONICAL_TX_SCHEMA_V1.to_string(),
+            sender: "did:operator:1".to_string(),
+            nonce: 1,
+            max_gas: 100_000,
+            fee_limit: 100_000,
+            command: CanonicalCommandV1::CreditAccount {
+                account: nakama_signer_id.to_string(),
+                amount: 1_000_000,
+            },
+        };
+        finalize_and_commit(
+            &app,
+            1,
+            vec![canonical_tx(
+                &operator_key,
+                "credit-nakama-authority",
+                "did:operator:1",
+                "operator",
+                1,
+                &credit,
+            )],
+        );
+
+        let signed =
+            signed_match_research_command("trnm-comet-spike", nakama_signer_id, 1, &nakama_key);
+        let research_tx =
+            CanonicalResearchTxV1::from_signed_command(&signed, 100_000, 100_000).unwrap();
+        let payload = research_tx.canonical_bytes().unwrap();
+        let now = now_unix_ms();
+        let transaction = research_envelope(
+            "trnm-comet-spike",
+            &research_tx.command_id,
+            nakama_signer_id,
+            "nakama",
+            research_tx.nonce,
+            &payload,
+            &nakama_key,
+            now,
+        );
+        let timestamp = timestamp_from_unix_ms(now);
+
+        let checked = app.check_tx(RequestCheckTx {
+            tx: transaction.clone(),
+            ..Default::default()
+        });
+        assert_eq!(checked.code, 0, "CheckTx failed: {}", checked.log);
+        let prepared = app.prepare_proposal(RequestPrepareProposal {
+            txs: vec![transaction.clone()],
+            max_tx_bytes: 1024 * 1024,
+            height: 2,
+            time: timestamp,
+            ..Default::default()
+        });
+        assert_eq!(prepared.txs, vec![transaction.clone()]);
+        assert_eq!(
+            app.process_proposal(RequestProcessProposal {
+                txs: prepared.txs,
+                height: 2,
+                time: timestamp,
+                ..Default::default()
+            })
+            .status,
+            response_process_proposal::ProposalStatus::Accept as i32
+        );
+        let finalized = app.finalize_block(RequestFinalizeBlock {
+            txs: vec![transaction.clone()],
+            height: 2,
+            time: timestamp,
+            ..Default::default()
+        });
+        app.commit();
+        assert_eq!(finalized.tx_results.len(), 1);
+        assert_eq!(finalized.tx_results[0].code, 0);
+        assert_eq!(finalized.tx_results[0].events.len(), 1);
+        let event = &finalized.tx_results[0].events[0];
+        assert_eq!(event.r#type, "trnm.research.applied.v1");
+        let primary_object_ref = signed.command.primary_object_ref();
+        assert_eq!(
+            event
+                .attributes
+                .iter()
+                .map(|attribute| (attribute.key.clone(), attribute.value.clone()))
+                .collect::<BTreeMap<_, _>>(),
+            BTreeMap::from([
+                ("command_id".to_string(), signed.command_id.to_hex()),
+                (
+                    "command_fingerprint_hex".to_string(),
+                    hex::encode(signed.command_fingerprint()),
+                ),
+                (
+                    "applied_command_object_key_hex".to_string(),
+                    research_applied_command_key(signed.command_id).unwrap(),
+                ),
+                (
+                    "primary_object_key_hex".to_string(),
+                    research_domain_object_key(primary_object_ref.kind, primary_object_ref.key,)
+                        .unwrap(),
+                ),
+            ])
+        );
+
+        let applied_command_key = research_applied_command_key(signed.command_id).unwrap();
+        let query = app.query(RequestQuery {
+            path: format!("/object/{applied_command_key}"),
+            prove: true,
+            ..Default::default()
+        });
+        assert_eq!(query.code, 0, "Research object query failed: {}", query.log);
+        assert_eq!(query.log, RESEARCH_APPLIED_COMMAND_OBJECT_TYPE_V1);
+        assert!(query.proof_ops.is_some());
+
+        let replay = app.check_tx(RequestCheckTx {
+            tx: transaction.clone(),
+            ..Default::default()
+        });
+        assert_eq!(replay.code, 1);
+        assert!(
+            replay.log.contains("research command was already applied"),
+            "Research replay error was not preserved: {}",
+            replay.log
+        );
+        let altered_signed = signed_match_research_command_with_event_root(
+            "trnm-comet-spike",
+            nakama_signer_id,
+            1,
+            [0x15; 32],
+            &nakama_key,
+        );
+        let altered_tx =
+            CanonicalResearchTxV1::from_signed_command(&altered_signed, 100_000, 100_000).unwrap();
+        let altered = app.check_tx(RequestCheckTx {
+            tx: research_envelope(
+                "trnm-comet-spike",
+                &altered_tx.command_id,
+                nakama_signer_id,
+                "nakama",
+                altered_tx.nonce,
+                &altered_tx.canonical_bytes().unwrap(),
+                &nakama_key,
+                now,
+            ),
+            ..Default::default()
+        });
+        assert_eq!(altered.code, 1);
+        assert!(
+            altered
+                .log
+                .contains("research command id was replayed with altered signed bytes"),
+            "Research altered-replay error was not preserved: {}",
+            altered.log
+        );
+        assert_eq!(
+            app.process_proposal(RequestProcessProposal {
+                txs: vec![transaction],
+                height: 3,
+                time: timestamp_from_unix_ms(now),
+                ..Default::default()
+            })
+            .status,
+            response_process_proposal::ProposalStatus::Reject as i32
+        );
+    }
+
+    #[test]
+    fn research_ingress_rejects_noncanonical_payloads_and_outer_binding_mismatches() {
+        let (app, _, nakama_key, authorities) = research_application();
+        app.init_chain(genesis_request_with_research_authorities(&app, authorities));
+        let signer_id = "did:trnm:nakama-authority";
+        let signed = signed_match_research_command("trnm-comet-spike", signer_id, 1, &nakama_key);
+        let research_tx =
+            CanonicalResearchTxV1::from_signed_command(&signed, 100_000, 100_000).unwrap();
+        let canonical_payload = research_tx.canonical_bytes().unwrap();
+        let now = now_unix_ms();
+        let timestamp = timestamp_from_unix_ms(now);
+        let assert_rejected = |transaction: Bytes| {
+            assert_eq!(
+                app.process_proposal(RequestProcessProposal {
+                    txs: vec![transaction],
+                    height: 1,
+                    time: timestamp,
+                    ..Default::default()
+                })
+                .status,
+                response_process_proposal::ProposalStatus::Reject as i32
+            );
+        };
+
+        assert_rejected(research_envelope(
+            "trnm-comet-spike",
+            &"00".repeat(32),
+            signer_id,
+            "nakama",
+            1,
+            &canonical_payload,
+            &nakama_key,
+            now,
+        ));
+        assert_rejected(research_envelope(
+            "trnm-comet-spike",
+            &research_tx.command_id,
+            signer_id,
+            "nakama",
+            2,
+            &canonical_payload,
+            &nakama_key,
+            now,
+        ));
+
+        let wrong_chain_signed =
+            signed_match_research_command("other-chain", signer_id, 1, &nakama_key);
+        let wrong_chain_tx =
+            CanonicalResearchTxV1::from_signed_command(&wrong_chain_signed, 100_000, 100_000)
+                .unwrap();
+        assert_rejected(research_envelope(
+            "trnm-comet-spike",
+            &wrong_chain_tx.command_id,
+            signer_id,
+            "nakama",
+            1,
+            &wrong_chain_tx.canonical_bytes().unwrap(),
+            &nakama_key,
+            now,
+        ));
+
+        let wrong_signer_signed = signed_match_research_command(
+            "trnm-comet-spike",
+            "did:trnm:other-nakama",
+            1,
+            &nakama_key,
+        );
+        let wrong_signer_tx =
+            CanonicalResearchTxV1::from_signed_command(&wrong_signer_signed, 100_000, 100_000)
+                .unwrap();
+        assert_rejected(research_envelope(
+            "trnm-comet-spike",
+            &wrong_signer_tx.command_id,
+            signer_id,
+            "nakama",
+            1,
+            &wrong_signer_tx.canonical_bytes().unwrap(),
+            &nakama_key,
+            now,
+        ));
+
+        let wrong_inner_key = SigningKey::from_bytes(&[32u8; 32]);
+        let wrong_key_signed =
+            signed_match_research_command("trnm-comet-spike", signer_id, 1, &wrong_inner_key);
+        let wrong_key_tx =
+            CanonicalResearchTxV1::from_signed_command(&wrong_key_signed, 100_000, 100_000)
+                .unwrap();
+        assert_rejected(research_envelope(
+            "trnm-comet-spike",
+            &wrong_key_tx.command_id,
+            signer_id,
+            "nakama",
+            1,
+            &wrong_key_tx.canonical_bytes().unwrap(),
+            &nakama_key,
+            now,
+        ));
+
+        let mut noncanonical_payload = vec![b' '];
+        noncanonical_payload.extend_from_slice(&canonical_payload);
+        assert_rejected(research_envelope(
+            "trnm-comet-spike",
+            &research_tx.command_id,
+            signer_id,
+            "nakama",
+            1,
+            &noncanonical_payload,
+            &nakama_key,
+            now,
+        ));
+    }
+
+    #[test]
+    fn genesis_research_authorities_must_match_authorized_signers() {
+        let (app, _, _, _) = research_application();
+        let unbound_key = SigningKey::from_bytes(&[32u8; 32]);
+        let unbound = AuthoritySetV1::new(
+            vec![AuthorityIdentityV1::new(
+                "did:trnm:nakama-authority".to_string(),
+                unbound_key.verifying_key().to_bytes(),
+            )
+            .unwrap()],
+            Vec::new(),
+        )
+        .unwrap();
+        let request = genesis_request_with_research_authorities(&app, unbound);
+        assert!(std::panic::catch_unwind(|| app.init_chain(request)).is_err());
     }
 
     #[test]
@@ -4248,24 +4846,42 @@ mod tests {
                 .get(&fee_policy.object_key_hex),
             Some(&fee_policy)
         );
+        let research_snapshot = research_genesis_object(AuthoritySetV1::default()).unwrap();
+        assert_eq!(research_snapshot.version, 1);
+        assert_eq!(
+            app.core
+                .state
+                .lock()
+                .unwrap()
+                .objects
+                .get(&research_snapshot.object_key_hex),
+            Some(&research_snapshot)
+        );
 
         let mut wrong_chain = genesis_request(&app);
         wrong_chain.chain_id = "wrong-chain".to_string();
         assert!(std::panic::catch_unwind(|| app.init_chain(wrong_chain)).is_err());
 
         let mut wrong_version = genesis_request(&app);
-        let mut genesis: GenesisAppStateV2 =
+        let mut genesis: GenesisAppStateV3 =
             serde_json::from_slice(&wrong_version.app_state_bytes).unwrap();
         genesis.app_version = APP_VERSION + 1;
         wrong_version.app_state_bytes = Bytes::from(serde_json::to_vec(&genesis).unwrap());
         assert!(std::panic::catch_unwind(|| app.init_chain(wrong_version)).is_err());
 
         let mut changed_governance = genesis_request(&app);
-        let mut genesis: GenesisAppStateV2 =
+        let mut genesis: GenesisAppStateV3 =
             serde_json::from_slice(&changed_governance.app_state_bytes).unwrap();
         genesis.validator_governance.min_activation_delay_blocks = 3;
         changed_governance.app_state_bytes = Bytes::from(serde_json::to_vec(&genesis).unwrap());
         assert!(std::panic::catch_unwind(|| app.init_chain(changed_governance)).is_err());
+
+        let mut old_schema = genesis_request(&app);
+        let mut genesis: GenesisAppStateV3 =
+            serde_json::from_slice(&old_schema.app_state_bytes).unwrap();
+        genesis.schema = GENESIS_SCHEMA_V2.to_string();
+        old_schema.app_state_bytes = Bytes::from(serde_json::to_vec(&genesis).unwrap());
+        assert!(std::panic::catch_unwind(|| app.init_chain(old_schema)).is_err());
     }
 
     #[test]
@@ -4275,7 +4891,7 @@ mod tests {
         let unsafe_single = |allow_unsafe: bool| {
             let app = CometBftApplication::new(fixture_app.core.config.clone()).unwrap();
             let mut request = genesis_request(&app);
-            let mut genesis: GenesisAppStateV2 =
+            let mut genesis: GenesisAppStateV3 =
                 serde_json::from_slice(&request.app_state_bytes).unwrap();
             genesis.initial_validators = vec![validator(21, 10)];
             genesis
@@ -4294,7 +4910,7 @@ mod tests {
 
         let dominant = CometBftApplication::new(fixture_app.core.config.clone()).unwrap();
         let mut request = genesis_request(&dominant);
-        let mut genesis: GenesisAppStateV2 =
+        let mut genesis: GenesisAppStateV3 =
             serde_json::from_slice(&request.app_state_bytes).unwrap();
         genesis.initial_validators = vec![
             validator(21, 40),
@@ -4752,6 +5368,63 @@ mod tests {
             response.status,
             response_process_proposal::ProposalStatus::Reject as i32
         );
+    }
+
+    #[test]
+    fn app_v5_rejects_noncanonical_outer_envelope_encodings() {
+        let (app, envelope) = fixture();
+        let canonical = envelope.to_wire_bytes().unwrap();
+        assert_eq!(
+            app.process_proposal(RequestProcessProposal {
+                txs: vec![Bytes::from(canonical.clone())],
+                height: 1,
+                time: block_time(),
+                ..Default::default()
+            })
+            .status,
+            response_process_proposal::ProposalStatus::Accept as i32
+        );
+
+        let canonical_json = String::from_utf8(canonical.clone()).unwrap();
+        let schema_field = format!(
+            "\"schema\":{},",
+            serde_json::to_string(&envelope.schema).unwrap()
+        );
+        let chain_field = format!(
+            "\"chain_id\":{},",
+            serde_json::to_string(&envelope.chain_id).unwrap()
+        );
+        let canonical_prefix = format!("{{{schema_field}{chain_field}");
+        assert!(canonical_json.starts_with(&canonical_prefix));
+
+        let mut whitespace = vec![b' '];
+        whitespace.extend_from_slice(&canonical);
+        let reordered = canonical_json
+            .replacen(
+                &canonical_prefix,
+                &format!("{{{chain_field}{schema_field}"),
+                1,
+            )
+            .into_bytes();
+        let unknown = canonical_json
+            .replacen('{', "{\"unexpected\":true,", 1)
+            .into_bytes();
+        let duplicate = canonical_json
+            .replacen('{', &format!("{{{schema_field}"), 1)
+            .into_bytes();
+
+        for transaction in [whitespace, reordered, unknown, duplicate] {
+            assert_eq!(
+                app.process_proposal(RequestProcessProposal {
+                    txs: vec![Bytes::from(transaction)],
+                    height: 1,
+                    time: block_time(),
+                    ..Default::default()
+                })
+                .status,
+                response_process_proposal::ProposalStatus::Reject as i32
+            );
+        }
     }
 
     #[test]

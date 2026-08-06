@@ -37,6 +37,7 @@ use trnm_node::live::{
     node::AuthorizedSignerV1,
     store::{ObjectMutation, StoredObject},
 };
+use trnm_research_protocol::AuthoritySetV1;
 
 use crate::{
     auth_tree::stored_object_key,
@@ -46,8 +47,8 @@ use crate::{
         validators_to_abci, ConsensusValidatorV1, ValidatorGovernanceV1,
         VALIDATOR_GOVERNANCE_SCHEMA_V1,
     },
-    AppState, BlockDelta, CometBftApplication, ConsensusAppConfig, GenesisAppStateV2, PendingBlock,
-    PendingDiskSnapshot, APP_VERSION, CONFIG_SCHEMA_V1, GENESIS_SCHEMA_V2, RETAINED_DISK_SNAPSHOTS,
+    AppState, BlockDelta, CometBftApplication, ConsensusAppConfig, GenesisAppStateV3, PendingBlock,
+    PendingDiskSnapshot, APP_VERSION, CONFIG_SCHEMA_V1, GENESIS_SCHEMA_V3, RETAINED_DISK_SNAPSHOTS,
     SNAPSHOT_FORMAT_V4,
 };
 
@@ -1292,11 +1293,12 @@ fn initialize_application(config: ConsensusAppConfig) -> Result<CometBftApplicat
             voting_power: 10,
         })
         .collect::<Vec<_>>();
-    let genesis = GenesisAppStateV2 {
-        schema: GENESIS_SCHEMA_V2.to_string(),
+    let genesis = GenesisAppStateV3 {
+        schema: GENESIS_SCHEMA_V3.to_string(),
         chain_id: config.chain_id.clone(),
         app_version: APP_VERSION,
         authorized_signers: config.authorized_signers,
+        research_authorities: AuthoritySetV1::default(),
         validator_governance: ValidatorGovernanceV1 {
             schema: VALIDATOR_GOVERNANCE_SCHEMA_V1.to_string(),
             signer_id: SCALE_SIGNER_ID.to_string(),

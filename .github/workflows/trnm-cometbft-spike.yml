@@ -187,9 +187,9 @@ jobs:
       COMETBFT_SHA256: "736592aea2e077a4bb934ed26b0ee670462ae3d8a37670e2d268dea33304bc52"
       CARGO_INCREMENTAL: "0"
       CARGO_TERM_COLOR: never
-      TRNM_COMETBFT_APP_VERSION: "4"
+      TRNM_COMETBFT_APP_VERSION: "5"
       TRNM_COMETBFT_APP_CONFIG_SCHEMA: trnm_cometbft_app_config_v1
-      TRNM_COMETBFT_GENESIS_SCHEMA: trnm_cometbft_genesis_v2
+      TRNM_COMETBFT_GENESIS_SCHEMA: trnm_cometbft_genesis_v3
       TRNM_COMETBFT_VALIDATOR_GOVERNANCE_SCHEMA: trnm_validator_governance_v1
       TRNM_COMETBFT_PARTITION_ROOT: ${{ runner.temp }}/trnm-comet-partition-${{ matrix.case }}-${{ github.run_id }}-${{ github.run_attempt }}
 

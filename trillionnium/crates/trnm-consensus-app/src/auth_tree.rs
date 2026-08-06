@@ -18,28 +18,19 @@ use jmt::{
     JellyfishMerkleIterator, KeyHash, RootHash, Sha256Jmt, Version,
 };
 use prost::Message;
-use sha2::{Digest, Sha256};
+use sha2::Sha256;
+use trnm_finality_types::{
+    authenticated_object_proof_key_v4, authenticated_state_key_v4,
+    logical_object_key_from_proof_key_v4,
+};
+pub use trnm_finality_types::{
+    AuthenticatedObjectRecordV1 as AuthenticatedObjectRecord,
+    AuthenticatedStateNamespaceV4 as StateNamespace,
+};
 
-const KEY_DOMAIN: &[u8] = b"trnm/authenticated-state/v4";
-const OBJECT_RECORD_SCHEMA_VERSION: u16 = 1;
 #[cfg(test)]
 const LIFECYCLE_RECORD_SCHEMA_VERSION: u16 = 1;
 const AUTH_TREE_SNAPSHOT_CODEC_VERSION: u16 = 1;
-
-/// Consensus-state namespaces.  Discriminants are part of the AppHash v4 key
-/// format and therefore must never be renumbered.
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
-#[repr(u8)]
-#[allow(dead_code)]
-pub enum StateNamespace {
-    Object = 1,
-    Account = 2,
-    Task = 3,
-    ValidatorLifecycle = 4,
-    Config = 5,
-    CommandReceipt = 6,
-    GovernanceSequence = 7,
-}
 
 /// Constructs a collision-free, non-empty authenticated key.
 ///
@@ -47,34 +38,7 @@ pub enum StateNamespace {
 /// cannot collide with `["a", "bc"]`.  Empty components are rejected because
 /// ICS23 non-membership proofs require recoverable, non-empty preimages.
 pub fn namespaced_key(namespace: StateNamespace, components: &[&[u8]]) -> Result<Vec<u8>> {
-    ensure!(
-        !components.is_empty(),
-        "authenticated key needs a component"
-    );
-    ensure!(
-        components.len() <= u16::MAX as usize,
-        "too many authenticated key components"
-    );
-
-    let mut key = Vec::with_capacity(KEY_DOMAIN.len() + 8);
-    key.extend_from_slice(KEY_DOMAIN);
-    key.push(0);
-    key.push(namespace as u8);
-    key.extend_from_slice(&(components.len() as u16).to_be_bytes());
-
-    for component in components {
-        ensure!(
-            !component.is_empty(),
-            "authenticated key components must be non-empty"
-        );
-        let len = u32::try_from(component.len())
-            .context("authenticated key component exceeds u32::MAX bytes")?;
-        key.extend_from_slice(&len.to_be_bytes());
-        key.extend_from_slice(component);
-    }
-
-    debug_assert!(!key.is_empty());
-    Ok(key)
+    authenticated_state_key_v4(namespace, components)
 }
 
 /// Authenticated key for an existing consensus-app `StoredObject`.
@@ -83,48 +47,11 @@ pub fn namespaced_key(namespace: StateNamespace, components: &[&[u8]]) -> Result
 /// short textual keys.  Commit its exact UTF-8 representation instead of
 /// normalizing or re-encoding it during migration.
 pub fn stored_object_key(object_key_hex: &str) -> Result<Vec<u8>> {
-    namespaced_key(StateNamespace::Object, &[object_key_hex.as_bytes()])
+    authenticated_object_proof_key_v4(object_key_hex)
 }
 
 pub(crate) fn stored_object_key_preimage(preimage: &[u8]) -> Result<String> {
-    let header_len = KEY_DOMAIN.len() + 1 + 1 + 2;
-    ensure!(
-        preimage.len() >= header_len + 4,
-        "authenticated object key preimage is truncated"
-    );
-    ensure!(
-        &preimage[..KEY_DOMAIN.len()] == KEY_DOMAIN,
-        "authenticated object key domain mismatch"
-    );
-    let mut cursor = KEY_DOMAIN.len();
-    ensure!(
-        preimage[cursor] == 0,
-        "authenticated object key domain separator mismatch"
-    );
-    cursor += 1;
-    ensure!(
-        preimage[cursor] == StateNamespace::Object as u8,
-        "authenticated key is not in the object namespace"
-    );
-    cursor += 1;
-    let component_count =
-        u16::from_be_bytes([preimage[cursor], preimage[cursor.saturating_add(1)]]);
-    cursor += 2;
-    ensure!(
-        component_count == 1,
-        "authenticated object key must have one component"
-    );
-    let component_len = u32::from_be_bytes(
-        preimage[cursor..cursor + 4]
-            .try_into()
-            .expect("object key length was checked"),
-    ) as usize;
-    cursor += 4;
-    ensure!(
-        component_len > 0 && cursor.saturating_add(component_len) == preimage.len(),
-        "authenticated object key component length mismatch"
-    );
-    String::from_utf8(preimage[cursor..].to_vec()).context("authenticated object key is not UTF-8")
+    logical_object_key_from_proof_key_v4(preimage)
 }
 
 #[cfg(test)]
@@ -152,68 +79,6 @@ fn key_hash(key: &[u8]) -> Result<KeyHash> {
 
 pub(crate) fn authenticated_key_hash(key: &[u8]) -> Result<KeyHash> {
     key_hash(key)
-}
-
-/// Exact value committed for an object leaf.
-///
-/// The redundant `value_hash` is authenticated along with the bytes and is
-/// checked on construction and decoding.  This makes corruption detectable
-/// before a record is interpreted by the runtime.
-#[derive(Clone, Debug, Eq, PartialEq, BorshDeserialize, BorshSerialize)]
-pub struct AuthenticatedObjectRecord {
-    pub schema_version: u16,
-    pub object_type: String,
-    pub object_version: u64,
-    pub value_hash: [u8; 32],
-    pub value: Vec<u8>,
-}
-
-impl AuthenticatedObjectRecord {
-    pub fn new(
-        object_type: impl Into<String>,
-        object_version: u64,
-        value: Vec<u8>,
-    ) -> Result<Self> {
-        let object_type = object_type.into();
-        ensure!(!object_type.is_empty(), "object type must be non-empty");
-        let value_hash = Sha256::digest(&value).into();
-        Ok(Self {
-            schema_version: OBJECT_RECORD_SCHEMA_VERSION,
-            object_type,
-            object_version,
-            value_hash,
-            value,
-        })
-    }
-
-    pub fn encode(&self) -> Result<Vec<u8>> {
-        self.validate()?;
-        borsh::to_vec(self).context("encode authenticated object record")
-    }
-
-    pub fn decode(encoded: &[u8]) -> Result<Self> {
-        let record: Self =
-            borsh::from_slice(encoded).context("decode authenticated object record")?;
-        record.validate()?;
-        Ok(record)
-    }
-
-    pub fn validate(&self) -> Result<()> {
-        ensure!(
-            self.schema_version == OBJECT_RECORD_SCHEMA_VERSION,
-            "unsupported object record schema {}",
-            self.schema_version
-        );
-        ensure!(
-            !self.object_type.is_empty(),
-            "object type must be non-empty"
-        );
-        ensure!(
-            self.value_hash == <[u8; 32]>::from(Sha256::digest(&self.value)),
-            "authenticated object value hash mismatch"
-        );
-        Ok(())
-    }
 }
 
 /// Validator-set transition committed under [`StateNamespace::ValidatorLifecycle`].
@@ -969,10 +834,16 @@ mod tests {
         assert_ne!(left, right);
         assert!(namespaced_key(StateNamespace::Object, &[]).is_err());
         assert!(namespaced_key(StateNamespace::Object, &[b""]).is_err());
-        assert_ne!(
-            stored_object_key("aa").expect("stored object key"),
-            validator_state_key().expect("validator state key")
+        let stored = stored_object_key("aa").expect("stored object key");
+        assert_eq!(
+            hex::encode(&stored),
+            "74726e6d2f61757468656e746963617465642d73746174652f763400010001000000026161"
         );
+        assert_eq!(
+            stored_object_key_preimage(&stored).expect("logical object key"),
+            "aa"
+        );
+        assert_ne!(stored, validator_state_key().expect("validator state key"));
     }
 
     #[test]
@@ -980,6 +851,10 @@ mod tests {
         let record =
             AuthenticatedObjectRecord::new("account", 7, b"balance=42".to_vec()).expect("record");
         let encoded = record.encode().expect("encode");
+        assert_eq!(
+            hex::encode(&encoded),
+            "0100070000006163636f756e7407000000000000006caaa99bd3df253387ca038ea0be01d832c479983afa31eb5fff43da5445a0d30a00000062616c616e63653d3432"
+        );
         assert_eq!(
             AuthenticatedObjectRecord::decode(&encoded).expect("decode"),
             record

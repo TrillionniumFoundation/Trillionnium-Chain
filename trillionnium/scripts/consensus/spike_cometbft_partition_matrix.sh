@@ -5,9 +5,9 @@ SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 cd "$SCRIPT_DIR/../.."
 
 COMETBFT_BIN="${TRNM_COMETBFT_BIN:-cometbft}"
-APP_VERSION="${TRNM_COMETBFT_APP_VERSION:-4}"
+APP_VERSION="${TRNM_COMETBFT_APP_VERSION:-5}"
 APP_CONFIG_SCHEMA="${TRNM_COMETBFT_APP_CONFIG_SCHEMA:-trnm_cometbft_app_config_v1}"
-GENESIS_SCHEMA="${TRNM_COMETBFT_GENESIS_SCHEMA:-trnm_cometbft_genesis_v2}"
+GENESIS_SCHEMA="${TRNM_COMETBFT_GENESIS_SCHEMA:-trnm_cometbft_genesis_v3}"
 VALIDATOR_GOVERNANCE_SCHEMA="${TRNM_COMETBFT_VALIDATOR_GOVERNANCE_SCHEMA:-trnm_validator_governance_v1}"
 MIN_ACTIVATION_DELAY_BLOCKS="${TRNM_COMETBFT_MIN_ACTIVATION_DELAY_BLOCKS:-2}"
 CHAIN_ID="${TRNM_COMETBFT_PARTITION_CHAIN_ID:-trnm-comet-partition}"
@@ -295,6 +295,10 @@ jq \
          signer_role:"operator",
          public_key_hex:$public_key
        }],
+       research_authorities:{
+         nakama_authorities:[],
+         hepta_authorities:[]
+       },
        validator_governance:{
          schema:$governance_schema,
          signer_id:"did:operator:1",

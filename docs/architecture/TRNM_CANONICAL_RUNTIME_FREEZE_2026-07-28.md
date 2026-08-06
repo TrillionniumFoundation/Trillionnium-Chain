@@ -24,6 +24,13 @@ and Cargo manifest. The broader no-new-capability rule is binding architecture
 policy but remains review-enforced while canonical and legacy code still share
 `trnm-node` library modules; it is not yet a full source-closure checksum.
 
+Application version 5 deliberately refreshes only the frozen
+`trnm-chain-cli` checksum so its existing signing commands write the strict
+canonical outer-envelope bytes now required by the production consensus path.
+This is a wire-hardening correction to an existing test/operator command, not
+a new legacy protocol capability; the remaining frozen entrypoints are
+byte-for-byte unchanged.
+
 ## Frozen Day-1 Scope
 
 Day-1 includes only:
@@ -75,12 +82,12 @@ capabilities until they enter the canonical path with end-to-end evidence.
 
 ## Upgrade and Dependency Boundary
 
-This branch reports application version 4, store schema 4, and persistent
-snapshot format 4. Format 3 is accepted only by the memory-only compatibility
+This branch reports application version 5, genesis schema 3, store schema 4,
+and persistent snapshot format 4. Format 3 is accepted only by the memory-only compatibility
 harness. It must not rewrite an existing app-version-3 height because that would
 break the CometBFT handshake. `trnm-v3-export-new-genesis` validates the legacy
 root and emits an atomic, review-only export bundle for a new chain ID; it does
-not claim an in-place upgrade or a ready-to-start v4 node. The old source and
+not claim an in-place upgrade or a ready-to-start v5 node. The old source and
 AppHash remain unchanged and rollback means resuming the old network before
 the new genesis is signed.
 

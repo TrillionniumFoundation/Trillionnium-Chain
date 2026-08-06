@@ -167,16 +167,20 @@ jq \
   --argjson initial_validators "$initial_validators" \
   '.chain_id=$chain_id
    | .validators=$validators
-   | .consensus_params.version.app="4"
+   | .consensus_params.version.app="5"
    | .app_state={
-       schema:"trnm_cometbft_genesis_v2",
+       schema:"trnm_cometbft_genesis_v3",
        chain_id:$chain_id,
-       app_version:4,
+       app_version:5,
        authorized_signers:[{
          signer_id:"did:operator:1",
          signer_role:"operator",
          public_key_hex:$public_key
        }],
+       research_authorities:{
+         nakama_authorities:[],
+         hepta_authorities:[]
+       },
        validator_governance:{
          schema:"trnm_validator_governance_v1",
          signer_id:"did:operator:1",

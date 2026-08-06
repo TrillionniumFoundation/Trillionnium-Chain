@@ -211,7 +211,7 @@ fn main() -> Result<()> {
                 &payload,
                 &key,
             )?;
-            write_json_new(&output, &envelope)?;
+            write_envelope_new(&output, &envelope)?;
             println!("{}", serde_json::to_string_pretty(&envelope)?);
             Ok(())
         }
@@ -258,7 +258,7 @@ fn main() -> Result<()> {
                 &signed.canonical_bytes(),
                 &key,
             )?;
-            write_json_new(&output, &envelope)?;
+            write_envelope_new(&output, &envelope)?;
             println!("{}", serde_json::to_string_pretty(&envelope)?);
             Ok(())
         }
@@ -656,6 +656,19 @@ fn write_json_new<T: Serialize>(path: &Path, value: &T) -> Result<()> {
         .with_context(|| format!("create JSON document {}", path.display()))?;
     file.write_all(&bytes)?;
     file.write_all(b"\n")?;
+    file.sync_all()?;
+    Ok(())
+}
+
+fn write_envelope_new(path: &Path, envelope: &SignedCommandEnvelopeV1) -> Result<()> {
+    let bytes = envelope.to_wire_bytes()?;
+    let mut file = OpenOptions::new()
+        .write(true)
+        .create_new(true)
+        .mode(0o600)
+        .open(path)
+        .with_context(|| format!("create canonical envelope {}", path.display()))?;
+    file.write_all(&bytes)?;
     file.sync_all()?;
     Ok(())
 }

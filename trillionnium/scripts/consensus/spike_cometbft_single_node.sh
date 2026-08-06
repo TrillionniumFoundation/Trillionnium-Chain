@@ -94,6 +94,7 @@ command -v python3 >/dev/null
 mkdir -p "$ROOT"
 APP_BIN="${TRNM_COMETBFT_APP_BIN:-}"
 CLI_BIN="${TRNM_COMETBFT_CLI_BIN:-}"
+RECEIPT_BIN="${TRNM_RESEARCH_RECEIPT_V2_BIN:-}"
 if [[ -z "$APP_BIN" ]]; then
   cargo build -q -p trnm-consensus-app --bin trnm-cometbft-app --locked
   APP_BIN="$PWD/target/debug/trnm-cometbft-app"
@@ -102,31 +103,61 @@ if [[ -z "$CLI_BIN" ]]; then
   cargo build -q -p trnm-node --features legacy-harness --bin trnm-chain-cli --locked
   CLI_BIN="$PWD/target/debug/trnm-chain-cli"
 fi
+if [[ -z "$RECEIPT_BIN" ]]; then
+  cargo build -q -p trnm-finality-verifier --bin trnm-research-receipt-v2 --locked
+  RECEIPT_BIN="$PWD/target/debug/trnm-research-receipt-v2"
+fi
 test -x "$APP_BIN"
 test -x "$CLI_BIN"
+test -x "$RECEIPT_BIN"
 
 key_json="$("$CLI_BIN" keygen --output "$ROOT/operator.key")"
 public_key="$(printf '%s' "$key_json" | jq -r .public_key_hex)"
+nakama_key_json="$("$CLI_BIN" keygen --output "$ROOT/nakama.key")"
+nakama_public_key="$(printf '%s' "$nakama_key_json" | jq -r .public_key_hex)"
+hepta_key_json="$("$CLI_BIN" keygen --output "$ROOT/hepta.key")"
+hepta_public_key="$(printf '%s' "$hepta_key_json" | jq -r .public_key_hex)"
 jq -n \
   --arg public_key "$public_key" \
+  --arg nakama_public_key "$nakama_public_key" \
+  --arg hepta_public_key "$hepta_public_key" \
   --arg state_path "$ROOT/app-state.json" \
   '{
     schema:"trnm_cometbft_app_config_v1",
     chain_id:"trnm-comet-spike",
-    authorized_signers:[{
-      signer_id:"did:operator:1",
-      signer_role:"operator",
-      public_key_hex:$public_key
-    }],
+    authorized_signers:[
+      {
+        signer_id:"did:operator:1",
+        signer_role:"operator",
+        public_key_hex:$public_key
+      },
+      {
+        signer_id:"did:trnm:nakama-authority",
+        signer_role:"nakama",
+        public_key_hex:$nakama_public_key
+      },
+      {
+        signer_id:"did:trnm:hepta-authority",
+        signer_role:"hepta",
+        public_key_hex:$hepta_public_key
+      }
+    ],
     state_path:$state_path
   }' > "$ROOT/app.json"
 
-for nonce in 1 2; do
+for nonce in 1 2 3; do
+  account="fixture:single:$nonce"
+  amount=1
+  if [[ "$nonce" == "1" ]]; then
+    account="did:trnm:nakama-authority"
+    amount=1000000
+  fi
   jq -n \
     --arg sender did:operator:1 \
-    --arg account "fixture:single:$nonce" \
+    --arg account "$account" \
     --argjson nonce "$nonce" \
-    '{schema:"trnm_canonical_tx_v1",sender:$sender,nonce:$nonce,max_gas:100000,fee_limit:"100000",command:{type:"credit_account",account:$account,amount:"1"}}' \
+    --argjson amount "$amount" \
+    '{schema:"trnm_canonical_tx_v1",sender:$sender,nonce:$nonce,max_gas:100000,fee_limit:"100000",command:{type:"credit_account",account:$account,amount:($amount | tostring)}}' \
     >"$ROOT/payload-$nonce.bin"
   "$CLI_BIN" sign \
     --private-key "$ROOT/operator.key" \
@@ -139,6 +170,13 @@ for nonce in 1 2; do
     --payload-file "$ROOT/payload-$nonce.bin" \
     --output "$ROOT/tx-$nonce.json" >/dev/null
 done
+
+research_fixture="$("$RECEIPT_BIN" fixture-tx \
+  "$ROOT/nakama.key" \
+  "$ROOT/research.tx.json")"
+research_command_id="$(printf '%s' "$research_fixture" | jq -er .command_id)"
+research_applied_key="$(printf '%s' "$research_fixture" | jq -er .applied_command_logical_key)"
+test "$(printf '%s' "$research_fixture" | jq -er .public_key_hex)" = "$nakama_public_key"
 
 "$COMETBFT_BIN" init --home "$ROOT/comet" >/dev/null
 initial_validators="$(python3 - "$ROOT/comet/config/genesis.json" <<'PY'
@@ -159,18 +197,66 @@ result.sort(key=lambda validator: validator["public_key_hex"])
 print(json.dumps(result, separators=(",", ":")))
 PY
 )"
-jq --arg public_key "$public_key" --argjson initial_validators "$initial_validators" \
+nakama_public_key_bytes="$(python3 - "$nakama_public_key" <<'PY'
+import json
+import sys
+
+value = bytes.fromhex(sys.argv[1])
+if len(value) != 32:
+    raise SystemExit("Nakama public key must be 32 bytes")
+print(json.dumps(list(value), separators=(",", ":")))
+PY
+)"
+hepta_public_key_bytes="$(python3 - "$hepta_public_key" <<'PY'
+import json
+import sys
+
+value = bytes.fromhex(sys.argv[1])
+if len(value) != 32:
+    raise SystemExit("Hepta public key must be 32 bytes")
+print(json.dumps(list(value), separators=(",", ":")))
+PY
+)"
+jq \
+  --arg public_key "$public_key" \
+  --arg nakama_public_key "$nakama_public_key" \
+  --arg hepta_public_key "$hepta_public_key" \
+  --argjson nakama_public_key_bytes "$nakama_public_key_bytes" \
+  --argjson hepta_public_key_bytes "$hepta_public_key_bytes" \
+  --argjson initial_validators "$initial_validators" \
   '.chain_id="trnm-comet-spike"
-   | .consensus_params.version.app="4"
+   | .consensus_params.version.app="5"
    | .app_state={
-       schema:"trnm_cometbft_genesis_v2",
+       schema:"trnm_cometbft_genesis_v3",
        chain_id:"trnm-comet-spike",
-       app_version:4,
-       authorized_signers:[{
-         signer_id:"did:operator:1",
-         signer_role:"operator",
-         public_key_hex:$public_key
-       }],
+       app_version:5,
+       authorized_signers:[
+         {
+           signer_id:"did:operator:1",
+           signer_role:"operator",
+           public_key_hex:$public_key
+         },
+         {
+           signer_id:"did:trnm:nakama-authority",
+           signer_role:"nakama",
+           public_key_hex:$nakama_public_key
+         },
+         {
+           signer_id:"did:trnm:hepta-authority",
+           signer_role:"hepta",
+           public_key_hex:$hepta_public_key
+         }
+       ],
+       research_authorities:{
+         nakama_authorities:[{
+           signer_did:"did:trnm:nakama-authority",
+           public_key:$nakama_public_key_bytes
+         }],
+         hepta_authorities:[{
+           signer_did:"did:trnm:hepta-authority",
+           public_key:$hepta_public_key_bytes
+         }]
+       },
        validator_governance:{
          schema:"trnm_validator_governance_v1",
          signer_id:"did:operator:1",
@@ -181,6 +267,7 @@ jq --arg public_key "$public_key" --argjson initial_validators "$initial_validat
      }' \
   "$ROOT/comet/config/genesis.json" > "$ROOT/genesis.json"
 mv "$ROOT/genesis.json" "$ROOT/comet/config/genesis.json"
+test ! -e "$ROOT/app-state.json"
 
 start_app() {
   "$APP_BIN" \
@@ -249,11 +336,46 @@ test "$(printf '%s' "$second" | jq -r '.result.check_tx.code')" = "0"
 test "$(printf '%s' "$second" | jq -r '.result.tx_result.code')" = "0"
 test "$(printf '%s' "$second" | jq -r '.result.height')" = "2"
 
-block="$(curl -fsS "http://127.0.0.1:$RPC_PORT/block?height=2")"
+research="$(broadcast_commit "$ROOT/research.tx.json")"
+test "$(printf '%s' "$research" | jq -r '.result.check_tx.code')" = "0"
+test "$(printf '%s' "$research" | jq -r '.result.tx_result.code')" = "0"
+test "$(printf '%s' "$research" | jq -r '.result.height')" = "3"
+test "$(printf '%s' "$research" | jq -r '.result.tx_result.events | length')" = "1"
+test "$(printf '%s' "$research" | jq -r '.result.tx_result.events[0].type')" = \
+  "trnm.research.applied.v1"
+
+# Height 4 commits height 3's AppHash and LastResultsHash. This transaction is
+# deliberately separate so the Receipt V2 collector can prove the exact H/H+1
+# boundary while empty-block production remains disabled.
+fourth="$(broadcast_commit "$ROOT/tx-3.json")"
+test "$(printf '%s' "$fourth" | jq -r '.result.check_tx.code')" = "0"
+test "$(printf '%s' "$fourth" | jq -r '.result.tx_result.code')" = "0"
+test "$(printf '%s' "$fourth" | jq -r '.result.height')" = "4"
+
+receipt_evidence="$ROOT/receipt-v2-evidence"
+"$SCRIPT_DIR/collect_research_receipt_v2_evidence.sh" \
+  "http://127.0.0.1:$RPC_PORT" \
+  3 \
+  "$research_command_id" \
+  "$research_applied_key" \
+  "$receipt_evidence"
+trusted_execution_header_hash="$(jq -er '.result.block_id.hash | ascii_downcase' \
+  "$receipt_evidence/block-h.json")"
+receipt_result="$("$RECEIPT_BIN" assemble-and-verify \
+  "$receipt_evidence" \
+  "$ROOT/research-receipt-v2.json" \
+  "$trusted_execution_header_hash")"
+test "$(printf '%s' "$receipt_result" | jq -er .status)" = "final"
+test "$(printf '%s' "$receipt_result" | jq -er .command_id)" = "$research_command_id"
+receipt_hash="$(printf '%s' "$receipt_result" | jq -er .receipt_hash_hex)"
+test "${#receipt_hash}" = "64"
+
+block="$(curl -fsS "http://127.0.0.1:$RPC_PORT/block?height=4")"
 test -n "$(printf '%s' "$block" | jq -r '.result.block.header.app_hash')"
 test "$(printf '%s' "$block" | jq -r '.result.block.data.txs|length')" = "1"
-test "$(jq -r .height "$ROOT/app-state.json")" = "2"
+test "$(jq -r .height "$ROOT/app-state.json")" = "4"
 
-printf 'TRNM_COMETBFT_SINGLE_NODE_OK height=2 app_hash=%s root=%s\n' \
+printf 'TRNM_COMETBFT_SINGLE_NODE_OK height=4 app_hash=%s receipt_v2=%s root=%s\n' \
   "$(printf '%s' "$block" | jq -r '.result.block.header.app_hash')" \
+  "$receipt_hash" \
   "$ROOT"

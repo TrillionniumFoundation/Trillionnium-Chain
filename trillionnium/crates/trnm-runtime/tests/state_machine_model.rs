@@ -209,6 +209,7 @@ fn execute_and_apply(
         &planned.tx,
         ExecutionContext {
             height: planned.height,
+            chain_id: "trnm-devnet-v1",
             signer_id: &planned.signer_id,
             signer_role: planned.signer_role,
             payload_len: payload.len(),

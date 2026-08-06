@@ -9,12 +9,29 @@ use trnm_protocol::{
     MONETARY_STATE_OBJECT_TYPE_V1, TASK_OBJECT_TYPE_V1,
 };
 
+mod research;
+pub use research::{execute_research, research_genesis_mutation};
+
 #[derive(Debug, Error)]
 pub enum RuntimeError {
     #[error("protocol validation failed: {0}")]
     Protocol(String),
     #[error("transaction sender does not match signed envelope")]
     SenderMismatch,
+    #[error("research signer role does not match signed command")]
+    ResearchRoleMismatch,
+    #[error("research command chain does not match execution context")]
+    ResearchChainMismatch,
+    #[error("research protocol genesis authority set is missing")]
+    ResearchAuthoritySetMissing,
+    #[error("research protocol state transition failed: {0}")]
+    ResearchState(String),
+    #[error("research command id was replayed with altered signed bytes")]
+    ResearchAlteredReplay,
+    #[error("research command was already applied")]
+    ResearchCommandReplay,
+    #[error("research state mirror {0} is missing or inconsistent")]
+    ResearchMirrorMismatch(String),
     #[error("operator role required")]
     OperatorRequired,
     #[error("account nonce mismatch: expected {expected}, received {received}")]
@@ -74,6 +91,13 @@ impl RuntimeError {
         match self {
             Self::Protocol(_) => "protocol_validation_failed",
             Self::SenderMismatch => "sender_mismatch",
+            Self::ResearchRoleMismatch => "research_role_mismatch",
+            Self::ResearchChainMismatch => "research_chain_mismatch",
+            Self::ResearchAuthoritySetMissing => "research_authority_set_missing",
+            Self::ResearchState(_) => "research_state_failed",
+            Self::ResearchAlteredReplay => "research_altered_replay",
+            Self::ResearchCommandReplay => "research_command_replay",
+            Self::ResearchMirrorMismatch(_) => "research_mirror_mismatch",
             Self::OperatorRequired => "operator_required",
             Self::NonceMismatch { .. } => "nonce_mismatch",
             Self::NonceExhausted => "nonce_exhausted",
@@ -143,6 +167,7 @@ pub struct ResourceEstimate {
 #[derive(Debug, Clone, Copy)]
 pub struct ExecutionContext<'a> {
     pub height: u64,
+    pub chain_id: &'a str,
     pub signer_id: &'a str,
     pub signer_role: &'a str,
     pub payload_len: usize,
@@ -1032,6 +1057,7 @@ mod tests {
             &tx,
             ExecutionContext {
                 height,
+                chain_id: "trnm-devnet-v1",
                 signer_id: &tx.sender,
                 signer_role: role,
                 payload_len: payload.len(),
@@ -1277,6 +1303,7 @@ mod tests {
                 &malicious,
                 ExecutionContext {
                     height: 3,
+                    chain_id: "trnm-devnet-v1",
                     signer_id: "client",
                     signer_role: "hepta",
                     payload_len: payload.len(),
@@ -1326,6 +1353,7 @@ mod tests {
                 &self_consumption,
                 ExecutionContext {
                     height: 6,
+                    chain_id: "trnm-devnet-v1",
                     signer_id: "worker",
                     signer_role: "nakama",
                     payload_len: payload.len(),
@@ -1363,6 +1391,7 @@ mod tests {
                 &early_settle,
                 ExecutionContext {
                     height: 7,
+                    chain_id: "trnm-devnet-v1",
                     signer_id: "client",
                     signer_role: "hepta",
                     payload_len: payload.len(),
@@ -1431,6 +1460,7 @@ mod tests {
                 &forged,
                 ExecutionContext {
                     height: 5,
+                    chain_id: "trnm-devnet-v1",
                     signer_id: "worker",
                     signer_role: "nakama",
                     payload_len: payload.len(),
@@ -1461,6 +1491,7 @@ mod tests {
                 &first,
                 ExecutionContext {
                     height: 3,
+                    chain_id: "trnm-devnet-v1",
                     signer_id: "alice",
                     signer_role: "hepta",
                     payload_len: payload.len()
@@ -1485,6 +1516,7 @@ mod tests {
                 &low_gas,
                 ExecutionContext {
                     height: 3,
+                    chain_id: "trnm-devnet-v1",
                     signer_id: "alice",
                     signer_role: "hepta",
                     payload_len: payload.len()
@@ -1533,6 +1565,7 @@ mod tests {
                 &too_early,
                 ExecutionContext {
                     height: 19,
+                    chain_id: "trnm-devnet-v1",
                     signer_id: "client",
                     signer_role: "hepta",
                     payload_len: payload.len(),
@@ -1612,6 +1645,7 @@ mod tests {
                 &accept,
                 ExecutionContext {
                     height: 20,
+                    chain_id: "trnm-devnet-v1",
                     signer_id: "worker",
                     signer_role: "nakama",
                     payload_len: payload.len(),
@@ -1691,6 +1725,7 @@ mod tests {
                 &extreme,
                 ExecutionContext {
                     height: 2,
+                    chain_id: "trnm-devnet-v1",
                     signer_id: "operator",
                     signer_role: "operator",
                     payload_len: payload.len(),
@@ -1768,6 +1803,7 @@ mod tests {
                 &exhausted,
                 ExecutionContext {
                     height: 1,
+                    chain_id: "trnm-devnet-v1",
                     signer_id: "alice",
                     signer_role: "hepta",
                     payload_len: payload.len(),
@@ -1818,6 +1854,7 @@ mod tests {
                 &transfer,
                 ExecutionContext {
                     height: 1,
+                    chain_id: "trnm-devnet-v1",
                     signer_id: "alice",
                     signer_role: "hepta",
                     payload_len: payload.len(),
