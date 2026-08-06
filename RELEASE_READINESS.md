@@ -1,6 +1,6 @@
 # TRNM Release Readiness
 
-Updated date: 2026-07-30
+Updated date: 2026-08-01
 Scope: A citation must record the remote URL, fetch UTC/result, branch, `HEAD`,
 `refs/remotes/origin/main`, clean/dirty `git status --porcelain`, and this
 document's SHA-256. Run `git fetch --prune origin main` first. If fetch or
@@ -49,12 +49,33 @@ cached tracking ref contemporaneous.
   update-batch P95 was 697/960 ms; pruning retained 64 versions while preserving
   the boundary/latest ICS23 proofs and latest root. Peak RSS was 4.44 GiB. This
   is an in-memory JMT algorithm/retention gate, not SQLite fsync, CometBFT block,
-  or multi-host latency evidence. A multi-chunk format-4 correctness gate now
-  covers repeated offer, receive-journal restart, catalog restart, hostile future
-  and unreachable rows, mutated schema, signer-policy rebinding, and non-destructive
-  rejection. Million-object persistent-store restart/prune/restore latency remains
-  open; retained-history pruning and full-store verification can still create
-  scale-dependent work. Local
+  or multi-host latency evidence. The persistent-store gate now emits report schema
+  `trnm_apphash_v4_persistent_scale_report_v2` inside evidence schema
+  `trnm_persistent_scale_evidence_v3`. It binds the configured row/byte pruning
+  budgets, separates snapshot/maintenance/writer/SQLite retry causes, samples 32
+  commit latencies, requires at least four samples while pruning remains pending,
+  proves a deterministic real-writer yield, records adaptive budget changes, and
+  requires exact restart plus resumable format-4 restore. A
+  dirty-tree release-build smokes have completed exactly 10,000 objects plus
+  10,000 updates with all report/resource assertions passing; they are explicitly
+  single-process, single-host, outside canonical `FinalizeBlock`, not CometBFT
+  end-to-end, and not million-gate evidence. Their working-directory artifacts
+  were not attached to a durable evidence bundle and therefore are non-citable
+  local diagnostics, not verifiable release evidence. A clean checked-out `HEAD`
+  must rerun and retain the gate before any result is promoted. The earlier local formal 1M+1M attempt
+  at `072270c39` produced an approximately 827 MiB normalized snapshot but exited
+  137 during restore, leaving an invalid report; it is a capacity datapoint, not a
+  pass. Snapshot validation now binds the manifest hash, semantic checks, and
+  install backup to one private inode; requires canonical 4096-byte pages, zero
+  freelist, exact file length and schema/JMT closure; and caps the accepted database,
+  aggregate rows, and validation scratch space. These limits are the current
+  state-sync operational envelope, not a consensus state-growth limit. Restore
+  operators must reserve about 9 GiB of transient space for the maximum 4 GiB
+  receive stage, 4 GiB private validation copy, and 1 GiB validation scratch,
+  plus separate headroom for the live database, WAL, and VACUUM. If state
+  grows beyond them, consensus can continue but format-4 snapshot production and
+  restore fail closed until an explicit capacity upgrade. Million-object
+  persistent-store restart/prune/restore latency therefore remains open. Local
   four-validator offline/rejoin, fresh-node ABCI state sync, deterministic proposal
   filtering, transactional SQLite-WAL delta persistence, and validator-lifecycle
   unit/crash-recovery gates pass. A six-node process fixture proves 4→5, 5→4,
@@ -91,7 +112,7 @@ cached tracking ref contemporaneous.
 - The authoritative feature-to-runtime matrix and Day-1 freeze are in
   `docs/architecture/TRNM_CANONICAL_RUNTIME_FREEZE_2026-07-28.md`. Features not
   marked implemented in that matrix remain unimplemented regardless of legacy tests.
-- This branch uses application version 4, store schema 3, and persistent snapshot
+- This branch uses application version 4, store schema 4, and persistent snapshot
   format 4. Snapshot format 3 is restricted to the memory-only compatibility
   harness.
   It deliberately refuses in-place v3 root rewriting. The verified

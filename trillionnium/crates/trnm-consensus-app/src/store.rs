@@ -1,8 +1,9 @@
 use std::{
     fs,
+    io::{Read, Seek, SeekFrom, Write},
     path::{Path, PathBuf},
     sync::{
-        atomic::{AtomicUsize, Ordering},
+        atomic::{AtomicU64, AtomicUsize, Ordering},
         Arc, Mutex, TryLockError,
     },
     time::{Duration, Instant},
@@ -11,13 +12,14 @@ use std::{
 use anyhow::{anyhow, ensure, Context, Result};
 use jmt::{
     storage::{HasPreimage, LeafNode, NibblePath, Node, NodeKey, TreeReader},
-    JellyfishMerkleIterator, KeyHash, RootHash, Version,
+    JellyfishMerkleIterator, KeyHash, RootHash, ValueHash, Version,
 };
 use rusqlite::{
-    backup::Backup, params, Connection, DatabaseName, OpenFlags, OptionalExtension, Transaction,
+    backup::Backup, limits::Limit, params, Connection, OpenFlags, OptionalExtension, Transaction,
     TransactionBehavior,
 };
 use serde::Serialize;
+use sha2::{Digest, Sha256};
 
 use super::{
     auth_tree::{
@@ -27,7 +29,7 @@ use super::{
         InMemoryAuthTree, PlannedAuthUpdate, PruneStats,
     },
     persist_state_bytes, AppState, PendingBlock, StoredObject, ValidatorLifecycleStateV1,
-    APP_VERSION, VALIDATOR_LIFECYCLE_SCHEMA_V1,
+    APP_VERSION, MAX_SNAPSHOT_CHUNKS, SNAPSHOT_CHUNK_SIZE, VALIDATOR_LIFECYCLE_SCHEMA_V1,
 };
 
 const STORE_SCHEMA_VERSION: &str = "4";
@@ -42,6 +44,21 @@ const MAX_SNAPSHOT_KEY_PREIMAGE_BYTES: u64 = 1024 * 1024;
 const MAX_SNAPSHOT_OBJECT_VALUE_BYTES: u64 = 16 * 1024 * 1024;
 const MAX_SNAPSHOT_LIFECYCLE_BYTES: u64 = 4 * 1024 * 1024;
 const MAX_SNAPSHOT_IDENTIFIER_BYTES: u64 = 4096;
+const MAX_SNAPSHOT_SQLITE_VALUE_BYTES: i32 = 20 * 1024 * 1024;
+const SNAPSHOT_SQLITE_PAGE_SIZE_BYTES: u64 = 4096;
+const MAX_SNAPSHOT_DATABASE_BYTES: u64 = 4 * 1024 * 1024 * 1024;
+const MAX_SNAPSHOT_DATABASE_PAGES: u64 =
+    MAX_SNAPSHOT_DATABASE_BYTES / SNAPSHOT_SQLITE_PAGE_SIZE_BYTES;
+const MAX_SNAPSHOT_SCRATCH_BYTES: u64 = 1024 * 1024 * 1024;
+const MAX_SNAPSHOT_SCRATCH_PAGES: u64 =
+    MAX_SNAPSHOT_SCRATCH_BYTES / SNAPSHOT_SQLITE_PAGE_SIZE_BYTES;
+const MAX_SNAPSHOT_OBJECT_ROWS: u64 = 1_100_000;
+const MAX_SNAPSHOT_AUTH_VALUE_ROWS: u64 = MAX_SNAPSHOT_OBJECT_ROWS + 1;
+const MAX_SNAPSHOT_AUTH_NODE_ROWS: u64 = 2_000_000;
+const MAX_SNAPSHOT_VALIDATION_COPY_BYTES: u64 =
+    MAX_SNAPSHOT_CHUNKS as u64 * SNAPSHOT_CHUNK_SIZE as u64;
+const JMT_PLACEHOLDER_HASH: [u8; 32] = *b"SPARSE_MERKLE_PLACEHOLDER_HASH__";
+static SNAPSHOT_VALIDATION_NONCE: AtomicU64 = AtomicU64::new(0);
 const STORE_SCHEMA_SQL: &str = "
     CREATE TABLE IF NOT EXISTS metadata (
         key TEXT PRIMARY KEY NOT NULL,
@@ -118,11 +135,202 @@ pub(super) struct ApplicationStore {
     writer_waiters: Arc<AtomicUsize>,
     maintenance_gate: Arc<Mutex<()>>,
     active_snapshot_pins: Arc<AtomicUsize>,
+    #[cfg(any(test, feature = "scale-gate"))]
+    prune_writer_collision_hook: Arc<AtomicUsize>,
 }
 
 pub(super) struct PinnedSnapshot {
     source: Option<Connection>,
     active_snapshot_pins: Arc<AtomicUsize>,
+}
+
+struct SnapshotValidationScratch {
+    connection: Option<Connection>,
+    path: PathBuf,
+}
+
+#[derive(Debug)]
+struct SnapshotValidationCopy {
+    file: Option<fs::File>,
+    path: PathBuf,
+}
+
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+struct SnapshotRowCounts {
+    metadata: u64,
+    objects: u64,
+    command_ids: u64,
+    signer_nonces: u64,
+    validator_lifecycle: u64,
+    auth_nodes: u64,
+    auth_values: u64,
+    auth_preimages: u64,
+    auth_stale_nodes: u64,
+    auth_stale_values: u64,
+    auth_roots: u64,
+}
+
+#[derive(Debug)]
+pub(super) struct ValidatedSnapshotDatabase {
+    source: Connection,
+    state: AppState,
+    schema_version: String,
+    _owned_copy: SnapshotValidationCopy,
+}
+
+impl ValidatedSnapshotDatabase {
+    pub(super) fn state(&self) -> &AppState {
+        &self.state
+    }
+
+    pub(super) fn schema_version(&self) -> &str {
+        &self.schema_version
+    }
+
+    fn into_state(self) -> Result<AppState> {
+        self.source.execute_batch("ROLLBACK")?;
+        Ok(self.state)
+    }
+}
+
+impl SnapshotValidationScratch {
+    fn open(snapshot_path: &Path) -> Result<Self> {
+        let parent = snapshot_path
+            .parent()
+            .context("SQLite snapshot validation path has no parent")?;
+        let file_name = snapshot_path
+            .file_name()
+            .and_then(|value| value.to_str())
+            .context("SQLite snapshot validation path is not UTF-8")?;
+        let nonce = SNAPSHOT_VALIDATION_NONCE.fetch_add(1, Ordering::Relaxed);
+        let path = parent.join(format!(
+            ".{file_name}.validate-{}-{nonce}.sqlite3",
+            std::process::id()
+        ));
+        remove_file_if_exists(&path)?;
+        remove_sqlite_sidecars(&path)?;
+        let connection = Connection::open(&path).with_context(|| {
+            format!("create SQLite snapshot validation index {}", path.display())
+        })?;
+        connection.pragma_update(None, "page_size", SNAPSHOT_SQLITE_PAGE_SIZE_BYTES)?;
+        connection.pragma_update(None, "max_page_count", MAX_SNAPSHOT_SCRATCH_PAGES)?;
+        connection.execute_batch(
+            "
+            PRAGMA journal_mode=OFF;
+            PRAGMA synchronous=OFF;
+            PRAGMA temp_store=FILE;
+            PRAGMA cache_size=-8192;
+            PRAGMA mmap_size=0;
+            PRAGMA trusted_schema=OFF;
+            CREATE TABLE node_checks (
+                node_key BLOB PRIMARY KEY NOT NULL,
+                actual_hash BLOB,
+                actual_kind INTEGER,
+                actual_leaf_count INTEGER,
+                expected_hash BLOB,
+                expected_kind INTEGER,
+                expected_leaf_count INTEGER,
+                reference_count INTEGER NOT NULL DEFAULT 0
+            ) STRICT, WITHOUT ROWID;
+            CREATE TABLE leaf_checks (
+                key_hash BLOB PRIMARY KEY NOT NULL,
+                node_version_be BLOB,
+                node_hash BLOB,
+                value_version_be BLOB,
+                value_hash BLOB,
+                domain_hash BLOB,
+                preimage_seen INTEGER NOT NULL DEFAULT 0
+            ) STRICT, WITHOUT ROWID;
+            ",
+        )?;
+        Ok(Self {
+            connection: Some(connection),
+            path,
+        })
+    }
+
+    fn connection_mut(&mut self) -> Result<&mut Connection> {
+        self.connection
+            .as_mut()
+            .context("SQLite snapshot validation index is closed")
+    }
+}
+
+impl SnapshotValidationCopy {
+    fn file(&self) -> Result<&fs::File> {
+        self.file
+            .as_ref()
+            .context("private SQLite snapshot validation copy is closed")
+    }
+
+    fn sqlite_path(&self) -> Result<PathBuf> {
+        #[cfg(target_os = "linux")]
+        {
+            use std::os::fd::AsRawFd;
+            Ok(PathBuf::from(format!(
+                "/proc/self/fd/{}",
+                self.file()?.as_raw_fd()
+            )))
+        }
+        #[cfg(not(target_os = "linux"))]
+        {
+            Ok(self.path.clone())
+        }
+    }
+}
+
+impl SnapshotRowCounts {
+    fn validate(self) -> Result<()> {
+        ensure!(
+            self.metadata <= 9,
+            "SQLite snapshot metadata row count exceeds the resource limit"
+        );
+        ensure!(
+            self.objects <= MAX_SNAPSHOT_OBJECT_ROWS,
+            "SQLite snapshot object row count exceeds the resource limit"
+        );
+        ensure!(
+            self.auth_nodes <= MAX_SNAPSHOT_AUTH_NODE_ROWS,
+            "SQLite snapshot authenticated node row count exceeds the resource limit"
+        );
+        ensure!(
+            self.auth_values <= MAX_SNAPSHOT_AUTH_VALUE_ROWS,
+            "SQLite snapshot authenticated value row count exceeds the resource limit"
+        );
+        ensure!(
+            self.auth_preimages <= MAX_SNAPSHOT_AUTH_VALUE_ROWS,
+            "SQLite snapshot authenticated preimage row count exceeds the resource limit"
+        );
+        ensure!(
+            self.validator_lifecycle == 1 && self.auth_roots == 1,
+            "SQLite snapshot must contain exactly one lifecycle and authenticated root row"
+        );
+        ensure!(
+            self.command_ids == 0
+                && self.signer_nonces == 0
+                && self.auth_stale_nodes == 0
+                && self.auth_stale_values == 0,
+            "SQLite snapshot contains replay-cache or stale-history rows"
+        );
+        Ok(())
+    }
+}
+
+impl Drop for SnapshotValidationScratch {
+    fn drop(&mut self) {
+        drop(self.connection.take());
+        let _ = remove_sqlite_sidecars(&self.path);
+        let _ = remove_file_if_exists(&self.path);
+    }
+}
+
+impl Drop for SnapshotValidationCopy {
+    fn drop(&mut self) {
+        drop(self.file.take());
+        let _ = remove_sqlite_sidecars(&self.path);
+        let _ = remove_file_if_exists(&sqlite_sidecar(&self.path, "-journal"));
+        let _ = remove_file_if_exists(&self.path);
+    }
 }
 
 impl PinnedSnapshot {
@@ -163,6 +371,21 @@ pub(super) struct PruneBatchOutcome {
     pub(super) rows_examined: usize,
     pub(super) logical_bytes_examined: u64,
     pub(super) elapsed: Duration,
+    pub(super) yielded_to_writer: bool,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub(super) enum PruneSkipReason {
+    MaintenanceBusy,
+    SnapshotPinned,
+    WriterWaiting,
+    WriterBusy,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub(super) enum PruneBatchAttempt {
+    Skipped(PruneSkipReason),
+    Completed(PruneBatchOutcome),
 }
 
 #[cfg(any(test, feature = "scale-gate"))]
@@ -262,6 +485,13 @@ impl HasPreimage for SqliteAuthReader<'_> {
 impl ApplicationStore {
     fn lock_writer(&self) -> Result<std::sync::MutexGuard<'_, ()>> {
         self.writer_waiters.fetch_add(1, Ordering::AcqRel);
+        #[cfg(any(test, feature = "scale-gate"))]
+        let _ = self.prune_writer_collision_hook.compare_exchange(
+            2,
+            3,
+            Ordering::AcqRel,
+            Ordering::Acquire,
+        );
         let locked = self.writer_gate.lock();
         self.writer_waiters.fetch_sub(1, Ordering::AcqRel);
         locked.map_err(|_| anyhow!("application store writer gate poisoned"))
@@ -286,6 +516,8 @@ impl ApplicationStore {
             writer_waiters: Arc::new(AtomicUsize::new(0)),
             maintenance_gate: Arc::new(Mutex::new(())),
             active_snapshot_pins: Arc::new(AtomicUsize::new(0)),
+            #[cfg(any(test, feature = "scale-gate"))]
+            prune_writer_collision_hook: Arc::new(AtomicUsize::new(0)),
         };
         Ok(store)
     }
@@ -431,6 +663,19 @@ impl ApplicationStore {
         max_rows: usize,
         max_logical_bytes: u64,
     ) -> Result<Option<PruneBatchOutcome>> {
+        Ok(
+            match self.try_prune_auth_batch_detailed(max_rows, max_logical_bytes)? {
+                PruneBatchAttempt::Skipped(_) => None,
+                PruneBatchAttempt::Completed(outcome) => Some(outcome),
+            },
+        )
+    }
+
+    pub(super) fn try_prune_auth_batch_detailed(
+        &self,
+        max_rows: usize,
+        max_logical_bytes: u64,
+    ) -> Result<PruneBatchAttempt> {
         ensure!(max_rows > 0, "authenticated prune batch must allow a row");
         ensure!(
             max_logical_bytes > 0,
@@ -438,24 +683,31 @@ impl ApplicationStore {
         );
         let _maintenance = match self.maintenance_gate.try_lock() {
             Ok(maintenance) => maintenance,
-            Err(TryLockError::WouldBlock) => return Ok(None),
+            Err(TryLockError::WouldBlock) => {
+                return Ok(PruneBatchAttempt::Skipped(PruneSkipReason::MaintenanceBusy));
+            }
             Err(TryLockError::Poisoned(_)) => {
                 return Err(anyhow!("application store maintenance gate poisoned"));
             }
         };
         if self.active_snapshot_pins.load(Ordering::Acquire) > 0 {
-            return Ok(None);
+            return Ok(PruneBatchAttempt::Skipped(PruneSkipReason::SnapshotPinned));
         }
         if self.writer_waiters.load(Ordering::Acquire) > 0 {
-            return Ok(None);
+            return Ok(PruneBatchAttempt::Skipped(PruneSkipReason::WriterWaiting));
         }
         let _writer = match self.writer_gate.try_lock() {
             Ok(writer) => writer,
-            Err(TryLockError::WouldBlock) => return Ok(None),
+            Err(TryLockError::WouldBlock) => {
+                return Ok(PruneBatchAttempt::Skipped(PruneSkipReason::WriterBusy));
+            }
             Err(TryLockError::Poisoned(_)) => {
                 return Err(anyhow!("application store writer gate poisoned"));
             }
         };
+        if self.writer_waiters.load(Ordering::Acquire) > 0 {
+            return Ok(PruneBatchAttempt::Skipped(PruneSkipReason::WriterWaiting));
+        }
         let started = Instant::now();
         let mut connection = self.connect_maintenance()?;
         let transaction = connection.transaction_with_behavior(TransactionBehavior::Immediate)?;
@@ -463,7 +715,7 @@ impl ApplicationStore {
             .context("application store is missing authenticated query floor")?;
         let Some(target) = optional_metadata_version(&transaction, AUTH_PRUNE_TARGET_KEY)? else {
             transaction.rollback()?;
-            return Ok(Some(PruneBatchOutcome {
+            return Ok(PruneBatchAttempt::Completed(PruneBatchOutcome {
                 stats: PruneStats::default(),
                 query_floor,
                 target: query_floor,
@@ -471,6 +723,7 @@ impl ApplicationStore {
                 rows_examined: 0,
                 logical_bytes_examined: 0,
                 elapsed: started.elapsed(),
+                yielded_to_writer: false,
             }));
         };
         let height = metadata(&transaction, "height")?
@@ -488,116 +741,105 @@ impl ApplicationStore {
             auth_root(&transaction, target)?.is_some(),
             "authenticated prune boundary root is absent"
         );
+        #[cfg(any(test, feature = "scale-gate"))]
+        self.coordinate_prune_writer_collision()?;
 
         let target_be = target.to_be_bytes();
         let mut stats = PruneStats::default();
         let mut rows_examined = 0_usize;
         let mut logical_bytes_examined = 0_u64;
-        let mut budget_expired = false;
+        let mut yielded_to_writer = false;
 
-        let root_versions = {
+        // Row/byte/time budgets are progress-preserving soft limits: an
+        // otherwise valid first row is processed even when it alone crosses a
+        // configured threshold, and every later row is bounded normally.
+
+        // Stale nodes are validated and removed before historical roots.  The
+        // root at `stale_since_version` is therefore still available as a
+        // witness that the candidate was actually retired by that version.
+        // JMT node keys are immutable and retired nodes are never resurrected.
+        let stale_rows = {
             let mut statement = transaction.prepare(
-                "SELECT version_be
-                 FROM auth_roots
-                 WHERE version_be<?1
-                 ORDER BY version_be
+                "SELECT stale.stale_since_version_be,
+                        stale.node_key,
+                        nodes.node
+                 FROM auth_stale_nodes AS stale
+                 LEFT JOIN auth_nodes AS nodes ON nodes.node_key=stale.node_key
+                 WHERE stale.stale_since_version_be<=?1
+                 ORDER BY stale.stale_since_version_be, stale.node_key
                  LIMIT ?2",
             )?;
             let rows = statement.query_map(
                 params![target_be.as_slice(), i64::try_from(max_rows)?],
-                |row| row.get::<_, Vec<u8>>(0),
+                |row| {
+                    Ok((
+                        row.get::<_, Vec<u8>>(0)?,
+                        row.get::<_, Vec<u8>>(1)?,
+                        row.get::<_, Option<Vec<u8>>>(2)?,
+                    ))
+                },
             )?;
             rows.collect::<rusqlite::Result<Vec<_>>>()?
         };
-        for encoded_version in root_versions {
-            let version = decode_version_be(&encoded_version)?;
-            let root_path: NibblePath = std::iter::empty().collect();
-            let encoded_key = borsh::to_vec(&NodeKey::new(version, root_path))
-                .context("encode authenticated root node key during pruning")?;
-            let node_bytes = transaction
-                .query_row(
-                    "SELECT length(node) FROM auth_nodes WHERE node_key=?1",
-                    params![encoded_key.as_slice()],
-                    |row| row.get::<_, u64>(0),
-                )
-                .optional()?
-                .unwrap_or(0)
-                .saturating_add(u64::try_from(encoded_key.len())?);
-            if rows_examined > 0
-                && (logical_bytes_examined.saturating_add(node_bytes) > max_logical_bytes
-                    || started.elapsed() >= AUTH_PRUNE_BATCH_MAX_DURATION)
-            {
-                budget_expired = true;
+        for (stale_since, encoded_key, encoded_node) in stale_rows {
+            let Some(encoded_node) = encoded_node else {
+                return Err(anyhow!(
+                    "authenticated stale-node index points to an absent node"
+                ));
+            };
+            let logical_bytes = u64::try_from(encoded_key.len())?
+                .saturating_add(u64::try_from(encoded_node.len())?);
+            if self.writer_waiters.load(Ordering::Acquire) > 0 {
+                yielded_to_writer = true;
                 break;
             }
+            if rows_examined > 0
+                && (logical_bytes_examined.saturating_add(logical_bytes) > max_logical_bytes
+                    || started.elapsed() >= AUTH_PRUNE_BATCH_MAX_DURATION)
+            {
+                break;
+            }
+            let stale_since_version = decode_version_be(&stale_since)?;
+            let node_key: NodeKey = borsh::from_slice(&encoded_key)
+                .context("decode authenticated stale JMT node key")?;
+            let node: Node =
+                borsh::from_slice(&encoded_node).context("decode authenticated stale JMT node")?;
+            ensure!(
+                borsh::to_vec(&node_key)? == encoded_key
+                    && borsh::to_vec(&node)? == encoded_node
+                    && node_key.version() < stale_since_version
+                    && stale_since_version <= target,
+                "authenticated stale-node index contains a non-canonical retirement"
+            );
+            ensure!(
+                auth_root(&transaction, stale_since_version)?.is_some(),
+                "authenticated stale-node retirement witness root is absent"
+            );
+            ensure!(
+                !auth_node_reachable_at_version(&transaction, stale_since_version, &node_key,)?,
+                "authenticated stale-node index points to a live retained node"
+            );
             rows_examined = rows_examined.saturating_add(1);
-            logical_bytes_examined = logical_bytes_examined.saturating_add(node_bytes);
-            stats.nodes_removed = stats.nodes_removed.saturating_add(transaction.execute(
+            logical_bytes_examined = logical_bytes_examined.saturating_add(logical_bytes);
+            let removed = transaction.execute(
                 "DELETE FROM auth_nodes WHERE node_key=?1",
                 params![encoded_key.as_slice()],
-            )?);
-            stats.roots_removed = stats.roots_removed.saturating_add(transaction.execute(
-                "DELETE FROM auth_roots WHERE version_be=?1",
-                params![encoded_version],
-            )?);
-        }
-
-        let old_roots_remain = transaction
-            .query_row(
-                "SELECT 1 FROM auth_roots WHERE version_be<?1 LIMIT 1",
-                params![target_be.as_slice()],
-                |_| Ok(()),
-            )
-            .optional()?
-            .is_some();
-        if !old_roots_remain && !budget_expired && rows_examined < max_rows {
-            let remaining = max_rows.saturating_sub(rows_examined);
-            let stale_rows = {
-                let mut statement = transaction.prepare(
-                    "SELECT stale.stale_since_version_be,
-                            stale.node_key,
-                            COALESCE(length(nodes.node), 0)
-                     FROM auth_stale_nodes AS stale
-                     LEFT JOIN auth_nodes AS nodes ON nodes.node_key=stale.node_key
-                     WHERE stale.stale_since_version_be<=?1
-                     ORDER BY stale.stale_since_version_be, stale.node_key
-                     LIMIT ?2",
-                )?;
-                let rows = statement.query_map(
-                    params![target_be.as_slice(), i64::try_from(remaining)?],
-                    |row| {
-                        Ok((
-                            row.get::<_, Vec<u8>>(0)?,
-                            row.get::<_, Vec<u8>>(1)?,
-                            row.get::<_, u64>(2)?,
-                        ))
-                    },
-                )?;
-                rows.collect::<rusqlite::Result<Vec<_>>>()?
-            };
-            for (stale_since, node_key, node_length) in stale_rows {
-                let logical_bytes = node_length.saturating_add(u64::try_from(node_key.len())?);
-                if rows_examined > 0
-                    && (logical_bytes_examined.saturating_add(logical_bytes) > max_logical_bytes
-                        || started.elapsed() >= AUTH_PRUNE_BATCH_MAX_DURATION)
-                {
-                    break;
-                }
-                rows_examined = rows_examined.saturating_add(1);
-                logical_bytes_examined = logical_bytes_examined.saturating_add(logical_bytes);
-                stats.nodes_removed = stats.nodes_removed.saturating_add(transaction.execute(
-                    "DELETE FROM auth_nodes WHERE node_key=?1",
-                    params![node_key.as_slice()],
-                )?);
-                stats.stale_indices_removed =
-                    stats
-                        .stale_indices_removed
-                        .saturating_add(transaction.execute(
-                            "DELETE FROM auth_stale_nodes
-                             WHERE stale_since_version_be=?1 AND node_key=?2",
-                            params![stale_since, node_key],
-                        )?);
-            }
+            )?;
+            ensure!(
+                removed == 1,
+                "authenticated stale node disappeared during pruning"
+            );
+            stats.nodes_removed = stats.nodes_removed.saturating_add(removed);
+            let index_removed = transaction.execute(
+                "DELETE FROM auth_stale_nodes
+                 WHERE stale_since_version_be=?1 AND node_key=?2",
+                params![stale_since.as_slice(), encoded_key.as_slice()],
+            )?;
+            ensure!(
+                index_removed == 1,
+                "authenticated stale-node index disappeared during pruning"
+            );
+            stats.stale_indices_removed = stats.stale_indices_removed.saturating_add(index_removed);
         }
 
         let stale_nodes_remain = transaction
@@ -611,11 +853,7 @@ impl ApplicationStore {
             )
             .optional()?
             .is_some();
-        if !old_roots_remain
-            && !stale_nodes_remain
-            && rows_examined < max_rows
-            && started.elapsed() < AUTH_PRUNE_BATCH_MAX_DURATION
-        {
+        if !stale_nodes_remain && rows_examined < max_rows {
             let remaining = max_rows.saturating_sub(rows_examined);
             let stale_values = {
                 let mut statement = transaction.prepare(
@@ -623,11 +861,22 @@ impl ApplicationStore {
                             stale.key_hash,
                             stale.version_be,
                             history.key_hash IS NOT NULL,
-                            COALESCE(length(history.value), 0)
+                            COALESCE(length(history.value), 0),
+                            successor.key_hash IS NOT NULL,
+                            NOT EXISTS (
+                                SELECT 1
+                                FROM auth_values AS intermediate
+                                WHERE intermediate.key_hash=stale.key_hash
+                                  AND intermediate.version_be>stale.version_be
+                                  AND intermediate.version_be<stale.stale_since_version_be
+                            )
                      FROM auth_stale_values AS stale
                      LEFT JOIN auth_values AS history
                        ON history.key_hash=stale.key_hash
                       AND history.version_be=stale.version_be
+                     LEFT JOIN auth_values AS successor
+                       ON successor.key_hash=stale.key_hash
+                      AND successor.version_be=stale.stale_since_version_be
                      WHERE stale.stale_since_version_be<=?1
                      ORDER BY stale.stale_since_version_be,
                               stale.key_hash,
@@ -643,19 +892,44 @@ impl ApplicationStore {
                             row.get::<_, Vec<u8>>(2)?,
                             row.get::<_, bool>(3)?,
                             row.get::<_, u64>(4)?,
+                            row.get::<_, bool>(5)?,
+                            row.get::<_, bool>(6)?,
                         ))
                     },
                 )?;
                 rows.collect::<rusqlite::Result<Vec<_>>>()?
             };
-            for (stale_since, key_hash, version_be, value_exists, value_length) in stale_values {
+            for (
+                stale_since,
+                key_hash,
+                version_be,
+                value_exists,
+                value_length,
+                successor_exists,
+                successor_is_next,
+            ) in stale_values
+            {
                 ensure!(
                     value_exists,
                     "authenticated stale-value index points to an absent value"
                 );
+                let stale_since_version = decode_version_be(&stale_since)?;
+                let value_version = decode_version_be(&version_be)?;
+                ensure!(
+                    key_hash.len() == 32
+                        && value_version < stale_since_version
+                        && stale_since_version <= target
+                        && successor_exists
+                        && successor_is_next,
+                    "authenticated stale-value index contains a non-canonical retirement"
+                );
                 let logical_bytes = value_length
                     .saturating_add(u64::try_from(key_hash.len())?)
                     .saturating_add(u64::try_from(version_be.len())?);
+                if self.writer_waiters.load(Ordering::Acquire) > 0 {
+                    yielded_to_writer = true;
+                    break;
+                }
                 if rows_examined > 0
                     && (logical_bytes_examined.saturating_add(logical_bytes) > max_logical_bytes
                         || started.elapsed() >= AUTH_PRUNE_BATCH_MAX_DURATION)
@@ -691,6 +965,74 @@ impl ApplicationStore {
                 );
                 stats.stale_indices_removed =
                     stats.stale_indices_removed.saturating_add(index_removed);
+            }
+        }
+
+        let stale_values_remain = transaction
+            .query_row(
+                "SELECT 1
+                 FROM auth_stale_values
+                 WHERE stale_since_version_be<=?1
+                 LIMIT 1",
+                params![target_be.as_slice()],
+                |_| Ok(()),
+            )
+            .optional()?
+            .is_some();
+        if !stale_nodes_remain
+            && !stale_values_remain
+            && rows_examined < max_rows
+            && started.elapsed() < AUTH_PRUNE_BATCH_MAX_DURATION
+        {
+            let remaining = max_rows.saturating_sub(rows_examined);
+            let root_versions = {
+                let mut statement = transaction.prepare(
+                    "SELECT version_be
+                     FROM auth_roots
+                     WHERE version_be<?1
+                     ORDER BY version_be
+                     LIMIT ?2",
+                )?;
+                let rows = statement.query_map(
+                    params![target_be.as_slice(), i64::try_from(remaining)?],
+                    |row| row.get::<_, Vec<u8>>(0),
+                )?;
+                rows.collect::<rusqlite::Result<Vec<_>>>()?
+            };
+            for encoded_version in root_versions {
+                let version = decode_version_be(&encoded_version)?;
+                let root_path: NibblePath = std::iter::empty().collect();
+                let encoded_key = borsh::to_vec(&NodeKey::new(version, root_path))
+                    .context("encode authenticated root node key during pruning")?;
+                let node_bytes = transaction
+                    .query_row(
+                        "SELECT length(node) FROM auth_nodes WHERE node_key=?1",
+                        params![encoded_key.as_slice()],
+                        |row| row.get::<_, u64>(0),
+                    )
+                    .optional()?
+                    .unwrap_or(0)
+                    .saturating_add(u64::try_from(encoded_key.len())?);
+                if self.writer_waiters.load(Ordering::Acquire) > 0 {
+                    yielded_to_writer = true;
+                    break;
+                }
+                if rows_examined > 0
+                    && (logical_bytes_examined.saturating_add(node_bytes) > max_logical_bytes
+                        || started.elapsed() >= AUTH_PRUNE_BATCH_MAX_DURATION)
+                {
+                    break;
+                }
+                rows_examined = rows_examined.saturating_add(1);
+                logical_bytes_examined = logical_bytes_examined.saturating_add(node_bytes);
+                stats.nodes_removed = stats.nodes_removed.saturating_add(transaction.execute(
+                    "DELETE FROM auth_nodes WHERE node_key=?1",
+                    params![encoded_key.as_slice()],
+                )?);
+                stats.roots_removed = stats.roots_removed.saturating_add(transaction.execute(
+                    "DELETE FROM auth_roots WHERE version_be=?1",
+                    params![encoded_version],
+                )?);
             }
         }
 
@@ -733,7 +1075,7 @@ impl ApplicationStore {
             )?;
         }
         transaction.commit()?;
-        Ok(Some(PruneBatchOutcome {
+        Ok(PruneBatchAttempt::Completed(PruneBatchOutcome {
             stats,
             query_floor,
             target,
@@ -741,6 +1083,7 @@ impl ApplicationStore {
             rows_examined,
             logical_bytes_examined,
             elapsed: started.elapsed(),
+            yielded_to_writer,
         }))
     }
 
@@ -784,6 +1127,61 @@ impl ApplicationStore {
         };
         connection.execute_batch("ROLLBACK")?;
         Ok(status)
+    }
+
+    #[cfg(any(test, feature = "scale-gate"))]
+    pub(super) fn arm_prune_writer_collision(&self) -> Result<()> {
+        self.prune_writer_collision_hook
+            .compare_exchange(0, 1, Ordering::AcqRel, Ordering::Acquire)
+            .map_err(|state| anyhow!("prune writer collision hook is already in state {state}"))?;
+        Ok(())
+    }
+
+    #[cfg(any(test, feature = "scale-gate"))]
+    pub(super) fn wait_for_prune_writer_collision(&self) -> Result<()> {
+        let started = Instant::now();
+        loop {
+            match self.prune_writer_collision_hook.load(Ordering::Acquire) {
+                2 => return Ok(()),
+                0 => {
+                    return Err(anyhow!(
+                        "prune writer collision hook disarmed before maintenance arrived"
+                    ));
+                }
+                1 => {}
+                state => return Err(anyhow!("invalid prune writer collision state {state}")),
+            }
+            ensure!(
+                started.elapsed() < Duration::from_secs(5),
+                "timed out waiting for maintenance to enter the prune writer collision hook"
+            );
+            std::thread::sleep(Duration::from_millis(1));
+        }
+    }
+
+    #[cfg(any(test, feature = "scale-gate"))]
+    fn coordinate_prune_writer_collision(&self) -> Result<()> {
+        if self
+            .prune_writer_collision_hook
+            .compare_exchange(1, 2, Ordering::AcqRel, Ordering::Acquire)
+            .is_err()
+        {
+            return Ok(());
+        }
+        let started = Instant::now();
+        while self.prune_writer_collision_hook.load(Ordering::Acquire) != 3
+            || self.writer_waiters.load(Ordering::Acquire) == 0
+        {
+            if started.elapsed() >= Duration::from_secs(5) {
+                self.prune_writer_collision_hook.store(0, Ordering::Release);
+                return Err(anyhow!(
+                    "timed out waiting for a designated consensus writer at the prune collision hook"
+                ));
+            }
+            std::thread::yield_now();
+        }
+        self.prune_writer_collision_hook.store(0, Ordering::Release);
+        Ok(())
     }
 
     pub(super) fn has_pending_auth_prune(&self) -> Result<bool> {
@@ -1028,8 +1426,15 @@ impl ApplicationStore {
             let connection = Connection::open(&temporary)?;
             connection.execute_batch(
                 "
+                -- These legacy replay-cache tables are not part of AppHash v4
+                -- and release execution never populates them.  A public
+                -- snapshot must not let an untrusted sender inject entries
+                -- that make otherwise valid commands appear spent.
+                DELETE FROM command_ids;
+                DELETE FROM signer_nonces;
                 PRAGMA wal_checkpoint(TRUNCATE);
                 PRAGMA journal_mode=DELETE;
+                PRAGMA page_size=4096;
                 VACUUM;
                 ",
             )?;
@@ -1037,6 +1442,7 @@ impl ApplicationStore {
         remove_sqlite_sidecars(&temporary)?;
         let validated =
             snapshot_store.validate_snapshot_database(&temporary, state.height, state.app_hash)?;
+        let validated = validated.into_state()?;
         fs::File::open(&temporary)?.sync_all()?;
         fs::rename(&temporary, destination).with_context(|| {
             format!(
@@ -1085,6 +1491,7 @@ impl ApplicationStore {
         })
     }
 
+    #[cfg_attr(not(test), allow(dead_code))]
     pub(super) fn install_snapshot_database(
         &self,
         expected: &AppState,
@@ -1092,12 +1499,30 @@ impl ApplicationStore {
         expected_height: u64,
         expected_app_hash: [u8; 32],
     ) -> Result<AppState> {
+        let validated =
+            self.validate_snapshot_database(source_path, expected_height, expected_app_hash)?;
+        self.install_validated_snapshot_database(expected, validated)
+    }
+
+    pub(super) fn install_validated_snapshot_database(
+        &self,
+        expected: &AppState,
+        validated: ValidatedSnapshotDatabase,
+    ) -> Result<AppState> {
         ensure!(
             expected.height == 0 && expected.pending.is_none(),
             "snapshot install requires empty application state"
         );
-        let restored =
-            self.validate_snapshot_database(source_path, expected_height, expected_app_hash)?;
+        let restored = validated.state().clone();
+        ensure!(
+            restored.height > 0 && restored.pending.is_none(),
+            "validated snapshot is not committed state"
+        );
+        ensure!(
+            validated.schema_version == STORE_SCHEMA_VERSION
+                || validated.schema_version == PREVIOUS_STORE_SCHEMA_VERSION,
+            "validated snapshot schema is unsupported"
+        );
 
         let _maintenance = self
             .maintenance_gate
@@ -1115,11 +1540,15 @@ impl ApplicationStore {
             verify_database_head(&transaction, expected)?;
             transaction.rollback()?;
         }
-        destination.restore(
-            DatabaseName::Main,
-            source_path,
-            None::<fn(rusqlite::backup::Progress)>,
-        )?;
+        {
+            let backup = Backup::new(&validated.source, &mut destination)?;
+            backup.run_to_completion(256, Duration::from_millis(2), None)?;
+        }
+
+        // A completed SQLite backup is the authoritative installation
+        // boundary. Before this point an error is a normal retry; afterwards
+        // every failure must stop the process so disk and memory cannot
+        // diverge while CometBFT continues.
         let post_install = (|| -> Result<AppState> {
             let installed_schema = metadata(&destination, "schema_version")?;
             if installed_schema == PREVIOUS_STORE_SCHEMA_VERSION {
@@ -1143,6 +1572,7 @@ impl ApplicationStore {
                 checkpoint.0 == 0,
                 "installed snapshot WAL checkpoint was blocked by an active reader"
             );
+            self.verify_installed_snapshot_copy(&destination, &restored)?;
             drop(destination);
             fs::File::open(&self.database_path)?.sync_all()?;
             let wal = sqlite_sidecar(&self.database_path, "-wal");
@@ -1151,16 +1581,9 @@ impl ApplicationStore {
             }
             sync_parent(&self.database_path)?;
 
-            let installed = self.validate_snapshot_database(
-                &self.database_path,
-                expected_height,
-                expected_app_hash,
-            )?;
-            ensure!(
-                (installed.height, installed.app_hash) == (restored.height, restored.app_hash),
-                "installed snapshot differs from its prevalidated source"
-            );
-            Ok(installed)
+            let installed = self.connect_read()?;
+            self.verify_installed_snapshot_copy(&installed, &restored)?;
+            Ok(restored)
         })();
         match post_install {
             Ok(installed) => {
@@ -1171,28 +1594,141 @@ impl ApplicationStore {
         }
     }
 
+    fn verify_installed_snapshot_copy(
+        &self,
+        connection: &Connection,
+        restored: &AppState,
+    ) -> Result<()> {
+        let integrity: String = connection.query_row("PRAGMA quick_check", [], |row| row.get(0))?;
+        ensure!(
+            integrity == "ok",
+            "installed SQLite snapshot quick_check failed"
+        );
+        validate_snapshot_schema(connection)?;
+        self.verify_database_bindings(connection)?;
+        ensure!(
+            metadata(connection, "height")? == restored.height.to_string()
+                && metadata(connection, "app_hash_hex")? == hex::encode(restored.app_hash)
+                && latest_auth_version(connection)? == Some(restored.height),
+            "installed SQLite snapshot head differs from its prevalidated source"
+        );
+        let root_hash = auth_root(connection, restored.height)?
+            .context("installed SQLite snapshot is missing its committed root")?;
+        ensure!(
+            <[u8; 32]>::from(root_hash) == restored.app_hash,
+            "installed SQLite snapshot root differs from its AppHash"
+        );
+        ensure!(
+            connection.query_row("SELECT COUNT(*) FROM auth_roots", [], |row| {
+                row.get::<_, u64>(0)
+            })? == 1
+                && connection.query_row("SELECT COUNT(*) FROM auth_stale_nodes", [], |row| {
+                    row.get::<_, u64>(0)
+                })? == 0
+                && connection.query_row("SELECT COUNT(*) FROM auth_stale_values", [], |row| {
+                    row.get::<_, u64>(0)
+                })? == 0
+                && optional_metadata_version(connection, AUTH_QUERY_FLOOR_KEY)?
+                    == Some(restored.height)
+                && optional_metadata_version(connection, AUTH_PRUNE_TARGET_KEY)?.is_none(),
+            "installed SQLite snapshot is not normalized latest-only state"
+        );
+
+        let lifecycle_bytes: Vec<u8> = connection.query_row(
+            "SELECT state_json FROM validator_lifecycle WHERE singleton=1",
+            [],
+            |row| row.get(0),
+        )?;
+        let lifecycle: ValidatorLifecycleStateV1 = serde_json::from_slice(&lifecycle_bytes)?;
+        ensure!(
+            restored.validator_lifecycle.as_ref() == Some(&lifecycle),
+            "installed SQLite snapshot lifecycle differs from its prevalidated source"
+        );
+        let reader = SqliteAuthReader { connection };
+        let proof = prove_with_reader(&reader, restored.height, root_hash, validator_state_key()?)?;
+        let value = proof
+            .value
+            .as_deref()
+            .context("installed SQLite snapshot lifecycle proof is absent")?;
+        let record = AuthenticatedObjectRecord::decode(value)?;
+        ensure!(
+            record.object_type == VALIDATOR_LIFECYCLE_SCHEMA_V1
+                && record.object_version <= restored.height
+                && record.value == lifecycle_bytes
+                && verify_ics23_membership(&proof, value),
+            "installed SQLite snapshot lifecycle proof failed"
+        );
+        Ok(())
+    }
+
     pub(super) fn validate_snapshot_database(
         &self,
         path: &Path,
         expected_height: u64,
         expected_app_hash: [u8; 32],
-    ) -> Result<AppState> {
+    ) -> Result<ValidatedSnapshotDatabase> {
+        let (copy, payload_hash) = prepare_snapshot_validation_copy(path)?;
+        self.validate_snapshot_database_copy(copy, expected_height, expected_app_hash, payload_hash)
+    }
+
+    pub(super) fn validate_snapshot_database_with_payload_hash(
+        &self,
+        path: &Path,
+        expected_height: u64,
+        expected_app_hash: [u8; 32],
+        expected_payload_hash: [u8; 32],
+    ) -> Result<ValidatedSnapshotDatabase> {
+        let (copy, observed_payload_hash) = prepare_snapshot_validation_copy(path)?;
+        ensure!(
+            observed_payload_hash == expected_payload_hash,
+            "SQLite snapshot payload changed after manifest verification"
+        );
+        self.validate_snapshot_database_copy(
+            copy,
+            expected_height,
+            expected_app_hash,
+            expected_payload_hash,
+        )
+    }
+
+    fn validate_snapshot_database_copy(
+        &self,
+        owned_copy: SnapshotValidationCopy,
+        expected_height: u64,
+        expected_app_hash: [u8; 32],
+        expected_payload_hash: [u8; 32],
+    ) -> Result<ValidatedSnapshotDatabase> {
+        let path = owned_copy.path.as_path();
+        for suffix in ["-wal", "-shm", "-journal"] {
+            ensure!(
+                !sqlite_sidecar(path, suffix).exists(),
+                "SQLite snapshot must be a standalone database without {suffix}"
+            );
+        }
+        let sqlite_path = owned_copy.sqlite_path()?;
         let connection = Connection::open_with_flags(
-            path,
+            &sqlite_path,
             OpenFlags::SQLITE_OPEN_READ_ONLY | OpenFlags::SQLITE_OPEN_NO_MUTEX,
         )
-        .with_context(|| format!("open untrusted SQLite snapshot {}", path.display()))?;
+        .with_context(|| format!("open private SQLite snapshot copy {}", path.display()))?;
+        connection.set_limit(Limit::SQLITE_LIMIT_LENGTH, MAX_SNAPSHOT_SQLITE_VALUE_BYTES);
+        connection.set_limit(Limit::SQLITE_LIMIT_SQL_LENGTH, 1024 * 1024);
+        connection.set_limit(Limit::SQLITE_LIMIT_WORKER_THREADS, 0);
         connection.execute_batch(
             "
             PRAGMA trusted_schema=OFF;
             PRAGMA query_only=ON;
+            BEGIN DEFERRED;
             ",
         )?;
+        validate_snapshot_file_layout(&connection, owned_copy.file()?.metadata()?.len())?;
         let integrity: String = connection.query_row("PRAGMA quick_check", [], |row| row.get(0))?;
         ensure!(integrity == "ok", "SQLite snapshot quick_check failed");
         validate_snapshot_schema(&connection)?;
+        validate_snapshot_row_counts(&connection)?;
         validate_storage_resource_bounds(&connection)?;
         let store_schema = self.verify_compatible_database_bindings(&connection)?;
+        validate_snapshot_metadata_keys(&connection, &store_schema)?;
         ensure!(
             metadata(&connection, "height")? == expected_height.to_string()
                 && metadata(&connection, "app_hash_hex")? == hex::encode(expected_app_hash),
@@ -1216,6 +1752,15 @@ impl ApplicationStore {
             root_count == 1 && stale_count == 0 && stale_value_count == 0,
             "SQLite snapshot must contain latest-only authenticated history"
         );
+        ensure!(
+            connection.query_row("SELECT COUNT(*) FROM command_ids", [], |row| {
+                row.get::<_, u64>(0)
+            })? == 0
+                && connection.query_row("SELECT COUNT(*) FROM signer_nonces", [], |row| {
+                    row.get::<_, u64>(0)
+                })? == 0,
+            "SQLite snapshot contains unauthenticated replay-cache rows"
+        );
         if store_schema == STORE_SCHEMA_VERSION {
             ensure!(
                 optional_metadata_version(&connection, AUTH_QUERY_FLOOR_KEY)?
@@ -1227,80 +1772,226 @@ impl ApplicationStore {
                 "SQLite snapshot contains unfinished authenticated maintenance"
             );
         }
-        Self::validate_latest_only_auth_storage(&connection, expected_height)?;
-        let restored = load_sqlite_state(&connection)?;
+        let restored = Self::validate_latest_only_auth_storage(
+            &connection,
+            path,
+            expected_height,
+            expected_app_hash,
+        )?;
         ensure!(
             (restored.height, restored.app_hash) == (expected_height, expected_app_hash),
             "validated SQLite snapshot state differs from trusted head"
         );
-        Ok(restored)
+        for suffix in ["-wal", "-shm", "-journal"] {
+            ensure!(
+                !sqlite_sidecar(path, suffix).exists(),
+                "SQLite snapshot sidecar {suffix} appeared during validation"
+            );
+        }
+        ensure!(
+            snapshot_payload_hash_open_file_v4(owned_copy.file()?)? == expected_payload_hash,
+            "SQLite snapshot payload changed during validation"
+        );
+        Ok(ValidatedSnapshotDatabase {
+            source: connection,
+            state: restored,
+            schema_version: store_schema,
+            _owned_copy: owned_copy,
+        })
     }
 
-    fn validate_latest_only_auth_storage(connection: &Connection, height: u64) -> Result<()> {
-        let reader = SqliteAuthReader { connection };
+    fn validate_latest_only_auth_storage(
+        connection: &Connection,
+        snapshot_path: &Path,
+        height: u64,
+        expected_app_hash: [u8; 32],
+    ) -> Result<AppState> {
+        let root_hash = auth_root(connection, height)?
+            .context("SQLite snapshot is missing its trusted root")?;
+        ensure!(
+            <[u8; 32]>::from(root_hash) == expected_app_hash,
+            "SQLite snapshot root differs from its trusted AppHash"
+        );
+
+        let mut scratch = SnapshotValidationScratch::open(snapshot_path)?;
+        let transaction = scratch
+            .connection_mut()?
+            .transaction_with_behavior(TransactionBehavior::Immediate)?;
         let root_path: NibblePath = std::iter::empty().collect();
-        let mut stack = vec![NodeKey::new(height, root_path)];
-        let mut reachable_nodes = 0_u64;
+        let root_key = borsh::to_vec(&NodeKey::new(height, root_path))
+            .context("encode trusted snapshot root key")?;
+        transaction.execute(
+            "INSERT INTO node_checks(
+                node_key, expected_hash, reference_count
+             ) VALUES (?1, ?2, 1)",
+            params![root_key, expected_app_hash.as_slice()],
+        )?;
+
+        let mut actual_node_statement = transaction.prepare(
+            "INSERT INTO node_checks(
+                node_key,
+                actual_hash,
+                actual_kind,
+                actual_leaf_count
+             ) VALUES (?1, ?2, ?3, ?4)
+             ON CONFLICT(node_key) DO UPDATE SET
+                actual_hash=excluded.actual_hash,
+                actual_kind=excluded.actual_kind,
+                actual_leaf_count=excluded.actual_leaf_count",
+        )?;
+        let mut expected_node_statement = transaction.prepare(
+            "INSERT INTO node_checks(
+                node_key,
+                expected_hash,
+                expected_kind,
+                expected_leaf_count,
+                reference_count
+             ) VALUES (?1, ?2, ?3, ?4, 1)
+             ON CONFLICT(node_key) DO UPDATE SET
+                expected_hash=COALESCE(node_checks.expected_hash, excluded.expected_hash),
+                expected_kind=COALESCE(node_checks.expected_kind, excluded.expected_kind),
+                expected_leaf_count=COALESCE(
+                    node_checks.expected_leaf_count,
+                    excluded.expected_leaf_count
+                ),
+                reference_count=node_checks.reference_count + 1",
+        )?;
+        let mut node_leaf_statement = transaction.prepare(
+            "INSERT INTO leaf_checks(
+                key_hash, node_version_be, node_hash
+             ) VALUES (?1, ?2, ?3)
+             ON CONFLICT(key_hash) DO UPDATE SET
+                node_version_be=excluded.node_version_be,
+                node_hash=excluded.node_hash",
+        )?;
+
+        let mut stored_nodes = 0_u64;
         let mut reachable_leaves = 0_u64;
-        while let Some(node_key) = stack.pop() {
+        let mut statement = connection.prepare("SELECT node_key, node FROM auth_nodes")?;
+        let rows = statement.query_map([], |row| {
+            Ok((row.get::<_, Vec<u8>>(0)?, row.get::<_, Vec<u8>>(1)?))
+        })?;
+        for row in rows {
+            let (encoded_key, encoded_node) = row?;
+            let node_key: NodeKey =
+                borsh::from_slice(&encoded_key).context("decode persisted JMT node key")?;
             ensure!(
-                node_key.version() <= height,
-                "SQLite snapshot contains a future-version reachable node"
+                node_key.version() <= height && node_key.nibble_path().num_nibbles() <= 64,
+                "SQLite snapshot contains an invalid or future-version JMT node key"
             );
-            let node = reader
-                .get_node_option(&node_key)?
-                .context("SQLite snapshot is missing a reachable JMT node")?;
-            reachable_nodes = reachable_nodes
+            let canonical_path: NibblePath = node_key.nibble_path().nibbles().collect();
+            ensure!(
+                canonical_path == *node_key.nibble_path()
+                    && borsh::to_vec(&node_key)? == encoded_key,
+                "SQLite snapshot contains a non-canonical JMT node key"
+            );
+            let node: Node =
+                borsh::from_slice(&encoded_node).context("decode persisted JMT node")?;
+            ensure!(
+                borsh::to_vec(&node)? == encoded_node,
+                "SQLite snapshot contains a non-canonical JMT node"
+            );
+            stored_nodes = stored_nodes
                 .checked_add(1)
-                .context("reachable JMT node count overflow")?;
-            match node {
-                Node::Null => {}
+                .context("SQLite snapshot JMT node count overflow")?;
+
+            let (actual_hash, actual_kind, actual_leaf_count) = match &node {
+                Node::Null => (JMT_PLACEHOLDER_HASH, 0_i64, 0_i64),
                 Node::Leaf(leaf) => {
                     reachable_leaves = reachable_leaves
                         .checked_add(1)
                         .context("reachable JMT leaf count overflow")?;
-                    let preimage = reader
-                        .preimage(leaf.key_hash())?
-                        .context("reachable JMT leaf is missing its preimage")?;
-                    ensure!(
-                        authenticated_key_hash(&preimage)? == leaf.key_hash(),
-                        "reachable JMT leaf preimage hash mismatch"
-                    );
+                    for (index, nibble) in node_key.nibble_path().nibbles().enumerate() {
+                        let byte = leaf.key_hash().0[index / 2];
+                        let expected = if index.is_multiple_of(2) {
+                            byte >> 4
+                        } else {
+                            byte & 0x0f
+                        };
+                        ensure!(
+                            u8::from(nibble) == expected,
+                            "SQLite snapshot leaf is stored outside its authenticated key path"
+                        );
+                    }
+                    let leaf_hash = leaf.hash::<Sha256>();
+                    node_leaf_statement.execute(params![
+                        leaf.key_hash().0.as_slice(),
+                        node_key.version().to_be_bytes().as_slice(),
+                        leaf_hash.as_slice(),
+                    ])?;
+                    (leaf_hash, 1_i64, 1_i64)
                 }
                 Node::Internal(internal) => {
+                    ensure!(
+                        node_key.nibble_path().num_nibbles() < 64,
+                        "SQLite snapshot contains a JMT internal node below maximum depth"
+                    );
+                    let mut child_count = 0_usize;
+                    let mut child_leaf_count = 0_usize;
+                    let mut only_child_is_leaf = false;
                     for (nibble, child) in internal.children_sorted() {
                         ensure!(
                             child.version <= height,
                             "SQLite snapshot contains a future-version JMT child"
                         );
+                        child_count = child_count
+                            .checked_add(1)
+                            .context("JMT child count overflow")?;
+                        child_leaf_count = child_leaf_count
+                            .checked_add(child.leaf_count())
+                            .context("JMT child leaf count overflow")?;
+                        only_child_is_leaf = child.is_leaf();
                         let path = node_key
                             .nibble_path()
                             .nibbles()
                             .chain(std::iter::once(nibble))
                             .collect();
-                        stack.push(NodeKey::new(child.version, path));
+                        let child_key = borsh::to_vec(&NodeKey::new(child.version, path))
+                            .context("encode expected snapshot child key")?;
+                        expected_node_statement.execute(params![
+                            child_key,
+                            child.hash.as_slice(),
+                            if child.is_leaf() { 1_i64 } else { 2_i64 },
+                            i64::try_from(child.leaf_count())
+                                .context("JMT child leaf count exceeds i64")?,
+                        ])?;
                     }
+                    ensure!(
+                        child_count > 0
+                            && !(child_count == 1 && only_child_is_leaf)
+                            && internal.leaf_count() >= 2
+                            && internal.leaf_count() == child_leaf_count,
+                        "SQLite snapshot contains a structurally invalid JMT internal node"
+                    );
+                    (
+                        internal.hash::<Sha256>(),
+                        2_i64,
+                        i64::try_from(internal.leaf_count())
+                            .context("JMT internal leaf count exceeds i64")?,
+                    )
                 }
-            }
+            };
+            actual_node_statement.execute(params![
+                encoded_key,
+                actual_hash.as_slice(),
+                actual_kind,
+                actual_leaf_count,
+            ])?;
         }
-        let stored_nodes = connection.query_row("SELECT COUNT(*) FROM auth_nodes", [], |row| {
-            row.get::<_, u64>(0)
-        })?;
-        let stored_preimages =
-            connection.query_row("SELECT COUNT(*) FROM auth_preimages", [], |row| {
-                row.get::<_, u64>(0)
-            })?;
-        let stored_values =
-            connection.query_row("SELECT COUNT(*) FROM auth_values", [], |row| {
-                row.get::<_, u64>(0)
-            })?;
-        ensure!(
-            stored_nodes == reachable_nodes
-                && stored_preimages == reachable_leaves
-                && stored_values == reachable_leaves,
-            "SQLite snapshot contains unreachable authenticated rows"
-        );
+        drop(node_leaf_statement);
+        drop(expected_node_statement);
+        drop(actual_node_statement);
+        drop(statement);
 
+        let mut value_statement = transaction.prepare(
+            "INSERT INTO leaf_checks(
+                key_hash, value_version_be, value_hash
+             ) VALUES (?1, ?2, ?3)
+             ON CONFLICT(key_hash) DO UPDATE SET
+                value_version_be=excluded.value_version_be,
+                value_hash=excluded.value_hash",
+        )?;
+        let mut stored_values = 0_u64;
         let mut statement = connection
             .prepare("SELECT key_hash, version_be, value, is_deleted FROM auth_values")?;
         let rows = statement.query_map([], |row| {
@@ -1313,27 +2004,215 @@ impl ApplicationStore {
         })?;
         for row in rows {
             let (key_hash, version, value, is_deleted) = row?;
+            let key_hash = KeyHash(
+                <[u8; 32]>::try_from(key_hash.as_slice())
+                    .map_err(|_| anyhow!("SQLite snapshot value key hash is not 32 bytes"))?,
+            );
+            let decoded_version = decode_version_be(&version)?;
             ensure!(
-                key_hash.len() == 32
-                    && decode_version_be(&version)? <= height
-                    && value.is_some()
-                    && is_deleted == 0,
+                decoded_version <= height && value.is_some() && is_deleted == 0,
                 "SQLite snapshot contains a non-canonical latest value"
             );
-            let preimage_exists = connection
-                .query_row(
-                    "SELECT 1 FROM auth_preimages WHERE key_hash=?1",
-                    params![key_hash],
-                    |_| Ok(()),
-                )
-                .optional()?
-                .is_some();
-            ensure!(
-                preimage_exists,
-                "SQLite snapshot value has no reachable preimage"
+            stored_values = stored_values
+                .checked_add(1)
+                .context("SQLite snapshot value count overflow")?;
+            let value_hash = snapshot_leaf_hash(
+                key_hash,
+                value
+                    .as_deref()
+                    .expect("latest-only snapshot value was checked"),
             );
+            value_statement.execute(params![
+                key_hash.0.as_slice(),
+                version,
+                value_hash.as_slice(),
+            ])?;
         }
-        Ok(())
+        drop(value_statement);
+        drop(statement);
+
+        let mut preimage_statement = transaction.prepare(
+            "INSERT INTO leaf_checks(key_hash, preimage_seen)
+             VALUES (?1, 1)
+             ON CONFLICT(key_hash) DO UPDATE SET
+                preimage_seen=leaf_checks.preimage_seen + 1",
+        )?;
+        let mut stored_preimages = 0_u64;
+        let mut statement =
+            connection.prepare("SELECT key_hash, key_preimage FROM auth_preimages")?;
+        let rows = statement.query_map([], |row| {
+            Ok((row.get::<_, Vec<u8>>(0)?, row.get::<_, Vec<u8>>(1)?))
+        })?;
+        for row in rows {
+            let (key_hash, preimage) = row?;
+            let key_hash = KeyHash(
+                <[u8; 32]>::try_from(key_hash.as_slice())
+                    .map_err(|_| anyhow!("SQLite snapshot preimage hash is not 32 bytes"))?,
+            );
+            ensure!(
+                authenticated_key_hash(&preimage)? == key_hash,
+                "SQLite snapshot authenticated key preimage hash mismatch"
+            );
+            stored_preimages = stored_preimages
+                .checked_add(1)
+                .context("SQLite snapshot preimage count overflow")?;
+            preimage_statement.execute(params![key_hash.0.as_slice()])?;
+        }
+        drop(preimage_statement);
+        drop(statement);
+
+        let mut domain_statement = transaction.prepare(
+            "INSERT INTO leaf_checks(key_hash, domain_hash)
+             VALUES (?1, ?2)
+             ON CONFLICT(key_hash) DO UPDATE SET
+                domain_hash=excluded.domain_hash",
+        )?;
+        let mut object_count = 0_u64;
+        let mut statement = connection.prepare(
+            "SELECT object_key_hex, object_type, version, value_hash_hex, value_bytes
+             FROM objects",
+        )?;
+        let rows = statement.query_map([], |row| {
+            Ok((
+                row.get::<_, String>(0)?,
+                row.get::<_, String>(1)?,
+                row.get::<_, String>(2)?,
+                row.get::<_, String>(3)?,
+                row.get::<_, Vec<u8>>(4)?,
+            ))
+        })?;
+        for row in rows {
+            let (object_key_hex, object_type, version, value_hash_hex, value_bytes) = row?;
+            let object = StoredObject {
+                object_key_hex,
+                object_type,
+                version: version
+                    .parse::<u64>()
+                    .context("parse SQLite snapshot object version")?,
+                value_hash_hex,
+                value_bytes,
+            };
+            validate_object(&object)?;
+            let key = stored_object_key(&object.object_key_hex)?;
+            let key_hash = authenticated_key_hash(&key)?;
+            let value = AuthenticatedObjectRecord::new(
+                object.object_type,
+                object.version,
+                object.value_bytes,
+            )?
+            .encode()?;
+            let domain_hash = snapshot_leaf_hash(key_hash, &value);
+            domain_statement.execute(params![key_hash.0.as_slice(), domain_hash.as_slice(),])?;
+            object_count = object_count
+                .checked_add(1)
+                .context("SQLite snapshot object count overflow")?;
+        }
+        drop(statement);
+
+        let lifecycle_bytes: Vec<u8> = connection
+            .query_row(
+                "SELECT state_json FROM validator_lifecycle WHERE singleton=1",
+                [],
+                |row| row.get(0),
+            )
+            .context("SQLite snapshot is missing committed validator lifecycle")?;
+        let validator_lifecycle: ValidatorLifecycleStateV1 =
+            serde_json::from_slice(&lifecycle_bytes)
+                .context("decode SQLite snapshot validator lifecycle")?;
+        validator_lifecycle.validate()?;
+        let lifecycle_key = validator_state_key()?;
+        let lifecycle_key_hash = authenticated_key_hash(&lifecycle_key)?;
+        let lifecycle_value_version: Vec<u8> = connection
+            .query_row(
+                "SELECT version_be
+                 FROM auth_values
+                 WHERE key_hash=?1 AND is_deleted=0",
+                params![lifecycle_key_hash.0.as_slice()],
+                |row| row.get(0),
+            )
+            .context("SQLite snapshot is missing authenticated validator lifecycle value")?;
+        let lifecycle_value = AuthenticatedObjectRecord::new(
+            VALIDATOR_LIFECYCLE_SCHEMA_V1,
+            decode_version_be(&lifecycle_value_version)?,
+            lifecycle_bytes,
+        )?
+        .encode()?;
+        let lifecycle_hash = snapshot_leaf_hash(lifecycle_key_hash, &lifecycle_value);
+        domain_statement.execute(params![
+            lifecycle_key_hash.0.as_slice(),
+            lifecycle_hash.as_slice(),
+        ])?;
+        drop(domain_statement);
+
+        let node_check_count =
+            transaction.query_row("SELECT COUNT(*) FROM node_checks", [], |row| {
+                row.get::<_, u64>(0)
+            })?;
+        let invalid_node_count = transaction.query_row(
+            "SELECT COUNT(*)
+             FROM node_checks
+             WHERE actual_hash IS NULL
+                OR expected_hash IS NULL
+                OR reference_count<>1
+                OR actual_hash<>expected_hash
+                OR (
+                    expected_kind IS NOT NULL
+                    AND (
+                        actual_kind<>expected_kind
+                        OR actual_leaf_count<>expected_leaf_count
+                    )
+                )",
+            [],
+            |row| row.get::<_, u64>(0),
+        )?;
+        ensure!(
+            node_check_count == stored_nodes && invalid_node_count == 0,
+            "SQLite snapshot contains missing, unreachable, multiply referenced, or hash-invalid JMT nodes"
+        );
+
+        let leaf_check_count =
+            transaction.query_row("SELECT COUNT(*) FROM leaf_checks", [], |row| {
+                row.get::<_, u64>(0)
+            })?;
+        let invalid_leaf_count = transaction.query_row(
+            "SELECT COUNT(*)
+             FROM leaf_checks
+             WHERE node_version_be IS NULL
+                OR node_hash IS NULL
+                OR value_version_be IS NULL
+                OR value_hash IS NULL
+                OR domain_hash IS NULL
+                OR preimage_seen<>1
+                OR value_version_be>node_version_be
+                OR node_hash<>value_hash
+                OR node_hash<>domain_hash",
+            [],
+            |row| row.get::<_, u64>(0),
+        )?;
+        let domain_rows = object_count
+            .checked_add(1)
+            .context("SQLite snapshot domain row count overflow")?;
+        ensure!(
+            leaf_check_count == reachable_leaves
+                && reachable_leaves == stored_values
+                && reachable_leaves == stored_preimages
+                && reachable_leaves == domain_rows
+                && invalid_leaf_count == 0,
+            "SQLite snapshot authenticated leaves, values, preimages, and domain rows differ \
+             (checks={leaf_check_count}, leaves={reachable_leaves}, values={stored_values}, \
+             preimages={stored_preimages}, domain={domain_rows}, invalid={invalid_leaf_count})"
+        );
+        transaction.commit()?;
+
+        Ok(AppState {
+            height,
+            app_hash: expected_app_hash,
+            objects: std::collections::BTreeMap::new(),
+            command_ids: std::collections::BTreeSet::new(),
+            signer_nonces: std::collections::BTreeSet::new(),
+            validator_lifecycle: Some(validator_lifecycle),
+            pending: None,
+        })
     }
 
     fn with_database_path(&self, database_path: PathBuf) -> Self {
@@ -1346,6 +2225,8 @@ impl ApplicationStore {
             writer_waiters: Arc::new(AtomicUsize::new(0)),
             maintenance_gate: Arc::new(Mutex::new(())),
             active_snapshot_pins: Arc::new(AtomicUsize::new(0)),
+            #[cfg(any(test, feature = "scale-gate"))]
+            prune_writer_collision_hook: Arc::new(AtomicUsize::new(0)),
         }
     }
 
@@ -2330,6 +3211,10 @@ fn validate_object(object: &StoredObject) -> Result<()> {
     Ok(())
 }
 
+fn snapshot_leaf_hash(key_hash: KeyHash, value: &[u8]) -> [u8; 32] {
+    LeafNode::new(key_hash, ValueHash::with::<Sha256>(value)).hash::<Sha256>()
+}
+
 fn latest_auth_version(connection: &Connection) -> Result<Option<Version>> {
     let encoded: Option<Vec<u8>> = connection
         .query_row(
@@ -2367,6 +3252,50 @@ fn auth_root(connection: &Connection, version: Version) -> Result<Option<RootHas
             )?))
         })
         .transpose()
+}
+
+fn auth_node_reachable_at_version(
+    connection: &Connection,
+    version: Version,
+    candidate: &NodeKey,
+) -> Result<bool> {
+    let mut path: NibblePath = std::iter::empty().collect();
+    let mut current = NodeKey::new(version, path.clone());
+    if &current == candidate {
+        return Ok(true);
+    }
+    for expected_nibble in candidate.nibble_path().nibbles() {
+        let encoded = borsh::to_vec(&current).context("encode retained JMT traversal node key")?;
+        let node_bytes: Vec<u8> = connection
+            .query_row(
+                "SELECT node FROM auth_nodes WHERE node_key=?1",
+                params![encoded.as_slice()],
+                |row| row.get(0),
+            )
+            .with_context(|| {
+                format!(
+                    "retained JMT traversal is missing node at version {}",
+                    current.version()
+                )
+            })?;
+        let node: Node =
+            borsh::from_slice(&node_bytes).context("decode retained JMT traversal node")?;
+        let Node::Internal(internal) = node else {
+            return Ok(false);
+        };
+        let Some((nibble, child)) = internal
+            .children_sorted()
+            .find(|(nibble, _)| *nibble == expected_nibble)
+        else {
+            return Ok(false);
+        };
+        path = path.nibbles().chain(std::iter::once(nibble)).collect();
+        current = NodeKey::new(child.version, path.clone());
+        if &current == candidate {
+            return Ok(true);
+        }
+    }
+    Ok(false)
 }
 
 fn physical_prune_candidates_remain(connection: &Connection, target: Version) -> Result<bool> {
@@ -2563,42 +3492,277 @@ fn validate_snapshot_schema(connection: &Connection) -> Result<()> {
     Ok(())
 }
 
+fn validate_snapshot_metadata_keys(connection: &Connection, schema_version: &str) -> Result<()> {
+    let mut expected = std::collections::BTreeSet::from([
+        "app_hash_hex".to_string(),
+        "app_version".to_string(),
+        "auth_codec".to_string(),
+        "auth_tree".to_string(),
+        "authorized_signers_hash_hex".to_string(),
+        "chain_id".to_string(),
+        "height".to_string(),
+        "schema_version".to_string(),
+    ]);
+    if schema_version == STORE_SCHEMA_VERSION {
+        expected.insert(AUTH_QUERY_FLOOR_KEY.to_string());
+    }
+    let mut statement = connection.prepare("SELECT key FROM metadata ORDER BY key")?;
+    let rows = statement.query_map([], |row| row.get::<_, String>(0))?;
+    let actual = rows.collect::<rusqlite::Result<std::collections::BTreeSet<_>>>()?;
+    ensure!(
+        actual == expected,
+        "SQLite snapshot metadata keys differ from the canonical allowlist"
+    );
+    Ok(())
+}
+
+fn prepare_snapshot_validation_copy(
+    source_path: &Path,
+) -> Result<(SnapshotValidationCopy, [u8; 32])> {
+    for suffix in ["-wal", "-shm", "-journal"] {
+        ensure!(
+            !sqlite_sidecar(source_path, suffix).exists(),
+            "SQLite snapshot must be a standalone database without {suffix}"
+        );
+    }
+    let parent = source_path
+        .parent()
+        .context("SQLite snapshot validation path has no parent")?;
+    let file_name = source_path
+        .file_name()
+        .and_then(|value| value.to_str())
+        .context("SQLite snapshot validation path is not UTF-8")?;
+    let nonce = SNAPSHOT_VALIDATION_NONCE.fetch_add(1, Ordering::Relaxed);
+    let copy_path = parent.join(format!(
+        ".{file_name}.validate-source-{}-{nonce}.sqlite3",
+        std::process::id()
+    ));
+    let mut source = fs::File::open(source_path)
+        .with_context(|| format!("open SQLite snapshot {}", source_path.display()))?;
+    let mut destination = fs::OpenOptions::new()
+        .read(true)
+        .write(true)
+        .create_new(true)
+        .open(&copy_path)
+        .with_context(|| {
+            format!(
+                "create private SQLite snapshot validation copy {}",
+                copy_path.display()
+            )
+        })?;
+    let copied = (|| -> Result<[u8; 32]> {
+        let mut hasher = Sha256::new();
+        hasher.update(b"trnm.cometbft.snapshot.payload.v4");
+        hasher.update([0]);
+        let mut total_bytes = 0_u64;
+        let mut buffer = vec![0_u8; SNAPSHOT_CHUNK_SIZE];
+        loop {
+            let count = source.read(&mut buffer)?;
+            if count == 0 {
+                break;
+            }
+            total_bytes = total_bytes
+                .checked_add(u64::try_from(count)?)
+                .context("SQLite snapshot validation copy length overflow")?;
+            ensure!(
+                total_bytes <= MAX_SNAPSHOT_VALIDATION_COPY_BYTES,
+                "SQLite snapshot byte length exceeds validation limit"
+            );
+            destination.write_all(&buffer[..count])?;
+            hasher.update(&buffer[..count]);
+        }
+        ensure!(total_bytes > 0, "SQLite snapshot payload is empty");
+        destination.flush()?;
+        destination.sync_all()?;
+        destination.seek(SeekFrom::Start(0))?;
+        Ok(hasher.finalize().into())
+    })();
+    let payload_hash = match copied {
+        Ok(payload_hash) => payload_hash,
+        Err(error) => {
+            drop(destination);
+            let _ = remove_file_if_exists(&copy_path);
+            return Err(error);
+        }
+    };
+    for suffix in ["-wal", "-shm", "-journal"] {
+        if sqlite_sidecar(source_path, suffix).exists() {
+            drop(destination);
+            let _ = remove_file_if_exists(&copy_path);
+            return Err(anyhow!(
+                "SQLite snapshot sidecar {suffix} appeared while making the validation copy"
+            ));
+        }
+    }
+    Ok((
+        SnapshotValidationCopy {
+            file: Some(destination),
+            path: copy_path,
+        },
+        payload_hash,
+    ))
+}
+
+fn snapshot_payload_hash_open_file_v4(file: &fs::File) -> Result<[u8; 32]> {
+    let mut reader = file.try_clone()?;
+    reader.seek(SeekFrom::Start(0))?;
+    let mut hasher = Sha256::new();
+    hasher.update(b"trnm.cometbft.snapshot.payload.v4");
+    hasher.update([0]);
+    let mut buffer = vec![0_u8; SNAPSHOT_CHUNK_SIZE];
+    loop {
+        let count = reader.read(&mut buffer)?;
+        if count == 0 {
+            break;
+        }
+        hasher.update(&buffer[..count]);
+    }
+    Ok(hasher.finalize().into())
+}
+
+fn validate_snapshot_file_layout(connection: &Connection, observed_bytes: u64) -> Result<()> {
+    let page_size = connection.query_row("PRAGMA page_size", [], |row| row.get::<_, u64>(0))?;
+    let page_count = connection.query_row("PRAGMA page_count", [], |row| row.get::<_, u64>(0))?;
+    let freelist_count =
+        connection.query_row("PRAGMA freelist_count", [], |row| row.get::<_, u64>(0))?;
+    let journal_mode =
+        connection.query_row("PRAGMA journal_mode", [], |row| row.get::<_, String>(0))?;
+    ensure!(
+        page_size == SNAPSHOT_SQLITE_PAGE_SIZE_BYTES,
+        "SQLite snapshot page size differs from the canonical 4096-byte layout"
+    );
+    ensure!(page_count > 0, "SQLite snapshot contains no database pages");
+    ensure!(
+        page_count <= MAX_SNAPSHOT_DATABASE_PAGES,
+        "SQLite snapshot page count exceeds the resource limit"
+    );
+    ensure!(
+        freelist_count == 0,
+        "SQLite snapshot contains non-canonical freelist pages"
+    );
+    ensure!(
+        journal_mode.eq_ignore_ascii_case("delete"),
+        "SQLite snapshot journal mode differs from the canonical DELETE layout"
+    );
+    let canonical_bytes = page_size
+        .checked_mul(page_count)
+        .context("SQLite snapshot canonical file length overflow")?;
+    ensure!(
+        observed_bytes == canonical_bytes,
+        "SQLite snapshot file length differs from its canonical page layout"
+    );
+    ensure!(
+        observed_bytes <= MAX_SNAPSHOT_DATABASE_BYTES,
+        "SQLite snapshot file length exceeds the resource limit"
+    );
+    Ok(())
+}
+
+fn validate_snapshot_row_counts(connection: &Connection) -> Result<()> {
+    let mut counts = connection.query_row(
+        "SELECT
+            (SELECT COUNT(*) FROM metadata),
+            (SELECT COUNT(*) FROM objects),
+            (SELECT COUNT(*) FROM command_ids),
+            (SELECT COUNT(*) FROM signer_nonces),
+            (SELECT COUNT(*) FROM validator_lifecycle),
+            (SELECT COUNT(*) FROM auth_nodes),
+            (SELECT COUNT(*) FROM auth_values),
+            (SELECT COUNT(*) FROM auth_preimages),
+            (SELECT COUNT(*) FROM auth_stale_nodes),
+            (SELECT COUNT(*) FROM auth_roots)",
+        [],
+        |row| {
+            Ok(SnapshotRowCounts {
+                metadata: row.get(0)?,
+                objects: row.get(1)?,
+                command_ids: row.get(2)?,
+                signer_nonces: row.get(3)?,
+                validator_lifecycle: row.get(4)?,
+                auth_nodes: row.get(5)?,
+                auth_values: row.get(6)?,
+                auth_preimages: row.get(7)?,
+                auth_stale_nodes: row.get(8)?,
+                auth_roots: row.get(9)?,
+                ..SnapshotRowCounts::default()
+            })
+        },
+    )?;
+    if metadata(connection, "schema_version")? == STORE_SCHEMA_VERSION {
+        counts.auth_stale_values =
+            connection.query_row("SELECT COUNT(*) FROM auth_stale_values", [], |row| {
+                row.get(0)
+            })?;
+    }
+    counts.validate()
+}
+
 fn validate_storage_resource_bounds(connection: &Connection) -> Result<()> {
-    for (table, column, maximum) in [
-        ("metadata", "key", MAX_SNAPSHOT_IDENTIFIER_BYTES),
-        ("metadata", "value", MAX_SNAPSHOT_IDENTIFIER_BYTES),
-        ("objects", "object_key_hex", MAX_SNAPSHOT_IDENTIFIER_BYTES),
-        ("objects", "object_type", MAX_SNAPSHOT_IDENTIFIER_BYTES),
-        ("objects", "version", MAX_SNAPSHOT_IDENTIFIER_BYTES),
-        ("objects", "value_hash_hex", MAX_SNAPSHOT_IDENTIFIER_BYTES),
-        ("objects", "value_bytes", MAX_SNAPSHOT_OBJECT_VALUE_BYTES),
-        ("command_ids", "command_id", MAX_SNAPSHOT_IDENTIFIER_BYTES),
-        ("signer_nonces", "signer_id", MAX_SNAPSHOT_IDENTIFIER_BYTES),
+    let tables: &[(&str, &[(&str, u64)])] = &[
+        (
+            "metadata",
+            &[
+                ("key", MAX_SNAPSHOT_IDENTIFIER_BYTES),
+                ("value", MAX_SNAPSHOT_IDENTIFIER_BYTES),
+            ],
+        ),
+        (
+            "objects",
+            &[
+                ("object_key_hex", MAX_SNAPSHOT_IDENTIFIER_BYTES),
+                ("object_type", MAX_SNAPSHOT_IDENTIFIER_BYTES),
+                ("version", MAX_SNAPSHOT_IDENTIFIER_BYTES),
+                ("value_hash_hex", MAX_SNAPSHOT_IDENTIFIER_BYTES),
+                ("value_bytes", MAX_SNAPSHOT_OBJECT_VALUE_BYTES),
+            ],
+        ),
+        (
+            "command_ids",
+            &[("command_id", MAX_SNAPSHOT_IDENTIFIER_BYTES)],
+        ),
+        (
+            "signer_nonces",
+            &[("signer_id", MAX_SNAPSHOT_IDENTIFIER_BYTES)],
+        ),
         (
             "validator_lifecycle",
-            "state_json",
-            MAX_SNAPSHOT_LIFECYCLE_BYTES,
+            &[("state_json", MAX_SNAPSHOT_LIFECYCLE_BYTES)],
         ),
-        ("auth_nodes", "node_key", MAX_SNAPSHOT_IDENTIFIER_BYTES),
-        ("auth_nodes", "node", MAX_SNAPSHOT_AUTH_NODE_BYTES),
-        ("auth_values", "value", MAX_SNAPSHOT_AUTH_VALUE_BYTES),
+        (
+            "auth_nodes",
+            &[
+                ("node_key", MAX_SNAPSHOT_IDENTIFIER_BYTES),
+                ("node", MAX_SNAPSHOT_AUTH_NODE_BYTES),
+            ],
+        ),
+        ("auth_values", &[("value", MAX_SNAPSHOT_AUTH_VALUE_BYTES)]),
         (
             "auth_preimages",
-            "key_preimage",
-            MAX_SNAPSHOT_KEY_PREIMAGE_BYTES,
+            &[("key_preimage", MAX_SNAPSHOT_KEY_PREIMAGE_BYTES)],
         ),
         (
             "auth_stale_nodes",
-            "node_key",
-            MAX_SNAPSHOT_IDENTIFIER_BYTES,
+            &[("node_key", MAX_SNAPSHOT_IDENTIFIER_BYTES)],
         ),
-    ] {
-        let query = format!("SELECT COALESCE(MAX(length(CAST({column} AS BLOB))), 0) FROM {table}");
-        let observed = connection.query_row(&query, [], |row| row.get::<_, u64>(0))?;
-        ensure!(
-            observed <= maximum,
-            "SQLite store {table}.{column} exceeds the {maximum}-byte resource limit"
-        );
+    ];
+    for (table, columns) in tables {
+        let projections = columns
+            .iter()
+            .map(|(column, _)| format!("COALESCE(MAX(length(CAST({column} AS BLOB))), 0)"))
+            .collect::<Vec<_>>()
+            .join(", ");
+        let query = format!("SELECT {projections} FROM {table}");
+        let observed = connection.query_row(&query, [], |row| {
+            (0..columns.len())
+                .map(|index| row.get::<_, u64>(index))
+                .collect::<rusqlite::Result<Vec<_>>>()
+        })?;
+        for ((column, maximum), observed) in columns.iter().zip(observed) {
+            ensure!(
+                observed <= *maximum,
+                "SQLite store {table}.{column} exceeds the {maximum}-byte resource limit"
+            );
+        }
     }
     Ok(())
 }
@@ -2653,7 +3817,8 @@ fn sqlite_sidecar(path: &Path, suffix: &str) -> PathBuf {
 
 fn remove_sqlite_sidecars(path: &Path) -> Result<()> {
     remove_file_if_exists(&sqlite_sidecar(path, "-wal"))?;
-    remove_file_if_exists(&sqlite_sidecar(path, "-shm"))
+    remove_file_if_exists(&sqlite_sidecar(path, "-shm"))?;
+    remove_file_if_exists(&sqlite_sidecar(path, "-journal"))
 }
 
 fn sync_parent(path: &Path) -> Result<()> {
@@ -2673,4 +3838,67 @@ fn fail_stop_after_snapshot_install(error: anyhow::Error) -> ! {
     std::process::abort();
     #[cfg(test)]
     panic!("fatal post-install snapshot error: {error:#}");
+}
+
+#[cfg(test)]
+mod snapshot_resource_limit_tests {
+    use super::*;
+
+    #[test]
+    fn formal_million_snapshot_counts_fit_bounded_validation() {
+        assert_eq!(MAX_SNAPSHOT_SCRATCH_PAGES, 262_144);
+        assert_eq!(MAX_SNAPSHOT_DATABASE_PAGES, 1_048_576);
+        let measured_formal = SnapshotRowCounts {
+            metadata: 9,
+            objects: 1_000_001,
+            validator_lifecycle: 1,
+            auth_nodes: 1_359_787,
+            auth_values: 1_000_002,
+            auth_preimages: 1_000_002,
+            auth_roots: 1,
+            ..SnapshotRowCounts::default()
+        };
+        measured_formal.validate().unwrap();
+
+        for invalid in [
+            SnapshotRowCounts {
+                metadata: 10,
+                ..measured_formal
+            },
+            SnapshotRowCounts {
+                objects: MAX_SNAPSHOT_OBJECT_ROWS + 1,
+                ..measured_formal
+            },
+            SnapshotRowCounts {
+                auth_nodes: MAX_SNAPSHOT_AUTH_NODE_ROWS + 1,
+                ..measured_formal
+            },
+            SnapshotRowCounts {
+                auth_values: MAX_SNAPSHOT_AUTH_VALUE_ROWS + 1,
+                ..measured_formal
+            },
+            SnapshotRowCounts {
+                auth_preimages: MAX_SNAPSHOT_AUTH_VALUE_ROWS + 1,
+                ..measured_formal
+            },
+            SnapshotRowCounts {
+                command_ids: 1,
+                ..measured_formal
+            },
+            SnapshotRowCounts {
+                validator_lifecycle: 0,
+                ..measured_formal
+            },
+            SnapshotRowCounts {
+                auth_roots: 2,
+                ..measured_formal
+            },
+            SnapshotRowCounts {
+                auth_stale_nodes: 1,
+                ..measured_formal
+            },
+        ] {
+            assert!(invalid.validate().is_err());
+        }
+    }
 }

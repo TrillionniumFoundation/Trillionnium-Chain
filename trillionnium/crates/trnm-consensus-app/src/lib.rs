@@ -80,6 +80,7 @@ const AUTH_PROOF_RETENTION_VERSIONS: u64 = 8_192;
 const AUTH_PRUNE_INTERVAL: u64 = 256;
 const AUTH_PRUNE_BATCH_ROWS: usize = 256;
 const AUTH_PRUNE_BATCH_LOGICAL_BYTES: u64 = 4 * 1024 * 1024;
+const AUTH_PRUNE_MIN_BATCH_LOGICAL_BYTES: u64 = 64 * 1024;
 const AUTH_PRUNE_RETRY_DELAY: std::time::Duration = std::time::Duration::from_millis(2);
 const AUTH_PRUNE_INTER_BATCH_DELAY: std::time::Duration = std::time::Duration::from_millis(1);
 const MAX_SIMULATION_TX_BYTES: usize = 1024 * 1024;
@@ -1264,9 +1265,10 @@ fn run_authenticated_prune_worker(core: Arc<AppCore>) {
         .store
         .clone()
         .expect("authenticated prune worker requires persistent storage");
+    let mut batch_rows = AUTH_PRUNE_BATCH_ROWS;
+    let mut batch_logical_bytes = AUTH_PRUNE_BATCH_LOGICAL_BYTES;
     loop {
-        let batch =
-            store.try_prune_auth_batch(AUTH_PRUNE_BATCH_ROWS, AUTH_PRUNE_BATCH_LOGICAL_BYTES);
+        let batch = store.try_prune_auth_batch(batch_rows, batch_logical_bytes);
         match batch {
             Ok(None) => {
                 std::thread::sleep(AUTH_PRUNE_RETRY_DELAY);
@@ -1293,6 +1295,20 @@ fn run_authenticated_prune_worker(core: Arc<AppCore>) {
             }
             Ok(Some(outcome)) => {
                 if outcome.elapsed > std::time::Duration::from_millis(50) {
+                    batch_rows = (batch_rows / 2).max(1);
+                    batch_logical_bytes =
+                        (batch_logical_bytes / 2).max(AUTH_PRUNE_MIN_BATCH_LOGICAL_BYTES);
+                } else if outcome.elapsed < std::time::Duration::from_millis(10)
+                    && !outcome.yielded_to_writer
+                {
+                    batch_rows = batch_rows
+                        .saturating_add((batch_rows / 8).max(1))
+                        .min(AUTH_PRUNE_BATCH_ROWS);
+                    batch_logical_bytes = batch_logical_bytes
+                        .saturating_add((batch_logical_bytes / 8).max(1))
+                        .min(AUTH_PRUNE_BATCH_LOGICAL_BYTES);
+                }
+                if outcome.elapsed > std::time::Duration::from_millis(50) {
                     let removed = outcome
                         .stats
                         .nodes_removed
@@ -1312,7 +1328,11 @@ fn run_authenticated_prune_worker(core: Arc<AppCore>) {
                         outcome.elapsed.as_millis()
                     );
                 }
-                std::thread::sleep(AUTH_PRUNE_INTER_BATCH_DELAY);
+                std::thread::sleep(if outcome.yielded_to_writer {
+                    AUTH_PRUNE_RETRY_DELAY
+                } else {
+                    AUTH_PRUNE_INTER_BATCH_DELAY
+                });
             }
             Err(error) if is_transient_sqlite_contention(&error) => {
                 std::thread::sleep(AUTH_PRUNE_RETRY_DELAY);
@@ -2299,24 +2319,11 @@ impl CometBftApplication {
                 if received.iter().any(|present| !present) {
                     return Ok(());
                 }
-                ensure!(
-                    snapshot_payload_hash_file_v4(stage_path)?
-                        == trnm_finality_types::decode_hash32(
-                            "snapshot payload hash",
-                            &metadata.payload_hash_hex,
-                        )?,
-                    "snapshot payload hash mismatch"
-                );
+                let expected_payload_hash = trnm_finality_types::decode_hash32(
+                    "snapshot payload hash",
+                    &metadata.payload_hash_hex,
+                )?;
 
-                let mut state = self
-                    .core
-                    .state
-                    .lock()
-                    .map_err(|_| anyhow!("consensus application state lock poisoned"))?;
-                ensure!(
-                    state.height == 0 && state.pending.is_none(),
-                    "application state changed during snapshot restore"
-                );
                 let store = self
                     .core
                     .store
@@ -2326,22 +2333,32 @@ impl CometBftApplication {
                     "snapshot app_hash",
                     &metadata.app_hash_hex,
                 )?;
-                let validated = store.validate_snapshot_database(
+                let validated = store.validate_snapshot_database_with_payload_hash(
                     stage_path,
                     metadata.height,
                     expected_app_hash,
+                    expected_payload_hash,
                 )?;
+                ensure!(
+                    validated.schema_version() == metadata.store_schema.to_string(),
+                    "snapshot manifest store schema differs from its SQLite payload"
+                );
                 let lifecycle = validated
+                    .state()
                     .validator_lifecycle
                     .as_ref()
                     .context("restored snapshot is missing validator lifecycle")?;
                 validate_lifecycle_authorization(&self.core.config, lifecycle)?;
-                let next = store.install_snapshot_database(
-                    &state,
-                    stage_path,
-                    metadata.height,
-                    expected_app_hash,
-                )?;
+                let mut state = self
+                    .core
+                    .state
+                    .lock()
+                    .map_err(|_| anyhow!("consensus application state lock poisoned"))?;
+                ensure!(
+                    state.height == 0 && state.pending.is_none(),
+                    "application state changed during snapshot restore"
+                );
+                let next = store.install_validated_snapshot_database(&state, validated)?;
                 *state = next;
                 if let Err(error) = self.retain_snapshot(&state) {
                     eprintln!(
@@ -2806,21 +2823,6 @@ fn snapshot_payload_hasher_v4() -> Sha256 {
     hasher
 }
 
-fn snapshot_payload_hash_file_v4(path: &Path) -> Result<[u8; 32]> {
-    let mut file = fs::File::open(path)
-        .with_context(|| format!("open snapshot payload {}", path.display()))?;
-    let mut hasher = snapshot_payload_hasher_v4();
-    let mut buffer = vec![0_u8; SNAPSHOT_CHUNK_SIZE];
-    loop {
-        let count = file.read(&mut buffer)?;
-        if count == 0 {
-            break;
-        }
-        hasher.update(&buffer[..count]);
-    }
-    Ok(hasher.finalize().into())
-}
-
 fn snapshot_file_hashes_v4(path: &Path) -> Result<(u64, [u8; 32], Vec<String>)> {
     let mut file = fs::File::open(path)
         .with_context(|| format!("open snapshot payload {}", path.display()))?;
@@ -3165,9 +3167,18 @@ fn load_disk_snapshot_record(
             && chunk_hashes_hex == metadata.chunk_hashes_hex,
         "retained snapshot payload does not match its manifest"
     );
-    let validated =
-        store.validate_snapshot_database(&payload_path, metadata.height, expected_app_hash)?;
+    let validated = store.validate_snapshot_database_with_payload_hash(
+        &payload_path,
+        metadata.height,
+        expected_app_hash,
+        payload_hash,
+    )?;
+    ensure!(
+        validated.schema_version() == metadata.store_schema.to_string(),
+        "retained snapshot manifest store schema differs from its SQLite payload"
+    );
     let lifecycle = validated
+        .state()
         .validator_lifecycle
         .as_ref()
         .context("retained snapshot is missing validator lifecycle")?;
@@ -5143,6 +5154,136 @@ mod tests {
             "future unreachable JMT rows must be rejected before install"
         );
 
+        let unreachable_path = root.join("unreachable-node.snapshot");
+        fs::copy(&payload_path, &unreachable_path).unwrap();
+        {
+            let connection = rusqlite::Connection::open(&unreachable_path).unwrap();
+            let (mut node_key, node): (Vec<u8>, Vec<u8>) = connection
+                .query_row(
+                    "SELECT node_key, node
+                     FROM auth_nodes
+                     WHERE length(node_key)>20
+                     LIMIT 1",
+                    [],
+                    |row| Ok((row.get(0)?, row.get(1)?)),
+                )
+                .unwrap();
+            node_key[0] = 1;
+            connection
+                .execute(
+                    "INSERT INTO auth_nodes(node_key, node) VALUES (?1, ?2)",
+                    rusqlite::params![node_key, node],
+                )
+                .unwrap();
+        }
+        assert!(
+            store
+                .validate_snapshot_database(&unreachable_path, expected.0, expected.1)
+                .is_err(),
+            "canonical but unreachable JMT nodes must be rejected before install"
+        );
+
+        let metadata_path = root.join("extra-metadata.snapshot");
+        fs::copy(&payload_path, &metadata_path).unwrap();
+        rusqlite::Connection::open(&metadata_path)
+            .unwrap()
+            .execute(
+                "INSERT INTO metadata(key, value) VALUES ('sender_hint', 'trusted')",
+                [],
+            )
+            .unwrap();
+        assert!(
+            store
+                .validate_snapshot_database(&metadata_path, expected.0, expected.1)
+                .is_err(),
+            "unrecognized snapshot metadata must be rejected"
+        );
+
+        let replay_path = root.join("replay-cache.snapshot");
+        fs::copy(&payload_path, &replay_path).unwrap();
+        rusqlite::Connection::open(&replay_path)
+            .unwrap()
+            .execute(
+                "INSERT INTO command_ids(command_id) VALUES ('forged-spent-command')",
+                [],
+            )
+            .unwrap();
+        assert!(
+            store
+                .validate_snapshot_database(&replay_path, expected.0, expected.1)
+                .is_err(),
+            "unauthenticated replay-cache rows must be rejected"
+        );
+
+        let sidecar_path = root.join("sidecar.snapshot");
+        fs::copy(&payload_path, &sidecar_path).unwrap();
+        let sidecar = std::path::PathBuf::from(format!("{}-wal", sidecar_path.display()));
+        fs::write(&sidecar, b"untrusted sidecar").unwrap();
+        assert!(
+            store
+                .validate_snapshot_database(&sidecar_path, expected.0, expected.1)
+                .is_err(),
+            "snapshot SQLite sidecars must be rejected"
+        );
+
+        let freelist_path = root.join("freelist-bloat.snapshot");
+        fs::copy(&payload_path, &freelist_path).unwrap();
+        {
+            let connection = rusqlite::Connection::open(&freelist_path).unwrap();
+            connection
+                .execute_batch(
+                    "PRAGMA secure_delete=OFF;
+                     INSERT INTO command_ids(command_id) VALUES (hex(zeroblob(1048576)));
+                     DELETE FROM command_ids;",
+                )
+                .unwrap();
+            assert!(
+                connection
+                    .query_row("PRAGMA freelist_count", [], |row| row.get::<_, u64>(0))
+                    .unwrap()
+                    > 0
+            );
+        }
+        let error = store
+            .validate_snapshot_database(&freelist_path, expected.0, expected.1)
+            .unwrap_err();
+        assert!(
+            format!("{error:#}").contains("freelist"),
+            "logically valid but physically bloated snapshots must be rejected"
+        );
+
+        let trailing_path = root.join("trailing-byte.snapshot");
+        fs::copy(&payload_path, &trailing_path).unwrap();
+        {
+            use std::io::Write as _;
+            let mut file = fs::OpenOptions::new()
+                .append(true)
+                .open(&trailing_path)
+                .unwrap();
+            file.write_all(&[0]).unwrap();
+        }
+        let error = store
+            .validate_snapshot_database(&trailing_path, expected.0, expected.1)
+            .unwrap_err();
+        assert!(
+            format!("{error:#}").contains("canonical page layout"),
+            "SQLite payload bytes outside canonical pages must be rejected"
+        );
+
+        let page_size_path = root.join("noncanonical-page-size.snapshot");
+        fs::copy(&payload_path, &page_size_path).unwrap();
+        rusqlite::Connection::open(&page_size_path)
+            .unwrap()
+            .execute_batch("PRAGMA page_size=8192; VACUUM;")
+            .unwrap();
+        let error = store
+            .validate_snapshot_database(&page_size_path, expected.0, expected.1)
+            .unwrap_err();
+        assert!(
+            format!("{error:#}").contains("page size"),
+            "non-canonical SQLite page sizes must be rejected"
+        );
+
         let schema_path = root.join("mutated-schema.snapshot");
         fs::copy(&payload_path, &schema_path).unwrap();
         {
@@ -5875,6 +6016,8 @@ mod tests {
                 "
                 DROP INDEX auth_stale_nodes_by_node_key;
                 DROP TABLE auth_stale_values;
+                PRAGMA page_size=4096;
+                VACUUM;
                 ",
             )
             .unwrap();
@@ -6417,6 +6560,7 @@ mod tests {
             state.app_hash = pending.app_hash;
         }
         let database_path = state_path.with_extension("json.sqlite3");
+        let proof_key = stored_object_key(object_key).unwrap();
         let before = rusqlite::Connection::open(&database_path)
             .unwrap()
             .query_row("SELECT COUNT(*) FROM auth_values", [], |row| {
@@ -6424,6 +6568,59 @@ mod tests {
             })
             .unwrap();
         store.request_auth_prune(4).unwrap();
+        {
+            let database = rusqlite::Connection::open(&database_path).unwrap();
+            let key_hash: Vec<u8> = database
+                .query_row(
+                    "SELECT key_hash FROM auth_preimages WHERE key_preimage=?1",
+                    rusqlite::params![proof_key.as_slice()],
+                    |row| row.get(0),
+                )
+                .unwrap();
+            database
+                .execute(
+                    "INSERT INTO auth_stale_values(
+                        stale_since_version_be, key_hash, version_be
+                     ) VALUES (?1, ?2, ?3)",
+                    rusqlite::params![
+                        1_u64.to_be_bytes().as_slice(),
+                        key_hash.as_slice(),
+                        6_u64.to_be_bytes().as_slice(),
+                    ],
+                )
+                .unwrap();
+            let mut rejection = None;
+            for _ in 0..1_000 {
+                match store.try_prune_auth_batch(1, 1024 * 1024) {
+                    Ok(Some(outcome)) => {
+                        assert!(!outcome.complete);
+                    }
+                    Ok(None) => panic!("uncontended forged retirement check yielded"),
+                    Err(error) => {
+                        rejection = Some(error);
+                        break;
+                    }
+                }
+            }
+            let error = rejection.expect("forged current-value retirement must fail closed");
+            assert!(
+                format!("{error:#}").contains("non-canonical retirement"),
+                "unexpected stale-value rejection: {error:#}"
+            );
+            assert_eq!(store.auth_prune_status().unwrap().target, Some(4));
+            assert!(store.prove(6, proof_key.clone()).unwrap().value.is_some());
+            database
+                .execute(
+                    "DELETE FROM auth_stale_values
+                     WHERE stale_since_version_be=?1 AND key_hash=?2 AND version_be=?3",
+                    rusqlite::params![
+                        1_u64.to_be_bytes().as_slice(),
+                        key_hash.as_slice(),
+                        6_u64.to_be_bytes().as_slice(),
+                    ],
+                )
+                .unwrap();
+        }
         let mut removed_values = 0_usize;
         for _ in 0..1_000 {
             let outcome = store.try_prune_auth_batch(1, 1024 * 1024).unwrap().unwrap();
@@ -6457,10 +6654,163 @@ mod tests {
             0
         );
         drop(database);
-        let proof_key = stored_object_key(object_key).unwrap();
         assert!(store.prove(3, proof_key.clone()).is_err());
         assert!(store.prove(4, proof_key.clone()).unwrap().value.is_some());
         assert!(store.prove(6, proof_key).unwrap().value.is_some());
+        drop(app);
+        fs::remove_dir_all(root).unwrap();
+    }
+
+    #[test]
+    fn budgeted_authenticated_pruning_rejects_a_live_stale_node_index() {
+        let root = std::env::temp_dir().join(format!(
+            "trnm-comet-store-live-stale-node-{}-{}",
+            std::process::id(),
+            now_unix_ms()
+        ));
+        fs::create_dir_all(&root).unwrap();
+        let state_path = root.join("app-state.json");
+        let (app, _) = persistent_fixture(state_path.clone());
+        for height in 1..=4 {
+            finalize_and_commit(&app, height, Vec::new());
+        }
+        let expected = app.height_and_app_hash().unwrap();
+        let database_path = state_path.with_extension("json.sqlite3");
+        let live_leaf_key = {
+            let connection = rusqlite::Connection::open(&database_path).unwrap();
+            let mut statement = connection
+                .prepare("SELECT node_key, node FROM auth_nodes")
+                .unwrap();
+            let rows = statement
+                .query_map([], |row| {
+                    Ok((row.get::<_, Vec<u8>>(0)?, row.get::<_, Vec<u8>>(1)?))
+                })
+                .unwrap();
+            let mut live_leaf_key = None;
+            for row in rows {
+                let (node_key, node) = row.unwrap();
+                let decoded_key: jmt::storage::NodeKey = borsh::from_slice(&node_key).unwrap();
+                let decoded_node: jmt::storage::Node = borsh::from_slice(&node).unwrap();
+                if matches!(decoded_node, jmt::storage::Node::Leaf(_)) && decoded_key.version() < 3
+                {
+                    live_leaf_key = Some(node_key);
+                    break;
+                }
+            }
+            drop(statement);
+            let live_leaf_key = live_leaf_key.expect("fixture must have an unchanged live leaf");
+            connection
+                .execute(
+                    "INSERT INTO auth_stale_nodes(stale_since_version_be, node_key)
+                     VALUES (?1, ?2)",
+                    rusqlite::params![3_u64.to_be_bytes().as_slice(), live_leaf_key.as_slice()],
+                )
+                .unwrap();
+            live_leaf_key
+        };
+
+        let store = app.core.store.as_ref().unwrap();
+        store.request_auth_prune(3).unwrap();
+        let error = store
+            .try_prune_auth_batch(256, 4 * 1024 * 1024)
+            .expect_err("a stale index pointing at a live leaf must fail closed");
+        assert!(
+            format!("{error:#}").contains("live retained node"),
+            "unexpected stale-node rejection: {error:#}"
+        );
+        assert_eq!(store.auth_prune_status().unwrap().target, Some(3));
+        assert_eq!(
+            <[u8; 32]>::from(
+                store
+                    .prove(4, validator_state_key().unwrap())
+                    .unwrap()
+                    .root_hash
+            ),
+            expected.1
+        );
+        let connection = rusqlite::Connection::open(database_path).unwrap();
+        assert_eq!(
+            connection
+                .query_row(
+                    "SELECT COUNT(*) FROM auth_nodes WHERE node_key=?1",
+                    rusqlite::params![live_leaf_key],
+                    |row| row.get::<_, u64>(0),
+                )
+                .unwrap(),
+            1,
+            "failed pruning transaction must not delete the live node"
+        );
+        connection
+            .execute(
+                "DELETE FROM auth_stale_nodes WHERE node_key=?1",
+                rusqlite::params![live_leaf_key.as_slice()],
+            )
+            .unwrap();
+        let mut absent_key = live_leaf_key;
+        absent_key[0] = 1;
+        connection
+            .execute(
+                "INSERT INTO auth_stale_nodes(stale_since_version_be, node_key)
+                 VALUES (?1, ?2)",
+                rusqlite::params![3_u64.to_be_bytes().as_slice(), absent_key],
+            )
+            .unwrap();
+        drop(connection);
+        let error = store
+            .try_prune_auth_batch(256, 4 * 1024 * 1024)
+            .expect_err("a stale index pointing at an absent node must fail closed");
+        assert!(
+            format!("{error:#}").contains("absent node"),
+            "unexpected absent-node rejection: {error:#}"
+        );
+        drop(app);
+        fs::remove_dir_all(root).unwrap();
+    }
+
+    #[test]
+    fn budgeted_authenticated_pruning_yields_to_a_real_waiting_commit() {
+        let root = std::env::temp_dir().join(format!(
+            "trnm-comet-store-prune-writer-collision-{}-{}",
+            std::process::id(),
+            now_unix_ms()
+        ));
+        fs::create_dir_all(&root).unwrap();
+        let state_path = root.join("app-state.json");
+        let (app, _) = persistent_fixture(state_path);
+        // Keep the collision below the periodic snapshot boundary so this
+        // test owns every background activity touching its temporary store.
+        for height in 1..=3 {
+            finalize_and_commit(&app, height, Vec::new());
+        }
+        let store = app.core.store.as_ref().unwrap();
+        store.request_auth_prune(2).unwrap();
+        let finalized = app.finalize_block(RequestFinalizeBlock {
+            height: 4,
+            time: block_time(),
+            ..Default::default()
+        });
+        assert!(finalized.tx_results.is_empty());
+
+        store.arm_prune_writer_collision().unwrap();
+        let drain_store = store.clone();
+        let drain = std::thread::spawn(move || {
+            drain_store
+                .try_prune_auth_batch(256, 4 * 1024 * 1024)
+                .unwrap()
+                .unwrap()
+        });
+        store.wait_for_prune_writer_collision().unwrap();
+        app.commit();
+        let outcome = drain.join().unwrap();
+        assert!(
+            outcome.yielded_to_writer,
+            "maintenance did not observe the real Commit waiter"
+        );
+        assert_eq!(
+            outcome.rows_examined, 0,
+            "maintenance must yield before starting another physical delete"
+        );
+        assert_eq!(app.height_and_app_hash().unwrap().0, 4);
         drop(app);
         fs::remove_dir_all(root).unwrap();
     }

@@ -63,9 +63,9 @@ capabilities until they enter the canonical path with end-to-end evidence.
 | Validator add/remove/rotation | `trnm-consensus-app` | Implemented | Six-process lifecycle gate |
 | State sync and crash recovery | `trnm-consensus-app` | Implemented foundation | Four/five-process recovery gate plus format-4 multi-chunk/restart correctness; large-state/multi-host timing still open |
 | Dynamic public account-key onboarding | none | Not implemented | static authorized-signer allowlist |
-| AppHash v4 incremental authenticated tree | `trnm-consensus-app` JMT | Implemented foundation | raw JMT root; persistent path plans/queries from SQLite without rebuilding the tree; release profiles cover the in-memory algorithm and single-host SQLite fsync/restart/prune/snapshot workload; multi-host SLO still open |
-| Proof query and pruning | `trnm-consensus-app` | Implemented foundation | self-verifying SQLite-backed ICS23 queries; schema-4 successor indices and a row/byte/time-budgeted worker collect history outside `Commit` and yield to writers/snapshot pins; final proof/fsync latency remains disk-dependent |
-| Asynchronous resumable snapshots | `trnm-consensus-app` | Implemented foundation | persistent format 4 streams SQLite chunks to disk, journals/restarts receive progress, recovers a bounded catalog, rejects hostile schema/JMT/lifecycle input, and is exercised by the persistent single-host scale gate; multi-host timing/disk-fault gates remain open |
+| AppHash v4 incremental authenticated tree | `trnm-consensus-app` JMT | Implemented foundation | raw JMT root; persistent path plans/queries from SQLite without rebuilding the tree; the in-memory 1M+1M algorithm gate and release-profile 10k+10k persistent smoke pass, while a clean persistent 1M+1M restart/prune/restore artifact and multi-host SLO remain open |
+| Proof query and pruning | `trnm-consensus-app` | Implemented foundation | self-verifying SQLite-backed ICS23 queries; schema-4 exact-successor indices and a progress-preserving row/byte/time soft-budget worker collect history outside `Commit`, fail closed on forged retirement indices, distinguish contention causes, and yield to writers/snapshot pins; the first valid row may cross a threshold so maintenance cannot stall forever, and final proof/fsync latency remains disk-dependent |
+| Asynchronous resumable snapshots | `trnm-consensus-app` | Implemented foundation | persistent format 4 streams SQLite chunks to disk, journals/restarts receive progress, recovers a bounded catalog, binds validation/install to a private hash-checked inode, enforces canonical file/row/scratch limits, and rejects hostile schema/JMT/lifecycle input; formal million-scale and multi-host timing/disk-fault gates remain open |
 | Threshold governance and timelock | none | Not implemented | operator key only |
 | Staking, unbonding, jail, slashing | none | Not implemented | mainnet blocker |
 | Authenticated multi-host topology | deployment layer | Not implemented | local loopback only |
@@ -83,6 +83,22 @@ root and emits an atomic, review-only export bundle for a new chain ID; it does
 not claim an in-place upgrade or a ready-to-start v4 node. The old source and
 AppHash remain unchanged and rollback means resuming the old network before
 the new genesis is signed.
+
+Persistent-scale evidence is versioned separately from the wire format. Report
+schema v2 and evidence schema v3 are storage-update gates: smoke is 10k+10k and
+cannot satisfy the million gate; formal requires a clean checked-out `HEAD`, at
+least 1M objects plus 1M updates, bounded resource reports, and a successful exact
+restart/prune/resumable-restore run. The workload currently writes planned storage
+updates directly and therefore must keep `canonical_finalize_block=false` and
+`cometbft_end_to_end=false` until transactions traverse the canonical ABCI path.
+The 4 GiB database, 1.1M object/value-family, 2M authenticated-node, and 1 GiB
+validation-scratch bounds define the current state-sync operational envelope.
+At the maximum accepted payload, operators must reserve about 9 GiB of transient
+space for the receive stage, private validation copy, and validation scratch,
+plus independent headroom for the live database, WAL, and VACUUM.
+They do not cap consensus state growth: crossing them makes snapshot build/restore
+fail closed, so a capacity policy or versioned envelope upgrade is required before
+the canonical state approaches those limits.
 
 The `trnm-node` binaries are frozen legacy harnesses, but
 `trnm-consensus-app` temporarily imports storage, Merkle, and signer-policy

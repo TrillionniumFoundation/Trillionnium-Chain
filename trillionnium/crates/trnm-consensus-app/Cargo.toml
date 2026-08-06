@@ -38,7 +38,7 @@ jmt = "=0.12.0"
 prost = "0.13"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
-rusqlite = { version = "0.32", features = ["backup", "bundled"] }
+rusqlite = { version = "0.32", features = ["backup", "bundled", "limits"] }
 sha2 = "0.10"
 tendermint-abci = "0.40.4"
 tendermint-proto = "0.40.4"

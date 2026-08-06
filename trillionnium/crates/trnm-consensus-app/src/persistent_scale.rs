@@ -41,7 +41,7 @@ use trnm_node::live::{
 use crate::{
     auth_tree::stored_object_key,
     authenticated_writes_for_delta, build_store_snapshot, install_snapshot_record,
-    store::ApplicationStore,
+    store::{ApplicationStore, PruneBatchAttempt, PruneSkipReason},
     validator_lifecycle::{
         validators_to_abci, ConsensusValidatorV1, ValidatorGovernanceV1,
         VALIDATOR_GOVERNANCE_SCHEMA_V1,
@@ -51,13 +51,16 @@ use crate::{
     SNAPSHOT_FORMAT_V4,
 };
 
-const REPORT_SCHEMA_V1: &str = "trnm_apphash_v4_persistent_scale_report_v1";
+const REPORT_SCHEMA_V2: &str = "trnm_apphash_v4_persistent_scale_report_v2";
 const SCALE_OBJECT_TYPE: &str = "trnm_persistent_scale_object_v1";
 const SCALE_CHAIN_ID: &str = "trnm-persistent-scale-gate";
 const SCALE_SIGNER_ID: &str = "did:operator:persistent-scale";
 const MILLION: u64 = 1_000_000;
 const PRUNE_CONCURRENT_COMMITS: u64 = 32;
 const PRUNE_PINNED_COMMITS: u64 = 4;
+const PRUNE_ADAPTIVE_TARGET_US: u64 = 25_000;
+const PRUNE_LATENCY_TARGET_US: u64 = 50_000;
+const PRUNE_MAX_CEILING_US: u64 = 250_000;
 
 #[derive(Clone, Debug)]
 pub struct PersistentScaleConfig {
@@ -92,6 +95,7 @@ pub struct PersistentScaleScope {
     pub sqlite_synchronous_full: bool,
     pub single_process: bool,
     pub single_host: bool,
+    pub canonical_finalize_block: bool,
     pub cometbft_end_to_end: bool,
     pub public_testnet_evidence: bool,
 }
@@ -262,6 +266,15 @@ pub struct PersistentPruneRemovals {
     pub roots: u64,
 }
 
+#[derive(Clone, Debug, Default, Serialize)]
+pub struct PersistentPruneRetries {
+    pub maintenance_busy: u64,
+    pub snapshot_pinned: u64,
+    pub writer_waiting: u64,
+    pub writer_busy: u64,
+    pub transient_sqlite: u64,
+}
+
 #[derive(Clone, Debug, Serialize)]
 pub struct PersistentPruneReport {
     pub collision_requested_floor: u64,
@@ -269,14 +282,33 @@ pub struct PersistentPruneReport {
     pub query_floor_after_request: u64,
     pub target_after_request: Option<u64>,
     pub batches: u64,
-    pub writer_busy_yields: u64,
+    pub retries: PersistentPruneRetries,
+    pub writer_yielded_batches: u64,
+    pub snapshot_pin_yields: u64,
     pub snapshot_pin_yield_observed: bool,
-    pub concurrent_commits: u64,
-    pub concurrent_commit_latency: PersistentLatencyStats,
+    pub commit_samples: u64,
+    pub prune_pending_commit_samples: u64,
+    pub commit_latency: PersistentLatencyStats,
+    pub commit_p95_guardrail_us: u64,
+    pub commit_max_ceiling_us: u64,
     pub rows_examined: u64,
     pub logical_bytes_examined: u64,
+    pub batch_budget_semantics: &'static str,
     pub removals: PersistentPruneRemovals,
     pub batch_latency: PersistentLatencyStats,
+    pub batch_p99_guardrail_us: u64,
+    pub batch_max_ceiling_us: u64,
+    pub latency_guardrails_passed: bool,
+    pub adaptive_target_us: u64,
+    pub adaptive_batching_observed: bool,
+    pub adaptive_batch_reductions: u64,
+    pub adaptive_batch_increases: u64,
+    pub initial_batch_rows: usize,
+    pub initial_batch_logical_bytes: u64,
+    pub minimum_batch_rows: usize,
+    pub minimum_batch_logical_bytes: u64,
+    pub final_batch_rows: usize,
+    pub final_batch_logical_bytes: u64,
     pub elapsed_us: u64,
     pub final_query_floor: u64,
     pub final_target: Option<u64>,
@@ -291,6 +323,16 @@ struct PruneDrainResult {
     logical_bytes_examined: u64,
     removals: PersistentPruneRemovals,
     latencies: Vec<u64>,
+    retries: PersistentPruneRetries,
+    writer_yielded_batches: u64,
+    adaptive_batch_reductions: u64,
+    adaptive_batch_increases: u64,
+    initial_batch_rows: usize,
+    initial_batch_logical_bytes: u64,
+    minimum_batch_rows: usize,
+    minimum_batch_logical_bytes: u64,
+    final_batch_rows: usize,
+    final_batch_logical_bytes: u64,
 }
 
 impl PruneDrainResult {
@@ -315,6 +357,41 @@ impl PruneDrainResult {
             .saturating_add(other.removals.stale_indices);
         self.removals.roots = self.removals.roots.saturating_add(other.removals.roots);
         self.latencies.extend(other.latencies);
+        self.retries.maintenance_busy = self
+            .retries
+            .maintenance_busy
+            .saturating_add(other.retries.maintenance_busy);
+        self.retries.snapshot_pinned = self
+            .retries
+            .snapshot_pinned
+            .saturating_add(other.retries.snapshot_pinned);
+        self.retries.writer_waiting = self
+            .retries
+            .writer_waiting
+            .saturating_add(other.retries.writer_waiting);
+        self.retries.writer_busy = self
+            .retries
+            .writer_busy
+            .saturating_add(other.retries.writer_busy);
+        self.retries.transient_sqlite = self
+            .retries
+            .transient_sqlite
+            .saturating_add(other.retries.transient_sqlite);
+        self.writer_yielded_batches = self
+            .writer_yielded_batches
+            .saturating_add(other.writer_yielded_batches);
+        self.adaptive_batch_reductions = self
+            .adaptive_batch_reductions
+            .saturating_add(other.adaptive_batch_reductions);
+        self.adaptive_batch_increases = self
+            .adaptive_batch_increases
+            .saturating_add(other.adaptive_batch_increases);
+        self.minimum_batch_rows = self.minimum_batch_rows.min(other.minimum_batch_rows);
+        self.minimum_batch_logical_bytes = self
+            .minimum_batch_logical_bytes
+            .min(other.minimum_batch_logical_bytes);
+        self.final_batch_rows = other.final_batch_rows;
+        self.final_batch_logical_bytes = other.final_batch_logical_bytes;
     }
 }
 
@@ -376,7 +453,7 @@ impl PersistentScaleReport {
     fn new(config: &PersistentScaleConfig) -> Self {
         let at_least_million = config.objects >= MILLION && config.updates >= MILLION;
         Self {
-            schema: REPORT_SCHEMA_V1,
+            schema: REPORT_SCHEMA_V2,
             workload_class: if at_least_million {
                 "at_least_1m_objects_and_1m_updates"
             } else {
@@ -393,6 +470,7 @@ impl PersistentScaleReport {
                 sqlite_synchronous_full: true,
                 single_process: true,
                 single_host: true,
+                canonical_finalize_block: false,
                 cometbft_end_to_end: false,
                 public_testnet_evidence: false,
             },
@@ -526,9 +604,22 @@ pub fn run_persistent_scale_gate(config: PersistentScaleConfig) -> PersistentSca
         && !report.prune.as_ref().is_some_and(|prune| {
             prune.complete
                 && prune.latest_root_unchanged
+                && prune.snapshot_pin_yields > 0
                 && prune.snapshot_pin_yield_observed
-                && prune.concurrent_commits == PRUNE_CONCURRENT_COMMITS
-                && prune.concurrent_commit_latency.samples == PRUNE_CONCURRENT_COMMITS
+                && prune.writer_yielded_batches > 0
+                && prune.commit_samples == PRUNE_CONCURRENT_COMMITS
+                && prune.prune_pending_commit_samples >= PRUNE_PINNED_COMMITS
+                && prune.commit_latency.samples == PRUNE_CONCURRENT_COMMITS
+                && prune.commit_latency.p95_us <= prune.commit_p95_guardrail_us
+                && prune.commit_latency.max_us <= prune.commit_max_ceiling_us
+                && prune.batch_latency.p99_us <= prune.batch_p99_guardrail_us
+                && prune.batch_latency.max_us <= prune.batch_max_ceiling_us
+                && prune.latency_guardrails_passed
+                && prune.adaptive_batching_observed
+                && prune
+                    .adaptive_batch_reductions
+                    .saturating_add(prune.adaptive_batch_increases)
+                    > 0
                 && prune.query_floor_after_request == prune.requested_floor
                 && prune.final_query_floor == prune.requested_floor
                 && prune.target_after_request == Some(prune.requested_floor)
@@ -714,8 +805,8 @@ fn execute_persistent_scale_gate(
     let pinned = store
         .pin_snapshot(&state)
         .context("pin persistent snapshot during authenticated pruning")?;
-    let writer_busy_yields = Arc::new(AtomicU64::new(0));
-    let drain_busy_yields = Arc::clone(&writer_busy_yields);
+    let observed_snapshot_pin_yields = Arc::new(AtomicU64::new(0));
+    let drain_snapshot_pin_yields = Arc::clone(&observed_snapshot_pin_yields);
     let drain_store = store.clone();
     let prune_batch_rows = config.prune_batch_rows;
     let prune_batch_logical_bytes = config.prune_batch_logical_bytes;
@@ -726,25 +817,28 @@ fn execute_persistent_scale_gate(
                 &drain_store,
                 prune_batch_rows,
                 prune_batch_logical_bytes,
-                &drain_busy_yields,
+                &drain_snapshot_pin_yields,
             )
         })
         .context("spawn persistent prune drain")?;
     for _ in 0..1_000 {
-        if writer_busy_yields.load(Ordering::Acquire) > 0 {
+        if observed_snapshot_pin_yields.load(Ordering::Acquire) > 0 {
             break;
         }
         std::thread::sleep(Duration::from_millis(1));
     }
     ensure!(
-        writer_busy_yields.load(Ordering::Acquire) > 0,
+        observed_snapshot_pin_yields.load(Ordering::Acquire) > 0,
         "authenticated pruning did not yield to the pinned snapshot"
     );
     let mut pinned = Some(pinned);
-    let mut concurrent_commit_latencies =
-        Vec::with_capacity(usize::try_from(PRUNE_CONCURRENT_COMMITS)?);
+    let mut prune_pending_commit_samples = 0_u64;
+    let mut commit_latencies = Vec::with_capacity(usize::try_from(PRUNE_CONCURRENT_COMMITS)?);
     for index in 0..PRUNE_CONCURRENT_COMMITS {
-        concurrent_commit_latencies.push(
+        if store.has_pending_auth_prune()? {
+            prune_pending_commit_samples = prune_pending_commit_samples.saturating_add(1);
+        }
+        commit_latencies.push(
             persist_empty_collision_version(&store, &mut state).with_context(|| {
                 format!(
                     "persist prune-collision version {}",
@@ -753,7 +847,13 @@ fn execute_persistent_scale_gate(
             })?,
         );
         if index.saturating_add(1) == PRUNE_PINNED_COMMITS {
+            store
+                .arm_prune_writer_collision()
+                .context("arm deterministic prune/Commit collision")?;
             drop(pinned.take());
+            store
+                .wait_for_prune_writer_collision()
+                .context("wait for maintenance side of prune/Commit collision")?;
         }
     }
     drop(pinned);
@@ -787,12 +887,20 @@ fn execute_persistent_scale_gate(
                 &store,
                 config.prune_batch_rows,
                 config.prune_batch_logical_bytes,
-                &writer_busy_yields,
+                &observed_snapshot_pin_yields,
             )
             .context("drain final persistent authenticated prune")?,
         );
     }
-    let writer_busy_yields = writer_busy_yields.load(Ordering::Acquire);
+    let snapshot_pin_yields = observed_snapshot_pin_yields.load(Ordering::Acquire);
+    ensure!(
+        snapshot_pin_yields == drained.retries.snapshot_pinned,
+        "snapshot-pin retry accounting differs from the observed drain attempts"
+    );
+    ensure!(
+        drained.writer_yielded_batches > 0,
+        "authenticated pruning did not yield to a real concurrent Commit"
+    );
     let final_status = store.auth_prune_status()?;
     let floor_minus_one_rejected = boundary
         .checked_sub(1)
@@ -834,20 +942,48 @@ fn execute_persistent_scale_gate(
         latest_root_after == latest_root_before,
         "authenticated pruning changed the latest AppHash"
     );
+    let commit_latency = latency_stats(&commit_latencies)?;
+    let batch_latency = latency_stats(&drained.latencies)?;
+    let latency_guardrails_passed = commit_latency.p95_us <= PRUNE_LATENCY_TARGET_US
+        && commit_latency.max_us <= PRUNE_MAX_CEILING_US
+        && batch_latency.p99_us <= PRUNE_LATENCY_TARGET_US
+        && batch_latency.max_us <= PRUNE_MAX_CEILING_US;
     report.prune = Some(PersistentPruneReport {
         collision_requested_floor: collision_request.query_floor,
         requested_floor: boundary,
         query_floor_after_request: request.query_floor,
         target_after_request: request.target,
         batches: drained.batches,
-        writer_busy_yields,
-        snapshot_pin_yield_observed: writer_busy_yields > 0,
-        concurrent_commits: PRUNE_CONCURRENT_COMMITS,
-        concurrent_commit_latency: latency_stats(&concurrent_commit_latencies)?,
+        retries: drained.retries,
+        writer_yielded_batches: drained.writer_yielded_batches,
+        snapshot_pin_yields,
+        snapshot_pin_yield_observed: snapshot_pin_yields > 0,
+        commit_samples: PRUNE_CONCURRENT_COMMITS,
+        prune_pending_commit_samples,
+        commit_latency,
+        commit_p95_guardrail_us: PRUNE_LATENCY_TARGET_US,
+        commit_max_ceiling_us: PRUNE_MAX_CEILING_US,
         rows_examined: drained.rows_examined,
         logical_bytes_examined: drained.logical_bytes_examined,
+        batch_budget_semantics: "progress_preserving_soft_limit_after_first_row",
         removals: drained.removals,
-        batch_latency: latency_stats(&drained.latencies)?,
+        batch_latency,
+        batch_p99_guardrail_us: PRUNE_LATENCY_TARGET_US,
+        batch_max_ceiling_us: PRUNE_MAX_CEILING_US,
+        latency_guardrails_passed,
+        adaptive_target_us: PRUNE_ADAPTIVE_TARGET_US,
+        adaptive_batching_observed: drained
+            .adaptive_batch_reductions
+            .saturating_add(drained.adaptive_batch_increases)
+            > 0,
+        adaptive_batch_reductions: drained.adaptive_batch_reductions,
+        adaptive_batch_increases: drained.adaptive_batch_increases,
+        initial_batch_rows: drained.initial_batch_rows,
+        initial_batch_logical_bytes: drained.initial_batch_logical_bytes,
+        minimum_batch_rows: drained.minimum_batch_rows,
+        minimum_batch_logical_bytes: drained.minimum_batch_logical_bytes,
+        final_batch_rows: drained.final_batch_rows,
+        final_batch_logical_bytes: drained.final_batch_logical_bytes,
         elapsed_us: elapsed_us(prune_started),
         final_query_floor: final_status.query_floor,
         final_target: final_status.target,
@@ -855,6 +991,10 @@ fn execute_persistent_scale_gate(
         floor_minus_one_rejected,
         latest_root_unchanged: latest_root_after == latest_root_before,
     });
+    ensure!(
+        latency_guardrails_passed,
+        "persistent pruning exceeded its 50ms commit-p95/batch-p99 target or 250ms single-sample ceiling"
+    );
     report
         .database_metrics
         .push(database_metrics("after_prune", &database_path)?);
@@ -905,30 +1045,95 @@ fn drain_persistent_prune(
     store: &ApplicationStore,
     max_rows: usize,
     max_logical_bytes: u64,
-    writer_busy_yields: &AtomicU64,
+    observed_snapshot_pin_yields: &AtomicU64,
 ) -> Result<PruneDrainResult> {
+    let minimum_logical_bytes = max_logical_bytes.min(64 * 1024);
+    let mut current_rows = (max_rows / 2).max(1);
+    let mut current_logical_bytes = (max_logical_bytes / 2).max(minimum_logical_bytes);
     let mut result = PruneDrainResult {
         batches: 0,
         rows_examined: 0,
         logical_bytes_examined: 0,
         removals: PersistentPruneRemovals::default(),
         latencies: Vec::new(),
+        retries: PersistentPruneRetries::default(),
+        writer_yielded_batches: 0,
+        adaptive_batch_reductions: 0,
+        adaptive_batch_increases: 0,
+        initial_batch_rows: current_rows,
+        initial_batch_logical_bytes: current_logical_bytes,
+        minimum_batch_rows: current_rows,
+        minimum_batch_logical_bytes: current_logical_bytes,
+        final_batch_rows: current_rows,
+        final_batch_logical_bytes: current_logical_bytes,
     };
     loop {
-        let outcome = match store.try_prune_auth_batch(max_rows, max_logical_bytes) {
-            Ok(outcome) => outcome,
+        let attempt = match store.try_prune_auth_batch_detailed(current_rows, current_logical_bytes)
+        {
+            Ok(attempt) => attempt,
             Err(error) if crate::is_transient_sqlite_contention(&error) => {
-                writer_busy_yields.fetch_add(1, Ordering::AcqRel);
+                result.retries.transient_sqlite = result.retries.transient_sqlite.saturating_add(1);
                 std::thread::sleep(Duration::from_millis(1));
                 continue;
             }
             Err(error) => return Err(error),
         };
-        let Some(outcome) = outcome else {
-            writer_busy_yields.fetch_add(1, Ordering::AcqRel);
-            std::thread::sleep(Duration::from_millis(1));
-            continue;
+        let outcome = match attempt {
+            PruneBatchAttempt::Skipped(reason) => {
+                match reason {
+                    PruneSkipReason::MaintenanceBusy => {
+                        result.retries.maintenance_busy =
+                            result.retries.maintenance_busy.saturating_add(1);
+                    }
+                    PruneSkipReason::SnapshotPinned => {
+                        result.retries.snapshot_pinned =
+                            result.retries.snapshot_pinned.saturating_add(1);
+                        observed_snapshot_pin_yields.fetch_add(1, Ordering::AcqRel);
+                    }
+                    PruneSkipReason::WriterWaiting => {
+                        result.retries.writer_waiting =
+                            result.retries.writer_waiting.saturating_add(1);
+                    }
+                    PruneSkipReason::WriterBusy => {
+                        result.retries.writer_busy = result.retries.writer_busy.saturating_add(1);
+                    }
+                }
+                std::thread::sleep(Duration::from_millis(1));
+                continue;
+            }
+            PruneBatchAttempt::Completed(outcome) => outcome,
         };
+        if outcome.yielded_to_writer {
+            result.writer_yielded_batches = result.writer_yielded_batches.saturating_add(1);
+        }
+        if duration_us(outcome.elapsed) > PRUNE_ADAPTIVE_TARGET_US {
+            let next_rows = (current_rows / 2).max(1);
+            let next_logical_bytes = (current_logical_bytes / 2).max(minimum_logical_bytes);
+            if (next_rows, next_logical_bytes) != (current_rows, current_logical_bytes) {
+                result.adaptive_batch_reductions =
+                    result.adaptive_batch_reductions.saturating_add(1);
+            }
+            current_rows = next_rows;
+            current_logical_bytes = next_logical_bytes;
+        } else if !outcome.yielded_to_writer {
+            let next_rows = current_rows
+                .saturating_add((current_rows / 8).max(1))
+                .min(max_rows);
+            let next_logical_bytes = current_logical_bytes
+                .saturating_add((current_logical_bytes / 8).max(1))
+                .min(max_logical_bytes);
+            if (next_rows, next_logical_bytes) != (current_rows, current_logical_bytes) {
+                result.adaptive_batch_increases = result.adaptive_batch_increases.saturating_add(1);
+            }
+            current_rows = next_rows;
+            current_logical_bytes = next_logical_bytes;
+        }
+        result.minimum_batch_rows = result.minimum_batch_rows.min(current_rows);
+        result.minimum_batch_logical_bytes = result
+            .minimum_batch_logical_bytes
+            .min(current_logical_bytes);
+        result.final_batch_rows = current_rows;
+        result.final_batch_logical_bytes = current_logical_bytes;
         result.batches = result.batches.saturating_add(1);
         result.rows_examined = result
             .rows_examined
@@ -1702,5 +1907,27 @@ fn elapsed_us(started: Instant) -> u64 {
 }
 
 fn duration_us(duration: std::time::Duration) -> u64 {
-    u64::try_from(duration.as_micros()).unwrap_or(u64::MAX)
+    u64::try_from(duration.as_nanos().div_ceil(1_000)).unwrap_or(u64::MAX)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn thirty_two_sample_commit_target_allows_one_bounded_outlier() {
+        let mut samples = vec![10_000; 31];
+        samples.push(200_000);
+        let stats = latency_stats(&samples).unwrap();
+        assert_eq!(stats.p95_us, 10_000);
+        assert_eq!(stats.p99_us, 200_000);
+        assert_eq!(stats.max_us, 200_000);
+        assert!(stats.p95_us <= PRUNE_LATENCY_TARGET_US);
+        assert!(stats.max_us <= PRUNE_MAX_CEILING_US);
+    }
+
+    #[test]
+    fn duration_serialization_rounds_up_guardrail_crossings() {
+        assert_eq!(duration_us(Duration::from_nanos(50_000_001)), 50_001);
+    }
 }
