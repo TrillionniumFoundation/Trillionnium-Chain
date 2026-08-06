@@ -42,7 +42,7 @@ const CLOCK_DRIFT_SECONDS: u64 = 10;
 
 fn usage(program: &str) -> anyhow::Error {
     anyhow!(
-        "usage:\n  {program} fixture-tx PRIVATE_KEY OUTPUT_TX\n  {program} sign-and-wrap SIGNING_INPUT PRIVATE_KEY SIGNED_COMMAND_OUTPUT OUTPUT_TX\n  {program} assemble-and-verify EVIDENCE_DIR RECEIPT_OUTPUT TRUSTED_EXECUTION_HEADER_HASH_HEX"
+        "usage:\n  {program} fixture-tx PRIVATE_KEY OUTPUT_TX\n  {program} sign-and-wrap SIGNING_INPUT PRIVATE_KEY SIGNED_COMMAND_OUTPUT OUTPUT_TX\n  {program} assemble-and-verify EVIDENCE_DIR RECEIPT_OUTPUT TRUSTED_EXECUTION_HEADER_HASH_HEX [TRUST_ANCHOR_OUTPUT]"
     )
 }
 
@@ -632,7 +632,14 @@ fn assemble_and_verify(
     evidence_dir: &Path,
     receipt_output: &Path,
     trusted_execution_header_hash_hex: &str,
+    trust_anchor_output: Option<&Path>,
 ) -> Result<()> {
+    if let Some(trust_anchor_output) = trust_anchor_output {
+        ensure!(
+            receipt_output != trust_anchor_output,
+            "receipt and trust-anchor outputs must be distinct"
+        );
+    }
     ensure!(
         evidence_dir.is_absolute()
             && evidence_dir.is_dir()
@@ -762,6 +769,7 @@ fn assemble_and_verify(
         Duration::from_secs(CLOCK_DRIFT_SECONDS),
     )?;
     let trust_anchor_hash_hex = trust_anchor_wire.anchor_hash_hex.clone();
+    let trust_anchor_bytes = trust_anchor_wire.canonical_bytes()?;
     let trust_anchor = ValidatedCometBftTrustAnchorV1::try_from(trust_anchor_wire)?;
     let outcome = verify_cometbft_apphash_finality_receipt_v2_with_trust_anchor(
         &receipt,
@@ -775,12 +783,24 @@ fn assemble_and_verify(
     };
     let receipt_bytes = receipt.canonical_bytes()?;
     write_new(receipt_output, &receipt_bytes)?;
+    if let Some(trust_anchor_output) = trust_anchor_output {
+        if let Err(error) = write_new(trust_anchor_output, &trust_anchor_bytes) {
+            fs::remove_file(receipt_output).with_context(|| {
+                format!(
+                    "remove incomplete receipt output {}",
+                    receipt_output.display()
+                )
+            })?;
+            return Err(error);
+        }
+    }
     println!(
         "{}",
         serde_json::to_string(&json!({
             "schema":"trnm_research_receipt_v2_assembly_result_v1",
             "status":"final",
             "receipt_path":receipt_output,
+            "trust_anchor_path":trust_anchor_output,
             "receipt_hash_hex":verified.receipt_hash_hex,
             "trust_anchor_hash_hex":trust_anchor_hash_hex,
             "command_id":verified.command_id,
@@ -805,11 +825,14 @@ fn run() -> Result<()> {
             Path::new(&arguments[4]),
             Path::new(&arguments[5]),
         ),
-        Some("assemble-and-verify") if arguments.len() == 5 => assemble_and_verify(
-            Path::new(&arguments[2]),
-            Path::new(&arguments[3]),
-            &arguments[4],
-        ),
+        Some("assemble-and-verify") if arguments.len() == 5 || arguments.len() == 6 => {
+            assemble_and_verify(
+                Path::new(&arguments[2]),
+                Path::new(&arguments[3]),
+                &arguments[4],
+                arguments.get(5).map(Path::new),
+            )
+        }
         _ => Err(usage(&arguments[0])),
     }
 }
