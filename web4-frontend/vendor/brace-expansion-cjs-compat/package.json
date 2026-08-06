@@ -1,14 +1,14 @@
 {
   "name": "brace-expansion",
-  "version": "5.0.8-trnm-cjs-compat.1",
+  "version": "5.0.9",
   "private": true,
-  "description": "Callable CommonJS compatibility facade over patched brace-expansion 5.0.8",
+  "description": "Callable CommonJS compatibility facade over patched brace-expansion 5.0.9",
   "main": "index.cjs",
   "license": "MIT",
   "engines": {
     "node": ">=24.18.0 <25"
   },
   "dependencies": {
-    "brace-expansion-v5": "npm:brace-expansion@5.0.8"
+    "brace-expansion-v5": "npm:brace-expansion@5.0.9"
   }
 }
