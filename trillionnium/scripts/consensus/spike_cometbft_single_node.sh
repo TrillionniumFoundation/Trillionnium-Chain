@@ -95,6 +95,8 @@ mkdir -p "$ROOT"
 APP_BIN="${TRNM_COMETBFT_APP_BIN:-}"
 CLI_BIN="${TRNM_COMETBFT_CLI_BIN:-}"
 RECEIPT_BIN="${TRNM_RESEARCH_RECEIPT_V2_BIN:-}"
+RESEARCH_SIGNING_INPUT="${TRNM_RESEARCH_SIGNING_INPUT:-}"
+RESEARCH_PREREQUISITE_SIGNING_INPUT="${TRNM_RESEARCH_PREREQUISITE_SIGNING_INPUT:-}"
 if [[ -z "$APP_BIN" ]]; then
   cargo build -q -p trnm-consensus-app --bin trnm-cometbft-app --locked
   APP_BIN="$PWD/target/debug/trnm-cometbft-app"
@@ -117,6 +119,24 @@ nakama_key_json="$("$CLI_BIN" keygen --output "$ROOT/nakama.key")"
 nakama_public_key="$(printf '%s' "$nakama_key_json" | jq -r .public_key_hex)"
 hepta_key_json="$("$CLI_BIN" keygen --output "$ROOT/hepta.key")"
 hepta_public_key="$(printf '%s' "$hepta_key_json" | jq -r .public_key_hex)"
+if [[ -n "$RESEARCH_SIGNING_INPUT" ]]; then
+  [[ "$RESEARCH_SIGNING_INPUT" = /* && -f "$RESEARCH_SIGNING_INPUT" \
+    && ! -L "$RESEARCH_SIGNING_INPUT" ]] || {
+    echo 'TRNM_COMETBFT_SINGLE_NODE_FAILED reason=invalid_research_signing_input' >&2
+    exit 2
+  }
+  [[ "$RESEARCH_PREREQUISITE_SIGNING_INPUT" = /* \
+    && -f "$RESEARCH_PREREQUISITE_SIGNING_INPUT" \
+    && ! -L "$RESEARCH_PREREQUISITE_SIGNING_INPUT" ]] || {
+    echo 'TRNM_COMETBFT_SINGLE_NODE_FAILED reason=invalid_research_prerequisite_signing_input' >&2
+    exit 2
+  }
+else
+  [[ -z "$RESEARCH_PREREQUISITE_SIGNING_INPUT" ]] || {
+    echo 'TRNM_COMETBFT_SINGLE_NODE_FAILED reason=orphan_research_prerequisite_signing_input' >&2
+    exit 2
+  }
+fi
 jq -n \
   --arg public_key "$public_key" \
   --arg nakama_public_key "$nakama_public_key" \
@@ -151,6 +171,9 @@ for nonce in 1 2 3; do
   if [[ "$nonce" == "1" ]]; then
     account="did:trnm:nakama-authority"
     amount=1000000
+  elif [[ "$nonce" == "2" && -n "$RESEARCH_SIGNING_INPUT" ]]; then
+    account="did:trnm:hepta-authority"
+    amount=1000000
   fi
   jq -n \
     --arg sender did:operator:1 \
@@ -171,12 +194,30 @@ for nonce in 1 2 3; do
     --output "$ROOT/tx-$nonce.json" >/dev/null
 done
 
-research_fixture="$("$RECEIPT_BIN" fixture-tx \
-  "$ROOT/nakama.key" \
-  "$ROOT/research.tx.json")"
+if [[ -n "$RESEARCH_SIGNING_INPUT" ]]; then
+  prerequisite_fixture="$("$RECEIPT_BIN" sign-and-wrap \
+    "$RESEARCH_PREREQUISITE_SIGNING_INPUT" \
+    "$ROOT/nakama.key" \
+    "$ROOT/research.prerequisite.signed-command.json" \
+    "$ROOT/research.prerequisite.tx.json")"
+  test "$(printf '%s' "$prerequisite_fixture" | jq -er .public_key_hex)" = \
+    "$nakama_public_key"
+  research_fixture="$("$RECEIPT_BIN" sign-and-wrap \
+    "$RESEARCH_SIGNING_INPUT" \
+    "$ROOT/hepta.key" \
+    "$ROOT/research.signed-command.json" \
+    "$ROOT/research.tx.json")"
+  expected_research_public_key=$hepta_public_key
+else
+  research_fixture="$("$RECEIPT_BIN" fixture-tx \
+    "$ROOT/nakama.key" \
+    "$ROOT/research.tx.json")"
+  expected_research_public_key=$nakama_public_key
+fi
 research_command_id="$(printf '%s' "$research_fixture" | jq -er .command_id)"
 research_applied_key="$(printf '%s' "$research_fixture" | jq -er .applied_command_logical_key)"
-test "$(printf '%s' "$research_fixture" | jq -er .public_key_hex)" = "$nakama_public_key"
+test "$(printf '%s' "$research_fixture" | jq -er .public_key_hex)" = \
+  "$expected_research_public_key"
 
 "$COMETBFT_BIN" init --home "$ROOT/comet" >/dev/null
 initial_validators="$(python3 - "$ROOT/comet/config/genesis.json" <<'PY'
@@ -336,26 +377,38 @@ test "$(printf '%s' "$second" | jq -r '.result.check_tx.code')" = "0"
 test "$(printf '%s' "$second" | jq -r '.result.tx_result.code')" = "0"
 test "$(printf '%s' "$second" | jq -r '.result.height')" = "2"
 
+research_height=3
+if [[ -n "$RESEARCH_SIGNING_INPUT" ]]; then
+  prerequisite="$(broadcast_commit "$ROOT/research.prerequisite.tx.json")"
+  test "$(printf '%s' "$prerequisite" | jq -r '.result.check_tx.code')" = "0"
+  test "$(printf '%s' "$prerequisite" | jq -r '.result.tx_result.code')" = "0"
+  test "$(printf '%s' "$prerequisite" | jq -r '.result.height')" = "3"
+  test "$(printf '%s' "$prerequisite" | jq -r '.result.tx_result.events[0].type')" = \
+    "trnm.research.applied.v1"
+  research_height=4
+fi
+
 research="$(broadcast_commit "$ROOT/research.tx.json")"
 test "$(printf '%s' "$research" | jq -r '.result.check_tx.code')" = "0"
 test "$(printf '%s' "$research" | jq -r '.result.tx_result.code')" = "0"
-test "$(printf '%s' "$research" | jq -r '.result.height')" = "3"
+test "$(printf '%s' "$research" | jq -r '.result.height')" = "$research_height"
 test "$(printf '%s' "$research" | jq -r '.result.tx_result.events | length')" = "1"
 test "$(printf '%s' "$research" | jq -r '.result.tx_result.events[0].type')" = \
   "trnm.research.applied.v1"
 
-# Height 4 commits height 3's AppHash and LastResultsHash. This transaction is
+# The next height commits the research height's AppHash and LastResultsHash. This transaction is
 # deliberately separate so the Receipt V2 collector can prove the exact H/H+1
 # boundary while empty-block production remains disabled.
 fourth="$(broadcast_commit "$ROOT/tx-3.json")"
 test "$(printf '%s' "$fourth" | jq -r '.result.check_tx.code')" = "0"
 test "$(printf '%s' "$fourth" | jq -r '.result.tx_result.code')" = "0"
-test "$(printf '%s' "$fourth" | jq -r '.result.height')" = "4"
+commitment_height=$((research_height + 1))
+test "$(printf '%s' "$fourth" | jq -r '.result.height')" = "$commitment_height"
 
 receipt_evidence="$ROOT/receipt-v2-evidence"
 "$SCRIPT_DIR/collect_research_receipt_v2_evidence.sh" \
   "http://127.0.0.1:$RPC_PORT" \
-  3 \
+  "$research_height" \
   "$research_command_id" \
   "$research_applied_key" \
   "$receipt_evidence"
@@ -364,18 +417,22 @@ trusted_execution_header_hash="$(jq -er '.result.block_id.hash | ascii_downcase'
 receipt_result="$("$RECEIPT_BIN" assemble-and-verify \
   "$receipt_evidence" \
   "$ROOT/research-receipt-v2.json" \
-  "$trusted_execution_header_hash")"
+  "$trusted_execution_header_hash" \
+  "$ROOT/research-trust-anchor-v1.json")"
 test "$(printf '%s' "$receipt_result" | jq -er .status)" = "final"
 test "$(printf '%s' "$receipt_result" | jq -er .command_id)" = "$research_command_id"
+test "$(printf '%s' "$receipt_result" | jq -er .trust_anchor_path)" = \
+  "$ROOT/research-trust-anchor-v1.json"
 receipt_hash="$(printf '%s' "$receipt_result" | jq -er .receipt_hash_hex)"
 test "${#receipt_hash}" = "64"
 
-block="$(curl -fsS "http://127.0.0.1:$RPC_PORT/block?height=4")"
+block="$(curl -fsS "http://127.0.0.1:$RPC_PORT/block?height=$commitment_height")"
 test -n "$(printf '%s' "$block" | jq -r '.result.block.header.app_hash')"
 test "$(printf '%s' "$block" | jq -r '.result.block.data.txs|length')" = "1"
-test "$(jq -r .height "$ROOT/app-state.json")" = "4"
+test "$(jq -r .height "$ROOT/app-state.json")" = "$commitment_height"
 
-printf 'TRNM_COMETBFT_SINGLE_NODE_OK height=4 app_hash=%s receipt_v2=%s root=%s\n' \
+printf 'TRNM_COMETBFT_SINGLE_NODE_OK height=%s app_hash=%s receipt_v2=%s root=%s\n' \
+  "$commitment_height" \
   "$(printf '%s' "$block" | jq -r '.result.block.header.app_hash')" \
   "$receipt_hash" \
   "$ROOT"
