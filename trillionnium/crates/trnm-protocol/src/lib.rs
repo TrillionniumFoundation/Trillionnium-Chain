@@ -2,13 +2,18 @@ use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use thiserror::Error;
 use trnm_research_protocol::{
-    CanonicalCbor, ExternalKey, ResearchObjectKind, SignedResearchCommandV1,
+    CanonicalCbor, ExternalKey, ResearchObjectKind, SignedPaperRaidFinalityCommandV2,
+    SignedResearchCommandV1,
 };
 
 pub const CANONICAL_TX_SCHEMA_V1: &str = "trnm_canonical_tx_v1";
 pub const CANONICAL_TX_PAYLOAD_TYPE_V1: &str = "trnm.canonical.tx.v1";
 pub const CANONICAL_RESEARCH_TX_SCHEMA_V1: &str = "trnm_canonical_research_tx_v1";
 pub const CANONICAL_RESEARCH_TX_PAYLOAD_TYPE_V1: &str = "trnm.canonical.research.tx.v1";
+pub const CANONICAL_PAPER_RAID_FINALITY_TX_SCHEMA_V2: &str =
+    "trnm_canonical_paper_raid_finality_tx_v2";
+pub const CANONICAL_PAPER_RAID_FINALITY_TX_PAYLOAD_TYPE_V2: &str =
+    "trnm.canonical.paper-raid-finality.tx.v2";
 pub const ACCOUNT_OBJECT_TYPE_V1: &str = "trnm.account.v1";
 pub const TASK_OBJECT_TYPE_V1: &str = "trnm.poco.task.v1";
 pub const FEE_POLICY_OBJECT_TYPE_V1: &str = "trnm.fee-policy.v1";
@@ -23,6 +28,9 @@ const MAX_ID_BYTES: usize = 160;
 const MAX_HASH_HEX_BYTES: usize = 64;
 const MAX_SIGNED_RESEARCH_COMMAND_CBOR_BYTES: usize = 256 * 1024;
 const MAX_CANONICAL_RESEARCH_TX_BYTES: usize = 2 * MAX_SIGNED_RESEARCH_COMMAND_CBOR_BYTES + 1024;
+const MAX_SIGNED_PAPER_RAID_FINALITY_COMMAND_CBOR_BYTES: usize = 256 * 1024;
+const MAX_CANONICAL_PAPER_RAID_FINALITY_TX_BYTES: usize =
+    2 * MAX_SIGNED_PAPER_RAID_FINALITY_COMMAND_CBOR_BYTES + 1024;
 const MAX_CHALLENGE_WINDOW_BLOCKS: u64 = 1_000_000;
 const MAX_GAS_PRICE: u128 = 1_000_000_000_000;
 const MAX_BASE_GAS: u64 = 10_000_000_000;
@@ -46,6 +54,10 @@ pub enum ProtocolError {
     InvalidSignedResearchCommand,
     #[error("{0} does not match the signed research command")]
     ResearchBindingMismatch(&'static str),
+    #[error("signed Paper Raid finality command is invalid")]
+    InvalidSignedPaperRaidFinalityCommand,
+    #[error("{0} does not match the signed Paper Raid finality command")]
+    PaperRaidFinalityBindingMismatch(&'static str),
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -178,6 +190,110 @@ impl CanonicalResearchTxV1 {
         }
         if self.nonce != signed.nonce {
             return Err(ProtocolError::ResearchBindingMismatch("nonce"));
+        }
+        Ok(())
+    }
+}
+
+/// Consensus-facing JSON wrapper for the independent, signed Paper Raid V2
+/// finality command. The V1 Research transaction remains byte-for-byte frozen.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct CanonicalPaperRaidFinalityTxV2 {
+    pub schema: String,
+    pub payload_type: String,
+    pub command_id: String,
+    pub sender: String,
+    pub nonce: u64,
+    pub max_gas: u64,
+    #[serde(with = "u128_decimal")]
+    pub fee_limit: u128,
+    pub signed_paper_raid_finality_command_cbor_hex: String,
+}
+
+impl CanonicalPaperRaidFinalityTxV2 {
+    pub fn from_signed_command(
+        signed: &SignedPaperRaidFinalityCommandV2,
+        max_gas: u64,
+        fee_limit: u128,
+    ) -> Result<Self, ProtocolError> {
+        let tx = Self {
+            schema: CANONICAL_PAPER_RAID_FINALITY_TX_SCHEMA_V2.to_string(),
+            payload_type: CANONICAL_PAPER_RAID_FINALITY_TX_PAYLOAD_TYPE_V2.to_string(),
+            command_id: signed.command_id.to_hex(),
+            sender: signed.signer_did.clone(),
+            nonce: signed.nonce,
+            max_gas,
+            fee_limit,
+            signed_paper_raid_finality_command_cbor_hex: hex::encode(signed.canonical_bytes()),
+        };
+        tx.validate()?;
+        Ok(tx)
+    }
+
+    pub fn canonical_bytes(&self) -> Result<Vec<u8>, ProtocolError> {
+        self.validate()?;
+        serde_json::to_vec(self)
+            .map_err(|_| ProtocolError::NonCanonical("canonical_paper_raid_finality_tx"))
+    }
+
+    pub fn from_canonical_bytes(bytes: &[u8]) -> Result<Self, ProtocolError> {
+        if bytes.is_empty() || bytes.len() > MAX_CANONICAL_PAPER_RAID_FINALITY_TX_BYTES {
+            return Err(ProtocolError::OutOfRange(
+                "canonical_paper_raid_finality_tx",
+            ));
+        }
+        let tx: Self = serde_json::from_slice(bytes)
+            .map_err(|_| ProtocolError::NonCanonical("canonical_paper_raid_finality_tx"))?;
+        tx.validate()?;
+        let canonical = serde_json::to_vec(&tx)
+            .map_err(|_| ProtocolError::NonCanonical("canonical_paper_raid_finality_tx"))?;
+        if canonical != bytes {
+            return Err(ProtocolError::NonCanonical(
+                "canonical_paper_raid_finality_tx",
+            ));
+        }
+        Ok(tx)
+    }
+
+    pub fn signed_paper_raid_finality_command(
+        &self,
+    ) -> Result<SignedPaperRaidFinalityCommandV2, ProtocolError> {
+        let bytes = decode_lower_hex(
+            "signed_paper_raid_finality_command_cbor_hex",
+            &self.signed_paper_raid_finality_command_cbor_hex,
+            None,
+            MAX_SIGNED_PAPER_RAID_FINALITY_COMMAND_CBOR_BYTES,
+        )?;
+        SignedPaperRaidFinalityCommandV2::from_canonical_bytes(&bytes)
+            .map_err(|_| ProtocolError::InvalidSignedPaperRaidFinalityCommand)
+    }
+
+    pub fn validate(&self) -> Result<(), ProtocolError> {
+        if self.schema != CANONICAL_PAPER_RAID_FINALITY_TX_SCHEMA_V2 {
+            return Err(ProtocolError::UnsupportedSchema);
+        }
+        if self.payload_type != CANONICAL_PAPER_RAID_FINALITY_TX_PAYLOAD_TYPE_V2 {
+            return Err(ProtocolError::UnsupportedPayloadType);
+        }
+        validate_hash("command_id", &self.command_id)?;
+        if self.nonce == 0 {
+            return Err(ProtocolError::NonPositive("nonce"));
+        }
+        if self.max_gas == 0 {
+            return Err(ProtocolError::NonPositive("max_gas"));
+        }
+        let signed = self.signed_paper_raid_finality_command()?;
+        if self.command_id != signed.command_id.to_hex() {
+            return Err(ProtocolError::PaperRaidFinalityBindingMismatch(
+                "command_id",
+            ));
+        }
+        if self.sender != signed.signer_did {
+            return Err(ProtocolError::PaperRaidFinalityBindingMismatch("sender"));
+        }
+        if self.nonce != signed.nonce {
+            return Err(ProtocolError::PaperRaidFinalityBindingMismatch("nonce"));
         }
         Ok(())
     }
@@ -633,7 +749,11 @@ mod u128_decimal {
 mod tests {
     use super::*;
     use ed25519_dalek::SigningKey;
-    use trnm_research_protocol::{AuthorityRole, MatchEvidenceCommitmentV1, ResearchCommandV1};
+    use trnm_research_protocol::{
+        AuthorityRole, MatchEvidenceCommitmentV1, ObjectRefV1, PaperRaidAppealStatusV2,
+        PaperRaidFinalityCommitmentV2, ResearchCommandV1, ResearchObjectKind,
+        SignedPaperRaidFinalityCommandV2,
+    };
 
     fn external_key(namespace: &str, id: &str) -> ExternalKey {
         ExternalKey::from_external_id(namespace, id).unwrap()
@@ -669,6 +789,63 @@ mod tests {
             &signed_research_command(),
             250_000,
             12_345_678_901_234_567_890,
+        )
+        .unwrap()
+    }
+
+    fn signed_paper_raid_finality_command() -> SignedPaperRaidFinalityCommandV2 {
+        SignedPaperRaidFinalityCommandV2::sign(
+            "trnm-devnet-v1".into(),
+            external_key("trnm.paper-raid.command", "command-001"),
+            "did:trnm:hepta-authority".into(),
+            9,
+            PaperRaidFinalityCommitmentV2 {
+                commitment_id: external_key("hepta.paper-raid.finality", "finality-001"),
+                paper_project_id: external_key("hepta.paper", "paper-001"),
+                submission_id: external_key("hepta.submission", "submission-001"),
+                match_evidence_ref: ObjectRefV1::new(
+                    ResearchObjectKind::MatchEvidence,
+                    external_key("nakama.commitment", "commitment-001"),
+                    1,
+                ),
+                release_candidate_hash: [0x21; 32],
+                paper_bundle_hash: [0x22; 32],
+                submission_commitment_hash: [0x23; 32],
+                author_consent_set_hash: [0x24; 32],
+                tolerance_policy_hash: [0x25; 32],
+                evaluation_id: external_key("hepta.evaluation", "evaluation-001"),
+                evaluation_hash: [0x26; 32],
+                evaluation_score_bps: 8_750,
+                evaluation_accepted: true,
+                evaluation_completed_at_unix_s: 100,
+                latest_reproduction_id: external_key("hepta.reproduction", "reproduction-001"),
+                latest_reproduction_hash: [0x27; 32],
+                latest_reproduction_accepted: true,
+                latest_reproduction_completed_at_unix_s: 110,
+                evaluation_superseded_by: None,
+                reproduction_superseded_by: None,
+                appeal_status: PaperRaidAppealStatusV2::ClosedNoAppeal,
+                appeal_id: None,
+                appeal_resolution_hash: None,
+                appeal_window_closes_at_unix_s: 120,
+                settlement_policy_hash: [0x28; 32],
+                scientific_finality: true,
+                score_eligible: false,
+                ranking_eligible: false,
+                reward_eligible: false,
+                economic_eligible: false,
+                finalized_at_unix_s: 121,
+            },
+            &SigningKey::from_bytes(&[0x22; 32]),
+        )
+        .unwrap()
+    }
+
+    fn canonical_paper_raid_finality_tx() -> CanonicalPaperRaidFinalityTxV2 {
+        CanonicalPaperRaidFinalityTxV2::from_signed_command(
+            &signed_paper_raid_finality_command(),
+            300_000,
+            98_765_432_100,
         )
         .unwrap()
     }
@@ -752,6 +929,46 @@ mod tests {
             "fc4cd763b66005da7954ba1857cb3b88a2cde70f817bd05a861d40073851cbe3"
         );
         assert_eq!(bytes.len(), 1_308);
+    }
+
+    #[test]
+    fn canonical_paper_raid_finality_transaction_is_exact_and_bound() {
+        let signed = signed_paper_raid_finality_command();
+        let tx = canonical_paper_raid_finality_tx();
+        let bytes = tx.canonical_bytes().unwrap();
+        assert_eq!(
+            CanonicalPaperRaidFinalityTxV2::from_canonical_bytes(&bytes).unwrap(),
+            tx
+        );
+        assert_eq!(tx.signed_paper_raid_finality_command().unwrap(), signed);
+
+        let mut padded = vec![b' '];
+        padded.extend_from_slice(&bytes);
+        assert!(CanonicalPaperRaidFinalityTxV2::from_canonical_bytes(&padded).is_err());
+
+        let text = String::from_utf8(bytes).unwrap();
+        let duplicate = text.replacen(
+            '{',
+            r#"{"schema":"trnm_canonical_paper_raid_finality_tx_v2","#,
+            1,
+        );
+        assert!(
+            CanonicalPaperRaidFinalityTxV2::from_canonical_bytes(duplicate.as_bytes()).is_err()
+        );
+
+        let mut wrong_sender = tx.clone();
+        wrong_sender.sender = "did:trnm:other-hepta".into();
+        assert_eq!(
+            wrong_sender.validate(),
+            Err(ProtocolError::PaperRaidFinalityBindingMismatch("sender"))
+        );
+
+        let mut wrong_payload = tx;
+        wrong_payload.payload_type = CANONICAL_RESEARCH_TX_PAYLOAD_TYPE_V1.into();
+        assert_eq!(
+            wrong_payload.validate(),
+            Err(ProtocolError::UnsupportedPayloadType)
+        );
     }
 
     #[test]
