@@ -1,0 +1,350 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+root=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)
+component_lock=${1:-}
+output=${2:-}
+[[ -n "$component_lock" && -n "$output" && $# -eq 2 ]] || {
+  echo "usage: $0 /absolute/path/to/integration/components.lock.json /new/evidence/directory" >&2
+  exit 64
+}
+[[ "$component_lock" == /* && "$output" == /* ]] || {
+  echo "ERROR: component lock and evidence directory must be absolute paths" >&2
+  exit 64
+}
+
+for command_name in awk basename cargo cmp dirname env find git id mktemp python3 rustc sha256sum stat tar; do
+  command -v "$command_name" >/dev/null 2>&1 || {
+    printf 'ERROR: Paper Raid Chain SBOM gate requires %s\n' "$command_name" >&2
+    exit 1
+  }
+done
+
+cd "$root"
+[[ -z $(git status --porcelain=v1 --untracked-files=all) ]] || {
+  echo "ERROR: immutable Paper Raid Chain SBOM gate requires a clean committed worktree" >&2
+  exit 1
+}
+[[ -f "$component_lock" && ! -L "$component_lock" ]] || {
+  echo "ERROR: Integration component lock must be a regular non-symlink file" >&2
+  exit 1
+}
+[[ "$output" != */ && "$output" != *'/../'* && "$output" != *'/./'* ]] || {
+  echo "ERROR: evidence directory must be an absolute normalized path" >&2
+  exit 1
+}
+output_parent=$(dirname -- "$output")
+output_name=$(basename -- "$output")
+[[ "$output_name" =~ ^[A-Za-z0-9][A-Za-z0-9._-]*$ ]] || {
+  echo "ERROR: evidence directory basename is not safe" >&2
+  exit 1
+}
+[[ -d "$output_parent" && ! -L "$output_parent" && ! -e "$output" && ! -L "$output" ]] || {
+  echo "ERROR: evidence parent must exist and the evidence directory must be new" >&2
+  exit 1
+}
+physical_output_parent=$(cd "$output_parent" && pwd -P)
+[[ "$physical_output_parent" == "$output_parent" ]] || {
+  echo "ERROR: evidence parent must be a physical path without symlink aliases" >&2
+  exit 1
+}
+current_uid=$(id -u)
+output_parent_mode=$(stat -c '%a' -- "$output_parent")
+[[ $(stat -c '%u' -- "$output_parent") == "$current_uid" ]] \
+  && (( (8#$output_parent_mode & 8#022) == 0 )) || {
+  echo "ERROR: evidence parent must be owned by the invoking uid and not group/world writable" >&2
+  exit 1
+}
+output_parent_identity=$(stat -c '%d:%i' -- "$output_parent")
+
+revision=$(git rev-parse HEAD)
+source_tree=$(git rev-parse 'HEAD^{tree}')
+source_epoch=$(git show -s --format=%ct "$revision")
+[[ "$revision" =~ ^[0-9a-f]{40}$ && "$source_tree" =~ ^[0-9a-f]{40}$ && "$source_epoch" =~ ^[0-9]+$ ]] || {
+  echo "ERROR: source revision metadata is not canonical" >&2
+  exit 1
+}
+
+umask 077
+scratch=$(mktemp -d /tmp/trnm-chain-paper-raid-sbom.XXXXXXXX)
+scratch_identity=$(stat -c '%d:%i' -- "$scratch")
+stage_prefix="$output_parent/.${output_name}.trnm-chain-paper-raid-sbom-stage."
+stage=$(mktemp -d "${stage_prefix}XXXXXXXX")
+stage_identity=$(stat -c '%d:%i' -- "$stage")
+cleanup() {
+  local original_status=$?
+  trap - EXIT
+  set +e
+  if [[ -n ${scratch:-} ]]; then
+    case "$scratch" in
+      /tmp/trnm-chain-paper-raid-sbom.*)
+        if [[ -d "$scratch" && ! -L "$scratch" \
+          && $(stat -c '%d:%i' -- "$scratch" 2>/dev/null) == "${scratch_identity:-}" ]]; then
+          find "$scratch" -depth -delete
+        else
+          echo "ERROR: refusing to clean replaced build scratch path" >&2
+        fi
+        ;;
+      *) echo "ERROR: refusing to clean unexpected build scratch path" >&2 ;;
+    esac
+  fi
+  if [[ -n ${stage:-} ]]; then
+    case "$stage" in
+      "$stage_prefix"*)
+        if [[ -d "$stage" && ! -L "$stage" \
+          && $(stat -c '%d:%i' -- "$stage" 2>/dev/null) == "${stage_identity:-}" ]]; then
+          find "$stage" -depth -delete
+        else
+          echo "ERROR: refusing to clean replaced evidence staging path" >&2
+        fi
+        ;;
+      *) echo "ERROR: refusing to clean unexpected evidence staging path" >&2 ;;
+    esac
+  fi
+  exit "$original_status"
+}
+trap cleanup EXIT
+trap 'exit 130' INT
+trap 'exit 143' TERM
+
+gate_user_home=${HOME:?HOME must identify the invoking user toolchain home}
+gate_cargo_home=${CARGO_HOME:-$gate_user_home/.cargo}
+gate_rustup_home=${RUSTUP_HOME:-$gate_user_home/.rustup}
+cargo_environment=(
+  env -i
+  "PATH=$PATH"
+  "HOME=$gate_user_home"
+  "CARGO_HOME=$gate_cargo_home"
+  "RUSTUP_HOME=$gate_rustup_home"
+  "CARGO_INCREMENTAL=0"
+  "CARGO_NET_OFFLINE=true"
+  "SOURCE_DATE_EPOCH=$source_epoch"
+  "LANG=C"
+  "LC_ALL=C"
+  "TZ=UTC"
+)
+
+mkdir -m 0700 "$scratch/source" "$scratch/target-a" "$scratch/target-b" "$scratch/metadata-target"
+git archive --format=tar "$revision" | tar -xf - -C "$scratch/source"
+archive_symlink=$(find "$scratch/source" -type l -print -quit)
+[[ -z "$archive_symlink" ]] || {
+  printf 'ERROR: archived source symlink is forbidden: %s\n' "$archive_symlink" >&2
+  exit 1
+}
+
+# Copy the external lock from a single O_NOFOLLOW descriptor. The final digest
+# check below also detects a caller changing the external file during the run.
+python3 - "$component_lock" "$scratch/components.lock.json" <<'PY'
+import os
+import pathlib
+import stat
+import sys
+
+source = pathlib.Path(sys.argv[1])
+destination = pathlib.Path(sys.argv[2])
+descriptor = os.open(source, os.O_RDONLY | os.O_CLOEXEC | getattr(os, "O_NOFOLLOW", 0))
+try:
+    info = os.fstat(descriptor)
+    if not stat.S_ISREG(info.st_mode):
+        raise SystemExit("component lock is not a regular file")
+    chunks = []
+    while True:
+        chunk = os.read(descriptor, 1024 * 1024)
+        if not chunk:
+            break
+        chunks.append(chunk)
+finally:
+    os.close(descriptor)
+out = os.open(destination, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_CLOEXEC, 0o600)
+try:
+    os.write(out, b"".join(chunks))
+    os.fsync(out)
+finally:
+    os.close(out)
+PY
+component_lock_sha256=$(sha256sum "$scratch/components.lock.json" | awk '{print $1}')
+[[ $(sha256sum "$component_lock" | awk '{print $1}') == "$component_lock_sha256" ]] || {
+  echo "ERROR: Integration component lock changed while it was snapshotted" >&2
+  exit 1
+}
+
+archive_root=$scratch/source
+workspace=$archive_root/trillionnium
+metadata=$scratch/cargo-metadata.json
+cargo_version_evidence=$scratch/cargo-version-verbose.txt
+rustc_version_evidence=$scratch/rustc-version-verbose.txt
+"${cargo_environment[@]}" cargo --version --verbose >"$cargo_version_evidence"
+"${cargo_environment[@]}" rustc -vV >"$rustc_version_evidence"
+(
+  cd "$workspace"
+  "${cargo_environment[@]}" CARGO_TARGET_DIR="$scratch/metadata-target" \
+    cargo metadata --frozen --format-version 1 --features trnm-node/legacy-harness
+) >"$metadata"
+
+build_candidate() {
+  local target_dir=$1
+  (
+    cd "$workspace"
+    "${cargo_environment[@]}" CARGO_TARGET_DIR="$target_dir" \
+      cargo build --frozen -p trnm-consensus-app --bin trnm-cometbft-app
+    "${cargo_environment[@]}" CARGO_TARGET_DIR="$target_dir" \
+      cargo build --frozen -p trnm-node --features legacy-harness --bin trnm-chain-cli
+    "${cargo_environment[@]}" CARGO_TARGET_DIR="$target_dir" \
+      cargo build --frozen -p trnm-finality-verifier --bin trnm-research-receipt-v2
+  )
+}
+
+build_candidate "$scratch/target-a"
+build_candidate "$scratch/target-b"
+
+for binary in trnm-cometbft-app trnm-chain-cli trnm-research-receipt-v2; do
+  cmp --silent "$scratch/target-a/debug/$binary" "$scratch/target-b/debug/$binary" || {
+    printf 'ERROR: isolated debug builds differ byte-for-byte: %s\n' "$binary" >&2
+    exit 1
+  }
+done
+
+generator=$archive_root/scripts/generate-paper-raid-chain-sbom.py
+verifier=$archive_root/scripts/verify-paper-raid-chain-sbom.py
+library=$archive_root/scripts/paper_raid_chain_sbom_lib.py
+gate=$archive_root/scripts/check-paper-raid-chain-sbom.sh
+sbom=$stage/trillionnium-chain-paper-raid.cdx.json
+provenance=$stage/trillionnium-chain-paper-raid.provenance.json
+common_arguments=(
+  --metadata "$metadata"
+  --source "$archive_root"
+  --revision "$revision"
+  --tree "$source_tree"
+  --component-lock "$scratch/components.lock.json"
+  --cargo-version-evidence "$cargo_version_evidence"
+  --rustc-version-evidence "$rustc_version_evidence"
+  --binary-a "trnm-cometbft-app=$scratch/target-a/debug/trnm-cometbft-app"
+  --binary-a "trnm-chain-cli=$scratch/target-a/debug/trnm-chain-cli"
+  --binary-a "trnm-research-receipt-v2=$scratch/target-a/debug/trnm-research-receipt-v2"
+  --binary-b "trnm-cometbft-app=$scratch/target-b/debug/trnm-cometbft-app"
+  --binary-b "trnm-chain-cli=$scratch/target-b/debug/trnm-chain-cli"
+  --binary-b "trnm-research-receipt-v2=$scratch/target-b/debug/trnm-research-receipt-v2"
+  --tool "gate=$gate"
+  --tool "generator=$generator"
+  --tool "library=$library"
+  --tool "verifier=$verifier"
+)
+
+python3 "$generator" "${common_arguments[@]}" \
+  --output "$sbom" --provenance-output "$provenance"
+python3 "$verifier" "${common_arguments[@]}" \
+  --sbom "$sbom" --provenance "$provenance" >/dev/null
+
+[[ $(git rev-parse HEAD) == "$revision" \
+  && $(git rev-parse 'HEAD^{tree}') == "$source_tree" \
+  && -z $(git status --porcelain=v1 --untracked-files=all) ]] || {
+  echo "ERROR: Chain repository changed while the immutable gate was running" >&2
+  exit 1
+}
+[[ $(sha256sum "$component_lock" | awk '{print $1}') == "$component_lock_sha256" ]] || {
+  echo "ERROR: Integration component lock changed while the immutable gate was running" >&2
+  exit 1
+}
+
+chmod 0644 "$sbom" "$provenance"
+chmod 0700 "$stage"
+
+# Publish through retained directory identities and RENAME_NOREPLACE.  A
+# concurrent target creation or staging path substitution is a hard failure;
+# neither can turn an incomplete run into a PASS directory.
+python3 - "$stage" "$output" "$output_parent" "$output_parent_identity" "$stage_identity" "$current_uid" <<'PY'
+import ctypes
+import os
+import pathlib
+import stat
+import sys
+
+staging = pathlib.Path(sys.argv[1])
+target = pathlib.Path(sys.argv[2])
+parent = pathlib.Path(sys.argv[3])
+expected_parent = tuple(int(value) for value in sys.argv[4].split(":"))
+expected_stage = tuple(int(value) for value in sys.argv[5].split(":"))
+expected_uid = int(sys.argv[6])
+expected_files = {
+    "trillionnium-chain-paper-raid.cdx.json",
+    "trillionnium-chain-paper-raid.provenance.json",
+}
+
+directory_flags = os.O_RDONLY | os.O_DIRECTORY | os.O_CLOEXEC | os.O_NOFOLLOW
+parent_fd = os.open(parent, directory_flags)
+try:
+    parent_info = os.fstat(parent_fd)
+    if (parent_info.st_dev, parent_info.st_ino) != expected_parent:
+        raise RuntimeError("evidence parent identity changed before publication")
+    if parent_info.st_uid != expected_uid or parent_info.st_mode & 0o022:
+        raise RuntimeError("evidence parent ownership or mode changed before publication")
+
+    stage_fd = os.open(staging.name, directory_flags, dir_fd=parent_fd)
+    try:
+        stage_info = os.fstat(stage_fd)
+        if (stage_info.st_dev, stage_info.st_ino) != expected_stage:
+            raise RuntimeError("evidence staging identity changed before publication")
+        names = set(os.listdir(stage_fd))
+        if names != expected_files:
+            raise RuntimeError(f"evidence artifact set differs: {sorted(names)}")
+        for name in sorted(names):
+            descriptor = os.open(
+                name,
+                os.O_RDONLY | os.O_CLOEXEC | os.O_NOFOLLOW | os.O_NONBLOCK,
+                dir_fd=stage_fd,
+            )
+            try:
+                info = os.fstat(descriptor)
+                if not stat.S_ISREG(info.st_mode) or info.st_nlink != 1:
+                    raise RuntimeError(f"evidence artifact is not one regular link: {name}")
+                os.fsync(descriptor)
+            finally:
+                os.close(descriptor)
+        os.fsync(stage_fd)
+    finally:
+        os.close(stage_fd)
+
+    libc = ctypes.CDLL(None, use_errno=True)
+    renameat2 = libc.renameat2
+    renameat2.argtypes = [
+        ctypes.c_int,
+        ctypes.c_char_p,
+        ctypes.c_int,
+        ctypes.c_char_p,
+        ctypes.c_uint,
+    ]
+    renameat2.restype = ctypes.c_int
+    if renameat2(
+        parent_fd,
+        os.fsencode(staging.name),
+        parent_fd,
+        os.fsencode(target.name),
+        1,
+    ) != 0:
+        error = ctypes.get_errno()
+        raise OSError(error, os.strerror(error), target)
+
+    target_fd = os.open(target.name, directory_flags, dir_fd=parent_fd)
+    try:
+        target_info = os.fstat(target_fd)
+        if (target_info.st_dev, target_info.st_ino) != expected_stage:
+            raise RuntimeError("published evidence identity differs from staging")
+        if set(os.listdir(target_fd)) != expected_files:
+            raise RuntimeError("published evidence artifact set differs")
+        os.fsync(target_fd)
+    finally:
+        os.close(target_fd)
+    os.fsync(parent_fd)
+finally:
+    os.close(parent_fd)
+PY
+stage=
+
+# A successful gate must also remove the build scratch before printing PASS.
+[[ -d "$scratch" && ! -L "$scratch" \
+  && $(stat -c '%d:%i' -- "$scratch") == "$scratch_identity" ]]
+find "$scratch" -depth -delete
+[[ ! -e "$scratch" && ! -L "$scratch" ]]
+scratch=
+printf 'Paper Raid Chain SBOM/provenance gate: PASS revision=%s tree=%s sbom_sha256=%s\n' \
+  "$revision" "$source_tree" "$(sha256sum "$output/trillionnium-chain-paper-raid.cdx.json" | awk '{print $1}')"

@@ -19,3 +19,5 @@
 - PR-6 nightly security summary runbook: `runbooks/pr6-nightly-security-summary.md`
 - PR-7 alert delivery runbook: `runbooks/pr7-alert-delivery.md`
 - PR-9 weekly alert governance runbook: `runbooks/pr9-weekly-alert-governance.md`
+- Paper Raid Chain debug-candidate SBOM/provenance gate:
+  `release/TRNM_PAPER_RAID_CHAIN_SBOM_PROVENANCE.md`
