@@ -353,7 +353,11 @@ def cargo_model(metadata_path: pathlib.Path, lock_path: pathlib.Path) -> CargoMo
             fail(f"dependency closure package is missing from Cargo.lock: {name} {version} {source}")
         metadata_checksum = package.get("checksum")
         lock_checksum = lock_entries[key].get("checksum")
-        if metadata_checksum != lock_checksum:
+        # Cargo 1.95 legitimately reports `checksum: null` for some registry
+        # packages even though the frozen Cargo.lock carries the authoritative
+        # checksum.  Treat a present metadata checksum as a second witness;
+        # absence is not drift, but a different present value is.
+        if metadata_checksum is not None and metadata_checksum != lock_checksum:
             fail(f"Cargo.lock checksum differs from cargo metadata for {name} {version}")
         if source and (
             not isinstance(lock_checksum, str)

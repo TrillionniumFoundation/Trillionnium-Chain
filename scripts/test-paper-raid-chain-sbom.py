@@ -296,6 +296,23 @@ def main() -> None:
         expect_rejected("dependency closure missing package", lambda: verify_artifacts(**verify_arguments))
         write(metadata_path, canonical_json(metadata))
 
+        null_registry_checksum = copy.deepcopy(metadata)
+        for package in null_registry_checksum["packages"]:
+            if package.get("name") == "shared-dep":
+                package["checksum"] = None
+        write(metadata_path, canonical_json(null_registry_checksum))
+        verify_artifacts(**verify_arguments)
+        mismatched_registry_checksum = copy.deepcopy(metadata)
+        for package in mismatched_registry_checksum["packages"]:
+            if package.get("name") == "shared-dep":
+                package["checksum"] = "e" * 64
+        write(metadata_path, canonical_json(mismatched_registry_checksum))
+        expect_rejected(
+            "present cargo metadata checksum drift",
+            lambda: verify_artifacts(**verify_arguments),
+        )
+        write(metadata_path, canonical_json(metadata))
+
         lock_path = arguments["source_root"] / "trillionnium" / "Cargo.lock"
         original_lock = lock_path.read_bytes()
         write(lock_path, original_lock.replace(b'\n[[package]]\nname = "shared-dep"', b'\n# removed\nname = "shared-dep"'))
