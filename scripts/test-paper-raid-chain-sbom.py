@@ -10,6 +10,7 @@ import tempfile
 
 from paper_raid_chain_sbom_lib import (
     EvidenceError,
+    LIVE_DRIVER_RELATIVE_PATH,
     TARGETS,
     build_artifacts,
     canonical_json,
@@ -37,6 +38,8 @@ def fixture(base: pathlib.Path):
         source / "rust-toolchain.toml",
         '[toolchain]\nchannel = "1.95.0"\nprofile = "minimal"\n',
     )
+    live_driver = source.joinpath(*LIVE_DRIVER_RELATIVE_PATH.parts)
+    write(live_driver, "#!/usr/bin/env bash\nset -euo pipefail\n")
     package_ids: dict[str, str] = {}
     packages: list[dict] = []
     nodes: list[dict] = []
@@ -148,6 +151,7 @@ def fixture(base: pathlib.Path):
                     }
                     for target in TARGETS
                 ],
+                "live_driver_sha256": "",
                 "project_id": "trillionnium-chain",
                 "revision": "a" * 40,
                 "rust_toolchain_sha256": "",
@@ -162,6 +166,9 @@ def fixture(base: pathlib.Path):
     ).hexdigest()
     component_lock["components"][0]["rust_toolchain_sha256"] = hashlib.sha256(
         (source / "rust-toolchain.toml").read_bytes()
+    ).hexdigest()
+    component_lock["components"][0]["live_driver_sha256"] = hashlib.sha256(
+        live_driver.read_bytes()
     ).hexdigest()
     write(lock_path, canonical_json(component_lock))
 
@@ -367,6 +374,15 @@ def main() -> None:
         write(lock_fixture_path, canonical_json(duplicate_lock))
         expect_rejected("duplicate Integration live binary", lambda: verify_artifacts(**verify_arguments))
         write(lock_fixture_path, canonical_json(component_lock))
+
+        live_driver = arguments["source_root"].joinpath(*LIVE_DRIVER_RELATIVE_PATH.parts)
+        original_live_driver = live_driver.read_bytes()
+        write(live_driver, original_live_driver + b"# tamper\n")
+        expect_rejected(
+            "Integration live driver hash drift",
+            lambda: verify_artifacts(**verify_arguments),
+        )
+        write(live_driver, original_live_driver)
 
         symlink = arguments["source_root"] / "forbidden-link"
         symlink.symlink_to("rust-toolchain.toml")

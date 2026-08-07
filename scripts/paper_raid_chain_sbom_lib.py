@@ -42,6 +42,9 @@ SBOM_NAME = "trillionnium-chain-paper-raid-debug-candidate"
 SBOM_REF = "urn:trnm:paper-raid:chain-debug-candidate"
 PROVENANCE_SCHEMA = "trnm.paper-raid.chain-debug-candidate-provenance.v2"
 TOOL_VERSION = "1"
+LIVE_DRIVER_RELATIVE_PATH = pathlib.PurePosixPath(
+    "trillionnium/scripts/consensus/spike_cometbft_single_node.sh"
+)
 
 
 class EvidenceError(ValueError):
@@ -539,7 +542,12 @@ def build_artifacts(
     workspace = root / "trillionnium"
     lock_path = workspace / "Cargo.lock"
     toolchain_path = root / "rust-toolchain.toml"
-    for path, label in ((lock_path, "Cargo.lock"), (toolchain_path, "rust-toolchain.toml")):
+    live_driver_path = root.joinpath(*LIVE_DRIVER_RELATIVE_PATH.parts)
+    for path, label in (
+        (lock_path, "Cargo.lock"),
+        (toolchain_path, "rust-toolchain.toml"),
+        (live_driver_path, str(LIVE_DRIVER_RELATIVE_PATH)),
+    ):
         within(root, path, label)
         read_regular(path)
     chain_component_sha256, chain = parse_component_lock(component_lock_path)
@@ -549,6 +557,7 @@ def build_artifacts(
         "source_tree": source_tree,
         "cargo_lock_sha256": sha256_file(lock_path),
         "rust_toolchain_sha256": sha256_file(toolchain_path),
+        "live_driver_sha256": sha256_file(live_driver_path),
         "working_tree_dirty": False,
     }
     for field, expected in expected_chain_lock.items():
