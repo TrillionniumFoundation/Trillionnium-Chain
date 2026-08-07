@@ -1,5 +1,9 @@
-use crate::canonical::{CanonicalCbor, CanonicalDecodeError, Decoder, Encoder};
+use crate::canonical::{
+    canonical_hash, CanonicalCbor, CanonicalDecodeError, Decoder, Encoder, CANONICAL_ENCODING,
+};
+use crate::command::AuthorityRole;
 use crate::types::{Digest32, ExternalKey, ObjectRefV1, ResearchObjectKind};
+use ed25519_dalek::{Signature, Signer, SigningKey, VerifyingKey};
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
 
@@ -270,6 +274,176 @@ impl CanonicalCbor for PaperRaidFinalityCommitmentV2 {
     }
 }
 
+/// Hepta-authorized, signature-bearing Paper Raid finality command.  It is a
+/// separate V2 envelope so adding Paper settlement semantics cannot change the
+/// frozen `SignedResearchCommandV1` wire or its command discriminants.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct SignedPaperRaidFinalityCommandV2 {
+    pub chain_id: String,
+    pub command_id: ExternalKey,
+    pub signer_did: String,
+    pub signer_role: AuthorityRole,
+    pub nonce: u64,
+    pub public_key: [u8; 32],
+    pub commitment: PaperRaidFinalityCommitmentV2,
+    pub signature: Vec<u8>,
+}
+
+impl SignedPaperRaidFinalityCommandV2 {
+    #[allow(clippy::too_many_arguments)]
+    pub fn sign(
+        chain_id: String,
+        command_id: ExternalKey,
+        signer_did: String,
+        nonce: u64,
+        commitment: PaperRaidFinalityCommitmentV2,
+        signing_key: &SigningKey,
+    ) -> Result<Self, SignedPaperRaidFinalityCommandValidationError> {
+        let mut signed = Self {
+            chain_id,
+            command_id,
+            signer_did,
+            signer_role: AuthorityRole::HeptaAuthority,
+            nonce,
+            public_key: signing_key.verifying_key().to_bytes(),
+            commitment,
+            signature: Vec::new(),
+        };
+        signed.validate_unsigned()?;
+        signed.signature = signing_key
+            .sign(&signed.signing_bytes())
+            .to_bytes()
+            .to_vec();
+        Ok(signed)
+    }
+
+    pub fn signing_bytes(&self) -> Vec<u8> {
+        let mut encoder = Encoder::default();
+        encoder.array(9);
+        encoder.uint(PAPER_RAID_FINALITY_COMMITMENT_VERSION_V2 as u64);
+        encoder.text(CANONICAL_ENCODING);
+        encoder.text(&self.chain_id);
+        self.command_id.encode_canonical(&mut encoder);
+        encoder.text(&self.signer_did);
+        self.signer_role.encode_canonical(&mut encoder);
+        encoder.uint(self.nonce);
+        encoder.bytes(&self.public_key);
+        self.commitment.encode_canonical(&mut encoder);
+        encoder.finish()
+    }
+
+    pub fn from_canonical_bytes(
+        bytes: &[u8],
+    ) -> Result<Self, SignedPaperRaidFinalityCommandValidationError> {
+        let mut decoder = Decoder::new(bytes);
+        decoder.array(10)?;
+        let version = decoder.uint()?;
+        if version != PAPER_RAID_FINALITY_COMMITMENT_VERSION_V2 as u64 {
+            return Err(CanonicalDecodeError::UnsupportedVersion(version).into());
+        }
+        if decoder.text()? != CANONICAL_ENCODING {
+            return Err(SignedPaperRaidFinalityCommandValidationError::EncodingMismatch);
+        }
+        let chain_id = decoder.text()?;
+        let command_id = decode_key(&mut decoder)?;
+        let signer_did = decoder.text()?;
+        let signer_role = match decoder.uint()? {
+            1 => AuthorityRole::NakamaAuthority,
+            2 => AuthorityRole::HeptaAuthority,
+            value => {
+                return Err(CanonicalDecodeError::UnknownDiscriminant {
+                    name: "AuthorityRole",
+                    value,
+                }
+                .into())
+            }
+        };
+        let nonce = decoder.uint()?;
+        let public_key = decoder.bytes_exact()?;
+        let commitment = decode_commitment(&mut decoder)?;
+        let signature = decoder.bytes()?.to_vec();
+        decoder.finish()?;
+        let signed = Self {
+            chain_id,
+            command_id,
+            signer_did,
+            signer_role,
+            nonce,
+            public_key,
+            commitment,
+            signature,
+        };
+        if signed.canonical_bytes() != bytes {
+            return Err(CanonicalDecodeError::NonCanonicalRoundTrip.into());
+        }
+        signed.validate()?;
+        Ok(signed)
+    }
+
+    pub fn validate(&self) -> Result<(), SignedPaperRaidFinalityCommandValidationError> {
+        self.validate_unsigned()?;
+        let signature_bytes: [u8; 64] = self
+            .signature
+            .as_slice()
+            .try_into()
+            .map_err(|_| SignedPaperRaidFinalityCommandValidationError::InvalidSignature)?;
+        let verifying_key = VerifyingKey::from_bytes(&self.public_key)
+            .map_err(|_| SignedPaperRaidFinalityCommandValidationError::InvalidPublicKey)?;
+        verifying_key
+            .verify_strict(
+                &self.signing_bytes(),
+                &Signature::from_bytes(&signature_bytes),
+            )
+            .map_err(|_| SignedPaperRaidFinalityCommandValidationError::InvalidSignature)
+    }
+
+    pub fn command_fingerprint(&self) -> Digest32 {
+        canonical_hash(
+            "trnm-paper-raid-finality-command-fingerprint-v2",
+            &self.signing_bytes(),
+        )
+    }
+
+    pub fn payload_hash(&self) -> Digest32 {
+        self.commitment
+            .canonical_hash("trnm-paper-raid-finality-commitment-v2")
+    }
+
+    fn validate_unsigned(&self) -> Result<(), SignedPaperRaidFinalityCommandValidationError> {
+        validate_chain_id(&self.chain_id)?;
+        ensure_key("command_id", self.command_id)?;
+        validate_signer_did(&self.signer_did)?;
+        if self.signer_role != AuthorityRole::HeptaAuthority {
+            return Err(SignedPaperRaidFinalityCommandValidationError::HeptaAuthorityRequired);
+        }
+        if self.nonce == 0 {
+            return Err(SignedPaperRaidFinalityCommandValidationError::ZeroNonce);
+        }
+        if self.public_key == [0; 32] || VerifyingKey::from_bytes(&self.public_key).is_err() {
+            return Err(SignedPaperRaidFinalityCommandValidationError::InvalidPublicKey);
+        }
+        self.commitment.validate()?;
+        Ok(())
+    }
+}
+
+impl CanonicalCbor for SignedPaperRaidFinalityCommandV2 {
+    fn encode_canonical(&self, encoder: &mut Encoder) {
+        encoder.array(10);
+        encoder.uint(PAPER_RAID_FINALITY_COMMITMENT_VERSION_V2 as u64);
+        encoder.text(CANONICAL_ENCODING);
+        encoder.text(&self.chain_id);
+        self.command_id.encode_canonical(encoder);
+        encoder.text(&self.signer_did);
+        self.signer_role.encode_canonical(encoder);
+        encoder.uint(self.nonce);
+        encoder.bytes(&self.public_key);
+        self.commitment.encode_canonical(encoder);
+        encoder.bytes(&self.signature);
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, Error)]
 pub enum PaperRaidFinalityValidationError {
     #[error("{0} must be a non-zero ExternalKey")]
@@ -306,6 +480,28 @@ pub enum PaperRaidFinalityCommitmentDecodeError {
     Validation(#[from] PaperRaidFinalityValidationError),
     #[error("evaluation_score_bps {0} exceeds u16")]
     ScoreOutOfRange(u64),
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Error)]
+pub enum SignedPaperRaidFinalityCommandValidationError {
+    #[error(transparent)]
+    Canonical(#[from] CanonicalDecodeError),
+    #[error(transparent)]
+    Commitment(#[from] PaperRaidFinalityValidationError),
+    #[error("unsupported canonical encoding")]
+    EncodingMismatch,
+    #[error("chain_id must be canonical lowercase ASCII")]
+    InvalidChainId,
+    #[error("signer_did must be a canonical did:* token")]
+    InvalidSignerDid,
+    #[error("Paper Raid finality must be signed by a Hepta authority")]
+    HeptaAuthorityRequired,
+    #[error("nonce must be positive")]
+    ZeroNonce,
+    #[error("invalid Ed25519 public key")]
+    InvalidPublicKey,
+    #[error("invalid Ed25519 signature")]
+    InvalidSignature,
 }
 
 fn ensure_key(
@@ -408,6 +604,84 @@ fn decode_appeal_status(
             name: "PaperRaidAppealStatusV2",
             value,
         }),
+    }
+}
+
+fn decode_commitment(
+    decoder: &mut Decoder<'_>,
+) -> Result<PaperRaidFinalityCommitmentV2, CanonicalDecodeError> {
+    decoder.array(32)?;
+    let version = decoder.uint()?;
+    if version != PAPER_RAID_FINALITY_COMMITMENT_VERSION_V2 as u64 {
+        return Err(CanonicalDecodeError::UnsupportedVersion(version));
+    }
+    Ok(PaperRaidFinalityCommitmentV2 {
+        commitment_id: decode_key(decoder)?,
+        paper_project_id: decode_key(decoder)?,
+        submission_id: decode_key(decoder)?,
+        match_evidence_ref: decode_object_ref(decoder)?,
+        release_candidate_hash: decoder.bytes_exact()?,
+        paper_bundle_hash: decoder.bytes_exact()?,
+        submission_commitment_hash: decoder.bytes_exact()?,
+        author_consent_set_hash: decoder.bytes_exact()?,
+        tolerance_policy_hash: decoder.bytes_exact()?,
+        evaluation_id: decode_key(decoder)?,
+        evaluation_hash: decoder.bytes_exact()?,
+        evaluation_score_bps: {
+            let value = decoder.uint()?;
+            u16::try_from(value).map_err(|_| CanonicalDecodeError::UnknownDiscriminant {
+                name: "evaluation_score_bps",
+                value,
+            })?
+        },
+        evaluation_accepted: decoder.bool()?,
+        evaluation_completed_at_unix_s: decoder.uint()?,
+        latest_reproduction_id: decode_key(decoder)?,
+        latest_reproduction_hash: decoder.bytes_exact()?,
+        latest_reproduction_accepted: decoder.bool()?,
+        latest_reproduction_completed_at_unix_s: decoder.uint()?,
+        evaluation_superseded_by: decode_option_key(decoder)?,
+        reproduction_superseded_by: decode_option_key(decoder)?,
+        appeal_status: decode_appeal_status(decoder)?,
+        appeal_id: decode_option_key(decoder)?,
+        appeal_resolution_hash: decode_option_digest(decoder)?,
+        appeal_window_closes_at_unix_s: decoder.uint()?,
+        settlement_policy_hash: decoder.bytes_exact()?,
+        scientific_finality: decoder.bool()?,
+        score_eligible: decoder.bool()?,
+        ranking_eligible: decoder.bool()?,
+        reward_eligible: decoder.bool()?,
+        economic_eligible: decoder.bool()?,
+        finalized_at_unix_s: decoder.uint()?,
+    })
+}
+
+fn validate_chain_id(chain_id: &str) -> Result<(), SignedPaperRaidFinalityCommandValidationError> {
+    if chain_id.is_empty()
+        || chain_id.len() > 64
+        || !chain_id.bytes().all(|byte| {
+            byte.is_ascii_lowercase()
+                || byte.is_ascii_digit()
+                || matches!(byte, b'-' | b'_' | b'.' | b':')
+        })
+    {
+        Err(SignedPaperRaidFinalityCommandValidationError::InvalidChainId)
+    } else {
+        Ok(())
+    }
+}
+
+fn validate_signer_did(
+    signer_did: &str,
+) -> Result<(), SignedPaperRaidFinalityCommandValidationError> {
+    if signer_did.len() < 5
+        || signer_did.len() > 192
+        || !signer_did.starts_with("did:")
+        || !signer_did.bytes().all(|byte| byte.is_ascii_graphic())
+    {
+        Err(SignedPaperRaidFinalityCommandValidationError::InvalidSignerDid)
+    } else {
+        Ok(())
     }
 }
 
@@ -531,5 +805,51 @@ mod tests {
         value.reward_eligible = false;
         value.economic_eligible = false;
         value.validate().unwrap();
+    }
+
+    #[test]
+    fn signed_v2_command_roundtrips_and_binds_every_finality_field() {
+        let signing_key = SigningKey::from_bytes(&[0x42; 32]);
+        let signed = SignedPaperRaidFinalityCommandV2::sign(
+            "trnm-paper-raid-test".to_string(),
+            key(19),
+            "did:trnm:hepta-paper-raid".to_string(),
+            7,
+            commitment(),
+            &signing_key,
+        )
+        .unwrap();
+        let bytes = signed.canonical_bytes();
+        assert_eq!(
+            SignedPaperRaidFinalityCommandV2::from_canonical_bytes(&bytes).unwrap(),
+            signed
+        );
+
+        let mut tampered = signed.clone();
+        tampered.commitment.paper_bundle_hash = [0x77; 32];
+        assert_eq!(
+            tampered.validate(),
+            Err(SignedPaperRaidFinalityCommandValidationError::InvalidSignature)
+        );
+        assert_ne!(tampered.command_fingerprint(), signed.command_fingerprint());
+    }
+
+    #[test]
+    fn signed_v2_command_rejects_non_hepta_role_before_signature_use() {
+        let signing_key = SigningKey::from_bytes(&[0x43; 32]);
+        let mut signed = SignedPaperRaidFinalityCommandV2::sign(
+            "trnm-paper-raid-test".to_string(),
+            key(20),
+            "did:trnm:hepta-paper-raid".to_string(),
+            8,
+            commitment(),
+            &signing_key,
+        )
+        .unwrap();
+        signed.signer_role = AuthorityRole::NakamaAuthority;
+        assert_eq!(
+            signed.validate(),
+            Err(SignedPaperRaidFinalityCommandValidationError::HeptaAuthorityRequired)
+        );
     }
 }

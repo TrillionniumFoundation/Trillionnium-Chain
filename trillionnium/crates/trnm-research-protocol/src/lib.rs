@@ -17,7 +17,8 @@ pub use canonical::{
 pub use command::{AuthorityRole, SignedResearchCommandV1, SignedResearchCommandValidationError};
 pub use paper_raid::{
     PaperRaidAppealStatusV2, PaperRaidFinalityCommitmentDecodeError, PaperRaidFinalityCommitmentV2,
-    PaperRaidFinalityValidationError, PAPER_RAID_FINALITY_COMMITMENT_VERSION_V2,
+    PaperRaidFinalityValidationError, SignedPaperRaidFinalityCommandV2,
+    SignedPaperRaidFinalityCommandValidationError, PAPER_RAID_FINALITY_COMMITMENT_VERSION_V2,
 };
 pub use state::{
     AppliedCommandRecordV1, ApplyOutcome, AuthorityIdentityV1, AuthoritySetV1,
