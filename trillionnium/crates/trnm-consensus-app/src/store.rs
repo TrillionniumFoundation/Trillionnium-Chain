@@ -1680,10 +1680,17 @@ impl ApplicationStore {
                 .with_context(|| {
                     format!("existing application store is missing or cannot read {key}")
                 })?;
-            ensure!(
-                actual == expected,
-                "existing application store {key} differs from configured value"
-            );
+            if key == "app_version" {
+                ensure!(
+                    actual == expected,
+                    "existing application store app_version {actual} cannot be opened by application version {expected}; reviewed export/new-genesis ceremony required; in-place app-version migration is unsupported"
+                );
+            } else {
+                ensure!(
+                    actual == expected,
+                    "existing application store {key} differs from configured value"
+                );
+            }
         }
         Ok(schema_version)
     }

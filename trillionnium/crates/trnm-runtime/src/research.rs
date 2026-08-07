@@ -58,6 +58,16 @@ pub fn execute_research(
     meter.add_validation_bytes(signed.canonical_bytes().len())?;
     let authorities = load_research_authorities(view, &mut meter)?;
     ResearchProtocolState::authorize(&authorities, &signed).map_err(map_research_state_error)?;
+    if matches!(
+        &signed.command,
+        ResearchCommandV1::IssueWorkloadReceipt(_) | ResearchCommandV1::CreateResearchClaim(_)
+    ) {
+        // App v6 has no settlement activation tied to a verified Paper Raid V2
+        // finality commitment. Keep the frozen V1 wire/state decodable, but do
+        // not let its accepted-work or claim objects become an alternate
+        // ranking/reward input lane.
+        return Err(RuntimeError::LegacyResearchSettlementLocked);
+    }
     reject_applied_replay(view, &signed, &mut meter)?;
 
     // This economic lower bound and nonce check intentionally precede all
@@ -345,6 +355,18 @@ fn load_research_authorities(
         return Err(RuntimeError::ResearchMirrorMismatch(key));
     }
     Ok(authorities)
+}
+
+/// Load the same immutable genesis trust set for additive Research protocol
+/// extensions without exposing or rewriting the frozen V1 aggregate state.
+pub(super) fn load_research_authorities_for_extension(
+    view: &dyn StateView,
+) -> Result<(AuthoritySetV1, u64, u64), RuntimeError> {
+    let mut meter = ResearchIoMeter::default();
+    let authorities = load_research_authorities(view, &mut meter)?;
+    let touched_keys =
+        u64::try_from(meter.touched_keys.len()).map_err(|_| RuntimeError::ArithmeticOverflow)?;
+    Ok((authorities, meter.read_bytes, touched_keys))
 }
 
 fn encode_authority_set(authorities: &AuthoritySetV1) -> Result<Vec<u8>, RuntimeError> {
@@ -669,10 +691,9 @@ mod tests {
         RESEARCH_DOMAIN_OBJECT_TYPE_V1, RESEARCH_SNAPSHOT_OBJECT_TYPE_V1,
     };
     use trnm_research_protocol::{
-        AuthorityIdentityV1, ChallengeReason, ChallengeResearchClaimV1, ClaimResolutionV1,
-        ClaimShareV1, ContributionRole, ContributorWorkV1, CreateResearchClaimV1,
-        EvaluationCommitmentV1, IssueWorkloadReceiptV1, MatchEvidenceCommitmentV1,
-        ResearchCommandV1,
+        AuthorityIdentityV1, ClaimShareV1, ContributionRole, ContributorWorkV1,
+        CreateResearchClaimV1, EvaluationCommitmentV1, IssueWorkloadReceiptV1,
+        MatchEvidenceCommitmentV1, ResearchCommandV1,
     };
 
     use super::*;
@@ -848,15 +869,6 @@ mod tests {
 
     fn execute_and_apply(view: &mut MemoryView, tx: &CanonicalResearchTxV1) -> RuntimeReceipt {
         let receipt = execute_research(tx, context(tx, "nakama"), view).unwrap();
-        view.apply_mutations(receipt.mutations.clone());
-        receipt
-    }
-
-    fn execute_hepta_and_apply(
-        view: &mut MemoryView,
-        tx: &CanonicalResearchTxV1,
-    ) -> RuntimeReceipt {
-        let receipt = execute_research(tx, context(tx, "hepta"), view).unwrap();
         view.apply_mutations(receipt.mutations.clone());
         receipt
     }
@@ -1162,32 +1174,17 @@ mod tests {
     }
 
     #[test]
-    fn amend_resolution_reads_and_validates_workload_contributors() {
-        let mut view = seeded_view();
+    fn legacy_workload_and_claim_settlement_lanes_are_locked_without_mutations() {
+        let view = seeded_view();
         let contributor = external_key("hepta.contributor", "contributor-001");
-
-        let match_tx = research_tx("read-set", 1, 0x41);
-        execute_and_apply(&mut view, &match_tx);
-        let match_ref = match_tx
-            .signed_research_command()
-            .unwrap()
-            .command
-            .primary_object_ref();
-
-        let evaluation_tx = hepta_tx(
-            "read-set-evaluation",
+        let evaluation_ref = ObjectRefV1::new(
+            ResearchObjectKind::EvaluationCommitment,
+            external_key("hepta.evaluation", "legacy-settlement-lock"),
             1,
-            evaluation_command(match_ref, "read-set"),
         );
-        execute_hepta_and_apply(&mut view, &evaluation_tx);
-        let evaluation_ref = evaluation_tx
-            .signed_research_command()
-            .unwrap()
-            .command
-            .primary_object_ref();
 
         let workload = ResearchCommandV1::IssueWorkloadReceipt(IssueWorkloadReceiptV1 {
-            receipt_id: external_key("hepta.workload", "workload-read-set"),
+            receipt_id: external_key("hepta.workload", "legacy-settlement-lock"),
             evaluation_ref,
             contributors: vec![ContributorWorkV1 {
                 contributor,
@@ -1199,16 +1196,25 @@ mod tests {
             policy_hash: [0x52; 32],
             issued_at_unix_s: 1_753_449_800,
         });
-        let workload_tx = hepta_tx("read-set-workload", 2, workload);
-        execute_hepta_and_apply(&mut view, &workload_tx);
-        let workload_ref = workload_tx
-            .signed_research_command()
-            .unwrap()
-            .command
-            .primary_object_ref();
+        let workload_tx = hepta_tx("legacy-settlement-workload", 1, workload);
+        let workload_signed = workload_tx.signed_research_command().unwrap();
+        let workload_ref = workload_signed.command.primary_object_ref();
+        let before = view.0.clone();
+        let error = execute_research(&workload_tx, context(&workload_tx, "hepta"), &view)
+            .expect_err("legacy workload issuance must remain locked");
+        assert!(matches!(
+            &error,
+            RuntimeError::LegacyResearchSettlementLocked
+        ));
+        assert_eq!(error.code(), "legacy_research_settlement_locked");
+        assert_eq!(view.0, before);
+        assert!(!view
+            .0
+            .contains_key(&applied_command_key(workload_signed.command_id).unwrap()));
+        assert!(!view.0.contains_key(&research_key(workload_ref).unwrap()));
 
         let claim = ResearchCommandV1::CreateResearchClaim(CreateResearchClaimV1 {
-            claim_id: external_key("hepta.claim", "claim-read-set"),
+            claim_id: external_key("hepta.claim", "legacy-settlement-lock"),
             workload_receipt_ref: workload_ref,
             evidence_refs: vec![evaluation_ref],
             artifact_hash: [0x53; 32],
@@ -1219,50 +1225,21 @@ mod tests {
             }],
             created_at_unix_s: 1_753_449_900,
         });
-        let claim_tx = hepta_tx("read-set-claim", 3, claim);
-        execute_hepta_and_apply(&mut view, &claim_tx);
-        let claim_ref = claim_tx
-            .signed_research_command()
-            .unwrap()
-            .command
-            .primary_object_ref();
-
-        let challenge = ResearchCommandV1::ChallengeResearchClaim(ChallengeResearchClaimV1 {
-            challenge_id: external_key("hepta.challenge", "challenge-read-set"),
-            claim_ref,
-            challenger: external_key("hepta.contributor", "challenger-001"),
-            reason: ChallengeReason::ContributionAllocation,
-            evidence_hash: [0x55; 32],
-            opened_at_unix_s: 1_753_450_000,
-        });
-        let challenge_tx = hepta_tx("read-set-challenge", 4, challenge);
-        execute_hepta_and_apply(&mut view, &challenge_tx);
-        let challenge_ref = challenge_tx
-            .signed_research_command()
-            .unwrap()
-            .command
-            .primary_object_ref();
-
-        let resolution = ResearchCommandV1::ResolveResearchClaim(ClaimResolutionV1 {
-            resolution_id: external_key("hepta.resolution", "resolution-read-set"),
-            challenge_ref,
-            decision: ClaimResolutionDecision::AmendContributorShares,
-            resolution_hash: [0x56; 32],
-            amended_claimants: vec![ClaimShareV1 {
-                contributor,
-                share_bps: 10_000,
-            }],
-            decided_at_unix_s: 1_753_450_100,
-        });
-        let resolution_tx = hepta_tx("read-set-resolution", 5, resolution);
-        execute_research(&resolution_tx, context(&resolution_tx, "hepta"), &view).unwrap();
-
-        let workload_key = research_key(workload_ref).unwrap();
-        view.0.get_mut(&workload_key).unwrap().value_bytes.push(0);
+        let claim_tx = hepta_tx("legacy-settlement-claim", 1, claim);
+        let claim_signed = claim_tx.signed_research_command().unwrap();
+        let claim_ref = claim_signed.command.primary_object_ref();
+        let error = execute_research(&claim_tx, context(&claim_tx, "hepta"), &view)
+            .expect_err("legacy claim creation must remain locked");
         assert!(matches!(
-            execute_research(&resolution_tx, context(&resolution_tx, "hepta"), &view),
-            Err(RuntimeError::ResearchMirrorMismatch(key)) if key == workload_key
+            &error,
+            RuntimeError::LegacyResearchSettlementLocked
         ));
+        assert_eq!(error.code(), "legacy_research_settlement_locked");
+        assert_eq!(view.0, before);
+        assert!(!view
+            .0
+            .contains_key(&applied_command_key(claim_signed.command_id).unwrap()));
+        assert!(!view.0.contains_key(&research_key(claim_ref).unwrap()));
     }
 
     #[test]

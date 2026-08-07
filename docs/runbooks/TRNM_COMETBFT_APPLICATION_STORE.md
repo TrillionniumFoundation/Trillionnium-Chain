@@ -36,10 +36,13 @@ transaction advances object deltas, validator lifecycle, versioned JMT nodes,
 the raw JMT AppHash, height, the durable proof-query floor, and successor
 indices for stale value versions. The database advances before the status
 cache; a crash between those operations recovers from SQLite. Metadata binds
-chain ID, app version 5, and the canonical authorized-signer policy. The app
-hash also commits that immutable identity through the validator-lifecycle
-state, so a mismatched fresh state-sync target rejects the snapshot instead of
-diverging after recovery.
+chain ID, app version 6, and the canonical authorized-signer policy. Startup
+probes an existing database read-only and rejects an app-version-5 binding
+before opening the writable store. It never rewrites that binding: preserve the
+v5 database and use a reviewed, version-specific export/new-genesis ceremony
+with fresh CometBFT and application data. The app hash also commits that
+immutable identity through the validator-lifecycle state, so a mismatched fresh
+state-sync target rejects the snapshot instead of diverging after recovery.
 
 Persistent startup keeps only the committed head and validator lifecycle in
 memory. Objects, replay lookups, JMT nodes, values, roots, and preimages remain

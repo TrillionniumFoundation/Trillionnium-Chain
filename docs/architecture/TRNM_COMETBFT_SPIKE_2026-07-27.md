@@ -16,8 +16,9 @@ Status: **four-validator crash recovery and fresh-node state sync proven locally
 - `InitChain` fails closed unless the CometBFT chain ID, genesis application
   schema/version, authorized signer set, validator set, and committed governance
   policy match the local application config. The current fixtures pin
-  `consensus_params.version.app=5`; omitting the application-version pin was
-  proven to make a fresh node reject state sync with an app-version mismatch.
+  `consensus_params.version.app=6`; app-version-5 genesis/version bindings are
+  rejected rather than migrated. Omitting the application-version pin was proven
+  to make a fresh node reject state sync with an app-version mismatch.
 - Application hash v4 is a versioned Jellyfish Merkle Tree root over namespaced
   canonical objects, sequential account nonces, chain/app identity,
   authorized-signer policy, active validators, pending transition, and governance

@@ -982,7 +982,7 @@ mod tests {
         write_source(&source, &fixture);
         let original = fs::read(&source).unwrap();
 
-        let report = export_new_genesis(&source, "trnm-v5-new-chain", &output).unwrap();
+        let report = export_new_genesis(&source, "trnm-v6-new-chain", &output).unwrap();
         assert_eq!(report.source_height, 17);
         assert_eq!(fs::read(&source).unwrap(), original);
         for name in [
@@ -1002,7 +1002,7 @@ mod tests {
         assert_eq!(manifest["source"]["app_version"], SOURCE_APP_VERSION);
         assert_eq!(manifest["source"]["app_hash_hex"], fixture.app_hash_hex);
         assert_eq!(manifest["schema"], "trnm_v3_export_new_genesis_manifest_v2");
-        assert_eq!(manifest["target"]["chain_id"], "trnm-v5-new-chain");
+        assert_eq!(manifest["target"]["chain_id"], "trnm-v6-new-chain");
         assert_eq!(manifest["target"]["genesis_schema"], GENESIS_SCHEMA_V3);
         assert_eq!(manifest["target"]["app_version"], APP_VERSION);
         assert!(manifest["target"]["app_hash_hex"].is_null());
@@ -1057,7 +1057,7 @@ mod tests {
         state.validator_lifecycle.app_version = APP_VERSION;
         write_source(&source, &state);
 
-        let error = export_new_genesis(&source, "trnm-v5-new-chain", &output).unwrap_err();
+        let error = export_new_genesis(&source, "trnm-v6-new-chain", &output).unwrap_err();
         assert!(error
             .to_string()
             .contains("source validator lifecycle app_version must be 3"));
@@ -1073,7 +1073,7 @@ mod tests {
         state.objects[0].value_hash_hex = hex::encode([0u8; 32]);
         write_source(&source, &state);
 
-        let error = export_new_genesis(&source, "trnm-v5-new-chain", &output).unwrap_err();
+        let error = export_new_genesis(&source, "trnm-v6-new-chain", &output).unwrap_err();
         assert!(error.to_string().contains("value hash mismatch"));
         assert!(!output.exists());
     }
@@ -1087,7 +1087,7 @@ mod tests {
         state.app_hash_hex = hex::encode([0u8; 32]);
         write_source(&source, &state);
 
-        let error = export_new_genesis(&source, "trnm-v5-new-chain", &output).unwrap_err();
+        let error = export_new_genesis(&source, "trnm-v6-new-chain", &output).unwrap_err();
         assert!(error.to_string().contains("application hash mismatch"));
         assert!(!output.exists());
     }

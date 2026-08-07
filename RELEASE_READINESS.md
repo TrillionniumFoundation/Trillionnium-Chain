@@ -102,14 +102,23 @@ cached tracking ref contemporaneous.
 - The authoritative feature-to-runtime matrix and Day-1 freeze are in
   `docs/architecture/TRNM_CANONICAL_RUNTIME_FREEZE_2026-07-28.md`. Features not
   marked implemented in that matrix remain unimplemented regardless of legacy tests.
-- This branch uses application version 5, genesis schema 3, store schema 4, and persistent snapshot
-  format 4. Snapshot format 3 is restricted to the memory-only compatibility
-  harness.
-  It deliberately refuses in-place v3 root rewriting. The verified
-  `trnm-v3-export-new-genesis` tool emits a review-only application-version-5 /
-  genesis-schema-3 bundle for a different chain ID and leaves the old source
-  untouched; operator review/signing, explicit Research authority selection,
-  and an actual new-genesis ceremony remain required.
+- This branch uses application version 6, genesis schema 3, store schema 4, and
+  persistent snapshot format 4. App version 6 is explicit because the independent
+  Paper Raid Finality V2 transaction adds consensus-visible state; it does not
+  activate ranking, reward, or economic eligibility. App v6 locks the legacy
+  Research V1 workload-receipt and claim creation lanes, requires consensus
+  block time to reach appeal-close/finalized timestamps, and commits unique
+  mirrors for both Paper/submission and evaluation identity. Snapshot format 3
+  is restricted to the memory-only compatibility harness.
+  App-version-5 genesis/version bindings and SQLite stores are rejected rather
+  than rewritten. There is no in-place v5-to-v6 migration: operators must preserve
+  the old database and complete a reviewed, version-specific export/new-genesis
+  ceremony with fresh CometBFT and application data. The verified
+  `trnm-v3-export-new-genesis` tool still accepts only a validated v3 JSON source;
+  it now emits a review-only application-version-6 / genesis-schema-3 bundle for
+  a different chain ID and leaves the old source untouched. Operator
+  review/signing, explicit Research authority selection, and an actual
+  new-genesis ceremony remain required.
 - Transaction authentication remains a static authorized-signer allowlist; dynamic
   public account-key onboarding is not implemented.
 

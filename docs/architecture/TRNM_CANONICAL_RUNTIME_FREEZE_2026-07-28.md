@@ -31,6 +31,17 @@ This is a wire-hardening correction to an existing test/operator command, not
 a new legacy protocol capability; the remaining frozen entrypoints are
 byte-for-byte unchanged.
 
+Application version 6 retains that exact outer wire and adds the independent
+Paper Raid Finality V2 consensus transaction. The new path commits scientific
+finality only; score, ranking, reward, and economic eligibility remain locked
+and fail closed. App v6 also rejects the frozen Research V1
+`IssueWorkloadReceipt` and `CreateResearchClaim` commands: those accepted-work
+objects cannot act as a second settlement lane before a separately versioned
+activation command exists. Paper Raid finality cannot enter consensus before
+the committed appeal-close and finalized timestamps, and authenticated unique
+indexes permit only one finality per Paper/submission tuple and per evaluation
+identity. It does not add a capability to any frozen legacy binary.
+
 ## Frozen Day-1 Scope
 
 Day-1 includes only:
@@ -42,6 +53,8 @@ Day-1 includes only:
 - challenge, governance resolution, unchallenged settlement, and deterministic
   expiry/refund or worker-deadline slashing for every pre-terminal escrow state;
 - validator lifecycle already committed through the CometBFT adapter;
+- Paper Raid scientific finality V2, with score, ranking, reward, and economic
+  eligibility locked fail-closed;
 - minimum deterministic ABCI execution events. A versioned durable indexer event
   schema and replay service remain later public-surface work.
 
@@ -67,6 +80,7 @@ capabilities until they enter the canonical path with end-to-end evidence.
 | Value-conserving challenge/resolve/settle | `trnm-runtime` | Implemented | Runtime conservation tests and four-validator slice |
 | Deadline expiry/refund/slash | `trnm-runtime` | Implemented | Runtime tests and four-validator deadline expiry |
 | Minimal indexed execution events | `trnm-consensus-app` | Implemented (minimal) | ABCI `ExecTxResult`; durable schema still open |
+| Paper Raid scientific finality V2 | `trnm-protocol`, `trnm-runtime`, `trnm-consensus-app` | Implemented candidate | independent typed transaction, consensus-time appeal/finality boundary, submission/evaluation uniqueness mirrors, committed evidence; all settlement-eligibility flags and legacy V1 workload/claim lanes fail closed |
 | Validator add/remove/rotation | `trnm-consensus-app` | Implemented | Six-process lifecycle gate |
 | State sync and crash recovery | `trnm-consensus-app` | Implemented foundation | Four/five-process recovery gate plus format-4 multi-chunk/restart correctness; large-state/multi-host timing still open |
 | Dynamic public account-key onboarding | none | Not implemented | static authorized-signer allowlist |
@@ -82,14 +96,17 @@ capabilities until they enter the canonical path with end-to-end evidence.
 
 ## Upgrade and Dependency Boundary
 
-This branch reports application version 5, genesis schema 3, store schema 4,
-and persistent snapshot format 4. Format 3 is accepted only by the memory-only compatibility
-harness. It must not rewrite an existing app-version-3 height because that would
-break the CometBFT handshake. `trnm-v3-export-new-genesis` validates the legacy
-root and emits an atomic, review-only export bundle for a new chain ID; it does
-not claim an in-place upgrade or a ready-to-start v5 node. The old source and
-AppHash remain unchanged and rollback means resuming the old network before
-the new genesis is signed.
+This branch reports application version 6, genesis schema 3, store schema 4,
+and persistent snapshot format 4. Format 3 is accepted only by the memory-only
+compatibility harness. App-version-5 genesis/version bindings and SQLite stores
+are rejected before writable startup; there is no in-place v5-to-v6 migration.
+Operators must preserve the v5 database and perform a reviewed,
+version-specific export/new-genesis ceremony with fresh chain and data
+directories. `trnm-v3-export-new-genesis` validates only the legacy v3 JSON root
+and emits an atomic, review-only app-version-6 export bundle for a new chain ID;
+it is not a v5 SQLite exporter and does not claim a ready-to-start v6 node. The
+old source and AppHash remain unchanged and rollback means resuming the old
+network before the new genesis is signed.
 
 The `trnm-node` binaries are frozen legacy harnesses, but
 `trnm-consensus-app` temporarily imports storage, Merkle, and signer-policy

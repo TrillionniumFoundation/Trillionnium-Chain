@@ -270,11 +270,11 @@ jq \
   --argjson hepta_public_key_bytes "$hepta_public_key_bytes" \
   --argjson initial_validators "$initial_validators" \
   '.chain_id="trnm-comet-spike"
-   | .consensus_params.version.app="5"
+   | .consensus_params.version.app="6"
    | .app_state={
        schema:"trnm_cometbft_genesis_v3",
        chain_id:"trnm-comet-spike",
-       app_version:5,
+       app_version:6,
        authorized_signers:[
          {
            signer_id:"did:operator:1",

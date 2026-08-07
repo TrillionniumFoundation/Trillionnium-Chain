@@ -9,7 +9,16 @@ use trnm_protocol::{
     MONETARY_STATE_OBJECT_TYPE_V1, TASK_OBJECT_TYPE_V1,
 };
 
+mod paper_raid;
 mod research;
+pub use paper_raid::{
+    execute_paper_raid_finality, paper_raid_finality_applied_command_key,
+    paper_raid_finality_commitment_key, paper_raid_finality_evaluation_index_key,
+    paper_raid_finality_submission_index_key, PAPER_RAID_FINALITY_APPLIED_COMMAND_OBJECT_TYPE_V2,
+    PAPER_RAID_FINALITY_COMMITMENT_OBJECT_TYPE_V2,
+    PAPER_RAID_FINALITY_EVALUATION_INDEX_OBJECT_TYPE_V2,
+    PAPER_RAID_FINALITY_SUBMISSION_INDEX_OBJECT_TYPE_V2,
+};
 pub use research::{execute_research, research_genesis_mutation};
 
 #[derive(Debug, Error)]
@@ -32,6 +41,37 @@ pub enum RuntimeError {
     ResearchCommandReplay,
     #[error("research state mirror {0} is missing or inconsistent")]
     ResearchMirrorMismatch(String),
+    #[error("legacy Research V1 accepted-work and claim settlement lanes are locked")]
+    LegacyResearchSettlementLocked,
+    #[error("Paper Raid finality signer role does not match the signed command")]
+    PaperRaidFinalityRoleMismatch,
+    #[error("Paper Raid finality command chain does not match execution context")]
+    PaperRaidFinalityChainMismatch,
+    #[error("Paper Raid finality signer is not a genesis Hepta authority")]
+    PaperRaidFinalityUnauthorizedAuthority,
+    #[error("Paper Raid settlement eligibility remains locked in finality ingress v2")]
+    PaperRaidFinalityEligibilityLocked,
+    #[error("Paper Raid finality state transition failed: {0}")]
+    PaperRaidFinalityState(String),
+    #[error("Paper Raid finality command id was replayed with altered signed bytes")]
+    PaperRaidFinalityAlteredReplay,
+    #[error("Paper Raid finality command was already applied")]
+    PaperRaidFinalityCommandReplay,
+    #[error("Paper Raid finality commitment already exists")]
+    PaperRaidFinalityCommitmentExists,
+    #[error("Paper Raid finality already exists for this Paper submission")]
+    PaperRaidFinalitySubmissionExists,
+    #[error("Paper Raid finality already exists for this evaluation")]
+    PaperRaidFinalityEvaluationExists,
+    #[error(
+        "Paper Raid finality block time {block_time_unix_s} precedes required finality time {required_unix_s}"
+    )]
+    PaperRaidFinalityTimeNotReached {
+        block_time_unix_s: u64,
+        required_unix_s: u64,
+    },
+    #[error("Paper Raid finality state mirror {0} is missing or inconsistent")]
+    PaperRaidFinalityMirrorMismatch(String),
     #[error("operator role required")]
     OperatorRequired,
     #[error("account nonce mismatch: expected {expected}, received {received}")]
@@ -98,6 +138,21 @@ impl RuntimeError {
             Self::ResearchAlteredReplay => "research_altered_replay",
             Self::ResearchCommandReplay => "research_command_replay",
             Self::ResearchMirrorMismatch(_) => "research_mirror_mismatch",
+            Self::LegacyResearchSettlementLocked => "legacy_research_settlement_locked",
+            Self::PaperRaidFinalityRoleMismatch => "paper_raid_finality_role_mismatch",
+            Self::PaperRaidFinalityChainMismatch => "paper_raid_finality_chain_mismatch",
+            Self::PaperRaidFinalityUnauthorizedAuthority => {
+                "paper_raid_finality_unauthorized_authority"
+            }
+            Self::PaperRaidFinalityEligibilityLocked => "paper_raid_finality_eligibility_locked",
+            Self::PaperRaidFinalityState(_) => "paper_raid_finality_state_failed",
+            Self::PaperRaidFinalityAlteredReplay => "paper_raid_finality_altered_replay",
+            Self::PaperRaidFinalityCommandReplay => "paper_raid_finality_command_replay",
+            Self::PaperRaidFinalityCommitmentExists => "paper_raid_finality_commitment_exists",
+            Self::PaperRaidFinalitySubmissionExists => "paper_raid_finality_submission_exists",
+            Self::PaperRaidFinalityEvaluationExists => "paper_raid_finality_evaluation_exists",
+            Self::PaperRaidFinalityTimeNotReached { .. } => "paper_raid_finality_time_not_reached",
+            Self::PaperRaidFinalityMirrorMismatch(_) => "paper_raid_finality_mirror_mismatch",
             Self::OperatorRequired => "operator_required",
             Self::NonceMismatch { .. } => "nonce_mismatch",
             Self::NonceExhausted => "nonce_exhausted",

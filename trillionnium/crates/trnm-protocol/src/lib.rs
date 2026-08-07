@@ -590,7 +590,7 @@ pub fn research_authority_set_key() -> String {
 }
 
 /// Legacy snapshot key retained only for explicit migration rejection. New
-/// app-version-5 genesis never writes or updates this aggregate object.
+/// app-version-6 genesis never writes or updates this aggregate object.
 pub fn research_snapshot_key() -> String {
     object_key("trnm.research.snapshot.object-key.v1", "singleton")
 }

@@ -1,10 +1,10 @@
-# TRNM v3 → v5 Offline Export-New-Genesis Runbook
+# TRNM v3 → v6 Offline Export-New-Genesis Runbook
 
 The historical file name is retained so operator links do not break. The current
-target is application version 5 with `trnm_cometbft_genesis_v3`.
+target is application version 6 with `trnm_cometbft_genesis_v3`.
 
 Status: review-only migration tooling. This is not an in-place database migration,
-not a state-sync snapshot, and not proof that a v5 network has been launched.
+not a state-sync snapshot, and not proof that a v6 network has been launched.
 
 ## Boundary
 
@@ -16,6 +16,12 @@ height, and does not calculate or assert a target AppHash.
 The target chain ID must be new and different from the chain ID committed by the
 source validator lifecycle. Reusing the old chain ID, CometBFT data directory,
 application database, snapshot, or validator signing state is unsupported.
+
+This exporter accepts only the v3 JSON format; it is not a v5 SQLite exporter.
+An app-version-5 genesis or store cannot be opened by the app-version-6 binary.
+Operators with a v5 store must preserve it unchanged and complete a separately
+reviewed, version-specific export/new-genesis ceremony. No in-place v5-to-v6
+migration is implemented or implied by this runbook.
 
 ## Prepare the source
 
@@ -38,8 +44,8 @@ cargo run \
   -p trnm-consensus-app \
   --bin trnm-v3-export-new-genesis -- \
   --source-v3 /offline/source/app-state-v3.json \
-  --target-chain-id trnm-public-testnet-v5-new \
-  --output-dir /offline/review/trnm-v5-new-genesis-bundle
+  --target-chain-id trnm-public-testnet-v6-new \
+  --output-dir /offline/review/trnm-v6-new-genesis-bundle
 ```
 
 The output directory must not already exist. The tool writes a sibling temporary
@@ -52,7 +58,7 @@ chain-ID equality, or an existing output directory.
 ## Bundle contents
 
 - `manifest.json`: source SHA-256, height, verified legacy AppHash, source/target
-  chain IDs, target `app_version=5`, target schema
+  chain IDs, target `app_version=6`, target schema
   `trnm_cometbft_genesis_v3`, artifact hashes, and explicit review flags.
 - `canonical-objects.json`: sorted, value-hash-verified v3 objects.
 - `legacy-replay-indexes.json`: command IDs and signer nonces preserved for review;
@@ -67,7 +73,7 @@ by a node.
 
 ## Mandatory review and signing
 
-Before constructing a v5 genesis, reviewers must:
+Before constructing a v6 genesis, reviewers must:
 
 1. independently reproduce all source and artifact hashes;
 2. review every object and decide how chain-ID-bearing values are transformed;
@@ -82,12 +88,12 @@ Before constructing a v5 genesis, reviewers must:
    genesis tooling;
 9. obtain the required human approvals/signatures; and
 10. start with fresh CometBFT/application data and independently verify the first
-    v5 AppHash.
+    v6 AppHash.
 
 ## Abort and rollback
 
 Before target launch, abort by quarantining the bundle and preserving the unchanged
 v3 source evidence. After target launch there is no database downgrade. Stop the
 new chain, preserve evidence, and make an explicit governance/operations decision.
-Never copy v5 state into the v3 store or reuse validator signing state across the
-two chain IDs.
+Never copy v6 state into a v3 or v5 store, copy v5 SQLite state into a v6 store,
+or reuse validator signing state across the source and target chain IDs.
