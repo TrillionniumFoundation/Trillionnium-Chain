@@ -40,7 +40,7 @@ TARGETS = (
 
 SBOM_NAME = "trillionnium-chain-paper-raid-debug-candidate"
 SBOM_REF = "urn:trnm:paper-raid:chain-debug-candidate"
-PROVENANCE_SCHEMA = "trnm.paper-raid.chain-debug-candidate-provenance.v1"
+PROVENANCE_SCHEMA = "trnm.paper-raid.chain-debug-candidate-provenance.v2"
 TOOL_VERSION = "1"
 
 
@@ -207,7 +207,10 @@ def parse_component_lock(path: pathlib.Path) -> tuple[str, dict[str, Any]]:
     ]
     if normalized != expected:
         fail("Integration canonical-chain live_binaries set/order differs from the Paper Raid contract")
-    return sha256_file(path), chain[0]
+    # Bind only the canonical Chain component. Integration readiness, Hepta,
+    # Nakama, and BFF fields evolve independently and must not invalidate
+    # byte-identical Chain evidence or create a self-referential lock hash.
+    return sha256_bytes(canonical_json(chain[0])), chain[0]
 
 
 @dataclass(frozen=True)
@@ -539,7 +542,7 @@ def build_artifacts(
     for path, label in ((lock_path, "Cargo.lock"), (toolchain_path, "rust-toolchain.toml")):
         within(root, path, label)
         read_regular(path)
-    component_lock_sha256, chain = parse_component_lock(component_lock_path)
+    chain_component_sha256, chain = parse_component_lock(component_lock_path)
     expected_chain_lock = {
         "project_id": "trillionnium-chain",
         "revision": revision,
@@ -625,7 +628,7 @@ def build_artifacts(
         ("trnm:build-profile", "debug"),
         ("trnm:cargo-lock:sha256", f"sha256:{sha256_file(lock_path)}"),
         ("trnm:cargo-version-evidence:sha256", f"sha256:{cargo_evidence_sha256}"),
-        ("trnm:integration-component-lock:sha256", f"sha256:{component_lock_sha256}"),
+        ("trnm:integration-chain-component:sha256", f"sha256:{chain_component_sha256}"),
         ("trnm:isolated-target-build-count", "2"),
         ("trnm:rust-toolchain:sha256", f"sha256:{sha256_file(toolchain_path)}"),
         ("trnm:rustc-version-evidence:sha256", f"sha256:{rustc_evidence_sha256}"),
@@ -725,7 +728,7 @@ def build_artifacts(
             ],
         },
         "candidate_boundary": "debug-integration-only",
-        "integration_component_lock_sha256": component_lock_sha256,
+        "integration_chain_component_sha256": chain_component_sha256,
         "schema": PROVENANCE_SCHEMA,
         "scripts": {name: f"sha256:{digest}" for name, digest in sorted(tool_hashes.items())},
         "sbom": {

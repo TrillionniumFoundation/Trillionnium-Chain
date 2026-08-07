@@ -162,8 +162,8 @@ try:
 finally:
     os.close(out)
 PY
-component_lock_sha256=$(sha256sum "$scratch/components.lock.json" | awk '{print $1}')
-[[ $(sha256sum "$component_lock" | awk '{print $1}') == "$component_lock_sha256" ]] || {
+component_lock_snapshot_sha256=$(sha256sum "$scratch/components.lock.json" | awk '{print $1}')
+[[ $(sha256sum "$component_lock" | awk '{print $1}') == "$component_lock_snapshot_sha256" ]] || {
   echo "ERROR: Integration component lock changed while it was snapshotted" >&2
   exit 1
 }
@@ -241,7 +241,7 @@ python3 "$verifier" "${common_arguments[@]}" \
   echo "ERROR: Chain repository changed while the immutable gate was running" >&2
   exit 1
 }
-[[ $(sha256sum "$component_lock" | awk '{print $1}') == "$component_lock_sha256" ]] || {
+[[ $(sha256sum "$component_lock" | awk '{print $1}') == "$component_lock_snapshot_sha256" ]] || {
   echo "ERROR: Integration component lock changed while the immutable gate was running" >&2
   exit 1
 }

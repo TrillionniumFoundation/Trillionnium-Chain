@@ -252,6 +252,25 @@ def main() -> None:
             raise AssertionError("different extraction roots changed canonical SBOM bytes")
         if canonical_json(provenance) != canonical_json(second_provenance):
             raise AssertionError("different extraction roots changed canonical provenance bytes")
+        lock_fixture_path = arguments["component_lock_path"]
+        unrelated_lock = copy.deepcopy(component_lock)
+        unrelated_lock["status"] = "blocked"
+        unrelated_lock["components"].append(
+            {
+                "component_id": "unrelated-hepta",
+                "project_id": "hepta-control-plane",
+                "revision": "f" * 40,
+            }
+        )
+        write(lock_fixture_path, canonical_json(unrelated_lock))
+        unrelated_sbom, unrelated_provenance = build_artifacts(**arguments)
+        if canonical_json(sbom) != canonical_json(unrelated_sbom) or canonical_json(
+            provenance
+        ) != canonical_json(unrelated_provenance):
+            raise AssertionError(
+                "unrelated Integration status/component fields changed Chain evidence"
+            )
+        write(lock_fixture_path, canonical_json(component_lock))
         combined_evidence = canonical_json(sbom) + canonical_json(provenance)
         for temporary_path in (base, arguments["source_root"], second_arguments["source_root"]):
             if str(temporary_path).encode("utf-8") in combined_evidence:

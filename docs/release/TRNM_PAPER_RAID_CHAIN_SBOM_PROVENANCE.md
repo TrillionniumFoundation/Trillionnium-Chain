@@ -7,10 +7,14 @@ binaries named by Integration's `canonical-chain.live_binaries` lock:
 - `trnm-node` with `legacy-harness` / `trnm-chain-cli`
 - `trnm-finality-verifier` / `trnm-research-receipt-v2`
 
-The checked component lock must bind the exact clean Chain revision, Git source
-tree, `Cargo.lock`, `rust-toolchain.toml`, and the exact ordered binary set. A
-stale Integration lock is rejected; do not calculate candidate evidence against
-an earlier Chain lock and relabel it later.
+The checked component lock's unique `canonical-chain` object must bind the exact
+clean Chain revision, Git source tree, `Cargo.lock`, `rust-toolchain.toml`, and
+the exact ordered binary set. That object is canonicalized and hashed into the
+evidence. Unrelated Integration readiness and Hepta/Nakama/BFF fields are not
+part of the Chain identity, so their later update does not invalidate the same
+Chain bytes or create a self-referential lock hash. A stale Chain object is
+still rejected; do not calculate candidate evidence against an earlier Chain
+lock and relabel it later.
 
 ## Run the immutable gate
 
