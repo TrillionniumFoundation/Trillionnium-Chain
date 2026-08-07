@@ -7,6 +7,7 @@
 
 mod canonical;
 mod command;
+mod paper_raid;
 mod state;
 mod types;
 
@@ -14,6 +15,10 @@ pub use canonical::{
     canonical_hash, CanonicalCbor, CanonicalDecodeError, Encoder, CANONICAL_ENCODING,
 };
 pub use command::{AuthorityRole, SignedResearchCommandV1, SignedResearchCommandValidationError};
+pub use paper_raid::{
+    PaperRaidAppealStatusV2, PaperRaidFinalityCommitmentDecodeError, PaperRaidFinalityCommitmentV2,
+    PaperRaidFinalityValidationError, PAPER_RAID_FINALITY_COMMITMENT_VERSION_V2,
+};
 pub use state::{
     AppliedCommandRecordV1, ApplyOutcome, AuthorityIdentityV1, AuthoritySetV1,
     ClaimChallengeObjectV1, ClaimResolutionObjectV1, EvaluationCommitmentObjectV1,
