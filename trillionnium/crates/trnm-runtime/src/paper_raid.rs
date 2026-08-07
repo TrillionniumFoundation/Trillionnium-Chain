@@ -2,14 +2,21 @@ use std::collections::BTreeMap;
 
 use serde::{Deserialize, Serialize};
 use trnm_protocol::{
-    account_key, fee_policy_key, research_domain_object_key, AccountV1,
-    CanonicalPaperRaidFinalityTxV2, FeePolicyV1, ACCOUNT_OBJECT_TYPE_V1, FEE_COLLECTOR_ACCOUNT_V1,
-    FEE_POLICY_OBJECT_TYPE_V1, RESEARCH_DOMAIN_OBJECT_TYPE_V1,
+    account_key, fee_policy_key,
+    paper_raid_finality_applied_command_key as protocol_paper_raid_finality_applied_command_key,
+    paper_raid_finality_applied_command_key_v3 as protocol_paper_raid_finality_applied_command_key_v3,
+    paper_raid_finality_commitment_key as protocol_paper_raid_finality_commitment_key,
+    paper_raid_finality_commitment_key_v3 as protocol_paper_raid_finality_commitment_key_v3,
+    research_domain_object_key, AccountV1, CanonicalPaperRaidFinalityTxV2,
+    CanonicalPaperRaidFinalityTxV3, FeePolicyV1, PaperRaidFinalityAppliedRecordV2,
+    PaperRaidFinalityAppliedRecordV3, ACCOUNT_OBJECT_TYPE_V1, FEE_COLLECTOR_ACCOUNT_V1,
+    FEE_POLICY_OBJECT_TYPE_V1, PAPER_RAID_FINALITY_APPLIED_COMMAND_OBJECT_TYPE_V2,
+    PAPER_RAID_FINALITY_APPLIED_COMMAND_OBJECT_TYPE_V3, RESEARCH_DOMAIN_OBJECT_TYPE_V1,
 };
 use trnm_research_protocol::{
     canonical_hash, AuthorityRole, CanonicalCbor, ExternalKey, ObjectRefV1,
-    PaperRaidFinalityCommitmentV2, ResearchDomainObjectV1, ResearchObjectKind,
-    SignedPaperRaidFinalityCommandV2,
+    PaperRaidFinalityCommitmentV2, PaperRaidFinalityCommitmentV3, ResearchDomainObjectV1,
+    ResearchObjectKind, SignedPaperRaidFinalityCommandV2, SignedPaperRaidFinalityCommandV3,
 };
 
 use super::research::load_research_authorities_for_extension;
@@ -20,101 +27,26 @@ use super::{
 
 pub const PAPER_RAID_FINALITY_COMMITMENT_OBJECT_TYPE_V2: &str =
     "trnm.paper-raid.finality-commitment.v2";
-pub const PAPER_RAID_FINALITY_APPLIED_COMMAND_OBJECT_TYPE_V2: &str =
-    "trnm.paper-raid.finality-applied-command.v2";
 pub const PAPER_RAID_FINALITY_SUBMISSION_INDEX_OBJECT_TYPE_V2: &str =
     "trnm.paper-raid.finality-submission-index.v2";
 pub const PAPER_RAID_FINALITY_EVALUATION_INDEX_OBJECT_TYPE_V2: &str =
     "trnm.paper-raid.finality-evaluation-index.v2";
+pub const PAPER_RAID_FINALITY_COMMITMENT_OBJECT_TYPE_V3: &str =
+    "trnm.paper-raid.finality-commitment.v3";
+pub const PAPER_RAID_FINALITY_SUBMISSION_INDEX_OBJECT_TYPE_V3: &str =
+    "trnm.paper-raid.finality-submission-index.v3";
+pub const PAPER_RAID_FINALITY_EVALUATION_INDEX_OBJECT_TYPE_V3: &str =
+    "trnm.paper-raid.finality-evaluation-index.v3";
 
-const PAPER_RAID_FINALITY_APPLIED_RECORD_SCHEMA_V2: &str =
-    "trnm_paper_raid_finality_applied_record_v2";
 const PAPER_RAID_FINALITY_OPERATION_GAS: u64 = 8_000;
 const PAPER_RAID_FINALITY_OBJECT_TOUCH_GAS: u64 = 750;
 const MAX_PAPER_RAID_FINALITY_COMMITMENT_BYTES: usize = 128 * 1024;
-const MAX_PAPER_RAID_FINALITY_APPLIED_RECORD_BYTES: usize = 8 * 1024;
 const MAX_PAPER_RAID_FINALITY_INDEX_RECORD_BYTES: usize = 8 * 1024;
 const MAX_MATCH_EVIDENCE_OBJECT_BYTES: usize = 1024 * 1024;
 // Account JSON size depends on the fee itself. Charging this proven upper bound
 // for both sender and collector writes avoids a gas/serialized-size fixed-point
 // while remaining conservative for the protocol's 192-byte signer limit.
 const MAX_ACCOUNT_MUTATION_METER_BYTES: u64 = 1024;
-
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
-struct PaperRaidFinalityAppliedRecordV2 {
-    schema: String,
-    command_id: String,
-    command_fingerprint_hex: String,
-    commitment_id: String,
-    commitment_object_key_hex: String,
-    payload_hash_hex: String,
-}
-
-impl PaperRaidFinalityAppliedRecordV2 {
-    fn from_signed(
-        signed: &SignedPaperRaidFinalityCommandV2,
-        commitment_object_key_hex: String,
-    ) -> Self {
-        Self {
-            schema: PAPER_RAID_FINALITY_APPLIED_RECORD_SCHEMA_V2.to_string(),
-            command_id: signed.command_id.to_hex(),
-            command_fingerprint_hex: digest_hex(signed.command_fingerprint()),
-            commitment_id: signed.commitment.commitment_id.to_hex(),
-            commitment_object_key_hex,
-            payload_hash_hex: digest_hex(signed.payload_hash()),
-        }
-    }
-
-    fn canonical_bytes(&self) -> Result<Vec<u8>, RuntimeError> {
-        self.validate()?;
-        let bytes = serde_json::to_vec(self)
-            .map_err(|error| RuntimeError::EncodeObject(error.to_string()))?;
-        if bytes.len() > MAX_PAPER_RAID_FINALITY_APPLIED_RECORD_BYTES {
-            return Err(RuntimeError::PaperRaidFinalityState(
-                "Paper Raid finality applied record exceeds the runtime byte limit".to_string(),
-            ));
-        }
-        Ok(bytes)
-    }
-
-    fn from_canonical_bytes(bytes: &[u8]) -> Result<Self, RuntimeError> {
-        if bytes.is_empty() || bytes.len() > MAX_PAPER_RAID_FINALITY_APPLIED_RECORD_BYTES {
-            return Err(RuntimeError::PaperRaidFinalityState(
-                "Paper Raid finality applied record is outside the runtime byte limit".to_string(),
-            ));
-        }
-        let record: Self = serde_json::from_slice(bytes).map_err(|error| {
-            RuntimeError::PaperRaidFinalityState(format!(
-                "decode Paper Raid finality applied record: {error}"
-            ))
-        })?;
-        record.validate()?;
-        let canonical = serde_json::to_vec(&record)
-            .map_err(|error| RuntimeError::EncodeObject(error.to_string()))?;
-        if canonical != bytes {
-            return Err(RuntimeError::PaperRaidFinalityState(
-                "Paper Raid finality applied record is not canonical".to_string(),
-            ));
-        }
-        Ok(record)
-    }
-
-    fn validate(&self) -> Result<(), RuntimeError> {
-        if self.schema != PAPER_RAID_FINALITY_APPLIED_RECORD_SCHEMA_V2
-            || !is_hash_hex(&self.command_id)
-            || !is_hash_hex(&self.command_fingerprint_hex)
-            || !is_hash_hex(&self.commitment_id)
-            || !is_hash_hex(&self.commitment_object_key_hex)
-            || !is_hash_hex(&self.payload_hash_hex)
-        {
-            return Err(RuntimeError::PaperRaidFinalityState(
-                "Paper Raid finality applied record is invalid".to_string(),
-            ));
-        }
-        Ok(())
-    }
-}
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
@@ -205,28 +137,117 @@ impl PaperRaidFinalityIndexRecordV2 {
     }
 }
 
-/// Stable authenticated-state key for one immutable Paper Raid V2 finality
-/// commitment. It is domain-separated from every frozen Research V1 object.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct PaperRaidFinalityIndexRecordV3 {
+    schema: String,
+    index_kind: PaperRaidFinalityIndexKindV2,
+    paper_project_id: String,
+    submission_id: String,
+    evaluation_id: String,
+    commitment_id: String,
+    commitment_object_key_hex: String,
+    payload_hash_hex: String,
+}
+
+impl PaperRaidFinalityIndexRecordV3 {
+    fn from_signed(
+        signed: &SignedPaperRaidFinalityCommandV3,
+        index_kind: PaperRaidFinalityIndexKindV2,
+        commitment_object_key_hex: String,
+    ) -> Self {
+        Self {
+            schema: "trnm_paper_raid_finality_index_record_v3".to_string(),
+            index_kind,
+            paper_project_id: signed.commitment.paper_project_id.to_hex(),
+            submission_id: signed.commitment.submission_id.to_hex(),
+            evaluation_id: signed.commitment.evaluation_id.to_hex(),
+            commitment_id: signed.commitment.commitment_id.to_hex(),
+            commitment_object_key_hex,
+            payload_hash_hex: digest_hex(signed.payload_hash()),
+        }
+    }
+
+    fn canonical_bytes(&self) -> Result<Vec<u8>, RuntimeError> {
+        self.validate()?;
+        let bytes = serde_json::to_vec(self)
+            .map_err(|error| RuntimeError::EncodeObject(error.to_string()))?;
+        if bytes.len() > MAX_PAPER_RAID_FINALITY_INDEX_RECORD_BYTES {
+            return Err(RuntimeError::PaperRaidFinalityState(
+                "Paper Raid V3 finality index record exceeds the runtime byte limit".to_string(),
+            ));
+        }
+        Ok(bytes)
+    }
+
+    fn from_canonical_bytes(bytes: &[u8]) -> Result<Self, RuntimeError> {
+        if bytes.is_empty() || bytes.len() > MAX_PAPER_RAID_FINALITY_INDEX_RECORD_BYTES {
+            return Err(RuntimeError::PaperRaidFinalityState(
+                "Paper Raid V3 finality index record is outside the runtime byte limit".to_string(),
+            ));
+        }
+        let record: Self = serde_json::from_slice(bytes).map_err(|error| {
+            RuntimeError::PaperRaidFinalityState(format!(
+                "decode Paper Raid V3 finality index record: {error}"
+            ))
+        })?;
+        record.validate()?;
+        let canonical = serde_json::to_vec(&record)
+            .map_err(|error| RuntimeError::EncodeObject(error.to_string()))?;
+        if canonical != bytes {
+            return Err(RuntimeError::PaperRaidFinalityState(
+                "Paper Raid V3 finality index record is not canonical".to_string(),
+            ));
+        }
+        Ok(record)
+    }
+
+    fn validate(&self) -> Result<(), RuntimeError> {
+        if self.schema != "trnm_paper_raid_finality_index_record_v3"
+            || !is_hash_hex(&self.paper_project_id)
+            || !is_hash_hex(&self.submission_id)
+            || !is_hash_hex(&self.evaluation_id)
+            || !is_hash_hex(&self.commitment_id)
+            || !is_hash_hex(&self.commitment_object_key_hex)
+            || !is_hash_hex(&self.payload_hash_hex)
+        {
+            return Err(RuntimeError::PaperRaidFinalityState(
+                "Paper Raid V3 finality index record is invalid".to_string(),
+            ));
+        }
+        Ok(())
+    }
+}
+
+/// Runtime error-mapped wrapper around the shared protocol key derivation.
 pub fn paper_raid_finality_commitment_key(
     commitment_id: ExternalKey,
 ) -> Result<String, RuntimeError> {
-    paper_raid_key(
-        "trnm.paper-raid.finality-commitment.object-key.v2",
-        "commitment_id",
-        commitment_id,
-    )
+    protocol_paper_raid_finality_commitment_key(commitment_id)
+        .map_err(|error| RuntimeError::PaperRaidFinalityState(error.to_string()))
 }
 
-/// Stable authenticated-state key for the exact-replay record of one Paper
-/// Raid V2 finality command.
+/// Runtime error-mapped wrapper around the shared protocol replay-key
+/// derivation used independently by Receipt V2 verification.
 pub fn paper_raid_finality_applied_command_key(
     command_id: ExternalKey,
 ) -> Result<String, RuntimeError> {
-    paper_raid_key(
-        "trnm.paper-raid.finality-applied-command.object-key.v2",
-        "command_id",
-        command_id,
-    )
+    protocol_paper_raid_finality_applied_command_key(command_id)
+        .map_err(|error| RuntimeError::PaperRaidFinalityState(error.to_string()))
+}
+
+pub fn paper_raid_finality_commitment_key_v3(
+    commitment_id: ExternalKey,
+) -> Result<String, RuntimeError> {
+    protocol_paper_raid_finality_commitment_key_v3(commitment_id)
+        .map_err(|error| RuntimeError::PaperRaidFinalityState(error.to_string()))
+}
+
+pub fn paper_raid_finality_applied_command_key_v3(
+    command_id: ExternalKey,
+) -> Result<String, RuntimeError> {
+    protocol_paper_raid_finality_applied_command_key_v3(command_id)
+        .map_err(|error| RuntimeError::PaperRaidFinalityState(error.to_string()))
 }
 
 /// Unique scientific-finality index for one Paper submission. A new command or
@@ -258,6 +279,208 @@ pub fn paper_raid_finality_evaluation_index_key(
     )
 }
 
+pub fn paper_raid_finality_submission_index_key_v3(
+    paper_project_id: ExternalKey,
+    submission_id: ExternalKey,
+) -> Result<String, RuntimeError> {
+    ensure_nonzero_key("paper_project_id", paper_project_id)?;
+    ensure_nonzero_key("submission_id", submission_id)?;
+    let mut scope = [0u8; 64];
+    scope[..32].copy_from_slice(paper_project_id.as_bytes());
+    scope[32..].copy_from_slice(submission_id.as_bytes());
+    Ok(digest_hex(canonical_hash(
+        "trnm.paper-raid.finality-submission-index.object-key.v3",
+        &scope,
+    )))
+}
+
+pub fn paper_raid_finality_evaluation_index_key_v3(
+    evaluation_id: ExternalKey,
+) -> Result<String, RuntimeError> {
+    paper_raid_key(
+        "trnm.paper-raid.finality-evaluation-index.object-key.v3",
+        "evaluation_id",
+        evaluation_id,
+    )
+}
+
+#[derive(Clone, Copy)]
+enum PaperRaidFinalityTxRef<'a> {
+    V2(&'a CanonicalPaperRaidFinalityTxV2),
+    V3(&'a CanonicalPaperRaidFinalityTxV3),
+}
+
+impl PaperRaidFinalityTxRef<'_> {
+    fn sender(self) -> String {
+        match self {
+            Self::V2(tx) => tx.sender.clone(),
+            Self::V3(tx) => tx.sender.clone(),
+        }
+    }
+
+    fn nonce(self) -> u64 {
+        match self {
+            Self::V2(tx) => tx.nonce,
+            Self::V3(tx) => tx.nonce,
+        }
+    }
+
+    fn max_gas(self) -> u64 {
+        match self {
+            Self::V2(tx) => tx.max_gas,
+            Self::V3(tx) => tx.max_gas,
+        }
+    }
+
+    fn fee_limit(self) -> u128 {
+        match self {
+            Self::V2(tx) => tx.fee_limit,
+            Self::V3(tx) => tx.fee_limit,
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+enum VersionedPaperRaidFinalityCommand {
+    V2(SignedPaperRaidFinalityCommandV2),
+    V3(SignedPaperRaidFinalityCommandV3),
+}
+
+impl VersionedPaperRaidFinalityCommand {
+    fn chain_id(&self) -> &str {
+        match self {
+            Self::V2(signed) => &signed.chain_id,
+            Self::V3(signed) => &signed.chain_id,
+        }
+    }
+
+    fn signer_did(&self) -> &str {
+        match self {
+            Self::V2(signed) => &signed.signer_did,
+            Self::V3(signed) => &signed.signer_did,
+        }
+    }
+
+    fn signer_role(&self) -> AuthorityRole {
+        match self {
+            Self::V2(signed) => signed.signer_role,
+            Self::V3(signed) => signed.signer_role,
+        }
+    }
+
+    fn public_key(&self) -> [u8; 32] {
+        match self {
+            Self::V2(signed) => signed.public_key,
+            Self::V3(signed) => signed.public_key,
+        }
+    }
+
+    fn command_id(&self) -> ExternalKey {
+        match self {
+            Self::V2(signed) => signed.command_id,
+            Self::V3(signed) => signed.command_id,
+        }
+    }
+
+    fn commitment_id(&self) -> ExternalKey {
+        match self {
+            Self::V2(signed) => signed.commitment.commitment_id,
+            Self::V3(signed) => signed.commitment.commitment_id,
+        }
+    }
+
+    fn paper_project_id(&self) -> ExternalKey {
+        match self {
+            Self::V2(signed) => signed.commitment.paper_project_id,
+            Self::V3(signed) => signed.commitment.paper_project_id,
+        }
+    }
+
+    fn submission_id(&self) -> ExternalKey {
+        match self {
+            Self::V2(signed) => signed.commitment.submission_id,
+            Self::V3(signed) => signed.commitment.submission_id,
+        }
+    }
+
+    fn evaluation_id(&self) -> ExternalKey {
+        match self {
+            Self::V2(signed) => signed.commitment.evaluation_id,
+            Self::V3(signed) => signed.commitment.evaluation_id,
+        }
+    }
+
+    fn match_evidence_ref(&self) -> ObjectRefV1 {
+        match self {
+            Self::V2(signed) => signed.commitment.match_evidence_ref,
+            Self::V3(signed) => signed.commitment.match_evidence_ref,
+        }
+    }
+
+    fn appeal_window_closes_at_unix_s(&self) -> u64 {
+        match self {
+            Self::V2(signed) => signed.commitment.appeal_window_closes_at_unix_s,
+            Self::V3(signed) => signed.commitment.appeal_window_closes_at_unix_s,
+        }
+    }
+
+    fn finalized_at_unix_s(&self) -> u64 {
+        match self {
+            Self::V2(signed) => signed.commitment.finalized_at_unix_s,
+            Self::V3(signed) => signed.commitment.finalized_at_unix_s,
+        }
+    }
+
+    fn any_eligibility(&self) -> bool {
+        match self {
+            Self::V2(signed) => {
+                signed.commitment.score_eligible
+                    || signed.commitment.ranking_eligible
+                    || signed.commitment.reward_eligible
+                    || signed.commitment.economic_eligible
+            }
+            Self::V3(signed) => {
+                signed.commitment.score_eligible
+                    || signed.commitment.ranking_eligible
+                    || signed.commitment.reward_eligible
+                    || signed.commitment.economic_eligible
+            }
+        }
+    }
+
+    fn canonical_bytes(&self) -> Vec<u8> {
+        match self {
+            Self::V2(signed) => signed.canonical_bytes(),
+            Self::V3(signed) => signed.canonical_bytes(),
+        }
+    }
+
+    fn commitment_bytes(&self) -> Vec<u8> {
+        match self {
+            Self::V2(signed) => signed.commitment.canonical_bytes(),
+            Self::V3(signed) => signed.commitment.canonical_bytes(),
+        }
+    }
+
+    fn command_fingerprint(&self) -> [u8; 32] {
+        match self {
+            Self::V2(signed) => signed.command_fingerprint(),
+            Self::V3(signed) => signed.command_fingerprint(),
+        }
+    }
+
+    fn payload_hash(&self) -> [u8; 32] {
+        match self {
+            Self::V2(signed) => signed.payload_hash(),
+            Self::V3(signed) => signed.payload_hash(),
+        }
+    }
+
+    fn is_v3(&self) -> bool {
+        matches!(self, Self::V3(_))
+    }
+}
+
 /// Execute the independent Paper Raid V2 scientific-finality ingress without
 /// changing the frozen generic Research V1 command or snapshot layouts.
 pub fn execute_paper_raid_finality(
@@ -266,10 +489,38 @@ pub fn execute_paper_raid_finality(
     block_time_unix_s: u64,
     view: &dyn StateView,
 ) -> Result<RuntimeReceipt, RuntimeError> {
+    execute_versioned_paper_raid_finality(
+        PaperRaidFinalityTxRef::V2(tx),
+        context,
+        block_time_unix_s,
+        view,
+    )
+}
+
+pub fn execute_paper_raid_finality_v3(
+    tx: &CanonicalPaperRaidFinalityTxV3,
+    context: ExecutionContext<'_>,
+    block_time_unix_s: u64,
+    view: &dyn StateView,
+) -> Result<RuntimeReceipt, RuntimeError> {
+    execute_versioned_paper_raid_finality(
+        PaperRaidFinalityTxRef::V3(tx),
+        context,
+        block_time_unix_s,
+        view,
+    )
+}
+
+fn execute_versioned_paper_raid_finality(
+    tx: PaperRaidFinalityTxRef<'_>,
+    context: ExecutionContext<'_>,
+    block_time_unix_s: u64,
+    view: &dyn StateView,
+) -> Result<RuntimeReceipt, RuntimeError> {
     let signed = validate_transaction_context(tx, context)?;
     for required_unix_s in [
-        signed.commitment.appeal_window_closes_at_unix_s,
-        signed.commitment.finalized_at_unix_s,
+        signed.appeal_window_closes_at_unix_s(),
+        signed.finalized_at_unix_s(),
     ] {
         if block_time_unix_s < required_unix_s {
             return Err(RuntimeError::PaperRaidFinalityTimeNotReached {
@@ -278,11 +529,7 @@ pub fn execute_paper_raid_finality(
             });
         }
     }
-    if signed.commitment.score_eligible
-        || signed.commitment.ranking_eligible
-        || signed.commitment.reward_eligible
-        || signed.commitment.economic_eligible
-    {
+    if signed.any_eligibility() {
         // The V2 commitment wire deliberately reserves future settlement
         // facts, but this candidate has no independent Receipt-V2-verified
         // activation command. Scientific finality cannot self-activate score,
@@ -294,14 +541,15 @@ pub fn execute_paper_raid_finality(
     let authorized = authorities
         .hepta_authorities
         .binary_search_by(|identity| {
-            (&identity.signer_did, identity.public_key)
-                .cmp(&(&signed.signer_did, signed.public_key))
+            (identity.signer_did.as_str(), identity.public_key)
+                .cmp(&(signed.signer_did(), signed.public_key()))
         })
         .is_ok();
     if !authorized {
         return Err(RuntimeError::PaperRaidFinalityUnauthorizedAuthority);
     }
     reject_applied_replay(view, &signed)?;
+    reject_cross_version_collisions(view, &signed)?;
 
     let mut economic_state = RuntimeState::new(view);
     let policy = economic_state.policy()?.value.clone();
@@ -314,10 +562,10 @@ pub fn execute_paper_raid_finality(
     )?;
     let sender_read_bytes = metered_read_or_default(
         view,
-        &account_key(&tx.sender),
+        &account_key(&tx.sender()),
         ACCOUNT_OBJECT_TYPE_V1,
         &serde_json::to_vec(&AccountV1 {
-            account: tx.sender.clone(),
+            account: tx.sender(),
             balance: 0,
             nonce: 0,
         })
@@ -339,62 +587,45 @@ pub fn execute_paper_raid_finality(
     let lower_bound = estimate_resources(context, &policy, lower_state_bytes, lower_touched_keys)?;
     enforce_limits(tx, lower_bound)?;
     let (expected_nonce, available_balance) = account_nonce_and_balance(&mut economic_state, tx)?;
-    if tx.nonce != expected_nonce {
+    if tx.nonce() != expected_nonce {
         return Err(RuntimeError::NonceMismatch {
             expected: expected_nonce,
-            received: tx.nonce,
+            received: tx.nonce(),
         });
     }
     if available_balance < lower_bound.fee_estimate {
         return Err(RuntimeError::InsufficientBalance {
-            account: tx.sender.clone(),
+            account: tx.sender(),
             required: lower_bound.fee_estimate,
             available: available_balance,
         });
     }
 
-    let commitment_key = paper_raid_finality_commitment_key(signed.commitment.commitment_id)?;
-    ensure_new_commitment_absent(view, &signed.commitment, &commitment_key)?;
-    let submission_index_key = paper_raid_finality_submission_index_key(
-        signed.commitment.paper_project_id,
-        signed.commitment.submission_id,
-    )?;
-    ensure_new_index_absent(
-        view,
-        PaperRaidFinalityIndexKindV2::Submission,
-        &submission_index_key,
-    )?;
-    let evaluation_index_key =
-        paper_raid_finality_evaluation_index_key(signed.commitment.evaluation_id)?;
-    ensure_new_index_absent(
-        view,
-        PaperRaidFinalityIndexKindV2::Evaluation,
-        &evaluation_index_key,
-    )?;
-    let match_evidence_bytes =
-        validate_match_evidence_ref(view, signed.commitment.match_evidence_ref)?;
-    let commitment_bytes = signed.commitment.canonical_bytes();
+    let commitment_key = versioned_commitment_key(&signed)?;
+    ensure_new_commitment_absent(view, &signed, &commitment_key)?;
+    let submission_index_key = versioned_submission_index_key(&signed)?;
+    ensure_new_index_absent(view, &signed, PaperRaidFinalityIndexKindV2::Submission)?;
+    let evaluation_index_key = versioned_evaluation_index_key(&signed)?;
+    ensure_new_index_absent(view, &signed, PaperRaidFinalityIndexKindV2::Evaluation)?;
+    let match_evidence_bytes = validate_match_evidence_ref(view, signed.match_evidence_ref())?;
+    let commitment_bytes = signed.commitment_bytes();
     if commitment_bytes.len() > MAX_PAPER_RAID_FINALITY_COMMITMENT_BYTES {
         return Err(RuntimeError::PaperRaidFinalityState(
             "Paper Raid finality commitment exceeds the runtime byte limit".to_string(),
         ));
     }
-    let applied_key = paper_raid_finality_applied_command_key(signed.command_id)?;
-    let applied_record =
-        PaperRaidFinalityAppliedRecordV2::from_signed(&signed, commitment_key.clone());
-    let applied_record_bytes = applied_record.canonical_bytes()?;
-    let submission_index_record = PaperRaidFinalityIndexRecordV2::from_signed(
+    let applied_key = versioned_applied_key(&signed)?;
+    let applied_record_bytes = versioned_applied_record_bytes(&signed)?;
+    let submission_index_record_bytes = versioned_index_record_bytes(
         &signed,
         PaperRaidFinalityIndexKindV2::Submission,
         commitment_key.clone(),
-    );
-    let submission_index_record_bytes = submission_index_record.canonical_bytes()?;
-    let evaluation_index_record = PaperRaidFinalityIndexRecordV2::from_signed(
+    )?;
+    let evaluation_index_record_bytes = versioned_index_record_bytes(
         &signed,
         PaperRaidFinalityIndexKindV2::Evaluation,
         commitment_key.clone(),
-    );
-    let evaluation_index_record_bytes = evaluation_index_record.canonical_bytes()?;
+    )?;
     let collector_read_bytes = metered_read_or_default(
         view,
         &account_key(FEE_COLLECTOR_ACCOUNT_V1),
@@ -408,22 +639,22 @@ pub fn execute_paper_raid_finality(
     )?;
     let commitment_write_bytes = metered_object_bytes(
         &commitment_key,
-        PAPER_RAID_FINALITY_COMMITMENT_OBJECT_TYPE_V2,
+        versioned_commitment_object_type(&signed),
         &commitment_bytes,
     )?;
     let applied_write_bytes = metered_object_bytes(
         &applied_key,
-        PAPER_RAID_FINALITY_APPLIED_COMMAND_OBJECT_TYPE_V2,
+        versioned_applied_object_type(&signed),
         &applied_record_bytes,
     )?;
     let submission_index_write_bytes = metered_object_bytes(
         &submission_index_key,
-        PAPER_RAID_FINALITY_SUBMISSION_INDEX_OBJECT_TYPE_V2,
+        versioned_index_object_type(&signed, PaperRaidFinalityIndexKindV2::Submission),
         &submission_index_record_bytes,
     )?;
     let evaluation_index_write_bytes = metered_object_bytes(
         &evaluation_index_key,
-        PAPER_RAID_FINALITY_EVALUATION_INDEX_OBJECT_TYPE_V2,
+        versioned_index_object_type(&signed, PaperRaidFinalityIndexKindV2::Evaluation),
         &evaluation_index_record_bytes,
     )?;
     let account_write_bytes = MAX_ACCOUNT_MUTATION_METER_BYTES
@@ -448,43 +679,45 @@ pub fn execute_paper_raid_finality(
     enforce_limits(tx, estimate)?;
     if available_balance < estimate.fee_estimate {
         return Err(RuntimeError::InsufficientBalance {
-            account: tx.sender.clone(),
+            account: tx.sender(),
             required: estimate.fee_estimate,
             available: available_balance,
         });
     }
 
-    economic_state.debit(&tx.sender, estimate.fee_estimate)?;
+    economic_state.debit(&tx.sender(), estimate.fee_estimate)?;
     economic_state.credit(FEE_COLLECTOR_ACCOUNT_V1, estimate.fee_estimate)?;
-    let sender = economic_state.account(&tx.sender)?;
-    sender.value.nonce = tx.nonce;
+    let sender = economic_state.account(&tx.sender())?;
+    sender.value.nonce = tx.nonce();
     sender.dirty = true;
 
     let mut mutations = economic_state.into_mutations()?;
     mutations.push(RuntimeMutation {
         object_key_hex: commitment_key.clone(),
-        object_type: PAPER_RAID_FINALITY_COMMITMENT_OBJECT_TYPE_V2.to_string(),
+        object_type: versioned_commitment_object_type(&signed).to_string(),
         expected_version: None,
         next_version: 1,
         value_bytes: commitment_bytes,
     });
     mutations.push(RuntimeMutation {
         object_key_hex: applied_key.clone(),
-        object_type: PAPER_RAID_FINALITY_APPLIED_COMMAND_OBJECT_TYPE_V2.to_string(),
+        object_type: versioned_applied_object_type(&signed).to_string(),
         expected_version: None,
         next_version: 1,
         value_bytes: applied_record_bytes,
     });
     mutations.push(RuntimeMutation {
         object_key_hex: submission_index_key,
-        object_type: PAPER_RAID_FINALITY_SUBMISSION_INDEX_OBJECT_TYPE_V2.to_string(),
+        object_type: versioned_index_object_type(&signed, PaperRaidFinalityIndexKindV2::Submission)
+            .to_string(),
         expected_version: None,
         next_version: 1,
         value_bytes: submission_index_record_bytes,
     });
     mutations.push(RuntimeMutation {
         object_key_hex: evaluation_index_key,
-        object_type: PAPER_RAID_FINALITY_EVALUATION_INDEX_OBJECT_TYPE_V2.to_string(),
+        object_type: versioned_index_object_type(&signed, PaperRaidFinalityIndexKindV2::Evaluation)
+            .to_string(),
         expected_version: None,
         next_version: 1,
         value_bytes: evaluation_index_record_bytes,
@@ -501,24 +734,37 @@ pub fn execute_paper_raid_finality(
 }
 
 fn validate_transaction_context(
-    tx: &CanonicalPaperRaidFinalityTxV2,
+    tx: PaperRaidFinalityTxRef<'_>,
     context: ExecutionContext<'_>,
-) -> Result<SignedPaperRaidFinalityCommandV2, RuntimeError> {
-    tx.validate()
-        .map_err(|error| RuntimeError::Protocol(error.to_string()))?;
-    if tx.sender != context.signer_id {
+) -> Result<VersionedPaperRaidFinalityCommand, RuntimeError> {
+    let signed = match tx {
+        PaperRaidFinalityTxRef::V2(tx) => {
+            tx.validate()
+                .map_err(|error| RuntimeError::Protocol(error.to_string()))?;
+            VersionedPaperRaidFinalityCommand::V2(
+                tx.signed_paper_raid_finality_command()
+                    .map_err(|error| RuntimeError::Protocol(error.to_string()))?,
+            )
+        }
+        PaperRaidFinalityTxRef::V3(tx) => {
+            tx.validate()
+                .map_err(|error| RuntimeError::Protocol(error.to_string()))?;
+            VersionedPaperRaidFinalityCommand::V3(
+                tx.signed_paper_raid_finality_command()
+                    .map_err(|error| RuntimeError::Protocol(error.to_string()))?,
+            )
+        }
+    };
+    if tx.sender() != context.signer_id {
         return Err(RuntimeError::SenderMismatch);
     }
-    if tx.sender == FEE_COLLECTOR_ACCOUNT_V1 {
+    if tx.sender() == FEE_COLLECTOR_ACCOUNT_V1 {
         return Err(RuntimeError::ReservedSystemAccount);
     }
-    let signed = tx
-        .signed_paper_raid_finality_command()
-        .map_err(|error| RuntimeError::Protocol(error.to_string()))?;
-    if signed.chain_id != context.chain_id {
+    if signed.chain_id() != context.chain_id {
         return Err(RuntimeError::PaperRaidFinalityChainMismatch);
     }
-    if signed.signer_role != AuthorityRole::HeptaAuthority || context.signer_role != "hepta" {
+    if signed.signer_role() != AuthorityRole::HeptaAuthority || context.signer_role != "hepta" {
         return Err(RuntimeError::PaperRaidFinalityRoleMismatch);
     }
     Ok(signed)
@@ -526,9 +772,9 @@ fn validate_transaction_context(
 
 fn account_nonce_and_balance(
     state: &mut RuntimeState<'_>,
-    tx: &CanonicalPaperRaidFinalityTxV2,
+    tx: PaperRaidFinalityTxRef<'_>,
 ) -> Result<(u64, u128), RuntimeError> {
-    let sender = state.account(&tx.sender)?;
+    let sender = state.account(&tx.sender())?;
     Ok((
         sender
             .value
@@ -572,25 +818,35 @@ fn estimate_resources(
 }
 
 fn enforce_limits(
-    tx: &CanonicalPaperRaidFinalityTxV2,
+    tx: PaperRaidFinalityTxRef<'_>,
     estimate: ResourceEstimate,
 ) -> Result<(), RuntimeError> {
-    if estimate.gas_used > tx.max_gas {
+    if estimate.gas_used > tx.max_gas() {
         return Err(RuntimeError::GasLimitExceeded {
             required: estimate.gas_used,
-            limit: tx.max_gas,
+            limit: tx.max_gas(),
         });
     }
-    if estimate.fee_estimate > tx.fee_limit {
+    if estimate.fee_estimate > tx.fee_limit() {
         return Err(RuntimeError::FeeLimitExceeded {
             required: estimate.fee_estimate,
-            limit: tx.fee_limit,
+            limit: tx.fee_limit(),
         });
     }
     Ok(())
 }
 
 fn reject_applied_replay(
+    view: &dyn StateView,
+    signed: &VersionedPaperRaidFinalityCommand,
+) -> Result<(), RuntimeError> {
+    match signed {
+        VersionedPaperRaidFinalityCommand::V2(signed) => reject_applied_replay_v2(view, signed),
+        VersionedPaperRaidFinalityCommand::V3(signed) => reject_applied_replay_v3(view, signed),
+    }
+}
+
+fn reject_applied_replay_v2(
     view: &dyn StateView,
     signed: &SignedPaperRaidFinalityCommandV2,
 ) -> Result<(), RuntimeError> {
@@ -667,7 +923,398 @@ fn reject_applied_replay(
     Err(RuntimeError::PaperRaidFinalityCommandReplay)
 }
 
+fn reject_applied_replay_v3(
+    view: &dyn StateView,
+    signed: &SignedPaperRaidFinalityCommandV3,
+) -> Result<(), RuntimeError> {
+    let applied_key = paper_raid_finality_applied_command_key_v3(signed.command_id)?;
+    let Some(stored) = view.get(&applied_key) else {
+        return Ok(());
+    };
+    ensure_type(
+        &applied_key,
+        &stored,
+        PAPER_RAID_FINALITY_APPLIED_COMMAND_OBJECT_TYPE_V3,
+    )?;
+    if stored.version != 1 {
+        return Err(RuntimeError::PaperRaidFinalityMirrorMismatch(applied_key));
+    }
+    let record = PaperRaidFinalityAppliedRecordV3::from_canonical_bytes(&stored.value_bytes)
+        .map_err(|_| RuntimeError::PaperRaidFinalityMirrorMismatch(applied_key.clone()))?;
+    if record.command_id != signed.command_id.to_hex() {
+        return Err(RuntimeError::PaperRaidFinalityMirrorMismatch(applied_key));
+    }
+    if record.command_fingerprint_hex != digest_hex(signed.command_fingerprint()) {
+        return Err(RuntimeError::PaperRaidFinalityAlteredReplay);
+    }
+
+    let commitment_key = paper_raid_finality_commitment_key_v3(signed.commitment.commitment_id)?;
+    if record.commitment_id != signed.commitment.commitment_id.to_hex()
+        || record.commitment_object_key_hex != commitment_key
+        || record.payload_hash_hex != digest_hex(signed.payload_hash())
+    {
+        return Err(RuntimeError::PaperRaidFinalityMirrorMismatch(applied_key));
+    }
+    let commitment = view
+        .get(&commitment_key)
+        .ok_or_else(|| RuntimeError::PaperRaidFinalityMirrorMismatch(commitment_key.clone()))?;
+    ensure_type(
+        &commitment_key,
+        &commitment,
+        PAPER_RAID_FINALITY_COMMITMENT_OBJECT_TYPE_V3,
+    )?;
+    if commitment.version != 1
+        || commitment.value_bytes.len() > MAX_PAPER_RAID_FINALITY_COMMITMENT_BYTES
+    {
+        return Err(RuntimeError::PaperRaidFinalityMirrorMismatch(
+            commitment_key,
+        ));
+    }
+    let decoded = PaperRaidFinalityCommitmentV3::from_canonical_bytes(&commitment.value_bytes)
+        .map_err(|_| RuntimeError::PaperRaidFinalityMirrorMismatch(commitment_key.clone()))?;
+    if decoded != signed.commitment {
+        return Err(RuntimeError::PaperRaidFinalityMirrorMismatch(
+            commitment_key,
+        ));
+    }
+    let submission_index_key = paper_raid_finality_submission_index_key_v3(
+        signed.commitment.paper_project_id,
+        signed.commitment.submission_id,
+    )?;
+    validate_expected_index_mirror_v3(
+        view,
+        signed,
+        PaperRaidFinalityIndexKindV2::Submission,
+        &submission_index_key,
+        &commitment_key,
+    )?;
+    let evaluation_index_key =
+        paper_raid_finality_evaluation_index_key_v3(signed.commitment.evaluation_id)?;
+    validate_expected_index_mirror_v3(
+        view,
+        signed,
+        PaperRaidFinalityIndexKindV2::Evaluation,
+        &evaluation_index_key,
+        &commitment_key,
+    )?;
+    Err(RuntimeError::PaperRaidFinalityCommandReplay)
+}
+
+fn versioned_commitment_key(
+    signed: &VersionedPaperRaidFinalityCommand,
+) -> Result<String, RuntimeError> {
+    match signed {
+        VersionedPaperRaidFinalityCommand::V2(signed) => {
+            paper_raid_finality_commitment_key(signed.commitment.commitment_id)
+        }
+        VersionedPaperRaidFinalityCommand::V3(signed) => {
+            paper_raid_finality_commitment_key_v3(signed.commitment.commitment_id)
+        }
+    }
+}
+
+fn versioned_applied_key(
+    signed: &VersionedPaperRaidFinalityCommand,
+) -> Result<String, RuntimeError> {
+    match signed {
+        VersionedPaperRaidFinalityCommand::V2(signed) => {
+            paper_raid_finality_applied_command_key(signed.command_id)
+        }
+        VersionedPaperRaidFinalityCommand::V3(signed) => {
+            paper_raid_finality_applied_command_key_v3(signed.command_id)
+        }
+    }
+}
+
+fn versioned_submission_index_key(
+    signed: &VersionedPaperRaidFinalityCommand,
+) -> Result<String, RuntimeError> {
+    if signed.is_v3() {
+        paper_raid_finality_submission_index_key_v3(
+            signed.paper_project_id(),
+            signed.submission_id(),
+        )
+    } else {
+        paper_raid_finality_submission_index_key(signed.paper_project_id(), signed.submission_id())
+    }
+}
+
+fn versioned_evaluation_index_key(
+    signed: &VersionedPaperRaidFinalityCommand,
+) -> Result<String, RuntimeError> {
+    if signed.is_v3() {
+        paper_raid_finality_evaluation_index_key_v3(signed.evaluation_id())
+    } else {
+        paper_raid_finality_evaluation_index_key(signed.evaluation_id())
+    }
+}
+
+fn versioned_commitment_object_type(signed: &VersionedPaperRaidFinalityCommand) -> &'static str {
+    if signed.is_v3() {
+        PAPER_RAID_FINALITY_COMMITMENT_OBJECT_TYPE_V3
+    } else {
+        PAPER_RAID_FINALITY_COMMITMENT_OBJECT_TYPE_V2
+    }
+}
+
+fn versioned_applied_object_type(signed: &VersionedPaperRaidFinalityCommand) -> &'static str {
+    if signed.is_v3() {
+        PAPER_RAID_FINALITY_APPLIED_COMMAND_OBJECT_TYPE_V3
+    } else {
+        PAPER_RAID_FINALITY_APPLIED_COMMAND_OBJECT_TYPE_V2
+    }
+}
+
+fn versioned_index_object_type(
+    signed: &VersionedPaperRaidFinalityCommand,
+    index_kind: PaperRaidFinalityIndexKindV2,
+) -> &'static str {
+    if signed.is_v3() {
+        paper_raid_index_object_type_v3(index_kind)
+    } else {
+        paper_raid_index_object_type(index_kind)
+    }
+}
+
+fn versioned_applied_record_bytes(
+    signed: &VersionedPaperRaidFinalityCommand,
+) -> Result<Vec<u8>, RuntimeError> {
+    match signed {
+        VersionedPaperRaidFinalityCommand::V2(signed) => {
+            PaperRaidFinalityAppliedRecordV2::from_signed(signed)
+                .and_then(|record| record.canonical_bytes())
+                .map_err(|error| RuntimeError::PaperRaidFinalityState(error.to_string()))
+        }
+        VersionedPaperRaidFinalityCommand::V3(signed) => {
+            PaperRaidFinalityAppliedRecordV3::from_signed(signed)
+                .and_then(|record| record.canonical_bytes())
+                .map_err(|error| RuntimeError::PaperRaidFinalityState(error.to_string()))
+        }
+    }
+}
+
+fn versioned_index_record_bytes(
+    signed: &VersionedPaperRaidFinalityCommand,
+    index_kind: PaperRaidFinalityIndexKindV2,
+    commitment_key: String,
+) -> Result<Vec<u8>, RuntimeError> {
+    match signed {
+        VersionedPaperRaidFinalityCommand::V2(signed) => {
+            PaperRaidFinalityIndexRecordV2::from_signed(signed, index_kind, commitment_key)
+                .canonical_bytes()
+        }
+        VersionedPaperRaidFinalityCommand::V3(signed) => {
+            PaperRaidFinalityIndexRecordV3::from_signed(signed, index_kind, commitment_key)
+                .canonical_bytes()
+        }
+    }
+}
+
+fn reject_cross_version_collisions(
+    view: &dyn StateView,
+    signed: &VersionedPaperRaidFinalityCommand,
+) -> Result<(), RuntimeError> {
+    match signed {
+        VersionedPaperRaidFinalityCommand::V2(signed) => {
+            validate_opposite_applied_v3(view, signed.command_id)?;
+            validate_opposite_commitment_v3(view, signed.commitment.commitment_id)?;
+            ensure_new_index_absent_v3(
+                view,
+                PaperRaidFinalityIndexKindV2::Submission,
+                &paper_raid_finality_submission_index_key_v3(
+                    signed.commitment.paper_project_id,
+                    signed.commitment.submission_id,
+                )?,
+            )?;
+            ensure_new_index_absent_v3(
+                view,
+                PaperRaidFinalityIndexKindV2::Evaluation,
+                &paper_raid_finality_evaluation_index_key_v3(signed.commitment.evaluation_id)?,
+            )?;
+        }
+        VersionedPaperRaidFinalityCommand::V3(signed) => {
+            validate_opposite_applied_v2(view, signed.command_id)?;
+            validate_opposite_commitment_v2(view, signed.commitment.commitment_id)?;
+            ensure_new_index_absent_v2(
+                view,
+                PaperRaidFinalityIndexKindV2::Submission,
+                &paper_raid_finality_submission_index_key(
+                    signed.commitment.paper_project_id,
+                    signed.commitment.submission_id,
+                )?,
+            )?;
+            ensure_new_index_absent_v2(
+                view,
+                PaperRaidFinalityIndexKindV2::Evaluation,
+                &paper_raid_finality_evaluation_index_key(signed.commitment.evaluation_id)?,
+            )?;
+        }
+    }
+    Ok(())
+}
+
+fn validate_opposite_applied_v2(
+    view: &dyn StateView,
+    command_id: ExternalKey,
+) -> Result<(), RuntimeError> {
+    let key = paper_raid_finality_applied_command_key(command_id)?;
+    let Some(stored) = view.get(&key) else {
+        return Ok(());
+    };
+    ensure_type(
+        &key,
+        &stored,
+        PAPER_RAID_FINALITY_APPLIED_COMMAND_OBJECT_TYPE_V2,
+    )?;
+    if stored.version != 1 {
+        return Err(RuntimeError::PaperRaidFinalityMirrorMismatch(key));
+    }
+    let record = PaperRaidFinalityAppliedRecordV2::from_canonical_bytes(&stored.value_bytes)
+        .map_err(|_| RuntimeError::PaperRaidFinalityMirrorMismatch(key.clone()))?;
+    if record.command_id != command_id.to_hex() {
+        return Err(RuntimeError::PaperRaidFinalityMirrorMismatch(key));
+    }
+    validate_record_commitment_v2(view, &record)?;
+    Err(RuntimeError::PaperRaidFinalityCommandReplay)
+}
+
+fn validate_opposite_applied_v3(
+    view: &dyn StateView,
+    command_id: ExternalKey,
+) -> Result<(), RuntimeError> {
+    let key = paper_raid_finality_applied_command_key_v3(command_id)?;
+    let Some(stored) = view.get(&key) else {
+        return Ok(());
+    };
+    ensure_type(
+        &key,
+        &stored,
+        PAPER_RAID_FINALITY_APPLIED_COMMAND_OBJECT_TYPE_V3,
+    )?;
+    if stored.version != 1 {
+        return Err(RuntimeError::PaperRaidFinalityMirrorMismatch(key));
+    }
+    let record = PaperRaidFinalityAppliedRecordV3::from_canonical_bytes(&stored.value_bytes)
+        .map_err(|_| RuntimeError::PaperRaidFinalityMirrorMismatch(key.clone()))?;
+    if record.command_id != command_id.to_hex() {
+        return Err(RuntimeError::PaperRaidFinalityMirrorMismatch(key));
+    }
+    validate_record_commitment_v3(view, &record)?;
+    Err(RuntimeError::PaperRaidFinalityCommandReplay)
+}
+
+fn validate_record_commitment_v2(
+    view: &dyn StateView,
+    record: &PaperRaidFinalityAppliedRecordV2,
+) -> Result<(), RuntimeError> {
+    let commitment_id = external_key_from_hash_hex(&record.commitment_id)
+        .ok_or_else(|| RuntimeError::PaperRaidFinalityState("invalid V2 commitment id".into()))?;
+    let key = paper_raid_finality_commitment_key(commitment_id)?;
+    if key != record.commitment_object_key_hex {
+        return Err(RuntimeError::PaperRaidFinalityMirrorMismatch(key));
+    }
+    let stored = view
+        .get(&key)
+        .ok_or_else(|| RuntimeError::PaperRaidFinalityMirrorMismatch(key.clone()))?;
+    ensure_type(&key, &stored, PAPER_RAID_FINALITY_COMMITMENT_OBJECT_TYPE_V2)?;
+    if stored.version != 1 || stored.value_bytes.len() > MAX_PAPER_RAID_FINALITY_COMMITMENT_BYTES {
+        return Err(RuntimeError::PaperRaidFinalityMirrorMismatch(key));
+    }
+    let commitment = PaperRaidFinalityCommitmentV2::from_canonical_bytes(&stored.value_bytes)
+        .map_err(|_| RuntimeError::PaperRaidFinalityMirrorMismatch(key.clone()))?;
+    if commitment.commitment_id != commitment_id
+        || digest_hex(commitment.canonical_hash("trnm-paper-raid-finality-commitment-v2"))
+            != record.payload_hash_hex
+    {
+        return Err(RuntimeError::PaperRaidFinalityMirrorMismatch(key));
+    }
+    Ok(())
+}
+
+fn validate_record_commitment_v3(
+    view: &dyn StateView,
+    record: &PaperRaidFinalityAppliedRecordV3,
+) -> Result<(), RuntimeError> {
+    let commitment_id = external_key_from_hash_hex(&record.commitment_id)
+        .ok_or_else(|| RuntimeError::PaperRaidFinalityState("invalid V3 commitment id".into()))?;
+    let key = paper_raid_finality_commitment_key_v3(commitment_id)?;
+    if key != record.commitment_object_key_hex {
+        return Err(RuntimeError::PaperRaidFinalityMirrorMismatch(key));
+    }
+    let stored = view
+        .get(&key)
+        .ok_or_else(|| RuntimeError::PaperRaidFinalityMirrorMismatch(key.clone()))?;
+    ensure_type(&key, &stored, PAPER_RAID_FINALITY_COMMITMENT_OBJECT_TYPE_V3)?;
+    if stored.version != 1 || stored.value_bytes.len() > MAX_PAPER_RAID_FINALITY_COMMITMENT_BYTES {
+        return Err(RuntimeError::PaperRaidFinalityMirrorMismatch(key));
+    }
+    let commitment = PaperRaidFinalityCommitmentV3::from_canonical_bytes(&stored.value_bytes)
+        .map_err(|_| RuntimeError::PaperRaidFinalityMirrorMismatch(key.clone()))?;
+    if commitment.commitment_id != commitment_id
+        || digest_hex(commitment.canonical_hash("trnm-paper-raid-finality-commitment-v3"))
+            != record.payload_hash_hex
+    {
+        return Err(RuntimeError::PaperRaidFinalityMirrorMismatch(key));
+    }
+    Ok(())
+}
+
+fn validate_opposite_commitment_v2(
+    view: &dyn StateView,
+    commitment_id: ExternalKey,
+) -> Result<(), RuntimeError> {
+    let key = paper_raid_finality_commitment_key(commitment_id)?;
+    let Some(stored) = view.get(&key) else {
+        return Ok(());
+    };
+    ensure_type(&key, &stored, PAPER_RAID_FINALITY_COMMITMENT_OBJECT_TYPE_V2)?;
+    if stored.version != 1 || stored.value_bytes.len() > MAX_PAPER_RAID_FINALITY_COMMITMENT_BYTES {
+        return Err(RuntimeError::PaperRaidFinalityMirrorMismatch(key));
+    }
+    let decoded = PaperRaidFinalityCommitmentV2::from_canonical_bytes(&stored.value_bytes)
+        .map_err(|_| RuntimeError::PaperRaidFinalityMirrorMismatch(key.clone()))?;
+    if decoded.commitment_id != commitment_id {
+        return Err(RuntimeError::PaperRaidFinalityMirrorMismatch(key));
+    }
+    Err(RuntimeError::PaperRaidFinalityCommitmentExists)
+}
+
+fn validate_opposite_commitment_v3(
+    view: &dyn StateView,
+    commitment_id: ExternalKey,
+) -> Result<(), RuntimeError> {
+    let key = paper_raid_finality_commitment_key_v3(commitment_id)?;
+    let Some(stored) = view.get(&key) else {
+        return Ok(());
+    };
+    ensure_type(&key, &stored, PAPER_RAID_FINALITY_COMMITMENT_OBJECT_TYPE_V3)?;
+    if stored.version != 1 || stored.value_bytes.len() > MAX_PAPER_RAID_FINALITY_COMMITMENT_BYTES {
+        return Err(RuntimeError::PaperRaidFinalityMirrorMismatch(key));
+    }
+    let decoded = PaperRaidFinalityCommitmentV3::from_canonical_bytes(&stored.value_bytes)
+        .map_err(|_| RuntimeError::PaperRaidFinalityMirrorMismatch(key.clone()))?;
+    if decoded.commitment_id != commitment_id {
+        return Err(RuntimeError::PaperRaidFinalityMirrorMismatch(key));
+    }
+    Err(RuntimeError::PaperRaidFinalityCommitmentExists)
+}
+
 fn ensure_new_commitment_absent(
+    view: &dyn StateView,
+    signed: &VersionedPaperRaidFinalityCommand,
+    commitment_key: &str,
+) -> Result<(), RuntimeError> {
+    match signed {
+        VersionedPaperRaidFinalityCommand::V2(signed) => {
+            ensure_new_commitment_absent_v2(view, &signed.commitment, commitment_key)
+        }
+        VersionedPaperRaidFinalityCommand::V3(signed) => {
+            ensure_new_commitment_absent_v3(view, &signed.commitment, commitment_key)
+        }
+    }
+}
+
+fn ensure_new_commitment_absent_v2(
     view: &dyn StateView,
     expected: &PaperRaidFinalityCommitmentV2,
     commitment_key: &str,
@@ -695,7 +1342,67 @@ fn ensure_new_commitment_absent(
     Err(RuntimeError::PaperRaidFinalityCommitmentExists)
 }
 
+fn ensure_new_commitment_absent_v3(
+    view: &dyn StateView,
+    expected: &PaperRaidFinalityCommitmentV3,
+    commitment_key: &str,
+) -> Result<(), RuntimeError> {
+    let Some(stored) = view.get(commitment_key) else {
+        return Ok(());
+    };
+    ensure_type(
+        commitment_key,
+        &stored,
+        PAPER_RAID_FINALITY_COMMITMENT_OBJECT_TYPE_V3,
+    )?;
+    if stored.version != 1 || stored.value_bytes.len() > MAX_PAPER_RAID_FINALITY_COMMITMENT_BYTES {
+        return Err(RuntimeError::PaperRaidFinalityMirrorMismatch(
+            commitment_key.to_string(),
+        ));
+    }
+    let decoded = PaperRaidFinalityCommitmentV3::from_canonical_bytes(&stored.value_bytes)
+        .map_err(|_| RuntimeError::PaperRaidFinalityMirrorMismatch(commitment_key.to_string()))?;
+    if decoded.commitment_id != expected.commitment_id {
+        return Err(RuntimeError::PaperRaidFinalityMirrorMismatch(
+            commitment_key.to_string(),
+        ));
+    }
+    Err(RuntimeError::PaperRaidFinalityCommitmentExists)
+}
+
 fn ensure_new_index_absent(
+    view: &dyn StateView,
+    signed: &VersionedPaperRaidFinalityCommand,
+    index_kind: PaperRaidFinalityIndexKindV2,
+) -> Result<(), RuntimeError> {
+    if signed.is_v3() {
+        let key = match index_kind {
+            PaperRaidFinalityIndexKindV2::Submission => {
+                paper_raid_finality_submission_index_key_v3(
+                    signed.paper_project_id(),
+                    signed.submission_id(),
+                )?
+            }
+            PaperRaidFinalityIndexKindV2::Evaluation => {
+                paper_raid_finality_evaluation_index_key_v3(signed.evaluation_id())?
+            }
+        };
+        ensure_new_index_absent_v3(view, index_kind, &key)
+    } else {
+        let key = match index_kind {
+            PaperRaidFinalityIndexKindV2::Submission => paper_raid_finality_submission_index_key(
+                signed.paper_project_id(),
+                signed.submission_id(),
+            )?,
+            PaperRaidFinalityIndexKindV2::Evaluation => {
+                paper_raid_finality_evaluation_index_key(signed.evaluation_id())?
+            }
+        };
+        ensure_new_index_absent_v2(view, index_kind, &key)
+    }
+}
+
+fn ensure_new_index_absent_v2(
     view: &dyn StateView,
     index_kind: PaperRaidFinalityIndexKindV2,
     index_key: &str,
@@ -704,6 +1411,21 @@ fn ensure_new_index_absent(
         return Ok(());
     };
     validate_stored_index_mirror(view, index_kind, index_key, &stored)?;
+    Err(match index_kind {
+        PaperRaidFinalityIndexKindV2::Submission => RuntimeError::PaperRaidFinalitySubmissionExists,
+        PaperRaidFinalityIndexKindV2::Evaluation => RuntimeError::PaperRaidFinalityEvaluationExists,
+    })
+}
+
+fn ensure_new_index_absent_v3(
+    view: &dyn StateView,
+    index_kind: PaperRaidFinalityIndexKindV2,
+    index_key: &str,
+) -> Result<(), RuntimeError> {
+    let Some(stored) = view.get(index_key) else {
+        return Ok(());
+    };
+    validate_stored_index_mirror_v3(view, index_kind, index_key, &stored)?;
     Err(match index_kind {
         PaperRaidFinalityIndexKindV2::Submission => RuntimeError::PaperRaidFinalitySubmissionExists,
         PaperRaidFinalityIndexKindV2::Evaluation => RuntimeError::PaperRaidFinalityEvaluationExists,
@@ -723,6 +1445,27 @@ fn validate_expected_index_mirror(
     let record = validate_stored_index_mirror(view, index_kind, index_key, &stored)?;
     let expected =
         PaperRaidFinalityIndexRecordV2::from_signed(signed, index_kind, commitment_key.to_string());
+    if record != expected {
+        return Err(RuntimeError::PaperRaidFinalityMirrorMismatch(
+            index_key.to_string(),
+        ));
+    }
+    Ok(())
+}
+
+fn validate_expected_index_mirror_v3(
+    view: &dyn StateView,
+    signed: &SignedPaperRaidFinalityCommandV3,
+    index_kind: PaperRaidFinalityIndexKindV2,
+    index_key: &str,
+    commitment_key: &str,
+) -> Result<(), RuntimeError> {
+    let stored = view
+        .get(index_key)
+        .ok_or_else(|| RuntimeError::PaperRaidFinalityMirrorMismatch(index_key.to_string()))?;
+    let record = validate_stored_index_mirror_v3(view, index_kind, index_key, &stored)?;
+    let expected =
+        PaperRaidFinalityIndexRecordV3::from_signed(signed, index_kind, commitment_key.to_string());
     if record != expected {
         return Err(RuntimeError::PaperRaidFinalityMirrorMismatch(
             index_key.to_string(),
@@ -802,6 +1545,81 @@ fn validate_stored_index_mirror(
     Ok(record)
 }
 
+fn validate_stored_index_mirror_v3(
+    view: &dyn StateView,
+    index_kind: PaperRaidFinalityIndexKindV2,
+    index_key: &str,
+    stored: &StateObject,
+) -> Result<PaperRaidFinalityIndexRecordV3, RuntimeError> {
+    ensure_type(
+        index_key,
+        stored,
+        paper_raid_index_object_type_v3(index_kind),
+    )
+    .map_err(|_| paper_raid_mirror_error(index_key))?;
+    if stored.version != 1 || stored.value_bytes.len() > MAX_PAPER_RAID_FINALITY_INDEX_RECORD_BYTES
+    {
+        return Err(paper_raid_mirror_error(index_key));
+    }
+    let record = PaperRaidFinalityIndexRecordV3::from_canonical_bytes(&stored.value_bytes)
+        .map_err(|_| paper_raid_mirror_error(index_key))?;
+    if record.index_kind != index_kind {
+        return Err(paper_raid_mirror_error(index_key));
+    }
+    let paper_project_id = external_key_from_hash_hex(&record.paper_project_id)
+        .ok_or_else(|| paper_raid_mirror_error(index_key))?;
+    let submission_id = external_key_from_hash_hex(&record.submission_id)
+        .ok_or_else(|| paper_raid_mirror_error(index_key))?;
+    let evaluation_id = external_key_from_hash_hex(&record.evaluation_id)
+        .ok_or_else(|| paper_raid_mirror_error(index_key))?;
+    let commitment_id = external_key_from_hash_hex(&record.commitment_id)
+        .ok_or_else(|| paper_raid_mirror_error(index_key))?;
+    let expected_index_key = match index_kind {
+        PaperRaidFinalityIndexKindV2::Submission => {
+            paper_raid_finality_submission_index_key_v3(paper_project_id, submission_id)
+        }
+        PaperRaidFinalityIndexKindV2::Evaluation => {
+            paper_raid_finality_evaluation_index_key_v3(evaluation_id)
+        }
+    }
+    .map_err(|_| paper_raid_mirror_error(index_key))?;
+    if expected_index_key != index_key {
+        return Err(paper_raid_mirror_error(index_key));
+    }
+    let commitment_key = paper_raid_finality_commitment_key_v3(commitment_id)
+        .map_err(|_| paper_raid_mirror_error(index_key))?;
+    if commitment_key != record.commitment_object_key_hex {
+        return Err(paper_raid_mirror_error(index_key));
+    }
+    let commitment_object = view
+        .get(&commitment_key)
+        .ok_or_else(|| paper_raid_mirror_error(index_key))?;
+    ensure_type(
+        &commitment_key,
+        &commitment_object,
+        PAPER_RAID_FINALITY_COMMITMENT_OBJECT_TYPE_V3,
+    )
+    .map_err(|_| paper_raid_mirror_error(index_key))?;
+    if commitment_object.version != 1
+        || commitment_object.value_bytes.len() > MAX_PAPER_RAID_FINALITY_COMMITMENT_BYTES
+    {
+        return Err(paper_raid_mirror_error(index_key));
+    }
+    let commitment =
+        PaperRaidFinalityCommitmentV3::from_canonical_bytes(&commitment_object.value_bytes)
+            .map_err(|_| paper_raid_mirror_error(index_key))?;
+    if commitment.paper_project_id != paper_project_id
+        || commitment.submission_id != submission_id
+        || commitment.evaluation_id != evaluation_id
+        || commitment.commitment_id != commitment_id
+        || digest_hex(commitment.canonical_hash("trnm-paper-raid-finality-commitment-v3"))
+            != record.payload_hash_hex
+    {
+        return Err(paper_raid_mirror_error(index_key));
+    }
+    Ok(record)
+}
+
 fn paper_raid_mirror_error(index_key: &str) -> RuntimeError {
     RuntimeError::PaperRaidFinalityMirrorMismatch(index_key.to_string())
 }
@@ -813,6 +1631,17 @@ fn paper_raid_index_object_type(index_kind: PaperRaidFinalityIndexKindV2) -> &'s
         }
         PaperRaidFinalityIndexKindV2::Evaluation => {
             PAPER_RAID_FINALITY_EVALUATION_INDEX_OBJECT_TYPE_V2
+        }
+    }
+}
+
+fn paper_raid_index_object_type_v3(index_kind: PaperRaidFinalityIndexKindV2) -> &'static str {
+    match index_kind {
+        PaperRaidFinalityIndexKindV2::Submission => {
+            PAPER_RAID_FINALITY_SUBMISSION_INDEX_OBJECT_TYPE_V3
+        }
+        PaperRaidFinalityIndexKindV2::Evaluation => {
+            PAPER_RAID_FINALITY_EVALUATION_INDEX_OBJECT_TYPE_V3
         }
     }
 }
@@ -913,14 +1742,36 @@ fn validate_mutations(mutations: &[RuntimeMutation]) -> Result<(), RuntimeError>
 }
 
 fn paper_raid_event(
-    signed: &SignedPaperRaidFinalityCommandV2,
+    signed: &VersionedPaperRaidFinalityCommand,
     commitment_key: &str,
     applied_key: &str,
 ) -> RuntimeEvent {
+    let (scientific_finality, score_eligible, ranking_eligible, reward_eligible, economic_eligible) =
+        match signed {
+            VersionedPaperRaidFinalityCommand::V2(signed) => (
+                signed.commitment.scientific_finality,
+                signed.commitment.score_eligible,
+                signed.commitment.ranking_eligible,
+                signed.commitment.reward_eligible,
+                signed.commitment.economic_eligible,
+            ),
+            VersionedPaperRaidFinalityCommand::V3(signed) => (
+                signed.commitment.scientific_finality,
+                signed.commitment.score_eligible,
+                signed.commitment.ranking_eligible,
+                signed.commitment.reward_eligible,
+                signed.commitment.economic_eligible,
+            ),
+        };
     RuntimeEvent {
-        kind: "trnm.paper-raid.finality.applied.v2".to_string(),
+        kind: if signed.is_v3() {
+            "trnm.paper-raid.finality.applied.v3"
+        } else {
+            "trnm.paper-raid.finality.applied.v2"
+        }
+        .to_string(),
         attributes: BTreeMap::from([
-            ("command_id".to_string(), signed.command_id.to_hex()),
+            ("command_id".to_string(), signed.command_id().to_hex()),
             (
                 "command_fingerprint_hex".to_string(),
                 digest_hex(signed.command_fingerprint()),
@@ -929,10 +1780,7 @@ fn paper_raid_event(
                 "applied_command_object_key_hex".to_string(),
                 applied_key.to_string(),
             ),
-            (
-                "commitment_id".to_string(),
-                signed.commitment.commitment_id.to_hex(),
-            ),
+            ("commitment_id".to_string(), signed.commitment_id().to_hex()),
             (
                 "commitment_object_key_hex".to_string(),
                 commitment_key.to_string(),
@@ -943,23 +1791,14 @@ fn paper_raid_event(
             ),
             (
                 "scientific_finality".to_string(),
-                signed.commitment.scientific_finality.to_string(),
+                scientific_finality.to_string(),
             ),
-            (
-                "score_eligible".to_string(),
-                signed.commitment.score_eligible.to_string(),
-            ),
-            (
-                "ranking_eligible".to_string(),
-                signed.commitment.ranking_eligible.to_string(),
-            ),
-            (
-                "reward_eligible".to_string(),
-                signed.commitment.reward_eligible.to_string(),
-            ),
+            ("score_eligible".to_string(), score_eligible.to_string()),
+            ("ranking_eligible".to_string(), ranking_eligible.to_string()),
+            ("reward_eligible".to_string(), reward_eligible.to_string()),
             (
                 "economic_eligible".to_string(),
-                signed.commitment.economic_eligible.to_string(),
+                economic_eligible.to_string(),
             ),
         ]),
     }
@@ -1001,11 +1840,12 @@ mod tests {
     use ed25519_dalek::{Signer, SigningKey};
     use trnm_protocol::{
         CANONICAL_PAPER_RAID_FINALITY_TX_PAYLOAD_TYPE_V2,
-        CANONICAL_PAPER_RAID_FINALITY_TX_SCHEMA_V2,
+        CANONICAL_PAPER_RAID_FINALITY_TX_PAYLOAD_TYPE_V3,
+        CANONICAL_PAPER_RAID_FINALITY_TX_SCHEMA_V2, CANONICAL_PAPER_RAID_FINALITY_TX_SCHEMA_V3,
     };
     use trnm_research_protocol::{
         AuthorityIdentityV1, AuthoritySetV1, MatchEvidenceCommitmentV1, MatchEvidenceObjectV1,
-        PaperRaidAppealStatusV2,
+        PaperRaidAppealStatusV2, PaperRaidAppealStatusV3,
     };
 
     use super::*;
@@ -1016,7 +1856,7 @@ mod tests {
     const HEPTA_SEED: [u8; 32] = [0x22; 32];
     const FINALIZED_AT_UNIX_S: u64 = 1_753_450_001;
 
-    #[derive(Default)]
+    #[derive(Default, Clone)]
     struct MemoryView(BTreeMap<String, StateObject>);
 
     impl StateView for MemoryView {
@@ -1113,6 +1953,45 @@ mod tests {
         }
     }
 
+    fn valid_commitment_v3(match_evidence_ref: ObjectRefV1) -> PaperRaidFinalityCommitmentV3 {
+        let v2 = valid_commitment(match_evidence_ref);
+        PaperRaidFinalityCommitmentV3 {
+            commitment_id: v2.commitment_id,
+            paper_project_id: v2.paper_project_id,
+            submission_id: v2.submission_id,
+            match_evidence_ref: v2.match_evidence_ref,
+            release_candidate_hash: v2.release_candidate_hash,
+            paper_bundle_hash: v2.paper_bundle_hash,
+            submission_commitment_hash: v2.submission_commitment_hash,
+            author_consent_set_hash: v2.author_consent_set_hash,
+            tolerance_policy_hash: v2.tolerance_policy_hash,
+            evaluation_id: v2.evaluation_id,
+            evaluation_hash: v2.evaluation_hash,
+            evaluation_score_bps: v2.evaluation_score_bps,
+            evaluation_accepted: v2.evaluation_accepted,
+            evaluation_completed_at_unix_s: v2.evaluation_completed_at_unix_s,
+            latest_reproduction_id: v2.latest_reproduction_id,
+            latest_reproduction_hash: v2.latest_reproduction_hash,
+            latest_reproduction_accepted: v2.latest_reproduction_accepted,
+            latest_reproduction_completed_at_unix_s: v2.latest_reproduction_completed_at_unix_s,
+            evaluation_supersedes: None,
+            evaluation_superseded_by: v2.evaluation_superseded_by,
+            reproduction_superseded_by: v2.reproduction_superseded_by,
+            appeal_status: PaperRaidAppealStatusV3::ClosedNoAppeal,
+            appeal_id: v2.appeal_id,
+            appealed_evaluation_id: None,
+            appeal_resolution_hash: v2.appeal_resolution_hash,
+            appeal_window_closes_at_unix_s: v2.appeal_window_closes_at_unix_s,
+            settlement_policy_hash: v2.settlement_policy_hash,
+            scientific_finality: v2.scientific_finality,
+            score_eligible: v2.score_eligible,
+            ranking_eligible: v2.ranking_eligible,
+            reward_eligible: v2.reward_eligible,
+            economic_eligible: v2.economic_eligible,
+            finalized_at_unix_s: v2.finalized_at_unix_s,
+        }
+    }
+
     fn fixture(
         balance: u128,
     ) -> (
@@ -1169,6 +2048,29 @@ mod tests {
         (view, hepta_key, signed, tx)
     }
 
+    fn fixture_v3(
+        balance: u128,
+    ) -> (
+        MemoryView,
+        SigningKey,
+        SignedPaperRaidFinalityCommandV3,
+        CanonicalPaperRaidFinalityTxV3,
+    ) {
+        let (view, hepta_key, signed_v2, _) = fixture(balance);
+        let signed = SignedPaperRaidFinalityCommandV3::sign(
+            CHAIN_ID.to_string(),
+            signed_v2.command_id,
+            HEPTA_DID.to_string(),
+            signed_v2.nonce,
+            valid_commitment_v3(signed_v2.commitment.match_evidence_ref),
+            &hepta_key,
+        )
+        .unwrap();
+        let tx = CanonicalPaperRaidFinalityTxV3::from_signed_command(&signed, 1_000_000, 1_000_000)
+            .unwrap();
+        (view, hepta_key, signed, tx)
+    }
+
     fn context<'a>(
         payload: &'a [u8],
         signer_id: &'a str,
@@ -1204,6 +2106,27 @@ mod tests {
         }
     }
 
+    fn raw_tx_v3(signed: &SignedPaperRaidFinalityCommandV3) -> CanonicalPaperRaidFinalityTxV3 {
+        CanonicalPaperRaidFinalityTxV3 {
+            schema: CANONICAL_PAPER_RAID_FINALITY_TX_SCHEMA_V3.to_string(),
+            payload_type: CANONICAL_PAPER_RAID_FINALITY_TX_PAYLOAD_TYPE_V3.to_string(),
+            command_id: signed.command_id.to_hex(),
+            sender: signed.signer_did.clone(),
+            nonce: signed.nonce,
+            max_gas: 1_000_000,
+            fee_limit: 1_000_000,
+            signed_paper_raid_finality_command_cbor_hex: hex::encode(signed.canonical_bytes()),
+        }
+    }
+
+    fn execute_at_finality_v3(
+        tx: &CanonicalPaperRaidFinalityTxV3,
+        context: ExecutionContext<'_>,
+        view: &dyn StateView,
+    ) -> Result<RuntimeReceipt, RuntimeError> {
+        execute_paper_raid_finality_v3(tx, context, FINALIZED_AT_UNIX_S, view)
+    }
+
     fn resign(
         mut signed: SignedPaperRaidFinalityCommandV2,
         signing_key: &SigningKey,
@@ -1213,6 +2136,98 @@ mod tests {
             .to_bytes()
             .to_vec();
         signed
+    }
+
+    #[derive(Clone, Copy, Debug)]
+    enum CrossVersionConflict {
+        Command,
+        Commitment,
+        Submission,
+        Evaluation,
+    }
+
+    fn set_account_state(view: &mut MemoryView, balance: u128, nonce: u64) {
+        let account = view.0.get_mut(&account_key(HEPTA_DID)).unwrap();
+        account.value_bytes = serde_json::to_vec(&AccountV1 {
+            account: HEPTA_DID.to_string(),
+            balance,
+            nonce,
+        })
+        .unwrap();
+    }
+
+    fn assert_cross_version_conflict(error: RuntimeError, conflict: CrossVersionConflict) {
+        assert!(
+            matches!(
+                (&error, conflict),
+                (
+                    RuntimeError::PaperRaidFinalityCommandReplay,
+                    CrossVersionConflict::Command
+                ) | (
+                    RuntimeError::PaperRaidFinalityCommitmentExists,
+                    CrossVersionConflict::Commitment
+                ) | (
+                    RuntimeError::PaperRaidFinalitySubmissionExists,
+                    CrossVersionConflict::Submission
+                ) | (
+                    RuntimeError::PaperRaidFinalityEvaluationExists,
+                    CrossVersionConflict::Evaluation
+                )
+            ),
+            "unexpected {conflict:?} error: {error:?}"
+        );
+    }
+
+    fn isolated_v3_conflict(
+        baseline: &SignedPaperRaidFinalityCommandV2,
+        conflict: CrossVersionConflict,
+    ) -> (ExternalKey, PaperRaidFinalityCommitmentV3) {
+        let mut commitment = valid_commitment_v3(baseline.commitment.match_evidence_ref);
+        commitment.commitment_id = external_key("hepta.paper-raid.finality", "v3-unique");
+        commitment.paper_project_id = external_key("hepta.paper", "v3-unique");
+        commitment.submission_id = external_key("hepta.submission", "v3-unique");
+        commitment.evaluation_id = external_key("hepta.evaluation", "v3-unique");
+        let mut command_id = external_key("trnm.command", "v3-unique");
+        match conflict {
+            CrossVersionConflict::Command => command_id = baseline.command_id,
+            CrossVersionConflict::Commitment => {
+                commitment.commitment_id = baseline.commitment.commitment_id
+            }
+            CrossVersionConflict::Submission => {
+                commitment.paper_project_id = baseline.commitment.paper_project_id;
+                commitment.submission_id = baseline.commitment.submission_id;
+            }
+            CrossVersionConflict::Evaluation => {
+                commitment.evaluation_id = baseline.commitment.evaluation_id
+            }
+        }
+        (command_id, commitment)
+    }
+
+    fn isolated_v2_conflict(
+        baseline: &SignedPaperRaidFinalityCommandV3,
+        conflict: CrossVersionConflict,
+    ) -> (ExternalKey, PaperRaidFinalityCommitmentV2) {
+        let mut commitment = valid_commitment(baseline.commitment.match_evidence_ref);
+        commitment.commitment_id = external_key("hepta.paper-raid.finality", "v2-unique");
+        commitment.paper_project_id = external_key("hepta.paper", "v2-unique");
+        commitment.submission_id = external_key("hepta.submission", "v2-unique");
+        commitment.evaluation_id = external_key("hepta.evaluation", "v2-unique");
+        let mut command_id = external_key("trnm.command", "v2-unique");
+        match conflict {
+            CrossVersionConflict::Command => command_id = baseline.command_id,
+            CrossVersionConflict::Commitment => {
+                commitment.commitment_id = baseline.commitment.commitment_id
+            }
+            CrossVersionConflict::Submission => {
+                commitment.paper_project_id = baseline.commitment.paper_project_id;
+                commitment.submission_id = baseline.commitment.submission_id;
+            }
+            CrossVersionConflict::Evaluation => {
+                commitment.evaluation_id = baseline.commitment.evaluation_id
+            }
+        }
+        (command_id, commitment)
     }
 
     #[test]
@@ -1568,6 +2583,217 @@ mod tests {
     }
 
     #[test]
+    fn v3_rejected_evaluation_and_accepted_reproduction_remain_independent_final_facts() {
+        let (view, hepta_key, signed, _) = fixture_v3(10_000_000);
+        let mut commitment = signed.commitment.clone();
+        commitment.evaluation_accepted = false;
+        commitment.evaluation_score_bps = 0;
+        commitment.latest_reproduction_accepted = true;
+        commitment.score_eligible = false;
+        commitment.ranking_eligible = false;
+        commitment.reward_eligible = false;
+        commitment.economic_eligible = false;
+        let independent_signed = SignedPaperRaidFinalityCommandV3::sign(
+            CHAIN_ID.to_string(),
+            signed.command_id,
+            HEPTA_DID.to_string(),
+            signed.nonce,
+            commitment.clone(),
+            &hepta_key,
+        )
+        .unwrap();
+        let tx = raw_tx_v3(&independent_signed);
+        let payload = tx.canonical_bytes().unwrap();
+        let receipt = execute_at_finality_v3(&tx, context(&payload, HEPTA_DID, "hepta"), &view)
+            .expect("independent rejected-evaluation/reproduced facts must finalize");
+        let stored = receipt
+            .mutations
+            .iter()
+            .find(|mutation| mutation.object_type == PAPER_RAID_FINALITY_COMMITMENT_OBJECT_TYPE_V3)
+            .expect("finality commitment mutation");
+        assert_eq!(
+            PaperRaidFinalityCommitmentV3::from_canonical_bytes(&stored.value_bytes).unwrap(),
+            commitment
+        );
+    }
+
+    #[test]
+    fn v3_execution_uses_only_v3_events_objects_and_exact_replay_state() {
+        let (mut view, _, signed, tx) = fixture_v3(10_000_000);
+        let payload = tx.canonical_bytes().unwrap();
+        let receipt =
+            execute_at_finality_v3(&tx, context(&payload, HEPTA_DID, "hepta"), &view).unwrap();
+        assert_eq!(
+            receipt.events[0].kind,
+            "trnm.paper-raid.finality.applied.v3"
+        );
+        for expected in [
+            PAPER_RAID_FINALITY_COMMITMENT_OBJECT_TYPE_V3,
+            PAPER_RAID_FINALITY_APPLIED_COMMAND_OBJECT_TYPE_V3,
+            PAPER_RAID_FINALITY_SUBMISSION_INDEX_OBJECT_TYPE_V3,
+            PAPER_RAID_FINALITY_EVALUATION_INDEX_OBJECT_TYPE_V3,
+        ] {
+            assert!(receipt
+                .mutations
+                .iter()
+                .any(|mutation| mutation.object_type == expected));
+        }
+        assert!(receipt.mutations.iter().all(|mutation| {
+            !matches!(
+                mutation.object_type.as_str(),
+                PAPER_RAID_FINALITY_COMMITMENT_OBJECT_TYPE_V2
+                    | PAPER_RAID_FINALITY_APPLIED_COMMAND_OBJECT_TYPE_V2
+                    | PAPER_RAID_FINALITY_SUBMISSION_INDEX_OBJECT_TYPE_V2
+                    | PAPER_RAID_FINALITY_EVALUATION_INDEX_OBJECT_TYPE_V2
+            )
+        }));
+        view.apply_mutations(receipt.mutations);
+        assert!(matches!(
+            execute_at_finality_v3(&tx, context(&payload, HEPTA_DID, "hepta"), &view),
+            Err(RuntimeError::PaperRaidFinalityCommandReplay)
+        ));
+
+        let evaluation_index =
+            paper_raid_finality_evaluation_index_key_v3(signed.commitment.evaluation_id).unwrap();
+        view.0
+            .get_mut(&evaluation_index)
+            .unwrap()
+            .value_bytes
+            .push(b' ');
+        assert!(matches!(
+            execute_at_finality_v3(
+                &tx,
+                context(&payload, HEPTA_DID, "hepta"),
+                &view
+            ),
+            Err(RuntimeError::PaperRaidFinalityMirrorMismatch(key)) if key == evaluation_index
+        ));
+    }
+
+    #[test]
+    fn v2_then_v3_overlay_conflicts_precede_bad_nonce_and_zero_balance_without_mutation() {
+        let conflicts = [
+            CrossVersionConflict::Command,
+            CrossVersionConflict::Commitment,
+            CrossVersionConflict::Submission,
+            CrossVersionConflict::Evaluation,
+        ];
+        for conflict in conflicts {
+            let (mut view, hepta_key, baseline, tx) = fixture(10_000_000);
+            let payload = tx.canonical_bytes().unwrap();
+            let receipt =
+                execute_at_finality(&tx, context(&payload, HEPTA_DID, "hepta"), &view).unwrap();
+            view.apply_mutations(receipt.mutations);
+            set_account_state(&mut view, 0, 41);
+            let before = view.0.clone();
+
+            let (command_id, commitment) = isolated_v3_conflict(&baseline, conflict);
+            let signed = SignedPaperRaidFinalityCommandV3::sign(
+                CHAIN_ID.to_string(),
+                command_id,
+                HEPTA_DID.to_string(),
+                99,
+                commitment,
+                &hepta_key,
+            )
+            .unwrap();
+            let tx = raw_tx_v3(&signed);
+            let payload = tx.canonical_bytes().unwrap();
+            let error = execute_at_finality_v3(&tx, context(&payload, HEPTA_DID, "hepta"), &view)
+                .unwrap_err();
+            assert_cross_version_conflict(error, conflict);
+            assert_eq!(view.0, before);
+        }
+    }
+
+    #[test]
+    fn v3_then_v2_overlay_conflicts_precede_bad_nonce_and_zero_balance_without_mutation() {
+        let conflicts = [
+            CrossVersionConflict::Command,
+            CrossVersionConflict::Commitment,
+            CrossVersionConflict::Submission,
+            CrossVersionConflict::Evaluation,
+        ];
+        for conflict in conflicts {
+            let (mut view, hepta_key, baseline, tx) = fixture_v3(10_000_000);
+            let payload = tx.canonical_bytes().unwrap();
+            let receipt =
+                execute_at_finality_v3(&tx, context(&payload, HEPTA_DID, "hepta"), &view).unwrap();
+            view.apply_mutations(receipt.mutations);
+            set_account_state(&mut view, 0, 41);
+            let before = view.0.clone();
+
+            let (command_id, commitment) = isolated_v2_conflict(&baseline, conflict);
+            let signed = SignedPaperRaidFinalityCommandV2::sign(
+                CHAIN_ID.to_string(),
+                command_id,
+                HEPTA_DID.to_string(),
+                99,
+                commitment,
+                &hepta_key,
+            )
+            .unwrap();
+            let tx = raw_tx(&signed);
+            let payload = tx.canonical_bytes().unwrap();
+            let error =
+                execute_at_finality(&tx, context(&payload, HEPTA_DID, "hepta"), &view).unwrap_err();
+            assert_cross_version_conflict(error, conflict);
+            assert_eq!(view.0, before);
+        }
+    }
+
+    #[test]
+    fn frozen_v2_same_version_commitment_and_indexes_remain_after_nonce_validation() {
+        let (view, hepta_key, signed, tx) = fixture(10_000_000);
+        let payload = tx.canonical_bytes().unwrap();
+        let receipt =
+            execute_at_finality(&tx, context(&payload, HEPTA_DID, "hepta"), &view).unwrap();
+        for object_types in [
+            vec![PAPER_RAID_FINALITY_COMMITMENT_OBJECT_TYPE_V2],
+            vec![
+                PAPER_RAID_FINALITY_COMMITMENT_OBJECT_TYPE_V2,
+                PAPER_RAID_FINALITY_SUBMISSION_INDEX_OBJECT_TYPE_V2,
+            ],
+            vec![
+                PAPER_RAID_FINALITY_COMMITMENT_OBJECT_TYPE_V2,
+                PAPER_RAID_FINALITY_EVALUATION_INDEX_OBJECT_TYPE_V2,
+            ],
+        ] {
+            let mut case_view = view.clone();
+            case_view.apply_mutations(
+                receipt
+                    .mutations
+                    .iter()
+                    .filter(|mutation| object_types.contains(&mutation.object_type.as_str()))
+                    .cloned()
+                    .collect(),
+            );
+            let bad_nonce_signed = SignedPaperRaidFinalityCommandV2::sign(
+                CHAIN_ID.to_string(),
+                signed.command_id,
+                HEPTA_DID.to_string(),
+                99,
+                signed.commitment.clone(),
+                &hepta_key,
+            )
+            .unwrap();
+            let bad_nonce_tx = raw_tx(&bad_nonce_signed);
+            let bad_nonce_payload = bad_nonce_tx.canonical_bytes().unwrap();
+            assert!(matches!(
+                execute_at_finality(
+                    &bad_nonce_tx,
+                    context(&bad_nonce_payload, HEPTA_DID, "hepta"),
+                    &case_view,
+                ),
+                Err(RuntimeError::NonceMismatch {
+                    expected: 1,
+                    received: 99,
+                })
+            ));
+        }
+    }
+
+    #[test]
     fn candidate_finality_ingress_keeps_all_settlement_eligibility_locked() {
         let (view, hepta_key, signed, _) = fixture(10_000_000);
         let before_account = view.account(HEPTA_DID);
@@ -1670,22 +2896,51 @@ mod tests {
     #[test]
     fn paper_raid_finality_object_keys_are_stable_and_domain_separated() {
         let key = ExternalKey::from_bytes([1; 32]);
+        let v2_commitment = paper_raid_finality_commitment_key(key).unwrap();
+        let v2_applied = paper_raid_finality_applied_command_key(key).unwrap();
+        let v2_submission = paper_raid_finality_submission_index_key(key, key).unwrap();
+        let v2_evaluation = paper_raid_finality_evaluation_index_key(key).unwrap();
         assert_eq!(
-            paper_raid_finality_commitment_key(key).unwrap(),
+            v2_commitment,
             "65df7e72b34c74bdeb173fe44e3626ca9956514453567cd2173d16dfad7affd7"
         );
         assert_eq!(
-            paper_raid_finality_applied_command_key(key).unwrap(),
+            v2_applied,
             "693163b6f4062b004999a5855675bf6b1688d15ca8309bca073fb064a87b1014"
         );
         assert_eq!(
-            paper_raid_finality_submission_index_key(key, key).unwrap(),
+            v2_submission,
             "b489b346e8be3de67fc758534e35ab6a8e7f49ed6fb0e8479d603680bcf260bd"
         );
         assert_eq!(
-            paper_raid_finality_evaluation_index_key(key).unwrap(),
+            v2_evaluation,
             "7e68f559f81810bfdc136061fa4dd38cb93547b216a55b107583c71c5047bf26"
         );
+        let v3_commitment = paper_raid_finality_commitment_key_v3(key).unwrap();
+        let v3_applied = paper_raid_finality_applied_command_key_v3(key).unwrap();
+        let v3_submission = paper_raid_finality_submission_index_key_v3(key, key).unwrap();
+        let v3_evaluation = paper_raid_finality_evaluation_index_key_v3(key).unwrap();
+        for (v2, v3) in [
+            (&v2_commitment, &v3_commitment),
+            (&v2_applied, &v3_applied),
+            (&v2_submission, &v3_submission),
+            (&v2_evaluation, &v3_evaluation),
+        ] {
+            assert_ne!(v2, v3);
+        }
+        let mut all = std::collections::BTreeSet::new();
+        for derived in [
+            v2_commitment,
+            v2_applied,
+            v2_submission,
+            v2_evaluation,
+            v3_commitment,
+            v3_applied,
+            v3_submission,
+            v3_evaluation,
+        ] {
+            assert!(all.insert(derived));
+        }
         assert!(paper_raid_finality_commitment_key(ExternalKey::from_bytes([0; 32])).is_err());
         assert!(paper_raid_finality_applied_command_key(ExternalKey::from_bytes([0; 32])).is_err());
         assert!(

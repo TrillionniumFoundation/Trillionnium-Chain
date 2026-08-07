@@ -12,14 +12,22 @@ use trnm_protocol::{
 mod paper_raid;
 mod research;
 pub use paper_raid::{
-    execute_paper_raid_finality, paper_raid_finality_applied_command_key,
-    paper_raid_finality_commitment_key, paper_raid_finality_evaluation_index_key,
-    paper_raid_finality_submission_index_key, PAPER_RAID_FINALITY_APPLIED_COMMAND_OBJECT_TYPE_V2,
-    PAPER_RAID_FINALITY_COMMITMENT_OBJECT_TYPE_V2,
+    execute_paper_raid_finality, execute_paper_raid_finality_v3,
+    paper_raid_finality_applied_command_key, paper_raid_finality_applied_command_key_v3,
+    paper_raid_finality_commitment_key, paper_raid_finality_commitment_key_v3,
+    paper_raid_finality_evaluation_index_key, paper_raid_finality_evaluation_index_key_v3,
+    paper_raid_finality_submission_index_key, paper_raid_finality_submission_index_key_v3,
+    PAPER_RAID_FINALITY_COMMITMENT_OBJECT_TYPE_V2, PAPER_RAID_FINALITY_COMMITMENT_OBJECT_TYPE_V3,
     PAPER_RAID_FINALITY_EVALUATION_INDEX_OBJECT_TYPE_V2,
+    PAPER_RAID_FINALITY_EVALUATION_INDEX_OBJECT_TYPE_V3,
     PAPER_RAID_FINALITY_SUBMISSION_INDEX_OBJECT_TYPE_V2,
+    PAPER_RAID_FINALITY_SUBMISSION_INDEX_OBJECT_TYPE_V3,
 };
 pub use research::{execute_research, research_genesis_mutation};
+pub use trnm_protocol::{
+    PAPER_RAID_FINALITY_APPLIED_COMMAND_OBJECT_TYPE_V2,
+    PAPER_RAID_FINALITY_APPLIED_COMMAND_OBJECT_TYPE_V3,
+};
 
 #[derive(Debug, Error)]
 pub enum RuntimeError {

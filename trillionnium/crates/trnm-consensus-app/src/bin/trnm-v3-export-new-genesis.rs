@@ -9,13 +9,15 @@ use anyhow::{ensure, Context, Result};
 use clap::Parser;
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
-use trnm_consensus_app::{APP_VERSION, GENESIS_SCHEMA_V3};
+use trnm_consensus_app::GENESIS_SCHEMA_V3;
 
 const SOURCE_SCHEMA_V3: &str = "trnm_cometbft_app_state_v3";
 const VALIDATOR_LIFECYCLE_SCHEMA_V1: &str = "trnm_validator_lifecycle_v1";
 const VALIDATOR_GOVERNANCE_SCHEMA_V1: &str = "trnm_validator_governance_v1";
 const SOURCE_APP_VERSION: u64 = 3;
-const TARGET_APP_VERSION: u64 = APP_VERSION;
+// This historical v3 exporter is frozen to the reviewed App v6 ceremony. It
+// must not silently retarget itself when the live consensus app version moves.
+const TARGET_APP_VERSION: u64 = 6;
 const TARGET_GENESIS_SCHEMA: &str = GENESIS_SCHEMA_V3;
 const MAX_TOTAL_VOTING_POWER: u64 = (i64::MAX as u64) / 8;
 
@@ -24,7 +26,7 @@ type Hash32 = [u8; 32];
 #[derive(Debug, Parser)]
 #[command(
     name = "trnm-v3-export-new-genesis",
-    about = "Validate an offline v3 JSON state and export a review-only current-version new-genesis bundle"
+    about = "Validate an offline v3 JSON state and export a review-only frozen App v6 new-genesis bundle"
 )]
 struct Cli {
     /// Offline trnm_cometbft_app_state_v3 JSON. Live SQLite/status files are unsupported.
@@ -402,7 +404,7 @@ fn build_and_publish_bundle(
             "The v3 state contains only an authorized-signer commitment; target signer identities and keys require separate reviewed input.",
             "The v3 state contains no Research authority set; target Nakama and Hepta authorities require separate reviewed input.",
             "Pending validator transitions are exported for review and are never carried automatically.",
-            "A separate reviewed genesis ceremony must construct, sign, and independently verify the target current-version genesis.",
+            "A separate reviewed genesis ceremony must construct, sign, and independently verify the frozen App v6 target genesis.",
         ],
     };
     write_new_synced_file(
@@ -975,6 +977,8 @@ mod tests {
 
     #[test]
     fn exports_atomic_review_only_bundle() {
+        assert_eq!(TARGET_APP_VERSION, 6);
+        assert_eq!(TARGET_GENESIS_SCHEMA, "trnm_cometbft_genesis_v3");
         let root = TestRoot::new();
         let source = root.0.join("source-v3.json");
         let output = root.0.join("review-bundle");
@@ -1004,7 +1008,7 @@ mod tests {
         assert_eq!(manifest["schema"], "trnm_v3_export_new_genesis_manifest_v2");
         assert_eq!(manifest["target"]["chain_id"], "trnm-v6-new-chain");
         assert_eq!(manifest["target"]["genesis_schema"], GENESIS_SCHEMA_V3);
-        assert_eq!(manifest["target"]["app_version"], APP_VERSION);
+        assert_eq!(manifest["target"]["app_version"], 6);
         assert!(manifest["target"]["app_hash_hex"].is_null());
         assert_eq!(manifest["direct_node_start_supported"], false);
         assert_eq!(manifest["requires_manual_review_and_signature"], true);
@@ -1018,7 +1022,7 @@ mod tests {
             "trnm_v3_export_validator_lifecycle_review_v2"
         );
         assert_eq!(lifecycle["source_app_version"], SOURCE_APP_VERSION);
-        assert_eq!(lifecycle["target_app_version"], APP_VERSION);
+        assert_eq!(lifecycle["target_app_version"], 6);
         assert_eq!(
             lifecycle["proposed_target_genesis"]["schema"],
             GENESIS_SCHEMA_V3
@@ -1054,7 +1058,7 @@ mod tests {
         let source = root.0.join("source-v3.json");
         let output = root.0.join("review-bundle");
         let mut state = fixture();
-        state.validator_lifecycle.app_version = APP_VERSION;
+        state.validator_lifecycle.app_version = TARGET_APP_VERSION;
         write_source(&source, &state);
 
         let error = export_new_genesis(&source, "trnm-v6-new-chain", &output).unwrap_err();

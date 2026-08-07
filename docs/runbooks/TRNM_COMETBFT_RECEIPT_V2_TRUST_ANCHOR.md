@@ -1,8 +1,11 @@
 # TRNM CometBFT Receipt V2 Trust-Anchor Runbook
 
-Status: internal cross-repository contract for the typed Research ingress and
-Receipt V2 development tranche. It does not establish production trust or
-release readiness.
+Status: internal cross-repository contract for the typed Research V1 and
+frozen Paper Raid finality V2 ingresses in consensus App v6, plus the Receipt
+V2 development tranche. Paper Raid V3 wire and verification types are
+preparation for a future App v7/new-genesis ceremony; App v6 rejects V3
+ingress deterministically. This does not establish production trust or release
+readiness.
 
 ## Trust Boundary
 
@@ -53,20 +56,30 @@ explicit `Final` outcome authorizes downstream finality-dependent state.
 For a transaction executed at height `H`, a valid
 `CometBftAppHashFinalityReceiptV2` binds one continuous proof chain:
 
-1. the exact raw signed Research transaction and its Comet transaction hash are
-   included in block `H` under `header_H.data_hash`;
+1. the exact raw signed typed transaction (Research V1 or App-v6 Paper Raid
+   finality V2; a future App-v7 receipt may carry Paper Raid finality V3) and
+   its Comet transaction hash are included in block `H` under
+   `header_H.data_hash`;
 2. the deterministic `ExecTxResult` at the same transaction index is included
    under `header_{H+1}.last_results_hash`;
 3. the application state produced by `FinalizeBlock(H)` is committed as
    `header_{H+1}.app_hash`;
 4. an ICS23/JMT membership proof under that AppHash authenticates the exact
-   applied-command object, including the Research command ID and command
-   fingerprint; and
+   domain-specific applied-command object, including the command ID,
+   fingerprint, object namespace/version, and canonical value; and
 5. the signed header and validator evidence finalize `H+1` against the
    externally authenticated trust anchor and policy.
 
 The frozen synthetic `FinalityReceiptV1` is not reinterpreted as this receipt.
 Receipt V2 is a separate CometBFT/AppHash contract.
+
+Receipt verification proves that the Chain accepted and committed the exact
+typed Paper Raid tuple under its consensus rules. It does not connect to the
+Hepta database or independently rederive the upstream Paper/revision,
+evaluation, reproduction, Appeal, consent, or Research Session source graph.
+That source-graph derivation and seal remain a Hepta-side responsibility and
+must be compared field by field with the verified typed command; AppHash proof
+membership is not a substitute for that comparison.
 
 Receipt V2 intentionally does not carry the validator-set evidence needed for
 `H+2`. It can finalize the transaction at `H` through the commitments in
@@ -74,6 +87,16 @@ Receipt V2 intentionally does not carry the validator-set evidence needed for
 the next validator set and the required light-client evidence through the
 normal light-store update path before advancing the trusted state. Never infer
 trust-root promotion merely because one Receipt V2 returned `Final`.
+
+The current App-v6 authenticated-state pruning policy retains a rolling proof
+window of 8,192 versions and advances its query floor at 256-height pruning
+boundaries; it is not an indefinite historical proof service. CometBFT block,
+result, and validator retention is a separate operational boundary and may be
+shorter. Collect and archive the object proof, headers, results, validator
+evidence, and canonical receipt before either side prunes the execution
+evidence. A previously collected self-contained receipt remains independently
+verifiable, but a pruned node may no longer be able to assemble a new
+historical receipt.
 
 ## Hepta Domain Binding
 
@@ -91,6 +114,62 @@ identifier or fingerprint mismatch is a quarantined verification failure, not
 a new local command. `StructuralInvalid`, `Untrusted`, and `NotFinal` leave the
 command pending or failed according to policy and must not unlock ranking,
 rewards, or economic claims.
+
+For Paper Raid, a `Final` verifier result additionally returns the exact typed
+domain command decoded from the AppHash-proven raw transaction. App-v6
+submissions and receipts use `SignedPaperRaidFinalityCommandV2`. The verifier
+also has an explicitly distinct `SignedPaperRaidFinalityCommandV3` result for
+future App-v7 evidence, but this does not activate V3 consensus ingress in App
+v6. Hepta must require the expected version and compare that typed command field
+by field with its sealed preparation: Paper/submission,
+bundle/release/consent, MatchEvidence, final evaluation and reproduction,
+appeal status and lineage, policy hashes, timestamps, and all four locked
+eligibility flags. It must never reinterpret a V2 command as V3 or vice versa.
+A caller-supplied JSON sidecar or digest summary is not a substitute for this
+verified typed command.
+
+## Paper Raid offline signing lane
+
+Hepta prepares and seals the scientific-finality tuple but does not retain the
+Chain authority private key. After the exact Chain revision is vendored, it
+emits the canonical commitment CBOR and deterministic command identity. An
+operator-controlled signer then runs:
+
+```text
+trnm-research-receipt-v2 paper-raid-v2-sign-and-wrap \
+  SIGNING_INPUT PRIVATE_KEY SIGNED_COMMAND_OUTPUT OUTPUT_TX
+```
+
+`SIGNING_INPUT` uses schema
+`trnm_paper_raid_finality_sign_and_wrap_input_v2` and supplies the chain ID,
+32-byte lowercase-hex command ID, Hepta signer DID, nonce, gas/fee limits,
+explicit outer-envelope issue/expiry milliseconds, and exact canonical
+commitment CBOR hex. The envelope lifetime is limited to five minutes. The
+command refuses any score/ranking/reward/economic eligibility flag.
+
+The future V3 encoder remains available only as
+`paper-raid-v3-pre-v7-artifact`. It emits a signed offline review artifact and
+transaction-shaped bytes for fixture/protocol integration work. Its input
+schema is `trnm_paper_raid_finality_pre_v7_artifact_input_v3`, and both its
+artifact and result explicitly declare `broadcastable_on_app_v6=false` and
+`required_consensus_app_version=7`. Do not broadcast that output to App v6;
+activation requires a separately reviewed App-v7 binary, new genesis schema,
+and export/new-genesis ceremony. V2 and V3 have distinct signed-command,
+transaction, applied-record, state-key, and object-type domains; neither CLI
+command accepts the other version's commitment bytes or silently upgrades
+them. `assemble-and-verify` reports `domain_command_version` as `research_v1`,
+`paper_raid_finality_v2`, or `paper_raid_finality_v3`.
+
+`SIGNED_COMMAND_OUTPUT` is a strict, secret-free audit artifact containing the
+canonical signed-command CBOR, canonical inner transaction, command and
+commitment hashes, applied-record key, signer public key, and Comet transaction
+hash. For the active V2 command, `OUTPUT_TX` is the exact canonical
+outer-envelope bytes to broadcast to App v6. For the pre-v7 V3 artifact,
+`OUTPUT_TX` is fixture/review material and must not be broadcast. The Hepta
+queue endpoint must decode the signed CBOR with the vendored protocol and
+recompare the complete sealed preparation; it must not trust the summary
+fields. Both files are create-new mode `0600`; private key bytes are never
+copied into either artifact.
 
 ## Anchor Operation and Rotation
 
