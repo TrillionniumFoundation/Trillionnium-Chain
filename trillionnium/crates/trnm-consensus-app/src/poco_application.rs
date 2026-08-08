@@ -6013,24 +6013,25 @@ fn insert_nullifiers(
     raw_insertions: &[RawNullifierInsertionV0],
     expected: &[(PocoNullifierFamilyV0, [u8; 32])],
 ) -> Result<()> {
-    let deterministic_proof = || {
-        anyhow::Error::new(PocoApplicationApplyFailureV0::DeterministicallyInvalid(
+    let malformed_proof = || {
+        deterministic_application_error_v0(PocoApplicationDeterministicInvalidV0::NullifierProof)
+    };
+    let wrong_root = || {
+        deterministic_application_error_v0(
             PocoApplicationDeterministicInvalidV0::NullifierNonMembershipRootMismatch,
-        ))
+        )
     };
     if raw_insertions.len() != expected.len() {
-        return Err(deterministic_proof());
+        return Err(malformed_proof());
     }
     let mut expected_ordered = expected.to_vec();
     expected_ordered.sort();
     for (raw, (expected_family, expected_identifier)) in raw_insertions.iter().zip(expected_ordered)
     {
-        let family =
-            PocoNullifierFamilyV0::from_u8(raw.family).map_err(|_| deterministic_proof())?;
-        let identifier =
-            exact_hash32_hex(&raw.identifier_hex).map_err(|_| deterministic_proof())?;
+        let family = PocoNullifierFamilyV0::from_u8(raw.family).map_err(|_| malformed_proof())?;
+        let identifier = exact_hash32_hex(&raw.identifier_hex).map_err(|_| malformed_proof())?;
         if family != expected_family || identifier != expected_identifier {
-            return Err(deterministic_proof());
+            return Err(malformed_proof());
         }
         let proof_bytes = exact_hex(
             &raw.proof_hex,
@@ -6038,14 +6039,22 @@ fn insert_nullifiers(
             crate::poco_nullifier::POCO_NULLIFIER_PROOF_ENCODED_BYTES_V0,
             "nullifier proof",
         )
-        .map_err(|_| deterministic_proof())?;
+        .map_err(|_| malformed_proof())?;
         let proof =
-            PocoNullifierProofV0::decode_exact(&proof_bytes).map_err(|_| deterministic_proof())?;
+            PocoNullifierProofV0::decode_exact(&proof_bytes).map_err(|_| malformed_proof())?;
         let key = derive_poco_nullifier_key_v0(family, identifier);
+        if proof.key() != key {
+            return Err(malformed_proof());
+        }
+        if overlay.accumulator.count() == u64::MAX {
+            return Err(invariant_application_error_v0(
+                PocoApplicationInvariantV0::ProtocolCounterExhausted,
+            ));
+        }
         let insertion = overlay
             .accumulator
             .verify_non_membership_and_compute_insertion(key, &proof)
-            .map_err(|_| deterministic_proof())?;
+            .map_err(|_| wrong_root())?;
         overlay.accumulator = insertion.target_accumulator().map_err(|_| {
             anyhow::Error::new(PocoApplicationApplyFailureV0::Invariant(
                 PocoApplicationInvariantV0::DerivedMutationPostcondition,
@@ -6060,40 +6069,42 @@ fn verify_nullifier_absences(
     raw_checks: &[RawNullifierInsertionV0],
     expected: &[(PocoNullifierFamilyV0, [u8; 32])],
 ) -> Result<()> {
-    verify_nullifier_absences_inner(overlay, raw_checks, expected).map_err(|_| {
-        anyhow::Error::new(PocoApplicationApplyFailureV0::DeterministicallyInvalid(
+    let malformed_proof = || {
+        deterministic_application_error_v0(PocoApplicationDeterministicInvalidV0::NullifierProof)
+    };
+    let wrong_root = || {
+        deterministic_application_error_v0(
             PocoApplicationDeterministicInvalidV0::NullifierNonMembershipRootMismatch,
-        ))
-    })
-}
-
-fn verify_nullifier_absences_inner(
-    overlay: &PocoApplicationOverlayV0,
-    raw_checks: &[RawNullifierInsertionV0],
-    expected: &[(PocoNullifierFamilyV0, [u8; 32])],
-) -> Result<()> {
-    ensure!(
-        raw_checks.len() == expected.len(),
-        "operation nullifier non-membership count mismatch"
-    );
+        )
+    };
+    if raw_checks.len() != expected.len() {
+        return Err(malformed_proof());
+    }
     let mut expected_ordered = expected.to_vec();
     expected_ordered.sort();
     for (raw, (expected_family, expected_identifier)) in raw_checks.iter().zip(expected_ordered) {
-        let family = PocoNullifierFamilyV0::from_u8(raw.family)?;
-        let identifier = exact_hash32_hex(&raw.identifier_hex)?;
-        ensure!(
-            family == expected_family && identifier == expected_identifier,
-            "operation nullifier non-membership family/identifier mismatch"
-        );
+        let family = PocoNullifierFamilyV0::from_u8(raw.family).map_err(|_| malformed_proof())?;
+        let identifier = exact_hash32_hex(&raw.identifier_hex).map_err(|_| malformed_proof())?;
+        if family != expected_family || identifier != expected_identifier {
+            return Err(malformed_proof());
+        }
         let proof_bytes = exact_hex(
             &raw.proof_hex,
             crate::poco_nullifier::POCO_NULLIFIER_PROOF_ENCODED_BYTES_V0,
             crate::poco_nullifier::POCO_NULLIFIER_PROOF_ENCODED_BYTES_V0,
             "nullifier proof",
-        )?;
-        let proof = PocoNullifierProofV0::decode_exact(&proof_bytes)?;
+        )
+        .map_err(|_| malformed_proof())?;
+        let proof =
+            PocoNullifierProofV0::decode_exact(&proof_bytes).map_err(|_| malformed_proof())?;
         let key = derive_poco_nullifier_key_v0(family, identifier);
-        overlay.accumulator.verify_non_membership(key, &proof)?;
+        if proof.key() != key {
+            return Err(malformed_proof());
+        }
+        overlay
+            .accumulator
+            .verify_non_membership(key, &proof)
+            .map_err(|_| wrong_root())?;
     }
     Ok(())
 }
@@ -7828,6 +7839,43 @@ mod tests {
         );
         assert_eq!(overlay.authority, authority);
         assert_eq!(overlay.entries, before);
+        assert!(overlay.mutations.is_empty());
+    }
+
+    #[test]
+    fn nullifier_shape_and_root_rejections_have_distinct_typed_reasons() {
+        let authority = PocoApplicationAuthorityStateV0::empty();
+        let overlay = overlay_with_authority(authority.clone());
+        let family = PocoNullifierFamilyV0::MeterDecision;
+        let identifier = [7; 32];
+        let key = derive_poco_nullifier_key_v0(family, identifier);
+        let raw = |proof: PocoNullifierProofV0| RawNullifierInsertionV0 {
+            family: family.code(),
+            identifier_hex: hex::encode(identifier),
+            proof_hex: hex::encode(proof.canonical_bytes()),
+        };
+
+        let wrong_key = raw(PocoNullifierProofV0::new([9; 32], [[0; 32]; 256]));
+        let malformed =
+            verify_nullifier_absences(&overlay, &[wrong_key], &[(family, identifier)]).unwrap_err();
+        assert_eq!(
+            malformed.downcast_ref::<PocoApplicationApplyFailureV0>(),
+            Some(&PocoApplicationApplyFailureV0::DeterministicallyInvalid(
+                PocoApplicationDeterministicInvalidV0::NullifierProof,
+            )),
+        );
+
+        let wrong_root = raw(PocoNullifierProofV0::new(key, [[3; 32]; 256]));
+        let invalid_root =
+            verify_nullifier_absences(&overlay, &[wrong_root], &[(family, identifier)])
+                .unwrap_err();
+        assert_eq!(
+            invalid_root.downcast_ref::<PocoApplicationApplyFailureV0>(),
+            Some(&PocoApplicationApplyFailureV0::DeterministicallyInvalid(
+                PocoApplicationDeterministicInvalidV0::NullifierNonMembershipRootMismatch,
+            )),
+        );
+        assert_eq!(overlay.authority, authority);
         assert!(overlay.mutations.is_empty());
     }
 

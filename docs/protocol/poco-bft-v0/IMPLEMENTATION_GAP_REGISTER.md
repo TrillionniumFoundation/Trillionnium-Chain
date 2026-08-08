@@ -1249,7 +1249,10 @@ epoch prune, and Core transition remain open.
    is deterministic; a present-but-malformed companion, malformed authenticated
    semantic predecessor, or derived CAS/mutation failure is invariant. Unrefined leaf failures remain conservatively classified as
    authenticated-overlay invariants. Decision-ID and cap/window failures are
-   deterministic; counter/epoch/retention arithmetic exhaustion is invariant,
+   deterministic. Nullifier shape/key rejects and an exactly key-bound proof
+   that fails its authenticated root check remain distinct deterministic
+   reasons, while authenticated nullifier-count exhaustion is invariant;
+   counter/epoch/retention arithmetic exhaustion is likewise invariant,
    so leaf-reason completion remains a hard
    dependency before terminal failure mapping. The success carrier still owns the open
    snapshot and unsealed overlay/scheduled lifecycle. It does not yet seal

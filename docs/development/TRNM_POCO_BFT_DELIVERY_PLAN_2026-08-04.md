@@ -385,7 +385,12 @@ an earlier phase.
   malformed authenticated semantic predecessor, or derived CAS/mutation
   failure remains invariant. Decision-ID mismatch and authenticated cap/window
   rejection are deterministic; counter, epoch, retention, and aggregate
-  arithmetic exhaustion fail stop with typed reasons. Leaf
+  arithmetic exhaustion fail stop with typed reasons. Nullifier count, family,
+  identifier, encoding, and proof-key shape rejects are deterministic
+  `NullifierProof`; a correctly bound key whose non-membership proof does not
+  verify against the authenticated root is the narrower deterministic
+  `NullifierNonMembershipRootMismatch`; authenticated accumulator-count
+  exhaustion fails stop as `ProtocolCounterExhausted`. Leaf
   errors not yet assigned a narrower reason remain conservatively typed as an
   authenticated-overlay invariant. Success keeps the exact decoded owner plus
   the still-open snapshot and unsealed family state. These attempts do not yet
