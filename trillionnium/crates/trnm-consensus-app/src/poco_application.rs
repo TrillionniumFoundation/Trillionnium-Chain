@@ -4600,25 +4600,24 @@ fn apply_accept_certificate_v0(
 
     let nonce_change = change_for_kind(&changes, PocoSnapshotEntryKindV0::ConsumerNonce)?;
     let nonce_identity = joined_identity(&[consumer, consumer_key, provider]);
-    ensure!(
-        nonce_change.next_identity.as_deref() == Some(nonce_identity.as_slice()),
-        "consumer nonce identity mismatch"
-    );
+    if nonce_change.next_identity.as_deref() != Some(nonce_identity.as_slice()) {
+        return Err(signed_semantic());
+    }
     let next_nonce = match nonce_change.next_fact.as_ref() {
         Some(SemanticFactV0::ConsumerNonce { max_accepted_nonce }) => *max_accepted_nonce,
-        _ => bail!("certificate operation lacks next consumer nonce"),
+        _ => return Err(signed_semantic()),
     };
-    ensure!(
-        next_nonce == body.consumer_nonce(),
-        "accepted nonce differs from certificate nonce"
-    );
+    if next_nonce != body.consumer_nonce() {
+        return Err(signed_semantic());
+    }
     if let Some(expected) = nonce_change.expected_fact.as_ref() {
         match expected {
-            SemanticFactV0::ConsumerNonce { max_accepted_nonce } => ensure!(
-                next_nonce > *max_accepted_nonce,
-                "accepted nonce does not advance authenticated watermark"
-            ),
-            _ => bail!("nonce CAS expected value has wrong semantic kind"),
+            SemanticFactV0::ConsumerNonce { max_accepted_nonce } => {
+                if next_nonce <= *max_accepted_nonce {
+                    return Err(protocol_reject());
+                }
+            }
+            _ => return Err(authenticated_overlay()),
         }
     }
     let nonce_provider_hex = hex::encode(provider);
@@ -4631,24 +4630,27 @@ fn apply_accept_certificate_v0(
                 .cmp(nonce_provider_hex.as_str())
         });
     match (nonce_change.expected_fact.as_ref(), nonce_watermark_search) {
-        (None, Err(_)) => ensure!(
-            overlay.authority.consumer_keys[key_authority_index]
+        (None, Err(_)) => {
+            if overlay.authority.consumer_keys[key_authority_index]
                 .nonce_watermarks
                 .len()
-                < MAX_NONCE_WATERMARKS_PER_KEY,
-            "consumer key has exhausted distinct provider watermark bound"
-        ),
+                >= MAX_NONCE_WATERMARKS_PER_KEY
+            {
+                return Err(protocol_reject());
+            }
+        }
         (Some(SemanticFactV0::ConsumerNonce { max_accepted_nonce }), Ok(index)) => {
             let watermark =
                 &overlay.authority.consumer_keys[key_authority_index].nonce_watermarks[index];
-            ensure!(
-                watermark.max_accepted_nonce == *max_accepted_nonce
-                    && exact_hash32_hex(&watermark.logical_key_hex)?.as_slice()
-                        == nonce_change.logical_key.as_slice(),
-                "consumer nonce semantic/authority watermark mismatch"
-            );
+            let authority_logical_key = exact_hash32_hex(&watermark.logical_key_hex)
+                .map_err(|_| authenticated_overlay())?;
+            if watermark.max_accepted_nonce != *max_accepted_nonce
+                || authority_logical_key.as_slice() != nonce_change.logical_key.as_slice()
+            {
+                return Err(authenticated_overlay());
+            }
         }
-        _ => bail!("consumer nonce semantic/authority companion mismatch"),
+        _ => return Err(authenticated_overlay()),
     }
 
     let tuple_identity = consumption_tuple_identity(body);

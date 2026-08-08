@@ -447,8 +447,12 @@ an earlier phase.
   certificate/funding/units mismatch is `SemanticTransition`, certificate
   decode or signature failure is `CryptographicProof`, key validity-window
   rejection is `ProtocolWindowOrCap`, and authenticated reservation/key
-  semantic/authority corruption is `AuthenticatedOverlay`. Nonce and later
-  meter/settlement/relationship/provider joins remain separate slices.
+  semantic/authority corruption is `AuthenticatedOverlay`. The nonce join is
+  now typed too: signed next identity/value mismatch is
+  `SemanticTransition`, non-advancing nonce or exhausted per-key provider slots
+  is `ProtocolWindowOrCap`, and authenticated semantic/watermark presence,
+  logical-key, or value divergence is `AuthenticatedOverlay`. Meter and later
+  joins remain separate.
   Leaf errors not yet assigned a narrower reason remain conservatively typed
   as an authenticated-overlay invariant. Success keeps the exact decoded owner plus
   the still-open snapshot and unsealed family state. These attempts do not yet

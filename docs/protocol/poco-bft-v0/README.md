@@ -704,6 +704,9 @@ admission; its later execution join remains under leaf-reason refinement;
 the first acceptance execution segment now separates signed certificate/units,
 cryptographic proof, key-window, and authenticated reservation/key companion
 failures; nonce and later companion joins remain open;
+the acceptance nonce join now separates signed next value, protocol advance/
+slot limits, and authenticated semantic/watermark divergence; meter and later
+joins remain open;
 unrefined leaf failures conservatively remain authenticated-overlay invariants
 without string matching. Success retains the open snapshot, decoded owner, and unsealed PoCO
 overlay or scheduled lifecycle. PoCO leaf-reason refinement, write sealing,
