@@ -51,8 +51,8 @@ for src, dst in {
     "`": "\"",
     "“": "\"",
     "”": "\"",
-    "‘": "'",
-    "’": "'",
+    "‘": "\u0027",
+    "’": "\u0027",
     "«": "\"",
     "»": "\"",
     "‹": "\"",
@@ -75,46 +75,167 @@ extract_tx_hash() {
   local raw="$1"
   local normalized
   normalized="$(printf "%s" "$raw" | normalize_receipt_text)"
-  local h=""
-  while IFS= read -r tok; do
-    tok="$(printf "%s" "$tok" | sed -E 's/^[[:space:]"'"'"'«»‹›〈〉《》「」『』<>()\[\]{}]+//; s/[[:space:]"'"'"'«»‹›〈〉《》「」『』<>()\[\]{}]+$//')"
-    tok="${tok#0x}"
-    tok="${tok#0X}"
-    if [[ "$tok" =~ ^[0-9A-Fa-f]{16,128}$ ]]; then
-      h="$tok"
-      break
-    fi
-  done < <(
-    printf "%s\n" "$normalized" \
-      | grep -Eio "['\"]?((tx|transaction)[[:space:]_-]*hash)['\"]?[[:space:]]*[:=][[:space:]]*['\"]?(0[xX])?[0-9A-Fa-f]{16,128}['\"]?" \
-      | sed -E 's/.*[:=][[:space:]]*//'
-  )
-  printf "%s" "$h"
+  printf "%s" "$normalized" | python3 -c '
+import json
+import re
+import sys
+
+text = sys.stdin.read()
+keys = {"tx_hash", "txHash", "transaction_hash", "transactionHash"}
+
+def strict_object(pairs):
+    result = {}
+    for key, value in pairs:
+        if key in result:
+            raise ValueError("duplicate JSON key")
+        result[key] = value
+    return result
+
+def exact_values(value):
+    if isinstance(value, dict):
+        for key, item in value.items():
+            if key in keys:
+                yield item
+            if isinstance(item, (dict, list)):
+                yield from exact_values(item)
+    elif isinstance(value, list):
+        for item in value:
+            yield from exact_values(item)
+
+try:
+    parsed = json.loads(text, object_pairs_hook=strict_object)
+except Exception:
+    parsed = None
+
+if parsed is not None:
+    candidates = list(exact_values(parsed))
+elif text.lstrip().startswith(("{", "[")):
+    candidates = []
+else:
+    pattern = re.compile(
+        r"""(?i)(?<![A-Za-z0-9_-])[\"]?(?:tx|transaction)(?:[\s_-]*hash)[\"]?\s*[:=]\s*[\"]?((?:0[xX])?[0-9A-Fa-f]{16,128})[\"]?"""
+    )
+    candidates = [match.group(1) for match in pattern.finditer(text)]
+
+normalized = []
+for candidate in candidates:
+    if not isinstance(candidate, str):
+        normalized = []
+        break
+    cleaned = candidate.strip()
+    if cleaned.lower().startswith("0x"):
+        cleaned = cleaned[2:]
+    if not re.fullmatch(r"[0-9A-Fa-f]{16,128}", cleaned):
+        normalized = []
+        break
+    normalized.append(cleaned.lower())
+
+if normalized and len(set(normalized)) == 1:
+    sys.stdout.write(normalized[0])
+'
 }
 
 extract_query_status() {
   local raw="$1"
   local normalized
   normalized="$(printf "%s" "$raw" | normalize_receipt_text)"
-  local s
-  # Accept plain-text variants like: status=ok / tx_status: committed / tx-status=committed / txStatus=committed,
-  # including log-prefixed lines (e.g. "[info] status=committed").
-  s=$(printf "%s\n" "$normalized" \
-    | grep -Eio '(^|[^A-Za-z0-9_])(([Tt][Xx]([_-]?[Ss][Tt][Aa][Tt][Uu][Ss])|[Tt][Xx][Ss][Tt][Aa][Tt][Uu][Ss])|[Ss][Tt][Aa][Tt][Uu][Ss])[[:space:]]*[:=][[:space:]]*[^[:space:]]+' \
-    | head -n1 \
-    | sed -E 's/.*[[:space:]:=]([^[:space:]]+).*/\1/' || true)
-  if [[ -z "$s" ]]; then
-    # Accept JSON variants with status / tx_status / tx-status / txStatus keys to avoid false negatives across adapters.
-    s=$(printf "%s\n" "$normalized" | grep -Eio '"(([Tt][Xx]([_-]?[Ss][Tt][Aa][Tt][Uu][Ss])|[Tt][Xx][Ss][Tt][Aa][Tt][Uu][Ss])|[Ss][Tt][Aa][Tt][Uu][Ss])"[[:space:]]*:[[:space:]]*"[^"]+"' | sed -E 's/.*:[[:space:]]*"([^"]+)"/\1/' | head -n1 || true)
-  fi
-  if [[ -z "$s" ]]; then
-    # Also accept non-string JSON scalar status values (number/bool), preserving guardrail against empty/null.
-    s=$(printf "%s\n" "$normalized" | grep -Eio '"(([Tt][Xx]([_-]?[Ss][Tt][Aa][Tt][Uu][Ss])|[Tt][Xx][Ss][Tt][Aa][Tt][Uu][Ss])|[Ss][Tt][Aa][Tt][Uu][Ss])"[[:space:]]*:[[:space:]]*(true|false|[0-9]+)' | sed -E 's/.*:[[:space:]]*(true|false|[0-9]+).*/\1/' | head -n1 || true)
-  fi
+  printf "%s" "$normalized" | python3 -c '
+import json
+import re
+import sys
 
-  s="$(printf "%s" "$s" | sed -E 's/^[[:space:]"'"'"'«»‹›〈〉《》「」『』\[\](){}<>]+//; s/[[:space:]"'"'"'«»‹›〈〉《》「」『』\[\](){}<>]+$//; s/[.,;:!?]+$//')"
+text = sys.stdin.read()
+keys = {
+    "status", "state", "tx_status", "txStatus", "tx_state", "txState",
+    "transaction_status", "transactionStatus", "transaction_state",
+    "transactionState",
+}
+hash_keys = {"tx_hash", "txHash", "transaction_hash", "transactionHash"}
+committed = {
+    "committed", "confirmed", "success", "succeeded", "ok", "included",
+    "finalized", "finalised", "complete", "completed", "done",
+}
+pending = {
+    "pending", "submitted", "accepted", "queued", "broadcast",
+    "broadcasted", "broadcasting", "processing", "executing", "in_progress",
+    "inflight", "in_flight",
+}
+failed = {
+    "fail", "failed", "error", "rejected", "reverted", "aborted", "dropped",
+    "timeout", "timed_out", "expired",
+}
 
-  printf "%s" "$s"
+def strict_object(pairs):
+    result = {}
+    for key, value in pairs:
+        if key in result:
+            raise ValueError("duplicate JSON key")
+        result[key] = value
+    return result
+
+def normalize(value):
+    if isinstance(value, bool):
+        return "committed" if value else "fail"
+    if isinstance(value, int) and not isinstance(value, bool):
+        return "committed" if value == 0 else "fail"
+    if not isinstance(value, str):
+        return "unknown"
+    cleaned = value.strip().lower()
+    canonical = re.sub(r"[^a-z0-9]+", "_", cleaned).strip("_")
+    if canonical in committed:
+        return "committed"
+    if canonical in pending:
+        return "pending"
+    if canonical in failed:
+        return "fail"
+    if canonical == "true":
+        return "committed"
+    if canonical == "false":
+        return "fail"
+    return "unknown"
+
+def scoped_values(value):
+    if isinstance(value, dict):
+        # Bare RPC envelope status is not transaction lifecycle evidence.
+        # Bind every accepted status/state field to an exact hash in the same
+        # canonical transaction object.
+        if any(key in hash_keys for key in value):
+            for key, item in value.items():
+                if key in keys:
+                    yield item
+        for item in value.values():
+            if isinstance(item, (dict, list)):
+                yield from scoped_values(item)
+    elif isinstance(value, list):
+        for item in value:
+            yield from scoped_values(item)
+
+try:
+    parsed = json.loads(text, object_pairs_hook=strict_object)
+except Exception:
+    parsed = None
+
+if parsed is not None:
+    values = list(scoped_values(parsed))
+elif text.lstrip().startswith(("{", "[")):
+    values = []
+else:
+    pattern = re.compile(
+        r"""(?i)(?<![A-Za-z0-9_-])[\"]?(?:(?:tx|transaction)[\s_-]?)?(?:status|state)[\"]?\s*[:=]\s*[\"]?([^\s\",}\]]+)"""
+    )
+    values = [match.group(1) for match in pattern.finditer(text)]
+
+statuses = [normalize(value) for value in values]
+if statuses and all(status == "committed" for status in statuses):
+    sys.stdout.write("committed")
+elif "fail" in statuses:
+    sys.stdout.write("fail")
+elif "pending" in statuses:
+    sys.stdout.write("pending")
+else:
+    # Missing, unknown, or conflicting lifecycle evidence is never READY.
+    sys.stdout.write("unknown")
+'
 }
 
 if command -v "$TX_CLI" >/dev/null 2>&1; then
@@ -143,6 +264,10 @@ if command -v "$TX_CLI" >/dev/null 2>&1; then
         commit_tx_hash_lc="$(printf "%s" "$commit_tx_hash" | tr '[:upper:]' '[:lower:]')"
 
         for ((attempt=1; attempt<=query_retries; attempt++)); do
+          query_hash_match="no"
+          query_status=""
+          query_seen_hash=""
+          query_seen_hash_lc=""
           set +e
           query_out=$("$TX_CLI" tx query "$commit_tx_hash" 2>&1)
           query_rc=$?
@@ -158,16 +283,14 @@ if command -v "$TX_CLI" >/dev/null 2>&1; then
             if [[ -n "$query_seen_hash" && "$query_seen_hash_lc" == "$commit_tx_hash_lc" ]]; then
               query_hash_match="yes"
             fi
-            # Guardrail: reject placeholder/negative status values to avoid false READY.
-            if [[ "$query_hash_match" == "yes" && -n "$query_status" \
-                  && "$query_status_lc" != "null" && "$query_status_lc" != "none" \
-                  && "$query_status_lc" != "unknown" && "$query_status_lc" != "false" \
-                  && "$query_status_lc" != "0" ]]; then
+            # READY requires a matching hash and an explicit positive terminal
+            # lifecycle state from this same query response.
+            if [[ "$query_hash_match" == "yes" && "$query_status_lc" == "committed" ]]; then
               status="READY"
               reason="tx lifecycle verified (commit + query visible)"
               break
             fi
-            reason="tx query output missing required fields (hash/status consistency + non-placeholder status)"
+            reason="tx query output missing matching hash or positive terminal status"
           else
             reason="tx query failed for submitted tx_hash=$commit_tx_hash"
           fi

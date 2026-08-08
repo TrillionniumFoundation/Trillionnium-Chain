@@ -4,6 +4,22 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 cd "$ROOT"
 
+# Offline CI exercises only the legacy worker adapter/state machine. Ambient
+# operator settings must not silently turn this entrypoint into an external
+# CLI integration test. The separate real-cli entrypoint opts in explicitly.
+ALLOW_EXTERNAL_TX_CLI="${TRNM_WORKER_ALLOW_EXTERNAL_TX_CLI:-0}"
+if [[ "$ALLOW_EXTERNAL_TX_CLI" != "0" && "$ALLOW_EXTERNAL_TX_CLI" != "1" ]]; then
+  echo "[FAIL] TRNM_WORKER_ALLOW_EXTERNAL_TX_CLI must be 0 or 1" >&2
+  exit 2
+fi
+if [[ "$ALLOW_EXTERNAL_TX_CLI" == "1" ]]; then
+  : "${TRNM_TX_CLI:?TRNM_TX_CLI is required for the explicit external-CLI lane}"
+  export TRNM_TX_ADAPTER_MODE=command
+else
+  unset TRNM_TX_CLI
+  unset TRNM_TX_ADAPTER_MODE
+fi
+
 # isolate adapter/state logs to avoid cross-run nonce/replay pollution
 RUN_TAG="$(date +%Y%m%d-%H%M%S)-$$"
 export TRNM_TX_ADAPTER_OUT_LOG="/tmp/trnm-worker-adapter-${RUN_TAG}.jsonl"
@@ -26,4 +42,4 @@ rm -f "$STATE" "$SUBMIT_LOG" "$ACK_LOG" "$EVENT_LOG" "$PROGRESS_LOG"
 ./scripts/v2/worker_resume_no_duplicate_test.sh
 ./scripts/v2/worker_retry_nonce_boundary_test.sh
 
-echo "[OK] worker receipt gates passed out_log=$TRNM_TX_ADAPTER_OUT_LOG run_tag=$RUN_TAG"
+echo "[OK] worker receipt gates passed out_log=$TRNM_TX_ADAPTER_OUT_LOG run_tag=$RUN_TAG external_cli=$ALLOW_EXTERNAL_TX_CLI"
