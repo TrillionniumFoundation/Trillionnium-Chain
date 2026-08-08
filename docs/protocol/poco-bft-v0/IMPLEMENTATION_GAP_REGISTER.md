@@ -1272,6 +1272,8 @@ epoch prune, and Core transition remain open.
    separates signed delete shape from authenticated leaf/reservation drift.
    `OpenChallenge` now has typed pre-clone ID/certificate/duplicate checks and
    splits signed next lifecycle from authenticated old lifecycle divergence.
+   `ResolveChallenge` now types its pre-clone pending/certificate join and
+   separates signed resolution from authenticated pending/lifecycle drift.
    Leaf-reason completion remains a hard
    dependency before terminal failure mapping. The success carrier still owns the open
    snapshot and unsealed overlay/scheduled lifecycle. It does not yet seal

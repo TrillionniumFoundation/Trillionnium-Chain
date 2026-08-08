@@ -692,6 +692,9 @@ then separates signed delete shape from authenticated leaf/reservation drift;
 open challenge validates signed IDs, active certificate, and duplicate-pending
 facts before clone, then separates signed next lifecycle from authenticated old
 lifecycle/authority drift;
+resolve challenge types its pending/certificate join before clone, preserves
+the exact not-pending reason, and splits signed next resolution from
+authenticated pending/old-lifecycle drift;
 unrefined leaf failures conservatively remain authenticated-overlay invariants
 without string matching. Success retains the open snapshot, decoded owner, and unsealed PoCO
 overlay or scheduled lifecycle. PoCO leaf-reason refinement, write sealing,

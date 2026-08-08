@@ -3104,17 +3104,51 @@ fn validate_operation_capacity_before_clone_v0(
             challenge_id_hex,
             ..
         } => {
+            exact_hash32_hex(certificate_id_hex).map_err(|_| {
+                deterministic_application_error_v0(
+                    PocoApplicationDeterministicInvalidV0::SemanticTransition,
+                )
+            })?;
+            exact_hash32_hex(challenge_id_hex).map_err(|_| {
+                deterministic_application_error_v0(
+                    PocoApplicationDeterministicInvalidV0::SemanticTransition,
+                )
+            })?;
             let pending_index = authority
                 .pending_challenges
                 .binary_search_by(|item| item.challenge_id_hex.as_str().cmp(challenge_id_hex))
-                .map_err(|_| anyhow::anyhow!("challenge is not pending"))?;
-            ensure!(
-                authority.pending_challenges[pending_index]
-                    .certificate_id_hex
-                    .as_str()
-                    == certificate_id_hex.as_str(),
-                "challenge resolution points to another certificate"
-            );
+                .map_err(|_| {
+                    deterministic_application_error_v0(
+                        PocoApplicationDeterministicInvalidV0::ChallengeNotPending,
+                    )
+                })?;
+            if authority.pending_challenges[pending_index]
+                .certificate_id_hex
+                .as_str()
+                != certificate_id_hex.as_str()
+            {
+                return Err(deterministic_application_error_v0(
+                    PocoApplicationDeterministicInvalidV0::SemanticTransition,
+                ));
+            }
+            let certificate_index = authority
+                .active_certificates
+                .binary_search_by(|certificate| {
+                    certificate
+                        .certificate_id_hex
+                        .as_str()
+                        .cmp(certificate_id_hex.as_str())
+                })
+                .map_err(|_| {
+                    invariant_application_error_v0(PocoApplicationInvariantV0::AuthenticatedOverlay)
+                })?;
+            if authority.active_certificates[certificate_index].lifecycle
+                != CertificateAuthorityLifecycleV0::Accepted
+            {
+                return Err(invariant_application_error_v0(
+                    PocoApplicationInvariantV0::AuthenticatedOverlay,
+                ));
+            }
             delta.pending_challenges_removed = 1;
         }
         PocoApplicationOperationBodyV0::ProposeGovernance { .. } => {
@@ -5127,61 +5161,75 @@ fn apply_resolve_challenge_v0(
     resolution: ChallengeResolutionV0,
     resolution_decision_id_hex: &str,
 ) -> Result<()> {
-    let certificate_id = exact_hash32_hex(certificate_id_hex)?;
-    exact_hash32_hex(challenge_id_hex)?;
+    let signed_semantic = || {
+        deterministic_application_error_v0(
+            PocoApplicationDeterministicInvalidV0::SemanticTransition,
+        )
+    };
+    let authenticated_overlay =
+        || invariant_application_error_v0(PocoApplicationInvariantV0::AuthenticatedOverlay);
+    let certificate_id = exact_hash32_hex(certificate_id_hex).map_err(|_| signed_semantic())?;
+    exact_hash32_hex(challenge_id_hex).map_err(|_| signed_semantic())?;
     let decision =
         require_derived_decision_id(preimage, b"resolve-challenge", resolution_decision_id_hex)?;
     let pending_index = overlay
         .authority
         .pending_challenges
         .binary_search_by(|item| item.challenge_id_hex.as_str().cmp(challenge_id_hex))
-        .map_err(|_| anyhow::anyhow!("challenge is not pending"))?;
-    ensure!(
-        overlay.authority.pending_challenges[pending_index].certificate_id_hex
-            == certificate_id_hex,
-        "challenge resolution points to another certificate"
-    );
+        .map_err(|_| {
+            deterministic_application_error_v0(
+                PocoApplicationDeterministicInvalidV0::ChallengeNotPending,
+            )
+        })?;
+    if overlay.authority.pending_challenges[pending_index].certificate_id_hex != certificate_id_hex
+    {
+        return Err(signed_semantic());
+    }
     let certificate_index = overlay
         .authority
         .active_certificates
         .binary_search_by(|item| item.certificate_id_hex.as_str().cmp(certificate_id_hex))
-        .map_err(|_| anyhow::anyhow!("challenged certificate is not active"))?;
-    ensure!(
-        overlay.authority.active_certificates[certificate_index].lifecycle
-            == CertificateAuthorityLifecycleV0::Accepted,
-        "challenged certificate authority lifecycle is terminal"
-    );
+        .map_err(|_| authenticated_overlay())?;
+    if overlay.authority.active_certificates[certificate_index].lifecycle
+        != CertificateAuthorityLifecycleV0::Accepted
+    {
+        return Err(authenticated_overlay());
+    }
     let changes = prepare_semantic_changes(overlay, &operation.semantic_changes, false)?;
     ensure_change_kinds(&changes, &[PocoSnapshotEntryKindV0::RevocationOrChallenge])?;
     let change = &changes[0];
-    ensure!(
-        change.expected_identity.as_deref() == Some(certificate_id.as_slice())
-            && change.next_identity.as_deref() == Some(certificate_id.as_slice()),
-        "challenge resolution certificate mismatch"
-    );
+    if change.expected_identity.as_deref() != Some(certificate_id.as_slice()) {
+        return Err(authenticated_overlay());
+    }
+    if change.next_identity.as_deref() != Some(certificate_id.as_slice()) {
+        return Err(signed_semantic());
+    }
     let expected_state = match resolution {
         ChallengeResolutionV0::Rejected => LifecycleStateV0::ChallengeRejected,
         ChallengeResolutionV0::Sustained => LifecycleStateV0::ChallengeSustained,
     };
     let pending = &overlay.authority.pending_challenges[pending_index];
-    match (change.expected_fact.as_ref(), change.next_fact.as_ref()) {
-        (
-            Some(SemanticFactV0::RevocationOrChallenge {
-                state: LifecycleStateV0::ChallengePending,
-                effective_height: pending_height,
-            }),
-            Some(SemanticFactV0::RevocationOrChallenge {
-                state,
-                effective_height,
-            }),
-        ) => ensure!(
-            *pending_height == pending.opened_height
-                && context.target_height.get() > pending.opened_height
-                && *state == expected_state
-                && *effective_height == context.target_height.get(),
-            "challenge resolution is not target-bound"
-        ),
-        _ => bail!("invalid challenge-resolution semantic transition"),
+    let pending_height = match change.expected_fact.as_ref() {
+        Some(SemanticFactV0::RevocationOrChallenge {
+            state: LifecycleStateV0::ChallengePending,
+            effective_height,
+        }) => *effective_height,
+        _ => return Err(authenticated_overlay()),
+    };
+    if pending_height != pending.opened_height {
+        return Err(authenticated_overlay());
+    }
+    if context.target_height.get() <= pending.opened_height {
+        return Err(deterministic_application_error_v0(
+            PocoApplicationDeterministicInvalidV0::ProtocolWindowOrCap,
+        ));
+    }
+    match change.next_fact.as_ref() {
+        Some(SemanticFactV0::RevocationOrChallenge {
+            state,
+            effective_height,
+        }) if *state == expected_state && *effective_height == context.target_height.get() => {}
+        _ => return Err(signed_semantic()),
     }
     insert_nullifiers(
         overlay,
@@ -8217,6 +8265,53 @@ mod tests {
             block.apply_decoded_exact(&raw, &operation),
             Err(PocoApplicationApplyFailureV0::DeterministicallyInvalid(
                 PocoApplicationDeterministicInvalidV0::MissingRequiredAuthorityFact,
+            )),
+        );
+        assert_eq!(block.operation_count(), 0);
+        assert!(block.overlay.operation_ids.is_empty());
+        assert!(block.overlay.mutations.is_empty());
+    }
+
+    #[test]
+    fn resolve_challenge_signed_shape_and_not_pending_are_typed_before_clone() {
+        let projection = genesis_projection();
+        let mut block =
+            PocoApplicationBlockOverlayV0::from_projection(context_at(2).unwrap(), &projection)
+                .unwrap();
+        let mut operation = PocoApplicationOperationV0 {
+            schema: POCO_APPLICATION_OPERATION_SCHEMA_V0.to_string(),
+            target_height: 2,
+            expected_state_revision: 1,
+            body: PocoApplicationOperationBodyV0::ResolveChallenge {
+                certificate_id_hex: "0".to_string(),
+                challenge_id_hex: "02".repeat(32),
+                resolution: ChallengeResolutionV0::Rejected,
+                resolution_decision_id_hex: "03".repeat(32),
+            },
+            semantic_changes: Vec::new(),
+            nullifier_non_membership_checks: Vec::new(),
+            nullifier_insertions: Vec::new(),
+        };
+        let malformed_raw = serde_json::to_vec(&operation).unwrap();
+        assert_eq!(
+            block.apply_decoded_exact(&malformed_raw, &operation),
+            Err(PocoApplicationApplyFailureV0::DeterministicallyInvalid(
+                PocoApplicationDeterministicInvalidV0::SemanticTransition,
+            )),
+        );
+
+        let PocoApplicationOperationBodyV0::ResolveChallenge {
+            certificate_id_hex, ..
+        } = &mut operation.body
+        else {
+            unreachable!();
+        };
+        *certificate_id_hex = "01".repeat(32);
+        let raw = serde_json::to_vec(&operation).unwrap();
+        assert_eq!(
+            block.apply_decoded_exact(&raw, &operation),
+            Err(PocoApplicationApplyFailureV0::DeterministicallyInvalid(
+                PocoApplicationDeterministicInvalidV0::ChallengeNotPending,
             )),
         );
         assert_eq!(block.operation_count(), 0);

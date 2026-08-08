@@ -422,6 +422,11 @@ an earlier phase.
   duplicate pending facts before clone; lifecycle/window rejection is
   `ProtocolWindowOrCap`, signed next-lifecycle drift is `SemanticTransition`,
   and old authenticated lifecycle/authority divergence is `AuthenticatedOverlay`.
+  `ResolveChallenge` now validates signed IDs, pending identity, active
+  certificate presence, and authenticated lifecycle before clone; not-pending
+  is its existing exact deterministic reason, too-early resolution is
+  `ProtocolWindowOrCap`, signed next-resolution drift is `SemanticTransition`,
+  and pending/old-lifecycle companion drift is `AuthenticatedOverlay`.
   Leaf errors not yet assigned a narrower reason remain conservatively typed
   as an authenticated-overlay invariant. Success keeps the exact decoded owner plus
   the still-open snapshot and unsealed family state. These attempts do not yet
