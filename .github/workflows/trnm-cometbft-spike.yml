@@ -84,9 +84,6 @@ jobs:
       COMETBFT_SHA256: "736592aea2e077a4bb934ed26b0ee670462ae3d8a37670e2d268dea33304bc52"
       CARGO_INCREMENTAL: "0"
       CARGO_TERM_COLOR: never
-      TRNM_COMETBFT_CI_ROOT: ${{ runner.temp }}/trnm-comet-four-${{ github.run_id }}-${{ github.run_attempt }}
-      TRNM_COMETBFT_LIFECYCLE_CI_ROOT: ${{ runner.temp }}/trnm-comet-lifecycle-${{ github.run_id }}-${{ github.run_attempt }}
-      TRNM_PERSISTENT_SCALE_CI_ROOT: ${{ runner.temp }}/trnm-persistent-scale-${{ github.run_id }}-${{ github.run_attempt }}
 
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
@@ -126,7 +123,7 @@ jobs:
       - name: Persistent SQLite AppHash v4 smoke (10k objects + 10k updates)
         env:
           TRNM_PERSISTENT_SCALE_PROFILE: smoke
-          TRNM_PERSISTENT_SCALE_EVIDENCE_ROOT: ${{ env.TRNM_PERSISTENT_SCALE_CI_ROOT }}
+          TRNM_PERSISTENT_SCALE_EVIDENCE_ROOT: ${{ runner.temp }}/trnm-persistent-scale-${{ github.run_id }}-${{ github.run_attempt }}
         run: trillionnium/scripts/consensus/run_persistent_scale_gate.sh
 
       - name: Single-node live-process gate
@@ -138,14 +135,14 @@ jobs:
         env:
           TRNM_COMETBFT_BIN: /tmp/cometbft
           TRNM_COMETBFT_SPIKE_CLEAN_ON_SUCCESS: "1"
-          TRNM_COMETBFT_SPIKE_ROOT: ${{ env.TRNM_COMETBFT_CI_ROOT }}
+          TRNM_COMETBFT_SPIKE_ROOT: ${{ runner.temp }}/trnm-comet-four-${{ github.run_id }}-${{ github.run_attempt }}
         run: trillionnium/scripts/consensus/spike_cometbft_four_validator.sh
 
       - name: Six-node validator lifecycle gate
         env:
           TRNM_COMETBFT_BIN: /tmp/cometbft
           TRNM_COMETBFT_LIFECYCLE_CLEAN_ON_SUCCESS: "1"
-          TRNM_COMETBFT_LIFECYCLE_ROOT: ${{ env.TRNM_COMETBFT_LIFECYCLE_CI_ROOT }}
+          TRNM_COMETBFT_LIFECYCLE_ROOT: ${{ runner.temp }}/trnm-comet-lifecycle-${{ github.run_id }}-${{ github.run_attempt }}
         run: trillionnium/scripts/consensus/spike_cometbft_validator_lifecycle.sh
 
       - name: Upload failed CometBFT safety evidence
@@ -154,24 +151,24 @@ jobs:
         with:
           name: trnm-cometbft-safety-${{ github.run_id }}-${{ github.run_attempt }}
           path: |
-            ${{ env.TRNM_COMETBFT_CI_ROOT }}/evidence/**
-            ${{ env.TRNM_COMETBFT_CI_ROOT }}/genesis.json
-            ${{ env.TRNM_COMETBFT_CI_ROOT }}/node*/app.log
-            ${{ env.TRNM_COMETBFT_CI_ROOT }}/node*/comet.log
-            ${{ env.TRNM_COMETBFT_CI_ROOT }}/node*/app-state.json
-            ${{ env.TRNM_COMETBFT_CI_ROOT }}/node*/app-state.json.sqlite3
-            ${{ env.TRNM_COMETBFT_CI_ROOT }}/node*/config/config.toml
-            ${{ env.TRNM_COMETBFT_CI_ROOT }}/node*/config/genesis.json
-            ${{ env.TRNM_COMETBFT_LIFECYCLE_CI_ROOT }}/evidence/**
-            ${{ env.TRNM_COMETBFT_LIFECYCLE_CI_ROOT }}/*.response.json
-            ${{ env.TRNM_COMETBFT_LIFECYCLE_CI_ROOT }}/genesis.json
-            ${{ env.TRNM_COMETBFT_LIFECYCLE_CI_ROOT }}/node*/app.log
-            ${{ env.TRNM_COMETBFT_LIFECYCLE_CI_ROOT }}/node*/comet.log
-            ${{ env.TRNM_COMETBFT_LIFECYCLE_CI_ROOT }}/node*/app-state.json
-            ${{ env.TRNM_COMETBFT_LIFECYCLE_CI_ROOT }}/node*/app-state.json.sqlite3
-            ${{ env.TRNM_PERSISTENT_SCALE_CI_ROOT }}/evidence.json
-            ${{ env.TRNM_PERSISTENT_SCALE_CI_ROOT }}/report.json
-            ${{ env.TRNM_PERSISTENT_SCALE_CI_ROOT }}/time.txt
+            ${{ runner.temp }}/trnm-comet-four-${{ github.run_id }}-${{ github.run_attempt }}/evidence/**
+            ${{ runner.temp }}/trnm-comet-four-${{ github.run_id }}-${{ github.run_attempt }}/genesis.json
+            ${{ runner.temp }}/trnm-comet-four-${{ github.run_id }}-${{ github.run_attempt }}/node*/app.log
+            ${{ runner.temp }}/trnm-comet-four-${{ github.run_id }}-${{ github.run_attempt }}/node*/comet.log
+            ${{ runner.temp }}/trnm-comet-four-${{ github.run_id }}-${{ github.run_attempt }}/node*/app-state.json
+            ${{ runner.temp }}/trnm-comet-four-${{ github.run_id }}-${{ github.run_attempt }}/node*/app-state.json.sqlite3
+            ${{ runner.temp }}/trnm-comet-four-${{ github.run_id }}-${{ github.run_attempt }}/node*/config/config.toml
+            ${{ runner.temp }}/trnm-comet-four-${{ github.run_id }}-${{ github.run_attempt }}/node*/config/genesis.json
+            ${{ runner.temp }}/trnm-comet-lifecycle-${{ github.run_id }}-${{ github.run_attempt }}/evidence/**
+            ${{ runner.temp }}/trnm-comet-lifecycle-${{ github.run_id }}-${{ github.run_attempt }}/*.response.json
+            ${{ runner.temp }}/trnm-comet-lifecycle-${{ github.run_id }}-${{ github.run_attempt }}/genesis.json
+            ${{ runner.temp }}/trnm-comet-lifecycle-${{ github.run_id }}-${{ github.run_attempt }}/node*/app.log
+            ${{ runner.temp }}/trnm-comet-lifecycle-${{ github.run_id }}-${{ github.run_attempt }}/node*/comet.log
+            ${{ runner.temp }}/trnm-comet-lifecycle-${{ github.run_id }}-${{ github.run_attempt }}/node*/app-state.json
+            ${{ runner.temp }}/trnm-comet-lifecycle-${{ github.run_id }}-${{ github.run_attempt }}/node*/app-state.json.sqlite3
+            ${{ runner.temp }}/trnm-persistent-scale-${{ github.run_id }}-${{ github.run_attempt }}/evidence.json
+            ${{ runner.temp }}/trnm-persistent-scale-${{ github.run_id }}-${{ github.run_attempt }}/report.json
+            ${{ runner.temp }}/trnm-persistent-scale-${{ github.run_id }}-${{ github.run_attempt }}/time.txt
           if-no-files-found: warn
           retention-days: 14
 
@@ -191,7 +188,6 @@ jobs:
       TRNM_COMETBFT_APP_CONFIG_SCHEMA: trnm_cometbft_app_config_v1
       TRNM_COMETBFT_GENESIS_SCHEMA: trnm_cometbft_genesis_v2
       TRNM_COMETBFT_VALIDATOR_GOVERNANCE_SCHEMA: trnm_validator_governance_v1
-      TRNM_COMETBFT_PARTITION_ROOT: ${{ runner.temp }}/trnm-comet-partition-${{ matrix.case }}-${{ github.run_id }}-${{ github.run_attempt }}
 
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
@@ -221,6 +217,7 @@ jobs:
           TRNM_COMETBFT_CLI_BIN: ${{ github.workspace }}/trillionnium/target/debug/trnm-chain-cli
           TRNM_COMETBFT_PARTITION_CASE: ${{ matrix.case }}
           TRNM_COMETBFT_PARTITION_CLEAN_ON_SUCCESS: "1"
+          TRNM_COMETBFT_PARTITION_ROOT: ${{ runner.temp }}/trnm-comet-partition-${{ matrix.case }}-${{ github.run_id }}-${{ github.run_attempt }}
         run: trillionnium/scripts/consensus/spike_cometbft_partition_matrix.sh
 
       - name: Upload failed partition safety evidence
@@ -229,16 +226,16 @@ jobs:
         with:
           name: trnm-cometbft-partition-${{ matrix.case }}-${{ github.run_id }}-${{ github.run_attempt }}
           path: |
-            ${{ env.TRNM_COMETBFT_PARTITION_ROOT }}/evidence/**
-            ${{ env.TRNM_COMETBFT_PARTITION_ROOT }}/genesis.json
-            ${{ env.TRNM_COMETBFT_PARTITION_ROOT }}/proxy-config.json
-            ${{ env.TRNM_COMETBFT_PARTITION_ROOT }}/proxy.log
-            ${{ env.TRNM_COMETBFT_PARTITION_ROOT }}/proxy-control.log
-            ${{ env.TRNM_COMETBFT_PARTITION_ROOT }}/node*/app.log
-            ${{ env.TRNM_COMETBFT_PARTITION_ROOT }}/node*/comet.log
-            ${{ env.TRNM_COMETBFT_PARTITION_ROOT }}/node*/app-state.json
-            ${{ env.TRNM_COMETBFT_PARTITION_ROOT }}/node*/app-state.json.sqlite3
-            ${{ env.TRNM_COMETBFT_PARTITION_ROOT }}/node*/config/config.toml
-            ${{ env.TRNM_COMETBFT_PARTITION_ROOT }}/node*/config/genesis.json
+            ${{ runner.temp }}/trnm-comet-partition-${{ matrix.case }}-${{ github.run_id }}-${{ github.run_attempt }}/evidence/**
+            ${{ runner.temp }}/trnm-comet-partition-${{ matrix.case }}-${{ github.run_id }}-${{ github.run_attempt }}/genesis.json
+            ${{ runner.temp }}/trnm-comet-partition-${{ matrix.case }}-${{ github.run_id }}-${{ github.run_attempt }}/proxy-config.json
+            ${{ runner.temp }}/trnm-comet-partition-${{ matrix.case }}-${{ github.run_id }}-${{ github.run_attempt }}/proxy.log
+            ${{ runner.temp }}/trnm-comet-partition-${{ matrix.case }}-${{ github.run_id }}-${{ github.run_attempt }}/proxy-control.log
+            ${{ runner.temp }}/trnm-comet-partition-${{ matrix.case }}-${{ github.run_id }}-${{ github.run_attempt }}/node*/app.log
+            ${{ runner.temp }}/trnm-comet-partition-${{ matrix.case }}-${{ github.run_id }}-${{ github.run_attempt }}/node*/comet.log
+            ${{ runner.temp }}/trnm-comet-partition-${{ matrix.case }}-${{ github.run_id }}-${{ github.run_attempt }}/node*/app-state.json
+            ${{ runner.temp }}/trnm-comet-partition-${{ matrix.case }}-${{ github.run_id }}-${{ github.run_attempt }}/node*/app-state.json.sqlite3
+            ${{ runner.temp }}/trnm-comet-partition-${{ matrix.case }}-${{ github.run_id }}-${{ github.run_attempt }}/node*/config/config.toml
+            ${{ runner.temp }}/trnm-comet-partition-${{ matrix.case }}-${{ github.run_id }}-${{ github.run_attempt }}/node*/config/genesis.json
           if-no-files-found: warn
           retention-days: 14
