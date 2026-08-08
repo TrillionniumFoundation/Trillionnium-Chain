@@ -34,6 +34,20 @@ targets.
 - The development workstation may edit source, compile with Cargo, run unit,
   property, simulator, formal, and isolated integration tests, and build
   immutable release artifacts.
+- Repository remote CI is budget-constrained and must use only the dedicated
+  X230 self-hosted GitHub Actions runner selected by the labels `self-hosted`,
+  `Linux`, `X64`, `x230`, and `trillionnium-chain`. GitHub-hosted or other paid
+  runners are not authorized. The runner identity has no sudo, Docker,
+  deployment credentials, operator-home access, or `/srv/trillionnium-chain`
+  access; host packages and pinned language toolchains are root-provisioned and
+  read-only to the job identity. Every job is also gated to the canonical private repository,
+  trusted initiating/triggering actor, and same-repository PR provenance
+  (scheduled default-branch work is the only actor exception).
+  `scripts/check_ci_runner_policy.sh` enforces these invariants from worktree,
+  staged-index, and pushed-HEAD preflight paths. Cold-cache job timeouts are
+  sized for the X230's two physical cores and clean per-job checkout; the
+  single runner serializes jobs, and real first-run wall times will be used to
+  tighten those bounds without weakening gates.
 - It must not run persistent validator, node, signer, RPC, monitoring, fault,
   or soak services and must not hold live node state or validator keys.
 - Deployment, LAN/public validation, fault campaigns, and soak run through
@@ -345,8 +359,29 @@ an earlier phase.
   retains the complete failed owner and none emits a Core callback.
   A consuming non-runtime dispatcher also selects only PoCO application,
   validator transition, or unsupported from the retained, strictly verified
-  envelope. Each branch keeps the exact cursor/snapshot owner; dispatch alone
-  neither decodes family semantics nor executes, mutates, or advances it.
+  envelope. A second consuming step strictly decodes canonical PoCO operations
+  and canonical validator transitions, binds PoCO target height plus validator
+  schema/chain/command/operator facts to that retained owner, and preserves
+  the exact family owner on every typed decode mismatch. The next consuming
+  step now reloads the production PoCO projection only through that pinned
+  snapshot, derives its application-authority context from the retained parent
+  configuration/lifecycle, and applies the operation to an unsealed overlay;
+  validator transitions schedule against a clone of the lifecycle authenticated
+  by the same owner. Decoded PoCO values are exact-reencoded against their
+  retained raw bytes before use, and there is no caller-supplied projection or
+  lifecycle loader. Semantic and family failures explicitly finish the owned
+  snapshot before exposing a closed failure; finish failure outranks the pending
+  cause. Closed causes distinguish authenticated-source loss, only the
+  deterministically invalid facts and invariant faults. Validator scheduling
+  now returns a closed typed reason set, uses checked nonce/delay arithmetic,
+  and clone-and-swaps only after its postcondition validates; native family
+  mapping preserves its deterministic versus invariant class without diagnostic
+  text. The remaining `anyhow` errors from PoCO application stay conservatively
+  fail-stop/unclassified. Success keeps the exact decoded owner plus
+  the still-open snapshot and unsealed family state. These attempts do not yet
+  seal family writes, merge multiple family operations into the cursor, advance
+  it, form receipts, or promote a terminal result. Typed PoCO application
+  errors are required before terminal family-failure mapping.
   Future orphan value/node/stale-index
   rejection still depends on the startup full scan, and the in-memory pin
   spans one cloned store family rather than independent handles or processes;

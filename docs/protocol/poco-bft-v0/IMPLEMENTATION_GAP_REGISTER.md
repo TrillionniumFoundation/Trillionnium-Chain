@@ -1223,14 +1223,31 @@ epoch prune, and Core transition remain open.
    and four-root comparison now come through one bounded production
    join/cursor chain.
    Synthetic genesis/native state authority, speculative-parent overlays,
-   non-runtime family semantic decode/execution/cursor advance, JMT plan
+   non-runtime family write sealing/multi-operation cursor advance, JMT plan
    application/state persistence, durable host
    callback-outbox scheduling/delivery, actual Core callback execution, and
    ABCI wiring
    remain hard gaps before terminal/Core callback and still have no production
-   constructor. A consuming dispatcher now derives only PoCO application,
-   validator transition, or unsupported from the retained verified envelope,
-   but does not decode or execute a family. The private consuming bridge maps `Proposal` only to
+   constructor. A consuming dispatcher derives only PoCO application,
+   validator transition, or unsupported from the retained verified envelope;
+   its consuming semantic step now strict-decodes canonical PoCO operations and
+   validator transitions, binds retained envelope/context facts, and preserves
+   the exact owner on mismatch. A subsequent consuming attempt constructs the
+   PoCO overlay from the pinned authenticated projection and schedules a
+   validator transition against the retained authenticated lifecycle, while
+   binding the decoded PoCO value back to the exact retained raw bytes. No
+   caller-supplied source loader exists. Every semantic/family failure explicitly
+   finishes the snapshot before exposing its closed owner, with finish failure
+   outranking the pending cause. Authenticated-source loss and independently
+   proven deterministic authorization failures are typed. Validator scheduling
+   also exposes a closed deterministic/invariant reason set, checks nonce and
+   delay overflow, and commits its clone only after postcondition validation.
+   Remaining opaque PoCO application errors are fail-stop invariants and are not
+   parsed from error strings. Typed PoCO application errors therefore remain a
+   hard dependency before terminal failure mapping. The success carrier still owns the open
+   snapshot and unsealed overlay/scheduled lifecycle. It does not yet seal
+   writes, integrate successive family operations into the cursor, advance,
+   emit a receipt, or promote a terminal result. The private consuming bridge maps `Proposal` only to
    `PayloadValidated` and `Synced` only to `SyncedPayloadValidated`, but it
    does not call a Core instance, persist state, deliver a callback, or enter
    ABCI. Reservation identity is already

@@ -647,7 +647,22 @@ internal/authenticated drift fails stop. Every mapped outcome retains its exact
 failed owner and none emits a Core input. A consuming closed-set non-runtime
 dispatcher now derives only PoCO application, validator transition, or
 unsupported from the exact verified envelope while retaining its cursor and
-snapshot; family decode, execution, mutation, and cursor advance remain open.
+snapshot. A second consuming carrier strictly decodes canonical PoCO operations
+and validator transitions, binds the retained target-height or
+schema/chain/command/operator facts, and retains the exact family owner on
+failure. A further consuming attempt now constructs PoCO authority state only
+from the pinned authenticated projection and schedules validator transitions
+only against the retained authenticated lifecycle; it accepts no supplied
+projection/lifecycle loader and rebinds decoded PoCO values to their exact raw
+bytes. Semantic/family failures explicitly finish the owned snapshot before
+exposing a closed owner, with finish failure taking priority. Authenticated
+source loss and independently proven authorization rejects are typed. Validator
+scheduling now has closed deterministic/invariant reasons, checked nonce/delay
+arithmetic, and clone-and-swap postcondition validation; remaining opaque PoCO
+application errors conservatively fail stop without string matching. Success retains the open snapshot, decoded owner, and unsealed PoCO
+overlay or scheduled lifecycle. Typed PoCO application errors, write sealing,
+multi-operation cursor integration, success-only cursor advance, receipts, and
+terminal failure promotion remain open.
 Runtime resource estimation now has a separate fallible API and opaque
 estimate-failure token, preserving deterministic versus typed state-read
 failure without creating a receipt or mutation; operator recovery estimation

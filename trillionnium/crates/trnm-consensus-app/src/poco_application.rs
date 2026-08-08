@@ -1030,6 +1030,10 @@ impl PocoApplicationOperationV0 {
         validate_raw_nullifier_order(&self.nullifier_insertions)?;
         Ok(())
     }
+
+    pub(crate) const fn target_height(&self) -> u64 {
+        self.target_height
+    }
 }
 
 /// Exact crate-internal operation identifier used by production replay
@@ -2393,6 +2397,19 @@ impl PocoApplicationBlockOverlayV0 {
     }
 
     pub(crate) fn apply_raw(&mut self, raw: &[u8]) -> Result<()> {
+        let operation = PocoApplicationOperationV0::decode_exact(raw)?;
+        self.apply_decoded_exact(raw, &operation)
+    }
+
+    /// Applies an operation already obtained from `decode_exact` while
+    /// retaining the committed raw bytes as the operation-ID preimage. The
+    /// re-encode equality check prevents a decoded value from being paired
+    /// with foreign bytes; all checks still precede the clone-and-swap update.
+    pub(crate) fn apply_decoded_exact(
+        &mut self,
+        raw: &[u8],
+        operation: &PocoApplicationOperationV0,
+    ) -> Result<()> {
         ensure!(
             self.raw_operations.len() < MAX_APPLICATION_OPERATIONS_PER_BLOCK,
             "too many PoCO application operations in one block"
@@ -2409,7 +2426,10 @@ impl PocoApplicationBlockOverlayV0 {
             next_total <= MAX_POCO_SNAPSHOT_BUNDLE_BYTES,
             "PoCO operation sequence exceeds 8 MiB"
         );
-        let operation = PocoApplicationOperationV0::decode_exact(raw)?;
+        ensure!(
+            serde_json::to_vec(&operation).context("re-encode decoded PoCO operation")? == raw,
+            "decoded PoCO operation differs from its exact raw owner"
+        );
         ensure!(
             operation.target_height == self.context.target_height.get(),
             "operation target height differs from authenticated block height"
@@ -2418,17 +2438,18 @@ impl PocoApplicationBlockOverlayV0 {
             operation.expected_state_revision == self.overlay.authority.revision,
             "operation expected authority revision mismatch"
         );
-        validate_operation_capacity_before_clone_v0(&self.context, &self.overlay, &operation)?;
+        validate_operation_capacity_before_clone_v0(&self.context, &self.overlay, operation)?;
         let operation_id = domain_hash(APPLICATION_OPERATION_DOMAIN, raw);
         ensure!(
             !self.overlay.operation_ids.contains(&operation_id),
             "duplicate application operation in one block"
         );
 
-        // Bounds and exact decode above precede this potentially large clone.
+        // Bounds and exact decoded-value/raw-byte binding above precede this
+        // potentially large clone.
         let mut candidate = self.overlay.clone();
         candidate.operation_ids.insert(operation_id);
-        apply_operation_v0(&self.context, &mut candidate, &operation)?;
+        apply_operation_v0(&self.context, &mut candidate, operation)?;
         self.overlay = candidate;
         self.raw_operations.push(raw.to_vec());
         self.aggregate_operation_bytes = next_total;
@@ -7420,6 +7441,22 @@ mod tests {
         let sealed = block.seal().unwrap();
         assert_eq!(sealed.operation_count(), 1);
         assert!(sealed.mutation_count() >= 2);
+    }
+
+    #[test]
+    fn decoded_operation_cannot_be_spliced_to_foreign_raw_bytes_or_mutate_overlay() {
+        let projection = genesis_projection();
+        let mut block =
+            PocoApplicationBlockOverlayV0::from_projection(context_at(2).unwrap(), &projection)
+                .unwrap();
+        let raw = block.test_define_meter_operation_v0().unwrap();
+        let decoded = PocoApplicationOperationV0::decode_exact(&raw).unwrap();
+        let mut foreign_raw = raw.clone();
+        foreign_raw.push(b' ');
+        assert!(block.apply_decoded_exact(&foreign_raw, &decoded).is_err());
+        assert_eq!(block.operation_count(), 0);
+        block.apply_decoded_exact(&raw, &decoded).unwrap();
+        assert_eq!(block.operation_count(), 1);
     }
 
     #[test]

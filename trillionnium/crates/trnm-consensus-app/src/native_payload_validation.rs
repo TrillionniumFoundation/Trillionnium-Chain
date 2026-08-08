@@ -10,9 +10,9 @@
 //! request, opens the exact positive-height parent retained by that
 //! capability, and exact-decodes its complete application/evidence transport
 //! under the active set and parameters authenticated from the same open
-//! SQLite/JMT snapshot. It does not yet dispatch application
-//! non-runtime payloads, produce a terminal invalid outcome, or authorize an
-//! [`crate::execution_outcome`] promotion. A production sequential cursor now
+//! SQLite/JMT snapshot. It does not yet execute application non-runtime
+//! payloads or authorize their terminal outcome promotion. A production
+//! sequential cursor now
 //! begins behind the Core request's shared process-local one-shot claim and a
 //! schema-v5 durable `(route, full ValidationId)` reservation, so both cloned
 //! replays and independently materialized exact duplicates are suppressed
@@ -33,8 +33,10 @@
 //! retains the exact finished plan on either success or mismatch. Non-runtime
 //! family execution, plan persistence, and callback delivery remain absent
 //! until later carriers supply those distinct authorities. Owner-preserving
-//! typed failure promotion and a consuming closed-set non-runtime family
-//! dispatcher are now present, but neither applies state nor advances Core.
+//! typed failure promotion, a consuming closed-set non-runtime family
+//! dispatcher, owner-preserving strict PoCO/validator semantic decoders, and
+//! same-snapshot family-state attempts are now present. The attempts still do
+//! not seal writes, advance the cursor, or advance Core.
 
 use crate::{
     auth_tree::{PlannedAuthUpdate, PlannedAuthUpdateSealV0},
@@ -580,6 +582,195 @@ struct CoreAuthorizedUnsupportedNonRuntimePayloadV0 {
     routed: CoreAuthorizedNonRuntimePayloadRoutingV0,
 }
 
+/// Strictly decoded PoCO application operation that still owns the exact
+/// Core-authorized envelope, body cursor, and authenticated source snapshot.
+/// State-authority checks and overlay execution remain later consuming steps.
+#[must_use = "a decoded PoCO operation still owns its exact validation cursor"]
+struct DecodedCoreAuthorizedPocoApplicationPayloadV0 {
+    owner: CoreAuthorizedPocoApplicationPayloadV0,
+    operation: crate::poco_application::PocoApplicationOperationV0,
+}
+
+/// Strictly decoded validator transition that still owns the exact
+/// Core-authorized envelope, body cursor, and authenticated source snapshot.
+/// Governance-state authorization and scheduling remain a later consuming
+/// step.
+#[must_use = "a decoded validator transition still owns its exact validation cursor"]
+struct DecodedCoreAuthorizedValidatorTransitionPayloadV0 {
+    owner: CoreAuthorizedValidatorTransitionPayloadV0,
+    transition: crate::validator_lifecycle::ValidatorSetTransitionV1,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+enum CoreAuthorizedNonRuntimeSemanticDecodeCauseV0 {
+    InvalidPocoApplicationOperation,
+    PocoTargetHeightMismatch,
+    InvalidValidatorTransition,
+    NonCanonicalValidatorTransition,
+    ValidatorTransitionSchemaMismatch,
+    ValidatorTransitionChainMismatch,
+    ValidatorTransitionCommandMismatch,
+    ValidatorTransitionSignerRoleMismatch,
+}
+
+#[must_use = "a semantic decode failure still retains its exact family owner"]
+enum FailedCoreAuthorizedNonRuntimeSemanticDecodeV0 {
+    PocoApplication {
+        owner: CoreAuthorizedPocoApplicationPayloadV0,
+        cause: CoreAuthorizedNonRuntimeSemanticDecodeCauseV0,
+    },
+    ValidatorTransition {
+        owner: CoreAuthorizedValidatorTransitionPayloadV0,
+        cause: CoreAuthorizedNonRuntimeSemanticDecodeCauseV0,
+    },
+}
+
+impl std::fmt::Debug for FailedCoreAuthorizedNonRuntimeSemanticDecodeV0 {
+    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        formatter
+            .debug_struct("FailedCoreAuthorizedNonRuntimeSemanticDecodeV0")
+            .field("pending_explicit_snapshot_finish", &true)
+            .finish_non_exhaustive()
+    }
+}
+
+/// Snapshot-closed form of one exact non-runtime payload owner. Both the
+/// committed cursor position and the decoded-but-uncommitted successor index
+/// are retained so closing a failure cannot be mistaken for cursor advance.
+#[must_use = "a closed non-runtime payload still retains its exact cursor owner"]
+struct ClosedCoreAuthorizedNonRuntimePayloadOwnerV0 {
+    authorized: CoreAuthorizedExactRegularBodyV0,
+    index: u32,
+    decoded_next_transaction_index: u32,
+    cursor_next_transaction_index: u32,
+    exact_outer_bytes: Vec<u8>,
+    exact_inner_bytes: Vec<u8>,
+    envelope: SignedCommandEnvelopeV1,
+    context: ExactRuntimeExecutionContextV0,
+    changes: BTreeMap<String, StoredObject>,
+    applied: Vec<AppliedCoreAuthorizedRuntimeTransactionV0>,
+}
+
+#[derive(Debug, PartialEq, Eq)]
+enum ClosedCoreAuthorizedNonRuntimeSemanticDecodeCauseV0 {
+    Snapshot(AuthenticatedRuntimeReadFailureV0),
+    Decode(CoreAuthorizedNonRuntimeSemanticDecodeCauseV0),
+}
+
+#[must_use = "a closed semantic decode failure still retains its exact family owner"]
+enum ClosedFailedCoreAuthorizedNonRuntimeSemanticDecodeV0 {
+    PocoApplication {
+        owner: ClosedCoreAuthorizedNonRuntimePayloadOwnerV0,
+        cause: ClosedCoreAuthorizedNonRuntimeSemanticDecodeCauseV0,
+    },
+    ValidatorTransition {
+        owner: ClosedCoreAuthorizedNonRuntimePayloadOwnerV0,
+        cause: ClosedCoreAuthorizedNonRuntimeSemanticDecodeCauseV0,
+    },
+}
+
+#[must_use = "semantic dispatch must preserve exactly one decoded or unsupported owner"]
+enum DecodedDispatchedCoreAuthorizedNonRuntimePayloadV0 {
+    PocoApplication(DecodedCoreAuthorizedPocoApplicationPayloadV0),
+    ValidatorTransition(DecodedCoreAuthorizedValidatorTransitionPayloadV0),
+    Unsupported(CoreAuthorizedUnsupportedNonRuntimePayloadV0),
+}
+
+/// One PoCO operation authorized and executed against an overlay constructed
+/// only from the exact retained parent snapshot. The cursor has not advanced
+/// and the overlay has not been sealed or converted into JMT writes.
+#[must_use = "an authorized PoCO family attempt still owns its exact cursor"]
+struct AuthorizedCorePocoApplicationAttemptV0 {
+    decoded: DecodedCoreAuthorizedPocoApplicationPayloadV0,
+    overlay: crate::poco_application::PocoApplicationBlockOverlayV0,
+}
+
+/// One validator transition scheduled against the lifecycle authenticated by
+/// the exact retained parent snapshot. The cursor has not advanced and the
+/// successor lifecycle has not been encoded as an authenticated write.
+#[must_use = "an authorized validator family attempt still owns its exact cursor"]
+struct AuthorizedCoreValidatorTransitionAttemptV0 {
+    decoded: DecodedCoreAuthorizedValidatorTransitionPayloadV0,
+    scheduled_lifecycle: crate::ValidatorLifecycleStateV1,
+}
+
+#[must_use = "family authorization must preserve exactly one attempted owner"]
+enum AuthorizedCoreNonRuntimeFamilyAttemptV0 {
+    PocoApplication(Box<AuthorizedCorePocoApplicationAttemptV0>),
+    ValidatorTransition(Box<AuthorizedCoreValidatorTransitionAttemptV0>),
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+enum CoreAuthorizedNonRuntimeFamilyDeterministicInvalidV0 {
+    PocoGovernanceAuthorization,
+    ValidatorTransition(crate::validator_lifecycle::ValidatorTransitionDeterministicInvalidV1),
+    UnsupportedFamily,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+enum CoreAuthorizedNonRuntimeFamilyInvariantV0 {
+    PocoExecutionContext,
+    PocoProjection,
+    PocoOperationUnclassified,
+    ValidatorTransition(crate::validator_lifecycle::ValidatorTransitionInvariantV1),
+}
+
+#[derive(Debug, PartialEq, Eq)]
+enum CoreAuthorizedNonRuntimeFamilyAttemptCauseV0 {
+    AuthenticatedSource(AuthenticatedRuntimeReadFailureV0),
+    DeterministicallyInvalid(CoreAuthorizedNonRuntimeFamilyDeterministicInvalidV0),
+    Invariant(CoreAuthorizedNonRuntimeFamilyInvariantV0),
+}
+
+#[must_use = "a failed family attempt still retains its exact dispatched owner"]
+enum FailedCoreAuthorizedNonRuntimeFamilyAttemptV0 {
+    PocoApplication {
+        decoded: DecodedCoreAuthorizedPocoApplicationPayloadV0,
+        cause: CoreAuthorizedNonRuntimeFamilyAttemptCauseV0,
+    },
+    ValidatorTransition {
+        decoded: DecodedCoreAuthorizedValidatorTransitionPayloadV0,
+        cause: CoreAuthorizedNonRuntimeFamilyAttemptCauseV0,
+    },
+    Unsupported {
+        owner: CoreAuthorizedUnsupportedNonRuntimePayloadV0,
+        cause: CoreAuthorizedNonRuntimeFamilyAttemptCauseV0,
+    },
+}
+
+impl std::fmt::Debug for FailedCoreAuthorizedNonRuntimeFamilyAttemptV0 {
+    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        formatter
+            .debug_struct("FailedCoreAuthorizedNonRuntimeFamilyAttemptV0")
+            .field("pending_explicit_snapshot_finish", &true)
+            .finish_non_exhaustive()
+    }
+}
+
+#[derive(Debug, PartialEq, Eq)]
+enum ClosedCoreAuthorizedNonRuntimeFamilyAttemptCauseV0 {
+    Snapshot(AuthenticatedRuntimeReadFailureV0),
+    Attempt(CoreAuthorizedNonRuntimeFamilyAttemptCauseV0),
+}
+
+#[must_use = "a closed family attempt failure still retains its exact family owner"]
+enum ClosedFailedCoreAuthorizedNonRuntimeFamilyAttemptV0 {
+    PocoApplication {
+        owner: ClosedCoreAuthorizedNonRuntimePayloadOwnerV0,
+        operation: crate::poco_application::PocoApplicationOperationV0,
+        cause: ClosedCoreAuthorizedNonRuntimeFamilyAttemptCauseV0,
+    },
+    ValidatorTransition {
+        owner: ClosedCoreAuthorizedNonRuntimePayloadOwnerV0,
+        transition: crate::validator_lifecycle::ValidatorSetTransitionV1,
+        cause: ClosedCoreAuthorizedNonRuntimeFamilyAttemptCauseV0,
+    },
+    Unsupported {
+        owner: ClosedCoreAuthorizedNonRuntimePayloadOwnerV0,
+        cause: ClosedCoreAuthorizedNonRuntimeFamilyAttemptCauseV0,
+    },
+}
+
 #[must_use = "non-runtime dispatch must preserve exactly one family owner"]
 enum DispatchedCoreAuthorizedNonRuntimePayloadV0 {
     PocoApplication(CoreAuthorizedPocoApplicationPayloadV0),
@@ -608,6 +799,416 @@ fn dispatch_core_authorized_non_runtime_payload_v0(
         _ => DispatchedCoreAuthorizedNonRuntimePayloadV0::Unsupported(
             CoreAuthorizedUnsupportedNonRuntimePayloadV0 { routed },
         ),
+    }
+}
+
+/// Consumes one family owner into strict semantic decode. Only intrinsic facts
+/// and facts already authenticated by the retained signed envelope are bound
+/// here. Application authority, validator governance state, overlay mutation,
+/// and success-only cursor advance remain unavailable from this function.
+#[allow(dead_code)]
+fn decode_dispatched_core_authorized_non_runtime_payload_v0(
+    dispatched: DispatchedCoreAuthorizedNonRuntimePayloadV0,
+) -> Result<
+    DecodedDispatchedCoreAuthorizedNonRuntimePayloadV0,
+    Box<FailedCoreAuthorizedNonRuntimeSemanticDecodeV0>,
+> {
+    match dispatched {
+        DispatchedCoreAuthorizedNonRuntimePayloadV0::PocoApplication(owner) => {
+            let operation = match crate::poco_application::PocoApplicationOperationV0::decode_exact(
+                &owner.routed.exact_inner_bytes,
+            ) {
+                Ok(operation) => operation,
+                Err(_) => {
+                    return Err(Box::new(
+                        FailedCoreAuthorizedNonRuntimeSemanticDecodeV0::PocoApplication {
+                            owner,
+                            cause: CoreAuthorizedNonRuntimeSemanticDecodeCauseV0::InvalidPocoApplicationOperation,
+                        },
+                    ));
+                }
+            };
+            if operation.target_height() != owner.routed.context.target_height {
+                return Err(Box::new(
+                    FailedCoreAuthorizedNonRuntimeSemanticDecodeV0::PocoApplication {
+                        owner,
+                        cause:
+                            CoreAuthorizedNonRuntimeSemanticDecodeCauseV0::PocoTargetHeightMismatch,
+                    },
+                ));
+            }
+            Ok(
+                DecodedDispatchedCoreAuthorizedNonRuntimePayloadV0::PocoApplication(
+                    DecodedCoreAuthorizedPocoApplicationPayloadV0 { owner, operation },
+                ),
+            )
+        }
+        DispatchedCoreAuthorizedNonRuntimePayloadV0::ValidatorTransition(owner) => {
+            let transition: crate::validator_lifecycle::ValidatorSetTransitionV1 =
+                match serde_json::from_slice(&owner.routed.exact_inner_bytes) {
+                    Ok(transition) => transition,
+                    Err(_) => {
+                        return Err(Box::new(
+                            FailedCoreAuthorizedNonRuntimeSemanticDecodeV0::ValidatorTransition {
+                                owner,
+                                cause: CoreAuthorizedNonRuntimeSemanticDecodeCauseV0::InvalidValidatorTransition,
+                            },
+                        ));
+                    }
+                };
+            if serde_json::to_vec(&transition).ok().as_deref()
+                != Some(owner.routed.exact_inner_bytes.as_slice())
+            {
+                return Err(Box::new(
+                    FailedCoreAuthorizedNonRuntimeSemanticDecodeV0::ValidatorTransition {
+                        owner,
+                        cause: CoreAuthorizedNonRuntimeSemanticDecodeCauseV0::NonCanonicalValidatorTransition,
+                    },
+                ));
+            }
+            if transition.schema != crate::validator_lifecycle::VALIDATOR_TRANSITION_SCHEMA_V1 {
+                return Err(Box::new(
+                    FailedCoreAuthorizedNonRuntimeSemanticDecodeV0::ValidatorTransition {
+                        owner,
+                        cause: CoreAuthorizedNonRuntimeSemanticDecodeCauseV0::ValidatorTransitionSchemaMismatch,
+                    },
+                ));
+            }
+            if transition.chain_id != owner.routed.envelope.chain_id {
+                return Err(Box::new(
+                    FailedCoreAuthorizedNonRuntimeSemanticDecodeV0::ValidatorTransition {
+                        owner,
+                        cause: CoreAuthorizedNonRuntimeSemanticDecodeCauseV0::ValidatorTransitionChainMismatch,
+                    },
+                ));
+            }
+            if transition.transition_id != owner.routed.envelope.command_id {
+                return Err(Box::new(
+                    FailedCoreAuthorizedNonRuntimeSemanticDecodeV0::ValidatorTransition {
+                        owner,
+                        cause: CoreAuthorizedNonRuntimeSemanticDecodeCauseV0::ValidatorTransitionCommandMismatch,
+                    },
+                ));
+            }
+            if owner.routed.context.signer_role != "operator" {
+                return Err(Box::new(
+                    FailedCoreAuthorizedNonRuntimeSemanticDecodeV0::ValidatorTransition {
+                        owner,
+                        cause: CoreAuthorizedNonRuntimeSemanticDecodeCauseV0::ValidatorTransitionSignerRoleMismatch,
+                    },
+                ));
+            }
+            Ok(
+                DecodedDispatchedCoreAuthorizedNonRuntimePayloadV0::ValidatorTransition(
+                    DecodedCoreAuthorizedValidatorTransitionPayloadV0 { owner, transition },
+                ),
+            )
+        }
+        DispatchedCoreAuthorizedNonRuntimePayloadV0::Unsupported(owner) => {
+            Ok(DecodedDispatchedCoreAuthorizedNonRuntimePayloadV0::Unsupported(owner))
+        }
+    }
+}
+
+/// Closes the one snapshot nested in a family owner while retaining every
+/// cursor and payload fact. The returned finish result is consumed immediately
+/// by the two failure-closing functions below; it is never an authority token.
+fn close_core_authorized_non_runtime_payload_owner_v0(
+    routed: CoreAuthorizedNonRuntimePayloadRoutingV0,
+) -> (
+    ClosedCoreAuthorizedNonRuntimePayloadOwnerV0,
+    std::result::Result<(), AuthenticatedRuntimeReadFailureV0>,
+) {
+    let CoreAuthorizedNonRuntimePayloadRoutingV0 {
+        open,
+        index,
+        next_transaction_index: decoded_next_transaction_index,
+        exact_outer_bytes,
+        exact_inner_bytes,
+        envelope,
+        context,
+    } = routed;
+    let OpenCoreAuthorizedRegularTransactionCursorV0 {
+        open,
+        next_transaction_index: cursor_next_transaction_index,
+        changes,
+        applied,
+    } = open;
+    let OpenCoreAuthorizedRegularValidationV0 {
+        authorized,
+        snapshot,
+    } = open;
+    let finish = snapshot.finish();
+    (
+        ClosedCoreAuthorizedNonRuntimePayloadOwnerV0 {
+            authorized,
+            index,
+            decoded_next_transaction_index,
+            cursor_next_transaction_index,
+            exact_outer_bytes,
+            exact_inner_bytes,
+            envelope,
+            context,
+            changes,
+            applied,
+        },
+        finish,
+    )
+}
+
+/// Reveals a semantic-decode cause only after the exact retained snapshot has
+/// closed. Snapshot-finish failure consumes and outranks the pending cause.
+#[allow(dead_code)]
+fn finish_failed_core_authorized_non_runtime_semantic_decode_v0(
+    failed: Box<FailedCoreAuthorizedNonRuntimeSemanticDecodeV0>,
+) -> Box<ClosedFailedCoreAuthorizedNonRuntimeSemanticDecodeV0> {
+    match *failed {
+        FailedCoreAuthorizedNonRuntimeSemanticDecodeV0::PocoApplication { owner, cause } => {
+            let (owner, finish) = close_core_authorized_non_runtime_payload_owner_v0(owner.routed);
+            let cause = match finish {
+                Ok(()) => ClosedCoreAuthorizedNonRuntimeSemanticDecodeCauseV0::Decode(cause),
+                Err(error) => ClosedCoreAuthorizedNonRuntimeSemanticDecodeCauseV0::Snapshot(error),
+            };
+            Box::new(
+                ClosedFailedCoreAuthorizedNonRuntimeSemanticDecodeV0::PocoApplication {
+                    owner,
+                    cause,
+                },
+            )
+        }
+        FailedCoreAuthorizedNonRuntimeSemanticDecodeV0::ValidatorTransition { owner, cause } => {
+            let (owner, finish) = close_core_authorized_non_runtime_payload_owner_v0(owner.routed);
+            let cause = match finish {
+                Ok(()) => ClosedCoreAuthorizedNonRuntimeSemanticDecodeCauseV0::Decode(cause),
+                Err(error) => ClosedCoreAuthorizedNonRuntimeSemanticDecodeCauseV0::Snapshot(error),
+            };
+            Box::new(
+                ClosedFailedCoreAuthorizedNonRuntimeSemanticDecodeV0::ValidatorTransition {
+                    owner,
+                    cause,
+                },
+            )
+        }
+    }
+}
+
+/// Consumes one strictly decoded family owner into its authenticated family
+/// state transition. Every state read comes from the same pinned parent
+/// snapshot already owned by the cursor. Success still cannot advance the
+/// cursor, seal writes, produce a receipt, or form a terminal result.
+#[allow(dead_code)]
+fn authorize_and_execute_decoded_core_non_runtime_family_v0(
+    decoded: DecodedDispatchedCoreAuthorizedNonRuntimePayloadV0,
+) -> Result<
+    AuthorizedCoreNonRuntimeFamilyAttemptV0,
+    Box<FailedCoreAuthorizedNonRuntimeFamilyAttemptV0>,
+> {
+    match decoded {
+        DecodedDispatchedCoreAuthorizedNonRuntimePayloadV0::PocoApplication(decoded) => {
+            let authenticated = &decoded.owner.routed.open.open.authorized.context;
+            if decoded.owner.routed.context.signer_role != "operator"
+                || decoded.owner.routed.context.signer_id
+                    != authenticated.validator_lifecycle.governance.signer_id
+            {
+                return Err(Box::new(
+                    FailedCoreAuthorizedNonRuntimeFamilyAttemptV0::PocoApplication {
+                        decoded,
+                        cause: CoreAuthorizedNonRuntimeFamilyAttemptCauseV0::DeterministicallyInvalid(
+                            CoreAuthorizedNonRuntimeFamilyDeterministicInvalidV0::PocoGovernanceAuthorization,
+                        ),
+                    },
+                ));
+            }
+            let projection = match decoded
+                .owner
+                .routed
+                .open
+                .open
+                .snapshot
+                .load_authenticated_production_poco_projection_v0()
+            {
+                Ok(projection) => projection,
+                Err(cause) => {
+                    return Err(Box::new(
+                        FailedCoreAuthorizedNonRuntimeFamilyAttemptV0::PocoApplication {
+                            decoded,
+                            cause:
+                                CoreAuthorizedNonRuntimeFamilyAttemptCauseV0::AuthenticatedSource(
+                                    cause,
+                                ),
+                        },
+                    ));
+                }
+            };
+            let context = match crate::poco_application::AuthenticatedPocoApplicationContextV0::new(
+                authenticated.parent_header.height().get(),
+                *authenticated.parent_header.state_root().as_bytes(),
+                decoded.owner.routed.open.open.authorized.header.height(),
+                authenticated.validator_set.chain_id(),
+                authenticated.validator_set.genesis_hash(),
+                authenticated.validator_set.epoch(),
+                authenticated.parameters,
+                crate::poco_application_governance_signer_commitment_v0(
+                    &authenticated.validator_lifecycle,
+                ),
+            ) {
+                Ok(context) => context,
+                Err(_) => {
+                    return Err(Box::new(
+                        FailedCoreAuthorizedNonRuntimeFamilyAttemptV0::PocoApplication {
+                            decoded,
+                            cause: CoreAuthorizedNonRuntimeFamilyAttemptCauseV0::Invariant(
+                                CoreAuthorizedNonRuntimeFamilyInvariantV0::PocoExecutionContext,
+                            ),
+                        },
+                    ));
+                }
+            };
+            let mut overlay =
+                match crate::poco_application::PocoApplicationBlockOverlayV0::from_projection(
+                    context,
+                    &projection,
+                ) {
+                    Ok(overlay) => overlay,
+                    Err(_) => {
+                        return Err(Box::new(
+                            FailedCoreAuthorizedNonRuntimeFamilyAttemptV0::PocoApplication {
+                                decoded,
+                                cause: CoreAuthorizedNonRuntimeFamilyAttemptCauseV0::Invariant(
+                                    CoreAuthorizedNonRuntimeFamilyInvariantV0::PocoProjection,
+                                ),
+                            },
+                        ));
+                    }
+                };
+            if overlay
+                .apply_decoded_exact(&decoded.owner.routed.exact_inner_bytes, &decoded.operation)
+                .is_err()
+            {
+                return Err(Box::new(
+                    FailedCoreAuthorizedNonRuntimeFamilyAttemptV0::PocoApplication {
+                        decoded,
+                        // The application planner still exposes `anyhow`; do
+                        // not downgrade an unclassified internal fault into a
+                        // deterministic reject by matching diagnostic text.
+                        cause: CoreAuthorizedNonRuntimeFamilyAttemptCauseV0::Invariant(
+                            CoreAuthorizedNonRuntimeFamilyInvariantV0::PocoOperationUnclassified,
+                        ),
+                    },
+                ));
+            }
+            Ok(AuthorizedCoreNonRuntimeFamilyAttemptV0::PocoApplication(
+                Box::new(AuthorizedCorePocoApplicationAttemptV0 { decoded, overlay }),
+            ))
+        }
+        DecodedDispatchedCoreAuthorizedNonRuntimePayloadV0::ValidatorTransition(decoded) => {
+            let mut lifecycle = decoded
+                .owner
+                .routed
+                .open
+                .open
+                .authorized
+                .context
+                .validator_lifecycle
+                .clone();
+            let authorization = crate::validator_lifecycle::ValidatorTransitionAuthorization {
+                command_id: &decoded.owner.routed.envelope.command_id,
+                signer_id: &decoded.owner.routed.context.signer_id,
+                signer_role: &decoded.owner.routed.context.signer_role,
+                nonce: decoded.owner.routed.envelope.nonce,
+                chain_id: decoded.owner.routed.envelope.chain_id.as_str(),
+                accepted_height: decoded.owner.routed.context.target_height,
+            };
+            if let Err(failure) = lifecycle.schedule(decoded.transition.clone(), authorization) {
+                let cause = match failure {
+                    crate::validator_lifecycle::ValidatorTransitionScheduleFailureV1::DeterministicallyInvalid(
+                        reason,
+                    ) => CoreAuthorizedNonRuntimeFamilyAttemptCauseV0::DeterministicallyInvalid(
+                        CoreAuthorizedNonRuntimeFamilyDeterministicInvalidV0::ValidatorTransition(
+                            reason,
+                        ),
+                    ),
+                    crate::validator_lifecycle::ValidatorTransitionScheduleFailureV1::Invariant(
+                        reason,
+                    ) => CoreAuthorizedNonRuntimeFamilyAttemptCauseV0::Invariant(
+                        CoreAuthorizedNonRuntimeFamilyInvariantV0::ValidatorTransition(reason),
+                    ),
+                };
+                return Err(Box::new(
+                    FailedCoreAuthorizedNonRuntimeFamilyAttemptV0::ValidatorTransition {
+                        decoded,
+                        cause,
+                    },
+                ));
+            }
+            Ok(
+                AuthorizedCoreNonRuntimeFamilyAttemptV0::ValidatorTransition(Box::new(
+                    AuthorizedCoreValidatorTransitionAttemptV0 {
+                        decoded,
+                        scheduled_lifecycle: lifecycle,
+                    },
+                )),
+            )
+        }
+        DecodedDispatchedCoreAuthorizedNonRuntimePayloadV0::Unsupported(owner) => Err(Box::new(
+            FailedCoreAuthorizedNonRuntimeFamilyAttemptV0::Unsupported {
+                owner,
+                cause: CoreAuthorizedNonRuntimeFamilyAttemptCauseV0::DeterministicallyInvalid(
+                    CoreAuthorizedNonRuntimeFamilyDeterministicInvalidV0::UnsupportedFamily,
+                ),
+            },
+        )),
+    }
+}
+
+/// Closes a failed family attempt before its typed cause becomes observable.
+/// A snapshot finish failure consumes and outranks deterministic, source, or
+/// invariant attempt provenance; no terminal mapping or callback is formed.
+#[allow(dead_code)]
+fn finish_failed_core_authorized_non_runtime_family_attempt_v0(
+    failed: Box<FailedCoreAuthorizedNonRuntimeFamilyAttemptV0>,
+) -> Box<ClosedFailedCoreAuthorizedNonRuntimeFamilyAttemptV0> {
+    match *failed {
+        FailedCoreAuthorizedNonRuntimeFamilyAttemptV0::PocoApplication { decoded, cause } => {
+            let DecodedCoreAuthorizedPocoApplicationPayloadV0 { owner, operation } = decoded;
+            let (owner, finish) = close_core_authorized_non_runtime_payload_owner_v0(owner.routed);
+            let cause = match finish {
+                Ok(()) => ClosedCoreAuthorizedNonRuntimeFamilyAttemptCauseV0::Attempt(cause),
+                Err(error) => ClosedCoreAuthorizedNonRuntimeFamilyAttemptCauseV0::Snapshot(error),
+            };
+            Box::new(
+                ClosedFailedCoreAuthorizedNonRuntimeFamilyAttemptV0::PocoApplication {
+                    owner,
+                    operation,
+                    cause,
+                },
+            )
+        }
+        FailedCoreAuthorizedNonRuntimeFamilyAttemptV0::ValidatorTransition { decoded, cause } => {
+            let DecodedCoreAuthorizedValidatorTransitionPayloadV0 { owner, transition } = decoded;
+            let (owner, finish) = close_core_authorized_non_runtime_payload_owner_v0(owner.routed);
+            let cause = match finish {
+                Ok(()) => ClosedCoreAuthorizedNonRuntimeFamilyAttemptCauseV0::Attempt(cause),
+                Err(error) => ClosedCoreAuthorizedNonRuntimeFamilyAttemptCauseV0::Snapshot(error),
+            };
+            Box::new(
+                ClosedFailedCoreAuthorizedNonRuntimeFamilyAttemptV0::ValidatorTransition {
+                    owner,
+                    transition,
+                    cause,
+                },
+            )
+        }
+        FailedCoreAuthorizedNonRuntimeFamilyAttemptV0::Unsupported { owner, cause } => {
+            let (owner, finish) = close_core_authorized_non_runtime_payload_owner_v0(owner.routed);
+            let cause = match finish {
+                Ok(()) => ClosedCoreAuthorizedNonRuntimeFamilyAttemptCauseV0::Attempt(cause),
+                Err(error) => ClosedCoreAuthorizedNonRuntimeFamilyAttemptCauseV0::Snapshot(error),
+            };
+            Box::new(
+                ClosedFailedCoreAuthorizedNonRuntimeFamilyAttemptV0::Unsupported { owner, cause },
+            )
+        }
     }
 }
 
@@ -4486,7 +5087,7 @@ mod tests {
         time::{SystemTime, UNIX_EPOCH},
     };
 
-    use ed25519_dalek::SigningKey;
+    use ed25519_dalek::{Signer, SigningKey};
     use trnm_consensus_core::{
         Core, CoreConfig, Effect, Input, PayloadValidationRequest, PayloadValidationResult,
         PayloadValidationRouteV0, ValidationId,
@@ -4512,15 +5113,20 @@ mod tests {
     use super::{
         attempt_prepared_core_authorized_runtime_transaction_v0,
         authenticate_regular_runtime_inputs_for_test_v0,
+        authorize_and_execute_decoded_core_non_runtime_family_v0,
         authorize_core_regular_payload_validation_callback_v0,
         authorize_exact_regular_body_parts_v0, begin_core_authorized_regular_validation_session_v0,
         claim_core_validation_request_for_test_v0,
         classify_core_authorized_regular_runtime_commitment_comparison_v0,
-        core_regular_validation_job_for_test_v0, dispatch_core_authorized_non_runtime_payload_v0,
+        core_regular_validation_job_for_test_v0,
+        decode_dispatched_core_authorized_non_runtime_payload_v0,
+        dispatch_core_authorized_non_runtime_payload_v0,
         execute_next_exact_runtime_transaction_for_test_v0,
         finish_and_plan_core_authorized_regular_post_state_v0,
         finish_and_plan_test_regular_runtime_execution_for_test_v0,
         finish_core_authorized_regular_validation_v0,
+        finish_failed_core_authorized_non_runtime_family_attempt_v0,
+        finish_failed_core_authorized_non_runtime_semantic_decode_v0,
         finish_failed_core_authorized_regular_runtime_attempt_v0,
         finish_failed_core_authorized_regular_transaction_decode_v0,
         finish_failed_inert_regular_body_traversal_for_test_v0,
@@ -4545,10 +5151,17 @@ mod tests {
         promote_failed_core_issued_regular_validation_open_v0, stage_runtime_mutations_for_test_v0,
         take_core_regular_validation_job_v0, validate_snapshot_authenticated_regular_context_v0,
         ClassifiedCoreAuthorizedRegularRuntimeCommitmentsV0,
+        ClosedCoreAuthorizedNonRuntimeFamilyAttemptCauseV0,
+        ClosedCoreAuthorizedNonRuntimeSemanticDecodeCauseV0,
         ClosedCoreAuthorizedRegularPostStatePlanCauseV0,
         ClosedCoreAuthorizedRegularRuntimeAttemptCauseV0,
         ClosedCoreAuthorizedRegularTransactionDecodeCauseV0,
+        ClosedFailedCoreAuthorizedNonRuntimeFamilyAttemptV0,
+        ClosedFailedCoreAuthorizedNonRuntimeSemanticDecodeV0,
         CoreAuthorizedExactRegularBodyFailureClassV0, CoreAuthorizedExactRegularBodyFailureV0,
+        CoreAuthorizedNonRuntimeFamilyAttemptCauseV0,
+        CoreAuthorizedNonRuntimeFamilyDeterministicInvalidV0,
+        CoreAuthorizedNonRuntimeFamilyInvariantV0, CoreAuthorizedNonRuntimeSemanticDecodeCauseV0,
         CoreAuthorizedRegularCommitmentComparisonCauseV0,
         CoreAuthorizedRegularCommitmentInvariantV0, CoreAuthorizedRegularComputedRootMismatchV0,
         CoreAuthorizedRegularExecutionOutcomeV0,
@@ -4557,7 +5170,8 @@ mod tests {
         CoreAuthorizedRegularRuntimeStepFailureV0, CoreAuthorizedRegularTransactionDecodeCauseV0,
         CoreAuthorizedRegularValidationSessionAdmissionV0, CoreIssuedRegularValidationJobV0,
         CoreIssuedRegularValidationOwnerV0, CoreIssuedRegularValidationReservationCauseV0,
-        CoreRegularValidationEffectIntakeV0, DispatchedCoreAuthorizedNonRuntimePayloadV0,
+        CoreRegularValidationEffectIntakeV0, DecodedDispatchedCoreAuthorizedNonRuntimePayloadV0,
+        DispatchedCoreAuthorizedNonRuntimePayloadV0, FailedCoreAuthorizedNonRuntimeFamilyAttemptV0,
         FailedCoreAuthorizedRegularRuntimeAttemptV0, FinishedFailedTestRegularRuntimeExecutionV0,
         FinishedInertRegularBodyCursorFailureV0,
         FinishedPlannedCoreAuthorizedRegularRuntimeExecutionV0, InertRegularBodyCursorFailureV0,
@@ -4694,6 +5308,27 @@ mod tests {
     }
 
     fn test_store() -> TestStore {
+        build_test_store(false)
+    }
+
+    fn test_store_with_poco_application_authority() -> TestStore {
+        build_test_store(true)
+    }
+
+    fn test_store_with_governance_sequence(governance_sequence: u64) -> TestStore {
+        build_test_store_with_lifecycle(false, |lifecycle| {
+            lifecycle.governance_sequence = governance_sequence;
+        })
+    }
+
+    fn build_test_store(include_poco_application_authority: bool) -> TestStore {
+        build_test_store_with_lifecycle(include_poco_application_authority, |_| {})
+    }
+
+    fn build_test_store_with_lifecycle(
+        include_poco_application_authority: bool,
+        configure_lifecycle: impl FnOnce(&mut ValidatorLifecycleStateV1),
+    ) -> TestStore {
         let root = unique_test_root();
         fs::create_dir_all(&root).expect("create native-input test directory");
         let status_path = root.join("state.json");
@@ -4716,7 +5351,7 @@ mod tests {
                 voting_power: validator.voting_power().get(),
             })
             .collect::<Vec<_>>();
-        let lifecycle = ValidatorLifecycleStateV1::from_genesis(
+        let mut lifecycle = ValidatorLifecycleStateV1::from_genesis(
             TEST_CHAIN.as_str().to_string(),
             APP_VERSION,
             signer_policy_hash_hex,
@@ -4729,6 +5364,10 @@ mod tests {
             active_validators,
         )
         .expect("construct native-input test validator lifecycle");
+        configure_lifecycle(&mut lifecycle);
+        lifecycle
+            .validate()
+            .expect("validate configured native-input test lifecycle");
         let lifecycle_record = AuthenticatedObjectRecord::new(
             VALIDATOR_LIFECYCLE_SCHEMA_V1.to_string(),
             1,
@@ -4773,6 +5412,12 @@ mod tests {
             )
             .expect("construct native-input parameters entry"),
         ];
+        if include_poco_application_authority {
+            config_entries.push(
+                crate::poco_application::genesis_poco_application_authority_entry_v0()
+                    .expect("construct native-input PoCO application authority entry"),
+            );
+        }
         config_entries.sort_by(|left, right| {
             (left.kind, left.logical_key.as_slice())
                 .cmp(&(right.kind, right.logical_key.as_slice()))
@@ -4822,6 +5467,105 @@ mod tests {
             chain_id: TEST_CHAIN.as_str(),
             authorized_signers: &store.authorized_signers,
         }
+    }
+
+    fn load_test_authenticated_poco_projection(
+        store: &TestStore,
+    ) -> crate::poco_transition::ProductionPocoProjectionV0 {
+        let snapshot = store
+            .store
+            .begin_authenticated_runtime_read_snapshot_for_test_v0(1, store.parent_state_root)
+            .expect("open authenticated PoCO projection authoring snapshot");
+        let projection = snapshot
+            .load_authenticated_production_poco_projection_v0()
+            .expect("load authenticated PoCO projection for operation authoring");
+        snapshot
+            .finish()
+            .expect("finish authenticated PoCO projection authoring snapshot");
+        projection
+    }
+
+    fn author_valid_poco_application_operation(
+        store: &TestStore,
+        profile: &FixtureProfile,
+    ) -> (crate::poco_transition::ProductionPocoProjectionV0, Vec<u8>) {
+        let projection = load_test_authenticated_poco_projection(store);
+        let context = crate::poco_application::AuthenticatedPocoApplicationContextV0::new(
+            profile.parent.height().get(),
+            *profile.parent.state_root().as_bytes(),
+            profile.header.height(),
+            profile.validator_set.chain_id(),
+            profile.validator_set.genesis_hash(),
+            profile.validator_set.epoch(),
+            profile.parameters,
+            crate::poco_application_governance_signer_commitment_v0(&store.validator_lifecycle),
+        )
+        .expect("construct exact retained PoCO operation context");
+        let overlay = crate::poco_application::PocoApplicationBlockOverlayV0::from_projection(
+            context,
+            &projection,
+        )
+        .expect("construct PoCO operation-authoring overlay");
+        let raw = overlay
+            .test_define_meter_operation_v0()
+            .expect("author one exact valid PoCO operation");
+        (projection, raw)
+    }
+
+    fn decode_only_non_runtime_family(
+        store: &TestStore,
+        profile: &FixtureProfile,
+    ) -> DecodedDispatchedCoreAuthorizedNonRuntimePayloadV0 {
+        let open = open_core_authorized_regular_transaction_cursor_v0(
+            &test_native_validation_host(store),
+            core_validation_request(profile),
+        )
+        .expect("open exact non-runtime family cursor");
+        let routed = match prepare_next_core_authorized_regular_payload_v0(open)
+            .expect("prepare exact non-runtime family payload")
+        {
+            PreparedCoreAuthorizedRegularPayloadV0::NonRuntime(routed) => routed,
+            PreparedCoreAuthorizedRegularPayloadV0::Runtime(_) => {
+                panic!("non-runtime family entered runtime")
+            }
+        };
+        decode_dispatched_core_authorized_non_runtime_payload_v0(
+            dispatch_core_authorized_non_runtime_payload_v0(routed),
+        )
+        .expect("strict-decode exact non-runtime family")
+    }
+
+    fn valid_validator_transition_bytes(store: &TestStore, command_id: &str) -> Vec<u8> {
+        let mut target_validators = store.validator_lifecycle.active_validators.clone();
+        let replacement_key = test_signing_key(99);
+        let replacement_public_key_hex = hex::encode(replacement_key.verifying_key().to_bytes());
+        target_validators[0].public_key_hex = replacement_public_key_hex.clone();
+        target_validators.sort_by(|left, right| left.public_key_hex.cmp(&right.public_key_hex));
+        let base_validator_set_hash_hex = store
+            .validator_lifecycle
+            .active_set_hash_hex()
+            .expect("hash authenticated source validator set");
+        let message = crate::validator_lifecycle::validator_key_proof_message(
+            TEST_CHAIN.as_str(),
+            command_id,
+            &base_validator_set_hash_hex,
+            4,
+            &target_validators,
+        )
+        .expect("derive replacement validator proof message");
+        let transition = crate::validator_lifecycle::ValidatorSetTransitionV1 {
+            schema: crate::validator_lifecycle::VALIDATOR_TRANSITION_SCHEMA_V1.to_string(),
+            chain_id: TEST_CHAIN.as_str().to_string(),
+            transition_id: command_id.to_string(),
+            base_validator_set_hash_hex,
+            activation_height: 4,
+            target_validators,
+            new_validator_proofs: vec![crate::validator_lifecycle::ValidatorKeyProofV1 {
+                public_key_hex: replacement_public_key_hex,
+                signature_hex: hex::encode(replacement_key.sign(&message).to_bytes()),
+            }],
+        };
+        serde_json::to_vec(&transition).expect("encode validator transition")
     }
 
     fn validator_set(parameters: &ConsensusParametersV0, validator_offset: u8) -> ValidatorSet {
@@ -6687,6 +7431,60 @@ mod tests {
                 "production runtime attempt gained caller input: {forbidden_parameter}"
             );
         }
+        let family_attempt_offset = implementation_source
+            .find("fn authorize_and_execute_decoded_core_non_runtime_family_v0(")
+            .expect("production consuming non-runtime family attempt");
+        let family_attempt_signature_end = implementation_source[family_attempt_offset..]
+            .find(" {\n")
+            .map(|offset| family_attempt_offset + offset)
+            .expect("production family attempt signature end");
+        let family_attempt_signature =
+            &implementation_source[family_attempt_offset..family_attempt_signature_end];
+        assert!(family_attempt_signature
+            .contains("decoded: DecodedDispatchedCoreAuthorizedNonRuntimePayloadV0"));
+        assert!(!family_attempt_signature
+            .contains("authorize_and_execute_decoded_core_non_runtime_family_v0<"));
+        for forbidden_parameter in [
+            "projection:",
+            "lifecycle:",
+            "snapshot:",
+            "header:",
+            "body:",
+            "context:",
+            "validator_set:",
+            "parameters:",
+            "loader:",
+        ] {
+            assert!(
+                !family_attempt_signature.contains(forbidden_parameter),
+                "production family attempt gained caller authority: {forbidden_parameter}"
+            );
+        }
+        let family_attempt_body = implementation_source[family_attempt_offset..]
+            .split_once("fn finish_failed_core_authorized_non_runtime_family_attempt_v0(")
+            .expect("production family attempt body boundary")
+            .0;
+        assert_eq!(
+            family_attempt_body
+                .matches(".load_authenticated_production_poco_projection_v0()")
+                .count(),
+            1,
+            "PoCO family attempt must have one retained-snapshot projection source"
+        );
+        assert!(family_attempt_body.contains(".validator_lifecycle\n                .clone()"));
+        for forbidden_surface in [
+            "with_poco_projection_loader",
+            "ProductionPocoProjectionV0,",
+            "Input::",
+            "core.step(",
+            "persist_transition(",
+            "snapshot.finish()",
+        ] {
+            assert!(
+                !family_attempt_body.contains(forbidden_surface),
+                "production family attempt gained a forbidden source/output surface: {forbidden_surface}"
+            );
+        }
         let plan_offset = implementation_source
             .find("fn finish_and_plan_core_authorized_regular_post_state_v0(")
             .expect("production consuming post-state planner");
@@ -6733,6 +7531,16 @@ mod tests {
                 "fn finish_failed_core_authorized_regular_runtime_attempt_v0(",
                 "failed: Box<FailedCoreAuthorizedRegularRuntimeAttemptV0>",
                 "Box<ClosedFailedCoreAuthorizedRegularRuntimeAttemptV0>",
+            ),
+            (
+                "fn finish_failed_core_authorized_non_runtime_semantic_decode_v0(",
+                "failed: Box<FailedCoreAuthorizedNonRuntimeSemanticDecodeV0>",
+                "Box<ClosedFailedCoreAuthorizedNonRuntimeSemanticDecodeV0>",
+            ),
+            (
+                "fn finish_failed_core_authorized_non_runtime_family_attempt_v0(",
+                "failed: Box<FailedCoreAuthorizedNonRuntimeFamilyAttemptV0>",
+                "Box<ClosedFailedCoreAuthorizedNonRuntimeFamilyAttemptV0>",
             ),
         ] {
             let offset = implementation_source
@@ -7329,6 +8137,14 @@ mod tests {
             "DecodedCoreAuthorizedNonRuntimePayloadV0",
             "PreparedCoreAuthorizedRuntimeTransactionV0",
             "CoreAuthorizedNonRuntimePayloadRoutingV0",
+            "CoreAuthorizedPocoApplicationPayloadV0",
+            "CoreAuthorizedValidatorTransitionPayloadV0",
+            "CoreAuthorizedUnsupportedNonRuntimePayloadV0",
+            "DecodedCoreAuthorizedPocoApplicationPayloadV0",
+            "DecodedCoreAuthorizedValidatorTransitionPayloadV0",
+            "ClosedCoreAuthorizedNonRuntimePayloadOwnerV0",
+            "AuthorizedCorePocoApplicationAttemptV0",
+            "AuthorizedCoreValidatorTransitionAttemptV0",
             "AppliedCoreAuthorizedRuntimeTransactionV0",
             "FinishedPlannedCoreAuthorizedRegularRuntimeExecutionV0",
             "MatchedCoreAuthorizedRegularRuntimeCommitmentsV0",
@@ -7515,6 +8331,13 @@ mod tests {
             "CoreAuthorizedRegularValidationSessionAdmissionV0",
             "CoreIssuedRegularValidationReservationCauseV0",
             "CoreRegularValidationEffectIntakeV0",
+            "DispatchedCoreAuthorizedNonRuntimePayloadV0",
+            "FailedCoreAuthorizedNonRuntimeSemanticDecodeV0",
+            "ClosedFailedCoreAuthorizedNonRuntimeSemanticDecodeV0",
+            "DecodedDispatchedCoreAuthorizedNonRuntimePayloadV0",
+            "AuthorizedCoreNonRuntimeFamilyAttemptV0",
+            "FailedCoreAuthorizedNonRuntimeFamilyAttemptV0",
+            "ClosedFailedCoreAuthorizedNonRuntimeFamilyAttemptV0",
         ] {
             let declaration = format!("enum {capability} {{");
             let attributes = item_attribute_source(implementation_source, &declaration);
@@ -10416,6 +11239,875 @@ mod tests {
             drop(routed);
             assert_eq!(store.store.active_runtime_snapshot_pins_for_test_v0(), 0);
         }
+    }
+
+    #[test]
+    fn production_non_runtime_semantic_decode_retains_exact_family_owners() {
+        let cases = [
+            (
+                crate::poco_application::POCO_APPLICATION_OPERATION_PAYLOAD_TYPE_V0,
+                "native-semantic-poco",
+                br#"{"schema":"trnm_poco_application_operation_v0","target_height":2,"expected_state_revision":0,"body":{"kind":"register_future_candidate","validator_id_hex":"00","target_epoch":1,"previous_registration_nonce":null,"predecessor_history_head_hex":"00","proof_cev0_hex":"","registration_decision_id_hex":"00"},"semantic_changes":[],"nullifier_non_membership_checks":[],"nullifier_insertions":[]}"#.as_slice(),
+                "poco",
+            ),
+            (
+                crate::validator_lifecycle::VALIDATOR_TRANSITION_PAYLOAD_TYPE_V1,
+                "native-semantic-validator",
+                br#"{"schema":"trnm_validator_set_transition_v1","chain_id":"trnm-native-input-session-test","transition_id":"native-semantic-validator","base_validator_set_hash_hex":"00","activation_height":4,"target_validators":[],"new_validator_proofs":[]}"#.as_slice(),
+                "validator",
+            ),
+            (
+                "trnm.unsupported.native-family.v0",
+                "native-semantic-unsupported",
+                b"{}".as_slice(),
+                "unsupported",
+            ),
+        ];
+
+        for (payload_type, command_id, payload, expected_family) in cases {
+            let store = test_store();
+            let exact_outer = signed_envelope_bytes(
+                TEST_CHAIN.as_str(),
+                command_id.to_string(),
+                81,
+                "did:operator:1",
+                "operator",
+                1,
+                1_700_000_000_000,
+                1_700_000_100_000,
+                payload_type,
+                payload,
+            );
+            let profile = replace_profile_transactions(
+                fixture_profile(store.parent_state_root, 0),
+                vec![exact_outer.clone()],
+            );
+            let expected_id = profile.header.id();
+            let open = open_core_authorized_regular_transaction_cursor_v0(
+                &test_native_validation_host(&store),
+                core_validation_request(&profile),
+            )
+            .expect("open semantic-decode cursor");
+            let routed = match prepare_next_core_authorized_regular_payload_v0(open)
+                .expect("prepare semantic-decode payload")
+            {
+                PreparedCoreAuthorizedRegularPayloadV0::NonRuntime(routed) => routed,
+                PreparedCoreAuthorizedRegularPayloadV0::Runtime(_) => {
+                    panic!("non-runtime semantic payload entered runtime")
+                }
+            };
+            let decoded = decode_dispatched_core_authorized_non_runtime_payload_v0(
+                dispatch_core_authorized_non_runtime_payload_v0(routed),
+            )
+            .unwrap_or_else(|_| panic!("semantic decode failed for {expected_family}"));
+            let (actual_family, routed) = match decoded {
+                DecodedDispatchedCoreAuthorizedNonRuntimePayloadV0::PocoApplication(decoded) => {
+                    assert_eq!(decoded.operation.target_height(), 2);
+                    ("poco", decoded.owner.routed)
+                }
+                DecodedDispatchedCoreAuthorizedNonRuntimePayloadV0::ValidatorTransition(
+                    decoded,
+                ) => {
+                    assert_eq!(decoded.transition.transition_id, command_id);
+                    ("validator", decoded.owner.routed)
+                }
+                DecodedDispatchedCoreAuthorizedNonRuntimePayloadV0::Unsupported(owner) => {
+                    ("unsupported", owner.routed)
+                }
+            };
+            assert_eq!(actual_family, expected_family);
+            assert_eq!(routed.exact_outer_bytes, exact_outer);
+            assert_eq!(routed.exact_inner_bytes, payload);
+            assert_eq!(routed.context.target_block_id, expected_id);
+            assert_eq!(routed.open.next_transaction_index, 0);
+            drop(routed);
+            assert_eq!(store.store.active_runtime_snapshot_pins_for_test_v0(), 0);
+        }
+    }
+
+    #[test]
+    fn production_non_runtime_semantic_decode_failure_retains_exact_owner() {
+        let store = test_store();
+        let exact_outer = signed_envelope_bytes(
+            TEST_CHAIN.as_str(),
+            "native-semantic-invalid-poco".to_string(),
+            81,
+            "did:operator:1",
+            "operator",
+            1,
+            1_700_000_000_000,
+            1_700_000_100_000,
+            crate::poco_application::POCO_APPLICATION_OPERATION_PAYLOAD_TYPE_V0,
+            b"{}",
+        );
+        let profile = replace_profile_transactions(
+            fixture_profile(store.parent_state_root, 0),
+            vec![exact_outer.clone()],
+        );
+        let expected_id = profile.header.id();
+        let open = open_core_authorized_regular_transaction_cursor_v0(
+            &test_native_validation_host(&store),
+            core_validation_request(&profile),
+        )
+        .expect("open invalid semantic-decode cursor");
+        let routed = match prepare_next_core_authorized_regular_payload_v0(open)
+            .expect("prepare invalid semantic-decode payload")
+        {
+            PreparedCoreAuthorizedRegularPayloadV0::NonRuntime(routed) => routed,
+            PreparedCoreAuthorizedRegularPayloadV0::Runtime(_) => {
+                panic!("invalid non-runtime semantic payload entered runtime")
+            }
+        };
+        let failed = decode_dispatched_core_authorized_non_runtime_payload_v0(
+            dispatch_core_authorized_non_runtime_payload_v0(routed),
+        )
+        .err()
+        .expect("invalid PoCO semantics must retain the family owner");
+        let closed = finish_failed_core_authorized_non_runtime_semantic_decode_v0(failed);
+        let owner = match *closed {
+            ClosedFailedCoreAuthorizedNonRuntimeSemanticDecodeV0::PocoApplication {
+                owner,
+                cause,
+            } => {
+                assert_eq!(
+                    cause,
+                    ClosedCoreAuthorizedNonRuntimeSemanticDecodeCauseV0::Decode(
+                        CoreAuthorizedNonRuntimeSemanticDecodeCauseV0::InvalidPocoApplicationOperation,
+                    )
+                );
+                owner
+            }
+            ClosedFailedCoreAuthorizedNonRuntimeSemanticDecodeV0::ValidatorTransition {
+                ..
+            } => {
+                panic!("PoCO semantic failure changed family")
+            }
+        };
+        assert_eq!(owner.exact_outer_bytes, exact_outer);
+        assert_eq!(owner.exact_inner_bytes, b"{}");
+        assert_eq!(owner.context.target_block_id, expected_id);
+        assert_eq!(owner.index, 0);
+        assert_eq!(owner.cursor_next_transaction_index, 0);
+        assert_eq!(owner.decoded_next_transaction_index, 1);
+        drop(owner);
+        assert_eq!(store.store.active_runtime_snapshot_pins_for_test_v0(), 0);
+    }
+
+    #[test]
+    fn production_semantic_decode_finish_failure_outranks_pending_decode_cause() {
+        let store = test_store();
+        let exact_outer = signed_envelope_bytes(
+            TEST_CHAIN.as_str(),
+            "native-semantic-finish-failure".to_string(),
+            81,
+            "did:operator:1",
+            "operator",
+            1,
+            1_700_000_000_000,
+            1_700_000_100_000,
+            crate::poco_application::POCO_APPLICATION_OPERATION_PAYLOAD_TYPE_V0,
+            b"{}",
+        );
+        let profile = replace_profile_transactions(
+            fixture_profile(store.parent_state_root, 0),
+            vec![exact_outer.clone()],
+        );
+        let expected_id = profile.header.id();
+        let open = open_core_authorized_regular_transaction_cursor_v0(
+            &test_native_validation_host(&store),
+            core_validation_request(&profile),
+        )
+        .expect("open semantic finish-failure cursor");
+        let routed = match prepare_next_core_authorized_regular_payload_v0(open)
+            .expect("prepare semantic finish-failure payload")
+        {
+            PreparedCoreAuthorizedRegularPayloadV0::NonRuntime(routed) => routed,
+            PreparedCoreAuthorizedRegularPayloadV0::Runtime(_) => {
+                panic!("semantic finish-failure payload entered runtime")
+            }
+        };
+        let mut failed = decode_dispatched_core_authorized_non_runtime_payload_v0(
+            dispatch_core_authorized_non_runtime_payload_v0(routed),
+        )
+        .err()
+        .expect("invalid PoCO operation must retain pending semantic failure");
+        match failed.as_mut() {
+            super::FailedCoreAuthorizedNonRuntimeSemanticDecodeV0::PocoApplication {
+                owner,
+                ..
+            } => owner
+                .routed
+                .open
+                .open
+                .snapshot
+                .inject_finish_failure_for_test_v0(),
+            super::FailedCoreAuthorizedNonRuntimeSemanticDecodeV0::ValidatorTransition {
+                ..
+            } => panic!("semantic finish-failure fixture changed family"),
+        }
+        let closed = finish_failed_core_authorized_non_runtime_semantic_decode_v0(failed);
+        let owner = match *closed {
+            ClosedFailedCoreAuthorizedNonRuntimeSemanticDecodeV0::PocoApplication {
+                owner,
+                cause,
+            } => {
+                assert!(matches!(
+                    cause,
+                    ClosedCoreAuthorizedNonRuntimeSemanticDecodeCauseV0::Snapshot(
+                        AuthenticatedRuntimeReadFailureV0::HostInvariant {
+                            stage: crate::store::AuthenticatedRuntimeReadStageV0::EndSnapshot,
+                            ..
+                        },
+                    )
+                ));
+                owner
+            }
+            ClosedFailedCoreAuthorizedNonRuntimeSemanticDecodeV0::ValidatorTransition {
+                ..
+            } => {
+                panic!("closed semantic finish failure changed family")
+            }
+        };
+        assert_eq!(owner.authorized.validation_id.block_id(), expected_id);
+        assert_eq!(owner.exact_outer_bytes, exact_outer);
+        assert_eq!(owner.cursor_next_transaction_index, 0);
+        assert_eq!(owner.decoded_next_transaction_index, 1);
+        drop(owner);
+        assert_eq!(store.store.active_runtime_snapshot_pins_for_test_v0(), 0);
+    }
+
+    #[test]
+    fn production_poco_family_attempt_uses_exact_parent_projection_without_publishing_mutation() {
+        let store = test_store_with_poco_application_authority();
+        let base = fixture_profile(store.parent_state_root, 0);
+        let (source_projection, exact_inner) =
+            author_valid_poco_application_operation(&store, &base);
+        let exact_outer = signed_envelope_bytes(
+            TEST_CHAIN.as_str(),
+            "native-poco-family-attempt".to_string(),
+            81,
+            "did:operator:1",
+            "operator",
+            1,
+            1_700_000_000_000,
+            1_700_000_100_000,
+            crate::poco_application::POCO_APPLICATION_OPERATION_PAYLOAD_TYPE_V0,
+            &exact_inner,
+        );
+        let profile = replace_profile_transactions(base, vec![exact_outer.clone()]);
+        let expected_id = profile.header.id();
+        let decoded = decode_only_non_runtime_family(&store, &profile);
+        let attempted = authorize_and_execute_decoded_core_non_runtime_family_v0(decoded)
+            .expect("authorize PoCO family attempt against retained projection");
+        let attempted = match attempted {
+            super::AuthorizedCoreNonRuntimeFamilyAttemptV0::PocoApplication(attempted) => attempted,
+            super::AuthorizedCoreNonRuntimeFamilyAttemptV0::ValidatorTransition(_) => {
+                panic!("PoCO family attempt changed family")
+            }
+        };
+        assert_eq!(attempted.overlay.target_height(), Height::new(2));
+        assert_eq!(attempted.overlay.source_version(), 1);
+        assert_eq!(attempted.overlay.source_root(), store.parent_state_root);
+        assert_eq!(attempted.overlay.operation_count(), 1);
+        assert_eq!(attempted.decoded.operation.target_height(), 2);
+        assert_eq!(
+            attempted.decoded.owner.routed.exact_outer_bytes,
+            exact_outer
+        );
+        assert_eq!(
+            attempted.decoded.owner.routed.exact_inner_bytes,
+            exact_inner
+        );
+        assert_eq!(
+            attempted.decoded.owner.routed.context.target_block_id,
+            expected_id
+        );
+        assert_eq!(attempted.decoded.owner.routed.index, 0);
+        assert_eq!(
+            attempted.decoded.owner.routed.open.next_transaction_index,
+            0
+        );
+        assert_eq!(attempted.decoded.owner.routed.next_transaction_index, 1);
+        assert_eq!(store.store.active_runtime_snapshot_pins_for_test_v0(), 1);
+        drop(attempted);
+        assert_eq!(store.store.active_runtime_snapshot_pins_for_test_v0(), 0);
+        assert_eq!(
+            load_test_authenticated_poco_projection(&store),
+            source_projection,
+            "authorized in-memory overlay must not publish a parent-state mutation"
+        );
+    }
+
+    #[test]
+    fn production_poco_governance_rejection_closes_without_cursor_or_state_mutation() {
+        let store = test_store_with_poco_application_authority();
+        let base = fixture_profile(store.parent_state_root, 0);
+        let (source_projection, exact_inner) =
+            author_valid_poco_application_operation(&store, &base);
+        let exact_outer = signed_envelope_bytes(
+            TEST_CHAIN.as_str(),
+            "native-poco-family-unauthorized".to_string(),
+            82,
+            "did:client:1",
+            "hepta",
+            1,
+            1_700_000_000_000,
+            1_700_000_100_000,
+            crate::poco_application::POCO_APPLICATION_OPERATION_PAYLOAD_TYPE_V0,
+            &exact_inner,
+        );
+        let profile = replace_profile_transactions(base, vec![exact_outer.clone()]);
+        let expected_id = profile.header.id();
+        let failed = authorize_and_execute_decoded_core_non_runtime_family_v0(
+            decode_only_non_runtime_family(&store, &profile),
+        )
+        .err()
+        .expect("foreign PoCO signer must retain a pending family failure");
+        assert_eq!(store.store.active_runtime_snapshot_pins_for_test_v0(), 1);
+        let closed = finish_failed_core_authorized_non_runtime_family_attempt_v0(failed);
+        let owner = match *closed {
+            ClosedFailedCoreAuthorizedNonRuntimeFamilyAttemptV0::PocoApplication {
+                owner,
+                operation,
+                cause,
+            } => {
+                assert_eq!(operation.target_height(), 2);
+                assert_eq!(
+                    cause,
+                    ClosedCoreAuthorizedNonRuntimeFamilyAttemptCauseV0::Attempt(
+                        CoreAuthorizedNonRuntimeFamilyAttemptCauseV0::DeterministicallyInvalid(
+                            CoreAuthorizedNonRuntimeFamilyDeterministicInvalidV0::PocoGovernanceAuthorization,
+                        ),
+                    )
+                );
+                owner
+            }
+            ClosedFailedCoreAuthorizedNonRuntimeFamilyAttemptV0::ValidatorTransition { .. }
+            | ClosedFailedCoreAuthorizedNonRuntimeFamilyAttemptV0::Unsupported { .. } => {
+                panic!("PoCO governance failure changed family")
+            }
+        };
+        assert_eq!(owner.authorized.validation_id.block_id(), expected_id);
+        assert_eq!(owner.exact_outer_bytes, exact_outer);
+        assert_eq!(owner.exact_inner_bytes, exact_inner);
+        assert_eq!(owner.envelope.signer_id, "did:client:1");
+        assert_eq!(owner.index, 0);
+        assert_eq!(owner.cursor_next_transaction_index, 0);
+        assert_eq!(owner.decoded_next_transaction_index, 1);
+        assert!(owner.changes.is_empty());
+        assert!(owner.applied.is_empty());
+        drop(owner);
+        assert_eq!(store.store.active_runtime_snapshot_pins_for_test_v0(), 0);
+        assert_eq!(
+            load_test_authenticated_poco_projection(&store),
+            source_projection
+        );
+    }
+
+    #[test]
+    fn production_family_authenticated_source_failure_closes_with_exact_owner() {
+        let store = test_store_with_poco_application_authority();
+        let base = fixture_profile(store.parent_state_root, 0);
+        let (_, exact_inner) = author_valid_poco_application_operation(&store, &base);
+        let exact_outer = signed_envelope_bytes(
+            TEST_CHAIN.as_str(),
+            "native-poco-family-source-unavailable".to_string(),
+            81,
+            "did:operator:1",
+            "operator",
+            1,
+            1_700_000_000_000,
+            1_700_000_100_000,
+            crate::poco_application::POCO_APPLICATION_OPERATION_PAYLOAD_TYPE_V0,
+            &exact_inner,
+        );
+        let profile = replace_profile_transactions(base, vec![exact_outer.clone()]);
+        let expected_id = profile.header.id();
+        let decoded = decode_only_non_runtime_family(&store, &profile);
+        let decoded = match decoded {
+            DecodedDispatchedCoreAuthorizedNonRuntimePayloadV0::PocoApplication(decoded) => decoded,
+            DecodedDispatchedCoreAuthorizedNonRuntimePayloadV0::ValidatorTransition(_)
+            | DecodedDispatchedCoreAuthorizedNonRuntimePayloadV0::Unsupported(_) => {
+                panic!("PoCO source-failure fixture changed family")
+            }
+        };
+        // Production obtains this variant only from the retained snapshot's
+        // typed loader. The test constructs the pending carrier directly so
+        // no caller-supplied projection/source seam exists in production.
+        let failed = Box::new(
+            FailedCoreAuthorizedNonRuntimeFamilyAttemptV0::PocoApplication {
+                decoded,
+                cause: CoreAuthorizedNonRuntimeFamilyAttemptCauseV0::AuthenticatedSource(
+                    AuthenticatedRuntimeReadFailureV0::HostResourceUnavailable {
+                        stage: crate::store::AuthenticatedRuntimeReadStageV0::VerifyPocoProjection,
+                        sqlite: None,
+                        reason: "test-only typed projection source failure",
+                    },
+                ),
+            },
+        );
+        let closed = finish_failed_core_authorized_non_runtime_family_attempt_v0(failed);
+        let owner = match *closed {
+            ClosedFailedCoreAuthorizedNonRuntimeFamilyAttemptV0::PocoApplication {
+                owner,
+                operation,
+                cause,
+            } => {
+                assert_eq!(operation.target_height(), 2);
+                assert!(matches!(
+                    cause,
+                    ClosedCoreAuthorizedNonRuntimeFamilyAttemptCauseV0::Attempt(
+                        CoreAuthorizedNonRuntimeFamilyAttemptCauseV0::AuthenticatedSource(
+                            AuthenticatedRuntimeReadFailureV0::HostResourceUnavailable {
+                                stage: crate::store::AuthenticatedRuntimeReadStageV0::VerifyPocoProjection,
+                                ..
+                            },
+                        ),
+                    )
+                ));
+                owner
+            }
+            ClosedFailedCoreAuthorizedNonRuntimeFamilyAttemptV0::ValidatorTransition { .. }
+            | ClosedFailedCoreAuthorizedNonRuntimeFamilyAttemptV0::Unsupported { .. } => {
+                panic!("PoCO source failure changed family")
+            }
+        };
+        assert_eq!(owner.authorized.validation_id.block_id(), expected_id);
+        assert_eq!(owner.exact_outer_bytes, exact_outer);
+        assert_eq!(owner.cursor_next_transaction_index, 0);
+        assert_eq!(owner.decoded_next_transaction_index, 1);
+        drop(owner);
+        assert_eq!(store.store.active_runtime_snapshot_pins_for_test_v0(), 0);
+    }
+
+    #[test]
+    fn production_family_finish_failure_outranks_pending_deterministic_rejection() {
+        let store = test_store();
+        let exact_outer = signed_envelope_bytes(
+            TEST_CHAIN.as_str(),
+            "native-unsupported-family-finish".to_string(),
+            81,
+            "did:operator:1",
+            "operator",
+            1,
+            1_700_000_000_000,
+            1_700_000_100_000,
+            "trnm.unsupported.native-family.v0",
+            b"{}",
+        );
+        let profile = replace_profile_transactions(
+            fixture_profile(store.parent_state_root, 0),
+            vec![exact_outer.clone()],
+        );
+        let expected_id = profile.header.id();
+        let mut failed = authorize_and_execute_decoded_core_non_runtime_family_v0(
+            decode_only_non_runtime_family(&store, &profile),
+        )
+        .err()
+        .expect("unsupported family must retain a pending deterministic failure");
+        match failed.as_mut() {
+            FailedCoreAuthorizedNonRuntimeFamilyAttemptV0::Unsupported { owner, cause } => {
+                assert_eq!(
+                    *cause,
+                    CoreAuthorizedNonRuntimeFamilyAttemptCauseV0::DeterministicallyInvalid(
+                        CoreAuthorizedNonRuntimeFamilyDeterministicInvalidV0::UnsupportedFamily,
+                    )
+                );
+                owner
+                    .routed
+                    .open
+                    .open
+                    .snapshot
+                    .inject_finish_failure_for_test_v0();
+            }
+            FailedCoreAuthorizedNonRuntimeFamilyAttemptV0::PocoApplication { .. }
+            | FailedCoreAuthorizedNonRuntimeFamilyAttemptV0::ValidatorTransition { .. } => {
+                panic!("unsupported finish fixture changed family")
+            }
+        }
+        let closed = finish_failed_core_authorized_non_runtime_family_attempt_v0(failed);
+        let owner = match *closed {
+            ClosedFailedCoreAuthorizedNonRuntimeFamilyAttemptV0::Unsupported { owner, cause } => {
+                assert!(matches!(
+                    cause,
+                    ClosedCoreAuthorizedNonRuntimeFamilyAttemptCauseV0::Snapshot(
+                        AuthenticatedRuntimeReadFailureV0::HostInvariant {
+                            stage: crate::store::AuthenticatedRuntimeReadStageV0::EndSnapshot,
+                            ..
+                        },
+                    )
+                ));
+                owner
+            }
+            ClosedFailedCoreAuthorizedNonRuntimeFamilyAttemptV0::PocoApplication { .. }
+            | ClosedFailedCoreAuthorizedNonRuntimeFamilyAttemptV0::ValidatorTransition { .. } => {
+                panic!("closed unsupported finish failure changed family")
+            }
+        };
+        assert_eq!(owner.authorized.validation_id.block_id(), expected_id);
+        assert_eq!(owner.exact_outer_bytes, exact_outer);
+        assert_eq!(owner.cursor_next_transaction_index, 0);
+        assert_eq!(owner.decoded_next_transaction_index, 1);
+        drop(owner);
+        assert_eq!(store.store.active_runtime_snapshot_pins_for_test_v0(), 0);
+    }
+
+    #[test]
+    fn production_validator_family_attempt_uses_authenticated_lifecycle_and_retains_owner() {
+        let store = test_store();
+        let command_id = "native-validator-family-attempt";
+        let exact_inner = valid_validator_transition_bytes(&store, command_id);
+        let exact_outer = signed_envelope_bytes(
+            TEST_CHAIN.as_str(),
+            command_id.to_string(),
+            81,
+            "did:operator:1",
+            "operator",
+            1,
+            1_700_000_000_000,
+            1_700_000_100_000,
+            crate::validator_lifecycle::VALIDATOR_TRANSITION_PAYLOAD_TYPE_V1,
+            &exact_inner,
+        );
+        let profile = replace_profile_transactions(
+            fixture_profile(store.parent_state_root, 0),
+            vec![exact_outer.clone()],
+        );
+        let expected_id = profile.header.id();
+        let open = open_core_authorized_regular_transaction_cursor_v0(
+            &test_native_validation_host(&store),
+            core_validation_request(&profile),
+        )
+        .expect("open validator family-attempt cursor");
+        let routed = match prepare_next_core_authorized_regular_payload_v0(open)
+            .expect("prepare validator family-attempt payload")
+        {
+            PreparedCoreAuthorizedRegularPayloadV0::NonRuntime(routed) => routed,
+            PreparedCoreAuthorizedRegularPayloadV0::Runtime(_) => {
+                panic!("validator family attempt entered runtime")
+            }
+        };
+        let decoded = decode_dispatched_core_authorized_non_runtime_payload_v0(
+            dispatch_core_authorized_non_runtime_payload_v0(routed),
+        )
+        .unwrap_or_else(|_| panic!("strict-decode validator family attempt"));
+        let attempted = authorize_and_execute_decoded_core_non_runtime_family_v0(decoded)
+            .unwrap_or_else(|_| {
+                panic!("authorize validator family attempt against retained lifecycle")
+            });
+        let attempted = match attempted {
+            super::AuthorizedCoreNonRuntimeFamilyAttemptV0::ValidatorTransition(attempted) => {
+                attempted
+            }
+            super::AuthorizedCoreNonRuntimeFamilyAttemptV0::PocoApplication(_) => {
+                panic!("validator family attempt changed family")
+            }
+        };
+        assert_eq!(
+            attempted
+                .scheduled_lifecycle
+                .pending_transition
+                .as_ref()
+                .expect("transition must be scheduled")
+                .transition_id,
+            command_id
+        );
+        assert_eq!(attempted.scheduled_lifecycle.governance_sequence, 1);
+        assert_eq!(attempted.decoded.transition.transition_id, command_id);
+        assert_eq!(
+            attempted.decoded.owner.routed.exact_outer_bytes,
+            exact_outer
+        );
+        assert_eq!(
+            attempted.decoded.owner.routed.exact_inner_bytes,
+            exact_inner
+        );
+        assert_eq!(
+            attempted.decoded.owner.routed.context.target_block_id,
+            expected_id
+        );
+        assert_eq!(
+            attempted.decoded.owner.routed.open.next_transaction_index,
+            0
+        );
+        assert_eq!(attempted.decoded.owner.routed.next_transaction_index, 1);
+        assert_eq!(store.validator_lifecycle.governance_sequence, 0);
+        assert!(store.validator_lifecycle.pending_transition.is_none());
+        assert_eq!(store.store.active_runtime_snapshot_pins_for_test_v0(), 1);
+        drop(attempted);
+        assert_eq!(store.store.active_runtime_snapshot_pins_for_test_v0(), 0);
+    }
+
+    #[test]
+    fn production_validator_nonce_rejection_closes_without_mutating_authenticated_lifecycle() {
+        let store = test_store();
+        let source_lifecycle = store.validator_lifecycle.clone();
+        let command_id = "native-validator-family-nonce-gap";
+        let exact_inner = valid_validator_transition_bytes(&store, command_id);
+        let exact_outer = signed_envelope_bytes(
+            TEST_CHAIN.as_str(),
+            command_id.to_string(),
+            81,
+            "did:operator:1",
+            "operator",
+            2,
+            1_700_000_000_000,
+            1_700_000_100_000,
+            crate::validator_lifecycle::VALIDATOR_TRANSITION_PAYLOAD_TYPE_V1,
+            &exact_inner,
+        );
+        let profile = replace_profile_transactions(
+            fixture_profile(store.parent_state_root, 0),
+            vec![exact_outer.clone()],
+        );
+        let expected_id = profile.header.id();
+        let failed = authorize_and_execute_decoded_core_non_runtime_family_v0(
+            decode_only_non_runtime_family(&store, &profile),
+        )
+        .err()
+        .expect("validator nonce gap must retain a pending family failure");
+        let closed = finish_failed_core_authorized_non_runtime_family_attempt_v0(failed);
+        let owner = match *closed {
+            ClosedFailedCoreAuthorizedNonRuntimeFamilyAttemptV0::ValidatorTransition {
+                owner,
+                transition,
+                cause,
+            } => {
+                assert_eq!(transition.transition_id, command_id);
+                assert_eq!(
+                    cause,
+                    ClosedCoreAuthorizedNonRuntimeFamilyAttemptCauseV0::Attempt(
+                        CoreAuthorizedNonRuntimeFamilyAttemptCauseV0::DeterministicallyInvalid(
+                            CoreAuthorizedNonRuntimeFamilyDeterministicInvalidV0::ValidatorTransition(
+                                crate::validator_lifecycle::ValidatorTransitionDeterministicInvalidV1::GovernanceSequenceMismatch,
+                            ),
+                        ),
+                    )
+                );
+                owner
+            }
+            ClosedFailedCoreAuthorizedNonRuntimeFamilyAttemptV0::PocoApplication { .. }
+            | ClosedFailedCoreAuthorizedNonRuntimeFamilyAttemptV0::Unsupported { .. } => {
+                panic!("validator nonce failure changed family")
+            }
+        };
+        assert_eq!(owner.authorized.validation_id.block_id(), expected_id);
+        assert_eq!(owner.exact_outer_bytes, exact_outer);
+        assert_eq!(owner.exact_inner_bytes, exact_inner);
+        assert_eq!(owner.envelope.nonce, 2);
+        assert_eq!(owner.cursor_next_transaction_index, 0);
+        assert_eq!(owner.decoded_next_transaction_index, 1);
+        assert!(owner.changes.is_empty());
+        assert!(owner.applied.is_empty());
+        drop(owner);
+        assert_eq!(store.validator_lifecycle, source_lifecycle);
+        assert_eq!(store.store.active_runtime_snapshot_pins_for_test_v0(), 0);
+    }
+
+    #[test]
+    fn production_validator_nonce_exhaustion_is_invariant_and_retains_owner() {
+        let store = test_store_with_governance_sequence(u64::MAX);
+        let source_lifecycle = store.validator_lifecycle.clone();
+        let command_id = "native-validator-family-nonce-exhausted";
+        let exact_inner = valid_validator_transition_bytes(&store, command_id);
+        let exact_outer = signed_envelope_bytes(
+            TEST_CHAIN.as_str(),
+            command_id.to_string(),
+            81,
+            "did:operator:1",
+            "operator",
+            u64::MAX,
+            1_700_000_000_000,
+            1_700_000_100_000,
+            crate::validator_lifecycle::VALIDATOR_TRANSITION_PAYLOAD_TYPE_V1,
+            &exact_inner,
+        );
+        let profile = replace_profile_transactions(
+            fixture_profile(store.parent_state_root, 0),
+            vec![exact_outer.clone()],
+        );
+        let failed = authorize_and_execute_decoded_core_non_runtime_family_v0(
+            decode_only_non_runtime_family(&store, &profile),
+        )
+        .err()
+        .expect("exhausted validator nonce must retain a pending family failure");
+        let closed = finish_failed_core_authorized_non_runtime_family_attempt_v0(failed);
+        let owner = match *closed {
+            ClosedFailedCoreAuthorizedNonRuntimeFamilyAttemptV0::ValidatorTransition {
+                owner,
+                transition,
+                cause,
+            } => {
+                assert_eq!(transition.transition_id, command_id);
+                assert_eq!(
+                    cause,
+                    ClosedCoreAuthorizedNonRuntimeFamilyAttemptCauseV0::Attempt(
+                        CoreAuthorizedNonRuntimeFamilyAttemptCauseV0::Invariant(
+                            CoreAuthorizedNonRuntimeFamilyInvariantV0::ValidatorTransition(
+                                crate::validator_lifecycle::ValidatorTransitionInvariantV1::GovernanceSequenceExhausted,
+                            ),
+                        ),
+                    )
+                );
+                owner
+            }
+            ClosedFailedCoreAuthorizedNonRuntimeFamilyAttemptV0::PocoApplication { .. }
+            | ClosedFailedCoreAuthorizedNonRuntimeFamilyAttemptV0::Unsupported { .. } => {
+                panic!("validator nonce-exhaustion failure changed family")
+            }
+        };
+        assert_eq!(owner.exact_outer_bytes, exact_outer);
+        assert_eq!(owner.exact_inner_bytes, exact_inner);
+        assert_eq!(owner.envelope.nonce, u64::MAX);
+        assert_eq!(owner.cursor_next_transaction_index, 0);
+        assert_eq!(owner.decoded_next_transaction_index, 1);
+        assert!(owner.changes.is_empty());
+        assert!(owner.applied.is_empty());
+        drop(owner);
+        assert_eq!(store.validator_lifecycle, source_lifecycle);
+        assert_eq!(store.store.active_runtime_snapshot_pins_for_test_v0(), 0);
+    }
+
+    #[test]
+    fn production_validator_bad_proof_is_deterministic_and_retains_owner() {
+        let store = test_store();
+        let source_lifecycle = store.validator_lifecycle.clone();
+        let command_id = "native-validator-family-bad-proof";
+        let mut transition: crate::validator_lifecycle::ValidatorSetTransitionV1 =
+            serde_json::from_slice(&valid_validator_transition_bytes(&store, command_id))
+                .expect("decode authored validator transition");
+        transition.new_validator_proofs[0].signature_hex = "00".to_string();
+        let exact_inner = serde_json::to_vec(&transition).expect("encode bad-proof transition");
+        let exact_outer = signed_envelope_bytes(
+            TEST_CHAIN.as_str(),
+            command_id.to_string(),
+            81,
+            "did:operator:1",
+            "operator",
+            1,
+            1_700_000_000_000,
+            1_700_000_100_000,
+            crate::validator_lifecycle::VALIDATOR_TRANSITION_PAYLOAD_TYPE_V1,
+            &exact_inner,
+        );
+        let profile = replace_profile_transactions(
+            fixture_profile(store.parent_state_root, 0),
+            vec![exact_outer.clone()],
+        );
+        let failed = authorize_and_execute_decoded_core_non_runtime_family_v0(
+            decode_only_non_runtime_family(&store, &profile),
+        )
+        .err()
+        .expect("bad validator proof must retain a pending family failure");
+        let closed = finish_failed_core_authorized_non_runtime_family_attempt_v0(failed);
+        let owner = match *closed {
+            ClosedFailedCoreAuthorizedNonRuntimeFamilyAttemptV0::ValidatorTransition {
+                owner,
+                transition,
+                cause,
+            } => {
+                assert_eq!(transition.transition_id, command_id);
+                assert_eq!(transition.new_validator_proofs[0].signature_hex, "00");
+                assert_eq!(
+                    cause,
+                    ClosedCoreAuthorizedNonRuntimeFamilyAttemptCauseV0::Attempt(
+                        CoreAuthorizedNonRuntimeFamilyAttemptCauseV0::DeterministicallyInvalid(
+                            CoreAuthorizedNonRuntimeFamilyDeterministicInvalidV0::ValidatorTransition(
+                                crate::validator_lifecycle::ValidatorTransitionDeterministicInvalidV1::NewValidatorProof,
+                            ),
+                        ),
+                    )
+                );
+                owner
+            }
+            ClosedFailedCoreAuthorizedNonRuntimeFamilyAttemptV0::PocoApplication { .. }
+            | ClosedFailedCoreAuthorizedNonRuntimeFamilyAttemptV0::Unsupported { .. } => {
+                panic!("validator bad-proof rejection changed family")
+            }
+        };
+        assert_eq!(owner.exact_outer_bytes, exact_outer);
+        assert_eq!(owner.exact_inner_bytes, exact_inner);
+        assert_eq!(owner.cursor_next_transaction_index, 0);
+        assert_eq!(owner.decoded_next_transaction_index, 1);
+        drop(owner);
+        assert_eq!(store.validator_lifecycle, source_lifecycle);
+        assert_eq!(store.store.active_runtime_snapshot_pins_for_test_v0(), 0);
+    }
+
+    #[test]
+    fn production_poco_family_failure_retains_exact_authenticated_owner() {
+        let store = test_store();
+        let exact_inner = br#"{"schema":"trnm_poco_application_operation_v0","target_height":2,"expected_state_revision":0,"body":{"kind":"register_future_candidate","validator_id_hex":"00","target_epoch":1,"previous_registration_nonce":null,"predecessor_history_head_hex":"00","proof_cev0_hex":"","registration_decision_id_hex":"00"},"semantic_changes":[],"nullifier_non_membership_checks":[],"nullifier_insertions":[]}"#;
+        let exact_outer = signed_envelope_bytes(
+            TEST_CHAIN.as_str(),
+            "native-poco-family-invalid".to_string(),
+            81,
+            "did:operator:1",
+            "operator",
+            1,
+            1_700_000_000_000,
+            1_700_000_100_000,
+            crate::poco_application::POCO_APPLICATION_OPERATION_PAYLOAD_TYPE_V0,
+            exact_inner,
+        );
+        let profile = replace_profile_transactions(
+            fixture_profile(store.parent_state_root, 0),
+            vec![exact_outer.clone()],
+        );
+        let expected_id = profile.header.id();
+        let open = open_core_authorized_regular_transaction_cursor_v0(
+            &test_native_validation_host(&store),
+            core_validation_request(&profile),
+        )
+        .expect("open invalid PoCO family-attempt cursor");
+        let routed = match prepare_next_core_authorized_regular_payload_v0(open)
+            .expect("prepare invalid PoCO family-attempt payload")
+        {
+            PreparedCoreAuthorizedRegularPayloadV0::NonRuntime(routed) => routed,
+            PreparedCoreAuthorizedRegularPayloadV0::Runtime(_) => {
+                panic!("PoCO family attempt entered runtime")
+            }
+        };
+        let decoded = decode_dispatched_core_authorized_non_runtime_payload_v0(
+            dispatch_core_authorized_non_runtime_payload_v0(routed),
+        )
+        .unwrap_or_else(|_| panic!("strict-decode intrinsically valid PoCO operation"));
+        let failed = authorize_and_execute_decoded_core_non_runtime_family_v0(decoded)
+            .err()
+            .expect("invalid PoCO state transition must retain its family owner");
+        let closed = finish_failed_core_authorized_non_runtime_family_attempt_v0(failed);
+        let owner = match *closed {
+            ClosedFailedCoreAuthorizedNonRuntimeFamilyAttemptV0::PocoApplication {
+                owner,
+                operation,
+                cause,
+            } => {
+                assert_eq!(operation.target_height(), 2);
+                assert!(
+                    matches!(
+                        cause,
+                        ClosedCoreAuthorizedNonRuntimeFamilyAttemptCauseV0::Attempt(
+                            CoreAuthorizedNonRuntimeFamilyAttemptCauseV0::Invariant(
+                                CoreAuthorizedNonRuntimeFamilyInvariantV0::PocoProjection,
+                            ),
+                        )
+                    ),
+                    "unexpected PoCO family cause: {cause:?}"
+                );
+                owner
+            }
+            ClosedFailedCoreAuthorizedNonRuntimeFamilyAttemptV0::ValidatorTransition { .. }
+            | ClosedFailedCoreAuthorizedNonRuntimeFamilyAttemptV0::Unsupported { .. } => {
+                panic!("PoCO family failure changed family")
+            }
+        };
+        assert_eq!(owner.exact_outer_bytes, exact_outer);
+        assert_eq!(owner.exact_inner_bytes, exact_inner);
+        assert_eq!(owner.context.target_block_id, expected_id);
+        assert_eq!(owner.cursor_next_transaction_index, 0);
+        assert_eq!(owner.decoded_next_transaction_index, 1);
+        drop(owner);
+        assert_eq!(store.store.active_runtime_snapshot_pins_for_test_v0(), 0);
     }
 
     #[test]
