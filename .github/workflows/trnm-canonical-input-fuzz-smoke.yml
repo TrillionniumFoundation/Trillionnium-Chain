@@ -43,12 +43,12 @@ jobs:
           toolchain: nightly-2026-07-27
       - name: Install checksum- and lock-pinned cargo-fuzz runner
         run: |
-          scripts/ci/install_cargo_fuzz.sh "$RUNNER_TEMP/trnm-cargo-fuzz"
+          ./scripts/ci/install_cargo_fuzz.sh "$RUNNER_TEMP/trnm-cargo-fuzz"
           printf '%s\n' "$RUNNER_TEMP/trnm-cargo-fuzz/bin" >> "$GITHUB_PATH"
       - name: Run bounded three-target smoke
         env:
           TRNM_FUZZ_SMOKE_SECONDS: "15"
-        run: scripts/ci/check_canonical_fuzz_smoke.sh
+        run: ./scripts/ci/check_canonical_fuzz_smoke.sh
       - name: Upload crash artifacts
         if: failure()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02

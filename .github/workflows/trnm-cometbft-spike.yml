@@ -63,7 +63,7 @@ jobs:
           toolchain: 1.95.0
       - name: Install checksum-pinned cargo-deny
         run: |
-          scripts/ci/install_cargo_deny.sh "$RUNNER_TEMP/trnm-tools"
+          ./scripts/ci/install_cargo_deny.sh "$RUNNER_TEMP/trnm-tools"
           printf '%s\n' "$RUNNER_TEMP/trnm-tools" >> "$GITHUB_PATH"
       - name: Check all Rust dependency policies
         run: |
@@ -74,7 +74,7 @@ jobs:
         working-directory: web4-frontend
         run: npm audit --package-lock-only --audit-level=high
       - name: Enforce frozen legacy binary surfaces
-        run: bash scripts/ci/check_legacy_harness_freeze.sh
+        run: bash ./scripts/ci/check_legacy_harness_freeze.sh
 
   cometbft-four-validator:
     runs-on: ubuntu-latest
@@ -124,26 +124,26 @@ jobs:
         env:
           TRNM_PERSISTENT_SCALE_PROFILE: smoke
           TRNM_PERSISTENT_SCALE_EVIDENCE_ROOT: ${{ runner.temp }}/trnm-persistent-scale-${{ github.run_id }}-${{ github.run_attempt }}
-        run: trillionnium/scripts/consensus/run_persistent_scale_gate.sh
+        run: ./trillionnium/scripts/consensus/run_persistent_scale_gate.sh
 
       - name: Single-node live-process gate
         env:
           TRNM_COMETBFT_BIN: /tmp/cometbft
-        run: trillionnium/scripts/consensus/spike_cometbft_single_node.sh
+        run: ./trillionnium/scripts/consensus/spike_cometbft_single_node.sh
 
       - name: Four-validator crash-boundary, safety, and state-sync gate
         env:
           TRNM_COMETBFT_BIN: /tmp/cometbft
           TRNM_COMETBFT_SPIKE_CLEAN_ON_SUCCESS: "1"
           TRNM_COMETBFT_SPIKE_ROOT: ${{ runner.temp }}/trnm-comet-four-${{ github.run_id }}-${{ github.run_attempt }}
-        run: trillionnium/scripts/consensus/spike_cometbft_four_validator.sh
+        run: ./trillionnium/scripts/consensus/spike_cometbft_four_validator.sh
 
       - name: Six-node validator lifecycle gate
         env:
           TRNM_COMETBFT_BIN: /tmp/cometbft
           TRNM_COMETBFT_LIFECYCLE_CLEAN_ON_SUCCESS: "1"
           TRNM_COMETBFT_LIFECYCLE_ROOT: ${{ runner.temp }}/trnm-comet-lifecycle-${{ github.run_id }}-${{ github.run_attempt }}
-        run: trillionnium/scripts/consensus/spike_cometbft_validator_lifecycle.sh
+        run: ./trillionnium/scripts/consensus/spike_cometbft_validator_lifecycle.sh
 
       - name: Upload failed CometBFT safety evidence
         if: failure()
@@ -218,7 +218,7 @@ jobs:
           TRNM_COMETBFT_PARTITION_CASE: ${{ matrix.case }}
           TRNM_COMETBFT_PARTITION_CLEAN_ON_SUCCESS: "1"
           TRNM_COMETBFT_PARTITION_ROOT: ${{ runner.temp }}/trnm-comet-partition-${{ matrix.case }}-${{ github.run_id }}-${{ github.run_attempt }}
-        run: trillionnium/scripts/consensus/spike_cometbft_partition_matrix.sh
+        run: ./trillionnium/scripts/consensus/spike_cometbft_partition_matrix.sh
 
       - name: Upload failed partition safety evidence
         if: failure()

@@ -28,7 +28,7 @@ jobs:
       - name: Unit and legacy-harness gates
         run: |
           set -euo pipefail
-          python3 trillionnium/scripts/release/test_trnm_chain_devnet_v1.py
+          python3 ./trillionnium/scripts/release/test_trnm_chain_devnet_v1.py
           cargo test --manifest-path trillionnium/Cargo.toml --locked \
             -p trnm-finality-types \
             -p trnm-finality-verifier \
@@ -51,9 +51,9 @@ jobs:
           export TRNM_DEVNET_TARGET_DIR=/tmp/trnm-devnet-target
 
           TRNM_DEVNET_RELEASE_OUT_DIR=/tmp/trnm-package-a \
-            trillionnium/scripts/release/build_trnm_chain_devnet_v1.sh
+            ./trillionnium/scripts/release/build_trnm_chain_devnet_v1.sh
           TRNM_DEVNET_RELEASE_OUT_DIR=/tmp/trnm-package-b \
-            trillionnium/scripts/release/build_trnm_chain_devnet_v1.sh
+            ./trillionnium/scripts/release/build_trnm_chain_devnet_v1.sh
 
           archive_a="$(find /tmp/trnm-package-a -maxdepth 1 -name '*.tar.gz' -print -quit)"
           archive_b="$(find /tmp/trnm-package-b -maxdepth 1 -name '*.tar.gz' -print -quit)"
@@ -62,7 +62,7 @@ jobs:
           cmp "$archive_a.sha256" "$archive_b.sha256"
           cmp "$archive_a.ed25519" "$archive_b.ed25519"
 
-          trillionnium/scripts/release/verify_trnm_chain_devnet_v1.sh \
+          ./trillionnium/scripts/release/verify_trnm_chain_devnet_v1.sh \
             "$archive_a" \
             "$archive_a.sha256" \
             "$archive_a.ed25519" \
