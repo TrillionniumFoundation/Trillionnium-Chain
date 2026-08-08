@@ -3475,7 +3475,13 @@ fn apply_operation_v0(
             settlement_commitment_hex,
             reserved_units,
             funding_decision_id_hex,
-        ),
+        )
+        .map_err(|error| {
+            preserve_application_failure_or_deterministic_v0(
+                error,
+                PocoApplicationDeterministicInvalidV0::SemanticTransition,
+            )
+        }),
         PocoApplicationOperationBodyV0::AcceptCertificate {
             certificate_id_hex,
             funding_decision_id_hex,
@@ -8006,6 +8012,39 @@ mod tests {
         assert_eq!(block.overlay.operation_ids, operation_ids_before);
         assert_eq!(block.overlay.accumulator.root(), accumulator_root_before);
         assert_eq!(block.overlay.accumulator.count(), accumulator_count_before);
+    }
+
+    #[test]
+    fn fund_settlement_signed_shape_is_deterministic_without_mutation() {
+        let projection = genesis_projection();
+        let mut block =
+            PocoApplicationBlockOverlayV0::from_projection(context_at(2).unwrap(), &projection)
+                .unwrap();
+        let operation = PocoApplicationOperationV0 {
+            schema: POCO_APPLICATION_OPERATION_SCHEMA_V0.to_string(),
+            target_height: 2,
+            expected_state_revision: 1,
+            body: PocoApplicationOperationBodyV0::FundSettlement {
+                certificate_id_hex: "01".repeat(32),
+                settlement_commitment_hex: "02".repeat(32),
+                reserved_units: CanonicalU128V0::new(0),
+                funding_decision_id_hex: "03".repeat(32),
+            },
+            semantic_changes: Vec::new(),
+            nullifier_non_membership_checks: Vec::new(),
+            nullifier_insertions: Vec::new(),
+        };
+        let raw = serde_json::to_vec(&operation).unwrap();
+
+        assert_eq!(
+            block.apply_decoded_exact(&raw, &operation),
+            Err(PocoApplicationApplyFailureV0::DeterministicallyInvalid(
+                PocoApplicationDeterministicInvalidV0::SemanticTransition,
+            )),
+        );
+        assert_eq!(block.operation_count(), 0);
+        assert!(block.overlay.operation_ids.is_empty());
+        assert!(block.overlay.mutations.is_empty());
     }
 
     #[test]

@@ -684,6 +684,9 @@ already-retired authority, and authenticated old-fact/authority divergence;
 meter prune validates signed IDs before policy lookup, separates nullifier and
 active/retention/reference rejection, and fails stop on authenticated retention
 arithmetic or certificate decoding;
+fund settlement maps its remaining signed certificate/commitment/units and
+semantic-shape failures deterministically while preserving nested typed
+nullifier/counter/CAS reasons;
 unrefined leaf failures conservatively remain authenticated-overlay invariants
 without string matching. Success retains the open snapshot, decoded owner, and unsealed PoCO
 overlay or scheduled lifecycle. PoCO leaf-reason refinement, write sealing,

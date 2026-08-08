@@ -1266,6 +1266,8 @@ epoch prune, and Core transition remain open.
    Meter prune validates signed IDs before its negative-fact lookup, separates
    nullifier and temporal/reference rejection, and keeps authenticated
    retention/certificate faults invariant.
+   `FundSettlement` now types all remaining signed-shape failures while
+   preserving its nested nullifier/counter/CAS failures unchanged.
    Leaf-reason completion remains a hard
    dependency before terminal failure mapping. The success carrier still owns the open
    snapshot and unsealed overlay/scheduled lifecycle. It does not yet seal

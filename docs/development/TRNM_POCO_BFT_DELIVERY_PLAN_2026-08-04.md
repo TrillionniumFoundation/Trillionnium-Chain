@@ -410,9 +410,12 @@ an earlier phase.
   `SemanticTransition` before lookup, missing policy as the negative-fact
   reason, unauthorized nullifiers as `NullifierProof`, and active/retained/
   referenced state as `ProtocolWindowOrCap`; authenticated retention arithmetic
-  or certificate decoding remains invariant. Leaf errors not yet assigned a narrower reason remain
-  conservatively typed as an
-  authenticated-overlay invariant. Success keeps the exact decoded owner plus
+  or certificate decoding remains invariant. `FundSettlement` now preserves
+  nested nullifier/counter/CAS reasons and maps
+  only its remaining signed certificate/commitment/units/semantic-shape
+  failures to `SemanticTransition`; it reads no authenticated companion.
+  Leaf errors not yet assigned a narrower reason remain conservatively typed
+  as an authenticated-overlay invariant. Success keeps the exact decoded owner plus
   the still-open snapshot and unsealed family state. These attempts do not yet
   seal family writes, merge multiple family operations into the cursor, advance
   it, form receipts, or promote a terminal result. Remaining PoCO leaf-reason
