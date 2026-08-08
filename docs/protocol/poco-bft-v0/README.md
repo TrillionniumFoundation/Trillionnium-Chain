@@ -661,8 +661,9 @@ scheduling now has closed deterministic/invariant reasons, checked nonce/delay
 arithmetic, and clone-and-swap postcondition validation. PoCO application now
 has its own closed apply reason set for raw ownership, height/revision,
 capacity/duplicate, nullifier proof, validator rules, validator PoP, and signed
-semantic changes; malformed authenticated predecessors and derived
-CAS/mutation postconditions fail stop;
+semantic changes. Authenticated negative facts reject deterministically;
+present-but-malformed companions, malformed authenticated predecessors, and
+derived CAS/mutation postconditions fail stop;
 unrefined leaf failures conservatively remain authenticated-overlay invariants
 without string matching. Success retains the open snapshot, decoded owner, and unsealed PoCO
 overlay or scheduled lifecycle. PoCO leaf-reason refinement, write sealing,

@@ -6104,12 +6104,19 @@ fn source_parts_for_identity(
     let value = overlay
         .entries
         .get(&(kind, logical_key.to_vec()))
-        .context("required authenticated semantic entry is absent")?;
-    let parts = owned_semantic_parts(kind, &logical_key, value)?;
-    ensure!(
-        parts.identity == identity,
-        "authenticated semantic identity digest collision"
-    );
+        .ok_or_else(|| {
+            deterministic_application_error_v0(
+                PocoApplicationDeterministicInvalidV0::MissingRequiredAuthorityFact,
+            )
+        })?;
+    let parts = owned_semantic_parts(kind, &logical_key, value).map_err(|_| {
+        invariant_application_error_v0(PocoApplicationInvariantV0::AuthenticatedOverlay)
+    })?;
+    if parts.identity != identity {
+        return Err(invariant_application_error_v0(
+            PocoApplicationInvariantV0::AuthenticatedOverlay,
+        ));
+    }
     Ok(parts)
 }
 
@@ -7748,6 +7755,42 @@ mod tests {
         assert_eq!(block.overlay.entries, before_entries);
         assert!(block.overlay.operation_ids.is_empty());
         assert!(block.overlay.mutations.is_empty());
+    }
+
+    #[test]
+    fn required_authority_fact_absence_and_corruption_have_distinct_typed_provenance() {
+        let identity = b"missing-operation-authority";
+        let kind = PocoSnapshotEntryKindV0::ConsumerKeyAuthorization;
+        let authority = PocoApplicationAuthorityStateV0::empty();
+        let mut overlay = overlay_with_authority(authority.clone());
+
+        let missing = source_parts_for_identity(&overlay, kind, identity)
+            .err()
+            .expect("authenticated negative fact must reject the operation");
+        assert_eq!(
+            missing.downcast_ref::<PocoApplicationApplyFailureV0>(),
+            Some(&PocoApplicationApplyFailureV0::DeterministicallyInvalid(
+                PocoApplicationDeterministicInvalidV0::MissingRequiredAuthorityFact,
+            )),
+        );
+
+        let logical_key = semantic_identity_digest_v0(kind, identity);
+        overlay
+            .entries
+            .insert((kind, logical_key.to_vec()), vec![0xff]);
+        let before = overlay.entries.clone();
+        let corrupt = source_parts_for_identity(&overlay, kind, identity)
+            .err()
+            .expect("malformed authenticated authority must fail stop");
+        assert_eq!(
+            corrupt.downcast_ref::<PocoApplicationApplyFailureV0>(),
+            Some(&PocoApplicationApplyFailureV0::Invariant(
+                PocoApplicationInvariantV0::AuthenticatedOverlay,
+            )),
+        );
+        assert_eq!(overlay.authority, authority);
+        assert_eq!(overlay.entries, before);
+        assert!(overlay.mutations.is_empty());
     }
 
     #[test]

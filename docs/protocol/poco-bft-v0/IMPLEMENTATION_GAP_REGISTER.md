@@ -1245,8 +1245,9 @@ epoch prune, and Core transition remain open.
    PoCO application now exposes a closed deterministic/invariant apply reason
    set: exact owner binding, height/revision, capacity/duplicate, nullifier
    proof, validator-rule, validator-PoP, and signed semantic-change paths are
-   typed without diagnostic string matching. Malformed authenticated semantic
-   predecessors and derived CAS/mutation failures are invariant. Unrefined leaf failures remain conservatively classified as
+   typed without diagnostic string matching. A proven missing authority fact
+   is deterministic; a present-but-malformed companion, malformed authenticated
+   semantic predecessor, or derived CAS/mutation failure is invariant. Unrefined leaf failures remain conservatively classified as
    authenticated-overlay invariants, so leaf-reason completion remains a hard
    dependency before terminal failure mapping. The success carrier still owns the open
    snapshot and unsealed overlay/scheduled lifecycle. It does not yet seal
