@@ -1294,7 +1294,10 @@ epoch prune, and Core transition remain open.
    The lifecycle and four usage-counter joins now type signed lifecycle drift,
    authenticated numeric corruption, deterministic cap rejection, and checked
    usage/prune arithmetic exhaustion. Certificate acceptance has no remaining
-   unclassified execution leaf.
+   unclassified execution leaf. Future-candidate registration now types its
+   pre-clone ID/duplicate admission plus the predecessor/history execution
+   join, preserving validator-rule, cryptographic-proof, and authenticated-
+   overlay provenance and determining its insertion slot before mutation.
    Leaf-reason completion remains a hard
    dependency before terminal failure mapping. The success carrier still owns the open
    snapshot and unsealed overlay/scheduled lifecycle. It does not yet seal

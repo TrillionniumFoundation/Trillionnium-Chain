@@ -718,6 +718,10 @@ facts or registration-history companion drift;
 the acceptance lifecycle/usage tail now separates signed lifecycle drift,
 authenticated counter/policy corruption, cap rejection, and checked usage/
 prune arithmetic exhaustion; certificate acceptance has no unclassified leaf;
+future-candidate registration now types pre-clone ID/duplicate admission and
+the predecessor/history execution join, separates validator-rule and PoP
+rejection from authenticated companion drift, and fixes insertion position
+before mutation;
 unrefined leaf failures conservatively remain authenticated-overlay invariants
 without string matching. Success retains the open snapshot, decoded owner, and unsealed PoCO
 overlay or scheduled lifecycle. PoCO leaf-reason refinement, write sealing,

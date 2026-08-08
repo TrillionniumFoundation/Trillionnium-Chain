@@ -3224,17 +3224,23 @@ fn validate_operation_capacity_before_clone_v0(
             target_epoch,
             ..
         } => {
-            exact_opaque_hex(validator_id_hex)?;
-            ensure!(
-                authority
-                    .future_candidate_registrations
-                    .binary_search_by(|item| {
-                        (item.target_epoch, item.validator_id_hex.as_str())
-                            .cmp(&(*target_epoch, validator_id_hex.as_str()))
-                    })
-                    .is_err(),
-                "future candidate is already registered for the target epoch"
-            );
+            exact_opaque_hex(validator_id_hex).map_err(|_| {
+                deterministic_application_error_v0(
+                    PocoApplicationDeterministicInvalidV0::ValidatorRule,
+                )
+            })?;
+            if authority
+                .future_candidate_registrations
+                .binary_search_by(|item| {
+                    (item.target_epoch, item.validator_id_hex.as_str())
+                        .cmp(&(*target_epoch, validator_id_hex.as_str()))
+                })
+                .is_ok()
+            {
+                return Err(deterministic_application_error_v0(
+                    PocoApplicationDeterministicInvalidV0::ValidatorRule,
+                ));
+            }
             delta.future_candidates_added = 1;
         }
         PocoApplicationOperationBodyV0::PruneRevokedValidatorHistory { .. } => {
@@ -5912,11 +5918,15 @@ fn apply_register_future_candidate_v0(
     proof_cev0_hex: &str,
     registration_decision_id_hex: &str,
 ) -> Result<()> {
-    ensure!(
-        operation.semantic_changes.is_empty()
-            && operation.nullifier_non_membership_checks.is_empty(),
-        "future candidate registration may not mutate frozen kinds or supply side proofs"
-    );
+    let validator_rule =
+        || deterministic_application_error_v0(PocoApplicationDeterministicInvalidV0::ValidatorRule);
+    let authenticated_overlay =
+        || invariant_application_error_v0(PocoApplicationInvariantV0::AuthenticatedOverlay);
+    if !operation.semantic_changes.is_empty()
+        || !operation.nullifier_non_membership_checks.is_empty()
+    {
+        return Err(validator_rule());
+    }
     let expected_target_epoch = context.active_epoch.get().checked_add(1).ok_or_else(|| {
         invariant_application_error_v0(PocoApplicationInvariantV0::ProtocolCounterExhausted)
     })?;
@@ -5963,67 +5973,67 @@ fn apply_register_future_candidate_v0(
             )
         })?;
 
-    let active = active_projection_context_v0(&overlay.entries)?;
-    ensure!(
-        active.validator_set.epoch() == context.active_epoch,
-        "future candidate active projection epoch drift"
-    );
-    let predecessor_head = exact_hash32_hex(predecessor_history_head_hex)?;
+    let active =
+        active_projection_context_v0(&overlay.entries).map_err(|_| authenticated_overlay())?;
+    if active.validator_set.epoch() != context.active_epoch {
+        return Err(authenticated_overlay());
+    }
+    let predecessor_head =
+        exact_hash32_hex(predecessor_history_head_hex).map_err(|_| validator_rule())?;
     match active.validator_set.validator(validator_id) {
         Some(old) if old.consensus_key() != proof_fields.public_key => {
-            let previous_nonce = previous_registration_nonce
-                .context("changed-key future candidate lacks predecessor nonce")?;
+            let previous_nonce = previous_registration_nonce.ok_or_else(validator_rule)?;
             let history = overlay
                 .authority
                 .validator_registration_history
                 .binary_search_by(|item| item.validator_id_hex.as_str().cmp(validator_id_hex))
                 .ok()
                 .map(|index| &overlay.authority.validator_registration_history[index])
-                .context("changed-key future candidate lacks active registration history")?;
-            ensure!(
-                history.revoked_at_height.is_none()
-                    && exact_hash32_hex(&history.consensus_key_hex)?
-                        == *old.consensus_key().as_bytes()
-                    && history.max_registration_nonce == previous_nonce
-                    && exact_hash32_hex(&history.history_head_hex)? == predecessor_head
-                    && proof_fields.registration_nonce > previous_nonce,
-                "future candidate predecessor nonce/history is not the authenticated active key"
-            );
+                .ok_or_else(authenticated_overlay)?;
+            let history_consensus_key = exact_hash32_hex(&history.consensus_key_hex)
+                .map_err(|_| authenticated_overlay())?;
+            let history_head =
+                exact_hash32_hex(&history.history_head_hex).map_err(|_| authenticated_overlay())?;
+            if history.revoked_at_height.is_some()
+                || history_consensus_key != *old.consensus_key().as_bytes()
+                || history.max_registration_nonce != previous_nonce
+                || history_head != predecessor_head
+            {
+                return Err(authenticated_overlay());
+            }
+            if proof_fields.registration_nonce <= previous_nonce {
+                return Err(validator_rule());
+            }
         }
-        Some(_) => {
-            bail!("unchanged-key old validator must use canonical proof-free candidate carry")
+        Some(_) => return Err(validator_rule()),
+        None => {
+            if previous_registration_nonce.is_some() || predecessor_head != [0; 32] {
+                return Err(validator_rule());
+            }
         }
-        None => ensure!(
-            previous_registration_nonce.is_none() && predecessor_head == [0; 32],
-            "new future candidate supplied a predecessor from outside the old set"
-        ),
     }
 
-    ensure!(
-        overlay
-            .authority
-            .future_candidate_registrations
-            .binary_search_by(|item| {
-                (item.target_epoch, item.validator_id_hex.as_str())
-                    .cmp(&(target_epoch, validator_id_hex))
-            })
-            .is_err(),
-        "future candidate is already registered for the target epoch"
-    );
+    let insertion = overlay
+        .authority
+        .future_candidate_registrations
+        .binary_search_by(|item| {
+            (item.target_epoch, item.validator_id_hex.as_str())
+                .cmp(&(target_epoch, validator_id_hex))
+        })
+        .map_or_else(Ok, |_| Err(validator_rule()))?;
     let consensus_key_hex = hex::encode(proof_fields.public_key.as_bytes());
-    ensure!(
-        overlay
-            .authority
-            .future_candidate_registrations
-            .iter()
-            .all(|item| item.consensus_key_hex != consensus_key_hex),
-        "future candidate consensus key is already registered"
-    );
+    if overlay
+        .authority
+        .future_candidate_registrations
+        .iter()
+        .any(|item| item.consensus_key_hex == consensus_key_hex)
+    {
+        return Err(validator_rule());
+    }
     for old in active.validator_set.validators() {
-        ensure!(
-            old.id() == validator_id || old.consensus_key() != proof_fields.public_key,
-            "future candidate consensus key belongs to another old validator"
-        );
+        if old.id() != validator_id && old.consensus_key() == proof_fields.public_key {
+            return Err(validator_rule());
+        }
     }
 
     let decision = require_derived_decision_id(
@@ -6055,14 +6065,6 @@ fn apply_register_future_candidate_v0(
         registration_decision_id_hex: registration_decision_id_hex.to_string(),
         registration_height: context.target_height.get(),
     };
-    let insertion = overlay
-        .authority
-        .future_candidate_registrations
-        .binary_search_by(|item| {
-            (item.target_epoch, item.validator_id_hex.as_str())
-                .cmp(&(target_epoch, validator_id_hex))
-        })
-        .expect_err("future candidate absence checked above");
     overlay
         .authority
         .future_candidate_registrations

@@ -469,7 +469,13 @@ an earlier phase.
   policy/counter decoding is `AuthenticatedOverlay`; usage-cap and bucket-cap
   rejection is `ProtocolWindowOrCap`; and usage/prune-window arithmetic
   exhaustion is `ProtocolCounterExhausted`. No unclassified acceptance leaf
-  remains.
+  remains. Future-candidate registration now also types its pre-clone ID/
+  duplicate gate and execution predecessor/history join: signed epoch,
+  predecessor, nonce, duplicate, and consensus-key reuse rejection is
+  `ValidatorRule`; proof decoding/verification is `CryptographicProof`; and
+  authenticated active-projection or registration-history drift is
+  `AuthenticatedOverlay`. Its insertion slot is fixed before nullifier
+  mutation.
   Leaf errors not yet assigned a narrower reason remain conservatively typed
   as an authenticated-overlay invariant. Success keeps the exact decoded owner plus
   the still-open snapshot and unsealed family state. These attempts do not yet
