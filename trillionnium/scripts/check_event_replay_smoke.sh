@@ -84,7 +84,7 @@ else
   # same event formatter while avoiding test-only authority injection into the
   # production-candidate=false legacy simulator.
   cargo test --locked -q -p trnm-node --features legacy-harness --bin trnm-sim \
-    tests::canonical_event_replay_uses_two_party_resolve_approval \
+    events::tests::canonical_event_replay_uses_two_party_resolve_approval \
     -- --exact --nocapture > "$OUT"
   check_event_sequence "$OUT" "$CANONICAL_EVENTS" 0
 fi
