@@ -681,6 +681,9 @@ signed policy/semantic shape from deterministic active-parameter cap rejection,
 while meter prune rejects a missing authority policy as a pre-clone negative fact;
 meter retirement distinguishes signed ID/height/next-state rejection, missing or
 already-retired authority, and authenticated old-fact/authority divergence;
+meter prune validates signed IDs before policy lookup, separates nullifier and
+active/retention/reference rejection, and fails stop on authenticated retention
+arithmetic or certificate decoding;
 unrefined leaf failures conservatively remain authenticated-overlay invariants
 without string matching. Success retains the open snapshot, decoded owner, and unsealed PoCO
 overlay or scheduled lifecycle. PoCO leaf-reason refinement, write sealing,

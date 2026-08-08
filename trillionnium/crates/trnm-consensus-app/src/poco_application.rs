@@ -2964,6 +2964,16 @@ fn validate_operation_capacity_before_clone_v0(
             consumer_id_hex,
             consumer_key_id_hex,
         } => {
+            exact_opaque_hex(consumer_id_hex).map_err(|_| {
+                deterministic_application_error_v0(
+                    PocoApplicationDeterministicInvalidV0::SemanticTransition,
+                )
+            })?;
+            exact_opaque_hex(consumer_key_id_hex).map_err(|_| {
+                deterministic_application_error_v0(
+                    PocoApplicationDeterministicInvalidV0::SemanticTransition,
+                )
+            })?;
             let index = authority
                 .consumer_keys
                 .binary_search_by(|key| {
@@ -2988,6 +2998,11 @@ fn validate_operation_capacity_before_clone_v0(
             meter_id_hex,
             meter_version,
         } => {
+            exact_opaque_hex(meter_id_hex).map_err(|_| {
+                deterministic_application_error_v0(
+                    PocoApplicationDeterministicInvalidV0::SemanticTransition,
+                )
+            })?;
             authority
                 .meter_policies
                 .binary_search_by(|policy| {
@@ -4065,53 +4080,73 @@ fn apply_prune_retired_meter_v0(
     meter_id_hex: &str,
     meter_version: u32,
 ) -> Result<()> {
-    ensure!(
-        operation.nullifier_insertions.is_empty(),
-        "retired-meter prune has unauthorized nullifier insertions"
-    );
-    let meter_id = exact_opaque_hex(meter_id_hex)?;
+    let signed_semantic = || {
+        deterministic_application_error_v0(
+            PocoApplicationDeterministicInvalidV0::SemanticTransition,
+        )
+    };
+    let protocol_reject = || {
+        deterministic_application_error_v0(
+            PocoApplicationDeterministicInvalidV0::ProtocolWindowOrCap,
+        )
+    };
+    let authenticated_overlay =
+        || invariant_application_error_v0(PocoApplicationInvariantV0::AuthenticatedOverlay);
+    if !operation.nullifier_insertions.is_empty() {
+        return Err(deterministic_application_error_v0(
+            PocoApplicationDeterministicInvalidV0::NullifierProof,
+        ));
+    }
+    let meter_id = exact_opaque_hex(meter_id_hex).map_err(|_| signed_semantic())?;
     let policy_index = overlay
         .authority
         .meter_policies
         .binary_search_by(|policy| {
             (policy.meter_id_hex.as_str(), policy.meter_version).cmp(&(meter_id_hex, meter_version))
         })
-        .map_err(|_| anyhow::anyhow!("retired-meter prune lacks policy authority"))?;
+        .map_err(|_| {
+            deterministic_application_error_v0(
+                PocoApplicationDeterministicInvalidV0::MissingRequiredAuthorityFact,
+            )
+        })?;
     let policy = overlay.authority.meter_policies[policy_index].clone();
-    let retired_at = policy
-        .retired_at_height
-        .context("active meter policy cannot be pruned")?;
-    let protocol_boundary = protocol_retention_boundary_v0(retired_at, &context.active_parameters)?;
+    let retired_at = policy.retired_at_height.ok_or_else(protocol_reject)?;
+    let protocol_boundary = protocol_retention_boundary_v0(retired_at, &context.active_parameters)
+        .map_err(|_| {
+            invariant_application_error_v0(PocoApplicationInvariantV0::PlannerArithmetic)
+        })?;
     let meter_boundary = retired_at
         .checked_add(policy.retention_blocks)
         .ok_or_else(|| {
             invariant_application_error_v0(PocoApplicationInvariantV0::PlannerArithmetic)
         })?;
-    ensure!(
-        context.target_height.get() > protocol_boundary.max(meter_boundary),
-        "retired-meter retention boundary has not been strictly crossed"
-    );
-    ensure!(
-        !active_certificate_reference_exists_v0(overlay, |body| {
-            body.meter_id() == meter_id.as_slice() && body.meter_version() == meter_version
-        })?,
-        "active certificate still references retired meter"
-    );
-    ensure!(
-        overlay.authority.meter_usage.iter().all(|usage| {
-            usage.meter_id_hex != meter_id_hex || usage.meter_version != meter_version
-        }),
-        "retired meter still has retained rolling usage"
-    );
+    if context.target_height.get() <= protocol_boundary.max(meter_boundary) {
+        return Err(protocol_reject());
+    }
+    let active_reference = active_certificate_reference_exists_v0(overlay, |body| {
+        body.meter_id() == meter_id.as_slice() && body.meter_version() == meter_version
+    })
+    .map_err(|_| authenticated_overlay())?;
+    if active_reference {
+        return Err(protocol_reject());
+    }
+    if !overlay
+        .authority
+        .meter_usage
+        .iter()
+        .all(|usage| usage.meter_id_hex != meter_id_hex || usage.meter_version != meter_version)
+    {
+        return Err(protocol_reject());
+    }
     let changes = prepare_semantic_changes(overlay, &operation.semantic_changes, true)?;
     ensure_change_kinds(&changes, &[PocoSnapshotEntryKindV0::MeterDefinition])?;
     let change = &changes[0];
-    ensure!(
-        change.next_value.is_none()
-            && change.expected_identity.as_deref()
-                == Some(meter_identity(&meter_id, meter_version).as_slice()),
-        "retired-meter prune does not delete exact kind-5 fact"
-    );
+    if change.next_value.is_some()
+        || change.expected_identity.as_deref()
+            != Some(meter_identity(&meter_id, meter_version).as_slice())
+    {
+        return Err(signed_semantic());
+    }
     overlay.authority.meter_policies.remove(policy_index);
     apply_prepared_changes(overlay, changes, true)
 }
@@ -7825,6 +7860,20 @@ mod tests {
                 PocoApplicationDeterministicInvalidV0::MissingRequiredAuthorityFact,
             )),
         );
+        let mut malformed_prune = prune.clone();
+        let PocoApplicationOperationBodyV0::PruneRetiredMeter { meter_id_hex, .. } =
+            &mut malformed_prune.body
+        else {
+            unreachable!();
+        };
+        *meter_id_hex = "0".to_string();
+        let malformed_raw = serde_json::to_vec(&malformed_prune).unwrap();
+        assert_eq!(
+            block.apply_decoded_exact(&malformed_raw, &malformed_prune),
+            Err(PocoApplicationApplyFailureV0::DeterministicallyInvalid(
+                PocoApplicationDeterministicInvalidV0::SemanticTransition,
+            )),
+        );
         assert_eq!(block.operation_count(), 0);
         assert!(block.overlay.operation_ids.is_empty());
         assert!(block.overlay.mutations.is_empty());
@@ -7888,6 +7937,75 @@ mod tests {
         assert_eq!(block.operation_count(), 0);
         assert!(block.overlay.operation_ids.is_empty());
         assert!(block.overlay.mutations.is_empty());
+    }
+
+    #[test]
+    fn meter_prune_active_policy_and_unauthorized_nullifier_are_typed_without_mutation() {
+        let projection = genesis_projection();
+        let mut block =
+            PocoApplicationBlockOverlayV0::from_projection(context_at(2).unwrap(), &projection)
+                .unwrap();
+        let define_raw = block.test_define_meter_operation_v0().unwrap();
+        block.apply_raw(&define_raw).unwrap();
+        let authority_before = block.overlay.authority.clone();
+        let mutations_before = block
+            .overlay
+            .mutations
+            .values()
+            .map(OverlayMutationV0::canonical_bytes)
+            .collect::<Vec<_>>();
+        let operation_ids_before = block.overlay.operation_ids.clone();
+        let accumulator_root_before = block.overlay.accumulator.root();
+        let accumulator_count_before = block.overlay.accumulator.count();
+
+        let prune = PocoApplicationOperationV0 {
+            schema: POCO_APPLICATION_OPERATION_SCHEMA_V0.to_string(),
+            target_height: 2,
+            expected_state_revision: block.overlay.authority.revision,
+            body: PocoApplicationOperationBodyV0::PruneRetiredMeter {
+                meter_id_hex: hex::encode(b"integration-meter-v0"),
+                meter_version: 1,
+            },
+            semantic_changes: Vec::new(),
+            nullifier_non_membership_checks: Vec::new(),
+            nullifier_insertions: Vec::new(),
+        };
+        let prune_raw = serde_json::to_vec(&prune).unwrap();
+        assert_eq!(
+            block.apply_decoded_exact(&prune_raw, &prune),
+            Err(PocoApplicationApplyFailureV0::DeterministicallyInvalid(
+                PocoApplicationDeterministicInvalidV0::ProtocolWindowOrCap,
+            )),
+        );
+
+        let mut unauthorized = prune.clone();
+        unauthorized.nullifier_insertions = vec![RawNullifierInsertionV0 {
+            family: PocoNullifierFamilyV0::MeterDecision.code(),
+            identifier_hex: "07".repeat(32),
+            proof_hex: String::new(),
+        }];
+        let unauthorized_raw = serde_json::to_vec(&unauthorized).unwrap();
+        assert_eq!(
+            block.apply_decoded_exact(&unauthorized_raw, &unauthorized),
+            Err(PocoApplicationApplyFailureV0::DeterministicallyInvalid(
+                PocoApplicationDeterministicInvalidV0::NullifierProof,
+            )),
+        );
+
+        assert_eq!(block.operation_count(), 1);
+        assert_eq!(block.overlay.authority, authority_before);
+        assert_eq!(
+            block
+                .overlay
+                .mutations
+                .values()
+                .map(OverlayMutationV0::canonical_bytes)
+                .collect::<Vec<_>>(),
+            mutations_before,
+        );
+        assert_eq!(block.overlay.operation_ids, operation_ids_before);
+        assert_eq!(block.overlay.accumulator.root(), accumulator_root_before);
+        assert_eq!(block.overlay.accumulator.count(), accumulator_count_before);
     }
 
     #[test]

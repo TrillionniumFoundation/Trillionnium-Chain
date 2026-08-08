@@ -406,7 +406,11 @@ an earlier phase.
   treats signed ID/height/next-fact drift as `SemanticTransition`, an absent
   authenticated policy as `MissingRequiredAuthorityFact`, an already-retired
   policy as `ProtocolWindowOrCap`, and old semantic-fact/authority divergence
-  as `AuthenticatedOverlay`. Leaf errors not yet assigned a narrower reason remain
+  as `AuthenticatedOverlay`. Meter prune now rejects malformed signed IDs as
+  `SemanticTransition` before lookup, missing policy as the negative-fact
+  reason, unauthorized nullifiers as `NullifierProof`, and active/retained/
+  referenced state as `ProtocolWindowOrCap`; authenticated retention arithmetic
+  or certificate decoding remains invariant. Leaf errors not yet assigned a narrower reason remain
   conservatively typed as an
   authenticated-overlay invariant. Success keeps the exact decoded owner plus
   the still-open snapshot and unsealed family state. These attempts do not yet

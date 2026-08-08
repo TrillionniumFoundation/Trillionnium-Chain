@@ -1263,6 +1263,9 @@ epoch prune, and Core transition remain open.
    cap rejection, and meter prune has a typed pre-clone negative-fact reject.
    Meter retirement also splits signed next-state drift and negative/already-
    retired policy facts from authenticated old-fact/authority divergence.
+   Meter prune validates signed IDs before its negative-fact lookup, separates
+   nullifier and temporal/reference rejection, and keeps authenticated
+   retention/certificate faults invariant.
    Leaf-reason completion remains a hard
    dependency before terminal failure mapping. The success carrier still owns the open
    snapshot and unsealed overlay/scheduled lifecycle. It does not yet seal
