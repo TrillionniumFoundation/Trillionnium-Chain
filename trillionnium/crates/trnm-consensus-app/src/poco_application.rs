@@ -3038,7 +3038,27 @@ fn validate_operation_capacity_before_clone_v0(
             delta.reservations_removed = 1;
             delta.active_certificates_added = 1;
         }
-        PocoApplicationOperationBodyV0::ReleaseSettlement { .. } => {
+        PocoApplicationOperationBodyV0::ReleaseSettlement {
+            certificate_id_hex, ..
+        } => {
+            exact_hash32_hex(certificate_id_hex).map_err(|_| {
+                deterministic_application_error_v0(
+                    PocoApplicationDeterministicInvalidV0::SemanticTransition,
+                )
+            })?;
+            authority
+                .funded_unused_reservations
+                .binary_search_by(|reservation| {
+                    reservation
+                        .certificate_id_hex
+                        .as_str()
+                        .cmp(certificate_id_hex.as_str())
+                })
+                .map_err(|_| {
+                    deterministic_application_error_v0(
+                        PocoApplicationDeterministicInvalidV0::MissingRequiredAuthorityFact,
+                    )
+                })?;
             delta.reservations_removed = 1;
         }
         PocoApplicationOperationBodyV0::OpenChallenge { .. } => {
@@ -4916,34 +4936,43 @@ fn apply_release_settlement_v0(
     certificate_id_hex: &str,
     release_decision_id_hex: &str,
 ) -> Result<()> {
-    let certificate_id = exact_hash32_hex(certificate_id_hex)?;
+    let signed_semantic = || {
+        deterministic_application_error_v0(
+            PocoApplicationDeterministicInvalidV0::SemanticTransition,
+        )
+    };
+    let authenticated_overlay =
+        || invariant_application_error_v0(PocoApplicationInvariantV0::AuthenticatedOverlay);
+    let certificate_id = exact_hash32_hex(certificate_id_hex).map_err(|_| signed_semantic())?;
     let release_decision =
         require_derived_decision_id(preimage, b"release-settlement", release_decision_id_hex)?;
     let reservation_index = overlay
         .authority
         .funded_unused_reservations
         .binary_search_by(|item| item.certificate_id_hex.as_str().cmp(certificate_id_hex))
-        .map_err(|_| anyhow::anyhow!("release requires funded-unused reservation"))?;
+        .map_err(|_| {
+            deterministic_application_error_v0(
+                PocoApplicationDeterministicInvalidV0::MissingRequiredAuthorityFact,
+            )
+        })?;
     let reservation = overlay.authority.funded_unused_reservations[reservation_index].clone();
     let changes = prepare_semantic_changes(overlay, &operation.semantic_changes, true)?;
     ensure_change_kinds(&changes, &[PocoSnapshotEntryKindV0::Settlement])?;
     let change = &changes[0];
-    ensure!(
-        change.expected_identity.as_deref() == Some(certificate_id.as_slice())
-            && change.next_value.is_none(),
-        "released settlement certificate mismatch"
-    );
+    if change.next_value.is_some() {
+        return Err(signed_semantic());
+    }
+    if change.expected_identity.as_deref() != Some(certificate_id.as_slice()) {
+        return Err(authenticated_overlay());
+    }
     match change.expected_fact.as_ref() {
         Some(SemanticFactV0::Settlement {
             commitment,
             state: SettlementStateV0::FinalizedFundedUnused,
             finalized_height,
-        }) => ensure!(
-            hex::encode(commitment) == reservation.settlement_commitment_hex
-                && *finalized_height == reservation.finalized_height,
-            "release settlement authority mismatch"
-        ),
-        _ => bail!("release does not tombstone an exact funded-unused settlement"),
+        }) if hex::encode(commitment) == reservation.settlement_commitment_hex
+            && *finalized_height == reservation.finalized_height => {}
+        _ => return Err(authenticated_overlay()),
     }
     insert_nullifiers(
         overlay,
@@ -8040,6 +8069,65 @@ mod tests {
             block.apply_decoded_exact(&raw, &operation),
             Err(PocoApplicationApplyFailureV0::DeterministicallyInvalid(
                 PocoApplicationDeterministicInvalidV0::SemanticTransition,
+            )),
+        );
+        assert_eq!(block.operation_count(), 0);
+        assert!(block.overlay.operation_ids.is_empty());
+        assert!(block.overlay.mutations.is_empty());
+    }
+
+    #[test]
+    fn release_settlement_signed_shape_and_negative_fact_are_typed_without_mutation() {
+        let projection = genesis_projection();
+        let mut block =
+            PocoApplicationBlockOverlayV0::from_projection(context_at(2).unwrap(), &projection)
+                .unwrap();
+        let mut operation = PocoApplicationOperationV0 {
+            schema: POCO_APPLICATION_OPERATION_SCHEMA_V0.to_string(),
+            target_height: 2,
+            expected_state_revision: 1,
+            body: PocoApplicationOperationBodyV0::ReleaseSettlement {
+                certificate_id_hex: "0".to_string(),
+                release_decision_id_hex: "00".repeat(32),
+            },
+            semantic_changes: Vec::new(),
+            nullifier_non_membership_checks: Vec::new(),
+            nullifier_insertions: Vec::new(),
+        };
+        let malformed_raw = serde_json::to_vec(&operation).unwrap();
+        assert_eq!(
+            block.apply_decoded_exact(&malformed_raw, &operation),
+            Err(PocoApplicationApplyFailureV0::DeterministicallyInvalid(
+                PocoApplicationDeterministicInvalidV0::SemanticTransition,
+            )),
+        );
+
+        let PocoApplicationOperationBodyV0::ReleaseSettlement {
+            certificate_id_hex, ..
+        } = &mut operation.body
+        else {
+            unreachable!();
+        };
+        *certificate_id_hex = "01".repeat(32);
+        let preimage = decision_preimage_digest_v0(&block.context, &operation).unwrap();
+        let decision_id = derived_decision_id_v0(preimage, b"release-settlement");
+        let PocoApplicationOperationBodyV0::ReleaseSettlement {
+            release_decision_id_hex,
+            ..
+        } = &mut operation.body
+        else {
+            unreachable!();
+        };
+        *release_decision_id_hex = hex::encode(decision_id);
+        assert_eq!(
+            decision_preimage_digest_v0(&block.context, &operation).unwrap(),
+            preimage,
+        );
+        let raw = serde_json::to_vec(&operation).unwrap();
+        assert_eq!(
+            block.apply_decoded_exact(&raw, &operation),
+            Err(PocoApplicationApplyFailureV0::DeterministicallyInvalid(
+                PocoApplicationDeterministicInvalidV0::MissingRequiredAuthorityFact,
             )),
         );
         assert_eq!(block.operation_count(), 0);

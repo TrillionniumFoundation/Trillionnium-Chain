@@ -414,6 +414,10 @@ an earlier phase.
   nested nullifier/counter/CAS reasons and maps
   only its remaining signed certificate/commitment/units/semantic-shape
   failures to `SemanticTransition`; it reads no authenticated companion.
+  `ReleaseSettlement` now validates its signed certificate ID and reservation
+  negative fact before clone, preserves nested typed failures, treats a signed
+  non-delete as `SemanticTransition`, and treats authenticated settlement-leaf/
+  reservation divergence as `AuthenticatedOverlay`.
   Leaf errors not yet assigned a narrower reason remain conservatively typed
   as an authenticated-overlay invariant. Success keeps the exact decoded owner plus
   the still-open snapshot and unsealed family state. These attempts do not yet

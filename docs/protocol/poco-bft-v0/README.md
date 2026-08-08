@@ -687,6 +687,8 @@ arithmetic or certificate decoding;
 fund settlement maps its remaining signed certificate/commitment/units and
 semantic-shape failures deterministically while preserving nested typed
 nullifier/counter/CAS reasons;
+release settlement validates signed ID and reservation existence before clone,
+then separates signed delete shape from authenticated leaf/reservation drift;
 unrefined leaf failures conservatively remain authenticated-overlay invariants
 without string matching. Success retains the open snapshot, decoded owner, and unsealed PoCO
 overlay or scheduled lifecycle. PoCO leaf-reason refinement, write sealing,
