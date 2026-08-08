@@ -464,7 +464,12 @@ an earlier phase.
   join now preserves exact missing-fact rejection, maps unresolved/expired or
   billing-outliving relationships to `ProtocolWindowOrCap`, and maps malformed
   relationship/registration facts or registration-history companion drift to
-  `AuthenticatedOverlay`. Lifecycle and usage-counter joins remain separate.
+  `AuthenticatedOverlay`. The acceptance lifecycle/usage tail is now typed:
+  signed accepted-lifecycle drift is `SemanticTransition`; authenticated
+  policy/counter decoding is `AuthenticatedOverlay`; usage-cap and bucket-cap
+  rejection is `ProtocolWindowOrCap`; and usage/prune-window arithmetic
+  exhaustion is `ProtocolCounterExhausted`. No unclassified acceptance leaf
+  remains.
   Leaf errors not yet assigned a narrower reason remain conservatively typed
   as an authenticated-overlay invariant. Success keeps the exact decoded owner plus
   the still-open snapshot and unsealed family state. These attempts do not yet

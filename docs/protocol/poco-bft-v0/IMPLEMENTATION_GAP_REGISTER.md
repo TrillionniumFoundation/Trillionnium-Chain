@@ -1291,7 +1291,10 @@ epoch prune, and Core transition remain open.
    The relationship/provider join now preserves exact authenticated negative-
    fact rejection, types unresolved/expired authority as a protocol rejection,
    and fails stop on malformed facts or registration-history companion drift.
-   Lifecycle and usage-counter joins remain open.
+   The lifecycle and four usage-counter joins now type signed lifecycle drift,
+   authenticated numeric corruption, deterministic cap rejection, and checked
+   usage/prune arithmetic exhaustion. Certificate acceptance has no remaining
+   unclassified execution leaf.
    Leaf-reason completion remains a hard
    dependency before terminal failure mapping. The success carrier still owns the open
    snapshot and unsealed overlay/scheduled lifecycle. It does not yet seal

@@ -4857,39 +4857,42 @@ fn apply_accept_certificate_v0(
 
     let lifecycle_change =
         change_for_kind(&changes, PocoSnapshotEntryKindV0::RevocationOrChallenge)?;
-    ensure!(
-        lifecycle_change.expected_value.is_none()
-            && lifecycle_change.next_identity.as_deref() == Some(certificate_id.as_slice()),
-        "certificate lifecycle semantic identity mismatch"
-    );
+    if lifecycle_change.expected_value.is_some()
+        || lifecycle_change.next_identity.as_deref() != Some(certificate_id.as_slice())
+    {
+        return Err(signed_semantic());
+    }
     match lifecycle_change.next_fact.as_ref() {
         Some(SemanticFactV0::RevocationOrChallenge {
             state: LifecycleStateV0::Accepted,
             effective_height,
-        }) => ensure!(
-            *effective_height == context.target_height.get(),
-            "accepted lifecycle is not bound to target height"
-        ),
-        _ => bail!("certificate operation lacks accepted lifecycle"),
+        }) if *effective_height == context.target_height.get() => {}
+        _ => return Err(signed_semantic()),
     }
 
     let usage_window = context
         .active_epoch
         .get()
         .checked_div(meter_policy.rolling_epoch_span)
-        .context("meter rolling epoch span is zero")?;
+        .ok_or_else(authenticated_overlay)?;
     let usage_key = (&meter_id_hex, body.meter_version(), usage_window);
     let usage_index = overlay.authority.meter_usage.binary_search_by(|item| {
         (&item.meter_id_hex, item.meter_version, item.window_epoch).cmp(&usage_key)
     });
     let previous_usage = match usage_index {
-        Ok(index) => overlay.authority.meter_usage[index].consumed_units.get()?,
+        Ok(index) => overlay.authority.meter_usage[index]
+            .consumed_units
+            .get()
+            .map_err(|_| authenticated_overlay())?,
         Err(_) => 0,
     };
     let next_usage = checked_usage_after_v0(
         previous_usage,
         body.consumed_units(),
-        meter_policy.rolling_cap.get()?,
+        meter_policy
+            .rolling_cap
+            .get()
+            .map_err(|_| authenticated_overlay())?,
         "meter rolling",
     )?;
 
@@ -4913,7 +4916,8 @@ fn apply_accept_certificate_v0(
     let consumer_provider_previous = match consumer_provider_index {
         Ok(index) => overlay.authority.consumer_provider_usage[index]
             .consumed_units
-            .get()?,
+            .get()
+            .map_err(|_| authenticated_overlay())?,
         Err(_) => 0,
     };
     let consumer_provider_next = checked_usage_after_v0(
@@ -4935,7 +4939,8 @@ fn apply_accept_certificate_v0(
     let task_provider_previous = match task_provider_index {
         Ok(index) => overlay.authority.task_provider_usage[index]
             .consumed_units
-            .get()?,
+            .get()
+            .map_err(|_| authenticated_overlay())?,
         Err(_) => 0,
     };
     let task_provider_next = checked_usage_after_v0(
@@ -4953,7 +4958,8 @@ fn apply_accept_certificate_v0(
     let provider_previous = match provider_index {
         Ok(index) => overlay.authority.provider_usage[index]
             .consumed_units
-            .get()?,
+            .get()
+            .map_err(|_| authenticated_overlay())?,
         Err(_) => 0,
     };
     let provider_next = checked_usage_after_v0(
@@ -6924,29 +6930,43 @@ fn derive_safe_prune_boundary_v0(
     parameters: &ConsensusParametersV0,
     meter_policy: &MeterAuthorityPolicyV0,
 ) -> Result<u64> {
-    parameters
-        .validate_safety_invariants()
-        .map_err(|error| anyhow::anyhow!("invalid active prune parameters: {error:?}"))?;
-    validate_meter_policy(meter_policy)?;
+    parameters.validate_safety_invariants().map_err(|_| {
+        invariant_application_error_v0(PocoApplicationInvariantV0::AuthenticatedOverlay)
+    })?;
+    validate_meter_policy(meter_policy).map_err(|_| {
+        invariant_application_error_v0(PocoApplicationInvariantV0::AuthenticatedOverlay)
+    })?;
     let weight_epochs = parameters
         .maturity_epochs()
         .checked_add(parameters.max_certificate_age_epochs())
-        .context("certificate maturity+age prune window overflow")?;
+        .ok_or_else(|| {
+            invariant_application_error_v0(PocoApplicationInvariantV0::ProtocolCounterExhausted)
+        })?;
     let protocol_epochs = weight_epochs.max(parameters.evidence_window_epochs());
     let protocol_blocks = protocol_epochs
         .checked_mul(parameters.epoch_length_blocks())
-        .context("certificate protocol prune window overflow")?;
+        .ok_or_else(|| {
+            invariant_application_error_v0(PocoApplicationInvariantV0::ProtocolCounterExhausted)
+        })?;
     let rolling_blocks = meter_policy
         .rolling_epoch_span
         .checked_mul(parameters.epoch_length_blocks())
-        .context("certificate rolling prune window overflow")?;
+        .ok_or_else(|| {
+            invariant_application_error_v0(PocoApplicationInvariantV0::ProtocolCounterExhausted)
+        })?;
     let retention_blocks = protocol_blocks
         .max(rolling_blocks)
         .max(meter_policy.retention_blocks);
-    ensure!(retention_blocks > 0, "certificate prune window is zero");
+    if retention_blocks == 0 {
+        return Err(invariant_application_error_v0(
+            PocoApplicationInvariantV0::AuthenticatedOverlay,
+        ));
+    }
     accepted_height
         .checked_add(retention_blocks)
-        .context("certificate safe prune boundary overflow")
+        .ok_or_else(|| {
+            invariant_application_error_v0(PocoApplicationInvariantV0::ProtocolCounterExhausted)
+        })
 }
 
 const fn prune_target_is_strictly_after_boundary_v0(target: u64, boundary: u64) -> bool {
@@ -8985,10 +9005,24 @@ mod tests {
             boundary + 1,
             boundary
         ));
-        assert!(derive_safe_prune_boundary_v0(u64::MAX, &parameters, &policy).is_err());
+        let accepted_height_overflow =
+            derive_safe_prune_boundary_v0(u64::MAX, &parameters, &policy).unwrap_err();
+        assert_eq!(
+            accepted_height_overflow.downcast_ref::<PocoApplicationApplyFailureV0>(),
+            Some(&PocoApplicationApplyFailureV0::Invariant(
+                PocoApplicationInvariantV0::ProtocolCounterExhausted,
+            )),
+        );
         let mut rolling_overflow = policy;
         rolling_overflow.rolling_epoch_span = u64::MAX;
-        assert!(derive_safe_prune_boundary_v0(1, &parameters, &rolling_overflow).is_err());
+        let rolling_window_overflow =
+            derive_safe_prune_boundary_v0(1, &parameters, &rolling_overflow).unwrap_err();
+        assert_eq!(
+            rolling_window_overflow.downcast_ref::<PocoApplicationApplyFailureV0>(),
+            Some(&PocoApplicationApplyFailureV0::Invariant(
+                PocoApplicationInvariantV0::ProtocolCounterExhausted,
+            )),
+        );
     }
 
     #[test]
