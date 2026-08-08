@@ -695,6 +695,9 @@ lifecycle/authority drift;
 resolve challenge types its pending/certificate join before clone, preserves
 the exact not-pending reason, and splits signed next resolution from
 authenticated pending/old-lifecycle drift;
+governance proposal and approval type signed rules plus the pre-clone proposal
+join, preserve exact missing-proposal and too-early reasons, and fail stop on
+authenticated parameters/proposal/pending-fact divergence;
 unrefined leaf failures conservatively remain authenticated-overlay invariants
 without string matching. Success retains the open snapshot, decoded owner, and unsealed PoCO
 overlay or scheduled lifecycle. PoCO leaf-reason refinement, write sealing,

@@ -427,6 +427,14 @@ an earlier phase.
   is its existing exact deterministic reason, too-early resolution is
   `ProtocolWindowOrCap`, signed next-resolution drift is `SemanticTransition`,
   and pending/old-lifecycle companion drift is `AuthenticatedOverlay`.
+  Governance proposal now preserves nested typed errors and maps its remaining
+  signed target/phase/parameters/semantic and duplicate-target rejects to
+  `GovernanceRule`. Governance approval validates signed hash/next epoch,
+  proposal existence, and finalized duplication before clone; missing proposal
+  retains `GovernanceApprovalMissing`, too-early approval is
+  `ProtocolWindowOrCap`, signed approved-state drift is `GovernanceRule`, and
+  authenticated proposal/parameters/pending-fact divergence is
+  `AuthenticatedOverlay`.
   Leaf errors not yet assigned a narrower reason remain conservatively typed
   as an authenticated-overlay invariant. Success keeps the exact decoded owner plus
   the still-open snapshot and unsealed family state. These attempts do not yet

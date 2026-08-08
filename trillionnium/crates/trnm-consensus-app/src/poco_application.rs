@@ -3154,11 +3154,41 @@ fn validate_operation_capacity_before_clone_v0(
         PocoApplicationOperationBodyV0::ProposeGovernance { .. } => {
             delta.pending_governance_added = 1;
         }
-        PocoApplicationOperationBodyV0::ApproveGovernance { target_epoch, .. } => {
+        PocoApplicationOperationBodyV0::ApproveGovernance {
+            target_epoch,
+            parameters_hash_hex,
+            ..
+        } => {
+            exact_hash32_hex(parameters_hash_hex).map_err(|_| {
+                deterministic_application_error_v0(
+                    PocoApplicationDeterministicInvalidV0::GovernanceRule,
+                )
+            })?;
+            let expected_epoch = context.active_epoch.get().checked_add(1).ok_or_else(|| {
+                invariant_application_error_v0(PocoApplicationInvariantV0::ProtocolCounterExhausted)
+            })?;
+            if *target_epoch != expected_epoch {
+                return Err(deterministic_application_error_v0(
+                    PocoApplicationDeterministicInvalidV0::GovernanceRule,
+                ));
+            }
             authority
                 .pending_governance_proposals
                 .binary_search_by_key(target_epoch, |proposal| proposal.target_epoch)
-                .map_err(|_| anyhow::anyhow!("governance approval lacks authenticated proposal"))?;
+                .map_err(|_| {
+                    deterministic_application_error_v0(
+                        PocoApplicationDeterministicInvalidV0::GovernanceApprovalMissing,
+                    )
+                })?;
+            if authority
+                .finalized_governance_approvals
+                .binary_search_by_key(target_epoch, |approval| approval.target_epoch)
+                .is_ok()
+            {
+                return Err(deterministic_application_error_v0(
+                    PocoApplicationDeterministicInvalidV0::GovernanceRule,
+                ));
+            }
             delta.pending_governance_removed = 1;
             delta.finalized_governance_added = 1;
         }
@@ -3643,7 +3673,13 @@ fn apply_operation_v0(
             parameters_hash_hex,
             *activation_height,
             proposal_decision_id_hex,
-        ),
+        )
+        .map_err(|error| {
+            preserve_application_failure_or_deterministic_v0(
+                error,
+                PocoApplicationDeterministicInvalidV0::GovernanceRule,
+            )
+        }),
         PocoApplicationOperationBodyV0::ApproveGovernance {
             target_epoch,
             parameters_hash_hex,
@@ -5398,76 +5434,104 @@ fn apply_approve_governance_v0(
     activation_height: u64,
     decision_id_hex: &str,
 ) -> Result<()> {
-    let parameters_hash = exact_hash32_hex(parameters_hash_hex)?;
-    ensure!(
-        context.active_epoch.get().checked_add(1) == Some(target_epoch),
-        "governance target epoch is not the exact next epoch"
-    );
+    let governance_reject = || {
+        deterministic_application_error_v0(PocoApplicationDeterministicInvalidV0::GovernanceRule)
+    };
+    let authenticated_overlay =
+        || invariant_application_error_v0(PocoApplicationInvariantV0::AuthenticatedOverlay);
+    let parameters_hash = exact_hash32_hex(parameters_hash_hex).map_err(|_| governance_reject())?;
+    let expected_epoch = context.active_epoch.get().checked_add(1).ok_or_else(|| {
+        invariant_application_error_v0(PocoApplicationInvariantV0::ProtocolCounterExhausted)
+    })?;
+    if target_epoch != expected_epoch {
+        return Err(governance_reject());
+    }
     let proposal_index = overlay
         .authority
         .pending_governance_proposals
         .binary_search_by_key(&target_epoch, |proposal| proposal.target_epoch)
-        .map_err(|_| anyhow::anyhow!("governance approval lacks authenticated proposal"))?;
+        .map_err(|_| {
+            deterministic_application_error_v0(
+                PocoApplicationDeterministicInvalidV0::GovernanceApprovalMissing,
+            )
+        })?;
     let proposal = overlay.authority.pending_governance_proposals[proposal_index].clone();
-    ensure!(
-        proposal.parameters_hash_hex == parameters_hash_hex
-            && proposal.activation_height == activation_height
-            && proposal.proposed_height < context.target_height.get(),
-        "governance approval differs from proposal authority"
-    );
+    if proposal.parameters_hash_hex != parameters_hash_hex
+        || proposal.activation_height != activation_height
+    {
+        return Err(governance_reject());
+    }
+    if proposal.proposed_height >= context.target_height.get() {
+        return Err(deterministic_application_error_v0(
+            PocoApplicationDeterministicInvalidV0::ProtocolWindowOrCap,
+        ));
+    }
     let mut parameters_identity = vec![2];
     parameters_identity.extend_from_slice(&target_epoch.to_be_bytes());
     let parameters_parts = source_parts_for_identity(
         overlay,
         PocoSnapshotEntryKindV0::ConsensusParameters,
         &parameters_identity,
-    )?;
+    )
+    .map_err(|_| authenticated_overlay())?;
     let next_parameters = decode_consensus_parameters_v0_exact(&parameters_parts.payload)
-        .map_err(|error| anyhow::anyhow!("decode proposed parameters: {error:?}"))?;
-    ensure!(
-        next_parameters.hash().as_bytes() == &parameters_hash,
-        "approved parameters hash diverges from exact role=2 preimage"
-    );
-    let decision = require_derived_decision_id(preimage, b"approve-governance", decision_id_hex)?;
-    ensure!(
-        overlay
-            .authority
-            .finalized_governance_approvals
-            .binary_search_by_key(&target_epoch, |item| item.target_epoch)
-            .is_err(),
-        "target epoch already has finalized governance approval"
-    );
+        .map_err(|_| authenticated_overlay())?;
+    if next_parameters.hash().as_bytes() != &parameters_hash {
+        return Err(authenticated_overlay());
+    }
+    let decision = require_derived_decision_id(preimage, b"approve-governance", decision_id_hex)
+        .map_err(|error| {
+            preserve_application_failure_or_deterministic_v0(
+                error,
+                PocoApplicationDeterministicInvalidV0::GovernanceRule,
+            )
+        })?;
+    if overlay
+        .authority
+        .finalized_governance_approvals
+        .binary_search_by_key(&target_epoch, |item| item.target_epoch)
+        .is_ok()
+    {
+        return Err(governance_reject());
+    }
     let changes = prepare_semantic_changes(overlay, &operation.semantic_changes, false)?;
     ensure_change_kinds(&changes, &[PocoSnapshotEntryKindV0::RolloutOrGovernance])?;
     let change = &changes[0];
-    match (change.expected_fact.as_ref(), change.next_fact.as_ref()) {
-        (
-            Some(SemanticFactV0::RolloutOrGovernance {
-                target_epoch: old_epoch,
-                phase: old_phase,
-                parameters_hash: old_hash,
-                activation_height: old_activation,
-                approval: GovernanceApprovalV0::Pending,
-            }),
-            Some(SemanticFactV0::RolloutOrGovernance {
-                target_epoch: new_epoch,
-                phase: new_phase,
-                parameters_hash: new_hash,
-                activation_height: new_activation,
-                approval: GovernanceApprovalV0::Approved,
-            }),
-        ) => ensure!(
-            *old_epoch == target_epoch
-                && old_epoch == new_epoch
-                && old_phase == new_phase
-                && *old_phase as u8 == proposal.phase
-                && *old_hash == parameters_hash
-                && old_hash == new_hash
-                && *old_activation == activation_height
-                && old_activation == new_activation,
-            "governance semantic transition differs from approved authority"
-        ),
-        _ => bail!("invalid governance approval semantic transition"),
+    if change.expected_identity.as_deref() != Some(target_epoch.to_be_bytes().as_slice()) {
+        return Err(authenticated_overlay());
+    }
+    if change.next_identity.as_deref() != Some(target_epoch.to_be_bytes().as_slice()) {
+        return Err(governance_reject());
+    }
+    let (old_epoch, old_phase, old_hash, old_activation) = match change.expected_fact.as_ref() {
+        Some(SemanticFactV0::RolloutOrGovernance {
+            target_epoch,
+            phase,
+            parameters_hash,
+            activation_height,
+            approval: GovernanceApprovalV0::Pending,
+        }) => (*target_epoch, *phase, *parameters_hash, *activation_height),
+        _ => return Err(authenticated_overlay()),
+    };
+    if old_epoch != target_epoch
+        || old_phase as u8 != proposal.phase
+        || old_hash != parameters_hash
+        || old_activation != activation_height
+    {
+        return Err(authenticated_overlay());
+    }
+    match change.next_fact.as_ref() {
+        Some(SemanticFactV0::RolloutOrGovernance {
+            target_epoch: new_epoch,
+            phase: new_phase,
+            parameters_hash: new_hash,
+            activation_height: new_activation,
+            approval: GovernanceApprovalV0::Approved,
+        }) if *new_epoch == old_epoch
+            && *new_phase == old_phase
+            && *new_hash == old_hash
+            && *new_activation == old_activation => {}
+        _ => return Err(governance_reject()),
     }
     insert_nullifiers(
         overlay,
@@ -8312,6 +8376,76 @@ mod tests {
             block.apply_decoded_exact(&raw, &operation),
             Err(PocoApplicationApplyFailureV0::DeterministicallyInvalid(
                 PocoApplicationDeterministicInvalidV0::ChallengeNotPending,
+            )),
+        );
+        assert_eq!(block.operation_count(), 0);
+        assert!(block.overlay.operation_ids.is_empty());
+        assert!(block.overlay.mutations.is_empty());
+    }
+
+    #[test]
+    fn governance_rule_and_missing_proposal_are_typed_before_clone() {
+        let projection = genesis_projection();
+        let mut block =
+            PocoApplicationBlockOverlayV0::from_projection(context_at(2).unwrap(), &projection)
+                .unwrap();
+        let proposal = PocoApplicationOperationV0 {
+            schema: POCO_APPLICATION_OPERATION_SCHEMA_V0.to_string(),
+            target_height: 2,
+            expected_state_revision: 1,
+            body: PocoApplicationOperationBodyV0::ProposeGovernance {
+                target_epoch: 2,
+                phase: crate::poco_semantics::RolloutPhaseV0::Full as u8,
+                parameters_hash_hex: "01".repeat(32),
+                activation_height: 3,
+                proposal_decision_id_hex: "02".repeat(32),
+            },
+            semantic_changes: Vec::new(),
+            nullifier_non_membership_checks: Vec::new(),
+            nullifier_insertions: Vec::new(),
+        };
+        let proposal_raw = serde_json::to_vec(&proposal).unwrap();
+        assert_eq!(
+            block.apply_decoded_exact(&proposal_raw, &proposal),
+            Err(PocoApplicationApplyFailureV0::DeterministicallyInvalid(
+                PocoApplicationDeterministicInvalidV0::GovernanceRule,
+            )),
+        );
+
+        let mut approval = PocoApplicationOperationV0 {
+            schema: POCO_APPLICATION_OPERATION_SCHEMA_V0.to_string(),
+            target_height: 2,
+            expected_state_revision: 1,
+            body: PocoApplicationOperationBodyV0::ApproveGovernance {
+                target_epoch: 1,
+                parameters_hash_hex: "0".to_string(),
+                activation_height: 3,
+                decision_id_hex: "03".repeat(32),
+            },
+            semantic_changes: Vec::new(),
+            nullifier_non_membership_checks: Vec::new(),
+            nullifier_insertions: Vec::new(),
+        };
+        let malformed_raw = serde_json::to_vec(&approval).unwrap();
+        assert_eq!(
+            block.apply_decoded_exact(&malformed_raw, &approval),
+            Err(PocoApplicationApplyFailureV0::DeterministicallyInvalid(
+                PocoApplicationDeterministicInvalidV0::GovernanceRule,
+            )),
+        );
+        let PocoApplicationOperationBodyV0::ApproveGovernance {
+            parameters_hash_hex,
+            ..
+        } = &mut approval.body
+        else {
+            unreachable!();
+        };
+        *parameters_hash_hex = "01".repeat(32);
+        let approval_raw = serde_json::to_vec(&approval).unwrap();
+        assert_eq!(
+            block.apply_decoded_exact(&approval_raw, &approval),
+            Err(PocoApplicationApplyFailureV0::DeterministicallyInvalid(
+                PocoApplicationDeterministicInvalidV0::GovernanceApprovalMissing,
             )),
         );
         assert_eq!(block.operation_count(), 0);
