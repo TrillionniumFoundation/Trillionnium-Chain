@@ -13,6 +13,7 @@ upgrade_model="$repo_root/formal/quint/poco-bft-v0/upgrade_atomicity.qnt"
 weight_snapshot_model="$repo_root/formal/quint/poco-bft-v0/poco_weight_snapshot.qnt"
 handoff_model="$repo_root/formal/quint/poco-bft-v0/joint_handoff.qnt"
 light_client_model="$repo_root/formal/quint/poco-bft-v0/light_client_handoff.qnt"
+application_atomicity_model="$repo_root/formal/quint/poco-bft-v0/poco_application_atomicity.qnt"
 sign_before_persist_mutant="$repo_root/formal/quint/poco-bft-v0/mutants/sign_before_persist.qnt"
 duplicate_signer_mutant="$repo_root/formal/quint/poco-bft-v0/mutants/duplicate_signer_weight.qnt"
 tc_unlock_mutant="$repo_root/formal/quint/poco-bft-v0/mutants/tc_clears_lock.qnt"
@@ -21,27 +22,33 @@ premature_upgrade_mutant="$repo_root/formal/quint/poco-bft-v0/mutants/premature_
 duplicate_certificate_mutant="$repo_root/formal/quint/poco-bft-v0/mutants/duplicate_certificate_counted.qnt"
 one_sided_handoff_mutant="$repo_root/formal/quint/poco-bft-v0/mutants/one_sided_handoff.qnt"
 self_signed_uncommitted_mutant="$repo_root/formal/quint/poco-bft-v0/mutants/self_signed_uncommitted_set.qnt"
-quint_package="@informalsystems/quint@0.32.0"
+quint_toolchain_dir="$repo_root/formal/quint/poco-bft-v0"
+quint_bin="${QUINT_BIN:-$quint_toolchain_dir/node_modules/.bin/quint}"
+if [[ ! -x "$quint_bin" ]]; then
+  echo "ERROR: lock-pinned Quint is not installed; run npm ci --ignore-scripts --no-audit --no-fund in $quint_toolchain_dir" >&2
+  exit 1
+fi
 
-npx --yes "$quint_package" typecheck "$model"
-npx --yes "$quint_package" typecheck "$journal_model"
-npx --yes "$quint_package" typecheck "$weighted_model"
-npx --yes "$quint_package" typecheck "$tc_model"
-npx --yes "$quint_package" typecheck "$tc_selection_model"
-npx --yes "$quint_package" typecheck "$anchor_view_change_model"
-npx --yes "$quint_package" typecheck "$partition_heal_model"
-npx --yes "$quint_package" typecheck "$upgrade_model"
-npx --yes "$quint_package" typecheck "$weight_snapshot_model"
-npx --yes "$quint_package" typecheck "$handoff_model"
-npx --yes "$quint_package" typecheck "$light_client_model"
-npx --yes "$quint_package" typecheck "$sign_before_persist_mutant"
-npx --yes "$quint_package" typecheck "$duplicate_signer_mutant"
-npx --yes "$quint_package" typecheck "$tc_unlock_mutant"
-npx --yes "$quint_package" typecheck "$tc_omitted_reference_mutant"
-npx --yes "$quint_package" typecheck "$premature_upgrade_mutant"
-npx --yes "$quint_package" typecheck "$duplicate_certificate_mutant"
-npx --yes "$quint_package" typecheck "$one_sided_handoff_mutant"
-npx --yes "$quint_package" typecheck "$self_signed_uncommitted_mutant"
+"$quint_bin" typecheck "$model"
+"$quint_bin" typecheck "$journal_model"
+"$quint_bin" typecheck "$weighted_model"
+"$quint_bin" typecheck "$tc_model"
+"$quint_bin" typecheck "$tc_selection_model"
+"$quint_bin" typecheck "$anchor_view_change_model"
+"$quint_bin" typecheck "$partition_heal_model"
+"$quint_bin" typecheck "$upgrade_model"
+"$quint_bin" typecheck "$weight_snapshot_model"
+"$quint_bin" typecheck "$handoff_model"
+"$quint_bin" typecheck "$light_client_model"
+"$quint_bin" typecheck "$application_atomicity_model"
+"$quint_bin" typecheck "$sign_before_persist_mutant"
+"$quint_bin" typecheck "$duplicate_signer_mutant"
+"$quint_bin" typecheck "$tc_unlock_mutant"
+"$quint_bin" typecheck "$tc_omitted_reference_mutant"
+"$quint_bin" typecheck "$premature_upgrade_mutant"
+"$quint_bin" typecheck "$duplicate_certificate_mutant"
+"$quint_bin" typecheck "$one_sided_handoff_mutant"
+"$quint_bin" typecheck "$self_signed_uncommitted_mutant"
 
 for invariant in \
   noConflictingFinality \
@@ -50,7 +57,7 @@ for invariant in \
   journalCoversVotes \
   certifiedLocks
 do
-  npx --yes "$quint_package" run "$model" \
+  "$quint_bin" run "$model" \
     --invariant="$invariant" \
     --max-samples=10000 \
     --max-steps=30 \
@@ -63,7 +70,7 @@ for invariant in \
   durableNonEquivocationAcrossCrash \
   journalCoveredByViewWatermark
 do
-  npx --yes "$quint_package" run "$journal_model" \
+  "$quint_bin" run "$journal_model" \
     --invariant="$invariant" \
     --max-samples=10000 \
     --max-steps=30 \
@@ -76,7 +83,7 @@ for invariant in \
   weightedQcContainsHonest \
   uniqueSignerAccounting
 do
-  npx --yes "$quint_package" run "$weighted_model" \
+  "$quint_bin" run "$weighted_model" \
     --invariant="$invariant" \
     --max-samples=10000 \
     --max-steps=20 \
@@ -86,7 +93,7 @@ done
 
 for invariant in tcDoesNotUnlock tcStateMonotonic
 do
-  npx --yes "$quint_package" run "$tc_model" \
+  "$quint_bin" run "$tc_model" \
     --invariant="$invariant" \
     --max-samples=10000 \
     --max-steps=20 \
@@ -102,7 +109,7 @@ for invariant in \
   haltedReceiverCannotAccept \
   qcDigestBreaksEqualViewBlockTie
 do
-  npx --yes "$quint_package" run "$tc_selection_model" \
+  "$quint_bin" run "$tc_selection_model" \
     --invariant="$invariant" \
     --max-samples=10000 \
     --max-steps=20 \
@@ -122,7 +129,7 @@ for invariant in \
   anchorHasNoCertificationOrFinalityPower \
   missingHandoffAuthorizationCannotProgress
 do
-  npx --yes "$quint_package" run "$anchor_view_change_model" \
+  "$quint_bin" run "$anchor_view_change_model" \
     --invariant="$invariant" \
     --max-samples=10000 \
     --max-steps=12 \
@@ -134,7 +141,7 @@ done
 # other kernels. Its separately named review invariants are combined into one
 # predicate so they inspect the same fixed corpus without repeating it seven
 # times. The fair finite progress trace is checked independently below.
-npx --yes "$quint_package" run "$partition_heal_model" \
+"$quint_bin" run "$partition_heal_model" \
   --invariant=partitionHealSafety \
   --max-samples=3000 \
   --max-steps=20 \
@@ -148,7 +155,7 @@ for invariant in \
   conflictingFinalizedPlansFailClosed \
   oneConfigurationPerHeight
 do
-  npx --yes "$quint_package" run "$upgrade_model" \
+  "$quint_bin" run "$upgrade_model" \
     --invariant="$invariant" \
     --max-samples=10000 \
     --max-steps=30 \
@@ -166,7 +173,7 @@ for invariant in \
   errorAndOverflowFailClosed \
   candidateAndCommittedPowerBounds
 do
-  npx --yes "$quint_package" run "$weight_snapshot_model" \
+  "$quint_bin" run "$weight_snapshot_model" \
     --invariant="$invariant" \
     --max-samples=10000 \
     --max-steps=4 \
@@ -179,7 +186,7 @@ for invariant in \
   activationRequiresBothQuorums \
   oneJointDescriptor
 do
-  npx --yes "$quint_package" run "$handoff_model" \
+  "$quint_bin" run "$handoff_model" \
     --invariant="$invariant" \
     --max-samples=10000 \
     --max-steps=30 \
@@ -194,10 +201,28 @@ for invariant in \
   trustingPeriodBoundary \
   atMostOneAcceptedLink
 do
-  npx --yes "$quint_package" run "$light_client_model" \
+  "$quint_bin" run "$light_client_model" \
     --invariant="$invariant" \
     --max-samples=10000 \
     --max-steps=30 \
+    --seed=0x54524e4d \
+    --verbosity=1
+done
+
+for invariant in \
+  allOrNothingCommit \
+  targetBoundFieldsEqualCommittedHeight \
+  acceptedCertificateHasAllAuthorities \
+  nonceAndRegistrationHistoryMonotonic \
+  decisionAndNullifierAtMostOnce \
+  pruneRequiresAtomicSparseNullifierInsertion \
+  replayRejectedAfterPrune \
+  failedOperationLeavesHeadUnchanged
+do
+  "$quint_bin" run "$application_atomicity_model" \
+    --invariant="$invariant" \
+    --max-samples=10000 \
+    --max-steps=8 \
     --seed=0x54524e4d \
     --verbosity=1
 done
@@ -214,7 +239,7 @@ expect_reachable() {
   local max_steps="$6"
   local output="$mutant_dir/$label.log"
 
-  if npx --yes "$quint_package" run "$witness_model" \
+  if "$quint_bin" run "$witness_model" \
     --init="$init_action" \
     --step="$step_action" \
     --invariant="$not_reached_invariant" \
@@ -244,7 +269,7 @@ expect_violation() {
   local max_steps="$4"
   local output="$mutant_dir/$label.log"
 
-  if npx --yes "$quint_package" run "$mutant_model" \
+  if "$quint_bin" run "$mutant_model" \
     --invariant="$invariant" \
     --max-samples=10000 \
     --max-steps="$max_steps" \
@@ -274,7 +299,7 @@ expect_scoped_violation() {
   local max_steps="$6"
   local output="$mutant_dir/$label.log"
 
-  if npx --yes "$quint_package" run "$mutation_model" \
+  if "$quint_bin" run "$mutation_model" \
     --init="$init_action" \
     --step="$step_action" \
     --invariant="$invariant" \
@@ -297,6 +322,12 @@ expect_scoped_violation() {
   echo "[ok] $label in-model mutation was rejected"
 }
 
+expect_reachable \
+  legal-three-chain-finality "$model" init \
+  legalFinalityStep legalFinalityNotReached 4
+expect_scoped_violation \
+  lock-rule-bypass-conflicting-finality "$model" init \
+  unsafeForkStep noConflictingFinality 8
 expect_reachable \
   heterogeneous-tc-selection "$tc_selection_model" initHeterogeneous \
   validateTc heterogeneousSelectionNotReached 1
@@ -364,6 +395,24 @@ expect_reachable \
 expect_reachable \
   malformed-state-fallback "$weight_snapshot_model" initMalformed \
   step overflowFallbackNotReached 2
+expect_reachable \
+  poco-application-acceptance "$application_atomicity_model" \
+  initAcceptance acceptanceWitnessStep acceptanceNotReached 1
+expect_reachable \
+  poco-application-challenge-resolution "$application_atomicity_model" \
+  initChallenge challengeWitnessStep challengeNotReached 2
+expect_reachable \
+  poco-application-governance-approval "$application_atomicity_model" \
+  initGovernance governanceWitnessStep governanceNotReached 2
+expect_reachable \
+  poco-application-registration-rotation "$application_atomicity_model" \
+  initRotation rotationWitnessStep rotationNotReached 1
+expect_reachable \
+  poco-application-prune-replay-rejection "$application_atomicity_model" \
+  initPrune pruneReplayWitnessStep pruneReplayRejectNotReached 2
+expect_reachable \
+  poco-application-failure-rollback "$application_atomicity_model" \
+  initFailure failureRollbackWitnessStep failureRollbackNotReached 1
 
 expect_violation \
   sign-before-persist "$sign_before_persist_mutant" signatureCoveredByJournal 10
@@ -392,3 +441,11 @@ expect_violation \
 expect_violation \
   self-signed-uncommitted-set "$self_signed_uncommitted_mutant" \
   acceptedOnlyCommittedJointTransition 5
+expect_scoped_violation \
+  partial-cross-entry-commit "$application_atomicity_model" \
+  initAcceptance partialCrossEntryCommitMutantStep \
+  allOrNothingCommit 1
+expect_scoped_violation \
+  prune-without-nullifier "$application_atomicity_model" \
+  initPrune pruneWithoutNullifierMutantStep \
+  pruneRequiresAtomicSparseNullifierInsertion 1

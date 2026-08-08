@@ -1,5 +1,12 @@
 # PoCO-BFT v0 Apalache evidence — 2026-08-04
 
+> **Superseded on 2026-08-05.** The per-vote model used here required more
+> than ten transitions to reach conflicting finality, so the depth-10 PASS did
+> not exercise the decisive bad-state depth. Retain this file as historical
+> evidence only. The compressed-QC model, positive finality witness, retained
+> lock-bypass mutation, and replacement symbolic results are recorded in
+> [`APALACHE_EVIDENCE_2026-08-05.md`](APALACHE_EVIDENCE_2026-08-05.md).
+
 Status: **bounded evidence; not an unbounded proof**
 
 This record covers the `noConflictingFinality` invariant in

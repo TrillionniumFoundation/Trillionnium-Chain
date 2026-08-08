@@ -4,6 +4,24 @@ Initial date: 2026-08-04
 Last updated: 2026-08-05
 Tool: `@informalsystems/quint@0.32.0`, Rust evaluator `0.6.0`
 
+## Mutation-calibrated conflicting-finality kernel
+
+The repaired `poco_bft.qnt` transition admits every nonempty vote batch,
+including singleton batches, and forms a QC only after cumulative votes reach
+the exact three-of-four quorum. A deterministic legal lane reaches ordinary
+three-chain finality in four steps. The retained `unsafeForkStep` mutation
+removes only the safe-vote/lock gate and reaches conflicting finality in eight
+steps, with finalized set `{1, 2}`.
+
+Using the same finite model, Apalache found the expected legal reachability
+witness at depth 4 and the expected mutation counterexample at depth 8, while
+the normal nondeterministic transition passed `noConflictingFinality` through
+depth 10. This keeps the fine-grained singleton paths and demonstrates that
+the symbolic bound is deep enough to expose the modeled failure when its
+decisive safety gate is disabled. Exact tool versions, source and log hashes,
+and the bounded-proof limits are recorded in
+[`APALACHE_EVIDENCE_2026-08-05.md`](APALACHE_EVIDENCE_2026-08-05.md).
+
 ## Missing durable view monotonicity
 
 The first bounded model enforced one honest vote per view and the locked-QC
@@ -29,8 +47,8 @@ This is a protocol requirement, not merely a model convenience:
 - remote signers must enforce the same conflict key independently.
 
 Random exploration is not exhaustive proof. The counterexample and repaired
-run are retained as mutation evidence; Apalache verification remains a
-separate P0 gate.
+run remain useful mutation evidence; the current bounded symbolic result is
+recorded separately and does not constitute an unbounded proof.
 
 ## Signing before durable acknowledgement
 

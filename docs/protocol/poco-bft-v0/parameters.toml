@@ -15,7 +15,11 @@ public_key_bytes = 32
 signature_bytes = 64
 max_chain_id_bytes = 128
 max_validator_id_bytes = 128
+# Exact consensus-validity measure: CEV0 header plus u32-framed application
+# payload and u32-count/u32-length-framed canonically ordered evidence objects.
 max_block_bytes = 4194304
+# Decoded/reassembled transport-body admission limit after decompression and
+# before external framing; it does not redefine a nested logical block/QC.
 max_consensus_message_bytes = 8388608
 
 [consensus]
@@ -38,9 +42,14 @@ timeout_multiplier_denominator = 2
 timeout_max_ms = 30000
 
 [epoch]
-# length_blocks includes the checkpoint and the two mandatory empty seal blocks.
+# length_blocks includes the checkpoint and the two mandatory empty seal
+# blocks and is immutable across every transition authorized by protocol v0.
 length_blocks = 10000
 seal_blocks = 2
+# Consensus validity requires
+# finality_certified_chain_length <= snapshot_lead_blocks and
+# length_blocks > snapshot_lead_blocks + seal_blocks. Protocol v0 fixes the
+# finality-certified chain length at 3, so 3 is the minimum valid lead.
 snapshot_lead_blocks = 100
 joint_handoff_old_quorum = true
 joint_handoff_new_quorum = true
@@ -87,7 +96,7 @@ require_evidence_window_not_greater_than_unbonding_delay = true
 stale_client_action = "fail-closed-require-new-trusted-checkpoint"
 
 [status]
-transport_container = "UNDECIDED"
+transport_container = "protobuf-v0-frozen; framing-and-multiplexing-undecided"
 aggregate_signatures = "DEFERRED"
 weighted_leader_selection = "DEFERRED"
 committee_sampling = "DEFERRED"

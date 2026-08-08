@@ -36,6 +36,9 @@ DOMAINS = (
     "trnm.poco-bft.upgrade-plan.v0",
     "trnm.poco-bft.finality-proof.v0",
     "trnm.poco-bft.double-sign-evidence.v0",
+    "trnm.poco-bft.ordered-leaf.v0",
+    "trnm.poco-bft.ordered-node.v0",
+    "trnm.poco-bft.ordered-root.v0",
     "trnm.poco.consumption-certificate.v0",
     "trnm.poco.consumption-certificate-id.v0",
 )

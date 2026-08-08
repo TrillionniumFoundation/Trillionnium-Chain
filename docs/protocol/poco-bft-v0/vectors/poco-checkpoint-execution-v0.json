@@ -1,0 +1,118 @@
+{
+  "schema": "trnm.poco-bft.checkpoint-execution-v0.vectors",
+  "schema_version": 0,
+  "valid_case": {
+    "canonical_schema_version": 0,
+    "authority_schema": "trnm_poco_authority_config_v0",
+    "genesis_hash_hex": "f8efb9d0353b610e9b5c25e311476d98baab8e7b39822010bf863979edff812e",
+    "chain_id": "trnm-b2e-checkpoint-0",
+    "protocol_profile_hash_hex": "8d837b3b1943cfdfa782c8f300df3444b5cfaa72ccce8aeeb2ac02f41b9fac7f",
+    "protocol_version": 0,
+    "epoch": 0,
+    "checkpoint_height": 8,
+    "checkpoint_block_hash_hex": "0404040404040404040404040404040404040404040404040404040404040404",
+    "checkpoint_timestamp_ms": 1700000000000,
+    "parent_height": 7,
+    "parent_state_root_hex": "0303030303030303030303030303030303030303030303030303030303030303",
+    "cutoff_height": 5,
+    "cutoff_state_root_hex": "0606060606060606060606060606060606060606060606060606060606060606",
+    "cutoff_manifest_entries_root_hex": "061d5321e5f59a5c77d20b94957b34476c33ea90046e6d131a9bcfa8c6b0c4df",
+    "cutoff_manifest_entry_count": 2,
+    "txs_hex": [
+      "74782d61",
+      "74782d62"
+    ],
+    "exec_tx_results_protobuf_hex": [
+      "",
+      ""
+    ],
+    "payload_root_hex": "342762ede6c1c72e9524325c53a1ba84b02e488c2d6353360c1ea2aa222aa389",
+    "receipts_root_hex": "ccf9f44dd5e597917aec67e49490ad01b2a3fed1e20fd8ba1853e78847f52ad6",
+    "next_state_root_hex": "0505050505050505050505050505050505050505050505050505050505050505",
+    "validator_set_id_hex": "935c5a65e6290e3fddb9764926224598400172863d2adcf126c43bff61bb96fb",
+    "consensus_parameters_hash_hex": "8d837b3b1943cfdfa782c8f300df3444b5cfaa72ccce8aeeb2ac02f41b9fac7f",
+    "canonical_hex": "0000f8efb9d0353b610e9b5c25e311476d98baab8e7b39822010bf863979edff812e001574726e6d2d6232652d636865636b706f696e742d308d837b3b1943cfdfa782c8f300df3444b5cfaa72ccce8aeeb2ac02f41b9fac7f000000000000000000000000000000000000000804040404040404040404040404040404040404040404040404040404040404040000018bcfe568000000000000000007030303030303030303030303030303030303030303030303030303030303030300000000000000050606060606060606060606060606060606060606060606060606060606060606061d5321e5f59a5c77d20b94957b34476c33ea90046e6d131a9bcfa8c6b0c4df00000002342762ede6c1c72e9524325c53a1ba84b02e488c2d6353360c1ea2aa222aa389ccf9f44dd5e597917aec67e49490ad01b2a3fed1e20fd8ba1853e78847f52ad60505050505050505050505050505050505050505050505050505050505050505935c5a65e6290e3fddb9764926224598400172863d2adcf126c43bff61bb96fb8d837b3b1943cfdfa782c8f300df3444b5cfaa72ccce8aeeb2ac02f41b9fac7f",
+    "execution_id_hex": "d4c93dbbcfe4cc844ff895580cba46b5a461f1e981c43622a4e993145ccbc010"
+  },
+  "chain_id_length_cases": [
+    {
+      "id": "minimum_1_byte",
+      "chain_id": "a",
+      "chain_id_utf8_bytes": 1,
+      "encoded_chain_id_hex": "000161",
+      "canonical_length_bytes": 405
+    },
+    {
+      "id": "maximum_128_bytes",
+      "chain_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "chain_id_utf8_bytes": 128,
+      "encoded_chain_id_hex": "00806161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161616161",
+      "canonical_length_bytes": 532
+    }
+  ],
+  "aggregate_bound_cases": [
+    {
+      "id": "transaction_bytes_exact",
+      "field": "transaction_bytes",
+      "count": "1",
+      "term_bytes": [
+        "8388608"
+      ],
+      "expected": "accept"
+    },
+    {
+      "id": "transaction_bytes_over",
+      "field": "transaction_bytes",
+      "count": "1",
+      "term_bytes": [
+        "8388609"
+      ],
+      "expected": "reject"
+    },
+    {
+      "id": "receipt_bytes_exact",
+      "field": "encoded_receipt_bytes",
+      "count": "1",
+      "term_bytes": [
+        "8388608"
+      ],
+      "expected": "accept"
+    },
+    {
+      "id": "receipt_bytes_over",
+      "field": "encoded_receipt_bytes",
+      "count": "1",
+      "term_bytes": [
+        "8388609"
+      ],
+      "expected": "reject"
+    },
+    {
+      "id": "count_exact_u32",
+      "field": "count",
+      "count": "4294967295",
+      "term_bytes": [],
+      "expected": "accept"
+    },
+    {
+      "id": "count_over_u32",
+      "field": "count",
+      "count": "4294967296",
+      "term_bytes": [],
+      "expected": "reject"
+    }
+  ],
+  "negative_relations": [
+    "genesis_hash_mismatch",
+    "protocol_profile_hash_mismatch",
+    "non_contiguous_parent",
+    "cutoff_height_mismatch",
+    "cutoff_root_mismatch",
+    "cutoff_manifest_root_or_count_substitution",
+    "validator_lifecycle_mismatch",
+    "block_hash_wrong_width",
+    "transaction_result_cardinality_mismatch",
+    "transaction_order_substitution",
+    "authority_config_not_genesis_authenticated"
+  ]
+}

@@ -1,0 +1,132 @@
+{
+  "schema": "trnm_poco_bft_next_epoch_commitment_kernel_vectors_v0",
+  "schema_version": 0,
+  "scope": "B2-C NextEpochCommitmentV0 exact CEV0 and same-version v0 context-binding kernel only",
+  "cryptographic_validity_claimed": false,
+  "logical_schema": "../schema/cev0-logical-schema-epoch-commitment-v0.json",
+  "domain": "trnm.poco-bft.epoch-commitment.v0",
+  "hash_prefix_ascii": "trnm.cev0.hash.v0",
+  "fixtures": {
+    "genesis_hash_hex": "1f87c89d4ecb714d01e05d731acdefae0f5973e57707eae1260a67cd56111aac",
+    "chain_id": "trnm-epoch-kernel-0",
+    "normal_old_parameters_hash_hex": "2a8e37cf97ed9f6a8dedc6890e0a935b35b6466cb1a0d07889410325d9983dca",
+    "normal_new_parameters_hash_hex": "14d51ceeb7d678ea58a4ee82eeab5c1339aa569ce9fc39f135b54cd1e868fac5",
+    "fallback_parameters_hash_hex": "2e1ff777f5da9d00ca54f31c14121331f4627591f64452d6b83c7d390837d2ca",
+    "normal_snapshot_state_root_hex": "b02d95bf86a73b1d799758a4b50be80e742e6a3510a39a16679e23973930a13f",
+    "fallback_snapshot_state_root_hex": "f95199e215266a417e25b3c2b1e7db0dc232030986e427f5c880e9d4be6ff1da",
+    "shape_only_upgrade_plan_hash_hex": "f7358d48b4f764230190ac9cf6f27017ea746703eedf61ba509a13e6b99ef9a4"
+  },
+  "validator_templates": {
+    "old": [
+      { "validator_id_hex": "76616c696461746f722d61", "consensus_public_key_hex": "1111111111111111111111111111111111111111111111111111111111111111", "effective_weight": "4" },
+      { "validator_id_hex": "76616c696461746f722d62", "consensus_public_key_hex": "2222222222222222222222222222222222222222222222222222222222222222", "effective_weight": "3" },
+      { "validator_id_hex": "76616c696461746f722d63", "consensus_public_key_hex": "3333333333333333333333333333333333333333333333333333333333333333", "effective_weight": "2" },
+      { "validator_id_hex": "76616c696461746f722d64", "consensus_public_key_hex": "4444444444444444444444444444444444444444444444444444444444444444", "effective_weight": "1" }
+    ],
+    "new": [
+      { "validator_id_hex": "76616c696461746f722d65", "consensus_public_key_hex": "5555555555555555555555555555555555555555555555555555555555555555", "effective_weight": "4" },
+      { "validator_id_hex": "76616c696461746f722d66", "consensus_public_key_hex": "6666666666666666666666666666666666666666666666666666666666666666", "effective_weight": "3" },
+      { "validator_id_hex": "76616c696461746f722d67", "consensus_public_key_hex": "7777777777777777777777777777777777777777777777777777777777777777", "effective_weight": "2" },
+      { "validator_id_hex": "76616c696461746f722d68", "consensus_public_key_hex": "8888888888888888888888888888888888888888888888888888888888888888", "effective_weight": "1" }
+    ]
+  },
+  "context_profiles": {
+    "normal_same_version": {
+      "old_set": { "protocol_version": "0", "epoch": "3", "consensus_parameters_hash_hex": "2a8e37cf97ed9f6a8dedc6890e0a935b35b6466cb1a0d07889410325d9983dca", "validator_template": "old", "expected_validator_set_hash_hex": "aa537b7aa5146732b076f588f5e03f04ca08027be7a18291bd66d904dde51cc1" },
+      "new_set": { "protocol_version": "0", "epoch": "4", "consensus_parameters_hash_hex": "14d51ceeb7d678ea58a4ee82eeab5c1339aa569ce9fc39f135b54cd1e868fac5", "validator_template": "new", "expected_validator_set_hash_hex": "cbe9afb7ad92555f371ef7f6955bc95e339840f76415b63e455052ee979fdf2f" },
+      "old_parameters": { "protocol_version": "0", "epoch_length_blocks": "100", "snapshot_lead_blocks": "10", "rollout_phase": 1, "hash_hex": "2a8e37cf97ed9f6a8dedc6890e0a935b35b6466cb1a0d07889410325d9983dca" },
+      "new_parameters": { "protocol_version": "0", "epoch_length_blocks": "100", "snapshot_lead_blocks": "10", "rollout_phase": 2, "hash_hex": "14d51ceeb7d678ea58a4ee82eeab5c1339aa569ce9fc39f135b54cd1e868fac5" }
+    },
+    "fallback_same_version": {
+      "old_set": { "protocol_version": "0", "epoch": "7", "consensus_parameters_hash_hex": "2e1ff777f5da9d00ca54f31c14121331f4627591f64452d6b83c7d390837d2ca", "validator_template": "old", "expected_validator_set_hash_hex": "cf81a9f426bee13f98d51a75a66c0f7786f1bbdc761d64a44ed2c18fd8ea1dfa" },
+      "new_set": { "protocol_version": "0", "epoch": "8", "consensus_parameters_hash_hex": "2e1ff777f5da9d00ca54f31c14121331f4627591f64452d6b83c7d390837d2ca", "validator_template": "old", "expected_validator_set_hash_hex": "7e071faa84b65e1d57fa20a9a7c7155489a276a692f6dea6c73d6430501475da" },
+      "old_parameters": { "protocol_version": "0", "epoch_length_blocks": "100", "snapshot_lead_blocks": "10", "rollout_phase": 1, "hash_hex": "2e1ff777f5da9d00ca54f31c14121331f4627591f64452d6b83c7d390837d2ca" },
+      "new_parameters": { "protocol_version": "0", "epoch_length_blocks": "100", "snapshot_lead_blocks": "10", "rollout_phase": 1, "hash_hex": "2e1ff777f5da9d00ca54f31c14121331f4627591f64452d6b83c7d390837d2ca" }
+    }
+  },
+  "valid_raw_objects": [
+    {
+      "id": "normal_same_version_no_upgrade",
+      "context_profile": "normal_same_version",
+      "context_expected": "valid",
+      "fields": { "schema_version": "0", "old_epoch": "3", "new_epoch": "4", "snapshot_cutoff_height": "388", "new_protocol_version": "0", "rollout_phase": 2, "upgrade_plan_hash_hex": null, "fallback_used": false, "fallback_reason_code": "0", "activation_height": "401" },
+      "cev0_hex": "00001f87c89d4ecb714d01e05d731acdefae0f5973e57707eae1260a67cd56111aac001374726e6d2d65706f63682d6b65726e656c2d30000000000000000300000000000000040000000000000184b02d95bf86a73b1d799758a4b50be80e742e6a3510a39a16679e23973930a13f00000000cbe9afb7ad92555f371ef7f6955bc95e339840f76415b63e455052ee979fdf2f14d51ceeb7d678ea58a4ee82eeab5c1339aa569ce9fc39f135b54cd1e868fac502000000000000000000000191",
+      "length": 192,
+      "digest_hex": "1b37ec2487a7309ac1d11e96ae6c2863ccff85a2ba9935fc49c7b1adf94bffb0"
+    },
+    {
+      "id": "present_upgrade_shape_only",
+      "context_profile": "normal_same_version",
+      "context_expected": "unsupported_upgrade_plan",
+      "fields": { "schema_version": "0", "old_epoch": "3", "new_epoch": "4", "snapshot_cutoff_height": "388", "new_protocol_version": "0", "rollout_phase": 2, "upgrade_plan_hash_hex": "f7358d48b4f764230190ac9cf6f27017ea746703eedf61ba509a13e6b99ef9a4", "fallback_used": false, "fallback_reason_code": "0", "activation_height": "401" },
+      "cev0_hex": "00001f87c89d4ecb714d01e05d731acdefae0f5973e57707eae1260a67cd56111aac001374726e6d2d65706f63682d6b65726e656c2d30000000000000000300000000000000040000000000000184b02d95bf86a73b1d799758a4b50be80e742e6a3510a39a16679e23973930a13f00000000cbe9afb7ad92555f371ef7f6955bc95e339840f76415b63e455052ee979fdf2f14d51ceeb7d678ea58a4ee82eeab5c1339aa569ce9fc39f135b54cd1e868fac50201f7358d48b4f764230190ac9cf6f27017ea746703eedf61ba509a13e6b99ef9a40000000000000000000191",
+      "length": 224,
+      "digest_hex": "dd1ad8d189f147c7f1dad8e56131ac101c68673b4c9f23d238e40d86bb426c77"
+    },
+    {
+      "id": "fallback_same_version",
+      "context_profile": "fallback_same_version",
+      "context_expected": "valid",
+      "fields": { "schema_version": "0", "old_epoch": "7", "new_epoch": "8", "snapshot_cutoff_height": "788", "new_protocol_version": "0", "rollout_phase": 1, "upgrade_plan_hash_hex": null, "fallback_used": true, "fallback_reason_code": "8", "activation_height": "801" },
+      "cev0_hex": "00001f87c89d4ecb714d01e05d731acdefae0f5973e57707eae1260a67cd56111aac001374726e6d2d65706f63682d6b65726e656c2d30000000000000000700000000000000080000000000000314f95199e215266a417e25b3c2b1e7db0dc232030986e427f5c880e9d4be6ff1da000000007e071faa84b65e1d57fa20a9a7c7155489a276a692f6dea6c73d6430501475da2e1ff777f5da9d00ca54f31c14121331f4627591f64452d6b83c7d390837d2ca01000100080000000000000321",
+      "length": 192,
+      "digest_hex": "8d3757c781ee1aa589f5eb13a48095b99e968e5618d5333aafcf3a7466e091cb"
+    }
+  ],
+  "boundary_cases": [
+    { "id": "chain_length_0", "mutation": "chain_length_0", "expected": "invalid_consensus_string", "expected_offset": 34 },
+    { "id": "chain_length_128", "mutation": "chain_length_128", "expected": "valid" },
+    { "id": "chain_length_129", "mutation": "chain_length_129", "expected": "length_limit_exceeded", "expected_offset": 34 },
+    { "id": "chain_invalid_ascii", "mutation": "chain_invalid_ascii", "expected": "invalid_consensus_string", "expected_offset": 34 },
+    { "id": "optional_tag_0", "mutation": "optional_tag_0", "expected": "valid" },
+    { "id": "optional_tag_1", "mutation": "optional_tag_1", "expected": "valid" },
+    { "id": "optional_tag_2", "mutation": "optional_tag_2", "expected": "invalid_optional_tag", "expected_offset": 180 },
+    { "id": "rollout_phase_0", "mutation": "rollout_phase_0", "expected": "valid" },
+    { "id": "rollout_phase_3", "mutation": "rollout_phase_3", "expected": "valid" },
+    { "id": "rollout_phase_4", "mutation": "rollout_phase_4", "expected": "invalid_rollout_phase", "expected_offset": 179 },
+    { "id": "fallback_false_reason_0", "mutation": "fallback_false_reason_0", "expected": "valid" },
+    { "id": "fallback_true_reason_1", "mutation": "fallback_true_reason_1", "expected": "valid" },
+    { "id": "fallback_true_reason_9", "mutation": "fallback_true_reason_9", "expected": "valid" },
+    { "id": "fallback_reason_10", "mutation": "fallback_reason_10", "expected": "invalid_fallback_reason", "expected_offset": 182 },
+    { "id": "fallback_false_reason_1", "mutation": "fallback_false_reason_1", "expected": "invalid_fallback_reason", "expected_offset": 182 },
+    { "id": "fallback_true_reason_0", "mutation": "fallback_true_reason_0", "expected": "invalid_fallback_reason", "expected_offset": 182 },
+    { "id": "fallback_bool_2", "mutation": "fallback_bool_2", "expected": "invalid_boolean", "expected_offset": 181 },
+    { "id": "schema_version_1", "mutation": "schema_version_1", "expected": "invalid_schema_version", "expected_offset": 0 },
+    { "id": "zero_genesis_hash", "mutation": "zero_genesis_hash", "expected": "zero_genesis_hash", "expected_offset": 2 },
+    { "id": "zero_snapshot_state_root", "mutation": "zero_snapshot_state_root", "expected": "invalid_next_epoch_commitment", "expected_offset": 79 },
+    { "id": "zero_new_validator_set_hash", "mutation": "zero_new_validator_set_hash", "expected": "invalid_next_epoch_commitment", "expected_offset": 115 },
+    { "id": "zero_new_parameters_hash", "mutation": "zero_new_parameters_hash", "expected": "invalid_next_epoch_commitment", "expected_offset": 147 },
+    { "id": "zero_present_upgrade_hash", "mutation": "zero_present_upgrade_hash", "expected": "invalid_next_epoch_commitment", "expected_offset": 180 },
+    { "id": "new_epoch_not_adjacent", "mutation": "new_epoch_not_adjacent", "expected": "invalid_next_epoch_commitment", "expected_offset": 63 },
+    { "id": "activation_height_0", "mutation": "activation_height_0", "expected": "invalid_next_epoch_commitment", "expected_offset": 184 }
+  ],
+  "context_relation_cases": [
+    { "id": "old_protocol_version_1", "base": "normal_same_version_no_upgrade", "mutation": "old_protocol_version_1", "expected": "unsupported_protocol_transition" },
+    { "id": "new_protocol_version_1", "base": "normal_same_version_no_upgrade", "mutation": "new_protocol_version_1", "expected": "unsupported_protocol_transition" },
+    { "id": "new_context_protocol_version_1", "base": "normal_same_version_no_upgrade", "mutation": "new_context_protocol_version_1", "expected": "unsupported_protocol_transition" },
+    { "id": "genesis_context_mismatch", "base": "normal_same_version_no_upgrade", "mutation": "genesis_context_mismatch", "expected": "context_mismatch" },
+    { "id": "chain_context_mismatch", "base": "normal_same_version_no_upgrade", "mutation": "chain_context_mismatch", "expected": "context_mismatch" },
+    { "id": "old_epoch_context_mismatch", "base": "normal_same_version_no_upgrade", "mutation": "old_epoch_context_mismatch", "expected": "context_mismatch" },
+    { "id": "new_set_hash_mismatch", "base": "normal_same_version_no_upgrade", "mutation": "new_set_hash_mismatch", "expected": "context_mismatch" },
+    { "id": "new_parameters_hash_mismatch", "base": "normal_same_version_no_upgrade", "mutation": "new_parameters_hash_mismatch", "expected": "context_mismatch" },
+    { "id": "epoch_length_change", "base": "normal_same_version_no_upgrade", "mutation": "epoch_length_change", "expected": "epoch_length_change" },
+    { "id": "old_snapshot_lead_zero", "base": "normal_same_version_no_upgrade", "mutation": "old_snapshot_lead_zero", "expected": "context_mismatch" },
+    { "id": "new_snapshot_lead_zero", "base": "normal_same_version_no_upgrade", "mutation": "new_snapshot_lead_zero", "expected": "context_mismatch" },
+    { "id": "snapshot_cutoff_mismatch", "base": "normal_same_version_no_upgrade", "mutation": "snapshot_cutoff_mismatch", "expected": "snapshot_cutoff_mismatch" },
+    { "id": "activation_height_mismatch", "base": "normal_same_version_no_upgrade", "mutation": "activation_height_mismatch", "expected": "activation_height_mismatch" },
+    { "id": "rollout_phase_mismatch", "base": "normal_same_version_no_upgrade", "mutation": "rollout_phase_mismatch", "expected": "rollout_phase_mismatch" },
+    { "id": "present_upgrade_unsupported", "base": "present_upgrade_shape_only", "mutation": "none", "expected": "unsupported_upgrade_plan" },
+    { "id": "fallback_parameters_changed", "base": "fallback_same_version", "mutation": "fallback_parameters_changed", "expected": "fallback_context_mismatch" },
+    { "id": "fallback_validator_id_changed", "base": "fallback_same_version", "mutation": "fallback_validator_id_changed", "expected": "fallback_context_mismatch" },
+    { "id": "fallback_validator_key_changed", "base": "fallback_same_version", "mutation": "fallback_validator_key_changed", "expected": "fallback_context_mismatch" },
+    { "id": "fallback_validator_weight_changed", "base": "fallback_same_version", "mutation": "fallback_validator_weight_changed", "expected": "fallback_context_mismatch" },
+    { "id": "fallback_validator_order_changed", "base": "fallback_same_version", "mutation": "fallback_validator_order_changed", "expected": "fallback_context_mismatch" },
+    { "id": "fallback_upgrade_present", "base": "fallback_same_version", "mutation": "fallback_upgrade_present", "expected": "fallback_context_mismatch" }
+  ],
+  "honest_boundary": [
+    "All raw values are inert commitment data. No vector emits an EpochAnchorAuthorizationV0, EpochAnchorQcV0, or trusted transition capability.",
+    "The context profiles expose only the exact set values and the parameter hash/schedule fields needed by this bounded relation kernel; they are not authenticated application state or complete parameter decodes.",
+    "The shape-only present upgrade hash proves optional tag 1 round-tripping, not governance or UpgradePlanV0 authorization.",
+    "No signature exists over NextEpochCommitmentV0 itself. Checkpoint/seal finality, handoff cryptography, snapshot reconstruction, PoP, governed upgrades, complete epoch authorization, first-new-block admission, B2 overall, and wire_conformance remain open."
+  ]
+}

@@ -289,7 +289,7 @@ def validate_semantics(document: dict[str, object]) -> None:
 
     minimum = unsigned(consensus.get("min_validators"), 32, "min_validators")
     maximum = unsigned(consensus.get("max_validators"), 32, "max_validators")
-    if not 4 <= minimum <= maximum:
+    if not 4 <= minimum <= maximum <= 100:
         raise ParameterError("validator bounds are inconsistent")
     if unsigned(consensus.get("timeout_multiplier_denominator"), 32, "timeout denominator") == 0:
         raise ParameterError("timeout multiplier denominator must be positive")
@@ -304,6 +304,14 @@ def validate_semantics(document: dict[str, object]) -> None:
 
     if epoch.get("seal_blocks") != 2:
         raise ParameterError("v0 requires exactly two epoch seal blocks")
+    if epoch.get("snapshot_lead_blocks") == 0:
+        raise ParameterError("snapshot lead must be positive")
+    if epoch.get("snapshot_lead_blocks") < consensus.get(
+        "finality_certified_chain_length"
+    ):
+        raise ParameterError(
+            "snapshot lead must cover the finality-certified chain length"
+        )
     if epoch.get("length_blocks") <= epoch.get("snapshot_lead_blocks") + epoch.get(
         "seal_blocks"
     ):
@@ -338,15 +346,20 @@ def validate_semantics(document: dict[str, object]) -> None:
         "max_validator_power"
     ):
         raise ParameterError("validator power bounds are inconsistent")
-    if not 0 < weights.get("max_validator_share_ppm") < scale // 3:
+    maximum_share = unsigned(
+        weights.get("max_validator_share_ppm"), 64, "max_validator_share_ppm"
+    )
+    if not 0 < maximum_share or maximum_share * 3 >= scale:
         raise ParameterError("validator share cap must be positive and below one third")
     if not 0 <= weights.get("capped_weight_alpha_ppm") <= scale:
         raise ParameterError("capped alpha is outside the ppm scale")
     if weights.get("full_weight_alpha_ppm") != scale:
         raise ParameterError("full rollout alpha must equal scale_ppm")
-    max_candidate_power = maximum * weights.get("max_validator_power")
-    if max_candidate_power > consensus.get("max_total_voting_power"):
-        raise ParameterError("candidate set can exceed max_total_voting_power")
+    min_candidate_power = minimum * weights.get("min_validator_power")
+    if min_candidate_power > consensus.get("max_total_voting_power"):
+        raise ParameterError(
+            "no minimum-size candidate can fit max_total_voting_power"
+        )
     if rollout.get("current_phase") != "shadow":
         raise ParameterError("the reference profile must remain in shadow")
     if rollout.get("automatic_promotion") is not False:
@@ -371,6 +384,25 @@ def validate_semantics(document: dict[str, object]) -> None:
         "require_evidence_window_not_greater_than_unbonding_delay"
     ) is not True:
         raise ParameterError("evidence/unbonding relationship must be enforced")
+
+
+def verify_snapshot_lead_finality_boundary(document: dict[str, object]) -> None:
+    def with_snapshot_lead(value: int) -> dict[str, object]:
+        candidate = dict(document)
+        candidate["epoch"] = {**table(document, "epoch"), "snapshot_lead_blocks": value}
+        return candidate
+
+    try:
+        validate_semantics(with_snapshot_lead(2))
+    except ParameterError as error:
+        if str(error) != "snapshot lead must cover the finality-certified chain length":
+            raise ParameterError(
+                f"lead-2 boundary rejected for the wrong reason: {error}"
+            ) from error
+    else:
+        raise ParameterError("lead-2 snapshot boundary was accepted")
+
+    validate_semantics(with_snapshot_lead(3))
 
 
 def make_vector(path: Path, document: dict[str, object]) -> dict[str, object]:
@@ -405,6 +437,7 @@ def main() -> int:
         document = load_parameters(args.path)
         vector = make_vector(args.path, document)
         validate_semantics(document)
+        verify_snapshot_lead_finality_boundary(document)
     except (OSError, tomllib.TOMLDecodeError, ParameterError, KeyError, TypeError) as error:
         print(f"parameter check failed: {error}", file=sys.stderr)
         return 1
@@ -425,7 +458,8 @@ def main() -> int:
             return 1
         print(
             "[ok] PoCO-BFT v0 parameters: "
-            f"{vector['cev0_length']} CEV0 bytes, digest {vector['digest_hex']}"
+            f"{vector['cev0_length']} CEV0 bytes, digest {vector['digest_hex']}; "
+            "snapshot lead boundary 2 rejected / 3 accepted"
         )
     return 0
 

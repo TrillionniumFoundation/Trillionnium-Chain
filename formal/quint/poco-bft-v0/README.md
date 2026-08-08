@@ -3,7 +3,10 @@
 This directory contains bounded formal models for the protocol freeze. The
 first model covers one Byzantine validator among four equal-power validators,
 two conflicting branches, the safe-vote/lock rule, quorum formation, and the
-direct three-chain finality rule. `persist_before_sign.qnt` separately models
+direct three-chain finality rule. Its transition admits every nonempty vote
+batch, including singletons; exact-quorum batches make legal finality reachable
+at depth 4, and an in-model lock-bypass mutation reaches conflicting finality
+at depth 8. `persist_before_sign.qnt` separately models
 volatile intent, durable journal acknowledgement, signature release, and
 crashes. The deliberately broken `mutants/sign_before_persist.qnt` must produce
 a counterexample and is retained to prove that the gate detects this failure.
@@ -80,27 +83,54 @@ set. Valid shadow diagnostics reach power 400 per provider, but committed
 power remains the current shadow set. The retained duplicate-counting mutant
 must fail.
 
-The model is intentionally smaller than the implementation. It establishes a
-reviewable safety kernel before P2 networking and storage exist; it does not
+`poco_application_atomicity.qnt` is the bounded H3b2b1 production-application
+kernel. It treats the authenticated source head, PoCO manifest, business
+authority head, and sparse-nullifier set as one commit boundary. Its normal
+transition either publishes every required cross-entry write at the exact
+committed target height or publishes none. The named invariants require
+all-or-nothing commit, exact target-height binding, complete certificate
+authority, monotonic consumer nonce and validator-registration history,
+at-most-once decision/nullifier claims, atomic sparse-nullifier insertion on
+prune, replay rejection after prune, and unchanged heads after a failed
+operation. Six bounded traces exercise certificate acceptance, challenge
+resolution, governance approval, validator key rotation, prune followed by
+replay rejection, and rollback after a rejected operation. The in-model
+`partial_cross_entry_commit` and `prune_without_nullifier` mutations are
+excluded from the normal step; CI must expose both as counterexamples. The
+integer IDs and one-bit authority facts are finite abstractions of the exact
+wire decoders, strict signatures, JMT proofs, and 256-level sparse-Merkle
+proofs checked by the implementation and shared vectors; this model does not
+replace those gates.
+
+The models are intentionally smaller than the implementation. They establish
+reviewable safety kernels before P2 networking and storage exist; they do not
 claim unbounded proof, cryptographic security, data availability, or liveness
 under an asynchronous scheduler.
 
-Pinned tool version: `@informalsystems/quint@0.32.0`.
+Pinned tool version: `@informalsystems/quint@0.32.0`. The committed npm lock
+freezes the complete transitive integrity set; the gate never falls back to
+dynamic `npx` resolution.
 
-The first symbolic Apalache result is retained in
-[`APALACHE_EVIDENCE_2026-08-04.md`](APALACHE_EVIDENCE_2026-08-04.md): the
-`noConflictingFinality` invariant passed through depth 10, while the depth-20
-attempt was stopped after 15 minutes and is explicitly recorded as
-inconclusive.
+The current symbolic result is retained in
+[`APALACHE_EVIDENCE_2026-08-05.md`](APALACHE_EVIDENCE_2026-08-05.md). The
+compressed-QC model reaches legal finality in four steps, passes
+`noConflictingFinality` symbolically through depth 10, and exposes conflicting
+finality at depth 8 when the retained lock-rule gate is disabled. The earlier
+per-vote result remains in
+[`APALACHE_EVIDENCE_2026-08-04.md`](APALACHE_EVIDENCE_2026-08-04.md), clearly
+marked superseded because its depth-10 pass preceded the modeled bad-state
+depth.
 
 Run the fast local checks with:
 
 ```sh
+npm ci --prefix formal/quint/poco-bft-v0 --ignore-scripts --no-audit --no-fund
 ./scripts/ci/check_poco_bft_v0_formal.sh
 ```
 
-The script typechecks the model and explores deterministic seeded traces while
-checking all named invariants. Bounded symbolic Apalache verification is a
+The script typechecks every model and explores deterministic seeded traces
+while checking all named invariants and retained mutations. Bounded symbolic
+Apalache verification is a
 separate P0 gate because it requires Java 17+. Its evidence record must be
 retained with the source commit and exact tool versions; a successful random
 run is not accepted as symbolic evidence, and a bounded result is never
