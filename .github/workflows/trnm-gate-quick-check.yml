@@ -8,6 +8,7 @@ on:
       - 'contracts-rust/**'
       - 'config/alert-policy/**'
       - 'docs/runbooks/enterprise_onboarding_runbook_v1.md'
+      - 'docs/runbooks/TRNM_POCO_BFT_X230_DEPLOYMENT_BOUNDARY.md'
       - 'scripts/**'
       - 'trillionnium/scripts/**'
       - '.github/workflows/trnm-gate-quick-check.yml'
@@ -19,6 +20,7 @@ on:
       - 'contracts-rust/**'
       - 'config/alert-policy/**'
       - 'docs/runbooks/enterprise_onboarding_runbook_v1.md'
+      - 'docs/runbooks/TRNM_POCO_BFT_X230_DEPLOYMENT_BOUNDARY.md'
       - 'scripts/**'
       - 'trillionnium/scripts/**'
       - '.github/workflows/trnm-gate-quick-check.yml'
@@ -110,6 +112,9 @@ jobs:
       # Stabilize created file permissions across runner/image defaults so
       # replay artifacts and git diffs keep deterministic mode bits.
       UMASK: "022"
+      TRNM_CARGO_OFFLINE_POLICY: "required"
+      CARGO_NET_OFFLINE: "true"
+      CARGO_CACHE_AUTO_CLEAN_FREQUENCY: "never"
     # This workflow runs dozens of regression scripts; 10 minutes can truncate
     # coverage and hide late-stage failures. Keep enough headroom for full sweep.
     timeout-minutes: 60
@@ -117,9 +122,20 @@ jobs:
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
 
-      - uses: dtolnay/rust-toolchain@4cda84d5c5c54efe2404f9d843567869ab1699d4
-        with:
-          toolchain: 1.95.0
+      - name: Verify runner-provisioned Rust toolchain
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_preprovisioned_rust_toolchain.sh \
+            --toolchain 1.95.0
+
+      - name: Verify Cargo offline cache readiness
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_cargo_offline_ready.sh \
+            --toolchain 1.95.0 \
+            --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}" \
+            trillionnium/Cargo.toml:trillionnium/Cargo.lock \
+            contracts/Cargo.toml:contracts/Cargo.lock
 
       - name: Verify runner-provisioned shellcheck
         run: |
@@ -182,6 +198,12 @@ jobs:
         run: |
           ./scripts/check_ci_runner_policy.sh --worktree
           ./scripts/check_ci_runner_policy_test.sh
+
+      - name: Enforce Cargo offline policy
+        run: |
+          set -euo pipefail
+          ./scripts/check_cargo_offline_policy.sh --worktree
+          ./scripts/check_cargo_offline_policy_test.sh
 
       - name: Workflow script refs summary path guard regression
         run: |
@@ -609,3 +631,10 @@ jobs:
           name: quick-gate-summary
           path: run/quick-gate/*.json
           if-no-files-found: warn
+
+      - name: Verify Cargo offline inputs remained unchanged
+        if: always()
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_cargo_offline_unchanged.sh \
+            --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}"

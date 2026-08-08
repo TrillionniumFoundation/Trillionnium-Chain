@@ -23,6 +23,9 @@ on:
       - "trillionnium/scripts/consensus/**"
       - "scripts/ci/check_legacy_harness_freeze.sh"
       - "scripts/ci/install_cargo_deny.sh"
+      - "scripts/ci/check_preprovisioned_rust_toolchain.sh"
+      - "scripts/ci/check_cargo_offline_ready.sh"
+      - "scripts/ci/check_cargo_offline_unchanged.sh"
       - "web4-frontend/**"
   push:
     branches: [main]
@@ -47,6 +50,9 @@ on:
       - "trillionnium/scripts/consensus/**"
       - "scripts/ci/check_legacy_harness_freeze.sh"
       - "scripts/ci/install_cargo_deny.sh"
+      - "scripts/ci/check_preprovisioned_rust_toolchain.sh"
+      - "scripts/ci/check_cargo_offline_ready.sh"
+      - "scripts/ci/check_cargo_offline_unchanged.sh"
       - "web4-frontend/**"
 
 permissions:
@@ -63,25 +69,53 @@ jobs:
           github.event.pull_request.head.repo.full_name == github.repository)))
     runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
     timeout-minutes: 30
+    env:
+      TRNM_CARGO_OFFLINE_POLICY: "cargo-deny"
+      CARGO_NET_OFFLINE: "true"
+      CARGO_CACHE_AUTO_CLEAN_FREQUENCY: "never"
+      NPM_CONFIG_CACHE: ${{ runner.temp }}/npm-cache
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
-      - uses: dtolnay/rust-toolchain@4cda84d5c5c54efe2404f9d843567869ab1699d4
-        with:
-          toolchain: 1.95.0
-      - name: Install checksum-pinned cargo-deny
+      - name: Verify runner-provisioned Rust toolchain
         run: |
-          ./scripts/ci/install_cargo_deny.sh "$RUNNER_TEMP/trnm-tools"
-          printf '%s\n' "$RUNNER_TEMP/trnm-tools" >> "$GITHUB_PATH"
-      - name: Check all Rust dependency policies
+          set -euo pipefail
+          ./scripts/ci/check_preprovisioned_rust_toolchain.sh \
+            --toolchain 1.95.0
+
+      - name: Verify Cargo offline cache readiness
         run: |
-          cargo deny --manifest-path trillionnium/Cargo.toml check
-          cargo deny --manifest-path contracts/Cargo.toml check
-          cargo deny --manifest-path trillionnium/fuzz/Cargo.toml check
+          set -euo pipefail
+          ./scripts/ci/check_cargo_offline_ready.sh \
+            --toolchain 1.95.0 \
+            --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}" \
+            trillionnium/Cargo.toml:trillionnium/Cargo.lock \
+            contracts/Cargo.toml:contracts/Cargo.lock \
+            trillionnium/fuzz/Cargo.toml:trillionnium/fuzz/Cargo.lock
+
+      - name: Verify runner-provisioned cargo-deny
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_preprovisioned_cargo_deny.sh
+
+      - name: Run frozen cargo-deny policy checks
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_cargo_deny_offline.sh \
+            trillionnium/Cargo.toml \
+            contracts/Cargo.toml \
+            trillionnium/fuzz/Cargo.toml
       - name: Check frontend dependency advisories
         working-directory: web4-frontend
         run: npm audit --package-lock-only --audit-level=high
       - name: Enforce frozen legacy binary surfaces
         run: bash ./scripts/ci/check_legacy_harness_freeze.sh
+
+      - name: Verify Cargo offline inputs remained unchanged
+        if: always()
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_cargo_offline_unchanged.sh \
+            --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}"
 
   cometbft-four-validator:
     if: >-
@@ -98,12 +132,25 @@ jobs:
       COMETBFT_SHA256: "736592aea2e077a4bb934ed26b0ee670462ae3d8a37670e2d268dea33304bc52"
       CARGO_INCREMENTAL: "0"
       CARGO_TERM_COLOR: never
+      TRNM_CARGO_OFFLINE_POLICY: "required"
+      CARGO_NET_OFFLINE: "true"
+      CARGO_CACHE_AUTO_CLEAN_FREQUENCY: "never"
 
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
-      - uses: dtolnay/rust-toolchain@4cda84d5c5c54efe2404f9d843567869ab1699d4
-        with:
-          toolchain: 1.95.0
+      - name: Verify runner-provisioned Rust toolchain
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_preprovisioned_rust_toolchain.sh \
+            --toolchain 1.95.0
+
+      - name: Verify Cargo offline cache readiness
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_cargo_offline_ready.sh \
+            --toolchain 1.95.0 \
+            --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}" \
+            trillionnium/Cargo.toml:trillionnium/Cargo.lock
 
       - name: Install checksum-pinned CometBFT
         run: |
@@ -186,6 +233,13 @@ jobs:
           if-no-files-found: warn
           retention-days: 14
 
+      - name: Verify Cargo offline inputs remained unchanged
+        if: always()
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_cargo_offline_unchanged.sh \
+            --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}"
+
   cometbft-partition-matrix:
     if: >-
       github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
@@ -209,12 +263,25 @@ jobs:
       TRNM_COMETBFT_APP_CONFIG_SCHEMA: trnm_cometbft_app_config_v1
       TRNM_COMETBFT_GENESIS_SCHEMA: trnm_cometbft_genesis_v2
       TRNM_COMETBFT_VALIDATOR_GOVERNANCE_SCHEMA: trnm_validator_governance_v1
+      TRNM_CARGO_OFFLINE_POLICY: "required"
+      CARGO_NET_OFFLINE: "true"
+      CARGO_CACHE_AUTO_CLEAN_FREQUENCY: "never"
 
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
-      - uses: dtolnay/rust-toolchain@4cda84d5c5c54efe2404f9d843567869ab1699d4
-        with:
-          toolchain: 1.95.0
+      - name: Verify runner-provisioned Rust toolchain
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_preprovisioned_rust_toolchain.sh \
+            --toolchain 1.95.0
+
+      - name: Verify Cargo offline cache readiness
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_cargo_offline_ready.sh \
+            --toolchain 1.95.0 \
+            --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}" \
+            trillionnium/Cargo.toml:trillionnium/Cargo.lock
 
       - name: Install checksum-pinned CometBFT
         run: |
@@ -260,3 +327,10 @@ jobs:
             ${{ runner.temp }}/trnm-comet-partition-${{ matrix.case }}-${{ github.run_id }}-${{ github.run_attempt }}/node*/config/genesis.json
           if-no-files-found: warn
           retention-days: 14
+
+      - name: Verify Cargo offline inputs remained unchanged
+        if: always()
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_cargo_offline_unchanged.sh \
+            --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}"

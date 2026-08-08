@@ -13,6 +13,9 @@ on:
       - 'scripts/v2/x2_settlement_contract_gate.sh'
       - 'scripts/v2/i2_token_lifecycle_gate.sh'
       - 'scripts/v2/product_layer_smoke.sh'
+      - 'scripts/ci/check_preprovisioned_rust_toolchain.sh'
+      - 'scripts/ci/check_cargo_offline_ready.sh'
+      - 'scripts/ci/check_cargo_offline_unchanged.sh'
       - 'examples/sdk-js/**'
       - 'trillionnium/crates/trnm-rpc/src/**'
       - 'trillionnium/crates/trnm-rpc/tests/**'
@@ -59,13 +62,26 @@ jobs:
       HOMEBREW_NO_AUTO_UPDATE: "1"
       CI: "true"
       UMASK: "022"
+      TRNM_CARGO_OFFLINE_POLICY: "required"
+      CARGO_NET_OFFLINE: "true"
+      CARGO_CACHE_AUTO_CLEAN_FREQUENCY: "never"
 
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
 
-      - uses: dtolnay/rust-toolchain@4cda84d5c5c54efe2404f9d843567869ab1699d4
-        with:
-          toolchain: 1.95.0
+      - name: Verify runner-provisioned Rust toolchain
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_preprovisioned_rust_toolchain.sh \
+            --toolchain 1.95.0
+
+      - name: Verify Cargo offline cache readiness
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_cargo_offline_ready.sh \
+            --toolchain 1.95.0 \
+            --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}" \
+            trillionnium/Cargo.toml:trillionnium/Cargo.lock
 
       - name: Verify runner-provisioned jq
         run: |
@@ -79,7 +95,6 @@ jobs:
       - name: Run P1 integration gate (blocking)
         run: |
           set -euo pipefail
-          export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
           RUN_DIR="run/p1-integration-gate/${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" ./scripts/v2/run_p1_integration_gate.sh
 
       - name: Summarize integration gate result
@@ -132,3 +147,10 @@ jobs:
           path: |
             ${{ steps.p1-summary.outputs.p1_summary_json }}
           if-no-files-found: error
+
+      - name: Verify Cargo offline inputs remained unchanged
+        if: always()
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_cargo_offline_unchanged.sh \
+            --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}"

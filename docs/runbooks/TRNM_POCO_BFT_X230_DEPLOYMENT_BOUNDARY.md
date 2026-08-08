@@ -1,7 +1,7 @@
 # TRNM PoCO-BFT X230 Deployment Boundary
 
 Status: binding for PoCO-BFT v0 development and validation
-Last verified: 2026-08-04
+Last verified: 2026-08-08
 
 ## Purpose
 
@@ -43,10 +43,70 @@ The terms **MUST**, **MUST NOT**, **SHOULD**, and **MAY** are normative.
    actor, and same-repository pull-request provenance before runner allocation;
    scheduled default-branch jobs are the only actor exception.
 8. The single runner executes one job at a time. Job timeouts MUST cover an
-   X230 cold cache (including pinned toolchain acquisition and clean-checkout
-   Rust compilation) rather than inherit GitHub-hosted runner timings. Longer
+   X230 clean checkout (including pinned toolchain/cache verification and Rust
+   compilation) rather than inherit GitHub-hosted runner timings. Longer
    bounded timeouts do not relax any test assertion; first-run wall times are
    reviewed before later tightening.
+
+### Self-hosted CI dependency boundary
+
+All 16 jobs that execute Cargo, cargo-deny, or cargo-fuzz MUST set
+`CARGO_NET_OFFLINE=true` and `CARGO_CACHE_AUTO_CLEAN_FREQUENCY=never`. The two
+Node-only jobs are explicitly classified `not-applicable`; a workflow-level
+offline setting is forbidden because it would erase that job boundary. Every
+Cargo job first verifies its preprovisioned Rust toolchain, then invokes
+`scripts/ci/check_cargo_offline_ready.sh` with every exact
+`Cargo.toml:Cargo.lock` root it will consume. The guard verifies the root-owned,
+read-only `$CARGO_HOME/trnm-chain-offline-cache-v2.sha256` stamp, whose only
+accepted line format is `sha256<two spaces>repo-relative-lock`; proves each
+tracked clean lock resolves with all-target `cargo fetch --locked --offline`
+(the target flag is deliberately omitted because cargo-deny resolves the full
+locked graph, including non-Linux target dependencies); verifies the selected
+toolchain host is `x86_64-unknown-linux-gnu`; snapshots all tracked
+`Cargo.toml` hashes and lock
+hash/device/inode/mode evidence under `$RUNNER_TEMP`; and makes the active locks
+non-writable for the Cargo interval. The job's final explicit `if: always()`
+step invokes `check_cargo_offline_unchanged.sh`, verifies the stamp, manifests,
+locks, inode identities, and Git state, then restores the checkout lock modes.
+A missing package, stamp mismatch, changed manifest/lock, or missing final state
+is a fail-closed provisioning error. There is no online fallback.
+
+Rust `1.95.0` is bound to rustc commit
+`59807616e1fa2540724bfbac14d7976d7e4a3860`; the fuzz jobs use
+`nightly-2026-07-27` at rustc commit
+`dc3f85158a955a87a6e4363af1fbe9cf2d063cce`. CI MUST verify those installed
+trees with `check_preprovisioned_rust_toolchain.sh`; it MUST NOT invoke
+`dtolnay/rust-toolchain`, `rustup install`, or `rustup update`. cargo-deny
+`0.20.2` is preprovisioned with binary SHA-256
+`b329e25933d01c36dd7c47d84ea5716694f9b7caf53a5003d45674703a8ed54a`, and
+cargo-fuzz `0.13.2` with SHA-256
+`e915260ced1c90e460153583597cb05efb8f72df489491682f5762710cd0b2ef`.
+Their repository installers remain auditable host-provisioning sources but are
+never called by a CI job. cargo-deny always runs with `--frozen` against the
+root-owned, read-only RustSec database at commit
+`1237bbe09d2701e14e6593a630fbaf28928df712`; CI verifies that commit and a
+clean database tree before use. The advisory database is therefore another
+pinned offline input, not authorized network traffic.
+Its frozen tree is `ab125d2529cff71167188bf27b5deceaa4a86994`.
+
+The active registry cache is provisioned from a fresh credential-free
+`CARGO_HOME` using all five tracked locks without a target filter. Its archive
+is checksum-verified before extraction. `/home/trnm-ci` itself is the trusted
+root-owned mode-0755 anchor, so the job identity cannot rename or replace the
+root-owned mode-0555 `.cargo` or `.rustup` authority trees. Registry
+directories, package sources, toolchains, binaries, RustSec data, and the stamp
+remain root-owned and read-only to `trnm-ci`; only Cargo's three
+version-confirmed cache-coordination/usage files and the precreated RustSec
+`advisory-dbs/db.lock` are job-writable. The runner installation and its
+configuration are root-owned and read-only; only the runner `_work` and `_diag`
+subdirectories are writable by `trnm-ci`. Node package and Playwright caches are
+similarly redirected to `$RUNNER_TEMP`, rather than creating writable authority
+under the runner home. Cargo auto-clean is disabled so an offline job never
+attempts to garbage-collect the root-owned cache. Superseded caches, partial
+downloads, toolchains, service drop-ins, and their checksum evidence are moved
+to dated backups rather than deleted. The runner service uses
+`KillMode=control-group` with a bounded stop timeout so cancelling maintenance
+cannot leave job, Cargo, or rustup processes outside the service lifecycle.
 
 No deployment is authorized merely by this document. Starting, stopping, or
 replacing a service remains an explicit deployment action.
@@ -55,7 +115,8 @@ replacing a service remains an explicit deployment action.
 
 Deployment does not depend on a mutable source checkout or compiler under
 `/srv/trillionnium-chain`. The separately isolated CI runner may check out
-source and install pinned user-scoped test toolchains under its dedicated home.
+source and consume its root-provisioned, read-only test toolchains under the
+dedicated runner home.
 Release artifacts promoted into the deployment root MUST still be immutable
 inputs with the provenance and integrity records below.
 
@@ -208,13 +269,31 @@ The following was verified read-only on 2026-08-04 through ordinary SSH using
 - Git 2.43.0 is installed.
 - Docker 29.1.3 is installed; its daemon is reachable, uses `overlayfs`, and
   the operator account has Docker-group access.
-- Rust and Cargo are not installed. This is expected under the deployment
-  boundary and is not a blocker for prebuilt binaries or container archives.
+- Rust and Cargo are not installed for the operator or deployment identity.
+  The isolated `trnm-ci` runner has separately root-provisioned, read-only
+  toolchains and caches; they are not deployment inputs.
 - The Tailscale peer is online, while ordinary OpenSSH is the verified login
   path. Tailscale SSH was not advertised as a target capability.
-- No Trillionnium Chain checkout or canonical deployment root exists yet.
+- No operator/deployment Trillionnium Chain checkout or canonical deployment
+  root exists yet. The isolated runner checkout under `/home/trnm-ci` is not a
+  deployable source tree.
 - No matching TRNM/Trillionnium Docker container or systemd service exists
   yet. The X230 is a clean deployment target, not an already deployed node.
 
 These resource figures are a baseline, not permanent capacity guarantees.
 Preflight MUST measure them again before every multi-node or soak run.
+
+The CI boundary was revalidated on 2026-08-09 after runner hardening and the v2
+all-target cache installation:
+
+- runner `p4-x230` was `online`, idle, and listening with the exact labels
+  `self-hosted`, `Linux`, `X64`, `x230`, and `trillionnium-chain`;
+- the runner program/configuration manifest was identical before and after
+  service start, with only `_work` and `_diag` writable by `trnm-ci`;
+- the v2 cache archive SHA-256 was
+  `a9db7d02b7c5438587dbdc18215dad3acac90855c2293b2be7150ab11532543f`
+  and its content-manifest SHA-256 was
+  `83ecf8a8207783cbc8e0b2407b8984de21c8200aedd1d6aa7505d646794b3027`;
+- the candidate guards completed stable all-target offline fetches for all five
+  lock roots, the dated-nightly fuzz-root fetch, all three frozen cargo-deny
+  manifests, and both unchanged checks without modifying the checkout.

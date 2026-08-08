@@ -45,22 +45,33 @@ jobs:
       PYTHONIOENCODING: "UTF-8"
       CI: "true"
       SOURCE_DATE_EPOCH: "1704067200"
+      TRNM_CARGO_OFFLINE_POLICY: "required"
+      CARGO_NET_OFFLINE: "true"
+      CARGO_CACHE_AUTO_CLEAN_FREQUENCY: "never"
     timeout-minutes: 180
 
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
 
-      - name: Setup Rust toolchain
-        uses: dtolnay/rust-toolchain@4cda84d5c5c54efe2404f9d843567869ab1699d4
-        with:
-          toolchain: 1.95.0
+      - name: Verify runner-provisioned Rust toolchain
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_preprovisioned_rust_toolchain.sh \
+            --toolchain 1.95.0
+
+      - name: Verify Cargo offline cache readiness
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_cargo_offline_ready.sh \
+            --toolchain 1.95.0 \
+            --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}" \
+            trillionnium/Cargo.toml:trillionnium/Cargo.lock
 
       - name: Install GNU timeout
         run: timeout --version
 
       - name: Rust workspace tests
         run: |
-          export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
           export RUST_TEST_THREADS="${RUST_TEST_THREADS:-1}"
           cd trillionnium
           cargo test --workspace --locked
@@ -83,7 +94,6 @@ jobs:
       - name: Run parallel mode sanity (hard gate)
         run: |
           set -euo pipefail
-          export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
           cd trillionnium
           cargo run --locked -q -p trnm-node --features legacy-harness --bin trnm-sim -- \
             --config configs/node1.toml \
@@ -102,62 +112,53 @@ jobs:
       - name: Validate v1 event field freeze (hard gate)
         run: |
           set -euo pipefail
-          export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
           cd trillionnium
           MVP_MODE=prod ALLOW_MISSING_RESOLVE_EVENT=0 ./scripts/check_event_fields.sh
 
       - name: Validate PoUW timeout migration gates (hard gate)
         run: |
           set -euo pipefail
-          export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
           ./scripts/v2/pouw_commit_timeout_migration_test.sh
           ./scripts/v2/pouw_challenge_timeout_migration_test.sh
 
       - name: Validate challenge bond enforcement gate (hard gate)
         run: |
           set -euo pipefail
-          export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
           ./scripts/v2/challenge_bond_enforcement_test.sh
 
       - name: Validate parallel flaky streak (hard gate)
         run: |
           set -euo pipefail
-          export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
           cd trillionnium
           RUNS=${PARALLEL_FLAKY_RUNS:-5} ./scripts/check_parallel_flaky.sh
 
       - name: Validate v1 event replay order (hard gate)
         run: |
           set -euo pipefail
-          export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
           cd trillionnium
           MVP_MODE=prod ALLOW_PARTIAL_EVENT_REPLAY=0 ./scripts/check_event_replay_smoke.sh
 
       - name: BFT 4-node consensus smoke (hard gate)
         run: |
           set -euo pipefail
-          export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
           cd trillionnium
           ./scripts/check_bft_4node_smoke.sh
 
       - name: BFT restart recovery (hard gate)
         run: |
           set -euo pipefail
-          export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
           cd trillionnium
           RUNS=${BFT_RECOVERY_RUNS:-20} ./scripts/check_bft_restart_recovery.sh
 
       - name: BFT message auth anti-replay (hard gate)
         run: |
           set -euo pipefail
-          export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
           cd trillionnium
           ./scripts/check_bft_message_auth.sh
 
       - name: BFT round-change + recovery liveness (hard gate)
         run: |
           set -euo pipefail
-          export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
           cd trillionnium
           ./scripts/check_bft_round_change.sh
 
@@ -166,7 +167,6 @@ jobs:
         id: consensus_fault_hard
         run: |
           set -euo pipefail
-          export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
           cd trillionnium
           hard_report="run/health/consensus-fault-matrix-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}-hard.txt"
           echo "hard_report=${hard_report}" >> "$GITHUB_OUTPUT"
@@ -191,7 +191,6 @@ jobs:
         continue-on-error: true
         run: |
           set -euo pipefail
-          export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
           cd trillionnium
           soft_report="run/health/consensus-fault-matrix-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}-soft.txt"
           echo "soft_report=${soft_report}" >> "$GITHUB_OUTPUT"
@@ -234,46 +233,39 @@ jobs:
       - name: Request fault injection (MVP hard gate)
         run: |
           set -euo pipefail
-          export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
           cd trillionnium
           ./scripts/run_request_fault_injection.sh
 
       - name: Request tx-hash binding (hard gate)
         run: |
           set -euo pipefail
-          export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
           cd trillionnium
           ./scripts/check_request_tx_binding.sh
 
       - name: Challenge reexec bundle smoke (hard gate)
         run: |
           set -euo pipefail
-          export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
           ./scripts/challenge_reexec_template_smoke.sh
 
       - name: Worker-agent hermetic receipt state-machine hard gate
         run: |
           set -euo pipefail
-          export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
           ./scripts/v2/run_worker_receipt_gates.sh
 
       - name: Active PoCO CLI cutover hard gate
         run: |
           set -euo pipefail
-          export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
           ./scripts/v2/worker_poco_cli_cutover_gate.sh
 
       - name: Worker-agent multi-agent onboarding smoke (hard gate)
         run: |
           set -euo pipefail
-          export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
           TRNM_TX_ADAPTER_MODE=mock SKIP_GATES=1 AGENTS=${WORKER_MULTI_AGENTS:-5} \
             ./scripts/v2/worker_agent_mining_onboard.sh
 
       - name: Executor spot-check regression gate (Original strategy)
         run: |
           set -euo pipefail
-          export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
           cd trillionnium
 
           OUT_DIR="run/bench"
@@ -314,25 +306,21 @@ jobs:
 
       - name: Run bench matrix
         run: |
-          export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
           cd trillionnium
           TXS=5000 ./scripts/run_bench_matrix.sh
 
       - name: Run mixed workload matrix
         run: |
-          export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
           cd trillionnium
           TXS=5000 ./scripts/run_bench_mixed_matrix.sh
 
       - name: Run executor strategy experiment (mixed, non-gate)
         run: |
-          export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
           cd trillionnium
           TXS=10000 KEYS=2000 READ_FANOUT=4 WRITE_EVERY=2 ./scripts/run_executor_strategy_experiment.sh
 
       - name: Run executor strategy experiment (hotspot, non-gate)
         run: |
-          export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
           cd trillionnium
           TXS=10000 KEYS=256 READ_FANOUT=4 WRITE_EVERY=1 ./scripts/run_executor_hotspot_experiment.sh
 
@@ -340,7 +328,6 @@ jobs:
         id: regression_matrix
         run: |
           set -euo pipefail
-          export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
           cd trillionnium
           TXS=${REGRESSION_MATRIX_TXS:-10000} ./scripts/run_bench_regression_matrix.sh
           regression_csv=$(ls -1t run/bench/bench-regression-matrix-*.csv 2>/dev/null | head -n 1 || true)
@@ -350,7 +337,6 @@ jobs:
         if: ${{ always() && steps.regression_matrix.outcome != 'skipped' }}
         run: |
           set -euo pipefail
-          export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
           cd trillionnium
 
           ./scripts/summarize_aggressive_profile.py
@@ -364,7 +350,6 @@ jobs:
       - name: Check aggressive regression ratio (hard gate)
         run: |
           set -euo pipefail
-          export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
           cd trillionnium
           MODE=${AGGRESSIVE_REGRESSION_MODE:-hard} \
           AGGRESSIVE_MAX_RATIO_CLASSIC=${AGGRESSIVE_MAX_RATIO_CLASSIC:-2.20} \
@@ -374,20 +359,17 @@ jobs:
 
       - name: Run auto-adaptive threshold sweep (non-gate)
         run: |
-          export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
           cd trillionnium
           TXS=5000 KEYS=1000 READ_FANOUT=4 WRITE_EVERY=2 ./scripts/run_auto_adaptive_threshold_sweep.sh
 
       - name: Build executor profiling summary
         run: |
-          export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
           cd trillionnium
           ./scripts/executor_profile_report.py
 
       - name: Enforce CI thresholds (warning + hard fail)
         run: |
           set -euo pipefail
-          export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
           cd trillionnium
 
           # stage2 observation window enabled
@@ -398,7 +380,6 @@ jobs:
         id: auto_adaptive_suggestion
         run: |
           set -euo pipefail
-          export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
           cd trillionnium
 
           ./scripts/suggest_auto_adaptive_thresholds.py
@@ -410,7 +391,6 @@ jobs:
         id: nightly_attribution
         run: |
           set -euo pipefail
-          export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
           cd trillionnium
 
           attribution_file="run/health/nightly-attribution-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}.txt"
@@ -423,7 +403,6 @@ jobs:
         id: render_nightly_summary
         run: |
           set -euo pipefail
-          export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
           cd trillionnium
 
           summary_out="run/health/nightly-summary-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}.md"
@@ -645,3 +624,10 @@ jobs:
             data/reexec-bundles/**
             data/worker-onboard/**
           if-no-files-found: warn
+
+      - name: Verify Cargo offline inputs remained unchanged
+        if: always()
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_cargo_offline_unchanged.sh \
+            --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}"

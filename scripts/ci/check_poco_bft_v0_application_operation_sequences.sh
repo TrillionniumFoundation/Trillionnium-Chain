@@ -9,7 +9,7 @@ node "$repo_root/scripts/ci/author_poco_bft_v0_application_sequences.mjs" \
 
 (
   cd "$repo_root/trillionnium"
-  cargo test -p trnm-consensus-app --lib \
+  cargo test --locked -p trnm-consensus-app --lib \
     poco_application_operation_sequences_final_vector_matches_rust_replay \
     -- --nocapture
 )

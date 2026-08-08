@@ -609,6 +609,9 @@ esac
 if ! bash "$root/scripts/check_ci_runner_policy.sh" "$ci_runner_policy_source"; then
   error "GitHub Actions jobs must use only the dedicated X230 self-hosted runner"
 fi
+if ! bash "$root/scripts/check_cargo_offline_policy.sh" "$ci_runner_policy_source"; then
+  error "GitHub Actions Cargo jobs must use the frozen X230 offline policy"
+fi
 
 printf 'warnings=%d errors=%d\n' "$warnings" "$errors"
 (( errors == 0 ))

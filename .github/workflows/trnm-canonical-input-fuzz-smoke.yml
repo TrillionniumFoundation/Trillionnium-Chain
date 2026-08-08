@@ -7,6 +7,9 @@ on:
       - "rust-toolchain.toml"
       - "scripts/ci/check_canonical_fuzz_smoke.sh"
       - "scripts/ci/install_cargo_fuzz.sh"
+      - "scripts/ci/check_preprovisioned_rust_toolchain.sh"
+      - "scripts/ci/check_cargo_offline_ready.sh"
+      - "scripts/ci/check_cargo_offline_unchanged.sh"
       - "trillionnium/Cargo.lock"
       - "trillionnium/Cargo.toml"
       - "trillionnium/crates/trnm-finality-types/**"
@@ -20,6 +23,9 @@ on:
       - "rust-toolchain.toml"
       - "scripts/ci/check_canonical_fuzz_smoke.sh"
       - "scripts/ci/install_cargo_fuzz.sh"
+      - "scripts/ci/check_preprovisioned_rust_toolchain.sh"
+      - "scripts/ci/check_cargo_offline_ready.sh"
+      - "scripts/ci/check_cargo_offline_unchanged.sh"
       - "trillionnium/Cargo.lock"
       - "trillionnium/Cargo.toml"
       - "trillionnium/crates/trnm-finality-types/**"
@@ -43,15 +49,31 @@ jobs:
           github.event.pull_request.head.repo.full_name == github.repository)))
     runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
     timeout-minutes: 45
+    env:
+      TRNM_CARGO_OFFLINE_POLICY: "cargo-fuzz"
+      CARGO_NET_OFFLINE: "true"
+      CARGO_CACHE_AUTO_CLEAN_FREQUENCY: "never"
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
-      - uses: dtolnay/rust-toolchain@4cda84d5c5c54efe2404f9d843567869ab1699d4
-        with:
-          toolchain: nightly-2026-07-27
-      - name: Install checksum- and lock-pinned cargo-fuzz runner
+      - name: Verify runner-provisioned Rust toolchain
         run: |
-          ./scripts/ci/install_cargo_fuzz.sh "$RUNNER_TEMP/trnm-cargo-fuzz"
-          printf '%s\n' "$RUNNER_TEMP/trnm-cargo-fuzz/bin" >> "$GITHUB_PATH"
+          set -euo pipefail
+          ./scripts/ci/check_preprovisioned_rust_toolchain.sh \
+            --toolchain nightly-2026-07-27
+
+      - name: Verify Cargo offline cache readiness
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_cargo_offline_ready.sh \
+            --toolchain nightly-2026-07-27 \
+            --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}" \
+            trillionnium/fuzz/Cargo.toml:trillionnium/fuzz/Cargo.lock
+
+      - name: Verify runner-provisioned cargo-fuzz
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_preprovisioned_cargo_fuzz.sh
+
       - name: Run bounded three-target smoke
         env:
           TRNM_FUZZ_SMOKE_SECONDS: "15"
@@ -64,3 +86,10 @@ jobs:
           path: trillionnium/fuzz/artifacts/**
           if-no-files-found: ignore
           retention-days: 14
+
+      - name: Verify Cargo offline inputs remained unchanged
+        if: always()
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_cargo_offline_unchanged.sh \
+            --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}"
