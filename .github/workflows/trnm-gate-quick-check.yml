@@ -33,7 +33,14 @@ permissions:
 
 jobs:
   shell-static-checks:
-    runs-on: ubuntu-latest
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      (github.event_name == 'schedule' ||
+        (github.actor == 'ProfAlexQI' &&
+         github.triggering_actor == 'ProfAlexQI' &&
+         (github.event_name != 'pull_request' ||
+          github.event.pull_request.head.repo.full_name == github.repository)))
+    runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
     env:
       TZ: UTC
       LANG: C.UTF-8
@@ -100,43 +107,25 @@ jobs:
       # Strip gzip header filename/timestamp for deterministic compressed
       # fixtures produced during shell/python regression probes.
       GZIP: "-n"
-      # Avoid sporadic apt interactive prompts on runner image/package drift.
-      DEBIAN_FRONTEND: noninteractive
-      # Prevent apt-listchanges from opening pager/prompts when package metadata
-      # changes on runner refreshes, which can otherwise hang shellcheck install.
-      APT_LISTCHANGES_FRONTEND: none
-      # Disable apt-listbugs interactive prompts on Debian-family runners when
-      # package transitions introduce RC bug notices during shellcheck install.
-      APT_LISTBUGS_FRONTEND: none
       # Stabilize created file permissions across runner/image defaults so
       # replay artifacts and git diffs keep deterministic mode bits.
       UMASK: "022"
     # This workflow runs dozens of regression scripts; 10 minutes can truncate
     # coverage and hide late-stage failures. Keep enough headroom for full sweep.
-    timeout-minutes: 45
+    timeout-minutes: 60
 
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
 
-      - name: Install shellcheck
+      - uses: dtolnay/rust-toolchain@4cda84d5c5c54efe2404f9d843567869ab1699d4
+        with:
+          toolchain: 1.95.0
+
+      - name: Verify runner-provisioned shellcheck
         run: |
           set -euo pipefail
-          retry() {
-            local attempts="$1"; shift
-            local n=1
-            until "$@"; do
-              if [ "$n" -ge "$attempts" ]; then
-                echo "Command failed after ${attempts} attempts: $*" >&2
-                return 1
-              fi
-              n=$((n+1))
-              sleep 2
-            done
-          }
-          # Keep network-level retries slightly higher than outer retry loop to
-          # absorb transient mirror hiccups without changing gate semantics.
-          retry 3 sudo apt-get -o DPkg::Lock::Timeout=60 -o Acquire::Retries=5 -o Acquire::http::Timeout=30 -o Acquire::https::Timeout=30 -o Dpkg::Use-Pty=0 -o APT::Color=0 update
-          retry 3 sudo apt-get -o DPkg::Lock::Timeout=60 -o Acquire::Retries=5 -o Acquire::http::Timeout=30 -o Acquire::https::Timeout=30 -o Dpkg::Use-Pty=0 -o APT::Color=0 install -y --no-install-recommends shellcheck
+          command -v shellcheck >/dev/null 2>&1
+          shellcheck --version
 
       - name: Quick shell gate (bash -n + shellcheck)
         run: |
@@ -188,6 +177,11 @@ jobs:
           WORKFLOW_SCRIPT_REF_STRICT=1 \
           WORKFLOW_SCRIPT_REF_SUMMARY_PATH=run/quick-gate/workflow-script-refs-summary.json \
           ./scripts/validate_workflow_script_refs.sh
+
+      - name: Enforce X230 runner and trusted-provenance policy
+        run: |
+          ./scripts/check_ci_runner_policy.sh --worktree
+          ./scripts/check_ci_runner_policy_test.sh
 
       - name: Workflow script refs summary path guard regression
         run: |
@@ -257,7 +251,7 @@ jobs:
         run: |
           ./scripts/v2/quick_gate_non_directory_target_guard_test.sh
 
-      - name: Quick gate shellcheck install deterministic apt guard regression
+      - name: Quick gate immutable shellcheck prerequisite guard regression
         run: |
           ./scripts/v2/trnm_gate_quick_check_shellcheck_install_deterministic_apt_guard_test.sh
 

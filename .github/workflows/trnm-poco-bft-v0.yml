@@ -85,8 +85,15 @@ env:
 jobs:
   vectors-schema-proto:
     name: Frozen vectors, schemas, and protobuf projection
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      (github.event_name == 'schedule' ||
+        (github.actor == 'ProfAlexQI' &&
+         github.triggering_actor == 'ProfAlexQI' &&
+         (github.event_name != 'pull_request' ||
+          github.event.pull_request.head.repo.full_name == github.repository)))
+    runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
@@ -154,16 +161,21 @@ jobs:
         working-directory: trillionnium-chain
         run: |
           set -euo pipefail
-          if ! command -v rg >/dev/null 2>&1; then
-            sudo apt-get update -qq
-            sudo apt-get install -y --no-install-recommends ripgrep
-          fi
+          command -v rg >/dev/null 2>&1
+          rg --version
           bash ./scripts/project-preflight.sh --audit
 
   rust:
     name: Rust tests, Clippy, and formatting
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      (github.event_name == 'schedule' ||
+        (github.actor == 'ProfAlexQI' &&
+         github.triggering_actor == 'ProfAlexQI' &&
+         (github.event_name != 'pull_request' ||
+          github.event.pull_request.head.repo.full_name == github.repository)))
+    runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
@@ -215,8 +227,15 @@ jobs:
 
   formal:
     name: Quint invariants, witnesses, and retained mutants
-    runs-on: ubuntu-latest
-    timeout-minutes: 30
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      (github.event_name == 'schedule' ||
+        (github.actor == 'ProfAlexQI' &&
+         github.triggering_actor == 'ProfAlexQI' &&
+         (github.event_name != 'pull_request' ||
+          github.event.pull_request.head.repo.full_name == github.repository)))
+    runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
@@ -237,8 +256,15 @@ jobs:
 
   release-artifacts:
     name: Release library artifact build
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      (github.event_name == 'schedule' ||
+        (github.actor == 'ProfAlexQI' &&
+         github.triggering_actor == 'ProfAlexQI' &&
+         (github.event_name != 'pull_request' ||
+          github.event.pull_request.head.repo.full_name == github.repository)))
+    runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
@@ -285,8 +311,15 @@ jobs:
 
   dependency-policy:
     name: Cargo dependency policy
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      (github.event_name == 'schedule' ||
+        (github.actor == 'ProfAlexQI' &&
+         github.triggering_actor == 'ProfAlexQI' &&
+         (github.event_name != 'pull_request' ||
+          github.event.pull_request.head.repo.full_name == github.repository)))
+    runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
@@ -311,8 +344,15 @@ jobs:
 
   fuzz-smoke:
     name: Bounded canonical-input fuzz smoke
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      (github.event_name == 'schedule' ||
+        (github.actor == 'ProfAlexQI' &&
+         github.triggering_actor == 'ProfAlexQI' &&
+         (github.event_name != 'pull_request' ||
+          github.event.pull_request.head.repo.full_name == github.repository)))
+    runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:

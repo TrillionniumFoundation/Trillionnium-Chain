@@ -44,7 +44,7 @@ required_lines=(
   'CI: "true"'
   'UMASK: "022"'
   'SOURCE_DATE_EPOCH: "1704067200"'
-  'timeout-minutes: 45'
+  'timeout-minutes: 120'
   'export RUST_TEST_THREADS="${RUST_TEST_THREADS:-1}"'
 )
 

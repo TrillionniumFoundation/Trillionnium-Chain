@@ -29,15 +29,35 @@ The terms **MUST**, **MUST NOT**, **SHOULD**, and **MAY** are normative.
 6. A public or multi-region test MAY contain machines other than the X230, but
    its deployment control, operator actions, and evidence collection MUST run
    from or through the X230. The local development host remains service-free.
+7. Repository remote CI MUST run on the dedicated X230 GitHub Actions runner
+   selected by `self-hosted`, `Linux`, `X64`, `x230`, and
+   `trillionnium-chain`. GitHub-hosted or other paid runners are not
+   authorized. The runner MUST use a dedicated unprivileged service identity
+   with no `sudo`, Docker group, SSH login material, deployment credentials, or
+   access to `/srv/trillionnium-chain` and operator-private homes. Its checkout
+   and tool caches MUST remain under that dedicated identity's home directory
+   and MUST NOT be treated as deployable release provenance. Workflows MUST
+   fail closed on missing preprovisioned operating-system tools rather than
+   install packages with host privileges. Every self-hosted job MUST also bind
+   the canonical private repository, the trusted initiating and triggering
+   actor, and same-repository pull-request provenance before runner allocation;
+   scheduled default-branch jobs are the only actor exception.
+8. The single runner executes one job at a time. Job timeouts MUST cover an
+   X230 cold cache (including pinned toolchain acquisition and clean-checkout
+   Rust compilation) rather than inherit GitHub-hosted runner timings. Longer
+   bounded timeouts do not relax any test assertion; first-run wall times are
+   reviewed before later tightening.
 
 No deployment is authorized merely by this document. Starting, stopping, or
 replacing a service remains an explicit deployment action.
 
 ## Artifact flow and integrity
 
-The X230 does not require a Rust compiler or a source checkout. Release
-artifacts MUST be built and tested locally, then transferred as immutable
-inputs.
+Deployment does not depend on a mutable source checkout or compiler under
+`/srv/trillionnium-chain`. The separately isolated CI runner may check out
+source and install pinned user-scoped test toolchains under its dedicated home.
+Release artifacts promoted into the deployment root MUST still be immutable
+inputs with the provenance and integrity records below.
 
 Each transfer MUST follow this sequence:
 

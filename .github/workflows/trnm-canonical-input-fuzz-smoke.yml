@@ -34,8 +34,15 @@ permissions:
 jobs:
   bounded-smoke:
     name: Bounded public-input fuzz smoke (not a campaign)
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      (github.event_name == 'schedule' ||
+        (github.actor == 'ProfAlexQI' &&
+         github.triggering_actor == 'ProfAlexQI' &&
+         (github.event_name != 'pull_request' ||
+          github.event.pull_request.head.repo.full_name == github.repository)))
+    runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
       - uses: dtolnay/rust-toolchain@4cda84d5c5c54efe2404f9d843567869ab1699d4

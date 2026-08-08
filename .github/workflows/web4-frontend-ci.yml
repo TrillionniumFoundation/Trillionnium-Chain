@@ -21,8 +21,15 @@ concurrency:
 
 jobs:
   gates:
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      (github.event_name == 'schedule' ||
+        (github.actor == 'ProfAlexQI' &&
+         github.triggering_actor == 'ProfAlexQI' &&
+         (github.event_name != 'pull_request' ||
+          github.event.pull_request.head.repo.full_name == github.repository)))
+    runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
+    timeout-minutes: 45
     env:
       # Keep locale/time hashing deterministic for frontend snapshots/log assertions.
       TZ: UTC
@@ -55,7 +62,7 @@ jobs:
         run: npm ci
 
       - name: Install pinned Playwright Chromium
-        run: npx playwright install --with-deps chromium
+        run: npx playwright install chromium
 
       - name: Run CI checks (enforce e2e)
         env:

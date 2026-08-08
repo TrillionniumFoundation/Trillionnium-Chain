@@ -41,8 +41,15 @@ concurrency:
 
 jobs:
   phasea-gate:
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      (github.event_name == 'schedule' ||
+        (github.actor == 'ProfAlexQI' &&
+         github.triggering_actor == 'ProfAlexQI' &&
+         (github.event_name != 'pull_request' ||
+          github.event.pull_request.head.repo.full_name == github.repository)))
+    runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
+    timeout-minutes: 45
     env:
       # Keep locale/time behavior deterministic across re-runs for soak evidence,
       # grep/sed assertions, and artifact diffability.

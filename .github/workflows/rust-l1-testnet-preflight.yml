@@ -16,7 +16,14 @@ concurrency:
 
 jobs:
   preflight:
-    runs-on: macos-latest
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      (github.event_name == 'schedule' ||
+        (github.actor == 'ProfAlexQI' &&
+         github.triggering_actor == 'ProfAlexQI' &&
+         (github.event_name != 'pull_request' ||
+          github.event.pull_request.head.repo.full_name == github.repository)))
+    runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
     env:
       TZ: UTC
       LANG: C.UTF-8
@@ -39,7 +46,7 @@ jobs:
       CI: "true"
       SOURCE_DATE_EPOCH: "1704067200"
       RUST_TEST_THREADS: "1"
-    timeout-minutes: 60
+    timeout-minutes: 120
 
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262

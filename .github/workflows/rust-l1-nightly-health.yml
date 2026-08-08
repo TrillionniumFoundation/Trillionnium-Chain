@@ -20,7 +20,14 @@ concurrency:
 
 jobs:
   rust-l1-health:
-    runs-on: macos-latest
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      (github.event_name == 'schedule' ||
+        (github.actor == 'ProfAlexQI' &&
+         github.triggering_actor == 'ProfAlexQI' &&
+         (github.event_name != 'pull_request' ||
+          github.event.pull_request.head.repo.full_name == github.repository)))
+    runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
     env:
       TZ: UTC
       LANG: C.UTF-8
@@ -38,7 +45,7 @@ jobs:
       PYTHONIOENCODING: "UTF-8"
       CI: "true"
       SOURCE_DATE_EPOCH: "1704067200"
-    timeout-minutes: 45
+    timeout-minutes: 180
 
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
@@ -49,7 +56,7 @@ jobs:
           toolchain: 1.95.0
 
       - name: Install GNU timeout
-        run: brew install coreutils
+        run: timeout --version
 
       - name: Rust workspace tests
         run: |
@@ -62,10 +69,15 @@ jobs:
         run: |
           set -euo pipefail
           cd trillionnium
+          cleanup_devnet() {
+            ./scripts/devnet_down.sh || true
+          }
+          trap cleanup_devnet EXIT INT TERM
           ./scripts/devnet_up.sh
           # allow initial cargo startup + block production on CI runners
           sleep ${DEVNET_AUDIT_WAIT_SECONDS:-12}
-          ./scripts/devnet_down.sh || true
+          cleanup_devnet
+          trap - EXIT INT TERM
           ./scripts/audit_state_roots.sh
 
       - name: Run parallel mode sanity (hard gate)

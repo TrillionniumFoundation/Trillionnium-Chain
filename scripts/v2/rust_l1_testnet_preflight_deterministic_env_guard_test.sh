@@ -33,7 +33,7 @@ required_lines=(
   'CI: "true"'
   'SOURCE_DATE_EPOCH: "1704067200"'
   'RUST_TEST_THREADS: "1"'
-  'timeout-minutes: 60'
+  'timeout-minutes: 120'
 )
 
 for line in "${required_lines[@]}"; do

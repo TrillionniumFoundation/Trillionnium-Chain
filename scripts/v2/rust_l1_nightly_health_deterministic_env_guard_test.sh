@@ -26,7 +26,7 @@ required_lines=(
   'PYTHONIOENCODING: "UTF-8"' 
   'CI: "true"'
   'SOURCE_DATE_EPOCH: "1704067200"'
-  'timeout-minutes: 45'
+  'timeout-minutes: 180'
   'export RUST_TEST_THREADS="${RUST_TEST_THREADS:-1}"'
 )
 

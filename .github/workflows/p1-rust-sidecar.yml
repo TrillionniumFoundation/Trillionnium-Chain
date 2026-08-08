@@ -3,8 +3,8 @@ name: p1-rust-sidecar
 on:
   workflow_dispatch:
   # Intentionally do not run on pull_request: this job executes repository code on
-  # a self-hosted runner with local chain access, so only trusted main/workflow_dispatch
-  # contexts may invoke it.
+  # the trusted X230 runner with local chain access, so only trusted
+  # main/workflow_dispatch contexts may invoke it.
   push:
     branches: [main]
     paths:
@@ -27,10 +27,16 @@ concurrency:
 
 jobs:
   p1-with-rust-sidecar:
-    # Requires a self-hosted runner with local Trillionnium dev chain environment.
-    if: github.event_name != 'workflow_dispatch' || github.ref == 'refs/heads/main'
-    runs-on: [self-hosted, macOS]
-    timeout-minutes: 45
+    # Requires the repository-owned X230 runner and local Trillionnium dev chain.
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      github.actor == 'ProfAlexQI' &&
+      github.triggering_actor == 'ProfAlexQI' &&
+      (github.event_name != 'pull_request' ||
+       github.event.pull_request.head.repo.full_name == github.repository) &&
+      (github.event_name != 'workflow_dispatch' || github.ref == 'refs/heads/main')
+    runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
+    timeout-minutes: 90
     env:
       TZ: UTC
       LANG: C.UTF-8
@@ -57,9 +63,13 @@ jobs:
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
 
-      - name: Ensure jq
+      - uses: dtolnay/rust-toolchain@4cda84d5c5c54efe2404f9d843567869ab1699d4
+        with:
+          toolchain: 1.95.0
+
+      - name: Verify runner-provisioned jq
         run: |
-          command -v jq >/dev/null 2>&1 || brew install jq
+          command -v jq >/dev/null 2>&1
           jq --version
 
       - name: Preflight - chain RPC must be reachable
