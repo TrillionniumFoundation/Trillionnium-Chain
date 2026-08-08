@@ -4655,24 +4655,26 @@ fn apply_accept_certificate_v0(
 
     let tuple_identity = consumption_tuple_identity(body);
     let tuple_change = change_for_kind(&changes, PocoSnapshotEntryKindV0::UniqueConsumptionTuple)?;
-    ensure!(
-        tuple_change.expected_value.is_none()
-            && tuple_change.next_identity.as_deref() == Some(tuple_identity.as_slice()),
-        "consumption tuple is not a new exact certificate tuple"
-    );
+    if tuple_change.expected_value.is_some() {
+        return Err(protocol_reject());
+    }
+    if tuple_change.next_identity.as_deref() != Some(tuple_identity.as_slice()) {
+        return Err(signed_semantic());
+    }
     validate_tuple_acceptance_authority_v0(
         tuple_change
             .next_fact
             .as_ref()
-            .context("certificate operation lacks exact tuple semantic fact")?,
+            .ok_or_else(signed_semantic)?,
         certificate_id,
         context.target_height.get(),
-    )?;
+    )
+    .map_err(|_| signed_semantic())?;
     let tuple_key: [u8; 32] = tuple_change
         .logical_key
         .as_slice()
         .try_into()
-        .context("consumption tuple logical key is not Hash32")?;
+        .map_err(|_| signed_semantic())?;
 
     let meter_id_hex = hex::encode(body.meter_id());
     let meter_index = overlay
@@ -4681,56 +4683,71 @@ fn apply_accept_certificate_v0(
         .binary_search_by(|item| {
             (&item.meter_id_hex, item.meter_version).cmp(&(&meter_id_hex, body.meter_version()))
         })
-        .map_err(|_| anyhow::anyhow!("certificate meter policy is not authenticated"))?;
+        .map_err(|_| authenticated_overlay())?;
     let meter_policy = overlay.authority.meter_policies[meter_index].clone();
-    ensure!(
-        meter_policy.active_from_height <= body.billing_start_height().get()
-            && meter_policy.active_from_height <= context.target_height.get()
-            && meter_policy.retired_at_height.is_none_or(|height| {
-                body.billing_end_height().get() < height && context.target_height.get() < height
-            }),
-        "certificate meter is retired or not yet active"
-    );
-    ensure!(
-        exact_opaque_hex(&meter_policy.task_id_hex)? == body.task_id(),
-        "certificate task is outside meter policy"
-    );
+    if meter_policy.active_from_height > body.billing_start_height().get()
+        || meter_policy.active_from_height > context.target_height.get()
+        || meter_policy.retired_at_height.is_some_and(|height| {
+            body.billing_end_height().get() >= height || context.target_height.get() >= height
+        })
+    {
+        return Err(protocol_reject());
+    }
+    let meter_task =
+        exact_opaque_hex(&meter_policy.task_id_hex).map_err(|_| authenticated_overlay())?;
+    if meter_task.as_slice() != body.task_id() {
+        return Err(protocol_reject());
+    }
     if let Some(expected_output) = &meter_policy.output_commitment_hex {
-        ensure!(
-            exact_hash32_hex(expected_output)? == *body.output_commitment(),
-            "certificate output is outside meter policy"
-        );
+        let expected_output =
+            exact_hash32_hex(expected_output).map_err(|_| authenticated_overlay())?;
+        if expected_output != *body.output_commitment() {
+            return Err(protocol_reject());
+        }
     }
     let meter_semantic_identity = meter_identity(body.meter_id(), body.meter_version());
     let meter_parts = source_parts_for_identity(
         overlay,
         PocoSnapshotEntryKindV0::MeterDefinition,
         &meter_semantic_identity,
-    )?;
+    )
+    .map_err(|_| authenticated_overlay())?;
     match meter_parts.fact {
         SemanticFactV0::MeterDefinition {
             unit_scale,
             active_from,
             retired_at,
-        } => ensure!(
-            unit_scale == meter_policy.unit_scale.get()?
-                && active_from == meter_policy.active_from_height
-                && retired_at == meter_policy.retired_at_height,
-            "meter policy and authenticated meter semantic fact diverge"
-        ),
-        _ => bail!("meter lookup returned wrong semantic fact"),
+        } => {
+            let authority_scale = meter_policy
+                .unit_scale
+                .get()
+                .map_err(|_| authenticated_overlay())?;
+            if unit_scale != authority_scale
+                || active_from != meter_policy.active_from_height
+                || retired_at != meter_policy.retired_at_height
+            {
+                return Err(authenticated_overlay());
+            }
+        }
+        _ => return Err(authenticated_overlay()),
     }
-    ensure!(
-        body.consumed_units() <= meter_policy.per_certificate_cap.get()?,
-        "certificate exceeds per-certificate meter cap"
-    );
-    ensure!(
-        body.consumed_units() <= context.active_parameters.per_certificate_unit_cap(),
-        "certificate exceeds active parameter per-certificate cap"
-    );
+    let meter_cap = meter_policy
+        .per_certificate_cap
+        .get()
+        .map_err(|_| authenticated_overlay())?;
+    if body.consumed_units() > meter_cap
+        || body.consumed_units() > context.active_parameters.per_certificate_unit_cap()
+    {
+        return Err(protocol_reject());
+    }
     body.consumed_units()
-        .checked_mul(meter_policy.unit_scale.get()?)
-        .context("meter scaled-unit arithmetic overflow")?;
+        .checked_mul(
+            meter_policy
+                .unit_scale
+                .get()
+                .map_err(|_| authenticated_overlay())?,
+        )
+        .ok_or_else(protocol_reject)?;
 
     let settlement_change = change_for_kind(&changes, PocoSnapshotEntryKindV0::Settlement)?;
     ensure!(

@@ -705,8 +705,11 @@ the first acceptance execution segment now separates signed certificate/units,
 cryptographic proof, key-window, and authenticated reservation/key companion
 failures; nonce and later companion joins remain open;
 the acceptance nonce join now separates signed next value, protocol advance/
-slot limits, and authenticated semantic/watermark divergence; meter and later
-joins remain open;
+slot limits, and authenticated semantic/watermark divergence;
+the acceptance tuple/meter join now separates signed tuple drift, duplicate/
+window/task/output/cap rejection, and authenticated meter policy/semantic
+companion corruption; settlement, measurement, relationship, provider, and
+usage-counter joins remain open;
 unrefined leaf failures conservatively remain authenticated-overlay invariants
 without string matching. Success retains the open snapshot, decoded owner, and unsealed PoCO
 overlay or scheduled lifecycle. PoCO leaf-reason refinement, write sealing,

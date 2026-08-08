@@ -451,8 +451,13 @@ an earlier phase.
   now typed too: signed next identity/value mismatch is
   `SemanticTransition`, non-advancing nonce or exhausted per-key provider slots
   is `ProtocolWindowOrCap`, and authenticated semantic/watermark presence,
-  logical-key, or value divergence is `AuthenticatedOverlay`. Meter and later
-  joins remain separate.
+  logical-key, or value divergence is `AuthenticatedOverlay`. The tuple/meter
+  join is now typed as well: signed tuple identity/fact/key drift is
+  `SemanticTransition`; duplicate tuple, meter activity/output/task/cap, and
+  unit-scaling rejection is `ProtocolWindowOrCap`; missing, malformed, or
+  divergent authenticated meter policy/semantic companions are
+  `AuthenticatedOverlay`. Settlement, measurement, relationship, provider,
+  and usage-counter joins remain separate.
   Leaf errors not yet assigned a narrower reason remain conservatively typed
   as an authenticated-overlay invariant. Success keeps the exact decoded owner plus
   the still-open snapshot and unsealed family state. These attempts do not yet
