@@ -1285,8 +1285,10 @@ epoch prune, and Core transition remain open.
    The nonce semantic/provider-watermark join is now also typed. The unique
    tuple and meter-policy/semantic join now separates signed tuple drift,
    deterministic meter window/task/output/cap rejection, and authenticated
-   meter companion corruption without string matching. Settlement,
-   measurement, relationship, provider, and usage-counter joins remain open.
+   meter companion corruption without string matching. The settlement and
+   measurement join now types signed next-state/evidence drift, premature
+   consumption, and authenticated funded-settlement/reservation corruption.
+   Relationship, provider, and usage-counter joins remain open.
    Leaf-reason completion remains a hard
    dependency before terminal failure mapping. The success carrier still owns the open
    snapshot and unsealed overlay/scheduled lifecycle. It does not yet seal

@@ -456,8 +456,11 @@ an earlier phase.
   `SemanticTransition`; duplicate tuple, meter activity/output/task/cap, and
   unit-scaling rejection is `ProtocolWindowOrCap`; missing, malformed, or
   divergent authenticated meter policy/semantic companions are
-  `AuthenticatedOverlay`. Settlement, measurement, relationship, provider,
-  and usage-counter joins remain separate.
+  `AuthenticatedOverlay`. The settlement/measurement join now separates
+  signed next settlement/evidence drift as `SemanticTransition`, premature
+  settlement consumption as `ProtocolWindowOrCap`, and authenticated funded-
+  settlement/reservation divergence as `AuthenticatedOverlay`. Relationship,
+  provider, and usage-counter joins remain separate.
   Leaf errors not yet assigned a narrower reason remain conservatively typed
   as an authenticated-overlay invariant. Success keeps the exact decoded owner plus
   the still-open snapshot and unsealed family state. These attempts do not yet

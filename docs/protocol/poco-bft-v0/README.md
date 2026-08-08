@@ -708,8 +708,11 @@ the acceptance nonce join now separates signed next value, protocol advance/
 slot limits, and authenticated semantic/watermark divergence;
 the acceptance tuple/meter join now separates signed tuple drift, duplicate/
 window/task/output/cap rejection, and authenticated meter policy/semantic
-companion corruption; settlement, measurement, relationship, provider, and
-usage-counter joins remain open;
+companion corruption;
+the acceptance settlement/measurement join now separates signed next-state/
+evidence drift, premature consumption, and authenticated funded-settlement/
+reservation corruption; relationship, provider, and usage-counter joins remain
+open;
 unrefined leaf failures conservatively remain authenticated-overlay invariants
 without string matching. Success retains the open snapshot, decoded owner, and unsealed PoCO
 overlay or scheduled lifecycle. PoCO leaf-reason refinement, write sealing,

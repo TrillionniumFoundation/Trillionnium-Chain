@@ -4750,50 +4750,52 @@ fn apply_accept_certificate_v0(
         .ok_or_else(protocol_reject)?;
 
     let settlement_change = change_for_kind(&changes, PocoSnapshotEntryKindV0::Settlement)?;
-    ensure!(
-        settlement_change.expected_identity.as_deref() == Some(certificate_id.as_slice())
-            && settlement_change.next_identity.as_deref() == Some(certificate_id.as_slice()),
-        "certificate settlement identity mismatch"
-    );
-    match (
-        settlement_change.expected_fact.as_ref(),
-        settlement_change.next_fact.as_ref(),
-    ) {
-        (
-            Some(SemanticFactV0::Settlement {
-                commitment: old_commitment,
-                state: SettlementStateV0::FinalizedFundedUnused,
-                finalized_height: old_height,
-            }),
-            Some(SemanticFactV0::Settlement {
-                commitment: new_commitment,
-                state: SettlementStateV0::Consumed,
-                finalized_height: new_height,
-            }),
-        ) => ensure!(
-            old_commitment == new_commitment
-                && *old_commitment == *body.settlement_commitment()
-                && hex::encode(old_commitment) == reservation.settlement_commitment_hex
-                && *old_height == reservation.finalized_height
-                && new_height == old_height
-                && *old_height <= context.target_height.get(),
-            "certificate settlement authority mismatch"
-        ),
-        _ => bail!("certificate settlement is not funded-unused to consumed"),
+    if settlement_change.expected_identity.as_deref() != Some(certificate_id.as_slice()) {
+        return Err(authenticated_overlay());
+    }
+    if settlement_change.next_identity.as_deref() != Some(certificate_id.as_slice()) {
+        return Err(signed_semantic());
+    }
+    let (old_commitment, old_height) = match settlement_change.expected_fact.as_ref() {
+        Some(SemanticFactV0::Settlement {
+            commitment,
+            state: SettlementStateV0::FinalizedFundedUnused,
+            finalized_height,
+        }) => (commitment, finalized_height),
+        _ => return Err(authenticated_overlay()),
+    };
+    if hex::encode(old_commitment) != reservation.settlement_commitment_hex
+        || *old_height != reservation.finalized_height
+    {
+        return Err(authenticated_overlay());
+    }
+    if *old_height > context.target_height.get() {
+        return Err(protocol_reject());
+    }
+    match settlement_change.next_fact.as_ref() {
+        Some(SemanticFactV0::Settlement {
+            commitment: new_commitment,
+            state: SettlementStateV0::Consumed,
+            finalized_height: new_height,
+        }) if old_commitment == new_commitment
+            && *new_commitment == *body.settlement_commitment()
+            && new_height == old_height => {}
+        _ => return Err(signed_semantic()),
     }
 
     let measurement_change =
         change_for_kind(&changes, PocoSnapshotEntryKindV0::MeasurementEvidence)?;
-    ensure!(
-        measurement_change.expected_value.is_none()
-            && measurement_change.next_identity.as_deref() == Some(certificate_id.as_slice()),
-        "measurement semantic identity mismatch"
-    );
+    if measurement_change.expected_value.is_some()
+        || measurement_change.next_identity.as_deref() != Some(certificate_id.as_slice())
+    {
+        return Err(signed_semantic());
+    }
     validate_measurement_policy(
         meter_policy.evidence_policy,
         body.measurement_evidence_root().copied(),
         measurement_change.next_fact.as_ref(),
-    )?;
+    )
+    .map_err(|_| signed_semantic())?;
 
     let relationship_identity = joined_identity(&[provider, consumer, body.task_id()]);
     let relationship_parts = source_parts_for_identity(
