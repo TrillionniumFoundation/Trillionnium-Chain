@@ -127,6 +127,11 @@ sed -i '/^      CARGO_NET_OFFLINE: "true"$/a\      BASH_ENV: /tmp/attacker-env' 
 expect_fail bash-env-authority-override
 restore_fixture
 
+workflow="$repo/.github/workflows/trnm-cometbft-spike.yml"
+sed -i '/^      CARGO_NET_OFFLINE: "true"$/a\      NPM_CONFIG_CACHE: ${{ runner.temp }}/npm-cache' "$workflow"
+expect_fail runner-temp-cannot-be-used-at-job-scope
+restore_fixture
+
 workflow="$repo/.github/workflows/agent-user-phasea-gate.yml"
 sed -i '/Verify Cargo offline cache readiness/a\        shell: /tmp/attacker-shell {0}' "$workflow"
 expect_fail custom-shell-authority-override

@@ -294,7 +294,6 @@ jobs:
     timeout-minutes: 45
     env:
       TRNM_CARGO_OFFLINE_POLICY: "not-applicable"
-      NPM_CONFIG_CACHE: ${{ runner.temp }}/npm-cache
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
@@ -307,6 +306,8 @@ jobs:
 
       - name: Install lock-pinned Quint toolchain
         working-directory: trillionnium-chain/formal/quint/poco-bft-v0
+        env:
+          NPM_CONFIG_CACHE: ${{ runner.temp }}/npm-cache
         run: npm ci --ignore-scripts --no-audit --no-fund
 
       - name: Run bounded formal gate

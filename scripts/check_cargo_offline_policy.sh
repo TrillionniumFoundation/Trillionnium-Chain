@@ -368,6 +368,11 @@ for key in "${!class[@]}"; do
     error "$key is missing its direct job block"
     continue
   }
+  steps_start=$(grep -n '^    steps:[[:space:]]*$' "$block" | cut -d: -f1 | head -n1)
+  if [[ -n "$steps_start" ]] \
+    && head -n "$((steps_start - 1))" "$block" | grep -Fq '${{ runner.temp }}'; then
+    error "$key uses runner.temp before runner allocation; move it to step scope"
+  fi
 
   policy_class=${class[$key]}
   expected_marker="TRNM_CARGO_OFFLINE_POLICY: \"$policy_class\""

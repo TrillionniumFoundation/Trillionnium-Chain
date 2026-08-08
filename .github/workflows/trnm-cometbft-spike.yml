@@ -73,7 +73,6 @@ jobs:
       TRNM_CARGO_OFFLINE_POLICY: "cargo-deny"
       CARGO_NET_OFFLINE: "true"
       CARGO_CACHE_AUTO_CLEAN_FREQUENCY: "never"
-      NPM_CONFIG_CACHE: ${{ runner.temp }}/npm-cache
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
       - name: Verify runner-provisioned Rust toolchain
@@ -106,6 +105,8 @@ jobs:
             trillionnium/fuzz/Cargo.toml
       - name: Check frontend dependency advisories
         working-directory: web4-frontend
+        env:
+          NPM_CONFIG_CACHE: ${{ runner.temp }}/npm-cache
         run: npm audit --package-lock-only --audit-level=high
       - name: Enforce frozen legacy binary surfaces
         run: bash ./scripts/ci/check_legacy_harness_freeze.sh
