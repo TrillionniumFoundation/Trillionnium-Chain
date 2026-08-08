@@ -669,6 +669,9 @@ exhaustion is invariant. Nullifier classification distinguishes malformed
 count/family/id/encoding or proof-key shape from a correctly key-bound proof
 rejected by the authenticated root; both are deterministic, while authenticated
 accumulator-count exhaustion fails stop as a protocol-counter invariant;
+consumer-key authorize/revoke preserves nested typed failures, maps remaining
+signed shape/height/semantic faults to deterministic semantic rejection, and
+maps an authenticated negative key lookup to deterministic missing-fact;
 unrefined leaf failures conservatively remain authenticated-overlay invariants
 without string matching. Success retains the open snapshot, decoded owner, and unsealed PoCO
 overlay or scheduled lifecycle. PoCO leaf-reason refinement, write sealing,

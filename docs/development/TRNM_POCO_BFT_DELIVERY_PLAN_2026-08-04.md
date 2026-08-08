@@ -390,7 +390,11 @@ an earlier phase.
   `NullifierProof`; a correctly bound key whose non-membership proof does not
   verify against the authenticated root is the narrower deterministic
   `NullifierNonMembershipRootMismatch`; authenticated accumulator-count
-  exhaustion fails stop as `ProtocolCounterExhausted`. Leaf
+  exhaustion fails stop as `ProtocolCounterExhausted`.
+  Consumer-key authorization/revocation now preserves existing typed failures,
+  rejects untyped signed shape/height/semantic faults as `SemanticTransition`,
+  and treats an authenticated negative key lookup as deterministic
+  `MissingRequiredAuthorityFact`; no error diagnostic participates. Leaf
   errors not yet assigned a narrower reason remain conservatively typed as an
   authenticated-overlay invariant. Success keeps the exact decoded owner plus
   the still-open snapshot and unsealed family state. These attempts do not yet

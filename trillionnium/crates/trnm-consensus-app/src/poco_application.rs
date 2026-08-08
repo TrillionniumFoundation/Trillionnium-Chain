@@ -183,6 +183,20 @@ fn invariant_application_error_v0(reason: PocoApplicationInvariantV0) -> anyhow:
     anyhow::Error::new(PocoApplicationApplyFailureV0::Invariant(reason))
 }
 
+fn preserve_application_failure_or_deterministic_v0(
+    error: anyhow::Error,
+    fallback: PocoApplicationDeterministicInvalidV0,
+) -> anyhow::Error {
+    if error
+        .downcast_ref::<PocoApplicationApplyFailureV0>()
+        .is_some()
+    {
+        error
+    } else {
+        deterministic_application_error_v0(fallback)
+    }
+}
+
 /// Decimal-string u128.  JSON numbers are intentionally avoided so a Node
 /// consumer can reproduce the same value without IEEE-754 coercion.
 #[derive(Clone, Debug, Eq, Ord, PartialEq, PartialOrd, Serialize, Deserialize)]
@@ -3318,11 +3332,11 @@ fn apply_operation_v0(
         PocoApplicationOperationBodyV0::AcceptCertificate { .. }
             | PocoApplicationOperationBodyV0::FundSettlement { .. }
             | PocoApplicationOperationBodyV0::RegisterValidator { .. }
-    ) {
-        ensure!(
-            operation.nullifier_non_membership_checks.is_empty(),
-            "operation has unauthorized nullifier non-membership checks"
-        );
+    ) && !operation.nullifier_non_membership_checks.is_empty()
+    {
+        return Err(deterministic_application_error_v0(
+            PocoApplicationDeterministicInvalidV0::NullifierProof,
+        ));
     }
     let decision_preimage = decision_preimage_digest_v0(context, operation).map_err(|_| {
         invariant_application_error_v0(PocoApplicationInvariantV0::OperationReencode)
@@ -3344,7 +3358,13 @@ fn apply_operation_v0(
             public_key_hex,
             *active_from_height,
             decision_id_hex,
-        ),
+        )
+        .map_err(|error| {
+            preserve_application_failure_or_deterministic_v0(
+                error,
+                PocoApplicationDeterministicInvalidV0::SemanticTransition,
+            )
+        }),
         PocoApplicationOperationBodyV0::RevokeConsumerKey {
             consumer_id_hex,
             consumer_key_id_hex,
@@ -3363,7 +3383,13 @@ fn apply_operation_v0(
             *active_from_height,
             *revoked_at_height,
             decision_id_hex,
-        ),
+        )
+        .map_err(|error| {
+            preserve_application_failure_or_deterministic_v0(
+                error,
+                PocoApplicationDeterministicInvalidV0::SemanticTransition,
+            )
+        }),
         PocoApplicationOperationBodyV0::PruneRevokedConsumerKey {
             consumer_id_hex,
             consumer_key_id_hex,
@@ -3696,7 +3722,11 @@ fn apply_revoke_consumer_key_v0(
             )
                 .cmp(&(consumer_id_hex, consumer_key_id_hex))
         })
-        .map_err(|_| anyhow::anyhow!("consumer-key revocation lacks authority companion"))?;
+        .map_err(|_| {
+            deterministic_application_error_v0(
+                PocoApplicationDeterministicInvalidV0::MissingRequiredAuthorityFact,
+            )
+        })?;
     let key_authority = &overlay.authority.consumer_keys[authority_index];
     ensure!(
         key_authority.public_key_hex == public_key_hex
@@ -7704,6 +7734,101 @@ mod tests {
         assert!(block.overlay.mutations.is_empty());
         block.apply_decoded_exact(&raw, &decoded).unwrap();
         assert_eq!(block.operation_count(), 1);
+    }
+
+    #[test]
+    fn consumer_key_signed_shape_rejects_deterministically_without_mutation() {
+        let projection = genesis_projection();
+        let mut block =
+            PocoApplicationBlockOverlayV0::from_projection(context_at(2).unwrap(), &projection)
+                .unwrap();
+        let operation = PocoApplicationOperationV0 {
+            schema: POCO_APPLICATION_OPERATION_SCHEMA_V0.to_string(),
+            target_height: 2,
+            expected_state_revision: 1,
+            body: PocoApplicationOperationBodyV0::AuthorizeConsumerKey {
+                consumer_id_hex: "01".to_string(),
+                consumer_key_id_hex: "02".to_string(),
+                public_key_hex: "03".repeat(32),
+                active_from_height: 3,
+                decision_id_hex: "04".repeat(32),
+            },
+            semantic_changes: Vec::new(),
+            nullifier_non_membership_checks: Vec::new(),
+            nullifier_insertions: Vec::new(),
+        };
+        let raw = serde_json::to_vec(&operation).unwrap();
+
+        assert_eq!(
+            block.apply_decoded_exact(&raw, &operation),
+            Err(PocoApplicationApplyFailureV0::DeterministicallyInvalid(
+                PocoApplicationDeterministicInvalidV0::SemanticTransition,
+            )),
+        );
+        let mut unauthorized_proof = operation.clone();
+        unauthorized_proof.nullifier_non_membership_checks = vec![RawNullifierInsertionV0 {
+            family: PocoNullifierFamilyV0::ConsumerKeyDecision.code(),
+            identifier_hex: "05".repeat(32),
+            proof_hex: "06".repeat(crate::poco_nullifier::POCO_NULLIFIER_PROOF_ENCODED_BYTES_V0),
+        }];
+        let unauthorized_raw = serde_json::to_vec(&unauthorized_proof).unwrap();
+        assert_eq!(
+            block.apply_decoded_exact(&unauthorized_raw, &unauthorized_proof),
+            Err(PocoApplicationApplyFailureV0::DeterministicallyInvalid(
+                PocoApplicationDeterministicInvalidV0::NullifierProof,
+            )),
+        );
+        assert_eq!(block.operation_count(), 0);
+        assert!(block.overlay.operation_ids.is_empty());
+        assert!(block.overlay.mutations.is_empty());
+    }
+
+    #[test]
+    fn consumer_key_missing_authority_fact_rejects_deterministically_without_mutation() {
+        let projection = genesis_projection();
+        let mut block =
+            PocoApplicationBlockOverlayV0::from_projection(context_at(2).unwrap(), &projection)
+                .unwrap();
+        let mut operation = PocoApplicationOperationV0 {
+            schema: POCO_APPLICATION_OPERATION_SCHEMA_V0.to_string(),
+            target_height: 2,
+            expected_state_revision: 1,
+            body: PocoApplicationOperationBodyV0::RevokeConsumerKey {
+                consumer_id_hex: "01".to_string(),
+                consumer_key_id_hex: "02".to_string(),
+                public_key_hex: "03".repeat(32),
+                active_from_height: 1,
+                revoked_at_height: 2,
+                decision_id_hex: "00".repeat(32),
+            },
+            semantic_changes: Vec::new(),
+            nullifier_non_membership_checks: Vec::new(),
+            nullifier_insertions: Vec::new(),
+        };
+        let preimage = decision_preimage_digest_v0(&block.context, &operation).unwrap();
+        let decision_id = derived_decision_id_v0(preimage, b"revoke-consumer-key");
+        let PocoApplicationOperationBodyV0::RevokeConsumerKey {
+            decision_id_hex, ..
+        } = &mut operation.body
+        else {
+            unreachable!();
+        };
+        *decision_id_hex = hex::encode(decision_id);
+        assert_eq!(
+            decision_preimage_digest_v0(&block.context, &operation).unwrap(),
+            preimage,
+        );
+        let raw = serde_json::to_vec(&operation).unwrap();
+
+        assert_eq!(
+            block.apply_decoded_exact(&raw, &operation),
+            Err(PocoApplicationApplyFailureV0::DeterministicallyInvalid(
+                PocoApplicationDeterministicInvalidV0::MissingRequiredAuthorityFact,
+            )),
+        );
+        assert_eq!(block.operation_count(), 0);
+        assert!(block.overlay.operation_ids.is_empty());
+        assert!(block.overlay.mutations.is_empty());
     }
 
     #[test]

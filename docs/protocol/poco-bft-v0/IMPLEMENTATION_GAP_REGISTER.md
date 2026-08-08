@@ -1252,8 +1252,11 @@ epoch prune, and Core transition remain open.
    deterministic. Nullifier shape/key rejects and an exactly key-bound proof
    that fails its authenticated root check remain distinct deterministic
    reasons, while authenticated nullifier-count exhaustion is invariant;
-   counter/epoch/retention arithmetic exhaustion is likewise invariant,
-   so leaf-reason completion remains a hard
+   counter/epoch/retention arithmetic exhaustion is likewise invariant.
+   Consumer-key authorize/revoke signed-shape failures are now deterministic,
+   and a missing authenticated key companion is the distinct deterministic
+   missing-fact reason; existing typed failures pass through unchanged, so
+   leaf-reason completion remains a hard
    dependency before terminal failure mapping. The success carrier still owns the open
    snapshot and unsealed overlay/scheduled lifecycle. It does not yet seal
    writes, integrate successive family operations into the cursor, advance,
