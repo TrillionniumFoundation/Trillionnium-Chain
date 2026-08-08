@@ -460,7 +460,11 @@ an earlier phase.
   signed next settlement/evidence drift as `SemanticTransition`, premature
   settlement consumption as `ProtocolWindowOrCap`, and authenticated funded-
   settlement/reservation divergence as `AuthenticatedOverlay`. Relationship,
-  provider, and usage-counter joins remain separate.
+  provider, and usage-counter joins remain separate. The relationship/provider
+  join now preserves exact missing-fact rejection, maps unresolved/expired or
+  billing-outliving relationships to `ProtocolWindowOrCap`, and maps malformed
+  relationship/registration facts or registration-history companion drift to
+  `AuthenticatedOverlay`. Lifecycle and usage-counter joins remain separate.
   Leaf errors not yet assigned a narrower reason remain conservatively typed
   as an authenticated-overlay invariant. Success keeps the exact decoded owner plus
   the still-open snapshot and unsealed family state. These attempts do not yet

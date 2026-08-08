@@ -711,8 +711,11 @@ window/task/output/cap rejection, and authenticated meter policy/semantic
 companion corruption;
 the acceptance settlement/measurement join now separates signed next-state/
 evidence drift, premature consumption, and authenticated funded-settlement/
-reservation corruption; relationship, provider, and usage-counter joins remain
-open;
+reservation corruption;
+the acceptance relationship/provider join now preserves exact missing-fact
+rejection, separates unresolved/expired authority, and fails stop on malformed
+facts or registration-history companion drift; lifecycle and usage-counter
+joins remain open;
 unrefined leaf failures conservatively remain authenticated-overlay invariants
 without string matching. Success retains the open snapshot, decoded owner, and unsealed PoCO
 overlay or scheduled lifecycle. PoCO leaf-reason refinement, write sealing,

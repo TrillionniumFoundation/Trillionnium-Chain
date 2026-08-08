@@ -1288,7 +1288,10 @@ epoch prune, and Core transition remain open.
    meter companion corruption without string matching. The settlement and
    measurement join now types signed next-state/evidence drift, premature
    consumption, and authenticated funded-settlement/reservation corruption.
-   Relationship, provider, and usage-counter joins remain open.
+   The relationship/provider join now preserves exact authenticated negative-
+   fact rejection, types unresolved/expired authority as a protocol rejection,
+   and fails stop on malformed facts or registration-history companion drift.
+   Lifecycle and usage-counter joins remain open.
    Leaf-reason completion remains a hard
    dependency before terminal failure mapping. The success carrier still owns the open
    snapshot and unsealed overlay/scheduled lifecycle. It does not yet seal

@@ -4805,19 +4805,17 @@ fn apply_accept_certificate_v0(
     )?;
     let (relationship_class, relationship_expires_at) = match relationship_parts.fact {
         SemanticFactV0::RelationshipClassification { class, expires_at } => {
-            ensure!(
-                class != RelationshipClassV0::Unresolved
-                    && context.target_height.get() < expires_at,
-                "certificate relationship is unresolved or expired"
-            );
+            if class == RelationshipClassV0::Unresolved || context.target_height.get() >= expires_at
+            {
+                return Err(protocol_reject());
+            }
             (class, expires_at)
         }
-        _ => bail!("relationship lookup returned wrong semantic fact"),
+        _ => return Err(authenticated_overlay()),
     };
-    ensure!(
-        body.billing_end_height().get() < relationship_expires_at,
-        "certificate billing interval outlives relationship authority"
-    );
+    if body.billing_end_height().get() >= relationship_expires_at {
+        return Err(protocol_reject());
+    }
 
     let registration_parts = source_parts_for_identity(
         overlay,
@@ -4832,23 +4830,24 @@ fn apply_accept_certificate_v0(
                 proof_digest,
                 state: RegistrationStateV0::Active,
             } => (consensus_key, registration_nonce, proof_digest),
-            _ => bail!("certificate provider lacks an active validator registration"),
+            _ => return Err(authenticated_overlay()),
         };
     let history_index = overlay
         .authority
         .validator_registration_history
         .binary_search_by(|item| item.validator_id_hex.as_str().cmp(&provider_id_hex))
-        .map_err(|_| {
-            anyhow::anyhow!("certificate provider lacks registration history authority")
-        })?;
+        .map_err(|_| authenticated_overlay())?;
     let registration_history = &overlay.authority.validator_registration_history[history_index];
-    ensure!(
-        exact_hash32_hex(&registration_history.consensus_key_hex)? == registered_key
-            && registration_history.max_registration_nonce == registration_nonce
-            && exact_hash32_hex(&registration_history.current_proof_digest_hex)?
-                == registration_proof_digest,
-        "provider registration fact/history companion mismatch"
-    );
+    let authority_consensus_key = exact_hash32_hex(&registration_history.consensus_key_hex)
+        .map_err(|_| authenticated_overlay())?;
+    let authority_proof_digest = exact_hash32_hex(&registration_history.current_proof_digest_hex)
+        .map_err(|_| authenticated_overlay())?;
+    if authority_consensus_key != registered_key
+        || registration_history.max_registration_nonce != registration_nonce
+        || authority_proof_digest != registration_proof_digest
+    {
+        return Err(authenticated_overlay());
+    }
     let provider_registration_provenance = (
         registration_history.current_proof_digest_hex.clone(),
         registration_history.registration_decision_id_hex.clone(),
