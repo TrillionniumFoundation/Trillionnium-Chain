@@ -105,13 +105,47 @@ with reference values:
 21 < 28 <= 30
 ```
 
-A client may automatically advance from its trusted checkpoint only while the candidate target epoch satisfies:
+A client persists two logically separate checkpoints:
+
+1. the **verification cursor**, which is the highest durably accepted
+   finalized checkpoint; and
+2. the **weak-subjectivity anchor**, whose epoch and block ID were established
+   by the most recent explicit external trust event.
+
+Ordinary cryptographic verification may advance the cursor. It MUST NOT move
+the weak-subjectivity anchor, renew freshness, or restart the trusting-period
+calculation. A client may automatically advance only while:
 
 ```text
-target_epoch - trusted_checkpoint.epoch <= trusting_period_epochs
+anchor_epoch <= target_epoch
+target_epoch - anchor_epoch <= trusting_period_epochs
 ```
 
-using checked arithmetic. Each successfully verified finalized update may become the new trusted checkpoint and restart the epoch-distance calculation.
+using checked arithmetic.
+
+Before each automatic-update session, the embedding application MUST
+explicitly authorize freshness for the exact chain, genesis, anchor block, and
+anchor epoch using its configured independent trust sources. That
+authorization includes an externally observed canonical epoch satisfying:
+
+```text
+anchor_epoch <= target_epoch <= observed_canonical_epoch
+observed_canonical_epoch - anchor_epoch <= trusting_period_epochs
+```
+
+It applies only to that update session. An ordinary peer response, claimed
+tip, header timestamp, local wall-clock age, previously verified intermediate
+checkpoint, or self-signed set cannot establish or renew it. Without current
+authorization the verifier may parse and diagnose a proof, but it MUST fail
+closed before promoting the cursor or reporting a trusted update.
+
+A multi-epoch bundle is verified as the ordered sequence
+`e -> e + 1 -> ... -> target_epoch`; every intervening handoff is mandatory.
+Each link's old checkpoint and active configuration MUST equal the preceding
+link's verified output. Gaps, reordering, branches, or independently supplied
+sets are invalid. Every link is bounded against the unchanged
+weak-subjectivity anchor, not a rolling cursor, so individually short hops
+cannot wash an expired anchor into a fresh one.
 
 An operator or embedding application MUST also determine whether the canonical network has advanced beyond the trusted window while the client was offline. A stale client cannot safely infer that fact from an untrusted peer's claimed tip alone. Deployment profiles SHOULD use multiple independent current-epoch observations.
 
@@ -119,7 +153,9 @@ If the checkpoint is or may be stale, the client MUST fail closed and require an
 
 ## 6. Weak-subjectivity recovery
 
-Recovery is an external trust event, not ordinary protocol verification. A new checkpoint MUST be presented with:
+Recovery is an external trust event, not ordinary protocol verification. It is
+the only operation that may atomically replace both the verification cursor
+and weak-subjectivity anchor. A new checkpoint MUST be presented with:
 
 - exact chain ID and genesis hash;
 - finalized header, state root, complete active set, parameter hash, and finality proof;

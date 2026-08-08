@@ -86,9 +86,46 @@ Partitions may halt progress. They MUST NOT cause two correct validators to fina
 
 WAL replay may reconstruct non-safety operational state. It MUST NOT overwrite a newer sign journal, lock, `highQC`, epoch, or view. If durable records disagree or their ordering cannot be proven, the validator MUST stop signing and require operator recovery.
 
+A recovered caller with a stale or lower `current_view` has no signing
+authority. The independent node/signer journal MUST enforce the durable
+per-epoch `last_voted_view` watermark and reject every non-idempotent request
+at or below it, even when the caller's otherwise self-consistent snapshot is
+older.
+
 ### 6.5 Invalid execution and data withholding
 
-An honest validator MUST possess the entire block payload, deterministically execute it, and verify all committed roots before voting. A QC therefore attests that more than two thirds of active voting weight validated the payload under the assumptions. It is not a perpetual, general-purpose data-availability guarantee for historical clients; archival/erasure/availability mechanisms remain separate work.
+An honest validator MUST possess the entire block payload, deterministically
+execute it, and verify all committed roots before voting. The consensus/host
+boundary has exactly three payload-validation outcomes:
+
+- `Valid`: the complete canonical body reproduces `payload_root`, the parent
+  state is authenticated, execution uses the epoch-authorized runtime and
+  parameters, and every committed execution root matches;
+- `Unavailable`: validation cannot yet be completed, including a missing body,
+  a body supplied by one source that does not reproduce the header's
+  `payload_root`, missing authenticated parent state, or transient runtime or
+  storage I/O;
+- `DeterministicallyInvalid`: a complete canonical body reproduces
+  `payload_root`, the authenticated parent state and frozen runtime/parameters
+  are available, and deterministic execution either satisfies the frozen
+  whole-block-invalid predicate or produces a committed-root mismatch.
+
+`Unavailable` is retryable and source-scoped; it MUST NOT become a terminal
+negative fact about the header. An ordinary proposal found
+`DeterministicallyInvalid` before any valid QC, referenced-QC entry in a valid
+TC, or durable safety anchor names that block may be retained only in a bounded
+negative cache and receives no vote. If a terminal invalid result collides
+with such an authenticated or durable reference, or if correct local execution
+ever changes between terminal `Valid` and `DeterministicallyInvalid` for the
+same validation context, the node MUST durably record a safety halt before any
+dependent effect and fail stop. This conflict is diagnostic evidence of a
+broken execution/integration assumption, not `DoubleVoteEvidenceV0` and not by
+itself slashable evidence.
+
+A QC therefore attests that more than two thirds of active voting weight
+validated the payload under the assumptions. It is not a perpetual,
+general-purpose data-availability guarantee for historical clients;
+archival/erasure/availability mechanisms remain separate work.
 
 ### 6.6 Long-range and weak-subjectivity attacks
 

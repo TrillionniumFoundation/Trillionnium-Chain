@@ -2,7 +2,12 @@
 
 ## 1. Separation of logical schema and transport
 
-The v0 signed and hashed representation is frozen. The P2 transport container, stream framing, RPC schema, and P2P multiplexing are `UNDECIDED`.
+The v0 signed and hashed representation is frozen. The bounded protobuf body
+projection under `proto/trnm/poco/bft/v0` is the frozen v0 reference network
+container; protobuf bytes are never signing bytes. Authenticated session
+establishment, external stream framing, compression, RPC method layout, peer
+discovery, and P2P multiplexing remain P2 implementation choices and MUST NOT
+alter the decoded logical value or its limits.
 
 A transport may use Protobuf or another bounded binary container, but it MUST decode to exactly the frozen logical fields and MUST reconstruct the same canonical `CEV0` bytes before hashing or signature verification. Transport bytes themselves MUST NOT be signed unless they are byte-for-byte `CEV0`.
 
@@ -87,6 +92,9 @@ trnm.poco-bft.epoch-commitment.v0
 trnm.poco-bft.upgrade-plan.v0
 trnm.poco-bft.finality-proof.v0
 trnm.poco-bft.double-sign-evidence.v0
+trnm.poco-bft.ordered-leaf.v0
+trnm.poco-bft.ordered-node.v0
+trnm.poco-bft.ordered-root.v0
 trnm.poco.consumption-certificate.v0
 trnm.poco.consumption-certificate-id.v0
 ```
@@ -163,9 +171,464 @@ The block ID is:
 Digest("trnm.poco-bft.block.v0", BlockHeaderV0)
 ```
 
-The full block body contains the payload and evidence objects whose deterministic ordered Merkle roots match the header. The exact application transaction serialization is authenticated through `payload_root`; it remains governed by the runtime protocol, not redefined by this consensus envelope.
+The full block body contains the exact transaction-byte list and objective
+evidence objects whose ordered roots match the header. `state_root` remains the
+runtime/JMT authenticated-state root. The other three roots use the exact
+algorithm below; no legacy Merkle helper, JSON/protobuf serialization, or
+duplicate-last tree without a final leaf-count commitment is equivalent.
 
 The header does not include its justify QC. Instead, the proposal signature binds the block ID and the exact certificate digests, preventing a leader from moving the same header between incompatible justifications.
+
+### 6.1 Ordered payload, receipt, and evidence roots
+
+`OrderedRootKindV0` discriminants are:
+
+```text
+0 payload
+1 receipts
+2 evidence
+```
+
+For an item at zero-based index `i`, its leaf digest is:
+
+```text
+OrderedLeafV0 =
+    schema_version u16  // 0
+    root_kind      u8
+    index          u32
+    item           Bytes
+
+Digest("trnm.poco-bft.ordered-leaf.v0", OrderedLeafV0)
+```
+
+Leaves are paired left-to-right. At each layer, an odd final digest is paired
+with itself. `level = 0` is the first layer above the leaves and increments by
+one with checked `u32` arithmetic:
+
+```text
+OrderedNodeV0 =
+    schema_version u16  // 0
+    root_kind      u8
+    level          u32
+    left           Hash32
+    right          Hash32
+
+Digest("trnm.poco-bft.ordered-node.v0", OrderedNodeV0)
+```
+
+The final leaf or node is always wrapped by:
+
+```text
+OrderedRootV0 =
+    schema_version u16  // 0
+    root_kind      u8
+    item_count     u32
+    inner          Optional<Hash32>
+
+Digest("trnm.poco-bft.ordered-root.v0", OrderedRootV0)
+```
+
+An empty list uses `item_count = 0` and `inner = None`; a nonempty list uses
+its exact checked count and `Some(final_digest)`. The index in every leaf and
+the count in the final wrapper are both mandatory. In particular,
+`[a, b, c]` and `[a, b, c, c]` have different roots even though odd layers
+duplicate their rightmost digest. Counts, indices, levels, item lengths, and
+all allocation arithmetic MUST fit their frozen `u32` boundaries before work
+begins.
+
+The frozen empty roots are:
+
+```text
+payload   0165aeb0b26dc305d5d2a639f4d8ad56abd03fcf165af902d856ecf58eebced2
+receipts  b455563b0b1e6ce49c079d2ef14e20dbccb1168af66d245d7295c45fa0895156
+evidence  df2f0138177d79d16f277d2c45d5a9fdbe492daa75c2b28fb901f3450022b047
+```
+
+`application_payload` is the exact CEV0 `List<Bytes>` of transaction bytes in
+execution order. It MUST decode canonically with no trailing data; validators
+pass each raw item to the runtime without decode/re-encode before hashing.
+The zero-transaction payload is the four bytes `00 00 00 00`, not an absent or
+zero-length payload. `payload_root` is `OrderedRootV0(payload, tx_bytes)`.
+
+Execution produces exactly one receipt per transaction at the same index.
+`ExecutionReceiptCommitmentV0` has this exact CEV0 field order:
+
+```text
+schema_version       u16  // 0
+transaction_index    u32
+payload_leaf_hash    Hash32
+gas_used             u64
+fee_charged          u128
+events               List<ExecutionEventV0>
+```
+
+`payload_leaf_hash` is the exact ordered-leaf digest for the transaction at
+`transaction_index`. `ExecutionEventV0` is `kind: Bytes` followed by
+`attributes: List<(key: Bytes, value: Bytes)>`. Kind, keys, and values are the
+runtime strings' exact UTF-8 bytes. Event order is execution order;
+attributes are strictly increasing by raw key bytes with no duplicates.
+`receipts_root` is the receipts-kind ordered root over each exact receipt CEV0
+value. The CEV0 `List<Bytes>` containing all receipt values MUST itself be no
+larger than `max_block_bytes`; equality is accepted. Receipt bytes are derived
+by execution and are not a second peer-supplied transport authority.
+
+In protocol v0, a block's evidence list contains only exact
+`DoubleVoteEvidenceV0` CEV0 values. Values are strictly ordered by their
+recomputed evidence IDs with no duplicates; diagnostic proposal, timeout, or
+handoff evidence is inadmissible until a later freeze assigns its canonical
+ID schema. `evidence_root` is the evidence-kind ordered root over that list.
+
+### 6.2 Host execution-validation boundary
+
+The host result is local deterministic-core input, not a network object and
+not a new CEV0 or protobuf value. Its classification is nevertheless
+consensus-critical and has exactly these meanings:
+
+- `Valid` requires a complete canonical `application_payload` whose ordered
+  root equals the header's `payload_root`, an authenticated parent state whose
+  root equals the parent header's `state_root`, the exact runtime/protocol
+  version and parameters authorized for the epoch, successful deterministic
+  execution, and exact equality of the computed `state_root`, `receipts_root`,
+  and `evidence_root` with the header.
+- `Unavailable` covers a missing or incomplete body, non-canonical body bytes,
+  a source-supplied body whose ordered payload or evidence root differs from
+  the corresponding header commitment, a missing or unauthenticated parent
+  state, and transient runtime, database, or storage I/O. These facts identify
+  a missing dependency or an unusable source, not a terminal property of the
+  header. The node MUST permit bounded retry from another source.
+- `DeterministicallyInvalid` is permitted only after the complete canonical
+  body reproduces both its payload and evidence commitments, the parent state
+  is authenticated, the authorized runtime and parameters are fixed, and all
+  provenance and static invariants pass. It then means either that the frozen
+  runtime-specific predicate classifies the complete block as terminally
+  invalid, or that deterministic execution completes successfully but the
+  computed state root or receipts root differs from the header. There is no
+  deterministic evidence-root mismatch branch: source evidence-root mismatch
+  remains `Unavailable`.
+
+The production application stages exact `application_payload` decoding and
+root derivation within authenticated `max_consensus_message_bytes`; that bound
+keeps source parsing finite but is not a substitute for logical-block validity.
+Only after the payload and evidence are canonical and reproduce their header
+roots is the complete `logical_block_size_v0` compared with authenticated
+`max_block_bytes`; excess at that point is `DeterministicallyInvalid`.
+
+After body authorization, any root/hash computation failure or payload,
+evidence, static-commitment, `BlockId`, provenance, or other internal drift is
+an invariant/fail-stop condition. It MUST NOT be downgraded into either
+`Unavailable` or `DeterministicallyInvalid`.
+
+Transaction execution failure is not implicitly a failed receipt. A runtime
+profile may keep the block valid and commit a failed-transaction receipt only
+if that profile freezes the exact deterministic failure predicate, state
+transition, gas/fee accounting, events, and canonical receipt outcome. The
+current `ExecutionReceiptCommitmentV0` has no outcome/status field. The active
+Trillionnium v0 runtime profile therefore permits successful receipts only:
+
+- each of its 21 typed deterministic transaction rejects makes the complete
+  authenticated block `DeterministicallyInvalid` and produces no receipt,
+  mutation, nonce, fee, gas event, or other partial execution artifact;
+- each of its 7 typed authenticated-state or internal invariant faults requires
+  host fail-stop and MUST NOT be projected as a transaction reject;
+- missing body/parent/cutoff dependencies and transient runtime, database, or
+  storage failures remain `Unavailable` and MUST NOT be inferred from runtime
+  diagnostic text.
+
+The runtime taxonomy is exhaustive and opaque to callers, but that leaf policy
+does not itself authenticate the body, parent state, cutoff, runtime context or
+computed roots. The bounded Rust seam now reflects that provenance rule:
+`TryStateViewV0`/`try_execute_v0` preserves a typed state-read failure and
+returns an opaque real-attempt failure with no public constructor. Its
+module-private, still-unwired application adapter consumes the authenticated
+execution-input token into the real call and retains that same token in either
+result, so promotion cannot splice a second same-generation join. It does not
+terminalize a typed state failure; it promotes only the deterministic branch
+carried by that attempt. A successful call produces an applied attempt rather
+than `Valid`, and a
+separate exact roots-match capability must own that applied attempt before
+`Valid` can be formed.
+
+The bounded store slice now has a typed self-head reader plus an opaque runtime
+snapshot that owns one SQLite `Connection`. Inside one `BEGIN` transaction it
+validates configured bindings, canonical committed height and app hash, query
+floor, latest authenticated-root version, and equality of the head root with
+the app hash. Multiple object/non-membership reads therefore share one
+snapshot; an explicit typed `finish` ends it, and begin uses maintenance
+`try_lock` rather than waiting behind maintenance. Core now privately freezes
+the exact positive-height parent header in the payload-validation request, and
+the store consumes that capability to open only an exact committed-head
+height/root. Synthetic genesis is explicitly headerless; speculative/non-head
+parents are retryable source mismatch until a canonical overlay store exists.
+This is bounded validation-parent authority, not a general host/ABCI runtime-
+view adapter. The bounded production validation cursor owns a private fallible
+`prior delta -> exact authenticated snapshot` view, while legacy `load_object`
+continues to use its direct-read path and no ABCI outcome consumes that view.
+
+A separate legacy test-only inert regular-block traversal owns the exact compared
+header/body/configuration and that one parent-bound snapshot. Its only cursor
+derives raw outer transaction bytes, index, target height, and target
+`BlockId` from the retained body/header, in order; callers cannot inject an
+index or transaction. The same snapshot authenticates the validator-lifecycle
+record and physical singleton and joins its active projection to the retained
+native set. It yields a finished inert value only after the complete
+body was traversed and the snapshot finished successfully. A cursor
+classification is obtained only by explicitly finishing the consumed
+traversal, whose errors outrank both incomplete traversal and cursor rejection;
+Drop yields neither classification nor capability. From each exact outer byte string it now
+decodes `SignedCommandEnvelopeV1`; the consensus-app-specific helper applies
+dalek `verify_strict` plus the existing chain and
+header-time checks against the exact store-bound signer list, then decodes the
+exact inner payload as `CanonicalTxV1` and joins payload type, sender and nonce.
+The raw outer and inner bytes remain the committed facts; decoded values are
+not reserialized into authority. Signer-policy admission now exact-decodes the
+Ed25519 point and rejects weak keys. This tightening does not alter generic
+`verify_hex`, vote/QC languages, the live-node development oracle, or instantiate
+the PoCO `StrictEd25519Verifier` type; retained production history would require
+an explicit activation boundary.
+
+A distinct legacy test-only owning runtime session consumes that same exact joined
+input and snapshot. Its runtime `ExecutionContext` is derived internally from
+the retained header/envelope, transactions can only execute in body order, and
+the real `try_execute_v0` reads `session changes -> fixed parent snapshot`.
+Successful runtime receipts are translated to native receipt shape only. Their
+mutation sets are applied first to a cloned delta and accepted only after an
+exhaustive account/task/fee/monetary canonical key/type/value check plus
+unique-key, immutable-type, expected-version, and exact-successor checks.
+Task mutations additionally reuse the runtime's full status/field-group/
+version/height validator through a distinct opaque read-only failure type.
+Consequently a later transaction can see an earlier private delta, while a
+later cursor/runtime/state/receipt/mutation failure consumes the whole session
+and exposes neither earlier changes nor receipts. Both the successful and
+failed session require explicit snapshot finish; a finish error has priority
+over the pending cause.
+After a failed snapshot finishes, one opaque non-cloneable value still owns the
+exact block/configuration inputs, authenticated lifecycle, failed index, and
+decoded observation/transaction together with the hidden cause. It accepts no
+second input join and exposes no standalone cause.
+
+The successful legacy test-only path now plans post-state without reopening the
+database: it fully revalidates the fixed parent on the same SQLite transaction,
+encodes the complete private delta, and derives only the exact `parent + 1` JMT
+plan. Planning and completeness remain inert until explicit snapshot finish.
+The resulting whole value is then consumed by a comparator which reconstructs
+native receipts from the retained raw body and real runtime receipts, uses the
+hard-coded `StrictEd25519Verifier`, and exact-compares the four header roots,
+configuration, and `BlockId`. The planner is query-only, applies no writes, and
+the positive fixture independently authors its expected state root from an
+in-memory parent tree rather than asking the comparator for one. A same-path
+independent WAL writer test commits a competing sibling after the first
+runtime read and proves that later reads and planning stay on the original
+parent snapshot until explicit finish.
+
+This preceding legacy test-only session and its finished-plan/root-matched
+values are not wire objects or terminal authority. They have no production
+constructor, serialization, or conversion to a terminal execution outcome,
+`AuthorizedNativeCheckpointExecutionV0`, checkpoint, Core, or ABCI. A separate
+bounded production cursor below now supplies process-local planning and
+four-root comparison with the same non-authority boundary. JMT plan
+application/persistence, non-runtime dispatcher families, matched/mismatch
+terminal promotion, and host/Core/ABCI callback wiring remain open. The Core transport holder now
+matches the frozen proto projection exactly: one header, one complete
+`ApplicationPayloadV0` CEV0 value, and ordered complete evidence-object CEV0
+values. Core alone constructs an opaque validation request over that retained
+block and its exact positive-height parent. A narrow app carrier consumes that
+request, opens the exact committed parent AppHash/JMT snapshot, loads and proves
+the complete namespace-8 active validator set and parameters plus lifecycle on
+that same SQLite transaction, and joins their epoch/hashes to the header before
+staged exact-decoding of the payload under authenticated
+`max_consensus_message_bytes` and exact-decoding every evidence object. It
+binds both peer-body roots before strict Ed25519 evidence verification and the
+complete logical-block `max_block_bytes` classification. Source root mismatch
+remains `Unavailable`; canonical root-bound logical oversize is
+`DeterministicallyInvalid`. This carrier is process-local comparison authority, not a second
+transport/configuration language; it has no serialization, caller-supplied
+height/root/set/parameters, cache, or second connection. It grants no runtime,
+terminal-result, vote, finality, checkpoint, or ABCI authority.
+
+Before that admission succeeds, the exact Core request remains inside a
+private process-local owner. A host failure before snapshot begin returns that
+owner directly. Once a snapshot is open, source or body-admission failure can
+escape only after close and still owns the exact `ValidationId`, target block,
+and parent. It does not own an authorized body and cannot be recreated from a
+transported ID, generation, block, parent, or cause. If close fails, the typed
+snapshot failure replaces the pending source/invalid/invariant cause while the
+exact Core owner remains. These are ownership and error-precedence rules, not
+an added wire encoding or peer-visible failure object.
+
+The original Core-issued `PayloadValidationRequest` and every `Clone` descended
+from that object graph share one process-local Arc-backed atomic one-shot gate.
+Exactly one claimant in the graph can enter the owning validation path. A
+losing clone is suppressed/coalesced by the current private native-admission
+branch before snapshot open and before source, deterministic-invalid, or
+invariant classification; that branch emits neither a classification nor a
+callback for it. This is not a wire-visible result and not full-`ValidationId`
+process uniqueness. Independently started Cores from the same obligation-free
+durable state may accept the same ingress and materialize separate request/gate
+object graphs; public Core `Input` is not a capability callback. A different
+generation has an independent gate, while an old object graph remains
+suppressed after its one claim. The gate is not encoded on the wire and by
+itself makes no cross-instance, durable, or cross-restart exactly-once promise.
+
+The request also carries a Core-private binding to
+`PayloadValidationRouteV0::Proposal` or `PayloadValidationRouteV0::Synced`.
+Native admission consumes the entire Core `Effect` and verifies the outer
+`ValidatePayload`/`ValidateSyncedPayload` wrapper against that inner route
+before the object-graph claim or any host read. A wrapper splice is a local
+transport invariant, does not consume the correctly wrapped clone, and is not
+a duplicate, `Unavailable`, or `DeterministicallyInvalid` wire result. The
+route remains inside the owner across open/body/cursor/runtime/post-state/
+comparator/disposition; no naked bool or route is accepted as authority.
+
+Separately from application-store schema v5, Core `SafetyState` schema v5
+introduced a canonically ordered `DurablePayloadValidationObligationV0` before
+either validation effect may escape a `PersistSafetyState -> StorageAck`
+barrier. This cloneable persistence fact binds the Core-selected route, full
+`ValidationId`, exact `SignedProposalV0`, exact
+`PayloadValidationParentV0`, and `first_recorded_revision`; the live invariant
+also binds generation to that revision. It is not a wire object, terminal
+token, or callback capability. `StorageAck` reconstructs the request only from
+that record and its exact volatile proposal mirror. Core `SafetyState` schema
+v6 adds a separately canonically sorted
+`DurablePayloadValidationCompletionV0` keyed by `(route, full ValidationId)`.
+Every callback atomically replaces its exact obligation with the same-key
+completion before persistence. This cloneable local persistence fact retains
+all three results, complete `ValidatedBlockCommitmentsV0` for `Valid`, and
+`first_recorded_revision`; exact same-result replay is durably idempotent after
+restart. Opposite-route reuse, a source/owner splice, different results, or
+different `Valid` commitments is invariant or a typed integration conflict,
+never a replacement. `Unavailable` closes only that generation and does not
+poison a later generation for the same block. These records are distinct from
+the block-ID-level terminal payload facts, which retain cross-generation
+`Valid`/`DeterministicallyInvalid` semantics. Exact synced cancellation removes
+the obligation behind the cleanup barrier without inventing a callback
+completion. Safety halt clears obligations while retaining prior completions.
+There is no automatic completion eviction: registration reserves the future
+slot and `completions + obligations` is bounded by authenticated
+`max_observed_messages`. Complete signed-proposal durable size -- logical block
+plus exact certified-tail witness -- is bounded by authenticated
+`max_consensus_message_bytes`; aggregate obligation accounting additionally
+covers fixed route/ID/revision/parent facts and an optional exact parent header.
+
+Recovery validates schema-v6 obligations and completions and then rejects a
+non-empty obligation set with `InvalidRecovery`; it does not reissue pending
+validation. Safety-state schema v5 has no implicit migration. Completion-only
+recovery supplies exact-result suppression, but these local persistence rules
+establish no new transport, type-level callback capability, crash replay/
+liveness, host-delivery acknowledgement, or callback exactly-once protocol.
+
+Application-store schema v5 adds a process-local-host reservation journal in
+the same SQLite database; it is not a new wire type or peer authority. After
+wrapper/route congruence and the object-graph claim, and before any host/
+snapshot read, one `BEGIN IMMEDIATE` transaction reserves
+`(route, full ValidationId)`. A versioned, domain-separated fingerprint is
+computed directly over framed raw source material: route, complete ID, exact
+target header/application payload/ordered evidence, and exact parent source.
+It is only a congruence witness, never body-validity, execution, or terminal
+authority. A congruent existing row coalesces/suppresses an independently
+materialized duplicate; reuse of the full ID with a different route, source,
+target, or parent is a local invariant. The journal is capped at 65,536 rows,
+does not evict, and admits exact-duplicate coalescing even when full. A
+state-sync snapshot transactionally deletes its rows only from the temporary
+copy before checkpoint/VACUUM and verifies the exported copy is empty, leaving
+the source untouched. Nothing in this reservation encodes an evaluated
+artifact/result, callback outbox, acknowledgement, takeover lease, or
+process-wide callback exactly-once fact.
+
+The same process-local carrier may now borrow the canonical signer-policy
+preimage only from initialized `AppCore`, after its commitment matches store
+metadata and the authenticated lifecycle in that exact snapshot. Its
+sequential cursor selects the retained body index internally, strictly verifies
+the exact envelope, exact-decodes and validates the inner `CanonicalTxV1`,
+joins sender/nonce, and derives height, native `BlockId`, header time, signer
+id/role, and exact inner-byte length. The prepared transaction still owns the
+cursor and snapshot. It is not a second transaction/configuration transport and
+has no seek/repeat/skip, parts conversion, or caller-supplied
+tx/index/context/view. One consuming attempt executes the real fallible runtime
+over `prior delta -> that same snapshot`; only native-receipt conversion and
+atomic full-mutation staging may return the cursor at `index + 1`. Failures
+retain the exact authorized owner and stage facts until finish: decode close
+retains next index, private delta, and applied receipts, while runtime close
+retains failed index, exact outer/inner bytes, decoded transaction, and derived
+context after intentionally destroying prior delta/receipts. Finish failure
+replaces the pending stage cause without discarding that owner, and none mints
+terminal-result, vote, finality, checkpoint, or ABCI authority. Non-runtime
+payloads retain the exact bytes, verified envelope/context, cursor, and
+snapshot in an opaque routing carrier rather than becoming an invented invalid
+result or advancing the index.
+
+For a complete runtime-only body, the same process-local cursor replays every
+retained real `RuntimeReceipt` mutation set separately and sequentially against
+that authenticated snapshot. Reusing a key across transactions is legal only
+when expected/next object versions form one continuous chain; duplicate keys
+within a single receipt are invalid. The replayed final map must exactly equal
+the cursor's canonical private delta, and only that map can supply writes to
+the unique exact-next JMT plan. An opaque process-local seal covers that plan's
+exact version, root, nodes, values, stale-node indices, and key preimages. The
+snapshot closes before the sealed inert finished plan escapes. Planning,
+replay, read, or completeness failure instead closes with the authorized owner,
+next index, private delta, and applied receipts. If snapshot finish fails, its
+cause replaces the pending plan cause and any computed plan/seal is discarded,
+without losing the exact owner. A single consuming comparator rebinds retained
+receipt -> replayed delta -> exact plan,
+verifies the full seal before any root mismatch, rebuilds native receipts, and
+hard-codes strict Ed25519 for ordinary static commitments. Root/hash
+computation, seal, or other post-authorization payload/evidence, static-
+commitment, `BlockId`, provenance, or internal drift is invariant/fail-stop.
+Its process-local owning result can classify only `Valid`,
+`DeterministicallyInvalid(State|Receipts)`, or `InvariantFault`; every branch
+retains the complete owner. `SourceUnavailable` is structurally excluded by the
+earlier source-admission boundary. These values are neither a new wire language
+nor a terminal result. All corresponding pre-terminal failure carriers are
+private, non-cloneable, non-serializable, have no `From`/`TryFrom`, parts, or
+standalone-cause escape, and accept no second generation or authority join.
+
+Snapshot begin does not repeat the startup full-table sweep for future orphan
+values/nodes or stale-index rows. Its in-memory pin protects only handles in
+one cloned `ApplicationStore` family, not an independently opened handle or
+another process; no external rollback watermark or OS-level process lock has
+landed. This bounded seam is not the complete production host adapter. The
+Core-issued request and same-snapshot join now freeze the exact `BlockId`, peer
+body, positive-height parent, committed-head active configuration, exact
+transaction decode/index/context, runtime-gated success-only advance, same-
+snapshot complete-body JMT planning, and four-root comparison.
+Synthetic genesis authority, speculative-parent storage, complete-body JMT
+plan application/state persistence and head update, final typed retryable-
+versus-invariant host mapping, a private route-aware callback adapter,
+host/Core callback wiring, ABCI wiring, non-runtime routing, and promotion of
+the owning classifications into
+`ExecutionOutcomeV0` or other terminal authority remain hard gaps before a
+terminal/Core callback path. The object-graph gate itself performs no terminal
+mapping; only the current private admission branch is proven to emit no
+callback for a losing clone.
+The route-bearing disposition likewise is not a terminal result and invokes no
+Core `Input`, persistence, or ABCI operation. A future consuming bridge must
+map `Proposal` only to `PayloadValidated` and `Synced` only to
+`SyncedPayloadValidated`. The future validation-time atomic boundary still
+must couple a versioned revalidatable evaluated artifact with callback-outbox
+intent. The distinct Finalize-time atomic boundary still must revalidate exact
+authority and atomically couple JMT/domain apply, root/native-head persistence,
+head advancement, and applied state. Core's completed cleanup `StorageAck` and
+completion tombstone are not a host callback-outbox delivery acknowledgement.
+Authenticated replay tickets, completion retirement after a durable
+host-delivery acknowledgement, speculative-parent/
+BlockTree reconstruction, application-reservation takeover, evaluated-artifact
+persistence, host callback-outbox scheduling/delivery acknowledgement, crash
+takeover, Core callback delivery, ABCI, both atomic boundaries, and process-wide
+callback exactly-once remain absent.
+Runtime
+resource estimation now has a distinct `try_estimate_resources_v0` call and
+opaque estimate-failure token: state dependency errors remain typed,
+deterministic failures do not arise from diagnostic text, and estimation
+cannot return a receipt or mutations. That type is deliberately distinct from
+the real-execution attempt token. The legacy infallible estimator remains the
+only application caller, so the fallible estimator has no consensus-admission
+authority yet. Historical cutoff/projection reads still use their legacy error
+boundary; the exact estimate-input carrier, terminal native carriers, and
+ABCI/host integration also remain open.
+Protocol v0 drivers MUST NOT invent failed receipts or choose a different
+classification per implementation. ABCI `ProcessProposal` has no faithful
+`Unavailable` status; mapping retry to either `REJECT` or `UNKNOWN` is non-
+conforming.
 
 ## 7. Proposal signing value
 
@@ -192,9 +655,11 @@ The context view MUST equal the block-header view. The context set hash MUST equ
 synthetic QC carried by the proposal. Optional certificate presence is
 canonical: an absent object has an absent digest and a present object has a
 present digest equal to the object's canonical digest. For a first
-non-genesis-epoch proposal, `handoff_certificate_digest` is derived from the
-complete `EpochAnchorAuthorizationV0` below; a bare peer-supplied digest is not
-an authorization.
+non-genesis-epoch proposal, `handoff_certificate_digest` is exactly
+`authorization.handoff_certificate.id()`. The complete
+`EpochAnchorAuthorizationV0` MUST be present and verify atomically; the
+authorization itself has no separate digest domain, and a bare peer-supplied
+certificate digest is not an authorization.
 
 The transport presence matrix is:
 
@@ -350,17 +815,30 @@ selected_high_qc_digest     Hash32
 
 Entries are strictly ordered by signer ID. Referenced QCs are deduplicated and
 strictly ordered by QC digest. Every entry's summary MUST match one included
-valid signed QC or the one context-authorized view-0 synthetic anchor. More
-than one QC MAY have the same `(view, block_id)` when its
+valid signed QC or the one context-authorized view-0 synthetic anchor, and
+every included reference MUST be named by at least one counted entry; unused
+references invalidate the TC. The number of entries cannot exceed the active
+validator count and the number of references cannot exceed the entry count.
+More than one QC MAY have the same `(view, block_id)` when its
 canonical signature subset, and therefore its digest, differs. The selected
 digest MUST name the unique maximum included QC referenced by a counted entry
 under `(view, block_id, qc_digest)`. Two QCs at the same epoch/view with
 different block IDs remain a safety-assumption violation and invalidate the
-TC. The TC digest is:
+TC. A single block ID bound to different `(epoch, view, height)` coordinates,
+or a single `(epoch, view)` bound to different `(height, block_id)`
+coordinates, also invalidates it. The TC digest is:
 
 ```text
 Digest("trnm.poco-bft.tc.v0", TimeoutCertificateV0)
 ```
+
+Equivalently, let `E` be the set of `high_qc.qc_digest` values in all counted
+entries and `R` the digest sequence of `referenced_qcs`. Canonical validation
+requires `R` to be strictly increasing and `set(R) = E`. Missing references,
+unreferenced extras, duplicates, and reordering are invalid and MUST NOT be
+normalized away. A synthetic anchor participates in the same equality rule;
+its authorization sidecar is verified separately and is not an extra
+reference.
 
 ## 10. Validator-set commitment
 
@@ -384,7 +862,12 @@ consensus_parameters_hash  Hash32
 validators                 List<ValidatorV0>
 ```
 
-Validators are strictly ordered by `validator_id`; IDs and keys are unique; every effective weight is positive. P2P endpoints, display names, commission data, and operator metadata are not consensus-set fields.
+Validators are strictly ordered by `validator_id`; IDs and keys are unique;
+every ID is nonempty and no longer than both the active committed
+`max_validator_id_bytes` and the v0 hard maximum of 128 bytes; every effective
+weight is positive. The chain ID is similarly nonempty and no longer than
+both `max_chain_id_bytes` and 128 bytes. P2P endpoints, display names,
+commission data, and operator metadata are not consensus-set fields.
 
 The validator-set hash is:
 
@@ -463,6 +946,15 @@ rollout_phase:   0 = shadow, 1 = eligibility-only,
 
 The fixed `CEV0`/SHA-256/Ed25519 choices are protocol-version constants, not negotiable parameters. TOML keys `schema`, `profile`, string descriptions, comments, and the entire `[status]` table are not part of `ConsensusParametersV0`. Every remaining numeric/boolean TOML value maps once to the field above; a missing, duplicate, out-of-range, unknown-enum, or semantically inconsistent value makes the parameter set invalid.
 
+The snapshot schedule is a cross-field validity rule, not a profile hint:
+`snapshot_lead_blocks` MUST be at least
+`finality_certified_chain_length`. Protocol v0 fixes the latter to `3`, so
+lead values `0`, `1`, and `2` are invalid. Independently,
+`epoch_length_blocks` MUST be greater than
+`snapshot_lead_blocks + epoch_seal_blocks`. Both the old and candidate
+parameter preimages are checked before an epoch commitment can satisfy the
+same-version context relation.
+
 Its hash is:
 
 ```text
@@ -533,8 +1025,36 @@ verify at `proposal.view - 1`, and select that same exact QC digest. A proof
 with only a peer-asserted justification digest and no proposer signature is
 invalid. Ordinary finality proofs do not cross an epoch.
 
-Evidence encodes its normalized pair of conflicting signed values and uses
-`trnm.poco-bft.double-sign-evidence.v0`.
+The mandatory `DoubleVoteEvidenceV0` logical value has this exact order:
+
+```text
+schema_version                 u16
+first                          VoteEvidenceRecordV0
+second                         VoteEvidenceRecordV0
+```
+
+Each `VoteEvidenceRecordV0` has the exact order:
+
+```text
+context                        CommonConsensusContext  // kind = vote
+height                         u64
+block_id                       Hash32
+author_validator_id            Bytes
+signature                      Signature64
+```
+
+Both contexts MUST be byte-identical, both authors MUST be the same active
+validator, both signatures MUST verify, and the two `(height, block_id)`
+tuples MUST differ. Records are strictly ordered by their reconstructed
+`VoteSignV0` signing roots; arrival order is irrelevant. The evidence ID is:
+
+```text
+Digest("trnm.poco-bft.double-sign-evidence.v0", DoubleVoteEvidenceV0)
+```
+
+Proposal, timeout, and handoff equivocation may be transported as diagnostic
+proofs, but they do not reuse this canonical preimage and have no active v0
+economic disposition until a later freeze supplies their exact ID schemas.
 
 Consumption Certificate fields and IDs are specified in `../poco-consumption-certificate-v0.md`.
 
@@ -553,7 +1073,39 @@ A node MAY reject or defer a proposal that is too far ahead of its local clock a
 
 ## 14. Size and decoding limits
 
-At minimum, conforming decoders enforce the reference limits for chain ID, validator ID, block, and consensus-message bytes from `parameters.toml`. A protocol object exceeding a committed active limit is invalid.
+At minimum, conforming decoders enforce the active committed limits for chain
+ID, validator ID, logical block, and consensus-message bytes from
+`parameters.toml`. These limits have exact, non-interchangeable meanings:
+
+```text
+logical_block_size_v0 =
+    len(CEV0(BlockHeaderV0)) +
+    4 + len(application_payload) +
+    4 + sum(4 + len(evidence_i))
+```
+
+The last term uses the canonically ordered evidence list. Every addition and
+length conversion is checked. A block is valid exactly when
+`logical_block_size_v0 <= max_block_bytes`; equality is accepted. Proposal,
+QC, TC, and transport sidecars are not counted. Compression, chunks,
+redundant transport hashes, and stream framing cannot change this logical
+size.
+
+`max_consensus_message_bytes` is a decoded transport-body admission and
+reassembly limit, measured after decompression and before external stream
+framing. A declared or accumulated body above the limit MUST be rejected
+before unbounded allocation. It is not a second consensus-validity size for a
+nested block, QC, TC, proof, or other logical object: two transport envelopes
+that decode to the same logical value cannot change that value's validity
+merely because their transport overhead differs. P2 MUST freeze exact
+chunking, compression-ratio, decompression-output, and framing limits before
+network activation.
+
+CEV0 object lengths are checked separately by their own `u16`/`u32` frames and
+collection bounds; protobuf and CEV0 byte lengths MUST NOT be compared as
+though they were the same encoding. Conformance vectors MUST cover exact
+limit, limit plus one, evidence framing overhead, checked overflow, and two
+different transport envelopes that decode to one equal logical block size.
 
 Decoders MUST:
 

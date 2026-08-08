@@ -13,6 +13,23 @@ seal_1_height(e) = epoch_end(e) - 1
 seal_2_height(e) = epoch_end(e)
 ```
 
+For every transition authorized by protocol version `0`, let `outgoing_L` be
+the active old-epoch `ConsensusParametersV0.epoch_length_blocks`. The
+activation height is computed exclusively from the outgoing schedule, using
+checked arithmetic:
+
+```text
+activation_height = seal_2_height(old_epoch) + 1
+```
+
+Candidate next parameters MUST encode the same `epoch_length_blocks`.
+Protocol v0 does not authorize changing epoch length, including in a
+transition that also activates a later protocol version. A different epoch
+schedule requires that later version to define explicit cumulative epoch-start
+semantics in a future freeze. A v0 candidate that changes this value is
+invalid committed parameters and triggers fallback reason `8`; the boundary
+is never recomputed from candidate parameters.
+
 The synthetic genesis block is height `0`. The first `L - 2` blocks of each epoch are payload-bearing slots; the last payload-bearing slot is the mandatory epoch checkpoint. The final two blocks are mandatory empty epoch seals that allow the checkpoint to be finalized by the ordinary three-chain rule under the old set.
 
 Views start at `1` in each epoch and are independent of height. Skipped views do not add heights.
@@ -39,7 +56,17 @@ For transition from epoch `e` to `e + 1`:
 snapshot_cutoff_height = checkpoint_height(e) - snapshot_lead_blocks
 ```
 
-`snapshot_lead_blocks` MUST be positive and strictly less than `checkpoint_height(e) - epoch_start(e) + 1`. The snapshot uses only the state of the finalized block at exactly `snapshot_cutoff_height`. If that block is not finalized, the checkpoint proposal is not yet valid.
+`snapshot_lead_blocks` MUST be at least the committed
+`finality_certified_chain_length` and strictly less than
+`checkpoint_height(e) - epoch_start(e) + 1`. Protocol v0 fixes the certified
+chain length at `3`; therefore lead `2` is invalid and lead `3` is the minimum
+accepted boundary. This guarantees that the cutoff block can acquire its
+direct child and grandchild certificates before the checkpoint height. The
+snapshot uses only the state of the finalized block at exactly
+`snapshot_cutoff_height`. If that block is not finalized, the checkpoint
+proposal is not yet valid. The relation is checked independently for both the
+old and candidate parameter preimages used by the same-version commitment
+context.
 
 The deterministic snapshot reads:
 
@@ -51,7 +78,213 @@ The deterministic snapshot reads:
 
 It applies the exact algorithm in `05-poco-weights-bond-and-slashing.md`. Later state changes do not alter the candidate for this transition.
 
-If the computed candidate violates any validator-set validity rule, arithmetic check, required key proof, or committed parameter bound, the deterministic result is to carry the current active validators, keys, and effective weights into a new `ValidatorSetV0` for epoch `e + 1`. The fallback reason is committed in state. Implementations MUST NOT repair an invalid candidate with local policy.
+The B2-G calculation boundary represents those reads as a caller-supplied
+`UnauthenticatedCandidateSelectionTranscriptV0`. Candidate and contribution
+input permutations are accepted and sorted internally by their canonical
+raw-byte keys; duplicates are invalid. The transcript carries normalized
+calculation facts; it is not the full wire encoding of a
+`ConsumptionCertificateV0`, an application-state proof, or an execution
+receipt. A B2-G verifier MUST treat every eligibility, finalization-epoch,
+relationship, bond, jail, registration, governance, and cutoff fact as
+untrusted input until a later provenance layer binds it to authenticated
+state. Passing the pure calculation kernel proves only that one supplied
+transcript has one deterministic result.
+
+The local inert-kernel admission surface checks cardinality before cloning:
+at most 100 candidate entries and 10,000 contribution entries, with nonempty
+task and consumer IDs of at most 128 bytes. Cardinality overflow is reason `1`
+and atomically carries the old configuration without candidate diagnostics.
+These bounds do not freeze production certificate transport or throughput.
+
+The next configuration is selected atomically as
+`(protocol_version, validator_set, consensus_parameters, rollout_phase,
+upgrade_plan_hash)`. Any invalid or mutually inconsistent component
+invalidates the complete candidate tuple; no valid-looking component from that
+candidate survives.
+
+Fallback deterministically selects:
+
+- the old active protocol version;
+- a `ValidatorSetV0` re-encoded for epoch `e + 1` with identical ordered
+  validator IDs, consensus keys, and effective weights, bound to the carried
+  parameter hash;
+- the complete old active `ConsensusParametersV0` unchanged;
+- that parameter set's existing rollout phase; and
+- an absent `upgrade_plan_hash`.
+
+Only epoch-dependent wrapper fields and their hashes are recomputed. A valid
+governance proposal may remain in application state, but fallback does not
+activate it. Implementations MUST NOT partially activate a parameter,
+rollout, validator-set, or upgrade change and MUST NOT repair an invalid
+candidate with local policy. If the old active configuration cannot itself be
+reconstructed and validated, the node halts instead of inventing a fallback.
+The fallback reason is committed in state. Candidate diagnostics and any
+computed candidate set are cleared on fallback; invalid partial results are
+not exposed as reusable evidence.
+
+`shadow` carry-forward is not fallback. A valid shadow calculation computes
+and commits its diagnostic candidate facts, but the selected next set carries
+the old ordered membership, consensus keys, and effective weights re-encoded
+for `new_epoch`, bound to the independently validated selected parameter
+preimage. Shadow does not force the old parameters or old rollout phase. It
+MUST use `fallback_used = false` and reason `0`. The
+nonzero fallback reasons above are reserved for an invalid complete candidate
+tuple, not for the configured shadow rollout rule. Shadow exposes raw
+candidate diagnostics but no computed candidate validator set, and validates
+the actual old carry against the candidate parameters.
+
+### 3.1 B2-G deterministic candidate/fallback computation kernel
+
+B2-G freezes a pure relation over caller-supplied typed inputs:
+
+1. validate the supplied old and candidate parameter preimages, exact
+   `snapshot_height == committed_snapshot_cutoff`, checked adjacent target
+   epoch, deterministic internal transcript sorting and uniqueness, bounded
+   normalized facts, validator
+   identities and keys, and every supplied `ValidatorKeyProofOfPossessionV0`;
+2. compute certificate maturity, decay and the three relationship aggregates
+   plus the provider cap using checked `u128`, floor-only arithmetic;
+3. compute the PoCO and bond ceilings, take their minimum with the validator
+   cap, filter below-minimum or ineligible registrations, rank by descending
+   raw capacity then ascending raw validator-ID bytes, truncate to
+   `max_validators`, and re-encode the selected set in ascending validator-ID
+   order;
+4. assign effective weights exactly for the committed rollout phase, with
+   `shadow` selecting the old membership/keys/weights without setting
+   fallback;
+5. validate all individual, total-power, cardinality, uniqueness and
+   concentration constraints; and
+6. either return the exact candidate with reason `0`, or select the exact
+   carry-forward configuration and the lowest applicable nonzero reason in
+   the frozen `1..9` taxonomy.
+
+The normative equations and precedence rules are in
+`05-poco-weights-bond-and-slashing.md`. Success yields only a private-field,
+inert `CandidateSelectionKernelV0` carrying deterministic outcome evidence for
+the supplied normalized inputs. It is not an exact-transcript commitment and
+has no aggregate digest or domain. There is no conversion from this token to
+an `EpochAnchorQC`, handoff
+signature, first-new-epoch proposal, activation authorization, or core epoch
+transition. The kernel does not authenticate a cutoff header or state root,
+does not verify JMT/ICS23 membership, non-membership, namespace, or
+completeness, does not identify or execute an authorized runtime, and does not
+prove checkpoint-body or receipt provenance.
+
+Production PoP verification MUST use `StrictEd25519Verifier`; a generic or
+accept-all `SignatureVerifier` is not attested and cannot grant authority.
+Every kernel getter remains unauthenticated diagnostic output.
+
+The required next provenance join is ordered and fail-closed:
+
+```text
+finalized exact cutoff header
+  -> JMT/ICS23 proofs for the frozen snapshot namespace and completeness
+  -> authorized runtime plus checkpoint execution/state-transition provenance
+  -> exact candidate/commitment/handoff composition
+  -> EpochHandoffProof fields 13 and 14
+  -> epoch-anchor authorization, activation, and atomic core transition
+```
+
+A later authority layer must re-run B2-G over the authenticated normalized
+projection after proving every prior arrow, or introduce a future
+exact-input-binding wrapper. It cannot join the present inert token itself to
+a cutoff or transcript. Peer-supplied transcript bytes, a matching
+`snapshot_state_root`, or a valid PoP alone never authorize a set or
+transition.
+
+### 3.2 Application-authenticated candidate reconstruction
+
+B2-H3b2b2 uses one crate-private call to bind the production checkpoint
+execution and its exact historical cutoff projection, reconstruct the complete
+normalized transcript internally, hard-code `StrictEd25519Verifier`, and run a
+fresh B2-G calculation. The call accepts no caller-supplied transcript,
+eligibility bit, signature verifier, status/event, current-head projection, or
+earlier `CandidateSelectionKernelV0`. Its private result binds the checkpoint,
+candidate-parameter hash, canonical transcript digest, canonical result digest,
+and one authorization identifier; the wrapped inert B2-G kernel is not exposed.
+
+The v0 candidate universe is exact and conservative:
+
+- old-set membership alone is not registration authority. An old identity/key
+  is included only when the cutoff contains the matching active, non-revoked
+  kind-9 registration and kind-16 history. Its canonical B2-G entry omits both
+  the PoP and previous nonce;
+- kind-16 appends a bounded, ordered future-candidate registration without
+  reinterpreting kind 9. It MUST target exactly `old_epoch + 1`, retain the
+  complete strict-PoP bytes and digest, registration decision/height, and, for
+  a changed old key, the exact predecessor nonce and history head;
+- a changed old key MUST prove a strictly increasing nonce over that exact
+  predecessor. A new identity MUST have no predecessor. An unchanged old key
+  MUST use the proof-free old-registration path and therefore cannot create a
+  redundant future record; and
+- duplicate target identities or keys, key ownership drift, incomplete
+  predecessor history, and malformed or wrong-scope future PoP state invalidate
+  the authenticated projection. They are not repaired by dropping one entry.
+
+Candidate parameters come from the exact finalized approval for the target
+epoch and its matching role-2 kind-14 preimage. If no such finalized approval
+exists, the exact active parameters are the reason-0 no-change candidate
+preimage. A pending proposal has no candidate authority. A present finalized
+approval with a missing or mismatched kind-14/kind-15 companion is malformed
+authenticated state and fails before B2-G rather than becoming fallback.
+
+Every contribution is reconstructed from the retained authenticated
+certificate companion. `finalized_epoch` is the epoch of its finalized
+acceptance block, derived from `accepted_height` under the immutable v0 epoch
+geometry; it is neither submitter supplied nor relabeled as the current epoch.
+Only `independent` relationships contribute. Lifecycle `accepted` contributes
+only with no pending challenge, `challenge_rejected` restores eligibility, and
+`challenge_sustained` does not contribute. Related, reciprocal, unresolved,
+revoked, or pending facts contribute zero.
+
+For target epoch `t`, a bond contributes its full amount only when it is
+`active_slashable` and checked arithmetic proves
+`t + evidence_window_epochs < locked_until`; absence, `unbonding`, insufficient
+coverage, or withdrawable state contributes zero. Jail is absent when no exact
+kind-11 fact exists and otherwise applies exactly while
+`t < jailed_until`; equality is expired. These normalized zero/ineligible
+facts remain part of the complete transcript rather than being omitted by
+local policy.
+
+Cross-epoch retention does not relabel admission-cap usage. When the active
+epoch changes, kind-16 meter usage retains only the canonical current rolling-
+span bucket, and consumer/provider, task/provider and provider usage retain
+only the exact new-epoch bucket. Older buckets are removed atomically with the
+new active configuration/kind-16/manifest/JMT root; their quantities are never
+copied into a new epoch. Mature retained certificates remain historical facts
+and are independent of that rollover. The helper/fixture boundary exists, but
+production Core activation does not yet drive this transition, so normalized
+usage rollover remains an H3b2b2a production gap.
+
+The implementation of this one-call application-authenticated join and its
+bounded raw shared schema/vector evidence have landed. Node independently
+rebuilds the two raw-history scenarios and a non-ignored Rust test reconstructs
+the committed JMT fixture/one-call result byte-for-byte. A second non-ignored
+production-path test consumes both canonical outcomes. Independent applications
+start from the exact production-valid epoch-0 empty-authority genesis, install
+the matching canonical source through the explicitly test-only height-24 epoch
+bootstrap, and then execute the normal height-25 cutoff refresh, height-27
+parent and height-28 checkpoint. The private result from the execution used by
+`ProcessProposal` equals the independent `FinalizeBlock` result. It remains
+equal after V3 parent restore, periodic SQLite V4 cutoff-25 restore followed by
+parent 27, SQLite restart, projection-cache miss/hit and fresh reconstruction
+from retained cutoff 25 after checkpoint restart. Zero-hash rejection leaves
+the committed head, pending block and cutoff projection unchanged. The
+height-24 bootstrap is fixture-only and proves no production application/Core
+epoch transition or usage rollover. Node now recomputes the historical JMT,
+enforces exact physical namespace completeness, exact-decodes every kind
+payload and runs the shared root-consistent mutation families. A targeted
+SQLite pruning test advances the floor to 26 and physically removes cutoff 25
+through the production pruning authority, proving restart-stable reject/
+fail-stop without head, pending or source changes. Only cache/restart TOCTOU
+mutation hardening and a stronger
+AST/type-aware API gate remain in the bounded evidence partition.
+Moreover, the current production join does not yet consume the B2-H1 finalized
+cutoff-header capability, proof ID, or cutoff block ID. It therefore authorizes
+only application-authenticated candidate/fallback reconstruction. It does not
+yet establish the complete `finalized cutoff -> application projection` join,
+mint a `NextEpochCommitmentV0`, fill handoff fields 13/14, authorize an anchor,
+activate a configuration, or move the Core across an epoch.
 
 ## 4. Validator key proof of possession
 
@@ -72,6 +305,12 @@ under:
 ```text
 trnm.poco-bft.validator-key-pop.v0
 ```
+
+`ValidatorKeyProofOfPossessionV0` encodes those seven signing fields in that
+exact order followed by `signature: Signature64`. The signature is not part of
+the signing preimage. Verification uses strict Ed25519 against the exact
+embedded `public_key`; accepting a PoP under any other domain, target epoch,
+identity, key, or nonce is invalid candidate-registration input.
 
 The registration nonce is strictly increasing per validator identity. A proof for another chain, genesis, validator, key, target epoch, or nonce is invalid. Key rotation takes effect only through the next-set commitment and joint handoff.
 
@@ -97,7 +336,21 @@ fallback_reason_code           u16
 activation_height              u64
 ```
 
-It is hashed under `trnm.poco-bft.epoch-commitment.v0`. `new_epoch` MUST equal `old_epoch + 1`, and `activation_height` MUST equal `epoch_start(new_epoch)`.
+It is hashed under `trnm.poco-bft.epoch-commitment.v0`. `new_epoch` MUST equal
+`old_epoch + 1`, and `activation_height` MUST equal
+`seal_2_height(old_epoch) + 1` under the outgoing active schedule.
+
+For every commitment, whether fallback or not:
+
+- `new_validator_set.epoch == new_epoch`;
+- `new_validator_set.protocol_version == new_protocol_version`;
+- `new_validator_set.consensus_parameters_hash == new_consensus_parameters_hash`;
+- the decoded new parameters' `protocol_version == new_protocol_version`;
+- `rollout_phase` equals the decoded new parameters' `rollout_phase`.
+
+A mismatch is invalid committed parameters. The duplicate `rollout_phase`
+field is an authenticated consistency check, not an independently selectable
+value.
 
 `fallback_reason_code` is deterministic:
 
@@ -116,6 +369,12 @@ It is hashed under `trnm.poco-bft.epoch-commitment.v0`. `new_epoch` MUST equal `
 
 If more than one nonzero reason applies, commit the lowest numeric code. Code `0` is invalid when `fallback_used = true`, and a nonzero code is invalid when it is false. Unlisted values are invalid in v0.
 
+`snapshot_state_root`, `new_validator_set_hash`, and
+`new_consensus_parameters_hash` MUST be nonzero. An absent
+`upgrade_plan_hash` is distinct from a present hash; when present, the hash
+MUST be nonzero. These are intrinsic object-shape rules and do not prove that
+the referenced state, set, parameters, or upgrade preimage is authorized.
+
 The checkpoint block at `checkpoint_height(e)` MUST have `block_kind = epoch_checkpoint` and MUST commit this digest in `next_epoch_commitment_hash`. It may contain ordinary application transactions, but its resulting state MUST include the complete preimage needed to reconstruct and verify the next commitment.
 
 ## 6. Epoch seals and checkpoint finality
@@ -123,8 +382,10 @@ The checkpoint block at `checkpoint_height(e)` MUST have `block_kind = epoch_che
 The blocks at `seal_1_height(e)` and `seal_2_height(e)` MUST have `block_kind = epoch_seal_1` and `epoch_seal_2`, respectively. Each seal MUST:
 
 - use epoch `e`, the old protocol version, old set, and old parameters;
-- have an empty application payload and no application transactions;
-- have the protocol-defined empty receipts and evidence roots;
+- encode the empty application payload as CEV0 `List<Bytes>` count `0`
+  (`00 00 00 00`) and contain no application transactions;
+- use the exact ordered-root empty payload, receipts, and evidence constants
+  frozen in the wire document;
 - preserve exactly the checkpoint state root;
 - repeat the checkpoint's `next_epoch_commitment_hash`;
 - extend the preceding block by one height;
@@ -289,7 +550,11 @@ For v0:
 
 The concrete governance transaction encoding and the target version's migration execution semantics are `UNDECIDED`. They MUST be frozen before a real upgrade depends on them. The wrapper and activation checks above are frozen. The finalized state result and epoch commitment are consensus authoritative; an off-chain release announcement is not.
 
-Parameter changes that affect consensus validity follow the same notice, commitment, and handoff process even when `protocol_version` does not change. A semantic change requires a new protocol version rather than a parameter reinterpretation.
+Parameter changes that affect consensus validity follow the same notice,
+commitment, and handoff process even when `protocol_version` does not change.
+The v0 `epoch_length_blocks` exception above remains immutable. A semantic
+change requires a new protocol version rather than a parameter
+reinterpretation.
 
 ## 12. Recovery and rollback
 
