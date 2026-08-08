@@ -1298,6 +1298,11 @@ epoch prune, and Core transition remain open.
    pre-clone ID/duplicate admission plus the predecessor/history execution
    join, preserving validator-rule, cryptographic-proof, and authenticated-
    overlay provenance and determining its insertion slot before mutation.
+   Validator registration/rotation now likewise types pre-clone semantic/key
+   admission plus the registration-history join, preserving the exact active-
+   key and missing-history reasons while separating signed validator rules,
+   PoP rejection, protocol references/revocation, and authenticated companion
+   drift.
    Leaf-reason completion remains a hard
    dependency before terminal failure mapping. The success carrier still owns the open
    snapshot and unsealed overlay/scheduled lifecycle. It does not yet seal

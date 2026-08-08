@@ -475,7 +475,13 @@ an earlier phase.
   `ValidatorRule`; proof decoding/verification is `CryptographicProof`; and
   authenticated active-projection or registration-history drift is
   `AuthenticatedOverlay`. Its insertion slot is fixed before nullifier
-  mutation.
+  mutation. Active validator registration/rotation now also types pre-clone
+  semantic/key admission and its history join: signed epoch, predecessor,
+  nonce, shape, and key-change rejection is `ValidatorRule`; an already-active
+  consensus key retains its exact reason; missing rotation history retains the
+  missing-fact reason; PoP failure is `CryptographicProof`; revoked or actively
+  referenced registrations are protocol rejects; and authenticated history/
+  semantic-predecessor drift is `AuthenticatedOverlay`.
   Leaf errors not yet assigned a narrower reason remain conservatively typed
   as an authenticated-overlay invariant. Success keeps the exact decoded owner plus
   the still-open snapshot and unsealed family state. These attempts do not yet

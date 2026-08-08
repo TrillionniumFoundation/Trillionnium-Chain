@@ -2927,24 +2927,33 @@ fn validate_validator_consensus_key_before_clone_v0(
         1,
         128,
         "validator semantic logical key",
-    )?;
-    let next_value = exact_hex(next_value_hex, 1, 65_536, "validator next semantic value")?;
+    )
+    .map_err(|_| {
+        deterministic_application_error_v0(PocoApplicationDeterministicInvalidV0::ValidatorRule)
+    })?;
+    let next_value = exact_hex(next_value_hex, 1, 65_536, "validator next semantic value")
+        .map_err(|_| {
+            deterministic_application_error_v0(PocoApplicationDeterministicInvalidV0::ValidatorRule)
+        })?;
     let parts = owned_semantic_parts(
         PocoSnapshotEntryKindV0::ValidatorRegistration,
         &logical_key,
         &next_value,
-    )?;
+    )
+    .map_err(|_| {
+        deterministic_application_error_v0(PocoApplicationDeterministicInvalidV0::ValidatorRule)
+    })?;
     if let SemanticFactV0::ValidatorRegistration { consensus_key, .. } = parts.fact {
         let consensus_key_hex = hex::encode(consensus_key);
-        ensure!(
-            authority
-                .validator_registration_history
-                .iter()
-                .all(|history| {
-                    history.consensus_key_hex.as_str() != consensus_key_hex.as_str()
-                }),
-            "validator consensus key is already active in registration history"
-        );
+        if authority
+            .validator_registration_history
+            .iter()
+            .any(|history| history.consensus_key_hex == consensus_key_hex)
+        {
+            return Err(deterministic_application_error_v0(
+                PocoApplicationDeterministicInvalidV0::ValidatorConsensusKeyAlreadyActive,
+            ));
+        }
     }
     Ok(())
 }
@@ -5699,17 +5708,26 @@ fn apply_register_validator_v0(
     previous_history_head_hex: Option<&String>,
     previous_registration_nonce: Option<u64>,
 ) -> Result<()> {
-    let validator_id_bytes = exact_opaque_hex(validator_id_hex)?;
+    let validator_rule =
+        || deterministic_application_error_v0(PocoApplicationDeterministicInvalidV0::ValidatorRule);
+    let protocol_reject = || {
+        deterministic_application_error_v0(
+            PocoApplicationDeterministicInvalidV0::ProtocolWindowOrCap,
+        )
+    };
+    let authenticated_overlay =
+        || invariant_application_error_v0(PocoApplicationInvariantV0::AuthenticatedOverlay);
+    let validator_id_bytes = exact_opaque_hex(validator_id_hex).map_err(|_| validator_rule())?;
     if rotate {
         ensure_validator_has_no_active_certificate_references_v0(
             &overlay.authority,
             validator_id_hex,
-        )?;
+        )
+        .map_err(|_| protocol_reject())?;
     }
-    ensure!(
-        target_epoch == context.active_epoch.get(),
-        "validator registration epoch differs from authenticated active epoch"
-    );
+    if target_epoch != context.active_epoch.get() {
+        return Err(validator_rule());
+    }
     let decision_label: &[u8] = if rotate {
         b"rotate-validator"
     } else {
@@ -5718,10 +5736,9 @@ fn apply_register_validator_v0(
     let decision =
         require_derived_decision_id(preimage, decision_label, registration_decision_id_hex)?;
     if rotate {
-        ensure!(
-            operation.nullifier_non_membership_checks.is_empty(),
-            "validator rotation has unauthorized identity absence proof"
-        );
+        if !operation.nullifier_non_membership_checks.is_empty() {
+            return Err(validator_rule());
+        }
     } else {
         verify_nullifier_absences(
             overlay,
@@ -5735,13 +5752,19 @@ fn apply_register_validator_v0(
             )],
         )?;
     }
-    let changes = prepare_semantic_changes(overlay, &operation.semantic_changes, false)?;
-    ensure_change_kinds(&changes, &[PocoSnapshotEntryKindV0::ValidatorRegistration])?;
+    let changes =
+        prepare_semantic_changes(overlay, &operation.semantic_changes, false).map_err(|error| {
+            preserve_application_failure_or_deterministic_v0(
+                error,
+                PocoApplicationDeterministicInvalidV0::ValidatorRule,
+            )
+        })?;
+    ensure_change_kinds(&changes, &[PocoSnapshotEntryKindV0::ValidatorRegistration])
+        .map_err(|_| validator_rule())?;
     let change = &changes[0];
-    ensure!(
-        change.next_identity.as_deref() == Some(validator_id_bytes.as_slice()),
-        "validator registration semantic identity mismatch"
-    );
+    if change.next_identity.as_deref() != Some(validator_id_bytes.as_slice()) {
+        return Err(validator_rule());
+    }
     let next_fact = match change.next_fact.as_ref() {
         Some(SemanticFactV0::ValidatorRegistration {
             consensus_key,
@@ -5749,7 +5772,7 @@ fn apply_register_validator_v0(
             proof_digest,
             state: RegistrationStateV0::Active,
         }) => (*consensus_key, *registration_nonce, *proof_digest),
-        _ => bail!("validator operation lacks active registration fact"),
+        _ => return Err(validator_rule()),
     };
     let next_consensus_key_hex = hex::encode(next_fact.0);
     if !overlay
@@ -5808,61 +5831,50 @@ fn apply_register_validator_v0(
         .validator_registration_history
         .binary_search_by(|item| item.validator_id_hex.as_str().cmp(validator_id_hex));
     let (previous_head, retired_key_count) = if rotate {
-        let index = history_search
-            .map_err(|_| anyhow::anyhow!("validator rotation lacks authenticated history"))?;
+        let index = history_search.map_err(|_| {
+            deterministic_application_error_v0(
+                PocoApplicationDeterministicInvalidV0::MissingRequiredAuthorityFact,
+            )
+        })?;
         let history = &overlay.authority.validator_registration_history[index];
-        ensure!(
-            history.revoked_at_height.is_none(),
-            "revoked validator registration cannot rotate"
-        );
-        let expected_head =
-            previous_history_head_hex.context("validator rotation lacks previous history head")?;
-        let expected_nonce = previous_registration_nonce
-            .context("validator rotation lacks previous registration nonce")?;
-        ensure!(
-            history.history_head_hex == expected_head.as_str()
-                && history.max_registration_nonce == expected_nonce,
-            "validator rotation predecessor history mismatch"
-        );
-        ensure!(
-            next_fact.1 > history.max_registration_nonce,
-            "validator registration nonce is not strictly monotonic"
-        );
-        ensure!(
-            hex::encode(next_fact.0) != history.consensus_key_hex,
-            "validator key rotation did not change key"
-        );
+        if history.revoked_at_height.is_some() {
+            return Err(protocol_reject());
+        }
+        let expected_head = previous_history_head_hex.ok_or_else(validator_rule)?;
+        let expected_nonce = previous_registration_nonce.ok_or_else(validator_rule)?;
+        if history.history_head_hex != expected_head.as_str()
+            || history.max_registration_nonce != expected_nonce
+            || next_fact.1 <= history.max_registration_nonce
+            || hex::encode(next_fact.0) == history.consensus_key_hex
+        {
+            return Err(validator_rule());
+        }
         match change.expected_fact.as_ref() {
             Some(SemanticFactV0::ValidatorRegistration {
                 consensus_key,
                 registration_nonce,
                 proof_digest,
                 state: RegistrationStateV0::Active,
-            }) => ensure!(
-                hex::encode(consensus_key) == history.consensus_key_hex
-                    && *registration_nonce == history.max_registration_nonce
-                    && hex::encode(proof_digest) == history.current_proof_digest_hex,
-                "validator semantic predecessor differs from history"
-            ),
-            _ => bail!("validator rotation lacks active semantic predecessor"),
+            }) if hex::encode(consensus_key) == history.consensus_key_hex
+                && *registration_nonce == history.max_registration_nonce
+                && hex::encode(proof_digest) == history.current_proof_digest_hex => {}
+            _ => return Err(authenticated_overlay()),
         }
         let next_retired_count = history.retired_key_count.checked_add(1).ok_or_else(|| {
             invariant_application_error_v0(PocoApplicationInvariantV0::ProtocolCounterExhausted)
         })?;
         (
-            exact_hash32_hex(&history.history_head_hex)?,
+            exact_hash32_hex(&history.history_head_hex).map_err(|_| authenticated_overlay())?,
             next_retired_count,
         )
     } else {
-        ensure!(history_search.is_err(), "validator is already registered");
-        ensure!(
-            change.expected_value.is_none(),
-            "first registration has semantic predecessor"
-        );
-        ensure!(
-            previous_history_head_hex.is_none() && previous_registration_nonce.is_none(),
-            "first registration supplied predecessor history"
-        );
+        if history_search.is_ok()
+            || change.expected_value.is_some()
+            || previous_history_head_hex.is_some()
+            || previous_registration_nonce.is_some()
+        {
+            return Err(validator_rule());
+        }
         ([0; 32], 0)
     };
     let next_history_head = registration_history_head_v0(

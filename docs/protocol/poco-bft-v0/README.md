@@ -722,6 +722,10 @@ future-candidate registration now types pre-clone ID/duplicate admission and
 the predecessor/history execution join, separates validator-rule and PoP
 rejection from authenticated companion drift, and fixes insertion position
 before mutation;
+validator registration/rotation now types pre-clone semantic/key admission and
+the history join, preserving exact active-key/missing-history reasons while
+separating signed validator rules, PoP rejection, protocol references, and
+authenticated companion drift;
 unrefined leaf failures conservatively remain authenticated-overlay invariants
 without string matching. Success retains the open snapshot, decoded owner, and unsealed PoCO
 overlay or scheduled lifecycle. PoCO leaf-reason refinement, write sealing,
