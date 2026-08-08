@@ -77,6 +77,7 @@ pub enum ValidationError {
     InvalidEvidence(&'static str),
     InvalidCommitProof(&'static str),
     InvalidFinalityProof(&'static str),
+    InvalidValidatorSet(&'static str),
     InvalidConsensusParameters(&'static str),
 }
 
@@ -182,6 +183,9 @@ impl fmt::Display for ValidationError {
             Self::InvalidCommitProof(reason) => write!(formatter, "invalid commit proof: {reason}"),
             Self::InvalidFinalityProof(reason) => {
                 write!(formatter, "invalid finality proof: {reason}")
+            }
+            Self::InvalidValidatorSet(reason) => {
+                write!(formatter, "invalid validator set: {reason}")
             }
             Self::InvalidConsensusParameters(reason) => {
                 write!(formatter, "invalid consensus parameters: {reason}")

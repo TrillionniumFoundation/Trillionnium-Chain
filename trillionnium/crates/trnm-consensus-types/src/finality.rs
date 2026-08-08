@@ -2,11 +2,93 @@ use alloc::vec::Vec;
 
 use crate::{
     canonical::{canonical_hash, try_canonical_bytes, Encoder, DOMAIN_FINALITY_PROOF},
-    BlockHeader, CertificateId, ChainId, ConsensusParametersHash, ConsensusParametersV0, Epoch,
-    EpochAnchorAuthorizationV0, GenesisHash, ProposalWitnessV0, ProtocolVersion, QcReferenceV0,
-    QuorumCertificate, Result, Signature64, SignatureVerifier, SignedProposalV0, SigningRoot,
-    TimeoutCertificateV0, ValidationError, ValidatorSet, ValidatorSetId, SCHEMA_VERSION_V0,
+    BlockHeader, BlockId, BlockKind, CertificateId, ChainId, ConsensusParametersHash,
+    ConsensusParametersV0, Epoch, EpochAnchorAuthorizationV0, EpochGeometryV0, EvidenceRoot,
+    GenesisHash, Height, NextEpochCommitmentHash, NextEpochCommitmentV0, OrderedRootV0,
+    PayloadDigest, ProposalWitnessV0, ProtocolVersion, QcReferenceV0, QuorumCertificate,
+    ReceiptsRoot, Result, RootKind, Signature64, SignatureVerifier, SignedProposalV0, SigningRoot,
+    StateRoot, TimeoutCertificateV0, ValidationError, ValidatorSet, ValidatorSetId,
+    SCHEMA_VERSION_V0,
 };
+
+/// Verified checkpoint/two-seal facts for one old-epoch finality proof.
+///
+/// This private-field token is deliberately narrower than epoch-transition
+/// authorization. It records that the exact checkpoint and two seal headers,
+/// their proposal/QC witnesses, and the supplied next-epoch commitment were
+/// accepted by [`FinalityProofV0::verify_checkpoint_two_seal_kernel`] against
+/// one caller-supplied verifier. It does not authenticate snapshot or runtime
+/// provenance, validate the next validator/parameter preimages, authorize a
+/// handoff, construct an epoch anchor, or activate a new epoch.
+///
+/// The token also cannot attest which [`SignatureVerifier`] implementation was
+/// supplied. Production integration must use
+/// `trnm_consensus_crypto::StrictEd25519Verifier`.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct CheckpointTwoSealKernelV0 {
+    proof_id: CertificateId,
+    old_epoch: Epoch,
+    checkpoint_height: Height,
+    checkpoint_block_id: BlockId,
+    checkpoint_state_root: StateRoot,
+    seal_1_block_id: BlockId,
+    terminal_old_height: Height,
+    terminal_old_block_id: BlockId,
+    terminal_old_qc_digest: CertificateId,
+    next_epoch_commitment_digest: NextEpochCommitmentHash,
+    new_epoch: Epoch,
+    activation_height: Height,
+}
+
+impl CheckpointTwoSealKernelV0 {
+    pub const fn proof_id(&self) -> CertificateId {
+        self.proof_id
+    }
+
+    pub const fn old_epoch(&self) -> Epoch {
+        self.old_epoch
+    }
+
+    pub const fn checkpoint_height(&self) -> Height {
+        self.checkpoint_height
+    }
+
+    pub const fn checkpoint_block_id(&self) -> BlockId {
+        self.checkpoint_block_id
+    }
+
+    pub const fn checkpoint_state_root(&self) -> StateRoot {
+        self.checkpoint_state_root
+    }
+
+    pub const fn seal_1_block_id(&self) -> BlockId {
+        self.seal_1_block_id
+    }
+
+    pub const fn terminal_old_height(&self) -> Height {
+        self.terminal_old_height
+    }
+
+    pub const fn terminal_old_block_id(&self) -> BlockId {
+        self.terminal_old_block_id
+    }
+
+    pub const fn terminal_old_qc_digest(&self) -> CertificateId {
+        self.terminal_old_qc_digest
+    }
+
+    pub const fn next_epoch_commitment_digest(&self) -> NextEpochCommitmentHash {
+        self.next_epoch_commitment_digest
+    }
+
+    pub const fn new_epoch(&self) -> Epoch {
+        self.new_epoch
+    }
+
+    pub const fn activation_height(&self) -> Height {
+        self.activation_height
+    }
+}
 
 /// Exact nested signed-header witness used by `FinalityProofV0`.
 ///
@@ -462,6 +544,167 @@ impl FinalityProofV0 {
         )
     }
 
+    /// Validates the deterministic checkpoint/two-seal bridge relations.
+    ///
+    /// This first runs the complete generic same-epoch finality validation,
+    /// then requires the finalized header to be the old epoch's checkpoint and
+    /// its two descendants to be the mandatory state-preserving empty seals.
+    /// The exact next-epoch commitment is bound to all three headers and to the
+    /// outgoing epoch schedule. Successful validation returns no capability;
+    /// use [`Self::verify_checkpoint_two_seal_kernel`] to additionally check
+    /// signatures and obtain the inert kernel token.
+    pub fn validate_checkpoint_two_seal_kernel(
+        &self,
+        old_validator_set: &ValidatorSet,
+        old_consensus_parameters: &ConsensusParametersV0,
+        next_epoch_commitment: &NextEpochCommitmentV0,
+        authenticated_checkpoint_parent_timestamp_ms: u64,
+    ) -> Result<()> {
+        old_validator_set.validate_against_parameters(old_consensus_parameters)?;
+        self.validate(
+            old_validator_set,
+            None,
+            old_consensus_parameters,
+            authenticated_checkpoint_parent_timestamp_ms,
+        )?;
+        self.checkpoint_two_seal_kernel(
+            old_validator_set,
+            old_consensus_parameters,
+            next_epoch_commitment,
+        )?;
+        Ok(())
+    }
+
+    /// Verifies and records the checkpoint/two-seal bridge kernel.
+    ///
+    /// All generic finality proposal, QC, optional-TC, leader, timestamp, and
+    /// signature checks run before the specialized checkpoint/seal relations.
+    /// The returned token is intentionally inert and proves acceptance only by
+    /// the caller-supplied [`SignatureVerifier`]; it does not attest verifier
+    /// identity. Production callers must supply
+    /// `trnm_consensus_crypto::StrictEd25519Verifier`.
+    pub fn verify_checkpoint_two_seal_kernel<V: SignatureVerifier>(
+        &self,
+        old_validator_set: &ValidatorSet,
+        old_consensus_parameters: &ConsensusParametersV0,
+        next_epoch_commitment: &NextEpochCommitmentV0,
+        authenticated_checkpoint_parent_timestamp_ms: u64,
+        verifier: &V,
+    ) -> Result<CheckpointTwoSealKernelV0> {
+        old_validator_set.validate_against_parameters(old_consensus_parameters)?;
+        self.verify(
+            old_validator_set,
+            None,
+            old_consensus_parameters,
+            authenticated_checkpoint_parent_timestamp_ms,
+            verifier,
+        )?;
+        self.checkpoint_two_seal_kernel(
+            old_validator_set,
+            old_consensus_parameters,
+            next_epoch_commitment,
+        )
+    }
+
+    fn checkpoint_two_seal_kernel(
+        &self,
+        old_validator_set: &ValidatorSet,
+        old_consensus_parameters: &ConsensusParametersV0,
+        next_epoch_commitment: &NextEpochCommitmentV0,
+    ) -> Result<CheckpointTwoSealKernelV0> {
+        next_epoch_commitment.validate_shape()?;
+
+        let geometry = EpochGeometryV0::new(old_validator_set.epoch(), old_consensus_parameters)?;
+        let checkpoint = self.finalized_block.header();
+        let seal_1 = self.child.header();
+        let seal_2 = self.grandchild.header();
+
+        if checkpoint.height() != geometry.checkpoint_height()
+            || checkpoint.block_kind() != BlockKind::EpochCheckpoint
+            || seal_1.height() != geometry.seal_1_height()
+            || seal_1.block_kind() != BlockKind::EpochSeal1
+            || seal_2.height() != geometry.seal_2_height()
+            || seal_2.block_kind() != BlockKind::EpochSeal2
+        {
+            return Err(ValidationError::InvalidEpochTransition(
+                "finality proof is not the exact checkpoint/two-seal geometry",
+            ));
+        }
+
+        let empty_payload = PayloadDigest::new(
+            OrderedRootV0::from_items::<&[u8]>(RootKind::Payload, &[])?.digest(),
+        );
+        let empty_receipts = ReceiptsRoot::new(
+            OrderedRootV0::from_items::<&[u8]>(RootKind::Receipts, &[])?.digest(),
+        );
+        let empty_evidence = EvidenceRoot::new(
+            OrderedRootV0::from_items::<&[u8]>(RootKind::Evidence, &[])?.digest(),
+        );
+        for seal in [seal_1, seal_2] {
+            if seal.payload_root() != empty_payload
+                || seal.receipts_root() != empty_receipts
+                || seal.evidence_root() != empty_evidence
+            {
+                return Err(ValidationError::InvalidEpochTransition(
+                    "epoch seal does not commit the frozen empty roots",
+                ));
+            }
+        }
+
+        if seal_1.state_root() != checkpoint.state_root()
+            || seal_2.state_root() != checkpoint.state_root()
+        {
+            return Err(ValidationError::InvalidEpochTransition(
+                "epoch seals do not preserve the checkpoint state root",
+            ));
+        }
+
+        let commitment_digest = next_epoch_commitment.id();
+        if checkpoint.next_epoch_commitment_hash() != Some(commitment_digest)
+            || seal_1.next_epoch_commitment_hash() != Some(commitment_digest)
+            || seal_2.next_epoch_commitment_hash() != Some(commitment_digest)
+        {
+            return Err(ValidationError::InvalidEpochTransition(
+                "checkpoint and seals do not bind one exact next-epoch commitment",
+            ));
+        }
+
+        let commitment = next_epoch_commitment.fields();
+        let expected_snapshot_cutoff = geometry
+            .checkpoint_height()
+            .get()
+            .checked_sub(old_consensus_parameters.snapshot_lead_blocks())
+            .ok_or(ValidationError::ArithmeticOverflow(
+                "checkpoint snapshot cutoff height",
+            ))?;
+        let expected_activation = geometry.seal_2_height().checked_next()?;
+        if commitment.genesis_hash != old_validator_set.genesis_hash()
+            || commitment.chain_id != old_validator_set.chain_id()
+            || commitment.old_epoch != old_validator_set.epoch()
+            || commitment.snapshot_cutoff_height != Height::new(expected_snapshot_cutoff)
+            || commitment.activation_height != expected_activation
+        {
+            return Err(ValidationError::InvalidEpochTransition(
+                "next-epoch commitment does not match the authenticated old schedule",
+            ));
+        }
+
+        Ok(CheckpointTwoSealKernelV0 {
+            proof_id: self.id(),
+            old_epoch: old_validator_set.epoch(),
+            checkpoint_height: checkpoint.height(),
+            checkpoint_block_id: checkpoint.id(),
+            checkpoint_state_root: checkpoint.state_root(),
+            seal_1_block_id: seal_1.id(),
+            terminal_old_height: seal_2.height(),
+            terminal_old_block_id: seal_2.id(),
+            terminal_old_qc_digest: self.grandchild.certifying_qc().id(),
+            next_epoch_commitment_digest: commitment_digest,
+            new_epoch: commitment.new_epoch,
+            activation_height: commitment.activation_height,
+        })
+    }
+
     pub(crate) fn encode_cev0(&self, encoder: &mut Encoder) {
         encoder.u16(SCHEMA_VERSION_V0);
         encoder.fixed(self.genesis_hash.as_bytes());
@@ -786,6 +1029,341 @@ mod parameter_context_tests {
             None,
             None,
             Signature64::from_array([2; SIGNATURE_BYTES]),
+            certifying_qc,
+        )
+        .unwrap()
+    }
+
+    #[derive(Debug, Clone, Copy)]
+    enum BridgeMutation {
+        None,
+        WrongCheckpointKind,
+        NonEmptySealPayload,
+        ChangedSealState,
+        WrongSnapshotCutoff,
+    }
+
+    struct BridgeFixture {
+        proof: FinalityProofV0,
+        commitment: NextEpochCommitmentV0,
+        set: ValidatorSet,
+        parameters: ConsensusParametersV0,
+        checkpoint_parent_timestamp_ms: u64,
+    }
+
+    #[derive(Debug, Clone, Copy)]
+    struct AcceptAllSignatures;
+
+    impl SignatureVerifier for AcceptAllSignatures {
+        fn verify(
+            &self,
+            _validator: &Validator,
+            _signing_root: &SigningRoot,
+            _signature: &crate::SignatureBytes,
+        ) -> bool {
+            true
+        }
+    }
+
+    #[test]
+    fn checkpoint_two_seal_kernel_records_only_verified_bridge_facts() {
+        let fixture = bridge_fixture(BridgeMutation::None);
+        fixture
+            .proof
+            .validate_checkpoint_two_seal_kernel(
+                &fixture.set,
+                &fixture.parameters,
+                &fixture.commitment,
+                fixture.checkpoint_parent_timestamp_ms,
+            )
+            .unwrap();
+
+        let token = fixture
+            .proof
+            .verify_checkpoint_two_seal_kernel(
+                &fixture.set,
+                &fixture.parameters,
+                &fixture.commitment,
+                fixture.checkpoint_parent_timestamp_ms,
+                &AcceptAllSignatures,
+            )
+            .unwrap();
+        let geometry = EpochGeometryV0::new(Epoch::new(0), &fixture.parameters).unwrap();
+        assert_eq!(token.proof_id(), fixture.proof.id());
+        assert_eq!(token.old_epoch(), Epoch::new(0));
+        assert_eq!(token.checkpoint_height(), geometry.checkpoint_height());
+        assert_eq!(
+            token.checkpoint_block_id(),
+            fixture.proof.finalized_block().header().id()
+        );
+        assert_eq!(
+            token.checkpoint_state_root(),
+            fixture.proof.finalized_block().header().state_root()
+        );
+        assert_eq!(token.seal_1_block_id(), fixture.proof.child().header().id());
+        assert_eq!(token.terminal_old_height(), geometry.seal_2_height());
+        assert_eq!(
+            token.terminal_old_block_id(),
+            fixture.proof.grandchild().header().id()
+        );
+        assert_eq!(
+            token.terminal_old_qc_digest(),
+            fixture.proof.grandchild().certifying_qc().id()
+        );
+        assert_eq!(
+            token.next_epoch_commitment_digest(),
+            fixture.commitment.id()
+        );
+        assert_eq!(token.new_epoch(), Epoch::new(1));
+        assert_eq!(token.activation_height(), Height::new(10_001));
+    }
+
+    #[test]
+    fn checkpoint_two_seal_kernel_rejects_every_specialized_bridge_mismatch() {
+        for mutation in [
+            BridgeMutation::WrongCheckpointKind,
+            BridgeMutation::NonEmptySealPayload,
+            BridgeMutation::ChangedSealState,
+            BridgeMutation::WrongSnapshotCutoff,
+        ] {
+            let fixture = bridge_fixture(mutation);
+            assert!(matches!(
+                fixture.proof.validate_checkpoint_two_seal_kernel(
+                    &fixture.set,
+                    &fixture.parameters,
+                    &fixture.commitment,
+                    fixture.checkpoint_parent_timestamp_ms,
+                ),
+                Err(ValidationError::InvalidEpochTransition(_))
+            ));
+        }
+    }
+
+    fn bridge_fixture(mutation: BridgeMutation) -> BridgeFixture {
+        use crate::{EpochFallbackReasonV0, NextEpochCommitmentV0Fields, RolloutPhase};
+
+        let parameters = ConsensusParametersV0::reference_shadow_v0();
+        let set = test_set(&parameters);
+        let geometry = EpochGeometryV0::new(set.epoch(), &parameters).unwrap();
+        let snapshot_cutoff = geometry
+            .checkpoint_height()
+            .get()
+            .checked_sub(parameters.snapshot_lead_blocks())
+            .unwrap();
+        let commitment = NextEpochCommitmentV0::new(NextEpochCommitmentV0Fields {
+            schema_version: SCHEMA_VERSION_V0,
+            genesis_hash: set.genesis_hash(),
+            chain_id: set.chain_id(),
+            old_epoch: set.epoch(),
+            new_epoch: Epoch::new(1),
+            snapshot_cutoff_height: Height::new(
+                if matches!(mutation, BridgeMutation::WrongSnapshotCutoff) {
+                    snapshot_cutoff + 1
+                } else {
+                    snapshot_cutoff
+                },
+            ),
+            snapshot_state_root: StateRoot::new([0x51; 32]),
+            new_protocol_version: ProtocolVersion::V0,
+            new_validator_set_hash: ValidatorSetId::new([0x52; 32]),
+            new_consensus_parameters_hash: parameters.hash(),
+            rollout_phase: RolloutPhase::Shadow,
+            upgrade_plan_hash: None,
+            fallback_used: false,
+            fallback_reason: EpochFallbackReasonV0::None,
+            activation_height: geometry.seal_2_height().checked_next().unwrap(),
+        })
+        .unwrap();
+        let commitment_digest = commitment.id();
+        let checkpoint_state = StateRoot::new([0x61; 32]);
+        let empty_payload = PayloadDigest::new(
+            OrderedRootV0::from_items::<&[u8]>(RootKind::Payload, &[])
+                .unwrap()
+                .digest(),
+        );
+        let empty_receipts = ReceiptsRoot::new(
+            OrderedRootV0::from_items::<&[u8]>(RootKind::Receipts, &[])
+                .unwrap()
+                .digest(),
+        );
+        let empty_evidence = EvidenceRoot::new(
+            OrderedRootV0::from_items::<&[u8]>(RootKind::Evidence, &[])
+                .unwrap()
+                .digest(),
+        );
+
+        let checkpoint_parent = BlockId::new([0x62; 32]);
+        let checkpoint = bridge_header(
+            &set,
+            View::new(10),
+            geometry.checkpoint_height(),
+            if matches!(mutation, BridgeMutation::WrongCheckpointKind) {
+                BlockKind::EpochSeal1
+            } else {
+                BlockKind::EpochCheckpoint
+            },
+            checkpoint_parent,
+            set.validators()[1].id(),
+            PayloadDigest::new([0x63; 32]),
+            checkpoint_state,
+            ReceiptsRoot::new([0x64; 32]),
+            EvidenceRoot::new([0x65; 32]),
+            101,
+            commitment_digest,
+        );
+        let parent_qc = bridge_qc(
+            &set,
+            View::new(9),
+            geometry
+                .checkpoint_height()
+                .get()
+                .checked_sub(1)
+                .unwrap()
+                .into(),
+            checkpoint_parent,
+        );
+        let checkpoint_qc = bridge_qc(
+            &set,
+            checkpoint.view(),
+            checkpoint.height(),
+            checkpoint.id(),
+        );
+        let checkpoint_certified = bridge_certified(checkpoint, parent_qc, checkpoint_qc.clone());
+
+        let seal_1 = bridge_header(
+            &set,
+            View::new(11),
+            geometry.seal_1_height(),
+            BlockKind::EpochSeal1,
+            checkpoint_certified.header().id(),
+            set.validators()[2].id(),
+            if matches!(mutation, BridgeMutation::NonEmptySealPayload) {
+                PayloadDigest::new([0x66; 32])
+            } else {
+                empty_payload
+            },
+            checkpoint_state,
+            empty_receipts,
+            empty_evidence,
+            102,
+            commitment_digest,
+        );
+        let seal_1_qc = bridge_qc(&set, seal_1.view(), seal_1.height(), seal_1.id());
+        let seal_1_certified = bridge_certified(seal_1, checkpoint_qc, seal_1_qc.clone());
+
+        let seal_2 = bridge_header(
+            &set,
+            View::new(12),
+            geometry.seal_2_height(),
+            BlockKind::EpochSeal2,
+            seal_1_certified.header().id(),
+            set.validators()[3].id(),
+            empty_payload,
+            if matches!(mutation, BridgeMutation::ChangedSealState) {
+                StateRoot::new([0x67; 32])
+            } else {
+                checkpoint_state
+            },
+            empty_receipts,
+            empty_evidence,
+            103,
+            commitment_digest,
+        );
+        let seal_2_qc = bridge_qc(&set, seal_2.view(), seal_2.height(), seal_2.id());
+        let seal_2_certified = bridge_certified(seal_2, seal_1_qc, seal_2_qc);
+        let proof = FinalityProofV0::from_parts_for_test(
+            checkpoint_certified,
+            seal_1_certified,
+            seal_2_certified,
+        )
+        .unwrap();
+
+        BridgeFixture {
+            proof,
+            commitment,
+            set,
+            parameters,
+            checkpoint_parent_timestamp_ms: 100,
+        }
+    }
+
+    #[allow(clippy::too_many_arguments)]
+    fn bridge_header(
+        set: &ValidatorSet,
+        view: View,
+        height: Height,
+        kind: BlockKind,
+        parent_id: BlockId,
+        proposer_id: ValidatorId,
+        payload_root: PayloadDigest,
+        state_root: StateRoot,
+        receipts_root: ReceiptsRoot,
+        evidence_root: EvidenceRoot,
+        timestamp_ms: u64,
+        commitment: NextEpochCommitmentHash,
+    ) -> BlockHeader {
+        BlockHeader::new(
+            set.genesis_hash(),
+            set.chain_id(),
+            set.protocol_version(),
+            set.epoch(),
+            view,
+            height,
+            kind,
+            parent_id,
+            proposer_id,
+            set.id(),
+            set.consensus_parameters_hash(),
+            payload_root,
+            state_root,
+            receipts_root,
+            evidence_root,
+            timestamp_ms,
+            Some(commitment),
+        )
+        .unwrap()
+    }
+
+    fn bridge_qc(
+        set: &ValidatorSet,
+        view: View,
+        height: Height,
+        block_id: BlockId,
+    ) -> QuorumCertificate {
+        let signatures = set.validators()[..3]
+            .iter()
+            .map(|validator| {
+                (
+                    validator.id(),
+                    Signature64::from_array([0x71; SIGNATURE_BYTES]),
+                )
+            })
+            .collect();
+        QuorumCertificate::from_parts_for_test(
+            set.genesis_hash(),
+            set.chain_id(),
+            set.protocol_version(),
+            set.epoch(),
+            view,
+            height,
+            block_id,
+            set.id(),
+            signatures,
+        )
+        .unwrap()
+    }
+
+    fn bridge_certified(
+        header: BlockHeader,
+        justify_qc: QuorumCertificate,
+        certifying_qc: QuorumCertificate,
+    ) -> CertifiedHeaderV0 {
+        CertifiedHeaderV0::from_parts_for_test(
+            header,
+            QcReferenceV0::ordinary(justify_qc),
+            None,
+            None,
+            Signature64::from_array([0x72; SIGNATURE_BYTES]),
             certifying_qc,
         )
         .unwrap()

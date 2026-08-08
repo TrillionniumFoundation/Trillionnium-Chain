@@ -137,6 +137,11 @@ impl QuorumCertificate {
         if self.genesis_hash != validator_set.genesis_hash() {
             return Err(ValidationError::GenesisHashMismatch);
         }
+        if self.view == View::new(0) {
+            return Err(ValidationError::InvalidCertificate(
+                "ordinary QC view must be positive",
+            ));
+        }
         let mut previous = None;
         let mut signed_power = 0u128;
         for vote in &self.votes {

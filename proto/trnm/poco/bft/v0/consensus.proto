@@ -10,10 +10,12 @@ import "trnm/poco/bft/v0/epoch.proto";
 // object, canonical field order, and domain frozen by the protocol docs.
 //
 // Decoder limits for the P0 reference profile:
-// - complete Block application_payload plus evidence_objects: at most 4 MiB;
+// - logical Block size (CEV0 header + framed payload + framed evidence list):
+//   at most 4 MiB; equality is accepted;
 // - QC/TC signer lists: at most 100 entries, canonical validator_id order;
 // - referenced QCs in a TC: at most 100, unique and canonical digest order;
-// - containing WireEnvelope: at most 8 MiB.
+// - decoded/reassembled transport body admission: at most 8 MiB; transport
+//   overhead does not redefine logical block validity.
 
 // Exact transport projection of BlockHeaderV0. Every hash/root/block ID is
 // exactly 32 bytes. next_epoch_commitment_hash is empty when absent or exactly
@@ -43,10 +45,16 @@ message BlockHeader {
 
 message Block {
   BlockHeader header = 1;
+  // Exact canonical CEV0 List<Bytes> of raw transactions in execution order.
+  // Zero transactions is 0x00000000, never an absent/empty byte string.
   bytes application_payload = 2;
-  // Bounded decoded evidence transport objects. Their deterministic ordered
-  // commitment MUST equal header.evidence_root; these bytes are never signed.
+  // Exact DoubleVoteEvidenceV0 CEV0 values, strictly ordered by recomputed
+  // evidence ID with no duplicates. Diagnostic evidence is not admissible in
+  // the v0 block root. These transport bytes are never signed directly.
   repeated bytes evidence_objects = 3;
+
+  // Execution receipts are derived one-for-one from application_payload and
+  // committed by header.receipts_root; they are not peer-supplied fields.
 
   reserved 64 to 127;
 }

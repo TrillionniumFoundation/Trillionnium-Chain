@@ -232,7 +232,7 @@ impl Vote {
             && self.view() == other.view()
             && self.validator_set_id == other.validator_set_id
             && self.author == other.author
-            && self.block_id != other.block_id
+            && (self.height != other.height || self.block_id != other.block_id)
     }
 
     #[cfg(test)]

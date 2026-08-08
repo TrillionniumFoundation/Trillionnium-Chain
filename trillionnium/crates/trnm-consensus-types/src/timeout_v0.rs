@@ -1,12 +1,15 @@
-use alloc::{boxed::Box, vec::Vec};
+use alloc::{
+    boxed::Box,
+    collections::{BTreeMap, BTreeSet},
+    vec::Vec,
+};
 
 use crate::{
     canonical::{canonical_hash, try_canonical_bytes, Encoder, DOMAIN_TIMEOUT_CERTIFICATE},
     certificate::validate_signer_order,
-    CertificateId, ChainId, ContextAuthorizedQcV0, Epoch, EpochAnchorAuthorizationV0,
-    EpochAnchorQcV0, GenesisHash, ProtocolVersion, QcRef, QcReferenceV0, Result, Signature64,
-    SignatureVerifier, TimeoutVote, ValidationError, ValidatorId, ValidatorSet, ValidatorSetId,
-    View, SCHEMA_VERSION_V0,
+    CertificateId, ChainId, ContextAuthorizedQcV0, Epoch, EpochAnchorAuthorizationV0, GenesisHash,
+    ProtocolVersion, QcRef, QcReferenceV0, Result, Signature64, SignatureVerifier, TimeoutVote,
+    ValidationError, ValidatorId, ValidatorSet, ValidatorSetId, View, SCHEMA_VERSION_V0,
 };
 
 /// Exact `TimeoutEntryV0` wire value. Consensus context is reconstructed from
@@ -134,6 +137,16 @@ impl TimeoutCertificateV0 {
 
     pub fn validate_shape(&self, validator_set: &ValidatorSet) -> Result<()> {
         validator_set.validate_shape()?;
+        if self.entries.len() > validator_set.validators().len() {
+            return Err(ValidationError::InvalidCertificate(
+                "TC entry count exceeds the validator set",
+            ));
+        }
+        if self.referenced_qcs.len() > self.entries.len() {
+            return Err(ValidationError::InvalidCertificate(
+                "TC referenced-QC count exceeds its timeout entries",
+            ));
+        }
         if self.genesis_hash != validator_set.genesis_hash() {
             return Err(ValidationError::GenesisHashMismatch);
         }
@@ -189,11 +202,10 @@ impl TimeoutCertificateV0 {
     pub fn verify<V: SignatureVerifier>(
         &self,
         validator_set: &ValidatorSet,
-        epoch_authorization: Option<(&EpochAnchorAuthorizationV0, &ValidatorSet)>,
+        _epoch_authorization: Option<(&EpochAnchorAuthorizationV0, &ValidatorSet)>,
         verifier: &V,
     ) -> Result<()> {
         self.validate_shape(validator_set)?;
-        let mut verified_epoch_anchor: Option<EpochAnchorQcV0> = None;
         for referenced in &self.referenced_qcs {
             match referenced {
                 QcReferenceV0::Ordinary(certificate) => {
@@ -203,28 +215,10 @@ impl TimeoutCertificateV0 {
                     ContextAuthorizedQcV0::Genesis(anchor) => {
                         anchor.matches_trusted_set(validator_set)?;
                     }
-                    ContextAuthorizedQcV0::Epoch(anchor) => {
-                        let (authorization, old_validator_set) =
-                            epoch_authorization.ok_or(ValidationError::InvalidCertificate(
-                                "epoch-anchor TC lacks atomic authorization",
-                            ))?;
-                        let verified = match &verified_epoch_anchor {
-                            Some(verified) => (*verified).clone(),
-                            None => {
-                                let verified = authorization.verify(
-                                    old_validator_set,
-                                    validator_set,
-                                    verifier,
-                                )?;
-                                verified_epoch_anchor = Some(verified.clone());
-                                verified
-                            }
-                        };
-                        if &verified != anchor {
-                            return Err(ValidationError::InvalidCertificate(
-                                "TC epoch anchor differs from atomic authorization",
-                            ));
-                        }
+                    ContextAuthorizedQcV0::Epoch(_) => {
+                        return Err(ValidationError::InvalidCertificate(
+                            "complete trusted epoch-anchor authorization is not implemented",
+                        ));
                     }
                 },
             }
@@ -271,7 +265,10 @@ impl TimeoutCertificateV0 {
             ));
         }
         let mut previous_qc = None;
-        for (index, referenced) in self.referenced_qcs.iter().enumerate() {
+        let mut referenced_ids = BTreeSet::new();
+        let mut coordinates = BTreeMap::new();
+        let mut block_coordinates = BTreeMap::new();
+        for referenced in &self.referenced_qcs {
             let summary = referenced.qc_ref();
             if summary.epoch() != self.epoch
                 || summary.validator_set_id() != self.validator_set_hash
@@ -284,19 +281,29 @@ impl TimeoutCertificateV0 {
                 return Err(ValidationError::NonCanonicalQcOrder);
             }
             previous_qc = Some(id);
-            for prior in &self.referenced_qcs[..index] {
-                let prior = prior.qc_ref();
-                if prior.epoch() == summary.epoch()
-                    && prior.view() == summary.view()
-                    && prior.block_id() != summary.block_id()
-                {
-                    return Err(ValidationError::ConflictingSameViewQc);
-                }
+            referenced_ids.insert(id);
+            let coordinate = (summary.epoch(), summary.view());
+            let certified = (summary.height(), summary.block_id());
+            if coordinates
+                .insert(coordinate, certified)
+                .is_some_and(|prior| prior != certified)
+            {
+                return Err(ValidationError::ConflictingSameViewQc);
+            }
+            let block_coordinate = (summary.epoch(), summary.view(), summary.height());
+            if block_coordinates
+                .insert(summary.block_id(), block_coordinate)
+                .is_some_and(|prior| prior != block_coordinate)
+            {
+                return Err(ValidationError::InvalidCertificate(
+                    "TC binds one block ID to multiple QC coordinates",
+                ));
             }
         }
 
         let mut previous_signer = None;
         let mut maximum: Option<QcRef> = None;
+        let mut used_references = BTreeSet::new();
         for entry in &self.entries {
             entry.signature.validate_shape()?;
             validate_signer_order(&mut previous_signer, entry.signer_id)?;
@@ -309,6 +316,7 @@ impl TimeoutCertificateV0 {
                     "timeout entry does not match an exact referenced QC",
                 ));
             }
+            used_references.insert(entry.high_qc.qc_digest());
             maximum = match maximum {
                 Some(current)
                     if (current.view(), current.block_id(), current.qc_digest())
@@ -329,6 +337,11 @@ impl TimeoutCertificateV0 {
         if maximum.qc_digest() != self.selected_high_qc_digest {
             return Err(ValidationError::InvalidCertificate(
                 "TC selected high QC is not the deterministic maximum",
+            ));
+        }
+        if used_references != referenced_ids {
+            return Err(ValidationError::InvalidCertificate(
+                "TC carries a referenced QC that no timeout entry signed",
             ));
         }
         Ok(())

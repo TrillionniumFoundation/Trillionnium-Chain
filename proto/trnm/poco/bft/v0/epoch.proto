@@ -33,14 +33,17 @@ message NextEpochCommitment {
   uint64 old_epoch = 4;
   uint64 new_epoch = 5;
   uint64 snapshot_cutoff_height = 6;
-  bytes snapshot_state_root = 7;
+  bytes snapshot_state_root = 7; // Exactly 32 nonzero bytes.
   uint32 new_protocol_version = 8;
-  bytes new_validator_set_hash = 9;
-  bytes new_consensus_parameters_hash = 10;
+  bytes new_validator_set_hash = 9; // Exactly 32 nonzero bytes.
+  bytes new_consensus_parameters_hash = 10; // Exactly 32 nonzero bytes.
+  // MUST equal the phase inside new_consensus_parameters_hash's exact
+  // parameter preimage; this is a redundant authenticated consistency check.
   RolloutPhase rollout_phase = 11;
-  bytes upgrade_plan_hash = 12; // Empty or exactly 32 bytes.
+  bytes upgrade_plan_hash = 12; // Empty or exactly 32 nonzero bytes.
   bool fallback_used = 13;
   uint32 fallback_reason_code = 14; // Logical u16; normative values 0..9.
+  // MUST equal old seal_2 height + 1 under the outgoing active schedule.
   uint64 activation_height = 15;
   bytes commitment_digest = 16; // epoch-commitment domain; recomputed.
 

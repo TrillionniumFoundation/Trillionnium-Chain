@@ -1,10 +1,10 @@
 use alloc::{boxed::Box, collections::BTreeSet, vec::Vec};
 
 use crate::{
-    canonical::{canonical_hash, DOMAIN_VALIDATOR_SET},
-    ChainId, CommonConsensusContextV0, ConsensusParametersHash, ConsensusPublicKey, Epoch,
-    GenesisHash, MessageKind, ProtocolVersion, Result, ValidationError, ValidatorId,
-    ValidatorSetId, View, VotingPower, SCHEMA_VERSION_V0,
+    canonical::{canonical_hash, try_canonical_bytes, Encoder, DOMAIN_VALIDATOR_SET},
+    ChainId, CommonConsensusContextV0, ConsensusParametersHash, ConsensusParametersV0,
+    ConsensusPublicKey, Epoch, GenesisHash, MessageKind, ProtocolVersion, Result, ValidationError,
+    ValidatorId, ValidatorSetId, View, VotingPower, SCHEMA_VERSION_V0,
 };
 
 pub const MAX_VALIDATORS: usize = 100;
@@ -139,6 +139,22 @@ impl ValidatorSet {
         self.quorum_power
     }
 
+    pub fn try_cev0_bytes(&self) -> Result<Vec<u8>> {
+        try_canonical_bytes(|encoder| self.encode_cev0(encoder))
+    }
+
+    pub(crate) fn encode_cev0(&self, encoder: &mut Encoder) {
+        encode_validator_set_cev0(
+            encoder,
+            self.genesis_hash,
+            self.chain_id,
+            self.protocol_version,
+            self.epoch,
+            self.consensus_parameters_hash,
+            &self.validators,
+        );
+    }
+
     pub fn validator(&self, id: ValidatorId) -> Option<&Validator> {
         self.validators
             .binary_search_by_key(&id, Validator::id)
@@ -182,6 +198,64 @@ impl ValidatorSet {
         ) != self.id
         {
             return Err(ValidationError::ValidatorSetIdMismatch);
+        }
+        Ok(())
+    }
+
+    /// Validates the active set against the exact parameter preimage whose
+    /// hash it commits. These bounds are consensus safety rules, not merely
+    /// operator policy, and must be enforced at genesis and every handoff.
+    pub fn validate_against_parameters(&self, parameters: &ConsensusParametersV0) -> Result<()> {
+        self.validate_shape()?;
+        parameters.validate_safety_invariants()?;
+        if self.consensus_parameters_hash != parameters.hash() {
+            return Err(ValidationError::ConsensusParametersMismatch);
+        }
+        if self.chain_id.as_bytes().len() > usize::from(parameters.max_chain_id_bytes()) {
+            return Err(ValidationError::InvalidValidatorSet(
+                "chain ID exceeds the committed byte limit",
+            ));
+        }
+        let count = self.validators.len() as u32;
+        if count < parameters.min_validators() || count > parameters.max_validators() {
+            return Err(ValidationError::InvalidValidatorSet(
+                "validator count is outside committed parameter bounds",
+            ));
+        }
+        if self.total_power > u128::from(parameters.max_total_voting_power()) {
+            return Err(ValidationError::InvalidValidatorSet(
+                "total voting power exceeds the committed maximum",
+            ));
+        }
+        for validator in &self.validators {
+            if validator.id.as_bytes().len() > usize::from(parameters.max_validator_id_bytes()) {
+                return Err(ValidationError::InvalidValidatorSet(
+                    "validator ID exceeds the committed byte limit",
+                ));
+            }
+            let power = validator.voting_power.get();
+            if power < parameters.min_validator_power() || power > parameters.max_validator_power()
+            {
+                return Err(ValidationError::InvalidValidatorSet(
+                    "validator power is outside committed parameter bounds",
+                ));
+            }
+            let scaled = u128::from(power)
+                .checked_mul(u128::from(parameters.scale_ppm()))
+                .ok_or(ValidationError::ArithmeticOverflow(
+                    "validator voting-power share",
+                ))?;
+            let maximum = self
+                .total_power
+                .checked_mul(u128::from(parameters.max_validator_share_ppm()))
+                .ok_or(ValidationError::ArithmeticOverflow(
+                    "maximum validator voting-power share",
+                ))?;
+            if scaled > maximum {
+                return Err(ValidationError::InvalidValidatorSet(
+                    "validator voting-power share exceeds the committed cap",
+                ));
+            }
         }
         Ok(())
     }
@@ -238,17 +312,38 @@ fn validator_set_id(
     validators: &[Validator],
 ) -> ValidatorSetId {
     ValidatorSetId::new(canonical_hash(DOMAIN_VALIDATOR_SET, |encoder| {
-        encoder.u16(SCHEMA_VERSION_V0);
-        encoder.fixed(genesis_hash.as_bytes());
-        encoder.consensus_string(chain_id.as_bytes());
-        encoder.u32(protocol_version.get());
-        encoder.u64(epoch.get());
-        encoder.fixed(consensus_parameters_hash.as_bytes());
-        encoder.list_len(validators.len());
-        for validator in validators {
-            encoder.bytes(validator.id.as_bytes());
-            encoder.fixed(validator.consensus_key.as_bytes());
-            encoder.u64(validator.voting_power.get());
-        }
+        encode_validator_set_cev0(
+            encoder,
+            genesis_hash,
+            chain_id,
+            protocol_version,
+            epoch,
+            consensus_parameters_hash,
+            validators,
+        );
     }))
+}
+
+#[allow(clippy::too_many_arguments)]
+fn encode_validator_set_cev0(
+    encoder: &mut Encoder,
+    genesis_hash: GenesisHash,
+    chain_id: ChainId,
+    protocol_version: ProtocolVersion,
+    epoch: Epoch,
+    consensus_parameters_hash: ConsensusParametersHash,
+    validators: &[Validator],
+) {
+    encoder.u16(SCHEMA_VERSION_V0);
+    encoder.fixed(genesis_hash.as_bytes());
+    encoder.consensus_string(chain_id.as_bytes());
+    encoder.u32(protocol_version.get());
+    encoder.u64(epoch.get());
+    encoder.fixed(consensus_parameters_hash.as_bytes());
+    encoder.list_len(validators.len());
+    for validator in validators {
+        encoder.bytes(validator.id.as_bytes());
+        encoder.fixed(validator.consensus_key.as_bytes());
+        encoder.u64(validator.voting_power.get());
+    }
 }

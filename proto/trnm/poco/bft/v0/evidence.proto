@@ -35,8 +35,10 @@ message DoubleProposalEvidence {
   reserved 64 to 127;
 }
 
-// The mandatory v0 objective evidence type. first/second are normalized by
-// their reconstructed vote digest, not arrival order.
+// The mandatory v0 objective evidence type. Its canonical
+// DoubleVoteEvidenceV0 preimage is schema_version u16 followed by these two
+// VoteEvidenceRecordV0-equivalent values (context,height,block_id,author,
+// signature), normalized by reconstructed vote signing root, not arrival.
 message DoubleVoteEvidence {
   Vote first = 1;
   Vote second = 2;
@@ -79,7 +81,10 @@ message EquivocationEvidence {
     ConflictingHandoffVoteEvidence conflicting_handoff_vote = 19;
   }
 
-  bytes evidence_id = 32; // Recomputed normalized domain-separated digest.
+  // For double_vote, recomputed from the exact canonical two-record preimage;
+  // redundant wrapper scope and protobuf bytes never enter that preimage.
+  // Other diagnostic proof kinds do not yet have an active v0 canonical ID.
+  bytes evidence_id = 32;
 
   reserved 64 to 127;
 }

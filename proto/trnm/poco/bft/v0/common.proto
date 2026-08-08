@@ -143,7 +143,7 @@ message ConsensusParameters {
   uint32 timeout_multiplier_numerator = 19;
   uint32 timeout_multiplier_denominator = 20;
   uint64 timeout_max_ms = 21;
-  uint64 epoch_length_blocks = 22;
+  uint64 epoch_length_blocks = 22; // Immutable across every v0-authorized handoff.
   uint32 epoch_seal_blocks = 23; // Logical u8; MUST equal 2.
   uint64 snapshot_lead_blocks = 24;
   bool joint_handoff_old_quorum = 25;

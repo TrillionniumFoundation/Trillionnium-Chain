@@ -1,0 +1,5172 @@
+//! Exact, bounded decoders for the frozen CEV0 certificate, handoff,
+//! epoch-commitment, and ordinary block-body kernels.
+//!
+//! These functions decode canonical logical values, not protobuf or another
+//! transport container. Certificate decoders require the trusted active
+//! validator set because set membership, voting power, and the validator-set
+//! identifier are authorization context rather than self-authenticating wire
+//! claims. Body decoders require authenticated active bounds and return inert
+//! values rather than runtime, voting, checkpoint, or epoch authority.
+//! Cryptographic signature verification remains a separate step.
+
+use alloc::{
+    collections::{BTreeMap, BTreeSet},
+    vec::Vec,
+};
+use core::fmt;
+
+use crate::canonical::try_canonical_bytes;
+use crate::proposal_v0::{validate_scheduled_leader, validate_timestamp_step};
+use crate::{
+    ApplicationPayloadV0, BlockHeader, BlockId, BlockKind, CertificateId, CertifiedHeaderV0,
+    ChainId, CommonConsensusContextV0, ConsensusParametersHash, ConsensusParametersV0,
+    ConsensusParametersV0Fields, ConsensusPublicKey, DoubleVoteEvidenceV0, Epoch,
+    EpochAnchorAuthorizationV0, EpochFallbackReasonV0, EvidenceRoot, ExecutionEventAttributeV0,
+    ExecutionEventV0, ExecutionReceiptCommitmentV0, FinalityProofV0, GenesisHash,
+    HandoffCertificateV0, HandoffDescriptorV0, HandoffDescriptorV0Fields, Height, LeaderSchedule,
+    MessageKind, NextEpochCommitmentHash, NextEpochCommitmentV0, NextEpochCommitmentV0Fields,
+    PayloadDigest, ProtocolVersion, QcRef, QcReferenceV0, QuorumCertificate, ReceiptsRoot,
+    RolloutPhase, Signature64, SignatureShareV0, SignatureVerifier, StateRoot,
+    TimeoutCertificateV0, TimeoutEntryV0, UpgradePlanHash, ValidationError, Validator, ValidatorId,
+    ValidatorSet, ValidatorSetId, View, Vote, VoteEvidenceRecordV0, VotingPower,
+    MAX_CONSENSUS_STRING_BYTES, MAX_VALIDATORS, MAX_VALIDATOR_ID_BYTES, SCHEMA_VERSION_V0,
+};
+
+/// The v0 hard cap for signer, timeout-entry, and referenced-QC lists.
+pub const MAX_CEV0_CERTIFICATE_ITEMS: usize = 100;
+
+/// The maximum total number of ordinary-QC signature shares nested in one TC.
+pub const MAX_CEV0_TC_AGGREGATE_SIGNATURE_SHARES: usize =
+    MAX_CEV0_CERTIFICATE_ITEMS * MAX_CEV0_CERTIFICATE_ITEMS;
+
+/// The maximum old-plus-new signature shares in one handoff certificate.
+pub const MAX_CEV0_HANDOFF_AGGREGATE_SIGNATURE_SHARES: usize = MAX_CEV0_CERTIFICATE_ITEMS * 2;
+
+pub type DecodeResult<T> = core::result::Result<T, DecodeError>;
+
+/// Stable, machine-readable failure classes for exact CEV0 parsing.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[non_exhaustive]
+pub enum DecodeErrorCode {
+    UnexpectedEof,
+    TrailingBytes,
+    LengthLimitExceeded,
+    CountLimitExceeded,
+    AggregateLimitExceeded,
+    InvalidSchemaVersion,
+    InvalidProtocolVersion,
+    InvalidConsensusString,
+    InvalidBlockKind,
+    InvalidOptionalTag,
+    InvalidBlockHeader,
+    InvalidHandoffDescriptor,
+    InvalidHandoffCertificate,
+    InvalidEpochAnchorRelations,
+    UnauthorizedSyntheticQc,
+    ZeroGenesisHash,
+    ZeroConsensusPublicKey,
+    ZeroVotingPower,
+    EmptyValidatorSet,
+    DuplicateValidatorId,
+    DuplicatePublicKey,
+    NonCanonicalValidatorOrder,
+    ContextMismatch,
+    UnknownSigner,
+    DuplicateSigner,
+    NonCanonicalSignerOrder,
+    NonCanonicalReferenceOrder,
+    ConflictingSameViewQc,
+    InsufficientQuorum,
+    EmptyTc,
+    InvalidReferencedQc,
+    DuplicateReference,
+    FutureReferenceView,
+    SameBlockDifferentCoordinates,
+    ReferenceSummaryMismatch,
+    UnreferencedQc,
+    SelectedNotMaximum,
+    InvalidBoolean,
+    InvalidRolloutPhase,
+    InvalidFallbackReason,
+    InvalidNextEpochCommitment,
+    InvalidUtf8,
+    NonCanonicalEventAttributeOrder,
+    InvalidDoubleVoteEvidence,
+    InvalidLeaderSchedule,
+    InvalidConsensusParameters,
+    InvalidFinalityProof,
+    InvalidCheckpointTwoSeal,
+}
+
+impl DecodeErrorCode {
+    /// Returns the stable snake-case code shared by the manifest and corpus.
+    pub const fn as_str(self) -> &'static str {
+        match self {
+            Self::UnexpectedEof => "unexpected_eof",
+            Self::TrailingBytes => "trailing_bytes",
+            Self::LengthLimitExceeded => "length_limit_exceeded",
+            Self::CountLimitExceeded => "count_limit_exceeded",
+            Self::AggregateLimitExceeded => "aggregate_limit_exceeded",
+            Self::InvalidSchemaVersion => "invalid_schema_version",
+            Self::InvalidProtocolVersion => "invalid_protocol_version",
+            Self::InvalidConsensusString => "invalid_consensus_string",
+            Self::InvalidBlockKind => "invalid_block_kind",
+            Self::InvalidOptionalTag => "invalid_optional_tag",
+            Self::InvalidBlockHeader => "invalid_block_header",
+            Self::InvalidHandoffDescriptor => "invalid_handoff_descriptor",
+            Self::InvalidHandoffCertificate => "invalid_handoff_certificate",
+            Self::InvalidEpochAnchorRelations => "invalid_epoch_anchor_relations",
+            Self::UnauthorizedSyntheticQc => "unauthorized_synthetic_qc",
+            Self::ZeroGenesisHash => "zero_genesis_hash",
+            Self::ZeroConsensusPublicKey => "zero_public_key",
+            Self::ZeroVotingPower => "zero_voting_power",
+            Self::EmptyValidatorSet => "empty_validator_set",
+            Self::DuplicateValidatorId => "duplicate_validator_id",
+            Self::DuplicatePublicKey => "duplicate_public_key",
+            Self::NonCanonicalValidatorOrder => "noncanonical_validator_order",
+            Self::ContextMismatch => "context_mismatch",
+            Self::UnknownSigner => "unknown_signer",
+            Self::DuplicateSigner => "duplicate_signer",
+            Self::NonCanonicalSignerOrder => "noncanonical_signer_order",
+            Self::NonCanonicalReferenceOrder => "noncanonical_reference_order",
+            Self::ConflictingSameViewQc => "conflicting_same_view_qc",
+            Self::InsufficientQuorum => "insufficient_quorum",
+            Self::InvalidReferencedQc => "invalid_referenced_qc",
+            Self::EmptyTc => "empty_tc",
+            Self::DuplicateReference => "duplicate_reference",
+            Self::FutureReferenceView => "future_reference_view",
+            Self::SameBlockDifferentCoordinates => "same_block_different_coordinates",
+            Self::ReferenceSummaryMismatch => "reference_summary_mismatch",
+            Self::UnreferencedQc => "unreferenced_qc",
+            Self::SelectedNotMaximum => "selected_not_maximum",
+            Self::InvalidBoolean => "invalid_boolean",
+            Self::InvalidRolloutPhase => "invalid_rollout_phase",
+            Self::InvalidFallbackReason => "invalid_fallback_reason",
+            Self::InvalidNextEpochCommitment => "invalid_next_epoch_commitment",
+            Self::InvalidUtf8 => "invalid_utf8",
+            Self::NonCanonicalEventAttributeOrder => "noncanonical_event_attribute_order",
+            Self::InvalidDoubleVoteEvidence => "invalid_double_vote_evidence",
+            Self::InvalidLeaderSchedule => "invalid_leader_schedule",
+            Self::InvalidConsensusParameters => "invalid_consensus_parameters",
+            Self::InvalidFinalityProof => "invalid_finality_proof",
+            Self::InvalidCheckpointTwoSeal => "invalid_checkpoint_two_seal",
+        }
+    }
+}
+
+/// A decoder failure at an exact byte offset in the supplied root slice.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct DecodeError {
+    code: DecodeErrorCode,
+    byte_offset: usize,
+}
+
+impl DecodeError {
+    const fn new(code: DecodeErrorCode, byte_offset: usize) -> Self {
+        Self { code, byte_offset }
+    }
+
+    pub const fn code(self) -> DecodeErrorCode {
+        self.code
+    }
+
+    pub const fn byte_offset(self) -> usize {
+        self.byte_offset
+    }
+}
+
+impl fmt::Display for DecodeError {
+    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(
+            formatter,
+            "CEV0 decode error {} at byte {}",
+            self.code.as_str(),
+            self.byte_offset
+        )
+    }
+}
+
+impl core::error::Error for DecodeError {}
+
+/// Inert, exactly decoded epoch-anchor authorization certificate kernel.
+///
+/// This value deliberately cannot derive an `EpochAnchorQcV0` or upgrade
+/// itself into `EpochAnchorAuthorizationV0`. It retains peer bytes only for
+/// inspection, exact re-encoding, and explicit certificate-signature checks.
+/// Checkpoint ancestry, the two-seal construction, and
+/// `NextEpochCommitment` authenticity remain outside this API.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct EpochAnchorAuthorizationKernelV0 {
+    terminal_old_header: BlockHeader,
+    terminal_old_qc: QuorumCertificate,
+    handoff_certificate: HandoffCertificateV0,
+}
+
+impl EpochAnchorAuthorizationKernelV0 {
+    pub const fn terminal_old_header(&self) -> &BlockHeader {
+        &self.terminal_old_header
+    }
+
+    pub const fn terminal_old_qc(&self) -> &QuorumCertificate {
+        &self.terminal_old_qc
+    }
+
+    pub const fn handoff_certificate(&self) -> &HandoffCertificateV0 {
+        &self.handoff_certificate
+    }
+
+    pub fn try_cev0_bytes(&self) -> crate::Result<Vec<u8>> {
+        try_canonical_bytes(|encoder| {
+            self.terminal_old_header.encode_cev0(encoder);
+            self.terminal_old_qc.encode_cev0(encoder);
+            self.handoff_certificate.encode_cev0(encoder);
+        })
+    }
+
+    /// Verifies only the certificate kernel and returns no authorization.
+    ///
+    /// This checks the terminal ordinary QC plus both old/new handoff
+    /// signature roles after revalidating their shapes and relations. Success
+    /// is not proof of checkpoint ancestry, the two-seal construction, or the
+    /// committed next validator/runtime context.
+    pub fn verify_certificate_kernel<V: SignatureVerifier>(
+        &self,
+        old_validator_set: &ValidatorSet,
+        new_validator_set: &ValidatorSet,
+        verifier: &V,
+    ) -> crate::Result<()> {
+        EpochAnchorAuthorizationV0::new(
+            self.terminal_old_header.clone(),
+            self.terminal_old_qc.clone(),
+            self.handoff_certificate.clone(),
+            old_validator_set,
+            new_validator_set,
+        )?
+        .verify_certificate_kernel(old_validator_set, new_validator_set, verifier)
+    }
+}
+
+const CONSENSUS_PARAMETERS_V0_BYTES: usize = 341;
+const PARAMETER_SCHEMA_OFFSET: usize = 0;
+const PARAMETER_PROTOCOL_OFFSET: usize = 2;
+const PARAMETER_PRODUCTION_ACTIVATION_OFFSET: usize = 6;
+const PARAMETER_MAX_CHAIN_ID_BYTES_OFFSET: usize = 7;
+const PARAMETER_MAX_VALIDATOR_ID_BYTES_OFFSET: usize = 9;
+const PARAMETER_MAX_BLOCK_BYTES_OFFSET: usize = 11;
+const PARAMETER_MIN_VALIDATORS_OFFSET: usize = 19;
+const PARAMETER_MAX_VALIDATORS_OFFSET: usize = 23;
+const PARAMETER_QUORUM_NUMERATOR_OFFSET: usize = 27;
+#[cfg(test)]
+const PARAMETER_QUORUM_DENOMINATOR_OFFSET: usize = 31;
+const PARAMETER_FINALITY_CHAIN_LENGTH_OFFSET: usize = 39;
+const PARAMETER_MAX_TOTAL_VOTING_POWER_OFFSET: usize = 40;
+const PARAMETER_LEADER_SCHEDULE_OFFSET: usize = 56;
+const PARAMETER_REQUIRE_FULL_PAYLOAD_OFFSET: usize = 57;
+const PARAMETER_BASE_TIMEOUT_OFFSET: usize = 58;
+const PARAMETER_TIMEOUT_NUMERATOR_OFFSET: usize = 66;
+const PARAMETER_EPOCH_LENGTH_OFFSET: usize = 82;
+const PARAMETER_EPOCH_SEAL_BLOCKS_OFFSET: usize = 90;
+const PARAMETER_SNAPSHOT_LEAD_OFFSET: usize = 91;
+const PARAMETER_JOINT_OLD_QUORUM_OFFSET: usize = 99;
+const PARAMETER_JOINT_NEW_QUORUM_OFFSET: usize = 100;
+const PARAMETER_UPGRADE_NOTICE_OFFSET: usize = 101;
+const PARAMETER_SCALE_PPM_OFFSET: usize = 113;
+const PARAMETER_PER_CERTIFICATE_CAP_OFFSET: usize = 145;
+const PARAMETER_PER_CONSUMER_CAP_OFFSET: usize = 161;
+const PARAMETER_PER_TASK_CAP_OFFSET: usize = 177;
+const PARAMETER_PER_PROVIDER_CAP_OFFSET: usize = 193;
+const PARAMETER_UNITS_PER_POWER_OFFSET: usize = 209;
+const PARAMETER_MIN_VALIDATOR_POWER_OFFSET: usize = 241;
+const PARAMETER_MAX_VALIDATOR_SHARE_OFFSET: usize = 257;
+const PARAMETER_CAPPED_ALPHA_OFFSET: usize = 265;
+const PARAMETER_ROLLOUT_PHASE_OFFSET: usize = 281;
+const PARAMETER_AUTOMATIC_PROMOTION_OFFSET: usize = 306;
+const PARAMETER_UNBONDING_DELAY_OFFSET: usize = 315;
+const PARAMETER_TRUSTING_PERIOD_OFFSET: usize = 331;
+const PARAMETER_REQUIRE_TRUSTING_RELATION_OFFSET: usize = 339;
+const PARAMETER_REQUIRE_UNBONDING_RELATION_OFFSET: usize = 340;
+
+/// Decodes the exact frozen 54-field `ConsensusParametersV0` CEV0 preimage.
+///
+/// The parser consumes all 341 fixed bytes before applying semantic rules, so
+/// a valid root plus any suffix is always classified as `trailing_bytes`.
+pub fn decode_consensus_parameters_v0_exact(bytes: &[u8]) -> DecodeResult<ConsensusParametersV0> {
+    let mut cursor = Cursor::new(bytes);
+    let raw = parse_raw_consensus_parameters_v0(&mut cursor)?;
+    cursor.finish()?;
+    admit_raw_consensus_parameters_v0(raw)
+}
+
+fn parse_raw_consensus_parameters_v0(
+    cursor: &mut Cursor<'_>,
+) -> DecodeResult<RawConsensusParametersV0> {
+    let raw = RawConsensusParametersV0 {
+        schema_version: cursor.u16()?,
+        protocol_version: cursor.u32()?,
+        production_activation: cursor.u8()?,
+        max_chain_id_bytes: cursor.u16()?,
+        max_validator_id_bytes: cursor.u16()?,
+        max_block_bytes: cursor.u32()?,
+        max_consensus_message_bytes: cursor.u32()?,
+        min_validators: cursor.u32()?,
+        max_validators: cursor.u32()?,
+        quorum_numerator: cursor.u32()?,
+        quorum_denominator: cursor.u32()?,
+        quorum_addend: cursor.u32()?,
+        finality_certified_chain_length: cursor.u8()?,
+        max_total_voting_power: cursor.u64()?,
+        max_block_time_step_ms: cursor.u64()?,
+        leader_schedule: cursor.u8()?,
+        require_full_payload_before_vote: cursor.u8()?,
+        base_timeout_ms: cursor.u64()?,
+        timeout_multiplier_numerator: cursor.u32()?,
+        timeout_multiplier_denominator: cursor.u32()?,
+        timeout_max_ms: cursor.u64()?,
+        epoch_length_blocks: cursor.u64()?,
+        epoch_seal_blocks: cursor.u8()?,
+        snapshot_lead_blocks: cursor.u64()?,
+        joint_handoff_old_quorum: cursor.u8()?,
+        joint_handoff_new_quorum: cursor.u8()?,
+        upgrade_notice_epochs: cursor.u64()?,
+        max_protocol_version_jump: cursor.u32()?,
+        scale_ppm: cursor.u64()?,
+        maturity_epochs: cursor.u64()?,
+        max_certificate_age_epochs: cursor.u64()?,
+        decay_step_ppm_per_epoch: cursor.u64()?,
+        per_certificate_unit_cap: cursor.u128()?,
+        per_consumer_provider_epoch_unit_cap: cursor.u128()?,
+        per_task_provider_epoch_unit_cap: cursor.u128()?,
+        per_provider_epoch_unit_cap: cursor.u128()?,
+        units_per_power: cursor.u128()?,
+        bond_atomic_units_per_power: cursor.u128()?,
+        min_validator_power: cursor.u64()?,
+        max_validator_power: cursor.u64()?,
+        max_validator_share_ppm: cursor.u64()?,
+        capped_weight_alpha_ppm: cursor.u64()?,
+        full_weight_alpha_ppm: cursor.u64()?,
+        rollout_phase: cursor.u8()?,
+        minimum_shadow_epochs: cursor.u64()?,
+        minimum_eligibility_only_epochs: cursor.u64()?,
+        minimum_capped_weight_epochs: cursor.u64()?,
+        automatic_promotion: cursor.u8()?,
+        evidence_window_epochs: cursor.u64()?,
+        unbonding_delay_epochs: cursor.u64()?,
+        jail_duration_epochs: cursor.u64()?,
+        trusting_period_epochs: cursor.u64()?,
+        require_trusting_period_less_than_evidence: cursor.u8()?,
+        require_evidence_window_le_unbonding_delay: cursor.u8()?,
+    };
+    debug_assert_eq!(cursor.offset(), CONSENSUS_PARAMETERS_V0_BYTES);
+    Ok(raw)
+}
+
+fn admit_raw_consensus_parameters_v0(
+    raw: RawConsensusParametersV0,
+) -> DecodeResult<ConsensusParametersV0> {
+    require_schema_v0(raw.schema_version, PARAMETER_SCHEMA_OFFSET)?;
+    if raw.protocol_version != ProtocolVersion::V0.get() {
+        return Err(DecodeError::new(
+            DecodeErrorCode::InvalidProtocolVersion,
+            PARAMETER_PROTOCOL_OFFSET,
+        ));
+    }
+    let production_activation = admit_parameter_bool(
+        raw.production_activation,
+        PARAMETER_PRODUCTION_ACTIVATION_OFFSET,
+    )?;
+    let leader_schedule = LeaderSchedule::try_from(raw.leader_schedule).map_err(|_| {
+        DecodeError::new(
+            DecodeErrorCode::InvalidLeaderSchedule,
+            PARAMETER_LEADER_SCHEDULE_OFFSET,
+        )
+    })?;
+    let require_full_payload_before_vote = admit_parameter_bool(
+        raw.require_full_payload_before_vote,
+        PARAMETER_REQUIRE_FULL_PAYLOAD_OFFSET,
+    )?;
+    let joint_handoff_old_quorum = admit_parameter_bool(
+        raw.joint_handoff_old_quorum,
+        PARAMETER_JOINT_OLD_QUORUM_OFFSET,
+    )?;
+    let joint_handoff_new_quorum = admit_parameter_bool(
+        raw.joint_handoff_new_quorum,
+        PARAMETER_JOINT_NEW_QUORUM_OFFSET,
+    )?;
+    let rollout_phase = RolloutPhase::try_from(raw.rollout_phase).map_err(|_| {
+        DecodeError::new(
+            DecodeErrorCode::InvalidRolloutPhase,
+            PARAMETER_ROLLOUT_PHASE_OFFSET,
+        )
+    })?;
+    let automatic_promotion = admit_parameter_bool(
+        raw.automatic_promotion,
+        PARAMETER_AUTOMATIC_PROMOTION_OFFSET,
+    )?;
+    let require_trusting_period_less_than_evidence = admit_parameter_bool(
+        raw.require_trusting_period_less_than_evidence,
+        PARAMETER_REQUIRE_TRUSTING_RELATION_OFFSET,
+    )?;
+    let require_evidence_window_le_unbonding_delay = admit_parameter_bool(
+        raw.require_evidence_window_le_unbonding_delay,
+        PARAMETER_REQUIRE_UNBONDING_RELATION_OFFSET,
+    )?;
+    let fields = ConsensusParametersV0Fields {
+        schema_version: raw.schema_version,
+        protocol_version: raw.protocol_version,
+        production_activation,
+        max_chain_id_bytes: raw.max_chain_id_bytes,
+        max_validator_id_bytes: raw.max_validator_id_bytes,
+        max_block_bytes: raw.max_block_bytes,
+        max_consensus_message_bytes: raw.max_consensus_message_bytes,
+        min_validators: raw.min_validators,
+        max_validators: raw.max_validators,
+        quorum_numerator: raw.quorum_numerator,
+        quorum_denominator: raw.quorum_denominator,
+        quorum_addend: raw.quorum_addend,
+        finality_certified_chain_length: raw.finality_certified_chain_length,
+        max_total_voting_power: raw.max_total_voting_power,
+        max_block_time_step_ms: raw.max_block_time_step_ms,
+        leader_schedule,
+        require_full_payload_before_vote,
+        base_timeout_ms: raw.base_timeout_ms,
+        timeout_multiplier_numerator: raw.timeout_multiplier_numerator,
+        timeout_multiplier_denominator: raw.timeout_multiplier_denominator,
+        timeout_max_ms: raw.timeout_max_ms,
+        epoch_length_blocks: raw.epoch_length_blocks,
+        epoch_seal_blocks: raw.epoch_seal_blocks,
+        snapshot_lead_blocks: raw.snapshot_lead_blocks,
+        joint_handoff_old_quorum,
+        joint_handoff_new_quorum,
+        upgrade_notice_epochs: raw.upgrade_notice_epochs,
+        max_protocol_version_jump: raw.max_protocol_version_jump,
+        scale_ppm: raw.scale_ppm,
+        maturity_epochs: raw.maturity_epochs,
+        max_certificate_age_epochs: raw.max_certificate_age_epochs,
+        decay_step_ppm_per_epoch: raw.decay_step_ppm_per_epoch,
+        per_certificate_unit_cap: raw.per_certificate_unit_cap,
+        per_consumer_provider_epoch_unit_cap: raw.per_consumer_provider_epoch_unit_cap,
+        per_task_provider_epoch_unit_cap: raw.per_task_provider_epoch_unit_cap,
+        per_provider_epoch_unit_cap: raw.per_provider_epoch_unit_cap,
+        units_per_power: raw.units_per_power,
+        bond_atomic_units_per_power: raw.bond_atomic_units_per_power,
+        min_validator_power: raw.min_validator_power,
+        max_validator_power: raw.max_validator_power,
+        max_validator_share_ppm: raw.max_validator_share_ppm,
+        capped_weight_alpha_ppm: raw.capped_weight_alpha_ppm,
+        full_weight_alpha_ppm: raw.full_weight_alpha_ppm,
+        rollout_phase,
+        minimum_shadow_epochs: raw.minimum_shadow_epochs,
+        minimum_eligibility_only_epochs: raw.minimum_eligibility_only_epochs,
+        minimum_capped_weight_epochs: raw.minimum_capped_weight_epochs,
+        automatic_promotion,
+        evidence_window_epochs: raw.evidence_window_epochs,
+        unbonding_delay_epochs: raw.unbonding_delay_epochs,
+        jail_duration_epochs: raw.jail_duration_epochs,
+        trusting_period_epochs: raw.trusting_period_epochs,
+        require_trusting_period_less_than_evidence,
+        require_evidence_window_le_unbonding_delay,
+    };
+    validate_consensus_parameter_offsets(&fields)?;
+    ConsensusParametersV0::new(fields).map_err(|_| {
+        DecodeError::new(
+            DecodeErrorCode::InvalidConsensusParameters,
+            PARAMETER_SCHEMA_OFFSET,
+        )
+    })
+}
+
+fn admit_parameter_bool(raw: u8, byte_offset: usize) -> DecodeResult<bool> {
+    match raw {
+        0 => Ok(false),
+        1 => Ok(true),
+        _ => Err(DecodeError::new(
+            DecodeErrorCode::InvalidBoolean,
+            byte_offset,
+        )),
+    }
+}
+
+fn invalid_consensus_parameters<T>(byte_offset: usize) -> DecodeResult<T> {
+    Err(DecodeError::new(
+        DecodeErrorCode::InvalidConsensusParameters,
+        byte_offset,
+    ))
+}
+
+fn validate_consensus_parameter_offsets(fields: &ConsensusParametersV0Fields) -> DecodeResult<()> {
+    if fields.max_chain_id_bytes == 0
+        || usize::from(fields.max_chain_id_bytes) > MAX_CONSENSUS_STRING_BYTES
+    {
+        return invalid_consensus_parameters(PARAMETER_MAX_CHAIN_ID_BYTES_OFFSET);
+    }
+    if fields.max_validator_id_bytes == 0
+        || usize::from(fields.max_validator_id_bytes) > MAX_VALIDATOR_ID_BYTES
+    {
+        return invalid_consensus_parameters(PARAMETER_MAX_VALIDATOR_ID_BYTES_OFFSET);
+    }
+    let hard_max_validators =
+        u32::try_from(MAX_VALIDATORS).expect("the v0 validator hard cap fits in u32");
+    if fields.min_validators < 4 || fields.min_validators > fields.max_validators {
+        return invalid_consensus_parameters(PARAMETER_MIN_VALIDATORS_OFFSET);
+    }
+    if fields.max_validators > hard_max_validators {
+        return invalid_consensus_parameters(PARAMETER_MAX_VALIDATORS_OFFSET);
+    }
+    if fields.max_block_bytes == 0
+        || fields.max_consensus_message_bytes == 0
+        || fields.max_block_bytes > fields.max_consensus_message_bytes
+    {
+        return invalid_consensus_parameters(PARAMETER_MAX_BLOCK_BYTES_OFFSET);
+    }
+    if !fields.require_full_payload_before_vote {
+        return invalid_consensus_parameters(PARAMETER_REQUIRE_FULL_PAYLOAD_OFFSET);
+    }
+    if (
+        fields.quorum_numerator,
+        fields.quorum_denominator,
+        fields.quorum_addend,
+    ) != (2, 3, 1)
+    {
+        return invalid_consensus_parameters(PARAMETER_QUORUM_NUMERATOR_OFFSET);
+    }
+    if fields.finality_certified_chain_length != 3 {
+        return invalid_consensus_parameters(PARAMETER_FINALITY_CHAIN_LENGTH_OFFSET);
+    }
+    if fields.timeout_multiplier_denominator == 0
+        || fields.timeout_multiplier_numerator <= fields.timeout_multiplier_denominator
+    {
+        return invalid_consensus_parameters(PARAMETER_TIMEOUT_NUMERATOR_OFFSET);
+    }
+    if fields.base_timeout_ms > fields.timeout_max_ms {
+        return invalid_consensus_parameters(PARAMETER_BASE_TIMEOUT_OFFSET);
+    }
+    if fields.epoch_seal_blocks != 2 {
+        return invalid_consensus_parameters(PARAMETER_EPOCH_SEAL_BLOCKS_OFFSET);
+    }
+    if fields.snapshot_lead_blocks < u64::from(fields.finality_certified_chain_length) {
+        return invalid_consensus_parameters(PARAMETER_SNAPSHOT_LEAD_OFFSET);
+    }
+    let snapshot_and_seals = fields
+        .snapshot_lead_blocks
+        .checked_add(u64::from(fields.epoch_seal_blocks))
+        .ok_or_else(|| {
+            DecodeError::new(
+                DecodeErrorCode::InvalidConsensusParameters,
+                PARAMETER_SNAPSHOT_LEAD_OFFSET,
+            )
+        })?;
+    if fields.epoch_length_blocks <= snapshot_and_seals {
+        return invalid_consensus_parameters(PARAMETER_EPOCH_LENGTH_OFFSET);
+    }
+    if !fields.joint_handoff_old_quorum || !fields.joint_handoff_new_quorum {
+        return invalid_consensus_parameters(PARAMETER_JOINT_OLD_QUORUM_OFFSET);
+    }
+    if fields.upgrade_notice_epochs < 1 || fields.max_protocol_version_jump != 1 {
+        return invalid_consensus_parameters(PARAMETER_UPGRADE_NOTICE_OFFSET);
+    }
+    if fields.scale_ppm == 0 {
+        return invalid_consensus_parameters(PARAMETER_SCALE_PPM_OFFSET);
+    }
+    let caps = [
+        (
+            fields.per_certificate_unit_cap,
+            PARAMETER_PER_CERTIFICATE_CAP_OFFSET,
+        ),
+        (
+            fields.per_consumer_provider_epoch_unit_cap,
+            PARAMETER_PER_CONSUMER_CAP_OFFSET,
+        ),
+        (
+            fields.per_task_provider_epoch_unit_cap,
+            PARAMETER_PER_TASK_CAP_OFFSET,
+        ),
+        (
+            fields.per_provider_epoch_unit_cap,
+            PARAMETER_PER_PROVIDER_CAP_OFFSET,
+        ),
+    ];
+    if caps[0].0 == 0 {
+        return invalid_consensus_parameters(PARAMETER_PER_CERTIFICATE_CAP_OFFSET);
+    }
+    for pair in caps.windows(2) {
+        if pair[0].0 > pair[1].0 {
+            return invalid_consensus_parameters(PARAMETER_PER_CERTIFICATE_CAP_OFFSET);
+        }
+    }
+    if fields.units_per_power == 0 || fields.bond_atomic_units_per_power == 0 {
+        return invalid_consensus_parameters(PARAMETER_UNITS_PER_POWER_OFFSET);
+    }
+    if fields.min_validator_power == 0 || fields.min_validator_power > fields.max_validator_power {
+        return invalid_consensus_parameters(PARAMETER_MIN_VALIDATOR_POWER_OFFSET);
+    }
+    if fields.max_validator_share_ppm == 0
+        || u128::from(fields.max_validator_share_ppm) * 3 >= u128::from(fields.scale_ppm)
+    {
+        return invalid_consensus_parameters(PARAMETER_MAX_VALIDATOR_SHARE_OFFSET);
+    }
+    if fields.capped_weight_alpha_ppm > fields.scale_ppm
+        || fields.full_weight_alpha_ppm != fields.scale_ppm
+    {
+        return invalid_consensus_parameters(PARAMETER_CAPPED_ALPHA_OFFSET);
+    }
+    let minimum_candidate_power = u128::from(fields.min_validators)
+        .checked_mul(u128::from(fields.min_validator_power))
+        .ok_or_else(|| {
+            DecodeError::new(
+                DecodeErrorCode::InvalidConsensusParameters,
+                PARAMETER_MAX_TOTAL_VOTING_POWER_OFFSET,
+            )
+        })?;
+    if minimum_candidate_power > u128::from(fields.max_total_voting_power) {
+        return invalid_consensus_parameters(PARAMETER_MAX_TOTAL_VOTING_POWER_OFFSET);
+    }
+    if fields.automatic_promotion {
+        return invalid_consensus_parameters(PARAMETER_AUTOMATIC_PROMOTION_OFFSET);
+    }
+    if fields.trusting_period_epochs >= fields.evidence_window_epochs {
+        return invalid_consensus_parameters(PARAMETER_TRUSTING_PERIOD_OFFSET);
+    }
+    if fields.evidence_window_epochs > fields.unbonding_delay_epochs {
+        return invalid_consensus_parameters(PARAMETER_UNBONDING_DELAY_OFFSET);
+    }
+    if !fields.require_trusting_period_less_than_evidence {
+        return invalid_consensus_parameters(PARAMETER_REQUIRE_TRUSTING_RELATION_OFFSET);
+    }
+    if !fields.require_evidence_window_le_unbonding_delay {
+        return invalid_consensus_parameters(PARAMETER_REQUIRE_UNBONDING_RELATION_OFFSET);
+    }
+    Ok(())
+}
+
+/// Decodes one complete `ValidatorSetV0` CEV0 value.
+pub fn decode_validator_set_v0_exact(bytes: &[u8]) -> DecodeResult<ValidatorSet> {
+    let mut cursor = Cursor::new(bytes);
+    let raw = parse_raw_validator_set(&mut cursor)?;
+    cursor.finish()?;
+    admit_raw_validator_set(raw)
+}
+
+fn parse_raw_validator_set<'a>(cursor: &mut Cursor<'a>) -> DecodeResult<RawValidatorSet<'a>> {
+    let object_offset = cursor.offset();
+    let schema_version = cursor.u16()?;
+    let genesis_hash = GenesisHash::new(cursor.fixed()?);
+    let chain_id = cursor.bounded_consensus_bytes()?;
+    let protocol_offset = cursor.offset();
+    let protocol_version = cursor.u32()?;
+    let epoch = Epoch::new(cursor.u64()?);
+    let consensus_parameters_hash = ConsensusParametersHash::new(cursor.fixed()?);
+    let validator_count_offset = cursor.offset();
+    let validator_count = cursor.list_len(MAX_VALIDATORS)?;
+    let mut validators = Vec::with_capacity(validator_count);
+    for _ in 0..validator_count {
+        let offset = cursor.offset();
+        validators.push(RawValidator {
+            offset,
+            id: cursor.bounded_validator_id_bytes()?,
+            consensus_key: ConsensusPublicKey::new(cursor.fixed()?),
+            voting_power: cursor.u64()?,
+        });
+    }
+    Ok(RawValidatorSet {
+        object_offset,
+        schema_version,
+        genesis_hash,
+        chain_id,
+        protocol_offset,
+        protocol_version,
+        epoch,
+        consensus_parameters_hash,
+        validator_count_offset,
+        validators,
+    })
+}
+
+fn admit_raw_validator_set(raw: RawValidatorSet<'_>) -> DecodeResult<ValidatorSet> {
+    require_schema_v0(raw.schema_version, raw.object_offset)?;
+    let chain_id = admit_consensus_string(raw.chain_id)?;
+    let protocol_version = admit_protocol_v0(raw.protocol_version, raw.protocol_offset)?;
+    let mut validators = Vec::with_capacity(raw.validators.len());
+    for validator in raw.validators {
+        let id = admit_validator_id(validator.id)?;
+        let voting_power = VotingPower::new(validator.voting_power).map_err(|error| {
+            map_validation_error(error, validator.offset, SemanticObject::ValidatorSet)
+        })?;
+        validators.push(
+            Validator::new(id, validator.consensus_key, voting_power).map_err(|error| {
+                map_validation_error(error, validator.offset, SemanticObject::ValidatorSet)
+            })?,
+        );
+    }
+    ValidatorSet::new(
+        raw.genesis_hash,
+        chain_id,
+        protocol_version,
+        raw.epoch,
+        raw.consensus_parameters_hash,
+        validators,
+    )
+    .map_err(|error| {
+        map_validation_error(
+            error,
+            raw.validator_count_offset,
+            SemanticObject::ValidatorSet,
+        )
+    })
+}
+
+/// Decodes one complete ordinary QC and validates it against a trusted set.
+///
+/// Empty-signature QCs are rejected with `UnauthorizedSyntheticQc`; this API
+/// never guesses genesis or epoch-anchor authority from peer-controlled bytes.
+pub fn decode_ordinary_qc_v0_exact(
+    bytes: &[u8],
+    validator_set: &ValidatorSet,
+) -> DecodeResult<QuorumCertificate> {
+    let mut cursor = Cursor::new(bytes);
+    let raw = parse_raw_qc(&mut cursor, MAX_CEV0_CERTIFICATE_ITEMS)?;
+    cursor.finish()?;
+    admit_raw_ordinary_qc(raw, validator_set)
+}
+
+/// Decodes one complete TC whose referenced QCs are all ordinary QCs.
+///
+/// The synthetic-anchor form requires separate trusted authorization and is
+/// deliberately outside this ordinary certificate-kernel entry point.
+pub fn decode_ordinary_timeout_certificate_v0_exact(
+    bytes: &[u8],
+    validator_set: &ValidatorSet,
+) -> DecodeResult<TimeoutCertificateV0> {
+    let mut cursor = Cursor::new(bytes);
+    let raw = parse_raw_timeout_certificate(&mut cursor)?;
+    cursor.finish()?;
+    admit_raw_timeout_certificate(raw, validator_set)
+}
+
+/// Decodes one complete canonical application-payload value.
+///
+/// Transaction bytes remain opaque and are copied byte-for-byte only after
+/// all structural bounds and exact root exhaustion have been established.
+pub fn decode_application_payload_v0_exact(
+    bytes: &[u8],
+    consensus_parameters: &ConsensusParametersV0,
+) -> DecodeResult<ApplicationPayloadV0> {
+    let maximum_bytes = usize::try_from(consensus_parameters.max_block_bytes())
+        .map_err(|_| DecodeError::new(DecodeErrorCode::LengthLimitExceeded, 0))?;
+    require_body_kernel_size(bytes, maximum_bytes)?;
+    let mut cursor = Cursor::new(bytes);
+    let raw = parse_raw_application_payload(&mut cursor, maximum_bytes)?;
+    cursor.finish()?;
+    admit_raw_application_payload(raw)
+}
+
+/// Decodes one complete canonical application payload for staged root binding.
+///
+/// Unlike [`decode_application_payload_v0_exact`], this entry point does not
+/// reject an otherwise canonical payload merely because the payload value by
+/// itself exceeds the active `max_block_bytes`. That lets a source-validation
+/// boundary compute and compare the canonical payload root before deciding
+/// whether a root-bound logical block is deterministically oversized.
+///
+/// This is not an unbounded decoder. The authenticated active
+/// `max_consensus_message_bytes` remains an outer hard bound checked before
+/// parsing, and the supplied exact-root length is used as the structural list
+/// and item bound so malformed short inputs cannot reserve capacity from the
+/// larger active message allowance. Callers must still enforce the complete
+/// logical block's active `max_block_bytes` after binding the returned inert
+/// payload to its expected header root.
+pub fn decode_application_payload_v0_exact_for_root_binding(
+    bytes: &[u8],
+    consensus_parameters: &ConsensusParametersV0,
+) -> DecodeResult<ApplicationPayloadV0> {
+    let maximum_message_bytes = usize::try_from(consensus_parameters.max_consensus_message_bytes())
+        .map_err(|_| DecodeError::new(DecodeErrorCode::LengthLimitExceeded, 0))?;
+    require_body_kernel_size(bytes, maximum_message_bytes)?;
+    let mut cursor = Cursor::new(bytes);
+    let raw = parse_raw_application_payload(&mut cursor, bytes.len())?;
+    cursor.finish()?;
+    admit_raw_application_payload(raw)
+}
+
+/// Decodes one complete canonical receipt-commitment preimage.
+///
+/// Protocol integration must source accepted receipts from the locally
+/// authorized deterministic runtime. The returned value is inert: exact
+/// decoding alone neither proves that provenance nor creates runtime, voting,
+/// epoch, anchor, or transition authority.
+pub fn decode_execution_receipt_commitment_v0_exact(
+    bytes: &[u8],
+    consensus_parameters: &ConsensusParametersV0,
+) -> DecodeResult<ExecutionReceiptCommitmentV0> {
+    let maximum_bytes = usize::try_from(consensus_parameters.max_block_bytes())
+        .map_err(|_| DecodeError::new(DecodeErrorCode::LengthLimitExceeded, 0))?;
+    require_body_kernel_size(bytes, maximum_bytes)?;
+    let mut cursor = Cursor::new(bytes);
+    let raw = parse_raw_execution_receipt_commitment(&mut cursor, maximum_bytes)?;
+    cursor.finish()?;
+    admit_raw_execution_receipt_commitment(raw)
+}
+
+/// Decodes one complete ordinary double-vote evidence value.
+///
+/// Its only variable-width fields are the two 128-byte-bounded chain IDs and
+/// validator IDs, and it contains no list, so this endpoint has an intrinsic
+/// sub-kilobyte structural bound. The enclosing block evidence list and total
+/// logical block size remain subject to the authenticated active parameters.
+///
+/// The trusted active validator set is required for exact context and author
+/// admission. The two fixed-size signatures are retained exactly; callers
+/// must additionally call [`DoubleVoteEvidenceV0::verify`] with a strict
+/// cryptographic verifier before treating the evidence as valid.
+pub fn decode_double_vote_evidence_v0_exact(
+    bytes: &[u8],
+    validator_set: &ValidatorSet,
+) -> DecodeResult<DoubleVoteEvidenceV0> {
+    let mut cursor = Cursor::new(bytes);
+    let raw = parse_raw_double_vote_evidence(&mut cursor)?;
+    cursor.finish()?;
+    admit_raw_double_vote_evidence(raw, validator_set)
+}
+
+fn require_body_kernel_size(bytes: &[u8], maximum_bytes: usize) -> DecodeResult<()> {
+    if bytes.len() > maximum_bytes {
+        return Err(DecodeError::new(DecodeErrorCode::LengthLimitExceeded, 0));
+    }
+    Ok(())
+}
+
+fn parse_raw_application_payload<'a>(
+    cursor: &mut Cursor<'a>,
+    maximum_bytes: usize,
+) -> DecodeResult<RawApplicationPayload<'a>> {
+    let transaction_count_offset = cursor.offset();
+    let minimum_frame = core::mem::size_of::<u32>();
+    let maximum_transactions = bounded_list_maximum(maximum_bytes, minimum_frame);
+    let transaction_count = cursor.list_len_with_minimum(maximum_transactions, minimum_frame)?;
+    let mut transactions = Vec::with_capacity(transaction_count);
+    for _ in 0..transaction_count {
+        transactions.push(cursor.bounded_body_bytes(maximum_bytes)?);
+    }
+    Ok(RawApplicationPayload {
+        transaction_count_offset,
+        transactions,
+    })
+}
+
+fn admit_raw_application_payload(
+    raw: RawApplicationPayload<'_>,
+) -> DecodeResult<ApplicationPayloadV0> {
+    let transactions = raw
+        .transactions
+        .into_iter()
+        .map(|transaction| transaction.bytes.to_vec())
+        .collect();
+    ApplicationPayloadV0::new(transactions).map_err(|_| {
+        DecodeError::new(
+            DecodeErrorCode::LengthLimitExceeded,
+            raw.transaction_count_offset,
+        )
+    })
+}
+
+fn parse_raw_execution_receipt_commitment<'a>(
+    cursor: &mut Cursor<'a>,
+    maximum_bytes: usize,
+) -> DecodeResult<RawExecutionReceiptCommitment<'a>> {
+    let object_offset = cursor.offset();
+    let schema_version = cursor.u16()?;
+    let transaction_index = cursor.u32()?;
+    let payload_leaf_hash = cursor.fixed()?;
+    let gas_used = cursor.u64()?;
+    let fee_charged = cursor.u128()?;
+    let event_count_offset = cursor.offset();
+    let minimum_event = core::mem::size_of::<u64>();
+    let maximum_events = bounded_list_maximum(maximum_bytes, minimum_event);
+    let event_count = cursor.list_len_with_minimum(maximum_events, minimum_event)?;
+    let mut events = Vec::with_capacity(event_count);
+    for _ in 0..event_count {
+        events.push(parse_raw_execution_event(cursor, maximum_bytes)?);
+    }
+    Ok(RawExecutionReceiptCommitment {
+        object_offset,
+        schema_version,
+        transaction_index,
+        payload_leaf_hash,
+        gas_used,
+        fee_charged,
+        event_count_offset,
+        events,
+    })
+}
+
+fn parse_raw_execution_event<'a>(
+    cursor: &mut Cursor<'a>,
+    maximum_bytes: usize,
+) -> DecodeResult<RawExecutionEvent<'a>> {
+    let kind = cursor.bounded_body_bytes(maximum_bytes)?;
+    let attribute_count_offset = cursor.offset();
+    let minimum_attribute = core::mem::size_of::<u64>();
+    let maximum_attributes = bounded_list_maximum(maximum_bytes, minimum_attribute);
+    let attribute_count = cursor.list_len_with_minimum(maximum_attributes, minimum_attribute)?;
+    let mut attributes = Vec::with_capacity(attribute_count);
+    for _ in 0..attribute_count {
+        let object_offset = cursor.offset();
+        let key = cursor.bounded_body_bytes(maximum_bytes)?;
+        let value = cursor.bounded_body_bytes(maximum_bytes)?;
+        attributes.push(RawExecutionEventAttribute {
+            object_offset,
+            key,
+            value,
+        });
+    }
+    Ok(RawExecutionEvent {
+        kind,
+        attribute_count_offset,
+        attributes,
+    })
+}
+
+fn admit_raw_execution_receipt_commitment(
+    raw: RawExecutionReceiptCommitment<'_>,
+) -> DecodeResult<ExecutionReceiptCommitmentV0> {
+    require_schema_v0(raw.schema_version, raw.object_offset)?;
+    let mut events = Vec::with_capacity(raw.events.len());
+    for event in raw.events {
+        let kind = admit_runtime_string(event.kind)?;
+        for pair in event.attributes.windows(2) {
+            if pair[0].key.bytes >= pair[1].key.bytes {
+                return Err(DecodeError::new(
+                    DecodeErrorCode::NonCanonicalEventAttributeOrder,
+                    pair[1].key.length_offset,
+                ));
+            }
+        }
+        let mut attributes = Vec::with_capacity(event.attributes.len());
+        for attribute in event.attributes {
+            let key = admit_runtime_string(attribute.key)?;
+            let value = admit_runtime_string(attribute.value)?;
+            attributes.push(ExecutionEventAttributeV0::new(key, value).map_err(|_| {
+                DecodeError::new(DecodeErrorCode::InvalidUtf8, attribute.object_offset)
+            })?);
+        }
+        events.push(ExecutionEventV0::new(kind, attributes).map_err(|_| {
+            DecodeError::new(
+                DecodeErrorCode::NonCanonicalEventAttributeOrder,
+                event.attribute_count_offset,
+            )
+        })?);
+    }
+    ExecutionReceiptCommitmentV0::new(
+        raw.transaction_index,
+        raw.payload_leaf_hash,
+        raw.gas_used,
+        raw.fee_charged,
+        events,
+    )
+    .map_err(|_| DecodeError::new(DecodeErrorCode::LengthLimitExceeded, raw.event_count_offset))
+}
+
+fn admit_runtime_string(raw: RawBytes<'_>) -> DecodeResult<Vec<u8>> {
+    core::str::from_utf8(raw.bytes)
+        .map_err(|_| DecodeError::new(DecodeErrorCode::InvalidUtf8, raw.length_offset))?;
+    Ok(raw.bytes.to_vec())
+}
+
+fn bounded_list_maximum(root_maximum_bytes: usize, minimum_item_bytes: usize) -> usize {
+    root_maximum_bytes.saturating_sub(core::mem::size_of::<u32>()) / minimum_item_bytes
+}
+
+fn parse_raw_double_vote_evidence<'a>(
+    cursor: &mut Cursor<'a>,
+) -> DecodeResult<RawDoubleVoteEvidence<'a>> {
+    let object_offset = cursor.offset();
+    let schema_version = cursor.u16()?;
+    let first = parse_raw_vote_evidence_record(cursor)?;
+    let second = parse_raw_vote_evidence_record(cursor)?;
+    Ok(RawDoubleVoteEvidence {
+        object_offset,
+        schema_version,
+        first,
+        second,
+    })
+}
+
+fn parse_raw_vote_evidence_record<'a>(
+    cursor: &mut Cursor<'a>,
+) -> DecodeResult<RawVoteEvidenceRecord<'a>> {
+    let object_offset = cursor.offset();
+    let context = parse_raw_common_consensus_context(cursor)?;
+    let height_offset = cursor.offset();
+    let height = Height::new(cursor.u64()?);
+    let block_id = BlockId::new(cursor.fixed()?);
+    let author = cursor.bounded_validator_id_bytes_raw()?;
+    let signature_offset = cursor.offset();
+    let signature = Signature64::from_array(cursor.fixed()?);
+    Ok(RawVoteEvidenceRecord {
+        object_offset,
+        context,
+        height_offset,
+        height,
+        block_id,
+        author,
+        signature_offset,
+        signature,
+    })
+}
+
+fn parse_raw_common_consensus_context<'a>(
+    cursor: &mut Cursor<'a>,
+) -> DecodeResult<RawCommonConsensusContext<'a>> {
+    let object_offset = cursor.offset();
+    let schema_version = cursor.u16()?;
+    let genesis_offset = cursor.offset();
+    let genesis_hash = GenesisHash::new(cursor.fixed()?);
+    let chain_id = cursor.bounded_consensus_bytes_raw()?;
+    let protocol_offset = cursor.offset();
+    let protocol_version = cursor.u32()?;
+    let epoch = Epoch::new(cursor.u64()?);
+    let validator_set_hash_offset = cursor.offset();
+    let validator_set_hash = ValidatorSetId::new(cursor.fixed()?);
+    let view = View::new(cursor.u64()?);
+    let message_kind_offset = cursor.offset();
+    let message_kind = cursor.u8()?;
+    Ok(RawCommonConsensusContext {
+        object_offset,
+        schema_version,
+        genesis_offset,
+        genesis_hash,
+        chain_id,
+        protocol_offset,
+        protocol_version,
+        epoch,
+        validator_set_hash_offset,
+        validator_set_hash,
+        view,
+        message_kind_offset,
+        message_kind,
+    })
+}
+
+fn admit_raw_double_vote_evidence(
+    raw: RawDoubleVoteEvidence<'_>,
+    validator_set: &ValidatorSet,
+) -> DecodeResult<DoubleVoteEvidenceV0> {
+    require_schema_v0(raw.schema_version, raw.object_offset)?;
+    let first = admit_raw_vote_evidence_record(raw.first, validator_set)?;
+    let second_offset = raw.second.object_offset;
+    let second_height_offset = raw.second.height_offset;
+    let second_author_offset = raw.second.author.length_offset;
+    let second = admit_raw_vote_evidence_record(raw.second, validator_set)?;
+
+    if first.context() != second.context() {
+        return Err(DecodeError::new(
+            DecodeErrorCode::ContextMismatch,
+            second_offset,
+        ));
+    }
+    if first.author() != second.author() {
+        return Err(DecodeError::new(
+            DecodeErrorCode::InvalidDoubleVoteEvidence,
+            second_author_offset,
+        ));
+    }
+    if first.height() == second.height() && first.block_id() == second.block_id() {
+        return Err(DecodeError::new(
+            DecodeErrorCode::InvalidDoubleVoteEvidence,
+            second_height_offset,
+        ));
+    }
+    if first.signing_root() >= second.signing_root() {
+        return Err(DecodeError::new(
+            DecodeErrorCode::InvalidDoubleVoteEvidence,
+            second_offset,
+        ));
+    }
+
+    DoubleVoteEvidenceV0::from_ordered_records(first, second).map_err(|_| {
+        DecodeError::new(
+            DecodeErrorCode::InvalidDoubleVoteEvidence,
+            raw.object_offset,
+        )
+    })
+}
+
+fn admit_raw_vote_evidence_record(
+    raw: RawVoteEvidenceRecord<'_>,
+    validator_set: &ValidatorSet,
+) -> DecodeResult<VoteEvidenceRecordV0> {
+    let context = admit_raw_vote_context(raw.context, validator_set)?;
+    if raw.author.bytes.is_empty() {
+        return Err(DecodeError::new(
+            DecodeErrorCode::LengthLimitExceeded,
+            raw.author.length_offset,
+        ));
+    }
+    let author = admit_validator_id(raw.author)?;
+    if validator_set.validator(author).is_none() {
+        return Err(DecodeError::new(
+            DecodeErrorCode::UnknownSigner,
+            raw.author.length_offset,
+        ));
+    }
+    VoteEvidenceRecordV0::new(context, raw.height, raw.block_id, author, raw.signature).map_err(
+        |_| {
+            DecodeError::new(
+                DecodeErrorCode::InvalidDoubleVoteEvidence,
+                raw.signature_offset,
+            )
+        },
+    )
+}
+
+fn admit_raw_vote_context(
+    raw: RawCommonConsensusContext<'_>,
+    validator_set: &ValidatorSet,
+) -> DecodeResult<CommonConsensusContextV0> {
+    require_schema_v0(raw.schema_version, raw.object_offset)?;
+    if raw.genesis_hash.is_zero() {
+        return Err(DecodeError::new(
+            DecodeErrorCode::ZeroGenesisHash,
+            raw.genesis_offset,
+        ));
+    }
+    if raw.validator_set_hash.is_zero() {
+        return Err(DecodeError::new(
+            DecodeErrorCode::ContextMismatch,
+            raw.validator_set_hash_offset,
+        ));
+    }
+    let chain_id = admit_consensus_string(raw.chain_id)?;
+    let protocol_version = admit_protocol_v0(raw.protocol_version, raw.protocol_offset)?;
+    if raw.message_kind != MessageKind::Vote as u8 {
+        return Err(DecodeError::new(
+            DecodeErrorCode::ContextMismatch,
+            raw.message_kind_offset,
+        ));
+    }
+    require_trusted_set_context(
+        raw.genesis_hash,
+        chain_id,
+        protocol_version,
+        raw.epoch,
+        raw.validator_set_hash,
+        validator_set,
+        raw.object_offset,
+    )?;
+    CommonConsensusContextV0::new(
+        raw.genesis_hash,
+        chain_id,
+        protocol_version,
+        raw.epoch,
+        raw.validator_set_hash,
+        raw.view,
+        MessageKind::Vote,
+    )
+    .map_err(|error| {
+        let offset = match error {
+            ValidationError::ZeroGenesisHash => raw.genesis_offset,
+            ValidationError::ValidatorSetMismatch => raw.validator_set_hash_offset,
+            _ => raw.object_offset,
+        };
+        DecodeError::new(DecodeErrorCode::ContextMismatch, offset)
+    })
+}
+
+/// Decodes one complete canonical `BlockHeaderV0` logical value.
+///
+/// This admits only the frozen header shape. It does not authenticate a block
+/// body, execute the payload, or establish checkpoint/seal ancestry.
+pub fn decode_block_header_v0_exact(bytes: &[u8]) -> DecodeResult<BlockHeader> {
+    let mut cursor = Cursor::new(bytes);
+    let raw = parse_raw_block_header(&mut cursor)?;
+    cursor.finish()?;
+    admit_raw_block_header(raw)
+}
+
+/// Decodes one complete ordinary `CertifiedHeaderV0` against authenticated
+/// old-epoch context.
+///
+/// The proposal justify and certifying certificates are admitted only as
+/// ordinary, non-empty, positive-view QCs. An optional ordinary TC is allowed;
+/// synthetic anchors and epoch-anchor authorization are intentionally outside
+/// this old-epoch entry point. Signature cryptography remains a separate step.
+pub fn decode_ordinary_certified_header_v0_exact(
+    bytes: &[u8],
+    validator_set: &ValidatorSet,
+    consensus_parameters: &ConsensusParametersV0,
+    authenticated_parent_timestamp_ms: u64,
+) -> DecodeResult<CertifiedHeaderV0> {
+    let mut cursor = Cursor::new(bytes);
+    let raw = parse_raw_ordinary_certified_header(&mut cursor)?;
+    cursor.finish()?;
+    admit_raw_ordinary_certified_header(
+        raw,
+        validator_set,
+        consensus_parameters,
+        authenticated_parent_timestamp_ms,
+    )
+}
+
+/// Decodes one complete same-epoch `FinalityProofV0` against authenticated
+/// validator/parameter context.
+///
+/// This is the general three-chain decoder: it performs bounded,
+/// root-exhausting CEV0 parsing and complete ordinary proposal/QC/optional-TC
+/// semantic admission, but does not impose checkpoint/two-seal geometry. The
+/// returned proof remains cryptographically inert until a caller verifies it
+/// with a production signature verifier.
+pub fn decode_finality_proof_v0_exact(
+    bytes: &[u8],
+    active_validator_set: &ValidatorSet,
+    consensus_parameters: &ConsensusParametersV0,
+    authenticated_finalized_parent_timestamp_ms: u64,
+) -> DecodeResult<FinalityProofV0> {
+    let mut cursor = Cursor::new(bytes);
+    let raw = parse_raw_checkpoint_finality_proof(&mut cursor)?;
+    cursor.finish()?;
+    admit_raw_finality_proof(
+        raw,
+        active_validator_set,
+        consensus_parameters,
+        authenticated_finalized_parent_timestamp_ms,
+    )
+}
+
+/// Decodes the exact old-set checkpoint/two-seal finality kernel.
+///
+/// This performs bounded root-exhausting CEV0 decoding, complete ordinary
+/// proposal/QC/optional-TC semantic admission, authenticated parent-relative
+/// timestamp checks, and the checkpoint/two-seal geometry and commitment
+/// relations. The returned proof remains inert until the caller separately
+/// invokes `verify_checkpoint_two_seal_kernel` with a production strict
+/// signature verifier.
+pub fn decode_checkpoint_finality_proof_v0_exact(
+    bytes: &[u8],
+    old_validator_set: &ValidatorSet,
+    old_consensus_parameters: &ConsensusParametersV0,
+    next_epoch_commitment: &NextEpochCommitmentV0,
+    authenticated_checkpoint_parent_timestamp_ms: u64,
+) -> DecodeResult<FinalityProofV0> {
+    let mut cursor = Cursor::new(bytes);
+    let raw = parse_raw_checkpoint_finality_proof(&mut cursor)?;
+    cursor.finish()?;
+    let object_offset = raw.object_offset;
+    let proof = admit_raw_finality_proof(
+        raw,
+        old_validator_set,
+        old_consensus_parameters,
+        authenticated_checkpoint_parent_timestamp_ms,
+    )?;
+    proof
+        .validate_checkpoint_two_seal_kernel(
+            old_validator_set,
+            old_consensus_parameters,
+            next_epoch_commitment,
+            authenticated_checkpoint_parent_timestamp_ms,
+        )
+        .map_err(|_| DecodeError::new(DecodeErrorCode::InvalidCheckpointTwoSeal, object_offset))?;
+    Ok(proof)
+}
+
+fn parse_raw_ordinary_certified_header<'a>(
+    cursor: &mut Cursor<'a>,
+) -> DecodeResult<RawOrdinaryCertifiedHeader<'a>> {
+    let object_offset = cursor.offset();
+    let header = parse_raw_block_header(cursor)?;
+    let justify_qc = parse_raw_qc(cursor, MAX_CEV0_CERTIFICATE_ITEMS)?;
+    let timeout_tag_offset = cursor.offset();
+    let timeout_certificate = match cursor.u8()? {
+        0 => None,
+        1 => Some(parse_raw_timeout_certificate(cursor)?),
+        _ => {
+            return Err(DecodeError::new(
+                DecodeErrorCode::InvalidOptionalTag,
+                timeout_tag_offset,
+            ));
+        }
+    };
+    let anchor_tag_offset = cursor.offset();
+    match cursor.u8()? {
+        0 => {}
+        1 => {
+            return Err(DecodeError::new(
+                DecodeErrorCode::InvalidCheckpointTwoSeal,
+                anchor_tag_offset,
+            ));
+        }
+        _ => {
+            return Err(DecodeError::new(
+                DecodeErrorCode::InvalidOptionalTag,
+                anchor_tag_offset,
+            ));
+        }
+    }
+    let proposer_signature = Signature64::from_array(cursor.fixed()?);
+    let certifying_qc = parse_raw_qc(cursor, MAX_CEV0_CERTIFICATE_ITEMS)?;
+    Ok(RawOrdinaryCertifiedHeader {
+        object_offset,
+        header,
+        justify_qc,
+        timeout_certificate,
+        proposer_signature,
+        certifying_qc,
+    })
+}
+
+fn admit_raw_ordinary_certified_header(
+    raw: RawOrdinaryCertifiedHeader<'_>,
+    validator_set: &ValidatorSet,
+    consensus_parameters: &ConsensusParametersV0,
+    authenticated_parent_timestamp_ms: u64,
+) -> DecodeResult<CertifiedHeaderV0> {
+    let object_offset = raw.object_offset;
+    let proposer_offset = raw.header.proposer_id.length_offset;
+    let header = admit_raw_block_header(raw.header)?;
+    validator_set
+        .validate_against_parameters(consensus_parameters)
+        .map_err(|_| DecodeError::new(DecodeErrorCode::InvalidConsensusParameters, 0))?;
+    if header.genesis_hash() != validator_set.genesis_hash()
+        || header.chain_id() != validator_set.chain_id()
+        || header.protocol_version() != validator_set.protocol_version()
+        || header.epoch() != validator_set.epoch()
+        || header.validator_set_id() != validator_set.id()
+        || header.consensus_parameters_hash() != consensus_parameters.hash()
+    {
+        return Err(DecodeError::new(
+            DecodeErrorCode::InvalidFinalityProof,
+            object_offset,
+        ));
+    }
+    validate_scheduled_leader(&header, validator_set, consensus_parameters)
+        .map_err(|_| DecodeError::new(DecodeErrorCode::InvalidLeaderSchedule, proposer_offset))?;
+    validate_timestamp_step(
+        authenticated_parent_timestamp_ms,
+        header.timestamp_ms(),
+        consensus_parameters,
+    )
+    .map_err(|_| DecodeError::new(DecodeErrorCode::InvalidFinalityProof, object_offset))?;
+
+    let justify_qc = admit_raw_ordinary_qc(raw.justify_qc, validator_set)?;
+    let timeout_certificate = raw
+        .timeout_certificate
+        .map(|certificate| admit_raw_timeout_certificate(certificate, validator_set))
+        .transpose()?;
+    let certifying_qc = admit_raw_ordinary_qc(raw.certifying_qc, validator_set)?;
+    CertifiedHeaderV0::new(
+        header,
+        QcReferenceV0::ordinary(justify_qc),
+        timeout_certificate,
+        None,
+        raw.proposer_signature,
+        certifying_qc,
+        validator_set,
+        None,
+        consensus_parameters,
+        authenticated_parent_timestamp_ms,
+    )
+    .map_err(|_| DecodeError::new(DecodeErrorCode::InvalidFinalityProof, object_offset))
+}
+
+fn parse_raw_checkpoint_finality_proof<'a>(
+    cursor: &mut Cursor<'a>,
+) -> DecodeResult<RawCheckpointFinalityProof<'a>> {
+    let object_offset = cursor.offset();
+    let schema_version = cursor.u16()?;
+    let genesis_offset = cursor.offset();
+    let genesis_hash = GenesisHash::new(cursor.fixed()?);
+    let chain_id = cursor.bounded_consensus_bytes()?;
+    let protocol_offset = cursor.offset();
+    let protocol_version = cursor.u32()?;
+    let epoch = Epoch::new(cursor.u64()?);
+    let validator_set_id = ValidatorSetId::new(cursor.fixed()?);
+    let parameters_hash_offset = cursor.offset();
+    let consensus_parameters_hash = ConsensusParametersHash::new(cursor.fixed()?);
+    let finalized_block = parse_raw_ordinary_certified_header(cursor)?;
+    let child = parse_raw_ordinary_certified_header(cursor)?;
+    let grandchild = parse_raw_ordinary_certified_header(cursor)?;
+    Ok(RawCheckpointFinalityProof {
+        object_offset,
+        schema_version,
+        genesis_offset,
+        genesis_hash,
+        chain_id,
+        protocol_offset,
+        protocol_version,
+        epoch,
+        validator_set_id,
+        parameters_hash_offset,
+        consensus_parameters_hash,
+        finalized_block,
+        child,
+        grandchild,
+    })
+}
+
+fn admit_raw_finality_proof(
+    raw: RawCheckpointFinalityProof<'_>,
+    active_validator_set: &ValidatorSet,
+    consensus_parameters: &ConsensusParametersV0,
+    authenticated_finalized_parent_timestamp_ms: u64,
+) -> DecodeResult<FinalityProofV0> {
+    require_schema_v0(raw.schema_version, raw.object_offset)?;
+    if raw.genesis_hash.is_zero() {
+        return Err(DecodeError::new(
+            DecodeErrorCode::ZeroGenesisHash,
+            raw.genesis_offset,
+        ));
+    }
+    let chain_id = admit_consensus_string(raw.chain_id)?;
+    let protocol_version = admit_protocol_v0(raw.protocol_version, raw.protocol_offset)?;
+    require_trusted_set_context(
+        raw.genesis_hash,
+        chain_id,
+        protocol_version,
+        raw.epoch,
+        raw.validator_set_id,
+        active_validator_set,
+        raw.object_offset,
+    )?;
+    active_validator_set
+        .validate_against_parameters(consensus_parameters)
+        .map_err(|_| {
+            DecodeError::new(
+                DecodeErrorCode::InvalidConsensusParameters,
+                raw.parameters_hash_offset,
+            )
+        })?;
+    if raw.consensus_parameters_hash != consensus_parameters.hash()
+        || raw.consensus_parameters_hash != active_validator_set.consensus_parameters_hash()
+    {
+        return Err(DecodeError::new(
+            DecodeErrorCode::InvalidFinalityProof,
+            raw.parameters_hash_offset,
+        ));
+    }
+
+    let finalized_block = admit_raw_ordinary_certified_header(
+        raw.finalized_block,
+        active_validator_set,
+        consensus_parameters,
+        authenticated_finalized_parent_timestamp_ms,
+    )?;
+    let child_parent_timestamp_ms = finalized_block.header().timestamp_ms();
+    let child = admit_raw_ordinary_certified_header(
+        raw.child,
+        active_validator_set,
+        consensus_parameters,
+        child_parent_timestamp_ms,
+    )?;
+    let grandchild_parent_timestamp_ms = child.header().timestamp_ms();
+    let grandchild = admit_raw_ordinary_certified_header(
+        raw.grandchild,
+        active_validator_set,
+        consensus_parameters,
+        grandchild_parent_timestamp_ms,
+    )?;
+    let proof = FinalityProofV0::new(
+        finalized_block,
+        child,
+        grandchild,
+        active_validator_set,
+        None,
+        consensus_parameters,
+        authenticated_finalized_parent_timestamp_ms,
+    )
+    .map_err(|_| DecodeError::new(DecodeErrorCode::InvalidFinalityProof, raw.object_offset))?;
+    Ok(proof)
+}
+
+/// Decodes one complete canonical `NextEpochCommitmentV0` logical value.
+///
+/// The returned value is an inert commitment preimage. Exact decoding and
+/// intrinsic shape admission do not authenticate the snapshot, validator set,
+/// parameter preimage, upgrade plan, checkpoint ancestry, or epoch handoff.
+pub fn decode_next_epoch_commitment_v0_exact(bytes: &[u8]) -> DecodeResult<NextEpochCommitmentV0> {
+    let mut cursor = Cursor::new(bytes);
+    let raw = parse_raw_next_epoch_commitment(&mut cursor)?;
+    cursor.finish()?;
+    admit_raw_next_epoch_commitment(raw)
+}
+
+fn parse_raw_next_epoch_commitment<'a>(
+    cursor: &mut Cursor<'a>,
+) -> DecodeResult<RawNextEpochCommitment<'a>> {
+    let object_offset = cursor.offset();
+    let schema_version = cursor.u16()?;
+    let genesis_offset = cursor.offset();
+    let genesis_hash = GenesisHash::new(cursor.fixed()?);
+    let chain_id = cursor.bounded_consensus_bytes_raw()?;
+    let old_epoch = Epoch::new(cursor.u64()?);
+    let new_epoch_offset = cursor.offset();
+    let new_epoch = Epoch::new(cursor.u64()?);
+    let snapshot_cutoff_height = Height::new(cursor.u64()?);
+    let snapshot_state_root_offset = cursor.offset();
+    let snapshot_state_root = StateRoot::new(cursor.fixed()?);
+    let protocol_offset = cursor.offset();
+    let new_protocol_version = cursor.u32()?;
+    let new_validator_set_hash_offset = cursor.offset();
+    let new_validator_set_hash = ValidatorSetId::new(cursor.fixed()?);
+    let new_consensus_parameters_hash_offset = cursor.offset();
+    let new_consensus_parameters_hash = ConsensusParametersHash::new(cursor.fixed()?);
+    let rollout_phase_offset = cursor.offset();
+    let rollout_phase = cursor.u8()?;
+    let optional_tag_offset = cursor.offset();
+    let upgrade_plan_hash = match cursor.u8()? {
+        0 => None,
+        1 => Some(UpgradePlanHash::new(cursor.fixed()?)),
+        _ => {
+            return Err(DecodeError::new(
+                DecodeErrorCode::InvalidOptionalTag,
+                optional_tag_offset,
+            ));
+        }
+    };
+    let fallback_used_offset = cursor.offset();
+    let fallback_used = cursor.u8()?;
+    let fallback_reason_offset = cursor.offset();
+    let fallback_reason = cursor.u16()?;
+    let activation_height_offset = cursor.offset();
+    let activation_height = Height::new(cursor.u64()?);
+    Ok(RawNextEpochCommitment {
+        object_offset,
+        schema_version,
+        genesis_offset,
+        genesis_hash,
+        chain_id,
+        old_epoch,
+        new_epoch_offset,
+        new_epoch,
+        snapshot_cutoff_height,
+        snapshot_state_root_offset,
+        snapshot_state_root,
+        protocol_offset,
+        new_protocol_version,
+        new_validator_set_hash_offset,
+        new_validator_set_hash,
+        new_consensus_parameters_hash_offset,
+        new_consensus_parameters_hash,
+        rollout_phase_offset,
+        rollout_phase,
+        upgrade_plan_hash_offset: optional_tag_offset,
+        upgrade_plan_hash,
+        fallback_used_offset,
+        fallback_used,
+        fallback_reason_offset,
+        fallback_reason,
+        activation_height_offset,
+        activation_height,
+    })
+}
+
+fn admit_raw_next_epoch_commitment(
+    raw: RawNextEpochCommitment<'_>,
+) -> DecodeResult<NextEpochCommitmentV0> {
+    require_schema_v0(raw.schema_version, raw.object_offset)?;
+    if raw.genesis_hash.is_zero() {
+        return Err(DecodeError::new(
+            DecodeErrorCode::ZeroGenesisHash,
+            raw.genesis_offset,
+        ));
+    }
+    let chain_id = admit_consensus_string(raw.chain_id)?;
+    let new_protocol_version = ProtocolVersion::new(raw.new_protocol_version).map_err(|error| {
+        map_validation_error(
+            error,
+            raw.protocol_offset,
+            SemanticObject::NextEpochCommitment,
+        )
+    })?;
+    let rollout_phase = RolloutPhase::try_from(raw.rollout_phase).map_err(|_| {
+        DecodeError::new(
+            DecodeErrorCode::InvalidRolloutPhase,
+            raw.rollout_phase_offset,
+        )
+    })?;
+    let fallback_used = match raw.fallback_used {
+        0 => false,
+        1 => true,
+        _ => {
+            return Err(DecodeError::new(
+                DecodeErrorCode::InvalidBoolean,
+                raw.fallback_used_offset,
+            ));
+        }
+    };
+    let fallback_reason = EpochFallbackReasonV0::try_from(raw.fallback_reason).map_err(|_| {
+        DecodeError::new(
+            DecodeErrorCode::InvalidFallbackReason,
+            raw.fallback_reason_offset,
+        )
+    })?;
+    for (is_zero, offset) in [
+        (
+            raw.snapshot_state_root.is_zero(),
+            raw.snapshot_state_root_offset,
+        ),
+        (
+            raw.new_validator_set_hash.is_zero(),
+            raw.new_validator_set_hash_offset,
+        ),
+        (
+            raw.new_consensus_parameters_hash.is_zero(),
+            raw.new_consensus_parameters_hash_offset,
+        ),
+    ] {
+        if is_zero {
+            return Err(DecodeError::new(
+                DecodeErrorCode::InvalidNextEpochCommitment,
+                offset,
+            ));
+        }
+    }
+    if raw
+        .upgrade_plan_hash
+        .is_some_and(|upgrade_plan_hash| upgrade_plan_hash.is_zero())
+    {
+        return Err(DecodeError::new(
+            DecodeErrorCode::InvalidNextEpochCommitment,
+            raw.upgrade_plan_hash_offset,
+        ));
+    }
+    if raw.old_epoch.get().checked_add(1) != Some(raw.new_epoch.get()) {
+        return Err(DecodeError::new(
+            DecodeErrorCode::InvalidNextEpochCommitment,
+            raw.new_epoch_offset,
+        ));
+    }
+    if fallback_used == (fallback_reason == EpochFallbackReasonV0::None) {
+        return Err(DecodeError::new(
+            DecodeErrorCode::InvalidFallbackReason,
+            raw.fallback_reason_offset,
+        ));
+    }
+    if raw.activation_height.get() == 0 {
+        return Err(DecodeError::new(
+            DecodeErrorCode::InvalidNextEpochCommitment,
+            raw.activation_height_offset,
+        ));
+    }
+    NextEpochCommitmentV0::new(NextEpochCommitmentV0Fields {
+        schema_version: raw.schema_version,
+        genesis_hash: raw.genesis_hash,
+        chain_id,
+        old_epoch: raw.old_epoch,
+        new_epoch: raw.new_epoch,
+        snapshot_cutoff_height: raw.snapshot_cutoff_height,
+        snapshot_state_root: raw.snapshot_state_root,
+        new_protocol_version,
+        new_validator_set_hash: raw.new_validator_set_hash,
+        new_consensus_parameters_hash: raw.new_consensus_parameters_hash,
+        rollout_phase,
+        upgrade_plan_hash: raw.upgrade_plan_hash,
+        fallback_used,
+        fallback_reason,
+        activation_height: raw.activation_height,
+    })
+    .map_err(|error| {
+        map_validation_error(
+            error,
+            raw.object_offset,
+            SemanticObject::NextEpochCommitment,
+        )
+    })
+}
+
+/// Decodes one complete handoff descriptor without claiming transition
+/// authorization. Old/new set binding is enforced by the certificate APIs.
+pub fn decode_handoff_descriptor_v0_exact(bytes: &[u8]) -> DecodeResult<HandoffDescriptorV0> {
+    let mut cursor = Cursor::new(bytes);
+    let raw = parse_raw_handoff_descriptor(&mut cursor)?;
+    cursor.finish()?;
+    admit_raw_handoff_descriptor(raw)
+}
+
+/// Decodes and semantically admits the shape and both weighted signer roles
+/// of one handoff certificate against trusted old/new validator sets.
+pub fn decode_handoff_certificate_v0_exact(
+    bytes: &[u8],
+    old_validator_set: &ValidatorSet,
+    new_validator_set: &ValidatorSet,
+) -> DecodeResult<HandoffCertificateV0> {
+    let mut cursor = Cursor::new(bytes);
+    let raw = parse_raw_handoff_certificate(&mut cursor)?;
+    cursor.finish()?;
+    admit_raw_handoff_certificate(raw, old_validator_set, new_validator_set)
+}
+
+/// Decodes the bounded epoch-anchor authorization *certificate kernel*.
+///
+/// The terminal QC is admitted strictly as an ordinary, non-empty old-set QC;
+/// peer bytes are never reinterpreted as a synthetic anchor. This validates
+/// the terminal header/QC/descriptor relations and both handoff signer roles,
+/// but it does not prove checkpoint ancestry, the two-seal construction,
+/// `NextEpochCommitment` reconstruction, signature cryptography, or complete
+/// epoch-transition authorization.
+pub fn decode_epoch_anchor_authorization_kernel_v0_exact(
+    bytes: &[u8],
+    old_validator_set: &ValidatorSet,
+    new_validator_set: &ValidatorSet,
+) -> DecodeResult<EpochAnchorAuthorizationKernelV0> {
+    let mut cursor = Cursor::new(bytes);
+    let raw = parse_raw_epoch_anchor_authorization_kernel(&mut cursor)?;
+    cursor.finish()?;
+
+    let terminal_old_header = admit_raw_block_header(raw.terminal_old_header)?;
+    let terminal_old_qc = admit_raw_ordinary_qc(raw.terminal_old_qc, old_validator_set)?;
+    let handoff_certificate = admit_raw_handoff_certificate(
+        raw.handoff_certificate,
+        old_validator_set,
+        new_validator_set,
+    )?;
+    EpochAnchorAuthorizationV0::new(
+        terminal_old_header.clone(),
+        terminal_old_qc.clone(),
+        handoff_certificate.clone(),
+        old_validator_set,
+        new_validator_set,
+    )
+    .map_err(|_| {
+        DecodeError::new(
+            DecodeErrorCode::InvalidEpochAnchorRelations,
+            raw.object_offset,
+        )
+    })?;
+    Ok(EpochAnchorAuthorizationKernelV0 {
+        terminal_old_header,
+        terminal_old_qc,
+        handoff_certificate,
+    })
+}
+
+fn parse_raw_block_header<'a>(cursor: &mut Cursor<'a>) -> DecodeResult<RawBlockHeader<'a>> {
+    let object_offset = cursor.offset();
+    let schema_version = cursor.u16()?;
+    let genesis_offset = cursor.offset();
+    let genesis_hash = GenesisHash::new(cursor.fixed()?);
+    let chain_id = cursor.bounded_consensus_bytes()?;
+    let protocol_offset = cursor.offset();
+    let protocol_version = cursor.u32()?;
+    let epoch = Epoch::new(cursor.u64()?);
+    let view = View::new(cursor.u64()?);
+    let height = Height::new(cursor.u64()?);
+    let block_kind_offset = cursor.offset();
+    let block_kind = match cursor.u8()? {
+        0 => BlockKind::Regular,
+        1 => BlockKind::EpochCheckpoint,
+        2 => BlockKind::EpochSeal1,
+        3 => BlockKind::EpochSeal2,
+        4 => BlockKind::EpochHandoff,
+        _ => {
+            return Err(DecodeError::new(
+                DecodeErrorCode::InvalidBlockKind,
+                block_kind_offset,
+            ));
+        }
+    };
+    let parent_id = BlockId::new(cursor.fixed()?);
+    let proposer_id = cursor.bounded_validator_id_bytes()?;
+    let validator_set_id = ValidatorSetId::new(cursor.fixed()?);
+    let consensus_parameters_hash = ConsensusParametersHash::new(cursor.fixed()?);
+    let payload_digest = PayloadDigest::new(cursor.fixed()?);
+    let state_root = StateRoot::new(cursor.fixed()?);
+    let receipts_root = ReceiptsRoot::new(cursor.fixed()?);
+    let evidence_root = EvidenceRoot::new(cursor.fixed()?);
+    let timestamp_ms = cursor.u64()?;
+    let optional_tag_offset = cursor.offset();
+    let next_epoch_commitment_hash = match cursor.u8()? {
+        0 => None,
+        1 => Some(NextEpochCommitmentHash::new(cursor.fixed()?)),
+        _ => {
+            return Err(DecodeError::new(
+                DecodeErrorCode::InvalidOptionalTag,
+                optional_tag_offset,
+            ));
+        }
+    };
+    Ok(RawBlockHeader {
+        object_offset,
+        schema_version,
+        genesis_offset,
+        genesis_hash,
+        chain_id,
+        protocol_offset,
+        protocol_version,
+        epoch,
+        view,
+        height,
+        block_kind,
+        parent_id,
+        proposer_id,
+        validator_set_id,
+        consensus_parameters_hash,
+        payload_digest,
+        state_root,
+        receipts_root,
+        evidence_root,
+        timestamp_ms,
+        next_epoch_commitment_hash,
+    })
+}
+
+fn admit_raw_block_header(raw: RawBlockHeader<'_>) -> DecodeResult<BlockHeader> {
+    require_schema_v0(raw.schema_version, raw.object_offset)?;
+    if raw.genesis_hash.is_zero() {
+        return Err(DecodeError::new(
+            DecodeErrorCode::ZeroGenesisHash,
+            raw.genesis_offset,
+        ));
+    }
+    let chain_id = admit_consensus_string(raw.chain_id)?;
+    if raw.protocol_version != ProtocolVersion::V0.get() {
+        return Err(DecodeError::new(
+            DecodeErrorCode::InvalidBlockHeader,
+            raw.protocol_offset,
+        ));
+    }
+    let protocol_version = ProtocolVersion::V0;
+    let proposer_id = admit_validator_id(raw.proposer_id)?;
+    BlockHeader::new(
+        raw.genesis_hash,
+        chain_id,
+        protocol_version,
+        raw.epoch,
+        raw.view,
+        raw.height,
+        raw.block_kind,
+        raw.parent_id,
+        proposer_id,
+        raw.validator_set_id,
+        raw.consensus_parameters_hash,
+        raw.payload_digest,
+        raw.state_root,
+        raw.receipts_root,
+        raw.evidence_root,
+        raw.timestamp_ms,
+        raw.next_epoch_commitment_hash,
+    )
+    .map_err(|_| DecodeError::new(DecodeErrorCode::InvalidBlockHeader, raw.object_offset))
+}
+
+fn parse_raw_handoff_descriptor<'a>(
+    cursor: &mut Cursor<'a>,
+) -> DecodeResult<RawHandoffDescriptor<'a>> {
+    let object_offset = cursor.offset();
+    let schema_version = cursor.u16()?;
+    let genesis_offset = cursor.offset();
+    let genesis_hash = GenesisHash::new(cursor.fixed()?);
+    let chain_id = cursor.bounded_consensus_bytes()?;
+    let old_epoch = Epoch::new(cursor.u64()?);
+    let new_epoch = Epoch::new(cursor.u64()?);
+    let old_protocol_version = cursor.u32()?;
+    let new_protocol_version = cursor.u32()?;
+    let old_validator_set_hash = ValidatorSetId::new(cursor.fixed()?);
+    let new_validator_set_hash = ValidatorSetId::new(cursor.fixed()?);
+    let old_consensus_parameters_hash = ConsensusParametersHash::new(cursor.fixed()?);
+    let new_consensus_parameters_hash = ConsensusParametersHash::new(cursor.fixed()?);
+    let checkpoint_height = Height::new(cursor.u64()?);
+    let checkpoint_block_id = BlockId::new(cursor.fixed()?);
+    let checkpoint_state_root = StateRoot::new(cursor.fixed()?);
+    let next_epoch_commitment_digest = NextEpochCommitmentHash::new(cursor.fixed()?);
+    let terminal_old_height = Height::new(cursor.u64()?);
+    let terminal_old_block_id = BlockId::new(cursor.fixed()?);
+    let terminal_old_qc_digest = CertificateId::new(cursor.fixed()?);
+    let terminal_old_view = View::new(cursor.u64()?);
+    let activation_height = Height::new(cursor.u64()?);
+    let initial_new_view = View::new(cursor.u64()?);
+    Ok(RawHandoffDescriptor {
+        object_offset,
+        schema_version,
+        genesis_offset,
+        genesis_hash,
+        chain_id,
+        old_epoch,
+        new_epoch,
+        old_protocol_version,
+        new_protocol_version,
+        old_validator_set_hash,
+        new_validator_set_hash,
+        old_consensus_parameters_hash,
+        new_consensus_parameters_hash,
+        checkpoint_height,
+        checkpoint_block_id,
+        checkpoint_state_root,
+        next_epoch_commitment_digest,
+        terminal_old_height,
+        terminal_old_block_id,
+        terminal_old_qc_digest,
+        terminal_old_view,
+        activation_height,
+        initial_new_view,
+    })
+}
+
+fn admit_raw_handoff_descriptor(
+    raw: RawHandoffDescriptor<'_>,
+) -> DecodeResult<HandoffDescriptorV0> {
+    require_schema_v0(raw.schema_version, raw.object_offset)?;
+    if raw.genesis_hash.is_zero() {
+        return Err(DecodeError::new(
+            DecodeErrorCode::ZeroGenesisHash,
+            raw.genesis_offset,
+        ));
+    }
+    let chain_id = admit_consensus_string(raw.chain_id)?;
+    let old_protocol_version = ProtocolVersion::new(raw.old_protocol_version).map_err(|_| {
+        DecodeError::new(DecodeErrorCode::InvalidHandoffDescriptor, raw.object_offset)
+    })?;
+    let new_protocol_version = ProtocolVersion::new(raw.new_protocol_version).map_err(|_| {
+        DecodeError::new(DecodeErrorCode::InvalidHandoffDescriptor, raw.object_offset)
+    })?;
+    HandoffDescriptorV0::new(HandoffDescriptorV0Fields {
+        genesis_hash: raw.genesis_hash,
+        chain_id,
+        old_epoch: raw.old_epoch,
+        new_epoch: raw.new_epoch,
+        old_protocol_version,
+        new_protocol_version,
+        old_validator_set_hash: raw.old_validator_set_hash,
+        new_validator_set_hash: raw.new_validator_set_hash,
+        old_consensus_parameters_hash: raw.old_consensus_parameters_hash,
+        new_consensus_parameters_hash: raw.new_consensus_parameters_hash,
+        checkpoint_height: raw.checkpoint_height,
+        checkpoint_block_id: raw.checkpoint_block_id,
+        checkpoint_state_root: raw.checkpoint_state_root,
+        next_epoch_commitment_digest: raw.next_epoch_commitment_digest,
+        terminal_old_height: raw.terminal_old_height,
+        terminal_old_block_id: raw.terminal_old_block_id,
+        terminal_old_qc_digest: raw.terminal_old_qc_digest,
+        terminal_old_view: raw.terminal_old_view,
+        activation_height: raw.activation_height,
+        initial_new_view: raw.initial_new_view,
+    })
+    .map_err(|_| DecodeError::new(DecodeErrorCode::InvalidHandoffDescriptor, raw.object_offset))
+}
+
+fn parse_raw_handoff_certificate<'a>(
+    cursor: &mut Cursor<'a>,
+) -> DecodeResult<RawHandoffCertificate<'a>> {
+    let object_offset = cursor.offset();
+    let schema_version = cursor.u16()?;
+    let descriptor = parse_raw_handoff_descriptor(cursor)?;
+    let old_count_offset = cursor.offset();
+    let old_count = cursor.list_len(MAX_CEV0_CERTIFICATE_ITEMS)?;
+    let mut old_signatures = Vec::with_capacity(old_count);
+    for _ in 0..old_count {
+        old_signatures.push(parse_raw_signature_share(cursor)?);
+    }
+    let new_count_offset = cursor.offset();
+    let new_count = cursor.list_len(MAX_CEV0_CERTIFICATE_ITEMS)?;
+    let aggregate = old_count.checked_add(new_count).ok_or_else(|| {
+        DecodeError::new(DecodeErrorCode::AggregateLimitExceeded, new_count_offset)
+    })?;
+    if aggregate > MAX_CEV0_HANDOFF_AGGREGATE_SIGNATURE_SHARES {
+        return Err(DecodeError::new(
+            DecodeErrorCode::AggregateLimitExceeded,
+            new_count_offset,
+        ));
+    }
+    let mut new_signatures = Vec::with_capacity(new_count);
+    for _ in 0..new_count {
+        new_signatures.push(parse_raw_signature_share(cursor)?);
+    }
+    Ok(RawHandoffCertificate {
+        object_offset,
+        schema_version,
+        descriptor,
+        old_count_offset,
+        old_signatures,
+        new_count_offset,
+        new_signatures,
+    })
+}
+
+fn parse_raw_signature_share<'a>(cursor: &mut Cursor<'a>) -> DecodeResult<RawSignatureShare<'a>> {
+    Ok(RawSignatureShare {
+        offset: cursor.offset(),
+        author: cursor.bounded_validator_id_bytes()?,
+        signature: Signature64::from_array(cursor.fixed()?),
+    })
+}
+
+fn admit_raw_handoff_certificate(
+    raw: RawHandoffCertificate<'_>,
+    old_validator_set: &ValidatorSet,
+    new_validator_set: &ValidatorSet,
+) -> DecodeResult<HandoffCertificateV0> {
+    require_schema_v0(raw.schema_version, raw.object_offset)?;
+    let descriptor = admit_raw_handoff_descriptor(raw.descriptor)?;
+    require_handoff_descriptor_context(
+        &descriptor,
+        old_validator_set,
+        new_validator_set,
+        raw.object_offset,
+    )?;
+    let old_signatures =
+        admit_handoff_signature_role(raw.old_signatures, raw.old_count_offset, old_validator_set)?;
+    let new_signatures =
+        admit_handoff_signature_role(raw.new_signatures, raw.new_count_offset, new_validator_set)?;
+    HandoffCertificateV0::new(
+        descriptor,
+        old_signatures,
+        new_signatures,
+        old_validator_set,
+        new_validator_set,
+    )
+    .map_err(|_| {
+        DecodeError::new(
+            DecodeErrorCode::InvalidHandoffCertificate,
+            raw.object_offset,
+        )
+    })
+}
+
+fn admit_handoff_signature_role(
+    raw: Vec<RawSignatureShare<'_>>,
+    count_offset: usize,
+    validator_set: &ValidatorSet,
+) -> DecodeResult<Vec<SignatureShareV0>> {
+    if raw.is_empty() {
+        return Err(DecodeError::new(
+            DecodeErrorCode::InvalidHandoffCertificate,
+            count_offset,
+        ));
+    }
+    let mut previous = None;
+    let mut signed_power = 0u128;
+    let mut shares = Vec::with_capacity(raw.len());
+    for share in raw {
+        let validator_id = admit_validator_id(share.author)?;
+        if let Some(prior) = previous {
+            if prior == validator_id {
+                return Err(DecodeError::new(
+                    DecodeErrorCode::DuplicateSigner,
+                    share.offset,
+                ));
+            }
+            if prior > validator_id {
+                return Err(DecodeError::new(
+                    DecodeErrorCode::NonCanonicalSignerOrder,
+                    share.offset,
+                ));
+            }
+        }
+        previous = Some(validator_id);
+        let power = validator_set
+            .power_of(validator_id)
+            .ok_or_else(|| DecodeError::new(DecodeErrorCode::UnknownSigner, share.offset))?;
+        signed_power = signed_power.checked_add(power).ok_or_else(|| {
+            DecodeError::new(DecodeErrorCode::AggregateLimitExceeded, share.offset)
+        })?;
+        shares.push(
+            SignatureShareV0::new(validator_id, share.signature).map_err(|_| {
+                DecodeError::new(DecodeErrorCode::InvalidHandoffCertificate, share.offset)
+            })?,
+        );
+    }
+    if signed_power < validator_set.quorum_power() {
+        return Err(DecodeError::new(
+            DecodeErrorCode::InsufficientQuorum,
+            count_offset,
+        ));
+    }
+    Ok(shares)
+}
+
+fn require_handoff_descriptor_context(
+    descriptor: &HandoffDescriptorV0,
+    old_validator_set: &ValidatorSet,
+    new_validator_set: &ValidatorSet,
+    offset: usize,
+) -> DecodeResult<()> {
+    old_validator_set
+        .validate_shape()
+        .map_err(|_| DecodeError::new(DecodeErrorCode::ContextMismatch, offset))?;
+    new_validator_set
+        .validate_shape()
+        .map_err(|_| DecodeError::new(DecodeErrorCode::ContextMismatch, offset))?;
+    let fields = descriptor.fields();
+    let old_matches = fields.genesis_hash == old_validator_set.genesis_hash()
+        && fields.chain_id == old_validator_set.chain_id()
+        && fields.old_protocol_version == old_validator_set.protocol_version()
+        && fields.old_epoch == old_validator_set.epoch()
+        && fields.old_validator_set_hash == old_validator_set.id()
+        && fields.old_consensus_parameters_hash == old_validator_set.consensus_parameters_hash();
+    let new_matches = fields.genesis_hash == new_validator_set.genesis_hash()
+        && fields.chain_id == new_validator_set.chain_id()
+        && fields.new_protocol_version == new_validator_set.protocol_version()
+        && fields.new_epoch == new_validator_set.epoch()
+        && fields.new_validator_set_hash == new_validator_set.id()
+        && fields.new_consensus_parameters_hash == new_validator_set.consensus_parameters_hash();
+    if !old_matches || !new_matches {
+        return Err(DecodeError::new(
+            DecodeErrorCode::InvalidHandoffCertificate,
+            offset,
+        ));
+    }
+    Ok(())
+}
+
+fn parse_raw_epoch_anchor_authorization_kernel<'a>(
+    cursor: &mut Cursor<'a>,
+) -> DecodeResult<RawEpochAnchorAuthorization<'a>> {
+    let object_offset = cursor.offset();
+    let terminal_old_header = parse_raw_block_header(cursor)?;
+    let terminal_old_qc = parse_raw_qc(cursor, MAX_CEV0_CERTIFICATE_ITEMS)?;
+    let handoff_certificate = parse_raw_handoff_certificate(cursor)?;
+    Ok(RawEpochAnchorAuthorization {
+        object_offset,
+        terminal_old_header,
+        terminal_old_qc,
+        handoff_certificate,
+    })
+}
+
+fn parse_raw_timeout_certificate<'a>(
+    cursor: &mut Cursor<'a>,
+) -> DecodeResult<RawTimeoutCertificate<'a>> {
+    let object_offset = cursor.offset();
+    let schema_version = cursor.u16()?;
+    let genesis_hash = GenesisHash::new(cursor.fixed()?);
+    let chain_id = cursor.bounded_consensus_bytes()?;
+    let protocol_offset = cursor.offset();
+    let protocol_version = cursor.u32()?;
+    let epoch = Epoch::new(cursor.u64()?);
+    let validator_set_hash = ValidatorSetId::new(cursor.fixed()?);
+    let timed_out_view = View::new(cursor.u64()?);
+
+    let entry_count = cursor.list_len(MAX_CEV0_CERTIFICATE_ITEMS)?;
+    let mut entries = Vec::with_capacity(entry_count);
+    for _ in 0..entry_count {
+        let offset = cursor.offset();
+        entries.push(RawTimeoutEntry {
+            offset,
+            signer_id: cursor.bounded_validator_id_bytes()?,
+            qc_digest: CertificateId::new(cursor.fixed()?),
+            qc_epoch: Epoch::new(cursor.u64()?),
+            qc_view: View::new(cursor.u64()?),
+            qc_height: Height::new(cursor.u64()?),
+            qc_block_id: BlockId::new(cursor.fixed()?),
+            signature: Signature64::from_array(cursor.fixed()?),
+        });
+    }
+
+    let reference_count = cursor.list_len(MAX_CEV0_CERTIFICATE_ITEMS)?;
+    let mut referenced_qcs = Vec::with_capacity(reference_count);
+    let mut aggregate_shares = 0usize;
+    for _ in 0..reference_count {
+        let remaining = MAX_CEV0_TC_AGGREGATE_SIGNATURE_SHARES
+            .checked_sub(aggregate_shares)
+            .ok_or_else(|| {
+                DecodeError::new(DecodeErrorCode::AggregateLimitExceeded, cursor.offset())
+            })?;
+        let certificate = parse_raw_qc(cursor, remaining)?;
+        aggregate_shares = aggregate_shares
+            .checked_add(certificate.signatures.len())
+            .ok_or_else(|| {
+                DecodeError::new(DecodeErrorCode::AggregateLimitExceeded, cursor.offset())
+            })?;
+        referenced_qcs.push(certificate);
+    }
+    let selected_high_qc_digest = CertificateId::new(cursor.fixed()?);
+    Ok(RawTimeoutCertificate {
+        object_offset,
+        schema_version,
+        genesis_hash,
+        chain_id,
+        protocol_offset,
+        protocol_version,
+        epoch,
+        validator_set_hash,
+        timed_out_view,
+        entries,
+        referenced_qcs,
+        selected_high_qc_digest,
+    })
+}
+
+fn admit_raw_timeout_certificate(
+    raw: RawTimeoutCertificate<'_>,
+    validator_set: &ValidatorSet,
+) -> DecodeResult<TimeoutCertificateV0> {
+    require_schema_v0(raw.schema_version, raw.object_offset)?;
+    let chain_id = admit_consensus_string(raw.chain_id)?;
+    let protocol_version = admit_protocol_v0(raw.protocol_version, raw.protocol_offset)?;
+    require_trusted_set_context(
+        raw.genesis_hash,
+        chain_id,
+        protocol_version,
+        raw.epoch,
+        raw.validator_set_hash,
+        validator_set,
+        raw.object_offset,
+    )?;
+    let mut entries = Vec::with_capacity(raw.entries.len());
+    for entry in raw.entries {
+        let signer_id = admit_validator_id(entry.signer_id)?;
+        let high_qc = QcRef::new(
+            entry.qc_digest,
+            entry.qc_epoch,
+            entry.qc_view,
+            entry.qc_height,
+            entry.qc_block_id,
+            validator_set.id(),
+        );
+        entries.push(
+            TimeoutEntryV0::new(signer_id, high_qc, entry.signature).map_err(|error| {
+                map_validation_error(error, entry.offset, SemanticObject::Certificate)
+            })?,
+        );
+    }
+    let mut referenced_qcs = Vec::with_capacity(raw.referenced_qcs.len());
+    for referenced in raw.referenced_qcs {
+        let certificate = admit_raw_ordinary_qc(referenced, validator_set).map_err(|error| {
+            DecodeError::new(DecodeErrorCode::InvalidReferencedQc, error.byte_offset())
+        })?;
+        referenced_qcs.push(QcReferenceV0::ordinary(certificate));
+    }
+    validate_timeout_relations(
+        raw.timed_out_view,
+        &entries,
+        &referenced_qcs,
+        raw.selected_high_qc_digest,
+        raw.object_offset,
+    )?;
+    TimeoutCertificateV0::new(
+        raw.timed_out_view,
+        entries,
+        referenced_qcs,
+        raw.selected_high_qc_digest,
+        validator_set,
+    )
+    .map_err(|error| map_validation_error(error, raw.object_offset, SemanticObject::Certificate))
+}
+
+fn parse_raw_qc<'a>(
+    cursor: &mut Cursor<'a>,
+    remaining_aggregate_shares: usize,
+) -> DecodeResult<RawQc<'a>> {
+    let certificate_offset = cursor.offset();
+    let schema_version = cursor.u16()?;
+    let genesis_hash = GenesisHash::new(cursor.fixed()?);
+    let chain_id = cursor.bounded_consensus_bytes()?;
+    let protocol_offset = cursor.offset();
+    let protocol_version = cursor.u32()?;
+    let epoch = Epoch::new(cursor.u64()?);
+    let validator_set_id = ValidatorSetId::new(cursor.fixed()?);
+    let view_offset = cursor.offset();
+    let view = View::new(cursor.u64()?);
+    let height = Height::new(cursor.u64()?);
+    let block_id = BlockId::new(cursor.fixed()?);
+    let signature_count_offset = cursor.offset();
+    let signature_count = cursor.list_len(MAX_CEV0_CERTIFICATE_ITEMS)?;
+    if signature_count > remaining_aggregate_shares {
+        return Err(DecodeError::new(
+            DecodeErrorCode::AggregateLimitExceeded,
+            signature_count_offset,
+        ));
+    }
+
+    let mut signatures = Vec::with_capacity(signature_count);
+    for _ in 0..signature_count {
+        signatures.push(RawSignatureShare {
+            offset: cursor.offset(),
+            author: cursor.bounded_validator_id_bytes()?,
+            signature: Signature64::from_array(cursor.fixed()?),
+        });
+    }
+    Ok(RawQc {
+        object_offset: certificate_offset,
+        schema_version,
+        genesis_hash,
+        chain_id,
+        protocol_offset,
+        protocol_version,
+        epoch,
+        validator_set_id,
+        view_offset,
+        view,
+        height,
+        block_id,
+        signature_count_offset,
+        signatures,
+    })
+}
+
+fn admit_raw_ordinary_qc(
+    raw: RawQc<'_>,
+    validator_set: &ValidatorSet,
+) -> DecodeResult<QuorumCertificate> {
+    require_schema_v0(raw.schema_version, raw.object_offset)?;
+    let chain_id = admit_consensus_string(raw.chain_id)?;
+    let protocol_version = admit_protocol_v0(raw.protocol_version, raw.protocol_offset)?;
+    require_trusted_set_context(
+        raw.genesis_hash,
+        chain_id,
+        protocol_version,
+        raw.epoch,
+        raw.validator_set_id,
+        validator_set,
+        raw.object_offset,
+    )?;
+    if raw.view == View::new(0) {
+        return Err(DecodeError::new(
+            DecodeErrorCode::UnauthorizedSyntheticQc,
+            raw.view_offset,
+        ));
+    }
+    if raw.signatures.is_empty() {
+        return Err(DecodeError::new(
+            DecodeErrorCode::UnauthorizedSyntheticQc,
+            raw.signature_count_offset,
+        ));
+    }
+    let mut votes = Vec::with_capacity(raw.signatures.len());
+    for share in raw.signatures {
+        let author = admit_validator_id(share.author)?;
+        votes.push(
+            Vote::new(
+                chain_id,
+                protocol_version,
+                raw.epoch,
+                raw.view,
+                raw.height,
+                raw.block_id,
+                raw.validator_set_id,
+                author,
+                share.signature,
+                validator_set,
+            )
+            .map_err(|error| {
+                map_validation_error(error, share.offset, SemanticObject::Certificate)
+            })?,
+        );
+    }
+    QuorumCertificate::new(
+        chain_id,
+        protocol_version,
+        raw.epoch,
+        raw.view,
+        raw.height,
+        raw.block_id,
+        raw.validator_set_id,
+        votes,
+        validator_set,
+    )
+    .map_err(|error| map_validation_error(error, raw.object_offset, SemanticObject::Certificate))
+}
+
+#[derive(Debug, Clone, Copy)]
+struct RawBytes<'a> {
+    length_offset: usize,
+    bytes: &'a [u8],
+}
+
+#[derive(Debug, Clone, Copy)]
+struct RawConsensusParametersV0 {
+    schema_version: u16,
+    protocol_version: u32,
+    production_activation: u8,
+    max_chain_id_bytes: u16,
+    max_validator_id_bytes: u16,
+    max_block_bytes: u32,
+    max_consensus_message_bytes: u32,
+    min_validators: u32,
+    max_validators: u32,
+    quorum_numerator: u32,
+    quorum_denominator: u32,
+    quorum_addend: u32,
+    finality_certified_chain_length: u8,
+    max_total_voting_power: u64,
+    max_block_time_step_ms: u64,
+    leader_schedule: u8,
+    require_full_payload_before_vote: u8,
+    base_timeout_ms: u64,
+    timeout_multiplier_numerator: u32,
+    timeout_multiplier_denominator: u32,
+    timeout_max_ms: u64,
+    epoch_length_blocks: u64,
+    epoch_seal_blocks: u8,
+    snapshot_lead_blocks: u64,
+    joint_handoff_old_quorum: u8,
+    joint_handoff_new_quorum: u8,
+    upgrade_notice_epochs: u64,
+    max_protocol_version_jump: u32,
+    scale_ppm: u64,
+    maturity_epochs: u64,
+    max_certificate_age_epochs: u64,
+    decay_step_ppm_per_epoch: u64,
+    per_certificate_unit_cap: u128,
+    per_consumer_provider_epoch_unit_cap: u128,
+    per_task_provider_epoch_unit_cap: u128,
+    per_provider_epoch_unit_cap: u128,
+    units_per_power: u128,
+    bond_atomic_units_per_power: u128,
+    min_validator_power: u64,
+    max_validator_power: u64,
+    max_validator_share_ppm: u64,
+    capped_weight_alpha_ppm: u64,
+    full_weight_alpha_ppm: u64,
+    rollout_phase: u8,
+    minimum_shadow_epochs: u64,
+    minimum_eligibility_only_epochs: u64,
+    minimum_capped_weight_epochs: u64,
+    automatic_promotion: u8,
+    evidence_window_epochs: u64,
+    unbonding_delay_epochs: u64,
+    jail_duration_epochs: u64,
+    trusting_period_epochs: u64,
+    require_trusting_period_less_than_evidence: u8,
+    require_evidence_window_le_unbonding_delay: u8,
+}
+
+#[derive(Debug)]
+struct RawApplicationPayload<'a> {
+    transaction_count_offset: usize,
+    transactions: Vec<RawBytes<'a>>,
+}
+
+#[derive(Debug)]
+struct RawExecutionEventAttribute<'a> {
+    object_offset: usize,
+    key: RawBytes<'a>,
+    value: RawBytes<'a>,
+}
+
+#[derive(Debug)]
+struct RawExecutionEvent<'a> {
+    kind: RawBytes<'a>,
+    attribute_count_offset: usize,
+    attributes: Vec<RawExecutionEventAttribute<'a>>,
+}
+
+#[derive(Debug)]
+struct RawExecutionReceiptCommitment<'a> {
+    object_offset: usize,
+    schema_version: u16,
+    transaction_index: u32,
+    payload_leaf_hash: [u8; 32],
+    gas_used: u64,
+    fee_charged: u128,
+    event_count_offset: usize,
+    events: Vec<RawExecutionEvent<'a>>,
+}
+
+#[derive(Debug)]
+struct RawCommonConsensusContext<'a> {
+    object_offset: usize,
+    schema_version: u16,
+    genesis_offset: usize,
+    genesis_hash: GenesisHash,
+    chain_id: RawBytes<'a>,
+    protocol_offset: usize,
+    protocol_version: u32,
+    epoch: Epoch,
+    validator_set_hash_offset: usize,
+    validator_set_hash: ValidatorSetId,
+    view: View,
+    message_kind_offset: usize,
+    message_kind: u8,
+}
+
+#[derive(Debug)]
+struct RawVoteEvidenceRecord<'a> {
+    object_offset: usize,
+    context: RawCommonConsensusContext<'a>,
+    height_offset: usize,
+    height: Height,
+    block_id: BlockId,
+    author: RawBytes<'a>,
+    signature_offset: usize,
+    signature: Signature64,
+}
+
+#[derive(Debug)]
+struct RawDoubleVoteEvidence<'a> {
+    object_offset: usize,
+    schema_version: u16,
+    first: RawVoteEvidenceRecord<'a>,
+    second: RawVoteEvidenceRecord<'a>,
+}
+
+#[derive(Debug)]
+struct RawValidator<'a> {
+    offset: usize,
+    id: RawBytes<'a>,
+    consensus_key: ConsensusPublicKey,
+    voting_power: u64,
+}
+
+#[derive(Debug)]
+struct RawValidatorSet<'a> {
+    object_offset: usize,
+    schema_version: u16,
+    genesis_hash: GenesisHash,
+    chain_id: RawBytes<'a>,
+    protocol_offset: usize,
+    protocol_version: u32,
+    epoch: Epoch,
+    consensus_parameters_hash: ConsensusParametersHash,
+    validator_count_offset: usize,
+    validators: Vec<RawValidator<'a>>,
+}
+
+#[derive(Debug)]
+struct RawBlockHeader<'a> {
+    object_offset: usize,
+    schema_version: u16,
+    genesis_offset: usize,
+    genesis_hash: GenesisHash,
+    chain_id: RawBytes<'a>,
+    protocol_offset: usize,
+    protocol_version: u32,
+    epoch: Epoch,
+    view: View,
+    height: Height,
+    block_kind: BlockKind,
+    parent_id: BlockId,
+    proposer_id: RawBytes<'a>,
+    validator_set_id: ValidatorSetId,
+    consensus_parameters_hash: ConsensusParametersHash,
+    payload_digest: PayloadDigest,
+    state_root: StateRoot,
+    receipts_root: ReceiptsRoot,
+    evidence_root: EvidenceRoot,
+    timestamp_ms: u64,
+    next_epoch_commitment_hash: Option<NextEpochCommitmentHash>,
+}
+
+#[derive(Debug)]
+struct RawOrdinaryCertifiedHeader<'a> {
+    object_offset: usize,
+    header: RawBlockHeader<'a>,
+    justify_qc: RawQc<'a>,
+    timeout_certificate: Option<RawTimeoutCertificate<'a>>,
+    proposer_signature: Signature64,
+    certifying_qc: RawQc<'a>,
+}
+
+#[derive(Debug)]
+struct RawCheckpointFinalityProof<'a> {
+    object_offset: usize,
+    schema_version: u16,
+    genesis_offset: usize,
+    genesis_hash: GenesisHash,
+    chain_id: RawBytes<'a>,
+    protocol_offset: usize,
+    protocol_version: u32,
+    epoch: Epoch,
+    validator_set_id: ValidatorSetId,
+    parameters_hash_offset: usize,
+    consensus_parameters_hash: ConsensusParametersHash,
+    finalized_block: RawOrdinaryCertifiedHeader<'a>,
+    child: RawOrdinaryCertifiedHeader<'a>,
+    grandchild: RawOrdinaryCertifiedHeader<'a>,
+}
+
+#[derive(Debug)]
+struct RawNextEpochCommitment<'a> {
+    object_offset: usize,
+    schema_version: u16,
+    genesis_offset: usize,
+    genesis_hash: GenesisHash,
+    chain_id: RawBytes<'a>,
+    old_epoch: Epoch,
+    new_epoch_offset: usize,
+    new_epoch: Epoch,
+    snapshot_cutoff_height: Height,
+    snapshot_state_root_offset: usize,
+    snapshot_state_root: StateRoot,
+    protocol_offset: usize,
+    new_protocol_version: u32,
+    new_validator_set_hash_offset: usize,
+    new_validator_set_hash: ValidatorSetId,
+    new_consensus_parameters_hash_offset: usize,
+    new_consensus_parameters_hash: ConsensusParametersHash,
+    rollout_phase_offset: usize,
+    rollout_phase: u8,
+    upgrade_plan_hash_offset: usize,
+    upgrade_plan_hash: Option<UpgradePlanHash>,
+    fallback_used_offset: usize,
+    fallback_used: u8,
+    fallback_reason_offset: usize,
+    fallback_reason: u16,
+    activation_height_offset: usize,
+    activation_height: Height,
+}
+
+#[derive(Debug)]
+struct RawHandoffDescriptor<'a> {
+    object_offset: usize,
+    schema_version: u16,
+    genesis_offset: usize,
+    genesis_hash: GenesisHash,
+    chain_id: RawBytes<'a>,
+    old_epoch: Epoch,
+    new_epoch: Epoch,
+    old_protocol_version: u32,
+    new_protocol_version: u32,
+    old_validator_set_hash: ValidatorSetId,
+    new_validator_set_hash: ValidatorSetId,
+    old_consensus_parameters_hash: ConsensusParametersHash,
+    new_consensus_parameters_hash: ConsensusParametersHash,
+    checkpoint_height: Height,
+    checkpoint_block_id: BlockId,
+    checkpoint_state_root: StateRoot,
+    next_epoch_commitment_digest: NextEpochCommitmentHash,
+    terminal_old_height: Height,
+    terminal_old_block_id: BlockId,
+    terminal_old_qc_digest: CertificateId,
+    terminal_old_view: View,
+    activation_height: Height,
+    initial_new_view: View,
+}
+
+#[derive(Debug)]
+struct RawSignatureShare<'a> {
+    offset: usize,
+    author: RawBytes<'a>,
+    signature: Signature64,
+}
+
+#[derive(Debug)]
+struct RawHandoffCertificate<'a> {
+    object_offset: usize,
+    schema_version: u16,
+    descriptor: RawHandoffDescriptor<'a>,
+    old_count_offset: usize,
+    old_signatures: Vec<RawSignatureShare<'a>>,
+    new_count_offset: usize,
+    new_signatures: Vec<RawSignatureShare<'a>>,
+}
+
+#[derive(Debug)]
+struct RawQc<'a> {
+    object_offset: usize,
+    schema_version: u16,
+    genesis_hash: GenesisHash,
+    chain_id: RawBytes<'a>,
+    protocol_offset: usize,
+    protocol_version: u32,
+    epoch: Epoch,
+    validator_set_id: ValidatorSetId,
+    view_offset: usize,
+    view: View,
+    height: Height,
+    block_id: BlockId,
+    signature_count_offset: usize,
+    signatures: Vec<RawSignatureShare<'a>>,
+}
+
+#[derive(Debug)]
+struct RawTimeoutEntry<'a> {
+    offset: usize,
+    signer_id: RawBytes<'a>,
+    qc_digest: CertificateId,
+    qc_epoch: Epoch,
+    qc_view: View,
+    qc_height: Height,
+    qc_block_id: BlockId,
+    signature: Signature64,
+}
+
+#[derive(Debug)]
+struct RawTimeoutCertificate<'a> {
+    object_offset: usize,
+    schema_version: u16,
+    genesis_hash: GenesisHash,
+    chain_id: RawBytes<'a>,
+    protocol_offset: usize,
+    protocol_version: u32,
+    epoch: Epoch,
+    validator_set_hash: ValidatorSetId,
+    timed_out_view: View,
+    entries: Vec<RawTimeoutEntry<'a>>,
+    referenced_qcs: Vec<RawQc<'a>>,
+    selected_high_qc_digest: CertificateId,
+}
+
+#[derive(Debug)]
+struct RawEpochAnchorAuthorization<'a> {
+    object_offset: usize,
+    terminal_old_header: RawBlockHeader<'a>,
+    terminal_old_qc: RawQc<'a>,
+    handoff_certificate: RawHandoffCertificate<'a>,
+}
+
+fn require_schema_v0(actual: u16, byte_offset: usize) -> DecodeResult<()> {
+    if actual != SCHEMA_VERSION_V0 {
+        return Err(DecodeError::new(
+            DecodeErrorCode::InvalidSchemaVersion,
+            byte_offset,
+        ));
+    }
+    Ok(())
+}
+
+fn admit_protocol_v0(actual: u32, byte_offset: usize) -> DecodeResult<ProtocolVersion> {
+    if actual != ProtocolVersion::V0.get() {
+        return Err(DecodeError::new(
+            DecodeErrorCode::InvalidProtocolVersion,
+            byte_offset,
+        ));
+    }
+    Ok(ProtocolVersion::V0)
+}
+
+fn admit_consensus_string(raw: RawBytes<'_>) -> DecodeResult<ChainId> {
+    ChainId::from_bytes(raw.bytes)
+        .map_err(|_| DecodeError::new(DecodeErrorCode::InvalidConsensusString, raw.length_offset))
+}
+
+fn admit_validator_id(raw: RawBytes<'_>) -> DecodeResult<ValidatorId> {
+    ValidatorId::from_bytes(raw.bytes)
+        .map_err(|_| DecodeError::new(DecodeErrorCode::LengthLimitExceeded, raw.length_offset))
+}
+
+fn validate_timeout_relations(
+    timed_out_view: View,
+    entries: &[TimeoutEntryV0],
+    referenced_qcs: &[QcReferenceV0],
+    selected_high_qc_digest: CertificateId,
+    byte_offset: usize,
+) -> DecodeResult<()> {
+    if entries.is_empty() || referenced_qcs.is_empty() {
+        return Err(DecodeError::new(DecodeErrorCode::EmptyTc, byte_offset));
+    }
+
+    let mut previous_reference = None;
+    let mut reference_ids = BTreeSet::new();
+    let mut view_coordinates = BTreeMap::new();
+    let mut block_coordinates = BTreeMap::new();
+    for referenced in referenced_qcs {
+        let summary = referenced.qc_ref();
+        if summary.view() > timed_out_view {
+            return Err(DecodeError::new(
+                DecodeErrorCode::FutureReferenceView,
+                byte_offset,
+            ));
+        }
+        let id = referenced.id();
+        if let Some(previous) = previous_reference {
+            if previous == id {
+                return Err(DecodeError::new(
+                    DecodeErrorCode::DuplicateReference,
+                    byte_offset,
+                ));
+            }
+            if previous > id {
+                return Err(DecodeError::new(
+                    DecodeErrorCode::NonCanonicalReferenceOrder,
+                    byte_offset,
+                ));
+            }
+        }
+        previous_reference = Some(id);
+        reference_ids.insert(id);
+
+        let coordinate = (summary.epoch(), summary.view());
+        let certified = (summary.height(), summary.block_id());
+        if view_coordinates
+            .insert(coordinate, certified)
+            .is_some_and(|prior| prior != certified)
+        {
+            return Err(DecodeError::new(
+                DecodeErrorCode::ConflictingSameViewQc,
+                byte_offset,
+            ));
+        }
+        let block_coordinate = (summary.epoch(), summary.view(), summary.height());
+        if block_coordinates
+            .insert(summary.block_id(), block_coordinate)
+            .is_some_and(|prior| prior != block_coordinate)
+        {
+            return Err(DecodeError::new(
+                DecodeErrorCode::SameBlockDifferentCoordinates,
+                byte_offset,
+            ));
+        }
+    }
+
+    let mut previous_signer = None;
+    let mut maximum: Option<QcRef> = None;
+    let mut used_references = BTreeSet::new();
+    for entry in entries {
+        let signer = entry.signer_id();
+        if let Some(previous) = previous_signer {
+            if previous == signer {
+                return Err(DecodeError::new(
+                    DecodeErrorCode::DuplicateSigner,
+                    byte_offset,
+                ));
+            }
+            if previous > signer {
+                return Err(DecodeError::new(
+                    DecodeErrorCode::NonCanonicalSignerOrder,
+                    byte_offset,
+                ));
+            }
+        }
+        previous_signer = Some(signer);
+
+        if !referenced_qcs
+            .iter()
+            .any(|candidate| candidate.qc_ref() == entry.high_qc())
+        {
+            return Err(DecodeError::new(
+                DecodeErrorCode::ReferenceSummaryMismatch,
+                byte_offset,
+            ));
+        }
+        used_references.insert(entry.high_qc().qc_digest());
+        maximum = match maximum {
+            Some(current)
+                if (current.view(), current.block_id(), current.qc_digest())
+                    >= (
+                        entry.high_qc().view(),
+                        entry.high_qc().block_id(),
+                        entry.high_qc().qc_digest(),
+                    ) =>
+            {
+                Some(current)
+            }
+            _ => Some(entry.high_qc()),
+        };
+    }
+
+    if used_references != reference_ids {
+        return Err(DecodeError::new(
+            DecodeErrorCode::UnreferencedQc,
+            byte_offset,
+        ));
+    }
+    if maximum.is_none_or(|summary: QcRef| summary.qc_digest() != selected_high_qc_digest) {
+        return Err(DecodeError::new(
+            DecodeErrorCode::SelectedNotMaximum,
+            byte_offset,
+        ));
+    }
+    Ok(())
+}
+
+#[allow(clippy::too_many_arguments)]
+fn require_trusted_set_context(
+    genesis_hash: GenesisHash,
+    chain_id: ChainId,
+    protocol_version: ProtocolVersion,
+    epoch: Epoch,
+    validator_set_id: ValidatorSetId,
+    validator_set: &ValidatorSet,
+    offset: usize,
+) -> DecodeResult<()> {
+    validator_set
+        .validate_shape()
+        .map_err(|error| map_validation_error(error, offset, SemanticObject::ValidatorSet))?;
+    if genesis_hash != validator_set.genesis_hash()
+        || chain_id != validator_set.chain_id()
+        || protocol_version != validator_set.protocol_version()
+        || epoch != validator_set.epoch()
+        || validator_set_id != validator_set.id()
+    {
+        return Err(DecodeError::new(DecodeErrorCode::ContextMismatch, offset));
+    }
+    Ok(())
+}
+
+#[derive(Clone, Copy)]
+enum SemanticObject {
+    ValidatorSet,
+    Certificate,
+    NextEpochCommitment,
+}
+
+fn map_validation_error(
+    error: ValidationError,
+    byte_offset: usize,
+    object: SemanticObject,
+) -> DecodeError {
+    let code = match error {
+        ValidationError::InvalidSchemaVersion { .. } => DecodeErrorCode::InvalidSchemaVersion,
+        ValidationError::InvalidProtocolVersion => DecodeErrorCode::InvalidProtocolVersion,
+        ValidationError::InvalidConsensusString => DecodeErrorCode::InvalidConsensusString,
+        ValidationError::EmptyValidatorId | ValidationError::ValidatorIdTooLong { .. } => {
+            DecodeErrorCode::LengthLimitExceeded
+        }
+        ValidationError::ZeroGenesisHash => DecodeErrorCode::ZeroGenesisHash,
+        ValidationError::ZeroConsensusPublicKey => DecodeErrorCode::ZeroConsensusPublicKey,
+        ValidationError::ZeroVotingPower => DecodeErrorCode::ZeroVotingPower,
+        ValidationError::EmptyValidatorSet => DecodeErrorCode::EmptyValidatorSet,
+        ValidationError::TooManyValidators { .. } => DecodeErrorCode::CountLimitExceeded,
+        ValidationError::DuplicateValidatorId(_) => DecodeErrorCode::DuplicateValidatorId,
+        ValidationError::DuplicateConsensusPublicKey => DecodeErrorCode::DuplicatePublicKey,
+        ValidationError::NonCanonicalValidatorOrder => DecodeErrorCode::NonCanonicalValidatorOrder,
+        ValidationError::ValidatorSetIdMismatch => DecodeErrorCode::ContextMismatch,
+        ValidationError::GenesisHashMismatch
+        | ValidationError::ChainIdMismatch
+        | ValidationError::ProtocolVersionMismatch
+        | ValidationError::EpochMismatch
+        | ValidationError::ValidatorSetMismatch
+        | ValidationError::CertificateMismatch => DecodeErrorCode::ContextMismatch,
+        ValidationError::UnknownValidator(_) => DecodeErrorCode::UnknownSigner,
+        ValidationError::DuplicateSigner(_) => DecodeErrorCode::DuplicateSigner,
+        ValidationError::NonCanonicalSignerOrder => DecodeErrorCode::NonCanonicalSignerOrder,
+        ValidationError::NonCanonicalQcOrder => DecodeErrorCode::NonCanonicalReferenceOrder,
+        ValidationError::ConflictingSameViewQc => DecodeErrorCode::ConflictingSameViewQc,
+        ValidationError::InsufficientQuorum { .. } => DecodeErrorCode::InsufficientQuorum,
+        ValidationError::InvalidCertificate(_) => DecodeErrorCode::InvalidReferencedQc,
+        _ => match object {
+            SemanticObject::ValidatorSet => DecodeErrorCode::ContextMismatch,
+            SemanticObject::Certificate => DecodeErrorCode::InvalidReferencedQc,
+            SemanticObject::NextEpochCommitment => DecodeErrorCode::InvalidNextEpochCommitment,
+        },
+    };
+    DecodeError::new(code, byte_offset)
+}
+
+struct Cursor<'a> {
+    bytes: &'a [u8],
+    offset: usize,
+}
+
+impl<'a> Cursor<'a> {
+    const fn new(bytes: &'a [u8]) -> Self {
+        Self { bytes, offset: 0 }
+    }
+
+    const fn offset(&self) -> usize {
+        self.offset
+    }
+
+    fn finish(&self) -> DecodeResult<()> {
+        if self.offset == self.bytes.len() {
+            Ok(())
+        } else {
+            Err(DecodeError::new(
+                DecodeErrorCode::TrailingBytes,
+                self.offset,
+            ))
+        }
+    }
+
+    fn take(&mut self, length: usize) -> DecodeResult<&'a [u8]> {
+        let start = self.offset;
+        let end = start
+            .checked_add(length)
+            .ok_or_else(|| DecodeError::new(DecodeErrorCode::LengthLimitExceeded, self.offset))?;
+        let value = self
+            .bytes
+            .get(start..end)
+            .ok_or_else(|| DecodeError::new(DecodeErrorCode::UnexpectedEof, self.bytes.len()))?;
+        self.offset = end;
+        Ok(value)
+    }
+
+    fn fixed<const N: usize>(&mut self) -> DecodeResult<[u8; N]> {
+        let mut value = [0u8; N];
+        value.copy_from_slice(self.take(N)?);
+        Ok(value)
+    }
+
+    fn u8(&mut self) -> DecodeResult<u8> {
+        Ok(self.fixed::<1>()?[0])
+    }
+
+    fn u16(&mut self) -> DecodeResult<u16> {
+        Ok(u16::from_be_bytes(self.fixed()?))
+    }
+
+    fn u32(&mut self) -> DecodeResult<u32> {
+        Ok(u32::from_be_bytes(self.fixed()?))
+    }
+
+    fn u64(&mut self) -> DecodeResult<u64> {
+        Ok(u64::from_be_bytes(self.fixed()?))
+    }
+
+    fn u128(&mut self) -> DecodeResult<u128> {
+        Ok(u128::from_be_bytes(self.fixed()?))
+    }
+
+    fn remaining(&self) -> usize {
+        self.bytes.len() - self.offset
+    }
+
+    fn bounded_body_bytes(&mut self, maximum: usize) -> DecodeResult<RawBytes<'a>> {
+        let length_offset = self.offset;
+        let length = usize::try_from(self.u32()?)
+            .map_err(|_| DecodeError::new(DecodeErrorCode::LengthLimitExceeded, length_offset))?;
+        if length > maximum {
+            return Err(DecodeError::new(
+                DecodeErrorCode::LengthLimitExceeded,
+                length_offset,
+            ));
+        }
+        let bytes = self.take(length)?;
+        Ok(RawBytes {
+            length_offset,
+            bytes,
+        })
+    }
+
+    fn bounded_consensus_bytes(&mut self) -> DecodeResult<RawBytes<'a>> {
+        let raw = self.bounded_consensus_bytes_raw()?;
+        ChainId::from_bytes(raw.bytes).map_err(|_| {
+            DecodeError::new(DecodeErrorCode::InvalidConsensusString, raw.length_offset)
+        })?;
+        Ok(raw)
+    }
+
+    fn bounded_consensus_bytes_raw(&mut self) -> DecodeResult<RawBytes<'a>> {
+        let length_offset = self.offset;
+        let length = usize::from(self.u16()?);
+        if length > MAX_CONSENSUS_STRING_BYTES {
+            return Err(DecodeError::new(
+                DecodeErrorCode::LengthLimitExceeded,
+                length_offset,
+            ));
+        }
+        let bytes = self.take(length)?;
+        Ok(RawBytes {
+            length_offset,
+            bytes,
+        })
+    }
+
+    fn bounded_validator_id_bytes(&mut self) -> DecodeResult<RawBytes<'a>> {
+        let raw = self.bounded_validator_id_bytes_raw()?;
+        ValidatorId::from_bytes(raw.bytes).map_err(|_| {
+            DecodeError::new(DecodeErrorCode::LengthLimitExceeded, raw.length_offset)
+        })?;
+        Ok(raw)
+    }
+
+    fn bounded_validator_id_bytes_raw(&mut self) -> DecodeResult<RawBytes<'a>> {
+        let length_offset = self.offset;
+        let length = usize::try_from(self.u32()?)
+            .map_err(|_| DecodeError::new(DecodeErrorCode::LengthLimitExceeded, length_offset))?;
+        if length > MAX_VALIDATOR_ID_BYTES {
+            return Err(DecodeError::new(
+                DecodeErrorCode::LengthLimitExceeded,
+                length_offset,
+            ));
+        }
+        let bytes = self.take(length)?;
+        Ok(RawBytes {
+            length_offset,
+            bytes,
+        })
+    }
+
+    fn list_len(&mut self, maximum: usize) -> DecodeResult<usize> {
+        let length_offset = self.offset;
+        let length = usize::try_from(self.u32()?)
+            .map_err(|_| DecodeError::new(DecodeErrorCode::LengthLimitExceeded, length_offset))?;
+        if length > maximum {
+            return Err(DecodeError::new(
+                DecodeErrorCode::CountLimitExceeded,
+                length_offset,
+            ));
+        }
+        Ok(length)
+    }
+
+    fn list_len_with_minimum(
+        &mut self,
+        maximum: usize,
+        minimum_item_bytes: usize,
+    ) -> DecodeResult<usize> {
+        let length = self.list_len(maximum)?;
+        let minimum_encoded_bytes = length.checked_mul(minimum_item_bytes).ok_or_else(|| {
+            DecodeError::new(DecodeErrorCode::CountLimitExceeded, self.offset - 4)
+        })?;
+        if minimum_encoded_bytes > self.remaining() {
+            return Err(DecodeError::new(
+                DecodeErrorCode::UnexpectedEof,
+                self.bytes.len(),
+            ));
+        }
+        Ok(length)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use alloc::{vec, vec::Vec};
+
+    use super::*;
+    use crate::SIGNATURE_BYTES;
+
+    struct AcceptSignatures;
+
+    impl SignatureVerifier for AcceptSignatures {
+        fn verify(
+            &self,
+            _validator: &Validator,
+            _signing_root: &crate::SigningRoot,
+            _signature: &Signature64,
+        ) -> bool {
+            true
+        }
+    }
+
+    struct RejectSignatures;
+
+    impl SignatureVerifier for RejectSignatures {
+        fn verify(
+            &self,
+            _validator: &Validator,
+            _signing_root: &crate::SigningRoot,
+            _signature: &Signature64,
+        ) -> bool {
+            false
+        }
+    }
+
+    fn validator(id: u8, power: u64) -> Validator {
+        Validator::new(
+            ValidatorId::from_bytes(&[id]).unwrap(),
+            ConsensusPublicKey::new([id; 32]),
+            VotingPower::new(power).unwrap(),
+        )
+        .unwrap()
+    }
+
+    fn sample_set() -> ValidatorSet {
+        ValidatorSet::new(
+            GenesisHash::new([9; 32]),
+            ChainId::new("trnm-decoder").unwrap(),
+            ProtocolVersion::V0,
+            Epoch::new(7),
+            ConsensusParametersHash::new([8; 32]),
+            vec![
+                validator(1, 4),
+                validator(2, 3),
+                validator(3, 2),
+                validator(4, 1),
+            ],
+        )
+        .unwrap()
+    }
+
+    fn assert_parameter_error(
+        bytes: &[u8],
+        expected_code: DecodeErrorCode,
+        expected_offset: usize,
+    ) {
+        let error = decode_consensus_parameters_v0_exact(bytes).unwrap_err();
+        assert_eq!(error.code(), expected_code);
+        assert_eq!(error.byte_offset(), expected_offset);
+    }
+
+    #[test]
+    fn consensus_parameters_decoder_round_trips_and_exhausts_the_exact_root() {
+        let parameters = ConsensusParametersV0::reference_shadow_v0();
+        let bytes = parameters.canonical_bytes();
+        assert_eq!(bytes.len(), CONSENSUS_PARAMETERS_V0_BYTES);
+        assert_eq!(
+            decode_consensus_parameters_v0_exact(&bytes).unwrap(),
+            parameters
+        );
+
+        for prefix_length in 0..bytes.len() {
+            assert_parameter_error(
+                &bytes[..prefix_length],
+                DecodeErrorCode::UnexpectedEof,
+                prefix_length,
+            );
+        }
+
+        let mut trailing = bytes.clone();
+        trailing.push(0);
+        assert_parameter_error(
+            &trailing,
+            DecodeErrorCode::TrailingBytes,
+            CONSENSUS_PARAMETERS_V0_BYTES,
+        );
+
+        let mut semantic_and_trailing = bytes;
+        semantic_and_trailing[PARAMETER_REQUIRE_FULL_PAYLOAD_OFFSET] = 0;
+        semantic_and_trailing.push(0);
+        assert_parameter_error(
+            &semantic_and_trailing,
+            DecodeErrorCode::TrailingBytes,
+            CONSENSUS_PARAMETERS_V0_BYTES,
+        );
+    }
+
+    #[test]
+    fn consensus_parameters_decoder_freezes_discriminants_and_boolean_offsets() {
+        let bytes = ConsensusParametersV0::reference_shadow_v0().canonical_bytes();
+
+        let mut schema = bytes.clone();
+        schema[PARAMETER_SCHEMA_OFFSET..PARAMETER_SCHEMA_OFFSET + 2]
+            .copy_from_slice(&1u16.to_be_bytes());
+        assert_parameter_error(
+            &schema,
+            DecodeErrorCode::InvalidSchemaVersion,
+            PARAMETER_SCHEMA_OFFSET,
+        );
+
+        let mut protocol = bytes.clone();
+        protocol[PARAMETER_PROTOCOL_OFFSET..PARAMETER_PROTOCOL_OFFSET + 4]
+            .copy_from_slice(&1u32.to_be_bytes());
+        assert_parameter_error(
+            &protocol,
+            DecodeErrorCode::InvalidProtocolVersion,
+            PARAMETER_PROTOCOL_OFFSET,
+        );
+
+        for offset in [
+            PARAMETER_PRODUCTION_ACTIVATION_OFFSET,
+            PARAMETER_REQUIRE_FULL_PAYLOAD_OFFSET,
+            PARAMETER_JOINT_OLD_QUORUM_OFFSET,
+            PARAMETER_JOINT_NEW_QUORUM_OFFSET,
+            PARAMETER_AUTOMATIC_PROMOTION_OFFSET,
+            PARAMETER_REQUIRE_TRUSTING_RELATION_OFFSET,
+            PARAMETER_REQUIRE_UNBONDING_RELATION_OFFSET,
+        ] {
+            let mut invalid = bytes.clone();
+            invalid[offset] = 2;
+            assert_parameter_error(&invalid, DecodeErrorCode::InvalidBoolean, offset);
+        }
+
+        let mut leader = bytes.clone();
+        leader[PARAMETER_LEADER_SCHEDULE_OFFSET] = 1;
+        assert_parameter_error(
+            &leader,
+            DecodeErrorCode::InvalidLeaderSchedule,
+            PARAMETER_LEADER_SCHEDULE_OFFSET,
+        );
+
+        let mut rollout = bytes;
+        rollout[PARAMETER_ROLLOUT_PHASE_OFFSET] = 4;
+        assert_parameter_error(
+            &rollout,
+            DecodeErrorCode::InvalidRolloutPhase,
+            PARAMETER_ROLLOUT_PHASE_OFFSET,
+        );
+    }
+
+    #[test]
+    fn consensus_parameters_decoder_rejects_hard_caps_and_safety_invariants() {
+        let bytes = ConsensusParametersV0::reference_shadow_v0().canonical_bytes();
+
+        let mut max_validators = bytes.clone();
+        max_validators[PARAMETER_MAX_VALIDATORS_OFFSET..PARAMETER_MAX_VALIDATORS_OFFSET + 4]
+            .copy_from_slice(&101u32.to_be_bytes());
+        assert_parameter_error(
+            &max_validators,
+            DecodeErrorCode::InvalidConsensusParameters,
+            PARAMETER_MAX_VALIDATORS_OFFSET,
+        );
+
+        let mut snapshot_lead = bytes.clone();
+        snapshot_lead[PARAMETER_SNAPSHOT_LEAD_OFFSET..PARAMETER_SNAPSHOT_LEAD_OFFSET + 8]
+            .copy_from_slice(&0u64.to_be_bytes());
+        assert_parameter_error(
+            &snapshot_lead,
+            DecodeErrorCode::InvalidConsensusParameters,
+            PARAMETER_SNAPSHOT_LEAD_OFFSET,
+        );
+
+        let mut short_snapshot_lead = bytes.clone();
+        short_snapshot_lead[PARAMETER_SNAPSHOT_LEAD_OFFSET..PARAMETER_SNAPSHOT_LEAD_OFFSET + 8]
+            .copy_from_slice(&2u64.to_be_bytes());
+        assert_parameter_error(
+            &short_snapshot_lead,
+            DecodeErrorCode::InvalidConsensusParameters,
+            PARAMETER_SNAPSHOT_LEAD_OFFSET,
+        );
+
+        let mut boundary_snapshot_lead = bytes.clone();
+        boundary_snapshot_lead[PARAMETER_SNAPSHOT_LEAD_OFFSET..PARAMETER_SNAPSHOT_LEAD_OFFSET + 8]
+            .copy_from_slice(&3u64.to_be_bytes());
+        assert_eq!(
+            decode_consensus_parameters_v0_exact(&boundary_snapshot_lead)
+                .expect("snapshot lead equal to the finality chain is valid")
+                .snapshot_lead_blocks(),
+            3,
+        );
+
+        let mut seal_count = bytes.clone();
+        seal_count[PARAMETER_EPOCH_SEAL_BLOCKS_OFFSET] = 1;
+        assert_parameter_error(
+            &seal_count,
+            DecodeErrorCode::InvalidConsensusParameters,
+            PARAMETER_EPOCH_SEAL_BLOCKS_OFFSET,
+        );
+
+        let mut finality_length = bytes.clone();
+        finality_length[PARAMETER_FINALITY_CHAIN_LENGTH_OFFSET] = 2;
+        assert_parameter_error(
+            &finality_length,
+            DecodeErrorCode::InvalidConsensusParameters,
+            PARAMETER_FINALITY_CHAIN_LENGTH_OFFSET,
+        );
+
+        let mut quorum = bytes.clone();
+        quorum[PARAMETER_QUORUM_DENOMINATOR_OFFSET..PARAMETER_QUORUM_DENOMINATOR_OFFSET + 4]
+            .copy_from_slice(&4u32.to_be_bytes());
+        assert_parameter_error(
+            &quorum,
+            DecodeErrorCode::InvalidConsensusParameters,
+            PARAMETER_QUORUM_NUMERATOR_OFFSET,
+        );
+
+        let mut share_cap = bytes.clone();
+        share_cap[PARAMETER_MAX_VALIDATOR_SHARE_OFFSET..PARAMETER_MAX_VALIDATOR_SHARE_OFFSET + 8]
+            .copy_from_slice(&333_334u64.to_be_bytes());
+        assert_parameter_error(
+            &share_cap,
+            DecodeErrorCode::InvalidConsensusParameters,
+            PARAMETER_MAX_VALIDATOR_SHARE_OFFSET,
+        );
+
+        let mut automatic = bytes;
+        automatic[PARAMETER_AUTOMATIC_PROMOTION_OFFSET] = 1;
+        assert_parameter_error(
+            &automatic,
+            DecodeErrorCode::InvalidConsensusParameters,
+            PARAMETER_AUTOMATIC_PROMOTION_OFFSET,
+        );
+    }
+
+    fn sample_next_epoch_commitment(
+        rollout_phase: RolloutPhase,
+        upgrade_plan_hash: Option<UpgradePlanHash>,
+        fallback_reason: EpochFallbackReasonV0,
+    ) -> NextEpochCommitmentV0 {
+        NextEpochCommitmentV0::new(NextEpochCommitmentV0Fields {
+            schema_version: SCHEMA_VERSION_V0,
+            genesis_hash: GenesisHash::new([31; 32]),
+            chain_id: ChainId::new("trnm-next-epoch-decoder").unwrap(),
+            old_epoch: Epoch::new(7),
+            new_epoch: Epoch::new(8),
+            snapshot_cutoff_height: Height::new(79_997),
+            snapshot_state_root: StateRoot::new([32; 32]),
+            new_protocol_version: ProtocolVersion::V0,
+            new_validator_set_hash: ValidatorSetId::new([33; 32]),
+            new_consensus_parameters_hash: ConsensusParametersHash::new([34; 32]),
+            rollout_phase,
+            upgrade_plan_hash,
+            fallback_used: fallback_reason != EpochFallbackReasonV0::None,
+            fallback_reason,
+            activation_height: Height::new(80_001),
+        })
+        .unwrap()
+    }
+
+    fn qc(
+        set: &ValidatorSet,
+        view: u64,
+        height: u64,
+        block: u8,
+        signer_indexes: &[usize],
+    ) -> QuorumCertificate {
+        qc_for_block(set, view, height, BlockId::new([block; 32]), signer_indexes)
+    }
+
+    fn qc_for_block(
+        set: &ValidatorSet,
+        view: u64,
+        height: u64,
+        block_id: BlockId,
+        signer_indexes: &[usize],
+    ) -> QuorumCertificate {
+        let votes = signer_indexes
+            .iter()
+            .map(|index| {
+                let signer = &set.validators()[*index];
+                Vote::new(
+                    set.chain_id(),
+                    set.protocol_version(),
+                    set.epoch(),
+                    View::new(view),
+                    Height::new(height),
+                    block_id,
+                    set.id(),
+                    signer.id(),
+                    Signature64::from_array([signer.id().as_bytes()[0]; SIGNATURE_BYTES]),
+                    set,
+                )
+                .unwrap()
+            })
+            .collect();
+        QuorumCertificate::new(
+            set.chain_id(),
+            set.protocol_version(),
+            set.epoch(),
+            View::new(view),
+            Height::new(height),
+            block_id,
+            set.id(),
+            votes,
+            set,
+        )
+        .unwrap()
+    }
+
+    fn sample_tc(set: &ValidatorSet) -> TimeoutCertificateV0 {
+        let low = qc(set, 3, 11, 3, &[0, 1]);
+        let high = qc(set, 5, 13, 5, &[0, 1]);
+        let entries = vec![
+            TimeoutEntryV0::new(
+                set.validators()[0].id(),
+                QcRef::from(&low),
+                Signature64::from_array([11; SIGNATURE_BYTES]),
+            )
+            .unwrap(),
+            TimeoutEntryV0::new(
+                set.validators()[1].id(),
+                QcRef::from(&high),
+                Signature64::from_array([12; SIGNATURE_BYTES]),
+            )
+            .unwrap(),
+        ];
+        let selected = high.id();
+        let mut references = vec![QcReferenceV0::ordinary(low), QcReferenceV0::ordinary(high)];
+        references.sort_by_key(QcReferenceV0::id);
+        TimeoutCertificateV0::new(View::new(9), entries, references, selected, set).unwrap()
+    }
+
+    struct SampleHandoffKernel {
+        old_set: ValidatorSet,
+        new_set: ValidatorSet,
+        terminal_header: BlockHeader,
+        descriptor: HandoffDescriptorV0,
+        certificate: HandoffCertificateV0,
+        authorization: EpochAnchorAuthorizationV0,
+    }
+
+    fn handoff_shares(set: &ValidatorSet, signer_indexes: &[usize]) -> Vec<SignatureShareV0> {
+        signer_indexes
+            .iter()
+            .map(|index| {
+                let validator_id = set.validators()[*index].id();
+                SignatureShareV0::new(
+                    validator_id,
+                    Signature64::from_array([validator_id.as_bytes()[0]; crate::SIGNATURE_BYTES]),
+                )
+                .unwrap()
+            })
+            .collect()
+    }
+
+    fn sample_handoff_kernel() -> SampleHandoffKernel {
+        let old_set = sample_set();
+        let new_parameters = crate::ConsensusParametersV0::reference_shadow_v0();
+        let new_set = ValidatorSet::new(
+            old_set.genesis_hash(),
+            old_set.chain_id(),
+            ProtocolVersion::V0,
+            old_set.epoch().checked_next().unwrap(),
+            new_parameters.hash(),
+            vec![
+                validator(11, 4),
+                validator(12, 3),
+                validator(13, 2),
+                validator(14, 1),
+            ],
+        )
+        .unwrap();
+        let next_epoch_commitment = NextEpochCommitmentHash::new([16; 32]);
+        let checkpoint_state_root = StateRoot::new([17; 32]);
+        let terminal_header = BlockHeader::new(
+            old_set.genesis_hash(),
+            old_set.chain_id(),
+            old_set.protocol_version(),
+            old_set.epoch(),
+            View::new(12),
+            Height::new(10),
+            BlockKind::EpochSeal2,
+            BlockId::new([18; 32]),
+            old_set.validators()[0].id(),
+            old_set.id(),
+            old_set.consensus_parameters_hash(),
+            PayloadDigest::new([19; 32]),
+            checkpoint_state_root,
+            ReceiptsRoot::new([20; 32]),
+            EvidenceRoot::new([21; 32]),
+            10_000,
+            Some(next_epoch_commitment),
+        )
+        .unwrap();
+        let terminal_qc = qc_for_block(&old_set, 12, 10, terminal_header.id(), &[0, 1]);
+        let descriptor = HandoffDescriptorV0::new(HandoffDescriptorV0Fields {
+            genesis_hash: old_set.genesis_hash(),
+            chain_id: old_set.chain_id(),
+            old_epoch: old_set.epoch(),
+            new_epoch: new_set.epoch(),
+            old_protocol_version: old_set.protocol_version(),
+            new_protocol_version: new_set.protocol_version(),
+            old_validator_set_hash: old_set.id(),
+            new_validator_set_hash: new_set.id(),
+            old_consensus_parameters_hash: old_set.consensus_parameters_hash(),
+            new_consensus_parameters_hash: new_set.consensus_parameters_hash(),
+            checkpoint_height: Height::new(8),
+            checkpoint_block_id: BlockId::new([22; 32]),
+            checkpoint_state_root,
+            next_epoch_commitment_digest: next_epoch_commitment,
+            terminal_old_height: terminal_header.height(),
+            terminal_old_block_id: terminal_header.id(),
+            terminal_old_qc_digest: terminal_qc.id(),
+            terminal_old_view: terminal_header.view(),
+            activation_height: Height::new(11),
+            initial_new_view: View::new(1),
+        })
+        .unwrap();
+        let certificate = HandoffCertificateV0::new(
+            descriptor.clone(),
+            handoff_shares(&old_set, &[0, 1]),
+            handoff_shares(&new_set, &[0, 1]),
+            &old_set,
+            &new_set,
+        )
+        .unwrap();
+        let authorization = EpochAnchorAuthorizationV0::new(
+            terminal_header.clone(),
+            terminal_qc.clone(),
+            certificate.clone(),
+            &old_set,
+            &new_set,
+        )
+        .unwrap();
+        SampleHandoffKernel {
+            old_set,
+            new_set,
+            terminal_header,
+            descriptor,
+            certificate,
+            authorization,
+        }
+    }
+
+    fn validator_count_offset(bytes: &[u8]) -> usize {
+        let mut cursor = Cursor::new(bytes);
+        cursor.u16().unwrap();
+        let _: [u8; 32] = cursor.fixed().unwrap();
+        cursor.bounded_consensus_bytes().unwrap();
+        cursor.u32().unwrap();
+        cursor.u64().unwrap();
+        let _: [u8; 32] = cursor.fixed().unwrap();
+        cursor.offset()
+    }
+
+    fn qc_signature_count_offset(bytes: &[u8]) -> usize {
+        let mut cursor = Cursor::new(bytes);
+        cursor.u16().unwrap();
+        let _: [u8; 32] = cursor.fixed().unwrap();
+        cursor.bounded_consensus_bytes().unwrap();
+        cursor.u32().unwrap();
+        cursor.u64().unwrap();
+        let _: [u8; 32] = cursor.fixed().unwrap();
+        cursor.u64().unwrap();
+        cursor.u64().unwrap();
+        let _: [u8; 32] = cursor.fixed().unwrap();
+        cursor.offset()
+    }
+
+    fn qc_view_offset(bytes: &[u8]) -> usize {
+        let mut cursor = Cursor::new(bytes);
+        cursor.u16().unwrap();
+        let _: [u8; 32] = cursor.fixed().unwrap();
+        cursor.bounded_consensus_bytes().unwrap();
+        cursor.u32().unwrap();
+        cursor.u64().unwrap();
+        let _: [u8; 32] = cursor.fixed().unwrap();
+        cursor.offset()
+    }
+
+    fn tc_offsets(bytes: &[u8]) -> (usize, usize, usize) {
+        let mut cursor = Cursor::new(bytes);
+        cursor.u16().unwrap();
+        let _: [u8; 32] = cursor.fixed().unwrap();
+        cursor.bounded_consensus_bytes().unwrap();
+        cursor.u32().unwrap();
+        cursor.u64().unwrap();
+        let _: [u8; 32] = cursor.fixed().unwrap();
+        cursor.u64().unwrap();
+        let entries_offset = cursor.offset();
+        let entries = cursor.list_len(MAX_CEV0_CERTIFICATE_ITEMS).unwrap();
+        for _ in 0..entries {
+            cursor.bounded_validator_id_bytes().unwrap();
+            let _: [u8; 32] = cursor.fixed().unwrap();
+            cursor.u64().unwrap();
+            cursor.u64().unwrap();
+            cursor.u64().unwrap();
+            let _: [u8; 32] = cursor.fixed().unwrap();
+            let _: [u8; SIGNATURE_BYTES] = cursor.fixed().unwrap();
+        }
+        let references_offset = cursor.offset();
+        cursor.list_len(MAX_CEV0_CERTIFICATE_ITEMS).unwrap();
+        (entries_offset, references_offset, cursor.offset())
+    }
+
+    fn block_header_offsets(bytes: &[u8]) -> (usize, usize, usize, usize, usize) {
+        let mut cursor = Cursor::new(bytes);
+        cursor.u16().unwrap();
+        let _: [u8; 32] = cursor.fixed().unwrap();
+        cursor.bounded_consensus_bytes().unwrap();
+        cursor.u32().unwrap();
+        cursor.u64().unwrap();
+        let view_offset = cursor.offset();
+        cursor.u64().unwrap();
+        cursor.u64().unwrap();
+        let kind_offset = cursor.offset();
+        cursor.u8().unwrap();
+        let _: [u8; 32] = cursor.fixed().unwrap();
+        let proposer_length_offset = cursor.offset();
+        cursor.bounded_validator_id_bytes().unwrap();
+        let _: [u8; 32] = cursor.fixed().unwrap();
+        let _: [u8; 32] = cursor.fixed().unwrap();
+        let _: [u8; 32] = cursor.fixed().unwrap();
+        let state_root_offset = cursor.offset();
+        let _: [u8; 32] = cursor.fixed().unwrap();
+        let _: [u8; 32] = cursor.fixed().unwrap();
+        let _: [u8; 32] = cursor.fixed().unwrap();
+        cursor.u64().unwrap();
+        let optional_tag_offset = cursor.offset();
+        (
+            view_offset,
+            kind_offset,
+            proposer_length_offset,
+            state_root_offset,
+            optional_tag_offset,
+        )
+    }
+
+    fn descriptor_offsets(bytes: &[u8]) -> (usize, usize, usize, usize, usize) {
+        let mut cursor = Cursor::new(bytes);
+        cursor.u16().unwrap();
+        let _: [u8; 32] = cursor.fixed().unwrap();
+        cursor.bounded_consensus_bytes().unwrap();
+        let old_epoch_offset = cursor.offset();
+        cursor.u64().unwrap();
+        let new_epoch_offset = cursor.offset();
+        cursor.u64().unwrap();
+        cursor.u32().unwrap();
+        cursor.u32().unwrap();
+        let old_set_offset = cursor.offset();
+        let _: [u8; 32] = cursor.fixed().unwrap();
+        let _: [u8; 32] = cursor.fixed().unwrap();
+        let _: [u8; 32] = cursor.fixed().unwrap();
+        let _: [u8; 32] = cursor.fixed().unwrap();
+        cursor.u64().unwrap();
+        let _: [u8; 32] = cursor.fixed().unwrap();
+        let _: [u8; 32] = cursor.fixed().unwrap();
+        let _: [u8; 32] = cursor.fixed().unwrap();
+        cursor.u64().unwrap();
+        let terminal_block_offset = cursor.offset();
+        let _: [u8; 32] = cursor.fixed().unwrap();
+        let terminal_qc_digest_offset = cursor.offset();
+        (
+            old_epoch_offset,
+            new_epoch_offset,
+            old_set_offset,
+            terminal_block_offset,
+            terminal_qc_digest_offset,
+        )
+    }
+
+    fn parsed_handoff_offsets(bytes: &[u8]) -> (usize, usize, usize, usize, usize) {
+        let mut cursor = Cursor::new(bytes);
+        let raw = parse_raw_handoff_certificate(&mut cursor).unwrap();
+        cursor.finish().unwrap();
+        (
+            raw.old_count_offset,
+            raw.old_signatures[0].offset,
+            raw.old_signatures[1].offset,
+            raw.new_signatures[0].offset,
+            raw.new_signatures[1].offset,
+        )
+    }
+
+    #[derive(Debug, Clone, Copy)]
+    struct NextCommitmentOffsets {
+        old_epoch: usize,
+        new_epoch: usize,
+        snapshot_state_root: usize,
+        new_validator_set_hash: usize,
+        new_consensus_parameters_hash: usize,
+        rollout_phase: usize,
+        optional_tag: usize,
+        fallback_used: usize,
+        fallback_reason: usize,
+        activation_height: usize,
+    }
+
+    fn next_commitment_offsets(bytes: &[u8]) -> NextCommitmentOffsets {
+        let mut cursor = Cursor::new(bytes);
+        cursor.u16().unwrap();
+        let _: [u8; 32] = cursor.fixed().unwrap();
+        cursor.bounded_consensus_bytes().unwrap();
+        let old_epoch = cursor.offset();
+        cursor.u64().unwrap();
+        let new_epoch = cursor.offset();
+        cursor.u64().unwrap();
+        cursor.u64().unwrap();
+        let snapshot_state_root = cursor.offset();
+        let _: [u8; 32] = cursor.fixed().unwrap();
+        cursor.u32().unwrap();
+        let new_validator_set_hash = cursor.offset();
+        let _: [u8; 32] = cursor.fixed().unwrap();
+        let new_consensus_parameters_hash = cursor.offset();
+        let _: [u8; 32] = cursor.fixed().unwrap();
+        let rollout_phase = cursor.offset();
+        cursor.u8().unwrap();
+        let optional_tag = cursor.offset();
+        match cursor.u8().unwrap() {
+            0 => {}
+            1 => {
+                let _: [u8; 32] = cursor.fixed().unwrap();
+            }
+            _ => unreachable!("sample commitment uses a canonical optional tag"),
+        }
+        let fallback_used = cursor.offset();
+        cursor.u8().unwrap();
+        let fallback_reason = cursor.offset();
+        cursor.u16().unwrap();
+        let activation_height = cursor.offset();
+        cursor.u64().unwrap();
+        cursor.finish().unwrap();
+        NextCommitmentOffsets {
+            old_epoch,
+            new_epoch,
+            snapshot_state_root,
+            new_validator_set_hash,
+            new_consensus_parameters_hash,
+            rollout_phase,
+            optional_tag,
+            fallback_used,
+            fallback_reason,
+            activation_height,
+        }
+    }
+
+    #[test]
+    fn next_epoch_commitment_decoder_round_trips_and_is_exact() {
+        for upgrade_plan_hash in [None, Some(UpgradePlanHash::new([35; 32]))] {
+            let commitment = sample_next_epoch_commitment(
+                RolloutPhase::Shadow,
+                upgrade_plan_hash,
+                EpochFallbackReasonV0::None,
+            );
+            let bytes = commitment.try_cev0_bytes().unwrap();
+            assert_eq!(
+                decode_next_epoch_commitment_v0_exact(&bytes).unwrap(),
+                commitment
+            );
+            for prefix_length in 0..bytes.len() {
+                let error =
+                    decode_next_epoch_commitment_v0_exact(&bytes[..prefix_length]).unwrap_err();
+                assert_eq!(error.code(), DecodeErrorCode::UnexpectedEof);
+                assert_eq!(error.byte_offset(), prefix_length);
+            }
+            let mut trailing = bytes.clone();
+            trailing.push(0);
+            let error = decode_next_epoch_commitment_v0_exact(&trailing).unwrap_err();
+            assert_eq!(error.code(), DecodeErrorCode::TrailingBytes);
+            assert_eq!(error.byte_offset(), bytes.len());
+        }
+    }
+
+    #[test]
+    fn next_epoch_commitment_decoder_freezes_discriminants_and_fallback_pairs() {
+        for rollout_phase in [
+            RolloutPhase::Shadow,
+            RolloutPhase::EligibilityOnly,
+            RolloutPhase::CappedWeight,
+            RolloutPhase::Full,
+        ] {
+            let commitment =
+                sample_next_epoch_commitment(rollout_phase, None, EpochFallbackReasonV0::None);
+            let bytes = commitment.try_cev0_bytes().unwrap();
+            assert_eq!(
+                decode_next_epoch_commitment_v0_exact(&bytes).unwrap(),
+                commitment
+            );
+        }
+
+        for fallback_reason in [
+            EpochFallbackReasonV0::MalformedSnapshotInput,
+            EpochFallbackReasonV0::ArithmeticFailure,
+            EpochFallbackReasonV0::TooFewEligibleValidators,
+            EpochFallbackReasonV0::InvalidValidatorIdentityOrKey,
+            EpochFallbackReasonV0::ValidatorWeightOutOfBounds,
+            EpochFallbackReasonV0::InvalidTotalVotingPower,
+            EpochFallbackReasonV0::ConcentrationConstraintViolated,
+            EpochFallbackReasonV0::InvalidCommittedParameters,
+            EpochFallbackReasonV0::InvalidUpgradeOrActivation,
+        ] {
+            let commitment =
+                sample_next_epoch_commitment(RolloutPhase::Full, None, fallback_reason);
+            let bytes = commitment.try_cev0_bytes().unwrap();
+            assert_eq!(
+                decode_next_epoch_commitment_v0_exact(&bytes).unwrap(),
+                commitment
+            );
+        }
+
+        let commitment =
+            sample_next_epoch_commitment(RolloutPhase::Shadow, None, EpochFallbackReasonV0::None);
+        let bytes = commitment.try_cev0_bytes().unwrap();
+        let offsets = next_commitment_offsets(&bytes);
+
+        let mut invalid_rollout = bytes.clone();
+        invalid_rollout[offsets.rollout_phase] = 4;
+        let error = decode_next_epoch_commitment_v0_exact(&invalid_rollout).unwrap_err();
+        assert_eq!(error.code(), DecodeErrorCode::InvalidRolloutPhase);
+        assert_eq!(error.byte_offset(), offsets.rollout_phase);
+
+        let mut invalid_optional = bytes.clone();
+        invalid_optional[offsets.optional_tag] = 2;
+        let error = decode_next_epoch_commitment_v0_exact(&invalid_optional).unwrap_err();
+        assert_eq!(error.code(), DecodeErrorCode::InvalidOptionalTag);
+        assert_eq!(error.byte_offset(), offsets.optional_tag);
+
+        let mut invalid_boolean = bytes.clone();
+        invalid_boolean[offsets.fallback_used] = 2;
+        let error = decode_next_epoch_commitment_v0_exact(&invalid_boolean).unwrap_err();
+        assert_eq!(error.code(), DecodeErrorCode::InvalidBoolean);
+        assert_eq!(error.byte_offset(), offsets.fallback_used);
+
+        let mut invalid_reason = bytes.clone();
+        invalid_reason[offsets.fallback_reason..offsets.fallback_reason + 2]
+            .copy_from_slice(&10u16.to_be_bytes());
+        let error = decode_next_epoch_commitment_v0_exact(&invalid_reason).unwrap_err();
+        assert_eq!(error.code(), DecodeErrorCode::InvalidFallbackReason);
+        assert_eq!(error.byte_offset(), offsets.fallback_reason);
+
+        let mut false_with_reason = bytes.clone();
+        false_with_reason[offsets.fallback_reason..offsets.fallback_reason + 2]
+            .copy_from_slice(&1u16.to_be_bytes());
+        let error = decode_next_epoch_commitment_v0_exact(&false_with_reason).unwrap_err();
+        assert_eq!(error.code(), DecodeErrorCode::InvalidFallbackReason);
+        assert_eq!(error.byte_offset(), offsets.fallback_reason);
+
+        let mut true_without_reason = bytes.clone();
+        true_without_reason[offsets.fallback_used] = 1;
+        let error = decode_next_epoch_commitment_v0_exact(&true_without_reason).unwrap_err();
+        assert_eq!(error.code(), DecodeErrorCode::InvalidFallbackReason);
+        assert_eq!(error.byte_offset(), offsets.fallback_reason);
+
+        let mut semantic_error_with_trailing = invalid_rollout;
+        semantic_error_with_trailing.push(0);
+        assert_eq!(
+            decode_next_epoch_commitment_v0_exact(&semantic_error_with_trailing)
+                .unwrap_err()
+                .code(),
+            DecodeErrorCode::TrailingBytes
+        );
+    }
+
+    #[test]
+    fn next_epoch_commitment_decoder_maps_intrinsic_shape_failures() {
+        let commitment =
+            sample_next_epoch_commitment(RolloutPhase::Shadow, None, EpochFallbackReasonV0::None);
+        let bytes = commitment.try_cev0_bytes().unwrap();
+        let offsets = next_commitment_offsets(&bytes);
+
+        let mut wrong_schema = bytes.clone();
+        wrong_schema[..2].copy_from_slice(&1u16.to_be_bytes());
+        let error = decode_next_epoch_commitment_v0_exact(&wrong_schema).unwrap_err();
+        assert_eq!(error.code(), DecodeErrorCode::InvalidSchemaVersion);
+        assert_eq!(error.byte_offset(), 0);
+
+        let mut zero_genesis = bytes.clone();
+        zero_genesis[2..34].fill(0);
+        let error = decode_next_epoch_commitment_v0_exact(&zero_genesis).unwrap_err();
+        assert_eq!(error.code(), DecodeErrorCode::ZeroGenesisHash);
+        assert_eq!(error.byte_offset(), 2);
+
+        let old_epoch = bytes[offsets.old_epoch..offsets.old_epoch + 8].to_vec();
+        let mut nonadjacent_epoch = bytes.clone();
+        nonadjacent_epoch[offsets.new_epoch..offsets.new_epoch + 8].copy_from_slice(&old_epoch);
+
+        let mut zero_snapshot_root = bytes.clone();
+        zero_snapshot_root[offsets.snapshot_state_root..offsets.snapshot_state_root + 32].fill(0);
+        let mut zero_validator_set = bytes.clone();
+        zero_validator_set[offsets.new_validator_set_hash..offsets.new_validator_set_hash + 32]
+            .fill(0);
+        let mut zero_parameters = bytes.clone();
+        zero_parameters
+            [offsets.new_consensus_parameters_hash..offsets.new_consensus_parameters_hash + 32]
+            .fill(0);
+        let mut zero_activation = bytes.clone();
+        zero_activation[offsets.activation_height..offsets.activation_height + 8].fill(0);
+
+        for (invalid, expected_offset) in [
+            (nonadjacent_epoch, offsets.new_epoch),
+            (zero_snapshot_root, offsets.snapshot_state_root),
+            (zero_validator_set, offsets.new_validator_set_hash),
+            (zero_parameters, offsets.new_consensus_parameters_hash),
+            (zero_activation, offsets.activation_height),
+        ] {
+            let error = decode_next_epoch_commitment_v0_exact(&invalid).unwrap_err();
+            assert_eq!(error.code(), DecodeErrorCode::InvalidNextEpochCommitment);
+            assert_eq!(error.byte_offset(), expected_offset);
+        }
+
+        let present = sample_next_epoch_commitment(
+            RolloutPhase::Shadow,
+            Some(UpgradePlanHash::new([35; 32])),
+            EpochFallbackReasonV0::None,
+        );
+        let mut zero_upgrade = present.try_cev0_bytes().unwrap();
+        let present_offsets = next_commitment_offsets(&zero_upgrade);
+        zero_upgrade[present_offsets.optional_tag + 1..present_offsets.optional_tag + 33].fill(0);
+        let error = decode_next_epoch_commitment_v0_exact(&zero_upgrade).unwrap_err();
+        assert_eq!(error.code(), DecodeErrorCode::InvalidNextEpochCommitment);
+        assert_eq!(error.byte_offset(), present_offsets.optional_tag);
+    }
+
+    #[test]
+    fn next_epoch_commitment_decoder_enforces_chain_id_bounds() {
+        let commitment =
+            sample_next_epoch_commitment(RolloutPhase::Shadow, None, EpochFallbackReasonV0::None);
+        let fields = commitment.fields();
+        let maximum_chain_id = ChainId::from_bytes(&[b'x'; MAX_CONSENSUS_STRING_BYTES]).unwrap();
+        let maximum = NextEpochCommitmentV0::new(NextEpochCommitmentV0Fields {
+            chain_id: maximum_chain_id,
+            ..fields
+        })
+        .unwrap();
+        let maximum_bytes = maximum.try_cev0_bytes().unwrap();
+        assert_eq!(
+            decode_next_epoch_commitment_v0_exact(&maximum_bytes).unwrap(),
+            maximum
+        );
+
+        let bytes = commitment.try_cev0_bytes().unwrap();
+        let chain_length_offset = 2 + 32;
+        let chain_start = chain_length_offset + 2;
+        let chain_length = usize::from(u16::from_be_bytes(
+            bytes[chain_length_offset..chain_start].try_into().unwrap(),
+        ));
+        let suffix = &bytes[chain_start + chain_length..];
+
+        let mut empty = bytes[..chain_length_offset].to_vec();
+        empty.extend_from_slice(&0u16.to_be_bytes());
+        empty.extend_from_slice(suffix);
+        let error = decode_next_epoch_commitment_v0_exact(&empty).unwrap_err();
+        assert_eq!(error.code(), DecodeErrorCode::InvalidConsensusString);
+        assert_eq!(error.byte_offset(), chain_length_offset);
+        empty.push(0);
+        let error = decode_next_epoch_commitment_v0_exact(&empty).unwrap_err();
+        assert_eq!(error.code(), DecodeErrorCode::TrailingBytes);
+        assert_eq!(error.byte_offset(), empty.len() - 1);
+
+        let excessive_length = MAX_CONSENSUS_STRING_BYTES + 1;
+        let mut excessive = bytes[..chain_length_offset].to_vec();
+        excessive.extend_from_slice(&(excessive_length as u16).to_be_bytes());
+        excessive.extend_from_slice(&vec![b'x'; excessive_length]);
+        excessive.extend_from_slice(suffix);
+        let error = decode_next_epoch_commitment_v0_exact(&excessive).unwrap_err();
+        assert_eq!(error.code(), DecodeErrorCode::LengthLimitExceeded);
+        assert_eq!(error.byte_offset(), chain_length_offset);
+    }
+
+    #[test]
+    fn certificate_only_handoff_checks_cannot_authorize_proposal_or_tc_epoch_anchors() {
+        let sample = sample_handoff_kernel();
+        assert!(sample
+            .authorization
+            .verify_certificate_kernel(&sample.old_set, &sample.new_set, &AcceptSignatures,)
+            .is_ok());
+
+        let anchor = QcReferenceV0::epoch_anchor(sample.authorization.epoch_anchor_qc());
+        let entries = sample.new_set.validators()[..2]
+            .iter()
+            .map(|validator| {
+                TimeoutEntryV0::new(
+                    validator.id(),
+                    anchor.qc_ref(),
+                    Signature64::from_array([41; SIGNATURE_BYTES]),
+                )
+                .unwrap()
+            })
+            .collect();
+        let timeout_certificate = TimeoutCertificateV0::new(
+            View::new(1),
+            entries,
+            vec![anchor.clone()],
+            anchor.id(),
+            &sample.new_set,
+        )
+        .unwrap();
+        assert_eq!(
+            timeout_certificate.verify(
+                &sample.new_set,
+                Some((&sample.authorization, &sample.old_set)),
+                &AcceptSignatures,
+            ),
+            Err(ValidationError::InvalidCertificate(
+                "complete trusted epoch-anchor authorization is not implemented"
+            ))
+        );
+
+        let parameters = crate::ConsensusParametersV0::reference_shadow_v0();
+        let header = BlockHeader::new(
+            sample.new_set.genesis_hash(),
+            sample.new_set.chain_id(),
+            sample.new_set.protocol_version(),
+            sample.new_set.epoch(),
+            View::new(1),
+            Height::new(11),
+            BlockKind::EpochHandoff,
+            sample.terminal_header.id(),
+            sample.new_set.validators()[0].id(),
+            sample.new_set.id(),
+            sample.new_set.consensus_parameters_hash(),
+            PayloadDigest::new([42; 32]),
+            StateRoot::new([43; 32]),
+            ReceiptsRoot::new([44; 32]),
+            EvidenceRoot::new([45; 32]),
+            sample.terminal_header.timestamp_ms() + 1,
+            None,
+        )
+        .unwrap();
+        let witness = crate::ProposalWitnessV0::new(
+            &header,
+            anchor,
+            None,
+            Some(sample.authorization.clone()),
+            Signature64::from_array([46; SIGNATURE_BYTES]),
+            &sample.new_set,
+            Some(&sample.old_set),
+            &parameters,
+            sample.terminal_header.timestamp_ms(),
+        )
+        .unwrap();
+        assert_eq!(
+            witness.verify_for_header(
+                &header,
+                &sample.new_set,
+                Some(&sample.old_set),
+                &parameters,
+                sample.terminal_header.timestamp_ms(),
+                &AcceptSignatures,
+            ),
+            Err(ValidationError::InvalidProposal(
+                "complete trusted epoch-anchor authorization is not implemented"
+            ))
+        );
+    }
+
+    #[test]
+    fn exact_decoders_round_trip_certificate_kernel() {
+        let set = sample_set();
+        let set_bytes = set.try_cev0_bytes().unwrap();
+        assert_eq!(decode_validator_set_v0_exact(&set_bytes).unwrap(), set);
+
+        let certificate = qc(&set, 3, 11, 3, &[0, 1]);
+        let certificate_bytes = certificate.try_cev0_bytes().unwrap();
+        assert_eq!(
+            decode_ordinary_qc_v0_exact(&certificate_bytes, &set).unwrap(),
+            certificate
+        );
+
+        let timeout = sample_tc(&set);
+        let timeout_bytes = timeout.try_cev0_bytes().unwrap();
+        assert_eq!(
+            decode_ordinary_timeout_certificate_v0_exact(&timeout_bytes, &set).unwrap(),
+            timeout
+        );
+    }
+
+    #[test]
+    fn exact_handoff_kernel_decoders_round_trip_and_enforce_root_boundaries() {
+        fn assert_exact_boundaries<T>(bytes: &[u8], decode: impl Fn(&[u8]) -> DecodeResult<T>) {
+            for prefix_length in 0..bytes.len() {
+                let error = match decode(&bytes[..prefix_length]) {
+                    Ok(_) => panic!("incomplete B2-B CEV0 prefix was accepted"),
+                    Err(error) => error,
+                };
+                assert_eq!(error.code(), DecodeErrorCode::UnexpectedEof);
+                assert_eq!(error.byte_offset(), prefix_length);
+            }
+            let mut trailing = bytes.to_vec();
+            trailing.push(0);
+            let error = match decode(&trailing) {
+                Ok(_) => panic!("B2-B CEV0 root with a trailing byte was accepted"),
+                Err(error) => error,
+            };
+            assert_eq!(error.code(), DecodeErrorCode::TrailingBytes);
+            assert_eq!(error.byte_offset(), bytes.len());
+        }
+
+        let sample = sample_handoff_kernel();
+        let header_bytes = sample.terminal_header.try_cev0_bytes().unwrap();
+        let descriptor_bytes = sample.descriptor.try_cev0_bytes().unwrap();
+        let certificate_bytes = sample.certificate.try_cev0_bytes().unwrap();
+        let authorization_bytes = sample.authorization.try_cev0_bytes().unwrap();
+        assert_eq!(
+            decode_block_header_v0_exact(&header_bytes).unwrap(),
+            sample.terminal_header
+        );
+        assert_eq!(
+            decode_handoff_descriptor_v0_exact(&descriptor_bytes).unwrap(),
+            sample.descriptor
+        );
+        assert_eq!(
+            decode_handoff_certificate_v0_exact(
+                &certificate_bytes,
+                &sample.old_set,
+                &sample.new_set,
+            )
+            .unwrap(),
+            sample.certificate
+        );
+        let kernel = decode_epoch_anchor_authorization_kernel_v0_exact(
+            &authorization_bytes,
+            &sample.old_set,
+            &sample.new_set,
+        )
+        .unwrap();
+        assert_eq!(
+            kernel.terminal_old_header(),
+            sample.authorization.terminal_old_header()
+        );
+        assert_eq!(
+            kernel.terminal_old_qc(),
+            sample.authorization.terminal_old_qc()
+        );
+        assert_eq!(
+            kernel.handoff_certificate(),
+            sample.authorization.handoff_certificate()
+        );
+        assert_eq!(kernel.try_cev0_bytes().unwrap(), authorization_bytes);
+        assert!(kernel
+            .verify_certificate_kernel(&sample.old_set, &sample.new_set, &RejectSignatures,)
+            .is_err());
+        assert!(kernel
+            .verify_certificate_kernel(&sample.old_set, &sample.new_set, &AcceptSignatures,)
+            .is_ok());
+
+        assert_exact_boundaries(&header_bytes, decode_block_header_v0_exact);
+        assert_exact_boundaries(&descriptor_bytes, decode_handoff_descriptor_v0_exact);
+        assert_exact_boundaries(&certificate_bytes, |bytes| {
+            decode_handoff_certificate_v0_exact(bytes, &sample.old_set, &sample.new_set)
+        });
+        assert_exact_boundaries(&authorization_bytes, |bytes| {
+            decode_epoch_anchor_authorization_kernel_v0_exact(
+                bytes,
+                &sample.old_set,
+                &sample.new_set,
+            )
+        });
+    }
+
+    #[test]
+    fn block_header_decoder_enforces_discriminants_bounds_and_shape() {
+        let sample = sample_handoff_kernel();
+        let bytes = sample.terminal_header.try_cev0_bytes().unwrap();
+        let (view_offset, kind_offset, proposer_length_offset, _, optional_tag_offset) =
+            block_header_offsets(&bytes);
+
+        let mut unknown_kind = bytes.clone();
+        unknown_kind[kind_offset] = 5;
+        let error = decode_block_header_v0_exact(&unknown_kind).unwrap_err();
+        assert_eq!(error.code(), DecodeErrorCode::InvalidBlockKind);
+        assert_eq!(error.byte_offset(), kind_offset);
+
+        let mut invalid_optional = bytes.clone();
+        invalid_optional[optional_tag_offset] = 2;
+        let error = decode_block_header_v0_exact(&invalid_optional).unwrap_err();
+        assert_eq!(error.code(), DecodeErrorCode::InvalidOptionalTag);
+        assert_eq!(error.byte_offset(), optional_tag_offset);
+
+        let mut zero_view = bytes.clone();
+        zero_view[view_offset..view_offset + 8].copy_from_slice(&0u64.to_be_bytes());
+        assert_eq!(
+            decode_block_header_v0_exact(&zero_view).unwrap_err().code(),
+            DecodeErrorCode::InvalidBlockHeader
+        );
+
+        for invalid_length in [0u32, 129, u32::MAX] {
+            let mut invalid_id = bytes.clone();
+            invalid_id[proposer_length_offset..proposer_length_offset + 4]
+                .copy_from_slice(&invalid_length.to_be_bytes());
+            assert_eq!(
+                decode_block_header_v0_exact(&invalid_id)
+                    .unwrap_err()
+                    .code(),
+                DecodeErrorCode::LengthLimitExceeded
+            );
+        }
+
+        let proposer = ValidatorId::from_bytes(&[31; MAX_VALIDATOR_ID_BYTES]).unwrap();
+        let header_with_max_id = BlockHeader::new(
+            sample.terminal_header.genesis_hash(),
+            sample.terminal_header.chain_id(),
+            sample.terminal_header.protocol_version(),
+            sample.terminal_header.epoch(),
+            sample.terminal_header.view(),
+            sample.terminal_header.height(),
+            sample.terminal_header.block_kind(),
+            sample.terminal_header.parent_id(),
+            proposer,
+            sample.terminal_header.validator_set_id(),
+            sample.terminal_header.consensus_parameters_hash(),
+            sample.terminal_header.payload_digest(),
+            sample.terminal_header.state_root(),
+            sample.terminal_header.receipts_root(),
+            sample.terminal_header.evidence_root(),
+            sample.terminal_header.timestamp_ms(),
+            sample.terminal_header.next_epoch_commitment_hash(),
+        )
+        .unwrap();
+        assert_eq!(
+            decode_block_header_v0_exact(&header_with_max_id.try_cev0_bytes().unwrap()).unwrap(),
+            header_with_max_id
+        );
+    }
+
+    #[test]
+    fn handoff_decoder_enforces_descriptor_context_roles_and_caps() {
+        let sample = sample_handoff_kernel();
+        let mut max_chain_fields = sample.descriptor.fields().clone();
+        max_chain_fields.chain_id = ChainId::new(&"a".repeat(MAX_CONSENSUS_STRING_BYTES)).unwrap();
+        let max_chain_descriptor = HandoffDescriptorV0::new(max_chain_fields).unwrap();
+        let max_chain_bytes = max_chain_descriptor.try_cev0_bytes().unwrap();
+        assert_eq!(
+            decode_handoff_descriptor_v0_exact(&max_chain_bytes).unwrap(),
+            max_chain_descriptor
+        );
+        let chain_length_offset = 2 + 32;
+        let mut empty_chain = max_chain_bytes.clone();
+        empty_chain[chain_length_offset..chain_length_offset + 2]
+            .copy_from_slice(&0u16.to_be_bytes());
+        assert_eq!(
+            decode_handoff_descriptor_v0_exact(&empty_chain)
+                .unwrap_err()
+                .code(),
+            DecodeErrorCode::InvalidConsensusString
+        );
+        let mut excessive_chain = max_chain_bytes;
+        excessive_chain[chain_length_offset..chain_length_offset + 2]
+            .copy_from_slice(&129u16.to_be_bytes());
+        assert_eq!(
+            decode_handoff_descriptor_v0_exact(&excessive_chain)
+                .unwrap_err()
+                .code(),
+            DecodeErrorCode::LengthLimitExceeded
+        );
+
+        let descriptor_bytes = sample.descriptor.try_cev0_bytes().unwrap();
+        let (_, new_epoch_offset, _, _, _) = descriptor_offsets(&descriptor_bytes);
+        let mut nonadjacent = descriptor_bytes;
+        nonadjacent[new_epoch_offset..new_epoch_offset + 8]
+            .copy_from_slice(&(sample.old_set.epoch().get() + 2).to_be_bytes());
+        assert_eq!(
+            decode_handoff_descriptor_v0_exact(&nonadjacent)
+                .unwrap_err()
+                .code(),
+            DecodeErrorCode::InvalidHandoffDescriptor
+        );
+
+        let bytes = sample.certificate.try_cev0_bytes().unwrap();
+        let (old_count_offset, first_old, second_old, first_new, second_new) =
+            parsed_handoff_offsets(&bytes);
+        for excessive in [101u32, u32::MAX] {
+            let mut invalid_count = bytes.clone();
+            invalid_count[old_count_offset..old_count_offset + 4]
+                .copy_from_slice(&excessive.to_be_bytes());
+            let error = decode_handoff_certificate_v0_exact(
+                &invalid_count,
+                &sample.old_set,
+                &sample.new_set,
+            )
+            .unwrap_err();
+            assert_eq!(error.code(), DecodeErrorCode::CountLimitExceeded);
+            assert_eq!(error.byte_offset(), old_count_offset);
+        }
+
+        let mut duplicate = bytes.clone();
+        duplicate[second_old + 4] = duplicate[first_old + 4];
+        let error =
+            decode_handoff_certificate_v0_exact(&duplicate, &sample.old_set, &sample.new_set)
+                .unwrap_err();
+        assert_eq!(error.code(), DecodeErrorCode::DuplicateSigner);
+        assert_eq!(error.byte_offset(), second_old);
+
+        let mut noncanonical = bytes.clone();
+        noncanonical.swap(first_new + 4, second_new + 4);
+        let error =
+            decode_handoff_certificate_v0_exact(&noncanonical, &sample.old_set, &sample.new_set)
+                .unwrap_err();
+        assert_eq!(error.code(), DecodeErrorCode::NonCanonicalSignerOrder);
+        assert_eq!(error.byte_offset(), second_new);
+
+        let mut unknown = bytes.clone();
+        unknown[first_old + 4] = 99;
+        let error = decode_handoff_certificate_v0_exact(&unknown, &sample.old_set, &sample.new_set)
+            .unwrap_err();
+        assert_eq!(error.code(), DecodeErrorCode::UnknownSigner);
+        assert_eq!(error.byte_offset(), first_old);
+
+        let descriptor_start = 2usize;
+        let (_, _, old_set_offset, _, _) = descriptor_offsets(&bytes[descriptor_start..]);
+        let mut wrong_context = bytes.clone();
+        wrong_context[descriptor_start + old_set_offset] ^= 1;
+        assert_eq!(
+            decode_handoff_certificate_v0_exact(&wrong_context, &sample.old_set, &sample.new_set,)
+                .unwrap_err()
+                .code(),
+            DecodeErrorCode::InvalidHandoffCertificate
+        );
+
+        let insufficient = HandoffCertificateV0::from_parts_for_test(
+            sample.descriptor.clone(),
+            handoff_shares(&sample.old_set, &[3]),
+            handoff_shares(&sample.new_set, &[0, 1]),
+        )
+        .unwrap();
+        assert_eq!(
+            decode_handoff_certificate_v0_exact(
+                &insufficient.try_cev0_bytes().unwrap(),
+                &sample.old_set,
+                &sample.new_set,
+            )
+            .unwrap_err()
+            .code(),
+            DecodeErrorCode::InsufficientQuorum
+        );
+
+        let mut cursor = Cursor::new(&bytes);
+        let raw = parse_raw_handoff_certificate(&mut cursor).unwrap();
+        let mut empty_old = Vec::new();
+        empty_old.extend_from_slice(&bytes[..raw.old_count_offset]);
+        empty_old.extend_from_slice(&0u32.to_be_bytes());
+        empty_old.extend_from_slice(&bytes[raw.new_count_offset..]);
+        assert_eq!(
+            decode_handoff_certificate_v0_exact(&empty_old, &sample.old_set, &sample.new_set,)
+                .unwrap_err()
+                .code(),
+            DecodeErrorCode::InvalidHandoffCertificate
+        );
+    }
+
+    #[test]
+    fn handoff_decoder_accepts_exact_two_hundred_share_aggregate() {
+        fn hundred_set(epoch: u64, parameters: u8, key_bias: u8) -> ValidatorSet {
+            let validators = (1u8..=100)
+                .map(|id| {
+                    Validator::new(
+                        ValidatorId::from_bytes(&[id]).unwrap(),
+                        ConsensusPublicKey::new([id.wrapping_add(key_bias); 32]),
+                        VotingPower::new(1).unwrap(),
+                    )
+                    .unwrap()
+                })
+                .collect();
+            ValidatorSet::new(
+                GenesisHash::new([41; 32]),
+                ChainId::new("handoff-caps").unwrap(),
+                ProtocolVersion::V0,
+                Epoch::new(epoch),
+                ConsensusParametersHash::new([parameters; 32]),
+                validators,
+            )
+            .unwrap()
+        }
+
+        let old_set = hundred_set(3, 42, 100);
+        let new_set = hundred_set(4, 43, 150);
+        let descriptor = HandoffDescriptorV0::new(HandoffDescriptorV0Fields {
+            genesis_hash: old_set.genesis_hash(),
+            chain_id: old_set.chain_id(),
+            old_epoch: old_set.epoch(),
+            new_epoch: new_set.epoch(),
+            old_protocol_version: old_set.protocol_version(),
+            new_protocol_version: new_set.protocol_version(),
+            old_validator_set_hash: old_set.id(),
+            new_validator_set_hash: new_set.id(),
+            old_consensus_parameters_hash: old_set.consensus_parameters_hash(),
+            new_consensus_parameters_hash: new_set.consensus_parameters_hash(),
+            checkpoint_height: Height::new(8),
+            checkpoint_block_id: BlockId::new([44; 32]),
+            checkpoint_state_root: StateRoot::new([45; 32]),
+            next_epoch_commitment_digest: NextEpochCommitmentHash::new([46; 32]),
+            terminal_old_height: Height::new(10),
+            terminal_old_block_id: BlockId::new([47; 32]),
+            terminal_old_qc_digest: CertificateId::new([48; 32]),
+            terminal_old_view: View::new(12),
+            activation_height: Height::new(11),
+            initial_new_view: View::new(1),
+        })
+        .unwrap();
+        let all: Vec<_> = (0..100).collect();
+        let certificate = HandoffCertificateV0::new(
+            descriptor,
+            handoff_shares(&old_set, &all),
+            handoff_shares(&new_set, &all),
+            &old_set,
+            &new_set,
+        )
+        .unwrap();
+        assert_eq!(
+            certificate.old_signatures().len() + certificate.new_signatures().len(),
+            MAX_CEV0_HANDOFF_AGGREGATE_SIGNATURE_SHARES
+        );
+        assert_eq!(
+            decode_handoff_certificate_v0_exact(
+                &certificate.try_cev0_bytes().unwrap(),
+                &old_set,
+                &new_set,
+            )
+            .unwrap(),
+            certificate
+        );
+    }
+
+    #[test]
+    fn epoch_anchor_kernel_requires_ordinary_qc_and_exact_terminal_relations() {
+        let sample = sample_handoff_kernel();
+        let bytes = sample.authorization.try_cev0_bytes().unwrap();
+        let mut cursor = Cursor::new(&bytes);
+        parse_raw_block_header(&mut cursor).unwrap();
+        let header_end = cursor.offset();
+        let terminal_qc = parse_raw_qc(&mut cursor, MAX_CEV0_CERTIFICATE_ITEMS).unwrap();
+        let terminal_qc_end = cursor.offset();
+        let handoff_start = cursor.offset();
+        parse_raw_handoff_certificate(&mut cursor).unwrap();
+        cursor.finish().unwrap();
+
+        let (_, kind_offset, _, state_root_offset, optional_tag_offset) =
+            block_header_offsets(&bytes[..header_end]);
+        let mut wrong_kind = bytes.clone();
+        wrong_kind[kind_offset] = BlockKind::EpochSeal1 as u8;
+        assert_eq!(
+            decode_epoch_anchor_authorization_kernel_v0_exact(
+                &wrong_kind,
+                &sample.old_set,
+                &sample.new_set,
+            )
+            .unwrap_err()
+            .code(),
+            DecodeErrorCode::InvalidEpochAnchorRelations
+        );
+
+        let mut empty_qc = Vec::new();
+        empty_qc.extend_from_slice(&bytes[..terminal_qc.signature_count_offset]);
+        empty_qc.extend_from_slice(&0u32.to_be_bytes());
+        empty_qc.extend_from_slice(&bytes[terminal_qc_end..]);
+        assert_eq!(
+            decode_epoch_anchor_authorization_kernel_v0_exact(
+                &empty_qc,
+                &sample.old_set,
+                &sample.new_set,
+            )
+            .unwrap_err()
+            .code(),
+            DecodeErrorCode::UnauthorizedSyntheticQc
+        );
+
+        let mut wrong_qc_block = bytes.clone();
+        let terminal_qc_block_offset = terminal_qc.signature_count_offset - 32;
+        wrong_qc_block[terminal_qc_block_offset] ^= 1;
+        assert_eq!(
+            decode_epoch_anchor_authorization_kernel_v0_exact(
+                &wrong_qc_block,
+                &sample.old_set,
+                &sample.new_set,
+            )
+            .unwrap_err()
+            .code(),
+            DecodeErrorCode::InvalidEpochAnchorRelations
+        );
+
+        let descriptor_start = handoff_start + 2;
+        let (_, _, _, terminal_block_offset, terminal_qc_digest_offset) =
+            descriptor_offsets(&bytes[descriptor_start..]);
+        for offset in [
+            state_root_offset,
+            optional_tag_offset + 1,
+            descriptor_start + terminal_block_offset,
+            descriptor_start + terminal_qc_digest_offset,
+        ] {
+            let mut mismatch = bytes.clone();
+            mismatch[offset] ^= 1;
+            assert_eq!(
+                decode_epoch_anchor_authorization_kernel_v0_exact(
+                    &mismatch,
+                    &sample.old_set,
+                    &sample.new_set,
+                )
+                .unwrap_err()
+                .code(),
+                DecodeErrorCode::InvalidEpochAnchorRelations
+            );
+        }
+    }
+
+    #[test]
+    fn exact_decoders_reject_every_root_prefix_and_trailing_bytes() {
+        fn assert_exact_boundaries<T>(bytes: &[u8], decode: impl Fn(&[u8]) -> DecodeResult<T>) {
+            for prefix_length in 0..bytes.len() {
+                let error = match decode(&bytes[..prefix_length]) {
+                    Ok(_) => panic!("incomplete CEV0 prefix was accepted"),
+                    Err(error) => error,
+                };
+                assert_eq!(error.code(), DecodeErrorCode::UnexpectedEof);
+                assert!(error.byte_offset() <= prefix_length);
+            }
+            let mut trailing = bytes.to_vec();
+            trailing.push(0);
+            let error = match decode(&trailing) {
+                Ok(_) => panic!("CEV0 root with a trailing byte was accepted"),
+                Err(error) => error,
+            };
+            assert_eq!(error.code(), DecodeErrorCode::TrailingBytes);
+            assert_eq!(error.byte_offset(), trailing.len() - 1);
+        }
+
+        let set = sample_set();
+        assert_exact_boundaries(
+            &set.try_cev0_bytes().unwrap(),
+            decode_validator_set_v0_exact,
+        );
+        assert_exact_boundaries(
+            &qc(&set, 3, 11, 3, &[0, 1]).try_cev0_bytes().unwrap(),
+            |bytes| decode_ordinary_qc_v0_exact(bytes, &set),
+        );
+        assert_exact_boundaries(&sample_tc(&set).try_cev0_bytes().unwrap(), |bytes| {
+            decode_ordinary_timeout_certificate_v0_exact(bytes, &set)
+        });
+    }
+
+    #[test]
+    fn decoder_rejects_schema_strings_and_lengths_before_payload_reads() {
+        let set = sample_set();
+        let mut qc_bytes = qc(&set, 3, 11, 3, &[0, 1]).try_cev0_bytes().unwrap();
+        qc_bytes[..2].copy_from_slice(&1u16.to_be_bytes());
+        assert_eq!(
+            decode_ordinary_qc_v0_exact(&qc_bytes, &set)
+                .unwrap_err()
+                .code(),
+            DecodeErrorCode::InvalidSchemaVersion
+        );
+
+        let chain = "a".repeat(MAX_CONSENSUS_STRING_BYTES);
+        let max_string_set = ValidatorSet::new(
+            GenesisHash::new([7; 32]),
+            ChainId::new(&chain).unwrap(),
+            ProtocolVersion::V0,
+            Epoch::new(0),
+            ConsensusParametersHash::new([6; 32]),
+            vec![validator(1, 1)],
+        )
+        .unwrap();
+        let max_string_bytes = max_string_set.try_cev0_bytes().unwrap();
+        assert_eq!(
+            decode_validator_set_v0_exact(&max_string_bytes).unwrap(),
+            max_string_set
+        );
+
+        let mut too_long = max_string_bytes.clone();
+        too_long[34..36].copy_from_slice(
+            &u16::try_from(MAX_CONSENSUS_STRING_BYTES + 1)
+                .unwrap()
+                .to_be_bytes(),
+        );
+        assert_eq!(
+            decode_validator_set_v0_exact(&too_long).unwrap_err().code(),
+            DecodeErrorCode::LengthLimitExceeded
+        );
+
+        let mut empty = Vec::with_capacity(max_string_bytes.len() - MAX_CONSENSUS_STRING_BYTES);
+        empty.extend_from_slice(&max_string_bytes[..34]);
+        empty.extend_from_slice(&0u16.to_be_bytes());
+        empty.extend_from_slice(&max_string_bytes[36 + MAX_CONSENSUS_STRING_BYTES..]);
+        assert_eq!(
+            decode_validator_set_v0_exact(&empty).unwrap_err().code(),
+            DecodeErrorCode::InvalidConsensusString
+        );
+
+        let mut invalid_ascii = max_string_bytes;
+        invalid_ascii[36] = b'A';
+        assert_eq!(
+            decode_validator_set_v0_exact(&invalid_ascii)
+                .unwrap_err()
+                .code(),
+            DecodeErrorCode::InvalidConsensusString
+        );
+    }
+
+    #[test]
+    fn decoder_enforces_validator_id_and_list_hard_caps_before_allocation() {
+        let id = vec![1; MAX_VALIDATOR_ID_BYTES];
+        let set = ValidatorSet::new(
+            GenesisHash::new([7; 32]),
+            ChainId::new("caps").unwrap(),
+            ProtocolVersion::V0,
+            Epoch::new(0),
+            ConsensusParametersHash::new([6; 32]),
+            vec![Validator::new(
+                ValidatorId::from_bytes(&id).unwrap(),
+                ConsensusPublicKey::new([1; 32]),
+                VotingPower::new(1).unwrap(),
+            )
+            .unwrap()],
+        )
+        .unwrap();
+        let bytes = set.try_cev0_bytes().unwrap();
+        assert_eq!(decode_validator_set_v0_exact(&bytes).unwrap(), set);
+
+        let count_offset = validator_count_offset(&bytes);
+        let first_id_length_offset = count_offset + 4;
+        let mut too_long = bytes.clone();
+        too_long[first_id_length_offset..first_id_length_offset + 4].copy_from_slice(
+            &u32::try_from(MAX_VALIDATOR_ID_BYTES + 1)
+                .unwrap()
+                .to_be_bytes(),
+        );
+        assert_eq!(
+            decode_validator_set_v0_exact(&too_long).unwrap_err().code(),
+            DecodeErrorCode::LengthLimitExceeded
+        );
+
+        let mut empty = Vec::with_capacity(bytes.len() - MAX_VALIDATOR_ID_BYTES);
+        empty.extend_from_slice(&bytes[..first_id_length_offset]);
+        empty.extend_from_slice(&0u32.to_be_bytes());
+        empty.extend_from_slice(&bytes[first_id_length_offset + 4 + MAX_VALIDATOR_ID_BYTES..]);
+        assert_eq!(
+            decode_validator_set_v0_exact(&empty).unwrap_err().code(),
+            DecodeErrorCode::LengthLimitExceeded
+        );
+
+        for excessive in [101u32, u32::MAX] {
+            let mut mutated = bytes.clone();
+            mutated[count_offset..count_offset + 4].copy_from_slice(&excessive.to_be_bytes());
+            assert_eq!(
+                decode_validator_set_v0_exact(&mutated).unwrap_err().code(),
+                DecodeErrorCode::CountLimitExceeded
+            );
+        }
+    }
+
+    #[test]
+    fn ordinary_qc_decoder_rejects_synthetic_and_noncanonical_signers() {
+        let set = sample_set();
+        let bytes = qc(&set, 3, 11, 3, &[0, 1]).try_cev0_bytes().unwrap();
+        let count_offset = qc_signature_count_offset(&bytes);
+
+        let mut empty = bytes[..count_offset + 4].to_vec();
+        empty[count_offset..count_offset + 4].copy_from_slice(&0u32.to_be_bytes());
+        assert_eq!(
+            decode_ordinary_qc_v0_exact(&empty, &set)
+                .unwrap_err()
+                .code(),
+            DecodeErrorCode::UnauthorizedSyntheticQc
+        );
+
+        for excessive in [101u32, u32::MAX] {
+            let mut mutated = bytes.clone();
+            mutated[count_offset..count_offset + 4].copy_from_slice(&excessive.to_be_bytes());
+            assert_eq!(
+                decode_ordinary_qc_v0_exact(&mutated, &set)
+                    .unwrap_err()
+                    .code(),
+                DecodeErrorCode::CountLimitExceeded
+            );
+        }
+
+        let first_share = count_offset + 4;
+        let first_id_length = 4usize;
+        let first_id_length_value = 1usize;
+        let second_share = first_share + first_id_length + first_id_length_value + SIGNATURE_BYTES;
+        let mut duplicate = bytes;
+        duplicate[second_share + first_id_length] = duplicate[first_share + first_id_length];
+        assert_eq!(
+            decode_ordinary_qc_v0_exact(&duplicate, &set)
+                .unwrap_err()
+                .code(),
+            DecodeErrorCode::DuplicateSigner
+        );
+
+        let mut signed_view_zero = qc(&set, 3, 11, 3, &[0, 1]).try_cev0_bytes().unwrap();
+        let view_offset = qc_view_offset(&signed_view_zero);
+        signed_view_zero[view_offset..view_offset + 8].copy_from_slice(&0u64.to_be_bytes());
+        assert_eq!(
+            decode_ordinary_qc_v0_exact(&signed_view_zero, &set)
+                .unwrap_err()
+                .code()
+                .as_str(),
+            "unauthorized_synthetic_qc"
+        );
+
+        let view_end = qc_view_offset(&signed_view_zero) + 8;
+        assert_eq!(
+            decode_ordinary_qc_v0_exact(&signed_view_zero[..view_end], &set)
+                .unwrap_err()
+                .code(),
+            DecodeErrorCode::UnexpectedEof
+        );
+
+        let mut empty_with_trailing = empty;
+        empty_with_trailing.push(0);
+        assert_eq!(
+            decode_ordinary_qc_v0_exact(&empty_with_trailing, &set)
+                .unwrap_err()
+                .code(),
+            DecodeErrorCode::TrailingBytes
+        );
+    }
+
+    #[test]
+    fn timeout_decoder_enforces_outer_caps_and_rejects_synthetic_references() {
+        let set = sample_set();
+        let bytes = sample_tc(&set).try_cev0_bytes().unwrap();
+        let (entries_offset, references_offset, first_reference) = tc_offsets(&bytes);
+
+        for offset in [entries_offset, references_offset] {
+            for excessive in [101u32, u32::MAX] {
+                let mut mutated = bytes.clone();
+                mutated[offset..offset + 4].copy_from_slice(&excessive.to_be_bytes());
+                assert_eq!(
+                    decode_ordinary_timeout_certificate_v0_exact(&mutated, &set)
+                        .unwrap_err()
+                        .code(),
+                    DecodeErrorCode::CountLimitExceeded
+                );
+            }
+        }
+
+        let first_qc_count = qc_signature_count_offset(&bytes[first_reference..]) + first_reference;
+        let first_qc_end = {
+            let mut cursor = Cursor::new(&bytes[first_reference..]);
+            parse_raw_qc(&mut cursor, MAX_CEV0_CERTIFICATE_ITEMS).unwrap();
+            first_reference + cursor.offset()
+        };
+        let mut synthetic = Vec::with_capacity(bytes.len());
+        synthetic.extend_from_slice(&bytes[..first_qc_count]);
+        synthetic.extend_from_slice(&0u32.to_be_bytes());
+        synthetic.extend_from_slice(&bytes[first_qc_end..]);
+        assert_eq!(
+            decode_ordinary_timeout_certificate_v0_exact(&synthetic, &set)
+                .unwrap_err()
+                .code(),
+            DecodeErrorCode::InvalidReferencedQc
+        );
+
+        let nested_view_offset = first_reference + qc_view_offset(&bytes[first_reference..]);
+        let mut view_zero_reference = bytes.clone();
+        view_zero_reference[nested_view_offset..nested_view_offset + 8]
+            .copy_from_slice(&0u64.to_be_bytes());
+        assert_eq!(
+            decode_ordinary_timeout_certificate_v0_exact(&view_zero_reference, &set)
+                .unwrap_err()
+                .code(),
+            DecodeErrorCode::InvalidReferencedQc
+        );
+
+        let signer_length_offset = first_qc_count + 4;
+        let mut empty_nested_signer = Vec::with_capacity(bytes.len() - 1);
+        empty_nested_signer.extend_from_slice(&bytes[..signer_length_offset]);
+        empty_nested_signer.extend_from_slice(&0u32.to_be_bytes());
+        empty_nested_signer.extend_from_slice(&bytes[signer_length_offset + 5..]);
+        assert_eq!(
+            decode_ordinary_timeout_certificate_v0_exact(&empty_nested_signer, &set)
+                .unwrap_err()
+                .code(),
+            DecodeErrorCode::LengthLimitExceeded
+        );
+    }
+
+    #[test]
+    fn exact_hard_caps_include_one_hundred_by_one_hundred_tc_shares() {
+        let validators: Vec<_> = (1u8..=100).map(|id| validator(id, 1)).collect();
+        let set = ValidatorSet::new(
+            GenesisHash::new([7; 32]),
+            ChainId::new("hard-caps").unwrap(),
+            ProtocolVersion::V0,
+            Epoch::new(3),
+            ConsensusParametersHash::new([6; 32]),
+            validators,
+        )
+        .unwrap();
+        assert_eq!(
+            decode_validator_set_v0_exact(&set.try_cev0_bytes().unwrap()).unwrap(),
+            set
+        );
+
+        let all_signers: Vec<_> = (0..MAX_CEV0_CERTIFICATE_ITEMS).collect();
+        let qcs: Vec<_> = (1u8..=100)
+            .map(|coordinate| {
+                qc(
+                    &set,
+                    u64::from(coordinate),
+                    u64::from(coordinate),
+                    coordinate,
+                    &all_signers,
+                )
+            })
+            .collect();
+        assert_eq!(qcs.len() * qcs[0].votes().len(), 10_000);
+
+        let entries: Vec<_> = set
+            .validators()
+            .iter()
+            .zip(qcs.iter())
+            .map(|(signer, certificate)| {
+                TimeoutEntryV0::new(
+                    signer.id(),
+                    QcRef::from(certificate),
+                    Signature64::from_array([signer.id().as_bytes()[0]; SIGNATURE_BYTES]),
+                )
+                .unwrap()
+            })
+            .collect();
+        let selected = qcs.last().unwrap().id();
+        let mut references: Vec<_> = qcs.into_iter().map(QcReferenceV0::ordinary).collect();
+        references.sort_by_key(QcReferenceV0::id);
+        let timeout =
+            TimeoutCertificateV0::new(View::new(100), entries, references, selected, &set).unwrap();
+        let bytes = timeout.try_cev0_bytes().unwrap();
+        assert_eq!(
+            decode_ordinary_timeout_certificate_v0_exact(&bytes, &set).unwrap(),
+            timeout
+        );
+    }
+
+    #[test]
+    fn aggregate_limit_is_checked_before_nested_vote_allocation() {
+        let set = sample_set();
+        let bytes = qc(&set, 3, 11, 3, &[0, 1]).try_cev0_bytes().unwrap();
+        let mut cursor = Cursor::new(&bytes);
+        let error = parse_raw_qc(&mut cursor, 1).unwrap_err();
+        assert_eq!(error.code(), DecodeErrorCode::AggregateLimitExceeded);
+        assert_eq!(error.byte_offset(), qc_signature_count_offset(&bytes));
+    }
+
+    #[test]
+    fn protocol_version_is_rejected_by_all_three_root_decoders() {
+        fn protocol_offset(bytes: &[u8]) -> usize {
+            let mut cursor = Cursor::new(bytes);
+            cursor.u16().unwrap();
+            let _: [u8; 32] = cursor.fixed().unwrap();
+            cursor.bounded_consensus_bytes().unwrap();
+            cursor.offset()
+        }
+
+        let set = sample_set();
+        let mut set_bytes = set.try_cev0_bytes().unwrap();
+        let offset = protocol_offset(&set_bytes);
+        set_bytes[offset..offset + 4].copy_from_slice(&1u32.to_be_bytes());
+        assert_eq!(
+            decode_validator_set_v0_exact(&set_bytes)
+                .unwrap_err()
+                .code()
+                .as_str(),
+            "invalid_protocol_version"
+        );
+
+        let mut qc_bytes = qc(&set, 3, 11, 3, &[0, 1]).try_cev0_bytes().unwrap();
+        let offset = protocol_offset(&qc_bytes);
+        qc_bytes[offset..offset + 4].copy_from_slice(&1u32.to_be_bytes());
+        assert_eq!(
+            decode_ordinary_qc_v0_exact(&qc_bytes, &set)
+                .unwrap_err()
+                .code()
+                .as_str(),
+            "invalid_protocol_version"
+        );
+
+        let mut tc_bytes = sample_tc(&set).try_cev0_bytes().unwrap();
+        let offset = protocol_offset(&tc_bytes);
+        tc_bytes[offset..offset + 4].copy_from_slice(&1u32.to_be_bytes());
+        assert_eq!(
+            decode_ordinary_timeout_certificate_v0_exact(&tc_bytes, &set)
+                .unwrap_err()
+                .code()
+                .as_str(),
+            "invalid_protocol_version"
+        );
+    }
+
+    #[test]
+    fn timeout_relation_failures_have_manifest_stable_codes() {
+        fn entry(signer: ValidatorId, certificate: &QuorumCertificate) -> TimeoutEntryV0 {
+            TimeoutEntryV0::new(
+                signer,
+                QcRef::from(certificate),
+                Signature64::from_array([42; SIGNATURE_BYTES]),
+            )
+            .unwrap()
+        }
+
+        let set = sample_set();
+        let low = qc(&set, 3, 11, 3, &[0, 1]);
+        let high = qc(&set, 5, 13, 5, &[0, 1]);
+        let future = qc(&set, 10, 15, 10, &[0, 1]);
+        let same_block_other_coordinate = qc(&set, 5, 13, 3, &[0, 1]);
+        let same_view_other_block = qc(&set, 3, 11, 4, &[0, 1]);
+
+        let assert_code = |result: DecodeResult<()>, expected: &'static str| {
+            assert_eq!(result.unwrap_err().code().as_str(), expected);
+        };
+
+        assert_code(
+            validate_timeout_relations(
+                View::new(9),
+                &[entry(set.validators()[0].id(), &future)],
+                &[QcReferenceV0::ordinary(future.clone())],
+                future.id(),
+                0,
+            ),
+            "future_reference_view",
+        );
+
+        let mut same_block_references = vec![
+            QcReferenceV0::ordinary(low.clone()),
+            QcReferenceV0::ordinary(same_block_other_coordinate.clone()),
+        ];
+        same_block_references.sort_by_key(QcReferenceV0::id);
+        assert_code(
+            validate_timeout_relations(
+                View::new(9),
+                &[
+                    entry(set.validators()[0].id(), &low),
+                    entry(set.validators()[1].id(), &same_block_other_coordinate),
+                ],
+                &same_block_references,
+                same_block_other_coordinate.id(),
+                0,
+            ),
+            "same_block_different_coordinates",
+        );
+
+        let mut same_view_references = vec![
+            QcReferenceV0::ordinary(low.clone()),
+            QcReferenceV0::ordinary(same_view_other_block.clone()),
+        ];
+        same_view_references.sort_by_key(QcReferenceV0::id);
+        assert_code(
+            validate_timeout_relations(
+                View::new(9),
+                &[
+                    entry(set.validators()[0].id(), &low),
+                    entry(set.validators()[1].id(), &same_view_other_block),
+                ],
+                &same_view_references,
+                low.id(),
+                0,
+            ),
+            "conflicting_same_view_qc",
+        );
+
+        let mut references = vec![
+            QcReferenceV0::ordinary(low.clone()),
+            QcReferenceV0::ordinary(high.clone()),
+        ];
+        references.sort_by_key(QcReferenceV0::id);
+        assert_code(
+            validate_timeout_relations(
+                View::new(9),
+                &[
+                    entry(set.validators()[0].id(), &low),
+                    entry(set.validators()[1].id(), &high),
+                ],
+                &references,
+                low.id(),
+                0,
+            ),
+            "selected_not_maximum",
+        );
+        assert_code(
+            validate_timeout_relations(
+                View::new(9),
+                &[entry(set.validators()[0].id(), &future)],
+                &references,
+                high.id(),
+                0,
+            ),
+            "reference_summary_mismatch",
+        );
+        assert_code(
+            validate_timeout_relations(
+                View::new(9),
+                &[entry(set.validators()[0].id(), &low)],
+                &references,
+                high.id(),
+                0,
+            ),
+            "unreferenced_qc",
+        );
+
+        let duplicate_reference = QcReferenceV0::ordinary(low.clone());
+        assert_code(
+            validate_timeout_relations(
+                View::new(9),
+                &[entry(set.validators()[0].id(), &low)],
+                &[duplicate_reference.clone(), duplicate_reference],
+                low.id(),
+                0,
+            ),
+            "duplicate_reference",
+        );
+
+        references.reverse();
+        assert_code(
+            validate_timeout_relations(
+                View::new(9),
+                &[
+                    entry(set.validators()[0].id(), &low),
+                    entry(set.validators()[1].id(), &high),
+                ],
+                &references,
+                high.id(),
+                0,
+            ),
+            "noncanonical_reference_order",
+        );
+    }
+
+    #[test]
+    fn body_kernel_exact_decoders_round_trip_and_reject_inexact_roots() {
+        fn assert_boundaries<T, F>(raw: &[u8], mut decode: F)
+        where
+            F: FnMut(&[u8]) -> DecodeResult<T>,
+        {
+            for prefix_length in 0..raw.len() {
+                let error = decode(&raw[..prefix_length])
+                    .err()
+                    .expect("every incomplete canonical prefix must fail");
+                assert_eq!(error.code(), DecodeErrorCode::UnexpectedEof);
+                assert_eq!(error.byte_offset(), prefix_length);
+            }
+            let mut trailing = raw.to_vec();
+            trailing.push(0);
+            let error = decode(&trailing)
+                .err()
+                .expect("an exact decoder must reject trailing bytes");
+            assert_eq!(error.code(), DecodeErrorCode::TrailingBytes);
+            assert_eq!(error.byte_offset(), raw.len());
+        }
+
+        let parameters = ConsensusParametersV0::reference_shadow_v0();
+        let payload = ApplicationPayloadV0::new(vec![vec![], vec![0, 1, 2, 255]]).unwrap();
+        let payload_raw = payload.try_cev0_bytes().unwrap();
+        assert_eq!(
+            decode_application_payload_v0_exact(&payload_raw, &parameters).unwrap(),
+            payload
+        );
+        assert_boundaries(&payload_raw, |bytes| {
+            decode_application_payload_v0_exact(bytes, &parameters)
+        });
+
+        let receipt = ExecutionReceiptCommitmentV0::for_transaction(
+            &payload,
+            1,
+            21_000,
+            777,
+            vec![ExecutionEventV0::new(
+                b"transfer".to_vec(),
+                vec![
+                    ExecutionEventAttributeV0::new(b"from".to_vec(), b"alice".to_vec()).unwrap(),
+                    ExecutionEventAttributeV0::new(b"to".to_vec(), b"bob".to_vec()).unwrap(),
+                ],
+            )
+            .unwrap()],
+        )
+        .unwrap();
+        let receipt_raw = receipt.try_cev0_bytes().unwrap();
+        assert_eq!(
+            decode_execution_receipt_commitment_v0_exact(&receipt_raw, &parameters).unwrap(),
+            receipt
+        );
+        assert_boundaries(&receipt_raw, |bytes| {
+            decode_execution_receipt_commitment_v0_exact(bytes, &parameters)
+        });
+
+        let set = sample_set();
+        let context = CommonConsensusContextV0::new(
+            set.genesis_hash(),
+            set.chain_id(),
+            set.protocol_version(),
+            set.epoch(),
+            set.id(),
+            View::new(2),
+            MessageKind::Vote,
+        )
+        .unwrap();
+        let evidence = DoubleVoteEvidenceV0::new(
+            VoteEvidenceRecordV0::new(
+                context,
+                Height::new(9),
+                BlockId::new([31; 32]),
+                set.validators()[2].id(),
+                Signature64::from_array([41; 64]),
+            )
+            .unwrap(),
+            VoteEvidenceRecordV0::new(
+                context,
+                Height::new(9),
+                BlockId::new([32; 32]),
+                set.validators()[2].id(),
+                Signature64::from_array([42; 64]),
+            )
+            .unwrap(),
+        )
+        .unwrap();
+        let evidence_raw = evidence.try_cev0_bytes().unwrap();
+        let decoded = decode_double_vote_evidence_v0_exact(&evidence_raw, &set).unwrap();
+        assert_eq!(decoded, evidence);
+        decoded.verify(&set, &AcceptSignatures).unwrap();
+        assert_boundaries(&evidence_raw, |bytes| {
+            decode_double_vote_evidence_v0_exact(bytes, &set)
+        });
+    }
+
+    #[test]
+    fn staged_application_payload_decode_preserves_root_material_past_block_limit() {
+        let mut fields = ConsensusParametersV0::reference_shadow_v0().fields();
+        fields.max_block_bytes = 12;
+        fields.max_consensus_message_bytes = 64;
+        let parameters = ConsensusParametersV0::new(fields).unwrap();
+        let payload = ApplicationPayloadV0::new(vec![vec![0xa5; 9]]).unwrap();
+        let bytes = payload.try_cev0_bytes().unwrap();
+        assert_eq!(bytes.len(), 17);
+
+        let legacy_error = decode_application_payload_v0_exact(&bytes, &parameters).unwrap_err();
+        assert_eq!(legacy_error.code(), DecodeErrorCode::LengthLimitExceeded);
+        assert_eq!(legacy_error.byte_offset(), 0);
+
+        let staged =
+            decode_application_payload_v0_exact_for_root_binding(&bytes, &parameters).unwrap();
+        assert_eq!(staged, payload);
+        assert_eq!(
+            staged.payload_root().unwrap(),
+            payload.payload_root().unwrap()
+        );
+
+        let mut trailing = bytes;
+        trailing.push(0);
+        let trailing_error =
+            decode_application_payload_v0_exact_for_root_binding(&trailing, &parameters)
+                .unwrap_err();
+        assert_eq!(trailing_error.code(), DecodeErrorCode::TrailingBytes);
+        assert_eq!(trailing_error.byte_offset(), 17);
+    }
+
+    #[test]
+    fn staged_application_payload_decode_retains_authenticated_message_bound() {
+        let mut fields = ConsensusParametersV0::reference_shadow_v0().fields();
+        fields.max_block_bytes = 12;
+        fields.max_consensus_message_bytes = 20;
+        let parameters = ConsensusParametersV0::new(fields).unwrap();
+
+        let error = decode_application_payload_v0_exact_for_root_binding(&[0; 21], &parameters)
+            .unwrap_err();
+        assert_eq!(error.code(), DecodeErrorCode::LengthLimitExceeded);
+        assert_eq!(error.byte_offset(), 0);
+
+        let declared_count_without_items = 2u32.to_be_bytes();
+        let short_error = decode_application_payload_v0_exact_for_root_binding(
+            &declared_count_without_items,
+            &parameters,
+        )
+        .unwrap_err();
+        assert_eq!(short_error.code(), DecodeErrorCode::CountLimitExceeded);
+        assert_eq!(short_error.byte_offset(), 0);
+    }
+}

@@ -1,4 +1,4 @@
-use alloc::vec::Vec;
+use alloc::{sync::Arc, vec::Vec};
 
 use crate::{
     canonical::{canonical_hash, try_canonical_bytes, Encoder, DOMAIN_BLOCK},
@@ -227,27 +227,95 @@ impl BlockHeader {
     }
 }
 
-/// A block body remains runtime-defined. Consensus types bind the body through
-/// the already-computed roots in `BlockHeader`; deterministic runtime/root
-/// validation occurs before voting in the host boundary.
+/// Exact transport projection of the canonical peer-supplied block fields.
+///
+/// `application_payload` is one complete `ApplicationPayloadV0` CEV0 value and
+/// every `evidence_objects` item is one complete `DoubleVoteEvidenceV0` CEV0
+/// value. Exact decoding, evidence ordering/signature admission, locally
+/// derived receipts, and authenticated parent/runtime authority remain host
+/// validation work.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Block {
     header: BlockHeader,
-    payload: Vec<u8>,
+    application_payload: Arc<[u8]>,
+    evidence_objects: Arc<[Vec<u8>]>,
+    logical_block_size: usize,
 }
 
 impl Block {
-    pub fn new(header: BlockHeader, payload: Vec<u8>) -> Result<Self> {
+    pub fn new(
+        header: BlockHeader,
+        application_payload: Vec<u8>,
+        evidence_objects: Vec<Vec<u8>>,
+    ) -> Result<Self> {
         header.validate_shape()?;
-        Ok(Self { header, payload })
+        if application_payload.is_empty() {
+            return Err(ValidationError::InvalidBlock(
+                "application payload CEV0 must not be empty",
+            ));
+        }
+        let application_payload_len = u32::try_from(application_payload.len()).map_err(|_| {
+            ValidationError::LengthOverflow {
+                field: "Block application payload CEV0 bytes",
+                actual: application_payload.len(),
+                maximum: u32::MAX as usize,
+            }
+        })?;
+        u32::try_from(evidence_objects.len()).map_err(|_| ValidationError::LengthOverflow {
+            field: "Block evidence object count",
+            actual: evidence_objects.len(),
+            maximum: u32::MAX as usize,
+        })?;
+        let mut logical_block_size = header
+            .try_cev0_bytes()?
+            .len()
+            .checked_add(4)
+            .and_then(|size| size.checked_add(application_payload_len as usize))
+            .and_then(|size| size.checked_add(4))
+            .ok_or(ValidationError::ArithmeticOverflow(
+                "Block logical transport size",
+            ))?;
+        for evidence in &evidence_objects {
+            if evidence.is_empty() {
+                return Err(ValidationError::InvalidBlock(
+                    "evidence object CEV0 must not be empty",
+                ));
+            }
+            let evidence_len =
+                u32::try_from(evidence.len()).map_err(|_| ValidationError::LengthOverflow {
+                    field: "Block evidence object CEV0 bytes",
+                    actual: evidence.len(),
+                    maximum: u32::MAX as usize,
+                })?;
+            logical_block_size = logical_block_size
+                .checked_add(4)
+                .and_then(|size| size.checked_add(evidence_len as usize))
+                .ok_or(ValidationError::ArithmeticOverflow(
+                    "Block logical transport size",
+                ))?;
+        }
+        Ok(Self {
+            header,
+            application_payload: application_payload.into(),
+            evidence_objects: evidence_objects.into(),
+            logical_block_size,
+        })
     }
 
     pub const fn header(&self) -> &BlockHeader {
         &self.header
     }
 
-    pub fn payload(&self) -> &[u8] {
-        &self.payload
+    pub fn application_payload(&self) -> &[u8] {
+        self.application_payload.as_ref()
+    }
+
+    pub fn evidence_objects(&self) -> &[Vec<u8>] {
+        self.evidence_objects.as_ref()
+    }
+
+    pub const fn logical_block_size(&self) -> usize {
+        self.logical_block_size
     }
 
     pub fn id(&self) -> BlockId {
@@ -256,5 +324,65 @@ impl Block {
 
     pub fn validate_shape(&self) -> Result<()> {
         self.header.validate_shape()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use alloc::{sync::Arc, vec};
+
+    use super::{Block, BlockHeader, BlockKind};
+    use crate::{
+        BlockId, ChainId, ConsensusParametersHash, Epoch, EvidenceRoot, GenesisHash, Height,
+        PayloadDigest, ProtocolVersion, ReceiptsRoot, StateRoot, ValidatorId, ValidatorSetId, View,
+    };
+
+    const TEST_CHAIN: ChainId = ChainId::from_static("trnm-block-clone-test");
+
+    fn test_header() -> BlockHeader {
+        BlockHeader::new(
+            GenesisHash::new([1; 32]),
+            TEST_CHAIN,
+            ProtocolVersion::V0,
+            Epoch::new(1),
+            View::new(2),
+            Height::new(3),
+            BlockKind::Regular,
+            BlockId::new([2; 32]),
+            ValidatorId::new([3; 32]),
+            ValidatorSetId::new([4; 32]),
+            ConsensusParametersHash::new([5; 32]),
+            PayloadDigest::new([6; 32]),
+            StateRoot::new([7; 32]),
+            ReceiptsRoot::new([8; 32]),
+            EvidenceRoot::new([9; 32]),
+            10,
+            None,
+        )
+        .expect("test block header is valid")
+    }
+
+    #[test]
+    fn clone_shares_body_storage_without_changing_contents() {
+        let block = Block::new(test_header(), vec![0, 1, 2, 3, 255], vec![vec![4, 5]])
+            .expect("test block is valid");
+        let cloned = block.clone();
+
+        assert_eq!(block, cloned);
+        assert_eq!(block.application_payload(), &[0, 1, 2, 3, 255]);
+        assert_eq!(block.evidence_objects(), &[vec![4, 5]]);
+        assert_eq!(cloned.application_payload(), block.application_payload());
+        assert!(Arc::ptr_eq(
+            &block.application_payload,
+            &cloned.application_payload
+        ));
+        assert!(Arc::ptr_eq(
+            &block.evidence_objects,
+            &cloned.evidence_objects
+        ));
+        assert!(core::ptr::eq(
+            block.application_payload().as_ptr(),
+            cloned.application_payload().as_ptr()
+        ));
     }
 }

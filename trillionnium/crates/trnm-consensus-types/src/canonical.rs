@@ -21,6 +21,9 @@ pub(crate) const DOMAIN_PARAMETERS: &[u8] = b"trnm.poco-bft.parameters.v0";
 pub(crate) const DOMAIN_EPOCH_COMMITMENT: &[u8] = b"trnm.poco-bft.epoch-commitment.v0";
 pub(crate) const DOMAIN_UPGRADE_PLAN: &[u8] = b"trnm.poco-bft.upgrade-plan.v0";
 pub(crate) const DOMAIN_FINALITY_PROOF: &[u8] = b"trnm.poco-bft.finality-proof.v0";
+pub(crate) const DOMAIN_ORDERED_LEAF: &[u8] = b"trnm.poco-bft.ordered-leaf.v0";
+pub(crate) const DOMAIN_ORDERED_NODE: &[u8] = b"trnm.poco-bft.ordered-node.v0";
+pub(crate) const DOMAIN_ORDERED_ROOT: &[u8] = b"trnm.poco-bft.ordered-root.v0";
 /// Non-protocol compatibility namespace for the prototype core's obsolete
 /// six-digest `CommitProof`. It must never be accepted as FinalityProofV0.
 pub(crate) const DOMAIN_OBSOLETE_COMMIT_PROOF_INTERNAL: &[u8] =
@@ -31,7 +34,7 @@ pub(crate) const DOMAIN_CONSUMPTION_CERTIFICATE_ID: &[u8] =
     b"trnm.poco.consumption-certificate-id.v0";
 
 #[allow(dead_code)]
-pub(crate) const FROZEN_DOMAINS: [&[u8]; 18] = [
+pub(crate) const FROZEN_DOMAINS: [&[u8]; 21] = [
     DOMAIN_BLOCK,
     DOMAIN_PROPOSAL,
     DOMAIN_VOTE,
@@ -48,6 +51,9 @@ pub(crate) const FROZEN_DOMAINS: [&[u8]; 18] = [
     DOMAIN_UPGRADE_PLAN,
     DOMAIN_FINALITY_PROOF,
     DOMAIN_DOUBLE_SIGN_EVIDENCE,
+    DOMAIN_ORDERED_LEAF,
+    DOMAIN_ORDERED_NODE,
+    DOMAIN_ORDERED_ROOT,
     DOMAIN_CONSUMPTION_CERTIFICATE,
     DOMAIN_CONSUMPTION_CERTIFICATE_ID,
 ];

@@ -61,6 +61,23 @@ impl HandoffDescriptorV0 {
         try_canonical_bytes(|encoder| self.encode_cev0(encoder))
     }
 
+    /// Canonical signing root for the terminal old-set handoff role.
+    ///
+    /// This exposes only the deterministic message root needed by an actual
+    /// signer. It does not validate a share, form a certificate, or authorize
+    /// an epoch transition.
+    pub fn old_set_signing_root(&self) -> SigningRoot {
+        handoff_vote_signing_root(self, MessageKind::OldSetHandoffVote)
+    }
+
+    /// Canonical signing root for the initial new-set handoff role.
+    ///
+    /// Like [`Self::old_set_signing_root`], this is a pure serialization/hash
+    /// helper and grants no handoff or activation authority.
+    pub fn new_set_signing_root(&self) -> SigningRoot {
+        handoff_vote_signing_root(self, MessageKind::NewSetHandoffVote)
+    }
+
     pub fn validate_shape(&self) -> Result<()> {
         let fields = &self.0;
         if fields.genesis_hash.is_zero() {
@@ -287,7 +304,7 @@ pub struct EpochAnchorAuthorizationV0 {
 }
 
 impl EpochAnchorAuthorizationV0 {
-    pub fn new(
+    pub(crate) fn new(
         terminal_old_header: BlockHeader,
         terminal_old_qc: QuorumCertificate,
         handoff_certificate: HandoffCertificateV0,
@@ -315,7 +332,7 @@ impl EpochAnchorAuthorizationV0 {
         &self.handoff_certificate
     }
 
-    pub fn epoch_anchor_qc(&self) -> EpochAnchorQcV0 {
+    pub(crate) fn epoch_anchor_qc(&self) -> EpochAnchorQcV0 {
         let descriptor = self.handoff_certificate.descriptor.fields();
         EpochAnchorQcV0::from_handoff_parts(
             descriptor.genesis_hash,
@@ -347,17 +364,22 @@ impl EpochAnchorAuthorizationV0 {
         )
     }
 
-    pub fn verify<V: SignatureVerifier>(
+    /// Verifies only the certificate kernel and returns no authorization.
+    ///
+    /// Full epoch-transition authorization additionally requires authenticated
+    /// checkpoint/two-seal ancestry and the committed next runtime/set context.
+    /// Until that trusted capability exists, successful certificate checks
+    /// must not mint or return an `EpochAnchorQcV0`.
+    pub(crate) fn verify_certificate_kernel<V: SignatureVerifier>(
         &self,
         old_validator_set: &ValidatorSet,
         new_validator_set: &ValidatorSet,
         verifier: &V,
-    ) -> Result<EpochAnchorQcV0> {
+    ) -> Result<()> {
         self.validate_shape(old_validator_set, new_validator_set)?;
         self.terminal_old_qc.verify(old_validator_set, verifier)?;
         self.handoff_certificate
-            .verify(old_validator_set, new_validator_set, verifier)?;
-        Ok(self.epoch_anchor_qc())
+            .verify(old_validator_set, new_validator_set, verifier)
     }
 
     pub(crate) fn encode_cev0(&self, encoder: &mut Encoder) {

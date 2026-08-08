@@ -2,7 +2,8 @@ use alloc::vec::Vec;
 
 use crate::{
     canonical::{canonical_hash, try_canonical_bytes, Encoder, DOMAIN_PARAMETERS},
-    ConsensusParametersHash, Result, ValidationError, SCHEMA_VERSION_V0,
+    ConsensusParametersHash, Result, ValidationError, MAX_CONSENSUS_STRING_BYTES, MAX_VALIDATORS,
+    MAX_VALIDATOR_ID_BYTES, SCHEMA_VERSION_V0,
 };
 
 /// Frozen PoCO-BFT v0 leader-schedule discriminants.
@@ -297,8 +298,30 @@ impl ConsensusParametersV0 {
         if fields.protocol_version != 0 {
             return Err(ValidationError::InvalidProtocolVersion);
         }
-        if fields.min_validators < 4 || fields.min_validators > fields.max_validators {
+        if fields.max_chain_id_bytes == 0
+            || usize::from(fields.max_chain_id_bytes) > MAX_CONSENSUS_STRING_BYTES
+        {
+            return invalid("chain-ID byte limit is outside the v0 hard bound");
+        }
+        if fields.max_validator_id_bytes == 0
+            || usize::from(fields.max_validator_id_bytes) > MAX_VALIDATOR_ID_BYTES
+        {
+            return invalid("validator-ID byte limit is outside the v0 hard bound");
+        }
+        if fields.min_validators < 4
+            || fields.min_validators > fields.max_validators
+            || u32::try_from(MAX_VALIDATORS).map_or(true, |maximum| fields.max_validators > maximum)
+        {
             return invalid("validator bounds are inconsistent");
+        }
+        if fields.max_block_bytes == 0
+            || fields.max_consensus_message_bytes == 0
+            || fields.max_block_bytes > fields.max_consensus_message_bytes
+        {
+            return invalid("block and consensus-message byte limits must be positive and ordered");
+        }
+        if !fields.require_full_payload_before_vote {
+            return invalid("v0 always requires the complete payload before a vote");
         }
         if (
             fields.quorum_numerator,
@@ -322,6 +345,9 @@ impl ConsensusParametersV0 {
         }
         if fields.epoch_seal_blocks != 2 {
             return invalid("v0 requires exactly two epoch seal blocks");
+        }
+        if fields.snapshot_lead_blocks < u64::from(fields.finality_certified_chain_length) {
+            return invalid("snapshot lead must cover the finality-certified chain");
         }
         let snapshot_and_seals = fields
             .snapshot_lead_blocks
@@ -362,7 +388,7 @@ impl ConsensusParametersV0 {
             return invalid("validator power bounds are inconsistent");
         }
         if fields.max_validator_share_ppm == 0
-            || fields.max_validator_share_ppm >= fields.scale_ppm / 3
+            || u128::from(fields.max_validator_share_ppm) * 3 >= u128::from(fields.scale_ppm)
         {
             return invalid("validator share cap must be positive and below one third");
         }
@@ -372,13 +398,13 @@ impl ConsensusParametersV0 {
         if fields.full_weight_alpha_ppm != fields.scale_ppm {
             return invalid("full rollout alpha must equal scale_ppm");
         }
-        let maximum_candidate_power = u128::from(fields.max_validators)
-            .checked_mul(u128::from(fields.max_validator_power))
+        let minimum_candidate_power = u128::from(fields.min_validators)
+            .checked_mul(u128::from(fields.min_validator_power))
             .ok_or(ValidationError::ArithmeticOverflow(
-                "maximum candidate voting power",
+                "minimum candidate voting power",
             ))?;
-        if maximum_candidate_power > u128::from(fields.max_total_voting_power) {
-            return invalid("candidate set can exceed max_total_voting_power");
+        if minimum_candidate_power > u128::from(fields.max_total_voting_power) {
+            return invalid("no minimum-size candidate can fit max_total_voting_power");
         }
         if fields.automatic_promotion {
             return invalid("phase promotion must never be automatic");

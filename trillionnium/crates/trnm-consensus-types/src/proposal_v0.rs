@@ -201,21 +201,10 @@ impl ProposalWitnessV0 {
                 ContextAuthorizedQcV0::Genesis(anchor) => {
                     anchor.matches_trusted_set(active_validator_set)?;
                 }
-                ContextAuthorizedQcV0::Epoch(anchor) => {
-                    let authorization = self.epoch_anchor_authorization.as_ref().ok_or(
-                        ValidationError::InvalidProposal("epoch anchor lacks atomic authorization"),
-                    )?;
-                    let old_validator_set =
-                        old_validator_set.ok_or(ValidationError::InvalidProposal(
-                            "epoch anchor lacks the old validator set",
-                        ))?;
-                    if &authorization.verify(old_validator_set, active_validator_set, verifier)?
-                        != anchor
-                    {
-                        return Err(ValidationError::InvalidProposal(
-                            "verified authorization produced another epoch anchor",
-                        ));
-                    }
+                ContextAuthorizedQcV0::Epoch(_) => {
+                    return Err(ValidationError::InvalidProposal(
+                        "complete trusted epoch-anchor authorization is not implemented",
+                    ));
                 }
             },
         }
@@ -438,6 +427,27 @@ impl SignedProposalV0 {
         self.block.header().proposer_id()
     }
 
+    /// Returns the normalized process-local resource size retained for one
+    /// durable payload-validation obligation.
+    ///
+    /// The size is the checked sum of the block's complete logical transport
+    /// size and the exact frozen CEV0 bytes of the proposal witness's
+    /// certified tail. This is resource accounting only: it does not define a
+    /// new wire encoding or signing domain, and it does not change logical
+    /// block validity.
+    pub fn durable_validation_resource_size_v0(&self) -> Result<usize> {
+        let witness_tail_size = crate::canonical::try_canonical_bytes(|encoder| {
+            self.witness.encode_certified_tail(encoder);
+        })?
+        .len();
+        self.block
+            .logical_block_size()
+            .checked_add(witness_tail_size)
+            .ok_or(ValidationError::ArithmeticOverflow(
+                "durable validation proposal resource size",
+            ))
+    }
+
     pub fn proposal_signing_root(&self) -> SigningRoot {
         self.witness
             .signing_root_for_header(self.block.header())
@@ -647,7 +657,7 @@ mod tests {
             set.validators()[0].id(),
             PARENT_TIMESTAMP_MS + 1,
         );
-        let block = Block::new(header.clone(), vec![1, 2, 3]).unwrap();
+        let block = Block::new(header.clone(), vec![1, 2, 3], Vec::new()).unwrap();
         let witness = ProposalWitnessV0::new(
             &header,
             QcReferenceV0::genesis_anchor(anchor),
@@ -780,7 +790,7 @@ mod tests {
         )
         .unwrap();
         let proposal = SignedProposalV0::new(
-            Block::new(header, vec![]).unwrap(),
+            Block::new(header, vec![0, 0, 0, 0], Vec::new()).unwrap(),
             witness,
             &set,
             None,
@@ -833,7 +843,7 @@ mod tests {
         )
         .unwrap();
         let proposal = SignedProposalV0::new(
-            Block::new(header, vec![]).unwrap(),
+            Block::new(header, vec![0, 0, 0, 0], Vec::new()).unwrap(),
             witness,
             &set,
             None,
@@ -855,6 +865,198 @@ mod tests {
                 &AcceptAllSignatures,
             )
             .unwrap();
+    }
+
+    #[test]
+    fn durable_validation_resource_size_counts_the_exact_qc_witness_tail() {
+        let parameters = ConsensusParametersV0::reference_shadow_v0();
+        let set = test_set(&parameters);
+        let parent_header = test_header(
+            &set,
+            View::new(1),
+            Height::new(1),
+            BlockId::new(*set.genesis_hash().as_bytes()),
+            set.validators()[0].id(),
+            PARENT_TIMESTAMP_MS + 1,
+        );
+        let header = test_header(
+            &set,
+            View::new(2),
+            Height::new(2),
+            parent_header.id(),
+            set.validators()[1].id(),
+            PARENT_TIMESTAMP_MS + 2,
+        );
+        let block = Block::new(header.clone(), vec![0, 0, 0, 0], Vec::new()).unwrap();
+        let proposal_with_quorum_qc = SignedProposalV0::new(
+            block.clone(),
+            ProposalWitnessV0::new(
+                &header,
+                QcReferenceV0::ordinary(qc_for_header_with_vote_count(&set, &parent_header, 1, 3)),
+                None,
+                None,
+                signature(9),
+                &set,
+                None,
+                &parameters,
+                parent_header.timestamp_ms(),
+            )
+            .unwrap(),
+            &set,
+            None,
+            &parameters,
+            parent_header.timestamp_ms(),
+        )
+        .unwrap();
+        let proposal_with_full_qc = SignedProposalV0::new(
+            block,
+            ProposalWitnessV0::new(
+                &header,
+                QcReferenceV0::ordinary(qc_for_header_with_vote_count(&set, &parent_header, 1, 4)),
+                None,
+                None,
+                signature(9),
+                &set,
+                None,
+                &parameters,
+                parent_header.timestamp_ms(),
+            )
+            .unwrap(),
+            &set,
+            None,
+            &parameters,
+            parent_header.timestamp_ms(),
+        )
+        .unwrap();
+
+        assert_eq!(
+            proposal_with_quorum_qc.block().logical_block_size(),
+            proposal_with_full_qc.block().logical_block_size()
+        );
+        assert!(
+            proposal_with_full_qc
+                .durable_validation_resource_size_v0()
+                .unwrap()
+                > proposal_with_quorum_qc
+                    .durable_validation_resource_size_v0()
+                    .unwrap()
+        );
+    }
+
+    #[test]
+    fn durable_validation_resource_size_counts_timeout_witness_deterministically() {
+        let parameters = ConsensusParametersV0::reference_shadow_v0();
+        let set = test_set(&parameters);
+        let anchor = QcReferenceV0::genesis_anchor(
+            GenesisQcV0::new(set.genesis_hash(), set.chain_id(), &set).unwrap(),
+        );
+        let parent_id = BlockId::new(*set.genesis_hash().as_bytes());
+        let next_view_header = test_header(
+            &set,
+            View::new(1),
+            Height::new(1),
+            parent_id,
+            set.validators()[0].id(),
+            PARENT_TIMESTAMP_MS + 1,
+        );
+        let next_view_proposal = SignedProposalV0::new(
+            Block::new(next_view_header.clone(), vec![0, 0, 0, 0], Vec::new()).unwrap(),
+            ProposalWitnessV0::new(
+                &next_view_header,
+                anchor.clone(),
+                None,
+                None,
+                signature(9),
+                &set,
+                None,
+                &parameters,
+                PARENT_TIMESTAMP_MS,
+            )
+            .unwrap(),
+            &set,
+            None,
+            &parameters,
+            PARENT_TIMESTAMP_MS,
+        )
+        .unwrap();
+
+        let skipped_view_header = test_header(
+            &set,
+            View::new(3),
+            Height::new(1),
+            parent_id,
+            set.validators()[2].id(),
+            PARENT_TIMESTAMP_MS + 1,
+        );
+        let high_qc = anchor.qc_ref();
+        let entries = set.validators()[..3]
+            .iter()
+            .map(|validator| TimeoutEntryV0::new(validator.id(), high_qc, signature(1)).unwrap())
+            .collect();
+        let timeout_certificate = TimeoutCertificateV0::new(
+            View::new(2),
+            entries,
+            vec![anchor.clone()],
+            anchor.id(),
+            &set,
+        )
+        .unwrap();
+        let skipped_view_proposal = SignedProposalV0::new(
+            Block::new(skipped_view_header.clone(), vec![0, 0, 0, 0], Vec::new()).unwrap(),
+            ProposalWitnessV0::new(
+                &skipped_view_header,
+                anchor,
+                Some(timeout_certificate),
+                None,
+                signature(9),
+                &set,
+                None,
+                &parameters,
+                PARENT_TIMESTAMP_MS,
+            )
+            .unwrap(),
+            &set,
+            None,
+            &parameters,
+            PARENT_TIMESTAMP_MS,
+        )
+        .unwrap();
+
+        assert_eq!(
+            next_view_proposal.block().logical_block_size(),
+            skipped_view_proposal.block().logical_block_size()
+        );
+        assert!(
+            skipped_view_proposal
+                .durable_validation_resource_size_v0()
+                .unwrap()
+                > next_view_proposal
+                    .durable_validation_resource_size_v0()
+                    .unwrap()
+        );
+
+        let exact_tail_size = crate::canonical::try_canonical_bytes(|encoder| {
+            skipped_view_proposal
+                .witness()
+                .encode_certified_tail(encoder);
+        })
+        .unwrap()
+        .len();
+        let expected_size = skipped_view_proposal
+            .block()
+            .logical_block_size()
+            .checked_add(exact_tail_size)
+            .unwrap();
+        assert_eq!(
+            skipped_view_proposal
+                .durable_validation_resource_size_v0()
+                .unwrap(),
+            expected_size
+        );
+        assert_eq!(
+            skipped_view_proposal.durable_validation_resource_size_v0(),
+            skipped_view_proposal.durable_validation_resource_size_v0()
+        );
     }
 
     #[test]
@@ -1004,7 +1206,16 @@ mod tests {
         header: &BlockHeader,
         signature_byte: u8,
     ) -> QuorumCertificate {
-        let votes = set.validators()[..3]
+        qc_for_header_with_vote_count(set, header, signature_byte, 3)
+    }
+
+    fn qc_for_header_with_vote_count(
+        set: &ValidatorSet,
+        header: &BlockHeader,
+        signature_byte: u8,
+        vote_count: usize,
+    ) -> QuorumCertificate {
+        let votes = set.validators()[..vote_count]
             .iter()
             .map(|validator| {
                 Vote::new(

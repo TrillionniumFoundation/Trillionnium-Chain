@@ -6,8 +6,9 @@ use crate::{
         try_canonical_bytes, try_canonical_hash, DOMAIN_BLOCK, DOMAIN_CONSUMPTION_CERTIFICATE,
         DOMAIN_CONSUMPTION_CERTIFICATE_ID, DOMAIN_DOUBLE_SIGN_EVIDENCE, DOMAIN_EPOCH_COMMITMENT,
         DOMAIN_FINALITY_PROOF, DOMAIN_HANDOFF_CERTIFICATE, DOMAIN_HANDOFF_DESCRIPTOR,
-        DOMAIN_HANDOFF_VOTE, DOMAIN_PARAMETERS, DOMAIN_PROPOSAL, DOMAIN_QUORUM_CERTIFICATE,
-        DOMAIN_TIMEOUT, DOMAIN_TIMEOUT_CERTIFICATE, DOMAIN_UPGRADE_PLAN, DOMAIN_VALIDATOR_KEY_POP,
+        DOMAIN_HANDOFF_VOTE, DOMAIN_ORDERED_LEAF, DOMAIN_ORDERED_NODE, DOMAIN_ORDERED_ROOT,
+        DOMAIN_PARAMETERS, DOMAIN_PROPOSAL, DOMAIN_QUORUM_CERTIFICATE, DOMAIN_TIMEOUT,
+        DOMAIN_TIMEOUT_CERTIFICATE, DOMAIN_UPGRADE_PLAN, DOMAIN_VALIDATOR_KEY_POP,
         DOMAIN_VALIDATOR_SET, DOMAIN_VOTE,
     },
     message::proposal_signing_root_from_digests,
@@ -179,6 +180,18 @@ fn every_frozen_domain_matches_empty_payload_vector() {
             "a491a6732951b05369b65f737faa14dc3f24c8909fa652d0c3a9cbdb66cbc8a3",
         ),
         (
+            DOMAIN_ORDERED_LEAF,
+            "47f6408985f9bd991cb412e8a194bb70c128fcbc43434a9cff23e82ddb8c40be",
+        ),
+        (
+            DOMAIN_ORDERED_NODE,
+            "1d3cc7b94cff8c987dc432d1ed5f6f069a39a74bb222e8eebebf51ab7c5d88bf",
+        ),
+        (
+            DOMAIN_ORDERED_ROOT,
+            "768c6ab896de3770a4cb671f0bbe8378bfa7157210f672c60f99e5ff966e2139",
+        ),
+        (
             DOMAIN_CONSUMPTION_CERTIFICATE,
             "66c676b203e64c79ab834c5e8a04fb2f1a624d239a5245889f70c355933b8fc5",
         ),
@@ -314,12 +327,27 @@ fn governed_activation_is_not_confused_with_the_reference_shadow_profile() {
 fn consensus_parameter_safety_boundaries_fail_closed() {
     assert_invalid_parameters(|fields| fields.schema_version = 1);
     assert_invalid_parameters(|fields| fields.protocol_version = 1);
+    assert_invalid_parameters(|fields| fields.max_chain_id_bytes = 0);
+    assert_invalid_parameters(|fields| {
+        fields.max_chain_id_bytes = (MAX_CONSENSUS_STRING_BYTES + 1) as u16;
+    });
+    assert_invalid_parameters(|fields| fields.max_validator_id_bytes = 0);
+    assert_invalid_parameters(|fields| {
+        fields.max_validator_id_bytes = (MAX_VALIDATOR_ID_BYTES + 1) as u16;
+    });
     assert_invalid_parameters(|fields| fields.min_validators = 3);
     assert_invalid_parameters(|fields| fields.max_validators = 3);
+    assert_invalid_parameters(|fields| fields.max_validators = 101);
+    assert_invalid_parameters(|fields| fields.max_block_bytes = 0);
+    assert_invalid_parameters(|fields| fields.max_consensus_message_bytes = 0);
+    assert_invalid_parameters(|fields| {
+        fields.max_block_bytes = fields.max_consensus_message_bytes + 1;
+    });
     assert_invalid_parameters(|fields| fields.quorum_numerator = 3);
     assert_invalid_parameters(|fields| fields.quorum_denominator = 4);
     assert_invalid_parameters(|fields| fields.quorum_addend = 0);
     assert_invalid_parameters(|fields| fields.finality_certified_chain_length = 2);
+    assert_invalid_parameters(|fields| fields.require_full_payload_before_vote = false);
 
     assert_invalid_parameters(|fields| fields.timeout_multiplier_denominator = 0);
     assert_invalid_parameters(|fields| {
@@ -328,6 +356,8 @@ fn consensus_parameter_safety_boundaries_fail_closed() {
     assert_invalid_parameters(|fields| fields.base_timeout_ms = fields.timeout_max_ms + 1);
 
     assert_invalid_parameters(|fields| fields.epoch_seal_blocks = 1);
+    assert_invalid_parameters(|fields| fields.snapshot_lead_blocks = 0);
+    assert_invalid_parameters(|fields| fields.snapshot_lead_blocks = 2);
     assert_invalid_parameters(|fields| fields.snapshot_lead_blocks = u64::MAX);
     assert_invalid_parameters(|fields| {
         fields.epoch_length_blocks =
@@ -337,6 +367,11 @@ fn consensus_parameter_safety_boundaries_fail_closed() {
     assert_invalid_parameters(|fields| fields.joint_handoff_new_quorum = false);
     assert_invalid_parameters(|fields| fields.upgrade_notice_epochs = 0);
     assert_invalid_parameters(|fields| fields.max_protocol_version_jump = 2);
+
+    let mut boundary_snapshot_lead = ConsensusParametersV0::reference_shadow_v0().fields();
+    boundary_snapshot_lead.snapshot_lead_blocks =
+        u64::from(boundary_snapshot_lead.finality_certified_chain_length);
+    assert!(ConsensusParametersV0::new(boundary_snapshot_lead).is_ok());
 
     assert_invalid_parameters(|fields| fields.scale_ppm = 0);
     assert_invalid_parameters(|fields| fields.per_certificate_unit_cap = 0);
@@ -351,13 +386,19 @@ fn consensus_parameter_safety_boundaries_fail_closed() {
     });
     assert_invalid_parameters(|fields| fields.max_validator_share_ppm = 0);
     assert_invalid_parameters(|fields| {
-        fields.max_validator_share_ppm = fields.scale_ppm / 3;
+        fields.max_validator_share_ppm = fields.scale_ppm.div_ceil(3);
     });
+    let mut non_divisible_scale = ConsensusParametersV0::reference_shadow_v0().fields();
+    non_divisible_scale.scale_ppm = 10;
+    non_divisible_scale.max_validator_share_ppm = 3;
+    non_divisible_scale.capped_weight_alpha_ppm = 2;
+    non_divisible_scale.full_weight_alpha_ppm = 10;
+    assert!(ConsensusParametersV0::new(non_divisible_scale).is_ok());
     assert_invalid_parameters(|fields| {
         fields.capped_weight_alpha_ppm = fields.scale_ppm + 1;
     });
     assert_invalid_parameters(|fields| fields.full_weight_alpha_ppm = fields.scale_ppm - 1);
-    assert_invalid_parameters(|fields| fields.max_total_voting_power = 99_999_999);
+    assert_invalid_parameters(|fields| fields.max_total_voting_power = 3);
     assert_invalid_parameters(|fields| fields.automatic_promotion = true);
 
     assert_invalid_parameters(|fields| {
@@ -577,6 +618,107 @@ fn validator_set_rejects_noncanonical_ids_duplicates_and_duplicate_keys() {
     );
 }
 
+#[test]
+fn validator_set_parameter_bounds_are_consensus_rules() {
+    let parameters = ConsensusParametersV0::reference_shadow_v0();
+    let make_validator = |index: u8, power: u64| {
+        Validator::new(
+            unit_validator_id(index),
+            ConsensusPublicKey::new([index + 100; 32]),
+            VotingPower::new(power).unwrap(),
+        )
+        .unwrap()
+    };
+    let make_set = |validators| {
+        ValidatorSet::new(
+            GenesisHash::new([1; 32]),
+            ChainId::from_static("trnm-parameter-set-0"),
+            ProtocolVersion::V0,
+            Epoch::new(0),
+            parameters.hash(),
+            validators,
+        )
+        .unwrap()
+    };
+
+    let valid = make_set(vec![
+        make_validator(1, 1),
+        make_validator(2, 1),
+        make_validator(3, 1),
+        make_validator(4, 1),
+    ]);
+    valid.validate_against_parameters(&parameters).unwrap();
+
+    let too_small = make_set(vec![make_validator(1, 1)]);
+    assert!(matches!(
+        too_small.validate_against_parameters(&parameters),
+        Err(ValidationError::InvalidValidatorSet(_))
+    ));
+
+    let concentrated = make_set(vec![
+        make_validator(1, 2),
+        make_validator(2, 1),
+        make_validator(3, 1),
+        make_validator(4, 1),
+    ]);
+    assert!(matches!(
+        concentrated.validate_against_parameters(&parameters),
+        Err(ValidationError::InvalidValidatorSet(_))
+    ));
+
+    let mut fields = parameters.fields();
+    fields.max_chain_id_bytes = 4;
+    let narrow_chain_id = ConsensusParametersV0::new(fields).unwrap();
+    let long_chain_set = ValidatorSet::new(
+        GenesisHash::new([1; 32]),
+        ChainId::from_static("trnm-long-0"),
+        ProtocolVersion::V0,
+        Epoch::new(0),
+        narrow_chain_id.hash(),
+        vec![
+            make_validator(1, 1),
+            make_validator(2, 1),
+            make_validator(3, 1),
+            make_validator(4, 1),
+        ],
+    )
+    .unwrap();
+    assert!(matches!(
+        long_chain_set.validate_against_parameters(&narrow_chain_id),
+        Err(ValidationError::InvalidValidatorSet(_))
+    ));
+
+    let mut fields = parameters.fields();
+    fields.max_validator_id_bytes = 1;
+    let narrow_validator_id = ConsensusParametersV0::new(fields).unwrap();
+    let long_id_validator = |index: u8| {
+        Validator::new(
+            ValidatorId::from_bytes(&[index, 0]).unwrap(),
+            ConsensusPublicKey::new([index + 100; 32]),
+            VotingPower::new(1).unwrap(),
+        )
+        .unwrap()
+    };
+    let long_id_set = ValidatorSet::new(
+        GenesisHash::new([1; 32]),
+        ChainId::from_static("trnm-id-0"),
+        ProtocolVersion::V0,
+        Epoch::new(0),
+        narrow_validator_id.hash(),
+        vec![
+            long_id_validator(1),
+            long_id_validator(2),
+            long_id_validator(3),
+            long_id_validator(4),
+        ],
+    )
+    .unwrap();
+    assert!(matches!(
+        long_id_set.validate_against_parameters(&narrow_validator_id),
+        Err(ValidationError::InvalidValidatorSet(_))
+    ));
+}
+
 fn unit_validator_id(index: u8) -> ValidatorId {
     ValidatorId::from_bytes(&[index]).unwrap()
 }
@@ -665,6 +807,43 @@ fn unit_qc(set: &ValidatorSet, header: &BlockHeader) -> QuorumCertificate {
     .unwrap()
 }
 
+fn unit_qc_for_coordinates(
+    set: &ValidatorSet,
+    view: u64,
+    height: u64,
+    block_id: BlockId,
+) -> QuorumCertificate {
+    let votes = (1..=3)
+        .map(|author| {
+            Vote::new(
+                set.chain_id(),
+                set.protocol_version(),
+                set.epoch(),
+                View::new(view),
+                Height::new(height),
+                block_id,
+                set.id(),
+                unit_validator_id(author),
+                signature(author),
+                set,
+            )
+            .unwrap()
+        })
+        .collect();
+    QuorumCertificate::new(
+        set.chain_id(),
+        set.protocol_version(),
+        set.epoch(),
+        View::new(view),
+        Height::new(height),
+        block_id,
+        set.id(),
+        votes,
+        set,
+    )
+    .unwrap()
+}
+
 fn unit_timeout_vote(
     set: &ValidatorSet,
     timeout_view: u64,
@@ -724,6 +903,41 @@ fn qc_rejects_insufficient_weight_and_noncanonical_signer_order() {
         &set,
     );
     assert_eq!(noncanonical, Err(ValidationError::NonCanonicalSignerOrder));
+
+    let view_zero_block = BlockId::new([7; 32]);
+    let view_zero_votes = (1..=3)
+        .map(|author| {
+            Vote::new(
+                set.chain_id(),
+                set.protocol_version(),
+                set.epoch(),
+                View::new(0),
+                Height::new(0),
+                view_zero_block,
+                set.id(),
+                unit_validator_id(author),
+                signature(author),
+                &set,
+            )
+            .unwrap()
+        })
+        .collect();
+    assert_eq!(
+        QuorumCertificate::new(
+            set.chain_id(),
+            set.protocol_version(),
+            set.epoch(),
+            View::new(0),
+            Height::new(0),
+            view_zero_block,
+            set.id(),
+            view_zero_votes,
+            &set,
+        ),
+        Err(ValidationError::InvalidCertificate(
+            "ordinary QC view must be positive"
+        ))
+    );
 }
 
 #[test]
@@ -997,6 +1211,36 @@ fn tc_allows_same_block_qc_variants_and_tiebreaks_by_qc_digest() {
 }
 
 #[test]
+fn timeout_certificate_v0_rejects_a_block_id_reused_at_other_coordinates() {
+    let set = unit_set();
+    let block_id = BlockId::new([0x42; 32]);
+
+    for second_height in [1, 2] {
+        let first = unit_qc_for_coordinates(&set, 1, 1, block_id);
+        let second = unit_qc_for_coordinates(&set, 2, second_height, block_id);
+        let first_ref = QcRef::from(&first);
+        let second_ref = QcRef::from(&second);
+        let entries = vec![
+            TimeoutEntryV0::new(unit_validator_id(1), first_ref, signature(1)).unwrap(),
+            TimeoutEntryV0::new(unit_validator_id(2), second_ref, signature(2)).unwrap(),
+            TimeoutEntryV0::new(unit_validator_id(3), second_ref, signature(3)).unwrap(),
+        ];
+        let mut referenced = vec![
+            QcReferenceV0::ordinary(first),
+            QcReferenceV0::ordinary(second.clone()),
+        ];
+        referenced.sort_by_key(QcReferenceV0::id);
+
+        assert!(matches!(
+            TimeoutCertificateV0::new(View::new(3), entries, referenced, second.id(), &set,),
+            Err(ValidationError::InvalidCertificate(
+                "TC binds one block ID to multiple QC coordinates"
+            ))
+        ));
+    }
+}
+
+#[test]
 fn equivocation_evidence_requires_two_conflicting_signed_votes() {
     let set = unit_set();
     let first = Vote::new(
@@ -1042,10 +1286,7 @@ fn equivocation_evidence_requires_two_conflicting_signed_votes() {
         &set,
     )
     .unwrap();
-    assert!(
-        EquivocationEvidence::vote(first.clone(), same_block_different_height, &set).is_err(),
-        "minimum DoubleVoteEvidence requires different block IDs"
-    );
+    assert!(EquivocationEvidence::vote(first.clone(), same_block_different_height, &set).is_ok());
 }
 
 #[test]

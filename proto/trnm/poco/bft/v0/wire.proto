@@ -8,10 +8,12 @@ import "trnm/poco/bft/v0/epoch.proto";
 import "trnm/poco/bft/v0/evidence.proto";
 import "trnm/poco/bft/v0/light_client.proto";
 
-// Bounded top-level transport envelope. Encoded size MUST be <= 8 MiB and
-// exactly one body must be present. Protobuf bytes and body_semantic_hash are
-// never consensus signing bytes. Peer authentication belongs to authenticated
-// P2P; the envelope introduces no alternate consensus signature scheme.
+// Bounded top-level transport envelope. Its decoded/reassembled transport body
+// is subject to the active 8 MiB admission limit and exactly one body must be
+// present. This transport limit does not redefine nested logical-object
+// validity. Protobuf bytes and body_semantic_hash are never consensus signing
+// bytes. Peer authentication belongs to authenticated P2P; the envelope
+// introduces no alternate consensus signature scheme.
 
 enum WireBodyKind {
   WIRE_BODY_KIND_UNSPECIFIED = 0;

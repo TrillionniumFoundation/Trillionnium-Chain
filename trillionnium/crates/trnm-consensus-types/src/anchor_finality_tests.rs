@@ -612,7 +612,7 @@ fn fixture_hash(label: &str) -> [u8; 32] {
 fn assert_certified_header(object: &str, certified: &CertifiedHeaderV0) {
     assert_vector_bytes(object, &certified.try_cev0_bytes().unwrap());
     let signed_proposal = SignedProposalV0::from_parts_for_test(
-        Block::new(certified.header().clone(), vec![]).unwrap(),
+        Block::new(certified.header().clone(), vec![0, 0, 0, 0], Vec::new()).unwrap(),
         certified.witness().clone(),
     )
     .unwrap();

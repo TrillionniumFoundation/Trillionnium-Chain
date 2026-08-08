@@ -13,7 +13,12 @@ import "trnm/poco/bft/v0/epoch.proto";
 //
 // Reference bounds: at most 64 ordered epoch_handoffs per update, at most 4096
 // contiguous headers, state-proof bytes <= 1 MiB, key <= 4 KiB, value <= 4 MiB,
-// and the complete WireEnvelope <= 8 MiB.
+// and the max_consensus_message_bytes reference value is 8 MiB. That message
+// limit is measured on the decoded transport body after decompression and
+// before external stream framing; it is not a complete-WireEnvelope bound or
+// a CEV0 logical-object validity rule. Exact sender_node_id and message_id
+// field bounds, session framing, compression, and multiplexing remain P2
+// admission policy and MUST be frozen before network activation.
 
 // One complete signed header proposal plus the QC that certifies its exact
 // block ID. Old pre-freeze tags 2..4 lacked a proposer signature/TC and are
