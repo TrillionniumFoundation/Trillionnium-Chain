@@ -703,6 +703,7 @@ enum AuthorizedCoreNonRuntimeFamilyAttemptV0 {
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 enum CoreAuthorizedNonRuntimeFamilyDeterministicInvalidV0 {
     PocoGovernanceAuthorization,
+    PocoOperation(crate::poco_application::PocoApplicationDeterministicInvalidV0),
     ValidatorTransition(crate::validator_lifecycle::ValidatorTransitionDeterministicInvalidV1),
     UnsupportedFamily,
 }
@@ -711,7 +712,7 @@ enum CoreAuthorizedNonRuntimeFamilyDeterministicInvalidV0 {
 enum CoreAuthorizedNonRuntimeFamilyInvariantV0 {
     PocoExecutionContext,
     PocoProjection,
-    PocoOperationUnclassified,
+    PocoOperation(crate::poco_application::PocoApplicationInvariantV0),
     ValidatorTransition(crate::validator_lifecycle::ValidatorTransitionInvariantV1),
 }
 
@@ -1081,19 +1082,25 @@ fn authorize_and_execute_decoded_core_non_runtime_family_v0(
                         ));
                     }
                 };
-            if overlay
+            if let Err(error) = overlay
                 .apply_decoded_exact(&decoded.owner.routed.exact_inner_bytes, &decoded.operation)
-                .is_err()
             {
+                let cause = match error {
+                    crate::poco_application::PocoApplicationApplyFailureV0::DeterministicallyInvalid(
+                        reason,
+                    ) => CoreAuthorizedNonRuntimeFamilyAttemptCauseV0::DeterministicallyInvalid(
+                        CoreAuthorizedNonRuntimeFamilyDeterministicInvalidV0::PocoOperation(reason),
+                    ),
+                    crate::poco_application::PocoApplicationApplyFailureV0::Invariant(reason) => {
+                        CoreAuthorizedNonRuntimeFamilyAttemptCauseV0::Invariant(
+                            CoreAuthorizedNonRuntimeFamilyInvariantV0::PocoOperation(reason),
+                        )
+                    }
+                };
                 return Err(Box::new(
                     FailedCoreAuthorizedNonRuntimeFamilyAttemptV0::PocoApplication {
                         decoded,
-                        // The application planner still exposes `anyhow`; do
-                        // not downgrade an unclassified internal fault into a
-                        // deterministic reject by matching diagnostic text.
-                        cause: CoreAuthorizedNonRuntimeFamilyAttemptCauseV0::Invariant(
-                            CoreAuthorizedNonRuntimeFamilyInvariantV0::PocoOperationUnclassified,
-                        ),
+                        cause,
                     },
                 ));
             }
@@ -12108,6 +12115,163 @@ mod tests {
         assert_eq!(owner.decoded_next_transaction_index, 1);
         drop(owner);
         assert_eq!(store.store.active_runtime_snapshot_pins_for_test_v0(), 0);
+    }
+
+    #[test]
+    fn production_poco_revision_rejection_is_typed_and_retains_exact_owner() {
+        let store = test_store_with_poco_application_authority();
+        let base = fixture_profile(store.parent_state_root, 0);
+        let (source_projection, valid_inner) =
+            author_valid_poco_application_operation(&store, &base);
+        let valid_inner = String::from_utf8(valid_inner).expect("authored PoCO operation UTF-8");
+        assert_eq!(
+            valid_inner.matches("\"expected_state_revision\":1").count(),
+            1
+        );
+        let exact_inner = valid_inner
+            .replacen(
+                "\"expected_state_revision\":1",
+                "\"expected_state_revision\":0",
+                1,
+            )
+            .into_bytes();
+        let exact_outer = signed_envelope_bytes(
+            TEST_CHAIN.as_str(),
+            "native-poco-family-stale-revision".to_string(),
+            81,
+            "did:operator:1",
+            "operator",
+            1,
+            1_700_000_000_000,
+            1_700_000_100_000,
+            crate::poco_application::POCO_APPLICATION_OPERATION_PAYLOAD_TYPE_V0,
+            &exact_inner,
+        );
+        let profile = replace_profile_transactions(base, vec![exact_outer.clone()]);
+        let expected_id = profile.header.id();
+        let failed = authorize_and_execute_decoded_core_non_runtime_family_v0(
+            decode_only_non_runtime_family(&store, &profile),
+        )
+        .err()
+        .expect("stale PoCO revision must retain a family failure");
+        let closed = finish_failed_core_authorized_non_runtime_family_attempt_v0(failed);
+        let owner = match *closed {
+            ClosedFailedCoreAuthorizedNonRuntimeFamilyAttemptV0::PocoApplication {
+                owner,
+                operation,
+                cause,
+            } => {
+                assert_eq!(operation.expected_state_revision(), 0);
+                assert_eq!(
+                    cause,
+                    ClosedCoreAuthorizedNonRuntimeFamilyAttemptCauseV0::Attempt(
+                        CoreAuthorizedNonRuntimeFamilyAttemptCauseV0::DeterministicallyInvalid(
+                            CoreAuthorizedNonRuntimeFamilyDeterministicInvalidV0::PocoOperation(
+                                crate::poco_application::PocoApplicationDeterministicInvalidV0::AuthorityRevisionMismatch,
+                            ),
+                        ),
+                    )
+                );
+                owner
+            }
+            ClosedFailedCoreAuthorizedNonRuntimeFamilyAttemptV0::ValidatorTransition { .. }
+            | ClosedFailedCoreAuthorizedNonRuntimeFamilyAttemptV0::Unsupported { .. } => {
+                panic!("PoCO revision rejection changed family")
+            }
+        };
+        assert_eq!(owner.exact_outer_bytes, exact_outer);
+        assert_eq!(owner.exact_inner_bytes, exact_inner);
+        assert_eq!(owner.context.target_block_id, expected_id);
+        assert_eq!(owner.cursor_next_transaction_index, 0);
+        assert_eq!(owner.decoded_next_transaction_index, 1);
+        assert!(owner.changes.is_empty());
+        assert!(owner.applied.is_empty());
+        drop(owner);
+        assert_eq!(store.store.active_runtime_snapshot_pins_for_test_v0(), 0);
+        assert_eq!(
+            load_test_authenticated_poco_projection(&store),
+            source_projection
+        );
+    }
+
+    #[test]
+    fn production_poco_bad_future_candidate_proof_is_deterministically_invalid() {
+        let store = test_store_with_poco_application_authority();
+        let source_projection = load_test_authenticated_poco_projection(&store);
+        let exact_inner = format!(
+            concat!(
+                "{{\"schema\":\"trnm_poco_application_operation_v0\",",
+                "\"target_height\":2,\"expected_state_revision\":1,",
+                "\"body\":{{\"kind\":\"register_future_candidate\",",
+                "\"validator_id_hex\":\"{}\",\"target_epoch\":1,",
+                "\"previous_registration_nonce\":null,",
+                "\"predecessor_history_head_hex\":\"{}\",",
+                "\"proof_cev0_hex\":\"\",\"registration_decision_id_hex\":\"{}\"}},",
+                "\"semantic_changes\":[],\"nullifier_non_membership_checks\":[],",
+                "\"nullifier_insertions\":[]}}"
+            ),
+            hex::encode(b"validator-a"),
+            "00".repeat(32),
+            "11".repeat(32),
+        )
+        .into_bytes();
+        crate::poco_application::PocoApplicationOperationV0::decode_exact(&exact_inner)
+            .expect("bad proof remains a canonically encoded operation");
+        let exact_outer = signed_envelope_bytes(
+            TEST_CHAIN.as_str(),
+            "native-poco-family-bad-future-proof".to_string(),
+            81,
+            "did:operator:1",
+            "operator",
+            1,
+            1_700_000_000_000,
+            1_700_000_100_000,
+            crate::poco_application::POCO_APPLICATION_OPERATION_PAYLOAD_TYPE_V0,
+            &exact_inner,
+        );
+        let profile = replace_profile_transactions(
+            fixture_profile(store.parent_state_root, 0),
+            vec![exact_outer.clone()],
+        );
+        let failed = authorize_and_execute_decoded_core_non_runtime_family_v0(
+            decode_only_non_runtime_family(&store, &profile),
+        )
+        .err()
+        .expect("bad future-candidate proof must retain a family failure");
+        let closed = finish_failed_core_authorized_non_runtime_family_attempt_v0(failed);
+        let owner = match *closed {
+            ClosedFailedCoreAuthorizedNonRuntimeFamilyAttemptV0::PocoApplication {
+                owner,
+                cause,
+                ..
+            } => {
+                assert_eq!(
+                    cause,
+                    ClosedCoreAuthorizedNonRuntimeFamilyAttemptCauseV0::Attempt(
+                        CoreAuthorizedNonRuntimeFamilyAttemptCauseV0::DeterministicallyInvalid(
+                            CoreAuthorizedNonRuntimeFamilyDeterministicInvalidV0::PocoOperation(
+                                crate::poco_application::PocoApplicationDeterministicInvalidV0::CryptographicProof,
+                            ),
+                        ),
+                    )
+                );
+                owner
+            }
+            ClosedFailedCoreAuthorizedNonRuntimeFamilyAttemptV0::ValidatorTransition { .. }
+            | ClosedFailedCoreAuthorizedNonRuntimeFamilyAttemptV0::Unsupported { .. } => {
+                panic!("PoCO bad-proof rejection changed family")
+            }
+        };
+        assert_eq!(owner.exact_outer_bytes, exact_outer);
+        assert_eq!(owner.exact_inner_bytes, exact_inner);
+        assert_eq!(owner.cursor_next_transaction_index, 0);
+        assert_eq!(owner.decoded_next_transaction_index, 1);
+        drop(owner);
+        assert_eq!(store.store.active_runtime_snapshot_pins_for_test_v0(), 0);
+        assert_eq!(
+            load_test_authenticated_poco_projection(&store),
+            source_projection
+        );
     }
 
     #[test]

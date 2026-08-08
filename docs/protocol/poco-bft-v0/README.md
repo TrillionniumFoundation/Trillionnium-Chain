@@ -658,9 +658,12 @@ bytes. Semantic/family failures explicitly finish the owned snapshot before
 exposing a closed owner, with finish failure taking priority. Authenticated
 source loss and independently proven authorization rejects are typed. Validator
 scheduling now has closed deterministic/invariant reasons, checked nonce/delay
-arithmetic, and clone-and-swap postcondition validation; remaining opaque PoCO
-application errors conservatively fail stop without string matching. Success retains the open snapshot, decoded owner, and unsealed PoCO
-overlay or scheduled lifecycle. Typed PoCO application errors, write sealing,
+arithmetic, and clone-and-swap postcondition validation. PoCO application now
+has its own closed apply reason set for raw ownership, height/revision,
+capacity/duplicate, nullifier proof, validator rules, and validator PoP;
+unrefined leaf failures conservatively remain authenticated-overlay invariants
+without string matching. Success retains the open snapshot, decoded owner, and unsealed PoCO
+overlay or scheduled lifecycle. PoCO leaf-reason refinement, write sealing,
 multi-operation cursor integration, success-only cursor advance, receipts, and
 terminal failure promotion remain open.
 Runtime resource estimation now has a separate fallible API and opaque

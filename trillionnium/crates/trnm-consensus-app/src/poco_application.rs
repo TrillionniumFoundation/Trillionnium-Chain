@@ -98,6 +98,91 @@ const FUTURE_CANDIDATE_POP_DIGEST_DOMAIN: &[u8] = b"trnm.poco-bft.future-candida
 const SEMANTIC_IDENTITY_DOMAIN: &[u8] = b"trnm.poco-bft.snapshot-value-identity.v0";
 const HASH_PREFIX: &[u8] = b"trnm.cev0.hash.v0";
 
+/// A signed PoCO application operation that cannot be applied to the
+/// authenticated parent projection under the frozen protocol rules.
+/// Reasons are data-free so consensus disposition never depends on an error
+/// message.
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) enum PocoApplicationDeterministicInvalidV0 {
+    PerBlockCapacity,
+    TargetHeightMismatch,
+    AuthorityRevisionMismatch,
+    DuplicateOperation,
+    SemanticTransition,
+    MissingRequiredAuthorityFact,
+    ProtocolWindowOrCap,
+    NullifierProof,
+    CryptographicProof,
+    GovernanceRule,
+    ValidatorRule,
+    ChallengeNotPending,
+    GovernanceApprovalMissing,
+    ValidatorConsensusKeyAlreadyActive,
+    NullifierNonMembershipRootMismatch,
+}
+
+/// A fail-stop condition while applying an operation to an authenticated
+/// in-memory projection.
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) enum PocoApplicationInvariantV0 {
+    RawOwnerBounds,
+    DecodedRawOwnerMismatch,
+    OperationReencode,
+    AuthenticatedOverlay,
+    PlannerArithmetic,
+    ProtocolCounterExhausted,
+    DerivedMutationPostcondition,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(crate) enum PocoApplicationApplyFailureV0 {
+    DeterministicallyInvalid(PocoApplicationDeterministicInvalidV0),
+    Invariant(PocoApplicationInvariantV0),
+}
+
+impl std::fmt::Display for PocoApplicationApplyFailureV0 {
+    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::DeterministicallyInvalid(
+                PocoApplicationDeterministicInvalidV0::ChallengeNotPending,
+            ) => formatter.write_str("challenge is not pending"),
+            Self::DeterministicallyInvalid(
+                PocoApplicationDeterministicInvalidV0::GovernanceApprovalMissing,
+            ) => formatter.write_str("governance approval lacks authenticated proposal"),
+            Self::DeterministicallyInvalid(
+                PocoApplicationDeterministicInvalidV0::ValidatorConsensusKeyAlreadyActive,
+            ) => formatter
+                .write_str("validator consensus key is already active in registration history"),
+            Self::DeterministicallyInvalid(
+                PocoApplicationDeterministicInvalidV0::NullifierNonMembershipRootMismatch,
+            ) => formatter.write_str("PoCO nullifier non-membership root mismatch"),
+            Self::DeterministicallyInvalid(reason) => {
+                write!(
+                    formatter,
+                    "deterministically invalid PoCO operation: {reason:?}"
+                )
+            }
+            Self::Invariant(reason) => {
+                write!(formatter, "PoCO application invariant: {reason:?}")
+            }
+        }
+    }
+}
+
+impl std::error::Error for PocoApplicationApplyFailureV0 {}
+
+fn deterministic_application_error_v0(
+    reason: PocoApplicationDeterministicInvalidV0,
+) -> anyhow::Error {
+    anyhow::Error::new(PocoApplicationApplyFailureV0::DeterministicallyInvalid(
+        reason,
+    ))
+}
+
+fn invariant_application_error_v0(reason: PocoApplicationInvariantV0) -> anyhow::Error {
+    anyhow::Error::new(PocoApplicationApplyFailureV0::Invariant(reason))
+}
+
 /// Decimal-string u128.  JSON numbers are intentionally avoided so a Node
 /// consumer can reproduce the same value without IEEE-754 coercion.
 #[derive(Clone, Debug, Eq, Ord, PartialEq, PartialOrd, Serialize, Deserialize)]
@@ -998,6 +1083,27 @@ impl PocoApplicationOperationV0 {
         Ok(decoded)
     }
 
+    #[cfg(test)]
+    pub(crate) const fn evidence_body(&self) -> &PocoApplicationOperationBodyV0 {
+        &self.body
+    }
+
+    #[cfg(test)]
+    pub(crate) const fn evidence_has_nullifier_non_membership_checks(&self) -> bool {
+        !self.nullifier_non_membership_checks.is_empty()
+    }
+
+    #[cfg(test)]
+    pub(crate) fn evidence_has_nullifier_insertion(
+        &self,
+        family: u8,
+        identifier_hex: &str,
+    ) -> bool {
+        self.nullifier_insertions
+            .iter()
+            .any(|item| item.family == family && item.identifier_hex == identifier_hex)
+    }
+
     fn validate_shape(&self) -> Result<()> {
         ensure!(
             self.schema == POCO_APPLICATION_OPERATION_SCHEMA_V0,
@@ -1033,6 +1139,10 @@ impl PocoApplicationOperationV0 {
 
     pub(crate) const fn target_height(&self) -> u64 {
         self.target_height
+    }
+
+    pub(crate) const fn expected_state_revision(&self) -> u64 {
+        self.expected_state_revision
     }
 }
 
@@ -2398,7 +2508,7 @@ impl PocoApplicationBlockOverlayV0 {
 
     pub(crate) fn apply_raw(&mut self, raw: &[u8]) -> Result<()> {
         let operation = PocoApplicationOperationV0::decode_exact(raw)?;
-        self.apply_decoded_exact(raw, &operation)
+        Ok(self.apply_decoded_exact(raw, &operation)?)
     }
 
     /// Applies an operation already obtained from `decode_exact` while
@@ -2409,47 +2519,66 @@ impl PocoApplicationBlockOverlayV0 {
         &mut self,
         raw: &[u8],
         operation: &PocoApplicationOperationV0,
-    ) -> Result<()> {
-        ensure!(
-            self.raw_operations.len() < MAX_APPLICATION_OPERATIONS_PER_BLOCK,
-            "too many PoCO application operations in one block"
-        );
-        ensure!(
-            !raw.is_empty() && raw.len() <= MAX_APPLICATION_OPERATION_BYTES,
-            "PoCO application operation byte length is outside bound"
-        );
+    ) -> std::result::Result<(), PocoApplicationApplyFailureV0> {
+        use PocoApplicationApplyFailureV0::{DeterministicallyInvalid, Invariant};
+        use PocoApplicationDeterministicInvalidV0 as Invalid;
+        use PocoApplicationInvariantV0 as InvariantReason;
+
+        if self.raw_operations.len() >= MAX_APPLICATION_OPERATIONS_PER_BLOCK {
+            return Err(DeterministicallyInvalid(Invalid::PerBlockCapacity));
+        }
+        if raw.is_empty() || raw.len() > MAX_APPLICATION_OPERATION_BYTES {
+            return Err(Invariant(InvariantReason::RawOwnerBounds));
+        }
         let next_total = self
             .aggregate_operation_bytes
             .checked_add(raw.len())
-            .context("PoCO operation aggregate size overflow")?;
-        ensure!(
-            next_total <= MAX_POCO_SNAPSHOT_BUNDLE_BYTES,
-            "PoCO operation sequence exceeds 8 MiB"
-        );
-        ensure!(
-            serde_json::to_vec(&operation).context("re-encode decoded PoCO operation")? == raw,
-            "decoded PoCO operation differs from its exact raw owner"
-        );
-        ensure!(
-            operation.target_height == self.context.target_height.get(),
-            "operation target height differs from authenticated block height"
-        );
-        ensure!(
-            operation.expected_state_revision == self.overlay.authority.revision,
-            "operation expected authority revision mismatch"
-        );
-        validate_operation_capacity_before_clone_v0(&self.context, &self.overlay, operation)?;
+            .ok_or(Invariant(InvariantReason::PlannerArithmetic))?;
+        if next_total > MAX_POCO_SNAPSHOT_BUNDLE_BYTES {
+            return Err(DeterministicallyInvalid(Invalid::PerBlockCapacity));
+        }
+        let reencoded = serde_json::to_vec(&operation)
+            .map_err(|_| Invariant(InvariantReason::OperationReencode))?;
+        if reencoded != raw {
+            return Err(Invariant(InvariantReason::DecodedRawOwnerMismatch));
+        }
+        if operation.target_height != self.context.target_height.get() {
+            return Err(DeterministicallyInvalid(Invalid::TargetHeightMismatch));
+        }
+        if operation.expected_state_revision != self.overlay.authority.revision {
+            return Err(DeterministicallyInvalid(Invalid::AuthorityRevisionMismatch));
+        }
+        validate_operation_capacity_before_clone_v0(&self.context, &self.overlay, operation)
+            .map_err(|_| {
+                DeterministicallyInvalid(match &operation.body {
+                    PocoApplicationOperationBodyV0::ResolveChallenge { .. } => {
+                        Invalid::ChallengeNotPending
+                    }
+                    PocoApplicationOperationBodyV0::ApproveGovernance { .. } => {
+                        Invalid::GovernanceApprovalMissing
+                    }
+                    PocoApplicationOperationBodyV0::RegisterValidator { .. }
+                    | PocoApplicationOperationBodyV0::RotateValidator { .. } => {
+                        Invalid::ValidatorConsensusKeyAlreadyActive
+                    }
+                    _ => Invalid::ProtocolWindowOrCap,
+                })
+            })?;
         let operation_id = domain_hash(APPLICATION_OPERATION_DOMAIN, raw);
-        ensure!(
-            !self.overlay.operation_ids.contains(&operation_id),
-            "duplicate application operation in one block"
-        );
+        if self.overlay.operation_ids.contains(&operation_id) {
+            return Err(DeterministicallyInvalid(Invalid::DuplicateOperation));
+        }
 
         // Bounds and exact decoded-value/raw-byte binding above precede this
         // potentially large clone.
         let mut candidate = self.overlay.clone();
         candidate.operation_ids.insert(operation_id);
-        apply_operation_v0(&self.context, &mut candidate, operation)?;
+        apply_operation_v0(&self.context, &mut candidate, operation).map_err(|error| {
+            error
+                .downcast_ref::<PocoApplicationApplyFailureV0>()
+                .copied()
+                .unwrap_or(Invariant(InvariantReason::AuthenticatedOverlay))
+        })?;
         self.overlay = candidate;
         self.raw_operations.push(raw.to_vec());
         self.aggregate_operation_bytes = next_total;
@@ -5167,24 +5296,37 @@ fn apply_register_validator_v0(
         _ => bail!("validator operation lacks active registration fact"),
     };
     let next_consensus_key_hex = hex::encode(next_fact.0);
-    ensure!(
-        overlay
-            .authority
-            .validator_registration_history
-            .iter()
-            .all(|history| history.consensus_key_hex != next_consensus_key_hex),
-        "validator consensus key is already active in registration history"
-    );
-    let proof_bytes = registration_proof_bytes(
-        change
-            .next_payload
-            .as_deref()
-            .context("validator operation lacks registration payload")?,
-    )?;
-    let proof = decode_validator_key_proof_of_possession_v0_exact(proof_bytes)
-        .map_err(|error| anyhow::anyhow!("decode validator registration PoP: {error:?}"))?;
-    let validator_id = ValidatorId::from_bytes(&validator_id_bytes)
-        .map_err(|error| anyhow::anyhow!("invalid validator ID: {error:?}"))?;
+    if !overlay
+        .authority
+        .validator_registration_history
+        .iter()
+        .all(|history| history.consensus_key_hex != next_consensus_key_hex)
+    {
+        return Err(anyhow::Error::new(
+            PocoApplicationApplyFailureV0::DeterministicallyInvalid(
+                PocoApplicationDeterministicInvalidV0::ValidatorConsensusKeyAlreadyActive,
+            ),
+        ));
+    }
+    let proof_bytes =
+        registration_proof_bytes(change.next_payload.as_deref().ok_or_else(|| {
+            deterministic_application_error_v0(
+                PocoApplicationDeterministicInvalidV0::CryptographicProof,
+            )
+        })?)
+        .map_err(|_| {
+            deterministic_application_error_v0(
+                PocoApplicationDeterministicInvalidV0::CryptographicProof,
+            )
+        })?;
+    let proof = decode_validator_key_proof_of_possession_v0_exact(proof_bytes).map_err(|_| {
+        deterministic_application_error_v0(
+            PocoApplicationDeterministicInvalidV0::CryptographicProof,
+        )
+    })?;
+    let validator_id = ValidatorId::from_bytes(&validator_id_bytes).map_err(|_| {
+        deterministic_application_error_v0(PocoApplicationDeterministicInvalidV0::ValidatorRule)
+    })?;
     proof
         .verify_for_registration(
             context.genesis_hash,
@@ -5194,11 +5336,16 @@ fn apply_register_validator_v0(
             ConsensusPublicKey::new(next_fact.0),
             &StrictEd25519Verifier,
         )
-        .map_err(|error| anyhow::anyhow!("invalid validator proof of possession: {error:?}"))?;
-    ensure!(
-        proof.fields().registration_nonce == next_fact.1,
-        "validator PoP nonce differs from semantic registration"
-    );
+        .map_err(|_| {
+            deterministic_application_error_v0(
+                PocoApplicationDeterministicInvalidV0::CryptographicProof,
+            )
+        })?;
+    if proof.fields().registration_nonce != next_fact.1 {
+        return Err(deterministic_application_error_v0(
+            PocoApplicationDeterministicInvalidV0::CryptographicProof,
+        ));
+    }
 
     let history_search = overlay
         .authority
@@ -5321,26 +5468,36 @@ fn apply_register_future_candidate_v0(
             && operation.nullifier_non_membership_checks.is_empty(),
         "future candidate registration may not mutate frozen kinds or supply side proofs"
     );
-    let expected_target_epoch = context
-        .active_epoch
-        .get()
-        .checked_add(1)
-        .context("future candidate target epoch exhausted")?;
-    ensure!(
-        target_epoch == expected_target_epoch,
-        "future candidate registration is not for the exact active successor epoch"
-    );
-    let validator_id_bytes = exact_opaque_hex(validator_id_hex)?;
-    let validator_id = ValidatorId::from_bytes(&validator_id_bytes)
-        .map_err(|error| anyhow::anyhow!("invalid future candidate validator ID: {error:?}"))?;
+    let expected_target_epoch = context.active_epoch.get().checked_add(1).ok_or_else(|| {
+        invariant_application_error_v0(PocoApplicationInvariantV0::ProtocolCounterExhausted)
+    })?;
+    if target_epoch != expected_target_epoch {
+        return Err(deterministic_application_error_v0(
+            PocoApplicationDeterministicInvalidV0::ValidatorRule,
+        ));
+    }
+    let validator_id_bytes = exact_opaque_hex(validator_id_hex).map_err(|_| {
+        deterministic_application_error_v0(PocoApplicationDeterministicInvalidV0::ValidatorRule)
+    })?;
+    let validator_id = ValidatorId::from_bytes(&validator_id_bytes).map_err(|_| {
+        deterministic_application_error_v0(PocoApplicationDeterministicInvalidV0::ValidatorRule)
+    })?;
     let proof_bytes = exact_hex(
         proof_cev0_hex,
         1,
         MAX_POCO_SEMANTIC_PAYLOAD_BYTES,
         "future candidate proof of possession",
-    )?;
-    let proof = decode_validator_key_proof_of_possession_v0_exact(&proof_bytes)
-        .map_err(|error| anyhow::anyhow!("decode future candidate PoP: {error:?}"))?;
+    )
+    .map_err(|_| {
+        deterministic_application_error_v0(
+            PocoApplicationDeterministicInvalidV0::CryptographicProof,
+        )
+    })?;
+    let proof = decode_validator_key_proof_of_possession_v0_exact(&proof_bytes).map_err(|_| {
+        deterministic_application_error_v0(
+            PocoApplicationDeterministicInvalidV0::CryptographicProof,
+        )
+    })?;
     let proof_fields = proof.fields();
     proof
         .verify_for_registration(
@@ -5351,7 +5508,11 @@ fn apply_register_future_candidate_v0(
             proof_fields.public_key,
             &StrictEd25519Verifier,
         )
-        .map_err(|error| anyhow::anyhow!("invalid future candidate PoP: {error:?}"))?;
+        .map_err(|_| {
+            deterministic_application_error_v0(
+                PocoApplicationDeterministicInvalidV0::CryptographicProof,
+            )
+        })?;
 
     let active = active_projection_context_v0(&overlay.entries)?;
     ensure!(
@@ -5821,44 +5982,61 @@ fn insert_nullifiers(
     raw_insertions: &[RawNullifierInsertionV0],
     expected: &[(PocoNullifierFamilyV0, [u8; 32])],
 ) -> Result<()> {
-    ensure!(
-        raw_insertions.len() == expected.len(),
-        "operation nullifier insertion count mismatch"
-    );
+    let deterministic_proof = || {
+        anyhow::Error::new(PocoApplicationApplyFailureV0::DeterministicallyInvalid(
+            PocoApplicationDeterministicInvalidV0::NullifierNonMembershipRootMismatch,
+        ))
+    };
+    if raw_insertions.len() != expected.len() {
+        return Err(deterministic_proof());
+    }
     let mut expected_ordered = expected.to_vec();
     expected_ordered.sort();
     for (raw, (expected_family, expected_identifier)) in raw_insertions.iter().zip(expected_ordered)
     {
-        let family = PocoNullifierFamilyV0::from_u8(raw.family)?;
-        let identifier = exact_hash32_hex(&raw.identifier_hex)?;
-        ensure!(
-            family == expected_family && identifier == expected_identifier,
-            "operation nullifier family/identifier mismatch"
-        );
+        let family =
+            PocoNullifierFamilyV0::from_u8(raw.family).map_err(|_| deterministic_proof())?;
+        let identifier =
+            exact_hash32_hex(&raw.identifier_hex).map_err(|_| deterministic_proof())?;
+        if family != expected_family || identifier != expected_identifier {
+            return Err(deterministic_proof());
+        }
         let proof_bytes = exact_hex(
             &raw.proof_hex,
             crate::poco_nullifier::POCO_NULLIFIER_PROOF_ENCODED_BYTES_V0,
             crate::poco_nullifier::POCO_NULLIFIER_PROOF_ENCODED_BYTES_V0,
             "nullifier proof",
-        )?;
-        let proof = PocoNullifierProofV0::decode_exact(&proof_bytes)?;
+        )
+        .map_err(|_| deterministic_proof())?;
+        let proof =
+            PocoNullifierProofV0::decode_exact(&proof_bytes).map_err(|_| deterministic_proof())?;
         let key = derive_poco_nullifier_key_v0(family, identifier);
         let insertion = overlay
             .accumulator
             .verify_non_membership_and_compute_insertion(key, &proof)
-            .with_context(|| {
-                format!(
-                    "verify PoCO nullifier insertion family {} identifier {}",
-                    family.code(),
-                    raw.identifier_hex
-                )
-            })?;
-        overlay.accumulator = insertion.target_accumulator()?;
+            .map_err(|_| deterministic_proof())?;
+        overlay.accumulator = insertion.target_accumulator().map_err(|_| {
+            anyhow::Error::new(PocoApplicationApplyFailureV0::Invariant(
+                PocoApplicationInvariantV0::DerivedMutationPostcondition,
+            ))
+        })?;
     }
     Ok(())
 }
 
 fn verify_nullifier_absences(
+    overlay: &PocoApplicationOverlayV0,
+    raw_checks: &[RawNullifierInsertionV0],
+    expected: &[(PocoNullifierFamilyV0, [u8; 32])],
+) -> Result<()> {
+    verify_nullifier_absences_inner(overlay, raw_checks, expected).map_err(|_| {
+        anyhow::Error::new(PocoApplicationApplyFailureV0::DeterministicallyInvalid(
+            PocoApplicationDeterministicInvalidV0::NullifierNonMembershipRootMismatch,
+        ))
+    })
+}
+
+fn verify_nullifier_absences_inner(
     overlay: &PocoApplicationOverlayV0,
     raw_checks: &[RawNullifierInsertionV0],
     expected: &[(PocoNullifierFamilyV0, [u8; 32])],
@@ -7453,10 +7631,59 @@ mod tests {
         let decoded = PocoApplicationOperationV0::decode_exact(&raw).unwrap();
         let mut foreign_raw = raw.clone();
         foreign_raw.push(b' ');
-        assert!(block.apply_decoded_exact(&foreign_raw, &decoded).is_err());
+        assert_eq!(
+            block.apply_decoded_exact(&foreign_raw, &decoded),
+            Err(PocoApplicationApplyFailureV0::Invariant(
+                PocoApplicationInvariantV0::DecodedRawOwnerMismatch,
+            ))
+        );
         assert_eq!(block.operation_count(), 0);
+        assert!(block.overlay.operation_ids.is_empty());
+        assert!(block.overlay.mutations.is_empty());
         block.apply_decoded_exact(&raw, &decoded).unwrap();
         assert_eq!(block.operation_count(), 1);
+    }
+
+    #[test]
+    fn decoded_operation_height_and_revision_rejections_are_typed_and_non_mutating() {
+        let projection = genesis_projection();
+        let mut block =
+            PocoApplicationBlockOverlayV0::from_projection(context_at(2).unwrap(), &projection)
+                .unwrap();
+        let original_authority = block.overlay.authority.clone();
+
+        let mut wrong_height = PocoApplicationOperationV0::decode_exact(
+            &block.test_define_meter_operation_v0().unwrap(),
+        )
+        .unwrap();
+        wrong_height.target_height = 3;
+        let wrong_height_raw = serde_json::to_vec(&wrong_height).unwrap();
+        assert_eq!(
+            block.apply_decoded_exact(&wrong_height_raw, &wrong_height),
+            Err(PocoApplicationApplyFailureV0::DeterministicallyInvalid(
+                PocoApplicationDeterministicInvalidV0::TargetHeightMismatch,
+            ))
+        );
+
+        for revision in [0, 2] {
+            let mut wrong_revision = PocoApplicationOperationV0::decode_exact(
+                &block.test_define_meter_operation_v0().unwrap(),
+            )
+            .unwrap();
+            wrong_revision.expected_state_revision = revision;
+            let wrong_revision_raw = serde_json::to_vec(&wrong_revision).unwrap();
+            assert_eq!(
+                block.apply_decoded_exact(&wrong_revision_raw, &wrong_revision),
+                Err(PocoApplicationApplyFailureV0::DeterministicallyInvalid(
+                    PocoApplicationDeterministicInvalidV0::AuthorityRevisionMismatch,
+                ))
+            );
+        }
+
+        assert_eq!(block.operation_count(), 0);
+        assert_eq!(block.overlay.authority, original_authority);
+        assert!(block.overlay.operation_ids.is_empty());
+        assert!(block.overlay.mutations.is_empty());
     }
 
     #[test]

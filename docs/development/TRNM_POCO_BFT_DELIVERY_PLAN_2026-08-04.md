@@ -376,12 +376,16 @@ an earlier phase.
   now returns a closed typed reason set, uses checked nonce/delay arithmetic,
   and clone-and-swaps only after its postcondition validates; native family
   mapping preserves its deterministic versus invariant class without diagnostic
-  text. The remaining `anyhow` errors from PoCO application stay conservatively
-  fail-stop/unclassified. Success keeps the exact decoded owner plus
+  text. PoCO application now also exposes a closed, data-free apply failure:
+  raw-owner/re-encode/derived-state faults fail stop, while exact height,
+  authority-revision, capacity, duplicate, nullifier-proof, validator-rule,
+  and validator-PoP rejects map without diagnostic-string matching. Leaf
+  errors not yet assigned a narrower reason remain conservatively typed as an
+  authenticated-overlay invariant. Success keeps the exact decoded owner plus
   the still-open snapshot and unsealed family state. These attempts do not yet
   seal family writes, merge multiple family operations into the cursor, advance
-  it, form receipts, or promote a terminal result. Typed PoCO application
-  errors are required before terminal family-failure mapping.
+  it, form receipts, or promote a terminal result. Remaining PoCO leaf-reason
+  refinement is required before terminal family-failure mapping.
   Future orphan value/node/stale-index
   rejection still depends on the startup full scan, and the in-memory pin
   spans one cloned store family rather than independent handles or processes;

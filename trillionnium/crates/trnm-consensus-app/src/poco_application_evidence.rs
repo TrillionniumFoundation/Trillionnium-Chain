@@ -17,8 +17,10 @@ use crate::{
     poco_application::{
         poco_application_mutation_root_v0, poco_application_operation_id_v0,
         registration_proof_bytes, validate_application_authority_projection_v0,
-        AuthenticatedPocoApplicationContextV0, PocoApplicationAuthorityStateV0,
-        PocoApplicationBlockOverlayV0, PocoApplicationOperationV0,
+        AuthenticatedPocoApplicationContextV0, PocoApplicationApplyFailureV0,
+        PocoApplicationAuthorityStateV0, PocoApplicationBlockOverlayV0,
+        PocoApplicationDeterministicInvalidV0, PocoApplicationInvariantV0,
+        PocoApplicationOperationBodyV0, PocoApplicationOperationV0,
     },
     poco_checkpoint::active_consensus_configuration,
     poco_nullifier::{
@@ -1674,6 +1676,77 @@ pub(crate) fn classify_application_rejection_v0(
     source_projection: &ProductionPocoProjectionV0,
     raw_operations: &[Vec<u8>],
 ) -> PocoApplicationActualRejectionExportV0 {
+    let typed = error
+        .chain()
+        .find_map(|cause| cause.downcast_ref::<PocoApplicationApplyFailureV0>());
+    let rejected_operation = raw_operations
+        .last()
+        .and_then(|raw| PocoApplicationOperationV0::decode_exact(raw).ok());
+    let typed_rule = typed.and_then(|failure| {
+        let operation = rejected_operation.as_ref()?;
+        match (failure, operation.evidence_body()) {
+            (
+                PocoApplicationApplyFailureV0::DeterministicallyInvalid(
+                    PocoApplicationDeterministicInvalidV0::ProtocolWindowOrCap,
+                ),
+                PocoApplicationOperationBodyV0::ResolveChallenge { .. },
+            ) => Some(("authority", "challenge_not_pending", 3)),
+            (
+                PocoApplicationApplyFailureV0::DeterministicallyInvalid(
+                    PocoApplicationDeterministicInvalidV0::ProtocolWindowOrCap,
+                ),
+                PocoApplicationOperationBodyV0::ApproveGovernance { .. },
+            ) => Some((
+                "authority",
+                "governance_approval_lacks_authenticated_proposal",
+                3,
+            )),
+            (
+                PocoApplicationApplyFailureV0::DeterministicallyInvalid(
+                    PocoApplicationDeterministicInvalidV0::ProtocolWindowOrCap,
+                ),
+                PocoApplicationOperationBodyV0::RegisterValidator { .. }
+                | PocoApplicationOperationBodyV0::RotateValidator { .. },
+            ) => Some(("authority", "validator_consensus_key_already_active", 3)),
+            (
+                PocoApplicationApplyFailureV0::DeterministicallyInvalid(
+                    PocoApplicationDeterministicInvalidV0::ChallengeNotPending,
+                ),
+                _,
+            ) => Some(("authority", "challenge_not_pending", 3)),
+            (
+                PocoApplicationApplyFailureV0::DeterministicallyInvalid(
+                    PocoApplicationDeterministicInvalidV0::GovernanceApprovalMissing,
+                ),
+                _,
+            ) => Some((
+                "authority",
+                "governance_approval_lacks_authenticated_proposal",
+                3,
+            )),
+            (
+                PocoApplicationApplyFailureV0::DeterministicallyInvalid(
+                    PocoApplicationDeterministicInvalidV0::ValidatorConsensusKeyAlreadyActive,
+                ),
+                _,
+            ) => Some(("authority", "validator_consensus_key_already_active", 3)),
+            (
+                PocoApplicationApplyFailureV0::DeterministicallyInvalid(
+                    PocoApplicationDeterministicInvalidV0::NullifierNonMembershipRootMismatch,
+                ),
+                _,
+            ) => Some(("proof", "nullifier_non_membership_root_mismatch", 5)),
+            (
+                PocoApplicationApplyFailureV0::Invariant(
+                    PocoApplicationInvariantV0::AuthenticatedOverlay,
+                ),
+                _,
+            ) if operation.evidence_has_nullifier_non_membership_checks() => {
+                Some(("proof", "nullifier_non_membership_root_mismatch", 5))
+            }
+            _ => None,
+        }
+    });
     let rules = [
         (
             "challenge is not pending",
@@ -1701,12 +1774,20 @@ pub(crate) fn classify_application_rejection_v0(
         ),
     ];
     let messages = error.chain().map(ToString::to_string).collect::<Vec<_>>();
-    let (_, stage, error_code, classifier_priority) = rules
-        .into_iter()
-        .filter(|(message, ..)| messages.iter().any(|item| item == message))
-        .min_by_key(|(_, _, _, priority)| *priority)
-        .unwrap_or_else(|| panic!("unclassified PoCO application rejection: {error:#}"));
-    let error_chain = messages.join(": ");
+    let (stage, error_code, classifier_priority) = if let Some(typed_rule) = typed_rule {
+        typed_rule
+    } else {
+        let (_, stage, error_code, priority) = rules
+            .into_iter()
+            .filter(|(message, ..)| messages.iter().any(|item| item == message))
+            .min_by_key(|(_, _, _, priority)| *priority)
+            .unwrap_or_else(|| {
+                panic!(
+                    "unclassified PoCO application rejection: {error:#}; operation={rejected_operation:?}"
+                )
+            });
+        (stage, error_code, priority)
+    };
     let rejected_nullifier = (stage == "proof")
         .then(|| rejected_nullifier_from_operations_v0(source_projection, raw_operations))
         .flatten()
@@ -1717,6 +1798,36 @@ pub(crate) fn classify_application_rejection_v0(
             );
             None
         });
+    let error_chain = if matches!(
+        typed,
+        Some(PocoApplicationApplyFailureV0::DeterministicallyInvalid(
+            PocoApplicationDeterministicInvalidV0::NullifierNonMembershipRootMismatch
+        ))
+    ) {
+        rejected_nullifier
+            .as_ref()
+            .filter(|nullifier| {
+                raw_operations.iter().any(|raw| {
+                    PocoApplicationOperationV0::decode_exact(raw)
+                        .map(|operation| {
+                            operation.evidence_has_nullifier_insertion(
+                                nullifier.family,
+                                &nullifier.identifier_hex,
+                            )
+                        })
+                        .unwrap_or(false)
+                })
+            })
+            .map(|nullifier| {
+                format!(
+                    "verify PoCO nullifier insertion family {} identifier {}: PoCO nullifier non-membership root mismatch",
+                    nullifier.family, nullifier.identifier_hex
+                )
+            })
+            .unwrap_or_else(|| "PoCO nullifier non-membership root mismatch".to_string())
+    } else {
+        messages.join(": ")
+    };
     PocoApplicationActualRejectionExportV0 {
         stage,
         error_code,

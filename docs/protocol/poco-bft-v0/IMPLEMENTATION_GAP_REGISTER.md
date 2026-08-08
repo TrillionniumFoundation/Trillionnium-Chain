@@ -1242,9 +1242,12 @@ epoch prune, and Core transition remain open.
    proven deterministic authorization failures are typed. Validator scheduling
    also exposes a closed deterministic/invariant reason set, checks nonce and
    delay overflow, and commits its clone only after postcondition validation.
-   Remaining opaque PoCO application errors are fail-stop invariants and are not
-   parsed from error strings. Typed PoCO application errors therefore remain a
-   hard dependency before terminal failure mapping. The success carrier still owns the open
+   PoCO application now exposes a closed deterministic/invariant apply reason
+   set: exact owner binding, height/revision, capacity/duplicate, nullifier
+   proof, validator-rule, and validator-PoP paths are typed without diagnostic
+   string matching. Unrefined leaf failures remain conservatively classified as
+   authenticated-overlay invariants, so leaf-reason completion remains a hard
+   dependency before terminal failure mapping. The success carrier still owns the open
    snapshot and unsealed overlay/scheduled lifecycle. It does not yet seal
    writes, integrate successive family operations into the cursor, advance,
    emit a receipt, or promote a terminal result. The private consuming bridge maps `Proposal` only to
