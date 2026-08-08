@@ -482,6 +482,10 @@ an earlier phase.
   missing-fact reason; PoP failure is `CryptographicProof`; revoked or actively
   referenced registrations are protocol rejects; and authenticated history/
   semantic-predecessor drift is `AuthenticatedOverlay`.
+  Validator revocation/history prune now preserve missing-history rejection,
+  classify signed transition/delete drift as `ValidatorRule`, retention,
+  revocation, and active-certificate references as `ProtocolWindowOrCap`, and
+  authenticated history/semantic/reference corruption as invariant.
   Leaf errors not yet assigned a narrower reason remain conservatively typed
   as an authenticated-overlay invariant. Success keeps the exact decoded owner plus
   the still-open snapshot and unsealed family state. These attempts do not yet

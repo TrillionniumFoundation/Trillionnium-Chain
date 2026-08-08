@@ -1303,6 +1303,9 @@ epoch prune, and Core transition remain open.
    key and missing-history reasons while separating signed validator rules,
    PoP rejection, protocol references/revocation, and authenticated companion
    drift.
+   Validator revocation/history prune now likewise separate missing history,
+   signed validator rules, retention/reference protocol rejection, and
+   authenticated predecessor/reference corruption.
    Leaf-reason completion remains a hard
    dependency before terminal failure mapping. The success carrier still owns the open
    snapshot and unsealed overlay/scheduled lifecycle. It does not yet seal

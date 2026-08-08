@@ -6092,56 +6092,76 @@ fn apply_revoke_validator_v0(
     validator_id_hex: &str,
     revocation_decision_id_hex: &str,
 ) -> Result<()> {
-    let validator_id = exact_opaque_hex(validator_id_hex)?;
-    ensure_validator_has_no_active_certificate_references_v0(&overlay.authority, validator_id_hex)?;
+    let validator_rule =
+        || deterministic_application_error_v0(PocoApplicationDeterministicInvalidV0::ValidatorRule);
+    let protocol_reject = || {
+        deterministic_application_error_v0(
+            PocoApplicationDeterministicInvalidV0::ProtocolWindowOrCap,
+        )
+    };
+    let authenticated_overlay =
+        || invariant_application_error_v0(PocoApplicationInvariantV0::AuthenticatedOverlay);
+    let validator_id = exact_opaque_hex(validator_id_hex).map_err(|_| validator_rule())?;
+    ensure_validator_has_no_active_certificate_references_v0(&overlay.authority, validator_id_hex)
+        .map_err(|_| protocol_reject())?;
     let decision =
         require_derived_decision_id(preimage, b"revoke-validator", revocation_decision_id_hex)?;
     let history_index = overlay
         .authority
         .validator_registration_history
         .binary_search_by(|history| history.validator_id_hex.as_str().cmp(validator_id_hex))
-        .map_err(|_| anyhow::anyhow!("validator revocation lacks registration history"))?;
-    ensure!(
-        overlay.authority.validator_registration_history[history_index]
-            .revoked_at_height
-            .is_none(),
-        "validator registration is already revoked"
-    );
-    let changes = prepare_semantic_changes(overlay, &operation.semantic_changes, false)?;
-    ensure_change_kinds(&changes, &[PocoSnapshotEntryKindV0::ValidatorRegistration])?;
+        .map_err(|_| {
+            deterministic_application_error_v0(
+                PocoApplicationDeterministicInvalidV0::MissingRequiredAuthorityFact,
+            )
+        })?;
+    if overlay.authority.validator_registration_history[history_index]
+        .revoked_at_height
+        .is_some()
+    {
+        return Err(protocol_reject());
+    }
+    let changes =
+        prepare_semantic_changes(overlay, &operation.semantic_changes, false).map_err(|error| {
+            preserve_application_failure_or_deterministic_v0(
+                error,
+                PocoApplicationDeterministicInvalidV0::ValidatorRule,
+            )
+        })?;
+    ensure_change_kinds(&changes, &[PocoSnapshotEntryKindV0::ValidatorRegistration])
+        .map_err(|_| validator_rule())?;
     let change = &changes[0];
-    ensure!(
-        change.expected_identity.as_deref() == Some(validator_id.as_slice())
-            && change.next_identity.as_deref() == Some(validator_id.as_slice()),
-        "validator revocation identity mismatch"
-    );
-    match (change.expected_fact.as_ref(), change.next_fact.as_ref()) {
-        (
-            Some(SemanticFactV0::ValidatorRegistration {
-                consensus_key: old_key,
-                registration_nonce: old_nonce,
-                proof_digest: old_proof,
-                state: RegistrationStateV0::Active,
-            }),
-            Some(SemanticFactV0::ValidatorRegistration {
-                consensus_key: new_key,
-                registration_nonce: new_nonce,
-                proof_digest: new_proof,
-                state: RegistrationStateV0::Revoked,
-            }),
-        ) => {
-            let history = &overlay.authority.validator_registration_history[history_index];
-            ensure!(
-                old_key == new_key
-                    && old_nonce == new_nonce
-                    && old_proof == new_proof
-                    && hex::encode(old_key) == history.consensus_key_hex
-                    && *old_nonce == history.max_registration_nonce
-                    && hex::encode(old_proof) == history.current_proof_digest_hex,
-                "validator revocation changes immutable registration authority"
-            );
+    if change.expected_identity.as_deref() != Some(validator_id.as_slice()) {
+        return Err(authenticated_overlay());
+    }
+    if change.next_identity.as_deref() != Some(validator_id.as_slice()) {
+        return Err(validator_rule());
+    }
+    let history = &overlay.authority.validator_registration_history[history_index];
+    let (old_key, old_nonce, old_proof) = match change.expected_fact.as_ref() {
+        Some(SemanticFactV0::ValidatorRegistration {
+            consensus_key,
+            registration_nonce,
+            proof_digest,
+            state: RegistrationStateV0::Active,
+        }) if hex::encode(consensus_key) == history.consensus_key_hex
+            && *registration_nonce == history.max_registration_nonce
+            && hex::encode(proof_digest) == history.current_proof_digest_hex =>
+        {
+            (consensus_key, registration_nonce, proof_digest)
         }
-        _ => bail!("validator revocation is not exact active-to-revoked"),
+        _ => return Err(authenticated_overlay()),
+    };
+    match change.next_fact.as_ref() {
+        Some(SemanticFactV0::ValidatorRegistration {
+            consensus_key,
+            registration_nonce,
+            proof_digest,
+            state: RegistrationStateV0::Revoked,
+        }) if consensus_key == old_key
+            && registration_nonce == old_nonce
+            && proof_digest == old_proof => {}
+        _ => return Err(validator_rule()),
     }
     insert_nullifiers(
         overlay,
@@ -6169,39 +6189,60 @@ fn apply_prune_revoked_validator_history_v0(
     operation: &PocoApplicationOperationV0,
     validator_id_hex: &str,
 ) -> Result<()> {
-    ensure!(
-        operation.nullifier_insertions.is_empty(),
-        "validator-history prune has unauthorized nullifier insertions"
-    );
-    let validator_id = exact_opaque_hex(validator_id_hex)?;
+    let validator_rule =
+        || deterministic_application_error_v0(PocoApplicationDeterministicInvalidV0::ValidatorRule);
+    let protocol_reject = || {
+        deterministic_application_error_v0(
+            PocoApplicationDeterministicInvalidV0::ProtocolWindowOrCap,
+        )
+    };
+    let authenticated_overlay =
+        || invariant_application_error_v0(PocoApplicationInvariantV0::AuthenticatedOverlay);
+    if !operation.nullifier_insertions.is_empty() {
+        return Err(validator_rule());
+    }
+    let validator_id = exact_opaque_hex(validator_id_hex).map_err(|_| validator_rule())?;
     let history_index = overlay
         .authority
         .validator_registration_history
         .binary_search_by(|history| history.validator_id_hex.as_str().cmp(validator_id_hex))
-        .map_err(|_| anyhow::anyhow!("validator-history prune lacks authority"))?;
+        .map_err(|_| {
+            deterministic_application_error_v0(
+                PocoApplicationDeterministicInvalidV0::MissingRequiredAuthorityFact,
+            )
+        })?;
     let history = overlay.authority.validator_registration_history[history_index].clone();
-    let revoked_at = history
-        .revoked_at_height
-        .context("active validator history cannot be pruned")?;
-    let boundary = protocol_retention_boundary_v0(revoked_at, &context.active_parameters)?;
-    ensure!(
-        context.target_height.get() > boundary,
-        "validator-history retention boundary has not been strictly crossed"
-    );
-    ensure!(
-        !active_certificate_reference_exists_v0(overlay, |body| {
-            body.provider_id().as_bytes() == validator_id.as_slice()
-        })?,
-        "active certificate still references revoked validator"
-    );
-    let changes = prepare_semantic_changes(overlay, &operation.semantic_changes, true)?;
-    ensure_change_kinds(&changes, &[PocoSnapshotEntryKindV0::ValidatorRegistration])?;
+    let revoked_at = history.revoked_at_height.ok_or_else(protocol_reject)?;
+    let boundary =
+        protocol_retention_boundary_v0(revoked_at, &context.active_parameters).map_err(|_| {
+            invariant_application_error_v0(PocoApplicationInvariantV0::PlannerArithmetic)
+        })?;
+    if context.target_height.get() <= boundary {
+        return Err(protocol_reject());
+    }
+    let active_reference = active_certificate_reference_exists_v0(overlay, |body| {
+        body.provider_id().as_bytes() == validator_id.as_slice()
+    })
+    .map_err(|_| authenticated_overlay())?;
+    if active_reference {
+        return Err(protocol_reject());
+    }
+    let changes =
+        prepare_semantic_changes(overlay, &operation.semantic_changes, true).map_err(|error| {
+            preserve_application_failure_or_deterministic_v0(
+                error,
+                PocoApplicationDeterministicInvalidV0::ValidatorRule,
+            )
+        })?;
+    ensure_change_kinds(&changes, &[PocoSnapshotEntryKindV0::ValidatorRegistration])
+        .map_err(|_| validator_rule())?;
     let change = &changes[0];
-    ensure!(
-        change.next_value.is_none()
-            && change.expected_identity.as_deref() == Some(validator_id.as_slice()),
-        "validator-history prune does not delete exact kind-9 fact"
-    );
+    if change.expected_identity.as_deref() != Some(validator_id.as_slice()) {
+        return Err(authenticated_overlay());
+    }
+    if change.next_value.is_some() {
+        return Err(validator_rule());
+    }
     overlay
         .authority
         .validator_registration_history

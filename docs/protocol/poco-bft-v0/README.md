@@ -726,6 +726,9 @@ validator registration/rotation now types pre-clone semantic/key admission and
 the history join, preserving exact active-key/missing-history reasons while
 separating signed validator rules, PoP rejection, protocol references, and
 authenticated companion drift;
+validator revocation/history prune now separate missing history, signed
+transition/delete rules, retention/reference rejection, and authenticated
+predecessor/reference corruption;
 unrefined leaf failures conservatively remain authenticated-overlay invariants
 without string matching. Success retains the open snapshot, decoded owner, and unsealed PoCO
 overlay or scheduled lifecycle. PoCO leaf-reason refinement, write sealing,
