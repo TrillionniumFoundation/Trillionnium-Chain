@@ -701,6 +701,9 @@ authenticated parameters/proposal/pending-fact divergence;
 certificate acceptance now has typed pre-clone signed envelope/proof,
 reservation/key/meter negative-fact, nonce-cap, and authenticated span/counter
 admission; its later execution join remains under leaf-reason refinement;
+the first acceptance execution segment now separates signed certificate/units,
+cryptographic proof, key-window, and authenticated reservation/key companion
+failures; nonce and later companion joins remain open;
 unrefined leaf failures conservatively remain authenticated-overlay invariants
 without string matching. Success retains the open snapshot, decoded owner, and unsealed PoCO
 overlay or scheduled lifecycle. PoCO leaf-reason refinement, write sealing,

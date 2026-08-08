@@ -443,7 +443,12 @@ an earlier phase.
   `CryptographicProof`, missing authorities are `MissingRequiredAuthorityFact`,
   cap rejection is `ProtocolWindowOrCap`, and authenticated arithmetic/span
   failure is invariant. The later acceptance execution join is still being
-  refined separately.
+  refined separately. Its first execution segment is now also typed: signed
+  certificate/funding/units mismatch is `SemanticTransition`, certificate
+  decode or signature failure is `CryptographicProof`, key validity-window
+  rejection is `ProtocolWindowOrCap`, and authenticated reservation/key
+  semantic/authority corruption is `AuthenticatedOverlay`. Nonce and later
+  meter/settlement/relationship/provider joins remain separate slices.
   Leaf errors not yet assigned a narrower reason remain conservatively typed
   as an authenticated-overlay invariant. Success keeps the exact decoded owner plus
   the still-open snapshot and unsealed family state. These attempts do not yet

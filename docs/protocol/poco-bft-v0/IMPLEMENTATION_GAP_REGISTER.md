@@ -1280,7 +1280,8 @@ epoch prune, and Core transition remain open.
    Certificate acceptance pre-clone admission now types signed certificate
    shape/proof, reservation/key/meter negative facts, nonce cap, and
    authenticated rolling-span/counter faults. Its later execution join remains
-   an open leaf-reason slice.
+   an open leaf-reason slice. The reservation/certificate/consumer-key/signature
+   execution segment is now typed; nonce and later companion joins remain open.
    Leaf-reason completion remains a hard
    dependency before terminal failure mapping. The success carrier still owns the open
    snapshot and unsealed overlay/scheduled lifecycle. It does not yet seal

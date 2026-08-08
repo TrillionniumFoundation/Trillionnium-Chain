@@ -4431,39 +4431,59 @@ fn apply_accept_certificate_v0(
     meter_decision_id_hex: &str,
     evidence_decision_id_hex: &str,
 ) -> Result<()> {
-    let certificate_id = exact_hash32_hex(certificate_id_hex)?;
-    let funding_decision = exact_hash32_hex(funding_decision_id_hex)?;
+    let signed_semantic = || {
+        deterministic_application_error_v0(
+            PocoApplicationDeterministicInvalidV0::SemanticTransition,
+        )
+    };
+    let protocol_reject = || {
+        deterministic_application_error_v0(
+            PocoApplicationDeterministicInvalidV0::ProtocolWindowOrCap,
+        )
+    };
+    let authenticated_overlay =
+        || invariant_application_error_v0(PocoApplicationInvariantV0::AuthenticatedOverlay);
+    let certificate_id = exact_hash32_hex(certificate_id_hex).map_err(|_| signed_semantic())?;
+    let funding_decision =
+        exact_hash32_hex(funding_decision_id_hex).map_err(|_| signed_semantic())?;
     let acceptance_decision =
         require_derived_decision_id(preimage, b"accept-certificate", acceptance_decision_id_hex)?;
     let meter_decision =
         require_derived_decision_id(preimage, b"meter-certificate", meter_decision_id_hex)?;
     let evidence_decision =
         require_derived_decision_id(preimage, b"evidence-certificate", evidence_decision_id_hex)?;
-    ensure!(
-        acceptance_decision != meter_decision
-            && acceptance_decision != evidence_decision
-            && meter_decision != evidence_decision,
-        "certificate decision IDs are not domain-separated"
-    );
-    ensure!(
-        overlay
-            .authority
-            .active_certificates
-            .binary_search_by(|item| item.certificate_id_hex.as_str().cmp(certificate_id_hex))
-            .is_err(),
-        "certificate authority record already exists"
-    );
+    if acceptance_decision == meter_decision
+        || acceptance_decision == evidence_decision
+        || meter_decision == evidence_decision
+    {
+        return Err(invariant_application_error_v0(
+            PocoApplicationInvariantV0::DerivedMutationPostcondition,
+        ));
+    }
+    if overlay
+        .authority
+        .active_certificates
+        .binary_search_by(|item| item.certificate_id_hex.as_str().cmp(certificate_id_hex))
+        .is_ok()
+    {
+        return Err(signed_semantic());
+    }
 
     let reservation_index = overlay
         .authority
         .funded_unused_reservations
         .binary_search_by(|item| item.certificate_id_hex.as_str().cmp(certificate_id_hex))
-        .map_err(|_| anyhow::anyhow!("certificate has no funded-unused reservation"))?;
+        .map_err(|_| {
+            deterministic_application_error_v0(
+                PocoApplicationDeterministicInvalidV0::MissingRequiredAuthorityFact,
+            )
+        })?;
     let reservation = overlay.authority.funded_unused_reservations[reservation_index].clone();
-    ensure!(
-        exact_hash32_hex(&reservation.funding_decision_id_hex)? == funding_decision,
-        "certificate funding decision does not match authenticated reservation"
-    );
+    let reserved_funding_decision = exact_hash32_hex(&reservation.funding_decision_id_hex)
+        .map_err(|_| authenticated_overlay())?;
+    if reserved_funding_decision != funding_decision {
+        return Err(signed_semantic());
+    }
 
     let changes = prepare_semantic_changes(overlay, &operation.semantic_changes, false)?;
     ensure_change_kinds(
@@ -4479,23 +4499,31 @@ fn apply_accept_certificate_v0(
     )?;
     let certificate_change =
         change_for_kind(&changes, PocoSnapshotEntryKindV0::ConsumptionCertificate)?;
-    ensure!(
-        certificate_change.expected_value.is_none()
-            && certificate_change.next_identity.as_deref() == Some(certificate_id.as_slice()),
-        "certificate semantic entry is not a new matching certificate"
-    );
+    if certificate_change.expected_value.is_some()
+        || certificate_change.next_identity.as_deref() != Some(certificate_id.as_slice())
+    {
+        return Err(signed_semantic());
+    }
     let certificate_payload = certificate_change
         .next_payload
         .as_deref()
-        .context("certificate operation lacks raw certificate payload")?;
-    let certificate = decode_consumption_certificate_v0_exact(certificate_payload)
-        .map_err(|error| anyhow::anyhow!("decode accepted certificate: {error:?}"))?;
-    ensure!(
-        certificate.certificate_id().as_bytes() == &certificate_id,
-        "accepted certificate ID mismatch"
-    );
+        .ok_or_else(signed_semantic)?;
+    let certificate =
+        decode_consumption_certificate_v0_exact(certificate_payload).map_err(|_| {
+            deterministic_application_error_v0(
+                PocoApplicationDeterministicInvalidV0::CryptographicProof,
+            )
+        })?;
+    if certificate.certificate_id().as_bytes() != &certificate_id {
+        return Err(signed_semantic());
+    }
     let body = certificate.body();
-    validate_reserved_units_exact_v0(reservation.reserved_units.get()?, body.consumed_units())?;
+    let reserved_units = reservation
+        .reserved_units
+        .get()
+        .map_err(|_| authenticated_overlay())?;
+    validate_reserved_units_exact_v0(reserved_units, body.consumed_units())
+        .map_err(|_| signed_semantic())?;
 
     let consumer_id = body.consumer_id();
     let consumer_key_id = body.consumer_key_id();
@@ -4511,25 +4539,26 @@ fn apply_accept_certificate_v0(
         overlay,
         PocoSnapshotEntryKindV0::ConsumerKeyAuthorization,
         &key_identity,
-    )?;
+    )
+    .map_err(|_| authenticated_overlay())?;
     let public_key = match key_parts.fact {
         SemanticFactV0::ConsumerKeyAuthorization {
             public_key,
             active_from,
             revoked_at,
         } => {
-            ensure!(
-                body.billing_start_height().get() >= active_from
-                    && context.target_height.get() >= active_from
-                    && revoked_at.is_none_or(|height| {
-                        body.billing_end_height().get() < height
-                            && context.target_height.get() < height
-                    }),
-                "consumer key is inactive at the authenticated acceptance height"
-            );
+            if body.billing_start_height().get() < active_from
+                || context.target_height.get() < active_from
+                || revoked_at.is_some_and(|height| {
+                    body.billing_end_height().get() >= height
+                        || context.target_height.get() >= height
+                })
+            {
+                return Err(protocol_reject());
+            }
             public_key
         }
-        _ => bail!("consumer-key lookup returned wrong semantic fact"),
+        _ => return Err(authenticated_overlay()),
     };
     let consumer_hex = hex::encode(consumer);
     let consumer_key_hex = hex::encode(consumer_key);
@@ -4540,16 +4569,20 @@ fn apply_accept_certificate_v0(
             (&item.consumer_id_hex, &item.consumer_key_id_hex)
                 .cmp(&(&consumer_hex, &consumer_key_hex))
         })
-        .map_err(|_| anyhow::anyhow!("consumer key lacks authenticated authority companion"))?;
+        .map_err(|_| authenticated_overlay())?;
     let key_authority = &overlay.authority.consumer_keys[key_authority_index];
-    ensure!(
-        exact_hash32_hex(&key_authority.public_key_hex)? == public_key
-            && key_authority.active_from_height <= context.target_height.get()
-            && key_authority.revoked_at_height.is_none_or(|height| {
-                body.billing_end_height().get() < height && context.target_height.get() < height
-            }),
-        "consumer-key semantic/authority companion mismatch"
-    );
+    let authority_public_key =
+        exact_hash32_hex(&key_authority.public_key_hex).map_err(|_| authenticated_overlay())?;
+    if authority_public_key != public_key {
+        return Err(authenticated_overlay());
+    }
+    if key_authority.active_from_height > context.target_height.get()
+        || key_authority.revoked_at_height.is_some_and(|height| {
+            body.billing_end_height().get() >= height || context.target_height.get() >= height
+        })
+    {
+        return Err(protocol_reject());
+    }
     certificate
         .verify(
             context.genesis_hash,
@@ -4559,7 +4592,11 @@ fn apply_accept_certificate_v0(
             ConsensusPublicKey::new(public_key),
             &StrictEd25519Verifier,
         )
-        .map_err(|error| anyhow::anyhow!("invalid consumption certificate: {error:?}"))?;
+        .map_err(|_| {
+            deterministic_application_error_v0(
+                PocoApplicationDeterministicInvalidV0::CryptographicProof,
+            )
+        })?;
 
     let nonce_change = change_for_kind(&changes, PocoSnapshotEntryKindV0::ConsumerNonce)?;
     let nonce_identity = joined_identity(&[consumer, consumer_key, provider]);
