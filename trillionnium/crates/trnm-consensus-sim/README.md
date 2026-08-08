@@ -5,18 +5,15 @@ prototype. It drives `Effect`/`Input` boundaries without opening sockets,
 starting services, reading a wall clock, writing a database, or owning a real
 signing key.
 
-This crate is **not wire-conforming yet**. Its bootstrap fixture follows the
-current prototype API: a signed genesis QC over an independent `0x42…` block
-identifier. Frozen PoCO-BFT v0 instead requires
-`synthetic_genesis_block_id = genesis_hash` and an empty-signature genesis QC.
-Until the core and simulator replace this prototype fixture with the
-already-implemented trusted `GenesisQcV0` path, simulator results do not close
-P1 genesis or production-readiness gates.
+This crate is **not wire-conforming yet**. Its bootstrap now uses the exact
+trusted, empty-signature `GenesisQcV0` path with
+`synthetic_genesis_block_id = genesis_hash`; an ordinary signed view-0 QC is
+rejected.
 
-Finalization currently follows the core's obsolete internal `CommitProof`
-compatibility witness. It is not the frozen `FinalityProofV0`, does not prove
-the exact signed proposal justification/TC/handoff relationships required by
-the protocol, and must not be exported or treated as light-client evidence.
+Finalization now carries and verifies the frozen `FinalityProofV0`, retaining
+each signed proposal's exact justification and optional TC. Epoch-anchor and
+handoff finality remain unavailable because the epoch-transition state machine
+is still fail-closed and unimplemented.
 
 The simulator is also epoch-0 only. Epoch transitions, a rollback-resistant
 sign journal/remote-signer watermark, authenticated networking, durable WAL,
@@ -31,21 +28,77 @@ remains a P1 blocker.
 
 ## Current regression evidence
 
-As of 2026-08-05, the crate passes 11 tests: 3 focused unit tests and 8
+As of 2026-08-05, the crate contains 24 tests: 8 focused unit tests and 16
 deterministic scenarios. They cover applied-chain prefix comparison, key-bound
 mock signatures, 4-/7-validator quorum-loss boundaries, 2+2 partition/heal,
 persistence-before-sign rollback, durable conflicting-QC halt/restart,
 consumed drop/duplicate/delay/reorder faults, and a running crash from nonzero
-durable state through safety replay and synced-payload validation.
+durable state through safety replay and synced-payload validation. Scripted
+payload callbacks additionally cover `Unavailable -> Valid` with a fresh
+generation, certified deterministic invalidity that remains halted after
+recovery, replay which waits for `Valid` before completing, and a wrong-block
+`Valid` capability that is rejected transactionally before the same request
+generation accepts its exact capability. A standalone
+QC-before-proposal scenario proves that the exact catch-up obligation is
+persisted before requesting data, survives a crash immediately after the
+durable acknowledgement releases the request, is reissued with the same
+certificate ID, and clears durably only after its exact target passes synced
+validation. Replay continuations and synced-validation callbacks are bound to
+a request generation, so an old active target cannot drive or complete a
+rotated backlog/TC request. The driver cancels only the exact old volatile core
+obligation; an unknown generation is rejected before the core's busy gates and
+transactional clone. If a replacement request still requires the same
+in-flight ancestor, the stale result is discarded and exactly one fresh
+callback is rebound to the new generation without consuming the stale event's
+fault outcome. Focused tests begin from a real
+`SyncedProposal -> PersistAck -> ValidateSyncedPayload` obligation and cover
+both callback-first and replacement-`ReplayNext`-first orderings through
+fresh-ID completion and replay cleanup. A second catch-up scenario drops both the parent
+proposal and its direct QC, proving that a later proposal carrying that exact
+justify QC creates the same persist-before-request obligation and recovers the
+same certificate/target after a crash. Finalized-height certificate injection
+also freezes the stale-QC split: a different-view competing block is
+historically subsumed without replay or safety-state mutation, while a
+same-view competing block becomes a durable conflicting-QC halt.
+An additional short-epoch campaign reaches the last ordinary height, then
+proves the epoch-boundary fence rejects every regular checkpoint proposal
+without emitting a checkpoint vote or forming a checkpoint QC; post-rejection
+scheduling remains safe and bounded.
 
 Progress assertions use applied finality plus a durable cleared-outbox
 watermark; they do not treat a volatile in-core finalized tip as completed
-application finality.
+application finality. The safety oracle now compares every observable finality
+layer after each deterministic event and before a run/crash/recovery step:
+online core state, acknowledged durable state, current-incarnation pending
+`PersistSafetyState` effects, durable and queued `Finalize` proofs,
+application-acknowledged chains, and the durable application-ack watermark.
+Every pair must be prefix-comparable, and a malformed/incomplete observation
+fails the run instead of being omitted. Focused tests prove that pending effects
+enter the oracle and that an injected application/core fork is rejected before
+another event executes.
 
-Additional P1 blockers remain: all simulated validators currently have equal
-weight; payload validation always succeeds; recovery and TC aggregation use
-global in-memory object availability; the complete persist/sign/broadcast
-crash matrix is absent; and no invalid/unavailable-payload, stale-disk/signer,
+For nonzero core/storage/proof tips, the oracle reconstructs ancestry from the
+simulator's global in-memory proposal archive. That is sufficient to detect a
+simulated cross-layer fork, but it is not evidence that a real node can recover
+the ancestry from its WAL/state-sync store. Stale queued effects from a crashed
+incarnation are deliberately excluded because the simulator will never apply
+them; their last acknowledged durable state remains covered. Corrupt WAL
+bytes, external application rollback, and independent state-sync responses
+still require P2 fault surfaces.
+
+Every simulator-created proposal now retains a canonical
+`ApplicationPayloadV0`, deterministic receipt commitments, and empty ordered
+evidence, then mints `ValidatedBlockCommitmentsV0` through the real B2-D body
+kernel before returning `Valid`. The scripted enum can select outcomes but
+cannot forge the token's private fields. This exercises the core's real
+callback capability gate: ordinary and synced validation reject another
+block's token before consuming the request generation. This still does not
+model alternate body sources, authenticated parent state, authorized-runtime
+execution, or receipt provenance. Additional P1 blockers remain: all simulated
+validators currently have equal weight; recovery and TC
+aggregation and standalone-QC catch-up use global in-memory object
+availability; the complete
+persist/sign/broadcast crash matrix is absent; and no stale-disk/signer,
 epoch-transition, or heterogeneous-certificate campaign exists. The key-aware
 deterministic signature scheme is test-only and is not Ed25519 or
 authenticated-network evidence.

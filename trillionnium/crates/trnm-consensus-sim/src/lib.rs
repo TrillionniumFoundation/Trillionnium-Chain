@@ -9,6 +9,8 @@ mod simulator;
 mod trace;
 
 pub use simulator::{
-    MessageKind, NodeId, NodeSnapshot, SimConfig, SimError, Simulator, GENESIS_BLOCK_ID,
+    FinalityConflict, InvalidFinalityObservation, MessageKind, NodeId, NodeSnapshot,
+    ScriptedValidationOutcome, SimConfig, SimError, Simulator, GENESIS_BLOCK_ID,
 };
 pub use trace::{Trace, TraceDigest, TraceEntry};
+pub use trnm_consensus_core::PayloadValidationResult;

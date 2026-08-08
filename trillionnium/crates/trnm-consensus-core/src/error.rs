@@ -1,7 +1,7 @@
 use alloc::boxed::Box;
 use core::fmt;
 
-use trnm_consensus_types::{BlockId, Epoch, ValidationError, ValidatorId, View};
+use trnm_consensus_types::{BlockId, Epoch, Height, ValidationError, ValidatorId, View};
 
 pub type Result<T> = core::result::Result<T, CoreError>;
 
@@ -32,14 +32,33 @@ pub enum CoreError {
     ConcurrentSignIntent,
     UnknownValidation(BlockId),
     TooManyPendingValidations,
+    PayloadTerminalFactCacheFull,
     BlockTooLarge {
         actual: usize,
         maximum: usize,
     },
+    PayloadValidationResourceTooLarge {
+        actual: usize,
+        maximum: usize,
+    },
+    ValidationCapabilityMismatch {
+        expected: BlockId,
+        received: BlockId,
+    },
     ConflictingPayloadValidation(BlockId),
     UnsafeProposal,
+    UnsupportedBlockKind,
+    EpochBoundaryUnsupported {
+        height: Height,
+        checkpoint_height: Height,
+    },
+    UnsupportedEpochAnchor,
+    InvalidOrdinaryCertificate,
+    ConflictingTcHighQcSyncTarget,
+    TooManyPendingStandaloneQcs,
     ConflictingCertificate,
     ConflictingBlock(BlockId),
+    ConflictingProposalWitness(BlockId),
     BlockTreeFull,
     MissingBlock(BlockId),
     ArithmeticOverflow(&'static str),
@@ -99,21 +118,59 @@ impl fmt::Display for CoreError {
             Self::TooManyPendingValidations => {
                 formatter.write_str("too many pending payload validations")
             }
+            Self::PayloadTerminalFactCacheFull => {
+                formatter.write_str("durable payload terminal-fact cache has no evictable entry")
+            }
             Self::BlockTooLarge { actual, maximum } => write!(
                 formatter,
                 "block body is too large: {actual} bytes exceeds {maximum} bytes",
+            ),
+            Self::PayloadValidationResourceTooLarge { actual, maximum } => write!(
+                formatter,
+                "payload-validation durable resource weight is too large: {actual} bytes exceeds {maximum} bytes",
+            ),
+            Self::ValidationCapabilityMismatch { expected, received } => write!(
+                formatter,
+                "block-validation capability identifies {received:?}; expected {expected:?}",
             ),
             Self::ConflictingPayloadValidation(block_id) => write!(
                 formatter,
                 "payload validation changed for block {block_id:?}",
             ),
             Self::UnsafeProposal => formatter.write_str("proposal violates the safe-vote rule"),
+            Self::UnsupportedBlockKind => formatter
+                .write_str("non-regular block kinds are unsupported before epoch transition"),
+            Self::EpochBoundaryUnsupported {
+                height,
+                checkpoint_height,
+            } => write!(
+                formatter,
+                "height {} reaches active epoch checkpoint {}; epoch-transition signing is unsupported",
+                height.get(),
+                checkpoint_height.get(),
+            ),
+            Self::UnsupportedEpochAnchor => formatter.write_str(
+                "epoch-anchor consensus references are unsupported before epoch transition",
+            ),
+            Self::InvalidOrdinaryCertificate => formatter.write_str(
+                "ordinary certificate must have positive view and height and exact block binding",
+            ),
+            Self::ConflictingTcHighQcSyncTarget => {
+                formatter.write_str("a different TC high-QC sync target is already durable")
+            }
+            Self::TooManyPendingStandaloneQcs => {
+                formatter.write_str("standalone QC sync backlog is full")
+            }
             Self::ConflictingCertificate => {
                 formatter.write_str("conflicting certificate at the same monotonic view")
             }
             Self::ConflictingBlock(block_id) => {
                 write!(formatter, "conflicting header for block id {block_id:?}")
             }
+            Self::ConflictingProposalWitness(block_id) => write!(
+                formatter,
+                "a different signed proposal witness is already fixed for block {block_id:?}",
+            ),
             Self::BlockTreeFull => formatter.write_str("bounded block tree is full"),
             Self::MissingBlock(block_id) => write!(formatter, "missing block {block_id:?}"),
             Self::ArithmeticOverflow(field) => write!(formatter, "arithmetic overflow in {field}"),

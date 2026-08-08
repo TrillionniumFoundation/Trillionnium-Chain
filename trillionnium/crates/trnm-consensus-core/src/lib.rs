@@ -24,8 +24,13 @@ mod model;
 pub use crate::core::{leader_for, Core};
 pub use crate::error::{CoreError, Result};
 pub use crate::model::{
-    BarrierId, CoreConfig, Effect, FinalizedTip, Input, OutboundMessage, SafetyHalt, SafetyState,
-    SignId, SignIntent, SignKind, ValidationId,
+    BarrierId, ClaimedPayloadValidationRequestV0, CoreConfig, DuplicatePayloadValidationRequestV0,
+    DurableFinalizationV0, DurablePayloadValidationCompletionV0,
+    DurablePayloadValidationObligationV0, Effect, FinalizedTip, Input, InvalidPayloadReference,
+    OutboundMessage, PayloadTerminalFact, PayloadTerminalResult, PayloadValidationParentV0,
+    PayloadValidationRequest, PayloadValidationResult, PayloadValidationRouteV0,
+    PendingStandaloneQcSync, PendingTcHighQcSync, SafetyHalt, SafetyState, SignId, SignIntent,
+    SignKind, ValidationId, SAFETY_STATE_SCHEMA_VERSION,
 };
 
 #[cfg(test)]
