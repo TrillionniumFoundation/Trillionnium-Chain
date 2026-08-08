@@ -7656,12 +7656,13 @@ mod tests {
             authenticated_candidate_abci_fixture_v0(compact_profile, Some(state_path));
         advance_authenticated_candidate_app_v0(&app, source_bootstrap_height - 1);
         install_authenticated_candidate_source_v0(&app, source_bootstrap_height, &source_entries);
-        advance_authenticated_candidate_app_v0(&app, parent_height);
-        // Drain the real cutoff-height V4 snapshot reader before the
-        // synchronous test-only retention hook takes the SQLite maintenance
-        // gate.
+        // Stop at the exact periodic cutoff and drain its asynchronous V4
+        // snapshot before advancing. A busy production worker intentionally
+        // coalesces later interval requests to the newest committed head.
+        advance_authenticated_candidate_app_v0(&app, cutoff_height);
         let cutoff_snapshot = wait_for_snapshot(&app, cutoff_height);
         assert_eq!(cutoff_snapshot.format, SNAPSHOT_FORMAT_V4);
+        advance_authenticated_candidate_app_v0(&app, parent_height);
 
         let parent_head = app.height_and_app_hash().unwrap();
         let parent_projection = app
