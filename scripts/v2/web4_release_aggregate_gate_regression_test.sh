@@ -45,7 +45,9 @@ done
 NEG_LOG="$(mktemp -t web4-release-neg.XXXXXX.log)"
 trap 'rm -f "$NEG_LOG"' EXIT
 
-if WEB4_RELEASE_REQUIRED_GATES="scripts/v2/definitely_missing_gate.sh" "$GATE" >"$NEG_LOG" 2>&1; then
+if WEB4_RELEASE_ALLOW_CI_OVERRIDE=1 \
+  WEB4_RELEASE_REQUIRED_GATES="scripts/v2/definitely_missing_gate.sh" \
+  "$GATE" >"$NEG_LOG" 2>&1; then
   echo "[FAIL] aggregate gate should fail when required gate script is missing" >&2
   exit 1
 fi
