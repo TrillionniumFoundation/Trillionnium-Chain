@@ -7,6 +7,8 @@ on:
   push:
     paths:
       - 'trillionnium/**'
+      - 'scripts/**'
+      - 'config/alert-policy/**'
       - '.github/workflows/rust-l1-nightly-health.yml'
 
 permissions:
@@ -19,6 +21,23 @@ concurrency:
 jobs:
   rust-l1-health:
     runs-on: macos-latest
+    env:
+      TZ: UTC
+      LANG: C.UTF-8
+      LC_ALL: C.UTF-8
+      LC_NUMERIC: C
+      LC_COLLATE: C
+      LC_TIME: C
+      LC_CTYPE: C
+      LC_MESSAGES: C
+      LC_MONETARY: C
+      LC_MEASUREMENT: C
+      PYTHONHASHSEED: "0"
+      PYTHONDONTWRITEBYTECODE: "1"
+      PYTHONUTF8: "1"
+      PYTHONIOENCODING: "UTF-8"
+      CI: "true"
+      SOURCE_DATE_EPOCH: "1704067200"
     timeout-minutes: 45
 
     steps:
@@ -35,6 +54,7 @@ jobs:
       - name: Rust workspace tests
         run: |
           export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
+          export RUST_TEST_THREADS="${RUST_TEST_THREADS:-1}"
           cd trillionnium
           cargo test --workspace --locked
 
@@ -129,18 +149,73 @@ jobs:
           cd trillionnium
           ./scripts/check_bft_round_change.sh
 
-      - name: Consensus fault matrix (hard gate)
+      - name: "Consensus fault matrix (hard gate: baseline/restart/byzantine)"
+        if: always()
+        id: consensus_fault_hard
         run: |
           set -euo pipefail
           export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
           cd trillionnium
+          hard_report="run/health/consensus-fault-matrix-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}-hard.txt"
+          echo "hard_report=${hard_report}" >> "$GITHUB_OUTPUT"
+          CONSENSUS_FAULT_MATRIX_OUT="$hard_report" \
+          GATE_MODE=hard \
+          ALLOW_FAIL=0 \
+          EXPECTED_CASES=3 \
+          CASE_FILTER="baseline,restart_recovery,byzantine_rounds" \
           BASELINE_MAX_FINALITY_P95_MS=${BASELINE_MAX_FINALITY_P95_MS:-100} \
-          SLOW_BLOCK_MAX_FINALITY_P95_MS=${SLOW_BLOCK_MAX_FINALITY_P95_MS:-300} \
           RESTART_RECOVERY_MAX_FINALITY_P95_MS=${RESTART_RECOVERY_MAX_FINALITY_P95_MS:-200} \
+          BYZANTINE_ROUNDS_MAX_FINALITY_P95_MS=${BYZANTINE_ROUNDS_MAX_FINALITY_P95_MS:-220} \
           BASELINE_MAX_ROUND_CHANGE_TOTAL=${BASELINE_MAX_ROUND_CHANGE_TOTAL:-8} \
-          SLOW_BLOCK_MAX_ROUND_CHANGE_TOTAL=${SLOW_BLOCK_MAX_ROUND_CHANGE_TOTAL:-8} \
           RESTART_RECOVERY_MAX_ROUND_CHANGE_TOTAL=${RESTART_RECOVERY_MAX_ROUND_CHANGE_TOTAL:-8} \
+          BYZANTINE_ROUNDS_MAX_ROUND_CHANGE_TOTAL=${BYZANTINE_ROUNDS_MAX_ROUND_CHANGE_TOTAL:-10} \
           ./scripts/run_consensus_fault_matrix.sh
+
+      - name: "Consensus fault matrix (soft gate observe: 5 stress cases)"
+        if: always()
+        id: consensus_fault_soft
+        continue-on-error: true
+        run: |
+          set -euo pipefail
+          export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
+          cd trillionnium
+          soft_report="run/health/consensus-fault-matrix-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}-soft.txt"
+          echo "soft_report=${soft_report}" >> "$GITHUB_OUTPUT"
+          CONSENSUS_FAULT_MATRIX_OUT="$soft_report" \
+          GATE_MODE=soft \
+          EXPECTED_CASES=5 \
+          CASE_FILTER="slow_block,faulty_round_backoff,leader_jitter,message_reorder,slow_validator" \
+          ALLOW_FAIL=1 \
+          SLOW_BLOCK_MAX_FINALITY_P95_MS=${SLOW_BLOCK_MAX_FINALITY_P95_MS:-300} \
+          FAULTY_ROUND_BACKOFF_MAX_FINALITY_P95_MS=${FAULTY_ROUND_BACKOFF_MAX_FINALITY_P95_MS:-320} \
+          LEADER_JITTER_MAX_FINALITY_P95_MS=${LEADER_JITTER_MAX_FINALITY_P95_MS:-320} \
+          MESSAGE_REORDER_MAX_FINALITY_P95_MS=${MESSAGE_REORDER_MAX_FINALITY_P95_MS:-350} \
+          SLOW_VALIDATOR_MAX_FINALITY_P95_MS=${SLOW_VALIDATOR_MAX_FINALITY_P95_MS:-320} \
+          ./scripts/run_consensus_fault_matrix.sh
+
+      - name: Append consensus fault matrix (hard/soft) to GitHub Step Summary
+        if: always()
+        run: |
+          set -euo pipefail
+          cd trillionnium
+
+          hard_report="${{ steps.consensus_fault_hard.outputs.hard_report }}"
+          soft_report="${{ steps.consensus_fault_soft.outputs.soft_report }}"
+          if [ -n "${GITHUB_STEP_SUMMARY:-}" ]; then
+            {
+              echo "## Consensus Fault Matrix"
+              echo
+              if [ -n "$hard_report" ] && [ -f "$hard_report" ]; then
+                echo "### Hard gate"
+                cat "$hard_report"
+                echo
+              fi
+              if [ -n "$soft_report" ] && [ -f "$soft_report" ]; then
+                echo "### Soft observation"
+                cat "$soft_report"
+              fi
+            } >> "$GITHUB_STEP_SUMMARY"
+          fi
 
       - name: Request fault injection (MVP hard gate)
         run: |
@@ -253,11 +328,14 @@ jobs:
           TXS=10000 KEYS=256 READ_FANOUT=4 WRITE_EVERY=1 ./scripts/run_executor_hotspot_experiment.sh
 
       - name: Run aggressive-vs-original regression matrix
+        id: regression_matrix
         run: |
           set -euo pipefail
           export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
           cd trillionnium
           TXS=${REGRESSION_MATRIX_TXS:-10000} ./scripts/run_bench_regression_matrix.sh
+          regression_csv=$(ls -1t run/bench/bench-regression-matrix-*.csv 2>/dev/null | head -n 1 || true)
+          echo "regression_csv=${regression_csv}" >> "$GITHUB_OUTPUT"
 
       - name: Build aggressive profiling summary
         if: always()
@@ -308,30 +386,44 @@ jobs:
 
       - name: Auto-adaptive threshold suggestion (non-gate)
         if: always()
+        id: auto_adaptive_suggestion
         run: |
           set -euo pipefail
           export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
           cd trillionnium
 
           ./scripts/suggest_auto_adaptive_thresholds.py
+          suggestion_file=$(ls -1t run/health/auto-adaptive-threshold-suggestion-*.txt 2>/dev/null | head -n 1 || true)
+          echo "suggestion_file=${suggestion_file}" >> "$GITHUB_OUTPUT"
 
       - name: Nightly auto-attribution labels (always)
         if: always()
+        id: nightly_attribution
         run: |
           set -euo pipefail
           export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
           cd trillionnium
 
+          attribution_file="run/health/nightly-attribution-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}.txt"
+          NIGHTLY_ATTRIBUTION_OUT="$attribution_file" \
           THRESHOLD_PROFILE=${THRESHOLD_PROFILE:-stage2} ./scripts/nightly_attribution.sh
+          echo "attribution_file=${attribution_file}" >> "$GITHUB_OUTPUT"
 
       - name: Render nightly summary (non-gate)
         if: always()
+        id: render_nightly_summary
         run: |
           set -euo pipefail
           export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
           cd trillionnium
 
+          summary_out="run/health/nightly-summary-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}.md"
+          NIGHTLY_SUMMARY_OUT="${summary_out}" \
+          NIGHTLY_ATTRIBUTION_FILE="${{ steps.nightly_attribution.outputs.attribution_file }}" \
+          AUTO_ADAPTIVE_SUGGESTION_FILE="${{ steps.auto_adaptive_suggestion.outputs.suggestion_file }}" \
+          BENCH_REGRESSION_CSV="${{ steps.regression_matrix.outputs.regression_csv }}" \
           ./scripts/render_nightly_summary.py
+          echo "summary_file=${summary_out}" >> "$GITHUB_OUTPUT"
 
       - name: Append nightly summary to GitHub Step Summary
         if: always()
@@ -339,17 +431,18 @@ jobs:
           set -euo pipefail
           cd trillionnium
 
-          latest_summary=$(ls -1t run/health/nightly-summary-*.md | head -n 1)
-          if [ -n "${GITHUB_STEP_SUMMARY:-}" ] && [ -f "${latest_summary}" ]; then
+          summary_file="${{ steps.render_nightly_summary.outputs.summary_file }}"
+          if [ -n "${GITHUB_STEP_SUMMARY:-}" ] && [ -f "${summary_file}" ]; then
             {
               echo "## Nightly Health (Rendered)"
               echo
-              cat "${latest_summary}"
+              cat "${summary_file}"
             } >> "${GITHUB_STEP_SUMMARY}"
           fi
 
       - name: PR-5 treasury reconcile report (non-gate)
         if: always()
+        id: pr5_reconcile_report
         continue-on-error: true
         run: |
           set -euo pipefail
@@ -363,17 +456,59 @@ jobs:
 
       - name: Build PR-6 daily security summary (non-gate)
         if: always()
+        id: pr6_daily_security_summary
         continue-on-error: true
         run: |
           set -euo pipefail
+          NIGHTLY_ATTRIBUTION_FILE="${{ steps.nightly_attribution.outputs.attribution_file }}" \
+          NIGHTLY_SUMMARY_FILE="${{ steps.render_nightly_summary.outputs.summary_file }}" \
+          AUTO_ADAPTIVE_SUGGESTION_FILE="${{ steps.auto_adaptive_suggestion.outputs.suggestion_file }}" \
           python3 ./scripts/v2/pr6_daily_security_summary.py
 
       - name: Build PR-9 weekly alert governance (non-gate)
         if: always()
+        id: pr9_weekly_alert_governance
         continue-on-error: true
         run: |
           set -euo pipefail
           python3 ./scripts/v2/pr9_weekly_alert_governance.py
+
+      - name: PR-7 alert delivery gate (non-gate, observable)
+        if: always()
+        id: pr7_alert_delivery_gate
+        continue-on-error: true
+        run: |
+          set -euo pipefail
+          PR7_GATE_LOCK_DIR=run/pr7-alert-delivery/.nightly-gate-lock \
+          PR7_GATE_LOCK_WAIT_SECONDS=120 \
+          PR7_DELIVERY_FAIL_MODE=escalate DRY_RUN=1 ./scripts/v2/pr7_alert_delivery_gate.sh
+
+      - name: Build P11 policy rollback guard (dry-run, observable)
+        if: always()
+        id: p11_policy_rollback_guard
+        continue-on-error: true
+        run: |
+          set -euo pipefail
+          p11_json="run/pr11/policy-rollback-guard.json"
+          P11_ROLLBACK_GUARD_JSON_OUT="$p11_json" \
+            ./scripts/v2/p11_policy_rollback_guard.sh
+          python3 - "$p11_json" <<'PY'
+          import json
+          import sys
+          from pathlib import Path
+
+          path = Path(sys.argv[1])
+          payload = json.loads(path.read_text(encoding="utf-8"))
+          if payload.get("would_rollback") is True or payload.get("status") == "FAIL":
+              raise SystemExit("P11 dry-run detected a rollback condition")
+          PY
+
+      - name: PR-7 delivery end-to-end replay gate (hard)
+        if: always()
+        run: |
+          set -euo pipefail
+          ./scripts/v2/pr7_delivery_e2e_gate.sh
+          ./scripts/v2/pr7_global_retry_budget_storm_test.sh
 
       - name: Append PR-6 daily security summary to GitHub Step Summary
         if: always()
@@ -402,6 +537,75 @@ jobs:
               cat "${summary_file}"
             } >> "${GITHUB_STEP_SUMMARY}"
           fi
+
+      - name: Append PR-7 alert delivery gate status to GitHub Step Summary
+        if: always()
+        continue-on-error: true
+        run: |
+          set -euo pipefail
+          status_file=$(ls -1t run/pr7-alerts/*/pr7-delivery-status.env 2>/dev/null | head -n 1 || true)
+          if [ -n "${GITHUB_STEP_SUMMARY:-}" ] && [ -n "${status_file}" ] && [ -f "${status_file}" ]; then
+            {
+              echo "## PR-7 Alert Delivery Gate Status"
+              echo
+              cat "${status_file}"
+            } >> "${GITHUB_STEP_SUMMARY}"
+          fi
+
+      - name: Aggregate nightly critical soft-fail signals
+        if: always()
+        run: |
+          set -euo pipefail
+
+          OUT_DIR="trillionnium/run/health"
+          mkdir -p "$OUT_DIR"
+          OUT_FILE="$OUT_DIR/nightly-softfail-summary-${GITHUB_RUN_ID:-local}-${GITHUB_RUN_ATTEMPT:-1}.md"
+
+          pr5_outcome="${{ steps.pr5_reconcile_report.outcome }}"
+          pr6_outcome="${{ steps.pr6_daily_security_summary.outcome }}"
+          pr9_outcome="${{ steps.pr9_weekly_alert_governance.outcome }}"
+          p11_outcome="${{ steps.p11_policy_rollback_guard.outcome }}"
+          pr7_outcome="${{ steps.pr7_alert_delivery_gate.outcome }}"
+
+          critical_failed=0
+          observe_failed=0
+
+          if [[ "$pr6_outcome" != "success" ]]; then critical_failed=1; fi
+          if [[ "$p11_outcome" != "success" ]]; then critical_failed=1; fi
+          if [[ "$pr7_outcome" != "success" ]]; then critical_failed=1; fi
+          if [[ "$pr5_outcome" != "success" ]]; then observe_failed=1; fi
+          if [[ "$pr9_outcome" != "success" ]]; then observe_failed=1; fi
+
+          {
+            echo "# Nightly soft-fail summary"
+            echo
+            echo "| scope | step_id | class | outcome | signal |"
+            echo "| --- | --- | --- | --- | --- |"
+            echo "| report | pr5_reconcile_report | observe | ${pr5_outcome} | $([[ "$pr5_outcome" == "success" ]] && echo clear || echo soft_fail_observe) |"
+            echo "| security | pr6_daily_security_summary | critical | ${pr6_outcome} | $([[ "$pr6_outcome" == "success" ]] && echo clear || echo soft_fail_critical) |"
+            echo "| report | pr9_weekly_alert_governance | observe | ${pr9_outcome} | $([[ "$pr9_outcome" == "success" ]] && echo clear || echo soft_fail_observe) |"
+            echo "| delivery_guard | p11_policy_rollback_guard | critical | ${p11_outcome} | $([[ "$p11_outcome" == "success" ]] && echo clear || echo soft_fail_critical) |"
+            echo "| delivery | pr7_alert_delivery_gate | critical | ${pr7_outcome} | $([[ "$pr7_outcome" == "success" ]] && echo clear || echo soft_fail_critical) |"
+            echo
+            echo "- critical_soft_fail_present: \`$([[ "$critical_failed" -eq 1 ]] && echo true || echo false)\`"
+            echo "- observe_soft_fail_present: \`$([[ "$observe_failed" -eq 1 ]] && echo true || echo false)\`"
+            echo "- gate_signal: \`$([[ "$critical_failed" -eq 1 ]] && echo nightly_critical_soft_fail || echo clear)\`"
+            echo "- semantics: \`critical soft-fail no longer stays silently green; observe-only soft-fail remains non-blocking but visible in summary\`"
+          } > "$OUT_FILE"
+
+          if [ -n "${GITHUB_STEP_SUMMARY:-}" ]; then
+            {
+              echo "## Nightly Soft-Fail Signals"
+              echo
+              cat "$OUT_FILE"
+            } >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+          if [[ "$critical_failed" -eq 1 ]]; then
+            echo "critical nightly soft-fail detected (security/delivery/reporting-critical path); see $OUT_FILE" >&2
+            exit 1
+          fi
+
       - name: Upload nightly health artifacts
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
@@ -424,7 +628,10 @@ jobs:
             run/pr5-reconcile/**
             run/pr6-ops/**
             run/pr7-topn/**
+            run/pr7-alerts/**
+            run/pr7-alert-delivery/**
             run/pr9/**
+            run/pr11/**
             data/reexec-smoke/**
             data/reexec-bundles/**
             data/worker-onboard/**

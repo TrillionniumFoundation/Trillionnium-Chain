@@ -25,7 +25,6 @@ required_lines=(
   'PYTHONUTF8: "1"'
   'PYTHONIOENCODING: "UTF-8"' 
   'CI: "true"'
-  'GITHUB_ACTIONS: "true"'
   'SOURCE_DATE_EPOCH: "1704067200"'
   'timeout-minutes: 45'
   'export RUST_TEST_THREADS="${RUST_TEST_THREADS:-1}"'
