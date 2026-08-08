@@ -36,7 +36,7 @@ if [[ "$FUZZ_VERSION" != "cargo-fuzz 0.13.2" ]]; then
 fi
 
 cd "$FUZZ_ROOT"
-for target in canonical_tx_json signed_envelope_json; do
+for target in canonical_tx_json signed_envelope_json poco_cev0_exact; do
   mkdir -p "$WORK_ROOT/$target"
   cp -a "$FUZZ_ROOT/corpus/$target/." "$WORK_ROOT/$target/"
   printf 'bounded_fuzz_smoke target=%s seconds=%s max_len=%s\n' \

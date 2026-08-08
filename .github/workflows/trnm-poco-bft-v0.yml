@@ -1,0 +1,337 @@
+name: TRNM PoCO-BFT v0 gates
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - ".github/workflows/trnm-poco-bft-v0.yml"
+      - "PROJECT_ID"
+      - "PROJECT_BOUNDARY.json"
+      - "docs/development/TRNM_POCO_BFT_DELIVERY_PLAN_2026-08-04.md"
+      - "docs/protocol/poco-bft-v0/**"
+      - "formal/quint/poco-bft-v0/**"
+      - "proto/trnm/poco/**"
+      - "scripts/ci/author_poco_bft_v0_application_sequences.mjs"
+      - "scripts/ci/check_poco_bft_v0_*"
+      - "scripts/ci/install_cargo_deny.sh"
+      - "scripts/ci/install_cargo_fuzz.sh"
+      - "scripts/project-preflight.sh"
+      - "deny.toml"
+      - "rust-toolchain.toml"
+      - "trillionnium/Cargo.lock"
+      - "trillionnium/Cargo.toml"
+      - "trillionnium/crates/trnm-consensus-core/**"
+      - "trillionnium/crates/trnm-consensus-app/**"
+      - "trillionnium/crates/trnm-consensus-crypto/**"
+      - "trillionnium/crates/trnm-consensus-sim/**"
+      - "trillionnium/crates/trnm-consensus-types/**"
+      - "trillionnium/crates/trnm-finality-types/**"
+      - "trillionnium/crates/trnm-protocol/**"
+      - "trillionnium/crates/trnm-runtime/**"
+      - "trillionnium/fuzz/**"
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/trnm-poco-bft-v0.yml"
+      - "PROJECT_ID"
+      - "PROJECT_BOUNDARY.json"
+      - "docs/development/TRNM_POCO_BFT_DELIVERY_PLAN_2026-08-04.md"
+      - "docs/protocol/poco-bft-v0/**"
+      - "formal/quint/poco-bft-v0/**"
+      - "proto/trnm/poco/**"
+      - "scripts/ci/author_poco_bft_v0_application_sequences.mjs"
+      - "scripts/ci/check_poco_bft_v0_*"
+      - "scripts/ci/install_cargo_deny.sh"
+      - "scripts/ci/install_cargo_fuzz.sh"
+      - "scripts/project-preflight.sh"
+      - "deny.toml"
+      - "rust-toolchain.toml"
+      - "trillionnium/Cargo.lock"
+      - "trillionnium/Cargo.toml"
+      - "trillionnium/crates/trnm-consensus-core/**"
+      - "trillionnium/crates/trnm-consensus-app/**"
+      - "trillionnium/crates/trnm-consensus-crypto/**"
+      - "trillionnium/crates/trnm-consensus-sim/**"
+      - "trillionnium/crates/trnm-consensus-types/**"
+      - "trillionnium/crates/trnm-finality-types/**"
+      - "trillionnium/crates/trnm-protocol/**"
+      - "trillionnium/crates/trnm-runtime/**"
+      - "trillionnium/fuzz/**"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: trnm-poco-bft-v0-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CI: "true"
+  LANG: C.UTF-8
+  LC_ALL: C.UTF-8
+  TZ: UTC
+  PYTHONHASHSEED: "0"
+  PYTHONDONTWRITEBYTECODE: "1"
+  PYTHONIOENCODING: UTF-8
+  PYTHONUTF8: "1"
+  CARGO_INCREMENTAL: "0"
+  CARGO_TERM_COLOR: never
+  CARGO_NET_RETRY: "5"
+  CARGO_HTTP_TIMEOUT: "120"
+  CARGO_REGISTRIES_CRATES_IO_PROTOCOL: sparse
+
+jobs:
+  vectors-schema-proto:
+    name: Frozen vectors, schemas, and protobuf projection
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          path: trillionnium-chain
+          persist-credentials: false
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: "22.18.0"
+
+      - name: Install checksum-pinned protoc 29.3
+        working-directory: trillionnium-chain
+        env:
+          PROTOC_ARCHIVE_SHA256: 3e866620c5be27664f3d2fa2d656b5f3e09b5152b42f1bedbf427b333e90021a
+        run: |
+          set -euo pipefail
+          archive="$RUNNER_TEMP/protoc-29.3-linux-x86_64.zip"
+          install_root="$RUNNER_TEMP/protoc-29.3"
+          curl --fail --location --retry 3 --retry-all-errors \
+            https://github.com/protocolbuffers/protobuf/releases/download/v29.3/protoc-29.3-linux-x86_64.zip \
+            --output "$archive"
+          printf '%s  %s\n' "$PROTOC_ARCHIVE_SHA256" "$archive" | sha256sum --check --strict
+          unzip -q "$archive" -d "$install_root"
+          printf '%s\n' "PROTOC=$install_root/bin/protoc" >> "$GITHUB_ENV"
+          "$install_root/bin/protoc" --version
+
+      - name: Independent vector gates
+        working-directory: trillionnium-chain
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/check_poco_bft_v0_parameters.py
+          python3 scripts/ci/check_poco_bft_v0_wire_vectors.py
+          python3 scripts/ci/check_poco_bft_v0_anchor_finality_vectors.py
+          python3 scripts/ci/check_poco_bft_v0_ordered_roots.py
+          bash scripts/ci/check_poco_bft_v0_qc_tc_vectors.sh
+          bash scripts/ci/check_poco_bft_v0_handoff_vectors.sh
+
+      - name: Machine-readable schema and exact-parser gates
+        working-directory: trillionnium-chain
+        run: |
+          set -euo pipefail
+          bash scripts/ci/check_poco_bft_v0_logical_schema.sh
+          bash scripts/ci/check_poco_bft_v0_anchor_handoff_schema.sh
+          bash scripts/ci/check_poco_bft_v0_epoch_commitment_schema.sh
+          bash scripts/ci/check_poco_bft_v0_block_body_schema.sh
+          bash scripts/ci/check_poco_bft_v0_checkpoint_finality_schema.sh
+          bash scripts/ci/check_poco_bft_v0_joint_handoff_schema.sh
+          bash scripts/ci/check_poco_bft_v0_snapshot_candidate_schema.sh
+          bash scripts/ci/check_poco_bft_v0_consumption_certificate_schema.sh
+          bash scripts/ci/check_poco_bft_v0_snapshot_namespace_schema.sh
+          bash scripts/ci/check_poco_bft_v0_snapshot_transition_schema.sh
+          bash scripts/ci/check_poco_bft_v0_checkpoint_execution_schema.sh
+          bash scripts/ci/check_poco_bft_v0_business_semantics_schema.sh
+          bash scripts/ci/check_poco_bft_v0_application_authority_schema.sh
+          bash scripts/ci/check_poco_bft_v0_application_operation_sequences.sh
+          bash scripts/ci/check_poco_bft_v0_authenticated_candidate_selection.sh
+          bash scripts/ci/check_poco_bft_v0_authenticated_next_epoch_commitment.sh
+          bash scripts/ci/check_poco_bft_v0_authenticated_checkpoint_handoff.sh
+
+      - name: Pinned protobuf descriptor gate
+        working-directory: trillionnium-chain
+        run: bash scripts/ci/check_poco_bft_v0_proto.sh
+
+      - name: Project boundary preflight
+        working-directory: trillionnium-chain
+        run: bash scripts/project-preflight.sh --audit
+
+  rust:
+    name: Rust tests, Clippy, and formatting
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          path: trillionnium-chain
+          persist-credentials: false
+
+      - uses: dtolnay/rust-toolchain@4cda84d5c5c54efe2404f9d843567869ab1699d4
+        with:
+          toolchain: 1.95.0
+          components: clippy,rustfmt
+
+      - name: Consensus crate tests
+        working-directory: trillionnium-chain/trillionnium
+        run: |
+          set -euo pipefail
+          cargo test --locked -p trnm-consensus-types
+          cargo test --locked -p trnm-consensus-crypto
+          cargo test --locked -p trnm-consensus-core
+          cargo test --locked -p trnm-consensus-sim
+          cargo test --locked -p trnm-consensus-app --lib
+          cargo test --locked -p trnm-finality-types
+          cargo test --locked -p trnm-protocol
+          cargo test --locked -p trnm-runtime
+
+      - name: Crash-recovery smoke
+        working-directory: trillionnium-chain
+        run: bash scripts/ci/check_poco_bft_v0_recovery_smoke.sh
+
+      - name: Strict Clippy
+        working-directory: trillionnium-chain/trillionnium
+        run: |
+          set -euo pipefail
+          cargo clippy --locked -p trnm-consensus-types --all-targets -- -D warnings
+          cargo clippy --locked -p trnm-consensus-crypto --all-targets -- -D warnings
+          cargo clippy --locked -p trnm-consensus-core --all-targets -- -D warnings
+          cargo clippy --locked -p trnm-consensus-sim --all-targets -- -D warnings
+          # These integration crates retain legacy workspace dependencies.
+          # --no-deps keeps strictness on the selected package without
+          # turning unrelated retained warnings into PoCO tranche failures.
+          cargo clippy --locked -p trnm-finality-types --all-targets --no-deps -- -D warnings
+          cargo clippy --locked -p trnm-protocol --all-targets --no-deps -- -D warnings
+          cargo clippy --locked -p trnm-runtime --all-targets --no-deps -- -D warnings
+          # Apply the same package-scoped boundary to consensus-app.
+          cargo clippy --locked -p trnm-consensus-app --lib --tests --no-deps -- -D warnings
+
+      - name: Rustfmt
+        working-directory: trillionnium-chain/trillionnium
+        run: cargo fmt --all -- --check
+
+  formal:
+    name: Quint invariants, witnesses, and retained mutants
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          path: trillionnium-chain
+          persist-credentials: false
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: "22.18.0"
+
+      - name: Install lock-pinned Quint toolchain
+        working-directory: trillionnium-chain/formal/quint/poco-bft-v0
+        run: npm ci --ignore-scripts --no-audit --no-fund
+
+      - name: Run bounded formal gate
+        working-directory: trillionnium-chain
+        run: bash scripts/ci/check_poco_bft_v0_formal.sh
+
+  release-artifacts:
+    name: Release library artifact build
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          path: trillionnium-chain
+          persist-credentials: false
+
+      - uses: dtolnay/rust-toolchain@4cda84d5c5c54efe2404f9d843567869ab1699d4
+        with:
+          toolchain: 1.95.0
+
+      - name: Build release integration libraries
+        working-directory: trillionnium-chain/trillionnium
+        run: |
+          set -euo pipefail
+          cargo build --locked --release \
+            -p trnm-consensus-types \
+            -p trnm-consensus-crypto \
+            -p trnm-consensus-core \
+            -p trnm-consensus-app \
+            -p trnm-finality-types \
+            -p trnm-protocol \
+            -p trnm-runtime
+          find target/release/deps -maxdepth 1 -type f \
+            \( -name 'libtrnm_consensus_*' \
+               -o -name 'libtrnm_finality_types*' \
+               -o -name 'libtrnm_protocol*' \
+               -o -name 'libtrnm_runtime*' \) \
+            -print0 | sort -z > "$RUNNER_TEMP/trnm-poco-artifacts.list"
+          test -s "$RUNNER_TEMP/trnm-poco-artifacts.list"
+          tar --null --files-from "$RUNNER_TEMP/trnm-poco-artifacts.list" \
+            --create --gzip --file "$RUNNER_TEMP/trnm-poco-bft-v0-libs.tar.gz"
+          sha256sum "$RUNNER_TEMP/trnm-poco-bft-v0-libs.tar.gz" \
+            > "$RUNNER_TEMP/trnm-poco-bft-v0-libs.tar.gz.sha256"
+
+      - name: Upload release libraries
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: trnm-poco-bft-v0-libs-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/trnm-poco-bft-v0-libs.tar.gz
+            ${{ runner.temp }}/trnm-poco-bft-v0-libs.tar.gz.sha256
+          if-no-files-found: error
+          retention-days: 14
+
+  dependency-policy:
+    name: Cargo dependency policy
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          path: trillionnium-chain
+          persist-credentials: false
+
+      - uses: dtolnay/rust-toolchain@4cda84d5c5c54efe2404f9d843567869ab1699d4
+        with:
+          toolchain: 1.95.0
+
+      - name: Install checksum-pinned cargo-deny
+        working-directory: trillionnium-chain
+        run: |
+          scripts/ci/install_cargo_deny.sh "$RUNNER_TEMP/trnm-tools"
+          printf '%s\n' "$RUNNER_TEMP/trnm-tools" >> "$GITHUB_PATH"
+
+      - name: Enforce workspace and fuzz dependency policy
+        working-directory: trillionnium-chain
+        run: |
+          cargo deny --manifest-path trillionnium/Cargo.toml check
+          cargo deny --manifest-path trillionnium/fuzz/Cargo.toml check
+
+  fuzz-smoke:
+    name: Bounded canonical-input fuzz smoke
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          path: trillionnium-chain
+          persist-credentials: false
+
+      - uses: dtolnay/rust-toolchain@4cda84d5c5c54efe2404f9d843567869ab1699d4
+        with:
+          toolchain: nightly-2026-07-27
+
+      - name: Install checksum- and lock-pinned cargo-fuzz runner
+        working-directory: trillionnium-chain
+        run: |
+          scripts/ci/install_cargo_fuzz.sh "$RUNNER_TEMP/trnm-cargo-fuzz"
+          printf '%s\n' "$RUNNER_TEMP/trnm-cargo-fuzz/bin" >> "$GITHUB_PATH"
+
+      - name: Run bounded three-target smoke
+        working-directory: trillionnium-chain
+        env:
+          TRNM_FUZZ_SMOKE_SECONDS: "15"
+        run: scripts/ci/check_canonical_fuzz_smoke.sh
+
+      - name: Upload crash artifacts
+        if: failure()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: trnm-poco-fuzz-${{ github.run_id }}-${{ github.run_attempt }}
+          path: trillionnium-chain/trillionnium/fuzz/artifacts/**
+          if-no-files-found: ignore
+          retention-days: 14
