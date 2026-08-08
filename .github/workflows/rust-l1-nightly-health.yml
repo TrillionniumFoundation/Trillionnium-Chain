@@ -158,6 +158,8 @@ jobs:
           cd trillionnium
           hard_report="run/health/consensus-fault-matrix-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}-hard.txt"
           echo "hard_report=${hard_report}" >> "$GITHUB_OUTPUT"
+          # Six observed heights with two injected faulty rounds each produce
+          # twelve deterministic round changes; keep the hard bound exact.
           CONSENSUS_FAULT_MATRIX_OUT="$hard_report" \
           GATE_MODE=hard \
           ALLOW_FAIL=0 \
@@ -168,7 +170,7 @@ jobs:
           BYZANTINE_ROUNDS_MAX_FINALITY_P95_MS=${BYZANTINE_ROUNDS_MAX_FINALITY_P95_MS:-220} \
           BASELINE_MAX_ROUND_CHANGE_TOTAL=${BASELINE_MAX_ROUND_CHANGE_TOTAL:-8} \
           RESTART_RECOVERY_MAX_ROUND_CHANGE_TOTAL=${RESTART_RECOVERY_MAX_ROUND_CHANGE_TOTAL:-8} \
-          BYZANTINE_ROUNDS_MAX_ROUND_CHANGE_TOTAL=${BYZANTINE_ROUNDS_MAX_ROUND_CHANGE_TOTAL:-10} \
+          BYZANTINE_ROUNDS_MAX_ROUND_CHANGE_TOTAL=${BYZANTINE_ROUNDS_MAX_ROUND_CHANGE_TOTAL:-12} \
           ./scripts/run_consensus_fault_matrix.sh
 
       - name: "Consensus fault matrix (soft gate observe: 5 stress cases)"
@@ -338,7 +340,7 @@ jobs:
           echo "regression_csv=${regression_csv}" >> "$GITHUB_OUTPUT"
 
       - name: Build aggressive profiling summary
-        if: always()
+        if: ${{ always() && steps.regression_matrix.outcome != 'skipped' }}
         run: |
           set -euo pipefail
           export PATH="/opt/homebrew/opt/rustup/bin:$PATH"

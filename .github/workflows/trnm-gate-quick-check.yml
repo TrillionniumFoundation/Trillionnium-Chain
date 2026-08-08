@@ -321,6 +321,10 @@ jobs:
         run: |
           ./scripts/v2/nightly_artifact_binding_guard_test.sh
 
+      - name: Consensus fault matrix canonical metrics prefix regression
+        run: |
+          ./scripts/v2/consensus_fault_matrix_canonical_metrics_prefix_test.sh
+
       - name: Testnet preflight deterministic env guard regression
         run: |
           ./scripts/v2/rust_l1_testnet_preflight_deterministic_env_guard_test.sh
