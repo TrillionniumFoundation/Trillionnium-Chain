@@ -383,7 +383,9 @@ an earlier phase.
   diagnostic-string matching. An authenticated negative authority fact is a
   deterministic missing-fact reject, while a present-but-malformed companion,
   malformed authenticated semantic predecessor, or derived CAS/mutation
-  failure remains invariant. Leaf
+  failure remains invariant. Decision-ID mismatch and authenticated cap/window
+  rejection are deterministic; counter, epoch, retention, and aggregate
+  arithmetic exhaustion fail stop with typed reasons. Leaf
   errors not yet assigned a narrower reason remain conservatively typed as an
   authenticated-overlay invariant. Success keeps the exact decoded owner plus
   the still-open snapshot and unsealed family state. These attempts do not yet

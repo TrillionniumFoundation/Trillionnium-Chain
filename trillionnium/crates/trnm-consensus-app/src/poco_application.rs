@@ -2549,20 +2549,25 @@ impl PocoApplicationBlockOverlayV0 {
             return Err(DeterministicallyInvalid(Invalid::AuthorityRevisionMismatch));
         }
         validate_operation_capacity_before_clone_v0(&self.context, &self.overlay, operation)
-            .map_err(|_| {
-                DeterministicallyInvalid(match &operation.body {
-                    PocoApplicationOperationBodyV0::ResolveChallenge { .. } => {
-                        Invalid::ChallengeNotPending
-                    }
-                    PocoApplicationOperationBodyV0::ApproveGovernance { .. } => {
-                        Invalid::GovernanceApprovalMissing
-                    }
-                    PocoApplicationOperationBodyV0::RegisterValidator { .. }
-                    | PocoApplicationOperationBodyV0::RotateValidator { .. } => {
-                        Invalid::ValidatorConsensusKeyAlreadyActive
-                    }
-                    _ => Invalid::ProtocolWindowOrCap,
-                })
+            .map_err(|error| {
+                error
+                    .downcast_ref::<PocoApplicationApplyFailureV0>()
+                    .copied()
+                    .unwrap_or({
+                        DeterministicallyInvalid(match &operation.body {
+                            PocoApplicationOperationBodyV0::ResolveChallenge { .. } => {
+                                Invalid::ChallengeNotPending
+                            }
+                            PocoApplicationOperationBodyV0::ApproveGovernance { .. } => {
+                                Invalid::GovernanceApprovalMissing
+                            }
+                            PocoApplicationOperationBodyV0::RegisterValidator { .. }
+                            | PocoApplicationOperationBodyV0::RotateValidator { .. } => {
+                                Invalid::ValidatorConsensusKeyAlreadyActive
+                            }
+                            _ => Invalid::ProtocolWindowOrCap,
+                        })
+                    })
             })?;
         let operation_id = domain_hash(APPLICATION_OPERATION_DOMAIN, raw);
         if self.overlay.operation_ids.contains(&operation_id) {
@@ -2874,10 +2879,19 @@ fn target_record_count_before_clone_v0(
 ) -> Result<usize> {
     let target = current
         .checked_sub(removed)
-        .with_context(|| format!("{name} removal exceeds authenticated record count"))?
+        .ok_or_else(|| {
+            invariant_application_error_v0(PocoApplicationInvariantV0::DerivedMutationPostcondition)
+        })?
         .checked_add(added)
-        .with_context(|| format!("{name} record count overflow"))?;
-    ensure!(target <= cap, "{name} exceeds authority record bound");
+        .ok_or_else(|| {
+            invariant_application_error_v0(PocoApplicationInvariantV0::ProtocolCounterExhausted)
+        })?;
+    let _ = name;
+    if target > cap {
+        return Err(deterministic_application_error_v0(
+            PocoApplicationDeterministicInvalidV0::ProtocolWindowOrCap,
+        ));
+    }
     Ok(target)
 }
 
@@ -3150,14 +3164,15 @@ fn validate_operation_capacity_before_clone_v0(
     ]
     .into_iter()
     .try_fold(0usize, |total, count| {
-        total
-            .checked_add(count)
-            .context("target application authority record count overflow")
+        total.checked_add(count).ok_or_else(|| {
+            invariant_application_error_v0(PocoApplicationInvariantV0::ProtocolCounterExhausted)
+        })
     })?;
-    ensure!(
-        target_total <= MAX_TOTAL_AUTHORITY_RECORDS,
-        "target application authority record count exceeds hard cap"
-    );
+    if target_total > MAX_TOTAL_AUTHORITY_RECORDS {
+        return Err(deterministic_application_error_v0(
+            PocoApplicationDeterministicInvalidV0::ProtocolWindowOrCap,
+        ));
+    }
     Ok(())
 }
 
@@ -3309,7 +3324,9 @@ fn apply_operation_v0(
             "operation has unauthorized nullifier non-membership checks"
         );
     }
-    let decision_preimage = decision_preimage_digest_v0(context, operation)?;
+    let decision_preimage = decision_preimage_digest_v0(context, operation).map_err(|_| {
+        invariant_application_error_v0(PocoApplicationInvariantV0::OperationReencode)
+    })?;
     match &operation.body {
         PocoApplicationOperationBodyV0::AuthorizeConsumerKey {
             consumer_id_hex,
@@ -3986,7 +4003,9 @@ fn apply_prune_retired_meter_v0(
     let protocol_boundary = protocol_retention_boundary_v0(retired_at, &context.active_parameters)?;
     let meter_boundary = retired_at
         .checked_add(policy.retention_blocks)
-        .context("meter retention boundary overflow")?;
+        .ok_or_else(|| {
+            invariant_application_error_v0(PocoApplicationInvariantV0::PlannerArithmetic)
+        })?;
     ensure!(
         context.target_height.get() > protocol_boundary.max(meter_boundary),
         "retired-meter retention boundary has not been strictly crossed"
@@ -4999,29 +5018,36 @@ fn apply_propose_governance_v0(
     activation_height: u64,
     proposal_decision_id_hex: &str,
 ) -> Result<()> {
-    let expected_epoch = context
-        .active_epoch
-        .get()
-        .checked_add(1)
-        .context("governance target epoch overflow")?;
-    ensure!(
-        target_epoch == expected_epoch,
-        "governance proposal target is not the exact next epoch"
-    );
-    let phase = crate::poco_semantics::RolloutPhaseV0::try_from(phase)?;
-    let current_geometry =
-        EpochGeometryV0::new(context.active_epoch, &context.active_parameters)
-            .map_err(|error| anyhow::anyhow!("invalid governance source geometry: {error:?}"))?;
+    let expected_epoch = context.active_epoch.get().checked_add(1).ok_or_else(|| {
+        invariant_application_error_v0(PocoApplicationInvariantV0::ProtocolCounterExhausted)
+    })?;
+    if target_epoch != expected_epoch {
+        return Err(deterministic_application_error_v0(
+            PocoApplicationDeterministicInvalidV0::GovernanceRule,
+        ));
+    }
+    let phase = crate::poco_semantics::RolloutPhaseV0::try_from(phase).map_err(|_| {
+        deterministic_application_error_v0(PocoApplicationDeterministicInvalidV0::GovernanceRule)
+    })?;
+    let current_geometry = EpochGeometryV0::new(context.active_epoch, &context.active_parameters)
+        .map_err(|_| {
+        invariant_application_error_v0(PocoApplicationInvariantV0::AuthenticatedOverlay)
+    })?;
     let expected_activation = current_geometry
         .epoch_end()
         .get()
         .checked_add(1)
-        .context("governance activation height overflow")?;
-    ensure!(
-        activation_height == expected_activation,
-        "governance proposal activation is not the next epoch boundary"
-    );
-    let parameters_hash = exact_hash32_hex(parameters_hash_hex)?;
+        .ok_or_else(|| {
+            invariant_application_error_v0(PocoApplicationInvariantV0::PlannerArithmetic)
+        })?;
+    if activation_height != expected_activation {
+        return Err(deterministic_application_error_v0(
+            PocoApplicationDeterministicInvalidV0::GovernanceRule,
+        ));
+    }
+    let parameters_hash = exact_hash32_hex(parameters_hash_hex).map_err(|_| {
+        deterministic_application_error_v0(PocoApplicationDeterministicInvalidV0::GovernanceRule)
+    })?;
     let decision =
         require_derived_decision_id(preimage, b"propose-governance", proposal_decision_id_hex)?;
     ensure!(
@@ -5390,10 +5416,9 @@ fn apply_register_validator_v0(
             ),
             _ => bail!("validator rotation lacks active semantic predecessor"),
         }
-        let next_retired_count = history
-            .retired_key_count
-            .checked_add(1)
-            .context("validator retired-key count exhausted")?;
+        let next_retired_count = history.retired_key_count.checked_add(1).ok_or_else(|| {
+            invariant_application_error_v0(PocoApplicationInvariantV0::ProtocolCounterExhausted)
+        })?;
         (
             exact_hash32_hex(&history.history_head_hex)?,
             next_retired_count,
@@ -6244,18 +6269,23 @@ fn validate_meter_policy(policy: &MeterAuthorityPolicyV0) -> Result<()> {
 }
 
 fn checked_usage_after_v0(previous: u128, delta: u128, cap: u128, label: &str) -> Result<u128> {
-    let next = previous
-        .checked_add(delta)
-        .with_context(|| format!("{label} usage overflow"))?;
-    ensure!(next <= cap, "{label} usage exceeds authenticated cap");
+    let _ = label;
+    let next = previous.checked_add(delta).ok_or_else(|| {
+        invariant_application_error_v0(PocoApplicationInvariantV0::ProtocolCounterExhausted)
+    })?;
+    if next > cap {
+        return Err(deterministic_application_error_v0(
+            PocoApplicationDeterministicInvalidV0::ProtocolWindowOrCap,
+        ));
+    }
     Ok(next)
 }
 
 fn checked_usage_bucket_total_v0(counts: [usize; 4]) -> Result<usize> {
     counts.into_iter().try_fold(0usize, |total, count| {
-        total
-            .checked_add(count)
-            .context("application usage bucket count overflow")
+        total.checked_add(count).ok_or_else(|| {
+            invariant_application_error_v0(PocoApplicationInvariantV0::ProtocolCounterExhausted)
+        })
     })
 }
 
@@ -6272,7 +6302,9 @@ fn total_nonce_watermarks_v0(state: &PocoApplicationAuthorityStateV0) -> Result<
     state.consumer_keys.iter().try_fold(0usize, |total, key| {
         total
             .checked_add(key.nonce_watermarks.len())
-            .context("application nonce watermark count overflow")
+            .ok_or_else(|| {
+                invariant_application_error_v0(PocoApplicationInvariantV0::ProtocolCounterExhausted)
+            })
     })
 }
 
@@ -6291,20 +6323,21 @@ fn authority_record_count_v0(state: &PocoApplicationAuthorityStateV0) -> Result<
         state.future_candidate_registrations.len(),
     ];
     counts.into_iter().try_fold(0usize, |total, count| {
-        total
-            .checked_add(count)
-            .context("application authority record count overflow")
+        total.checked_add(count).ok_or_else(|| {
+            invariant_application_error_v0(PocoApplicationInvariantV0::ProtocolCounterExhausted)
+        })
     })
 }
 
 fn validate_usage_bucket_admission_v0(current: usize, new_buckets: usize) -> Result<usize> {
-    let target = current
-        .checked_add(new_buckets)
-        .context("application usage bucket count overflow")?;
-    ensure!(
-        target <= MAX_TOTAL_USAGE_BUCKETS,
-        "application authority usage bucket count exceeds hard cap"
-    );
+    let target = current.checked_add(new_buckets).ok_or_else(|| {
+        invariant_application_error_v0(PocoApplicationInvariantV0::ProtocolCounterExhausted)
+    })?;
+    if target > MAX_TOTAL_USAGE_BUCKETS {
+        return Err(deterministic_application_error_v0(
+            PocoApplicationDeterministicInvalidV0::ProtocolWindowOrCap,
+        ));
+    }
     Ok(target)
 }
 
@@ -6910,12 +6943,17 @@ fn require_derived_decision_id(
     label: &[u8],
     claimed_hex: &str,
 ) -> Result<[u8; 32]> {
-    let claimed = exact_hash32_hex(claimed_hex)?;
+    let claimed = exact_hash32_hex(claimed_hex).map_err(|_| {
+        deterministic_application_error_v0(
+            PocoApplicationDeterministicInvalidV0::SemanticTransition,
+        )
+    })?;
     let expected = derived_decision_id_v0(preimage, label);
-    ensure!(
-        claimed == expected,
-        "claimed decision ID is not derived from authenticated operation context"
-    );
+    if claimed != expected {
+        return Err(deterministic_application_error_v0(
+            PocoApplicationDeterministicInvalidV0::SemanticTransition,
+        ));
+    }
     Ok(expected)
 }
 
@@ -7898,8 +7936,20 @@ mod tests {
     #[test]
     fn scoped_usage_and_reserved_units_are_exact_bounded_and_checked() {
         assert_eq!(checked_usage_after_v0(40, 60, 100, "scope").unwrap(), 100);
-        assert!(checked_usage_after_v0(40, 61, 100, "scope").is_err());
-        assert!(checked_usage_after_v0(u128::MAX, 1, u128::MAX, "scope").is_err());
+        let over_cap = checked_usage_after_v0(40, 61, 100, "scope").unwrap_err();
+        assert_eq!(
+            over_cap.downcast_ref::<PocoApplicationApplyFailureV0>(),
+            Some(&PocoApplicationApplyFailureV0::DeterministicallyInvalid(
+                PocoApplicationDeterministicInvalidV0::ProtocolWindowOrCap,
+            )),
+        );
+        let overflow = checked_usage_after_v0(u128::MAX, 1, u128::MAX, "scope").unwrap_err();
+        assert_eq!(
+            overflow.downcast_ref::<PocoApplicationApplyFailureV0>(),
+            Some(&PocoApplicationApplyFailureV0::Invariant(
+                PocoApplicationInvariantV0::ProtocolCounterExhausted,
+            )),
+        );
         // A second meter contributes to the same scope instead of resetting it.
         let after_meter_a = checked_usage_after_v0(0, 40, 100, "scope").unwrap();
         assert_eq!(
@@ -7925,8 +7975,20 @@ mod tests {
         );
         let authority = PocoApplicationAuthorityStateV0::empty();
         let before = authority.clone();
-        assert!(validate_usage_bucket_admission_v0(MAX_TOTAL_USAGE_BUCKETS, 1).is_err());
-        assert!(validate_usage_bucket_admission_v0(usize::MAX, 1).is_err());
+        let over_cap = validate_usage_bucket_admission_v0(MAX_TOTAL_USAGE_BUCKETS, 1).unwrap_err();
+        assert_eq!(
+            over_cap.downcast_ref::<PocoApplicationApplyFailureV0>(),
+            Some(&PocoApplicationApplyFailureV0::DeterministicallyInvalid(
+                PocoApplicationDeterministicInvalidV0::ProtocolWindowOrCap,
+            )),
+        );
+        let overflow = validate_usage_bucket_admission_v0(usize::MAX, 1).unwrap_err();
+        assert_eq!(
+            overflow.downcast_ref::<PocoApplicationApplyFailureV0>(),
+            Some(&PocoApplicationApplyFailureV0::Invariant(
+                PocoApplicationInvariantV0::ProtocolCounterExhausted,
+            )),
+        );
         assert_eq!(authority, before);
     }
 

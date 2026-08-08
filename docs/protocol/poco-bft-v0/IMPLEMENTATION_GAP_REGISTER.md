@@ -1248,7 +1248,9 @@ epoch prune, and Core transition remain open.
    typed without diagnostic string matching. A proven missing authority fact
    is deterministic; a present-but-malformed companion, malformed authenticated
    semantic predecessor, or derived CAS/mutation failure is invariant. Unrefined leaf failures remain conservatively classified as
-   authenticated-overlay invariants, so leaf-reason completion remains a hard
+   authenticated-overlay invariants. Decision-ID and cap/window failures are
+   deterministic; counter/epoch/retention arithmetic exhaustion is invariant,
+   so leaf-reason completion remains a hard
    dependency before terminal failure mapping. The success carrier still owns the open
    snapshot and unsealed overlay/scheduled lifecycle. It does not yet seal
    writes, integrate successive family operations into the cursor, advance,

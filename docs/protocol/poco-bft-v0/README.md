@@ -663,7 +663,9 @@ has its own closed apply reason set for raw ownership, height/revision,
 capacity/duplicate, nullifier proof, validator rules, validator PoP, and signed
 semantic changes. Authenticated negative facts reject deterministically;
 present-but-malformed companions, malformed authenticated predecessors, and
-derived CAS/mutation postconditions fail stop;
+derived CAS/mutation postconditions fail stop. Decision-ID and cap/window
+failures reject deterministically, while counter/epoch/retention arithmetic
+exhaustion is invariant;
 unrefined leaf failures conservatively remain authenticated-overlay invariants
 without string matching. Success retains the open snapshot, decoded owner, and unsealed PoCO
 overlay or scheduled lifecycle. PoCO leaf-reason refinement, write sealing,
