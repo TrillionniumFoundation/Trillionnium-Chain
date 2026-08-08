@@ -46,6 +46,9 @@ trnm-finality-types = { version = "0.1.0", path = "../trnm-finality-types" }
 trnm-node = { version = "0.1.0", path = "../trnm-node" }
 trnm-protocol = { version = "0.1.0", path = "../trnm-protocol" }
 trnm-runtime = { version = "0.1.0", path = "../trnm-runtime" }
+trnm-consensus-crypto = { version = "0.1.0", path = "../trnm-consensus-crypto" }
+trnm-consensus-core = { version = "0.1.0", path = "../trnm-consensus-core" }
+trnm-consensus-types = { version = "0.1.0", path = "../trnm-consensus-types" }
 
 [dev-dependencies]
 ed25519-dalek = "2"

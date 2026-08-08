@@ -979,6 +979,7 @@ fn persist_empty_collision_version(store: &ApplicationStore, state: &mut AppStat
         validator_updates: Vec::new(),
         delta,
         auth_update,
+        poco_checkpoint_execution: None,
     };
     store
         .persist_transition(state, &pending, 0)
@@ -1280,6 +1281,7 @@ fn scale_application_config(state_path: PathBuf) -> ConsensusAppConfig {
             signer_role: "operator".to_string(),
             public_key_hex: hex::encode([1_u8; 32]),
         }],
+        poco_authority: None,
         state_path: Some(state_path),
     }
 }
@@ -1297,6 +1299,7 @@ fn initialize_application(config: ConsensusAppConfig) -> Result<CometBftApplicat
         chain_id: config.chain_id.clone(),
         app_version: APP_VERSION,
         authorized_signers: config.authorized_signers,
+        poco_authority: config.poco_authority,
         validator_governance: ValidatorGovernanceV1 {
             schema: VALIDATOR_GOVERNANCE_SCHEMA_V1.to_string(),
             signer_id: SCALE_SIGNER_ID.to_string(),
@@ -1360,6 +1363,7 @@ fn persist_batch(
         validator_updates: Vec::new(),
         delta,
         auth_update,
+        poco_checkpoint_execution: None,
     };
     let persist_started = Instant::now();
     store

@@ -33,17 +33,48 @@ use trnm_protocol::{
     account_key, fee_policy_key, task_key, CanonicalTxV1, FeePolicyV1,
     CANONICAL_TX_PAYLOAD_TYPE_V1, FEE_POLICY_OBJECT_TYPE_V1,
 };
+#[cfg(test)]
+use trnm_runtime::TryStateViewV0 as RuntimeTryStateViewV0;
 use trnm_runtime::{
     ExecutionContext, ResourceEstimate, RuntimeEvent, StateObject, StateView as RuntimeStateView,
 };
 
 mod auth_tree;
+#[allow(dead_code)]
+mod execution_outcome;
+mod native_execution;
+#[allow(dead_code)]
+mod native_payload_validation;
 #[cfg(feature = "scale-gate")]
 mod persistent_scale;
+#[allow(dead_code)]
+mod poco_application;
+#[cfg(test)]
+mod poco_application_evidence;
+mod poco_checkpoint;
+#[allow(dead_code)]
+mod poco_checkpoint_header;
+#[allow(dead_code)]
+mod poco_epoch_commitment;
+#[allow(dead_code)]
+mod poco_joint_handoff;
+#[allow(dead_code)]
+mod poco_nullifier;
+#[allow(dead_code)]
+mod poco_preparation_journal;
+mod poco_semantics;
+pub mod poco_snapshot;
+// B2-H3a/H3b1 is crate-private: exact PoCO state is now sealed across the
+// production persistence and restore paths, while the authoritative runtime
+// mutation source and business authorization remain a later step.
+#[allow(dead_code)]
+pub(crate) mod poco_transition;
 #[cfg(feature = "scale-gate")]
 mod scale;
 mod store;
 mod validator_lifecycle;
+
+pub use poco_checkpoint::{PocoAuthorityConfigV0, POCO_AUTHORITY_CONFIG_SCHEMA_V0};
 
 #[cfg(feature = "scale-gate")]
 pub use persistent_scale::{
@@ -56,7 +87,26 @@ use auth_tree::{
     stored_object_key, validator_state_key, AuthWrite, AuthenticatedObjectRecord, InMemoryAuthTree,
     PlannedAuthUpdate,
 };
+use native_execution::{
+    authorize_native_checkpoint_execution_v0, AuthorizedNativeCheckpointExecutionV0,
+    NativeBlockExecutionV0, NativeTransactionReceiptFactsV0,
+};
+use poco_application::{
+    AuthenticatedPocoApplicationContextV0, AuthenticatedPocoCandidateSelectionV0,
+    PocoApplicationBlockOverlayV0, POCO_APPLICATION_OPERATION_PAYLOAD_TYPE_V0,
+};
+use poco_checkpoint::{
+    active_consensus_configuration, authorize_poco_checkpoint_candidate_selection_v0,
+    maybe_authenticated_poco_projection_at_v0, validate_application_validator_projection,
+    AuthenticatedPocoProjectionAtV0, PocoCheckpointExecutionInputV0,
+};
+use poco_transition::{
+    auth_writes_from_sealed_poco_application_v0, genesis_poco_snapshot_writes_v0,
+    scheduled_cutoff_manifest_refresh_write_v0, take_and_validate_production_poco_projection_v0,
+};
 use store::{ApplicationStore, PinnedSnapshot};
+#[cfg(test)]
+use store::{AuthenticatedRuntimeReadFailureV0, AuthenticatedRuntimeReadSnapshotV0};
 use validator_lifecycle::{
     validators_from_abci, validators_to_abci, ConsensusValidatorV1, ValidatorGovernanceV1,
     ValidatorLifecycleStateV1, ValidatorSetTransitionV1, ValidatorTransitionAuthorization,
@@ -76,7 +126,7 @@ const MAX_SNAPSHOT_CHUNKS: u32 = 4096;
 const RETAINED_SNAPSHOTS: usize = 16;
 const DISK_SNAPSHOT_INTERVAL: u64 = 5;
 const RETAINED_DISK_SNAPSHOTS: usize = 3;
-const AUTH_PROOF_RETENTION_VERSIONS: u64 = 8_192;
+pub(crate) const AUTH_PROOF_RETENTION_VERSIONS: u64 = 8_192;
 const AUTH_PRUNE_INTERVAL: u64 = 256;
 const AUTH_PRUNE_BATCH_ROWS: usize = 256;
 const AUTH_PRUNE_BATCH_LOGICAL_BYTES: u64 = 4 * 1024 * 1024;
@@ -95,6 +145,16 @@ fn authenticated_query_floor(height: u64) -> u64 {
             .saturating_sub(AUTH_PROOF_RETENTION_VERSIONS)
             .saturating_add(1)
     }
+}
+
+pub(crate) fn validate_poco_parameter_retention_v0(
+    parameters: &trnm_consensus_types::ConsensusParametersV0,
+) -> Result<()> {
+    ensure!(
+        parameters.snapshot_lead_blocks() <= AUTH_PROOF_RETENTION_VERSIONS,
+        "PoCO snapshot lead exceeds authenticated JMT history retention"
+    );
+    Ok(())
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -165,6 +225,8 @@ pub struct ConsensusAppConfig {
     pub chain_id: String,
     pub authorized_signers: Vec<AuthorizedSignerV1>,
     #[serde(default)]
+    pub poco_authority: Option<PocoAuthorityConfigV0>,
+    #[serde(default)]
     pub state_path: Option<PathBuf>,
 }
 
@@ -175,8 +237,56 @@ pub struct GenesisAppStateV2 {
     pub chain_id: String,
     pub app_version: u64,
     pub authorized_signers: Vec<AuthorizedSignerV1>,
+    #[serde(default)]
+    pub poco_authority: Option<PocoAuthorityConfigV0>,
+    /// Optional exact namespace-8 genesis projection. An empty list preserves
+    /// legacy/inert PoCO state; H3b2b1 production operations require this list
+    /// to contain the frozen active configuration and kind-16 application
+    /// authority head. No runtime path upgrades a legacy projection in place.
+    #[serde(default)]
+    pub poco_genesis_entries: Vec<PocoGenesisEntryV0>,
     pub validator_governance: ValidatorGovernanceV1,
     pub initial_validators: Vec<ConsensusValidatorV1>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct PocoGenesisEntryV0 {
+    pub kind: u8,
+    pub logical_key_hex: String,
+    pub value_hex: String,
+}
+
+struct ValidatedGenesisV2 {
+    lifecycle: ValidatorLifecycleStateV1,
+    poco_entries: Vec<poco_snapshot::PocoSnapshotEntryV0>,
+}
+
+fn validate_authorized_signers_v1(authorized_signers: &[AuthorizedSignerV1]) -> Result<()> {
+    ensure!(
+        !authorized_signers.is_empty(),
+        "authorized_signers must not be empty"
+    );
+    let mut ids = BTreeSet::new();
+    let mut keys = BTreeSet::new();
+    for signer in authorized_signers {
+        ensure!(ids.insert(signer.signer_id.clone()), "duplicate signer_id");
+        ensure!(
+            keys.insert(signer.public_key_hex.clone()),
+            "duplicate signer public key"
+        );
+        ensure!(
+            matches!(signer.signer_role.as_str(), "hepta" | "nakama" | "operator"),
+            "unsupported signer role"
+        );
+        let key = trnm_finality_types::crypto::verifying_key_from_hex(&signer.public_key_hex)
+            .context("authorized signer public key must be canonical Ed25519")?;
+        ensure!(
+            !key.is_weak(),
+            "authorized signer public key must not be small-order"
+        );
+    }
+    Ok(())
 }
 
 impl ConsensusAppConfig {
@@ -191,32 +301,9 @@ impl ConsensusAppConfig {
                 && self.chain_id.len() <= 128,
             "chain_id is not canonical"
         );
-        ensure!(
-            !self.authorized_signers.is_empty(),
-            "authorized_signers must not be empty"
-        );
-        let mut ids = BTreeSet::new();
-        let mut keys = BTreeSet::new();
-        for signer in &self.authorized_signers {
-            ensure!(ids.insert(signer.signer_id.clone()), "duplicate signer_id");
-            ensure!(
-                keys.insert(signer.public_key_hex.clone()),
-                "duplicate signer public key"
-            );
-            ensure!(
-                matches!(signer.signer_role.as_str(), "hepta" | "nakama" | "operator"),
-                "unsupported signer role"
-            );
-            let bytes = hex::decode(&signer.public_key_hex)
-                .context("authorized signer public key must be hex")?;
-            ensure!(
-                bytes.len() == 32,
-                "authorized signer public key must be 32 bytes"
-            );
-            ensure!(
-                signer.public_key_hex == hex::encode(&bytes),
-                "authorized signer public key must use canonical lowercase hex"
-            );
+        validate_authorized_signers_v1(&self.authorized_signers)?;
+        if let Some(authority) = &self.poco_authority {
+            authority.validate()?;
         }
         Ok(())
     }
@@ -238,9 +325,38 @@ struct PendingBlock {
     height: u64,
     app_hash: [u8; 32],
     tx_results: Vec<ExecTxResult>,
+    #[allow(dead_code)]
+    native_execution: AuthorizedNativeCheckpointExecutionV0,
     validator_updates: Vec<ValidatorUpdate>,
     delta: BlockDelta,
     auth_update: PlannedAuthUpdate,
+    poco_checkpoint_execution: Option<AuthenticatedPocoCandidateSelectionV0>,
+}
+
+struct CheckpointBlockExecutionInput<'a> {
+    txs: &'a [Bytes],
+    tx_results: &'a [ExecTxResult],
+    native_execution: &'a AuthorizedNativeCheckpointExecutionV0,
+    timestamp_ms: u64,
+    block_hash: &'a [u8],
+    next_state_root: [u8; 32],
+}
+
+struct AppliedTransactionV0 {
+    tx_result: ExecTxResult,
+    native_receipt: NativeTransactionReceiptFactsV0,
+}
+
+const MAX_AUTHENTICATED_POCO_PROJECTION_CACHE_ENTRIES: usize = 4;
+type AuthenticatedPocoProjectionCache = BTreeMap<(u64, [u8; 32]), AuthenticatedPocoProjectionAtV0>;
+
+#[derive(Debug, Clone, Copy)]
+enum PocoScheduleCacheV0 {
+    Inactive,
+    Active {
+        cutoff_height: u64,
+        checkpoint_height: u64,
+    },
 }
 
 #[derive(Debug, Clone, Default)]
@@ -249,6 +365,7 @@ struct BlockDelta {
     command_ids: BTreeSet<String>,
     signer_nonces: BTreeSet<(String, u64)>,
     validator_lifecycle: Option<ValidatorLifecycleStateV1>,
+    poco_application: Option<PocoApplicationBlockOverlayV0>,
 }
 
 struct OverlayObjects<'a> {
@@ -288,6 +405,43 @@ impl RuntimeStateView for OverlayObjects<'_> {
     }
 }
 
+/// Test-only model of the unwired authenticated native planning view.
+///
+/// Unlike the legacy ABCI overlay, its persistent fallback is one already
+/// validated, pinned read transaction rather than an independently reopened
+/// store read for every object.
+#[cfg(test)]
+struct AuthenticatedRuntimeOverlayObjects<'a> {
+    base: &'a BTreeMap<String, StoredObject>,
+    changes: &'a BTreeMap<String, StoredObject>,
+    snapshot: &'a AuthenticatedRuntimeReadSnapshotV0,
+}
+
+#[cfg(test)]
+impl RuntimeTryStateViewV0 for AuthenticatedRuntimeOverlayObjects<'_> {
+    type Error = AuthenticatedRuntimeReadFailureV0;
+
+    fn try_get(
+        &self,
+        object_key_hex: &str,
+    ) -> std::result::Result<Option<StateObject>, Self::Error> {
+        let object = if let Some(object) = self
+            .changes
+            .get(object_key_hex)
+            .or_else(|| self.base.get(object_key_hex))
+        {
+            Some(object.clone())
+        } else {
+            self.snapshot.load(object_key_hex)?
+        };
+        Ok(object.map(|object| StateObject {
+            object_type: object.object_type,
+            version: object.version,
+            value_bytes: object.value_bytes,
+        }))
+    }
+}
+
 impl Default for AppState {
     fn default() -> Self {
         Self {
@@ -309,6 +463,8 @@ struct AppCore {
     store: Option<ApplicationStore>,
     state: Mutex<AppState>,
     auth_tree: Mutex<InMemoryAuthTree>,
+    poco_projection_cache: Mutex<AuthenticatedPocoProjectionCache>,
+    poco_schedule_cache: Mutex<Option<PocoScheduleCacheV0>>,
     snapshots: Mutex<BTreeMap<u64, SnapshotRecord>>,
     snapshot_building: Mutex<SnapshotBuildQueue>,
     snapshot_restore: Mutex<Option<SnapshotRestore>>,
@@ -529,7 +685,39 @@ pub struct CometBftApplication {
     core: Arc<AppCore>,
 }
 
+fn validate_signed_command_envelope_against_policy_v1<'a>(
+    envelope: &SignedCommandEnvelopeV1,
+    expected_chain_id: &str,
+    timestamp_ms: u64,
+    authorized_signers: &'a [AuthorizedSignerV1],
+) -> Result<&'a AuthorizedSignerV1> {
+    envelope.validate_at_strict(expected_chain_id, timestamp_ms)?;
+    let signer = authorized_signers
+        .iter()
+        .find(|signer| signer.signer_id == envelope.signer_id)
+        .ok_or_else(|| anyhow!("command signer is not authorized"))?;
+    ensure!(
+        signer.signer_role == envelope.signer_role,
+        "signer role mismatch"
+    );
+    ensure!(
+        signer.public_key_hex == envelope.public_key_hex,
+        "signer public key mismatch"
+    );
+    Ok(signer)
+}
+
 impl CometBftApplication {
+    /// Borrows the only production native-validation host tuple: the store,
+    /// chain binding, and signer-policy preimage already validated together at
+    /// application startup. This is not wired to ABCI or a Core callback yet.
+    #[allow(dead_code)]
+    fn native_validation_host_v0(
+        &self,
+    ) -> Option<native_payload_validation::NativeValidationHostV0<'_>> {
+        native_payload_validation::NativeValidationHostV0::from_app_core(&self.core)
+    }
+
     pub fn new(config: ConsensusAppConfig) -> Result<Self> {
         Self::new_inner(config, None)
     }
@@ -572,6 +760,7 @@ impl CometBftApplication {
         if let Some(lifecycle) = state.validator_lifecycle.as_ref() {
             validate_lifecycle_authorization(&config, lifecycle)?;
         }
+        validate_poco_authority_binding(&config, &state, store.as_ref())?;
         let mut snapshots = match (&store, state.height) {
             (Some(store), height) if height > 0 => {
                 load_disk_snapshot_records(&config, &state, store).unwrap_or_else(|error| {
@@ -608,6 +797,8 @@ impl CometBftApplication {
                 store,
                 state: Mutex::new(state),
                 auth_tree: Mutex::new(auth_tree),
+                poco_projection_cache: Mutex::new(BTreeMap::new()),
+                poco_schedule_cache: Mutex::new(None),
                 snapshots: Mutex::new(snapshots),
                 snapshot_building: Mutex::new(SnapshotBuildQueue::default()),
                 snapshot_restore: Mutex::new(None),
@@ -742,22 +933,12 @@ impl CometBftApplication {
         envelope: &SignedCommandEnvelopeV1,
         timestamp_ms: u64,
     ) -> Result<()> {
-        envelope.validate_at(&self.core.config.chain_id, timestamp_ms)?;
-        let signer = self
-            .core
-            .config
-            .authorized_signers
-            .iter()
-            .find(|signer| signer.signer_id == envelope.signer_id)
-            .ok_or_else(|| anyhow!("command signer is not authorized"))?;
-        ensure!(
-            signer.signer_role == envelope.signer_role,
-            "signer role mismatch"
-        );
-        ensure!(
-            signer.public_key_hex == envelope.public_key_hex,
-            "signer public key mismatch"
-        );
+        validate_signed_command_envelope_against_policy_v1(
+            envelope,
+            &self.core.config.chain_id,
+            timestamp_ms,
+            &self.core.config.authorized_signers,
+        )?;
         Ok(())
     }
 
@@ -779,13 +960,294 @@ impl CometBftApplication {
         state: &AppState,
         txs: &[Bytes],
         timestamp_ms: u64,
-    ) -> Result<(BlockDelta, Vec<ExecTxResult>)> {
+    ) -> Result<(BlockDelta, Vec<ExecTxResult>, NativeBlockExecutionV0)> {
         let mut delta = self.start_block_delta(state)?;
         let mut tx_results = Vec::with_capacity(txs.len());
+        let mut native_receipts = Vec::with_capacity(txs.len());
         for tx in txs {
-            tx_results.push(self.apply_tx(state, &mut delta, tx, timestamp_ms)?);
+            let applied = self.apply_tx(state, &mut delta, tx, timestamp_ms)?;
+            tx_results.push(applied.tx_result);
+            native_receipts.push(applied.native_receipt);
         }
-        Ok((delta, tx_results))
+        let native_execution = NativeBlockExecutionV0::try_new(txs, native_receipts)?;
+        Ok((delta, tx_results, native_execution))
+    }
+
+    fn production_poco_projection_at(
+        &self,
+        version: u64,
+    ) -> Result<AuthenticatedPocoProjectionAtV0> {
+        self.maybe_production_poco_projection_at(version)?
+            .context("PoCO authority requires an active production namespace")
+    }
+
+    fn maybe_production_poco_projection_at(
+        &self,
+        version: u64,
+    ) -> Result<Option<AuthenticatedPocoProjectionAtV0>> {
+        let state_root: [u8; 32] = if let Some(store) = &self.core.store {
+            store.authenticated_root_at(version)?.into()
+        } else {
+            self.core
+                .auth_tree
+                .lock()
+                .map_err(|_| anyhow!("authenticated state tree lock poisoned"))?
+                .root_hash(version)
+                .with_context(|| format!("missing authenticated root at version {version}"))?
+                .into()
+        };
+        let cache_key = (version, state_root);
+        if let Some(cached) = self
+            .core
+            .poco_projection_cache
+            .lock()
+            .map_err(|_| anyhow!("PoCO projection cache lock poisoned"))?
+            .get(&cache_key)
+            .cloned()
+        {
+            return Ok(Some(cached));
+        }
+
+        let Some(authenticated) = maybe_authenticated_poco_projection_at_v0(
+            self.core.store.as_ref(),
+            &self.core.auth_tree,
+            version,
+        )?
+        else {
+            return Ok(None);
+        };
+        ensure!(
+            authenticated.state_root() == state_root,
+            "authenticated PoCO root changed during projection load"
+        );
+        let mut cache = self
+            .core
+            .poco_projection_cache
+            .lock()
+            .map_err(|_| anyhow!("PoCO projection cache lock poisoned"))?;
+        cache.insert(cache_key, authenticated.clone());
+        while cache.len() > MAX_AUTHENTICATED_POCO_PROJECTION_CACHE_ENTRIES {
+            let oldest = *cache.keys().next().expect("nonempty bounded cache");
+            cache.remove(&oldest);
+        }
+        Ok(Some(authenticated))
+    }
+
+    fn validated_live_poco_configuration(
+        &self,
+        state: &AppState,
+        delta: &BlockDelta,
+    ) -> Result<
+        Option<(
+            AuthenticatedPocoProjectionAtV0,
+            trnm_consensus_types::ValidatorSet,
+            trnm_consensus_types::ConsensusParametersV0,
+        )>,
+    > {
+        let Some(projection) = self.maybe_production_poco_projection_at(state.height)? else {
+            return Ok(None);
+        };
+        ensure!(
+            projection.version() == state.height && projection.state_root() == state.app_hash,
+            "authenticated PoCO projection differs from committed application head"
+        );
+        let authority = self
+            .core
+            .config
+            .poco_authority
+            .as_ref()
+            .context("active PoCO projection lacks configured authority")?;
+        authority.validate()?;
+        let (validator_set, parameters) = active_consensus_configuration(projection.projection())?;
+        validate_poco_parameter_retention_v0(&parameters)?;
+        let configured_chain =
+            trnm_consensus_types::ChainId::from_bytes(self.core.config.chain_id.as_bytes())
+                .map_err(|error| anyhow!("invalid configured PoCO chain ID: {error:?}"))?;
+        let configured_genesis = trnm_consensus_types::GenesisHash::new(
+            trnm_finality_types::decode_hash32("PoCO genesis hash", &authority.genesis_hash_hex)?,
+        );
+        let configured_profile = trnm_finality_types::decode_hash32(
+            "PoCO protocol profile hash",
+            &authority.protocol_profile_hash_hex,
+        )?;
+        ensure!(
+            validator_set.chain_id() == configured_chain
+                && validator_set.genesis_hash() == configured_genesis
+                && validator_set.consensus_parameters_hash() == parameters.hash()
+                && *parameters.hash().as_bytes() == configured_profile,
+            "live PoCO configuration differs from configured chain/genesis/profile"
+        );
+        validator_set
+            .validate_against_parameters(&parameters)
+            .map_err(|error| anyhow!("invalid live PoCO configuration: {error:?}"))?;
+        validate_application_validator_projection(
+            &validator_set,
+            &effective_validator_lifecycle(state, delta)?.active_validators,
+        )?;
+        Ok(Some((projection, validator_set, parameters)))
+    }
+
+    fn start_poco_application_overlay(
+        &self,
+        state: &AppState,
+        delta: &BlockDelta,
+    ) -> Result<PocoApplicationBlockOverlayV0> {
+        let (projection, validator_set, parameters) = self
+            .validated_live_poco_configuration(state, delta)?
+            .context("PoCO application operation requires genesis-activated authority")?;
+        let context = AuthenticatedPocoApplicationContextV0::new(
+            state.height,
+            state.app_hash,
+            trnm_consensus_types::Height::new(
+                state
+                    .height
+                    .checked_add(1)
+                    .context("PoCO application target height overflow")?,
+            ),
+            validator_set.chain_id(),
+            validator_set.genesis_hash(),
+            validator_set.epoch(),
+            parameters,
+            poco_application_governance_signer_commitment_v0(effective_validator_lifecycle(
+                state, delta,
+            )?),
+        )?;
+        PocoApplicationBlockOverlayV0::from_projection(context, projection.projection())
+    }
+
+    fn poco_schedule_for_state(
+        &self,
+        state: &AppState,
+        delta: &BlockDelta,
+    ) -> Result<PocoScheduleCacheV0> {
+        if let Some(cached) = *self
+            .core
+            .poco_schedule_cache
+            .lock()
+            .map_err(|_| anyhow!("PoCO schedule cache lock poisoned"))?
+        {
+            return Ok(cached);
+        }
+        let schedule = if let Some((_, validator_set, parameters)) =
+            self.validated_live_poco_configuration(state, delta)?
+        {
+            let geometry =
+                trnm_consensus_types::EpochGeometryV0::new(validator_set.epoch(), &parameters)
+                    .map_err(|error| anyhow!("invalid live PoCO epoch geometry: {error:?}"))?;
+            let checkpoint_height = geometry.checkpoint_height().get();
+            let cutoff_height = checkpoint_height
+                .checked_sub(parameters.snapshot_lead_blocks())
+                .context("PoCO snapshot cutoff height underflow")?;
+            PocoScheduleCacheV0::Active {
+                cutoff_height,
+                checkpoint_height,
+            }
+        } else {
+            PocoScheduleCacheV0::Inactive
+        };
+        *self
+            .core
+            .poco_schedule_cache
+            .lock()
+            .map_err(|_| anyhow!("PoCO schedule cache lock poisoned"))? = Some(schedule);
+        Ok(schedule)
+    }
+
+    fn clear_poco_runtime_caches(&self) -> Result<()> {
+        self.core
+            .poco_projection_cache
+            .lock()
+            .map_err(|_| anyhow!("PoCO projection cache lock poisoned"))?
+            .clear();
+        *self
+            .core
+            .poco_schedule_cache
+            .lock()
+            .map_err(|_| anyhow!("PoCO schedule cache lock poisoned"))? = None;
+        Ok(())
+    }
+
+    fn authorize_checkpoint_execution_if_due(
+        &self,
+        state: &AppState,
+        delta: &BlockDelta,
+        block: CheckpointBlockExecutionInput<'_>,
+    ) -> Result<Option<AuthenticatedPocoCandidateSelectionV0>> {
+        let native_execution = block.native_execution.execution();
+        ensure!(
+            native_execution.application_payload().transactions().len() == block.txs.len()
+                && native_execution
+                    .application_payload()
+                    .transactions()
+                    .iter()
+                    .zip(block.txs)
+                    .all(|(native, transport)| native.as_slice() == transport.as_ref()),
+            "native application payload differs from exact ABCI transaction bytes"
+        );
+        ensure!(
+            native_execution.execution_receipts().receipts().len() == block.tx_results.len(),
+            "native execution receipts differ from ABCI transaction count"
+        );
+        let next_height = state
+            .height
+            .checked_add(1)
+            .context("PoCO checkpoint height overflow")?;
+        ensure!(
+            block.native_execution.parent_height().get() == state.height
+                && block.native_execution.parent_state_root().as_bytes() == &state.app_hash
+                && block.native_execution.target_height().get() == next_height
+                && block.native_execution.post_state_root().as_bytes() == &block.next_state_root,
+            "authorized native execution differs from committed checkpoint state transition"
+        );
+        let Some(authority) = self.core.config.poco_authority.as_ref() else {
+            return Ok(None);
+        };
+        let Some(current_projection) = self.maybe_production_poco_projection_at(state.height)?
+        else {
+            // Configured authority with an explicitly empty namespace is the
+            // supported legacy/inert state. It has no PoCO schedule and must
+            // continue processing ordinary blocks without inventing a
+            // checkpoint obligation.
+            return Ok(None);
+        };
+        let (old_set, active_parameters) =
+            active_consensus_configuration(current_projection.projection())?;
+        let geometry =
+            trnm_consensus_types::EpochGeometryV0::new(old_set.epoch(), &active_parameters)
+                .map_err(|error| anyhow!("invalid active PoCO epoch geometry: {error:?}"))?;
+        if geometry.checkpoint_height().get() != next_height {
+            return Ok(None);
+        }
+        ensure!(
+            state.height > 0,
+            "PoCO checkpoint authority requires an initialized parent state"
+        );
+        let cutoff_height = next_height
+            .checked_sub(active_parameters.snapshot_lead_blocks())
+            .context("PoCO snapshot cutoff height underflow")?;
+        let cutoff_projection = self.production_poco_projection_at(cutoff_height)?;
+        ensure!(
+            cutoff_projection.projection() == current_projection.projection(),
+            "PoCO projection changed after the scheduled snapshot cutoff"
+        );
+        let lifecycle = effective_validator_lifecycle(state, delta)?;
+        let capability = authorize_poco_checkpoint_candidate_selection_v0(
+            authority,
+            PocoCheckpointExecutionInputV0 {
+                chain_id: &self.core.config.chain_id,
+                parent_height: state.height,
+                parent_state_root: state.app_hash,
+                block_height: next_height,
+                block_hash: block.block_hash,
+                timestamp_ms: block.timestamp_ms,
+                txs: block.txs,
+                tx_results: block.tx_results,
+                next_state_root: block.next_state_root,
+            },
+            &cutoff_projection,
+            &lifecycle.active_validators,
+        )?;
+        Ok(Some(capability))
     }
 
     fn execute_block(
@@ -793,10 +1255,49 @@ impl CometBftApplication {
         state: &AppState,
         txs: &[Bytes],
         timestamp_ms: u64,
+        block_hash: &[u8],
     ) -> Result<PendingBlock> {
-        let (delta, tx_results) = self.plan_block(state, txs, timestamp_ms)?;
-        let next_height = state.height.saturating_add(1);
-        let writes = authenticated_writes_for_delta(next_height, &delta)?;
+        let (mut delta, tx_results, native_execution) =
+            self.plan_block(state, txs, timestamp_ms)?;
+        let next_height = state
+            .height
+            .checked_add(1)
+            .context("application height overflow")?;
+        let mut writes = authenticated_writes_for_delta(next_height, &delta)?;
+        if let Some(overlay) = delta.poco_application.take() {
+            ensure!(
+                overlay.source_version() == state.height
+                    && overlay.source_root() == state.app_hash
+                    && overlay.target_height().get() == next_height,
+                "PoCO block overlay is not bound to the committed source/target"
+            );
+            let sealed = overlay.seal()?;
+            ensure!(
+                sealed.source_version() == state.height
+                    && sealed.source_root() == state.app_hash
+                    && sealed.target_height().get() == next_height,
+                "sealed PoCO plan is not bound to the committed source/target"
+            );
+            writes.extend(auth_writes_from_sealed_poco_application_v0(&sealed)?);
+        } else if let PocoScheduleCacheV0::Active {
+            cutoff_height,
+            checkpoint_height,
+        } = self.poco_schedule_for_state(state, &delta)?
+        {
+            ensure!(
+                cutoff_height < checkpoint_height,
+                "invalid cached PoCO cutoff/checkpoint schedule"
+            );
+            if next_height == cutoff_height {
+                let (projection, _, _) = self
+                    .validated_live_poco_configuration(state, &delta)?
+                    .context("scheduled PoCO cutoff lacks active projection")?;
+                writes.push(scheduled_cutoff_manifest_refresh_write_v0(
+                    trnm_consensus_types::Height::new(next_height),
+                    projection.projection(),
+                )?);
+            }
+        }
         let auth_update = if let Some(store) = &self.core.store {
             store.plan_auth_update(next_height, writes)?
         } else {
@@ -807,15 +1308,36 @@ impl CometBftApplication {
                 .plan_put_value_set(next_height, writes)?
         };
         let app_hash = auth_update.root_hash.into();
+        let native_execution = authorize_native_checkpoint_execution_v0(
+            native_execution,
+            trnm_consensus_types::Height::new(state.height),
+            trnm_consensus_types::StateRoot::new(state.app_hash),
+            trnm_consensus_types::Height::new(next_height),
+            trnm_consensus_types::StateRoot::new(app_hash),
+        )?;
+        let poco_checkpoint_execution = self.authorize_checkpoint_execution_if_due(
+            state,
+            &delta,
+            CheckpointBlockExecutionInput {
+                txs,
+                tx_results: &tx_results,
+                native_execution: &native_execution,
+                timestamp_ms,
+                block_hash,
+                next_state_root: app_hash,
+            },
+        )?;
         let validator_updates = effective_validator_lifecycle(state, &delta)?
             .updates_due_at_finalize_height(next_height)?;
         Ok(PendingBlock {
             height: next_height,
             app_hash,
             tx_results,
+            native_execution,
             validator_updates,
             delta,
             auth_update,
+            poco_checkpoint_execution,
         })
     }
 
@@ -825,11 +1347,31 @@ impl CometBftApplication {
         delta: &mut BlockDelta,
         tx: &[u8],
         timestamp_ms: u64,
-    ) -> Result<ExecTxResult> {
+    ) -> Result<AppliedTransactionV0> {
         let envelope: SignedCommandEnvelopeV1 =
             serde_json::from_slice(tx).context("decode signed command envelope")?;
         self.validate_envelope(&envelope, timestamp_ms)?;
         let payload = envelope.payload_bytes()?;
+        if envelope.payload_type == POCO_APPLICATION_OPERATION_PAYLOAD_TYPE_V0 {
+            let lifecycle = effective_validator_lifecycle(state, delta)?;
+            ensure!(
+                envelope.signer_role == "operator"
+                    && envelope.signer_id == lifecycle.governance.signer_id,
+                "PoCO application operation requires the AppHash-authenticated governance signer"
+            );
+            if delta.poco_application.is_none() {
+                delta.poco_application = Some(self.start_poco_application_overlay(state, delta)?);
+            }
+            delta
+                .poco_application
+                .as_mut()
+                .expect("PoCO overlay initialized above")
+                .apply_raw(&payload)?;
+            return Ok(AppliedTransactionV0 {
+                tx_result: ExecTxResult::default(),
+                native_receipt: NativeTransactionReceiptFactsV0::internal_operation(),
+            });
+        }
         if envelope.payload_type == VALIDATOR_TRANSITION_PAYLOAD_TYPE_V1 {
             let transition: ValidatorSetTransitionV1 =
                 serde_json::from_slice(&payload).context("decode validator set transition")?;
@@ -846,9 +1388,14 @@ impl CometBftApplication {
                 },
             )?;
             delta.validator_lifecycle = Some(lifecycle);
-            return Ok(ExecTxResult::default());
+            return Ok(AppliedTransactionV0 {
+                tx_result: ExecTxResult::default(),
+                native_receipt: NativeTransactionReceiptFactsV0::internal_operation(),
+            });
         }
-        let (mutations, tx_result) = if envelope.payload_type == CANONICAL_TX_PAYLOAD_TYPE_V1 {
+        let (mutations, tx_result, native_receipt) = if envelope.payload_type
+            == CANONICAL_TX_PAYLOAD_TYPE_V1
+        {
             let tx: CanonicalTxV1 =
                 serde_json::from_slice(&payload).context("decode canonical transaction")?;
             ensure!(
@@ -874,11 +1421,18 @@ impl CometBftApplication {
                 },
                 &objects,
             )?;
+            let native_receipt =
+                NativeTransactionReceiptFactsV0::try_from_runtime_receipt(&receipt)?;
+            let trnm_runtime::RuntimeReceipt {
+                gas_used,
+                events,
+                mutations,
+                ..
+            } = receipt;
             let tx_result = ExecTxResult {
                 gas_wanted: i64::try_from(tx.max_gas).unwrap_or(i64::MAX),
-                gas_used: i64::try_from(receipt.gas_used).unwrap_or(i64::MAX),
-                events: receipt
-                    .events
+                gas_used: i64::try_from(gas_used).unwrap_or(i64::MAX),
+                events: events
                     .into_iter()
                     .map(|event| Event {
                         r#type: event.kind,
@@ -896,8 +1450,7 @@ impl CometBftApplication {
                 ..Default::default()
             };
             (
-                receipt
-                    .mutations
+                mutations
                     .into_iter()
                     .map(|mutation| ObjectMutation {
                         object_key_hex: mutation.object_key_hex,
@@ -908,6 +1461,7 @@ impl CometBftApplication {
                     })
                     .collect::<Vec<_>>(),
                 tx_result,
+                native_receipt,
             )
         } else {
             #[cfg(test)]
@@ -951,6 +1505,7 @@ impl CometBftApplication {
                             .prepare_execution(&envelope, &objects)?
                             .mutations,
                         ExecTxResult::default(),
+                        NativeTransactionReceiptFactsV0::internal_operation(),
                     )
                 } else {
                     return Err(anyhow!("unsupported payload_type"));
@@ -962,6 +1517,10 @@ impl CometBftApplication {
             }
         };
         for mutation in mutations {
+            ensure!(
+                mutation.object_key_hex != poco_authority_object_key(),
+                "PoCO authority object is genesis-only and immutable"
+            );
             let persisted_version = self
                 .core
                 .store
@@ -983,10 +1542,13 @@ impl CometBftApplication {
             let stored = mutation.into_stored();
             delta.objects.insert(stored.object_key_hex.clone(), stored);
         }
-        Ok(tx_result)
+        Ok(AppliedTransactionV0 {
+            tx_result,
+            native_receipt,
+        })
     }
 
-    fn validate_genesis(&self, request: &RequestInitChain) -> Result<ValidatorLifecycleStateV1> {
+    fn validate_genesis(&self, request: &RequestInitChain) -> Result<ValidatedGenesisV2> {
         ensure!(
             request.chain_id == self.core.config.chain_id,
             "genesis chain_id mismatch"
@@ -1022,6 +1584,10 @@ impl CometBftApplication {
                 == canonical_signers(&self.core.config.authorized_signers),
             "genesis authorized signers do not match application config"
         );
+        ensure!(
+            genesis.poco_authority == self.core.config.poco_authority,
+            "genesis PoCO authority does not match application config"
+        );
         genesis.validator_governance.validate()?;
         let request_validators = validators_from_abci(&request.validators)?;
         ensure!(
@@ -1038,7 +1604,16 @@ impl CometBftApplication {
             request_validators,
         )?;
         validate_lifecycle_authorization(&self.core.config, &lifecycle)?;
-        Ok(lifecycle)
+        let poco_entries = validate_poco_genesis_entries_v0(
+            &genesis.poco_genesis_entries,
+            genesis.poco_authority.as_ref(),
+            &self.core.config.chain_id,
+            &lifecycle.active_validators,
+        )?;
+        Ok(ValidatedGenesisV2 {
+            lifecycle,
+            poco_entries,
+        })
     }
 
     fn retain_snapshot(&self, state: &AppState) -> Result<()> {
@@ -1393,9 +1968,11 @@ impl Application for CometBftApplication {
     }
 
     fn init_chain(&self, request: RequestInitChain) -> ResponseInitChain {
-        let lifecycle = self
+        let validated = self
             .validate_genesis(&request)
             .unwrap_or_else(|error| panic!("refuse incompatible CometBFT genesis: {error:#}"));
+        let lifecycle = validated.lifecycle;
+        let genesis_poco_entries = validated.poco_entries;
         let validators = validators_to_abci(&lifecycle.active_validators)
             .expect("validated genesis validators convert to ABCI");
         let mut state = self
@@ -1432,6 +2009,49 @@ impl Application for CometBftApplication {
                     Some(&fee_policy),
                     "repeated InitChain fee policy mismatch"
                 );
+                let expected_authority = self
+                    .core
+                    .config
+                    .poco_authority
+                    .as_ref()
+                    .map(poco_authority_object);
+                let authority_key = poco_authority_object_key();
+                let committed_authority =
+                    state.objects.get(&authority_key).cloned().or_else(|| {
+                        self.core.store.as_ref().and_then(|store| {
+                            store.load_object(&authority_key).unwrap_or_else(|error| {
+                                panic!("load repeated genesis PoCO authority: {error:#}")
+                            })
+                        })
+                    });
+                assert_eq!(
+                    committed_authority, expected_authority,
+                    "repeated InitChain PoCO authority mismatch"
+                );
+                let committed_poco = if let Some(store) = &self.core.store {
+                    store
+                        .production_poco_projection(0)
+                        .unwrap_or_else(|error| panic!("load repeated PoCO genesis: {error:#}"))
+                        .1
+                } else {
+                    let tree = self
+                        .core
+                        .auth_tree
+                        .lock()
+                        .unwrap_or_else(|_| panic!("authenticated state tree lock poisoned"));
+                    let mut live = tree
+                        .verified_live_values(0)
+                        .unwrap_or_else(|error| panic!("load repeated PoCO genesis: {error:#}"));
+                    take_and_validate_production_poco_projection_v0(0, &mut live)
+                        .unwrap_or_else(|error| panic!("validate repeated PoCO genesis: {error:#}"))
+                };
+                assert_eq!(
+                    committed_poco
+                        .as_ref()
+                        .map(|projection| projection.entries()),
+                    (!genesis_poco_entries.is_empty()).then_some(genesis_poco_entries.as_slice()),
+                    "repeated InitChain PoCO genesis projection mismatch"
+                );
                 let auth_key = stored_object_key(&fee_policy.object_key_hex)
                     .expect("genesis fee policy has an authenticated key");
                 let proof = if let Some(store) = &self.core.store {
@@ -1466,8 +2086,26 @@ impl Application for CometBftApplication {
                             .insert(fee_policy.object_key_hex.clone(), fee_policy);
                     }
                 }
-                let writes = authenticated_writes_for_state(0, &initialized)
+                if let Some(authority) = self.core.config.poco_authority.as_ref() {
+                    let authority = poco_authority_object(authority);
+                    match initialized.objects.get(&authority.object_key_hex) {
+                        Some(existing) => assert_eq!(
+                            existing, &authority,
+                            "genesis PoCO authority object mismatch"
+                        ),
+                        None => {
+                            initialized
+                                .objects
+                                .insert(authority.object_key_hex.clone(), authority);
+                        }
+                    }
+                }
+                let mut writes = authenticated_writes_for_state(0, &initialized)
                     .expect("validated genesis state converts to authenticated writes");
+                writes.extend(
+                    genesis_poco_snapshot_writes_v0(&genesis_poco_entries)
+                        .expect("validated PoCO genesis projection converts to sealed writes"),
+                );
                 let auth_update = if let Some(store) = &self.core.store {
                     store
                         .plan_auth_update(0, writes)
@@ -1515,7 +2153,7 @@ impl Application for CometBftApplication {
             Err(_) => return check_tx_error("state lock poisoned"),
         };
         match self.plan_block(&state, &[request.tx], now_unix_ms()) {
-            Ok((_, tx_results)) => {
+            Ok((_, tx_results, _)) => {
                 let Some(result) = tx_results.into_iter().next() else {
                     return check_tx_error("transaction planning returned no result");
                 };
@@ -1683,6 +2321,15 @@ impl Application for CometBftApplication {
             {
                 continue;
             }
+            if candidate
+                .poco_application
+                .clone()
+                .map(PocoApplicationBlockOverlayV0::seal)
+                .transpose()
+                .is_err()
+            {
+                continue;
+            }
             delta = candidate;
             total_bytes = next_total;
             txs.push(tx);
@@ -1706,10 +2353,11 @@ impl Application for CometBftApplication {
                     request.height == state.height as i64 + 1,
                     "proposal height mismatch"
                 );
-                self.plan_block(
+                self.execute_block(
                     &state,
                     &request.txs,
                     consensus_timestamp_ms(request.time.as_ref())?,
+                    &request.hash,
                 )?;
                 Ok(())
             })
@@ -1741,7 +2389,7 @@ impl Application for CometBftApplication {
             panic!("refuse FinalizeBlock with invalid consensus timestamp: {error:#}")
         });
         let pending = self
-            .execute_block(&state, &request.txs, timestamp_ms)
+            .execute_block(&state, &request.txs, timestamp_ms, &request.hash)
             .unwrap_or_else(|error| {
                 panic!(
                     "ProcessProposal accepted a block that FinalizeBlock cannot execute: {error:#}"
@@ -1749,6 +2397,75 @@ impl Application for CometBftApplication {
             });
         let app_hash = Bytes::copy_from_slice(&pending.app_hash);
         let validator_updates = pending.validator_updates.clone();
+        let checkpoint_events = pending
+            .poco_checkpoint_execution
+            .as_ref()
+            .map(|capability| Event {
+                r#type: "trnm.poco.checkpoint-execution.v0".to_string(),
+                attributes: {
+                    let checkpoint = capability.checkpoint_execution();
+                    vec![
+                        ("execution_id", hex::encode(checkpoint.execution_id())),
+                        ("epoch", checkpoint.epoch().get().to_string()),
+                        (
+                            "checkpoint_height",
+                            checkpoint.checkpoint_height().get().to_string(),
+                        ),
+                        (
+                            "cutoff_height",
+                            checkpoint.cutoff_height().get().to_string(),
+                        ),
+                        (
+                            "cutoff_state_root",
+                            hex::encode(checkpoint.cutoff_state_root().as_bytes()),
+                        ),
+                        ("payload_root", hex::encode(checkpoint.payload_root())),
+                        ("receipts_root", hex::encode(checkpoint.receipts_root())),
+                        (
+                            "next_state_root",
+                            hex::encode(checkpoint.next_state_root().as_bytes()),
+                        ),
+                        (
+                            "manifest_entries_root",
+                            hex::encode(checkpoint.cutoff_entries_root()),
+                        ),
+                        (
+                            "manifest_entry_count",
+                            checkpoint.cutoff_entry_count().to_string(),
+                        ),
+                        (
+                            "candidate_authorization_id",
+                            hex::encode(capability.authorization_id()),
+                        ),
+                        (
+                            "candidate_transcript_digest",
+                            hex::encode(capability.transcript_digest()),
+                        ),
+                        (
+                            "candidate_result_digest",
+                            hex::encode(capability.result_digest()),
+                        ),
+                        (
+                            "candidate_parameters_hash",
+                            hex::encode(capability.candidate_parameters_hash().as_bytes()),
+                        ),
+                        ("fallback_used", capability.fallback_used().to_string()),
+                        (
+                            "fallback_reason",
+                            u16::from(capability.fallback_reason()).to_string(),
+                        ),
+                    ]
+                    .into_iter()
+                    .map(|(key, value)| EventAttribute {
+                        key: key.to_string(),
+                        value,
+                        index: true,
+                    })
+                    .collect()
+                },
+            })
+            .into_iter()
+            .collect();
         state.pending = Some(pending);
         ResponseFinalizeBlock {
             tx_results: state
@@ -1759,6 +2476,7 @@ impl Application for CometBftApplication {
                 .clone(),
             validator_updates,
             app_hash,
+            events: checkpoint_events,
             ..Default::default()
         }
     }
@@ -2223,6 +2941,7 @@ impl CometBftApplication {
                     .as_ref()
                     .context("restored snapshot is missing validator lifecycle")?;
                 validate_lifecycle_authorization(&self.core.config, lifecycle)?;
+                validate_poco_authority_binding(&self.core.config, &next, None)?;
                 ensure!(
                     next.height == metadata.height
                         && hex::encode(next.app_hash) == metadata.app_hash_hex,
@@ -2251,6 +2970,7 @@ impl CometBftApplication {
                         next_auth_tree;
                 }
                 *state = next;
+                self.clear_poco_runtime_caches()?;
                 if let Err(error) = self.retain_snapshot(&state) {
                     eprintln!(
                         "[trnm-cometbft-app] restored state but failed to retain optional snapshot: {error:#}"
@@ -2336,6 +3056,18 @@ impl CometBftApplication {
                     .as_ref()
                     .context("restored snapshot is missing validator lifecycle")?;
                 validate_lifecycle_authorization(&self.core.config, lifecycle)?;
+                let restored_authority =
+                    store.load_snapshot_object(stage_path, &poco_authority_object_key())?;
+                ensure!(
+                    restored_authority
+                        == self
+                            .core
+                            .config
+                            .poco_authority
+                            .as_ref()
+                            .map(poco_authority_object),
+                    "restored PoCO authority does not match application config"
+                );
                 let next = store.install_snapshot_database(
                     &state,
                     stage_path,
@@ -2343,6 +3075,7 @@ impl CometBftApplication {
                     expected_app_hash,
                 )?;
                 *state = next;
+                self.clear_poco_runtime_caches()?;
                 if let Err(error) = self.retain_snapshot(&state) {
                     eprintln!(
                         "[trnm-cometbft-app] restored state but failed to retain optional snapshot: {error:#}"
@@ -2420,6 +3153,121 @@ fn canonical_signers(signers: &[AuthorizedSignerV1]) -> BTreeSet<(String, String
         .collect()
 }
 
+fn validate_poco_genesis_entries_v0(
+    raw_entries: &[PocoGenesisEntryV0],
+    authority: Option<&PocoAuthorityConfigV0>,
+    chain_id: &str,
+    application_validators: &[ConsensusValidatorV1],
+) -> Result<Vec<poco_snapshot::PocoSnapshotEntryV0>> {
+    if raw_entries.is_empty() {
+        // An empty list is the explicit legacy/inert state. It remains
+        // restorable but cannot be consumed by the H3b2b1 planner.
+        return Ok(Vec::new());
+    }
+    let authority = authority.context("PoCO genesis entries require authenticated authority")?;
+    ensure!(
+        raw_entries.len() <= poco_snapshot::MAX_POCO_SNAPSHOT_ENTRIES,
+        "PoCO genesis entry count exceeds bound"
+    );
+    let mut encoded_total = 0usize;
+    for entry in raw_entries {
+        encoded_total = encoded_total
+            .checked_add(entry.logical_key_hex.len())
+            .and_then(|size| size.checked_add(entry.value_hex.len()))
+            .context("PoCO genesis hex size overflow")?;
+        ensure!(
+            encoded_total <= poco_snapshot::MAX_POCO_SNAPSHOT_BUNDLE_BYTES.saturating_mul(2),
+            "PoCO genesis hex exceeds decoded 8 MiB bound"
+        );
+    }
+
+    let mut entries = raw_entries
+        .iter()
+        .map(|raw| {
+            let kind = poco_snapshot::PocoSnapshotEntryKindV0::from_u8(raw.kind)?;
+            let logical_key =
+                hex::decode(&raw.logical_key_hex).context("decode PoCO genesis logical key hex")?;
+            let value = hex::decode(&raw.value_hex).context("decode PoCO genesis value hex")?;
+            poco_transition::decode_poco_snapshot_value_v0_exact(kind, &logical_key, &value)?;
+            poco_snapshot::PocoSnapshotEntryV0::new(kind, logical_key, value)
+        })
+        .collect::<Result<Vec<_>>>()?;
+    entries.sort_by(|left, right| {
+        (left.kind, left.logical_key.as_slice()).cmp(&(right.kind, right.logical_key.as_slice()))
+    });
+    poco_snapshot::validate_entries(&entries)?;
+
+    let authority_key = poco_application::poco_application_authority_logical_key_v0();
+    let authority_entries = entries
+        .iter()
+        .filter(|entry| {
+            entry.kind == poco_snapshot::PocoSnapshotEntryKindV0::ApplicationAuthorityState
+        })
+        .collect::<Vec<_>>();
+    ensure!(
+        authority_entries.len() == 1
+            && authority_entries[0].logical_key.as_slice() == authority_key,
+        "PoCO genesis requires exactly one canonical application authority entry"
+    );
+    let parts = poco_transition::decode_poco_snapshot_value_parts_v0_exact(
+        authority_entries[0].kind,
+        &authority_entries[0].logical_key,
+        &authority_entries[0].value,
+    )?;
+    ensure!(
+        parts.verified.revision() == 1
+            && parts.identity == poco_application::poco_application_authority_identity_v0()
+            && poco_application::PocoApplicationAuthorityStateV0::decode_exact(parts.payload)?
+                == poco_application::PocoApplicationAuthorityStateV0::empty(),
+        "PoCO genesis application authority is not the exact empty revision-1 state"
+    );
+
+    let manifest = poco_snapshot::PocoSnapshotManifestV0::from_entries(
+        trnm_consensus_types::Height::new(0),
+        &entries,
+    )?;
+    let mut live = BTreeMap::new();
+    for entry in &entries {
+        ensure!(
+            live.insert(entry.jmt_key()?, entry.value.clone()).is_none(),
+            "duplicate PoCO genesis physical entry"
+        );
+    }
+    live.insert(
+        poco_snapshot::poco_snapshot_manifest_key()?,
+        manifest.encode(),
+    );
+    let projection = take_and_validate_production_poco_projection_v0(0, &mut live)?
+        .context("PoCO genesis projection is inactive")?;
+    ensure!(live.is_empty(), "PoCO genesis validation left hidden state");
+    let (validator_set, parameters) = active_consensus_configuration(&projection)?;
+    validate_poco_parameter_retention_v0(&parameters)?;
+    let expected_chain_id = trnm_consensus_types::ChainId::from_bytes(chain_id.as_bytes())
+        .map_err(|error| anyhow!("invalid PoCO genesis chain ID: {error:?}"))?;
+    let expected_genesis = trnm_consensus_types::GenesisHash::new(
+        trnm_finality_types::decode_hash32("PoCO genesis hash", &authority.genesis_hash_hex)?,
+    );
+    let expected_profile = trnm_finality_types::decode_hash32(
+        "PoCO protocol profile hash",
+        &authority.protocol_profile_hash_hex,
+    )?;
+    ensure!(
+        validator_set.chain_id() == expected_chain_id
+            && validator_set.genesis_hash() == expected_genesis,
+        "PoCO genesis validator set authority mismatch"
+    );
+    ensure!(
+        validator_set.consensus_parameters_hash() == parameters.hash()
+            && *parameters.hash().as_bytes() == expected_profile,
+        "PoCO genesis active parameter/profile mismatch"
+    );
+    validator_set
+        .validate_against_parameters(&parameters)
+        .map_err(|error| anyhow!("invalid PoCO genesis active configuration: {error:?}"))?;
+    validate_application_validator_projection(&validator_set, application_validators)?;
+    Ok(entries)
+}
+
 fn default_fee_policy_object() -> StoredObject {
     ObjectMutation {
         object_key_hex: fee_policy_key(),
@@ -2432,6 +3280,53 @@ fn default_fee_policy_object() -> StoredObject {
     .into_stored()
 }
 
+fn poco_authority_object_key() -> String {
+    hex::encode(hash_domain(
+        "trnm.state.object.key.v1",
+        &[b"trnm.poco.authority.v0"],
+    ))
+}
+
+fn poco_authority_object(authority: &PocoAuthorityConfigV0) -> StoredObject {
+    ObjectMutation {
+        object_key_hex: poco_authority_object_key(),
+        object_type: "trnm.poco.authority.v0".to_string(),
+        expected_version: None,
+        next_version: 0,
+        value_bytes: serde_json::to_vec(authority)
+            .expect("validated PoCO authority serialization is infallible"),
+    }
+    .into_stored()
+}
+
+fn validate_poco_authority_binding(
+    config: &ConsensusAppConfig,
+    state: &AppState,
+    store: Option<&ApplicationStore>,
+) -> Result<()> {
+    let key = poco_authority_object_key();
+    if state.validator_lifecycle.is_none() {
+        ensure!(
+            !state.objects.contains_key(&key),
+            "uninitialized state contains a PoCO authority object"
+        );
+        return Ok(());
+    }
+    let committed = state.objects.get(&key).cloned().or_else(|| {
+        store.and_then(|store| {
+            store.load_object(&key).unwrap_or_else(|error| {
+                panic!("fail-stop: load authenticated PoCO authority object: {error:#}")
+            })
+        })
+    });
+    let expected = config.poco_authority.as_ref().map(poco_authority_object);
+    ensure!(
+        committed == expected,
+        "authenticated PoCO authority does not match application config"
+    );
+    Ok(())
+}
+
 fn effective_validator_lifecycle<'a>(
     state: &'a AppState,
     delta: &'a BlockDelta,
@@ -2441,6 +3336,18 @@ fn effective_validator_lifecycle<'a>(
         .as_ref()
         .or(state.validator_lifecycle.as_ref())
         .context("validator lifecycle is not initialized")
+}
+
+fn poco_application_governance_signer_commitment_v0(
+    lifecycle: &ValidatorLifecycleStateV1,
+) -> [u8; 32] {
+    hash_domain(
+        "trnm.poco-bft.application-governance-signer.v0",
+        &[
+            lifecycle.governance.signer_id.as_bytes(),
+            lifecycle.authorized_signers_hash_hex.as_bytes(),
+        ],
+    )
 }
 
 fn validate_lifecycle_authorization(
@@ -2543,8 +3450,85 @@ fn authenticated_writes_for_delta(height: u64, delta: &BlockDelta) -> Result<Vec
     Ok(writes)
 }
 
+fn validate_in_memory_authenticated_domain_projection(
+    state: &AppState,
+    auth_tree: &InMemoryAuthTree,
+) -> Result<()> {
+    ensure!(
+        state.pending.is_none(),
+        "cannot validate pending application state"
+    );
+    ensure!(
+        auth_tree.latest_version() == Some(state.height)
+            && auth_tree
+                .root_hash(state.height)
+                .map(Into::<[u8; 32]>::into)
+                == Some(state.app_hash),
+        "authenticated tree does not match application head"
+    );
+    let mut authenticated = auth_tree.verified_live_values(state.height)?;
+    for object in state.objects.values() {
+        let key = stored_object_key(&object.object_key_hex)?;
+        let value = authenticated.remove(&key).with_context(|| {
+            format!(
+                "persisted object {} is absent from authenticated state",
+                object.object_key_hex
+            )
+        })?;
+        ensure!(
+            value
+                == AuthenticatedObjectRecord::new(
+                    object.object_type.clone(),
+                    object.version,
+                    object.value_bytes.clone(),
+                )?
+                .encode()?,
+            "persisted object {} differs from authenticated value",
+            object.object_key_hex
+        );
+    }
+    let lifecycle = state
+        .validator_lifecycle
+        .as_ref()
+        .context("persisted state is missing validator lifecycle")?;
+    let lifecycle_value = authenticated
+        .remove(&validator_state_key()?)
+        .context("persisted validator lifecycle is absent from authenticated state")?;
+    let lifecycle_record = AuthenticatedObjectRecord::decode(&lifecycle_value)?;
+    ensure!(
+        lifecycle_record.object_type == VALIDATOR_LIFECYCLE_SCHEMA_V1
+            && lifecycle_record.object_version <= state.height
+            && lifecycle_record.value == serde_json::to_vec(lifecycle)?,
+        "persisted validator lifecycle differs from authenticated value"
+    );
+    take_and_validate_production_poco_projection_v0(state.height, &mut authenticated)?;
+    ensure!(
+        authenticated.is_empty(),
+        "authenticated state contains {} leaves absent from persisted application state",
+        authenticated.len()
+    );
+    Ok(())
+}
+
 fn empty_app_hash() -> [u8; 32] {
     hash_domain("trnm.cometbft.application.empty.v2", &[])
+}
+
+#[cfg(test)]
+fn test_authorized_empty_native_execution(
+    parent_height: u64,
+    parent_state_root: [u8; 32],
+    target_height: u64,
+    post_state_root: [u8; 32],
+) -> AuthorizedNativeCheckpointExecutionV0 {
+    authorize_native_checkpoint_execution_v0(
+        NativeBlockExecutionV0::empty(),
+        trnm_consensus_types::Height::new(parent_height),
+        trnm_consensus_types::StateRoot::new(parent_state_root),
+        trnm_consensus_types::Height::new(target_height),
+        trnm_consensus_types::StateRoot::new(post_state_root),
+    )
+    .expect("test native execution transition is authorized")
 }
 
 #[cfg(test)]
@@ -2686,42 +3670,6 @@ fn decode_state(bytes: &[u8]) -> Result<(AppState, InMemoryAuthTree)> {
                 == Some(app_hash),
         "persisted authenticated tree does not match application head"
     );
-    let mut authenticated = auth_tree.verified_live_values(persisted.height)?;
-    for object in objects.values() {
-        let key = stored_object_key(&object.object_key_hex)?;
-        let value = authenticated.remove(&key).with_context(|| {
-            format!(
-                "persisted object {} is absent from authenticated state",
-                object.object_key_hex
-            )
-        })?;
-        ensure!(
-            value
-                == AuthenticatedObjectRecord::new(
-                    object.object_type.clone(),
-                    object.version,
-                    object.value_bytes.clone(),
-                )?
-                .encode()?,
-            "persisted object {} differs from authenticated value",
-            object.object_key_hex
-        );
-    }
-    let lifecycle_value = authenticated
-        .remove(&validator_state_key()?)
-        .context("persisted validator lifecycle is absent from authenticated state")?;
-    let lifecycle_record = AuthenticatedObjectRecord::decode(&lifecycle_value)?;
-    ensure!(
-        lifecycle_record.object_type == VALIDATOR_LIFECYCLE_SCHEMA_V1
-            && lifecycle_record.object_version <= persisted.height
-            && lifecycle_record.value == serde_json::to_vec(&persisted.validator_lifecycle)?,
-        "persisted validator lifecycle differs from authenticated value"
-    );
-    ensure!(
-        authenticated.is_empty(),
-        "authenticated state contains {} leaves absent from persisted application state",
-        authenticated.len()
-    );
     let state = AppState {
         height: persisted.height,
         app_hash,
@@ -2731,6 +3679,7 @@ fn decode_state(bytes: &[u8]) -> Result<(AppState, InMemoryAuthTree)> {
         validator_lifecycle: Some(persisted.validator_lifecycle),
         pending: None,
     };
+    validate_in_memory_authenticated_domain_projection(&state, &auth_tree)?;
     Ok((state, auth_tree))
 }
 
@@ -2747,6 +3696,7 @@ fn encode_state(state: &AppState, auth_tree: &InMemoryAuthTree) -> Result<Vec<u8
                 == Some(state.app_hash),
         "cannot encode state with a different authenticated tree head"
     );
+    validate_in_memory_authenticated_domain_projection(state, auth_tree)?;
     let persisted = PersistedAppStateV4 {
         schema: "trnm_cometbft_app_state_v4".to_string(),
         height: state.height,
@@ -3385,6 +4335,19 @@ fn persist_state_bytes(path: &Path, bytes: &[u8]) -> Result<()> {
 
 #[cfg(test)]
 mod tests {
+    use super::*;
+    use crate::validator_lifecycle::{
+        validator_key_proof_message, ValidatorKeyProofV1, VALIDATOR_GOVERNANCE_SCHEMA_V1,
+        VALIDATOR_TRANSITION_SCHEMA_V1,
+    };
+    use crate::{
+        poco_application::genesis_poco_application_authority_entry_v0,
+        poco_snapshot::{
+            poco_snapshot_manifest_key, PocoSnapshotEntryKindV0, PocoSnapshotEntryV0,
+            PocoSnapshotManifestV0,
+        },
+        poco_transition::{encode_poco_snapshot_value_envelope_v0, PocoWritePermitV0},
+    };
     use ed25519_dalek::SigningKey;
     use tendermint_proto::{
         google::protobuf::Timestamp,
@@ -3398,11 +4361,9 @@ mod tests {
     };
     use trnm_finality_types::crypto::{public_key_hex, sign_hex};
 
-    use super::*;
-    use crate::validator_lifecycle::{
-        validator_key_proof_message, ValidatorKeyProofV1, VALIDATOR_GOVERNANCE_SCHEMA_V1,
-        VALIDATOR_TRANSITION_SCHEMA_V1,
-    };
+    const POCO_TRANSITION_VECTOR: &str = include_str!(
+        "../../../../docs/protocol/poco-bft-v0/vectors/poco-snapshot-transition-v0.json"
+    );
 
     fn initial_validators() -> Vec<ConsensusValidatorV1> {
         let mut validators = (21u8..=24)
@@ -3416,11 +4377,1077 @@ mod tests {
     }
 
     #[test]
+    fn authenticated_runtime_overlay_uses_one_snapshot_and_preserves_typed_failures() {
+        let root = std::env::temp_dir().join(format!(
+            "trnm-authenticated-runtime-overlay-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .expect("system clock after Unix epoch")
+                .as_nanos()
+        ));
+        fs::create_dir_all(&root).expect("create authenticated overlay test directory");
+        let (app, _) = persistent_fixture(root.join("state.json"));
+        let (height, app_hash) = app
+            .height_and_app_hash()
+            .expect("read authenticated overlay parent");
+        let store = app.core.store.as_ref().expect("persistent test store");
+        let snapshot = store
+            .begin_authenticated_runtime_read_snapshot_for_test_v0(height, app_hash)
+            .expect("begin authenticated runtime overlay snapshot");
+
+        let object_key = "fallible-overlay-object".to_string();
+        let local_value = b"local-value".to_vec();
+        let local_object = StoredObject {
+            object_key_hex: object_key.clone(),
+            object_type: "trnm.test-object.v0".to_string(),
+            version: 7,
+            value_hash_hex: hex::encode(hash_domain("trnm.state.object.value.v1", &[&local_value])),
+            value_bytes: local_value.clone(),
+        };
+        let changes = BTreeMap::from([(object_key.clone(), local_object)]);
+        let base_value = b"base-value".to_vec();
+        let base = BTreeMap::from([(
+            object_key.clone(),
+            StoredObject {
+                object_key_hex: object_key.clone(),
+                object_type: "trnm.base-object.v0".to_string(),
+                version: 2,
+                value_hash_hex: hex::encode(hash_domain(
+                    "trnm.state.object.value.v1",
+                    &[&base_value],
+                )),
+                value_bytes: base_value,
+            },
+        )]);
+
+        let overlay = AuthenticatedRuntimeOverlayObjects {
+            base: &base,
+            changes: &changes,
+            snapshot: &snapshot,
+        };
+        let local = RuntimeTryStateViewV0::try_get(&overlay, &object_key)
+            .expect("local overlay hit must not touch snapshot")
+            .expect("local object exists");
+        assert_eq!(local.object_type, "trnm.test-object.v0");
+        assert_eq!(local.version, 7);
+        assert_eq!(local.value_bytes, local_value);
+
+        let empty = BTreeMap::new();
+        let overlay = AuthenticatedRuntimeOverlayObjects {
+            base: &empty,
+            changes: &empty,
+            snapshot: &snapshot,
+        };
+        let persisted = RuntimeTryStateViewV0::try_get(&overlay, &fee_policy_key())
+            .expect("load persisted fee policy through pinned snapshot")
+            .expect("genesis fee policy is authenticated");
+        assert_eq!(persisted.object_type, FEE_POLICY_OBJECT_TYPE_V1);
+        assert_eq!(
+            RuntimeTryStateViewV0::try_get(&overlay, "missing-authenticated-object")
+                .expect("verify snapshot non-membership"),
+            None
+        );
+        assert!(matches!(
+            RuntimeTryStateViewV0::try_get(&overlay, ""),
+            Err(AuthenticatedRuntimeReadFailureV0::HostInvariant {
+                stage: store::AuthenticatedRuntimeReadStageV0::DeriveObjectKey,
+                ..
+            })
+        ));
+
+        snapshot
+            .finish()
+            .expect("finish authenticated overlay snapshot");
+        drop(app);
+        fs::remove_dir_all(root).expect("remove authenticated overlay test directory");
+    }
+
+    fn active_poco_genesis_fixture_with_state_path(
+        state_path: Option<PathBuf>,
+    ) -> (CometBftApplication, SigningKey, Vec<PocoSnapshotEntryV0>) {
+        let vector: serde_json::Value = serde_json::from_str(POCO_TRANSITION_VECTOR).unwrap();
+        let positives = vector["semantic_layout_corpus"]["positive_fixtures"]
+            .as_array()
+            .unwrap();
+        let mut entries = [13_u8, 14_u8]
+            .into_iter()
+            .map(|kind| {
+                let source = positives
+                    .iter()
+                    .find(|fixture| fixture["kind"].as_u64() == Some(u64::from(kind)))
+                    .unwrap();
+                PocoSnapshotEntryV0::new(
+                    PocoSnapshotEntryKindV0::from_u8(kind).unwrap(),
+                    hex::decode(source["logical_key_hex"].as_str().unwrap()).unwrap(),
+                    hex::decode(source["value_cev0_hex"].as_str().unwrap()).unwrap(),
+                )
+                .unwrap()
+            })
+            .collect::<Vec<_>>();
+        entries.push(genesis_poco_application_authority_entry_v0().unwrap());
+        let projection_from_entries = |entries: &[PocoSnapshotEntryV0]| {
+            let manifest =
+                PocoSnapshotManifestV0::from_entries(trnm_consensus_types::Height::new(0), entries)
+                    .unwrap();
+            let mut live = BTreeMap::new();
+            live.insert(poco_snapshot_manifest_key().unwrap(), manifest.encode());
+            for entry in entries {
+                live.insert(entry.jmt_key().unwrap(), entry.value.clone());
+            }
+            let projection = take_and_validate_production_poco_projection_v0(0, &mut live)
+                .unwrap()
+                .unwrap();
+            assert!(live.is_empty());
+            projection
+        };
+        entries.sort_by(|left, right| {
+            (left.kind, left.logical_key.as_slice())
+                .cmp(&(right.kind, right.logical_key.as_slice()))
+        });
+        let provisional_projection = projection_from_entries(&entries);
+        let (provisional_set, _) = active_consensus_configuration(&provisional_projection).unwrap();
+        let relationship_provider = provisional_set
+            .validators()
+            .iter()
+            .find(|validator| validator.id().as_bytes() == b"validator-a")
+            .expect("active genesis fixture contains validator-a")
+            .id()
+            .as_bytes()
+            .to_vec();
+        let relationship_consumer = b"consumer-a".to_vec();
+        let relationship_task = b"task-a".to_vec();
+        let frame_identity = |output: &mut Vec<u8>, value: &[u8]| {
+            output.extend_from_slice(&(value.len() as u32).to_be_bytes());
+            output.extend_from_slice(value);
+        };
+        let mut relationship_identity = Vec::new();
+        for value in [
+            relationship_provider.as_slice(),
+            relationship_consumer.as_slice(),
+            relationship_task.as_slice(),
+        ] {
+            frame_identity(&mut relationship_identity, value);
+        }
+        let mut relationship_payload = relationship_identity.clone();
+        // Reciprocal is authorizing; Unresolved (the generic kind-8 corpus
+        // value) is intentionally rejected by certificate admission.
+        relationship_payload.push(3);
+        relationship_payload.extend_from_slice(&40u64.to_be_bytes());
+        let (relationship_key, relationship_value) = encode_poco_snapshot_value_envelope_v0(
+            PocoSnapshotEntryKindV0::RelationshipClassification,
+            1,
+            &relationship_identity,
+            &relationship_payload,
+        )
+        .unwrap();
+        entries.push(
+            PocoSnapshotEntryV0::new(
+                PocoSnapshotEntryKindV0::RelationshipClassification,
+                relationship_key,
+                relationship_value,
+            )
+            .unwrap(),
+        );
+        entries.sort_by(|left, right| {
+            (left.kind, left.logical_key.as_slice())
+                .cmp(&(right.kind, right.logical_key.as_slice()))
+        });
+        let projection = projection_from_entries(&entries);
+        let (validator_set, parameters) = active_consensus_configuration(&projection).unwrap();
+        assert!(validator_set
+            .validators()
+            .iter()
+            .any(|validator| { validator.id().as_bytes() == relationship_provider.as_slice() }));
+        let relationship = projection
+            .entries()
+            .iter()
+            .find(|entry| entry.kind == PocoSnapshotEntryKindV0::RelationshipClassification)
+            .unwrap();
+        let relationship_parts = poco_transition::decode_poco_snapshot_value_parts_v0_exact(
+            relationship.kind,
+            &relationship.logical_key,
+            &relationship.value,
+        )
+        .unwrap();
+        match relationship_parts.fact {
+            poco_semantics::SemanticFactV0::RelationshipClassification { class, expires_at } => {
+                assert_ne!(class, poco_semantics::RelationshipClassV0::Unresolved);
+                assert!(expires_at > 0);
+            }
+            _ => panic!("genesis relationship decoded as wrong semantic kind"),
+        }
+        let mut validators = validator_set
+            .validators()
+            .iter()
+            .map(|validator| ConsensusValidatorV1 {
+                public_key_hex: hex::encode(validator.consensus_key().as_bytes()),
+                voting_power: validator.voting_power().get(),
+            })
+            .collect::<Vec<_>>();
+        validators.sort_by(|left, right| left.public_key_hex.cmp(&right.public_key_hex));
+        let chain_id = String::from_utf8(validator_set.chain_id().as_bytes().to_vec()).unwrap();
+        let signing_key = SigningKey::from_bytes(&[11u8; 32]);
+        let secondary_signing_key = SigningKey::from_bytes(&[12u8; 32]);
+        let authority = PocoAuthorityConfigV0 {
+            schema: POCO_AUTHORITY_CONFIG_SCHEMA_V0.to_string(),
+            genesis_hash_hex: hex::encode(validator_set.genesis_hash().as_bytes()),
+            protocol_profile_hash_hex: hex::encode(parameters.hash().as_bytes()),
+        };
+        let app = CometBftApplication::new(ConsensusAppConfig {
+            schema: CONFIG_SCHEMA_V1.to_string(),
+            chain_id: chain_id.clone(),
+            authorized_signers: vec![
+                AuthorizedSignerV1 {
+                    signer_id: "did:operator:1".to_string(),
+                    signer_role: "operator".to_string(),
+                    public_key_hex: public_key_hex(&signing_key),
+                },
+                AuthorizedSignerV1 {
+                    signer_id: "did:operator:2".to_string(),
+                    signer_role: "operator".to_string(),
+                    public_key_hex: public_key_hex(&secondary_signing_key),
+                },
+            ],
+            poco_authority: Some(authority.clone()),
+            state_path,
+        })
+        .unwrap();
+        let genesis = GenesisAppStateV2 {
+            schema: GENESIS_SCHEMA_V2.to_string(),
+            chain_id: chain_id.clone(),
+            app_version: APP_VERSION,
+            authorized_signers: app.core.config.authorized_signers.clone(),
+            poco_authority: Some(authority),
+            poco_genesis_entries: entries
+                .iter()
+                .map(|entry| PocoGenesisEntryV0 {
+                    kind: entry.kind as u8,
+                    logical_key_hex: hex::encode(&entry.logical_key),
+                    value_hex: hex::encode(&entry.value),
+                })
+                .collect(),
+            validator_governance: ValidatorGovernanceV1 {
+                schema: VALIDATOR_GOVERNANCE_SCHEMA_V1.to_string(),
+                signer_id: "did:operator:1".to_string(),
+                min_activation_delay_blocks: 2,
+                unsafe_allow_single_validator_genesis: false,
+            },
+            initial_validators: validators.clone(),
+        };
+        app.init_chain(RequestInitChain {
+            chain_id,
+            app_state_bytes: Bytes::from(serde_json::to_vec(&genesis).unwrap()),
+            consensus_params: Some(ConsensusParams {
+                version: Some(VersionParams { app: APP_VERSION }),
+                ..Default::default()
+            }),
+            validators: validators_to_abci(&validators).unwrap(),
+            ..Default::default()
+        });
+        (app, signing_key, entries)
+    }
+
+    fn active_poco_genesis_fixture() -> (CometBftApplication, SigningKey, Vec<PocoSnapshotEntryV0>)
+    {
+        active_poco_genesis_fixture_with_state_path(None)
+    }
+
+    fn authenticated_candidate_vector_v0() -> serde_json::Value {
+        let vector_path = Path::new(env!("CARGO_MANIFEST_DIR")).join(
+            "../../../docs/protocol/poco-bft-v0/vectors/\
+             poco-authenticated-candidate-selection-v0.json",
+        );
+        let raw = fs::read(&vector_path).unwrap_or_else(|error| {
+            panic!(
+                "read authenticated-candidate vector {}: {error}",
+                vector_path.display()
+            )
+        });
+        serde_json::from_slice(&raw).unwrap_or_else(|error| {
+            panic!(
+                "decode authenticated-candidate vector {}: {error}",
+                vector_path.display()
+            )
+        })
+    }
+
+    fn authenticated_candidate_scenario_entries_v0(
+        scenario: &serde_json::Value,
+    ) -> Vec<PocoSnapshotEntryV0> {
+        let mut entries = scenario["source"]["head_projection"]["entries"]
+            .as_array()
+            .expect("candidate head projection entries")
+            .iter()
+            .map(|entry| {
+                PocoSnapshotEntryV0::new(
+                    PocoSnapshotEntryKindV0::from_u8(
+                        u8::try_from(entry["kind"].as_u64().expect("candidate entry kind"))
+                            .expect("candidate entry kind is u8"),
+                    )
+                    .expect("candidate entry kind is known"),
+                    hex::decode(
+                        entry["logical_key_hex"]
+                            .as_str()
+                            .expect("candidate logical key"),
+                    )
+                    .expect("decode candidate logical key"),
+                    hex::decode(entry["value_hex"].as_str().expect("candidate entry value"))
+                        .expect("decode candidate entry value"),
+                )
+                .expect("candidate source entry")
+            })
+            .collect::<Vec<_>>();
+        entries.sort_by(|left, right| {
+            (left.kind, left.logical_key.as_slice())
+                .cmp(&(right.kind, right.logical_key.as_slice()))
+        });
+        entries
+    }
+
+    /// Initializes the normal ABCI application with the exact empty-authority
+    /// epoch-zero source accepted by production InitChain. The canonical
+    /// scenario authority is installed later at manifest height 24 by an
+    /// explicit test-only source bootstrap, matching the corpus's documented
+    /// fixture-only epoch boundary without weakening the production API.
+    fn authenticated_candidate_abci_fixture_v0(
+        compact_profile: &serde_json::Value,
+        state_path: Option<PathBuf>,
+    ) -> (CometBftApplication, ConsensusAppConfig) {
+        let entries =
+            poco_application::fixture_authoring::authenticated_candidate_abci_genesis_entries_v0()
+                .expect("candidate ABCI epoch-zero genesis entries");
+
+        let manifest =
+            PocoSnapshotManifestV0::from_entries(trnm_consensus_types::Height::new(0), &entries)
+                .expect("candidate equivalent-bootstrap manifest");
+        let mut live = BTreeMap::new();
+        live.insert(
+            poco_snapshot_manifest_key().expect("candidate manifest key"),
+            manifest.encode(),
+        );
+        for entry in &entries {
+            live.insert(
+                entry.jmt_key().expect("candidate physical entry key"),
+                entry.value.clone(),
+            );
+        }
+        let projection = take_and_validate_production_poco_projection_v0(0, &mut live)
+            .expect("candidate equivalent-bootstrap projection")
+            .expect("candidate equivalent bootstrap is active");
+        assert!(live.is_empty());
+        poco_application::validate_application_authority_projection_v0(&projection)
+            .expect("candidate epoch-zero genesis authority audit");
+        let (validator_set, parameters) =
+            active_consensus_configuration(&projection).expect("candidate genesis configuration");
+        assert_eq!(
+            validator_set.epoch().get(),
+            0,
+            "candidate ABCI genesis must retain the real epoch-zero source"
+        );
+        assert_eq!(
+            hex::encode(parameters.hash().as_bytes()),
+            compact_profile["active_parameters_hash_hex"]
+                .as_str()
+                .expect("candidate parameters hash")
+        );
+        let mut validators = validator_set
+            .validators()
+            .iter()
+            .map(|validator| ConsensusValidatorV1 {
+                public_key_hex: hex::encode(validator.consensus_key().as_bytes()),
+                voting_power: validator.voting_power().get(),
+            })
+            .collect::<Vec<_>>();
+        validators.sort_by(|left, right| left.public_key_hex.cmp(&right.public_key_hex));
+
+        let chain_id = compact_profile["chain_id_utf8"]
+            .as_str()
+            .expect("candidate chain ID")
+            .to_string();
+        let operator = SigningKey::from_bytes(&[11; 32]);
+        let authority = PocoAuthorityConfigV0 {
+            schema: POCO_AUTHORITY_CONFIG_SCHEMA_V0.to_string(),
+            genesis_hash_hex: compact_profile["genesis_hash_hex"]
+                .as_str()
+                .expect("candidate genesis hash")
+                .to_string(),
+            protocol_profile_hash_hex: compact_profile["active_parameters_hash_hex"]
+                .as_str()
+                .expect("candidate protocol profile")
+                .to_string(),
+        };
+        let config = ConsensusAppConfig {
+            schema: CONFIG_SCHEMA_V1.to_string(),
+            chain_id: chain_id.clone(),
+            authorized_signers: vec![AuthorizedSignerV1 {
+                signer_id: "did:operator:1".to_string(),
+                signer_role: "operator".to_string(),
+                public_key_hex: public_key_hex(&operator),
+            }],
+            poco_authority: Some(authority.clone()),
+            state_path,
+        };
+        let app = CometBftApplication::new(config.clone()).expect("candidate ABCI application");
+        let genesis = GenesisAppStateV2 {
+            schema: GENESIS_SCHEMA_V2.to_string(),
+            chain_id: chain_id.clone(),
+            app_version: APP_VERSION,
+            authorized_signers: config.authorized_signers.clone(),
+            poco_authority: Some(authority),
+            poco_genesis_entries: entries
+                .iter()
+                .map(|entry| PocoGenesisEntryV0 {
+                    kind: entry.kind as u8,
+                    logical_key_hex: hex::encode(&entry.logical_key),
+                    value_hex: hex::encode(&entry.value),
+                })
+                .collect(),
+            validator_governance: ValidatorGovernanceV1 {
+                schema: VALIDATOR_GOVERNANCE_SCHEMA_V1.to_string(),
+                signer_id: "did:operator:1".to_string(),
+                min_activation_delay_blocks: 2,
+                unsafe_allow_single_validator_genesis: false,
+            },
+            initial_validators: validators.clone(),
+        };
+        app.init_chain(RequestInitChain {
+            chain_id,
+            app_state_bytes: Bytes::from(
+                serde_json::to_vec(&genesis).expect("encode candidate ABCI genesis"),
+            ),
+            consensus_params: Some(ConsensusParams {
+                version: Some(VersionParams { app: APP_VERSION }),
+                ..Default::default()
+            }),
+            validators: validators_to_abci(&validators).expect("candidate ABCI validators"),
+            ..Default::default()
+        });
+        (app, config)
+    }
+
+    #[derive(serde::Serialize)]
+    struct PocoApplicationFullGenesisExportV0 {
+        schema: &'static str,
+        schema_version: u16,
+        initial: PocoApplicationFullGenesisInitialV0,
+        authoring_nullifier_state: PocoApplicationAuthoringNullifierStateV0,
+    }
+
+    #[derive(serde::Serialize)]
+    struct PocoApplicationFullGenesisInitialV0 {
+        version: u64,
+        jmt_root_hex: String,
+        active_genesis: PocoApplicationActiveGenesisExportV0,
+        production_context: PocoApplicationProductionContextExportV0,
+        history: Vec<PocoApplicationHistoryExportV0>,
+        projection: PocoApplicationProjectionExportV0,
+    }
+
+    #[derive(serde::Serialize)]
+    struct PocoApplicationProductionContextExportV0 {
+        chain_id_utf8: String,
+        genesis_hash_hex: String,
+        source_version: u64,
+        source_root_hex: String,
+        target_height: u64,
+        active_epoch: u64,
+        active_parameters_cev0_hex: String,
+        active_parameters_hash_hex: String,
+        authority_signer_commitment_hex: String,
+    }
+
+    #[derive(serde::Serialize)]
+    struct PocoApplicationActiveGenesisExportV0 {
+        chain_id_utf8: String,
+        genesis_hash_hex: String,
+        validator_lifecycle: PocoApplicationNamedRecordExportV0,
+        poco_authority_config: PocoApplicationNamedRecordExportV0,
+        active_parameters: PocoApplicationActiveParametersExportV0,
+        other_apphash_writes: Vec<PocoApplicationPhysicalWriteExportV0>,
+    }
+
+    #[derive(serde::Serialize)]
+    struct PocoApplicationNamedRecordExportV0 {
+        physical_key_hex: String,
+        value_hex: String,
+    }
+
+    #[derive(serde::Serialize)]
+    struct PocoApplicationActiveParametersExportV0 {
+        physical_key_hex: String,
+        value_hex: String,
+        cev0_hex: String,
+        hash_hex: String,
+    }
+
+    #[derive(serde::Serialize)]
+    struct PocoApplicationHistoryExportV0 {
+        version: u64,
+        jmt_root_hex: String,
+        writes: Vec<PocoApplicationPhysicalWriteExportV0>,
+    }
+
+    #[derive(serde::Serialize)]
+    struct PocoApplicationPhysicalWriteExportV0 {
+        physical_key_hex: String,
+        value_hex: Option<String>,
+    }
+
+    #[derive(serde::Serialize)]
+    struct PocoApplicationProjectionExportV0 {
+        manifest_hex: String,
+        entries_root_hex: String,
+        entries: Vec<PocoApplicationEntryExportV0>,
+    }
+
+    #[derive(serde::Serialize)]
+    struct PocoApplicationEntryExportV0 {
+        kind: u8,
+        logical_key_hex: String,
+        value_hex: String,
+        canonical_entry_cev0_hex: String,
+    }
+
+    #[derive(serde::Serialize)]
+    struct PocoApplicationAuthoringNullifierStateV0 {
+        root_hex: String,
+        count: u64,
+        occupied: Vec<PocoApplicationOccupiedNullifierExportV0>,
+    }
+
+    #[derive(serde::Serialize)]
+    struct PocoApplicationOccupiedNullifierExportV0 {
+        family: u8,
+        identifier_hex: String,
+    }
+
+    /// Manual v2 vector-authoring exporter.  The source is the real active
+    /// InitChain fixture above, and every emitted physical value is read back
+    /// from the committed authenticated tree.  A parallel ApplicationStore
+    /// InitChain must prove the same root and every emitted leaf before any
+    /// JSON is printed.
+    #[test]
+    #[ignore = "manual active-genesis full-AppHash vector exporter"]
+    fn export_active_poco_application_full_genesis_v0() {
+        let (memory, _, entries) = active_poco_genesis_fixture();
+        let production_context = {
+            let state = memory.core.state.lock().unwrap();
+            let delta = memory.start_block_delta(&state).unwrap();
+            let (authenticated, validator_set, parameters) = memory
+                .validated_live_poco_configuration(&state, &delta)
+                .unwrap()
+                .expect("active genesis production PoCO configuration");
+            assert_eq!(authenticated.version(), state.height);
+            assert_eq!(authenticated.state_root(), state.app_hash);
+            // This invokes the same private constructor used by block
+            // execution; the export never accepts a Node-supplied context.
+            memory
+                .start_poco_application_overlay(&state, &delta)
+                .unwrap();
+            PocoApplicationProductionContextExportV0 {
+                chain_id_utf8: String::from_utf8(validator_set.chain_id().as_bytes().to_vec())
+                    .unwrap(),
+                genesis_hash_hex: hex::encode(validator_set.genesis_hash().as_bytes()),
+                source_version: state.height,
+                source_root_hex: hex::encode(state.app_hash),
+                target_height: state.height.checked_add(1).unwrap(),
+                active_epoch: validator_set.epoch().get(),
+                active_parameters_cev0_hex: hex::encode(parameters.canonical_bytes()),
+                active_parameters_hash_hex: hex::encode(parameters.hash().as_bytes()),
+                authority_signer_commitment_hex: hex::encode(
+                    poco_application_governance_signer_commitment_v0(
+                        effective_validator_lifecycle(&state, &delta).unwrap(),
+                    ),
+                ),
+            }
+        };
+        let tree = memory.core.auth_tree.lock().unwrap();
+        let version = 0_u64;
+        let full_root: [u8; 32] = tree.root_hash(version).unwrap().into();
+        let live = tree.verified_live_values(version).unwrap();
+        drop(tree);
+
+        let persistent_root = std::env::temp_dir().join(format!(
+            "trnm-poco-application-genesis-export-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        ));
+        let state_path = persistent_root.join("app-state.json");
+        let (persistent, _, persistent_entries) =
+            active_poco_genesis_fixture_with_state_path(Some(state_path));
+        assert_eq!(persistent_entries, entries);
+        let committed = persistent.core.state.lock().unwrap().clone();
+        assert_eq!(committed.height, version);
+        assert_eq!(committed.app_hash, full_root);
+        let store = persistent.core.store.as_ref().unwrap();
+        for (key, value) in &live {
+            let proof = store.prove(version, key.clone()).unwrap();
+            assert_eq!(<[u8; 32]>::from(proof.root_hash), full_root);
+            assert_eq!(proof.value.as_deref(), Some(value.as_slice()));
+        }
+
+        let lifecycle_key = validator_state_key().unwrap();
+        let authority_key = stored_object_key(&poco_authority_object_key()).unwrap();
+        let active_parameters_entry = entries
+            .iter()
+            .find(|entry| entry.kind == PocoSnapshotEntryKindV0::ConsensusParameters)
+            .unwrap();
+        let active_parameters_key = active_parameters_entry.jmt_key().unwrap();
+        let active_parameters_parts = poco_transition::decode_poco_snapshot_value_parts_v0_exact(
+            PocoSnapshotEntryKindV0::ConsensusParameters,
+            &active_parameters_entry.logical_key,
+            &active_parameters_entry.value,
+        )
+        .unwrap();
+        let active_parameters = trnm_consensus_types::decode_consensus_parameters_v0_exact(
+            active_parameters_parts.payload,
+        )
+        .unwrap();
+
+        let mut projection_live = live.clone();
+        let projection =
+            take_and_validate_production_poco_projection_v0(version, &mut projection_live)
+                .unwrap()
+                .unwrap();
+        let projection_entries = projection
+            .entries()
+            .iter()
+            .map(|entry| PocoApplicationEntryExportV0 {
+                kind: entry.kind as u8,
+                logical_key_hex: hex::encode(&entry.logical_key),
+                value_hex: hex::encode(&entry.value),
+                canonical_entry_cev0_hex: hex::encode(entry.canonical_bytes()),
+            })
+            .collect::<Vec<_>>();
+        let history_writes = live
+            .iter()
+            .map(|(key, value)| PocoApplicationPhysicalWriteExportV0 {
+                physical_key_hex: hex::encode(key),
+                value_hex: Some(hex::encode(value)),
+            })
+            .collect::<Vec<_>>();
+        let other_apphash_writes = live
+            .iter()
+            .filter(|(key, _)| {
+                *key != &lifecycle_key && *key != &authority_key && *key != &active_parameters_key
+            })
+            .map(|(key, value)| PocoApplicationPhysicalWriteExportV0 {
+                physical_key_hex: hex::encode(key),
+                value_hex: Some(hex::encode(value)),
+            })
+            .collect::<Vec<_>>();
+        let authority = memory.core.config.poco_authority.as_ref().unwrap();
+        let application_authority_entry = entries
+            .iter()
+            .find(|entry| entry.kind == PocoSnapshotEntryKindV0::ApplicationAuthorityState)
+            .unwrap();
+        let application_authority_parts =
+            poco_transition::decode_poco_snapshot_value_parts_v0_exact(
+                PocoSnapshotEntryKindV0::ApplicationAuthorityState,
+                &application_authority_entry.logical_key,
+                &application_authority_entry.value,
+            )
+            .unwrap();
+        let application_authority =
+            poco_application::PocoApplicationAuthorityStateV0::decode_exact(
+                application_authority_parts.payload,
+            )
+            .unwrap();
+        assert_eq!(application_authority.nullifier_count(), 0);
+        assert_eq!(
+            application_authority.nullifier_root().unwrap(),
+            poco_nullifier::empty_poco_nullifier_root_v0()
+        );
+        let exported = PocoApplicationFullGenesisExportV0 {
+            schema: "trnm.poco-bft.application-full-genesis-export.v0",
+            schema_version: 0,
+            initial: PocoApplicationFullGenesisInitialV0 {
+                version,
+                jmt_root_hex: hex::encode(full_root),
+                active_genesis: PocoApplicationActiveGenesisExportV0 {
+                    chain_id_utf8: memory.core.config.chain_id.clone(),
+                    genesis_hash_hex: authority.genesis_hash_hex.clone(),
+                    validator_lifecycle: PocoApplicationNamedRecordExportV0 {
+                        physical_key_hex: hex::encode(&lifecycle_key),
+                        value_hex: hex::encode(live.get(&lifecycle_key).unwrap()),
+                    },
+                    poco_authority_config: PocoApplicationNamedRecordExportV0 {
+                        physical_key_hex: hex::encode(&authority_key),
+                        value_hex: hex::encode(live.get(&authority_key).unwrap()),
+                    },
+                    active_parameters: PocoApplicationActiveParametersExportV0 {
+                        physical_key_hex: hex::encode(&active_parameters_key),
+                        value_hex: hex::encode(live.get(&active_parameters_key).unwrap()),
+                        cev0_hex: hex::encode(active_parameters_parts.payload),
+                        hash_hex: hex::encode(active_parameters.hash().as_bytes()),
+                    },
+                    other_apphash_writes,
+                },
+                production_context,
+                history: vec![PocoApplicationHistoryExportV0 {
+                    version,
+                    jmt_root_hex: hex::encode(full_root),
+                    writes: history_writes,
+                }],
+                projection: PocoApplicationProjectionExportV0 {
+                    manifest_hex: hex::encode(projection.manifest().encode()),
+                    entries_root_hex: hex::encode(projection.manifest().entries_root()),
+                    entries: projection_entries,
+                },
+            },
+            authoring_nullifier_state: PocoApplicationAuthoringNullifierStateV0 {
+                root_hex: hex::encode(application_authority.nullifier_root().unwrap()),
+                count: application_authority.nullifier_count(),
+                occupied: Vec::new(),
+            },
+        };
+        let encoded = serde_json::to_vec_pretty(&exported).unwrap();
+        if let Some(path) = std::env::var_os("TRNM_POCO_APPLICATION_GENESIS_EXPORT") {
+            fs::write(&path, &encoded).unwrap();
+            eprintln!(
+                "wrote active PoCO application full-genesis export to {}",
+                PathBuf::from(path).display()
+            );
+        } else {
+            println!("{}", String::from_utf8(encoded).unwrap());
+        }
+
+        drop(persistent);
+        fs::remove_dir_all(&persistent_root).unwrap();
+    }
+
+    #[test]
     fn authenticated_query_floor_advances_only_on_retention_intervals() {
         assert_eq!(authenticated_query_floor(8_192), 0);
         assert_eq!(authenticated_query_floor(8_447), 0);
         assert_eq!(authenticated_query_floor(8_448), 257);
         assert_eq!(authenticated_query_floor(8_704), 513);
+    }
+
+    #[test]
+    fn poco_snapshot_lead_is_bounded_by_authenticated_history_retention() {
+        let mut fields =
+            trnm_consensus_types::ConsensusParametersV0::reference_shadow_v0().fields();
+        fields.snapshot_lead_blocks = AUTH_PROOF_RETENTION_VERSIONS;
+        let exact = trnm_consensus_types::ConsensusParametersV0::new(fields).unwrap();
+        validate_poco_parameter_retention_v0(&exact).unwrap();
+
+        fields.snapshot_lead_blocks = AUTH_PROOF_RETENTION_VERSIONS + 1;
+        let over = trnm_consensus_types::ConsensusParametersV0::new(fields).unwrap();
+        assert!(validate_poco_parameter_retention_v0(&over).is_err());
+    }
+
+    #[test]
+    fn poco_application_operation_is_identical_across_abci_and_authenticated_jmt() {
+        let (app, signing_key, _) = active_poco_genesis_fixture();
+        let before = app.height_and_app_hash().unwrap();
+        let operation = {
+            let state = app.core.state.lock().unwrap();
+            let delta = app.start_block_delta(&state).unwrap();
+            app.start_poco_application_overlay(&state, &delta)
+                .unwrap()
+                .test_define_meter_operation_v0()
+                .unwrap()
+        };
+        let tx = poco_application_tx(
+            &signing_key,
+            &app.core.config.chain_id,
+            "poco-application-integration-1",
+            1,
+            &operation,
+        );
+        let expected = {
+            let state = app.core.state.lock().unwrap();
+            app.execute_block(&state, std::slice::from_ref(&tx), 2_000, &[])
+                .unwrap()
+                .app_hash
+        };
+
+        let prepared = app.prepare_proposal(RequestPrepareProposal {
+            txs: vec![tx.clone()],
+            max_tx_bytes: 1024 * 1024,
+            height: 1,
+            time: block_time(),
+            ..Default::default()
+        });
+        assert_eq!(prepared.txs, vec![tx.clone()]);
+        assert_eq!(
+            app.process_proposal(RequestProcessProposal {
+                txs: prepared.txs.clone(),
+                height: 1,
+                time: block_time(),
+                ..Default::default()
+            })
+            .status,
+            response_process_proposal::ProposalStatus::Accept as i32
+        );
+        let finalized = app.finalize_block(RequestFinalizeBlock {
+            txs: prepared.txs,
+            height: 1,
+            time: block_time(),
+            ..Default::default()
+        });
+        assert_eq!(finalized.app_hash.as_ref(), expected);
+        app.commit();
+        assert_eq!(app.height_and_app_hash().unwrap(), (1, expected));
+        assert_ne!(before.1, expected);
+
+        let authenticated = app.production_poco_projection_at(1).unwrap();
+        assert_eq!(
+            authenticated.projection().manifest().cutoff_height().get(),
+            1
+        );
+        assert!(authenticated
+            .projection()
+            .entries()
+            .iter()
+            .any(|entry| { entry.kind == PocoSnapshotEntryKindV0::MeterDefinition }));
+        let authority = authenticated
+            .projection()
+            .entries()
+            .iter()
+            .find(|entry| entry.kind == PocoSnapshotEntryKindV0::ApplicationAuthorityState)
+            .unwrap();
+        let parts = poco_transition::decode_poco_snapshot_value_parts_v0_exact(
+            authority.kind,
+            &authority.logical_key,
+            &authority.value,
+        )
+        .unwrap();
+        let authority =
+            poco_application::PocoApplicationAuthorityStateV0::decode_exact(parts.payload).unwrap();
+        assert_eq!(authority.revision(), 2);
+        assert_eq!(authority.last_target_height(), 1);
+        assert_eq!(authority.nullifier_count(), 2);
+
+        let committed = app.height_and_app_hash().unwrap();
+        assert_eq!(
+            app.process_proposal(RequestProcessProposal {
+                txs: vec![tx],
+                height: 2,
+                time: block_time(),
+                ..Default::default()
+            })
+            .status,
+            response_process_proposal::ProposalStatus::Reject as i32
+        );
+        assert_eq!(app.height_and_app_hash().unwrap(), committed);
+    }
+
+    #[test]
+    fn poco_application_rejects_non_governance_operator_before_overlay_mutation() {
+        let (app, _, _) = active_poco_genesis_fixture();
+        let operation = {
+            let state = app.core.state.lock().unwrap();
+            let delta = app.start_block_delta(&state).unwrap();
+            app.start_poco_application_overlay(&state, &delta)
+                .unwrap()
+                .test_define_meter_operation_v0()
+                .unwrap()
+        };
+        let secondary = SigningKey::from_bytes(&[12u8; 32]);
+        let envelope = SignedCommandEnvelopeV1::sign(
+            &app.core.config.chain_id,
+            "poco-application-wrong-operator",
+            "did:operator:2",
+            "operator",
+            1,
+            1_000,
+            10_000,
+            POCO_APPLICATION_OPERATION_PAYLOAD_TYPE_V0,
+            &operation,
+            &secondary,
+        )
+        .unwrap();
+        let before = app.height_and_app_hash().unwrap();
+        assert_eq!(
+            app.process_proposal(RequestProcessProposal {
+                txs: vec![Bytes::from(serde_json::to_vec(&envelope).unwrap())],
+                height: 1,
+                time: block_time(),
+                ..Default::default()
+            })
+            .status,
+            response_process_proposal::ProposalStatus::Reject as i32
+        );
+        assert_eq!(app.height_and_app_hash().unwrap(), before);
+        assert!(app.core.state.lock().unwrap().pending.is_none());
+    }
+
+    #[test]
+    fn poco_application_sqlite_failpoints_recover_old_or_new_authority_atomically() {
+        let root = std::env::temp_dir().join(format!(
+            "trnm-poco-application-atomicity-{}-{}",
+            std::process::id(),
+            now_unix_ms()
+        ));
+        fs::create_dir_all(&root).unwrap();
+        let state_path = root.join("app-state.json");
+        let (app, signing_key, _) = active_poco_genesis_fixture_with_state_path(Some(state_path));
+        let config = app.core.config.clone();
+        let source = app.height_and_app_hash().unwrap();
+        let operation = {
+            let state = app.core.state.lock().unwrap();
+            let delta = app.start_block_delta(&state).unwrap();
+            app.start_poco_application_overlay(&state, &delta)
+                .unwrap()
+                .test_define_meter_operation_v0()
+                .unwrap()
+        };
+        let tx = poco_application_tx(
+            &signing_key,
+            &app.core.config.chain_id,
+            "poco-application-atomicity-1",
+            1,
+            &operation,
+        );
+        let pending = {
+            let state = app.core.state.lock().unwrap();
+            app.execute_block(&state, std::slice::from_ref(&tx), 2_000, &[])
+                .unwrap()
+        };
+        app.core
+            .store
+            .as_ref()
+            .unwrap()
+            .persist_transition_with_failpoint(
+                &app.core.state.lock().unwrap(),
+                &pending,
+                store::StoreFailpoint::BeforeSqlCommit,
+            )
+            .unwrap_err();
+        drop(app);
+
+        let app = CometBftApplication::new(config.clone()).unwrap();
+        assert_eq!(app.height_and_app_hash().unwrap(), source);
+        let pending = {
+            let state = app.core.state.lock().unwrap();
+            app.execute_block(&state, &[tx], 2_000, &[]).unwrap()
+        };
+        let target = (pending.height, pending.app_hash);
+        app.core
+            .store
+            .as_ref()
+            .unwrap()
+            .persist_transition_with_failpoint(
+                &app.core.state.lock().unwrap(),
+                &pending,
+                store::StoreFailpoint::AfterSqlCommitBeforeStatus,
+            )
+            .unwrap_err();
+        drop(app);
+
+        let restarted = CometBftApplication::new(config).unwrap();
+        assert_eq!(restarted.height_and_app_hash().unwrap(), target);
+        let projection = restarted.production_poco_projection_at(1).unwrap();
+        assert!(projection
+            .projection()
+            .entries()
+            .iter()
+            .any(|entry| { entry.kind == PocoSnapshotEntryKindV0::MeterDefinition }));
+        drop(restarted);
+        fs::remove_dir_all(root).unwrap();
+    }
+
+    #[test]
+    fn orphan_application_authority_is_rejected_by_codec_and_sqlite_precommit() {
+        let build_writes = |source_entries: &[PocoSnapshotEntryV0]| {
+            let orphan = poco_application::test_orphan_meter_authority_entry_v0().unwrap();
+            let mut target_entries = source_entries
+                .iter()
+                .filter(|entry| entry.kind != PocoSnapshotEntryKindV0::ApplicationAuthorityState)
+                .cloned()
+                .collect::<Vec<_>>();
+            target_entries.push(orphan.clone());
+            target_entries.sort_by(|left, right| {
+                (left.kind, left.logical_key.as_slice())
+                    .cmp(&(right.kind, right.logical_key.as_slice()))
+            });
+            let manifest = PocoSnapshotManifestV0::from_entries(
+                trnm_consensus_types::Height::new(1),
+                &target_entries,
+            )
+            .unwrap();
+            vec![
+                AuthWrite::put_poco_snapshot(
+                    PocoWritePermitV0::test_only(),
+                    poco_snapshot_manifest_key().unwrap(),
+                    manifest.encode(),
+                )
+                .unwrap(),
+                AuthWrite::put_poco_snapshot(
+                    PocoWritePermitV0::test_only(),
+                    orphan.jmt_key().unwrap(),
+                    orphan.value,
+                )
+                .unwrap(),
+            ]
+        };
+
+        let (memory_app, _, entries) = active_poco_genesis_fixture();
+        let mut memory_state = memory_app.core.state.lock().unwrap().clone();
+        let mut memory_tree = memory_app.core.auth_tree.lock().unwrap().clone();
+        let update = memory_tree
+            .plan_put_value_set(1, build_writes(&entries))
+            .unwrap();
+        memory_state.height = 1;
+        memory_state.app_hash = memory_tree.apply(update).unwrap().into();
+        assert!(encode_state(&memory_state, &memory_tree).is_err());
+        drop(memory_app);
+
+        let root = std::env::temp_dir().join(format!(
+            "trnm-poco-orphan-authority-{}-{}",
+            std::process::id(),
+            now_unix_ms()
+        ));
+        fs::create_dir_all(&root).unwrap();
+        let (persistent, _, entries) =
+            active_poco_genesis_fixture_with_state_path(Some(root.join("app-state.json")));
+        let config = persistent.core.config.clone();
+        let current = persistent.core.state.lock().unwrap().clone();
+        let auth_update = persistent
+            .core
+            .store
+            .as_ref()
+            .unwrap()
+            .plan_auth_update(1, build_writes(&entries))
+            .unwrap();
+        let pending = PendingBlock {
+            height: 1,
+            app_hash: auth_update.root_hash.into(),
+            tx_results: Vec::new(),
+            native_execution: test_authorized_empty_native_execution(
+                current.height,
+                current.app_hash,
+                1,
+                auth_update.root_hash.into(),
+            ),
+            validator_updates: Vec::new(),
+            delta: BlockDelta::default(),
+            auth_update,
+            poco_checkpoint_execution: None,
+        };
+        let error = persistent
+            .core
+            .store
+            .as_ref()
+            .unwrap()
+            .persist_transition(&current, &pending, 0)
+            .unwrap_err();
+        let rendered = format!("{error:#}");
+        assert!(
+            rendered.contains("application authority references absent semantic entry"),
+            "{rendered}"
+        );
+        drop(persistent);
+        let restarted = CometBftApplication::new(config).unwrap();
+        assert_eq!(restarted.height_and_app_hash().unwrap().0, 0);
+        drop(restarted);
+        fs::remove_dir_all(root).unwrap();
     }
 
     fn fixture() -> (CometBftApplication, SignedCommandEnvelopeV1) {
@@ -3433,6 +5460,7 @@ mod tests {
                 signer_role: "operator".to_string(),
                 public_key_hex: public_key_hex(&signing_key),
             }],
+            poco_authority: None,
             state_path: None,
         })
         .unwrap();
@@ -3453,6 +5481,87 @@ mod tests {
         (app, envelope)
     }
 
+    #[test]
+    fn signer_policy_rejects_undecodable_and_small_order_ed25519_keys() {
+        const UNDECODABLE_PUBLIC_KEY: [u8; 32] = [
+            2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0,
+        ];
+        const IDENTITY_PUBLIC_KEY: [u8; 32] = [
+            1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0,
+        ];
+        let valid_key = SigningKey::from_bytes(&[11u8; 32]);
+        let mut config = ConsensusAppConfig {
+            schema: CONFIG_SCHEMA_V1.to_string(),
+            chain_id: "trnm-comet-spike".to_string(),
+            authorized_signers: vec![AuthorizedSignerV1 {
+                signer_id: "did:operator:1".to_string(),
+                signer_role: "operator".to_string(),
+                public_key_hex: public_key_hex(&valid_key),
+            }],
+            poco_authority: None,
+            state_path: None,
+        };
+        config.validate().unwrap();
+
+        config.authorized_signers[0].public_key_hex = hex::encode(UNDECODABLE_PUBLIC_KEY);
+        assert!(config.validate().is_err());
+        config.authorized_signers[0].public_key_hex = hex::encode(IDENTITY_PUBLIC_KEY);
+        assert!(config.validate().is_err());
+    }
+
+    #[test]
+    fn app_command_policy_helper_rejects_identity_key_forge() {
+        const IDENTITY_POINT: [u8; 32] = [
+            1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            0, 0, 0,
+        ];
+        let signing_key = SigningKey::from_bytes(&[11u8; 32]);
+        let mut envelope = SignedCommandEnvelopeV1::sign(
+            "trnm-comet-spike",
+            "strict-command-1",
+            "did:operator:1",
+            "operator",
+            1,
+            1_000,
+            10_000,
+            "opaque_fixture_v1",
+            b"deterministic-payload",
+            &signing_key,
+        )
+        .unwrap();
+        let honest_policy = vec![AuthorizedSignerV1 {
+            signer_id: envelope.signer_id.clone(),
+            signer_role: envelope.signer_role.clone(),
+            public_key_hex: envelope.public_key_hex.clone(),
+        }];
+        validate_signed_command_envelope_against_policy_v1(
+            &envelope,
+            "trnm-comet-spike",
+            1_500,
+            &honest_policy,
+        )
+        .unwrap();
+
+        envelope.public_key_hex = hex::encode(IDENTITY_POINT);
+        let mut signature = [0u8; 64];
+        signature[..32].copy_from_slice(&IDENTITY_POINT);
+        envelope.signature_hex = hex::encode(signature);
+        let weak_policy = vec![AuthorizedSignerV1 {
+            signer_id: envelope.signer_id.clone(),
+            signer_role: envelope.signer_role.clone(),
+            public_key_hex: envelope.public_key_hex.clone(),
+        }];
+        assert!(validate_signed_command_envelope_against_policy_v1(
+            &envelope,
+            "trnm-comet-spike",
+            1_500,
+            &weak_policy,
+        )
+        .is_err());
+    }
+
     fn persistent_fixture(state_path: PathBuf) -> (CometBftApplication, SignedCommandEnvelopeV1) {
         let (fixture_app, envelope) = fixture();
         let app = CometBftApplication::new(ConsensusAppConfig {
@@ -3462,6 +5571,135 @@ mod tests {
         .unwrap();
         initialize(&app);
         (app, envelope)
+    }
+
+    #[test]
+    fn poco_authority_is_genesis_authenticated_and_restart_bound() {
+        let root = std::env::temp_dir().join(format!(
+            "trnm-poco-authority-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        ));
+        fs::create_dir_all(&root).unwrap();
+        let state_path = root.join("authority-state.json");
+        let signing_key = SigningKey::from_bytes(&[11u8; 32]);
+        let authority = PocoAuthorityConfigV0 {
+            schema: POCO_AUTHORITY_CONFIG_SCHEMA_V0.to_string(),
+            genesis_hash_hex: hex::encode([7u8; 32]),
+            protocol_profile_hash_hex: hex::encode([8u8; 32]),
+        };
+        let config = ConsensusAppConfig {
+            schema: CONFIG_SCHEMA_V1.to_string(),
+            chain_id: "trnm-comet-spike".to_string(),
+            authorized_signers: vec![AuthorizedSignerV1 {
+                signer_id: "did:operator:1".to_string(),
+                signer_role: "operator".to_string(),
+                public_key_hex: public_key_hex(&signing_key),
+            }],
+            poco_authority: Some(authority.clone()),
+            state_path: Some(state_path),
+        };
+        let app = CometBftApplication::new(config.clone()).unwrap();
+        app.init_chain(genesis_request(&app));
+        // Configured authority with an explicitly empty PoCO namespace is a
+        // supported inert/legacy deployment. Checkpoint discovery must not
+        // turn that state into a first-block liveness failure.
+        finalize_and_commit(&app, 1, Vec::new());
+        assert_eq!(app.height_and_app_hash().unwrap().0, 1);
+        let committed = app
+            .core
+            .store
+            .as_ref()
+            .unwrap()
+            .load_object(&poco_authority_object_key())
+            .unwrap();
+        assert_eq!(committed, Some(poco_authority_object(&authority)));
+        drop(app);
+
+        CometBftApplication::new(config.clone()).unwrap();
+        let mut wrong = config;
+        wrong
+            .poco_authority
+            .as_mut()
+            .unwrap()
+            .protocol_profile_hash_hex = hex::encode([9u8; 32]);
+        assert!(CometBftApplication::new(wrong).is_err());
+        fs::remove_dir_all(root).unwrap();
+    }
+
+    #[test]
+    fn genesis_rejects_local_only_poco_authority() {
+        let (app, _) = fixture();
+        let mut request = genesis_request(&app);
+        let mut genesis: GenesisAppStateV2 =
+            serde_json::from_slice(&request.app_state_bytes).unwrap();
+        genesis.poco_authority = Some(PocoAuthorityConfigV0 {
+            schema: POCO_AUTHORITY_CONFIG_SCHEMA_V0.to_string(),
+            genesis_hash_hex: hex::encode([7u8; 32]),
+            protocol_profile_hash_hex: hex::encode([8u8; 32]),
+        });
+        request.app_state_bytes = Bytes::from(serde_json::to_vec(&genesis).unwrap());
+        assert!(app.validate_genesis(&request).is_err());
+    }
+
+    fn production_poco_writes(manifest_height: u64, include_hidden_leaf: bool) -> Vec<AuthWrite> {
+        let identity = |consumer: &[u8], key: &[u8], provider: &[u8]| {
+            let mut bytes = Vec::new();
+            for value in [consumer, key, provider] {
+                bytes.extend_from_slice(&(value.len() as u32).to_be_bytes());
+                bytes.extend_from_slice(value);
+            }
+            bytes
+        };
+        let entry = |consumer: &[u8], key: &[u8], provider: &[u8], nonce: u64| {
+            let identity = identity(consumer, key, provider);
+            let mut payload = identity.clone();
+            payload.extend_from_slice(&nonce.to_be_bytes());
+            let (logical_key, value) = encode_poco_snapshot_value_envelope_v0(
+                PocoSnapshotEntryKindV0::ConsumerNonce,
+                1,
+                &identity,
+                &payload,
+            )
+            .unwrap();
+            PocoSnapshotEntryV0::new(PocoSnapshotEntryKindV0::ConsumerNonce, logical_key, value)
+                .unwrap()
+        };
+        let committed = entry(b"consumer-a", b"key-a", b"provider-a", 1);
+        let manifest = PocoSnapshotManifestV0::from_entries(
+            trnm_consensus_types::Height::new(manifest_height),
+            std::slice::from_ref(&committed),
+        )
+        .unwrap();
+        let mut writes = vec![
+            AuthWrite::put_poco_snapshot(
+                PocoWritePermitV0::test_only(),
+                poco_snapshot_manifest_key().unwrap(),
+                manifest.encode(),
+            )
+            .unwrap(),
+            AuthWrite::put_poco_snapshot(
+                PocoWritePermitV0::test_only(),
+                committed.jmt_key().unwrap(),
+                committed.value,
+            )
+            .unwrap(),
+        ];
+        if include_hidden_leaf {
+            let hidden = entry(b"consumer-b", b"key-b", b"provider-b", 1);
+            writes.push(
+                AuthWrite::put_poco_snapshot(
+                    PocoWritePermitV0::test_only(),
+                    hidden.jmt_key().unwrap(),
+                    hidden.value,
+                )
+                .unwrap(),
+            );
+        }
+        writes
     }
 
     fn block_time() -> Option<Timestamp> {
@@ -3478,6 +5716,8 @@ mod tests {
             chain_id: app.core.config.chain_id.clone(),
             app_version: APP_VERSION,
             authorized_signers: app.core.config.authorized_signers.clone(),
+            poco_authority: app.core.config.poco_authority.clone(),
+            poco_genesis_entries: Vec::new(),
             validator_governance: ValidatorGovernanceV1 {
                 schema: VALIDATOR_GOVERNANCE_SCHEMA_V1.to_string(),
                 signer_id: "did:operator:1".to_string(),
@@ -3617,6 +5857,1979 @@ mod tests {
         Bytes::from(serde_json::to_vec(&envelope).unwrap())
     }
 
+    fn poco_application_tx(
+        signing_key: &SigningKey,
+        chain_id: &str,
+        command_id: &str,
+        envelope_nonce: u64,
+        operation: &[u8],
+    ) -> Bytes {
+        let envelope = SignedCommandEnvelopeV1::sign(
+            chain_id,
+            command_id,
+            "did:operator:1",
+            "operator",
+            envelope_nonce,
+            1_000,
+            10_000,
+            POCO_APPLICATION_OPERATION_PAYLOAD_TYPE_V0,
+            operation,
+            signing_key,
+        )
+        .unwrap();
+        Bytes::from(serde_json::to_vec(&envelope).unwrap())
+    }
+
+    struct PocoFullStoreStepReplayV0 {
+        authenticated_context: AuthenticatedPocoApplicationContextV0,
+        context: poco_application_evidence::PocoApplicationProductionContextExportV0,
+        source_version: u64,
+        source_root: [u8; 32],
+        source_projection: poco_transition::ProductionPocoProjectionV0,
+        target_version: u64,
+        target_root: [u8; 32],
+        target_projection: poco_transition::ProductionPocoProjectionV0,
+        raw_operations: Vec<Vec<u8>>,
+        signed_txs: Vec<Bytes>,
+        process_body: poco_checkpoint::CheckpointBodyEvidenceV0,
+        finalize_body: poco_checkpoint::CheckpointBodyEvidenceV0,
+        next_production_context:
+            poco_application_evidence::PocoApplicationProductionContextExportV0,
+        failpoints: PocoFullStoreFailpointEvidenceV0,
+        restores: PocoFullStoreRestoreEvidenceV0,
+    }
+
+    struct PocoFullStoreFailpointEvidenceV0 {
+        before_sql_commit_error_sha256: [u8; 32],
+        before_restart_version: u64,
+        before_restart_root: [u8; 32],
+        after_sql_commit_error_sha256: [u8; 32],
+        sqlite_committed_version: u64,
+        sqlite_committed_root: [u8; 32],
+        sqlite_committed_projection: poco_transition::ProductionPocoProjectionV0,
+        restart_version: u64,
+        restart_root: [u8; 32],
+    }
+
+    struct PocoFullStoreRestoreEvidenceV0 {
+        v3_version: u64,
+        v3_root: [u8; 32],
+        v3_projection: poco_transition::ProductionPocoProjectionV0,
+        v4_version: u64,
+        v4_root: [u8; 32],
+        v4_projection: poco_transition::ProductionPocoProjectionV0,
+    }
+
+    struct PocoFullStoreNegativeReplayV0 {
+        context: poco_application_evidence::PocoApplicationProductionContextExportV0,
+        source_version: u64,
+        source_root: [u8; 32],
+        source_projection: poco_transition::ProductionPocoProjectionV0,
+        raw_operations: Vec<Vec<u8>>,
+        signed_txs: Vec<Bytes>,
+        process_actual: poco_application_evidence::PocoApplicationActualRejectionExportV0,
+        independent_actual: poco_application_evidence::PocoApplicationActualRejectionExportV0,
+        restart_version: u64,
+        restart_root: [u8; 32],
+        restart_projection: poco_transition::ProductionPocoProjectionV0,
+    }
+
+    /// Three independently initialized applications keep proposal planning,
+    /// finalization and persistent commit/restart evidence from sharing a
+    /// pending block or a history-specific JMT plan.
+    struct PocoFullStoreReplayHarnessV0 {
+        process_app: CometBftApplication,
+        finalize_app: CometBftApplication,
+        persistent_app: Option<CometBftApplication>,
+        persistent_config: ConsensusAppConfig,
+        persistent_root: PathBuf,
+        operator: SigningKey,
+        next_envelope_nonce: u64,
+    }
+
+    impl PocoFullStoreReplayHarnessV0 {
+        fn new() -> Self {
+            static NEXT_SEQUENCE_REPLAY_DIR: std::sync::atomic::AtomicU64 =
+                std::sync::atomic::AtomicU64::new(0);
+            let (process_app, _, process_entries) = active_poco_genesis_fixture();
+            let (finalize_app, _, finalize_entries) = active_poco_genesis_fixture();
+            assert_eq!(process_entries, finalize_entries);
+            let replay_directory_id =
+                NEXT_SEQUENCE_REPLAY_DIR.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+            let persistent_root = std::env::temp_dir().join(format!(
+                "trnm-poco-application-sequence-replay-{}-{}-{}",
+                std::process::id(),
+                now_unix_ms(),
+                replay_directory_id
+            ));
+            fs::create_dir_all(&persistent_root).unwrap();
+            let (persistent_app, _, persistent_entries) =
+                active_poco_genesis_fixture_with_state_path(Some(
+                    persistent_root.join("app-state.json"),
+                ));
+            assert_eq!(process_entries, persistent_entries);
+            let persistent_config = persistent_app.core.config.clone();
+            let expected = process_app.height_and_app_hash().unwrap();
+            assert_eq!(finalize_app.height_and_app_hash().unwrap(), expected);
+            assert_eq!(persistent_app.height_and_app_hash().unwrap(), expected);
+            Self {
+                process_app,
+                finalize_app,
+                persistent_app: Some(persistent_app),
+                persistent_config,
+                persistent_root,
+                operator: SigningKey::from_bytes(&[11; 32]),
+                next_envelope_nonce: 1,
+            }
+        }
+
+        fn signed_txs(
+            &self,
+            sequence_id: &str,
+            step_id: &str,
+            raw_operations: &[Vec<u8>],
+        ) -> Vec<Bytes> {
+            raw_operations
+                .iter()
+                .enumerate()
+                .map(|(index, operation)| {
+                    poco_application_tx(
+                        &self.operator,
+                        &self.process_app.core.config.chain_id,
+                        &format!("poco-sequence-{sequence_id}-{step_id}-{index}"),
+                        self.next_envelope_nonce
+                            .checked_add(u64::try_from(index).unwrap())
+                            .unwrap(),
+                        operation,
+                    )
+                })
+                .collect()
+        }
+
+        fn replay_step(
+            &mut self,
+            sequence_id: &str,
+            step_id: &str,
+            raw_operations: Vec<Vec<u8>>,
+        ) -> PocoFullStoreStepReplayV0 {
+            assert!(!raw_operations.is_empty());
+            let signed_txs = self.signed_txs(sequence_id, step_id, &raw_operations);
+            let (source_version, source_root) = self.process_app.height_and_app_hash().unwrap();
+            assert_eq!(
+                self.finalize_app.height_and_app_hash().unwrap(),
+                (source_version, source_root)
+            );
+            assert_eq!(
+                self.persistent_app
+                    .as_ref()
+                    .unwrap()
+                    .height_and_app_hash()
+                    .unwrap(),
+                (source_version, source_root)
+            );
+            let authenticated_source = self
+                .process_app
+                .production_poco_projection_at(source_version)
+                .unwrap();
+            let source_projection_ref: &poco_transition::ProductionPocoProjectionV0 =
+                authenticated_source.projection();
+            let source_projection = source_projection_ref.clone();
+            let target_version = source_version.checked_add(1).unwrap();
+            let target_height = i64::try_from(target_version).unwrap();
+            let source_signer_commitment = {
+                let state = self.process_app.core.state.lock().unwrap();
+                let delta = self.process_app.start_block_delta(&state).unwrap();
+                poco_application_governance_signer_commitment_v0(
+                    effective_validator_lifecycle(&state, &delta).unwrap(),
+                )
+            };
+            let source_epoch = active_consensus_configuration(&source_projection)
+                .unwrap()
+                .0
+                .epoch()
+                .get();
+            let (authenticated_context, context) =
+                poco_application_evidence::production_context_from_projection(
+                    &source_projection,
+                    source_version,
+                    source_root,
+                    target_version,
+                    source_epoch,
+                    source_signer_commitment,
+                );
+
+            let process_pending = {
+                let state = self.process_app.core.state.lock().unwrap();
+                self.process_app
+                    .execute_block(&state, &signed_txs, 2_000, &[])
+                    .unwrap()
+            };
+            assert_eq!(process_pending.height, target_version);
+            let process_body = poco_checkpoint::checkpoint_body_evidence_v0(
+                &signed_txs,
+                &process_pending.tx_results,
+            )
+            .unwrap();
+            let process_response = self.process_app.process_proposal(RequestProcessProposal {
+                txs: signed_txs.clone(),
+                height: target_height,
+                time: block_time(),
+                ..Default::default()
+            });
+            assert_eq!(
+                process_response.status,
+                response_process_proposal::ProposalStatus::Accept as i32
+            );
+
+            let finalized = self.finalize_app.finalize_block(RequestFinalizeBlock {
+                txs: signed_txs.clone(),
+                height: target_height,
+                time: block_time(),
+                ..Default::default()
+            });
+            let target_root: [u8; 32] = finalized
+                .app_hash
+                .as_ref()
+                .try_into()
+                .expect("FinalizeBlock AppHash32");
+            assert_eq!(target_root, process_pending.app_hash);
+            assert_eq!(finalized.tx_results, process_pending.tx_results);
+            let finalize_body =
+                poco_checkpoint::checkpoint_body_evidence_v0(&signed_txs, &finalized.tx_results)
+                    .unwrap();
+            assert_eq!(process_body, finalize_body);
+            self.finalize_app.commit();
+
+            // Advance the independent ProcessProposal instance only after its
+            // proposal evidence has been captured.
+            let process_finalized = self.process_app.finalize_block(RequestFinalizeBlock {
+                txs: signed_txs.clone(),
+                height: target_height,
+                time: block_time(),
+                ..Default::default()
+            });
+            assert_eq!(process_finalized.app_hash.as_ref(), target_root);
+            assert_eq!(process_finalized.tx_results, finalized.tx_results);
+            self.process_app.commit();
+
+            let before_sql_commit_error_sha256 = {
+                let persistent = self.persistent_app.as_ref().unwrap();
+                let persistent_pending = {
+                    let state = persistent.core.state.lock().unwrap();
+                    persistent
+                        .execute_block(&state, &signed_txs, 2_000, &[])
+                        .unwrap()
+                };
+                assert_eq!(persistent_pending.height, target_version);
+                assert_eq!(persistent_pending.app_hash, target_root);
+                assert_eq!(persistent_pending.tx_results, finalized.tx_results);
+                let error = persistent
+                    .core
+                    .store
+                    .as_ref()
+                    .unwrap()
+                    .persist_transition_with_failpoint(
+                        &persistent.core.state.lock().unwrap(),
+                        &persistent_pending,
+                        store::StoreFailpoint::BeforeSqlCommit,
+                    )
+                    .expect_err("before-SQL-COMMIT failpoint unexpectedly committed");
+                assert_eq!(
+                    persistent.height_and_app_hash().unwrap(),
+                    (source_version, source_root)
+                );
+                let error_chain = error
+                    .chain()
+                    .map(ToString::to_string)
+                    .collect::<Vec<_>>()
+                    .join(": ");
+                Sha256::digest(error_chain.as_bytes()).into()
+            };
+            let persistent = self.persistent_app.take().unwrap();
+            drop(persistent);
+            let restarted = CometBftApplication::new(self.persistent_config.clone()).unwrap();
+            assert_eq!(
+                restarted.height_and_app_hash().unwrap(),
+                (source_version, source_root)
+            );
+            let restarted_source = restarted
+                .production_poco_projection_at(source_version)
+                .unwrap();
+            let restarted_source_ref: &poco_transition::ProductionPocoProjectionV0 =
+                restarted_source.projection();
+            assert_eq!(restarted_source_ref, &source_projection);
+            self.persistent_app = Some(restarted);
+
+            let (after_sql_commit_error_sha256, sqlite_committed_root, sqlite_committed_projection) = {
+                let persistent = self.persistent_app.as_ref().unwrap();
+                let persistent_pending = {
+                    let state = persistent.core.state.lock().unwrap();
+                    persistent
+                        .execute_block(&state, &signed_txs, 2_000, &[])
+                        .unwrap()
+                };
+                assert_eq!(persistent_pending.height, target_version);
+                assert_eq!(persistent_pending.app_hash, target_root);
+                assert_eq!(persistent_pending.tx_results, finalized.tx_results);
+                let error = persistent
+                    .core
+                    .store
+                    .as_ref()
+                    .unwrap()
+                    .persist_transition_with_failpoint(
+                        &persistent.core.state.lock().unwrap(),
+                        &persistent_pending,
+                        store::StoreFailpoint::AfterSqlCommitBeforeStatus,
+                    )
+                    .expect_err("after-SQL-COMMIT failpoint unexpectedly returned success");
+                assert_eq!(
+                    persistent.height_and_app_hash().unwrap(),
+                    (source_version, source_root),
+                    "in-memory status must remain old until restart"
+                );
+                let (committed_root, committed_projection) = persistent
+                    .core
+                    .store
+                    .as_ref()
+                    .unwrap()
+                    .production_poco_projection(target_version)
+                    .unwrap();
+                let committed_root: [u8; 32] = committed_root.into();
+                assert_eq!(committed_root, target_root);
+                let committed_projection = committed_projection
+                    .expect("committed target must retain an active PoCO projection");
+                let error_chain = error
+                    .chain()
+                    .map(ToString::to_string)
+                    .collect::<Vec<_>>()
+                    .join(": ");
+                (
+                    Sha256::digest(error_chain.as_bytes()).into(),
+                    committed_root,
+                    committed_projection,
+                )
+            };
+            let persistent = self.persistent_app.take().unwrap();
+            drop(persistent);
+            let restarted = CometBftApplication::new(self.persistent_config.clone()).unwrap();
+            assert_eq!(
+                restarted.height_and_app_hash().unwrap(),
+                (target_version, target_root)
+            );
+            let restarted_target = restarted
+                .production_poco_projection_at(target_version)
+                .unwrap();
+            let restarted_target_ref: &poco_transition::ProductionPocoProjectionV0 =
+                restarted_target.projection();
+            assert_eq!(restarted_target_ref, &sqlite_committed_projection);
+            self.persistent_app = Some(restarted);
+            let failpoints = PocoFullStoreFailpointEvidenceV0 {
+                before_sql_commit_error_sha256,
+                before_restart_version: source_version,
+                before_restart_root: source_root,
+                after_sql_commit_error_sha256,
+                sqlite_committed_version: target_version,
+                sqlite_committed_root,
+                sqlite_committed_projection,
+                restart_version: target_version,
+                restart_root: target_root,
+            };
+
+            assert_eq!(
+                self.process_app.height_and_app_hash().unwrap(),
+                (target_version, target_root)
+            );
+            assert_eq!(
+                self.finalize_app.height_and_app_hash().unwrap(),
+                (target_version, target_root)
+            );
+            let authenticated_target = self
+                .persistent_app
+                .as_ref()
+                .unwrap()
+                .production_poco_projection_at(target_version)
+                .unwrap();
+            let target_projection_ref: &poco_transition::ProductionPocoProjectionV0 =
+                authenticated_target.projection();
+            let target_projection = target_projection_ref.clone();
+            let restores = {
+                let snapshot = wait_for_snapshot(&self.process_app, target_version);
+                assert_eq!(snapshot.format, SNAPSHOT_FORMAT_V3);
+                let v3_target =
+                    CometBftApplication::new(self.process_app.core.config.clone()).unwrap();
+                assert_eq!(
+                    v3_target
+                        .offer_snapshot(RequestOfferSnapshot {
+                            snapshot: Some(snapshot.clone()),
+                            app_hash: Bytes::copy_from_slice(&target_root),
+                        })
+                        .result,
+                    response_offer_snapshot::Result::Accept as i32
+                );
+                for index in 0..snapshot.chunks {
+                    let chunk = self
+                        .process_app
+                        .load_snapshot_chunk(RequestLoadSnapshotChunk {
+                            height: snapshot.height,
+                            format: snapshot.format,
+                            chunk: index,
+                        })
+                        .chunk;
+                    assert_eq!(
+                        v3_target
+                            .apply_snapshot_chunk(RequestApplySnapshotChunk {
+                                index,
+                                chunk,
+                                sender: "poco-evidence-source-v3".to_string(),
+                            })
+                            .result,
+                        response_apply_snapshot_chunk::Result::Accept as i32
+                    );
+                }
+                assert_eq!(
+                    v3_target.height_and_app_hash().unwrap(),
+                    (target_version, target_root)
+                );
+                let v3_projection = v3_target
+                    .production_poco_projection_at(target_version)
+                    .unwrap();
+                let v3_projection_ref: &poco_transition::ProductionPocoProjectionV0 =
+                    v3_projection.projection();
+                assert_eq!(v3_projection_ref, &target_projection);
+                let v3_projection = v3_projection_ref.clone();
+                drop(v3_target);
+
+                let v4_record = {
+                    let persistent = self.persistent_app.as_ref().unwrap();
+                    let state = persistent.core.state.lock().unwrap().clone();
+                    let store = persistent.core.store.as_ref().unwrap();
+                    let pinned = store.pin_snapshot(&state).unwrap();
+                    build_store_snapshot(
+                        store,
+                        &persistent.core.config.chain_id,
+                        PendingDiskSnapshot {
+                            state,
+                            disk_path: self.persistent_root.join(format!(
+                                "poco-evidence-source-{target_version}.snapshot.sqlite3"
+                            )),
+                            pinned,
+                        },
+                    )
+                    .unwrap()
+                };
+                assert_eq!(v4_record.snapshot.format, SNAPSHOT_FORMAT_V4);
+                assert_eq!(v4_record.snapshot.height, target_version);
+                let mut v4_config = self.persistent_config.clone();
+                v4_config.state_path = Some(
+                    self.persistent_root
+                        .join(format!("poco-evidence-v4-target-{target_version}.json")),
+                );
+                let v4_target = CometBftApplication::new(v4_config).unwrap();
+                assert_eq!(
+                    v4_target
+                        .offer_snapshot(RequestOfferSnapshot {
+                            snapshot: Some(v4_record.snapshot.clone()),
+                            app_hash: Bytes::copy_from_slice(&target_root),
+                        })
+                        .result,
+                    response_offer_snapshot::Result::Accept as i32
+                );
+                for index in 0..v4_record.snapshot.chunks {
+                    assert_eq!(
+                        v4_target
+                            .apply_snapshot_chunk(RequestApplySnapshotChunk {
+                                index,
+                                chunk: v4_record.payload.read_chunk(index).unwrap(),
+                                sender: "poco-evidence-source-v4".to_string(),
+                            })
+                            .result,
+                        response_apply_snapshot_chunk::Result::Accept as i32
+                    );
+                }
+                assert_eq!(
+                    v4_target.height_and_app_hash().unwrap(),
+                    (target_version, target_root)
+                );
+                let v4_projection = v4_target
+                    .production_poco_projection_at(target_version)
+                    .unwrap();
+                let v4_projection_ref: &poco_transition::ProductionPocoProjectionV0 =
+                    v4_projection.projection();
+                assert_eq!(v4_projection_ref, &target_projection);
+                let v4_projection = v4_projection_ref.clone();
+                drop(v4_target);
+                v4_record.payload.remove_file().unwrap();
+
+                PocoFullStoreRestoreEvidenceV0 {
+                    v3_version: target_version,
+                    v3_root: target_root,
+                    v3_projection,
+                    v4_version: target_version,
+                    v4_root: target_root,
+                    v4_projection,
+                }
+            };
+            let next_signer_commitment = {
+                let state = self.process_app.core.state.lock().unwrap();
+                let delta = self.process_app.start_block_delta(&state).unwrap();
+                poco_application_governance_signer_commitment_v0(
+                    effective_validator_lifecycle(&state, &delta).unwrap(),
+                )
+            };
+            let next_epoch = active_consensus_configuration(&target_projection)
+                .unwrap()
+                .0
+                .epoch()
+                .get();
+            let (_, next_production_context) =
+                poco_application_evidence::production_context_from_projection(
+                    &target_projection,
+                    target_version,
+                    target_root,
+                    target_version.checked_add(1).unwrap(),
+                    next_epoch,
+                    next_signer_commitment,
+                );
+            let process_target = self
+                .process_app
+                .production_poco_projection_at(target_version)
+                .unwrap();
+            let process_target_ref: &poco_transition::ProductionPocoProjectionV0 =
+                process_target.projection();
+            assert_eq!(process_target_ref, &target_projection);
+            let finalize_target = self
+                .finalize_app
+                .production_poco_projection_at(target_version)
+                .unwrap();
+            let finalize_target_ref: &poco_transition::ProductionPocoProjectionV0 =
+                finalize_target.projection();
+            assert_eq!(finalize_target_ref, &target_projection);
+            let source_authority = poco_application_evidence::authority_summary(&source_projection);
+            let target_authority = poco_application_evidence::authority_summary(&target_projection);
+            assert_eq!(target_authority.revision, source_authority.revision + 1);
+
+            self.next_envelope_nonce = self
+                .next_envelope_nonce
+                .checked_add(u64::try_from(signed_txs.len()).unwrap())
+                .unwrap();
+            PocoFullStoreStepReplayV0 {
+                authenticated_context,
+                context,
+                source_version,
+                source_root,
+                source_projection,
+                target_version,
+                target_root,
+                target_projection,
+                raw_operations,
+                signed_txs,
+                process_body,
+                finalize_body,
+                next_production_context,
+                failpoints,
+                restores,
+            }
+        }
+
+        fn replay_negative(
+            &mut self,
+            sequence_id: &str,
+            negative_id: &str,
+            raw_operations: Vec<Vec<u8>>,
+        ) -> PocoFullStoreNegativeReplayV0 {
+            assert!(!raw_operations.is_empty());
+            let signed_txs = self.signed_txs(sequence_id, negative_id, &raw_operations);
+            let (source_version, source_root) = self.process_app.height_and_app_hash().unwrap();
+            assert_eq!(
+                self.finalize_app.height_and_app_hash().unwrap(),
+                (source_version, source_root)
+            );
+            assert_eq!(
+                self.persistent_app
+                    .as_ref()
+                    .unwrap()
+                    .height_and_app_hash()
+                    .unwrap(),
+                (source_version, source_root)
+            );
+            let authenticated_source = self
+                .process_app
+                .production_poco_projection_at(source_version)
+                .unwrap();
+            let source_projection_ref: &poco_transition::ProductionPocoProjectionV0 =
+                authenticated_source.projection();
+            let source_projection = source_projection_ref.clone();
+            let source_signer_commitment = {
+                let state = self.process_app.core.state.lock().unwrap();
+                let delta = self.process_app.start_block_delta(&state).unwrap();
+                poco_application_governance_signer_commitment_v0(
+                    effective_validator_lifecycle(&state, &delta).unwrap(),
+                )
+            };
+            let source_epoch = active_consensus_configuration(&source_projection)
+                .unwrap()
+                .0
+                .epoch()
+                .get();
+            let (_, context) = poco_application_evidence::production_context_from_projection(
+                &source_projection,
+                source_version,
+                source_root,
+                source_version.checked_add(1).unwrap(),
+                source_epoch,
+                source_signer_commitment,
+            );
+            let process_actual = {
+                let state = self.process_app.core.state.lock().unwrap();
+                let error = self
+                    .process_app
+                    .execute_block(&state, &signed_txs, 2_000, &[])
+                    .expect_err("negative replay unexpectedly executed");
+                poco_application_evidence::classify_application_rejection_v0(
+                    &error,
+                    &source_projection,
+                    &raw_operations,
+                )
+            };
+            let response = self.process_app.process_proposal(RequestProcessProposal {
+                txs: signed_txs.clone(),
+                height: i64::try_from(source_version.checked_add(1).unwrap()).unwrap(),
+                time: block_time(),
+                ..Default::default()
+            });
+            assert_eq!(
+                response.status,
+                response_process_proposal::ProposalStatus::Reject as i32
+            );
+            assert_eq!(
+                self.process_app.height_and_app_hash().unwrap(),
+                (source_version, source_root)
+            );
+            assert!(self
+                .process_app
+                .core
+                .state
+                .lock()
+                .unwrap()
+                .pending
+                .is_none());
+
+            let mut independent_actual = None;
+            for app in [&self.finalize_app, self.persistent_app.as_ref().unwrap()] {
+                let state = app.core.state.lock().unwrap();
+                let error = app
+                    .execute_block(&state, &signed_txs, 2_000, &[])
+                    .expect_err("negative replay differs across application instances");
+                let actual = poco_application_evidence::classify_application_rejection_v0(
+                    &error,
+                    &source_projection,
+                    &raw_operations,
+                );
+                assert_eq!(actual, process_actual);
+                if let Some(previous) = &independent_actual {
+                    assert_eq!(previous, &actual);
+                } else {
+                    independent_actual = Some(actual);
+                }
+                assert_eq!(
+                    (state.height, state.app_hash),
+                    (source_version, source_root)
+                );
+                assert!(state.pending.is_none());
+            }
+            let persistent = self.persistent_app.take().unwrap();
+            drop(persistent);
+            let restarted = CometBftApplication::new(self.persistent_config.clone()).unwrap();
+            assert_eq!(
+                restarted.height_and_app_hash().unwrap(),
+                (source_version, source_root)
+            );
+            let restarted_source = restarted
+                .production_poco_projection_at(source_version)
+                .unwrap();
+            let restarted_source_ref: &poco_transition::ProductionPocoProjectionV0 =
+                restarted_source.projection();
+            assert_eq!(restarted_source_ref, &source_projection);
+            let restart_projection = restarted_source_ref.clone();
+            self.persistent_app = Some(restarted);
+            PocoFullStoreNegativeReplayV0 {
+                context,
+                source_version,
+                source_root,
+                source_projection,
+                raw_operations,
+                signed_txs,
+                process_actual,
+                independent_actual: independent_actual.expect("independent negative executor"),
+                restart_version: source_version,
+                restart_root: source_root,
+                restart_projection,
+            }
+        }
+    }
+
+    impl Drop for PocoFullStoreReplayHarnessV0 {
+        fn drop(&mut self) {
+            if let Some(persistent) = self.persistent_app.take() {
+                drop(persistent);
+            }
+            let _ = fs::remove_dir_all(&self.persistent_root);
+        }
+    }
+
+    fn application_sequence_source_digest_v0(sequence: &serde_json::Value) -> [u8; 32] {
+        hex::decode(
+            sequence["source_export_sha256_hex"]
+                .as_str()
+                .expect("sequence source-export digest"),
+        )
+        .expect("decode sequence source-export digest")
+        .try_into()
+        .expect("Hash32 sequence source-export digest")
+    }
+
+    fn replay_full_application_sequence_events_v0(
+        sequence: &serde_json::Value,
+    ) -> (
+        Vec<poco_application_evidence::PocoApplicationSerializedEventV0>,
+        Option<poco_application_evidence::PocoApplicationSerializedEventV0>,
+    ) {
+        assert_eq!(
+            sequence["execution_scope"].as_str(),
+            Some("full_application_store")
+        );
+        let sequence_id = sequence["id"].as_str().expect("sequence id");
+        let source_export_sha256 = application_sequence_source_digest_v0(sequence);
+        let mut harness = PocoFullStoreReplayHarnessV0::new();
+        let (initial_version, initial_root) = harness.process_app.height_and_app_hash().unwrap();
+        let (retained_tree, retained_version, retained_root, retained_projection) =
+            poco_application_evidence::authenticated_tree_from_sequence_initial_v0(
+                &sequence["initial"],
+            );
+        assert_eq!(
+            initial_version,
+            sequence["initial"]["version"]
+                .as_u64()
+                .expect("sequence initial version"),
+            "full-store sequence does not start at the real fixture version"
+        );
+        assert_eq!(
+            hex::encode(initial_root),
+            sequence["initial"]["jmt_root_hex"]
+                .as_str()
+                .expect("sequence initial root"),
+            "full-store sequence does not start at the real fixture root"
+        );
+        assert_eq!(
+            (retained_version, retained_root),
+            (initial_version, initial_root)
+        );
+        let actual_live = harness
+            .process_app
+            .core
+            .auth_tree
+            .lock()
+            .unwrap()
+            .verified_live_values(initial_version)
+            .unwrap();
+        assert_eq!(
+            retained_tree
+                .verified_live_values(retained_version)
+                .unwrap(),
+            actual_live,
+            "retained full source leaves differ from the real InitChain fixture"
+        );
+        let actual_projection = harness
+            .process_app
+            .production_poco_projection_at(initial_version)
+            .unwrap();
+        let actual_projection_ref: &poco_transition::ProductionPocoProjectionV0 =
+            actual_projection.projection();
+        assert_eq!(actual_projection_ref, &retained_projection);
+
+        let mut events = Vec::new();
+        for step in sequence["steps"].as_array().expect("sequence steps") {
+            let step_id = step["id"].as_str().expect("step id");
+            let raw_operations =
+                poco_application_evidence::application_sequence_raw_operations_v0(step);
+            let replay = harness.replay_step(sequence_id, step_id, raw_operations);
+            let scope_evidence =
+                poco_application_evidence::full_application_store_scope_evidence_v0(
+                    poco_application_evidence::FullApplicationStoreScopeEvidenceInputV0 {
+                        signed_txs: &replay.signed_txs,
+                        source_version: replay.source_version,
+                        source_root: replay.source_root,
+                        source_projection: &replay.source_projection,
+                        target_version: replay.target_version,
+                        target_root: replay.target_root,
+                        process_body: &replay.process_body,
+                        finalize_body: &replay.finalize_body,
+                        sqlite_commit_projection: &replay.failpoints.sqlite_committed_projection,
+                        sqlite_restart_projection: &replay.target_projection,
+                        snapshot_v3_projection: &replay.restores.v3_projection,
+                        snapshot_v4_projection: &replay.restores.v4_projection,
+                    },
+                );
+            let event = poco_application_evidence::application_sequence_step_event_v0(
+                source_export_sha256,
+                poco_application_evidence::application_sequence_step_request_sha256_v0(
+                    sequence, step,
+                ),
+                sequence_id,
+                step_id,
+                "full_application_store",
+                replay.authenticated_context,
+                replay.context,
+                replay.source_root,
+                &replay.source_projection,
+                replay.target_root,
+                &replay.target_projection,
+                &replay.raw_operations,
+                Some(scope_evidence),
+                replay.next_production_context,
+            );
+            events.push(poco_application_evidence::serialize_application_sequence_event_v0(&event));
+        }
+
+        let negative_event = sequence["negatives"]
+            .as_array()
+            .expect("sequence negatives")
+            .first()
+            .map(|negative| {
+                assert_eq!(
+                    sequence["negatives"].as_array().unwrap().len(),
+                    1,
+                    "full-store automaton must have one negative"
+                );
+                let negative_id = negative["id"].as_str().expect("negative id");
+                let raw_operations =
+                    poco_application_evidence::application_sequence_negative_raw_operations_v0(
+                        negative,
+                    );
+                let replay = harness.replay_negative(sequence_id, negative_id, raw_operations);
+                assert_eq!(replay.source_version, replay.context.source_version);
+                let event = poco_application_evidence::full_application_store_negative_event_v0(
+                    source_export_sha256,
+                    poco_application_evidence::application_sequence_negative_request_sha256_v0(
+                        sequence, negative,
+                    ),
+                    sequence_id,
+                    negative_id,
+                    replay.context,
+                    replay.source_root,
+                    &replay.source_projection,
+                    &replay.raw_operations,
+                    &replay.signed_txs,
+                    replay.process_actual,
+                    replay.independent_actual,
+                    replay.restart_version,
+                    replay.restart_root,
+                    &replay.restart_projection,
+                );
+                poco_application_evidence::serialize_application_sequence_event_v0(&event)
+            });
+        (events, negative_event)
+    }
+
+    fn verify_retained_application_sequence_sources_v0(draft: &serde_json::Value) {
+        let source_exports = draft["source_exports"]
+            .as_array()
+            .expect("operation-sequence source registry");
+        for source in source_exports {
+            let raw = hex::decode(
+                source["raw_json_hex"]
+                    .as_str()
+                    .expect("retained source raw JSON"),
+            )
+            .expect("decode retained source raw JSON");
+            assert_eq!(
+                hex::encode(Sha256::digest(&raw)),
+                source["sha256_hex"]
+                    .as_str()
+                    .expect("retained source digest"),
+                "retained source raw digest drift"
+            );
+            let parsed: serde_json::Value =
+                serde_json::from_slice(&raw).expect("decode retained source JSON");
+            let (tree, version, root, projection) =
+                poco_application_evidence::authenticated_tree_from_sequence_initial_v0(
+                    &parsed["initial"],
+                );
+            assert_eq!(tree.latest_version(), Some(version));
+            assert_eq!(tree.root_hash(version).unwrap().0, root);
+            poco_application::validate_application_authority_projection_v0(&projection)
+                .expect("retained source cross-entry authority");
+        }
+        for sequence in draft["sequences"].as_array().expect("operation sequences") {
+            let digest = sequence["source_export_sha256_hex"]
+                .as_str()
+                .expect("sequence source digest");
+            let source = source_exports
+                .iter()
+                .find(|source| source["sha256_hex"].as_str() == Some(digest))
+                .expect("sequence source bytes retained in registry");
+            let raw = hex::decode(source["raw_json_hex"].as_str().unwrap()).unwrap();
+            let parsed: serde_json::Value = serde_json::from_slice(&raw).unwrap();
+            assert_eq!(
+                parsed["initial"], sequence["initial"],
+                "sequence initial differs from its retained authenticated source"
+            );
+            poco_application_evidence::validate_application_sequence_business_lineage_v0(
+                sequence, &parsed,
+            );
+        }
+    }
+
+    fn replay_application_sequence_events_v0(draft: &serde_json::Value) -> Vec<Vec<u8>> {
+        verify_retained_application_sequence_sources_v0(draft);
+        let mut missing = Vec::new();
+        for sequence in draft["sequences"].as_array().expect("operation sequences") {
+            let (step_events, negative_event) = if sequence["execution_scope"].as_str()
+                == Some("full_application_store")
+            {
+                replay_full_application_sequence_events_v0(sequence)
+            } else {
+                let replay =
+                    poco_application_evidence::replay_isolated_application_sequence_v0(sequence);
+                (replay.step_events, replay.negative_event)
+            };
+            let steps = sequence["steps"].as_array().expect("sequence steps");
+            assert_eq!(step_events.len(), steps.len());
+            for (step, actual) in steps.iter().zip(step_events) {
+                if step["rust_event"].is_null() {
+                    missing.push(actual.raw);
+                } else {
+                    assert_eq!(
+                        actual.value, step["rust_event"],
+                        "already-merged Rust step event no longer replays exactly"
+                    );
+                }
+            }
+            if let Some(negative) = sequence["negatives"]
+                .as_array()
+                .expect("sequence negatives")
+                .first()
+            {
+                let actual = negative_event.expect("negative replay event");
+                if negative["rust_event"].is_null() {
+                    missing.push(actual.raw);
+                } else {
+                    assert_eq!(
+                        actual.value, negative["rust_event"],
+                        "already-merged Rust negative event no longer replays exactly"
+                    );
+                }
+            } else {
+                assert!(negative_event.is_none());
+            }
+        }
+        missing
+    }
+
+    #[test]
+    #[ignore = "manual machine-readable operation-sequence Rust event exporter"]
+    fn export_poco_application_operation_sequence_rust_events() {
+        let draft = poco_application_evidence::operation_sequence_authoring_value_v0();
+        let events = replay_application_sequence_events_v0(&draft);
+        assert!(
+            !events.is_empty(),
+            "operation-sequence draft has no null Rust event"
+        );
+        let mut encoded = Vec::new();
+        for event in events {
+            assert!(event.starts_with(b"{\"schema\":"));
+            encoded.extend_from_slice(&event);
+            encoded.push(b'\n');
+        }
+        if let Some(output) = std::env::var_os("TRNM_POCO_APPLICATION_SEQUENCE_RUST_EVENTS") {
+            let output = PathBuf::from(output);
+            let parent = output.parent().expect("Rust event output parent");
+            fs::create_dir_all(parent).unwrap();
+            let temporary = parent.join(format!(
+                ".{}.tmp-{}-{}",
+                output
+                    .file_name()
+                    .expect("Rust event output file name")
+                    .to_string_lossy(),
+                std::process::id(),
+                now_unix_ms()
+            ));
+            fs::write(&temporary, &encoded).unwrap();
+            fs::rename(&temporary, &output).unwrap();
+            eprintln!(
+                "wrote {} PoCO application Rust event(s) to {}",
+                encoded.iter().filter(|byte| **byte == b'\n').count(),
+                output.display()
+            );
+        } else {
+            print!("{}", String::from_utf8(encoded).unwrap());
+        }
+    }
+
+    #[test]
+    fn poco_application_operation_sequences_final_vector_matches_rust_replay() {
+        let vector_path = Path::new(env!("CARGO_MANIFEST_DIR")).join(
+            "../../../docs/protocol/poco-bft-v0/vectors/\
+             poco-application-operation-sequences-v0.json",
+        );
+        let raw = fs::read(&vector_path).unwrap_or_else(|error| {
+            panic!(
+                "read final PoCO application operation sequences {}: {error}",
+                vector_path.display()
+            )
+        });
+        let vector: serde_json::Value = serde_json::from_slice(&raw).unwrap_or_else(|error| {
+            panic!(
+                "decode final PoCO application operation sequences {}: {error}",
+                vector_path.display()
+            )
+        });
+        assert_eq!(
+            vector["schema"].as_str(),
+            Some("trnm.poco-bft.application-operation-sequences.vector.v0")
+        );
+        assert_eq!(vector["schema_version"].as_u64(), Some(0));
+        let missing = replay_application_sequence_events_v0(&vector);
+        assert!(
+            missing.is_empty(),
+            "final operation-sequence vector contains a null Rust event"
+        );
+    }
+
+    #[test]
+    #[ignore = "manual shape-independent full ApplicationStore replay scaffold"]
+    fn full_store_sequence_replay_scaffold_uses_independent_instances() {
+        let mut harness = PocoFullStoreReplayHarnessV0::new();
+        let operation = {
+            let state = harness.process_app.core.state.lock().unwrap();
+            let delta = harness.process_app.start_block_delta(&state).unwrap();
+            harness
+                .process_app
+                .start_poco_application_overlay(&state, &delta)
+                .unwrap()
+                .test_define_meter_operation_v0()
+                .unwrap()
+        };
+        let replay =
+            harness.replay_step("shape-independent", "define-meter", vec![operation.clone()]);
+        assert_eq!(replay.source_version, 0);
+        assert_eq!(replay.target_version, 1);
+        assert_ne!(replay.source_root, replay.target_root);
+        assert_ne!(replay.source_projection, replay.target_projection);
+        assert_eq!(replay.raw_operations, vec![operation.clone()]);
+        assert_eq!(replay.signed_txs.len(), 1);
+        assert_eq!(replay.process_body, replay.finalize_body);
+        assert_eq!(replay.process_body.encoded_receipts().len(), 1);
+        assert_ne!(replay.process_body.payload_root(), [0; 32]);
+        assert_ne!(replay.process_body.receipts_root(), [0; 32]);
+        assert_ne!(replay.failpoints.before_sql_commit_error_sha256, [0; 32]);
+        assert_eq!(
+            replay.failpoints.before_restart_version,
+            replay.source_version
+        );
+        assert_eq!(replay.failpoints.before_restart_root, replay.source_root);
+        assert_ne!(replay.failpoints.after_sql_commit_error_sha256, [0; 32]);
+        assert_eq!(
+            replay.failpoints.sqlite_committed_version,
+            replay.target_version
+        );
+        assert_eq!(replay.failpoints.sqlite_committed_root, replay.target_root);
+        assert_eq!(
+            replay.failpoints.sqlite_committed_projection,
+            replay.target_projection
+        );
+        assert_eq!(replay.failpoints.restart_version, replay.target_version);
+        assert_eq!(replay.failpoints.restart_root, replay.target_root);
+        assert_eq!(replay.restores.v3_version, replay.target_version);
+        assert_eq!(replay.restores.v3_root, replay.target_root);
+        assert_eq!(replay.restores.v3_projection, replay.target_projection);
+        assert_eq!(replay.restores.v4_version, replay.target_version);
+        assert_eq!(replay.restores.v4_root, replay.target_root);
+        assert_eq!(replay.restores.v4_projection, replay.target_projection);
+        let scope_evidence = poco_application_evidence::full_application_store_scope_evidence_v0(
+            poco_application_evidence::FullApplicationStoreScopeEvidenceInputV0 {
+                signed_txs: &replay.signed_txs,
+                source_version: replay.source_version,
+                source_root: replay.source_root,
+                source_projection: &replay.source_projection,
+                target_version: replay.target_version,
+                target_root: replay.target_root,
+                process_body: &replay.process_body,
+                finalize_body: &replay.finalize_body,
+                sqlite_commit_projection: &replay.failpoints.sqlite_committed_projection,
+                sqlite_restart_projection: &replay.target_projection,
+                snapshot_v3_projection: &replay.restores.v3_projection,
+                snapshot_v4_projection: &replay.restores.v4_projection,
+            },
+        );
+        let event = poco_application_evidence::application_sequence_step_event_v0(
+            [1; 32],
+            [2; 32],
+            "shape-independent",
+            "define-meter",
+            "full_application_store",
+            replay.authenticated_context.clone(),
+            replay.context.clone(),
+            replay.source_root,
+            &replay.source_projection,
+            replay.target_root,
+            &replay.target_projection,
+            &replay.raw_operations,
+            Some(scope_evidence),
+            replay.next_production_context.clone(),
+        );
+        let event_bytes = serde_json::to_vec(&event).unwrap();
+        assert!(event_bytes
+            .starts_with(br#"{"schema":"trnm.poco-bft.application-operation-rust-step-event.v0""#));
+
+        assert_eq!(harness.next_envelope_nonce, 2);
+    }
+
+    fn authenticated_candidate_block_time_v0(timestamp_ms: u64) -> Option<Timestamp> {
+        Some(Timestamp {
+            seconds: i64::try_from(timestamp_ms / 1_000).expect("candidate timestamp seconds"),
+            nanos: i32::try_from((timestamp_ms % 1_000) * 1_000_000)
+                .expect("candidate timestamp nanos"),
+        })
+    }
+
+    fn advance_authenticated_candidate_app_v0(app: &CometBftApplication, target_height: u64) {
+        let (source_height, _) = app
+            .height_and_app_hash()
+            .expect("candidate source application head");
+        for height in source_height + 1..=target_height {
+            let hash = [u8::try_from(height).expect("compact candidate height is u8"); 32];
+            let finalized = app.finalize_block(RequestFinalizeBlock {
+                txs: Vec::new(),
+                hash: Bytes::copy_from_slice(&hash),
+                height: i64::try_from(height).expect("candidate ABCI height"),
+                time: authenticated_candidate_block_time_v0(
+                    height.checked_mul(1_000).expect("candidate setup time"),
+                ),
+                ..Default::default()
+            });
+            assert!(finalized.tx_results.is_empty());
+            assert_eq!(finalized.app_hash.len(), 32);
+            app.commit();
+            assert_eq!(
+                app.height_and_app_hash().unwrap().0,
+                height,
+                "candidate setup commit height drift"
+            );
+        }
+    }
+
+    fn install_authenticated_candidate_source_v0(
+        app: &CometBftApplication,
+        target_height: u64,
+        target_entries: &[PocoSnapshotEntryV0],
+    ) {
+        let mut state = app.core.state.lock().expect("candidate bootstrap state");
+        assert_eq!(
+            state.height.checked_add(1),
+            Some(target_height),
+            "candidate source bootstrap must be contiguous"
+        );
+        let source = app
+            .production_poco_projection_at(state.height)
+            .expect("candidate bootstrap source projection");
+        let source_entries = source
+            .projection()
+            .entries()
+            .iter()
+            .map(|entry| ((entry.kind, entry.logical_key.clone()), entry))
+            .collect::<BTreeMap<_, _>>();
+        let target = target_entries
+            .iter()
+            .map(|entry| ((entry.kind, entry.logical_key.clone()), entry))
+            .collect::<BTreeMap<_, _>>();
+        assert_eq!(target.len(), target_entries.len());
+
+        let delta = app
+            .start_block_delta(&state)
+            .expect("candidate bootstrap block delta");
+        let mut writes = authenticated_writes_for_delta(target_height, &delta)
+            .expect("candidate bootstrap application writes");
+        for (key, entry) in &source_entries {
+            if !target.contains_key(key) {
+                writes.push(
+                    AuthWrite::delete_poco_snapshot(
+                        PocoWritePermitV0::test_only(),
+                        entry.jmt_key().expect("candidate source physical key"),
+                    )
+                    .expect("candidate source deletion"),
+                );
+            }
+        }
+        for (key, entry) in &target {
+            if source_entries
+                .get(key)
+                .is_none_or(|source| source.value != entry.value)
+            {
+                writes.push(
+                    AuthWrite::put_poco_snapshot(
+                        PocoWritePermitV0::test_only(),
+                        entry.jmt_key().expect("candidate target physical key"),
+                        entry.value.clone(),
+                    )
+                    .expect("candidate target insertion"),
+                );
+            }
+        }
+        let manifest = PocoSnapshotManifestV0::from_entries(
+            trnm_consensus_types::Height::new(target_height),
+            target_entries,
+        )
+        .expect("candidate source manifest");
+        writes.push(
+            AuthWrite::put_poco_snapshot(
+                PocoWritePermitV0::test_only(),
+                poco_snapshot_manifest_key().expect("candidate source manifest key"),
+                manifest.encode(),
+            )
+            .expect("candidate source manifest write"),
+        );
+        writes.sort_by(|left, right| left.key().cmp(right.key()));
+        let auth_update = if let Some(store) = &app.core.store {
+            store
+                .plan_auth_update(target_height, writes)
+                .expect("candidate persistent bootstrap plan")
+        } else {
+            app.core
+                .auth_tree
+                .lock()
+                .expect("candidate bootstrap JMT")
+                .plan_put_value_set(target_height, writes)
+                .expect("candidate in-memory bootstrap plan")
+        };
+        let app_hash = auth_update.root_hash.into();
+        let validator_updates = effective_validator_lifecycle(&state, &delta)
+            .expect("candidate bootstrap lifecycle")
+            .updates_due_at_finalize_height(target_height)
+            .expect("candidate bootstrap validator updates");
+        state.pending = Some(PendingBlock {
+            height: target_height,
+            app_hash,
+            tx_results: Vec::new(),
+            native_execution: test_authorized_empty_native_execution(
+                state.height,
+                state.app_hash,
+                target_height,
+                app_hash,
+            ),
+            validator_updates,
+            delta,
+            auth_update,
+            poco_checkpoint_execution: None,
+        });
+        drop(state);
+        app.commit();
+        app.clear_poco_runtime_caches()
+            .expect("clear candidate bootstrap caches");
+        let installed = app
+            .production_poco_projection_at(target_height)
+            .expect("candidate installed projection");
+        assert_eq!(installed.projection().entries(), target_entries);
+        assert_eq!(
+            installed.projection().manifest().cutoff_height().get(),
+            target_height
+        );
+        poco_application::validate_application_authority_projection_v0(installed.projection())
+            .expect("candidate installed source authority audit");
+    }
+
+    fn plan_authenticated_candidate_v0(
+        app: &CometBftApplication,
+        height: u64,
+        block_hash: &[u8],
+        timestamp_ms: u64,
+    ) -> AuthenticatedPocoCandidateSelectionV0 {
+        let state = app.core.state.lock().expect("candidate application state");
+        let capability = app
+            .execute_block(&state, &[], timestamp_ms, block_hash)
+            .expect("candidate checkpoint production plan")
+            .poco_checkpoint_execution
+            .expect("scheduled checkpoint produces candidate authority");
+        assert_eq!(
+            capability.checkpoint_execution().checkpoint_height().get(),
+            height
+        );
+        capability
+    }
+
+    fn assert_authenticated_candidate_matches_vector_v0(
+        capability: &AuthenticatedPocoCandidateSelectionV0,
+        scenario: &serde_json::Value,
+    ) {
+        let checkpoint = &scenario["checkpoint"];
+        assert_eq!(
+            hex::encode(capability.transcript_digest()),
+            checkpoint["transcript_digest_hex"]
+                .as_str()
+                .expect("candidate transcript digest")
+        );
+        assert_eq!(
+            hex::encode(capability.result_digest()),
+            checkpoint["result_digest_hex"]
+                .as_str()
+                .expect("candidate result digest")
+        );
+        assert_eq!(
+            hex::encode(capability.candidate_parameters_hash().as_bytes()),
+            checkpoint["candidate_parameters_hash_hex"]
+                .as_str()
+                .expect("candidate parameter hash")
+        );
+        assert_eq!(
+            capability.fallback_used(),
+            checkpoint["fallback_used"]
+                .as_bool()
+                .expect("candidate fallback bit")
+        );
+        assert_eq!(
+            u16::from(capability.fallback_reason()),
+            u16::try_from(
+                checkpoint["fallback_reason_code"]
+                    .as_u64()
+                    .expect("candidate fallback reason")
+            )
+            .expect("candidate fallback reason is u16")
+        );
+        assert_eq!(
+            capability
+                .computed_candidate_ids()
+                .iter()
+                .map(|validator_id| hex::encode(validator_id.as_bytes()))
+                .collect::<Vec<_>>(),
+            checkpoint["computed_candidate_ids_hex"]
+                .as_array()
+                .expect("candidate ID array")
+                .iter()
+                .map(|value| value.as_str().expect("candidate ID hex").to_string())
+                .collect::<Vec<_>>()
+        );
+        assert_eq!(
+            hex::encode(
+                capability
+                    .effective_validator_set()
+                    .try_cev0_bytes()
+                    .expect("encode effective candidate validator set")
+            ),
+            checkpoint["effective_validator_set_cev0_hex"]
+                .as_str()
+                .expect("effective candidate validator set")
+        );
+        assert_ne!(capability.authorization_id(), [0; 32]);
+    }
+
+    #[test]
+    fn authenticated_candidate_corpus_replays_across_abci_sqlite_cache_and_restore() {
+        static NEXT_CANDIDATE_REPLAY_DIR: std::sync::atomic::AtomicU64 =
+            std::sync::atomic::AtomicU64::new(0);
+        let vector = authenticated_candidate_vector_v0();
+        assert_eq!(
+            vector["schema"].as_str(),
+            Some("trnm.poco-bft.authenticated-candidate-selection-fixture.v0")
+        );
+        let compact_profile = &vector["compact_profile"];
+        let checkpoint_height = compact_profile["checkpoint_height"]
+            .as_u64()
+            .expect("candidate checkpoint height");
+        let parent_height = checkpoint_height - 1;
+        let cutoff_height = compact_profile["cutoff_height"]
+            .as_u64()
+            .expect("candidate cutoff height");
+        let source_bootstrap_height = cutoff_height - 1;
+
+        for scenario_name in ["positive", "authenticated_fallback"] {
+            let scenario = &vector[scenario_name];
+            let source_entries = authenticated_candidate_scenario_entries_v0(scenario);
+            let checkpoint = &scenario["checkpoint"];
+            let timestamp_ms = checkpoint["timestamp_ms"]
+                .as_u64()
+                .expect("candidate checkpoint timestamp");
+            let block_hash = hex::decode(
+                checkpoint["block_hash_hex"]
+                    .as_str()
+                    .expect("candidate checkpoint block hash"),
+            )
+            .expect("decode candidate checkpoint block hash");
+
+            // ProcessProposal and FinalizeBlock use separate application
+            // instances and therefore cannot share a pending block, cached
+            // JMT plan, or private candidate capability.
+            let (process_app, _) = authenticated_candidate_abci_fixture_v0(compact_profile, None);
+            let (finalize_app, _) = authenticated_candidate_abci_fixture_v0(compact_profile, None);
+            advance_authenticated_candidate_app_v0(&process_app, source_bootstrap_height - 1);
+            install_authenticated_candidate_source_v0(
+                &process_app,
+                source_bootstrap_height,
+                &source_entries,
+            );
+            advance_authenticated_candidate_app_v0(&finalize_app, source_bootstrap_height - 1);
+            install_authenticated_candidate_source_v0(
+                &finalize_app,
+                source_bootstrap_height,
+                &source_entries,
+            );
+            advance_authenticated_candidate_app_v0(&process_app, parent_height);
+            advance_authenticated_candidate_app_v0(&finalize_app, parent_height);
+            assert_eq!(
+                process_app.height_and_app_hash().unwrap(),
+                finalize_app.height_and_app_hash().unwrap()
+            );
+
+            let process_capability = plan_authenticated_candidate_v0(
+                &process_app,
+                checkpoint_height,
+                &block_hash,
+                timestamp_ms,
+            );
+            assert_authenticated_candidate_matches_vector_v0(&process_capability, scenario);
+            let process_response = process_app.process_proposal(RequestProcessProposal {
+                txs: Vec::new(),
+                hash: Bytes::copy_from_slice(&block_hash),
+                height: i64::try_from(checkpoint_height).unwrap(),
+                time: authenticated_candidate_block_time_v0(timestamp_ms),
+                ..Default::default()
+            });
+            assert_eq!(
+                process_response.status,
+                response_process_proposal::ProposalStatus::Accept as i32
+            );
+            assert!(process_app.core.state.lock().unwrap().pending.is_none());
+
+            let finalized = finalize_app.finalize_block(RequestFinalizeBlock {
+                txs: Vec::new(),
+                hash: Bytes::copy_from_slice(&block_hash),
+                height: i64::try_from(checkpoint_height).unwrap(),
+                time: authenticated_candidate_block_time_v0(timestamp_ms),
+                ..Default::default()
+            });
+            let finalize_capability = finalize_app
+                .core
+                .state
+                .lock()
+                .unwrap()
+                .pending
+                .as_ref()
+                .and_then(|pending| pending.poco_checkpoint_execution.clone())
+                .expect("FinalizeBlock retains private candidate capability until commit");
+            assert_eq!(process_capability, finalize_capability);
+            assert_eq!(finalized.events.len(), 1);
+            assert_eq!(
+                finalized.events[0].r#type,
+                "trnm.poco.checkpoint-execution.v0"
+            );
+            assert!(finalized.events[0].attributes.iter().any(|attribute| {
+                attribute.key == "candidate_authorization_id"
+                    && attribute.value == hex::encode(finalize_capability.authorization_id())
+            }));
+
+            // A V3 restore retains the authenticated cutoff history needed to
+            // recompute the exact private checkpoint/candidate authority.
+            let snapshot = wait_for_snapshot(&process_app, parent_height);
+            assert_eq!(snapshot.format, SNAPSHOT_FORMAT_V3);
+            let v3_target = CometBftApplication::new(process_app.core.config.clone())
+                .expect("candidate V3 target");
+            assert_eq!(
+                v3_target
+                    .offer_snapshot(RequestOfferSnapshot {
+                        snapshot: Some(snapshot.clone()),
+                        app_hash: Bytes::copy_from_slice(
+                            &process_app.height_and_app_hash().unwrap().1,
+                        ),
+                    })
+                    .result,
+                response_offer_snapshot::Result::Accept as i32
+            );
+            for index in 0..snapshot.chunks {
+                let chunk = process_app
+                    .load_snapshot_chunk(RequestLoadSnapshotChunk {
+                        height: snapshot.height,
+                        format: snapshot.format,
+                        chunk: index,
+                    })
+                    .chunk;
+                assert_eq!(
+                    v3_target
+                        .apply_snapshot_chunk(RequestApplySnapshotChunk {
+                            index,
+                            chunk,
+                            sender: "candidate-v3-replay".to_string(),
+                        })
+                        .result,
+                    response_apply_snapshot_chunk::Result::Accept as i32
+                );
+            }
+            let v3_capability = plan_authenticated_candidate_v0(
+                &v3_target,
+                checkpoint_height,
+                &block_hash,
+                timestamp_ms,
+            );
+            assert_eq!(v3_capability, process_capability);
+
+            // Complete the two independent ABCI instances only after their
+            // proposal/finalization evidence has been compared.
+            let process_finalized = process_app.finalize_block(RequestFinalizeBlock {
+                txs: Vec::new(),
+                hash: Bytes::copy_from_slice(&block_hash),
+                height: i64::try_from(checkpoint_height).unwrap(),
+                time: authenticated_candidate_block_time_v0(timestamp_ms),
+                ..Default::default()
+            });
+            assert_eq!(process_finalized.app_hash, finalized.app_hash);
+            process_app.commit();
+            finalize_app.commit();
+            assert_eq!(
+                process_app.height_and_app_hash().unwrap(),
+                finalize_app.height_and_app_hash().unwrap()
+            );
+
+            // SQLite starts from the same semantic corpus but maintains an
+            // independent retained JMT. Restart at the committed parent,
+            // prove rejection is write-free, then exercise explicit cache
+            // miss/hit and the real checkpoint ABCI path.
+            let replay_id =
+                NEXT_CANDIDATE_REPLAY_DIR.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+            let persistent_root = std::env::temp_dir().join(format!(
+                "trnm-poco-authenticated-candidate-replay-{}-{}-{replay_id}",
+                std::process::id(),
+                now_unix_ms()
+            ));
+            fs::create_dir_all(&persistent_root).unwrap();
+            let state_path = persistent_root.join("app-state.json");
+            let (persistent, persistent_config) =
+                authenticated_candidate_abci_fixture_v0(compact_profile, Some(state_path));
+            advance_authenticated_candidate_app_v0(&persistent, source_bootstrap_height - 1);
+            install_authenticated_candidate_source_v0(
+                &persistent,
+                source_bootstrap_height,
+                &source_entries,
+            );
+            advance_authenticated_candidate_app_v0(&persistent, parent_height);
+            // The cutoff is a real periodic disk-snapshot height. Waiting for
+            // it also drains the asynchronous snapshot writer before restart.
+            let periodic_v4_snapshot = wait_for_snapshot(&persistent, cutoff_height);
+            assert_eq!(periodic_v4_snapshot.format, SNAPSHOT_FORMAT_V4);
+            let parent_head = persistent.height_and_app_hash().unwrap();
+
+            // Restore the real periodic V4 snapshot at the retained cutoff,
+            // advance the restored SQLite application through the checkpoint
+            // parent, then recompute the checkpoint. A latest-only V4 snapshot
+            // made at the parent correctly drops the earlier cutoff and is not
+            // checkpoint-grade history.
+            let mut v4_config = persistent_config.clone();
+            v4_config.state_path =
+                Some(persistent_root.join(format!("candidate-v4-target-{scenario_name}.json")));
+            let v4_target =
+                CometBftApplication::new(v4_config).expect("candidate V4 restore target");
+            assert_eq!(
+                v4_target
+                    .offer_snapshot(RequestOfferSnapshot {
+                        snapshot: Some(periodic_v4_snapshot.clone()),
+                        app_hash: Bytes::copy_from_slice(
+                            &persistent
+                                .production_poco_projection_at(cutoff_height)
+                                .expect("candidate V4 cutoff source")
+                                .state_root(),
+                        ),
+                    })
+                    .result,
+                response_offer_snapshot::Result::Accept as i32
+            );
+            for index in 0..periodic_v4_snapshot.chunks {
+                let chunk = persistent
+                    .load_snapshot_chunk(RequestLoadSnapshotChunk {
+                        height: periodic_v4_snapshot.height,
+                        format: periodic_v4_snapshot.format,
+                        chunk: index,
+                    })
+                    .chunk;
+                assert_eq!(
+                    v4_target
+                        .apply_snapshot_chunk(RequestApplySnapshotChunk {
+                            index,
+                            chunk,
+                            sender: "candidate-v4-replay".to_string(),
+                        })
+                        .result,
+                    response_apply_snapshot_chunk::Result::Accept as i32
+                );
+            }
+            assert_eq!(v4_target.height_and_app_hash().unwrap().0, cutoff_height);
+            advance_authenticated_candidate_app_v0(&v4_target, parent_height);
+            assert_eq!(v4_target.height_and_app_hash().unwrap(), parent_head);
+            let v4_capability = plan_authenticated_candidate_v0(
+                &v4_target,
+                checkpoint_height,
+                &block_hash,
+                timestamp_ms,
+            );
+            assert_eq!(v4_capability, process_capability);
+            drop(v4_target);
+            drop(persistent);
+            let restarted =
+                CometBftApplication::new(persistent_config.clone()).expect("candidate restart");
+            assert_eq!(restarted.height_and_app_hash().unwrap(), parent_head);
+
+            let cutoff_before = restarted
+                .production_poco_projection_at(cutoff_height)
+                .expect("candidate retained cutoff before rejection");
+            let rejected = restarted.process_proposal(RequestProcessProposal {
+                txs: Vec::new(),
+                hash: Bytes::copy_from_slice(&[0; 32]),
+                height: i64::try_from(checkpoint_height).unwrap(),
+                time: authenticated_candidate_block_time_v0(timestamp_ms),
+                ..Default::default()
+            });
+            assert_eq!(
+                rejected.status,
+                response_process_proposal::ProposalStatus::Reject as i32
+            );
+            assert_eq!(restarted.height_and_app_hash().unwrap(), parent_head);
+            assert!(restarted.core.state.lock().unwrap().pending.is_none());
+            let cutoff_after = restarted
+                .production_poco_projection_at(cutoff_height)
+                .expect("candidate retained cutoff after rejection");
+            assert_eq!(cutoff_after, cutoff_before);
+            drop(restarted);
+            let restarted =
+                CometBftApplication::new(persistent_config.clone()).expect("candidate rere-start");
+            assert_eq!(restarted.height_and_app_hash().unwrap(), parent_head);
+
+            restarted.clear_poco_runtime_caches().unwrap();
+            assert!(restarted
+                .core
+                .poco_projection_cache
+                .lock()
+                .unwrap()
+                .is_empty());
+            let cache_miss_capability = plan_authenticated_candidate_v0(
+                &restarted,
+                checkpoint_height,
+                &block_hash,
+                timestamp_ms,
+            );
+            let cache_entries = restarted.core.poco_projection_cache.lock().unwrap().len();
+            assert!(
+                cache_entries >= 2,
+                "candidate plan must load head and cutoff"
+            );
+            let cache_hit_capability = plan_authenticated_candidate_v0(
+                &restarted,
+                checkpoint_height,
+                &block_hash,
+                timestamp_ms,
+            );
+            assert_eq!(
+                restarted.core.poco_projection_cache.lock().unwrap().len(),
+                cache_entries
+            );
+            assert_eq!(cache_hit_capability, cache_miss_capability);
+            assert_eq!(cache_hit_capability, process_capability);
+
+            assert_eq!(
+                restarted
+                    .process_proposal(RequestProcessProposal {
+                        txs: Vec::new(),
+                        hash: Bytes::copy_from_slice(&block_hash),
+                        height: i64::try_from(checkpoint_height).unwrap(),
+                        time: authenticated_candidate_block_time_v0(timestamp_ms),
+                        ..Default::default()
+                    })
+                    .status,
+                response_process_proposal::ProposalStatus::Accept as i32
+            );
+            let persistent_finalized = restarted.finalize_block(RequestFinalizeBlock {
+                txs: Vec::new(),
+                hash: Bytes::copy_from_slice(&block_hash),
+                height: i64::try_from(checkpoint_height).unwrap(),
+                time: authenticated_candidate_block_time_v0(timestamp_ms),
+                ..Default::default()
+            });
+            let persistent_capability = restarted
+                .core
+                .state
+                .lock()
+                .unwrap()
+                .pending
+                .as_ref()
+                .and_then(|pending| pending.poco_checkpoint_execution.clone())
+                .expect("persistent FinalizeBlock candidate capability");
+            assert_eq!(persistent_capability, process_capability);
+            restarted.commit();
+            let committed_head = restarted.height_and_app_hash().unwrap();
+            assert_eq!(
+                committed_head.1.as_slice(),
+                persistent_finalized.app_hash.as_ref()
+            );
+            drop(restarted);
+
+            // Capabilities are never serialized. After the checkpoint commit,
+            // reconstruct one fresh from the retained historical cutoff and
+            // exact committed block inputs, then compare every private field.
+            let restarted = CometBftApplication::new(persistent_config.clone())
+                .expect("candidate post-checkpoint restart");
+            assert_eq!(restarted.height_and_app_hash().unwrap(), committed_head);
+            let cutoff = restarted
+                .production_poco_projection_at(cutoff_height)
+                .expect("candidate retained cutoff after checkpoint restart");
+            let active_validators = restarted
+                .core
+                .state
+                .lock()
+                .unwrap()
+                .validator_lifecycle
+                .as_ref()
+                .expect("candidate validator lifecycle")
+                .active_validators
+                .clone();
+            let fresh = authorize_poco_checkpoint_candidate_selection_v0(
+                restarted
+                    .core
+                    .config
+                    .poco_authority
+                    .as_ref()
+                    .expect("candidate configured authority"),
+                PocoCheckpointExecutionInputV0 {
+                    chain_id: &restarted.core.config.chain_id,
+                    parent_height,
+                    parent_state_root: parent_head.1,
+                    block_height: checkpoint_height,
+                    block_hash: &block_hash,
+                    timestamp_ms,
+                    txs: &[],
+                    tx_results: &[],
+                    next_state_root: committed_head.1,
+                },
+                &cutoff,
+                &active_validators,
+            )
+            .expect("fresh post-restart candidate reconstruction");
+            assert_eq!(fresh, persistent_capability);
+            drop(restarted);
+            fs::remove_dir_all(&persistent_root).unwrap();
+        }
+    }
+
+    #[test]
+    fn authenticated_candidate_checkpoint_rejects_physically_pruned_cutoff_without_writes() {
+        static NEXT_PRUNED_CANDIDATE_DIR: std::sync::atomic::AtomicU64 =
+            std::sync::atomic::AtomicU64::new(0);
+        let vector = authenticated_candidate_vector_v0();
+        let compact_profile = &vector["compact_profile"];
+        let scenario = &vector["positive"];
+        let checkpoint_height = compact_profile["checkpoint_height"]
+            .as_u64()
+            .expect("pruned candidate checkpoint height");
+        let parent_height = checkpoint_height - 1;
+        let cutoff_height = compact_profile["cutoff_height"]
+            .as_u64()
+            .expect("pruned candidate cutoff height");
+        let source_bootstrap_height = cutoff_height - 1;
+        let source_entries = authenticated_candidate_scenario_entries_v0(scenario);
+        let timestamp_ms = scenario["checkpoint"]["timestamp_ms"]
+            .as_u64()
+            .expect("pruned candidate checkpoint timestamp");
+        let block_hash = hex::decode(
+            scenario["checkpoint"]["block_hash_hex"]
+                .as_str()
+                .expect("pruned candidate checkpoint block hash"),
+        )
+        .expect("decode pruned candidate checkpoint block hash");
+
+        let replay_id =
+            NEXT_PRUNED_CANDIDATE_DIR.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+        let persistent_root = std::env::temp_dir().join(format!(
+            "trnm-poco-authenticated-candidate-pruned-cutoff-{}-{}-{replay_id}",
+            std::process::id(),
+            now_unix_ms()
+        ));
+        fs::create_dir_all(&persistent_root).unwrap();
+        let state_path = persistent_root.join("app-state.json");
+        let database_path = state_path.with_extension("json.sqlite3");
+        let (app, config) =
+            authenticated_candidate_abci_fixture_v0(compact_profile, Some(state_path));
+        advance_authenticated_candidate_app_v0(&app, source_bootstrap_height - 1);
+        install_authenticated_candidate_source_v0(&app, source_bootstrap_height, &source_entries);
+        advance_authenticated_candidate_app_v0(&app, parent_height);
+        // Drain the real cutoff-height V4 snapshot reader before the
+        // synchronous test-only retention hook takes the SQLite maintenance
+        // gate.
+        let cutoff_snapshot = wait_for_snapshot(&app, cutoff_height);
+        assert_eq!(cutoff_snapshot.format, SNAPSHOT_FORMAT_V4);
+
+        let parent_head = app.height_and_app_hash().unwrap();
+        let parent_projection = app
+            .production_poco_projection_at(parent_height)
+            .expect("pruned candidate parent projection before rejection");
+        let parent_state = app.core.state.lock().unwrap().clone();
+        assert!(parent_state.pending.is_none());
+        let retain_from = cutoff_height
+            .checked_add(1)
+            .expect("pruned candidate retention floor overflow");
+        assert!(
+            retain_from < parent_height,
+            "lead-three cutoff pruning floor must remain below the checkpoint parent"
+        );
+        let store = app.core.store.as_ref().expect("pruned candidate store");
+        let stats = store
+            .prune_auth_versions_before(&parent_state, retain_from)
+            .expect("physically prune candidate cutoff history");
+        assert!(stats.roots_removed > 0);
+        assert_eq!(
+            store.auth_prune_status().unwrap(),
+            store::AuthPruneStatus {
+                query_floor: retain_from,
+                target: None,
+            }
+        );
+        let cutoff_error = store
+            .production_poco_projection(cutoff_height)
+            .expect_err("pruned cutoff projection must be unavailable")
+            .to_string();
+        assert!(
+            cutoff_error.contains("was pruned; retained query floor"),
+            "unexpected pruned-cutoff error: {cutoff_error}"
+        );
+        let physical_cutoff_roots = rusqlite::Connection::open(&database_path)
+            .unwrap()
+            .query_row(
+                "SELECT COUNT(*) FROM auth_roots WHERE version_be=?1",
+                rusqlite::params![cutoff_height.to_be_bytes().as_slice()],
+                |row| row.get::<_, u64>(0),
+            )
+            .unwrap();
+        assert_eq!(
+            physical_cutoff_roots, 0,
+            "logical retention floor advanced without removing the cutoff root"
+        );
+
+        let request = RequestProcessProposal {
+            txs: Vec::new(),
+            hash: Bytes::copy_from_slice(&block_hash),
+            height: i64::try_from(checkpoint_height).unwrap(),
+            time: authenticated_candidate_block_time_v0(timestamp_ms),
+            ..Default::default()
+        };
+        let rejected = app.process_proposal(request);
+        assert_eq!(
+            rejected.status,
+            response_process_proposal::ProposalStatus::Reject as i32
+        );
+        {
+            let state = app.core.state.lock().unwrap();
+            assert_eq!((state.height, state.app_hash), parent_head);
+            assert!(state.pending.is_none());
+        }
+        assert_eq!(
+            app.production_poco_projection_at(parent_height)
+                .expect("candidate parent survives ProcessProposal rejection"),
+            parent_projection
+        );
+        assert_eq!(store.auth_prune_status().unwrap().query_floor, retain_from);
+        drop(parent_state);
+        drop(app);
+
+        let restarted = CometBftApplication::new(config.clone()).expect("pruned candidate restart");
+        assert_eq!(restarted.height_and_app_hash().unwrap(), parent_head);
+        assert!(restarted.core.state.lock().unwrap().pending.is_none());
+        assert_eq!(
+            restarted
+                .production_poco_projection_at(parent_height)
+                .expect("candidate parent survives restart"),
+            parent_projection
+        );
+        let restarted_store = restarted
+            .core
+            .store
+            .as_ref()
+            .expect("restarted pruned candidate store");
+        assert_eq!(
+            restarted_store.auth_prune_status().unwrap(),
+            store::AuthPruneStatus {
+                query_floor: retain_from,
+                target: None,
+            }
+        );
+
+        // This is an independent defensive FinalizeBlock invocation after
+        // ProcessProposal has already proved that normal consensus flow must
+        // reject the block. The ABCI Application trait has no Result/status
+        // channel for FinalizeBlock, so execution divergence is deliberately
+        // fail-stop rather than a normal rejection response. Catch that
+        // expected panic, then inspect the poisoned state guard directly:
+        // execution failed before installing a pending block or advancing the
+        // committed head.
+        let finalized = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+            restarted.finalize_block(RequestFinalizeBlock {
+                txs: Vec::new(),
+                hash: Bytes::copy_from_slice(&block_hash),
+                height: i64::try_from(checkpoint_height).unwrap(),
+                time: authenticated_candidate_block_time_v0(timestamp_ms),
+                ..Default::default()
+            })
+        }));
+        let panic = match finalized {
+            Ok(_) => panic!("FinalizeBlock accepted a pruned cutoff"),
+            Err(panic) => panic,
+        };
+        let panic_message = panic
+            .downcast_ref::<String>()
+            .map(String::as_str)
+            .or_else(|| panic.downcast_ref::<&str>().copied())
+            .expect("pruned-cutoff FinalizeBlock panic must carry a message");
+        assert!(
+            panic_message.contains("was pruned; retained query floor"),
+            "unexpected pruned-cutoff FinalizeBlock panic: {panic_message}"
+        );
+        {
+            let state = restarted
+                .core
+                .state
+                .lock()
+                .expect_err("failed FinalizeBlock must poison its guarded state")
+                .into_inner();
+            assert_eq!((state.height, state.app_hash), parent_head);
+            assert!(state.pending.is_none());
+        }
+        assert_eq!(
+            restarted_store.auth_prune_status().unwrap().query_floor,
+            retain_from
+        );
+        drop(restarted);
+
+        let final_restart =
+            CometBftApplication::new(config).expect("post-Finalize pruned candidate restart");
+        assert_eq!(final_restart.height_and_app_hash().unwrap(), parent_head);
+        assert!(final_restart.core.state.lock().unwrap().pending.is_none());
+        assert_eq!(
+            final_restart
+                .production_poco_projection_at(parent_height)
+                .expect("candidate parent survives failed FinalizeBlock and restart"),
+            parent_projection
+        );
+        let final_store = final_restart
+            .core
+            .store
+            .as_ref()
+            .expect("final pruned candidate store");
+        assert_eq!(
+            final_store.auth_prune_status().unwrap(),
+            store::AuthPruneStatus {
+                query_floor: retain_from,
+                target: None,
+            }
+        );
+        assert!(final_store
+            .production_poco_projection(cutoff_height)
+            .is_err());
+        drop(final_restart);
+        fs::remove_dir_all(&persistent_root).unwrap();
+    }
+
     fn simulate(app: &CometBftApplication, tx: &CanonicalTxV1) -> SimulationResponseV1 {
         let query = app.query(RequestQuery {
             path: "/simulate".to_string(),
@@ -3737,6 +7950,7 @@ mod tests {
                     public_key_hex: public_key_hex(&client_key),
                 },
             ],
+            poco_authority: None,
             state_path: None,
         })
         .unwrap();
@@ -3905,6 +8119,7 @@ mod tests {
                     public_key_hex: public_key_hex(&client_key),
                 },
             ],
+            poco_authority: None,
             state_path: None,
         })
         .unwrap();
@@ -4051,6 +8266,7 @@ mod tests {
                     public_key_hex: public_key_hex(&client_key),
                 },
             ],
+            poco_authority: None,
             state_path: None,
         })
         .unwrap();
@@ -4266,6 +8482,131 @@ mod tests {
         genesis.validator_governance.min_activation_delay_blocks = 3;
         changed_governance.app_state_bytes = Bytes::from(serde_json::to_vec(&genesis).unwrap());
         assert!(std::panic::catch_unwind(|| app.init_chain(changed_governance)).is_err());
+    }
+
+    #[test]
+    fn exact_poco_projection_survives_state_codec_and_sqlite_restart() {
+        let (memory_app, _) = fixture();
+        let mut memory_state = memory_app.core.state.lock().unwrap().clone();
+        let mut memory_tree = memory_app.core.auth_tree.lock().unwrap().clone();
+        let update = memory_tree
+            .plan_put_value_set(1, production_poco_writes(1, false))
+            .unwrap();
+        memory_state.height = 1;
+        memory_state.app_hash = memory_tree.apply(update).unwrap().into();
+        let encoded = encode_state(&memory_state, &memory_tree).unwrap();
+        let (decoded_state, decoded_tree) = decode_state(&encoded).unwrap();
+        assert_eq!(decoded_state.height, 1);
+        assert_eq!(decoded_state.app_hash, memory_state.app_hash);
+        assert!(decoded_tree
+            .prove(1, poco_snapshot_manifest_key().unwrap())
+            .unwrap()
+            .value
+            .is_some());
+
+        let root = std::env::temp_dir().join(format!(
+            "trnm-poco-projection-valid-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        ));
+        let state_path = root.join("valid").join("app-state.json");
+        let (persistent, _) = persistent_fixture(state_path.clone());
+        let config = persistent.core.config.clone();
+        let current = persistent.core.state.lock().unwrap().clone();
+        let store = persistent.core.store.as_ref().unwrap();
+        let auth_update = store
+            .plan_auth_update(1, production_poco_writes(1, false))
+            .unwrap();
+        let app_hash = auth_update.root_hash.into();
+        let pending = PendingBlock {
+            height: 1,
+            app_hash,
+            tx_results: Vec::new(),
+            native_execution: test_authorized_empty_native_execution(
+                current.height,
+                current.app_hash,
+                1,
+                app_hash,
+            ),
+            validator_updates: Vec::new(),
+            delta: BlockDelta::default(),
+            auth_update,
+            poco_checkpoint_execution: None,
+        };
+        store.persist_transition(&current, &pending, 0).unwrap();
+        drop(persistent);
+
+        let restarted = CometBftApplication::new(config).unwrap();
+        let restarted_state = restarted.core.state.lock().unwrap();
+        assert_eq!(restarted_state.height, 1);
+        assert_eq!(restarted_state.app_hash, app_hash);
+        assert!(restarted
+            .core
+            .store
+            .as_ref()
+            .unwrap()
+            .prove(1, poco_snapshot_manifest_key().unwrap())
+            .unwrap()
+            .value
+            .is_some());
+        drop(restarted_state);
+        drop(restarted);
+        fs::remove_dir_all(root).unwrap();
+    }
+
+    #[test]
+    fn hidden_poco_leaf_is_rejected_by_state_codec_and_before_sqlite_commit() {
+        let (memory_app, _) = fixture();
+        let mut memory_state = memory_app.core.state.lock().unwrap().clone();
+        let mut memory_tree = memory_app.core.auth_tree.lock().unwrap().clone();
+        let update = memory_tree
+            .plan_put_value_set(1, production_poco_writes(1, true))
+            .unwrap();
+        memory_state.height = 1;
+        memory_state.app_hash = memory_tree.apply(update).unwrap().into();
+        assert!(encode_state(&memory_state, &memory_tree).is_err());
+
+        let root = std::env::temp_dir().join(format!(
+            "trnm-poco-projection-invalid-{}-{}",
+            std::process::id(),
+            std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_nanos()
+        ));
+        let state_path = root.join("invalid").join("app-state.json");
+        let (persistent, _) = persistent_fixture(state_path);
+        let config = persistent.core.config.clone();
+        let current = persistent.core.state.lock().unwrap().clone();
+        let store = persistent.core.store.as_ref().unwrap();
+        let auth_update = store
+            .plan_auth_update(1, production_poco_writes(1, true))
+            .unwrap();
+        let pending = PendingBlock {
+            height: 1,
+            app_hash: auth_update.root_hash.into(),
+            tx_results: Vec::new(),
+            native_execution: test_authorized_empty_native_execution(
+                current.height,
+                current.app_hash,
+                1,
+                auth_update.root_hash.into(),
+            ),
+            validator_updates: Vec::new(),
+            delta: BlockDelta::default(),
+            auth_update,
+            poco_checkpoint_execution: None,
+        };
+        let error = store.persist_transition(&current, &pending, 0).unwrap_err();
+        assert!(format!("{error:#}").contains("manifest entry count mismatch"));
+        drop(persistent);
+        let restarted = CometBftApplication::new(config).unwrap();
+        assert_eq!(restarted.core.state.lock().unwrap().height, 0);
+        drop(restarted);
+        fs::remove_dir_all(root).unwrap();
     }
 
     #[test]
@@ -4940,6 +9281,95 @@ mod tests {
         })
         .unwrap();
         assert_eq!(restarted.height_and_app_hash().unwrap(), source_state);
+        drop(restarted);
+        drop(source);
+        fs::remove_dir_all(root).unwrap();
+    }
+
+    #[test]
+    fn native_validation_reservations_remain_source_local_across_snapshot_build_and_install() {
+        let root = std::env::temp_dir().join(format!(
+            "trnm-comet-snapshot-reservation-scrub-{}-{}",
+            std::process::id(),
+            now_unix_ms()
+        ));
+        fs::create_dir_all(&root).unwrap();
+        let reservation_count = |path: &Path| {
+            rusqlite::Connection::open(path)
+                .unwrap()
+                .query_row(
+                    "SELECT COUNT(*) FROM native_validation_reservations",
+                    [],
+                    |row| row.get::<_, u64>(0),
+                )
+                .unwrap()
+        };
+
+        let source_state_path = root.join("source-state.json");
+        let source_database_path = source_state_path.with_extension("json.sqlite3");
+        let (source, _) = persistent_fixture(source_state_path);
+        finalize_and_commit(&source, 1, Vec::new());
+        let committed = source.core.state.lock().unwrap().clone();
+        let expected = (committed.height, committed.app_hash);
+        let source_store = source.core.store.as_ref().unwrap();
+        match source_store.reserve_native_validation_v0(
+            store::NativeValidationReservationFactsV0::new(
+                trnm_consensus_core::PayloadValidationRouteV0::Proposal,
+                trnm_consensus_core::ValidationId::new(
+                    trnm_consensus_types::BlockId::new([0x71; 32]),
+                    trnm_consensus_types::View::new(5),
+                    11,
+                ),
+                committed.height + 1,
+                [0x72; 32],
+                [0x73; 32],
+            ),
+        ) {
+            Ok(store::NativeValidationReservationDecisionV0::Reserved(_)) => {}
+            Ok(store::NativeValidationReservationDecisionV0::Coalesced(_)) | Err(_) => {
+                panic!("first source reservation must own durable admission")
+            }
+        }
+        assert_eq!(reservation_count(&source_database_path), 1);
+
+        let snapshot_path = root.join("reservation-local.snapshot");
+        let pinned = source_store.pin_snapshot(&committed).unwrap();
+        let built = source_store
+            .build_snapshot_database(&committed, &snapshot_path, pinned)
+            .unwrap();
+        assert_eq!((built.height, built.app_hash), expected);
+        // The builder validates the temporary v5 database before its atomic
+        // rename, so success also proves the temporary reservation table was
+        // empty rather than copying the node-local journal into the snapshot.
+        assert!(!snapshot_path.with_extension("snapshot.tmp").exists());
+        assert_eq!(reservation_count(&source_database_path), 1);
+        assert_eq!(reservation_count(&snapshot_path), 0);
+
+        let target_state_path = root.join("target-state.json");
+        let target_database_path = target_state_path.with_extension("json.sqlite3");
+        let target_config = ConsensusAppConfig {
+            state_path: Some(target_state_path),
+            ..source.core.config.clone()
+        };
+        let target = CometBftApplication::new(target_config.clone()).unwrap();
+        initialize(&target);
+        let empty = target.core.state.lock().unwrap().clone();
+        assert_eq!(empty.height, 0);
+        let installed = target
+            .core
+            .store
+            .as_ref()
+            .unwrap()
+            .install_snapshot_database(&empty, &snapshot_path, expected.0, expected.1)
+            .unwrap();
+        assert_eq!((installed.height, installed.app_hash), expected);
+        assert_eq!(reservation_count(&target_database_path), 0);
+        assert_eq!(reservation_count(&source_database_path), 1);
+        drop(target);
+
+        let restarted = CometBftApplication::new(target_config).unwrap();
+        assert_eq!(restarted.height_and_app_hash().unwrap(), expected);
+        assert_eq!(reservation_count(&target_database_path), 0);
         drop(restarted);
         drop(source);
         fs::remove_dir_all(root).unwrap();
@@ -5802,6 +10232,7 @@ mod tests {
                 "
                 DROP INDEX auth_stale_nodes_by_node_key;
                 DROP TABLE auth_stale_values;
+                DROP TABLE native_validation_reservations;
                 ",
             )
             .unwrap();
@@ -5826,7 +10257,17 @@ mod tests {
                     |row| row.get::<_, String>(0),
                 )
                 .unwrap(),
-            "4"
+            "5"
+        );
+        assert_eq!(
+            database
+                .query_row(
+                    "SELECT COUNT(*) FROM native_validation_reservations",
+                    [],
+                    |row| row.get::<_, u64>(0),
+                )
+                .unwrap(),
+            0
         );
         drop(database);
         finalize_and_commit(&restarted, 4, Vec::new());
@@ -5875,6 +10316,7 @@ mod tests {
                 "
                 DROP INDEX auth_stale_nodes_by_node_key;
                 DROP TABLE auth_stale_values;
+                DROP TABLE native_validation_reservations;
                 ",
             )
             .unwrap();
@@ -6048,7 +10490,7 @@ mod tests {
         let tx = transition_tx(&transition, 1);
         let pending = {
             let state = app.core.state.lock().unwrap();
-            app.execute_block(&state, std::slice::from_ref(&tx), 2_000)
+            app.execute_block(&state, std::slice::from_ref(&tx), 2_000, &[1; 32])
                 .unwrap()
         };
         app.core
@@ -6077,7 +10519,7 @@ mod tests {
 
         let pending = {
             let state = app.core.state.lock().unwrap();
-            app.execute_block(&state, &[tx], 2_000).unwrap()
+            app.execute_block(&state, &[tx], 2_000, &[1; 32]).unwrap()
         };
         let expected = (pending.height, pending.app_hash);
         app.core
@@ -6408,9 +10850,16 @@ mod tests {
                 height: next_height,
                 app_hash: auth_update.root_hash.into(),
                 tx_results: Vec::new(),
+                native_execution: test_authorized_empty_native_execution(
+                    state.height,
+                    state.app_hash,
+                    next_height,
+                    auth_update.root_hash.into(),
+                ),
                 validator_updates: Vec::new(),
                 delta,
                 auth_update,
+                poco_checkpoint_execution: None,
             };
             store.persist_transition(&state, &pending, 0).unwrap();
             state.height = pending.height;
@@ -6530,6 +10979,7 @@ mod tests {
                 signer_role: "operator".to_string(),
                 public_key_hex: public_key_hex(&operator_key),
             }],
+            poco_authority: None,
             state_path: Some(state_path),
         };
         let app = CometBftApplication::new(config.clone()).unwrap();
