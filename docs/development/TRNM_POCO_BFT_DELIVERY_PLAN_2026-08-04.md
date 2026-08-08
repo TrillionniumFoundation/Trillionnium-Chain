@@ -379,7 +379,9 @@ an earlier phase.
   text. PoCO application now also exposes a closed, data-free apply failure:
   raw-owner/re-encode/derived-state faults fail stop, while exact height,
   authority-revision, capacity, duplicate, nullifier-proof, validator-rule,
-  and validator-PoP rejects map without diagnostic-string matching. Leaf
+  validator-PoP, and signed semantic-change rejects map without
+  diagnostic-string matching; malformed authenticated semantic predecessors
+  and derived CAS/mutation failures remain invariant. Leaf
   errors not yet assigned a narrower reason remain conservatively typed as an
   authenticated-overlay invariant. Success keeps the exact decoded owner plus
   the still-open snapshot and unsealed family state. These attempts do not yet

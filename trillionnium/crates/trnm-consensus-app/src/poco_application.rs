@@ -5847,49 +5847,50 @@ fn prepare_semantic_changes(
 ) -> Result<Vec<PreparedSemanticChangeV0>> {
     let mut prepared = Vec::with_capacity(raw_changes.len());
     for raw in raw_changes {
-        let kind = PocoSnapshotEntryKindV0::from_u8(raw.kind)?;
-        ensure!(
-            kind != PocoSnapshotEntryKindV0::ApplicationAuthorityState,
-            "application operation cannot directly mutate authority kind 16"
-        );
-        let logical_key = exact_hex(&raw.logical_key_hex, 1, 128, "semantic logical key")?;
+        let deterministic_semantic = || {
+            deterministic_application_error_v0(
+                PocoApplicationDeterministicInvalidV0::SemanticTransition,
+            )
+        };
+        let kind =
+            PocoSnapshotEntryKindV0::from_u8(raw.kind).map_err(|_| deterministic_semantic())?;
+        if kind == PocoSnapshotEntryKindV0::ApplicationAuthorityState {
+            return Err(deterministic_semantic());
+        }
+        let logical_key = exact_hex(&raw.logical_key_hex, 1, 128, "semantic logical key")
+            .map_err(|_| deterministic_semantic())?;
         let map_key = (kind, logical_key.clone());
-        ensure!(
-            !overlay.mutations.contains_key(&map_key),
-            "semantic entry is mutated more than once in one block"
-        );
+        if overlay.mutations.contains_key(&map_key) {
+            return Err(deterministic_semantic());
+        }
         let expected_value = overlay.entries.get(&map_key).cloned();
         let expected = expected_value
             .as_deref()
             .map(|value| owned_semantic_parts(kind, &logical_key, value))
-            .transpose()?;
+            .transpose()
+            .map_err(|_| {
+                invariant_application_error_v0(PocoApplicationInvariantV0::AuthenticatedOverlay)
+            })?;
         let next_value = raw
             .next_value_hex
             .as_deref()
             .map(|value| exact_hex(value, 1, 65_536, "next semantic value"))
-            .transpose()?;
+            .transpose()
+            .map_err(|_| deterministic_semantic())?;
         let next = next_value
             .as_deref()
             .map(|value| owned_semantic_parts(kind, &logical_key, value))
-            .transpose()?;
-        ensure!(
-            expected_value != next_value,
-            "semantic operation is a no-op"
-        );
+            .transpose()
+            .map_err(|_| deterministic_semantic())?;
+        if expected_value == next_value {
+            return Err(deterministic_semantic());
+        }
         match (&expected, &next) {
-            (None, Some(next)) => ensure!(
-                next.revision == 1,
-                "created semantic value revision must be 1"
-            ),
-            (Some(expected), Some(next)) => ensure!(
-                expected.revision.checked_add(1) == Some(next.revision),
-                "updated semantic value revision is not exact successor"
-            ),
-            (Some(_), None) => ensure!(
-                allow_prune_deletes,
-                "semantic deletes require private prune authority"
-            ),
-            (None, None) => bail!("delete targets absent semantic entry"),
+            (None, Some(next)) if next.revision == 1 => {}
+            (Some(expected), Some(next))
+                if expected.revision.checked_add(1) == Some(next.revision) => {}
+            (Some(_), None) if allow_prune_deletes => {}
+            _ => return Err(deterministic_semantic()),
         }
         prepared.push(PreparedSemanticChangeV0 {
             kind,
@@ -5915,23 +5916,21 @@ fn apply_prepared_changes(
     prune_authorized: bool,
 ) -> Result<()> {
     for change in changes {
-        ensure!(
-            change.next_value.is_some() || prune_authorized,
-            "non-prune operation attempted semantic delete"
-        );
-        ensure!(
-            change.kind != PocoSnapshotEntryKindV0::ApplicationAuthorityState || !prune_authorized,
-            "application authority state cannot be pruned"
-        );
+        let postcondition = || {
+            invariant_application_error_v0(PocoApplicationInvariantV0::DerivedMutationPostcondition)
+        };
+        if change.next_value.is_none() && !prune_authorized {
+            return Err(postcondition());
+        }
+        if change.kind == PocoSnapshotEntryKindV0::ApplicationAuthorityState && prune_authorized {
+            return Err(postcondition());
+        }
         let map_key = (change.kind, change.logical_key.clone());
-        ensure!(
-            overlay.entries.get(&map_key) == change.expected_value.as_ref(),
-            "derived semantic CAS is stale"
-        );
-        ensure!(
-            !overlay.mutations.contains_key(&map_key),
-            "duplicate semantic mutation in block overlay"
-        );
+        if overlay.entries.get(&map_key) != change.expected_value.as_ref()
+            || overlay.mutations.contains_key(&map_key)
+        {
+            return Err(postcondition());
+        }
         match &change.next_value {
             Some(value) => {
                 overlay.entries.insert(map_key.clone(), value.clone());
@@ -5958,7 +5957,11 @@ fn ensure_change_kinds(
     expected: &[PocoSnapshotEntryKindV0],
 ) -> Result<()> {
     let actual = changes.iter().map(|item| item.kind).collect::<Vec<_>>();
-    ensure!(actual == expected, "operation semantic change set mismatch");
+    if actual != expected {
+        return Err(deterministic_application_error_v0(
+            PocoApplicationDeterministicInvalidV0::SemanticTransition,
+        ));
+    }
     Ok(())
 }
 
@@ -5967,13 +5970,16 @@ fn change_for_kind(
     kind: PocoSnapshotEntryKindV0,
 ) -> Result<&PreparedSemanticChangeV0> {
     let mut matches = changes.iter().filter(|change| change.kind == kind);
-    let result = matches
-        .next()
-        .context("operation is missing required semantic change")?;
-    ensure!(
-        matches.next().is_none(),
-        "duplicate semantic kind in operation"
-    );
+    let result = matches.next().ok_or_else(|| {
+        deterministic_application_error_v0(
+            PocoApplicationDeterministicInvalidV0::MissingRequiredAuthorityFact,
+        )
+    })?;
+    if matches.next().is_some() {
+        return Err(deterministic_application_error_v0(
+            PocoApplicationDeterministicInvalidV0::SemanticTransition,
+        ));
+    }
     Ok(result)
 }
 
@@ -7682,6 +7688,64 @@ mod tests {
 
         assert_eq!(block.operation_count(), 0);
         assert_eq!(block.overlay.authority, original_authority);
+        assert!(block.overlay.operation_ids.is_empty());
+        assert!(block.overlay.mutations.is_empty());
+    }
+
+    #[test]
+    fn semantic_delete_absence_boundary_is_typed_and_non_mutating() {
+        let projection = genesis_projection();
+        let block =
+            PocoApplicationBlockOverlayV0::from_projection(context_at(2).unwrap(), &projection)
+                .unwrap();
+        let original_authority = block.overlay.authority.clone();
+        let mut operation = PocoApplicationOperationV0::decode_exact(
+            &block.test_define_meter_operation_v0().unwrap(),
+        )
+        .unwrap();
+        operation.semantic_changes[0].next_value_hex = None;
+        let error = prepare_semantic_changes(&block.overlay, &operation.semantic_changes, false)
+            .expect_err("delete of an absent semantic entry must be rejected");
+        assert_eq!(
+            error.downcast_ref::<PocoApplicationApplyFailureV0>(),
+            Some(&PocoApplicationApplyFailureV0::DeterministicallyInvalid(
+                PocoApplicationDeterministicInvalidV0::SemanticTransition,
+            )),
+        );
+        assert_eq!(block.operation_count(), 0);
+        assert_eq!(block.overlay.authority, original_authority);
+        assert!(block.overlay.operation_ids.is_empty());
+        assert!(block.overlay.mutations.is_empty());
+    }
+
+    #[test]
+    fn malformed_authenticated_semantic_entry_is_invariant_and_non_mutating() {
+        let projection = genesis_projection();
+        let mut block =
+            PocoApplicationBlockOverlayV0::from_projection(context_at(2).unwrap(), &projection)
+                .unwrap();
+        let operation = PocoApplicationOperationV0::decode_exact(
+            &block.test_define_meter_operation_v0().unwrap(),
+        )
+        .unwrap();
+        let change = &operation.semantic_changes[0];
+        let kind = PocoSnapshotEntryKindV0::from_u8(change.kind).unwrap();
+        let logical_key = exact_hex(&change.logical_key_hex, 1, 128, "test logical key").unwrap();
+        block
+            .overlay
+            .entries
+            .insert((kind, logical_key), vec![0xff]);
+        let before_entries = block.overlay.entries.clone();
+
+        let error = prepare_semantic_changes(&block.overlay, &operation.semantic_changes, false)
+            .expect_err("malformed authenticated semantic state must fail stop");
+        assert_eq!(
+            error.downcast_ref::<PocoApplicationApplyFailureV0>(),
+            Some(&PocoApplicationApplyFailureV0::Invariant(
+                PocoApplicationInvariantV0::AuthenticatedOverlay,
+            )),
+        );
+        assert_eq!(block.overlay.entries, before_entries);
         assert!(block.overlay.operation_ids.is_empty());
         assert!(block.overlay.mutations.is_empty());
     }
