@@ -3061,7 +3061,42 @@ fn validate_operation_capacity_before_clone_v0(
                 })?;
             delta.reservations_removed = 1;
         }
-        PocoApplicationOperationBodyV0::OpenChallenge { .. } => {
+        PocoApplicationOperationBodyV0::OpenChallenge {
+            certificate_id_hex,
+            challenge_id_hex,
+            ..
+        } => {
+            exact_hash32_hex(certificate_id_hex).map_err(|_| {
+                deterministic_application_error_v0(
+                    PocoApplicationDeterministicInvalidV0::SemanticTransition,
+                )
+            })?;
+            exact_hash32_hex(challenge_id_hex).map_err(|_| {
+                deterministic_application_error_v0(
+                    PocoApplicationDeterministicInvalidV0::SemanticTransition,
+                )
+            })?;
+            authority
+                .active_certificates
+                .binary_search_by(|certificate| {
+                    certificate
+                        .certificate_id_hex
+                        .as_str()
+                        .cmp(certificate_id_hex.as_str())
+                })
+                .map_err(|_| {
+                    deterministic_application_error_v0(
+                        PocoApplicationDeterministicInvalidV0::MissingRequiredAuthorityFact,
+                    )
+                })?;
+            if authority.pending_challenges.iter().any(|challenge| {
+                challenge.challenge_id_hex == *challenge_id_hex
+                    || challenge.certificate_id_hex == *certificate_id_hex
+            }) {
+                return Err(deterministic_application_error_v0(
+                    PocoApplicationDeterministicInvalidV0::ProtocolWindowOrCap,
+                ));
+            }
             delta.pending_challenges_added = 1;
         }
         PocoApplicationOperationBodyV0::ResolveChallenge {
@@ -4998,59 +5033,67 @@ fn apply_open_challenge_v0(
     challenge_id_hex: &str,
     opening_decision_id_hex: &str,
 ) -> Result<()> {
-    let certificate_id = exact_hash32_hex(certificate_id_hex)?;
-    let challenge_id = exact_hash32_hex(challenge_id_hex)?;
-    ensure!(
-        challenge_id == require_derived_decision_id(preimage, b"challenge-id", challenge_id_hex)?,
-        "challenge ID is not derived from opening authority"
-    );
+    let signed_semantic = || {
+        deterministic_application_error_v0(
+            PocoApplicationDeterministicInvalidV0::SemanticTransition,
+        )
+    };
+    let protocol_reject = || {
+        deterministic_application_error_v0(
+            PocoApplicationDeterministicInvalidV0::ProtocolWindowOrCap,
+        )
+    };
+    let authenticated_overlay =
+        || invariant_application_error_v0(PocoApplicationInvariantV0::AuthenticatedOverlay);
+    let certificate_id = exact_hash32_hex(certificate_id_hex).map_err(|_| signed_semantic())?;
+    require_derived_decision_id(preimage, b"challenge-id", challenge_id_hex)?;
     let decision =
         require_derived_decision_id(preimage, b"open-challenge", opening_decision_id_hex)?;
     let certificate_index = overlay
         .authority
         .active_certificates
         .binary_search_by(|item| item.certificate_id_hex.as_str().cmp(certificate_id_hex))
-        .map_err(|_| anyhow::anyhow!("challenge certificate is not active"))?;
-    ensure!(
-        overlay.authority.active_certificates[certificate_index].lifecycle
-            == CertificateAuthorityLifecycleV0::Accepted,
-        "challenge certificate lifecycle is terminal"
-    );
-    ensure!(
-        context.target_height.get()
-            <= overlay.authority.active_certificates[certificate_index].prunable_after_height,
-        "challenge opened after the authenticated evidence/weight window"
-    );
-    ensure!(
-        overlay.authority.pending_challenges.iter().all(|item| {
-            item.challenge_id_hex != challenge_id_hex
-                && item.certificate_id_hex != certificate_id_hex
-        }),
-        "challenge ID or certificate already pending"
-    );
+        .map_err(|_| {
+            deterministic_application_error_v0(
+                PocoApplicationDeterministicInvalidV0::MissingRequiredAuthorityFact,
+            )
+        })?;
+    if overlay.authority.active_certificates[certificate_index].lifecycle
+        != CertificateAuthorityLifecycleV0::Accepted
+        || context.target_height.get()
+            > overlay.authority.active_certificates[certificate_index].prunable_after_height
+    {
+        return Err(protocol_reject());
+    }
+    if !overlay.authority.pending_challenges.iter().all(|item| {
+        item.challenge_id_hex != challenge_id_hex && item.certificate_id_hex != certificate_id_hex
+    }) {
+        return Err(protocol_reject());
+    }
     let changes = prepare_semantic_changes(overlay, &operation.semantic_changes, false)?;
     ensure_change_kinds(&changes, &[PocoSnapshotEntryKindV0::RevocationOrChallenge])?;
     let change = &changes[0];
-    ensure!(
-        change.expected_identity.as_deref() == Some(certificate_id.as_slice())
-            && change.next_identity.as_deref() == Some(certificate_id.as_slice()),
-        "challenge lifecycle certificate mismatch"
-    );
-    match (change.expected_fact.as_ref(), change.next_fact.as_ref()) {
-        (
-            Some(SemanticFactV0::RevocationOrChallenge {
-                state: LifecycleStateV0::Accepted,
-                ..
-            }),
-            Some(SemanticFactV0::RevocationOrChallenge {
-                state: LifecycleStateV0::ChallengePending,
-                effective_height,
-            }),
-        ) => ensure!(
-            *effective_height == context.target_height.get(),
-            "challenge open height differs from authenticated target"
-        ),
-        _ => bail!("invalid challenge-open semantic transition"),
+    if change.expected_identity.as_deref() != Some(certificate_id.as_slice()) {
+        return Err(authenticated_overlay());
+    }
+    if change.next_identity.as_deref() != Some(certificate_id.as_slice()) {
+        return Err(signed_semantic());
+    }
+    if !matches!(
+        change.expected_fact.as_ref(),
+        Some(SemanticFactV0::RevocationOrChallenge {
+            state: LifecycleStateV0::Accepted,
+            ..
+        })
+    ) {
+        return Err(authenticated_overlay());
+    }
+    match change.next_fact.as_ref() {
+        Some(SemanticFactV0::RevocationOrChallenge {
+            state: LifecycleStateV0::ChallengePending,
+            effective_height,
+        }) if *effective_height == context.target_height.get() => {}
+        _ => return Err(signed_semantic()),
     }
     insert_nullifiers(
         overlay,
@@ -8123,6 +8166,52 @@ mod tests {
             decision_preimage_digest_v0(&block.context, &operation).unwrap(),
             preimage,
         );
+        let raw = serde_json::to_vec(&operation).unwrap();
+        assert_eq!(
+            block.apply_decoded_exact(&raw, &operation),
+            Err(PocoApplicationApplyFailureV0::DeterministicallyInvalid(
+                PocoApplicationDeterministicInvalidV0::MissingRequiredAuthorityFact,
+            )),
+        );
+        assert_eq!(block.operation_count(), 0);
+        assert!(block.overlay.operation_ids.is_empty());
+        assert!(block.overlay.mutations.is_empty());
+    }
+
+    #[test]
+    fn open_challenge_signed_shape_and_negative_fact_are_typed_before_clone() {
+        let projection = genesis_projection();
+        let mut block =
+            PocoApplicationBlockOverlayV0::from_projection(context_at(2).unwrap(), &projection)
+                .unwrap();
+        let mut operation = PocoApplicationOperationV0 {
+            schema: POCO_APPLICATION_OPERATION_SCHEMA_V0.to_string(),
+            target_height: 2,
+            expected_state_revision: 1,
+            body: PocoApplicationOperationBodyV0::OpenChallenge {
+                certificate_id_hex: "0".to_string(),
+                challenge_id_hex: "02".repeat(32),
+                opening_decision_id_hex: "03".repeat(32),
+            },
+            semantic_changes: Vec::new(),
+            nullifier_non_membership_checks: Vec::new(),
+            nullifier_insertions: Vec::new(),
+        };
+        let malformed_raw = serde_json::to_vec(&operation).unwrap();
+        assert_eq!(
+            block.apply_decoded_exact(&malformed_raw, &operation),
+            Err(PocoApplicationApplyFailureV0::DeterministicallyInvalid(
+                PocoApplicationDeterministicInvalidV0::SemanticTransition,
+            )),
+        );
+
+        let PocoApplicationOperationBodyV0::OpenChallenge {
+            certificate_id_hex, ..
+        } = &mut operation.body
+        else {
+            unreachable!();
+        };
+        *certificate_id_hex = "01".repeat(32);
         let raw = serde_json::to_vec(&operation).unwrap();
         assert_eq!(
             block.apply_decoded_exact(&raw, &operation),

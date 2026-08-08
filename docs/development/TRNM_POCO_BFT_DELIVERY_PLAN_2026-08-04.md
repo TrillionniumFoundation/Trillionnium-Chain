@@ -418,6 +418,10 @@ an earlier phase.
   negative fact before clone, preserves nested typed failures, treats a signed
   non-delete as `SemanticTransition`, and treats authenticated settlement-leaf/
   reservation divergence as `AuthenticatedOverlay`.
+  `OpenChallenge` now validates signed IDs, active-certificate existence, and
+  duplicate pending facts before clone; lifecycle/window rejection is
+  `ProtocolWindowOrCap`, signed next-lifecycle drift is `SemanticTransition`,
+  and old authenticated lifecycle/authority divergence is `AuthenticatedOverlay`.
   Leaf errors not yet assigned a narrower reason remain conservatively typed
   as an authenticated-overlay invariant. Success keeps the exact decoded owner plus
   the still-open snapshot and unsealed family state. These attempts do not yet

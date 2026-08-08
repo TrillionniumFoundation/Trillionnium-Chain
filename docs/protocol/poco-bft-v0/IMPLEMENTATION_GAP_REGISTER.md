@@ -1270,6 +1270,8 @@ epoch prune, and Core transition remain open.
    preserving its nested nullifier/counter/CAS failures unchanged.
    `ReleaseSettlement` now performs a typed pre-clone reservation lookup and
    separates signed delete shape from authenticated leaf/reservation drift.
+   `OpenChallenge` now has typed pre-clone ID/certificate/duplicate checks and
+   splits signed next lifecycle from authenticated old lifecycle divergence.
    Leaf-reason completion remains a hard
    dependency before terminal failure mapping. The success carrier still owns the open
    snapshot and unsealed overlay/scheduled lifecycle. It does not yet seal
