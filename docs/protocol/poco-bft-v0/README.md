@@ -698,6 +698,9 @@ authenticated pending/old-lifecycle drift;
 governance proposal and approval type signed rules plus the pre-clone proposal
 join, preserve exact missing-proposal and too-early reasons, and fail stop on
 authenticated parameters/proposal/pending-fact divergence;
+certificate acceptance now has typed pre-clone signed envelope/proof,
+reservation/key/meter negative-fact, nonce-cap, and authenticated span/counter
+admission; its later execution join remains under leaf-reason refinement;
 unrefined leaf failures conservatively remain authenticated-overlay invariants
 without string matching. Success retains the open snapshot, decoded owner, and unsealed PoCO
 overlay or scheduled lifecycle. PoCO leaf-reason refinement, write sealing,

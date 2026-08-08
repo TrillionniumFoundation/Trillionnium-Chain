@@ -3022,6 +3022,11 @@ fn validate_operation_capacity_before_clone_v0(
         PocoApplicationOperationBodyV0::AcceptCertificate {
             certificate_id_hex, ..
         } => {
+            exact_hash32_hex(certificate_id_hex).map_err(|_| {
+                deterministic_application_error_v0(
+                    PocoApplicationDeterministicInvalidV0::SemanticTransition,
+                )
+            })?;
             authority
                 .funded_unused_reservations
                 .binary_search_by(|reservation| {
@@ -3030,7 +3035,25 @@ fn validate_operation_capacity_before_clone_v0(
                         .as_str()
                         .cmp(certificate_id_hex.as_str())
                 })
-                .map_err(|_| anyhow::anyhow!("certificate acceptance lacks funded reservation"))?;
+                .map_err(|_| {
+                    deterministic_application_error_v0(
+                        PocoApplicationDeterministicInvalidV0::MissingRequiredAuthorityFact,
+                    )
+                })?;
+            if authority
+                .active_certificates
+                .binary_search_by(|certificate| {
+                    certificate
+                        .certificate_id_hex
+                        .as_str()
+                        .cmp(certificate_id_hex.as_str())
+                })
+                .is_ok()
+            {
+                return Err(deterministic_application_error_v0(
+                    PocoApplicationDeterministicInvalidV0::SemanticTransition,
+                ));
+            }
             let (new_nonce_watermarks, new_usage_buckets) =
                 accept_capacity_additions_before_clone_v0(context, overlay, operation)?;
             delta.nonce_watermarks_added = new_nonce_watermarks;
@@ -3337,34 +3360,60 @@ fn accept_capacity_additions_before_clone_v0(
     overlay: &PocoApplicationOverlayV0,
     operation: &PocoApplicationOperationV0,
 ) -> Result<(usize, usize)> {
+    let signed_semantic = || {
+        deterministic_application_error_v0(
+            PocoApplicationDeterministicInvalidV0::SemanticTransition,
+        )
+    };
+    let missing_fact = || {
+        deterministic_application_error_v0(
+            PocoApplicationDeterministicInvalidV0::MissingRequiredAuthorityFact,
+        )
+    };
+    let PocoApplicationOperationBodyV0::AcceptCertificate {
+        certificate_id_hex, ..
+    } = &operation.body
+    else {
+        return Err(invariant_application_error_v0(
+            PocoApplicationInvariantV0::DerivedMutationPostcondition,
+        ));
+    };
+    let signed_certificate_id =
+        exact_hash32_hex(certificate_id_hex).map_err(|_| signed_semantic())?;
     let mut certificate_changes = operation
         .semantic_changes
         .iter()
         .filter(|change| change.kind == PocoSnapshotEntryKindV0::ConsumptionCertificate as u8);
-    let certificate_change = certificate_changes
-        .next()
-        .context("certificate acceptance lacks certificate semantic change")?;
-    ensure!(
-        certificate_changes.next().is_none(),
-        "certificate acceptance has duplicate certificate semantic changes"
-    );
-    let logical_key = exact_hash32_hex(&certificate_change.logical_key_hex)?;
+    let certificate_change = certificate_changes.next().ok_or_else(signed_semantic)?;
+    if certificate_changes.next().is_some() {
+        return Err(signed_semantic());
+    }
+    let logical_key =
+        exact_hash32_hex(&certificate_change.logical_key_hex).map_err(|_| signed_semantic())?;
     let next_value = exact_hex(
         certificate_change
             .next_value_hex
             .as_deref()
-            .context("certificate acceptance deletes certificate semantic entry")?,
+            .ok_or_else(signed_semantic)?,
         1,
         MAX_POCO_SEMANTIC_PAYLOAD_BYTES,
         "certificate semantic value",
-    )?;
+    )
+    .map_err(|_| signed_semantic())?;
     let parts = decode_poco_snapshot_value_parts_v0_exact(
         PocoSnapshotEntryKindV0::ConsumptionCertificate,
         &logical_key,
         &next_value,
-    )?;
-    let certificate = decode_consumption_certificate_v0_exact(parts.payload)
-        .map_err(|error| anyhow::anyhow!("decode capacity certificate: {error:?}"))?;
+    )
+    .map_err(|_| signed_semantic())?;
+    let certificate = decode_consumption_certificate_v0_exact(parts.payload).map_err(|_| {
+        deterministic_application_error_v0(
+            PocoApplicationDeterministicInvalidV0::CryptographicProof,
+        )
+    })?;
+    if certificate.certificate_id().as_bytes() != &signed_certificate_id {
+        return Err(signed_semantic());
+    }
     let body = certificate.body();
     let consumer_id_hex = hex::encode(body.consumer_id().as_bytes());
     let consumer_key_id_hex = hex::encode(body.consumer_key_id().as_bytes());
@@ -3379,7 +3428,7 @@ fn accept_capacity_additions_before_clone_v0(
             )
                 .cmp(&(consumer_id_hex.as_str(), consumer_key_id_hex.as_str()))
         })
-        .map_err(|_| anyhow::anyhow!("capacity certificate lacks consumer-key authority"))?;
+        .map_err(|_| missing_fact())?;
     let key_authority = &overlay.authority.consumer_keys[key_index];
     let new_nonce_watermark = usize::from(
         key_authority
@@ -3387,14 +3436,18 @@ fn accept_capacity_additions_before_clone_v0(
             .binary_search_by(|watermark| watermark.provider_id_hex.cmp(&provider_id_hex))
             .is_err(),
     );
-    ensure!(
-        key_authority
-            .nonce_watermarks
-            .len()
-            .checked_add(new_nonce_watermark)
-            .is_some_and(|count| count <= MAX_NONCE_WATERMARKS_PER_KEY),
-        "consumer key nonce watermark count exceeds per-key bound"
-    );
+    let target_nonce_watermarks = key_authority
+        .nonce_watermarks
+        .len()
+        .checked_add(new_nonce_watermark)
+        .ok_or_else(|| {
+            invariant_application_error_v0(PocoApplicationInvariantV0::ProtocolCounterExhausted)
+        })?;
+    if target_nonce_watermarks > MAX_NONCE_WATERMARKS_PER_KEY {
+        return Err(deterministic_application_error_v0(
+            PocoApplicationDeterministicInvalidV0::ProtocolWindowOrCap,
+        ));
+    }
 
     let meter_id_hex = hex::encode(body.meter_id());
     let policy_index = overlay
@@ -3404,13 +3457,15 @@ fn accept_capacity_additions_before_clone_v0(
             (policy.meter_id_hex.as_str(), policy.meter_version)
                 .cmp(&(meter_id_hex.as_str(), body.meter_version()))
         })
-        .map_err(|_| anyhow::anyhow!("capacity certificate lacks meter policy"))?;
+        .map_err(|_| missing_fact())?;
     let policy = &overlay.authority.meter_policies[policy_index];
     let meter_window = context
         .active_epoch
         .get()
         .checked_div(policy.rolling_epoch_span)
-        .context("capacity meter rolling span is zero")?;
+        .ok_or_else(|| {
+            invariant_application_error_v0(PocoApplicationInvariantV0::AuthenticatedOverlay)
+        })?;
     let parameter_window = context.active_epoch.get();
     let task_id_hex = hex::encode(body.task_id());
     let new_usage_buckets = [
@@ -8446,6 +8501,53 @@ mod tests {
             block.apply_decoded_exact(&approval_raw, &approval),
             Err(PocoApplicationApplyFailureV0::DeterministicallyInvalid(
                 PocoApplicationDeterministicInvalidV0::GovernanceApprovalMissing,
+            )),
+        );
+        assert_eq!(block.operation_count(), 0);
+        assert!(block.overlay.operation_ids.is_empty());
+        assert!(block.overlay.mutations.is_empty());
+    }
+
+    #[test]
+    fn certificate_acceptance_signed_id_and_reservation_fact_are_typed_before_clone() {
+        let projection = genesis_projection();
+        let mut block =
+            PocoApplicationBlockOverlayV0::from_projection(context_at(2).unwrap(), &projection)
+                .unwrap();
+        let mut operation = PocoApplicationOperationV0 {
+            schema: POCO_APPLICATION_OPERATION_SCHEMA_V0.to_string(),
+            target_height: 2,
+            expected_state_revision: 1,
+            body: PocoApplicationOperationBodyV0::AcceptCertificate {
+                certificate_id_hex: "0".to_string(),
+                funding_decision_id_hex: "01".repeat(32),
+                acceptance_decision_id_hex: "02".repeat(32),
+                meter_decision_id_hex: "03".repeat(32),
+                evidence_decision_id_hex: "04".repeat(32),
+            },
+            semantic_changes: Vec::new(),
+            nullifier_non_membership_checks: Vec::new(),
+            nullifier_insertions: Vec::new(),
+        };
+        let malformed_raw = serde_json::to_vec(&operation).unwrap();
+        assert_eq!(
+            block.apply_decoded_exact(&malformed_raw, &operation),
+            Err(PocoApplicationApplyFailureV0::DeterministicallyInvalid(
+                PocoApplicationDeterministicInvalidV0::SemanticTransition,
+            )),
+        );
+        let PocoApplicationOperationBodyV0::AcceptCertificate {
+            certificate_id_hex, ..
+        } = &mut operation.body
+        else {
+            unreachable!();
+        };
+        *certificate_id_hex = "05".repeat(32);
+        let raw = serde_json::to_vec(&operation).unwrap();
+        assert_eq!(
+            block.apply_decoded_exact(&raw, &operation),
+            Err(PocoApplicationApplyFailureV0::DeterministicallyInvalid(
+                PocoApplicationDeterministicInvalidV0::MissingRequiredAuthorityFact,
             )),
         );
         assert_eq!(block.operation_count(), 0);

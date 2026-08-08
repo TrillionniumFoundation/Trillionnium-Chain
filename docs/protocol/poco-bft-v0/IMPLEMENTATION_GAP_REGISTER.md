@@ -1277,6 +1277,10 @@ epoch prune, and Core transition remain open.
    Governance proposal/approval now type their signed rules and pre-clone
    proposal join while keeping authenticated parameters/pending-fact drift
    invariant and preserving the exact missing-proposal reason.
+   Certificate acceptance pre-clone admission now types signed certificate
+   shape/proof, reservation/key/meter negative facts, nonce cap, and
+   authenticated rolling-span/counter faults. Its later execution join remains
+   an open leaf-reason slice.
    Leaf-reason completion remains a hard
    dependency before terminal failure mapping. The success carrier still owns the open
    snapshot and unsealed overlay/scheduled lifecycle. It does not yet seal

@@ -435,6 +435,15 @@ an earlier phase.
   `ProtocolWindowOrCap`, signed approved-state drift is `GovernanceRule`, and
   authenticated proposal/parameters/pending-fact divergence is
   `AuthenticatedOverlay`.
+  Certificate acceptance pre-clone admission now validates the signed
+  certificate ID, funded-reservation negative fact, duplicate active record,
+  exact signed certificate semantic envelope, consumer-key/meter authority
+  facts, per-key nonce cap, and authenticated rolling span with closed reasons:
+  signed shape is `SemanticTransition`, certificate decoding/proof is
+  `CryptographicProof`, missing authorities are `MissingRequiredAuthorityFact`,
+  cap rejection is `ProtocolWindowOrCap`, and authenticated arithmetic/span
+  failure is invariant. The later acceptance execution join is still being
+  refined separately.
   Leaf errors not yet assigned a narrower reason remain conservatively typed
   as an authenticated-overlay invariant. Success keeps the exact decoded owner plus
   the still-open snapshot and unsealed family state. These attempts do not yet
