@@ -78,22 +78,15 @@ bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: rpc
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: run-p1-integration-gate" "./scripts/v2/run_p1_integration_gate.sh" "ci(gate): add run-p1-integration-gate regression to quick-check"
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: run-reliability-soak" "./scripts/v2/run_reliability_soak.sh" "ci(gate): add run-reliability-soak regression to quick-check"
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: run-worker-receipt-gates" "./scripts/v2/run_worker_receipt_gates.sh" "ci(gate): add run-worker-receipt-gates regression to quick-check"
-bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: run-worker-receipt-gates-real-cli" "./scripts/v2/run_worker_receipt_gates_real_cli.sh" "ci(gate): add run-worker-receipt-gates-real-cli regression to quick-check"
 
 # Auto-filled by dual-subagent task pool
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: soak-chunk" "./scripts/v2/soak_chunk.sh" "ci(gate): add soak-chunk regression to quick-check"
-bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: trnm-tx-cli-real-adapter" "./scripts/v2/trnm_tx_cli_real_adapter.sh" "ci(gate): add trnm-tx-cli-real-adapter regression to quick-check"
-bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: trnm-tx-cli-real-adapter.template" "./scripts/v2/trnm_tx_cli_real_adapter.template.sh" "ci(gate): add trnm-tx-cli-real-adapter.template regression to quick-check"
-bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: trnm-tx-cli-wrapper" "./scripts/v2/trnm_tx_cli_wrapper.sh" "ci(gate): add trnm-tx-cli-wrapper regression to quick-check"
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: worker-agent-e2e-demo" "./scripts/v2/worker_agent_e2e_demo.sh" "ci(gate): add worker-agent-e2e-demo regression to quick-check"
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: worker-agent-full-loop" "./scripts/v2/worker_agent_full_loop.sh" "ci(gate): add worker-agent-full-loop regression to quick-check"
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: worker-agent-mining-onboard" "./scripts/v2/worker_agent_mining_onboard.sh" "ci(gate): add worker-agent-mining-onboard regression to quick-check"
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: worker-agent-multi-onboard" "./scripts/v2/worker_agent_multi_onboard.sh" "ci(gate): add worker-agent-multi-onboard regression to quick-check"
-bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: worker-agent-onboard-mvp" "./scripts/v2/worker_agent_onboard_mvp.sh" "ci(gate): add worker-agent-onboard-mvp regression to quick-check"
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: worker-agent-verify-with-rpc" "./scripts/v2/worker_agent_verify_with_rpc.sh" "ci(gate): add worker-agent-verify-with-rpc regression to quick-check"
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: worker-failed-receipt-test" "./scripts/v2/worker_failed_receipt_test.sh" "ci(gate): add worker-failed-receipt-test regression to quick-check"
-bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: worker-real-cli-fake-wrapper-block-test" "./scripts/v2/worker_real_cli_fake_wrapper_block_test.sh" "ci(gate): add worker-real-cli-fake-wrapper-block-test regression to quick-check"
-bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: worker-real-cli-readiness" "./scripts/v2/worker_real_cli_readiness.sh" "ci(gate): add worker-real-cli-readiness regression to quick-check"
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: worker-retry-nonce-boundary-test" "./scripts/v2/worker_retry_nonce_boundary_test.sh" "ci(gate): add worker-retry-nonce-boundary-test regression to quick-check"
 
 # Auto-filled by dual-subagent task pool
@@ -718,8 +711,6 @@ bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: qui
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: quick-gate-manifest-content-hash-guard-test" "./scripts/v2/quick_gate_manifest_content_hash_guard_test.sh" "ci(gate): add quick-gate-manifest-content-hash-guard-test regression to quick-check"
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: quick-gate-missing-target-dir-guard-test" "./scripts/v2/quick_gate_missing_target_dir_guard_test.sh" "ci(gate): add quick-gate-missing-target-dir-guard-test regression to quick-check"
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: release-rc-manifest-replay-contract-test" "./scripts/v2/release_rc_manifest_replay_contract_test.sh" "ci(gate): add release-rc-manifest-replay-contract-test regression to quick-check"
-bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: worker-real-cli-readiness-scalar-state-alias-test" "./scripts/v2/worker_real_cli_readiness_scalar_state_alias_test.sh" "ci(gate): add worker-real-cli-readiness-scalar-state-alias-test regression to quick-check"
-bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: worker-real-cli-readiness-transaction-hash-alias-test" "./scripts/v2/worker_real_cli_readiness_transaction_hash_alias_test.sh" "ci(gate): add worker-real-cli-readiness-transaction-hash-alias-test regression to quick-check"
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: workflow-script-ref-strict-non-dot-guard-test" "./scripts/v2/workflow_script_ref_strict_non_dot_guard_test.sh" "ci(gate): add workflow-script-ref-strict-non-dot-guard-test regression to quick-check"
 bash ./scripts/v2/auto_iterate_task_add_quickcheck_step.sh "Auto regression: workflow-script-refs-strict-mode-guard-test" "./scripts/v2/workflow_script_refs_strict_mode_guard_test.sh" "ci(gate): add workflow-script-refs-strict-mode-guard-test regression to quick-check"
 

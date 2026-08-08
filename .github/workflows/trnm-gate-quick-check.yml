@@ -513,9 +513,13 @@ jobs:
         run: |
           ./scripts/v2/v1_proof_backend_ci_gate_regression_test.sh
 
-      - name: Worker real-CLI fake-wrapper rejection regression
+      - name: Worker / active PoCO CLI workflow-boundary regression
         run: |
-          ./scripts/v2/worker_real_cli_fake_wrapper_block_test.sh
+          ./scripts/v2/worker_poco_cli_cutover_workflow_guard_test.sh
+
+      - name: Legacy external CLI readiness parser fail-closed regression
+        run: |
+          ./scripts/v2/legacy_external_cli_readiness_parser_fail_closed_test.sh
 
       - name: Legacy quick-check injector fail-closed regression
         run: |

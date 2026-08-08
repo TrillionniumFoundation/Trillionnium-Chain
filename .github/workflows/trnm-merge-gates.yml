@@ -295,7 +295,7 @@ jobs:
           export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
           ./scripts/challenge_reexec_template_smoke.sh
 
-      - name: Worker-agent tx-hash receipt hard gate
+      - name: Worker-agent hermetic receipt state-machine hard gate
         run: |
           set -euo pipefail
           export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
@@ -306,22 +306,17 @@ jobs:
           set -euo pipefail
           ./scripts/v2/check_unchecked_gov_usage.sh
 
-      - name: Worker-agent strict real-cli gate (default-on)
+      - name: Active PoCO CLI cutover hard gate
         run: |
           set -euo pipefail
           export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
-          if [[ "${REQUIRE_REAL_TX_CLI:-1}" == "1" ]]; then
-            TRNM_TX_CLI="${TRNM_TX_CLI:-./scripts/v2/trnm_tx_cli_wrapper.sh}" ./scripts/v2/run_worker_receipt_gates_real_cli.sh
-          else
-            echo "[skip] strict real-cli gate disabled (REQUIRE_REAL_TX_CLI=${REQUIRE_REAL_TX_CLI:-1})"
-          fi
+          ./scripts/v2/worker_poco_cli_cutover_gate.sh
 
       - name: Worker-agent multi-agent onboarding smoke (hard gate)
         run: |
           set -euo pipefail
           export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
-          TRNM_TX_CLI="${TRNM_TX_CLI:-./scripts/v2/trnm_tx_cli_wrapper.sh}" \
-          SKIP_GATES=1 AGENTS=${WORKER_MULTI_AGENTS:-3} \
+          TRNM_TX_ADAPTER_MODE=mock SKIP_GATES=1 AGENTS=${WORKER_MULTI_AGENTS:-3} \
             ./scripts/v2/worker_agent_mining_onboard.sh
 
       - name: P1-4 integration gate (sdk examples + product smoke + rpc contract v1)

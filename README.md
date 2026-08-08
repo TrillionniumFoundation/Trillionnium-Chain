@@ -18,7 +18,8 @@ TRNM is a Rust L1 protocol for task-based AI compute settlement and verification
 - **PoCO state machine** for task lifecycle: create → commit → reveal → challenge → resolve
 - **High-concurrency execution** with conflict detection and grouped scheduling
 - **Auditable events + stable interfaces** for integration, replay, governance, and operations
-- **Worker Agent + CLI** loop from execution to on-chain submission
+- **Worker Agent + CLI** legacy local adapter loop for retry/replay evidence;
+  canonical worker-to-PoCO broadcast/query is still an open integration boundary
 - **BL09 retirement-prep wording**: the retained `trnm-pouw` crate name and any residual PoUW fields should be read as migration-era compatibility or provenance/audit evidence, not as ongoing payout authority or a default work-unit payout path
 
 ---
@@ -96,7 +97,8 @@ TrillionniumChain/
 - `trnm-executor`: conflict detection and concurrent scheduling strategy
 - `trnm-mempool`: transaction pool and admission/packaging
 - `trnm-rpc`: RPC service and stable query APIs
-- `trnm-worker-agent`: worker execution and on-chain submission path
+- `trnm-worker-agent`: legacy worker execution and local adapter-state path;
+  it is not yet wired to canonical PoCO receipt broadcast/query
 - `trnm-cli`: native CLI for tx/query operations
 - `trnm-bench`: benchmarking and performance tooling
 - `trnm-types`: shared protocol types
@@ -181,13 +183,22 @@ This validates the current `contracts/` MVP workspace only, which today contains
 ### 5.2 Worker / Receipt gates
 
 ```bash
-# Worker receipt gates
+# Hermetic legacy worker adapter/state-machine regressions. These exercise
+# retry, replay, nonce and acknowledgement handling; they are not evidence of
+# a real chain broadcast.
 ./scripts/v2/run_worker_receipt_gates.sh
 
-# Strict real-cli mode
-TRNM_TX_CLI=./trillionnium/target/debug/trnm-cli \
-  ./scripts/v2/run_worker_receipt_gates_real_cli.sh
+# Active PoCO CLI surface and retired-command cutover
+./scripts/v2/worker_poco_cli_cutover_gate.sh
 ```
+
+The active native PoCO CLI intentionally does not implement the legacy worker
+`commit-result` / `reveal-result` protocol. The historical
+`run_worker_receipt_gates_real_cli.sh` entrypoint is only for an explicitly
+configured external compatibility adapter with real RPC and key material; it
+is not part of offline CI and is not proof that worker-to-PoCO broadcast/query
+is complete. That production path remains open until the worker submission
+schema is migrated to the canonical PoCO receipt model.
 
 ### 5.3 Tokenomics regression gate
 
