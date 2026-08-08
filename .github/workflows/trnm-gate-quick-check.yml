@@ -3,6 +3,7 @@ name: trnm-gate-quick-check
 on:
   pull_request:
     paths:
+      - '.github/workflows/**'
       - 'contracts/**'
       - 'contracts-rust/**'
       - 'scripts/**'
@@ -11,6 +12,7 @@ on:
   push:
     branches: [main]
     paths:
+      - '.github/workflows/**'
       - 'contracts/**'
       - 'contracts-rust/**'
       - 'scripts/**'

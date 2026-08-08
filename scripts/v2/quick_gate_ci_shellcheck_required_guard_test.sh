@@ -17,9 +17,11 @@ chmod +x "$TARGET_DIR/sample.sh"
 FAKE_BIN="$TMP_DIR/fake-bin"
 mkdir -p "$FAKE_BIN"
 BASH_BIN="$(command -v bash)"
+ln -s "$(command -v date)" "$FAKE_BIN/date"
+ln -s "$(command -v dirname)" "$FAKE_BIN/dirname"
 
 set +e
-PATH="$FAKE_BIN:/usr/bin:/bin:/usr/sbin:/sbin" CI=true "$BASH_BIN" "$SCRIPT" "$TARGET_DIR" >"$TMP_DIR/stdout.log" 2>"$TMP_DIR/stderr.log"
+PATH="$FAKE_BIN" CI=true "$BASH_BIN" "$SCRIPT" "$TARGET_DIR" >"$TMP_DIR/stdout.log" 2>"$TMP_DIR/stderr.log"
 rc=$?
 set -e
 
