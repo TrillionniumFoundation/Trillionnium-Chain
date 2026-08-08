@@ -192,16 +192,6 @@ if [[ ! -f "$REPORT" ]]; then
 fi
 
 # 2) Deliver WARN/FAIL alerts with dedup window
-DRY_RUN_ARG=()
-if [[ "${DRY_RUN:-0}" == "1" ]]; then
-  DRY_RUN_ARG=(--dry-run)
-fi
-
-QUIET_HOURS_ARG=()
-if [[ "${ALERT_NOTIFY_QUIET_HOURS_ENABLED:-0}" == "1" ]]; then
-  QUIET_HOURS_ARG=(--quiet-hours-enabled)
-fi
-
 # Backward-compatible CLI arguments for custom delivery commands and existing
 # mocks. The canonical Python delivery command receives the full route map via
 # environment and, when no explicit override exists, ignores this threshold-
@@ -221,9 +211,40 @@ fi
 
 DELIVERY_PRIMARY_CHANNEL="${EXPLICIT_PRIMARY_CHANNEL:-$ALERT_NOTIFY_CHANNEL}"
 
-BACKUP_CHANNEL_ARG=()
+# Keep the argv vector non-empty before expanding it. macOS still ships Bash
+# 3.2, where expanding an empty array under `set -u` aborts the script. Building
+# one mandatory vector and conditionally appending optional flags is portable
+# across Bash 3 and newer shells.
+DELIVERY_ARGS=(
+  --report "$REPORT"
+  --channel "$ALERT_NOTIFY_CHANNEL"
+  --primary-channel "$DELIVERY_PRIMARY_CHANNEL"
+  --audit-file "${ALERT_NOTIFY_AUDIT_FILE:-$ROOT/run/pr7-alert-delivery/audit.jsonl}"
+  --state-file "${ALERT_NOTIFY_STATE_FILE:-$ROOT/run/pr7-alert-delivery/state.json}"
+  --dead-letter-file "${ALERT_NOTIFY_DEAD_LETTER_FILE:-$ROOT/run/pr7-alert-delivery/dead-letter.jsonl}"
+  --min-level "${ALERT_NOTIFY_MIN_LEVEL:-WARN}"
+  --dedup-seconds "${ALERT_NOTIFY_DEDUP_SECONDS:-1800}"
+  --aggregate-seconds "${ALERT_NOTIFY_AGGREGATE_SECONDS:-${ALERT_NOTIFY_DEDUP_SECONDS:-1800}}"
+  --max-retries "${ALERT_NOTIFY_MAX_RETRIES:-3}"
+  --base-backoff-ms "${ALERT_NOTIFY_BASE_BACKOFF_MS:-500}"
+  --max-backoff-ms "${ALERT_NOTIFY_MAX_BACKOFF_MS:-8000}"
+  --cooldown-info "${ALERT_NOTIFY_COOLDOWN_INFO:-${ALERT_NOTIFY_DEDUP_SECONDS:-1800}}"
+  --cooldown-warn "${ALERT_NOTIFY_COOLDOWN_WARN:-${ALERT_NOTIFY_DEDUP_SECONDS:-1800}}"
+  --cooldown-critical "${ALERT_NOTIFY_COOLDOWN_CRITICAL:-300}"
+  --warn-escalate-count "${ALERT_NOTIFY_WARN_ESCALATE_COUNT:-0}"
+  --warn-escalate-window-seconds "${ALERT_NOTIFY_WARN_ESCALATE_WINDOW_SECONDS:-3600}"
+  --quiet-hours-start "${ALERT_NOTIFY_QUIET_HOURS_START:-23:00}"
+  --quiet-hours-end "${ALERT_NOTIFY_QUIET_HOURS_END:-08:00}"
+  --quiet-hours-tz "${ALERT_NOTIFY_QUIET_HOURS_TZ:-Asia/Shanghai}"
+)
 if [[ -n "${ALERT_NOTIFY_BACKUP_CHANNEL:-}" ]]; then
-  BACKUP_CHANNEL_ARG=(--backup-channel "$ALERT_NOTIFY_BACKUP_CHANNEL")
+  DELIVERY_ARGS+=(--backup-channel "$ALERT_NOTIFY_BACKUP_CHANNEL")
+fi
+if [[ "${ALERT_NOTIFY_QUIET_HOURS_ENABLED:-0}" == "1" ]]; then
+  DELIVERY_ARGS+=(--quiet-hours-enabled)
+fi
+if [[ "${DRY_RUN:-0}" == "1" ]]; then
+  DELIVERY_ARGS+=(--dry-run)
 fi
 
 set +e
@@ -233,29 +254,7 @@ IMESSAGE_TO="${IMESSAGE_TO:-qiqianpkugsm@gmail.com}" \
   ALERT_NOTIFY_CHANNEL_WARN="$ROUTE_CHANNEL_WARN" \
   ALERT_NOTIFY_CHANNEL_CRITICAL="$ROUTE_CHANNEL_CRITICAL" \
   "${PR7_DELIVERY_CMD_ARR[@]}" \
-  --report "$REPORT" \
-  --channel "$ALERT_NOTIFY_CHANNEL" \
-  --primary-channel "$DELIVERY_PRIMARY_CHANNEL" \
-  "${BACKUP_CHANNEL_ARG[@]}" \
-  --audit-file "${ALERT_NOTIFY_AUDIT_FILE:-$ROOT/run/pr7-alert-delivery/audit.jsonl}" \
-  --state-file "${ALERT_NOTIFY_STATE_FILE:-$ROOT/run/pr7-alert-delivery/state.json}" \
-  --dead-letter-file "${ALERT_NOTIFY_DEAD_LETTER_FILE:-$ROOT/run/pr7-alert-delivery/dead-letter.jsonl}" \
-  --min-level "${ALERT_NOTIFY_MIN_LEVEL:-WARN}" \
-  --dedup-seconds "${ALERT_NOTIFY_DEDUP_SECONDS:-1800}" \
-  --aggregate-seconds "${ALERT_NOTIFY_AGGREGATE_SECONDS:-${ALERT_NOTIFY_DEDUP_SECONDS:-1800}}" \
-  --max-retries "${ALERT_NOTIFY_MAX_RETRIES:-3}" \
-  --base-backoff-ms "${ALERT_NOTIFY_BASE_BACKOFF_MS:-500}" \
-  --max-backoff-ms "${ALERT_NOTIFY_MAX_BACKOFF_MS:-8000}" \
-  --cooldown-info "${ALERT_NOTIFY_COOLDOWN_INFO:-${ALERT_NOTIFY_DEDUP_SECONDS:-1800}}" \
-  --cooldown-warn "${ALERT_NOTIFY_COOLDOWN_WARN:-${ALERT_NOTIFY_DEDUP_SECONDS:-1800}}" \
-  --cooldown-critical "${ALERT_NOTIFY_COOLDOWN_CRITICAL:-300}" \
-  --warn-escalate-count "${ALERT_NOTIFY_WARN_ESCALATE_COUNT:-0}" \
-  --warn-escalate-window-seconds "${ALERT_NOTIFY_WARN_ESCALATE_WINDOW_SECONDS:-3600}" \
-  --quiet-hours-start "${ALERT_NOTIFY_QUIET_HOURS_START:-23:00}" \
-  --quiet-hours-end "${ALERT_NOTIFY_QUIET_HOURS_END:-08:00}" \
-  --quiet-hours-tz "${ALERT_NOTIFY_QUIET_HOURS_TZ:-Asia/Shanghai}" \
-  "${QUIET_HOURS_ARG[@]}" \
-  "${DRY_RUN_ARG[@]}"
+  "${DELIVERY_ARGS[@]}"
 pr7_rc=$?
 set -e
 
