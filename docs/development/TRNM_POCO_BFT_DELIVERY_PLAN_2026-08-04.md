@@ -399,7 +399,10 @@ an earlier phase.
   the same deterministic negative fact; signed identifiers/delete shape and
   retention/reference blocks are deterministic, while authenticated retention
   arithmetic, certificate-reference decoding, and nonce-watermark corruption
-  fail stop. Leaf errors not yet assigned a narrower reason remain
+  fail stop. Meter definition now preserves nested typed failures, maps signed
+  policy/semantic shape to `SemanticTransition`, maps authenticated-parameter
+  cap rejection to `ProtocolWindowOrCap`, and maps a pre-clone missing prune
+  authority to `MissingRequiredAuthorityFact`. Leaf errors not yet assigned a narrower reason remain
   conservatively typed as an
   authenticated-overlay invariant. Success keeps the exact decoded owner plus
   the still-open snapshot and unsealed family state. These attempts do not yet

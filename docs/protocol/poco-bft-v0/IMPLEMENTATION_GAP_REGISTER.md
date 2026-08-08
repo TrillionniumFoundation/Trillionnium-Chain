@@ -1259,6 +1259,8 @@ epoch prune, and Core transition remain open.
    consumer-key prune now shares the pre-clone negative-fact rejection and
    keeps authenticated retention/certificate/nonce failures invariant, while
    signed prune shape and temporal/reference rejection remain deterministic.
+   Meter definition now separates signed policy/semantic shape from protocol
+   cap rejection, and meter prune has a typed pre-clone negative-fact reject.
    Leaf-reason completion remains a hard
    dependency before terminal failure mapping. The success carrier still owns the open
    snapshot and unsealed overlay/scheduled lifecycle. It does not yet seal

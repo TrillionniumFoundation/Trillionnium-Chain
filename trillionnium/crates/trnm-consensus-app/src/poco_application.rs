@@ -2994,7 +2994,11 @@ fn validate_operation_capacity_before_clone_v0(
                     (policy.meter_id_hex.as_str(), policy.meter_version)
                         .cmp(&(meter_id_hex.as_str(), *meter_version))
                 })
-                .map_err(|_| anyhow::anyhow!("meter prune lacks authority record"))?;
+                .map_err(|_| {
+                    deterministic_application_error_v0(
+                        PocoApplicationDeterministicInvalidV0::MissingRequiredAuthorityFact,
+                    )
+                })?;
             delta.meter_policies_removed = 1;
         }
         PocoApplicationOperationBodyV0::FundSettlement { .. } => {
@@ -3414,7 +3418,13 @@ fn apply_operation_v0(
             decision_preimage,
             policy,
             decision_id_hex,
-        ),
+        )
+        .map_err(|error| {
+            preserve_application_failure_or_deterministic_v0(
+                error,
+                PocoApplicationDeterministicInvalidV0::SemanticTransition,
+            )
+        }),
         PocoApplicationOperationBodyV0::RetireMeterPolicy {
             meter_id_hex,
             meter_version,
@@ -3888,17 +3898,20 @@ fn apply_define_meter_v0(
     decision_id_hex: &str,
 ) -> Result<()> {
     validate_meter_policy(policy)?;
-    ensure!(
-        policy.per_certificate_cap.get()? <= context.active_parameters.per_certificate_unit_cap(),
-        "meter per-certificate cap exceeds active parameter cap"
-    );
-    ensure!(
-        policy.rolling_cap.get()?
-            <= context
-                .active_parameters
-                .per_consumer_provider_epoch_unit_cap(),
-        "meter rolling cap exceeds active consumer/provider parameter cap"
-    );
+    if policy.per_certificate_cap.get()? > context.active_parameters.per_certificate_unit_cap() {
+        return Err(deterministic_application_error_v0(
+            PocoApplicationDeterministicInvalidV0::ProtocolWindowOrCap,
+        ));
+    }
+    if policy.rolling_cap.get()?
+        > context
+            .active_parameters
+            .per_consumer_provider_epoch_unit_cap()
+    {
+        return Err(deterministic_application_error_v0(
+            PocoApplicationDeterministicInvalidV0::ProtocolWindowOrCap,
+        ));
+    }
     ensure!(
         policy.active_from_height == context.target_height.get()
             && policy.retired_at_height.is_none(),
@@ -7735,6 +7748,72 @@ mod tests {
         let sealed = block.seal().unwrap();
         assert_eq!(sealed.operation_count(), 1);
         assert!(sealed.mutation_count() >= 2);
+    }
+
+    #[test]
+    fn meter_define_shape_cap_and_prune_negative_fact_are_typed_without_mutation() {
+        let projection = genesis_projection();
+        let mut block =
+            PocoApplicationBlockOverlayV0::from_projection(context_at(2).unwrap(), &projection)
+                .unwrap();
+        let mut bad_shape = PocoApplicationOperationV0::decode_exact(
+            &block.test_define_meter_operation_v0().unwrap(),
+        )
+        .unwrap();
+        let PocoApplicationOperationBodyV0::DefineMeterPolicy { policy, .. } = &mut bad_shape.body
+        else {
+            unreachable!();
+        };
+        policy.active_from_height = 3;
+        let bad_shape_raw = serde_json::to_vec(&bad_shape).unwrap();
+        assert_eq!(
+            block.apply_decoded_exact(&bad_shape_raw, &bad_shape),
+            Err(PocoApplicationApplyFailureV0::DeterministicallyInvalid(
+                PocoApplicationDeterministicInvalidV0::SemanticTransition,
+            )),
+        );
+
+        let mut over_cap = PocoApplicationOperationV0::decode_exact(
+            &block.test_define_meter_operation_v0().unwrap(),
+        )
+        .unwrap();
+        let PocoApplicationOperationBodyV0::DefineMeterPolicy { policy, .. } = &mut over_cap.body
+        else {
+            unreachable!();
+        };
+        let over_protocol_cap = block.context.active_parameters.per_certificate_unit_cap() + 1;
+        policy.per_certificate_cap = CanonicalU128V0::new(over_protocol_cap);
+        policy.rolling_cap = CanonicalU128V0::new(over_protocol_cap);
+        let over_cap_raw = serde_json::to_vec(&over_cap).unwrap();
+        assert_eq!(
+            block.apply_decoded_exact(&over_cap_raw, &over_cap),
+            Err(PocoApplicationApplyFailureV0::DeterministicallyInvalid(
+                PocoApplicationDeterministicInvalidV0::ProtocolWindowOrCap,
+            )),
+        );
+
+        let prune = PocoApplicationOperationV0 {
+            schema: POCO_APPLICATION_OPERATION_SCHEMA_V0.to_string(),
+            target_height: 2,
+            expected_state_revision: 1,
+            body: PocoApplicationOperationBodyV0::PruneRetiredMeter {
+                meter_id_hex: "01".to_string(),
+                meter_version: 1,
+            },
+            semantic_changes: Vec::new(),
+            nullifier_non_membership_checks: Vec::new(),
+            nullifier_insertions: Vec::new(),
+        };
+        let prune_raw = serde_json::to_vec(&prune).unwrap();
+        assert_eq!(
+            block.apply_decoded_exact(&prune_raw, &prune),
+            Err(PocoApplicationApplyFailureV0::DeterministicallyInvalid(
+                PocoApplicationDeterministicInvalidV0::MissingRequiredAuthorityFact,
+            )),
+        );
+        assert_eq!(block.operation_count(), 0);
+        assert!(block.overlay.operation_ids.is_empty());
+        assert!(block.overlay.mutations.is_empty());
     }
 
     #[test]

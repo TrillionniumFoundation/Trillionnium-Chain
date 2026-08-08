@@ -676,6 +676,9 @@ consumer-key prune uses that negative-fact reason before clone, keeps signed
 delete/retention/reference rejection deterministic, and keeps authenticated
 retention arithmetic, certificate decoding, and nonce-watermark faults
 invariant;
+meter definition preserves nested typed errors and separates deterministic
+signed policy/semantic shape from deterministic active-parameter cap rejection,
+while meter prune rejects a missing authority policy as a pre-clone negative fact;
 unrefined leaf failures conservatively remain authenticated-overlay invariants
 without string matching. Success retains the open snapshot, decoded owner, and unsealed PoCO
 overlay or scheduled lifecycle. PoCO leaf-reason refinement, write sealing,
