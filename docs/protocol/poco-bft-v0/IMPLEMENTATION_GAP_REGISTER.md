@@ -1261,6 +1261,8 @@ epoch prune, and Core transition remain open.
    signed prune shape and temporal/reference rejection remain deterministic.
    Meter definition now separates signed policy/semantic shape from protocol
    cap rejection, and meter prune has a typed pre-clone negative-fact reject.
+   Meter retirement also splits signed next-state drift and negative/already-
+   retired policy facts from authenticated old-fact/authority divergence.
    Leaf-reason completion remains a hard
    dependency before terminal failure mapping. The success carrier still owns the open
    snapshot and unsealed overlay/scheduled lifecycle. It does not yet seal

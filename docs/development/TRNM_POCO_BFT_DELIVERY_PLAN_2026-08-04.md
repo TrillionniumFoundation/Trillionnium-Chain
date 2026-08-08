@@ -402,7 +402,11 @@ an earlier phase.
   fail stop. Meter definition now preserves nested typed failures, maps signed
   policy/semantic shape to `SemanticTransition`, maps authenticated-parameter
   cap rejection to `ProtocolWindowOrCap`, and maps a pre-clone missing prune
-  authority to `MissingRequiredAuthorityFact`. Leaf errors not yet assigned a narrower reason remain
+  authority to `MissingRequiredAuthorityFact`. Meter retirement separately
+  treats signed ID/height/next-fact drift as `SemanticTransition`, an absent
+  authenticated policy as `MissingRequiredAuthorityFact`, an already-retired
+  policy as `ProtocolWindowOrCap`, and old semantic-fact/authority divergence
+  as `AuthenticatedOverlay`. Leaf errors not yet assigned a narrower reason remain
   conservatively typed as an
   authenticated-overlay invariant. Success keeps the exact decoded owner plus
   the still-open snapshot and unsealed family state. These attempts do not yet

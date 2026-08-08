@@ -679,6 +679,8 @@ invariant;
 meter definition preserves nested typed errors and separates deterministic
 signed policy/semantic shape from deterministic active-parameter cap rejection,
 while meter prune rejects a missing authority policy as a pre-clone negative fact;
+meter retirement distinguishes signed ID/height/next-state rejection, missing or
+already-retired authority, and authenticated old-fact/authority divergence;
 unrefined leaf failures conservatively remain authenticated-overlay invariants
 without string matching. Success retains the open snapshot, decoded owner, and unsealed PoCO
 overlay or scheduled lifecycle. PoCO leaf-reason refinement, write sealing,

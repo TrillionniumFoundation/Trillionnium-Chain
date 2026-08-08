@@ -3987,11 +3987,17 @@ fn apply_retire_meter_v0(
     retired_at_height: u64,
     decision_id_hex: &str,
 ) -> Result<()> {
-    let meter_id = exact_opaque_hex(meter_id_hex)?;
-    ensure!(
-        retired_at_height == context.target_height.get(),
-        "meter retirement height differs from authenticated target"
-    );
+    let signed_semantic = || {
+        deterministic_application_error_v0(
+            PocoApplicationDeterministicInvalidV0::SemanticTransition,
+        )
+    };
+    let authenticated_overlay =
+        || invariant_application_error_v0(PocoApplicationInvariantV0::AuthenticatedOverlay);
+    let meter_id = exact_opaque_hex(meter_id_hex).map_err(|_| signed_semantic())?;
+    if retired_at_height != context.target_height.get() {
+        return Err(signed_semantic());
+    }
     let decision = require_derived_decision_id(preimage, b"retire-meter", decision_id_hex)?;
     let index = overlay
         .authority
@@ -3999,41 +4005,49 @@ fn apply_retire_meter_v0(
         .binary_search_by(|item| {
             (item.meter_id_hex.as_str(), item.meter_version).cmp(&(meter_id_hex, meter_version))
         })
-        .map_err(|_| anyhow::anyhow!("meter authority policy does not exist"))?;
-    ensure!(
-        overlay.authority.meter_policies[index]
-            .retired_at_height
-            .is_none(),
-        "meter authority policy is already retired"
-    );
+        .map_err(|_| {
+            deterministic_application_error_v0(
+                PocoApplicationDeterministicInvalidV0::MissingRequiredAuthorityFact,
+            )
+        })?;
+    let authority_policy = &overlay.authority.meter_policies[index];
+    if authority_policy.retired_at_height.is_some() {
+        return Err(deterministic_application_error_v0(
+            PocoApplicationDeterministicInvalidV0::ProtocolWindowOrCap,
+        ));
+    }
     let changes = prepare_semantic_changes(overlay, &operation.semantic_changes, false)?;
     ensure_change_kinds(&changes, &[PocoSnapshotEntryKindV0::MeterDefinition])?;
     let change = &changes[0];
-    ensure!(
-        change.next_identity.as_deref()
-            == Some(meter_identity(&meter_id, meter_version).as_slice()),
-        "retired meter semantic identity mismatch"
-    );
-    match (change.expected_fact.as_ref(), change.next_fact.as_ref()) {
-        (
-            Some(SemanticFactV0::MeterDefinition {
-                unit_scale: old_scale,
-                active_from: old_active,
-                retired_at: None,
-            }),
-            Some(SemanticFactV0::MeterDefinition {
-                unit_scale: new_scale,
-                active_from: new_active,
-                retired_at: Some(retired),
-            }),
-        ) => ensure!(
-            old_scale == new_scale
-                && old_active == new_active
-                && *retired == retired_at_height
-                && *old_active == overlay.authority.meter_policies[index].active_from_height,
-            "invalid authenticated meter retirement"
-        ),
-        _ => bail!("retire-meter operation has invalid semantic transition"),
+    if change.next_identity.as_deref() != Some(meter_identity(&meter_id, meter_version).as_slice())
+    {
+        return Err(signed_semantic());
+    }
+    let (old_scale, old_active) = match change.expected_fact.as_ref() {
+        Some(SemanticFactV0::MeterDefinition {
+            unit_scale,
+            active_from,
+            retired_at: None,
+        }) => (*unit_scale, *active_from),
+        _ => return Err(authenticated_overlay()),
+    };
+    let (new_scale, new_active, retired) = match change.next_fact.as_ref() {
+        Some(SemanticFactV0::MeterDefinition {
+            unit_scale,
+            active_from,
+            retired_at: Some(retired),
+        }) => (*unit_scale, *active_from, *retired),
+        _ => return Err(signed_semantic()),
+    };
+    let authority_scale = authority_policy
+        .unit_scale
+        .get()
+        .map_err(|_| authenticated_overlay())?;
+    if old_scale != authority_scale || old_active != authority_policy.active_from_height {
+        return Err(authenticated_overlay());
+    }
+    if new_scale != old_scale || new_active != old_active || retired != retired_at_height {
+        return Err(signed_semantic());
     }
     insert_nullifiers(
         overlay,
@@ -7807,6 +7821,66 @@ mod tests {
         let prune_raw = serde_json::to_vec(&prune).unwrap();
         assert_eq!(
             block.apply_decoded_exact(&prune_raw, &prune),
+            Err(PocoApplicationApplyFailureV0::DeterministicallyInvalid(
+                PocoApplicationDeterministicInvalidV0::MissingRequiredAuthorityFact,
+            )),
+        );
+        assert_eq!(block.operation_count(), 0);
+        assert!(block.overlay.operation_ids.is_empty());
+        assert!(block.overlay.mutations.is_empty());
+    }
+
+    #[test]
+    fn meter_retire_negative_fact_is_typed_without_mutation() {
+        let projection = genesis_projection();
+        let mut block =
+            PocoApplicationBlockOverlayV0::from_projection(context_at(2).unwrap(), &projection)
+                .unwrap();
+        let mut operation = PocoApplicationOperationV0 {
+            schema: POCO_APPLICATION_OPERATION_SCHEMA_V0.to_string(),
+            target_height: 2,
+            expected_state_revision: 1,
+            body: PocoApplicationOperationBodyV0::RetireMeterPolicy {
+                meter_id_hex: "01".to_string(),
+                meter_version: 1,
+                retired_at_height: 3,
+                decision_id_hex: "00".repeat(32),
+            },
+            semantic_changes: Vec::new(),
+            nullifier_non_membership_checks: Vec::new(),
+            nullifier_insertions: Vec::new(),
+        };
+        let wrong_height_raw = serde_json::to_vec(&operation).unwrap();
+        assert_eq!(
+            block.apply_decoded_exact(&wrong_height_raw, &operation),
+            Err(PocoApplicationApplyFailureV0::DeterministicallyInvalid(
+                PocoApplicationDeterministicInvalidV0::SemanticTransition,
+            )),
+        );
+        let PocoApplicationOperationBodyV0::RetireMeterPolicy {
+            retired_at_height, ..
+        } = &mut operation.body
+        else {
+            unreachable!();
+        };
+        *retired_at_height = 2;
+        let preimage = decision_preimage_digest_v0(&block.context, &operation).unwrap();
+        let decision_id = derived_decision_id_v0(preimage, b"retire-meter");
+        let PocoApplicationOperationBodyV0::RetireMeterPolicy {
+            decision_id_hex, ..
+        } = &mut operation.body
+        else {
+            unreachable!();
+        };
+        *decision_id_hex = hex::encode(decision_id);
+        assert_eq!(
+            decision_preimage_digest_v0(&block.context, &operation).unwrap(),
+            preimage,
+        );
+        let raw = serde_json::to_vec(&operation).unwrap();
+
+        assert_eq!(
+            block.apply_decoded_exact(&raw, &operation),
             Err(PocoApplicationApplyFailureV0::DeterministicallyInvalid(
                 PocoApplicationDeterministicInvalidV0::MissingRequiredAuthorityFact,
             )),
