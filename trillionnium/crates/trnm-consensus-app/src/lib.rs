@@ -7408,11 +7408,13 @@ mod tests {
                 source_bootstrap_height,
                 &source_entries,
             );
-            advance_authenticated_candidate_app_v0(&persistent, parent_height);
-            // The cutoff is a real periodic disk-snapshot height. Waiting for
-            // it also drains the asynchronous snapshot writer before restart.
+            // Stop at the exact periodic cutoff and drain its asynchronous
+            // snapshot before advancing. A busy production worker may legally
+            // coalesce later interval requests to the newest committed head.
+            advance_authenticated_candidate_app_v0(&persistent, cutoff_height);
             let periodic_v4_snapshot = wait_for_snapshot(&persistent, cutoff_height);
             assert_eq!(periodic_v4_snapshot.format, SNAPSHOT_FORMAT_V4);
+            advance_authenticated_candidate_app_v0(&persistent, parent_height);
             let parent_head = persistent.height_and_app_hash().unwrap();
 
             // Restore the real periodic V4 snapshot at the retained cutoff,
