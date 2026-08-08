@@ -394,8 +394,13 @@ an earlier phase.
   Consumer-key authorization/revocation now preserves existing typed failures,
   rejects untyped signed shape/height/semantic faults as `SemanticTransition`,
   and treats an authenticated negative key lookup as deterministic
-  `MissingRequiredAuthorityFact`; no error diagnostic participates. Leaf
-  errors not yet assigned a narrower reason remain conservatively typed as an
+  `MissingRequiredAuthorityFact`; no error diagnostic participates.
+  Consumer-key prune also rejects a missing authority record before clone as
+  the same deterministic negative fact; signed identifiers/delete shape and
+  retention/reference blocks are deterministic, while authenticated retention
+  arithmetic, certificate-reference decoding, and nonce-watermark corruption
+  fail stop. Leaf errors not yet assigned a narrower reason remain
+  conservatively typed as an
   authenticated-overlay invariant. Success keeps the exact decoded owner plus
   the still-open snapshot and unsealed family state. These attempts do not yet
   seal family writes, merge multiple family operations into the cursor, advance

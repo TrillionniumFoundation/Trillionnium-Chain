@@ -1256,7 +1256,10 @@ epoch prune, and Core transition remain open.
    Consumer-key authorize/revoke signed-shape failures are now deterministic,
    and a missing authenticated key companion is the distinct deterministic
    missing-fact reason; existing typed failures pass through unchanged, so
-   leaf-reason completion remains a hard
+   consumer-key prune now shares the pre-clone negative-fact rejection and
+   keeps authenticated retention/certificate/nonce failures invariant, while
+   signed prune shape and temporal/reference rejection remain deterministic.
+   Leaf-reason completion remains a hard
    dependency before terminal failure mapping. The success carrier still owns the open
    snapshot and unsealed overlay/scheduled lifecycle. It does not yet seal
    writes, integrate successive family operations into the cursor, advance,

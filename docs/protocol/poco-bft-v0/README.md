@@ -672,6 +672,10 @@ accumulator-count exhaustion fails stop as a protocol-counter invariant;
 consumer-key authorize/revoke preserves nested typed failures, maps remaining
 signed shape/height/semantic faults to deterministic semantic rejection, and
 maps an authenticated negative key lookup to deterministic missing-fact;
+consumer-key prune uses that negative-fact reason before clone, keeps signed
+delete/retention/reference rejection deterministic, and keeps authenticated
+retention arithmetic, certificate decoding, and nonce-watermark faults
+invariant;
 unrefined leaf failures conservatively remain authenticated-overlay invariants
 without string matching. Success retains the open snapshot, decoded owner, and unsealed PoCO
 overlay or scheduled lifecycle. PoCO leaf-reason refinement, write sealing,

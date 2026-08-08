@@ -2973,7 +2973,11 @@ fn validate_operation_capacity_before_clone_v0(
                     )
                         .cmp(&(consumer_id_hex.as_str(), consumer_key_id_hex.as_str()))
                 })
-                .map_err(|_| anyhow::anyhow!("consumer-key prune lacks authority record"))?;
+                .map_err(|_| {
+                    deterministic_application_error_v0(
+                        PocoApplicationDeterministicInvalidV0::MissingRequiredAuthorityFact,
+                    )
+                })?;
             delta.consumer_keys_removed = 1;
             delta.nonce_watermarks_removed = authority.consumer_keys[index].nonce_watermarks.len();
         }
@@ -3787,8 +3791,20 @@ fn apply_prune_revoked_consumer_key_v0(
     consumer_id_hex: &str,
     consumer_key_id_hex: &str,
 ) -> Result<()> {
-    let consumer_id = exact_opaque_hex(consumer_id_hex)?;
-    let consumer_key_id = exact_opaque_hex(consumer_key_id_hex)?;
+    let signed_semantic = || {
+        deterministic_application_error_v0(
+            PocoApplicationDeterministicInvalidV0::SemanticTransition,
+        )
+    };
+    let protocol_reject = || {
+        deterministic_application_error_v0(
+            PocoApplicationDeterministicInvalidV0::ProtocolWindowOrCap,
+        )
+    };
+    let authenticated_overlay =
+        || invariant_application_error_v0(PocoApplicationInvariantV0::AuthenticatedOverlay);
+    let consumer_id = exact_opaque_hex(consumer_id_hex).map_err(|_| signed_semantic())?;
+    let consumer_key_id = exact_opaque_hex(consumer_key_id_hex).map_err(|_| signed_semantic())?;
     let authority_index = overlay
         .authority
         .consumer_keys
@@ -3799,28 +3815,34 @@ fn apply_prune_revoked_consumer_key_v0(
             )
                 .cmp(&(consumer_id_hex, consumer_key_id_hex))
         })
-        .map_err(|_| anyhow::anyhow!("consumer-key prune lacks authority companion"))?;
+        .map_err(|_| {
+            deterministic_application_error_v0(
+                PocoApplicationDeterministicInvalidV0::MissingRequiredAuthorityFact,
+            )
+        })?;
     let key_authority = overlay.authority.consumer_keys[authority_index].clone();
     let revoked_at = key_authority
         .revoked_at_height
-        .context("active consumer key cannot be pruned")?;
-    let boundary = protocol_retention_boundary_v0(revoked_at, &context.active_parameters)?;
-    ensure!(
-        prune_target_is_strictly_after_boundary_v0(context.target_height.get(), boundary),
-        "consumer-key retention boundary has not been strictly crossed"
-    );
-    ensure!(
-        !active_certificate_reference_exists_v0(overlay, |body| {
-            body.consumer_id().as_bytes() == consumer_id.as_slice()
-                && body.consumer_key_id().as_bytes() == consumer_key_id.as_slice()
-        })?,
-        "active certificate still references consumer key"
-    );
+        .ok_or_else(protocol_reject)?;
+    let boundary =
+        protocol_retention_boundary_v0(revoked_at, &context.active_parameters).map_err(|_| {
+            invariant_application_error_v0(PocoApplicationInvariantV0::PlannerArithmetic)
+        })?;
+    if !prune_target_is_strictly_after_boundary_v0(context.target_height.get(), boundary) {
+        return Err(protocol_reject());
+    }
+    let active_reference = active_certificate_reference_exists_v0(overlay, |body| {
+        body.consumer_id().as_bytes() == consumer_id.as_slice()
+            && body.consumer_key_id().as_bytes() == consumer_key_id.as_slice()
+    })
+    .map_err(|_| authenticated_overlay())?;
+    if active_reference {
+        return Err(protocol_reject());
+    }
     let changes = prepare_semantic_changes(overlay, &operation.semantic_changes, true)?;
-    ensure!(
-        changes.iter().all(|change| change.next_value.is_none()),
-        "consumer-key prune may only delete exact semantic entries"
-    );
+    if !changes.iter().all(|change| change.next_value.is_none()) {
+        return Err(signed_semantic());
+    }
     let mut expected_keys = BTreeSet::new();
     let key_identity = joined_identity(&[&consumer_id, &consumer_key_id]);
     expected_keys.insert((
@@ -3834,18 +3856,20 @@ fn apply_prune_revoked_consumer_key_v0(
     for watermark in &key_authority.nonce_watermarks {
         expected_keys.insert((
             PocoSnapshotEntryKindV0::ConsumerNonce,
-            exact_hash32_hex(&watermark.logical_key_hex)?.to_vec(),
+            exact_hash32_hex(&watermark.logical_key_hex)
+                .map_err(|_| authenticated_overlay())?
+                .to_vec(),
         ));
     }
     let actual_keys = changes
         .iter()
         .map(|change| (change.kind, change.logical_key.clone()))
         .collect::<BTreeSet<_>>();
-    ensure!(
-        actual_keys == expected_keys && actual_keys.len() == changes.len(),
-        "consumer-key prune delete set is substituted or incomplete"
-    );
-    let nonce_summary = consumer_nonce_summary_digest_v0(&key_authority.nonce_watermarks)?;
+    if actual_keys != expected_keys || actual_keys.len() != changes.len() {
+        return Err(signed_semantic());
+    }
+    let nonce_summary = consumer_nonce_summary_digest_v0(&key_authority.nonce_watermarks)
+        .map_err(|_| authenticated_overlay())?;
     insert_nullifiers(
         overlay,
         &operation.nullifier_insertions,
@@ -7818,6 +7842,37 @@ mod tests {
             decision_preimage_digest_v0(&block.context, &operation).unwrap(),
             preimage,
         );
+        let raw = serde_json::to_vec(&operation).unwrap();
+
+        assert_eq!(
+            block.apply_decoded_exact(&raw, &operation),
+            Err(PocoApplicationApplyFailureV0::DeterministicallyInvalid(
+                PocoApplicationDeterministicInvalidV0::MissingRequiredAuthorityFact,
+            )),
+        );
+        assert_eq!(block.operation_count(), 0);
+        assert!(block.overlay.operation_ids.is_empty());
+        assert!(block.overlay.mutations.is_empty());
+    }
+
+    #[test]
+    fn consumer_key_prune_negative_fact_is_typed_before_clone() {
+        let projection = genesis_projection();
+        let mut block =
+            PocoApplicationBlockOverlayV0::from_projection(context_at(2).unwrap(), &projection)
+                .unwrap();
+        let operation = PocoApplicationOperationV0 {
+            schema: POCO_APPLICATION_OPERATION_SCHEMA_V0.to_string(),
+            target_height: 2,
+            expected_state_revision: 1,
+            body: PocoApplicationOperationBodyV0::PruneRevokedConsumerKey {
+                consumer_id_hex: "01".to_string(),
+                consumer_key_id_hex: "02".to_string(),
+            },
+            semantic_changes: Vec::new(),
+            nullifier_non_membership_checks: Vec::new(),
+            nullifier_insertions: Vec::new(),
+        };
         let raw = serde_json::to_vec(&operation).unwrap();
 
         assert_eq!(
