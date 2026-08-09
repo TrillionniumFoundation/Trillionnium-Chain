@@ -735,10 +735,24 @@ versus-proof count/family/ID/root, structural, body/carrier, sorting, exact-
 boundary and full-overlay rollback behavior. Their injected unrelated pending
 rows omit matching certificate, semantic and nullifier provenance, so these
 are handler-boundary fixtures only and the success case is not sealable or
-authenticated end to end. Capacity-order closure is now limited to
-`DefineMeterPolicy`, `FundSettlement`, `AuthorizeConsumerKey`, and
-`OpenChallenge`; every other family stays audit-open before terminal failure
-mapping;
+authenticated end to end. Future-candidate registration deliberately keeps the
+schema's bound-before-cryptography rule: structural and exact owner/context/
+revision/replay plus validator-ID/duplicate admission precede future-family and
+defensive-total record caps. Only after those caps, but still before clone,
+come unsupported-field and authenticated nullifier-count `+2` bounds, checked
+successor epoch/target, exact strict PoP, active projection/predecessor/history/
+key joins, derived decision, and construction of one prepared record. The two
+insertion proofs and sorted record mutation stay late on the cloned candidate.
+A test-only authoring path builds four distinct exact successor-epoch
+registrations from authenticated epoch-zero configuration: the fifth rejects
+at cap even with later PoP/field/counter/proof faults, while the fourth from
+three succeeds, advances the count by two, remains sorted, and seals. H22's two
+changed/new canonical operations remain the frozen shared-vector witness, not
+the cap witness; raw nullifier proof-key and encoding faults remain decode-
+first. Capacity-order closure is now limited to `DefineMeterPolicy`,
+`FundSettlement`,
+`AuthorizeConsumerKey`, `OpenChallenge`, and `RegisterFutureCandidate`; every
+other family stays audit-open before terminal failure mapping;
 resolve challenge types its pending/certificate join before clone, preserves
 the exact not-pending reason, and splits signed next resolution from
 authenticated pending/old-lifecycle drift;
@@ -765,10 +779,10 @@ facts or registration-history companion drift;
 the acceptance lifecycle/usage tail now separates signed lifecycle drift,
 authenticated counter/policy corruption, cap rejection, and checked usage/
 prune arithmetic exhaustion; certificate acceptance has no unclassified leaf;
-future-candidate registration now types pre-clone ID/duplicate admission and
-the predecessor/history execution join, separates validator-rule and PoP
-rejection from authenticated companion drift, and fixes insertion position
-before mutation;
+future-candidate registration now types pre-cap ID/duplicate admission and its
+post-cap, pre-clone predecessor/history preparation, separates validator-rule
+and PoP rejection from authenticated companion drift, and freezes the prepared
+insertion position before mutation;
 validator registration/rotation now types pre-clone semantic/key admission and
 the history join, preserving exact active-key/missing-history reasons while
 separating signed validator rules, PoP rejection, protocol references, and

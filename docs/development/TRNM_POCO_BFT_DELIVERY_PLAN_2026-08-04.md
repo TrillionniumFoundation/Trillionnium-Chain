@@ -474,8 +474,24 @@ an earlier phase.
   unrelated pending rows without their matching certificate, semantic, and
   nullifier provenance, so they prove only the handler boundary and their
   success case is intentionally not sealable or authenticated end to end.
-  The capacity-order closure now covers `DefineMeterPolicy`, `FundSettlement`,
-  `AuthorizeConsumerKey`, and `OpenChallenge`; all other families remain
+  `RegisterFutureCandidate` deliberately preserves the frozen schema rule that
+  bound overruns precede allocation-heavy or cryptographic work. Its order is
+  structural owner/context/revision/replay admission, exact validator ID and
+  duplicate target admission, future-family/defensive-total record caps, then
+  still-before-clone unsupported-field and authenticated nullifier-count `+2`
+  bounds, checked successor epoch/target, exact strict PoP, active projection/
+  predecessor/history/key joins, and derived decision preparation. Only the
+  two insertion proofs and the prepared sorted record insertion remain on the
+  cloned candidate. A test-only authoring path constructs four distinct exact
+  successor-epoch registrations from authenticated epoch-zero configuration:
+  the fifth rejects at the family cap even when later PoP/field/counter/proof
+  faults coexist, while the fourth succeeds from three, advances the count by
+  two, stays sorted, and seals. The frozen H22 vector remains its two-operation
+  changed/new canonical witness, not the four-record cap witness. Raw
+  nullifier proof-key and encoding faults remain decode-first. Capacity-order
+  closure now covers
+  `DefineMeterPolicy`, `FundSettlement`, `AuthorizeConsumerKey`,
+  `OpenChallenge`, and `RegisterFutureCandidate`; all other families remain
   audit-open before terminal failure mapping.
   `ResolveChallenge` now validates signed IDs, pending identity, active
   certificate presence, and authenticated lifecycle before clone; not-pending

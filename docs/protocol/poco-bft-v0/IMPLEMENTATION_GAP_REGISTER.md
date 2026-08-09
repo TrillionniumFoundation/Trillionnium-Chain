@@ -1319,10 +1319,24 @@ epoch prune, and Core transition remain open.
    exact-boundary and full-overlay rollback behavior. Their injected unrelated
    pending rows omit matching certificate, semantic, and nullifier provenance,
    so these are handler-boundary fixtures only and the success case is not
-   sealable or authenticated end to end. Capacity-order closure is now limited
-   to `DefineMeterPolicy`, `FundSettlement`, `AuthorizeConsumerKey`, and
-   `OpenChallenge`; all other families remain audit-open before terminal
-   failure mapping.
+   sealable or authenticated end to end. `RegisterFutureCandidate`
+   deliberately retains the schema's bound-before-cryptography rule:
+   structural and exact owner/context/revision/replay plus validator-ID/
+   duplicate admission precede future-family/defensive-total record caps. Only
+   after those caps, but still before clone, come unsupported-field and
+   authenticated nullifier-count `+2` bounds, checked successor epoch/target,
+   exact strict PoP, active projection/predecessor/history/key joins, derived
+   decision, and construction of one prepared record. The two insertion proofs
+   and sorted record mutation remain late on the cloned candidate. A test-only
+   authoring path builds four distinct exact successor-epoch registrations from
+   authenticated epoch-zero configuration: the fifth rejects at cap even with
+   later PoP/field/counter/proof faults, while the fourth from three succeeds,
+   advances count by two, remains sorted, and seals. H22's two changed/new
+   canonical operations remain the shared-vector witness rather than the cap
+   witness; raw nullifier proof-key and encoding faults remain decode-first.
+   Capacity-order closure is now limited to `DefineMeterPolicy`, `FundSettlement`,
+   `AuthorizeConsumerKey`, `OpenChallenge`, and `RegisterFutureCandidate`; all
+   other families remain audit-open before terminal failure mapping.
    `ResolveChallenge` now types its pre-clone pending/certificate join and
    separates signed resolution from authenticated pending/lifecycle drift.
    Governance proposal/approval now type their signed rules and pre-clone
@@ -1346,9 +1360,10 @@ epoch prune, and Core transition remain open.
    authenticated numeric corruption, deterministic cap rejection, and checked
    usage/prune arithmetic exhaustion. Certificate acceptance has no remaining
    unclassified execution leaf. Future-candidate registration now types its
-   pre-clone ID/duplicate admission plus the predecessor/history execution
-   join, preserving validator-rule, cryptographic-proof, and authenticated-
-   overlay provenance and determining its insertion slot before mutation.
+   pre-cap ID/duplicate admission plus the post-cap, pre-clone predecessor/
+   history preparation, preserving validator-rule, cryptographic-proof, and
+   authenticated-overlay provenance and determining its insertion slot before
+   mutation.
    Validator registration/rotation now likewise types pre-clone semantic/key
    admission plus the registration-history join, preserving the exact active-
    key and missing-history reasons while separating signed validator rules,
