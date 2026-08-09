@@ -716,16 +716,29 @@ record caps. Both insertion proofs and all authority/semantic mutation remain
 late on the cloned candidate. Canonical H1 apply/seal plus saturated/cap-minus-
 one collisions cover signed/authenticated, proof count/family/ID/root, counter,
 structural, body/carrier and full-overlay rollback boundaries; proof-key and
-encoding faults remain decode-first. This capacity-order closure
-is limited to `DefineMeterPolicy`, `FundSettlement`, and `AuthorizeConsumerKey`;
+encoding faults remain decode-first. The same closure also extends to open
+challenge below;
 release settlement validates signed ID and reservation existence before clone,
 then separates signed delete shape from authenticated leaf/reservation drift;
-open challenge pre-clone admission validates signed IDs, active certificate,
-and duplicate-pending facts; execution binds the body-derived kind-12 key
-before source selection, joins the exact old `Accepted` effective height to
-authenticated authority, rejects a same-height or expired open as protocol,
-and separates signed next lifecycle from missing, malformed, or divergent
-authenticated predecessor state;
+open challenge now carries one prepared pending record, challenge nullifier,
+and lifecycle semantic transition through capacity admission. Structural and
+exact owner/context/revision/replay plus cheap unsupported-field admission stay
+first; signed/derived decisions, active-certificate/lifecycle/duplicate joins,
+window and exact semantic preparation, and authenticated nullifier-count `+1`
+precede pending-challenge and defensive-total record caps. The insertion proof
+and all pending/semantic mutation stay late on the cloned candidate. Missing,
+malformed, or divergent authenticated lifecycle companions fail stop before a
+valid duplicate rejects as protocol; proof-key and encoding faults remain
+decode-first. The canonical H3 exact vector still applies and seals once.
+Saturated/cap-minus-one collisions freeze signed/authenticated, counter, cap-
+versus-proof count/family/ID/root, structural, body/carrier, sorting, exact-
+boundary and full-overlay rollback behavior. Their injected unrelated pending
+rows omit matching certificate, semantic and nullifier provenance, so these
+are handler-boundary fixtures only and the success case is not sealable or
+authenticated end to end. Capacity-order closure is now limited to
+`DefineMeterPolicy`, `FundSettlement`, `AuthorizeConsumerKey`, and
+`OpenChallenge`; every other family stays audit-open before terminal failure
+mapping;
 resolve challenge types its pending/certificate join before clone, preserves
 the exact not-pending reason, and splits signed next resolution from
 authenticated pending/old-lifecycle drift;

@@ -450,21 +450,33 @@ an earlier phase.
   authenticated faults, cap-versus-late proof count/family/ID/root faults, structural
   priority, counter exhaustion, exact-boundary success, body/carrier mismatch,
   and full-overlay rollback; raw proof-key/encoding faults remain
-  decode-first. This capacity-order closure now covers
-  `DefineMeterPolicy`, `FundSettlement`, and `AuthorizeConsumerKey`; the
+  decode-first. The same closure also extends to `OpenChallenge` below; the
   remaining operation families stay audit-open.
   `ReleaseSettlement` now validates its signed certificate ID and reservation
   negative fact before clone, preserves nested typed failures, treats a signed
   non-delete as `SemanticTransition`, and treats authenticated settlement-leaf/
   reservation divergence as `AuthenticatedOverlay`.
-  `OpenChallenge` pre-clone admission validates signed IDs,
-  active-certificate existence, and duplicate pending facts. Execution binds
-  the exact body-derived kind-12 logical key before source selection, then
-  joins the authenticated `Accepted` predecessor state and effective height to
-  kind-16 authority; missing, malformed, or divergent old lifecycle is
-  `AuthenticatedOverlay`, while same-height/expired-window rejection is
-  `ProtocolWindowOrCap` and signed key/next-lifecycle drift is
-  `SemanticTransition`.
+  `OpenChallenge` now also carries one prepared pending record, challenge
+  nullifier, and lifecycle semantic transition across capacity admission and
+  execution. Its frozen order is structural and exact owner/context/revision/
+  replay admission, cheap unsupported-field rejection, signed and derived
+  decision IDs, active-certificate/lifecycle/duplicate companion joins,
+  lifecycle-window and exact semantic preparation, authenticated nullifier-
+  count `+1`, pending-challenge/defensive-total record caps, then clone-and-
+  swap with the insertion proof and all pending/semantic mutation late.
+  Missing, malformed, or divergent authenticated lifecycle companions fail
+  stop before an otherwise valid duplicate can reject as
+  `ProtocolWindowOrCap`; proof-key and encoding faults remain decode-first.
+  The canonical H3 exact vector still applies and seals once. Saturated and
+  cap-minus-one collision tests freeze signed/authenticated, counter, cap-
+  versus-proof count/family/ID/root, structural, body/carrier, exact-boundary,
+  sorting, and full-overlay rollback behavior. Those collision fixtures inject
+  unrelated pending rows without their matching certificate, semantic, and
+  nullifier provenance, so they prove only the handler boundary and their
+  success case is intentionally not sealable or authenticated end to end.
+  The capacity-order closure now covers `DefineMeterPolicy`, `FundSettlement`,
+  `AuthorizeConsumerKey`, and `OpenChallenge`; all other families remain
+  audit-open before terminal failure mapping.
   `ResolveChallenge` now validates signed IDs, pending identity, active
   certificate presence, and authenticated lifecycle before clone; not-pending
   is its existing exact deterministic reason, too-early resolution is
