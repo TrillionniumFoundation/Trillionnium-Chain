@@ -1348,11 +1348,31 @@ epoch prune, and Core transition remain open.
    from authenticated epoch-zero state: the fifth rejects at cap over later
    counter/crypto/proof faults, while the fourth from three advances count by
    two, stays sorted, installs its kind-9 companion, and seals. Existing H1 and
-   register/rotate vectors remain unchanged; rotation retains its separate
-   deferred update path. Capacity-order closure is now limited to
-   `DefineMeterPolicy`, `FundSettlement`, `AuthorizeConsumerKey`,
-   `OpenChallenge`, `RegisterFutureCandidate`, and `RegisterValidator`; all
-   other families remain audit-open before terminal failure mapping.
+   register/rotate vectors remain unchanged. `RotateValidator` now has a
+   separate closed replacement path: shallow exact validator-ID/active-kind-9/
+   body-identity/fresh-key admission still precedes family and defensive-total
+   caps without performing strict signature verification. Rotation has zero
+   record delta, so an authenticated four-record history remains admissible.
+   Unsupported-field rejection, active-certificate exclusion, exact history
+   lookup, revoked-history rejection, checked retired-key `+1`, checked
+   accumulator `+2`, epoch, decision, semantic CAS, strict PoP/nonce, and
+   predecessor head/nonce/history agreement follow in that order. A prepared
+   carrier freezes the replacement record and slot, two nullifier subjects, and
+   semantic change; only the chained insertion proofs and mutations run after
+   clone. Its test-only witness commits four real registrations in one block,
+   starts from the authenticated next block, rotates at the full family bound,
+   preserves length/sort order, advances count by two, and seals once. The
+   collision matrix freezes unsupported-field, active-reference, missing/
+   revoked-history, retired-versus-accumulator counter, epoch/decision/CAS/PoP/
+   predecessor, late-proof, structural, body/carrier, and full-overlay rollback
+   priorities. The compound active-reference collision injects authority
+   metadata only and therefore proves handler ordering, not a second
+   authenticated success path. H1 and register/rotate H2 bytes remain
+   unchanged. Capacity-order closure is now limited to `DefineMeterPolicy`,
+   `FundSettlement`, `AuthorizeConsumerKey`, `OpenChallenge`,
+   `RegisterFutureCandidate`,
+   `RegisterValidator`, and `RotateValidator`; all other families remain audit-
+   open before terminal failure mapping.
    `ResolveChallenge` now types its pre-clone pending/certificate join and
    separates signed resolution from authenticated pending/lifecycle drift.
    Governance proposal/approval now type their signed rules and pre-clone
@@ -1385,8 +1405,10 @@ epoch prune, and Core transition remain open.
    key and missing-history reasons while separating signed validator rules,
    PoP rejection, protocol references/revocation, and authenticated companion
    drift. First registration now additionally moves one fully prepared
-   history/create transition across clone after its record-cap boundary;
-   rotation remains on the separately audit-open deferred update path.
+   history/create transition across clone after its record-cap boundary.
+   Rotation also moves its checked-counter/strict-PoP-prepared full-history
+   replacement across clone; only two insertion proofs and its exact slot/
+   semantic mutations remain late.
    Validator revocation/history prune now likewise separate missing history,
    signed validator rules, retention/reference protocol rejection, and
    authenticated predecessor/reference corruption.

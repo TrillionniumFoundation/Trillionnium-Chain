@@ -760,11 +760,29 @@ one prepared history record. Clone-and-swap retains only one identity-absence
 proof, two chained insertion proofs, and history/semantic mutation. Four real
 active-epoch registrations authored from authenticated epoch-zero state freeze
 the 4-to-5 cap and sealable 3-to-4 boundary. H1 and register/rotate vectors stay
-unchanged; rotation retains its deferred update path. Capacity-order closure
-is now limited to `DefineMeterPolicy`, `FundSettlement`,
-`AuthorizeConsumerKey`, `OpenChallenge`, `RegisterFutureCandidate`, and
-`RegisterValidator`; every other family stays audit-open before terminal
-failure mapping;
+unchanged. Validator rotation now has its own closed replacement path. Its
+shallow exact validator-ID/active-kind-9/body-identity/fresh-key admission stays
+before the family and defensive-total caps, but performs no strict signature
+verification. A full four-record history remains legal because rotation has
+zero record delta. After the caps, unsupported-field admission, active-
+certificate exclusion, exact history lookup, revoked-history rejection,
+retired-key count `+1`, accumulator count `+2`, epoch, decision, semantic CAS,
+strict PoP/nonce, and predecessor head/nonce/history agreement are frozen in
+that order. The prepared carrier retains the replacement record and exact slot,
+two nullifier subjects, and semantic change; only chained insertion proofs and
+mutation run on the clone. A real two-block test commits four registrations,
+then rotates at the full bound from the authenticated next block, preserving
+length/sort order, advancing count by two, and sealing once. Its collision
+matrix covers unsupported fields, active references, missing/revoked history,
+both counter priorities, epoch/decision/CAS/PoP/predecessor, late proof shape/
+subject/root, structural bounds, body/carrier mismatch, and full rollback. The
+compound active-reference collision is an authority-only handler-boundary
+priority witness, not another authenticated success fixture. H1 and register/
+rotate H2 bytes remain unchanged. Capacity-order closure is now
+limited to `DefineMeterPolicy`, `FundSettlement`, `AuthorizeConsumerKey`,
+`OpenChallenge`, `RegisterFutureCandidate`, `RegisterValidator`, and
+`RotateValidator`; every other family stays audit-open before terminal failure
+mapping;
 resolve challenge types its pending/certificate join before clone, preserves
 the exact not-pending reason, and splits signed next resolution from
 authenticated pending/old-lifecycle drift;
@@ -800,7 +818,8 @@ the history join, preserving exact active-key/missing-history reasons while
 separating signed validator rules, PoP rejection, protocol references, and
 authenticated companion drift; first registration additionally carries one
 prepared history/create transition across clone after record caps, while
-rotation remains on its deferred audit-open update path;
+rotation carries a checked-counter/strict-PoP-prepared full-history replacement
+whose two proof insertions and mutations remain late on the clone;
 validator revocation/history prune now separate missing history, signed
 transition/delete rules, retention/reference rejection, and authenticated
 predecessor/reference corruption;

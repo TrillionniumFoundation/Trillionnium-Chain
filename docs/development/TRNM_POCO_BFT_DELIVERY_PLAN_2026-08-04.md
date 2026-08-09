@@ -504,12 +504,32 @@ an earlier phase.
   applies four distinct active-epoch registrations against authenticated
   epoch-zero state: the fifth loses to the record cap over later counter,
   signed-crypto, and proof faults; the fourth from three advances count by two,
-  stays sorted, installs its kind-9 companion, and seals. The frozen H1 and
-  register/rotate shared vectors remain byte-identical; `RotateValidator`
-  deliberately retains its separate deferred update path. Capacity-order
-  closure now covers `DefineMeterPolicy`, `FundSettlement`,
-  `AuthorizeConsumerKey`, `OpenChallenge`, `RegisterFutureCandidate`, and
-  `RegisterValidator`; all other families remain audit-open before terminal
+  stays sorted, installs its kind-9 companion, and seals. `RotateValidator`
+  now closes the corresponding replacement path without pretending that a
+  four-record history is an over-cap insertion. Its frozen shallow admission
+  still exact-decodes one active kind-9 successor bound to the validator ID and
+  rejects any globally active consensus key before family/defensive-total caps;
+  that canonical decode is not strict signature verification. With a zero
+  record delta, those caps are followed by unsupported-field rejection, the
+  active-certificate guard, exact history lookup, revoked-history rejection,
+  checked retired-key `+1`, checked accumulator `+2`, epoch, derived decision,
+  semantic CAS, strict Ed25519 PoP/nonce, and predecessor head/nonce/history
+  agreement. One prepared replacement record, its frozen slot, two expected
+  nullifiers, and the prepared semantic change cross the clone boundary; only
+  the chained insertion proofs, slot replacement, and semantic mutation remain
+  late. A test-only two-block witness really applies and commits four distinct
+  registrations, opens the next authenticated block, rotates one record at the
+  full family bound, preserves length/sort order, advances both counters, and
+  seals once. Collision tests freeze unsupported-field, active-reference,
+  missing/revoked history, retired-versus-accumulator counter, epoch/decision/
+  CAS/PoP/predecessor, insertion count/family/ID/root, structural, body/carrier,
+  and full-overlay rollback priorities. The compound active-reference collision
+  injects authority metadata only and is a handler-boundary priority witness,
+  not an additional authenticated success fixture. The frozen H1 and register/
+  rotate H2 shared vectors remain byte-identical. Capacity-order closure now
+  covers `DefineMeterPolicy`, `FundSettlement`, `AuthorizeConsumerKey`,
+  `OpenChallenge`, `RegisterFutureCandidate`, `RegisterValidator`, and
+  `RotateValidator`; all other families remain audit-open before terminal
   failure mapping.
   `ResolveChallenge` now validates signed IDs, pending identity, active
   certificate presence, and authenticated lifecycle before clone; not-pending
@@ -572,8 +592,10 @@ an earlier phase.
   referenced registrations are protocol rejects; and authenticated history/
   semantic-predecessor drift is `AuthenticatedOverlay`. First registration now
   additionally carries its fully prepared history/create transition across
-  clone after the record-cap boundary; rotation remains on the separately
-  audit-open deferred update path.
+  clone after the record-cap boundary. Rotation likewise carries its prepared
+  full-history replacement after both checked counters and strict PoP complete;
+  its two insertion proofs, exact slot replacement, and semantic mutation stay
+  late on the clone.
   Validator revocation/history prune now preserve missing-history rejection,
   classify signed transition/delete drift as `ValidatorRule`, retention,
   revocation, and active-certificate references as `ProtocolWindowOrCap`, and

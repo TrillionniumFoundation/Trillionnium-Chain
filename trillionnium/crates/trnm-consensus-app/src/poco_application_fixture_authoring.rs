@@ -2616,6 +2616,47 @@ fn rotate_fixture_validator(
     Ok((built, next))
 }
 
+pub(super) fn rotate_validator_full_history_fixture_v0() -> Result<(
+    PocoApplicationBlockOverlayV0,
+    Vec<u8>,
+    PocoApplicationOperationV0,
+)> {
+    let mut chain = authenticated_candidate_genesis_v0()?;
+    let mut registration_block = chain.start_overlay()?;
+    let mut nullifiers = chain.nullifiers.clone();
+    for index in 0..MAX_VALIDATOR_REGISTRATION_HISTORIES {
+        let validator_id = format!("rotate-capacity-validator-{index}").into_bytes();
+        let signing_key = provider_fixture_signing_key_for_id(&validator_id);
+        let (built, next) = register_rotation_fixture(
+            &registration_block,
+            &chain,
+            &validator_id,
+            &signing_key,
+            u64::try_from(index)?
+                .checked_add(1)
+                .context("rotate capacity fixture registration nonce overflow")?,
+            &nullifiers,
+        )?;
+        registration_block.apply_raw(&built.raw)?;
+        nullifiers = next;
+    }
+    chain.commit_block(registration_block, nullifiers)?;
+
+    let block = chain.start_overlay()?;
+    let validator_id = b"rotate-capacity-validator-0".to_vec();
+    let signing_key = provider_fixture_signing_key_for_id(b"rotate-capacity-validator-0-next");
+    let (built, _) = rotate_fixture_validator(
+        &block,
+        &chain,
+        &validator_id,
+        &signing_key,
+        2,
+        &chain.nullifiers,
+    )?;
+    let operation = PocoApplicationOperationV0::decode_exact(&built.raw)?;
+    Ok((block, built.raw, operation))
+}
+
 fn revoke_fixture_validator(
     block: &PocoApplicationBlockOverlayV0,
     chain: &FixtureChainV0,
