@@ -731,9 +731,11 @@ transition/delete rules, retention/reference rejection, and authenticated
 predecessor/reference corruption;
 clone-before-capacity admission now proves first-registration identity and both
 prune targets before changing record deltas, binds one exact active kind-9
-successor to the body validator, and rebinds history prune to the exact revoked
-key/nonce/proof predecessor, preserving validator/missing-fact reasons instead
-of capacity or subtraction artifacts;
+successor to the body validator, and preserves exact replay as
+`DuplicateOperation` before state-dependent checks; the cloned history-prune
+candidate separately rebinds the exact revoked key/nonce/proof predecessor and
+keeps signed body/delete-identity mismatch deterministic, preserving validator/
+missing-fact reasons instead of capacity, subtraction, or invariant artifacts;
 certificate prune now separates signed ID/delete-set drift, exact missing
 certificate authority, retention/live-reference rejection, and authenticated
 settlement/lifecycle companion corruption while preserving nested nullifier and

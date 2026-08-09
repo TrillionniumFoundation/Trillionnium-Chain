@@ -2562,6 +2562,10 @@ impl PocoApplicationBlockOverlayV0 {
         if operation.expected_state_revision != self.overlay.authority.revision {
             return Err(DeterministicallyInvalid(Invalid::AuthorityRevisionMismatch));
         }
+        let operation_id = domain_hash(APPLICATION_OPERATION_DOMAIN, raw);
+        if self.overlay.operation_ids.contains(&operation_id) {
+            return Err(DeterministicallyInvalid(Invalid::DuplicateOperation));
+        }
         validate_operation_capacity_before_clone_v0(&self.context, &self.overlay, operation)
             .map_err(|error| {
                 error
@@ -2583,11 +2587,6 @@ impl PocoApplicationBlockOverlayV0 {
                         })
                     })
             })?;
-        let operation_id = domain_hash(APPLICATION_OPERATION_DOMAIN, raw);
-        if self.overlay.operation_ids.contains(&operation_id) {
-            return Err(DeterministicallyInvalid(Invalid::DuplicateOperation));
-        }
-
         // Bounds and exact decoded-value/raw-byte binding above precede this
         // potentially large clone.
         let mut candidate = self.overlay.clone();
@@ -6300,7 +6299,7 @@ fn apply_prune_revoked_validator_history_v0(
         .map_err(|_| validator_rule())?;
     let change = &changes[0];
     if change.expected_identity.as_deref() != Some(validator_id.as_slice()) {
-        return Err(authenticated_overlay());
+        return Err(validator_rule());
     }
     match change.expected_fact.as_ref() {
         Some(SemanticFactV0::ValidatorRegistration {
@@ -7908,7 +7907,7 @@ mod tests {
         )
     }
 
-    fn prune_vector_fixture(
+    fn sequence_vector_fixture(
         sequence_id: &str,
     ) -> (
         AuthenticatedPocoApplicationContextV0,
@@ -7979,6 +7978,55 @@ mod tests {
         )
         .unwrap();
         (context, projection, raw, operation)
+    }
+
+    fn assert_block_overlay_unchanged(
+        actual: &PocoApplicationBlockOverlayV0,
+        expected: &PocoApplicationBlockOverlayV0,
+    ) {
+        assert_eq!(
+            actual.context.source_version,
+            expected.context.source_version
+        );
+        assert_eq!(actual.context.source_root, expected.context.source_root);
+        assert_eq!(actual.context.target_height, expected.context.target_height);
+        assert_eq!(actual.context.chain_id, expected.context.chain_id);
+        assert_eq!(actual.context.genesis_hash, expected.context.genesis_hash);
+        assert_eq!(actual.context.active_epoch, expected.context.active_epoch);
+        assert_eq!(
+            actual.context.active_parameters,
+            expected.context.active_parameters
+        );
+        assert_eq!(
+            actual.context.authority_signer_commitment,
+            expected.context.authority_signer_commitment
+        );
+        assert_eq!(actual.overlay.entries, expected.overlay.entries);
+        assert_eq!(
+            actual.overlay.source_authority_value,
+            expected.overlay.source_authority_value
+        );
+        assert_eq!(actual.overlay.authority, expected.overlay.authority);
+        assert_eq!(actual.overlay.accumulator, expected.overlay.accumulator);
+        let actual_mutations = actual
+            .overlay
+            .mutations
+            .iter()
+            .map(|(key, mutation)| (key.clone(), mutation.canonical_bytes()))
+            .collect::<Vec<_>>();
+        let expected_mutations = expected
+            .overlay
+            .mutations
+            .iter()
+            .map(|(key, mutation)| (key.clone(), mutation.canonical_bytes()))
+            .collect::<Vec<_>>();
+        assert_eq!(actual_mutations, expected_mutations);
+        assert_eq!(actual.overlay.operation_ids, expected.overlay.operation_ids);
+        assert_eq!(actual.raw_operations, expected.raw_operations);
+        assert_eq!(
+            actual.aggregate_operation_bytes,
+            expected.aggregate_operation_bytes
+        );
     }
 
     fn meter_policy() -> MeterAuthorityPolicyV0 {
@@ -8425,7 +8473,7 @@ mod tests {
     #[test]
     fn certificate_prune_leaf_provenance_is_typed_and_non_mutating() {
         let (context, projection, raw, operation) =
-            prune_vector_fixture("certificate_prune_replay");
+            sequence_vector_fixture("certificate_prune_replay");
         let mut canonical =
             PocoApplicationBlockOverlayV0::from_projection(context.clone(), &projection).unwrap();
         canonical.apply_decoded_exact(&raw, &operation).unwrap();
@@ -8438,18 +8486,14 @@ mod tests {
             PocoApplicationOperationV0::decode_exact(&signed_delete_raw).unwrap();
         let mut signed_block =
             PocoApplicationBlockOverlayV0::from_projection(context.clone(), &projection).unwrap();
-        let signed_authority = signed_block.overlay.authority.clone();
-        let signed_accumulator = signed_block.overlay.accumulator;
+        let signed_before = signed_block.clone();
         assert_eq!(
             signed_block.apply_decoded_exact(&signed_delete_raw, &signed_delete_drift),
             Err(PocoApplicationApplyFailureV0::DeterministicallyInvalid(
                 PocoApplicationDeterministicInvalidV0::SemanticTransition,
             )),
         );
-        assert_eq!(signed_block.overlay.authority, signed_authority);
-        assert_eq!(signed_block.overlay.accumulator, signed_accumulator);
-        assert!(signed_block.overlay.mutations.is_empty());
-        assert_eq!(signed_block.operation_count(), 0);
+        assert_block_overlay_unchanged(&signed_block, &signed_before);
 
         let mut corrupted =
             PocoApplicationBlockOverlayV0::from_projection(context, &projection).unwrap();
@@ -8476,23 +8520,20 @@ mod tests {
             &payload,
         );
         corrupted.overlay.entries.insert(map_key, substituted);
-        let corrupted_authority = corrupted.overlay.authority.clone();
-        let corrupted_accumulator = corrupted.overlay.accumulator;
+        let corrupted_before = corrupted.clone();
         assert_eq!(
             corrupted.apply_decoded_exact(&raw, &operation),
             Err(PocoApplicationApplyFailureV0::Invariant(
                 PocoApplicationInvariantV0::AuthenticatedOverlay,
             )),
         );
-        assert_eq!(corrupted.overlay.authority, corrupted_authority);
-        assert_eq!(corrupted.overlay.accumulator, corrupted_accumulator);
-        assert!(corrupted.overlay.mutations.is_empty());
-        assert_eq!(corrupted.operation_count(), 0);
+        assert_block_overlay_unchanged(&corrupted, &corrupted_before);
     }
 
     #[test]
     fn validator_history_prune_rebinds_revoked_semantic_predecessor() {
-        let (context, projection, raw, operation) = prune_vector_fixture("validator_prune_replay");
+        let (context, projection, raw, operation) =
+            sequence_vector_fixture("validator_prune_replay");
         let mut canonical =
             PocoApplicationBlockOverlayV0::from_projection(context.clone(), &projection).unwrap();
         canonical.apply_decoded_exact(&raw, &operation).unwrap();
@@ -8530,18 +8571,75 @@ mod tests {
             &payload,
         );
         corrupted.overlay.entries.insert(map_key, substituted);
-        let corrupted_authority = corrupted.overlay.authority.clone();
-        let corrupted_accumulator = corrupted.overlay.accumulator;
+        let corrupted_before = corrupted.clone();
         assert_eq!(
             corrupted.apply_decoded_exact(&raw, &operation),
             Err(PocoApplicationApplyFailureV0::Invariant(
                 PocoApplicationInvariantV0::AuthenticatedOverlay,
             )),
         );
-        assert_eq!(corrupted.overlay.authority, corrupted_authority);
-        assert_eq!(corrupted.overlay.accumulator, corrupted_accumulator);
-        assert!(corrupted.overlay.mutations.is_empty());
-        assert_eq!(corrupted.operation_count(), 0);
+        assert_block_overlay_unchanged(&corrupted, &corrupted_before);
+    }
+
+    #[test]
+    fn validator_history_prune_signed_identity_mismatch_is_deterministic() {
+        let (context, projection, _, operation) = sequence_vector_fixture("validator_prune_replay");
+        let mut block =
+            PocoApplicationBlockOverlayV0::from_projection(context, &projection).unwrap();
+        let mut foreign_history = block.overlay.authority.validator_registration_history[0].clone();
+        let foreign_validator_id_hex = hex::encode(b"validator-prune-foreign");
+        foreign_history.validator_id_hex = foreign_validator_id_hex.clone();
+        block
+            .overlay
+            .authority
+            .validator_registration_history
+            .push(foreign_history);
+        block
+            .overlay
+            .authority
+            .validator_registration_history
+            .sort_by(|left, right| left.validator_id_hex.cmp(&right.validator_id_hex));
+
+        let mut mismatched = operation;
+        let PocoApplicationOperationBodyV0::PruneRevokedValidatorHistory { validator_id_hex } =
+            &mut mismatched.body
+        else {
+            unreachable!();
+        };
+        *validator_id_hex = foreign_validator_id_hex;
+        let mismatched_raw = serde_json::to_vec(&mismatched).unwrap();
+        let mismatched = PocoApplicationOperationV0::decode_exact(&mismatched_raw).unwrap();
+        let before = block.clone();
+        assert_eq!(
+            block.apply_decoded_exact(&mismatched_raw, &mismatched),
+            Err(PocoApplicationApplyFailureV0::DeterministicallyInvalid(
+                PocoApplicationDeterministicInvalidV0::ValidatorRule,
+            )),
+        );
+        assert_block_overlay_unchanged(&block, &before);
+    }
+
+    #[test]
+    fn exact_replay_precedes_state_dependent_preflight_without_mutation() {
+        for sequence_id in [
+            "validator_register_rotate",
+            "validator_prune_replay",
+            "certificate_prune_replay",
+        ] {
+            let (context, projection, raw, operation) = sequence_vector_fixture(sequence_id);
+            let mut block =
+                PocoApplicationBlockOverlayV0::from_projection(context, &projection).unwrap();
+            block.apply_decoded_exact(&raw, &operation).unwrap();
+            let before_replay = block.clone();
+            assert_eq!(
+                block.apply_decoded_exact(&raw, &operation),
+                Err(PocoApplicationApplyFailureV0::DeterministicallyInvalid(
+                    PocoApplicationDeterministicInvalidV0::DuplicateOperation,
+                )),
+                "exact replay precedence for {sequence_id}",
+            );
+            assert_block_overlay_unchanged(&block, &before_replay);
+        }
     }
 
     #[test]

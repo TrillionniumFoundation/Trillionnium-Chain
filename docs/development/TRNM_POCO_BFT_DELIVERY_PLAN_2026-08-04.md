@@ -489,10 +489,12 @@ an earlier phase.
   clone-before-capacity preflight now also validates first-registration and
   both prune identities plus their exact target facts before applying record
   deltas, requires the one exact active kind-9 successor to bind the body
-  validator identity, and rebinds a history-prune predecessor to the exact
-  revoked key/nonce/proof history. A malformed or duplicate validator and an
-  absent prune target therefore cannot be masked by a capacity result or
-  checked-subtraction invariant. Certificate prune now
+  validator identity, and preserves exact operation-ID replay before these
+  state-dependent checks. The cloned history-prune candidate then rebinds its
+  predecessor to the exact revoked key/nonce/proof history; a signed body/
+  delete-identity mismatch remains `ValidatorRule`. A malformed or duplicate
+  validator and an absent prune target therefore cannot be masked by a
+  capacity result or checked-subtraction invariant. Certificate prune now
   classifies signed ID/delete-set drift as `SemanticTransition`, an absent
   active certificate as `MissingRequiredAuthorityFact`, retention or live
   challenge/reservation references as `ProtocolWindowOrCap`, and authenticated

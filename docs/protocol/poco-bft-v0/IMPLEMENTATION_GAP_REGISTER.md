@@ -1308,9 +1308,12 @@ epoch prune, and Core transition remain open.
    authenticated predecessor/reference corruption.
    Clone-before-capacity admission now checks the first-registration identity
    and both prune identities/targets before record deltas, binds the one active
-   kind-9 successor to the body validator identity, and rebinds history prune
-   to the exact revoked key/nonce/proof predecessor, so malformed, duplicate,
-   or missing facts cannot collapse into a cap or checked-subtraction invariant.
+   kind-9 successor to the body validator identity, and preserves exact replay
+   as `DuplicateOperation` before state-dependent checks. The cloned history-
+   prune candidate separately rebinds the exact revoked key/nonce/proof
+   predecessor and treats signed body/delete-identity mismatch as
+   `ValidatorRule`, so malformed, duplicate, or missing facts cannot collapse
+   into a cap, checked-subtraction, or authenticated-state invariant.
    Certificate prune now types signed ID/delete-set drift, exact missing active
    authority, retention/live-reference rejection, and authenticated settlement/
    lifecycle companion corruption while preserving nested nullifier and
