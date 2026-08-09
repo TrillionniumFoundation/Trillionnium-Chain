@@ -680,8 +680,19 @@ delete/retention/reference rejection deterministic, and keeps authenticated
 retention arithmetic, certificate decoding, and nonce-watermark faults
 invariant;
 meter definition preserves nested typed errors and separates deterministic
-signed policy/semantic shape from deterministic active-parameter cap rejection,
-while meter prune rejects a missing authority policy as a pre-clone negative fact;
+signed policy/semantic shape from deterministic active-parameter cap rejection.
+`DefineMeterPolicy` now carries one shared prepared policy/semantic transition
+from capacity admission into execution: structural block/raw/aggregate bounds,
+exact owner/context/revision/replay and cheap field admission remain first;
+signed preparation and authenticated nullifier-count arithmetic precede the
+family and defensive-total record caps; late nullifier-root verification and
+mutation occur only on the cloned candidate after those caps. Saturated and
+cap-minus-one collision tests freeze cheap-field/signed/counter rejection
+before record caps, record caps before late root rejection, and full-overlay
+rollback. This capacity-order closure currently applies only to meter
+definition; the remaining operation families still need explicit audits before
+terminal failure mapping. Meter prune rejects a missing authority policy as a
+pre-clone negative fact;
 meter retirement distinguishes signed ID/height/next-state rejection, missing or
 already-retired authority, and authenticated old-fact/authority divergence;
 meter prune validates signed IDs before policy lookup, separates nullifier and

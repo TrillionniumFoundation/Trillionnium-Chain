@@ -1263,7 +1263,17 @@ epoch prune, and Core transition remain open.
    keeps authenticated retention/certificate/nonce failures invariant, while
    signed prune shape and temporal/reference rejection remain deterministic.
    Meter definition now separates signed policy/semantic shape from protocol
-   cap rejection, and meter prune has a typed pre-clone negative-fact reject.
+   cap rejection and consumes one shared prepared policy/semantic transition
+   across capacity admission and execution. For `DefineMeterPolicy` only,
+   structural block/raw/aggregate limits and exact owner/context/revision/replay
+   remain first; cheap field admission, signed preparation, and authenticated
+   nullifier-count arithmetic precede family/defensive-total record caps; late
+   nullifier-root verification and all mutation run only against the cloned
+   candidate after those caps. Saturated/cap-minus-one collision tests freeze
+   cheap-field/signed/counter rejection before record caps, record caps before
+   late root rejection, and full-overlay rollback. The other operation families
+   still require capacity-order audits before terminal failure mapping. Meter
+   prune has a typed pre-clone negative-fact reject.
    Meter retirement also splits signed next-state drift and negative/already-
    retired policy facts from authenticated old-fact/authority divergence.
    Meter prune validates signed IDs before its negative-fact lookup, separates

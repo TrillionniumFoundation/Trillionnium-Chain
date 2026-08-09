@@ -405,8 +405,19 @@ an earlier phase.
   arithmetic, certificate-reference decoding, and nonce-watermark corruption
   fail stop. Meter definition now preserves nested typed failures, maps signed
   policy/semantic shape to `SemanticTransition`, maps authenticated-parameter
-  cap rejection to `ProtocolWindowOrCap`, and maps a pre-clone missing prune
-  authority to `MissingRequiredAuthorityFact`. Meter retirement separately
+  cap rejection to `ProtocolWindowOrCap`, and uses one shared prepared carrier
+  across capacity admission and execution. For `DefineMeterPolicy` only, the
+  frozen first-error order is structural block/raw/aggregate bounds, exact
+  owner/context/revision/replay plus cheap field admission, signed policy and
+  exact semantic preparation plus authenticated nullifier-count arithmetic,
+  family/defensive-total record caps, then clone-and-swap with late nullifier
+  root verification and mutation. Saturated/cap-minus-one collisions prove
+  that signed semantic and counter faults precede record caps, record caps
+  precede a correctly shaped proof with the wrong authenticated root, and a
+  rejection preserves the whole block overlay. Other operation families still
+  require an explicit capacity-order audit before terminal failure mapping.
+  Meter prune maps a pre-clone missing authority to
+  `MissingRequiredAuthorityFact`. Meter retirement separately
   treats signed ID/height/next-fact drift as `SemanticTransition`, an absent
   authenticated policy as `MissingRequiredAuthorityFact`, an already-retired
   policy as `ProtocolWindowOrCap`, and old semantic-fact/authority divergence
