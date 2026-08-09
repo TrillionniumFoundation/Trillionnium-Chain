@@ -689,10 +689,9 @@ family and defensive-total record caps; late nullifier-root verification and
 mutation occur only on the cloned candidate after those caps. Saturated and
 cap-minus-one collision tests freeze cheap-field/signed/counter rejection
 before record caps, record caps before late root rejection, and full-overlay
-rollback. This capacity-order closure currently applies only to meter
-definition; the remaining operation families still need explicit audits before
-terminal failure mapping. Meter prune rejects a missing authority policy as a
-pre-clone negative fact;
+rollback. The same closure now also covers fund settlement below; all remaining
+operation families still need explicit audits before terminal failure mapping.
+Meter prune rejects a missing authority policy as a pre-clone negative fact;
 meter retirement distinguishes signed ID/height/next-state rejection, missing or
 already-retired authority, and authenticated old-fact/authority divergence;
 meter prune validates signed IDs before policy lookup, separates nullifier and
@@ -700,7 +699,14 @@ active/retention/reference rejection, and fails stop on authenticated retention
 arithmetic or certificate decoding;
 fund settlement maps its remaining signed certificate/commitment/units and
 semantic-shape failures deterministically while preserving nested typed
-nullifier/counter/CAS reasons;
+nullifier/counter/CAS reasons. It now carries one prepared reservation and
+semantic transition through capacity admission: structural and exact owner/
+context/revision/replay checks remain first; signed ID/commitment/units/semantic
+preparation plus authenticated duplicate checks and insertion-count arithmetic precede reservation
+and defensive-total record caps; certificate-absence and settlement-decision
+proofs plus all mutation remain late on the cloned candidate. Saturated/cap-
+minus-one collisions freeze those boundaries and full-overlay rollback. This
+capacity-order closure is specific to `FundSettlement`;
 release settlement validates signed ID and reservation existence before clone,
 then separates signed delete shape from authenticated leaf/reservation drift;
 open challenge pre-clone admission validates signed IDs, active certificate,

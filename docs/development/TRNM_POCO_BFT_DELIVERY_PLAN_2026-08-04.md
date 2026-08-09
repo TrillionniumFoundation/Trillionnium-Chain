@@ -414,8 +414,9 @@ an earlier phase.
   root verification and mutation. Saturated/cap-minus-one collisions prove
   that signed semantic and counter faults precede record caps, record caps
   precede a correctly shaped proof with the wrong authenticated root, and a
-  rejection preserves the whole block overlay. Other operation families still
-  require an explicit capacity-order audit before terminal failure mapping.
+  rejection preserves the whole block overlay. Apart from the fund-settlement
+  closure below, other operation families still require an explicit capacity-
+  order audit before terminal failure mapping.
   Meter prune maps a pre-clone missing authority to
   `MissingRequiredAuthorityFact`. Meter retirement separately
   treats signed ID/height/next-fact drift as `SemanticTransition`, an absent
@@ -428,7 +429,18 @@ an earlier phase.
   or certificate decoding remains invariant. `FundSettlement` now preserves
   nested nullifier/counter/CAS reasons and maps
   only its remaining signed certificate/commitment/units/semantic-shape
-  failures to `SemanticTransition`; it reads no authenticated companion.
+  failures to `SemanticTransition`; it reads no authenticated companion. Fund
+  settlement now also consumes one shared prepared reservation/semantic
+  transition across capacity admission and execution. Its frozen first-error
+  order is structural and exact owner/context/revision/replay admission, signed
+  ID/commitment/units/semantic preparation plus authenticated duplicate checks
+  and nullifier-count arithmetic, reservation/defensive-total record caps, then clone-and-swap
+  with late certificate-absence and settlement-decision nullifier proofs before
+  mutation. Saturated/cap-minus-one collisions cover malformed signed state,
+  authenticated duplicates, foreign semantic keys, counter exhaustion, wrong
+  roots, structural priority, success at the exact family boundary, and full-
+  overlay rollback. This closure is limited to `FundSettlement`; the remaining
+  operation families stay audit-open.
   `ReleaseSettlement` now validates its signed certificate ID and reservation
   negative fact before clone, preserves nested typed failures, treats a signed
   non-delete as `SemanticTransition`, and treats authenticated settlement-leaf/

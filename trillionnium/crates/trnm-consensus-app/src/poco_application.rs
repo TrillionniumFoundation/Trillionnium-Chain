@@ -2913,12 +2913,21 @@ struct OperationRecordDeltaV0 {
 enum PreparedCapacityOperationV0 {
     Deferred,
     DefineMeter(Box<PreparedDefineMeterV0>),
+    FundSettlement(Box<PreparedFundSettlementV0>),
 }
 
 #[derive(Debug)]
 struct PreparedDefineMeterV0 {
     policy: MeterAuthorityPolicyV0,
     expected_nullifiers: [(PocoNullifierFamilyV0, [u8; 32]); 2],
+    changes: Vec<PreparedSemanticChangeV0>,
+}
+
+#[derive(Debug)]
+struct PreparedFundSettlementV0 {
+    reservation: FundedUnusedReservationV0,
+    expected_absences: [(PocoNullifierFamilyV0, [u8; 32]); 1],
+    expected_insertions: [(PocoNullifierFamilyV0, [u8; 32]); 1],
     changes: Vec<PreparedSemanticChangeV0>,
 }
 
@@ -3181,7 +3190,30 @@ fn validate_operation_capacity_before_clone_v0(
                 })?;
             delta.meter_policies_removed = 1;
         }
-        PocoApplicationOperationBodyV0::FundSettlement { .. } => {
+        PocoApplicationOperationBodyV0::FundSettlement {
+            certificate_id_hex,
+            settlement_commitment_hex,
+            reserved_units,
+            funding_decision_id_hex,
+        } => {
+            prepared = PreparedCapacityOperationV0::FundSettlement(Box::new(
+                prepare_fund_settlement_v0(
+                    context,
+                    overlay,
+                    operation,
+                    decision_preimage,
+                    certificate_id_hex,
+                    settlement_commitment_hex,
+                    reserved_units,
+                    funding_decision_id_hex,
+                )
+                .map_err(|error| {
+                    preserve_application_failure_or_deterministic_v0(
+                        error,
+                        PocoApplicationDeterministicInvalidV0::SemanticTransition,
+                    )
+                })?,
+            ));
             delta.reservations_added = 1;
         }
         PocoApplicationOperationBodyV0::AcceptCertificate {
@@ -3787,8 +3819,16 @@ fn apply_operation_v0(
         &operation.body,
         PocoApplicationOperationBodyV0::DefineMeterPolicy { .. }
     );
+    let operation_is_fund_settlement = matches!(
+        &operation.body,
+        PocoApplicationOperationBodyV0::FundSettlement { .. }
+    );
     let prepared_is_define_meter = matches!(&prepared, PreparedCapacityOperationV0::DefineMeter(_));
-    if operation_is_define_meter != prepared_is_define_meter {
+    let prepared_is_fund_settlement =
+        matches!(&prepared, PreparedCapacityOperationV0::FundSettlement(_));
+    if operation_is_define_meter != prepared_is_define_meter
+        || operation_is_fund_settlement != prepared_is_fund_settlement
+    {
         return Err(invariant_application_error_v0(
             PocoApplicationInvariantV0::DerivedMutationPostcondition,
         ));
@@ -3796,9 +3836,10 @@ fn apply_operation_v0(
     if !operation_is_define_meter {
         validate_operation_field_admission_v0(operation)?;
     }
-    let mut prepared_define_meter = match prepared {
-        PreparedCapacityOperationV0::Deferred => None,
-        PreparedCapacityOperationV0::DefineMeter(prepared) => Some(*prepared),
+    let (mut prepared_define_meter, mut prepared_fund_settlement) = match prepared {
+        PreparedCapacityOperationV0::Deferred => (None, None),
+        PreparedCapacityOperationV0::DefineMeter(prepared) => (Some(*prepared), None),
+        PreparedCapacityOperationV0::FundSettlement(prepared) => (None, Some(*prepared)),
     };
     match &operation.body {
         PocoApplicationOperationBodyV0::AuthorizeConsumerKey {
@@ -3892,27 +3933,15 @@ fn apply_operation_v0(
         } => {
             apply_prune_retired_meter_v0(context, overlay, operation, meter_id_hex, *meter_version)
         }
-        PocoApplicationOperationBodyV0::FundSettlement {
-            certificate_id_hex,
-            settlement_commitment_hex,
-            reserved_units,
-            funding_decision_id_hex,
-        } => apply_fund_settlement_v0(
-            context,
+        PocoApplicationOperationBodyV0::FundSettlement { .. } => apply_prepared_fund_settlement_v0(
             overlay,
             operation,
-            decision_preimage,
-            certificate_id_hex,
-            settlement_commitment_hex,
-            reserved_units,
-            funding_decision_id_hex,
-        )
-        .map_err(|error| {
-            preserve_application_failure_or_deterministic_v0(
-                error,
-                PocoApplicationDeterministicInvalidV0::SemanticTransition,
-            )
-        }),
+            prepared_fund_settlement.take().ok_or_else(|| {
+                invariant_application_error_v0(
+                    PocoApplicationInvariantV0::DerivedMutationPostcondition,
+                )
+            })?,
+        ),
         PocoApplicationOperationBodyV0::AcceptCertificate {
             certificate_id_hex,
             funding_decision_id_hex,
@@ -4659,16 +4688,16 @@ fn apply_prune_retired_meter_v0(
 }
 
 #[allow(clippy::too_many_arguments)]
-fn apply_fund_settlement_v0(
+fn prepare_fund_settlement_v0(
     context: &AuthenticatedPocoApplicationContextV0,
-    overlay: &mut PocoApplicationOverlayV0,
+    overlay: &PocoApplicationOverlayV0,
     operation: &PocoApplicationOperationV0,
     preimage: [u8; 32],
     certificate_id_hex: &str,
     settlement_commitment_hex: &str,
     reserved_units: &CanonicalU128V0,
     funding_decision_id_hex: &str,
-) -> Result<()> {
+) -> Result<PreparedFundSettlementV0> {
     let certificate_id = exact_hash32_hex(certificate_id_hex)?;
     let commitment = exact_hash32_hex(settlement_commitment_hex)?;
     let reserved_units_value = reserved_units.get()?;
@@ -4713,31 +4742,47 @@ fn apply_fund_settlement_v0(
         ),
         _ => bail!("fund-settlement operation lacks funded-unused semantic fact"),
     }
-    verify_nullifier_absences(
-        overlay,
-        &operation.nullifier_non_membership_checks,
-        &fund_certificate_absence_subjects_v0(certificate_id),
-    )?;
-    insert_nullifiers(
-        overlay,
-        &operation.nullifier_insertions,
-        &[(PocoNullifierFamilyV0::SettlementDecision, funding_decision)],
-    )?;
-    overlay
-        .authority
-        .funded_unused_reservations
-        .push(FundedUnusedReservationV0 {
+    overlay.accumulator.count().checked_add(1).ok_or_else(|| {
+        invariant_application_error_v0(PocoApplicationInvariantV0::ProtocolCounterExhausted)
+    })?;
+    Ok(PreparedFundSettlementV0 {
+        reservation: FundedUnusedReservationV0 {
             certificate_id_hex: certificate_id_hex.to_string(),
             settlement_commitment_hex: settlement_commitment_hex.to_string(),
             funding_decision_id_hex: funding_decision_id_hex.to_string(),
             finalized_height: context.target_height.get(),
             reserved_units: CanonicalU128V0::new(reserved_units_value),
-        });
+        },
+        expected_absences: fund_certificate_absence_subjects_v0(certificate_id),
+        expected_insertions: [(PocoNullifierFamilyV0::SettlementDecision, funding_decision)],
+        changes,
+    })
+}
+
+fn apply_prepared_fund_settlement_v0(
+    overlay: &mut PocoApplicationOverlayV0,
+    operation: &PocoApplicationOperationV0,
+    prepared: PreparedFundSettlementV0,
+) -> Result<()> {
+    verify_nullifier_absences(
+        overlay,
+        &operation.nullifier_non_membership_checks,
+        &prepared.expected_absences,
+    )?;
+    insert_nullifiers(
+        overlay,
+        &operation.nullifier_insertions,
+        &prepared.expected_insertions,
+    )?;
+    overlay
+        .authority
+        .funded_unused_reservations
+        .push(prepared.reservation);
     overlay
         .authority
         .funded_unused_reservations
         .sort_by(|left, right| left.certificate_id_hex.cmp(&right.certificate_id_hex));
-    apply_prepared_changes(overlay, changes, false)
+    apply_prepared_changes(overlay, prepared.changes, false)
 }
 
 #[allow(clippy::too_many_arguments)]
@@ -8474,6 +8519,22 @@ mod tests {
         *decision_id_hex = hex::encode(decision);
     }
 
+    fn bind_fund_settlement_decision_v0(
+        context: &AuthenticatedPocoApplicationContextV0,
+        operation: &mut PocoApplicationOperationV0,
+    ) {
+        let preimage = decision_preimage_digest_v0(context, operation).unwrap();
+        let decision = derived_decision_id_v0(preimage, b"fund-settlement");
+        let PocoApplicationOperationBodyV0::FundSettlement {
+            funding_decision_id_hex,
+            ..
+        } = &mut operation.body
+        else {
+            unreachable!();
+        };
+        *funding_decision_id_hex = hex::encode(decision);
+    }
+
     fn define_meter_capacity_fixture(
         meter_policy_count: usize,
     ) -> (PocoApplicationBlockOverlayV0, PocoApplicationOperationV0) {
@@ -8491,14 +8552,44 @@ mod tests {
         (block, operation)
     }
 
-    fn poison_nullifier_roots_v0(operation: &mut PocoApplicationOperationV0) {
-        for raw in &mut operation.nullifier_insertions {
+    fn fund_settlement_capacity_fixture(
+        reservation_count: usize,
+    ) -> (PocoApplicationBlockOverlayV0, PocoApplicationOperationV0) {
+        let (context, projection, _, operation) = sequence_vector_fixture("release_refund_replay");
+        assert!(matches!(
+            &operation.body,
+            PocoApplicationOperationBodyV0::FundSettlement { .. }
+        ));
+        let mut block =
+            PocoApplicationBlockOverlayV0::from_projection(context, &projection).unwrap();
+        let mut reservations = max_capacity_authority_state().funded_unused_reservations;
+        reservations.truncate(reservation_count);
+        let PocoApplicationOperationBodyV0::FundSettlement {
+            certificate_id_hex, ..
+        } = &operation.body
+        else {
+            unreachable!();
+        };
+        assert!(reservations
+            .iter()
+            .all(|reservation| reservation.certificate_id_hex != *certificate_id_hex));
+        block.overlay.authority.funded_unused_reservations = reservations;
+        (block, operation)
+    }
+
+    fn poison_raw_nullifier_roots_v0(raw: &mut [RawNullifierInsertionV0]) {
+        for raw in raw {
             let family = PocoNullifierFamilyV0::from_u8(raw.family).unwrap();
             let identifier = exact_hash32_hex(&raw.identifier_hex).unwrap();
             let key = derive_poco_nullifier_key_v0(family, identifier);
             raw.proof_hex =
                 hex::encode(PocoNullifierProofV0::new(key, [[0x55; 32]; 256]).canonical_bytes());
         }
+    }
+
+    fn poison_nullifier_roots_v0(operation: &mut PocoApplicationOperationV0) {
+        poison_raw_nullifier_roots_v0(&mut operation.nullifier_non_membership_checks);
+        poison_raw_nullifier_roots_v0(&mut operation.nullifier_insertions);
     }
 
     fn consumer_key_revocation_fixture(
@@ -9474,6 +9565,259 @@ mod tests {
             )),
         );
         assert_block_overlay_unchanged(&block, &before);
+    }
+
+    #[test]
+    fn fund_settlement_preparation_freezes_capacity_and_late_proof_priority() {
+        use PocoApplicationApplyFailureV0::{DeterministicallyInvalid, Invariant};
+        use PocoApplicationDeterministicInvalidV0 as Invalid;
+        use PocoApplicationInvariantV0 as InvariantReason;
+
+        let (mut saturated, operation) =
+            fund_settlement_capacity_fixture(MAX_FUNDED_UNUSED_RESERVATIONS);
+        let raw = serde_json::to_vec(&operation).unwrap();
+        let before = saturated.clone();
+        assert_eq!(
+            saturated.apply_decoded_exact(&raw, &operation),
+            Err(DeterministicallyInvalid(Invalid::ProtocolWindowOrCap)),
+        );
+        assert_block_overlay_unchanged(&saturated, &before);
+
+        let (mut malformed, mut malformed_operation) =
+            fund_settlement_capacity_fixture(MAX_FUNDED_UNUSED_RESERVATIONS);
+        let PocoApplicationOperationBodyV0::FundSettlement { reserved_units, .. } =
+            &mut malformed_operation.body
+        else {
+            unreachable!();
+        };
+        *reserved_units = CanonicalU128V0::new(0);
+        let malformed_raw = serde_json::to_vec(&malformed_operation).unwrap();
+        let before = malformed.clone();
+        assert_eq!(
+            malformed.apply_decoded_exact(&malformed_raw, &malformed_operation),
+            Err(DeterministicallyInvalid(Invalid::SemanticTransition)),
+        );
+        assert_block_overlay_unchanged(&malformed, &before);
+
+        let (mut wrong_decision, mut wrong_decision_operation) =
+            fund_settlement_capacity_fixture(MAX_FUNDED_UNUSED_RESERVATIONS);
+        let PocoApplicationOperationBodyV0::FundSettlement {
+            funding_decision_id_hex,
+            ..
+        } = &mut wrong_decision_operation.body
+        else {
+            unreachable!();
+        };
+        *funding_decision_id_hex = "ee".repeat(32);
+        let wrong_decision_raw = serde_json::to_vec(&wrong_decision_operation).unwrap();
+        let before = wrong_decision.clone();
+        assert_eq!(
+            wrong_decision.apply_decoded_exact(&wrong_decision_raw, &wrong_decision_operation),
+            Err(DeterministicallyInvalid(Invalid::SemanticTransition)),
+        );
+        assert_block_overlay_unchanged(&wrong_decision, &before);
+
+        let (mut duplicate, duplicate_operation) =
+            fund_settlement_capacity_fixture(MAX_FUNDED_UNUSED_RESERVATIONS);
+        let PocoApplicationOperationBodyV0::FundSettlement {
+            certificate_id_hex, ..
+        } = &duplicate_operation.body
+        else {
+            unreachable!();
+        };
+        duplicate.overlay.authority.funded_unused_reservations[0].certificate_id_hex =
+            certificate_id_hex.clone();
+        duplicate
+            .overlay
+            .authority
+            .funded_unused_reservations
+            .sort_by(|left, right| left.certificate_id_hex.cmp(&right.certificate_id_hex));
+        let duplicate_raw = serde_json::to_vec(&duplicate_operation).unwrap();
+        let before = duplicate.clone();
+        assert_eq!(
+            duplicate.apply_decoded_exact(&duplicate_raw, &duplicate_operation),
+            Err(DeterministicallyInvalid(Invalid::SemanticTransition)),
+        );
+        assert_block_overlay_unchanged(&duplicate, &before);
+
+        let (mut foreign_semantic, mut foreign_semantic_operation) =
+            fund_settlement_capacity_fixture(MAX_FUNDED_UNUSED_RESERVATIONS);
+        foreign_semantic_operation.semantic_changes[0].logical_key_hex = "cd".repeat(32);
+        bind_fund_settlement_decision_v0(
+            &foreign_semantic.context,
+            &mut foreign_semantic_operation,
+        );
+        let foreign_semantic_raw = serde_json::to_vec(&foreign_semantic_operation).unwrap();
+        let before = foreign_semantic.clone();
+        assert_eq!(
+            foreign_semantic
+                .apply_decoded_exact(&foreign_semantic_raw, &foreign_semantic_operation),
+            Err(DeterministicallyInvalid(Invalid::SemanticTransition)),
+        );
+        assert_block_overlay_unchanged(&foreign_semantic, &before);
+
+        let (mut corrupted_semantic, corrupted_semantic_operation) =
+            fund_settlement_capacity_fixture(MAX_FUNDED_UNUSED_RESERVATIONS);
+        let raw_change = &corrupted_semantic_operation.semantic_changes[0];
+        let kind = PocoSnapshotEntryKindV0::from_u8(raw_change.kind).unwrap();
+        let logical_key = exact_hash32_hex(&raw_change.logical_key_hex).unwrap();
+        corrupted_semantic
+            .overlay
+            .entries
+            .insert((kind, logical_key.to_vec()), vec![0xff]);
+        let corrupted_semantic_raw = serde_json::to_vec(&corrupted_semantic_operation).unwrap();
+        let before = corrupted_semantic.clone();
+        assert_eq!(
+            corrupted_semantic
+                .apply_decoded_exact(&corrupted_semantic_raw, &corrupted_semantic_operation,),
+            Err(Invariant(InvariantReason::AuthenticatedOverlay)),
+        );
+        assert_block_overlay_unchanged(&corrupted_semantic, &before);
+
+        let (mut saturated_bad_proof, mut bad_proof_operation) =
+            fund_settlement_capacity_fixture(MAX_FUNDED_UNUSED_RESERVATIONS);
+        poison_nullifier_roots_v0(&mut bad_proof_operation);
+        let bad_proof_raw = serde_json::to_vec(&bad_proof_operation).unwrap();
+        PocoApplicationOperationV0::decode_exact(&bad_proof_raw).unwrap();
+        let before = saturated_bad_proof.clone();
+        assert_eq!(
+            saturated_bad_proof.apply_decoded_exact(&bad_proof_raw, &bad_proof_operation),
+            Err(DeterministicallyInvalid(Invalid::ProtocolWindowOrCap)),
+        );
+        assert_block_overlay_unchanged(&saturated_bad_proof, &before);
+
+        let (mut below_cap_bad_proof, mut bad_proof_operation) =
+            fund_settlement_capacity_fixture(MAX_FUNDED_UNUSED_RESERVATIONS - 1);
+        poison_nullifier_roots_v0(&mut bad_proof_operation);
+        let bad_proof_raw = serde_json::to_vec(&bad_proof_operation).unwrap();
+        let before = below_cap_bad_proof.clone();
+        assert_eq!(
+            below_cap_bad_proof.apply_decoded_exact(&bad_proof_raw, &bad_proof_operation),
+            Err(DeterministicallyInvalid(
+                Invalid::NullifierNonMembershipRootMismatch,
+            )),
+        );
+        assert_block_overlay_unchanged(&below_cap_bad_proof, &before);
+
+        let (mut saturated_bad_insertion, mut bad_insertion_operation) =
+            fund_settlement_capacity_fixture(MAX_FUNDED_UNUSED_RESERVATIONS);
+        poison_raw_nullifier_roots_v0(&mut bad_insertion_operation.nullifier_insertions);
+        let bad_insertion_raw = serde_json::to_vec(&bad_insertion_operation).unwrap();
+        PocoApplicationOperationV0::decode_exact(&bad_insertion_raw).unwrap();
+        let before = saturated_bad_insertion.clone();
+        assert_eq!(
+            saturated_bad_insertion
+                .apply_decoded_exact(&bad_insertion_raw, &bad_insertion_operation),
+            Err(DeterministicallyInvalid(Invalid::ProtocolWindowOrCap)),
+        );
+        assert_block_overlay_unchanged(&saturated_bad_insertion, &before);
+
+        let (mut below_cap_bad_insertion, mut bad_insertion_operation) =
+            fund_settlement_capacity_fixture(MAX_FUNDED_UNUSED_RESERVATIONS - 1);
+        poison_raw_nullifier_roots_v0(&mut bad_insertion_operation.nullifier_insertions);
+        let bad_insertion_raw = serde_json::to_vec(&bad_insertion_operation).unwrap();
+        let before = below_cap_bad_insertion.clone();
+        assert_eq!(
+            below_cap_bad_insertion
+                .apply_decoded_exact(&bad_insertion_raw, &bad_insertion_operation),
+            Err(DeterministicallyInvalid(
+                Invalid::NullifierNonMembershipRootMismatch,
+            )),
+        );
+        assert_block_overlay_unchanged(&below_cap_bad_insertion, &before);
+
+        let (mut saturated_bad_shape, mut bad_shape_operation) =
+            fund_settlement_capacity_fixture(MAX_FUNDED_UNUSED_RESERVATIONS);
+        bad_shape_operation.nullifier_non_membership_checks.clear();
+        let bad_shape_raw = serde_json::to_vec(&bad_shape_operation).unwrap();
+        PocoApplicationOperationV0::decode_exact(&bad_shape_raw).unwrap();
+        let before = saturated_bad_shape.clone();
+        assert_eq!(
+            saturated_bad_shape.apply_decoded_exact(&bad_shape_raw, &bad_shape_operation),
+            Err(DeterministicallyInvalid(Invalid::ProtocolWindowOrCap)),
+        );
+        assert_block_overlay_unchanged(&saturated_bad_shape, &before);
+
+        let (mut below_cap_bad_shape, mut bad_shape_operation) =
+            fund_settlement_capacity_fixture(MAX_FUNDED_UNUSED_RESERVATIONS - 1);
+        bad_shape_operation.nullifier_non_membership_checks.clear();
+        let bad_shape_raw = serde_json::to_vec(&bad_shape_operation).unwrap();
+        let before = below_cap_bad_shape.clone();
+        assert_eq!(
+            below_cap_bad_shape.apply_decoded_exact(&bad_shape_raw, &bad_shape_operation),
+            Err(DeterministicallyInvalid(Invalid::NullifierProof)),
+        );
+        assert_block_overlay_unchanged(&below_cap_bad_shape, &before);
+
+        let (mut below_cap, operation) =
+            fund_settlement_capacity_fixture(MAX_FUNDED_UNUSED_RESERVATIONS - 1);
+        let accumulator_count_before = below_cap.overlay.accumulator.count();
+        let raw = serde_json::to_vec(&operation).unwrap();
+        below_cap.apply_decoded_exact(&raw, &operation).unwrap();
+        assert_eq!(below_cap.operation_count(), 1);
+        assert_eq!(
+            below_cap.overlay.authority.funded_unused_reservations.len(),
+            MAX_FUNDED_UNUSED_RESERVATIONS,
+        );
+        assert_eq!(
+            below_cap.overlay.accumulator.count(),
+            accumulator_count_before + 1,
+        );
+        assert!(below_cap
+            .overlay
+            .mutations
+            .values()
+            .any(|mutation| mutation.kind == PocoSnapshotEntryKindV0::Settlement));
+
+        let (mut operation_full, mut malformed_operation) =
+            fund_settlement_capacity_fixture(MAX_FUNDED_UNUSED_RESERVATIONS);
+        let PocoApplicationOperationBodyV0::FundSettlement { reserved_units, .. } =
+            &mut malformed_operation.body
+        else {
+            unreachable!();
+        };
+        *reserved_units = CanonicalU128V0::new(0);
+        let malformed_raw = serde_json::to_vec(&malformed_operation).unwrap();
+        operation_full.raw_operations = vec![Vec::new(); MAX_APPLICATION_OPERATIONS_PER_BLOCK];
+        let before = operation_full.clone();
+        assert_eq!(
+            operation_full.apply_decoded_exact(&malformed_raw, &malformed_operation),
+            Err(DeterministicallyInvalid(Invalid::PerBlockCapacity)),
+        );
+        assert_block_overlay_unchanged(&operation_full, &before);
+
+        let (mut byte_full, mut malformed_operation) =
+            fund_settlement_capacity_fixture(MAX_FUNDED_UNUSED_RESERVATIONS);
+        let PocoApplicationOperationBodyV0::FundSettlement { reserved_units, .. } =
+            &mut malformed_operation.body
+        else {
+            unreachable!();
+        };
+        *reserved_units = CanonicalU128V0::new(0);
+        let malformed_raw = serde_json::to_vec(&malformed_operation).unwrap();
+        byte_full.aggregate_operation_bytes = MAX_POCO_SNAPSHOT_BUNDLE_BYTES;
+        let before = byte_full.clone();
+        assert_eq!(
+            byte_full.apply_decoded_exact(&malformed_raw, &malformed_operation),
+            Err(DeterministicallyInvalid(Invalid::PerBlockCapacity)),
+        );
+        assert_block_overlay_unchanged(&byte_full, &before);
+
+        let (mut exhausted, operation) =
+            fund_settlement_capacity_fixture(MAX_FUNDED_UNUSED_RESERVATIONS);
+        exhausted.overlay.accumulator =
+            PocoNullifierAccumulatorV0::from_authenticated_parts([2; 32], u64::MAX).unwrap();
+        exhausted
+            .overlay
+            .authority
+            .set_accumulator(exhausted.overlay.accumulator);
+        let raw = serde_json::to_vec(&operation).unwrap();
+        let before = exhausted.clone();
+        assert_eq!(
+            exhausted.apply_decoded_exact(&raw, &operation),
+            Err(Invariant(InvariantReason::ProtocolCounterExhausted)),
+        );
+        assert_block_overlay_unchanged(&exhausted, &before);
     }
 
     #[test]
@@ -10834,28 +11178,18 @@ mod tests {
 
     #[test]
     fn operation_capacity_preflight_accepts_exact_and_rejects_over_without_mutation() {
+        let (context, _, _, operation) = sequence_vector_fixture("release_refund_replay");
         let mut exact_authority = max_capacity_authority_state();
         exact_authority.funded_unused_reservations.pop();
         exact_authority.validate().unwrap();
         assert_eq!(authority_record_count_v0(&exact_authority).unwrap(), 65);
-        let mut operation = minimal_operation();
-        operation.body = PocoApplicationOperationBodyV0::FundSettlement {
-            certificate_id_hex: tagged_hash_hex(65_010),
-            settlement_commitment_hex: tagged_hash_hex(65_011),
-            reserved_units: CanonicalU128V0::new(u128::MAX),
-            funding_decision_id_hex: tagged_hash_hex(65_012),
-        };
         let exact_overlay = overlay_with_authority(exact_authority.clone());
-        assert!(
-            validate_capacity_test_v0(&context_at(2).unwrap(), &exact_overlay, &operation,).is_ok()
-        );
+        assert!(validate_capacity_test_v0(&context, &exact_overlay, &operation).is_ok());
         assert_eq!(exact_overlay.authority, exact_authority);
 
         let over_authority = max_capacity_authority_state();
         let over_overlay = overlay_with_authority(over_authority.clone());
-        assert!(
-            validate_capacity_test_v0(&context_at(2).unwrap(), &over_overlay, &operation,).is_err()
-        );
+        assert!(validate_capacity_test_v0(&context, &over_overlay, &operation).is_err());
         assert_eq!(over_overlay.authority, over_authority);
     }
 

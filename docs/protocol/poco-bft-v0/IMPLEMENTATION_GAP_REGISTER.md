@@ -1271,16 +1271,25 @@ epoch prune, and Core transition remain open.
    nullifier-root verification and all mutation run only against the cloned
    candidate after those caps. Saturated/cap-minus-one collision tests freeze
    cheap-field/signed/counter rejection before record caps, record caps before
-   late root rejection, and full-overlay rollback. The other operation families
-   still require capacity-order audits before terminal failure mapping. Meter
-   prune has a typed pre-clone negative-fact reject.
+   late root rejection, and full-overlay rollback. The same closure now covers
+   fund settlement below; all remaining operation families still require
+   capacity-order audits before terminal failure mapping. Meter prune has a
+   typed pre-clone negative-fact reject.
    Meter retirement also splits signed next-state drift and negative/already-
    retired policy facts from authenticated old-fact/authority divergence.
    Meter prune validates signed IDs before its negative-fact lookup, separates
    nullifier and temporal/reference rejection, and keeps authenticated
    retention/certificate faults invariant.
    `FundSettlement` now types all remaining signed-shape failures while
-   preserving its nested nullifier/counter/CAS failures unchanged.
+   preserving its nested nullifier/counter/CAS failures unchanged. It also
+   carries one prepared reservation/semantic transition across capacity
+   admission and execution: structural and exact owner/context/revision/replay
+   admission remains first; signed ID/commitment/units/semantic preparation plus
+   authenticated duplicate checks and insertion-count arithmetic precede reservation/defensive-
+   total record caps; certificate-absence and settlement-decision proofs plus
+   mutation remain late on the cloned candidate. Saturated/cap-minus-one
+   collisions freeze those boundaries and full-overlay rollback. This closure
+   is specific to `FundSettlement`; the remaining families stay audit-open.
    `ReleaseSettlement` now performs a typed pre-clone reservation lookup and
    separates signed delete shape from authenticated leaf/reservation drift.
    `OpenChallenge` now has typed pre-clone ID/certificate/duplicate checks;
