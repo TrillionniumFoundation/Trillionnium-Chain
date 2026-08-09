@@ -485,7 +485,20 @@ an earlier phase.
   Validator revocation/history prune now preserve missing-history rejection,
   classify signed transition/delete drift as `ValidatorRule`, retention,
   revocation, and active-certificate references as `ProtocolWindowOrCap`, and
-  authenticated history/semantic/reference corruption as invariant.
+  authenticated history/semantic/reference corruption as invariant. The
+  clone-before-capacity preflight now also validates first-registration and
+  both prune identities plus their exact target facts before applying record
+  deltas, requires the one exact active kind-9 successor to bind the body
+  validator identity, and rebinds a history-prune predecessor to the exact
+  revoked key/nonce/proof history. A malformed or duplicate validator and an
+  absent prune target therefore cannot be masked by a capacity result or
+  checked-subtraction invariant. Certificate prune now
+  classifies signed ID/delete-set drift as `SemanticTransition`, an absent
+  active certificate as `MissingRequiredAuthorityFact`, retention or live
+  challenge/reservation references as `ProtocolWindowOrCap`, and authenticated
+  settlement/lifecycle/authority companion corruption as
+  `AuthenticatedOverlay`; nested nullifier and mutation-postcondition reasons
+  remain intact. No unclassified certificate-prune leaf remains.
   Leaf errors not yet assigned a narrower reason remain conservatively typed
   as an authenticated-overlay invariant. Success keeps the exact decoded owner plus
   the still-open snapshot and unsealed family state. These attempts do not yet

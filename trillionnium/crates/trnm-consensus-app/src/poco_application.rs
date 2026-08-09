@@ -2913,14 +2913,26 @@ fn validate_validator_consensus_key_before_clone_v0(
     authority: &PocoApplicationAuthorityStateV0,
     operation: &PocoApplicationOperationV0,
 ) -> Result<()> {
+    let validator_rule =
+        || deterministic_application_error_v0(PocoApplicationDeterministicInvalidV0::ValidatorRule);
+    let validator_id_hex = match &operation.body {
+        PocoApplicationOperationBodyV0::RegisterValidator {
+            validator_id_hex, ..
+        }
+        | PocoApplicationOperationBodyV0::RotateValidator {
+            validator_id_hex, ..
+        } => validator_id_hex,
+        _ => return Err(validator_rule()),
+    };
+    let validator_id = exact_opaque_hex(validator_id_hex).map_err(|_| validator_rule())?;
     let [change] = operation.semantic_changes.as_slice() else {
-        return Ok(());
+        return Err(validator_rule());
     };
     if change.kind != PocoSnapshotEntryKindV0::ValidatorRegistration as u8 {
-        return Ok(());
+        return Err(validator_rule());
     }
     let Some(next_value_hex) = change.next_value_hex.as_deref() else {
-        return Ok(());
+        return Err(validator_rule());
     };
     let logical_key = exact_hex(
         &change.logical_key_hex,
@@ -2928,32 +2940,35 @@ fn validate_validator_consensus_key_before_clone_v0(
         128,
         "validator semantic logical key",
     )
-    .map_err(|_| {
-        deterministic_application_error_v0(PocoApplicationDeterministicInvalidV0::ValidatorRule)
-    })?;
+    .map_err(|_| validator_rule())?;
     let next_value = exact_hex(next_value_hex, 1, 65_536, "validator next semantic value")
-        .map_err(|_| {
-            deterministic_application_error_v0(PocoApplicationDeterministicInvalidV0::ValidatorRule)
-        })?;
+        .map_err(|_| validator_rule())?;
     let parts = owned_semantic_parts(
         PocoSnapshotEntryKindV0::ValidatorRegistration,
         &logical_key,
         &next_value,
     )
-    .map_err(|_| {
-        deterministic_application_error_v0(PocoApplicationDeterministicInvalidV0::ValidatorRule)
-    })?;
-    if let SemanticFactV0::ValidatorRegistration { consensus_key, .. } = parts.fact {
-        let consensus_key_hex = hex::encode(consensus_key);
-        if authority
-            .validator_registration_history
-            .iter()
-            .any(|history| history.consensus_key_hex == consensus_key_hex)
-        {
-            return Err(deterministic_application_error_v0(
-                PocoApplicationDeterministicInvalidV0::ValidatorConsensusKeyAlreadyActive,
-            ));
-        }
+    .map_err(|_| validator_rule())?;
+    if parts.identity != validator_id {
+        return Err(validator_rule());
+    }
+    let consensus_key = match parts.fact {
+        SemanticFactV0::ValidatorRegistration {
+            consensus_key,
+            state: RegistrationStateV0::Active,
+            ..
+        } => consensus_key,
+        _ => return Err(validator_rule()),
+    };
+    let consensus_key_hex = hex::encode(consensus_key);
+    if authority
+        .validator_registration_history
+        .iter()
+        .any(|history| history.consensus_key_hex == consensus_key_hex)
+    {
+        return Err(deterministic_application_error_v0(
+            PocoApplicationDeterministicInvalidV0::ValidatorConsensusKeyAlreadyActive,
+        ));
     }
     Ok(())
 }
@@ -3224,7 +3239,23 @@ fn validate_operation_capacity_before_clone_v0(
             delta.pending_governance_removed = 1;
             delta.finalized_governance_added = 1;
         }
-        PocoApplicationOperationBodyV0::RegisterValidator { .. } => {
+        PocoApplicationOperationBodyV0::RegisterValidator {
+            validator_id_hex, ..
+        } => {
+            exact_opaque_hex(validator_id_hex).map_err(|_| {
+                deterministic_application_error_v0(
+                    PocoApplicationDeterministicInvalidV0::ValidatorRule,
+                )
+            })?;
+            if authority
+                .validator_registration_history
+                .binary_search_by(|history| history.validator_id_hex.as_str().cmp(validator_id_hex))
+                .is_ok()
+            {
+                return Err(deterministic_application_error_v0(
+                    PocoApplicationDeterministicInvalidV0::ValidatorRule,
+                ));
+            }
             validate_validator_consensus_key_before_clone_v0(authority, operation)?;
             delta.validator_histories_added = 1;
         }
@@ -3252,10 +3283,41 @@ fn validate_operation_capacity_before_clone_v0(
             }
             delta.future_candidates_added = 1;
         }
-        PocoApplicationOperationBodyV0::PruneRevokedValidatorHistory { .. } => {
+        PocoApplicationOperationBodyV0::PruneRevokedValidatorHistory { validator_id_hex } => {
+            exact_opaque_hex(validator_id_hex).map_err(|_| {
+                deterministic_application_error_v0(
+                    PocoApplicationDeterministicInvalidV0::ValidatorRule,
+                )
+            })?;
+            authority
+                .validator_registration_history
+                .binary_search_by(|history| history.validator_id_hex.as_str().cmp(validator_id_hex))
+                .map_err(|_| {
+                    deterministic_application_error_v0(
+                        PocoApplicationDeterministicInvalidV0::MissingRequiredAuthorityFact,
+                    )
+                })?;
             delta.validator_histories_removed = 1;
         }
-        PocoApplicationOperationBodyV0::PruneExpiredCertificate { .. } => {
+        PocoApplicationOperationBodyV0::PruneExpiredCertificate { certificate_id_hex } => {
+            exact_hash32_hex(certificate_id_hex).map_err(|_| {
+                deterministic_application_error_v0(
+                    PocoApplicationDeterministicInvalidV0::SemanticTransition,
+                )
+            })?;
+            authority
+                .active_certificates
+                .binary_search_by(|certificate| {
+                    certificate
+                        .certificate_id_hex
+                        .as_str()
+                        .cmp(certificate_id_hex)
+                })
+                .map_err(|_| {
+                    deterministic_application_error_v0(
+                        PocoApplicationDeterministicInvalidV0::MissingRequiredAuthorityFact,
+                    )
+                })?;
             delta.active_certificates_removed = 1;
         }
         PocoApplicationOperationBodyV0::RotateValidator { .. } => {
@@ -6240,6 +6302,17 @@ fn apply_prune_revoked_validator_history_v0(
     if change.expected_identity.as_deref() != Some(validator_id.as_slice()) {
         return Err(authenticated_overlay());
     }
+    match change.expected_fact.as_ref() {
+        Some(SemanticFactV0::ValidatorRegistration {
+            consensus_key,
+            registration_nonce,
+            proof_digest,
+            state: RegistrationStateV0::Revoked,
+        }) if hex::encode(consensus_key) == history.consensus_key_hex
+            && *registration_nonce == history.max_registration_nonce
+            && hex::encode(proof_digest) == history.current_proof_digest_hex => {}
+        _ => return Err(authenticated_overlay()),
+    }
     if change.next_value.is_some() {
         return Err(validator_rule());
     }
@@ -6256,41 +6329,58 @@ fn apply_prune_certificate_v0(
     operation: &PocoApplicationOperationV0,
     certificate_id_hex: &str,
 ) -> Result<()> {
-    let certificate_id = exact_hash32_hex(certificate_id_hex)?;
+    let signed_semantic = || {
+        deterministic_application_error_v0(
+            PocoApplicationDeterministicInvalidV0::SemanticTransition,
+        )
+    };
+    let protocol_reject = || {
+        deterministic_application_error_v0(
+            PocoApplicationDeterministicInvalidV0::ProtocolWindowOrCap,
+        )
+    };
+    let authenticated_overlay =
+        || invariant_application_error_v0(PocoApplicationInvariantV0::AuthenticatedOverlay);
+    let certificate_id = exact_hash32_hex(certificate_id_hex).map_err(|_| signed_semantic())?;
     let certificate_index = overlay
         .authority
         .active_certificates
         .binary_search_by(|item| item.certificate_id_hex.as_str().cmp(certificate_id_hex))
-        .map_err(|_| anyhow::anyhow!("pruned certificate is not active"))?;
+        .map_err(|_| {
+            deterministic_application_error_v0(
+                PocoApplicationDeterministicInvalidV0::MissingRequiredAuthorityFact,
+            )
+        })?;
     let certificate = overlay.authority.active_certificates[certificate_index].clone();
-    ensure!(
-        prune_target_is_strictly_after_boundary_v0(
-            context.target_height.get(),
-            certificate.prunable_after_height,
-        ),
-        "certificate retention/evidence/weight boundary has not been strictly crossed"
-    );
-    ensure!(
-        overlay
-            .authority
-            .pending_challenges
-            .iter()
-            .all(|item| item.certificate_id_hex != certificate_id_hex),
-        "pending challenge prevents certificate pruning"
-    );
-    ensure!(
-        overlay
+    if !prune_target_is_strictly_after_boundary_v0(
+        context.target_height.get(),
+        certificate.prunable_after_height,
+    ) {
+        return Err(protocol_reject());
+    }
+    if overlay
+        .authority
+        .pending_challenges
+        .iter()
+        .any(|item| item.certificate_id_hex == certificate_id_hex)
+        || overlay
             .authority
             .funded_unused_reservations
             .iter()
-            .all(|item| item.certificate_id_hex != certificate_id_hex),
-        "funded-unused settlement prevents certificate pruning"
-    );
-    let changes = prepare_semantic_changes(overlay, &operation.semantic_changes, true)?;
-    ensure!(
-        changes.iter().all(|change| change.next_value.is_none()),
-        "prune operation may only delete rich semantic entries"
-    );
+            .any(|item| item.certificate_id_hex == certificate_id_hex)
+    {
+        return Err(protocol_reject());
+    }
+    let changes =
+        prepare_semantic_changes(overlay, &operation.semantic_changes, true).map_err(|error| {
+            preserve_application_failure_or_deterministic_v0(
+                error,
+                PocoApplicationDeterministicInvalidV0::SemanticTransition,
+            )
+        })?;
+    if changes.iter().any(|change| change.next_value.is_some()) {
+        return Err(signed_semantic());
+    }
     let actual_keys = changes
         .iter()
         .map(|change| SemanticKeyRefV0 {
@@ -6298,37 +6388,37 @@ fn apply_prune_certificate_v0(
             logical_key_hex: hex::encode(&change.logical_key),
         })
         .collect::<Vec<_>>();
-    ensure!(
-        actual_keys == certificate.semantic_keys,
-        "prune operation does not delete the exact retained certificate set"
-    );
-    let settlement_change = change_for_kind(&changes, PocoSnapshotEntryKindV0::Settlement)?;
-    ensure!(
-        matches!(
-            settlement_change.expected_fact.as_ref(),
-            Some(SemanticFactV0::Settlement {
-                state: SettlementStateV0::Consumed,
-                ..
-            })
-        ),
-        "prune requires a terminal consumed settlement"
-    );
+    if actual_keys != certificate.semantic_keys {
+        return Err(signed_semantic());
+    }
+    let settlement_change = change_for_kind(&changes, PocoSnapshotEntryKindV0::Settlement)
+        .map_err(|_| authenticated_overlay())?;
+    if !matches!(
+        settlement_change.expected_fact.as_ref(),
+        Some(SemanticFactV0::Settlement {
+            state: SettlementStateV0::Consumed,
+            ..
+        })
+    ) {
+        return Err(authenticated_overlay());
+    }
     let lifecycle_change =
-        change_for_kind(&changes, PocoSnapshotEntryKindV0::RevocationOrChallenge)?;
+        change_for_kind(&changes, PocoSnapshotEntryKindV0::RevocationOrChallenge)
+            .map_err(|_| authenticated_overlay())?;
     let expected_terminal_lifecycle = match certificate.lifecycle {
         CertificateAuthorityLifecycleV0::ChallengeRejected => LifecycleStateV0::ChallengeRejected,
         CertificateAuthorityLifecycleV0::ChallengeSustained => LifecycleStateV0::ChallengeSustained,
         CertificateAuthorityLifecycleV0::Accepted => LifecycleStateV0::Accepted,
     };
-    ensure!(
-        matches!(
-            lifecycle_change.expected_fact.as_ref(),
-            Some(SemanticFactV0::RevocationOrChallenge { state, .. })
-                if *state == expected_terminal_lifecycle
-        ),
-        "prune authority/semantic lifecycle terminal state mismatch"
-    );
-    let tuple_key = exact_hash32_hex(&certificate.tuple_key_hex)?;
+    if !matches!(
+        lifecycle_change.expected_fact.as_ref(),
+        Some(SemanticFactV0::RevocationOrChallenge { state, .. })
+            if *state == expected_terminal_lifecycle
+    ) {
+        return Err(authenticated_overlay());
+    }
+    let tuple_key =
+        exact_hash32_hex(&certificate.tuple_key_hex).map_err(|_| authenticated_overlay())?;
     insert_nullifiers(
         overlay,
         &operation.nullifier_insertions,
@@ -7818,6 +7908,79 @@ mod tests {
         )
     }
 
+    fn prune_vector_fixture(
+        sequence_id: &str,
+    ) -> (
+        AuthenticatedPocoApplicationContextV0,
+        ProductionPocoProjectionV0,
+        Vec<u8>,
+        PocoApplicationOperationV0,
+    ) {
+        let vector: serde_json::Value = serde_json::from_str(include_str!(
+            "../../../../docs/protocol/poco-bft-v0/vectors/\
+             poco-application-operation-sequences-v0.json"
+        ))
+        .unwrap();
+        let sequence = vector["sequences"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|sequence| sequence["id"] == sequence_id)
+            .unwrap();
+        let (_, source_version, source_root, projection) =
+            crate::poco_application_evidence::authenticated_tree_from_sequence_initial_v0(
+                &sequence["initial"],
+            );
+        let step = &sequence["steps"][0];
+        let raw = crate::poco_application_evidence::application_sequence_raw_operations_v0(step)
+            .into_iter()
+            .next()
+            .unwrap();
+        let operation = PocoApplicationOperationV0::decode_exact(&raw).unwrap();
+        let vector_context = &step["context"];
+        assert_eq!(
+            vector_context["source_version"].as_u64(),
+            Some(source_version)
+        );
+        assert_eq!(
+            vector_context["source_root_hex"].as_str().unwrap(),
+            hex::encode(source_root),
+        );
+        let parameters = decode_consensus_parameters_v0_exact(
+            &hex::decode(
+                vector_context["active_parameters_cev0_hex"]
+                    .as_str()
+                    .unwrap(),
+            )
+            .unwrap(),
+        )
+        .unwrap();
+        let context = AuthenticatedPocoApplicationContextV0::new(
+            source_version,
+            source_root,
+            Height::new(vector_context["target_height"].as_u64().unwrap()),
+            ChainId::new(vector_context["chain_id_utf8"].as_str().unwrap()).unwrap(),
+            GenesisHash::new(
+                hex::decode(vector_context["genesis_hash_hex"].as_str().unwrap())
+                    .unwrap()
+                    .try_into()
+                    .unwrap(),
+            ),
+            Epoch::new(vector_context["active_epoch"].as_u64().unwrap()),
+            parameters,
+            hex::decode(
+                vector_context["authority_signer_commitment_hex"]
+                    .as_str()
+                    .unwrap(),
+            )
+            .unwrap()
+            .try_into()
+            .unwrap(),
+        )
+        .unwrap();
+        (context, projection, raw, operation)
+    }
+
     fn meter_policy() -> MeterAuthorityPolicyV0 {
         MeterAuthorityPolicyV0 {
             meter_id_hex: "01".to_string(),
@@ -8139,6 +8302,246 @@ mod tests {
             PocoApplicationOperationV0::decode_exact(&serde_json::to_vec(&unknown).unwrap())
                 .is_err()
         );
+    }
+
+    #[test]
+    fn prune_capacity_preflight_preserves_typed_negative_facts_before_clone() {
+        let projection = genesis_projection();
+        let mut block =
+            PocoApplicationBlockOverlayV0::from_projection(context_at(2).unwrap(), &projection)
+                .unwrap();
+        let missing_certificate = minimal_operation();
+        let missing_certificate_raw = serde_json::to_vec(&missing_certificate).unwrap();
+        assert_eq!(
+            block.apply_decoded_exact(&missing_certificate_raw, &missing_certificate),
+            Err(PocoApplicationApplyFailureV0::DeterministicallyInvalid(
+                PocoApplicationDeterministicInvalidV0::MissingRequiredAuthorityFact,
+            )),
+        );
+
+        let mut malformed_certificate = missing_certificate.clone();
+        let PocoApplicationOperationBodyV0::PruneExpiredCertificate { certificate_id_hex } =
+            &mut malformed_certificate.body
+        else {
+            unreachable!();
+        };
+        *certificate_id_hex = "0".to_string();
+        let malformed_certificate_raw = serde_json::to_vec(&malformed_certificate).unwrap();
+        assert_eq!(
+            block.apply_decoded_exact(&malformed_certificate_raw, &malformed_certificate),
+            Err(PocoApplicationApplyFailureV0::DeterministicallyInvalid(
+                PocoApplicationDeterministicInvalidV0::SemanticTransition,
+            )),
+        );
+
+        let mut missing_validator = missing_certificate.clone();
+        missing_validator.body = PocoApplicationOperationBodyV0::PruneRevokedValidatorHistory {
+            validator_id_hex: hex::encode(b"missing-validator"),
+        };
+        let missing_validator_raw = serde_json::to_vec(&missing_validator).unwrap();
+        assert_eq!(
+            block.apply_decoded_exact(&missing_validator_raw, &missing_validator),
+            Err(PocoApplicationApplyFailureV0::DeterministicallyInvalid(
+                PocoApplicationDeterministicInvalidV0::MissingRequiredAuthorityFact,
+            )),
+        );
+
+        let mut malformed_validator = missing_validator.clone();
+        let PocoApplicationOperationBodyV0::PruneRevokedValidatorHistory { validator_id_hex } =
+            &mut malformed_validator.body
+        else {
+            unreachable!();
+        };
+        *validator_id_hex = "0".to_string();
+        let malformed_validator_raw = serde_json::to_vec(&malformed_validator).unwrap();
+        assert_eq!(
+            block.apply_decoded_exact(&malformed_validator_raw, &malformed_validator),
+            Err(PocoApplicationApplyFailureV0::DeterministicallyInvalid(
+                PocoApplicationDeterministicInvalidV0::ValidatorRule,
+            )),
+        );
+        assert_eq!(block.operation_count(), 0);
+        assert!(block.overlay.operation_ids.is_empty());
+        assert!(block.overlay.mutations.is_empty());
+    }
+
+    #[test]
+    fn validator_registration_semantics_precede_capacity_and_clone() {
+        let authority = max_capacity_authority_state();
+        let overlay = overlay_with_authority(authority.clone());
+        let mut operation = minimal_operation();
+        operation.body = PocoApplicationOperationBodyV0::RegisterValidator {
+            validator_id_hex: authority.validator_registration_history[0]
+                .validator_id_hex
+                .clone(),
+            target_epoch: 0,
+            registration_decision_id_hex: "11".repeat(32),
+        };
+        let error = validate_operation_capacity_before_clone_v0(
+            &context_at(2).unwrap(),
+            &overlay,
+            &operation,
+        )
+        .expect_err("duplicate validator identity must precede capacity");
+        assert_eq!(
+            error
+                .downcast_ref::<PocoApplicationApplyFailureV0>()
+                .copied(),
+            Some(PocoApplicationApplyFailureV0::DeterministicallyInvalid(
+                PocoApplicationDeterministicInvalidV0::ValidatorRule,
+            )),
+        );
+        assert_eq!(overlay.authority, authority);
+        assert!(overlay.operation_ids.is_empty());
+        assert!(overlay.mutations.is_empty());
+
+        let mut wrong_semantic_kind = operation;
+        let PocoApplicationOperationBodyV0::RegisterValidator {
+            validator_id_hex, ..
+        } = &mut wrong_semantic_kind.body
+        else {
+            unreachable!();
+        };
+        *validator_id_hex = hex::encode(b"fresh-validator-at-full-capacity");
+        let error = validate_operation_capacity_before_clone_v0(
+            &context_at(2).unwrap(),
+            &overlay,
+            &wrong_semantic_kind,
+        )
+        .expect_err("wrong validator semantic kind must precede capacity");
+        assert_eq!(
+            error
+                .downcast_ref::<PocoApplicationApplyFailureV0>()
+                .copied(),
+            Some(PocoApplicationApplyFailureV0::DeterministicallyInvalid(
+                PocoApplicationDeterministicInvalidV0::ValidatorRule,
+            )),
+        );
+        assert_eq!(overlay.authority, authority);
+        assert!(overlay.operation_ids.is_empty());
+        assert!(overlay.mutations.is_empty());
+    }
+
+    #[test]
+    fn certificate_prune_leaf_provenance_is_typed_and_non_mutating() {
+        let (context, projection, raw, operation) =
+            prune_vector_fixture("certificate_prune_replay");
+        let mut canonical =
+            PocoApplicationBlockOverlayV0::from_projection(context.clone(), &projection).unwrap();
+        canonical.apply_decoded_exact(&raw, &operation).unwrap();
+        assert_eq!(canonical.operation_count(), 1);
+
+        let mut signed_delete_drift = operation.clone();
+        signed_delete_drift.semantic_changes.pop();
+        let signed_delete_raw = serde_json::to_vec(&signed_delete_drift).unwrap();
+        let signed_delete_drift =
+            PocoApplicationOperationV0::decode_exact(&signed_delete_raw).unwrap();
+        let mut signed_block =
+            PocoApplicationBlockOverlayV0::from_projection(context.clone(), &projection).unwrap();
+        let signed_authority = signed_block.overlay.authority.clone();
+        let signed_accumulator = signed_block.overlay.accumulator;
+        assert_eq!(
+            signed_block.apply_decoded_exact(&signed_delete_raw, &signed_delete_drift),
+            Err(PocoApplicationApplyFailureV0::DeterministicallyInvalid(
+                PocoApplicationDeterministicInvalidV0::SemanticTransition,
+            )),
+        );
+        assert_eq!(signed_block.overlay.authority, signed_authority);
+        assert_eq!(signed_block.overlay.accumulator, signed_accumulator);
+        assert!(signed_block.overlay.mutations.is_empty());
+        assert_eq!(signed_block.operation_count(), 0);
+
+        let mut corrupted =
+            PocoApplicationBlockOverlayV0::from_projection(context, &projection).unwrap();
+        let settlement_change = operation
+            .semantic_changes
+            .iter()
+            .find(|change| change.kind == PocoSnapshotEntryKindV0::Settlement as u8)
+            .unwrap();
+        let logical_key = hex::decode(&settlement_change.logical_key_hex).unwrap();
+        let map_key = (PocoSnapshotEntryKindV0::Settlement, logical_key.clone());
+        let parts = owned_semantic_parts(
+            PocoSnapshotEntryKindV0::Settlement,
+            &logical_key,
+            corrupted.overlay.entries.get(&map_key).unwrap(),
+        )
+        .unwrap();
+        let mut payload = parts.payload;
+        assert_eq!(payload.len(), 73);
+        payload[64] = SettlementStateV0::FinalizedFundedUnused as u8;
+        let substituted = encode_test_semantic_envelope_v0(
+            PocoSnapshotEntryKindV0::Settlement,
+            parts.revision,
+            &parts.identity,
+            &payload,
+        );
+        corrupted.overlay.entries.insert(map_key, substituted);
+        let corrupted_authority = corrupted.overlay.authority.clone();
+        let corrupted_accumulator = corrupted.overlay.accumulator;
+        assert_eq!(
+            corrupted.apply_decoded_exact(&raw, &operation),
+            Err(PocoApplicationApplyFailureV0::Invariant(
+                PocoApplicationInvariantV0::AuthenticatedOverlay,
+            )),
+        );
+        assert_eq!(corrupted.overlay.authority, corrupted_authority);
+        assert_eq!(corrupted.overlay.accumulator, corrupted_accumulator);
+        assert!(corrupted.overlay.mutations.is_empty());
+        assert_eq!(corrupted.operation_count(), 0);
+    }
+
+    #[test]
+    fn validator_history_prune_rebinds_revoked_semantic_predecessor() {
+        let (context, projection, raw, operation) = prune_vector_fixture("validator_prune_replay");
+        let mut canonical =
+            PocoApplicationBlockOverlayV0::from_projection(context.clone(), &projection).unwrap();
+        canonical.apply_decoded_exact(&raw, &operation).unwrap();
+        assert_eq!(canonical.operation_count(), 1);
+
+        let mut corrupted =
+            PocoApplicationBlockOverlayV0::from_projection(context, &projection).unwrap();
+        let registration_change = operation
+            .semantic_changes
+            .iter()
+            .find(|change| change.kind == PocoSnapshotEntryKindV0::ValidatorRegistration as u8)
+            .unwrap();
+        let logical_key = hex::decode(&registration_change.logical_key_hex).unwrap();
+        let map_key = (
+            PocoSnapshotEntryKindV0::ValidatorRegistration,
+            logical_key.clone(),
+        );
+        let parts = owned_semantic_parts(
+            PocoSnapshotEntryKindV0::ValidatorRegistration,
+            &logical_key,
+            corrupted.overlay.entries.get(&map_key).unwrap(),
+        )
+        .unwrap();
+        let mut payload = parts.payload;
+        let state_offset = 4usize
+            .checked_add(parts.identity.len())
+            .and_then(|offset| offset.checked_add(32 + 8))
+            .unwrap();
+        assert_eq!(payload[state_offset], RegistrationStateV0::Revoked as u8);
+        payload[state_offset] = RegistrationStateV0::Active as u8;
+        let substituted = encode_test_semantic_envelope_v0(
+            PocoSnapshotEntryKindV0::ValidatorRegistration,
+            parts.revision,
+            &parts.identity,
+            &payload,
+        );
+        corrupted.overlay.entries.insert(map_key, substituted);
+        let corrupted_authority = corrupted.overlay.authority.clone();
+        let corrupted_accumulator = corrupted.overlay.accumulator;
+        assert_eq!(
+            corrupted.apply_decoded_exact(&raw, &operation),
+            Err(PocoApplicationApplyFailureV0::Invariant(
+                PocoApplicationInvariantV0::AuthenticatedOverlay,
+            )),
+        );
+        assert_eq!(corrupted.overlay.authority, corrupted_authority);
+        assert_eq!(corrupted.overlay.accumulator, corrupted_accumulator);
+        assert!(corrupted.overlay.mutations.is_empty());
+        assert_eq!(corrupted.operation_count(), 0);
     }
 
     #[test]

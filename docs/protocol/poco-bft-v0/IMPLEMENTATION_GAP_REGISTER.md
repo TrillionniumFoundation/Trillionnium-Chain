@@ -2,7 +2,7 @@
 
 Status: **release-blocking register**
 
-Last audited: 2026-08-05
+Last audited: 2026-08-09
 
 ## Recoverability-first integration reset (2026-08-08)
 
@@ -1279,9 +1279,9 @@ epoch prune, and Core transition remain open.
    invariant and preserving the exact missing-proposal reason.
    Certificate acceptance pre-clone admission now types signed certificate
    shape/proof, reservation/key/meter negative facts, nonce cap, and
-   authenticated rolling-span/counter faults. Its later execution join remains
-   an open leaf-reason slice. The reservation/certificate/consumer-key/signature
-   execution segment is now typed; nonce and later companion joins remain open.
+   authenticated rolling-span/counter faults. The reservation/certificate/
+   consumer-key/signature execution segment and every later companion join are
+   now typed.
    The nonce semantic/provider-watermark join is now also typed. The unique
    tuple and meter-policy/semantic join now separates signed tuple drift,
    deterministic meter window/task/output/cap rejection, and authenticated
@@ -1306,6 +1306,15 @@ epoch prune, and Core transition remain open.
    Validator revocation/history prune now likewise separate missing history,
    signed validator rules, retention/reference protocol rejection, and
    authenticated predecessor/reference corruption.
+   Clone-before-capacity admission now checks the first-registration identity
+   and both prune identities/targets before record deltas, binds the one active
+   kind-9 successor to the body validator identity, and rebinds history prune
+   to the exact revoked key/nonce/proof predecessor, so malformed, duplicate,
+   or missing facts cannot collapse into a cap or checked-subtraction invariant.
+   Certificate prune now types signed ID/delete-set drift, exact missing active
+   authority, retention/live-reference rejection, and authenticated settlement/
+   lifecycle companion corruption while preserving nested nullifier and
+   postcondition reasons; no unclassified certificate-prune leaf remains.
    Leaf-reason completion remains a hard
    dependency before terminal failure mapping. The success carrier still owns the open
    snapshot and unsealed overlay/scheduled lifecycle. It does not yet seal

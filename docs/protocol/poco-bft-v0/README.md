@@ -700,10 +700,10 @@ join, preserve exact missing-proposal and too-early reasons, and fail stop on
 authenticated parameters/proposal/pending-fact divergence;
 certificate acceptance now has typed pre-clone signed envelope/proof,
 reservation/key/meter negative-fact, nonce-cap, and authenticated span/counter
-admission; its later execution join remains under leaf-reason refinement;
+admission; every later execution join is now leaf-typed;
 the first acceptance execution segment now separates signed certificate/units,
 cryptographic proof, key-window, and authenticated reservation/key companion
-failures; nonce and later companion joins remain open;
+failures;
 the acceptance nonce join now separates signed next value, protocol advance/
 slot limits, and authenticated semantic/watermark divergence;
 the acceptance tuple/meter join now separates signed tuple drift, duplicate/
@@ -729,6 +729,15 @@ authenticated companion drift;
 validator revocation/history prune now separate missing history, signed
 transition/delete rules, retention/reference rejection, and authenticated
 predecessor/reference corruption;
+clone-before-capacity admission now proves first-registration identity and both
+prune targets before changing record deltas, binds one exact active kind-9
+successor to the body validator, and rebinds history prune to the exact revoked
+key/nonce/proof predecessor, preserving validator/missing-fact reasons instead
+of capacity or subtraction artifacts;
+certificate prune now separates signed ID/delete-set drift, exact missing
+certificate authority, retention/live-reference rejection, and authenticated
+settlement/lifecycle companion corruption while preserving nested nullifier and
+postcondition reasons; it has no unclassified leaf;
 unrefined leaf failures conservatively remain authenticated-overlay invariants
 without string matching. Success retains the open snapshot, decoded owner, and unsealed PoCO
 overlay or scheduled lifecycle. PoCO leaf-reason refinement, write sealing,
