@@ -672,6 +672,9 @@ accumulator-count exhaustion fails stop as a protocol-counter invariant;
 consumer-key authorize/revoke preserves nested typed failures, maps remaining
 signed shape/height/semantic faults to deterministic semantic rejection, and
 maps an authenticated negative key lookup to deterministic missing-fact;
+revocation also binds the signed logical key to the body identity, fails stop
+on a present active-predecessor/key-authority divergence, and leaves malformed
+signed revoked successors deterministic;
 consumer-key prune uses that negative-fact reason before clone, keeps signed
 delete/retention/reference rejection deterministic, and keeps authenticated
 retention arithmetic, certificate decoding, and nonce-watermark faults

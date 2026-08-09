@@ -394,7 +394,11 @@ an earlier phase.
   Consumer-key authorization/revocation now preserves existing typed failures,
   rejects untyped signed shape/height/semantic faults as `SemanticTransition`,
   and treats an authenticated negative key lookup as deterministic
-  `MissingRequiredAuthorityFact`; no error diagnostic participates.
+  `MissingRequiredAuthorityFact`. Revocation additionally binds its signed
+  logical key to the body identity, classifies a present-but-divergent active
+  semantic predecessor against the exact key authority as
+  `AuthenticatedOverlay`, and keeps signed revoked successors deterministic;
+  no error diagnostic participates.
   Consumer-key prune also rejects a missing authority record before clone as
   the same deterministic negative fact; signed identifiers/delete shape and
   retention/reference blocks are deterministic, while authenticated retention

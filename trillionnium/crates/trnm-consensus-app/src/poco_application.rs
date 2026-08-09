@@ -3993,16 +3993,25 @@ fn apply_revoke_consumer_key_v0(
     revoked_at_height: u64,
     decision_id_hex: &str,
 ) -> Result<()> {
-    ensure!(
-        revoked_at_height == context.target_height.get(),
-        "consumer-key revocation height is not the authenticated target height"
-    );
-    let consumer_id = exact_opaque_hex(consumer_id_hex)?;
-    let consumer_key_id = exact_opaque_hex(consumer_key_id_hex)?;
-    let public_key = exact_hash32_hex(public_key_hex)?;
-    ensure!(public_key != [0; 32], "zero consumer public key");
+    let signed_semantic = || {
+        deterministic_application_error_v0(
+            PocoApplicationDeterministicInvalidV0::SemanticTransition,
+        )
+    };
+    let authenticated_overlay =
+        || invariant_application_error_v0(PocoApplicationInvariantV0::AuthenticatedOverlay);
+    if revoked_at_height != context.target_height.get() {
+        return Err(signed_semantic());
+    }
+    let consumer_id = exact_opaque_hex(consumer_id_hex).map_err(|_| signed_semantic())?;
+    let consumer_key_id = exact_opaque_hex(consumer_key_id_hex).map_err(|_| signed_semantic())?;
+    let public_key = exact_hash32_hex(public_key_hex).map_err(|_| signed_semantic())?;
+    if public_key == [0; 32] {
+        return Err(signed_semantic());
+    }
     let identity = joined_identity(&[&consumer_id, &consumer_key_id]);
-    let decision = require_derived_decision_id(preimage, b"revoke-consumer-key", decision_id_hex)?;
+    let decision = require_derived_decision_id(preimage, b"revoke-consumer-key", decision_id_hex)
+        .map_err(|_| signed_semantic())?;
     let authority_index = overlay
         .authority
         .consumer_keys
@@ -4018,46 +4027,89 @@ fn apply_revoke_consumer_key_v0(
                 PocoApplicationDeterministicInvalidV0::MissingRequiredAuthorityFact,
             )
         })?;
-    let key_authority = &overlay.authority.consumer_keys[authority_index];
-    ensure!(
-        key_authority.public_key_hex == public_key_hex
-            && key_authority.active_from_height == active_from_height
-            && key_authority.revoked_at_height.is_none(),
-        "consumer-key revocation authority is substituted or terminal"
-    );
-    let changes = prepare_semantic_changes(overlay, &operation.semantic_changes, false)?;
-    ensure_change_kinds(
-        &changes,
-        &[PocoSnapshotEntryKindV0::ConsumerKeyAuthorization],
-    )?;
+    let key_authority = overlay.authority.consumer_keys[authority_index].clone();
+    let authority_public_key =
+        exact_hash32_hex(&key_authority.public_key_hex).map_err(|_| authenticated_overlay())?;
+    let [raw_change] = operation.semantic_changes.as_slice() else {
+        return Err(signed_semantic());
+    };
+    if raw_change.kind != PocoSnapshotEntryKindV0::ConsumerKeyAuthorization as u8 {
+        return Err(signed_semantic());
+    }
+    let signed_logical_key = exact_hex(
+        &raw_change.logical_key_hex,
+        32,
+        32,
+        "consumer-key revocation logical key",
+    )
+    .map_err(|_| signed_semantic())?;
+    let expected_logical_key =
+        semantic_identity_digest_v0(PocoSnapshotEntryKindV0::ConsumerKeyAuthorization, &identity);
+    if signed_logical_key != expected_logical_key {
+        return Err(signed_semantic());
+    }
+    let predecessor_value = overlay
+        .entries
+        .get(&(
+            PocoSnapshotEntryKindV0::ConsumerKeyAuthorization,
+            expected_logical_key.to_vec(),
+        ))
+        .cloned()
+        .ok_or_else(authenticated_overlay)?;
+    let predecessor = owned_semantic_parts(
+        PocoSnapshotEntryKindV0::ConsumerKeyAuthorization,
+        &expected_logical_key,
+        &predecessor_value,
+    )
+    .map_err(|_| authenticated_overlay())?;
+    if predecessor.identity != identity {
+        return Err(authenticated_overlay());
+    }
+    let (old_key, old_active, old_revoked_at) = match predecessor.fact {
+        SemanticFactV0::ConsumerKeyAuthorization {
+            public_key,
+            active_from,
+            revoked_at,
+        } => (public_key, active_from, revoked_at),
+        _ => return Err(authenticated_overlay()),
+    };
+    if old_key != authority_public_key
+        || old_active != key_authority.active_from_height
+        || old_revoked_at != key_authority.revoked_at_height
+    {
+        return Err(authenticated_overlay());
+    }
+    if public_key != authority_public_key
+        || active_from_height != key_authority.active_from_height
+        || old_revoked_at.is_some()
+    {
+        return Err(signed_semantic());
+    }
+    let changes =
+        prepare_semantic_changes(overlay, &operation.semantic_changes, false).map_err(|error| {
+            preserve_application_failure_or_deterministic_v0(
+                error,
+                PocoApplicationDeterministicInvalidV0::SemanticTransition,
+            )
+        })?;
     let change = &changes[0];
-    ensure!(
-        change.expected_value.is_some()
-            && change.expected_identity.as_deref() == Some(identity.as_slice())
-            && change.next_identity.as_deref() == Some(identity.as_slice()),
-        "consumer-key revocation is not an exact update"
-    );
-    match (change.expected_fact.as_ref(), change.next_fact.as_ref()) {
-        (
-            Some(SemanticFactV0::ConsumerKeyAuthorization {
-                public_key: old_key,
-                active_from: old_active,
-                revoked_at: None,
-            }),
-            Some(SemanticFactV0::ConsumerKeyAuthorization {
-                public_key: new_key,
-                active_from: new_active,
-                revoked_at: Some(revoked_at),
-            }),
-        ) => ensure!(
-            *old_key == public_key
-                && *new_key == public_key
-                && *old_active == active_from_height
-                && *new_active == active_from_height
-                && *revoked_at == context.target_height.get(),
-            "consumer-key revocation semantic value mismatch"
-        ),
-        _ => bail!("consumer-key revocation is terminal or has wrong semantic state"),
+    if change.expected_value.as_ref() != Some(&predecessor_value)
+        || change.expected_identity.as_deref() != Some(identity.as_slice())
+    {
+        return Err(authenticated_overlay());
+    }
+    if change.next_identity.as_deref() != Some(identity.as_slice()) {
+        return Err(signed_semantic());
+    }
+    match change.next_fact.as_ref() {
+        Some(SemanticFactV0::ConsumerKeyAuthorization {
+            public_key: new_key,
+            active_from: new_active,
+            revoked_at: Some(revoked_at),
+        }) if *new_key == public_key
+            && *new_active == active_from_height
+            && *revoked_at == context.target_height.get() => {}
+        _ => return Err(signed_semantic()),
     }
     insert_nullifiers(
         overlay,
@@ -8029,6 +8081,139 @@ mod tests {
         );
     }
 
+    fn consumer_key_semantic_payload(
+        consumer_id: &[u8],
+        consumer_key_id: &[u8],
+        public_key: [u8; 32],
+        active_from_height: u64,
+        revoked_at_height: Option<u64>,
+    ) -> Vec<u8> {
+        let mut payload = Vec::new();
+        encode_bytes(&mut payload, consumer_id);
+        encode_bytes(&mut payload, consumer_key_id);
+        payload.extend_from_slice(&public_key);
+        payload.extend_from_slice(&active_from_height.to_be_bytes());
+        match revoked_at_height {
+            Some(height) => {
+                payload.push(1);
+                payload.extend_from_slice(&height.to_be_bytes());
+            }
+            None => payload.push(0),
+        }
+        payload
+    }
+
+    fn bind_consumer_key_revocation_decision_v0(
+        context: &AuthenticatedPocoApplicationContextV0,
+        operation: &mut PocoApplicationOperationV0,
+    ) {
+        operation.nullifier_insertions.clear();
+        let preimage = decision_preimage_digest_v0(context, operation).unwrap();
+        let decision = derived_decision_id_v0(preimage, b"revoke-consumer-key");
+        let PocoApplicationOperationBodyV0::RevokeConsumerKey {
+            decision_id_hex, ..
+        } = &mut operation.body
+        else {
+            unreachable!();
+        };
+        *decision_id_hex = hex::encode(decision);
+        let key =
+            derive_poco_nullifier_key_v0(PocoNullifierFamilyV0::ConsumerKeyDecision, decision);
+        let siblings = std::array::from_fn(|level| {
+            crate::poco_nullifier::poco_nullifier_default_hash_v0(level)
+                .expect("fixed nullifier level is in range")
+        });
+        let proof = PocoNullifierProofV0::new(key, siblings);
+        operation.nullifier_insertions = vec![RawNullifierInsertionV0 {
+            family: PocoNullifierFamilyV0::ConsumerKeyDecision.code(),
+            identifier_hex: hex::encode(decision),
+            proof_hex: hex::encode(proof.canonical_bytes()),
+        }];
+    }
+
+    fn consumer_key_revocation_fixture(
+    ) -> (PocoApplicationBlockOverlayV0, PocoApplicationOperationV0) {
+        let (context, projection, _, _) = sequence_vector_fixture("consumer_key_prune_replay");
+        let mut block =
+            PocoApplicationBlockOverlayV0::from_projection(context, &projection).unwrap();
+        assert_eq!(block.overlay.authority.consumer_keys.len(), 1);
+        let key_authority = block.overlay.authority.consumer_keys[0].clone();
+        let consumer_id = exact_opaque_hex(&key_authority.consumer_id_hex).unwrap();
+        let consumer_key_id = exact_opaque_hex(&key_authority.consumer_key_id_hex).unwrap();
+        let public_key = exact_hash32_hex(&key_authority.public_key_hex).unwrap();
+        let identity = joined_identity(&[&consumer_id, &consumer_key_id]);
+        let logical_key = semantic_identity_digest_v0(
+            PocoSnapshotEntryKindV0::ConsumerKeyAuthorization,
+            &identity,
+        );
+        let map_key = (
+            PocoSnapshotEntryKindV0::ConsumerKeyAuthorization,
+            logical_key.to_vec(),
+        );
+        let current = owned_semantic_parts(
+            PocoSnapshotEntryKindV0::ConsumerKeyAuthorization,
+            &logical_key,
+            block.overlay.entries.get(&map_key).unwrap(),
+        )
+        .unwrap();
+        let active_payload = consumer_key_semantic_payload(
+            &consumer_id,
+            &consumer_key_id,
+            public_key,
+            key_authority.active_from_height,
+            None,
+        );
+        let active_value = encode_test_semantic_envelope_v0(
+            PocoSnapshotEntryKindV0::ConsumerKeyAuthorization,
+            current.revision,
+            &identity,
+            &active_payload,
+        );
+        block.overlay.entries.insert(map_key, active_value);
+        block.overlay.authority.consumer_keys[0].revoked_at_height = None;
+        block.overlay.authority.consumer_keys[0].revocation_decision_id_hex = None;
+        let empty_accumulator = PocoNullifierAccumulatorV0::empty();
+        block.overlay.accumulator = empty_accumulator;
+        block.overlay.authority.set_accumulator(empty_accumulator);
+        assert!(block.context.target_height.get() > key_authority.active_from_height);
+
+        let revoked_payload = consumer_key_semantic_payload(
+            &consumer_id,
+            &consumer_key_id,
+            public_key,
+            key_authority.active_from_height,
+            Some(block.context.target_height.get()),
+        );
+        let next_value = encode_test_semantic_envelope_v0(
+            PocoSnapshotEntryKindV0::ConsumerKeyAuthorization,
+            current.revision + 1,
+            &identity,
+            &revoked_payload,
+        );
+        let mut operation = PocoApplicationOperationV0 {
+            schema: POCO_APPLICATION_OPERATION_SCHEMA_V0.to_string(),
+            target_height: block.context.target_height.get(),
+            expected_state_revision: block.overlay.authority.revision,
+            body: PocoApplicationOperationBodyV0::RevokeConsumerKey {
+                consumer_id_hex: key_authority.consumer_id_hex,
+                consumer_key_id_hex: key_authority.consumer_key_id_hex,
+                public_key_hex: key_authority.public_key_hex,
+                active_from_height: key_authority.active_from_height,
+                revoked_at_height: block.context.target_height.get(),
+                decision_id_hex: "00".repeat(32),
+            },
+            semantic_changes: vec![RawSemanticChangeV0 {
+                kind: PocoSnapshotEntryKindV0::ConsumerKeyAuthorization as u8,
+                logical_key_hex: hex::encode(logical_key),
+                next_value_hex: Some(hex::encode(next_value)),
+            }],
+            nullifier_non_membership_checks: Vec::new(),
+            nullifier_insertions: Vec::new(),
+        };
+        bind_consumer_key_revocation_decision_v0(&block.context, &mut operation);
+        (block, operation)
+    }
+
     fn meter_policy() -> MeterAuthorityPolicyV0 {
         MeterAuthorityPolicyV0 {
             meter_id_hex: "01".to_string(),
@@ -9304,6 +9489,128 @@ mod tests {
         assert_eq!(block.operation_count(), 0);
         assert!(block.overlay.operation_ids.is_empty());
         assert!(block.overlay.mutations.is_empty());
+    }
+
+    #[test]
+    fn consumer_key_revocation_splits_authenticated_predecessor_from_signed_successor() {
+        let (mut canonical, operation) = consumer_key_revocation_fixture();
+        let raw = serde_json::to_vec(&operation).unwrap();
+        canonical.apply_decoded_exact(&raw, &operation).unwrap();
+        assert_eq!(canonical.operation_count(), 1);
+        assert_eq!(
+            canonical.overlay.authority.consumer_keys[0].revoked_at_height,
+            Some(canonical.context.target_height.get()),
+        );
+
+        let (mut corrupted, operation) = consumer_key_revocation_fixture();
+        let raw_change = &operation.semantic_changes[0];
+        let logical_key = exact_hash32_hex(&raw_change.logical_key_hex).unwrap();
+        let map_key = (
+            PocoSnapshotEntryKindV0::ConsumerKeyAuthorization,
+            logical_key.to_vec(),
+        );
+        let next_value = hex::decode(raw_change.next_value_hex.as_deref().unwrap()).unwrap();
+        let next_parts = owned_semantic_parts(
+            PocoSnapshotEntryKindV0::ConsumerKeyAuthorization,
+            &logical_key,
+            &next_value,
+        )
+        .unwrap();
+        assert!(matches!(
+            next_parts.fact,
+            SemanticFactV0::ConsumerKeyAuthorization {
+                revoked_at: Some(_),
+                ..
+            }
+        ));
+        let corrupted_predecessor = encode_test_semantic_envelope_v0(
+            PocoSnapshotEntryKindV0::ConsumerKeyAuthorization,
+            next_parts.revision - 1,
+            &next_parts.identity,
+            &next_parts.payload,
+        );
+        corrupted
+            .overlay
+            .entries
+            .insert(map_key.clone(), corrupted_predecessor);
+        let corrupted_before = corrupted.clone();
+        let raw = serde_json::to_vec(&operation).unwrap();
+        assert_eq!(
+            corrupted.apply_decoded_exact(&raw, &operation),
+            Err(PocoApplicationApplyFailureV0::Invariant(
+                PocoApplicationInvariantV0::AuthenticatedOverlay,
+            )),
+        );
+        assert_block_overlay_unchanged(&corrupted, &corrupted_before);
+
+        let (mut missing, operation) = consumer_key_revocation_fixture();
+        missing.overlay.entries.remove(&map_key);
+        let missing_before = missing.clone();
+        let raw = serde_json::to_vec(&operation).unwrap();
+        assert_eq!(
+            missing.apply_decoded_exact(&raw, &operation),
+            Err(PocoApplicationApplyFailureV0::Invariant(
+                PocoApplicationInvariantV0::AuthenticatedOverlay,
+            )),
+        );
+        assert_block_overlay_unchanged(&missing, &missing_before);
+
+        let (mut authority_corrupted, operation) = consumer_key_revocation_fixture();
+        authority_corrupted.overlay.authority.consumer_keys[0].public_key_hex = "aa".repeat(32);
+        let authority_before = authority_corrupted.clone();
+        let raw = serde_json::to_vec(&operation).unwrap();
+        assert_eq!(
+            authority_corrupted.apply_decoded_exact(&raw, &operation),
+            Err(PocoApplicationApplyFailureV0::Invariant(
+                PocoApplicationInvariantV0::AuthenticatedOverlay,
+            )),
+        );
+        assert_block_overlay_unchanged(&authority_corrupted, &authority_before);
+
+        let (mut foreign_key, mut operation) = consumer_key_revocation_fixture();
+        operation.semantic_changes[0].logical_key_hex = "ab".repeat(32);
+        bind_consumer_key_revocation_decision_v0(&foreign_key.context, &mut operation);
+        let raw = serde_json::to_vec(&operation).unwrap();
+        let foreign_key_before = foreign_key.clone();
+        assert_eq!(
+            foreign_key.apply_decoded_exact(&raw, &operation),
+            Err(PocoApplicationApplyFailureV0::DeterministicallyInvalid(
+                PocoApplicationDeterministicInvalidV0::SemanticTransition,
+            )),
+        );
+        assert_block_overlay_unchanged(&foreign_key, &foreign_key_before);
+
+        let (mut signed, mut operation) = consumer_key_revocation_fixture();
+        let active_parts = owned_semantic_parts(
+            PocoSnapshotEntryKindV0::ConsumerKeyAuthorization,
+            &logical_key,
+            signed.overlay.entries.get(&map_key).unwrap(),
+        )
+        .unwrap();
+        assert!(matches!(
+            active_parts.fact,
+            SemanticFactV0::ConsumerKeyAuthorization {
+                revoked_at: None,
+                ..
+            }
+        ));
+        let signed_active_successor = encode_test_semantic_envelope_v0(
+            PocoSnapshotEntryKindV0::ConsumerKeyAuthorization,
+            active_parts.revision + 1,
+            &active_parts.identity,
+            &active_parts.payload,
+        );
+        operation.semantic_changes[0].next_value_hex = Some(hex::encode(signed_active_successor));
+        bind_consumer_key_revocation_decision_v0(&signed.context, &mut operation);
+        let raw = serde_json::to_vec(&operation).unwrap();
+        let signed_before = signed.clone();
+        assert_eq!(
+            signed.apply_decoded_exact(&raw, &operation),
+            Err(PocoApplicationApplyFailureV0::DeterministicallyInvalid(
+                PocoApplicationDeterministicInvalidV0::SemanticTransition,
+            )),
+        );
+        assert_block_overlay_unchanged(&signed, &signed_before);
     }
 
     #[test]

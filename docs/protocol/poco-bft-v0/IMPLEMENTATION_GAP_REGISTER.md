@@ -1255,7 +1255,10 @@ epoch prune, and Core transition remain open.
    counter/epoch/retention arithmetic exhaustion is likewise invariant.
    Consumer-key authorize/revoke signed-shape failures are now deterministic,
    and a missing authenticated key companion is the distinct deterministic
-   missing-fact reason; existing typed failures pass through unchanged, so
+   missing-fact reason. Revocation binds its signed logical key to the body,
+   classifies present old semantic/key-authority divergence as an authenticated
+   invariant, and retains deterministic signed-successor rejection; existing
+   typed failures pass through unchanged, so
    consumer-key prune now shares the pre-clone negative-fact rejection and
    keeps authenticated retention/certificate/nonce failures invariant, while
    signed prune shape and temporal/reference rejection remain deterministic.
