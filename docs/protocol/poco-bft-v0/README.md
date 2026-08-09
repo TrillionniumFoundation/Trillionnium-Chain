@@ -689,8 +689,9 @@ family and defensive-total record caps; late nullifier-root verification and
 mutation occur only on the cloned candidate after those caps. Saturated and
 cap-minus-one collision tests freeze cheap-field/signed/counter rejection
 before record caps, record caps before late root rejection, and full-overlay
-rollback. The same closure now also covers fund settlement below; all remaining
-operation families still need explicit audits before terminal failure mapping.
+rollback. The same closure now also covers consumer-key authorization and fund
+settlement below; all remaining operation families still need explicit audits
+before terminal failure mapping.
 Meter prune rejects a missing authority policy as a pre-clone negative fact;
 meter retirement distinguishes signed ID/height/next-state rejection, missing or
 already-retired authority, and authenticated old-fact/authority divergence;
@@ -705,8 +706,18 @@ context/revision/replay checks remain first; signed ID/commitment/units/semantic
 preparation plus authenticated duplicate checks and insertion-count arithmetic precede reservation
 and defensive-total record caps; certificate-absence and settlement-decision
 proofs plus all mutation remain late on the cloned candidate. Saturated/cap-
-minus-one collisions freeze those boundaries and full-overlay rollback. This
-capacity-order closure is specific to `FundSettlement`;
+minus-one collisions freeze those boundaries and full-overlay rollback;
+consumer-key authorization likewise carries one prepared authority/semantic
+transition through capacity admission. Structural and exact owner/context/
+revision/replay plus cheap unsupported-field admission remain first; signed
+height/ID/key/derived-decision and exact-create semantic preparation with
+authenticated nullifier-count `+2` precede the consumer-key and defensive-total
+record caps. Both insertion proofs and all authority/semantic mutation remain
+late on the cloned candidate. Canonical H1 apply/seal plus saturated/cap-minus-
+one collisions cover signed/authenticated, proof count/family/ID/root, counter,
+structural, body/carrier and full-overlay rollback boundaries; proof-key and
+encoding faults remain decode-first. This capacity-order closure
+is limited to `DefineMeterPolicy`, `FundSettlement`, and `AuthorizeConsumerKey`;
 release settlement validates signed ID and reservation existence before clone,
 then separates signed delete shape from authenticated leaf/reservation drift;
 open challenge pre-clone admission validates signed IDs, active certificate,

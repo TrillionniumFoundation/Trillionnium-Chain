@@ -2566,11 +2566,12 @@ impl PocoApplicationBlockOverlayV0 {
         if self.overlay.operation_ids.contains(&operation_id) {
             return Err(DeterministicallyInvalid(Invalid::DuplicateOperation));
         }
-        let operation_is_define_meter = matches!(
+        let operation_has_preclone_field_admission = matches!(
             &operation.body,
-            PocoApplicationOperationBodyV0::DefineMeterPolicy { .. }
+            PocoApplicationOperationBodyV0::AuthorizeConsumerKey { .. }
+                | PocoApplicationOperationBodyV0::DefineMeterPolicy { .. }
         );
-        if operation_is_define_meter {
+        if operation_has_preclone_field_admission {
             validate_operation_field_admission_v0(operation).map_err(|error| {
                 error
                     .downcast_ref::<PocoApplicationApplyFailureV0>()
@@ -2912,8 +2913,16 @@ struct OperationRecordDeltaV0 {
 #[derive(Debug)]
 enum PreparedCapacityOperationV0 {
     Deferred,
+    AuthorizeConsumerKey(Box<PreparedAuthorizeConsumerKeyV0>),
     DefineMeter(Box<PreparedDefineMeterV0>),
     FundSettlement(Box<PreparedFundSettlementV0>),
+}
+
+#[derive(Debug)]
+struct PreparedAuthorizeConsumerKeyV0 {
+    authority: ConsumerKeyAuthorityV0,
+    expected_nullifiers: [(PocoNullifierFamilyV0, [u8; 32]); 2],
+    changes: Vec<PreparedSemanticChangeV0>,
 }
 
 #[derive(Debug)]
@@ -3112,7 +3121,32 @@ fn validate_operation_capacity_before_clone_v0(
     let mut delta = OperationRecordDeltaV0::default();
     let mut prepared = PreparedCapacityOperationV0::Deferred;
     match &operation.body {
-        PocoApplicationOperationBodyV0::AuthorizeConsumerKey { .. } => {
+        PocoApplicationOperationBodyV0::AuthorizeConsumerKey {
+            consumer_id_hex,
+            consumer_key_id_hex,
+            public_key_hex,
+            active_from_height,
+            decision_id_hex,
+        } => {
+            prepared = PreparedCapacityOperationV0::AuthorizeConsumerKey(Box::new(
+                prepare_authorize_consumer_key_v0(
+                    context,
+                    overlay,
+                    operation,
+                    decision_preimage,
+                    consumer_id_hex,
+                    consumer_key_id_hex,
+                    public_key_hex,
+                    *active_from_height,
+                    decision_id_hex,
+                )
+                .map_err(|error| {
+                    preserve_application_failure_or_deterministic_v0(
+                        error,
+                        PocoApplicationDeterministicInvalidV0::SemanticTransition,
+                    )
+                })?,
+            ));
             delta.consumer_keys_added = 1;
         }
         PocoApplicationOperationBodyV0::PruneRevokedConsumerKey {
@@ -3815,56 +3849,55 @@ fn apply_operation_v0(
     decision_preimage: [u8; 32],
     prepared: PreparedCapacityOperationV0,
 ) -> Result<()> {
-    let operation_is_define_meter = matches!(
-        &operation.body,
-        PocoApplicationOperationBodyV0::DefineMeterPolicy { .. }
-    );
-    let operation_is_fund_settlement = matches!(
-        &operation.body,
-        PocoApplicationOperationBodyV0::FundSettlement { .. }
-    );
-    let prepared_is_define_meter = matches!(&prepared, PreparedCapacityOperationV0::DefineMeter(_));
-    let prepared_is_fund_settlement =
-        matches!(&prepared, PreparedCapacityOperationV0::FundSettlement(_));
-    if operation_is_define_meter != prepared_is_define_meter
-        || operation_is_fund_settlement != prepared_is_fund_settlement
-    {
+    let expected_prepared_tag = match &operation.body {
+        PocoApplicationOperationBodyV0::AuthorizeConsumerKey { .. } => 1,
+        PocoApplicationOperationBodyV0::DefineMeterPolicy { .. } => 2,
+        PocoApplicationOperationBodyV0::FundSettlement { .. } => 3,
+        _ => 0,
+    };
+    let actual_prepared_tag = match &prepared {
+        PreparedCapacityOperationV0::Deferred => 0,
+        PreparedCapacityOperationV0::AuthorizeConsumerKey(_) => 1,
+        PreparedCapacityOperationV0::DefineMeter(_) => 2,
+        PreparedCapacityOperationV0::FundSettlement(_) => 3,
+    };
+    if expected_prepared_tag != actual_prepared_tag {
         return Err(invariant_application_error_v0(
             PocoApplicationInvariantV0::DerivedMutationPostcondition,
         ));
     }
-    if !operation_is_define_meter {
+    let field_admission_was_preclone = matches!(
+        &operation.body,
+        PocoApplicationOperationBodyV0::AuthorizeConsumerKey { .. }
+            | PocoApplicationOperationBodyV0::DefineMeterPolicy { .. }
+    );
+    if !field_admission_was_preclone {
         validate_operation_field_admission_v0(operation)?;
     }
-    let (mut prepared_define_meter, mut prepared_fund_settlement) = match prepared {
-        PreparedCapacityOperationV0::Deferred => (None, None),
-        PreparedCapacityOperationV0::DefineMeter(prepared) => (Some(*prepared), None),
-        PreparedCapacityOperationV0::FundSettlement(prepared) => (None, Some(*prepared)),
+    let (
+        mut prepared_authorize_consumer_key,
+        mut prepared_define_meter,
+        mut prepared_fund_settlement,
+    ) = match prepared {
+        PreparedCapacityOperationV0::Deferred => (None, None, None),
+        PreparedCapacityOperationV0::AuthorizeConsumerKey(prepared) => {
+            (Some(*prepared), None, None)
+        }
+        PreparedCapacityOperationV0::DefineMeter(prepared) => (None, Some(*prepared), None),
+        PreparedCapacityOperationV0::FundSettlement(prepared) => (None, None, Some(*prepared)),
     };
     match &operation.body {
-        PocoApplicationOperationBodyV0::AuthorizeConsumerKey {
-            consumer_id_hex,
-            consumer_key_id_hex,
-            public_key_hex,
-            active_from_height,
-            decision_id_hex,
-        } => apply_authorize_consumer_key_v0(
-            context,
-            overlay,
-            operation,
-            decision_preimage,
-            consumer_id_hex,
-            consumer_key_id_hex,
-            public_key_hex,
-            *active_from_height,
-            decision_id_hex,
-        )
-        .map_err(|error| {
-            preserve_application_failure_or_deterministic_v0(
-                error,
-                PocoApplicationDeterministicInvalidV0::SemanticTransition,
+        PocoApplicationOperationBodyV0::AuthorizeConsumerKey { .. } => {
+            apply_prepared_authorize_consumer_key_v0(
+                overlay,
+                operation,
+                prepared_authorize_consumer_key.take().ok_or_else(|| {
+                    invariant_application_error_v0(
+                        PocoApplicationInvariantV0::DerivedMutationPostcondition,
+                    )
+                })?,
             )
-        }),
+        }
         PocoApplicationOperationBodyV0::RevokeConsumerKey {
             consumer_id_hex,
             consumer_key_id_hex,
@@ -4110,9 +4143,9 @@ fn apply_operation_v0(
 }
 
 #[allow(clippy::too_many_arguments)]
-fn apply_authorize_consumer_key_v0(
+fn prepare_authorize_consumer_key_v0(
     context: &AuthenticatedPocoApplicationContextV0,
-    overlay: &mut PocoApplicationOverlayV0,
+    overlay: &PocoApplicationOverlayV0,
     operation: &PocoApplicationOperationV0,
     preimage: [u8; 32],
     consumer_id_hex: &str,
@@ -4120,7 +4153,7 @@ fn apply_authorize_consumer_key_v0(
     public_key_hex: &str,
     active_from_height: u64,
     decision_id_hex: &str,
-) -> Result<()> {
+) -> Result<PreparedAuthorizeConsumerKeyV0> {
     ensure!(
         active_from_height == context.target_height.get(),
         "consumer-key activation height is not the authenticated target height"
@@ -4156,10 +4189,21 @@ fn apply_authorize_consumer_key_v0(
         ),
         _ => bail!("authorize-consumer-key operation lacks exact key semantic fact"),
     }
-    insert_nullifiers(
-        overlay,
-        &operation.nullifier_insertions,
-        &[
+    overlay.accumulator.count().checked_add(2).ok_or_else(|| {
+        invariant_application_error_v0(PocoApplicationInvariantV0::ProtocolCounterExhausted)
+    })?;
+    Ok(PreparedAuthorizeConsumerKeyV0 {
+        authority: ConsumerKeyAuthorityV0 {
+            consumer_id_hex: consumer_id_hex.to_string(),
+            consumer_key_id_hex: consumer_key_id_hex.to_string(),
+            public_key_hex: public_key_hex.to_string(),
+            active_from_height,
+            authorization_decision_id_hex: decision_id_hex.to_string(),
+            revoked_at_height: None,
+            revocation_decision_id_hex: None,
+            nonce_watermarks: Vec::new(),
+        },
+        expected_nullifiers: [
             (PocoNullifierFamilyV0::ConsumerKeyDecision, decision),
             (
                 PocoNullifierFamilyV0::ConsumerKeyIdentity,
@@ -4169,25 +4213,26 @@ fn apply_authorize_consumer_key_v0(
                 ),
             ),
         ],
+        changes,
+    })
+}
+
+fn apply_prepared_authorize_consumer_key_v0(
+    overlay: &mut PocoApplicationOverlayV0,
+    operation: &PocoApplicationOperationV0,
+    prepared: PreparedAuthorizeConsumerKeyV0,
+) -> Result<()> {
+    insert_nullifiers(
+        overlay,
+        &operation.nullifier_insertions,
+        &prepared.expected_nullifiers,
     )?;
-    overlay
-        .authority
-        .consumer_keys
-        .push(ConsumerKeyAuthorityV0 {
-            consumer_id_hex: consumer_id_hex.to_string(),
-            consumer_key_id_hex: consumer_key_id_hex.to_string(),
-            public_key_hex: public_key_hex.to_string(),
-            active_from_height,
-            authorization_decision_id_hex: decision_id_hex.to_string(),
-            revoked_at_height: None,
-            revocation_decision_id_hex: None,
-            nonce_watermarks: Vec::new(),
-        });
+    overlay.authority.consumer_keys.push(prepared.authority);
     overlay.authority.consumer_keys.sort_by(|left, right| {
         (&left.consumer_id_hex, &left.consumer_key_id_hex)
             .cmp(&(&right.consumer_id_hex, &right.consumer_key_id_hex))
     });
-    apply_prepared_changes(overlay, changes, false)
+    apply_prepared_changes(overlay, prepared.changes, false)
 }
 
 #[allow(clippy::too_many_arguments)]
@@ -8552,6 +8597,31 @@ mod tests {
         (block, operation)
     }
 
+    fn authorize_consumer_key_capacity_fixture(
+        consumer_key_count: usize,
+    ) -> (PocoApplicationBlockOverlayV0, PocoApplicationOperationV0) {
+        let (context, projection, _, operation) =
+            sequence_vector_fixture("certificate_challenge_rejected");
+        let PocoApplicationOperationBodyV0::AuthorizeConsumerKey {
+            consumer_id_hex,
+            consumer_key_id_hex,
+            ..
+        } = &operation.body
+        else {
+            unreachable!();
+        };
+        let mut block =
+            PocoApplicationBlockOverlayV0::from_projection(context, &projection).unwrap();
+        let mut consumer_keys = max_capacity_authority_state().consumer_keys;
+        consumer_keys.truncate(consumer_key_count);
+        assert!(consumer_keys.iter().all(|authority| {
+            authority.consumer_id_hex != *consumer_id_hex
+                || authority.consumer_key_id_hex != *consumer_key_id_hex
+        }));
+        block.overlay.authority.consumer_keys = consumer_keys;
+        (block, operation)
+    }
+
     fn fund_settlement_capacity_fixture(
         reservation_count: usize,
     ) -> (PocoApplicationBlockOverlayV0, PocoApplicationOperationV0) {
@@ -9394,6 +9464,367 @@ mod tests {
         assert_eq!(block.operation_count(), 0);
         assert!(block.overlay.operation_ids.is_empty());
         assert!(block.overlay.mutations.is_empty());
+    }
+
+    #[test]
+    fn authorize_consumer_key_preparation_freezes_capacity_and_late_proof_priority() {
+        use PocoApplicationApplyFailureV0::{DeterministicallyInvalid, Invariant};
+        use PocoApplicationDeterministicInvalidV0 as Invalid;
+        use PocoApplicationInvariantV0 as InvariantReason;
+
+        let (mut canonical, operation) = authorize_consumer_key_capacity_fixture(0);
+        let raw = serde_json::to_vec(&operation).unwrap();
+        canonical.apply_decoded_exact(&raw, &operation).unwrap();
+        assert_eq!(canonical.operation_count(), 1);
+        let sealed = canonical.seal().unwrap();
+        assert_eq!(sealed.operation_count, 1);
+
+        let (mut saturated, operation) =
+            authorize_consumer_key_capacity_fixture(MAX_CONSUMER_KEY_AUTHORITIES);
+        let raw = serde_json::to_vec(&operation).unwrap();
+        let before = saturated.clone();
+        assert_eq!(
+            saturated.apply_decoded_exact(&raw, &operation),
+            Err(DeterministicallyInvalid(Invalid::ProtocolWindowOrCap)),
+        );
+        assert_block_overlay_unchanged(&saturated, &before);
+
+        let (mut bad_height, mut bad_height_operation) =
+            authorize_consumer_key_capacity_fixture(MAX_CONSUMER_KEY_AUTHORITIES);
+        let PocoApplicationOperationBodyV0::AuthorizeConsumerKey {
+            active_from_height, ..
+        } = &mut bad_height_operation.body
+        else {
+            unreachable!();
+        };
+        *active_from_height = bad_height.context.target_height.get() + 1;
+        let bad_height_raw = serde_json::to_vec(&bad_height_operation).unwrap();
+        let before = bad_height.clone();
+        assert_eq!(
+            bad_height.apply_decoded_exact(&bad_height_raw, &bad_height_operation),
+            Err(DeterministicallyInvalid(Invalid::SemanticTransition)),
+        );
+        assert_block_overlay_unchanged(&bad_height, &before);
+
+        let (mut zero_key, mut zero_key_operation) =
+            authorize_consumer_key_capacity_fixture(MAX_CONSUMER_KEY_AUTHORITIES);
+        let PocoApplicationOperationBodyV0::AuthorizeConsumerKey { public_key_hex, .. } =
+            &mut zero_key_operation.body
+        else {
+            unreachable!();
+        };
+        *public_key_hex = "00".repeat(32);
+        let zero_key_raw = serde_json::to_vec(&zero_key_operation).unwrap();
+        let before = zero_key.clone();
+        assert_eq!(
+            zero_key.apply_decoded_exact(&zero_key_raw, &zero_key_operation),
+            Err(DeterministicallyInvalid(Invalid::SemanticTransition)),
+        );
+        assert_block_overlay_unchanged(&zero_key, &before);
+
+        let (mut wrong_decision, mut wrong_decision_operation) =
+            authorize_consumer_key_capacity_fixture(MAX_CONSUMER_KEY_AUTHORITIES);
+        let PocoApplicationOperationBodyV0::AuthorizeConsumerKey {
+            decision_id_hex, ..
+        } = &mut wrong_decision_operation.body
+        else {
+            unreachable!();
+        };
+        *decision_id_hex = "ee".repeat(32);
+        let wrong_decision_raw = serde_json::to_vec(&wrong_decision_operation).unwrap();
+        let before = wrong_decision.clone();
+        assert_eq!(
+            wrong_decision.apply_decoded_exact(&wrong_decision_raw, &wrong_decision_operation),
+            Err(DeterministicallyInvalid(Invalid::SemanticTransition)),
+        );
+        assert_block_overlay_unchanged(&wrong_decision, &before);
+
+        let (mut unsupported_field, mut unsupported_field_operation) =
+            authorize_consumer_key_capacity_fixture(MAX_CONSUMER_KEY_AUTHORITIES);
+        let PocoApplicationOperationBodyV0::AuthorizeConsumerKey {
+            active_from_height, ..
+        } = &mut unsupported_field_operation.body
+        else {
+            unreachable!();
+        };
+        *active_from_height = unsupported_field.context.target_height.get() + 1;
+        unsupported_field_operation.nullifier_non_membership_checks =
+            vec![unsupported_field_operation.nullifier_insertions[0].clone()];
+        let unsupported_field_raw = serde_json::to_vec(&unsupported_field_operation).unwrap();
+        PocoApplicationOperationV0::decode_exact(&unsupported_field_raw).unwrap();
+        let before = unsupported_field.clone();
+        assert_eq!(
+            unsupported_field
+                .apply_decoded_exact(&unsupported_field_raw, &unsupported_field_operation),
+            Err(DeterministicallyInvalid(Invalid::NullifierProof)),
+        );
+        assert_block_overlay_unchanged(&unsupported_field, &before);
+
+        let (mut corrupted_semantic, corrupted_semantic_operation) =
+            authorize_consumer_key_capacity_fixture(MAX_CONSUMER_KEY_AUTHORITIES);
+        let raw_change = &corrupted_semantic_operation.semantic_changes[0];
+        let kind = PocoSnapshotEntryKindV0::from_u8(raw_change.kind).unwrap();
+        let logical_key = exact_hash32_hex(&raw_change.logical_key_hex).unwrap();
+        corrupted_semantic
+            .overlay
+            .entries
+            .insert((kind, logical_key.to_vec()), vec![0xff]);
+        let corrupted_semantic_raw = serde_json::to_vec(&corrupted_semantic_operation).unwrap();
+        let before = corrupted_semantic.clone();
+        assert_eq!(
+            corrupted_semantic
+                .apply_decoded_exact(&corrupted_semantic_raw, &corrupted_semantic_operation),
+            Err(Invariant(InvariantReason::AuthenticatedOverlay)),
+        );
+        assert_block_overlay_unchanged(&corrupted_semantic, &before);
+
+        for count in [u64::MAX - 1, u64::MAX] {
+            let (mut exhausted, operation) =
+                authorize_consumer_key_capacity_fixture(MAX_CONSUMER_KEY_AUTHORITIES);
+            exhausted.overlay.accumulator =
+                PocoNullifierAccumulatorV0::from_authenticated_parts([2; 32], count).unwrap();
+            exhausted
+                .overlay
+                .authority
+                .set_accumulator(exhausted.overlay.accumulator);
+            let raw = serde_json::to_vec(&operation).unwrap();
+            let before = exhausted.clone();
+            assert_eq!(
+                exhausted.apply_decoded_exact(&raw, &operation),
+                Err(Invariant(InvariantReason::ProtocolCounterExhausted)),
+            );
+            assert_block_overlay_unchanged(&exhausted, &before);
+        }
+
+        let (mut counter_boundary, operation) =
+            authorize_consumer_key_capacity_fixture(MAX_CONSUMER_KEY_AUTHORITIES);
+        counter_boundary.overlay.accumulator =
+            PocoNullifierAccumulatorV0::from_authenticated_parts([2; 32], u64::MAX - 2).unwrap();
+        counter_boundary
+            .overlay
+            .authority
+            .set_accumulator(counter_boundary.overlay.accumulator);
+        let raw = serde_json::to_vec(&operation).unwrap();
+        let before = counter_boundary.clone();
+        assert_eq!(
+            counter_boundary.apply_decoded_exact(&raw, &operation),
+            Err(DeterministicallyInvalid(Invalid::ProtocolWindowOrCap)),
+        );
+        assert_block_overlay_unchanged(&counter_boundary, &before);
+
+        let (mut saturated_bad_shape, mut bad_shape_operation) =
+            authorize_consumer_key_capacity_fixture(MAX_CONSUMER_KEY_AUTHORITIES);
+        bad_shape_operation.nullifier_insertions.pop();
+        let bad_shape_raw = serde_json::to_vec(&bad_shape_operation).unwrap();
+        PocoApplicationOperationV0::decode_exact(&bad_shape_raw).unwrap();
+        let before = saturated_bad_shape.clone();
+        assert_eq!(
+            saturated_bad_shape.apply_decoded_exact(&bad_shape_raw, &bad_shape_operation),
+            Err(DeterministicallyInvalid(Invalid::ProtocolWindowOrCap)),
+        );
+        assert_block_overlay_unchanged(&saturated_bad_shape, &before);
+
+        let (mut below_cap_bad_shape, mut bad_shape_operation) =
+            authorize_consumer_key_capacity_fixture(MAX_CONSUMER_KEY_AUTHORITIES - 1);
+        bad_shape_operation.nullifier_insertions.pop();
+        let bad_shape_raw = serde_json::to_vec(&bad_shape_operation).unwrap();
+        let before = below_cap_bad_shape.clone();
+        assert_eq!(
+            below_cap_bad_shape.apply_decoded_exact(&bad_shape_raw, &bad_shape_operation),
+            Err(DeterministicallyInvalid(Invalid::NullifierProof)),
+        );
+        assert_block_overlay_unchanged(&below_cap_bad_shape, &before);
+
+        for subject_fault in 0..2 {
+            let mutate_subject = |operation: &mut PocoApplicationOperationV0| {
+                let raw = &mut operation.nullifier_insertions[0];
+                match subject_fault {
+                    0 => raw.identifier_hex = "ab".repeat(32),
+                    1 => raw.family = PocoNullifierFamilyV0::MeterDecision.code(),
+                    _ => unreachable!(),
+                }
+                let family = PocoNullifierFamilyV0::from_u8(raw.family).unwrap();
+                let identifier = exact_hash32_hex(&raw.identifier_hex).unwrap();
+                let key = derive_poco_nullifier_key_v0(family, identifier);
+                raw.proof_hex = hex::encode(
+                    PocoNullifierProofV0::new(key, [[0x55; 32]; 256]).canonical_bytes(),
+                );
+            };
+
+            let (mut saturated_bad_subject, mut bad_subject_operation) =
+                authorize_consumer_key_capacity_fixture(MAX_CONSUMER_KEY_AUTHORITIES);
+            mutate_subject(&mut bad_subject_operation);
+            let bad_subject_raw = serde_json::to_vec(&bad_subject_operation).unwrap();
+            PocoApplicationOperationV0::decode_exact(&bad_subject_raw).unwrap();
+            let before = saturated_bad_subject.clone();
+            assert_eq!(
+                saturated_bad_subject.apply_decoded_exact(&bad_subject_raw, &bad_subject_operation),
+                Err(DeterministicallyInvalid(Invalid::ProtocolWindowOrCap)),
+            );
+            assert_block_overlay_unchanged(&saturated_bad_subject, &before);
+
+            let (mut below_cap_bad_subject, mut bad_subject_operation) =
+                authorize_consumer_key_capacity_fixture(MAX_CONSUMER_KEY_AUTHORITIES - 1);
+            mutate_subject(&mut bad_subject_operation);
+            let bad_subject_raw = serde_json::to_vec(&bad_subject_operation).unwrap();
+            PocoApplicationOperationV0::decode_exact(&bad_subject_raw).unwrap();
+            let before = below_cap_bad_subject.clone();
+            assert_eq!(
+                below_cap_bad_subject.apply_decoded_exact(&bad_subject_raw, &bad_subject_operation),
+                Err(DeterministicallyInvalid(Invalid::NullifierProof)),
+            );
+            assert_block_overlay_unchanged(&below_cap_bad_subject, &before);
+        }
+
+        for decode_fault in 0..2 {
+            let (_, mut decode_fault_operation) = authorize_consumer_key_capacity_fixture(0);
+            let raw = &mut decode_fault_operation.nullifier_insertions[0];
+            match decode_fault {
+                0 => {
+                    raw.proof_hex = hex::encode(
+                        PocoNullifierProofV0::new([0x44; 32], [[0x55; 32]; 256]).canonical_bytes(),
+                    );
+                }
+                1 => raw.proof_hex = "00".to_string(),
+                _ => unreachable!(),
+            }
+            let decode_fault_raw = serde_json::to_vec(&decode_fault_operation).unwrap();
+            assert!(PocoApplicationOperationV0::decode_exact(&decode_fault_raw).is_err());
+        }
+
+        for insertion_index in 0..2 {
+            let (mut saturated_bad_root, mut bad_root_operation) =
+                authorize_consumer_key_capacity_fixture(MAX_CONSUMER_KEY_AUTHORITIES);
+            poison_raw_nullifier_roots_v0(
+                &mut bad_root_operation.nullifier_insertions[insertion_index..=insertion_index],
+            );
+            let bad_root_raw = serde_json::to_vec(&bad_root_operation).unwrap();
+            PocoApplicationOperationV0::decode_exact(&bad_root_raw).unwrap();
+            let before = saturated_bad_root.clone();
+            assert_eq!(
+                saturated_bad_root.apply_decoded_exact(&bad_root_raw, &bad_root_operation),
+                Err(DeterministicallyInvalid(Invalid::ProtocolWindowOrCap)),
+            );
+            assert_block_overlay_unchanged(&saturated_bad_root, &before);
+
+            let (mut below_cap_bad_root, mut bad_root_operation) =
+                authorize_consumer_key_capacity_fixture(MAX_CONSUMER_KEY_AUTHORITIES - 1);
+            poison_raw_nullifier_roots_v0(
+                &mut bad_root_operation.nullifier_insertions[insertion_index..=insertion_index],
+            );
+            let bad_root_raw = serde_json::to_vec(&bad_root_operation).unwrap();
+            let before = below_cap_bad_root.clone();
+            assert_eq!(
+                below_cap_bad_root.apply_decoded_exact(&bad_root_raw, &bad_root_operation),
+                Err(DeterministicallyInvalid(
+                    Invalid::NullifierNonMembershipRootMismatch,
+                )),
+            );
+            assert_block_overlay_unchanged(&below_cap_bad_root, &before);
+        }
+
+        let (mut below_cap, operation) =
+            authorize_consumer_key_capacity_fixture(MAX_CONSUMER_KEY_AUTHORITIES - 1);
+        let accumulator_count_before = below_cap.overlay.accumulator.count();
+        let raw = serde_json::to_vec(&operation).unwrap();
+        below_cap.apply_decoded_exact(&raw, &operation).unwrap();
+        assert_eq!(below_cap.operation_count(), 1);
+        assert_eq!(
+            below_cap.overlay.authority.consumer_keys.len(),
+            MAX_CONSUMER_KEY_AUTHORITIES,
+        );
+        assert_eq!(
+            below_cap.overlay.accumulator.count(),
+            accumulator_count_before + 2,
+        );
+        assert!(below_cap
+            .overlay
+            .authority
+            .consumer_keys
+            .windows(2)
+            .all(|pair| {
+                (&pair[0].consumer_id_hex, &pair[0].consumer_key_id_hex)
+                    < (&pair[1].consumer_id_hex, &pair[1].consumer_key_id_hex)
+            }));
+        assert!(below_cap.overlay.mutations.values().any(|mutation| {
+            mutation.kind == PocoSnapshotEntryKindV0::ConsumerKeyAuthorization
+        }));
+
+        let (mut operation_full, mut malformed_operation) =
+            authorize_consumer_key_capacity_fixture(MAX_CONSUMER_KEY_AUTHORITIES);
+        let PocoApplicationOperationBodyV0::AuthorizeConsumerKey {
+            active_from_height, ..
+        } = &mut malformed_operation.body
+        else {
+            unreachable!();
+        };
+        *active_from_height = operation_full.context.target_height.get() + 1;
+        let malformed_raw = serde_json::to_vec(&malformed_operation).unwrap();
+        operation_full.raw_operations = vec![Vec::new(); MAX_APPLICATION_OPERATIONS_PER_BLOCK];
+        let before = operation_full.clone();
+        assert_eq!(
+            operation_full.apply_decoded_exact(&malformed_raw, &malformed_operation),
+            Err(DeterministicallyInvalid(Invalid::PerBlockCapacity)),
+        );
+        assert_block_overlay_unchanged(&operation_full, &before);
+
+        let (mut byte_full, mut malformed_operation) =
+            authorize_consumer_key_capacity_fixture(MAX_CONSUMER_KEY_AUTHORITIES);
+        let PocoApplicationOperationBodyV0::AuthorizeConsumerKey {
+            active_from_height, ..
+        } = &mut malformed_operation.body
+        else {
+            unreachable!();
+        };
+        *active_from_height = byte_full.context.target_height.get() + 1;
+        let malformed_raw = serde_json::to_vec(&malformed_operation).unwrap();
+        byte_full.aggregate_operation_bytes = MAX_POCO_SNAPSHOT_BUNDLE_BYTES;
+        let before = byte_full.clone();
+        assert_eq!(
+            byte_full.apply_decoded_exact(&malformed_raw, &malformed_operation),
+            Err(DeterministicallyInvalid(Invalid::PerBlockCapacity)),
+        );
+        assert_block_overlay_unchanged(&byte_full, &before);
+
+        let (tag_block, operation) = authorize_consumer_key_capacity_fixture(0);
+        let decision_preimage =
+            decision_preimage_digest_v0(&tag_block.context, &operation).unwrap();
+        let prepared = validate_operation_capacity_before_clone_v0(
+            &tag_block.context,
+            &tag_block.overlay,
+            &operation,
+            decision_preimage,
+        )
+        .unwrap();
+        let mut mismatched_operation = operation;
+        mismatched_operation.body = PocoApplicationOperationBodyV0::PruneExpiredCertificate {
+            certificate_id_hex: "11".repeat(32),
+        };
+        let mut candidate = tag_block.overlay.clone();
+        let before = candidate.clone();
+        let error = apply_operation_v0(
+            &tag_block.context,
+            &mut candidate,
+            &mismatched_operation,
+            decision_preimage,
+            prepared,
+        )
+        .unwrap_err();
+        assert_eq!(
+            error
+                .downcast_ref::<PocoApplicationApplyFailureV0>()
+                .copied(),
+            Some(Invariant(InvariantReason::DerivedMutationPostcondition)),
+        );
+        assert_eq!(candidate.entries, before.entries);
+        assert_eq!(
+            candidate.source_authority_value,
+            before.source_authority_value
+        );
+        assert_eq!(candidate.authority, before.authority);
+        assert_eq!(candidate.accumulator, before.accumulator);
+        assert!(candidate.mutations.is_empty());
+        assert!(candidate.operation_ids.is_empty());
     }
 
     #[test]

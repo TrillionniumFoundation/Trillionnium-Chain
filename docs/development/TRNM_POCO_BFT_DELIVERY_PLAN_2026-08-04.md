@@ -439,8 +439,20 @@ an earlier phase.
   mutation. Saturated/cap-minus-one collisions cover malformed signed state,
   authenticated duplicates, foreign semantic keys, counter exhaustion, wrong
   roots, structural priority, success at the exact family boundary, and full-
-  overlay rollback. This closure is limited to `FundSettlement`; the remaining
-  operation families stay audit-open.
+  overlay rollback. `AuthorizeConsumerKey` now likewise carries one prepared
+  authority/semantic transition through capacity admission and execution. Its
+  frozen order is structural and exact owner/context/revision/replay admission,
+  cheap unsupported-field rejection, signed height/ID/key/derived-decision and
+  exact-create semantic preparation plus authenticated nullifier-count `+2`,
+  consumer-key/defensive-total record caps, then clone-and-swap with both
+  nullifier proofs and all mutation late. The canonical H1 vector still applies
+  and seals, while saturated/cap-minus-one collisions cover signed and
+  authenticated faults, cap-versus-late proof count/family/ID/root faults, structural
+  priority, counter exhaustion, exact-boundary success, body/carrier mismatch,
+  and full-overlay rollback; raw proof-key/encoding faults remain
+  decode-first. This capacity-order closure now covers
+  `DefineMeterPolicy`, `FundSettlement`, and `AuthorizeConsumerKey`; the
+  remaining operation families stay audit-open.
   `ReleaseSettlement` now validates its signed certificate ID and reservation
   negative fact before clone, preserves nested typed failures, treats a signed
   non-delete as `SemanticTransition`, and treats authenticated settlement-leaf/
