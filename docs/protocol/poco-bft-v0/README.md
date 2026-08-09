@@ -749,10 +749,22 @@ at cap even with later PoP/field/counter/proof faults, while the fourth from
 three succeeds, advances the count by two, remains sorted, and seals. H22's two
 changed/new canonical operations remain the frozen shared-vector witness, not
 the cap witness; raw nullifier proof-key and encoding faults remain decode-
-first. Capacity-order closure is now limited to `DefineMeterPolicy`,
-`FundSettlement`,
-`AuthorizeConsumerKey`, `OpenChallenge`, and `RegisterFutureCandidate`; every
-other family stays audit-open before terminal failure mapping;
+first. Validator registration now also has a closed capacity order: exact
+validator-ID/history absence and one canonical active kind-9 create bound to
+the body identity and a fresh key retain their frozen pre-cap priority. That
+admission exact-decodes the embedded PoP structure but does not verify its
+signature; the schema's cryptographic-work boundary here covers strict
+Ed25519 and SMT proof verification. History/defensive-total record caps then
+precede accumulator count `+2`, epoch/decision/CAS/strict-PoP preparation, and
+one prepared history record. Clone-and-swap retains only one identity-absence
+proof, two chained insertion proofs, and history/semantic mutation. Four real
+active-epoch registrations authored from authenticated epoch-zero state freeze
+the 4-to-5 cap and sealable 3-to-4 boundary. H1 and register/rotate vectors stay
+unchanged; rotation retains its deferred update path. Capacity-order closure
+is now limited to `DefineMeterPolicy`, `FundSettlement`,
+`AuthorizeConsumerKey`, `OpenChallenge`, `RegisterFutureCandidate`, and
+`RegisterValidator`; every other family stays audit-open before terminal
+failure mapping;
 resolve challenge types its pending/certificate join before clone, preserves
 the exact not-pending reason, and splits signed next resolution from
 authenticated pending/old-lifecycle drift;
@@ -786,7 +798,9 @@ insertion position before mutation;
 validator registration/rotation now types pre-clone semantic/key admission and
 the history join, preserving exact active-key/missing-history reasons while
 separating signed validator rules, PoP rejection, protocol references, and
-authenticated companion drift;
+authenticated companion drift; first registration additionally carries one
+prepared history/create transition across clone after record caps, while
+rotation remains on its deferred audit-open update path;
 validator revocation/history prune now separate missing history, signed
 transition/delete rules, retention/reference rejection, and authenticated
 predecessor/reference corruption;

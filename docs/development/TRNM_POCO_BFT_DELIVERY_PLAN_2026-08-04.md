@@ -489,10 +489,28 @@ an earlier phase.
   two, stays sorted, and seals. The frozen H22 vector remains its two-operation
   changed/new canonical witness, not the four-record cap witness. Raw
   nullifier proof-key and encoding faults remain decode-first. Capacity-order
-  closure now covers
-  `DefineMeterPolicy`, `FundSettlement`, `AuthorizeConsumerKey`,
-  `OpenChallenge`, and `RegisterFutureCandidate`; all other families remain
-  audit-open before terminal failure mapping.
+  closure now also covers `RegisterValidator`. Its frozen pre-cap admission
+  remains exact validator ID/history absence plus one canonical active kind-9
+  create bound to the body identity and a globally fresh consensus key. That
+  admission exact-decodes the embedded PoP structure but performs no signature
+  or sparse-tree verification; for this family, the schema's cryptographic-
+  work boundary therefore means strict Ed25519 and SMT proof verification,
+  while the already-frozen canonical semantic admission remains earlier.
+  Validator-history/defensive-total record caps then precede accumulator count
+  `+2`, active epoch and derived decision, full semantic CAS preparation,
+  strict PoP verification, and construction of one prepared history record.
+  Clone-and-swap retains only the validator-identity absence proof, two chained
+  insertion proofs, and history/semantic mutation. A test-only authoring path
+  applies four distinct active-epoch registrations against authenticated
+  epoch-zero state: the fifth loses to the record cap over later counter,
+  signed-crypto, and proof faults; the fourth from three advances count by two,
+  stays sorted, installs its kind-9 companion, and seals. The frozen H1 and
+  register/rotate shared vectors remain byte-identical; `RotateValidator`
+  deliberately retains its separate deferred update path. Capacity-order
+  closure now covers `DefineMeterPolicy`, `FundSettlement`,
+  `AuthorizeConsumerKey`, `OpenChallenge`, `RegisterFutureCandidate`, and
+  `RegisterValidator`; all other families remain audit-open before terminal
+  failure mapping.
   `ResolveChallenge` now validates signed IDs, pending identity, active
   certificate presence, and authenticated lifecycle before clone; not-pending
   is its existing exact deterministic reason, too-early resolution is
@@ -552,7 +570,10 @@ an earlier phase.
   consensus key retains its exact reason; missing rotation history retains the
   missing-fact reason; PoP failure is `CryptographicProof`; revoked or actively
   referenced registrations are protocol rejects; and authenticated history/
-  semantic-predecessor drift is `AuthenticatedOverlay`.
+  semantic-predecessor drift is `AuthenticatedOverlay`. First registration now
+  additionally carries its fully prepared history/create transition across
+  clone after the record-cap boundary; rotation remains on the separately
+  audit-open deferred update path.
   Validator revocation/history prune now preserve missing-history rejection,
   classify signed transition/delete drift as `ValidatorRule`, retention,
   revocation, and active-certificate references as `ProtocolWindowOrCap`, and

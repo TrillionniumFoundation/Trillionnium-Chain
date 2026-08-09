@@ -2484,6 +2484,43 @@ fn register_future_candidate_fixture(
     Ok((built, next))
 }
 
+pub(super) fn register_validator_capacity_fixture_v0(
+    admitted: usize,
+) -> Result<(
+    PocoApplicationBlockOverlayV0,
+    Vec<u8>,
+    PocoApplicationOperationV0,
+)> {
+    ensure!(
+        admitted <= MAX_VALIDATOR_REGISTRATION_HISTORIES,
+        "validator registration capacity fixture exceeds family cap"
+    );
+    let chain = authenticated_candidate_genesis_v0()?;
+    let mut block = chain.start_overlay()?;
+    let mut nullifiers = chain.nullifiers.clone();
+    for index in 0..=admitted {
+        let validator_id = format!("validator-capacity-{index}").into_bytes();
+        let signing_key = provider_fixture_signing_key_for_id(&validator_id);
+        let (built, next) = register_rotation_fixture(
+            &block,
+            &chain,
+            &validator_id,
+            &signing_key,
+            u64::try_from(index)?
+                .checked_add(1)
+                .context("validator capacity fixture registration nonce overflow")?,
+            &nullifiers,
+        )?;
+        if index == admitted {
+            let operation = PocoApplicationOperationV0::decode_exact(&built.raw)?;
+            return Ok((block, built.raw, operation));
+        }
+        block.apply_raw(&built.raw)?;
+        nullifiers = next;
+    }
+    unreachable!("inclusive validator capacity fixture loop must return")
+}
+
 pub(super) fn future_candidate_capacity_fixture_v0(
     admitted: usize,
 ) -> Result<(

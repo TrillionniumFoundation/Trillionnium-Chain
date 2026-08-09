@@ -1334,8 +1334,24 @@ epoch prune, and Core transition remain open.
    advances count by two, remains sorted, and seals. H22's two changed/new
    canonical operations remain the shared-vector witness rather than the cap
    witness; raw nullifier proof-key and encoding faults remain decode-first.
-   Capacity-order closure is now limited to `DefineMeterPolicy`, `FundSettlement`,
-   `AuthorizeConsumerKey`, `OpenChallenge`, and `RegisterFutureCandidate`; all
+   `RegisterValidator` now also has a closed capacity order. Exact validator-
+   ID/history absence and one canonical active kind-9 create bound to the body
+   identity and a fresh consensus key retain their frozen pre-cap priority.
+   This admission exact-decodes the embedded PoP structure without verifying
+   its signature; the schema's cryptographic-work boundary here means strict
+   Ed25519 and SMT proof verification, not the earlier canonical semantic
+   admission. Validator-history/defensive-total record caps precede accumulator
+   count `+2`, active epoch/derived decision, semantic CAS preparation, strict
+   PoP verification, and one prepared history record. The identity-absence and
+   two chained insertion proofs plus history/semantic mutation remain late on
+   the cloned candidate. Four distinct active-epoch registrations are authored
+   from authenticated epoch-zero state: the fifth rejects at cap over later
+   counter/crypto/proof faults, while the fourth from three advances count by
+   two, stays sorted, installs its kind-9 companion, and seals. Existing H1 and
+   register/rotate vectors remain unchanged; rotation retains its separate
+   deferred update path. Capacity-order closure is now limited to
+   `DefineMeterPolicy`, `FundSettlement`, `AuthorizeConsumerKey`,
+   `OpenChallenge`, `RegisterFutureCandidate`, and `RegisterValidator`; all
    other families remain audit-open before terminal failure mapping.
    `ResolveChallenge` now types its pre-clone pending/certificate join and
    separates signed resolution from authenticated pending/lifecycle drift.
@@ -1368,7 +1384,9 @@ epoch prune, and Core transition remain open.
    admission plus the registration-history join, preserving the exact active-
    key and missing-history reasons while separating signed validator rules,
    PoP rejection, protocol references/revocation, and authenticated companion
-   drift.
+   drift. First registration now additionally moves one fully prepared
+   history/create transition across clone after its record-cap boundary;
+   rotation remains on the separately audit-open deferred update path.
    Validator revocation/history prune now likewise separate missing history,
    signed validator rules, retention/reference protocol rejection, and
    authenticated predecessor/reference corruption.
