@@ -1273,8 +1273,11 @@ epoch prune, and Core transition remain open.
    preserving its nested nullifier/counter/CAS failures unchanged.
    `ReleaseSettlement` now performs a typed pre-clone reservation lookup and
    separates signed delete shape from authenticated leaf/reservation drift.
-   `OpenChallenge` now has typed pre-clone ID/certificate/duplicate checks and
-   splits signed next lifecycle from authenticated old lifecycle divergence.
+   `OpenChallenge` now has typed pre-clone ID/certificate/duplicate checks;
+   execution binds the body-derived kind-12 key before source selection and
+   the exact old `Accepted` effective height to authenticated authority,
+   rejects same-height and expired opens as protocol, and splits signed next
+   lifecycle from missing, malformed, or divergent old lifecycle state.
    `ResolveChallenge` now types its pre-clone pending/certificate join and
    separates signed resolution from authenticated pending/lifecycle drift.
    Governance proposal/approval now type their signed rules and pre-clone

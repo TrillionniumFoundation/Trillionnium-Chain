@@ -692,9 +692,12 @@ semantic-shape failures deterministically while preserving nested typed
 nullifier/counter/CAS reasons;
 release settlement validates signed ID and reservation existence before clone,
 then separates signed delete shape from authenticated leaf/reservation drift;
-open challenge validates signed IDs, active certificate, and duplicate-pending
-facts before clone, then separates signed next lifecycle from authenticated old
-lifecycle/authority drift;
+open challenge pre-clone admission validates signed IDs, active certificate,
+and duplicate-pending facts; execution binds the body-derived kind-12 key
+before source selection, joins the exact old `Accepted` effective height to
+authenticated authority, rejects a same-height or expired open as protocol,
+and separates signed next lifecycle from missing, malformed, or divergent
+authenticated predecessor state;
 resolve challenge types its pending/certificate join before clone, preserves
 the exact not-pending reason, and splits signed next resolution from
 authenticated pending/old-lifecycle drift;

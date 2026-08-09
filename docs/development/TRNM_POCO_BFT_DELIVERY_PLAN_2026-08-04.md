@@ -422,10 +422,14 @@ an earlier phase.
   negative fact before clone, preserves nested typed failures, treats a signed
   non-delete as `SemanticTransition`, and treats authenticated settlement-leaf/
   reservation divergence as `AuthenticatedOverlay`.
-  `OpenChallenge` now validates signed IDs, active-certificate existence, and
-  duplicate pending facts before clone; lifecycle/window rejection is
-  `ProtocolWindowOrCap`, signed next-lifecycle drift is `SemanticTransition`,
-  and old authenticated lifecycle/authority divergence is `AuthenticatedOverlay`.
+  `OpenChallenge` pre-clone admission validates signed IDs,
+  active-certificate existence, and duplicate pending facts. Execution binds
+  the exact body-derived kind-12 logical key before source selection, then
+  joins the authenticated `Accepted` predecessor state and effective height to
+  kind-16 authority; missing, malformed, or divergent old lifecycle is
+  `AuthenticatedOverlay`, while same-height/expired-window rejection is
+  `ProtocolWindowOrCap` and signed key/next-lifecycle drift is
+  `SemanticTransition`.
   `ResolveChallenge` now validates signed IDs, pending identity, active
   certificate presence, and authenticated lifecycle before clone; not-pending
   is its existing exact deterministic reason, too-early resolution is

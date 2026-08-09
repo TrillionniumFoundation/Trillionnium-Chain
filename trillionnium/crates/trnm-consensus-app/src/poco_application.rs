@@ -2908,6 +2908,88 @@ fn target_record_count_before_clone_v0(
     Ok(target)
 }
 
+fn authenticated_certificate_lifecycle_companion_v0(
+    overlay: &PocoApplicationOverlayV0,
+    certificate: &ActiveCertificateAuthorityV0,
+) -> Result<OwnedSemanticPartsV0> {
+    let authenticated_overlay =
+        || invariant_application_error_v0(PocoApplicationInvariantV0::AuthenticatedOverlay);
+    let certificate_id =
+        exact_hash32_hex(&certificate.certificate_id_hex).map_err(|_| authenticated_overlay())?;
+    exact_hash32_hex(&certificate.acceptance_decision_id_hex)
+        .map_err(|_| authenticated_overlay())?;
+    exact_hash32_hex(&certificate.lifecycle_decision_id_hex)
+        .map_err(|_| authenticated_overlay())?;
+    validate_certificate_lifecycle_authority_v0(
+        certificate.lifecycle,
+        certificate.lifecycle_effective_height,
+        &certificate.lifecycle_decision_id_hex,
+        certificate.accepted_height,
+        &certificate.acceptance_decision_id_hex,
+    )
+    .map_err(|_| authenticated_overlay())?;
+    let mut pending_iter = overlay
+        .authority
+        .pending_challenges
+        .iter()
+        .filter(|challenge| challenge.certificate_id_hex == certificate.certificate_id_hex);
+    let pending = pending_iter.next();
+    if pending_iter.next().is_some() {
+        return Err(authenticated_overlay());
+    }
+    let (expected_state, expected_height) = match (certificate.lifecycle, pending) {
+        (CertificateAuthorityLifecycleV0::Accepted, Some(challenge)) => {
+            exact_hash32_hex(&challenge.challenge_id_hex).map_err(|_| authenticated_overlay())?;
+            exact_hash32_hex(&challenge.opening_decision_id_hex)
+                .map_err(|_| authenticated_overlay())?;
+            if certificate.lifecycle_effective_height != certificate.accepted_height
+                || challenge.opened_height <= certificate.accepted_height
+            {
+                return Err(authenticated_overlay());
+            }
+            (LifecycleStateV0::ChallengePending, challenge.opened_height)
+        }
+        (CertificateAuthorityLifecycleV0::Accepted, None) => {
+            if certificate.lifecycle_effective_height != certificate.accepted_height {
+                return Err(authenticated_overlay());
+            }
+            (
+                LifecycleStateV0::Accepted,
+                certificate.lifecycle_effective_height,
+            )
+        }
+        (CertificateAuthorityLifecycleV0::ChallengeRejected, None) => (
+            LifecycleStateV0::ChallengeRejected,
+            certificate.lifecycle_effective_height,
+        ),
+        (CertificateAuthorityLifecycleV0::ChallengeSustained, None) => (
+            LifecycleStateV0::ChallengeSustained,
+            certificate.lifecycle_effective_height,
+        ),
+        (
+            CertificateAuthorityLifecycleV0::ChallengeRejected
+            | CertificateAuthorityLifecycleV0::ChallengeSustained,
+            Some(_),
+        ) => return Err(authenticated_overlay()),
+    };
+    let lifecycle = source_parts_for_identity(
+        overlay,
+        PocoSnapshotEntryKindV0::RevocationOrChallenge,
+        &certificate_id,
+    )
+    .map_err(|_| authenticated_overlay())?;
+    if !matches!(
+        lifecycle.fact,
+        SemanticFactV0::RevocationOrChallenge {
+            state,
+            effective_height,
+        } if state == expected_state && effective_height == expected_height
+    ) {
+        return Err(authenticated_overlay());
+    }
+    Ok(lifecycle)
+}
+
 fn validate_validator_consensus_key_before_clone_v0(
     authority: &PocoApplicationAuthorityStateV0,
     operation: &PocoApplicationOperationV0,
@@ -3122,7 +3204,7 @@ fn validate_operation_capacity_before_clone_v0(
                     PocoApplicationDeterministicInvalidV0::SemanticTransition,
                 )
             })?;
-            authority
+            let certificate_index = authority
                 .active_certificates
                 .binary_search_by(|certificate| {
                     certificate
@@ -3135,10 +3217,34 @@ fn validate_operation_capacity_before_clone_v0(
                         PocoApplicationDeterministicInvalidV0::MissingRequiredAuthorityFact,
                     )
                 })?;
-            if authority.pending_challenges.iter().any(|challenge| {
-                challenge.challenge_id_hex == *challenge_id_hex
-                    || challenge.certificate_id_hex == *certificate_id_hex
+            let certificate = &authority.active_certificates[certificate_index];
+            authenticated_certificate_lifecycle_companion_v0(overlay, certificate)?;
+            for pending in authority.pending_challenges.iter().filter(|pending| {
+                pending.challenge_id_hex == *challenge_id_hex
+                    && pending.certificate_id_hex != *certificate_id_hex
             }) {
+                let pending_certificate = authority
+                    .active_certificates
+                    .binary_search_by(|certificate| {
+                        certificate
+                            .certificate_id_hex
+                            .as_str()
+                            .cmp(pending.certificate_id_hex.as_str())
+                    })
+                    .map(|index| &authority.active_certificates[index])
+                    .map_err(|_| {
+                        invariant_application_error_v0(
+                            PocoApplicationInvariantV0::AuthenticatedOverlay,
+                        )
+                    })?;
+                authenticated_certificate_lifecycle_companion_v0(overlay, pending_certificate)?;
+            }
+            if certificate.lifecycle != CertificateAuthorityLifecycleV0::Accepted
+                || authority.pending_challenges.iter().any(|challenge| {
+                    challenge.challenge_id_hex == *challenge_id_hex
+                        || challenge.certificate_id_hex == *certificate_id_hex
+                })
+            {
                 return Err(deterministic_application_error_v0(
                     PocoApplicationDeterministicInvalidV0::ProtocolWindowOrCap,
                 ));
@@ -5365,6 +5471,21 @@ fn apply_open_challenge_v0(
     require_derived_decision_id(preimage, b"challenge-id", challenge_id_hex)?;
     let decision =
         require_derived_decision_id(preimage, b"open-challenge", opening_decision_id_hex)?;
+    let [raw_change] = operation.semantic_changes.as_slice() else {
+        return Err(signed_semantic());
+    };
+    if raw_change.kind != PocoSnapshotEntryKindV0::RevocationOrChallenge as u8 {
+        return Err(signed_semantic());
+    }
+    let signed_logical_key =
+        exact_hash32_hex(&raw_change.logical_key_hex).map_err(|_| signed_semantic())?;
+    let expected_logical_key = semantic_identity_digest_v0(
+        PocoSnapshotEntryKindV0::RevocationOrChallenge,
+        &certificate_id,
+    );
+    if signed_logical_key != expected_logical_key {
+        return Err(signed_semantic());
+    }
     let certificate_index = overlay
         .authority
         .active_certificates
@@ -5374,19 +5495,59 @@ fn apply_open_challenge_v0(
                 PocoApplicationDeterministicInvalidV0::MissingRequiredAuthorityFact,
             )
         })?;
-    if overlay.authority.active_certificates[certificate_index].lifecycle
-        != CertificateAuthorityLifecycleV0::Accepted
-        || context.target_height.get()
-            > overlay.authority.active_certificates[certificate_index].prunable_after_height
-    {
+    let certificate = overlay.authority.active_certificates[certificate_index].clone();
+    let predecessor = authenticated_certificate_lifecycle_companion_v0(overlay, &certificate)?;
+    if certificate.lifecycle != CertificateAuthorityLifecycleV0::Accepted {
         return Err(protocol_reject());
     }
-    if !overlay.authority.pending_challenges.iter().all(|item| {
-        item.challenge_id_hex != challenge_id_hex && item.certificate_id_hex != certificate_id_hex
+    for pending in overlay
+        .authority
+        .pending_challenges
+        .iter()
+        .filter(|pending| {
+            pending.challenge_id_hex == challenge_id_hex
+                && pending.certificate_id_hex != certificate_id_hex
+        })
+    {
+        let pending_certificate = overlay
+            .authority
+            .active_certificates
+            .binary_search_by(|certificate| {
+                certificate
+                    .certificate_id_hex
+                    .as_str()
+                    .cmp(pending.certificate_id_hex.as_str())
+            })
+            .map(|index| &overlay.authority.active_certificates[index])
+            .map_err(|_| authenticated_overlay())?;
+        authenticated_certificate_lifecycle_companion_v0(overlay, pending_certificate)?;
+    }
+    if overlay.authority.pending_challenges.iter().any(|item| {
+        item.challenge_id_hex == challenge_id_hex || item.certificate_id_hex == certificate_id_hex
     }) {
         return Err(protocol_reject());
     }
-    let changes = prepare_semantic_changes(overlay, &operation.semantic_changes, false)?;
+    if !matches!(
+        predecessor.fact,
+        SemanticFactV0::RevocationOrChallenge {
+            state: LifecycleStateV0::Accepted,
+            effective_height,
+        } if effective_height == certificate.lifecycle_effective_height
+    ) {
+        return Err(authenticated_overlay());
+    }
+    if context.target_height.get() <= certificate.lifecycle_effective_height
+        || context.target_height.get() > certificate.prunable_after_height
+    {
+        return Err(protocol_reject());
+    }
+    let changes =
+        prepare_semantic_changes(overlay, &operation.semantic_changes, false).map_err(|error| {
+            preserve_application_failure_or_deterministic_v0(
+                error,
+                PocoApplicationDeterministicInvalidV0::SemanticTransition,
+            )
+        })?;
     ensure_change_kinds(&changes, &[PocoSnapshotEntryKindV0::RevocationOrChallenge])?;
     let change = &changes[0];
     if change.expected_identity.as_deref() != Some(certificate_id.as_slice()) {
@@ -5399,8 +5560,8 @@ fn apply_open_challenge_v0(
         change.expected_fact.as_ref(),
         Some(SemanticFactV0::RevocationOrChallenge {
             state: LifecycleStateV0::Accepted,
-            ..
-        })
+            effective_height,
+        }) if *effective_height == certificate.lifecycle_effective_height
     ) {
         return Err(authenticated_overlay());
     }
@@ -7959,8 +8120,42 @@ mod tests {
         )
     }
 
-    fn sequence_vector_fixture(
+    fn sequence_target_projection(
+        target: &serde_json::Value,
+    ) -> (u64, [u8; 32], ProductionPocoProjectionV0) {
+        let source_version = target["version"].as_u64().unwrap();
+        let source_root = hex::decode(target["jmt_root_hex"].as_str().unwrap())
+            .unwrap()
+            .try_into()
+            .unwrap();
+        let mut live = BTreeMap::new();
+        for entry in target["entries"].as_array().unwrap() {
+            let kind = PocoSnapshotEntryKindV0::from_u8(
+                u8::try_from(entry["kind"].as_u64().unwrap()).unwrap(),
+            )
+            .unwrap();
+            let logical_key = hex::decode(entry["logical_key_hex"].as_str().unwrap()).unwrap();
+            let value = hex::decode(entry["value_hex"].as_str().unwrap()).unwrap();
+            assert!(live
+                .insert(poco_snapshot_entry_key(kind, &logical_key).unwrap(), value)
+                .is_none());
+        }
+        assert!(live
+            .insert(
+                poco_snapshot_manifest_key().unwrap(),
+                hex::decode(target["manifest_hex"].as_str().unwrap()).unwrap(),
+            )
+            .is_none());
+        let projection = take_and_validate_production_poco_projection_v0(source_version, &mut live)
+            .unwrap()
+            .unwrap();
+        assert!(live.is_empty());
+        (source_version, source_root, projection)
+    }
+
+    fn sequence_step_vector_fixture(
         sequence_id: &str,
+        step_index: usize,
     ) -> (
         AuthenticatedPocoApplicationContextV0,
         ProductionPocoProjectionV0,
@@ -7978,11 +8173,17 @@ mod tests {
             .iter()
             .find(|sequence| sequence["id"] == sequence_id)
             .unwrap();
-        let (_, source_version, source_root, projection) =
-            crate::poco_application_evidence::authenticated_tree_from_sequence_initial_v0(
-                &sequence["initial"],
-            );
-        let step = &sequence["steps"][0];
+        let steps = sequence["steps"].as_array().unwrap();
+        let step = &steps[step_index];
+        let (source_version, source_root, projection) = if step_index == 0 {
+            let (_, source_version, source_root, projection) =
+                crate::poco_application_evidence::authenticated_tree_from_sequence_initial_v0(
+                    &sequence["initial"],
+                );
+            (source_version, source_root, projection)
+        } else {
+            sequence_target_projection(&steps[step_index - 1]["rust_event"]["target"])
+        };
         let raw = crate::poco_application_evidence::application_sequence_raw_operations_v0(step)
             .into_iter()
             .next()
@@ -8030,6 +8231,17 @@ mod tests {
         )
         .unwrap();
         (context, projection, raw, operation)
+    }
+
+    fn sequence_vector_fixture(
+        sequence_id: &str,
+    ) -> (
+        AuthenticatedPocoApplicationContextV0,
+        ProductionPocoProjectionV0,
+        Vec<u8>,
+        PocoApplicationOperationV0,
+    ) {
+        sequence_step_vector_fixture(sequence_id, 0)
     }
 
     fn assert_block_overlay_unchanged(
@@ -8129,6 +8341,26 @@ mod tests {
             identifier_hex: hex::encode(decision),
             proof_hex: hex::encode(proof.canonical_bytes()),
         }];
+    }
+
+    fn bind_open_challenge_decisions_v0(
+        context: &AuthenticatedPocoApplicationContextV0,
+        operation: &mut PocoApplicationOperationV0,
+    ) {
+        operation.nullifier_insertions.clear();
+        let preimage = decision_preimage_digest_v0(context, operation).unwrap();
+        let challenge_id = derived_decision_id_v0(preimage, b"challenge-id");
+        let opening_decision = derived_decision_id_v0(preimage, b"open-challenge");
+        let PocoApplicationOperationBodyV0::OpenChallenge {
+            challenge_id_hex,
+            opening_decision_id_hex,
+            ..
+        } = &mut operation.body
+        else {
+            unreachable!();
+        };
+        *challenge_id_hex = hex::encode(challenge_id);
+        *opening_decision_id_hex = hex::encode(opening_decision);
     }
 
     fn consumer_key_revocation_fixture(
@@ -9207,6 +9439,279 @@ mod tests {
         assert_eq!(block.operation_count(), 0);
         assert!(block.overlay.operation_ids.is_empty());
         assert!(block.overlay.mutations.is_empty());
+    }
+
+    #[test]
+    fn open_challenge_binds_exact_authenticated_predecessor_and_monotonic_height() {
+        let fixture = || sequence_step_vector_fixture("certificate_challenge_rejected", 2);
+
+        let (context, projection, raw, operation) = fixture();
+        let mut canonical =
+            PocoApplicationBlockOverlayV0::from_projection(context, &projection).unwrap();
+        canonical.apply_decoded_exact(&raw, &operation).unwrap();
+        assert_eq!(canonical.seal().unwrap().operation_count(), 1);
+
+        let certificate_id = match &operation.body {
+            PocoApplicationOperationBodyV0::OpenChallenge {
+                certificate_id_hex, ..
+            } => exact_hash32_hex(certificate_id_hex).unwrap(),
+            _ => unreachable!(),
+        };
+        let logical_key = semantic_identity_digest_v0(
+            PocoSnapshotEntryKindV0::RevocationOrChallenge,
+            &certificate_id,
+        );
+        let map_key = (
+            PocoSnapshotEntryKindV0::RevocationOrChallenge,
+            logical_key.to_vec(),
+        );
+
+        let (context, projection, raw, operation) = fixture();
+        let mut corrupted =
+            PocoApplicationBlockOverlayV0::from_projection(context, &projection).unwrap();
+        let predecessor = owned_semantic_parts(
+            PocoSnapshotEntryKindV0::RevocationOrChallenge,
+            &logical_key,
+            corrupted.overlay.entries.get(&map_key).unwrap(),
+        )
+        .unwrap();
+        let effective_height = match &predecessor.fact {
+            SemanticFactV0::RevocationOrChallenge {
+                state: LifecycleStateV0::Accepted,
+                effective_height,
+            } => *effective_height,
+            _ => unreachable!(),
+        };
+        let mut corrupted_payload = predecessor.payload.clone();
+        let height_offset = corrupted_payload.len() - std::mem::size_of::<u64>();
+        corrupted_payload[height_offset..].copy_from_slice(&(effective_height + 1).to_be_bytes());
+        let corrupted_value = encode_test_semantic_envelope_v0(
+            PocoSnapshotEntryKindV0::RevocationOrChallenge,
+            predecessor.revision,
+            &predecessor.identity,
+            &corrupted_payload,
+        );
+        assert!(matches!(
+            owned_semantic_parts(
+                PocoSnapshotEntryKindV0::RevocationOrChallenge,
+                &logical_key,
+                &corrupted_value,
+            )
+            .unwrap()
+            .fact,
+            SemanticFactV0::RevocationOrChallenge {
+                state: LifecycleStateV0::Accepted,
+                effective_height: height,
+            } if height == effective_height + 1
+        ));
+        corrupted
+            .overlay
+            .entries
+            .insert(map_key.clone(), corrupted_value);
+        let corrupted_before = corrupted.clone();
+        assert_eq!(
+            corrupted.apply_decoded_exact(&raw, &operation),
+            Err(PocoApplicationApplyFailureV0::Invariant(
+                PocoApplicationInvariantV0::AuthenticatedOverlay,
+            )),
+        );
+        assert_block_overlay_unchanged(&corrupted, &corrupted_before);
+
+        let (context, projection, raw, operation) = fixture();
+        let mut missing =
+            PocoApplicationBlockOverlayV0::from_projection(context, &projection).unwrap();
+        missing.overlay.entries.remove(&map_key);
+        let missing_before = missing.clone();
+        assert_eq!(
+            missing.apply_decoded_exact(&raw, &operation),
+            Err(PocoApplicationApplyFailureV0::Invariant(
+                PocoApplicationInvariantV0::AuthenticatedOverlay,
+            )),
+        );
+        assert_block_overlay_unchanged(&missing, &missing_before);
+
+        let (context, projection, raw, operation) = fixture();
+        let mut substituted_decision =
+            PocoApplicationBlockOverlayV0::from_projection(context, &projection).unwrap();
+        substituted_decision.overlay.authority.active_certificates[0].lifecycle_decision_id_hex =
+            "aa".repeat(32);
+        let substituted_before = substituted_decision.clone();
+        assert_eq!(
+            substituted_decision.apply_decoded_exact(&raw, &operation),
+            Err(PocoApplicationApplyFailureV0::Invariant(
+                PocoApplicationInvariantV0::AuthenticatedOverlay,
+            )),
+        );
+        assert_block_overlay_unchanged(&substituted_decision, &substituted_before);
+
+        let (context, projection, raw, operation) = fixture();
+        let mut nonmonotonic_terminal =
+            PocoApplicationBlockOverlayV0::from_projection(context, &projection).unwrap();
+        let accepted_height =
+            nonmonotonic_terminal.overlay.authority.active_certificates[0].accepted_height;
+        {
+            let certificate = &mut nonmonotonic_terminal.overlay.authority.active_certificates[0];
+            certificate.lifecycle = CertificateAuthorityLifecycleV0::ChallengeRejected;
+            certificate.lifecycle_effective_height = accepted_height;
+            certificate.lifecycle_decision_id_hex = "bb".repeat(32);
+        }
+        let terminal_predecessor = owned_semantic_parts(
+            PocoSnapshotEntryKindV0::RevocationOrChallenge,
+            &logical_key,
+            nonmonotonic_terminal.overlay.entries.get(&map_key).unwrap(),
+        )
+        .unwrap();
+        let mut terminal_payload = terminal_predecessor.payload.clone();
+        let state_offset = terminal_payload.len() - std::mem::size_of::<u64>() - 1;
+        terminal_payload[state_offset] = LifecycleStateV0::ChallengeRejected as u8;
+        terminal_payload[state_offset + 1..].copy_from_slice(&accepted_height.to_be_bytes());
+        nonmonotonic_terminal.overlay.entries.insert(
+            map_key.clone(),
+            encode_test_semantic_envelope_v0(
+                PocoSnapshotEntryKindV0::RevocationOrChallenge,
+                terminal_predecessor.revision,
+                &terminal_predecessor.identity,
+                &terminal_payload,
+            ),
+        );
+        let terminal_before = nonmonotonic_terminal.clone();
+        assert_eq!(
+            nonmonotonic_terminal.apply_decoded_exact(&raw, &operation),
+            Err(PocoApplicationApplyFailureV0::Invariant(
+                PocoApplicationInvariantV0::AuthenticatedOverlay,
+            )),
+        );
+        assert_block_overlay_unchanged(&nonmonotonic_terminal, &terminal_before);
+
+        let duplicate_fixture = || {
+            let (context, projection, raw, operation) = fixture();
+            let mut block =
+                PocoApplicationBlockOverlayV0::from_projection(context, &projection).unwrap();
+            block.apply_decoded_exact(&raw, &operation).unwrap();
+            let mut duplicate = operation;
+            duplicate.expected_state_revision = block.overlay.authority.revision;
+            bind_open_challenge_decisions_v0(&block.context, &mut duplicate);
+            let raw = serde_json::to_vec(&duplicate).unwrap();
+            (block, raw, duplicate)
+        };
+
+        let (mut duplicate, raw, operation) = duplicate_fixture();
+        let duplicate_before = duplicate.clone();
+        assert_eq!(
+            duplicate.apply_decoded_exact(&raw, &operation),
+            Err(PocoApplicationApplyFailureV0::DeterministicallyInvalid(
+                PocoApplicationDeterministicInvalidV0::ProtocolWindowOrCap,
+            )),
+        );
+        assert_block_overlay_unchanged(&duplicate, &duplicate_before);
+
+        let (mut duplicate_corrupted, raw, operation) = duplicate_fixture();
+        let pending = owned_semantic_parts(
+            PocoSnapshotEntryKindV0::RevocationOrChallenge,
+            &logical_key,
+            duplicate_corrupted.overlay.entries.get(&map_key).unwrap(),
+        )
+        .unwrap();
+        let pending_height = match &pending.fact {
+            SemanticFactV0::RevocationOrChallenge {
+                state: LifecycleStateV0::ChallengePending,
+                effective_height,
+            } => *effective_height,
+            _ => unreachable!(),
+        };
+        let mut pending_payload = pending.payload.clone();
+        let height_offset = pending_payload.len() - std::mem::size_of::<u64>();
+        pending_payload[height_offset..].copy_from_slice(&(pending_height + 1).to_be_bytes());
+        duplicate_corrupted.overlay.entries.insert(
+            map_key.clone(),
+            encode_test_semantic_envelope_v0(
+                PocoSnapshotEntryKindV0::RevocationOrChallenge,
+                pending.revision,
+                &pending.identity,
+                &pending_payload,
+            ),
+        );
+        let duplicate_corrupted_before = duplicate_corrupted.clone();
+        assert_eq!(
+            duplicate_corrupted.apply_decoded_exact(&raw, &operation),
+            Err(PocoApplicationApplyFailureV0::Invariant(
+                PocoApplicationInvariantV0::AuthenticatedOverlay,
+            )),
+        );
+        assert_block_overlay_unchanged(&duplicate_corrupted, &duplicate_corrupted_before);
+
+        let (mut duplicate_missing, raw, operation) = duplicate_fixture();
+        duplicate_missing.overlay.entries.remove(&map_key);
+        let duplicate_missing_before = duplicate_missing.clone();
+        assert_eq!(
+            duplicate_missing.apply_decoded_exact(&raw, &operation),
+            Err(PocoApplicationApplyFailureV0::Invariant(
+                PocoApplicationInvariantV0::AuthenticatedOverlay,
+            )),
+        );
+        assert_block_overlay_unchanged(&duplicate_missing, &duplicate_missing_before);
+
+        let (context, projection, _, mut foreign_operation) = fixture();
+        let mut foreign =
+            PocoApplicationBlockOverlayV0::from_projection(context, &projection).unwrap();
+        let foreign_key = [0xab; 32];
+        foreign_operation.semantic_changes[0].logical_key_hex = hex::encode(foreign_key);
+        foreign.overlay.entries.insert(
+            (
+                PocoSnapshotEntryKindV0::RevocationOrChallenge,
+                foreign_key.to_vec(),
+            ),
+            vec![0],
+        );
+        bind_open_challenge_decisions_v0(&foreign.context, &mut foreign_operation);
+        let foreign_raw = serde_json::to_vec(&foreign_operation).unwrap();
+        let foreign_before = foreign.clone();
+        assert_eq!(
+            foreign.apply_decoded_exact(&foreign_raw, &foreign_operation),
+            Err(PocoApplicationApplyFailureV0::DeterministicallyInvalid(
+                PocoApplicationDeterministicInvalidV0::SemanticTransition,
+            )),
+        );
+        assert_block_overlay_unchanged(&foreign, &foreign_before);
+
+        let (context, projection, _, mut same_height_operation) = fixture();
+        let mut same_height =
+            PocoApplicationBlockOverlayV0::from_projection(context, &projection).unwrap();
+        same_height.context.target_height = Height::new(effective_height);
+        same_height_operation.target_height = effective_height;
+        let next_value = hex::decode(
+            same_height_operation.semantic_changes[0]
+                .next_value_hex
+                .as_deref()
+                .unwrap(),
+        )
+        .unwrap();
+        let next = owned_semantic_parts(
+            PocoSnapshotEntryKindV0::RevocationOrChallenge,
+            &logical_key,
+            &next_value,
+        )
+        .unwrap();
+        let mut same_height_payload = next.payload.clone();
+        let height_offset = same_height_payload.len() - std::mem::size_of::<u64>();
+        same_height_payload[height_offset..].copy_from_slice(&effective_height.to_be_bytes());
+        same_height_operation.semantic_changes[0].next_value_hex =
+            Some(hex::encode(encode_test_semantic_envelope_v0(
+                PocoSnapshotEntryKindV0::RevocationOrChallenge,
+                next.revision,
+                &next.identity,
+                &same_height_payload,
+            )));
+        bind_open_challenge_decisions_v0(&same_height.context, &mut same_height_operation);
+        let same_height_raw = serde_json::to_vec(&same_height_operation).unwrap();
+        let same_height_before = same_height.clone();
+        assert_eq!(
+            same_height.apply_decoded_exact(&same_height_raw, &same_height_operation),
+            Err(PocoApplicationApplyFailureV0::DeterministicallyInvalid(
+                PocoApplicationDeterministicInvalidV0::ProtocolWindowOrCap,
+            )),
+        );
+        assert_block_overlay_unchanged(&same_height, &same_height_before);
     }
 
     #[test]
