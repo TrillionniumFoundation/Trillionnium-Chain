@@ -30,6 +30,7 @@ use super::{
         prove_with_reader, stored_object_key, stored_object_key_preimage, validator_state_key,
         verify_ics23_membership, verify_ics23_non_membership, AuthProof, AuthWrite,
         AuthenticatedObjectRecord, InMemoryAuthTree, PlannedAuthUpdate, PruneStats,
+        MAX_AUTH_KEY_PREIMAGE_BYTES,
     },
     persist_state_bytes,
     poco_transition::{
@@ -49,7 +50,7 @@ const AUTH_PRUNE_TARGET_KEY: &str = "auth_prune_target";
 const AUTH_PRUNE_BATCH_MAX_DURATION: Duration = Duration::from_millis(10);
 const MAX_SNAPSHOT_AUTH_NODE_BYTES: u64 = 64 * 1024;
 const MAX_SNAPSHOT_AUTH_VALUE_BYTES: u64 = 16 * 1024 * 1024;
-const MAX_SNAPSHOT_KEY_PREIMAGE_BYTES: u64 = 1024 * 1024;
+const MAX_SNAPSHOT_KEY_PREIMAGE_BYTES: u64 = MAX_AUTH_KEY_PREIMAGE_BYTES as u64;
 const MAX_SNAPSHOT_OBJECT_VALUE_BYTES: u64 = 16 * 1024 * 1024;
 const MAX_SNAPSHOT_LIFECYCLE_BYTES: u64 = 4 * 1024 * 1024;
 const MAX_SNAPSHOT_IDENTIFIER_BYTES: u64 = 4096;

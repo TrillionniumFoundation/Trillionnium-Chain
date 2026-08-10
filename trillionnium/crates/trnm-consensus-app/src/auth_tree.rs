@@ -22,12 +22,15 @@ use sha2::{Digest, Sha256};
 
 use crate::poco_transition::PocoWritePermitV0;
 
+pub(crate) mod durable_plan;
+
 const KEY_DOMAIN: &[u8] = b"trnm/authenticated-state/v4";
 const POCO_SNAPSHOT_KEY_PREFIX: &[u8] = b"trnm/authenticated-state/v4\0\x08";
 const OBJECT_RECORD_SCHEMA_VERSION: u16 = 1;
 #[cfg(test)]
 const LIFECYCLE_RECORD_SCHEMA_VERSION: u16 = 1;
 const AUTH_TREE_SNAPSHOT_CODEC_VERSION: u16 = 1;
+pub(crate) const MAX_AUTH_KEY_PREIMAGE_BYTES: usize = 1024 * 1024;
 const PLANNED_AUTH_UPDATE_SEAL_CODEC_VERSION_V0: u16 = 0;
 const PLANNED_AUTH_UPDATE_SEAL_HASH_PREFIX_V0: &[u8] = b"trnm.auth-tree.plan-seal.hash.v0";
 const PLANNED_AUTH_UPDATE_SEAL_DOMAIN_V0: &[u8] = b"trnm.consensus-app.planned-auth-update.v0";

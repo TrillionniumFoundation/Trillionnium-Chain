@@ -1761,9 +1761,23 @@ epoch prune, and Core transition remain open.
    full ValidationId)`, returns exact existing state, scans recovery work, and
    excludes both job/outbox tables from snapshots. It does not reconstruct a
    signed-proposal witness and still does not populate an evaluated artifact or
-   outbox row. The next validation-time atomic
-   boundary must persist a versioned revalidatable evaluated artifact with its
-   callback outbox, and the separate Finalize-time boundary still must
+   outbox row. A private inert app-owned durable physical-plan codec now covers
+   the exact persistence-bearing JMT fields. It pins each `NodeKey`/`Node` to
+   `jmt-sha256-0.12.0-node-borsh-v0`, uses app-owned framing for values, stale
+   indices and preimages, and decodes only to bounded unverified bytes. An
+   exact-parent/root, exact-next replan from canonical writes must reproduce
+   those bytes exactly, but yields only an inert verified carrier so historical
+   recovery remains valid after a competing fork occupies that version. A
+   separate consuming boundary retains and rebinds the original parent root,
+   requires an unoccupied target, replans the same writes on the current
+   reader, and releases an apply-capable plan only when the physical bytes are
+   still exact. The codec neither exposes the opaque process-local plan seal
+   nor activates any job state or outbox row. Activation still needs a scale
+   gate proving that every consensus-permitted block fits the 64 MiB
+   physical-plan envelope; a local capacity failure cannot become deterministic
+   invalidity. The next validation-time atomic boundary must persist a
+   versioned revalidatable evaluated artifact with its callback outbox, and the
+   separate Finalize-time boundary still must
    revalidate exact authority and atomically apply JMT/domain state, persist
    roots/native head, advance the head, and mark the reservation applied.
    Core's completed validation-cleanup `StorageAck` and completion tombstone

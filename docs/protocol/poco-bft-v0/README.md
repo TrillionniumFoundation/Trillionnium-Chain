@@ -664,11 +664,28 @@ The private route-bearing bridge now proves that `Proposal` maps only to
 `PayloadValidated` and `Synced` only to `SyncedPayloadValidated`, but it does
 not submit that input to a Core instance or establish callback delivery.
 The reservation stores no evaluated artifact, result, JMT plan, or outbox. A
-future validation-time atomic boundary must persist a versioned revalidatable
-artifact together with callback-outbox intent; a distinct Finalize-time atomic
-boundary must revalidate the exact authority and couple JMT/domain apply,
-root/native-head persistence, head advancement, and applied state. Neither
-boundary, authenticated replay tickets, completion retirement after durable
+private inert durable-plan codec now covers the exact persistence-bearing JMT
+version/root, nodes, values, stale indices, and key preimages without exposing
+the process-local plan seal or serializing `TreeUpdateBatch` as a container.
+Its per-node representation is explicitly pinned to the existing
+`jmt-sha256-0.12.0-node-borsh-v0` store adapter. Decode produces only bounded
+unverified bytes. Exact-parent/root and exact-next replanning from canonical
+writes produce only an inert verified carrier, so recovery can still verify
+an artifact after another fork occupies that state version. A separate
+consuming boundary retains and rebinds the original parent root, requires an
+unoccupied target, replans the same writes on the current reader, and releases
+the fresh `PlannedAuthUpdate` only if its physical bytes are still exact. The
+codec is not yet embedded in an evaluated artifact or written to the job
+table. A future activation must first prove the 64 MiB physical-plan envelope
+against the consensus block/write scale gate; exceeding a local artifact budget
+can never
+become deterministic invalidity. The validation-time atomic boundary must
+persist a versioned revalidatable artifact together with callback-outbox
+intent; a distinct
+Finalize-time atomic boundary must revalidate the exact authority and couple
+JMT/domain apply, root/native-head persistence, head advancement, and applied
+state. Neither boundary, authenticated replay tickets, completion retirement
+after durable
 host-delivery acknowledgement, speculative-parent/BlockTree reconstruction,
 application-reservation takeover, evaluated-artifact persistence, host
 callback-outbox scheduling/delivery acknowledgement, crash takeover, Core
