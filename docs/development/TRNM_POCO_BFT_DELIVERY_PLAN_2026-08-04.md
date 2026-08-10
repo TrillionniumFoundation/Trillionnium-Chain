@@ -545,9 +545,9 @@ an earlier phase.
   rotate H2 shared vectors remain byte-identical. Capacity-order closure now
   covers `DefineMeterPolicy`, `FundSettlement`, `AuthorizeConsumerKey`,
   `OpenChallenge`, `ReleaseSettlement`, `ResolveChallenge`,
-  `ProposeGovernance`, `RegisterFutureCandidate`, `RegisterValidator`, and
-  `RotateValidator`; all other families remain audit-open before terminal
-  failure mapping.
+  `ProposeGovernance`, `ApproveGovernance`, `RegisterFutureCandidate`,
+  `RegisterValidator`, and `RotateValidator`; all other families remain audit-
+  open before terminal failure mapping.
   `ResolveChallenge` now carries one exact pending removal, certificate
   lifecycle successor, resolution decision nullifier, and semantic transition
   across capacity admission and execution. Its frozen order is structural and
@@ -590,12 +590,34 @@ an earlier phase.
   carrier/source-row drift, and full-overlay rollback. Raw proof-key/encoding
   faults remain decode-first. Governance proposal preserves nested typed errors
   and maps its remaining signed target/phase/parameters/semantic and duplicate-
-  target rejects to `GovernanceRule`. Governance approval validates signed hash/next epoch,
-  proposal existence, and finalized duplication before clone; missing proposal
-  retains `GovernanceApprovalMissing`, too-early approval is
-  `ProtocolWindowOrCap`, signed approved-state drift is `GovernanceRule`, and
-  authenticated proposal/parameters/pending-fact divergence is
-  `AuthenticatedOverlay`.
+  target rejects to `GovernanceRule`. `ApproveGovernance` now carries one exact
+  pending removal, finalized insertion, proposal provenance, authenticated
+  role-2 parameters companion, governance-decision nullifier, and pending-to-
+  approved semantic CAS across capacity admission and execution. Its frozen
+  order is structural and exact owner/context/revision/replay admission,
+  canonical signed hash and successor epoch, exact pending proposal lookup, and
+  finalized-target absence, then pending-family `-1`, finalized-family `+1`,
+  and defensive-total record caps. Unsupported-field rejection, exact proposal
+  hash/activation binding, strictly later approval height, authenticated role-2
+  parameters/hash agreement, derived decision, exact pending predecessor and
+  approved successor, and accumulator count `+1` follow before clone. The
+  carrier freezes both authority slots/rows, the complete finalized record,
+  exact parameters source value, nullifier subject, and semantic source/
+  successor; body, proposal, finalized slot, parameters, or semantic-source
+  drift is a `DerivedMutationPostcondition`. Only proof verification, sorted
+  finalized insertion, pending removal, and prepared semantic mutation remain
+  on the candidate. The frozen shared H2 approval applies and seals the real
+  1-to-0 pending, 0-to-1 finalized, count-`+1` path. Finalized saturation and
+  cap-minus-one witnesses inject unrelated authority rows only because the
+  active-epoch uniqueness contract makes a real two-finalized-plus-pending
+  source unreachable; they prove handler ordering, not another authenticated
+  success fixture. Collisions freeze shallow signed/missing/duplicate facts,
+  cap versus unsupported/proposal/window/parameters/semantic/counter/proof
+  faults, structural priority, exact-boundary apply, carrier/source drift, and
+  full rollback. Missing proposal retains `GovernanceApprovalMissing`, too-
+  early approval is `ProtocolWindowOrCap`, signed approved-state drift is
+  `GovernanceRule`, authenticated parameters/pending-fact divergence is
+  `AuthenticatedOverlay`, and raw proof-key/encoding faults remain decode-first.
   Certificate acceptance pre-clone admission now validates the signed
   certificate ID, funded-reservation negative fact, duplicate active record,
   exact signed certificate semantic envelope, consumer-key/meter authority

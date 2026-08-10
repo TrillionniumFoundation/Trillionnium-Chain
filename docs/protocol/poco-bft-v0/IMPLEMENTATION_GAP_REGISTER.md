@@ -1386,8 +1386,9 @@ epoch prune, and Core transition remain open.
    unchanged. Capacity-order closure is now limited to `DefineMeterPolicy`,
    `FundSettlement`, `AuthorizeConsumerKey`, `OpenChallenge`,
    `ReleaseSettlement`, `ResolveChallenge`, `ProposeGovernance`,
-   `RegisterFutureCandidate`, `RegisterValidator`, and `RotateValidator`; all
-   other families remain audit-open before terminal failure mapping.
+   `ApproveGovernance`, `RegisterFutureCandidate`, `RegisterValidator`, and
+   `RotateValidator`; all other families remain audit-open before terminal
+   failure mapping.
    `ResolveChallenge` now carries the exact pending/certificate rows and slots,
    target lifecycle/height/decision, one challenge-decision nullifier, and its
    semantic transition across capacity admission. Signed IDs, pending identity,
@@ -1413,10 +1414,23 @@ epoch prune, and Core transition remain open.
    still applies and seals; authority-only saturated/cap-minus-one fixtures
    freeze signed/semantic/counter, cap-versus-proof, structural, carrier/source-
    row, exact-boundary, and rollback priorities without claiming another
-   authenticated success path. Governance approval continues to type its
-   signed rules and pre-clone proposal join while keeping authenticated
-   parameters/pending-fact drift invariant and preserving the exact missing-
-   proposal reason.
+   authenticated success path. `ApproveGovernance` now carries the exact
+   pending proposal/slot, finalized absence/insertion slot and complete
+   provenance record, authenticated role-2 parameters value, governance-
+   decision nullifier, and pending-to-approved semantic CAS. Canonical signed
+   hash/successor epoch, pending lookup, and finalized duplicate rejection
+   precede pending `-1`/finalized `+1`/defensive-total caps. Unsupported fields,
+   proposal hash/activation, later-height window, authenticated parameters/hash,
+   decision, semantic predecessor/successor, and count `+1` follow before clone;
+   only proof verification and prepared replacement/mutation stay late. The
+   canonical H2 approval seals the real 1-to-0 pending, 0-to-1 finalized,
+   count-`+1` path. Finalized saturation/boundary fixtures are authority-only
+   because active-epoch uniqueness makes the corresponding fully authenticated
+   source unreachable; they freeze shallow/cap/late-proof, semantic/counter,
+   structural, carrier/source-drift, boundary, and rollback priorities without
+   claiming another end-to-end success path. Missing proposal stays
+   `GovernanceApprovalMissing`, too-early approval stays `ProtocolWindowOrCap`,
+   and authenticated parameters/pending-fact drift remains invariant.
    Certificate acceptance pre-clone admission now types signed certificate
    shape/proof, reservation/key/meter negative facts, nonce cap, and
    authenticated rolling-span/counter faults. The reservation/certificate/

@@ -796,9 +796,9 @@ priority witness, not another authenticated success fixture. H1 and register/
 rotate H2 bytes remain unchanged. Capacity-order closure is now
 limited to `DefineMeterPolicy`, `FundSettlement`, `AuthorizeConsumerKey`,
 `OpenChallenge`, `ReleaseSettlement`, `ResolveChallenge`,
-`ProposeGovernance`, `RegisterFutureCandidate`, `RegisterValidator`, and
-`RotateValidator`; every other family stays audit-open before terminal failure
-mapping;
+`ProposeGovernance`, `ApproveGovernance`, `RegisterFutureCandidate`,
+`RegisterValidator`, and `RotateValidator`; every other family stays audit-open
+before terminal failure mapping;
 resolve challenge now freezes the exact pending/certificate rows and indices,
 target lifecycle/height/decision, challenge-decision nullifier, and semantic
 transition before clone. Signed IDs, pending identity, and accepted-certificate
@@ -822,9 +822,20 @@ sorted insertion, and prepared semantic mutation remain late. The shared H1
 vector still applies and seals. Authority-only saturated/boundary fixtures
 freeze cap-versus-late-proof, signed/semantic/counter, structural, carrier/
 source-row, and rollback priorities without claiming another authenticated
-success fixture. Governance approval continues to preserve exact missing-
-proposal and too-early reasons and fails stop on authenticated parameters/
-proposal/pending-fact divergence;
+success fixture. Governance approval now freezes the exact pending proposal and
+slot, finalized absence/insertion slot and complete provenance record, role-2
+parameters source value, governance-decision nullifier, and pending-to-approved
+semantic CAS. Signed hash/successor epoch, pending presence, and finalized
+absence precede pending `-1`/finalized `+1`/total caps; unsupported fields,
+proposal hash/activation, later-height window, authenticated parameters/hash,
+decision, semantic predecessor/successor, and count `+1` follow before clone.
+Only proof verification and prepared replacement/mutation remain late. The
+shared H2 vector seals the real 1-to-0/0-to-1/count-`+1` path. Authority-only
+finalized saturation/boundary fixtures freeze cap-versus-late faults, carrier/
+source drift, structural priority, and rollback without claiming an unreachable
+second authenticated success path. Missing proposal and too-early reasons stay
+exact, and authenticated parameters/proposal/pending-fact divergence remains
+fail-stop;
 certificate acceptance now has typed pre-clone signed envelope/proof,
 reservation/key/meter negative-fact, nonce-cap, and authenticated span/counter
 admission; every later execution join is now leaf-typed;
