@@ -3029,11 +3029,7 @@ fn rotate_fixture_validator(
     Ok((built, next))
 }
 
-pub(super) fn rotate_validator_full_history_fixture_v0() -> Result<(
-    PocoApplicationBlockOverlayV0,
-    Vec<u8>,
-    PocoApplicationOperationV0,
-)> {
+fn validator_full_history_chain_v0() -> Result<FixtureChainV0> {
     let mut chain = authenticated_candidate_genesis_v0()?;
     let mut registration_block = chain.start_overlay()?;
     let mut nullifiers = chain.nullifiers.clone();
@@ -3055,6 +3051,16 @@ pub(super) fn rotate_validator_full_history_fixture_v0() -> Result<(
     }
     chain.commit_block(registration_block, nullifiers)?;
 
+    Ok(chain)
+}
+
+pub(super) fn rotate_validator_full_history_fixture_v0() -> Result<(
+    PocoApplicationBlockOverlayV0,
+    Vec<u8>,
+    PocoApplicationOperationV0,
+)> {
+    let chain = validator_full_history_chain_v0()?;
+
     let block = chain.start_overlay()?;
     let validator_id = b"rotate-capacity-validator-0".to_vec();
     let signing_key = provider_fixture_signing_key_for_id(b"rotate-capacity-validator-0-next");
@@ -3065,6 +3071,154 @@ pub(super) fn rotate_validator_full_history_fixture_v0() -> Result<(
         &signing_key,
         2,
         &chain.nullifiers,
+    )?;
+    let operation = PocoApplicationOperationV0::decode_exact(&built.raw)?;
+    Ok((block, built.raw, operation))
+}
+
+pub(super) fn revoke_validator_full_history_fixture_v0() -> Result<(
+    PocoApplicationBlockOverlayV0,
+    Vec<u8>,
+    PocoApplicationOperationV0,
+)> {
+    let chain = validator_full_history_chain_v0()?;
+    let block = chain.start_overlay()?;
+    ensure!(
+        block.overlay.authority.validator_registration_history.len()
+            == MAX_VALIDATOR_REGISTRATION_HISTORIES,
+        "validator revoke fixture lost the full history family"
+    );
+    let validator_id = b"rotate-capacity-validator-0".to_vec();
+    let signing_key = provider_fixture_signing_key_for_id(&validator_id);
+    let (built, _) = revoke_fixture_validator(
+        &block,
+        &chain,
+        &validator_id,
+        &signing_key,
+        1,
+        &chain.nullifiers,
+    )?;
+    let operation = PocoApplicationOperationV0::decode_exact(&built.raw)?;
+    Ok((block, built.raw, operation))
+}
+
+pub(super) fn revoke_validator_same_block_registration_fixture_v0() -> Result<(
+    PocoApplicationBlockOverlayV0,
+    Vec<u8>,
+    PocoApplicationOperationV0,
+)> {
+    let chain = authenticated_candidate_genesis_v0()?;
+    let mut block = chain.start_overlay()?;
+    let validator_id = b"same-block-register-revoke-validator".to_vec();
+    let signing_key = provider_fixture_signing_key_for_id(&validator_id);
+    let (registration, nullifiers) = register_rotation_fixture(
+        &block,
+        &chain,
+        &validator_id,
+        &signing_key,
+        1,
+        &chain.nullifiers,
+    )?;
+    block.apply_raw(&registration.raw)?;
+    let (revocation, _) =
+        revoke_fixture_validator(&block, &chain, &validator_id, &signing_key, 1, &nullifiers)?;
+    let operation = PocoApplicationOperationV0::decode_exact(&revocation.raw)?;
+    Ok((block, revocation.raw, operation))
+}
+
+pub(super) fn revoke_validator_active_reference_fixture_v0() -> Result<(
+    PocoApplicationBlockOverlayV0,
+    Vec<u8>,
+    PocoApplicationOperationV0,
+)> {
+    let (chain, fixtures) = consumer_key_full_capacity_with_watermark_chain_v0()?;
+    let fixture = &fixtures[0];
+    let block = chain.start_overlay()?;
+    ensure!(
+        block
+            .overlay
+            .authority
+            .active_certificates
+            .iter()
+            .any(|certificate| {
+                certificate.provider_id_hex == hex::encode(&fixture.provider_id)
+            }),
+        "validator revoke active-reference fixture lost its certificate"
+    );
+    let (built, _) = revoke_fixture_validator(
+        &block,
+        &chain,
+        &fixture.provider_id,
+        &fixture.provider_signing_key,
+        1,
+        &chain.nullifiers,
+    )?;
+    let operation = PocoApplicationOperationV0::decode_exact(&built.raw)?;
+    Ok((block, built.raw, operation))
+}
+
+pub(super) fn revoke_validator_already_revoked_fixture_v0() -> Result<(
+    PocoApplicationBlockOverlayV0,
+    Vec<u8>,
+    PocoApplicationOperationV0,
+)> {
+    let mut chain = validator_full_history_chain_v0()?;
+    let validator_id = b"rotate-capacity-validator-0".to_vec();
+    let signing_key = provider_fixture_signing_key_for_id(&validator_id);
+
+    let mut revocation_block = chain.start_overlay()?;
+    let (revocation, nullifiers) = revoke_fixture_validator(
+        &revocation_block,
+        &chain,
+        &validator_id,
+        &signing_key,
+        1,
+        &chain.nullifiers,
+    )?;
+    revocation_block.apply_raw(&revocation.raw)?;
+    chain.commit_block(revocation_block, nullifiers)?;
+
+    let block = chain.start_overlay()?;
+    let change = validator_registration_change(
+        &block,
+        &chain,
+        &validator_id,
+        &signing_key,
+        1,
+        RegistrationStateV0::Revoked,
+    )?;
+    let identity_digest = semantic_identity_digest_v0(
+        PocoSnapshotEntryKindV0::ValidatorRegistration,
+        &validator_id,
+    );
+    let mut proof_basis = chain.nullifiers.clone();
+    proof_basis.occupied.retain(|(family, identifier)| {
+        !(*family == PocoNullifierFamilyV0::ValidatorIdentity && *identifier == identity_digest)
+    });
+    proof_basis.sort();
+    let (built, _, _) = finish_operation_with_proof_basis(
+        &block,
+        "already-revoked-validator",
+        "revoke_validator",
+        PocoApplicationOperationBodyV0::RevokeValidator {
+            validator_id_hex: hex::encode(&validator_id),
+            revocation_decision_id_hex: "0".repeat(64),
+        },
+        vec![change],
+        vec![
+            ProofRequestV0 {
+                list: "insertion",
+                family: PocoNullifierFamilyV0::RegistrationDecision,
+                subject: ProofSubjectV0::Decision("revoke-validator"),
+            },
+            ProofRequestV0 {
+                list: "insertion",
+                family: PocoNullifierFamilyV0::ValidatorIdentity,
+                subject: ProofSubjectV0::Literal(identity_digest),
+            },
+        ],
+        &chain.nullifiers,
+        &proof_basis,
     )?;
     let operation = PocoApplicationOperationV0::decode_exact(&built.raw)?;
     Ok((block, built.raw, operation))

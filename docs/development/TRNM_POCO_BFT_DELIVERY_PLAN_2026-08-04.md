@@ -638,14 +638,37 @@ an earlier phase.
   and full-overlay rollback priorities. The compound active-reference collision
   injects authority metadata only and is a handler-boundary priority witness,
   not an additional authenticated success fixture. The frozen H1 and register/
-  rotate H2 shared vectors remain byte-identical. Capacity-order closure now
+  rotate H2 shared vectors remain byte-identical. `RevokeValidator` now closes
+  the separate zero-delta revocation path. Canonical validator ID and the exact
+  history slot precede every unchanged family cap and the defensive total.
+  Unsupported-field admission then precedes authenticated kind-1 active-
+  certificate owner rebinding/reference exclusion, the derived revocation
+  decision, complete history/head and revocation provenance, already-revoked
+  rejection, an independent authenticated kind-9 predecessor join, the exact
+  signed active-to-revoked successor, and accumulator count `+2`. Its prepared
+  carrier freezes the complete source/successor history rows and slot, both
+  nullifier field owners, the raw semantic owner, two expected subjects, and
+  the exact kind-9 source CAS. Body/owner/row/source drift fails stop before the
+  two chained late proofs; only then may the row and kind-9 value be replaced.
+  A real H1 fixture commits four distinct registrations and H2 revokes one at
+  the authenticated full-family boundary, preserving sorted `4 -> 4`, three
+  byte-exact rows, the consensus key/nonce/PoP, and seal while advancing the
+  accumulator by two. Separate real fixtures freeze active-reference and
+  already-revoked rejection; same-block different-raw re-revocation stays a
+  protocol rejection, while register-then-revoke reaches the deterministic
+  one-mutation validator rule. A synthetic fifth history is only a handler-
+  boundary cap-priority witness. The shared validator-prune bytes remain
+  unchanged and are not cross-language `RevokeValidator` evidence. This closes
+  only the isolated handler/audit surface, not validator-history prune,
+  production epoch/Core/host reachability, terminal mapping, or a phase.
+  Capacity-order closure now
   covers `DefineMeterPolicy`, `RetireMeterPolicy`, `PruneRetiredMeter`,
   `FundSettlement`, `AuthorizeConsumerKey`,
   `RevokeConsumerKey`, `PruneRevokedConsumerKey`,
   `OpenChallenge`, `ReleaseSettlement`, `ResolveChallenge`,
   `ProposeGovernance`, `ApproveGovernance`, `RegisterFutureCandidate`,
-  `RegisterValidator`, and `RotateValidator`; all other families remain audit-
-  open before terminal failure mapping.
+  `RegisterValidator`, `RotateValidator`, and `RevokeValidator`; all other
+  families remain audit-open before terminal failure mapping.
   `ResolveChallenge` now carries one exact pending removal, certificate
   lifecycle successor, resolution decision nullifier, and semantic transition
   across capacity admission and execution. Its frozen order is structural and

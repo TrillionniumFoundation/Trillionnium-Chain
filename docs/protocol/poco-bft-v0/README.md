@@ -847,15 +847,34 @@ both counter priorities, epoch/decision/CAS/PoP/predecessor, late proof shape/
 subject/root, structural bounds, body/carrier mismatch, and full rollback. The
 compound active-reference collision is an authority-only handler-boundary
 priority witness, not another authenticated success fixture. H1 and register/
-rotate H2 bytes remain unchanged. Capacity-order closure is now
+rotate H2 bytes remain unchanged. Validator revocation now has a separate
+closed zero-delta path. Canonical validator ID and exact history slot precede
+all unchanged family/total caps. Unsupported fields then precede authenticated
+kind-1 owner rebinding and active-reference exclusion, the derived revocation
+decision, complete history/head and revocation provenance, already-revoked
+rejection, an independent kind-9 predecessor join, the exact signed
+active-to-revoked successor, and accumulator count `+2`. The carrier freezes
+the complete source/successor rows and slot, both nullifier field owners, raw
+semantic owner, two subjects, and exact kind-9 source CAS. Carrier drift fails
+before the two chained proofs; row and semantic replacement occur only after
+both proofs. A real H1 four-registration/H2 revoke fixture proves authenticated
+sorted `4 -> 4`, three byte-exact rows, preserved key/nonce/PoP, count `+2`, and
+seal. Separate real fixtures cover active-reference and already-revoked
+rejection; same-block distinct-raw re-revocation remains a protocol reject,
+while register-then-revoke reaches the deterministic one-mutation validator
+rule. A synthetic fifth history is only handler-boundary priority evidence.
+Shared validator-prune bytes remain unchanged and are not cross-
+language `RevokeValidator` evidence. This closes only the isolated handler/
+audit surface, not validator-history prune, production epoch/Core/host
+reachability, terminal mapping, or a phase. Capacity-order closure is now
 limited to `DefineMeterPolicy`, `RetireMeterPolicy`, `PruneRetiredMeter`,
 `FundSettlement`, `AuthorizeConsumerKey`,
 `RevokeConsumerKey`,
 `PruneRevokedConsumerKey`,
 `OpenChallenge`, `ReleaseSettlement`, `ResolveChallenge`,
 `ProposeGovernance`, `ApproveGovernance`, `RegisterFutureCandidate`,
-`RegisterValidator`, and `RotateValidator`; every other family stays audit-open
-before terminal failure mapping;
+`RegisterValidator`, `RotateValidator`, and `RevokeValidator`; every other
+family stays audit-open before terminal failure mapping;
 resolve challenge now freezes the exact pending/certificate rows and indices,
 target lifecycle/height/decision, challenge-decision nullifier, and semantic
 transition before clone. Signed IDs, pending identity, and accepted-certificate
