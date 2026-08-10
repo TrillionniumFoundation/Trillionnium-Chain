@@ -705,9 +705,26 @@ successor policy rows, slot, decision/raw semantic owners, and source bytes;
 carrier CAS runs before the one late family-4 proof, then exact row/semantic
 replacement. A real two-block four-policy fixture proves sorted `4 -> 4`,
 three byte-exact untouched rows, revision/count `+1`, and seal. Synthetic fifth
-rows remain handler-boundary priority evidence, shared vectors stay unchanged,
-and `PruneRetiredMeter` remains audit-open. Every other audit-open family still
-needs its own capacity-order audit before terminal failure mapping.
+rows remain handler-boundary priority evidence and shared vectors stay
+unchanged. `PruneRetiredMeter` now carries its own prepared meter `-1` and
+kind-5 delete across the same boundary. Canonical ID/slot and all family/total
+caps precede unsupported fields, then full policy, strict retention,
+active-certificate and retained-usage exclusion, authenticated predecessor,
+and the signed exact single-delete set. The certificate scan rebinds all
+body-derived authority owner fields, including meter ID/version, to the
+authenticated kind-1 payload. The carrier freezes the complete policy row/
+slot, raw semantic and field owners, and exact source bytes before row/leaf
+deletion. It authorizes no new proof or accumulator increment: the permanent
+family-12 identity inserted by meter definition remains occupied. A real
+four-definition, one-retirement, isolated H284 fixture proves sorted
+authenticated `4 -> 3`, exact deletion,
+three untouched rows, unchanged accumulator, and seal; a separate real
+accepted-certificate fixture proves reference rejection. One synthetic six-row
+`6 -> 5` cap collision remains handler-boundary evidence and shared meter-prune
+bytes remain unchanged. This closes only the isolated handler/audit surface,
+not production cross-epoch reachability, Core activation, host integration, or
+a phase. Every other audit-open family still needs its own capacity-order audit
+before terminal failure mapping.
 Meter prune rejects a missing authority policy as a pre-clone negative fact;
 meter retirement distinguishes signed ID/height/next-state rejection, missing or
 already-retired authority, and authenticated old-fact/authority divergence;
@@ -831,7 +848,8 @@ subject/root, structural bounds, body/carrier mismatch, and full rollback. The
 compound active-reference collision is an authority-only handler-boundary
 priority witness, not another authenticated success fixture. H1 and register/
 rotate H2 bytes remain unchanged. Capacity-order closure is now
-limited to `DefineMeterPolicy`, `RetireMeterPolicy`, `FundSettlement`, `AuthorizeConsumerKey`,
+limited to `DefineMeterPolicy`, `RetireMeterPolicy`, `PruneRetiredMeter`,
+`FundSettlement`, `AuthorizeConsumerKey`,
 `RevokeConsumerKey`,
 `PruneRevokedConsumerKey`,
 `OpenChallenge`, `ReleaseSettlement`, `ResolveChallenge`,

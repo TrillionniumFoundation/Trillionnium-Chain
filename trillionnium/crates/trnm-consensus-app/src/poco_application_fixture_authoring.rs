@@ -1872,11 +1872,7 @@ pub(super) fn revoke_consumer_key_full_capacity_fixture_v0() -> Result<(
     Ok((block, built.raw, operation))
 }
 
-pub(super) fn retire_meter_full_capacity_fixture_v0() -> Result<(
-    PocoApplicationBlockOverlayV0,
-    Vec<u8>,
-    PocoApplicationOperationV0,
-)> {
+fn meter_full_capacity_chain_v0() -> Result<(FixtureChainV0, [CertificateFixtureV0; 4])> {
     let mut chain = authenticated_candidate_genesis_v0()?;
     let fixtures = [
         certificate_fixture_for_provider(&chain, b'a', 0, b"validator-a")?,
@@ -1893,9 +1889,19 @@ pub(super) fn retire_meter_full_capacity_fixture_v0() -> Result<(
     }
     ensure!(
         definition_block.overlay.authority.meter_policies.len() == MAX_METER_POLICIES,
-        "retire fixture did not fill the meter-policy family"
+        "meter capacity fixture did not fill the meter-policy family"
     );
     chain.commit_block(definition_block, nullifiers)?;
+
+    Ok((chain, fixtures))
+}
+
+pub(super) fn retire_meter_full_capacity_fixture_v0() -> Result<(
+    PocoApplicationBlockOverlayV0,
+    Vec<u8>,
+    PocoApplicationOperationV0,
+)> {
+    let (chain, fixtures) = meter_full_capacity_chain_v0()?;
 
     let block = chain.start_overlay()?;
     ensure!(
@@ -1905,6 +1911,121 @@ pub(super) fn retire_meter_full_capacity_fixture_v0() -> Result<(
     let (retirement, _) = retire_meter(&block, &fixtures[0], &chain.nullifiers)?;
     let operation = PocoApplicationOperationV0::decode_exact(&retirement.raw)?;
     Ok((block, retirement.raw, operation))
+}
+
+pub(super) fn prune_retired_meter_full_capacity_fixture_v0() -> Result<(
+    PocoApplicationBlockOverlayV0,
+    Vec<u8>,
+    PocoApplicationOperationV0,
+)> {
+    let (mut chain, fixtures) = meter_full_capacity_chain_v0()?;
+    let fixture = &fixtures[0];
+
+    let mut retirement_block = chain.start_overlay()?;
+    let (retirement, nullifiers) = retire_meter(&retirement_block, fixture, &chain.nullifiers)?;
+    retirement_block.apply_raw(&retirement.raw)?;
+    chain.commit_block(retirement_block, nullifiers)?;
+
+    chain.advance_empty_versions(283)?;
+    chain.active_epoch = Epoch::new(28);
+    let block = chain.start_overlay()?;
+    ensure!(
+        block.context.target_height.get() == 284,
+        "meter prune capacity fixture target height drifted"
+    );
+    ensure!(
+        block.overlay.authority.meter_policies.len() == MAX_METER_POLICIES,
+        "meter prune capacity fixture lost the full family"
+    );
+    let target = block
+        .overlay
+        .authority
+        .meter_policies
+        .iter()
+        .find(|policy| {
+            policy.meter_id_hex == hex::encode(&fixture.meter_id) && policy.meter_version == 1
+        })
+        .context("meter prune capacity fixture lost the target")?;
+    ensure!(
+        target.retired_at_height == Some(2),
+        "meter prune capacity fixture lacks the retired target"
+    );
+    let protocol_boundary = protocol_retention_boundary_v0(
+        target
+            .retired_at_height
+            .context("meter prune target is active")?,
+        &block.context.active_parameters,
+    )?;
+    let meter_boundary = target
+        .retired_at_height
+        .context("meter prune target is active")?
+        .checked_add(target.retention_blocks)
+        .context("meter prune retention boundary overflow")?;
+    ensure!(
+        block.context.target_height.get() > protocol_boundary.max(meter_boundary),
+        "meter prune capacity fixture did not pass retention"
+    );
+    let (prune, _) = prune_meter(&block, fixture, &chain.nullifiers)?;
+    let operation = PocoApplicationOperationV0::decode_exact(&prune.raw)?;
+    Ok((block, prune.raw, operation))
+}
+
+pub(super) fn prune_retired_meter_active_reference_fixture_v0() -> Result<(
+    PocoApplicationBlockOverlayV0,
+    Vec<u8>,
+    PocoApplicationOperationV0,
+)> {
+    let (mut chain, fixtures) = consumer_key_full_capacity_with_watermark_chain_v0()?;
+    let fixture = &fixtures[0];
+
+    let mut retirement_block = chain.start_overlay()?;
+    let (retirement, nullifiers) = retire_meter(&retirement_block, fixture, &chain.nullifiers)?;
+    retirement_block.apply_raw(&retirement.raw)?;
+    chain.commit_block(retirement_block, nullifiers)?;
+
+    chain.advance_empty_versions(284)?;
+    chain.active_epoch = Epoch::new(28);
+    let block = chain.start_overlay()?;
+    ensure!(
+        block.context.target_height.get() == 285,
+        "meter active-reference fixture target height drifted"
+    );
+    ensure!(
+        block
+            .overlay
+            .authority
+            .active_certificates
+            .iter()
+            .any(|certificate| {
+                certificate.meter_id_hex == hex::encode(&fixture.meter_id)
+                    && certificate.meter_version == 1
+            }),
+        "meter active-reference fixture lost its certificate"
+    );
+    let target = block
+        .overlay
+        .authority
+        .meter_policies
+        .iter()
+        .find(|policy| {
+            policy.meter_id_hex == hex::encode(&fixture.meter_id) && policy.meter_version == 1
+        })
+        .context("meter active-reference fixture lost the target")?;
+    let retired_at = target
+        .retired_at_height
+        .context("meter active-reference fixture target is active")?;
+    let protocol_boundary =
+        protocol_retention_boundary_v0(retired_at, &block.context.active_parameters)?;
+    let meter_boundary = retired_at
+        .checked_add(target.retention_blocks)
+        .context("meter active-reference boundary overflow")?;
+    ensure!(
+        block.context.target_height.get() > protocol_boundary.max(meter_boundary),
+        "meter active-reference fixture did not pass retention"
+    );
+    let (prune, _) = prune_meter(&block, fixture, &chain.nullifiers)?;
+    let operation = PocoApplicationOperationV0::decode_exact(&prune.raw)?;
+    Ok((block, prune.raw, operation))
 }
 
 pub(super) fn prune_revoked_consumer_key_full_capacity_fixture_v0() -> Result<(

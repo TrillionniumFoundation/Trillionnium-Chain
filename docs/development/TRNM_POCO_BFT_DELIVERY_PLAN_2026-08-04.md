@@ -433,11 +433,31 @@ an earlier phase.
   drift, and full-overlay rollback priorities. A synthetic fifth policy is
   only an unreachable handler-boundary priority witness; the real four-row
   fixture is the authenticated exact-boundary evidence. Existing shared
-  vectors remain byte-identical. This does not close `PruneRetiredMeter`,
-  production cross-epoch prune, Core activation, host integration, or any
-  phase. Apart from the already named closures, every audit-open operation
-  family still requires its own capacity-order audit before terminal failure
-  mapping.
+  vectors remain byte-identical. `PruneRetiredMeter` now closes the matching
+  decrement/delete handler path. Canonical meter ID and exact policy-slot
+  presence precede meter `-1`, every other unchanged family cap, and the
+  defensive total. Unsupported fields then precede complete policy validity,
+  retired/strict-retention checks, active-certificate exclusion, retained
+  meter-usage exclusion, authenticated kind-5 predecessor agreement, and the
+  signed exact single-delete set. The active-certificate scan rebinds all
+  body-derived authority owner fields to authenticated metadata, so a
+  meter-owner drift fails stop as `AuthenticatedOverlay` rather than hiding a
+  live reference. Its prepared carrier freezes the complete policy row and
+  slot, raw semantic and field owners, and the exact kind-5 source bytes;
+  carrier/source drift fails stop before the exact row and semantic leaf are
+  deleted. The operation adds no nullifier: the permanent family-12 meter
+  identity inserted by definition remains occupied, and accumulator count is
+  unchanged. A real authoring path commits four distinct definitions at H1,
+  retires one at H2, advances an isolated fixture beyond retention, then seals
+  the authenticated H284 `4 -> 3` prune with three byte-exact untouched rows.
+  A second real accepted-certificate path proves the active-reference guard;
+  one synthetic six-row `6 -> 5` collision is only a handler-boundary
+  cap-priority witness. Shared meter-prune bytes remain identical. This closes
+  only the isolated handler leaf-reason, capacity-order, prepared-carrier,
+  fixture, and rollback surface. It does not close production cross-epoch
+  prune, Core activation, host integration, or any phase. Apart from the already named
+  closures, every audit-open operation family still requires its own
+  capacity-order audit before terminal failure mapping.
   Meter prune maps a pre-clone missing authority to
   `MissingRequiredAuthorityFact`. Meter retirement separately
   treats signed ID/height/next-fact drift as `SemanticTransition`, an absent
@@ -619,7 +639,8 @@ an earlier phase.
   injects authority metadata only and is a handler-boundary priority witness,
   not an additional authenticated success fixture. The frozen H1 and register/
   rotate H2 shared vectors remain byte-identical. Capacity-order closure now
-  covers `DefineMeterPolicy`, `RetireMeterPolicy`, `FundSettlement`, `AuthorizeConsumerKey`,
+  covers `DefineMeterPolicy`, `RetireMeterPolicy`, `PruneRetiredMeter`,
+  `FundSettlement`, `AuthorizeConsumerKey`,
   `RevokeConsumerKey`, `PruneRevokedConsumerKey`,
   `OpenChallenge`, `ReleaseSettlement`, `ResolveChallenge`,
   `ProposeGovernance`, `ApproveGovernance`, `RegisterFutureCandidate`,
