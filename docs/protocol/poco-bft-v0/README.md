@@ -498,7 +498,7 @@ duplicate, `Unavailable`, or `DeterministicallyInvalid` result. The exact route
 travels with the owner through open/body/cursor/runtime/post-state/comparator
 and process-local disposition; callers cannot inject a bool or naked route.
 
-Separately from application-store schema v5, Core `SafetyState` schema v5
+Separately from application-store schema v6, Core `SafetyState` schema v5
 introduced a canonically ordered `DurablePayloadValidationObligationV0` before
 either `ValidatePayload` or `ValidateSyncedPayload` may escape a
 `PersistSafetyState -> StorageAck` barrier. Each record binds the Core-selected
@@ -538,20 +538,41 @@ crash replay, callback exactly-once, type-level callback authority, or recovery
 liveness.
 
 After that wrapper/route check and process-local claim, and before any host or
-snapshot read, application-store schema v5 durably reserves
-`(route, full ValidationId)` in the same SQLite database. One
-`BEGIN IMMEDIATE` transaction performs the unique insert or reads the existing
-row. A versioned, domain-separated fingerprint binds the route and complete ID
-to the exact raw target header, application payload, ordered evidence, and
-parent source. Only an exact match coalesces/suppresses a duplicate across
-independently materialized request graphs or processes; a route, raw-source,
-target, or parent splice under the same full ID is an invariant. The table has
-a hard 65,536-row ceiling with no eviction, while exact duplicates still
-coalesce at capacity. State-sync snapshot generation scrubs all reservation
-rows transactionally from the temporary copy and verifies that copy is empty,
-without changing the source database. This is a durable reservation and
-cross-instance congruence boundary, not an evaluated result, takeover lease,
-callback outbox, or process-wide callback exactly-once guarantee.
+snapshot read, application-store schema v6 durably reserves one
+`validation_jobs_v0` row for `(route, full ValidationId)` under
+`BEGIN IMMEDIATE`. The row freezes the raw target header, a strict versioned
+payload/evidence body record, parent tip and optional exact parent state,
+execution-configuration references, the currently generation-derived creation
+revision, the existing raw-source fingerprint, and domain-separated body/
+immutable/row checksums. It starts in `reserved`. The schema reserves columns
+and a `validation_callback_outbox_v0` table for later tranches, but this binary
+accepts only `reserved` rows and an empty outbox; later artifact, transition,
+idempotency, and outbox semantics are not yet frozen. An
+exact reopen returns its checksum-verified durable state rather than silently
+coalescing unfinished work, while no reopen can recreate the unique first-
+reservation token. Startup and recovery exact-decode and canonically re-encode
+the target and any present parent header, rebind identity/parent/configuration
+fields, rederive the frozen
+raw-source fingerprint, and enumerate verified rows in canonical identity
+order. Malformed framing, semantic splice, checksum drift, accounting drift,
+or host/runtime reference drift fails closed. A headerless height-zero parent
+is only a structurally revalidated inert recovery fact: it must bind an
+epoch-zero regular height-one target to the target genesis hash, while trusted
+genesis timestamp/hash authority remains Core-owned until a later takeover
+rebinds it. The journal remains bounded by
+65,536 rows and a 512-MiB aggregate raw-request budget. Reservation uses an
+atomically maintained O(1) accounting singleton while startup independently
+audits it against the real rows; exact reopen precedes capacity rejection. The
+application compatibility boundary also requires `max_block_bytes <= 16 MiB`.
+Schema-v5 migration succeeds only when its legacy reservation table is empty;
+a non-empty v5 table is unreplayable and rolls back unchanged. State-sync
+snapshot generation scrubs outbox rows first and jobs second only from the
+temporary copy and verifies both are empty, leaving the source database
+unchanged; installation refuses to overwrite a non-empty target-local
+validation journal. This is a revalidatable raw reserved-job/recovery-fact foundation,
+not a reconstruction of the signed proposal witness and not an
+evaluated artifact, executable crash takeover, Core callback delivery,
+acknowledgement, or process-wide callback exactly-once guarantee.
 
 That carrier now also opens a production, process-local sequential transaction
 cursor. Its host tuple can only be borrowed from initialized `AppCore`; the

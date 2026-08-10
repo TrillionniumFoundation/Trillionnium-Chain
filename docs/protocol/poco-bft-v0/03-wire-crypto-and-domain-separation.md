@@ -480,7 +480,7 @@ a duplicate, `Unavailable`, or `DeterministicallyInvalid` wire result. The
 route remains inside the owner across open/body/cursor/runtime/post-state/
 comparator/disposition; no naked bool or route is accepted as authority.
 
-Separately from application-store schema v5, Core `SafetyState` schema v5
+Separately from application-store schema v6, Core `SafetyState` schema v5
 introduced a canonically ordered `DurablePayloadValidationObligationV0` before
 either validation effect may escape a `PersistSafetyState -> StorageAck`
 barrier. This cloneable persistence fact binds the Core-selected route, full
@@ -517,23 +517,47 @@ recovery supplies exact-result suppression, but these local persistence rules
 establish no new transport, type-level callback capability, crash replay/
 liveness, host-delivery acknowledgement, or callback exactly-once protocol.
 
-Application-store schema v5 adds a process-local-host reservation journal in
-the same SQLite database; it is not a new wire type or peer authority. After
-wrapper/route congruence and the object-graph claim, and before any host/
-snapshot read, one `BEGIN IMMEDIATE` transaction reserves
-`(route, full ValidationId)`. A versioned, domain-separated fingerprint is
-computed directly over framed raw source material: route, complete ID, exact
-target header/application payload/ordered evidence, and exact parent source.
-It is only a congruence witness, never body-validity, execution, or terminal
-authority. A congruent existing row coalesces/suppresses an independently
-materialized duplicate; reuse of the full ID with a different route, source,
-target, or parent is a local invariant. The journal is capped at 65,536 rows,
-does not evict, and admits exact-duplicate coalescing even when full. A
-state-sync snapshot transactionally deletes its rows only from the temporary
-copy before checkpoint/VACUUM and verifies the exported copy is empty, leaving
-the source untouched. Nothing in this reservation encodes an evaluated
-artifact/result, callback outbox, acknowledgement, takeover lease, or
-process-wide callback exactly-once fact.
+Application-store schema v6 adds local `validation_jobs_v0` and
+`validation_callback_outbox_v0` relations; neither is a wire type or peer
+authority. Before any host/snapshot read, one `BEGIN IMMEDIATE` transaction
+stores the route/full ID, exact target header, a strict versioned raw body
+record, parent tip and optional exact parent header/state root, configuration
+references, the currently generation-derived creation revision, the existing
+source fingerprint, and distinct domain-separated body/immutable/row
+checksums. The initial state is `reserved`. Future state/artifact columns and
+the outbox table are structural reservations only: this binary rejects every
+non-`reserved` row and every non-empty outbox, and their codecs/checksum/
+idempotency semantics are not yet frozen. Exact reopen returns the
+verified durable state without reminting first-evaluation authority, and the
+startup/recovery scanner exact-decodes and canonically re-encodes the target
+and any present parent header,
+rebinds identity/parent/configuration fields, rederives the raw-source
+fingerprint, and validates checksums plus canonical row order. The journal is
+capped at 65,536 rows plus a 512-MiB raw-request budget, with an atomic O(1)
+accounting singleton independently audited at startup. The app accepts only
+parameter profiles with `max_block_bytes <= 16 MiB`. Empty schema v5 journals
+migrate atomically; non-empty v5
+reservations fail closed and remain byte-for-byte intact. State sync deletes
+outbox then jobs only from the temporary copy and verifies both are empty.
+These checksums are corruption/congruence seals, never body-validity,
+execution, evaluated-result, callback, acknowledgement, takeover, or
+exactly-once authority.
+
+The exact process-local integrity labels used by this foundation are:
+
+```text
+trnm.native-validation-reservation.hash.v0          // raw SHA-256 prefix
+trnm.consensus-app.native-validation-reservation.v0 // raw framed fingerprint domain
+trnm.consensus-app.validation-body.v0               // hash_domain
+trnm.consensus-app.validation-job-immutable.v0      // hash_domain
+trnm.consensus-app.validation-job-row.v0            // hash_domain
+trnm.consensus-app.validation-runtime-profile.v0    // hash_domain
+trnm.consensus-app.validation-host-config.v0        // hash_domain
+```
+
+These are node-local integrity/congruence labels, not consensus signature or
+wire-object domains. Artifact and callback labels remain intentionally absent
+until their exact codecs and recovery semantics are defined.
 
 The same process-local carrier may now borrow the canonical signer-policy
 preimage only from initialized `AppCore`, after its commitment matches store

@@ -19,7 +19,10 @@ use rusqlite::{
     Transaction, TransactionBehavior,
 };
 use serde::Serialize;
+use sha2::{Digest, Sha256};
 use trnm_consensus_core::{PayloadValidationParentV0, PayloadValidationRouteV0, ValidationId};
+use trnm_consensus_types::{decode_block_header_v0_exact, Block, BlockId, BlockKind, View};
+use trnm_finality_types::hash_domain;
 
 use super::{
     auth_tree::{
@@ -36,8 +39,9 @@ use super::{
     ValidatorLifecycleStateV1, APP_VERSION, VALIDATOR_LIFECYCLE_SCHEMA_V1,
 };
 
-const STORE_SCHEMA_VERSION: &str = "5";
-const PREVIOUS_STORE_SCHEMA_VERSION: &str = "4";
+const STORE_SCHEMA_VERSION: &str = "6";
+const STORE_SCHEMA_VERSION_V5: &str = "5";
+const STORE_SCHEMA_VERSION_V4: &str = "4";
 const LEGACY_STORE_SCHEMA_VERSION: &str = "3";
 const STATUS_SCHEMA_V2: &str = "trnm_cometbft_app_status_v2";
 const AUTH_QUERY_FLOOR_KEY: &str = "auth_query_floor";
@@ -50,6 +54,156 @@ const MAX_SNAPSHOT_OBJECT_VALUE_BYTES: u64 = 16 * 1024 * 1024;
 const MAX_SNAPSHOT_LIFECYCLE_BYTES: u64 = 4 * 1024 * 1024;
 const MAX_SNAPSHOT_IDENTIFIER_BYTES: u64 = 4096;
 const MAX_NATIVE_VALIDATION_RESERVATIONS: u64 = 65_536;
+const MAX_NATIVE_VALIDATION_HEADER_BYTES: usize = 64 * 1024;
+pub(super) const MAX_NATIVE_VALIDATION_BODY_RECORD_BYTES: usize = 16 * 1024 * 1024;
+const MAX_NATIVE_VALIDATION_ARTIFACT_BYTES: u64 = 64 * 1024 * 1024;
+const MAX_NATIVE_VALIDATION_CALLBACK_BYTES: u64 = 16 * 1024 * 1024;
+const MAX_NATIVE_VALIDATION_REQUEST_JOURNAL_BYTES: u64 = 512 * 1024 * 1024;
+const MAX_NATIVE_VALIDATION_ARTIFACT_JOURNAL_BYTES: u64 = 512 * 1024 * 1024;
+const MAX_NATIVE_VALIDATION_CALLBACK_OUTBOX_BYTES: u64 = 128 * 1024 * 1024;
+const NATIVE_VALIDATION_BODY_RECORD_CODEC_V0: u16 = 0;
+const NATIVE_VALIDATION_RESERVATION_FINGERPRINT_CODEC_V0: u16 = 0;
+const NATIVE_VALIDATION_RESERVATION_FINGERPRINT_HASH_PREFIX_V0: &[u8] =
+    b"trnm.native-validation-reservation.hash.v0";
+const NATIVE_VALIDATION_RESERVATION_FINGERPRINT_DOMAIN_V0: &[u8] =
+    b"trnm.consensus-app.native-validation-reservation.v0";
+const NATIVE_VALIDATION_JOB_IMMUTABLE_CODEC_V0: u16 = 0;
+const NATIVE_VALIDATION_JOB_ROW_CODEC_V0: u16 = 0;
+const NATIVE_VALIDATION_JOB_IMMUTABLE_DOMAIN_V0: &str =
+    "trnm.consensus-app.validation-job-immutable.v0";
+const NATIVE_VALIDATION_JOB_ROW_DOMAIN_V0: &str = "trnm.consensus-app.validation-job-row.v0";
+const NATIVE_VALIDATION_BODY_DOMAIN_V0: &str = "trnm.consensus-app.validation-body.v0";
+const NATIVE_VALIDATION_RUNTIME_PROFILE_DOMAIN_V0: &str =
+    "trnm.consensus-app.validation-runtime-profile.v0";
+const NATIVE_VALIDATION_HOST_CONFIG_DOMAIN_V0: &str =
+    "trnm.consensus-app.validation-host-config.v0";
+const LEGACY_NATIVE_VALIDATION_RESERVATIONS_SCHEMA_V5_SQL: &str = "
+    CREATE TABLE IF NOT EXISTS native_validation_reservations (
+        route INTEGER NOT NULL CHECK(route IN (0,1)),
+        block_id BLOB NOT NULL CHECK(length(block_id)=32),
+        view_be BLOB NOT NULL CHECK(length(view_be)=8),
+        generation_be BLOB NOT NULL CHECK(length(generation_be)=8),
+        target_height_be BLOB NOT NULL CHECK(length(target_height_be)=8),
+        parent_block_id BLOB NOT NULL CHECK(length(parent_block_id)=32),
+        request_fingerprint BLOB NOT NULL CHECK(length(request_fingerprint)=32),
+        PRIMARY KEY(route, block_id, view_be, generation_be),
+        UNIQUE(block_id, view_be, generation_be)
+    ) STRICT;
+";
+const NATIVE_VALIDATION_JOURNAL_SCHEMA_V0_SQL: &str = "
+    CREATE TABLE IF NOT EXISTS validation_journal_accounting_v0 (
+        singleton INTEGER PRIMARY KEY NOT NULL CHECK(singleton=1),
+        job_count_be BLOB NOT NULL CHECK(length(job_count_be)=8),
+        request_bytes_be BLOB NOT NULL CHECK(length(request_bytes_be)=8),
+        artifact_bytes_be BLOB NOT NULL CHECK(length(artifact_bytes_be)=8),
+        outbox_count_be BLOB NOT NULL CHECK(length(outbox_count_be)=8),
+        outbox_bytes_be BLOB NOT NULL CHECK(length(outbox_bytes_be)=8)
+    ) STRICT;
+    INSERT OR IGNORE INTO validation_journal_accounting_v0(
+        singleton, job_count_be, request_bytes_be, artifact_bytes_be,
+        outbox_count_be, outbox_bytes_be
+    ) VALUES (1, zeroblob(8), zeroblob(8), zeroblob(8), zeroblob(8), zeroblob(8));
+    CREATE TABLE IF NOT EXISTS validation_jobs_v0 (
+        route INTEGER NOT NULL CHECK(route IN (0,1)),
+        block_id BLOB NOT NULL CHECK(length(block_id)=32),
+        view_be BLOB NOT NULL CHECK(length(view_be)=8),
+        generation_be BLOB NOT NULL CHECK(length(generation_be)=8),
+        target_height_be BLOB NOT NULL CHECK(length(target_height_be)=8),
+        target_header_cev0 BLOB NOT NULL
+            CHECK(length(target_header_cev0)>0 AND length(target_header_cev0)<=65536),
+        body_record_codec INTEGER NOT NULL CHECK(body_record_codec=0),
+        body_record BLOB NOT NULL
+            CHECK(length(body_record)>0 AND length(body_record)<=16777216),
+        body_checksum BLOB NOT NULL CHECK(length(body_checksum)=32),
+        parent_height_be BLOB NOT NULL CHECK(length(parent_height_be)=8),
+        parent_view_be BLOB NOT NULL CHECK(length(parent_view_be)=8),
+        parent_block_id BLOB NOT NULL CHECK(length(parent_block_id)=32),
+        parent_timestamp_ms_be BLOB NOT NULL CHECK(length(parent_timestamp_ms_be)=8),
+        parent_header_cev0 BLOB
+            CHECK(parent_header_cev0 IS NULL OR
+                  (length(parent_header_cev0)>0 AND length(parent_header_cev0)<=65536)),
+        parent_state_version_be BLOB
+            CHECK(parent_state_version_be IS NULL OR length(parent_state_version_be)=8),
+        parent_state_root BLOB
+            CHECK(parent_state_root IS NULL OR length(parent_state_root)=32),
+        validator_set_id BLOB NOT NULL CHECK(length(validator_set_id)=32),
+        parameters_hash BLOB NOT NULL CHECK(length(parameters_hash)=32),
+        protocol_version_be BLOB NOT NULL CHECK(length(protocol_version_be)=4),
+        runtime_profile_ref BLOB NOT NULL CHECK(length(runtime_profile_ref)=32),
+        host_config_ref BLOB NOT NULL CHECK(length(host_config_ref)=32),
+        creation_revision_be BLOB NOT NULL CHECK(length(creation_revision_be)=8),
+        request_fingerprint BLOB NOT NULL CHECK(length(request_fingerprint)=32),
+        immutable_checksum BLOB NOT NULL CHECK(length(immutable_checksum)=32),
+        state INTEGER NOT NULL CHECK(state BETWEEN 0 AND 5),
+        result_kind INTEGER CHECK(result_kind IS NULL OR result_kind IN (0,1)),
+        invalid_reason_code_be BLOB
+            CHECK(invalid_reason_code_be IS NULL OR length(invalid_reason_code_be)=4),
+        artifact_codec TEXT
+            CHECK(artifact_codec IS NULL OR
+                  (length(artifact_codec)>0 AND length(CAST(artifact_codec AS BLOB))<=64)),
+        artifact_bytes BLOB
+            CHECK(artifact_bytes IS NULL OR length(artifact_bytes)<=67108864),
+        artifact_checksum BLOB
+            CHECK(artifact_checksum IS NULL OR length(artifact_checksum)=32),
+        accepted_core_revision_be BLOB
+            CHECK(accepted_core_revision_be IS NULL OR length(accepted_core_revision_be)=8),
+        accepted_core_payload_checksum BLOB
+            CHECK(accepted_core_payload_checksum IS NULL OR
+                  length(accepted_core_payload_checksum)=32),
+        row_codec INTEGER NOT NULL CHECK(row_codec=0),
+        row_checksum BLOB NOT NULL CHECK(length(row_checksum)=32),
+        PRIMARY KEY(route, block_id, view_be, generation_be),
+        UNIQUE(block_id, view_be, generation_be),
+        CHECK(creation_revision_be=generation_be),
+        CHECK(
+            (parent_header_cev0 IS NULL AND parent_state_version_be IS NULL AND
+             parent_state_root IS NULL) OR
+            (parent_header_cev0 IS NOT NULL AND parent_state_version_be IS NOT NULL AND
+             parent_state_root IS NOT NULL)
+        ),
+        CHECK(
+            (state=0 AND result_kind IS NULL AND invalid_reason_code_be IS NULL AND
+             artifact_codec IS NULL AND artifact_bytes IS NULL AND
+             artifact_checksum IS NULL) OR
+            (state BETWEEN 1 AND 5 AND result_kind IS NOT NULL AND
+             artifact_codec IS NOT NULL AND artifact_bytes IS NOT NULL AND
+             artifact_checksum IS NOT NULL)
+        ),
+        CHECK(
+            (result_kind IS NULL AND invalid_reason_code_be IS NULL) OR
+            (result_kind=0 AND invalid_reason_code_be IS NULL) OR
+            (result_kind=1 AND invalid_reason_code_be IS NOT NULL)
+        ),
+        CHECK(
+            (state<4 AND accepted_core_revision_be IS NULL AND
+             accepted_core_payload_checksum IS NULL) OR
+            (state>=4 AND accepted_core_revision_be IS NOT NULL AND
+             accepted_core_payload_checksum IS NOT NULL)
+        )
+    ) STRICT;
+    CREATE INDEX IF NOT EXISTS validation_jobs_non_reserved_v0
+        ON validation_jobs_v0(state) WHERE state<>0;
+    CREATE TABLE IF NOT EXISTS validation_callback_outbox_v0 (
+        route INTEGER NOT NULL CHECK(route IN (0,1)),
+        block_id BLOB NOT NULL CHECK(length(block_id)=32),
+        view_be BLOB NOT NULL CHECK(length(view_be)=8),
+        generation_be BLOB NOT NULL CHECK(length(generation_be)=8),
+        result_kind INTEGER NOT NULL CHECK(result_kind IN (0,1)),
+        artifact_checksum BLOB NOT NULL CHECK(length(artifact_checksum)=32),
+        payload_codec TEXT NOT NULL
+            CHECK(length(payload_codec)>0 AND length(CAST(payload_codec AS BLOB))<=64),
+        payload_bytes BLOB NOT NULL CHECK(length(payload_bytes)<=16777216),
+        payload_checksum BLOB NOT NULL CHECK(length(payload_checksum)=32),
+        idempotency_key BLOB NOT NULL CHECK(length(idempotency_key)=32),
+        delivery_attempt_be BLOB NOT NULL CHECK(length(delivery_attempt_be)=8),
+        outbox_checksum BLOB NOT NULL CHECK(length(outbox_checksum)=32),
+        PRIMARY KEY(route, block_id, view_be, generation_be),
+        UNIQUE(idempotency_key),
+        FOREIGN KEY(route, block_id, view_be, generation_be)
+            REFERENCES validation_jobs_v0(route, block_id, view_be, generation_be)
+            ON UPDATE RESTRICT ON DELETE RESTRICT
+    ) STRICT;
+";
 const STORE_SCHEMA_SQL: &str = "
     CREATE TABLE IF NOT EXISTS metadata (
         key TEXT PRIMARY KEY NOT NULL,
@@ -106,17 +260,6 @@ const STORE_SCHEMA_SQL: &str = "
     CREATE TABLE IF NOT EXISTS auth_roots (
         version_be BLOB PRIMARY KEY NOT NULL CHECK(length(version_be)=8),
         root_hash BLOB NOT NULL CHECK(length(root_hash)=32)
-    ) STRICT;
-    CREATE TABLE IF NOT EXISTS native_validation_reservations (
-        route INTEGER NOT NULL CHECK(route IN (0,1)),
-        block_id BLOB NOT NULL CHECK(length(block_id)=32),
-        view_be BLOB NOT NULL CHECK(length(view_be)=8),
-        generation_be BLOB NOT NULL CHECK(length(generation_be)=8),
-        target_height_be BLOB NOT NULL CHECK(length(target_height_be)=8),
-        parent_block_id BLOB NOT NULL CHECK(length(parent_block_id)=32),
-        request_fingerprint BLOB NOT NULL CHECK(length(request_fingerprint)=32),
-        PRIMARY KEY(route, block_id, view_be, generation_be),
-        UNIQUE(block_id, view_be, generation_be)
     ) STRICT;
 ";
 
@@ -247,37 +390,352 @@ impl fmt::Display for AuthenticatedRuntimeReadFailureV0 {
 
 impl std::error::Error for AuthenticatedRuntimeReadFailureV0 {}
 
-/// Process-local inputs for one durable native payload-validation reservation.
+#[cfg_attr(not(test), allow(dead_code))]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub(super) enum NativeValidationRequestRecordFailureV0 {
+    ValidationIdentityMismatch,
+    TargetHeaderEncoding,
+    ParentHeaderEncoding,
+    ApplicationPayloadTooLarge,
+    EvidenceCountOverflow,
+    EvidenceObjectTooLarge,
+    BodyRecordTooLarge,
+    FingerprintFrameLengthOverflow,
+    RequestFingerprintMismatch,
+}
+
+fn hash_native_validation_reservation_frame_v0(
+    hasher: &mut Sha256,
+    frame: &[u8],
+) -> std::result::Result<(), NativeValidationRequestRecordFailureV0> {
+    let length = u32::try_from(frame.len())
+        .map_err(|_| NativeValidationRequestRecordFailureV0::FingerprintFrameLengthOverflow)?;
+    hasher.update(length.to_be_bytes());
+    hasher.update(frame);
+    Ok(())
+}
+
+#[allow(clippy::too_many_arguments)]
+fn begin_native_validation_reservation_fingerprint_v0(
+    route: PayloadValidationRouteV0,
+    validation_id: ValidationId,
+    target_header_cev0: &[u8],
+    application_payload: &[u8],
+    evidence_count: u32,
+) -> std::result::Result<Sha256, NativeValidationRequestRecordFailureV0> {
+    let route = [match route {
+        PayloadValidationRouteV0::Proposal => 0,
+        PayloadValidationRouteV0::Synced => 1,
+    }];
+    let codec = NATIVE_VALIDATION_RESERVATION_FINGERPRINT_CODEC_V0.to_be_bytes();
+    let validation_view = validation_id.view().get().to_be_bytes();
+    let validation_generation = validation_id.generation().to_be_bytes();
+    let evidence_count = evidence_count.to_be_bytes();
+    let mut hasher = Sha256::new();
+    for frame in [
+        NATIVE_VALIDATION_RESERVATION_FINGERPRINT_HASH_PREFIX_V0,
+        NATIVE_VALIDATION_RESERVATION_FINGERPRINT_DOMAIN_V0,
+        codec.as_slice(),
+        route.as_slice(),
+        validation_id.block_id().as_bytes(),
+        validation_view.as_slice(),
+        validation_generation.as_slice(),
+        target_header_cev0,
+        application_payload,
+        evidence_count.as_slice(),
+    ] {
+        hash_native_validation_reservation_frame_v0(&mut hasher, frame)?;
+    }
+    Ok(hasher)
+}
+
+#[allow(clippy::too_many_arguments)]
+fn finish_native_validation_reservation_fingerprint_v0(
+    mut hasher: Sha256,
+    parent_height: u64,
+    parent_view: u64,
+    parent_block_id: &[u8; 32],
+    parent_timestamp_ms: u64,
+    parent_header_cev0: Option<&[u8]>,
+) -> std::result::Result<[u8; 32], NativeValidationRequestRecordFailureV0> {
+    let parent_height = parent_height.to_be_bytes();
+    let parent_view = parent_view.to_be_bytes();
+    let parent_timestamp_ms = parent_timestamp_ms.to_be_bytes();
+    let parent_header_presence = [u8::from(parent_header_cev0.is_some())];
+    for frame in [
+        parent_height.as_slice(),
+        parent_view.as_slice(),
+        parent_block_id.as_slice(),
+        parent_timestamp_ms.as_slice(),
+        parent_header_presence.as_slice(),
+    ] {
+        hash_native_validation_reservation_frame_v0(&mut hasher, frame)?;
+    }
+    if let Some(parent_header_cev0) = parent_header_cev0 {
+        hash_native_validation_reservation_frame_v0(&mut hasher, parent_header_cev0)?;
+    }
+    Ok(hasher.finalize().into())
+}
+
+pub(super) fn native_validation_request_fingerprint_v0(
+    route: PayloadValidationRouteV0,
+    validation_id: ValidationId,
+    block: &Block,
+    parent: &PayloadValidationParentV0,
+) -> std::result::Result<[u8; 32], NativeValidationRequestRecordFailureV0> {
+    let target_header_cev0 = block
+        .header()
+        .try_cev0_bytes()
+        .map_err(|_| NativeValidationRequestRecordFailureV0::TargetHeaderEncoding)?;
+    let evidence_count = u32::try_from(block.evidence_objects().len())
+        .map_err(|_| NativeValidationRequestRecordFailureV0::EvidenceCountOverflow)?;
+    let mut hasher = begin_native_validation_reservation_fingerprint_v0(
+        route,
+        validation_id,
+        &target_header_cev0,
+        block.application_payload(),
+        evidence_count,
+    )?;
+    for evidence in block.evidence_objects() {
+        hash_native_validation_reservation_frame_v0(&mut hasher, evidence)?;
+    }
+    let parent_tip = parent.tip();
+    let parent_header_cev0 = parent
+        .exact_header()
+        .map(|header| {
+            header
+                .try_cev0_bytes()
+                .map_err(|_| NativeValidationRequestRecordFailureV0::ParentHeaderEncoding)
+        })
+        .transpose()?;
+    finish_native_validation_reservation_fingerprint_v0(
+        hasher,
+        parent_tip.height().get(),
+        parent_tip.view().get(),
+        parent_tip.block_id().as_bytes(),
+        parent_tip.timestamp_ms(),
+        parent_header_cev0.as_deref(),
+    )
+}
+
+struct NativeValidationRequestBodyRecordV0 {
+    bytes: Vec<u8>,
+    checksum: [u8; 32],
+}
+
+impl NativeValidationRequestBodyRecordV0 {
+    fn from_block(
+        block: &Block,
+    ) -> std::result::Result<Self, NativeValidationRequestRecordFailureV0> {
+        let payload = block.application_payload();
+        let payload_length = u32::try_from(payload.len())
+            .map_err(|_| NativeValidationRequestRecordFailureV0::ApplicationPayloadTooLarge)?;
+        let evidence_count = u32::try_from(block.evidence_objects().len())
+            .map_err(|_| NativeValidationRequestRecordFailureV0::EvidenceCountOverflow)?;
+        let mut bytes = Vec::with_capacity(block.logical_block_size());
+        bytes.extend_from_slice(&NATIVE_VALIDATION_BODY_RECORD_CODEC_V0.to_be_bytes());
+        bytes.extend_from_slice(&payload_length.to_be_bytes());
+        bytes.extend_from_slice(payload);
+        bytes.extend_from_slice(&evidence_count.to_be_bytes());
+        for evidence in block.evidence_objects() {
+            let evidence_length = u32::try_from(evidence.len())
+                .map_err(|_| NativeValidationRequestRecordFailureV0::EvidenceObjectTooLarge)?;
+            bytes.extend_from_slice(&evidence_length.to_be_bytes());
+            bytes.extend_from_slice(evidence);
+        }
+        if bytes.len() > MAX_NATIVE_VALIDATION_BODY_RECORD_BYTES {
+            return Err(NativeValidationRequestRecordFailureV0::BodyRecordTooLarge);
+        }
+        let checksum = hash_domain(NATIVE_VALIDATION_BODY_DOMAIN_V0, &[&bytes]);
+        Ok(Self { bytes, checksum })
+    }
+}
+
+/// Process-local inputs for one revalidatable native raw-request job fact.
 ///
-/// The constructor is crate-private and the value is deliberately neither
-/// cloneable nor serializable. The fingerprint is only a congruence seal over
-/// the retained Core request; it is not payload-validity or terminal-result
-/// authority.
+/// The constructor accepts only one exact Core-issued block/parent graph and
+/// freezes the target header, canonical raw body record, parent state
+/// reference and execution-configuration references before SQLite is
+/// opened. The value is deliberately neither cloneable nor serializable. Its
+/// checksums are congruence and recovery facts, never payload-validity or Core
+/// callback authority.
 #[cfg_attr(not(test), allow(dead_code))]
 pub(super) struct NativeValidationReservationFactsV0 {
     route: PayloadValidationRouteV0,
     validation_id: ValidationId,
     target_height: u64,
+    target_header_cev0: Vec<u8>,
+    body_record: Vec<u8>,
+    body_checksum: [u8; 32],
+    parent_height: u64,
+    parent_view: u64,
     parent_block_id: [u8; 32],
+    parent_timestamp_ms: u64,
+    parent_header_cev0: Option<Vec<u8>>,
+    parent_state_version: Option<u64>,
+    parent_state_root: Option<[u8; 32]>,
+    validator_set_id: [u8; 32],
+    parameters_hash: [u8; 32],
+    protocol_version: u32,
+    creation_revision: u64,
     request_fingerprint: [u8; 32],
 }
 
 #[cfg_attr(not(test), allow(dead_code))]
 impl NativeValidationReservationFactsV0 {
-    pub(super) const fn new(
+    pub(super) fn from_core_request_v0(
         route: PayloadValidationRouteV0,
         validation_id: ValidationId,
-        target_height: u64,
-        parent_block_id: [u8; 32],
+        block: &Block,
+        parent: &PayloadValidationParentV0,
         request_fingerprint: [u8; 32],
-    ) -> Self {
-        Self {
+    ) -> std::result::Result<Self, NativeValidationRequestRecordFailureV0> {
+        let header = block.header();
+        if validation_id.block_id() != block.id() || validation_id.view() != header.view() {
+            return Err(NativeValidationRequestRecordFailureV0::ValidationIdentityMismatch);
+        }
+        let target_header_cev0 = header
+            .try_cev0_bytes()
+            .map_err(|_| NativeValidationRequestRecordFailureV0::TargetHeaderEncoding)?;
+        if target_header_cev0.is_empty()
+            || target_header_cev0.len() > MAX_NATIVE_VALIDATION_HEADER_BYTES
+        {
+            return Err(NativeValidationRequestRecordFailureV0::TargetHeaderEncoding);
+        }
+        let body = NativeValidationRequestBodyRecordV0::from_block(block)?;
+        if native_validation_request_fingerprint_v0(route, validation_id, block, parent)?
+            != request_fingerprint
+        {
+            return Err(NativeValidationRequestRecordFailureV0::RequestFingerprintMismatch);
+        }
+        let parent_tip = parent.tip();
+        let (parent_header_cev0, parent_state_version, parent_state_root) = parent
+            .exact_header()
+            .map(|header| {
+                let encoded = header
+                    .try_cev0_bytes()
+                    .map_err(|_| NativeValidationRequestRecordFailureV0::ParentHeaderEncoding)?;
+                if encoded.is_empty() || encoded.len() > MAX_NATIVE_VALIDATION_HEADER_BYTES {
+                    return Err(NativeValidationRequestRecordFailureV0::ParentHeaderEncoding);
+                }
+                Ok((
+                    encoded,
+                    header.height().get(),
+                    *header.state_root().as_bytes(),
+                ))
+            })
+            .transpose()?
+            .map_or((None, None, None), |(header, version, root)| {
+                (Some(header), Some(version), Some(root))
+            });
+        Ok(Self {
             route,
             validation_id,
-            target_height,
-            parent_block_id,
+            target_height: header.height().get(),
+            target_header_cev0,
+            body_record: body.bytes,
+            body_checksum: body.checksum,
+            parent_height: parent_tip.height().get(),
+            parent_view: parent_tip.view().get(),
+            parent_block_id: *parent_tip.block_id().as_bytes(),
+            parent_timestamp_ms: parent_tip.timestamp_ms(),
+            parent_header_cev0,
+            parent_state_version,
+            parent_state_root,
+            validator_set_id: *header.validator_set_id().as_bytes(),
+            parameters_hash: *header.consensus_parameters_hash().as_bytes(),
+            protocol_version: header.protocol_version().get(),
+            creation_revision: validation_id.generation(),
             request_fingerprint,
-        }
+        })
+    }
+
+    #[cfg(test)]
+    pub(super) fn new_for_test_v0(
+        route: PayloadValidationRouteV0,
+        generation: u64,
+        chain_id: &str,
+    ) -> Self {
+        use trnm_consensus_types::{
+            BlockHeader, BlockKind, ChainId, ConsensusParametersHash, Epoch, EvidenceRoot,
+            GenesisHash, Height, PayloadDigest, ProtocolVersion, ReceiptsRoot, StateRoot,
+            ValidatorId, ValidatorSetId,
+        };
+
+        let test_chain = ChainId::new(chain_id).expect("valid validation-job test chain ID");
+        let parent_header = BlockHeader::new(
+            GenesisHash::new([1; 32]),
+            test_chain,
+            ProtocolVersion::V0,
+            Epoch::new(1),
+            View::new(8),
+            Height::new(11),
+            trnm_consensus_types::BlockKind::Regular,
+            BlockId::new([2; 32]),
+            ValidatorId::new([3; 32]),
+            ValidatorSetId::new([4; 32]),
+            ConsensusParametersHash::new([5; 32]),
+            PayloadDigest::new([6; 32]),
+            StateRoot::new([3; 32]),
+            ReceiptsRoot::new([8; 32]),
+            EvidenceRoot::new([9; 32]),
+            10,
+            None,
+        )
+        .expect("construct validation-job test parent header");
+        let target_header = BlockHeader::new(
+            GenesisHash::new([1; 32]),
+            test_chain,
+            ProtocolVersion::V0,
+            Epoch::new(1),
+            View::new(9),
+            Height::new(12),
+            BlockKind::Regular,
+            parent_header.id(),
+            ValidatorId::new([3; 32]),
+            ValidatorSetId::new([4; 32]),
+            ConsensusParametersHash::new([5; 32]),
+            PayloadDigest::new([6; 32]),
+            StateRoot::new([7; 32]),
+            ReceiptsRoot::new([8; 32]),
+            EvidenceRoot::new([9; 32]),
+            11,
+            None,
+        )
+        .expect("construct validation-job test target header");
+        let validation_id = ValidationId::new(target_header.id(), target_header.view(), generation);
+        let body_record = vec![0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0];
+        let body_checksum = hash_domain(NATIVE_VALIDATION_BODY_DOMAIN_V0, &[&body_record]);
+        let mut facts = Self {
+            route,
+            validation_id,
+            target_height: target_header.height().get(),
+            target_header_cev0: target_header
+                .try_cev0_bytes()
+                .expect("encode validation-job test target header"),
+            body_record,
+            body_checksum,
+            parent_height: parent_header.height().get(),
+            parent_view: parent_header.view().get(),
+            parent_block_id: *parent_header.id().as_bytes(),
+            parent_timestamp_ms: parent_header.timestamp_ms(),
+            parent_header_cev0: Some(
+                parent_header
+                    .try_cev0_bytes()
+                    .expect("encode validation-job test parent header"),
+            ),
+            parent_state_version: Some(parent_header.height().get()),
+            parent_state_root: Some([3; 32]),
+            validator_set_id: [4; 32],
+            parameters_hash: [5; 32],
+            protocol_version: ProtocolVersion::V0.get(),
+            creation_revision: validation_id.generation(),
+            request_fingerprint: [0; 32],
+        };
+        facts.request_fingerprint =
+            native_validation_reservation_fingerprint_from_record_v0(&facts)
+                .expect("derive validation-job test request fingerprint");
+        facts
     }
 }
 
@@ -288,32 +746,12 @@ impl NativeValidationReservationFactsV0 {
 #[cfg_attr(not(test), allow(dead_code))]
 #[must_use = "a durable native validation reservation is not terminal authority"]
 pub(super) struct NativeValidationReservationTokenV0 {
-    facts: NativeValidationReservationFactsV0,
-}
-
-#[cfg_attr(not(test), allow(dead_code))]
-impl NativeValidationReservationTokenV0 {
-    pub(super) const fn route(&self) -> PayloadValidationRouteV0 {
-        self.facts.route
-    }
-
-    pub(super) const fn validation_id(&self) -> ValidationId {
-        self.facts.validation_id
-    }
-}
-
-/// Opaque suppression fact for an already-identical durable reservation.
-/// Unlike [`NativeValidationReservationTokenV0`], this type can never enter
-/// evaluation and exposes no conversion into the reserved-owner token.
-#[cfg_attr(not(test), allow(dead_code))]
-#[must_use = "a coalesced durable reservation must suppress duplicate evaluation"]
-pub(super) struct NativeValidationReservationCoalescedV0 {
     route: PayloadValidationRouteV0,
     validation_id: ValidationId,
 }
 
 #[cfg_attr(not(test), allow(dead_code))]
-impl NativeValidationReservationCoalescedV0 {
+impl NativeValidationReservationTokenV0 {
     pub(super) const fn route(&self) -> PayloadValidationRouteV0 {
         self.route
     }
@@ -323,15 +761,105 @@ impl NativeValidationReservationCoalescedV0 {
     }
 }
 
+#[cfg_attr(not(test), allow(dead_code))]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+pub(super) enum NativeValidationJobStateV0 {
+    Reserved,
+    Evaluated,
+    CallbackPending,
+    Delivered,
+    Acked,
+    Applied,
+}
+
+impl NativeValidationJobStateV0 {
+    const fn code(self) -> i64 {
+        match self {
+            Self::Reserved => 0,
+            Self::Evaluated => 1,
+            Self::CallbackPending => 2,
+            Self::Delivered => 3,
+            Self::Acked => 4,
+            Self::Applied => 5,
+        }
+    }
+
+    const fn from_code(code: i64) -> Option<Self> {
+        match code {
+            0 => Some(Self::Reserved),
+            1 => Some(Self::Evaluated),
+            2 => Some(Self::CallbackPending),
+            3 => Some(Self::Delivered),
+            4 => Some(Self::Acked),
+            5 => Some(Self::Applied),
+            _ => None,
+        }
+    }
+}
+
+/// Checksum-verified durable state returned when an exact job already exists
+/// or when restart recovery enumerates local work. It exposes no conversion
+/// into the unique first-reservation evaluation token and is not Core
+/// callback authority.
+#[allow(dead_code)]
+#[must_use = "an existing durable job must be routed by its verified recovery state"]
+pub(super) struct DurableNativeValidationJobV0 {
+    facts: NativeValidationReservationFactsV0,
+    runtime_profile_ref: [u8; 32],
+    host_config_ref: [u8; 32],
+    immutable_checksum: [u8; 32],
+    state: NativeValidationJobStateV0,
+    result_kind: Option<i64>,
+    invalid_reason_code_be: Option<Vec<u8>>,
+    artifact_codec: Option<String>,
+    artifact_bytes: Option<Vec<u8>>,
+    artifact_checksum: Option<[u8; 32]>,
+    accepted_core_revision_be: Option<Vec<u8>>,
+    accepted_core_payload_checksum: Option<[u8; 32]>,
+    row_checksum: [u8; 32],
+}
+
+#[allow(dead_code)]
+impl DurableNativeValidationJobV0 {
+    pub(super) const fn route(&self) -> PayloadValidationRouteV0 {
+        self.facts.route
+    }
+
+    pub(super) const fn validation_id(&self) -> ValidationId {
+        self.facts.validation_id
+    }
+
+    pub(super) const fn target_height(&self) -> u64 {
+        self.facts.target_height
+    }
+
+    pub(super) const fn parent_block_id(&self) -> [u8; 32] {
+        self.facts.parent_block_id
+    }
+
+    pub(super) const fn request_fingerprint(&self) -> [u8; 32] {
+        self.facts.request_fingerprint
+    }
+
+    pub(super) const fn creation_revision(&self) -> u64 {
+        self.facts.creation_revision
+    }
+
+    pub(super) const fn state(&self) -> NativeValidationJobStateV0 {
+        self.state
+    }
+}
+
 /// Whether this call created the durable row or joined the already-identical
-/// reservation. Only `Reserved` retains the evaluation-admission token;
-/// `Coalesced` is a distinct suppression-only type. Neither is a result or
+/// job. Only `Reserved` retains first-evaluation admission. `Existing`
+/// returns the checksum-verified durable state for explicit recovery/takeover
+/// routing without recreating that token. Neither variant is a result or
 /// callback authority.
 #[cfg_attr(not(test), allow(dead_code))]
 #[must_use = "a reservation decision must remain attached to its opaque token"]
 pub(super) enum NativeValidationReservationDecisionV0 {
     Reserved(NativeValidationReservationTokenV0),
-    Coalesced(NativeValidationReservationCoalescedV0),
+    Existing(Box<DurableNativeValidationJobV0>),
 }
 
 #[cfg_attr(not(test), allow(dead_code))]
@@ -356,6 +884,13 @@ pub(super) enum NativeValidationReservationInvariantV0 {
     TargetHeightMismatch,
     ParentBlockIdMismatch,
     RequestFingerprintMismatch,
+    TargetHeaderMismatch,
+    BodyRecordMismatch,
+    ParentContextMismatch,
+    ConfigurationReferenceMismatch,
+    CreationRevisionMismatch,
+    ChecksumMismatch,
+    StateMismatch,
     PersistedRepresentationMalformed,
     CommitReadbackConflict,
 }
@@ -379,6 +914,9 @@ pub(super) enum NativeValidationReservationFailureCauseV0 {
         sqlite: Option<TypedSqliteReadCodeV0>,
     },
     Capacity {
+        maximum: u64,
+    },
+    ByteCapacity {
         maximum: u64,
     },
     Invariant {
@@ -420,15 +958,45 @@ impl FailedNativeValidationReservationV0 {
 
 struct NativeValidationReservationExistingV0 {
     route: i64,
+    block_id: Vec<u8>,
+    view_be: Vec<u8>,
+    generation_be: Vec<u8>,
     target_height_be: Vec<u8>,
+    target_header_cev0: Vec<u8>,
+    body_record_codec: i64,
+    body_record: Vec<u8>,
+    body_checksum: Vec<u8>,
+    parent_height_be: Vec<u8>,
+    parent_view_be: Vec<u8>,
     parent_block_id: Vec<u8>,
+    parent_timestamp_ms_be: Vec<u8>,
+    parent_header_cev0: Option<Vec<u8>>,
+    parent_state_version_be: Option<Vec<u8>>,
+    parent_state_root: Option<Vec<u8>>,
+    validator_set_id: Vec<u8>,
+    parameters_hash: Vec<u8>,
+    protocol_version_be: Vec<u8>,
+    runtime_profile_ref: Vec<u8>,
+    host_config_ref: Vec<u8>,
+    creation_revision_be: Vec<u8>,
     request_fingerprint: Vec<u8>,
+    immutable_checksum: Vec<u8>,
+    state: i64,
+    result_kind: Option<i64>,
+    invalid_reason_code_be: Option<Vec<u8>>,
+    artifact_codec: Option<String>,
+    artifact_bytes: Option<Vec<u8>>,
+    artifact_checksum: Option<Vec<u8>>,
+    accepted_core_revision_be: Option<Vec<u8>>,
+    accepted_core_payload_checksum: Option<Vec<u8>>,
+    row_codec: i64,
+    row_checksum: Vec<u8>,
 }
 
 enum NativeValidationReservationInnerDecisionV0 {
     Reserved,
-    Coalesced,
-    CommitUncertainCoalesced,
+    Existing(DurableNativeValidationJobV0),
+    CommitUncertainExisting(DurableNativeValidationJobV0),
 }
 
 #[cfg_attr(not(test), allow(dead_code))]
@@ -810,37 +1378,42 @@ impl ApplicationStore {
         locked.map_err(|_| anyhow!("application store writer gate poisoned"))
     }
 
-    /// Durably reserves one Core-issued native payload-validation identity.
+    /// Durably reserves or checksum-verifies one Core-issued native
+    /// payload-validation job.
     ///
     /// The complete identity is globally unique in this SQLite store even
     /// though route is also part of the primary key. An exactly congruent row
     /// coalesces before the capacity check; any reuse of the full identity with
-    /// different route, parent, target height, or fingerprint is fail-stop.
-    /// This method does not evaluate the block or create terminal/callback
-    /// authority.
+    /// different route, raw request record, parent, configuration reference,
+    /// target height, or fingerprint is fail-stop. An exact reopen returns the
+    /// durable state for recovery routing; it never remints the unique first
+    /// evaluation token. This method does not evaluate the block or create
+    /// terminal/callback authority.
     #[cfg_attr(not(test), allow(dead_code))]
-    pub(super) fn reserve_native_validation_v0(
+    pub(super) fn reserve_or_reopen_native_validation_job_v0(
         &self,
         facts: NativeValidationReservationFactsV0,
     ) -> std::result::Result<
         NativeValidationReservationDecisionV0,
         Box<FailedNativeValidationReservationV0>,
     > {
-        match self.reserve_native_validation_inner_v0(&facts) {
+        let route = facts.route;
+        let validation_id = facts.validation_id;
+        match self.reserve_or_reopen_native_validation_job_inner_v0(&facts) {
             Ok(NativeValidationReservationInnerDecisionV0::Reserved) => {
                 Ok(NativeValidationReservationDecisionV0::Reserved(
-                    NativeValidationReservationTokenV0 { facts },
+                    NativeValidationReservationTokenV0 {
+                        route,
+                        validation_id,
+                    },
                 ))
             }
             Ok(
-                NativeValidationReservationInnerDecisionV0::Coalesced
-                | NativeValidationReservationInnerDecisionV0::CommitUncertainCoalesced,
-            ) => Ok(NativeValidationReservationDecisionV0::Coalesced(
-                NativeValidationReservationCoalescedV0 {
-                    route: facts.route,
-                    validation_id: facts.validation_id,
-                },
-            )),
+                NativeValidationReservationInnerDecisionV0::Existing(existing)
+                | NativeValidationReservationInnerDecisionV0::CommitUncertainExisting(existing),
+            ) => Ok(NativeValidationReservationDecisionV0::Existing(Box::new(
+                existing,
+            ))),
             Err(cause) => Err(Box::new(FailedNativeValidationReservationV0 {
                 facts,
                 cause,
@@ -848,7 +1421,7 @@ impl ApplicationStore {
         }
     }
 
-    fn reserve_native_validation_inner_v0(
+    fn reserve_or_reopen_native_validation_job_inner_v0(
         &self,
         facts: &NativeValidationReservationFactsV0,
     ) -> std::result::Result<
@@ -867,7 +1440,7 @@ impl ApplicationStore {
                 },
             )?;
 
-        let mut connection = self.connect_native_validation_reservation_v0()?;
+        let mut connection = self.connect_native_validation_job_v0()?;
         let transaction = connection
             .transaction_with_behavior(TransactionBehavior::Immediate)
             .map_err(|error| {
@@ -876,32 +1449,91 @@ impl ApplicationStore {
                     &error,
                 )
             })?;
-        validate_native_validation_reservation_bindings_v0(&transaction, self)?;
-        let already_exists = match load_native_validation_reservation_v0(&transaction, facts)? {
+        validate_native_validation_job_bindings_v0(&transaction, self)?;
+        let decision = match load_native_validation_job_v0(&transaction, facts.validation_id)? {
             Some(existing) => {
-                validate_native_validation_reservation_congruence_v0(facts, &existing)?;
-                true
+                let existing = durable_native_validation_job_from_existing_v0(existing, self)
+                    .map_err(
+                        |kind| NativeValidationReservationFailureCauseV0::Invariant {
+                            stage: NativeValidationReservationStageV0::ReadExisting,
+                            kind,
+                            sqlite: None,
+                        },
+                    )?;
+                validate_native_validation_job_congruence_v0(facts, &existing, self)?;
+                read_reserved_only_native_validation_journal_accounting_v0(
+                    &transaction,
+                    NativeValidationReservationStageV0::ReadExisting,
+                )?;
+                NativeValidationReservationInnerDecisionV0::Existing(existing)
             }
             None => {
-                let count = transaction
-                    .query_row(
-                        "SELECT COUNT(*) FROM native_validation_reservations",
-                        [],
-                        |row| row.get::<_, u64>(0),
-                    )
-                    .map_err(|error| {
-                        classify_native_validation_reservation_sqlite_failure_v0(
-                            NativeValidationReservationStageV0::ReadCapacity,
-                            &error,
-                        )
-                    })?;
-                if count >= MAX_NATIVE_VALIDATION_RESERVATIONS {
+                let accounting = read_reserved_only_native_validation_journal_accounting_v0(
+                    &transaction,
+                    NativeValidationReservationStageV0::ReadCapacity,
+                )?;
+                if accounting.job_count >= MAX_NATIVE_VALIDATION_RESERVATIONS {
                     return Err(NativeValidationReservationFailureCauseV0::Capacity {
                         maximum: MAX_NATIVE_VALIDATION_RESERVATIONS,
                     });
                 }
-                insert_native_validation_reservation_v0(&transaction, facts)?;
-                false
+                let incoming_request_bytes = facts
+                    .target_header_cev0
+                    .len()
+                    .checked_add(facts.body_record.len())
+                    .and_then(|length| {
+                        length.checked_add(facts.parent_header_cev0.as_ref().map_or(0, Vec::len))
+                    })
+                    .and_then(|length| u64::try_from(length).ok())
+                    .ok_or(NativeValidationReservationFailureCauseV0::HostInvariant {
+                        stage: NativeValidationReservationStageV0::ReadCapacity,
+                        sqlite: None,
+                    })?;
+                let next_request_bytes = accounting
+                    .request_bytes
+                    .checked_add(incoming_request_bytes)
+                    .filter(|total| *total <= MAX_NATIVE_VALIDATION_REQUEST_JOURNAL_BYTES)
+                    .ok_or(NativeValidationReservationFailureCauseV0::ByteCapacity {
+                        maximum: MAX_NATIVE_VALIDATION_REQUEST_JOURNAL_BYTES,
+                    })?;
+                let next_job_count = accounting.job_count.checked_add(1).ok_or(
+                    NativeValidationReservationFailureCauseV0::Capacity {
+                        maximum: MAX_NATIVE_VALIDATION_RESERVATIONS,
+                    },
+                )?;
+                if next_job_count > MAX_NATIVE_VALIDATION_RESERVATIONS {
+                    return Err(NativeValidationReservationFailureCauseV0::Capacity {
+                        maximum: MAX_NATIVE_VALIDATION_RESERVATIONS,
+                    });
+                }
+                insert_native_validation_job_v0(&transaction, facts, self)?;
+                let updated = transaction
+                    .execute(
+                        "UPDATE validation_journal_accounting_v0
+                         SET job_count_be=?1, request_bytes_be=?2
+                         WHERE singleton=1 AND job_count_be=?3 AND request_bytes_be=?4",
+                        params![
+                            next_job_count.to_be_bytes().as_slice(),
+                            next_request_bytes.to_be_bytes().as_slice(),
+                            accounting.job_count.to_be_bytes().as_slice(),
+                            accounting.request_bytes.to_be_bytes().as_slice(),
+                        ],
+                    )
+                    .map_err(|error| {
+                        classify_native_validation_reservation_sqlite_failure_v0(
+                            NativeValidationReservationStageV0::Insert,
+                            &error,
+                        )
+                    })?;
+                if updated != 1 {
+                    return Err(NativeValidationReservationFailureCauseV0::Invariant {
+                        stage: NativeValidationReservationStageV0::Insert,
+                        kind:
+                            NativeValidationReservationInvariantV0::PersistedRepresentationMalformed,
+                        sqlite: None,
+                    });
+                }
+                NativeValidationReservationInnerDecisionV0::Reserved
             }
         };
 
@@ -911,8 +1543,10 @@ impl ApplicationStore {
             // accept an exact row only as suppression: another process may
             // have inserted it after this transaction released its lock, so
             // readback alone can never mint the unique evaluation token.
-            return match self.confirm_native_validation_reservation_v0(facts) {
-                Ok(()) => Ok(NativeValidationReservationInnerDecisionV0::CommitUncertainCoalesced),
+            return match self.confirm_native_validation_job_v0(facts) {
+                Ok(existing) => Ok(
+                    NativeValidationReservationInnerDecisionV0::CommitUncertainExisting(existing),
+                ),
                 Err(invariant @ NativeValidationReservationFailureCauseV0::Invariant { .. }) => {
                     Err(invariant)
                 }
@@ -923,14 +1557,10 @@ impl ApplicationStore {
             };
         }
 
-        Ok(if already_exists {
-            NativeValidationReservationInnerDecisionV0::Coalesced
-        } else {
-            NativeValidationReservationInnerDecisionV0::Reserved
-        })
+        Ok(decision)
     }
 
-    fn connect_native_validation_reservation_v0(
+    fn connect_native_validation_job_v0(
         &self,
     ) -> std::result::Result<Connection, NativeValidationReservationFailureCauseV0> {
         let connection = Connection::open_with_flags(
@@ -985,10 +1615,11 @@ impl ApplicationStore {
         Ok(connection)
     }
 
-    fn confirm_native_validation_reservation_v0(
+    fn confirm_native_validation_job_v0(
         &self,
         facts: &NativeValidationReservationFactsV0,
-    ) -> std::result::Result<(), NativeValidationReservationFailureCauseV0> {
+    ) -> std::result::Result<DurableNativeValidationJobV0, NativeValidationReservationFailureCauseV0>
+    {
         let connection = Connection::open_with_flags(
             &self.database_path,
             OpenFlags::SQLITE_OPEN_READ_ONLY | OpenFlags::SQLITE_OPEN_NO_MUTEX,
@@ -1007,14 +1638,22 @@ impl ApplicationStore {
                     &error,
                 )
             })?;
-        validate_native_validation_reservation_bindings_v0(&connection, self)?;
-        let existing = load_native_validation_reservation_v0(&connection, facts)?.ok_or(
+        validate_native_validation_job_bindings_v0(&connection, self)?;
+        let existing = load_native_validation_job_v0(&connection, facts.validation_id)?.ok_or(
             NativeValidationReservationFailureCauseV0::HostInvariant {
                 stage: NativeValidationReservationStageV0::ConfirmCommit,
                 sqlite: None,
             },
         )?;
-        validate_native_validation_reservation_congruence_v0(facts, &existing).map_err(
+        let existing =
+            durable_native_validation_job_from_existing_v0(existing, self).map_err(|kind| {
+                NativeValidationReservationFailureCauseV0::Invariant {
+                    stage: NativeValidationReservationStageV0::ConfirmCommit,
+                    kind,
+                    sqlite: None,
+                }
+            })?;
+        validate_native_validation_job_congruence_v0(facts, &existing, self).map_err(
             |failure| match failure {
                 NativeValidationReservationFailureCauseV0::Invariant { kind, sqlite, .. } => {
                     NativeValidationReservationFailureCauseV0::Invariant {
@@ -1031,7 +1670,70 @@ impl ApplicationStore {
                 }
                 other => other,
             },
-        )
+        )?;
+        Ok(existing)
+    }
+
+    /// Loads every checksum-verified local validation job in canonical state
+    /// and identity order. Returned values are recovery facts only: they do
+    /// not recreate the first-reservation token, the claimed Core request, an
+    /// evaluated artifact, or callback authority.
+    #[cfg_attr(not(test), allow(dead_code))]
+    #[cfg(test)]
+    pub(super) fn load_native_validation_recovery_work_v0(
+        &self,
+    ) -> Result<Vec<DurableNativeValidationJobV0>> {
+        let connection = self.connect_read()?;
+        let mut work = Vec::new();
+        self.visit_native_validation_recovery_work_v0(&connection, |job| {
+            work.push(job);
+            Ok(())
+        })?;
+        Ok(work)
+    }
+
+    fn visit_native_validation_recovery_work_v0(
+        &self,
+        connection: &Connection,
+        mut visit: impl FnMut(DurableNativeValidationJobV0) -> Result<()>,
+    ) -> Result<()> {
+        validate_foreign_key_integrity(connection)?;
+        validate_storage_resource_bounds(connection)?;
+        let mut statement = connection.prepare(
+            "SELECT route, block_id, view_be, generation_be, target_height_be,
+                    target_header_cev0, body_record_codec, body_record, body_checksum,
+                    parent_height_be, parent_view_be, parent_block_id,
+                    parent_timestamp_ms_be, parent_header_cev0,
+                    parent_state_version_be, parent_state_root, validator_set_id,
+                    parameters_hash, protocol_version_be, runtime_profile_ref,
+                    host_config_ref, creation_revision_be, request_fingerprint,
+                    immutable_checksum, state, result_kind, invalid_reason_code_be,
+                    artifact_codec, artifact_bytes, artifact_checksum,
+                    accepted_core_revision_be, accepted_core_payload_checksum,
+                    row_codec, row_checksum
+             FROM validation_jobs_v0
+             ORDER BY state, route, block_id, view_be, generation_be",
+        )?;
+        let rows = statement.query_map([], native_validation_existing_from_row_v0)?;
+        let expected_host_config_ref = native_validation_host_config_ref_v0(self);
+        for row in rows {
+            let job =
+                durable_native_validation_job_from_existing_v0(row?, self).map_err(|kind| {
+                    anyhow!("native validation recovery row invariant failed: {kind:?}")
+                })?;
+            ensure!(
+                job.runtime_profile_ref
+                    == native_validation_runtime_profile_ref_v0(job.facts.protocol_version)
+                    && job.host_config_ref == expected_host_config_ref,
+                "native validation recovery row configuration reference differs from this host"
+            );
+            ensure!(
+                job.state == NativeValidationJobStateV0::Reserved,
+                "application-store schema v6 foundation encountered an evaluated validation job before its artifact codec is active"
+            );
+            visit(job)?;
+        }
+        Ok(())
     }
 
     pub(super) fn open(
@@ -1067,6 +1769,13 @@ impl ApplicationStore {
             self.probe_existing_database()?;
         }
         let connection = self.connect()?;
+        // Startup must authenticate every local validation fact before the
+        // application resumes from the committed head. Recovery execution is
+        // still a later tranche; this scan is a fail-closed integrity gate.
+        self.visit_native_validation_recovery_work_v0(&connection, |job| {
+            drop(job);
+            Ok(())
+        })?;
         if self.has_committed_state(&connection)? {
             let state = load_sqlite_state(&connection)?;
             self.refresh_status_best_effort(&state);
@@ -1942,14 +2651,24 @@ impl ApplicationStore {
         drop(target);
         pinned.release()?;
 
-        // Validation reservations are node-local, monotonic work journal
-        // rows, not consensus state. Scrub only the temporary copy before
-        // pruning/VACUUM; the authoritative source database remains intact.
+        // Validation jobs and callback delivery records are node-local,
+        // monotonic work journal rows, not consensus state. Scrub only the
+        // temporary copy, child outbox first, before pruning/VACUUM; the
+        // authoritative source database remains intact.
         {
             let mut connection = Connection::open(&temporary)?;
             let transaction =
                 connection.transaction_with_behavior(TransactionBehavior::Immediate)?;
-            transaction.execute("DELETE FROM native_validation_reservations", [])?;
+            transaction.execute("DELETE FROM validation_callback_outbox_v0", [])?;
+            transaction.execute("DELETE FROM validation_jobs_v0", [])?;
+            transaction.execute(
+                "UPDATE validation_journal_accounting_v0
+                 SET job_count_be=zeroblob(8), request_bytes_be=zeroblob(8),
+                     artifact_bytes_be=zeroblob(8), outbox_count_be=zeroblob(8),
+                     outbox_bytes_be=zeroblob(8)
+                 WHERE singleton=1",
+                [],
+            )?;
             transaction.commit()?;
         }
 
@@ -2044,6 +2763,18 @@ impl ApplicationStore {
             let transaction =
                 destination.transaction_with_behavior(TransactionBehavior::Immediate)?;
             verify_database_head(&transaction, expected)?;
+            let accounting = decode_native_validation_journal_accounting_v0(
+                native_validation_journal_accounting_raw_v0(&transaction)?,
+            )
+            .context("decode snapshot-install validation journal accounting")?;
+            ensure!(
+                accounting.job_count == 0
+                    && accounting.request_bytes == 0
+                    && accounting.artifact_bytes == 0
+                    && accounting.outbox_count == 0
+                    && accounting.outbox_bytes == 0,
+                "snapshot install refuses to discard local native validation journal work"
+            );
             transaction.rollback()?;
         }
         destination.restore(
@@ -2057,8 +2788,12 @@ impl ApplicationStore {
                 migrate_store_schema_v3_to_v4(&mut destination)?;
                 installed_schema = metadata(&destination, "schema_version")?;
             }
-            if installed_schema == PREVIOUS_STORE_SCHEMA_VERSION {
+            if installed_schema == STORE_SCHEMA_VERSION_V4 {
                 migrate_store_schema_v4_to_v5(&mut destination)?;
+                installed_schema = metadata(&destination, "schema_version")?;
+            }
+            if installed_schema == STORE_SCHEMA_VERSION_V5 {
+                migrate_store_schema_v5_to_v6(&mut destination)?;
                 installed_schema = metadata(&destination, "schema_version")?;
             }
             ensure!(
@@ -2126,6 +2861,7 @@ impl ApplicationStore {
         let integrity: String = connection.query_row("PRAGMA quick_check", [], |row| row.get(0))?;
         ensure!(integrity == "ok", "SQLite snapshot quick_check failed");
         validate_snapshot_schema(&connection)?;
+        validate_foreign_key_integrity(&connection)?;
         validate_storage_resource_bounds(&connection)?;
         let store_schema = self.verify_compatible_database_bindings(&connection)?;
         ensure!(
@@ -2163,6 +2899,20 @@ impl ApplicationStore {
             );
         }
         if store_schema == STORE_SCHEMA_VERSION {
+            let jobs =
+                connection.query_row("SELECT COUNT(*) FROM validation_jobs_v0", [], |row| {
+                    row.get::<_, u64>(0)
+                })?;
+            let outbox = connection.query_row(
+                "SELECT COUNT(*) FROM validation_callback_outbox_v0",
+                [],
+                |row| row.get::<_, u64>(0),
+            )?;
+            ensure!(
+                jobs == 0 && outbox == 0,
+                "SQLite snapshot contains node-local native validation jobs or callbacks"
+            );
+        } else if store_schema == STORE_SCHEMA_VERSION_V5 {
             let reservations = connection.query_row(
                 "SELECT COUNT(*) FROM native_validation_reservations",
                 [],
@@ -2170,7 +2920,7 @@ impl ApplicationStore {
             )?;
             ensure!(
                 reservations == 0,
-                "SQLite snapshot contains node-local native validation reservations"
+                "SQLite schema-v5 snapshot contains unreplayable native validation reservations"
             );
         }
         Self::validate_latest_only_auth_storage(&connection, expected_height)?;
@@ -2508,6 +3258,7 @@ impl ApplicationStore {
         )?;
         if initialize {
             connection.execute_batch(STORE_SCHEMA_SQL)?;
+            connection.execute_batch(NATIVE_VALIDATION_JOURNAL_SCHEMA_V0_SQL)?;
         }
         let schema: Option<String> = connection
             .query_row(
@@ -2519,7 +3270,8 @@ impl ApplicationStore {
         match schema.as_deref() {
             Some(schema) => ensure!(
                 schema == STORE_SCHEMA_VERSION
-                    || schema == PREVIOUS_STORE_SCHEMA_VERSION
+                    || schema == STORE_SCHEMA_VERSION_V5
+                    || schema == STORE_SCHEMA_VERSION_V4
                     || schema == LEGACY_STORE_SCHEMA_VERSION,
                 "unsupported application store schema version"
             ),
@@ -2541,8 +3293,11 @@ impl ApplicationStore {
         if schema.as_deref() == Some(LEGACY_STORE_SCHEMA_VERSION) {
             migrate_store_schema_v3_to_v4(&mut connection)?;
         }
-        if metadata(&connection, "schema_version")? == PREVIOUS_STORE_SCHEMA_VERSION {
+        if metadata(&connection, "schema_version")? == STORE_SCHEMA_VERSION_V4 {
             migrate_store_schema_v4_to_v5(&mut connection)?;
+        }
+        if metadata(&connection, "schema_version")? == STORE_SCHEMA_VERSION_V5 {
+            migrate_store_schema_v5_to_v6(&mut connection)?;
         }
         if initialize {
             ensure_metadata_binding(&connection, "chain_id", &self.chain_id)?;
@@ -2764,6 +3519,7 @@ impl ApplicationStore {
             )
         })?;
         validate_snapshot_schema(&connection)?;
+        validate_foreign_key_integrity(&connection)?;
         validate_storage_resource_bounds(&connection)?;
         self.verify_compatible_database_bindings(&connection)?;
         Ok(())
@@ -2787,7 +3543,8 @@ impl ApplicationStore {
             .context("existing application store is missing or cannot read schema_version")?;
         ensure!(
             schema_version == STORE_SCHEMA_VERSION
-                || schema_version == PREVIOUS_STORE_SCHEMA_VERSION
+                || schema_version == STORE_SCHEMA_VERSION_V5
+                || schema_version == STORE_SCHEMA_VERSION_V4
                 || schema_version == LEGACY_STORE_SCHEMA_VERSION,
             "existing application store schema version is unsupported"
         );
@@ -3570,6 +4327,200 @@ fn validate_auth_stale_value_index(connection: &Connection) -> Result<()> {
     Ok(())
 }
 
+fn take_native_validation_record_bytes_v0<'a>(
+    cursor: &mut &'a [u8],
+    length: usize,
+) -> Option<&'a [u8]> {
+    if cursor.len() < length {
+        return None;
+    }
+    let (taken, remaining) = cursor.split_at(length);
+    *cursor = remaining;
+    Some(taken)
+}
+
+fn read_native_validation_record_u16_v0(cursor: &mut &[u8]) -> Option<u16> {
+    let bytes: [u8; 2] = take_native_validation_record_bytes_v0(cursor, 2)?
+        .try_into()
+        .ok()?;
+    Some(u16::from_be_bytes(bytes))
+}
+
+fn read_native_validation_record_u32_v0(cursor: &mut &[u8]) -> Option<u32> {
+    let bytes: [u8; 4] = take_native_validation_record_bytes_v0(cursor, 4)?
+        .try_into()
+        .ok()?;
+    Some(u32::from_be_bytes(bytes))
+}
+
+fn validate_native_validation_body_record_v0(bytes: &[u8]) -> bool {
+    if bytes.is_empty() || bytes.len() > MAX_NATIVE_VALIDATION_BODY_RECORD_BYTES {
+        return false;
+    }
+    let mut cursor = bytes;
+    if read_native_validation_record_u16_v0(&mut cursor)
+        != Some(NATIVE_VALIDATION_BODY_RECORD_CODEC_V0)
+    {
+        return false;
+    }
+    let Some(payload_length) = read_native_validation_record_u32_v0(&mut cursor)
+        .and_then(|length| usize::try_from(length).ok())
+    else {
+        return false;
+    };
+    if payload_length == 0
+        || take_native_validation_record_bytes_v0(&mut cursor, payload_length).is_none()
+    {
+        return false;
+    }
+    let Some(evidence_count) = read_native_validation_record_u32_v0(&mut cursor)
+        .and_then(|count| usize::try_from(count).ok())
+    else {
+        return false;
+    };
+    for _ in 0..evidence_count {
+        let Some(evidence_length) = read_native_validation_record_u32_v0(&mut cursor)
+            .and_then(|length| usize::try_from(length).ok())
+        else {
+            return false;
+        };
+        if evidence_length == 0
+            || take_native_validation_record_bytes_v0(&mut cursor, evidence_length).is_none()
+        {
+            return false;
+        }
+    }
+    cursor.is_empty()
+}
+
+fn native_validation_reservation_fingerprint_from_record_v0(
+    facts: &NativeValidationReservationFactsV0,
+) -> std::result::Result<[u8; 32], NativeValidationReservationInvariantV0> {
+    let mut cursor = facts.body_record.as_slice();
+    if read_native_validation_record_u16_v0(&mut cursor)
+        != Some(NATIVE_VALIDATION_BODY_RECORD_CODEC_V0)
+    {
+        return Err(NativeValidationReservationInvariantV0::PersistedRepresentationMalformed);
+    }
+    let payload_length = read_native_validation_record_u32_v0(&mut cursor)
+        .and_then(|length| usize::try_from(length).ok())
+        .ok_or(NativeValidationReservationInvariantV0::PersistedRepresentationMalformed)?;
+    let application_payload = take_native_validation_record_bytes_v0(&mut cursor, payload_length)
+        .filter(|payload| !payload.is_empty())
+        .ok_or(NativeValidationReservationInvariantV0::PersistedRepresentationMalformed)?;
+    let evidence_count = read_native_validation_record_u32_v0(&mut cursor)
+        .ok_or(NativeValidationReservationInvariantV0::PersistedRepresentationMalformed)?;
+    let mut hasher = begin_native_validation_reservation_fingerprint_v0(
+        facts.route,
+        facts.validation_id,
+        &facts.target_header_cev0,
+        application_payload,
+        evidence_count,
+    )
+    .map_err(|_| NativeValidationReservationInvariantV0::PersistedRepresentationMalformed)?;
+    for _ in 0..evidence_count {
+        let evidence_length = read_native_validation_record_u32_v0(&mut cursor)
+            .and_then(|length| usize::try_from(length).ok())
+            .ok_or(NativeValidationReservationInvariantV0::PersistedRepresentationMalformed)?;
+        let evidence = take_native_validation_record_bytes_v0(&mut cursor, evidence_length)
+            .filter(|evidence| !evidence.is_empty())
+            .ok_or(NativeValidationReservationInvariantV0::PersistedRepresentationMalformed)?;
+        hash_native_validation_reservation_frame_v0(&mut hasher, evidence).map_err(|_| {
+            NativeValidationReservationInvariantV0::PersistedRepresentationMalformed
+        })?;
+    }
+    if !cursor.is_empty() {
+        return Err(NativeValidationReservationInvariantV0::PersistedRepresentationMalformed);
+    }
+    finish_native_validation_reservation_fingerprint_v0(
+        hasher,
+        facts.parent_height,
+        facts.parent_view,
+        &facts.parent_block_id,
+        facts.parent_timestamp_ms,
+        facts.parent_header_cev0.as_deref(),
+    )
+    .map_err(|_| NativeValidationReservationInvariantV0::PersistedRepresentationMalformed)
+}
+
+fn validate_native_validation_request_record_semantics_v0(
+    facts: &NativeValidationReservationFactsV0,
+    store: &ApplicationStore,
+) -> std::result::Result<(), NativeValidationReservationInvariantV0> {
+    let malformed = || NativeValidationReservationInvariantV0::PersistedRepresentationMalformed;
+    let target_header =
+        decode_block_header_v0_exact(&facts.target_header_cev0).map_err(|_| malformed())?;
+    if target_header.try_cev0_bytes().map_err(|_| malformed())? != facts.target_header_cev0 {
+        return Err(malformed());
+    }
+    if target_header.id() != facts.validation_id.block_id()
+        || target_header.view() != facts.validation_id.view()
+        || target_header.height().get() != facts.target_height
+        || target_header.parent_id().as_bytes() != &facts.parent_block_id
+        || facts.parent_height.checked_add(1) != Some(facts.target_height)
+        || facts.parent_timestamp_ms >= target_header.timestamp_ms()
+    {
+        return Err(NativeValidationReservationInvariantV0::TargetHeaderMismatch);
+    }
+    if target_header.validator_set_id().as_bytes() != &facts.validator_set_id
+        || target_header.consensus_parameters_hash().as_bytes() != &facts.parameters_hash
+        || target_header.protocol_version().get() != facts.protocol_version
+        || target_header.chain_id().as_str() != store.chain_id
+    {
+        return Err(NativeValidationReservationInvariantV0::ConfigurationReferenceMismatch);
+    }
+    match (
+        facts.parent_header_cev0.as_deref(),
+        facts.parent_state_version,
+        facts.parent_state_root,
+    ) {
+        (None, None, None)
+            if facts.parent_height == 0
+                && facts.parent_view == 0
+                && facts.parent_block_id == *target_header.genesis_hash().as_bytes()
+                && target_header.block_kind() == BlockKind::Regular
+                && target_header.epoch().get() == 0 => {}
+        (Some(encoded), Some(state_version), Some(state_root)) => {
+            let parent_header = decode_block_header_v0_exact(encoded).map_err(|_| malformed())?;
+            if parent_header.try_cev0_bytes().map_err(|_| malformed())? != encoded {
+                return Err(malformed());
+            }
+            if facts.parent_height == 0
+                || parent_header.id().as_bytes() != &facts.parent_block_id
+                || parent_header.height().get() != facts.parent_height
+                || parent_header.view().get() != facts.parent_view
+                || parent_header.timestamp_ms() != facts.parent_timestamp_ms
+                || parent_header.height().get() != state_version
+                || parent_header.state_root().as_bytes() != &state_root
+                || parent_header.chain_id() != target_header.chain_id()
+                || parent_header.genesis_hash() != target_header.genesis_hash()
+            {
+                return Err(NativeValidationReservationInvariantV0::ParentContextMismatch);
+            }
+            let context_matches = if target_header.block_kind() == BlockKind::EpochHandoff {
+                parent_header.block_kind() == BlockKind::EpochSeal2
+                    && parent_header.epoch().get().checked_add(1)
+                        == Some(target_header.epoch().get())
+            } else {
+                parent_header.protocol_version() == target_header.protocol_version()
+                    && parent_header.epoch() == target_header.epoch()
+                    && parent_header.validator_set_id() == target_header.validator_set_id()
+                    && parent_header.consensus_parameters_hash()
+                        == target_header.consensus_parameters_hash()
+            };
+            if !context_matches {
+                return Err(NativeValidationReservationInvariantV0::ParentContextMismatch);
+            }
+        }
+        _ => return Err(NativeValidationReservationInvariantV0::ParentContextMismatch),
+    }
+    if native_validation_reservation_fingerprint_from_record_v0(facts)? != facts.request_fingerprint
+    {
+        return Err(NativeValidationReservationInvariantV0::RequestFingerprintMismatch);
+    }
+    Ok(())
+}
+
 fn native_validation_route_code_v0(route: PayloadValidationRouteV0) -> i64 {
     match route {
         PayloadValidationRouteV0::Proposal => 0,
@@ -3577,7 +4528,411 @@ fn native_validation_route_code_v0(route: PayloadValidationRouteV0) -> i64 {
     }
 }
 
-fn validate_native_validation_reservation_bindings_v0(
+fn native_validation_route_from_code_v0(code: i64) -> Option<PayloadValidationRouteV0> {
+    match code {
+        0 => Some(PayloadValidationRouteV0::Proposal),
+        1 => Some(PayloadValidationRouteV0::Synced),
+        _ => None,
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+struct NativeValidationJournalAccountingV0 {
+    job_count: u64,
+    request_bytes: u64,
+    artifact_bytes: u64,
+    outbox_count: u64,
+    outbox_bytes: u64,
+}
+
+type NativeValidationJournalAccountingRawV0 = (Vec<u8>, Vec<u8>, Vec<u8>, Vec<u8>, Vec<u8>);
+
+fn native_validation_journal_accounting_raw_v0(
+    connection: &Connection,
+) -> rusqlite::Result<NativeValidationJournalAccountingRawV0> {
+    connection.query_row(
+        "SELECT job_count_be, request_bytes_be, artifact_bytes_be,
+                outbox_count_be, outbox_bytes_be
+         FROM validation_journal_accounting_v0
+         WHERE singleton=1",
+        [],
+        |row| {
+            Ok((
+                row.get(0)?,
+                row.get(1)?,
+                row.get(2)?,
+                row.get(3)?,
+                row.get(4)?,
+            ))
+        },
+    )
+}
+
+fn decode_native_validation_journal_accounting_v0(
+    raw: NativeValidationJournalAccountingRawV0,
+) -> Option<NativeValidationJournalAccountingV0> {
+    Some(NativeValidationJournalAccountingV0 {
+        job_count: native_validation_u64_v0(&raw.0)?,
+        request_bytes: native_validation_u64_v0(&raw.1)?,
+        artifact_bytes: native_validation_u64_v0(&raw.2)?,
+        outbox_count: native_validation_u64_v0(&raw.3)?,
+        outbox_bytes: native_validation_u64_v0(&raw.4)?,
+    })
+}
+
+fn read_reserved_only_native_validation_journal_accounting_v0(
+    connection: &Connection,
+    stage: NativeValidationReservationStageV0,
+) -> std::result::Result<
+    NativeValidationJournalAccountingV0,
+    NativeValidationReservationFailureCauseV0,
+> {
+    let raw = native_validation_journal_accounting_raw_v0(connection)
+        .map_err(|error| classify_native_validation_reservation_sqlite_failure_v0(stage, &error))?;
+    let accounting = decode_native_validation_journal_accounting_v0(raw).ok_or(
+        NativeValidationReservationFailureCauseV0::Invariant {
+            stage,
+            kind: NativeValidationReservationInvariantV0::PersistedRepresentationMalformed,
+            sqlite: None,
+        },
+    )?;
+    let outbox_exists = connection
+        .query_row(
+            "SELECT EXISTS(SELECT 1 FROM validation_callback_outbox_v0 LIMIT 1)",
+            [],
+            |row| row.get::<_, bool>(0),
+        )
+        .map_err(|error| classify_native_validation_reservation_sqlite_failure_v0(stage, &error))?;
+    let non_reserved_job_exists = connection
+        .query_row(
+            "SELECT EXISTS(
+                 SELECT 1 FROM validation_jobs_v0 WHERE state<>0 LIMIT 1
+             )",
+            [],
+            |row| row.get::<_, bool>(0),
+        )
+        .map_err(|error| classify_native_validation_reservation_sqlite_failure_v0(stage, &error))?;
+    if accounting.artifact_bytes != 0
+        || accounting.outbox_count != 0
+        || accounting.outbox_bytes != 0
+        || outbox_exists
+        || non_reserved_job_exists
+    {
+        return Err(NativeValidationReservationFailureCauseV0::Invariant {
+            stage,
+            kind: NativeValidationReservationInvariantV0::StateMismatch,
+            sqlite: None,
+        });
+    }
+    Ok(accounting)
+}
+
+fn native_validation_runtime_profile_ref_v0(protocol_version: u32) -> [u8; 32] {
+    hash_domain(
+        NATIVE_VALIDATION_RUNTIME_PROFILE_DOMAIN_V0,
+        &[
+            &APP_VERSION.to_be_bytes(),
+            &protocol_version.to_be_bytes(),
+            b"native-runtime-v0",
+        ],
+    )
+}
+
+fn native_validation_host_config_ref_v0(store: &ApplicationStore) -> [u8; 32] {
+    hash_domain(
+        NATIVE_VALIDATION_HOST_CONFIG_DOMAIN_V0,
+        &[
+            store.chain_id.as_bytes(),
+            &APP_VERSION.to_be_bytes(),
+            store.signer_policy_hash_hex.as_bytes(),
+            b"jmt-sha256-v0.12.0",
+            b"borsh-v1",
+        ],
+    )
+}
+
+fn native_validation_job_immutable_checksum_v0(
+    facts: &NativeValidationReservationFactsV0,
+    runtime_profile_ref: &[u8; 32],
+    host_config_ref: &[u8; 32],
+) -> [u8; 32] {
+    let route = [u8::try_from(native_validation_route_code_v0(facts.route))
+        .expect("native validation route code is one byte")];
+    let validation_id = facts.validation_id;
+    let immutable_codec = NATIVE_VALIDATION_JOB_IMMUTABLE_CODEC_V0.to_be_bytes();
+    let body_record_codec = NATIVE_VALIDATION_BODY_RECORD_CODEC_V0.to_be_bytes();
+    let parent_header_presence = [u8::from(facts.parent_header_cev0.is_some())];
+    let empty = [];
+    let parent_header = facts.parent_header_cev0.as_deref().unwrap_or(&empty);
+    let parent_state_version = facts
+        .parent_state_version
+        .map(u64::to_be_bytes)
+        .unwrap_or_default();
+    let parent_state_root = facts.parent_state_root.unwrap_or_default();
+    hash_domain(
+        NATIVE_VALIDATION_JOB_IMMUTABLE_DOMAIN_V0,
+        &[
+            &immutable_codec,
+            &route,
+            validation_id.block_id().as_bytes(),
+            &validation_id.view().get().to_be_bytes(),
+            &validation_id.generation().to_be_bytes(),
+            &facts.target_height.to_be_bytes(),
+            &facts.target_header_cev0,
+            &body_record_codec,
+            &facts.body_checksum,
+            &facts.parent_height.to_be_bytes(),
+            &facts.parent_view.to_be_bytes(),
+            &facts.parent_block_id,
+            &facts.parent_timestamp_ms.to_be_bytes(),
+            &parent_header_presence,
+            parent_header,
+            &parent_state_version,
+            &parent_state_root,
+            &facts.validator_set_id,
+            &facts.parameters_hash,
+            &facts.protocol_version.to_be_bytes(),
+            runtime_profile_ref,
+            host_config_ref,
+            &facts.creation_revision.to_be_bytes(),
+            &facts.request_fingerprint,
+        ],
+    )
+}
+
+#[allow(clippy::too_many_arguments)]
+fn native_validation_job_row_checksum_v0(
+    immutable_checksum: &[u8; 32],
+    state: NativeValidationJobStateV0,
+    result_kind: Option<i64>,
+    invalid_reason_code_be: Option<&[u8]>,
+    artifact_codec: Option<&str>,
+    artifact_checksum: Option<&[u8; 32]>,
+    accepted_core_revision_be: Option<&[u8]>,
+    accepted_core_payload_checksum: Option<&[u8; 32]>,
+) -> [u8; 32] {
+    let codec = NATIVE_VALIDATION_JOB_ROW_CODEC_V0.to_be_bytes();
+    let state = [u8::try_from(state.code()).expect("native validation state code is one byte")];
+    let result_kind_presence = [u8::from(result_kind.is_some())];
+    let result_kind = result_kind
+        .and_then(|value| u8::try_from(value).ok())
+        .map_or(Vec::new(), |value| vec![value]);
+    let invalid_reason_presence = [u8::from(invalid_reason_code_be.is_some())];
+    let artifact_presence = [u8::from(artifact_checksum.is_some())];
+    let accepted_revision_presence = [u8::from(accepted_core_revision_be.is_some())];
+    let accepted_payload_presence = [u8::from(accepted_core_payload_checksum.is_some())];
+    hash_domain(
+        NATIVE_VALIDATION_JOB_ROW_DOMAIN_V0,
+        &[
+            &codec,
+            immutable_checksum,
+            &state,
+            &result_kind_presence,
+            &result_kind,
+            &invalid_reason_presence,
+            invalid_reason_code_be.unwrap_or(&[]),
+            &artifact_presence,
+            artifact_codec.map(str::as_bytes).unwrap_or(&[]),
+            artifact_checksum.map(<[u8; 32]>::as_slice).unwrap_or(&[]),
+            &accepted_revision_presence,
+            accepted_core_revision_be.unwrap_or(&[]),
+            &accepted_payload_presence,
+            accepted_core_payload_checksum
+                .map(<[u8; 32]>::as_slice)
+                .unwrap_or(&[]),
+        ],
+    )
+}
+
+fn native_validation_array_v0<const LENGTH: usize>(bytes: &[u8]) -> Option<[u8; LENGTH]> {
+    bytes.try_into().ok()
+}
+
+fn native_validation_u64_v0(bytes: &[u8]) -> Option<u64> {
+    Some(u64::from_be_bytes(native_validation_array_v0(bytes)?))
+}
+
+fn native_validation_u32_v0(bytes: &[u8]) -> Option<u32> {
+    Some(u32::from_be_bytes(native_validation_array_v0(bytes)?))
+}
+
+fn durable_native_validation_job_from_existing_v0(
+    existing: NativeValidationReservationExistingV0,
+    store: &ApplicationStore,
+) -> std::result::Result<DurableNativeValidationJobV0, NativeValidationReservationInvariantV0> {
+    let route = native_validation_route_from_code_v0(existing.route)
+        .ok_or(NativeValidationReservationInvariantV0::PersistedRepresentationMalformed)?;
+    let block_id = native_validation_array_v0::<32>(&existing.block_id)
+        .map(BlockId::new)
+        .ok_or(NativeValidationReservationInvariantV0::PersistedRepresentationMalformed)?;
+    let view = native_validation_u64_v0(&existing.view_be)
+        .map(View::new)
+        .ok_or(NativeValidationReservationInvariantV0::PersistedRepresentationMalformed)?;
+    let generation = native_validation_u64_v0(&existing.generation_be)
+        .ok_or(NativeValidationReservationInvariantV0::PersistedRepresentationMalformed)?;
+    let target_height = native_validation_u64_v0(&existing.target_height_be)
+        .ok_or(NativeValidationReservationInvariantV0::PersistedRepresentationMalformed)?;
+    let parent_height = native_validation_u64_v0(&existing.parent_height_be)
+        .ok_or(NativeValidationReservationInvariantV0::PersistedRepresentationMalformed)?;
+    let parent_view = native_validation_u64_v0(&existing.parent_view_be)
+        .ok_or(NativeValidationReservationInvariantV0::PersistedRepresentationMalformed)?;
+    let parent_block_id = native_validation_array_v0(&existing.parent_block_id)
+        .ok_or(NativeValidationReservationInvariantV0::PersistedRepresentationMalformed)?;
+    let parent_timestamp_ms = native_validation_u64_v0(&existing.parent_timestamp_ms_be)
+        .ok_or(NativeValidationReservationInvariantV0::PersistedRepresentationMalformed)?;
+    let parent_state_version = existing
+        .parent_state_version_be
+        .as_deref()
+        .map(native_validation_u64_v0)
+        .transpose_option()
+        .ok_or(NativeValidationReservationInvariantV0::PersistedRepresentationMalformed)?;
+    let parent_state_root = existing
+        .parent_state_root
+        .as_deref()
+        .map(native_validation_array_v0::<32>)
+        .transpose_option()
+        .ok_or(NativeValidationReservationInvariantV0::PersistedRepresentationMalformed)?;
+    if existing.body_record_codec != i64::from(NATIVE_VALIDATION_BODY_RECORD_CODEC_V0)
+        || existing.row_codec != i64::from(NATIVE_VALIDATION_JOB_ROW_CODEC_V0)
+        || existing.target_header_cev0.is_empty()
+        || existing.target_header_cev0.len() > MAX_NATIVE_VALIDATION_HEADER_BYTES
+        || !validate_native_validation_body_record_v0(&existing.body_record)
+        || existing.parent_header_cev0.as_ref().is_some_and(|header| {
+            header.is_empty() || header.len() > MAX_NATIVE_VALIDATION_HEADER_BYTES
+        })
+        || !matches!(
+            (
+                existing.parent_header_cev0.is_some(),
+                parent_state_version.is_some(),
+                parent_state_root.is_some(),
+            ),
+            (false, false, false) | (true, true, true)
+        )
+    {
+        return Err(NativeValidationReservationInvariantV0::PersistedRepresentationMalformed);
+    }
+    let body_checksum = native_validation_array_v0(&existing.body_checksum)
+        .ok_or(NativeValidationReservationInvariantV0::PersistedRepresentationMalformed)?;
+    if hash_domain(NATIVE_VALIDATION_BODY_DOMAIN_V0, &[&existing.body_record]) != body_checksum {
+        return Err(NativeValidationReservationInvariantV0::ChecksumMismatch);
+    }
+    let validator_set_id = native_validation_array_v0(&existing.validator_set_id)
+        .ok_or(NativeValidationReservationInvariantV0::PersistedRepresentationMalformed)?;
+    let parameters_hash = native_validation_array_v0(&existing.parameters_hash)
+        .ok_or(NativeValidationReservationInvariantV0::PersistedRepresentationMalformed)?;
+    let protocol_version = native_validation_u32_v0(&existing.protocol_version_be)
+        .ok_or(NativeValidationReservationInvariantV0::PersistedRepresentationMalformed)?;
+    let runtime_profile_ref = native_validation_array_v0(&existing.runtime_profile_ref)
+        .ok_or(NativeValidationReservationInvariantV0::PersistedRepresentationMalformed)?;
+    let host_config_ref = native_validation_array_v0(&existing.host_config_ref)
+        .ok_or(NativeValidationReservationInvariantV0::PersistedRepresentationMalformed)?;
+    let creation_revision = native_validation_u64_v0(&existing.creation_revision_be)
+        .ok_or(NativeValidationReservationInvariantV0::PersistedRepresentationMalformed)?;
+    if creation_revision != generation {
+        return Err(NativeValidationReservationInvariantV0::CreationRevisionMismatch);
+    }
+    let request_fingerprint = native_validation_array_v0(&existing.request_fingerprint)
+        .ok_or(NativeValidationReservationInvariantV0::PersistedRepresentationMalformed)?;
+    let immutable_checksum = native_validation_array_v0(&existing.immutable_checksum)
+        .ok_or(NativeValidationReservationInvariantV0::PersistedRepresentationMalformed)?;
+    let state = NativeValidationJobStateV0::from_code(existing.state)
+        .ok_or(NativeValidationReservationInvariantV0::StateMismatch)?;
+    if state != NativeValidationJobStateV0::Reserved
+        || existing.result_kind.is_some()
+        || existing.invalid_reason_code_be.is_some()
+        || existing.artifact_codec.is_some()
+        || existing.artifact_bytes.is_some()
+        || existing.artifact_checksum.is_some()
+        || existing.accepted_core_revision_be.is_some()
+        || existing.accepted_core_payload_checksum.is_some()
+    {
+        return Err(NativeValidationReservationInvariantV0::StateMismatch);
+    }
+    let artifact_checksum = existing
+        .artifact_checksum
+        .as_deref()
+        .map(native_validation_array_v0::<32>)
+        .transpose_option()
+        .ok_or(NativeValidationReservationInvariantV0::PersistedRepresentationMalformed)?;
+    let accepted_core_payload_checksum = existing
+        .accepted_core_payload_checksum
+        .as_deref()
+        .map(native_validation_array_v0::<32>)
+        .transpose_option()
+        .ok_or(NativeValidationReservationInvariantV0::PersistedRepresentationMalformed)?;
+    let row_checksum = native_validation_array_v0(&existing.row_checksum)
+        .ok_or(NativeValidationReservationInvariantV0::PersistedRepresentationMalformed)?;
+    let facts = NativeValidationReservationFactsV0 {
+        route,
+        validation_id: ValidationId::new(block_id, view, generation),
+        target_height,
+        target_header_cev0: existing.target_header_cev0,
+        body_record: existing.body_record,
+        body_checksum,
+        parent_height,
+        parent_view,
+        parent_block_id,
+        parent_timestamp_ms,
+        parent_header_cev0: existing.parent_header_cev0,
+        parent_state_version,
+        parent_state_root,
+        validator_set_id,
+        parameters_hash,
+        protocol_version,
+        creation_revision,
+        request_fingerprint,
+    };
+    validate_native_validation_request_record_semantics_v0(&facts, store)?;
+    if native_validation_job_immutable_checksum_v0(&facts, &runtime_profile_ref, &host_config_ref)
+        != immutable_checksum
+    {
+        return Err(NativeValidationReservationInvariantV0::ChecksumMismatch);
+    }
+    if native_validation_job_row_checksum_v0(
+        &immutable_checksum,
+        state,
+        existing.result_kind,
+        existing.invalid_reason_code_be.as_deref(),
+        existing.artifact_codec.as_deref(),
+        artifact_checksum.as_ref(),
+        existing.accepted_core_revision_be.as_deref(),
+        accepted_core_payload_checksum.as_ref(),
+    ) != row_checksum
+    {
+        return Err(NativeValidationReservationInvariantV0::ChecksumMismatch);
+    }
+    Ok(DurableNativeValidationJobV0 {
+        facts,
+        runtime_profile_ref,
+        host_config_ref,
+        immutable_checksum,
+        state,
+        result_kind: existing.result_kind,
+        invalid_reason_code_be: existing.invalid_reason_code_be,
+        artifact_codec: existing.artifact_codec,
+        artifact_bytes: existing.artifact_bytes,
+        artifact_checksum,
+        accepted_core_revision_be: existing.accepted_core_revision_be,
+        accepted_core_payload_checksum,
+        row_checksum,
+    })
+}
+
+trait TransposeOptionV0<T> {
+    fn transpose_option(self) -> Option<Option<T>>;
+}
+
+impl<T> TransposeOptionV0<T> for Option<Option<T>> {
+    fn transpose_option(self) -> Option<Option<T>> {
+        match self {
+            Some(Some(value)) => Some(Some(value)),
+            Some(None) => None,
+            None => Some(None),
+        }
+    }
+}
+
+fn validate_native_validation_job_bindings_v0(
     connection: &Connection,
     store: &ApplicationStore,
 ) -> std::result::Result<(), NativeValidationReservationFailureCauseV0> {
@@ -3614,32 +4969,75 @@ fn validate_native_validation_reservation_bindings_v0(
     Ok(())
 }
 
-fn load_native_validation_reservation_v0(
+fn native_validation_existing_from_row_v0(
+    row: &rusqlite::Row<'_>,
+) -> rusqlite::Result<NativeValidationReservationExistingV0> {
+    Ok(NativeValidationReservationExistingV0 {
+        route: row.get(0)?,
+        block_id: row.get(1)?,
+        view_be: row.get(2)?,
+        generation_be: row.get(3)?,
+        target_height_be: row.get(4)?,
+        target_header_cev0: row.get(5)?,
+        body_record_codec: row.get(6)?,
+        body_record: row.get(7)?,
+        body_checksum: row.get(8)?,
+        parent_height_be: row.get(9)?,
+        parent_view_be: row.get(10)?,
+        parent_block_id: row.get(11)?,
+        parent_timestamp_ms_be: row.get(12)?,
+        parent_header_cev0: row.get(13)?,
+        parent_state_version_be: row.get(14)?,
+        parent_state_root: row.get(15)?,
+        validator_set_id: row.get(16)?,
+        parameters_hash: row.get(17)?,
+        protocol_version_be: row.get(18)?,
+        runtime_profile_ref: row.get(19)?,
+        host_config_ref: row.get(20)?,
+        creation_revision_be: row.get(21)?,
+        request_fingerprint: row.get(22)?,
+        immutable_checksum: row.get(23)?,
+        state: row.get(24)?,
+        result_kind: row.get(25)?,
+        invalid_reason_code_be: row.get(26)?,
+        artifact_codec: row.get(27)?,
+        artifact_bytes: row.get(28)?,
+        artifact_checksum: row.get(29)?,
+        accepted_core_revision_be: row.get(30)?,
+        accepted_core_payload_checksum: row.get(31)?,
+        row_codec: row.get(32)?,
+        row_checksum: row.get(33)?,
+    })
+}
+
+fn load_native_validation_job_v0(
     connection: &Connection,
-    facts: &NativeValidationReservationFactsV0,
+    validation_id: ValidationId,
 ) -> std::result::Result<
     Option<NativeValidationReservationExistingV0>,
     NativeValidationReservationFailureCauseV0,
 > {
-    let validation_id = facts.validation_id;
     connection
         .query_row(
-            "SELECT route, target_height_be, parent_block_id, request_fingerprint
-             FROM native_validation_reservations
+            "SELECT route, block_id, view_be, generation_be, target_height_be,
+                    target_header_cev0, body_record_codec, body_record, body_checksum,
+                    parent_height_be, parent_view_be, parent_block_id,
+                    parent_timestamp_ms_be, parent_header_cev0,
+                    parent_state_version_be, parent_state_root, validator_set_id,
+                    parameters_hash, protocol_version_be, runtime_profile_ref,
+                    host_config_ref, creation_revision_be, request_fingerprint,
+                    immutable_checksum, state, result_kind, invalid_reason_code_be,
+                    artifact_codec, artifact_bytes, artifact_checksum,
+                    accepted_core_revision_be, accepted_core_payload_checksum,
+                    row_codec, row_checksum
+             FROM validation_jobs_v0
              WHERE block_id=?1 AND view_be=?2 AND generation_be=?3",
             params![
                 validation_id.block_id().as_bytes().as_slice(),
                 validation_id.view().get().to_be_bytes().as_slice(),
                 validation_id.generation().to_be_bytes().as_slice(),
             ],
-            |row| {
-                Ok(NativeValidationReservationExistingV0 {
-                    route: row.get(0)?,
-                    target_height_be: row.get(1)?,
-                    parent_block_id: row.get(2)?,
-                    request_fingerprint: row.get(3)?,
-                })
-            },
+            native_validation_existing_from_row_v0,
         )
         .optional()
         .map_err(|error| {
@@ -3650,74 +5048,181 @@ fn load_native_validation_reservation_v0(
         })
 }
 
-fn validate_native_validation_reservation_congruence_v0(
+fn validate_native_validation_job_congruence_v0(
     facts: &NativeValidationReservationFactsV0,
-    existing: &NativeValidationReservationExistingV0,
+    existing: &DurableNativeValidationJobV0,
+    store: &ApplicationStore,
 ) -> std::result::Result<(), NativeValidationReservationFailureCauseV0> {
     let stage = NativeValidationReservationStageV0::ReadExisting;
-    if !matches!(existing.route, 0 | 1)
-        || existing.target_height_be.len() != 8
-        || existing.parent_block_id.len() != 32
-        || existing.request_fingerprint.len() != 32
-    {
+    if existing.facts.validation_id != facts.validation_id {
         return Err(NativeValidationReservationFailureCauseV0::Invariant {
             stage,
             kind: NativeValidationReservationInvariantV0::PersistedRepresentationMalformed,
             sqlite: None,
         });
     }
-    if existing.route != native_validation_route_code_v0(facts.route) {
+    if existing.facts.route != facts.route {
         return Err(NativeValidationReservationFailureCauseV0::Invariant {
             stage,
             kind: NativeValidationReservationInvariantV0::RouteMismatch,
             sqlite: None,
         });
     }
-    let mut target_height_be = [0_u8; 8];
-    target_height_be.copy_from_slice(&existing.target_height_be);
-    if u64::from_be_bytes(target_height_be) != facts.target_height {
+    if existing.facts.target_height != facts.target_height {
         return Err(NativeValidationReservationFailureCauseV0::Invariant {
             stage,
             kind: NativeValidationReservationInvariantV0::TargetHeightMismatch,
             sqlite: None,
         });
     }
-    if existing.parent_block_id.as_slice() != facts.parent_block_id.as_slice() {
+    if existing.facts.parent_block_id != facts.parent_block_id {
         return Err(NativeValidationReservationFailureCauseV0::Invariant {
             stage,
             kind: NativeValidationReservationInvariantV0::ParentBlockIdMismatch,
             sqlite: None,
         });
     }
-    if existing.request_fingerprint.as_slice() != facts.request_fingerprint.as_slice() {
+    if existing.facts.request_fingerprint != facts.request_fingerprint {
         return Err(NativeValidationReservationFailureCauseV0::Invariant {
             stage,
             kind: NativeValidationReservationInvariantV0::RequestFingerprintMismatch,
             sqlite: None,
         });
     }
+    if existing.facts.target_header_cev0 != facts.target_header_cev0 {
+        return Err(NativeValidationReservationFailureCauseV0::Invariant {
+            stage,
+            kind: NativeValidationReservationInvariantV0::TargetHeaderMismatch,
+            sqlite: None,
+        });
+    }
+    if existing.facts.body_record != facts.body_record
+        || existing.facts.body_checksum != facts.body_checksum
+    {
+        return Err(NativeValidationReservationFailureCauseV0::Invariant {
+            stage,
+            kind: NativeValidationReservationInvariantV0::BodyRecordMismatch,
+            sqlite: None,
+        });
+    }
+    if existing.facts.parent_height != facts.parent_height
+        || existing.facts.parent_view != facts.parent_view
+        || existing.facts.parent_timestamp_ms != facts.parent_timestamp_ms
+        || existing.facts.parent_header_cev0 != facts.parent_header_cev0
+        || existing.facts.parent_state_version != facts.parent_state_version
+        || existing.facts.parent_state_root != facts.parent_state_root
+    {
+        return Err(NativeValidationReservationFailureCauseV0::Invariant {
+            stage,
+            kind: NativeValidationReservationInvariantV0::ParentContextMismatch,
+            sqlite: None,
+        });
+    }
+    if existing.facts.validator_set_id != facts.validator_set_id
+        || existing.facts.parameters_hash != facts.parameters_hash
+        || existing.facts.protocol_version != facts.protocol_version
+        || existing.runtime_profile_ref
+            != native_validation_runtime_profile_ref_v0(facts.protocol_version)
+        || existing.host_config_ref != native_validation_host_config_ref_v0(store)
+    {
+        return Err(NativeValidationReservationFailureCauseV0::Invariant {
+            stage,
+            kind: NativeValidationReservationInvariantV0::ConfigurationReferenceMismatch,
+            sqlite: None,
+        });
+    }
+    if existing.facts.creation_revision != facts.creation_revision {
+        return Err(NativeValidationReservationFailureCauseV0::Invariant {
+            stage,
+            kind: NativeValidationReservationInvariantV0::CreationRevisionMismatch,
+            sqlite: None,
+        });
+    }
     Ok(())
 }
 
-fn insert_native_validation_reservation_v0(
+fn insert_native_validation_job_v0(
     connection: &Connection,
     facts: &NativeValidationReservationFactsV0,
+    store: &ApplicationStore,
 ) -> std::result::Result<(), NativeValidationReservationFailureCauseV0> {
+    validate_native_validation_request_record_semantics_v0(facts, store).map_err(|kind| {
+        NativeValidationReservationFailureCauseV0::Invariant {
+            stage: NativeValidationReservationStageV0::Insert,
+            kind,
+            sqlite: None,
+        }
+    })?;
+    if !validate_native_validation_body_record_v0(&facts.body_record)
+        || hash_domain(NATIVE_VALIDATION_BODY_DOMAIN_V0, &[&facts.body_record])
+            != facts.body_checksum
+    {
+        return Err(NativeValidationReservationFailureCauseV0::HostInvariant {
+            stage: NativeValidationReservationStageV0::Insert,
+            sqlite: None,
+        });
+    }
     let validation_id = facts.validation_id;
+    let runtime_profile_ref = native_validation_runtime_profile_ref_v0(facts.protocol_version);
+    let host_config_ref = native_validation_host_config_ref_v0(store);
+    let immutable_checksum =
+        native_validation_job_immutable_checksum_v0(facts, &runtime_profile_ref, &host_config_ref);
+    let state = NativeValidationJobStateV0::Reserved;
+    let row_checksum = native_validation_job_row_checksum_v0(
+        &immutable_checksum,
+        state,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+    );
+    let parent_state_version_be = facts.parent_state_version.map(u64::to_be_bytes);
     connection
         .execute(
-            "INSERT INTO native_validation_reservations(
+            "INSERT INTO validation_jobs_v0(
                  route, block_id, view_be, generation_be, target_height_be,
-                 parent_block_id, request_fingerprint
-             ) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)",
+                 target_header_cev0, body_record_codec, body_record, body_checksum,
+                 parent_height_be, parent_view_be, parent_block_id,
+                 parent_timestamp_ms_be, parent_header_cev0,
+                 parent_state_version_be, parent_state_root, validator_set_id,
+                 parameters_hash, protocol_version_be, runtime_profile_ref,
+                 host_config_ref, creation_revision_be, request_fingerprint,
+                 immutable_checksum, state, result_kind, invalid_reason_code_be,
+                 artifact_codec, artifact_bytes, artifact_checksum,
+                 accepted_core_revision_be, accepted_core_payload_checksum,
+                 row_codec, row_checksum
+             ) VALUES (
+                 ?1, ?2, ?3, ?4, ?5, ?6, 0, ?7, ?8, ?9, ?10, ?11, ?12,
+                 ?13, ?14, ?15, ?16, ?17, ?18, ?19, ?20, ?21, ?22, ?23,
+                 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, ?24
+             )",
             params![
                 native_validation_route_code_v0(facts.route),
                 validation_id.block_id().as_bytes().as_slice(),
                 validation_id.view().get().to_be_bytes().as_slice(),
                 validation_id.generation().to_be_bytes().as_slice(),
                 facts.target_height.to_be_bytes().as_slice(),
+                facts.target_header_cev0.as_slice(),
+                facts.body_record.as_slice(),
+                facts.body_checksum.as_slice(),
+                facts.parent_height.to_be_bytes().as_slice(),
+                facts.parent_view.to_be_bytes().as_slice(),
                 facts.parent_block_id.as_slice(),
+                facts.parent_timestamp_ms.to_be_bytes().as_slice(),
+                facts.parent_header_cev0.as_deref(),
+                parent_state_version_be.as_ref().map(<[u8; 8]>::as_slice),
+                facts.parent_state_root.as_ref().map(<[u8; 32]>::as_slice),
+                facts.validator_set_id.as_slice(),
+                facts.parameters_hash.as_slice(),
+                facts.protocol_version.to_be_bytes().as_slice(),
+                runtime_profile_ref.as_slice(),
+                host_config_ref.as_slice(),
+                facts.creation_revision.to_be_bytes().as_slice(),
                 facts.request_fingerprint.as_slice(),
+                immutable_checksum.as_slice(),
+                row_checksum.as_slice(),
             ],
         )
         .map_err(|error| {
@@ -4619,7 +6124,7 @@ fn migrate_store_schema_v3_to_v4(connection: &mut Connection) -> Result<()> {
     )?;
     transaction.execute(
         "UPDATE metadata SET value=?1 WHERE key='schema_version'",
-        params![PREVIOUS_STORE_SCHEMA_VERSION],
+        params![STORE_SCHEMA_VERSION_V4],
     )?;
     transaction.commit()?;
     Ok(())
@@ -4628,24 +6133,35 @@ fn migrate_store_schema_v3_to_v4(connection: &mut Connection) -> Result<()> {
 fn migrate_store_schema_v4_to_v5(connection: &mut Connection) -> Result<()> {
     let transaction = connection.transaction_with_behavior(TransactionBehavior::Immediate)?;
     ensure!(
-        metadata(&transaction, "schema_version")? == PREVIOUS_STORE_SCHEMA_VERSION,
+        metadata(&transaction, "schema_version")? == STORE_SCHEMA_VERSION_V4,
         "application store schema changed before v4 to v5 migration"
     );
-    transaction.execute_batch(
-        "
-        CREATE TABLE IF NOT EXISTS native_validation_reservations (
-            route INTEGER NOT NULL CHECK(route IN (0,1)),
-            block_id BLOB NOT NULL CHECK(length(block_id)=32),
-            view_be BLOB NOT NULL CHECK(length(view_be)=8),
-            generation_be BLOB NOT NULL CHECK(length(generation_be)=8),
-            target_height_be BLOB NOT NULL CHECK(length(target_height_be)=8),
-            parent_block_id BLOB NOT NULL CHECK(length(parent_block_id)=32),
-            request_fingerprint BLOB NOT NULL CHECK(length(request_fingerprint)=32),
-            PRIMARY KEY(route, block_id, view_be, generation_be),
-            UNIQUE(block_id, view_be, generation_be)
-        ) STRICT;
-        ",
+    transaction.execute_batch(LEGACY_NATIVE_VALIDATION_RESERVATIONS_SCHEMA_V5_SQL)?;
+    transaction.execute(
+        "UPDATE metadata SET value=?1 WHERE key='schema_version'",
+        params![STORE_SCHEMA_VERSION_V5],
     )?;
+    transaction.commit()?;
+    Ok(())
+}
+
+fn migrate_store_schema_v5_to_v6(connection: &mut Connection) -> Result<()> {
+    let transaction = connection.transaction_with_behavior(TransactionBehavior::Immediate)?;
+    ensure!(
+        metadata(&transaction, "schema_version")? == STORE_SCHEMA_VERSION_V5,
+        "application store schema changed before v5 to v6 migration"
+    );
+    let legacy_reservations = transaction.query_row(
+        "SELECT COUNT(*) FROM native_validation_reservations",
+        [],
+        |row| row.get::<_, u64>(0),
+    )?;
+    ensure!(
+        legacy_reservations == 0,
+        "application store schema v5 contains unreplayable native validation reservations"
+    );
+    transaction.execute_batch(NATIVE_VALIDATION_JOURNAL_SCHEMA_V0_SQL)?;
+    transaction.execute_batch("DROP TABLE native_validation_reservations;")?;
     transaction.execute(
         "UPDATE metadata SET value=?1 WHERE key='schema_version'",
         params![STORE_SCHEMA_VERSION],
@@ -4681,14 +6197,23 @@ fn validate_snapshot_schema(connection: &Connection) -> Result<()> {
     let schema_version = metadata(connection, "schema_version")?;
     ensure!(
         schema_version == STORE_SCHEMA_VERSION
-            || schema_version == PREVIOUS_STORE_SCHEMA_VERSION
+            || schema_version == STORE_SCHEMA_VERSION_V5
+            || schema_version == STORE_SCHEMA_VERSION_V4
             || schema_version == LEGACY_STORE_SCHEMA_VERSION,
         "SQLite snapshot store schema is unsupported"
     );
     let canonical = Connection::open_in_memory()?;
     canonical.execute_batch(STORE_SCHEMA_SQL)?;
+    canonical.execute_batch(NATIVE_VALIDATION_JOURNAL_SCHEMA_V0_SQL)?;
     if schema_version != STORE_SCHEMA_VERSION {
-        canonical.execute_batch("DROP TABLE native_validation_reservations;")?;
+        canonical.execute_batch(
+            "DROP TABLE validation_callback_outbox_v0;
+             DROP TABLE validation_jobs_v0;
+             DROP TABLE validation_journal_accounting_v0;",
+        )?;
+    }
+    if schema_version == STORE_SCHEMA_VERSION_V5 {
+        canonical.execute_batch(LEGACY_NATIVE_VALIDATION_RESERVATIONS_SCHEMA_V5_SQL)?;
     }
     if schema_version == LEGACY_STORE_SCHEMA_VERSION {
         canonical.execute_batch(
@@ -4703,6 +6228,16 @@ fn validate_snapshot_schema(connection: &Connection) -> Result<()> {
     ensure!(
         actual == expected,
         "SQLite snapshot schema differs from the canonical store schema"
+    );
+    Ok(())
+}
+
+fn validate_foreign_key_integrity(connection: &Connection) -> Result<()> {
+    let mut statement = connection.prepare("PRAGMA foreign_key_check")?;
+    let mut rows = statement.query([])?;
+    ensure!(
+        rows.next()?.is_none(),
+        "SQLite store contains a foreign-key violation"
     );
     Ok(())
 }
@@ -4744,16 +6279,110 @@ fn validate_storage_resource_bounds(connection: &Connection) -> Result<()> {
             "SQLite store {table}.{column} exceeds the {maximum}-byte resource limit"
         );
     }
-    if metadata(connection, "schema_version")? == STORE_SCHEMA_VERSION {
-        let reservations = connection.query_row(
-            "SELECT COUNT(*) FROM native_validation_reservations",
-            [],
-            |row| row.get::<_, u64>(0),
-        )?;
-        ensure!(
-            reservations <= MAX_NATIVE_VALIDATION_RESERVATIONS,
-            "SQLite store native validation reservations exceed the {MAX_NATIVE_VALIDATION_RESERVATIONS}-row resource limit"
-        );
+    match metadata(connection, "schema_version")?.as_str() {
+        STORE_SCHEMA_VERSION => {
+            let jobs =
+                connection.query_row("SELECT COUNT(*) FROM validation_jobs_v0", [], |row| {
+                    row.get::<_, u64>(0)
+                })?;
+            ensure!(
+                jobs <= MAX_NATIVE_VALIDATION_RESERVATIONS,
+                "SQLite store native validation jobs exceed the {MAX_NATIVE_VALIDATION_RESERVATIONS}-row resource limit"
+            );
+            let outbox = connection.query_row(
+                "SELECT COUNT(*) FROM validation_callback_outbox_v0",
+                [],
+                |row| row.get::<_, u64>(0),
+            )?;
+            ensure!(
+                outbox <= jobs,
+                "SQLite store native validation callback outbox exceeds its job count"
+            );
+            ensure!(
+                outbox == 0,
+                "application-store schema v6 foundation encountered a callback outbox row before its codec is active"
+            );
+            let request_bytes = connection.query_row(
+                "SELECT COALESCE(SUM(
+                     length(target_header_cev0) + length(body_record) +
+                     COALESCE(length(parent_header_cev0), 0)
+                 ), 0)
+                 FROM validation_jobs_v0",
+                [],
+                |row| row.get::<_, u64>(0),
+            )?;
+            ensure!(
+                request_bytes <= MAX_NATIVE_VALIDATION_REQUEST_JOURNAL_BYTES,
+                "SQLite store native validation request journal exceeds the {MAX_NATIVE_VALIDATION_REQUEST_JOURNAL_BYTES}-byte resource limit"
+            );
+            let maximum_artifact_bytes = connection.query_row(
+                "SELECT COALESCE(MAX(length(artifact_bytes)), 0) FROM validation_jobs_v0",
+                [],
+                |row| row.get::<_, u64>(0),
+            )?;
+            ensure!(
+                maximum_artifact_bytes <= MAX_NATIVE_VALIDATION_ARTIFACT_BYTES,
+                "SQLite store native validation artifact exceeds the {MAX_NATIVE_VALIDATION_ARTIFACT_BYTES}-byte resource limit"
+            );
+            let artifact_journal_bytes = connection.query_row(
+                "SELECT COALESCE(SUM(COALESCE(length(artifact_bytes), 0)), 0)
+                 FROM validation_jobs_v0",
+                [],
+                |row| row.get::<_, u64>(0),
+            )?;
+            ensure!(
+                artifact_journal_bytes <= MAX_NATIVE_VALIDATION_ARTIFACT_JOURNAL_BYTES,
+                "SQLite store native validation artifact journal exceeds the {MAX_NATIVE_VALIDATION_ARTIFACT_JOURNAL_BYTES}-byte aggregate resource limit"
+            );
+            let maximum_callback_bytes = connection.query_row(
+                "SELECT COALESCE(MAX(length(payload_bytes)), 0)
+                 FROM validation_callback_outbox_v0",
+                [],
+                |row| row.get::<_, u64>(0),
+            )?;
+            ensure!(
+                maximum_callback_bytes <= MAX_NATIVE_VALIDATION_CALLBACK_BYTES,
+                "SQLite store native validation callback exceeds the {MAX_NATIVE_VALIDATION_CALLBACK_BYTES}-byte resource limit"
+            );
+            let callback_outbox_bytes = connection.query_row(
+                "SELECT COALESCE(SUM(length(payload_bytes)), 0)
+                 FROM validation_callback_outbox_v0",
+                [],
+                |row| row.get::<_, u64>(0),
+            )?;
+            ensure!(
+                callback_outbox_bytes <= MAX_NATIVE_VALIDATION_CALLBACK_OUTBOX_BYTES,
+                "SQLite store native validation callback outbox exceeds the {MAX_NATIVE_VALIDATION_CALLBACK_OUTBOX_BYTES}-byte aggregate resource limit"
+            );
+            let accounting = decode_native_validation_journal_accounting_v0(
+                native_validation_journal_accounting_raw_v0(connection)?,
+            )
+            .context("SQLite store native validation accounting row is malformed")?;
+            ensure!(
+                accounting
+                    == (NativeValidationJournalAccountingV0 {
+                        job_count: jobs,
+                        request_bytes,
+                        artifact_bytes: artifact_journal_bytes,
+                        outbox_count: outbox,
+                        outbox_bytes: callback_outbox_bytes,
+                    }),
+                "SQLite store native validation accounting differs from journal contents"
+            );
+        }
+        STORE_SCHEMA_VERSION_V5 => {
+            let reservations = connection.query_row(
+                "SELECT COUNT(*) FROM native_validation_reservations",
+                [],
+                |row| row.get::<_, u64>(0),
+            )?;
+            ensure!(
+                reservations <= MAX_NATIVE_VALIDATION_RESERVATIONS,
+                "SQLite store native validation reservations exceed the {MAX_NATIVE_VALIDATION_RESERVATIONS}-row resource limit"
+            );
+        }
+        STORE_SCHEMA_VERSION_V4 | LEGACY_STORE_SCHEMA_VERSION => {}
+        _ => unreachable!("schema version was validated before resource bounds"),
     }
     Ok(())
 }
@@ -5586,14 +7215,19 @@ mod native_validation_reservation_tests {
         time::{SystemTime, UNIX_EPOCH},
     };
 
+    use rusqlite::OptionalExtension;
     use trnm_consensus_core::{PayloadValidationRouteV0, ValidationId};
-    use trnm_consensus_types::{BlockId, View};
+    use trnm_consensus_types::{
+        decode_block_header_v0_exact, BlockHeader, BlockId, BlockKind, Epoch, Height,
+    };
 
     use super::{
-        metadata, migrate_store_schema_v4_to_v5, validate_snapshot_schema, ApplicationStore,
-        NativeValidationReservationDecisionV0, NativeValidationReservationFactsV0,
-        NativeValidationReservationFailureCauseV0, NativeValidationReservationInvariantV0,
-        PREVIOUS_STORE_SCHEMA_VERSION, STORE_SCHEMA_VERSION,
+        metadata, migrate_store_schema_v4_to_v5, migrate_store_schema_v5_to_v6, schema_objects,
+        validate_snapshot_schema, ApplicationStore, NativeValidationReservationDecisionV0,
+        NativeValidationReservationFactsV0, NativeValidationReservationFailureCauseV0,
+        NativeValidationReservationInvariantV0,
+        LEGACY_NATIVE_VALIDATION_RESERVATIONS_SCHEMA_V5_SQL, STORE_SCHEMA_VERSION,
+        STORE_SCHEMA_VERSION_V4, STORE_SCHEMA_VERSION_V5,
     };
 
     fn test_store(label: &str) -> (PathBuf, ApplicationStore) {
@@ -5624,25 +7258,171 @@ mod native_validation_reservation_tests {
         parent: u8,
         fingerprint: u8,
     ) -> NativeValidationReservationFactsV0 {
-        NativeValidationReservationFactsV0::new(
+        let mut facts = NativeValidationReservationFactsV0::new_for_test_v0(
             route,
-            ValidationId::new(BlockId::new([7; 32]), View::new(9), generation),
-            12,
-            [parent; 32],
-            [fingerprint; 32],
+            generation,
+            "reservation-test-chain",
+        );
+        if parent != 8 {
+            facts.parent_block_id = [parent; 32];
+        }
+        if fingerprint != 9 {
+            facts.request_fingerprint = [fingerprint; 32];
+        }
+        facts
+    }
+
+    fn headerless_genesis_facts(
+        route: PayloadValidationRouteV0,
+        generation: u64,
+    ) -> NativeValidationReservationFactsV0 {
+        let mut facts = facts(route, generation, 8, 9);
+        let previous = decode_block_header_v0_exact(&facts.target_header_cev0)
+            .expect("decode validation-job target fixture");
+        let genesis_block_id = BlockId::new(*previous.genesis_hash().as_bytes());
+        let target = BlockHeader::new(
+            previous.genesis_hash(),
+            previous.chain_id(),
+            previous.protocol_version(),
+            Epoch::new(0),
+            previous.view(),
+            Height::new(1),
+            BlockKind::Regular,
+            genesis_block_id,
+            previous.proposer_id(),
+            previous.validator_set_id(),
+            previous.consensus_parameters_hash(),
+            previous.payload_digest(),
+            previous.state_root(),
+            previous.receipts_root(),
+            previous.evidence_root(),
+            previous.timestamp_ms(),
+            None,
         )
+        .expect("construct headerless-genesis target fixture");
+        facts.validation_id = ValidationId::new(target.id(), target.view(), generation);
+        facts.target_height = 1;
+        facts.target_header_cev0 = target
+            .try_cev0_bytes()
+            .expect("encode headerless-genesis target fixture");
+        facts.parent_height = 0;
+        facts.parent_view = 0;
+        facts.parent_block_id = *genesis_block_id.as_bytes();
+        facts.parent_timestamp_ms = target.timestamp_ms() - 1;
+        facts.parent_header_cev0 = None;
+        facts.parent_state_version = None;
+        facts.parent_state_root = None;
+        facts.request_fingerprint =
+            super::native_validation_reservation_fingerprint_from_record_v0(&facts)
+                .expect("derive headerless-genesis request fingerprint");
+        facts
+    }
+
+    fn table_exists(connection: &rusqlite::Connection, name: &str) -> bool {
+        connection
+            .query_row(
+                "SELECT 1 FROM sqlite_schema WHERE type='table' AND name=?1",
+                rusqlite::params![name],
+                |_| Ok(()),
+            )
+            .optional()
+            .expect("query table existence")
+            .is_some()
+    }
+
+    fn downgrade_fresh_store_to_schema_v5(connection: &rusqlite::Connection) {
+        connection
+            .execute_batch(
+                "DROP TABLE validation_callback_outbox_v0;
+                 DROP TABLE validation_jobs_v0;
+                 DROP TABLE validation_journal_accounting_v0;",
+            )
+            .expect("drop schema v6 validation journal");
+        connection
+            .execute_batch(LEGACY_NATIVE_VALIDATION_RESERVATIONS_SCHEMA_V5_SQL)
+            .expect("create schema v5 reservation table");
+        connection
+            .execute(
+                "UPDATE metadata SET value=?1 WHERE key='schema_version'",
+                rusqlite::params![STORE_SCHEMA_VERSION_V5],
+            )
+            .expect("set schema v5 fixture version");
     }
 
     #[test]
-    fn durable_reservation_is_unique_and_exact_duplicate_only_coalesces() {
+    fn native_validation_body_record_codec_is_stable_bounded_and_strict_eof() {
+        let facts = facts(PayloadValidationRouteV0::Proposal, 1, 8, 9);
+        assert_eq!(facts.body_record, vec![0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0]);
+        assert!(super::validate_native_validation_body_record_v0(
+            &facts.body_record
+        ));
+
+        let mut unknown_version = facts.body_record.clone();
+        unknown_version[1] = 1;
+        assert!(!super::validate_native_validation_body_record_v0(
+            &unknown_version
+        ));
+        let mut truncated = facts.body_record.clone();
+        truncated.pop();
+        assert!(!super::validate_native_validation_body_record_v0(
+            &truncated
+        ));
+        let mut trailing = facts.body_record.clone();
+        trailing.push(0);
+        assert!(!super::validate_native_validation_body_record_v0(&trailing));
+        let mut zero_payload = facts.body_record.clone();
+        zero_payload[2..6].copy_from_slice(&0_u32.to_be_bytes());
+        assert!(!super::validate_native_validation_body_record_v0(
+            &zero_payload
+        ));
+        assert!(!super::validate_native_validation_body_record_v0(
+            &vec![0; super::MAX_NATIVE_VALIDATION_BODY_RECORD_BYTES + 1]
+        ));
+    }
+
+    #[test]
+    fn validation_job_immutable_and_row_checksums_have_frozen_vectors() {
+        let (root, store) = test_store("checksum-vectors");
+        let mut facts = facts(PayloadValidationRouteV0::Proposal, 1, 8, 9);
+        let runtime = super::native_validation_runtime_profile_ref_v0(facts.protocol_version);
+        let host = super::native_validation_host_config_ref_v0(&store);
+        let immutable = super::native_validation_job_immutable_checksum_v0(&facts, &runtime, &host);
+        let row = super::native_validation_job_row_checksum_v0(
+            &immutable,
+            super::NativeValidationJobStateV0::Reserved,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+        );
+        assert_eq!(
+            hex::encode(immutable),
+            "df663ad6b773454c5c2c3043a4429865a9f23f4aa96c5e255d5533a48c666c41"
+        );
+        assert_eq!(
+            hex::encode(row),
+            "fd9dc8caa07ce08fec93a624b8afbea08759a8d51ab914bbc91f5656cf911a75"
+        );
+
+        facts.parent_timestamp_ms += 1;
+        assert_ne!(
+            super::native_validation_job_immutable_checksum_v0(&facts, &runtime, &host),
+            immutable
+        );
+        drop(store);
+        fs::remove_dir_all(root).expect("remove checksum-vector test directory");
+    }
+
+    #[test]
+    fn durable_job_is_unique_and_exact_reopen_returns_existing_state() {
         let (root, store) = test_store("coalesce");
-        let expected_id = ValidationId::new(BlockId::new([7; 32]), View::new(9), 3);
-        let first = match store.reserve_native_validation_v0(facts(
-            PayloadValidationRouteV0::Proposal,
-            3,
-            8,
-            9,
-        )) {
+        let expected_facts = facts(PayloadValidationRouteV0::Proposal, 3, 8, 9);
+        let expected_id = expected_facts.validation_id;
+        let expected_parent = expected_facts.parent_block_id;
+        let expected_fingerprint = expected_facts.request_fingerprint;
+        let first = match store.reserve_or_reopen_native_validation_job_v0(expected_facts) {
             Ok(decision) => decision,
             Err(_) => panic!("reserve exact validation identity"),
         };
@@ -5652,7 +7432,7 @@ mod native_validation_reservation_tests {
         assert_eq!(token.route(), PayloadValidationRouteV0::Proposal);
         assert_eq!(token.validation_id(), expected_id);
 
-        let duplicate = match store.reserve_native_validation_v0(facts(
+        let duplicate = match store.reserve_or_reopen_native_validation_job_v0(facts(
             PayloadValidationRouteV0::Proposal,
             3,
             8,
@@ -5661,19 +7441,25 @@ mod native_validation_reservation_tests {
             Ok(decision) => decision,
             Err(_) => panic!("coalesce exact duplicate"),
         };
-        let NativeValidationReservationDecisionV0::Coalesced(coalesced) = duplicate else {
-            panic!("exact duplicate must not regain evaluation admission");
+        let NativeValidationReservationDecisionV0::Existing(existing) = duplicate else {
+            panic!("exact duplicate must return its durable state");
         };
-        assert_eq!(coalesced.route(), PayloadValidationRouteV0::Proposal);
-        assert_eq!(coalesced.validation_id(), expected_id);
+        assert_eq!(existing.route(), PayloadValidationRouteV0::Proposal);
+        assert_eq!(existing.validation_id(), expected_id);
+        assert_eq!(existing.target_height(), 12);
+        assert_eq!(existing.parent_block_id(), expected_parent);
+        assert_eq!(existing.request_fingerprint(), expected_fingerprint);
+        assert_eq!(existing.creation_revision(), 3);
+        assert_eq!(
+            existing.state(),
+            super::NativeValidationJobStateV0::Reserved
+        );
 
         let connection = store.connect().expect("open reservation test database");
         let count = connection
-            .query_row(
-                "SELECT COUNT(*) FROM native_validation_reservations",
-                [],
-                |row| row.get::<_, u64>(0),
-            )
+            .query_row("SELECT COUNT(*) FROM validation_jobs_v0", [], |row| {
+                row.get::<_, u64>(0)
+            })
             .expect("count durable reservations");
         assert_eq!(count, 1);
         drop(connection);
@@ -5703,27 +7489,25 @@ mod native_validation_reservation_tests {
             })
             .collect::<Vec<_>>();
         let barrier = Arc::new(Barrier::new(WORKER_COUNT));
-        let workers = stores
-            .into_iter()
-            .map(|store| {
-                let barrier = Arc::clone(&barrier);
-                thread::spawn(move || {
-                    barrier.wait();
-                    let reserved = match store.reserve_native_validation_v0(facts(
-                        PayloadValidationRouteV0::Proposal,
-                        5,
-                        8,
-                        9,
-                    )) {
-                        Ok(NativeValidationReservationDecisionV0::Reserved(_)) => true,
-                        Ok(NativeValidationReservationDecisionV0::Coalesced(_)) => false,
-                        Err(_) => panic!("reserve from independent application store"),
-                    };
-                    drop(store);
-                    reserved
+        let workers =
+            stores
+                .into_iter()
+                .map(|store| {
+                    let barrier = Arc::clone(&barrier);
+                    thread::spawn(move || {
+                        barrier.wait();
+                        let reserved = match store.reserve_or_reopen_native_validation_job_v0(
+                            facts(PayloadValidationRouteV0::Proposal, 5, 8, 9),
+                        ) {
+                            Ok(NativeValidationReservationDecisionV0::Reserved(_)) => true,
+                            Ok(NativeValidationReservationDecisionV0::Existing(_)) => false,
+                            Err(_) => panic!("reserve from independent application store"),
+                        };
+                        drop(store);
+                        reserved
+                    })
                 })
-            })
-            .collect::<Vec<_>>();
+                .collect::<Vec<_>>();
 
         let outcomes = workers
             .into_iter()
@@ -5746,7 +7530,7 @@ mod native_validation_reservation_tests {
         reopened
             .load_or_migrate()
             .expect("load reopened reservation test store");
-        let repeated = match reopened.reserve_native_validation_v0(facts(
+        let repeated = match reopened.reserve_or_reopen_native_validation_job_v0(facts(
             PayloadValidationRouteV0::Proposal,
             5,
             8,
@@ -5755,24 +7539,26 @@ mod native_validation_reservation_tests {
             Ok(decision) => decision,
             Err(_) => panic!("coalesce reservation after store reopen"),
         };
-        let NativeValidationReservationDecisionV0::Coalesced(coalesced) = repeated else {
-            panic!("reopening the store must not regain evaluation admission");
+        let NativeValidationReservationDecisionV0::Existing(existing) = repeated else {
+            panic!("reopening the store must return durable state without fresh admission");
         };
-        assert_eq!(coalesced.route(), PayloadValidationRouteV0::Proposal);
+        assert_eq!(existing.route(), PayloadValidationRouteV0::Proposal);
         assert_eq!(
-            coalesced.validation_id(),
-            ValidationId::new(BlockId::new([7; 32]), View::new(9), 5)
+            existing.validation_id(),
+            facts(PayloadValidationRouteV0::Proposal, 5, 8, 9).validation_id
+        );
+        assert_eq!(
+            existing.state(),
+            super::NativeValidationJobStateV0::Reserved
         );
 
         let connection = reopened
             .connect()
             .expect("open reopened reservation test database");
         let count = connection
-            .query_row(
-                "SELECT COUNT(*) FROM native_validation_reservations",
-                [],
-                |row| row.get::<_, u64>(0),
-            )
+            .query_row("SELECT COUNT(*) FROM validation_jobs_v0", [], |row| {
+                row.get::<_, u64>(0)
+            })
             .expect("count durable reservations after reopen");
         assert_eq!(count, 1);
         drop(connection);
@@ -5781,36 +7567,93 @@ mod native_validation_reservation_tests {
     }
 
     #[test]
-    fn durable_reservation_exact_duplicate_coalesces_at_capacity() {
+    fn durable_job_exact_reopen_precedes_row_capacity() {
         let (root, store) = test_store("capacity-coalesce");
+        match store.reserve_or_reopen_native_validation_job_v0(facts(
+            PayloadValidationRouteV0::Proposal,
+            3,
+            8,
+            9,
+        )) {
+            Ok(NativeValidationReservationDecisionV0::Reserved(_)) => {}
+            _ => panic!("reserve baseline capacity job"),
+        }
         let mut connection = store.connect().expect("open capacity test database");
         let transaction = connection.transaction().expect("begin capacity fixture");
         {
             let mut insert = transaction
                 .prepare(
-                    "INSERT INTO native_validation_reservations(
+                    "INSERT INTO validation_jobs_v0(
                          route, block_id, view_be, generation_be, target_height_be,
-                         parent_block_id, request_fingerprint
-                     ) VALUES (0, ?1, ?2, ?3, ?4, ?5, ?6)",
+                         target_header_cev0, body_record_codec, body_record, body_checksum,
+                         parent_height_be, parent_view_be, parent_block_id,
+                         parent_timestamp_ms_be, parent_header_cev0,
+                         parent_state_version_be, parent_state_root, validator_set_id,
+                         parameters_hash, protocol_version_be, runtime_profile_ref,
+                         host_config_ref, creation_revision_be, request_fingerprint,
+                         immutable_checksum, state, result_kind, invalid_reason_code_be,
+                         artifact_codec, artifact_bytes, artifact_checksum,
+                         accepted_core_revision_be, accepted_core_payload_checksum,
+                         row_codec, row_checksum
+                     ) VALUES (
+                         0, ?1, ?2, ?3, ?4, X'00', 0,
+                         X'0000000000010100000000', zeroblob(32), ?5, ?6, ?7, ?8,
+                         X'00', ?5, zeroblob(32), zeroblob(32), zeroblob(32), ?9,
+                         zeroblob(32), zeroblob(32), ?3, zeroblob(32), zeroblob(32),
+                         0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, zeroblob(32)
+                     )",
                 )
                 .expect("prepare capacity fixture insert");
             for generation in 0..super::MAX_NATIVE_VALIDATION_RESERVATIONS {
+                if generation == 3 {
+                    continue;
+                }
                 insert
                     .execute(rusqlite::params![
                         [7_u8; 32].as_slice(),
                         9_u64.to_be_bytes().as_slice(),
                         generation.to_be_bytes().as_slice(),
                         12_u64.to_be_bytes().as_slice(),
+                        11_u64.to_be_bytes().as_slice(),
+                        8_u64.to_be_bytes().as_slice(),
                         [8_u8; 32].as_slice(),
-                        [9_u8; 32].as_slice(),
+                        1_u64.to_be_bytes().as_slice(),
+                        1_u32.to_be_bytes().as_slice(),
                     ])
                     .expect("insert capacity fixture row");
             }
         }
+        let fixture_count = transaction
+            .query_row("SELECT COUNT(*) FROM validation_jobs_v0", [], |row| {
+                row.get::<_, u64>(0)
+            })
+            .expect("count capacity fixture jobs");
+        let fixture_request_bytes = transaction
+            .query_row(
+                "SELECT COALESCE(SUM(
+                     length(target_header_cev0) + length(body_record) +
+                     COALESCE(length(parent_header_cev0), 0)
+                 ), 0)
+                 FROM validation_jobs_v0",
+                [],
+                |row| row.get::<_, u64>(0),
+            )
+            .expect("sum capacity fixture request bytes");
+        transaction
+            .execute(
+                "UPDATE validation_journal_accounting_v0
+                 SET job_count_be=?1, request_bytes_be=?2
+                 WHERE singleton=1",
+                rusqlite::params![
+                    fixture_count.to_be_bytes().as_slice(),
+                    fixture_request_bytes.to_be_bytes().as_slice(),
+                ],
+            )
+            .expect("update capacity fixture accounting");
         transaction.commit().expect("commit capacity fixture");
         drop(connection);
 
-        let duplicate = match store.reserve_native_validation_v0(facts(
+        let duplicate = match store.reserve_or_reopen_native_validation_job_v0(facts(
             PayloadValidationRouteV0::Proposal,
             3,
             8,
@@ -5821,10 +7664,10 @@ mod native_validation_reservation_tests {
         };
         assert!(matches!(
             duplicate,
-            NativeValidationReservationDecisionV0::Coalesced(_)
+            NativeValidationReservationDecisionV0::Existing(_)
         ));
 
-        let failure = match store.reserve_native_validation_v0(facts(
+        let failure = match store.reserve_or_reopen_native_validation_job_v0(facts(
             PayloadValidationRouteV0::Proposal,
             super::MAX_NATIVE_VALIDATION_RESERVATIONS,
             8,
@@ -5846,13 +7689,32 @@ mod native_validation_reservation_tests {
     #[test]
     fn durable_reservation_rejects_route_parent_and_fingerprint_splices() {
         let (root, store) = test_store("splices");
-        match store.reserve_native_validation_v0(facts(PayloadValidationRouteV0::Proposal, 4, 8, 9))
-        {
+        match store.reserve_or_reopen_native_validation_job_v0(facts(
+            PayloadValidationRouteV0::Proposal,
+            4,
+            8,
+            9,
+        )) {
             Ok(NativeValidationReservationDecisionV0::Reserved(_)) => {}
-            Ok(NativeValidationReservationDecisionV0::Coalesced(_)) | Err(_) => {
+            Ok(NativeValidationReservationDecisionV0::Existing(_)) | Err(_) => {
                 panic!("reserve baseline validation identity")
             }
         }
+
+        let mut target_header_splice = facts(PayloadValidationRouteV0::Proposal, 4, 8, 9);
+        target_header_splice.target_header_cev0[0] ^= 1;
+        let mut body_splice = facts(PayloadValidationRouteV0::Proposal, 4, 8, 9);
+        body_splice.body_record[6] ^= 1;
+        body_splice.body_checksum = super::hash_domain(
+            super::NATIVE_VALIDATION_BODY_DOMAIN_V0,
+            &[&body_splice.body_record],
+        );
+        let mut parent_context_splice = facts(PayloadValidationRouteV0::Proposal, 4, 8, 9);
+        parent_context_splice.parent_timestamp_ms += 1;
+        let mut configuration_splice = facts(PayloadValidationRouteV0::Proposal, 4, 8, 9);
+        configuration_splice.protocol_version += 1;
+        let mut creation_revision_splice = facts(PayloadValidationRouteV0::Proposal, 4, 8, 9);
+        creation_revision_splice.creation_revision += 1;
 
         for (candidate, expected) in [
             (
@@ -5867,8 +7729,28 @@ mod native_validation_reservation_tests {
                 facts(PayloadValidationRouteV0::Proposal, 4, 8, 11),
                 NativeValidationReservationInvariantV0::RequestFingerprintMismatch,
             ),
+            (
+                target_header_splice,
+                NativeValidationReservationInvariantV0::TargetHeaderMismatch,
+            ),
+            (
+                body_splice,
+                NativeValidationReservationInvariantV0::BodyRecordMismatch,
+            ),
+            (
+                parent_context_splice,
+                NativeValidationReservationInvariantV0::ParentContextMismatch,
+            ),
+            (
+                configuration_splice,
+                NativeValidationReservationInvariantV0::ConfigurationReferenceMismatch,
+            ),
+            (
+                creation_revision_splice,
+                NativeValidationReservationInvariantV0::CreationRevisionMismatch,
+            ),
         ] {
-            let failure = match store.reserve_native_validation_v0(candidate) {
+            let failure = match store.reserve_or_reopen_native_validation_job_v0(candidate) {
                 Ok(_) => panic!("spliced reservation unexpectedly succeeded"),
                 Err(failure) => failure,
             };
@@ -5893,7 +7775,7 @@ mod native_validation_reservation_tests {
             .expect("corrupt reservation binding fixture");
         drop(connection);
 
-        let failure = match store.reserve_native_validation_v0(facts(
+        let failure = match store.reserve_or_reopen_native_validation_job_v0(facts(
             PayloadValidationRouteV0::Proposal,
             6,
             8,
@@ -5912,11 +7794,9 @@ mod native_validation_reservation_tests {
         let connection = rusqlite::Connection::open(&store.database_path)
             .expect("reopen binding test database without revalidating the corrupted fixture");
         let count = connection
-            .query_row(
-                "SELECT COUNT(*) FROM native_validation_reservations",
-                [],
-                |row| row.get::<_, u64>(0),
-            )
+            .query_row("SELECT COUNT(*) FROM validation_jobs_v0", [], |row| {
+                row.get::<_, u64>(0)
+            })
             .expect("count reservations after binding failure");
         assert_eq!(count, 0);
         drop(connection);
@@ -5925,33 +7805,689 @@ mod native_validation_reservation_tests {
     }
 
     #[test]
-    fn schema_v4_migrates_to_empty_schema_v5_reservation_table() {
-        let (root, store) = test_store("migration");
-        let mut connection = store.connect().expect("open migration test database");
-        connection
-            .execute_batch("DROP TABLE native_validation_reservations;")
-            .expect("remove schema v5 reservation table");
-        connection
-            .execute(
-                "UPDATE metadata SET value=?1 WHERE key='schema_version'",
-                rusqlite::params![PREVIOUS_STORE_SCHEMA_VERSION],
-            )
-            .expect("downgrade migration fixture to schema v4");
-        validate_snapshot_schema(&connection).expect("validate canonical schema v4 fixture");
-        migrate_store_schema_v4_to_v5(&mut connection).expect("migrate schema v4 to v5");
+    fn fresh_store_uses_schema_v6_and_empty_validation_journal() {
+        let (root, store) = test_store("fresh-v6");
+        let connection = store.connect().expect("open fresh schema v6 store");
+        assert_eq!(
+            metadata(&connection, "schema_version").expect("read fresh schema version"),
+            STORE_SCHEMA_VERSION
+        );
+        validate_snapshot_schema(&connection).expect("validate fresh schema v6");
+        assert!(table_exists(&connection, "validation_jobs_v0"));
+        assert!(table_exists(&connection, "validation_callback_outbox_v0"));
+        assert!(!table_exists(&connection, "native_validation_reservations"));
+        drop(connection);
+        assert!(store
+            .load_native_validation_recovery_work_v0()
+            .expect("scan empty recovery journal")
+            .is_empty());
+        drop(store);
+        fs::remove_dir_all(root).expect("remove fresh schema v6 test directory");
+    }
+
+    #[test]
+    fn headerless_genesis_recovery_fact_is_structurally_revalidated() {
+        let (root, store) = test_store("headerless-genesis");
+        let facts = headerless_genesis_facts(PayloadValidationRouteV0::Proposal, 12);
+        let validation_id = facts.validation_id;
+        assert!(matches!(
+            store.reserve_or_reopen_native_validation_job_v0(facts),
+            Ok(NativeValidationReservationDecisionV0::Reserved(_))
+        ));
+        let status_path = root.join("app.status");
+        drop(store);
+
+        let reopened =
+            ApplicationStore::open(&status_path, "reservation-test-chain", &"11".repeat(32))
+                .expect("reopen headerless-genesis store");
+        reopened
+            .load_or_migrate()
+            .expect("revalidate structurally bound headerless-genesis fact");
+        let work = reopened
+            .load_native_validation_recovery_work_v0()
+            .expect("load headerless-genesis recovery fact");
+        assert_eq!(work.len(), 1);
+        assert_eq!(work[0].validation_id(), validation_id);
+        drop(work);
+        drop(reopened);
+        fs::remove_dir_all(root).expect("remove headerless-genesis test directory");
+    }
+
+    #[test]
+    fn schema_v5_empty_migrates_atomically_to_v6() {
+        let (root, store) = test_store("migration-v5-empty");
+        let connection = store.connect().expect("open schema v5 migration fixture");
+        downgrade_fresh_store_to_schema_v5(&connection);
+        validate_snapshot_schema(&connection).expect("validate canonical schema v5 fixture");
+        drop(connection);
+
+        store
+            .load_or_migrate()
+            .expect("migrate empty schema v5 store to v6");
+        let connection = store.connect().expect("open migrated schema v6 store");
         assert_eq!(
             metadata(&connection, "schema_version").expect("read migrated schema version"),
             STORE_SCHEMA_VERSION
         );
-        let count = connection
-            .query_row(
-                "SELECT COUNT(*) FROM native_validation_reservations",
-                [],
-                |row| row.get::<_, u64>(0),
-            )
-            .expect("count migrated reservation rows");
-        assert_eq!(count, 0);
+        assert!(!table_exists(&connection, "native_validation_reservations"));
+        assert!(table_exists(&connection, "validation_jobs_v0"));
+        assert!(table_exists(&connection, "validation_callback_outbox_v0"));
+        validate_snapshot_schema(&connection).expect("validate migrated schema v6");
         drop(connection);
-        fs::remove_dir_all(root).expect("remove reservation migration test directory");
+        drop(store);
+        fs::remove_dir_all(root).expect("remove empty schema v5 migration directory");
+    }
+
+    #[test]
+    fn schema_v5_nonempty_migration_fails_closed_and_preserves_rows() {
+        let (root, store) = test_store("migration-v5-nonempty");
+        let connection = store
+            .connect()
+            .expect("open nonempty schema v5 migration fixture");
+        downgrade_fresh_store_to_schema_v5(&connection);
+        connection
+            .execute(
+                "INSERT INTO native_validation_reservations(
+                     route, block_id, view_be, generation_be, target_height_be,
+                     parent_block_id, request_fingerprint
+                 ) VALUES (0, ?1, ?2, ?3, ?4, ?5, ?6)",
+                rusqlite::params![
+                    [7_u8; 32].as_slice(),
+                    9_u64.to_be_bytes().as_slice(),
+                    3_u64.to_be_bytes().as_slice(),
+                    12_u64.to_be_bytes().as_slice(),
+                    [8_u8; 32].as_slice(),
+                    [9_u8; 32].as_slice(),
+                ],
+            )
+            .expect("insert unreplayable schema v5 reservation");
+        let schema_before = schema_objects(&connection).expect("capture schema v5 objects");
+        let row_before = connection
+            .query_row(
+                "SELECT route, block_id, view_be, generation_be, target_height_be,
+                        parent_block_id, request_fingerprint
+                 FROM native_validation_reservations",
+                [],
+                |row| {
+                    Ok((
+                        row.get::<_, i64>(0)?,
+                        row.get::<_, Vec<u8>>(1)?,
+                        row.get::<_, Vec<u8>>(2)?,
+                        row.get::<_, Vec<u8>>(3)?,
+                        row.get::<_, Vec<u8>>(4)?,
+                        row.get::<_, Vec<u8>>(5)?,
+                        row.get::<_, Vec<u8>>(6)?,
+                    ))
+                },
+            )
+            .expect("capture schema v5 reservation row");
+        drop(connection);
+
+        let error = store
+            .load_or_migrate()
+            .expect_err("nonempty schema v5 migration must fail closed");
+        assert!(error
+            .to_string()
+            .contains("unreplayable native validation reservations"));
+        let connection = rusqlite::Connection::open(&store.database_path)
+            .expect("reopen rejected schema v5 database directly");
+        assert_eq!(
+            metadata(&connection, "schema_version").expect("read preserved schema version"),
+            STORE_SCHEMA_VERSION_V5
+        );
+        assert_eq!(
+            schema_objects(&connection).expect("read preserved schema objects"),
+            schema_before
+        );
+        let row_after = connection
+            .query_row(
+                "SELECT route, block_id, view_be, generation_be, target_height_be,
+                        parent_block_id, request_fingerprint
+                 FROM native_validation_reservations",
+                [],
+                |row| {
+                    Ok((
+                        row.get::<_, i64>(0)?,
+                        row.get::<_, Vec<u8>>(1)?,
+                        row.get::<_, Vec<u8>>(2)?,
+                        row.get::<_, Vec<u8>>(3)?,
+                        row.get::<_, Vec<u8>>(4)?,
+                        row.get::<_, Vec<u8>>(5)?,
+                        row.get::<_, Vec<u8>>(6)?,
+                    ))
+                },
+            )
+            .expect("read preserved schema v5 reservation row");
+        assert_eq!(row_after, row_before);
+        assert!(!table_exists(&connection, "validation_jobs_v0"));
+        assert!(!table_exists(&connection, "validation_callback_outbox_v0"));
+        let integrity = connection
+            .query_row("PRAGMA quick_check", [], |row| row.get::<_, String>(0))
+            .expect("quick-check rejected schema v5 database");
+        assert_eq!(integrity, "ok");
+        drop(connection);
+        drop(store);
+        fs::remove_dir_all(root).expect("remove rejected schema v5 migration directory");
+    }
+
+    #[test]
+    fn schema_v4_migrates_serially_through_v5_to_v6() {
+        let (root, store) = test_store("migration-v4-v6");
+        let mut connection = store.connect().expect("open schema v4 migration fixture");
+        downgrade_fresh_store_to_schema_v5(&connection);
+        connection
+            .execute_batch("DROP TABLE native_validation_reservations;")
+            .expect("remove schema v5 reservation table for v4 fixture");
+        connection
+            .execute(
+                "UPDATE metadata SET value=?1 WHERE key='schema_version'",
+                rusqlite::params![STORE_SCHEMA_VERSION_V4],
+            )
+            .expect("set schema v4 fixture version");
+        validate_snapshot_schema(&connection).expect("validate canonical schema v4 fixture");
+
+        migrate_store_schema_v4_to_v5(&mut connection).expect("migrate schema v4 to v5");
+        assert_eq!(
+            metadata(&connection, "schema_version").expect("read intermediate schema version"),
+            STORE_SCHEMA_VERSION_V5
+        );
+        assert!(table_exists(&connection, "native_validation_reservations"));
+        validate_snapshot_schema(&connection).expect("validate intermediate schema v5");
+
+        migrate_store_schema_v5_to_v6(&mut connection).expect("migrate schema v5 to v6");
+        assert_eq!(
+            metadata(&connection, "schema_version").expect("read final schema version"),
+            STORE_SCHEMA_VERSION
+        );
+        assert!(!table_exists(&connection, "native_validation_reservations"));
+        assert!(table_exists(&connection, "validation_jobs_v0"));
+        assert!(table_exists(&connection, "validation_callback_outbox_v0"));
+        validate_snapshot_schema(&connection).expect("validate final schema v6");
+        drop(connection);
+        drop(store);
+        fs::remove_dir_all(root).expect("remove serial schema migration directory");
+    }
+
+    #[test]
+    fn recovery_scanner_orders_reserved_jobs_and_fails_closed_on_checksum_drift() {
+        let (root, store) = test_store("recovery-scan");
+        for (route, generation) in [
+            (PayloadValidationRouteV0::Synced, 3),
+            (PayloadValidationRouteV0::Proposal, 5),
+            (PayloadValidationRouteV0::Proposal, 2),
+        ] {
+            assert!(matches!(
+                store.reserve_or_reopen_native_validation_job_v0(facts(route, generation, 8, 9,)),
+                Ok(NativeValidationReservationDecisionV0::Reserved(_))
+            ));
+        }
+        let status_path = root.join("app.status");
+        drop(store);
+        let reopened =
+            ApplicationStore::open(&status_path, "reservation-test-chain", &"11".repeat(32))
+                .expect("reopen recovery scan store");
+        reopened
+            .load_or_migrate()
+            .expect("load recovery scan store");
+        let work = reopened
+            .load_native_validation_recovery_work_v0()
+            .expect("scan checksum-verified recovery work");
+        assert_eq!(work.len(), 3);
+        assert_eq!(
+            work.iter()
+                .map(|job| (job.route(), job.validation_id().generation(), job.state()))
+                .collect::<Vec<_>>(),
+            vec![
+                (
+                    PayloadValidationRouteV0::Proposal,
+                    2,
+                    super::NativeValidationJobStateV0::Reserved,
+                ),
+                (
+                    PayloadValidationRouteV0::Proposal,
+                    5,
+                    super::NativeValidationJobStateV0::Reserved,
+                ),
+                (
+                    PayloadValidationRouteV0::Synced,
+                    3,
+                    super::NativeValidationJobStateV0::Reserved,
+                ),
+            ]
+        );
+        drop(work);
+        let connection = reopened
+            .connect()
+            .expect("open recovery corruption fixture");
+        connection
+            .execute(
+                "UPDATE validation_jobs_v0
+                 SET immutable_checksum=zeroblob(32)
+                 WHERE generation_be=?1",
+                rusqlite::params![2_u64.to_be_bytes().as_slice()],
+            )
+            .expect("tamper one recovery row checksum");
+        drop(connection);
+        drop(reopened);
+        let corrupted =
+            ApplicationStore::open(&status_path, "reservation-test-chain", &"11".repeat(32))
+                .expect("reopen checksum-corrupted recovery store");
+        assert!(corrupted.load_or_migrate().is_err());
+        drop(corrupted);
+        fs::remove_dir_all(root).expect("remove recovery scan test directory");
+    }
+
+    #[test]
+    fn restart_rejects_checksum_consistent_canonical_header_splice() {
+        let (root, store) = test_store("semantic-splice");
+        let facts = facts(PayloadValidationRouteV0::Proposal, 7, 8, 9);
+        let validation_id = facts.validation_id;
+        assert!(matches!(
+            store.reserve_or_reopen_native_validation_job_v0(facts),
+            Ok(NativeValidationReservationDecisionV0::Reserved(_))
+        ));
+        let connection = store.connect().expect("open semantic splice fixture");
+        let encoded: Vec<u8> = connection
+            .query_row(
+                "SELECT target_header_cev0 FROM validation_jobs_v0
+                 WHERE block_id=?1 AND view_be=?2 AND generation_be=?3",
+                rusqlite::params![
+                    validation_id.block_id().as_bytes().as_slice(),
+                    validation_id.view().get().to_be_bytes().as_slice(),
+                    validation_id.generation().to_be_bytes().as_slice(),
+                ],
+                |row| row.get(0),
+            )
+            .expect("load semantic splice target header");
+        let header = decode_block_header_v0_exact(&encoded).expect("decode fixture target header");
+        let spliced = BlockHeader::new(
+            header.genesis_hash(),
+            header.chain_id(),
+            header.protocol_version(),
+            header.epoch(),
+            header.view(),
+            header.height(),
+            header.block_kind(),
+            header.parent_id(),
+            header.proposer_id(),
+            header.validator_set_id(),
+            header.consensus_parameters_hash(),
+            header.payload_digest(),
+            header.state_root(),
+            header.receipts_root(),
+            header.evidence_root(),
+            header.timestamp_ms() + 1,
+            header.next_epoch_commitment_hash(),
+        )
+        .expect("construct canonical spliced target header")
+        .try_cev0_bytes()
+        .expect("encode canonical spliced target header");
+        let existing = super::load_native_validation_job_v0(&connection, validation_id)
+            .expect("load semantic splice row")
+            .expect("semantic splice row exists");
+        let mut durable = super::durable_native_validation_job_from_existing_v0(existing, &store)
+            .expect("baseline semantic row validates");
+        durable.facts.target_header_cev0 = spliced.clone();
+        let immutable = super::native_validation_job_immutable_checksum_v0(
+            &durable.facts,
+            &durable.runtime_profile_ref,
+            &durable.host_config_ref,
+        );
+        let row = super::native_validation_job_row_checksum_v0(
+            &immutable,
+            super::NativeValidationJobStateV0::Reserved,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+        );
+        connection
+            .execute(
+                "UPDATE validation_jobs_v0
+                 SET target_header_cev0=?1, immutable_checksum=?2, row_checksum=?3
+                 WHERE block_id=?4 AND view_be=?5 AND generation_be=?6",
+                rusqlite::params![
+                    spliced,
+                    immutable.as_slice(),
+                    row.as_slice(),
+                    validation_id.block_id().as_bytes().as_slice(),
+                    validation_id.view().get().to_be_bytes().as_slice(),
+                    validation_id.generation().to_be_bytes().as_slice(),
+                ],
+            )
+            .expect("write checksum-consistent semantic splice");
+        drop(connection);
+        drop(store);
+
+        let status_path = root.join("app.status");
+        let corrupted =
+            ApplicationStore::open(&status_path, "reservation-test-chain", &"11".repeat(32))
+                .expect("reopen semantic splice store");
+        assert!(corrupted.load_or_migrate().is_err());
+        drop(corrupted);
+        fs::remove_dir_all(root).expect("remove semantic splice test directory");
+    }
+
+    #[test]
+    fn restart_rejects_checksum_consistent_positive_parent_downgrade() {
+        let (root, store) = test_store("parent-downgrade");
+        let original = facts(PayloadValidationRouteV0::Proposal, 10, 8, 9);
+        let validation_id = original.validation_id;
+        assert!(matches!(
+            store.reserve_or_reopen_native_validation_job_v0(original),
+            Ok(NativeValidationReservationDecisionV0::Reserved(_))
+        ));
+        let connection = store.connect().expect("open parent downgrade fixture");
+        let existing = super::load_native_validation_job_v0(&connection, validation_id)
+            .expect("load parent downgrade row")
+            .expect("parent downgrade row exists");
+        let mut durable = super::durable_native_validation_job_from_existing_v0(existing, &store)
+            .expect("baseline parent row validates");
+        durable.facts.parent_height = 0;
+        durable.facts.parent_view = 0;
+        durable.facts.parent_timestamp_ms = 0;
+        durable.facts.parent_header_cev0 = None;
+        durable.facts.parent_state_version = None;
+        durable.facts.parent_state_root = None;
+        durable.facts.request_fingerprint =
+            super::native_validation_reservation_fingerprint_from_record_v0(&durable.facts)
+                .expect("recompute checksum-consistent downgraded-parent fingerprint");
+        let immutable = super::native_validation_job_immutable_checksum_v0(
+            &durable.facts,
+            &durable.runtime_profile_ref,
+            &durable.host_config_ref,
+        );
+        let row = super::native_validation_job_row_checksum_v0(
+            &immutable,
+            super::NativeValidationJobStateV0::Reserved,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+        );
+        connection
+            .execute(
+                "UPDATE validation_jobs_v0
+                 SET parent_height_be=?1, parent_view_be=?1,
+                     parent_timestamp_ms_be=?1, parent_header_cev0=NULL,
+                     parent_state_version_be=NULL, parent_state_root=NULL,
+                     request_fingerprint=?2, immutable_checksum=?3, row_checksum=?4
+                 WHERE block_id=?5 AND view_be=?6 AND generation_be=?7",
+                rusqlite::params![
+                    0_u64.to_be_bytes().as_slice(),
+                    durable.facts.request_fingerprint.as_slice(),
+                    immutable.as_slice(),
+                    row.as_slice(),
+                    validation_id.block_id().as_bytes().as_slice(),
+                    validation_id.view().get().to_be_bytes().as_slice(),
+                    validation_id.generation().to_be_bytes().as_slice(),
+                ],
+            )
+            .expect("write checksum-consistent positive-parent downgrade");
+        drop(connection);
+        drop(store);
+
+        let status_path = root.join("app.status");
+        let corrupted =
+            ApplicationStore::open(&status_path, "reservation-test-chain", &"11".repeat(32))
+                .expect("reopen parent downgrade store");
+        assert!(corrupted.load_or_migrate().is_err());
+        drop(corrupted);
+        fs::remove_dir_all(root).expect("remove parent downgrade test directory");
+    }
+
+    #[test]
+    fn exact_reopen_rejects_checksum_consistent_inactive_future_state() {
+        let (root, store) = test_store("inactive-future-state");
+        let original = facts(PayloadValidationRouteV0::Proposal, 8, 8, 9);
+        let validation_id = original.validation_id;
+        assert!(matches!(
+            store.reserve_or_reopen_native_validation_job_v0(original),
+            Ok(NativeValidationReservationDecisionV0::Reserved(_))
+        ));
+        let connection = store.connect().expect("open inactive-state fixture");
+        let existing = super::load_native_validation_job_v0(&connection, validation_id)
+            .expect("load inactive-state row")
+            .expect("inactive-state row exists");
+        let durable = super::durable_native_validation_job_from_existing_v0(existing, &store)
+            .expect("baseline reserved row validates");
+        let artifact_codec = "future-fixture-v0";
+        let artifact_bytes = [1_u8];
+        let artifact_checksum = [0x88_u8; 32];
+        let row_checksum = super::native_validation_job_row_checksum_v0(
+            &durable.immutable_checksum,
+            super::NativeValidationJobStateV0::Evaluated,
+            Some(0),
+            None,
+            Some(artifact_codec),
+            Some(&artifact_checksum),
+            None,
+            None,
+        );
+        connection
+            .execute(
+                "UPDATE validation_jobs_v0
+                 SET state=1, result_kind=0, artifact_codec=?1,
+                     artifact_bytes=?2, artifact_checksum=?3, row_checksum=?4
+                 WHERE block_id=?5 AND view_be=?6 AND generation_be=?7",
+                rusqlite::params![
+                    artifact_codec,
+                    artifact_bytes.as_slice(),
+                    artifact_checksum.as_slice(),
+                    row_checksum.as_slice(),
+                    validation_id.block_id().as_bytes().as_slice(),
+                    validation_id.view().get().to_be_bytes().as_slice(),
+                    validation_id.generation().to_be_bytes().as_slice(),
+                ],
+            )
+            .expect("write checksum-consistent inactive state");
+        connection
+            .execute(
+                "UPDATE validation_journal_accounting_v0
+                 SET artifact_bytes_be=?1 WHERE singleton=1",
+                rusqlite::params![1_u64.to_be_bytes().as_slice()],
+            )
+            .expect("update inactive-state accounting");
+        drop(connection);
+
+        let failure = match store.reserve_or_reopen_native_validation_job_v0(facts(
+            PayloadValidationRouteV0::Proposal,
+            8,
+            8,
+            9,
+        )) {
+            Ok(_) => panic!("inactive future state unexpectedly reopened"),
+            Err(failure) => failure,
+        };
+        assert!(matches!(
+            failure.cause(),
+            NativeValidationReservationFailureCauseV0::Invariant {
+                kind: NativeValidationReservationInvariantV0::StateMismatch,
+                ..
+            }
+        ));
+        drop(store);
+        let status_path = root.join("app.status");
+        let corrupted =
+            ApplicationStore::open(&status_path, "reservation-test-chain", &"11".repeat(32))
+                .expect("reopen inactive-state store");
+        assert!(corrupted.load_or_migrate().is_err());
+        drop(corrupted);
+        fs::remove_dir_all(root).expect("remove inactive-state test directory");
+    }
+
+    #[test]
+    fn exact_reopen_rejects_a_different_non_reserved_job() {
+        let (root, store) = test_store("foreign-inactive-state");
+        let first = facts(PayloadValidationRouteV0::Proposal, 13, 8, 9);
+        let second = facts(PayloadValidationRouteV0::Proposal, 14, 8, 9);
+        let second_id = second.validation_id;
+        for candidate in [first, second] {
+            assert!(matches!(
+                store.reserve_or_reopen_native_validation_job_v0(candidate),
+                Ok(NativeValidationReservationDecisionV0::Reserved(_))
+            ));
+        }
+        let connection = store
+            .connect()
+            .expect("open foreign inactive-state fixture");
+        let existing = super::load_native_validation_job_v0(&connection, second_id)
+            .expect("load foreign inactive-state row")
+            .expect("foreign inactive-state row exists");
+        let durable = super::durable_native_validation_job_from_existing_v0(existing, &store)
+            .expect("baseline foreign reserved row validates");
+        let artifact_codec = "future-empty-fixture-v0";
+        let artifact_checksum = [0x98_u8; 32];
+        let row_checksum = super::native_validation_job_row_checksum_v0(
+            &durable.immutable_checksum,
+            super::NativeValidationJobStateV0::Evaluated,
+            Some(0),
+            None,
+            Some(artifact_codec),
+            Some(&artifact_checksum),
+            None,
+            None,
+        );
+        connection
+            .execute(
+                "UPDATE validation_jobs_v0
+                 SET state=1, result_kind=0, artifact_codec=?1,
+                     artifact_bytes=X'', artifact_checksum=?2, row_checksum=?3
+                 WHERE block_id=?4 AND view_be=?5 AND generation_be=?6",
+                rusqlite::params![
+                    artifact_codec,
+                    artifact_checksum.as_slice(),
+                    row_checksum.as_slice(),
+                    second_id.block_id().as_bytes().as_slice(),
+                    second_id.view().get().to_be_bytes().as_slice(),
+                    second_id.generation().to_be_bytes().as_slice(),
+                ],
+            )
+            .expect("write checksum-consistent foreign inactive state");
+        drop(connection);
+
+        let failure = match store.reserve_or_reopen_native_validation_job_v0(facts(
+            PayloadValidationRouteV0::Proposal,
+            13,
+            8,
+            9,
+        )) {
+            Ok(_) => panic!("reserved job reopened beside a non-reserved job"),
+            Err(failure) => failure,
+        };
+        assert!(matches!(
+            failure.cause(),
+            NativeValidationReservationFailureCauseV0::Invariant {
+                stage: super::NativeValidationReservationStageV0::ReadExisting,
+                kind: NativeValidationReservationInvariantV0::StateMismatch,
+                ..
+            }
+        ));
+        drop(store);
+        fs::remove_dir_all(root).expect("remove foreign inactive-state test directory");
+    }
+
+    #[test]
+    fn exact_reopen_and_restart_reject_nonempty_inactive_outbox() {
+        let (root, store) = test_store("inactive-outbox");
+        let original = facts(PayloadValidationRouteV0::Proposal, 11, 8, 9);
+        let validation_id = original.validation_id;
+        assert!(matches!(
+            store.reserve_or_reopen_native_validation_job_v0(original),
+            Ok(NativeValidationReservationDecisionV0::Reserved(_))
+        ));
+        let connection = store.connect().expect("open inactive-outbox fixture");
+        connection
+            .execute(
+                "INSERT INTO validation_callback_outbox_v0(
+                     route, block_id, view_be, generation_be, result_kind,
+                     artifact_checksum, payload_codec, payload_bytes,
+                     payload_checksum, idempotency_key, delivery_attempt_be,
+                     outbox_checksum
+                 ) VALUES (0, ?1, ?2, ?3, 0, ?4, 'future-fixture-v0', X'01',
+                           ?5, ?6, ?7, ?8)",
+                rusqlite::params![
+                    validation_id.block_id().as_bytes().as_slice(),
+                    validation_id.view().get().to_be_bytes().as_slice(),
+                    validation_id.generation().to_be_bytes().as_slice(),
+                    [0x84_u8; 32].as_slice(),
+                    [0x85_u8; 32].as_slice(),
+                    [0x86_u8; 32].as_slice(),
+                    0_u64.to_be_bytes().as_slice(),
+                    [0x87_u8; 32].as_slice(),
+                ],
+            )
+            .expect("insert inactive outbox child");
+        connection
+            .execute(
+                "UPDATE validation_journal_accounting_v0
+                 SET outbox_count_be=?1, outbox_bytes_be=?1 WHERE singleton=1",
+                rusqlite::params![1_u64.to_be_bytes().as_slice()],
+            )
+            .expect("update inactive-outbox accounting");
+        drop(connection);
+
+        let failure = match store.reserve_or_reopen_native_validation_job_v0(facts(
+            PayloadValidationRouteV0::Proposal,
+            11,
+            8,
+            9,
+        )) {
+            Ok(_) => panic!("nonempty inactive outbox unexpectedly reopened"),
+            Err(failure) => failure,
+        };
+        assert!(matches!(
+            failure.cause(),
+            NativeValidationReservationFailureCauseV0::Invariant {
+                stage: super::NativeValidationReservationStageV0::ReadExisting,
+                kind: NativeValidationReservationInvariantV0::StateMismatch,
+                ..
+            }
+        ));
+        drop(store);
+
+        let status_path = root.join("app.status");
+        let corrupted =
+            ApplicationStore::open(&status_path, "reservation-test-chain", &"11".repeat(32))
+                .expect("reopen inactive-outbox store");
+        assert!(corrupted.load_or_migrate().is_err());
+        drop(corrupted);
+        fs::remove_dir_all(root).expect("remove inactive-outbox test directory");
+    }
+
+    #[test]
+    fn restart_rejects_validation_journal_accounting_drift() {
+        let (root, store) = test_store("accounting-drift");
+        assert!(matches!(
+            store.reserve_or_reopen_native_validation_job_v0(facts(
+                PayloadValidationRouteV0::Proposal,
+                9,
+                8,
+                9,
+            )),
+            Ok(NativeValidationReservationDecisionV0::Reserved(_))
+        ));
+        let connection = store.connect().expect("open accounting drift fixture");
+        connection
+            .execute(
+                "UPDATE validation_journal_accounting_v0
+                 SET job_count_be=?1 WHERE singleton=1",
+                rusqlite::params![2_u64.to_be_bytes().as_slice()],
+            )
+            .expect("tamper validation journal accounting");
+        drop(connection);
+        drop(store);
+
+        let status_path = root.join("app.status");
+        let corrupted =
+            ApplicationStore::open(&status_path, "reservation-test-chain", &"11".repeat(32))
+                .expect("reopen accounting-drift store");
+        assert!(corrupted.load_or_migrate().is_err());
+        drop(corrupted);
+        fs::remove_dir_all(root).expect("remove accounting-drift test directory");
     }
 }

@@ -15,7 +15,7 @@
 //! snapshot-closed failures into the app-private outcome kernel. A production
 //! sequential cursor now
 //! begins behind the Core request's shared process-local one-shot claim and a
-//! schema-v5 durable `(route, full ValidationId)` reservation, so both cloned
+//! schema-v6 durable `(route, full ValidationId)` job reservation, so both cloned
 //! replays and independently materialized exact duplicates are suppressed
 //! before host or authenticated-state access. The durable row is congruence
 //! and reservation authority only: it does not persist evaluation artifacts,
@@ -61,17 +61,17 @@ use crate::{
     auth_tree::{AuthWrite, PlannedAuthUpdate, PlannedAuthUpdateSealV0},
     native_execution::{NativeBlockExecutionV0, NativeTransactionReceiptFactsV0},
     store::{
-        ApplicationStore, AuthenticatedRuntimeReadFailureV0, AuthenticatedRuntimeReadSnapshotV0,
-        AuthenticatedRuntimeReadStageV0, FailedNativeValidationReservationV0,
-        NativeValidationReservationCoalescedV0, NativeValidationReservationDecisionV0,
-        NativeValidationReservationFactsV0, NativeValidationReservationFailureCauseV0,
-        NativeValidationReservationTokenV0,
+        native_validation_request_fingerprint_v0, ApplicationStore,
+        AuthenticatedRuntimeReadFailureV0, AuthenticatedRuntimeReadSnapshotV0,
+        AuthenticatedRuntimeReadStageV0, DurableNativeValidationJobV0,
+        FailedNativeValidationReservationV0, NativeValidationRequestRecordFailureV0,
+        NativeValidationReservationDecisionV0, NativeValidationReservationFactsV0,
+        NativeValidationReservationFailureCauseV0, NativeValidationReservationTokenV0,
     },
 };
 use anyhow::Context;
 use bytes::Bytes;
 use serde::{de::DeserializeOwned, Serialize};
-use sha2::{Digest, Sha256};
 use std::collections::{BTreeMap, BTreeSet};
 use trnm_consensus_core::{
     ClaimedPayloadValidationRequestV0, DuplicatePayloadValidationRequestV0, Effect, Input,
@@ -99,33 +99,10 @@ use trnm_runtime::{
     RuntimeExecutionAttemptFailureV0, RuntimeMutation, RuntimeReceipt, StateObject, TryStateViewV0,
 };
 
-const NATIVE_VALIDATION_RESERVATION_FINGERPRINT_CODEC_V0: u16 = 0;
-const NATIVE_VALIDATION_RESERVATION_FINGERPRINT_HASH_PREFIX_V0: &[u8] =
-    b"trnm.native-validation-reservation.hash.v0";
-const NATIVE_VALIDATION_RESERVATION_FINGERPRINT_DOMAIN_V0: &[u8] =
-    b"trnm.consensus-app.native-validation-reservation.v0";
-
 /// A failure to derive the exact, versioned raw-source fingerprint before any
 /// host or authenticated-state read. These cases are local invariants, never
 /// source unavailability or a negative result for the target block.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-enum NativeValidationReservationFingerprintFailureV0 {
-    TargetHeaderEncoding,
-    ParentHeaderEncoding,
-    EvidenceCountOverflow,
-    FrameLengthOverflow,
-}
-
-fn hash_native_validation_reservation_frame_v0(
-    hasher: &mut Sha256,
-    frame: &[u8],
-) -> Result<(), NativeValidationReservationFingerprintFailureV0> {
-    let length = u32::try_from(frame.len())
-        .map_err(|_| NativeValidationReservationFingerprintFailureV0::FrameLengthOverflow)?;
-    hasher.update(length.to_be_bytes());
-    hasher.update(frame);
-    Ok(())
-}
+type NativeValidationReservationFingerprintFailureV0 = NativeValidationRequestRecordFailureV0;
 
 /// Derives the durable congruence fingerprint exclusively from one claimed
 /// Core request. No caller-supplied header/body/parent, host configuration,
@@ -133,71 +110,12 @@ fn hash_native_validation_reservation_frame_v0(
 fn native_validation_reservation_fingerprint_v0(
     request: &ClaimedPayloadValidationRequestV0,
 ) -> Result<[u8; 32], NativeValidationReservationFingerprintFailureV0> {
-    let route = match request.route() {
-        PayloadValidationRouteV0::Proposal => [0_u8],
-        PayloadValidationRouteV0::Synced => [1_u8],
-    };
-    let validation_id = request.id();
-    let block = request.block();
-    let target_header = block
-        .header()
-        .try_cev0_bytes()
-        .map_err(|_| NativeValidationReservationFingerprintFailureV0::TargetHeaderEncoding)?;
-    let evidence_count = u32::try_from(block.evidence_objects().len())
-        .map_err(|_| NativeValidationReservationFingerprintFailureV0::EvidenceCountOverflow)?;
-    let parent = request.parent();
-    let parent_tip = parent.tip();
-    let parent_header = parent
-        .exact_header()
-        .map(|header| {
-            header
-                .try_cev0_bytes()
-                .map_err(|_| NativeValidationReservationFingerprintFailureV0::ParentHeaderEncoding)
-        })
-        .transpose()?;
-    let parent_header_presence = [u8::from(parent_header.is_some())];
-
-    let codec_version = NATIVE_VALIDATION_RESERVATION_FINGERPRINT_CODEC_V0.to_be_bytes();
-    let validation_block_id = validation_id.block_id();
-    let validation_view = validation_id.view().get().to_be_bytes();
-    let validation_generation = validation_id.generation().to_be_bytes();
-    let parent_height = parent_tip.height().get().to_be_bytes();
-    let parent_view = parent_tip.view().get().to_be_bytes();
-    let parent_block_id = parent_tip.block_id();
-    let parent_timestamp_ms = parent_tip.timestamp_ms().to_be_bytes();
-    let evidence_count = evidence_count.to_be_bytes();
-
-    let mut hasher = Sha256::new();
-    for frame in [
-        NATIVE_VALIDATION_RESERVATION_FINGERPRINT_HASH_PREFIX_V0,
-        NATIVE_VALIDATION_RESERVATION_FINGERPRINT_DOMAIN_V0,
-        codec_version.as_slice(),
-        route.as_slice(),
-        validation_block_id.as_bytes(),
-        validation_view.as_slice(),
-        validation_generation.as_slice(),
-        target_header.as_slice(),
-        block.application_payload(),
-        evidence_count.as_slice(),
-    ] {
-        hash_native_validation_reservation_frame_v0(&mut hasher, frame)?;
-    }
-    for evidence in block.evidence_objects() {
-        hash_native_validation_reservation_frame_v0(&mut hasher, evidence)?;
-    }
-    for frame in [
-        parent_height.as_slice(),
-        parent_view.as_slice(),
-        parent_block_id.as_bytes(),
-        parent_timestamp_ms.as_slice(),
-        parent_header_presence.as_slice(),
-    ] {
-        hash_native_validation_reservation_frame_v0(&mut hasher, frame)?;
-    }
-    if let Some(parent_header) = parent_header {
-        hash_native_validation_reservation_frame_v0(&mut hasher, &parent_header)?;
-    }
-    Ok(hasher.finalize().into())
+    native_validation_request_fingerprint_v0(
+        request.route(),
+        request.id(),
+        request.block(),
+        request.parent(),
+    )
 }
 
 /// Exact body retained after consuming one opaque Core validation capability.
@@ -291,14 +209,15 @@ struct CoreIssuedRegularValidationOwnerV0 {
 /// An independently issued request joined an already-identical durable row.
 /// This is suppression only and can never be converted into the fresh
 /// reservation token required by the evaluation path.
-#[must_use = "a durably coalesced Core request must not be evaluated"]
-struct DurablyCoalescedCoreIssuedRegularValidationOwnerV0 {
+#[must_use = "an existing durable Core job must be routed by recovery state"]
+struct DurablyExistingCoreIssuedRegularValidationOwnerV0 {
     request: ClaimedPayloadValidationRequestV0,
-    coalesced: NativeValidationReservationCoalescedV0,
+    existing: Box<DurableNativeValidationJobV0>,
 }
 
 enum CoreIssuedRegularValidationReservationCauseV0 {
     FingerprintInvariant(NativeValidationReservationFingerprintFailureV0),
+    RequestRecordInvariant(NativeValidationRequestRecordFailureV0),
     Store(Box<FailedNativeValidationReservationV0>),
 }
 
@@ -417,7 +336,7 @@ enum CoreAuthorizedRegularValidationSessionAdmissionV0 {
     FailedOpen(Box<FailedCoreIssuedRegularValidationOpenV0>),
     FailedReservation(Box<FailedCoreIssuedRegularValidationReservationV0>),
     Duplicate(Box<DuplicateCoreIssuedRegularValidationOwnerV0>),
-    DurablyCoalesced(Box<DurablyCoalescedCoreIssuedRegularValidationOwnerV0>),
+    DurablyExisting(Box<DurablyExistingCoreIssuedRegularValidationOwnerV0>),
 }
 
 impl std::fmt::Debug for CoreAuthorizedRegularValidationSessionAdmissionV0 {
@@ -427,7 +346,7 @@ impl std::fmt::Debug for CoreAuthorizedRegularValidationSessionAdmissionV0 {
             Self::FailedOpen(_) => "failed_open",
             Self::FailedReservation(_) => "failed_reservation",
             Self::Duplicate(_) => "duplicate",
-            Self::DurablyCoalesced(_) => "durably_coalesced",
+            Self::DurablyExisting(_) => "durably_existing",
         };
         formatter
             .debug_struct("CoreAuthorizedRegularValidationSessionAdmissionV0")
@@ -3121,7 +3040,8 @@ impl FailedCoreIssuedRegularValidationReservationV0 {
     fn outcome_facts_v0(&self) -> CoreAuthorizedRegularPreExecutionFailureOutcomeFactsV0 {
         let generation = self.owner.request.id().generation();
         let kind = match &self.cause {
-            CoreIssuedRegularValidationReservationCauseV0::FingerprintInvariant(_) => {
+            CoreIssuedRegularValidationReservationCauseV0::FingerprintInvariant(_)
+            | CoreIssuedRegularValidationReservationCauseV0::RequestRecordInvariant(_) => {
                 return CoreAuthorizedRegularPreExecutionFailureOutcomeFactsV0::Invariant {
                     generation,
                     stage: CoreAuthorizedRegularPreExecutionInvariantStageV0::Reservation,
@@ -3137,7 +3057,8 @@ impl FailedCoreIssuedRegularValidationReservationV0 {
                 NativeValidationReservationFailureCauseV0::HostResourceUnavailable { .. } => {
                     CoreAuthorizedRegularPreExecutionUnavailableKindV0::HostResource
                 }
-                NativeValidationReservationFailureCauseV0::Capacity { .. } => {
+                NativeValidationReservationFailureCauseV0::Capacity { .. }
+                | NativeValidationReservationFailureCauseV0::ByteCapacity { .. } => {
                     CoreAuthorizedRegularPreExecutionUnavailableKindV0::ReservationCapacity
                 }
                 NativeValidationReservationFailureCauseV0::Invariant { .. }
@@ -3777,23 +3698,34 @@ fn reserve_claimed_core_authorized_regular_validation_session_v0(
             ));
         }
     };
-    let parent_block_id = *owner.request.parent().tip().block_id().as_bytes();
-    let facts = NativeValidationReservationFactsV0::new(
+    let facts = match NativeValidationReservationFactsV0::from_core_request_v0(
         owner.request.route(),
         owner.request.id(),
-        owner.request.block().header().height().get(),
-        parent_block_id,
+        owner.request.block(),
+        owner.request.parent(),
         fingerprint,
-    );
-    let reservation = match host.store.reserve_native_validation_v0(facts) {
+    ) {
+        Ok(facts) => facts,
+        Err(cause) => {
+            return CoreAuthorizedRegularValidationSessionAdmissionV0::FailedReservation(Box::new(
+                FailedCoreIssuedRegularValidationReservationV0 {
+                    owner,
+                    cause: CoreIssuedRegularValidationReservationCauseV0::RequestRecordInvariant(
+                        cause,
+                    ),
+                },
+            ));
+        }
+    };
+    let reservation = match host.store.reserve_or_reopen_native_validation_job_v0(facts) {
         Ok(NativeValidationReservationDecisionV0::Reserved(reservation)) => reservation,
-        Ok(NativeValidationReservationDecisionV0::Coalesced(coalesced)) => {
-            debug_assert_eq!(coalesced.route(), owner.request.route());
-            debug_assert_eq!(coalesced.validation_id(), owner.request.id());
-            return CoreAuthorizedRegularValidationSessionAdmissionV0::DurablyCoalesced(Box::new(
-                DurablyCoalescedCoreIssuedRegularValidationOwnerV0 {
+        Ok(NativeValidationReservationDecisionV0::Existing(existing)) => {
+            debug_assert_eq!(existing.route(), owner.request.route());
+            debug_assert_eq!(existing.validation_id(), owner.request.id());
+            return CoreAuthorizedRegularValidationSessionAdmissionV0::DurablyExisting(Box::new(
+                DurablyExistingCoreIssuedRegularValidationOwnerV0 {
                     request: owner.request,
-                    coalesced,
+                    existing,
                 },
             ));
         }
@@ -4382,7 +4314,7 @@ fn open_core_authorized_regular_validation_for_test_v0(
         CoreAuthorizedRegularValidationSessionAdmissionV0::Duplicate(_) => {
             panic!("fresh test fixture unexpectedly replayed one Core validation request")
         }
-        CoreAuthorizedRegularValidationSessionAdmissionV0::DurablyCoalesced(_) => {
+        CoreAuthorizedRegularValidationSessionAdmissionV0::DurablyExisting(_) => {
             panic!("fresh test fixture unexpectedly joined a durable reservation")
         }
         CoreAuthorizedRegularValidationSessionAdmissionV0::FailedReservation(_) => {
@@ -10031,8 +9963,8 @@ mod tests {
             .find("native_validation_reservation_fingerprint_v0(&owner.request)")
             .expect("claimed-request durable fingerprint");
         let reserve_offset = admission_body
-            .find("host.store.reserve_native_validation_v0(facts)")
-            .expect("durable validation reservation");
+            .find("reserve_or_reopen_native_validation_job_v0(facts)")
+            .expect("durable validation job reservation or reopen");
         let claimed_open_offset = admission_body
             .find("open_core_authorized_regular_validation_v0(host, owner)")
             .expect("only a freshly reserved owner reaches parent authentication");
@@ -10043,14 +9975,14 @@ mod tests {
             admission_body.contains("CoreAuthorizedRegularValidationSessionAdmissionV0::Duplicate")
         );
         assert!(admission_body
-            .contains("CoreAuthorizedRegularValidationSessionAdmissionV0::DurablyCoalesced"));
+            .contains("CoreAuthorizedRegularValidationSessionAdmissionV0::DurablyExisting"));
         assert!(admission_body
             .contains("CoreAuthorizedRegularValidationSessionAdmissionV0::FailedReservation"));
         assert!(
             admission_body.contains("NativeValidationReservationDecisionV0::Reserved(reservation)")
         );
         assert!(
-            admission_body.contains("NativeValidationReservationDecisionV0::Coalesced(coalesced)")
+            admission_body.contains("NativeValidationReservationDecisionV0::Existing(existing)")
         );
         assert!(admission_body
             .contains("reservation: CoreAuthorizedRegularReservationV0::Durable(reservation)"));
@@ -10076,18 +10008,11 @@ mod tests {
             .expect("reservation fingerprint end")
             .0;
         for required_fingerprint_fact in [
-            "NATIVE_VALIDATION_RESERVATION_FINGERPRINT_CODEC_V0",
             "request.route()",
             "request.id()",
             "request.block()",
-            "let target_header = block",
-            ".try_cev0_bytes()",
-            "block.application_payload()",
-            "block.evidence_objects()",
             "request.parent()",
-            "parent.tip()",
-            ".exact_header()",
-            "hash_native_validation_reservation_frame_v0",
+            "native_validation_request_fingerprint_v0",
         ] {
             assert!(
                 fingerprint_body.contains(required_fingerprint_fact),
@@ -10109,11 +10034,35 @@ mod tests {
                 "durable fingerprint gained external input: {forbidden_fingerprint_input}"
             );
         }
-        let frame_body = implementation_source
+        let store_source = include_str!("store.rs");
+        let fingerprint_kernel = store_source
+            .split_once("pub(super) fn native_validation_request_fingerprint_v0(")
+            .expect("shared durable fingerprint kernel")
+            .1
+            .split_once("struct NativeValidationRequestBodyRecordV0")
+            .expect("shared durable fingerprint kernel end")
+            .0;
+        for required_fingerprint_fact in [
+            "let target_header_cev0 = block",
+            ".header()",
+            ".try_cev0_bytes()",
+            "block.application_payload()",
+            "block.evidence_objects()",
+            "parent.tip()",
+            ".exact_header()",
+            "hash_native_validation_reservation_frame_v0",
+        ] {
+            assert!(
+                fingerprint_kernel.contains(required_fingerprint_fact),
+                "shared durable fingerprint lost exact Core source fact: {required_fingerprint_fact}"
+            );
+        }
+        assert!(store_source.contains("NATIVE_VALIDATION_RESERVATION_FINGERPRINT_CODEC_V0"));
+        let frame_body = store_source
             .split_once("fn hash_native_validation_reservation_frame_v0(")
             .expect("checked fingerprint frame helper")
             .1
-            .split_once("/// Derives the durable congruence fingerprint")
+            .split_once("fn begin_native_validation_reservation_fingerprint_v0(")
             .expect("fingerprint frame helper end")
             .0;
         assert!(frame_body.contains("u32::try_from(frame.len())"));
@@ -10199,9 +10148,9 @@ mod tests {
             );
         }
         for forbidden_test_only_authority in [
-            "reserve_native_validation_v0",
+            "reserve_or_reopen_native_validation_job_v0",
             "NativeValidationReservationDecisionV0::Reserved",
-            "NativeValidationReservationDecisionV0::Coalesced",
+            "NativeValidationReservationDecisionV0::Existing",
             "CoreAuthorizedRegularReservationV0::Durable",
         ] {
             assert!(
@@ -10215,7 +10164,7 @@ mod tests {
             "open_core_authorized_regular_validation_with_test_only_reservation_v0(host, request)"
         ));
         assert!(!test_cursor_body.contains("begin_core_authorized_regular_validation_session_v0"));
-        assert!(!test_cursor_body.contains("reserve_native_validation_v0"));
+        assert!(!test_cursor_body.contains("reserve_or_reopen_native_validation_job_v0"));
         let prepare_offset = implementation_source
             .find("fn prepare_next_core_authorized_regular_payload_v0(")
             .expect("production exact transaction prepare function");
@@ -11490,7 +11439,7 @@ mod tests {
             "OpenCoreAuthorizedRegularValidationV0",
             "ClaimedCoreIssuedRegularValidationOwnerV0",
             "CoreIssuedRegularValidationOwnerV0",
-            "DurablyCoalescedCoreIssuedRegularValidationOwnerV0",
+            "DurablyExistingCoreIssuedRegularValidationOwnerV0",
             "CoreIssuedRegularValidationJobV0",
             "CoreRegularValidationEffectRouteInvariantV0",
             "DuplicateCoreIssuedRegularValidationOwnerV0",
@@ -11573,33 +11522,33 @@ mod tests {
             .expect("durable reservation decision end")
             .0;
         assert!(reservation_decision.contains("Reserved(NativeValidationReservationTokenV0)"));
-        assert!(reservation_decision.contains("Coalesced(NativeValidationReservationCoalescedV0)"));
+        assert!(reservation_decision.contains("Existing(Box<DurableNativeValidationJobV0>)"));
         assert!(!store_source.contains("fn token(&self)"));
         assert!(!store_source.contains("PayloadValidationRequest"));
         assert!(store_source.contains(
-            "pub(super) fn reserve_native_validation_v0(\n        &self,\n        facts: NativeValidationReservationFactsV0,"
+            "pub(super) fn reserve_or_reopen_native_validation_job_v0(\n        &self,\n        facts: NativeValidationReservationFactsV0,"
         ));
         let reservation_transaction = store_source
-            .split_once("fn reserve_native_validation_inner_v0(")
+            .split_once("fn reserve_or_reopen_native_validation_job_inner_v0(")
             .expect("durable reservation transaction")
             .1
-            .split_once("fn connect_native_validation_reservation_v0(")
+            .split_once("fn connect_native_validation_job_v0(")
             .expect("durable reservation transaction end")
             .0;
         let begin_offset = reservation_transaction
             .find("transaction_with_behavior(TransactionBehavior::Immediate)")
             .expect("durable reservation BEGIN IMMEDIATE");
         let binding_offset = reservation_transaction
-            .find("validate_native_validation_reservation_bindings_v0(&transaction, self)")
+            .find("validate_native_validation_job_bindings_v0(&transaction, self)")
             .expect("durable reservation binding validation");
         let existing_offset = reservation_transaction
-            .find("load_native_validation_reservation_v0(&transaction, facts)")
+            .find("load_native_validation_job_v0(&transaction, facts.validation_id)")
             .expect("durable reservation existing-row lookup");
         let capacity_offset = reservation_transaction
-            .find("SELECT COUNT(*) FROM native_validation_reservations")
-            .expect("durable reservation capacity check");
+            .find("read_reserved_only_native_validation_journal_accounting_v0(")
+            .expect("constant-time reserved-only durable journal gate");
         let insert_offset = reservation_transaction
-            .find("insert_native_validation_reservation_v0(&transaction, facts)")
+            .find("insert_native_validation_job_v0(&transaction, facts, self)")
             .expect("durable reservation insert");
         let commit_offset = reservation_transaction
             .find("transaction.commit()")
@@ -11609,42 +11558,97 @@ mod tests {
         assert!(existing_offset < capacity_offset);
         assert!(capacity_offset < insert_offset);
         assert!(insert_offset < commit_offset);
+        assert!(!reservation_transaction.contains("SELECT COUNT(*) FROM validation_jobs_v0"));
+        assert!(!reservation_transaction.contains("SUM("));
         assert!(reservation_transaction.contains(
-            "Ok(()) => Ok(NativeValidationReservationInnerDecisionV0::CommitUncertainCoalesced)"
+            "NativeValidationReservationInnerDecisionV0::CommitUncertainExisting(existing)"
         ));
+        let reserved_only_gate = store_source
+            .split_once("fn read_reserved_only_native_validation_journal_accounting_v0(")
+            .expect("reserved-only validation journal gate")
+            .1
+            .split_once("fn native_validation_runtime_profile_ref_v0(")
+            .expect("reserved-only validation journal gate end")
+            .0;
+        assert!(reserved_only_gate
+            .contains("SELECT EXISTS(SELECT 1 FROM validation_callback_outbox_v0 LIMIT 1)"));
+        assert!(
+            reserved_only_gate.contains("SELECT 1 FROM validation_jobs_v0 WHERE state<>0 LIMIT 1")
+        );
+        assert!(store_source.contains(
+            "CREATE INDEX IF NOT EXISTS validation_jobs_non_reserved_v0\n        ON validation_jobs_v0(state) WHERE state<>0;"
+        ));
+        let startup = store_source
+            .split_once("pub(super) fn load_or_migrate(&self) -> Result<AppState> {")
+            .expect("application-store startup")
+            .1
+            .split_once("pub(super) fn load_object(")
+            .expect("application-store startup end")
+            .0;
+        assert!(startup.contains("self.visit_native_validation_recovery_work_v0("));
+        let request_semantics = store_source
+            .split_once("fn validate_native_validation_request_record_semantics_v0(")
+            .expect("durable request semantic rebind")
+            .1
+            .split_once("fn native_validation_route_code_v0(")
+            .expect("durable request semantic rebind end")
+            .0;
+        for required in [
+            "facts.parent_height.checked_add(1)",
+            "target_header.genesis_hash().as_bytes()",
+            "target_header.block_kind() == BlockKind::Regular",
+            "target_header.block_kind() == BlockKind::EpochHandoff",
+            "native_validation_reservation_fingerprint_from_record_v0(facts)",
+        ] {
+            assert!(request_semantics.contains(required));
+        }
+        let snapshot_scrub = store_source
+            .split_once("pub(super) fn build_snapshot_database(")
+            .expect("snapshot builder")
+            .1
+            .split_once("pub(super) fn pin_snapshot(")
+            .expect("snapshot builder end")
+            .0;
+        let outbox_delete = snapshot_scrub
+            .find("DELETE FROM validation_callback_outbox_v0")
+            .expect("snapshot child-outbox scrub");
+        let job_delete = snapshot_scrub
+            .find("DELETE FROM validation_jobs_v0")
+            .expect("snapshot validation-job scrub");
+        assert!(outbox_delete < job_delete);
         let reservation_confirmation = store_source
-            .split_once("fn confirm_native_validation_reservation_v0(")
+            .split_once("fn confirm_native_validation_job_v0(")
             .expect("durable reservation commit confirmation")
             .1
             .split_once("pub(super) fn open(")
             .expect("durable reservation commit confirmation end")
             .0;
         let confirmation_binding_offset = reservation_confirmation
-            .find("validate_native_validation_reservation_bindings_v0(&connection, self)")
+            .find("validate_native_validation_job_bindings_v0(&connection, self)")
             .expect("commit confirmation binding validation");
         let confirmation_load_offset = reservation_confirmation
-            .find("load_native_validation_reservation_v0(&connection, facts)")
+            .find("load_native_validation_job_v0(&connection, facts.validation_id)")
             .expect("commit confirmation exact-row lookup");
         assert!(confirmation_binding_offset < confirmation_load_offset);
-        let coalesced_impl = store_source
-            .split_once("impl NativeValidationReservationCoalescedV0 {")
-            .expect("durable coalesced suppression implementation")
+        let existing_impl = store_source
+            .split_once("impl DurableNativeValidationJobV0 {")
+            .expect("durable existing job implementation")
             .1
             .split_once("/// Whether this call created")
-            .expect("durable coalesced suppression implementation end")
+            .expect("durable existing job implementation end")
             .0;
-        for forbidden_coalesced_surface in
+        for forbidden_existing_surface in
             ["token", "retry", "takeover", "into_parts", "into_reserved"]
         {
             assert!(
-                !coalesced_impl.contains(forbidden_coalesced_surface),
-                "coalesced suppression gained evaluation surface: {forbidden_coalesced_surface}"
+                !existing_impl.contains(forbidden_existing_surface),
+                "existing durable job gained evaluation surface: {forbidden_existing_surface}"
             );
         }
         for capability in [
             "NativeValidationReservationFactsV0",
             "NativeValidationReservationTokenV0",
-            "NativeValidationReservationCoalescedV0",
+            "DurableNativeValidationJobV0",
             "FailedNativeValidationReservationV0",
         ] {
             let declaration = format!("pub(super) struct {capability} {{");
@@ -11937,7 +11941,7 @@ mod tests {
                 "OpenCoreAuthorizedRegularValidationV0",
                 "ClaimedCoreIssuedRegularValidationOwnerV0",
                 "CoreIssuedRegularValidationOwnerV0",
-                "DurablyCoalescedCoreIssuedRegularValidationOwnerV0",
+                "DurablyExistingCoreIssuedRegularValidationOwnerV0",
                 "FailedCoreIssuedRegularValidationReservationV0",
                 "CoreIssuedRegularValidationReservationCauseV0",
                 "CoreAuthorizedRegularReservationV0",
@@ -18850,11 +18854,16 @@ mod tests {
         let second = second
             .try_claim()
             .unwrap_or_else(|_| panic!("second independent Core request has its own claim family"));
+        let first_fingerprint = native_validation_reservation_fingerprint_v0(&first)
+            .expect("fingerprint first exact Core request");
         assert_eq!(
-            native_validation_reservation_fingerprint_v0(&first)
-                .expect("fingerprint first exact Core request"),
+            first_fingerprint,
             native_validation_reservation_fingerprint_v0(&second)
                 .expect("fingerprint second exact Core request")
+        );
+        assert_eq!(
+            hex::encode(first_fingerprint),
+            "b15611aabc72eec20cc86263ebbcb5d40e08b599161a1b67ee0ddf3db45e7693"
         );
 
         let synced = match core_synced_validation_effect(&profile) {
@@ -18874,7 +18883,7 @@ mod tests {
     }
 
     #[test]
-    fn independent_core_request_graphs_durably_coalesce_before_invalid_host_reads() {
+    fn independent_core_request_graphs_reopen_durable_state_before_invalid_host_reads() {
         let store = test_store();
         let profile = fixture_profile(store.parent_state_root, 0);
         let first_job = match take_core_regular_validation_job_v0(core_validation_effect(&profile))
@@ -18911,21 +18920,20 @@ mod tests {
             chain_id: "not-the-configured-chain",
             authorized_signers: &invalid_signers,
         };
-        let coalesced =
+        let existing =
             match begin_core_authorized_regular_validation_session_v0(&invalid_host, second_job) {
-                CoreAuthorizedRegularValidationSessionAdmissionV0::DurablyCoalesced(coalesced) => {
-                    coalesced
+                CoreAuthorizedRegularValidationSessionAdmissionV0::DurablyExisting(existing) => {
+                    existing
                 }
-                other => panic!("exact independent request was not durably coalesced: {other:?}"),
+                other => {
+                    panic!("exact independent request did not reopen durable state: {other:?}")
+                }
             };
-        assert_eq!(coalesced.request.id(), expected_id);
+        assert_eq!(existing.request.id(), expected_id);
+        assert_eq!(existing.request.route(), PayloadValidationRouteV0::Proposal);
+        assert_eq!(existing.existing.validation_id(), expected_id);
         assert_eq!(
-            coalesced.request.route(),
-            PayloadValidationRouteV0::Proposal
-        );
-        assert_eq!(coalesced.coalesced.validation_id(), expected_id);
-        assert_eq!(
-            coalesced.coalesced.route(),
+            existing.existing.route(),
             PayloadValidationRouteV0::Proposal
         );
         assert_eq!(store.store.active_runtime_snapshot_pins_for_test_v0(), 0);
@@ -19102,7 +19110,7 @@ mod tests {
             CoreAuthorizedRegularValidationSessionAdmissionV0::FailedReservation(_) => {
                 panic!("a volatile duplicate reached durable reservation")
             }
-            CoreAuthorizedRegularValidationSessionAdmissionV0::DurablyCoalesced(_) => {
+            CoreAuthorizedRegularValidationSessionAdmissionV0::DurablyExisting(_) => {
                 panic!("a volatile duplicate was rewritten as durable coalescing")
             }
         };
@@ -19153,7 +19161,7 @@ mod tests {
             CoreAuthorizedRegularValidationSessionAdmissionV0::FailedReservation(_) => {
                 panic!("a clone reached durable reservation instead of volatile suppression")
             }
-            CoreAuthorizedRegularValidationSessionAdmissionV0::DurablyCoalesced(_) => {
+            CoreAuthorizedRegularValidationSessionAdmissionV0::DurablyExisting(_) => {
                 panic!("a clone was rewritten as durable coalescing")
             }
         };
@@ -19206,9 +19214,9 @@ mod tests {
                             CoreAuthorizedRegularValidationSessionAdmissionV0::FailedReservation(
                                 _,
                             ) => panic!("the sole admitted fixture request was not reserved"),
-                            CoreAuthorizedRegularValidationSessionAdmissionV0::DurablyCoalesced(
+                            CoreAuthorizedRegularValidationSessionAdmissionV0::DurablyExisting(
                                 _,
-                            ) => panic!("an in-family clone became a durable coalesced request"),
+                            ) => panic!("an in-family clone became an existing durable job"),
                         }
                     })
                 })

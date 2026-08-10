@@ -723,7 +723,7 @@ The P1 core accepts explicit events and returns deterministic actions. Its trace
   `DeterministicallyInvalid`; route MUST remain owned through open/body/cursor/
   runtime/post-state/comparator/disposition, and no naked bool or route may be
   injected into those constructors;
-- separately from application-store schema v5, Core `SafetyState` schema v6
+- separately from application-store schema v6, Core `SafetyState` schema v6
   MUST retain the schema-v5 obligation rule: canonically order and persist one
   `DurablePayloadValidationObligationV0` before either direct or synced
   validation effect escapes `PersistSafetyState -> StorageAck`; each record
@@ -766,23 +766,47 @@ The P1 core accepts explicit events and returns deterministic actions. Its trace
   suppress an exact same-result replay but Core cleanup/completion MUST NOT be
   represented as type-level callback authority, host callback-outbox delivery
   acknowledgement, or callback exactly-once;
-- application-store schema v5 MUST durably reserve `(route, full ValidationId)`
-  in the same SQLite database after wrapper/route congruence and the process-
-  local claim but before host or snapshot reads; one `BEGIN IMMEDIATE`
-  transaction MUST perform the unique insert/existing-row decision, and a
-  versioned, domain-separated fingerprint MUST bind that key to the exact raw
-  target header, application payload, ordered evidence, and parent source;
-  only an exactly congruent row may coalesce/suppress an independently
-  materialized duplicate, while reuse of the full ID with another route,
-  source, target, or parent MUST be invariant; the reservation table MUST be
-  bounded at 65,536 rows with no eviction, and an exact duplicate MUST still
-  coalesce at capacity;
-- state-sync snapshot creation MUST transactionally scrub all reservation rows
-  from the temporary snapshot copy before checkpoint/VACUUM, MUST verify that
-  exported copy is empty, and MUST leave the source database unchanged; the
-  reservation/fingerprint MUST NOT be treated as body validation, an evaluated
-  artifact/result, JMT/terminal authority, callback outbox/acknowledgement,
-  crash-takeover lease, or process-wide callback exactly-once evidence;
+- application-store schema v6 MUST durably reserve one `validation_jobs_v0`
+  row for `(route, full ValidationId)` after wrapper/route congruence and the
+  process-local claim but before host or snapshot reads; one
+  `BEGIN IMMEDIATE` transaction MUST freeze the exact target header, strict
+  versioned raw body record, parent tip and optional exact parent state,
+  configuration references, the currently generation-derived creation
+  revision, raw-source fingerprint, and distinct body/immutable/row checksums
+  in state `reserved`; the active v6 binary MUST reject every non-`reserved`
+  row and non-empty outbox because artifact/outbox codecs and transition
+  semantics are not yet frozen; a congruent reopen
+  MUST return the checksum-verified durable state and MUST NOT remint the
+  first-reservation token; route, source, target, parent, configuration,
+  revision, framing, state, or checksum drift MUST fail closed;
+- the schema-v6 job journal MUST be bounded at 65,536 rows and 512 MiB of raw
+  request records with no eviction, and exact reopen MUST precede capacity
+  rejection; schema-v5 migration MUST proceed only when the legacy reservation
+  table is empty, while a non-empty v5 table MUST roll back without deleting,
+  rewriting, or fabricating replay fields; restart recovery MUST enumerate all
+  verified jobs in canonical state/identity order but MUST NOT treat those
+  facts as reconstructed Core or evaluation authority; startup/recovery MUST
+  exact-decode and canonically re-encode target and parent headers, rebind all
+  duplicated identity/parent/configuration fields, and rederive the frozen
+  request fingerprint; checksum-consistent semantic splices MUST fail closed.
+  A headerless height-zero parent is only a structurally revalidated inert
+  recovery fact: it MUST bind a height-one epoch-zero regular target to the
+  target genesis hash, while the trusted genesis timestamp/hash authority
+  remains Core-owned and MUST be reauthenticated before executable takeover;
+- validation-job admission MUST use an atomically maintained O(1) accounting
+  singleton for row/request-byte capacity, while startup MUST independently
+  compare it with real `COUNT`/`SUM` facts; accounting drift MUST fail closed,
+  and application-compatible parameters MUST have
+  `max_block_bytes <= 16 MiB`;
+- state-sync snapshot creation MUST transactionally scrub callback-outbox rows
+  before validation-job rows from the temporary snapshot copy before
+  checkpoint/VACUUM, MUST verify both exported tables are empty, and MUST leave
+  the source database unchanged; installation MUST reject a non-empty target
+  validation journal rather than silently discard target-local work; the
+  job/fingerprint/checksums MUST NOT be
+  treated as body validation, an evaluated artifact/result, JMT/terminal
+  authority, callback delivery/acknowledgement, executable crash takeover, or
+  process-wide callback exactly-once evidence;
 - missing/pruned/foreign committed-parent sources remain retryable and distinct
   from authenticated-tree/physical-singleton/configuration invariants; no
   joined fact may escape unless explicit snapshot finish succeeds, and finish

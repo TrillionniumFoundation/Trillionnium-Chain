@@ -154,6 +154,12 @@ pub(crate) fn validate_poco_parameter_retention_v0(
         parameters.snapshot_lead_blocks() <= AUTH_PROOF_RETENTION_VERSIONS,
         "PoCO snapshot lead exceeds authenticated JMT history retention"
     );
+    ensure!(
+        u64::from(parameters.max_block_bytes())
+            <= u64::try_from(store::MAX_NATIVE_VALIDATION_BODY_RECORD_BYTES)
+                .expect("native validation body cap fits u64"),
+        "consensus max_block_bytes exceeds the application validation journal body limit"
+    );
     Ok(())
 }
 
@@ -5142,6 +5148,25 @@ mod tests {
     }
 
     #[test]
+    fn consensus_block_limit_is_compatible_with_validation_journal_capacity() {
+        let maximum = u32::try_from(store::MAX_NATIVE_VALIDATION_BODY_RECORD_BYTES).unwrap();
+        let mut fields =
+            trnm_consensus_types::ConsensusParametersV0::reference_shadow_v0().fields();
+        fields.max_block_bytes = maximum;
+        fields.max_consensus_message_bytes = maximum + 1;
+        let exact = trnm_consensus_types::ConsensusParametersV0::new(fields).unwrap();
+        validate_poco_parameter_retention_v0(&exact).unwrap();
+
+        fields.max_consensus_message_bytes = maximum + 1024;
+        let wider_message = trnm_consensus_types::ConsensusParametersV0::new(fields).unwrap();
+        validate_poco_parameter_retention_v0(&wider_message).unwrap();
+
+        fields.max_block_bytes = maximum + 1;
+        let oversized = trnm_consensus_types::ConsensusParametersV0::new(fields).unwrap();
+        assert!(validate_poco_parameter_retention_v0(&oversized).is_err());
+    }
+
+    #[test]
     fn poco_application_operation_is_identical_across_abci_and_authenticated_jmt() {
         let (app, signing_key, _) = active_poco_genesis_fixture();
         let before = app.height_and_app_hash().unwrap();
@@ -9290,22 +9315,28 @@ mod tests {
     }
 
     #[test]
-    fn native_validation_reservations_remain_source_local_across_snapshot_build_and_install() {
+    fn native_validation_jobs_and_outbox_remain_source_local_across_snapshot_install() {
         let root = std::env::temp_dir().join(format!(
             "trnm-comet-snapshot-reservation-scrub-{}-{}",
             std::process::id(),
             now_unix_ms()
         ));
         fs::create_dir_all(&root).unwrap();
-        let reservation_count = |path: &Path| {
-            rusqlite::Connection::open(path)
-                .unwrap()
+        let journal_counts = |path: &Path| {
+            let connection = rusqlite::Connection::open(path).unwrap();
+            let jobs = connection
+                .query_row("SELECT COUNT(*) FROM validation_jobs_v0", [], |row| {
+                    row.get::<_, u64>(0)
+                })
+                .unwrap();
+            let outbox = connection
                 .query_row(
-                    "SELECT COUNT(*) FROM native_validation_reservations",
+                    "SELECT COUNT(*) FROM validation_callback_outbox_v0",
                     [],
                     |row| row.get::<_, u64>(0),
                 )
-                .unwrap()
+                .unwrap();
+            (jobs, outbox)
         };
 
         let source_state_path = root.join("source-state.json");
@@ -9315,25 +9346,63 @@ mod tests {
         let committed = source.core.state.lock().unwrap().clone();
         let expected = (committed.height, committed.app_hash);
         let source_store = source.core.store.as_ref().unwrap();
-        match source_store.reserve_native_validation_v0(
-            store::NativeValidationReservationFactsV0::new(
+        let validation_identity = match source_store.reserve_or_reopen_native_validation_job_v0(
+            store::NativeValidationReservationFactsV0::new_for_test_v0(
                 trnm_consensus_core::PayloadValidationRouteV0::Proposal,
-                trnm_consensus_core::ValidationId::new(
-                    trnm_consensus_types::BlockId::new([0x71; 32]),
-                    trnm_consensus_types::View::new(5),
-                    11,
-                ),
-                committed.height + 1,
-                [0x72; 32],
-                [0x73; 32],
+                11,
+                &source.core.config.chain_id,
             ),
         ) {
-            Ok(store::NativeValidationReservationDecisionV0::Reserved(_)) => {}
-            Ok(store::NativeValidationReservationDecisionV0::Coalesced(_)) | Err(_) => {
+            Ok(store::NativeValidationReservationDecisionV0::Reserved(token)) => {
+                (token.route(), token.validation_id())
+            }
+            Ok(store::NativeValidationReservationDecisionV0::Existing(_)) | Err(_) => {
                 panic!("first source reservation must own durable admission")
             }
-        }
-        assert_eq!(reservation_count(&source_database_path), 1);
+        };
+        // This is a deliberate raw-SQL future-child fixture: the active v6
+        // binary rejects non-empty outbox state on startup, but snapshot
+        // scrubbing must still remove child rows before their parent without
+        // changing the authoritative source copy.
+        let source_connection = rusqlite::Connection::open(&source_database_path).unwrap();
+        source_connection
+            .execute(
+                "INSERT INTO validation_callback_outbox_v0(
+                     route, block_id, view_be, generation_be, result_kind,
+                     artifact_checksum, payload_codec, payload_bytes,
+                     payload_checksum, idempotency_key, delivery_attempt_be,
+                     outbox_checksum
+                 ) VALUES (0, ?1, ?2, ?3, 0, ?4, 'future-fixture-v0', X'01',
+                           ?5, ?6, ?7, ?8)",
+                rusqlite::params![
+                    validation_identity.1.block_id().as_bytes().as_slice(),
+                    validation_identity.1.view().get().to_be_bytes().as_slice(),
+                    validation_identity.1.generation().to_be_bytes().as_slice(),
+                    [0x74_u8; 32].as_slice(),
+                    [0x75_u8; 32].as_slice(),
+                    [0x76_u8; 32].as_slice(),
+                    0_u64.to_be_bytes().as_slice(),
+                    [0x77_u8; 32].as_slice(),
+                ],
+            )
+            .unwrap();
+        source_connection
+            .execute(
+                "UPDATE validation_journal_accounting_v0
+                 SET outbox_count_be=?1, outbox_bytes_be=?2
+                 WHERE singleton=1",
+                rusqlite::params![
+                    1_u64.to_be_bytes().as_slice(),
+                    1_u64.to_be_bytes().as_slice(),
+                ],
+            )
+            .unwrap();
+        drop(source_connection);
+        assert_eq!(
+            validation_identity.0,
+            trnm_consensus_core::PayloadValidationRouteV0::Proposal
+        );
+        assert_eq!(journal_counts(&source_database_path), (1, 1));
 
         let snapshot_path = root.join("reservation-local.snapshot");
         let pinned = source_store.pin_snapshot(&committed).unwrap();
@@ -9341,12 +9410,12 @@ mod tests {
             .build_snapshot_database(&committed, &snapshot_path, pinned)
             .unwrap();
         assert_eq!((built.height, built.app_hash), expected);
-        // The builder validates the temporary v5 database before its atomic
-        // rename, so success also proves the temporary reservation table was
-        // empty rather than copying the node-local journal into the snapshot.
+        // The builder validates the temporary v6 database before its atomic
+        // rename, so success also proves both node-local journal tables were
+        // empty rather than copied into the snapshot.
         assert!(!snapshot_path.with_extension("snapshot.tmp").exists());
-        assert_eq!(reservation_count(&source_database_path), 1);
-        assert_eq!(reservation_count(&snapshot_path), 0);
+        assert_eq!(journal_counts(&source_database_path), (1, 1));
+        assert_eq!(journal_counts(&snapshot_path), (0, 0));
 
         let target_state_path = root.join("target-state.json");
         let target_database_path = target_state_path.with_extension("json.sqlite3");
@@ -9358,21 +9427,49 @@ mod tests {
         initialize(&target);
         let empty = target.core.state.lock().unwrap().clone();
         assert_eq!(empty.height, 0);
-        let installed = target
-            .core
-            .store
-            .as_ref()
-            .unwrap()
+        let target_store = target.core.store.as_ref().unwrap();
+        assert!(matches!(
+            target_store.reserve_or_reopen_native_validation_job_v0(
+                store::NativeValidationReservationFactsV0::new_for_test_v0(
+                    trnm_consensus_core::PayloadValidationRouteV0::Proposal,
+                    12,
+                    &target.core.config.chain_id,
+                ),
+            ),
+            Ok(store::NativeValidationReservationDecisionV0::Reserved(_))
+        ));
+        assert_eq!(journal_counts(&target_database_path), (1, 0));
+        let error = target_store
+            .install_snapshot_database(&empty, &snapshot_path, expected.0, expected.1)
+            .expect_err("snapshot install must not silently discard target-local work");
+        assert!(error
+            .to_string()
+            .contains("refuses to discard local native validation journal work"));
+        assert_eq!(journal_counts(&target_database_path), (1, 0));
+        let target_connection = rusqlite::Connection::open(&target_database_path).unwrap();
+        target_connection
+            .execute("DELETE FROM validation_jobs_v0", [])
+            .unwrap();
+        target_connection
+            .execute(
+                "UPDATE validation_journal_accounting_v0
+                 SET job_count_be=zeroblob(8), request_bytes_be=zeroblob(8)
+                 WHERE singleton=1",
+                [],
+            )
+            .unwrap();
+        drop(target_connection);
+        let installed = target_store
             .install_snapshot_database(&empty, &snapshot_path, expected.0, expected.1)
             .unwrap();
         assert_eq!((installed.height, installed.app_hash), expected);
-        assert_eq!(reservation_count(&target_database_path), 0);
-        assert_eq!(reservation_count(&source_database_path), 1);
+        assert_eq!(journal_counts(&target_database_path), (0, 0));
+        assert_eq!(journal_counts(&source_database_path), (1, 1));
         drop(target);
 
         let restarted = CometBftApplication::new(target_config).unwrap();
         assert_eq!(restarted.height_and_app_hash().unwrap(), expected);
-        assert_eq!(reservation_count(&target_database_path), 0);
+        assert_eq!(journal_counts(&target_database_path), (0, 0));
         drop(restarted);
         drop(source);
         fs::remove_dir_all(root).unwrap();
@@ -10235,7 +10332,9 @@ mod tests {
                 "
                 DROP INDEX auth_stale_nodes_by_node_key;
                 DROP TABLE auth_stale_values;
-                DROP TABLE native_validation_reservations;
+                DROP TABLE validation_callback_outbox_v0;
+                DROP TABLE validation_jobs_v0;
+                DROP TABLE validation_journal_accounting_v0;
                 ",
             )
             .unwrap();
@@ -10260,12 +10359,19 @@ mod tests {
                     |row| row.get::<_, String>(0),
                 )
                 .unwrap(),
-            "5"
+            "6"
+        );
+        assert_eq!(
+            database
+                .query_row("SELECT COUNT(*) FROM validation_jobs_v0", [], |row| row
+                    .get::<_, u64>(0),)
+                .unwrap(),
+            0
         );
         assert_eq!(
             database
                 .query_row(
-                    "SELECT COUNT(*) FROM native_validation_reservations",
+                    "SELECT COUNT(*) FROM validation_callback_outbox_v0",
                     [],
                     |row| row.get::<_, u64>(0),
                 )
@@ -10319,7 +10425,9 @@ mod tests {
                 "
                 DROP INDEX auth_stale_nodes_by_node_key;
                 DROP TABLE auth_stale_values;
-                DROP TABLE native_validation_reservations;
+                DROP TABLE validation_callback_outbox_v0;
+                DROP TABLE validation_jobs_v0;
+                DROP TABLE validation_journal_accounting_v0;
                 ",
             )
             .unwrap();

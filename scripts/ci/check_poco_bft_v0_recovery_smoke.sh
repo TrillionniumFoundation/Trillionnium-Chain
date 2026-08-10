@@ -30,7 +30,21 @@ run_unit_filter trnm-consensus-core \
 run_unit_filter trnm-consensus-app \
   durable_reservation_is_unique_across_independent_stores_and_reopen
 run_unit_filter trnm-consensus-app \
-  native_validation_reservations_remain_source_local_across_snapshot_build_and_install
+  recovery_scanner_orders_reserved_jobs_and_fails_closed_on_checksum_drift
+run_unit_filter trnm-consensus-app \
+  restart_rejects_checksum_consistent_canonical_header_splice
+run_unit_filter trnm-consensus-app \
+  restart_rejects_checksum_consistent_positive_parent_downgrade
+run_unit_filter trnm-consensus-app \
+  exact_reopen_and_restart_reject_nonempty_inactive_outbox
+run_unit_filter trnm-consensus-app \
+  exact_reopen_rejects_a_different_non_reserved_job
+run_unit_filter trnm-consensus-app \
+  restart_rejects_validation_journal_accounting_drift
+run_unit_filter trnm-consensus-app \
+  schema_v5_nonempty_migration_fails_closed_and_preserves_rows
+run_unit_filter trnm-consensus-app \
+  native_validation_jobs_and_outbox_remain_source_local_across_snapshot_install
 
 printf '%s\n' \
-  'poco_bft_recovery_smoke=passed scope=core-sign-validation-reservation-snapshot'
+  'poco_bft_recovery_smoke=passed scope=core-sign-validation-job-recovery-integrity-outbox-snapshot'

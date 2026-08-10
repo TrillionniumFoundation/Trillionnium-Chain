@@ -1121,7 +1121,7 @@ epoch prune, and Core transition remain open.
    comparator/disposition; no constructor accepts a naked bool or route.
 
    Core `SafetyState` schema v5, which is separate from application-store
-   schema v5 below, introduced a canonically ordered
+   schema v6 below, introduced a canonically ordered
    `DurablePayloadValidationObligationV0` before either direct or synced
    validation effect may escape a `PersistSafetyState -> StorageAck` barrier.
    Each obligation binds the Core-selected route, full `ValidationId`, exact
@@ -1157,23 +1157,44 @@ epoch prune, and Core transition remain open.
    idempotence only, not crash replay/liveness, type-level callback authority,
    or callback exactly-once.
 
-   Application-store schema v5 now adds a same-database durable reservation
-   table keyed by `(route, full ValidationId)`. After outer/inner route
-   congruence and the process-local claim, but before host or snapshot reads,
-   one `BEGIN IMMEDIATE` transaction uniquely inserts that key or compares the
-   existing row. A versioned, domain-separated raw-source fingerprint binds the
-   complete ID and route to the exact target header/application payload/ordered
-   evidence and exact parent source. Only a bit-for-bit congruent row
-   coalesces/suppresses a duplicate across independently materialized request
-   graphs or processes; a route, source, target, or parent splice under the
-   same full ID is an invariant. The table is bounded to 65,536 rows with no
-   eviction, while an exact duplicate still coalesces at capacity. State-sync
-   snapshot creation transactionally clears this journal only in the temporary
-   copy before checkpoint/VACUUM and verifies the exported copy is empty; it
-   leaves the source database unchanged. This closes durable reservation and
-   cross-instance source congruence only. It does not store an evaluated
-   artifact/result, grant crash takeover, or provide process-wide callback
-   exactly-once.
+   Application-store schema v6 now replaces that reservation-only table with
+   `validation_jobs_v0` plus a structurally reserved
+   `validation_callback_outbox_v0` table.
+   Before host or snapshot reads, `BEGIN IMMEDIATE` stores the full raw request
+   material available from the Core request -- target header, strict versioned
+   payload/evidence body record, parent tip and optional exact parent state --
+   together with execution-configuration references, the currently
+   generation-derived creation revision, the existing raw-source fingerprint,
+   and domain-separated body/immutable/row checksums. The row begins at
+   `reserved`. Future state/artifact columns and the outbox table are structural
+   reservations only; the active binary rejects non-`reserved` rows and
+   non-empty outboxes until their codecs and recovery semantics are defined.
+   Exact reopen returns the
+   checksum-verified state rather than permanently coalescing unfinished work,
+   while the first-reservation token cannot be recreated. Startup/recovery
+   exact-decodes and canonically re-encodes the target and any present parent
+   header, rebinds duplicated identity/parent/configuration fields, rederives
+   the request fingerprint, and
+   fails closed on semantic splice, record/checksum/configuration/accounting
+   drift. Headerless height-zero parents are only structurally revalidated
+   inert recovery facts bound to an epoch-zero regular height-one target and
+   its genesis hash; trusted genesis timestamp/hash authority remains
+   Core-owned until takeover reauthentication. The journal is bounded at
+   65,536 rows and 512 MiB of raw request
+   records. Admission uses atomically maintained O(1) accounting and startup
+   audits it against real rows; the app also requires
+   `max_block_bytes <= 16 MiB`. Exact reopen still
+   precedes capacity rejection. Empty v5 journals migrate atomically; any
+   non-empty v5 reservation table lacks a revalidatable raw request record and
+   makes migration roll back with schema and rows intact. Snapshot export
+   deletes outbox then jobs only from the temporary copy and verifies both
+   empty, while install refuses to discard a non-empty target-local journal.
+   This closes the revalidatable raw request-record/recovery-fact
+   foundation only; it does not reconstruct the signed proposal witness. It
+   does not persist an
+   evaluated artifact/outbox row, restore a Core obligation, grant executable
+   crash takeover, deliver/acknowledge a Core callback, or provide process-wide
+   callback exactly-once.
 
    The initialized `AppCore` can now privately lend that carrier one canonical
    signer-policy preimage after its commitment matches both store metadata and
@@ -1735,9 +1756,13 @@ epoch prune, and Core transition remain open.
    The separate private callback-shaped bridge maps `Proposal` only to
    `PayloadValidated` and `Synced` only to `SyncedPayloadValidated`, but it
    does not call a Core instance, persist state, deliver a callback, or enter
-   ABCI. Reservation identity is already
-   `(route, full ValidationId)`, but the future validation-time atomic boundary
-   still must persist a versioned revalidatable evaluated artifact with its
+   ABCI. Application-store schema v6 now durably stores the revalidatable raw
+   request record and checksum-verified `reserved` recovery fact for `(route,
+   full ValidationId)`, returns exact existing state, scans recovery work, and
+   excludes both job/outbox tables from snapshots. It does not reconstruct a
+   signed-proposal witness and still does not populate an evaluated artifact or
+   outbox row. The next validation-time atomic
+   boundary must persist a versioned revalidatable evaluated artifact with its
    callback outbox, and the separate Finalize-time boundary still must
    revalidate exact authority and atomically apply JMT/domain state, persist
    roots/native head, advance the head, and mark the reservation applied.

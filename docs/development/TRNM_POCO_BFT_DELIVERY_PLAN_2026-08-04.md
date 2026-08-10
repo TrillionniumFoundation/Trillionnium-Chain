@@ -233,7 +233,7 @@ an earlier phase.
   `Unavailable`, nor `DeterministicallyInvalid`. The route remains owned with
   the request through open/body/cursor/runtime/post-state/comparator and final
   process-local disposition. No naked bool or route can be injected into those
-  constructors. Separately from application-store schema v5, Core
+  constructors. Separately from application-store schema v6, Core
   `SafetyState` schema v5 introduced a canonically ordered
   `DurablePayloadValidationObligationV0` before either `ValidatePayload` or
   `ValidateSyncedPayload` may escape a `PersistSafetyState -> StorageAck`
@@ -274,20 +274,37 @@ an earlier phase.
   fail-closed. This closes durable pre-effect capture, cleanup ordering, and
   callback-result idempotence, not crash replay, callback exactly-once, or
   liveness.
-  After wrapper/route congruence and the object-graph claim, but
-  before any host/snapshot read, application-store schema v5 now reserves
-  `(route, full ValidationId)` in the same SQLite database under one
-  `BEGIN IMMEDIATE` unique-insert transaction. A versioned, domain-separated
-  fingerprint covers the exact raw target header/application payload/ordered
-  evidence and exact parent source together with that route and ID. An exact
-  existing row coalesces/suppresses the duplicate across independently
-  materialized request graphs or processes; reuse of the full ID with another
-  route, raw source, target, or parent is an invariant. The table is capped at
-  65,536 rows, admits no eviction, and still coalesces an exact duplicate at
-  capacity. State-sync snapshot construction deletes reservation rows only
-  from its temporary copy before checkpoint/VACUUM and verifies the copy is
-  empty; the source database remains untouched. This is durable reservation
-  and cross-instance congruence only, not process-wide callback exactly-once.
+  After wrapper/route congruence and the object-graph claim, but before host or
+  snapshot reads, application-store schema v6 now inserts one
+  `validation_jobs_v0` row under `BEGIN IMMEDIATE`. It freezes the route/full
+  ID, exact target header, strict versioned raw body record, parent tip and
+  optional exact parent state, configuration references, the currently
+  generation-derived creation revision,
+  the existing source fingerprint, and distinct body/immutable/row checksums
+  in state `reserved`. Future state/artifact columns and the outbox table are
+  structural reservations only; the active binary rejects non-`reserved` rows
+  and non-empty outboxes until their codecs and recovery semantics are frozen.
+  Exact reopen returns the verified durable state instead
+  of permanently coalescing work, without recreating first-evaluation
+  authority. Startup/recovery exact-decodes and canonically re-encodes both
+  headers, rebinds identity/parent/configuration fields, rederives the raw
+  fingerprint, and scans every row in canonical order; semantic splice,
+  framing/checksum/configuration/accounting drift fails closed. Headerless
+  height-zero parents remain structurally revalidated inert facts bound to an
+  epoch-zero regular height-one target and its genesis hash; trusted genesis
+  timestamp/hash authority remains Core-owned until takeover reauthentication.
+  Admission uses
+  atomically maintained O(1) row/byte accounting that startup independently
+  audits. The journal is capped at 65,536 rows and 512 MiB of raw request
+  records, and app-compatible parameters require
+  `max_block_bytes <= 16 MiB`; empty schema-v5 stores migrate atomically,
+  while any non-empty v5 reservation table rolls back unchanged. Snapshot
+  construction scrubs outbox then jobs only from its temporary copy and
+  verifies both empty, and install refuses to discard non-empty target-local
+  work. This is a revalidatable raw reserved-job/recovery-fact
+  foundation, not signed-proposal-witness reconstruction, executable crash
+  takeover, Core callback delivery/
+  acknowledgement, or process-wide callback exactly-once.
   Its only host value is borrowed
   from the initialized `AppCore`, and the canonical signer-policy preimage is
   recomputed against both store metadata and the authenticated lifecycle
@@ -1084,6 +1101,14 @@ an earlier phase.
   distinct from, and do not implement, an application callback outbox,
   delivery acknowledgement, type-level callback authority, or callback
   exactly-once.
+- Application-store schema v6 now persists checksum- and semantically verified raw
+  request jobs in `reserved`, returns exact existing durable state, scans
+  recovery work canonically, rejects non-empty v5 migration without data loss,
+  and excludes jobs/outbox from state-sync snapshots. Future state columns and
+  the outbox table are structural reservations only and remain inactive;
+  evaluated artifact
+  sealing, atomic `callback_pending`, Core obligation reactivation, callback
+  delivery/acknowledgement, and Finalize apply are the next ordered slices.
 - The epoch-zero core now derives a checked `EpochGeometryV0` from the exact
   active parameter preimage and enforces a unified fail-closed boundary before
   the mandatory checkpoint height. Regular proposals/replay, votes, QCs,
