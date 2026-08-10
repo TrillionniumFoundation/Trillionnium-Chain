@@ -1281,9 +1281,20 @@ epoch prune, and Core transition remain open.
    candidate after those caps. Saturated/cap-minus-one collision tests freeze
    cheap-field/signed/counter rejection before record caps, record caps before
    late root rejection, and full-overlay rollback. The same closure now covers
-   consumer-key authorization and fund settlement below; all remaining
-   operation families still require capacity-order audits before terminal
-   failure mapping. Meter prune has a
+   consumer-key authorization and fund settlement below. `RetireMeterPolicy`
+   now has its own zero-delta prepared
+   replacement path. Canonical ID and exact slot precede all unchanged family
+   and defensive-total caps; unsupported fields, target height/decision,
+   complete policy validity, already-retired state, authenticated kind-5
+   predecessor agreement, signed successor, and count `+1` follow before
+   clone. The carrier freezes full source/successor rows, slot, decision/raw
+   semantic owners, and source bytes; carrier drift precedes the single late
+   family-4 proof, then exact row/semantic replacement. A real two-block
+   four-policy fixture proves sorted `4 -> 4`, three untouched rows, revision
+   and count `+1`, and seal. Synthetic fifth-row collisions are only handler-
+   boundary priority evidence. Shared vectors remain unchanged, and meter
+   prune remains audit-open. Every other audit-open family still requires its
+   own capacity-order audit before terminal failure mapping. Meter prune has a
    typed pre-clone negative-fact reject.
    Meter retirement also splits signed next-state drift and negative/already-
    retired policy facts from authenticated old-fact/authority divergence.
@@ -1432,7 +1443,7 @@ epoch prune, and Core transition remain open.
    metadata only and therefore proves handler ordering, not a second
    authenticated success path. H1 and register/rotate H2 bytes remain
    unchanged. Capacity-order closure is now limited to `DefineMeterPolicy`,
-   `FundSettlement`, `AuthorizeConsumerKey`, `RevokeConsumerKey`,
+   `RetireMeterPolicy`, `FundSettlement`, `AuthorizeConsumerKey`, `RevokeConsumerKey`,
    `PruneRevokedConsumerKey`, `OpenChallenge`,
    `ReleaseSettlement`, `ResolveChallenge`, `ProposeGovernance`,
    `ApproveGovernance`, `RegisterFutureCandidate`, `RegisterValidator`, and

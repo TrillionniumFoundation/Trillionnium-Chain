@@ -414,9 +414,30 @@ an earlier phase.
   root verification and mutation. Saturated/cap-minus-one collisions prove
   that signed semantic and counter faults precede record caps, record caps
   precede a correctly shaped proof with the wrong authenticated root, and a
-  rejection preserves the whole block overlay. Apart from the fund-settlement
-  closure below, other operation families still require an explicit capacity-
-  order audit before terminal failure mapping.
+  rejection preserves the whole block overlay. `RetireMeterPolicy` now closes
+  the zero-delta meter replacement path separately from prune. Canonical meter
+  ID and exact policy-slot presence precede every unchanged family cap and the
+  defensive total; unsupported fields, target-bound retirement, the derived
+  meter decision, complete source-policy validity, already-retired rejection,
+  authenticated kind-5 predecessor agreement, signed successor preparation,
+  and accumulator count `+1` follow before clone. Its prepared carrier freezes
+  the full source/successor policy and slot, decision owner, exact raw semantic
+  owner, and prepared source bytes. Carrier/source drift fails stop before the
+  one late family-4 proof; only then may the exact row and kind-5 successor be
+  installed. A real two-block fixture defines and commits four distinct meter
+  policies, retires one at the authenticated next height, preserves sorted
+  `4 -> 4` policy state and three byte-exact rows, advances the semantic
+  revision and nullifier count by one, and seals. Collision tests freeze
+  shallow ID/negative fact, zero-delta cap, unsupported/signed/authenticated/
+  counter, proof count/family/ID/root, body/raw-owner/full-row/source carrier
+  drift, and full-overlay rollback priorities. A synthetic fifth policy is
+  only an unreachable handler-boundary priority witness; the real four-row
+  fixture is the authenticated exact-boundary evidence. Existing shared
+  vectors remain byte-identical. This does not close `PruneRetiredMeter`,
+  production cross-epoch prune, Core activation, host integration, or any
+  phase. Apart from the already named closures, every audit-open operation
+  family still requires its own capacity-order audit before terminal failure
+  mapping.
   Meter prune maps a pre-clone missing authority to
   `MissingRequiredAuthorityFact`. Meter retirement separately
   treats signed ID/height/next-fact drift as `SemanticTransition`, an absent
@@ -598,7 +619,7 @@ an earlier phase.
   injects authority metadata only and is a handler-boundary priority witness,
   not an additional authenticated success fixture. The frozen H1 and register/
   rotate H2 shared vectors remain byte-identical. Capacity-order closure now
-  covers `DefineMeterPolicy`, `FundSettlement`, `AuthorizeConsumerKey`,
+  covers `DefineMeterPolicy`, `RetireMeterPolicy`, `FundSettlement`, `AuthorizeConsumerKey`,
   `RevokeConsumerKey`, `PruneRevokedConsumerKey`,
   `OpenChallenge`, `ReleaseSettlement`, `ResolveChallenge`,
   `ProposeGovernance`, `ApproveGovernance`, `RegisterFutureCandidate`,

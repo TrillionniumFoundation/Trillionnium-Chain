@@ -696,8 +696,18 @@ mutation occur only on the cloned candidate after those caps. Saturated and
 cap-minus-one collision tests freeze cheap-field/signed/counter rejection
 before record caps, record caps before late root rejection, and full-overlay
 rollback. The same closure now also covers consumer-key authorization and fund
-settlement below; all remaining operation families still need explicit audits
-before terminal failure mapping.
+settlement below. `RetireMeterPolicy` now carries one zero-delta prepared
+replacement across that boundary: canonical ID/slot and every
+unchanged family/total cap precede unsupported fields, target height/decision,
+full policy validity, already-retired state, authenticated kind-5 predecessor,
+signed successor, and count `+1`. The carrier freezes the complete source and
+successor policy rows, slot, decision/raw semantic owners, and source bytes;
+carrier CAS runs before the one late family-4 proof, then exact row/semantic
+replacement. A real two-block four-policy fixture proves sorted `4 -> 4`,
+three byte-exact untouched rows, revision/count `+1`, and seal. Synthetic fifth
+rows remain handler-boundary priority evidence, shared vectors stay unchanged,
+and `PruneRetiredMeter` remains audit-open. Every other audit-open family still
+needs its own capacity-order audit before terminal failure mapping.
 Meter prune rejects a missing authority policy as a pre-clone negative fact;
 meter retirement distinguishes signed ID/height/next-state rejection, missing or
 already-retired authority, and authenticated old-fact/authority divergence;
@@ -821,7 +831,7 @@ subject/root, structural bounds, body/carrier mismatch, and full rollback. The
 compound active-reference collision is an authority-only handler-boundary
 priority witness, not another authenticated success fixture. H1 and register/
 rotate H2 bytes remain unchanged. Capacity-order closure is now
-limited to `DefineMeterPolicy`, `FundSettlement`, `AuthorizeConsumerKey`,
+limited to `DefineMeterPolicy`, `RetireMeterPolicy`, `FundSettlement`, `AuthorizeConsumerKey`,
 `RevokeConsumerKey`,
 `PruneRevokedConsumerKey`,
 `OpenChallenge`, `ReleaseSettlement`, `ResolveChallenge`,

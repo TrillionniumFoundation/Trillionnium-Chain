@@ -1872,6 +1872,41 @@ pub(super) fn revoke_consumer_key_full_capacity_fixture_v0() -> Result<(
     Ok((block, built.raw, operation))
 }
 
+pub(super) fn retire_meter_full_capacity_fixture_v0() -> Result<(
+    PocoApplicationBlockOverlayV0,
+    Vec<u8>,
+    PocoApplicationOperationV0,
+)> {
+    let mut chain = authenticated_candidate_genesis_v0()?;
+    let fixtures = [
+        certificate_fixture_for_provider(&chain, b'a', 0, b"validator-a")?,
+        certificate_fixture_for_provider(&chain, b'b', 1, b"validator-b")?,
+        certificate_fixture_for_provider(&chain, b'c', 2, b"validator-c")?,
+        certificate_fixture_for_provider(&chain, b'd', 3, b"validator-d")?,
+    ];
+    let mut definition_block = chain.start_overlay()?;
+    let mut nullifiers = chain.nullifiers.clone();
+    for fixture in &fixtures {
+        let (definition, next) = define_meter(&definition_block, fixture, &nullifiers)?;
+        definition_block.apply_raw(&definition.raw)?;
+        nullifiers = next;
+    }
+    ensure!(
+        definition_block.overlay.authority.meter_policies.len() == MAX_METER_POLICIES,
+        "retire fixture did not fill the meter-policy family"
+    );
+    chain.commit_block(definition_block, nullifiers)?;
+
+    let block = chain.start_overlay()?;
+    ensure!(
+        block.overlay.authority.meter_policies.len() == MAX_METER_POLICIES,
+        "authenticated retire source lost the full meter-policy family"
+    );
+    let (retirement, _) = retire_meter(&block, &fixtures[0], &chain.nullifiers)?;
+    let operation = PocoApplicationOperationV0::decode_exact(&retirement.raw)?;
+    Ok((block, retirement.raw, operation))
+}
+
 pub(super) fn prune_revoked_consumer_key_full_capacity_fixture_v0() -> Result<(
     PocoApplicationBlockOverlayV0,
     Vec<u8>,
