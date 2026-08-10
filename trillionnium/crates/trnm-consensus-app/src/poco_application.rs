@@ -2763,6 +2763,163 @@ impl PocoApplicationBlockOverlayV0 {
         Ok(raw)
     }
 
+    /// Authors two distinct define-meter operations against one empty
+    /// authenticated nullifier baseline. Proofs for the second operation are
+    /// derived from the keys inserted by the first, and a cloned block overlay
+    /// must accept both raw operations in order before they are returned.
+    #[cfg(test)]
+    pub(crate) fn test_two_define_meter_operations_v0(&self) -> Result<Vec<Vec<u8>>> {
+        ensure!(
+            self.overlay.accumulator.count() == 0
+                && self.overlay.accumulator.root()
+                    == crate::poco_nullifier::empty_poco_nullifier_root_v0(),
+            "test two-meter helper requires the empty authenticated nullifier set"
+        );
+
+        let mut authoring = self.clone();
+        let mut occupied_keys = Vec::with_capacity(4);
+        let mut raw_operations = Vec::with_capacity(2);
+        for discriminator in [b'a', b'b'] {
+            let (raw, inserted_keys) = authoring
+                .test_define_meter_operation_with_evolving_proofs_v0(
+                    discriminator,
+                    &occupied_keys,
+                )?;
+            let operation = PocoApplicationOperationV0::decode_exact(&raw)?;
+            authoring
+                .apply_decoded_exact(&raw, &operation)
+                .map_err(|error| {
+                    anyhow::anyhow!("test two-meter operation failed real overlay apply: {error:?}")
+                })?;
+            occupied_keys.extend(inserted_keys);
+            ensure!(
+                authoring.overlay.accumulator.count()
+                    == u64::try_from(occupied_keys.len())
+                        .context("test two-meter nullifier count fits u64")?,
+                "test two-meter accumulator count drifted after ordered apply"
+            );
+            raw_operations.push(raw);
+        }
+        ensure!(
+            authoring.operation_count() == raw_operations.len(),
+            "test two-meter ordered operation count drifted"
+        );
+        Ok(raw_operations)
+    }
+
+    #[cfg(test)]
+    fn test_define_meter_operation_with_evolving_proofs_v0(
+        &self,
+        discriminator: u8,
+        occupied_keys: &[[u8; 32]],
+    ) -> Result<(Vec<u8>, [[u8; 32]; 2])> {
+        ensure!(
+            discriminator.is_ascii_lowercase(),
+            "test meter discriminator is not lowercase ASCII"
+        );
+        ensure!(
+            self.overlay.accumulator.count()
+                == u64::try_from(occupied_keys.len())
+                    .context("test meter proof-basis count fits u64")?,
+            "test meter proof basis does not match the overlay count"
+        );
+
+        let meter_id = format!("integration-meter-v0-{}", char::from(discriminator)).into_bytes();
+        let task_id = format!("integration-task-v0-{}", char::from(discriminator)).into_bytes();
+        let meter_version = 1u32;
+        let policy = MeterAuthorityPolicyV0 {
+            meter_id_hex: hex::encode(&meter_id),
+            meter_version,
+            task_id_hex: hex::encode(&task_id),
+            output_commitment_hex: None,
+            unit_scale: CanonicalU128V0::new(1),
+            evidence_policy: MeterEvidencePolicyV0::Optional,
+            per_certificate_cap: CanonicalU128V0::new(1),
+            rolling_cap: CanonicalU128V0::new(1),
+            rolling_epoch_span: 1,
+            retention_blocks: 1,
+            active_from_height: self.context.target_height.get(),
+            retired_at_height: None,
+        };
+        let identity = meter_identity(&meter_id, meter_version);
+        let mut payload = Vec::new();
+        encode_bytes(&mut payload, &meter_id);
+        payload.extend_from_slice(&meter_version.to_be_bytes());
+        payload.extend_from_slice(&1u128.to_be_bytes());
+        payload.extend_from_slice(&self.context.target_height.get().to_be_bytes());
+        payload.push(0);
+        let logical_key =
+            semantic_identity_digest_v0(PocoSnapshotEntryKindV0::MeterDefinition, &identity);
+        let next_value = encode_test_semantic_envelope_v0(
+            PocoSnapshotEntryKindV0::MeterDefinition,
+            1,
+            &identity,
+            &payload,
+        );
+        let mut operation = PocoApplicationOperationV0 {
+            schema: POCO_APPLICATION_OPERATION_SCHEMA_V0.to_string(),
+            target_height: self.context.target_height.get(),
+            expected_state_revision: self.overlay.authority.revision,
+            body: PocoApplicationOperationBodyV0::DefineMeterPolicy {
+                policy,
+                decision_id_hex: "0".repeat(64),
+            },
+            semantic_changes: vec![RawSemanticChangeV0 {
+                kind: PocoSnapshotEntryKindV0::MeterDefinition as u8,
+                logical_key_hex: hex::encode(logical_key),
+                next_value_hex: Some(hex::encode(next_value)),
+            }],
+            nullifier_non_membership_checks: Vec::new(),
+            nullifier_insertions: Vec::new(),
+        };
+        let preimage = decision_preimage_digest_v0(&self.context, &operation)?;
+        let decision = derived_decision_id_v0(preimage, b"define-meter");
+        if let PocoApplicationOperationBodyV0::DefineMeterPolicy {
+            decision_id_hex, ..
+        } = &mut operation.body
+        {
+            *decision_id_hex = hex::encode(decision);
+        }
+
+        let decision_key =
+            derive_poco_nullifier_key_v0(PocoNullifierFamilyV0::MeterDecision, decision);
+        let decision_proof = crate::poco_nullifier::test_non_membership_proof_for_keys_v0(
+            occupied_keys,
+            decision_key,
+        )?;
+        ensure!(
+            decision_proof.non_membership_root() == self.overlay.accumulator.root(),
+            "test meter proof basis does not match the authenticated nullifier root"
+        );
+        let identity_key =
+            derive_poco_nullifier_key_v0(PocoNullifierFamilyV0::MeterIdentity, logical_key);
+        let mut after_decision = occupied_keys.to_vec();
+        after_decision.push(decision_key);
+        let identity_proof = crate::poco_nullifier::test_non_membership_proof_for_keys_v0(
+            &after_decision,
+            identity_key,
+        )?;
+        operation.nullifier_insertions = vec![
+            RawNullifierInsertionV0 {
+                family: PocoNullifierFamilyV0::MeterDecision.code(),
+                identifier_hex: hex::encode(decision),
+                proof_hex: hex::encode(decision_proof.canonical_bytes()),
+            },
+            RawNullifierInsertionV0 {
+                family: PocoNullifierFamilyV0::MeterIdentity.code(),
+                identifier_hex: hex::encode(logical_key),
+                proof_hex: hex::encode(identity_proof.canonical_bytes()),
+            },
+        ];
+        let raw = serde_json::to_vec(&operation)
+            .context("encode test define-meter operation with evolving proofs")?;
+        ensure!(
+            PocoApplicationOperationV0::decode_exact(&raw)? == operation,
+            "test define-meter operation with evolving proofs is not canonical"
+        );
+        Ok((raw, [decision_key, identity_key]))
+    }
+
     pub(crate) fn seal(mut self) -> Result<SealedPocoApplicationPlanV0> {
         ensure!(
             !self.raw_operations.is_empty(),

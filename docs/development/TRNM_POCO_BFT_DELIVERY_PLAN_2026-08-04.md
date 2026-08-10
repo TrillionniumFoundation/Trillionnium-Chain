@@ -769,10 +769,20 @@ an earlier phase.
   transitions are rescheduled from the retained authenticated lifecycle and
   encoded as one canonical singleton write. The exact attempt and open snapshot
   remain inside either success carrier, so these writes are not a complete-body
-  JMT or persistence authority. Multi-operation cursor integration,
-  complete-body PoCO resealing and exact JMT planning, success receipts,
-  durable terminal artifacts/outbox, and host/Core delivery remain next, and
-  no phase is complete.
+  JMT or persistence authority. Successive-family cursor integration is now
+  also closed: one consuming owner-only advance retains exact prior runtime and
+  non-runtime item provenance, carries the evolving unsealed PoCO overlay and
+  staged validator lifecycle, replaces rather than concatenates each latest
+  whole-prefix plan/write, and advances only after family execution plus write
+  sealing succeed. Two real same-block PoCO operations bind one ordered prefix
+  and one retained final whole-prefix seal while a runtime item between them
+  preserves that overlay;
+  a duplicate second operation closes with the first prefix retained. A real
+  second validator transition with nonce two reaches the staged
+  `PendingTransitionExists` guard ahead of a poisoned proof, proving it did not
+  restart from the authenticated parent. Complete-body write merge and exact
+  JMT planning, success receipts, durable terminal artifacts/outbox, and
+  host/Core delivery remain next, and no phase is complete.
   The mapping consumes only the exact retained closed owner. All eight strict
   semantic-decode reasons, every PoCO deterministic/invariant reason, every
   validator-transition deterministic/invariant reason, operator authorization,
@@ -938,10 +948,12 @@ an earlier phase.
   retaining the exact owner. A successful single-family attempt can now carry
   both its original decoded owner/open snapshot/unsealed PoCO overlay or
   scheduled lifecycle and an owner-bound family-local sealed plan/write. That
-  seal is prefix evidence, not authority to concatenate independent PoCO
-  blocks, merge successive family operations into the cursor, advance it, form
-  a complete-body JMT plan or success receipt, persist a terminal result, or
-  deliver a callback.
+  seal is consumed by the private success-only cursor advance: the cursor keeps
+  exact applied non-runtime provenance, continues PoCO from the prior unsealed
+  overlay, continues validator scheduling from the prior staged lifecycle, and
+  replaces the latest whole-prefix seal/write. It is still not authority to
+  concatenate independent PoCO blocks, form a complete-body JMT plan or success
+  receipt, persist a terminal result, or deliver a callback.
   Future orphan value/node/stale-index
   rejection still depends on the startup full scan, and the in-memory pin
   spans one cloned store family rather than independent handles or processes;
@@ -965,7 +977,7 @@ an earlier phase.
   after durable host-delivery acknowledgement, speculative-parent/BlockTree
   reconstruction,
   application-reservation takeover, revalidatable evaluated-artifact
-  persistence, successive non-runtime family integration and cursor advance,
+  persistence, complete-body mixed-family write merge and exact JMT planning,
   plan/state persistence, host callback-outbox scheduling/delivery acknowledgement,
   actual `Core::step` callback
   delivery, and ABCI wiring remain absent. In particular, the object-graph

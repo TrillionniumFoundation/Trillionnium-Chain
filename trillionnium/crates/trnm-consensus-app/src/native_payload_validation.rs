@@ -34,15 +34,18 @@
 //! retains the exact finished plan on either success or mismatch. A consuming
 //! single-attempt non-runtime sealer can now bind PoCO/validator family-local
 //! writes back to the exact retained owner while preserving the original
-//! unsealed attempt and open snapshot. Successive-family cursor advance,
-//! complete-body JMT planning, plan persistence, callbacks, and actual Core
-//! execution remain absent until later carriers supply those distinct
-//! authorities. Owner-preserving
+//! unsealed attempt and open snapshot. A consuming success-only advance now
+//! retains exact prior item provenance, continues the evolving PoCO overlay or
+//! staged validator lifecycle, replaces the latest whole-prefix write seal,
+//! and moves the internal cursor. Complete-body mixed-family JMT planning,
+//! receipts, plan persistence, callbacks, and actual Core execution remain
+//! absent until later carriers supply those distinct authorities. Owner-preserving
 //! typed failure promotion, a consuming closed-set non-runtime family
 //! dispatcher, owner-preserving strict PoCO/validator semantic decoders, and
 //! same-snapshot family-state attempts are now present. The family-local seal
-//! is not a complete-block JMT or persistence authority: it cannot advance the
-//! cursor, form a receipt, persist, callback, or advance Core.
+//! becomes cursor state only through that private consuming advance; neither
+//! value is complete-block JMT or persistence authority and neither can form a
+//! receipt, persist, callback, or advance Core.
 
 use crate::{
     auth_tree::{AuthWrite, PlannedAuthUpdate, PlannedAuthUpdateSealV0},
@@ -497,6 +500,27 @@ struct OpenCoreAuthorizedRegularTransactionCursorV0 {
     next_transaction_index: u32,
     changes: BTreeMap<String, StoredObject>,
     applied: Vec<AppliedCoreAuthorizedRuntimeTransactionV0>,
+    applied_non_runtime: Vec<AppliedCoreAuthorizedNonRuntimePayloadV0>,
+    poco_prefix: Option<Box<CoreAuthorizedRegularPocoPrefixV0>>,
+    validator_prefix: Option<Box<CoreAuthorizedRegularValidatorPrefixV0>>,
+}
+
+/// Latest whole-prefix PoCO state retained only inside the exact body cursor.
+/// The unsealed overlay is the sole continuation source for a later same-block
+/// operation; the plan and writes are a replace-only preview of that complete
+/// prefix, never independent blocks or persistence authority.
+struct CoreAuthorizedRegularPocoPrefixV0 {
+    overlay: crate::poco_application::PocoApplicationBlockOverlayV0,
+    plan: crate::poco_application::SealedPocoApplicationPlanV0,
+    writes: Vec<AuthWrite>,
+}
+
+/// Latest staged validator lifecycle and its canonical singleton write. A
+/// later transition must schedule from this lifecycle rather than reopening
+/// the authenticated parent lifecycle.
+struct CoreAuthorizedRegularValidatorPrefixV0 {
+    lifecycle: crate::ValidatorLifecycleStateV1,
+    write: AuthWrite,
 }
 
 /// Runtime context facts derived only from the retained target header and the
@@ -656,6 +680,9 @@ struct ClosedCoreAuthorizedNonRuntimePayloadOwnerV0 {
     context: ExactRuntimeExecutionContextV0,
     changes: BTreeMap<String, StoredObject>,
     applied: Vec<AppliedCoreAuthorizedRuntimeTransactionV0>,
+    applied_non_runtime: Vec<AppliedCoreAuthorizedNonRuntimePayloadV0>,
+    poco_prefix: Option<Box<CoreAuthorizedRegularPocoPrefixV0>>,
+    validator_prefix: Option<Box<CoreAuthorizedRegularValidatorPrefixV0>>,
 }
 
 #[derive(Debug, PartialEq, Eq)]
@@ -683,18 +710,20 @@ enum DecodedDispatchedCoreAuthorizedNonRuntimePayloadV0 {
     Unsupported(CoreAuthorizedUnsupportedNonRuntimePayloadV0),
 }
 
-/// One PoCO operation authorized and executed against an overlay constructed
-/// only from the exact retained parent snapshot. The cursor has not advanced
-/// and the overlay has not been sealed or converted into JMT writes.
+/// One PoCO operation authorized and executed against either the first overlay
+/// constructed from the exact retained parent snapshot or the cursor's prior
+/// unsealed same-block prefix. The cursor has not advanced and the overlay has
+/// not been converted into a complete-body JMT plan.
 #[must_use = "an authorized PoCO family attempt still owns its exact cursor"]
 struct AuthorizedCorePocoApplicationAttemptV0 {
     decoded: DecodedCoreAuthorizedPocoApplicationPayloadV0,
     overlay: crate::poco_application::PocoApplicationBlockOverlayV0,
 }
 
-/// One validator transition scheduled against the lifecycle authenticated by
-/// the exact retained parent snapshot. The cursor has not advanced and the
-/// successor lifecycle has not been encoded as an authenticated write.
+/// One validator transition scheduled against either the lifecycle
+/// authenticated by the exact retained parent snapshot or the cursor's prior
+/// staged same-block lifecycle. The cursor has not advanced and the successor
+/// lifecycle has not yet replaced the cursor's canonical singleton write.
 #[must_use = "an authorized validator family attempt still owns its exact cursor"]
 struct AuthorizedCoreValidatorTransitionAttemptV0 {
     decoded: DecodedCoreAuthorizedValidatorTransitionPayloadV0,
@@ -1407,6 +1436,9 @@ fn close_core_authorized_non_runtime_payload_owner_v0(
         next_transaction_index: cursor_next_transaction_index,
         changes,
         applied,
+        applied_non_runtime,
+        poco_prefix,
+        validator_prefix,
     } = open;
     let OpenCoreAuthorizedRegularValidationV0 {
         authorized,
@@ -1425,6 +1457,9 @@ fn close_core_authorized_non_runtime_payload_owner_v0(
             context,
             changes,
             applied,
+            applied_non_runtime,
+            poco_prefix,
+            validator_prefix,
         },
         finish,
     )
@@ -1493,52 +1528,55 @@ fn authorize_and_execute_decoded_core_non_runtime_family_v0(
                     },
                 ));
             }
-            let projection = match decoded
-                .owner
-                .routed
-                .open
-                .open
-                .snapshot
-                .load_authenticated_production_poco_projection_v0()
-            {
-                Ok(projection) => projection,
-                Err(cause) => {
-                    return Err(Box::new(
-                        FailedCoreAuthorizedNonRuntimeFamilyAttemptV0::PocoApplication {
-                            decoded,
-                            cause:
-                                CoreAuthorizedNonRuntimeFamilyAttemptCauseV0::AuthenticatedSource(
-                                    cause,
+            let mut overlay = if let Some(prefix) = &decoded.owner.routed.open.poco_prefix {
+                prefix.overlay.clone()
+            } else {
+                let projection = match decoded
+                    .owner
+                    .routed
+                    .open
+                    .open
+                    .snapshot
+                    .load_authenticated_production_poco_projection_v0()
+                {
+                    Ok(projection) => projection,
+                    Err(cause) => {
+                        return Err(Box::new(
+                            FailedCoreAuthorizedNonRuntimeFamilyAttemptV0::PocoApplication {
+                                decoded,
+                                cause:
+                                    CoreAuthorizedNonRuntimeFamilyAttemptCauseV0::AuthenticatedSource(
+                                        cause,
+                                    ),
+                            },
+                        ));
+                    }
+                };
+                let context =
+                    match crate::poco_application::AuthenticatedPocoApplicationContextV0::new(
+                        authenticated.parent_header.height().get(),
+                        *authenticated.parent_header.state_root().as_bytes(),
+                        decoded.owner.routed.open.open.authorized.header.height(),
+                        authenticated.validator_set.chain_id(),
+                        authenticated.validator_set.genesis_hash(),
+                        authenticated.validator_set.epoch(),
+                        authenticated.parameters,
+                        crate::poco_application_governance_signer_commitment_v0(
+                            &authenticated.validator_lifecycle,
+                        ),
+                    ) {
+                        Ok(context) => context,
+                        Err(_) => {
+                            return Err(Box::new(
+                            FailedCoreAuthorizedNonRuntimeFamilyAttemptV0::PocoApplication {
+                                decoded,
+                                cause: CoreAuthorizedNonRuntimeFamilyAttemptCauseV0::Invariant(
+                                    CoreAuthorizedNonRuntimeFamilyInvariantV0::PocoExecutionContext,
                                 ),
-                        },
-                    ));
-                }
-            };
-            let context = match crate::poco_application::AuthenticatedPocoApplicationContextV0::new(
-                authenticated.parent_header.height().get(),
-                *authenticated.parent_header.state_root().as_bytes(),
-                decoded.owner.routed.open.open.authorized.header.height(),
-                authenticated.validator_set.chain_id(),
-                authenticated.validator_set.genesis_hash(),
-                authenticated.validator_set.epoch(),
-                authenticated.parameters,
-                crate::poco_application_governance_signer_commitment_v0(
-                    &authenticated.validator_lifecycle,
-                ),
-            ) {
-                Ok(context) => context,
-                Err(_) => {
-                    return Err(Box::new(
-                        FailedCoreAuthorizedNonRuntimeFamilyAttemptV0::PocoApplication {
-                            decoded,
-                            cause: CoreAuthorizedNonRuntimeFamilyAttemptCauseV0::Invariant(
-                                CoreAuthorizedNonRuntimeFamilyInvariantV0::PocoExecutionContext,
-                            ),
-                        },
-                    ));
-                }
-            };
-            let mut overlay =
+                            },
+                        ));
+                        }
+                    };
                 match crate::poco_application::PocoApplicationBlockOverlayV0::from_projection(
                     context,
                     &projection,
@@ -1554,7 +1592,8 @@ fn authorize_and_execute_decoded_core_non_runtime_family_v0(
                             },
                         ));
                     }
-                };
+                }
+            };
             if let Err(error) = overlay
                 .apply_decoded_exact(&decoded.owner.routed.exact_inner_bytes, &decoded.operation)
             {
@@ -1586,11 +1625,22 @@ fn authorize_and_execute_decoded_core_non_runtime_family_v0(
                 .owner
                 .routed
                 .open
-                .open
-                .authorized
-                .context
-                .validator_lifecycle
-                .clone();
+                .validator_prefix
+                .as_ref()
+                .map_or_else(
+                    || {
+                        decoded
+                            .owner
+                            .routed
+                            .open
+                            .open
+                            .authorized
+                            .context
+                            .validator_lifecycle
+                            .clone()
+                    },
+                    |prefix| prefix.lifecycle.clone(),
+                );
             let authorization = crate::validator_lifecycle::ValidatorTransitionAuthorization {
                 command_id: &decoded.owner.routed.envelope.command_id,
                 signer_id: &decoded.owner.routed.context.signer_id,
@@ -1698,6 +1748,205 @@ fn validate_core_authorized_non_runtime_write_seal_owner_v0(
     Ok(())
 }
 
+fn auth_writes_match_v0(left: &[AuthWrite], right: &[AuthWrite]) -> bool {
+    left.len() == right.len()
+        && left
+            .iter()
+            .zip(right)
+            .all(|(left, right)| left.key() == right.key() && left.value() == right.value())
+}
+
+fn validate_core_authorized_non_runtime_prefix_v0(
+    routed: &CoreAuthorizedNonRuntimePayloadRoutingV0,
+) -> anyhow::Result<Vec<Vec<u8>>> {
+    let open = &routed.open;
+    let authorized = &open.open.authorized;
+    let body = authorized.body.application_payload().transactions();
+    let target_height = authorized.header.height().get();
+    let target_block_id = authorized.validation_id.block_id();
+    let mut indices = BTreeSet::new();
+    let mut previous_runtime_index = None;
+    for applied in &open.applied {
+        anyhow::ensure!(
+            applied.index < routed.index
+                && previous_runtime_index.is_none_or(|previous| previous < applied.index)
+                && indices.insert(applied.index)
+                && body.get(usize::try_from(applied.index)?).map(Vec::as_slice)
+                    == Some(applied.exact_outer_bytes.as_slice())
+                && applied.context.target_height == target_height
+                && applied.context.target_block_id == target_block_id
+                && applied.context.validation_timestamp_ms == authorized.header.timestamp_ms()
+                && applied.context.payload_len == applied.exact_inner_bytes.len(),
+            "non-runtime prefix runtime provenance drift"
+        );
+        previous_runtime_index = Some(applied.index);
+    }
+
+    let mut poco_raws = Vec::new();
+    let mut rebuilt_validator = authorized.context.validator_lifecycle.clone();
+    let mut validator_count = 0usize;
+    let mut previous_non_runtime_index = None;
+    for applied in &open.applied_non_runtime {
+        let (index, exact_outer_bytes, exact_inner_bytes, envelope, context) = match applied {
+            AppliedCoreAuthorizedNonRuntimePayloadV0::PocoApplication {
+                index,
+                exact_outer_bytes,
+                exact_inner_bytes,
+                envelope,
+                context,
+                operation,
+            } => {
+                anyhow::ensure!(
+                    serde_json::to_vec(operation)? == *exact_inner_bytes
+                        && envelope.payload_type
+                            == crate::poco_application::POCO_APPLICATION_OPERATION_PAYLOAD_TYPE_V0,
+                    "non-runtime PoCO prefix semantic owner drift"
+                );
+                poco_raws.push(exact_inner_bytes.clone());
+                (
+                    *index,
+                    exact_outer_bytes,
+                    exact_inner_bytes,
+                    envelope,
+                    context,
+                )
+            }
+            AppliedCoreAuthorizedNonRuntimePayloadV0::ValidatorTransition {
+                index,
+                exact_outer_bytes,
+                exact_inner_bytes,
+                envelope,
+                context,
+                transition,
+            } => {
+                anyhow::ensure!(
+                    serde_json::to_vec(transition)? == *exact_inner_bytes
+                        && envelope.payload_type
+                            == crate::validator_lifecycle::VALIDATOR_TRANSITION_PAYLOAD_TYPE_V1,
+                    "non-runtime validator prefix semantic owner drift"
+                );
+                let authorization = crate::validator_lifecycle::ValidatorTransitionAuthorization {
+                    command_id: &envelope.command_id,
+                    signer_id: &context.signer_id,
+                    signer_role: &context.signer_role,
+                    nonce: envelope.nonce,
+                    chain_id: envelope.chain_id.as_str(),
+                    accepted_height: context.target_height,
+                };
+                rebuilt_validator
+                    .schedule(transition.clone(), authorization)
+                    .map_err(|_| anyhow::anyhow!("non-runtime validator prefix replay drift"))?;
+                validator_count = validator_count
+                    .checked_add(1)
+                    .context("non-runtime validator prefix count exhausted")?;
+                (
+                    *index,
+                    exact_outer_bytes,
+                    exact_inner_bytes,
+                    envelope,
+                    context,
+                )
+            }
+        };
+        anyhow::ensure!(
+            index < routed.index
+                && previous_non_runtime_index.is_none_or(|previous| previous < index)
+                && indices.insert(index)
+                && body.get(usize::try_from(index)?).map(Vec::as_slice)
+                    == Some(exact_outer_bytes.as_slice()),
+            "non-runtime prefix body sequence drift"
+        );
+        previous_non_runtime_index = Some(index);
+        let decoded_envelope: SignedCommandEnvelopeV1 = serde_json::from_slice(exact_outer_bytes)?;
+        anyhow::ensure!(
+            decoded_envelope == *envelope,
+            "non-runtime prefix envelope drift"
+        );
+        anyhow::ensure!(
+            decoded_envelope.payload_bytes()? == *exact_inner_bytes,
+            "non-runtime prefix inner payload drift"
+        );
+        let signer = crate::validate_signed_command_envelope_against_policy_v1(
+            &decoded_envelope,
+            authorized.header.chain_id().as_str(),
+            authorized.header.timestamp_ms(),
+            &authorized.context.signer_policy.authorized_signers,
+        )?;
+        anyhow::ensure!(
+            context.target_height == target_height
+                && context.target_block_id == target_block_id
+                && context.validation_timestamp_ms == authorized.header.timestamp_ms()
+                && context.signer_id == signer.signer_id
+                && context.signer_role == signer.signer_role
+                && context.payload_len == exact_inner_bytes.len(),
+            "non-runtime prefix context drift"
+        );
+    }
+    anyhow::ensure!(
+        usize::try_from(routed.index)? == indices.len()
+            && (0..routed.index).all(|index| indices.contains(&index)),
+        "non-runtime prefix does not cover the exact prior body"
+    );
+
+    match (&open.poco_prefix, poco_raws.is_empty()) {
+        (None, true) => {}
+        (Some(prefix), false) => {
+            let authorized_parent = &authorized.context.parent_header;
+            anyhow::ensure!(
+                prefix.overlay.source_version() == authorized_parent.height().get()
+                    && prefix.overlay.source_root() == *authorized_parent.state_root().as_bytes()
+                    && prefix.overlay.target_height() == authorized.header.height()
+                    && prefix.overlay.operation_count() == poco_raws.len()
+                    && prefix.plan.source_version() == authorized_parent.height().get()
+                    && prefix.plan.source_root() == *authorized_parent.state_root().as_bytes()
+                    && prefix.plan.target_height() == authorized.header.height()
+                    && prefix.plan.target_manifest().cutoff_height() == authorized.header.height()
+                    && prefix.plan.binds_exact_operations_v0(&poco_raws),
+                "non-runtime PoCO prefix source or operation binding drift"
+            );
+            let regenerated = prefix.overlay.clone().seal()?;
+            anyhow::ensure!(
+                regenerated.source_version() == prefix.plan.source_version()
+                    && regenerated.source_root() == prefix.plan.source_root()
+                    && regenerated.target_height() == prefix.plan.target_height()
+                    && regenerated.operation_root() == prefix.plan.operation_root()
+                    && regenerated.operation_count() == prefix.plan.operation_count()
+                    && regenerated.mutation_root() == prefix.plan.mutation_root()
+                    && regenerated.mutation_count() == prefix.plan.mutation_count()
+                    && regenerated.target_manifest() == prefix.plan.target_manifest()
+                    && regenerated
+                        .namespace_writes()
+                        .eq(prefix.plan.namespace_writes()),
+                "non-runtime PoCO prefix seal drift"
+            );
+            let expected_writes =
+                crate::poco_transition::auth_writes_from_sealed_poco_application_v0(&prefix.plan)?;
+            anyhow::ensure!(
+                auth_writes_match_v0(&prefix.writes, &expected_writes),
+                "non-runtime PoCO prefix writes drift"
+            );
+        }
+        _ => anyhow::bail!("non-runtime PoCO prefix presence drift"),
+    }
+
+    match (&open.validator_prefix, validator_count) {
+        (None, 0) => {}
+        (Some(prefix), count) if count > 0 => {
+            anyhow::ensure!(
+                prefix.lifecycle == rebuilt_validator,
+                "non-runtime validator prefix lifecycle drift"
+            );
+            let expected = crate::authenticated_lifecycle_write(target_height, &rebuilt_validator)?;
+            anyhow::ensure!(
+                prefix.write.key() == expected.key() && prefix.write.value() == expected.value(),
+                "non-runtime validator prefix write drift"
+            );
+        }
+        _ => anyhow::bail!("non-runtime validator prefix presence drift"),
+    }
+    Ok(poco_raws)
+}
+
 /// Derives only family-local canonical writes from one complete successful
 /// attempt. The exact attempt remains embedded beside those writes, including
 /// its still-open parent snapshot and uncommitted cursor. PoCO sealing runs on
@@ -1719,6 +1968,9 @@ fn seal_core_authorized_non_runtime_family_writes_v0(
                     &attempted.decoded.owner.routed,
                 )
                 .map_err(|_| CoreAuthorizedNonRuntimeWriteSealInvariantV0::OwnerBinding)?;
+                let mut exact_poco_operations =
+                    validate_core_authorized_non_runtime_prefix_v0(&attempted.decoded.owner.routed)
+                        .map_err(|_| CoreAuthorizedNonRuntimeWriteSealInvariantV0::OwnerBinding)?;
                 let reencoded = serde_json::to_vec(&attempted.decoded.operation)
                     .map_err(|_| CoreAuthorizedNonRuntimeWriteSealInvariantV0::OwnerBinding)?;
                 if reencoded != attempted.decoded.owner.routed.exact_inner_bytes {
@@ -1731,17 +1983,23 @@ fn seal_core_authorized_non_runtime_family_writes_v0(
                     return Err(CoreAuthorizedNonRuntimeWriteSealInvariantV0::OwnerBinding);
                 }
                 let authorized = &routed.open.open.authorized;
+                let expected_operation_count = exact_poco_operations
+                    .len()
+                    .checked_add(1)
+                    .ok_or(CoreAuthorizedNonRuntimeWriteSealInvariantV0::PocoSourceBinding)?;
                 if attempted.overlay.source_version()
                     != authorized.context.parent_header.height().get()
                     || attempted.overlay.source_root()
                         != *authorized.context.parent_header.state_root().as_bytes()
                     || attempted.overlay.target_height() != authorized.header.height()
-                    || attempted.overlay.operation_count() != 1
+                    || attempted.overlay.operation_count() != expected_operation_count
                     || attempted.decoded.operation.target_height()
                         != authorized.header.height().get()
                 {
                     return Err(CoreAuthorizedNonRuntimeWriteSealInvariantV0::PocoSourceBinding);
                 }
+                exact_poco_operations
+                    .push(attempted.decoded.owner.routed.exact_inner_bytes.clone());
                 let plan = attempted
                     .overlay
                     .clone()
@@ -1752,9 +2010,7 @@ fn seal_core_authorized_non_runtime_family_writes_v0(
                         != *authorized.context.parent_header.state_root().as_bytes()
                     || plan.target_height() != authorized.header.height()
                     || plan.target_manifest().cutoff_height() != authorized.header.height()
-                    || !plan.binds_exact_operations_v0(std::slice::from_ref(
-                        &attempted.decoded.owner.routed.exact_inner_bytes,
-                    ))
+                    || !plan.binds_exact_operations_v0(&exact_poco_operations)
                 {
                     return Err(
                         CoreAuthorizedNonRuntimeWriteSealInvariantV0::PocoSealedPostcondition,
@@ -1799,6 +2055,8 @@ fn seal_core_authorized_non_runtime_family_writes_v0(
                     &attempted.decoded.owner.routed,
                 )
                 .map_err(|_| CoreAuthorizedNonRuntimeWriteSealInvariantV0::OwnerBinding)?;
+                validate_core_authorized_non_runtime_prefix_v0(&attempted.decoded.owner.routed)
+                    .map_err(|_| CoreAuthorizedNonRuntimeWriteSealInvariantV0::OwnerBinding)?;
                 let reencoded = serde_json::to_vec(&attempted.decoded.transition)
                     .map_err(|_| CoreAuthorizedNonRuntimeWriteSealInvariantV0::OwnerBinding)?;
                 if reencoded != attempted.decoded.owner.routed.exact_inner_bytes {
@@ -1810,13 +2068,18 @@ fn seal_core_authorized_non_runtime_family_writes_v0(
                 {
                     return Err(CoreAuthorizedNonRuntimeWriteSealInvariantV0::OwnerBinding);
                 }
-                let mut rebuilt = routed
-                    .open
-                    .open
-                    .authorized
-                    .context
-                    .validator_lifecycle
-                    .clone();
+                let mut rebuilt = routed.open.validator_prefix.as_ref().map_or_else(
+                    || {
+                        routed
+                            .open
+                            .open
+                            .authorized
+                            .context
+                            .validator_lifecycle
+                            .clone()
+                    },
+                    |prefix| prefix.lifecycle.clone(),
+                );
                 let authorization = crate::validator_lifecycle::ValidatorTransitionAuthorization {
                     command_id: &routed.envelope.command_id,
                     signer_id: &routed.context.signer_id,
@@ -1883,6 +2146,96 @@ fn seal_core_authorized_non_runtime_family_writes_v0(
                     },
                 ),
             }
+        }
+    }
+}
+
+/// Consumes the complete owner-bound family seal and commits exactly one
+/// successful cursor step in memory. The latest whole-family prefix replaces
+/// its predecessor; PoCO writes are never concatenated as separate blocks and
+/// validator writes remain one singleton successor. All fallible owner,
+/// prefix, seal, and encoding checks occurred before this capability existed.
+/// This function does not finish the snapshot, form a receipt, plan/apply JMT,
+/// persist, callback, or call Core.
+#[allow(dead_code)]
+fn advance_core_authorized_non_runtime_success_v0(
+    sealed: OwnerBoundCoreAuthorizedNonRuntimeFamilyWriteSealV0,
+) -> OpenCoreAuthorizedRegularTransactionCursorV0 {
+    match sealed {
+        OwnerBoundCoreAuthorizedNonRuntimeFamilyWriteSealV0::PocoApplication(sealed) => {
+            let OwnerBoundCoreAuthorizedPocoApplicationWriteSealV0 {
+                attempted,
+                plan,
+                writes,
+            } = *sealed;
+            let AuthorizedCorePocoApplicationAttemptV0 { decoded, overlay } = *attempted;
+            let DecodedCoreAuthorizedPocoApplicationPayloadV0 { owner, operation } = decoded;
+            let CoreAuthorizedPocoApplicationPayloadV0 { routed } = owner;
+            let CoreAuthorizedNonRuntimePayloadRoutingV0 {
+                mut open,
+                index,
+                next_transaction_index,
+                exact_outer_bytes,
+                exact_inner_bytes,
+                envelope,
+                context,
+            } = routed;
+            debug_assert_eq!(open.next_transaction_index, index);
+            debug_assert_eq!(index.checked_add(1), Some(next_transaction_index));
+            open.applied_non_runtime.push(
+                AppliedCoreAuthorizedNonRuntimePayloadV0::PocoApplication {
+                    index,
+                    exact_outer_bytes,
+                    exact_inner_bytes,
+                    envelope,
+                    context,
+                    operation,
+                },
+            );
+            open.poco_prefix = Some(Box::new(CoreAuthorizedRegularPocoPrefixV0 {
+                overlay,
+                plan,
+                writes,
+            }));
+            open.next_transaction_index = next_transaction_index;
+            open
+        }
+        OwnerBoundCoreAuthorizedNonRuntimeFamilyWriteSealV0::ValidatorTransition(sealed) => {
+            let OwnerBoundCoreAuthorizedValidatorTransitionWriteSealV0 { attempted, write } =
+                *sealed;
+            let AuthorizedCoreValidatorTransitionAttemptV0 {
+                decoded,
+                scheduled_lifecycle,
+            } = *attempted;
+            let DecodedCoreAuthorizedValidatorTransitionPayloadV0 { owner, transition } = decoded;
+            let CoreAuthorizedValidatorTransitionPayloadV0 { routed } = owner;
+            let CoreAuthorizedNonRuntimePayloadRoutingV0 {
+                mut open,
+                index,
+                next_transaction_index,
+                exact_outer_bytes,
+                exact_inner_bytes,
+                envelope,
+                context,
+            } = routed;
+            debug_assert_eq!(open.next_transaction_index, index);
+            debug_assert_eq!(index.checked_add(1), Some(next_transaction_index));
+            open.applied_non_runtime.push(
+                AppliedCoreAuthorizedNonRuntimePayloadV0::ValidatorTransition {
+                    index,
+                    exact_outer_bytes,
+                    exact_inner_bytes,
+                    envelope,
+                    context,
+                    transition,
+                },
+            );
+            open.validator_prefix = Some(Box::new(CoreAuthorizedRegularValidatorPrefixV0 {
+                lifecycle: scheduled_lifecycle,
+                write,
+            }));
+            open.next_transaction_index = next_transaction_index;
+            open
         }
     }
 }
@@ -2006,6 +2359,29 @@ struct AppliedCoreAuthorizedRuntimeTransactionV0 {
     context: ExactRuntimeExecutionContextV0,
     runtime_receipt: RuntimeReceipt,
     native_receipt: NativeTransactionReceiptFactsV0,
+}
+
+/// Successful non-runtime item provenance retained only inside the owning
+/// cursor. These records are neither receipts nor independently reusable
+/// writes; they exist to bind a later whole-prefix seal and body completion to
+/// the exact signed item sequence.
+enum AppliedCoreAuthorizedNonRuntimePayloadV0 {
+    PocoApplication {
+        index: u32,
+        exact_outer_bytes: Vec<u8>,
+        exact_inner_bytes: Vec<u8>,
+        envelope: SignedCommandEnvelopeV1,
+        context: ExactRuntimeExecutionContextV0,
+        operation: crate::poco_application::PocoApplicationOperationV0,
+    },
+    ValidatorTransition {
+        index: u32,
+        exact_outer_bytes: Vec<u8>,
+        exact_inner_bytes: Vec<u8>,
+        envelope: SignedCommandEnvelopeV1,
+        context: ExactRuntimeExecutionContextV0,
+        transition: crate::validator_lifecycle::ValidatorSetTransitionV1,
+    },
 }
 
 /// Snapshot-finished complete-body runtime evidence plus an inert exact-next
@@ -2239,6 +2615,9 @@ struct ClosedFailedCoreAuthorizedRegularPostStatePlanV0 {
     next_transaction_index: u32,
     changes: BTreeMap<String, StoredObject>,
     applied: Vec<AppliedCoreAuthorizedRuntimeTransactionV0>,
+    applied_non_runtime: Vec<AppliedCoreAuthorizedNonRuntimePayloadV0>,
+    poco_prefix: Option<Box<CoreAuthorizedRegularPocoPrefixV0>>,
+    validator_prefix: Option<Box<CoreAuthorizedRegularValidatorPrefixV0>>,
     cause: ClosedCoreAuthorizedRegularPostStatePlanCauseV0,
 }
 
@@ -2327,6 +2706,9 @@ struct ClosedFailedCoreAuthorizedRegularTransactionDecodeV0 {
     next_transaction_index: u32,
     changes: BTreeMap<String, StoredObject>,
     applied: Vec<AppliedCoreAuthorizedRuntimeTransactionV0>,
+    applied_non_runtime: Vec<AppliedCoreAuthorizedNonRuntimePayloadV0>,
+    poco_prefix: Option<Box<CoreAuthorizedRegularPocoPrefixV0>>,
+    validator_prefix: Option<Box<CoreAuthorizedRegularValidatorPrefixV0>>,
     cause: ClosedCoreAuthorizedRegularTransactionDecodeCauseV0,
 }
 
@@ -2877,13 +3259,16 @@ enum CoreAuthorizedRegularRuntimeStepFailureV0 {
     MutationInvariant(CoreAuthorizedRegularRuntimeMutationInvariantV0),
 }
 
-/// A failed runtime step destroys every prior delta and receipt but retains
-/// the exact body/configuration, failed prepared transaction, and open parent
-/// snapshot as one non-cloneable value. Its classification is unavailable
-/// until explicit snapshot finish.
+/// A failed runtime step destroys every prior runtime delta and receipt but
+/// retains any prior staged non-runtime prefix, the exact body/configuration,
+/// failed prepared transaction, and open parent snapshot as one non-cloneable
+/// value. Its classification is unavailable until explicit snapshot finish.
 #[must_use = "a failed runtime attempt must explicitly finish its exact parent snapshot"]
 struct FailedCoreAuthorizedRegularRuntimeAttemptV0 {
     open: OpenCoreAuthorizedRegularValidationV0,
+    applied_non_runtime: Vec<AppliedCoreAuthorizedNonRuntimePayloadV0>,
+    poco_prefix: Option<Box<CoreAuthorizedRegularPocoPrefixV0>>,
+    validator_prefix: Option<Box<CoreAuthorizedRegularValidatorPrefixV0>>,
     failed_transaction_index: u32,
     exact_outer_bytes: Vec<u8>,
     exact_inner_bytes: Vec<u8>,
@@ -2907,11 +3292,15 @@ enum ClosedCoreAuthorizedRegularRuntimeAttemptCauseV0 {
 }
 
 /// Snapshot-closed runtime failure provenance. It retains the exact authorized
-/// body and failed transaction facts, but never prior mutable delta/receipts
-/// (which the failed attempt intentionally destroyed).
+/// body, failed transaction facts, and any prior staged non-runtime prefix, but
+/// never prior mutable runtime delta/receipts (which the failed attempt
+/// intentionally destroyed).
 #[must_use = "a closed runtime failure still retains its exact attempt owner"]
 pub(super) struct ClosedFailedCoreAuthorizedRegularRuntimeAttemptV0 {
     authorized: CoreAuthorizedExactRegularBodyV0,
+    applied_non_runtime: Vec<AppliedCoreAuthorizedNonRuntimePayloadV0>,
+    poco_prefix: Option<Box<CoreAuthorizedRegularPocoPrefixV0>>,
+    validator_prefix: Option<Box<CoreAuthorizedRegularValidatorPrefixV0>>,
     failed_transaction_index: u32,
     exact_outer_bytes: Vec<u8>,
     exact_inner_bytes: Vec<u8>,
@@ -3730,6 +4119,9 @@ fn open_core_authorized_regular_transaction_cursor_from_open_v0(
         next_transaction_index: 0,
         changes: BTreeMap::new(),
         applied: Vec::new(),
+        applied_non_runtime: Vec::new(),
+        poco_prefix: None,
+        validator_prefix: None,
     }
 }
 
@@ -4008,6 +4400,9 @@ fn finish_failed_core_authorized_regular_transaction_decode_v0(
         next_transaction_index,
         changes,
         applied,
+        applied_non_runtime,
+        poco_prefix,
+        validator_prefix,
     } = open;
     let OpenCoreAuthorizedRegularValidationV0 {
         authorized,
@@ -4022,6 +4417,9 @@ fn finish_failed_core_authorized_regular_transaction_decode_v0(
         next_transaction_index,
         changes,
         applied,
+        applied_non_runtime,
+        poco_prefix,
+        validator_prefix,
         cause,
     })
 }
@@ -4351,10 +4749,16 @@ fn fail_prepared_core_authorized_runtime_transaction_v0(
         next_transaction_index,
         changes: _,
         applied: _,
+        applied_non_runtime,
+        poco_prefix,
+        validator_prefix,
     } = open;
     debug_assert_eq!(failed_transaction_index, next_transaction_index);
     Box::new(FailedCoreAuthorizedRegularRuntimeAttemptV0 {
         open,
+        applied_non_runtime,
+        poco_prefix,
+        validator_prefix,
         failed_transaction_index,
         exact_outer_bytes,
         exact_inner_bytes,
@@ -4480,6 +4884,9 @@ fn finish_failed_core_authorized_regular_runtime_attempt_v0(
 ) -> Box<ClosedFailedCoreAuthorizedRegularRuntimeAttemptV0> {
     let FailedCoreAuthorizedRegularRuntimeAttemptV0 {
         open,
+        applied_non_runtime,
+        poco_prefix,
+        validator_prefix,
         failed_transaction_index,
         exact_outer_bytes,
         exact_inner_bytes,
@@ -4497,6 +4904,9 @@ fn finish_failed_core_authorized_regular_runtime_attempt_v0(
     };
     Box::new(ClosedFailedCoreAuthorizedRegularRuntimeAttemptV0 {
         authorized,
+        applied_non_runtime,
+        poco_prefix,
+        validator_prefix,
         failed_transaction_index,
         exact_outer_bytes,
         exact_inner_bytes,
@@ -4522,6 +4932,9 @@ fn finish_and_plan_core_authorized_regular_post_state_v0(
         next_transaction_index,
         changes,
         applied,
+        applied_non_runtime,
+        poco_prefix,
+        validator_prefix,
     } = open;
     let expected = open
         .authorized
@@ -4537,7 +4950,10 @@ fn finish_and_plan_core_authorized_regular_post_state_v0(
                 expected,
             });
         }
-        if applied.len() != expected as usize
+        if !applied_non_runtime.is_empty()
+            || poco_prefix.is_some()
+            || validator_prefix.is_some()
+            || applied.len() != expected as usize
             || applied
                 .iter()
                 .zip(open.authorized.body.application_payload().transactions())
@@ -4602,6 +5018,9 @@ fn finish_and_plan_core_authorized_regular_post_state_v0(
             next_transaction_index,
             changes,
             applied,
+            applied_non_runtime,
+            poco_prefix,
+            validator_prefix,
             cause: ClosedCoreAuthorizedRegularPostStatePlanCauseV0::Snapshot(error),
         }));
     }
@@ -4613,6 +5032,9 @@ fn finish_and_plan_core_authorized_regular_post_state_v0(
                 next_transaction_index,
                 changes,
                 applied,
+                applied_non_runtime,
+                poco_prefix,
+                validator_prefix,
                 cause: ClosedCoreAuthorizedRegularPostStatePlanCauseV0::Plan(cause),
             }));
         }
@@ -6112,6 +6534,7 @@ mod tests {
     use trnm_runtime::RuntimeMutation;
 
     use super::{
+        advance_core_authorized_non_runtime_success_v0,
         attempt_prepared_core_authorized_runtime_transaction_v0,
         authenticate_regular_runtime_inputs_for_test_v0,
         authorize_and_execute_decoded_core_non_runtime_family_v0,
@@ -6520,6 +6943,36 @@ mod tests {
             .test_define_meter_operation_v0()
             .expect("author one exact valid PoCO operation");
         (projection, raw)
+    }
+
+    fn author_two_valid_poco_application_operations(
+        store: &TestStore,
+        profile: &FixtureProfile,
+    ) -> (
+        crate::poco_transition::ProductionPocoProjectionV0,
+        Vec<Vec<u8>>,
+    ) {
+        let projection = load_test_authenticated_poco_projection(store);
+        let context = crate::poco_application::AuthenticatedPocoApplicationContextV0::new(
+            profile.parent.height().get(),
+            *profile.parent.state_root().as_bytes(),
+            profile.header.height(),
+            profile.validator_set.chain_id(),
+            profile.validator_set.genesis_hash(),
+            profile.validator_set.epoch(),
+            profile.parameters,
+            crate::poco_application_governance_signer_commitment_v0(&store.validator_lifecycle),
+        )
+        .expect("construct two-operation PoCO context");
+        let overlay = crate::poco_application::PocoApplicationBlockOverlayV0::from_projection(
+            context,
+            &projection,
+        )
+        .expect("construct two-operation PoCO authoring overlay");
+        let operations = overlay
+            .test_two_define_meter_operations_v0()
+            .expect("author two ordered PoCO operations");
+        (projection, operations)
     }
 
     fn decode_only_non_runtime_family(
@@ -7329,6 +7782,28 @@ mod tests {
                 .expect("prepare exact production runtime transaction"),
         );
         attempt_prepared_core_authorized_runtime_transaction_v0(prepared)
+    }
+
+    fn advance_next_production_non_runtime_payload(
+        open: OpenCoreAuthorizedRegularTransactionCursorV0,
+    ) -> OpenCoreAuthorizedRegularTransactionCursorV0 {
+        let routed = match prepare_next_core_authorized_regular_payload_v0(open)
+            .expect("prepare exact production non-runtime payload")
+        {
+            PreparedCoreAuthorizedRegularPayloadV0::NonRuntime(routed) => routed,
+            PreparedCoreAuthorizedRegularPayloadV0::Runtime(_) => {
+                panic!("expected exact non-runtime payload")
+            }
+        };
+        let decoded = decode_dispatched_core_authorized_non_runtime_payload_v0(
+            dispatch_core_authorized_non_runtime_payload_v0(routed),
+        )
+        .expect("strict-decode exact production non-runtime payload");
+        let attempted = authorize_and_execute_decoded_core_non_runtime_family_v0(decoded)
+            .expect("execute exact production non-runtime family");
+        let sealed = seal_core_authorized_non_runtime_family_writes_v0(attempted)
+            .expect("seal exact production non-runtime family writes");
+        advance_core_authorized_non_runtime_success_v0(sealed)
     }
 
     fn complete_production_runtime_cursor(
@@ -8481,7 +8956,10 @@ mod tests {
             1,
             "PoCO family attempt must have one retained-snapshot projection source"
         );
-        assert!(family_attempt_body.contains(".validator_lifecycle\n                .clone()"));
+        assert!(family_attempt_body
+            .contains("if let Some(prefix) = &decoded.owner.routed.open.poco_prefix"));
+        assert!(family_attempt_body.contains(".validator_prefix\n                .as_ref()"));
+        assert!(family_attempt_body.contains("|prefix| prefix.lifecycle.clone()"));
         for forbidden_surface in [
             "with_poco_projection_loader",
             "ProductionPocoProjectionV0,",
@@ -8498,10 +8976,14 @@ mod tests {
         let write_seal_owner_offset = implementation_source
             .find("fn validate_core_authorized_non_runtime_write_seal_owner_v0(")
             .expect("production non-runtime write-seal owner rebind");
+        let prefix_rebind_offset = implementation_source
+            .find("fn validate_core_authorized_non_runtime_prefix_v0(")
+            .expect("production non-runtime staged-prefix rebind");
         let write_seal_offset = implementation_source
             .find("fn seal_core_authorized_non_runtime_family_writes_v0(")
             .expect("production consuming non-runtime family write sealer");
-        assert!(write_seal_owner_offset < write_seal_offset);
+        assert!(write_seal_owner_offset < prefix_rebind_offset);
+        assert!(prefix_rebind_offset < write_seal_offset);
         let write_seal_owner_body =
             &implementation_source[write_seal_owner_offset..write_seal_offset];
         for required_binding in [
@@ -8532,6 +9014,64 @@ mod tests {
                 "production write-seal owner rebind gained authority: {forbidden_surface}"
             );
         }
+        let prefix_rebind_signature_end = implementation_source[prefix_rebind_offset..]
+            .find(" {\n")
+            .map(|offset| prefix_rebind_offset + offset)
+            .expect("production staged-prefix rebind signature end");
+        let prefix_rebind_signature =
+            &implementation_source[prefix_rebind_offset..prefix_rebind_signature_end];
+        assert!(
+            prefix_rebind_signature.contains("routed: &CoreAuthorizedNonRuntimePayloadRoutingV0")
+        );
+        for forbidden_parameter in [
+            "route:",
+            "validation_id:",
+            "index:",
+            "snapshot:",
+            "plan:",
+            "writes:",
+            "lifecycle:",
+        ] {
+            assert!(
+                !prefix_rebind_signature.contains(forbidden_parameter),
+                "production staged-prefix rebind gained caller authority: {forbidden_parameter}"
+            );
+        }
+        let prefix_rebind_body = &implementation_source[prefix_rebind_offset..write_seal_offset];
+        for required_binding in [
+            "indices.insert(applied.index)",
+            "indices.insert(index)",
+            "prefix.overlay.clone().seal()?",
+            "prefix.plan.binds_exact_operations_v0(&poco_raws)",
+            "auth_writes_match_v0(&prefix.writes, &expected_writes)",
+            "prefix.lifecycle == rebuilt_validator",
+        ] {
+            assert!(
+                prefix_rebind_body.contains(required_binding),
+                "production staged-prefix rebind lost: {required_binding}"
+            );
+        }
+        for forbidden_surface in [
+            "plan_exact_next_auth_update_v0",
+            ".seal_v0()",
+            "snapshot.finish()",
+            "next_transaction_index = ",
+            "next_transaction_index +=",
+            "finish_and_plan_core_authorized_regular_post_state_v0",
+            "ExecutionOutcomeV0",
+            "PayloadValidationResult",
+            "Input::",
+            "into_core_input",
+            "Core::step",
+            "core.step(",
+            "persist_transition(",
+            "receipt:",
+        ] {
+            assert!(
+                !prefix_rebind_body.contains(forbidden_surface),
+                "production staged-prefix rebind gained forbidden authority: {forbidden_surface}"
+            );
+        }
         let write_seal_signature_end = implementation_source[write_seal_offset..]
             .find(" {\n")
             .map(|offset| write_seal_offset + offset)
@@ -8558,7 +9098,7 @@ mod tests {
             );
         }
         let write_seal_body = implementation_source[write_seal_offset..]
-            .split_once("fn finish_failed_core_authorized_non_runtime_family_write_seal_v0(")
+            .split_once("fn advance_core_authorized_non_runtime_success_v0(")
             .expect("production family write-seal body boundary")
             .0;
         assert!(write_seal_body
@@ -8587,6 +9127,75 @@ mod tests {
             assert!(
                 !write_seal_body.contains(forbidden_surface),
                 "production family write seal gained a forbidden authority: {forbidden_surface}"
+            );
+        }
+        assert_eq!(
+            write_seal_body
+                .matches("validate_core_authorized_non_runtime_prefix_v0(")
+                .count(),
+            2,
+            "both family seal arms must rebind the exact prior cursor prefix"
+        );
+        assert!(write_seal_body.contains("plan.binds_exact_operations_v0(&exact_poco_operations)"));
+        assert!(write_seal_body.contains("routed.open.validator_prefix.as_ref().map_or_else("));
+
+        let non_runtime_advance_offset = implementation_source
+            .find("fn advance_core_authorized_non_runtime_success_v0(")
+            .expect("production consuming non-runtime cursor advance");
+        let non_runtime_advance_signature_end = implementation_source[non_runtime_advance_offset..]
+            .find(" {\n")
+            .map(|offset| non_runtime_advance_offset + offset)
+            .expect("production non-runtime cursor advance signature end");
+        let non_runtime_advance_signature =
+            &implementation_source[non_runtime_advance_offset..non_runtime_advance_signature_end];
+        assert!(non_runtime_advance_signature
+            .contains("sealed: OwnerBoundCoreAuthorizedNonRuntimeFamilyWriteSealV0"));
+        for forbidden_parameter in [
+            "route:",
+            "validation_id:",
+            "index:",
+            "snapshot:",
+            "writes:",
+            "plan:",
+            "lifecycle:",
+        ] {
+            assert!(
+                !non_runtime_advance_signature.contains(forbidden_parameter),
+                "production non-runtime advance gained caller authority: {forbidden_parameter}"
+            );
+        }
+        let non_runtime_advance_body = implementation_source[non_runtime_advance_offset..]
+            .split_once("fn finish_failed_core_authorized_non_runtime_family_write_seal_v0(")
+            .expect("production non-runtime cursor advance body boundary")
+            .0;
+        for required_surface in [
+            "open.applied_non_runtime.push(",
+            "open.poco_prefix = Some(",
+            "open.validator_prefix = Some(",
+            "open.next_transaction_index = next_transaction_index",
+        ] {
+            assert!(
+                non_runtime_advance_body.contains(required_surface),
+                "production non-runtime advance lost staged state: {required_surface}"
+            );
+        }
+        for forbidden_surface in [
+            "plan_exact_next_auth_update_v0",
+            ".seal_v0()",
+            "snapshot.finish()",
+            "finish_and_plan_core_authorized_regular_post_state_v0",
+            "ExecutionOutcomeV0",
+            "PayloadValidationResult",
+            "Input::",
+            "into_core_input",
+            "Core::step",
+            "core.step(",
+            "persist_transition(",
+            "receipt:",
+        ] {
+            assert!(
+                !non_runtime_advance_body.contains(forbidden_surface),
+                "production non-runtime advance gained forbidden authority: {forbidden_surface}"
             );
         }
         let plan_offset = implementation_source
@@ -8684,6 +9293,9 @@ mod tests {
             .0;
         assert!(!closed_runtime_owner.contains("changes:"));
         assert!(!closed_runtime_owner.contains("applied:"));
+        assert!(closed_runtime_owner.contains("applied_non_runtime:"));
+        assert!(closed_runtime_owner.contains("poco_prefix:"));
+        assert!(closed_runtime_owner.contains("validator_prefix:"));
         let closed_plan_owner = implementation_source
             .split_once("struct ClosedFailedCoreAuthorizedRegularPostStatePlanV0 {")
             .expect("closed post-state failure owner")
@@ -8836,12 +9448,19 @@ mod tests {
         assert!(state_mismatch_offset < receipts_mismatch_offset);
         for forbidden_alternate in [
             "fn skip_core_authorized",
-            "fn advance_core_authorized",
+            "fn advance_core_authorized_regular",
             "fn resume_core_authorized",
             "fn retry_core_authorized",
         ] {
             assert!(!implementation_source.contains(forbidden_alternate));
         }
+        assert_eq!(
+            implementation_source
+                .matches("fn advance_core_authorized_non_runtime_success_v0(")
+                .count(),
+            1,
+            "non-runtime cursor advance must have one consuming implementation"
+        );
         assert!(implementation_source
             .contains("pub(super) fn from_app_core(core: &'a crate::AppCore) -> Option<Self>"));
         assert!(!implementation_source.contains("fn new_native_validation_host_v0("));
@@ -9241,6 +9860,8 @@ mod tests {
             "FinishedCoreAuthorizedRegularValidationV0",
             "ClosedFailedCoreAuthorizedRegularValidationV0",
             "OpenCoreAuthorizedRegularTransactionCursorV0",
+            "CoreAuthorizedRegularPocoPrefixV0",
+            "CoreAuthorizedRegularValidatorPrefixV0",
             "ExactRuntimeExecutionContextV0",
             "DecodedCoreAuthorizedRuntimeTransactionV0",
             "DecodedCoreAuthorizedNonRuntimePayloadV0",
@@ -9287,6 +9908,7 @@ mod tests {
                 format!("impl serde::Deserialize for {capability}"),
                 format!("impl BorshSerialize for {capability}"),
                 format!("impl BorshDeserialize for {capability}"),
+                format!("impl Drop for {capability}"),
                 format!("impl From<{capability}"),
                 format!("impl TryFrom<{capability}"),
                 "fn into_parts(self)".to_string(),
@@ -9446,6 +10068,7 @@ mod tests {
             "FailedCoreAuthorizedNonRuntimeSemanticDecodeV0",
             "ClosedFailedCoreAuthorizedNonRuntimeSemanticDecodeV0",
             "DecodedDispatchedCoreAuthorizedNonRuntimePayloadV0",
+            "AppliedCoreAuthorizedNonRuntimePayloadV0",
             "AuthorizedCoreNonRuntimeFamilyAttemptV0",
             "FailedCoreAuthorizedNonRuntimeFamilyAttemptV0",
             "ClosedFailedCoreAuthorizedNonRuntimeFamilyAttemptV0",
@@ -9479,6 +10102,32 @@ mod tests {
                 "fn into_parts(self)".to_string(),
             ] {
                 assert!(!implementation_source.contains(&forbidden));
+            }
+        }
+        for (kind, capability) in [
+            ("struct", "CoreAuthorizedRegularPocoPrefixV0"),
+            ("struct", "CoreAuthorizedRegularValidatorPrefixV0"),
+            (
+                "struct",
+                "OwnerBoundCoreAuthorizedPocoApplicationWriteSealV0",
+            ),
+            (
+                "struct",
+                "OwnerBoundCoreAuthorizedValidatorTransitionWriteSealV0",
+            ),
+            ("enum", "AppliedCoreAuthorizedNonRuntimePayloadV0"),
+            (
+                "enum",
+                "OwnerBoundCoreAuthorizedNonRuntimeFamilyWriteSealV0",
+            ),
+            ("enum", "FailedCoreAuthorizedNonRuntimeFamilyWriteSealV0"),
+        ] {
+            for visibility in ["pub ", "pub(crate) ", "pub(super) "] {
+                assert!(
+                    !implementation_source
+                        .contains(&format!("{visibility}{kind} {capability}")),
+                    "staged non-runtime capability gained visibility: {visibility}{kind} {capability}"
+                );
             }
         }
 
@@ -13001,6 +13650,454 @@ mod tests {
     }
 
     #[test]
+    fn production_cursor_advances_two_ordered_poco_operations_on_one_evolving_prefix() {
+        let store = test_store_with_poco_application_authority();
+        let base = fixture_profile(store.parent_state_root, 0);
+        let (source_projection, exact_inner) =
+            author_two_valid_poco_application_operations(&store, &base);
+        let exact_outer = exact_inner
+            .iter()
+            .enumerate()
+            .map(|(index, raw)| {
+                signed_envelope_bytes(
+                    TEST_CHAIN.as_str(),
+                    format!("native-poco-successive-{index}"),
+                    81,
+                    "did:operator:1",
+                    "operator",
+                    u64::try_from(index + 1).unwrap(),
+                    1_700_000_000_000,
+                    1_700_000_100_000,
+                    crate::poco_application::POCO_APPLICATION_OPERATION_PAYLOAD_TYPE_V0,
+                    raw,
+                )
+            })
+            .collect::<Vec<_>>();
+        let profile = replace_profile_transactions(base, exact_outer.clone());
+        let open = open_core_authorized_regular_transaction_cursor_v0(
+            &test_native_validation_host(&store),
+            core_validation_request(&profile),
+        )
+        .expect("open successive PoCO cursor");
+        let open = advance_next_production_non_runtime_payload(open);
+        assert_eq!(open.next_transaction_index, 1);
+        assert_eq!(open.applied_non_runtime.len(), 1);
+        assert_eq!(
+            open.poco_prefix.as_ref().unwrap().overlay.operation_count(),
+            1
+        );
+        let open = advance_next_production_non_runtime_payload(open);
+        assert_eq!(open.next_transaction_index, 2);
+        assert_eq!(open.applied_non_runtime.len(), 2);
+        assert!(open.applied.is_empty());
+        assert!(open.changes.is_empty());
+        let prefix = open.poco_prefix.as_ref().expect("retain final PoCO prefix");
+        assert_eq!(prefix.overlay.operation_count(), 2);
+        let source_revision =
+            crate::poco_application::PocoApplicationOperationV0::decode_exact(&exact_inner[0])
+                .unwrap()
+                .expected_state_revision();
+        assert_eq!(prefix.overlay.expected_state_revision(), source_revision);
+        assert!(exact_inner.iter().all(|raw| {
+            crate::poco_application::PocoApplicationOperationV0::decode_exact(raw)
+                .map(|operation| operation.expected_state_revision() == source_revision)
+                .unwrap_or(false)
+        }));
+        assert_eq!(prefix.plan.operation_count(), 2);
+        assert!(prefix.plan.binds_exact_operations_v0(&exact_inner));
+        let expected_writes =
+            crate::poco_transition::auth_writes_from_sealed_poco_application_v0(&prefix.plan)
+                .expect("rederive complete PoCO prefix writes");
+        assert_eq!(prefix.writes, expected_writes);
+        for (expected_index, applied) in open.applied_non_runtime.iter().enumerate() {
+            match applied {
+                super::AppliedCoreAuthorizedNonRuntimePayloadV0::PocoApplication {
+                    index,
+                    exact_outer_bytes,
+                    exact_inner_bytes,
+                    ..
+                } => {
+                    assert_eq!(*index, u32::try_from(expected_index).unwrap());
+                    assert_eq!(exact_outer_bytes, &exact_outer[expected_index]);
+                    assert_eq!(exact_inner_bytes, &exact_inner[expected_index]);
+                }
+                super::AppliedCoreAuthorizedNonRuntimePayloadV0::ValidatorTransition { .. } => {
+                    panic!("successive PoCO provenance changed family")
+                }
+            }
+        }
+        assert_eq!(store.store.active_runtime_snapshot_pins_for_test_v0(), 1);
+        assert_eq!(
+            load_test_authenticated_poco_projection(&store),
+            source_projection
+        );
+        drop(open);
+        assert_eq!(store.store.active_runtime_snapshot_pins_for_test_v0(), 0);
+    }
+
+    #[test]
+    fn production_second_poco_duplicate_closes_with_first_prefix_retained() {
+        let store = test_store_with_poco_application_authority();
+        let base = fixture_profile(store.parent_state_root, 0);
+        let (_, exact_inner) = author_valid_poco_application_operation(&store, &base);
+        let exact_outer = (0..2)
+            .map(|index| {
+                signed_envelope_bytes(
+                    TEST_CHAIN.as_str(),
+                    format!("native-poco-duplicate-{index}"),
+                    81,
+                    "did:operator:1",
+                    "operator",
+                    index + 1,
+                    1_700_000_000_000,
+                    1_700_000_100_000,
+                    crate::poco_application::POCO_APPLICATION_OPERATION_PAYLOAD_TYPE_V0,
+                    &exact_inner,
+                )
+            })
+            .collect::<Vec<_>>();
+        let profile = replace_profile_transactions(base, exact_outer);
+        let open = open_core_authorized_regular_transaction_cursor_v0(
+            &test_native_validation_host(&store),
+            core_validation_request(&profile),
+        )
+        .expect("open duplicate PoCO cursor");
+        let open = advance_next_production_non_runtime_payload(open);
+        let routed = match prepare_next_core_authorized_regular_payload_v0(open)
+            .expect("prepare duplicate second PoCO payload")
+        {
+            PreparedCoreAuthorizedRegularPayloadV0::NonRuntime(routed) => routed,
+            PreparedCoreAuthorizedRegularPayloadV0::Runtime(_) => {
+                panic!("duplicate second PoCO payload entered runtime")
+            }
+        };
+        let decoded = decode_dispatched_core_authorized_non_runtime_payload_v0(
+            dispatch_core_authorized_non_runtime_payload_v0(routed),
+        )
+        .expect("strict-decode duplicate second PoCO payload");
+        let failed = authorize_and_execute_decoded_core_non_runtime_family_v0(decoded)
+            .err()
+            .expect("duplicate second PoCO operation must fail");
+        let closed = finish_failed_core_authorized_non_runtime_family_attempt_v0(failed);
+        let owner = match *closed {
+            ClosedFailedCoreAuthorizedNonRuntimeFamilyAttemptV0::PocoApplication {
+                owner,
+                cause:
+                    ClosedCoreAuthorizedNonRuntimeFamilyAttemptCauseV0::Attempt(
+                        CoreAuthorizedNonRuntimeFamilyAttemptCauseV0::DeterministicallyInvalid(
+                            CoreAuthorizedNonRuntimeFamilyDeterministicInvalidV0::PocoOperation(
+                                crate::poco_application::PocoApplicationDeterministicInvalidV0::DuplicateOperation,
+                            ),
+                        ),
+                    ),
+                ..
+            } => owner,
+            _ => panic!("duplicate second PoCO operation changed failure classification"),
+        };
+        assert_eq!(owner.cursor_next_transaction_index, 1);
+        assert_eq!(owner.decoded_next_transaction_index, 2);
+        assert_eq!(owner.applied_non_runtime.len(), 1);
+        let prefix = owner
+            .poco_prefix
+            .as_ref()
+            .expect("retain first PoCO prefix");
+        assert_eq!(prefix.overlay.operation_count(), 1);
+        assert_eq!(prefix.plan.operation_count(), 1);
+        drop(owner);
+        assert_eq!(store.store.active_runtime_snapshot_pins_for_test_v0(), 0);
+    }
+
+    #[test]
+    fn production_second_poco_seal_rejects_prior_prefix_write_drift_before_advance() {
+        let store = test_store_with_poco_application_authority();
+        let base = fixture_profile(store.parent_state_root, 0);
+        let (source_projection, exact_inner) =
+            author_two_valid_poco_application_operations(&store, &base);
+        let exact_outer = exact_inner
+            .iter()
+            .enumerate()
+            .map(|(index, raw)| {
+                signed_envelope_bytes(
+                    TEST_CHAIN.as_str(),
+                    format!("native-poco-prefix-drift-{index}"),
+                    81,
+                    "did:operator:1",
+                    "operator",
+                    u64::try_from(index + 1).unwrap(),
+                    1_700_000_000_000,
+                    1_700_000_100_000,
+                    crate::poco_application::POCO_APPLICATION_OPERATION_PAYLOAD_TYPE_V0,
+                    raw,
+                )
+            })
+            .collect();
+        let profile = replace_profile_transactions(base, exact_outer);
+        let open = open_core_authorized_regular_transaction_cursor_v0(
+            &test_native_validation_host(&store),
+            core_validation_request(&profile),
+        )
+        .expect("open prior-prefix-drift cursor");
+        let mut open = advance_next_production_non_runtime_payload(open);
+        open.poco_prefix
+            .as_mut()
+            .expect("first PoCO prefix")
+            .writes
+            .clear();
+        let routed = match prepare_next_core_authorized_regular_payload_v0(open)
+            .expect("prepare second PoCO after prior-prefix drift")
+        {
+            PreparedCoreAuthorizedRegularPayloadV0::NonRuntime(routed) => routed,
+            PreparedCoreAuthorizedRegularPayloadV0::Runtime(_) => {
+                panic!("second PoCO after prior-prefix drift entered runtime")
+            }
+        };
+        let decoded = decode_dispatched_core_authorized_non_runtime_payload_v0(
+            dispatch_core_authorized_non_runtime_payload_v0(routed),
+        )
+        .expect("strict-decode second PoCO after prior-prefix drift");
+        let attempted = authorize_and_execute_decoded_core_non_runtime_family_v0(decoded)
+            .expect("family apply uses the still-valid unsealed PoCO prefix");
+        let failed = seal_core_authorized_non_runtime_family_writes_v0(attempted)
+            .err()
+            .expect("prior prefix write drift must fail-stop during whole-prefix seal");
+        assert!(matches!(
+            failed,
+            super::FailedCoreAuthorizedNonRuntimeFamilyWriteSealV0::PocoApplication {
+                reason: CoreAuthorizedNonRuntimeWriteSealInvariantV0::OwnerBinding,
+                ..
+            }
+        ));
+        let closed = finish_failed_core_authorized_non_runtime_family_write_seal_v0(failed);
+        let owner = match *closed {
+            ClosedFailedCoreAuthorizedNonRuntimeFamilyWriteSealV0::PocoApplication {
+                owner,
+                cause:
+                    ClosedCoreAuthorizedNonRuntimeFamilyWriteSealCauseV0::Seal(
+                        CoreAuthorizedNonRuntimeWriteSealInvariantV0::OwnerBinding,
+                    ),
+                ..
+            } => owner,
+            _ => panic!("prior PoCO prefix write drift changed failure classification"),
+        };
+        assert_eq!(owner.cursor_next_transaction_index, 1);
+        assert_eq!(owner.decoded_next_transaction_index, 2);
+        assert_eq!(owner.applied_non_runtime.len(), 1);
+        assert!(owner.poco_prefix.is_some());
+        drop(owner);
+        assert_eq!(store.store.active_runtime_snapshot_pins_for_test_v0(), 0);
+        assert_eq!(
+            load_test_authenticated_poco_projection(&store),
+            source_projection
+        );
+    }
+
+    #[test]
+    fn production_runtime_between_poco_operations_preserves_prefix_and_runtime_delta() {
+        let store = test_store_with_poco_application_authority();
+        let base = fixture_profile(store.parent_state_root, 0);
+        let first_runtime = base.body.application_payload().transactions()[0].clone();
+        let (_, exact_inner) = author_two_valid_poco_application_operations(&store, &base);
+        let first_poco = signed_envelope_bytes(
+            TEST_CHAIN.as_str(),
+            "native-poco-runtime-poco-first".to_string(),
+            81,
+            "did:operator:1",
+            "operator",
+            1,
+            1_700_000_000_000,
+            1_700_000_100_000,
+            crate::poco_application::POCO_APPLICATION_OPERATION_PAYLOAD_TYPE_V0,
+            &exact_inner[0],
+        );
+        let second_poco = signed_envelope_bytes(
+            TEST_CHAIN.as_str(),
+            "native-poco-runtime-poco-second".to_string(),
+            81,
+            "did:operator:1",
+            "operator",
+            2,
+            1_700_000_000_000,
+            1_700_000_100_000,
+            crate::poco_application::POCO_APPLICATION_OPERATION_PAYLOAD_TYPE_V0,
+            &exact_inner[1],
+        );
+        let profile =
+            replace_profile_transactions(base, vec![first_poco, first_runtime, second_poco]);
+        let open = open_core_authorized_regular_transaction_cursor_v0(
+            &test_native_validation_host(&store),
+            core_validation_request(&profile),
+        )
+        .expect("open PoCO/runtime/PoCO cursor");
+        let open = advance_next_production_non_runtime_payload(open);
+        let open = attempt_next_production_runtime_transaction(open)
+            .expect("execute runtime item between PoCO operations");
+        assert_eq!(open.next_transaction_index, 2);
+        assert_eq!(open.applied.len(), 1);
+        assert_eq!(open.applied_non_runtime.len(), 1);
+        assert_eq!(
+            open.poco_prefix.as_ref().unwrap().overlay.operation_count(),
+            1
+        );
+        let open = advance_next_production_non_runtime_payload(open);
+        assert_eq!(open.next_transaction_index, 3);
+        assert_eq!(open.applied.len(), 1);
+        assert_eq!(open.applied_non_runtime.len(), 2);
+        assert!(!open.changes.is_empty());
+        assert!(!open.applied[0].runtime_receipt.mutations.is_empty());
+        let prefix = open
+            .poco_prefix
+            .as_ref()
+            .expect("retain mixed final PoCO prefix");
+        assert_eq!(prefix.overlay.operation_count(), 2);
+        assert!(prefix.plan.binds_exact_operations_v0(&exact_inner));
+        assert_eq!(store.store.active_runtime_snapshot_pins_for_test_v0(), 1);
+        assert_runtime_fixture_objects_absent(&store.store);
+        drop(open);
+        assert_eq!(store.store.active_runtime_snapshot_pins_for_test_v0(), 0);
+    }
+
+    #[test]
+    fn production_poco_validator_poco_keeps_independent_staged_prefixes() {
+        let store = test_store_with_poco_application_authority();
+        let base = fixture_profile(store.parent_state_root, 0);
+        let (_, poco_inner) = author_two_valid_poco_application_operations(&store, &base);
+        let validator_id = "native-poco-validator-poco";
+        let validator_inner = valid_validator_transition_bytes(&store, validator_id);
+        let first_poco = signed_envelope_bytes(
+            TEST_CHAIN.as_str(),
+            "native-poco-validator-poco-first".to_string(),
+            81,
+            "did:operator:1",
+            "operator",
+            1,
+            1_700_000_000_000,
+            1_700_000_100_000,
+            crate::poco_application::POCO_APPLICATION_OPERATION_PAYLOAD_TYPE_V0,
+            &poco_inner[0],
+        );
+        let validator = signed_envelope_bytes(
+            TEST_CHAIN.as_str(),
+            validator_id.to_string(),
+            81,
+            "did:operator:1",
+            "operator",
+            1,
+            1_700_000_000_000,
+            1_700_000_100_000,
+            crate::validator_lifecycle::VALIDATOR_TRANSITION_PAYLOAD_TYPE_V1,
+            &validator_inner,
+        );
+        let second_poco = signed_envelope_bytes(
+            TEST_CHAIN.as_str(),
+            "native-poco-validator-poco-second".to_string(),
+            81,
+            "did:operator:1",
+            "operator",
+            2,
+            1_700_000_000_000,
+            1_700_000_100_000,
+            crate::poco_application::POCO_APPLICATION_OPERATION_PAYLOAD_TYPE_V0,
+            &poco_inner[1],
+        );
+        let profile = replace_profile_transactions(base, vec![first_poco, validator, second_poco]);
+        let open = open_core_authorized_regular_transaction_cursor_v0(
+            &test_native_validation_host(&store),
+            core_validation_request(&profile),
+        )
+        .expect("open PoCO/validator/PoCO cursor");
+        let open = advance_next_production_non_runtime_payload(open);
+        let open = advance_next_production_non_runtime_payload(open);
+        assert_eq!(open.next_transaction_index, 2);
+        assert_eq!(
+            open.validator_prefix
+                .as_ref()
+                .and_then(|prefix| prefix.lifecycle.pending_transition.as_ref())
+                .map(|pending| pending.transition_id.as_str()),
+            Some(validator_id)
+        );
+        let open = advance_next_production_non_runtime_payload(open);
+        assert_eq!(open.next_transaction_index, 3);
+        assert_eq!(open.applied_non_runtime.len(), 3);
+        let poco_prefix = open.poco_prefix.as_ref().expect("retain final PoCO prefix");
+        assert_eq!(poco_prefix.overlay.operation_count(), 2);
+        assert!(poco_prefix.plan.binds_exact_operations_v0(&poco_inner));
+        let validator_prefix = open
+            .validator_prefix
+            .as_ref()
+            .expect("retain staged validator prefix");
+        assert_eq!(validator_prefix.lifecycle.governance_sequence, 1);
+        assert_eq!(
+            validator_prefix
+                .lifecycle
+                .pending_transition
+                .as_ref()
+                .unwrap()
+                .transition_id,
+            validator_id
+        );
+        assert_eq!(store.validator_lifecycle.governance_sequence, 0);
+        assert!(store.validator_lifecycle.pending_transition.is_none());
+        assert_eq!(store.store.active_runtime_snapshot_pins_for_test_v0(), 1);
+        drop(open);
+        assert_eq!(store.store.active_runtime_snapshot_pins_for_test_v0(), 0);
+    }
+
+    #[test]
+    fn production_runtime_failure_retains_prior_poco_prefix_but_destroys_runtime_delta() {
+        let store = test_store_with_poco_application_authority();
+        let base = fixture_profile(store.parent_state_root, 0);
+        let (_, exact_inner) = author_valid_poco_application_operation(&store, &base);
+        let poco_outer = signed_envelope_bytes(
+            TEST_CHAIN.as_str(),
+            "native-poco-before-runtime-reject".to_string(),
+            81,
+            "did:operator:1",
+            "operator",
+            1,
+            1_700_000_000_000,
+            1_700_000_100_000,
+            crate::poco_application::POCO_APPLICATION_OPERATION_PAYLOAD_TYPE_V0,
+            &exact_inner,
+        );
+        let reject_profile = fixture_profile_with_second_runtime_reject(store.parent_state_root);
+        let rejected_runtime = reject_profile.body.application_payload().transactions()[1].clone();
+        let profile = replace_profile_transactions(base, vec![poco_outer, rejected_runtime]);
+        let open = open_core_authorized_regular_transaction_cursor_v0(
+            &test_native_validation_host(&store),
+            core_validation_request(&profile),
+        )
+        .expect("open PoCO/runtime-reject cursor");
+        let open = advance_next_production_non_runtime_payload(open);
+        assert_eq!(open.next_transaction_index, 1);
+        assert_eq!(open.applied_non_runtime.len(), 1);
+        let failed = attempt_next_production_runtime_transaction(open)
+            .err()
+            .expect("runtime after PoCO must reject without enough balance");
+        let closed = finish_failed_core_authorized_regular_runtime_attempt_v0(failed);
+        assert_eq!(closed.failed_transaction_index, 1);
+        assert_eq!(closed.applied_non_runtime.len(), 1);
+        let prefix = closed
+            .poco_prefix
+            .as_ref()
+            .expect("closed runtime failure retains prior PoCO prefix");
+        assert_eq!(prefix.overlay.operation_count(), 1);
+        assert_eq!(prefix.plan.operation_count(), 1);
+        assert!(prefix
+            .plan
+            .binds_exact_operations_v0(std::slice::from_ref(&exact_inner)));
+        assert!(closed.validator_prefix.is_none());
+        assert!(matches!(
+            closed.cause,
+            ClosedCoreAuthorizedRegularRuntimeAttemptCauseV0::Attempt(
+                CoreAuthorizedRegularRuntimeStepFailureV0::Runtime(_)
+            )
+        ));
+        drop(closed);
+        assert_eq!(store.store.active_runtime_snapshot_pins_for_test_v0(), 0);
+        assert_runtime_fixture_objects_absent(&store.store);
+    }
+
+    #[test]
     fn production_mixed_runtime_then_poco_write_seal_retains_prior_private_evidence() {
         let store = test_store_with_poco_application_authority();
         let base = fixture_profile(store.parent_state_root, 0);
@@ -13881,6 +14978,121 @@ mod tests {
         assert_eq!(store.store.active_runtime_snapshot_pins_for_test_v0(), 0);
         assert_eq!(store.validator_lifecycle.governance_sequence, 0);
         assert!(store.validator_lifecycle.pending_transition.is_none());
+    }
+
+    #[test]
+    fn production_second_validator_transition_uses_staged_pending_lifecycle() {
+        let store = test_store();
+        let first_id = "native-validator-successive-first";
+        let second_id = "native-validator-successive-second";
+        let first_inner = valid_validator_transition_bytes(&store, first_id);
+        let mut second_transition: crate::validator_lifecycle::ValidatorSetTransitionV1 =
+            serde_json::from_slice(&valid_validator_transition_bytes(&store, second_id)).unwrap();
+        second_transition.new_validator_proofs[0].signature_hex = "00".repeat(64);
+        let second_inner = serde_json::to_vec(&second_transition).unwrap();
+        let first_outer = signed_envelope_bytes(
+            TEST_CHAIN.as_str(),
+            first_id.to_string(),
+            81,
+            "did:operator:1",
+            "operator",
+            1,
+            1_700_000_000_000,
+            1_700_000_100_000,
+            crate::validator_lifecycle::VALIDATOR_TRANSITION_PAYLOAD_TYPE_V1,
+            &first_inner,
+        );
+        let second_outer = signed_envelope_bytes(
+            TEST_CHAIN.as_str(),
+            second_id.to_string(),
+            81,
+            "did:operator:1",
+            "operator",
+            2,
+            1_700_000_000_000,
+            1_700_000_100_000,
+            crate::validator_lifecycle::VALIDATOR_TRANSITION_PAYLOAD_TYPE_V1,
+            &second_inner,
+        );
+        let profile = replace_profile_transactions(
+            fixture_profile(store.parent_state_root, 0),
+            vec![first_outer, second_outer],
+        );
+        let open = open_core_authorized_regular_transaction_cursor_v0(
+            &test_native_validation_host(&store),
+            core_validation_request(&profile),
+        )
+        .expect("open successive validator cursor");
+        let open = advance_next_production_non_runtime_payload(open);
+        assert_eq!(open.next_transaction_index, 1);
+        assert_eq!(open.applied_non_runtime.len(), 1);
+        let prefix = open
+            .validator_prefix
+            .as_ref()
+            .expect("retain first staged validator lifecycle");
+        assert_eq!(prefix.lifecycle.governance_sequence, 1);
+        assert_eq!(
+            prefix
+                .lifecycle
+                .pending_transition
+                .as_ref()
+                .expect("first transition is pending")
+                .transition_id,
+            first_id
+        );
+
+        let routed = match prepare_next_core_authorized_regular_payload_v0(open)
+            .expect("prepare second validator payload")
+        {
+            PreparedCoreAuthorizedRegularPayloadV0::NonRuntime(routed) => routed,
+            PreparedCoreAuthorizedRegularPayloadV0::Runtime(_) => {
+                panic!("second validator payload entered runtime")
+            }
+        };
+        let decoded = decode_dispatched_core_authorized_non_runtime_payload_v0(
+            dispatch_core_authorized_non_runtime_payload_v0(routed),
+        )
+        .expect("strict-decode second validator payload");
+        let failed = authorize_and_execute_decoded_core_non_runtime_family_v0(decoded)
+            .err()
+            .expect("second validator transition must observe staged pending state");
+        let closed = finish_failed_core_authorized_non_runtime_family_attempt_v0(failed);
+        let owner = match *closed {
+            ClosedFailedCoreAuthorizedNonRuntimeFamilyAttemptV0::ValidatorTransition {
+                owner,
+                cause:
+                    ClosedCoreAuthorizedNonRuntimeFamilyAttemptCauseV0::Attempt(
+                        CoreAuthorizedNonRuntimeFamilyAttemptCauseV0::DeterministicallyInvalid(
+                            CoreAuthorizedNonRuntimeFamilyDeterministicInvalidV0::ValidatorTransition(
+                                crate::validator_lifecycle::ValidatorTransitionDeterministicInvalidV1::PendingTransitionExists,
+                            ),
+                        ),
+                    ),
+                ..
+            } => owner,
+            _ => panic!("second validator transition did not freeze staged pending priority"),
+        };
+        assert_eq!(owner.cursor_next_transaction_index, 1);
+        assert_eq!(owner.decoded_next_transaction_index, 2);
+        assert_eq!(owner.applied_non_runtime.len(), 1);
+        let prefix = owner
+            .validator_prefix
+            .as_ref()
+            .expect("closed owner retains first validator prefix");
+        assert_eq!(prefix.lifecycle.governance_sequence, 1);
+        assert_eq!(
+            prefix
+                .lifecycle
+                .pending_transition
+                .as_ref()
+                .unwrap()
+                .transition_id,
+            first_id
+        );
+        assert_eq!(store.validator_lifecycle.governance_sequence, 0);
+        assert!(store.validator_lifecycle.pending_transition.is_none());
+        drop(owner);
+        assert_eq!(store.store.active_runtime_snapshot_pins_for_test_v0(), 0);
     }
 
     #[test]

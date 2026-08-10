@@ -576,7 +576,8 @@ envelope/context, cursor, and snapshot as an opaque routing carrier; it neither
 advances nor becomes terminal invalid.
 
 This is still not terminal production execution authority. The production
-cursor can perform real runtime attempts and success-only advance. Before
+cursor can perform real runtime attempts plus owner-bound successive
+PoCO/validator attempts, family-local sealing, and success-only advance. Before
 planning a complete runtime-only body, it replays each retained real
 `RuntimeReceipt` mutation set separately and sequentially against the same
 authenticated snapshot. A key may recur in different transactions only when
@@ -610,9 +611,14 @@ cannot form an input. This is type-level callback material only: it does not
 call `Core::step`, persist or deliver an outbox, or provide
 `AuthorizedNativeCheckpointExecutionV0`, checkpoint, or ABCI authority. The
 pre-terminal failure carriers share that private,
-non-cloneable, non-serializable, no-parts/no-standalone-cause boundary. Plan
-application/persistence and head update, successive-family cursor integration
-and complete-body planning/persistence,
+non-cloneable, non-serializable, no-parts/no-standalone-cause boundary.
+Successive PoCO/validator items now use that same owning cursor: exact prior
+non-runtime provenance stays private, PoCO continues from one evolving unsealed
+overlay, validator scheduling continues from the staged lifecycle, each latest
+whole-prefix plan/write replaces its predecessor, and the internal index moves
+only after execution plus sealing succeed. This remains open-snapshot staged
+execution, not a receipt or complete-body plan. Plan application/persistence
+and head update, complete-body mixed-family write merge/planning/persistence,
 speculative-parent overlays, host callback-outbox persistence/delivery, actual
 Core callback execution, ABCI wiring, and cross-process rollback
 protection remain hard open prerequisites before any terminal/Core callback
@@ -650,11 +656,13 @@ unsupported from the exact verified envelope while retaining its cursor and
 snapshot. A second consuming carrier strictly decodes canonical PoCO operations
 and validator transitions, binds the retained target-height or
 schema/chain/command/operator facts, and retains the exact family owner on
-failure. A further consuming attempt now constructs PoCO authority state only
-from the pinned authenticated projection and schedules validator transitions
-only against the retained authenticated lifecycle; it accepts no supplied
-projection/lifecycle loader and rebinds decoded PoCO values to their exact raw
-bytes. Semantic/family failures explicitly finish the owned snapshot before
+failure. A further consuming attempt constructs the first PoCO authority state
+only from the pinned authenticated projection and schedules the first validator
+transition only against the retained authenticated lifecycle; later same-block
+operations continue from the cursor's evolving PoCO overlay or staged validator
+lifecycle. It accepts no supplied projection/lifecycle loader and rebinds
+decoded PoCO values to their exact raw bytes. Semantic/family failures
+explicitly finish the owned snapshot before
 exposing a closed owner, with finish failure taking priority. Authenticated
 source loss and independently proven authorization rejects are typed. Validator
 scheduling now has closed deterministic/invariant reasons, checked nonce/delay
@@ -1008,12 +1016,13 @@ still outranks the pending reason; no diagnostic string participates. Success
 retains the open snapshot, decoded owner, and unsealed PoCO overlay or scheduled
 lifecycle. An owner-bound single-attempt seal now additionally carries either a
 PoCO plan produced from a bounded overlay clone plus canonical namespace writes,
-or a rescheduled canonical validator singleton write. It neither closes the
-snapshot nor advances the cursor, and it is not a complete-body JMT or
-persistence authority. Multi-operation cursor integration, complete-body PoCO
-resealing and exact JMT planning, success-only advance, receipts, durable
-terminal artifacts/outbox, callback delivery, and Core/ABCI integration remain
-open.
+or a rescheduled canonical validator singleton write. A private consuming
+advance now folds that seal into the snapshot-owning cursor, retains the
+evolving overlay/lifecycle and exact item owner, replaces the latest prefix
+write, and advances only on success. It does not close the snapshot and is not
+a complete-body JMT or persistence authority. Complete-body mixed-family write
+merge and exact JMT planning, receipts, durable terminal artifacts/outbox,
+callback delivery, and Core/ABCI integration remain open.
 Runtime resource estimation now has a separate fallible API and opaque
 estimate-failure token, preserving deterministic versus typed state-read
 failure without creating a receipt or mutation; operator recovery estimation

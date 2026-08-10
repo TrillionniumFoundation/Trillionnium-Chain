@@ -1053,8 +1053,9 @@ epoch prune, and Core transition remain open.
    for valid or computed-root-invalid outcomes while refusing any input for a
    comparator invariant. Neither bridge calls `Core::step` or provides
    `AuthorizedNativeCheckpointExecutionV0`, checkpoint, or ABCI authority. JMT
-   plan application/persistence, successive-family cursor/body completion,
-   success receipts, durable evaluated-artifact deduplication, and host
+   plan application/persistence, complete-body mixed-family write merge and
+   exact JMT planning, success receipts, durable evaluated-artifact
+   deduplication, and host
    outbox/Core/ABCI callback delivery remain open. The Core
    block holder now matches the frozen proto body projection instead of carrying
    one legacy opaque payload: exact application-payload CEV0 plus ordered exact
@@ -1223,7 +1224,7 @@ epoch prune, and Core transition remain open.
    and four-root comparison now come through one bounded production
    join/cursor chain.
    Synthetic genesis/native state authority, speculative-parent overlays,
-   multi-operation non-runtime cursor advance, complete-body PoCO resealing and
+   complete-body mixed-family write merge, final PoCO prefix consumption and
    exact JMT planning/application/state persistence, durable host
    callback-outbox scheduling/delivery, actual Core callback execution, and
    ABCI wiring
@@ -1233,9 +1234,11 @@ epoch prune, and Core transition remain open.
    its consuming semantic step now strict-decodes canonical PoCO operations and
    validator transitions, binds retained envelope/context facts, and preserves
    the exact owner on mismatch. A subsequent consuming attempt constructs the
-   PoCO overlay from the pinned authenticated projection and schedules a
-   validator transition against the retained authenticated lifecycle, while
-   binding the decoded PoCO value back to the exact retained raw bytes. No
+   first PoCO overlay from the pinned authenticated projection and schedules a
+   first validator transition against the retained authenticated lifecycle;
+   later same-block operations continue only from the cursor's evolving PoCO
+   overlay or staged validator lifecycle. Every attempt binds the decoded PoCO
+   value back to the exact retained raw bytes. No
    caller-supplied source loader exists. Every semantic/family failure explicitly
    finishes the snapshot before exposing its closed owner, with finish failure
    outranking the pending cause. Authenticated-source loss and independently
@@ -1574,13 +1577,20 @@ epoch prune, and Core transition remain open.
    PoCO seals a bounded overlay clone into its high-level plan and canonical
    namespace writes while retaining the original unsealed overlay; validator
    transitions are rescheduled from the retained authenticated lifecycle and
-   encoded as one canonical singleton write. Success does not finish the
-   snapshot or advance the cursor. Seal/rebind/encoding failures retain the
-   exact attempted owner, fail stop, and are still overridden by a typed
-   snapshot-finish failure. Multi-operation cursor integration, complete-body
-   PoCO resealing and exact JMT planning, success receipts, durable terminal
-   artifacts/outbox, and host/Core delivery remain next, and no phase is
-   complete.
+   encoded as one canonical singleton write. Successive-family cursor
+   integration is now closed as well: one consuming owner-only advance appends
+   private exact non-runtime provenance, carries the evolving unsealed PoCO
+   overlay or staged validator lifecycle, replaces the latest whole-prefix
+   seal/write, and updates the internal index only after execution and sealing
+   succeed. Two real PoCO operations, including a runtime-interleaved path,
+   prove one ordered prefix and one retained final whole-prefix clone seal;
+   duplicate second-PoCO and staged validator-pending failures retain the first
+   prefix and close the snapshot without applying or publishing writes.
+   Seal/rebind/encoding failures retain the exact
+   attempted owner, fail stop, and are still overridden by a typed snapshot-
+   finish failure. Complete-body mixed-family write merge and exact JMT
+   planning, success receipts, durable terminal artifacts/outbox, and host/Core
+   delivery remain next, and no phase is complete.
    The consuming mapping accepts only the exact closed owner. Eight semantic-
    decode reasons plus every PoCO and validator deterministic/invariant reason,
    operator authorization, and unsupported-family rejection have explicit
@@ -1682,13 +1692,14 @@ epoch prune, and Core transition remain open.
    authority, retention/live-reference rejection, and authenticated settlement/
    lifecycle companion corruption while preserving nested nullifier and
    postcondition reasons; no unclassified certificate-prune leaf remains.
-   Isolated operation-family leaf reasons and snapshot-closed non-runtime
-   failure promotion are now closed. The single-attempt success carrier still
-   owns the open snapshot and unsealed overlay/scheduled lifecycle beside an
-   owner-bound family-local sealed plan/write. It does not integrate successive
-   family operations into the cursor, advance, form a complete-body exact JMT
-   plan, emit a success receipt, persist a terminal artifact, or deliver a
-   result.
+   Isolated operation-family leaf reasons, snapshot-closed non-runtime failure
+   promotion, family-local sealing, and successive-family cursor integration
+   are now closed. The open cursor privately retains exact prior item
+   provenance, the evolving unsealed PoCO overlay, the staged validator
+   lifecycle, and only the latest whole-prefix plan/write; success advances the
+   index without closing the snapshot. It still cannot form a complete-body
+   exact JMT plan, emit a success receipt, persist a terminal artifact, or
+   deliver a result.
    The separate private callback-shaped bridge maps `Proposal` only to
    `PayloadValidated` and `Synced` only to `SyncedPayloadValidated`, but it
    does not call a Core instance, persist state, deliver a callback, or enter
