@@ -1300,7 +1300,31 @@ epoch prune, and Core transition remain open.
    minus-one collisions freeze signed/authenticated, proof count/family/ID/root,
    counter, structural, body/carrier, exact-boundary and full-overlay rollback
    behavior; proof-key and encoding faults remain decode-first. The same
-   closure also extends to `OpenChallenge` and `ReleaseSettlement` below.
+   closure also extends to `OpenChallenge`, `ReleaseSettlement`, and
+   `RevokeConsumerKey` below.
+   `RevokeConsumerKey` now closes the zero-delta authority replacement path.
+   Structural and exact owner/context/revision/replay checks are followed by
+   canonical consumer/key IDs and exact authority-slot presence, then consumer-
+   key/defensive-total caps; a legal full four-record family remains admissible.
+   Unsupported fields, target height/public key/derived decision, authenticated
+   complete-row/predecessor agreement, signed revoked successor preparation,
+   and accumulator count `+1` follow before clone. Its prepared carrier freezes
+   the full source row including authorization provenance and nonce watermarks,
+   the successor and exact slot, the raw semantic owner, family-2 decision
+   nullifier, and prepared semantic CAS. Only proof verification, slot
+   replacement, and semantic mutation remain late. A real three-block fixture
+   commits four distinct authorizations, accepts one real certificate to create
+   a nonempty target nonce watermark, then revokes that row from the
+   authenticated following block, proving sorted 4-to-4, count `+1`, kind-2
+   revision `+1`, watermark/untouched-row preservation, and seal. The collision
+   matrix freezes shallow ID/missing-fact, the family cap, unsupported/signed/
+   authenticated/counter, proof count/family/ID/root, structural, raw-semantic-
+   owner/carrier/source-watermark drift, and rollback priority. Defensive-total
+   arithmetic remains in shared capacity preflight rather than an independently
+   reachable revocation collision. Its synthetic fifth row is an
+   unreachable handler-boundary witness, not authenticated capacity evidence;
+   frozen vectors and valid wire bytes stay unchanged and raw proof-key/
+   encoding faults remain decode-first.
    `ReleaseSettlement` now carries one exact funded-unused reservation/delete
    transition across capacity admission and execution. Structural and exact
    owner/context/revision/replay, signed certificate ID, and exact reservation
@@ -1384,7 +1408,7 @@ epoch prune, and Core transition remain open.
    metadata only and therefore proves handler ordering, not a second
    authenticated success path. H1 and register/rotate H2 bytes remain
    unchanged. Capacity-order closure is now limited to `DefineMeterPolicy`,
-   `FundSettlement`, `AuthorizeConsumerKey`, `OpenChallenge`,
+   `FundSettlement`, `AuthorizeConsumerKey`, `RevokeConsumerKey`, `OpenChallenge`,
    `ReleaseSettlement`, `ResolveChallenge`, `ProposeGovernance`,
    `ApproveGovernance`, `RegisterFutureCandidate`, `RegisterValidator`, and
    `RotateValidator`; all other families remain audit-open before terminal

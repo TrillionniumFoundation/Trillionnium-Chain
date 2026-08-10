@@ -2926,12 +2926,23 @@ enum PreparedCapacityOperationV0 {
     RegisterFutureCandidate(Box<PreparedFutureCandidateV0>),
     RegisterValidator(Box<PreparedRegisterValidatorV0>),
     RotateValidator(Box<PreparedRotateValidatorV0>),
+    RevokeConsumerKey(Box<PreparedRevokeConsumerKeyV0>),
 }
 
 #[derive(Debug)]
 struct PreparedAuthorizeConsumerKeyV0 {
     authority: ConsumerKeyAuthorityV0,
     expected_nullifiers: [(PocoNullifierFamilyV0, [u8; 32]); 2],
+    changes: Vec<PreparedSemanticChangeV0>,
+}
+
+#[derive(Debug)]
+struct PreparedRevokeConsumerKeyV0 {
+    authority_index: usize,
+    expected_authority: ConsumerKeyAuthorityV0,
+    successor_authority: ConsumerKeyAuthorityV0,
+    expected_semantic_changes: Vec<RawSemanticChangeV0>,
+    expected_nullifiers: [(PocoNullifierFamilyV0, [u8; 32]); 1],
     changes: Vec<PreparedSemanticChangeV0>,
 }
 
@@ -3210,6 +3221,7 @@ fn validate_operation_capacity_before_clone_v0(
     let mut resolve_certificate_index = None;
     let mut approval_proposal_index = None;
     let mut approval_finalized_insertion = None;
+    let mut revoke_consumer_key_index = None;
     match &operation.body {
         PocoApplicationOperationBodyV0::AuthorizeConsumerKey {
             consumer_id_hex,
@@ -3638,8 +3650,39 @@ fn validate_operation_capacity_before_clone_v0(
         PocoApplicationOperationBodyV0::RotateValidator { .. } => {
             validate_validator_consensus_key_before_clone_v0(authority, operation)?;
         }
-        PocoApplicationOperationBodyV0::RevokeConsumerKey { .. }
-        | PocoApplicationOperationBodyV0::RetireMeterPolicy { .. }
+        PocoApplicationOperationBodyV0::RevokeConsumerKey {
+            consumer_id_hex,
+            consumer_key_id_hex,
+            ..
+        } => {
+            exact_opaque_hex(consumer_id_hex).map_err(|_| {
+                deterministic_application_error_v0(
+                    PocoApplicationDeterministicInvalidV0::SemanticTransition,
+                )
+            })?;
+            exact_opaque_hex(consumer_key_id_hex).map_err(|_| {
+                deterministic_application_error_v0(
+                    PocoApplicationDeterministicInvalidV0::SemanticTransition,
+                )
+            })?;
+            revoke_consumer_key_index = Some(
+                authority
+                    .consumer_keys
+                    .binary_search_by(|item| {
+                        (
+                            item.consumer_id_hex.as_str(),
+                            item.consumer_key_id_hex.as_str(),
+                        )
+                            .cmp(&(consumer_id_hex.as_str(), consumer_key_id_hex.as_str()))
+                    })
+                    .map_err(|_| {
+                        deterministic_application_error_v0(
+                            PocoApplicationDeterministicInvalidV0::MissingRequiredAuthorityFact,
+                        )
+                    })?,
+            );
+        }
+        PocoApplicationOperationBodyV0::RetireMeterPolicy { .. }
         | PocoApplicationOperationBodyV0::RevokeValidator { .. } => {}
     }
 
@@ -3742,6 +3785,24 @@ fn validate_operation_capacity_before_clone_v0(
     if target_total > MAX_TOTAL_AUTHORITY_RECORDS {
         return Err(deterministic_application_error_v0(
             PocoApplicationDeterministicInvalidV0::ProtocolWindowOrCap,
+        ));
+    }
+    if matches!(
+        &operation.body,
+        PocoApplicationOperationBodyV0::RevokeConsumerKey { .. }
+    ) {
+        prepared = PreparedCapacityOperationV0::RevokeConsumerKey(Box::new(
+            prepare_revoke_consumer_key_v0(
+                context,
+                overlay,
+                operation,
+                decision_preimage,
+                revoke_consumer_key_index.ok_or_else(|| {
+                    invariant_application_error_v0(
+                        PocoApplicationInvariantV0::DerivedMutationPostcondition,
+                    )
+                })?,
+            )?,
         ));
     }
     if let PocoApplicationOperationBodyV0::ReleaseSettlement {
@@ -4097,6 +4158,7 @@ fn apply_operation_v0(
         PocoApplicationOperationBodyV0::ResolveChallenge { .. } => 9,
         PocoApplicationOperationBodyV0::ProposeGovernance { .. } => 10,
         PocoApplicationOperationBodyV0::ApproveGovernance { .. } => 11,
+        PocoApplicationOperationBodyV0::RevokeConsumerKey { .. } => 12,
         _ => 0,
     };
     let actual_prepared_tag = match &prepared {
@@ -4112,6 +4174,7 @@ fn apply_operation_v0(
         PreparedCapacityOperationV0::ResolveChallenge(_) => 9,
         PreparedCapacityOperationV0::ProposeGovernance(_) => 10,
         PreparedCapacityOperationV0::ApproveGovernance(_) => 11,
+        PreparedCapacityOperationV0::RevokeConsumerKey(_) => 12,
     };
     if expected_prepared_tag != actual_prepared_tag {
         return Err(invariant_application_error_v0(
@@ -4130,6 +4193,7 @@ fn apply_operation_v0(
             | PocoApplicationOperationBodyV0::ResolveChallenge { .. }
             | PocoApplicationOperationBodyV0::ProposeGovernance { .. }
             | PocoApplicationOperationBodyV0::ApproveGovernance { .. }
+            | PocoApplicationOperationBodyV0::RevokeConsumerKey { .. }
     );
     if !field_admission_was_preclone {
         validate_operation_field_admission_v0(operation)?;
@@ -4146,12 +4210,14 @@ fn apply_operation_v0(
         mut prepared_future_candidate,
         mut prepared_register_validator,
         mut prepared_rotate_validator,
+        mut prepared_revoke_consumer_key,
     ) = match prepared {
         PreparedCapacityOperationV0::Deferred => (
-            None, None, None, None, None, None, None, None, None, None, None,
+            None, None, None, None, None, None, None, None, None, None, None, None,
         ),
         PreparedCapacityOperationV0::AuthorizeConsumerKey(prepared) => (
             Some(*prepared),
+            None,
             None,
             None,
             None,
@@ -4175,11 +4241,13 @@ fn apply_operation_v0(
             None,
             None,
             None,
+            None,
         ),
         PreparedCapacityOperationV0::FundSettlement(prepared) => (
             None,
             None,
             Some(*prepared),
+            None,
             None,
             None,
             None,
@@ -4201,6 +4269,7 @@ fn apply_operation_v0(
             None,
             None,
             None,
+            None,
         ),
         PreparedCapacityOperationV0::OpenChallenge(prepared) => (
             None,
@@ -4208,6 +4277,7 @@ fn apply_operation_v0(
             None,
             None,
             Some(*prepared),
+            None,
             None,
             None,
             None,
@@ -4227,6 +4297,7 @@ fn apply_operation_v0(
             None,
             None,
             None,
+            None,
         ),
         PreparedCapacityOperationV0::ProposeGovernance(prepared) => (
             None,
@@ -4236,6 +4307,7 @@ fn apply_operation_v0(
             None,
             None,
             Some(*prepared),
+            None,
             None,
             None,
             None,
@@ -4253,6 +4325,7 @@ fn apply_operation_v0(
             None,
             None,
             None,
+            None,
         ),
         PreparedCapacityOperationV0::RegisterFutureCandidate(prepared) => (
             None,
@@ -4264,6 +4337,7 @@ fn apply_operation_v0(
             None,
             None,
             Some(*prepared),
+            None,
             None,
             None,
         ),
@@ -4279,8 +4353,24 @@ fn apply_operation_v0(
             None,
             Some(*prepared),
             None,
+            None,
         ),
         PreparedCapacityOperationV0::RotateValidator(prepared) => (
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            Some(*prepared),
+            None,
+        ),
+        PreparedCapacityOperationV0::RevokeConsumerKey(prepared) => (
+            None,
             None,
             None,
             None,
@@ -4306,31 +4396,17 @@ fn apply_operation_v0(
                 })?,
             )
         }
-        PocoApplicationOperationBodyV0::RevokeConsumerKey {
-            consumer_id_hex,
-            consumer_key_id_hex,
-            public_key_hex,
-            active_from_height,
-            revoked_at_height,
-            decision_id_hex,
-        } => apply_revoke_consumer_key_v0(
-            context,
-            overlay,
-            operation,
-            decision_preimage,
-            consumer_id_hex,
-            consumer_key_id_hex,
-            public_key_hex,
-            *active_from_height,
-            *revoked_at_height,
-            decision_id_hex,
-        )
-        .map_err(|error| {
-            preserve_application_failure_or_deterministic_v0(
-                error,
-                PocoApplicationDeterministicInvalidV0::SemanticTransition,
+        PocoApplicationOperationBodyV0::RevokeConsumerKey { .. } => {
+            apply_prepared_revoke_consumer_key_v0(
+                overlay,
+                operation,
+                prepared_revoke_consumer_key.take().ok_or_else(|| {
+                    invariant_application_error_v0(
+                        PocoApplicationInvariantV0::DerivedMutationPostcondition,
+                    )
+                })?,
             )
-        }),
+        }
         PocoApplicationOperationBodyV0::PruneRevokedConsumerKey {
             consumer_id_hex,
             consumer_key_id_hex,
@@ -4599,19 +4675,13 @@ fn apply_prepared_authorize_consumer_key_v0(
     apply_prepared_changes(overlay, prepared.changes, false)
 }
 
-#[allow(clippy::too_many_arguments)]
-fn apply_revoke_consumer_key_v0(
+fn prepare_revoke_consumer_key_v0(
     context: &AuthenticatedPocoApplicationContextV0,
-    overlay: &mut PocoApplicationOverlayV0,
+    overlay: &PocoApplicationOverlayV0,
     operation: &PocoApplicationOperationV0,
     preimage: [u8; 32],
-    consumer_id_hex: &str,
-    consumer_key_id_hex: &str,
-    public_key_hex: &str,
-    active_from_height: u64,
-    revoked_at_height: u64,
-    decision_id_hex: &str,
-) -> Result<()> {
+    authority_index: usize,
+) -> Result<PreparedRevokeConsumerKeyV0> {
     let signed_semantic = || {
         deterministic_application_error_v0(
             PocoApplicationDeterministicInvalidV0::SemanticTransition,
@@ -4619,7 +4689,21 @@ fn apply_revoke_consumer_key_v0(
     };
     let authenticated_overlay =
         || invariant_application_error_v0(PocoApplicationInvariantV0::AuthenticatedOverlay);
-    if revoked_at_height != context.target_height.get() {
+    validate_operation_field_admission_v0(operation)?;
+    let PocoApplicationOperationBodyV0::RevokeConsumerKey {
+        consumer_id_hex,
+        consumer_key_id_hex,
+        public_key_hex,
+        active_from_height,
+        revoked_at_height,
+        decision_id_hex,
+    } = &operation.body
+    else {
+        return Err(invariant_application_error_v0(
+            PocoApplicationInvariantV0::DerivedMutationPostcondition,
+        ));
+    };
+    if *revoked_at_height != context.target_height.get() {
         return Err(signed_semantic());
     }
     let consumer_id = exact_opaque_hex(consumer_id_hex).map_err(|_| signed_semantic())?;
@@ -4631,24 +4715,20 @@ fn apply_revoke_consumer_key_v0(
     let identity = joined_identity(&[&consumer_id, &consumer_key_id]);
     let decision = require_derived_decision_id(preimage, b"revoke-consumer-key", decision_id_hex)
         .map_err(|_| signed_semantic())?;
-    let authority_index = overlay
+    let expected_authority = overlay
         .authority
         .consumer_keys
-        .binary_search_by(|item| {
-            (
-                item.consumer_id_hex.as_str(),
-                item.consumer_key_id_hex.as_str(),
-            )
-                .cmp(&(consumer_id_hex, consumer_key_id_hex))
+        .get(authority_index)
+        .filter(|item| {
+            item.consumer_id_hex == *consumer_id_hex
+                && item.consumer_key_id_hex == *consumer_key_id_hex
         })
-        .map_err(|_| {
-            deterministic_application_error_v0(
-                PocoApplicationDeterministicInvalidV0::MissingRequiredAuthorityFact,
-            )
+        .cloned()
+        .ok_or_else(|| {
+            invariant_application_error_v0(PocoApplicationInvariantV0::DerivedMutationPostcondition)
         })?;
-    let key_authority = overlay.authority.consumer_keys[authority_index].clone();
-    let authority_public_key =
-        exact_hash32_hex(&key_authority.public_key_hex).map_err(|_| authenticated_overlay())?;
+    let authority_public_key = exact_hash32_hex(&expected_authority.public_key_hex)
+        .map_err(|_| authenticated_overlay())?;
     let [raw_change] = operation.semantic_changes.as_slice() else {
         return Err(signed_semantic());
     };
@@ -4693,13 +4773,13 @@ fn apply_revoke_consumer_key_v0(
         _ => return Err(authenticated_overlay()),
     };
     if old_key != authority_public_key
-        || old_active != key_authority.active_from_height
-        || old_revoked_at != key_authority.revoked_at_height
+        || old_active != expected_authority.active_from_height
+        || old_revoked_at != expected_authority.revoked_at_height
     {
         return Err(authenticated_overlay());
     }
     if public_key != authority_public_key
-        || active_from_height != key_authority.active_from_height
+        || *active_from_height != expected_authority.active_from_height
         || old_revoked_at.is_some()
     {
         return Err(signed_semantic());
@@ -4726,20 +4806,87 @@ fn apply_revoke_consumer_key_v0(
             active_from: new_active,
             revoked_at: Some(revoked_at),
         }) if *new_key == public_key
-            && *new_active == active_from_height
+            && *new_active == *active_from_height
             && *revoked_at == context.target_height.get() => {}
         _ => return Err(signed_semantic()),
+    }
+    overlay.accumulator.count().checked_add(1).ok_or_else(|| {
+        invariant_application_error_v0(PocoApplicationInvariantV0::ProtocolCounterExhausted)
+    })?;
+    let mut successor_authority = expected_authority.clone();
+    successor_authority.revoked_at_height = Some(context.target_height.get());
+    successor_authority.revocation_decision_id_hex = Some(decision_id_hex.to_string());
+    Ok(PreparedRevokeConsumerKeyV0 {
+        authority_index,
+        expected_authority,
+        successor_authority,
+        expected_semantic_changes: operation.semantic_changes.clone(),
+        expected_nullifiers: [(PocoNullifierFamilyV0::ConsumerKeyDecision, decision)],
+        changes,
+    })
+}
+
+fn apply_prepared_revoke_consumer_key_v0(
+    overlay: &mut PocoApplicationOverlayV0,
+    operation: &PocoApplicationOperationV0,
+    prepared: PreparedRevokeConsumerKeyV0,
+) -> Result<()> {
+    let body_matches = match &operation.body {
+        PocoApplicationOperationBodyV0::RevokeConsumerKey {
+            consumer_id_hex,
+            consumer_key_id_hex,
+            public_key_hex,
+            active_from_height,
+            revoked_at_height,
+            decision_id_hex,
+        } => {
+            consumer_id_hex == &prepared.expected_authority.consumer_id_hex
+                && consumer_key_id_hex == &prepared.expected_authority.consumer_key_id_hex
+                && public_key_hex == &prepared.expected_authority.public_key_hex
+                && *active_from_height == prepared.expected_authority.active_from_height
+                && Some(*revoked_at_height) == prepared.successor_authority.revoked_at_height
+                && prepared
+                    .successor_authority
+                    .revocation_decision_id_hex
+                    .as_deref()
+                    == Some(decision_id_hex.as_str())
+        }
+        _ => false,
+    };
+    let mut expected_successor = prepared.expected_authority.clone();
+    expected_successor.revoked_at_height = prepared.successor_authority.revoked_at_height;
+    expected_successor.revocation_decision_id_hex = prepared
+        .successor_authority
+        .revocation_decision_id_hex
+        .clone();
+    let source_row_matches = overlay
+        .authority
+        .consumer_keys
+        .get(prepared.authority_index)
+        == Some(&prepared.expected_authority);
+    let semantic_owner_matches = operation.semantic_changes == prepared.expected_semantic_changes;
+    let change_sources_match = prepared.changes.iter().all(|change| {
+        let key = (change.kind, change.logical_key.clone());
+        overlay.entries.get(&key) == change.expected_value.as_ref()
+            && !overlay.mutations.contains_key(&key)
+    });
+    if !body_matches
+        || expected_successor != prepared.successor_authority
+        || !source_row_matches
+        || !semantic_owner_matches
+        || !change_sources_match
+    {
+        return Err(invariant_application_error_v0(
+            PocoApplicationInvariantV0::DerivedMutationPostcondition,
+        ));
     }
     insert_nullifiers(
         overlay,
         &operation.nullifier_insertions,
-        &[(PocoNullifierFamilyV0::ConsumerKeyDecision, decision)],
+        &prepared.expected_nullifiers,
     )?;
-    overlay.authority.consumer_keys[authority_index].revoked_at_height =
-        Some(context.target_height.get());
-    overlay.authority.consumer_keys[authority_index].revocation_decision_id_hex =
-        Some(decision_id_hex.to_string());
-    apply_prepared_changes(overlay, changes, false)
+    overlay.authority.consumer_keys[prepared.authority_index] = prepared.successor_authority;
+    apply_prepared_changes(overlay, prepared.changes, false)
 }
 
 fn apply_prune_revoked_consumer_key_v0(
@@ -15739,6 +15886,535 @@ mod tests {
         assert_eq!(block.operation_count(), 0);
         assert!(block.overlay.operation_ids.is_empty());
         assert!(block.overlay.mutations.is_empty());
+    }
+
+    #[test]
+    fn revoke_consumer_key_preparation_freezes_zero_delta_capacity_and_late_proof() {
+        use PocoApplicationApplyFailureV0::{DeterministicallyInvalid, Invariant};
+        use PocoApplicationDeterministicInvalidV0 as Invalid;
+        use PocoApplicationInvariantV0 as InvariantReason;
+
+        let (baseline, raw, operation) =
+            fixture_authoring::revoke_consumer_key_full_capacity_fixture_v0().unwrap();
+        assert_eq!(
+            baseline.overlay.authority.consumer_keys.len(),
+            MAX_CONSUMER_KEY_AUTHORITIES,
+        );
+        assert_eq!(baseline.operation_count(), 0);
+        assert_eq!(
+            PocoApplicationOperationV0::decode_exact(&raw).unwrap(),
+            operation,
+        );
+        let PocoApplicationOperationBodyV0::RevokeConsumerKey {
+            consumer_id_hex,
+            consumer_key_id_hex,
+            public_key_hex,
+            active_from_height,
+            revoked_at_height,
+            decision_id_hex,
+        } = &operation.body
+        else {
+            unreachable!();
+        };
+        let target_index = baseline
+            .overlay
+            .authority
+            .consumer_keys
+            .binary_search_by(|item| {
+                (
+                    item.consumer_id_hex.as_str(),
+                    item.consumer_key_id_hex.as_str(),
+                )
+                    .cmp(&(consumer_id_hex.as_str(), consumer_key_id_hex.as_str()))
+            })
+            .unwrap();
+        let source_rows = baseline.overlay.authority.consumer_keys.clone();
+        let source_target = source_rows[target_index].clone();
+        assert!(
+            !source_target.nonce_watermarks.is_empty(),
+            "authenticated full-capacity predecessor must carry a real nonce watermark"
+        );
+        let semantic_key = (
+            PocoSnapshotEntryKindV0::ConsumerKeyAuthorization,
+            exact_hash32_hex(&operation.semantic_changes[0].logical_key_hex)
+                .unwrap()
+                .to_vec(),
+        );
+        let source_semantic = owned_semantic_parts(
+            semantic_key.0,
+            &semantic_key.1,
+            baseline.overlay.entries.get(&semantic_key).unwrap(),
+        )
+        .unwrap();
+        let accumulator_before = baseline.overlay.accumulator.count();
+
+        let mut canonical = baseline.clone();
+        canonical.apply_decoded_exact(&raw, &operation).unwrap();
+        assert_eq!(canonical.operation_count(), 1);
+        assert_eq!(
+            canonical.overlay.authority.consumer_keys.len(),
+            MAX_CONSUMER_KEY_AUTHORITIES,
+        );
+        assert!(canonical
+            .overlay
+            .authority
+            .consumer_keys
+            .windows(2)
+            .all(|pair| {
+                (&pair[0].consumer_id_hex, &pair[0].consumer_key_id_hex)
+                    < (&pair[1].consumer_id_hex, &pair[1].consumer_key_id_hex)
+            }));
+        for (index, row) in canonical.overlay.authority.consumer_keys.iter().enumerate() {
+            if index == target_index {
+                let mut expected = source_target.clone();
+                expected.revoked_at_height = Some(*revoked_at_height);
+                expected.revocation_decision_id_hex = Some(decision_id_hex.clone());
+                assert_eq!(row, &expected);
+                assert_eq!(row.nonce_watermarks, source_target.nonce_watermarks);
+            } else {
+                assert_eq!(row, &source_rows[index]);
+            }
+        }
+        assert_eq!(
+            canonical.overlay.accumulator.count(),
+            accumulator_before + 1,
+        );
+        let target_semantic = owned_semantic_parts(
+            semantic_key.0,
+            &semantic_key.1,
+            canonical.overlay.entries.get(&semantic_key).unwrap(),
+        )
+        .unwrap();
+        assert_eq!(
+            target_semantic.revision,
+            source_semantic.revision.checked_add(1).unwrap(),
+        );
+        assert_eq!(target_semantic.identity, source_semantic.identity);
+        assert!(matches!(
+            target_semantic.fact,
+            SemanticFactV0::ConsumerKeyAuthorization {
+                public_key,
+                active_from,
+                revoked_at: Some(height),
+            } if hex::encode(public_key) == *public_key_hex
+                && active_from == *active_from_height
+                && height == *revoked_at_height
+        ));
+        assert_eq!(canonical.seal().unwrap().operation_count(), 1);
+
+        let assert_failure =
+            |mut candidate: PocoApplicationBlockOverlayV0,
+             candidate_operation: PocoApplicationOperationV0,
+             expected: PocoApplicationApplyFailureV0| {
+                let candidate_raw = serde_json::to_vec(&candidate_operation).unwrap();
+                let before = candidate.clone();
+                assert_eq!(
+                    candidate.apply_decoded_exact(&candidate_raw, &candidate_operation),
+                    Err(expected),
+                );
+                assert_block_overlay_unchanged(&candidate, &before);
+            };
+
+        let mut malformed_consumer = operation.clone();
+        let PocoApplicationOperationBodyV0::RevokeConsumerKey {
+            consumer_id_hex, ..
+        } = &mut malformed_consumer.body
+        else {
+            unreachable!();
+        };
+        *consumer_id_hex = "0".to_string();
+        assert_failure(
+            baseline.clone(),
+            malformed_consumer,
+            DeterministicallyInvalid(Invalid::SemanticTransition),
+        );
+
+        let mut missing = baseline.clone();
+        missing.overlay.authority.consumer_keys[target_index].consumer_id_hex = "fe".repeat(32);
+        missing
+            .overlay
+            .authority
+            .consumer_keys
+            .sort_by(|left, right| {
+                (&left.consumer_id_hex, &left.consumer_key_id_hex)
+                    .cmp(&(&right.consumer_id_hex, &right.consumer_key_id_hex))
+            });
+        let mut later_bad_height = operation.clone();
+        let PocoApplicationOperationBodyV0::RevokeConsumerKey {
+            revoked_at_height, ..
+        } = &mut later_bad_height.body
+        else {
+            unreachable!();
+        };
+        *revoked_at_height = baseline.context.target_height.get() + 1;
+        later_bad_height.nullifier_insertions.clear();
+        assert_failure(
+            missing,
+            later_bad_height,
+            DeterministicallyInvalid(Invalid::MissingRequiredAuthorityFact),
+        );
+
+        let mut synthetic_over_capacity = baseline.clone();
+        let mut fifth = source_rows.last().unwrap().clone();
+        fifth.consumer_id_hex = "ff".repeat(31) + "01";
+        fifth.consumer_key_id_hex = "ff".repeat(31) + "02";
+        synthetic_over_capacity
+            .overlay
+            .authority
+            .consumer_keys
+            .push(fifth);
+        synthetic_over_capacity
+            .overlay
+            .authority
+            .consumer_keys
+            .sort_by(|left, right| {
+                (&left.consumer_id_hex, &left.consumer_key_id_hex)
+                    .cmp(&(&right.consumer_id_hex, &right.consumer_key_id_hex))
+            });
+        assert_eq!(
+            synthetic_over_capacity
+                .overlay
+                .authority
+                .consumer_keys
+                .len(),
+            MAX_CONSUMER_KEY_AUTHORITIES + 1,
+        );
+        let mut synthetic_later_fault = operation.clone();
+        synthetic_later_fault.nullifier_non_membership_checks =
+            vec![synthetic_later_fault.nullifier_insertions[0].clone()];
+        assert_failure(
+            synthetic_over_capacity,
+            synthetic_later_fault,
+            DeterministicallyInvalid(Invalid::ProtocolWindowOrCap),
+        );
+
+        let mut unsupported = operation.clone();
+        unsupported.nullifier_non_membership_checks =
+            vec![unsupported.nullifier_insertions[0].clone()];
+        let PocoApplicationOperationBodyV0::RevokeConsumerKey {
+            revoked_at_height, ..
+        } = &mut unsupported.body
+        else {
+            unreachable!();
+        };
+        *revoked_at_height = baseline.context.target_height.get() + 1;
+        assert_failure(
+            baseline.clone(),
+            unsupported,
+            DeterministicallyInvalid(Invalid::NullifierProof),
+        );
+
+        let mut zero_public_key = operation.clone();
+        let PocoApplicationOperationBodyV0::RevokeConsumerKey { public_key_hex, .. } =
+            &mut zero_public_key.body
+        else {
+            unreachable!();
+        };
+        *public_key_hex = "00".repeat(32);
+        assert_failure(
+            baseline.clone(),
+            zero_public_key,
+            DeterministicallyInvalid(Invalid::SemanticTransition),
+        );
+
+        let mut wrong_decision = operation.clone();
+        let PocoApplicationOperationBodyV0::RevokeConsumerKey {
+            decision_id_hex, ..
+        } = &mut wrong_decision.body
+        else {
+            unreachable!();
+        };
+        *decision_id_hex = "ee".repeat(32);
+        assert_failure(
+            baseline.clone(),
+            wrong_decision,
+            DeterministicallyInvalid(Invalid::SemanticTransition),
+        );
+
+        let mut malformed_authority = baseline.clone();
+        malformed_authority.overlay.authority.consumer_keys[target_index].public_key_hex =
+            "00".to_string();
+        assert_failure(
+            malformed_authority,
+            operation.clone(),
+            Invariant(InvariantReason::AuthenticatedOverlay),
+        );
+
+        let mut missing_predecessor = baseline.clone();
+        missing_predecessor.overlay.entries.remove(&semantic_key);
+        assert_failure(
+            missing_predecessor,
+            operation.clone(),
+            Invariant(InvariantReason::AuthenticatedOverlay),
+        );
+
+        let mut exhausted = baseline.clone();
+        exhausted.overlay.accumulator =
+            PocoNullifierAccumulatorV0::from_authenticated_parts([2; 32], u64::MAX).unwrap();
+        exhausted
+            .overlay
+            .authority
+            .set_accumulator(exhausted.overlay.accumulator);
+        let mut later_bad_proof = operation.clone();
+        later_bad_proof.nullifier_insertions.clear();
+        assert_failure(
+            exhausted,
+            later_bad_proof,
+            Invariant(InvariantReason::ProtocolCounterExhausted),
+        );
+
+        let mut bad_shape = operation.clone();
+        bad_shape.nullifier_insertions.clear();
+        assert_failure(
+            baseline.clone(),
+            bad_shape,
+            DeterministicallyInvalid(Invalid::NullifierProof),
+        );
+
+        let mut bad_subject = operation.clone();
+        let subject = [0xa5; 32];
+        let family = PocoNullifierFamilyV0::MeterDecision;
+        let key = derive_poco_nullifier_key_v0(family, subject);
+        let siblings = std::array::from_fn(|level| {
+            crate::poco_nullifier::poco_nullifier_default_hash_v0(level).unwrap()
+        });
+        bad_subject.nullifier_insertions[0] = RawNullifierInsertionV0 {
+            family: family.code(),
+            identifier_hex: hex::encode(subject),
+            proof_hex: hex::encode(PocoNullifierProofV0::new(key, siblings).canonical_bytes()),
+        };
+        assert_failure(
+            baseline.clone(),
+            bad_subject,
+            DeterministicallyInvalid(Invalid::NullifierProof),
+        );
+
+        let mut bad_root = operation.clone();
+        poison_raw_nullifier_roots_v0(&mut bad_root.nullifier_insertions);
+        assert_failure(
+            baseline.clone(),
+            bad_root.clone(),
+            DeterministicallyInvalid(Invalid::NullifierNonMembershipRootMismatch),
+        );
+
+        let bad_root_raw = serde_json::to_vec(&bad_root).unwrap();
+        let mut operation_full = baseline.clone();
+        operation_full.raw_operations = vec![Vec::new(); MAX_APPLICATION_OPERATIONS_PER_BLOCK];
+        let before = operation_full.clone();
+        assert_eq!(
+            operation_full.apply_decoded_exact(&bad_root_raw, &bad_root),
+            Err(DeterministicallyInvalid(Invalid::PerBlockCapacity)),
+        );
+        assert_block_overlay_unchanged(&operation_full, &before);
+
+        let mut byte_full = baseline.clone();
+        byte_full.aggregate_operation_bytes = MAX_POCO_SNAPSHOT_BUNDLE_BYTES;
+        let before = byte_full.clone();
+        assert_eq!(
+            byte_full.apply_decoded_exact(&bad_root_raw, &bad_root),
+            Err(DeterministicallyInvalid(Invalid::PerBlockCapacity)),
+        );
+        assert_block_overlay_unchanged(&byte_full, &before);
+
+        let decision_preimage = decision_preimage_digest_v0(&baseline.context, &operation).unwrap();
+        let prepared = validate_operation_capacity_before_clone_v0(
+            &baseline.context,
+            &baseline.overlay,
+            &operation,
+            decision_preimage,
+        )
+        .unwrap();
+        let mut cross_family = operation.clone();
+        cross_family.body = PocoApplicationOperationBodyV0::PruneExpiredCertificate {
+            certificate_id_hex: "11".repeat(32),
+        };
+        let mut candidate = baseline.overlay.clone();
+        let before = candidate.clone();
+        let error = apply_operation_v0(
+            &baseline.context,
+            &mut candidate,
+            &cross_family,
+            decision_preimage,
+            prepared,
+        )
+        .unwrap_err();
+        assert_eq!(
+            error
+                .downcast_ref::<PocoApplicationApplyFailureV0>()
+                .copied(),
+            Some(Invariant(InvariantReason::DerivedMutationPostcondition)),
+        );
+        assert_eq!(candidate.entries, before.entries);
+        assert_eq!(candidate.authority, before.authority);
+        assert_eq!(candidate.accumulator, before.accumulator);
+        assert!(candidate.mutations.is_empty());
+        assert!(before.mutations.is_empty());
+
+        let prepared = validate_operation_capacity_before_clone_v0(
+            &baseline.context,
+            &baseline.overlay,
+            &operation,
+            decision_preimage,
+        )
+        .unwrap();
+        let mut semantic_owner_drift = operation.clone();
+        semantic_owner_drift.semantic_changes[0].next_value_hex = None;
+        let mut candidate = baseline.overlay.clone();
+        let before = candidate.clone();
+        let error = apply_operation_v0(
+            &baseline.context,
+            &mut candidate,
+            &semantic_owner_drift,
+            decision_preimage,
+            prepared,
+        )
+        .unwrap_err();
+        assert_eq!(
+            error
+                .downcast_ref::<PocoApplicationApplyFailureV0>()
+                .copied(),
+            Some(Invariant(InvariantReason::DerivedMutationPostcondition)),
+        );
+        assert_eq!(candidate.entries, before.entries);
+        assert_eq!(candidate.authority, before.authority);
+        assert_eq!(candidate.accumulator, before.accumulator);
+        assert!(candidate.mutations.is_empty());
+        assert!(before.mutations.is_empty());
+
+        let prepared = validate_operation_capacity_before_clone_v0(
+            &baseline.context,
+            &baseline.overlay,
+            &operation,
+            decision_preimage,
+        )
+        .unwrap();
+        let mut body_drift = operation.clone();
+        let PocoApplicationOperationBodyV0::RevokeConsumerKey { public_key_hex, .. } =
+            &mut body_drift.body
+        else {
+            unreachable!();
+        };
+        *public_key_hex = "ab".repeat(32);
+        let mut candidate = baseline.overlay.clone();
+        let before = candidate.clone();
+        let error = apply_operation_v0(
+            &baseline.context,
+            &mut candidate,
+            &body_drift,
+            decision_preimage,
+            prepared,
+        )
+        .unwrap_err();
+        assert_eq!(
+            error
+                .downcast_ref::<PocoApplicationApplyFailureV0>()
+                .copied(),
+            Some(Invariant(InvariantReason::DerivedMutationPostcondition)),
+        );
+        assert_eq!(candidate.entries, before.entries);
+        assert_eq!(candidate.authority, before.authority);
+        assert_eq!(candidate.accumulator, before.accumulator);
+        assert!(candidate.mutations.is_empty());
+        assert!(before.mutations.is_empty());
+
+        let prepared = validate_operation_capacity_before_clone_v0(
+            &baseline.context,
+            &baseline.overlay,
+            &operation,
+            decision_preimage,
+        )
+        .unwrap();
+        let mut candidate = baseline.overlay.clone();
+        candidate.authority.consumer_keys[target_index].nonce_watermarks[0].max_accepted_nonce =
+            candidate.authority.consumer_keys[target_index].nonce_watermarks[0]
+                .max_accepted_nonce
+                .checked_add(1)
+                .unwrap();
+        let before = candidate.clone();
+        let mut late_proof_drift = operation.clone();
+        poison_raw_nullifier_roots_v0(&mut late_proof_drift.nullifier_insertions);
+        let error = apply_operation_v0(
+            &baseline.context,
+            &mut candidate,
+            &late_proof_drift,
+            decision_preimage,
+            prepared,
+        )
+        .unwrap_err();
+        assert_eq!(
+            error
+                .downcast_ref::<PocoApplicationApplyFailureV0>()
+                .copied(),
+            Some(Invariant(InvariantReason::DerivedMutationPostcondition)),
+        );
+        assert_eq!(candidate.entries, before.entries);
+        assert_eq!(candidate.authority, before.authority);
+        assert_eq!(candidate.accumulator, before.accumulator);
+        assert!(candidate.mutations.is_empty());
+        assert!(before.mutations.is_empty());
+
+        let prepared = validate_operation_capacity_before_clone_v0(
+            &baseline.context,
+            &baseline.overlay,
+            &operation,
+            decision_preimage,
+        )
+        .unwrap();
+        let mut candidate = baseline.overlay.clone();
+        candidate.authority.consumer_keys[target_index].authorization_decision_id_hex =
+            "cd".repeat(32);
+        let before = candidate.clone();
+        let mut proof_drift = operation.clone();
+        poison_raw_nullifier_roots_v0(&mut proof_drift.nullifier_insertions);
+        let error = apply_operation_v0(
+            &baseline.context,
+            &mut candidate,
+            &proof_drift,
+            decision_preimage,
+            prepared,
+        )
+        .unwrap_err();
+        assert_eq!(
+            error
+                .downcast_ref::<PocoApplicationApplyFailureV0>()
+                .copied(),
+            Some(Invariant(InvariantReason::DerivedMutationPostcondition)),
+        );
+        assert_eq!(candidate.entries, before.entries);
+        assert_eq!(candidate.authority, before.authority);
+        assert_eq!(candidate.accumulator, before.accumulator);
+        assert!(candidate.mutations.is_empty());
+        assert!(before.mutations.is_empty());
+
+        let prepared = validate_operation_capacity_before_clone_v0(
+            &baseline.context,
+            &baseline.overlay,
+            &operation,
+            decision_preimage,
+        )
+        .unwrap();
+        let mut candidate = baseline.overlay.clone();
+        candidate.entries.remove(&semantic_key);
+        let before = candidate.clone();
+        let error = apply_operation_v0(
+            &baseline.context,
+            &mut candidate,
+            &proof_drift,
+            decision_preimage,
+            prepared,
+        )
+        .unwrap_err();
+        assert_eq!(
+            error
+                .downcast_ref::<PocoApplicationApplyFailureV0>()
+                .copied(),
+            Some(Invariant(InvariantReason::DerivedMutationPostcondition)),
+        );
+        assert_eq!(candidate.entries, before.entries);
+        assert_eq!(candidate.authority, before.authority);
+        assert_eq!(candidate.accumulator, before.accumulator);
+        assert!(candidate.mutations.is_empty());
+        assert!(before.mutations.is_empty());
     }
 
     #[test]

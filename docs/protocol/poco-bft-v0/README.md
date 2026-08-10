@@ -716,8 +716,29 @@ record caps. Both insertion proofs and all authority/semantic mutation remain
 late on the cloned candidate. Canonical H1 apply/seal plus saturated/cap-minus-
 one collisions cover signed/authenticated, proof count/family/ID/root, counter,
 structural, body/carrier and full-overlay rollback boundaries; proof-key and
-encoding faults remain decode-first. The same closure also extends to open
-challenge and release settlement below;
+encoding faults remain decode-first. Consumer-key revocation now has the
+corresponding closed zero-delta replacement path. Structural and exact owner/
+context/revision/replay checks, canonical consumer/key IDs, and exact authority-
+slot presence precede the consumer-key and defensive-total record caps. At the
+legal full four-record boundary those caps pass; unsupported fields, target
+height/public key/derived decision, authenticated full-row/predecessor
+agreement, signed revoked successor preparation, and accumulator count `+1`
+then run before clone. The prepared carrier freezes the complete source and
+successor rows, exact slot, raw semantic owner, family-2 decision nullifier,
+and prepared semantic CAS. Only proof verification, slot replacement, and
+semantic mutation remain clone-late. A real three-block test authorizes and
+commits four distinct keys, accepts one certificate to create a nonempty
+target nonce watermark, then revokes that row from the authenticated following
+block, proving sorted 4-to-4, count `+1`, kind-2 revision `+1`, watermark and
+untouched-row preservation, and seal. Its collision matrix covers shallow ID/
+missing facts, the family cap, unsupported/signed/authenticated/counter
+failures, proof count/family/ID/root, structural bounds, raw-semantic-owner/
+carrier/source-watermark drift, and full rollback. Defensive-total arithmetic
+remains in shared capacity preflight rather than an independently reachable
+revocation collision. A synthetic fifth row is explicitly an unreachable handler-
+boundary cap witness, not authenticated success evidence; proof-key/encoding
+faults remain decode-first and frozen shared vectors stay byte-identical. The
+same closure also extends to open challenge and release settlement below;
 release settlement now carries one exact funded-unused reservation/delete
 transition across capacity admission. Structural and exact owner/context/
 revision/replay plus signed certificate ID and exact reservation lookup precede
@@ -795,6 +816,7 @@ compound active-reference collision is an authority-only handler-boundary
 priority witness, not another authenticated success fixture. H1 and register/
 rotate H2 bytes remain unchanged. Capacity-order closure is now
 limited to `DefineMeterPolicy`, `FundSettlement`, `AuthorizeConsumerKey`,
+`RevokeConsumerKey`,
 `OpenChallenge`, `ReleaseSettlement`, `ResolveChallenge`,
 `ProposeGovernance`, `ApproveGovernance`, `RegisterFutureCandidate`,
 `RegisterValidator`, and `RotateValidator`; every other family stays audit-open

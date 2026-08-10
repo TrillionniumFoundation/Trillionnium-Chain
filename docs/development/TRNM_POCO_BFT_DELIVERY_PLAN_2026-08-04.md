@@ -450,8 +450,35 @@ an earlier phase.
   authenticated faults, cap-versus-late proof count/family/ID/root faults, structural
   priority, counter exhaustion, exact-boundary success, body/carrier mismatch,
   and full-overlay rollback; raw proof-key/encoding faults remain
-  decode-first. The same closure also extends to `OpenChallenge` and
-  `ReleaseSettlement` below; the remaining operation families stay audit-open.
+  decode-first. The same closure also extends to `OpenChallenge`,
+  `ReleaseSettlement`, and consumer-key revocation below; the remaining
+  operation families stay audit-open.
+  `RevokeConsumerKey` now carries one exact full-row replacement and semantic
+  CAS across capacity admission and execution. Its frozen order is structural
+  and exact owner/context/revision/replay admission, canonical consumer/key IDs
+  and exact authority-slot presence, zero-delta consumer-key/defensive-total
+  record caps, then unsupported-field rejection, target-height/public-key/
+  derived-decision checks, authenticated authority/predecessor agreement,
+  signed revoked successor preparation, and accumulator count `+1`. The carrier
+  freezes the complete source row including authorization provenance and nonce
+  watermarks, its successor and slot, the exact raw semantic owner, the
+  family-2 decision nullifier, and the prepared semantic change. Only proof
+  verification, exact slot replacement, and prepared semantic mutation run on
+  the clone. A real three-block fixture
+  authorizes and commits four distinct keys, accepts a real certificate to
+  create a nonempty nonce watermark on the target row, then revokes that row
+  from the authenticated following block: the family stays 4-to-4 and sorted,
+  the watermark and untouched rows remain byte-exact, the nullifier count
+  advances by one, kind 2 advances one revision, and the block seals. Collision
+  tests freeze shallow-ID/negative-fact, the family cap, unsupported/signed/
+  authenticated/counter, proof count/family/ID/root, structural, body/raw-
+  semantic-owner/carrier/source-row including watermark drift, and full-overlay
+  rollback priorities. The defensive-total arithmetic remains covered by the
+  shared capacity preflight rather than an independently reachable revocation
+  collision. The deliberately injected fifth authority row is only an
+  unreachable handler-boundary cap witness, not authenticated capacity
+  evidence; raw proof-key/encoding faults remain decode-first and frozen shared
+  vectors remain byte-identical.
   `ReleaseSettlement` now carries one exact funded-unused reservation/delete
   transition across capacity admission and execution. Its frozen order is
   structural and exact owner/context/revision/replay admission, signed
@@ -544,6 +571,7 @@ an earlier phase.
   not an additional authenticated success fixture. The frozen H1 and register/
   rotate H2 shared vectors remain byte-identical. Capacity-order closure now
   covers `DefineMeterPolicy`, `FundSettlement`, `AuthorizeConsumerKey`,
+  `RevokeConsumerKey`,
   `OpenChallenge`, `ReleaseSettlement`, `ResolveChallenge`,
   `ProposeGovernance`, `ApproveGovernance`, `RegisterFutureCandidate`,
   `RegisterValidator`, and `RotateValidator`; all other families remain audit-

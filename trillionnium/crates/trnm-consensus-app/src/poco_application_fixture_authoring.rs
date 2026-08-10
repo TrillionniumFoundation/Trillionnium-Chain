@@ -1787,6 +1787,73 @@ fn revoke_consumer_key(
     Ok((built, next))
 }
 
+pub(super) fn revoke_consumer_key_full_capacity_fixture_v0() -> Result<(
+    PocoApplicationBlockOverlayV0,
+    Vec<u8>,
+    PocoApplicationOperationV0,
+)> {
+    let mut chain = authenticated_candidate_genesis_v0()?;
+    let fixtures = [
+        certificate_fixture_for_provider(&chain, b'a', 0, b"validator-a")?,
+        certificate_fixture_for_provider(&chain, b'b', 1, b"validator-b")?,
+        certificate_fixture_for_provider(&chain, b'c', 2, b"validator-c")?,
+        certificate_fixture_for_provider(&chain, b'd', 3, b"validator-d")?,
+    ];
+    let mut authorization_block = chain.start_overlay()?;
+    let mut nullifiers = chain.nullifiers.clone();
+    let mut first_funding_decision = None;
+    for (index, fixture) in fixtures.iter().enumerate() {
+        let (authorization, next) =
+            authorize_consumer_key(&authorization_block, fixture, &nullifiers)?;
+        authorization_block.apply_raw(&authorization.raw)?;
+        nullifiers = next;
+        if index == 0 {
+            let (meter, next) = define_meter(&authorization_block, fixture, &nullifiers)?;
+            authorization_block.apply_raw(&meter.raw)?;
+            nullifiers = next;
+            let (provider, next) =
+                register_provider(&authorization_block, &chain, fixture, &nullifiers)?;
+            authorization_block.apply_raw(&provider.raw)?;
+            nullifiers = next;
+            let (funding, next, funding_decision) =
+                fund_settlement(&authorization_block, fixture, &nullifiers)?;
+            authorization_block.apply_raw(&funding.raw)?;
+            nullifiers = next;
+            first_funding_decision = Some(funding_decision);
+        }
+    }
+    ensure!(
+        authorization_block.overlay.authority.consumer_keys.len() == MAX_CONSUMER_KEY_AUTHORITIES,
+        "revoke capacity fixture did not fill the consumer-key family"
+    );
+    chain.commit_block(authorization_block, nullifiers)?;
+
+    let mut acceptance_block = chain.start_overlay()?;
+    let (acceptance, nullifiers) = accept_certificate(
+        &acceptance_block,
+        &fixtures[0],
+        first_funding_decision.context("revoke capacity fixture lacks funding decision")?,
+        &chain.nullifiers,
+    )?;
+    acceptance_block.apply_raw(&acceptance.raw)?;
+    chain.commit_block(acceptance_block, nullifiers)?;
+
+    let block = chain.start_overlay()?;
+    ensure!(
+        block.overlay.authority.consumer_keys.len() == MAX_CONSUMER_KEY_AUTHORITIES,
+        "authenticated revoke source lost the full consumer-key family"
+    );
+    ensure!(
+        !block.overlay.authority.consumer_keys[0]
+            .nonce_watermarks
+            .is_empty(),
+        "authenticated revoke source lacks a real nonce watermark"
+    );
+    let (built, _) = revoke_consumer_key(&block, &fixtures[0], &chain.nullifiers)?;
+    let operation = PocoApplicationOperationV0::decode_exact(&built.raw)?;
+    Ok((block, built.raw, operation))
+}
+
 fn define_meter(
     block: &PocoApplicationBlockOverlayV0,
     fixture: &CertificateFixtureV0,
