@@ -312,6 +312,8 @@ jobs:
 
       - name: Run bounded formal gate
         working-directory: trillionnium-chain
+        env:
+          QUINT_HOME: ${{ runner.temp }}/quint-home
         run: bash ./scripts/ci/check_poco_bft_v0_formal.sh
 
   release-artifacts:
