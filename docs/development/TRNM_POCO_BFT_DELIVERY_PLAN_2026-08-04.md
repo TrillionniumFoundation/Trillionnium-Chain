@@ -661,14 +661,37 @@ an earlier phase.
   unchanged and are not cross-language `RevokeValidator` evidence. This closes
   only the isolated handler/audit surface, not validator-history prune,
   production epoch/Core/host reachability, terminal mapping, or a phase.
+  `PruneRevokedValidatorHistory` now closes the matching isolated decrement/
+  delete path. Canonical validator ID and exact history-slot presence precede
+  history `-1`, every remaining family cap, and the defensive total. No-proof
+  field admission then precedes complete history/head/revocation provenance,
+  revoked and strict protocol-retention checks, authenticated active-
+  certificate owner/reference exclusion, an independent exact revoked kind-9
+  companion join, and the signed single-delete set. Its prepared carrier
+  freezes the complete row/slot, both empty proof-field owners, raw semantic
+  owner, and exact kind-9 source bytes; carrier/source drift fails stop before
+  the row and leaf are deleted. The permanent validator identity and consensus-
+  key nullifiers remain occupied, so prune authorizes no proof and leaves the
+  accumulator unchanged. A real H1 four-registration/H2 revoke chain rejects
+  H282 at the exact retention boundary, then seals the first admissible H283
+  sorted `4 -> 3` prune with three byte-exact rows and one exact delete. A
+  handler-boundary overlay with a real certificate body freezes reference and
+  owner-drift priority, but revoked-provider/active-certificate coexistence is
+  not authenticated-reachable. A synthetic six-row `6 -> 5` collision is also
+  handler-boundary evidence only. The frozen shared validator-prune replay
+  remains byte-identical and proves the isolated register/revoke/wait/prune and
+  permanent-identity resurrection guard, not the full-capacity carrier matrix
+  or production epoch reachability. This is not Core activation, host
+  integration, terminal mapping, durable-node closure, or a phase.
   Capacity-order closure now
   covers `DefineMeterPolicy`, `RetireMeterPolicy`, `PruneRetiredMeter`,
   `FundSettlement`, `AuthorizeConsumerKey`,
   `RevokeConsumerKey`, `PruneRevokedConsumerKey`,
   `OpenChallenge`, `ReleaseSettlement`, `ResolveChallenge`,
   `ProposeGovernance`, `ApproveGovernance`, `RegisterFutureCandidate`,
-  `RegisterValidator`, `RotateValidator`, and `RevokeValidator`; all other
-  families remain audit-open before terminal failure mapping.
+  `RegisterValidator`, `RotateValidator`, `RevokeValidator`, and
+  `PruneRevokedValidatorHistory`; all other families remain audit-open before
+  terminal failure mapping.
   `ResolveChallenge` now carries one exact pending removal, certificate
   lifecycle successor, resolution decision nullifier, and semantic transition
   across capacity admission and execution. Its frozen order is structural and

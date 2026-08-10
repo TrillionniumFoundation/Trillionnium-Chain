@@ -3054,6 +3054,173 @@ fn validator_full_history_chain_v0() -> Result<FixtureChainV0> {
     Ok(chain)
 }
 
+fn revoked_validator_full_history_chain_v0() -> Result<(FixtureChainV0, Vec<u8>)> {
+    let mut chain = validator_full_history_chain_v0()?;
+    let validator_id = b"rotate-capacity-validator-0".to_vec();
+    let signing_key = provider_fixture_signing_key_for_id(&validator_id);
+    let mut revocation_block = chain.start_overlay()?;
+    let (revocation, nullifiers) = revoke_fixture_validator(
+        &revocation_block,
+        &chain,
+        &validator_id,
+        &signing_key,
+        1,
+        &chain.nullifiers,
+    )?;
+    revocation_block.apply_raw(&revocation.raw)?;
+    chain.commit_block(revocation_block, nullifiers)?;
+    Ok((chain, validator_id))
+}
+
+fn prune_revoked_validator_full_history_fixture_at_v0(
+    target_height: u64,
+) -> Result<(
+    PocoApplicationBlockOverlayV0,
+    Vec<u8>,
+    PocoApplicationOperationV0,
+)> {
+    let (mut chain, validator_id) = revoked_validator_full_history_chain_v0()?;
+    let source_height = target_height
+        .checked_sub(1)
+        .context("validator prune fixture target height underflow")?;
+    chain.advance_empty_versions(source_height)?;
+    chain.active_epoch = Epoch::new(28);
+    let block = chain.start_overlay()?;
+    ensure!(
+        block.context.target_height.get() == target_height,
+        "validator prune fixture target height drifted"
+    );
+    ensure!(
+        block.overlay.authority.validator_registration_history.len()
+            == MAX_VALIDATOR_REGISTRATION_HISTORIES,
+        "validator prune fixture lost the full history family"
+    );
+    let target = block
+        .overlay
+        .authority
+        .validator_registration_history
+        .iter()
+        .find(|history| history.validator_id_hex == hex::encode(&validator_id))
+        .context("validator prune fixture lost its target")?;
+    ensure!(
+        target.revoked_at_height == Some(2),
+        "validator prune fixture target is not the H2 revocation"
+    );
+    let (prune, _) = prune_validator_history(&block, &validator_id, &chain.nullifiers)?;
+    let operation = PocoApplicationOperationV0::decode_exact(&prune.raw)?;
+    Ok((block, prune.raw, operation))
+}
+
+pub(super) fn prune_revoked_validator_full_history_fixture_v0() -> Result<(
+    PocoApplicationBlockOverlayV0,
+    Vec<u8>,
+    PocoApplicationOperationV0,
+)> {
+    prune_revoked_validator_full_history_fixture_at_v0(283)
+}
+
+pub(super) fn prune_revoked_validator_retention_boundary_fixture_v0() -> Result<(
+    PocoApplicationBlockOverlayV0,
+    Vec<u8>,
+    PocoApplicationOperationV0,
+)> {
+    prune_revoked_validator_full_history_fixture_at_v0(282)
+}
+
+pub(super) fn prune_validator_not_revoked_fixture_v0() -> Result<(
+    PocoApplicationBlockOverlayV0,
+    Vec<u8>,
+    PocoApplicationOperationV0,
+)> {
+    let mut chain = validator_full_history_chain_v0()?;
+    let validator_id = b"rotate-capacity-validator-0".to_vec();
+    chain.advance_empty_versions(282)?;
+    chain.active_epoch = Epoch::new(28);
+    let block = chain.start_overlay()?;
+    let (prune, _) = prune_validator_history(&block, &validator_id, &chain.nullifiers)?;
+    let operation = PocoApplicationOperationV0::decode_exact(&prune.raw)?;
+    Ok((block, prune.raw, operation))
+}
+
+pub(super) fn prune_revoked_validator_active_reference_handler_fixture_v0() -> Result<(
+    PocoApplicationBlockOverlayV0,
+    Vec<u8>,
+    PocoApplicationOperationV0,
+)> {
+    let (mut chain, fixtures) = consumer_key_full_capacity_with_watermark_chain_v0()?;
+    let fixture = &fixtures[0];
+    chain.advance_empty_versions(282)?;
+    chain.active_epoch = Epoch::new(28);
+    let mut block = chain.start_overlay()?;
+    ensure!(
+        block.context.target_height.get() == 283,
+        "validator prune active-reference fixture target height drifted"
+    );
+    ensure!(
+        block
+            .overlay
+            .authority
+            .active_certificates
+            .iter()
+            .any(|certificate| {
+                certificate.provider_id_hex == hex::encode(&fixture.provider_id)
+            }),
+        "validator prune active-reference fixture lost its real certificate"
+    );
+    let validator_id_hex = hex::encode(&fixture.provider_id);
+    let history_index = block
+        .overlay
+        .authority
+        .validator_registration_history
+        .binary_search_by(|history| history.validator_id_hex.cmp(&validator_id_hex))
+        .map_err(|_| {
+            anyhow::anyhow!("validator prune active-reference fixture lost provider history")
+        })?;
+    let logical_key = semantic_identity_digest_v0(
+        PocoSnapshotEntryKindV0::ValidatorRegistration,
+        &fixture.provider_id,
+    );
+    let map_key = (
+        PocoSnapshotEntryKindV0::ValidatorRegistration,
+        logical_key.to_vec(),
+    );
+    let source_value = block
+        .overlay
+        .entries
+        .get(&map_key)
+        .context("validator prune active-reference fixture lost kind-9 source")?;
+    let source = owned_semantic_parts(map_key.0, &map_key.1, source_value)?;
+    let mut payload = source.payload;
+    let state_offset = 4usize
+        .checked_add(source.identity.len())
+        .and_then(|offset| offset.checked_add(32 + 8))
+        .context("validator prune active-reference state offset overflow")?;
+    ensure!(
+        payload[state_offset] == RegistrationStateV0::Active as u8,
+        "validator prune active-reference source is not active"
+    );
+    payload[state_offset] = RegistrationStateV0::Revoked as u8;
+    block.overlay.entries.insert(
+        map_key,
+        encode_test_semantic_envelope_v0(
+            PocoSnapshotEntryKindV0::ValidatorRegistration,
+            source
+                .revision
+                .checked_add(1)
+                .context("validator prune active-reference revision overflow")?,
+            &source.identity,
+            &payload,
+        ),
+    );
+    block.overlay.authority.validator_registration_history[history_index].revoked_at_height =
+        Some(2);
+    block.overlay.authority.validator_registration_history[history_index]
+        .revocation_decision_id_hex = Some("aa".repeat(32));
+    let (prune, _) = prune_validator_history(&block, &fixture.provider_id, &chain.nullifiers)?;
+    let operation = PocoApplicationOperationV0::decode_exact(&prune.raw)?;
+    Ok((block, prune.raw, operation))
+}
+
 pub(super) fn rotate_validator_full_history_fixture_v0() -> Result<(
     PocoApplicationBlockOverlayV0,
     Vec<u8>,
