@@ -1,10 +1,11 @@
 # TRNM Consensus Engine Decision — 2026-07-27
 
-Status: **Superseded by the 2026-07-28 canonical runtime freeze**
+Status: **Superseded by the 2026-08-04 PoCO-BFT v0 architecture freeze**
 
 The references below to `trnm-chain-node` describe the historical comparison
-fixture, not the production candidate. The binding path is now
-`CometBFT -> trnm-consensus-app -> trnm-runtime`.
+fixture, not the production candidate. CometBFT is now retained as a development
+differential oracle. The binding target is
+`TRNM_POCO_BFT_V0_FREEZE_2026-08-04.md`.
 
 ## Decision
 

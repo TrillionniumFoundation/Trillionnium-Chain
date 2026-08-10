@@ -601,5 +601,17 @@ if [[ "$mode" == "--push" ]]; then
   [[ $update_count -gt 0 ]] || warn "no pre-push ref updates were supplied; URL policy only was checked"
 fi
 
+ci_runner_policy_source=--worktree
+case "$mode" in
+  --staged) ci_runner_policy_source=--staged ;;
+  --push) ci_runner_policy_source=--head ;;
+esac
+if ! bash "$root/scripts/check_ci_runner_policy.sh" "$ci_runner_policy_source"; then
+  error "GitHub Actions jobs must use only the dedicated X230 self-hosted runner"
+fi
+if ! bash "$root/scripts/check_cargo_offline_policy.sh" "$ci_runner_policy_source"; then
+  error "GitHub Actions Cargo jobs must use the frozen X230 offline policy"
+fi
+
 printf 'warnings=%d errors=%d\n' "$warnings" "$errors"
 (( errors == 0 ))

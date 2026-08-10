@@ -4,6 +4,10 @@
 
 - Active mainline: `trillionnium/`
 - Historical status/archive docs live under `docs/archive/`
+- Current consensus target: deterministic PoCO-BFT v0; see
+  `docs/architecture/TRNM_POCO_BFT_V0_FREEZE_2026-08-04.md`
+- CometBFT is retained as a development differential oracle, not the target
+  production finality authority.
 
 ---
 
@@ -14,7 +18,8 @@ TRNM is a Rust L1 protocol for task-based AI compute settlement and verification
 - **PoCO state machine** for task lifecycle: create → commit → reveal → challenge → resolve
 - **High-concurrency execution** with conflict detection and grouped scheduling
 - **Auditable events + stable interfaces** for integration, replay, governance, and operations
-- **Worker Agent + CLI** loop from execution to on-chain submission
+- **Worker Agent + CLI** legacy local adapter loop for retry/replay evidence;
+  canonical worker-to-PoCO broadcast/query is still an open integration boundary
 - **BL09 retirement-prep wording**: the retained `trnm-pouw` crate name and any residual PoUW fields should be read as migration-era compatibility or provenance/audit evidence, not as ongoing payout authority or a default work-unit payout path
 
 ---
@@ -37,6 +42,9 @@ TrillionniumChain/
 │   │   ├── trnm-cli
 │   │   ├── trnm-protocol
 │   │   ├── trnm-runtime
+│   │   ├── trnm-consensus-types
+│   │   ├── trnm-consensus-core
+│   │   ├── trnm-consensus-sim
 │   │   ├── trnm-consensus-app
 │   │   └── trnm-bridge-poc
 │   ├── configs/
@@ -66,8 +74,17 @@ TrillionniumChain/
 - `trnm-protocol` / `trnm-runtime`: the canonical typed transaction protocol and
   pure deterministic state transition for accounts, fees, task escrow, PoCO
   consumption settlement, challenge, and resolution
-- `trnm-consensus-app`: the sole production-candidate runtime boundary, using
-  CometBFT ABCI++ with typed canonical transactions, fail-closed unknown payloads,
+- `trnm-consensus-types`: network- and storage-independent PoCO-BFT v0 type
+  scaffold for canonical signing inputs, certificates, handoff, and evidence;
+  remaining conformance gaps are release-blocking and tracked explicitly
+- `trnm-consensus-core`: deterministic PoCO-BFT state-machine prototype. It has no
+  sockets, database, filesystem, wall-clock, or signer-device dependency and
+  requires persistence acknowledgement before requesting a signature
+- `trnm-consensus-sim`: deterministic, replayable fault simulator for the pure
+  core; it is test evidence, not a deployed network or production node
+- `trnm-consensus-app`: the preserved CometBFT development oracle and runtime
+  integration fixture, using ABCI++ with typed canonical transactions,
+  fail-closed unknown payloads,
   account sequence nonces, gas/fees, indexed execution events,
   replay-safe app-hash v3, committed validator lifecycle, SQLite-WAL delta
   persistence, stable empty-block state roots, local fresh-node state sync,
@@ -80,16 +97,19 @@ TrillionniumChain/
 - `trnm-executor`: conflict detection and concurrent scheduling strategy
 - `trnm-mempool`: transaction pool and admission/packaging
 - `trnm-rpc`: RPC service and stable query APIs
-- `trnm-worker-agent`: worker execution and on-chain submission path
+- `trnm-worker-agent`: legacy worker execution and local adapter-state path;
+  it is not yet wired to canonical PoCO receipt broadcast/query
 - `trnm-cli`: native CLI for tx/query operations
 - `trnm-bench`: benchmarking and performance tooling
 - `trnm-types`: shared protocol types
 - `trnm-bridge-poc`: bridge proof-of-concept integration
 
-The frozen Day-1 scope and feature-to-runtime truth table are maintained in
-`docs/architecture/TRNM_CANONICAL_RUNTIME_FREEZE_2026-07-28.md`. Bridge, oracle,
-external contracts, and full ZK platform work are explicitly outside the Day-1
-production candidate until they execute through `trnm-runtime` under CometBFT.
+The PoCO-BFT v0 architecture target is maintained in
+`docs/architecture/TRNM_POCO_BFT_V0_FREEZE_2026-08-04.md`. The older Day-1
+runtime table in `docs/architecture/TRNM_CANONICAL_RUNTIME_FREEZE_2026-07-28.md`
+remains useful evidence for the reusable runtime/JMT boundary, but its CometBFT
+production-authority decision is superseded. Bridge, external contracts, and
+full ZK platform work remain outside the frozen PoCO-BFT v0 scope.
 
 ### Web4 frontend (`web4-frontend`)
 
@@ -163,13 +183,22 @@ This validates the current `contracts/` MVP workspace only, which today contains
 ### 5.2 Worker / Receipt gates
 
 ```bash
-# Worker receipt gates
+# Hermetic legacy worker adapter/state-machine regressions. These exercise
+# retry, replay, nonce and acknowledgement handling; they are not evidence of
+# a real chain broadcast.
 ./scripts/v2/run_worker_receipt_gates.sh
 
-# Strict real-cli mode
-TRNM_TX_CLI=./trillionnium/target/debug/trnm-cli \
-  ./scripts/v2/run_worker_receipt_gates_real_cli.sh
+# Active PoCO CLI surface and retired-command cutover
+./scripts/v2/worker_poco_cli_cutover_gate.sh
 ```
+
+The active native PoCO CLI intentionally does not implement the legacy worker
+`commit-result` / `reveal-result` protocol. The historical
+`run_worker_receipt_gates_real_cli.sh` entrypoint is only for an explicitly
+configured external compatibility adapter with real RPC and key material; it
+is not part of offline CI and is not proof that worker-to-PoCO broadcast/query
+is complete. That production path remains open until the worker submission
+schema is migrated to the canonical PoCO receipt model.
 
 ### 5.3 Tokenomics regression gate
 

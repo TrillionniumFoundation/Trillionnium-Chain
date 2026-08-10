@@ -172,10 +172,10 @@ python3 ./scripts/v2/check_validator_config_bundle.py \
   configs/node4.toml | tee -a "$LOG"
 
 log "workspace tests"
-cargo test --workspace | tee -a "$LOG"
+cargo test --workspace --locked | tee -a "$LOG"
 
 log "single-node parallel sanity"
-cargo run -q -p trnm-node --features legacy-harness --bin trnm-sim -- \
+cargo run --locked -q -p trnm-node --features legacy-harness --bin trnm-sim -- \
   --config configs/node1.toml \
   --block-ms 5 \
   --max-blocks 6 \

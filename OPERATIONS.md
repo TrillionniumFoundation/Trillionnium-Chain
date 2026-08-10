@@ -180,40 +180,16 @@ Optional environment variables:
 - `getTx` returns `status`
 - script ends with `[SMOKE][PASS] product-layer smoke`
 
-## E2E Worker Runbook (Job -> Execute -> Commit)
+## Historical Worker E2E Boundary
 
-### Prerequisites
-- Local chain running (`chaind status` returns latest height)
-- Docker daemon running
-- Worker config exists at `worker/config.yaml`
+The former `chaind`/Docker worker runbook referenced paths that are no longer
+present in this repository. It is not an active PoCO runbook and its historical
+`committed on-chain` log wording is not current production evidence. Use the
+hermetic state-machine and active CLI cutover gates below. A real
+worker-to-canonical-PoCO broadcast/query runbook remains OPEN until the worker
+submission schema and durable native node path are connected.
 
-### 1) Batch submit jobs (with sequence-mismatch retry)
-```bash
-cd /Users/qianqi/.openclaw/workspace/TrillionniumChain
-./scripts/submit_jobs.sh ./tasks/example_futures cpu 3
-```
-
-### 2) One-command end-to-end smoke
-```bash
-cd /Users/qianqi/.openclaw/workspace/TrillionniumChain
-./scripts/e2e_smoke.sh 2
-```
-
-The smoke script automatically:
-1. checks chain availability
-2. ensures exactly one worker instance
-3. submits N jobs
-4. waits for processing
-5. checks `worker/worker.log` contains `result committed on-chain` exactly N times
-
-### Pass criteria
-- Script exits with code `0`
-- Terminal prints `SMOKE PASS ✅`
-- Worker log contains entries like:
-  - `Submitting MsgCompleteJob for Job <id>...`
-  - `✅ Job <id> result committed on-chain`
-
-## Rust Worker Receipt Gate (single entrypoint)
+## Legacy Worker Receipt State-Machine Gate
 
 Run from repository root:
 
@@ -222,32 +198,37 @@ Run from repository root:
 ```
 
 Notes:
-- This is the only supported entrypoint for worker receipt gating (aligned with CI and relay).
+- This is the supported hermetic entrypoint for legacy worker retry/replay/nonce/ack
+  state-machine regression (aligned with offline CI and relay).
+- It does not prove real chain broadcast or active PoCO receipt readiness.
 - It includes:
   1. `worker_agent_full_loop.sh`
   2. `worker_replay_guard_test.sh`
   3. `worker_failed_receipt_test.sh`
   4. `worker_resume_no_duplicate_test.sh`
+  5. `worker_retry_nonce_boundary_test.sh`
 
-Readiness check for real CLI (run before integration):
+Active PoCO CLI cutover gate:
 
 ```bash
-./scripts/v2/worker_real_cli_readiness.sh
-# Strict mode: non-zero exit when prerequisites are not met
-REQUIRE_REAL_TX_CLI=1 ./scripts/v2/worker_real_cli_readiness.sh
+./scripts/v2/worker_poco_cli_cutover_gate.sh
 ```
 
-Full real-cli gate (readiness + receipt gates):
+This requires the active CLI to expose `submit-consumption-receipt`,
+`challenge-consumption`, and `resolve-consumption`, while keeping the retired
+`commit-result` / `reveal-result` commands unavailable and side-effect free.
+
+Legacy external compatibility-adapter readiness (operator/live environment only):
 
 ```bash
-TRNM_TX_CLI=<your-real-tx-cli> ./scripts/v2/run_worker_receipt_gates_real_cli.sh
-# Local minimal wrapper example
-TRNM_TX_CLI=./scripts/v2/trnm_tx_cli_wrapper.sh ./scripts/v2/run_worker_receipt_gates_real_cli.sh
-# Rust-native CLI (build first)
-TRNM_TX_CLI=./trillionnium/target/debug/trnm-cli ./scripts/v2/run_worker_receipt_gates_real_cli.sh
-# Real-chain adapter (configured via env vars)
 TRNM_TX_CLI=./scripts/v2/trnm_tx_cli_real_adapter.sh ./scripts/v2/run_worker_receipt_gates_real_cli.sh
 ```
+
+This command requires a genuinely configured external adapter, live RPC, keys,
+and queryable lifecycle evidence. Neither the bundled compatibility wrapper nor
+the active native PoCO CLI satisfies that legacy protocol, and neither may be
+used as a positive readiness fixture. Worker → canonical PoCO receipt → real
+broadcast/query remains OPEN pending worker submission-schema migration.
 
 Recommended environment template flow:
 
@@ -258,11 +239,10 @@ source /tmp/worker_real_cli.env
 TRNM_TX_CLI=./scripts/v2/trnm_tx_cli_real_adapter.sh ./scripts/v2/run_worker_receipt_gates_real_cli.sh
 ```
 
-Adapter spec/template references:
-- Spec: `docs/protocol/worker-real-tx-cli-adapter-spec.md`
-- Template: `scripts/v2/trnm_tx_cli_real_adapter.template.sh`
+Legacy adapter template reference:
+- `scripts/v2/trnm_tx_cli_real_adapter.template.sh`
 
-### PR-1 companion gates (Tests-Docs)
+### Historical PR-1 companion gates (Tests-Docs)
 
 Run from repository root:
 
@@ -277,7 +257,9 @@ Gate notes:
 - `governance_value_schema_reject_test.sh`: verifies invalid u64 / non-strict bool governance params are rejected.
 - `worker_real_cli_fake_wrapper_block_test.sh`: verifies strict real-cli gate blocks fake wrapper (must exit non-zero).
 
-Recommended set: combine the three checks above with `run_worker_receipt_gates_real_cli.sh` as PR-1 minimum acceptance.
+The fake-wrapper check remains a negative fail-closed regression only. It is not
+part of current positive PoCO readiness; use the active cutover gate above for
+the offline CI boundary.
 
 ### PR-2 companion gates (Timeout + Challenge Bond)
 

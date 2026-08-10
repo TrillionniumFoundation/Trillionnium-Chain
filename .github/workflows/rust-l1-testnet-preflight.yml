@@ -5,6 +5,9 @@ on:
   push:
     paths:
       - 'trillionnium/**'
+      - 'scripts/ci/check_cargo_offline_ready.sh'
+      - 'scripts/ci/check_cargo_offline_unchanged.sh'
+      - 'scripts/ci/check_preprovisioned_rust_toolchain.sh'
       - '.github/workflows/rust-l1-testnet-preflight.yml'
 
 permissions:
@@ -16,7 +19,14 @@ concurrency:
 
 jobs:
   preflight:
-    runs-on: macos-latest
+    if: >-
+      github.repository == 'TrillionniumFoundation/Trillionnium-Chain' &&
+      (github.event_name == 'schedule' ||
+        (github.actor == 'ProfAlexQI' &&
+         github.triggering_actor == 'ProfAlexQI' &&
+         (github.event_name != 'pull_request' ||
+          github.event.pull_request.head.repo.full_name == github.repository)))
+    runs-on: [self-hosted, Linux, X64, x230, trillionnium-chain]
     env:
       TZ: UTC
       LANG: C.UTF-8
@@ -39,20 +49,31 @@ jobs:
       CI: "true"
       SOURCE_DATE_EPOCH: "1704067200"
       RUST_TEST_THREADS: "1"
-    timeout-minutes: 60
+      TRNM_CARGO_OFFLINE_POLICY: "required"
+      CARGO_NET_OFFLINE: "true"
+      CARGO_CACHE_AUTO_CLEAN_FREQUENCY: "never"
+    timeout-minutes: 120
 
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
 
-      - name: Setup Rust toolchain
-        uses: dtolnay/rust-toolchain@4cda84d5c5c54efe2404f9d843567869ab1699d4
-        with:
-          toolchain: 1.95.0
+      - name: Verify runner-provisioned Rust toolchain
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_preprovisioned_rust_toolchain.sh \
+            --toolchain 1.95.0
+
+      - name: Verify Cargo offline cache readiness
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_cargo_offline_ready.sh \
+            --toolchain 1.95.0 \
+            --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}" \
+            trillionnium/Cargo.toml:trillionnium/Cargo.lock
 
       - name: Run testnet preflight
         run: |
           set -euo pipefail
-          export PATH="/opt/homebrew/opt/rustup/bin:$PATH"
           cd trillionnium
           ./scripts/testnet_preflight.sh
 
@@ -68,3 +89,10 @@ jobs:
             trillionnium/run/node*.log
             trillionnium/run/parallel-sanity.log
           if-no-files-found: warn
+
+      - name: Verify Cargo offline inputs remained unchanged
+        if: always()
+        run: |
+          set -euo pipefail
+          ./scripts/ci/check_cargo_offline_unchanged.sh \
+            --state "$RUNNER_TEMP/trnm-cargo-offline-${GITHUB_JOB}"

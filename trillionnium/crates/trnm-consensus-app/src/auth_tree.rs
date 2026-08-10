@@ -20,11 +20,17 @@ use jmt::{
 use prost::Message;
 use sha2::{Digest, Sha256};
 
+use crate::poco_transition::PocoWritePermitV0;
+
 const KEY_DOMAIN: &[u8] = b"trnm/authenticated-state/v4";
+const POCO_SNAPSHOT_KEY_PREFIX: &[u8] = b"trnm/authenticated-state/v4\0\x08";
 const OBJECT_RECORD_SCHEMA_VERSION: u16 = 1;
 #[cfg(test)]
 const LIFECYCLE_RECORD_SCHEMA_VERSION: u16 = 1;
 const AUTH_TREE_SNAPSHOT_CODEC_VERSION: u16 = 1;
+const PLANNED_AUTH_UPDATE_SEAL_CODEC_VERSION_V0: u16 = 0;
+const PLANNED_AUTH_UPDATE_SEAL_HASH_PREFIX_V0: &[u8] = b"trnm.auth-tree.plan-seal.hash.v0";
+const PLANNED_AUTH_UPDATE_SEAL_DOMAIN_V0: &[u8] = b"trnm.consensus-app.planned-auth-update.v0";
 
 /// Consensus-state namespaces.  Discriminants are part of the AppHash v4 key
 /// format and therefore must never be renumbered.
@@ -39,6 +45,7 @@ pub enum StateNamespace {
     Config = 5,
     CommandReceipt = 6,
     GovernanceSequence = 7,
+    PocoSnapshot = 8,
 }
 
 /// Constructs a collision-free, non-empty authenticated key.
@@ -152,6 +159,52 @@ fn key_hash(key: &[u8]) -> Result<KeyHash> {
 
 pub(crate) fn authenticated_key_hash(key: &[u8]) -> Result<KeyHash> {
     key_hash(key)
+}
+
+/// Decodes the exact length-framed components of a namespace-8 key. Keys in
+/// other namespaces return `None`; malformed namespace-8 preimages fail
+/// closed so restore/startup cannot reinterpret them as ordinary objects.
+pub(crate) fn poco_snapshot_key_components(key: &[u8]) -> Result<Option<Vec<&[u8]>>> {
+    if !key.starts_with(POCO_SNAPSHOT_KEY_PREFIX) {
+        return Ok(None);
+    }
+    let mut cursor = POCO_SNAPSHOT_KEY_PREFIX.len();
+    ensure!(
+        key.len() >= cursor.saturating_add(2),
+        "PoCO snapshot key component count is truncated"
+    );
+    let component_count = u16::from_be_bytes(
+        key[cursor..cursor + 2]
+            .try_into()
+            .expect("component count length checked"),
+    ) as usize;
+    cursor += 2;
+    ensure!(
+        (1..=3).contains(&component_count),
+        "PoCO snapshot key component count is invalid"
+    );
+    let mut components = Vec::with_capacity(component_count);
+    for _ in 0..component_count {
+        ensure!(
+            key.len() >= cursor.saturating_add(4),
+            "PoCO snapshot key component length is truncated"
+        );
+        let length = u32::from_be_bytes(
+            key[cursor..cursor + 4]
+                .try_into()
+                .expect("component length checked"),
+        ) as usize;
+        cursor += 4;
+        ensure!(length > 0, "PoCO snapshot key component is empty");
+        let end = cursor
+            .checked_add(length)
+            .context("PoCO snapshot key component length overflow")?;
+        ensure!(end <= key.len(), "PoCO snapshot key component is truncated");
+        components.push(&key[cursor..end]);
+        cursor = end;
+    }
+    ensure!(cursor == key.len(), "PoCO snapshot key has trailing bytes");
+    Ok(Some(components))
 }
 
 /// Exact value committed for an object leaf.
@@ -330,17 +383,62 @@ impl ValidatorLifecycleRecord {
 /// A single raw authenticated write.  `None` is a deletion/tombstone.
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct AuthWrite {
-    pub key: Vec<u8>,
-    pub value: Option<Vec<u8>>,
+    key: Vec<u8>,
+    value: Option<Vec<u8>>,
 }
 
 impl AuthWrite {
     pub fn put(key: Vec<u8>, value: Vec<u8>) -> Result<Self> {
         ensure!(!key.is_empty(), "authenticated key must be non-empty");
+        ensure!(
+            !key.starts_with(POCO_SNAPSHOT_KEY_PREFIX),
+            "PoCO snapshot writes require the atomic PoCO planner"
+        );
         Ok(Self {
             key,
             value: Some(value),
         })
+    }
+
+    #[cfg(test)]
+    pub fn delete(key: Vec<u8>) -> Result<Self> {
+        ensure!(!key.is_empty(), "authenticated key must be non-empty");
+        ensure!(
+            !key.starts_with(POCO_SNAPSHOT_KEY_PREFIX),
+            "PoCO snapshot writes require the atomic PoCO planner"
+        );
+        Ok(Self { key, value: None })
+    }
+
+    pub(crate) fn put_poco_snapshot(
+        _permit: PocoWritePermitV0,
+        key: Vec<u8>,
+        value: Vec<u8>,
+    ) -> Result<Self> {
+        ensure!(
+            key.starts_with(POCO_SNAPSHOT_KEY_PREFIX),
+            "sealed PoCO write is outside the PoCO snapshot namespace"
+        );
+        Ok(Self {
+            key,
+            value: Some(value),
+        })
+    }
+
+    pub(crate) fn delete_poco_snapshot(_permit: PocoWritePermitV0, key: Vec<u8>) -> Result<Self> {
+        ensure!(
+            key.starts_with(POCO_SNAPSHOT_KEY_PREFIX),
+            "sealed PoCO delete is outside the PoCO snapshot namespace"
+        );
+        Ok(Self { key, value: None })
+    }
+
+    pub(crate) fn key(&self) -> &[u8] {
+        &self.key
+    }
+
+    pub(crate) fn value(&self) -> Option<&[u8]> {
+        self.value.as_deref()
     }
 }
 
@@ -353,10 +451,93 @@ pub struct PlannedAuthUpdate {
     preimages: BTreeMap<KeyHash, Vec<u8>>,
 }
 
+/// Process-local integrity seal for every persistence-bearing plan field.
+///
+/// This type deliberately has no public constructor, byte accessor, clone,
+/// serde, or Borsh surface. It is an internal continuity check between the
+/// planner and its later consumer, not a wire commitment or execution
+/// authority.
+pub(crate) struct PlannedAuthUpdateSealV0([u8; 32]);
+
+impl PartialEq for PlannedAuthUpdateSealV0 {
+    fn eq(&self, other: &Self) -> bool {
+        self.0 == other.0
+    }
+}
+
+impl Eq for PlannedAuthUpdateSealV0 {}
+
+impl std::fmt::Debug for PlannedAuthUpdateSealV0 {
+    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        formatter
+            .debug_struct("PlannedAuthUpdateSealV0")
+            .field("opaque", &true)
+            .finish_non_exhaustive()
+    }
+}
+
+/// Frozen deterministic preimage for [`PlannedAuthUpdateSealV0`]. JMT node
+/// statistics are intentionally omitted: neither the in-memory apply path nor
+/// SQLite persistence consumes them. All state-affecting plan contents are
+/// included explicitly so a future `TreeUpdateBatch` metadata change cannot
+/// silently change this seal's meaning.
+#[derive(BorshSerialize)]
+struct PlannedAuthUpdateSealPreimageV0<'a> {
+    codec_version: u16,
+    version: Version,
+    root_hash: &'a RootHash,
+    nodes: &'a BTreeMap<NodeKey, Node>,
+    values: &'a BTreeMap<(Version, KeyHash), Option<Vec<u8>>>,
+    stale_node_indices: &'a BTreeSet<StaleNodeIndex>,
+    preimages: &'a BTreeMap<KeyHash, Vec<u8>>,
+}
+
 impl PlannedAuthUpdate {
     pub(crate) fn preimages(&self) -> &BTreeMap<KeyHash, Vec<u8>> {
         &self.preimages
     }
+
+    /// Seals the exact version, root, nodes, values, stale indices, and key
+    /// preimages of this deterministic plan without granting persistence or
+    /// terminal authority.
+    pub(crate) fn seal_v0(&self) -> Result<PlannedAuthUpdateSealV0> {
+        let encoded = borsh::to_vec(&PlannedAuthUpdateSealPreimageV0 {
+            codec_version: PLANNED_AUTH_UPDATE_SEAL_CODEC_VERSION_V0,
+            version: self.version,
+            root_hash: &self.root_hash,
+            nodes: self.tree_update_batch.node_batch.nodes(),
+            values: self.tree_update_batch.node_batch.values(),
+            stale_node_indices: &self.tree_update_batch.stale_node_index_batch,
+            preimages: &self.preimages,
+        })
+        .context("encode planned authenticated update seal preimage")?;
+        Ok(PlannedAuthUpdateSealV0(framed_plan_seal_hash_v0(&encoded)?))
+    }
+
+    /// Recomputes the complete deterministic plan seal and fails closed if any
+    /// persistence-bearing field drifted after the plan was sealed.
+    pub(crate) fn verify_seal_v0(&self, expected: &PlannedAuthUpdateSealV0) -> Result<()> {
+        let actual = self.seal_v0()?;
+        ensure!(
+            &actual == expected,
+            "planned authenticated update seal mismatch"
+        );
+        Ok(())
+    }
+}
+
+fn framed_plan_seal_hash_v0(encoded: &[u8]) -> Result<[u8; 32]> {
+    let mut hasher = Sha256::new();
+    for frame in [
+        PLANNED_AUTH_UPDATE_SEAL_HASH_PREFIX_V0,
+        PLANNED_AUTH_UPDATE_SEAL_DOMAIN_V0,
+        encoded,
+    ] {
+        let length = u32::try_from(frame.len()).context("plan seal hash frame exceeds u32::MAX")?;
+        hasher.update(length.to_be_bytes());
+        hasher.update(frame);
+    }
+    Ok(hasher.finalize().into())
 }
 
 /// ICS23 proof plus the exact root/version it proves against.
@@ -398,6 +579,70 @@ pub struct InMemoryAuthTree {
 struct VersionedReadView<'a> {
     nodes: &'a BTreeMap<NodeKey, Node>,
     values: &'a BTreeMap<(KeyHash, Version), Option<Vec<u8>>>,
+}
+
+/// Read-only overlay for proving a bounded planned update without cloning or
+/// applying the complete authenticated-tree history.
+struct PlannedReadView<'a> {
+    base: &'a InMemoryAuthTree,
+    plan: &'a PlannedAuthUpdate,
+}
+
+impl TreeReader for PlannedReadView<'_> {
+    fn get_node_option(&self, node_key: &NodeKey) -> Result<Option<Node>> {
+        Ok(self
+            .plan
+            .tree_update_batch
+            .node_batch
+            .get_node(node_key)
+            .cloned()
+            .or_else(|| self.base.nodes.get(node_key).cloned()))
+    }
+
+    fn get_value_option(&self, max_version: Version, key_hash: KeyHash) -> Result<Option<Vec<u8>>> {
+        if self.plan.version <= max_version {
+            if let Some(value) = self
+                .plan
+                .tree_update_batch
+                .node_batch
+                .values()
+                .get(&(self.plan.version, key_hash))
+            {
+                return Ok(value.clone());
+            }
+        }
+        self.base.get_value_option(max_version, key_hash)
+    }
+
+    fn get_rightmost_leaf(&self) -> Result<Option<(NodeKey, LeafNode)>> {
+        let base = self.base.get_rightmost_leaf()?;
+        let planned = self
+            .plan
+            .tree_update_batch
+            .node_batch
+            .nodes()
+            .iter()
+            .filter_map(|(node_key, node)| match node {
+                Node::Leaf(leaf) => Some((node_key.clone(), leaf.clone())),
+                Node::Null | Node::Internal(_) => None,
+            })
+            .max_by_key(|(node_key, leaf)| (leaf.key_hash(), node_key.version()));
+        Ok([base, planned]
+            .into_iter()
+            .flatten()
+            .max_by_key(|(node_key, leaf)| (leaf.key_hash(), node_key.version())))
+    }
+}
+
+impl HasPreimage for PlannedReadView<'_> {
+    fn preimage(&self, key_hash: KeyHash) -> Result<Option<Vec<u8>>> {
+        Ok(self
+            .plan
+            .preimages
+            .get(&key_hash)
+            .cloned()
+            .or_else(|| self.base.preimages.get(&key_hash).cloned()))
+    }
 }
 
 impl<'a> VersionedReadView<'a> {
@@ -675,6 +920,34 @@ impl InMemoryAuthTree {
             .root_hash(version)
             .with_context(|| format!("missing authenticated root at version {version}"))?;
         prove_with_reader(self, version, root_hash, key)
+    }
+
+    /// Reads one exact key at a committed version without allocating an ICS23
+    /// proof. The private preimage map is checked to fail closed on a
+    /// theoretical key-hash collision.
+    pub(crate) fn value_at(&self, version: Version, key: &[u8]) -> Result<Option<Vec<u8>>> {
+        self.root_hash(version)
+            .with_context(|| format!("missing authenticated root at version {version}"))?;
+        let hash = key_hash(key)?;
+        if let Some(preimage) = self.preimages.get(&hash) {
+            ensure!(preimage == key, "SHA-256 authenticated key collision");
+        }
+        self.get_value_option(version, hash)
+    }
+
+    /// Generates an ICS23 proof against the root of a not-yet-applied bounded
+    /// plan through an overlay reader; the full tree is never cloned.
+    pub(crate) fn prove_planned(
+        &self,
+        plan: &PlannedAuthUpdate,
+        key: Vec<u8>,
+    ) -> Result<AuthProof> {
+        ensure!(
+            plan.version == self.expected_next_version(),
+            "planned proof version is stale"
+        );
+        let reader = PlannedReadView { base: self, plan };
+        prove_with_reader(&reader, plan.version, plan.root_hash, key)
     }
 
     /// Returns every live key/value pair at `version` and verifies each value
@@ -959,6 +1232,44 @@ mod tests {
         AuthWrite::put(key, value.to_vec()).expect("valid write")
     }
 
+    fn planned_update_seal_fixture() -> PlannedAuthUpdate {
+        let first = account_key("seal-first").expect("first key");
+        let second = account_key("seal-second").expect("second key");
+        let third = task_key("seal-third").expect("third key");
+        let mut tree = InMemoryAuthTree::default();
+        tree.put_value_set(
+            0,
+            [
+                put(first.clone(), b"first-before"),
+                put(second.clone(), b"second-before"),
+                put(third.clone(), b"third-before"),
+            ],
+        )
+        .expect("seal parent state");
+        tree.plan_put_value_set(
+            1,
+            [
+                put(first, b"first-after"),
+                AuthWrite::delete(second).expect("delete second"),
+                put(task_key("seal-created").expect("created key"), b"created"),
+            ],
+        )
+        .expect("seal plan")
+    }
+
+    fn assert_planned_update_seal_rejects_drift(
+        mut plan: PlannedAuthUpdate,
+        mutate: impl FnOnce(&mut PlannedAuthUpdate),
+    ) {
+        let seal = plan.seal_v0().expect("seal plan");
+        plan.verify_seal_v0(&seal).expect("unchanged plan");
+        mutate(&mut plan);
+        assert!(
+            plan.verify_seal_v0(&seal).is_err(),
+            "mutated persistence-bearing plan field must invalidate the seal"
+        );
+    }
+
     #[test]
     fn namespaced_keys_are_nonempty_and_unambiguous() {
         let left =
@@ -1021,6 +1332,88 @@ mod tests {
     }
 
     #[test]
+    fn planned_update_seal_is_deterministic_for_the_same_logical_write_set() {
+        let first = account_key("seal-order-first").expect("first key");
+        let second = account_key("seal-order-second").expect("second key");
+        let tree = InMemoryAuthTree::default();
+        let forward = tree
+            .plan_put_value_set(
+                0,
+                [put(first.clone(), b"first"), put(second.clone(), b"second")],
+            )
+            .expect("forward plan");
+        let reverse = tree
+            .plan_put_value_set(0, [put(second, b"second"), put(first, b"first")])
+            .expect("reverse plan");
+        let forward_seal = forward.seal_v0().expect("forward seal");
+        let reverse_seal = reverse.seal_v0().expect("reverse seal");
+
+        assert_eq!(forward_seal, reverse_seal);
+        forward
+            .verify_seal_v0(&forward_seal)
+            .expect("verify forward seal");
+    }
+
+    #[test]
+    fn planned_update_seal_covers_every_persistence_bearing_field() {
+        assert_planned_update_seal_rejects_drift(planned_update_seal_fixture(), |plan| {
+            plan.version = plan.version.checked_add(1).expect("bounded test version");
+        });
+        assert_planned_update_seal_rejects_drift(planned_update_seal_fixture(), |plan| {
+            plan.root_hash.0[0] ^= 1;
+        });
+        assert_planned_update_seal_rejects_drift(planned_update_seal_fixture(), |plan| {
+            let root_key = plan
+                .tree_update_batch
+                .node_batch
+                .nodes()
+                .keys()
+                .find(|key| key.nibble_path().is_empty())
+                .expect("planned root node")
+                .clone();
+            let foreign_leaf = plan
+                .tree_update_batch
+                .node_batch
+                .nodes()
+                .values()
+                .find(|node| matches!(node, Node::Leaf(_)))
+                .expect("planned leaf node")
+                .clone();
+            plan.tree_update_batch
+                .node_batch
+                .insert_node(root_key, foreign_leaf);
+        });
+        assert_planned_update_seal_rejects_drift(planned_update_seal_fixture(), |plan| {
+            let (version, hash) = *plan
+                .tree_update_batch
+                .node_batch
+                .values()
+                .keys()
+                .next()
+                .expect("planned value");
+            plan.tree_update_batch.node_batch.insert_value(
+                version,
+                hash,
+                b"seal-drifted-value".to_vec(),
+            );
+        });
+        assert_planned_update_seal_rejects_drift(planned_update_seal_fixture(), |plan| {
+            assert!(
+                !plan.tree_update_batch.stale_node_index_batch.is_empty(),
+                "fixture must include stale indices"
+            );
+            plan.tree_update_batch.stale_node_index_batch.clear();
+        });
+        assert_planned_update_seal_rejects_drift(planned_update_seal_fixture(), |plan| {
+            plan.preimages
+                .values_mut()
+                .next()
+                .expect("planned preimage")
+                .push(0);
+        });
+    }
+
+    #[test]
     fn verifies_ics23_existence_and_nonexistence() {
         let alice = account_key("alice").expect("key");
         let bob = account_key("bob").expect("key");
@@ -1039,6 +1432,98 @@ mod tests {
         assert!(nonexistence.value.is_none());
         assert!(verify_ics23_non_membership(&nonexistence));
         assert!(!nonexistence.encoded_commitment_proof().is_empty());
+    }
+
+    #[test]
+    fn planned_overlay_proofs_match_applied_tree_and_stale_plans_fail() {
+        let mut keys = (0..16)
+            .map(|index| account_key(&format!("overlay-{index}")))
+            .collect::<Result<Vec<_>>>()
+            .expect("keys");
+        keys.sort_by_key(|key| key_hash(key).expect("hash"));
+        let deleted = keys[0].clone();
+        let updated = keys[3].clone();
+        let unchanged = keys[7].clone();
+        let created_rightmost = keys[15].clone();
+        let missing = task_key("overlay-missing").expect("missing key");
+
+        let mut tree = InMemoryAuthTree::default();
+        tree.put_value_set(
+            0,
+            [
+                put(deleted.clone(), b"delete-me"),
+                put(updated.clone(), b"before"),
+                put(unchanged.clone(), b"stable"),
+            ],
+        )
+        .expect("initial tree");
+        assert_eq!(
+            tree.value_at(0, &updated).expect("point read").as_deref(),
+            Some(b"before".as_slice())
+        );
+
+        let plan = tree
+            .plan_put_value_set(
+                1,
+                [
+                    AuthWrite::delete(deleted.clone()).expect("delete"),
+                    put(updated.clone(), b"after"),
+                    put(created_rightmost.clone(), b"new-rightmost"),
+                ],
+            )
+            .expect("plan");
+        let stale_sibling = tree
+            .plan_put_value_set(1, [put(updated.clone(), b"sibling")])
+            .expect("sibling plan");
+
+        let planned = [
+            (deleted, None),
+            (updated.clone(), Some(b"after".as_slice())),
+            (unchanged, Some(b"stable".as_slice())),
+            (created_rightmost, Some(b"new-rightmost".as_slice())),
+            (missing, None),
+        ]
+        .into_iter()
+        .map(|(key, expected)| {
+            let proof = tree
+                .prove_planned(&plan, key.clone())
+                .expect("planned proof");
+            assert_eq!(proof.root_hash, plan.root_hash);
+            assert_eq!(proof.value.as_deref(), expected);
+            if let Some(value) = expected {
+                assert!(verify_ics23_membership(&proof, value));
+            } else {
+                assert!(verify_ics23_non_membership(&proof));
+            }
+            (key, proof)
+        })
+        .collect::<Vec<_>>();
+
+        tree.apply(plan).expect("apply plan");
+        for (key, planned_proof) in planned {
+            let applied = tree.prove(1, key).expect("applied proof");
+            assert_eq!(applied.root_hash, planned_proof.root_hash);
+            assert_eq!(applied.value, planned_proof.value);
+            assert_eq!(
+                applied.encoded_commitment_proof(),
+                planned_proof.encoded_commitment_proof()
+            );
+        }
+        assert!(tree.prove_planned(&stale_sibling, updated).is_err());
+        assert!(tree.apply(stale_sibling).is_err());
+
+        let point_key = account_key("overlay-3").expect("point key");
+        let point_hash = key_hash(&point_key).expect("point hash");
+        let original = tree.preimages.insert(point_hash, b"collision".to_vec());
+        assert!(tree.value_at(1, &point_key).is_err());
+        match original {
+            Some(original) => {
+                tree.preimages.insert(point_hash, original);
+            }
+            None => {
+                tree.preimages.remove(&point_hash);
+            }
+        }
     }
 
     #[test]

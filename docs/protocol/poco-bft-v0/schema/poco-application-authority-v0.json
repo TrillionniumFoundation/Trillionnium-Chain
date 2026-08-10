@@ -1,0 +1,666 @@
+{
+  "schema": "trnm.poco-bft.application-authority.v0",
+  "schema_version": 0,
+  "status": "B2-H3b2b1-authenticated-application-authority-and-atomic-cross-entry-planner",
+  "composition": {
+    "imports": [
+      "trnm.poco-bft.snapshot-namespace.v0",
+      "trnm.poco-bft.snapshot-transition.v0",
+      "trnm.poco-bft.business-semantics.v0",
+      "trnm.poco-bft.checkpoint-execution.v0"
+    ],
+    "legacy_kinds": {
+      "minimum": 1,
+      "maximum": 15,
+      "wire_change": false,
+      "semantic_change": false,
+      "note": "H3b2b0 remains an honest pure-semantic kernel; no old value becomes authority by reinterpretation."
+    },
+    "appended_kind": {
+      "kind": 16,
+      "name": "application_authority_state",
+      "namespace": 8,
+      "identity_ascii": "trnm.poco.application-authority.v0",
+      "identity_utf8_bytes": 34,
+      "logical_key_domain_ascii": "trnm.poco-bft.snapshot-value-identity.v0",
+      "manifest_membership": "required exactly once"
+    },
+    "optional_payload_extension": {
+      "milestone": "B2-H3b2b2a",
+      "field": "future_candidate_registrations",
+      "position": "trailing after validator_registration_history",
+      "compatibility": "pre-release v0 append-only optional extension: an empty vector is omitted, so every frozen H3b2b1 payload byte remains valid; when non-empty the field is present exactly once in the trailing position",
+      "authority_boundary": "future target candidate registration only; the existing active-provider kind-9 registration is not reinterpreted"
+    }
+  },
+  "canonical_hash": {
+    "algorithm": "SHA-256",
+    "prefix_ascii": "trnm.cev0.hash.v0",
+    "framing": "for prefix, domain, and payload in order: u32 big-endian byte length followed by exact bytes"
+  },
+  "authenticated_signer_commitment": {
+    "source": "the AppHash-authenticated validator lifecycle effective for the parent state; local configuration, transaction envelope signer, event, or execution ID is not authority",
+    "prefix_ascii": "trnm.domain.hash.v1",
+    "domain_ascii": "trnm.poco-bft.application-governance-signer.v0",
+    "framing": "prefix bytes without a length, then for the domain and each part in order: u64 big-endian byte length followed by exact bytes",
+    "parts": [
+      {"name": "governance_signer_id", "type": "exact UTF-8 bytes", "minimum_bytes": 1, "maximum_bytes": 256},
+      {"name": "authorized_signers_hash_hex", "type": "64-byte canonical lowercase ASCII hex, not decoded Hash32 bytes"}
+    ],
+    "output": "non-zero Hash32",
+    "block_rule": "one immutable commitment is privately constructed for the whole block; switching signer or policy between operations rejects"
+  },
+  "decision_preimage": {
+    "domain_ascii": "trnm.poco-bft.application-decision-preimage.v0",
+    "field_order": [
+      "schema_version:u16",
+      "genesis_hash:Bytes",
+      "chain_id:Bytes",
+      "source_version:u64",
+      "source_root:Hash32",
+      "target_height:u64",
+      "active_epoch:u64",
+      "active_parameters_hash:Hash32",
+      "authority_signer_commitment:Hash32",
+      "normalized_operation:Bytes"
+    ],
+    "normalization": "clear both nullifier arrays and zero exactly the operation-kind-specific derived decision fields before canonical JSON re-encode",
+    "signer_substitution": "another operator, signer ID, signer key/policy commitment, or same-block signer switch changes the preimage and every derived decision ID and is rejected by production admission"
+  },
+  "operation_extension": {
+    "kind": "register_future_candidate",
+    "body_field_order": [
+      "kind",
+      "validator_id_hex",
+      "target_epoch",
+      "previous_registration_nonce",
+      "predecessor_history_head_hex",
+      "proof_cev0_hex",
+      "registration_decision_id_hex"
+    ],
+    "semantic_changes": 0,
+    "nullifier_non_membership_checks": 0,
+    "nullifier_insertions": [
+      {"family": 8, "name": "registration_decision", "identifier": "derived registration_decision_id"},
+      {"family": 13, "name": "validator_consensus_key", "identifier": "exact future consensus key"}
+    ],
+    "target_epoch": "exact checked active_epoch + 1",
+    "strict_pop": "exact CEV0 ValidatorKeyProofOfPossessionV0 verified by production StrictEd25519Verifier and bound to authenticated genesis hash, chain ID, exact successor target epoch, validator ID, consensus key, and registration nonce",
+    "changed_key_predecessor": "an old-set validator changing key supplies previous_registration_nonce equal to the exact active validator-registration history max_registration_nonce and predecessor_history_head_hex equal to its exact non-revoked history_head_hex; the new nonce is strictly greater",
+    "new_validator_predecessor": "a validator absent from the old set supplies null previous_registration_nonce and the all-zero predecessor_history_head_hex",
+    "unchanged_key": "reject; an old-set validator carrying the same key uses the proof-free canonical candidate path instead",
+    "persistence": "writes only the trailing kind-16 future_candidate_registrations companion; it neither creates nor rewrites a kind-9 active-provider fact"
+  },
+  "authority_value": {
+    "envelope": {
+      "encoding": "CEV0",
+      "fields": [
+        {"name": "schema_version", "type": "u16", "const": 0},
+        {"name": "kind", "type": "u8", "const": 16},
+        {"name": "revision", "type": "u64", "minimum": 1},
+        {"name": "identity", "type": "Bytes", "exact_ascii": "trnm.poco.application-authority.v0"},
+        {"name": "payload", "type": "Bytes", "encoding": "canonical UTF-8 JSON", "maximum_bytes": 65384}
+      ],
+      "exact_decode": true,
+      "trailing_bytes": "reject",
+      "maximum_bytes": 65536
+    },
+    "payload": {
+      "schema_const": "trnm_poco_application_authority_v0",
+      "canonical_json": "UTF-8 JSON produced with the exact field order below, no insignificant whitespace, no unknown fields, and byte-identical re-encode; only the final future_candidate_registrations field is omitted when empty",
+      "field_order": [
+        "schema",
+        "revision",
+        "last_target_height",
+        "nullifier_root_hex",
+        "nullifier_count",
+        "consumer_keys",
+        "meter_policies",
+        "meter_usage",
+        "consumer_provider_usage",
+        "task_provider_usage",
+        "provider_usage",
+        "funded_unused_reservations",
+        "active_certificates",
+        "pending_challenges",
+        "pending_governance_proposals",
+        "finalized_governance_approvals",
+        "validator_registration_history",
+        "future_candidate_registrations"
+      ],
+      "optional_trailing_fields": ["future_candidate_registrations"],
+      "optional_trailing_field_rule": "future_candidate_registrations is absent if and only if empty; when present it is a non-empty array in the exact final position, so payloads omitting the empty extension retain their original canonical bytes",
+      "revision_binding": "payload revision equals envelope revision",
+      "genesis_binding": "(revision == 1) if and only if (last_target_height == 0); all non-genesis successors have revision > 1 and last_target_height > 0",
+      "record_families": [
+        {"name": "consumer_keys", "canonical_key": ["consumer_id_hex", "consumer_key_id_hex"], "maximum_records": 4},
+        {"name": "meter_policies", "canonical_key": ["meter_id_hex", "meter_version"], "maximum_records": 4},
+        {"name": "meter_usage", "canonical_key": ["meter_id_hex", "meter_version", "window_epoch"], "maximum_records": 32},
+        {"name": "consumer_provider_usage", "canonical_key": ["consumer_id_hex", "provider_id_hex", "window_epoch"], "maximum_records": 32},
+        {"name": "task_provider_usage", "canonical_key": ["task_id_hex", "provider_id_hex", "window_epoch"], "maximum_records": 32},
+        {"name": "provider_usage", "canonical_key": ["provider_id_hex", "window_epoch"], "maximum_records": 32},
+        {"name": "funded_unused_reservations", "canonical_key": ["certificate_id_hex"], "maximum_records": 4},
+        {"name": "active_certificates", "canonical_key": ["certificate_id_hex"], "maximum_records": 4},
+        {"name": "pending_challenges", "canonical_key": ["challenge_id_hex"], "maximum_records": 2},
+        {"name": "pending_governance_proposals", "canonical_key": ["target_epoch"], "maximum_records": 2},
+        {"name": "finalized_governance_approvals", "canonical_key": ["target_epoch"], "maximum_records": 2},
+        {"name": "validator_registration_history", "canonical_key": ["validator_id_hex"], "maximum_records": 4},
+        {"name": "future_candidate_registrations", "canonical_key": ["target_epoch", "validator_id_hex"], "maximum_records": 4}
+      ],
+      "record_order": "strictly increasing and unique by canonical key",
+      "integer_policy": "u64 values are unquoted canonical decimal JSON integers over the full 0..2^64-1 range; independent consumers parse them losslessly and reject floats, exponents, signs, leading zeros, overflow, and any byte-changing reformat; u128 business quantities remain canonical decimal strings parsed by BigInt",
+      "numeric_field_types": {
+        "top_level": {
+          "u64_unquoted": ["revision", "last_target_height", "nullifier_count"]
+        },
+        "consumer_keys": {
+          "u64_unquoted": ["active_from_height"],
+          "optional_u64_unquoted": ["revoked_at_height"]
+        },
+        "consumer_nonce_watermarks": {
+          "u64_unquoted": ["max_accepted_nonce"]
+        },
+        "meter_policies": {
+          "u32_unquoted": ["meter_version"],
+          "u64_unquoted": ["rolling_epoch_span", "retention_blocks", "active_from_height"],
+          "optional_u64_unquoted": ["retired_at_height"],
+          "u128_decimal_strings": ["unit_scale", "per_certificate_cap", "rolling_cap"]
+        },
+        "meter_usage": {
+          "u32_unquoted": ["meter_version"],
+          "u64_unquoted": ["window_epoch"],
+          "u128_decimal_strings": ["consumed_units"]
+        },
+        "consumer_provider_usage": {
+          "u64_unquoted": ["window_epoch"],
+          "u128_decimal_strings": ["consumed_units"]
+        },
+        "task_provider_usage": {
+          "u64_unquoted": ["window_epoch"],
+          "u128_decimal_strings": ["consumed_units"]
+        },
+        "provider_usage": {
+          "u64_unquoted": ["window_epoch"],
+          "u128_decimal_strings": ["consumed_units"]
+        },
+        "funded_unused_reservations": {
+          "u64_unquoted": ["finalized_height"],
+          "u128_decimal_strings": ["reserved_units"]
+        },
+        "active_certificates": {
+          "u32_unquoted": ["meter_version"],
+          "u64_unquoted": ["settlement_finalized_height", "provider_registration_nonce", "provider_registration_height", "accepted_height", "finalized_epoch", "prunable_after_height", "lifecycle_effective_height"],
+          "u8_unquoted": ["relationship_class"],
+          "u128_decimal_strings": ["consumed_units"]
+        },
+        "semantic_keys": {
+          "u8_unquoted": ["kind"]
+        },
+        "pending_challenges": {
+          "u64_unquoted": ["opened_height"]
+        },
+        "pending_governance_proposals": {
+          "u64_unquoted": ["target_epoch", "proposed_height", "activation_height"],
+          "u8_unquoted": ["phase"]
+        },
+        "finalized_governance_approvals": {
+          "u64_unquoted": ["target_epoch", "proposed_height", "approval_height", "activation_height"],
+          "u8_unquoted": ["phase"]
+        },
+        "validator_registration_history": {
+          "u64_unquoted": ["max_registration_nonce", "registration_height", "retired_key_count"],
+          "optional_u64_unquoted": ["revoked_at_height"]
+        },
+        "future_candidate_registrations": {
+          "u64_unquoted": ["target_epoch", "registration_nonce", "registration_height"],
+          "optional_u64_unquoted": ["previous_registration_nonce"]
+        }
+      },
+      "reservation_record": "funded-unused reservation includes reserved_units as a canonical decimal u128 string and requires reserved_units > 0",
+      "consumer_key_record": "each key retains sorted unique nonce_watermarks keyed by provider_id_hex; every watermark binds max_accepted_nonce to the exact kind-3 logical key so a private key prune can delete the complete authenticated nonce set and commit its summary",
+      "active_certificate_record": "the exact field order is certificate_id_hex, consumer_id_hex, consumer_key_id_hex, provider_id_hex, task_id_hex, meter_id_hex, meter_version, settlement_commitment_hex, settlement_finalized_height, consumed_units, evidence_root_hex, relationship_class, relationship_key_hex, provider_consensus_key_hex, provider_registration_nonce, provider_proof_digest_hex, provider_registration_decision_id_hex, provider_registration_height, provider_registration_history_head_hex, acceptance_decision_id_hex, funding_decision_id_hex, meter_decision_id_hex, evidence_decision_id_hex, accepted_height, finalized_epoch, tuple_key_hex, prunable_after_height, lifecycle, lifecycle_effective_height, lifecycle_decision_id_hex, semantic_keys; every companion field is re-derived from the authenticated certificate/key/provider/meter/settlement/evidence/relationship/lifecycle projection",
+      "finalized_governance_record": "the exact field order is target_epoch, phase, proposal_decision_id_hex, proposed_height, decision_id_hex, approval_height, parameters_hash_hex, activation_height; phase/hash/activation and proposal provenance must equal the consumed pending companion and exact kind-15 fact, with 0 < proposed_height < approval_height < activation_height",
+      "validator_history_record": "the exact field order is validator_id_hex, history_head_hex, max_registration_nonce, consensus_key_hex, current_proof_digest_hex, previous_history_head_hex, registration_decision_id_hex, registration_height, retired_key_count, revoked_at_height, revocation_decision_id_hex; retired consensus-key identities remain permanently committed by family-13 nullifiers instead of an unbounded JSON vector",
+      "future_candidate_record": {
+        "field_order": [
+          "validator_id_hex",
+          "target_epoch",
+          "consensus_key_hex",
+          "registration_nonce",
+          "previous_registration_nonce",
+          "predecessor_history_head_hex",
+          "proof_cev0_hex",
+          "proof_digest_hex",
+          "registration_decision_id_hex",
+          "registration_height"
+        ],
+        "maximum_records": 4,
+        "target_epoch": "exact checked active epoch successor",
+        "proof": "exact CEV0 ValidatorKeyProofOfPossessionV0 verified by production StrictEd25519Verifier",
+        "proof_digest_domain_ascii": "trnm.poco-bft.future-candidate-pop.v0",
+        "changed_key_predecessor": "exact non-revoked active history max_registration_nonce and history_head_hex, with a strictly larger new nonce",
+        "new_validator_predecessor": "null previous_registration_nonce and all-zero predecessor_history_head_hex",
+        "rejections": "same-key old validator, reused key, stale epoch, noncanonical or invalid proof, or substituted predecessor, decision, digest, or registration height"
+      },
+      "nested_record_field_order": {
+        "consumer_keys": [
+          "consumer_id_hex",
+          "consumer_key_id_hex",
+          "public_key_hex",
+          "active_from_height",
+          "authorization_decision_id_hex",
+          "revoked_at_height",
+          "revocation_decision_id_hex",
+          "nonce_watermarks"
+        ],
+        "consumer_nonce_watermarks": [
+          "provider_id_hex",
+          "max_accepted_nonce",
+          "logical_key_hex"
+        ],
+        "meter_policies": [
+          "meter_id_hex",
+          "meter_version",
+          "task_id_hex",
+          "output_commitment_hex",
+          "unit_scale",
+          "evidence_policy",
+          "per_certificate_cap",
+          "rolling_cap",
+          "rolling_epoch_span",
+          "retention_blocks",
+          "active_from_height",
+          "retired_at_height"
+        ],
+        "meter_usage": [
+          "meter_id_hex",
+          "meter_version",
+          "window_epoch",
+          "consumed_units"
+        ],
+        "consumer_provider_usage": [
+          "consumer_id_hex",
+          "provider_id_hex",
+          "window_epoch",
+          "consumed_units"
+        ],
+        "task_provider_usage": [
+          "task_id_hex",
+          "provider_id_hex",
+          "window_epoch",
+          "consumed_units"
+        ],
+        "provider_usage": [
+          "provider_id_hex",
+          "window_epoch",
+          "consumed_units"
+        ],
+        "funded_unused_reservations": [
+          "certificate_id_hex",
+          "settlement_commitment_hex",
+          "funding_decision_id_hex",
+          "finalized_height",
+          "reserved_units"
+        ],
+        "active_certificates": [
+          "certificate_id_hex",
+          "consumer_id_hex",
+          "consumer_key_id_hex",
+          "provider_id_hex",
+          "task_id_hex",
+          "meter_id_hex",
+          "meter_version",
+          "settlement_commitment_hex",
+          "settlement_finalized_height",
+          "consumed_units",
+          "evidence_root_hex",
+          "relationship_class",
+          "relationship_key_hex",
+          "provider_consensus_key_hex",
+          "provider_registration_nonce",
+          "provider_proof_digest_hex",
+          "provider_registration_decision_id_hex",
+          "provider_registration_height",
+          "provider_registration_history_head_hex",
+          "acceptance_decision_id_hex",
+          "funding_decision_id_hex",
+          "meter_decision_id_hex",
+          "evidence_decision_id_hex",
+          "accepted_height",
+          "finalized_epoch",
+          "tuple_key_hex",
+          "prunable_after_height",
+          "lifecycle",
+          "lifecycle_effective_height",
+          "lifecycle_decision_id_hex",
+          "semantic_keys"
+        ],
+        "semantic_keys": [
+          "kind",
+          "logical_key_hex"
+        ],
+        "pending_challenges": [
+          "challenge_id_hex",
+          "certificate_id_hex",
+          "opening_decision_id_hex",
+          "opened_height"
+        ],
+        "pending_governance_proposals": [
+          "target_epoch",
+          "proposal_decision_id_hex",
+          "proposed_height",
+          "phase",
+          "parameters_hash_hex",
+          "activation_height"
+        ],
+        "finalized_governance_approvals": [
+          "target_epoch",
+          "phase",
+          "proposal_decision_id_hex",
+          "proposed_height",
+          "decision_id_hex",
+          "approval_height",
+          "parameters_hash_hex",
+          "activation_height"
+        ],
+        "validator_registration_history": [
+          "validator_id_hex",
+          "history_head_hex",
+          "max_registration_nonce",
+          "consensus_key_hex",
+          "current_proof_digest_hex",
+          "previous_history_head_hex",
+          "registration_decision_id_hex",
+          "registration_height",
+          "retired_key_count",
+          "revoked_at_height",
+          "revocation_decision_id_hex"
+        ],
+        "future_candidate_registrations": [
+          "validator_id_hex",
+          "target_epoch",
+          "consensus_key_hex",
+          "registration_nonce",
+          "previous_registration_nonce",
+          "predecessor_history_head_hex",
+          "proof_cev0_hex",
+          "proof_digest_hex",
+          "registration_decision_id_hex",
+          "registration_height"
+        ]
+      },
+      "hard_caps": {
+        "consumer_keys": 4,
+        "nonce_watermarks_per_consumer_key": 8,
+        "total_nonce_watermarks": 8,
+        "meter_policies": 4,
+        "total_usage_buckets": 32,
+        "funded_unused_reservations": 4,
+        "active_certificates": 4,
+        "pending_challenges": 2,
+        "pending_governance_proposals": 2,
+        "finalized_governance_approvals": 2,
+        "validator_registration_history": 4,
+        "future_candidate_registrations": 4,
+        "total_authority_records_including_nonce_watermarks": 70
+      },
+      "nested_canonicality": "every nested object is exact-order and deny-unknown; the four usage arrays share one aggregate cap, nonce watermarks have per-key and aggregate caps, and the total cap counts nested nonce watermarks"
+    }
+  },
+  "successor_contract": {
+    "source": "kind 16 is read from the exact manifest-authenticated source projection at source_version/source_root",
+    "target_height": "source_version + 1 with checked u64 arithmetic",
+    "active_window": "target height is within the authenticated active epoch and no later than checkpoint_height - snapshot_lead_blocks",
+    "operation_height": "every operation target_height equals the authenticated target height",
+    "revision": "every operation expected_state_revision equals the current overlay revision; the sealed authority envelope and payload use exactly source revision + 1",
+    "nullifier": "each insertion consumes the preceding root/count and produces the next root/count in operation order",
+    "overlay": "all operation reads observe the same ordered in-block overlay; exactly one successor kind-16 write is emitted",
+    "manifest": "all semantic entry writes, private prune deletes, the kind-16 successor, and the unique target-height manifest are one JMT version/root",
+    "failure": "any rejected operation produces zero writes, no success receipt, and leaves source head/root/manifest/nullifier unchanged",
+    "output_boundary": "application-write authority only; no candidate, B2-G, handoff, activation, or Core epoch-transition capability"
+  },
+  "shared_operation_sequences": {
+    "vector_path": "operation_sequences",
+    "final_top_level_fields": ["schema", "schema_version", "source_exports_sha256_hex", "source_exports", "required_automata", "sequences"],
+    "source_export_registry_fields": ["sha256_hex", "raw_json_hex"],
+    "source_export_rule": "sorted unique registry retains every exact Rust export byte, including whitespace; Node rehashes raw_json_hex, exact-parses the scope-specific source export, and every sequence references the matching digest",
+    "full_source_export_fields": ["schema", "schema_version", "initial", "authoring_nullifier_state"],
+    "isolated_source_export_fields": ["schema", "schema_version", "lineage_base_intent", "initial", "authoring_nullifier_state"],
+    "lineage_base_intent_fields": ["operation_kind", "normalized_business_intent_digest_hex", "subjects"],
+    "business_intent_normalization": {
+      "domain": "trnm.poco-bft.application-business-intent.v1",
+      "preimage_fields": ["operation_kind", "body", "semantic_intent"],
+      "decision_rule": "replace every operation-kind decision binding with exactly 32 zero bytes before canonical JSON hashing",
+      "target_bound_omissions": {
+        "authorize_consumer_key": ["/body/active_from_height"],
+        "define_meter_policy": ["/body/policy/active_from_height"],
+        "register_validator": ["/body/target_epoch"]
+      },
+      "semantic_intent": {
+        "item_fields": ["kind", "logical_key_hex", "action", "identity_hex", "fact"],
+        "actions": ["put", "delete"],
+        "put_kind_by_operation": {
+          "authorize_consumer_key": 2,
+          "define_meter_policy": 5,
+          "fund_settlement": 6,
+          "register_validator": 9,
+          "rotate_validator": 9,
+          "resolve_challenge": 12,
+          "approve_governance": 15
+        },
+        "fact_fields": {
+          "2": ["consumer_id_hex", "consumer_key_id_hex", "public_key_hex", "state"],
+          "5": ["meter_id_hex", "meter_version", "unit_scale", "state"],
+          "6": ["certificate_id_hex", "commitment_hex", "state"],
+          "9": ["validator_id_hex", "consensus_key_hex", "registration_nonce", "proof", "state"],
+          "12": ["state"],
+          "15": ["target_epoch", "phase", "parameters_hash_hex", "activation_height", "approved"]
+        },
+        "validator_proof_fields": ["schema_version", "genesis_hash_hex", "chain_id_utf8", "validator_id_hex", "public_key_hex", "registration_nonce"],
+        "integer_rule": "u64/u128 facts are canonical decimal strings; u32 and u8 wire discriminants are JSON numbers; governance approved is boolean",
+        "normalization_rule": "Node and Rust exact-decode each nondelete value through the sole semantic envelope/payload layouts, rederive the raw identity and logical key, omit envelope revision and only the explicitly target-bound semantic heights, and for validator PoP retain schema/genesis/chain/validator/key/nonce while omitting target_epoch and signature; delete binds kind/key/action with null identity/fact, unknown nondelete kinds fail closed, and volatile sparse-Merkle proofs are never part of lineage"
+      },
+      "omission_boundary": "only the three named body fields, envelope revision, target-bound semantic heights, validator-PoP target_epoch/signature, and volatile sparse-Merkle proofs are omitted from lineage/base-positive hashing; exact semantic identity/key/content, production operation bytes, target context, decision preimage, semantic validation, and subjects remain unchanged"
+    },
+    "sequence_fields": ["id", "execution_scope", "activation_prerequisite", "source_export_sha256_hex", "subjects", "initial", "steps", "negatives"],
+    "initial_fields": ["version", "jmt_root_hex", "active_genesis", "production_context", "history", "projection"],
+    "active_genesis_fields": ["chain_id_utf8", "genesis_hash_hex", "validator_lifecycle", "poco_authority_config", "active_parameters", "other_apphash_writes"],
+    "named_genesis_record_fields": ["physical_key_hex", "value_hex"],
+    "active_parameter_fields": ["physical_key_hex", "value_hex", "cev0_hex", "hash_hex"],
+    "active_genesis": "exact validator-lifecycle, genesis PocoAuthorityConfig, active-parameter raw bytes/hash, and every remaining genesis AppHash leaf needed to reconstruct version zero; each named physical key/value must appear byte-for-byte in version-zero history, other_apphash_writes are strictly sorted unique and disjoint from named records, later authenticated history may supersede dynamic PoCO genesis leaves, and no synthetic parameter leaf is permitted when the production store embeds parameters in another authenticated object",
+    "history_entry_fields": ["version", "jmt_root_hex", "writes"],
+    "history_write_fields": ["physical_key_hex", "value_hex"],
+    "projection_fields": ["manifest_hex", "entries_root_hex", "entries"],
+    "projection_entry_fields": ["kind", "logical_key_hex", "value_hex", "canonical_entry_cev0_hex"],
+    "step_fields": ["id", "context", "operations", "operation_root_hex", "operation_count", "rust_event"],
+    "operation_record_fields": ["id", "operation_kind", "raw_operation_json_hex", "operation_id_hex"],
+    "context_fields": ["chain_id_utf8", "genesis_hash_hex", "source_version", "source_root_hex", "target_height", "active_epoch", "active_parameters_cev0_hex", "active_parameters_hash_hex", "authority_signer_commitment_hex"],
+    "step_request_fields": ["schema", "schema_version", "source_export_sha256_hex", "sequence_id", "step_id", "execution_scope", "activation_prerequisite", "context", "raw_operation_json_hexes", "operation_ids_hex", "operation_root_hex", "operation_count"],
+    "negative_request_fields": ["schema", "schema_version", "source_export_sha256_hex", "sequence_id", "negative_id", "execution_scope", "context", "source", "base_positive", "fault_model", "raw_operation_json_hexes", "expected_reject", "expected_writes", "expected_unchanged"],
+    "rust_step_event_fields": ["schema", "schema_version", "source_export_sha256_hex", "draft_request_sha256_hex", "sequence_id", "step_id", "execution_scope", "context", "source", "operation", "scope_evidence", "mutations", "target", "next_production_context"],
+    "event_operation_fields": ["raw_json_hexes", "operation_ids_hex", "operation_root_hex", "operation_count"],
+    "full_scope_evidence_fields": ["kind", "ordered_signed_tx_hexes", "process_proposal", "finalize_block", "sqlite_commit", "sqlite_restart", "snapshot_v3_restore", "snapshot_v4_restore", "sqlite_failpoint_outcomes"],
+    "state_fingerprint_fields": ["version", "jmt_root_hex", "manifest_hex", "entries_root_hex", "authority_envelope_hex"],
+    "sqlite_failpoint_contract": [["before_sql_commit", "source"], ["after_sql_commit_before_status", "target"]],
+    "mutation_fields": ["kind", "logical_key_hex", "expected_value_hex", "next_value_hex", "canonical_cev0_hex"],
+    "target_fields": ["version", "jmt_root_hex", "manifest_hex", "entries_root_hex", "entries", "authority"],
+    "negative_fields": ["id", "context", "base_positive", "fault_model", "raw_operation_json_hexes", "source", "expected_reject", "expected_writes", "expected_unchanged", "rust_event"],
+    "negative_base_fields": ["source", "step_id", "operation_index", "normalized_business_intent_digest_hex"],
+    "negative_fault_fields": ["kind", "authenticated_source_relation", "expected_first_error_stage", "expected_first_error_code"],
+    "rust_negative_event_fields": ["schema", "schema_version", "source_export_sha256_hex", "draft_request_sha256_hex", "sequence_id", "negative_id", "execution_scope", "context", "source", "raw_operation_json_hexes", "actual_rejection", "execution_evidence", "writes", "target_after"],
+    "actual_rejection_fields": ["stage", "error_code", "classifier_priority", "error_chain_sha256_hex", "rejected_nullifier"],
+    "rejected_nullifier_fields": ["family", "identifier_hex", "key_hex", "proof_source_root_hex"],
+    "full_negative_execution_fields": ["kind", "ordered_signed_tx_hexes", "process_proposal_status", "process_executor_actual", "independent_executor_actual", "finalize_block_not_invoked_after_reject", "pending_after_reject", "sqlite_restart"],
+    "isolated_negative_execution_fields": ["kind", "kernel"],
+    "required_full_store_sequences": ["certificate_challenge_rejected", "certificate_challenge_sustained", "governance_propose_approve", "validator_register_rotate", "release_refund_replay"],
+    "required_kernel_sequences": ["certificate_prune_replay", "consumer_key_prune_replay", "meter_prune_replay", "validator_prune_replay"],
+    "scope_rule": "full_application_store binds the same ordered signed transactions through independent ProcessProposal and FinalizeBlock executions plus SQLite commit/restart, V3/V4 restore, and both durable failpoint outcomes; isolated_prune_transition_kernel is explicitly non-production evidence gated by the named activation prerequisite",
+    "semantic_delete_rule": "Node permits null semantic successors only for private prune_* operations or for release_settlement deleting exactly one kind-6 logical key re-derived from the same certificate ID; Rust production evidence must additionally prove every exact source fact, permanent nullifier, and complete authorized delete set",
+    "negative_rule": "each required negative is a state_dependent_same_subject_replay tied to one successful same-kind business-intent digest or an exact Rust isolated-source lineage; proof-stage replay additionally requires that exact family/subject/key to be occupied in the current authenticated nullifier set and the rejected proof source root to differ from the current authority root; Rust exports an actual stable classifier result and nonzero error-chain digest, while rejected ProcessProposal never invokes FinalizeBlock",
+    "independence": "Node independently exact-decodes raw JSON and CEV0, derives decision IDs and subjects, verifies every sparse proof against the authenticated initial/sequential root, recomputes operation/mutation/entry roots and manifests, validates persistence fingerprints, and provides an independent check-final after authoring metadata is stripped",
+    "side_fact_rule": "status strings, normalized summaries, telemetry IDs, expected-error echoes, and caller context/proofs are never completion or application authority"
+  },
+  "operation_sequence_authoring": {
+    "script": "scripts/ci/author_poco_bft_v0_application_sequences.mjs",
+    "draft_schema": "trnm.poco-bft.application-operation-sequence-draft.v0",
+    "rust_genesis_schema": "trnm.poco-bft.application-full-genesis-export.v0",
+    "final_schema": "trnm.poco-bft.application-operation-sequences.vector.v0",
+    "commands": ["init", "append", "derive", "derive-negative", "merge", "check", "finalize", "check-final", "scaffold-required", "self-test"],
+    "stdout_only": true,
+    "completion_authority": "there is no status field: a step is complete only when its exact fixed Rust event validates source export/request digests, scope, context, source and target heads, ordered raw operations/IDs/root, canonical mutations/root, full target projection/manifest, authority/nullifier successor, persistence evidence, and next production context",
+    "root_discipline": "Node never invents a JMT root: every source and target root is imported from exact retained Rust evidence, while Node independently rehashes all content committed by that root",
+    "independent_node_work": "Node derives every operation-local decision ID and proof plan, enforces sorted unique semantic/proof arrays, checks all absence proofs against one initial root and insertions sequentially, and recomputes operation/mutation/entry roots plus the exact 47-byte manifest",
+    "partial_rule": "check reports partial=true whenever any required automaton block or required negative is absent or any present record awaits its fixed Rust event; within each sequence no later positive step may be appended until the current event is fully revalidated",
+    "finalization_rule": "finalize strips private authoring metadata only after all nine exact automata and actual negatives validate; check-final reconstructs source/nullifier/decision/proof/root/scope/subject continuity from retained raw source exports and finalized raw records",
+    "scaffold_rule": "scaffold-required requires one real full-store source and four scoped isolated-source exports and emits all nine complete next-block field-order skeletons with exact source digests; every marker is non-authorizing and derive rejects it",
+    "self_test_rule": "self-test executes a valid success and actual negative merge, finalizes and independently check-finals it, and proves rejection of status/root/mutation/manifest/source/scope/context/sort/type/signature/persistence/classifier/subject/proof tampering; missing or unknown commands exit nonzero"
+  },
+  "nullifier_accumulator": {
+    "tree": "fixed-depth sparse Merkle set",
+    "depth": 256,
+    "key_interpretation": "32-byte big-endian integer",
+    "path_order": "least-significant bit first; level 0 is bit 0 of key[31], level 255 is bit 7 of key[0]",
+    "proof_sibling_order": "leaf to root",
+    "proof": {
+      "encoded_bytes": 8230,
+      "fields": [
+        {"name": "schema_version", "type": "u16", "const": 0},
+        {"name": "proof_version", "type": "u16", "const": 0},
+        {"name": "depth", "type": "u16", "const": 256},
+        {"name": "key", "type": "Hash32"},
+        {"name": "siblings", "type": "Hash32", "count": 256, "order": "leaf-to-root"}
+      ],
+      "exact_decode": true,
+      "trailing_bytes": "reject"
+    },
+    "domains": {
+      "key": "trnm.poco-bft.nullifier-key.v0",
+      "empty_leaf": "trnm.poco-bft.nullifier-empty-leaf.v0",
+      "occupied_leaf": "trnm.poco-bft.nullifier-occupied-leaf.v0",
+      "node": "trnm.poco-bft.nullifier-node.v0"
+    },
+    "key_preimage": [
+      {"name": "schema_version", "type": "u16", "const": 0},
+      {"name": "family", "type": "u8"},
+      {"name": "identifier", "type": "Hash32"}
+    ],
+    "families": [
+      {"tag": 1, "name": "certificate"},
+      {"tag": 2, "name": "tuple"},
+      {"tag": 3, "name": "settlement_decision"},
+      {"tag": 4, "name": "meter_decision"},
+      {"tag": 5, "name": "evidence_decision"},
+      {"tag": 6, "name": "challenge_decision"},
+      {"tag": 7, "name": "governance_decision"},
+      {"tag": 8, "name": "registration_decision"},
+      {"tag": 9, "name": "consumer_key_decision"},
+      {"tag": 10, "name": "consumer_key_identity"},
+      {"tag": 11, "name": "consumer_nonce_summary"},
+      {"tag": 12, "name": "meter_identity"},
+      {"tag": 13, "name": "validator_consensus_key"},
+      {"tag": 14, "name": "validator_identity"}
+    ],
+    "default_hashes": "default[0] is the empty-leaf hash; default[level+1] is the level-bound node hash of default[level] with itself",
+    "occupied_leaf": "domain hash of schema_version:u16 followed by the exact derived key",
+    "node_preimage": "schema_version:u16 || level:u32 || left:Hash32 || right:Hash32",
+    "root_count_binding": "count is u64 and checked-adds one before the 256-level proof walk; count zero iff root is the frozen empty root",
+    "non_membership": "proof key equals the independently derived family key and empty-leaf reconstruction equals the authenticated source root"
+  },
+  "application_rules": {
+    "target_bound_fields": [
+      "certificate accepted height",
+      "settlement disposition height",
+      "measurement decision height",
+      "challenge effective height",
+      "governance approval height",
+      "validator registration height",
+      "future candidate registration height"
+    ],
+    "certificate_acceptance": [
+      "exact certificate and identity decoding",
+      "chain, genesis, protocol profile, and active parameter equality",
+      "production StrictEd25519 consumer signature verification",
+      "active consumer key and strict nonce watermark",
+      "active provider kind-9 registration with exact provider identity and matching registration-history companion",
+      "certificate, tuple, decision, and nullifier non-membership",
+      "meter task/output/version and per-certificate plus rolling caps",
+      "required/forbidden evidence policy",
+      "pre-existing finalized funded-unused settlement with matching commitment, decision, and reserved_units exactly equal to certificate consumed_units",
+      "relationship validity",
+      "atomic certificate, nonce, tuple, settlement, measurement, lifecycle, authority, nullifier, and manifest writes"
+    ],
+    "consumer_key_authority": "authorize and revoke are target-height-bound exact kind-2 transitions; each derived decision consumes a fresh family-9 consumer_key_decision proof, first authorization additionally inserts family-10 consumer_key_identity, and every accepted nonce updates the key companion watermark; wrong-family, wrong-proof, identity reuse, or subject substitution rejects",
+    "funding_subject": "fund_settlement requires exactly one canonical family-1 certificate non-membership proof for certificate_id before creating the funded-unused reservation; release or terminal prune permanently occupies that subject so refund after deletion cannot recreate it",
+    "release_tombstone": "release_settlement privately deletes exactly the funded-unused kind-6 leaf and atomically inserts canonical family-1 certificate plus family-3 release-decision nullifiers in family order; missing, substituted, stale, or replayed proof produces zero writes",
+    "cross_meter_usage": {
+      "consumer_provider": "canonical key (consumer_id, provider_id, active_epoch)",
+      "task_provider": "canonical key (task_id, provider_id, active_epoch)",
+      "provider": "canonical key (provider_id, active_epoch)",
+      "rule": "all three checked-u128 aggregates span every meter definition, so splitting work across meters cannot reset an active-parameter cap"
+    },
+    "tuple_authority": "the sole kind-4 exact decoder retains certificate_id and accepted_height; both must equal the accepted certificate and authenticated target height",
+    "projection_integrity": "startup, migration, V3/V4 restore, source overlay construction, and SQLite precommit reject authority/semantic drift across meter, reservation/settlement, active certificate exact subject/key/provider/meter/units/evidence/relationship/tuple/lifecycle fields, challenge/lifecycle, validator current key/proof/registration height/retired count versus kind-9, and governance phase/kind-15 companions before writes",
+    "challenge_governance_registration": "decision IDs are role/domain/subject/payload/height bound and at-most-once; validator rotation additionally binds the exact predecessor nonce and history head",
+    "future_candidate_registration": "register_future_candidate is an append-only kind-16-only operation for exact active_epoch + 1; it admits zero semantic changes and zero caller non-membership checks, strictly verifies the exact PoP, consumes fresh family-8 decision and family-13 key nullifiers, rejects an unchanged old key, and requires either the exact active predecessor nonce/head for an old-set key change or null/all-zero predecessor authority for a new validator",
+    "governance_scope": "propose_governance and approve_governance are distinct target-height-bound operations; approval consumes the exact authenticated proposal, requires a later height before activation, and both pending and finalized companions are kind-15 projection-checked",
+    "pruning": {
+      "entry": "crate-private prune planner only; generic semantic delete remains rejected",
+      "eligibility": "all records are terminal, no pending challenge, funded-unused reservation, active certificate, or retained rolling-usage reference remains, and authenticated target height is strictly greater than the checked retention boundary",
+      "certificate": "prune_expired_certificate deletes exactly the authority-retained certificate semantic-key set, requires consumed settlement and lifecycle equality, inserts family-1 certificate plus family-2 tuple nullifiers, then removes the authority companion in the same transition",
+      "consumer_key": "prune_revoked_consumer_key requires a revoked key and no active certificate reference, deletes exactly kind 2 plus every kind-3 entry named by its nonce_watermarks, inserts the family-11 canonical summary Digest(trnm.poco-bft.consumer-nonce-summary.v0, u16_be(schema_version) || Bytes(consumer_id) || Bytes(key_id) || u32_be(watermark_count) || each Bytes(provider_id) || u64_be(max_nonce) || Hash32(logical_key) in authority order), and removes the key companion; family-9 decisions and family-10 identity were already inserted before prune",
+      "meter": "prune_retired_meter requires the strict maximum of protocol and meter retention boundaries, no active certificate reference, and no retained rolling usage; it deletes exactly the matching kind-5 entry and removes the policy companion; family-12 meter identity was inserted at definition",
+      "validator": "prune_revoked_validator_history requires the strict protocol retention boundary and no active provider certificate reference; it deletes exactly the matching kind-9 entry and removes the history companion; family-13 active/retired consensus keys and family-14 validator identity remain permanent",
+      "atomicity": "every nullifier newly required by the prune is inserted before the exact rich record group is deleted, within the same overlay/JMT/manifest transition",
+      "failure": "missing/substituted nullifier, double prune, active reference, count exhaustion, or partial delete rejects the entire block transition"
+    }
+  },
+  "hard_bounds": {
+    "operations_per_block": 32,
+    "operation_bytes_each": 1048576,
+    "semantic_changes_per_operation": 32,
+    "total_usage_buckets": 32,
+    "nullifier_non_membership_checks_per_operation": 16,
+    "nullifier_insertions_per_operation": 16,
+    "authority_payload_bytes": 65384,
+    "namespace_entries": 10000,
+    "aggregate_projection_bytes": 8388608,
+    "ordering": "source projection plus operation count/bytes are checked with checked arithmetic before operation decode or overlay clone; operation-internal semantic/nullifier counts are checked before semantic planning, while exact nullifier shape validation necessarily decodes each bounded 8,230-byte proof"
+  },
+  "additional_bounds": {
+    "semantic_changes_minimum": {
+      "default": 1,
+      "register_future_candidate": 0
+    },
+    "opaque_id_bytes_minimum": 1,
+    "opaque_id_bytes_maximum": 128,
+    "nonce_watermarks_per_consumer_key": 8,
+    "total_nonce_watermarks": 8,
+    "total_authority_records": 70,
+    "future_candidate_registrations": 4,
+    "retired_registration_keys": "represented only by checked retired_key_count; every concrete retired key remains permanently protected by its family-13 nullifier"
+  },
+  "required_rejections": [
+    "target H-1 or H+1",
+    "source height overflow",
+    "wrong source root or stale authority revision",
+    "authority root/count mismatch",
+    "proof header, length, key, sibling, root, family, or count drift",
+    "decision substitution or replay",
+    "AppHash signer commitment, signer ID, authorized signer key/policy hash, or same-block signer substitution",
+    "consumer-key authorize/revoke wrong family-9 proof, subject substitution, or replay",
+    "consumer-key identity replay, incomplete nonce watermark delete set, or substituted nonce-summary nullifier",
+    "meter task/output/cap/evidence mismatch or u128 overflow",
+    "reserved units zero, noncanonical, overflowed, or not exactly equal to certificate consumed units",
+    "cross-meter consumer-provider, task-provider, or provider aggregate cap overrun or checked-u128 overflow",
+    "missing, revoked, or cross-provider registration and tuple certificate/accepted-height drift",
+    "unfunded, non-unused, substituted, competing, or terminal settlement",
+    "challenge/governance decision substitution, replay, or terminal update",
+    "validator predecessor/history/key/nonce drift or exhaustion",
+    "future candidate wrong target epoch, malformed or noncanonical PoP, wrong chain/genesis/validator/key/nonce/signature, reused key, unchanged old key, substituted predecessor nonce/head, or more than four retained future registrations",
+    "retired meter or revoked validator prune at/before its boundary, with a live reference, or with a substituted delete set",
+    "omitted/extra/duplicate/reordered cross-entry mutation",
+    "prune without every nullifier or prune of live state",
+    "authority/semantic companion drift during restore or precommit",
+    "any bound overrun before allocation-heavy or cryptographic work"
+  ]
+}

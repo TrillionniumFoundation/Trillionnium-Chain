@@ -34,11 +34,8 @@ required_lines=(
   'PIP_DISABLE_PIP_VERSION_CHECK: "1"'
   'SOURCE_DATE_EPOCH: "1704067200"'
   'GZIP: "-n"'
-  'DEBIAN_FRONTEND: noninteractive'
-  'APT_LISTCHANGES_FRONTEND: none'
-  'APT_LISTBUGS_FRONTEND: none'
   'UMASK: "022"'
-  'timeout-minutes: 45'
+  'timeout-minutes: 60'
 )
 
 for line in "${required_lines[@]}"; do
